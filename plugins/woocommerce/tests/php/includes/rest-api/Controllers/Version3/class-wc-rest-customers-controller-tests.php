@@ -2,12 +2,12 @@
 
 // phpcs:disable Squiz.Classes.ClassFileName.NoMatch, Squiz.Classes.ValidClassName.NotCamelCaps -- legacy conventions.
 /**
- * Tests relating to WC_REST_Customers_V1_Controller.
+ * Tests relating to WC_REST_Customers_Controller.
  */
-class WC_REST_Customers_V1_Controller_Tests extends WC_Unit_Test_Case {
+class WC_REST_Customers_Controller_Test extends WC_Unit_Test_Case {
 
 	/**
-	 * @var WC_REST_Customers_V1_Controller System under test.
+	 * @var WC_REST_Customers_Controller System under test.
 	 */
 	private $sut;
 
@@ -22,18 +22,13 @@ class WC_REST_Customers_V1_Controller_Tests extends WC_Unit_Test_Case {
 	private $customer_id;
 
 	/**
-	 * @var string API version.
-	 */
-	private $version = 'v1';
-
-	/**
 	 * Test setup.
 	 *
 	 * @return void
 	 */
 	public function setUp(): void {
 		parent::setUp();
-		$this->sut         = new WC_REST_Customers_V1_Controller();
+		$this->sut         = new WC_REST_Customers_Controller();
 		$this->admin_id    = self::factory()->user->create( array( 'role' => 'administrator' ) );
 		$this->customer_id = self::factory()->user->create( array( 'role' => 'customer' ) );
 	}
@@ -42,7 +37,7 @@ class WC_REST_Customers_V1_Controller_Tests extends WC_Unit_Test_Case {
 	 * @testDox Test that an admin user can create a customer.
 	 */
 	public function test_customer_create_permissions(): void {
-		$api_request = new WP_REST_Request( 'POST', '/wc/v1/customers' );
+		$api_request = new WP_REST_Request( 'POST', '/wc/v3/customers' );
 		$api_request->set_body_params(
 			array(
 				'email' => 'test_customer',
@@ -68,7 +63,7 @@ class WC_REST_Customers_V1_Controller_Tests extends WC_Unit_Test_Case {
 	 * @testDox Test that an admin user can update a customer.
 	 */
 	public function test_customer_update_permissions(): void {
-		$api_request = new WP_REST_Request( 'PUT', '/wc/v1/customers/' );
+		$api_request = new WP_REST_Request( 'PUT', '/wc/v3/customers/' );
 		$api_request->set_param( 'id', $this->customer_id );
 		wp_set_current_user( $this->admin_id );
 
@@ -77,7 +72,7 @@ class WC_REST_Customers_V1_Controller_Tests extends WC_Unit_Test_Case {
 			'An admin user can update a customer.'
 		);
 
-		$api_request = new WP_REST_Request( 'PUT', '/wc/v1/customers/' );
+		$api_request = new WP_REST_Request( 'PUT', '/wc/v3/customers/' );
 		$api_request->set_param( 'id', $this->admin_id );
 		$this->assertEquals(
 			'woocommerce_rest_cannot_edit',
@@ -90,7 +85,7 @@ class WC_REST_Customers_V1_Controller_Tests extends WC_Unit_Test_Case {
 	 * @testDox Test that an admin user can delete a customer.
 	 */
 	public function test_customer_delete_permission(): void {
-		$api_request = new WP_REST_Request( 'DELETE', '/wc/v1/customers' );
+		$api_request = new WP_REST_Request( 'DELETE', '/wc/v3/customers' );
 		$api_request->set_param( 'id', $this->customer_id );
 		wp_set_current_user( $this->admin_id );
 
@@ -111,7 +106,7 @@ class WC_REST_Customers_V1_Controller_Tests extends WC_Unit_Test_Case {
 	 * @testDox Test that an admin user can view a customer.
 	 */
 	public function test_customer_view_permission(): void {
-		$api_request = new WP_REST_Request( 'GET', '/wc/v1/customers/' );
+		$api_request = new WP_REST_Request( 'GET', '/wc/v3/customers/' );
 		$api_request->set_param( 'id', $this->customer_id );
 		wp_set_current_user( $this->admin_id );
 
