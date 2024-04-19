@@ -150,6 +150,10 @@ class WC_REST_Customers_V1_Controller extends WC_REST_Controller {
 			return new WP_Error( 'woocommerce_rest_cannot_create', __( 'Sorry, you are not allowed to create resources.', 'woocommerce' ), array( 'status' => rest_authorization_required_code() ) );
 		}
 
+		if ( 'customer' !== $request->get_param( 'role' ) ) {
+			return new WP_Error( 'woocommerce_rest_cannot_create', __( 'Sorry, only users with customer role can be created via this endpoint', 'woocommerce' ), array( 'status' => rest_authorization_required_code() ) );
+		}
+
 		return true;
 	}
 
@@ -183,6 +187,11 @@ class WC_REST_Customers_V1_Controller extends WC_REST_Controller {
 			return new WP_Error( 'woocommerce_rest_cannot_edit', __( 'Sorry, you are not allowed to edit this resource.', 'woocommerce' ), array( 'status' => rest_authorization_required_code() ) );
 		}
 
+		$customer = new WC_Customer( $id );
+		if ( $customer && 'customer' !== $customer->get_role() ) {
+			return new WP_Error( 'woocommerce_rest_cannot_edit', __( 'Sorry, only users with customer role can be edited via this endpoint', 'woocommerce' ), array( 'status' => rest_authorization_required_code() ) );
+		}
+
 		return true;
 	}
 
@@ -198,6 +207,11 @@ class WC_REST_Customers_V1_Controller extends WC_REST_Controller {
 
 		if ( ! wc_rest_check_user_permissions( 'delete', $id ) ) {
 			return new WP_Error( 'woocommerce_rest_cannot_delete', __( 'Sorry, you are not allowed to delete this resource.', 'woocommerce' ), array( 'status' => rest_authorization_required_code() ) );
+		}
+
+		$customer = new WC_Customer( $id );
+		if ( $customer && 'customer' !== $customer->get_role() ) {
+			return new WP_Error( 'woocommerce_rest_cannot_delete', __( 'Sorry, only users with customer role can be deleted via this endpoint', 'woocommerce' ), array( 'status' => rest_authorization_required_code() ) );
 		}
 
 		return true;
