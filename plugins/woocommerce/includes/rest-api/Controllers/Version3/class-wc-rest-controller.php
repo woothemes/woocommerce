@@ -245,6 +245,19 @@ abstract class WC_REST_Controller extends WP_REST_Controller {
 				// Set query (GET) parameters.
 				$_item->set_query_params( $query );
 
+				$allowed = $this->create_item_permissions_check( $_item );
+				if ( is_wp_error( $allowed ) ) {
+					$response['create'][] = array(
+						'id'    => 0,
+						'error' => array(
+							'code'    => $allowed->get_error_code(),
+							'message' => $allowed->get_error_message(),
+							'data'    => $allowed->get_error_data(),
+						),
+					);
+					continue;
+				}
+
 				$_response = $this->create_item( $_item );
 
 				if ( is_wp_error( $_response ) ) {
@@ -266,6 +279,20 @@ abstract class WC_REST_Controller extends WP_REST_Controller {
 			foreach ( $items['update'] as $item ) {
 				$_item = new WP_REST_Request( 'PUT', $request->get_route() );
 				$_item->set_body_params( $item );
+
+				$allowed = $this->update_item_permissions_check( $_item );
+				if ( is_wp_error( $allowed ) ) {
+					$response['update'][] = array(
+						'id'    => $_item['id'],
+						'error' => array(
+							'code'    => $allowed->get_error_code(),
+							'message' => $allowed->get_error_message(),
+							'data'    => $allowed->get_error_data(),
+						),
+					);
+					continue;
+				}
+
 				$_response = $this->update_item( $_item );
 
 				if ( is_wp_error( $_response ) ) {
@@ -298,6 +325,20 @@ abstract class WC_REST_Controller extends WP_REST_Controller {
 						'force' => true,
 					)
 				);
+
+				$allowed = $this->delete_item_permissions_check( $_item );
+				if ( is_wp_error( $allowed ) ) {
+					$response['delete'][] = array(
+						'id'    => $id,
+						'error' => array(
+							'code'    => $allowed->get_error_code(),
+							'message' => $allowed->get_error_message(),
+							'data'    => $allowed->get_error_data(),
+						),
+					);
+					continue;
+				}
+
 				$_response = $this->delete_item( $_item );
 
 				if ( is_wp_error( $_response ) ) {
