@@ -90,10 +90,22 @@ class WC_REST_Customers_V1_Controller_Tests extends WC_Unit_Test_Case {
 
 		$api_request = new WP_REST_Request( 'PUT', '/wc/v1/customers/' );
 		$api_request->set_param( 'id', $this->admin_id );
+		$api_request->set_param( 'first_name', 'Test name' );
+		$this->assertTrue(
+			$this->sut->update_item_permissions_check( $api_request ),
+			'Non sensitive fields are allowed to be updated.'
+		);
+
+		$api_request = new WP_REST_Request( 'PUT', '/wc/v1/customers/' );
+		$api_request->set_param( 'id', $this->admin_id );
+		$api_request->set_param( 'role', 'customer' );
+		$api_request->set_param( 'password', 'test password' );
+		$api_request->set_param( 'username', 'admin2' );
+		$api_request->set_param( 'email', 'admin2example.com' );
 		$this->assertEquals(
 			'woocommerce_rest_cannot_edit',
 			$this->sut->update_item_permissions_check( $api_request )->get_error_code(),
-			'An admin user cannot update any admin user from customer API.'
+			'Sensitive fields cannot be updated via the customers api.'
 		);
 	}
 
@@ -193,7 +205,7 @@ class WC_REST_Customers_V1_Controller_Tests extends WC_Unit_Test_Case {
 					'id'   => $this->customer_id,
 					'role' => 'administrator',
 				),
-				array( // Invalid user (admin user can't be updated).
+				array( // Invalid user (admin user's email can't be updated).
 					'id'    => $this->admin_id,
 					'email' => 'dummy_email@example.com',
 				),

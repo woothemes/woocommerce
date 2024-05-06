@@ -73,11 +73,22 @@ class WC_REST_Customers_Controller_Test extends WC_Unit_Test_Case {
 		);
 
 		$api_request = new WP_REST_Request( 'PUT', '/wc/v3/customers/' );
+		$api_request->set_param( 'first_name', 'Test name' );
+		$this->assertTrue(
+			$this->sut->update_item_permissions_check( $api_request ),
+			'Non sensitive fields are allowed to be updated.'
+		);
+
+		$api_request = new WP_REST_Request( 'PUT', '/wc/v3/customers/' );
 		$api_request->set_param( 'id', $this->admin_id );
+		$api_request->set_param( 'role', 'customer' );
+		$api_request->set_param( 'password', 'test password' );
+		$api_request->set_param( 'username', 'admin2' );
+		$api_request->set_param( 'email', 'admin2example.com' );
 		$this->assertEquals(
 			'woocommerce_rest_cannot_edit',
 			$this->sut->update_item_permissions_check( $api_request )->get_error_code(),
-			'An admin user cannot update any admin user from customer API.'
+			'Sensitive fields cannot be updated via the customers api.'
 		);
 	}
 
