@@ -1,25 +1,23 @@
 /**
  * External dependencies
  */
-import { test as base, expect } from '@woocommerce/e2e-playwright-utils';
-import type { Request } from '@playwright/test';
+import { Request } from '@playwright/test';
+import { test as base, expect } from '@woocommerce/e2e-utils';
 
 /**
  * Internal dependencies
  */
-import ProductCollectionPage, { SELECTORS } from './product-collection.page';
+import ProductCollectionPage, {
+	BLOCK_LABELS,
+	SELECTORS,
+} from './product-collection.page';
 
 const test = base.extend< { pageObject: ProductCollectionPage } >( {
-	pageObject: async (
-		{ page, admin, editor, templateApiUtils, editorUtils },
-		use
-	) => {
+	pageObject: async ( { page, admin, editor }, use ) => {
 		const pageObject = new ProductCollectionPage( {
 			page,
 			admin,
 			editor,
-			templateApiUtils,
-			editorUtils,
 		} );
 		await use( pageObject );
 	},
@@ -120,16 +118,16 @@ test.describe( 'Product Collection', () => {
 			editor,
 			pageObject,
 		} ) => {
-			await pageObject.replaceProductsWithProductCollectionInTemplate(
-				'woocommerce/woocommerce//archive-product'
-			);
+			await pageObject.goToEditorTemplate();
 
 			await expect(
 				editor.canvas.locator( '[data-testid="product-image"]:visible' )
 			).toHaveCount( 16 );
 
 			await insertProductElements( pageObject );
-			await editor.saveSiteEditorEntities();
+			await editor.saveSiteEditorEntities( {
+				isOnlyCurrentEntityDirty: true,
+			} );
 			await pageObject.goToProductCatalogFrontend();
 
 			// Workaround for the issue with the product change not being
@@ -155,7 +153,9 @@ test.describe( 'Product Collection', () => {
 			).toHaveCount( 9 );
 
 			await insertProductElements( pageObject );
-			await editor.saveSiteEditorEntities();
+			await editor.saveSiteEditorEntities( {
+				isOnlyCurrentEntityDirty: true,
+			} );
 			await pageObject.goToHomePageFrontend();
 
 			for ( const content of expectedProductContent ) {
@@ -462,7 +462,8 @@ test.describe( 'Product Collection', () => {
 				pageObject,
 				editor,
 			} ) => {
-				await pageObject.goToProductCatalogAndInsertCollection();
+				await pageObject.goToEditorTemplate();
+				await pageObject.focusProductCollection();
 				await editor.openDocumentSettingsSidebar();
 
 				const sidebarSettings =
@@ -518,7 +519,8 @@ test.describe( 'Product Collection', () => {
 			} ) => {
 				// First Product Catalog
 				// Option should be visible & ENABLED by default
-				await pageObject.goToProductCatalogAndInsertCollection();
+				await pageObject.goToEditorTemplate();
+				await pageObject.focusProductCollection();
 				await editor.openDocumentSettingsSidebar();
 
 				const sidebarSettings =
@@ -790,10 +792,18 @@ test.describe( 'Product Collection', () => {
 		test( 'Product Catalog Collection can be added in product archive and syncs query with template', async ( {
 			pageObject,
 			editor,
+			admin,
 		} ) => {
-			await pageObject.goToProductCatalogAndInsertCollection(
-				'productCatalog'
-			);
+			await admin.visitSiteEditor( {
+				postId: 'woocommerce/woocommerce//archive-product',
+				postType: 'wp_template',
+				canvas: 'edit',
+			} );
+
+			await editor.setContent( '' );
+
+			await pageObject.insertProductCollection();
+			await pageObject.chooseCollectionInTemplate();
 			await editor.openDocumentSettingsSidebar();
 
 			const sidebarSettings = await pageObject.locateSidebarSettings();
@@ -880,6 +890,28 @@ test.describe( 'Product Collection', () => {
 				featuredProductsPrices
 			);
 		} );
+
+		test( 'With multiple Pagination blocks', async ( {
+			page,
+			admin,
+			editor,
+			pageObject,
+		} ) => {
+			await admin.createNewPost();
+			await pageObject.insertProductCollection();
+			await pageObject.chooseCollectionInPost( 'productCatalog' );
+			const paginations = page.getByLabel( BLOCK_LABELS.pagination );
+
+			await expect( paginations ).toHaveCount( 1 );
+
+			const siblingBlock = await editor.getBlockByName(
+				'woocommerce/product-template'
+			);
+			await editor.selectBlocks( siblingBlock );
+			await editor.insertBlockUsingGlobalInserter( 'Pagination' );
+
+			await expect( paginations ).toHaveCount( 2 );
+		} );
 	} );
 
 	test.describe( 'Location is recognised', () => {
@@ -934,19 +966,31 @@ test.describe( 'Product Collection', () => {
 		};
 
 		test( 'as product in specific Single Product template', async ( {
+			admin,
 			page,
 			pageObject,
-			editorUtils,
+			editor,
 		} ) => {
-			const productName = 'Cap';
-			const productSlug = 'cap';
+			await admin.visitSiteEditor( { path: '/wp_template' } );
 
-			await editorUtils.openSpecificProductTemplate(
-				productName,
-				productSlug
-			);
+			await page
+				.getByRole( 'button', { name: 'Add New Template' } )
+				.click();
+			await page
+				.getByRole( 'button', { name: 'Single Item: Product' } )
+				.click();
+			await page
+				.getByRole( 'option', {
+					name: `Cap http://localhost:8889/product/cap/`,
+				} )
+				.click();
+			await page
+				.getByRole( 'button', {
+					name: 'Skip',
+				} )
+				.click();
 
-			await editorUtils.insertBlockUsingGlobalInserter(
+			await editor.insertBlockUsingGlobalInserter(
 				pageObject.BLOCK_NAME
 			);
 
@@ -965,16 +1009,16 @@ test.describe( 'Product Collection', () => {
 		} );
 		test( 'as category in Products by Category template', async ( {
 			admin,
-			editorUtils,
+			editor,
 			pageObject,
 			page,
 		} ) => {
 			await admin.visitSiteEditor( {
 				postId: `woocommerce/woocommerce//taxonomy-product_cat`,
 				postType: 'wp_template',
+				canvas: 'edit',
 			} );
-			await editorUtils.enterEditMode();
-			await editorUtils.insertBlockUsingGlobalInserter(
+			await editor.insertBlockUsingGlobalInserter(
 				pageObject.BLOCK_NAME
 			);
 
@@ -994,16 +1038,16 @@ test.describe( 'Product Collection', () => {
 
 		test( 'as tag in Products by Tag template', async ( {
 			admin,
-			editorUtils,
+			editor,
 			pageObject,
 			page,
 		} ) => {
 			await admin.visitSiteEditor( {
 				postId: `woocommerce/woocommerce//taxonomy-product_tag`,
 				postType: 'wp_template',
+				canvas: 'edit',
 			} );
-			await editorUtils.enterEditMode();
-			await editorUtils.insertBlockUsingGlobalInserter(
+			await editor.insertBlockUsingGlobalInserter(
 				pageObject.BLOCK_NAME
 			);
 
@@ -1023,12 +1067,12 @@ test.describe( 'Product Collection', () => {
 
 		test( 'as site in post', async ( {
 			admin,
-			editorUtils,
+			editor,
 			pageObject,
 			page,
 		} ) => {
 			await admin.createNewPost();
-			await editorUtils.insertBlockUsingGlobalInserter(
+			await editor.insertBlockUsingGlobalInserter(
 				pageObject.BLOCK_NAME
 			);
 
@@ -1100,14 +1144,9 @@ test.describe( 'Product Collection', () => {
 		];
 
 		genericArchiveTemplates.forEach( ( { name, path } ) => {
-			test( `${ name } template`, async ( {
-				editor,
-				page,
-				pageObject,
-			} ) => {
-				await pageObject.replaceProductsWithProductCollectionInTemplate(
-					path
-				);
+			test( `${ name } template`, async ( { editor, pageObject } ) => {
+				await pageObject.goToEditorTemplate( path );
+				await pageObject.focusProductCollection();
 
 				const previewButtonLocator = editor.canvas.locator(
 					'button[data-test-id="product-collection-preview-button"]'
@@ -1116,18 +1155,183 @@ test.describe( 'Product Collection', () => {
 				// The preview button should be visible
 				await expect( previewButtonLocator ).toBeVisible();
 
-				// The preview button should be hidden when the block is not selected
-				await page.click( 'body' );
+				// The preview button should be hidden when the block is not selected.
+				// Changing focus.
+				const otherBlockSelector = editor.canvas.getByLabel(
+					'Block: Archive Title'
+				);
+				await editor.selectBlocks( otherBlockSelector );
 				await expect( previewButtonLocator ).toBeHidden();
 
 				// Preview button should be visible when any of inner block is selected
 				await editor.canvas
-					.getByLabel( 'Block: Product Template' )
-					.getByLabel( 'Block: Product Image' )
+					.getByLabel( BLOCK_LABELS.productTemplate )
+					.getByLabel( BLOCK_LABELS.productImage )
 					.first()
 					.click();
 				await expect( previewButtonLocator ).toBeVisible();
 			} );
 		} );
 	} );
+
+	// Tests for regressions of https://github.com/woocommerce/woocommerce/pull/47994
+	test.describe( 'Product Collection should be visible after Refresh', () => {
+		test( 'Product Collection should be visible after Refresh in a Template', async ( {
+			page,
+			editor,
+			pageObject,
+		} ) => {
+			await pageObject.goToEditorTemplate();
+			const productTemplate = editor.canvas.getByLabel(
+				BLOCK_LABELS.productTemplate
+			);
+			await expect( productTemplate ).toBeVisible();
+
+			// Refresh the template and verify the block is still visible
+			await page.reload();
+			await expect( productTemplate ).toBeVisible();
+		} );
+
+		test( 'Product Collection should be visible after Refresh in a Post', async ( {
+			page,
+			pageObject,
+			editor,
+		} ) => {
+			await pageObject.createNewPostAndInsertBlock();
+			const productTemplate = page.getByLabel(
+				BLOCK_LABELS.productTemplate
+			);
+			await expect( productTemplate ).toBeVisible();
+
+			// Refresh the post and verify the block is still visible
+			await editor.publishPost();
+			await page.reload();
+			await expect( productTemplate ).toBeVisible();
+		} );
+
+		test( 'On Sale collection should be visible after Refresh', async ( {
+			page,
+			pageObject,
+			editor,
+		} ) => {
+			await pageObject.goToEditorTemplate();
+			await pageObject.insertProductCollection();
+			await pageObject.chooseCollectionInTemplate( 'onSale' );
+
+			const productTemplate = editor.canvas.getByLabel(
+				BLOCK_LABELS.productTemplate
+			);
+
+			await expect( productTemplate ).toHaveCount( 2 );
+
+			// Refresh the template and verify "On Sale" collection is still visible
+			await editor.saveSiteEditorEntities( {
+				isOnlyCurrentEntityDirty: true,
+			} );
+			await page.reload();
+			await expect( productTemplate ).toHaveCount( 2 );
+		} );
+
+		test( 'On Sale collection should be visible after Refresh in a Post', async ( {
+			page,
+			pageObject,
+			editor,
+		} ) => {
+			await pageObject.createNewPostAndInsertBlock( 'onSale' );
+			const productTemplate = page.getByLabel(
+				BLOCK_LABELS.productTemplate
+			);
+			await expect( productTemplate ).toBeVisible();
+
+			// Refresh the post and verify "On Sale" collection is still visible
+			await editor.saveDraft();
+			await page.reload();
+			await expect( productTemplate ).toBeVisible();
+		} );
+	} );
+
+	const templates = {
+		// This test is disabled because archives are disabled for attributes by default. This can be uncommented when this is toggled on.
+		//'taxonomy-product_attribute': {
+		//	templateTitle: 'Product Attribute',
+		//	slug: 'taxonomy-product_attribute',
+		//	frontendPage: '/product-attribute/color/',
+		//	legacyBlockName: 'woocommerce/legacy-template',
+		//},
+		'taxonomy-product_cat': {
+			templateTitle: 'Product Category',
+			slug: 'taxonomy-product_cat',
+			frontendPage: '/product-category/music/',
+			legacyBlockName: 'woocommerce/legacy-template',
+			expectedProductsCount: 2,
+		},
+		'taxonomy-product_tag': {
+			templateTitle: 'Product Tag',
+			slug: 'taxonomy-product_tag',
+			frontendPage: '/product-tag/recommended/',
+			legacyBlockName: 'woocommerce/legacy-template',
+			expectedProductsCount: 2,
+		},
+		'archive-product': {
+			templateTitle: 'Product Catalog',
+			slug: 'archive-product',
+			frontendPage: '/shop/',
+			legacyBlockName: 'woocommerce/legacy-template',
+			expectedProductsCount: 16,
+		},
+		'product-search-results': {
+			templateTitle: 'Product Search Results',
+			slug: 'product-search-results',
+			frontendPage: '/?s=shirt&post_type=product',
+			legacyBlockName: 'woocommerce/legacy-template',
+			expectedProductsCount: 3,
+		},
+	};
+
+	for ( const {
+		templateTitle,
+		slug,
+		frontendPage,
+		legacyBlockName,
+		expectedProductsCount,
+	} of Object.values( templates ) ) {
+		test.describe( `${ templateTitle } template`, () => {
+			test( 'Product Collection block matches with classic template block', async ( {
+				pageObject,
+				admin,
+				editor,
+				page,
+			} ) => {
+				const getProductNamesFromClassicTemplate = async () => {
+					const products = page.locator(
+						'.woocommerce-loop-product__title'
+					);
+					await expect( products ).toHaveCount(
+						expectedProductsCount
+					);
+					return products.allTextContents();
+				};
+
+				await admin.visitSiteEditor( {
+					postId: `woocommerce/woocommerce//${ slug }`,
+					postType: 'wp_template',
+					canvas: 'edit',
+				} );
+				await editor.insertBlock( { name: legacyBlockName } );
+				await editor.canvas.locator( 'body' ).click();
+				await editor.saveSiteEditorEntities( {
+					isOnlyCurrentEntityDirty: true,
+				} );
+				await page.goto( frontendPage );
+				await pageObject.refreshLocators( 'frontend' );
+
+				const classicProducts =
+					await getProductNamesFromClassicTemplate();
+				const productCollectionProducts =
+					await pageObject.getProductNames();
+
+				expect( classicProducts ).toEqual( productCollectionProducts );
+			} );
+		} );
+	}
 } );
