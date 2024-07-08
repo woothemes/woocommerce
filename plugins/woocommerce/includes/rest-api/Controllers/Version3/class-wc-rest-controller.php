@@ -312,19 +312,24 @@ abstract class WC_REST_Controller extends WP_REST_Controller {
 
 		if ( ! empty( $items['delete'] ) ) {
 			foreach ( $items['delete'] as $id ) {
-				$id = (int) $id;
+				$id = ! is_array( $id ) ? ( int ) $id : $id;
 
 				if ( 0 === $id ) {
 					continue;
 				}
 
 				$_item = new WP_REST_Request( 'DELETE', $request->get_route() );
-				$_item->set_query_params(
-					array(
-						'id'    => $id,
-						'force' => true,
-					)
-				);
+				if ( is_array( $id ) ) {
+					$id['force'] = true;
+					$_item->set_query_params( $id );
+				} else {
+					$_item->set_query_params(
+						array(
+							'id'    => $id,
+							'force' => true,
+						)
+					);
+				}
 
 				$allowed = $this->delete_item_permissions_check( $_item );
 				if ( is_wp_error( $allowed ) ) {

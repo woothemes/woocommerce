@@ -646,11 +646,18 @@ class WC_REST_Product_Variations_V2_Controller extends WC_REST_Products_V2_Contr
 			if ( ! empty( $items[ $batch_type ] ) ) {
 				$injected_items = array();
 				foreach ( $items[ $batch_type ] as $item ) {
-					$injected_items[] = is_array( $item ) ? array_merge(
+					$injected_item = is_array( $item ) ? array_merge(
 						array(
 							'product_id' => $product_id,
 						), $item
 					) : $item;
+					if ( 'delete' === $batch_type && is_int( $item ) ) {
+						$injected_item = array(
+							'id'         => $item,
+							'product_id' => $product_id,
+						);
+					}
+					$injected_items[] = $injected_item;
 				}
 				$body_params[ $batch_type ] = $injected_items;
 			}
