@@ -52,7 +52,7 @@ class WC_Shipping_Rate {
 	 * @param int     $instance_id Shipping instance ID.
 	 * @param string  $tax_status  Tax status.
 	 */
-	public function __construct( $id = '', $label = '', $cost = 0, $taxes = array(), $method_id = '', $instance_id = 0, $tax_status = 'taxable' ) {
+	public function __construct( $id = '', $label = '', $cost = 0, $taxes = array(), $method_id = '', $instance_id = 0, $tax_status = 'taxable', $description = '', $delivery_time = '' ) {
 		$this->set_id( $id );
 		$this->set_label( $label );
 		$this->set_cost( $cost );
