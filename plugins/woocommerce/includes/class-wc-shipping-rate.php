@@ -60,6 +60,8 @@ class WC_Shipping_Rate {
 		$this->set_method_id( $method_id );
 		$this->set_instance_id( $instance_id );
 		$this->set_tax_status( $tax_status );
+		$this->set_description( $description );
+		$this->set_delivery_time( $delivery_time );
 	}
 
 	/**
