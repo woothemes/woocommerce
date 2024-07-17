@@ -29,6 +29,8 @@ class WC_Shipping_Rate {
 		'cost'        => 0,
 		'taxes'       => array(),
 		'tax_status'  => 'taxable',
+		'description'   => '',
+		'delivery_time' => '',
 	);
 
 	/**
