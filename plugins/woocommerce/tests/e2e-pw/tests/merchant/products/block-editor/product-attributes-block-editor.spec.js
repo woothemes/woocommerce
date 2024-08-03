@@ -4,6 +4,10 @@ const {
 const { expect } = require( '../../../../fixtures/fixtures' );
 const { updateProduct } = require( '../../../../utils/product-block-editor' );
 const { clickOnTab } = require( '../../../../utils/simple-products' );
+const attributesData = require( './fixtures/attributes' );
+const {
+	waitForGlobalAttributesLoaded,
+} = require( './helpers/wait-for-global-attributes-loaded' );
 
 async function waitForAttributeList( page ) {
 	// The list child is different in case there are no results versus when there already are some attributes, so we need to wait for either one to be visible.
@@ -99,22 +103,6 @@ test(
 	'add local attribute (with terms) to the Product',
 	{ tag: '@gutenberg' },
 	async ( { page, product } ) => {
-		const newAttributes = [
-			{
-				name: 'Color',
-
-				terms: [ 'Red', 'Blue', 'Green' ],
-			},
-			{
-				name: 'Size',
-				terms: [ 'Small', 'Medium', 'Large' ],
-			},
-			{
-				name: 'Style',
-				terms: [ 'Modern', 'Classic', 'Vintage' ],
-			},
-		];
-
 		await test.step( 'go to product editor -> Organization tab -> Click on `Add new`', async () => {
 			await page.goto(
 				`wp-admin/post.php?post=${ product.id }&action=edit`
@@ -132,6 +120,11 @@ test(
 				.isVisible();
 
 			await page.waitForLoadState( 'domcontentloaded' );
+
+			// Confirm the Add button is disabled
+			await expect(
+				page.getByRole( 'button', { name: 'Add attributes' } )
+			).toBeDisabled();
 		} );
 
 		await test.step( 'create local attributes with terms', async () => {
@@ -143,19 +136,10 @@ test(
 				'.woocommerce-new-attribute-modal__table-row'
 			);
 
-			/*
-			 * First, check the app loads the attributes,
-			 * based on the Spinner visibility.
-			 */
-			const spinnerLocator = attributeRowsLocator.locator(
-				'.components-spinner'
-			);
-			await spinnerLocator.waitFor( {
-				state: 'visible',
-			} );
-			await spinnerLocator.waitFor( { state: 'hidden' } );
+			// First, check the app loads the attributes,
+			await waitForGlobalAttributesLoaded( page );
 
-			for ( const term of newAttributes ) {
+			for ( const attribute of attributesData ) {
 				const attributeRowLocator = attributeRowsLocator.last();
 
 				const attributeComboboxLocator = attributeRowLocator
@@ -165,8 +149,10 @@ test(
 					.last();
 
 				// Create new (local) product attribute.
-				await attributeComboboxLocator.fill( term.name );
-				await page.locator( `text=Create "${ term.name }"` ).click();
+				await attributeComboboxLocator.fill( attribute.name );
+				await page
+					.locator( `text=Create "${ attribute.name }"` )
+					.click();
 
 				const FormTokenFieldLocator = attributeRowLocator.locator(
 					'td.woocommerce-new-attribute-modal__table-attribute-value-column'
@@ -179,19 +165,37 @@ test(
 					);
 
 				// Add terms to the attribute.
-				for ( const attributeTerm of term.terms ) {
-					await FormTokenFieldInputLocator.fill( attributeTerm );
+				for ( const term of attribute.terms ) {
+					await FormTokenFieldInputLocator.fill( term.name );
 					await FormTokenFieldInputLocator.press( 'Enter' );
 				}
 
-				await page.getByLabel( 'Add another attribute' ).click();
-			}
+				// Terms accepted, so the Add button should be enabled.
+				await expect(
+					page.getByRole( 'button', { name: 'Add attributes' } )
+				).toBeEnabled();
 
-			// Add the product attributes
-			await page
-				.getByRole( 'button', { name: 'Add attributes' } )
-				.click();
+				await page.getByLabel( 'Add another attribute' ).click();
+
+				// Attribute no defined, so the Add button should be disabled.
+				await expect(
+					page.getByRole( 'button', { name: 'Add attributes' } )
+				).toBeDisabled();
+			}
 		} );
+
+		// Remove the last row, as it was added by the last click on "Add another attribute".
+		await page
+			.getByRole( 'button', { name: 'Remove attribute' } )
+			.last()
+			.click();
+
+		await expect(
+			page.getByRole( 'button', { name: 'Add attributes' } )
+		).toBeEnabled();
+
+		// Add the product attributes
+		await page.getByRole( 'button', { name: 'Add attributes' } ).click();
 
 		await test.step( 'verify attributes in product editor', async () => {
 			// Locate the main attributes list element
@@ -203,25 +207,42 @@ test(
 			const attributeRowsLocator =
 				attributesListLocator.getByRole( 'listitem' );
 
-			for ( const attribute of newAttributes ) {
+			for ( const attribute of attributesData ) {
 				const attributeRowLocator = attributeRowsLocator.filter( {
 					has: page.getByText( attribute.name, { exact: true } ),
 				} );
 				await expect( attributeRowLocator ).toBeVisible();
 
-				for ( const term of attribute.terms ) {
+				// UI only shows 3 terms, so we need to check if the term is visible.
+				const shownTerms = attribute.terms.slice( 0, 3 ).entries();
+
+				// Check if there are more terms than three.
+				const moreThanThreeTerms = attribute.terms.length > 3;
+
+				for ( const [ index, term ] of shownTerms ) {
+					/*
+					 * Disabling the eslint rule because the text
+					 * is different when there are more than three terms.
+					 */
+					const termLabel =
+						// eslint-disable-next-line playwright/no-conditional-in-test
+						moreThanThreeTerms && index === 2
+							? '+ 3 more'
+							: term.name;
 					// Pick the term element/locator
 					const termLocator = attributeRowLocator
 						.locator( `[aria-hidden="true"]` )
 						.filter( {
-							has: page.getByText( term ),
+							has: page.getByText( termLabel, {
+								exact: true,
+							} ),
 						} );
 
 					// Verify the term is visible
 					await expect( termLocator ).toBeVisible();
 
 					// Verify the term text
-					await expect( termLocator ).toContainText( term );
+					await expect( termLocator ).toContainText( termLabel );
 				}
 			}
 		} );
@@ -235,7 +256,7 @@ test(
 			await page.goto( product.permalink );
 
 			// Verify attributes in store frontend
-			for ( const attribute of newAttributes ) {
+			for ( const attribute of attributesData ) {
 				const item = page.getByRole( 'row' ).filter( {
 					has: page.getByText( attribute.name, { exact: true } ),
 				} );
@@ -246,7 +267,7 @@ test(
 	}
 );
 
-test.skip(
+test(
 	'can add existing attributes',
 	{ tag: '@gutenberg' },
 	async ( { page, product, attributes } ) => {
@@ -254,13 +275,7 @@ test.skip(
 			await page.goto(
 				`wp-admin/post.php?post=${ product.id }&action=edit`
 			);
-			const getAttributesResponsePromise = page.waitForResponse(
-				( response ) =>
-					response.url().includes( '/terms?attribute_id=' ) &&
-					response.status() === 200
-			);
 			await page.getByRole( 'tab', { name: 'Organization' } ).click();
-			await getAttributesResponsePromise;
 		} );
 
 		await test.step( 'add an existing attribute', async () => {
@@ -268,14 +283,15 @@ test.skip(
 
 			await page.waitForLoadState( 'domcontentloaded' );
 
-			// Add attributes that do not exist
-			await page.getByPlaceholder( 'Search or create attribute' ).click();
+			await page
+				.locator( '.woocommerce-attributes-combobox input' )
+				.click();
 
 			// Unless we wait for the list to be visible, the attribute name will be filled too soon and the test will fail.
 			await waitForAttributeList( page );
 
 			await page
-				.getByPlaceholder( 'Search or create attribute' )
+				.locator( '.woocommerce-attributes-combobox input' )
 				.fill( attributes.attribute.name );
 			await page
 				.getByRole( 'option', { name: attributes.attribute.name } )
@@ -285,7 +301,7 @@ test.skip(
 			await page.getByPlaceholder( 'Search or create value' ).click();
 
 			for ( const term of attributes.terms ) {
-				await page.getByLabel( term.name, { exact: true } ).check();
+				await page.getByText( term.name, { exact: true } ).click();
 			}
 
 			await page.keyboard.press( 'Escape' );
@@ -334,9 +350,7 @@ test.skip(
 	}
 );
 
-// Test skipped because an issue with the options not always loading makes it flaky.
-// See https://github.com/woocommerce/woocommerce/issues/44925
-test.skip(
+test(
 	'can update product attributes',
 	{ tag: '@gutenberg' },
 	async ( { page, productWithAttributes } ) => {
@@ -355,7 +369,9 @@ test.skip(
 					await page.reload();
 					await page.getByRole( 'button', { name: 'Edit' } ).click();
 					await expect(
-						page.getByLabel( `Remove ${ attribute.options[ 0 ] }` )
+						page.locator(
+							`button[aria-label="Remove ${ attribute.options[ 0 ] }"]`
+						)
 					).toBeVisible( { timeout: 2000 } );
 				},
 				{
