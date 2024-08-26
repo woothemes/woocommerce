@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 // phpcs:disable Squiz.Classes.ClassFileName.NoMatch, Squiz.Classes.ValidClassName.NotCamelCaps -- legacy conventions.
 /**
@@ -67,12 +68,16 @@ class WC_REST_Customers_V1_Controller_Tests extends WC_Unit_Test_Case {
 			'An admin user can create a customer.'
 		);
 
-		$api_request->set_body_params( array( 'role' => 'administrator' ) );
-		$this->assertEquals(
-			'woocommerce_rest_cannot_create',
-			$this->sut->create_item_permissions_check( $api_request )->get_error_code(),
-			'An admin user cannot create a customer with the role of administrator via the customer API.'
+		$api_request->set_body_params(
+			array(
+				'role'  => 'administrator',
+				'email' => 'test_admin@example.com',
+			)
 		);
+		$response = $this->sut->create_item( $api_request );
+		$data     = $response->get_data();
+		$customer = new WC_Customer( $data['id'] );
+		$this->assertEquals( 'customer', $customer->get_role() );
 	}
 
 	/**
@@ -201,10 +206,6 @@ class WC_REST_Customers_V1_Controller_Tests extends WC_Unit_Test_Case {
 				),
 			),
 			'update' => array(
-				array( // Invalid role.
-					'id'   => $this->customer_id,
-					'role' => 'administrator',
-				),
 				array( // Invalid user (admin user's email can't be updated).
 					'id'    => $this->admin_id,
 					'email' => 'dummy_email@example.com',
@@ -220,16 +221,11 @@ class WC_REST_Customers_V1_Controller_Tests extends WC_Unit_Test_Case {
 		$response = $this->sut->batch_items( $api_request );
 
 		$create_results = $response['create'];
-		$this->assertEquals( 0, $create_results[0]['id'], 'Admin cannot create another admin' );
-		$this->assertEquals( 'woocommerce_rest_cannot_create', $create_results[0]['error']['code'], 'Admin cannot create another admin' );
+		$id             = $create_results[0]['id'];
+		$customer       = new WC_Customer( $id );
+		$this->assertEquals( 'customer', $customer->get_role(), 'Role will always default to customer' );
 
-		foreach ( $response['update'] as $index => $item ) {
-			if ( $item['id'] === $this->customer_id ) {
-				$this->assertEquals( 'woocommerce_rest_cannot_edit', $item['error']['code'], 'Admin cannot update a customer to an admin' );
-			} elseif ( $item['id'] === $this->admin_id ) {
-				$this->assertEquals( 'woocommerce_rest_cannot_edit', $item['error']['code'], 'Admin cannot update an admin' );
-			}
-		}
+		$this->assertEquals( 'woocommerce_rest_cannot_edit', $response['update'][0]['error']['code'], 'Admin cannot update an admin' );
 
 		$this->assertEquals( 'woocommerce_rest_cannot_delete', $response['delete'][0]['error']['code'], 'Admin user can delete a customer.' );
 	}

@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 // phpcs:disable Squiz.Classes.ClassFileName.NoMatch, Squiz.Classes.ValidClassName.NotCamelCaps -- legacy conventions.
 /**
@@ -51,12 +52,17 @@ class WC_REST_Customers_V2_Controller_Tests extends WC_Unit_Test_Case {
 			'An admin user can create a customer.'
 		);
 
-		$api_request->set_body_params( array( 'role' => 'administrator' ) );
-		$this->assertEquals(
-			'woocommerce_rest_cannot_create',
-			$this->sut->create_item_permissions_check( $api_request )->get_error_code(),
-			'An admin user cannot create a customer with the role of administrator via the customer API.'
+		$api_request->set_body_params(
+			array(
+				'role'  => 'administrator',
+				'email' => 'test_admin@example.com',
+			)
 		);
+		$response = $this->sut->create_item( $api_request );
+		$data     = $response->get_data();
+		$this->assertEquals( 'customer', $data['role'] );
+		$customer = new WC_Customer( $data['id'] );
+		$this->assertEquals( 'customer', $customer->get_role() );
 	}
 
 	/**

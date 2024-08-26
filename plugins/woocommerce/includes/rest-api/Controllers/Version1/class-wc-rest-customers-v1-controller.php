@@ -141,7 +141,7 @@ class WC_REST_Customers_V1_Controller extends WC_REST_Controller {
 	/**
 	 * Returns list of allowed roles for the REST API.
 	 *
-	 * @return array $roles Allowed roles to be updated or created via the REST API.
+	 * @return array $roles Allowed roles to be updated via the REST API.
 	 */
 	public function allowed_roles() {
 		/**
@@ -166,21 +166,6 @@ class WC_REST_Customers_V1_Controller extends WC_REST_Controller {
 	public function create_item_permissions_check( $request ) {
 		if ( ! wc_rest_check_user_permissions( 'create' ) ) {
 			return new WP_Error( 'woocommerce_rest_cannot_create', __( 'Sorry, you are not allowed to create resources.', 'woocommerce' ), array( 'status' => rest_authorization_required_code() ) );
-		}
-
-		$allowed_roles = $this->allowed_roles();
-
-		if ( ! empty( $request['role'] ) && ! in_array( $request['role'], $allowed_roles, true ) ) {
-			return new WP_Error(
-				'woocommerce_rest_cannot_create',
-				sprintf(
-					/* translators: 1: current role 2: comma separated list of allowed roles. egs customer, subscriber */
-					__( 'Sorry, user with %1$s role cannot be created via this endpoint. Allowed roles: %2$s.', 'woocommerce' ),
-					$request['role'],
-					implode( ', ', $allowed_roles )
-				),
-				array( 'status' => rest_authorization_required_code() )
-			);
 		}
 
 		return true;
@@ -241,19 +226,6 @@ class WC_REST_Customers_V1_Controller extends WC_REST_Controller {
 					);
 				}
 			}
-		}
-
-		if ( ! empty( $request['role'] ) && ! in_array( $request['role'], $allowed_roles, true ) ) {
-			return new WP_Error(
-				'woocommerce_rest_cannot_edit',
-				sprintf(
-					/* translators: 1s: name of the property (email, role), 2: Role of the user (administrator, customer). */
-					__( 'Sorry, role cannot be changed to %1$s via this endpoint. Allowed roles: %2$s', 'woocommerce' ),
-					$request['role'],
-					implode( ', ', $allowed_roles )
-				),
-				array( 'status' => rest_authorization_required_code() )
-			);
 		}
 
 		return true;
