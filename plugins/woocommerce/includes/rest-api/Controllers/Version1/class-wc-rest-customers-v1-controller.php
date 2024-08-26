@@ -207,11 +207,8 @@ class WC_REST_Customers_V1_Controller extends WC_REST_Controller {
 
 		if ( $customer && ! in_array( $customer->get_role(), $allowed_roles, true ) ) {
 			// Check against existing props to be compatible with clients that will send the entire user object. Password shouldn't be sent anyway.
-			$non_editable_props = array( 'email', 'role', 'password' );
-			$customer_prop      = array(
-				'email' => $customer->get_email(),
-				'role'  => $customer->get_role(),
-			);
+			$non_editable_props = array( 'email', 'password' );
+			$customer_prop      = array( 'email' => $customer->get_email() );
 			foreach ( $non_editable_props as $prop ) {
 				if ( isset( $request[ $prop ] ) && ( 'password' === $prop || $request[ $prop ] !== $customer_prop[ $prop ] ) ) {
 					return new WP_Error(
