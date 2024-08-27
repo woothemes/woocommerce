@@ -143,7 +143,7 @@ class WC_REST_Customers_V1_Controller extends WC_REST_Controller {
 	 *
 	 * @return array $roles Allowed roles to be updated via the REST API.
 	 */
-	public function allowed_roles() {
+	private function allowed_roles(): array {
 		/**
 		 * Filter the allowed roles for the REST API.
 		 *
@@ -151,9 +151,9 @@ class WC_REST_Customers_V1_Controller extends WC_REST_Controller {
 		 *
 		 * @param array $roles Array of allowed roles.
 		 *
-		 * @since 9.0
+		 * @since 9.3.0
 		 */
-		return apply_filters( 'woocommerce_rest_allowed_roles', array( 'customer', 'subscriber' ) );
+		return apply_filters( 'woocommerce_rest_customer_allowed_roles', array( 'customer', 'subscriber' ) );
 	}
 
 	/**
@@ -245,7 +245,7 @@ class WC_REST_Customers_V1_Controller extends WC_REST_Controller {
 		$allowed_roles = $this->allowed_roles();
 		$customer      = new WC_Customer( $id );
 
-		if ( $customer && ! in_array( $customer->get_role(), $this->allowed_roles(), true ) ) {
+		if ( ! in_array( $customer->get_role(), $allowed_roles, true ) ) {
 			return new WP_Error(
 				'woocommerce_rest_cannot_delete',
 				sprintf(

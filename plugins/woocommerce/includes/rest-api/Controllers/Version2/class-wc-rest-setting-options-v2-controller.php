@@ -404,7 +404,7 @@ class WC_REST_Setting_Options_V2_Controller extends WC_REST_Controller {
 	/**
 	 * Makes sure the current user has access to WRITE the settings APIs.
 	 *
-	 * @since 9.2.0
+	 * @since 9.3.0
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 *

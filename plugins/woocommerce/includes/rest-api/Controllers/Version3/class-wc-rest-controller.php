@@ -312,7 +312,7 @@ abstract class WC_REST_Controller extends WP_REST_Controller {
 
 		if ( ! empty( $items['delete'] ) ) {
 			foreach ( $items['delete'] as $id ) {
-				$id = ! is_array( $id ) ? (int) $id : $id;
+				$id = is_array( $id ) ? $id : (int) $id;
 
 				if ( 0 === $id ) {
 					continue;
