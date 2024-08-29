@@ -149,4 +149,59 @@ class WC_REST_Customers_Controller_Test extends WC_Unit_Test_Case {
 			'An admin user can view any user, including admins.'
 		);
 	}
+
+
+	/** @testDox Test metadata can be set as expected. */
+	public function test_customer_update_metadata(): void {
+		$api_request = new WP_REST_Request( 'PUT', '/wc/v3/customers/' );
+		$api_request->set_body_params(
+			array(
+				'id'        => $this->admin_id,
+				'meta_data' => array(
+					array(
+						'key'   => 'test_key',
+						'value' => 'test_value',
+					),
+					array(
+						'key'   => '_internal_test_key',
+						'value' => '_internal_test_value',
+					),
+				),
+			)
+		);
+		wp_set_current_user( $this->admin_id );
+
+		$response = $this->sut->update_item( $api_request );
+		$this->assertEquals( 200, $response->get_status() );
+		$customer = new WC_Customer( $this->admin_id );
+		$this->assertEquals( 'test_value', $customer->get_meta( 'test_key' ) );
+		$this->assertEmpty( $customer->get_meta( '_internal_test_key' ) );
+	}
+
+	/** @testDox Test metadata can be set as expected in a create request. */
+	public function test_customer_create_metadata(): void {
+		$api_request = new WP_REST_Request( 'POST', '/wc/v3/customers/' );
+		$api_request->set_body_params(
+			array(
+				'email'     => 'test_customer_create_metadata@example.com',
+				'meta_data' => array(
+					array(
+						'key'   => 'test_key',
+						'value' => 'test_value',
+					),
+					array(
+						'key'   => '_internal_test_key',
+						'value' => '_internal_test_value',
+					),
+				),
+			)
+		);
+
+		wp_set_current_user( $this->admin_id );
+		$response = $this->sut->create_item( $api_request );
+		$this->assertEquals( 201, $response->get_status() );
+		$customer = new WC_Customer( $response->get_data()['id'] );
+		$this->assertEquals( 'test_value', $customer->get_meta( 'test_key' ) );
+		$this->assertEmpty( $customer->get_meta( '_internal_test_key' ) );
+	}
 }
