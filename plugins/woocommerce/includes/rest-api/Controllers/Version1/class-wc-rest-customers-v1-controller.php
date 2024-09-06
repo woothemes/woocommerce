@@ -214,7 +214,7 @@ class WC_REST_Customers_V1_Controller extends WC_REST_Controller {
 					return new WP_Error(
 						'woocommerce_rest_cannot_edit',
 						sprintf(
-						/* translators: 1s: name of the property (email, role), 2: Role of the user (administrator, customer). */
+							/* translators: 1s: name of the property (email, role), 2: Role of the user (administrator, customer). */
 							__( 'Sorry, %1$s cannot be updated via this endpoint for a user with role %2$s.', 'woocommerce' ),
 							$prop,
 							$customer->get_role()
