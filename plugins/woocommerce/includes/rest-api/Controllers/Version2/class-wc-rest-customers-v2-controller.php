@@ -132,7 +132,7 @@ class WC_REST_Customers_V2_Controller extends WC_REST_Customers_V1_Controller {
 		if ( isset( $request['meta_data'] ) ) {
 			if ( is_array( $request['meta_data'] ) ) {
 				foreach ( $request['meta_data'] as $meta ) {
-					if ( is_protected_meta( $meta->key, 'user' ) ) { // bypass internal keys.
+					if ( is_protected_meta( $meta['key'], 'user' ) ) { // bypass internal keys.
 						continue;
 					}
 					$customer->update_meta_data( $meta['key'], $meta['value'], isset( $meta['id'] ) ? $meta['id'] : '' );
