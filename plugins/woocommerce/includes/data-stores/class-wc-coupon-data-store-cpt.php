@@ -548,7 +548,7 @@ class WC_Coupon_Data_Store_CPT extends WC_Data_Store_WP implements WC_Coupon_Dat
 
 		$held_time   = $this->get_tentative_held_time();
 
-		// Make sure we have usage_count meta key for this coupon because its required for `$query_for_usages`.
+		// Make sure we have usage_count meta key for this coupon because it's required for `$query_for_usages`.
 		// We are not directly modifying `$query_for_usages` to allow for `usage_count` not present only keep that query simple.
 		if ( ! metadata_exists( 'post', $coupon->get_id(), 'usage_count' ) ) {
 			$coupon->set_usage_count( $coupon->get_usage_count() ); // Use `get_usage_count` here to write default value, which may changed by a filter.

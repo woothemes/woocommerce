@@ -268,7 +268,7 @@ class Checkout extends AbstractCartRoute {
 
 		/**
 		 * Persist customer session data from the request first so that OrderController::update_addresses_from_cart
-		 * uses the up to date customer address.
+		 * uses the up-to-date customer address.
 		 */
 		$this->update_customer_from_request( $request );
 
