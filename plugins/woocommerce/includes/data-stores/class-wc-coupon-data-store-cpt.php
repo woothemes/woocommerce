@@ -513,13 +513,21 @@ class WC_Coupon_Data_Store_CPT extends WC_Data_Store_WP implements WC_Coupon_Dat
 	}
 
 	/**
-	 * Get held time for resources before cancelling the order. Use 60 minutes as sane default.
+	 * Get held time for resources before cancelling the order. Use 60 seconds as sane minimum.
+	 * It will use `woocommerce_coupon_hold_minutes` filter to get the value, defaulting to `woocommerce_hold_stock_minutes` option if set.
 	 * Note that the filter `woocommerce_coupon_hold_minutes` only support minutes because it's getting used elsewhere as well, however this function returns in seconds.
 	 *
 	 * @return int
 	 */
 	private function get_tentative_held_time() {
-		return apply_filters( 'woocommerce_coupon_hold_minutes', ( (int) get_option( 'woocommerce_hold_stock_minutes', 60 ) ) ) * 60;
+		$held_time = apply_filters( 'woocommerce_coupon_hold_minutes', ( (int) get_option( 'woocommerce_hold_stock_minutes', 1 ) ) ) * 60;
+
+		if ( 0 >= $held_time ) {
+			// Held time is at least 60 seconds.
+			$held_time = 60;
+		}
+
+		return $held_time;
 	}
 
 	/**
@@ -533,15 +541,12 @@ class WC_Coupon_Data_Store_CPT extends WC_Data_Store_WP implements WC_Coupon_Dat
 		global $wpdb;
 
 		$usage_limit = $coupon->get_usage_limit();
+
+		if ( 0 >= $usage_limit ) {
+			return null;
+		}
+
 		$held_time   = $this->get_tentative_held_time();
-
-		if ( 0 >= $usage_limit || 0 >= $held_time ) {
-			return null;
-		}
-
-		if ( ! apply_filters( 'woocommerce_hold_stock_for_checkout', true ) ) {
-			return null;
-		}
 
 		// Make sure we have usage_count meta key for this coupon because its required for `$query_for_usages`.
 		// We are not directly modifying `$query_for_usages` to allow for `usage_count` not present only keep that query simple.
