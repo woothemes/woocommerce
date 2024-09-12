@@ -61,6 +61,7 @@ if ( ! class_exists( 'WC_Admin_Settings', false ) ) :
 				$settings[] = include __DIR__ . '/settings/class-wc-settings-accounts.php';
 				$settings[] = include __DIR__ . '/settings/class-wc-settings-emails.php';
 				$settings[] = include __DIR__ . '/settings/class-wc-settings-integrations.php';
+				$settings[] = include __DIR__ . '/settings/class-wc-settings-interface.php';
 				if ( \Automattic\WooCommerce\Admin\Features\Features::is_enabled( 'launch-your-store' ) ) {
 					$settings[] = include __DIR__ . '/settings/class-wc-settings-site-visibility.php';
 				}

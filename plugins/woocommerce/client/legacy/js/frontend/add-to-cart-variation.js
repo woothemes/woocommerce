@@ -338,15 +338,19 @@
 	 */
 	VariationForm.prototype.onChange = function( event ) {
 		var form = event.data.variationForm;
+		const eventTarget = event.target;
 
 		form.$form.find( 'input[name="variation_id"], input.variation_id' ).val( '' ).trigger( 'change' );
 		form.$form.trigger( 'clear_reset_announcement' );
 		form.$form.find( '.wc-no-matching-variations' ).parent().remove();
 
-		if ( form.useAjax ) {
-			form.$form.trigger( 'check_variations' );
-		} else {
+		if ( ! form.useAjax ) {
 			form.$form.trigger( 'woocommerce_variation_select_change' );
+		}
+		form.$form.trigger( 'check_variations' );
+
+		if ( form.$form.wc_variations_attributes_autoselect( form, $( eventTarget ) ) ) {
+			// Check variations again after auto-selecting
 			form.$form.trigger( 'check_variations' );
 		}
 
@@ -768,6 +772,48 @@
 		$gallery_img.wc_reset_variation_attr( 'src' );
 		$product_link.wc_reset_variation_attr( 'href' );
 	};
+
+	/**
+	 * Autoselect variation attributes
+	 */
+	$.fn.wc_variations_attributes_autoselect = function( form, $eventTargetSelect ) {
+		var attributes_autoselect_type =
+				wc_add_to_cart_variation_params.attributes_autoselect_type ||
+				'none';
+		if ( $eventTargetSelect.val() !== '' ) {
+			const idx = form.$attributeFields.index( $eventTargetSelect );
+			let $selectElements;
+			switch ( attributes_autoselect_type ) {
+				case 'previous':
+					$selectElements = form.$attributeFields.slice( 0, idx );
+					break;
+				case 'all':
+					// The result of both 'previous' and 'next'
+					$selectElements = form.$attributeFields.slice( 0, idx ).add( form.$attributeFields.slice( idx + 1 ) );
+					break;
+				case 'next':
+					$selectElements = form.$attributeFields.slice( idx + 1 );
+					break;
+				case 'none':
+				default:
+					$selectElements = $();
+					break;
+			}
+			$selectElements.each( function () {
+				const $selectElement = $( this );
+				// Options that HAVE a value and are NOT disabled
+				const $validOptions = $selectElement.children( 'option:not([value=""], [disabled], [class*="disabled"])' );
+				if ( $validOptions.length === 1 ) {
+					// Only 1 option (+ the "Choose an option" choice)
+					$selectElement.val( $validOptions.val() );
+				}
+			} );
+
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	$(function() {
 		if ( typeof wc_add_to_cart_variation_params !== 'undefined' ) {
