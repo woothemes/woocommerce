@@ -603,6 +603,7 @@ class WC_Frontend_Scripts {
 					'i18n_unavailable_text'            => esc_attr__( 'Sorry, this product is unavailable. Please choose a different combination.', 'woocommerce' ),
 					'i18n_reset_alert_text'            => esc_attr__( 'Your selection has been reset. Please select some product options before adding this product to your cart.', 'woocommerce' ),
 					'attributes_autoselect_type'       => get_option( 'attributes_autoselect_type' ),
+					'attributes_unattached_action'     => get_option( 'attributes_unattached_action' ),
 				);
 				break;
 			case 'wc-country-select':

@@ -70,6 +70,22 @@ class WC_Settings_Interface extends WC_Settings_Page {
 				),
 
 				array(
+					'title'    => __( 'Values in conflict with current selection', 'woocommerce' ),
+					'desc'     => __( 'What to do with values that cannot be applied to current attributes selection.', 'woocommerce' ),
+					'id'       => 'attributes_unattached_action',
+					'class'    => 'wc-enhanced-select',
+					'css'      => 'min-width:300px;',
+					'default'  => 'delete',
+					'type'     => 'select',
+					'options'  => array(
+						'hide'    => __( 'Hidden', 'woocommerce' ),
+						'disable' => __( 'Grayed-out and disabled', 'woocommerce' ),
+						'gray'    => __( 'Grayed-out but selectable (will clear all other attributes if selected)', 'woocommerce' ),
+					),
+					'desc_tip' => true,
+				),
+
+				array(
 					'type' => 'sectionend',
 					'id'   => 'attributes_dropdown_options',
 				),

@@ -373,9 +373,11 @@
 	 * Updates attributes in the DOM to show valid values.
 	 */
 	VariationForm.prototype.onUpdateAttributes = function( event ) {
-		var form              = event.data.variationForm,
-			attributes        = form.getChosenAttributes(),
-			currentAttributes = attributes.data;
+		var form                       = event.data.variationForm,
+			attributes                 = form.getChosenAttributes(),
+			currentAttributes          = attributes.data;
+			attributesUnattachedAction = wc_add_to_cart_variation_params.attributesUnattachedAction ||
+										 'hide';
 
 		if ( form.useAjax ) {
 			return;
@@ -414,12 +416,15 @@
 
 			checkAttributes[ current_attr_name ] = '';
 
-			var variations = form.findMatchingVariations( form.variationData, checkAttributes );
+			// Variations that are not "possible" are likely unpublished, such as not "enabled"
+			var all_possible_variations = form.variationData;
+			var matching_variations = form.findMatchingVariations( all_possible_variations, checkAttributes );
 
-			// Loop through variations.
-			for ( var num in variations ) {
-				if ( typeof( variations[ num ] ) !== 'undefined' ) {
-					var variationAttributes = variations[ num ].attributes;
+			for ( var num in matching_variations ) {
+				const variation = matching_variations[ num ];
+
+				if ( typeof( variation ) !== 'undefined' ) {
+					var variationAttributes = variation.attributes;
 
 					for ( var attr_name in variationAttributes ) {
 						if ( variationAttributes.hasOwnProperty( attr_name ) ) {
@@ -427,7 +432,7 @@
 								variation_active = '';
 
 							if ( attr_name === current_attr_name ) {
-								if ( variations[ num ].variation_is_active ) {
+								if ( variation.variation_is_active ) {
 									variation_active = 'enabled';
 								}
 
@@ -444,14 +449,18 @@
 												option_value = $option_element.val();
 
 											if ( attr_val === option_value ) {
-												$option_element.addClass( 'attached ' + variation_active );
+												$possibleOptions = $possibleOptions.add( $option_element );
+												
+												if ( matching_variations.includes( variation ) ) {
+													$option_element.addClass( 'attached ' + variation_active );
+												}
 												break;
 											}
 										}
 									}
 								} else {
 									// Attach all apart from placeholder.
-									new_attr_select.find( 'option:gt(0)' ).addClass( 'attached ' + variation_active );
+									new_attr_select.find( 'option' + option_gt_filter ).addClass( 'attached ' + variation_active );
 								}
 							}
 						}
@@ -488,9 +497,23 @@
 				option_gt_filter = '';
 			}
 
-			// Detach unattached.
-			new_attr_select.find( 'option' + option_gt_filter + ':not(.attached)' ).remove();
-
+			var unattached_options = new_attr_select.find( 'option' + option_gt_filter + ':not(.attached)' );
+			switch ( attributes_unattached_action ) {
+				case 'hide':
+					// Hide unattached
+					unattached_options.remove();
+					break;
+				case 'disable':
+					// Disable unattached (prop) -- Browser disallows selecting
+					unattached_options.prop( 'disabled', true );
+					break;
+				case 'gray':
+					// Disable unattached (class) -- Browser allows selecting
+					unattached_options.addClass( 'disabled' );
+					break;
+			}
+			
+			
 			// Finally, copy to DOM and set value.
 			current_attr_select.html( new_attr_select.html() );
 			current_attr_select.find( 'option' + option_gt_filter + ':not(.enabled)' ).prop( 'disabled', true );
