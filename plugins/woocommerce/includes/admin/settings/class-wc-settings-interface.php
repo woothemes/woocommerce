@@ -47,24 +47,24 @@ class WC_Settings_Interface extends WC_Settings_Page {
 			array(
 				array(
 					'title' => __( 'Attribute dropdowns options', 'woocommerce' ),
-					'desc'  => __( 'Options for attribute dropdowns', 'woocommerce' ),
+					'desc'  => __( 'Options for attribute fields dropdowns', 'woocommerce' ),
 					'type'  => 'title',
 					'id'    => 'attributes_dropdown_options',
 				),
 
 				array(
 					'title'    => __( 'Auto-select', 'woocommerce' ),
-					'desc'     => __( 'This controls what attributes will be auto-selected.', 'woocommerce' ),
+					'desc'     => __( 'This controls what attribute fields will be auto-selected relative to the changed field.', 'woocommerce' ),
 					'id'       => 'attributes_autoselect_type',
 					'class'    => 'wc-enhanced-select',
 					'css'      => 'min-width:300px;',
-					'default'  => null,
+					'default'  => 'none',
 					'type'     => 'select',
 					'options'  => array(
-						null       => 'None',
-						'previous' => 'Previous attributes',
-						'all'      => 'All attributes',
-						'next'     => 'Next attributes',
+						'none'       => 'None',
+						'previous' => 'Previous attribute fields',
+						'all'      => 'All other attribute fields',
+						'next'     => 'Next attribute fields',
 					),
 					'desc_tip' => true,
 				),

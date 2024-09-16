@@ -13,6 +13,14 @@
 			"type": "string",
 			"enum": [ "input", "stepper" ],
 			"default": "input"
+		},
+		"attributesAutoselectType": {
+			"type": "string",
+			"default": ""
+		},
+		"attributesUnattachedAction": {
+			"type": "string",
+			"default": ""
 		}
 	},
 	"keywords": [ "WooCommerce" ],

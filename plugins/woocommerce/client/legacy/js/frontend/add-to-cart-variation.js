@@ -376,8 +376,10 @@
 		var form                       = event.data.variationForm,
 			attributes                 = form.getChosenAttributes(),
 			currentAttributes          = attributes.data;
-			attributesUnattachedAction = wc_add_to_cart_variation_params.attributesUnattachedAction ||
-										 'hide';
+			attributes_unattached_action =
+				form.$form.parent( 'div.wp-block-add-to-cart-form.wc-block-add-to-cart-form' ).data( 'attributesUnattachedAction' ) ||
+				wc_add_to_cart_variation_params.attributes_unattached_action ||
+				'hide';
 
 		if ( form.useAjax ) {
 			return;
@@ -801,6 +803,7 @@
 	 */
 	$.fn.wc_variations_attributes_autoselect = function( form, $eventTargetSelect ) {
 		var attributes_autoselect_type =
+				form.$form.parent( 'div.wp-block-add-to-cart-form.wc-block-add-to-cart-form' ).data( 'attributesAutoselectType' ) ||
 				wc_add_to_cart_variation_params.attributes_autoselect_type ||
 				'none';
 		if ( $eventTargetSelect.val() !== '' ) {
