@@ -94,7 +94,7 @@ const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
 		) }admin.php?page=wc-settings&tab=interface`;
 
 		const linkText = createInterpolateElement(
-			`<a>${ __( 'Manage global attribute dropdowns options', 'woocommerce' ) }</a>`,
+			`<a>${ __( 'Manage default WooCommerce interface settings', 'woocommerce' ) }</a>`,
 			{
 				a: <ExternalLink href={ interfaceSettingsUrl } />,
 			}
@@ -222,11 +222,11 @@ const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
 						help={ __( 'This controls which other attributes will be auto-selected when an attribute is changed. Only attributes with a single compatible value will be auto-selected.', 'woocommerce' ) }
 						value={ attributesAutoselectType }
 						options={ [
-							{ label: 'Default', value: '' },
-							{ label: 'None', value: 'none' },
-							{ label: 'Previous attribute fields', value: 'previous' },
-							{ label: 'All other attribute fields', value: 'all' },
-							{ label: 'Next attribute fields', value: 'next' },
+							{ label: __( 'Default',              'woocommerce' ), value: '' },
+							{ label: __( 'None',                 'woocommerce' ), value: 'none' },
+							{ label: __( 'Previous attributes',  'woocommerce' ), value: 'previous' },
+							{ label: __( 'All other attributes', 'woocommerce' ), value: 'all' },
+							{ label: __( 'Next attributes',      'woocommerce' ), value: 'next' },
 						] }
 						onChange={ ( value ) => setAttributes( { attributesAutoselectType: value } ) }
 						__nextHasNoMarginBottom

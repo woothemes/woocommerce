@@ -47,31 +47,31 @@ class WC_Settings_Interface extends WC_Settings_Page {
 			array(
 				array(
 					'title' => __( 'Attribute dropdowns options', 'woocommerce' ),
-					'desc'  => __( 'Options for attribute fields dropdowns', 'woocommerce' ),
+					'desc'  => __( 'Default options for attribute dropdowns', 'woocommerce' ),
 					'type'  => 'title',
 					'id'    => 'attributes_dropdown_options',
 				),
 
 				array(
-					'title'    => __( 'Auto-select', 'woocommerce' ),
-					'desc'     => __( 'This controls what attribute fields will be auto-selected relative to the changed field.', 'woocommerce' ),
+					'title'    => __( 'Auto-select behavior', 'woocommerce' ),
+					'desc'     => __( 'This controls which other attributes will be auto-selected when an attribute is changed. Only attributes with a single compatible value will be auto-selected.', 'woocommerce' ),
 					'id'       => 'attributes_autoselect_type',
 					'class'    => 'wc-enhanced-select',
 					'css'      => 'min-width:300px;',
 					'default'  => 'none',
 					'type'     => 'select',
 					'options'  => array(
-						'none'       => 'None',
-						'previous' => 'Previous attribute fields',
-						'all'      => 'All other attribute fields',
-						'next'     => 'Next attribute fields',
+						'none'     => __( 'None', 'woocommerce' ),
+						'previous' => __( 'Previous attributes', 'woocommerce' ),
+						'all'      => __( 'All attributes', 'woocommerce' ),
+						'next'     => __( 'Next attributes', 'woocommerce' ),
 					),
 					'desc_tip' => true,
 				),
 
 				array(
 					'title'    => __( 'Values in conflict with current selection', 'woocommerce' ),
-					'desc'     => __( 'What to do with values that cannot be applied to current attributes selection.', 'woocommerce' ),
+					'desc'     => __( 'This controls what to do with attribute values that conflict with the current selection.', 'woocommerce' ),
 					'id'       => 'attributes_unattached_action',
 					'class'    => 'wc-enhanced-select',
 					'css'      => 'min-width:300px;',
