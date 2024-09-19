@@ -149,7 +149,7 @@ class Checkout extends AbstractCartRoute {
 			// If we encountered an exception, free up stock and release held coupons.
 			if ( $this->order ) {
 				wc_release_stock_for_order( $this->order );
-				$this->order->get_data_store()->release_held_coupons( $this->order );
+				wc_release_coupons_for_order( $this->order );
 			}
 		}
 
