@@ -497,7 +497,10 @@ add_action( 'woocommerce_order_status_on-hold', 'wc_release_stock_for_order', 11
  */
 function wc_release_coupons_for_order( $order, bool $save = true ) {
 	$order = $order instanceof WC_Order ? $order : wc_get_order( $order );
-	$order->get_data_store()->release_held_coupons( $order, $save );
+
+	if ( $order ) {
+		$order->get_data_store()->release_held_coupons( $order, $save );
+	}
 }
 
 /**
