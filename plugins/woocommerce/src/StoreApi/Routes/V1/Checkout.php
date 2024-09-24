@@ -284,7 +284,6 @@ class Checkout extends AbstractCartRoute {
 		 */
 		$this->order_controller->validate_order_before_payment( $this->order );
 
-
 		/**
 		 * Hold coupons for the order as soon as the draft order is created.
 		 */
