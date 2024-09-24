@@ -647,14 +647,16 @@ class WC_Coupon_Data_Store_CPT extends WC_Data_Store_WP implements WC_Coupon_Dat
 	public function check_and_hold_coupon_for_user( $coupon, $user_aliases, $user_alias ) {
 		global $wpdb;
 		$limit_per_user = $coupon->get_usage_limit_per_user();
-		$held_time      = $this->get_tentative_held_time();
 
-		if ( 0 >= $limit_per_user || 0 >= $held_time ) {
+		if ( 0 >= $limit_per_user ) {
 			// This coupon do not have any restriction for usage per customer. No need to check further, lets bail.
 			return null;
 		}
 
-		if ( ! apply_filters( 'woocommerce_hold_stock_for_checkout', true ) ) {
+		$held_time = $this->get_tentative_held_time();
+
+		if ( 0 >= $held_time ) {
+			// This coupon has held time set to zero. No need to check further, lets bail.
 			return null;
 		}
 
