@@ -527,6 +527,13 @@ class WC_Coupon_Data_Store_CPT extends WC_Data_Store_WP implements WC_Coupon_Dat
 			$default_hold_time_minutes = 1;
 		}
 
+		/**
+		 * Filter the tentative hold time in minutes for a coupon before it expires.
+		 *
+		 * @since 3.7.0
+		 *
+		 * @param int $default_hold_time_minutes The default hold time for coupons in minutes.
+		 */
 		return (int) apply_filters( 'woocommerce_coupon_hold_minutes', $default_hold_time_minutes ) * 60;
 	}
 
