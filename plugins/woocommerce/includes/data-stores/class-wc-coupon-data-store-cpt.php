@@ -546,7 +546,7 @@ class WC_Coupon_Data_Store_CPT extends WC_Data_Store_WP implements WC_Coupon_Dat
 			return null;
 		}
 
-		$held_time   = $this->get_tentative_held_time();
+		$held_time = $this->get_tentative_held_time();
 
 		if ( 0 >= $held_time ) {
 			return null;
