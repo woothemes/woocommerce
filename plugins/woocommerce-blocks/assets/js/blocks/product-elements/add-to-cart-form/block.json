@@ -18,6 +18,10 @@
 			"type": "string",
 			"default": ""
 		},
+		"attributesAutoselectOnPageLoad": {
+			"type": "string",
+			"default": ""
+		},
 		"attributesUnattachedAction": {
 			"type": "string",
 			"default": ""

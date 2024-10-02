@@ -85,6 +85,7 @@ const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
 
 	const {
 		attributesAutoselectType,
+		attributesAutoselectOnPageLoad,
 		attributesUnattachedAction
 	} = attributes;
 
@@ -229,6 +230,18 @@ const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
 							{ label: __( 'Next attributes',      'woocommerce' ), value: 'next' },
 						] }
 						onChange={ ( value ) => setAttributes( { attributesAutoselectType: value } ) }
+						__nextHasNoMarginBottom
+					/>
+					<SelectControl
+						label={ __( 'Auto-select on page load', 'woocommerce' ) }
+						help={ __( 'This controls whether or not attributes with only one possible option will be auto-selected upon loading the page.', 'woocommerce' ) }
+						value={ attributesAutoselectOnPageLoad }
+						options={ [
+							{ label: __( 'Default', 'woocommerce' ), value: '' },
+							{ label: __( 'Yes',     'woocommerce' ), value: 'yes' },
+							{ label: __( 'No',      'woocommerce' ), value: 'no' },
+						] }
+						onChange={ ( ) => setAttributes( { attributesAutoselectOnPageLoad: ! attributesAutoselectOnPageLoad } ) }
 						__nextHasNoMarginBottom
 					/>
 					<SelectControl

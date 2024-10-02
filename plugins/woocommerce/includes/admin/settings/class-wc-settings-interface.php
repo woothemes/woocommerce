@@ -70,6 +70,14 @@ class WC_Settings_Interface extends WC_Settings_Page {
 				),
 
 				array(
+					'title'    => __( 'Auto-select on page load', 'woocommerce' ),
+					'desc'     => __( 'This controls whether or not attributes with only one possible option will be auto-selected upon loading the page.', 'woocommerce' ),
+					'id'       => 'attributes_autoselect_on_page_load',
+					'default'  => 'no',
+					'type'     => 'checkbox',
+				),
+
+				array(
 					'title'    => __( 'Values in conflict with current selection', 'woocommerce' ),
 					'desc'     => __( 'This controls what to do with attribute values that conflict with the current selection.', 'woocommerce' ),
 					'id'       => 'attributes_unattached_action',
