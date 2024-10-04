@@ -476,7 +476,7 @@
 
 											if ( attr_val === option_value ) {
 												$possibleOptions = $possibleOptions.add( $option_element );
-												
+
 												if ( matching_variations.includes( variation ) ) {
 													$option_element.addClass( 'attached ' + variation_active );
 												}
@@ -538,8 +538,8 @@
 					unattached_options.addClass( 'disabled' );
 					break;
 			}
-			
-			
+
+
 			// Finally, copy to DOM and set value.
 			current_attr_select.html( new_attr_select.html() );
 			current_attr_select.find( 'option' + option_gt_filter + ':not(.enabled)' ).prop( 'disabled', true );
