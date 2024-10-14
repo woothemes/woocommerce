@@ -70,4 +70,39 @@ class Cache {
 	public function get_object_cache_key( string $id ) {
 		return WC_Cache_Helper::get_cache_prefix( self::CACHE_GROUP ) . $id;
 	}
+
+	public function get_cached_product_ids( $product_query_sql ) {
+		return $this->get_cached_subquery(
+			$product_query_sql,
+			function ( $product_query_sql ) {
+				global $wpdb;
+				$results = $wpdb->get_results( $product_query_sql, ARRAY_A );
+
+				if ( ! $results ) {
+					$results = array();
+				}
+
+				return implode( ',', array_column( $results, 'ID' ) );
+			}
+		);
+	}
+
+	public function get_cached_subquery( string $product_query_sql, $callback ) {
+		$cache_key = $this->get_object_cache_key( md5( $product_query_sql ) );
+		$cache     = wp_cache_get( $cache_key );
+
+		if ( $cache ) {
+			return $cache;
+		}
+
+		if ( ! $callback ) {
+			return null;
+		}
+
+		$results = call_user_func( $callback, $product_query_sql );
+
+		wp_cache_set( $cache_key, $results );
+
+		return $results;
+	}
 }
