@@ -80,13 +80,24 @@ class BlockPatterns {
 		$this->pattern_registry   = $pattern_registry;
 		$this->ptk_patterns_store = $ptk_patterns_store;
 
-		$this->dictionary = PatternsHelper::get_patterns_dictionary();
-
 		add_action( 'init', array( $this, 'register_block_patterns' ) );
 
 		if ( Features::is_enabled( 'pattern-toolkit-full-composability' ) ) {
 			add_action( 'init', array( $this, 'register_ptk_patterns' ) );
 		}
+	}
+
+	/**
+	 * Returns the Patterns dictionary.
+	 *
+	 * @return array|WP_Error
+	 */
+	private function get_patterns_dictionary() {
+		if ( $this->dictionary === null ) {
+			$this->dictionary = PatternsHelper::get_patterns_dictionary();
+		}
+
+		return $this->dictionary;
 	}
 
 	/**
@@ -123,7 +134,7 @@ class BlockPatterns {
 		foreach ( $files as $file ) {
 			$pattern_data = get_file_data( $file, $default_headers );
 
-			$this->pattern_registry->register_block_pattern( $file, $pattern_data, $this->dictionary );
+			$this->pattern_registry->register_block_pattern( $file, $pattern_data, $this->get_patterns_dictionary() );
 		}
 	}
 
@@ -158,7 +169,7 @@ class BlockPatterns {
 			$pattern['slug']    = $pattern['name'];
 			$pattern['content'] = $pattern['html'];
 
-			$this->pattern_registry->register_block_pattern( $pattern['ID'], $pattern, $this->dictionary );
+			$this->pattern_registry->register_block_pattern( $pattern['ID'], $pattern, $this->get_patterns_dictionary() );
 		}
 	}
 
