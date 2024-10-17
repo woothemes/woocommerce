@@ -67,7 +67,7 @@ const fillPageTitle = async ( page, title ) => {
 const insertBlock = async ( page, blockName, wpVersion = null ) => {
 	await page
 		.getByRole( 'button', {
-			name: 'Toggle block inserter',
+			name: 'Block Inserter',
 			expanded: false,
 		} )
 		.click();
