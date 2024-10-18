@@ -50,7 +50,7 @@ jobs:
           else
             MESSAGE=":arrow_right: New PRR request: ${{ github.event.issue.title }} ${{ github.event.issue.html_url }}"
           fi
-          printf -v SAFE_MESSAGE "%q" "$MESSAGE"
+
           echo "SLACK_MESSAGE=$SAFE_MESSAGE" >> $GITHUB_ENV
 
       - name: Notify Slack
@@ -108,6 +108,15 @@ jobs:
         run: |
           gh pr edit "$PR_NUMBER" --add-label "cherry pick to trunk" --repo "$OWNER/$REPO"
 
+      - name: Add label 'cherry pick to frozen release' to PR
+        if: contains(github.event.issue.labels.*.name, 'point release request')
+        env:
+          OWNER: ${{ github.event.repository.owner.login }}
+          REPO: ${{ github.event.repository.name }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr edit $PR_NUMBER --add-label "cherry pick to frozen release" --repo "$OWNER/$REPO"
+
       - name: Apply Milestone to the Issue
         env:
           MILESTONE: ${{ needs.prep.outputs.release_number }}.0
@@ -132,7 +141,7 @@ jobs:
           else
             MESSAGE=":white_check_mark: PRR request approved: ${{ github.event.issue.title }}\n${{ github.event.issue.html_url }}"
           fi
-          printf -v SAFE_MESSAGE "%q" "$MESSAGE"
+
           echo "SLACK_MESSAGE=$SAFE_MESSAGE" >> $GITHUB_ENV
 
       - name: Notify Slack
@@ -178,7 +187,7 @@ jobs:
           else
             MESSAGE=":x: PRR request rejected: ${{ github.event.issue.title }}\n${{ github.event.issue.html_url }}"
           fi
-          printf -v SAFE_MESSAGE "%q" "$MESSAGE"
+
           echo "SLACK_MESSAGE=$SAFE_MESSAGE" >> $GITHUB_ENV
 
       - name: Notify Slack
