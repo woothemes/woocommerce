@@ -10,6 +10,7 @@ import { Button } from '@ariakit/react';
 /**
  * Internal dependencies
  */
+import NoPaymentMethods from './no-payment-methods';
 import PaymentMethodOptions from './payment-method-options';
 import SavedPaymentMethodOptions from './saved-payment-method-options';
 import './style.scss';
@@ -18,9 +19,9 @@ import './style.scss';
  * PaymentMethods component.
  */
 const PaymentMethods = ( {
-	noPaymentMethods,
+	noPaymentMethods = <NoPaymentMethods />,
 }: {
-	noPaymentMethods: JSX.Element | null;
+	noPaymentMethods?: JSX.Element | undefined;
 } ) => {
 	const [ showPaymentMethodsToggle, setShowPaymentMethodsToggle ] =
 		useState( false );
