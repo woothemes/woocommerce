@@ -222,6 +222,7 @@ export const Plugins = ( {
 										/>
 									) : null
 								}
+								slug={ plugin.key.replace( ':alt', '' ) }
 								title={ plugin.label }
 								description={ plugin.description }
 								learnMoreLink={ learnMoreLink }
