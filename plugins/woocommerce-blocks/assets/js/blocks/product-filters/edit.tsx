@@ -16,7 +16,6 @@ const TEMPLATE: InnerBlockTemplate[] = [
 		'core/heading',
 		{
 			level: 3,
-			style: { typography: { fontSize: '24px' } },
 			content: __( 'Filters', 'woocommerce' ),
 		},
 	],
@@ -25,30 +24,6 @@ const TEMPLATE: InnerBlockTemplate[] = [
 	[ 'woocommerce/product-filter-rating' ],
 	[ 'woocommerce/product-filter-attribute' ],
 	[ 'woocommerce/product-filter-status' ],
-	[
-		'core/buttons',
-		{ layout: { type: 'flex' } },
-		[
-			[
-				'core/button',
-				{
-					text: __( 'Apply', 'woocommerce' ),
-					className: 'wc-block-product-filters__apply-button',
-					style: {
-						border: {
-							width: '0px',
-							style: 'none',
-						},
-						typography: {
-							textDecoration: 'none',
-						},
-						outline: 'none',
-						fontSize: 'medium',
-					},
-				},
-			],
-		],
-	],
 ];
 
 export const Edit = ( {}: BlockEditProps< BlockAttributes > ) => {
