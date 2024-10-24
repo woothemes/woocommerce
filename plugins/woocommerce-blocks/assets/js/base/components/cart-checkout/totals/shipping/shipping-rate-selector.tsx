@@ -8,6 +8,7 @@ import type {
 } from '@woocommerce/types';
 import NoticeBanner from '@woocommerce/base-components/notice-banner';
 import { createInterpolateElement } from '@wordpress/element';
+
 /**
  * Internal dependencies
  */
@@ -15,32 +16,29 @@ import ShippingRatesControl from '../../shipping-rates-control';
 import { formatShippingAddress } from '../../../../utils';
 
 export interface ShippingRateSelectorProps {
-	hasRates: boolean;
 	shippingRates: CartResponseShippingRate[];
 	shippingAddress: CartResponseShippingAddress;
 	isLoadingRates: boolean;
-	isAddressComplete: boolean;
+	hasCompleteAddress: boolean;
 }
 
 export const ShippingRateSelector = ( {
-	hasRates,
 	shippingRates,
 	shippingAddress,
 	isLoadingRates,
-	isAddressComplete,
+	hasCompleteAddress,
 }: ShippingRateSelectorProps ): JSX.Element => {
-	const legend = hasRates
-		? __( 'Shipping options', 'woocommerce' )
-		: __( 'Choose a shipping option', 'woocommerce' );
-
 	return (
 		<fieldset className="wc-block-components-totals-shipping__fieldset">
-			<legend className="screen-reader-text">{ legend }</legend>
+			<legend className="screen-reader-text">
+				{ __( 'Shipping options', 'woocommerce' ) }
+			</legend>
+
 			<ShippingRatesControl
 				className="wc-block-components-totals-shipping__options"
 				noResultsMessage={
 					<>
-						{ isAddressComplete && (
+						{ hasCompleteAddress && (
 							<NoticeBanner
 								isDismissible={ false }
 								className="wc-block-components-shipping-rates-control__no-results-notice"
