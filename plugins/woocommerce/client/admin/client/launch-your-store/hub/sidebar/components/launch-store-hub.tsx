@@ -102,7 +102,7 @@ export const LaunchYourStoreHubSidebar: React.FC< SidebarComponentProps > = (
 						view: { x: 0 },
 					} }
 					isTransparent={ false }
-					className="edit-site-layout__hub"
+					className="woocommerce-cys-layout__hub"
 				/>
 			</motion.div>
 			<SidebarContainer
