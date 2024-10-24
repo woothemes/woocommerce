@@ -57,8 +57,7 @@ export const TotalsShipping = ( {
 	const totalShippingValue = getTotalShippingValue( values );
 	const totalCurrency = getCurrencyFromPriceResponse( values );
 	const hasRates =
-		cartHasCalculatedShipping &&
-		( hasShippingRate( shippingRates ) || totalShippingValue > 0 );
+		cartHasCalculatedShipping && hasShippingRate( shippingRates );
 	const hasCompleteAddress = isAddressComplete( shippingAddress, [
 		'state',
 		'country',
