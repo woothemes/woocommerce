@@ -144,14 +144,6 @@ class DefaultFreeExtensions {
 				'description'     => __( 'Get your products in front of Pinners searching for ideas and things to buy.', 'woocommerce' ),
 				'image_url'       => plugins_url( '/assets/images/onboarding/pinterest.png', WC_PLUGIN_FILE ),
 				'manage_url'      => 'admin.php?page=wc-admin&path=%2Fpinterest%2Flanding',
-				'is_built_by_wc'  => true,
-				'min_php_version' => '7.3',
-			),
-			'pinterest-for-woocommerce:alt' => array(
-				'name'           => __( 'Pinterest for WooCommerce', 'woocommerce' ),
-				'description'    => __( 'Get your products in front of Pinterest users searching for ideas and things to buy. Get started with Pinterest and make your entire product catalog browsable.', 'woocommerce' ),
-				'image_url'      => plugins_url( '/assets/images/onboarding/pinterest.png', WC_PLUGIN_FILE ),
-				'manage_url'     => 'admin.php?page=wc-admin&path=%2Fpinterest%2Flanding',
 				'is_visible'     => array(
 					array(
 						'type'        => 'option',
@@ -161,6 +153,14 @@ class DefaultFreeExtensions {
 						'operation'   => 'range',
 					),
 				),
+				'is_built_by_wc'  => true,
+				'min_php_version' => '7.3',
+			),
+			'pinterest-for-woocommerce:alt' => array(
+				'name'           => __( 'Pinterest for WooCommerce', 'woocommerce' ),
+				'description'    => __( 'Get your products in front of Pinterest users searching for ideas and things to buy. Get started with Pinterest and make your entire product catalog browsable.', 'woocommerce' ),
+				'image_url'      => plugins_url( '/assets/images/onboarding/pinterest.png', WC_PLUGIN_FILE ),
+				'manage_url'     => 'admin.php?page=wc-admin&path=%2Fpinterest%2Flanding',
 				'is_built_by_wc' => true,
 			),
 			'mailpoet'                      => array(
