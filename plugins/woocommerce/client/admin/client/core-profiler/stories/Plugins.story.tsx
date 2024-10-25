@@ -8,11 +8,6 @@ import { PluginErrorBanner } from '../pages/Plugins/components/plugin-error-bann
 
 import '../style.scss';
 import { WithSetupWizardLayout } from './WithSetupWizardLayout';
-import {
-	PluginsInstallationRequestedEvent,
-	PluginsPageSkippedEvent,
-	PluginsLearnMoreLinkClickedEvent,
-} from '../events';
 
 const plugins = [
 	{
