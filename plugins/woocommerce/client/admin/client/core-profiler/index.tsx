@@ -1402,6 +1402,9 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 							},
 						},
 						noPermissionsError: {
+							entry: [
+								'recordTracksPluginsInstallationNoPermissionError',
+							],
 							meta: {
 								progress: 80,
 								component: NoPermissionsError,
