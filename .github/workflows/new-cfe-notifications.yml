@@ -124,6 +124,7 @@ jobs:
         env:
           OWNER: ${{ github.event.repository.owner.login }}
           REPO: ${{ github.event.repository.name }}
+          PR_NUMBER: ${{ steps.extract-pr.outputs.PR_NUMBER }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr edit $PR_NUMBER --add-label "cherry pick to frozen release" --repo "$OWNER/$REPO"
