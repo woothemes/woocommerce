@@ -17,8 +17,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const event = ${{ toJSON( github.event ) }}
-            const body = event.issue.body;
+            const body = context.payload.issue.body; // Accessing the issue body directly from the context
 
             // Regular expression to match the release number after the specific question
             const releaseRegex = /Which release does this request apply to\?.*?\n([0-9]+\.[0-9]+)/s;
@@ -69,8 +68,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const event = ${{ toJSON( github.event ) }}
-            const body = event.issue.body;
+            const body = context.payload.issue.body;
 
             // Regular expression to match the PR link that follows the specific question
             const prRegex = /Which PR needs to be included\?.*?\n(https:\/\/github\.com\/[a-zA-Z0-9_\-]+\/[a-zA-Z0-9_\-]+\/pull\/([0-9]+))/s;
