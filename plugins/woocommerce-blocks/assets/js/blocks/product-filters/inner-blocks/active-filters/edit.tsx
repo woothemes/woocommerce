@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { useBlockProps, useInnerBlocksProps } from '@wordpress/block-editor';
-import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
