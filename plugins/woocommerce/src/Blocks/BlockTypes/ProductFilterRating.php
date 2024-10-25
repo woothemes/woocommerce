@@ -196,9 +196,9 @@ final class ProductFilterRating extends AbstractBlock {
 	/**
 	 * Get the Rating list items.
 	 *
-	 * @param array  $rating_counts          - The rating counts.
-	 * @param string $selected_ratings_query - The url query param for selected ratings.
-	 * @param bool   $show_counts            - Whether to show the counts.
+	 * @param array $rating_counts          - The rating counts.
+	 * @param mixed $selected_ratings_query - The url query param for selected ratings.
+	 * @param bool  $show_counts            - Whether to show the counts.
 	 * @return array
 	 */
 	private function get_rating_items( $rating_counts, $selected_ratings_query, $show_counts ) {
