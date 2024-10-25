@@ -2,7 +2,7 @@
 
 declare( strict_types = 1 );
 
-namespace Automattic\WooCommerce\Checkout\Enums;
+namespace Automattic\WooCommerce\Enums;
 
 /**
  * Enum class for all the order statuses.
