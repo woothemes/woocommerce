@@ -7,7 +7,7 @@
 		$plugin_path = dirname($reference_point, 2);
 
 		// Load composer manifest for class mapping (we'll pick PRS4 only, as it's where new classes are introduced).
-		static $namespaces   = [];
+		static $namespaces = [];
 		$declarations = json_decode(file_get_contents($plugin_path . DIRECTORY_SEPARATOR . 'composer.json'), true);
 		foreach ($declarations['autoload']['psr-4'] ?? [] as $namespace => $path) {
 			$this->namespaces[$namespace] = $plugin_path . DIRECTORY_SEPARATOR . $path;
@@ -18,7 +18,7 @@
 
 		spl_autoload_register( function ( string $class ) use( $namespaces ): bool {
 			foreach ( $namespaces as $namespace => $path ) {
-				if (strpos( $class, $namespace ) === 0) {
+				if ( strpos( $class, $namespace ) === 0 ) {
 					$file = $path . str_replace( "\\", DIRECTORY_SEPARATOR, str_replace( $namespace, '', $class ) . '.php' );
 					if ( file_exists( $file ) ) {
 						require_once $file;
