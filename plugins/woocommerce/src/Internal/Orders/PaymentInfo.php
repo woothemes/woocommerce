@@ -89,6 +89,8 @@ class PaymentInfo {
 	/**
 	 * Get info about the card used for payment on an order, when the payment gateway is WooPayments.
 	 *
+	 * @see https://docs.stripe.com/api/charges/object#charge_object-payment_method_details
+	 *
 	 * @param WC_Abstract_Order $order The order in question.
 	 *
 	 * @return array
@@ -142,15 +144,23 @@ class PaymentInfo {
 
 		$card_info = array();
 
-		if ( isset( $payment_details['card'] ) ) {
-			$card_info['brand'] = $payment_details['card']['brand'] ?? '';
-			$card_info['last4'] = $payment_details['card']['last4'] ?? '';
-		} elseif ( isset( $payment_details['card_present'] ) ) {
-			$card_info['brand']        = $payment_details['card_present']['brand'] ?? '';
-			$card_info['last4']        = $payment_details['card_present']['last4'] ?? '';
-			$card_info['account_type'] = $payment_details['card_present']['receipt']['account_type'] ?? '';
-			$card_info['aid']          = $payment_details['card_present']['receipt']['dedicated_file_name'] ?? '';
-			$card_info['app_name']     = $payment_details['card_present']['receipt']['application_preferred_name'] ?? '';
+		if ( isset( $payment_details['type'], $payment_details[ $payment_details['type'] ] ) ) {
+			$details = $payment_details[ $payment_details['type'] ];
+			switch ( $payment_details['type'] ) {
+				case 'card':
+				default:
+					$card_info['brand'] = $details['brand'] ?? '';
+					$card_info['last4'] = $details['last4'] ?? '';
+					break;
+				case 'card_present':
+				case 'interac_present':
+					$card_info['brand']        = $details['brand'] ?? '';
+					$card_info['last4']        = $details['last4'] ?? '';
+					$card_info['account_type'] = $details['receipt']['account_type'] ?? '';
+					$card_info['aid']          = $details['receipt']['dedicated_file_name'] ?? '';
+					$card_info['app_name']     = $details['receipt']['application_preferred_name'] ?? '';
+					break;
+			}
 		}
 
 		return array_map( 'sanitize_text_field', $card_info );
