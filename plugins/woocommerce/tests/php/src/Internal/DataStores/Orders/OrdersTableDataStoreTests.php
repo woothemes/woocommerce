@@ -3639,9 +3639,14 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 		$order = new WC_Order();
 		$order->save();
 
+		$saved_meta = $meta_store->get_metadata_by_key( $order, '_cogs_total_value' );
+		if ( $saved_meta ) {
+			$meta_store->delete_meta( $order, $saved_meta[0] );
+		}
+
 		$meta        = new \WC_Meta_Data();
 		$meta->key   = '_cogs_total_value';
-		$meta->value = 12.34;
+		$meta->value = '12.34';
 		$meta_store->add_meta( $order, $meta );
 
 		if ( $order_has_cogs ) {
