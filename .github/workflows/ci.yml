@@ -157,7 +157,6 @@ jobs:
         if: ${{ matrix.testEnv.shouldCreate }}
         env: ${{ matrix.testEnv.envVars }}
         run: |
-          composer --working-dir=plugins/woocommerce config autoload-dev.files --unset
           pnpm --filter="${{ matrix.projectName }}" ${{ matrix.testEnv.start }}
 
       - name: 'Determine BuildKite Analytics Message'
