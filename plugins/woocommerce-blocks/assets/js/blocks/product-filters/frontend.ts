@@ -68,7 +68,6 @@ export function navigate( href: string, options = {} ) {
 }
 
 export interface ProductFiltersContext {
-	isOverlayEnabled: boolean;
 	isOverlayOpened: boolean;
 	params: Record< string, string >;
 	originalParams: Record< string, string >;
