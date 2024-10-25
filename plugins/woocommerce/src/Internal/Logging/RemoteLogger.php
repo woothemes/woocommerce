@@ -345,19 +345,34 @@ class RemoteLogger extends \WC_Log_Handler {
 			return false;
 		}
 
-		$wc_plugin_dir = StringUtil::normalize_local_path_slashes( WC_ABSPATH );
+		$wc_plugin_dir   = StringUtil::normalize_local_path_slashes( WC_ABSPATH );
+		$wp_includes_dir = StringUtil::normalize_local_path_slashes( ABSPATH . WPINC );
+		$wp_admin_dir    = StringUtil::normalize_local_path_slashes( ABSPATH . 'wp-admin' );
 
 		// Check if the error message contains the WooCommerce plugin directory.
 		if ( str_contains( $message, $wc_plugin_dir ) ) {
 			return false;
 		}
 
-		// Check if the first (most recent) frame in the backtrace is from WooCommerce.
-		$first_frame = reset( $context['backtrace'] );
-		if ( is_array( $first_frame ) && isset( $first_frame['file'] ) ) {
-			return ! str_contains( $first_frame['file'], $wc_plugin_dir );
-		} elseif ( is_string( $first_frame ) ) {
-			return ! str_contains( $first_frame, $wc_plugin_dir );
+		// Find the first relevant frame that is not from WordPress core and not empty.
+		$relevant_frame = null;
+		foreach ( $context['backtrace'] as $frame ) {
+			if ( empty( $frame ) || ! is_string( $frame ) ) {
+				continue;
+			}
+
+			// Skip frames from WordPress core.
+			if ( strpos( $frame, $wp_includes_dir ) !== false || strpos( $frame, $wp_admin_dir ) !== false ) {
+				continue;
+			}
+
+			$relevant_frame = $frame;
+			break;
+		}
+
+		// Check if the relevant frame is from WooCommerce.
+		if ( $relevant_frame && strpos( $relevant_frame, $wc_plugin_dir ) !== false ) {
+			return false;
 		}
 
 		if ( ! function_exists( 'apply_filters' ) ) {
@@ -485,7 +500,7 @@ class RemoteLogger extends \WC_Log_Handler {
 		$message = preg_replace( '/\b\d{3}[-.]?\d{3}[-.]?\d{4}\b/', '[redacted_phone]', $message );
 
 		// Redact potential IP addresses.
-		$sanitized = preg_replace( '/\b(?:\d{1,3}\.){3}\d{1,3}\b/', '[redacted_ip]', $sanitized );
+		$message = preg_replace( '/\b(?:\d{1,3}\.){3}\d{1,3}\b/', '[redacted_ip]', $message );
 
 		return $message;
 	}
