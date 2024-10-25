@@ -131,16 +131,14 @@ const enum PRODUCT_REFERENCE_TYPE {
 
 const getFromCurrentProductRadioLabel = (
 	currentLocation: string,
-	isUsesReferenceIncludesCart: boolean
+	hasCartReference: boolean,
+	hasOrderReference: boolean
 ): string => {
-	if (
-		currentLocation === REFERENCE_TYPE_CART &&
-		isUsesReferenceIncludesCart
-	) {
+	if ( currentLocation === REFERENCE_TYPE_CART && hasCartReference ) {
 		return __( 'From products in the cart', 'woocommerce' );
 	}
 
-	if ( currentLocation === REFERENCE_TYPE_ORDER ) {
+	if ( currentLocation === REFERENCE_TYPE_ORDER && hasOrderReference ) {
 		return __( 'From products in the order', 'woocommerce' );
 	}
 
@@ -229,7 +227,8 @@ const LinkedProductControl = ( {
 
 	const fromCurrentProductRadioLabel = getFromCurrentProductRadioLabel(
 		location.type,
-		hasCartReference
+		hasCartReference,
+		hasOrderReference
 	);
 
 	return (
