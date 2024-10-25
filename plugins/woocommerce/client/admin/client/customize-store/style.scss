@@ -49,17 +49,22 @@ body.woocommerce-customize-store.js.is-fullscreen-mode {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	background: #1e1e1e;
+	color: #ccc;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
 
-	h1 {
-		text-align: center;
-		color: #000;
-		font-size: 32px;
-		font-style: normal;
-		font-weight: 500;
-		line-height: 40px; /* 125% */
-		margin-top: 100px;
-		margin-bottom: 60px;
-	}
+	// h1 {
+	// 	text-align: center;
+	// 	color: #000;
+	// 	font-size: 32px;
+	// 	font-style: normal;
+	// 	font-weight: 500;
+	// 	line-height: 40px; /* 125% */
+	// 	margin-top: 100px;
+	// 	margin-bottom: 60px;
+	// }
 
 	.woocommerce-customize-store__page {
 		width: 615px;

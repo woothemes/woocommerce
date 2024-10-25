@@ -1,4 +1,7 @@
 // Resizable frame styles
+.woocommerce-customize-store-layout__canvas .edit-site-resizable-frame__inner {
+	color: #1e1e1e;
+}
 .edit-site-resizable-frame__inner.is-resizing::before {
 	content: "";
 	inset: 0;
