@@ -2,20 +2,109 @@
 /**
  * Plugin Name: WooCommerce Cleanup
  * Description: Resets WooCommerce site to testing start state.
- * Version: 1.3
+ * Version: 1.4
  * Author: Solaris Team
  * Requires at least: 6.6
- * Requires PHP: 8.0
+ * Requires PHP: 7.4
  * @package WooCommerceCleanup
  *
  * This file contains the main functionality for the WooCommerce Cleanup plugin.
  * It provides functions to reset the WooCommerce site to a clean testing state.
+ * It also allows you to install an updated version of the WooCommerce plugin via the REST API.
  */
 
 declare(strict_types=1);
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
+}
+
+/**
+ * Register the REST API route for installing a plugin.
+ */
+function wc_cleanup_register_routes() {
+	register_rest_route( 'wc-cleanup/v1', '/install-plugin', array(
+		'methods'  => 'GET',
+		'callback' => 'wc_cleanup_install_plugin',
+		'permission_callback' => function() {
+			return current_user_can( 'install_plugins' );
+		},
+	) );
+}
+add_action( 'rest_api_init', 'wc_cleanup_register_routes' );
+
+/**
+ * Callback function to install a plugin from a URL.
+ *
+ * @param WP_REST_Request $request The REST request.
+ * @return WP_REST_Response The REST response.
+ */
+function wc_cleanup_install_plugin( WP_REST_Request $request ) {
+	$url = $request->get_param( 'url' );
+
+	if ( empty( $url ) || ! filter_var( $url, FILTER_VALIDATE_URL ) ) {
+		return new WP_REST_Response( array( 'error' => 'Invalid URL' ), 400 );
+	}
+
+	// Ensure the URL is for WooCommerce only
+	if ( ! preg_match( '/woocommerce/', $url ) ) {
+		return new WP_REST_Response( array( 'error' => 'URL must be for WooCommerce plugin' ), 400 );
+	}
+
+	include_once ABSPATH . 'wp-admin/includes/file.php';
+	include_once ABSPATH . 'wp-admin/includes/misc.php';
+	include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+	include_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+	include_once ABSPATH . 'wp-admin/includes/plugin.php';
+
+	// Extract plugin slug from URL
+	$plugin_slug = basename( parse_url( $url, PHP_URL_PATH ), '.zip' );
+
+	// Check if the plugin is already installed
+	$installed_plugins = get_plugins();
+	$plugin_file = null;
+
+	foreach ( $installed_plugins as $file => $plugin_data ) {
+		if ( strpos( $file, $plugin_slug ) !== false ) {
+			$plugin_file = $file;
+			break;
+		}
+	}
+
+	if ( $plugin_file ) {
+		// Deactivate and uninstall the plugin if it is already installed
+		deactivate_plugins( $plugin_file );
+		delete_plugins( array( $plugin_file ) );
+	}
+
+	// Check if the plugin folder exists and delete it
+	$plugin_dir = WP_PLUGIN_DIR . '/' . $plugin_slug;
+	if ( is_dir( $plugin_dir ) ) {
+		global $wp_filesystem;
+		if ( ! $wp_filesystem ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+			WP_Filesystem();
+		}
+		$wp_filesystem->delete( $plugin_dir, true );
+	}
+
+	$upgrader = new Plugin_Upgrader();
+	$result = $upgrader->install( $url );
+
+	if ( is_wp_error( $result ) ) {
+		return new WP_REST_Response( array( 'error' => $result->get_error_message() ), 500 );
+	}
+
+	// Activate the plugin after installation
+	$plugin_file = $plugin_slug . '/' . $plugin_slug . '.php';
+	activate_plugin( $plugin_file );
+
+	// Trigger WooCommerce database update if required
+	if ( function_exists( 'WC_Install' ) ) {
+		WC_Install::update();
+	}
+
+	return new WP_REST_Response( array( 'success' => 'Plugin installed, activated, and database updated successfully' ), 200 );
 }
 
 /**
