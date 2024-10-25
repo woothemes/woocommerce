@@ -6,7 +6,7 @@
  * @version 2.2.0
  */
 
-use Automattic\WooCommerce\Checkout\Enums\OrderStatus;
+use Automattic\WooCommerce\Enums\OrderStatus;
 
 defined( 'ABSPATH' ) || exit;
 
