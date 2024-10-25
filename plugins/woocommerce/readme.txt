@@ -223,6 +223,7 @@ WooCommerce comes with some sample data you can use to see how products look; im
 * Fix - Use `get_filtered_ids` consistently in `reports/taxes` and `reports/taxes/stats` datastores [#51219](https://github.com/woocommerce/woocommerce/pull/51219)
 * Fix - wc_get_cart_url should only return current URL if on the cart page. This excludes the usage of WOOCOMMERCE_CART. [#51384](https://github.com/woocommerce/woocommerce/pull/51384)
 * Fix - Wrap parse_str under a check to resolve deprecation notice [#51474](https://github.com/woocommerce/woocommerce/pull/51474)
+* Fix - Removes several side effects in the code base that caused translations to be loaded too early [#52055](https://github.com/woocommerce/woocommerce/pull/52055)
 * Add - BFCM promo card support (data to be served by WCCOM API) [#51739](https://github.com/woocommerce/woocommerce/pull/51739)
 * Add - Add core feature for site visibility badge [#51664](https://github.com/woocommerce/woocommerce/pull/51664)
 * Add - Added a Load More button to product lists on the Extensions page, to request additional search results from WooCommerce.com. [#51413](https://github.com/woocommerce/woocommerce/pull/51413)
