@@ -10,7 +10,7 @@ final class DevelopmentTimeAutoloader {
 
 	public function initialize(): void
 	{
-		if ( class_exists( \Automattic\WooCommerce\Autoloader::class, false ) ) {
+		if ( class_exists( \Automattic\WooCommerce\Autoloader::class, false /* TODO: ensure no conflicts with JP autoloader */ ) ) {
 			// Locate the reference point first - WooCommerce autoloader in our case.
 			$reference_point = ( new \ReflectionClass( \Automattic\WooCommerce\Autoloader::class ) )->getFileName();
 			$plugin_path     = dirname( $reference_point, 2 );
