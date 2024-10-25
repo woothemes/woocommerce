@@ -4,6 +4,7 @@ declare( strict_types=1 );
 
 namespace Automattic\WooCommerce\Internal\DependencyManagement;
 
+use Automattic\WooCommerce\Blocks\Package as BlocksPackage;
 use Automattic\WooCommerce\StoreApi\StoreApi;
 use Automattic\WooCommerce\Utilities\StringUtil;
 
@@ -89,10 +90,12 @@ class RuntimeContainer {
 			throw new ContainerException( "Attempt to get an instance of class '$class_name', which doesn't exist." );
 		}
 
-		// Needed because some classes are registered with a dependency
-		// on classes from the Store API.
-		if ( StringUtil::starts_with( $class_name, 'Automattic\WooCommerce\StoreApi' ) ) {
+		// Account for the containers used by the Store API and Blocks.
+		if ( StringUtil::starts_with( $class_name, 'Automattic\WooCommerce\StoreApi\\' ) ) {
 			return StoreApi::container()->get( $class_name );
+		}
+		if ( StringUtil::starts_with( $class_name, 'Automattic\WooCommerce\Blocks\\' ) ) {
+			return BlocksPackage::container()->get( $class_name );
 		}
 
 		if ( in_array( $class_name, $resolve_chain, true ) ) {

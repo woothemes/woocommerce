@@ -4,6 +4,8 @@ declare( strict_types=1 );
 
 namespace Automattic\WooCommerce\Tests\Internal\DependencyManagement;
 
+use Automattic\WooCommerce\Blocks\Assets\Api as BlocksAssetsApi;
+use Automattic\WooCommerce\Blocks\Package as BlocksPackage;
 use Automattic\WooCommerce\Internal\DependencyManagement\ContainerException;
 use Automattic\WooCommerce\Internal\DependencyManagement\ExtendedContainer;
 use Automattic\WooCommerce\Internal\DependencyManagement\RuntimeContainer;
@@ -197,6 +199,15 @@ class RuntimeContainerTest extends \WC_Unit_Test_Case {
 		$resolved = $this->sut->get( ClassWithStoreApiDependency::class );
 
 		$this->assertSame( $resolved->dependency_class, StoreApi::container()->get( ExtendSchema::class ) );
+	}
+
+	/**
+	 * @testdox 'get' resolves Blocks classes using the Store API container.
+	 */
+	public function test_blocks_classes_are_resolved_using_the_blocks_container() {
+		$resolved = $this->sut->get( BlocksAssetsApi::class );
+
+		$this->assertSame( $resolved, BlocksPackage::container()->get( BlocksAssetsApi::class ) );
 	}
 
 	/**
