@@ -142,15 +142,27 @@ class WC_Order extends WC_Abstract_Order {
 				WC()->session->set( 'order_awaiting_payment', false );
 			}
 
-			// phpcs:disable WooCommerce.Commenting.CommentHooks.MissingHookComment
-			if ( $this->has_status( apply_filters( 'woocommerce_valid_order_statuses_for_payment_complete', array( OrderStatus::ON_HOLD, OrderStatus::PENDING, OrderStatus::FAILED, OrderStatus::CANCELLED ), $this ) ) ) {
+			/**
+			 * Filters the valid order statuses for payment complete.
+			 *
+			 * @param array    $valid_completed_statuses Array of valid order statuses for payment complete.
+			 * @param WC_Order $this                     Order object.
+			 */
+			$valid_completed_statuses = apply_filters( 'woocommerce_valid_order_statuses_for_payment_complete', array( OrderStatus::ON_HOLD, OrderStatus::PENDING, OrderStatus::FAILED, OrderStatus::CANCELLED ), $this );
+			if ( $this->has_status( $valid_completed_statuses ) ) {
 				if ( ! empty( $transaction_id ) ) {
 					$this->set_transaction_id( $transaction_id );
 				}
 				if ( ! $this->get_date_paid( 'edit' ) ) {
 					$this->set_date_paid( time() );
 				}
-				// phpcs:disable WooCommerce.Commenting.CommentHooks.MissingHookComment
+				/**
+				 * Filters the order status to set after payment complete.
+				 *
+				 * @param string   $status        Order status.
+				 * @param int      $order_id      Order ID.
+				 * @param WC_Order $this          Order object.
+				 */
 				$this->set_status( apply_filters( 'woocommerce_payment_complete_order_status', $this->needs_processing() ? OrderStatus::PROCESSING : OrderStatus::COMPLETED, $this->get_id(), $this ) );
 				$this->save();
 
