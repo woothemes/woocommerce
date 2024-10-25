@@ -2071,7 +2071,7 @@ class ProductCollection extends AbstractBlock {
 					}
 
 					if ( isset( $location['type'] ) && 'order' === $location['type'] ) {
-						$product_references = $this->get_product_ids_from_order( $location['sourceData']['orderId'] ?? null );
+						$product_references = $this->get_product_ids_from_order( $location['sourceData']['orderId'] ?? 0 );
 					}
 				}
 
@@ -2153,7 +2153,7 @@ class ProductCollection extends AbstractBlock {
 					}
 
 					if ( isset( $location['type'] ) && 'order' === $location['type'] ) {
-						$product_references = $this->get_product_ids_from_order( $location['sourceData']['orderId'] ?? null );
+						$product_references = $this->get_product_ids_from_order( $location['sourceData']['orderId'] ?? 0 );
 					}
 				}
 
