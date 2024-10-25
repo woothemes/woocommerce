@@ -70,14 +70,12 @@ class ProductFilters extends AbstractBlock {
 			''
 		);
 		$icontext     = array(
-			'isOverlayOpened'  => ! wp_is_mobile(),
-			'isOverlayEnabled' => wp_is_mobile(),
-			'params'           => $this->get_filter_query_params( 0 ),
-			'originalParams'   => $this->get_filter_query_params( 0 ),
+			'isOverlayOpened' => false,
+			'params'          => $this->get_filter_query_params( 0 ),
+			'originalParams'  => $this->get_filter_query_params( 0 ),
 		);
 		$classes      = array(
 			'wc-block-product-filters' => true,
-			'is-overlay-enabled'       => wp_is_mobile(),
 		);
 		$styles       = array(
 			'--wc-product-filters-text-color'       => StyleAttributesUtils::get_text_color_class_and_style( $attributes )['value'],
@@ -85,14 +83,13 @@ class ProductFilters extends AbstractBlock {
 		);
 
 		$wrapper_attributes = array(
-			'class'                             => implode( ' ', array_keys( array_filter( $classes ) ) ),
-			'data-wc-interactive'               => wp_json_encode( array( 'namespace' => $this->get_full_block_name() ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
-			'data-wc-watch'                     => 'callbacks.maybeNavigate',
-			'data-wc-navigation-id'             => $this->generate_navigation_id( $block ),
-			'data-wc-context'                   => wp_json_encode( $icontext, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
-			'data-wc-class--is-overlay-enabled' => 'context.isOverlayEnabled',
-			'data-wc-class--is-overlay-opened'  => 'context.isOverlayOpened',
-			'style'                             => array_reduce(
+			'class'                            => implode( ' ', array_keys( array_filter( $classes ) ) ),
+			'data-wc-interactive'              => wp_json_encode( array( 'namespace' => $this->get_full_block_name() ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
+			'data-wc-watch'                    => 'callbacks.maybeNavigate',
+			'data-wc-navigation-id'            => $this->generate_navigation_id( $block ),
+			'data-wc-context'                  => wp_json_encode( $icontext, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
+			'data-wc-class--is-overlay-opened' => 'context.isOverlayOpened',
+			'style'                            => array_reduce(
 				array_keys( $styles ),
 				function ( $carry, $key ) use ( $styles ) {
 					$carry .= $key . ':' . $styles[ $key ] . ';';
@@ -107,9 +104,7 @@ class ProductFilters extends AbstractBlock {
 		<div <?php echo get_block_wrapper_attributes( $wrapper_attributes ); ?>>
 			<button
 				class="wc-block-product-filters__open-overlay"
-				data-wc-bind--hidden="!context.isOverlayEnabled"
 				data-wc-on--click="actions.openOverlay"
-				<?php echo $icontext['isOverlayEnabled'] ? '' : 'hidden'; ?>
 			>
 				<?php if ( 'label-only' !== $attributes['overlayButtonType'] ) : ?>
 					<?php echo $this->get_svg_icon( $attributes['overlayIcon'] ?? 'filter-icon-2', $attributes['overlayIconSize'] ?? 24 ); ?>
@@ -123,15 +118,11 @@ class ProductFilters extends AbstractBlock {
 					<div
 						class="wc-block-product-filters__overlay-dialog"
 						role="dialog"
-						data-wc-bind--hidden="state.__return_false"
-						<?php echo $icontext['isOverlayEnabled'] ? 'hidden' : ''; ?>
 					>
 						<header class="wc-block-product-filters__overlay-header">
 							<button
 								class="wc-block-product-filters__close-overlay"
 								data-wc-on--click="actions.closeOverlay"
-								data-wc-bind--hidden="!context.isOverlayEnabled"
-								<?php echo $icontext['isOverlayEnabled'] ? '' : 'hidden'; ?>
 							>
 								<span><?php echo esc_html__( 'Close', 'woocommerce' ); ?></span>
 								<?php echo $this->get_svg_icon( 'close' ); ?>
@@ -142,9 +133,6 @@ class ProductFilters extends AbstractBlock {
 						</div>
 						<footer
 							class="wc-block-product-filters__overlay-footer"
-							data-wc-interactive="<?php echo esc_attr( wp_json_encode( array( 'namespace' => $this->get_full_block_name() ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ) ); ?>"
-							data-wc-bind--hidden="!context.isOverlayEnabled"
-							<?php echo $icontext['isOverlayEnabled'] ? '' : 'hidden'; ?>
 						>
 							<button class="wc-block-product-filters__apply wp-block-button__link wp-element-button">
 								<span><?php echo esc_html__( 'Apply', 'woocommerce' ); ?></span>
