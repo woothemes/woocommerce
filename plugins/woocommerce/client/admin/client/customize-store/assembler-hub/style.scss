@@ -9,13 +9,13 @@
 }
 
 .woocommerce-customize-store-header,
-.woocommerce-cys-layout__header-container {
+.edit-site-layout__header-container {
 	.woocommerce-cys-site-hub__view-mode-toggle-container a {
 		color: unset;
 	}
 }
 
-.woocommerce-cys-layout__header-container {
+.edit-site-layout__header-container {
 	position: fixed;
 	z-index: 4;
 }
@@ -31,7 +31,7 @@ body.woocommerce-assembler {
 		text-decoration: none;
 	}
 
-	.woocomerce-cys-layout {
+	.edit-site-layout {
 		bottom: 0;
 		left: 0;
 		min-height: 100vh;
@@ -99,13 +99,13 @@ body.woocommerce-assembler {
 	}
 
 	/* Sidebar */
-	.woocomerce-cys-layout__sidebar-region {
+	.edit-site-layout__sidebar-region {
 		width: 380px;
 		z-index: 3;
 		background-color: #f5f5f5;
 	}
 
-	.woocomerce-cys-layout__sidebar {
+	.edit-site-layout__sidebar {
 		.edit-site-sidebar__content {
 			display: flex;
 			flex-direction: column;
@@ -521,7 +521,7 @@ body.woocommerce-assembler {
 	}
 
 	/* Preview Canvas */
-	.woocomerce-cys-layout__canvas {
+	.edit-site-layout__canvas {
 		bottom: 16px;
 		top: 16px;
 		left: 6px; // the default styles for this undersizes the width by 24px so we want to center this
@@ -533,15 +533,15 @@ body.woocommerce-assembler {
 		cursor: ew-resize;
 	}
 
-	.woocomerce-cys-layout__canvas .components-resizable-box__container {
+	.edit-site-layout__canvas .components-resizable-box__container {
 		border-radius: 12px;
 		/* new frame */
 		box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.05);
 	}
 
 	.woocommerce-customize-store__block-editor,
-	.woocomerce-cys-layout:not(.is-full-canvas)
-	.woocomerce-cys-layout__canvas > div
+	.edit-site-layout:not(.is-full-canvas)
+	.edit-site-layout__canvas > div
 	.interface-interface-skeleton__content {
 		border-radius: 12px;
 
@@ -566,7 +566,7 @@ body.woocommerce-assembler {
 
 .woocommerce-customize-store__step-assemblerHub,
 .woocommerce-customize-store__step-transitionalScreen {
-	.woocomerce-cys-layout {
+	.edit-site-layout {
 		.woocommerce-cys-site-hub__view-mode-toggle-container {
 			padding: 16px 12px 0 16px;
 		}
@@ -582,7 +582,7 @@ body.woocommerce-assembler {
 		height: 32px;
 	}
 
-	.woocomerce-cys-layout {
+	.edit-site-layout {
 		.woocommerce-cys-site-hub__view-mode-toggle-container {
 			padding-left: 16px;
 		}
@@ -812,12 +812,12 @@ body.woocommerce-assembler {
 	}
 }
 
-.woocomerce-cys-layout__content {
-	.woocomerce-cys-layout__sidebar {
+.edit-site-layout__content {
+	.edit-site-layout__sidebar {
 		display: flex;
 		max-width: 700px;
 	}
-	.woocomerce-cys-layout__canvas-container {
+	.edit-site-layout__canvas-container {
 		background-color: #f5f5f5;
 	}
 }

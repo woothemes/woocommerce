@@ -198,7 +198,7 @@ export const OnboardingTour = ( {
 				steps: [
 					{
 						referenceElements: {
-							desktop: `.woocomerce-cys-layout__canvas-container`,
+							desktop: `.edit-site-layout__canvas-container`,
 						},
 						meta: {
 							name: 'view-changes-real-time',
@@ -216,7 +216,7 @@ export const OnboardingTour = ( {
 					},
 					{
 						referenceElements: {
-							desktop: `.woocomerce-cys-layout__sidebar-region`,
+							desktop: `.edit-site-layout__sidebar-region`,
 						},
 						meta: {
 							name: 'make-your-store-your-own',
