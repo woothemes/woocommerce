@@ -13,7 +13,7 @@ const Edit = ( props: EditProps ) => {
 	let text = __( 'Clear', 'woocommerce' );
 
 	if ( props.attributes?.clearType === 'all' ) {
-		text = __( 'Clear All', 'woocommerce' );
+		text = __( 'Clear all', 'woocommerce' );
 	}
 
 	return (
