@@ -24,28 +24,27 @@ const FrontendBlock = ( {
 	className?: string;
 } ): JSX.Element | null => {
 	const { cartTotals } = useStoreCart();
-	const { isSmall, isMobile } = useContainerWidthContext();
+	const { isLarge } = useContainerWidthContext();
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	const totalsCurrency = getCurrencyFromPriceResponse( cartTotals );
 	const totalPrice = parseInt( cartTotals.total_price, 10 );
 	const ariaControlsId = useId();
 
-	const orderSummaryProps =
-		isSmall || isMobile
-			? {
-					role: 'button',
-					onClick: () => setIsOpen( ! isOpen ),
-					'aria-expanded': isOpen,
-					'aria-controls': ariaControlsId,
-					tabIndex: 0,
-					onKeyDown: ( event: React.KeyboardEvent ) => {
-						if ( event.key === 'Enter' || event.key === ' ' ) {
-							setIsOpen( ! isOpen );
-						}
-					},
-			  }
-			: {};
+	const orderSummaryProps = ! isLarge
+		? {
+				role: 'button',
+				onClick: () => setIsOpen( ! isOpen ),
+				'aria-expanded': isOpen,
+				'aria-controls': ariaControlsId,
+				tabIndex: 0,
+				onKeyDown: ( event: React.KeyboardEvent ) => {
+					if ( event.key === 'Enter' || event.key === ' ' ) {
+						setIsOpen( ! isOpen );
+					}
+				},
+		  }
+		: {};
 
 	// Render the summary once here in the block and once in the fill. The fill can be slotted once elsewhere. The fill is only
 	// rendered on small and mobile screens.
@@ -67,7 +66,7 @@ const FrontendBlock = ( {
 					>
 						{ __( 'Order summary', 'woocommerce' ) }
 					</p>
-					{ ( isSmall || isMobile ) && (
+					{ ! isLarge && (
 						<>
 							<FormattedMonetaryAmount
 								currency={ totalsCurrency }
@@ -98,7 +97,7 @@ const FrontendBlock = ( {
 				</div>
 			</div>
 
-			{ ( isSmall || isMobile ) && (
+			{ ! isLarge && (
 				<CheckoutOrderSummaryFill>
 					<div
 						className={ `${ className } checkout-order-summary-block-fill-wrapper` }

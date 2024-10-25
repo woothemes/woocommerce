@@ -32,25 +32,24 @@ export const Edit = ( { clientId }: { clientId: string } ): JSX.Element => {
 	const allowedBlocks = getAllowedBlocks(
 		innerBlockAreas.CHECKOUT_ORDER_SUMMARY
 	);
-	const { isSmall, isMobile } = useContainerWidthContext();
+	const { isLarge } = useContainerWidthContext();
 	const [ isOpen, setIsOpen ] = useState( false );
 	const ariaControlsId = useId();
 
-	const orderSummaryProps =
-		isSmall || isMobile
-			? {
-					role: 'button',
-					onClick: () => setIsOpen( ! isOpen ),
-					'aria-expanded': isOpen,
-					'aria-controls': ariaControlsId,
-					tabIndex: 0,
-					onKeyDown: ( event: React.KeyboardEvent ) => {
-						if ( event.key === 'Enter' || event.key === ' ' ) {
-							setIsOpen( ! isOpen );
-						}
-					},
-			  }
-			: {};
+	const orderSummaryProps = ! isLarge
+		? {
+				role: 'button',
+				onClick: () => setIsOpen( ! isOpen ),
+				'aria-expanded': isOpen,
+				'aria-controls': ariaControlsId,
+				tabIndex: 0,
+				onKeyDown: ( event: React.KeyboardEvent ) => {
+					if ( event.key === 'Enter' || event.key === ' ' ) {
+						setIsOpen( ! isOpen );
+					}
+				},
+		  }
+		: {};
 
 	const defaultTemplate = [
 		[ 'woocommerce/checkout-order-summary-cart-items-block', {}, [] ],
@@ -76,7 +75,7 @@ export const Edit = ( { clientId }: { clientId: string } ): JSX.Element => {
 				>
 					{ __( 'Order summary', 'woocommerce' ) }
 				</p>
-				{ ( isSmall || isMobile ) && (
+				{ ! isLarge && (
 					<>
 						<FormattedMonetaryAmount
 							currency={ totalsCurrency }
