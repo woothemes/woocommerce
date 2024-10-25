@@ -94,7 +94,7 @@ export const LaunchYourStoreHubSidebar: React.FC< SidebarComponentProps > = (
 			) }
 		>
 			<motion.div
-				className="edit-site-layout__header-container"
+				className="woocommerce-cys-layout__header-container"
 				animate={ 'view' }
 			>
 				<SiteHub

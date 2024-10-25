@@ -157,9 +157,9 @@ export const Layout = () => {
 						type={ templateType }
 						id={ templateId }
 					>
-						<div className={ clsx( 'edit-site-layout' ) }>
+						<div className={ clsx( 'woocomerce-cys-layout' ) }>
 							<motion.div
-								className="edit-site-layout__header-container"
+								className="woocommerce-cys-layout__header-container"
 								animate={ 'view' }
 							>
 								<SiteHub
@@ -171,14 +171,14 @@ export const Layout = () => {
 								/>
 							</motion.div>
 
-							<div className="edit-site-layout__content">
-								<div className="edit-site-layout__sidebar">
+							<div className="woocomerce-cys-layout__content">
+								<div className="woocomerce-cys-layout__sidebar">
 									<NavigableRegion
 										ariaLabel={ __(
 											'Navigation',
 											'woocommerce'
 										) }
-										className="edit-site-layout__sidebar-region"
+										className="woocomerce-cys-layout__sidebar-region"
 									>
 										<motion.div
 											animate={ { opacity: 1 } }
@@ -192,7 +192,7 @@ export const Layout = () => {
 														: ANIMATION_DURATION,
 												ease: 'easeOut',
 											} }
-											className="edit-site-layout__sidebar"
+											className="woocomerce-cys-layout__sidebar"
 										>
 											<Sidebar />
 										</motion.div>
@@ -201,14 +201,14 @@ export const Layout = () => {
 								</div>
 
 								{ ! isMobileViewport && (
-									<div className="edit-site-layout__canvas-container">
+									<div className="woocomerce-cys-layout__canvas-container">
 										{ canvasResizer }
 										{ !! canvasSize.width && (
 											<motion.div
 												initial={ false }
 												layout="position"
 												className={ clsx(
-													'edit-site-layout__canvas'
+													'woocomerce-cys-layout__canvas'
 												) }
 											>
 												<ErrorBoundary>
