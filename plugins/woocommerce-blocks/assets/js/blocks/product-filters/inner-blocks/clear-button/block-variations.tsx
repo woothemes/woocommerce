@@ -7,7 +7,7 @@ import { BlockVariation } from '@wordpress/blocks';
 const variations: BlockVariation[] = [
 	{
 		name: 'product-filter-clear-all-button',
-		title: __( 'Clear All (Experimental).', 'woocommerce' ),
+		title: __( 'Clear All (Experimental)', 'woocommerce' ),
 		attributes: {
 			clearType: 'all',
 		},
