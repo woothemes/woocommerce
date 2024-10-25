@@ -293,6 +293,19 @@ final class ProductFilterRating extends AbstractBlock {
 		}
 
 		$counts = $filters->get_rating_counts( $query_vars );
+
+		/*
+		 * Sort the counts by rating value in descending order.
+		 * Todo: Consider to implement this consistently in the query.
+		 * @see https://github.com/woocommerce/woocommerce/pull/52152#issuecomment-2437598323
+		 */
+		uksort(
+			$counts,
+			function( $a, $b ) {
+				return $b - $a;
+			}
+		);
+
 		$data   = array();
 
 		foreach ( $counts as $key => $value ) {
