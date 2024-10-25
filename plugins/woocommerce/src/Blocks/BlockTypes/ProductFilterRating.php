@@ -1,8 +1,6 @@
 <?php
 namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
-use Automattic\WooCommerce\Blocks\InteractivityComponents\CheckboxList;
-use Automattic\WooCommerce\Blocks\InteractivityComponents\Dropdown;
 use Automattic\WooCommerce\Blocks\Utils\ProductCollectionUtils;
 use Automattic\WooCommerce\Blocks\QueryFilters;
 use Automattic\WooCommerce\Blocks\Package;
