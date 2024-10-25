@@ -157,7 +157,7 @@ export const Layout = () => {
 						type={ templateType }
 						id={ templateId }
 					>
-						<div className={ clsx( 'woocomerce-cys-layout' ) }>
+						<div className={ clsx( 'woocommerce-customize-store__layout' ) }>
 							<motion.div
 								className="woocommerce-cys-layout__header-container"
 								animate={ 'view' }
@@ -171,14 +171,14 @@ export const Layout = () => {
 								/>
 							</motion.div>
 
-							<div className="woocomerce-cys-layout__content">
-								<div className="woocomerce-cys-layout__sidebar">
+							<div className="woocommerce-customize-store__layout__content">
+								<div className="woocommerce-customize-store__layout__sidebar">
 									<NavigableRegion
 										ariaLabel={ __(
 											'Navigation',
 											'woocommerce'
 										) }
-										className="woocomerce-cys-layout__sidebar-region"
+										className="woocommerce-customize-store__layout__sidebar-region"
 									>
 										<motion.div
 											animate={ { opacity: 1 } }
@@ -192,7 +192,7 @@ export const Layout = () => {
 														: ANIMATION_DURATION,
 												ease: 'easeOut',
 											} }
-											className="woocomerce-cys-layout__sidebar"
+											className="woocommerce-customize-store__layout__sidebar"
 										>
 											<Sidebar />
 										</motion.div>
@@ -201,14 +201,14 @@ export const Layout = () => {
 								</div>
 
 								{ ! isMobileViewport && (
-									<div className="woocomerce-cys-layout__canvas-container">
+									<div className="woocommerce-customize-store__layout__canvas-container">
 										{ canvasResizer }
 										{ !! canvasSize.width && (
 											<motion.div
 												initial={ false }
 												layout="position"
 												className={ clsx(
-													'woocomerce-cys-layout__canvas'
+													'woocommerce-customize-store__layout__canvas'
 												) }
 											>
 												<ErrorBoundary>
