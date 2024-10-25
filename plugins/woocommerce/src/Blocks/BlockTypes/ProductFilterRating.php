@@ -122,7 +122,7 @@ final class ProductFilterRating extends AbstractBlock {
 		 * Get the rating items
 		 * based on the selected ratings and the rating counts.
 		 */
-		$items = $this->get_checkbox_list_items( $rating_counts, $selected_rating, $attributes['showCounts'] ?? false );
+		$items = $this->get_rating_items( $rating_counts, $selected_rating, $attributes['showCounts'] ?? false );
 
 		$filter_context = array(
 			'filterData' => array(
@@ -194,14 +194,14 @@ final class ProductFilterRating extends AbstractBlock {
 	}
 
 	/**
-	 * Get the checkbox list items.
+	 * Get the Rating list items.
 	 *
-	 * @param array  $rating_counts    The rating counts.
-	 * @param string $selected_ratings_query The url query param for selected ratings.
-	 * @param bool   $show_counts      Whether to show the counts.
+	 * @param array  $rating_counts          - The rating counts.
+	 * @param string $selected_ratings_query - The url query param for selected ratings.
+	 * @param bool   $show_counts            - Whether to show the counts.
 	 * @return array
 	 */
-	private function get_checkbox_list_items( $rating_counts, $selected_ratings_query, $show_counts ) {
+	private function get_rating_items( $rating_counts, $selected_ratings_query, $show_counts ) {
 		return array_map(
 			function( $rating ) use ( $selected_ratings_query, $show_counts ) {
 				$rating_str  = (string) $rating['rating'];
