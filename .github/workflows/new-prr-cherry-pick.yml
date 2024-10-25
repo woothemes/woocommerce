@@ -254,38 +254,26 @@ jobs:
             - name: Notify Slack on failure
               if: ${{ failure() && inputs.skipSlackPing != true }}
               uses: archive/github-actions-slack@v2.0.0
-              env:
-                  SLACK_BOT_USER_OAUTH_ACCESS_TOKEN: ${{ secrets.CODE_FREEZE_BOT_TOKEN }}
-                  SLACK_CHANNEL: ${{ secrets.WOO_CORE_RELESES_DAILY_SLACK_CHANNEL }}
-                  RELEASE: ${{ needs.prep.outputs.release }}
-                  FROZEN_RELEASE: ${{ needs.prep.outputs.frozenRelease }}
-                  PR: ${{ needs.prep.outputs.pr }}
               with:
-                  slack-bot-user-oauth-access-token: $SLACK_BOT_USER_OAUTH_ACCESS_TOKEN
-                  slack-channel: $SLACK_CHANNEL
+                  slack-bot-user-oauth-access-token: ${{ secrets.CODE_FREEZE_BOT_TOKEN }}
+                  slack-channel: ${{ secrets.WOO_CORE_RELESES_DAILY_SLACK_CHANNEL }}
                   slack-text: |
-                      :warning-8c: Point release request cherry pick failed for `$RELEASE`
+                      :warning-8c: Point release request cherry pick failed for `${{ needs.prep.outputs.release }}`
 
-                      An attempt to cherry pick PR(s) into outgoing `$FROZEN_RELEASE` for  `$RELEASE` has failed. This could be due to a merge conflict or something else that requires manual attention. Please check: https://github.com/woocommerce/woocommerce/pull/$PR
+                      An attempt to cherry pick PR(s) into outgoing `${{ needs.prep.outputs.frozenRelease }}` for  `${{ needs.prep.outputs.release }}` has failed. This could be due to a merge conflict or something else that requires manual attention. Please check: https://github.com/woocommerce/woocommerce/pull/${{ needs.prep.outputs.pr }}
 
             - name: Notify Slack on success
               if: ${{ success() && inputs.skipSlackPing != true }}
               uses: archive/github-actions-slack@v2.0.0
-              env:
-                  SLACK_BOT_USER_OAUTH_ACCESS_TOKEN: ${{ secrets.CODE_FREEZE_BOT_TOKEN }}
-                  SLACK_CHANNEL: ${{ secrets.WOO_CORE_RELESES_DAILY_SLACK_CHANNEL }}
-                  RELEASE: ${{ needs.prep.outputs.release }}
-                  FROZEN_RELEASE: ${{ needs.prep.outputs.frozenRelease }}
-                  CHERRY_PICK_PR: ${{ steps.cherry-pick-pr.outputs.cherry-pick-pr }}
               with:
-                  slack-bot-user-oauth-access-token: $SLACK_BOT_USER_OAUTH_ACCESS_TOKEN
-                  slack-channel: $SLACK_CHANNEL
+                  slack-bot-user-oauth-access-token: ${{ secrets.CODE_FREEZE_BOT_TOKEN }}
+                  slack-channel: ${{ secrets.WOO_CORE_RELESES_DAILY_SLACK_CHANNEL }}
                   slack-text: |
-                      :info: Point release request cherry pick succeeded for `$RELEASE`
+                      :info: Point release request cherry pick succeeded for `${{ needs.prep.outputs.release }}`
 
-                      Please merge the following PR :pr: into `$FROZEN_RELEASE`:
+                      Please merge the following PR :pr: into `${{ needs.prep.outputs.frozenRelease }}`:
 
-                      $CHERRY_PICK_PR
+                      ${{ steps.cherry-pick-pr.outputs.cherry-pick-pr }}
 
             - name: Comment on PR about the failed cherry pick
               if: ${{ failure() }}
