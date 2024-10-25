@@ -73,7 +73,7 @@ export interface ProductFiltersContext {
 	originalParams: Record< string, string >;
 }
 
-store( 'woocommerce/product-filters', {
+const { actions } = store( 'woocommerce/product-filters', {
 	state: {
 		get __return_false() {
 			return false;
@@ -100,10 +100,9 @@ store( 'woocommerce/product-filters', {
 			const context = getContext< ProductFiltersContext >();
 			context.isOverlayOpened = false;
 			document.body.style.overflow = 'auto';
+			context.params = { ...context.originalParams };
 		},
-	},
-	callbacks: {
-		maybeNavigate: () => {
+		navigate: () => {
 			const { params, originalParams } =
 				getContext< ProductFiltersContext >();
 
@@ -121,7 +120,18 @@ store( 'woocommerce/product-filters', {
 			for ( const key in params ) {
 				searchParams.set( key, params[ key ] );
 			}
+
 			navigate( url.href );
+		},
+	},
+	callbacks: {
+		maybeNavigate: () => {
+			const { isOverlayOpened, params, originalParams } =
+				getContext< ProductFiltersContext >();
+
+			if ( ! isOverlayOpened ) {
+				actions.navigate();
+			}
 		},
 	},
 } );

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { getContext, store } from '@woocommerce/interactivity';
+import { getContext, getElement, store } from '@woocommerce/interactivity';
 import { HTMLElementEvent } from '@woocommerce/types';
 
 /**

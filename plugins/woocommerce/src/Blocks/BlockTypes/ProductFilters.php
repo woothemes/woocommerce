@@ -134,7 +134,11 @@ class ProductFilters extends AbstractBlock {
 						<footer
 							class="wc-block-product-filters__overlay-footer"
 						>
-							<button class="wc-block-product-filters__apply wp-block-button__link wp-element-button">
+							<button
+								class="wc-block-product-filters__apply wp-block-button__link wp-element-button"
+								data-wc-interactive="<?php echo esc_attr( wp_json_encode( array( 'namespace' => $this->get_full_block_name() ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ) ); ?>"
+								data-wc-on--click="actions.navigate"
+							>
 								<span><?php echo esc_html__( 'Apply', 'woocommerce' ); ?></span>
 							</button>
 						</footer>
