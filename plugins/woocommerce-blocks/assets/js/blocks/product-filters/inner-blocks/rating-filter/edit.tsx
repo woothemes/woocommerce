@@ -17,7 +17,7 @@ import {
 import { getSettingWithCoercion } from '@woocommerce/settings';
 import { isBoolean, isObject, objectHasProp } from '@woocommerce/types';
 import { useState, useMemo, useEffect } from '@wordpress/element';
-import { Notice, withSpokenMessages } from '@wordpress/components';
+import { withSpokenMessages } from '@wordpress/components';
 import type { BlockEditProps } from '@wordpress/blocks';
 
 /**
@@ -31,19 +31,9 @@ import { InitialDisabled } from '../../components/initial-disabled';
 import { PreviewDropdown } from '../components/preview-dropdown';
 import { getAllowedBlocks } from '../../utils';
 import { EXCLUDED_BLOCKS } from '../../constants';
-import './style.scss';
+import { Notice } from '../../components/notice';
 import type { Attributes } from './types';
-
-const NoRatings = () => (
-	<Notice status="warning" isDismissible={ false }>
-		<p>
-			{ __(
-				"Your store doesn't have any products with ratings yet. This filter option will display when a product receives a review.",
-				'woocommerce'
-			) }
-		</p>
-	</Notice>
-);
+import './style.scss';
 
 const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 	const { attributes, setAttributes } = props;
@@ -215,7 +205,14 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 
 			<div { ...innerBlocksProps }>
 				<InitialDisabled>
-					{ displayNoProductRatingsNotice && <NoRatings /> }
+					{ displayNoProductRatingsNotice && (
+						<Notice>
+							{ __(
+								"Your store doesn't have any products with ratings yet. This filter option will display when a product receives a review.",
+								'woocommerce'
+							) }
+						</Notice>
+					) }
 					<div
 						className={ clsx( `style-${ displayStyle }`, {
 							'is-loading': isLoading,
