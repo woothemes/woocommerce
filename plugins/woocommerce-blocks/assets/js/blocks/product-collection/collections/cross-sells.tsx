@@ -24,7 +24,7 @@ const collection = {
 	),
 	keywords: [ 'boost', 'promotion' ],
 	scope: [ 'inserter', 'block' ] as BlockVariationScope[],
-	usesReference: [ 'product', 'cart' ],
+	usesReference: [ 'product', 'cart', 'order' ],
 };
 
 const attributes = {
