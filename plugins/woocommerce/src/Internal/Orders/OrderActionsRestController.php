@@ -31,11 +31,11 @@ class OrderActionsRestController extends RestApiControllerBase {
 	public function register_routes() {
 		register_rest_route(
 			$this->route_namespace,
-			'/orders/(?P<id>[\d]+)/actions',
+			'/orders/(?P<id>[\d]+)/actions/send_order_details',
 			array(
 				array(
 					'methods'             => \WP_REST_Server::CREATABLE,
-					'callback'            => fn( $request ) => $this->run( $request, 'order_actions' ),
+					'callback'            => fn( $request ) => $this->run( $request, 'send_order_details' ),
 					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
 					'args'                => $this->get_args_for_order_actions(),
 					'schema'              => $this->get_schema_for_order_actions(),
@@ -68,19 +68,11 @@ class OrderActionsRestController extends RestApiControllerBase {
 	 */
 	private function get_args_for_order_actions(): array {
 		return array(
-			'id'     => array(
+			'id' => array(
 				'description' => __( 'Unique identifier of the order.', 'woocommerce' ),
 				'type'        => 'integer',
 				'context'     => array( 'view', 'edit' ),
 				'readonly'    => true,
-			),
-			'action' => array(
-				'description' => __( 'The action to run on the order.', 'woocommerce' ),
-				'type'        => 'string',
-				'enum'        => array( 'send_order_details' ),
-				'context'     => array( 'view', 'edit' ),
-				'readonly'    => true,
-				'required'    => true,
 			),
 		);
 	}
@@ -103,17 +95,12 @@ class OrderActionsRestController extends RestApiControllerBase {
 	}
 
 	/**
-	 * Handle the POST /orders/{id}/actions.
+	 * Handle the POST /orders/{id}/actions/send_order_details.
 	 *
 	 * @param WP_REST_Request $request The received request.
 	 * @return array|WP_Error Request response or an error.
 	 */
-	public function order_actions( WP_REST_Request $request ) {
-		$action = $request->get_param( 'action' );
-		if ( 'send_order_details' !== $action ) {
-			return new WP_Error( 'invalid_action', __( 'Invalid action.', 'woocommerce' ), array( 'status' => 400 ) );
-		}
-
+	public function send_order_details( WP_REST_Request $request ) {
 		$order_id = $request->get_param( 'id' );
 		$order    = wc_get_order( $order_id );
 		if ( ! $order ) {

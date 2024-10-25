@@ -36,41 +36,6 @@ class OrderActionsRestControllerTest extends WC_REST_Unit_Test_Case {
 	}
 
 	/**
-	 * Test calling the endpoint without an action.
-	 */
-	public function test_missing_action() {
-		wp_set_current_user( $this->user );
-
-		$order   = wc_create_order();
-		$request = new WP_REST_Request( 'POST', '/wc/v3/orders/' . $order->get_id() . '/actions' );
-
-		$response = $this->server->dispatch( $request );
-
-		$this->assertEquals( 400, $response->get_status() );
-		$data = $response->get_data();
-		$this->assertEquals( 'rest_missing_callback_param', $data['code'] );
-		$this->assertEquals( 'Missing parameter(s): action', $data['message'] );
-	}
-
-	/**
-	 * Test calling the endpoint with an unknown action.
-	 */
-	public function test_invalid_action() {
-		wp_set_current_user( $this->user );
-
-		$order   = wc_create_order();
-		$request = new WP_REST_Request( 'POST', '/wc/v3/orders/' . $order->get_id() . '/actions' );
-		$request->set_param( 'action', 'unknown_action' );
-
-		$response = $this->server->dispatch( $request );
-
-		$this->assertEquals( 400, $response->get_status() );
-		$data = $response->get_data();
-		$this->assertEquals( 'rest_invalid_param', $data['code'] );
-		$this->assertEquals( 'Invalid parameter(s): action', $data['message'] );
-	}
-
-	/**
 	 * Test sending order details email.
 	 */
 	public function test_send_order_details() {
@@ -78,8 +43,7 @@ class OrderActionsRestControllerTest extends WC_REST_Unit_Test_Case {
 
 		wp_set_current_user( $this->user );
 
-		$request = new WP_REST_Request( 'POST', '/wc/v3/orders/' . $order->get_id() . '/actions' );
-		$request->set_param( 'action', 'send_order_details' );
+		$request = new WP_REST_Request( 'POST', '/wc/v3/orders/' . $order->get_id() . '/actions/send_order_details' );
 
 		$response = $this->server->dispatch( $request );
 
@@ -100,8 +64,7 @@ class OrderActionsRestControllerTest extends WC_REST_Unit_Test_Case {
 	public function test_send_order_details_with_non_existent_order() {
 		wp_set_current_user( $this->user );
 
-		$request = new WP_REST_Request( 'POST', '/wc/v3/orders/999/actions' );
-		$request->set_param( 'action', 'send_order_details' );
+		$request  = new WP_REST_Request( 'POST', '/wc/v3/orders/999/actions/send_order_details' );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertEquals( 404, $response->get_status() );
@@ -122,8 +85,7 @@ class OrderActionsRestControllerTest extends WC_REST_Unit_Test_Case {
 
 		wp_set_current_user( $customer );
 
-		$request = new WP_REST_Request( 'POST', '/wc/v3/orders/' . $order->get_id() . '/actions' );
-		$request->set_param( 'action', 'send_order_details' );
+		$request  = new WP_REST_Request( 'POST', '/wc/v3/orders/' . $order->get_id() . '/actions/send_order_details' );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertEquals( 403, $response->get_status() );
