@@ -1666,9 +1666,8 @@ export const CoreProfilerController = ( {
 				},
 				userHasNoInstallPluginsPermission: ( { context } ) => {
 					return (
-						context?.currentUser?.capabilities[
-							'install_plugins'
-						] !== true
+						context?.currentUser?.capabilities.install_plugins !==
+						true
 					);
 				},
 			},

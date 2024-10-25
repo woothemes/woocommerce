@@ -37,6 +37,30 @@ describe( 'Plugins Component', () => {
 				is_built_by_wc: false,
 				is_visible: true,
 			},
+			{
+				slug: 'plugin3',
+				name: 'Plugin 3',
+				label: 'Plugin 3',
+				is_activated: false,
+				description: '',
+				key: 'plugin3',
+				image_url: '',
+				manage_url: '',
+				is_built_by_wc: false,
+				is_visible: true,
+			},
+			{
+				slug: 'plugin4',
+				name: 'Plugin 4',
+				label: 'Plugin 4',
+				is_activated: false,
+				description: '',
+				key: 'plugin4',
+				image_url: '',
+				manage_url: '',
+				is_built_by_wc: false,
+				is_visible: true,
+			},
 		],
 		pluginsSelected: [],
 		pluginsInstallationErrors: [],
@@ -58,6 +82,8 @@ describe( 'Plugins Component', () => {
 		).toBeInTheDocument();
 		expect( screen.getByText( 'Plugin 1' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Plugin 2' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Plugin 3' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Plugin 4' ) ).toBeInTheDocument();
 	} );
 
 	it( 'handles plugin selection', () => {
@@ -69,7 +95,12 @@ describe( 'Plugins Component', () => {
 			/>
 		);
 		const checkboxLabel = screen.getByText( 'Plugin 1' );
-		fireEvent.click( checkboxLabel );
+		fireEvent.click( checkboxLabel ); // because the checkbox is enabled by default, let's uncheck it
+		fireEvent.click( checkboxLabel ); // then check it
+		const checkboxLabel3 = screen.getByText( 'Plugin 3' );
+		fireEvent.click( checkboxLabel3 );
+		const checkboxLabel4 = screen.getByText( 'Plugin 4' ); // attempt to uncheck 4, but it shouldn't do anything since it is already unchecked
+		fireEvent.click( checkboxLabel4 );
 		const installButton = screen.getByText( 'Continue' );
 		fireEvent.click( installButton );
 
@@ -77,8 +108,8 @@ describe( 'Plugins Component', () => {
 			type: 'PLUGINS_INSTALLATION_REQUESTED',
 			payload: {
 				pluginsSelected: [ 'plugin1' ],
-				pluginsShown: [ 'plugin1', 'plugin2' ],
-				pluginsUnselected: [],
+				pluginsShown: [ 'plugin1', 'plugin2', 'plugin3', 'plugin4' ],
+				pluginsUnselected: [ 'plugin3', 'plugin4' ],
 			},
 		} );
 	} );
@@ -114,6 +145,69 @@ describe( 'Plugins Component', () => {
 		expect( mockSendEvent ).toHaveBeenCalledWith( {
 			type: 'PLUGINS_PAGE_SKIPPED',
 		} );
+	} );
+
+	it( 'initialises with all plugins selected when there were no errors previously', () => {
+		render(
+			<Plugins
+				context={ mockContext }
+				sendEvent={ mockSendEvent }
+				navigationProgress={ navigationProgress }
+			/>
+		);
+		const checkboxLabels = screen.getAllByRole( 'checkbox' );
+		expect( checkboxLabels ).toHaveLength( 3 );
+		checkboxLabels.forEach( ( checkbox ) => {
+			expect( checkbox ).toBeChecked();
+		} );
+	} );
+
+	it( 'initialises with the previous selection correctly when there were errors previously', () => {
+		render(
+			<Plugins
+				context={ {
+					...mockContext,
+					pluginsAvailable: [ ...mockContext.pluginsAvailable ],
+					pluginsInstallationErrors: [
+						{
+							plugin: 'plugin4',
+							error: 'Installation failed',
+							errorDetails: {
+								data: {
+									code: 'some_error_code',
+									data: {
+										status: 400,
+									},
+								},
+							},
+						},
+					],
+					pluginsSelected: [ 'plugin4' ],
+				} }
+				sendEvent={ mockSendEvent }
+				navigationProgress={ navigationProgress }
+			/>
+		);
+		expect(
+			screen.getByText(
+				/Oops! We encountered a problem while installing/
+			)
+		).toBeInTheDocument();
+		const checkbox1 = screen
+			.getByText( 'Plugin 1' )
+			.closest( '.woocommerce-profiler-plugins-plugin-card' )
+			?.querySelector( 'input[type="checkbox"]' );
+		expect( checkbox1 ).not.toBeChecked();
+		const checkbox3 = screen
+			.getByText( 'Plugin 3' )
+			.closest( '.woocommerce-profiler-plugins-plugin-card' )
+			?.querySelector( 'input[type="checkbox"]' );
+		expect( checkbox3 ).not.toBeChecked();
+		const checkbox4 = screen
+			.getByText( 'Plugin 4' )
+			.closest( '.woocommerce-profiler-plugins-plugin-card' )
+			?.querySelector( 'input[type="checkbox"]' );
+		expect( checkbox4 ).toBeChecked();
 	} );
 
 	it( 'handles skip action', () => {

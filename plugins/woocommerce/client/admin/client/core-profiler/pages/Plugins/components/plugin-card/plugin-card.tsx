@@ -58,61 +58,60 @@ export const PluginCard = ( {
 	} );
 	return (
 		// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-		<div
-			className={ clsx( 'woocommerce-profiler-plugins-plugin-card', {
-				'is-installed': installed,
-				disabled,
-			} ) }
-			onClick={ ( event ) => {
-				if ( ! disabled ) {
-					onChange( event );
-				}
-			} }
-			data-slug={ slug }
-		>
-			<div className="woocommerce-profiler-plugin-card-top">
-				{ ! installed && (
-					<CheckboxControl
-						id={ `${ pluginKey }-checkbox` }
-						className="core-profiler__checkbox"
-						disabled={ disabled }
-						checked={ checked }
-						onChange={ ( event ) => {
-							if ( ! disabled ) {
-								onChange( event );
+		<label htmlFor={ `${ pluginKey }-checkbox` }>
+			{ /* this label element acts as the catchment area for the checkbox */ }
+			<div
+				className={ clsx( 'woocommerce-profiler-plugins-plugin-card', {
+					'is-installed': installed,
+					disabled,
+				} ) }
+				data-slug={ slug }
+			>
+				<div className="woocommerce-profiler-plugin-card-top">
+					{ ! installed && (
+						<CheckboxControl
+							id={ `${ pluginKey }-checkbox` }
+							className="core-profiler__checkbox"
+							disabled={ disabled }
+							checked={ checked }
+							onChange={ ( event ) => {
+								if ( ! disabled ) {
+									onChange( event );
+								}
+							} }
+						/>
+					) }
+					{ imageUrl ? (
+						<img src={ imageUrl } alt={ pluginKey } />
+					) : null }
+					<div
+						className={ clsx(
+							'woocommerce-profiler-plugins-plugin-card-text-header',
+							{
+								installed,
 							}
-						} }
-						onClick={ ( e ) => e.stopPropagation() }
-					/>
-				) }
-				{ imageUrl ? <img src={ imageUrl } alt={ pluginKey } /> : null }
+						) }
+					>
+						<h3>{ title }</h3>
+						{ installed && (
+							<span>{ __( 'Installed', 'woocommerce' ) }</span>
+						) }
+					</div>
+				</div>
+
 				<div
 					className={ clsx(
-						'woocommerce-profiler-plugins-plugin-card-text-header',
-						{
-							installed,
-						}
+						'woocommerce-profiler-plugins-plugin-card-text',
+						{ 'smaller-margin-left': installed }
 					) }
 				>
-					<label htmlFor={ `${ pluginKey }-checkbox` }>
-						<h3>{ title }</h3>
-					</label>
-					{ installed && (
-						<span>{ __( 'Installed', 'woocommerce' ) }</span>
-					) }
+					<p
+						dangerouslySetInnerHTML={ sanitizeHTML( description ) }
+					/>
+					{ learnMoreLink }
 				</div>
 			</div>
-
-			<div
-				className={ clsx(
-					'woocommerce-profiler-plugins-plugin-card-text',
-					{ 'smaller-margin-left': installed }
-				) }
-			>
-				<p dangerouslySetInnerHTML={ sanitizeHTML( description ) } />
-				{ learnMoreLink }
-			</div>
-		</div>
+		</label>
 	);
 };
 
@@ -126,7 +125,6 @@ PluginCard.LearnMoreLink = ( {
 	<Link
 		onClick={ ( event ) => {
 			if ( typeof onClick === 'function' ) {
-				event.stopPropagation();
 				onClick( event );
 			}
 		} }
