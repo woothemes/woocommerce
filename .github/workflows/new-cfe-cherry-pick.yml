@@ -87,7 +87,7 @@ jobs:
                   script: |
                       const event = ${{ toJSON( github.event ) }}
 
-                      const releaseBranch = '${{ needs.verify.outputs.base_ref }}'
+                      const releaseBranch = process.env.BASE_REF
                       const version = releaseBranch.replace( 'release/', '' )
                       const pr = event.pull_request.number
 
@@ -99,6 +99,8 @@ jobs:
                       core.setOutput( 'pr', pr )
                       core.setOutput( 'version', version )
                       core.setOutput( 'release', releaseBranch )
+              env:
+                BASE_REF: ${{ needs.verify.outputs.base_ref }}
 
     check-release-branch-exists:
         name: Check for existence of release branch
@@ -114,8 +116,11 @@ jobs:
                       await github.request( 'GET /repos/{owner}/{repo}/branches/{branch}', {
                         owner: context.repo.owner,
                         repo: context.repo.repo,
-                        branch: '${{ needs.prep.outputs.release }}',
+                        branch: process.env.RELEASE_BRANCH,
                       } );
+              env:
+                RELEASE_BRANCH: ${{ needs.prep.outputs.release }}
+
     cherry-pick-run:
         name: Run cherry pick tool
         runs-on: ubuntu-20.04
@@ -138,7 +143,10 @@ jobs:
               run: git checkout trunk
 
             - name: Create a cherry pick branch based on trunk branch
-              run: git checkout -b cherry-pick-${{ needs.prep.outputs.version }}/${{ needs.prep.outputs.pr }}
+              run: git checkout -b cherry-pick-$VERSION/$PR
+              env:
+                VERSION: needs.prep.outputs.version
+                PR: needs.prep.outputs.pr
 
             - name: Get commit sha from PR
               id: commit-sha
@@ -148,17 +156,24 @@ jobs:
                       const pr = await github.rest.pulls.get({
                         owner: context.repo.owner,
                         repo: context.repo.repo,
-                        pull_number: '${{ needs.prep.outputs.pr }}'
+                        pull_number: process.env.PR
                       })
 
                       core.setOutput( 'sha', pr.data.merge_commit_sha )
+              env:
+                PR: ${{ needs.prep.outputs.pr }}
 
             - name: Cherry pick
               run: |
-                  git cherry-pick ${{ steps.commit-sha.outputs.sha }} -m1
+                  git cherry-pick $SHA -m1
+              env:
+                SHA: ${{ steps.commit-sha.outputs.sha }}
 
             - name: Push cherry pick branch up
-              run: git push origin cherry-pick-${{ needs.prep.outputs.version }}/${{ needs.prep.outputs.pr }}
+              run: git push origin cherry-pick-$VERSION/$PR
+              env:
+                VERSION: ${{ needs.prep.outputs.version }}
+                PR: ${{ needs.prep.outputs.pr }}
 
             - name: Create the PR for cherry pick branch
               id: cherry-pick-pr
@@ -172,8 +187,8 @@ jobs:
                       const pr = await github.rest.pulls.create({
                         owner: context.repo.owner,
                         repo: context.repo.repo,
-                        title: "Cherry pick ${{ needs.prep.outputs.pr }} into trunk",
-                        head: "cherry-pick-${{ needs.prep.outputs.version }}/${{ needs.prep.outputs.pr }}",
+                        title: "Cherry pick $PR into trunk",
+                        head: "cherry-pick-$VERSION/$PR",
                         base: "trunk",
                         body: cherryPickPRBody
                       })
@@ -189,6 +204,9 @@ jobs:
                         issue_number: pr.data.number,
                         labels: ["metric: code freeze exception"],
                       });
+              env:
+                PR: ${{ needs.prep.outputs.pr }}
+                VERSION: ${{ needs.prep.outputs.version }}
 
             - name: Notify Slack on failure
               if: ${{ failure() && inputs.skipSlackPing != true }}
@@ -217,13 +235,16 @@ jobs:
             - name: Comment on PR about the failed cherry pick
               if: ${{ failure() }}
               run: |
-                  gh pr comment ${{ github.event.pull_request.html_url }} --body "Cherry picking failed for the trunk. Please do it manually. Or debug, what happened and run the workflow again. Workflow link for debugging: https://github.com/${{ github.repository_owner }}/${{ github.repository }}/actions/workflows/new-cfe-cherry-pick.yml"
+                  gh pr comment $HTML_URL --body "Cherry picking failed for the trunk. Please do it manually. Or debug, what happened and run the workflow again. Workflow link for debugging: https://github.com/${{ github.repository_owner }}/${{ github.repository }}/actions/workflows/new-cfe-cherry-pick.yml"
               env:
                 GH_TOKEN: ${{ github.token }}
+                HTML_URL: ${{ github.event.pull_request.html_url }}
 
             - name: Comment on PR about the cherry picked PRs to be merged
               if: ${{ success() }}
               run: |
-                gh pr comment ${{ github.event.pull_request.html_url }} --body "Cherry picking was successful for trunk. Please merge the following PR: ${{ steps.cherry-pick-pr.outputs.cherry-pick-pr }}"
+                gh pr comment $HTML_URL --body "Cherry picking was successful for trunk. Please merge the following PR: $CHERRY_PICK_PR"
               env:
                 GH_TOKEN: ${{ github.token }}
+                HTML_URL: ${{ github.event.pull_request.html_url }}
+                CHERRY_PICK_PR: ${{ steps.cherry-pick-pr.outputs.cherry-pick-pr }}

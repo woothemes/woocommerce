@@ -88,7 +88,7 @@ jobs:
                   script: |
                       const event = ${{ toJSON( github.event ) }}
 
-                      const releaseBranch = '${{ needs.verify.outputs.base_ref }}'
+                      const releaseBranch = process.env.BASE_REF
                       const version = releaseBranch.replace( 'release/', '' )
                       const pr = event.pull_request.number
 
@@ -117,6 +117,8 @@ jobs:
                       core.setOutput('version', version)
                       core.setOutput('release', releaseBranch)
                       core.setOutput('frozenRelease', frozenRelease)
+              env:
+                BASE_REF: ${{ needs.verify.outputs.base_ref }}
 
     check-release-branch-exists:
         name: Check for existence of release branch
@@ -132,8 +134,11 @@ jobs:
                       await github.request( 'GET /repos/{owner}/{repo}/branches/{branch}', {
                         owner: context.repo.owner,
                         repo: context.repo.repo,
-                        branch: '${{ needs.prep.outputs.release }}',
+                        branch: process.env.RELEASE_BRANCH,
                       } );
+              env:
+                RELEASE_BRANCH: ${{ needs.prep.outputs.release }}
+
     check-frozen-release-branch-exists:
         name: Check for existence of frozen release branch
         runs-on: ubuntu-20.04
@@ -148,8 +153,10 @@ jobs:
                       await github.request( 'GET /repos/{owner}/{repo}/branches/{branch}', {
                         owner: context.repo.owner,
                         repo: context.repo.repo,
-                        branch: '${{ needs.prep.outputs.frozenRelease }}',
+                        branch: process.env.FROZEN_RELEASE_BRANCH,
                       } );
+              env:
+                FROZEN_RELEASE_BRANCH: ${{ needs.prep.outputs.frozenRelease }}
 
     cherry-pick-run:
         name: Run cherry pick tool
@@ -167,13 +174,20 @@ jobs:
                   fetch-depth: 0
 
             - name: Git fetch the frozen release branch
-              run: git fetch origin ${{ needs.prep.outputs.frozenRelease }}
+              run: git fetch origin $FROZEN_RELEASE_BRANCH
+              env:
+                FROZEN_RELEASE_BRANCH: ${{ needs.prep.outputs.frozenRelease }}
 
             - name: Checkout frozen release branch
-              run: git checkout ${{ needs.prep.outputs.frozenRelease }}
+              run: git checkout $FROZEN_RELEASE_BRANCH
+              env:
+                FROZEN_RELEASE_BRANCH: ${{ needs.prep.outputs.frozenRelease }}
 
             - name: Create a cherry pick branch
-              run: git checkout -b cherry-pick-${{ needs.prep.outputs.frozenRelease }}/${{ needs.prep.outputs.pr }}
+              run: git checkout -b cherry-pick-$FROZEN_RELEASE_BRANCH/$PR
+              env:
+                FROZEN_RELEASE_BRANCH: ${{ needs.prep.outputs.frozenRelease }}
+                PR: ${{ needs.prep.outputs.pr }}
 
             - name: Get commit sha from PR
               id: commit-sha
@@ -183,33 +197,40 @@ jobs:
                       const pr = await github.rest.pulls.get({
                         owner: context.repo.owner,
                         repo: context.repo.repo,
-                        pull_number: '${{ needs.prep.outputs.pr }}'
+                        pull_number: process.env.PR
                       })
 
                       core.setOutput( 'sha', pr.data.merge_commit_sha )
+              env:
+                PR: ${{ needs.prep.outputs.pr }}
 
             - name: Cherry pick
               run: |
-                  git cherry-pick ${{ steps.commit-sha.outputs.sha }} -m1
+                  git cherry-pick $SHA -m1
+              env:
+                SHA: ${{ steps.commit-sha.outputs.sha }}
 
             - name: Push cherry pick branch up
-              run: git push origin cherry-pick-${{ needs.prep.outputs.frozenRelease }}/${{ needs.prep.outputs.pr }}
+              run: git push origin cherry-pick-$FROZEN_RELEASE_BRANCH/$PR
+              env:
+                FROZEN_RELEASE_BRANCH: ${{ needs.prep.outputs.frozenRelease }}
+                PR: ${{ needs.prep.outputs.pr }}
 
             - name: Create the PR for cherry pick branch
               id: cherry-pick-pr
               uses: actions/github-script@v7
               with:
                   script: |
-                      let cherryPickPRBody = "This PR cherry-picks the following PRs into the frozen release branch: " + "${{ needs.prep.outputs.frozenRelease }}";
+                      let cherryPickPRBody = "This PR cherry-picks the following PRs into the frozen release branch: " + "$FROZEN_RELEASE_BRANCH";
 
-                      cherryPickPRBody = `${cherryPickPRBody}` + "\n" + `* #${{ needs.prep.outputs.pr }}` + "\n";
+                      cherryPickPRBody = `${cherryPickPRBody}` + "\n" + `* #$PR` + "\n";
 
                       const pr = await github.rest.pulls.create({
                         owner: context.repo.owner,
                         repo: context.repo.repo,
-                        title: "Cherry pick ${{ needs.prep.outputs.pr }} into frozen release: " + "${{ needs.prep.outputs.frozenRelease }}",
-                        head: "cherry-pick-${{ needs.prep.outputs.frozenRelease }}/${{ needs.prep.outputs.pr }}",
-                        base: "${{ needs.prep.outputs.frozenRelease }}",
+                        title: "Cherry pick $PR into frozen release: " + "$FROZEN_RELEASE_BRANCH",
+                        head: "cherry-pick-$FROZEN_RELEASE_BRANCH/$PR",
+                        base: "$FROZEN_RELEASE_BRANCH",
                         body: cherryPickPRBody
                       })
 
@@ -224,6 +245,9 @@ jobs:
                         issue_number: pr.data.number,
                         labels: ["metric: point release request"],
                       });
+              env:
+                PR: ${{ needs.prep.outputs.pr }}
+                FROZEN_RELEASE_BRANCH: ${{ needs.prep.outputs.frozenRelease }}
 
             - name: Notify Slack on failure
               if: ${{ failure() && inputs.skipSlackPing != true }}
@@ -252,13 +276,18 @@ jobs:
             - name: Comment on PR about the failed cherry pick
               if: ${{ failure() }}
               run: |
-                  gh pr comment ${{ github.event.pull_request.html_url }} --body "Cherry picking failed for the frozen release: ${{ needs.prep.outputs.frozenRelease }}. Please do it manually. Or debug, what happened and run the workflow again. Workflow link for debugging:https://github.com/${{ github.repository_owner }}/${{ github.repository }}/actions/workflows/new-prr-cherry-pick.yml"
+                  gh pr comment $HTML_URL --body "Cherry picking failed for the frozen release: $FROZEN_RELEASE_BRANCH. Please do it manually. Or debug, what happened and run the workflow again. Workflow link for debugging:https://github.com/${{ github.repository_owner }}/${{ github.repository }}/actions/workflows/new-prr-cherry-pick.yml"
               env:
                 GH_TOKEN: ${{ github.token }}
+                HTML_URL: ${{ github.event.pull_request.html_url }}
+                FROZEN_RELEASE_BRANCH: ${{ needs.prep.outputs.frozenRelease }}
 
             - name: Comment on PR about the cherry picked PRs to be merged
               if: ${{ success() }}
               run: |
-                gh pr comment ${{ github.event.pull_request.html_url }} --body "Cherry picking was successful for frozen release: ${{ needs.prep.outputs.frozenRelease }}. Please merge the following PR: ${{ steps.cherry-pick-pr.outputs.cherry-pick-pr }}"
+                gh pr comment $HTML_URL --body "Cherry picking was successful for frozen release: $FROZEN_RELEASE_BRANCH. Please merge the following PR: $CHERRY_PICK_PR"
               env:
                 GH_TOKEN: ${{ github.token }}
+                HTML_URL: ${{ github.event.pull_request.html_url }}
+                FROZEN_RELEASE_BRANCH: ${{ needs.prep.outputs.frozenRelease }}
+                CHERRY_PICK_PR: ${{ steps.cherry-pick-pr.outputs.cherry-pick-pr }}
