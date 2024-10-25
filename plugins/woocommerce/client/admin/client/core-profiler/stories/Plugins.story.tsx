@@ -2,11 +2,17 @@
  * Internal dependencies
  */
 import { Plugins } from '../pages/Plugins/Plugins';
+import { NoPermissionsError } from '../pages/Plugins/NoPermissions';
 import { PluginsTermsOfService } from '../pages/Plugins/components/plugin-terms-of-service/PluginsTermsOfService';
 import { PluginErrorBanner } from '../pages/Plugins/components/plugin-error-banner/PluginErrorBanner';
 
 import '../style.scss';
 import { WithSetupWizardLayout } from './WithSetupWizardLayout';
+import {
+	PluginsInstallationRequestedEvent,
+	PluginsPageSkippedEvent,
+	PluginsLearnMoreLinkClickedEvent,
+} from '../events';
 
 const plugins = [
 	{
@@ -107,6 +113,16 @@ export const InstallationErrorBanner = () => (
 			onClick={ () => {} }
 		/>
 	</div>
+);
+
+export const InstallationNoPermissionError = () => (
+	<NoPermissionsError
+		sendEvent={ () => {} }
+		navigationProgress={ 80 }
+		context={ {
+			pluginsAvailable: plugins,
+		} }
+	/>
 );
 
 export default {
