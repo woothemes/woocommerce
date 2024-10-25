@@ -91,27 +91,29 @@ jobs:
             }
 
       - name: Add label 'cherry pick to trunk' to PR
-        run: |
-          OWNER="${{ github.event.repository.owner.login }}"
-          REPO="${{ github.event.repository.name }}"
-          gh pr edit ${{ steps.extract-pr.outputs.PR_NUMBER }} --add-label "cherry pick to trunk" --repo $OWNER/$REPO
         env:
+          OWNER: ${{ github.event.repository.owner.login }}
+          REPO: ${{ github.event.repository.name }}
+          PR_NUMBER: ${{ steps.extract-pr.outputs.PR_NUMBER }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr edit "$PR_NUMBER" --add-label "cherry pick to trunk" --repo "$OWNER/$REPO"
 
       - name: Apply Milestone to the Issue
-        run: |
-          MILESTONE="$RELEASE_NUMBER.0"
-          echo "Applying milestone: $MILESTONE"
-          gh issue edit ${{ github.event.issue.html_url }} --milestone "$MILESTONE"
         env:
-          RELEASE_NUMBER: ${{ needs.prep.outputs.release_number }}
+          MILESTONE: ${{ needs.prep.outputs.release_number }}.0
+          ISSUE_URL: ${{ github.event.issue.html_url }}
           GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "Applying milestone: $MILESTONE"
+          gh issue edit "$ISSUE_URL" --milestone "$MILESTONE"
 
       - name: Comment issue has been approved
-        run: |
-          gh issue comment ${{ github.event.issue.html_url }} --body "This request has been approved. Please merge the PR to release branch."
         env:
+          ISSUE_URL: ${{ github.event.issue.html_url }}
           GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue comment "$ISSUE_URL" --body "This request has been approved. Please merge the PR to release branch."
 
       - name: Notify Slack
         uses: archive/github-actions-slack@v2.0.0
@@ -135,18 +137,20 @@ jobs:
       issues: write
     steps:
       - name: Apply Milestone to the Issue
-        run: |
-          MILESTONE="$RELEASE_NUMBER.0"
-          echo "Applying milestone: $MILESTONE"
-          gh issue edit ${{ github.event.issue.html_url }} --milestone "$MILESTONE"
         env:
-          RELEASE_NUMBER: ${{ needs.prep.outputs.release_number }}
+          MILESTONE: ${{ needs.prep.outputs.release_number }}.0
+          ISSUE_URL: ${{ github.event.issue.html_url }}
           GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "Applying milestone: $MILESTONE"
+          gh issue edit "$ISSUE_URL" --milestone "$MILESTONE"
 
       - name: Close CFE Issue
-        run: gh issue close --comment "Closing issue as CFE is rejected - ${{ github.event.issue.html_url }}" "${{ github.event.issue.html_url }}. Please switch the base to trunk and merge."
         env:
+          ISSUE_URL: ${{ github.event.issue.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue close --comment "Closing issue as CFE is rejected - $ISSUE_URL. Please switch the base to trunk and merge." "$ISSUE_URL"
 
       - name: Notify Slack
         uses: archive/github-actions-slack@v2.0.0
