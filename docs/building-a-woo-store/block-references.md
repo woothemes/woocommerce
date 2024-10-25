@@ -138,7 +138,7 @@ Display related products.
 -	**Category:** woocommerce
 -   **Ancestor:** 
 -   **Parent:** 
--	**Supports:** align, ~~reusable~~
+-	**Supports:** align, ~~inserter~~, ~~reusable~~
 -	**Attributes:** 
 
 ## On-Sale Badge - woocommerce/product-sale-badge
@@ -1170,7 +1170,7 @@ Display a list of filter options.
 
 -	**Name:** woocommerce/product-filter-checkbox-list
 -	**Category:** woocommerce
--   **Ancestor:** woocommerce/product-filter-attribute
+-   **Ancestor:** woocommerce/product-filter-attribute,woocommerce/product-filter-status
 -   **Parent:** 
 -	**Supports:** color (background, text, ~~enableContrastChecker~~)
 -	**Attributes:** customOptionElement, customOptionElementBorder, customOptionElementSelected, optionElement, optionElementBorder, optionElementSelected
@@ -1181,7 +1181,7 @@ Display filter options as chips.
 
 -	**Name:** woocommerce/product-filter-chips
 -	**Category:** woocommerce
--   **Ancestor:** woocommerce/product-filter-attribute
+-   **Ancestor:** woocommerce/product-filter-attribute,woocommerce/product-filter-status
 -   **Parent:** 
 -	**Supports:** 
 -	**Attributes:** chipBackground, chipBorder, chipText, customChipBackground, customChipBorder, customChipText, customSelectedChipBackground, customSelectedChipBorder, customSelectedChipText, selectedChipBackground, selectedChipBorder, selectedChipText
@@ -1241,16 +1241,16 @@ Enable customers to filter the product collection by rating.
 -	**Supports:** color (text, ~~background~~), interactivity, ~~inserter~~
 -	**Attributes:** className, displayStyle, isPreview, selectType, showCounts
 
-## Filter Options - woocommerce/product-filter-stock-status
+## Status (Experimental) - woocommerce/product-filter-status
 
-Enable customers to filter the product collection by stock status.
+Let shoppers filter products by choosing stock status.
 
--	**Name:** woocommerce/product-filter-stock-status
+-	**Name:** woocommerce/product-filter-status
 -	**Category:** woocommerce
--   **Ancestor:** woocommerce/product-filter
+-   **Ancestor:** woocommerce/product-filters
 -   **Parent:** 
--	**Supports:** color (text, ~~background~~), interactivity, ~~html~~, ~~inserter~~
--	**Attributes:** className, displayStyle, isPreview, selectType, showCounts
+-	**Supports:** color (text, ~~background~~), interactivity, spacing (blockGap, margin, padding), typography (fontSize, lineHeight), ~~html~~
+-	**Attributes:** clearButton, displayStyle, hideEmpty, isPreview, showCounts
 
 ## Product Gallery (Beta) - woocommerce/product-gallery
 
@@ -1370,7 +1370,7 @@ Display products from your store in a grid layout.
 -	**Category:** woocommerce
 -   **Ancestor:** 
 -   **Parent:** 
--	**Supports:** align (full, wide), ~~html~~, ~~multiple~~
+-	**Supports:** align (full, wide), ~~html~~, ~~inserter~~, ~~multiple~~
 -	**Attributes:** alignButtons, columns, contentVisibility, isPreview, layoutConfig, orderby, rows
 
 ## Products by Attribute - woocommerce/products-by-attribute
