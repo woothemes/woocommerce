@@ -123,8 +123,8 @@ final class ProductFilterPrice extends AbstractBlock {
 		$price_range = $this->get_filtered_price( $block );
 		$min_range   = $price_range['min_price'] ?? 0;
 		$max_range   = $price_range['max_price'] ?? 0;
-		$min_price   = intval( get_query_var( self::MIN_PRICE_QUERY_VAR ) ) ?: $min_range;
-		$max_price   = intval( get_query_var( self::MAX_PRICE_QUERY_VAR ) ) ?: $max_range;
+		$min_price   = intval( get_query_var( self::MIN_PRICE_QUERY_VAR, $min_range ) );
+		$max_price   = intval( get_query_var( self::MAX_PRICE_QUERY_VAR, $max_range ) );
 
 		$filter_context = array(
 			'price'   => array(

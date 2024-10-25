@@ -5,6 +5,8 @@
  * @package Automattic\WooCommerce\Blocks\BlockTypes
  */
 
+declare( strict_types = 1 );
+
 namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 /**
