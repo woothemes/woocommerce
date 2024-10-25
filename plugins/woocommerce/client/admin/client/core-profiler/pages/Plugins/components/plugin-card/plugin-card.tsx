@@ -57,7 +57,6 @@ export const PluginCard = ( {
 		}
 	} );
 	return (
-		// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
 		<div
 			className={ clsx( 'woocommerce-profiler-plugins-plugin-card', {
 				'is-installed': installed,
