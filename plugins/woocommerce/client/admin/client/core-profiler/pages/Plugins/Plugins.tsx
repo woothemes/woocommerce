@@ -48,7 +48,6 @@ export const computePluginsSelection = (
 	availablePlugins: Extension[],
 	selectedPlugins: Set< Extension >
 ) => {
-	// todo: add tests
 	const selectedPluginSlugs = Array.from( selectedPlugins ).map( ( plugin ) =>
 		plugin.key.replace( ':alt', '' )
 	);
