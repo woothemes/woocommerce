@@ -20,17 +20,14 @@ class Init extends RemoteSpecsEngine {
 	 */
 	public function __construct() {
 		/* phpcs:disable WordPress.Security.NonceVerification */
-		$is_payments_page   = isset( $_GET['page'] ) && 'wc-settings' === $_GET['page'] && isset( $_GET['tab'] ) && 'checkout' === $_GET['tab'];
-		$is_wc_admin_page   = isset( $_GET['page'] ) && 'wc-admin' === $_GET['page'];
-		$is_payments_task   = $is_wc_admin_page && isset( $_GET['task'] ) && 'payments' === $_GET['task'];
-		$is_payment_welcome = $is_wc_admin_page && isset( $_GET['path'] ) && '/wc-pay-welcome-page' === $_GET['path'];
-		/* phpcs:enable */
+		$is_payments_setting_page = isset( $_GET['page'] ) && 'wc-settings' === $_GET['page'] && isset( $_GET['tab'] ) && 'checkout' === $_GET['tab'];
+		$is_wc_admin_page         = isset( $_GET['page'] ) && 'wc-admin' === $_GET['page'];
 
-		if ( $is_payments_page || $is_payments_task || $is_payment_welcome ) {
+		if ( $is_payments_setting_page || $is_wc_admin_page ) {
 			add_filter( 'woocommerce_admin_shared_settings', array( $this, 'add_component_settings' ) );
 		}
 
-		if ( ! wp_is_json_request() && ! $is_payments_page ) {
+		if ( ! wp_is_json_request() && ! $is_payments_setting_page ) {
 			return;
 		}
 
