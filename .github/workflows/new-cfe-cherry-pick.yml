@@ -145,8 +145,8 @@ jobs:
             - name: Create a cherry pick branch based on trunk branch
               run: git checkout -b cherry-pick-$VERSION/$PR
               env:
-                VERSION: needs.prep.outputs.version
-                PR: needs.prep.outputs.pr
+                VERSION: ${{ needs.prep.outputs.version }}
+                PR: ${{ needs.prep.outputs.pr }}
 
             - name: Get commit sha from PR
               id: commit-sha
@@ -217,7 +217,7 @@ jobs:
                   slack-text: |
                       :warning-8c: CFE cherry pick failed for '${{ needs.prep.outputs.release }}'
 
-                      An attempt to cherry pick PR(s) into outgoing trunk for '${{ needs.prep.outputs.release }}' has failed. This could be due to a merge conflict or something else that requires manual attention. Please check: https://github.com/woocommerce/woocommerce/pull/${{ needs.prep.outputs.pr }}
+                      An attempt to cherry pick PR(s) into outgoing trunk for `${{ needs.prep.outputs.release }}` has failed. This could be due to a merge conflict or something else that requires manual attention. Please check: https://github.com/woocommerce/woocommerce/pull/${{ needs.prep.outputs.pr }}
 
             - name: Notify Slack on success
               if: ${{ success() && inputs.skipSlackPing != true }}
@@ -226,9 +226,9 @@ jobs:
                   slack-bot-user-oauth-access-token: ${{ secrets.CODE_FREEZE_BOT_TOKEN }}
                   slack-channel: ${{ secrets.WOO_CORE_RELESES_DAILY_SLACK_CHANNEL }}
                   slack-text: |
-                      :info: CFE cherry pick succeeded for '${{ needs.prep.outputs.release }}'
+                      :info: CFE cherry pick succeeded for `${{ needs.prep.outputs.release }}`
 
-                      Please merge the following PR :pr: into trunk:
+                      Please merge the following PR :pr: into `trunk`:
 
                       ${{ steps.cherry-pick-pr.outputs.cherry-pick-pr }}
 

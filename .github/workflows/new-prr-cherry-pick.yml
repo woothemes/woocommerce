@@ -221,25 +221,27 @@ jobs:
               uses: actions/github-script@v7
               with:
                   script: |
-                      let cherryPickPRBody = "This PR cherry-picks the following PRs into the frozen release branch: " + "$FROZEN_RELEASE_BRANCH";
+                      const frozenReleaseBranch = process.env.FROZEN_RELEASE_BRANCH;
+                      const prNumber = process.env.PR;
 
-                      cherryPickPRBody = `${cherryPickPRBody}` + "\n" + `* #$PR` + "\n";
+                      let cherryPickPRBody = `This PR cherry-picks the following PRs into the frozen release branch: ${frozenReleaseBranch}`;
+
+                      cherryPickPRBody = `${cherryPickPRBody}\n* #${prNumber}\n`;
 
                       const pr = await github.rest.pulls.create({
                         owner: context.repo.owner,
                         repo: context.repo.repo,
-                        title: "Cherry pick $PR into frozen release: " + "$FROZEN_RELEASE_BRANCH",
-                        head: "cherry-pick-$FROZEN_RELEASE_BRANCH/$PR",
-                        base: "$FROZEN_RELEASE_BRANCH",
+                        title: `Cherry pick ${prNumber} into frozen release: ${frozenReleaseBranch}`,
+                        head: `cherry-pick-${frozenReleaseBranch}/${prNumber}`,
+                        base: frozenReleaseBranch,
                         body: cherryPickPRBody
-                      })
+                      });
 
-                      core.setOutput( 'cherry-pick-pr', pr.data.html_url )
-                      console.log( 'cherry-pick-pr URL:', pr.data.html_url )
+                      core.setOutput('cherry-pick-pr', pr.data.html_url);
+                      console.log('cherry-pick-pr URL:', pr.data.html_url);
 
                       // label PR
-
-                      const label = await github.rest.issues.addLabels({
+                      await github.rest.issues.addLabels({
                         owner: context.repo.owner,
                         repo: context.repo.repo,
                         issue_number: pr.data.number,
@@ -256,9 +258,9 @@ jobs:
                   slack-bot-user-oauth-access-token: ${{ secrets.CODE_FREEZE_BOT_TOKEN }}
                   slack-channel: ${{ secrets.WOO_CORE_RELESES_DAILY_SLACK_CHANNEL }}
                   slack-text: |
-                      :warning-8c: Point release request cherry pick failed for '${{ needs.prep.outputs.release }}'
+                      :warning-8c: Point release request cherry pick failed for `${{ needs.prep.outputs.release }}`
 
-                      An attempt to cherry pick PR(s) into outgoing '${{ needs.prep.outputs.frozenRelease }}' for '${{ needs.prep.outputs.release }}' has failed. This could be due to a merge conflict or something else that requires manual attention. Please check: https://github.com/woocommerce/woocommerce/pull/${{ needs.prep.outputs.pr }}
+                      An attempt to cherry pick PR(s) into outgoing `${{ needs.prep.outputs.frozenRelease }}` for  `${{ needs.prep.outputs.release }}` has failed. This could be due to a merge conflict or something else that requires manual attention. Please check: https://github.com/woocommerce/woocommerce/pull/${{ needs.prep.outputs.pr }}
 
             - name: Notify Slack on success
               if: ${{ success() && inputs.skipSlackPing != true }}
@@ -267,9 +269,9 @@ jobs:
                   slack-bot-user-oauth-access-token: ${{ secrets.CODE_FREEZE_BOT_TOKEN }}
                   slack-channel: ${{ secrets.WOO_CORE_RELESES_DAILY_SLACK_CHANNEL }}
                   slack-text: |
-                      :info: Point release request cherry pick succeeded for '${{ needs.prep.outputs.release }}'
+                      :info: Point release request cherry pick succeeded for `${{ needs.prep.outputs.release }}`
 
-                      Please merge the following PR :pr: into '${{ needs.prep.outputs.frozenRelease }}':
+                      Please merge the following PR :pr: into `${{ needs.prep.outputs.frozenRelease }}`:
 
                       ${{ steps.cherry-pick-pr.outputs.cherry-pick-pr }}
 
