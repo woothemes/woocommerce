@@ -123,7 +123,7 @@ class RuntimeContainerTest extends \WC_Unit_Test_Case {
 	 */
 	public function test_cant_use_untyped_init_arguments() {
 		$this->expectException( ContainerException::class );
-		$this->expectExceptionMessage( "Error resolving '" . ClassWithUntypedInjectionMethodArgument::class . "': argument '\$some_argument' is not a named argument." );
+		$this->expectExceptionMessage( "Error resolving '" . ClassWithUntypedInjectionMethodArgument::class . "': argument '\$some_argument' doesn't have a type declaration." );
 
 		$this->sut->get( ClassWithUntypedInjectionMethodArgument::class );
 	}

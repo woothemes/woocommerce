@@ -145,7 +145,7 @@ class RuntimeContainer {
 			function ( \ReflectionParameter $arg ) use ( $class_name, &$resolve_chain ) {
 				$arg_type = $arg->getType();
 				if ( ! ( $arg_type instanceof \ReflectionNamedType ) ) {
-					throw new ContainerException( "Error resolving '$class_name': argument '\${$arg->getName()}' is not a named argument." );
+					throw new ContainerException( "Error resolving '$class_name': argument '\${$arg->getName()}' doesn't have a type declaration." );
 				}
 				if ( $arg_type->isBuiltin() ) {
 					throw new ContainerException( "Error resolving '$class_name': argument '\${$arg->getName()}' is not of a class type." );
