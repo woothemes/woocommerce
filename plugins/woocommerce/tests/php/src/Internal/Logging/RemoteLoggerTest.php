@@ -1,7 +1,6 @@
 <?php
 declare( strict_types = 1 );
 
-
 // phpcs:disable Universal.Namespaces.DisallowCurlyBraceSyntax.Forbidden -- need to override filter_input
 // phpcs:disable Universal.Files.SeparateFunctionsFromOO.Mixed -- same
 // phpcs:disable Universal.Namespaces.OneDeclarationPerFile.MultipleFound -- same
@@ -9,6 +8,7 @@ namespace Automattic\WooCommerce\Tests\Internal\Logging {
 
 	use Automattic\Jetpack\Constants;
 	use Automattic\WooCommerce\Internal\Logging\RemoteLogger;
+	use Automattic\WooCommerce\Utilities\StringUtil;
 	use WC_Rate_Limiter;
 	use WC_Cache_Helper;
 	/**
@@ -499,41 +499,63 @@ namespace Automattic\WooCommerce\Tests\Internal\Logging {
 		 * @return array[] Test cases.
 		 */
 		public function is_third_party_error_provider() {
+			$wc_plugin_dir   = StringUtil::normalize_local_path_slashes( WC_ABSPATH );
+			$wp_includes_dir = StringUtil::normalize_local_path_slashes( ABSPATH . WPINC );
+			$wp_admin_dir    = StringUtil::normalize_local_path_slashes( ABSPATH . 'wp-admin' );
+
 			return array(
-				array( 'Fatal error in ' . WC_ABSPATH . 'file.php', array(), false ),
-				array( 'Fatal error in /wp-content/file.php', array(), false ),
-				array( 'Fatal error in /wp-content/file.php', array( 'source' => 'fatal-errors' ), false ),
-				array(
-					'Fatal error in /wp-content/plugins/3rd-plugin/file.php',
+				'WooCommerce error message' => array(
+					'Error in ' . $wc_plugin_dir . 'includes/class-wc-cart.php',
 					array(
 						'source'    => 'fatal-errors',
-						'backtrace' => array( '/wp-content/plugins/3rd-plugin/file.php', WC_ABSPATH . 'file.php' ),
+						'backtrace' => array(),
 					),
 					false,
 				),
-				array(
-					'Fatal error in /wp-content/plugins/woocommerce-3rd-plugin/file.php',
+				'Third-party error message' => array(
+					'Error in /plugins/some-other-plugin/file.php',
 					array(
 						'source'    => 'fatal-errors',
-						'backtrace' => array( WP_PLUGIN_DIR . 'woocommerce-3rd-plugin/file.php' ),
+						'backtrace' => array(),
 					),
 					true,
 				),
-				array(
-					'Fatal error in /wp-content/plugins/3rd-plugin/file.php',
+				'WooCommerce backtrace'     => array(
+					'Some error message',
 					array(
 						'source'    => 'fatal-errors',
-						'backtrace' => array( WP_PLUGIN_DIR . '3rd-plugin/file.php' ),
+						'backtrace' => array(
+							$wp_includes_dir . 'functions.php',
+							$wc_plugin_dir . 'includes/class-wc-cart.php',
+							'/plugins/some-other-plugin/file.php',
+						),
+					),
+					false,
+				),
+				'Third-party backtrace'     => array(
+					'Some error message',
+					array(
+						'source'    => 'fatal-errors',
+						'backtrace' => array(
+							$wp_includes_dir . 'functions.php',
+							$wp_admin_dir . 'admin.php',
+							'/plugins/some-other-plugin/file.php',
+						),
 					),
 					true,
 				),
-				array(
-					'Fatal error in /wp-content/plugins/3rd-plugin/file.php',
+				'Non-fatal-errors source'   => array(
+					'Some error message',
 					array(
-						'source'    => 'fatal-errors',
-						'backtrace' => array( array( 'file' => WP_PLUGIN_DIR . '3rd-plugin/file.php' ) ),
+						'source'    => 'other-source',
+						'backtrace' => array(),
 					),
-					true,
+					false,
+				),
+				'Missing backtrace'         => array(
+					'Some error message',
+					array( 'source' => 'fatal-errors' ),
+					false,
 				),
 			);
 		}
