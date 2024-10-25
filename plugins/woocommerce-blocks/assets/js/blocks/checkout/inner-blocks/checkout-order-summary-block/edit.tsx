@@ -12,6 +12,8 @@ import { useId, useState } from '@wordpress/element';
 import { Icon } from '@wordpress/components';
 import { chevronDown, chevronUp } from '@wordpress/icons';
 import clsx from 'clsx';
+import { FormattedMonetaryAmount } from '@woocommerce/blocks-components';
+import { useContainerWidthContext } from '@woocommerce/base-context';
 
 /**
  * Internal dependencies
@@ -21,8 +23,6 @@ import {
 	getAllowedBlocks,
 } from '../../../cart-checkout-shared';
 import { OrderMetaSlotFill } from './slotfills';
-import { useContainerWidthContext } from '../../../../base/context';
-import { FormattedMonetaryAmount } from '../../../../../../packages/components';
 
 export const Edit = ( { clientId }: { clientId: string } ): JSX.Element => {
 	const blockProps = useBlockProps();
