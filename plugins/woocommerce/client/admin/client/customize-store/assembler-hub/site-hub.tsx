@@ -59,7 +59,7 @@ export const SiteHub = forwardRef(
 			<motion.div
 				ref={ ref }
 				{ ...restProps }
-				className={ clsx( 'woocommerce-cys-site-hub', restProps.className ) }
+				className={ clsx( 'woocommerce-customize-store__site-hub', restProps.className ) }
 				initial={ false }
 				transition={ {
 					type: 'tween',
@@ -70,16 +70,16 @@ export const SiteHub = forwardRef(
 				<HStack
 					justify="space-between"
 					alignment="center"
-					className="woocommerce-cys-site-hub__container"
+					className="woocommerce-customize-store__site-hub__container"
 				>
 					<HStack
 						justify="flex-start"
-						className="woocommerce-cys-site-hub__text-content"
+						className="woocommerce-customize-store__site-hub__text-content"
 						spacing="0"
 					>
 						<div
 							className={ clsx(
-								'woocommerce-cys-site-hub__view-mode-toggle-container',
+								'woocommerce-customize-store__site-hub__view-mode-toggle-container',
 								{
 									'has-transparent-background': isTransparent,
 								}
@@ -96,10 +96,10 @@ export const SiteHub = forwardRef(
 								{ isEntrepreneurFlow() ? (
 									<WordPressLogo
 										size={ 24 }
-										className="woocommerce-cys-wordpress-header-logo"
+										className="woocommerce-customize-store__wordpress-header-logo"
 									/>
 								) : (
-									<SiteIcon className="woocommerce-cys-layout__view-mode-toggle-icon" />
+									<SiteIcon className="woocommerce-customize-store__layout__view-mode-toggle-icon" />
 								) }
 							</Link>
 						</div>
@@ -115,7 +115,7 @@ export const SiteHub = forwardRef(
 										opacity: 0,
 									} }
 									className={ clsx(
-										'woocommerce-cys-site-hub__site-title',
+										'woocommerce-customize-store__site-hub__site-title',
 										{ 'is-transparent': isTransparent }
 									) }
 									transition={ {

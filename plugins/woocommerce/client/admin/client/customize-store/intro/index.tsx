@@ -404,7 +404,7 @@ export const Intro: CustomizeStoreComponent = ( { sendEvent, context } ) => {
 					{ showError && (
 						<Notice
 							onRemove={ () => setShowError( false ) }
-							className="woocommerce-cys-design-with-ai__error-notice"
+							className="woocommerce-customize-store__design-with-ai__error-notice"
 							status="error"
 						>
 							{ interpolateComponents( {

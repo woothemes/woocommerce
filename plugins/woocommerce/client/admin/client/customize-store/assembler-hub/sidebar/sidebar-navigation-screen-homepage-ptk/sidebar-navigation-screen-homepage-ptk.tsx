@@ -193,13 +193,13 @@ export const SidebarNavigationScreenHomepagePTK = ( {
 			description={ sidebarMessage }
 			content={
 				<div className="woocommerce-customize-store__sidebar-homepage-content">
-					<div className="woocommerce-cys-sidebar-navigation-screen-patterns__group-homepage">
+					<div className="woocommerce-customize-store__sidebar-navigation-screen-patterns__group-homepage">
 						{ Object.entries( PATTERN_CATEGORIES ).map(
 							( [ categoryKey, { label } ], index ) => (
 								<ItemGroup key={ index }>
 									<NavigatorButton
 										className={ clsx( {
-											'woocommerce-cys-sidebar-navigation-screen-patterns__group-homepage-item--active':
+											'woocommerce-customize-store__sidebar-navigation-screen-patterns__group-homepage-item--active':
 												isActiveElement(
 													path,
 													categoryKey
@@ -223,13 +223,13 @@ export const SidebarNavigationScreenHomepagePTK = ( {
 										as={ SidebarNavigationItem }
 										withChevron
 									>
-										<div className="woocommerce-cys-sidebar-navigation-screen-patterns__group-homepage-label-container">
+										<div className="woocommerce-customize-store__sidebar-navigation-screen-patterns__group-homepage-label-container">
 											<span>{ capitalize( label ) }</span>
 											{ blocks.length > 0 &&
 												numberOfPatternsAdded[
 													categoryKey
 												] > 0 && (
-													<span className="woocommerce-cys-sidebar-navigation-screen-patterns__group-homepage-number-pattern">
+													<span className="woocommerce-customize-store__sidebar-navigation-screen-patterns__group-homepage-number-pattern">
 														{
 															numberOfPatternsAdded[
 																categoryKey

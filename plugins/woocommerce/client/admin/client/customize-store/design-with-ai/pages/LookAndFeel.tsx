@@ -77,7 +77,7 @@ export const LookAndFeel = ( {
 			{ isEntrepreneurFlow() && (
 				<WordPressLogo
 					size={ 24 }
-					className="woocommerce-cys-wordpress-header-logo"
+					className="woocommerce-customize-store__wordpress-header-logo"
 				/>
 			) }
 			{ ! isEntrepreneurFlow() && (
@@ -105,8 +105,8 @@ export const LookAndFeel = ( {
 					} }
 				/>
 			) }
-			<div className="woocommerce-cys-design-with-ai-look-and-feel woocommerce-cys-layout">
-				<div className="woocommerce-cys-page">
+			<div className="woocommerce-customize-store__design-with-ai-look-and-feel woocommerce-customize-store__layout">
+				<div className="woocommerce-customize-store__page">
 					<h1>
 						{ __(
 							'How would you like your store to look?',

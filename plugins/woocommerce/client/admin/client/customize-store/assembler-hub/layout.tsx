@@ -159,7 +159,7 @@ export const Layout = () => {
 					>
 						<div className={ clsx( 'woocommerce-customize-store__layout' ) }>
 							<motion.div
-								className="woocommerce-cys-layout__header-container"
+								className="woocommerce-customize-store__layout__header-container"
 								animate={ 'view' }
 							>
 								<SiteHub
@@ -167,7 +167,7 @@ export const Layout = () => {
 										view: { x: 0 },
 									} }
 									isTransparent={ false }
-									className="woocommerce-cys-layout__hub"
+									className="woocommerce-customize-store__layout__hub"
 								/>
 							</motion.div>
 

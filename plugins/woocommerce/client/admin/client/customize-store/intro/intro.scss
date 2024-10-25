@@ -16,13 +16,13 @@
 	padding: 1rem;
 	width: 100%;
 
-	.woocommerce-cys-site-hub__view-mode-toggle-container {
+	.woocommerce-customize-store__site-hub__view-mode-toggle-container {
 		background-color: transparent;
 		height: 32px;
 		width: 32px;
 	}
 
-	.woocommerce-cys-site-icon {
+	.woocommerce-customize-store__site-icon {
 		line-height: 0;
 
 		svg {
@@ -31,7 +31,7 @@
 		}
 	}
 
-	.woocommerce-cys-site-hub__site-title {
+	.woocommerce-customize-store__site-hub__site-title {
 		font-size: 0.8125rem;
 		font-weight: 500;
 		margin: 0;
@@ -101,7 +101,7 @@
 		}
 	}
 
-	.woocommerce-cys-design-with-ai__error-notice {
+	.woocommerce-customize-store__design-with-ai__error-notice {
 		margin: 0 0 24px;
 	}
 }

@@ -1,4 +1,4 @@
-.woocommerce-cys-choice-container {
+.woocommerce-customize-store__choice-container {
 	display: flex;
 	flex-direction: column;
 	padding: 16px;
@@ -19,11 +19,11 @@
 	}
 }
 
-.woocommerce-cys-choice {
+.woocommerce-customize-store__choice {
 	display: flex;
 	flex-direction: column;
 
-	.woocommerce-cys-choice-input {
+	.woocommerce-customize-store__choice-input {
 		opacity: 0;
 		position: absolute;
 	}

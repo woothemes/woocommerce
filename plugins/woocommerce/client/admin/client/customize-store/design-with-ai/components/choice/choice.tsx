@@ -35,7 +35,7 @@ export const Choice = ( {
 	return (
 		<div
 			role="radio"
-			className={ clsx( 'woocommerce-cys-choice-container', className ) }
+			className={ clsx( 'woocommerce-customize-store__choice-container', className ) }
 			onClick={ changeHandler }
 			onKeyDown={ ( e ) => {
 				if ( e.key === 'Enter' ) {
@@ -45,9 +45,9 @@ export const Choice = ( {
 			data-selected={ selected ? selected : null }
 			tabIndex={ 0 }
 		>
-			<div className="woocommerce-cys-choice">
+			<div className="woocommerce-customize-store__choice">
 				<input
-					className="woocommerce-cys-choice-input"
+					className="woocommerce-customize-store__choice-input"
 					id={ inputId }
 					name={ name }
 					type="radio"

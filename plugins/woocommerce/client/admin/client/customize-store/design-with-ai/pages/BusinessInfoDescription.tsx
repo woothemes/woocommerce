@@ -50,7 +50,7 @@ export const BusinessInfoDescription = ( {
 			{ isEntrepreneurFlow() && (
 				<WordPressLogo
 					size={ 24 }
-					className="woocommerce-cys-wordpress-header-logo"
+					className="woocommerce-customize-store__wordpress-header-logo"
 				/>
 			) }
 			{ ! isEntrepreneurFlow() && (
@@ -78,8 +78,8 @@ export const BusinessInfoDescription = ( {
 					} }
 				/>
 			) }
-			<div className="woocommerce-cys-design-with-ai woocommerce-cys-layout">
-				<div className="woocommerce-cys-page">
+			<div className="woocommerce-customize-store__design-with-ai woocommerce-customize-store__layout">
+				<div className="woocommerce-customize-store__page">
 					<h1>
 						{ __(
 							'Tell us a bit more about your business',
@@ -92,7 +92,7 @@ export const BusinessInfoDescription = ( {
 						} }
 						value={ businessInfoDescription }
 					/>
-					<div className="woocommerce-cys-design-with-ai-guide">
+					<div className="woocommerce-customize-store__design-with-ai-guide">
 						<p>
 							{ __(
 								'The more detail you provide, the better job our AI can do!',

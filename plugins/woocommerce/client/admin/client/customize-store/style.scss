@@ -22,7 +22,7 @@
 		padding-right: 0;
 	}
 
-	.woocommerce-cys-site-icon__image {
+	.woocommerce-customize-store__site-icon__image {
 		background: transparent;
 		border-radius: 4px;
 		height: auto;
@@ -45,7 +45,7 @@ body.woocommerce-customize-store.js.is-fullscreen-mode {
 	}
 }
 
-.woocommerce-cys-layout {
+.woocommerce-customize-store__layout {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -61,7 +61,7 @@ body.woocommerce-customize-store.js.is-fullscreen-mode {
 		margin-bottom: 60px;
 	}
 
-	.woocommerce-cys-page {
+	.woocommerce-customize-store__page {
 		width: 615px;
 		display: flex;
 		flex-direction: column;
@@ -85,7 +85,7 @@ body.woocommerce-customize-store.js.is-fullscreen-mode {
 	}
 }
 
-.woocommerce-cys-design-with-ai {
+.woocommerce-customize-store__design-with-ai {
 	.components-base-control {
 		width: 404px;
 		textarea {
@@ -111,7 +111,7 @@ body.woocommerce-customize-store.js.is-fullscreen-mode {
 		}
 	}
 
-	.woocommerce-cys-design-with-ai-guide {
+	.woocommerce-customize-store__design-with-ai-guide {
 		padding: 12px;
 		width: 404px;
 		border-radius: 2px;
@@ -136,8 +136,8 @@ body.woocommerce-customize-store.js.is-fullscreen-mode {
 	}
 }
 
-.woocommerce-cys-design-with-ai-look-and-feel,
-.woocommerce-cys-design-with-ai-tone-of-voice {
+.woocommerce-customize-store__design-with-ai-look-and-feel,
+.woocommerce-customize-store__design-with-ai-tone-of-voice {
 	.choices {
 		width: 404px;
 		display: flex;
@@ -146,7 +146,7 @@ body.woocommerce-customize-store.js.is-fullscreen-mode {
 	}
 }
 
-.woocommerce-cys-design-with-ai__error-notice.is-error {
+.woocommerce-customize-store__design-with-ai__error-notice.is-error {
 	background: #fce2e4;
 	padding: $gap-small;
 	// gap: 12px;
@@ -312,13 +312,13 @@ body.woocommerce-customize-store.js.is-fullscreen-mode {
 	}
 }
 
-.woocommerce-cys-wordpress-header-logo {
+.woocommerce-customize-store__wordpress-header-logo {
 	position: absolute;
 	top: 28px;
 	left: 24px;
 }
 
-.woocommerce-cys-layout__hub svg.woocommerce-cys-wordpress-header-logo {
+.woocommerce-customize-store__layout__hub svg.woocommerce-customize-store__wordpress-header-logo {
 	width: 24px;
 	height: 24px;
 }

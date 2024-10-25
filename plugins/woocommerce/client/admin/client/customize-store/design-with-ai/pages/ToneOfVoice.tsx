@@ -95,7 +95,7 @@ export const ToneOfVoice = ( {
 			{ isEntrepreneurFlow() && (
 				<WordPressLogo
 					size={ 24 }
-					className="woocommerce-cys-wordpress-header-logo"
+					className="woocommerce-customize-store__wordpress-header-logo"
 				/>
 			) }
 			{ ! isEntrepreneurFlow() && (
@@ -123,8 +123,8 @@ export const ToneOfVoice = ( {
 					} }
 				/>
 			) }
-			<div className="woocommerce-cys-design-with-ai-tone-of-voice woocommerce-cys-layout">
-				<div className="woocommerce-cys-page">
+			<div className="woocommerce-customize-store__design-with-ai-tone-of-voice woocommerce-customize-store__layout">
+				<div className="woocommerce-customize-store__page">
 					<h1>
 						{ __(
 							'Which writing style do you prefer?',
@@ -133,7 +133,7 @@ export const ToneOfVoice = ( {
 					</h1>
 					{ context.apiCallLoader.hasErrors && (
 						<Notice
-							className="woocommerce-cys-design-with-ai__error-notice"
+							className="woocommerce-customize-store__design-with-ai__error-notice"
 							isDismissible={ false }
 							status="error"
 						>
