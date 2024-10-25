@@ -24,10 +24,14 @@ final class ProductFilterCheckboxList extends AbstractBlock {
 	 * @return string Rendered block type output.
 	 */
 	protected function render( $attributes, $content, $block ) {
+		if ( empty( $block->context['filterData'] ) || empty( $block->context['filterData']['items'] ) ) {
+			return '';
+		}
+
 		$context               = $block->context['filterData'];
 		$items                 = $context['items'] ?? array();
 		$checkbox_list_context = array( 'items' => $items );
-		$action                = $context['action'] ?? '';
+		$action                = $context['actions']['toggleFilter'] ?? '';
 		$namespace             = wp_json_encode( array( 'namespace' => 'woocommerce/product-filter-checkbox-list' ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP );
 		$classes               = '';
 		$style                 = '';
@@ -51,6 +55,7 @@ final class ProductFilterCheckboxList extends AbstractBlock {
 		$wrapper_attributes = array(
 			'data-wc-interactive' => esc_attr( $namespace ),
 			'data-wc-context'     => wp_json_encode( $checkbox_list_context, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
+			'data-wc-key'         => wp_unique_prefixed_id( $this->get_full_block_name() ),
 			'class'               => esc_attr( $classes ),
 			'style'               => esc_attr( $style ),
 		);

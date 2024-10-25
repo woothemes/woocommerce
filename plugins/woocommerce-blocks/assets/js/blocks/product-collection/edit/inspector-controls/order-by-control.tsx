@@ -46,12 +46,22 @@ const orderOptions = [
 		value: 'price/asc',
 	},
 	{
-		value: 'popularity/desc',
-		label: __( 'Best Selling', 'woocommerce' ),
+		label: __( 'Sales, high to low', 'woocommerce' ),
+		value: 'sales/desc',
+	},
+	{
+		label: __( 'Sales, low to high', 'woocommerce' ),
+		value: 'sales/asc',
 	},
 	{
 		value: 'rating/desc',
 		label: __( 'Top Rated', 'woocommerce' ),
+	},
+	{
+		// In WooCommerce, "Manual (menu order)" refers to a custom ordering set by the store owner.
+		// Products can be manually arranged in the desired order in the WooCommerce admin panel.
+		value: 'menu_order/asc',
+		label: __( 'Manual (menu order)', 'woocommerce' ),
 	},
 ];
 
@@ -65,6 +75,13 @@ const OrderByControl = ( props: QueryControlProps ) => {
 		trackInteraction( CoreFilterNames.ORDER );
 	};
 
+	let orderValue = `${ orderBy }/${ order }`;
+
+	// This is to provide backward compatibility as we removed the 'popularity' (Best Selling) option from the order options.
+	if ( orderBy === 'popularity' ) {
+		orderValue = `sales/${ order }`;
+	}
+
 	return (
 		<ToolsPanelItem
 			label={ __( 'Order by', 'woocommerce' ) }
@@ -77,7 +94,7 @@ const OrderByControl = ( props: QueryControlProps ) => {
 			resetAllFilter={ deselectCallback }
 		>
 			<SelectControl
-				value={ `${ orderBy }/${ order }` }
+				value={ orderValue }
 				options={ orderOptions }
 				label={ __( 'Order by', 'woocommerce' ) }
 				onChange={ ( value ) => {

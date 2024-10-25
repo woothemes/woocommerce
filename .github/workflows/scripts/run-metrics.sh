@@ -51,17 +51,19 @@ if [ "$GITHUB_EVENT_NAME" == "push" ] || [ "$GITHUB_EVENT_NAME" == "pull_request
 		title "Skipping benchmarking baseline as benchmarking results already available under $ARTIFACTS_PATH"
 	else
 		title "##[group]Checkout baseline"
-		git fetch --no-tags --quiet origin trunk
+		git fetch --no-tags --quiet --unshallow origin trunk
 		echo '##[endgroup]'
 
 		title "##[group]Building baseline"
-		git -c core.hooksPath=/dev/null checkout --quiet $BASE_SHA > /dev/null && echo 'On' $(git rev-parse HEAD)
+		( git -c core.hooksPath=/dev/null checkout --quiet $BASE_SHA > /dev/null || git reset --hard $BASE_SHA ) && echo 'On' $(git rev-parse HEAD)
 		pnpm run --if-present clean:build &
 		pnpm install --filter='@woocommerce/plugin-woocommerce...' --frozen-lockfile --config.dedupe-peer-dependents=false
 		pnpm --filter='@woocommerce/plugin-woocommerce' build
 		echo '##[endgroup]'
 
 		title "##[group]Benchmarking baseline"
+		# This one is important: we run the same tests in the same state as we did at head benchmarking.
+		git restore --source $GITHUB_SHA $(realpath $(dirname -- ${BASH_SOURCE[0]})/../../../plugins/woocommerce/tests)
 		RESULTS_ID="editor_${BASE_SHA}_round-1" pnpm --filter="@woocommerce/plugin-woocommerce" test:metrics editor
 		RESULTS_ID="product-editor_${BASE_SHA}_round-1" pnpm --filter="@woocommerce/plugin-woocommerce" test:metrics product-editor
 		echo '##[endgroup]'

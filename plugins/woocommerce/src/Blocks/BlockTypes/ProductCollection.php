@@ -53,7 +53,7 @@ class ProductCollection extends AbstractBlock {
 	 *
 	 * @var array
 	 */
-	protected $custom_order_opts = array( 'popularity', 'rating', 'post__in', 'price' );
+	protected $custom_order_opts = array( 'popularity', 'rating', 'post__in', 'price', 'sales', 'menu_order' );
 
 
 	/**
@@ -319,17 +319,13 @@ class ProductCollection extends AbstractBlock {
 				'data-wc-init',
 				'callbacks.onRender'
 			);
-			if ( $collection ) {
-				$p->set_attribute(
-					'data-wc-context',
-					wp_json_encode(
-						array(
-							'collection' => $collection,
-						),
-						JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
-					)
-				);
-			}
+			$p->set_attribute(
+				'data-wc-context',
+				$collection ? wp_json_encode(
+					array( 'collection' => $collection ),
+					JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
+				) : '{}'
+			);
 		}
 
 		return $p->get_updated_html();
@@ -434,7 +430,7 @@ class ProductCollection extends AbstractBlock {
 				$block_content = $this->enable_client_side_navigation( $block_content );
 			}
 		}
-		return sprintf( '<div>%s</div>', $block_content );
+		return $block_content;
 	}
 
 	/**
@@ -1064,9 +1060,24 @@ class ProductCollection extends AbstractBlock {
 			);
 		}
 
+		// The popularity orderby value here is for backwards compatibility as we have since removed the filter option.
+		if ( 'sales' === $orderby || 'popularity' === $orderby ) {
+			add_filter( 'posts_clauses', array( $this, 'add_sales_sorting_posts_clauses' ), 10, 2 );
+			return array(
+				'isProductCollection' => true,
+				'orderby'             => $orderby,
+			);
+		}
+
+		if ( 'menu_order' === $orderby ) {
+			return array(
+				'orderby' => 'menu_order',
+				'order'   => 'ASC',
+			);
+		}
+
 		$meta_keys = array(
-			'popularity' => 'total_sales',
-			'rating'     => '_wc_average_rating',
+			'rating' => '_wc_average_rating',
 		);
 
 		return array(
@@ -1719,18 +1730,18 @@ class ProductCollection extends AbstractBlock {
 		$min_price = $price_range['min'] ?? null;
 		if ( $min_price ) {
 			if ( $adjust_for_taxes ) {
-				$clauses['where'] .= $this->get_price_filter_query_for_displayed_taxes( $min_price, 'min_price', '>=' );
+				$clauses['where'] .= $this->get_price_filter_query_for_displayed_taxes( $min_price, 'max_price', '>=' );
 			} else {
-				$clauses['where'] .= $wpdb->prepare( ' AND wc_product_meta_lookup.min_price >= %f ', $min_price );
+				$clauses['where'] .= $wpdb->prepare( ' AND wc_product_meta_lookup.max_price >= %f ', $min_price );
 			}
 		}
 
 		$max_price = $price_range['max'] ?? null;
 		if ( $max_price ) {
 			if ( $adjust_for_taxes ) {
-				$clauses['where'] .= $this->get_price_filter_query_for_displayed_taxes( $max_price, 'max_price', '<=' );
+				$clauses['where'] .= $this->get_price_filter_query_for_displayed_taxes( $max_price, 'min_price', '<=' );
 			} else {
-				$clauses['where'] .= $wpdb->prepare( ' AND wc_product_meta_lookup.max_price <= %f ', $max_price );
+				$clauses['where'] .= $wpdb->prepare( ' AND wc_product_meta_lookup.min_price <= %f ', $max_price );
 			}
 		}
 
@@ -1763,6 +1774,38 @@ class ProductCollection extends AbstractBlock {
 		$clauses['orderby'] = $is_ascending_order ?
 			'wc_product_meta_lookup.min_price ASC, wc_product_meta_lookup.product_id ASC' :
 			'wc_product_meta_lookup.max_price DESC, wc_product_meta_lookup.product_id DESC';
+
+		return $clauses;
+	}
+
+	/**
+	 * Add the `posts_clauses` filter to add sales-based sorting
+	 *
+	 * @param array    $clauses The list of clauses for the query.
+	 * @param WP_Query $query   The WP_Query instance.
+	 * @return array   Modified list of clauses.
+	 */
+	public function add_sales_sorting_posts_clauses( $clauses, $query ) {
+		$query_vars                  = $query->query_vars;
+		$is_product_collection_block = $query_vars['isProductCollection'] ?? false;
+
+		if ( ! $is_product_collection_block ) {
+			return $clauses;
+		}
+
+		$orderby = $query_vars['orderby'] ?? null;
+
+		// The popularity orderby value here is for backwards compatibility as we have since removed the filter option.
+		if ( 'sales' !== $orderby && 'popularity' !== $orderby ) {
+			return $clauses;
+		}
+
+		$clauses['join']    = $this->append_product_sorting_table_join( $clauses['join'] );
+		$is_ascending_order = 'asc' === strtolower( $query_vars['order'] ?? 'desc' );
+
+		$clauses['orderby'] = $is_ascending_order ?
+			'wc_product_meta_lookup.total_sales ASC, wc_product_meta_lookup.product_id ASC' :
+			'wc_product_meta_lookup.total_sales DESC, wc_product_meta_lookup.product_id DESC';
 
 		return $clauses;
 	}
@@ -2017,7 +2060,7 @@ class ProductCollection extends AbstractBlock {
 			function ( $collection_args, $query ) {
 				$product_references = isset( $query['productReference'] ) ? array( $query['productReference'] ) : null;
 				// Infer the product reference from the location if an explicit product is not set.
-				if ( empty( $product_reference ) ) {
+				if ( empty( $product_references ) ) {
 					$location = $collection_args['productCollectionLocation'];
 					if ( isset( $location['type'] ) && 'product' === $location['type'] ) {
 						$product_references = array( $location['sourceData']['productId'] );
@@ -2041,6 +2084,83 @@ class ProductCollection extends AbstractBlock {
 				}
 
 				$collection_args['upsellsProductReferences'] = array( $product_reference );
+				return $collection_args;
+			}
+		);
+
+		$this->register_collection_handlers(
+			'woocommerce/product-collection/cross-sells',
+			function ( $collection_args ) {
+				$product_reference = $collection_args['crossSellsProductReferences'] ?? null;
+				// No products should be shown if no cross-sells product reference is set.
+				if ( empty( $product_reference ) ) {
+					return array(
+						'post__in' => array( -1 ),
+					);
+				}
+
+				$products = array_filter( array_map( 'wc_get_product', $product_reference ) );
+
+				if ( empty( $products ) ) {
+					return array(
+						'post__in' => array( -1 ),
+					);
+				}
+
+				$product_ids = array_map(
+					function ( $product ) {
+						return $product->get_id();
+					},
+					$products
+				);
+
+				$all_cross_sells = array_reduce(
+					$products,
+					function ( $acc, $product ) {
+						return array_merge(
+							$acc,
+							$product->get_cross_sell_ids()
+						);
+					},
+					array()
+				);
+
+				// Remove duplicates and product references. We don't want to display
+				// what's already in cart.
+				$unique_cross_sells = array_unique( $all_cross_sells );
+				$cross_sells        = array_diff( $unique_cross_sells, $product_ids );
+
+				return array(
+					'post__in' => empty( $cross_sells ) ? array( -1 ) : $cross_sells,
+				);
+			},
+			function ( $collection_args, $query ) {
+				$product_reference = isset( $query['productReference'] ) ? array( $query['productReference'] ) : null;
+				// Infer the product reference from the location if an explicit product is not set.
+				if ( empty( $product_reference ) ) {
+					$location = $collection_args['productCollectionLocation'];
+					if ( isset( $location['type'] ) && 'product' === $location['type'] ) {
+						$product_reference = array( $location['sourceData']['productId'] );
+					}
+					if ( isset( $location['type'] ) && 'cart' === $location['type'] ) {
+						$product_reference = $location['sourceData']['productIds'];
+					}
+				}
+
+				$collection_args['crossSellsProductReferences'] = $product_reference;
+				return $collection_args;
+			},
+			function ( $collection_args, $query, $request ) {
+				$product_reference = $request->get_param( 'productReference' );
+				// In some cases the editor will send along block location context that we can infer the product reference from.
+				if ( empty( $product_reference ) ) {
+					$location = $collection_args['productCollectionLocation'];
+					if ( isset( $location['type'] ) && 'product' === $location['type'] ) {
+						$product_reference = $location['sourceData']['productId'];
+					}
+				}
+
+				$collection_args['crossSellsProductReferences'] = array( $product_reference );
 				return $collection_args;
 			}
 		);
