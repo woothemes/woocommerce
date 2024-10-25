@@ -10,8 +10,7 @@ namespace Automattic\WooCommerce\Enums;
  * For a full documentation on the public order statuses, please refer to the following link:
  * https://woocommerce.com/document/managing-orders/order-statuses/
  */
-class OrderStatus
-{
+class OrderStatus {
 	/**
 	 * The order has been received, but no payment has been made.
 	 *
