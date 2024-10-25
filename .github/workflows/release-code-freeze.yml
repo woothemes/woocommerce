@@ -1,7 +1,7 @@
 name: 'Release: Code freeze'
 on:
-    schedule:
-        - cron: '0 0 * * 4' # Run at start of day UTC on Thursday. i.e. ~Wednesday EOD 23:59:59 UTC
+    release:
+        types: [released]
     workflow_dispatch:
         inputs:
             timeOverride:
@@ -23,8 +23,28 @@ env:
 permissions: {}
 
 jobs:
+    verify-release:
+        name: 'Verify if the release is a major version release, that ends with .0'
+        runs-on: ubuntu-20.04
+        outputs:
+            run: ${{ steps.verify.outputs.run }}
+        steps:
+            - name: Verify release
+              id: verify
+              uses: actions/github-script@v6
+              with:
+                  script: |
+                      const release = github.event.release;
+                      if (release.tag_name.endsWith('.0')) {
+                          core.setOutput('run', 'true');
+                      } else {
+                          core.setOutput('run', 'false');
+                      }
+
     code-freeze-prep:
         name: 'Verify that today is the day of the code freeze and prepare repository'
+        if: ${{ needs.verify-release.outputs.run == 'true' }}
+        needs: verify-release
         runs-on: ubuntu-20.04
         permissions:
             contents: write
@@ -46,81 +66,60 @@ jobs:
               with:
                   fetch-depth: 0
 
-            - name: Setup PNPM
-              uses: pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d
-
-            - name: Setup Node
-              uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c
+            - name: Calculate next release version and milestone based on the current release tag
+              id: calculate-next-release
+              uses: actions/github-script@v6
               with:
-                  node-version-file: .nvmrc
-                  cache: pnpm
-                  registry-url: 'https://registry.npmjs.org'
-
-            - name: Install prerequisites
-              run: |
-                  pnpm install --filter monorepo-utils --ignore-scripts
-                  # ignore scripts speeds up setup signficantly, but we still need to build monorepo utils
-                  pnpm build
-              working-directory: tools/monorepo-utils
-
-            - name: 'Get the  versions for the accelerated and monthly releases'
-              id: get-versions
-              run: pnpm utils code-freeze get-version -o $TIME_OVERRIDE
+                  script: |
+                      const currentTag = github.event.release.tag_name;
+                      const [major, minor, patch] = currentTag.split('.').map(Number);
+                      let nextMajor = major;
+                      let nextMinor = minor + 1;
+                      if (nextMinor > 9) {
+                          nextMajor += 1;
+                          nextMinor = 0;
+                      }
+                      const nextRelease = `release/${nextMajor}.${nextMinor}.0`;
+                      const nextMilestone = `${nextMajor}.${nextMinor}.0`;
+                      core.setOutput('nextRelease', nextRelease);
+                      core.setOutput('nextMilestone', nextMilestone);
+                      console.log(`Next release: ${nextRelease}`);
+                      console.log(`Next milestone: ${nextMilestone}`);
 
             - name: Create next monthly milestone
               id: milestone
-              if: steps.get-versions.outputs.isTodayMonthlyFreeze == 'yes'
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: pnpm utils code-freeze milestone -o ${{ github.repository_owner }} -m ${{ steps.get-versions.outputs.monthlyMilestone }}
+                  NEXT_MILESTONE: ${{ steps.calculate-next-release.outputs.nextMilestone }}
+              run: pnpm utils code-freeze milestone -o ${{ github.repository_owner }} -m $NEXT_MILESTONE
 
             - name: Create next monthly release branch
               id: branch
-              if: steps.get-versions.outputs.isTodayMonthlyFreeze == 'yes'
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: pnpm utils code-freeze branch -o ${{ github.repository_owner }} -b ${{ steps.get-versions.outputs.monthlyBranch }}
-
-            - name: Create next accelerated release branch
-              id: branch-accel
-              if: steps.get-versions.outputs.isTodayAcceleratedFreeze == 'yes'
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: pnpm utils code-freeze branch -o ${{ github.repository_owner }} -b ${{ steps.get-versions.outputs.acceleratedBranch }}
+                  NEXT_RELEASE: ${{ steps.calculate-next-release.outputs.nextRelease }}
+              run: pnpm utils code-freeze branch -o ${{ github.repository_owner }} -b $NEXT_RELEASE
 
             - name: Bump versions for Beta.1 monthly release
               id: version-bump
-              if: steps.get-versions.outputs.isTodayMonthlyFreeze == 'yes'
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: pnpm utils code-freeze version-bump -o ${{ github.repository_owner }} -b ${{ steps.get-versions.outputs.monthlyBranch }} -c ${{ steps.get-versions.outputs.monthlyVersion }}-beta.1
-
-            - name: Bump versions for accelerated release
-              id: version-bump-accel
-              if: steps.get-versions.outputs.isTodayAcceleratedFreeze == 'yes'
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: pnpm utils code-freeze version-bump -o ${{ github.repository_owner }} -b ${{ steps.get-versions.outputs.acceleratedBranch }} -c ${{ steps.get-versions.outputs.acceleratedVersion }} -af
-
-            - name: Prep accelerated release
-              id: accel-release-prep
-              if: steps.get-versions.outputs.isTodayAcceleratedFreeze == 'yes'
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: pnpm utils code-freeze accelerated-prep -o ${{ github.repository_owner }} -b ${{ steps.get-versions.outputs.acceleratedBranch }} -c ${{ steps.get-versions.outputs.acceleratedVersion }} ${{ steps.get-versions.outputs.acceleratedReleaseDate }}
+                  NEXT_RELEASE: ${{ steps.calculate-next-release.outputs.nextRelease }}
+                  NEXT_MILESTONE: ${{ steps.calculate-next-release.outputs.nextMilestone }}
+              run: pnpm utils code-freeze version-bump -o ${{ github.repository_owner }} -b $NEXT_RELEASE -c $NEXT_MILESTONE-beta.1
 
             - name: Prepare trunk for next development cycle
               id: prep-trunk
-              if: steps.get-versions.outputs.isTodayMonthlyFreeze == 'yes'
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: pnpm utils code-freeze version-bump ${{ steps.get-versions.outputs.monthlyMilestone }}-dev -o ${{ github.repository_owner }}
+                  NEXT_MILESTONE: ${{ steps.calculate-next-release.outputs.nextMilestone }}
+              run: pnpm utils code-freeze version-bump $NEXT_MILESTONE-dev -o ${{ github.repository_owner }}
 
     notify-slack:
         name: 'Sends code freeze notification to Slack'
         runs-on: ubuntu-20.04
         needs: code-freeze-prep
-        if: ${{ inputs.skipSlackPing != true && ( needs.code-freeze-prep.outputs.isTodayAcceleratedFreeze == 'yes' || needs.code-freeze-prep.outputs.isTodayMonthlyFreeze == 'yes' ) }}
+        if: ${{ inputs.skipSlackPing != true }}
         outputs:
             ts: ${{ steps.notify.outputs.ts }}
         steps:
@@ -150,23 +149,25 @@ jobs:
               id: notify
               run: |
                   pnpm utils slack "${{ secrets.CODE_FREEZE_BOT_TOKEN }}" "
-                  :warning-8c: ${{ join( fromJSON( needs.code-freeze-prep.outputs.releasesFrozenToday ), ' and ' ) }} Code Freeze :ice_cube:
-                  The freeze automation for ${{ join( fromJSON( needs.code-freeze-prep.outputs.releasesFrozenToday ), ' and ' ) }} has finished. ${{ ( needs.code-freeze-prep.outputs.isTodayMonthlyFreeze == 'yes' && 'If you need to request a code freeze exception, see the <' ) || '' }}${{ ( needs.code-freeze-prep.outputs.isTodayMonthlyFreeze == 'yes' && secrets.FG_LINK ) || '' }}${{ ( needs.code-freeze-prep.outputs.isTodayMonthlyFreeze == 'yes' && '/code-freeze-for-woocommerce-core-release/|fieldguide page for the code freeze>.' ) || '' }}
+                  :warning-8c: Code Freeze :ice_cube:
+                  The freeze automation for `${{ process.env.NEXT_RELEASE }}`  has finished. If you would like to request a code freeze exception, see the [fieldguide page for the code freeze](${{ secrets.FG_LINK }}).
 
-                  The build for ${{ join( fromJSON( needs.code-freeze-prep.outputs.releasesFrozenToday ), ' and ' ) }} will appear in this thread shortly... :thread:
+                  The build for `${{ process.env.NEXT_RELEASE }}` will appear in this thread shortly... :thread:
                   " "${{ inputs.slackChannelOverride || secrets.WOO_RELEASE_SLACK_CHANNEL }}"
+            env:
+              NEXT_RELEASE: ${{ steps.calculate-next-release.outputs.nextRelease }}
+              NEXT_MILESTONE: ${{ steps.calculate-next-release.outputs.nextMilestone }}
 
     build-monthly:
         name: Build beta zip file
         runs-on: ubuntu-20.04
         needs: code-freeze-prep
-        if: ${{ needs.code-freeze-prep.outputs.isTodayMonthlyFreeze == 'yes' }}
         permissions:
             contents: read
         steps:
             - uses: actions/checkout@v3
               with:
-                  ref: ${{ needs.code-freeze-prep.outputs.monthlyBranch }}
+                  ref: $NEXT_RELEASE
 
             - name: Setup WooCommerce Monorepo
               uses: ./.github/actions/setup-woocommerce-monorepo
@@ -182,45 +183,17 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
-                  name: double-zipped-woocommerce.${{ needs.code-freeze-prep.outputs.monthlyVersion }}-beta.1
+                  name: double-zipped-woocommerce.$NEXT_MILESTONE-beta.1
                   path: plugins/woocommerce/woocommerce.zip
                   retention-days: 2
-
-    build-a:
-        name: Build accelerated zip file
-        runs-on: ubuntu-20.04
-        needs: code-freeze-prep
-        if: ${{ needs.code-freeze-prep.outputs.isTodayAcceleratedFreeze == 'yes' }}
-        permissions:
-            contents: read
-        steps:
-            - uses: actions/checkout@v3
-              with:
-                  ref: ${{ needs.code-freeze-prep.outputs.acceleratedBranch }}
-
-            - name: Setup WooCommerce Monorepo
-              uses: ./.github/actions/setup-woocommerce-monorepo
-              with:
-                pull-package-deps: '@woocommerce/plugin-woocommerce'
-
-            - name: Build zip
-              working-directory: plugins/woocommerce
-              run: bash bin/build-zip.sh
-
-            - name: Upload the zip file as an artifact
-              uses: actions/upload-artifact@v4
               env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                  name: double-zipped-woocommerce.${{ needs.code-freeze-prep.outputs.acceleratedVersion }}
-                  path: plugins/woocommerce/woocommerce.zip
-                  retention-days: 2
+                  NEXT_RELEASE: ${{ steps.calculate-next-release.outputs.nextRelease }}
+                  NEXT_MILESTONE: ${{ steps.calculate-next-release.outputs.nextMilestone }}
                   
     r2-upload-monthly:
       name: Upload Beta to R2
       runs-on: ubuntu-20.04
       needs: [ code-freeze-prep, build-monthly ]
-      if: ${{ needs.code-freeze-prep.outputs.isTodayMonthlyFreeze == 'yes' }}
       steps:
           - id: download
             uses: actions/download-artifact@v4
@@ -246,7 +219,7 @@ jobs:
         name: Upload Beta to Slack
         runs-on: ubuntu-20.04
         needs: [ code-freeze-prep, notify-slack, build-monthly ]
-        if: ${{ needs.code-freeze-prep.outputs.isTodayMonthlyFreeze == 'yes' && inputs.skipSlackPing != true }}
+        if: ${{ inputs.skipSlackPing != true }}
         steps:
             - name: Checkout code
               uses: actions/checkout@v3
@@ -405,3 +378,4 @@ jobs:
                   name: woocommerce.${{ needs.code-freeze-prep.outputs.acceleratedVersion }}
                   path: zipfile
                   retention-days: 10
+
