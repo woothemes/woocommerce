@@ -352,15 +352,12 @@ class RemoteLogger extends \WC_Log_Handler {
 			return false;
 		}
 
-		// Check if the backtrace contains the WooCommerce plugin directory.
-		foreach ( $context['backtrace'] as $trace ) {
-			if ( is_string( $trace ) && str_contains( $trace, $wc_plugin_dir ) ) {
-				return false;
-			}
-
-			if ( is_array( $trace ) && isset( $trace['file'] ) && str_contains( $trace['file'], $wc_plugin_dir ) ) {
-				return false;
-			}
+		// Check if the first (most recent) frame in the backtrace is from WooCommerce.
+		$first_frame = reset( $context['backtrace'] );
+		if ( is_array( $first_frame ) && isset( $first_frame['file'] ) ) {
+			return ! str_contains( $first_frame['file'], $wc_plugin_dir );
+		} elseif ( is_string( $first_frame ) ) {
+			return ! str_contains( $first_frame, $wc_plugin_dir );
 		}
 
 		if ( ! function_exists( 'apply_filters' ) ) {
@@ -409,11 +406,14 @@ class RemoteLogger extends \WC_Log_Handler {
 	 *
 	 * 1. Remove the absolute path to the plugin directory based on WC_ABSPATH. This is more accurate than using WP_PLUGIN_DIR when the plugin is symlinked.
 	 * 2. Remove the absolute path to the WordPress root directory.
+	 * 3. Redact potential user data such as email addresses and phone numbers.
 	 *
 	 * For example, the trace:
 	 *
 	 * /var/www/html/wp-content/plugins/woocommerce/includes/class-wc-remote-logger.php on line 123
 	 * will be sanitized to: **\/woocommerce/includes/class-wc-remote-logger.php on line 123
+	 *
+	 * Additionally, any user data like email addresses or phone numbers will be redacted.
 	 *
 	 * @param string $message The message to sanitize.
 	 * @return string The sanitized message.
@@ -432,7 +432,7 @@ class RemoteLogger extends \WC_Log_Handler {
 			$message
 		);
 
-		return $sanitized;
+		return $this->redact_user_data( $sanitized );
 	}
 
 	/**
@@ -468,6 +468,26 @@ class RemoteLogger extends \WC_Log_Handler {
 		}
 
 		return implode( "\n", $sanitized_trace );
+	}
+
+
+	/**
+	 * Redact potential user data from the message.
+	 *
+	 * @param string $message The message to redact.
+	 * @return string The redacted message.
+	 */
+	private function redact_user_data( $message ) {
+		// Redact email addresses.
+		$message = preg_replace( '/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/', '[redacted_email]', $message );
+
+		// Redact potential phone numbers (this is a simple pattern and might need refinement).
+		$message = preg_replace( '/\b\d{3}[-.]?\d{3}[-.]?\d{4}\b/', '[redacted_phone]', $message );
+
+		// Redact potential IP addresses.
+		$sanitized = preg_replace( '/\b(?:\d{1,3}\.){3}\d{1,3}\b/', '[redacted_ip]', $sanitized );
+
+		return $message;
 	}
 
 	/**

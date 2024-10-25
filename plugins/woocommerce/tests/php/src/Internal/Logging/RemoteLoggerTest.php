@@ -562,6 +562,64 @@ namespace Automattic\WooCommerce\Tests\Internal\Logging {
 		}
 
 		/**
+		 * @testdox redact_user_data method correctly redacts sensitive information
+		 * @dataProvider redact_user_data_provider
+		 *
+		 * @param string $input    The input string containing sensitive data.
+		 * @param string $expected The expected output with redacted data.
+		 */
+		public function test_redact_user_data( $input, $expected ) {
+			$result = $this->invoke_private_method( $this->sut, 'redact_user_data', array( $input ) );
+			$this->assertEquals( $expected, $result );
+		}
+
+		/**
+		 * Data provider for test_redact_user_data.
+		 *
+		 * @return array[] Test cases with input strings and expected redacted outputs.
+		 */
+		public function redact_user_data_provider() {
+			return array(
+				'email address'                   => array(
+					'input'    => 'User email is john.doe@example.com',
+					'expected' => 'User email is [redacted_email]',
+				),
+				'multiple email addresses'        => array(
+					'input'    => 'Emails: john@example.com and jane@test.org',
+					'expected' => 'Emails: [redacted_email] and [redacted_email]',
+				),
+				'phone number with dashes'        => array(
+					'input'    => 'Phone: 123-456-7890',
+					'expected' => 'Phone: [redacted_phone]',
+				),
+				'phone number without separators' => array(
+					'input'    => 'Contact at 1234567890',
+					'expected' => 'Contact at [redacted_phone]',
+				),
+				'phone number with dots'          => array(
+					'input'    => 'Call 123.456.7890',
+					'expected' => 'Call [redacted_phone]',
+				),
+				'IP address'                      => array(
+					'input'    => 'User IP: 192.168.1.1',
+					'expected' => 'User IP: [redacted_ip]',
+				),
+				'multiple IP addresses'           => array(
+					'input'    => 'IPs: 10.0.0.1 and 172.16.0.1',
+					'expected' => 'IPs: [redacted_ip] and [redacted_ip]',
+				),
+				'mixed sensitive data'            => array(
+					'input'    => 'Email: user@example.com, Phone: 987-654-3210, IP: 192.168.0.1',
+					'expected' => 'Email: [redacted_email], Phone: [redacted_phone], IP: [redacted_ip]',
+				),
+				'no sensitive data'               => array(
+					'input'    => 'This is a regular message without sensitive data.',
+					'expected' => 'This is a regular message without sensitive data.',
+				),
+			);
+		}
+
+		/**
 		 * Setup common conditions for remote logging tests.
 		 *
 		 * @param bool $enabled Whether remote logging is enabled.
