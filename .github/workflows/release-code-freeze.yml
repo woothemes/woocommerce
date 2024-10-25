@@ -2,6 +2,7 @@ name: 'Release: Code freeze'
 on:
     release:
         types: [released]
+
     workflow_dispatch:
         inputs:
             timeOverride:
@@ -11,7 +12,7 @@ on:
                 description: 'Skip Slack Ping: If true, the Slack ping will be skipped (useful for testing)'
                 type: boolean
             slackChannelOverride:
-                description: 'Slack Channel Override: The channel ID to send the Slack ping about the freeze'
+                description: 'Slack Channel Override: The channel ID to send the Slack ping'
 
 env:
     TIME_OVERRIDE: ${{ inputs.timeOverride || 'now' }}
@@ -34,7 +35,9 @@ jobs:
               uses: actions/github-script@v6
               with:
                   script: |
-                      const release = github.event.release;
+                      const event = ${{ toJSON( github.event ) }}
+                      console.log(event);
+                      const release = event.release;
                       if (release.tag_name.endsWith('.0')) {
                           core.setOutput('run', 'true');
                       } else {
@@ -51,15 +54,8 @@ jobs:
             issues: write
             pull-requests: write
         outputs:
-            isTodayAcceleratedFreeze: ${{ steps.get-versions.outputs.isTodayAcceleratedFreeze }}
-            isTodayMonthlyFreeze: ${{ steps.get-versions.outputs.isTodayMonthlyFreeze }}
-            acceleratedVersion: ${{ steps.get-versions.outputs.acceleratedVersion }}
-            monthlyVersion: ${{ steps.get-versions.outputs.monthlyVersion }}
-            monthlyVersionXY: ${{ steps.get-versions.outputs.monthlyVersionXY }}
-            releasesFrozenToday: ${{ steps.get-versions.outputs.releasesFrozenToday }}
-            acceleratedBranch: ${{ steps.get-versions.outputs.acceleratedBranch }}
-            monthlyBranch: ${{ steps.get-versions.outputs.monthlyBranch }}
-            monthlyMilestone: ${{ steps.get-versions.outputs.monthlyMilestone }}            
+            nextRelease: ${{ steps.calculate-next-release.outputs.nextRelease }}
+            nextMilestone: ${{ steps.calculate-next-release.outputs.nextMilestone }}
         steps:
             - name: Checkout code
               uses: actions/checkout@v3
@@ -71,7 +67,9 @@ jobs:
               uses: actions/github-script@v6
               with:
                   script: |
-                      const currentTag = github.event.release.tag_name;
+                      const event = ${{ toJSON( github.event ) }}
+                      const release = event.release;
+                      const currentTag = release.tag_name;
                       const [major, minor, patch] = currentTag.split('.').map(Number);
                       let nextMajor = major;
                       let nextMinor = minor + 1;
@@ -150,13 +148,13 @@ jobs:
               run: |
                   pnpm utils slack "${{ secrets.CODE_FREEZE_BOT_TOKEN }}" "
                   :warning-8c: Code Freeze :ice_cube:
-                  The freeze automation for `${{ process.env.NEXT_RELEASE }}`  has finished. If you would like to request a code freeze exception, see the [fieldguide page for the code freeze](${{ secrets.FG_LINK }}).
+                  The freeze automation for `${{ steps.calculate-next-release.outputs.nextRelease }}`  has finished. If you would like to request a code freeze exception, see the [fieldguide page for the code freeze](${{ secrets.FG_LINK }}).
 
-                  The build for `${{ process.env.NEXT_RELEASE }}` will appear in this thread shortly... :thread:
+                  The build for `${{ steps.calculate-next-release.outputs.nextRelease }}` will appear in this thread shortly... :thread:
                   " "${{ inputs.slackChannelOverride || secrets.WOO_RELEASE_SLACK_CHANNEL }}"
-            env:
-              NEXT_RELEASE: ${{ steps.calculate-next-release.outputs.nextRelease }}
-              NEXT_MILESTONE: ${{ steps.calculate-next-release.outputs.nextMilestone }}
+              env:
+                  NEXT_RELEASE: ${{ steps.calculate-next-release.outputs.nextRelease }}
+                  NEXT_MILESTONE: ${{ steps.calculate-next-release.outputs.nextMilestone }}
 
     build-monthly:
         name: Build beta zip file
@@ -180,202 +178,201 @@ jobs:
 
             - name: Upload the zip file as an artifact
               uses: actions/upload-artifact@v4
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
                   name: double-zipped-woocommerce.$NEXT_MILESTONE-beta.1
                   path: plugins/woocommerce/woocommerce.zip
                   retention-days: 2
               env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   NEXT_RELEASE: ${{ steps.calculate-next-release.outputs.nextRelease }}
                   NEXT_MILESTONE: ${{ steps.calculate-next-release.outputs.nextMilestone }}
                   
-    r2-upload-monthly:
-      name: Upload Beta to R2
-      runs-on: ubuntu-20.04
-      needs: [ code-freeze-prep, build-monthly ]
-      steps:
-          - id: download
-            uses: actions/download-artifact@v4
-            env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            with:
-                name: double-zipped-woocommerce.${{ needs.code-freeze-prep.outputs.monthlyVersion }}-beta.1
-                path: download
+    # r2-upload-monthly:
+    #   name: Upload Beta to R2
+    #   runs-on: ubuntu-20.04
+    #   needs: [ code-freeze-prep, build-monthly ]
+    #   steps:
+    #       - id: download
+    #         uses: actions/download-artifact@v4
+    #         env:
+    #             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #         with:
+    #             name: double-zipped-woocommerce.${{ needs.code-freeze-prep.outputs.monthlyVersion }}-beta.1
+    #             path: download
 
-          - run: ls -lah ${{steps.download.outputs.download-path}}
+    #       - run: ls -lah ${{steps.download.outputs.download-path}}
 
-          - name: Upload release zip to Cloudflare R2 bucket
-            uses: ryand56/r2-upload-action@de3eabc2e3137ce07bc3805af441df55f535c64b
-            with:
-              r2-account-id: ${{ secrets.R2_ACCOUNT_ID }}
-              r2-access-key-id: ${{ secrets.R2_ACCESS_KEY_ID }}
-              r2-secret-access-key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-              r2-bucket: ${{ secrets.R2_BUCKET }}
-              source-dir: ${{ steps.download.outputs.download-path }}
-              destination-dir: ./monthly/                  
+    #       - name: Upload release zip to Cloudflare R2 bucket
+    #         uses: ryand56/r2-upload-action@de3eabc2e3137ce07bc3805af441df55f535c64b
+    #         with:
+    #           r2-account-id: ${{ secrets.R2_ACCOUNT_ID }}
+    #           r2-access-key-id: ${{ secrets.R2_ACCESS_KEY_ID }}
+    #           r2-secret-access-key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+    #           r2-bucket: ${{ secrets.R2_BUCKET }}
+    #           source-dir: ${{ steps.download.outputs.download-path }}
+    #           destination-dir: ./monthly/                  
 
-    slack-upload-monthly:
-        name: Upload Beta to Slack
-        runs-on: ubuntu-20.04
-        needs: [ code-freeze-prep, notify-slack, build-monthly ]
-        if: ${{ inputs.skipSlackPing != true }}
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v3
-              with:
-                  fetch-depth: 0
+    # slack-upload-monthly:
+    #     name: Upload Beta to Slack
+    #     runs-on: ubuntu-20.04
+    #     needs: [ code-freeze-prep, notify-slack, build-monthly ]
+    #     if: ${{ inputs.skipSlackPing != true }}
+    #     steps:
+    #         - name: Checkout code
+    #           uses: actions/checkout@v3
+    #           with:
+    #               fetch-depth: 0
 
-            - name: Setup PNPM
-              uses: pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d
+    #         - name: Setup PNPM
+    #           uses: pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d
 
-            - name: Setup Node
-              uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c
-              with:
-                  node-version-file: .nvmrc
-                  cache: pnpm
-                  registry-url: 'https://registry.npmjs.org'
+    #         - name: Setup Node
+    #           uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c
+    #           with:
+    #               node-version-file: .nvmrc
+    #               cache: pnpm
+    #               registry-url: 'https://registry.npmjs.org'
 
-            - name: Install prerequisites
-              run: |
-                  pnpm install --filter monorepo-utils --ignore-scripts
-                  # ignore scripts speeds up setup signficantly, but we still need to build monorepo utils
-                  pnpm build
-              working-directory: tools/monorepo-utils
+    #         - name: Install prerequisites
+    #           run: |
+    #               pnpm install --filter monorepo-utils --ignore-scripts
+    #               # ignore scripts speeds up setup signficantly, but we still need to build monorepo utils
+    #               pnpm build
+    #           working-directory: tools/monorepo-utils
 
-            - id: download
-              uses: actions/download-artifact@v4
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                  name: double-zipped-woocommerce.${{ needs.code-freeze-prep.outputs.monthlyVersion }}-beta.1
-                  path: download
+    #         - id: download
+    #           uses: actions/download-artifact@v4
+    #           env:
+    #               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #           with:
+    #               name: double-zipped-woocommerce.${{ needs.code-freeze-prep.outputs.monthlyVersion }}-beta.1
+    #               path: download
 
-            - run: ls -lah ${{steps.download.outputs.download-path}}
+    #         - run: ls -lah ${{steps.download.outputs.download-path}}
 
-            - name: Send release zip to Slack
-              id: send-file-slack
-              run : |
-                  pnpm utils slack file "${{ secrets.CODE_FREEZE_BOT_TOKEN }}" "Here's the generated release build for ${{ needs.code-freeze-prep.outputs.monthlyVersion }}-beta.1" "${{ steps.download.outputs.download-path }}/woocommerce.zip" "${{ inputs.slackChannelOverride || secrets.WOO_RELEASE_SLACK_CHANNEL }}" --reply-ts ${{ needs.notify-slack.outputs.ts }} --filename "woocommerce.${{ needs.code-freeze-prep.outputs.monthlyVersion }}-beta.1.zip"
+    #         - name: Send release zip to Slack
+    #           id: send-file-slack
+    #           run: |
+    #               pnpm utils slack file "${{ secrets.CODE_FREEZE_BOT_TOKEN }}" "Here's the generated release build for ${{ needs.code-freeze-prep.outputs.monthlyVersion }}-beta.1" "${{ steps.download.outputs.download-path }}/woocommerce.zip" "${{ inputs.slackChannelOverride || secrets.WOO_RELEASE_SLACK_CHANNEL }}" --reply-ts ${{ needs.notify-slack.outputs.ts }} --filename "woocommerce.${{ needs.code-freeze-prep.outputs.monthlyVersion }}-beta.1.zip"
 
-    r2-upload-accelerated:
-      name: Upload Accelerated to R2
-      runs-on: ubuntu-20.04
-      needs: [ code-freeze-prep, build-a ]
-      if: ${{ needs.code-freeze-prep.outputs.isTodayAcceleratedFreeze == 'yes' }}
-      steps:
-          - id: download
-            uses: actions/download-artifact@v4
-            env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            with:
-                name: double-zipped-woocommerce.${{ needs.code-freeze-prep.outputs.acceleratedVersion }}
-                path: download
+    # r2-upload-accelerated:
+    #   name: Upload Accelerated to R2
+    #   runs-on: ubuntu-20.04
+    #   needs: [ code-freeze-prep, build-monthly ]
+    #   if: ${{ needs.code-freeze-prep.outputs.isTodayAcceleratedFreeze == 'yes' }}
+    #   steps:
+    #       - id: download
+    #         uses: actions/download-artifact@v4
+    #         env:
+    #             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #         with:
+    #             name: double-zipped-woocommerce.${{ needs.code-freeze-prep.outputs.acceleratedVersion }}
+    #             path: download
 
-          - run: ls -lah ${{steps.download.outputs.download-path}}
+    #       - run: ls -lah ${{steps.download.outputs.download-path}}
 
-          - name: Upload release zip to Cloudflare R2 bucket
-            uses: ryand56/r2-upload-action@de3eabc2e3137ce07bc3805af441df55f535c64b
-            with:
-              r2-account-id: ${{ secrets.R2_ACCOUNT_ID }}
-              r2-access-key-id: ${{ secrets.R2_ACCESS_KEY_ID }}
-              r2-secret-access-key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-              r2-bucket: ${{ secrets.R2_BUCKET }}
-              source-dir: ${{ steps.download.outputs.download-path }}
-              destination-dir: ./accelerated/
+    #       - name: Upload release zip to Cloudflare R2 bucket
+    #         uses: ryand56/r2-upload-action@de3eabc2e3137ce07bc3805af441df55f535c64b
+    #         with:
+    #           r2-account-id: ${{ secrets.R2_ACCOUNT_ID }}
+    #           r2-access-key-id: ${{ secrets.R2_ACCESS_KEY_ID }}
+    #           r2-secret-access-key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+    #           r2-bucket: ${{ secrets.R2_BUCKET }}
+    #           source-dir: ${{ steps.download.outputs.download-path }}
+    #           destination-dir: ./accelerated/
 
-    slack-upload-accelerated:
-        name: Upload Accelerated to Slack
-        runs-on: ubuntu-20.04
-        needs: [ code-freeze-prep, notify-slack, build-a ]
-        if: ${{ needs.code-freeze-prep.outputs.isTodayAcceleratedFreeze == 'yes' && inputs.skipSlackPing != true }}
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v3
-              with:
-                  fetch-depth: 0
+    # slack-upload-accelerated:
+    #     name: Upload Accelerated to Slack
+    #     runs-on: ubuntu-20.04
+    #     needs: [ code-freeze-prep, notify-slack, build-monthly ]
+    #     if: ${{ needs.code-freeze-prep.outputs.isTodayAcceleratedFreeze == 'yes' && inputs.skipSlackPing != true }}
+    #     steps:
+    #         - name: Checkout code
+    #           uses: actions/checkout@v3
+    #           with:
+    #               fetch-depth: 0
 
-            - name: Setup PNPM
-              uses: pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d
+    #         - name: Setup PNPM
+    #           uses: pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d
 
-            - name: Setup Node
-              uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c
-              with:
-                  node-version-file: .nvmrc
-                  cache: pnpm
-                  registry-url: 'https://registry.npmjs.org'
+    #         - name: Setup Node
+    #           uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c
+    #           with:
+    #               node-version-file: .nvmrc
+    #               cache: pnpm
+    #               registry-url: 'https://registry.npmjs.org'
 
-            - name: Install prerequisites
-              run: |
-                  pnpm install --filter monorepo-utils --ignore-scripts
-                  # ignore scripts speeds up setup signficantly, but we still need to build monorepo utils
-                  pnpm build
-              working-directory: tools/monorepo-utils
+    #         - name: Install prerequisites
+    #           run: |
+    #               pnpm install --filter monorepo-utils --ignore-scripts
+    #               # ignore scripts speeds up setup signficantly, but we still need to build monorepo utils
+    #               pnpm build
+    #           working-directory: tools/monorepo-utils
 
-            - id: download
-              uses: actions/download-artifact@v4
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                  name: double-zipped-woocommerce.${{ needs.code-freeze-prep.outputs.acceleratedVersion }}
-                  path: download
+    #         - id: download
+    #           uses: actions/download-artifact@v4
+    #           env:
+    #               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #           with:
+    #               name: double-zipped-woocommerce.${{ needs.code-freeze-prep.outputs.acceleratedVersion }}
+    #               path: download
 
-            - run: ls -lah ${{steps.download.outputs.download-path}}
+    #         - run: ls -lah ${{steps.download.outputs.download-path}}
 
-            - name: Send release zip to Slack
-              id: send-file-slack
-              run : |
-                  pnpm utils slack file "${{ secrets.CODE_FREEZE_BOT_TOKEN }}" "Here's the generated release build for ${{ needs.code-freeze-prep.outputs.acceleratedVersion }}" "${{ steps.download.outputs.download-path }}/woocommerce.zip" "${{ inputs.slackChannelOverride || secrets.WOO_RELEASE_SLACK_CHANNEL }}" --reply-ts ${{ needs.notify-slack.outputs.ts }} --filename "woocommerce.${{ needs.code-freeze-prep.outputs.acceleratedVersion }}.zip"
+    #         - name: Send release zip to Slack
+    #           id: send-file-slack
+    #           run: |
+    #               pnpm utils slack file "${{ secrets.CODE_FREEZE_BOT_TOKEN }}" "Here's the generated release build for ${{ needs.code-freeze-prep.outputs.acceleratedVersion }}" "${{ steps.download.outputs.download-path }}/woocommerce.zip" "${{ inputs.slackChannelOverride || secrets.WOO_RELEASE_SLACK_CHANNEL }}" --reply-ts ${{ needs.notify-slack.outputs.ts }} --filename "woocommerce.${{ needs.code-freeze-prep.outputs.acceleratedVersion }}.zip"
 
-    github-upload-monthly:
-        name: Create single-zipped GitHub asset (Monthly)
-        runs-on: ubuntu-20.04
-        needs: [ code-freeze-prep, build-monthly ]
-        if: ${{ needs.code-freeze-prep.outputs.isTodayMonthlyFreeze == 'yes' }}
-        steps:
-            - id: download
-              uses: actions/download-artifact@v4
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                  name: double-zipped-woocommerce.${{ needs.code-freeze-prep.outputs.monthlyVersion }}-beta.1
-                  path: download
+    # github-upload-monthly:
+    #     name: Create single-zipped GitHub asset (Monthly)
+    #     runs-on: ubuntu-20.04
+    #     needs: [ code-freeze-prep, build-monthly ]
+    #     if: ${{ needs.code-freeze-prep.outputs.isTodayMonthlyFreeze == 'yes' }}
+    #     steps:
+    #         - id: download
+    #           uses: actions/download-artifact@v4
+    #           env:
+    #               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #           with:
+    #               name: double-zipped-woocommerce.${{ needs.code-freeze-prep.outputs.monthlyVersion }}-beta.1
+    #               path: download
 
-            - name: Unzip the file (prevents double zip problem)
-              run: unzip ${{ steps.download.outputs.download-path }}/woocommerce.zip -d zipfile
+    #         - name: Unzip the file (prevents double zip problem)
+    #           run: unzip ${{ steps.download.outputs.download-path }}/woocommerce.zip -d zipfile
 
-            - name: Upload the zip file as an artifact
-              uses: actions/upload-artifact@v4
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                  name: woocommerce.${{ needs.code-freeze-prep.outputs.monthlyVersion }}-beta.1
-                  path: zipfile
-                  retention-days: 10
+    #         - name: Upload the zip file as an artifact
+    #           uses: actions/upload-artifact@v4
+    #           env:
+    #               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #           with:
+    #               name: woocommerce.${{ needs.code-freeze-prep.outputs.monthlyVersion }}-beta.1
+    #               path: zipfile
+    #               retention-days: 10
 
-    github-upload-accelerated:
-        name: Create single-zipped GitHub asset (Accelerated)
-        runs-on: ubuntu-20.04
-        needs: [ code-freeze-prep, build-a ]
-        if: ${{ needs.code-freeze-prep.outputs.isTodayAcceleratedFreeze == 'yes' }}
-        steps:
-            - id: download
-              uses: actions/download-artifact@v4
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                  name: double-zipped-woocommerce.${{ needs.code-freeze-prep.outputs.acceleratedVersion }}
-                  path: download
+    # github-upload-accelerated:
+    #     name: Create single-zipped GitHub asset (Accelerated)
+    #     runs-on: ubuntu-20.04
+    #     needs: [ code-freeze-prep, build-monthly ]
+    #     if: ${{ needs.code-freeze-prep.outputs.isTodayAcceleratedFreeze == 'yes' }}
+    #     steps:
+    #         - id: download
+    #           uses: actions/download-artifact@v4
+    #           env:
+    #               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #           with:
+    #               name: double-zipped-woocommerce.${{ needs.code-freeze-prep.outputs.acceleratedVersion }}
+    #               path: download
 
-            - name: Unzip the file (prevents double zip problem)
-              run: unzip ${{ steps.download.outputs.download-path }}/woocommerce.zip -d zipfile
+    #         - name: Unzip the file (prevents double zip problem)
+    #           run: unzip ${{ steps.download.outputs.download-path }}/woocommerce.zip -d zipfile
 
-            - name: Upload the zip file as an artifact
-              uses: actions/upload-artifact@v4
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                  name: woocommerce.${{ needs.code-freeze-prep.outputs.acceleratedVersion }}
-                  path: zipfile
-                  retention-days: 10
+    #         - name: Upload the zip file as an artifact
+    #           uses: actions/upload-artifact@v4
+    #           env:
+    #               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #           with:
+    #               name: woocommerce.${{ needs.code-freeze-prep.outputs.acceleratedVersion }}
+    #               path: zipfile
+    #               retention-days: 10
 
