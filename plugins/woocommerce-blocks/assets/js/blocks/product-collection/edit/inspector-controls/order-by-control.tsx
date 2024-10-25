@@ -63,6 +63,10 @@ const orderOptions = [
 		value: 'menu_order/asc',
 		label: __( 'Manual (menu order)', 'woocommerce' ),
 	},
+	{
+		value: 'random/asc',
+		label: __( 'Random', 'woocommerce' ),
+	},
 ];
 
 const OrderByControl = ( props: QueryControlProps ) => {
