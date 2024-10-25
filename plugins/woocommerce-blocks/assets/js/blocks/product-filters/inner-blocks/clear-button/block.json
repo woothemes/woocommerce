@@ -15,6 +15,12 @@
 		"woocommerce/product-filter",
 		"woocommerce/product-filter-active"
 	],
+	"attributes": {
+		"clearType": {
+			"type": "string",
+			"default": ""
+		}
+	},
 	"supports": {
 		"interactivity": true,
 		"inserter": false

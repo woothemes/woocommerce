@@ -20,45 +20,20 @@ const Edit = ( props: EditProps ) => {
 			allowedBlocks: getAllowedBlocks( EXCLUDED_BLOCKS ),
 			template: [
 				[
-					'core/group',
-					{
-						layout: {
-							type: 'flex',
-							flexWrap: 'nowrap',
-						},
-						metadata: {
-							name: __( 'Header', 'woocommerce' ),
-						},
-						style: {
-							spacing: {
-								blockGap: '0',
-							},
-						},
-					},
-					[
-						[
-							'core/heading',
-							{
-								level: 3,
-								content: __( 'Active', 'woocommerce' ),
-							},
-						],
-						[
-							'woocommerce/product-filter-clear-button',
-							{
-								lock: {
-									remove: true,
-									move: false,
-								},
-							},
-						],
-					],
-				],
-				[
 					'woocommerce/product-filter-active-chips',
 					{
 						lock: {
 							remove: true,
+						},
+					},
+				],
+				[
+					'woocommerce/product-filter-clear-button',
+					{
+						clearType: 'all',
+						lock: {
+							remove: true,
+							move: false,
 						},
 					},
 				],

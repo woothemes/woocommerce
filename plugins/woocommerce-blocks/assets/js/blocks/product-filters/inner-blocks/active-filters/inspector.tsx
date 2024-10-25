@@ -25,11 +25,6 @@ export const Inspector = ( {
 		const activeFilterBlock =
 			select( 'core/block-editor' ).getBlock( clientId );
 
-		const coreGroupBlock = getInnerBlockByName(
-			activeFilterBlock,
-			'core/group'
-		);
-
 		const clearButtonBlock = getInnerBlockByName(
 			activeFilterBlock,
 			'woocommerce/product-filter-clear-button'
@@ -51,25 +46,15 @@ export const Inspector = ( {
 			// We need to reselect the current block for better UX.
 			dispatch( 'core/block-editor' ).selectBlock( clientId );
 		} else if ( ! clearButtonBlock && clearButton ) {
-			if ( coreGroupBlock ) {
-				dispatch( 'core/block-editor' ).insertBlock(
-					createBlock( 'woocommerce/product-filter-clear-button', {
-						lock: { move: false, remove: true },
-					} ),
-					1,
-					coreGroupBlock.clientId,
-					false
-				);
-			} else {
-				dispatch( 'core/block-editor' ).insertBlock(
-					createBlock( 'woocommerce/product-filter-clear-button', {
-						lock: { move: false, remove: true },
-					} ),
-					0,
-					clientId,
-					false
-				);
-			}
+			dispatch( 'core/block-editor' ).insertBlock(
+				createBlock( 'woocommerce/product-filter-clear-button', {
+					lock: { move: false, remove: true },
+					clearType: 'all',
+				} ),
+				1,
+				clientId,
+				false
+			);
 		}
 	}, [ clearButton, clientId ] );
 
