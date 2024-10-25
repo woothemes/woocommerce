@@ -23,13 +23,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Register the REST API route for installing a plugin.
  */
 function wc_cleanup_register_routes() {
-	register_rest_route( 'wc-cleanup/v1', '/install-plugin', array(
-		'methods'  => 'GET',
-		'callback' => 'wc_cleanup_install_plugin',
-		'permission_callback' => function() {
-			return current_user_can( 'install_plugins' );
-		},
-	) );
+	register_rest_route(
+		'wc-cleanup/v1',
+		'/install-plugin',
+		array(
+			'methods'             => 'GET',
+			'callback'            => 'wc_cleanup_install_plugin',
+			'permission_callback' => function () {
+				return current_user_can( 'install_plugins' );
+			},
+		)
+	);
 }
 add_action( 'rest_api_init', 'wc_cleanup_register_routes' );
 
@@ -46,7 +50,7 @@ function wc_cleanup_install_plugin( WP_REST_Request $request ) {
 		return new WP_REST_Response( array( 'error' => 'Invalid URL' ), 400 );
 	}
 
-	// Ensure the URL is for WooCommerce only
+	// Ensure the URL is for WooCommerce only.
 	if ( ! preg_match( '/woocommerce/', $url ) ) {
 		return new WP_REST_Response( array( 'error' => 'URL must be for WooCommerce plugin' ), 400 );
 	}
@@ -57,12 +61,12 @@ function wc_cleanup_install_plugin( WP_REST_Request $request ) {
 	include_once ABSPATH . 'wp-admin/includes/plugin-install.php';
 	include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
-	// Extract plugin slug from URL
-	$plugin_slug = basename( parse_url( $url, PHP_URL_PATH ), '.zip' );
+	// Extract plugin slug from URL.
+	$plugin_slug = basename( wp_parse_url( $url, PHP_URL_PATH ), '.zip' );
 
-	// Check if the plugin is already installed
+	// Check if the plugin is already installed.
 	$installed_plugins = get_plugins();
-	$plugin_file = null;
+	$plugin_file       = null;
 
 	foreach ( $installed_plugins as $file => $plugin_data ) {
 		if ( strpos( $file, $plugin_slug ) !== false ) {
@@ -72,12 +76,12 @@ function wc_cleanup_install_plugin( WP_REST_Request $request ) {
 	}
 
 	if ( $plugin_file ) {
-		// Deactivate and uninstall the plugin if it is already installed
+		// Deactivate and uninstall the plugin if it is already installed.
 		deactivate_plugins( $plugin_file );
 		delete_plugins( array( $plugin_file ) );
 	}
 
-	// Check if the plugin folder exists and delete it
+	// Check if the plugin folder exists and delete it.
 	$plugin_dir = WP_PLUGIN_DIR . '/' . $plugin_slug;
 	if ( is_dir( $plugin_dir ) ) {
 		global $wp_filesystem;
@@ -89,17 +93,17 @@ function wc_cleanup_install_plugin( WP_REST_Request $request ) {
 	}
 
 	$upgrader = new Plugin_Upgrader();
-	$result = $upgrader->install( $url );
+	$result   = $upgrader->install( $url );
 
 	if ( is_wp_error( $result ) ) {
 		return new WP_REST_Response( array( 'error' => $result->get_error_message() ), 500 );
 	}
 
-	// Activate the plugin after installation
+	// Activate the plugin after installation.
 	$plugin_file = $plugin_slug . '/' . $plugin_slug . '.php';
 	activate_plugin( $plugin_file );
 
-	// Trigger WooCommerce database update if required
+	// Trigger WooCommerce database update if required.
 	if ( function_exists( 'WC_Install' ) ) {
 		WC_Install::update();
 	}
