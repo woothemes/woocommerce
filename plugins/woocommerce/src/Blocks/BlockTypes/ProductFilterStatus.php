@@ -18,7 +18,8 @@ final class ProductFilterStatus extends AbstractBlock {
 	 */
 	protected $block_name = 'product-filter-status';
 
-	const STOCK_STATUS_QUERY_VAR = 'filter_stock_status';
+	const STOCK_STATUS_QUERY_VAR  = 'filter_stock_status';
+	const ONSALE_STATUS_QUERY_VAR = 'filter_onsale_status';
 
 	/**
 	 * Initialize this block type.
@@ -34,7 +35,7 @@ final class ProductFilterStatus extends AbstractBlock {
 	}
 
 	/**
-	{{{;;{{hhi{,,,kkkiiiiijkjkffasdfj}}}}}} * Register the query param keys.
+	 * Register the query param keys.
 	 *
 	 * @param array $filter_param_keys The active filters data.
 	 * @param array $url_param_keys    The query param parsed from the URL.
@@ -49,9 +50,17 @@ final class ProductFilterStatus extends AbstractBlock {
 			}
 		);
 
+		$onsale_param_keys = array_filter(
+			$url_param_keys,
+			function ( $param ) {
+				return self::ONSALE_STATUS_QUERY_VAR === $param;
+			}
+		);
+
 		return array_merge(
 			$filter_param_keys,
-			$stock_param_keys
+			$stock_param_keys,
+			$onsale_param_keys
 		);
 	}
 

@@ -32,11 +32,7 @@ final class QueryFilters {
 			return $args;
 		}
 
-		if ( $wp_query->get( 'filter_stock_status' ) ) {
-			$args = $this->stock_filter_clauses( $args, $wp_query );
-		}
-
-		return $args;
+		return $this->add_query_clauses( $args, $wp_query );
 	}
 
 	/**
@@ -50,6 +46,7 @@ final class QueryFilters {
 		$args = $this->stock_filter_clauses( $args, $wp_query );
 		$args = $this->price_filter_clauses( $args, $wp_query );
 		$args = $this->attribute_filter_clauses( $args, $wp_query );
+		$args = $this->onsale_filter_clauses( $args, $wp_query );
 
 		return $args;
 	}
@@ -210,6 +207,24 @@ final class QueryFilters {
 
 		$args['join']   = $this->append_product_sorting_table_join( $args['join'] );
 		$args['where'] .= ' AND wc_product_meta_lookup.stock_status IN (\'' . implode( '\',\'', array_map( 'esc_sql', explode( ',', $wp_query->get( 'filter_stock_status' ) ) ) ) . '\')';
+
+		return $args;
+	}
+
+	/**
+	 * Add query clauses for onsale filter.
+	 *
+	 * @param array     $args     Query args.
+	 * @param \WP_Query $wp_query WP_Query object.
+	 * @return array
+	 */
+	private function onsale_filter_clauses( $args, $wp_query ) {
+		if ( ! $wp_query->get( 'filter_onsale_status' ) ) {
+			return $args;
+		}
+
+		$args['join']   = $this->append_product_sorting_table_join( $args['join'] );
+		$args['where'] .= ' AND wc_product_meta_lookup.onsale = 1';
 
 		return $args;
 	}
