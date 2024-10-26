@@ -27,7 +27,7 @@ export const PluginErrorBanner = ( {
 			// it really shouldn't get here since permissions are pre-checked. but we'll check for 403 just to be safe.
 			( e ) => e.errorDetails?.data.data.status === 403 // 403 is the code representing rest_authorization_required_code()
 		):
-			installationErrorMessage = // Translators: %s is a list of plugins that does not need to be translated
+			installationErrorMessage =
 				__(
 					'You do not have permissions to install plugins. Please contact your site administrator.',
 					'woocommerce'
