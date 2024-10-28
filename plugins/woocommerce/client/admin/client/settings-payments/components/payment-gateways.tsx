@@ -8,6 +8,7 @@ import { __ } from '@wordpress/i18n';
 import { EllipsisMenu, List, Pill } from '@woocommerce/components';
 import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
 import { Gridicon } from '@automattic/components';
+import { getNewPath } from '@woocommerce/navigation';
 
 /**
  * Internal dependencies
@@ -98,22 +99,28 @@ export const PaymentGateways = () => {
 				after: (
 					<div className="woocommerce-list__item-after__actions">
 						<>
-							<Button
-								variant={
-									gateway.enabled ? 'secondary' : 'primary'
-								}
-								onClick={
-									gateway.enabled
-										? manageGateway( gateway )
-										: enableGateway( gateway )
-								}
-								isBusy={ false }
-								disabled={ false }
-							>
-								{ gateway.enabled
-									? __( 'Manage', 'woocommerce' )
-									: __( 'Enable', 'woocommerce' ) }
-							</Button>
+							{ gateway.enabled ? (
+								<Button
+									variant="secondary"
+									href={
+										'admin.php?page=wc-settings&tab=checkout&section=' +
+										gateway.id
+									}
+									isBusy={ false }
+									disabled={ false }
+								>
+									{ __( 'Manage', 'woocommerce' ) }
+								</Button>
+							) : (
+								<Button
+									variant="primary"
+									onClick={ enableGateway( gateway ) }
+									isBusy={ false }
+									disabled={ false }
+								>
+									{ __( 'Enable', 'woocommerce' ) }
+								</Button>
+							) }
 							{ gateway.id === 'woocommerce_payments' &&
 								wooPaymentsData.isInTestMode && (
 									<Button
