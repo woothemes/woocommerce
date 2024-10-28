@@ -1219,15 +1219,26 @@ Display overlay navigation controls.
 -	**Supports:** align (center, left, right), color (background, text), inserter, interactivity, layout (default, ~~allowEditing~~), position (sticky), spacing (blockGap, margin, padding), typography (fontSize, lineHeight)
 -	**Attributes:** align, buttonStyle, iconSize, navigationStyle, overlayIcon, overlayMode, style, triggerType
 
-## Filter Options - woocommerce/product-filter-price
+## Price (Experimental) - woocommerce/product-filter-price
 
-Enable customers to filter the product collection by choosing a price range.
+Let shoppers filter products by choosing a price range.
 
 -	**Name:** woocommerce/product-filter-price
 -	**Category:** woocommerce
--   **Ancestor:** woocommerce/product-filter
+-   **Ancestor:** woocommerce/product-filters
 -   **Parent:** 
--	**Supports:** interactivity, ~~inserter~~
+-	**Supports:** interactivity, ~~html~~
+-	**Attributes:** 
+
+## Price Slider - woocommerce/product-filter-price-slider
+
+A slider helps shopper choose a price range.
+
+-	**Name:** woocommerce/product-filter-price-slider
+-	**Category:** woocommerce
+-   **Ancestor:** woocommerce/product-filter-price
+-   **Parent:** 
+-	**Supports:** ~~html~~
 -	**Attributes:** inlineInput, showInputFields
 
 ## Filter Options - woocommerce/product-filter-rating
