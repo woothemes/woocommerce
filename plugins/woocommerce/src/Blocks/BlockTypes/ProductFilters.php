@@ -92,7 +92,9 @@ class ProductFilters extends AbstractBlock {
 			'style'                            => array_reduce(
 				array_keys( $styles ),
 				function ( $carry, $key ) use ( $styles ) {
-					$carry .= $key . ':' . $styles[ $key ] . ';';
+					if ( $styles[ $key ] ) {
+						$carry .= $key . ':' . $styles[ $key ] . ';';
+					}
 					return $carry;
 				},
 				''
