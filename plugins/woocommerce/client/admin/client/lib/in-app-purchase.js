@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { addQueryArgs } from '@wordpress/url';
+import { getAdminSetting } from '~/utils/admin-settings';
 import { getSetting } from '@woocommerce/settings';
 
 /**
@@ -15,7 +16,7 @@ export const getInAppPurchaseUrl = ( url, queryArgs = {} ) => {
 	const { pathname, search } = window.location;
 	const connectNonce = getSetting( 'connectNonce', '' );
 	queryArgs = {
-		'wccom-site': getSetting( 'siteUrl' ),
+		'wccom-site': getAdminSetting( 'siteUrl' ),
 		// If the site is installed in a directory the directory must be included in the back param path.
 		'wccom-back': pathname + search,
 		'wccom-woo-version': getSetting( 'wcVersion' ),
