@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 import ProductControl from '@woocommerce/editor-components/product-control';
 import { SelectedOption } from '@woocommerce/block-hocs';
 import { WC_BLOCKS_IMAGE_URL } from '@woocommerce/block-settings';
-import { useState, useMemo, useRef } from '@wordpress/element';
+import { useState, useRef } from '@wordpress/element';
 import type { WooCommerceBlockLocation } from '@woocommerce/blocks/product-template/utils';
 import { type ProductResponseItem, isEmpty } from '@woocommerce/types';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -31,6 +31,10 @@ import type {
 	ProductCollectionQuery,
 	ProductCollectionSetAttributes,
 } from '../../types';
+
+const REFERENCE_TYPE_PRODUCT = 'product';
+const REFERENCE_TYPE_CART = 'cart';
+const REFERENCE_TYPE_ORDER = 'order';
 
 const ProductButton: React.FC< {
 	isOpen: boolean;
@@ -125,6 +129,22 @@ const enum PRODUCT_REFERENCE_TYPE {
 	SPECIFIC_PRODUCT = 'SPECIFIC_PRODUCT',
 }
 
+const getFromCurrentProductRadioLabel = (
+	currentLocation: string,
+	hasCartReference: boolean,
+	hasOrderReference: boolean
+): string => {
+	if ( currentLocation === REFERENCE_TYPE_CART && hasCartReference ) {
+		return __( 'From products in the cart', 'woocommerce' );
+	}
+
+	if ( currentLocation === REFERENCE_TYPE_ORDER && hasOrderReference ) {
+		return __( 'From products in the order', 'woocommerce' );
+	}
+
+	return __( 'From the current product', 'woocommerce' );
+};
+
 const LinkedProductControl = ( {
 	query,
 	setAttributes,
@@ -136,34 +156,45 @@ const LinkedProductControl = ( {
 	location: WooCommerceBlockLocation;
 	usesReference: string[] | undefined;
 } ) => {
-	const REFERENCE_TYPE_PRODUCT = 'product';
-	const isProductReferenceAvailable =
-		location.type === REFERENCE_TYPE_PRODUCT;
+	const isProductLocation = location.type === REFERENCE_TYPE_PRODUCT;
+	const hasProductReference = !! usesReference?.includes(
+		REFERENCE_TYPE_PRODUCT
+	);
+	const isCartLocation = location.type === REFERENCE_TYPE_CART;
+	const hasCartReference = !! usesReference?.includes( REFERENCE_TYPE_CART );
+
+	const isOrderLocation = location.type === REFERENCE_TYPE_ORDER;
+	const hasOrderReference =
+		!! usesReference?.includes( REFERENCE_TYPE_ORDER );
+
 	const { productReference } = query;
 
 	const { product, isLoading } = useGetProduct( productReference );
 	const [ isDropdownOpen, setIsDropdownOpen ] = useState< boolean >( false );
 	const [ radioControlState, setRadioControlState ] =
 		useState< PRODUCT_REFERENCE_TYPE >(
-			isProductReferenceAvailable && isEmpty( productReference )
+			( isProductLocation || isCartLocation || isOrderLocation ) &&
+				isEmpty( productReference )
 				? PRODUCT_REFERENCE_TYPE.CURRENT_PRODUCT
 				: PRODUCT_REFERENCE_TYPE.SPECIFIC_PRODUCT
 		);
 	const prevReference = useRef< number | undefined >( undefined );
-	const showLinkedProductControl = useMemo( () => {
-		const isProductContextRequired = usesReference?.includes(
-			REFERENCE_TYPE_PRODUCT
-		);
 
-		return isProductContextRequired;
-	}, [ usesReference ] );
-
-	if ( ! showLinkedProductControl ) return null;
-
-	const showRadioControl = isProductReferenceAvailable;
+	const showRadioControl =
+		( isProductLocation && hasProductReference ) ||
+		( isCartLocation && hasCartReference ) ||
+		( isOrderLocation && hasOrderReference );
 	const showSpecificProductSelector = showRadioControl
 		? radioControlState === PRODUCT_REFERENCE_TYPE.SPECIFIC_PRODUCT
 		: ! isEmpty( productReference );
+
+	const showLinkedProductControl =
+		( showRadioControl || showSpecificProductSelector ) &&
+		/**
+		 * Linked control is only useful for collection which uses product, cart or order reference.
+		 */
+		( hasProductReference || hasCartReference || hasOrderReference );
+	if ( ! showLinkedProductControl ) return null;
 
 	const radioControlHelp =
 		radioControlState === PRODUCT_REFERENCE_TYPE.CURRENT_PRODUCT
@@ -194,6 +225,12 @@ const LinkedProductControl = ( {
 		setRadioControlState( newValue );
 	};
 
+	const fromCurrentProductRadioLabel = getFromCurrentProductRadioLabel(
+		location.type,
+		hasCartReference,
+		hasOrderReference
+	);
+
 	return (
 		<PanelBody title={ __( 'Linked Product', 'woocommerce' ) }>
 			{ showRadioControl && (
@@ -205,10 +242,7 @@ const LinkedProductControl = ( {
 						selected={ radioControlState }
 						options={ [
 							{
-								label: __(
-									'From the current product',
-									'woocommerce'
-								),
+								label: fromCurrentProductRadioLabel,
 								value: PRODUCT_REFERENCE_TYPE.CURRENT_PRODUCT,
 							},
 							{
