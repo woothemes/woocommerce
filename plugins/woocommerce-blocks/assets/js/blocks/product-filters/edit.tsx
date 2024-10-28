@@ -51,6 +51,9 @@ export const Edit = ( props: BlockEditProps< BlockAttributes > ) => {
 			'--wc-product-filters-text-color': colors.textColor || '#111',
 			'--wc-product-filters-background-color':
 				colors.backgroundColor || '#fff',
+			'--wc-product-filters-overlay-icon-size': overlayIconSize
+				? `${ overlayIconSize }px`
+				: undefined,
 		} as Record< string, string >,
 	} );
 
@@ -62,10 +65,7 @@ export const Edit = ( props: BlockEditProps< BlockAttributes > ) => {
 				onClick={ () => setIsOpen( ! isOpen ) }
 			>
 				{ overlayButtonType !== 'label-only' && (
-					<Icon
-						icon={ icons[ overlayIcon ] || filterThreeLines }
-						size={ overlayIconSize }
-					/>
+					<Icon icon={ icons[ overlayIcon ] || filterThreeLines } />
 				) }
 				{ overlayButtonType !== 'icon-only' && (
 					<span>{ __( 'Filter products', 'woocommerce' ) }</span>

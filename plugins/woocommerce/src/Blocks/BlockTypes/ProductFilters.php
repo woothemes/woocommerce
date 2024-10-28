@@ -104,13 +104,13 @@ class ProductFilters extends AbstractBlock {
 
 		ob_start();
 		?>
-		<div <?php echo get_block_wrapper_attributes( $wrapper_attributes ); ?>>
+		<div <?php echo get_block_wrapper_attributes( $wrapper_attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<button
 				class="wc-block-product-filters__open-overlay"
 				data-wc-on--click="actions.openOverlay"
 			>
 				<?php if ( 'label-only' !== $attributes['overlayButtonType'] ) : ?>
-					<?php echo $this->get_svg_icon( $attributes['overlayIcon'] ?? 'filter-icon-2', $attributes['overlayIconSize'] ?? 24 ); ?>
+					<?php echo $this->get_svg_icon( $attributes['overlayIcon'] ?? 'filter-icon-2' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				<?php endif; ?>
 				<?php if ( 'icon-only' !== $attributes['overlayButtonType'] ) : ?>
 					<span><?php echo esc_html__( 'Filter products', 'woocommerce' ); ?></span>
@@ -128,11 +128,11 @@ class ProductFilters extends AbstractBlock {
 								data-wc-on--click="actions.closeOverlay"
 							>
 								<span><?php echo esc_html__( 'Close', 'woocommerce' ); ?></span>
-								<?php echo $this->get_svg_icon( 'close' ); ?>
+								<?php echo $this->get_svg_icon( 'close' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 							</button>
 						</header>
 						<div class="wc-block-product-filters__overlay-content">
-							<?php echo $inner_blocks; ?>
+							<?php echo $inner_blocks; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 						</div>
 						<footer
 							class="wc-block-product-filters__overlay-footer"
@@ -152,7 +152,13 @@ class ProductFilters extends AbstractBlock {
 		return ob_get_clean();
 	}
 
-	private function get_svg_icon( string $name, int $size = 0 ) {
+	/**
+	 * Get SVG icon markup for a given icon name.
+	 *
+	 * @param string $name The name of the icon to retrieve.
+	 * @return string SVG markup for the icon, or empty string if icon not found.
+	 */
+	private function get_svg_icon( string $name ) {
 		$icons = array(
 			'close'         => '<path d="M12 13.0607L15.7123 16.773L16.773 15.7123L13.0607 12L16.773 8.28772L15.7123 7.22706L12 10.9394L8.28771 7.22705L7.22705 8.28771L10.9394 12L7.22706 15.7123L8.28772 16.773L12 13.0607Z" fill="currentColor"/>',
 			'filter-icon-1' => '<path fill-rule="evenodd" clip-rule="evenodd" d="M10.541 4.20007H5.20245C4.27908 4.20007 3.84904 5.34461 4.54394 5.95265L10.541 11.2001V16.2001L10.541 17.9428C10.541 18.1042 10.619 18.2558 10.7504 18.3496L13.2504 20.1353C13.5813 20.3717 14.041 20.1352 14.041 19.7285V11.2001L19.3339 5.90718C19.9639 5.27722 19.5177 4.20007 18.6268 4.20007H13.041H10.541Z" fill="currentColor"/>',
@@ -166,8 +172,7 @@ class ProductFilters extends AbstractBlock {
 		}
 
 		return sprintf(
-			'<svg width="%1$d" height="%1$d" viewBox="0 0 %1$d %1$d" fill="none" xmlns="http://www.w3.org/2000/svg">%2$s</svg>',
-			$size ?: 24,
+			'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">%s</svg>',
 			$icons[ $name ]
 		);
 	}
