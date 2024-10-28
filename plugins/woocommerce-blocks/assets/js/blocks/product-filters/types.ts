@@ -11,7 +11,7 @@ export type BlockAttributes = {
 		| 'filter-icon-3'
 		| 'filter-icon-4';
 	overlayButtonType: 'label-icon' | 'label-only' | 'icon-only';
-	overlayIconSize?: number;
+	overlayIconSize: number;
 };
 
 export type EditProps = BlockEditProps< BlockAttributes >;

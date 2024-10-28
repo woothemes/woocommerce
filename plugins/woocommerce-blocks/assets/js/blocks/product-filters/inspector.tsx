@@ -89,7 +89,7 @@ export const Inspector = ( { attributes, setAttributes }: EditProps ) => {
 
 				{ overlayButtonType !== 'label-only' && (
 					<RangeControl
-						className="wc-block-product-filters-overlay-navigation__icon-size-control"
+						className="wc-block-editor-product-filters__overlay-icon-size"
 						label={ __( 'Icon Size', 'woocommerce' ) }
 						value={ overlayIconSize }
 						onChange={ ( newSize: number ) => {
@@ -97,6 +97,7 @@ export const Inspector = ( { attributes, setAttributes }: EditProps ) => {
 						} }
 						min={ 0 }
 						max={ 300 }
+						allowReset={ true }
 					/>
 				) }
 			</PanelBody>
