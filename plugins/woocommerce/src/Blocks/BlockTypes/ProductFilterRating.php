@@ -194,33 +194,32 @@ final class ProductFilterRating extends AbstractBlock {
 	/**
 	 * Get the Rating list items.
 	 *
-	 * @param array $rating_counts          - The rating counts.
-	 * @param array $selected_ratings_query - The url query param for selected ratings.
-	 * @param bool  $show_counts            - Whether to show the counts.
-	 * @return array
+	 * @param array $ratings     - The rating counts.
+	 * @param array $selected    - an array of selected ratings.
+	 * @param bool  $with_counts - Whether to show the counts.
+	 * @return array The rating items.
 	 */
-	private function get_rating_items( $rating_counts, $selected_ratings_query, $show_counts ) {
+	private function get_rating_items( $ratings, $selected, $with_counts ) {
 		return array_map(
-			function ( $rating ) use ( $selected_ratings_query, $show_counts ) {
-				$rating      = (string) $rating['rating'];
-				$count       = $rating['count'];
-				$count_label = $show_counts ? "($count)" : '';
+			function ( $rating ) use ( $selected, $with_counts ) {
+				$value       = (string) $rating['rating'];
+				$count_label = $with_counts ? "({$rating['count']})" : '';
 
 				$aria_label = sprintf(
 					/* translators: %1$d is referring to rating value. Example: Rated 4 out of 5. */
 					__( 'Rated %s out of 5', 'woocommerce' ),
-					$rating,
+					$value,
 				);
 
 				return array(
-					'id'         => 'rating-' . $rating,
-					'selected'   => in_array( $rating, $selected_ratings_query, true ),
-					'label'      => $this->render_rating_label( (int) $rating, $count_label ),
+					'id'         => 'rating-' . $value,
+					'selected'   => in_array( $value, $selected, true ),
+					'label'      => $this->render_rating_label( (int) $value, $count_label ),
 					'aria_label' => $aria_label,
-					'value'      => $rating,
+					'value'      => $value,
 				);
 			},
-			$rating_counts
+			$ratings
 		);
 	}
 
