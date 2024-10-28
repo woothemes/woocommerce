@@ -503,7 +503,7 @@ class RemoteLogger extends \WC_Log_Handler {
 	/**
 	 * Redact potential user data from the content.
 	 *
-	 * @param string $message The content to redact.
+	 * @param string $content The content to redact.
 	 * @return string The redacted message.
 	 */
 	private function redact_user_data( $content ) {
