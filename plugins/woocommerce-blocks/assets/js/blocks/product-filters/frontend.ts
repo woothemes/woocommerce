@@ -73,12 +73,7 @@ export interface ProductFiltersContext {
 	originalParams: Record< string, string >;
 }
 
-store( 'woocommerce/product-filters', {
-	state: {
-		get __return_false() {
-			return false;
-		},
-	},
+const { actions } = store( 'woocommerce/product-filters', {
 	actions: {
 		openOverlay: () => {
 			const context = getContext< ProductFiltersContext >();
@@ -100,6 +95,12 @@ store( 'woocommerce/product-filters', {
 			const context = getContext< ProductFiltersContext >();
 			context.isOverlayOpened = false;
 			document.body.style.overflow = 'auto';
+		},
+		closeOverlayOnEscape: ( event: KeyboardEvent ) => {
+			const context = getContext< ProductFiltersContext >();
+			if ( context.isOverlayOpened && event.key === 'Escape' ) {
+				actions.closeOverlay();
+			}
 		},
 	},
 	callbacks: {
