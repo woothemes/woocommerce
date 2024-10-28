@@ -8,12 +8,8 @@ import type {
 } from '@woocommerce/types';
 import NoticeBanner from '@woocommerce/base-components/notice-banner';
 import { createInterpolateElement } from '@wordpress/element';
-
-/**
- * Internal dependencies
- */
-import ShippingRatesControl from '../../shipping-rates-control';
-import { formatShippingAddress } from '../../../../utils';
+import { formatShippingAddress } from '@woocommerce/base-utils';
+import { ShippingRatesControl } from '@woocommerce/base-components/cart-checkout';
 
 export interface ShippingRateSelectorProps {
 	shippingRates: CartResponseShippingRate[];
