@@ -9,7 +9,6 @@ export { default as ProductDetails } from './product-details';
 export { default as ProductImage } from './product-image';
 export { default as ProductLowStockBadge } from './product-low-stock-badge';
 export { default as ProductSummary } from './product-summary';
-export { default as PickupLocation } from './pickup-location';
 export { default as ProductMetadata } from './product-metadata';
 export { default as ProductSaleBadge } from './product-sale-badge';
 export { default as ReturnToCartButton } from './return-to-cart-button';
