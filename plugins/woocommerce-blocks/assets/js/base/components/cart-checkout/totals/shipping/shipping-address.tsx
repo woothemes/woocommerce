@@ -23,6 +23,9 @@ export const ShippingAddress = ( {
 		select( CHECKOUT_STORE_KEY ).prefersCollection()
 	);
 	const formattedLocation = formatShippingAddress( shippingAddress );
+	const label = !! formattedLocation
+		? __( 'Change address', 'woocommerce' )
+		: __( 'Enter address to check delivery options', 'woocommerce' );
 	return (
 		<>
 			{ prefersCollection ? (
@@ -30,16 +33,7 @@ export const ShippingAddress = ( {
 			) : (
 				<ShippingLocation formattedLocation={ formattedLocation } />
 			) }
-			<ShippingCalculatorButton
-				label={
-					!! formattedLocation
-						? __( 'Change address', 'woocommerce' )
-						: __(
-								'Enter address to check delivery options',
-								'woocommerce'
-						  )
-				}
-			/>
+			<ShippingCalculatorButton label={ label } />
 		</>
 	);
 };
