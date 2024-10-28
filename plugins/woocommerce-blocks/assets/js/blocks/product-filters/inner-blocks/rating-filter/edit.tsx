@@ -116,9 +116,6 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 		initialFilters
 	);
 
-	const [ displayNoProductRatingsNotice, setDisplayNoProductRatingsNotice ] =
-		useState( false );
-
 	/**
 	 * Compare intersection of all ratings
 	 * and filtered counts to get a list of options to display.
@@ -143,7 +140,6 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 
 		if ( orderedRatings.length === 0 ) {
 			setDisplayedOptions( previewOptions );
-			setDisplayNoProductRatingsNotice( true );
 			return;
 		}
 
@@ -189,6 +185,8 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 		return null;
 	}
 
+	const showNoProductsNotice = ! filteredCountsLoading && ! filteredCounts;
+
 	return (
 		<>
 			<Inspector
@@ -197,7 +195,7 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 			/>
 
 			<div { ...innerBlocksProps }>
-				{ displayNoProductRatingsNotice && (
+				{ showNoProductsNotice && (
 					<Notice>
 						{ __(
 							"Your store doesn't have any products with ratings yet. This filter option will display when a product receives a review.",
