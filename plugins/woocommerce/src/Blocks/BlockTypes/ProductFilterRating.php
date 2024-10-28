@@ -112,7 +112,7 @@ final class ProductFilterRating extends AbstractBlock {
 			return '';
 		}
 
-		$rating_counts   = $this->get_rating_counts( $block );
+		$rating_counts = $this->get_rating_counts( $block );
 
 		// Pick the selected ratings from the query string.
 		$query           = isset( $_GET[ self::RATING_FILTER_QUERY_VAR ] ) ? sanitize_text_field( wp_unslash( $_GET[ self::RATING_FILTER_QUERY_VAR ] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -125,7 +125,7 @@ final class ProductFilterRating extends AbstractBlock {
 		$items = $this->get_rating_items( $rating_counts, $selected_rating, $attributes['showCounts'] ?? false );
 
 		$filter_context = array(
-			'filterData' => array(
+			'filterData'         => array(
 				'items'   => $items,
 				'actions' => array(
 					'toggleFilter' => "{$this->get_full_block_name()}::actions.toggleFilter",
@@ -141,7 +141,7 @@ final class ProductFilterRating extends AbstractBlock {
 			'data-wc-context'      => wp_json_encode(
 				array(
 					'hasSelectedFilters' => $filter_context['hasSelectedFilters'],
-					'hasFilterOptions'   => ! empty( $items),
+					'hasFilterOptions'   => ! empty( $items ),
 				),
 				JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
 			),
@@ -203,7 +203,7 @@ final class ProductFilterRating extends AbstractBlock {
 	 */
 	private function get_rating_items( $rating_counts, $selected_ratings_query, $show_counts ) {
 		return array_map(
-			function( $rating ) use ( $selected_ratings_query, $show_counts ) {
+			function ( $rating ) use ( $selected_ratings_query, $show_counts ) {
 				$rating_str  = (string) $rating['rating'];
 				$count       = $rating['count'];
 				$count_label = $show_counts ? "($count)" : '';
@@ -301,12 +301,12 @@ final class ProductFilterRating extends AbstractBlock {
 		 */
 		uksort(
 			$counts,
-			function( $a, $b ) {
+			function ( $a, $b ) {
 				return $b - $a;
 			}
 		);
 
-		$data   = array();
+		$data = array();
 
 		foreach ( $counts as $key => $value ) {
 			$data[] = array(
