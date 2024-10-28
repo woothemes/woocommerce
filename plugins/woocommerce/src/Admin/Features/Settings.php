@@ -5,7 +5,7 @@
 
 namespace Automattic\WooCommerce\Admin\Features;
 
-use Automattic\WooCommerce\Admin\PageController;
+use Automattic\Jetpack\Constants;
 
 /**
  * Contains backend logic for the Settings feature.
@@ -37,6 +37,41 @@ class Settings {
 		}
 
 		add_filter( 'woocommerce_admin_shared_settings', array( __CLASS__, 'add_component_settings' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_settings_editor_scripts' ) );
+	}
+
+	/**
+	 * Enqueue scripts for the settings editor.
+	 */
+	public function enqueue_settings_editor_scripts() {
+		$screen = get_current_screen();
+		if ( ! $screen || 'woocommerce_page_wc-settings' !== $screen->id ) {
+			return;
+		}
+
+		$suffix  = Constants::is_true( 'SCRIPT_DEBUG' ) ? '' : '.min';
+		$version = Constants::get_constant( 'WC_VERSION' );
+		
+		// WCAdminAssets::get_instance();
+		wp_enqueue_script( 'wc-settings-editor', WC()->plugin_url() . '/assets/js/admin/settings-editor' . $suffix . '.js', array(), $version, false );
+		
+
+		// $script_path       = '/build/settings-editor/index.js';
+		// $script_asset_path = WC_ADMIN_ABSPATH . 'build/settings-editor/index.asset.php';
+		// $script_asset      = file_exists( $script_asset_path )
+		// 	? require( $script_asset_path )
+		// 	: array( 'dependencies' => array(), 'version' => filemtime( $script_path ) );
+		// $script_url        = plugins_url( $script_path, WC_ADMIN_PLUGIN_FILE );
+
+		// wp_register_script(
+		// 	'wc-settings-editor',
+		// 	$script_url,
+		// 	$script_asset['dependencies'],
+		// 	$script_asset['version'],
+		// 	true
+		// );
+
+		// wp_enqueue_script( 'wc-settings-editor' );
 	}
 
 	/**
