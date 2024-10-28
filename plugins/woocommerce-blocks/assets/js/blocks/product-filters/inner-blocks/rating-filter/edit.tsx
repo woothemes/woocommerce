@@ -25,7 +25,6 @@ import type { BlockEditProps } from '@wordpress/blocks';
  */
 import { previewOptions } from './preview';
 import { getActiveFilters } from './utils';
-import { useSetWraperVisibility } from '../../../filter-wrapper/context';
 import { Inspector } from './components/inspector';
 import { PreviewDropdown } from '../components/preview-dropdown';
 import { getAllowedBlocks } from '../../utils';
@@ -91,7 +90,6 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 		}
 	);
 
-	const setWrapperVisibility = useSetWraperVisibility();
 	const [ queryState ] = useQueryStateByContext();
 
 	const { results: filteredCounts, isLoading: filteredCountsLoading } =
@@ -178,7 +176,6 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 	] );
 
 	if ( ! filteredCountsLoading && displayedOptions.length === 0 ) {
-		setWrapperVisibility( false );
 		return null;
 	}
 
@@ -189,11 +186,8 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 	);
 
 	if ( ! hasFilterableProducts ) {
-		setWrapperVisibility( false );
 		return null;
 	}
-
-	setWrapperVisibility( true );
 
 	return (
 		<>
