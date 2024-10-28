@@ -94,7 +94,7 @@
 			"tests/legacy/unit-tests/rest-api/Helpers"
 		],
 		"files": [
-			"vendor/woocommerce/monorepo-plugin/autoloader.php"
+			"vendor/woocommerce/monorepo-plugin/autoload-dev.php"
 		]
 	},
 	"scripts": {
