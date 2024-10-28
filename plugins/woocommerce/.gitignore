@@ -22,7 +22,7 @@ tests/cli/vendor
 .phpunit.result.cache
 
 # Test translations
-/languages
+/i18n/languages/woocommerce*
 
 # Packages
 /packages/*

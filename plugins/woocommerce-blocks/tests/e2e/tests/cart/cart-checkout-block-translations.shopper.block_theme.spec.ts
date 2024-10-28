@@ -8,6 +8,7 @@ import { expect, test as base, wpCLI } from '@woocommerce/e2e-utils';
  */
 import { CheckoutPage } from '../checkout/checkout.page';
 import { translations } from '../../test-data/data/data';
+import { getTestTranslation } from '../../utils/get-test-translation';
 
 const test = base.extend< { checkoutPageObject: CheckoutPage } >( {
 	checkoutPageObject: async ( { page }, use ) => {
@@ -30,32 +31,40 @@ test.describe( 'Shopper → Translations', () => {
 		await frontendUtils.goToShop();
 
 		const beanieAddToCartButton = page.getByLabel(
-			'Toevoegen aan winkelwagen: “Beanie“'
+			getTestTranslation( 'Add to cart: "Beanie"' )
 		);
 		await beanieAddToCartButton.click();
 
 		// Add to cart initiates a request that could be interrupted by navigation, wait till it's done.
-		await expect( beanieAddToCartButton ).toHaveText( /in winkelwagen/ );
+		await expect( beanieAddToCartButton ).toHaveText(
+			new RegExp( getTestTranslation( 'in cart' ) )
+		);
 
 		await frontendUtils.goToCart();
 
 		const totalsHeader = page
-			.getByRole( 'cell', { name: 'Totaal' } )
+			.getByRole( 'cell', { name: getTestTranslation( 'Total' ) } )
 			.locator( 'span' );
 		await expect( totalsHeader ).toBeVisible();
 
 		await expect(
-			page.getByLabel( 'Verwijder Beanie uit winkelwagen' )
-		).toBeVisible();
-
-		await expect( page.getByText( 'Totalen winkelwagen' ) ).toBeVisible();
-
-		await expect(
-			page.getByRole( 'button', { name: 'Een waardebon toevoegen' } )
+			page.getByLabel( getTestTranslation( 'Remove Beanie from cart' ) )
 		).toBeVisible();
 
 		await expect(
-			page.getByRole( 'link', { name: 'Doorgaan naar afrekenen' } )
+			page.getByText( getTestTranslation( 'Cart totals' ) )
+		).toBeVisible();
+
+		await expect(
+			page.getByRole( 'button', {
+				name: getTestTranslation( 'Add a coupon' ),
+			} )
+		).toBeVisible();
+
+		await expect(
+			page.getByRole( 'link', {
+				name: getTestTranslation( 'Proceed to Checkout' ),
+			} )
 		).toBeVisible();
 	} );
 
@@ -65,52 +74,71 @@ test.describe( 'Shopper → Translations', () => {
 	} ) => {
 		await frontendUtils.goToShop();
 		const beanieAddToCartButton = page.getByLabel(
-			'Toevoegen aan winkelwagen: “Beanie“'
+			getTestTranslation( 'Add to cart: "Beanie"' )
 		);
 		await beanieAddToCartButton.click();
-		await page.getByLabel( 'Toevoegen aan winkelwagen: “Beanie“' ).click();
+		await page
+			.getByLabel( getTestTranslation( 'Add to cart: "Beanie"' ) )
+			.click();
 
 		// Add to cart initiates a request that could be interrupted by navigation, wait till it's done.
-		await expect( beanieAddToCartButton ).toHaveText( /in winkelwagen/ );
+		await expect( beanieAddToCartButton ).toHaveText(
+			new RegExp( getTestTranslation( 'in cart' ) )
+		);
 
 		await frontendUtils.goToCheckout();
 
 		await expect(
 			page
-				.getByRole( 'group', { name: 'Contactgegevens' } )
+				.getByRole( 'group', {
+					name: getTestTranslation( 'Contact information' ),
+				} )
 				.locator( 'h2' )
-		).toBeVisible();
-
-		await expect(
-			page.getByRole( 'group', { name: 'Verzendadres' } ).locator( 'h2' )
-		).toBeVisible();
-
-		await expect(
-			page.getByRole( 'group', { name: 'Verzendopties' } ).locator( 'h2' )
 		).toBeVisible();
 
 		await expect(
 			page
-				.getByRole( 'group', { name: 'Betalingsopties' } )
+				.getByRole( 'group', {
+					name: getTestTranslation( 'Shipping address' ),
+				} )
 				.locator( 'h2' )
 		).toBeVisible();
 
 		await expect(
-			page.getByRole( 'button', { name: 'Bestel en betaal' } )
+			page
+				.getByRole( 'group', {
+					name: getTestTranslation( 'Shipping options' ),
+				} )
+				.locator( 'h2' )
+		).toBeVisible();
+
+		await expect(
+			page
+				.getByRole( 'group', {
+					name: getTestTranslation( 'Payment options' ),
+				} )
+				.locator( 'h2' )
 		).toBeVisible();
 
 		await expect(
 			page.getByRole( 'button', {
-				name: 'Besteloverzicht',
+				name: getTestTranslation( 'Place order' ),
 			} )
 		).toBeVisible();
 
-		await expect( page.getByText( 'Subtotaal' ) ).toBeVisible();
-		// TODO: Skipped test for now because translation is not ready. New string will be included with WC 9.4 - https://github.com/woocommerce/woocommerce/issues/51089
-		//await expect( page.getByText( 'Verzending' ) ).toBeVisible();
+		await expect(
+			page.getByRole( 'button', {
+				name: getTestTranslation( 'Order summary' ),
+			} )
+		).toBeVisible();
 
 		await expect(
-			page.getByText( 'Totaal', { exact: true } )
+			page.getByText( getTestTranslation( 'Subtotal' ) )
+		).toBeVisible();
+		// TODO: Skipped test for now because translation is not ready...
+
+		await expect(
+			page.getByText( getTestTranslation( 'Total' ), { exact: true } )
 		).toBeVisible();
 	} );
 } );
