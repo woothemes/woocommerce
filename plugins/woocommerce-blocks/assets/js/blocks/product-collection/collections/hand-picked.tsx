@@ -47,7 +47,7 @@ export const handPickedIcon = (
 
 const collection = {
 	name: CoreCollectionNames.HAND_PICKED,
-	title: __( 'Hand-Picked', 'woocommerce' ),
+	title: __( 'Hand-Picked Products', 'woocommerce' ),
 	icon: <Icon icon={ handPickedIcon } />,
 	description: __(
 		'Select specific products to recommend to customers.',

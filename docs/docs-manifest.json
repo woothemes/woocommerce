@@ -74,7 +74,7 @@
           "post_title": "Blocks reference",
           "menu_title": "Blocks Reference",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/building-a-woo-store/block-references.md",
-          "hash": "6d8d9394ddd611ae370786e7b935aa3f68aa05e7e66c5563c42866d547f76752",
+          "hash": "837d8a6314f87466aecc979464e0d0f4ad8a5aca917b299cf234689c86885b05",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/building-a-woo-store/block-references.md",
           "id": "1fbe91d7fa4fafaf35f0297e4cee1e7958756aed"
         },
@@ -145,7 +145,7 @@
           "menu_title": "Additional Checkout Fields",
           "tags": "reference",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/cart-and-checkout-blocks/additional-checkout-fields.md",
-          "hash": "641615864f627be4bb42574df378cea91f4a7fda9edab099558bad06b92ce62d",
+          "hash": "79d03c2dbe66ff1bea1e40e58b83f304006b1ff52ffc22de6328d136a559cb84",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/additional-checkout-fields.md",
           "id": "cb5dd8d59043a4e53929121b45da7b33b1661ab8"
         }
@@ -1805,5 +1805,5 @@
       "categories": []
     }
   ],
-  "hash": "3954a7295c373244d6d0d0ad2a101c86b31625c195a7ed3ff39723e1192e7fec"
+  "hash": "bc654cbcc10a565674dcb9ba84fefa23d6adfd0c28f57686d1c5f53bdedaf24f"
 }
