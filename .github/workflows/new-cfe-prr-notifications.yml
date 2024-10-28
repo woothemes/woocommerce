@@ -196,7 +196,7 @@ jobs:
           ISSUE_URL: ${{ github.event.issue.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh issue close "$ISSUE_URL" --comment "Closing issue the request is rejected - $ISSUE_URL. Please switch the base to trunk and merge."
+          gh issue close "$ISSUE_URL" --comment "Closing issue as the request is rejected - $ISSUE_URL. Please switch the base to trunk and merge."
 
       - name: Set Slack Message
         id: set-message
