@@ -1,5 +1,5 @@
 <?php
-declare( strict_types = 1);
+declare( strict_types = 1 );
 namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 use Automattic\WooCommerce\Blocks\Utils\ProductCollectionUtils;
@@ -19,7 +19,7 @@ final class ProductFilterStatus extends AbstractBlock {
 	protected $block_name = 'product-filter-status';
 
 	const STOCK_STATUS_QUERY_VAR  = 'filter_stock_status';
-	const ONSALE_STATUS_QUERY_VAR = 'filter_onsale_status';
+	const FILTER_STATUS_QUERY_VAR = 'filter_status';
 
 	/**
 	 * Initialize this block type.
@@ -50,17 +50,17 @@ final class ProductFilterStatus extends AbstractBlock {
 			}
 		);
 
-		$onsale_param_keys = array_filter(
+		$filter_status_param_keys = array_filter(
 			$url_param_keys,
 			function ( $param ) {
-				return self::ONSALE_STATUS_QUERY_VAR === $param;
+				return self::FILTER_STATUS_QUERY_VAR === $param;
 			}
 		);
 
 		return array_merge(
 			$filter_param_keys,
 			$stock_param_keys,
-			$onsale_param_keys
+			$filter_status_param_keys,
 		);
 	}
 

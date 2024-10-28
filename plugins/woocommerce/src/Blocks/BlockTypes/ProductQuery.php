@@ -515,7 +515,7 @@ class ProductQuery extends AbstractBlock {
 			'stock_filter_query_args'      => array( StockFilter::STOCK_STATUS_QUERY_VAR ),
 			'attributes_filter_query_args' => $attributes_filter_query_args,
 			'rating_filter_query_args'     => array( RatingFilter::RATING_QUERY_VAR ),
-			'onsale_filter_query_args'     => array( ProductFilterStatus::ONSALE_STATUS_QUERY_VAR ),
+			'status_filter_query_args'     => array( ProductFilterStatus::FILTER_STATUS_QUERY_VAR ),
 		);
 	}
 

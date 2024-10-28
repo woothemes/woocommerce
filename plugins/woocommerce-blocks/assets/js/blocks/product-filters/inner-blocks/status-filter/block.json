@@ -74,6 +74,26 @@
 		"clearButton": {
 			"type": "boolean",
 			"default": true
+		},
+		"onsale": {
+			"type": "boolean",
+			"default": false
+		},
+		"featured": {
+			"type": "boolean",
+			"default": false
+		},
+		"instock": {
+			"type": "boolean",
+			"default": false
+		},
+		"outofstock": {
+			"type": "boolean",
+			"default": false
+		},
+		"onbackorder": {
+			"type": "boolean",
+			"default": false
 		}
 	},
 	"example": {

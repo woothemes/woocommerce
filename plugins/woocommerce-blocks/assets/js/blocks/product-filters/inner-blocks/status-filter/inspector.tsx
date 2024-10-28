@@ -8,7 +8,10 @@ import { useState } from '@wordpress/element';
 import { dispatch, useSelect } from '@wordpress/data';
 import {
 	PanelBody,
+	PanelRow,
+	BaseControl,
 	ToggleControl,
+	CheckboxControl,
 	// @ts-expect-error - no types.
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalToggleGroupControl as ToggleGroupControl,
@@ -22,6 +25,7 @@ import {
  */
 import { BlockAttributes, EditProps } from './types';
 import { getInnerBlockByName } from '../../utils';
+import './editor.scss';
 
 let displayStyleOptions: Block[] = [];
 
@@ -30,7 +34,17 @@ export const Inspector = ( {
 	setAttributes,
 	clientId,
 }: EditProps ) => {
-	const { displayStyle, showCounts, hideEmpty, clearButton } = attributes;
+	const {
+		displayStyle,
+		showCounts,
+		hideEmpty,
+		clearButton,
+		onsale,
+		featured,
+		instock,
+		onbackorder,
+		outofstock,
+	} = attributes;
 
 	if ( displayStyleOptions.length === 0 ) {
 		displayStyleOptions = getBlockTypes().filter( ( blockType ) =>
@@ -51,6 +65,74 @@ export const Inspector = ( {
 
 	return (
 		<>
+			<InspectorControls group="settings">
+				<PanelBody
+					title={ __( 'Statuses', 'woocommerce' ) }
+					className="wp-block-woocommerce-product-filter-status"
+				>
+					<PanelRow>
+						{ __(
+							"Choose statuses to display as filter options. They'll shown only if there's at least one product with that status.",
+							'woocommerce'
+						) }
+					</PanelRow>
+					<PanelRow>
+						<BaseControl
+							id="product"
+							label={ __( 'PRODUCT', 'woocommerce' ) }
+						>
+							<CheckboxControl
+								className="wp-block-woocommerce-product-filter-status__checkbox"
+								label={ __( 'On sale', 'woocommerce' ) }
+								onChange={ ( value ) => {
+									setAttributes( { onsale: value } );
+								} }
+								checked={ onsale }
+							/>
+							<CheckboxControl
+								className="wp-block-woocommerce-product-filter-status__checkbox"
+								label={ __( 'Featured', 'woocommerce' ) }
+								onChange={ ( value ) => {
+									setAttributes( { featured: value } );
+								} }
+								checked={ featured }
+							/>
+						</BaseControl>
+					</PanelRow>
+					<PanelRow>
+						<BaseControl
+							id="stock"
+							label={ __( 'STOCK', 'woocommerce' ) }
+							className="wp-block-woocommerce-product-filter-status"
+						>
+							<CheckboxControl
+								className="wp-block-woocommerce-product-filter-status__checkbox"
+								label={ __( 'In stock', 'woocommerce' ) }
+								onChange={ ( value ) => {
+									setAttributes( { instock: value } );
+								} }
+								checked={ instock }
+							/>
+							<CheckboxControl
+								className="wp-block-woocommerce-product-filter-status__checkbox"
+								label={ __( 'On backorder', 'woocommerce' ) }
+								onChange={ ( value ) => {
+									setAttributes( { onbackorder: value } );
+								} }
+								checked={ onbackorder }
+							/>
+							<CheckboxControl
+								className="wp-block-woocommerce-product-filter-status__checkbox"
+								label={ __( 'Out of stock', 'woocommerce' ) }
+								onChange={ ( value ) => {
+									setAttributes( { outofstock: value } );
+								} }
+								checked={ outofstock }
+							/>
+						</BaseControl>
+					</PanelRow>
+				</PanelBody>
+			</InspectorControls>
 			<InspectorControls group="styles">
 				<PanelBody title={ __( 'Display', 'woocommerce' ) }>
 					<ToggleGroupControl

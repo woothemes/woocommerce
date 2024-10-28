@@ -46,7 +46,7 @@ final class QueryFilters {
 		$args = $this->stock_filter_clauses( $args, $wp_query );
 		$args = $this->price_filter_clauses( $args, $wp_query );
 		$args = $this->attribute_filter_clauses( $args, $wp_query );
-		$args = $this->onsale_filter_clauses( $args, $wp_query );
+		$args = $this->status_filter_clauses( $args, $wp_query );
 
 		return $args;
 	}
@@ -212,17 +212,19 @@ final class QueryFilters {
 	}
 
 	/**
-	 * Add query clauses for onsale filter.
+	 * Add query clauses for status filter.
+	 * { onsale, featured, instock, onbackorder, outofstock }
 	 *
 	 * @param array     $args     Query args.
 	 * @param \WP_Query $wp_query WP_Query object.
 	 * @return array
 	 */
-	private function onsale_filter_clauses( $args, $wp_query ) {
-		if ( ! $wp_query->get( 'filter_onsale_status' ) ) {
+	private function status_filter_clauses( $args, $wp_query ) {
+		if ( ! $wp_query->get( 'filter_status' ) ) {
 			return $args;
 		}
 
+		$statuses = $wp_query->get( 'filter_status' );
 		$args['join']   = $this->append_product_sorting_table_join( $args['join'] );
 		$args['where'] .= ' AND wc_product_meta_lookup.onsale = 1';
 
