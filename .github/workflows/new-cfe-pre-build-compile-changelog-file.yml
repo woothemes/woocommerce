@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version override. Default version is fetched from monthly release calendar, you can override the version but make sure the that the branch release/{version} exists on remote.'
+        description: 'Version override. Default version is fetched from the base branch name, you can override the version but make sure the that the branch release/{version} exists on remote. Format: X.Y (Major.Minor)'
         required: false
         default: ''
 
@@ -41,9 +41,11 @@ jobs:
       - name: Validate version input override
         if: ${{ github.event.inputs.version != '' }}
         uses: actions/github-script@v7
+        env:
+          VERSION: ${{ github.event.inputs.version }}
         with:
           script: |
-            const version = '${{ github.event.inputs.version }}';
+            const version = process.env.VERSION;
             if (!/^\d+\.\d+$/.test(version)) {
               core.setFailed('Invalid version format. The version must be in the format X.Y');
               core.info(`Version you entered: ${version}`);
