@@ -3,25 +3,20 @@
  */
 import { __ } from '@wordpress/i18n';
 import { formatShippingAddress } from '@woocommerce/base-utils';
-import { ShippingAddress as ShippingAddressType } from '@woocommerce/settings';
 import {
 	ShippingLocation,
 	PickupLocation,
 	ShippingCalculatorButton,
 } from '@woocommerce/base-components/cart-checkout';
-import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
-import { useSelect } from '@wordpress/data';
-
-export interface ShippingAddressProps {
-	shippingAddress: ShippingAddressType;
-}
+import { useCheckoutAddress } from '@woocommerce/base-context';
+import type { ShippingAddress as ShippingAddressType } from '@woocommerce/settings';
 
 export const ShippingAddress = ( {
 	shippingAddress,
-}: ShippingAddressProps ): JSX.Element | null => {
-	const prefersCollection = useSelect( ( select ) =>
-		select( CHECKOUT_STORE_KEY ).prefersCollection()
-	);
+}: {
+	shippingAddress: ShippingAddressType;
+} ): JSX.Element => {
+	const { prefersCollection } = useCheckoutAddress();
 	const formattedLocation = formatShippingAddress( shippingAddress );
 	const label = !! formattedLocation
 		? __( 'Change address', 'woocommerce' )

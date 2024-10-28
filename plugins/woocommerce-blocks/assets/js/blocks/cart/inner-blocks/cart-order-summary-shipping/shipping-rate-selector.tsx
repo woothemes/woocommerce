@@ -2,28 +2,28 @@
  * External dependencies
  */
 import { __, sprintf } from '@wordpress/i18n';
+import { createInterpolateElement } from '@wordpress/element';
+import {
+	NoticeBanner,
+	ShippingRatesControl,
+} from '@woocommerce/base-components';
+import { formatShippingAddress } from '@woocommerce/base-utils';
 import type {
 	CartResponseShippingAddress,
 	CartResponseShippingRate,
 } from '@woocommerce/types';
-import NoticeBanner from '@woocommerce/base-components/notice-banner';
-import { createInterpolateElement } from '@wordpress/element';
-import { formatShippingAddress } from '@woocommerce/base-utils';
-import { ShippingRatesControl } from '@woocommerce/base-components/cart-checkout';
-
-export interface ShippingRateSelectorProps {
-	shippingRates: CartResponseShippingRate[];
-	shippingAddress: CartResponseShippingAddress;
-	isLoadingRates: boolean;
-	hasCompleteAddress: boolean;
-}
 
 export const ShippingRateSelector = ( {
 	shippingRates,
 	shippingAddress,
 	isLoadingRates,
 	hasCompleteAddress,
-}: ShippingRateSelectorProps ): JSX.Element => {
+}: {
+	shippingRates: CartResponseShippingRate[];
+	shippingAddress: CartResponseShippingAddress;
+	isLoadingRates: boolean;
+	hasCompleteAddress: boolean;
+} ): JSX.Element => {
 	return (
 		<fieldset className="wc-block-components-totals-shipping__fieldset">
 			<legend className="screen-reader-text">

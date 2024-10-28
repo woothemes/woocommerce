@@ -29,7 +29,7 @@ export interface NoticeBannerProps {
  *
  * An informational UI displayed near the top of the store pages.
  */
-const NoticeBanner = ( {
+export const NoticeBanner = ( {
 	className,
 	status = 'default',
 	children,
