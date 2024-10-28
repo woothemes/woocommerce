@@ -13,6 +13,7 @@ use Automattic\WooCommerce\Testing\Tools\CodeHacking\Hacks\StaticMockerHack;
 use Automattic\WooCommerce\Testing\Tools\CodeHacking\Hacks\FunctionsMockerHack;
 use Automattic\WooCommerce\Testing\Tools\CodeHacking\Hacks\BypassFinalsHack;
 use Automattic\WooCommerce\Testing\Tools\DependencyManagement\MockableLegacyProxy;
+use Automattic\WooCommerce\Testing\Tools\TestingContainer;
 
 /**
  * Class WC_Unit_Tests_Bootstrap
@@ -37,10 +38,11 @@ class WC_Unit_Tests_Bootstrap {
 	 * @since 2.2
 	 */
 	public function __construct() {
-		// TODO: This is temporary!
-		// To be wrapped in a "if(getenv('USE_OLD_DI_CONTAINER'))" block
-		// as soon as infrastructure to run unit tests using the new container is in place.
-		define( 'WOOCOMMERCE_USE_OLD_DI_CONTAINER', true );
+		$use_old_container = false;
+		if ( getenv( 'USE_OLD_DI_CONTAINER' ) ) {
+			define( 'WOOCOMMERCE_USE_OLD_DI_CONTAINER', true );
+			$use_old_container = true;
+		}
 
 		$this->tests_dir  = __DIR__;
 		$this->plugin_dir = dirname( dirname( $this->tests_dir ) );
@@ -91,7 +93,7 @@ class WC_Unit_Tests_Bootstrap {
 		$this->includes();
 
 		// re-initialize dependency injection, this needs to be the last operation after everything else is in place.
-		$this->initialize_dependency_injection();
+		$this->initialize_dependency_injection( $use_old_container );
 
 		if ( getenv( 'HPOS' ) ) {
 			$this->initialize_hpos();
@@ -177,16 +179,17 @@ class WC_Unit_Tests_Bootstrap {
 	 * Re-initialize the dependency injection engine.
 	 *
 	 * The dependency injection engine has been already initialized as part of the Woo initialization, but we need
-	 * to replace the registered read-only container with a fully configurable one for testing.
+	 * to replace the registered runtime container with one with extra capabilities for testing.
 	 * To this end we hack a bit and use reflection to grab the underlying container that the read-only one stores
 	 * in a private property.
 	 *
-	 * Additionally, we replace the legacy/function proxies with mockable versions to easily replace anything
-	 * in tests as appropriate.
+	 * Note also that TestingContainer replaces the instance of LegacyProxy with an instance of MockableLegacyProxy.
+	 *
+	 * @param bool $use_old_container The underlying container is the old ExtendedContainer class. This parameter will disappear in WooCommerce 10.0.
 	 *
 	 * @throws \Exception The Container class doesn't have a 'container' property.
 	 */
-	private function initialize_dependency_injection() {
+	private function initialize_dependency_injection( bool $use_old_container ) {
 		try {
 			$inner_container_property = new \ReflectionProperty( \Automattic\WooCommerce\Container::class, 'container' );
 		} catch ( ReflectionException $ex ) {
@@ -194,9 +197,15 @@ class WC_Unit_Tests_Bootstrap {
 		}
 
 		$inner_container_property->setAccessible( true );
-		$inner_container = $inner_container_property->getValue( wc_get_container() );
 
-		$inner_container->replace( LegacyProxy::class, MockableLegacyProxy::class );
+		$container       = wc_get_container();
+		$inner_container = $inner_container_property->getValue( $container );
+		if ( $use_old_container ) {
+			$inner_container->replace( LegacyProxy::class, MockableLegacyProxy::class );
+		} else {
+			$inner_container = new TestingContainer( $inner_container );
+			$inner_container_property->setValue( $container, $inner_container );
+		}
 
 		$GLOBALS['wc_container'] = $inner_container;
 	}

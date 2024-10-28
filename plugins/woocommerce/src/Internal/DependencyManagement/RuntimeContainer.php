@@ -32,12 +32,20 @@ class RuntimeContainer {
 	protected array $resolved_cache;
 
 	/**
+	 * A copy of the initial resolved classes cache passed to the constructor.
+	 *
+	 * @var array
+	 */
+	protected array $initial_resolved_cache;
+
+	/**
 	 * Initializes a new instance of the class.
 	 *
 	 * @param array $initial_resolved_cache Dictionary of class name => instance, to be used as the starting point for the resolved classes cache.
 	 */
 	public function __construct( array $initial_resolved_cache ) {
-		$this->resolved_cache = $initial_resolved_cache;
+		$this->initial_resolved_cache = $initial_resolved_cache;
+		$this->resolved_cache         = $initial_resolved_cache;
 	}
 
 	/**
