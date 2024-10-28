@@ -17,8 +17,8 @@ body:
     id: release-number
     attributes:
       label: "Which release does this request apply to?"
-      description: "Format: X.Y"
-      placeholder: "7.0"
+      description: "Format: X.Y (Major.Minor)"
+      placeholder: "9.2"
     validations:
       required: true
   - type: textarea

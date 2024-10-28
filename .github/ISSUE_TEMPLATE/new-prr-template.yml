@@ -17,8 +17,8 @@ body:
     id: release-number
     attributes:
       label: "Which release does this request apply to?"
-      description: "Format: X.Y"
-      placeholder: "7.0"
+      description: "Format: X.Y (Major.Minor)"
+      placeholder: "9.2"
     validations:
       required: true
   - type: textarea
@@ -54,8 +54,8 @@ body:
   - type: textarea
     id: how-to-communicate
     attributes:
-      label: "How should this change be communicated in the release post on the public developer blog:"
-      description: "See the blog at [https://developer.woo.com/blog/](https://developer.woo.com/blog/) cc @woocommerce/developer-advocacy"
+      label: "How should this change be communicated in the release post on the public developer blog: cc @woocommerce/developer-advocacy"
+      description: "See the blog at [https://developer.woo.com/blog/](https://developer.woo.com/blog/)"
       placeholder: "There is no need to add new communication to the already planned one."
     validations:
       required: true
