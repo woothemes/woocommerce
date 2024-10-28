@@ -721,6 +721,16 @@ class WC_Email extends WC_Settings_API {
 	}
 
 	/**
+	 * Set the object for the outgoing email.
+	 *
+	 * @param object $object Object this email is for, e.g. customer, or product.
+	 * @return void
+	 */
+	public function set_object( $object ) { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.objectFound
+		$this->object = $object;
+	}
+
+	/**
 	 * Send an email.
 	 *
 	 * @param string $to Email to.
