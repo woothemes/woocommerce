@@ -34,7 +34,7 @@ test.describe( 'Frontend Performance', () => {
 			medians[ metric ] = median( results[ metric ] );
 		} );
 		await testInfo.attach( 'results', {
-			body: JSON.stringify( { 'frontend': medians }, null, 2 ),
+			body: JSON.stringify( { frontend: medians }, null, 2 ),
 			contentType: 'application/json',
 		} );
 	} );
@@ -51,10 +51,7 @@ test.describe( 'Frontend Performance', () => {
 				await page.goto( HOME );
 
 				// Wait for the site title to load.
-				await page
-					.locator( '[aria-current="page"]' )
-					.first()
-					.waitFor();
+				await page.locator( '[aria-current="page"]' ).first().waitFor();
 
 				// Get the durations.
 				const loadingDurations = await metrics.getLoadingDurations();
