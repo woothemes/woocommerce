@@ -46,7 +46,7 @@ class TestingContainer extends RuntimeContainer {
 	 * @param string $class_name The class name to replace.
 	 * @param object $concrete The object that will be replaced when the class is requested.
 	 */
-	public function replace( string $class_name, $concrete ): void {
+	public function replace( string $class_name, object $concrete ): void {
 		$this->replacements[ $class_name ] = $concrete;
 	}
 
