@@ -25,14 +25,14 @@ jQuery( function ( $ ) {
 			$( '.js_field-country' ).selectWoo().on( 'change', this.change_country );
 			$( '.js_field-country' ).trigger( 'change', [ true ] );
 			$( document.body ).on( 'change', 'select.js_field-state', this.change_state );
-			$( document.body ).on( 'click', '#woocommerce-order-actions input, #woocommerce-order-actions a', function() {
+			$( '#woocommerce-order-actions input, #woocommerce-order-actions a' ).on( 'click', function() {
 				window.onbeforeunload = '';
 			});
-			$( document.body ).on( 'click', 'a.edit_address', this.edit_address );
-			$( document.body ).on( 'click', 'a.billing-same-as-shipping', this.copy_billing_to_shipping );
-			$( document.body ).on( 'click', 'a.load_customer_billing', this.load_billing );
-			$( document.body ).on( 'click', 'a.load_customer_shipping', this.load_shipping );
-			$( document.body ).on( 'change', '#customer_user', this.change_customer_user );
+			$( 'a.edit_address' ).on( 'click', this.edit_address );
+			$( 'a.billing-same-as-shipping' ).on( 'click', this.copy_billing_to_shipping );
+			$( 'a.load_customer_billing' ).on( 'click', this.load_billing );
+			$( 'a.load_customer_shipping' ).on( 'click', this.load_shipping );
+			$( '#customer_user' ).on( 'change', this.change_customer_user );
 		},
 
 		change_country: function( e, stickValue ) {
@@ -1599,4 +1599,13 @@ jQuery( function ( $ ) {
 	wc_meta_boxes_order_notes.init();
 	wc_meta_boxes_order_downloads.init();
 	wc_meta_boxes_order_custom_meta.init();
+
+	// this allows third party plugin to call woocommerce function
+	window.wcOrderMetaBoxes = {
+		wc_meta_boxes_order: wc_meta_boxes_order,
+		wc_meta_boxes_order_items: wc_meta_boxes_order_items,
+		wc_meta_boxes_order_notes: wc_meta_boxes_order_notes,
+		wc_meta_boxes_order_downloads: wc_meta_boxes_order_downloads,
+		wc_meta_boxes_order_custom_meta: wc_meta_boxes_order_custom_meta,
+	};
 });
