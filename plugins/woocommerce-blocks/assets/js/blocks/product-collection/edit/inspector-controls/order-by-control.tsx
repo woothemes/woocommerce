@@ -105,7 +105,9 @@ const OrderByControl = ( props: QueryControlProps ) => {
 					const [ newOrderBy, newOrder ] = value.split( '/' );
 					setQueryAttribute( {
 						orderBy: newOrderBy as TProductCollectionOrderBy,
-						order: ( newOrder as TProductCollectionOrder ) || 'asc', // Use 'asc' as default if order is not specified
+						order:
+							( newOrder as TProductCollectionOrder ) ||
+							undefined,
 					} );
 					trackInteraction( CoreFilterNames.ORDER );
 				} }
