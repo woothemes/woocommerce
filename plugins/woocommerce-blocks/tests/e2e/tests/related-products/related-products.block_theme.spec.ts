@@ -59,12 +59,11 @@ test.describe( `${ blockData.name } Block`, () => {
 		} );
 		await editor.setContent( '' );
 
-		try {
-			await editor.insertBlock( { name: blockData.slug } );
-		} catch ( _error ) {
-			// noop
-		}
+		// Inserting Related Products by name
+		// (but it's a Product Collection variation).
+		await editor.insertBlockUsingGlobalInserter( blockData.name );
 
+		// Verifying by slug - it's expected it's NOT woocommerce/related-products.
 		await expect(
 			await editor.getBlockByName( blockData.slug )
 		).toBeHidden();
