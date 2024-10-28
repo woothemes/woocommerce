@@ -6,6 +6,8 @@
  *
  * @package WooCommerce\Uninstaller
  * @version 2.3.0
+ * 
+ * Dummy PRR CFE Test
  */
 
 use Automattic\WooCommerce\Admin\Notes\Notes;
