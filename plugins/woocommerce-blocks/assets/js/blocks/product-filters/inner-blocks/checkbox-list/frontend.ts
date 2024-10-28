@@ -1,8 +1,13 @@
 /**
  * External dependencies
  */
-import { getContext, store } from '@woocommerce/interactivity';
+import { getContext, getElement, store } from '@woocommerce/interactivity';
 import { HTMLElementEvent } from '@woocommerce/types';
+
+/**
+ * Internal dependencies
+ */
+import { ProductFiltersContext } from '../../frontend';
 
 /**
  * Internal dependencies
@@ -16,9 +21,27 @@ export type CheckboxListContext = {
 		checked: boolean;
 	}[];
 	showAll: boolean;
+	filterKey: string;
 };
 
 store( 'woocommerce/product-filter-checkbox-list', {
+	state: {
+		get isItemSelected() {
+			const { props } = getElement();
+			const { filterKey } = getContext< CheckboxListContext >();
+			const productFiltersContext = getContext< ProductFiltersContext >(
+				'woocommerce/product-filters'
+			);
+			return (
+				filterKey &&
+				productFiltersContext.selected &&
+				productFiltersContext.selected[ filterKey ] &&
+				productFiltersContext.selected[ filterKey ].includes(
+					props.value
+				)
+			);
+		},
+	},
 	actions: {
 		showAllItems: () => {
 			const context = getContext< CheckboxListContext >();

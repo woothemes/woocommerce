@@ -30,7 +30,10 @@ final class ProductFilterCheckboxList extends AbstractBlock {
 
 		$context               = $block->context['filterData'];
 		$items                 = $context['items'] ?? array();
-		$checkbox_list_context = array( 'items' => $items );
+		$checkbox_list_context = array(
+			'items'     => $items,
+			'filterKey' => $block->context['filterData']['filterKey'] ?? '',
+		);
 		$action                = $context['actions']['toggleFilter'] ?? '';
 		$namespace             = wp_json_encode( array( 'namespace' => 'woocommerce/product-filter-checkbox-list' ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP );
 		$classes               = '';
@@ -100,6 +103,7 @@ final class ProductFilterCheckboxList extends AbstractBlock {
 									data-wc-on--change--parent-action="<?php echo esc_attr( $action ); ?>"
 									value="<?php echo esc_attr( $item['value'] ); ?>"
 									<?php checked( $item['selected'], 1 ); ?>
+									data-wc-bind--checked="state.isItemSelected"
 								>
 								<svg class="wc-block-product-filter-checkbox-list__mark" viewBox="0 0 10 8" fill="none" xmlns="http://www.w3.org/2000/svg">
 									<path d="M9.25 1.19922L3.75 6.69922L1 3.94922" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>

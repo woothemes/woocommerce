@@ -64,6 +64,7 @@ class ProductFilters extends AbstractBlock {
 			);
 			$tags->set_attribute( 'data-wc-navigation-id', $this->generate_navigation_id( $block ) );
 			$tags->set_attribute( 'data-wc-watch', 'callbacks.maybeNavigate' );
+			$tags->set_attribute( 'data-wc-init', 'callbacks.init' );
 
 			return $tags->get_updated_html();
 		}

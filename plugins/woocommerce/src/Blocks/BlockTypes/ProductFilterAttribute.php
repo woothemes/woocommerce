@@ -219,10 +219,11 @@ final class ProductFilterAttribute extends AbstractBlock {
 			);
 
 			$filter_context = array(
-				'items'   => $filtered_options,
-				'actions' => array(
+				'items'     => $filtered_options,
+				'actions'   => array(
 					'toggleFilter' => "{$this->get_full_block_name()}::actions.toggleFilter",
 				),
+				'filterKey' => "{$this->get_full_block_name()}/{$product_attribute->slug}",
 			);
 		}
 
@@ -232,6 +233,7 @@ final class ProductFilterAttribute extends AbstractBlock {
 			'selectType'         => 'multiple',
 			'hasSelectedFilters' => count( $selected_terms ) > 0,
 			'hasFilterOptions'   => ! empty( $filter_context ),
+			'filterKey'          => "{$this->get_full_block_name()}/{$product_attribute->slug}",
 		);
 
 		$wrapper_attributes = array(
@@ -239,6 +241,7 @@ final class ProductFilterAttribute extends AbstractBlock {
 			'data-wc-key'          => 'product-filter-attribute-' . md5( wp_json_encode( $block_attributes ) ),
 			'data-wc-context'      => wp_json_encode( $context, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
 			'data-wc-bind--hidden' => '!context.hasFilterOptions',
+			'data-wc-init'         => 'callbacks.init',
 		);
 
 		return sprintf(
