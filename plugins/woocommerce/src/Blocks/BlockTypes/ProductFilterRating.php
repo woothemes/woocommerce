@@ -195,29 +195,29 @@ final class ProductFilterRating extends AbstractBlock {
 	 * Get the Rating list items.
 	 *
 	 * @param array $rating_counts          - The rating counts.
-	 * @param mixed $selected_ratings_query - The url query param for selected ratings.
+	 * @param array $selected_ratings_query - The url query param for selected ratings.
 	 * @param bool  $show_counts            - Whether to show the counts.
 	 * @return array
 	 */
 	private function get_rating_items( $rating_counts, $selected_ratings_query, $show_counts ) {
 		return array_map(
 			function ( $rating ) use ( $selected_ratings_query, $show_counts ) {
-				$rating_str  = (string) $rating['rating'];
+				$rating      = (string) $rating['rating'];
 				$count       = $rating['count'];
 				$count_label = $show_counts ? "($count)" : '';
 
 				$aria_label = sprintf(
 					/* translators: %1$d is referring to rating value. Example: Rated 4 out of 5. */
 					__( 'Rated %s out of 5', 'woocommerce' ),
-					$rating_str,
+					$rating,
 				);
 
 				return array(
-					'id'         => 'rating-' . $rating_str,
-					'selected'   => in_array( $rating_str, $selected_ratings_query, true ),
-					'label'      => $this->render_rating_label( (int) $rating_str, $count_label ),
+					'id'         => 'rating-' . $rating,
+					'selected'   => in_array( $rating, $selected_ratings_query, true ),
+					'label'      => $this->render_rating_label( (int) $rating, $count_label ),
 					'aria_label' => $aria_label,
-					'value'      => $rating_str,
+					'value'      => $rating,
 				);
 			},
 			$rating_counts
