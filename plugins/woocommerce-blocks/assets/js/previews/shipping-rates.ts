@@ -70,7 +70,7 @@ export const previewShippingRates: CartResponseShippingRate[] = [
 			},
 			{
 				...API_SITE_CURRENCY,
-				name: __( 'Local pickup', 'woocommerce' ),
+				name: __( 'Local pickup #1', 'woocommerce' ),
 				description: '',
 				delivery_time: '',
 				price: '0',
@@ -85,6 +85,28 @@ export const previewShippingRates: CartResponseShippingRate[] = [
 					{
 						key: 'pickup_address',
 						value: '123 Easy Street, New York, 12345',
+					},
+				],
+				method_id: 'pickup_location',
+				selected: false,
+			},
+			{
+				...API_SITE_CURRENCY,
+				name: __( 'Local pickup #2', 'woocommerce' ),
+				description: '',
+				delivery_time: '',
+				price: '0',
+				taxes: '0',
+				rate_id: 'pickup_location:2',
+				instance_id: 1,
+				meta_data: [
+					{
+						key: 'pickup_location',
+						value: 'Los Angeles',
+					},
+					{
+						key: 'pickup_address',
+						value: '123 Easy Street, Los Angeles, California, 90210',
 					},
 				],
 				method_id: 'pickup_location',
