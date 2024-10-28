@@ -10,10 +10,10 @@
 		static $namespaces = [];
 		$declarations = json_decode( file_get_contents( $plugin_path . DIRECTORY_SEPARATOR . 'composer.json' ), true );
 		foreach ($declarations['autoload']['psr-4'] ?? [] as $namespace => $path) {
-			$this->namespaces[$namespace] = $plugin_path . DIRECTORY_SEPARATOR . $path;
+			$namespaces[$namespace] = $plugin_path . DIRECTORY_SEPARATOR . $path;
 		}
 		foreach ($declarations['autoload-dev']['psr-4'] ?? [] as $namespace => $path) {
-			$this->namespaces[$namespace] = $plugin_path . DIRECTORY_SEPARATOR . $path;
+			$namespaces[$namespace] = $plugin_path . DIRECTORY_SEPARATOR . $path;
 		}
 
 		spl_autoload_register( function ( string $class ) use( $namespaces ): bool {
