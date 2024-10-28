@@ -145,7 +145,7 @@
           "menu_title": "Additional Checkout Fields",
           "tags": "reference",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/cart-and-checkout-blocks/additional-checkout-fields.md",
-          "hash": "641615864f627be4bb42574df378cea91f4a7fda9edab099558bad06b92ce62d",
+          "hash": "79d03c2dbe66ff1bea1e40e58b83f304006b1ff52ffc22de6328d136a559cb84",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/additional-checkout-fields.md",
           "id": "cb5dd8d59043a4e53929121b45da7b33b1661ab8"
         }
@@ -991,7 +991,7 @@
           "menu_title": "Payment Token API",
           "tags": "reference",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/payments/payment-token-api.md",
-          "hash": "441908f0678b9ff90f33adc3831ac75a5c49038a0b068dfc41456c232a851c7d",
+          "hash": "ee6753e946e6533dff62a26ece1911442080de12d449c4d5d28fe1e68adc72b7",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/payments/payment-token-api.md",
           "id": "5f345b53875981703d4b80e8d04eae2daafe4c81"
         },
@@ -1452,7 +1452,7 @@
         {
           "post_title": "Template structure & Overriding templates via a theme",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/theme-development/template-structure.md",
-          "hash": "a82d885c8395385dc51c976b2b51eec88cdcce72bf905fda78f97d77533ce079",
+          "hash": "8bb4925cfc5ca1f9d8839675fafbf1941d6a23ae257827cead075bd4956b80bc",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/theme-development/template-structure.md",
           "id": "34bfebec9fc45e680976814928a7b8a1778af14e"
         },
@@ -1461,7 +1461,7 @@
           "menu_title": "Set up and use a child theme",
           "tags": "how-to",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/theme-development/set-up-a-child-theme.md",
-          "hash": "b362d5ddd34d8b81f6a2ee2369dd2cd68e51700836a85f96d629e87d564b0844",
+          "hash": "e343a623970fb22db7e109e0623d877ba42d5938885dde99a5701fa42bf7d197",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/theme-development/set-up-a-child-theme.md",
           "id": "00b6916595cbde7766f080260a9ea26f53f3271c"
         },
@@ -1470,7 +1470,7 @@
           "menu_title": "Image sizing",
           "tags": "reference",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/theme-development/image-sizes.md",
-          "hash": "9883e7931ff8bd56dcd707974fe8ec992f21148818206aec354b0368dc999239",
+          "hash": "94d30b875d0c26b88ebd040a686f802f974f89997a30954fc5bb448de57aefdc",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/theme-development/image-sizes.md",
           "id": "3f5301ac3040d38bc449b440733da6a466209df3",
           "links": {
@@ -1805,5 +1805,5 @@
       "categories": []
     }
   ],
-  "hash": "c018c42bc44d2921bec1ad8bae379066e257f0c5bf3293657b927c8060e756c7"
+  "hash": "89c74bc9d8b10a5b2727820ae5e5e80b6142bf4d35ea0a810e9288eae1f76232"
 }
