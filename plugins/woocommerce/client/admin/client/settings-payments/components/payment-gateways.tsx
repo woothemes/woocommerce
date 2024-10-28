@@ -60,10 +60,6 @@ export const PaymentGateways = () => {
 		console.log( 'Enable gateway', gateway );
 	};
 
-	const manageGateway = ( gateway: PaymentGateway ) => () => {
-		console.log( 'Manage gateway', gateway );
-	};
-
 	const setupLivePayments = () => {
 		console.log( 'Setup live payments' );
 	};
