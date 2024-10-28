@@ -78,7 +78,7 @@ const Block = ( { className }: { className: string } ): JSX.Element | null => {
 			<ShippingCalculatorContext.Provider
 				value={ {
 					showCalculator,
-					shippingCalculatorId: 'shipping-calculator-form-wrapper',
+					shippingCalculatorID: 'shipping-calculator-form-wrapper',
 					isShippingCalculatorOpen,
 					setIsShippingCalculatorOpen,
 				} }
