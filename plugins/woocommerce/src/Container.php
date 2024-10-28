@@ -12,6 +12,7 @@ use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\CostOf
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\COTMigrationServiceProvider;
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\DownloadPermissionsAdjusterServiceProvider;
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\AssignDefaultCategoryServiceProvider;
+use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\EmailPreviewServiceProvider;
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\EnginesServiceProvider;
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\FeaturesServiceProvider;
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\LoggingServiceProvider;
@@ -63,6 +64,7 @@ final class Container {
 	private $service_providers = array(
 		AssignDefaultCategoryServiceProvider::class,
 		DownloadPermissionsAdjusterServiceProvider::class,
+		EmailPreviewServiceProvider::class,
 		OptionSanitizerServiceProvider::class,
 		OrdersDataStoreServiceProvider::class,
 		ProductAttributesLookupServiceProvider::class,
