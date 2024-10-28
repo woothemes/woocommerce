@@ -85,6 +85,13 @@ class EmailPreview {
 	 * @return string
 	 */
 	private function render_preview_email() {
+		/**
+		 * Always show shipping address in the preview email.
+		 *
+		 * @since 9.5.0
+		 */
+		add_filter( 'woocommerce_order_needs_shipping_address', '__return_true' );
+
 		$email = $this->get_email();
 
 		$order = $this->get_dummy_order();
@@ -119,6 +126,7 @@ class EmailPreview {
 
 		$address = $this->get_dummy_address();
 		$order->set_billing_address( $address );
+		$order->set_shipping_address( $address );
 
 		return $order;
 	}
