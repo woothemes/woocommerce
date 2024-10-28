@@ -83,15 +83,15 @@ class ReceiptRenderingEngine {
 	 * transient file is created with the supplied expiration date (defaulting to "tomorrow"), and the new file name
 	 * is stored as order meta with the key RECEIPT_FILE_NAME_META_KEY.
 	 *
-	 * @param int|WC_Order    $order The order object or order id to get the receipt for.
-	 * @param string|int|null $expiration_date GMT expiration date formatted as yyyy-mm-dd, or as a timestamp, or null for "tomorrow".
-	 * @param bool            $force_new If true, creates a new receipt file even if one already exists for the order.
+	 * @param int|WC_Abstract_Order $order The order object or order id to get the receipt for.
+	 * @param string|int|null       $expiration_date GMT expiration date formatted as yyyy-mm-dd, or as a timestamp, or null for "tomorrow".
+	 * @param bool                  $force_new If true, creates a new receipt file even if one already exists for the order.
 	 * @return string|null The file name of the new or already existing receipt file, null if an order id is passed and the order doesn't exist.
 	 * @throws InvalidArgumentException Invalid expiration date (wrongly formatted, or it's a date in the past).
 	 * @throws Exception The directory to store the file doesn't exist and can't be created.
 	 */
 	public function generate_receipt( $order, $expiration_date = null, bool $force_new = false ): ?string {
-		if ( ! $order instanceof WC_Order ) {
+		if ( ! $order instanceof WC_Abstract_Order ) {
 			$order = wc_get_order( $order );
 			if ( false === $order ) {
 				return null;
@@ -126,7 +126,7 @@ class ReceiptRenderingEngine {
 		 * See the template file, Templates/order-receipt.php, for reference on how the data is used.
 		 *
 		 * @param array $data The original set of data.
-		 * @param WC_Order $order The order for which the receipt is being generated.
+		 * @param WC_Abstract_Order $order The order for which the receipt is being generated.
 		 * @returns array The updated set of data.
 		 *
 		 * @since 9.0.0
@@ -164,7 +164,7 @@ class ReceiptRenderingEngine {
 			 *
 			 * @param string $line_item_display_data Data to use to generate the HTML table row to be rendered for the line item.
 			 * @param array $line_item_data The relevant data for the line item for which the HTML table row is being generated.
-			 * @param WC_Order $order The order for which the receipt is being generated.
+			 * @param WC_Abstract_Order $order The order for which the receipt is being generated.
 			 * @return string The actual data to use to generate the HTML for the line item.
 			 *
 			 * @since 9.0.0
@@ -191,7 +191,7 @@ class ReceiptRenderingEngine {
 		 * See Templates/order-receipt-css.php for the original CSS styles.
 		 *
 		 * @param string $css The original CSS styles to use.
-		 * @param WC_Order $order The order for which the receipt is being generated.
+		 * @param WC_Abstract_Order $order The order for which the receipt is being generated.
 		 * @return string The actual CSS styles that will be used.
 		 *
 		 * @since 9.0.0
@@ -243,12 +243,12 @@ class ReceiptRenderingEngine {
 	 * A receipt is considered to be available for the order if there's an order meta entry with key
 	 * RECEIPT_FILE_NAME_META_KEY AND the transient file it points to exists AND it has not expired.
 	 *
-	 * @param WC_Order $order The order object or order id to get the receipt for.
+	 * @param WC_Abstract_Order $order The order object or order id to get the receipt for.
 	 * @return string|null The receipt file name, or null if no receipt is currently available for the order.
 	 * @throws Exception Thrown if a wrong file path is passed.
 	 */
 	public function get_existing_receipt( $order ): ?string {
-		if ( ! $order instanceof WC_Order ) {
+		if ( ! $order instanceof WC_Abstract_Order ) {
 			$order = wc_get_order( $order );
 			if ( false === $order ) {
 				return null;
@@ -424,6 +424,6 @@ class ReceiptRenderingEngine {
 		$card_info['card_icon']  = $card_info['icon'];
 		$card_info['card_last4'] = $card_info['last4'];
 
-		return array_filter( $card_info );
+		return $card_info;
 	}
 }
