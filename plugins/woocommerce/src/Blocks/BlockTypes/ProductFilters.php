@@ -86,6 +86,7 @@ class ProductFilters extends AbstractBlock {
 			'class'                            => implode( ' ', array_keys( array_filter( $classes ) ) ),
 			'data-wc-interactive'              => wp_json_encode( array( 'namespace' => $this->get_full_block_name() ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
 			'data-wc-watch'                    => 'callbacks.maybeNavigate',
+			'data-wc-on--keyup'                => 'actions.closeOverlayOnEscape',
 			'data-wc-navigation-id'            => $this->generate_navigation_id( $block ),
 			'data-wc-context'                  => wp_json_encode( $icontext, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
 			'data-wc-class--is-overlay-opened' => 'context.isOverlayOpened',
