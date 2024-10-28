@@ -817,7 +817,7 @@ class ProductCollection extends AbstractBlock {
 			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 			'meta_query'     => array(),
 			'posts_per_page' => $per_page,
-			'order'          => $query['order'],
+			'order'          => $query['order'] ?? 'asc',
 			'offset'         => ( $per_page * ( $page - 1 ) ) + $offset,
 			'post__in'       => $product_ids,
 			'post_status'    => 'publish',
