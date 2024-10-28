@@ -13,7 +13,7 @@ import { CoreCollectionNames, CoreFilterNames } from '../types';
 
 const collection = {
 	name: CoreCollectionNames.ON_SALE,
-	title: __( 'On Sale', 'woocommerce' ),
+	title: __( 'On Sale Products', 'woocommerce' ),
 	icon: <Icon icon={ percent } />,
 	description: __(
 		'Highlight products that are currently on sale.',
