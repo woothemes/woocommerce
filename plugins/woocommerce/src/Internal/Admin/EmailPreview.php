@@ -39,6 +39,19 @@ class EmailPreview {
 	}
 
 	/**
+	 * Hook into WooCommerce.
+	 */
+	public function __construct() {
+		/**
+		 * Email templates fetch product from the database to show additional information, which are not
+		 * saved in WC_Order_Item_Product. This filter enables fetching those data also in email preview.
+		 *
+		 * @since 9.5.0
+		 */
+		add_filter( 'woocommerce_order_item_product', array( $this, 'get_dummy_product_when_not_set' ), 10, 1 );
+	}
+
+	/**
 	 * Get the preview email content.
 	 *
 	 * @return string
@@ -47,8 +60,20 @@ class EmailPreview {
 		if ( FeaturesUtil::feature_is_enabled( 'email_improvements' ) ) {
 			return $this->render_preview_email();
 		}
-
 		return $this->render_legacy_preview_email();
+	}
+
+	/**
+	 * Return a dummy product when the product is not set in email classes.
+	 *
+	 * @param WC_Product $product Order item product.
+	 * @return WC_Product
+	 */
+	public function get_dummy_product_when_not_set( $product ) {
+		if ( $product ) {
+			return $product;
+		}
+		return $this->get_dummy_product();
 	}
 
 	/**
@@ -113,9 +138,7 @@ class EmailPreview {
 	 * @return WC_Order
 	 */
 	private function get_dummy_order() {
-		$product = new WC_Product();
-		$product->set_name( 'Dummy Product' );
-		$product->set_price( 25 );
+		$product = $this->get_dummy_product();
 
 		$order = new WC_Order();
 		$order->add_product( $product, 2 );
@@ -129,6 +152,19 @@ class EmailPreview {
 		$order->set_shipping_address( $address );
 
 		return $order;
+	}
+
+	/**
+	 * Get a dummy product. Also used with `woocommerce_order_item_product` filter
+	 * when email templates tries to get the product from the database.
+	 *
+	 * @return WC_Product
+	 */
+	private function get_dummy_product() {
+		$product = new WC_Product();
+		$product->set_name( 'Dummy Product' );
+		$product->set_price( 25 );
+		return $product;
 	}
 
 	/**
