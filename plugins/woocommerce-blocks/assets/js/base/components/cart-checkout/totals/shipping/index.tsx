@@ -4,7 +4,6 @@
 import clsx from 'clsx';
 import { __ } from '@wordpress/i18n';
 import { TotalsItem } from '@woocommerce/blocks-components';
-import { getTotalShippingValue } from '@woocommerce/base-utils';
 import { getCurrencyFromPriceResponse } from '@woocommerce/price-format';
 import type {
 	CartResponseShippingAddress,
@@ -17,25 +16,8 @@ import type {
  */
 import { ShippingVia } from './shipping-via';
 import { ShippingAddress } from './shipping-address';
+import { renderShippingTotalValue } from './utils';
 import './style.scss';
-
-export interface TotalShippingProps {
-	label: string;
-	hasRates: boolean;
-	shippingRates: CartShippingRate[];
-	shippingAddress: CartResponseShippingAddress;
-	values: CartResponseTotals;
-	className?: string;
-	placeholder?: React.ReactNode | null;
-	collaterals?: React.ReactNode | null;
-}
-
-const renderShippingTotalValue = ( value: number ) => {
-	if ( value === 0 ) {
-		return <strong>{ __( 'Free', 'woocommerce' ) }</strong>;
-	}
-	return value;
-};
 
 export const TotalsShipping = ( {
 	label = __( 'Delivery', 'woocommerce' ),
@@ -46,17 +28,16 @@ export const TotalsShipping = ( {
 	placeholder = null,
 	className,
 	collaterals = null,
-}: TotalShippingProps ): JSX.Element | null => {
-	const totalShippingValue = getTotalShippingValue( values );
-	const totalCurrency = getCurrencyFromPriceResponse( values );
-	const selectedShippingRates = shippingRates.flatMap(
-		( shippingPackage ) => {
-			return shippingPackage.shipping_rates
-				.filter( ( rate ) => rate.selected )
-				.flatMap( ( rate ) => rate.name );
-		}
-	);
-
+}: {
+	label: string;
+	hasRates: boolean;
+	shippingRates: CartShippingRate[];
+	shippingAddress: CartResponseShippingAddress;
+	values: CartResponseTotals;
+	className?: string;
+	placeholder?: React.ReactNode | null;
+	collaterals?: React.ReactNode | null;
+} ): JSX.Element | null => {
 	return (
 		<div
 			className={ clsx(
@@ -67,20 +48,15 @@ export const TotalsShipping = ( {
 			<TotalsItem
 				label={ label }
 				value={
-					hasRates
-						? renderShippingTotalValue( totalShippingValue )
-						: placeholder
+					hasRates ? renderShippingTotalValue( values ) : placeholder
 				}
 				description={
 					<>
 						{ hasRates && (
 							<>
-								<ShippingVia
-									selectedShippingRates={
-										selectedShippingRates
-									}
-								/>
+								<ShippingVia shippingRates={ shippingRates } />
 								<ShippingAddress
+									shippingRates={ shippingRates }
 									shippingAddress={ shippingAddress }
 								/>
 							</>
@@ -92,7 +68,7 @@ export const TotalsShipping = ( {
 						) }
 					</>
 				}
-				currency={ totalCurrency }
+				currency={ getCurrencyFromPriceResponse( values ) }
 			/>
 		</div>
 	);

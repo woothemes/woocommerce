@@ -1,35 +1,49 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { formatShippingAddress } from '@woocommerce/base-utils';
-import {
-	ShippingLocation,
-	PickupLocation,
-	ShippingCalculatorButton,
-} from '@woocommerce/base-components/cart-checkout';
+import { ShippingCalculatorButton } from '@woocommerce/base-components/cart-checkout';
 import { useCheckoutAddress } from '@woocommerce/base-context';
 import type { ShippingAddress as ShippingAddressType } from '@woocommerce/settings';
+import { CartShippingRate } from '@woocommerce/types';
+
+/**
+ * Internal dependencies
+ */
+import { getPickupLocation } from './utils';
 
 export const ShippingAddress = ( {
 	shippingAddress,
+	shippingRates,
 }: {
 	shippingAddress: ShippingAddressType;
+	shippingRates: CartShippingRate[];
 } ): JSX.Element => {
 	const { prefersCollection } = useCheckoutAddress();
-	const formattedLocation = formatShippingAddress( shippingAddress );
-	const label = !! formattedLocation
-		? __( 'Change address', 'woocommerce' )
-		: __( 'Enter address to check delivery options', 'woocommerce' );
+
+	const formattedAddress = prefersCollection
+		? getPickupLocation( shippingRates )
+		: formatShippingAddress( shippingAddress );
+
+	const addressLabel = prefersCollection
+		? /* translators: %s location. */
+		  __( 'Pickup from %s', 'woocommerce' )
+		: /* translators: %s location. */
+		  __( 'Delivers to %s', 'woocommerce' );
+
+	const calculatorLabel =
+		! formattedAddress || prefersCollection
+			? __( 'Enter address to check delivery options', 'woocommerce' )
+			: __( 'Change address', 'woocommerce' );
+
 	return (
-		<>
-			{ prefersCollection ? (
-				<PickupLocation />
-			) : (
-				<ShippingLocation formattedLocation={ formattedLocation } />
-			) }
-			<ShippingCalculatorButton label={ label } />
-		</>
+		<div className="wc-block-components-shipping-address">
+			{ formattedAddress
+				? sprintf( addressLabel, formattedAddress ) + ' '
+				: null }
+			<ShippingCalculatorButton label={ calculatorLabel } />
+		</div>
 	);
 };
 

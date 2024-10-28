@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import {
-	CartShippingPackageShippingRate,
-	CartShippingRate,
-} from '@woocommerce/type-defs/cart';
 import { getSetting } from '@woocommerce/settings';
 import { LOCAL_PICKUP_ENABLED } from '@woocommerce/block-settings';
+import type {
+	CartShippingPackageShippingRate,
+	CartShippingRate,
+} from '@woocommerce/types';
 
 /**
  * Get the number of packages in a shippingRates array.
@@ -113,4 +113,17 @@ export const getTotalShippingValue = ( values: {
 		? parseInt( values.total_shipping, 10 ) +
 				parseInt( values.total_shipping_tax, 10 )
 		: parseInt( values.total_shipping, 10 );
+};
+
+/**
+ * Get the names of the selected rates in an array of shipping rates.
+ */
+export const getSelectedShippingRateNames = (
+	shippingRates: CartShippingRate[]
+): string[] => {
+	return shippingRates.flatMap( ( shippingPackage ) => {
+		return shippingPackage.shipping_rates
+			.filter( ( rate ) => rate.selected )
+			.flatMap( ( rate ) => rate.name );
+	} );
 };

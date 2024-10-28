@@ -2,24 +2,26 @@
  * External dependencies
  */
 import { decodeEntities } from '@wordpress/html-entities';
+import { getSelectedShippingRateNames } from '@woocommerce/base-utils';
+import type { CartShippingRate } from '@woocommerce/types';
 
 export const ShippingVia = ( {
-	selectedShippingRates,
+	shippingRates,
 }: {
-	selectedShippingRates: string[];
-} ): JSX.Element => {
-	return (
+	shippingRates: CartShippingRate[];
+} ): JSX.Element | null => {
+	const rateNames = getSelectedShippingRateNames( shippingRates );
+	return rateNames ? (
 		<div className="wc-block-components-totals-shipping__via">
 			{ decodeEntities(
-				selectedShippingRates
+				rateNames
 					.filter(
-						( item, index ) =>
-							selectedShippingRates.indexOf( item ) === index
+						( item, index ) => rateNames.indexOf( item ) === index
 					)
 					.join( ', ' )
 			) }
 		</div>
-	);
+	) : null;
 };
 
 export default ShippingVia;
