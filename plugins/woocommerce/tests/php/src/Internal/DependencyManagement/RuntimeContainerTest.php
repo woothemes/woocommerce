@@ -78,9 +78,9 @@ class RuntimeContainerTest extends \WC_Unit_Test_Case {
 	 * @testdox 'get' properly resolves and caches classes, and its dependencies, if they are in the root WooCommerce namespace.
 	 */
 	public function test_resolves_and_caches_classes_and_dependencies() {
-        ClassWithNestedDependencies::$instances_count = 0;
-        DependencyClassWithInnerDependency::$instances_count = 0;
-        InnerDependencyClass::$instances_count = 0;
+		ClassWithNestedDependencies::$instances_count        = 0;
+		DependencyClassWithInnerDependency::$instances_count = 0;
+		InnerDependencyClass::$instances_count               = 0;
 
 		$instance_1 = $this->sut->get( ClassWithNestedDependencies::class );
 		$instance_2 = $this->sut->get( ClassWithNestedDependencies::class );

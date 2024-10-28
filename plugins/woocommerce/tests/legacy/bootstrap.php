@@ -99,6 +99,7 @@ class WC_Unit_Tests_Bootstrap {
 			$this->initialize_hpos();
 		}
 
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions, WordPress.PHP.DiscouragedPHPFunctions
 		error_reporting( error_reporting() & ~E_DEPRECATED );
 	}
 
