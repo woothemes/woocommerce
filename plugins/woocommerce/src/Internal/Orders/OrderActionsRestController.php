@@ -85,7 +85,7 @@ class OrderActionsRestController extends RestApiControllerBase {
 	private function get_schema_for_order_actions(): array {
 		$schema['properties'] = array(
 			'message' => array(
-				'description' => __( 'A message indication whether the email was sent.', 'woocommerce' ),
+				'description' => __( 'A message indicating that the action completed successfully.', 'woocommerce' ),
 				'type'        => 'string',
 				'context'     => array( 'view', 'edit' ),
 				'readonly'    => true,
@@ -104,7 +104,7 @@ class OrderActionsRestController extends RestApiControllerBase {
 		$order_id = $request->get_param( 'id' );
 		$order    = wc_get_order( $order_id );
 		if ( ! $order ) {
-			return new WP_Error( 'invalid_order', __( 'Invalid order ID.', 'woocommerce' ), array( 'status' => 404 ) );
+			return new WP_Error( 'woocommerce_rest_invalid_order', __( 'Invalid order ID.', 'woocommerce' ), array( 'status' => 404 ) );
 		}
 
 		// phpcs:disable WooCommerce.Commenting.CommentHooks.MissingSinceComment
@@ -115,7 +115,14 @@ class OrderActionsRestController extends RestApiControllerBase {
 		WC()->shipping();
 		WC()->mailer()->customer_invoice( $order );
 
-		$order->add_order_note( __( 'Order details sent to customer via REST API.', 'woocommerce' ), false, true );
+		$user_agent = esc_html( $request->get_header( 'User-Agent' ) );
+		$note       = sprintf(
+			// translators: %1$s is the customer email, %2$s is the user agent that requested the action.
+			esc_html__( 'Order details sent to %1$s, via %2$s.', 'woocommerce' ),
+			esc_html( $order->get_billing_email() ),
+			$user_agent ? $user_agent : 'REST API'
+		);
+		$order->add_order_note( $note, false, true );
 
 		// phpcs:disable WooCommerce.Commenting.CommentHooks.MissingSinceComment
 		/** This action is documented in includes/admin/meta-boxes/class-wc-meta-box-order-actions.php */

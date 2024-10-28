@@ -40,10 +40,13 @@ class OrderActionsRestControllerTest extends WC_REST_Unit_Test_Case {
 	 */
 	public function test_send_order_details() {
 		$order = wc_create_order();
+		$order->set_billing_email( 'customer@email.com' );
+		$order->save();
 
 		wp_set_current_user( $this->user );
 
 		$request = new WP_REST_Request( 'POST', '/wc/v3/orders/' . $order->get_id() . '/actions/send_order_details' );
+		$request->add_header( 'User-Agent', 'some app' );
 
 		$response = $this->server->dispatch( $request );
 
@@ -55,7 +58,7 @@ class OrderActionsRestControllerTest extends WC_REST_Unit_Test_Case {
 
 		$notes = wc_get_order_notes( array( 'order_id' => $order->get_id() ) );
 		$this->assertCount( 1, $notes );
-		$this->assertEquals( 'Order details sent to customer via REST API.', $notes[0]->content );
+		$this->assertEquals( 'Order details sent to customer@email.com, via some app.', $notes[0]->content );
 	}
 
 	/**
