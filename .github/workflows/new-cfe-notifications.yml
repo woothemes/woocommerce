@@ -17,8 +17,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const event = ${{ toJSON( github.event ) }}
-            const body = event.issue.body;
+            const body = context.payload.issue.body; // Accessing the issue body directly from the context
 
             // Regular expression to match the release number after the specific question
             const releaseRegex = /Which release does this request apply to\?.*?\n([0-9]+\.[0-9]+)/s;
@@ -89,8 +88,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const event = ${{ toJSON( github.event ) }}
-            const body = event.issue.body;
+            const body = context.payload.issue.body;
 
             // Regular expression to match the PR link that follows the specific question
             const prRegex = /Which PR needs to be included\?.*?\n(https:\/\/github\.com\/[a-zA-Z0-9_\-]+\/[a-zA-Z0-9_\-]+\/pull\/([0-9]+))/s;
@@ -117,7 +115,7 @@ jobs:
           PR_NUMBER: ${{ steps.extract-pr.outputs.PR_NUMBER }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr edit "$PR_NUMBER" --add-label "cherry pick to trunk" --repo "$OWNER/$REPO"
+          gh pr edit $PR_NUMBER --add-label "cherry pick to trunk" --repo "$OWNER/$REPO"
 
       - name: Add label 'cherry pick to frozen release' to PR
         if: contains(github.event.issue.labels.*.name, 'point release request')
@@ -193,12 +191,12 @@ jobs:
           echo "Applying milestone: $MILESTONE"
           gh issue edit "$ISSUE_URL" --milestone "$MILESTONE"
 
-      - name: Close CFE Issue
+      - name: Close the request
         env:
           ISSUE_URL: ${{ github.event.issue.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh issue close --comment "Closing issue as CFE is rejected - $ISSUE_URL. Please switch the base to trunk and merge."
+          gh issue close --comment "Closing issue the request is rejected - $ISSUE_URL. Please switch the base to trunk and merge."
 
       - name: Set Slack Message
         id: set-message
@@ -219,6 +217,7 @@ jobs:
             }
 
             core.setOutput('SLACK_MESSAGE', message);
+
 
       - name: Notify Slack
         uses: archive/github-actions-slack@v2.0.0
