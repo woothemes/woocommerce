@@ -5,7 +5,7 @@
 
 namespace Automattic\WooCommerce\Admin\Features;
 
-use Automattic\Jetpack\Constants;
+use Automattic\WooCommerce\Internal\Admin\WCAdminAssets;
 
 /**
  * Contains backend logic for the Settings feature.
@@ -48,11 +48,26 @@ class Settings {
 		if ( ! $screen || 'woocommerce_page_wc-settings' !== $screen->id ) {
 			return;
 		}
-
-		$suffix  = Constants::is_true( 'SCRIPT_DEBUG' ) ? '' : '.min';
-		$version = Constants::get_constant( 'WC_VERSION' );
 		
+		// Make sure the Settings Editor package is loaded.
 		wp_enqueue_script( 'wc-settings-editor' );
+		
+		$script_handle = 'wc-admin-edit-settings';
+		$script_path_name = 'wp-admin-scripts/settings';
+		$script_assets_filename = WCAdminAssets::get_script_asset_filename( 'wp-admin-scripts', 'settings' );
+		$script_assets          = require WC_ADMIN_ABSPATH . WC_ADMIN_DIST_JS_FOLDER . 'wp-admin-scripts/' . $script_assets_filename;
+		$script_version         = WCAdminAssets::get_file_version( 'js', $script_assets['version'] );
+		
+		wp_register_script(
+			$script_handle,
+			WCAdminAssets::get_url( $script_path_name, 'js' ),
+			$script_assets['dependencies'],
+			$script_version,
+			true
+		);
+
+		// Load the main Settings script.
+		wp_enqueue_script( $script_handle );
 	}
 
 	/**

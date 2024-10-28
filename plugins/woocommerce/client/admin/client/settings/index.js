@@ -1,3 +1,1 @@
-export default ( {} ) => {
-	return <div>Settings page</div>;
-};
+console.log( 'Settings page' );
