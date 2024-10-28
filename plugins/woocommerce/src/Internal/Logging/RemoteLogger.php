@@ -430,12 +430,12 @@ class RemoteLogger extends \WC_Log_Handler {
 	 *
 	 * Additionally, any user data like email addresses or phone numbers will be redacted.
 	 *
-	 * @param string $message The message to sanitize.
-	 * @return string The sanitized message.
+	 * @param string $content The content to sanitize.
+	 * @return string The sanitized content.
 	 */
-	private function sanitize( $message ) {
-		if ( ! is_string( $message ) ) {
-			return $message;
+	private function sanitize( $content ) {
+		if ( ! is_string( $content ) ) {
+			return $content;
 		}
 
 		$plugin_path = StringUtil::normalize_local_path_slashes( trailingslashit( dirname( WC_ABSPATH ) ) );
@@ -444,10 +444,24 @@ class RemoteLogger extends \WC_Log_Handler {
 		$sanitized = str_replace(
 			array( $plugin_path, $wp_path ),
 			array( './', './' ),
-			$message
+			$content
 		);
 
-		return $this->redact_user_data( $sanitized );
+		$sanitized = $this->redact_user_data( $sanitized );
+
+		if ( ! function_exists( 'apply_filters' ) ) {
+			require_once ABSPATH . WPINC . '/plugin.php';
+		}
+
+		/**
+		 * Filter the sanitized log content before it's sent to the remote logging service.
+		 *
+		 * @since 9.5.0
+		 *
+		 * @param string $sanitized The sanitized content.
+		 * @param string $message   The original content.
+		 */
+		return apply_filters( 'woocommerce_remote_logger_sanitized_content', $sanitized, $content );
 	}
 
 	/**
@@ -487,22 +501,38 @@ class RemoteLogger extends \WC_Log_Handler {
 
 
 	/**
-	 * Redact potential user data from the message.
+	 * Redact potential user data from the content.
 	 *
-	 * @param string $message The message to redact.
+	 * @param string $message The content to redact.
 	 * @return string The redacted message.
 	 */
-	private function redact_user_data( $message ) {
+	private function redact_user_data( $content ) {
 		// Redact email addresses.
-		$message = preg_replace( '/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/', '[redacted_email]', $message );
+		$content = preg_replace( '/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/', '[redacted_email]', $content );
 
-		// Redact potential phone numbers (this is a simple pattern and might need refinement).
-		$message = preg_replace( '/\b\d{3}[-.]?\d{3}[-.]?\d{4}\b/', '[redacted_phone]', $message );
+		/**
+		 * Redact potential phone numbers.
+		 *
+		 * This will match patterns like:
+		 * +1 (123) 456 7890 (with parentheses around area code)
+		 * +44-123-4567-890 (with area code, no parentheses)
+		 * 1234567890 (10 consecutive digits, no area code)
+		 * (123) 456-7890 (area code in parentheses, groups)
+		 * +91 12345 67890 (international format with space)
+		 */
+		$content = preg_replace(
+			'/(?:(?:\+?\d{1,3}[-\s]?)?\(?\d{3}\)?[-\s]?\d{3}[-\s]?\d{4}|\b\d{10,11}\b)/',
+			'[redacted_phone]',
+			$content
+		);
 
 		// Redact potential IP addresses.
-		$message = preg_replace( '/\b(?:\d{1,3}\.){3}\d{1,3}\b/', '[redacted_ip]', $message );
+		$content = preg_replace( '/\b(?:\d{1,3}\.){3}\d{1,3}\b/', '[redacted_ip]', $content );
 
-		return $message;
+		// Redact potential credit card numbers.
+		$content = preg_replace( '/(\d{4}[- ]?){3}\d{4}/', '[redacted_credit_card]', $content );
+
+		return $content;
 	}
 
 	/**

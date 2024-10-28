@@ -602,43 +602,74 @@ namespace Automattic\WooCommerce\Tests\Internal\Logging {
 		 */
 		public function redact_user_data_provider() {
 			return array(
-				'email address'                   => array(
+				'email address'                        => array(
 					'input'    => 'User email is john.doe@example.com',
 					'expected' => 'User email is [redacted_email]',
 				),
-				'multiple email addresses'        => array(
-					'input'    => 'Emails: john@example.com and jane@test.org',
-					'expected' => 'Emails: [redacted_email] and [redacted_email]',
+				'complex email address'                => array(
+					'input'    => 'Email: test.user+label@sub-domain.example.co.uk',
+					'expected' => 'Email: [redacted_email]',
 				),
-				'phone number with dashes'        => array(
-					'input'    => 'Phone: 123-456-7890',
+				'international phone with parentheses' => array(
+					'input'    => 'Phone: +1 (123) 456 7890',
 					'expected' => 'Phone: [redacted_phone]',
 				),
-				'phone number without separators' => array(
-					'input'    => 'Contact at 1234567890',
+				'international phone with dashes'      => array(
+					'input'    => 'Contact at +44-123-456-7890',
 					'expected' => 'Contact at [redacted_phone]',
 				),
-				'phone number with dots'          => array(
-					'input'    => 'Call 123.456.7890',
+				'simple phone number'                  => array(
+					'input'    => 'Call 1234567890',
 					'expected' => 'Call [redacted_phone]',
 				),
-				'IP address'                      => array(
+				'formatted phone number'               => array(
+					'input'    => 'Phone: (123) 456-7890',
+					'expected' => 'Phone: [redacted_phone]',
+				),
+				'should not match short number'        => array(
+					'input'    => 'Order #123 status',
+					'expected' => 'Order #123 status',
+				),
+				'should not match medium number'       => array(
+					'input'    => 'Product 12345',
+					'expected' => 'Product 12345',
+				),
+				'IP address'                           => array(
 					'input'    => 'User IP: 192.168.1.1',
 					'expected' => 'User IP: [redacted_ip]',
 				),
-				'multiple IP addresses'           => array(
-					'input'    => 'IPs: 10.0.0.1 and 172.16.0.1',
-					'expected' => 'IPs: [redacted_ip] and [redacted_ip]',
+				'credit card number spaced'            => array(
+					'input'    => 'Card: 4111 1111 1111 1111',
+					'expected' => 'Card: [redacted_credit_card]',
 				),
-				'mixed sensitive data'            => array(
-					'input'    => 'Email: user@example.com, Phone: 987-654-3210, IP: 192.168.0.1',
-					'expected' => 'Email: [redacted_email], Phone: [redacted_phone], IP: [redacted_ip]',
+				'mixed sensitive data'                 => array(
+					'input'    => 'Contact: user@example.com, Tel: +1-234-567-8900, IP: 192.168.0.1, Card: 4111 1111 1111 1111',
+					'expected' => 'Contact: [redacted_email], Tel: [redacted_phone], IP: [redacted_ip], Card: [redacted_credit_card]',
 				),
-				'no sensitive data'               => array(
-					'input'    => 'This is a regular message without sensitive data.',
-					'expected' => 'This is a regular message without sensitive data.',
+				'numbers in text'                      => array(
+					'input'    => 'Order #123 had 456 items costing $789',
+					'expected' => 'Order #123 had 456 items costing $789',
 				),
 			);
+		}
+
+		/**
+		 * @testdox sanitize method applies custom sanitization filter
+		 */
+		public function test_sanitize_with_custom_filter() {
+			add_filter(
+				'woocommerce_remote_logger_sanitized_content',
+				function ( $sanitized ) {
+					return str_replace( 'test', 'filtered', $sanitized );
+				},
+				10,
+				2
+			);
+
+			$message  = WC_ABSPATH . 'includes/class-wc-test.php on line 123';
+			$expected = './woocommerce/includes/class-wc-filtered.php on line 123';
+			$result   = $this->invoke_private_method( $this->sut, 'sanitize', array( $message ) );
+			$this->assertEquals( $expected, $result );
 		}
 
 		/**
