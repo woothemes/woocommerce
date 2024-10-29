@@ -786,7 +786,7 @@ class ProductCollection extends AbstractBlock {
 		);
 
 		// Use ProductQueryBuilder to construct the query.
-        return $this->query_builder->get_final_frontend_query(
+		return $this->query_builder->get_final_frontend_query(
 			$collection_args,
 			$block_context_query,
 			$page,
