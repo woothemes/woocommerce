@@ -108,15 +108,15 @@ class CartItemSchema extends ItemSchema {
 	
 		// Return the original images if the filtered image has no thumbnail URL.
 		$valid_images = array();
-		$logger = wc_get_logger();
-		foreach ( $filtered_images as $key => $image ) {
+		$logger       = wc_get_logger();
+		foreach ( $filtered_images $image ) {
 			// Check if thumbnail is a valid url.
 			if ( empty( $image->thumbnail ) || ! filter_var( $image->thumbnail, FILTER_VALIDATE_URL ) ) {
 				$logger->warning( "After passing through woocommerce_cart_item_images filter, image with id $image->id did not have a valid thumbnail property." );
 				continue;
 			}
 			// Check if src property is a valid url.
-			if ( empty( $image->src) || ! filter_var( $image->src, FILTER_VALIDATE_URL ) ) {
+			if ( empty( $image->src ) || ! filter_var( $image->src, FILTER_VALIDATE_URL ) ) {
 				$logger->warning( "After passing through woocommerce_cart_item_images filter, image with id $image->id did not have a valid src property." );
 				continue;
 			}
