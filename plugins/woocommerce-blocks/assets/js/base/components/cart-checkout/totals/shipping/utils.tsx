@@ -20,7 +20,7 @@ export const renderShippingTotalValue = ( values: CartResponseTotals ) => {
 export const getPickupLocation = (
 	shippingRates: CartShippingRate[]
 ): string => {
-	const flattenedRates = shippingRates.flatMap(
+	const flattenedRates = ( shippingRates || [] ).flatMap(
 		( shippingRate ) => shippingRate.shipping_rates
 	);
 

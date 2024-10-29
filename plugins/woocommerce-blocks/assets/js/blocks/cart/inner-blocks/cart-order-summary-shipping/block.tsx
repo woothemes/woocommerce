@@ -14,9 +14,9 @@ import { useEditorContext } from '@woocommerce/base-context';
 import { TotalsWrapper } from '@woocommerce/blocks-components';
 import {
 	getShippingRatesPackageCount,
-	isPackageRateCollectable,
 	isAddressComplete,
-	hasShippingRate,
+	selectedRatesAreCollectable,
+	allRatesAreCollectable,
 } from '@woocommerce/base-utils';
 import { getSetting } from '@woocommerce/settings';
 
@@ -32,7 +32,6 @@ const Block = ( { className }: { className: string } ): JSX.Element | null => {
 		cartNeedsShipping,
 		shippingRates,
 		isLoadingRates,
-		cartHasCalculatedShipping,
 		shippingAddress,
 	} = useStoreCart();
 	const [ isShippingCalculatorOpen, setIsShippingCalculatorOpen ] =
@@ -55,24 +54,6 @@ const Block = ( { className }: { className: string } ): JSX.Element | null => {
 		'postcode',
 		'city',
 	] );
-	const hasRates =
-		cartHasCalculatedShipping && hasShippingRate( shippingRates );
-	const isCollectionOnly = hasRates
-		? shippingRates.every( ( shippingPackage ) => {
-				return shippingPackage.shipping_rates.every(
-					( rate ) =>
-						! rate.selected || isPackageRateCollectable( rate )
-				);
-		  } )
-		: false;
-	const hasCollectionRatesOnly = hasRates
-		? shippingRates.every( ( shippingPackage ) => {
-				return shippingPackage.shipping_rates.every( ( rate ) =>
-					isPackageRateCollectable( rate )
-				);
-		  } )
-		: false;
-
 	return (
 		<TotalsWrapper className={ className }>
 			<ShippingCalculatorContext.Provider
@@ -85,11 +66,10 @@ const Block = ( { className }: { className: string } ): JSX.Element | null => {
 			>
 				<TotalsShipping
 					label={
-						isCollectionOnly
+						selectedRatesAreCollectable( shippingRates )
 							? __( 'Collection', 'woocommerce' )
 							: __( 'Delivery', 'woocommerce' )
 					}
-					hasRates={ hasRates }
 					shippingRates={ shippingRates }
 					shippingAddress={ shippingAddress }
 					values={ cartTotals }
@@ -123,14 +103,15 @@ const Block = ( { className }: { className: string } ): JSX.Element | null => {
 									shippingAddress={ shippingAddress }
 								/>
 							) }
-							{ ! showCalculator && hasCollectionRatesOnly && (
-								<div className="wc-block-components-totals-shipping__delivery-options-notice">
-									{ __(
-										'Delivery options will be calculated during checkout',
-										'woocommerce'
-									) }
-								</div>
-							) }
+							{ ! showCalculator &&
+								allRatesAreCollectable( shippingRates ) && (
+									<div className="wc-block-components-totals-shipping__delivery-options-notice">
+										{ __(
+											'Delivery options will be calculated during checkout',
+											'woocommerce'
+										) }
+									</div>
+								) }
 						</>
 					}
 				/>

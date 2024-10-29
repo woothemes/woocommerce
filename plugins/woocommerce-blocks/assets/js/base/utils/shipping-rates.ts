@@ -127,3 +127,28 @@ export const getSelectedShippingRateNames = (
 			.flatMap( ( rate ) => rate.name );
 	} );
 };
+
+export const selectedRatesAreCollectable = (
+	shippingRates: CartShippingRate[]
+): boolean => {
+	return hasShippingRate( shippingRates )
+		? shippingRates.every( ( shippingPackage ) => {
+				return shippingPackage.shipping_rates.every(
+					( rate ) =>
+						! rate.selected || isPackageRateCollectable( rate )
+				);
+		  } )
+		: false;
+};
+
+export const allRatesAreCollectable = (
+	shippingRates: CartShippingRate[]
+): boolean => {
+	return hasShippingRate( shippingRates )
+		? shippingRates.every( ( shippingPackage ) => {
+				return shippingPackage.shipping_rates.every( ( rate ) =>
+					isPackageRateCollectable( rate )
+				);
+		  } )
+		: false;
+};

@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { __ } from '@wordpress/i18n';
 import { TotalsItem } from '@woocommerce/blocks-components';
 import { getCurrencyFromPriceResponse } from '@woocommerce/price-format';
+import { hasShippingRate } from '@woocommerce/base-utils';
 import type {
 	CartResponseShippingAddress,
 	CartResponseTotals,
@@ -21,7 +22,6 @@ import './style.scss';
 
 export const TotalsShipping = ( {
 	label = __( 'Delivery', 'woocommerce' ),
-	hasRates = false,
 	shippingAddress,
 	shippingRates,
 	values,
@@ -30,7 +30,6 @@ export const TotalsShipping = ( {
 	collaterals = null,
 }: {
 	label: string;
-	hasRates: boolean;
 	shippingRates: CartShippingRate[];
 	shippingAddress: CartResponseShippingAddress;
 	values: CartResponseTotals;
@@ -38,6 +37,7 @@ export const TotalsShipping = ( {
 	placeholder?: React.ReactNode | null;
 	collaterals?: React.ReactNode | null;
 } ): JSX.Element | null => {
+	const hasRates = hasShippingRate( shippingRates );
 	return (
 		<div
 			className={ clsx(

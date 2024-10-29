@@ -8,8 +8,7 @@ import { TotalsWrapper } from '@woocommerce/blocks-checkout';
 import {
 	filterShippingRatesByPrefersCollection,
 	isAddressComplete,
-	isPackageRateCollectable,
-	hasShippingRate,
+	selectedRatesAreCollectable,
 } from '@woocommerce/base-utils';
 
 const Block = ( {
@@ -22,7 +21,6 @@ const Block = ( {
 		cartNeedsShipping,
 		shippingRates: cartShippingRates,
 		shippingAddress,
-		cartHasCalculatedShipping,
 	} = useStoreCart();
 	const { prefersCollection } = useCheckoutAddress();
 
@@ -30,6 +28,10 @@ const Block = ( {
 		return null;
 	}
 
+	const shippingRates = filterShippingRatesByPrefersCollection(
+		cartShippingRates,
+		prefersCollection ?? false
+	);
 	const hasCompleteAddress = isAddressComplete( shippingAddress, [
 		'state',
 		'country',
@@ -37,30 +39,14 @@ const Block = ( {
 		'city',
 	] );
 
-	const shippingRates = filterShippingRatesByPrefersCollection(
-		cartShippingRates,
-		prefersCollection ?? false
-	);
-	const hasRates =
-		cartHasCalculatedShipping && hasShippingRate( shippingRates );
-	const isCollectionOnly = hasRates
-		? shippingRates.every( ( shippingPackage ) => {
-				return shippingPackage.shipping_rates.every(
-					( rate ) =>
-						! rate.selected || isPackageRateCollectable( rate )
-				);
-		  } )
-		: false;
-
 	return (
 		<TotalsWrapper className={ className }>
 			<TotalsShipping
 				label={
-					isCollectionOnly
+					selectedRatesAreCollectable( shippingRates )
 						? __( 'Collection', 'woocommerce' )
 						: __( 'Delivery', 'woocommerce' )
 				}
-				hasRates={ hasRates }
 				shippingAddress={ shippingAddress }
 				shippingRates={ shippingRates }
 				values={ cartTotals }

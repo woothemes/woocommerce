@@ -28,7 +28,7 @@ export const ShippingAddress = ( {
 
 	const addressLabel = prefersCollection
 		? /* translators: %s location. */
-		  __( 'Pickup from %s', 'woocommerce' )
+		  __( 'Collection from %s', 'woocommerce' )
 		: /* translators: %s location. */
 		  __( 'Delivers to %s', 'woocommerce' );
 
