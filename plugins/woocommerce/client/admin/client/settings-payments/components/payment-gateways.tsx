@@ -2,13 +2,13 @@
  * External dependencies
  */
 import React, { useEffect, useState } from 'react';
+import { Gridicon } from '@automattic/components';
 import { Button, Card, CardHeader, SelectControl } from '@wordpress/components';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 import { EllipsisMenu, List, Pill } from '@woocommerce/components';
 import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
-import { Gridicon } from '@automattic/components';
-import { getNewPath } from '@woocommerce/navigation';
+import { getAdminLink } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
@@ -184,7 +184,15 @@ export const PaymentGateways = () => {
 				) }
 			</>
 		),
-		after: <Gridicon icon="chevron-right" />,
+		after: (
+			<a
+				href={ getAdminLink(
+					'admin.php?page=wc-settings&tab=checkout&section=offline'
+				) }
+			>
+				<Gridicon icon="chevron-right" />
+			</a>
+		),
 		// todo change logo to appropriate one.
 		before: (
 			<img
