@@ -174,14 +174,14 @@ export const SaveHub = () => {
 	if ( isMainScreen ) {
 		return (
 			<HStack
-				className="edit-site-save-hub"
+				className="woocommerce-edit-site-save-hub"
 				alignment="right"
 				spacing={ 4 }
 			>
 				<Button
 					variant="primary"
 					onClick={ onDone }
-					className="edit-site-save-hub__button"
+					className="woocommerce-edit-site-save-hub__button"
 					disabled={
 						isResolving ||
 						isEditorLoading ||

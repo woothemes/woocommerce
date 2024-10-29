@@ -44,7 +44,7 @@ export const SidebarContainer = ( {
 	return (
 		<>
 			<VStack
-				className={ clsx( 'edit-site-sidebar-navigation-screen__main', {
+				className={ clsx( 'woocommerce-edit-site-sidebar-navigation-screen__main', {
 					'has-footer': !! footer,
 				} ) }
 				spacing={ 0 }
@@ -53,7 +53,7 @@ export const SidebarContainer = ( {
 				<HStack
 					spacing={ 4 }
 					alignment="flex-start"
-					className="edit-site-sidebar-navigation-screen__title-icon"
+					className="woocommerce-edit-site-sidebar-navigation-screen__title-icon"
 				>
 					<SidebarButton
 						onClick={
@@ -67,7 +67,7 @@ export const SidebarContainer = ( {
 					/>
 
 					<Heading
-						className="edit-site-sidebar-navigation-screen__title"
+						className="woocommerce-edit-site-sidebar-navigation-screen__title"
 						level={ 1 }
 						size={ 20 }
 					>
@@ -75,9 +75,9 @@ export const SidebarContainer = ( {
 					</Heading>
 				</HStack>
 
-				<div className="edit-site-sidebar-navigation-screen__content">
+				<div className="woocommerce-edit-site-sidebar-navigation-screen__content">
 					{ description && (
-						<p className="edit-site-sidebar-navigation-screen__description">
+						<p className="woocommerce-edit-site-sidebar-navigation-screen__description">
 							{ description }
 						</p>
 					) }
@@ -85,7 +85,7 @@ export const SidebarContainer = ( {
 				</div>
 			</VStack>
 			{ footer && (
-				<footer className="edit-site-sidebar-navigation-screen__footer">
+				<footer className="woocommerce-edit-site-sidebar-navigation-screen__footer">
 					{ footer }
 				</footer>
 			) }

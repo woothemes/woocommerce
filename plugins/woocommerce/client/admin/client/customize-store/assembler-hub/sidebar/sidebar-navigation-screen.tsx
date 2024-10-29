@@ -67,7 +67,7 @@ export const SidebarNavigationScreen = ( {
 	return (
 		<>
 			<VStack
-				className={ clsx( 'edit-site-sidebar-navigation-screen__main', {
+				className={ clsx( 'woocommerce-edit-site-sidebar-navigation-screen__main', {
 					'has-footer': !! footer,
 				} ) }
 				spacing={ 0 }
@@ -76,7 +76,7 @@ export const SidebarNavigationScreen = ( {
 				<HStack
 					spacing={ 4 }
 					alignment="flex-start"
-					className="edit-site-sidebar-navigation-screen__title-icon"
+					className="woocommerce-edit-site-sidebar-navigation-screen__title-icon"
 				>
 					{ ! isRoot && (
 						<SidebarButton
@@ -108,7 +108,7 @@ export const SidebarNavigationScreen = ( {
 						/>
 					) }
 					<Heading
-						className="edit-site-sidebar-navigation-screen__title"
+						className="woocommerce-edit-site-sidebar-navigation-screen__title"
 						style={
 							isEntrepreneurFlow() ? { padding: '0 16px' } : {}
 						}
@@ -119,22 +119,22 @@ export const SidebarNavigationScreen = ( {
 						{ title }
 					</Heading>
 					{ actions && (
-						<div className="edit-site-sidebar-navigation-screen__actions">
+						<div className="woocommerce-edit-site-sidebar-navigation-screen__actions">
 							{ actions }
 						</div>
 					) }
 				</HStack>
 				{ meta && (
 					<>
-						<div className="edit-site-sidebar-navigation-screen__meta">
+						<div className="woocommerce-edit-site-sidebar-navigation-screen__meta">
 							{ meta }
 						</div>
 					</>
 				) }
 
-				<div className="edit-site-sidebar-navigation-screen__content">
+				<div className="woocommerce-edit-site-sidebar-navigation-screen__content">
 					{ description && (
-						<p className="edit-site-sidebar-navigation-screen__description">
+						<p className="woocommerce-edit-site-sidebar-navigation-screen__description">
 							{ description }
 						</p>
 					) }
@@ -142,7 +142,7 @@ export const SidebarNavigationScreen = ( {
 				</div>
 			</VStack>
 			{ footer && (
-				<footer className="edit-site-sidebar-navigation-screen__footer">
+				<footer className="woocommerce-edit-site-sidebar-navigation-screen__footer">
 					{ footer }
 				</footer>
 			) }

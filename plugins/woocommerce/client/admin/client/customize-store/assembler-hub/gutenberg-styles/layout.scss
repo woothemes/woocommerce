@@ -4,7 +4,7 @@
 @import '_variables.scss';
 @import '_mixins.scss';
 
-.edit-site-layout {
+.woocommerce-edit-site-layout {
 	height: 100%;
 	background: $gray-900;
 	color: $gray-400;
@@ -17,14 +17,14 @@
 	}
 }
 
-.edit-site-layout__content {
+.woocommerce-edit-site-layout__content {
 	height: 100%;
 	flex-grow: 1;
 	display: flex;
 }
 
-.edit-site-layout__sidebar-region {
-	/*z-index: zIndex".edit-site-layout__sidebar");*/
+.woocommerce-edit-site-layout__sidebar-region {
+	/*z-index: zIndex".woocommerce-edit-site-layout__sidebar");*/
 	width: 100vw;
 	flex-shrink: 0;
 
@@ -33,14 +33,14 @@
 	}
 
 	// This is only necessary for the exit animation
-	.edit-site-layout.is-full-canvas & {
+	.woocommerce-edit-site-layout.is-full-canvas & {
 		position: fixed !important;
 		height: 100vh;
 		left: 0;
 		top: 0;
 	}
 
-	.edit-site-layout__sidebar {
+	.woocommerce-edit-site-layout__sidebar {
 		display: flex;
 		flex-direction: column;
 		height: 100%;
@@ -51,17 +51,17 @@
 	}
 }
 
-.edit-site-layout__main {
+.woocommerce-edit-site-layout__main {
 	flex-grow: 1;
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
 }
 
-.edit-site-layout__mobile {
+.woocommerce-edit-site-layout__mobile {
 	position: relative;
 	width: 100%;
-	/* z-index: zIndex".edit-site-layout__canvas-container"); */
+	/* z-index: zIndex".woocommerce-edit-site-layout__canvas-container"); */
 
 	/*
 	 * The SiteHubMobile component is displayed
@@ -71,15 +71,15 @@
 	 * This removes the padding in this scenario.
 	 * See https://github.com/WordPress/gutenberg/pull/63118
 	 */
-	.edit-site-sidebar__screen-wrapper {
+	.woocommerce-edit-site-sidebar__screen-wrapper {
 		padding: 0;
 	}
 }
 
-.edit-site-layout__canvas-container {
+.woocommerce-edit-site-layout__canvas-container {
 	position: relative;
 	flex-grow: 1;
-	/* z-index: zIndex".edit-site-layout__canvas-container"); */
+	/* z-index: zIndex".woocommerce-edit-site-layout__canvas-container"); */
 	// When animating the frame size can exceed its container size.
 	overflow: visible;
 
@@ -92,11 +92,11 @@
 		right: 0;
 		bottom: 0;
 		content: "";
-		/* z-index: zIndex".edit-site-layout__canvas-container.is-resizing::after"); */
+		/* z-index: zIndex".woocommerce-edit-site-layout__canvas-container.is-resizing::after"); */
 	}
 }
 
-.edit-site-layout__canvas {
+.woocommerce-edit-site-layout__canvas {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -110,7 +110,7 @@
 		justify-content: flex-end;
 	}
 
-	.edit-site-resizable-frame__inner {
+	.woocommerce-edit-site-resizable-frame__inner {
 		color: $gray-900;
 	}
 
@@ -119,13 +119,13 @@
 		bottom: $canvas-padding;
 		width: calc(100% - #{$canvas-padding});
 
-		.edit-site-resizable-frame__inner-content {
+		.woocommerce-edit-site-resizable-frame__inner-content {
 			box-shadow: $elevation-x-small;
 			transition: border-radius, box-shadow 0.4s;
 			// This ensure the radius work properly.
 			overflow: hidden;
 
-			.edit-site-layout:not(.is-full-canvas) & {
+			.woocommerce-edit-site-layout:not(.is-full-canvas) & {
 				border-radius: $radius-large;
 			}
 
@@ -135,7 +135,7 @@
 		}
 	}
 
-	.edit-site-layout.is-full-canvas & {
+	.woocommerce-edit-site-layout.is-full-canvas & {
 		top: 0;
 		bottom: 0;
 		width: 100%;
@@ -143,14 +143,14 @@
 }
 
 // This shouldn't be necessary (we should have a way to say that a skeletton is relative
-.edit-site-layout__mobile .interface-interface-skeleton,
-.edit-site-layout__canvas .interface-interface-skeleton,
-.edit-site-template-pages-preview .interface-interface-skeleton {
+.woocommerce-edit-site-layout__mobile .interface-interface-skeleton,
+.woocommerce-edit-site-layout__canvas .interface-interface-skeleton,
+.woocommerce-edit-site-template-pages-preview .interface-interface-skeleton {
 	position: relative !important;
 	min-height: 100% !important;
 }
 
-.edit-site-template-pages-preview {
+.woocommerce-edit-site-template-pages-preview {
 	height: 100%;
 }
 
@@ -170,11 +170,11 @@ html.canvas-mode-edit-transition::view-transition-group(toggle) {
 
 /* stylelint-enable  */
 
-.edit-site-layout.is-full-canvas .edit-site-layout__sidebar-region .edit-site-layout__view-mode-toggle {
+.woocommerce-edit-site-layout.is-full-canvas .woocommerce-edit-site-layout__sidebar-region .woocommerce-edit-site-layout__view-mode-toggle {
 	display: none;
 }
 
-.edit-site-layout__view-mode-toggle.components-button {
+.woocommerce-edit-site-layout__view-mode-toggle.components-button {
 	/* stylelint-disable -- Disable reason: View Transitions not supported properly by stylelint. */
 	view-transition-name: toggle;
 	/* stylelint-enable  */
@@ -216,7 +216,7 @@ html.canvas-mode-edit-transition::view-transition-group(toggle) {
 		box-shadow: none;
 	}
 
-	.edit-site-layout__view-mode-toggle-icon {
+	.woocommerce-edit-site-layout__view-mode-toggle-icon {
 		display: flex;
 		height: $header-height;
 		width: $header-height;
@@ -225,8 +225,8 @@ html.canvas-mode-edit-transition::view-transition-group(toggle) {
 	}
 }
 
-.edit-site-layout__actions {
-	/* z-index: zIndex".edit-site-layout__actions"); */
+.woocommerce-edit-site-layout__actions {
+	/* z-index: zIndex".woocommerce-edit-site-layout__actions"); */
 	position: fixed !important; // Need to override the default relative positioning
 	top: -9999em;
 	bottom: auto;
@@ -255,7 +255,7 @@ html.canvas-mode-edit-transition::view-transition-group(toggle) {
 	}
 }
 
-.edit-site-layout__area {
+.woocommerce-edit-site-layout__area {
 	flex-grow: 1;
 	margin: 0;
 	overflow: hidden;
@@ -267,7 +267,7 @@ html.canvas-mode-edit-transition::view-transition-group(toggle) {
 	}
 }
 
-.edit-site .components-editor-notices__snackbar {
+.woocommerce-edit-site .components-editor-notices__snackbar {
 	position: fixed;
 	right: 0;
 	bottom: 16px;

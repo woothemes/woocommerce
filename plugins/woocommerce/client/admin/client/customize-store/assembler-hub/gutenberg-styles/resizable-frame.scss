@@ -3,7 +3,7 @@
 // See https://github.com/woocommerce/woocommerce/issues/48377
 @import '_variables.scss';
 
-.edit-site-resizable-frame__inner {
+.woocommerce-edit-site-resizable-frame__inner {
 	position: relative;
 
 	&.is-resizing {
@@ -26,13 +26,13 @@
 	}
 }
 
-.edit-site-resizable-frame__inner-content {
+.woocommerce-edit-site-resizable-frame__inner-content {
 	position: absolute;
 	z-index: 0;
 	inset: 0;
 }
 
-.edit-site-resizable-frame__handle {
+.woocommerce-edit-site-resizable-frame__handle {
 	align-items: center;
 	background-color: rgba($gray-700, 0.4);
 	border: 0;

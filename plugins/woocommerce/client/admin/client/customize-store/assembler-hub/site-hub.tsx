@@ -60,7 +60,7 @@ export const SiteHub = forwardRef(
 			<motion.div
 				ref={ ref }
 				{ ...restProps }
-				className={ clsx( 'edit-site-site-hub', restProps.className ) }
+				className={ clsx( 'woocommerce-edit-site-site-hub', restProps.className ) }
 				initial={ false }
 				transition={ {
 					type: 'tween',
@@ -71,16 +71,16 @@ export const SiteHub = forwardRef(
 				<HStack
 					justify="space-between"
 					alignment="center"
-					className="edit-site-site-hub__container"
+					className="woocommerce-edit-site-site-hub__container"
 				>
 					<HStack
 						justify="flex-start"
-						className="edit-site-site-hub__text-content"
+						className="woocommerce-edit-site-site-hub__text-content"
 						spacing="0"
 					>
 						<div
 							className={ clsx(
-								'edit-site-site-hub__view-mode-toggle-container',
+								'woocommerce-edit-site-site-hub__view-mode-toggle-container',
 								{
 									'has-transparent-background': isTransparent,
 								}
@@ -100,7 +100,7 @@ export const SiteHub = forwardRef(
 										className="woocommerce-cys-wordpress-header-logo"
 									/>
 								) : (
-									<SiteIcon className="edit-site-layout__view-mode-toggle-icon" />
+									<SiteIcon className="woocommerce-edit-site-layout__view-mode-toggle-icon" />
 								) }
 							</Link>
 						</div>
@@ -116,7 +116,7 @@ export const SiteHub = forwardRef(
 										opacity: 0,
 									} }
 									className={ clsx(
-										'edit-site-site-hub__site-title',
+										'woocommerce-edit-site-site-hub__site-title',
 										{ 'is-transparent': isTransparent }
 									) }
 									transition={ {

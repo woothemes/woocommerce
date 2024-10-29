@@ -3,7 +3,7 @@
 // See https://github.com/woocommerce/woocommerce/issues/48377
 @import '_variables.scss';
 
-.edit-site-save-hub {
+.woocommerce-edit-site-save-hub {
 	color: $gray-600;
 	border-top: 1px solid $gray-800;
 	flex-shrink: 0;
@@ -11,7 +11,7 @@
 	padding: $grid-unit-20 $canvas-padding;
 }
 
-.edit-site-save-hub__button {
+.woocommerce-edit-site-save-hub__button {
 	color: inherit;
 	width: 100%;
 	justify-content: center;

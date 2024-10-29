@@ -3,14 +3,14 @@
 // See https://github.com/woocommerce/woocommerce/issues/48377
 @import '_variables.scss';
 
-.edit-site-sidebar-navigation-screen {
+.woocommerce-edit-site-sidebar-navigation-screen {
 	display: flex;
 	flex-direction: column;
 	overflow-x: unset !important;
 	position: relative;
 }
 
-.edit-site-sidebar-navigation-screen__main {
+.woocommerce-edit-site-sidebar-navigation-screen__main {
 	// Ensure the sidebar is always at least as tall as the viewport.
 	// This allows the footer section to be sticky at the bottom of the viewport.
 	flex-grow: 1;
@@ -21,7 +21,7 @@
 	}
 }
 
-.edit-site-sidebar-navigation-screen__content {
+.woocommerce-edit-site-sidebar-navigation-screen__content {
 	padding: 0 $grid-unit-20;
 
 	.components-item-group {
@@ -38,7 +38,7 @@
 	}
 }
 
-.edit-site-sidebar-navigation-screen__meta {
+.woocommerce-edit-site-sidebar-navigation-screen__meta {
 	margin: 0 0 $grid-unit-20 $grid-unit-20;
 	color: $gray-400;
 
@@ -47,7 +47,7 @@
 	}
 }
 
-.edit-site-sidebar-navigation-screen__page-link {
+.woocommerce-edit-site-sidebar-navigation-screen__page-link {
 	color: $gray-600;
 	display: inline-block;
 	word-break: break-word;
@@ -62,32 +62,31 @@
 	}
 }
 
-.edit-site-sidebar-navigation-screen__title-icon {
+.woocommerce-edit-site-sidebar-navigation-screen__title-icon {
 	position: sticky;
 	top: 0;
 	background: $gray-900;
 	padding-top: $grid-unit-60;
 	margin-bottom: $grid-unit-10;
 	padding-bottom: $grid-unit-10;
-	z-index: z-index(".edit-site-sidebar-navigation-screen__title-icon");
 }
 
-.edit-site-sidebar-navigation-screen__title {
+.woocommerce-edit-site-sidebar-navigation-screen__title {
 	flex-grow: 1;
 	overflow-wrap: break-word;
 
 	&#{&},
-	&#{&} .edit-site-sidebar-navigation-screen__title {
+	&#{&} .woocommerce-edit-site-sidebar-navigation-screen__title {
 		line-height: $font-line-height-x-large;
 	}
 }
 
-.edit-site-sidebar-navigation-screen__actions {
+.woocommerce-edit-site-sidebar-navigation-screen__actions {
 	display: flex;
 	flex-shrink: 0;
 }
 
-.edit-site-sidebar-navigation-screen__content .edit-site-global-styles-variation-container {
+.woocommerce-edit-site-sidebar-navigation-screen__content .woocommerce-edit-site-global-styles-variation-container {
 	@include break-medium() {
 		// Safari does not currently support `scrollbar-gutter: stable`, so at
 		// particular viewport sizes it's possible for previews to render prior to a
@@ -102,34 +101,34 @@
 	}
 }
 
-.edit-site-global-styles-variation-title {
+.woocommerce-edit-site-global-styles-variation-title {
 	color: $gray-300;
 	font-size: 11px;
 	text-transform: uppercase;
 	font-weight: 500;
 }
 
-.edit-site-sidebar-navigation-screen__content .edit-site-global-styles-variations_item {
+.woocommerce-edit-site-sidebar-navigation-screen__content .woocommerce-edit-site-global-styles-variations_item {
 
 	// Use a white outline to provide contrast with the dark background.
-	.edit-site-global-styles-variations_item-preview {
+	.woocommerce-edit-site-global-styles-variations_item-preview {
 		outline-color: rgba($white, 0.05);
 	}
 
-	&:not(.is-active):hover .edit-site-global-styles-variations_item-preview {
+	&:not(.is-active):hover .woocommerce-edit-site-global-styles-variations_item-preview {
 		outline-color: rgba($white, 0.15);
 	}
 
-	&.is-active .edit-site-global-styles-variations_item-preview {
+	&.is-active .woocommerce-edit-site-global-styles-variations_item-preview {
 		outline-color: $white;
 	}
 
-	&:focus-visible .edit-site-global-styles-variations_item-preview {
+	&:focus-visible .woocommerce-edit-site-global-styles-variations_item-preview {
 		outline-color: var(--wp-admin-theme-color);
 	}
 }
 
-.edit-site-sidebar-navigation-screen__footer {
+.woocommerce-edit-site-sidebar-navigation-screen__footer {
 	position: sticky;
 	bottom: 0;
 	background-color: $gray-900;
@@ -145,7 +144,7 @@
  * once that component is stabilized.
  * See: packages/components/src/theme
  */
-.edit-site-sidebar-navigation-screen__input-control {
+.woocommerce-edit-site-sidebar-navigation-screen__input-control {
 	width: 100%;
 
 	.components-input-control__container {
