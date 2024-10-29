@@ -352,6 +352,10 @@ class MiniCart extends AbstractBlock {
 	 * Update frontend dependencies cache.
 	 */
 	public function update_frontend_dependencies_cache() {
+		if ( empty( $this->scripts_to_lazy_load ) ) {
+			return;
+		}
+
 		$cache = array(
 			'version' => array(
 				'woocommerce' => WOOCOMMERCE_VERSION,
