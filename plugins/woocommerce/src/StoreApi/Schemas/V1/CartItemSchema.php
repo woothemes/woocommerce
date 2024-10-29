@@ -105,31 +105,38 @@ class CartItemSchema extends ItemSchema {
 		 * @since 9.4.0
 		 */
 		$filtered_images = apply_filters( 'woocommerce_cart_item_images', $product_images, $cart_item, $cart_item_key );
-	
-		// Return the original images if the filtered image has no thumbnail URL.
+
+		// Return the original images if the filtered image has no ID, or an invalid thumbnail or source URL.
 		$valid_images = array();
 		$logger       = wc_get_logger();
-		foreach ( $filtered_images $image ) {
-			// Check if thumbnail is a valid url.
-			if ( empty( $image->thumbnail ) || ! filter_var( $image->thumbnail, FILTER_VALIDATE_URL ) ) {
-				$logger->warning( "After passing through woocommerce_cart_item_images filter, image with id $image->id did not have a valid thumbnail property." );
+		foreach ( $filtered_images as $image ) {
+			// If id is not set then something is wrong with the image, and further logging would break (it uses the ID).
+			if ( ! isset( $image->id ) ) {
+				$logger->warning( 'After passing through woocommerce_cart_item_images filter, one of the images did not have an id property.' );
 				continue;
 			}
-			// Check if src property is a valid url.
+
+			// Check if thumbnail is a valid url.
+			if ( empty( $image->thumbnail ) || ! filter_var( $image->thumbnail, FILTER_VALIDATE_URL ) ) {
+				$logger->warning( sprintf( 'After passing through woocommerce_cart_item_images filter, image with id %s did not have a valid thumbnail property.', $image->id ) );
+				continue;
+			}
+
+			// Check if src is a valid url.
 			if ( empty( $image->src ) || ! filter_var( $image->src, FILTER_VALIDATE_URL ) ) {
 				$logger->warning( "After passing through woocommerce_cart_item_images filter, image with id $image->id did not have a valid src property." );
 				continue;
 			}
-	
+
 			// Image is valid, add to resulting array.
 			$valid_images[] = $image;
 		}
-	
+
 		// If there are no valid images remaining, return original array.
 		if ( count( $valid_images ) === 0 ) {
 			return $product_images;
 		}
-	
+
 		// Return the filtered guarded images.
 		return $valid_images;
 	}
