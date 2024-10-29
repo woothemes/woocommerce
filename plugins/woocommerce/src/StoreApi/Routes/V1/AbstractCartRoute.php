@@ -188,6 +188,9 @@ abstract class AbstractCartRoute extends AbstractRoute {
 	 * @return string
 	 */
 	protected function get_cart_token() {
+		// Ensure cart is loaded.
+		$this->cart_controller->load_cart();
+
 		if ( ! wc()->session ) {
 			return null;
 		}
