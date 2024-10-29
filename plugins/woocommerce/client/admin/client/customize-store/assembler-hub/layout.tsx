@@ -54,6 +54,7 @@ import { isOfflineAIFlow } from '../guards';
 import { isWooExpress } from '~/utils/is-woo-express';
 import { trackEvent } from '../tracking';
 import { SidebarNavigationExtraScreen } from './sidebar/navigation-extra-screen/sidebar-navigation-extra-screen';
+import './gutenberg-styles/layout.scss';
 
 const { useGlobalStyle } = unlock( blockEditorPrivateApis );
 

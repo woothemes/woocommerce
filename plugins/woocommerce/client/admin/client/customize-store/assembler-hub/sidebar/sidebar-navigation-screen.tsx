@@ -32,6 +32,7 @@ import { GoBackWarningModal } from '../go-back-warning-modal';
 import { CustomizeStoreContext } from '../';
 import { isAIFlow } from '~/customize-store/guards';
 import { isEntrepreneurFlow } from '~/customize-store/design-with-ai/entrepreneur-flow';
+import '../gutenberg-styles/sidebar-navigation-screen.scss';
 const { useLocation } = unlock( routerPrivateApis );
 
 export const SidebarNavigationScreen = ( {

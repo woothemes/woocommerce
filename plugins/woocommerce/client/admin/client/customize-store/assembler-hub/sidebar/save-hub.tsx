@@ -38,6 +38,7 @@ import { CustomizeStoreContext } from '../';
 import { trackEvent } from '~/customize-store/tracking';
 import { useEditorBlocks } from '../hooks/use-editor-blocks';
 import { useIsNoBlocksPlaceholderPresent } from '../hooks/block-placeholder/use-is-no-blocks-placeholder-present';
+import '../gutenberg-styles/save-hub.scss';
 
 const PUBLISH_ON_SAVE_ENTITIES = [
 	{
