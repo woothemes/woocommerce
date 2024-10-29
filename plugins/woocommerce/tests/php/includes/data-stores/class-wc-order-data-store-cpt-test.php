@@ -1,5 +1,6 @@
 <?php
 
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\RestApi\UnitTests\Helpers\OrderHelper;
 use Automattic\WooCommerce\Utilities\OrderUtil;
 
@@ -289,7 +290,7 @@ class WC_Order_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 		$original_status = $order->get_status();
 
 		$order->delete();
-		$this->assertEquals( WC_Order::STATUS_TRASH, $order->get_status(), 'The order was successfully trashed.' );
+		$this->assertEquals( OrderStatus::TRASH, $order->get_status(), 'The order was successfully trashed.' );
 
 		$order = wc_get_order( $order_id );
 		$this->assertTrue( $order->untrash(), 'The order was restored from the trash.' );
@@ -452,7 +453,7 @@ class WC_Order_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 
 		add_action( 'woocommerce_new_order', $callback );
 
-		$draft_statuses = array( WC_Order::STATUS_AUTO_DRAFT, \Automattic\WooCommerce\Blocks\Domain\Services\DraftOrders::STATUS );
+		$draft_statuses = array( OrderStatus::AUTO_DRAFT, \Automattic\WooCommerce\Blocks\Domain\Services\DraftOrders::STATUS );
 
 		$order_data_store_cpt = new WC_Order_Data_Store_CPT();
 
@@ -483,7 +484,7 @@ class WC_Order_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 		$order_data_store_cpt = new WC_Order_Data_Store_CPT();
 
 		$order = new WC_Order();
-		$order->set_status( WC_Order::STATUS_DRAFT );
+		$order->set_status( OrderStatus::DRAFT );
 
 		$this->assertEquals( 0, $new_count );
 
@@ -492,7 +493,7 @@ class WC_Order_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 		$order->save();
 		$this->assertEquals( 0, $new_count );
 
-		$triggering_order_statuses = array( WC_Order::STATUS_PENDING, WC_Order::STATUS_ON_HOLD, WC_Order::STATUS_COMPLETED, WC_Order::STATUS_PROCESSING );
+		$triggering_order_statuses = array( OrderStatus::PENDING, OrderStatus::ON_HOLD, OrderStatus::COMPLETED, OrderStatus::PROCESSING );
 
 		foreach ( $triggering_order_statuses as $k => $status ) {
 			$current_status = $order->get_status( 'edit' );
@@ -526,7 +527,7 @@ class WC_Order_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 		$order_data_store_cpt = new WC_Order_Data_Store_CPT();
 
 		$order = new WC_Order();
-		$order->set_status( WC_Order::STATUS_PROCESSING );
+		$order->set_status( OrderStatus::PROCESSING );
 
 		$this->assertEquals( 0, $new_count );
 
