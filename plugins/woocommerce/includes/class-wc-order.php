@@ -147,6 +147,7 @@ class WC_Order extends WC_Abstract_Order {
 			 *
 			 * @param array    $valid_completed_statuses Array of valid order statuses for payment complete.
 			 * @param WC_Order $this                     Order object.
+			 * @since 2.7.0
 			 */
 			$valid_completed_statuses = apply_filters( 'woocommerce_valid_order_statuses_for_payment_complete', array( OrderStatus::ON_HOLD, OrderStatus::PENDING, OrderStatus::FAILED, OrderStatus::CANCELLED ), $this );
 			if ( $this->has_status( $valid_completed_statuses ) ) {
@@ -162,6 +163,7 @@ class WC_Order extends WC_Abstract_Order {
 				 * @param string   $status        Order status.
 				 * @param int      $order_id      Order ID.
 				 * @param WC_Order $this          Order object.
+				 * @since 2.7.0
 				 */
 				$this->set_status( apply_filters( 'woocommerce_payment_complete_order_status', $this->needs_processing() ? OrderStatus::PROCESSING : OrderStatus::COMPLETED, $this->get_id(), $this ) );
 				$this->save();
@@ -342,6 +344,7 @@ class WC_Order extends WC_Abstract_Order {
 			 * @param string   $status        Order status.
 			 * @param int      $order_id      Order ID.
 			 * @param WC_Order $this          Order object.
+			 * @since 2.7.0
 			 */
 			$payment_completed_status = apply_filters( 'woocommerce_payment_complete_order_status', $this->needs_processing() ? OrderStatus::PROCESSING : OrderStatus::COMPLETED, $this->get_id(), $this );
 
@@ -449,6 +452,7 @@ class WC_Order extends WC_Abstract_Order {
 					 *
 					 * @param array    $valid_order_statuses Array of valid order statuses for payment.
 					 * @param WC_Order $order                Order object.
+					 * @since 4.0.0
 					 */
 					if (
 						in_array( $status_transition['from'], apply_filters( 'woocommerce_valid_order_statuses_for_payment', array( OrderStatus::PENDING, OrderStatus::FAILED ), $this ), true )
@@ -935,6 +939,7 @@ class WC_Order extends WC_Abstract_Order {
 			 * @param string   $status        Order status.
 			 * @param int      $order_id      Order ID.
 			 * @param WC_Order $this          Order object.
+			 * @since 3.0.0
 			 */
 			&& $this->has_status( apply_filters( 'woocommerce_payment_complete_order_status', $this->needs_processing() ? OrderStatus::PROCESSING : OrderStatus::COMPLETED, $this->get_id(), $this ) ) ) {
 			// In view context, return a date if missing.
@@ -1643,6 +1648,7 @@ class WC_Order extends WC_Abstract_Order {
 		 *
 		 * @param bool     $is_editable Is the order editable.
 		 * @param WC_Order $this        Order object.
+		 * @since 2.7.0
 		 */
 		return apply_filters( 'wc_order_is_editable', in_array( $this->get_status(), array( OrderStatus::PENDING, OrderStatus::ON_HOLD, OrderStatus::AUTO_DRAFT ), true ), $this );
 	}
@@ -1668,6 +1674,7 @@ class WC_Order extends WC_Abstract_Order {
 		 *
 		 * @param bool     $is_download_permitted Is the order downloadable.
 		 * @param WC_Order $this                  Order object.
+		 * @since 2.7.0
 		 */
 		return apply_filters( 'woocommerce_order_is_download_permitted', $this->has_status( OrderStatus::COMPLETED ) || ( 'yes' === get_option( 'woocommerce_downloads_grant_access_after_payment' ) && $this->has_status( OrderStatus::PROCESSING ) ), $this );
 	}
@@ -1775,6 +1782,7 @@ class WC_Order extends WC_Abstract_Order {
 		 *
 		 * @param array    $valid_order_statuses Array of valid order statuses for payment.
 		 * @param WC_Order $order                Order object.
+		 * @since 2.7.0
 		 */
 		$valid_order_statuses = apply_filters( 'woocommerce_valid_order_statuses_for_payment', array( OrderStatus::PENDING, OrderStatus::FAILED ), $this );
 		return apply_filters( 'woocommerce_order_needs_payment', ( $this->has_status( $valid_order_statuses ) && $this->get_total() > 0 ), $this, $valid_order_statuses );
