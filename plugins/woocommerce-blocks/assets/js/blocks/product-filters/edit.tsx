@@ -21,8 +21,10 @@ const TEMPLATE: InnerBlockTemplate[] = [
 		},
 	],
 	[ 'woocommerce/product-filter-active' ],
+	[ 'woocommerce/product-filter-price' ],
+	[ 'woocommerce/product-filter-rating' ],
 	[ 'woocommerce/product-filter-attribute' ],
-	[ 'woocommerce/product-filter-stock-status' ],
+	[ 'woocommerce/product-filter-status' ],
 	[
 		'core/buttons',
 		{ layout: { type: 'flex' } },
