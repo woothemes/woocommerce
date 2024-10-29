@@ -1,5 +1,5 @@
 export interface Attributes {
-	className?: string;
+	className: 'is-style-dropdown' | 'is-style-list';
 	displayStyle: string;
 	selectType: string;
 	showCounts: boolean;
