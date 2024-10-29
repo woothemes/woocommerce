@@ -12,7 +12,7 @@
  *
  * @see         https://woocommerce.com/document/template-structure/
  * @package     WooCommerce\Templates
- * @version     3.9.0
+ * @version     9.5.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,7 +32,7 @@ if ( $related_products ) : ?>
 			?>
 			<h2><?php echo esc_html( $heading ); ?></h2>
 		<?php endif; ?>
-		
+
 		<?php woocommerce_product_loop_start(); ?>
 
 			<?php foreach ( $related_products as $related_product ) : ?>
