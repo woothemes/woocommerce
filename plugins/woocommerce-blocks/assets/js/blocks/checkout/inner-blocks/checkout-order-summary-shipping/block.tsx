@@ -3,8 +3,10 @@
  */
 import { __ } from '@wordpress/i18n';
 import { TotalsShipping } from '@woocommerce/base-components/cart-checkout';
-import { useStoreCart, useCheckoutAddress } from '@woocommerce/base-context';
+import { useStoreCart } from '@woocommerce/base-context';
 import { TotalsWrapper } from '@woocommerce/blocks-checkout';
+import { useSelect } from '@wordpress/data';
+import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
 import {
 	filterShippingRatesByPrefersCollection,
 	isAddressComplete,
@@ -22,7 +24,9 @@ const Block = ( {
 		shippingRates: cartShippingRates,
 		shippingAddress,
 	} = useStoreCart();
-	const { prefersCollection } = useCheckoutAddress();
+	const prefersCollection = useSelect( ( select ) =>
+		select( CHECKOUT_STORE_KEY ).prefersCollection()
+	);
 
 	if ( ! cartNeedsShipping ) {
 		return null;

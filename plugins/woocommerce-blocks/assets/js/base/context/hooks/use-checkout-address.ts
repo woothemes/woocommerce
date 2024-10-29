@@ -37,7 +37,6 @@ interface CheckoutAddress {
 	useBillingAsShipping: boolean;
 	needsShipping: boolean;
 	showShippingMethods: boolean;
-	prefersCollection: boolean;
 }
 
 /**
@@ -104,6 +103,5 @@ export const useCheckoutAddress = (): CheckoutAddress => {
 			! needsShipping || ! useShippingAsBilling || !! prefersCollection,
 		forcedBillingAddress,
 		useBillingAsShipping: forcedBillingAddress || !! prefersCollection,
-		prefersCollection: !! prefersCollection,
 	};
 };
