@@ -53,12 +53,12 @@ class ProductCollection extends AbstractBlock {
 		'has_no_results_block' => false,
 	);
 
-	 /**
-     * Instance of ProductQueryBuilder.
-     *
-     * @var ProductQueryBuilder
-     */
-    protected $query_builder;
+	/**
+	 * Instance of ProductQueryBuilder.
+	 *
+	 * @var ProductQueryBuilder
+	 */
+	protected $query_builder;
 
 	/**
 	 * Initialize this block type.
@@ -122,8 +122,6 @@ class ProductCollection extends AbstractBlock {
 		add_filter( 'render_block_woocommerce/product-collection', array( $this, 'handle_rendering' ), 10, 2 );
 		add_filter( 'render_block_core/query-pagination', array( $this, 'add_navigation_link_directives' ), 10, 3 );
 		add_filter( 'render_block_core/post-title', array( $this, 'add_product_title_click_event_directives' ), 10, 3 );
-
-		// add_filter( 'posts_clauses', array( $this, 'add_price_range_filter_posts_clauses' ), 10, 2 );
 
 		// Disable client-side-navigation if incompatible blocks are detected.
 		add_filter( 'render_block_data', array( $this, 'disable_enhanced_pagination' ), 10, 1 );
@@ -710,7 +708,7 @@ class ProductCollection extends AbstractBlock {
 		$query['author'] = '';
 
 		// Use ProductQueryBuilder to get the final query args.
-        return $this->query_builder->get_final_query_args(
+		return $this->query_builder->get_final_query_args(
 			$collection_args,
 			$query,
 			array(
