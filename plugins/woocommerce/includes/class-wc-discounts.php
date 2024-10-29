@@ -635,7 +635,7 @@ class WC_Discounts {
 			$recent_pending_orders = wc_get_orders(
 				array(
 					'limit'       => 1,
-					'post_status' => array( 'wc-failed', 'wc-pending' ),
+					'post_status' => array( 'wc-failed', \Automattic\WooCommerce\Enums\OrderLegacyStatus::PENDING ),
 					'customer'    => get_current_user_id(),
 					'return'      => 'ids',
 				)

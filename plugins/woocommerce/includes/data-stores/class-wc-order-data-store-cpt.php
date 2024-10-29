@@ -568,7 +568,7 @@ class WC_Order_Data_Store_CPT extends Abstract_WC_Order_Data_Store_CPT implement
 				"SELECT posts.ID
 				FROM {$wpdb->posts} AS posts
 				WHERE   posts.post_type   IN ('" . implode( "','", wc_get_order_types() ) . "')
-				AND     posts.post_status = 'wc-pending'
+				AND     posts.post_status = '" . \Automattic\WooCommerce\Enums\OrderLegacyStatus::PENDING . "'
 				AND     posts.post_modified < %s",
 				// @codingStandardsIgnoreEnd
 				gmdate( 'Y-m-d H:i:s', absint( $date ) )

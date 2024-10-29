@@ -8,6 +8,7 @@
  * @version 3.4.0
  */
 
+use Automattic\WooCommerce\Enums\OrderLegacyStatus;
 use Automattic\WooCommerce\Internal\DataStores\Orders\DataSynchronizer;
 use Automattic\WooCommerce\Internal\Utilities\Users;
 use Automattic\WooCommerce\Utilities\OrderUtil;
@@ -97,13 +98,13 @@ function wc_get_order( $the_order = false ) {
  */
 function wc_get_order_statuses() {
 	$order_statuses = array(
-		'wc-pending'    => _x( 'Pending payment', 'Order status', 'woocommerce' ),
-		'wc-processing' => _x( 'Processing', 'Order status', 'woocommerce' ),
-		'wc-on-hold'    => _x( 'On hold', 'Order status', 'woocommerce' ),
-		'wc-completed'  => _x( 'Completed', 'Order status', 'woocommerce' ),
-		'wc-cancelled'  => _x( 'Cancelled', 'Order status', 'woocommerce' ),
-		'wc-refunded'   => _x( 'Refunded', 'Order status', 'woocommerce' ),
-		'wc-failed'     => _x( 'Failed', 'Order status', 'woocommerce' ),
+		OrderLegacyStatus::PENDING    => _x( 'Pending payment', 'Order status', 'woocommerce' ),
+		OrderLegacyStatus::PROCESSING => _x( 'Processing', 'Order status', 'woocommerce' ),
+		OrderLegacyStatus::ON_HOLD    => _x( 'On hold', 'Order status', 'woocommerce' ),
+		OrderLegacyStatus::COMPLETED  => _x( 'Completed', 'Order status', 'woocommerce' ),
+		OrderLegacyStatus::CANCELLED  => _x( 'Cancelled', 'Order status', 'woocommerce' ),
+		OrderLegacyStatus::REFUNDED   => _x( 'Refunded', 'Order status', 'woocommerce' ),
+		OrderLegacyStatus::FAILED     => _x( 'Failed', 'Order status', 'woocommerce' ),
 	);
 	return apply_filters( 'wc_order_statuses', $order_statuses );
 }

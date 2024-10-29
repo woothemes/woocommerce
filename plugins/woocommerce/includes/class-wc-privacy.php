@@ -186,7 +186,7 @@ class WC_Privacy extends WC_Abstract_Privacy {
 				array(
 					'date_created' => '<' . strtotime( '-' . $option['number'] . ' ' . $option['unit'] ),
 					'limit'        => $limit, // Batches of 20.
-					'status'       => 'wc-pending',
+					'status'       => \Automattic\WooCommerce\Enums\OrderLegacyStatus::PENDING,
 					'type'         => 'shop_order',
 				)
 			)
