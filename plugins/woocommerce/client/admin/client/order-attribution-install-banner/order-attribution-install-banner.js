@@ -4,7 +4,7 @@
 import { Button, Card, CardBody } from '@wordpress/components';
 import { useEffect, useCallback } from '@wordpress/element';
 import { plugins, external } from '@wordpress/icons';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { Text } from '@woocommerce/experimental';
 import { recordEvent } from '@woocommerce/tracks';
 import { getPath } from '@woocommerce/navigation';
@@ -12,23 +12,26 @@ import { getPath } from '@woocommerce/navigation';
 /**
  * Internal dependencies
  */
-import OrderAttributionInstallBannerImage from './order-attribution-install-banner-image';
 import { useOrderAttributionInstallBanner } from './use-order-attribution-install-banner';
+import {
+	BANNER_TYPE_BIG,
+	BANNER_TYPE_SMALL,
+	BANNER_TYPE_HEADER,
+} from './constants';
 import './style.scss';
 
 const WC_ANALYTICS_PRODUCT_URL =
 	'https://woocommerce.com/products/woocommerce-analytics';
 
 export const OrderAttributionInstallBanner = ( {
-	bannerImage = <OrderAttributionInstallBannerImage />,
+	bannerImage = null,
+	bannerType = BANNER_TYPE_BIG,
 	eventContext = 'analytics-overview',
-	isHeaderBanner = false,
-	isSmallBanner = false,
-	showBadge = true,
-	dismissable = true,
-	title = 'Discover what drives your sales',
-	description = 'Understand what truly drives revenue with our powerful order attribution extension. Use it to track your sales journey, identify your most effective marketing channels, and optimize your sales strategy.',
-	buttonText = 'Try it now',
+	dismissable = false,
+	badgeText = '',
+	title = '',
+	description = '',
+	buttonText = '',
 } ) => {
 	const { isDismissed, dismiss, shouldShowBanner } =
 		useOrderAttributionInstallBanner();
@@ -41,7 +44,7 @@ export const OrderAttributionInstallBanner = ( {
 	};
 
 	const getShouldRender = useCallback( () => {
-		if ( isHeaderBanner ) {
+		if ( bannerType === BANNER_TYPE_HEADER ) {
 			return shouldShowBanner && isDismissed;
 		}
 
@@ -50,7 +53,7 @@ export const OrderAttributionInstallBanner = ( {
 		}
 
 		return shouldShowBanner && ! isDismissed;
-	}, [ isHeaderBanner, shouldShowBanner, isDismissed, dismissable ] );
+	}, [ bannerType, shouldShowBanner, isDismissed, dismissable ] );
 
 	const shouldRender = getShouldRender();
 
@@ -68,7 +71,7 @@ export const OrderAttributionInstallBanner = ( {
 		return null;
 	}
 
-	if ( isHeaderBanner ) {
+	if ( bannerType === BANNER_TYPE_HEADER ) {
 		return (
 			<Button
 				className="woocommerce-order-attribution-install-header-banner"
@@ -83,18 +86,7 @@ export const OrderAttributionInstallBanner = ( {
 		);
 	}
 
-	if ( title ) {
-		// translators: %s: The dynamic title.
-		title = sprintf( __( '%s ', 'woocommerce' ), title );
-	}
-
-	if ( description ) {
-		// translators: %s: The dynamic description.
-		description = sprintf( __( '%s ', 'woocommerce' ), description );
-	}
-
-	// translators: %s: The dynamic button text.
-	buttonText = sprintf( __( '%s ', 'woocommerce' ), buttonText );
+	const isSmallBanner = bannerType === BANNER_TYPE_SMALL;
 
 	return (
 		<Card
@@ -116,7 +108,7 @@ export const OrderAttributionInstallBanner = ( {
 						isSmallBanner ? 'small' : ''
 					}` }
 				>
-					{ showBadge && (
+					{ badgeText && (
 						<div className="woocommerce-order-attribution-install-banner__text-badge">
 							<Text
 								className="woocommerce-order-attribution-install-banner__text-description"
@@ -124,7 +116,7 @@ export const OrderAttributionInstallBanner = ( {
 								size="12"
 								align="center"
 							>
-								{ __( 'New', 'woocommerce' ) }
+								{ badgeText }
 							</Text>
 						</div>
 					) }

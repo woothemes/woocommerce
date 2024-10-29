@@ -2,12 +2,16 @@
  * External dependencies
  */
 import { Component, Suspense, lazy } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { Spinner } from '@woocommerce/components';
 
 /**
  * Internal dependencies
  */
-import { OrderAttributionInstallBanner } from '~/order-attribution-install-banner';
+import {
+	OrderAttributionInstallBanner,
+	OrderAttributionInstallBannerImage,
+} from '~/order-attribution-install-banner';
 import './style.scss';
 
 const CustomizableDashboard = lazy( () =>
@@ -20,7 +24,20 @@ class Dashboard extends Component {
 
 		return (
 			<Suspense fallback={ <Spinner /> }>
-				<OrderAttributionInstallBanner />
+				<OrderAttributionInstallBanner
+					title={ __(
+						'Discover what drives your sales',
+						'woocommerce'
+					) }
+					description={ __(
+						'Understand what truly drives revenue with our powerful order attribution extension. Use it to track your sales journey, identify your most effective marketing channels, and optimize your sales strategy.',
+						'woocommerce'
+					) }
+					buttonText={ __( 'Try it now', 'woocommerce' ) }
+					badgeText={ __( 'New', 'woocommerce' ) }
+					bannerImage={ <OrderAttributionInstallBannerImage /> }
+					dismissable
+				/>
 				<CustomizableDashboard query={ query } path={ path } />
 			</Suspense>
 		);

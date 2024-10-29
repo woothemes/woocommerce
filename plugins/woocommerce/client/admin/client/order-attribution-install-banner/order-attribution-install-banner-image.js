@@ -1,4 +1,4 @@
-const OrderAttributionInstallBannerImage = () => (
+export const OrderAttributionInstallBannerImage = () => (
 	<svg
 		width="156"
 		height="159"
@@ -58,5 +58,3 @@ const OrderAttributionInstallBannerImage = () => (
 		</defs>
 	</svg>
 );
-
-export default OrderAttributionInstallBannerImage;

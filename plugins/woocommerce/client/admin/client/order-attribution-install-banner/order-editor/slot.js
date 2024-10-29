@@ -4,6 +4,7 @@
 import { createRoot } from '@wordpress/element';
 import { createSlotFill, SlotFillProvider } from '@wordpress/components';
 import { PluginArea, registerPlugin } from '@wordpress/plugins';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -13,6 +14,7 @@ import {
 	ORDER_ATTRIBUTION_INSTALL_BANNER_DOM_ID,
 	ORDER_ATTRIBUTION_INSTALL_BANNER_SLOT_SCOPE,
 	ORDER_ATTRIBUTION_SLOT_FILL_CONSTANT,
+	BANNER_TYPE_SMALL,
 } from '../constants';
 
 const { Slot, Fill } = createSlotFill( ORDER_ATTRIBUTION_SLOT_FILL_CONSTANT );
@@ -41,13 +43,12 @@ const OrderAttributionInstallBannerSlotFill = () => {
 		<Fill>
 			<OrderAttributionInstallBanner
 				eventContext="order-editor-order-attribution-metabox"
-				bannerImage={ null }
-				showBadge={ false }
-				dismissable={ false }
-				isSmallBanner
-				title={ null }
-				description="View all of your orders in our new Order Attribution extension."
-				buttonText="Install the extension"
+				bannerType={ BANNER_TYPE_SMALL }
+				description={ __(
+					'View all of your orders in our new Order Attribution extension.',
+					'woocommerce'
+				) }
+				buttonText={ __( 'Install the extension', 'woocommerce' ) }
 			/>
 		</Fill>
 	);
