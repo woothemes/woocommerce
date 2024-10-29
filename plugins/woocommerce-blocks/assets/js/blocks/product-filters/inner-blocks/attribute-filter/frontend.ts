@@ -12,6 +12,7 @@ type AttributeFilterContext = {
 	attributeSlug: string;
 	queryType: 'or' | 'and';
 	selectType: 'single' | 'multiple';
+	filterKey: string;
 };
 
 store( 'woocommerce/product-filter-attribute', {
@@ -24,49 +25,41 @@ store( 'woocommerce/product-filter-attribute', {
 
 			if ( ! termSlug ) return;
 
-			const { attributeSlug, queryType } =
+			const { attributeSlug, queryType, filterKey } =
 				getContext< AttributeFilterContext >();
 			const productFiltersContext = getContext< ProductFiltersContext >(
 				'woocommerce/product-filters'
 			);
 
-			if (
-				! (
-					`filter_${ attributeSlug }` in productFiltersContext.params
-				)
-			) {
-				productFiltersContext.params = {
-					...productFiltersContext.params,
-					[ `filter_${ attributeSlug }` ]: termSlug,
-					[ `query_type_${ attributeSlug }` ]: queryType,
-				};
-				return;
-			}
+			let selectedTerms = productFiltersContext.params[
+				`filter_${ attributeSlug }`
+			]
+				? productFiltersContext.params[
+						`filter_${ attributeSlug }`
+				  ].split( ',' )
+				: [];
 
-			const selectedTerms =
-				productFiltersContext.params[
-					`filter_${ attributeSlug }`
-				].split( ',' );
 			if ( selectedTerms.includes( termSlug ) ) {
-				const remainingSelectedTerms = selectedTerms.filter(
+				selectedTerms = selectedTerms.filter(
 					( term ) => term !== termSlug
 				);
-				if ( remainingSelectedTerms.length > 0 ) {
-					productFiltersContext.params[
-						`filter_${ attributeSlug }`
-					] = remainingSelectedTerms.join( ',' );
-				} else {
-					const updatedParams = productFiltersContext.params;
-
-					delete updatedParams[ `filter_${ attributeSlug }` ];
-					delete updatedParams[ `query_type_${ attributeSlug }` ];
-
-					productFiltersContext.params = updatedParams;
-				}
 			} else {
-				productFiltersContext.params[ `filter_${ attributeSlug }` ] =
-					selectedTerms.concat( termSlug ).join( ',' );
+				selectedTerms.push( termSlug );
 			}
+
+			const newParams = { ...productFiltersContext.params };
+
+			if ( selectedTerms.length > 0 ) {
+				newParams[ `filter_${ attributeSlug }` ] =
+					selectedTerms.join( ',' );
+				newParams[ `query_type_${ attributeSlug }` ] = queryType;
+			} else {
+				delete newParams[ `filter_${ attributeSlug }` ];
+				delete newParams[ `query_type_${ attributeSlug }` ];
+			}
+
+			productFiltersContext.activeFilters[ filterKey ] = selectedTerms;
+			productFiltersContext.params = newParams;
 		},
 
 		clearFilters: () => {

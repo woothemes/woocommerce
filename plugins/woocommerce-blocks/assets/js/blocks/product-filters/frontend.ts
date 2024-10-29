@@ -67,11 +67,17 @@ export function navigate( href: string, options = {} ) {
 	return navigateFn( href, options );
 }
 
-export interface ProductFiltersContext {
+type ActiveFilter = {
+	label: string;
+	value: string | number;
+};
+
+export type ProductFiltersContext = {
 	isOverlayOpened: boolean;
 	params: Record< string, string >;
 	originalParams: Record< string, string >;
-}
+	activeFilters: Record< string, Record< string, string >[] >;
+};
 
 const { actions } = store( 'woocommerce/product-filters', {
 	actions: {

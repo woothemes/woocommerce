@@ -7,29 +7,38 @@ import { HTMLElementEvent } from '@woocommerce/types';
 /**
  * Internal dependencies
  */
+import { ProductFiltersContext } from '../../frontend';
 
+/**
+ * Internal dependencies
+ */
 export type CheckboxListContext = {
 	items: {
 		id: string;
 		label: string;
 		value: string;
-		selected: boolean;
+		checked: boolean;
 	}[];
 	showAll: boolean;
+	filterKey: string;
 };
 
 store( 'woocommerce/product-filter-checkbox-list', {
 	state: {
 		get isItemSelected() {
-			const context = getContext< CheckboxListContext >();
 			const { props } = getElement();
-			const result = context.items.find(
-				( item ) => item.value === props.value
+			const { filterKey } = getContext< CheckboxListContext >();
+			const productFiltersContext = getContext< ProductFiltersContext >(
+				'woocommerce/product-filters'
 			);
-
-			if ( result ) return result.selected;
-
-			return false;
+			return (
+				filterKey &&
+				productFiltersContext.activeFilters &&
+				productFiltersContext.activeFilters[ filterKey ] &&
+				productFiltersContext.activeFilters[ filterKey ].includes(
+					props.value
+				)
+			);
 		},
 	},
 	actions: {
@@ -37,16 +46,14 @@ store( 'woocommerce/product-filter-checkbox-list', {
 			const context = getContext< CheckboxListContext >();
 			context.showAll = true;
 		},
-
 		selectCheckboxItem: ( event: HTMLElementEvent< HTMLInputElement > ) => {
 			const context = getContext< CheckboxListContext >();
 			const value = event.target.value;
-
 			context.items = context.items.map( ( item ) => {
 				if ( item.value.toString() === value ) {
 					return {
 						...item,
-						selected: ! item.selected,
+						checked: ! item.checked,
 					};
 				}
 				return item;
