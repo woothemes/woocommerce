@@ -24,34 +24,13 @@ final class ProductFilterRemovableChips extends AbstractBlock {
 	 * @return string Rendered block type output.
 	 */
 	protected function render( $attributes, $content, $block ) {
-		$query_id = $block->context['queryId'] ?? 0;
+		if ( empty( $block->context['filterData'] ) || empty( $block->context['filterData']['items'] ) ) {
+			return '';
+		}
 
-		/**
-		 * Filters the active filter data provided by filter blocks.
-		 *
-		 * $data = array(
-		 *     <id> => array(
-		 *         'type' => string,
-		 *         'items' => array(
-		 *             array(
-		 *                 'title' => string,
-		 *                 'attributes' => array(
-		 *                     <key> => string
-		 *                 )
-		 *             )
-		 *         )
-		 *     ),
-		 * );
-		 *
-		 * @since 11.7.0
-		 *
-		 * @param array $data   The active filters data
-		 * @param array $params The query param parsed from the URL.
-		 * @return array Active filters data.
-		 */
-		$active_filters = apply_filters( 'collection_active_filters_data', array(), $this->get_filter_query_params( $query_id ) );
-
-		$style = '';
+		$style   = '';
+		$context = $block->context['filterData'];
+		$filters = $context['items'] ?? array();
 
 		$tags = new \WP_HTML_Tag_Processor( $content );
 		if ( $tags->next_tag( array( 'class_name' => 'wc-block-product-filter-removable-chips' ) ) ) {
@@ -72,9 +51,9 @@ final class ProductFilterRemovableChips extends AbstractBlock {
 		?>
 
 		<div <?php echo $wrapper_attributes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-			<?php if ( ! empty( $active_filters ) ) : ?>
+			<?php if ( ! empty( $filters ) ) : ?>
 				<ul class="wc-block-product-filter-removable-chips__items">
-					<?php foreach ( $active_filters as $filter ) : ?>
+					<?php foreach ( $filters as $filter ) : ?>
 						<?php foreach ( $filter['items'] as $item ) : ?>
 							<?php $this->render_chip_item( $filter['type'], $item ); ?>
 						<?php endforeach; ?>
@@ -116,7 +95,7 @@ final class ProductFilterRemovableChips extends AbstractBlock {
 			<?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			<button class="wc-block-product-filter-removable-chips__remove" aria-label="<?php echo esc_attr( $remove_label ); ?>" <?php echo $this->get_html_attributes( $attributes ); ?>>
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="25" height="25" class="wc-block-product-filter-removable-chips__remove-icon" aria-hidden="true" focusable="false"><path d="M12 13.06l3.712 3.713 1.061-1.06L13.061 12l3.712-3.712-1.06-1.06L12 10.938 8.288 7.227l-1.061 1.06L10.939 12l-3.712 3.712 1.06 1.061L12 13.061z"></path></svg>
-				<span class="screen-reader-text"><?php echo esc_attr( $remove_label ); ?></span>
+				<span class="screen-reader-text"><?php echo esc_html( $remove_label ); ?></span>
 			</button>
 		</li>
 		<?php
@@ -136,47 +115,6 @@ final class ProductFilterRemovableChips extends AbstractBlock {
 				return $acc;
 			},
 			''
-		);
-	}
-
-	/**
-	 * Parse the filter parameters from the URL.
-	 * For now we only get the global query params from the URL. In the future,
-	 * we should get the query params based on $query_id.
-	 *
-	 * @param int $query_id Query ID.
-	 * @return array Parsed filter params.
-	 */
-	private function get_filter_query_params( $query_id ) {
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
-
-		$parsed_url = wp_parse_url( esc_url_raw( $request_uri ) );
-
-		if ( empty( $parsed_url['query'] ) ) {
-			return array();
-		}
-
-		parse_str( $parsed_url['query'], $url_query_params );
-
-		/**
-		 * Filters the active filter data provided by filter blocks.
-		 *
-		 * @since 11.7.0
-		 *
-		 * @param array $filter_param_keys The active filters data
-		 * @param array $url_param_keys    The query param parsed from the URL.
-		 *
-		 * @return array Active filters params.
-		 */
-		$filter_param_keys = array_unique( apply_filters( 'collection_filter_query_param_keys', array(), array_keys( $url_query_params ) ) );
-
-		return array_filter(
-			$url_query_params,
-			function ( $key ) use ( $filter_param_keys ) {
-				return in_array( $key, $filter_param_keys, true );
-			},
-			ARRAY_FILTER_USE_KEY
 		);
 	}
 }

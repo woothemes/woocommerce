@@ -21,12 +21,12 @@ import {
  * Internal dependencies
  */
 import { EditProps } from './types';
-import './editor.scss';
 import { getColorClasses, getColorVars } from './utils';
 
 const Edit = ( props: EditProps ): JSX.Element => {
 	const colorGradientSettings = useMultipleOriginColorsAndGradients();
 	const {
+		context,
 		clientId,
 		attributes,
 		setAttributes,
@@ -39,6 +39,8 @@ const Edit = ( props: EditProps ): JSX.Element => {
 	} = props;
 	const { customChipText, customChipBackground, customChipBorder } =
 		attributes;
+	const { filterData } = context;
+	const { items } = filterData;
 
 	const blockProps = useBlockProps( {
 		className: clsx( 'wc-block-product-filter-removable-chips', {
@@ -59,55 +61,28 @@ const Edit = ( props: EditProps ): JSX.Element => {
 		<>
 			<div { ...blockProps }>
 				<ul className="wc-block-product-filter-removable-chips__items">
-					<li className="wc-block-product-filter-removable-chips__item">
-						<span className="wc-block-product-filter-removable-chips__label">
-							{ __( 'Size: Small', 'woocommerce' ) }
-						</span>
-						<button className="wc-block-product-filter-removable-chips__remove">
-							<Icon
-								className="wc-block-product-filter-removable-chips__remove-icon"
-								icon={ closeSmall }
-								size={ 25 }
-							/>
-							<Label
-								screenReaderLabel={ removeText(
-									'Size: Small'
-								) }
-							/>
-						</button>
-					</li>
-					<li className="wc-block-product-filter-removable-chips__item">
-						<span className="wc-block-product-filter-removable-chips__label">
-							{ __( 'Color: Red', 'woocommerce' ) }
-						</span>
-						<button className="wc-block-product-filter-removable-chips__remove">
-							<Icon
-								className="wc-block-product-filter-removable-chips__remove-icon"
-								icon={ closeSmall }
-								size={ 25 }
-							/>
-							<Label
-								screenReaderLabel={ removeText( 'Color: Red' ) }
-							/>
-						</button>
-					</li>
-					<li className="wc-block-product-filter-removable-chips__item">
-						<span className="wc-block-product-filter-removable-chips__label">
-							{ __( 'Color: Blue', 'woocommerce' ) }
-						</span>
-						<button className="wc-block-product-filter-removable-chips__remove">
-							<Icon
-								className="wc-block-product-filter-removable-chips__remove-icon"
-								icon={ closeSmall }
-								size={ 25 }
-							/>
-							<Label
-								screenReaderLabel={ removeText(
-									'Color: Blue'
-								) }
-							/>
-						</button>
-					</li>
+					{ items?.map( ( item, index ) => (
+						<li
+							key={ index }
+							className="wc-block-product-filter-removable-chips__item"
+						>
+							<span className="wc-block-product-filter-removable-chips__label">
+								{ item.type + ': ' + item.label }
+							</span>
+							<button className="wc-block-product-filter-removable-chips__remove">
+								<Icon
+									className="wc-block-product-filter-removable-chips__remove-icon"
+									icon={ closeSmall }
+									size={ 25 }
+								/>
+								<Label
+									screenReaderLabel={ removeText(
+										item.type + ': ' + item.label
+									) }
+								/>
+							</button>
+						</li>
+					) ) }
 				</ul>
 			</div>
 			<InspectorControls group="color">

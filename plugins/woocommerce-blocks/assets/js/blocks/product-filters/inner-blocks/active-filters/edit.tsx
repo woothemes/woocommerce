@@ -1,7 +1,11 @@
 /**
  * External dependencies
  */
-import { useBlockProps, useInnerBlocksProps } from '@wordpress/block-editor';
+import {
+	useBlockProps,
+	useInnerBlocksProps,
+	BlockContextProvider,
+} from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
@@ -11,6 +15,7 @@ import { InitialDisabled } from '../../components/initial-disabled';
 import { EXCLUDED_BLOCKS } from '../../constants';
 import { getAllowedBlocks } from '../../utils';
 import { EditProps } from './types';
+import { filtersPreview } from './constants';
 
 const Edit = ( props: EditProps ) => {
 	const { children, ...innerBlocksProps } = useInnerBlocksProps(
@@ -43,7 +48,17 @@ const Edit = ( props: EditProps ) => {
 	return (
 		<div { ...innerBlocksProps }>
 			<Inspector { ...props } />
-			<InitialDisabled>{ children }</InitialDisabled>
+			<InitialDisabled>
+				<BlockContextProvider
+					value={ {
+						filterData: {
+							items: filtersPreview,
+						},
+					} }
+				>
+					{ children }
+				</BlockContextProvider>
+			</InitialDisabled>
 		</div>
 	);
 };

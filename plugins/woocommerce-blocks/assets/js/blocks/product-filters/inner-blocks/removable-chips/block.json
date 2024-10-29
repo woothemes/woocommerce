@@ -3,7 +3,7 @@
 	"name": "woocommerce/product-filter-removable-chips",
 	"version": "1.0.0",
 	"title": "Chips",
-	"description": "Display removable active filters.",
+	"description": "Display removable active filters as chips.",
 	"category": "woocommerce",
 	"keywords": [
 		"WooCommerce"
@@ -15,7 +15,8 @@
 	],
 	"supports": {},
 	"usesContext": [
-		"queryId"
+		"queryId",
+		"filterData"
 	],
 	"attributes": {
 		"chipText":{

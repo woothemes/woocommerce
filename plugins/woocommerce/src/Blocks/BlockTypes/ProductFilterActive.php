@@ -52,6 +52,10 @@ final class ProductFilterActive extends AbstractBlock {
 			'hasSelectedFilters' => ! empty( $active_filters ) ?? false,
 		);
 
+		$filter_context = array(
+			'items' => $active_filters,
+		);
+
 		$wrapper_attributes = get_block_wrapper_attributes(
 			array(
 				'data-wc-interactive' => wp_json_encode( array( 'namespace' => $this->get_full_block_name() ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
@@ -65,8 +69,8 @@ final class ProductFilterActive extends AbstractBlock {
 			$wrapper_attributes,
 			array_reduce(
 				$block->parsed_block['innerBlocks'],
-				function ( $carry, $parsed_block ) {
-					$carry .= ( new \WP_Block( $parsed_block ) )->render();
+				function ( $carry, $parsed_block ) use ( $filter_context ) {
+					$carry .= ( new \WP_Block( $parsed_block, array( 'filterData' => $filter_context ) ) )->render();
 					return $carry;
 				},
 				''
