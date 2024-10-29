@@ -21,10 +21,7 @@ body.wc-block-product-gallery-modal-open {
 
 	img {
 		height: auto;
-		width: auto;
 		max-width: 100%;
-		// Handle user agent stylesheet applied in WordPress 6.7
-		contain-intrinsic-size: 300px 300px;
 
 		&[hidden] {
 			display: none;
