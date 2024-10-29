@@ -106,7 +106,7 @@ class RemoteLogger extends \WC_Log_Handler {
 		}
 
 		if ( isset( $context['error']['file'] ) && is_string( $context['error']['file'] ) && '' !== $context['error']['file'] ) {
-			$log_data['file'] = $this->sanitize( $context['error']['file'] );
+			$log_data['file'] = $this->normalize_paths( $context['error']['file'] );
 			unset( $context['error']['file'] );
 		}
 
@@ -431,6 +431,7 @@ class RemoteLogger extends \WC_Log_Handler {
 	 * Additionally, any user data like email addresses or phone numbers will be redacted.
 	 *
 	 * @param string $content The content to sanitize.
+	 *
 	 * @return string The sanitized content.
 	 */
 	private function sanitize( $content ) {
@@ -438,15 +439,7 @@ class RemoteLogger extends \WC_Log_Handler {
 			return $content;
 		}
 
-		$plugin_path = StringUtil::normalize_local_path_slashes( trailingslashit( dirname( WC_ABSPATH ) ) );
-		$wp_path     = StringUtil::normalize_local_path_slashes( trailingslashit( ABSPATH ) );
-
-		$sanitized = str_replace(
-			array( $plugin_path, $wp_path ),
-			array( './', './' ),
-			$content
-		);
-
+		$sanitized = $this->normalize_paths( $content );
 		$sanitized = $this->redact_user_data( $sanitized );
 
 		if ( ! function_exists( 'apply_filters' ) ) {
@@ -459,9 +452,27 @@ class RemoteLogger extends \WC_Log_Handler {
 		 * @since 9.5.0
 		 *
 		 * @param string $sanitized The sanitized content.
-		 * @param string $message   The original content.
+		 * @param string $content The original content.
 		 */
 		return apply_filters( 'woocommerce_remote_logger_sanitized_content', $sanitized, $content );
+	}
+
+	/**
+	 * Normalize file paths by replacing absolute paths with relative ones.
+	 *
+	 * @param string $content The content containing paths to normalize.
+	 *
+	 * @return string The content with normalized paths.
+	 */
+	private function normalize_paths( string $content ): string {
+		$plugin_path = StringUtil::normalize_local_path_slashes( trailingslashit( dirname( WC_ABSPATH ) ) );
+		$wp_path     = StringUtil::normalize_local_path_slashes( trailingslashit( ABSPATH ) );
+
+		return str_replace(
+			array( $plugin_path, $wp_path ),
+			array( './', './' ),
+			$content
+		);
 	}
 
 	/**
