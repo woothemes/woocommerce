@@ -75,7 +75,7 @@ do_action( 'woocommerce_before_account_orders', $has_orders ); ?>
 
 								if ( ! empty( $actions ) ) {
 									foreach ( $actions as $key => $action ) { // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-										if ( empty ( $action['aria-label'] ) ) {
+										if ( empty( $action['aria-label'] ) ) {
 											// Generate the aria-label based on the action name.
 											/* translators: %1$s Action name, %2$s Order number. */
 											$action_aria_label = sprintf( __( '%1$s order number %2$s', 'woocommerce' ), $action['name'], $order->get_order_number() );
