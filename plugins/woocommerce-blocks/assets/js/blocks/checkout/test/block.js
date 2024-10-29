@@ -279,9 +279,6 @@ describe( 'Testing Checkout', () => {
 		} );
 		render( <CheckoutBlock /> );
 
-		// TODO: Fix a recent deprecation of showSpinner prop of Button called in this component.
-		expect( console ).toHaveWarned();
-
 		await waitFor( () => expect( fetchMock ).toHaveBeenCalled() );
 
 		expect(
