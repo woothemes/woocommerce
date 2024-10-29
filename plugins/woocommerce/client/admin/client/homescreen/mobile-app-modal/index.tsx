@@ -10,7 +10,7 @@ import { addFilter, removeFilter } from '@wordpress/hooks';
 import { getAdminLink } from '@woocommerce/settings';
 import { __ } from '@wordpress/i18n';
 import { useDispatch } from '@wordpress/data';
-import { OPTIONS_STORE_NAME } from '@woocommerce/data';
+import { OPTIONS_STORE_NAME, ONBOARDING_STORE_NAME } from '@woocommerce/data';
 import { recordEvent } from '@woocommerce/tracks';
 
 /**
@@ -37,6 +37,10 @@ export const MobileAppModal = () => {
 
 	const [ pageContent, setPageContent ] = useState< React.ReactNode >();
 	const [ searchParams ] = useSearchParams();
+
+	const { invalidateResolutionForStoreSelector } = useDispatch(
+		ONBOARDING_STORE_NAME
+	);
 
 	useEffect( () => {
 		if ( searchParams.get( 'mobileAppModal' ) ) {
@@ -130,26 +134,29 @@ export const MobileAppModal = () => {
 		);
 	}, [ searchParams ] );
 
+	const onFinish = () => {
+		updateOptions( {
+			woocommerce_admin_dismissed_mobile_app_modal: 'yes',
+		} ).then( () =>
+			invalidateResolutionForStoreSelector( 'getTaskLists' )
+		);
+
+		clearQueryString();
+		setGuideIsOpen( false );
+	};
+
 	return (
 		<>
 			{ guideIsOpen && (
 				<Guide
-					onFinish={ () => {
-						updateOptions( {
-							woocommerce_admin_dismissed_mobile_app_modal: 'yes',
-						} );
-						clearQueryString();
-					} }
+					onFinish={ onFinish }
 					className={ 'woocommerce__mobile-app-welcome-modal' }
 					pages={ [
 						{
 							content: (
 								<ModalIllustrationLayout
 									body={ pageContent }
-									onDismiss={ () => {
-										clearQueryString();
-										setGuideIsOpen( false );
-									} }
+									onDismiss={ onFinish }
 								/>
 							),
 						},
