@@ -69,25 +69,6 @@ export const Inspector = ( {
 						/>
 					</ToggleGroupControl>
 				) }
-				<ToggleGroupControl
-					label={ __( 'Display Style', 'woocommerce' ) }
-					value={ displayStyle }
-					onChange={ ( value: string ) =>
-						setAttributes( {
-							displayStyle: value,
-						} )
-					}
-					className="wc-block-attribute-filter__display-toggle"
-				>
-					<ToggleGroupControlOption
-						value="list"
-						label={ __( 'List', 'woocommerce' ) }
-					/>
-					<ToggleGroupControlOption
-						value="dropdown"
-						label={ __( 'Dropdown', 'woocommerce' ) }
-					/>
-				</ToggleGroupControl>
 			</PanelBody>
 		</InspectorControls>
 	);
