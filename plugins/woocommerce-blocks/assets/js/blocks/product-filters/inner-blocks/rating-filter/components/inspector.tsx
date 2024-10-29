@@ -24,7 +24,7 @@ export const Inspector = ( {
 	attributes,
 	setAttributes,
 }: Pick< BlockEditProps< Attributes >, 'attributes' | 'setAttributes' > ) => {
-	const { showCounts, displayStyle, selectType } = attributes;
+	const { showCounts, className, selectType } = attributes;
 	return (
 		<InspectorControls key="inspector">
 			<PanelBody title={ __( 'Display Settings', 'woocommerce' ) }>
@@ -37,7 +37,7 @@ export const Inspector = ( {
 						} )
 					}
 				/>
-				{ displayStyle === 'dropdown' && (
+				{ className === 'is-style-dropdown' && (
 					<ToggleGroupControl
 						label={ __(
 							'Allow selecting multiple options?',
