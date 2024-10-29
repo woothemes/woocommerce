@@ -188,6 +188,10 @@ abstract class AbstractCartRoute extends AbstractRoute {
 	 * @return string
 	 */
 	protected function get_cart_token() {
+		if ( ! wc()->session ) {
+			return null;
+		}
+
 		return JsonWebToken::create(
 			[
 				'user_id' => wc()->session->get_customer_id(),
