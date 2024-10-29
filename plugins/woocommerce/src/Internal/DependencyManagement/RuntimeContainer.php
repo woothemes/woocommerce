@@ -90,6 +90,10 @@ class RuntimeContainer {
 
 		// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped
 
+		if ( in_array( $class_name, $resolve_chain, true ) ) {
+			throw new ContainerException( "Recursive resolution of class '$class_name'. Resolution chain: " . implode( ', ', $resolve_chain ) );
+		}
+
 		if ( ! $this->is_class_allowed( $class_name ) ) {
 			throw new ContainerException( "Attempt to get an instance of class '$class_name', which is not in the " . self::WOOCOMMERCE_NAMESPACE . ' namespace. Did you forget to add a namespace import?' );
 		}
@@ -104,10 +108,6 @@ class RuntimeContainer {
 		}
 		if ( StringUtil::starts_with( $class_name, 'Automattic\WooCommerce\Blocks\\' ) ) {
 			return BlocksPackage::container()->get( $class_name );
-		}
-
-		if ( in_array( $class_name, $resolve_chain, true ) ) {
-			throw new ContainerException( "Recursive resolution of class '$class_name'. Resolution chain: " . implode( ', ', $resolve_chain ) );
 		}
 
 		$resolve_chain[] = $class_name;
