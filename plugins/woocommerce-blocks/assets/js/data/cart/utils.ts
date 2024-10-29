@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { select } from '@wordpress/data';
-import { camelCaseKeys } from '@woocommerce/base-utils';
+import { camelCaseKeys, debounce } from '@woocommerce/base-utils';
 import { isEmail } from '@wordpress/url';
 import {
 	CartBillingAddress,
@@ -131,9 +131,12 @@ export const getIsCustomerDataDirty = () => {
 /**
  * Sets a flag in localStorage to indicate whether the customer data has been modified.
  */
-export const setIsCustomerDataDirty = ( isCustomerDataDirty: boolean ) => {
-	window.localStorage.setItem(
-		'WOOCOMMERCE_CHECKOUT_IS_CUSTOMER_DATA_DIRTY',
-		isCustomerDataDirty ? 'true' : 'false'
-	);
-};
+export const setIsCustomerDataDirty = debounce(
+	( isCustomerDataDirty: boolean ) => {
+		window.localStorage.setItem(
+			'WOOCOMMERCE_CHECKOUT_IS_CUSTOMER_DATA_DIRTY',
+			isCustomerDataDirty ? 'true' : 'false'
+		);
+	},
+	300
+);
