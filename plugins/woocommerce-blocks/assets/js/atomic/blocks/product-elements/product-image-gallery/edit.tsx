@@ -2,11 +2,8 @@
  * External dependencies
  */
 import { WC_BLOCKS_IMAGE_URL } from '@woocommerce/block-settings';
-import { isEmptyObject } from '@woocommerce/types';
 import { useBlockProps } from '@wordpress/block-editor';
-import { BlockAttributes } from '@wordpress/blocks';
 import { Disabled } from '@wordpress/components';
-import type { BlockEditProps } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
