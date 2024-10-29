@@ -8,12 +8,15 @@ import { __ } from '@wordpress/i18n';
  */
 import { CalculatorButton, CalculatorButtonProps } from './calculator-button';
 
-export interface ShippingPlaceholderProps {
+export interface ShippingPlaceholderProps
+	extends Pick<
+		CalculatorButtonProps,
+		'setIsShippingCalculatorOpen' | 'shippingCalculatorID'
+	> {
 	showCalculator: boolean;
 	isShippingCalculatorOpen: boolean;
 	isCheckout?: boolean;
 	addressProvided: boolean;
-	setIsShippingCalculatorOpen: CalculatorButtonProps[ 'setIsShippingCalculatorOpen' ];
 }
 
 export const ShippingPlaceholder = ( {
@@ -22,6 +25,7 @@ export const ShippingPlaceholder = ( {
 	isShippingCalculatorOpen,
 	setIsShippingCalculatorOpen,
 	isCheckout = false,
+	shippingCalculatorID,
 }: ShippingPlaceholderProps ): JSX.Element => {
 	if ( ! showCalculator ) {
 		const label = addressProvided
@@ -31,7 +35,7 @@ export const ShippingPlaceholder = ( {
 			<span className="wc-block-components-shipping-placeholder__value">
 				{ isCheckout
 					? label
-					: __( 'Calculated during checkout', 'woocommerce' ) }
+					: __( 'Calculated at checkout', 'woocommerce' ) }
 			</span>
 		);
 	}
@@ -44,6 +48,7 @@ export const ShippingPlaceholder = ( {
 			) }
 			isShippingCalculatorOpen={ isShippingCalculatorOpen }
 			setIsShippingCalculatorOpen={ setIsShippingCalculatorOpen }
+			shippingCalculatorID={ shippingCalculatorID }
 		/>
 	);
 };

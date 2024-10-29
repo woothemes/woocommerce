@@ -5,6 +5,7 @@ const {
 	insertBlock,
 	insertBlockByShortcut,
 	publishPage,
+	getCanvas,
 } = require( '../../utils/editor' );
 const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
 
@@ -74,13 +75,29 @@ test.describe(
 			page,
 			testPage,
 		} ) => {
-			const sortingProductsDropdown = '.wc-block-sort-select__select';
+			const productTitleSelector = 'h3.wp-block-post-title';
+			const product1 = page
+				.locator( productTitleSelector )
+				.filter( { hasText: `${ simpleProductName } 1` } );
+			const product2 = page
+				.locator( productTitleSelector )
+				.filter( { hasText: `${ simpleProductName } 2` } );
+			const product3 = page
+				.locator( productTitleSelector )
+				.filter( { hasText: `${ simpleProductName } 3` } );
 
 			await goToPageEditor( { page } );
 			await fillPageTitle( page, testPage.title );
 			await insertBlockByShortcut( page, 'Filter by Price' );
 			const wordPressVersion = await getInstalledWordPressVersion();
-			await insertBlock( page, 'All Products', wordPressVersion );
+			await insertBlock( page, 'Product Collection', wordPressVersion );
+			const canvas = await getCanvas( page );
+			await canvas
+				.getByRole( 'button', {
+					name: 'create your own',
+					exact: true,
+				} )
+				.click();
 			await publishPage( page, testPage.title );
 
 			// go to the page to test filtering products by price
@@ -109,12 +126,6 @@ test.describe(
 			await page
 				.getByRole( 'textbox', { name: 'Filter products by maximum' } )
 				.fill( '$50' );
-			// click and sort products to allow changes to take effect
-			await page.locator( sortingProductsDropdown ).click();
-			await page
-				.locator( sortingProductsDropdown )
-				.selectOption( 'Popularity' );
-			// to avoid flakiness
 			await page
 				.getByRole( 'textbox', {
 					name: 'Filter products by maximum price',
@@ -126,32 +137,14 @@ test.describe(
 					// initial (pre-request) render.
 				} );
 
-			await expect(
-				page
-					.locator( 'h2.wc-block-grid__product-title' )
-					.filter( { hasText: `${ simpleProductName } 1` } )
-			).toBeVisible();
-			await expect(
-				page
-					.locator( 'h2.wc-block-grid__product-title' )
-					.filter( { hasText: `${ simpleProductName } 2` } )
-			).toBeVisible();
-			await expect(
-				page
-					.locator( 'h2.wc-block-grid__product-title' )
-					.filter( { hasText: `${ simpleProductName } 3` } )
-			).toBeHidden();
+			await expect( product1 ).toBeVisible();
+			await expect( product2 ).toBeVisible();
+			await expect( product3 ).toBeHidden();
 
 			// filter by between $100 and $200 and verify the results
 			await page
 				.getByRole( 'textbox', { name: 'Filter products by maximum' } )
 				.fill( '$200' );
-			// click and sort products to allow changes to take effect
-			await page.locator( sortingProductsDropdown ).click();
-			await page
-				.locator( sortingProductsDropdown )
-				.selectOption( 'Default sorting' );
-			// to avoid flakiness
 			await page
 				.getByRole( 'textbox', {
 					name: 'Filter products by maximum price',
@@ -165,12 +158,6 @@ test.describe(
 			await page
 				.getByRole( 'textbox', { name: 'Filter products by minimum' } )
 				.fill( '$100' );
-			// click and sort products to allow changes to take effect
-			await page.locator( sortingProductsDropdown ).click();
-			await page
-				.locator( sortingProductsDropdown )
-				.selectOption( 'Latest' );
-			// to avoid flakiness
 			await page
 				.getByRole( 'textbox', {
 					name: 'Filter products by maximum price',
@@ -182,21 +169,9 @@ test.describe(
 					// initial (pre-request) render.
 				} );
 
-			await expect(
-				page
-					.locator( 'h2.wc-block-grid__product-title' )
-					.filter( { hasText: `${ simpleProductName } 1` } )
-			).toBeHidden();
-			await expect(
-				page
-					.locator( 'h2.wc-block-grid__product-title' )
-					.filter( { hasText: `${ simpleProductName } 2` } )
-			).toBeHidden();
-			await expect(
-				page
-					.locator( 'h2.wc-block-grid__product-title' )
-					.filter( { hasText: `${ simpleProductName } 3` } )
-			).toBeVisible();
+			await expect( product1 ).toBeHidden();
+			await expect( product2 ).toBeHidden();
+			await expect( product3 ).toBeVisible();
 		} );
 	}
 );
