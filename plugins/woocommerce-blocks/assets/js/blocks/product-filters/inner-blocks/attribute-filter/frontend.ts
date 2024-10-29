@@ -58,7 +58,7 @@ store( 'woocommerce/product-filter-attribute', {
 				delete newParams[ `query_type_${ attributeSlug }` ];
 			}
 
-			productFiltersContext.selected[ filterKey ] = selectedTerms;
+			productFiltersContext.activeFilters[ filterKey ] = selectedTerms;
 			productFiltersContext.params = newParams;
 		},
 
@@ -73,7 +73,7 @@ store( 'woocommerce/product-filter-attribute', {
 			delete updatedParams[ `filter_${ attributeSlug }` ];
 			delete updatedParams[ `query_type_${ attributeSlug }` ];
 
-			delete productFiltersContext.selected[ filterKey ];
+			delete productFiltersContext.activeFilters[ filterKey ];
 
 			productFiltersContext.params = updatedParams;
 		},
@@ -84,8 +84,8 @@ store( 'woocommerce/product-filter-attribute', {
 				'woocommerce/product-filters'
 			);
 
-			if ( ! productFiltersContext.selected ) {
-				productFiltersContext.selected = {};
+			if ( ! productFiltersContext.activeFilters ) {
+				productFiltersContext.activeFilters = {};
 			}
 
 			const { attributeSlug, filterKey } =
@@ -99,7 +99,7 @@ store( 'woocommerce/product-filter-attribute', {
 				  ].split( ',' )
 				: [];
 
-			productFiltersContext.selected[ filterKey ] = selectedTerms;
+			productFiltersContext.activeFilters[ filterKey ] = selectedTerms;
 		},
 	},
 } );

@@ -72,7 +72,7 @@ export interface ProductFiltersContext {
 	hasPageWithWordPressAdminBar: boolean;
 	params: Record< string, string >;
 	originalParams: Record< string, string >;
-	selected: Record< string, string[] >;
+	activeFilters: Record< string, string[] >;
 }
 
 store( 'woocommerce/product-filters', {
@@ -102,13 +102,16 @@ store( 'woocommerce/product-filters', {
 	callbacks: {
 		init: () => {
 			const context = getContext< ProductFiltersContext >();
-			if ( ! context.selected ) {
-				context.selected = {};
+			if ( ! context.activeFilters ) {
+				context.activeFilters = {};
 			}
 		},
 		maybeNavigate: () => {
-			const { selected, params, originalParams } =
-				getContext< ProductFiltersContext >();
+			const {
+				activeFilters: selected,
+				params,
+				originalParams,
+			} = getContext< ProductFiltersContext >();
 
 			console.log( selected );
 			if ( isParamsEqual( params, originalParams ) ) {

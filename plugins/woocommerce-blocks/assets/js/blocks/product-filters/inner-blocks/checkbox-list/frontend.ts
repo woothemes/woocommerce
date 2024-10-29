@@ -34,9 +34,9 @@ store( 'woocommerce/product-filter-checkbox-list', {
 			);
 			return (
 				filterKey &&
-				productFiltersContext.selected &&
-				productFiltersContext.selected[ filterKey ] &&
-				productFiltersContext.selected[ filterKey ].includes(
+				productFiltersContext.activeFilters &&
+				productFiltersContext.activeFilters[ filterKey ] &&
+				productFiltersContext.activeFilters[ filterKey ].includes(
 					props.value
 				)
 			);
