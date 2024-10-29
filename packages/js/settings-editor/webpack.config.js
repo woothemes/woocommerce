@@ -29,6 +29,14 @@ module.exports = {
 	},
 	plugins: [
 		new RemoveEmptyScriptsPlugin(),
+		new plugin( {
+			filename: ( data ) => {
+				return data.chunk.name.startsWith( '/build/blocks' )
+					? `[name].css`
+					: `[name]/style.css`;
+			},
+			chunkFilename: 'chunks/[id].style.css',
+		} ),
 		new WebpackRTLPlugin( {
 			test: /(?<!style)\.css$/,
 			filename: '[name]-rtl.css',
