@@ -23,7 +23,7 @@ class ProductQueryBuilder {
 	 *
 	 * @var array
 	 */
-	protected $custom_order_opts = array( 'popularity', 'rating', 'post__in', 'price', 'sales', 'menu_order' );
+	protected $custom_order_opts = array( 'popularity', 'rating', 'post__in', 'price', 'sales', 'menu_order', 'random' );
 
 	/**
 	 * Constructor.
@@ -44,8 +44,7 @@ class ProductQueryBuilder {
 		}
 
 		$valid_query_vars       = array_keys( ( new WP_Query() )->fill_query_vars( array() ) );
-		// $this->valid_query_vars = array_merge(
-		return array_merge(
+		$this->valid_query_vars = array_merge(
 			$valid_query_vars,
 			// fill_query_vars doesn't include these vars so we need to add them manually.
 			array(
@@ -72,7 +71,7 @@ class ProductQueryBuilder {
 			)
 		);
 
-		// return $this->valid_query_vars;
+		return $this->valid_query_vars;
     }
 
 	/**
@@ -101,7 +100,7 @@ class ProductQueryBuilder {
 			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 			'meta_query'     => array(),
 			'posts_per_page' => $per_page,
-			'order'          => $query['order'],
+			'order'          => $query['order'] ?? 'asc',
 			'offset'         => ( $per_page * ( $page - 1 ) ) + $offset,
 			'post__in'       => $product_ids,
 			'post_status'    => 'publish',
@@ -1016,6 +1015,12 @@ class ProductQueryBuilder {
 			return array(
 				'orderby' => 'menu_order',
 				'order'   => 'ASC',
+			);
+		}
+
+		if ( 'random' === $orderby ) {
+			return array(
+				'orderby' => 'rand',
 			);
 		}
 
