@@ -9,12 +9,10 @@ import {
 	ShippingCalculator,
 } from '@woocommerce/base-components/cart-checkout';
 import { ShippingCalculatorContext } from '@woocommerce/base-components/cart-checkout/shipping-calculator/context';
-import { useStoreCart } from '@woocommerce/base-context/hooks';
-import { useEditorContext } from '@woocommerce/base-context';
+import { useEditorContext, useStoreCart } from '@woocommerce/base-context';
 import { TotalsWrapper } from '@woocommerce/blocks-components';
 import {
 	getShippingRatesPackageCount,
-	isAddressComplete,
 	selectedRatesAreCollectable,
 	allRatesAreCollectable,
 } from '@woocommerce/base-utils';
@@ -27,13 +25,7 @@ import { ShippingRateSelector } from './shipping-rate-selector';
 
 const Block = ( { className }: { className: string } ): JSX.Element | null => {
 	const { isEditor } = useEditorContext();
-	const {
-		cartTotals,
-		cartNeedsShipping,
-		shippingRates,
-		isLoadingRates,
-		shippingAddress,
-	} = useStoreCart();
+	const { cartNeedsShipping, shippingRates } = useStoreCart();
 	const [ isShippingCalculatorOpen, setIsShippingCalculatorOpen ] =
 		useState( false );
 
@@ -44,16 +36,15 @@ const Block = ( { className }: { className: string } ): JSX.Element | null => {
 	if ( isEditor && getShippingRatesPackageCount( shippingRates ) === 0 ) {
 		return null;
 	}
+
 	const showCalculator = getSetting< boolean >(
 		'isShippingCalculatorEnabled',
 		true
 	);
-	const hasCompleteAddress = isAddressComplete( shippingAddress, [
-		'state',
-		'country',
-		'postcode',
-		'city',
-	] );
+
+	const hasSelectedCollectionOnly =
+		selectedRatesAreCollectable( shippingRates );
+
 	return (
 		<TotalsWrapper className={ className }>
 			<ShippingCalculatorContext.Provider
@@ -66,13 +57,10 @@ const Block = ( { className }: { className: string } ): JSX.Element | null => {
 			>
 				<TotalsShipping
 					label={
-						selectedRatesAreCollectable( shippingRates )
+						hasSelectedCollectionOnly
 							? __( 'Collection', 'woocommerce' )
 							: __( 'Delivery', 'woocommerce' )
 					}
-					shippingRates={ shippingRates }
-					shippingAddress={ shippingAddress }
-					values={ cartTotals }
 					placeholder={
 						showCalculator ? (
 							<ShippingCalculatorButton
@@ -96,12 +84,7 @@ const Block = ( { className }: { className: string } ): JSX.Element | null => {
 								<ShippingCalculator />
 							) }
 							{ ! isShippingCalculatorOpen && (
-								<ShippingRateSelector
-									shippingRates={ shippingRates }
-									isLoadingRates={ isLoadingRates }
-									hasCompleteAddress={ hasCompleteAddress }
-									shippingAddress={ shippingAddress }
-								/>
+								<ShippingRateSelector />
 							) }
 							{ ! showCalculator &&
 								allRatesAreCollectable( shippingRates ) && (

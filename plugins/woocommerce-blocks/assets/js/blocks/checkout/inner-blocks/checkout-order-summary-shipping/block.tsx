@@ -18,12 +18,8 @@ const Block = ( {
 }: {
 	className?: string;
 } ): JSX.Element | null => {
-	const {
-		cartTotals,
-		cartNeedsShipping,
-		shippingRates: cartShippingRates,
-		shippingAddress,
-	} = useStoreCart();
+	const { cartNeedsShipping, shippingRates, shippingAddress } =
+		useStoreCart();
 	const prefersCollection = useSelect( ( select ) =>
 		select( CHECKOUT_STORE_KEY ).prefersCollection()
 	);
@@ -32,10 +28,13 @@ const Block = ( {
 		return null;
 	}
 
-	const shippingRates = filterShippingRatesByPrefersCollection(
-		cartShippingRates,
-		prefersCollection ?? false
+	const hasSelectedCollectionOnly = selectedRatesAreCollectable(
+		filterShippingRatesByPrefersCollection(
+			shippingRates,
+			prefersCollection ?? false
+		)
 	);
+
 	const hasCompleteAddress = isAddressComplete( shippingAddress, [
 		'state',
 		'country',
@@ -47,13 +46,10 @@ const Block = ( {
 		<TotalsWrapper className={ className }>
 			<TotalsShipping
 				label={
-					selectedRatesAreCollectable( shippingRates )
+					hasSelectedCollectionOnly
 						? __( 'Collection', 'woocommerce' )
 						: __( 'Delivery', 'woocommerce' )
 				}
-				shippingAddress={ shippingAddress }
-				shippingRates={ shippingRates }
-				values={ cartTotals }
 				placeholder={
 					<span className="wc-block-components-shipping-placeholder__value">
 						{ hasCompleteAddress

@@ -2,14 +2,11 @@
  * External dependencies
  */
 import { decodeEntities } from '@wordpress/html-entities';
+import { useStoreCart } from '@woocommerce/base-context';
 import { getSelectedShippingRateNames } from '@woocommerce/base-utils';
-import type { CartShippingRate } from '@woocommerce/types';
 
-export const ShippingVia = ( {
-	shippingRates,
-}: {
-	shippingRates: CartShippingRate[];
-} ): JSX.Element | null => {
+export const ShippingVia = (): JSX.Element | null => {
+	const { shippingRates } = useStoreCart();
 	const rateNames = getSelectedShippingRateNames( shippingRates );
 	return rateNames ? (
 		<div className="wc-block-components-totals-shipping__via">

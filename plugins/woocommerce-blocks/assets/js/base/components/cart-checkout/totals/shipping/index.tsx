@@ -1,67 +1,51 @@
 /**
  * External dependencies
  */
+import { __ } from '@wordpress/i18n';
 import { TotalsItem } from '@woocommerce/blocks-components';
 import { getCurrencyFromPriceResponse } from '@woocommerce/price-format';
 import { hasShippingRate } from '@woocommerce/base-utils';
-import type {
-	CartResponseShippingAddress,
-	CartResponseTotals,
-	CartShippingRate,
-} from '@woocommerce/types';
+import { useStoreCart } from '@woocommerce/base-context';
 
 /**
  * Internal dependencies
  */
 import { ShippingVia } from './shipping-via';
+import { ShippingCollaterals } from './shipping-collaterals';
 import { ShippingAddress } from './shipping-address';
 import { renderShippingTotalValue } from './utils';
 import './style.scss';
 
 export interface TotalShippingProps {
-	label: string;
-	values: CartResponseTotals;
-	shippingRates: CartShippingRate[];
-	shippingAddress: CartResponseShippingAddress;
+	label?: string;
 	placeholder?: React.ReactNode | null;
 	collaterals?: React.ReactNode | null;
 }
 
 export const TotalsShipping = ( {
-	label,
-	shippingAddress,
-	shippingRates,
-	values,
+	label = __( 'Shipping', 'woocommerce' ),
 	placeholder = null,
 	collaterals = null,
 }: TotalShippingProps ): JSX.Element | null => {
+	const { cartTotals, shippingRates } = useStoreCart();
 	const hasRates = hasShippingRate( shippingRates );
 	return (
 		<div className="wc-block-components-totals-shipping">
 			<TotalsItem
 				label={ label }
 				value={
-					hasRates ? renderShippingTotalValue( values ) : placeholder
+					hasRates
+						? renderShippingTotalValue( cartTotals )
+						: placeholder
 				}
 				description={
 					<>
-						{ hasRates && (
-							<>
-								<ShippingVia shippingRates={ shippingRates } />
-								<ShippingAddress
-									shippingRates={ shippingRates }
-									shippingAddress={ shippingAddress }
-								/>
-							</>
-						) }
-						{ !! collaterals && (
-							<div className="wc-block-components-totals-shipping__collaterals">
-								{ collaterals }
-							</div>
-						) }
+						<ShippingVia />
+						<ShippingAddress />
+						<ShippingCollaterals collaterals={ collaterals } />
 					</>
 				}
-				currency={ getCurrencyFromPriceResponse( values ) }
+				currency={ getCurrencyFromPriceResponse( cartTotals ) }
 			/>
 		</div>
 	);

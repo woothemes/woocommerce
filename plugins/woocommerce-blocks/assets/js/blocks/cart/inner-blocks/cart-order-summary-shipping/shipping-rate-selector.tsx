@@ -7,23 +7,22 @@ import {
 	NoticeBanner,
 	ShippingRatesControl,
 } from '@woocommerce/base-components';
-import { formatShippingAddress } from '@woocommerce/base-utils';
-import type {
-	CartResponseShippingAddress,
-	CartResponseShippingRate,
-} from '@woocommerce/types';
+import { useStoreCart } from '@woocommerce/base-context';
+import {
+	formatShippingAddress,
+	isAddressComplete,
+} from '@woocommerce/base-utils';
 
-export const ShippingRateSelector = ( {
-	shippingRates,
-	shippingAddress,
-	isLoadingRates,
-	hasCompleteAddress,
-}: {
-	shippingRates: CartResponseShippingRate[];
-	shippingAddress: CartResponseShippingAddress;
-	isLoadingRates: boolean;
-	hasCompleteAddress: boolean;
-} ): JSX.Element => {
+export const ShippingRateSelector = (): JSX.Element => {
+	const { shippingRates, isLoadingRates, shippingAddress } = useStoreCart();
+
+	const hasCompleteAddress = isAddressComplete( shippingAddress, [
+		'state',
+		'country',
+		'postcode',
+		'city',
+	] );
+
 	return (
 		<fieldset className="wc-block-components-totals-shipping__fieldset">
 			<legend className="screen-reader-text">
