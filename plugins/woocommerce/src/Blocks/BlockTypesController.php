@@ -390,7 +390,7 @@ final class BlockTypesController {
 			'ProductCategories',
 			'ProductCategory',
 			'ProductCollection\ProductCollectionController',
-			'ProductCollectionNoResults',
+			'ProductCollection\ProductCollectionNoResults',
 			'ProductGallery',
 			'ProductGalleryLargeImage',
 			'ProductGalleryLargeImageNextPrevious',
