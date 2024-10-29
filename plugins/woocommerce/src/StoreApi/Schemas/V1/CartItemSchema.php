@@ -107,7 +107,7 @@ class CartItemSchema extends ItemSchema {
 		$filtered_images = apply_filters( 'woocommerce_cart_item_images', $product_images, $cart_item, $cart_item_key );
 	
 		// Return the original images if the filtered image has no thumbnail URL.
-		$guarded_images = array();
+		$valid_images = array();
 		$logger = wc_get_logger();
 		foreach ( $filtered_images as $key => $image ) {
 			// Check if thumbnail is a valid url.
@@ -122,16 +122,16 @@ class CartItemSchema extends ItemSchema {
 			}
 	
 			// Image is valid, add to resulting array.
-			$guarded_images[] = $image;
+			$valid_images[] = $image;
 		}
 	
 		// If there are no valid images remaining, return original array.
-		if ( count($guarded_images) == 0 ) {
+		if ( count( $valid_images ) === 0 ) {
 			return $product_images;
 		}
 	
 		// Return the filtered guarded images.
-		return $guarded_images;
+		return $valid_images;
 	}
 
 	/**
