@@ -41,6 +41,15 @@
 			"default": false
 		}
 	},
+	"styles": [
+		{ "name": "list", "label": "Stars list", "isDefault": true },
+		{ "name": "dropdown", "label": "Dropdown" }
+	],
+	"example": {
+		"attributes": {
+			"isPreview": true
+		}
+	},
 	"textdomain": "woocommerce",
 	"apiVersion": 3,
 	"$schema": "https://schemas.wp.org/trunk/block.json"
