@@ -40,7 +40,7 @@ if ( $related_products ) : ?>
 					<?php
 					$post_object = get_post( $related_product->get_id() );
 
-					$GLOBALS['post'] = $post_object;
+					$GLOBALS['post'] = $post_object; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 					setup_postdata( $GLOBALS['post'] ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited, Squiz.PHP.DisallowMultipleAssignments.Found
 
@@ -55,5 +55,5 @@ if ( $related_products ) : ?>
 	<?php
 endif;
 
-$GLOBALS['post'] = $original_post;
+$GLOBALS['post'] = $original_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 wp_reset_postdata();

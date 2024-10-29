@@ -39,7 +39,7 @@ if ( $upsells ) : ?>
 				<?php
 				$post_object = get_post( $upsell->get_id() );
 
-				$GLOBALS['post'] = $post_object;
+				$GLOBALS['post'] = $post_object; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 				setup_postdata( $GLOBALS['post'] ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited, Squiz.PHP.DisallowMultipleAssignments.Found
 
@@ -55,5 +55,5 @@ if ( $upsells ) : ?>
 	<?php
 endif;
 
-$GLOBALS['post'] = $original_post;
+$GLOBALS['post'] = $original_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 wp_reset_postdata();
