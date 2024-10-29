@@ -19,7 +19,7 @@ const Edit = ( props: EditProps ) => {
 			allowedBlocks: getAllowedBlocks( EXCLUDED_BLOCKS ),
 			template: [
 				[
-					'woocommerce/product-filter-active-chips',
+					'woocommerce/product-filter-removable-chips',
 					{
 						lock: {
 							remove: true,

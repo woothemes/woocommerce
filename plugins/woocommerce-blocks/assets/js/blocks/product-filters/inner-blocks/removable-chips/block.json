@@ -1,9 +1,9 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
-	"name": "woocommerce/product-filter-active-chips",
+	"name": "woocommerce/product-filter-removable-chips",
 	"version": "1.0.0",
 	"title": "Chips",
-	"description": "Display active filters as chips.",
+	"description": "Display removable active filters.",
 	"category": "woocommerce",
 	"keywords": [
 		"WooCommerce"

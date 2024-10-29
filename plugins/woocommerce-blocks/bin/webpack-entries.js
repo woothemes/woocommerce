@@ -119,8 +119,8 @@ const blocks = {
 		customDir: 'product-filters/inner-blocks/active-filters',
 		isExperimental: true,
 	},
-	'product-filter-active-chips': {
-		customDir: 'product-filters/inner-blocks/active-chips',
+	'product-filter-removable-chips': {
+		customDir: 'product-filters/inner-blocks/removable-chips',
 		isExperimental: true,
 	},
 	'product-filter-clear-button': {

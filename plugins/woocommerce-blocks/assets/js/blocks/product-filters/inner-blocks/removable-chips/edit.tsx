@@ -41,7 +41,7 @@ const Edit = ( props: EditProps ): JSX.Element => {
 		attributes;
 
 	const blockProps = useBlockProps( {
-		className: clsx( 'wc-block-product-filter-active-chips', {
+		className: clsx( 'wc-block-product-filter-removable-chips', {
 			...getColorClasses( attributes ),
 		} ),
 		style: getColorVars( attributes ),
@@ -58,14 +58,14 @@ const Edit = ( props: EditProps ): JSX.Element => {
 	return (
 		<>
 			<div { ...blockProps }>
-				<ul className="wc-block-product-filter-active-chips__items">
-					<li className="wc-block-product-filter-active-chips__item">
-						<span className="wc-block-product-filter-active-chips__label">
+				<ul className="wc-block-product-filter-removable-chips__items">
+					<li className="wc-block-product-filter-removable-chips__item">
+						<span className="wc-block-product-filter-removable-chips__label">
 							{ __( 'Size: Small', 'woocommerce' ) }
 						</span>
-						<button className="wc-block-product-filter-active-chips__remove">
+						<button className="wc-block-product-filter-removable-chips__remove">
 							<Icon
-								className="wc-block-product-filter-active-chips__remove-icon"
+								className="wc-block-product-filter-removable-chips__remove-icon"
 								icon={ closeSmall }
 								size={ 25 }
 							/>
@@ -76,13 +76,13 @@ const Edit = ( props: EditProps ): JSX.Element => {
 							/>
 						</button>
 					</li>
-					<li className="wc-block-product-filter-active-chips__item">
-						<span className="wc-block-product-filter-active-chips__label">
+					<li className="wc-block-product-filter-removable-chips__item">
+						<span className="wc-block-product-filter-removable-chips__label">
 							{ __( 'Color: Red', 'woocommerce' ) }
 						</span>
-						<button className="wc-block-product-filter-active-chips__remove">
+						<button className="wc-block-product-filter-removable-chips__remove">
 							<Icon
-								className="wc-block-product-filter-active-chips__remove-icon"
+								className="wc-block-product-filter-removable-chips__remove-icon"
 								icon={ closeSmall }
 								size={ 25 }
 							/>
@@ -91,13 +91,13 @@ const Edit = ( props: EditProps ): JSX.Element => {
 							/>
 						</button>
 					</li>
-					<li className="wc-block-product-filter-active-chips__item">
-						<span className="wc-block-product-filter-active-chips__label">
+					<li className="wc-block-product-filter-removable-chips__item">
+						<span className="wc-block-product-filter-removable-chips__label">
 							{ __( 'Color: Blue', 'woocommerce' ) }
 						</span>
-						<button className="wc-block-product-filter-active-chips__remove">
+						<button className="wc-block-product-filter-removable-chips__remove">
 							<Icon
-								className="wc-block-product-filter-active-chips__remove-icon"
+								className="wc-block-product-filter-removable-chips__remove-icon"
 								icon={ closeSmall }
 								size={ 25 }
 							/>

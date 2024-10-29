@@ -4,16 +4,16 @@ declare( strict_types = 1 );
 namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 /**
- * Product Filter: Active Chips Block.
+ * Product Filter: Removable Chips Block.
  */
-final class ProductFilterActiveChips extends AbstractBlock {
+final class ProductFilterRemovableChips extends AbstractBlock {
 
 	/**
 	 * Block name.
 	 *
 	 * @var string
 	 */
-	protected $block_name = 'product-filter-active-chips';
+	protected $block_name = 'product-filter-removable-chips';
 
 	/**
 	 * Render the block.
@@ -54,7 +54,7 @@ final class ProductFilterActiveChips extends AbstractBlock {
 		$style = '';
 
 		$tags = new \WP_HTML_Tag_Processor( $content );
-		if ( $tags->next_tag( array( 'class_name' => 'wc-block-product-filter-active-chips' ) ) ) {
+		if ( $tags->next_tag( array( 'class_name' => 'wc-block-product-filter-removable-chips' ) ) ) {
 			$classes = $tags->get_attribute( 'class' );
 			$style   = $tags->get_attribute( 'style' );
 		}
@@ -73,7 +73,7 @@ final class ProductFilterActiveChips extends AbstractBlock {
 
 		<div <?php echo $wrapper_attributes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php if ( ! empty( $active_filters ) ) : ?>
-				<ul class="wc-block-product-filter-active-chips__items">
+				<ul class="wc-block-product-filter-removable-chips__items">
 					<?php foreach ( $active_filters as $filter ) : ?>
 						<?php foreach ( $filter['items'] as $item ) : ?>
 							<?php $this->render_chip_item( $filter['type'], $item ); ?>
@@ -109,13 +109,13 @@ final class ProductFilterActiveChips extends AbstractBlock {
 
 		$remove_label = sprintf( 'Remove %s filter', wp_strip_all_tags( $title ) );
 		?>
-		<li class="wc-block-product-filter-active-chips__item">
-			<span class="wc-block-product-filter-active-chips__label">
+		<li class="wc-block-product-filter-removable-chips__item">
+			<span class="wc-block-product-filter-removable-chips__label">
 				<?php printf( '%s: %s', esc_html( $type ), wp_kses_post( $title ) ); ?>
 			</span>
 			<?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-			<button class="wc-block-product-filter-active-chips__remove" aria-label="<?php echo esc_attr( $remove_label ); ?>" <?php echo $this->get_html_attributes( $attributes ); ?>>
-				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="25" height="25" class="wc-block-product-filter-active-chips__remove-icon" aria-hidden="true" focusable="false"><path d="M12 13.06l3.712 3.713 1.061-1.06L13.061 12l3.712-3.712-1.06-1.06L12 10.938 8.288 7.227l-1.061 1.06L10.939 12l-3.712 3.712 1.06 1.061L12 13.061z"></path></svg>
+			<button class="wc-block-product-filter-removable-chips__remove" aria-label="<?php echo esc_attr( $remove_label ); ?>" <?php echo $this->get_html_attributes( $attributes ); ?>>
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="25" height="25" class="wc-block-product-filter-removable-chips__remove-icon" aria-hidden="true" focusable="false"><path d="M12 13.06l3.712 3.713 1.061-1.06L13.061 12l3.712-3.712-1.06-1.06L12 10.938 8.288 7.227l-1.061 1.06L10.939 12l-3.712 3.712 1.06 1.061L12 13.061z"></path></svg>
 				<span class="screen-reader-text"><?php echo esc_attr( $remove_label ); ?></span>
 			</button>
 		</li>

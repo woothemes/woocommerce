@@ -21,15 +21,15 @@ export function getColorVars( attributes: BlockAttributes ) {
 	} = attributes;
 
 	const vars: Record< string, string > = {
-		'--wc-product-filter-active-chips-text': getCSSVar(
+		'--wc-product-filter-removable-chips-text': getCSSVar(
 			chipText,
 			customChipText
 		),
-		'--wc-product-filter-active-chips-background': getCSSVar(
+		'--wc-product-filter-removable-chips-background': getCSSVar(
 			chipBackground,
 			customChipBackground
 		),
-		'--wc-product-filter-active-chips-border': getCSSVar(
+		'--wc-product-filter-removable-chips-border': getCSSVar(
 			chipBorder,
 			customChipBorder
 		),

@@ -19,7 +19,7 @@ const Save = ( {
 } ) => {
 	const blockProps = useBlockProps.save( {
 		className: clsx(
-			'wc-block-product-filter-active-chips',
+			'wc-block-product-filter-removable-chips',
 			attributes.className,
 			getColorClasses( attributes )
 		),
