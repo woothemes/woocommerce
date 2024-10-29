@@ -521,22 +521,6 @@ class RemoteLogger extends \WC_Log_Handler {
 		// Redact email addresses.
 		$content = preg_replace( '/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/', '[redacted_email]', $content );
 
-		/**
-		 * Redact potential phone numbers.
-		 *
-		 * This will match patterns like:
-		 * +1 (123) 456 7890 (with parentheses around area code)
-		 * +44-123-4567-890 (with area code, no parentheses)
-		 * 1234567890 (10 consecutive digits, no area code)
-		 * (123) 456-7890 (area code in parentheses, groups)
-		 * +91 12345 67890 (international format with space)
-		 */
-		$content = preg_replace(
-			'/(?:(?:\+?\d{1,3}[-\s]?)?\(?\d{3}\)?[-\s]?\d{3}[-\s]?\d{4}|\b\d{10,11}\b)/',
-			'[redacted_phone]',
-			$content
-		);
-
 		// Redact potential IP addresses.
 		$content = preg_replace( '/\b(?:\d{1,3}\.){3}\d{1,3}\b/', '[redacted_ip]', $content );
 
@@ -554,6 +538,22 @@ class RemoteLogger extends \WC_Log_Handler {
 		foreach ( $api_patterns as $pattern ) {
 			$content = preg_replace( $pattern, '[redacted_api_key]', $content );
 		}
+
+		/**
+		 * Redact potential phone numbers.
+		 *
+		 * This will match patterns like:
+		 * +1 (123) 456 7890 (with parentheses around area code)
+		 * +44-123-4567-890 (with area code, no parentheses)
+		 * 1234567890 (10 consecutive digits, no area code)
+		 * (123) 456-7890 (area code in parentheses, groups)
+		 * +91 12345 67890 (international format with space)
+		 */
+		$content = preg_replace(
+			'/(?:(?:\+?\d{1,3}[-\s]?)?\(?\d{3}\)?[-\s]?\d{3}[-\s]?\d{4}|\b\d{10,11}\b)/',
+			'[redacted_phone]',
+			$content
+		);
 
 		return $content;
 	}

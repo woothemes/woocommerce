@@ -663,7 +663,7 @@ namespace Automattic\WooCommerce\Tests\Internal\Logging {
 					'expected' => 'Access Key: [redacted_api_key]',
 				),
 				'multiple api keys'                    => array(
-					'input'    => 'Keys: a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0, ABCD-1234-EFGH-5678, sk_live_1234567890abcdef',
+					'input'    => 'Keys: a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0, ABCD-1234-EFGH-5678, sk_fakekey0123456789abcdefg',
 					'expected' => 'Keys: [redacted_api_key], [redacted_api_key], [redacted_api_key]',
 				),
 			);
