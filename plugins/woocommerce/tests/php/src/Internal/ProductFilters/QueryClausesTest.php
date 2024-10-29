@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Automattic\WooCommerce\Tests\Internal\ProductFilters;
 
@@ -44,7 +45,7 @@ class QueryClausesTest extends AbstractProductFiltersTest {
 			$price_range,
 			array(
 				'min_price' => 0,
-				'min_price' => 0,
+				'max_price' => 0,
 			)
 		);
 		$filter_callback = function ( $args ) use ( $price_range ) {

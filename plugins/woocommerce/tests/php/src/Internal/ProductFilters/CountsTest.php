@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Automattic\WooCommerce\Tests\Internal\ProductFilters;
 
@@ -143,12 +144,10 @@ class CountsTest extends AbstractProductFiltersTest {
 	 * @testdox Test attribute count without filter.
 	 */
 	public function test_get_attribute_counts_with_default_query() {
-		$wp_query                = new \WP_Query( array( 'post_type' => 'product' ) );
-		$query_vars              = array_filter( $wp_query->query_vars );
-		$actual_attribute_counts = (array) $this->sut->get_attribute_counts( $query_vars, 'pa_color' );
-		var_dump( $actual_attribute_counts );
+		$wp_query                  = new \WP_Query( array( 'post_type' => 'product' ) );
+		$query_vars                = array_filter( $wp_query->query_vars );
+		$actual_attribute_counts   = (array) $this->sut->get_attribute_counts( $query_vars, 'pa_color' );
 		$expected_attribute_counts = $this->get_expected_attribute_counts( 'pa_color' );
-		var_dump( $expected_attribute_counts );
 
 		$this->assertEqualsCanonicalizing( $expected_attribute_counts, $actual_attribute_counts );
 	}

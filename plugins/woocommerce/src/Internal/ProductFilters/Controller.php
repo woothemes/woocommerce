@@ -3,6 +3,8 @@
  * MainQueryFilters class file.
  */
 
+declare(strict_types=1);
+
 namespace Automattic\WooCommerce\Internal\ProductFilters;
 
 use Automattic\WooCommerce\Internal\RegisterHooksInterface;

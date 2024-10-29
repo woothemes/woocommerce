@@ -3,6 +3,8 @@
  * Class for filter counts.
  */
 
+declare(strict_types=1);
+
 namespace Automattic\WooCommerce\Internal\ProductFilters;
 
 use WC_Cache_Helper;
@@ -30,14 +32,14 @@ class Counts {
 	 *
 	 * @return void
 	 */
-	final public function init( QueryClausesGenerator $query_clauses ): void {
+	final public function init( QueryClauses $query_clauses ): void {
 		$this->set_query_clauses( $query_clauses );
 	}
 
 	/**
 	 * Allow setting the clauses provider at run time.
 	 *
-	 * @param ClausesGeneratorInterface $query_clauses Instance of QueryClauses.
+	 * @param QueryClausesGenerator $query_clauses Instance of QueryClauses.
 	 *
 	 * @return void
 	 */
