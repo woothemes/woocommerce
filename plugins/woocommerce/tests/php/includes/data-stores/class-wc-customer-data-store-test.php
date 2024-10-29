@@ -1,5 +1,6 @@
 <?php
 
+use Automattic\WooCommerce\Enums\OrderLegacyStatus;
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 use Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTableDataStore;
 use Automattic\WooCommerce\Internal\Utilities\Users;
@@ -63,7 +64,7 @@ class WC_Customer_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 	 * @return string[]
 	 */
 	public function get_pending_only_as_order_statuses() {
-		return array( 'wc-pending' => 'pending' );
+		return array( OrderLegacyStatus::PENDING => 'pending' );
 	}
 
 	/**
@@ -101,11 +102,11 @@ class WC_Customer_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 		update_option( CustomOrdersTableController::CUSTOM_ORDERS_TABLE_USAGE_ENABLED_OPTION, 'yes' );
 
 		$sql =
-			'INSERT INTO ' . OrdersTableDataStore::get_orders_table_name() . "
+			"INSERT INTO " . OrdersTableDataStore::get_orders_table_name() . "
 			( id, customer_id, status, type )
 			VALUES
-			( 1, %d, 'wc-completed', 'shop_order' ), ( %d, %d, 'wc-completed', 'shop_order' ), ( 3, %d, 'wc-invalid-status', 'shop_order' ),
-			( 4, %d, 'wc-completed', 'shop_order' ), ( 5, %d, 'wc-completed', 'shop_order' )";
+			( 1, %d, '" . OrderLegacyStatus::COMPLETED . "', 'shop_order' ), ( %d, %d, '" . OrderLegacyStatus::COMPLETED . "', 'shop_order' ), ( 3, %d, 'wc-invalid-status', 'shop_order' ),
+			( 4, %d, '" . OrderLegacyStatus::COMPLETED . "', 'shop_order' ), ( 5, %d, '" . OrderLegacyStatus::COMPLETED . "', 'shop_order' )";
 
 		$customer_1_id = $customer_1->get_id();
 		$customer_2_id = $customer_2->get_id();
@@ -189,11 +190,11 @@ class WC_Customer_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 		$customer_2 = WC_Helper_Customer::create_customer( 'test2', 'pass2', 'test2@example.com' );
 
 		$sql =
-			'INSERT INTO ' . OrdersTableDataStore::get_orders_table_name() . "
+			"INSERT INTO " . OrdersTableDataStore::get_orders_table_name() . "
 			( id, customer_id, status )
 			VALUES
-			( 1, %d, 'wc-completed' ), ( 2, %d, 'wc-completed' ), ( 3, %d, 'wc-completed' ), ( 4, %d, 'wc-invalid-status' ),
-			( 5, %d, 'wc-completed' ), ( 6, %d, 'wc-completed' )";
+			( 1, %d, '" . OrderLegacyStatus::COMPLETED . "' ), ( 2, %d, '" . OrderLegacyStatus::COMPLETED . "' ), ( 3, %d, '" . OrderLegacyStatus::COMPLETED . "' ), ( 4, %d, 'wc-invalid-status' ),
+			( 5, %d, '" . OrderLegacyStatus::COMPLETED . "' ), ( 6, %d, '" . OrderLegacyStatus::COMPLETED . "' )";
 
 		$customer_1_id = $customer_1->get_id();
 		$customer_2_id = $customer_2->get_id();
@@ -244,11 +245,11 @@ class WC_Customer_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 		$customer_2 = WC_Helper_Customer::create_customer( 'test2', 'pass2', 'test2@example.com' );
 
 		$sql =
-			'INSERT INTO ' . OrdersTableDataStore::get_orders_table_name() . "
+			"INSERT INTO " . OrdersTableDataStore::get_orders_table_name() . "
 			( id, customer_id, status, total_amount )
 			VALUES
-			( 1, %d, 'wc-completed', 10 ), ( 2, %d, 'wc-completed', 20 ), ( 3, %d, 'wc-completed', 30 ), ( 4, %d, 'wc-invalid-status', 40 ),
-			( 5, %d, 'wc-completed', 200 ), ( 6, %d, 'wc-completed', 300 )";
+			( 1, %d, '" . OrderLegacyStatus::COMPLETED . "', 10 ), ( 2, %d, '" . OrderLegacyStatus::COMPLETED . "', 20 ), ( 3, %d, '" . OrderLegacyStatus::COMPLETED . "', 30 ), ( 4, %d, 'wc-invalid-status', 40 ),
+			( 5, %d, '" . OrderLegacyStatus::COMPLETED . "', 200 ), ( 6, %d, '" . OrderLegacyStatus::COMPLETED . "', 300 )";
 
 		$customer_1_id = $customer_1->get_id();
 		$customer_2_id = $customer_2->get_id();

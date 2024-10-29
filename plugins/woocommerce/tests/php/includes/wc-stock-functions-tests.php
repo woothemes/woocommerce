@@ -24,7 +24,7 @@ class WC_Stock_Functions_Tests extends \WC_Unit_Test_Case {
 	 */
 	public $order_stock_restore_statuses = array(
 		'wc-cancelled',
-		'wc-pending',
+		\Automattic\WooCommerce\Enums\OrderLegacyStatus::PENDING,
 	);
 
 	/**

@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 namespace Automattic\WooCommerce\Tests\Internal\DataStores\Orders;
 
 use Automattic\WooCommerce\Database\Migrations\CustomOrderTable\PostsToOrdersMigrationController;
+use Automattic\WooCommerce\Enums\OrderLegacyStatus;
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 use Automattic\WooCommerce\Internal\DataStores\Orders\DataSynchronizer;
 use Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTableDataStore;
@@ -579,7 +580,7 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 		$this->sut->untrash_order( $order );
 
 		$this->assertEquals( 'on-hold', $order->get_status() );
-		$this->assertEquals( 'wc-on-hold', get_post_status( $order_id ) );
+		$this->assertEquals( OrderLegacyStatus::ON_HOLD, get_post_status( $order_id ) );
 
 		$this->assertEmpty( $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$this->sut->get_meta_table_name()} WHERE order_id = %d AND meta_key LIKE '_wp_trash_meta_%'", $order_id ) ) );
 		$this->assertEmpty( $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key LIKE '_wp_trash_meta_%'", $order_id ) ) );
@@ -1194,9 +1195,9 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 	 */
 	public function test_get_order_count(): void {
 		$number_of_orders_by_status = array(
-			'wc-completed'  => 4,
-			'wc-processing' => 2,
-			'wc-pending'    => 4,
+			OrderLegacyStatus::COMPLETED  => 4,
+			OrderLegacyStatus::PROCESSING => 2,
+			OrderLegacyStatus::PENDING    => 4,
 		);
 
 		foreach ( $number_of_orders_by_status as $order_status => $number_of_orders ) {
@@ -1230,8 +1231,8 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 
 		// Create a few orders.
 		$orders_by_status = array(
-			'wc-completed' => 3,
-			'wc-pending'   => 2,
+			OrderLegacyStatus::COMPLETED => 3,
+			OrderLegacyStatus::PENDING   => 2,
 		);
 		$unpaid_ids       = array();
 		foreach ( $orders_by_status as $order_status => $order_count ) {
@@ -1249,7 +1250,7 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 		}
 
 		// Confirm not all orders are unpaid.
-		$this->assertEquals( $orders_by_status['wc-completed'], $this->sut->get_order_count( 'wc-completed' ) );
+		$this->assertEquals( $orders_by_status[ OrderLegacyStatus::COMPLETED ], $this->sut->get_order_count( OrderLegacyStatus::COMPLETED ) );
 
 		// Find unpaid orders.
 		$this->assertEqualsCanonicalizing( $unpaid_ids, $this->sut->get_unpaid_orders( $now_ist ) );
@@ -1640,7 +1641,7 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 		foreach ( $orders_test_data as $i => $order_data ) {
 			$order = new \WC_Order();
 			$this->switch_data_store( $order, $this->sut );
-			$order->set_status( 'wc-completed' );
+			$order->set_status( OrderLegacyStatus::COMPLETED);
 			$order->set_shipping_city( 'The Universe' );
 			$order->set_billing_first_name( $order_data[0] );
 			$order->set_billing_last_name( $order_data[1] );
@@ -2473,7 +2474,7 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 
 		$db_row = $db_row_callback->call( $this->sut, $order, false );
 
-		$this->assertEquals( 'wc-completed', $db_row['data']['status'] );
+		$this->assertEquals( OrderLegacyStatus::COMPLETED, $db_row['data']['status'] );
 	}
 
 	/**

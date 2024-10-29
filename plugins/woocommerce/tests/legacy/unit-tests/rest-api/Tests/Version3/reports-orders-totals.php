@@ -6,6 +6,7 @@
  * @since 3.5.0
  */
 
+use Automattic\WooCommerce\Enums\OrderLegacyStatus;
 use Automattic\WooCommerce\RestApi\UnitTests\Helpers\OrderHelper;
 use Automattic\WooCommerce\RestApi\UnitTests\HPOSToggleTrait;
 
@@ -81,9 +82,9 @@ class WC_Tests_API_Reports_Orders_Totals extends WC_REST_Unit_Test_Case {
 
 		// Create some orders with HPOS enabled.
 		$order_counts = array(
-			'wc-pending'    => 3,
-			'wc-processing' => 2,
-			'wc-on-hold'    => 1,
+			OrderLegacyStatus::PENDING    => 3,
+			OrderLegacyStatus::PROCESSING => 2,
+			OrderLegacyStatus::ON_HOLD    => 1,
 		);
 		foreach ( $order_counts as $status => $count ) {
 			for ( $i = 0; $i < $count; $i++ ) {

@@ -3,6 +3,7 @@ declare( strict_types = 1 );
 
 namespace Automattic\WooCommerce\Tests\Internal\DataStores\Orders;
 
+use Automattic\WooCommerce\Enums\OrderLegacyStatus;
 use Automattic\WooCommerce\Internal\BatchProcessing\BatchProcessingController;
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 use Automattic\WooCommerce\Internal\DataStores\Orders\DataSynchronizer;
@@ -201,7 +202,7 @@ class DataSynchronizerTests extends \HposTestCase {
 		$order->set_status( 'pending' );
 		$order->save();
 		$this->assertEquals(
-			'wc-pending',
+			OrderLegacyStatus::PENDING,
 			$wpdb->get_var( "SELECT status FROM $orders_table WHERE id = $order_id" ), //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			'When the order status is updated, the change should be observed by the DataSynhronizer and a matching update will take place in the COT table.'
 		);
