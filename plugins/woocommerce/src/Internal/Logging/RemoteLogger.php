@@ -543,6 +543,18 @@ class RemoteLogger extends \WC_Log_Handler {
 		// Redact potential credit card numbers.
 		$content = preg_replace( '/(\d{4}[- ]?){3}\d{4}/', '[redacted_credit_card]', $content );
 
+		// API key redaction patterns.
+		$api_patterns = array(
+			'/\b[A-Za-z0-9]{32,40}\b/',                // Generic API key.
+			'/\b[0-9a-f]{32}\b/i',                     // 32 hex characters.
+			'/\b(?:[A-Z0-9]{4}-){3,7}[A-Z0-9]{4}\b/i', // Segmented API key (e.g., XXXX-XXXX-XXXX-XXXX).
+			'/\bsk_[A-Za-z0-9]{24,}\b/i',              // Stripe keys (starts with sk_).
+		);
+
+		foreach ( $api_patterns as $pattern ) {
+			$content = preg_replace( $pattern, '[redacted_api_key]', $content );
+		}
+
 		return $content;
 	}
 

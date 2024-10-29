@@ -650,6 +650,22 @@ namespace Automattic\WooCommerce\Tests\Internal\Logging {
 					'input'    => 'Order #123 had 456 items costing $789',
 					'expected' => 'Order #123 had 456 items costing $789',
 				),
+				'generic api key'                      => array(
+					'input'    => 'API Key: a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0',
+					'expected' => 'API Key: [redacted_api_key]',
+				),
+				'hex api key'                          => array(
+					'input'    => 'Key: 1234567890abcdef1234567890abcdef',
+					'expected' => 'Key: [redacted_api_key]',
+				),
+				'segmented api key'                    => array(
+					'input'    => 'Access Key: ABCD-1234-EFGH-5678',
+					'expected' => 'Access Key: [redacted_api_key]',
+				),
+				'multiple api keys'                    => array(
+					'input'    => 'Keys: a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0, ABCD-1234-EFGH-5678, sk_live_1234567890abcdef',
+					'expected' => 'Keys: [redacted_api_key], [redacted_api_key], [redacted_api_key]',
+				),
 			);
 		}
 
