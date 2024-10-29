@@ -928,15 +928,15 @@ class WC_Order extends WC_Abstract_Order {
 	public function get_date_paid( $context = 'view' ) {
 		$date_paid = $this->get_prop( 'date_paid', $context );
 
-		/**
-		 * Filters the order status to set after payment complete.
-		 *
-		 * @param string   $status        Order status.
-		 * @param int      $order_id      Order ID.
-		 * @param WC_Order $this          Order object.
-		 */
-		$has_payment_complete_status = $this->has_status( apply_filters( 'woocommerce_payment_complete_order_status', $this->needs_processing() ? OrderStatus::PROCESSING : OrderStatus::COMPLETED, $this->get_id(), $this ) );
-		if ( 'view' === $context && ! $date_paid && version_compare( $this->get_version( 'edit' ), '3.0', '<' ) && $has_payment_complete_status ) {
+		if ( 'view' === $context && ! $date_paid && version_compare( $this->get_version( 'edit' ), '3.0', '<' )
+			/**
+			 * Filters the order status to set after payment complete.
+			 *
+			 * @param string   $status        Order status.
+			 * @param int      $order_id      Order ID.
+			 * @param WC_Order $this          Order object.
+			 */
+			&& $this->has_status( apply_filters( 'woocommerce_payment_complete_order_status', $this->needs_processing() ? OrderStatus::PROCESSING : OrderStatus::COMPLETED, $this->get_id(), $this ) ) ) {
 			// In view context, return a date if missing.
 			$date_paid = $this->get_date_created( 'edit' );
 		}
