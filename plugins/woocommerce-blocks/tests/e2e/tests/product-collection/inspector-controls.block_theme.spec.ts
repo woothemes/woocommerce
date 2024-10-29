@@ -60,7 +60,6 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 		await expect( pageObject.productTitles ).toHaveText( sortedTitles );
 	} );
 
-	// Products can be filtered based on 'on sale' status.
 	test( 'Products can be filtered based on "on sale" status', async ( {
 		pageObject,
 	} ) => {

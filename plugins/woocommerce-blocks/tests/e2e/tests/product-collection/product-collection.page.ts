@@ -84,14 +84,16 @@ export type Collections =
 	| 'myCustomCollectionWithOrderContext'
 	| 'myCustomCollectionWithCartContext'
 	| 'myCustomCollectionWithArchiveContext'
-	| 'myCustomCollectionMultipleContexts';
+	| 'myCustomCollectionMultipleContexts'
+	| 'myCustomCollectionWithInserterScope'
+	| 'myCustomCollectionWithBlockScope';
 
 const collectionToButtonNameMap = {
 	newArrivals: 'New Arrivals',
-	topRated: 'Top Rated',
+	topRated: 'Top Rated Products',
 	bestSellers: 'Best Sellers',
-	onSale: 'On Sale',
-	featured: 'Featured',
+	onSale: 'On Sale Products',
+	featured: 'Featured Products',
 	productCatalog: 'create your own',
 	myCustomCollection: 'My Custom Collection',
 	myCustomCollectionWithPreview: 'My Custom Collection with Preview',
@@ -105,6 +107,9 @@ const collectionToButtonNameMap = {
 		'My Custom Collection - Archive Context',
 	myCustomCollectionMultipleContexts:
 		'My Custom Collection - Multiple Contexts',
+	myCustomCollectionWithInserterScope:
+		'My Custom Collection - With Inserter Scope',
+	myCustomCollectionWithBlockScope: 'My Custom Collection - With Block Scope',
 };
 
 class ProductCollectionPage {
