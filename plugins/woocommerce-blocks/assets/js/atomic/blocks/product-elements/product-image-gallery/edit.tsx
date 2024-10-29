@@ -35,30 +35,16 @@ const Placeholder = () => {
 	);
 };
 
-type Context = {
-	postId: string;
-	postType: string;
-	queryId: string;
-};
-
-interface Props extends BlockEditProps< BlockAttributes > {
-	context: Context;
-}
-
-const Edit = ( { context }: Props ) => {
+const Edit = () => {
 	const blockProps = useBlockProps();
 
-	if ( isEmptyObject( context ) ) {
-		return (
-			<div { ...blockProps }>
-				<Disabled>
-					<Placeholder />
-				</Disabled>
-			</div>
-		);
-	}
-	// We have work on this case when we will work on the Single Product block.
-	return <></>;
+	return (
+		<div { ...blockProps }>
+			<Disabled>
+				<Placeholder />
+			</Disabled>
+		</div>
+	);
 };
 
 export default Edit;
