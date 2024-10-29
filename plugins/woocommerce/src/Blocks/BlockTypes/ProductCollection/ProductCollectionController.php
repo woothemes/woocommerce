@@ -9,9 +9,9 @@ use WP_Query;
 use WC_Tax;
 
 /**
- * ProductCollection class.
+ * ProductCollectionController class.
  */
-class ProductCollection extends AbstractBlock {
+class ProductCollectionController extends AbstractBlock {
 
 	/**
 	 * Block name.
