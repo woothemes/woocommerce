@@ -36,7 +36,7 @@ import './style.scss';
 const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 	const { attributes, setAttributes } = props;
 
-	const { displayStyle, isPreview, showCounts, selectType } = attributes;
+	const { className, isPreview, showCounts, selectType } = attributes;
 
 	const { children, ...innerBlocksProps } = useInnerBlocksProps(
 		useBlockProps(),
@@ -204,11 +204,11 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 					</Notice>
 				) }
 				<div
-					className={ clsx( `style-${ displayStyle }`, {
+					className={ clsx( {
 						'is-loading': isLoading,
 					} ) }
 				>
-					{ displayStyle === 'dropdown' ? (
+					{ className === 'is-style-dropdown' ? (
 						<PreviewDropdown
 							placeholder={
 								selectType === 'single'
