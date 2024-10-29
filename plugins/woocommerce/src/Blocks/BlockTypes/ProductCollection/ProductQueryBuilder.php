@@ -1,7 +1,11 @@
 <?php
 
-namespace Automattic\WooCommerce\Blocks\BlockTypes;
+namespace Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection;
 
+use Automattic\WooCommerce\Blocks\BlockTypes\AttributeFilter;
+use Automattic\WooCommerce\Blocks\BlockTypes\PriceFilter;
+use Automattic\WooCommerce\Blocks\BlockTypes\RatingFilter;
+use Automattic\WooCommerce\Blocks\BlockTypes\StockFilter;
 use WP_Query;
 use WC_Tax;
 
@@ -33,7 +37,7 @@ class ProductQueryBuilder {
 		add_filter( 'posts_clauses', array( $this, 'add_price_range_filter_posts_clauses' ), 10, 2 );
 	}
 
-    /**
+	/**
 	 * Return or initialize $valid_query_vars.
 	 *
 	 * @return array
@@ -43,8 +47,7 @@ class ProductQueryBuilder {
 			return $this->valid_query_vars;
 		}
 
-		$valid_query_vars       = array_keys( ( new WP_Query() )->fill_query_vars( array() ) );
-		// $this->valid_query_vars = array_merge(
+		$valid_query_vars = array_keys( ( new WP_Query() )->fill_query_vars( array() ) );
 		return array_merge(
 			$valid_query_vars,
 			// fill_query_vars doesn't include these vars so we need to add them manually.
@@ -71,9 +74,7 @@ class ProductQueryBuilder {
 				'priceRange',
 			)
 		);
-
-		// return $this->valid_query_vars;
-    }
+	}
 
 	/**
 	 * Get custom order options.
@@ -84,7 +85,7 @@ class ProductQueryBuilder {
 		return $this->custom_order_opts;
 	}
 
-    /**
+	/**
 	 * Get the final query arguments for the frontend.
 	 *
 	 * @param array $collection_args            Any special arguments that should change the behavior of the query.
@@ -143,7 +144,7 @@ class ProductQueryBuilder {
 		);
 
 		return $final_query;
-    }
+	}
 
 	/**
 	 * Return a query to filter products by taxonomies (product categories, product tags, etc.)
@@ -188,7 +189,7 @@ class ProductQueryBuilder {
 		return ! empty( $result ) ? array( 'tax_query' => $result ) : array();
 	}
 
-    /**
+	/**
 	 * Get final query args based on provided values
 	 *
 	 * @param array $collection_args            Any special arguments that should change the behavior of the query.
@@ -607,19 +608,19 @@ class ProductQueryBuilder {
 	 * - For array items with string keys:
 	 *
 	 *   - If the value isn't array, we'll use the value coming from the merge array.
-	 *     $base = ['orderby' => 'date']
-	 *     $new  = ['orderby' => 'meta_value_num']
+	 *     $base       = ['orderby' => 'date']
+	 *     $new_array  = ['orderby' => 'meta_value_num']
 	 *     Result: ['orderby' => 'meta_value_num']
 	 *
 	 *   - If the value is array, we'll use recursion to merge each key.
-	 *     $base = ['meta_query' => [
+	 *     $base       = ['meta_query' => [
 	 *       [
 	 *         'key'     => '_stock_status',
 	 *         'compare' => 'IN'
 	 *         'value'   =>  ['instock', 'onbackorder']
 	 *       ]
 	 *     ]]
-	 *     $new  = ['meta_query' => [
+	 *     $new_array  = ['meta_query' => [
 	 *       [
 	 *         'relation' => 'AND',
 	 *         [...<max_price_query>],
@@ -639,15 +640,15 @@ class ProductQueryBuilder {
 	 *       ]
 	 *     ]]
 	 *
-	 *     $base = ['post__in' => [1, 2, 3, 4, 5]]
-	 *     $new  = ['post__in' => [3, 4, 5, 6, 7]]
+	 *     $base       = ['post__in' => [1, 2, 3, 4, 5]]
+	 *     $new_array  = ['post__in' => [3, 4, 5, 6, 7]]
 	 *     Result: ['post__in' => [1, 2, 3, 4, 5, 3, 4, 5, 6, 7]]
 	 *
 	 * @param array $base First array.
 	 * @param array $new  Second array.
 	 */
-	private function array_merge_recursive_replace_non_array_properties( $base, $new ) {
-		foreach ( $new as $key => $value ) {
+	private function array_merge_recursive_replace_non_array_properties( $base, $new_array ) {
+		foreach ( $new_array as $key => $value ) {
 			if ( is_numeric( $key ) ) {
 				$base[] = $value;
 			} elseif ( is_array( $value ) ) {
@@ -764,7 +765,7 @@ class ProductQueryBuilder {
 		);
 	}
 
-		/**
+	/**
 	 * Add the `posts_clauses` filter to the main query.
 	 *
 	 * @param array    $clauses The query clauses.

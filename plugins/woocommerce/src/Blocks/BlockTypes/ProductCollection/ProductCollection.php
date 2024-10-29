@@ -1,7 +1,8 @@
 <?php
 
-namespace Automattic\WooCommerce\Blocks\BlockTypes;
+namespace Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection;
 
+use Automattic\WooCommerce\Blocks\BlockTypes\AbstractBlock;
 use Automattic\WooCommerce\Blocks\Utils\ProductCollectionUtils;
 use InvalidArgumentException;
 use WP_Query;
