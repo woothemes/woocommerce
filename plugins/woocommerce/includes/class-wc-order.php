@@ -447,14 +447,14 @@ class WC_Order extends WC_Abstract_Order {
 					do_action( 'woocommerce_order_status_changed', $this->get_id(), $status_transition['from'], $status_transition['to'], $this );
 
 					// Work out if this was for a payment, and trigger a payment_status hook instead.
-					/**
-					 * Filter the valid order statuses for payment.
-					 *
-					 * @param array    $valid_order_statuses Array of valid order statuses for payment.
-					 * @param WC_Order $order                Order object.
-					 * @since 4.0.0
-					 */
 					if (
+						/**
+						 * Filter the valid order statuses for payment.
+						 *
+						 * @param array    $valid_order_statuses Array of valid order statuses for payment.
+						 * @param WC_Order $order                Order object.
+						 * @since 4.0.0
+						 */
 						in_array( $status_transition['from'], apply_filters( 'woocommerce_valid_order_statuses_for_payment', array( OrderStatus::PENDING, OrderStatus::FAILED ), $this ), true )
 						&& in_array( $status_transition['to'], wc_get_is_paid_statuses(), true )
 					) {
