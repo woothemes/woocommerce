@@ -65,6 +65,22 @@ composer update
 
 ## The container
 
+### Important notice
+
+As of WooCommerce 9.5 WooCommerce uses a new, simpler, custom-made container instead of the old one based on the PHP League's Container package. However, the old container is still in place and it's possible to configure WooCommerce to use it (instead of the new container) by adding one of these snippets:
+
+1. `define('WOOCOMMERCE_USE_OLD_DI_CONTAINER', true);`
+2. `add_filter('woocommerce_use_old_di_container', '__return_true');`
+
+This should be done **only** if an issue in the new container causes disruption in the site. This fallback mechanism, together with the old container and the PHP League's Container package, will be removed in WooCommerce 10.0.
+
+The new container is used in the same way as the old one: it's only for classes in the `src` directory, dependencies are defined in an `init` method of the classes, the container exposes a `get` method and a `has` method, and `wc_get_container` can be used to use the container from legacy code; the difference is that explicit class registration is not needed anymore (any class in the `Automattic\Woocommerce` namespace can be resolved). **However**, until WooCommerce 10.0 arrives please keep registering new classes using service providers as instructed below, so that the old container can be used if needed.
+
+As for the unit tests, they can be forced to use the old container by defining the `USE_OLD_DI_CONTAINER` environment variable.
+
+*End of important notice*
+
+
 WooCommerce uses a [PSR-11](https://www.php-fig.org/psr/psr-11/) compatible container for registering and resolving all the classes in this directory by using the [dependency injection](https://en.wikipedia.org/wiki/Dependency_injection) pattern. More specifically, we use [the container from The PHP League](https://container.thephpleague.com/); this is relevant when registering classes, but not when resolving them. The full class name of the container used is `Automattic\WooCommerce\Container` (it uses the PHP League's container under the hood).
 
 _Resolving_ a class means asking the container to provide an instance of the class (or interface). _Registering_ a class means telling the container how the class should be resolved.
