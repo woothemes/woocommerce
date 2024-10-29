@@ -566,6 +566,7 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 		$order = $this->create_complex_cot_order();
 		$order->set_status( 'on-hold' );
 		$order->save();
+
 		$order_id = $order->get_id();
 
 		$this->sut->trash_order( $order );
