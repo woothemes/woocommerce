@@ -66,9 +66,9 @@ const reducer: Reducer< CartState > = ( state = defaultCartState, action ) => {
 					},
 				},
 			};
-			setIsCustomerDataDirty(
-				getIsCustomerDataDirty() || billingAddressChanged
-			);
+			if ( billingAddressChanged ) {
+				setIsCustomerDataDirty( true );
+			}
 			break;
 		case types.SET_SHIPPING_ADDRESS:
 			const shippingAddressChanged = Object.keys(
@@ -89,9 +89,9 @@ const reducer: Reducer< CartState > = ( state = defaultCartState, action ) => {
 					},
 				},
 			};
-			setIsCustomerDataDirty(
-				getIsCustomerDataDirty() || shippingAddressChanged
-			);
+			if ( shippingAddressChanged ) {
+				setIsCustomerDataDirty( true );
+			}
 			break;
 
 		case types.REMOVING_COUPON:
