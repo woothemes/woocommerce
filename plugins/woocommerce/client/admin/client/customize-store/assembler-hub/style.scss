@@ -1,10 +1,8 @@
 @keyframes containerFadeIn {
-
 	0%,
 	80% {
 		opacity: 0;
 	}
-
 	100% {
 		opacity: 1;
 	}
@@ -92,7 +90,6 @@ body.woocommerce-assembler {
 	}
 
 	.woocommerce-edit-site-site-hub__view-mode-toggle-container {
-
 		.woocommerce-edit-site-layout__view-mode-toggle,
 		.woocommerce-edit-site-layout__view-mode-toggle-icon.edit-site-site-icon,
 		.edit-site-site-icon__icon {
@@ -168,7 +165,7 @@ body.woocommerce-assembler {
 			text-transform: uppercase;
 		}
 
-		.woocommerce-edit-site-sidebar-navigation-item {
+		.edit-site-sidebar-navigation-item {
 			border-radius: 4px;
 			padding: 8px 8px 8px 16px;
 			align-items: center;
@@ -194,13 +191,12 @@ body.woocommerce-assembler {
 				font-size: 0.8125rem;
 				font-style: normal;
 				font-weight: 400;
-				line-height: 16px;
-				/* 123.077% */
+				line-height: 16px; /* 123.077% */
 				letter-spacing: -0.078px;
 			}
 		}
 
-		.woocommerce-edit-site-sidebar-navigation-item.components-item .woocommerce-edit-site-sidebar-navigation-item__drilldown-indicator {
+		.edit-site-sidebar-navigation-item.components-item .edit-site-sidebar-navigation-item__drilldown-indicator {
 			fill: #ccc;
 		}
 
@@ -465,6 +461,7 @@ body.woocommerce-assembler {
 			text-transform: uppercase;
 			margin-bottom: 4px;
 		}
+
 		p {
 			margin: 0;
 		}
@@ -479,10 +476,12 @@ body.woocommerce-assembler {
 		margin-top: 48px;
 		color: #1e1e1e;
 		padding: 0;
+
 		h4 {
 			text-transform: uppercase;
 			margin-bottom: 4px;
 		}
+
 		p {
 			margin: 0;
 		}
@@ -543,7 +542,7 @@ body.woocommerce-assembler {
 	}
 
 	.woocommerce-customize-store__block-editor,
-	.woocommerce-edit-site-layout:not(.is-full-canvas) .woocommerce-edit-site-layout__canvas>div .interface-interface-skeleton__content {
+	.woocommerce-edit-site-layout:not(.is-full-canvas) .woocommerce-edit-site-layout__canvas > div .interface-interface-skeleton__content {
 		border-radius: 12px;
 
 		.woocommerce-customize-store__block-editor,
@@ -612,6 +611,7 @@ body.woocommerce-assembler {
 	.tour-kit-frame__container[data-popper-placement^="left"] {
 		& > .tour-kit-frame__arrow {
 			right: -5px;
+
 			&::before {
 				background: #fff;
 				border-top: 1px solid var(--gutenberg-gray-300, #ddd);
@@ -685,6 +685,7 @@ body.woocommerce-assembler {
 	&.ai-offline {
 		.woocommerce-tour-kit-step {
 			width: 430px;
+
 			.components-card__header {
 				background-image: none;
 				height: auto;
@@ -721,6 +722,16 @@ body.woocommerce-assembler {
 	}
 }
 
+@keyframes woocommerce-edit-site-canvas-loader__fade-in-animation {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
 .woocommerce-edit-site-canvas-spinner {
 	width: 100%;
 	height: 100%;
@@ -728,7 +739,7 @@ body.woocommerce-assembler {
 	align-items: center;
 	justify-content: center;
 
-	animation: 0.5s ease 1s edit-site-canvas-spinner__fade-in-animation;
+	animation: 0.5s ease 1s woocommerce-edit-site-canvas-spinner__fade-in-animation;
 	animation-fill-mode: forwards;
 	@include reduce-motion("animation");
 

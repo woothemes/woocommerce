@@ -1,8 +1,9 @@
 // This is a copy of the Gutenberg styles with the selectors modified.
+// Also, some z-index properties have been removed for simplicity.
 // https://github.com/WordPress/gutenberg/blob/8aa998526984a3e9d547cd638840f8314bad9d81/packages/edit-site/src/components/layout/style.scss
 // See https://github.com/woocommerce/woocommerce/issues/48377
-@import '_variables.scss';
-@import '_mixins.scss';
+@import "_variables.scss";
+@import "_mixins.scss";
 
 .woocommerce-edit-site-layout {
 	height: 100%;
@@ -24,7 +25,6 @@
 }
 
 .woocommerce-edit-site-layout__sidebar-region {
-	/*z-index: zIndex".woocommerce-edit-site-layout__sidebar");*/
 	width: 100vw;
 	flex-shrink: 0;
 
@@ -61,7 +61,6 @@
 .woocommerce-edit-site-layout__mobile {
 	position: relative;
 	width: 100%;
-	/* z-index: zIndex".woocommerce-edit-site-layout__canvas-container"); */
 
 	/*
 	 * The SiteHubMobile component is displayed
@@ -79,7 +78,6 @@
 .woocommerce-edit-site-layout__canvas-container {
 	position: relative;
 	flex-grow: 1;
-	/* z-index: zIndex".woocommerce-edit-site-layout__canvas-container"); */
 	// When animating the frame size can exceed its container size.
 	overflow: visible;
 
@@ -92,7 +90,6 @@
 		right: 0;
 		bottom: 0;
 		content: "";
-		/* z-index: zIndex".woocommerce-edit-site-layout__canvas-container.is-resizing::after"); */
 	}
 }
 
@@ -226,7 +223,6 @@ html.canvas-mode-edit-transition::view-transition-group(toggle) {
 }
 
 .woocommerce-edit-site-layout__actions {
-	/* z-index: zIndex".woocommerce-edit-site-layout__actions"); */
 	position: fixed !important; // Need to override the default relative positioning
 	top: -9999em;
 	bottom: auto;

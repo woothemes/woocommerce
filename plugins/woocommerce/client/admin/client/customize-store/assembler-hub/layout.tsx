@@ -158,7 +158,9 @@ export const Layout = () => {
 						type={ templateType }
 						id={ templateId }
 					>
-						<div className={ clsx( 'woocommerce-edit-site-layout' ) }>
+						<div
+							className={ clsx( 'woocommerce-edit-site-layout' ) }
+						>
 							<motion.div
 								className="woocommerce-edit-site-layout__header-container"
 								animate={ 'view' }

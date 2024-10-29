@@ -67,9 +67,12 @@ export const SidebarNavigationScreen = ( {
 	return (
 		<>
 			<VStack
-				className={ clsx( 'woocommerce-edit-site-sidebar-navigation-screen__main', {
-					'has-footer': !! footer,
-				} ) }
+				className={ clsx(
+					'woocommerce-edit-site-sidebar-navigation-screen__main',
+					{
+						'has-footer': !! footer,
+					}
+				) }
 				spacing={ 0 }
 				justify="flex-start"
 			>

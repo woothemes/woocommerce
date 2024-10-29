@@ -60,7 +60,10 @@ export const SiteHub = forwardRef(
 			<motion.div
 				ref={ ref }
 				{ ...restProps }
-				className={ clsx( 'woocommerce-edit-site-site-hub', restProps.className ) }
+				className={ clsx(
+					'woocommerce-edit-site-site-hub',
+					restProps.className
+				) }
 				initial={ false }
 				transition={ {
 					type: 'tween',

@@ -1,4 +1,4 @@
-@import '_breakpoints.scss';
+@import "_breakpoints.scss";
 
 @mixin break-medium() {
 	@media (min-width: #{ ($break-medium) }) {
@@ -9,24 +9,18 @@
 /**
  * Allows users to opt-out of animations via OS-level preferences.
  */
-
 @mixin reduce-motion($property: "") {
-
 	@if $property =="transition" {
 		@media (prefers-reduced-motion: reduce) {
 			transition-duration: 0s;
 			transition-delay: 0s;
 		}
-	}
-
-	@else if $property =="animation" {
+	} @else if $property =="animation" {
 		@media (prefers-reduced-motion: reduce) {
 			animation-duration: 1ms;
 			animation-delay: 0s;
 		}
-	}
-
-	@else {
+	} @else {
 		@media (prefers-reduced-motion: reduce) {
 			transition-duration: 0s;
 			transition-delay: 0s;

@@ -89,7 +89,6 @@
 					}
 
 					.woocommerce-edit-site-site-hub__view-mode-toggle-container {
-
 						.woocommerce-edit-site-layout__view-mode-toggle,
 						.woocommerce-edit-site-layout__view-mode-toggle-icon.edit-site-site-icon,
 						.edit-site-site-icon__icon {
@@ -186,7 +185,7 @@
 								margin-top: 40px;
 							}
 
-							.woocommerce-edit-site-sidebar-navigation-item {
+							.edit-site-sidebar-navigation-item {
 								border-radius: 4px;
 								padding: 8px 8px 8px 16px;
 								align-items: center;
@@ -291,12 +290,11 @@
 								font-size: 0.6875rem;
 								font-style: normal;
 								font-weight: 600;
-								line-height: 16px;
-								/* 145.455% */
+								line-height: 16px; /* 145.455% */
 								text-transform: uppercase;
 							}
 
-							.woocommerce-edit-site-sidebar-navigation-item.is-complete {
+							.edit-site-sidebar-navigation-item.is-complete {
 								text-decoration: line-through;
 								color: $gray-700;
 
