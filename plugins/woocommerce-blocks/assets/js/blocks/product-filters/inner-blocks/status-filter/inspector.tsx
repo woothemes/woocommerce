@@ -72,7 +72,7 @@ export const Inspector = ( {
 				>
 					<PanelRow>
 						{ __(
-							"Choose statuses to display as filter options. They'll shown only if there's at least one product with that status.",
+							"Choose statuses to display as filter options. They'll be shown only if there's at least one product with that status.",
 							'woocommerce'
 						) }
 					</PanelRow>

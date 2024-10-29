@@ -118,6 +118,53 @@ final class QueryFilters {
 	}
 
 	/**
+	 * Get the count of on sale products.
+	 *
+	 * @param array $query_vars The WP_Query arguments.
+	 */
+	public function get_onsale_status_counts( array $query_vars ) {
+		$transient_key = 'wc_onsale_status_count_' . md5( wp_json_encode( $query_vars ) );
+		$cached_data   = get_transient( $transient_key );
+
+		if ( isset( $cached_data ) && ( ! defined( 'WP_DEBUG' ) || true !== WP_DEBUG ) ) {
+			return $cached_data;
+		}
+
+		global $wpdb;
+
+		add_filter( 'posts_clauses', array( $this, 'add_query_clauses' ), 10, 2 );
+		add_filter( 'posts_pre_query', '__return_empty_array' );
+
+		$query_vars['no_found_rows']  = true;
+		$query_vars['posts_per_page'] = -1;
+		$query_vars['fields']         = 'ids';
+		$query                        = new \WP_Query();
+
+		$result = $query->query( $query_vars );
+		$product_query_sql = $query->request;
+
+		remove_filter( 'posts_clauses', array( $this, 'add_query_clauses' ), 10 );
+		remove_filter( 'posts_pre_query', '__return_empty_array' );
+
+		$count_sql = "
+			SELECT COUNT( DISTINCT product_id ) as status_count
+			FROM {$wpdb->wc_product_meta_lookup}
+			WHERE product_id IN ( {$product_query_sql} )
+			AND onsale > 0
+		";
+
+		$result = $wpdb->get_var( $count_sql );
+
+		$onsale_status_counts = array(
+			'onsale' => $result,
+		);
+
+		set_transient( $transient_key, $onsale_status_counts );
+
+		return $onsale_status_counts;
+	}
+
+	/**
 	 * Get rating counts for the current products.
 	 *
 	 * @param array $query_vars The WP_Query arguments.
@@ -224,9 +271,30 @@ final class QueryFilters {
 			return $args;
 		}
 
-		$statuses = $wp_query->get( 'filter_status' );
-		$args['join']   = $this->append_product_sorting_table_join( $args['join'] );
-		$args['where'] .= ' AND wc_product_meta_lookup.onsale = 1';
+		$statuses = array_map( 'esc_sql', explode( ',',  $wp_query->get( 'filter_status' ) ) );
+
+		foreach ( $statuses as $status ) {
+			switch ( $status ) {
+				case 'onsale':
+					$args['where'] .= ' AND wc_product_meta_lookup.onsale = 1';
+					break;
+				case 'featured':
+					break;
+				case 'instock':
+					$args['where'] .= ' AND wc_product_meta_lookup.stock_status = "instock"';
+					break;
+				case 'onbackorder':
+					$args['where'] .= ' AND wc_product_meta_lookup.stock_status = "onbackorder"';
+					break;
+				case 'outofstock':
+					$args['where'] .= ' AND wc_product_meta_lookup.stock_status = "outofstock"';
+					break;
+				default:
+					break;
+			}
+		}
+
+		$args['join'] = $this->append_product_sorting_table_join( $args['join'] );
 
 		return $args;
 	}

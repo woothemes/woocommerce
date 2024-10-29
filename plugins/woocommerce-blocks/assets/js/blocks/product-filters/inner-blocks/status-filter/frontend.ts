@@ -8,7 +8,7 @@ import { getContext, getElement, store } from '@woocommerce/interactivity';
  */
 import { ProductFiltersContext } from '../../frontend';
 
-const filterStockStatusKey = 'filter_stock_status';
+const filterStatusKey = 'filter_status';
 
 store( 'woocommerce/product-filter-status', {
 	actions: {
@@ -17,7 +17,7 @@ store( 'woocommerce/product-filter-status', {
 				'woocommerce/product-filters'
 			);
 			const currentFilters =
-				productFiltersContext.params[ filterStockStatusKey ];
+				productFiltersContext.params[ filterStatusKey ];
 
 			// split out the active filters into an array.
 			const filtersArr =
@@ -33,13 +33,13 @@ store( 'woocommerce/product-filter-status', {
 				: [ ...filtersArr, value ];
 
 			if ( newFilterArr.length === 0 ) {
-				delete productFiltersContext.params[ filterStockStatusKey ];
+				delete productFiltersContext.params[ filterStatusKey ];
 				return;
 			}
 
 			productFiltersContext.params = {
 				...productFiltersContext.params,
-				[ filterStockStatusKey ]: newFilterArr.join( ',' ),
+				[ filterStatusKey ]: newFilterArr.join( ',' ),
 			};
 		},
 		clearFilters: () => {
@@ -48,7 +48,7 @@ store( 'woocommerce/product-filter-status', {
 			);
 			const updatedParams = productFiltersContext.params;
 
-			delete updatedParams[ filterStockStatusKey ];
+			delete updatedParams[ filterStatusKey ];
 
 			productFiltersContext.params = {
 				...updatedParams,
