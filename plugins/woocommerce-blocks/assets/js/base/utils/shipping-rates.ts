@@ -71,7 +71,8 @@ export const hasShippingRate = (
 	shippingRates: CartShippingRate[]
 ): boolean => {
 	return shippingRates.some(
-		( shippingRatesPackage ) => shippingRatesPackage.shipping_rates.length
+		( shippingRatesPackage ) =>
+			!! shippingRatesPackage.shipping_rates.length
 	);
 };
 

@@ -4,7 +4,8 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { formatShippingAddress } from '@woocommerce/base-utils';
 import { ShippingCalculatorButton } from '@woocommerce/base-components/cart-checkout';
-import { useCheckoutAddress } from '@woocommerce/base-context';
+import { useSelect } from '@wordpress/data';
+import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
 import type { ShippingAddress as ShippingAddressType } from '@woocommerce/settings';
 import { CartShippingRate } from '@woocommerce/types';
 
@@ -20,7 +21,9 @@ export const ShippingAddress = ( {
 	shippingAddress: ShippingAddressType;
 	shippingRates: CartShippingRate[];
 } ): JSX.Element => {
-	const { prefersCollection } = useCheckoutAddress();
+	const prefersCollection = useSelect( ( select ) =>
+		select( CHECKOUT_STORE_KEY ).prefersCollection()
+	);
 
 	const formattedAddress = prefersCollection
 		? getPickupLocation( shippingRates )
