@@ -122,7 +122,6 @@ describe( 'TotalsShipping', () => {
 							currency_thousand_separator: ', ',
 						} as CartResponseTotals
 					}
-					className={ '' }
 				/>
 			</SlotFillProvider>
 		);
@@ -150,7 +149,6 @@ describe( 'TotalsShipping', () => {
 							currency_thousand_separator: ', ',
 						} as CartResponseTotals
 					}
-					className={ '' }
 				/>
 			</SlotFillProvider>
 		);
