@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection;
 
@@ -147,5 +148,4 @@ class ProductCollectionNoResults extends AbstractBlock {
 
 		return $new_url;
 	}
-
 }
