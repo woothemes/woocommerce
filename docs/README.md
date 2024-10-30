@@ -6,7 +6,7 @@ post_title: WooCommerce developer documentation
 
 This is your go-to place to find everything you need to know to get started with WooCommerce development, including implementation details for specific parts of the WooCommerce code base. 
 
-## Getting started
+## Getting started...
 
 WooCommerce is a customizable, open-source eCommerce platform built on WordPress. It empowers businesses worldwide to sell anything from physical products and digital downloads to subscriptions, content, and even appointments.
 

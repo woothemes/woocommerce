@@ -2,7 +2,7 @@
 
 A collection of utilities to display and work with currency values.
 
-## Installation...
+## Installation
 
 Install the module
 
