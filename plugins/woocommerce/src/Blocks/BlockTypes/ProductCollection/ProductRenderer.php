@@ -23,14 +23,53 @@ class ProductRenderer {
 	];
 
 	/**
+	 * The Block with its attributes before it gets rendered
+	 *
+	 * @var array
+	 */
+	protected $parsed_block;
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
 		// Interactivity API: Add navigation directives to the product collection block.
 		add_filter( 'render_block_woocommerce/product-collection', array( $this, 'handle_rendering' ), 10, 2 );
+
+		// Disable block render if the ProductTemplate block is empty.
+		add_filter(
+			'render_block_woocommerce/product-template',
+			function ( $html ) {
+				$this->render_state['has_results'] = ! empty( $html );
+				return $html;
+			},
+			100,
+			1
+		);
+
+		// Enable block render if the ProductCollectionNoResults block is rendered.
+		add_filter(
+			'render_block_woocommerce/product-collection-no-results',
+			function ( $html ) {
+				$this->render_state['has_no_results_block'] = ! empty( $html );
+				return $html;
+			},
+			100,
+			1
+		);
 		add_filter( 'render_block_core/query-pagination', array( $this, 'add_navigation_link_directives' ), 10, 3 );
+
 		// // Provide location context into block's context.
 		add_filter( 'render_block_context', array( $this, 'provide_location_context_for_inner_blocks' ), 11, 1 );
+	}
+
+	/**
+	 * Set the parsed block.
+	 *
+	 * @param array $block The block to be parsed.
+	 */
+	public function set_parsed_block( $block ) {
+		$this->parsed_block = $block;
 	}
 
 	/**
@@ -193,7 +232,7 @@ class ProductRenderer {
 		$p = new \WP_HTML_Tag_Processor( $block_content );
 
 		// Add `data-wc-navigation-id to the product collection block.
-		if ( $this->is_next_tag_product_collection( $p ) ) {
+		if ( $this->is_next_tag_product_collection( $p ) && isset( $this->parsed_block ) ) {
 			$p->set_attribute(
 				'data-wc-navigation-id',
 				'wc-product-collection-' . $this->parsed_block['attrs']['queryId']

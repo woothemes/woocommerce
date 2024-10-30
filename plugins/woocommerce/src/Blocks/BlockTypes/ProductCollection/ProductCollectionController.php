@@ -94,29 +94,6 @@ class ProductCollectionController extends AbstractBlock {
 
 		// Extend allowed `collection_params` for the REST API.
 		add_filter( 'rest_product_collection_params', array( $this, 'extend_rest_query_allowed_params' ), 10, 1 );
-
-		// Disable block render if the ProductTemplate block is empty.
-		add_filter(
-			'render_block_woocommerce/product-template',
-			function ( $html ) {
-				$this->render_state['has_results'] = ! empty( $html );
-				return $html;
-			},
-			100,
-			1
-		);
-
-		// Enable block render if the ProductCollectionNoResults block is rendered.
-		add_filter(
-			'render_block_woocommerce/product-collection-no-results',
-			function ( $html ) {
-				$this->render_state['has_no_results_block'] = ! empty( $html );
-				return $html;
-			},
-			100,
-			1
-		);
-
 		add_filter( 'render_block_core/post-title', array( $this, 'add_product_title_click_event_directives' ), 10, 3 );
 
 		// Disable client-side-navigation if incompatible blocks are detected.
@@ -381,6 +358,7 @@ class ProductCollectionController extends AbstractBlock {
 		}
 
 		$this->parsed_block = $parsed_block;
+		$this->renderer->set_parsed_block( $parsed_block );
 		$this->asset_data_registry->add( 'hasFilterableProducts', true );
 		/**
 		 * It enables the page to refresh when a filter is applied, ensuring that the product collection block,
