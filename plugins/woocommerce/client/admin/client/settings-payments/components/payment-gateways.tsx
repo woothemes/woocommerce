@@ -53,9 +53,6 @@ export const PaymentGateways = () => {
 		console.log( 'Setup live payments' );
 	};
 
-	console.log( 'paymentGateways', paymentGateways );
-	console.log( 'wooPaymentsData', wooPaymentsGatewayData );
-
 	// Transform plugins comply with List component format.
 	const paymentGatewaysList = paymentGateways.map(
 		( gateway: PaymentGateway ) => {
