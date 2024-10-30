@@ -119,6 +119,10 @@ class OrderActionsRestController extends RestApiControllerBase {
 			$order->set_billing_email( $email );
 		}
 
+		if ( ! is_email( $order->get_billing_email() ) ) {
+			return new WP_Error( 'woocommerce_rest_missing_email', __( 'Order does not have an email address.', 'woocommerce' ), array( 'status' => 400 ) );
+		}
+
 		// phpcs:disable WooCommerce.Commenting.CommentHooks.MissingSinceComment
 		/** This action is documented in includes/admin/meta-boxes/class-wc-meta-box-order-actions.php */
 		do_action( 'woocommerce_before_resend_order_emails', $order, 'customer_invoice' );

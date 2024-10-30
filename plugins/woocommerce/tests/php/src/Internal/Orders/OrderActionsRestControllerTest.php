@@ -142,4 +142,26 @@ class OrderActionsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$this->assertEquals( 'rest_invalid_param', $data['code'] );
 		$this->assertEquals( 'Invalid parameter(s): email', $data['message'] );
 	}
+
+	/**
+	 * Test sending order details email when the order does not have an email.
+	 */
+	public function test_send_order_details_without_order_email() {
+		$order = wc_create_order();
+		$order->set_billing_email( '' );
+		$order->save();
+
+		wp_set_current_user( $this->user );
+
+		$request = new WP_REST_Request( 'POST', '/wc/v3/orders/' . $order->get_id() . '/actions/send_order_details' );
+		$request->add_header( 'User-Agent', 'some app' );
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertEquals( 400, $response->get_status() );
+
+		$data = $response->get_data();
+		$this->assertEquals( 'woocommerce_rest_missing_email', $data['code'] );
+		$this->assertEquals( 'Order does not have an email address.', $data['message'] );
+	}
 }
