@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useContext } from '@wordpress/element';
+import { useContext, useCallback } from '@wordpress/element';
 import type { ShippingAddress } from '@woocommerce/settings';
 import { useCustomerData } from '@woocommerce/base-context/hooks';
 import { dispatch } from '@wordpress/data';
@@ -39,6 +39,33 @@ export const ShippingCalculator = ( {
 	const { shippingAddress } = useCustomerData();
 	const noticeContext = 'wc/cart/shipping-calculator';
 
+	const handleCancel = useCallback( () => {
+		setIsShippingCalculatorOpen( false );
+		onCancel();
+	}, [ setIsShippingCalculatorOpen, onCancel ] );
+
+	const handleUpdate = useCallback(
+		( newAddress: ShippingAddress ) => {
+			// Updates the address and waits for the result.
+			dispatch( CART_STORE_KEY )
+				.updateCustomerData(
+					{
+						shipping_address: newAddress,
+					},
+					false
+				)
+				.then( () => {
+					removeNoticesWithContext( noticeContext );
+					setIsShippingCalculatorOpen( false );
+					onUpdate( newAddress );
+				} )
+				.catch( ( response ) => {
+					processErrorResponse( response, noticeContext );
+				} );
+		},
+		[ onUpdate, setIsShippingCalculatorOpen ]
+	);
+
 	if ( ! showCalculator ) {
 		return null;
 	}
@@ -52,28 +79,8 @@ export const ShippingCalculator = ( {
 			<ShippingCalculatorAddress
 				address={ shippingAddress }
 				addressFields={ addressFields }
-				onCancel={ () => {
-					setIsShippingCalculatorOpen( false );
-					onCancel();
-				} }
-				onUpdate={ ( newAddress ) => {
-					// Updates the address and waits for the result.
-					dispatch( CART_STORE_KEY )
-						.updateCustomerData(
-							{
-								shipping_address: newAddress,
-							},
-							false
-						)
-						.then( () => {
-							removeNoticesWithContext( noticeContext );
-							setIsShippingCalculatorOpen( false );
-							onUpdate( newAddress );
-						} )
-						.catch( ( response ) => {
-							processErrorResponse( response, noticeContext );
-						} );
-				} }
+				onCancel={ handleCancel }
+				onUpdate={ handleUpdate }
 			/>
 		</div>
 	);
