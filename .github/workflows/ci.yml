@@ -455,6 +455,7 @@ jobs:
 
     steps:
       - uses: 'actions/checkout@v4'
+        name: Checkout (everything, need ${{ github.event.pull_request.commits }} commits)
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
