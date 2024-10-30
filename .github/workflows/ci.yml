@@ -43,11 +43,11 @@ jobs:
       report-jobs: ${{ steps.project-jobs.outputs.report-jobs }}
     steps:
       - name: 'Calculate checkout depth'
-        if: ${{ github.event_name == 'pull_request' && github.base_ref == 'trunk' }}
+        if: ${{ github.event_name == 'pull_request' && github.base_ref == 'test skipping it' }}
         id: checkout_depth
         shell: bash
         run: |
-          pull_request_commits=$(( ${{ github.event.pull_request.commits }} + 2 ))
+          pull_request_commits=$(( ${{ github.event.pull_request.commits }} + 1 ))
           echo "pull_request_commits=$pull_request_commits" >> $GITHUB_OUTPUT
 
       - uses: 'actions/checkout@v4'
@@ -70,10 +70,10 @@ jobs:
             if ( baseRef ) {
               baseRef = `--base-ref origin/${ baseRef }`;
             }
-            let baseSha = ${{ toJson( github.event.pull_request.base.sha ) }};
-            if ( baseSha ) {
-              baseRef = `--base-ref ${ baseSha }`;
-            }
+            // let baseSha = ${{ toJson( github.event.pull_request.base.sha ) }};
+            // if ( baseSha ) {
+            //   baseRef = `--base-ref ${ baseSha }`;
+            // }
 
             let githubEvent = ${{ toJson( github.event_name ) }};
 
