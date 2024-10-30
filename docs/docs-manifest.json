@@ -815,7 +815,7 @@
           "post_title": "Formatting for Changelog.txt",
           "menu_title": "Changelog.txt",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/extension-development/changelog-txt.md",
-          "hash": "ee84b4ee1ec2b163b10d4e5ffa83585bbca5eed68b0481beef3f3331488c4d95",
+          "hash": "f5688b3bd4dde0379fb0b863dc3ab1983cf63c291e087658a35c2f90164955c5",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/extension-development/changelog-txt.md",
           "id": "05308ae6632158907efc55b3dcbd693c265f25c8"
         },
@@ -1823,5 +1823,5 @@
       "categories": []
     }
   ],
-  "hash": "e7e1bd2544b17fd45e12130a3e280983bfd351818fa20087691b961760d4c957"
+  "hash": "b493fa620b4f693f8165bd4cdcd474badf1659f4ae65e71a012bdde28351e8eb"
 }
