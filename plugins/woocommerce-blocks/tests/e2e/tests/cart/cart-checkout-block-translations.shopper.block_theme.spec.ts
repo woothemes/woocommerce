@@ -122,7 +122,6 @@ test.describe( 'Shopper → Translations', () => {
 		await expect(
 			page.getByText( getTestTranslation( 'Subtotal' ) )
 		).toBeVisible();
-		// TODO: Skipped test for now because translation is not ready...
 
 		await expect(
 			page.getByText( getTestTranslation( 'Total' ), { exact: true } )
