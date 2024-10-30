@@ -99,9 +99,9 @@ const blocks = {
 		isExperimental: true,
 		customDir: 'product-filters/inner-blocks/overlay-navigation',
 	},
-	'product-filter-stock-status': {
+	'product-filter-status': {
 		isExperimental: true,
-		customDir: 'product-filters/inner-blocks/stock-filter',
+		customDir: 'product-filters/inner-blocks/status-filter',
 	},
 	'product-filter-price': {
 		customDir: 'product-filters/inner-blocks/price-filter',
@@ -129,6 +129,10 @@ const blocks = {
 	},
 	'product-filter-chips': {
 		customDir: 'product-filters/inner-blocks/chips',
+		isExperimental: true,
+	},
+	'product-filter-price-slider': {
+		customDir: 'product-filters/inner-blocks/price-slider',
 		isExperimental: true,
 	},
 	'order-confirmation-summary': {
@@ -179,6 +183,7 @@ const blocks = {
 // Intentional separation of cart and checkout entry points to allow for better code splitting.
 const cartAndCheckoutBlocks = {
 	cart: {},
+	'cart-link': {},
 	checkout: {},
 	'mini-cart': {},
 	'mini-cart-contents': {

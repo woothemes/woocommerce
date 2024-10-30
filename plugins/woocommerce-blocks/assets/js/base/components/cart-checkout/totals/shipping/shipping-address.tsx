@@ -4,27 +4,19 @@
 import { __ } from '@wordpress/i18n';
 import { formatShippingAddress } from '@woocommerce/base-utils';
 import { ShippingAddress as ShippingAddressType } from '@woocommerce/settings';
-import PickupLocation from '@woocommerce/base-components/cart-checkout/pickup-location';
+import {
+	ShippingLocation,
+	PickupLocation,
+	ShippingCalculatorButton,
+} from '@woocommerce/base-components/cart-checkout';
 import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
 import { useSelect } from '@wordpress/data';
 
-/**
- * Internal dependencies
- */
-import ShippingLocation from '../../shipping-location';
-import { CalculatorButton, CalculatorButtonProps } from './calculator-button';
-
 export interface ShippingAddressProps {
-	showCalculator: boolean;
-	isShippingCalculatorOpen: boolean;
-	setIsShippingCalculatorOpen: CalculatorButtonProps[ 'setIsShippingCalculatorOpen' ];
 	shippingAddress: ShippingAddressType;
 }
 
 export const ShippingAddress = ( {
-	showCalculator,
-	isShippingCalculatorOpen,
-	setIsShippingCalculatorOpen,
 	shippingAddress,
 }: ShippingAddressProps ): JSX.Element | null => {
 	const prefersCollection = useSelect( ( select ) =>
@@ -44,13 +36,7 @@ export const ShippingAddress = ( {
 			) : (
 				<ShippingLocation formattedLocation={ formattedLocation } />
 			) }
-			{ showCalculator && (
-				<CalculatorButton
-					label={ label }
-					isShippingCalculatorOpen={ isShippingCalculatorOpen }
-					setIsShippingCalculatorOpen={ setIsShippingCalculatorOpen }
-				/>
-			) }
+			<ShippingCalculatorButton label={ label } />
 		</>
 	);
 };
