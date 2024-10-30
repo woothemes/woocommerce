@@ -1,5 +1,5 @@
 name: 🚧 Point release request
-description: Request handling individual pull request as point release request.
+description: Request to process a particular pull request as part of a point release.
 title: "[PRR]: "
 labels: ["point release request"]
 body:
