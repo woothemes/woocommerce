@@ -42,20 +42,21 @@ jobs:
       test-jobs: ${{ steps.project-jobs.outputs.test-jobs }}
       report-jobs: ${{ steps.project-jobs.outputs.report-jobs }}
     steps:
-      - name: 'Calculate checkout depth'
+      - name: Setup - calculate checkout depth
         id: checkout_depth
         shell: bash
         run: |
           pull_request_commits=$(( ${{ ( github.event_name == 'pull_request' && github.event.pull_request.commits ) || 1 }} + 1 ))
           echo "pull_request_commits=$pull_request_commits" >> $GITHUB_OUTPUT
-      - uses: 'actions/checkout@v4'
+      - name: Setup - checkout
+        uses: 'actions/checkout@v4'
         with:
           ref: ${{ ( github.event_name == 'pull_request' && github.head_ref ) || '' }}
           fetch-depth: ${{ steps.checkout_depth.outputs.pull_request_commits }}
-      - name: 'Setup PNPM'
+      - name: Setup - pnpm
         uses: 'pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d'
-      - uses: actions/github-script@v7
-        name: 'Build Matrix'
+      - name: Setup - spawn linting and testing jobs
+        uses: actions/github-script@v7
         id: 'project-jobs'
         with:
           script: |
