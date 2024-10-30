@@ -314,6 +314,7 @@ WooCommerce comes with some sample data you can use to see how products look; im
 * Dev - Update docs [#51144](https://github.com/woocommerce/woocommerce/pull/51144)
 * Dev - Updated webpack build script for wc admin so that the wp-admin-scripts are dynamically fetched from the fs instead of a hard list [#51133](https://github.com/woocommerce/woocommerce/pull/51133)
 * Dev - [Enhancement] Abstract rating block #50810 [#50810](https://github.com/woocommerce/woocommerce/pull/50810)
+* Tweak - Add default Facebook for WooCommerce plugin recommendation. [#52405](https://github.com/woocommerce/woocommerce/pull/52405)
 * Tweak - Fix PHPCS warnings in OrdersTableQuery.php and ProductQuery.php [#51281](https://github.com/woocommerce/woocommerce/pull/51281)
 * Tweak - Fix typo in inline doc in woocommerce client, includes, and lib folders. [#50739](https://github.com/woocommerce/woocommerce/pull/50739)
 * Tweak - Fix typos in plugins/woocommerce-blocks/docs [#48562](https://github.com/woocommerce/woocommerce/pull/48562)
