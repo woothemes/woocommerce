@@ -4,21 +4,49 @@
 import { InspectorControls } from '@wordpress/block-editor';
 import { BlockEditProps } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
-import { PanelBody, ToggleControl } from '@wordpress/components';
+import { PanelBody, RadioControl, ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { Attributes } from '../types';
+import RatingStars from './rating-stars';
+
+function MinimumRatingLabel( {
+	stars,
+	ariaLabel,
+}: {
+	stars: number;
+	ariaLabel: string;
+} ) {
+	return (
+		<div
+			className="wc-block-rating-filter__rating-label"
+			aria-label={ ariaLabel }
+		>
+			<RatingStars stars={ stars } />{ ' ' }
+			<span className="wc-block-rating-filter__rating-label-text">
+				{ __( '& up', 'woocommerce' ) }
+			</span>
+		</div>
+	);
+}
 
 export const Inspector = ( {
 	attributes,
 	setAttributes,
 }: Pick< BlockEditProps< Attributes >, 'attributes' | 'setAttributes' > ) => {
-	const { showCounts } = attributes;
+	const { showCounts, minRating } = attributes;
+
+	const setMinRating = ( value: string ) => {
+		setAttributes( {
+			minRating: value,
+		} );
+	};
+
 	return (
 		<InspectorControls key="inspector">
-			<PanelBody title={ __( 'Display Settings', 'woocommerce' ) }>
+			<PanelBody title={ __( 'Display', 'woocommerce' ) }>
 				<ToggleControl
 					label={ __( 'Display product count', 'woocommerce' ) }
 					checked={ showCounts }
@@ -27,6 +55,56 @@ export const Inspector = ( {
 							showCounts: ! showCounts,
 						} )
 					}
+				/>
+			</PanelBody>
+
+			<PanelBody title={ __( 'Minimum rating', 'woocommerce' ) }>
+				<RadioControl
+					selected={ minRating }
+					className="wc-block-rating-filter__rating-control"
+					options={ [
+						{
+							label: (
+								<MinimumRatingLabel
+									stars={ 4 }
+									ariaLabel={ __(
+										'Four stars and up',
+										'woocommerce'
+									) }
+								/>
+							),
+							value: '4',
+						},
+						{
+							label: (
+								<MinimumRatingLabel
+									stars={ 3 }
+									ariaLabel={ __(
+										'Three stars and up',
+										'woocommerce'
+									) }
+								/>
+							),
+							value: '3',
+						},
+						{
+							label: (
+								<MinimumRatingLabel
+									stars={ 2 }
+									ariaLabel={ __(
+										'Two stars and up',
+										'woocommerce'
+									) }
+								/>
+							),
+							value: '2',
+						},
+						{
+							label: __( 'No limit', 'woocommerce' ),
+							value: '0', // no limit
+						},
+					] }
+					onChange={ setMinRating }
 				/>
 			</PanelBody>
 		</InspectorControls>

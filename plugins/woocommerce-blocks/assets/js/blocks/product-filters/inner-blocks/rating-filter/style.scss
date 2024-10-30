@@ -10,3 +10,12 @@
 		margin-left: $gap-smallest;
 	}
 }
+
+.wc-block-rating-filter__rating-label {
+	display: flex;
+	align-items: center;
+
+	.wc-block-rating-filter__rating-label-text {
+		margin-left: $gap-smallest;
+	}
+}
