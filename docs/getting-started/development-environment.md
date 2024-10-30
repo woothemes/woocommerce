@@ -46,7 +46,6 @@ Below are a couple of tools designed specifically for a WordPress environment:
 
 - [vvv](https://varyingvagrantvagrants.org/) is a highly configurable, cross-platform, and robust environment management tool powered by VirtualBox and Vagrant. This is one tool that the WooCommerce Core team recommends to contributors.
 - [wp-env](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-env/) is a command-line utility maintained by the WordPress community that allows you to set up and run custom WordPress environments with [Docker](https://www.docker.com/) and JSON manifests.
-- [LocalWP](https://localwp.com/) is a cross-platform app that bills itself as a one-click WordPress installation.
 
 #### General PHP-based web stack tools
 
