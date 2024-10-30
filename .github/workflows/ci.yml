@@ -30,17 +30,35 @@ env:
   FORCE_COLOR: 1
 
 jobs:
+  identify-jobs-to-run:
+    name: 'Identify jobs to run'
+    runs-on: 'ubuntu-20.04'
+    outputs:
+      needs-changelog-validation: ${{ steps.target-changes.outputs.needs-changelog-validation }}
+      needs-markdown-validation:  ${{ steps.target-changes.outputs.needs-markdown-validation }}
+    steps:
+      - uses: 'dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36'
+        id: target-changes
+        with:
+          filters: |
+            needs-changelog-validation:
+              - '{packages,plugins}/*/!(changelog/**)/**'
+            needs-markdown-validation:
+              - '!(.github/**)/**/*.md'
+
   project-jobs:
     # Since this is a monorepo, not every pull request or change is going to impact every project.
     # Instead of running CI tasks on all projects indiscriminately, we use a command to detect
     # which projects have changed and what kind of change occurred. This lets us build the
     # matrices that we can use to run CI tasks only on the projects that need them.
     name: 'Build Project Jobs'
+    needs: 'identify-jobs-to-run'
     runs-on: 'ubuntu-20.04'
     outputs:
       lint-jobs: ${{ steps.project-jobs.outputs.lint-jobs }}
       test-jobs: ${{ steps.project-jobs.outputs.test-jobs }}
       report-jobs: ${{ steps.project-jobs.outputs.report-jobs }}
+    
     steps:
       - name: Setup - calculate checkout depth
         id: checkout_depth
@@ -416,21 +434,14 @@ jobs:
 
   validate-changelog:
     name: 'Validate changelog'
-    if: ${{ !cancelled() && github.event_name == 'pull_request' }}
+    if: ${{ !cancelled() && github.event_name == 'pull_request' && needs.identify-jobs-to-run.outputs.needs-changelog-validation == 'true' }}
+    needs: 'identify-jobs-to-run'
     runs-on: 'ubuntu-20.04'
     permissions:
       contents: read
 
     steps:
-      - uses: 'dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36'
-        id: target-changes
-        with:
-          filters: |
-            needs-validation:
-              - '{packages,plugins}/*/!(changelog/**)/**'
-
       - name: 'Calculate checkout depth'
-        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         id: checkout_depth
         shell: bash
         run: |
@@ -438,45 +449,34 @@ jobs:
           echo "pull_request_commits=$pull_request_commits" >> $GITHUB_OUTPUT
 
       - uses: 'actions/checkout@v4'
-        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: ${{ steps.checkout_depth.outputs.pull_request_commits }}
 
       - uses: './.github/actions/setup-woocommerce-monorepo'
-        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         with:
           # The package has majority of composer-deps, therefore referencing it
           pull-package-composer-deps: '@woocommerce/plugin-woocommerce'
 
       - name: 'Validate - missing entries'
-        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         env:
           BASE: ${{ github.event.pull_request.base.sha }}
           HEAD: ${{ github.event.pull_request.head.sha }}
         run: php tools/monorepo/check-changelogger-use.php --debug "$BASE" "$HEAD"
 
       - name: 'Validate - existing entries'
-        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         run: pnpm --recursive --parallel --stream changelog validate
 
   validate-markdown:
     name: 'Validate markdown'
-    if: ${{ !cancelled() && github.event_name == 'pull_request' }}
+    if: ${{ !cancelled() && github.event_name == 'pull_request' && needs.identify-jobs-to-run.outputs.needs-markdown-validation == 'true' }}
+    needs: 'identify-jobs-to-run'
     runs-on: 'ubuntu-20.04'
     permissions:
       contents: read
 
     steps:
-      - uses: 'dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36'
-        id: target-changes
-        with:
-          filters: |
-            needs-validation:
-              - '!(.github/**)/**/*.md'
-
       - name: 'Calculate checkout depth'
-        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         id: checkout_depth
         shell: bash
         run: |
@@ -484,13 +484,11 @@ jobs:
           echo "pull_request_commits=$pull_request_commits" >> $GITHUB_OUTPUT
 
       - uses: 'actions/checkout@v4'
-        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: ${{ steps.checkout_depth.outputs.pull_request_commits }}
 
       - name: Scan - markdown files from monorepo packages
-        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         id: repo-changed-files
         uses: tj-actions/changed-files@v41
         with:
@@ -501,7 +499,6 @@ jobs:
             .github/**/*.md
 
       - name: Scan - markdown files from monorepo documentation
-        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         id: docs-changed-files
         uses: tj-actions/changed-files@v41
         with:
@@ -509,7 +506,6 @@ jobs:
             docs/**/*.md
 
       - name: Scan - manifest files for monorepo documentation
-        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         id: docs-manifest
         uses: tj-actions/changed-files@v41
         with:
@@ -517,11 +513,9 @@ jobs:
             docs/docs-manifest.json
 
       - name: Setup - pnpm
-        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         uses: pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d
 
       - name: Setup - node
-        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c
         with:
           node-version-file: .nvmrc
@@ -529,13 +523,11 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Setup - utility-packages
-        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         run: |
           pnpm i -g markdownlint-cli
           npm --prefix .github/workflows/scripts install @actions/core
 
       - name: Validate - changed markdown files from monorepo documentation
-        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         run: |
           RED="\e[1;31m"
           GREEN="\e[1;32m"
@@ -563,12 +555,10 @@ jobs:
           fi
 
       - name: Validate - manifest files for monorepo documentation
-        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         id: is-valid-json
         run: node .github/workflows/scripts/is-valid-json.js docs/docs-manifest.json
 
       - name: Validate - changed markdown files from monorepo documentation
-        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         run: |
           RED="\e[1;31m"
           GREEN="\e[1;32m"
