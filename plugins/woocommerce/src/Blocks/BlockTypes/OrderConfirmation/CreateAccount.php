@@ -63,20 +63,20 @@ class CreateAccount extends AbstractOrderConfirmationBlock {
 				$site_title_heading                  = sprintf( __( 'Create an account with %s', 'woocommerce' ), wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES ) );
 				$parsed_hooked_block['innerContent'] = array(
 					'<div class="wp-block-woocommerce-order-confirmation-create-account alignwide">
-				<!-- wp:heading {"level":3} -->
+					<!-- wp:heading {"level":3} -->
                     <h3 class="wp-block-heading">' . esc_html( $site_title_heading ) . '</h3>
-				<!-- /wp:heading -->
-				<!-- wp:list {"className":"is-style-checkmark-list"} -->
-				<ul class="wp-block-list is-style-checkmark-list"><!-- wp:list-item -->
+					<!-- /wp:heading -->
+					<!-- wp:list {"className":"is-style-checkmark-list"} -->
+					<ul class="wp-block-list is-style-checkmark-list"><!-- wp:list-item -->
                     <li>' . esc_html__( 'Faster future purchases', 'woocommerce' ) . '</li>
-				<!-- /wp:list-item -->
-				<!-- wp:list-item -->
+                    <!-- /wp:list-item -->
+                    <!-- wp:list-item -->
                     <li>' . esc_html__( 'Securely save payment info', 'woocommerce' ) . '</li>
-				<!-- /wp:list-item -->
-				<!-- wp:list-item -->
+                    <!-- /wp:list-item -->
+                    <!-- wp:list-item -->
                     <li>' . esc_html__( 'Track orders &amp; view shopping history', 'woocommerce' ) . '</li>
-				<!-- /wp:list-item --></ul>
-				<!-- /wp:list -->
+                    <!-- /wp:list-item --></ul>
+                    <!-- /wp:list -->
                     </div>',
 				);
 
