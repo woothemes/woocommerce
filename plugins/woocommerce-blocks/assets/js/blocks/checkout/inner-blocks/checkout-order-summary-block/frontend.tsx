@@ -73,7 +73,10 @@ const FrontendBlock = ( {
 								value={ totalPrice }
 							/>
 
-							<Icon icon={ isOpen ? chevronUp : chevronDown } />
+							<Icon
+								className="wc-block-components-checkout-order-summary__title-icon"
+								icon={ isOpen ? chevronUp : chevronDown }
+							/>
 						</>
 					) }
 				</div>

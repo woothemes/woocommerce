@@ -71,12 +71,15 @@
 			border-bottom: 1px solid $universal-border-light;
 
 			&.is-open {
-				padding-bottom: 0;
 				border-bottom: none;
 			}
 
 			.wc-block-components-checkout-order-summary__title-text {
 				margin: 0;
+			}
+
+			.wc-block-components-checkout-order-summary__title-icon {
+				fill: currentColor;
 			}
 		}
 
@@ -89,7 +92,6 @@
 				}
 
 				display: block;
-				margin-top: 20px;
 			}
 		}
 	}
