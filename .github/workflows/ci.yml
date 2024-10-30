@@ -417,10 +417,16 @@ jobs:
       contents: read
 
     steps:
+      - id: checkout_depth
+        shell: bash
+        run: |
+          pull_request_commits=${{ github.event.pull_request.commits }}+1
+          echo "pull_request_commits=$pull_request_commits" >> $GITHUB_OUTPUT
+
       - uses: 'actions/checkout@v4'
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: ${{ github.event.pull_request.commits }}
+          fetch-depth: ${{ steps.checkout_depth.outputs.pull_request_commits }}
 
       - uses: 'dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36'
         id: target-changes
@@ -454,10 +460,16 @@ jobs:
       contents: read
 
     steps:
+      - id: checkout_depth
+        shell: bash
+        run: |
+          pull_request_commits=${{ github.event.pull_request.commits }}+1
+          echo "pull_request_commits=$pull_request_commits" >> $GITHUB_OUTPUT
+
       - uses: 'actions/checkout@v4'
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: ${{ github.event.pull_request.commits }}
+          fetch-depth: ${{ steps.checkout_depth.outputs.pull_request_commits }}
 
       - uses: 'dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36'
         id: target-changes
