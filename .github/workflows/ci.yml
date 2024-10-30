@@ -31,9 +31,10 @@ env:
 
 jobs:
   identify-jobs-to-run:
-    name: 'Identify jobs to run'
+    name: 'Analyze changes'
     runs-on: 'ubuntu-20.04'
     outputs:
+      needs-code-validation: ${{ steps.target-changes.outputs.needs-code-validation }}
       needs-changelog-validation: ${{ steps.target-changes.outputs.needs-changelog-validation }}
       needs-markdown-validation:  ${{ steps.target-changes.outputs.needs-markdown-validation }}
     steps:
@@ -41,6 +42,8 @@ jobs:
         id: target-changes
         with:
           filters: |
+            needs-code-validation:
+              - '**/!(changelog/**)/**'
             needs-changelog-validation:
               - '{packages,plugins}/*/!(changelog/**)/**'
             needs-markdown-validation:
@@ -52,6 +55,7 @@ jobs:
     # which projects have changed and what kind of change occurred. This lets us build the
     # matrices that we can use to run CI tasks only on the projects that need them.
     name: 'Build Project Jobs'
+    if: ${{ !cancelled() && needs.identify-jobs-to-run.outputs.needs-code-validation == 'true' }}
     needs: 'identify-jobs-to-run'
     runs-on: 'ubuntu-20.04'
     outputs:
