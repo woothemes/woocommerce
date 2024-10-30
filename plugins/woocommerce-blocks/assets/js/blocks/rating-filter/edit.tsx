@@ -21,7 +21,7 @@ import {
  * Internal dependencies
  */
 import Block from './block';
-import { Attributes } from './types';
+import type { Attributes } from './types';
 import './editor.scss';
 
 const noRatingsNotice = (
