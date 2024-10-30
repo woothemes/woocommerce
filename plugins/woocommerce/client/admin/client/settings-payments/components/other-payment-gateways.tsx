@@ -58,7 +58,7 @@ const usePaymentGatewayData = () => {
 };
 
 export const OtherPaymentGateways = () => {
-	const [ isShow, setIsShow ] = useState( false );
+	const [ isExpanded, setIsExpanded ] = useState( false );
 	// Mock other payment gateways for now.
 	// TODO Get the list of gateways via the API in future PR.
 	const mockOtherPaymentGateways = [
@@ -158,7 +158,7 @@ export const OtherPaymentGateways = () => {
 					<span>
 						{ __( 'Other payment options', 'woocommerce' ) }
 					</span>
-					{ ! isShow && (
+					{ ! isExpanded && (
 						<>
 							{ mockOtherPaymentGateways.map(
 								( gateway: PaymentGateway ) => (
@@ -177,18 +177,18 @@ export const OtherPaymentGateways = () => {
 				</div>
 				<span
 					onClick={ () => {
-						setIsShow( ! isShow );
+						setIsExpanded( ! isExpanded );
 					} }
-					aria-expanded={ isShow }
+					aria-expanded={ isExpanded }
 				>
-					{ isShow ? (
+					{ isExpanded ? (
 						<Gridicon icon="chevron-up" />
 					) : (
 						<Gridicon icon="chevron-down" />
 					) }
 				</span>
 			</div>
-			{ isShow && (
+			{ isExpanded && (
 				<div className="other-payment-gateways__content">
 					<div className="other-payment-gateways__content__grid">
 						{ mockOtherPaymentGateways.map(
@@ -223,7 +223,7 @@ export const OtherPaymentGateways = () => {
 					</div>
 					<div className="other-payment-gateways__content__external-icon">
 						<Button
-							variant={ 'tertiary' }
+							variant={ 'link' }
 							target="_blank"
 							href="https://woocommerce.com/product-category/woocommerce-extensions/payment-gateways/"
 						>
