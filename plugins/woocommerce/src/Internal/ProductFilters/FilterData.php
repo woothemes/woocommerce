@@ -68,7 +68,7 @@ class FilterData {
 		$transient_key = $this->cache->get_transient_key( 'price', $query_vars );
 		$cached_data   = $this->cache->get_transient( $transient_key );
 
-		if ( ! empty( $cached_data ) ) {
+		if ( isset( $cached_data ) ) {
 			return $cached_data;
 		}
 
@@ -117,7 +117,7 @@ class FilterData {
 		$transient_key = $this->cache->get_transient_key( 'stock', $query_vars );
 		$cached_data   = $this->cache->get_transient( $transient_key );
 
-		if ( ! empty( $cached_data ) ) {
+		if ( isset( $cached_data ) ) {
 			return $cached_data;
 		}
 
@@ -175,7 +175,7 @@ class FilterData {
 		$transient_key = $this->cache->get_transient_key( 'rating', $query_vars );
 		$cached_data   = $this->cache->get_transient( $transient_key );
 
-		if ( ! empty( $cached_data ) ) {
+		if ( isset( $cached_data ) ) {
 			return $cached_data;
 		}
 
@@ -229,7 +229,7 @@ class FilterData {
 		$transient_key = $this->cache->get_transient_key( 'attribute', $query_vars, $attribute_to_count );
 		$cached_data   = $this->cache->get_transient( $transient_key );
 
-		if ( ! empty( $cached_data ) ) {
+		if ( isset( $cached_data ) ) {
 			return $cached_data;
 		}
 
