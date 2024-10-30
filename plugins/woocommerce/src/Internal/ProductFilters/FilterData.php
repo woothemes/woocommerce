@@ -275,7 +275,7 @@ class FilterData {
 		/**
 		 * Allows offloading the filter data.
 		 *
-		 * @hook woocommerce_pre_filter_data
+		 * @hook woocommerce_pre_product_filter_data
 		 *
 		 * @since 8.7.0
 		 *
@@ -284,7 +284,7 @@ class FilterData {
 		 * @param array $query_vars   The query arguments to calculate the filter data.
 		 * @param array $extra        Some filter types require extra arguments for calculation, like attribute.
 		 */
-		return apply_filters( 'woocommerce_pre_product_filter_counts', null, $filter_type, $query_vars, $extra );
+		return apply_filters( 'woocommerce_pre_product_filter_data', null, $filter_type, $query_vars, $extra );
 	}
 
 	/**
