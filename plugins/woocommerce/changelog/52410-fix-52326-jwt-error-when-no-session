@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Make sure session exists before calling its functions in the Cart StoreApi route

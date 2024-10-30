@@ -31,8 +31,14 @@ const Block = ( {
 	showReturnToCart,
 	className,
 	placeOrderButtonLabel,
+	returnToCartButtonLabel,
 	priceSeparator,
-}: BlockAttributes ): JSX.Element => {
+}: {
+	cartPageId: number;
+	showReturnToCart: boolean;
+	className?: string;
+	placeOrderButtonLabel: string;
+} ): JSX.Element => {
 	const { paymentMethodButtonLabel } = useCheckoutSubmit();
 
 	const label = applyCheckoutFilter( {
@@ -53,8 +59,10 @@ const Block = ( {
 			<div className="wc-block-checkout__actions_row">
 				{ showReturnToCart && (
 					<ReturnToCartButton
-						link={ getSetting( 'page-' + cartPageId, false ) }
-					/>
+						href={ getSetting( 'page-' + cartPageId, false ) }
+					>
+						{ returnToCartButtonLabel }
+					</ReturnToCartButton>
 				) }
 				{ showPrice && (
 					<style>
