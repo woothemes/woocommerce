@@ -53,7 +53,6 @@ jobs:
       - uses: 'actions/checkout@v4'
         with:
           ref: ${{ ( github.event_name == 'pull_request' && github.head_ref ) || '' }}
-          # If 'base_ref' is available, the 'Build Matrix' step requires non-shallow git-history to identify changed files.
           fetch-depth: ${{ ( ( github.event_name == 'pull_request' && steps.checkout_depth.outputs.pull_request_commits ) || ( github.base_ref && '0' ) || '1' ) }}
           
       - name: Test
