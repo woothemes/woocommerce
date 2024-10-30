@@ -19,7 +19,7 @@ test.describe( 'woocommerce/product-filter-active - Frontend', () => {
 		);
 	} );
 
-	test( 'Without any filters selected, only a wrapper block is rendered', async ( {
+	test( 'Without any filters selected, active block should not be rendered', async ( {
 		page,
 		templateCompiler,
 	} ) => {
@@ -28,16 +28,10 @@ test.describe( 'woocommerce/product-filter-active - Frontend', () => {
 		await page.goto( '/shop' );
 
 		const chips = page.locator(
-			'.wp-block-woocommerce-product-filter-active .wp-block-woocommerce-product-filter-removable-chips'
-		);
-
-		await expect( chips ).toHaveCount( 0 );
-
-		const filterWrapper = page.locator(
 			'.wp-block-woocommerce-product-filter-active'
 		);
 
-		await expect( filterWrapper ).toHaveCount( 1 );
+		await expect( chips ).toHaveCount( 0 );
 	} );
 
 	test( 'With rating filters applied it shows the correct active filters', async ( {

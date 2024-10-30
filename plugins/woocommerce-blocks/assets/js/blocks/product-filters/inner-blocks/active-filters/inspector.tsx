@@ -59,18 +59,16 @@ export const Inspector = ( {
 	}, [ clearButton, clientId ] );
 
 	return (
-		<>
-			<InspectorControls group="styles">
-				<PanelBody title={ __( 'Display', 'woocommerce' ) }>
-					<ToggleControl
-						label={ __( 'Clear button', 'woocommerce' ) }
-						checked={ clearButton }
-						onChange={ ( value ) => {
-							setAttributes( { clearButton: value } );
-						} }
-					/>
-				</PanelBody>
-			</InspectorControls>
-		</>
+		<InspectorControls group="styles">
+			<PanelBody title={ __( 'Display', 'woocommerce' ) }>
+				<ToggleControl
+					label={ __( 'Clear button', 'woocommerce' ) }
+					checked={ clearButton }
+					onChange={ ( value ) => {
+						setAttributes( { clearButton: value } );
+					} }
+				/>
+			</PanelBody>
+		</InspectorControls>
 	);
 };
