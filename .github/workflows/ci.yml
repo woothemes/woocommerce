@@ -427,10 +427,10 @@ jobs:
       - uses: 'dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36'
         id: target-changes
         with:
+          predicate-quantifier: every
           filters: |
             needs-validation:
-              - 'packages/**'
-              - 'plugins/**'
+              - '{packages,plugins}/**'
               - '!**/changelog/**'
 
       - uses: './.github/actions/setup-woocommerce-monorepo'
