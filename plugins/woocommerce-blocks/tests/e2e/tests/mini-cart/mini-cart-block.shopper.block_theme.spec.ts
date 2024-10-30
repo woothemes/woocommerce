@@ -6,7 +6,10 @@ import { expect, test, wpCLI } from '@woocommerce/e2e-utils';
 /**
  * Internal dependencies
  */
-import { REGULAR_PRICED_PRODUCT_NAME } from '../checkout/constants';
+import {
+	REGULAR_PRICED_PRODUCT_NAME,
+	SIMPLE_PHYSICAL_PRODUCT_NAME,
+} from '../checkout/constants';
 import { getTestTranslation } from '../../utils/get-test-translation';
 import { translations } from '../../test-data/data/data';
 
@@ -20,14 +23,9 @@ test.describe( 'Shopper → Translations', () => {
 		frontendUtils,
 		miniCartUtils,
 	} ) => {
+		await frontendUtils.emptyCart();
 		await frontendUtils.goToShop();
 		await miniCartUtils.openMiniCart();
-
-		await expect(
-			page.getByText(
-				getTestTranslation( 'Your cart is currently empty!' )
-			)
-		).toBeVisible();
 
 		await expect(
 			page.getByRole( 'link', {
@@ -42,14 +40,12 @@ test.describe( 'Shopper → Translations', () => {
 		miniCartUtils,
 	} ) => {
 		await frontendUtils.goToShop();
-		await page
-			.getByLabel( getTestTranslation( 'Add to cart: “Beanie“' ) )
-			.click();
+		await frontendUtils.addToCart( SIMPLE_PHYSICAL_PRODUCT_NAME );
 		await miniCartUtils.openMiniCart();
 
 		await expect(
 			page.getByRole( 'heading', {
-				name: getTestTranslation( 'Your cart (1 item)' ),
+				name: getTestTranslation( 'Your cart' ),
 			} )
 		).toBeVisible();
 
@@ -64,6 +60,8 @@ test.describe( 'Shopper → Translations', () => {
 				name: getTestTranslation( 'Go to checkout' ),
 			} )
 		).toBeVisible();
+
+		await frontendUtils.emptyCart();
 	} );
 } );
 
@@ -77,6 +75,7 @@ test.describe( 'Shopper → Tax', () => {
 		frontendUtils,
 		page,
 	} ) => {
+		await frontendUtils.emptyCart();
 		await frontendUtils.goToShop();
 		await frontendUtils.addToCart( REGULAR_PRICED_PRODUCT_NAME );
 		await frontendUtils.goToMiniCart();

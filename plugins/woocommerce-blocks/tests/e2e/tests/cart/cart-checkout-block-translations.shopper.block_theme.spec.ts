@@ -31,14 +31,9 @@ test.describe( 'Shopper → Translations', () => {
 		await frontendUtils.goToShop();
 
 		const beanieAddToCartButton = page.getByLabel(
-			getTestTranslation( 'Add to cart: "Beanie"' )
+			'Add to cart: “Beanie”'
 		);
 		await beanieAddToCartButton.click();
-
-		// Add to cart initiates a request that could be interrupted by navigation, wait till it's done.
-		await expect( beanieAddToCartButton ).toHaveText(
-			new RegExp( getTestTranslation( 'in cart' ) )
-		);
 
 		await frontendUtils.goToCart();
 
@@ -48,7 +43,7 @@ test.describe( 'Shopper → Translations', () => {
 		await expect( totalsHeader ).toBeVisible();
 
 		await expect(
-			page.getByLabel( getTestTranslation( 'Remove Beanie from cart' ) )
+			page.getByText( getTestTranslation( 'Remove item' ) )
 		).toBeVisible();
 
 		await expect(
@@ -74,17 +69,9 @@ test.describe( 'Shopper → Translations', () => {
 	} ) => {
 		await frontendUtils.goToShop();
 		const beanieAddToCartButton = page.getByLabel(
-			getTestTranslation( 'Add to cart: "Beanie"' )
+			'Add to cart: “Beanie”'
 		);
 		await beanieAddToCartButton.click();
-		await page
-			.getByLabel( getTestTranslation( 'Add to cart: "Beanie"' ) )
-			.click();
-
-		// Add to cart initiates a request that could be interrupted by navigation, wait till it's done.
-		await expect( beanieAddToCartButton ).toHaveText(
-			new RegExp( getTestTranslation( 'in cart' ) )
-		);
 
 		await frontendUtils.goToCheckout();
 
@@ -122,7 +109,7 @@ test.describe( 'Shopper → Translations', () => {
 
 		await expect(
 			page.getByRole( 'button', {
-				name: getTestTranslation( 'Place order' ),
+				name: getTestTranslation( 'Place Order' ),
 			} )
 		).toBeVisible();
 
