@@ -19,6 +19,7 @@ import { isBoolean, isObject, objectHasProp } from '@woocommerce/types';
 import { useState, useMemo, useEffect } from '@wordpress/element';
 import { withSpokenMessages } from '@wordpress/components';
 import type { BlockEditProps } from '@wordpress/blocks';
+import type { WCStoreV1ProductsCollectionProps } from '@woocommerce/type-defs/product-collection';
 
 /**
  * Internal dependencies
@@ -92,7 +93,7 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 	const [ queryState ] = useQueryStateByContext();
 
 	const { results: filteredCounts, isLoading: filteredCountsLoading } =
-		useCollectionData( {
+		useCollectionData< WCStoreV1ProductsCollectionProps >( {
 			queryRating: true,
 			queryState,
 			isEditor: true,
@@ -184,7 +185,8 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 		return null;
 	}
 
-	const showNoProductsNotice = ! filteredCountsLoading && ! filteredCounts;
+	const showNoProductsNotice =
+		! filteredCountsLoading && ! filteredCounts.rating_counts?.length;
 
 	return (
 		<>
