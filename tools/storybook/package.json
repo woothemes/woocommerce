@@ -11,7 +11,7 @@
 	"author": "Automattic",
 	"license": "GPL-3.0-or-later",
 	"scripts": {
-		"build": "pnpm --if-present --workspace-concurrency=Infinity --stream --filter=\"$npm_package_name...\" '/^build:(project|storybook):?.*$/'",
+		"build": "pnpm --if-present --workspace-concurrency=Infinity --stream --filter=\"$npm_package_name...\" '/^build:(project:|storybook).*$/'",
 		"build:storybook": "wireit",
 		"watch:build": "pnpm --if-present --workspace-concurrency=Infinity --filter=\"$npm_package_name...\" --parallel '/^watch:build:storybook$/'",
 		"watch:build:storybook": "wireit",
