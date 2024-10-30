@@ -39,19 +39,6 @@ class EmailPreview {
 	}
 
 	/**
-	 * Hook into WooCommerce.
-	 */
-	public function __construct() {
-		/**
-		 * Email templates fetch product from the database to show additional information, which are not
-		 * saved in WC_Order_Item_Product. This filter enables fetching those data also in email preview.
-		 *
-		 * @since 9.5.0
-		 */
-		add_filter( 'woocommerce_order_item_product', array( $this, 'get_dummy_product_when_not_set' ), 10, 1 );
-	}
-
-	/**
 	 * Get the preview email content.
 	 *
 	 * @return string
@@ -110,12 +97,7 @@ class EmailPreview {
 	 * @return string
 	 */
 	private function render_preview_email() {
-		/**
-		 * Always show shipping address in the preview email.
-		 *
-		 * @since 9.5.0
-		 */
-		add_filter( 'woocommerce_order_needs_shipping_address', '__return_true' );
+		$this->set_up_filters();
 
 		$email = $this->get_email();
 
@@ -123,6 +105,8 @@ class EmailPreview {
 		$email->set_object( $order );
 
 		$content = $email->get_content_html();
+
+		$this->clean_up_filters();
 
 		/**
 		 * Wrap the content with the email template and then add styles.
@@ -196,5 +180,24 @@ class EmailPreview {
 		$emails = WC()->mailer()->get_emails();
 		$email  = $emails['WC_Email_Customer_Processing_Order'];
 		return $email;
+	}
+
+	/**
+	 * Set up filters for email preview.
+	 */
+	private function set_up_filters() {
+		// Always show shipping address in the preview email.
+		add_filter( 'woocommerce_order_needs_shipping_address', '__return_true' );
+		// Email templates fetch product from the database to show additional information, which are not
+		// saved in WC_Order_Item_Product. This filter enables fetching that data also in email preview.
+		add_filter( 'woocommerce_order_item_product', array( $this, 'get_dummy_product_when_not_set' ), 10, 1 );
+	}
+
+	/**
+	 * Clean up filters after email preview.
+	 */
+	private function clean_up_filters() {
+		remove_filter( 'woocommerce_order_needs_shipping_address', '__return_true' );
+		remove_filter( 'woocommerce_order_item_product', array( $this, 'get_dummy_product_when_not_set' ), 10 );
 	}
 }
