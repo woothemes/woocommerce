@@ -409,11 +409,11 @@ class CartItems extends ControllerTestCase {
 		// Ensure original images are returned if filter returns a non-array.
 		add_filter(
 			'woocommerce_store_api_cart_item_images',
-			function ( $images ) {
+			function () {
 				return null;
 			},
 			10,
-			1
+			0
 		);
 		$response       = $controller->prepare_item_for_response( current( $cart ), new \WP_REST_Request() );
 		$image          = $response->get_data()['images'][0];
