@@ -50,7 +50,7 @@ export const PaymentGateways = () => {
 	};
 
 	const setupLivePayments = () => {
-		console.log( 'Setup live payments' );
+		// TODO: Implement in future PR.
 	};
 
 	// Transform plugins comply with List component format.
