@@ -273,6 +273,55 @@ class FilterData {
 	}
 
 	/**
+	 * Get the count of on sale products.
+	 *
+	 * @param array $query_vars The WP_Query arguments.
+	 */
+	public function get_onsale_counts( array $query_vars ) {
+		$pre_filter_data = $this->pre_get_filter_counts( 'onsale', $query_vars );
+
+		if ( ! empty( $pre_filter_data ) ) {
+			return $pre_filter_data;
+		}
+
+		$transient_key = $this->cache->get_transient_key( 'onsale', $query_vars );
+		$cached_data   = $this->cache->get_transient( $transient_key );
+
+		if ( isset( $cached_data ) ) {
+			return $cached_data;
+		}
+
+		global $wpdb;
+
+		add_filter( 'posts_clauses', array( $this->query_clauses, 'add_query_clauses' ), 10, 2 );
+		add_filter( 'posts_pre_query', '__return_empty_array' );
+
+		$query_vars['no_found_rows']  = true;
+		$query_vars['posts_per_page'] = -1;
+		$query_vars['fields']         = 'ids';
+		$query                        = new \WP_Query();
+
+		$query->query( $query_vars );
+		$product_query_sql = $query->request;
+
+		remove_filter( 'posts_clauses', array( $this->query_clauses, 'add_query_clauses' ), 10 );
+		remove_filter( 'posts_pre_query', '__return_empty_array' );
+
+		$count_sql = "
+			SELECT COUNT( DISTINCT product_id )
+			FROM {$wpdb->wc_product_meta_lookup}
+			WHERE product_id IN ( {$product_query_sql} )
+			AND onsale > 0
+		";
+
+		$result = $wpdb->get_var( $count_sql );
+
+		$this->cache->set_transient( $transient_key, $result );
+
+		return $result;
+	}
+
+	/**
 	 * Get the offload filter counts.
 	 *
 	 * @param string $filter_type The type of filter. Accepts price|stock|rating|attribute.
