@@ -18,6 +18,8 @@ import { EditProps } from './types';
 import { filtersPreview } from './constants';
 
 const Edit = ( props: EditProps ) => {
+	const { clearButton } = props.attributes;
+
 	const { children, ...innerBlocksProps } = useInnerBlocksProps(
 		useBlockProps(),
 		{
@@ -31,16 +33,20 @@ const Edit = ( props: EditProps ) => {
 						},
 					},
 				],
-				[
-					'woocommerce/product-filter-clear-button',
-					{
-						clearType: 'all',
-						lock: {
-							remove: true,
-							move: false,
-						},
-					},
-				],
+				...( clearButton
+					? [
+							[
+								'woocommerce/product-filter-clear-button',
+								{
+									clearType: 'all',
+									lock: {
+										remove: true,
+										move: false,
+									},
+								},
+							],
+					  ]
+					: [] ),
 			],
 		}
 	);

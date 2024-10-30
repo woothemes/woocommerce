@@ -22,7 +22,7 @@
 	"attributes": {
 		"clearButton": {
 			"type": "boolean",
-			"default":true
+			"default": false
 		}
 	}
 }
