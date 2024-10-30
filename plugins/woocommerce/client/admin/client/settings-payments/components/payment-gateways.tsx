@@ -8,53 +8,42 @@ import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 import { EllipsisMenu, List, Pill } from '@woocommerce/components';
 import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
+import { PaymentGateway } from '@woocommerce/data';
 import { getAdminLink } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
  */
 
-interface PaymentGateway {
-	id: string;
-	title: string;
-	description: string;
-	order: string | number;
-	enabled: boolean;
-	method_title: string;
-	method_description: string;
-	needs_setup: boolean;
-	image?: string;
-	image_72x72?: string;
-	square_image?: string;
-	actionText?: string;
-	recommended?: boolean;
-}
-
-interface WooPaymentsData {
-	isSupported: boolean;
-	isOnboarded: boolean;
-	isInTestMode: boolean;
-}
-
+// TODO: This should either be a util function, or handled in a different way e.g. passing the data as props.
 const parseScriptTag = ( elementId: string ) => {
 	const scriptTag = document.getElementById( elementId );
 	return scriptTag ? JSON.parse( scriptTag.textContent || '' ) : [];
 };
 
-export const PaymentGateways = () => {
-	const [ paymentGateways, setPaymentGateways ] = useState( [] );
-	const [ wooPaymentsData, setWooPaymentsData ] = useState( {} );
+interface WooPaymentsGatewayData {
+	isSupported: boolean;
+	isAccountOnboarded: boolean;
+	isInTestMode: boolean;
+}
 
-	const recommendedGateways = [ 'woocommerce_payments' ];
+export const PaymentGateways = () => {
+	const [ paymentGateways, setPaymentGateways ] = useState<
+		PaymentGateway[]
+	>( [] );
+	const [ wooPaymentsGatewayData, setWooPaymentsGatewayData ] =
+		useState< WooPaymentsGatewayData | null >( null );
 
 	useEffect( () => {
-		setWooPaymentsData(
+		setWooPaymentsGatewayData(
 			parseScriptTag( 'experimental_wc_settings_payments_woopayments' )
 		);
 		setPaymentGateways(
 			parseScriptTag( 'experimental_wc_settings_payments_gateways' )
 		);
 	}, [] );
+
+	const recommendedGateways = [ 'woocommerce_payments' ];
 
 	const enableGateway = ( gateway: PaymentGateway ) => () => {
 		console.log( 'Enable gateway', gateway );
@@ -65,7 +54,7 @@ export const PaymentGateways = () => {
 	};
 
 	console.log( 'paymentGateways', paymentGateways );
-	console.log( 'wooPaymentsData', wooPaymentsData );
+	console.log( 'wooPaymentsData', wooPaymentsGatewayData );
 
 	// Transform plugins comply with List component format.
 	const paymentGatewaysList = paymentGateways.map(
@@ -118,7 +107,7 @@ export const PaymentGateways = () => {
 								</Button>
 							) }
 							{ gateway.id === 'woocommerce_payments' &&
-								wooPaymentsData.isInTestMode && (
+								wooPaymentsGatewayData?.isInTestMode && (
 									<Button
 										variant="primary"
 										onClick={ setupLivePayments }

@@ -119,9 +119,9 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 		// TODO: we should think about a better way to pass this data to the frontend.
 		echo '<script type="application/json" id="experimental_wc_settings_payments_woopayments">' . wp_json_encode(
 			array(
-				'isSupported'  => WooCommercePayments::is_supported(),
-				'isOnboarded'  => $is_woopayments_onboarded,
-				'isInTestMode' => $is_woopayments_in_test_mode,
+				'isSupported'         => WooCommercePayments::is_supported(),
+				'isAccountOnboarded'  => $is_woopayments_onboarded,
+				'isInTestMode'        => $is_woopayments_in_test_mode,
 			)
 		) . '</script>';
 		echo '<script type="application/json" id="experimental_wc_settings_payments_gateways">' . wp_json_encode( $payment_gateways ) . '</script>';
