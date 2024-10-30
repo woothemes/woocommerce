@@ -52,7 +52,7 @@ export interface useCollectionOptions {
 export const useCollection = < T >(
 	options: useCollectionOptions
 ): {
-	results: T[];
+	results: T;
 	isLoading: boolean;
 } => {
 	const {
