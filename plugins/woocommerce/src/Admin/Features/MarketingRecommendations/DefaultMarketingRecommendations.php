@@ -121,9 +121,7 @@ class DefaultMarketingRecommendations {
 				'subcategories'  => array(
 					$sales_channels,
 				),
-				'tags'           => array(
-					$built_by_woocommerce,
-				),
+				'tags'           => array(),
 			),
 			array(
 				'title'          => 'MailPoet',
