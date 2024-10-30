@@ -59,12 +59,14 @@ const wcAdminPackages = [
 	'onboarding',
 	'block-templates',
 	'product-editor',
+	'settings-editor',
 	'remote-logging',
 ];
 
 const getEntryPoints = () => {
 	const entryPoints = {
 		app: './client/index.js',
+		settings: './client/settings/index.js',
 	};
 	wcAdminPackages.forEach( ( name ) => {
 		entryPoints[ name ] = `${ WC_ADMIN_PACKAGES_DIR }/${ name }`;
@@ -92,7 +94,8 @@ const webpackConfig = {
 		filename: ( data ) => {
 			// Output wpAdminScripts to wp-admin-scripts folder
 			// See https://github.com/woocommerce/woocommerce-admin/pull/3061
-			return wpAdminScripts.includes( data.chunk.name )
+			return wpAdminScripts.includes( data.chunk.name ) ||
+				data.chunk.name === 'settings'
 				? `wp-admin-scripts/[name]${ outputSuffix }.js`
 				: `[name]/index${ outputSuffix }.js`;
 		},
