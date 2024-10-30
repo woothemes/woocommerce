@@ -31,11 +31,27 @@ class ProductQueryBuilder {
 	protected $custom_order_opts = array( 'popularity', 'rating', 'post__in', 'price', 'sales', 'menu_order', 'random' );
 
 	/**
+	 * Collection handler store.
+	 *
+	 * @var array
+	 */
+	protected $collection_handler_store = array();
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
 		$this->valid_query_vars = $this->get_valid_query_vars();
 		add_filter( 'posts_clauses', array( $this, 'add_price_range_filter_posts_clauses' ), 10, 2 );
+	}
+
+	/**
+	 * Set collection handler store.
+	 *
+	 * @param array $handlers Collection handlers.
+	 */
+	public function set_collection_handler_store( array $handlers ) {
+		$this->collection_handler_store = $handlers;
 	}
 
 	/**
