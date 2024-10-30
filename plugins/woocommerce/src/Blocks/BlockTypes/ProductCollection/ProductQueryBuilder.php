@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection;
 
@@ -647,7 +648,7 @@ class ProductQueryBuilder {
 	 *     Result: ['post__in' => [1, 2, 3, 4, 5, 3, 4, 5, 6, 7]]
 	 *
 	 * @param array $base First array.
-	 * @param array $new  Second array.
+	 * @param array $new_array  Second array.
 	 */
 	private function array_merge_recursive_replace_non_array_properties( $base, $new_array ) {
 		foreach ( $new_array as $key => $value ) {
