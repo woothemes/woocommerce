@@ -6,6 +6,7 @@
 namespace Automattic\WooCommerce\Internal\Admin;
 
 use Automattic\WooCommerce\Admin\PageController;
+use Automattic\WooCommerce\Admin\PluginsHelper;
 use Automattic\WooCommerce\Internal\Admin\Loader;
 
 /**
@@ -294,8 +295,8 @@ class Translations {
 			return $file;
 		}
 
-		// Make sure we're handing the correct domain (could be woocommerce or woocommerce-admin).
-		$plugin_domain = explode( '/', plugin_basename( __FILE__ ) )[0];
+		// Make sure we're handing the correct domain.
+		$plugin_domain = 'woocommerce';
 		if ( $plugin_domain !== $domain ) {
 			return $file;
 		}
