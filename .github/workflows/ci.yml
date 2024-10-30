@@ -49,6 +49,7 @@ jobs:
         run: |
           pull_request_commits=$(( ${{ github.event.pull_request.commits }} + 1 ))
           echo "pull_request_commits=$pull_request_commits" >> $GITHUB_OUTPUT
+          git diff --name-only 42b4c1f25d4f70684acab737d10ef7b1216e4309
 
       - uses: 'actions/checkout@v4'
         with:
@@ -70,10 +71,10 @@ jobs:
             if ( baseRef ) {
               baseRef = `--base-ref origin/${ baseRef }`;
             }
-            // let baseSha = ${{ toJson( github.event.pull_request.base.sha ) }};
-            // if ( baseSha ) {
-            //   baseRef = `--base-ref ${ baseSha }`;
-            // }
+            let baseSha = ${{ toJson( github.event.pull_request.base.sha ) }};
+            if ( baseSha ) {
+            baseRef = `--base-ref ${ baseSha }`;
+            }
 
             let githubEvent = ${{ toJson( github.event_name ) }};
 
