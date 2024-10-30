@@ -103,7 +103,7 @@ class SingleProduct extends AbstractBlock {
 			$result[] = $block['blockName'];
 		}
 
-		if ( 'woocommerce/product-template' === $block['blockName'] ) {
+		if ( 'woocommerce/product-template' === $block['blockName'] || 'core/post-template' === $block['blockName'] ) {
 			return $result;
 		}
 
