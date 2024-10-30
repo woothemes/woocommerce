@@ -22,5 +22,5 @@ Default.args = {
 	stars: 5,
 	size: 24,
 	color: 'black',
-	gap: 4,
+	gap: 0,
 };
