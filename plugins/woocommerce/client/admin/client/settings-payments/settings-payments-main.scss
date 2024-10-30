@@ -109,13 +109,6 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 		}
 	}
 
-	// Settings specific style override for the pill component.
-	.woocommerce-pill {
-		background-color: $gray-100;
-		border: none;
-		border-radius: 4px;
-	}
-
 	.other-payment-gateways {
 		border: 1px solid $gray-200;
 		border-radius: 4px;
