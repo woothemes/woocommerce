@@ -39,6 +39,7 @@ test.describe( 'Shopper → Translations', () => {
 		frontendUtils,
 		miniCartUtils,
 	} ) => {
+		await frontendUtils.emptyCart();
 		await frontendUtils.goToShop();
 		await frontendUtils.addToCart( SIMPLE_PHYSICAL_PRODUCT_NAME );
 		await miniCartUtils.openMiniCart();
