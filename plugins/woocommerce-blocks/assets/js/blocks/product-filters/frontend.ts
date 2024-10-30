@@ -89,12 +89,10 @@ const { actions } = store( 'woocommerce/product-filters', {
 					`max(calc(var(--wp-admin--admin-bar--height) - ${ scrollTop }px), 0px)`
 				);
 			}
-			document.body.style.overflow = 'hidden';
 		},
 		closeOverlay: () => {
 			const context = getContext< ProductFiltersContext >();
 			context.isOverlayOpened = false;
-			document.body.style.overflow = 'auto';
 		},
 		closeOverlayOnEscape: ( event: KeyboardEvent ) => {
 			const context = getContext< ProductFiltersContext >();
@@ -123,6 +121,14 @@ const { actions } = store( 'woocommerce/product-filters', {
 				searchParams.set( key, params[ key ] );
 			}
 			navigate( url.href );
+		},
+		scrollLimit: () => {
+			const { isOverlayOpened } = getContext< ProductFiltersContext >();
+			if ( isOverlayOpened ) {
+				document.body.style.overflow = 'hidden';
+			} else {
+				document.body.style.overflow = 'auto';
+			}
 		},
 	},
 } );
