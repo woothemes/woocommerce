@@ -43,24 +43,15 @@ jobs:
       report-jobs: ${{ steps.project-jobs.outputs.report-jobs }}
     steps:
       - name: 'Calculate checkout depth'
-        if: ${{ github.event_name == 'pull_request' }}
         id: checkout_depth
         shell: bash
         run: |
-          pull_request_commits=$(( ${{ github.event.pull_request.commits }} + 1 ))
+          pull_request_commits=$(( ${{ ( github.event_name == 'pull_request' && github.event.pull_request.commits ) || 1 }} + 1 ))
           echo "pull_request_commits=$pull_request_commits" >> $GITHUB_OUTPUT
-
       - uses: 'actions/checkout@v4'
         with:
           ref: ${{ ( github.event_name == 'pull_request' && github.head_ref ) || '' }}
-          fetch-depth: ${{ ( ( github.event_name == 'pull_request' && steps.checkout_depth.outputs.pull_request_commits ) || ( github.base_ref && '0' ) || '1' ) }}
-          
-      - name: Test
-        shell: bash
-        run: |
-          git diff --name-only 42b4c1f25d4f70684acab737d10ef7b1216e4309
-          exit 1
-          
+          fetch-depth: ${{ steps.checkout_depth.outputs.pull_request_commits }}
       - name: 'Setup PNPM'
         uses: 'pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d'
       - uses: actions/github-script@v7
@@ -77,10 +68,10 @@ jobs:
             if ( baseRef ) {
               baseRef = `--base-ref origin/${ baseRef }`;
             }
-            // let baseSha = ${{ toJson( github.event.pull_request.base.sha ) }};
-            // if ( baseSha ) {
-            // baseRef = `--base-ref ${ baseSha }`;
-            // }
+            let baseSha = ${{ toJson( github.event.pull_request.base.sha ) }};
+            if ( baseSha ) {
+              baseRef = `--base-ref ${ baseSha }`;
+            }
 
             let githubEvent = ${{ toJson( github.event_name ) }};
 
