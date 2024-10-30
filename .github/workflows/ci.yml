@@ -424,6 +424,7 @@ jobs:
               - '{packages,plugins}/*/!(changelog/**)/**'
 
       - name: 'Calculate checkout depth'
+        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         id: checkout_depth
         shell: bash
         run: |
@@ -431,6 +432,7 @@ jobs:
           echo "pull_request_commits=$pull_request_commits" >> $GITHUB_OUTPUT
 
       - uses: 'actions/checkout@v4'
+        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: ${{ steps.checkout_depth.outputs.pull_request_commits }}
@@ -468,6 +470,7 @@ jobs:
               - '!(.github/**)/**/*.md'
 
       - name: 'Calculate checkout depth'
+        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         id: checkout_depth
         shell: bash
         run: |
@@ -475,6 +478,7 @@ jobs:
           echo "pull_request_commits=$pull_request_commits" >> $GITHUB_OUTPUT
 
       - uses: 'actions/checkout@v4'
+        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: ${{ steps.checkout_depth.outputs.pull_request_commits }}
