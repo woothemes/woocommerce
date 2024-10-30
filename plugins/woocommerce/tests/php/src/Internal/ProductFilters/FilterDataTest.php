@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace Automattic\WooCommerce\Tests\Internal\ProductFilters;
 
-use Automattic\WooCommerce\Internal\ProductFilters\Counts;
+use Automattic\WooCommerce\Internal\ProductFilters\FilterData;
 
 /**
  * Tests related to Counts service.
  */
-class CountsTest extends AbstractProductFiltersTest {
+class FilterDataTest extends AbstractProductFiltersTest {
 	/**
 	 * The system under test.
 	 *
@@ -23,7 +23,7 @@ class CountsTest extends AbstractProductFiltersTest {
 		parent::setUp();
 
 		$container = wc_get_container();
-		$this->sut = $container->get( Counts::class );
+		$this->sut = $container->get( FilterData::class );
 
 		$this->fixture_data->add_product_review( $this->products[0]->get_id(), 5 );
 		$this->fixture_data->add_product_review( $this->products[1]->get_id(), 3 );

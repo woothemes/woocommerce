@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders;
 
 use Automattic\WooCommerce\Admin\API\Reports\Controller;
-use Automattic\WooCommerce\Internal\ProductFilters\Counts;
+use Automattic\WooCommerce\Internal\ProductFilters\FilterData;
 use Automattic\WooCommerce\Internal\ProductFilters\QueryClauses;
 
 /**
@@ -18,7 +18,7 @@ class ProductFiltersServiceProvider extends AbstractInterfaceServiceProvider {
 	 */
 	protected $provides = array(
 		QueryClauses::class,
-		Counts::class,
+		FilterData::class,
 		Controller::class,
 	);
 
@@ -35,6 +35,6 @@ class ProductFiltersServiceProvider extends AbstractInterfaceServiceProvider {
 		 * here to return a new instance with a known default clause generator
 		 * when retrieving the data provider from the container.
 		 */
-		$this->add( Counts::class )->addArgument( QueryClauses::class );
+		$this->add( FilterData::class )->addArgument( QueryClauses::class );
 	}
 }

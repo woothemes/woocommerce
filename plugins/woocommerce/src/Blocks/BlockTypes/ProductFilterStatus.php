@@ -3,7 +3,7 @@ declare( strict_types = 1);
 namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 use Automattic\WooCommerce\Blocks\Utils\ProductCollectionUtils;
-use Automattic\WooCommerce\Internal\ProductFilters\Counts;
+use Automattic\WooCommerce\Internal\ProductFilters\FilterData;
 
 /**
  * Product Filter: Status Block.
@@ -198,7 +198,7 @@ final class ProductFilterStatus extends AbstractBlock {
 			$query_vars['meta_query'] = ProductCollectionUtils::remove_query_array( $query_vars['meta_query'], 'key', '_stock_status' );
 		}
 
-		$counts = wc_get_container()->get( Counts::class )->get_stock_status_counts( $query_vars );
+		$counts = wc_get_container()->get( FilterData::class )->get_stock_status_counts( $query_vars );
 		$data   = array();
 
 		foreach ( $counts as $key => $value ) {

@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Class for filter counts.
  */
-class Counts {
+class FilterData {
 	/**
 	 * Instance of QueryClauses.
 	 *
