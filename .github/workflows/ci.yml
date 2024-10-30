@@ -265,7 +265,7 @@ jobs:
     # on the results of the other jobs in the workflow.
     name: 'Evaluate Project Job Statuses'
     runs-on: 'ubuntu-20.04'
-    needs: ['project-jobs', 'project-lint-jobs', 'project-test-jobs', 'validate-changelog']
+    needs: [ 'project-jobs', 'project-lint-jobs', 'project-test-jobs', 'validate-changelog', 'validate-markdown' ]
     if: ${{ !cancelled() && github.event_name == 'pull_request' }}
     steps:
       - uses: 'actions/checkout@v4'
@@ -448,3 +448,159 @@ jobs:
       - name: 'Validate - existing entries'
         if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         run: pnpm --recursive --parallel --stream changelog validate
+
+  validate-markdown:
+    name: 'Validate markdown'
+    if: ${{ !cancelled() && github.event_name == 'pull_request' && github.base_ref == 'trunk' }}
+    runs-on: 'ubuntu-20.04'
+    permissions:
+      contents: read
+
+    steps:
+      - uses: 'actions/checkout@v4'
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - uses: 'dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36'
+        id: target-changes
+        with:
+          filters: |
+            needs-validation:
+              - '**/*.md'
+              - '!.github/**/*.md'
+
+      - name: Scan - markdown files from monorepo packages
+        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
+        id: repo-changed-files
+        uses: tj-actions/changed-files@v41
+        with:
+          files: |
+            **/*.md
+          files_ignore: |
+            docs/**/*.md
+            .github/**/*.md
+
+      - name: Scan - markdown files from monorepo documentation
+        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
+        id: docs-changed-files
+        uses: tj-actions/changed-files@v41
+        with:
+          files: |
+            docs/**/*.md
+
+      - name: Scan - manifest files for monorepo documentation
+        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
+        id: docs-manifest
+        uses: tj-actions/changed-files@v41
+        with:
+          files: |
+            docs/docs-manifest.json
+
+      - name: Setup PNPM
+        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
+        uses: pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d
+
+      - name: Setup Node
+        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
+        uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install prerequisites
+        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
+        run: |
+          pnpm i -g markdownlint-cli
+          npm --prefix .github/workflows/scripts install @actions/core
+
+      - name: Lint repo changed markdown files
+        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
+        run: |
+          RED="\e[1;31m"
+          GREEN="\e[1;32m"
+          NC="\e[0m"
+          set -e
+          rc=0
+          changed_files="${{ steps.repo-changed-files.outputs.all_changed_files  }}"
+          if [ -n "$changed_files" ]; then
+            lint_results=""
+            for file in $changed_files; do
+              lint_result=$( { cat "$file" | markdownlint --stdin ; } 2>&1 ) || rc="$?"
+              if [ $rc -ne 0 ]; then
+                lint_results="$lint_results\n>>>Linting failed for file: $file <<<\n$lint_result\n--------"
+              fi
+            done
+            if [ $rc -ne 0 ]; then
+              echo -e "${RED}Linting failed for one or more files${NC}"
+              echo -e "$lint_results"
+              exit 1
+            else
+              echo -e "${GREEN}Linting successful for all files.${NC}"
+            fi
+          else
+            echo "No repo markdown files changed."
+          fi
+
+      - name: Check if docs manifest is valid JSON
+        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
+        id: is-valid-json
+        run: node .github/workflows/scripts/is-valid-json.js docs/docs-manifest.json
+
+      - name: Lint docs changed markdown files
+        if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
+        run: |
+          RED="\e[1;31m"
+          GREEN="\e[1;32m"
+          NC="\e[0m"
+          set -e
+          rc=0
+          changed_files="${{ steps.docs-changed-files.outputs.all_changed_files }}"
+          changed_manifest="${{ steps.docs-manifest.outputs.all_changed_files }}"
+          is_valid_json="${{ steps.is-valid-json.outputs.is-valid-json }}"
+          storybook="no"
+          for L in ${{github.event.pull_request.labels.*.name}}
+          do
+            if [ $L == "type: storybook" ]; then
+              storybook="yes"
+            fi
+          done
+          if [ -n "$changed_files" ]; then
+            lint_results=""
+            failed_check=""
+            for file in $changed_files; do
+              lint_result=$( { cat "$file" | markdownlint --stdin -c docs/.markdownlint.json ; } 2>&1 ) || rc="$?"
+              if [ $rc -ne 0 ]; then
+                lint_results="$lint_results\n>>>Linting failed for file: $file <<<\n$lint_result\n--------"
+              fi
+            done
+          
+            if [ $rc -ne 0 ]; then
+              echo -e "${RED}Linting failed for one or more files${NC}"
+              echo -e "$lint_results"
+              failed_check="lint"
+            else
+              echo -e "${GREEN}Linting successful for all files.${NC}"
+            fi
+          
+            if [ "$storybook" == "no" ]; then
+              if [ -z "$changed_manifest" ]; then
+                echo -e "${RED}Changes in the docs folder require updating the manifest${NC}"
+                failed_check="manifest"
+              fi
+              if [ "$is_valid_json" == "no" ]; then
+                echo -e "${RED}'docs/docs-manifest.json' is not valid JSON${NC}"
+                failed_check="manifest"
+              fi
+              if [ "$failed_check" == "manifest" ]; then
+                echo -e "Generate a manifest with 'pnpm utils md-docs create docs woocommerce -o docs/docs-manifest.json'"
+              fi
+            fi
+          
+            if [ -n "$failed_check" ]; then
+              exit 1
+            fi
+          else
+            echo "No docs markdown files changed."
+          fi
