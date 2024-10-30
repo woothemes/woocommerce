@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { Gridicon } from '@automattic/components';
-import { Button, Card, CardHeader, SelectControl } from '@wordpress/components';
+import { Button, SelectControl } from '@wordpress/components';
 import React from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';

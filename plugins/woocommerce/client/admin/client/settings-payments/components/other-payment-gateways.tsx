@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { Gridicon } from '@automattic/components';
 import React, { useMemo, useState } from '@wordpress/element';
 import { Button } from '@wordpress/components';
 import {
@@ -21,7 +22,6 @@ import {
 	getIsWCPayOrOtherCategoryDoneSetup,
 	getSplitGateways,
 } from '~/task-lists/fills/PaymentGatewaySuggestions/utils';
-import { Gridicon } from '@automattic/components';
 import { getAdminSetting } from '~/utils/admin-settings';
 
 type PaymentGateway = {
@@ -175,7 +175,8 @@ export const OtherPaymentGateways = () => {
 						</>
 					) }
 				</div>
-				<span
+				<Button
+					variant={ 'link' }
 					onClick={ () => {
 						setIsExpanded( ! isExpanded );
 					} }
@@ -186,7 +187,7 @@ export const OtherPaymentGateways = () => {
 					) : (
 						<Gridicon icon="chevron-down" />
 					) }
-				</span>
+				</Button>
 			</div>
 			{ isExpanded && (
 				<div className="other-payment-gateways__content">
@@ -229,6 +230,7 @@ export const OtherPaymentGateways = () => {
 						>
 							<img
 								src={ assetUrl + '/icons/external-link.svg' }
+								alt=""
 							/>
 							{ __( 'More payment options', 'woocommerce' ) }
 						</Button>

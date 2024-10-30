@@ -127,6 +127,16 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 				font-weight: 600;
 				line-height: 24px;
 			}
+
+			/* Override hover and focus states for the button */
+			.components-button:focus:not(:disabled) {
+				box-shadow: none;
+				outline: none;
+			}
+
+			.components-button {
+				color: $gray-900;
+			}
 		}
 
 		&__content {
