@@ -832,6 +832,7 @@ class ProductCollectionController extends AbstractBlock {
 			'editor_args'   => $editor_args,
 			'preview_query' => $preview_query,
 		);
+		$this->query_builder->set_collection_handler_store( $this->collection_handler_store );
 	}
 
 	/**
