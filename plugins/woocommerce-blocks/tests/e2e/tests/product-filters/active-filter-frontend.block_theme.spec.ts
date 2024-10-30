@@ -27,14 +27,17 @@ test.describe( 'woocommerce/product-filter-active - Frontend', () => {
 
 		await page.goto( '/shop' );
 
-		const locator = page.locator(
-			'.wp-block-woocommerce-product-filter-active .wp-block-woocommerce-product-filter-active-chips'
+		const chips = page.locator(
+			'.wp-block-woocommerce-product-filter-active .wp-block-woocommerce-product-filter-removable-chips'
 		);
 
-		await expect( locator ).toHaveCount( 1 );
+		await expect( chips ).toHaveCount( 0 );
 
-		const html = await locator.innerHTML();
-		expect( html.trim() ).toBe( '' );
+		const filterWrapper = page.locator(
+			'.wp-block-woocommerce-product-filter-active'
+		);
+
+		await expect( filterWrapper ).toHaveCount( 1 );
 	} );
 
 	test( 'With rating filters applied it shows the correct active filters', async ( {
