@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders;
 
-use Automattic\WooCommerce\Admin\API\Reports\Controller;
+use Automattic\WooCommerce\Internal\ProductFilters\Controller;
 use Automattic\WooCommerce\Internal\ProductFilters\FilterData;
 use Automattic\WooCommerce\Internal\ProductFilters\QueryClauses;
 
