@@ -11,7 +11,7 @@ import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
  */
 import { getAdminSetting } from '~/utils/admin-settings';
 import sanitizeHTML from '~/lib/sanitize-html';
-import { WCPayInstallButton } from './wcpay-install-button';
+import { WCPayInstallButton } from '../wcpay-install-button/wcpay-install-button';
 
 export const PaymentMethod = ( {
 	id,

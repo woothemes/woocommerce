@@ -13,7 +13,7 @@ import { PAYMENT_GATEWAYS_STORE_NAME } from '@woocommerce/data';
  * Internal dependencies
  */
 import { getAdminSetting } from '~/utils/admin-settings';
-import { PaymentGatewayButton } from './payment-gateway-button';
+import { PaymentGatewayButton } from '../payment-gateway-button/payment-gateway-button';
 
 const assetUrl = getAdminSetting( 'wcAdminAssetUrl' );
 

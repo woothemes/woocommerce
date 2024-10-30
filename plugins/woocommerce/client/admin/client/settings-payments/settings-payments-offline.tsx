@@ -7,7 +7,7 @@ import '@wordpress/element';
  * Internal dependencies
  */
 import './settings-payments-offline.scss';
-import { OfflinePaymentGateways } from './components/offline-payment-gateways';
+import { OfflinePaymentGateways } from './components/offline-payment-gateways/offline-payment-gateways';
 
 export const SettingsPaymentsOffline: React.FC = () => {
 	return (

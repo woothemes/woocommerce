@@ -13,6 +13,7 @@ import { getAdminLink } from '@woocommerce/settings';
 /**
  * Internal dependencies
  */
+import './payment-gateways.scss';
 
 export const PaymentGateways = () => {
 	// Mock payment gateways for now.
@@ -52,13 +53,34 @@ export const PaymentGateways = () => {
 
 	// Transform plugins comply with List component format.
 	const paymentGatewaysList = mockPaymentGateways.map( ( gateway ) => {
+		// todo: add logic to check if the incentive is available for the gateway.
+		const hasIncentive = gateway.id === 'woocommerce_payments';
+
+		// Determine the class names needed for the list item.
+		let className = 'woocommerce-list__item--payment-gateway';
+		if ( hasIncentive ) {
+			className += ' has-incentive';
+		}
+
 		return {
 			key: gateway.id,
+			className: `${ className }`,
 			title: (
 				<>
 					{ gateway.title }
-					{ gateway.recommended && (
-						<Pill>{ __( 'Recommended', 'woocommerce' ) }</Pill>
+					{ ( hasIncentive || gateway.recommended ) && (
+						<Pill>
+							{
+								// TODO: Replace with actual incentive text.
+								// TODO: add tooltip
+								hasIncentive
+									? __(
+											'Save 10% on processing fees',
+											'woocommerce'
+									  )
+									: __( 'Recommended', 'woocommerce' )
+							}
+						</Pill>
 					) }
 				</>
 			),
@@ -119,6 +141,7 @@ export const PaymentGateways = () => {
 	// Add offline payment provider.
 	paymentGatewaysList.push( {
 		key: 'offline',
+		className: 'woocommerce-list__item--payment-gateway',
 		title: <>{ __( 'Offline payment methods', 'woocommerce' ) }</>,
 		content: (
 			<>
