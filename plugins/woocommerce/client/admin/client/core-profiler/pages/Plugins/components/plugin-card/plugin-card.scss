@@ -1,19 +1,29 @@
-@import "../../shared.scss";
+@import "../../../../shared.scss";
 
 .woocommerce-profiler-plugins-plugin-card {
-	max-width: 492px;
+	max-width: clamp(384px, 48%, 492px);
 	display: flex;
 	flex-direction: column;
 	box-sizing: border-box;
 	border: 1px solid #e0e0e0;
 	border-radius: 2px;
-	padding: 26px;
 	align-items: flex-start;
-	flex: 0 0 48%;
+	flex: 1 0 48%;
 
-	&:hover {
+	label {
+		padding: 26px;
+	}
+
+	&.disabled {
+		opacity: 0.5;
+		filter: grayscale(1);
+		cursor: not-allowed;
+	}
+
+	&:hover:not(.disabled) {
 		cursor: pointer;
 	}
+
 
 	&.is-installed:hover {
 		cursor: initial;
@@ -21,9 +31,12 @@
 
 	@include breakpoint( "<782px" ) {
 		width: 100%;
-		padding: 16px;
 		flex: 100%;
 		max-width: 100%;
+
+		label {
+			padding: 16px;
+		}
 	}
 
 	.components-checkbox-control__input-container {
@@ -34,13 +47,11 @@
 		margin-top: 0;
 	}
 
-	input {
-		margin: 3px 26px 0 0;
-		width: 20px;
-		height: 20px;
-		border: 1px solid $gray-700;
-		border-radius: 2px;
-		background: #fff;
+	input.components-checkbox-control__input[type="checkbox"] {
+		&[disabled] {
+			background: $gray-400;
+			cursor: not-allowed;
+		}
 	}
 	img {
 		margin-right: 12px;
