@@ -32,6 +32,7 @@ env:
 jobs:
   identify-jobs-to-run:
     name: 'Analyze changes'
+    if: ${{ !cancelled() && github.event_name == 'pull_request' }}
     runs-on: 'ubuntu-20.04'
     outputs:
       needs-code-validation: ${{ steps.target-changes.outputs.needs-code-validation }}
@@ -55,7 +56,7 @@ jobs:
     # which projects have changed and what kind of change occurred. This lets us build the
     # matrices that we can use to run CI tasks only on the projects that need them.
     name: 'Build Project Jobs'
-    if: ${{ !cancelled() && needs.identify-jobs-to-run.outputs.needs-code-validation == 'true' }}
+    if: ${{ !cancelled() && ( needs.identify-jobs-to-run.outputs.needs-code-validation || 'true' ) == 'true' }}
     needs: 'identify-jobs-to-run'
     runs-on: 'ubuntu-20.04'
     outputs:
@@ -438,7 +439,7 @@ jobs:
 
   validate-changelog:
     name: 'Validate changelog'
-    if: ${{ !cancelled() && github.event_name == 'pull_request' && needs.identify-jobs-to-run.outputs.needs-changelog-validation == 'true' }}
+    if: ${{ !cancelled() && github.event_name == 'pull_request' && ( needs.identify-jobs-to-run.outputs.needs-changelog-validation || false ) == 'true' }}
     needs: 'identify-jobs-to-run'
     runs-on: 'ubuntu-20.04'
     permissions:
@@ -473,7 +474,7 @@ jobs:
 
   validate-markdown:
     name: 'Validate markdown'
-    if: ${{ !cancelled() && github.event_name == 'pull_request' && needs.identify-jobs-to-run.outputs.needs-markdown-validation == 'true' }}
+    if: ${{ !cancelled() && github.event_name == 'pull_request' && ( needs.identify-jobs-to-run.outputs.needs-markdown-validation || 'false' ) == 'true' }}
     needs: 'identify-jobs-to-run'
     runs-on: 'ubuntu-20.04'
     permissions:
