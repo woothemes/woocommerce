@@ -44,6 +44,7 @@ jobs:
     steps:
       - uses: 'actions/checkout@v4'
         with:
+          fetch-tags: false
           # If 'base_ref' is available, the 'Build Matrix' step requires non-shallow git-history to identify changed files.
           fetch-depth: ${{ ( ( github.base_ref && '0' ) || '1' ) }}
       - name: 'Setup PNPM'
