@@ -183,7 +183,7 @@ class EmailPreview {
 	 */
 	private function set_up_filters() {
 		// Always show shipping address in the preview email.
-		add_filter( 'woocommerce_order_needs_shipping_address', '__return_true' );
+		add_filter( 'woocommerce_order_needs_shipping_address', array( $this, 'enable_shipping_address' ) );
 		// Email templates fetch product from the database to show additional information, which are not
 		// saved in WC_Order_Item_Product. This filter enables fetching that data also in email preview.
 		add_filter( 'woocommerce_order_item_product', array( $this, 'get_dummy_product_when_not_set' ), 10, 1 );
@@ -193,7 +193,17 @@ class EmailPreview {
 	 * Clean up filters after email preview.
 	 */
 	private function clean_up_filters() {
-		remove_filter( 'woocommerce_order_needs_shipping_address', '__return_true' );
+		remove_filter( 'woocommerce_order_needs_shipping_address', array( $this, 'enable_shipping_address' ) );
 		remove_filter( 'woocommerce_order_item_product', array( $this, 'get_dummy_product_when_not_set' ), 10 );
+	}
+
+	/**
+	 * Enable shipping address in the preview email. Not using __return_true so
+	 * we don't accidentally remove the same filter used by other plugin or theme.
+	 *
+	 * @return true
+	 */
+	public function enable_shipping_address() {
+		return true;
 	}
 }
