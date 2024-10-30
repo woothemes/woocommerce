@@ -59,7 +59,7 @@ jobs:
       - name: Test
         shell: bash
         run: |
-          git diff --name-only HEAD~${{ github.event.pull_request.commits }}
+          git diff --name-only 42b4c1f25d4f70684acab737d10ef7b1216e4309
           exit 1
           
       - name: 'Setup PNPM'
