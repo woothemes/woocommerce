@@ -23,6 +23,8 @@ class FilterData {
 	private $query_clauses;
 
 	/**
+	 * Instance of Cache.
+	 *
 	 * @var Cache
 	 */
 	private $cache;
@@ -33,6 +35,7 @@ class FilterData {
 	 * @internal
 	 *
 	 * @param QueryClauses $query_clauses Instance of QueryClauses.
+	 * @param Cache        $cache         Instance of Cache.
 	 *
 	 * @return void
 	 */

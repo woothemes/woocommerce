@@ -21,7 +21,7 @@ class Cache {
 	 * Get filter data transient key.
 	 *
 	 * @param string $id   The id of entity.
-	 * @param array  $args Data to be hashed for an unique key.
+	 * @param array  ...$args Data to be hashed for an unique key.
 	 */
 	public function get_transient_key( string $id, ...$args ) {
 		return sprintf(
@@ -92,7 +92,8 @@ class Cache {
 			function ( $product_query_sql ) {
 				global $wpdb;
 
-				$results = $wpdb->get_results( $product_query_sql, ARRAY_A );
+				// The query is already prepared by WP_Query.
+				$results = $wpdb->get_results( $product_query_sql, ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 				if ( ! $results ) {
 					$results = array();
