@@ -1,5 +1,6 @@
 <?php
 
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareUnitTestSuiteTrait;
 use Automattic\WooCommerce\RestApi\UnitTests\HPOSToggleTrait;
 
@@ -237,7 +238,7 @@ class WC_REST_Orders_Controller_Tests extends WC_REST_Unit_Test_Case {
 
 		$data = $response->get_data();
 		$this->assertArrayHasKey( 'id', $data );
-		$this->assertEquals( WC_Order::STATUS_PROCESSING, $data['status'] );
+		$this->assertEquals( OrderStatus::PROCESSING, $data['status'] );
 
 		wp_cache_flush();
 
@@ -258,7 +259,7 @@ class WC_REST_Orders_Controller_Tests extends WC_REST_Unit_Test_Case {
 	 */
 	public function test_orders_delete(): void {
 		$order = new \WC_Order();
-		$order->set_status( WC_Order::STATUS_COMPLETED );
+		$order->set_status( OrderStatus::COMPLETED );
 		$order->save();
 		$order_id = $order->get_id();
 
@@ -271,13 +272,13 @@ class WC_REST_Orders_Controller_Tests extends WC_REST_Unit_Test_Case {
 		$data = $response->get_data();
 		$this->assertArrayHasKey( 'id', $data );
 		$this->assertEquals( $data['id'], $order_id );
-		$this->assertEquals( WC_Order::STATUS_COMPLETED, $data['status'] );
+		$this->assertEquals( OrderStatus::COMPLETED, $data['status'] );
 
 		wp_cache_flush();
 
 		// Check the order was actually deleted.
 		$order = wc_get_order( $order_id );
-		$this->assertEquals( WC_Order::STATUS_TRASH, $order->get_status( 'edit' ) );
+		$this->assertEquals( OrderStatus::TRASH, $order->get_status( 'edit' ) );
 	}
 
 	/**
@@ -482,7 +483,7 @@ class WC_REST_Orders_Controller_Tests extends WC_REST_Unit_Test_Case {
 		$product->set_stock_quantity( 10 );
 		$product->save();
 
-		$order = WC_Helper_Order::create_order( 1, $product, array( 'status' => WC_Order::STATUS_ON_HOLD ) ); // Initial qty of 4.
+		$order = WC_Helper_Order::create_order( 1, $product, array( 'status' => OrderStatus::ON_HOLD ) ); // Initial qty of 4.
 		$items = $order->get_items();
 		$item  = reset( $items );
 		wc_maybe_adjust_line_item_product_stock( $item );

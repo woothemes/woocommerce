@@ -5,6 +5,7 @@ namespace Automattic\WooCommerce\Tests\Internal\DataStores\Orders;
 
 use Automattic\WooCommerce\Blocks\Domain\Services\DraftOrders;
 use Automattic\WooCommerce\Database\Migrations\CustomOrderTable\PostsToOrdersMigrationController;
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareUnitTestSuiteTrait;
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 use Automattic\WooCommerce\Internal\DataStores\Orders\DataSynchronizer;
@@ -460,7 +461,7 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 		$wpdb->delete( $this->sut::get_addresses_table_name(), array( 'order_id' => $order->get_id() ), array( '%d' ) );
 
 		// Try to update the order.
-		$order->set_status( WC_Order::STATUS_COMPLETED );
+		$order->set_status( OrderStatus::COMPLETED );
 		$order->set_billing_address_1( 'New address' );
 		$order->save();
 
@@ -545,7 +546,7 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 		$order->delete();
 
 		$orders_table = $this->sut::get_orders_table_name();
-		$this->assertEquals( WC_Order::STATUS_TRASH, $wpdb->get_var( $wpdb->prepare( "SELECT status FROM {$orders_table} WHERE id = %d", $order_id ) ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$this->assertEquals( OrderStatus::TRASH, $wpdb->get_var( $wpdb->prepare( "SELECT status FROM {$orders_table} WHERE id = %d", $order_id ) ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		// Make sure order data persists in the database.
 		$this->assertNotEmpty( $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}woocommerce_order_items WHERE order_id = %d", $order_id ) ) );
@@ -570,7 +571,7 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 
 		// Tests trashing of orders.
 		$order = $this->create_complex_cot_order();
-		$order->set_status( WC_Order::STATUS_ON_HOLD );
+		$order->set_status( OrderStatus::ON_HOLD );
 		$order->save();
 		$order_id = $order->get_id();
 
@@ -578,13 +579,13 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 
 		//phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders
 		$orders_table = $this->sut::get_orders_table_name();
-		$this->assertEquals( WC_Order::STATUS_TRASH, $wpdb->get_var( $wpdb->prepare( "SELECT status FROM {$orders_table} WHERE id = %d", $order_id ) ) );
-		$this->assertEquals( WC_Order::STATUS_TRASH, $wpdb->get_var( $wpdb->prepare( "SELECT post_status FROM {$wpdb->posts} WHERE id = %d", $order_id ) ) );
+		$this->assertEquals( OrderStatus::TRASH, $wpdb->get_var( $wpdb->prepare( "SELECT status FROM {$orders_table} WHERE id = %d", $order_id ) ) );
+		$this->assertEquals( OrderStatus::TRASH, $wpdb->get_var( $wpdb->prepare( "SELECT post_status FROM {$wpdb->posts} WHERE id = %d", $order_id ) ) );
 
 		$this->sut->read( $order );
 		$this->sut->untrash_order( $order );
 
-		$this->assertEquals( WC_Order::STATUS_ON_HOLD, $order->get_status() );
+		$this->assertEquals( OrderStatus::ON_HOLD, $order->get_status() );
 		$this->assertEquals( 'wc-on-hold', get_post_status( $order_id ) );
 
 		$this->assertEmpty( $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$this->sut->get_meta_table_name()} WHERE order_id = %d AND meta_key LIKE '_wp_trash_meta_%'", $order_id ) ) );
@@ -695,7 +696,7 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 		$order1->add_meta_data( 'animal', 'lion', true );
 		$order1->add_meta_data( 'place', 'London', true );
 		$order1->add_meta_data( 'movie', 'Magnolia', true );
-		$order1->set_status( WC_Order::STATUS_COMPLETED );
+		$order1->set_status( OrderStatus::COMPLETED );
 		$order1->save();
 
 		$order2 = new WC_Order();
@@ -703,7 +704,7 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 		$order2->add_meta_data( 'color', 'blue', true );
 		$order2->add_meta_data( 'animal', 'cow', true );
 		$order2->add_meta_data( 'place', 'near London', true );
-		$order2->set_status( WC_Order::STATUS_COMPLETED );
+		$order2->set_status( OrderStatus::COMPLETED );
 		$order2->save();
 
 		$order3 = new WC_Order();
@@ -712,7 +713,7 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 		$order3->add_meta_data( 'animal', 'lion', true );
 		$order3->add_meta_data( 'place', 'Paris', true );
 		$order3->add_meta_data( 'movie', 'Citizen Kane', true );
-		$order3->set_status( WC_Order::STATUS_COMPLETED );
+		$order3->set_status( OrderStatus::COMPLETED );
 		$order3->save();
 
 		// phpcs:disable WordPress.DB.SlowDBQuery.slow_db_query_meta_query,WordPress.DB.SlowDBQuery.slow_db_query_meta_key
@@ -2101,7 +2102,7 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 		$created_date->setTimezone( new DateTimeZone( 'GMT' ) );
 		$this->assertEquals( $created_date->format( 'Y-m-d H:i:s' ), $post->post_date_gmt );
 
-		$order->set_status( WC_Order::STATUS_COMPLETED );
+		$order->set_status( OrderStatus::COMPLETED );
 		$order->save();
 		$this->sut->backfill_post_record( $order );
 
@@ -2470,7 +2471,7 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 	public function test_get_db_row_from_order_only_prefixed_status_is_written_to_db() {
 		$order = wc_create_order();
 
-		$order->set_status( WC_Order::STATUS_COMPLETED );
+		$order->set_status( OrderStatus::COMPLETED );
 		$db_row_callback = function ( $order, $only_changes ) {
 			return $this->get_db_row_from_order( $order, $this->order_column_mapping, $only_changes );
 		};
@@ -2687,12 +2688,12 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 
 		$this->assertEquals( 0, $product->get_total_sales() );
 
-		$order->set_status( WC_Order::STATUS_PROCESSING );
+		$order->set_status( OrderStatus::PROCESSING );
 		$order->save();
 		$product = wc_get_product( $product->get_id() );
 		$this->assertEquals( 1, $product->get_total_sales() ); // Sale is increased when status is changed to processing.
 
-		$order->set_status( WC_Order::STATUS_COMPLETED );
+		$order->set_status( OrderStatus::COMPLETED );
 		$order->save();
 		$product = wc_get_product( $product->get_id() );
 		$this->assertEquals( 1, $product->get_total_sales() ); // Sale is not increased when status is changed to completed (from processing).
@@ -2827,7 +2828,7 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 
 		// Trashing should not fire an update.
 		$order->get_data_store()->delete( $order );
-		$this->assertEquals( $order->get_status(), WC_Order::STATUS_TRASH );
+		$this->assertEquals( $order->get_status(), OrderStatus::TRASH );
 		$this->assertEquals( 2, $update_count );
 
 		// Untrashing should not fire an update.
@@ -2838,19 +2839,19 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 			wp_untrash_post( $order->get_id() );
 			$order = wc_get_order( $order->get_id() ); // Refresh order.
 		}
-		$this->assertNotEquals( $order->get_status(), WC_Order::STATUS_TRASH );
+		$this->assertNotEquals( $order->get_status(), OrderStatus::TRASH );
 		$this->assertEquals( 2, $update_count );
 
 		// An auto-draft order should not trigger 'woocommerce_new_order' until first saved with a valid status.
 		if ( $cot_is_authoritative ) {
 			$order = new WC_Order();
-			$order->set_status( WC_Order::STATUS_AUTO_DRAFT );
+			$order->set_status( OrderStatus::AUTO_DRAFT );
 			$order->save();
 
 			$this->assertEquals( 1, $new_count );
 			$this->assertEquals( 2, $update_count );
 
-			$order->set_status( WC_Order::STATUS_ON_HOLD );
+			$order->set_status( OrderStatus::ON_HOLD );
 			$order->save();
 
 			$this->assertEquals( 2, $new_count );
@@ -3469,7 +3470,7 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 
 		add_action( 'woocommerce_new_order', $callback );
 
-		$draft_statuses = array( WC_Order::STATUS_AUTO_DRAFT, DraftOrders::STATUS );
+		$draft_statuses = array( OrderStatus::AUTO_DRAFT, DraftOrders::STATUS );
 
 		$orders_data_store = new OrdersTableDataStore();
 
@@ -3497,7 +3498,7 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 		add_action( 'woocommerce_new_order', $callback );
 
 		$order = new WC_Order();
-		$order->set_status( WC_Order::STATUS_DRAFT );
+		$order->set_status( OrderStatus::DRAFT );
 
 		$this->assertEquals( 0, $new_count );
 
@@ -3506,7 +3507,7 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 		$order->save();
 		$this->assertEquals( 0, $new_count );
 
-		$triggering_order_statuses = array( WC_Order::STATUS_PENDING, WC_Order::STATUS_ON_HOLD, WC_Order::STATUS_COMPLETED, WC_Order::STATUS_PROCESSING );
+		$triggering_order_statuses = array( OrderStatus::PENDING, OrderStatus::ON_HOLD, OrderStatus::COMPLETED, OrderStatus::PROCESSING );
 
 		foreach ( $triggering_order_statuses as $status ) {
 			$order->set_status( $status );
@@ -3534,7 +3535,7 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 		add_action( 'woocommerce_new_order', $callback );
 
 		$order = new WC_Order();
-		$order->set_status( WC_Order::STATUS_PROCESSING );
+		$order->set_status( OrderStatus::PROCESSING );
 
 		$this->assertEquals( 0, $new_count );
 
