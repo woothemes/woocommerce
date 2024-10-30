@@ -48,6 +48,10 @@ final class ProductFilterActive extends AbstractBlock {
 		 */
 		$active_filters = apply_filters( 'collection_active_filters_data', array(), $this->get_filter_query_params( $query_id ) );
 
+		if ( empty( $active_filters ) ) {
+			return '';
+		}
+
 		$context = array(
 			'hasSelectedFilters' => ! empty( $active_filters ) ?? false,
 		);
