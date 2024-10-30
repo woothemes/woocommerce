@@ -52,9 +52,9 @@ jobs:
 
       - uses: 'actions/checkout@v4'
         with:
-          ref: ${{ github.event.pull_request.head.sha || '' }}
+          ref: ${{ ( github.event_name == 'pull_request' && github.head_ref ) || '' }}
           # If 'base_ref' is available, the 'Build Matrix' step requires non-shallow git-history to identify changed files.
-          fetch-depth: ${{ ( steps.checkout_depth.outputs.pull_request_commits || ( github.base_ref && '0' ) || '1' ) }}
+          fetch-depth: ${{ ( ( github.event_name == 'pull_request' && steps.checkout_depth.outputs.pull_request_commits ) || ( github.base_ref && '0' ) || '1' ) }}
           
       - name: Test
         shell: bash
@@ -430,7 +430,7 @@ jobs:
 
   validate-changelog:
     name: 'Validate changelog'
-    if: ${{ !cancelled() && github.event_name == 'pull_request' && github.base_ref == 'trunk' }}
+    if: ${{ !cancelled() && github.event_name == 'pull_request' }}
     runs-on: 'ubuntu-20.04'
     permissions:
       contents: read
@@ -476,7 +476,7 @@ jobs:
 
   validate-markdown:
     name: 'Validate markdown'
-    if: ${{ !cancelled() && github.event_name == 'pull_request' && github.base_ref == 'trunk' }}
+    if: ${{ !cancelled() && github.event_name == 'pull_request' }}
     runs-on: 'ubuntu-20.04'
     permissions:
       contents: read
