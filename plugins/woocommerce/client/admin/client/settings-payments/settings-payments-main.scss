@@ -1,7 +1,7 @@
 $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 
 #wpcontent {
-	background-color: white;
+	background-color: #ffffff;
 }
 
 .settings-payments-main__container {
@@ -75,7 +75,7 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 				align-items: center;
 
 				.woocommerce-pill {
-					background: var(--Alias-bg-bg-surface-secondary, #F5F5F5);
+					background: var(--Alias-bg-bg-surface-secondary, #f5f5f5);
 					border: none;
 					border-radius: var(--radius-primitive, 4px);
 				}
