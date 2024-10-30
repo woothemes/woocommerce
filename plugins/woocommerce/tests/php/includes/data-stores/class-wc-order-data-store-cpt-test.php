@@ -1,5 +1,6 @@
 <?php
 
+use Automattic\WooCommerce\Blocks\Domain\Services\DraftOrders;
 use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\RestApi\UnitTests\Helpers\OrderHelper;
 use Automattic\WooCommerce\Utilities\OrderUtil;
@@ -453,7 +454,7 @@ class WC_Order_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 
 		add_action( 'woocommerce_new_order', $callback );
 
-		$draft_statuses = array( OrderStatus::AUTO_DRAFT, \Automattic\WooCommerce\Blocks\Domain\Services\DraftOrders::STATUS );
+		$draft_statuses = array( OrderStatus::AUTO_DRAFT, DraftOrders::STATUS );
 
 		$order_data_store_cpt = new WC_Order_Data_Store_CPT();
 
@@ -488,7 +489,7 @@ class WC_Order_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 
 		$this->assertEquals( 0, $new_count );
 
-		$order->set_status( \Automattic\WooCommerce\Blocks\Domain\Services\DraftOrders::STATUS );
+		$order->set_status( DraftOrders::STATUS );
 		$order_data_store_cpt->update( $order );
 		$order->save();
 		$this->assertEquals( 0, $new_count );
@@ -499,7 +500,7 @@ class WC_Order_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 			$current_status = $order->get_status( 'edit' );
 			$order->set_status( $status );
 			$order_data_store_cpt->update( $order );
-			$order->set_status( \Automattic\WooCommerce\Blocks\Domain\Services\DraftOrders::STATUS ); // Revert back to draft.
+			$order->set_status( DraftOrders::STATUS ); // Revert back to draft.
 			$order->save();
 			$this->assertEquals(
 				$k + 1,
