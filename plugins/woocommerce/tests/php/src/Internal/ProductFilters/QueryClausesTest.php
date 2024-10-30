@@ -41,11 +41,13 @@ class QueryClausesTest extends AbstractProductFiltersTest {
 	 * }
 	 */
 	public function test_price_clauses_with( $price_range ) {
-		$price_range     = wp_parse_args(
-			$price_range,
-			array(
-				'min_price' => 0,
-				'max_price' => 0,
+		$price_range     = array_filter(
+			wp_parse_args(
+				$price_range,
+				array(
+					'min_price' => 0,
+					'max_price' => 0,
+				)
 			)
 		);
 		$filter_callback = function ( $args ) use ( $price_range ) {
