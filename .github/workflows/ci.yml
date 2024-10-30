@@ -462,7 +462,7 @@ jobs:
 
   validate-markdown:
     name: 'Validate markdown'
-    if: ${{ !cancelled() && github.event_name == 'pull_request__' }}
+    if: ${{ !cancelled() && github.event_name == 'pull_request' }}
     runs-on: 'ubuntu-20.04'
     permissions:
       contents: read
