@@ -1,3 +1,11 @@
+/**
+ * External dependencies
+ */
+import '@wordpress/notices';
+
+/**
+ * Internal dependencies
+ */
 export { CART_STORE_KEY } from './cart';
 export { CHECKOUT_STORE_KEY } from './checkout';
 export { COLLECTIONS_STORE_KEY } from './collections';
