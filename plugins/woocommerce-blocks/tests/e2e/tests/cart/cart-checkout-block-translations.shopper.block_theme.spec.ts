@@ -6,6 +6,7 @@ import { expect, test as base, wpCLI } from '@woocommerce/e2e-utils';
 /**
  * Internal dependencies
  */
+import { SIMPLE_PHYSICAL_PRODUCT_NAME } from '../checkout/constants';
 import { CheckoutPage } from '../checkout/checkout.page';
 import { translations } from '../../test-data/data/data';
 import { getTestTranslation } from '../../utils/get-test-translation';
@@ -28,13 +29,9 @@ test.describe( 'Shopper → Translations', () => {
 		frontendUtils,
 		page,
 	} ) => {
+		await frontendUtils.emptyCart();
 		await frontendUtils.goToShop();
-
-		const beanieAddToCartButton = page.getByLabel(
-			'Add to cart: “Beanie”'
-		);
-		await beanieAddToCartButton.click();
-
+		await frontendUtils.addToCart( SIMPLE_PHYSICAL_PRODUCT_NAME );
 		await frontendUtils.goToCart();
 
 		const totalsHeader = page
@@ -67,12 +64,9 @@ test.describe( 'Shopper → Translations', () => {
 		frontendUtils,
 		page,
 	} ) => {
+		await frontendUtils.emptyCart();
 		await frontendUtils.goToShop();
-		const beanieAddToCartButton = page.getByLabel(
-			'Add to cart: “Beanie”'
-		);
-		await beanieAddToCartButton.click();
-
+		await frontendUtils.addToCart( SIMPLE_PHYSICAL_PRODUCT_NAME );
 		await frontendUtils.goToCheckout();
 
 		await expect(
