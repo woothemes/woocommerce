@@ -25,6 +25,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 		$this->label = __( 'Emails', 'woocommerce' );
 
 		add_action( 'woocommerce_admin_field_email_notification', array( $this, 'email_notification_setting' ) );
+		add_action( 'woocommerce_admin_field_email_preview', array( $this, 'email_preview' ) );
 		parent::__construct();
 	}
 
@@ -208,6 +209,8 @@ class WC_Settings_Emails extends WC_Settings_Page {
 					'id'   => 'email_template_options',
 				),
 
+				array( 'type' => 'email_preview' ),
+
 				array(
 					'title' => __( 'Store management insights', 'woocommerce' ),
 					'type'  => 'title',
@@ -376,6 +379,15 @@ class WC_Settings_Emails extends WC_Settings_Page {
 				</table>
 			</td>
 		</tr>
+		<?php
+	}
+
+	/**
+	 * Creates the React mount point for the email preview.
+	 */
+	public function email_preview() {
+		?>
+		<div id="wc_settings_email_preview_slotfill"></div>
 		<?php
 	}
 }
