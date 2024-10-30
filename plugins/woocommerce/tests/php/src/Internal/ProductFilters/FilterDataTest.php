@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace Automattic\WooCommerce\Tests\Internal\ProductFilters;
 
+use Automattic\WooCommerce\Internal\ProductFilters\Cache;
 use Automattic\WooCommerce\Internal\ProductFilters\FilterData;
+use Automattic\WooCommerce\Internal\ProductFilters\QueryClauses;
 
 /**
  * Tests related to Counts service.
@@ -23,6 +25,10 @@ class FilterDataTest extends AbstractProductFiltersTest {
 		parent::setUp();
 
 		$container = wc_get_container();
+		$container->reset_all_resolved();
+		$container->add( QueryClauses::class );
+		$container->add( Cache::class );
+		$container->add( FilterData::class )->addArguments( array( QueryClauses::class, Cache::class ) );
 		$this->sut = $container->get( FilterData::class );
 
 		$this->fixture_data->add_product_review( $this->products[0]->get_id(), 5 );
