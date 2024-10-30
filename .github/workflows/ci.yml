@@ -43,7 +43,7 @@ jobs:
       report-jobs: ${{ steps.project-jobs.outputs.report-jobs }}
     steps:
       - name: 'Calculate checkout depth'
-        if: ${{ github.event_name == 'pull_request' && github.base_ref == 'test skipping it' }}
+        if: ${{ github.event_name == 'pull_request' }}
         id: checkout_depth
         shell: bash
         run: |
