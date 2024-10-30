@@ -15,13 +15,9 @@ import { PanelBody, ToggleControl, TextControl } from '@wordpress/components';
 import { CHECKOUT_PAGE_ID } from '@woocommerce/block-settings';
 import { ReturnToCartButton } from '@woocommerce/base-components/cart-checkout';
 import EditableButton from '@woocommerce/editor-components/editable-button';
-import Noninteractive from '@woocommerce/base-components/noninteractive';
 import { useStoreCart } from '@woocommerce/base-context';
 import { getCurrencyFromPriceResponse } from '@woocommerce/price-format';
-import {
-	FormattedMonetaryAmount,
-	TextInput,
-} from '@woocommerce/blocks-components';
+import { FormattedMonetaryAmount } from '@woocommerce/blocks-components';
 
 /**
  * Internal dependencies
