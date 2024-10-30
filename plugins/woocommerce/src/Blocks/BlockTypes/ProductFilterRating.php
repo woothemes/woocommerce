@@ -2,7 +2,7 @@
 namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 use Automattic\WooCommerce\Blocks\Utils\ProductCollectionUtils;
-use Automattic\WooCommerce\Internal\ProductFilters\Counts;
+use Automattic\WooCommerce\Internal\ProductFilters\FilterData;
 
 /**
  * Product Filter: Rating Block
@@ -286,7 +286,7 @@ final class ProductFilterRating extends AbstractBlock {
 			$query_vars['tax_query'] = ProductCollectionUtils::remove_query_array( $query_vars['tax_query'], 'rating_filter', true );
 		}
 
-		$counts = wc_get_container()->get( Counts::class )->get_rating_counts( $query_vars );
+		$counts = wc_get_container()->get( FilterData::class )->get_rating_counts( $query_vars );
 		$data   = array();
 
 		foreach ( $counts as $key => $value ) {
