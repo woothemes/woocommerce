@@ -60,8 +60,6 @@ test.describe( 'Shopper → Translations', () => {
 				name: getTestTranslation( 'Go to checkout' ),
 			} )
 		).toBeVisible();
-
-		await frontendUtils.emptyCart();
 	} );
 } );
 
