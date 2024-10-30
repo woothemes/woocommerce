@@ -417,10 +417,11 @@ jobs:
       contents: read
 
     steps:
-      - id: checkout_depth
+      - name: 'Calculate checkout depth'
+        id: checkout_depth
         shell: bash
         run: |
-          pull_request_commits=${{ github.event.pull_request.commits }}+1
+          pull_request_commits=$(( ${{ github.event.pull_request.commits }} + 1 ))
           echo "pull_request_commits=$pull_request_commits" >> $GITHUB_OUTPUT
 
       - uses: 'actions/checkout@v4'
@@ -460,10 +461,11 @@ jobs:
       contents: read
 
     steps:
-      - id: checkout_depth
+      - name: 'Calculate checkout depth'
+        id: checkout_depth
         shell: bash
         run: |
-          pull_request_commits=${{ github.event.pull_request.commits }}+1
+          pull_request_commits=$(( ${{ github.event.pull_request.commits }} + 1 ))
           echo "pull_request_commits=$pull_request_commits" >> $GITHUB_OUTPUT
 
       - uses: 'actions/checkout@v4'
