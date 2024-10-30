@@ -82,6 +82,10 @@ class ProductFilters extends AbstractBlock {
 			'--wc-product-filters-background-color' => StyleAttributesUtils::get_background_color_class_and_style( $attributes )['value'],
 		);
 
+		if ( ! empty( $attributes['overlayIconSize'] ) ) {
+			$styles['--wc-product-filters-overlay-icon-size'] = "{$attributes['overlayIconSize']}px";
+		}
+
 		$wrapper_attributes = array(
 			'class'                            => implode( ' ', array_keys( array_filter( $classes ) ) ),
 			'data-wc-interactive'              => wp_json_encode( array( 'namespace' => $this->get_full_block_name() ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),

@@ -16,12 +16,17 @@
 		font-size: 0.875em;
 		padding: 0;
 		svg {
-			width: var(--wc-product-filters-overlay-icon-size, 1.5em);
-			height: var(--wc-product-filters-overlay-icon-size, 1.5em);
 			fill: currentColor;
 		}
 		span {
 			padding: 0 5px;
+		}
+	}
+
+	.wc-block-product-filters__open-overlay {
+		svg {
+			width: var(--wc-product-filters-overlay-icon-size, 1.5em);
+			height: var(--wc-product-filters-overlay-icon-size, 1.5em);
 		}
 	}
 
