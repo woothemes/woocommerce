@@ -96,6 +96,7 @@ export const TotalsShipping = ( {
 		) : (
 			totalShippingValue
 		);
+	const shippingCalculatorID = 'shipping-calculator-form-wrapper';
 
 	return (
 		<div
@@ -121,6 +122,9 @@ export const TotalsShipping = ( {
 									setIsShippingCalculatorOpen={
 										setIsShippingCalculatorOpen
 									}
+									shippingCalculatorID={
+										shippingCalculatorID
+									}
 								/>
 						  )
 				}
@@ -141,6 +145,7 @@ export const TotalsShipping = ( {
 								setIsShippingCalculatorOpen={
 									setIsShippingCalculatorOpen
 								}
+								shippingCalculatorID={ shippingCalculatorID }
 							/>
 						</>
 					) : null
@@ -155,6 +160,7 @@ export const TotalsShipping = ( {
 					onCancel={ () => {
 						setIsShippingCalculatorOpen( false );
 					} }
+					shippingCalculatorID={ shippingCalculatorID }
 				/>
 			) }
 			{ showRateSelector &&
@@ -165,6 +171,7 @@ export const TotalsShipping = ( {
 						shippingRates={ shippingRates }
 						isLoadingRates={ isLoadingRates }
 						isAddressComplete={ addressComplete }
+						shippingAddress={ shippingAddress }
 					/>
 				) }
 		</div>

@@ -41,6 +41,23 @@ const recordTracksIntroCompleted = () => {
 	} );
 };
 
+const recordSkipGuidedSetup = (
+	_: unknown,
+	{
+		optInDataSharing,
+	}: {
+		optInDataSharing: boolean;
+	}
+) => {
+	if ( ! optInDataSharing ) {
+		return;
+	}
+
+	recordEvent( 'coreprofiler_skip_guided_setup', {
+		wc_version: getSetting( 'wcVersion' ),
+	} );
+};
+
 const recordTracksUserProfileCompleted = ( {
 	event,
 }: {
@@ -146,6 +163,9 @@ const recordTracksPluginsLearnMoreLinkClicked = (
 	} );
 };
 
+const recordTracksPluginsInstallationNoPermissionError = () =>
+	recordEvent( 'coreprofiler_store_extensions_no_permission_error' );
+
 const recordFailedPluginInstallations = ( {
 	event,
 }: {
@@ -213,11 +233,13 @@ export default {
 	recordTracksStepViewed,
 	recordTracksStepSkipped,
 	recordTracksIntroCompleted,
+	recordSkipGuidedSetup,
 	recordTracksUserProfileCompleted,
 	recordTracksSkipBusinessLocationCompleted,
 	recordTracksBusinessInfoCompleted,
 	recordTracksPluginsLearnMoreLinkClicked,
 	recordFailedPluginInstallations,
+	recordTracksPluginsInstallationNoPermissionError,
 	recordSuccessfulPluginInstallation,
 	recordTracksPluginsInstallationRequest,
 	recordTracksIsEmailChanged,
