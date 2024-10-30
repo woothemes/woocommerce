@@ -48,6 +48,7 @@ class SchemaController {
 				Schemas\V1\OrderItemSchema::IDENTIFIER     => Schemas\V1\OrderItemSchema::class,
 				Schemas\V1\OrderCouponSchema::IDENTIFIER   => Schemas\V1\OrderCouponSchema::class,
 				Schemas\V1\OrderFeeSchema::IDENTIFIER      => Schemas\V1\OrderFeeSchema::class,
+				Schemas\V1\OrderStatusSchema::IDENTIFIER   => Schemas\V1\OrderStatusSchema::class,
 				Schemas\V1\OrderSchema::IDENTIFIER         => Schemas\V1\OrderSchema::class,
 				Schemas\V1\ProductSchema::IDENTIFIER       => Schemas\V1\ProductSchema::class,
 				Schemas\V1\ProductAttributeSchema::IDENTIFIER => Schemas\V1\ProductAttributeSchema::class,
