@@ -97,8 +97,8 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 
 			// Loop through each section and get the settings for that section.
 			foreach ( $sections as $section_id => $section_label ) {
-				$section_settings = count( $sections ) > 1 
-					? $this->get_settings_for_section( $section_id ) 
+				$section_settings = count( $sections ) > 1
+					? $this->get_settings_for_section( $section_id )
 					: $this->get_settings();
 
 				// Loop through each setting in the section and add the value to the settings data.
