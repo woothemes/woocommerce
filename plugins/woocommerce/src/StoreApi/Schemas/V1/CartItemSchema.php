@@ -104,11 +104,16 @@ class CartItemSchema extends ItemSchema {
 		 * @param string $cart_item_key  Cart item key.
 		 * @since 9.4.0
 		 */
-		$filtered_images = apply_filters( 'woocommerce_cart_item_images', $product_images, $cart_item, $cart_item_key );
+		$filtered_images = apply_filters( 'woocommerce_store_api_cart_item_images', $product_images, $cart_item, $cart_item_key );
+
+		if ( ! is_array( $filtered_images ) || count( $filtered_images ) === 0 ) {
+			return $product_images;
+		}
 
 		// Return the original images if the filtered image has no ID, or an invalid thumbnail or source URL.
 		$valid_images = array();
 		$logger       = wc_get_logger();
+
 		foreach ( $filtered_images as $image ) {
 			// If id is not set then something is wrong with the image, and further logging would break (it uses the ID).
 			if ( ! isset( $image->id ) ) {
@@ -124,7 +129,7 @@ class CartItemSchema extends ItemSchema {
 
 			// Check if src is a valid url.
 			if ( empty( $image->src ) || ! filter_var( $image->src, FILTER_VALIDATE_URL ) ) {
-				$logger->warning( "After passing through woocommerce_cart_item_images filter, image with id $image->id did not have a valid src property." );
+				$logger->warning( sprintf( 'After passing through woocommerce_cart_item_images filter, image with id %s did not have a valid src property.', $image->id ) );
 				continue;
 			}
 
