@@ -1,0 +1,4 @@
+Significance: minor
+Type: add
+
+Record Cancel and Close events on modal to change collection type #52314
