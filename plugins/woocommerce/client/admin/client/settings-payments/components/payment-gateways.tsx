@@ -62,7 +62,6 @@ export const PaymentGateways = () => {
 					<>
 						{ gateway.method_title }
 						{ recommendedGateways.includes( gateway.id ) && (
-							// TODO: Support recommended flag
 							<Pill>{ __( 'Recommended', 'woocommerce' ) }</Pill>
 						) }
 					</>
