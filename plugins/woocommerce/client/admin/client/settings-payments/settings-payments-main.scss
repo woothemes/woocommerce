@@ -29,9 +29,11 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 				padding-left: 12px;
 				color: $gray-700;
 			}
+
 			.components-select-control__input {
 				min-height: 32px;
 			}
+
 			.components-base-control__field {
 				margin-bottom: 0;
 			}
@@ -41,8 +43,10 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 		.woocommerce-list {
 			border-top: 1px solid $gray-200;
 			border-bottom: 1px solid $gray-200;
+
 			&__item {
 				padding: 0 48px;
+
 				&:hover {
 					background-color: $white;
 
@@ -50,6 +54,7 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 						color: $gray-900;
 					}
 				}
+
 				&:not(:first-child) {
 					border-top: 1px solid $gray-200;
 				}
@@ -68,6 +73,7 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 				display: inline-flex;
 				gap: 10px;
 				align-items: center;
+
 				.woocommerce-pill {
 					background: var(--Alias-bg-bg-surface-secondary, #F5F5F5);
 					border: none;
@@ -80,6 +86,7 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 				font-weight: 400;
 				line-height: 20px;
 				color: $gray-700;
+
 				.woocommerce-woopayments-payment-methods-logos {
 					flex-wrap: wrap;
 				}
@@ -180,15 +187,16 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 				}
 			}
 
-			// Override style for external link.
-			.components-external-link {
-				display: flex;
-				justify-content: flex-end;
-				flex-direction: row-reverse;
-				gap: 4px;
-				padding: 16px 0;
-				&__contents {
-					text-decoration: none;
+			&__external-icon {
+				padding: 8px 0;
+
+				img {
+					height: 16px;
+					margin-right: 4px;
+				}
+
+				a {
+					padding: 0;
 				}
 			}
 		}

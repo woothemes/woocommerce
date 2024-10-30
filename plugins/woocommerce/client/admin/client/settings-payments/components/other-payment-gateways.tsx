@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useMemo, useState } from '@wordpress/element';
-import { Button, ExternalLink } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import {
 	ONBOARDING_STORE_NAME,
 	PAYMENT_GATEWAYS_STORE_NAME,
@@ -22,6 +22,7 @@ import {
 	getSplitGateways,
 } from '~/task-lists/fills/PaymentGatewaySuggestions/utils';
 import { Gridicon } from '@automattic/components';
+import { getAdminSetting } from '~/utils/admin-settings';
 
 type PaymentGateway = {
 	id: string;
@@ -32,6 +33,8 @@ type PaymentGateway = {
 	needsSetup: boolean;
 	// Add other properties as needed...
 };
+
+const assetUrl = getAdminSetting( 'wcAdminAssetUrl' );
 
 const usePaymentGatewayData = () => {
 	return useSelect( ( select ) => {
@@ -157,16 +160,18 @@ export const OtherPaymentGateways = () => {
 					</span>
 					{ ! isShow && (
 						<>
-							{ mockOtherPaymentGateways.map( (gateway: PaymentGateway ) => (
-								<img
-									key={ gateway.id }
-									src={ gateway.image_72x72 }
-									alt={ gateway.title }
-									width="24"
-									height="24"
-									className="other-payment-gateways__header__title__image"
-								/>
-							) ) }
+							{ mockOtherPaymentGateways.map(
+								( gateway: PaymentGateway ) => (
+									<img
+										key={ gateway.id }
+										src={ gateway.image_72x72 }
+										alt={ gateway.title }
+										width="24"
+										height="24"
+										className="other-payment-gateways__header__title__image"
+									/>
+								)
+							) }
 						</>
 					) }
 				</div>
@@ -216,9 +221,18 @@ export const OtherPaymentGateways = () => {
 							)
 						) }
 					</div>
-					<ExternalLink href="https://woocommerce.com/product-category/woocommerce-extensions/payment-gateways/">
-						{ __( 'More payment options', 'woocommerce' ) }
-					</ExternalLink>
+					<div className="other-payment-gateways__content__external-icon">
+						<Button
+							variant={ 'tertiary' }
+							target="_blank"
+							href="https://woocommerce.com/product-category/woocommerce-extensions/payment-gateways/"
+						>
+							<img
+								src={ assetUrl + '/icons/external-link.svg' }
+							/>
+							{ __( 'More payment options', 'woocommerce' ) }
+						</Button>
+					</div>
 				</div>
 			) }
 		</div>
