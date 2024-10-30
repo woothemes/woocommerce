@@ -38,11 +38,17 @@ export const Inspector = ( {
 }: Pick< BlockEditProps< Attributes >, 'attributes' | 'setAttributes' > ) => {
 	const { showCounts, minRating } = attributes;
 
-	const setMinRating = ( value: string ) => {
+	function setCountVisibility( value: boolean ) {
+		setAttributes( {
+			showCounts: value,
+		} );
+	}
+
+	function setMinRating( value: string ) {
 		setAttributes( {
 			minRating: value,
 		} );
-	};
+	}
 
 	return (
 		<InspectorControls key="inspector">
@@ -50,11 +56,7 @@ export const Inspector = ( {
 				<ToggleControl
 					label={ __( 'Display product count', 'woocommerce' ) }
 					checked={ showCounts }
-					onChange={ () =>
-						setAttributes( {
-							showCounts: ! showCounts,
-						} )
-					}
+					onChange={ setCountVisibility }
 				/>
 			</PanelBody>
 
