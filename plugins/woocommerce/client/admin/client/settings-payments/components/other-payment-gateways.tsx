@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React, { useMemo } from '@wordpress/element';
-import { Button, ExternalLink, Panel, PanelBody } from '@wordpress/components';
+import { Gridicon } from '@automattic/components';
+import React, { useMemo, useState } from '@wordpress/element';
+import { Button } from '@wordpress/components';
 import {
 	ONBOARDING_STORE_NAME,
 	PAYMENT_GATEWAYS_STORE_NAME,
@@ -21,6 +22,7 @@ import {
 	getIsWCPayOrOtherCategoryDoneSetup,
 	getSplitGateways,
 } from '~/task-lists/fills/PaymentGatewaySuggestions/utils';
+import { getAdminSetting } from '~/utils/admin-settings';
 
 type PaymentGateway = {
 	id: string;
@@ -31,6 +33,8 @@ type PaymentGateway = {
 	needsSetup: boolean;
 	// Add other properties as needed...
 };
+
+const assetUrl = getAdminSetting( 'wcAdminAssetUrl' );
 
 const usePaymentGatewayData = () => {
 	return useSelect( ( select ) => {
@@ -53,28 +57,8 @@ const usePaymentGatewayData = () => {
 	}, [] );
 };
 
-// TODO implement gateway images.
-// const AdditionalGatewayImages = ( {
-// 	additionalGateways,
-// }: {
-// 	additionalGateways: PaymentGateway[];
-// } ) => (
-// 	<>
-// 		{ additionalGateways.map( ( gateway ) => (
-// 			<img
-// 				key={ gateway.id }
-// 				src={ gateway.image_72x72 }
-// 				alt={ gateway.title }
-// 				width="24"
-// 				height="24"
-// 				className="other-payment-methods__image"
-// 			/>
-// 		) ) }
-// 		{ _x( '& more.', 'More payment providers to discover', 'woocommerce' ) }
-// 	</>
-// );
-
 export const OtherPaymentGateways = () => {
+	const [ isExpanded, setIsExpanded ] = useState( false );
 	// Mock other payment gateways for now.
 	// TODO Get the list of gateways via the API in future PR.
 	const mockOtherPaymentGateways = [
@@ -168,40 +152,91 @@ export const OtherPaymentGateways = () => {
 	}
 
 	return (
-		<Panel className="other-payment-gateways">
-			<PanelBody title="Other payment providers">
-				<div className="other-payment-gateways__grid">
-					{ mockOtherPaymentGateways.map(
-						( gateway: PaymentGateway ) => (
-							<div
-								className="other-payment-gateways__grid-item"
-								key={ gateway.id }
-							>
-								<img
-									src={ gateway.image_72x72 }
-									alt={ gateway.title }
-								/>
-								<div className="other-payment-gateways__grid-item__content">
-									<span className="other-payment-gateways__grid-item__content__title">
-										{ gateway.title }
-									</span>
-									<span className="other-payment-gateways__grid-item__content__description">
-										{ gateway.content }
-									</span>
-									<div className="other-payment-gateways__grid-item__content__actions">
-										<Button variant={ 'primary' }>
-											{ __( 'Install', 'woocommerce' ) }
-										</Button>
-									</div>
-								</div>
-							</div>
-						)
+		<div className="other-payment-gateways">
+			<div className="other-payment-gateways__header">
+				<div className="other-payment-gateways__header__title">
+					<span>
+						{ __( 'Other payment options', 'woocommerce' ) }
+					</span>
+					{ ! isExpanded && (
+						<>
+							{ mockOtherPaymentGateways.map(
+								( gateway: PaymentGateway ) => (
+									<img
+										key={ gateway.id }
+										src={ gateway.image_72x72 }
+										alt={ gateway.title }
+										width="24"
+										height="24"
+										className="other-payment-gateways__header__title__image"
+									/>
+								)
+							) }
+						</>
 					) }
 				</div>
-				<ExternalLink href="https://woocommerce.com/product-category/woocommerce-extensions/payment-gateways/">
-					{ __( 'More payment options', 'woocommerce' ) }
-				</ExternalLink>
-			</PanelBody>
-		</Panel>
+				<Button
+					variant={ 'link' }
+					onClick={ () => {
+						setIsExpanded( ! isExpanded );
+					} }
+					aria-expanded={ isExpanded }
+				>
+					{ isExpanded ? (
+						<Gridicon icon="chevron-up" />
+					) : (
+						<Gridicon icon="chevron-down" />
+					) }
+				</Button>
+			</div>
+			{ isExpanded && (
+				<div className="other-payment-gateways__content">
+					<div className="other-payment-gateways__content__grid">
+						{ mockOtherPaymentGateways.map(
+							( gateway: PaymentGateway ) => (
+								<div
+									className="other-payment-gateways__content__grid-item"
+									key={ gateway.id }
+								>
+									<img
+										src={ gateway.image_72x72 }
+										alt={ gateway.title }
+									/>
+									<div className="other-payment-gateways__content__grid-item__content">
+										<span className="other-payment-gateways__content__grid-item__content__title">
+											{ gateway.title }
+										</span>
+										<span className="other-payment-gateways__content__grid-item__content__description">
+											{ gateway.content }
+										</span>
+										<div className="other-payment-gateways__content__grid-item__content__actions">
+											<Button variant={ 'primary' }>
+												{ __(
+													'Install',
+													'woocommerce'
+												) }
+											</Button>
+										</div>
+									</div>
+								</div>
+							)
+						) }
+					</div>
+					<div className="other-payment-gateways__content__external-icon">
+						<Button
+							variant={ 'link' }
+							target="_blank"
+							href="https://woocommerce.com/product-category/woocommerce-extensions/payment-gateways/"
+						>
+							<img
+								src={ assetUrl + '/icons/external-link.svg' }
+								alt=""
+							/>
+							{ __( 'More payment options', 'woocommerce' ) }
+						</Button>
+					</div>
+				</div>
+			) }
+		</div>
 	);
 };

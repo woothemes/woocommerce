@@ -3,7 +3,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import { Gridicon } from '@automattic/components';
-import { Button, Card, CardHeader, SelectControl } from '@wordpress/components';
+import { Button, SelectControl } from '@wordpress/components';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 import { EllipsisMenu, List, Pill } from '@woocommerce/components';
@@ -205,8 +205,8 @@ export const PaymentGateways = () => {
 	} );
 
 	return (
-		<Card size="medium" className="settings-payment-gateways">
-			<CardHeader>
+		<div className="settings-payment-gateways">
+			<div className="settings-payment-gateways__header">
 				<div className="settings-payment-gateways__header-title">
 					{ __( 'Payment providers', 'woocommerce' ) }
 				</div>
@@ -223,8 +223,8 @@ export const PaymentGateways = () => {
 						onChange={ () => {} }
 					/>
 				</div>
-			</CardHeader>
+			</div>
 			<List items={ paymentGatewaysList } />
-		</Card>
+		</div>
 	);
 };
