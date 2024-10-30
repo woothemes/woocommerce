@@ -108,12 +108,8 @@ class EmailPreview {
 
 		$this->clean_up_filters();
 
-		/**
-		 * Wrap the content with the email template and then add styles.
-		 *
-		 * @since 9.5.0
-		 */
-		return apply_filters( 'woocommerce_mail_content', $email->style_inline( $content ) );
+		/** This filter is documented in src/Internal/Admin/EmailPreview.php */
+		return apply_filters( 'woocommerce_mail_content', $email->style_inline( $content ) ); // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingSinceComment
 	}
 
 	/**
