@@ -62,14 +62,14 @@ composer update
 
 ### Important notice
 
-As of WooCommerce 9.5 WooCommerce uses a new, simpler, custom-made container instead of the old one based on the PHP League's Container package. However, the old container is still in place and it's possible to configure WooCommerce to use it (instead of the new container) by adding one of these snippets:
+As of version 9.5 WooCommerce uses a new, simpler, custom-made container instead of the old one based on the PHP League's Container package. However, the old container is still in place and it's possible to configure WooCommerce to use it (instead of the new container) by adding one of these snippets:
 
 1. `define('WOOCOMMERCE_USE_OLD_DI_CONTAINER', true);`
 2. `add_filter('woocommerce_use_old_di_container', '__return_true');`
 
-This should be done **only** if an issue in the new container causes disruption in the site. This fallback mechanism, together with the old container and the PHP League's Container package, will be removed in WooCommerce 10.0.
+This should be done **only** if a problem with the new container causes disruption in the site *(and if you discover such a problem, please [create an issue in GitHub](https://github.com/woocommerce/woocommerce/issues/new) so that we can keep track of it and work on a fix)*. This fallback mechanism, together with the old container and the PHP League's Container package, will be removed in WooCommerce 10.0.
 
-The new container is used in the same way as the old one: it's only for classes in the `src` directory, dependencies are defined in an `init` method of the classes, the container exposes a `get` method and a `has` method, and `wc_get_container` can be used to use the container from legacy code; the difference is that explicit class registration is not needed anymore (any class in the `Automattic\Woocommerce` namespace can be resolved). **However**, until WooCommerce 10.0 arrives please keep registering new classes using service providers as instructed below, so that the old container can be used if needed.
+The new container is used in the same way as the old one: it's only for classes in the `src` directory, dependencies are defined in an `init` method of the classes, the container exposes a `get` method and a `has` method, and `wc_get_container` can be used to use the container from [legacy code](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/includes/README.md/?rgh-link-date=2024-10-29T14%3A32%3A58Z#L6-L7); the difference is that explicit class registration is not needed anymore (any class in the `Automattic\Woocommerce` namespace can be resolved). **However**, until WooCommerce 10.0 arrives please keep registering new classes using service providers as instructed below, so that the old container can be used if needed.
 
 As for the unit tests, they can be forced to use the old container by defining the `USE_OLD_DI_CONTAINER` environment variable.
 

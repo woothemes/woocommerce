@@ -341,7 +341,8 @@ final class WooCommerce {
 		$container->get( Automattic\WooCommerce\Internal\Orders\OrderAttributionController::class )->register();
 		$container->get( Automattic\WooCommerce\Internal\Orders\OrderAttributionBlocksController::class )->register();
 		$container->get( Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController::class )->register();
-		$container->get( Automattic\WooCommerce\Internal\Utilities\LegacyRestApiStub::class )->register();    }
+		$container->get( Automattic\WooCommerce\Internal\Utilities\LegacyRestApiStub::class )->register();
+	}
 
 	/**
 	 * Add woocommerce_inbox_variant for the Remote Inbox Notification.

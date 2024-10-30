@@ -14,7 +14,7 @@ use Automattic\WooCommerce\Utilities\StringUtil;
  * This is a simple container that doesn't implement explicit class registration.
  * Instead, all the classes in the Automattic\WooCommerce namespace can be resolved
  * and are considered as implicitly registered as single-instance classes
- * (so each classes will be instantiated only once and the instance will be cached).
+ * (so each class will be instantiated only once and the instance will be cached).
  */
 class RuntimeContainer {
 	/**
@@ -208,18 +208,18 @@ class RuntimeContainer {
 	 *
 	 * @return bool True if this class should be used as the core WooCommerce dependency injection container, false if ExtendedContainer should be used instead.
 	 */
-	public static function must_use(): bool {
-		$must_use = ! defined( 'WOOCOMMERCE_USE_OLD_DI_CONTAINER' ) || true !== WOOCOMMERCE_USE_OLD_DI_CONTAINER;
+	public static function should_use(): bool {
+		$should_use = ! defined( 'WOOCOMMERCE_USE_OLD_DI_CONTAINER' ) || true !== WOOCOMMERCE_USE_OLD_DI_CONTAINER;
 
 		/**
 		 * Hook to decide if the old ExtendedContainer class (instead of RuntimeContainer) should be used as the underlying WooCommerce dependency injection container.
 		 *
 		 * NOTE: This hook will be removed in WooCommerce 9.5.
 		 *
-		 * @param bool $must_use Value of the WOOCOMMERCE_USE_OLD_DI_CONTAINER constant, false if the constant doesn't exist.
+		 * @param bool $should_use Value of the WOOCOMMERCE_USE_OLD_DI_CONTAINER constant, false if the constant doesn't exist.
 		 *
 		 * @since 9.5.0
 		 */
-		return apply_filters( 'woocommerce_use_old_di_container', $must_use );
+		return apply_filters( 'woocommerce_use_old_di_container', $should_use );
 	}
 }

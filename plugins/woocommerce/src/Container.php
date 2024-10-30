@@ -58,7 +58,7 @@ use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\Import
  *
  * IMPORTANT NOTE: By default an instance of RuntimeContainer will be used as the underlying container,
  * but it's possible to use the old ExtendedContainer (backed by the PHP League's container package) instead,
- * see RuntimeContainer::must_use() for configuration instructions.
+ * see RuntimeContainer::should_use() for configuration instructions.
  * The League's container, the ExtendedContainer class and the related support code will be removed in WooCommerce 10.0.
  */
 final class Container {
@@ -73,7 +73,7 @@ final class Container {
 	 * Class constructor.
 	 */
 	public function __construct() {
-		if ( RuntimeContainer::must_use() ) {
+		if ( RuntimeContainer::should_use() ) {
 			// When the League container was in use we allowed to retrieve the container itself
 			// by using 'Psr\Container\ContainerInterface' as the class identifier,
 			// we continue allowing that for compatibility.
