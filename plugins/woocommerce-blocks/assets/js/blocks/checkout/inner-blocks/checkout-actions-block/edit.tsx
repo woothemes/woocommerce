@@ -26,7 +26,6 @@ import {
 /**
  * Internal dependencies
  */
-import { defaultPlaceOrderButtonLabel } from './constants';
 import { BlockAttributes } from './block';
 import './editor.scss';
 import {

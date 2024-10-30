@@ -24,6 +24,7 @@ export type BlockAttributes = {
 	className?: string;
 	placeOrderButtonLabel: string;
 	priceSeparator: string;
+	returnToCartButtonLabel: string;
 };
 
 const Block = ( {
