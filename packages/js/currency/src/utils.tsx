@@ -49,7 +49,7 @@ export type CountryInfo = {
 	weight_unit: string;
 	dimension_unit: string;
 	direction: string;
-	default_locale: string;
+	default_locale: string | null;
 	name: string;
 	singular: string;
 	plural: string;
