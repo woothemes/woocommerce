@@ -63,7 +63,9 @@ builtJsFiles.forEach( ( filePath ) => {
 	if ( stringsInFile.length === 0 ) {
 		return;
 	}
-	const relativeFilePath = filePath.substring( filePath.indexOf( 'build/' ) );
+	const relativeFilePath = filePath
+		.substring( filePath.indexOf( 'build/' ) )
+		.replace( 'build', 'assets/client/blocks' );
 	const data = {
 		locale_data: {
 			messages: {
