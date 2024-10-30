@@ -4,19 +4,19 @@ const { ensureDirSync, writeJsonSync } = require( 'fs-extra' );
 const crypto = require( 'crypto' );
 const path = require( 'path' );
 const glob = require( 'glob' );
-const { translations } = require( '../tests/e2e/test-data/data/data.ts' );
-const {
-	getTestTranslation,
-} = require( '../tests/e2e/utils/get-test-translation' );
+const { translations } = require( '../test-data/data/data.ts' );
+const { getTestTranslation } = require( '../utils/get-test-translation.js' );
 
-ensureDirSync( path.join( __dirname, '../../woocommerce/i18n/languages' ) );
+ensureDirSync(
+	path.join( __dirname, '../../../../woocommerce/i18n/languages' )
+);
 
 const builtJsFiles = glob.sync(
-	`${ path.dirname( __filename ) }/../build/**/*.js`,
+	`${ path.dirname( __filename ) }/../../../build/**/*.js`,
 	{}
 );
 const testFiles = glob.sync(
-	`${ path.dirname( __filename ) }/../tests/e2e/tests/**/*.{js,ts}`,
+	`${ path.dirname( __filename ) }/../tests/**/*.{js,ts}`,
 	{}
 );
 
@@ -87,7 +87,7 @@ builtJsFiles.forEach( ( filePath ) => {
 	writeJsonSync(
 		`${ path.dirname(
 			__filename
-		) }/../../woocommerce/i18n/languages/woocommerce-${ locale }-${ md5Path }.json`,
+		) }/../../../../woocommerce/i18n/languages/woocommerce-${ locale }-${ md5Path }.json`,
 		data
 	);
 } );
