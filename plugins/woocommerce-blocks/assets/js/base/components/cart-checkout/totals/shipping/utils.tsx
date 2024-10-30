@@ -6,8 +6,12 @@ import {
 	getTotalShippingValue,
 	isPackageRateCollectable,
 } from '@woocommerce/base-utils';
-import type { CartResponseTotals } from '@woocommerce/types';
-import { isObject, objectHasProp, CartShippingRate } from '@woocommerce/types';
+import {
+	isObject,
+	objectHasProp,
+	CartShippingRate,
+	CartResponseTotals,
+} from '@woocommerce/types';
 
 export const renderShippingTotalValue = ( values: CartResponseTotals ) => {
 	const totalShippingValue = getTotalShippingValue( values );
