@@ -497,11 +497,11 @@ jobs:
           files: |
             docs/docs-manifest.json
 
-      - name: Setup PNPM
+      - name: Setup - pnpm
         if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         uses: pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d
 
-      - name: Setup Node
+      - name: Setup - node
         if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c
         with:
@@ -509,13 +509,13 @@ jobs:
           cache: pnpm
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Install prerequisites
+      - name: Setup - utility-packages
         if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         run: |
           pnpm i -g markdownlint-cli
           npm --prefix .github/workflows/scripts install @actions/core
 
-      - name: Lint repo changed markdown files
+      - name: Validate - changed markdown files from monorepo documentation
         if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         run: |
           RED="\e[1;31m"
@@ -543,12 +543,12 @@ jobs:
             echo "No repo markdown files changed."
           fi
 
-      - name: Check if docs manifest is valid JSON
+      - name: Validate - manifest files for monorepo documentation
         if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         id: is-valid-json
         run: node .github/workflows/scripts/is-valid-json.js docs/docs-manifest.json
 
-      - name: Lint docs changed markdown files
+      - name: Validate - changed markdown files from monorepo documentation
         if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         run: |
           RED="\e[1;31m"
