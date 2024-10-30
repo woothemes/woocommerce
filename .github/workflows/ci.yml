@@ -433,7 +433,7 @@ jobs:
               - 'plugins/**'
               - '!**/changelog/**'
 
-      - uses: ''./.github/actions/setup-woocommerce-monorepo'
+      - uses: './.github/actions/setup-woocommerce-monorepo'
         if: ${{ steps.target-changes.outputs.needs-validation == 'true' }}
         with:
           # The package has majority of composer-deps, therefore referencing it
