@@ -30,7 +30,7 @@ env:
 jobs:
   identify-jobs-to-run:
     name: 'Analyze changes'
-    if: ${{ !cancelled() && github.event_name == 'pull_request' }}
+    if: ${{ !cancelled() && github.event_name == 'pull_request__' }}
     runs-on: 'ubuntu-20.04'
     outputs:
       needs-code-validation: ${{ steps.target-changes.outputs.needs-code-validation }}
