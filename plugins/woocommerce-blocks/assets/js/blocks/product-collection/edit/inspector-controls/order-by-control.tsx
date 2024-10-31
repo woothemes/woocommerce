@@ -55,7 +55,11 @@ const orderOptions = [
 	},
 	{
 		value: 'rating/desc',
-		label: __( 'Top Rated', 'woocommerce' ),
+		label: __( 'Rating, high to low', 'woocommerce' ),
+	},
+	{
+		value: 'rating/asc',
+		label: __( 'Rating, low to high', 'woocommerce' ),
 	},
 	{
 		// In WooCommerce, "Manual (menu order)" refers to a custom ordering set by the store owner.
