@@ -31,16 +31,16 @@ function getCustomKey( color: string ): string {
 	return `custom${ color.charAt( 0 ).toUpperCase() }${ color.slice( 1 ) }`;
 }
 
-export function getStyleColorVars< T >(
+export function getStyleColorVars< T extends Record< string, unknown > >(
 	prefix: string,
 	attributes: T,
-	colors: readonly Extract< keyof T, string >[]
+	colors: string[]
 ): Record< string, string > {
 	const styleVars: Record< string, string > = {};
 
 	colors.forEach( ( color ) => {
-		const normalColor = attributes[ color ];
-		const customKey = getCustomKey( color );
+		const normalColor = attributes[ color ] as string | undefined;
+		const customKey = getCustomKey( color ) as keyof T;
 		const customColor = attributes[ customKey as keyof T ];
 
 		if (
@@ -48,8 +48,8 @@ export function getStyleColorVars< T >(
 			( typeof customColor === 'string' && customColor.length > 0 )
 		) {
 			styleVars[ `--${ prefix }-${ kebabCase( color ) }` ] = getCSSVar(
-				normalColor as string | undefined,
-				customColor as string | undefined
+				normalColor,
+				customColor as string
 			);
 		}
 	} );
@@ -59,11 +59,11 @@ export function getStyleColorVars< T >(
 
 export function getHasColorClasses< T extends Record< string, unknown > >(
 	attributes: T,
-	colorAttributes: readonly Extract< keyof T, string >[]
+	colors: string[]
 ): Record< string, string | undefined > {
 	const cssClasses: Record< string, string | undefined > = {};
 
-	colorAttributes.forEach( ( attr ) => {
+	colors.forEach( ( attr ) => {
 		if ( ! attr.startsWith( 'custom' ) ) {
 			const customAttr = getCustomKey( attr );
 
@@ -74,9 +74,8 @@ export function getHasColorClasses< T extends Record< string, unknown > >(
 			 */
 			const className = `has-${ kebabCase( attr ) }-color`;
 
-			cssClasses[ className ] =
-				( attributes[ attr ] as string | undefined ) ||
-				( attributes[ customAttr ] as string | undefined );
+			cssClasses[ className ] = ( attributes[ attr ] ||
+				attributes[ customAttr ] ) as string;
 		}
 	} );
 

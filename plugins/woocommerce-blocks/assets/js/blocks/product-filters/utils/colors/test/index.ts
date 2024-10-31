@@ -15,10 +15,7 @@ describe( 'getHasColorClasses', () => {
 			customWarningBackground: '#aaffff',
 		};
 
-		const colorAttributes: Array< keyof typeof attributes > = [
-			'warningText',
-			'warningBackground',
-		];
+		const colorAttributes = [ 'warningText', 'warningBackground' ];
 
 		const result = getHasColorClasses( attributes, colorAttributes );
 
@@ -38,10 +35,7 @@ describe( 'getHasColorClasses', () => {
 			customWarningBackground: '#aaffff',
 		};
 
-		const colorAttributes: Array< keyof typeof attributes > = [
-			'warningText',
-			'warningBackground',
-		];
+		const colorAttributes = [ 'warningText', 'warningBackground' ];
 
 		const result = getHasColorClasses( attributes, colorAttributes );
 
@@ -65,10 +59,7 @@ describe( 'getStyleColorVars', () => {
 			customWarningBackgroundColor: '#aaffff',
 		};
 
-		const colors: Array< keyof typeof attributes > = [
-			'warningTextColor',
-			'warningBackgroundColor',
-		];
+		const colors = [ 'warningTextColor', 'warningBackgroundColor' ];
 
 		const result = getStyleColorVars( 'retro', attributes, colors );
 
@@ -90,10 +81,7 @@ describe( 'getStyleColorVars', () => {
 			customWarningBackgroundColor: '#aaffff',
 		};
 
-		const colors: Array< keyof typeof attributes > = [
-			'warningTextColor',
-			'warningBackgroundColor',
-		];
+		const colors = [ 'warningTextColor', 'warningBackgroundColor' ];
 
 		const result = getStyleColorVars( 'retro', attributes, colors );
 
