@@ -27,8 +27,8 @@ class ComingSoonAdminBarBadge {
 	 * @internal
 	 */
 	public function init_hooks() {
-		// Early exit if user is not logged in or doesn't have admin capabilities.
-		if ( ! is_user_logged_in() || ! current_user_can( 'manage_options' ) ) {
+		// Early exit if the user is not logged in as administrator / shop manager.
+		if ( ! is_user_logged_in() || ! current_user_can( 'manage_woocommerce' ) ) {
 			return;
 		}
 
