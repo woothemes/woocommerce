@@ -6,7 +6,12 @@
 	"category": "woocommerce",
 	"keywords": [ "WooCommerce" ],
 	"supports": {
-		"html": false
+		"html": false,
+		"color": {
+			"enableContrastChecker": false,
+			"background": false,
+			"text": false
+		}
 	},
 	"attributes": {
 		"showInputFields": {
@@ -16,6 +21,15 @@
 		"inlineInput": {
 			"type": "boolean",
 			"default": false
+		},
+
+		"sliderHandleColor": {
+			"type": "string",
+			"default": ""
+		},
+		"customSliderHandleColor": {
+			"type": "string",
+			"default": ""
 		}
 	},
 	"ancestor": [ "woocommerce/product-filter-price" ],
