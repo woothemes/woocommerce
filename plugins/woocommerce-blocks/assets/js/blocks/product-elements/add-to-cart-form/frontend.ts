@@ -20,7 +20,7 @@ const getInputData = ( event: HTMLElementEvent< HTMLButtonElement > ) => {
 	const parsedMaxValue = parseInt( inputElement.max, 10 );
 	const parsedStep = parseInt( inputElement.step, 10 );
 
-	const currentValue = isNaN( parsedValue ) ? 0 : parsedValue;
+	const currentValue = isNaN( parsedValue ) ? 1 : parsedValue;
 	const minValue = isNaN( parsedMinValue ) ? 1 : parsedMinValue;
 	const maxValue = isNaN( parsedMaxValue ) ? undefined : parsedMaxValue;
 	const step = isNaN( parsedStep ) ? 1 : parsedStep;
