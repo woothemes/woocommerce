@@ -31,17 +31,17 @@ function getCustomKey( color: string ): string {
 	return `custom${ color.charAt( 0 ).toUpperCase() }${ color.slice( 1 ) }`;
 }
 
-export function getStyleColorVars< T extends Record< string, unknown > >(
+export function getStyleColorVars(
 	prefix: string,
-	attributes: T,
+	attributes: Record< string, unknown >,
 	colors: string[]
 ): Record< string, string > {
 	const styleVars: Record< string, string > = {};
 
 	colors.forEach( ( color ) => {
 		const normalColor = attributes[ color ] as string | undefined;
-		const customKey = getCustomKey( color ) as keyof T;
-		const customColor = attributes[ customKey as keyof T ];
+		const customKey = getCustomKey( color );
+		const customColor = attributes[ customKey ];
 
 		if (
 			( typeof normalColor === 'string' && normalColor.length > 0 ) ||
@@ -57,8 +57,8 @@ export function getStyleColorVars< T extends Record< string, unknown > >(
 	return styleVars;
 }
 
-export function getHasColorClasses< T extends Record< string, unknown > >(
-	attributes: T,
+export function getHasColorClasses(
+	attributes: Record< string, unknown >,
 	colors: string[]
 ): Record< string, string | undefined > {
 	const cssClasses: Record< string, string | undefined > = {};
