@@ -2879,6 +2879,9 @@ importers:
       '@types/wordpress__blocks':
         specifier: 11.0.7
         version: 11.0.7(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
+      '@woocommerce/product-editor':
+        specifier: workspace:^
+        version: link:../product-editor
       '@woocommerce/settings':
         specifier: ^1.0.0
         version: 1.0.0
