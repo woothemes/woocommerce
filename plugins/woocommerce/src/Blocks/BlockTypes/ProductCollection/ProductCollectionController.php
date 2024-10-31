@@ -55,7 +55,7 @@ class ProductCollectionController extends AbstractBlock {
 	protected $query_builder;
 
 	/**
-     * Instance of ProductRenderer.
+	 * Instance of ProductRenderer.
 	 *
 	 * @var ProductRenderer
 	 */
