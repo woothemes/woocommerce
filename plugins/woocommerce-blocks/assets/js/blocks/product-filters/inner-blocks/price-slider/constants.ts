@@ -1,5 +1,1 @@
-export const colorAttributes = [
-	'sliderHandle',
-	'sliderHandleBorder',
-	'slider',
-];
+export const colorNames = [ 'sliderHandle', 'sliderHandleBorder', 'slider' ];
