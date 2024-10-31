@@ -22,6 +22,8 @@ import {
  * Internal dependencies
  */
 import type { EditProps } from './types';
+import { colorAttributes } from './constants';
+import { getHasColorClasses, getStyleColorVars } from '../../utils/colors';
 
 const PriceSliderEdit = ( {
 	clientId,
@@ -35,11 +37,20 @@ const PriceSliderEdit = ( {
 	setSliderHandle,
 }: EditProps ): JSX.Element | null => {
 	const { showInputFields, inlineInput, customSliderHandle } = attributes;
-	const blockProps = useBlockProps( {
-		className: 'wc-block-product-filter-price-slider',
-	} );
 
 	const { isLoading, price } = context.filterData;
+
+	const blockProps = useBlockProps( {
+		className: clsx( 'wc-block-product-filter-price-slider', {
+			'is-loading': isLoading,
+			...getHasColorClasses( attributes, colorAttributes ),
+		} ),
+		style: getStyleColorVars(
+			'wc-product-filter--price-slider',
+			attributes,
+			colorAttributes
+		),
+	} );
 
 	const colorGradientSettings = useMultipleOriginColorsAndGradients();
 
