@@ -1,5 +1,5 @@
 name: 🚧 Code freeze exception request
-description: Request handling one or more pull requests(s) as code freeze exception(s).
+description: Request to process a particular pull request as a code freeze exception.
 title: "[CFE]: "
 labels: ["code freeze exception"]
 body:

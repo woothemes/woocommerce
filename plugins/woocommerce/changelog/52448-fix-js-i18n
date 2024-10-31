@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Fixed issue with translation loading for React-based WooCommerce pages when non-standard plugin directory names are used.

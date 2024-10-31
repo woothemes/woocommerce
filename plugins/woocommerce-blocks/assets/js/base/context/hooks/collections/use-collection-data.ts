@@ -49,7 +49,7 @@ interface UseCollectionDataProps {
 	isEditor?: boolean;
 }
 
-export const useCollectionData = ( {
+export const useCollectionData = < T >( {
 	queryAttribute,
 	queryPrices,
 	queryStock,
@@ -155,7 +155,7 @@ export const useCollectionData = ( {
 		return buildCollectionDataQuery( collectionDataQueryState );
 	}, [ collectionDataQueryState ] );
 
-	return useCollection( {
+	return useCollection< T >( {
 		namespace: '/wc/store/v1',
 		resourceName: 'products/collection-data',
 		query: {
