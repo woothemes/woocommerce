@@ -26,7 +26,7 @@ class Autoloader {
 	 *
 	 * @return boolean
 	 */
-	public static function init() {
+	public static function init(): bool {
 		$autoloader = dirname( __DIR__ ) . '/vendor/autoload_packages.php';
 
 		if ( ! is_readable( $autoloader ) ) {
