@@ -42,7 +42,7 @@ jobs:
         with:
           filters: |
             needs-code-validation:
-              - '!(docs/*|**/changelog/*|**/docs/*)'
+              - '!((*.md)|(**/changelog/*))'
             needs-changelog-validation:
               - '{packages,plugins}/*/!(changelog/**)/**'
             needs-markdown-validation:
