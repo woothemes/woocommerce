@@ -7,7 +7,7 @@ permissions: {}
 
 jobs:
   prep:
-    if: github.event.label.name == 'Approved' || github.event.label.name == 'Rejected'
+    if: github.event.label.name == 'code freeze exception' || github.event.label.name == 'point release request' || github.event.label.name == 'Approved' || github.event.label.name == 'Rejected'
     runs-on: ubuntu-20.04
     outputs:
       release_number: ${{ steps.extract-release.outputs.RELEASE_NUMBER }}
@@ -36,6 +36,23 @@ jobs:
               // If no valid release number is found, fail the step
               core.setFailed("No valid release number found after the 'Which release does this request apply to?' section. Aborting.");
             }
+
+  apply-milestone:
+    if: github.event.label.name == 'code freeze exception' || github.event.label.name == 'point release request' || github.event.label.name == 'Approved' || github.event.label.name == 'Rejected'
+    runs-on: ubuntu-20.04
+    permissions:
+      issues: write
+    needs:
+      - prep
+    steps:
+      - name: Apply Milestone to the Issue
+        env:
+          MILESTONE: ${{ needs.prep.outputs.release_number }}.0
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "Applying milestone: $MILESTONE"
+          gh issue edit "$ISSUE_URL" --milestone "$MILESTONE"
 
   cfe-created:
     if: github.event.label.name == 'code freeze exception' || github.event.label.name == 'point release request'
@@ -77,8 +94,6 @@ jobs:
   request-approved:
     if: ${{ github.event.label.name == 'Approved' }}
     runs-on: ubuntu-20.04
-    needs:
-      - prep
     permissions:
       pull-requests: write
       issues: write
@@ -127,15 +142,6 @@ jobs:
         run: |
           gh pr edit $PR_NUMBER --add-label "cherry pick to frozen release" --repo "$OWNER/$REPO"
 
-      - name: Apply Milestone to the Issue
-        env:
-          MILESTONE: ${{ needs.prep.outputs.release_number }}.0
-          ISSUE_URL: ${{ github.event.issue.html_url }}
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          echo "Applying milestone: $MILESTONE"
-          gh issue edit "$ISSUE_URL" --milestone "$MILESTONE"
-
       - name: Comment issue has been approved
         env:
           ISSUE_URL: ${{ github.event.issue.html_url }}
@@ -177,26 +183,15 @@ jobs:
   request-rejected:
     if: ${{ github.event.label.name == 'Rejected' }}
     runs-on: ubuntu-20.04
-    needs:
-      - prep
     permissions:
       issues: write
     steps:
-      - name: Apply Milestone to the Issue
-        env:
-          MILESTONE: ${{ needs.prep.outputs.release_number }}.0
-          ISSUE_URL: ${{ github.event.issue.html_url }}
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          echo "Applying milestone: $MILESTONE"
-          gh issue edit "$ISSUE_URL" --milestone "$MILESTONE"
-
       - name: Close the request
         env:
           ISSUE_URL: ${{ github.event.issue.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh issue close "$ISSUE_URL" --comment "Closing issue the request is rejected - $ISSUE_URL. Please switch the base to trunk and merge."
+          gh issue close "$ISSUE_URL" --comment "Closing issue as the request is rejected - $ISSUE_URL. Please switch the base to trunk and merge."
 
       - name: Set Slack Message
         id: set-message
