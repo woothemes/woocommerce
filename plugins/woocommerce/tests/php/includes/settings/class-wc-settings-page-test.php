@@ -338,6 +338,9 @@ HTML;
 		$this->assertEquals( 0, did_action( 'woocommerce_update_options_example_' ) );
 	}
 
+	/**
+	 * Test for add_settings_page_data.
+	 */
 	public function test_add_settings_page_data() {
 		$migration = new WC_Settings_Migration_Test();
 		$setting_data =$migration->add_settings_page_data( array() );
