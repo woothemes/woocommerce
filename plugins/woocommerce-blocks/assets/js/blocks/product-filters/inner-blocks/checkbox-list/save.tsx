@@ -18,16 +18,11 @@ const Save = ( {
 	attributes: BlockAttributes;
 	style: Record< string, string >;
 } ) => {
-	const cssColorClasses = getHasColorClasses< BlockAttributes >(
-		attributes,
-		colorAttributes
-	);
-
 	const blockProps = useBlockProps.save( {
 		className: clsx(
 			'wc-block-product-filter-checkbox-list',
 			attributes.className,
-			cssColorClasses
+			getHasColorClasses( attributes, colorAttributes )
 		),
 		style: {
 			...style,

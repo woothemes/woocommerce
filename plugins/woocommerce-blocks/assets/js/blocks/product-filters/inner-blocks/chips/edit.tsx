@@ -19,9 +19,10 @@ import {
 /**
  * Internal dependencies
  */
-import { EditProps } from './types';
+import { getHasColorClasses, getStyleColorVars } from '../../utils/colors';
+import { colorAttributes } from './constants';
+import type { EditProps } from './types';
 import './editor.scss';
-import { getColorClasses, getColorVars } from './utils';
 
 const Edit = ( props: EditProps ): JSX.Element => {
 	const colorGradientSettings = useMultipleOriginColorsAndGradients();
@@ -57,9 +58,13 @@ const Edit = ( props: EditProps ): JSX.Element => {
 	const blockProps = useBlockProps( {
 		className: clsx( 'wc-block-product-filter-chips', {
 			'is-loading': isLoading,
-			...getColorClasses( attributes ),
+			...getHasColorClasses( attributes, colorAttributes ),
 		} ),
-		style: getColorVars( attributes ),
+		style: getStyleColorVars(
+			'wc-product-filter-chips',
+			attributes,
+			colorAttributes
+		),
 	} );
 
 	const loadingState = useMemo( () => {

@@ -8,7 +8,8 @@ import clsx from 'clsx';
  * Internal dependencies
  */
 import { BlockAttributes } from './types';
-import { getColorClasses, getColorVars } from './utils';
+import { getHasColorClasses, getStyleColorVars } from '../../utils/colors';
+import { colorAttributes } from './constants';
 
 const Save = ( {
 	attributes,
@@ -21,11 +22,15 @@ const Save = ( {
 		className: clsx(
 			'wc-block-product-filter-chips',
 			attributes.className,
-			getColorClasses( attributes )
+			getHasColorClasses( attributes, colorAttributes )
 		),
 		style: {
 			...style,
-			...getColorVars( attributes ),
+			...getStyleColorVars(
+				'wc-product-filter-chips',
+				attributes,
+				colorAttributes
+			),
 		},
 	} );
 
