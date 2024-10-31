@@ -7,6 +7,7 @@ describe( 'getHasColorClasses', () => {
 	it( 'returns classes with "normal" colors, prioritizing them over "custom" colors', () => {
 		const attributes = {
 			className: 'wc-block-product-filter-checkbox-list',
+			count: 5,
 
 			warningText: 'dark',
 			customWarningText: '#000011',
@@ -28,6 +29,7 @@ describe( 'getHasColorClasses', () => {
 	it( 'returns classes with "custom" colors when "normal" colors are not defined', () => {
 		const attributes = {
 			className: 'wc-block-product-filter-checkbox-list',
+			count: 5,
 
 			warningText: '',
 			customWarningText: '#000011',
