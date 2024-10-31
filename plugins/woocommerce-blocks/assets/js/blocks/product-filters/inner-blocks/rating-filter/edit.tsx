@@ -130,27 +130,20 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 			return;
 		}
 
-		/*
-		 * Sort the ratings in descending order
-		 * Todo: consider to handle this in the API request
-		 */
-		const productsRating = collectionFilters?.rating_counts?.sort(
-			( a, b ) => b.rating - a.rating
-		);
+		const minimumRating =
+			typeof minRating === 'string' ? parseFloat( minRating ) : 0;
 
 		/*
-		 * Filter the ratings based on the minimum rating
+		 * Process the ratings counts:
+		 * - Sort the ratings in descending order
+		 *   Todo: consider to handle this in the API request
+		 * - Filter out ratings below the minimum rating
+		 * - Map the ratings to the format expected by the filter component
 		 */
-		const filteredRatings =
-			typeof minRating === 'string'
-				? productsRating.filter(
-						( { rating } ) => rating >= parseFloat( minRating )
-				  )
-				: productsRating;
-
-		// Create the { label, value } options array for the filter.
-		const ratingOptions = filteredRatings.map( ( { rating, count } ) => {
-			return {
+		const productsRating = collectionFilters.rating_counts
+			.sort( ( a, b ) => b.rating - a.rating )
+			.filter( ( { rating } ) => rating >= minimumRating )
+			.map( ( { rating, count } ) => ( {
 				label: (
 					<Rating
 						key={ rating }
@@ -159,10 +152,9 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 					/>
 				),
 				value: rating?.toString(),
-			};
-		} );
+			} ) );
 
-		setDisplayedOptions( ratingOptions );
+		setDisplayedOptions( productsRating );
 	}, [
 		showCounts,
 		isPreview,
