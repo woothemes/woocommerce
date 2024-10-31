@@ -3,7 +3,8 @@ declare( strict_types = 1 );
 
 namespace Automattic\WooCommerce\Tests\Blocks\Mocks;
 
-use Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection;
+use Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection\ProductCollectionController;
+use Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection\ProductQueryBuilder;
 use Automattic\WooCommerce\Blocks\Package;
 use Automattic\WooCommerce\Blocks\Assets\Api;
 use Automattic\WooCommerce\Blocks\Assets\AssetDataRegistry;
@@ -14,7 +15,7 @@ use Automattic\WooCommerce\Blocks\Integrations\IntegrationRegistry;
 /**
  * ProductCollectionMock used to test Product Query block functions.
  */
-class ProductCollectionMock extends ProductCollection {
+class ProductCollectionMock extends ProductCollectionController {
 
 	/**
 	 * Initialize our mock class.
@@ -31,6 +32,7 @@ class ProductCollectionMock extends ProductCollection {
 	 * Override the normal initialization behavior to prevent registering the block with WordPress filters.
 	 */
 	protected function initialize() {
+		$this->query_builder = new ProductQueryBuilder();
 		$this->register_core_collections();
 	}
 
@@ -49,7 +51,7 @@ class ProductCollectionMock extends ProductCollection {
 	 * @param array $data The attribute data.
 	 */
 	public function set_attributes_filter_query_args( $data ) {
-		$this->attributes_filter_query_args = $data;
+		$this->query_builder->set_attributes_filter_query_args( $data );
 	}
 
 	/**

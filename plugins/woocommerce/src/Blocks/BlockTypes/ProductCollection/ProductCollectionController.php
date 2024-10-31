@@ -37,13 +37,6 @@ class ProductCollectionController extends AbstractBlock {
 	protected $parsed_block;
 
 	/**
-	 * All the query args related to the filter by attributes block.
-	 *
-	 * @var array
-	 */
-	protected $attributes_filter_query_args = array();
-
-	/**
 	 * The render state of the product collection block.
 	 *
 	 * These props are runtime-based and reinitialize for every block on a page.

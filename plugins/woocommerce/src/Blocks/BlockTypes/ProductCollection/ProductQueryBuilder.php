@@ -31,6 +31,13 @@ class ProductQueryBuilder {
 	protected $custom_order_opts = array( 'popularity', 'rating', 'post__in', 'price', 'sales', 'menu_order', 'random' );
 
 	/**
+	 * All the query args related to the filter by attributes block.
+	 *
+	 * @var array
+	 */
+	protected $attributes_filter_query_args = array();
+
+	/**
 	 * Collection handler store.
 	 *
 	 * @var array
@@ -53,6 +60,15 @@ class ProductQueryBuilder {
 	 */
 	public function set_collection_handler_store( $collection_name, $handlers ) {
 		$this->collection_handler_store[ $collection_name ] = $handlers;
+	}
+
+	/**
+	 * Set attributes filter query args.
+	 *
+	 * @param array $args The attributes filter query arguments.
+	 */
+	public function set_attributes_filter_query_args( $args ) {
+		$this->attributes_filter_query_args = $args;
 	}
 
 	/**
