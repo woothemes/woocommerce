@@ -15,11 +15,11 @@ import {
 	useCollectionData,
 } from '@woocommerce/base-context/hooks';
 import { getSettingWithCoercion } from '@woocommerce/settings';
-import { isBoolean, isObject, objectHasProp } from '@woocommerce/types';
+import { isBoolean } from '@woocommerce/types';
 import { useState, useMemo, useEffect } from '@wordpress/element';
 import { withSpokenMessages } from '@wordpress/components';
 import type { BlockEditProps } from '@wordpress/blocks';
-import type { WCStoreV1ProductsCollectionProps } from '@woocommerce/type-defs/product-collection';
+import type { WCStoreV1ProductsCollectionProps } from '@woocommerce/blocks/product-collection/types';
 
 /**
  * Internal dependencies
@@ -92,7 +92,7 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 
 	const [ queryState ] = useQueryStateByContext();
 
-	const { results: filteredCounts, isLoading: filteredCountsLoading } =
+	const { results: collectionFilters, isLoading: filteredCountsLoading } =
 		useCollectionData< WCStoreV1ProductsCollectionProps >( {
 			queryRating: true,
 			queryState,
@@ -131,42 +131,35 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 			return;
 		}
 
-		const orderedRatings =
-			! filteredCountsLoading &&
-			objectHasProp( filteredCounts, 'rating_counts' ) &&
-			Array.isArray( filteredCounts.rating_counts )
-				? [ ...filteredCounts.rating_counts ].reverse()
-				: [];
+		// Sort the ratings in descending order
+		const productsRating = collectionFilters?.rating_counts
+			? [ ...collectionFilters.rating_counts ].reverse()
+			: [];
 
-		if ( orderedRatings.length === 0 ) {
+		if ( productsRating.length === 0 ) {
 			setDisplayedOptions( previewOptions );
 			return;
 		}
 
-		const newOptions = orderedRatings
-			.filter(
-				( item ) => isObject( item ) && Object.keys( item ).length > 0
-			)
-			.map( ( item ) => {
-				return {
-					label: (
-						<Rating
-							key={ item?.rating }
-							rating={ item?.rating }
-							ratedProductsCount={
-								showCounts ? item?.count : null
-							}
-						/>
-					),
-					value: item?.rating?.toString(),
-				};
-			} );
+		// Create the { label, value } options array for the filter.
+		const ratingOptions = productsRating.map( ( item ) => {
+			return {
+				label: (
+					<Rating
+						key={ item.rating }
+						rating={ item.rating }
+						ratedProductsCount={ showCounts ? item.count : null }
+					/>
+				),
+				value: item?.rating?.toString(),
+			};
+		} );
 
-		setDisplayedOptions( newOptions );
+		setDisplayedOptions( ratingOptions );
 	}, [
 		showCounts,
 		isPreview,
-		filteredCounts,
+		collectionFilters,
 		filteredCountsLoading,
 		productRatingsQuery,
 	] );
@@ -186,7 +179,7 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 	}
 
 	const showNoProductsNotice =
-		! filteredCountsLoading && ! filteredCounts.rating_counts?.length;
+		! filteredCountsLoading && ! collectionFilters.rating_counts?.length;
 
 	return (
 		<>
