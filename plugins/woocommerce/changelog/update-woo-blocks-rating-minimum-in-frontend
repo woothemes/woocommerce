@@ -1,0 +1,4 @@
+Significance: patch
+Type: update
+
+Rating Filter: filter the ratings to show depending on the minimum rating value, in the frontend
