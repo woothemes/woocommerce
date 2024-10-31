@@ -10,9 +10,13 @@ import { formatPrice, getCurrency } from '@woocommerce/price-format';
 /**
  * Internal dependencies
  */
-import { EditProps } from './types';
+import type { EditProps } from './types';
 
-const Edit = ( { attributes, setAttributes, context }: EditProps ) => {
+const PriceSliderEdit = ( {
+	attributes,
+	setAttributes,
+	context,
+}: EditProps ) => {
 	const { showInputFields, inlineInput } = attributes;
 	const blockProps = useBlockProps( {
 		className: 'wc-block-product-filter-price-slider',
@@ -21,7 +25,7 @@ const Edit = ( { attributes, setAttributes, context }: EditProps ) => {
 	const { isLoading, price } = context.filterData;
 
 	if ( isLoading ) {
-		return 'Loading...';
+		return __( 'Loading…', 'woocommerce' );
 	}
 
 	if ( ! price ) {
@@ -115,4 +119,4 @@ const Edit = ( { attributes, setAttributes, context }: EditProps ) => {
 	);
 };
 
-export default Edit;
+export default PriceSliderEdit;
