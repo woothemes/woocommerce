@@ -65,9 +65,6 @@ const CoreProfiler = lazy( () =>
 	import( /* webpackChunkName: "core-profiler" */ '../core-profiler' )
 );
 
-const SettingsGroup = lazy( () =>
-	import( /* webpackChunkName: "settings" */ '../settings' )
-);
 const WCPaymentsWelcomePage = lazy( () =>
 	import(
 		/* webpackChunkName: "wcpay-payment-welcome-page" */ '../payments-welcome'
@@ -317,35 +314,6 @@ export const getPages = () => {
 				showStoreAlerts: false,
 				showPluginArea: false,
 			},
-			capability: 'manage_woocommerce',
-		} );
-	}
-
-	if ( window.wcAdminFeatures.settings ) {
-		pages.push( {
-			container: SettingsGroup,
-			path: '/settings/:page',
-			breadcrumbs: ( { match } ) => {
-				// @todo This might need to be refactored to retrieve groups via data store.
-				const settingsPages = getAdminSetting( 'settingsPages' );
-				const page = settingsPages[ match.params.page ];
-				if ( ! page ) {
-					return [];
-				}
-				return [
-					...initialBreadcrumbs,
-					[
-						settingsPages.general
-							? '/settings/general'
-							: `/settings/${
-									Object.keys( settingsPages )[ 0 ]
-							  }`,
-						__( 'Settings', 'woocommerce' ),
-					],
-					page,
-				];
-			},
-			wpOpenMenu: 'toplevel_page_woocommerce',
 			capability: 'manage_woocommerce',
 		} );
 	}
