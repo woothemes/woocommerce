@@ -35,8 +35,17 @@ const PriceSliderEdit = ( {
 	// Custom colors
 	sliderHandle,
 	setSliderHandle,
+
+	sliderHandleBorder,
+	setSliderHandleBorder,
 }: EditProps ): JSX.Element | null => {
-	const { showInputFields, inlineInput, customSliderHandle } = attributes;
+	const {
+		showInputFields,
+		inlineInput,
+
+		customSliderHandle,
+		customSliderHandleBorder,
+	} = attributes;
 
 	const { isLoading, price } = context.filterData;
 
@@ -135,6 +144,29 @@ const PriceSliderEdit = ( {
 									} );
 								},
 							},
+							{
+								label: __(
+									'Slider Handle Border',
+									'woocommerce'
+								),
+								colorValue:
+									sliderHandleBorder.color ||
+									customSliderHandleBorder,
+								isShownByDefault: true,
+								enableAlpha: true,
+								onColorChange: ( colorValue: string ) => {
+									setSliderHandleBorder( colorValue );
+									setAttributes( {
+										customSliderHandleBorder: colorValue,
+									} );
+								},
+								resetAllFilter: () => {
+									setSliderHandle( '' );
+									setAttributes( {
+										customSliderHandleBorder: '',
+									} );
+								},
+							},
 						] }
 						panelId={ clientId }
 						{ ...colorGradientSettings }
@@ -184,5 +216,6 @@ const PriceSliderEdit = ( {
 };
 
 export default withColors( {
-	sliderHandle: 'slider-handle-color',
+	sliderHandle: 'slider-handle',
+	sliderHandleBorder: 'slider-handle-border',
 } )( PriceSliderEdit );
