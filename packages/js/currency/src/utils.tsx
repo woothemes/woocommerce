@@ -11,11 +11,11 @@ import deprecated from '@wordpress/deprecated';
  * @typedef {import('@woocommerce/number').NumberConfig} NumberConfig
  */
 /**
- * @typedef {Object} CurrencyProps
+ * @typedef  {Object} CurrencyProps
  * @property {string} code           Currency ISO code.
  * @property {string} symbol         Symbol, can be multi-character. Should be in plain text, w/o HTML markup. HTML entities will be decoded.
  * @property {string} symbolPosition Where the symbol should be relative to the amount. One of `'left' | 'right' | 'left_space | 'right_space'`.
- * @typedef {NumberConfig & CurrencyProps} CurrencyConfig
+ * @typedef  {NumberConfig & CurrencyProps} CurrencyConfig
  */
 
 export type SymbolPosition = 'left' | 'right' | 'left_space' | 'right_space';
