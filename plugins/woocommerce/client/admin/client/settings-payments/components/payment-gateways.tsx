@@ -6,14 +6,15 @@ import { Gridicon } from '@automattic/components';
 import { Button, SelectControl } from '@wordpress/components';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
+import { PaymentGateway } from '@woocommerce/data';
 import { EllipsisMenu, List, Pill } from '@woocommerce/components';
 import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
-import { PaymentGateway } from '@woocommerce/data';
 import { getAdminLink } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
  */
+import EnableGatewayButton from '~/settings-payments/components/enable-gateway-button';
 
 // TODO: This should either be a util function, or handled in a different way e.g. passing the data as props.
 const parseScriptTag = ( elementId: string ) => {
@@ -44,10 +45,6 @@ export const PaymentGateways = () => {
 	}, [] );
 
 	const recommendedGateways = [ 'woocommerce_payments' ];
-
-	const enableGateway = ( gateway: PaymentGateway ) => () => {
-		console.log( 'Enable gateway', gateway );
-	};
 
 	const setupLivePayments = () => {
 		// TODO: Implement in future PR.
@@ -83,24 +80,14 @@ export const PaymentGateways = () => {
 							{ gateway.enabled ? (
 								<Button
 									variant="secondary"
-									href={
-										'admin.php?page=wc-settings&tab=checkout&section=' +
-										gateway.id
-									}
+									href={ gateway.settings_url }
 									isBusy={ false }
 									disabled={ false }
 								>
 									{ __( 'Manage', 'woocommerce' ) }
 								</Button>
 							) : (
-								<Button
-									variant="primary"
-									onClick={ enableGateway( gateway ) }
-									isBusy={ false }
-									disabled={ false }
-								>
-									{ __( 'Enable', 'woocommerce' ) }
-								</Button>
+								<EnableGatewayButton gateway={ gateway } />
 							) }
 							{ gateway.id === 'woocommerce_payments' &&
 								wooPaymentsGatewayData?.isInTestMode && (
@@ -145,9 +132,10 @@ export const PaymentGateways = () => {
 				before: (
 					<img
 						src={
-							gateway.square_image ||
-							gateway.image_72x72 ||
-							gateway.image ||
+							// TODO: Need a way to make images available here.
+							// gateway.square_image ||
+							// gateway.image_72x72 ||
+							// gateway.image ||
 							'https://woocommerce.com/wp-content/plugins/wccom-plugins/payment-gateway-suggestions/images/wcpay.svg'
 						}
 						alt={ gateway.title + ' logo' }

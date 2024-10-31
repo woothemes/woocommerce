@@ -49,7 +49,27 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 	public function __construct() {
 		$this->id    = 'checkout';
 		$this->label = _x( 'Payments', 'Settings tab label', 'woocommerce' );
+
+		// Add filters and actions.
+		add_filter( 'woocommerce_admin_shared_settings', array( $this, 'preload_settings' ) );
+
 		parent::__construct();
+	}
+
+	/**
+	 * This function can be used to preload settings related to payment gateways.
+	 * Registered keys will be available in the window.wcSettings.admin object.
+	 *
+	 * @param $settings array Settings array.
+	 *
+	 * @return array Settings array with additional settings added.
+	 */
+	public function preload_settings( $settings ) {
+		if ( ! is_admin() ) {
+			return $settings;
+		}
+
+		return $settings;
 	}
 
 	/**
