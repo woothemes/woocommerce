@@ -14,8 +14,12 @@ export type BlockAttributes = {
 
 	sliderHandle: string;
 	customSliderHandle: string;
+
 	sliderHandleBorder: string;
 	customSliderHandleBorder: string;
+
+	slider: string;
+	customSlider: string;
 };
 
 export interface EditProps extends BlockEditProps< BlockAttributes > {
@@ -23,6 +27,10 @@ export interface EditProps extends BlockEditProps< BlockAttributes > {
 
 	sliderHandle: Color;
 	setSliderHandle: ( color: string ) => void;
+
 	sliderHandleBorder: Color;
 	setSliderHandleBorder: ( color: string ) => void;
+
+	slider: Color;
+	setSlider: ( color: string ) => void;
 }

@@ -38,6 +38,14 @@
 		"customSliderHandleBorder": {
 			"type": "string",
 			"default": ""
+		},
+		"slider": {
+			"type": "string",
+			"default": ""
+		},
+		"customSlider": {
+			"type": "string",
+			"default": ""
 		}
 	},
 	"ancestor": [ "woocommerce/product-filter-price" ],

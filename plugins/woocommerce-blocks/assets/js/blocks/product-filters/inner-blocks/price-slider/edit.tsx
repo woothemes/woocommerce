@@ -35,9 +35,10 @@ const PriceSliderEdit = ( {
 	// Custom colors
 	sliderHandle,
 	setSliderHandle,
-
 	sliderHandleBorder,
 	setSliderHandleBorder,
+	slider,
+	setSlider,
 }: EditProps ): JSX.Element | null => {
 	const {
 		showInputFields,
@@ -45,6 +46,7 @@ const PriceSliderEdit = ( {
 
 		customSliderHandle,
 		customSliderHandleBorder,
+		customSlider,
 	} = attributes;
 
 	const { isLoading, price } = context.filterData;
@@ -55,7 +57,7 @@ const PriceSliderEdit = ( {
 			...getHasColorClasses( attributes, colorAttributes ),
 		} ),
 		style: getStyleColorVars(
-			'wc-product-filter--price-slider',
+			'wc-product-filter--price',
 			attributes,
 			colorAttributes
 		),
@@ -167,6 +169,24 @@ const PriceSliderEdit = ( {
 									} );
 								},
 							},
+							{
+								label: __( 'Slider', 'woocommerce' ),
+								colorValue: slider.color || customSlider,
+								isShownByDefault: true,
+								enableAlpha: true,
+								onColorChange: ( colorValue: string ) => {
+									setSlider( colorValue );
+									setAttributes( {
+										customSlider: colorValue,
+									} );
+								},
+								resetAllFilter: () => {
+									setSliderHandle( '' );
+									setAttributes( {
+										customSlider: '',
+									} );
+								},
+							},
 						] }
 						panelId={ clientId }
 						{ ...colorGradientSettings }
@@ -218,4 +238,5 @@ const PriceSliderEdit = ( {
 export default withColors( {
 	sliderHandle: 'slider-handle',
 	sliderHandleBorder: 'slider-handle-border',
+	slider: 'slider',
 } )( PriceSliderEdit );
