@@ -26,7 +26,6 @@ import type { BlockEditProps } from '@wordpress/blocks';
 import { previewOptions } from './preview';
 import { getActiveFilters } from './utils';
 import { Inspector } from './components/inspector';
-import { PreviewDropdown } from '../components/preview-dropdown';
 import { getAllowedBlocks } from '../../utils';
 import { EXCLUDED_BLOCKS } from '../../constants';
 import { Notice } from '../../components/notice';
@@ -36,7 +35,7 @@ import './style.scss';
 const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 	const { attributes, setAttributes } = props;
 
-	const { displayStyle, isPreview, showCounts, selectType } = attributes;
+	const { isPreview, showCounts } = attributes;
 
 	const { children, ...innerBlocksProps } = useInnerBlocksProps(
 		useBlockProps(),
@@ -204,30 +203,20 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 					</Notice>
 				) }
 				<div
-					className={ clsx( `style-${ displayStyle }`, {
+					className={ clsx( {
 						'is-loading': isLoading,
 					} ) }
 				>
-					{ displayStyle === 'dropdown' ? (
-						<PreviewDropdown
-							placeholder={
-								selectType === 'single'
-									? __( 'Select a rating', 'woocommerce' )
-									: __( 'Select ratings', 'woocommerce' )
-							}
-						/>
-					) : (
-						<BlockContextProvider
-							value={ {
-								filterData: {
-									items: displayedOptions,
-									isLoading,
-								},
-							} }
-						>
-							{ children }
-						</BlockContextProvider>
-					) }
+					<BlockContextProvider
+						value={ {
+							filterData: {
+								items: displayedOptions,
+								isLoading,
+							},
+						} }
+					>
+						{ children }
+					</BlockContextProvider>
 				</div>
 			</div>
 		</>
