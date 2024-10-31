@@ -3,9 +3,20 @@
  */
 import clsx from 'clsx';
 import { __ } from '@wordpress/i18n';
-import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, ToggleControl, Disabled } from '@wordpress/components';
 import { formatPrice, getCurrency } from '@woocommerce/price-format';
+import {
+	useBlockProps,
+	InspectorControls,
+	withColors,
+
+	// @ts-expect-error - no types.
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
+	__experimentalColorGradientSettingsDropdown as ColorGradientSettingsDropdown,
+	// @ts-expect-error - no types.
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
+	__experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
+} from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
@@ -13,19 +24,28 @@ import { formatPrice, getCurrency } from '@woocommerce/price-format';
 import type { EditProps } from './types';
 
 const PriceSliderEdit = ( {
+	clientId,
+	context,
+
 	attributes,
 	setAttributes,
-	context,
-}: EditProps ) => {
-	const { showInputFields, inlineInput } = attributes;
+
+	// Custom colors
+	sliderHandleColor,
+	setSliderHandleColor,
+}: EditProps ): JSX.Element | null => {
+	const { showInputFields, inlineInput, customSliderHandleColor } =
+		attributes;
 	const blockProps = useBlockProps( {
 		className: 'wc-block-product-filter-price-slider',
 	} );
 
 	const { isLoading, price } = context.filterData;
 
+	const colorGradientSettings = useMultipleOriginColorsAndGradients();
+
 	if ( isLoading ) {
-		return __( 'Loading…', 'woocommerce' );
+		return <>{ __( 'Loading…', 'woocommerce' ) }</>;
 	}
 
 	if ( ! price ) {
@@ -37,6 +57,7 @@ const PriceSliderEdit = ( {
 		minPrice,
 		getCurrency( { minorUnit: 0 } )
 	);
+
 	const formattedMaxPrice = formatPrice(
 		maxPrice,
 		getCurrency( { minorUnit: 0 } )
@@ -67,6 +88,7 @@ const PriceSliderEdit = ( {
 							} )
 						}
 					/>
+
 					{ showInputFields && (
 						<ToggleControl
 							label={ __( 'Inline input fields', 'woocommerce' ) }
@@ -78,6 +100,42 @@ const PriceSliderEdit = ( {
 					) }
 				</PanelBody>
 			</InspectorControls>
+
+			<InspectorControls group="color">
+				{ colorGradientSettings.hasColorsOrGradients && (
+					<ColorGradientSettingsDropdown
+						__experimentalIsRenderedInSidebar
+						settings={ [
+							{
+								label: __(
+									'Slider Handle Color',
+									'woocommerce'
+								),
+								colorValue:
+									sliderHandleColor.color ||
+									customSliderHandleColor,
+								isShownByDefault: true,
+								enableAlpha: true,
+								onColorChange: ( colorValue: string ) => {
+									setSliderHandleColor( colorValue );
+									setAttributes( {
+										customSliderHandleColor: colorValue,
+									} );
+								},
+								resetAllFilter: () => {
+									setSliderHandleColor( '' );
+									setAttributes( {
+										customSliderHandleColor: '',
+									} );
+								},
+							},
+						] }
+						panelId={ clientId }
+						{ ...colorGradientSettings }
+					/>
+				) }
+			</InspectorControls>
+
 			<div { ...blockProps }>
 				<Disabled>
 					<div
@@ -119,4 +177,6 @@ const PriceSliderEdit = ( {
 	);
 };
 
-export default PriceSliderEdit;
+export default withColors( {
+	sliderHandleColor: 'slider-handle-color',
+} )( PriceSliderEdit );
