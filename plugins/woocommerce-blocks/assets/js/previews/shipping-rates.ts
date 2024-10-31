@@ -70,7 +70,7 @@ export const previewShippingRates: CartResponseShippingRate[] = [
 			},
 			{
 				...API_SITE_CURRENCY,
-				name: __( 'Local pickup', 'woocommerce' ),
+				name: __( 'Local pickup #1', 'woocommerce' ),
 				description: '',
 				delivery_time: '',
 				price: '0',
@@ -92,7 +92,7 @@ export const previewShippingRates: CartResponseShippingRate[] = [
 			},
 			{
 				...API_SITE_CURRENCY,
-				name: __( 'Local pickup', 'woocommerce' ),
+				name: __( 'Local pickup #2', 'woocommerce' ),
 				description: '',
 				delivery_time: '',
 				price: '0',
