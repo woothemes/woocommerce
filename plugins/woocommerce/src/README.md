@@ -199,7 +199,7 @@ class TheClassServiceProvider extends AbstractServiceProvider {
 }
 ```
 
-Last (but certainly not least, don't forget this step!), add the class name of the service provider to the `$service_providers` property in the `Container` class.
+Last (but certainly not least, don't forget this step!), add the class name of the service provider to the array returned by the `get_service_providers` method in the `Container` class.
 
 Worth noting:
 
