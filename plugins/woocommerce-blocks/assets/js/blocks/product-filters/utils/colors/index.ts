@@ -44,8 +44,8 @@ export function getStyleColorVars< T >(
 		const customColor = attributes[ customKey as keyof T ];
 
 		if (
-			typeof normalColor === 'string' ||
-			typeof customColor === 'string'
+			( typeof normalColor === 'string' && normalColor.length > 0 ) ||
+			( typeof customColor === 'string' && customColor.length > 0 )
 		) {
 			styleVars[ `--${ prefix }-${ kebabCase( color ) }` ] = getCSSVar(
 				normalColor as string | undefined,
