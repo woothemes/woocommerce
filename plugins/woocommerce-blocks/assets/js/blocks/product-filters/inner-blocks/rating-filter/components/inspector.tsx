@@ -4,7 +4,13 @@
 import { InspectorControls } from '@wordpress/block-editor';
 import { BlockEditProps } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
-import { PanelBody, RadioControl, ToggleControl } from '@wordpress/components';
+import {
+	Flex,
+	FlexItem,
+	PanelBody,
+	RadioControl,
+	ToggleControl,
+} from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -20,16 +26,17 @@ function MinimumRatingLabel( {
 	ariaLabel: string;
 } ) {
 	return (
-		<div
+		<Flex
 			title={ ariaLabel }
-			className="wc-block-rating-filter__rating-label"
 			aria-label={ ariaLabel }
+			justify="flex-start"
+			gap={ 1 }
 		>
-			<RatingStars stars={ stars } />{ ' ' }
-			<span className="wc-block-rating-filter__rating-label-text">
-				{ __( '& up', 'woocommerce' ) }
-			</span>
-		</div>
+			<FlexItem>
+				<RatingStars stars={ stars } />
+			</FlexItem>
+			<FlexItem>{ __( '& up', 'woocommerce' ) }</FlexItem>
+		</Flex>
 	);
 }
 
