@@ -36,7 +36,7 @@ import './style.scss';
 const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 	const { attributes, setAttributes } = props;
 
-	const { isPreview, showCounts } = attributes;
+	const { isPreview, showCounts, minRating } = attributes;
 
 	const { children, ...innerBlocksProps } = useInnerBlocksProps(
 		useBlockProps(),
@@ -138,8 +138,18 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 			( a, b ) => b.rating - a.rating
 		);
 
+		/*
+		 * Filter the ratings based on the minimum rating
+		 */
+		const filteredRatings =
+			typeof minRating === 'string'
+				? productsRating.filter(
+						( { rating } ) => rating >= parseFloat( minRating )
+				  )
+				: productsRating;
+
 		// Create the { label, value } options array for the filter.
-		const ratingOptions = productsRating.map( ( { rating, count } ) => {
+		const ratingOptions = filteredRatings.map( ( { rating, count } ) => {
 			return {
 				label: (
 					<Rating
@@ -159,6 +169,7 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 		collectionFilters,
 		filteredCountsLoading,
 		productRatingsQuery,
+		minRating,
 	] );
 
 	if ( ! filteredCountsLoading && displayedOptions.length === 0 ) {
