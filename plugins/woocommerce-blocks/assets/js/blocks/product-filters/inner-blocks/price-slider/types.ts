@@ -11,11 +11,12 @@ import type { Color, FilterBlockContext } from '../../types';
 export type BlockAttributes = {
 	showInputFields: boolean;
 	inlineInput: boolean;
-	customSliderHandleColor: string;
+	sliderHandle: string;
+	customSliderHandle: string;
 };
 
 export interface EditProps extends BlockEditProps< BlockAttributes > {
 	context: FilterBlockContext;
-	sliderHandleColor: Color;
-	setSliderHandleColor: ( color: string ) => void;
+	sliderHandle: Color;
+	setSliderHandle: ( color: string ) => void;
 }

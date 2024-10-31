@@ -31,11 +31,10 @@ const PriceSliderEdit = ( {
 	setAttributes,
 
 	// Custom colors
-	sliderHandleColor,
-	setSliderHandleColor,
+	sliderHandle,
+	setSliderHandle,
 }: EditProps ): JSX.Element | null => {
-	const { showInputFields, inlineInput, customSliderHandleColor } =
-		attributes;
+	const { showInputFields, inlineInput, customSliderHandle } = attributes;
 	const blockProps = useBlockProps( {
 		className: 'wc-block-product-filter-price-slider',
 	} );
@@ -107,25 +106,21 @@ const PriceSliderEdit = ( {
 						__experimentalIsRenderedInSidebar
 						settings={ [
 							{
-								label: __(
-									'Slider Handle Color',
-									'woocommerce'
-								),
+								label: __( 'Slider Handle', 'woocommerce' ),
 								colorValue:
-									sliderHandleColor.color ||
-									customSliderHandleColor,
+									sliderHandle.color || customSliderHandle,
 								isShownByDefault: true,
 								enableAlpha: true,
 								onColorChange: ( colorValue: string ) => {
-									setSliderHandleColor( colorValue );
+									setSliderHandle( colorValue );
 									setAttributes( {
-										customSliderHandleColor: colorValue,
+										customSliderHandle: colorValue,
 									} );
 								},
 								resetAllFilter: () => {
-									setSliderHandleColor( '' );
+									setSliderHandle( '' );
 									setAttributes( {
-										customSliderHandleColor: '',
+										customSliderHandle: '',
 									} );
 								},
 							},
@@ -178,5 +173,5 @@ const PriceSliderEdit = ( {
 };
 
 export default withColors( {
-	sliderHandleColor: 'slider-handle-color',
+	sliderHandle: 'slider-handle-color',
 } )( PriceSliderEdit );

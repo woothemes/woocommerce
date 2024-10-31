@@ -23,11 +23,11 @@
 			"default": false
 		},
 
-		"sliderHandleColor": {
+		"sliderHandle": {
 			"type": "string",
 			"default": ""
 		},
-		"customSliderHandleColor": {
+		"customSliderHandle": {
 			"type": "string",
 			"default": ""
 		}
