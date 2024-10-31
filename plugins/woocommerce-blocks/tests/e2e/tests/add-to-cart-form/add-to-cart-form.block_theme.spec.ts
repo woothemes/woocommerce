@@ -1,11 +1,13 @@
 /**
  * External dependencies
  */
+import { Page } from '@playwright/test';
 import {
 	test as base,
 	expect,
 	Editor,
 	BlockData,
+	wpCLI,
 } from '@woocommerce/e2e-utils';
 
 /**
@@ -17,35 +19,71 @@ const blockData: BlockData = {
 	slug: 'woocommerce/add-to-cart-form',
 	mainClass: '.wc-block-add-to-cart-form',
 	selectors: {
-		frontend: {},
-		editor: {},
+		frontend: {
+			stepperMinusButton:
+				'.wc-block-components-quantity-selector__button--minus',
+			stepperPlusButton:
+				'.wc-block-components-quantity-selector__button--plus',
+		},
+		editor: {
+			stepperMinusButton:
+				'.wc-block-components-quantity-selector__button--minus',
+			stepperPlusButton:
+				'.wc-block-components-quantity-selector__button--plus',
+		},
 	},
 };
 
 class BlockUtils {
 	editor: Editor;
+	page: Page;
 
-	constructor( { editor }: { editor: Editor } ) {
+	constructor( { editor, page }: { editor: Editor; page: Page } ) {
 		this.editor = editor;
+		this.page = page;
 	}
 
-	async configureSingleProductBlock() {
+	/**
+	 * Configures the Single Product Block in the editor.
+	 * If a product name is provided, it searches for the product by name and selects it.
+	 * If no product name is provided, it selects the first product in the list by default.
+	 */
+	async configureSingleProductBlock( name?: string ) {
 		const singleProductBlock = await this.editor.getBlockByName(
 			'woocommerce/single-product'
 		);
 
-		await singleProductBlock
-			.locator( 'input[type="radio"]' )
-			.nth( 0 )
-			.click();
+		if ( name ) {
+			await singleProductBlock
+				.locator( 'input[type="search"]' )
+				.fill( name );
+			await singleProductBlock.getByText( 'Search' ).click();
+			await singleProductBlock.getByText( name ).click();
+		} else {
+			await singleProductBlock
+				.locator( 'input[type="radio"]' )
+				.nth( 0 )
+				.click();
+		}
 
 		await singleProductBlock.getByText( 'Done' ).click();
+	}
+
+	async enableStepperMode() {
+		await ( await this.editor.getBlockByName( blockData.slug ) ).click();
+		await this.page.getByLabel( 'Stepper' ).click();
+	}
+
+	async createSoldIndividuallyProduct() {
+		await wpCLI(
+			'wc product create --name="Sold Individually" --regular_price=10 --sold_individually=true --user=admin'
+		);
 	}
 }
 
 const test = base.extend< { blockUtils: BlockUtils } >( {
-	blockUtils: async ( { editor }, use ) => {
-		await use( new BlockUtils( { editor } ) );
+	blockUtils: async ( { editor, page }, use ) => {
+		await use( new BlockUtils( { editor, page } ) );
 	},
 } );
 
@@ -136,5 +174,90 @@ test.describe( `${ blockData.name } Block`, () => {
 		await expect(
 			await editor.getBlockByName( blockData.slug )
 		).toBeVisible();
+	} );
+
+	test( 'has the stepper option visible', async ( {
+		admin,
+		editor,
+		blockUtils,
+	} ) => {
+		await admin.createNewPost();
+		await editor.insertBlock( { name: 'woocommerce/single-product' } );
+
+		await blockUtils.configureSingleProductBlock();
+
+		await blockUtils.enableStepperMode();
+
+		const minusButton = editor.canvas.locator(
+			'.wc-block-components-quantity-selector__button--minus'
+		);
+		const plusButton = editor.canvas.locator(
+			'.wc-block-components-quantity-selector__button--plus'
+		);
+
+		await expect( minusButton ).toBeVisible();
+		await expect( plusButton ).toBeVisible();
+	} );
+
+	test( 'has the stepper mode working on the frontend', async ( {
+		admin,
+		editor,
+		blockUtils,
+		page,
+	} ) => {
+		await admin.createNewPost();
+		await editor.insertBlock( { name: 'woocommerce/single-product' } );
+
+		await blockUtils.configureSingleProductBlock();
+
+		await blockUtils.enableStepperMode();
+
+		await editor.publishAndVisitPost();
+
+		const minusButton = page.locator(
+			'.wc-block-components-quantity-selector__button--minus'
+		);
+		const plusButton = page.locator(
+			'.wc-block-components-quantity-selector__button--plus'
+		);
+
+		await expect( minusButton ).toBeVisible();
+		await expect( plusButton ).toBeVisible();
+
+		const input = page.getByLabel( 'Product quantity' );
+
+		await expect( input ).toHaveValue( '1' );
+		await plusButton.click();
+		await expect( input ).toHaveValue( '2' );
+		await minusButton.click();
+		await expect( input ).toHaveValue( '1' );
+		// Ensure the quantity doesn't go below 1.
+		await minusButton.click();
+		await expect( input ).toHaveValue( '1' );
+	} );
+
+	test( "doesn't render stepper when the product is sold individually", async ( {
+		admin,
+		editor,
+		blockUtils,
+		page,
+	} ) => {
+		await blockUtils.createSoldIndividuallyProduct();
+		await admin.createNewPost();
+		await editor.insertBlock( { name: 'woocommerce/single-product' } );
+
+		await blockUtils.configureSingleProductBlock( 'Sold Individually' );
+		await blockUtils.enableStepperMode();
+		await editor.publishAndVisitPost();
+
+		const minusButton = page.locator(
+			'.wc-block-components-quantity-selector__button--minus'
+		);
+		const plusButton = page.locator(
+			'.wc-block-components-quantity-selector__button--plus'
+		);
+
+		await expect( minusButton ).toBeHidden();
+		await expect( plusButton ).toBeHidden();
 	} );
 } );

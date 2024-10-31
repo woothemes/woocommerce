@@ -14,11 +14,12 @@ import {
 } from '@woocommerce/base-utils';
 import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
 import { useSelect } from '@wordpress/data';
+import { ShippingCalculatorContext } from '@woocommerce/base-components/cart-checkout/shipping-calculator/context';
 
 /**
  * Internal dependencies
  */
-import ShippingCalculator from '../../shipping-calculator';
+import { ShippingCalculator } from '../../shipping-calculator';
 import {
 	hasShippingRate,
 	getTotalShippingValue,
@@ -60,6 +61,7 @@ export const TotalsShipping = ( {
 	const hasRates = hasShippingRate( shippingRates ) || totalShippingValue > 0;
 	const showShippingCalculatorForm =
 		showCalculator && isShippingCalculatorOpen;
+
 	const prefersCollection = useSelect( ( select ) => {
 		return select( CHECKOUT_STORE_KEY ).prefersCollection();
 	} );
@@ -104,68 +106,60 @@ export const TotalsShipping = ( {
 				className
 			) }
 		>
-			<TotalsItem
-				label={ __( 'Delivery', 'woocommerce' ) }
-				value={
-					! shippingMethodsMissing && cartHasCalculatedShipping
-						? // if address is not complete, display the link to add an address.
-						  valueToDisplay
-						: ( ! addressComplete || isCheckout ) && (
-								<ShippingPlaceholder
-									showCalculator={ showCalculator }
-									isCheckout={ isCheckout }
-									isShippingCalculatorOpen={
-										isShippingCalculatorOpen
-									}
-									setIsShippingCalculatorOpen={
-										setIsShippingCalculatorOpen
+			<ShippingCalculatorContext.Provider
+				value={ {
+					showCalculator,
+					shippingCalculatorID: 'shipping-calculator-form-wrapper',
+					isShippingCalculatorOpen,
+					setIsShippingCalculatorOpen,
+				} }
+			>
+				<TotalsItem
+					label={ __( 'Delivery', 'woocommerce' ) }
+					value={
+						! shippingMethodsMissing && cartHasCalculatedShipping
+							? // if address is not complete, display the link to add an address.
+							  valueToDisplay
+							: ( ! addressComplete || isCheckout ) && (
+									<ShippingPlaceholder
+										showCalculator={ showCalculator }
+										isCheckout={ isCheckout }
+										addressProvided={ addressComplete }
+									/>
+							  )
+					}
+					description={
+						( ! shippingMethodsMissing &&
+							cartHasCalculatedShipping ) ||
+						// If address is complete, display the shipping address.
+						( addressComplete && ! isCheckout ) ? (
+							<>
+								<ShippingVia
+									selectedShippingRates={
+										selectedShippingRates
 									}
 								/>
-						  )
-				}
-				description={
-					( ! shippingMethodsMissing && cartHasCalculatedShipping ) ||
-					// If address is complete, display the shipping address.
-					( addressComplete && ! isCheckout ) ? (
-						<>
-							<ShippingVia
-								selectedShippingRates={ selectedShippingRates }
-							/>
-							<ShippingAddress
-								shippingAddress={ shippingAddress }
-								showCalculator={ showCalculator }
-								isShippingCalculatorOpen={
-									isShippingCalculatorOpen
-								}
-								setIsShippingCalculatorOpen={
-									setIsShippingCalculatorOpen
-								}
-							/>
-						</>
-					) : null
-				}
-				currency={ currency }
-			/>
-			{ showShippingCalculatorForm && (
-				<ShippingCalculator
-					onUpdate={ () => {
-						setIsShippingCalculatorOpen( false );
-					} }
-					onCancel={ () => {
-						setIsShippingCalculatorOpen( false );
-					} }
+								<ShippingAddress
+									shippingAddress={ shippingAddress }
+								/>
+							</>
+						) : null
+					}
+					currency={ currency }
 				/>
-			) }
-			{ showRateSelector &&
-				cartHasCalculatedShipping &&
-				! showShippingCalculatorForm && (
-					<ShippingRateSelector
-						hasRates={ hasRates }
-						shippingRates={ shippingRates }
-						isLoadingRates={ isLoadingRates }
-						isAddressComplete={ addressComplete }
-					/>
-				) }
+				{ showShippingCalculatorForm && <ShippingCalculator /> }
+				{ showRateSelector &&
+					cartHasCalculatedShipping &&
+					! showShippingCalculatorForm && (
+						<ShippingRateSelector
+							hasRates={ hasRates }
+							shippingRates={ shippingRates }
+							isLoadingRates={ isLoadingRates }
+							isAddressComplete={ addressComplete }
+							shippingAddress={ shippingAddress }
+						/>
+					) }
+			</ShippingCalculatorContext.Provider>
 		</div>
 	);
 };
