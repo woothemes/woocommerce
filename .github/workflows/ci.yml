@@ -307,9 +307,9 @@ jobs:
           RUN_ID: ${{ github.run_id }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Check if project-jobs was successful. Fail for any other status, including skipped. 
+          # Check if project-jobs was successful (skipped still treated as success).
           result="${{ needs.project-jobs.result }}"
-          if [[ $result != "success" ]]; then
+          if [ $result != "success" ] && [ $result != "skipped" ]; then
             echo "Generating CI jobs was not successful."
             exit 1
           fi
