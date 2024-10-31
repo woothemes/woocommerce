@@ -2,7 +2,7 @@
 
 WooCommerce powers many online stores across the internet, and your help making it even more awesome will be greatly appreciated :)
 
-There are many ways to contribute to the project!!!
+There are many ways to contribute to the project!
 
 - [Translating strings into your language](https://github.com/woocommerce/woocommerce/wiki/Translating-WooCommerce).
 - Answering questions on the various WooCommerce communities like the [WP.org support forums](https://wordpress.org/support/plugin/woocommerce/).
