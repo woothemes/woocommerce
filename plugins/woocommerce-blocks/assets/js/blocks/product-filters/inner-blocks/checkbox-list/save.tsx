@@ -7,8 +7,9 @@ import clsx from 'clsx';
 /**
  * Internal dependencies
  */
-import { BlockAttributes } from './types';
-import { getColorClasses, getColorVars } from './utils';
+import { getHasColorClasses, getColorVars } from '../../utils/colors';
+import { colorAttributes } from './constants';
+import type { BlockAttributes } from './types';
 
 const Save = ( {
 	attributes,
@@ -17,11 +18,16 @@ const Save = ( {
 	attributes: BlockAttributes;
 	style: Record< string, string >;
 } ) => {
+	const cssColorClasses = getHasColorClasses< BlockAttributes >(
+		attributes,
+		colorAttributes
+	);
+
 	const blockProps = useBlockProps.save( {
 		className: clsx(
 			'wc-block-product-filter-checkbox-list',
 			attributes.className,
-			getColorClasses( attributes )
+			cssColorClasses
 		),
 		style: {
 			...style,

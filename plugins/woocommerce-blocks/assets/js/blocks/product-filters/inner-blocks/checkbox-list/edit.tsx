@@ -23,8 +23,9 @@ import {
  */
 import './style.scss';
 import './editor.scss';
-import { EditProps } from './types';
-import { getColorClasses, getColorVars } from './utils';
+import { getHasColorClasses, getColorVars } from '../../utils/colors';
+import { colorAttributes } from './constants';
+import type { EditProps } from './types';
 
 const CheckboxListEdit = ( props: EditProps ): JSX.Element => {
 	const {
@@ -52,7 +53,7 @@ const CheckboxListEdit = ( props: EditProps ): JSX.Element => {
 	const blockProps = useBlockProps( {
 		className: clsx( 'wc-block-product-filter-checkbox-list', {
 			'is-loading': isLoading,
-			...getColorClasses( attributes ),
+			...getHasColorClasses( attributes, colorAttributes ),
 		} ),
 		style: getColorVars( attributes ),
 	} );
