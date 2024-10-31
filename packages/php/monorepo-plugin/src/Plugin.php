@@ -96,7 +96,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 		$root_package = $this->composer->getPackage();
 
 		// Inject out custom autoloader for picking up new classes without re-running autoload dump.
-		$dev_autoload = $root_package->getDevAutoload();
+		$dev_autoload          = $root_package->getDevAutoload();
 		$dev_autoload['files'] = array_merge(
 			$dev_autoload['files'] ?? array(),
 			array( 'vendor/woocommerce/monorepo-plugin/autoload-dev.php' )

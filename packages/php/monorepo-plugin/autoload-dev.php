@@ -5,11 +5,11 @@
 	if ( class_exists( \Automattic\WooCommerce\Autoloader::class, false ) ) {
 		// Locate the reference point first - WooCommerce autoloader in our case.
 		$reference_point = ( new \ReflectionClass( \Automattic\WooCommerce\Autoloader::class ) )->getFileName();
-		$plugin_path = dirname( $reference_point, 2 );
+		$plugin_path     = dirname( $reference_point, 2 );
 
 		// Load composer manifest for class mapping (we'll pick PRS4 only, as it's where new classes are introduced).
 		static $namespaces = [];
-		$declarations = json_decode( file_get_contents( $plugin_path . DIRECTORY_SEPARATOR . 'composer.json' ), true );
+		$declarations      = json_decode( file_get_contents( $plugin_path . DIRECTORY_SEPARATOR . 'composer.json' ), true );
 		foreach ($declarations['autoload']['psr-4'] ?? [] as $namespace => $path) {
 			$namespaces[$namespace] = $plugin_path . DIRECTORY_SEPARATOR . $path;
 		}
