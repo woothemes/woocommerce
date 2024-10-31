@@ -217,7 +217,7 @@ class WC_Tracker_Test extends \WC_Unit_Test_Case {
 	 */
 	public function test_get_tracking_data_order_snapshot() {
 		$dummy_product = WC_Helper_Product::create_simple_product();
-		$year          = date( 'Y' );
+		$year          = gmdate( 'Y' );
 		$first_20      = array();
 		$last_20       = array();
 
