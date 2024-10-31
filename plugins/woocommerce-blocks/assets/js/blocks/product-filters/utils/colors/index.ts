@@ -74,7 +74,7 @@ export function getHasColorClasses< T extends Record< string, unknown > >(
 			 * transforming from camelCase to kebab-case.
 			 * Example: `warningTextColor` -> `has-warning-text-color`.
 			 */
-			const className = `has-${ kebabCase( attr ) }`;
+			const className = `has-${ kebabCase( attr ) }-color`;
 
 			cssClasses[ className ] =
 				( attributes[ attr ] as string | undefined ) ||

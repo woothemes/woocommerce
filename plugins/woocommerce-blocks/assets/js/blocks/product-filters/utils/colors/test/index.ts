@@ -8,18 +8,16 @@ describe( 'getHasColorClasses', () => {
 		const attributes = {
 			className: 'wc-block-product-filter-checkbox-list',
 
-			warningTextColor: 'dark',
-			customWarningTextColor: '#000011',
+			warningText: 'dark',
+			customWarningText: '#000011',
 
-			warningBackgroundColor: 'light',
-			customWarningBackgroundColor: '#aaffff',
+			warningBackground: 'light',
+			customWarningBackground: '#aaffff',
 		};
 
 		const colorAttributes: Array< keyof typeof attributes > = [
-			'warningTextColor',
-			'customWarningTextColor',
-			'warningBackgroundColor',
-			'customWarningBackgroundColor',
+			'warningText',
+			'warningBackground',
 		];
 
 		const result = getHasColorClasses( attributes, colorAttributes );
@@ -34,17 +32,15 @@ describe( 'getHasColorClasses', () => {
 		const attributes = {
 			className: 'wc-block-product-filter-checkbox-list',
 
-			warningTextColor: undefined,
-			customWarningTextColor: '#000011',
-			warningBackgroundColor: undefined,
-			customWarningBackgroundColor: '#aaffff',
+			warningText: '',
+			customWarningText: '#000011',
+			warningBackground: undefined,
+			customWarningBackground: '#aaffff',
 		};
 
 		const colorAttributes: Array< keyof typeof attributes > = [
-			'warningTextColor',
-			'customWarningTextColor',
-			'warningBackgroundColor',
-			'customWarningBackgroundColor',
+			'warningText',
+			'warningBackground',
 		];
 
 		const result = getHasColorClasses( attributes, colorAttributes );
