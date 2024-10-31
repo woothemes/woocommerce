@@ -114,6 +114,18 @@ final class ProductFilterRating extends AbstractBlock {
 
 		$rating_counts = $this->get_rating_counts( $block );
 
+		/*
+		* Filter the rating counts to only include
+		* ratings greater than or equal to the min rating.
+		*/
+		$min_rating    = $attributes['minRating'] ?? 0;
+		$rating_counts = array_filter(
+			$rating_counts,
+			function ( $rating ) use ( $min_rating ) {
+				return $rating['rating'] >= $min_rating;
+			}
+		);
+
 		// Pick the selected ratings from the query string.
 		$query           = isset( $_GET[ self::RATING_FILTER_QUERY_VAR ] ) ? sanitize_text_field( wp_unslash( $_GET[ self::RATING_FILTER_QUERY_VAR ] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$selected_rating = array_filter( explode( ',', $query ) );
