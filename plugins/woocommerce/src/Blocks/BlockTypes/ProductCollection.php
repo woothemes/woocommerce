@@ -53,7 +53,7 @@ class ProductCollection extends AbstractBlock {
 	 *
 	 * @var array
 	 */
-	protected $custom_order_opts = array( 'popularity', 'rating', 'post__in', 'price', 'sales', 'menu_order' );
+	protected $custom_order_opts = array( 'popularity', 'rating', 'post__in', 'price', 'sales', 'menu_order', 'random' );
 
 
 	/**
@@ -817,7 +817,7 @@ class ProductCollection extends AbstractBlock {
 			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 			'meta_query'     => array(),
 			'posts_per_page' => $per_page,
-			'order'          => $query['order'],
+			'order'          => $query['order'] ?? 'asc',
 			'offset'         => ( $per_page * ( $page - 1 ) ) + $offset,
 			'post__in'       => $product_ids,
 			'post_status'    => 'publish',
@@ -1073,6 +1073,12 @@ class ProductCollection extends AbstractBlock {
 			return array(
 				'orderby' => 'menu_order',
 				'order'   => 'ASC',
+			);
+		}
+
+		if ( 'random' === $orderby ) {
+			return array(
+				'orderby' => 'rand',
 			);
 		}
 

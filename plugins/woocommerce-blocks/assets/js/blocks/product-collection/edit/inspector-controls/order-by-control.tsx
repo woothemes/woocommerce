@@ -63,6 +63,10 @@ const orderOptions = [
 		value: 'menu_order/asc',
 		label: __( 'Manual (menu order)', 'woocommerce' ),
 	},
+	{
+		value: 'random',
+		label: __( 'Random', 'woocommerce' ),
+	},
 ];
 
 const OrderByControl = ( props: QueryControlProps ) => {
@@ -75,7 +79,7 @@ const OrderByControl = ( props: QueryControlProps ) => {
 		trackInteraction( CoreFilterNames.ORDER );
 	};
 
-	let orderValue = `${ orderBy }/${ order }`;
+	let orderValue = order ? `${ orderBy }/${ order }` : orderBy;
 
 	// This is to provide backward compatibility as we removed the 'popularity' (Best Selling) option from the order options.
 	if ( orderBy === 'popularity' ) {
@@ -100,8 +104,10 @@ const OrderByControl = ( props: QueryControlProps ) => {
 				onChange={ ( value ) => {
 					const [ newOrderBy, newOrder ] = value.split( '/' );
 					setQueryAttribute( {
-						order: newOrder as TProductCollectionOrder,
 						orderBy: newOrderBy as TProductCollectionOrderBy,
+						order:
+							( newOrder as TProductCollectionOrder ) ||
+							undefined,
 					} );
 					trackInteraction( CoreFilterNames.ORDER );
 				} }
