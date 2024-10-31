@@ -26,7 +26,10 @@
 		<h3 id="payment_method_section_title"><?php echo strtoupper( $data['texts']['payment_method_section_title'] ); ?></h3>
 		<p>
 			<?php if ( $data['payment_info'] ) { ?>
-				<span class="card-icon"></span> - <?php echo $data['payment_info']['card_last4']; ?>
+				<span class="card-icon"></span>
+				<?php if ( $data['payment_info']['card_last4'] ) { ?>
+					- <?php echo $data['payment_info']['card_last4']; ?>
+				<?php } ?>
 			<?php } else { ?>
 				<span><?php echo $data['payment_method']; ?></span>
 			<?php } ?>
