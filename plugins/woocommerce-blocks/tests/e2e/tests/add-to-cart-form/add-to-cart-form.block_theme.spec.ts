@@ -288,7 +288,7 @@ test.describe( `${ blockData.name } Block`, () => {
 		await expect( plusButton ).toBeHidden();
 	} );
 
-	test.only( 'has the stepper mode working on the frontend with min, max, and step attributes', async ( {
+	test( 'has the stepper mode working on the frontend with min, max, and step attributes', async ( {
 		admin,
 		editor,
 		blockUtils,
