@@ -21,6 +21,7 @@ function MinimumRatingLabel( {
 } ) {
 	return (
 		<div
+			title={ ariaLabel }
 			className="wc-block-rating-filter__rating-label"
 			aria-label={ ariaLabel }
 		>
