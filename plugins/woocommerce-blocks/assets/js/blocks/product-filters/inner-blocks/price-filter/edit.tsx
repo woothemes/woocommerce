@@ -12,7 +12,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { getAllowedBlocks } from '../../utils';
+import { getAllowedBlocks } from '../../utils/block';
 import { getPriceFilterData } from './utils';
 import { InitialDisabled } from '../../components/initial-disabled';
 

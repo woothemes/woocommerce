@@ -26,7 +26,7 @@ import type { BlockEditProps } from '@wordpress/blocks';
 import { previewOptions } from './preview';
 import { getActiveFilters } from './utils';
 import { Inspector } from './components/inspector';
-import { getAllowedBlocks } from '../../utils';
+import { getAllowedBlocks } from '../../utils/block';
 import { EXCLUDED_BLOCKS } from '../../constants';
 import { Notice } from '../../components/notice';
 import type { Attributes } from './types';

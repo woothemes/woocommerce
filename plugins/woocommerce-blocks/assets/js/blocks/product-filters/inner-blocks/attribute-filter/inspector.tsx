@@ -27,7 +27,7 @@ import {
 import { sortOrderOptions } from './constants';
 import { BlockAttributes, EditProps } from './types';
 import { getAttributeFromId } from './utils';
-import { getInnerBlockByName } from '../../utils';
+import { getInnerBlockByName } from '../../utils/block';
 
 const ATTRIBUTES = getSetting< AttributeSetting[] >( 'attributes', [] );
 
