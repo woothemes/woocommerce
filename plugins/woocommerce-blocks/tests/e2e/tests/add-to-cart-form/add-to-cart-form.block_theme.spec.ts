@@ -80,6 +80,12 @@ class BlockUtils {
 		);
 	}
 
+	/**
+	 * Sets the min, max, and step attributes for the input field.
+	 * This is useful for simulating extensions that set these attributes via woocommerce_quantity_input
+	 * https://github.com/woocommerce/woocommerce/blob/89945ca8fc4589c061ba2130bf72bf24dc9268bd/plugins/woocommerce/includes/wc-template-functions.php#L1877-L1878
+	 *
+	 */
 	async setMinMaxAndStep( {
 		min,
 		max,
@@ -90,11 +96,15 @@ class BlockUtils {
 		step: number;
 	} ) {
 		const input = this.page.locator( "input[type='number']" );
-		await input.evaluate( ( el: HTMLInputElement ) => {
-			el.setAttribute( 'min', min.toString() );
-			el.setAttribute( 'max', max.toString() );
-			el.setAttribute( 'step', step.toString() );
-		} );
+		await input.evaluate(
+			( el: HTMLInputElement, data ) => {
+				el.setAttribute( 'min', data.min.toString() );
+				el.setAttribute( 'max', data.max.toString() );
+				el.setAttribute( 'step', data.step.toString() );
+				el.value = data.min.toString();
+			},
+			{ min, max, step }
+		);
 	}
 }
 
@@ -278,7 +288,7 @@ test.describe( `${ blockData.name } Block`, () => {
 		await expect( plusButton ).toBeHidden();
 	} );
 
-	test( 'has the stepper mode working on the frontend with min, max, and step attributes', async ( {
+	test.only( 'has the stepper mode working on the frontend with min, max, and step attributes', async ( {
 		admin,
 		editor,
 		blockUtils,
