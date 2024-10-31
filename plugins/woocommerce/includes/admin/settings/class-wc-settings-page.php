@@ -91,7 +91,7 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 		 *
 		 * @return array
 		 */
-		public function get_settings_page_data( $pages ) {
+		public function add_settings_page_data( $pages ) {
 			$sections      = $this->get_sections();
 			$sections_data = array();
 
