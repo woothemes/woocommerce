@@ -23,7 +23,7 @@ import {
  */
 import './style.scss';
 import './editor.scss';
-import { getHasColorClasses, getColorVars } from '../../utils/colors';
+import { getHasColorClasses, getStyleColorVars } from '../../utils/colors';
 import { colorAttributes } from './constants';
 import type { EditProps } from './types';
 
@@ -50,12 +50,17 @@ const CheckboxListEdit = ( props: EditProps ): JSX.Element => {
 	const { isLoading, items } = filterData;
 
 	const colorGradientSettings = useMultipleOriginColorsAndGradients();
+
 	const blockProps = useBlockProps( {
 		className: clsx( 'wc-block-product-filter-checkbox-list', {
 			'is-loading': isLoading,
 			...getHasColorClasses( attributes, colorAttributes ),
 		} ),
-		style: getColorVars( attributes ),
+		style: getStyleColorVars(
+			'wc-product-filter-checkbox-list',
+			attributes,
+			colorAttributes
+		),
 	} );
 
 	const loadingState = useMemo( () => {

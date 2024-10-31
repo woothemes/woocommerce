@@ -7,7 +7,7 @@ import clsx from 'clsx';
 /**
  * Internal dependencies
  */
-import { getHasColorClasses, getColorVars } from '../../utils/colors';
+import { getHasColorClasses, getStyleColorVars } from '../../utils/colors';
 import { colorAttributes } from './constants';
 import type { BlockAttributes } from './types';
 
@@ -31,7 +31,11 @@ const Save = ( {
 		),
 		style: {
 			...style,
-			...getColorVars( attributes ),
+			...getStyleColorVars(
+				'wc-product-filter-checkbox-list',
+				attributes,
+				colorAttributes
+			),
 		},
 	} );
 
