@@ -387,7 +387,9 @@ class Features {
 			wp_doing_ajax() ||
 			wp_doing_cron() ||
 			( defined( 'WP_CLI' ) && WP_CLI ) ||
-			( WC()->is_rest_api_request() && ! WC()->is_store_api_request() )
+			( WC()->is_rest_api_request() && ! WC()->is_store_api_request() ) ||
+			// Allow features to be loaded in frontend for admin users. This is needed for the use case such as the coming soon footer banner.
+			current_user_can( 'manage_woocommerce' )
 		);
 	}
 }
