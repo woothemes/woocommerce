@@ -297,4 +297,11 @@ class WC_Tracker_Test extends \WC_Unit_Test_Case {
 		$this->assertEquals( $tracking_data['settings']['admin_install_timestamp'], $time );
 		delete_option( 'woocommerce_admin_install_timestamp' );
 	}
+
+	/**
+	 * @testDox Test tracking data records snapshot generation time.
+	 */
+	public function test_get_tracking_data_snapshot_generation_time() {
+		$this->assertGreaterThan( 0, WC_Tracker::get_tracking_data()['snapshot_generation_time'] );
+	}
 }
