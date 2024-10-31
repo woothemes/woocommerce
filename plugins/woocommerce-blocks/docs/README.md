@@ -14,7 +14,7 @@
 
 The WooCommerce Blocks Handbook provides documentation for designers and developers on how to extend or contribute to blocks, and how internal developers should handle new releases.
 
-## Contributors header update
+## Contributors
 
 > Want to contribute to the WooCommerce Blocks plugin? The following documents offer information that can help you get started.
 

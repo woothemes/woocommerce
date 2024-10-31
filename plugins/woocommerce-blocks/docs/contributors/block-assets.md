@@ -15,7 +15,7 @@
 
 For performance reasons the blocks plugin ensures assets and asset data is made available only as needed.
 
-## When are assets needed? Header update
+## When are assets needed?
 
 Assets are needed when we know a block will be rendered.
 
