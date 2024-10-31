@@ -28,13 +28,6 @@ class ProductCollection extends AbstractBlock {
 	protected $collection_handler_store = array();
 
 	/**
-	 * The Block with its attributes before it gets rendered
-	 *
-	 * @var array
-	 */
-	protected $parsed_block;
-
-	/**
 	 * All query args from WP_Query.
 	 *
 	 * @var array
@@ -91,6 +84,9 @@ class ProductCollection extends AbstractBlock {
 			10,
 			2
 		);
+		
+		// Ensure query Id is defined.
+		add_filter( 'render_block_data', array( $this, 'set_fallback_query_id' ), 10 );
 
 		// Update the query for Editor.
 		add_filter( 'rest_product_query', array( $this, 'update_rest_query_in_editor' ), 10, 2 );
@@ -134,6 +130,22 @@ class ProductCollection extends AbstractBlock {
 		add_filter( 'render_block_data', array( $this, 'disable_enhanced_pagination' ), 10, 1 );
 
 		$this->register_core_collections();
+	}
+
+	/**
+	 * Get the block's attributes.
+	 *
+	 * @param array $attributes Block attributes. Default empty array.
+	 * @return array  Block attributes merged with defaults.
+	 */
+	private function parse_attributes( $attributes ) {
+		// These should match what's set in JS `registerBlockType`.
+		$defaults = array(
+			'isDescendentOfSingleProductBlock' => false,
+			'quantitySelectorStyle'            => 'input',
+		);
+
+		return wp_parse_args( $attributes, $defaults );
 	}
 
 	/**
@@ -336,17 +348,18 @@ class ProductCollection extends AbstractBlock {
 	 * for client-side navigation.
 	 *
 	 * @param string $block_content The HTML content of the block.
+	 * @param array $block Block details, including its attributes.
 	 *
 	 * @return string Updated HTML content.
 	 */
-	private function enable_client_side_navigation( $block_content ) {
+	private function enable_client_side_navigation( $block_content, $block ) {
 		$p = new \WP_HTML_Tag_Processor( $block_content );
 
 		// Add `data-wc-navigation-id to the product collection block.
 		if ( $this->is_next_tag_product_collection( $p ) ) {
 			$p->set_attribute(
 				'data-wc-navigation-id',
-				'wc-product-collection-' . $this->parsed_block['attrs']['queryId']
+				'wc-product-collection-' . $block['attrs']['queryId']
 			);
 			$current_context = json_decode( $p->get_attribute( 'data-wc-context' ) ?? '{}', true );
 			$p->set_attribute(
@@ -427,7 +440,7 @@ class ProductCollection extends AbstractBlock {
 
 			$is_enhanced_pagination_enabled = ! ( $block['attrs']['forcePageReload'] ?? false );
 			if ( $is_enhanced_pagination_enabled ) {
-				$block_content = $this->enable_client_side_navigation( $block_content );
+				$block_content = $this->enable_client_side_navigation( $block_content, $block );
 			}
 		}
 		return $block_content;
@@ -445,8 +458,8 @@ class ProductCollection extends AbstractBlock {
 		$query_context                  = $instance->context['query'] ?? array();
 		$is_product_collection_block    = $query_context['isProductCollectionBlock'] ?? false;
 		$query_id                       = $instance->context['queryId'] ?? null;
-		$parsed_query_id                = $this->parsed_block['attrs']['queryId'] ?? null;
-		$is_enhanced_pagination_enabled = ! ( $this->parsed_block['attrs']['forcePageReload'] ?? false );
+		$parsed_query_id                = $$block->attributes['queryId'] ?? null;
+		$is_enhanced_pagination_enabled = ! ( $$block->attributes['forcePageReload'] ?? false );
 
 		// Only proceed if the block is a product collection block,
 		// enhanced pagination is enabled and query IDs match.
@@ -743,13 +756,13 @@ class ProductCollection extends AbstractBlock {
 	 * @param array $parsed_block The parsed block.
 	 */
 	public function add_support_for_filter_blocks( $pre_render, $parsed_block ) {
+
 		$is_product_collection_block = $parsed_block['attrs']['query']['isProductCollectionBlock'] ?? false;
 
 		if ( ! $is_product_collection_block ) {
 			return $pre_render;
 		}
 
-		$this->parsed_block = $parsed_block;
 		$this->asset_data_registry->add( 'hasFilterableProducts', true );
 		/**
 		 * It enables the page to refresh when a filter is applied, ensuring that the product collection block,
@@ -799,6 +812,28 @@ class ProductCollection extends AbstractBlock {
 		);
 	}
 
+	/**
+	 * Return a custom query based on attributes, filters and global WP_Query.
+	 *
+	 * @param array $parsed_block  A representative array of the block being rendered. See WP_Block_Parser_Block
+	 *
+	 * @return array
+	 */
+	public function set_fallback_query_id( $parsed_block ) {
+
+		$block_name = $parsed_block['blockName'] ?? null;
+
+		if ( 'woocommerce/product-collection' !== $block_name ) {
+			return $parsed_block;
+		}
+
+		if ( empty ( $parsed_block['attrs']['queryId'] ) ) {
+			$parsed_block['attrs']['queryId'] = rand();
+		}
+
+		return $parsed_block;
+	}
+	
 
 	/**
 	 * Get the final query arguments for the frontend.
