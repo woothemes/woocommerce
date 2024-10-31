@@ -79,6 +79,23 @@ class BlockUtils {
 			'wc product create --name="Sold Individually" --regular_price=10 --sold_individually=true --user=admin'
 		);
 	}
+
+	async setMinMaxAndStep( {
+		min,
+		max,
+		step,
+	}: {
+		min: number;
+		max: number;
+		step: number;
+	} ) {
+		const input = this.page.locator( "input[type='number']" );
+		await input.evaluate( ( el: HTMLInputElement ) => {
+			el.setAttribute( 'min', min.toString() );
+			el.setAttribute( 'max', max.toString() );
+			el.setAttribute( 'step', step.toString() );
+		} );
+	}
 }
 
 const test = base.extend< { blockUtils: BlockUtils } >( {
@@ -259,5 +276,52 @@ test.describe( `${ blockData.name } Block`, () => {
 
 		await expect( minusButton ).toBeHidden();
 		await expect( plusButton ).toBeHidden();
+	} );
+
+	test( 'has the stepper mode working on the frontend with min, max, and step attributes', async ( {
+		admin,
+		editor,
+		blockUtils,
+		page,
+	} ) => {
+		await admin.createNewPost();
+		await editor.insertBlock( { name: 'woocommerce/single-product' } );
+
+		await blockUtils.configureSingleProductBlock();
+
+		await blockUtils.enableStepperMode();
+		await editor.publishAndVisitPost();
+
+		await blockUtils.setMinMaxAndStep( {
+			min: 2,
+			max: 10,
+			step: 2,
+		} );
+
+		const minusButton = page.locator(
+			'.wc-block-components-quantity-selector__button--minus'
+		);
+		const plusButton = page.locator(
+			'.wc-block-components-quantity-selector__button--plus'
+		);
+
+		await expect( minusButton ).toBeVisible();
+		await expect( plusButton ).toBeVisible();
+
+		const input = page.getByLabel( 'Product quantity' );
+
+		await expect( input ).toHaveValue( '2' );
+		await minusButton.click();
+		await expect( input ).toHaveValue( '2' );
+		await plusButton.click();
+		await expect( input ).toHaveValue( '4' );
+		await plusButton.click();
+		await expect( input ).toHaveValue( '6' );
+		await plusButton.click();
+		await expect( input ).toHaveValue( '8' );
+		await plusButton.click();
+		await expect( input ).toHaveValue( '10' );
+		await plusButton.click();
+		await expect( input ).toHaveValue( '10' );
 	} );
 } );
