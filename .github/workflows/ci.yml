@@ -121,17 +121,23 @@ jobs:
     name: "Lint - ${{ matrix.projectName }} ${{ ( matrix.optional && ' (optional)' ) || '' }}"
     runs-on: 'ubuntu-20.04'
     needs: 'project-jobs'
-    if: ${{ needs.project-jobs.outputs.lint-jobs != '[]' && github.event_name == 'pull_request' }}
+    if: ${{ !cancelled() && github.event_name == 'pull_request' && needs.project-jobs.outputs.lint-jobs != '[]' }}
     strategy:
       fail-fast: false
       matrix:
         include: ${{ fromJSON( needs.project-jobs.outputs.lint-jobs ) }}
     steps:
+      - name: 'Calculate checkout depth'
+        id: checkout_depth
+        shell: bash
+        run: |
+          pull_request_commits=$(( ${{ github.event.pull_request.commits }} + 1 ))
+          echo "pull_request_commits=$pull_request_commits" >> $GITHUB_OUTPUT
+
       - uses: 'actions/checkout@v4'
-        name: 'Checkout'
         with:
-          # the WooCommerce plugin package uses phpcs-changed for linting, which requires non-shallow git-history.
-          fetch-depth: ${{ ( ( matrix.projectName == '@woocommerce/plugin-woocommerce' && '0' ) || '1' ) }}
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: ${{ steps.checkout_depth.outputs.pull_request_commits }}
 
       - uses: './.github/actions/setup-woocommerce-monorepo'
         id: 'setup-monorepo'
