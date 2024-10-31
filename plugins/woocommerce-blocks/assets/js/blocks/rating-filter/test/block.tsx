@@ -86,9 +86,9 @@ const setup = ( params: SetupParams ) => {
 	} );
 
 	const { container, ...utils } = render(
-		<RatingFilterBlock attributes={ attributes } />
+		<RatingFilterBlock attributes={ attributes } />,
+		{ legacyRoot: true }
 	);
-
 	// We need to switch to React 17 rendering to allow these tests to keep passing, but as a result the React
 	// rendering error will be shown.
 	expect( console ).toHaveErroredWith(
