@@ -3,10 +3,8 @@
  */
 import { useBlockProps } from '@wordpress/block-editor';
 
-const Save = () => {
+export default function save() {
 	const blockProps = useBlockProps.save();
 
 	return <div { ...blockProps } />;
-};
-
-export default Save;
+}
