@@ -137,16 +137,16 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 		const productsRating = collectionFilters?.rating_counts.reverse();
 
 		// Create the { label, value } options array for the filter.
-		const ratingOptions = productsRating.map( ( item ) => {
+		const ratingOptions = productsRating.map( ( { rating, count } ) => {
 			return {
 				label: (
 					<Rating
-						key={ item.rating }
-						rating={ item.rating }
-						ratedProductsCount={ showCounts ? item.count : null }
+						key={ rating }
+						rating={ rating }
+						ratedProductsCount={ showCounts ? count : null }
 					/>
 				),
-				value: item?.rating?.toString(),
+				value: rating?.toString(),
 			};
 		} );
 
