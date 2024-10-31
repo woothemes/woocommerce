@@ -90,6 +90,13 @@ trait CouponsMovedTrait {
 	 * @return bool
 	 */
 	protected static function should_display_legacy_menu() {
+		/**
+		 * We'll stop displaying the legacy menu starting from WooCommerce 9.3+.
+		 */
+		if ( version_compare( '9.3', WC()->version, '<' ) ) {
+			return false;
+		}
+
 		return ( get_option( self::$option_key, 1 ) && ! Features::is_enabled( 'navigation' ) );
 	}
 
