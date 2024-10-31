@@ -132,9 +132,11 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 
 		/*
 		 * Sort the ratings in descending order
-		 * Todo: Why reverse()? consider to handle this in the API request
+		 * Todo: consider to handle this in the API request
 		 */
-		const productsRating = collectionFilters?.rating_counts.reverse();
+		const productsRating = collectionFilters?.rating_counts?.sort(
+			( a, b ) => b.rating - a.rating
+		);
 
 		// Create the { label, value } options array for the filter.
 		const ratingOptions = productsRating.map( ( { rating, count } ) => {
