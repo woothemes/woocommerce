@@ -48,10 +48,11 @@ class ProductQueryBuilder {
 	/**
 	 * Set collection handler store.
 	 *
-	 * @param array $handlers Collection handlers.
+	 * @param string $collection_name The name of the custom collection.
+	 * @param array  $handlers        Collection handlers.
 	 */
-	public function set_collection_handler_store( array $handlers ) {
-		$this->collection_handler_store = $handlers;
+	public function set_collection_handler_store( $collection_name, $handlers ) {
+		$this->collection_handler_store[ $collection_name ] = $handlers;
 	}
 
 	/**

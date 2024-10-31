@@ -826,13 +826,14 @@ class ProductCollectionController extends AbstractBlock {
 			throw new \InvalidArgumentException( 'Collection handlers already registered for ' . esc_html( $collection_name ) );
 		}
 
-		$this->collection_handler_store[ $collection_name ] = array(
+		$handlers = array(
 			'build_query'   => $build_query,
 			'frontend_args' => $frontend_args,
 			'editor_args'   => $editor_args,
 			'preview_query' => $preview_query,
 		);
-		$this->query_builder->set_collection_handler_store( $this->collection_handler_store );
+		$this->collection_handler_store[ $collection_name ] = $handlers;
+		$this->query_builder->set_collection_handler_store( $collection_name, $handlers );
 	}
 
 	/**
