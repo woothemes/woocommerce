@@ -53,6 +53,10 @@ class Features {
 	 * Constructor.
 	 */
 	public function __construct() {
+		if ( ! self::should_load_features() ) {
+			return;
+		}
+
 		$this->register_internal_class_aliases();
 		// Load feature before WooCommerce update hooks.
 		add_action( 'init', array( __CLASS__, 'load_features' ), 4 );
@@ -107,6 +111,10 @@ class Features {
 	 * @return string|null
 	 */
 	public static function get_feature_class( $feature ) {
+		if ( ! self::should_load_features() ) {
+			return null;
+		}
+
 		$feature       = str_replace( '-', '', ucwords( strtolower( $feature ), '-' ) );
 		$feature_class = 'Automattic\\WooCommerce\\Admin\\Features\\' . $feature;
 
@@ -126,6 +134,10 @@ class Features {
 	 * Class loader for enabled WooCommerce Admin features/sections.
 	 */
 	public static function load_features() {
+		if ( ! self::should_load_features() ) {
+			return;
+		}
+
 		$features = self::get_features();
 		foreach ( $features as $feature ) {
 			$feature_class = self::get_feature_class( $feature );
@@ -357,5 +369,20 @@ class Features {
 		foreach ( $aliases as $new_class => $orig_class ) {
 			class_alias( $new_class, $orig_class );
 		}
+	}
+
+	/**
+	 * Check if we're in an admin context where features should be loaded.
+	 *
+	 * @return boolean
+	 */
+	private static function should_load_features() {
+		return (
+			is_admin() ||
+			wp_doing_ajax() ||
+			wp_doing_cron() ||
+			defined( 'WP_CLI' ) ||
+			( WC()->is_rest_api_request() && ! WC()->is_store_api_request() )
+		);
 	}
 }
