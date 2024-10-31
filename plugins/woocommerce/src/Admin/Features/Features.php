@@ -377,6 +377,11 @@ class Features {
 	 * @return boolean
 	 */
 	private static function should_load_features() {
+		if ( class_exists( 'WC_Unit_Tests_Bootstrap' ) ) {
+			// Always load features in unit tests.
+			return true;
+		}
+
 		return (
 			is_admin() ||
 			wp_doing_ajax() ||
