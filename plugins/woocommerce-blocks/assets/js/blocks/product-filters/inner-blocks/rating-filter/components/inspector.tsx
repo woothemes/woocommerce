@@ -15,8 +15,8 @@ import {
 /**
  * Internal dependencies
  */
-import { Attributes } from '../types';
 import RatingStars from './rating-stars';
+import type { Attributes } from '../types';
 
 function MinimumRatingLabel( {
 	stars,
