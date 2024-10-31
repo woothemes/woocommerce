@@ -5005,8 +5005,9 @@
                 "psr-4": {
                     "Automattic\\WooCommerce\\Monorepo\\Composer\\": "src/"
                 }
-            },
+			},
             "transport-options": {
+				"symlink": false,
                 "relative": true
             }
         },

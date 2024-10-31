@@ -14,7 +14,10 @@
 		},
 		{
 			"type": "path",
-			"url": "../../packages/php/monorepo-plugin"
+			"url": "../../packages/php/monorepo-plugin",
+			"options": {
+				"symlink": false
+			}
 		},
 		{
 			"type": "path",
@@ -82,8 +85,7 @@
 		"files": [
 			"src/StoreApi/deprecated.php",
 			"src/StoreApi/functions.php",
-			"src/Blocks/Domain/Services/functions.php",
-			"src/Deprecated.php"
+			"src/Blocks/Domain/Services/functions.php"
 		]
 	},
 	"autoload-dev": {
@@ -93,6 +95,9 @@
 		},
 		"classmap": [
 			"tests/legacy/unit-tests/rest-api/Helpers"
+		],
+		"files": [
+			"vendor/woocommerce/monorepo-plugin/autoload-dev.php"
 		]
 	},
 	"scripts": {

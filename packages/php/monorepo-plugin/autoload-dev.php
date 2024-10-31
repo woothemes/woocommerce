@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php declare( strict_types=1 );
 
 ( function() {
 	if ( class_exists( \Automattic\WooCommerce\Autoloader::class, false ) ) {

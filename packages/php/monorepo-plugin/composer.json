@@ -11,10 +11,7 @@
     "autoload": {
         "psr-4": {
             "Automattic\\WooCommerce\\Monorepo\\Composer\\": "src/"
-        },
-        "files": [
-            "autoload-dev.php"
-        ]
+        }
     },
     "extra": {
         "class": "Automattic\\WooCommerce\\Monorepo\\Composer\\Plugin"
