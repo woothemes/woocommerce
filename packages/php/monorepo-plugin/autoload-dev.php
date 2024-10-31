@@ -1,6 +1,7 @@
 <?php declare( strict_types=1 );
 
 ( function() {
+	// Ensure we are hooking up after primary autoloading being available.
 	if ( class_exists( \Automattic\WooCommerce\Autoloader::class, false ) ) {
 		// Locate the reference point first - WooCommerce autoloader in our case.
 		$reference_point = ( new \ReflectionClass( \Automattic\WooCommerce\Autoloader::class ) )->getFileName();
@@ -16,6 +17,7 @@
 			$namespaces[$namespace] = $plugin_path . DIRECTORY_SEPARATOR . $path;
 		}
 
+		// Follow the provided mapping and require the matching file if found it.
 		spl_autoload_register( function ( string $class ) use( $namespaces ): bool {
 			foreach ( $namespaces as $namespace => $path ) {
 				if ( strpos( $class, $namespace ) === 0 ) {

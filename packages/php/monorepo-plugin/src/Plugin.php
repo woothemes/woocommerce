@@ -88,14 +88,14 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 	}
 
 	/**
-	 * An event handler that runs after the autoload dump event.
+	 * An event handler that runs before the autoload dump event.
 	 *
 	 * @param Event $event The event to handle.
 	 */
 	public function onPreAutoloadDump( Event $event ) {
 		$root_package = $this->composer->getPackage();
 
-		// Inject out custom autoloader for picking up new classes without re-dumping autoloading.
+		// Inject out custom autoloader for picking up new classes without re-running autoload dump.
 		$dev_autoload = $root_package->getDevAutoload();
 		$dev_autoload['files'] = array_merge(
 			$dev_autoload['files'] ?? array(),
