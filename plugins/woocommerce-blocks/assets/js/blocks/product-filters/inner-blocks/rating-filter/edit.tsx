@@ -121,12 +121,6 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 	 * and filtered counts to get a list of options to display.
 	 */
 	useEffect( () => {
-		/**
-		 * Checks if a status slug is in the query state.
-		 *
-		 * @param {string} queryStatus The status slug to check.
-		 */
-
 		if ( filteredCountsLoading || isPreview ) {
 			return;
 		}
