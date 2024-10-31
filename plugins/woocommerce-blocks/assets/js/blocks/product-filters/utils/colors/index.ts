@@ -12,49 +12,49 @@ import { paramCase as kebabCase } from 'change-case';
  */
 function getCSSVar(
 	slug: string | undefined,
-	value: string | undefined
+	value: string | undefined = ''
 ): string {
-	if ( slug ) {
+	if ( slug?.length ) {
 		return `var(--wp--preset--color--${ slug })`;
 	}
 
-	return value || '';
+	return value;
 }
 
-export function getColorVars( attributes: Record< string, string > ) {
-	const {
-		optionElement,
-		optionElementBorder,
-		optionElementSelected,
-		customOptionElement,
-		customOptionElementBorder,
-		customOptionElementSelected,
-	} = attributes;
+/**
+ * Get custom key for a given color.
+ *
+ * @param {string} color Color name.
+ * @return {string} Custom key.
+ */
+function getCustomKey( color: string ): string {
+	return `custom${ color.charAt( 0 ).toUpperCase() }${ color.slice( 1 ) }`;
+}
 
-	const vars: Record< string, string > = {
-		'--wc-product-filter-checkbox-list-option-element': getCSSVar(
-			optionElement,
-			customOptionElement
-		),
-		'--wc-product-filter-checkbox-list-option-element-border': getCSSVar(
-			optionElementBorder,
-			customOptionElementBorder
-		),
-		'--wc-product-filter-checkbox-list-option-element-selected': getCSSVar(
-			optionElementSelected,
-			customOptionElementSelected
-		),
-	};
+export function getStyleColorVars< T >(
+	prefix: string,
+	attributes: T,
+	colors: readonly Extract< keyof T, string >[]
+): Record< string, string > {
+	const styleVars: Record< string, string > = {};
 
-	return Object.keys( vars ).reduce(
-		( acc: Record< string, string >, key ) => {
-			if ( vars[ key ] ) {
-				acc[ key ] = vars[ key ];
-			}
-			return acc;
-		},
-		{}
-	);
+	colors.forEach( ( color ) => {
+		const normalColor = attributes[ color ];
+		const customKey = getCustomKey( color );
+		const customColor = attributes[ customKey as keyof T ];
+
+		if (
+			typeof normalColor === 'string' ||
+			typeof customColor === 'string'
+		) {
+			styleVars[ `--${ prefix }-${ kebabCase( color ) }` ] = getCSSVar(
+				normalColor as string | undefined,
+				customColor as string | undefined
+			);
+		}
+	} );
+
+	return styleVars;
 }
 
 export function getHasColorClasses< T extends Record< string, unknown > >(
@@ -65,9 +65,7 @@ export function getHasColorClasses< T extends Record< string, unknown > >(
 
 	colorAttributes.forEach( ( attr ) => {
 		if ( ! attr.startsWith( 'custom' ) ) {
-			const customAttr = `custom${ attr
-				.charAt( 0 )
-				.toUpperCase() }${ attr.slice( 1 ) }` as keyof T;
+			const customAttr = getCustomKey( attr );
 
 			/*
 			 * Generate class name based on the attribute name,
