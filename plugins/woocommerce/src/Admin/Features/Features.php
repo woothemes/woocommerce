@@ -381,7 +381,7 @@ class Features {
 			is_admin() ||
 			wp_doing_ajax() ||
 			wp_doing_cron() ||
-			defined( 'WP_CLI' ) ||
+			( defined( 'WP_CLI' ) && WP_CLI ) ||
 			( WC()->is_rest_api_request() && ! WC()->is_store_api_request() )
 		);
 	}
