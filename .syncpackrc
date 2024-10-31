@@ -105,7 +105,7 @@
 				"react",
 				"react-dom",
 				"@types/react-dom",
-				"@types/react",
+				"@types/react"
 			],
 			"pinVersion": "18.3.x",
 			"packages": [
@@ -119,7 +119,7 @@
 				"react",
 				"react-dom",
 				"@types/react-dom",
-				"@types/react",
+				"@types/react"
 			],
 			"pinVersion": "17.0.x",
 			"packages": [
@@ -213,6 +213,7 @@
 			"packages": [
 				"@woocommerce/block-templates",
 				"@woocommerce/product-editor",
+				"@woocommerce/settings-editor",
 				"@woocommerce/admin-library",
 				"@woocommerce/components"
 			],
@@ -448,7 +449,7 @@
 				"node",
 				"pnpm",
 				"postcss",
-				"postcss-loader",
+				"postcss-loader"
 			],
 			"packages": [
 				"**"
