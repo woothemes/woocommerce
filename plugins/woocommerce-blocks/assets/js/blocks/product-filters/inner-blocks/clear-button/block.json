@@ -12,8 +12,15 @@
 	"textdomain": "woocommerce",
 	"apiVersion": 3,
 	"ancestor": [
-		"woocommerce/product-filter"
+		"woocommerce/product-filter",
+		"woocommerce/product-filter-active"
 	],
+	"attributes": {
+		"clearType": {
+			"type": "string",
+			"default": ""
+		}
+	},
 	"supports": {
 		"interactivity": true,
 		"inserter": false
