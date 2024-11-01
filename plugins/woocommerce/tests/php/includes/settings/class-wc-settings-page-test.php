@@ -9,6 +9,7 @@ use Automattic\WooCommerce\Testing\Tools\CodeHacking\Hacks\StaticMockerHack;
 
 require_once __DIR__ . '/class-wc-settings-example.php';
 require_once __DIR__ . '/class-wc-legacy-settings-example.php';
+require_once __DIR__ . '/class-wc-settings-migration-test.php';
 
 /**
  * Unit tests for the base functionality of WC_Settings_Page.
@@ -335,5 +336,19 @@ HTML;
 		$sut->save();
 
 		$this->assertEquals( 0, did_action( 'woocommerce_update_options_example_' ) );
+	}
+
+	/**
+	 * Test for add_settings_page_data.
+	 */
+	public function test_add_settings_page_data() {
+		$migration           = new WC_Settings_Migration_Test();
+		$setting_data        = $migration->add_settings_page_data( array() );
+		$migration_page_data = $setting_data[ $migration->get_id() ];
+
+		$this->assertTrue( isset( $migration_page_data ) );
+		$this->assertEquals( count( $migration->get_sections() ), count( $migration_page_data ) );
+		$this->assertEquals( $migration_page_data[0]['title'], 'Default Section' );
+		$this->assertEquals( $migration_page_data[1]['title'], 'Foobar Section' );
 	}
 }

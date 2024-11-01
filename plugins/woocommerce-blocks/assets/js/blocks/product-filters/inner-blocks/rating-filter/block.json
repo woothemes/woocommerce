@@ -28,13 +28,9 @@
 			"type": "boolean",
 			"default": false
 		},
-		"displayStyle": {
+		"minRating": {
 			"type": "string",
-			"default": "list"
-		},
-		"selectType": {
-			"type": "string",
-			"default": "multiple"
+			"default": "0"
 		},
 		"isPreview": {
 			"type": "boolean",

@@ -108,7 +108,7 @@ test.describe( 'Shopper → Translations', () => {
 		).toBeVisible();
 
 		await expect(
-			page.getByRole( 'button', {
+			page.getByRole( 'heading', {
 				name: getTestTranslation( 'Order summary' ),
 			} )
 		).toBeVisible();
