@@ -26,7 +26,10 @@ import {
 	LaunchYourStoreStatus,
 	useLaunchYourStore,
 } from '../launch-your-store';
-import { OrderAttributionInstallBanner } from '~/order-attribution-install-banner';
+import {
+	OrderAttributionInstallBanner,
+	BANNER_TYPE_HEADER as ORDER_ATTRIBUTION_INSTALL_BANNER_TYPE_HEADER,
+} from '~/order-attribution-install-banner';
 
 export const PAGE_TITLE_FILTER = 'woocommerce_admin_header_page_title';
 
@@ -167,7 +170,9 @@ export const Header = ( { sections, isEmbedded = false, query } ) => {
 				{ showLaunchYourStoreStatus && <LaunchYourStoreStatus /> }
 				{ isAnalyticsOverviewScreen && (
 					<OrderAttributionInstallBanner
-						isHeaderBanner
+						bannerType={
+							ORDER_ATTRIBUTION_INSTALL_BANNER_TYPE_HEADER
+						}
 						eventContext="analytics-overview-header"
 					/>
 				) }
