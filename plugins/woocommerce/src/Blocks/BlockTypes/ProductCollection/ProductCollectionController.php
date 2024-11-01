@@ -426,7 +426,7 @@ class ProductCollectionController extends AbstractBlock {
 	}
 
 	/**
-	 * Register the core collection handlers.
+	 * Register the collection handlers.
 	 */
 	protected function register_core_collections() {
 		// Use CollectionHandlerRegistry to register collections.
