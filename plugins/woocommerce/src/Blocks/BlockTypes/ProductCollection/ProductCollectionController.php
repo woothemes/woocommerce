@@ -21,14 +21,6 @@ class ProductCollectionController extends AbstractBlock {
 	protected $block_name = 'product-collection';
 
 	/**
-	 * An associative array of collection handlers.
-	 *
-	 * @var array<string, callable> $collection_handler_store
-	 * Keys are collection names, values are callable handlers for custom collection behavior.
-	 */
-	protected $collection_handler_store = array();
-
-	/**
 	 * Instance of CollectionHandlerRegistry.
 	 *
 	 * @var CollectionHandlerRegistry
@@ -100,7 +92,7 @@ class ProductCollectionController extends AbstractBlock {
 		// Disable client-side-navigation if incompatible blocks are detected.
 		add_filter( 'render_block_data', array( $this, 'disable_enhanced_pagination' ), 10, 1 );
 
-		$this->register_core_collections();
+		$this->register_core_collections_and_set_handler_store();
 	}
 
 	/**
@@ -301,7 +293,7 @@ class ProductCollectionController extends AbstractBlock {
 		);
 
 		// Allow collections to modify the collection arguments passed to the query builder.
-		$handlers = $this->collection_handler_store[ $collection_args['name'] ] ?? null;
+		$handlers = $this->collection_registry->get_collection_handler( $collection_args['name'] );
 		if ( isset( $handlers['editor_args'] ) ) {
 			$collection_args = call_user_func( $handlers['editor_args'], $collection_args, $query, $request );
 		}
@@ -426,11 +418,11 @@ class ProductCollectionController extends AbstractBlock {
 	}
 
 	/**
-	 * Registers any handlers for the core collections.
+	 * Registers core collections and sets the handler store.
 	 */
-	protected function register_core_collections() {
+	protected function register_core_collections_and_set_handler_store() {
 		// Use CollectionHandlerRegistry to register collections.
-		$this->collection_handler_store = $this->collection_registry->register_core_collections();
-		$this->query_builder->set_collection_handler_store( $this->collection_handler_store );
+		$collection_handler_store = $this->collection_registry->register_core_collections();
+		$this->query_builder->set_collection_handler_store( $collection_handler_store );
 	}
 }

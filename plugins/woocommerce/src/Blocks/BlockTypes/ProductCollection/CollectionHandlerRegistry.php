@@ -34,7 +34,7 @@ class CollectionHandlerRegistry {
 			throw new InvalidArgumentException( 'Collection handlers already registered for ' . esc_html( $collection_name ) );
 		}
 
-		$this->collection_handler_store[ $collection_name ] = [
+		return $this->collection_handler_store[ $collection_name ] = [
 			'build_query'   => $build_query,
 			'frontend_args' => $frontend_args,
 			'editor_args'   => $editor_args,
@@ -271,6 +271,26 @@ class CollectionHandlerRegistry {
 		);
 		return $this->collection_handler_store;
 	}
+
+	/**
+	 * Get collection handler by name.
+	 *
+	 * @param string $name Collection name.
+	 * @return array|null Collection handler array or null if not found.
+	 */
+	public function get_collection_handler( $name ) {
+		return $this->collection_handler_store[ $name ] ?? null;
+	}
+
+	/**
+	 * Removes any custom collection handlers for the given collection.
+	 *
+	 * @param string $collection_name The name of the collection to unregister.
+	 */
+	public function unregister_collection_handlers( $collection_name ) {
+		unset( $this->collection_handler_store[ $collection_name ] );
+	}
+
 
 	/**
 	 * Get product IDs from an order.
