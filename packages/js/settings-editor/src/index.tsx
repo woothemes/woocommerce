@@ -18,7 +18,6 @@ export const SettingsEditor = () => {
 				areas: { sidebar: Sidebar },
 				widths: {},
 			} }
-			showNewNavigation={ true }
 		/>
 	);
 };
