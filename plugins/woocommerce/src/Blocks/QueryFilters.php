@@ -140,7 +140,7 @@ final class QueryFilters {
 		$query_vars['fields']         = 'ids';
 		$query                        = new \WP_Query();
 
-		$result = $query->query( $query_vars );
+		$result            = $query->query( $query_vars );
 		$product_query_sql = $query->request;
 
 		remove_filter( 'posts_clauses', array( $this, 'add_query_clauses' ), 10 );
@@ -151,9 +151,9 @@ final class QueryFilters {
 			FROM {$wpdb->wc_product_meta_lookup}
 			WHERE product_id IN ( {$product_query_sql} )
 			AND onsale > 0
-		";
+		"; // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
-		$result = $wpdb->get_var( $count_sql );
+		$result = $wpdb->get_var( $count_sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		$onsale_status_counts = array(
 			'onsale' => $result,
@@ -271,7 +271,7 @@ final class QueryFilters {
 			return $args;
 		}
 
-		$statuses = array_map( 'esc_sql', explode( ',',  $wp_query->get( 'filter_status' ) ) );
+		$statuses = array_map( 'esc_sql', explode( ',', $wp_query->get( 'filter_status' ) ) );
 
 		foreach ( $statuses as $status ) {
 			switch ( $status ) {

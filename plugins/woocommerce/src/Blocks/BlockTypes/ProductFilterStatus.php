@@ -118,7 +118,7 @@ final class ProductFilterStatus extends AbstractBlock {
 	/**
 	 * Extra data passed through from server to client for block.
 	 *
-	 * @param array $stock_statuses  Any stock statuses that currently are available from the block.
+	 * @param array $statuses  Any statuses that currently are available from the block.
 	 *                               Note, this will be empty in the editor context when the block is
 	 *                               not in the post content on editor load.
 	 */
@@ -179,7 +179,7 @@ final class ProductFilterStatus extends AbstractBlock {
 				}
 			}
 
-			$i++;
+			++$i;
 		}
 
 		// Re-index the array.
@@ -188,7 +188,7 @@ final class ProductFilterStatus extends AbstractBlock {
 		$filter_options = array_map(
 			function ( $item ) use ( $selected_statuses, $attributes ) {
 				$statuses = $this->status_options;
-				$label = $statuses[ $item['status'] ] . ( $attributes['showCounts'] ? ' (' . $item['count'] . ')' : '' );
+				$label    = $statuses[ $item['status'] ] . ( $attributes['showCounts'] ? ' (' . $item['count'] . ')' : '' );
 
 				return array(
 					'label'    => $label,
