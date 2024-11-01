@@ -541,7 +541,8 @@
 						"start": "env:test"
 					},
 					"events": [
-						"push"
+						"push",
+						"pull_request"
 					],
 					"report": {
 						"resultsBlobName": "core-metrics-report",
