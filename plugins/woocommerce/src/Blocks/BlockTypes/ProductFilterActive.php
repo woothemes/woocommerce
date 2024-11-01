@@ -56,18 +56,20 @@ final class ProductFilterActive extends AbstractBlock {
 			'items' => $active_filters,
 		);
 
-		$wrapper_attributes = get_block_wrapper_attributes(
-			array(
-				'data-wc-interactive'  => wp_json_encode( array( 'namespace' => $this->get_full_block_name() ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
-				'data-wc-key'          => wp_unique_prefixed_id( $this->get_full_block_name() ),
-				'data-wc-context'      => wp_json_encode( $context, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
-				'data-wc-bind--hidden' => '!context.hasSelectedFilters',
-			)
+		$wrapper_attributes = array(
+			'data-wc-interactive'  => wp_json_encode( array( 'namespace' => $this->get_full_block_name() ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
+			'data-wc-key'          => wp_unique_prefixed_id( $this->get_full_block_name() ),
+			'data-wc-context'      => wp_json_encode( $context, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
+			'data-wc-bind--hidden' => '!context.hasSelectedFilters',
 		);
+
+		if ( empty( $active_filters ) ) {
+			$wrapper_attributes['hidden'] = true;
+		}
 
 		return sprintf(
 			'<div %1$s>%2$s</div>',
-			$wrapper_attributes,
+			get_block_wrapper_attributes( $wrapper_attributes ),
 			array_reduce(
 				$block->parsed_block['innerBlocks'],
 				function ( $carry, $parsed_block ) use ( $filter_context ) {
