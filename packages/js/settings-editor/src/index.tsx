@@ -8,7 +8,7 @@ import { createElement } from '@wordpress/element';
  */
 import { Layout } from './layout';
 
-const Sidebar = <div>Sidebar</div>;
+const Sidebar = <div>Sidebar content goes here</div>;
 
 export const SettingsEditor = () => {
 	return (

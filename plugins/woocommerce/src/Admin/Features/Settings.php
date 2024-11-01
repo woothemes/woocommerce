@@ -71,7 +71,7 @@ class Settings {
 		wp_enqueue_script(
 			$script_name,
 			WCAdminAssets::get_url( $script_path_name . '/index', 'js' ),
-			$script_assets['dependencies'],
+			array_merge( array( 'wp-edit-site' ), $script_assets['dependencies'] ),
 			WCAdminAssets::get_file_version( 'js', $script_assets['version'] ),
 			true
 		);

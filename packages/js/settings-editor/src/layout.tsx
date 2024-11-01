@@ -92,10 +92,10 @@ export function Layout( { route, showNewNavigation = false }: LayoutProps ) {
 										} }
 										className="edit-site-layout__sidebar"
 									>
-										{ /* <SiteHub
+										<SiteHub
 											ref={ toggleRef }
 											isTransparent={ false }
-										/> */ }
+										/>
 										<SidebarContent routeKey={ routeKey }>
 											{ areas.sidebar }
 										</SidebarContent>
