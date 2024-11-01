@@ -143,10 +143,11 @@ final class ProductFilterStatus extends AbstractBlock {
 
 		$filter_context = array(
 			'filterData'         => array(
-				'items'   => $filter_options,
-				'actions' => array(
+				'items'           => $filter_options,
+				'actions'         => array(
 					'toggleFilter' => "{$this->get_full_block_name()}::actions.toggleFilter",
 				),
+				'filterParamKeys' => array( self::STOCK_STATUS_QUERY_VAR ),
 			),
 			'hasSelectedFilters' => ! empty( $selected_stock_statuses ),
 		);

@@ -77,7 +77,7 @@ final class ProductFilterRating extends AbstractBlock {
 		}
 
 		$active_ratings = array_map(
-			function( $rating ) {
+			function ( $rating ) {
 				return array(
 					/* translators: %d is the rating value. */
 					'title'      => sprintf( __( 'Rated %d out of 5', 'woocommerce' ), $rating ),
@@ -126,10 +126,11 @@ final class ProductFilterRating extends AbstractBlock {
 
 		$filter_context = array(
 			'filterData'         => array(
-				'items'   => $items,
-				'actions' => array(
+				'items'           => $items,
+				'actions'         => array(
 					'toggleFilter' => "{$this->get_full_block_name()}::actions.toggleFilter",
 				),
+				'filterParamKeys' => array( self::RATING_FILTER_QUERY_VAR ),
 			),
 			'hasSelectedFilters' => count( $selected_rating ) > 0,
 		);
@@ -238,7 +239,7 @@ final class ProductFilterRating extends AbstractBlock {
 
 		$selected_items = array_reduce(
 			$rating_counts,
-			function( $carry, $rating ) use ( $ratings_array, $show_counts ) {
+			function ( $carry, $rating ) use ( $ratings_array, $show_counts ) {
 				if ( in_array( (string) $rating['rating'], $ratings_array, true ) ) {
 					$count       = $rating['count'];
 					$count_label = $show_counts ? "($count)" : '';
