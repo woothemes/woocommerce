@@ -23,6 +23,28 @@ import './style.scss';
 const WC_ANALYTICS_PRODUCT_URL =
 	'https://woocommerce.com/products/woocommerce-analytics';
 
+/**
+ * The banner to prompt users to install the Order Attribution extension.
+ *
+ * This banner will only appear when the Order Attribution extension is not installed. It can appear in three different ways:
+ *
+ * - As a big banner in the analytics overview page. (dismissable)
+ * - As a header banner in the analytics overview page. (non-dismissable, appear only when the big banner is dismissed)
+ * - As a small banner in the order editor. (non-dismissable)
+ *
+ * @param {Object}  props              Component props.
+ * @param {Object}  props.bannerImage  The banner image component.
+ * @param {string}  props.bannerType   The type of the banner. Can be BANNER_TYPE_BIG, BANNER_TYPE_SMALL, or BANNER_TYPE_HEADER.
+ * @param {string}  props.eventContext The context for the event tracking.
+ * @param {boolean} props.dismissable  Whether the banner is dismissable.
+ * @param {string}  props.badgeText    The badge text to display on the banner.
+ * @param {string}  props.title        The title of the banner.
+ * @param {string}  props.description  The description of the banner.
+ * @param {string}  props.buttonText   The text for the button.
+ *
+ * @return {JSX.Element} The rendered component.
+ *
+ */
 export const OrderAttributionInstallBanner = ( {
 	bannerImage = null,
 	bannerType = BANNER_TYPE_BIG,
@@ -44,14 +66,17 @@ export const OrderAttributionInstallBanner = ( {
 	};
 
 	const getShouldRender = useCallback( () => {
+		// The header banner should be shown if shouldShowBanner is true and the big banner is dismissed
 		if ( bannerType === BANNER_TYPE_HEADER ) {
 			return shouldShowBanner && isDismissed;
 		}
 
+		// The small banner should always be shown if shouldShowBanner is true.
 		if ( ! dismissable ) {
 			return shouldShowBanner;
 		}
 
+		// The big banner should be shown if shouldShowBanner is true and the banner is not dismissed.
 		return shouldShowBanner && ! isDismissed;
 	}, [ bannerType, shouldShowBanner, isDismissed, dismissable ] );
 
@@ -80,6 +105,7 @@ export const OrderAttributionInstallBanner = ( {
 				icon={ plugins }
 				size="default"
 				onClick={ onButtonClick }
+				target="_blank"
 			>
 				{ __( 'Try Order Attribution', 'woocommerce' ) }
 			</Button>
