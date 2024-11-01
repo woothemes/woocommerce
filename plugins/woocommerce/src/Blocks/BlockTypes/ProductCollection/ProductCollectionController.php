@@ -25,7 +25,7 @@ class ProductCollectionController extends AbstractBlock {
 	 *
 	 * @var CollectionHandlerRegistry
 	 */
-	protected $collection_registry;
+	protected $collection_handler_registry;
 
 	/**
 	 * The render state of the product collection block.
@@ -63,9 +63,9 @@ class ProductCollectionController extends AbstractBlock {
 	protected function initialize() {
 		parent::initialize();
 
-		$this->query_builder       = new ProductQueryBuilder();
-		$this->renderer            = new ProductRenderer();
-		$this->collection_registry = new CollectionHandlerRegistry();
+		$this->query_builder               = new ProductQueryBuilder();
+		$this->renderer                    = new ProductRenderer();
+		$this->collection_handler_registry = new CollectionHandlerRegistry();
 
 		// Update query for frontend rendering.
 		add_filter(
@@ -293,7 +293,7 @@ class ProductCollectionController extends AbstractBlock {
 		);
 
 		// Allow collections to modify the collection arguments passed to the query builder.
-		$handlers = $this->collection_registry->get_collection_handler( $collection_args['name'] );
+		$handlers = $this->collection_handler_registry->get_collection_handler( $collection_args['name'] );
 		if ( isset( $handlers['editor_args'] ) ) {
 			$collection_args = call_user_func( $handlers['editor_args'], $collection_args, $query, $request );
 		}
@@ -422,7 +422,7 @@ class ProductCollectionController extends AbstractBlock {
 	 */
 	protected function register_core_collections_and_set_handler_store() {
 		// Use CollectionHandlerRegistry to register collections.
-		$collection_handler_store = $this->collection_registry->register_core_collections();
+		$collection_handler_store = $this->collection_handler_registry->register_core_collections();
 		$this->query_builder->set_collection_handler_store( $collection_handler_store );
 	}
 }
