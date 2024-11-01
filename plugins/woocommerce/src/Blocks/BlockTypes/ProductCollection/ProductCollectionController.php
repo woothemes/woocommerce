@@ -29,13 +29,6 @@ class ProductCollectionController extends AbstractBlock {
 	protected $collection_handler_store = array();
 
 	/**
-	 * The Block with its attributes before it gets rendered
-	 *
-	 * @var array
-	 */
-	protected $parsed_block;
-
-	/**
 	 * The render state of the product collection block.
 	 *
 	 * These props are runtime-based and reinitialize for every block on a page.
@@ -357,7 +350,6 @@ class ProductCollectionController extends AbstractBlock {
 			return $pre_render;
 		}
 
-		$this->parsed_block = $parsed_block;
 		$this->renderer->set_parsed_block( $parsed_block );
 		$this->asset_data_registry->add( 'hasFilterableProducts', true );
 		/**
