@@ -4,6 +4,8 @@ menu_title: Implement merchant onboarding
 tags: how-to
 ---
 
+# How to implement merchant onboarding
+
 ## Introduction
 
 Onboarding is a critical part of the merchant's user experience. It helps set them up for success and ensures they're not only using your extension correctly but also getting the most out of it. There are a few especially useful features that you can take advantage of as a developer to help onboard merchants who are using your extension:
