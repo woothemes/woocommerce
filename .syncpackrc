@@ -54,6 +54,7 @@
 				"@wordpress/data",
 				"@wordpress/data-controls",
 				"@wordpress/date",
+				"@wordpress/editor",
 				"@wordpress/dependency-extraction-webpack-plugin",
 				"@wordpress/deprecated",
 				"@wordpress/dom",
