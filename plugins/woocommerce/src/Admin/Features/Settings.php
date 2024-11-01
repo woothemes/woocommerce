@@ -75,6 +75,8 @@ class Settings {
 			true
 		);
 
+		// wp_register_style( $script_handle, false ); // phpcs:ignore
+
 		// Load the main Settings script.
 		wp_enqueue_script( $script_handle );
 
@@ -83,16 +85,16 @@ class Settings {
 		wp_add_inline_style( 'wc-global-presets', wp_get_global_stylesheet( array( 'presets' ) ) );
 		wp_enqueue_style( 'wc-global-presets' );
 
-		if ( function_exists( 'gutenberg_url' ) ) {
-			// phpcs:disable WordPress.WP.EnqueuedResourceParameters.MissingVersion
-			wp_register_style(
-				'wp-gutenberg-posts-dashboard',
-				gutenberg_url( 'build/edit-site/posts.css', __FILE__ ),
-				array( 'wp-components' ),
-			);
-			// phpcs:enable WordPress.WP.EnqueuedResourceParameters.MissingVersion
-			wp_enqueue_style( 'wp-gutenberg-posts-dashboard' );
-		}
+		// if ( function_exists( 'gutenberg_url' ) ) {
+		// 	// phpcs:disable WordPress.WP.EnqueuedResourceParameters.MissingVersion
+		// 	wp_register_style(
+		// 		'wp-gutenberg-posts-dashboard',
+		// 		gutenberg_url( 'build/edit-site/posts.css', __FILE__ ),
+		// 		array( 'wp-components' ),
+		// 	);
+		// 	// phpcs:enable WordPress.WP.EnqueuedResourceParameters.MissingVersion
+		// 	wp_enqueue_style( 'wp-gutenberg-posts-dashboard' );
+		// }
 	}
 
 	/**
