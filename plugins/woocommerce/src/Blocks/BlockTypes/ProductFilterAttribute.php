@@ -219,10 +219,12 @@ final class ProductFilterAttribute extends AbstractBlock {
 			);
 
 			$filter_context = array(
-				'items'   => $attribute_options,
-				'actions' => array(
+				'items'           => $attribute_options,
+				'actions'         => array(
 					'toggleFilter' => "{$this->get_full_block_name()}::actions.toggleFilter",
 				),
+				'filterParamKeys' => array( 'filter_' . str_replace( 'pa_', '', $product_attribute->slug ) ),
+
 			);
 		}
 

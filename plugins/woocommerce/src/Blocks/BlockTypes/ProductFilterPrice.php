@@ -128,15 +128,16 @@ final class ProductFilterPrice extends AbstractBlock {
 		$max_price     = intval( $filter_params[ self::MAX_PRICE_QUERY_VAR ] ?? $max_range );
 
 		$filter_context = array(
-			'price'   => array(
+			'price'           => array(
 				'minPrice' => $min_price,
 				'maxPrice' => $max_price,
 				'minRange' => $min_range,
 				'maxRange' => $max_range,
 			),
-			'actions' => array(
+			'actions'         => array(
 				'setPrices' => "{$this->get_full_block_name()}::actions.setPrices",
 			),
+			'filterParamKeys' => array( self::MIN_PRICE_QUERY_VAR, self::MAX_PRICE_QUERY_VAR ),
 		);
 
 		$wrapper_attributes = array(
