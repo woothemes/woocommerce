@@ -21,9 +21,9 @@ import {
 /**
  * Internal dependencies
  */
-import type { EditProps } from './types';
 import { colorAttributes } from './constants';
 import { getHasColorClasses, getStyleColorVars } from '../../utils/colors';
+import type { EditProps } from './types';
 
 const PriceSliderEdit = ( {
 	clientId,
