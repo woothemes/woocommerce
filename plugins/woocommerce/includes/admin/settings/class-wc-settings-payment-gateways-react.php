@@ -127,11 +127,11 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 		echo '<div id="experimental_wc_settings_payments_' . esc_attr( $section ) . '"></div>';
 
 		// Output the gateways data to the page so the React app can use it.
-		$controller = new WC_REST_Payment_Gateways_Controller();
-		$response   = $controller->get_items( new WP_REST_Request( 'GET', '/wc/v3/payment_gateways' ) );
+		$controller       = new WC_REST_Payment_Gateways_Controller();
+		$response         = $controller->get_items( new WP_REST_Request( 'GET', '/wc/v3/payment_gateways' ) );
 		$payment_gateways = $this->format_payment_gateways_for_output( $response->data );
 
-		$is_woopayments_onboarded = WooCommercePayments::is_connected() && ! WooCommercePayments::is_account_partially_onboarded();
+		$is_woopayments_onboarded    = WooCommercePayments::is_connected() && ! WooCommercePayments::is_account_partially_onboarded();
 		$is_woopayments_in_test_mode = $is_woopayments_onboarded &&
 			method_exists( WC_Payments::class, 'mode' ) &&
 			method_exists( WC_Payments::mode(), 'is_test_mode_onboarding' ) &&
@@ -140,9 +140,9 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 		// TODO: we should think about a better way to pass this data to the frontend.
 		echo '<script type="application/json" id="experimental_wc_settings_payments_woopayments">' . wp_json_encode(
 			array(
-				'isSupported'         => WooCommercePayments::is_supported(),
-				'isAccountOnboarded'  => $is_woopayments_onboarded,
-				'isInTestMode'        => $is_woopayments_in_test_mode,
+				'isSupported'        => WooCommercePayments::is_supported(),
+				'isAccountOnboarded' => $is_woopayments_onboarded,
+				'isInTestMode'       => $is_woopayments_in_test_mode,
 			)
 		) . '</script>';
 		echo '<script type="application/json" id="experimental_wc_settings_payments_gateways">' . wp_json_encode( $payment_gateways ) . '</script>';
@@ -156,8 +156,8 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 	 * @return array
 	 */
 	private function format_payment_gateways_for_output( array $payment_gateways ): array {
-		$offline_methods = [ 'bacs', 'cheque', 'cod' ];
-		$display_payment_gateways = [];
+		$offline_methods          = array( 'bacs', 'cheque', 'cod' );
+		$display_payment_gateways = array();
 
 		// Remove offline methods from the list of gateways (these are handled differently).
 		foreach ( $payment_gateways as $gateway ) {
