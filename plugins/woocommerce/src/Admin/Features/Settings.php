@@ -61,19 +61,19 @@ class Settings {
 		// Make sure the Settings Editor package is loaded.
 		wp_enqueue_script( 'wc-settings-editor' );
 
-		$script_handle          = 'wc-admin-edit-settings';
-		$script_path_name       = 'wp-admin-scripts/settings';
-		$script_assets_filename = WCAdminAssets::get_script_asset_filename( 'wp-admin-scripts', 'settings' );
-		$script_assets          = require WC_ADMIN_ABSPATH . WC_ADMIN_DIST_JS_FOLDER . 'wp-admin-scripts/' . $script_assets_filename;
-		$script_version         = WCAdminAssets::get_file_version( 'js', $script_assets['version'] );
+		$script_name            = 'wc-admin-edit-settings';
+		$script_path_name       = 'settings';
+		$script_assets_filename = WCAdminAssets::get_script_asset_filename( $script_path_name, 'index' );
+		$script_assets          = require WC_ADMIN_ABSPATH . WC_ADMIN_DIST_JS_FOLDER . $script_path_name . '/' . $script_assets_filename;
 
-		wp_register_script(
-			$script_handle,
-			WCAdminAssets::get_url( $script_path_name, 'js' ),
-			$script_assets['dependencies'],
-			$script_version,
+		wp_enqueue_script(
+			$script_name,
+			WCAdminAssets::get_url( $script_path_name . '/index', 'js' ),
+			$script_assets ['dependencies'],
+			WCAdminAssets::get_file_version( 'js', $script_assets['version'] ),
 			true
 		);
+<<<<<<< HEAD
 
 		// wp_register_style( $script_handle, false ); // phpcs:ignore
 
@@ -95,6 +95,8 @@ class Settings {
 		// 	// phpcs:enable WordPress.WP.EnqueuedResourceParameters.MissingVersion
 		// 	wp_enqueue_style( 'wp-gutenberg-posts-dashboard' );
 		// }
+=======
+>>>>>>> fff301a112 (make regular script)
 	}
 
 	/**
