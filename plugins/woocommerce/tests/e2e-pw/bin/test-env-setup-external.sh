@@ -29,10 +29,10 @@ printf "\n\n\n"
 echo "--------------------------------------------------------"
 echo -e "Installing mu plugins"
 echo "--------------------------------------------------------"
-wp plugin install --force --activate https://github.com/rodelgc/woo-e2e-site-setup/raw/trunk/mu-plugins/filter-setter.zip \
-    https://github.com/rodelgc/woo-e2e-site-setup/raw/trunk/mu-plugins/process-waiting-actions.zip \
-    https://github.com/rodelgc/woo-e2e-site-setup/raw/trunk/mu-plugins/test-helper-apis.zip \
-    https://github.com/rodelgc/woo-e2e-site-setup/raw/trunk/mu-plugins/wp-cache-flush.zip
+wp plugin install --force --activate https://github.com/woocommerce/woocommerce/raw/trunk/plugins/woocommerce/tests/e2e-pw/bin/filter-setter.zip \
+    https://github.com/woocommerce/woocommerce/raw/trunk/plugins/woocommerce/tests/e2e-pw/bin/process-waiting-actions.zip \
+    https://github.com/woocommerce/woocommerce/raw/trunk/plugins/woocommerce/tests/e2e-pw/bin/test-helper-apis.zip \
+    https://github.com/woocommerce/woocommerce/raw/trunk/plugins/woocommerce/tests/e2e-pw/bin/wp-cache-flush.zip
 
 printf "\n\n\n"
 
@@ -66,6 +66,6 @@ echo "--------------------------------------------------------"
 echo -e 'Upload test images'
 echo "--------------------------------------------------------"
 echo "Importing test images..."
-wp media import https://raw.githubusercontent.com/rodelgc/woo-e2e-site-setup/trunk/images/image-01.png \
-    https://raw.githubusercontent.com/rodelgc/woo-e2e-site-setup/trunk/images/image-02.png \
-    https://raw.githubusercontent.com/rodelgc/woo-e2e-site-setup/trunk/images/image-03.png
+wp media import https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/plugins/woocommerce/tests/e2e-pw/test-data/images/image-01.png \
+    https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/plugins/woocommerce/tests/e2e-pw/test-data/images/image-02.png \
+    https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/plugins/woocommerce/tests/e2e-pw/test-data/images/image-03.png
