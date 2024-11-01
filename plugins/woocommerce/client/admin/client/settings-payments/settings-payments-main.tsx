@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { useEffect, useState } from 'react';
 
 /**
  * Internal dependencies
