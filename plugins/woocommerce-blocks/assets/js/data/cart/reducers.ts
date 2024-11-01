@@ -9,7 +9,7 @@ import type { Reducer } from 'redux';
 import { ACTION_TYPES as types } from './action-types';
 import { defaultCartState, CartState } from './default-state';
 import { EMPTY_CART_ERRORS } from '../constants';
-import { getIsCustomerDataDirty, setIsCustomerDataDirty } from './utils';
+import { setIsCustomerDataDirty } from './utils';
 
 /**
  * Reducer for receiving items related to the cart.
