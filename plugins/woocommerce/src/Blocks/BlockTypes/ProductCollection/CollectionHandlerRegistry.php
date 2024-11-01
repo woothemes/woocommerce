@@ -34,12 +34,14 @@ class CollectionHandlerRegistry {
 			throw new InvalidArgumentException( 'Collection handlers already registered for ' . esc_html( $collection_name ) );
 		}
 
-		return $this->collection_handler_store[ $collection_name ] = [
+		$this->collection_handler_store[ $collection_name ] = [
 			'build_query'   => $build_query,
 			'frontend_args' => $frontend_args,
 			'editor_args'   => $editor_args,
 			'preview_query' => $preview_query,
 		];
+
+		return $this->collection_handler_store[ $collection_name ];
 	}
 
 	/**
