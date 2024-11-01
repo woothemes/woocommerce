@@ -48,10 +48,6 @@ final class ProductFilterActive extends AbstractBlock {
 		 */
 		$active_filters = apply_filters( 'collection_active_filters_data', array(), $this->get_filter_query_params( $query_id ) );
 
-		if ( empty( $active_filters ) ) {
-			return '';
-		}
-
 		$context = array(
 			'hasSelectedFilters' => ! empty( $active_filters ) ?? false,
 		);
@@ -65,6 +61,7 @@ final class ProductFilterActive extends AbstractBlock {
 				'data-wc-interactive' => wp_json_encode( array( 'namespace' => $this->get_full_block_name() ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
 				'data-wc-key'         => wp_unique_prefixed_id( $this->get_full_block_name() ),
 				'data-wc-context'     => wp_json_encode( $context, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
+				'data-wc-bind--hidden' => '!context.hasSelectedFilters',
 			)
 		);
 
