@@ -62,6 +62,16 @@ class ProductQueryBuilder {
 	}
 
 	/**
+	 * Set collection handler.
+	 *
+	 * @param string $collection_name The name of the custom collection.
+	 * @param array  $handlers        Collection handlers.
+	 */
+	public function set_collection_handler( $collection_name, $handlers ) {
+		$this->collection_handler_store[ $collection_name ] = $handlers;
+	}
+
+	/**
 	 * Set attributes filter query args.
 	 *
 	 * @param array $args The attributes filter query arguments.
