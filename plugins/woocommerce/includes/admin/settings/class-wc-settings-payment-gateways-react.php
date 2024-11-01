@@ -69,6 +69,8 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 			return $settings;
 		}
 
+		// TODO: Add any values we need to pass to the React frontend here.
+
 		return $settings;
 	}
 
