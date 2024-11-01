@@ -58,9 +58,9 @@ final class ProductFilterActive extends AbstractBlock {
 
 		$wrapper_attributes = get_block_wrapper_attributes(
 			array(
-				'data-wc-interactive' => wp_json_encode( array( 'namespace' => $this->get_full_block_name() ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
-				'data-wc-key'         => wp_unique_prefixed_id( $this->get_full_block_name() ),
-				'data-wc-context'     => wp_json_encode( $context, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
+				'data-wc-interactive'  => wp_json_encode( array( 'namespace' => $this->get_full_block_name() ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
+				'data-wc-key'          => wp_unique_prefixed_id( $this->get_full_block_name() ),
+				'data-wc-context'      => wp_json_encode( $context, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
 				'data-wc-bind--hidden' => '!context.hasSelectedFilters',
 			)
 		);

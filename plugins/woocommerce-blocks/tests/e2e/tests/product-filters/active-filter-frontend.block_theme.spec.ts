@@ -31,7 +31,7 @@ test.describe( 'woocommerce/product-filter-active - Frontend', () => {
 			'.wp-block-woocommerce-product-filter-active'
 		);
 
-		await expect( chips ).toHaveCount( 0 );
+		await expect( chips ).toHaveCount( 1 );
 	} );
 
 	test( 'With rating filters applied it shows the correct active filters', async ( {
