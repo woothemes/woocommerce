@@ -65,38 +65,40 @@ class Settings {
 		$script_path_name       = 'settings';
 		$script_assets_filename = WCAdminAssets::get_script_asset_filename( $script_path_name, 'index' );
 		$script_assets          = require WC_ADMIN_ABSPATH . WC_ADMIN_DIST_JS_FOLDER . $script_path_name . '/' . $script_assets_filename;
+		$style_assets_filename  = WCAdminAssets::get_script_asset_filename( $script_path_name, 'style' );
+		$style_assets           = require WC_ADMIN_ABSPATH . WC_ADMIN_DIST_JS_FOLDER . $script_path_name . '/' . $style_assets_filename;
 
 		wp_enqueue_script(
 			$script_name,
 			WCAdminAssets::get_url( $script_path_name . '/index', 'js' ),
-			$script_assets ['dependencies'],
+			$script_assets['dependencies'],
 			WCAdminAssets::get_file_version( 'js', $script_assets['version'] ),
 			true
 		);
-<<<<<<< HEAD
 
-		// wp_register_style( $script_handle, false ); // phpcs:ignore
+		wp_register_style(
+			$script_name,
+			WCAdminAssets::get_url( $script_path_name . '/style', 'css' ),
+			isset( $style_assets['dependencies'] ) ? $style_assets['dependencies'] : array(),
+			WCAdminAssets::get_file_version( 'css', $style_assets['version'] ),
+		);
 
-		// Load the main Settings script.
-		wp_enqueue_script( $script_handle );
-
+		wp_enqueue_style( $script_name );
 
 		wp_register_style( 'wc-global-presets', false ); // phpcs:ignore
 		wp_add_inline_style( 'wc-global-presets', wp_get_global_stylesheet( array( 'presets' ) ) );
 		wp_enqueue_style( 'wc-global-presets' );
 
-		// if ( function_exists( 'gutenberg_url' ) ) {
-		// 	// phpcs:disable WordPress.WP.EnqueuedResourceParameters.MissingVersion
-		// 	wp_register_style(
-		// 		'wp-gutenberg-posts-dashboard',
-		// 		gutenberg_url( 'build/edit-site/posts.css', __FILE__ ),
-		// 		array( 'wp-components' ),
-		// 	);
-		// 	// phpcs:enable WordPress.WP.EnqueuedResourceParameters.MissingVersion
-		// 	wp_enqueue_style( 'wp-gutenberg-posts-dashboard' );
-		// }
-=======
->>>>>>> fff301a112 (make regular script)
+		if ( function_exists( 'gutenberg_url' ) ) {
+			// phpcs:disable WordPress.WP.EnqueuedResourceParameters.MissingVersion
+			wp_register_style(
+				'wp-gutenberg-posts-dashboard',
+				gutenberg_url( 'build/edit-site/posts.css', __FILE__ ),
+				array( 'wp-components' ),
+			);
+			// phpcs:enable WordPress.WP.EnqueuedResourceParameters.MissingVersion
+			wp_enqueue_style( 'wp-gutenberg-posts-dashboard' );
+		}
 	}
 
 	/**
