@@ -436,7 +436,7 @@ Allow customers to place their order.
 -   **Ancestor:** 
 -   **Parent:** woocommerce/checkout-fields-block
 -	**Supports:** ~~align~~, ~~html~~, ~~inserter~~, ~~lock~~, ~~multiple~~, ~~reusable~~
--	**Attributes:** lock
+-	**Attributes:** cartPageId, className, lock, priceSeparator, showReturnToCart
 
 ## Additional information - woocommerce/checkout-additional-information-block
 
@@ -1139,8 +1139,8 @@ Let shoppers filter products displayed on the page.
 -	**Category:** woocommerce
 -   **Ancestor:** 
 -   **Parent:** 
--	**Supports:** align, color (background, text), inserter, interactivity, layout (allowJustification, allowOrientation, allowVerticalAlignment, default, ~~allowInheriting~~), multiple, spacing (blockGap), typography (fontSize, textAlign)
--	**Attributes:** 
+-	**Supports:** align, color (background, button, heading, text, ~~enableContrastChecker~~), inserter, interactivity, multiple, typography (fontSize)
+-	**Attributes:** overlayButtonType, overlayIcon, overlayIconSize
 
 ## Active (Experimental) - woocommerce/product-filter-active
 
@@ -1241,16 +1241,16 @@ A slider helps shopper choose a price range.
 -	**Supports:** ~~html~~
 -	**Attributes:** inlineInput, showInputFields
 
-## Filter Options - woocommerce/product-filter-rating
+## Rating (Experimental) - woocommerce/product-filter-rating
 
 Enable customers to filter the product collection by rating.
 
 -	**Name:** woocommerce/product-filter-rating
 -	**Category:** woocommerce
--   **Ancestor:** woocommerce/product-filter
+-   **Ancestor:** woocommerce/product-filters
 -   **Parent:** 
--	**Supports:** color (text, ~~background~~), interactivity, ~~inserter~~
--	**Attributes:** className, displayStyle, isPreview, selectType, showCounts
+-	**Supports:** color (text, ~~background~~), interactivity
+-	**Attributes:** className, isPreview, minRating, showCounts
 
 ## Status (Experimental) - woocommerce/product-filter-status
 
