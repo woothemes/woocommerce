@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { createElement, Fragment, useRef } from '@wordpress/element';
+import { unlock, SiteHub, SidebarContent } from '@woocommerce/product-editor';
 import {
 	useViewportMatch,
 	useResizeObserver,
@@ -21,12 +22,7 @@ import {
 	// @ts-expect-error missing type.
 	__unstableAnimatePresence as AnimatePresence,
 } from '@wordpress/components';
-import { unlock, SiteHub, SidebarContent } from '@woocommerce/product-editor';
 
-/**
- * Internal dependencies
- */
-// import { Route } from './router';
 type Route = {
 	key: string;
 	areas: {
