@@ -342,8 +342,8 @@ HTML;
 	 * Test for add_settings_page_data.
 	 */
 	public function test_add_settings_page_data() {
-		$migration = new WC_Settings_Migration_Test();
-		$setting_data =$migration->add_settings_page_data( array() );
+		$migration           = new WC_Settings_Migration_Test();
+		$setting_data        = $migration->add_settings_page_data( array() );
 		$migration_page_data = $setting_data[ $migration->get_id() ];
 
 		$this->assertTrue( isset( $migration_page_data ) );
