@@ -76,6 +76,10 @@
 			"default": true
 		}
 	},
+	"usesContext": [
+		"query",
+		"queryId"
+	],
 	"example": {
 		"attributes": {
 			"isPreview": true
