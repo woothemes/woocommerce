@@ -1,3 +1,10 @@
+const { webcrypto } = require( 'node:crypto' );
+
+global.crypto = webcrypto;
+
+global.TextEncoder = require( 'util' ).TextEncoder;
+global.TextDecoder = require( 'util' ).TextDecoder;
+
 // Set up `wp.*` aliases.  Doing this because any tests importing wp stuff will likely run into this.
 global.wp = {};
 require( '@wordpress/data' );
