@@ -14,7 +14,7 @@ import { getAdminLink } from '@woocommerce/settings';
 /**
  * Internal dependencies
  */
-import EnableGatewayButton from '~/settings-payments/components/enable-gateway-button';
+import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
 
 // TODO: This should either be a util function, or handled in a different way e.g. passing the data as props.
 const parseScriptTag = ( elementId: string ) => {
@@ -77,18 +77,11 @@ export const PaymentGateways = () => {
 				after: (
 					<div className="woocommerce-list__item-after__actions">
 						<>
-							{ gateway.enabled ? (
-								<Button
-									variant="secondary"
-									href={ gateway.settings_url }
-									isBusy={ false }
-									disabled={ false }
-								>
-									{ __( 'Manage', 'woocommerce' ) }
-								</Button>
-							) : (
-								<EnableGatewayButton gateway={ gateway } />
-							) }
+							<PaymentGatewayButton
+								id={ gateway.id }
+								enabled={ gateway.enabled }
+								settings_url={ gateway.settings_url }
+							/>
 							{ gateway.id === 'woocommerce_payments' &&
 								wooPaymentsGatewayData?.isInTestMode && (
 									<Button
