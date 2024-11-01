@@ -60,7 +60,7 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 	 * This function can be used to preload settings related to payment gateways.
 	 * Registered keys will be available in the window.wcSettings.admin object.
 	 *
-	 * @param $settings array Settings array.
+	 * @param array $settings Settings array.
 	 *
 	 * @return array Settings array with additional settings added.
 	 */
@@ -118,7 +118,6 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 	 * Render the React section.
 	 *
 	 * @param string $section The section to render.
-	 * @param array  $payment_gateways Payment gateways.
 	 */
 	private function render_react_section( string $section ) {
 		global $hide_save_button;
