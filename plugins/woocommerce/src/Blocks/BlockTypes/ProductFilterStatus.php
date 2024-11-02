@@ -137,11 +137,12 @@ final class ProductFilterStatus extends AbstractBlock {
 	 * @return string Rendered block type output.
 	 */
 	protected function render( $attributes, $content, $block ) {
-		$stock_status_data  = $this->get_stock_status_counts( $block );
-		$onsale_status_data = $this->get_onsale_status_counts( $block );
-		$query              = isset( $_GET[ self::FILTER_STATUS_QUERY_VAR ] ) ? sanitize_text_field( wp_unslash( $_GET[ self::FILTER_STATUS_QUERY_VAR ] ) ) : '';  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$selected_statuses  = array_filter( explode( ',', $query ) );
-		$status_data        = array_merge( $stock_status_data, $onsale_status_data );
+		$stock_status_data    = $this->get_stock_status_counts( $block );
+		$onsale_status_data   = $this->get_onsale_status_counts( $block );
+		$featured_status_data = $this->get_featured_status_counts( $block );
+		$query                = isset( $_GET[ self::FILTER_STATUS_QUERY_VAR ] ) ? sanitize_text_field( wp_unslash( $_GET[ self::FILTER_STATUS_QUERY_VAR ] ) ) : '';  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$selected_statuses    = array_filter( explode( ',', $query ) );
+		$status_data          = array_merge( $stock_status_data, $onsale_status_data, $featured_status_data );
 
 		$onsale_enabled      = ! empty( $attributes['onsale'] ) ?? $attributes['onsale'];
 		$featured_enabled    = ! empty( $attributes['featured'] ) ?? $attributes['featured'];
@@ -306,6 +307,40 @@ final class ProductFilterStatus extends AbstractBlock {
 			$data,
 			function ( $onsale_count ) {
 				return $onsale_count['count'] > 0;
+			}
+		);
+	}
+
+	/**
+	 * Retrieve the status filter data for current block.
+	 *
+	 * @param WP_Block $block Block instance.
+	 */
+	private function get_featured_status_counts( $block ) {
+		$filters    = Package::container()->get( QueryFilters::class );
+		$query_vars = ProductCollectionUtils::get_query_vars( $block, 1 );
+
+		unset( $query_vars['filter_status'] );
+
+		if ( ! empty( $query_vars['meta_query'] ) ) {
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+			$query_vars['meta_query'] = ProductCollectionUtils::remove_query_array( $query_vars['meta_query'], 'key', '_featured_status' );
+		}
+
+		$counts = $filters->get_featured_status_counts( $query_vars );
+		$data   = array();
+
+		foreach ( $counts as $key => $value ) {
+			$data[] = array(
+				'status' => $key,
+				'count'  => $value,
+			);
+		}
+
+		return array_filter(
+			$data,
+			function ( $featured_count ) {
+				return $featured_count['count'] > 0;
 			}
 		);
 	}
