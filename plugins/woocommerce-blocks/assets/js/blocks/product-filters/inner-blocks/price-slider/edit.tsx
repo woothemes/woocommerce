@@ -163,7 +163,7 @@ const PriceSliderEdit = ( {
 									} );
 								},
 								resetAllFilter: () => {
-									setSliderHandle( '' );
+									setSliderHandleBorder( '' );
 									setAttributes( {
 										customSliderHandleBorder: '',
 									} );
@@ -181,7 +181,7 @@ const PriceSliderEdit = ( {
 									} );
 								},
 								resetAllFilter: () => {
-									setSliderHandle( '' );
+									setSlider( '' );
 									setAttributes( {
 										customSlider: '',
 									} );
