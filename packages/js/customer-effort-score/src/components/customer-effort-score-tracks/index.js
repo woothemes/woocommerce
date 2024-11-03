@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import { compose } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
-import { createElement, useState } from '@wordpress/element';
+import { createElement, useState, useEffect } from '@wordpress/element';
 import { OPTIONS_STORE_NAME } from '@woocommerce/data';
 import { __ } from '@wordpress/i18n';
 import { recordEvent } from '@woocommerce/tracks';
@@ -60,6 +60,29 @@ function _CustomerEffortScoreTracks( {
 } ) {
 	const [ modalShown, setModalShown ] = useState( false );
 
+	const addActionToShownOption = () => {
+		updateOptions( {
+			[ SHOWN_FOR_ACTIONS_OPTION_NAME ]: [
+				action,
+				...( cesShownForActions || [] ),
+			],
+		} );
+	};
+
+	// Update the shown actions option when the component is unmounted or the user navigates away
+	// to ensure we don't show the same notice again.
+	useEffect( () => {
+		const handleBeforeUnload = () => {
+			addActionToShownOption();
+		};
+
+		window.addEventListener( 'beforeunload', handleBeforeUnload );
+
+		return () => {
+			window.removeEventListener( 'beforeunload', handleBeforeUnload );
+		};
+	}, [] );
+
 	if ( resolving ) {
 		return null;
 	}
@@ -91,14 +114,6 @@ function _CustomerEffortScoreTracks( {
 			ces_location: 'inside',
 			...trackProps,
 		} );
-		if ( ! cesShownForActions || ! cesShownForActions.includes( action ) ) {
-			updateOptions( {
-				[ SHOWN_FOR_ACTIONS_OPTION_NAME ]: [
-					action,
-					...( cesShownForActions || [] ),
-				],
-			} );
-		}
 	};
 
 	const onNoticeDismissed = () => {
@@ -108,6 +123,8 @@ function _CustomerEffortScoreTracks( {
 			ces_location: 'inside',
 			...trackProps,
 		} );
+
+		addActionToShownOption();
 	};
 
 	const onModalDismissed = () => {
@@ -117,6 +134,8 @@ function _CustomerEffortScoreTracks( {
 			ces_location: 'inside',
 			...trackProps,
 		} );
+
+		addActionToShownOption();
 	};
 
 	const onModalShown = () => {
