@@ -108,6 +108,8 @@ class Settings {
 			WCAdminAssets::get_file_version( 'js', $script_assets['version'] ),
 			true
 		);
+
+		wp_set_script_translations( 'wc-admin-' . $script_name, 'woocommerce' );
 	}
 
 	/**
