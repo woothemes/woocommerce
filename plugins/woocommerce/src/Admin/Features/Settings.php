@@ -52,6 +52,10 @@ class Settings {
 	}
 
 	public function enqueue_settings_editor_styles() {
+		if ( ! self::get_instance()->is_settings_page() ) {
+			return;
+		}
+
 		$style_name            = 'wc-admin-edit-settings';
 		$style_path_name       = 'settings';
 		$style_assets_filename = WCAdminAssets::get_script_asset_filename( $style_path_name, 'style' );
