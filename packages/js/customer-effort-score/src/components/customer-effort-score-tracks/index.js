@@ -60,20 +60,21 @@ function _CustomerEffortScoreTracks( {
 } ) {
 	const [ modalShown, setModalShown ] = useState( false );
 
-	const addActionToShownOption = () => {
-		updateOptions( {
-			[ SHOWN_FOR_ACTIONS_OPTION_NAME ]: [
-				action,
-				...( cesShownForActions || [] ),
-			],
-		} );
-	};
-
 	// Update the shown actions option when the component is unmounted or the user navigates away
 	// to ensure we don't show the same notice again.
 	useEffect( () => {
 		const handleBeforeUnload = () => {
-			addActionToShownOption();
+			if (
+				! cesShownForActions ||
+				! cesShownForActions.includes( action )
+			) {
+				updateOptions( {
+					[ SHOWN_FOR_ACTIONS_OPTION_NAME ]: [
+						action,
+						...( cesShownForActions || [] ),
+					],
+				} );
+			}
 		};
 
 		window.addEventListener( 'beforeunload', handleBeforeUnload );
@@ -123,8 +124,6 @@ function _CustomerEffortScoreTracks( {
 			ces_location: 'inside',
 			...trackProps,
 		} );
-
-		addActionToShownOption();
 	};
 
 	const onModalDismissed = () => {
@@ -134,8 +133,6 @@ function _CustomerEffortScoreTracks( {
 			ces_location: 'inside',
 			...trackProps,
 		} );
-
-		addActionToShownOption();
 	};
 
 	const onModalShown = () => {
