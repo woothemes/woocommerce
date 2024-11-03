@@ -51,6 +51,9 @@ class Settings {
 		return $screen && 'woocommerce_page_wc-settings' === $screen->id;
 	}
 
+	/**
+	 * Enqueue styles for the settings editor.
+	 */
 	public function enqueue_settings_editor_styles() {
 		if ( ! self::get_instance()->is_settings_page() ) {
 			return;
