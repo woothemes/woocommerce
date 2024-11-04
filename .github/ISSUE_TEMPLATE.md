@@ -4,4 +4,4 @@
 - [ ] I have checked that my issue type is not listed here https://github.com/woocommerce/woocommerce/issues/new/choose
 - [ ] My issue is not a security issue, support request, bug report, enhancement or feature request (Please use the link above if it is).
 
-**Issue Description:**
+**Issue Description**
