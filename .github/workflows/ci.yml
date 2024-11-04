@@ -451,17 +451,10 @@ jobs:
       contents: read
 
     steps:
-      - name: 'Calculate checkout depth'
-        id: checkout_depth
-        shell: bash
-        run: |
-          fetch_commits=$(( ${{ github.event.pull_request.commits }} + 2 ))
-          echo "fetch_commits=$fetch_commits" >> $GITHUB_OUTPUT
-
       - uses: 'actions/checkout@v4'
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: ${{ steps.checkout_depth.outputs.fetch_commits }}
+          fetch-depth: '0'
 
       - uses: './.github/actions/setup-woocommerce-monorepo'
         with:
@@ -486,10 +479,17 @@ jobs:
       contents: read
 
     steps:
+      - name: 'Calculate checkout depth'
+        id: checkout_depth
+        shell: bash
+        run: |
+          fetch_commits=$(( ${{ github.event.pull_request.commits }} + 2 ))
+          echo "fetch_commits=$fetch_commits" >> $GITHUB_OUTPUT
+
       - uses: 'actions/checkout@v4'
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: '0'
+          fetch-depth: ${{ steps.checkout_depth.outputs.fetch_commits }}
 
       - name: Scan - markdown files from monorepo packages
         id: repo-changed-files
