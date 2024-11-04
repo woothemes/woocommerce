@@ -71,7 +71,6 @@ jobs:
       - name: Setup - checkout
         uses: 'actions/checkout@v4'
         with:
-          ref: ${{ ( github.event_name == 'pull_request' && github.event.pull_request.head.sha ) || '' }}
           fetch-depth: ${{ steps.checkout_depth.outputs.fetch_commits }}
       - name: Setup - pnpm
         uses: 'pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d'
