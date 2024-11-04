@@ -70,15 +70,18 @@ class AddToCartForm extends AbstractBlock {
 	 * Add increment and decrement buttons to the quantity input field.
 	 *
 	 * @param string $product add-to-cart form HTML.
+	 * @param string $product_name Product name.
 	 * @return stringa add-to-cart form HTML with increment and decrement buttons.
 	 */
-	private function add_steppers( $product ) {
+	private function add_steppers( $product, $product_name ) {
 		// Regex pattern to match the <input> element with id starting with 'quantity_'.
 		$pattern = '/(<input[^>]*id="quantity_[^"]*"[^>]*\/>)/';
 		// Replacement string to add button BEFORE the matched <input> element.
-		$minus_button = '<button type="button" data-wc-on--click="actions.removeQuantity" class="wc-block-components-quantity-selector__button wc-block-components-quantity-selector__button--minus">-</button>$1';
+		/* translators: %s refers to the item name in the cart. */
+		$minus_button = '<button aria-label="' . esc_html( sprintf( __( 'Reduce quantity of %s', 'woocommerce' ), $product_name ) ) . '"type="button" data-wc-on--click="actions.removeQuantity" class="wc-block-components-quantity-selector__button wc-block-components-quantity-selector__button--minus">-</button>$1';
 		// Replacement string to add button AFTER the matched <input> element.
-		$plus_button = '$1<button type="button" data-wc-on--click="actions.addQuantity" class="wc-block-components-quantity-selector__button wc-block-components-quantity-selector__button--plus">+</button>';
+		/* translators: %s refers to the item name in the cart. */
+		$plus_button = '$1<button  aria-label="' . esc_html( sprintf( __( 'Increase quantity of %s', 'woocommerce' ), $product_name ) ) . '" type="button" data-wc-on--click="actions.addQuantity" class="wc-block-components-quantity-selector__button wc-block-components-quantity-selector__button--plus">+</button>';
 		$new_html    = preg_replace( $pattern, $minus_button, $product );
 		$new_html    = preg_replace( $pattern, $plus_button, $new_html );
 		return $new_html;
@@ -128,6 +131,7 @@ class AddToCartForm extends AbstractBlock {
 
 		$previous_product = $product;
 		$product          = wc_get_product( $post_id );
+		$product_name     = $product->get_name();
 		if ( ! $product instanceof \WC_Product ) {
 			$product = $previous_product;
 
@@ -153,8 +157,7 @@ class AddToCartForm extends AbstractBlock {
 
 			return '';
 		}
-
-		$product = $is_stepper_style ? $this->add_steppers( $product ) : $product;
+		$product = $is_stepper_style ? $this->add_steppers( $product, $product_name ) : $product;
 
 		$parsed_attributes                     = $this->parse_attributes( $attributes );
 		$is_descendent_of_single_product_block = $parsed_attributes['isDescendentOfSingleProductBlock'];

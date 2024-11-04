@@ -235,17 +235,19 @@ test.describe( `${ blockData.name } Block`, () => {
 		await admin.createNewPost();
 		await editor.insertBlock( { name: 'woocommerce/single-product' } );
 
-		await blockUtils.configureSingleProductBlock();
+		const productName = 'Hoodie with Logo';
+
+		await blockUtils.configureSingleProductBlock( productName );
 
 		await blockUtils.enableStepperMode();
 
 		await editor.publishAndVisitPost();
 
-		const minusButton = page.locator(
-			'.wc-block-components-quantity-selector__button--minus'
+		const minusButton = page.getByLabel(
+			`Reduce quantity of ${ productName }`
 		);
-		const plusButton = page.locator(
-			'.wc-block-components-quantity-selector__button--plus'
+		const plusButton = page.getByLabel(
+			`Increase quantity of ${ productName }`
 		);
 
 		await expect( minusButton ).toBeVisible();
@@ -273,15 +275,18 @@ test.describe( `${ blockData.name } Block`, () => {
 		await admin.createNewPost();
 		await editor.insertBlock( { name: 'woocommerce/single-product' } );
 
-		await blockUtils.configureSingleProductBlock( 'Sold Individually' );
+		const productName = 'Sold Individually';
+
+		await blockUtils.configureSingleProductBlock( productName );
 		await blockUtils.enableStepperMode();
+
 		await editor.publishAndVisitPost();
 
-		const minusButton = page.locator(
-			'.wc-block-components-quantity-selector__button--minus'
+		const minusButton = page.getByLabel(
+			`Reduce quantity of ${ productName }`
 		);
-		const plusButton = page.locator(
-			'.wc-block-components-quantity-selector__button--plus'
+		const plusButton = page.getByLabel(
+			`Increase quantity of ${ productName }`
 		);
 
 		await expect( minusButton ).toBeHidden();
@@ -297,7 +302,9 @@ test.describe( `${ blockData.name } Block`, () => {
 		await admin.createNewPost();
 		await editor.insertBlock( { name: 'woocommerce/single-product' } );
 
-		await blockUtils.configureSingleProductBlock();
+		const productName = 'Hoodie with Logo';
+
+		await blockUtils.configureSingleProductBlock( productName );
 
 		await blockUtils.enableStepperMode();
 		await editor.publishAndVisitPost();
@@ -308,11 +315,11 @@ test.describe( `${ blockData.name } Block`, () => {
 			step: 2,
 		} );
 
-		const minusButton = page.locator(
-			'.wc-block-components-quantity-selector__button--minus'
+		const minusButton = page.getByLabel(
+			`Reduce quantity of ${ productName }`
 		);
-		const plusButton = page.locator(
-			'.wc-block-components-quantity-selector__button--plus'
+		const plusButton = page.getByLabel(
+			`Increase quantity of ${ productName }`
 		);
 
 		await expect( minusButton ).toBeVisible();
