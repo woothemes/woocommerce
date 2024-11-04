@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { useDispatch, useSelect } from '@wordpress/data';
+import { useCallback } from '@wordpress/element';
 import {
 	OPTIONS_STORE_NAME,
 	PLUGINS_STORE_NAME,
@@ -9,10 +10,46 @@ import {
 } from '@woocommerce/data';
 import { recordEvent } from '@woocommerce/tracks';
 import { getPath } from '@woocommerce/navigation';
+import { isWcVersion } from '@woocommerce/settings';
 
 const OPTION_NAME_BANNER_DISMISSED =
 	'woocommerce_order_attribution_install_banner_dismissed';
 const OPTION_VALUE_YES = 'yes';
+const OPTION_NAME_REMOTE_VARIANT_ASSIGNMENT =
+	'woocommerce_remote_variant_assignment';
+
+const get_threshold = () => {
+	// Using Map() to ensure the order of the thresholds so the below comparison is correct.
+	// I.e. the larger version should be checked first.
+	const version_thresholds = new Map( [
+		[ '9.7', 120 ], // 100% of 120
+		[ '9.6', 72 ], // 60% of 120
+		[ '9.5', 12 ], // 10% of 120
+	] );
+
+	for ( const [
+		threshold_version,
+		threshold,
+	] of version_thresholds.entries() ) {
+		if ( isWcVersion( threshold_version, '>=' ) ) {
+			return threshold;
+		}
+	}
+
+	return 12; // Default to 10% if version is lower than 9.5
+};
+
+const shouldPromoteOrderAttribution = ( remoteVariantAssignment ) => {
+	remoteVariantAssignment = parseInt( remoteVariantAssignment, 10 );
+
+	if ( isNaN( remoteVariantAssignment ) ) {
+		return false;
+	}
+
+	const threshold = get_threshold();
+
+	return remoteVariantAssignment <= threshold;
+};
 
 /**
  * A utility hook designed specifically for the order attribution install banner,
@@ -47,27 +84,49 @@ export const useOrderAttributionInstallBanner = () => {
 		[ currentUserCan ]
 	);
 
-	const { loading, isBannerDismissed } = useSelect( ( select ) => {
-		const { getOption, hasFinishedResolution } =
-			select( OPTIONS_STORE_NAME );
+	const { loading, isBannerDismissed, remoteVariantAssignment } = useSelect(
+		( select ) => {
+			const { getOption, hasFinishedResolution } =
+				select( OPTIONS_STORE_NAME );
 
-		return {
-			loading: ! hasFinishedResolution( 'getOption', [
-				OPTION_NAME_BANNER_DISMISSED,
-			] ),
-			isBannerDismissed: getOption( OPTION_NAME_BANNER_DISMISSED ),
-		};
-	}, [] );
+			return {
+				loading: ! hasFinishedResolution( 'getOption', [
+					OPTION_NAME_BANNER_DISMISSED,
+				] ),
+				isBannerDismissed: getOption( OPTION_NAME_BANNER_DISMISSED ),
+				remoteVariantAssignment: getOption(
+					OPTION_NAME_REMOTE_VARIANT_ASSIGNMENT
+				),
+			};
+		},
+		[]
+	);
+
+	const getShouldShowBanner = useCallback( () => {
+		if ( ! canUserInstallPlugins || loading ) {
+			return false;
+		}
+
+		const isPluginInstalled = [ 'installed', 'activated' ].includes(
+			orderAttributionInstallState
+		);
+
+		if ( isPluginInstalled ) {
+			return false;
+		}
+
+		return shouldPromoteOrderAttribution( remoteVariantAssignment );
+	}, [
+		loading,
+		canUserInstallPlugins,
+		orderAttributionInstallState,
+		remoteVariantAssignment,
+	] );
 
 	return {
 		loading,
 		isDismissed: isBannerDismissed === OPTION_VALUE_YES,
 		dismiss,
-		shouldShowBanner:
-			! loading &&
-			canUserInstallPlugins &&
-			! [ 'installed', 'activated' ].includes(
-				orderAttributionInstallState
-			),
+		shouldShowBanner: getShouldShowBanner(),
 	};
 };
