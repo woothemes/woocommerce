@@ -22,11 +22,11 @@ import {
 // @ts-expect-error missing types.
 // eslint-disable-next-line @woocommerce/dependency-group
 import { privateApis as editorPrivateApis } from '@wordpress/editor';
+import { unlock } from '@woocommerce/admin-layout';
 
 /**
  * Internal dependencies
  */
-import { unlock } from '../../lock-unlock';
 import { productFields } from '../product-list/fields';
 
 const { NavigableRegion } = unlock( editorPrivateApis );

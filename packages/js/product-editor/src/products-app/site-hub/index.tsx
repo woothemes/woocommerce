@@ -14,12 +14,12 @@ import {
 	__experimentalHStack as HStack,
 	VisuallyHidden,
 } from '@wordpress/components';
+import { unlock } from '@woocommerce/admin-layout';
 
 /**
  * Internal dependencies
  */
 import SiteIcon from './site-icon';
-import { unlock } from '../../lock-unlock';
 
 const SiteHub = memo(
 	forwardRef(

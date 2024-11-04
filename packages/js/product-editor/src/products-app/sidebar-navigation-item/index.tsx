@@ -13,11 +13,7 @@ import {
 	__experimentalHStack as HStack,
 	FlexBlock,
 } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import { unlock } from '../../lock-unlock';
+import { unlock } from '@woocommerce/admin-layout';
 
 const { useHistory } = unlock( routerPrivateApis );
 

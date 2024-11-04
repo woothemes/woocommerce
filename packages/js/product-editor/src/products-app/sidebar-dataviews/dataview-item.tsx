@@ -9,12 +9,12 @@ import { VIEW_LAYOUTS } from '@wordpress/dataviews';
 // @ts-expect-error missing type.
 // eslint-disable-next-line @woocommerce/dependency-group
 import { __experimentalHStack as HStack } from '@wordpress/components';
+import { unlock } from '@woocommerce/admin-layout';
 
 /**
  * Internal dependencies
  */
 import SidebarNavigationItem from '../sidebar-navigation-item';
-import { unlock } from '../../lock-unlock';
 
 const { useHistory, useLocation } = unlock( routerPrivateApis );
 

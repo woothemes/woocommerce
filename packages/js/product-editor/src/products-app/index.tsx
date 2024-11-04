@@ -8,13 +8,12 @@ import {
 	// @ts-expect-error No types for this exist yet.
 	privateApis as editorPrivateApis,
 } from '@wordpress/editor';
+import { Layout, unlock } from '@woocommerce/admin-layout';
 
 /**
  * Internal dependencies
  */
-import { unlock } from '../lock-unlock';
 import useLayoutAreas from './router';
-import { Layout } from './layout';
 import {
 	NewNavigationProvider,
 	useNewNavigation,

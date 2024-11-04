@@ -6,11 +6,7 @@ import { edit } from '@wordpress/icons';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 import { __ } from '@wordpress/i18n';
 import { Product } from '@woocommerce/data';
-
-/**
- * Internal dependencies
- */
-import { unlock } from '../../lock-unlock';
+import { unlock } from '@woocommerce/admin-layout';
 
 const { useHistory, useLocation } = unlock( routerPrivateApis );
 

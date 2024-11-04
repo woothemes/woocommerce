@@ -21,6 +21,7 @@ import {
 	// @ts-expect-error missing type.
 	__unstableAnimatePresence as AnimatePresence,
 } from '@wordpress/components';
+import { unlock } from '@woocommerce/admin-layout';
 
 /**
  * Internal dependencies
@@ -28,7 +29,6 @@ import {
 import SidebarContent from './sidebar';
 import SiteHub from './site-hub';
 import { Route } from './router';
-import { unlock } from '../lock-unlock';
 
 const { NavigableRegion } = unlock( editorPrivateApis );
 

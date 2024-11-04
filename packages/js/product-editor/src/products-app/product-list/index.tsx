@@ -32,11 +32,11 @@ import {
 // @ts-expect-error missing type.
 // eslint-disable-next-line @woocommerce/dependency-group
 import { privateApis as editorPrivateApis } from '@wordpress/editor';
+import { unlock } from '@woocommerce/admin-layout';
 
 /**
  * Internal dependencies
  */
-import { unlock } from '../../lock-unlock';
 import {
 	useDefaultViews,
 	defaultLayouts,

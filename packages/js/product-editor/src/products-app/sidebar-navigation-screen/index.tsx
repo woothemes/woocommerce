@@ -16,11 +16,11 @@ import {
 	// @ts-expect-error missing type.
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { unlock } from '@woocommerce/admin-layout';
 
 /**
  * Internal dependencies
  */
-import { unlock } from '../../lock-unlock';
 import SidebarButton from './sidebar-button';
 
 const { useHistory, useLocation } = unlock( routerPrivateApis );
