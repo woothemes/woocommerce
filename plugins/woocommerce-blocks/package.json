@@ -170,6 +170,7 @@
 		"@wordpress/data": "6.15.0",
 		"@wordpress/data-controls": "2.2.7",
 		"@wordpress/date": "4.44.0",
+		"@wordpress/editor": "wp-6.7",
 		"@wordpress/dependency-extraction-webpack-plugin": "4.28.0",
 		"@wordpress/dom": "3.27.0",
 		"@wordpress/dom-ready": "3.27.0",

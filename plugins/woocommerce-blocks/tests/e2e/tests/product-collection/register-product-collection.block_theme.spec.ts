@@ -61,6 +61,7 @@ test.describe( 'Product Collection: Register Product Collection', () => {
 	} );
 
 	test( `Registered collections should be available in Collection chooser`, async ( {
+		page,
 		pageObject,
 		editor,
 		admin,
@@ -73,15 +74,11 @@ test.describe( 'Product Collection: Register Product Collection', () => {
 			} )
 			.click();
 
-		const productCollectionBlock = editor.canvas.getByLabel(
-			'Block: Product Collection'
-		);
-
 		for ( const myCollection of Object.values(
 			MY_REGISTERED_COLLECTIONS
 		) ) {
 			await expect(
-				productCollectionBlock.getByRole( 'button', {
+				page.getByRole( 'button', {
 					name: myCollection.name,
 					exact: true,
 				} )
