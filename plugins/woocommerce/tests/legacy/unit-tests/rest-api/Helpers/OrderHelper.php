@@ -72,7 +72,7 @@ class OrderHelper {
 		ShippingHelper::create_simple_flat_rate();
 
 		$order_data = array(
-			'status'        => 'pending',
+			'status'        => OrderStatus::PENDING,
 			'customer_id'   => $customer_id,
 			'customer_note' => '',
 			'total'         => '',
