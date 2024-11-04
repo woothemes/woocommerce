@@ -61,6 +61,7 @@ test.describe( 'Product Collection: Register Product Collection', () => {
 	} );
 
 	test( `Registered collections should be available in Collection chooser`, async ( {
+		page,
 		pageObject,
 		editor,
 		admin,
@@ -73,15 +74,11 @@ test.describe( 'Product Collection: Register Product Collection', () => {
 			} )
 			.click();
 
-		const productCollectionBlock = editor.canvas.getByLabel(
-			'Block: Product Collection'
-		);
-
 		for ( const myCollection of Object.values(
 			MY_REGISTERED_COLLECTIONS
 		) ) {
 			await expect(
-				productCollectionBlock.getByRole( 'button', {
+				page.getByRole( 'button', {
 					name: myCollection.name,
 					exact: true,
 				} )
@@ -586,6 +583,71 @@ test.describe( 'Product Collection: Register Product Collection', () => {
 
 				await expect( previewButtonLocator ).toBeHidden();
 			} );
+		} );
+	} );
+
+	test.describe( 'with "scope" argument', () => {
+		test( 'Collection with only `inserter` scope should not be displayed in Collection Chooser', async ( {
+			pageObject,
+			editor,
+			admin,
+		} ) => {
+			await admin.createNewPost();
+			await pageObject.insertProductCollection();
+
+			const placeholderSelector = editor.canvas.locator(
+				SELECTORS.collectionPlaceholder
+			);
+
+			const collectionButton = placeholderSelector.getByRole( 'button', {
+				name: 'My Custom Collection - With Inserter Scope',
+				exact: true,
+			} );
+
+			await expect( collectionButton ).toBeHidden();
+		} );
+
+		test( 'Collection with only `block` scope should be displayed in Collection Chooser', async ( {
+			pageObject,
+			editor,
+			admin,
+		} ) => {
+			await admin.createNewPost();
+			await pageObject.insertProductCollection();
+
+			const placeholderSelector = editor.canvas.locator(
+				SELECTORS.collectionPlaceholder
+			);
+
+			const collectionButton = placeholderSelector.getByRole( 'button', {
+				name: 'My Custom Collection - With Block Scope',
+				exact: true,
+			} );
+
+			await expect( collectionButton ).toBeVisible();
+		} );
+
+		test( 'Choose collection button visibility for different scopes', async ( {
+			pageObject,
+			editor,
+			admin,
+		} ) => {
+			await admin.createNewPost();
+			await pageObject.insertProductCollection();
+			await pageObject.chooseCollectionInPost(
+				'myCustomCollectionWithBlockScope'
+			);
+			const chooseCollectionButton = admin.page
+				.getByRole( 'toolbar', { name: 'Block Tools' } )
+				.getByRole( 'button', { name: 'Choose collection' } );
+			await expect( chooseCollectionButton ).toBeVisible();
+
+			// Test inserter scope collection
+			await editor.setContent( '' );
+			await editor.insertBlockUsingGlobalInserter(
+				'My Custom Collection - With Inserter Scope'
+			);
+			await expect( chooseCollectionButton ).toBeHidden();
 		} );
 	} );
 } );
