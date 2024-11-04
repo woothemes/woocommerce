@@ -13,7 +13,11 @@ import {
 	__experimentalHStack as HStack,
 	FlexBlock,
 } from '@wordpress/components';
-import { unlock } from '@woocommerce/admin-layout';
+
+/**
+ * Internal dependencies
+ */	
+import { unlock } from '../lock-unlock';
 
 const { useHistory } = unlock( routerPrivateApis );
 
@@ -28,7 +32,7 @@ type SidebarNavigationItemProps = {
 	children: React.ReactNode;
 };
 
-export default function SidebarNavigationItem( {
+export function SidebarNavigationItem( {
 	className,
 	icon,
 	withChevron = false,

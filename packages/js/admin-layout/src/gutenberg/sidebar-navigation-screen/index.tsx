@@ -16,12 +16,12 @@ import {
 	// @ts-expect-error missing type.
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { unlock } from '@woocommerce/admin-layout';
 
 /**
  * Internal dependencies
  */
 import SidebarButton from './sidebar-button';
+import { unlock } from '../lock-unlock';
 
 const { useHistory, useLocation } = unlock( routerPrivateApis );
 
@@ -36,7 +36,7 @@ type SidebarNavigationScreenProps = {
 	backPath?: string;
 };
 
-export default function SidebarNavigationScreen( {
+export function SidebarNavigationScreen( {
 	isRoot,
 	title,
 	actions,

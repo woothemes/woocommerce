@@ -3,6 +3,7 @@
  */
 import { createElement } from '@wordpress/element';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
+import { SidebarNavigationScreen } from '@woocommerce/admin-layout';
 
 /**
  * Internal dependencies
@@ -11,7 +12,6 @@ import { unlock } from '@woocommerce/admin-layout';
 import ProductList from './product-list';
 import ProductEdit from './product-edit';
 import DataViewsSidebarContent from './sidebar-dataviews';
-import SidebarNavigationScreen from './sidebar-navigation-screen';
 
 const { useLocation } = unlock( routerPrivateApis );
 

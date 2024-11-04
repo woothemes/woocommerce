@@ -63,6 +63,7 @@
 		"@wordpress/i18n": "wp-6.0",
 		"@wordpress/icons": "10.6.0",
 		"@wordpress/private-apis": "^1.6.0",
+		"@wordpress/router": "^1.11.0",
 		"@wordpress/url": "wp-6.0",
 		"classnames": "^2.3.2"
 	},

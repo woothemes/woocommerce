@@ -235,6 +235,9 @@ importers:
       '@wordpress/private-apis':
         specifier: ^1.6.0
         version: 1.10.0
+      '@wordpress/router':
+        specifier: ^1.11.0
+        version: 1.11.0(react@17.0.2)
       '@wordpress/url':
         specifier: wp-6.0
         version: 3.7.1
@@ -12546,6 +12549,12 @@ packages:
   '@wordpress/router@0.7.0':
     resolution: {integrity: sha512-dOMbN8v6g9z8q6yDaAGS/7ZldVFVk0HvF/AvcMw2VFZ9QLOsP6VYRwuXgq8dAD2n8Rh42j1IfaMDTNznKScQpA==}
     engines: {node: '>=12'}
+    peerDependencies:
+      react: ^18.0.0
+
+  '@wordpress/router@1.11.0':
+    resolution: {integrity: sha512-sPcJ0uLXNmMW0hi+zpzvZkOXHbh//U32ZbZs6EHVmpjOk4CD2QNXkEPctFiU8UwOucMOZdkdB2WJcLE4GRkGCA==}
+    engines: {node: '>=18.12.0', npm: '>=8.19.2'}
     peerDependencies:
       react: ^18.0.0
 
@@ -44803,6 +44812,15 @@ snapshots:
       '@wordpress/element': 5.22.0
       '@wordpress/private-apis': 0.20.0
       '@wordpress/url': 3.59.0
+      history: 5.3.0
+      react: 17.0.2
+
+  '@wordpress/router@1.11.0(react@17.0.2)':
+    dependencies:
+      '@babel/runtime': 7.25.7
+      '@wordpress/element': 4.20.0
+      '@wordpress/private-apis': 1.10.0
+      '@wordpress/url': 3.7.1
       history: 5.3.0
       react: 17.0.2
 
