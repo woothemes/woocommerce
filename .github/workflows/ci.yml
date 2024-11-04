@@ -152,7 +152,7 @@ jobs:
     name: '${{ matrix.name }}'
     runs-on: 'ubuntu-20.04'
     needs: 'project-jobs'
-    if: ${{ !cancelled() && needs.identify-jobs-to-run.outputs.needs-code-validation == 'true' && needs.project-jobs.outputs.test-jobs != '[]' }}
+    if: ${{ !cancelled() && needs.project-jobs.outputs.test-jobs != '[]' }}
     env: ${{ matrix.testEnv.envVars }}
     strategy:
       fail-fast: false
