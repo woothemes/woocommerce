@@ -2,19 +2,10 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { ShippingCalculatorButton } from '@woocommerce/base-components/cart-checkout';
 
-/**
- * Internal dependencies
- */
-import { CalculatorButton, CalculatorButtonProps } from './calculator-button';
-
-export interface ShippingPlaceholderProps
-	extends Pick<
-		CalculatorButtonProps,
-		'setIsShippingCalculatorOpen' | 'shippingCalculatorID'
-	> {
+export interface ShippingPlaceholderProps {
 	showCalculator: boolean;
-	isShippingCalculatorOpen: boolean;
 	isCheckout?: boolean;
 	addressProvided: boolean;
 }
@@ -22,10 +13,7 @@ export interface ShippingPlaceholderProps
 export const ShippingPlaceholder = ( {
 	showCalculator,
 	addressProvided,
-	isShippingCalculatorOpen,
-	setIsShippingCalculatorOpen,
 	isCheckout = false,
-	shippingCalculatorID,
 }: ShippingPlaceholderProps ): JSX.Element => {
 	if ( ! showCalculator ) {
 		const label = addressProvided
@@ -35,20 +23,17 @@ export const ShippingPlaceholder = ( {
 			<span className="wc-block-components-shipping-placeholder__value">
 				{ isCheckout
 					? label
-					: __( 'Calculated during checkout', 'woocommerce' ) }
+					: __( 'Calculated at checkout', 'woocommerce' ) }
 			</span>
 		);
 	}
 
 	return (
-		<CalculatorButton
+		<ShippingCalculatorButton
 			label={ __(
 				'Enter address to check delivery options',
 				'woocommerce'
 			) }
-			isShippingCalculatorOpen={ isShippingCalculatorOpen }
-			setIsShippingCalculatorOpen={ setIsShippingCalculatorOpen }
-			shippingCalculatorID={ shippingCalculatorID }
 		/>
 	);
 };

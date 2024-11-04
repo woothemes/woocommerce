@@ -32,6 +32,10 @@ import type {
 	ProductCollectionSetAttributes,
 } from '../../types';
 
+const REFERENCE_TYPE_PRODUCT = 'product';
+const REFERENCE_TYPE_CART = 'cart';
+const REFERENCE_TYPE_ORDER = 'order';
+
 const ProductButton: React.FC< {
 	isOpen: boolean;
 	onToggle: () => void;
@@ -127,10 +131,15 @@ const enum PRODUCT_REFERENCE_TYPE {
 
 const getFromCurrentProductRadioLabel = (
 	currentLocation: string,
-	isUsesReferenceIncludesCart: boolean
+	hasCartReference: boolean,
+	hasOrderReference: boolean
 ): string => {
-	if ( currentLocation === 'cart' && isUsesReferenceIncludesCart ) {
+	if ( currentLocation === REFERENCE_TYPE_CART && hasCartReference ) {
 		return __( 'From products in the cart', 'woocommerce' );
+	}
+
+	if ( currentLocation === REFERENCE_TYPE_ORDER && hasOrderReference ) {
+		return __( 'From products in the order', 'woocommerce' );
 	}
 
 	return __( 'From the current product', 'woocommerce' );
@@ -147,21 +156,24 @@ const LinkedProductControl = ( {
 	location: WooCommerceBlockLocation;
 	usesReference: string[] | undefined;
 } ) => {
-	const REFERENCE_TYPE_PRODUCT = 'product';
 	const isProductLocation = location.type === REFERENCE_TYPE_PRODUCT;
 	const hasProductReference = !! usesReference?.includes(
 		REFERENCE_TYPE_PRODUCT
 	);
-	const REFERENCE_TYPE_CART = 'cart';
 	const isCartLocation = location.type === REFERENCE_TYPE_CART;
 	const hasCartReference = !! usesReference?.includes( REFERENCE_TYPE_CART );
+
+	const isOrderLocation = location.type === REFERENCE_TYPE_ORDER;
+	const hasOrderReference =
+		!! usesReference?.includes( REFERENCE_TYPE_ORDER );
+
 	const { productReference } = query;
 
 	const { product, isLoading } = useGetProduct( productReference );
 	const [ isDropdownOpen, setIsDropdownOpen ] = useState< boolean >( false );
 	const [ radioControlState, setRadioControlState ] =
 		useState< PRODUCT_REFERENCE_TYPE >(
-			( isProductLocation || isCartLocation ) &&
+			( isProductLocation || isCartLocation || isOrderLocation ) &&
 				isEmpty( productReference )
 				? PRODUCT_REFERENCE_TYPE.CURRENT_PRODUCT
 				: PRODUCT_REFERENCE_TYPE.SPECIFIC_PRODUCT
@@ -170,7 +182,8 @@ const LinkedProductControl = ( {
 
 	const showRadioControl =
 		( isProductLocation && hasProductReference ) ||
-		( isCartLocation && hasCartReference );
+		( isCartLocation && hasCartReference ) ||
+		( isOrderLocation && hasOrderReference );
 	const showSpecificProductSelector = showRadioControl
 		? radioControlState === PRODUCT_REFERENCE_TYPE.SPECIFIC_PRODUCT
 		: ! isEmpty( productReference );
@@ -179,9 +192,8 @@ const LinkedProductControl = ( {
 		( showRadioControl || showSpecificProductSelector ) &&
 		/**
 		 * Linked control is only useful for collection which uses product, cart or order reference.
-		 * TODO Add handling for Order reference
 		 */
-		( hasProductReference || hasCartReference );
+		( hasProductReference || hasCartReference || hasOrderReference );
 	if ( ! showLinkedProductControl ) return null;
 
 	const radioControlHelp =
@@ -215,7 +227,8 @@ const LinkedProductControl = ( {
 
 	const fromCurrentProductRadioLabel = getFromCurrentProductRadioLabel(
 		location.type,
-		hasCartReference
+		hasCartReference,
+		hasOrderReference
 	);
 
 	return (
