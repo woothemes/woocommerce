@@ -20,17 +20,16 @@ const test = base.extend( {
 } );
 
 const colorPalette = {
-	Slate: {
-		button: {
-			background: 'rgb(255, 223, 109)',
-			color: 'rgb(253, 251, 239)',
-		},
-		paragraph: {
-			color: [ 'rgb(239, 242, 249)', 'rgb(255, 255, 255)' ],
-		},
-		header: {
-			color: [ 'rgb(239, 242, 249)', 'rgb(255, 255, 255)' ],
-		},
+	name: 'Slate',
+	button: {
+		background: 'rgb(255, 223, 109)',
+		color: 'rgb(253, 251, 239)',
+	},
+	paragraph: {
+		color: [ 'rgb(239, 242, 249)', 'rgb(255, 255, 255)' ],
+	},
+	header: {
+		color: [ 'rgb(239, 242, 249)', 'rgb(255, 255, 255)' ],
 	},
 };
 
@@ -95,116 +94,112 @@ test.describe( 'Assembler -> Color Pickers', { tag: '@gutenberg' }, () => {
 		await expect( colorPickers ).toHaveCount( 18 );
 	} );
 
-	for ( const [ colorPaletteName, colors ] of Object.entries(
-		colorPalette
-	) ) {
-		test( `Color palette ${ colorPaletteName } should be applied`, async ( {
-			assemblerPageObject,
-			page,
-		} ) => {
-			const assembler = await assemblerPageObject.getAssembler();
-			const editor = await assemblerPageObject.getEditor();
+	test( `Color palette ${ colorPalette.name } should be applied`, async ( {
+		assemblerPageObject,
+		page,
+	} ) => {
+		const assembler = await assemblerPageObject.getAssembler();
+		const editor = await assemblerPageObject.getEditor();
 
-			const colorPicker = assembler.getByLabel( colorPaletteName );
+		const colorPicker = assembler.getByLabel( colorPalette.name );
 
-			await colorPicker.click();
+		await colorPicker.click();
 
-			await assembler.locator( '[aria-label="Back"]' ).click();
+		await assembler.locator( '[aria-label="Back"]' ).click();
 
-			const saveButton = assembler.getByText( 'Finish customizing' );
+		const saveButton = assembler.getByText( 'Finish customizing' );
 
-			const waitResponse = page.waitForResponse(
-				( response ) =>
-					response.url().includes( 'wp-json/wp/v2/global-styles' ) &&
-					response.status() === 200
+		const waitResponse = page.waitForResponse(
+			( response ) =>
+				response.url().includes( 'wp-json/wp/v2/global-styles' ) &&
+				response.status() === 200
+		);
+
+		const buttons = await editor
+			.locator( '.wp-block-button > .wp-block-button__link' )
+			.evaluateAll( ( elements ) =>
+				elements.map( ( element ) => {
+					const style = window.getComputedStyle( element );
+					return {
+						background: style.backgroundColor,
+						color: style.color,
+					};
+				} )
 			);
 
-			const buttons = await editor
-				.locator( '.wp-block-button > .wp-block-button__link' )
-				.evaluateAll( ( elements ) =>
-					elements.map( ( element ) => {
-						const style = window.getComputedStyle( element );
-						return {
-							background: style.backgroundColor,
-							color: style.color,
-						};
-					} )
-				);
+		const paragraphs = await editor
+			.locator(
+				'p.wp-block.wp-block-paragraph:not([aria-label="Empty block; start writing or type forward slash to choose a block"])'
+			)
+			.evaluateAll( ( elements ) =>
+				elements.map( ( element ) => {
+					const style = window.getComputedStyle( element );
+					return {
+						background: style.backgroundColor,
+						color: style.color,
+					};
+				} )
+			);
 
-			const paragraphs = await editor
-				.locator(
-					'p.wp-block.wp-block-paragraph:not([aria-label="Empty block; start writing or type forward slash to choose a block"])'
-				)
-				.evaluateAll( ( elements ) =>
-					elements.map( ( element ) => {
-						const style = window.getComputedStyle( element );
-						return {
-							background: style.backgroundColor,
-							color: style.color,
-						};
-					} )
-				);
+		const headers = await editor
+			.locator( 'h1, h2, h3, h4, h5, h6' )
+			.evaluateAll( ( elements ) =>
+				elements.map( ( element ) => {
+					const style = window.getComputedStyle( element );
+					return {
+						background: style.backgroundColor,
+						color: style.color,
+					};
+				} )
+			);
 
-			const headers = await editor
-				.locator( 'h1, h2, h3, h4, h5, h6' )
-				.evaluateAll( ( elements ) =>
-					elements.map( ( element ) => {
-						const style = window.getComputedStyle( element );
-						return {
-							background: style.backgroundColor,
-							color: style.color,
-						};
-					} )
-				);
-
-			const headersInCoverBlock = await editor
-				.locator(
-					`.wp-block-cover__inner-container h1,
+		const headersInCoverBlock = await editor
+			.locator(
+				`.wp-block-cover__inner-container h1,
 					 .wp-block-cover__inner-container h2,
 					 .wp-block-cover__inner-container h3,
 					 .wp-block-cover__inner-container h4,
 					 .wp-block-cover__inner-container h5,
 					 .wp-block-cover__inner-container h6`
-				)
-				.evaluateAll( ( elements ) =>
-					elements.map( ( element ) => {
-						const style = window.getComputedStyle( element );
-						return {
-							background: style.backgroundColor,
-							color: style.color,
-						};
-					} )
-				);
+			)
+			.evaluateAll( ( elements ) =>
+				elements.map( ( element ) => {
+					const style = window.getComputedStyle( element );
+					return {
+						background: style.backgroundColor,
+						color: style.color,
+					};
+				} )
+			);
 
-			for ( const element of buttons ) {
-				await expect( element.background ).toEqual(
-					colors.button.background
-				);
-			}
+		for ( const element of buttons ) {
+			await expect( element.background ).toEqual(
+				colorPalette.button.background
+			);
+		}
 
-			for ( const element of paragraphs ) {
-				expect( colors.paragraph.color.includes( element.color ) ).toBe(
-					true
-				);
-			}
+		for ( const element of paragraphs ) {
+			expect(
+				colorPalette.paragraph.color.includes( element.color )
+			).toBe( true );
+		}
 
-			for ( const element of headers ) {
-				expect( colors.header.color.includes( element.color ) ).toBe(
-					true
-				);
-			}
+		for ( const element of headers ) {
+			expect( colorPalette.header.color.includes( element.color ) ).toBe(
+				true
+			);
+		}
 
-			// Check that the headers in the cover block are white text.
-			// See: https://github.com/woocommerce/woocommerce/pull/48447
-			for ( const element of headersInCoverBlock ) {
-				expect( element.color ).toEqual( 'rgb(255, 255, 255)' );
-			}
+		// Check that the headers in the cover block are white text.
+		// See: https://github.com/woocommerce/woocommerce/pull/48447
+		for ( const element of headersInCoverBlock ) {
+			expect( element.color ).toEqual( 'rgb(255, 255, 255)' );
+		}
 
-			await saveButton.click();
+		await saveButton.click();
 
-			await waitResponse;
-		} );
-	}
+		await waitResponse;
+	} );
 
 	test( 'Color picker should be focused when a color is picked', async ( {
 		assemblerPageObject,
@@ -302,19 +297,19 @@ test.describe( 'Assembler -> Color Pickers', { tag: '@gutenberg' }, () => {
 
 			for ( const element of buttons ) {
 				await expect( element.background ).toEqual(
-					colorPalette.Slate.button.background
+					colorPalette.button.background
 				);
 			}
 
 			for ( const element of paragraphs ) {
 				expect(
-					colorPalette.Slate.paragraph.color.includes( element.color )
+					colorPalette.paragraph.color.includes( element.color )
 				).toBe( true );
 			}
 
 			for ( const element of headers ) {
 				expect(
-					colorPalette.Slate.header.color.includes( element.color )
+					colorPalette.header.color.includes( element.color )
 				).toBe( true );
 			}
 		}
