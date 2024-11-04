@@ -87,7 +87,14 @@ jobs:
 
             let baseSha = ${{ toJson( github.event.pull_request.base.sha ) }};
             if ( baseSha ) {
+              // Use-case: trigger is pull request
               baseRef = `--base-ref ${ baseSha }`;
+            } else {
+              // Use-case: trigger is other workflow trigger
+              let baseRef = ${{ toJson( github.base_ref ) }};
+              if ( baseRef ) {
+                baseRef = `--base-ref origin/${ baseRef }`;
+              }
             }
 
             let githubEvent = ${{ toJson( github.event_name ) }};
