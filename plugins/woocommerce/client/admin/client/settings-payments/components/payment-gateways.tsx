@@ -15,6 +15,7 @@ import { getAdminLink } from '@woocommerce/settings';
  * Internal dependencies
  */
 import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
+import { StatusBadge } from '~/settings-payments/components/status-badge';
 
 // TODO: This should either be a util function, or handled in a different way e.g. passing the data as props.
 const parseScriptTag = ( elementId: string ) => {
@@ -44,23 +45,41 @@ export const PaymentGateways = () => {
 		);
 	}, [] );
 
-	const recommendedGateways = [ 'woocommerce_payments' ];
-
 	const setupLivePayments = () => {
 		// TODO: Implement in future PR.
+	};
+
+	const determineGatewayStatus = ( gateway: PaymentGateway ) => {
+		if ( gateway.enabled ) {
+			if ( gateway.needs_setup ?? false ) {
+				return 'needs_setup';
+			}
+
+			if ( gateway.id === 'woocommerce_payments' ) {
+				if ( wooPaymentsGatewayData?.isInTestMode ) {
+					return 'test_mode';
+				}
+			}
+			return 'active';
+		}
+
+		if ( gateway.id === 'woocommerce_payments' ) {
+			return 'recommended';
+		}
+
+		return 'inactive';
 	};
 
 	// Transform plugins comply with List component format.
 	const paymentGatewaysList = paymentGateways.map(
 		( gateway: PaymentGateway ) => {
+			const status = determineGatewayStatus( gateway );
 			return {
 				key: gateway.id,
 				title: (
 					<>
 						{ gateway.method_title }
-						{ recommendedGateways.includes( gateway.id ) && (
-							<Pill>{ __( 'Recommended', 'woocommerce' ) }</Pill>
-						) }
+						<StatusBadge status={ status } />
 					</>
 				),
 				content: (
