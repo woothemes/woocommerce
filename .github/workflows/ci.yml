@@ -60,8 +60,7 @@ jobs:
     outputs:
       lint-jobs: ${{ steps.project-jobs.outputs.lint-jobs }}
       test-jobs: ${{ steps.project-jobs.outputs.test-jobs }}
-      report-jobs: ${{ steps.project-jobs.outputs.report-jobs }}
-    
+      report-jobs: ${{ steps.project-jobs.outputs.report-jobs }}    
     steps:
       - name: Setup - calculate checkout depth
         id: checkout_depth
