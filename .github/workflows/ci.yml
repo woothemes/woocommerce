@@ -408,7 +408,7 @@ jobs:
 
   report-flaky-tests:
     name: 'Create issues for flaky tests'
-    if: ${{ !cancelled() && github.repository == 'woocommerce/woocommerce' && ( needs.project-jobs.outputs.test-jobs || '[]' ) != '[]' }}
+    if: ${{ !cancelled() && github.repository == 'woocommerce/woocommerce' && needs.project-jobs.outputs.test-jobs != '[]' }}
     needs: ['project-jobs', 'project-test-jobs']
     runs-on: ubuntu-latest
     permissions:
