@@ -4,7 +4,7 @@ tags: reference
 ---
 ## Overview
 
-With HPOS we introduced a set of [WP-CLI commands](https://developer.woocommerce.com/docs/category/wc-cli/) living under the `wp wc hpos` and `wp wc cot` namespaces.
+With HPOS we introduced a set of [WP-CLI commands](https://developer.woocommerce.com/docs/category/wc-cli/) living under the `wp wc hpos` namespace (though you may come across blog posts and older documentation referencing the now-deprecated `wp wc cot` namespace).
 
 The following table provides an overview of what each command does, while more details and examples can be found below.
 
@@ -13,11 +13,11 @@ Keep in mind that the commands themselves have documentation and examples that c
 |Command|Use this command to...|
 |----|-----|
 |`wc hpos status`|Get an overview of all HPOS matters on your site.|
-|`wc cot enable`|Enable HPOS (and possibly compatibility mode).|
-|`wc cot disable`|Disable HPOS (and possibly compatibility mode).|
-|`wc cot count_unmigrated`|Get a count of all orders pending sync.|
-|`wc cot sync`|Performantly sync orders from the currently active order storage to the other.|
-|`wc cot verify_cot_data`|Verify data between datastores.|
+|`wc hpos enable`|Enable HPOS (and possibly compatibility mode).|
+|`wc hpos disable`|Disable HPOS (and possibly compatibility mode).|
+|`wc hpos count_unmigrated`|Get a count of all orders pending sync.|
+|`wc hpos sync`|Performantly sync orders from the currently active order storage to the other.|
+|`wc hpos verify_data`|Verify data between datastores.|
 |`wc hpos diff`|Get an user friendly version of the differences for an order between both order storages.|
 |`wc hpos backfill`|Copy over whole orders or specific bits of order data from any order storage to the other.|
 |`wc hpos cleanup`|Remove order data from legacy tables.|
@@ -41,7 +41,7 @@ Unsynced orders: 651
 Orders subject to cleanup: 348
 ```
 
-### `wc cot enable`
+### `wc hpos enable`
 
 Use this command to enable HPOS and compatibility mode (if desired) from the command line.
 
@@ -50,13 +50,13 @@ Use this command to enable HPOS and compatibility mode (if desired) from the com
 Enables HPOS and compatibility mode too (`--with-sync` flag).
 
 ```plaintext
-$ wp wc cot enable --with-sync
+$ wp wc hpos enable --with-sync
 Running pre-enable checks...
 Success: Sync enabled.
 Success: HPOS enabled.
 ```
 
-### `wc cot disable`
+### `wc hpos disable`
 
 Similarly to the prior command, this can be used to disable HPOS.
 
@@ -73,19 +73,19 @@ Error: [Failed] There are orders pending sync. Please run `wp wc cot sync` to sy
 #### Example 2 - Disable HPOS
 
 ```plaintext
-$ wp wc cot disable
+$ wp wc hpos disable
 Running pre-disable checks...
 Success: HPOS disabled.
 ```
 
-### `wc cot count_unmigrated`
+### `wc hpos count_unmigrated`
 
 Prints the number of orders pending sync.
 
 #### Example 1 - Obtain number of orders pending sync
 
 ```plaintext
-$ wp wc cot count_unmigrated
+$ wp wc hpos count_unmigrated
 There are 651 orders to be synced.
 ```
 
@@ -101,14 +101,14 @@ If you need more control over which datastore to use as source (or destination) 
 #### Example 1 - Sync all orders
 
 ```plaintext
-$ wp wc cot sync
+$ wp wc hpos sync
 There are 999 orders to be synced.
 Order Data Sync  100% [============================================================================================] 0:08 / 0:08
 Sync completed.
 Success: 999 orders were synced in 14 seconds.
 ```
 
-### `wc cot verify_cot_data`
+### `wc hpos verify_cot_data`
 
 Use this command to check that order data in both the legacy (posts) datastore and HPOS is in sync. This is only relevant if you have "compatibility mode" enabled and orders might've been modified outside of the usual WooCommerce flows.
 
@@ -119,7 +119,7 @@ This command operates on all orders. For a user friendlier alternative that oper
 All orders are identical between datastores.
 
 ```plaintext
-$ wp wc cot verify_cot_data
+$ wp wc hpos verify_data
 Order Data Verification  100% [====================================================================================] 0:00 / 0:00
 Verification completed.
 Success: 999 orders were verified in 0 seconds.
@@ -130,7 +130,7 @@ Success: 999 orders were verified in 0 seconds.
 An order (with ID 100126) fails verification due to differences in order total, tax, modification date and billing information.
 
 ```plaintext
-$ wp wc cot verify_cot_data
+$ wp wc hpos verify_data
 Order Data Verification  100% [====================================================================================] 0:00 / 0:00
 Verification completed.
 Error: 999 orders were verified in 0 seconds. 1 error found: {
@@ -169,7 +169,7 @@ Error: 999 orders were verified in 0 seconds. 1 error found: {
 The verification command also admits a `--re-migrate` flag that will attempt to sync orders that have differences. This could effectively overwrite an order in the database, so use with care.
 
 ```plaintext
-$ wp wc cot verify_cot_data --re-migrate
+$ wp wc hpos verify_data --re-migrate
 Order Data Verification  100% [====================================================================================] 0:00 / 0:00
 Verification completed.
 Success: 999 orders were verified in 0 seconds.
