@@ -1,7 +1,7 @@
 export const ShippingCollaterals = ( {
 	collaterals,
 }: {
-	collaterals: React.ReactNode | null;
+	collaterals?: React.ReactNode;
 } ): JSX.Element | null => {
 	if ( ! collaterals ) {
 		return null;

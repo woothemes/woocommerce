@@ -18,8 +18,8 @@ import './style.scss';
 
 export interface TotalShippingProps {
 	label?: string;
-	placeholder?: React.ReactNode | null;
-	collaterals?: React.ReactNode | null;
+	placeholder?: React.ReactNode;
+	collaterals?: React.ReactNode;
 }
 
 export const TotalsShipping = ( {
