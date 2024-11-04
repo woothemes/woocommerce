@@ -57,19 +57,19 @@ class WC_Admin_Tests_API_Onboarding_Tasks extends WC_REST_Unit_Test_Case {
 	 */
 	public function tearDown(): void {
 		parent::tearDown();
-		$this->remove_color_or_logo_attribute_taxonomy();
+		$this->cleanup_test_product_attributes();
 		TaskLists::clear_lists();
 		TaskLists::init_default_lists();
 	}
 
 	/**
-	 * Remove product attributes that where created in previous tests.
+	 * Clean up product attribute taxonomies created during tests.
 	 */
-	public function remove_color_or_logo_attribute_taxonomy() {
+	public function cleanup_test_product_attributes() {
 		$taxonomies = get_taxonomies();
 		foreach ( (array) $taxonomies as $taxonomy ) {
-			// pa - product attribute.
-			if ( 'pa_color' === $taxonomy || 'pa_logo' === $taxonomy ) {
+			// pa_ prefix indicates product attribute taxonomy.
+			if ( in_array( $taxonomy, array( 'pa_color', 'pa_logo', 'pa_size' ), true ) ) {
 				unregister_taxonomy( $taxonomy );
 			}
 		}
@@ -81,7 +81,7 @@ class WC_Admin_Tests_API_Onboarding_Tasks extends WC_REST_Unit_Test_Case {
 	public function test_import_sample_products() {
 		wp_set_current_user( $this->user );
 
-		$this->remove_color_or_logo_attribute_taxonomy();
+		$this->cleanup_test_product_attributes();
 
 		// Downloading product images are slow and tests shouldn't rely on external resources so we mock the request.
 		add_filter(
@@ -108,6 +108,8 @@ class WC_Admin_Tests_API_Onboarding_Tasks extends WC_REST_Unit_Test_Case {
 		$request  = new WP_REST_Request( 'POST', $this->endpoint . '/import_sample_products' );
 		$response = $this->server->dispatch( $request );
 		$data     = $response->get_data();
+
+		echo print_r( $data, true );
 
 		$this->assertEquals( 200, $response->get_status() );
 
