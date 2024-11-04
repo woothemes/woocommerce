@@ -7,6 +7,7 @@
  *
  * Clears the cache for E2E test runs.
  */
+
 declare(strict_types=1);
 
 wp_cache_flush();
