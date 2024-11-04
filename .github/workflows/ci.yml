@@ -9,7 +9,6 @@ on:
     branches:
       - 'trunk'
       - 'release/*'
-      - 'dev/ci-block-merge-if-ci-fails'
   release:
     types: [published, edited]
   workflow_call:
@@ -61,7 +60,7 @@ jobs:
     outputs:
       lint-jobs: ${{ steps.project-jobs.outputs.lint-jobs }}
       test-jobs: ${{ steps.project-jobs.outputs.test-jobs }}
-      report-jobs: ${{ steps.project-jobs.outputs.report-jobs }}    
+      report-jobs: ${{ steps.project-jobs.outputs.report-jobs }}
     steps:
       - name: Setup - calculate checkout depth
         id: checkout_depth
@@ -90,12 +89,6 @@ jobs:
             if ( baseSha ) {
               // Use-case: trigger is pull request
               baseRef = `--base-ref ${ baseSha }`;
-            } else {
-              // Use-case: trigger is other workflow trigger
-              let baseRef = ${{ toJson( github.base_ref ) }};
-              if ( baseRef ) {
-                baseRef = `--base-ref origin/${ baseRef }`;
-              }
             }
 
             let githubEvent = ${{ toJson( github.event_name ) }};
