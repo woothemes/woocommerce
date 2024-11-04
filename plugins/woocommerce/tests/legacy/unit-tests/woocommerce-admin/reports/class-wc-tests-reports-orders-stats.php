@@ -277,7 +277,7 @@ class WC_Admin_Tests_Reports_Orders_Stats extends WC_Unit_Test_Case {
 			'interval'  => 'hour',
 			'after'     => $start_time,
 			'before'    => $end_time,
-			'status_is' => array( 'failed' ),
+			'status_is' => array( OrderStatus::FAILED ),
 		);
 		$expected_stats = array(
 			'totals'    => array(

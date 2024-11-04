@@ -1429,7 +1429,7 @@ class WC_Tests_Order_Functions extends WC_Unit_Test_Case {
 			1,
 			WC_Helper_Product::create_simple_product(),
 			array(
-				'status' => 'completed',
+				'status' => OrderStatus::COMPLETED,
 			)
 		);
 		// Ensure the order is a complete object with an initial modified date.
