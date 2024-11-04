@@ -10,7 +10,7 @@ import {
 } from '@woocommerce/base-components/cart-checkout';
 import { ShippingCalculatorContext } from '@woocommerce/base-components/cart-checkout/shipping-calculator/context';
 import { useEditorContext, useStoreCart } from '@woocommerce/base-context';
-import { TotalsWrapper } from '@woocommerce/blocks-components';
+import { TotalsWrapper } from '@woocommerce/blocks-checkout';
 import {
 	getShippingRatesPackageCount,
 	selectedRatesAreCollectable,

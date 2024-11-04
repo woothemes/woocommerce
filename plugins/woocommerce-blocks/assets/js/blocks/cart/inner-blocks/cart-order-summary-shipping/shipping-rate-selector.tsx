@@ -3,9 +3,9 @@
  */
 import { __, sprintf } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
-import { ShippingRatesControl } from '@woocommerce/base-components';
+import { ShippingRatesControl } from '@woocommerce/base-components/cart-checkout';
 import NoticeBanner from '@woocommerce/base-components/notice-banner';
-import { useStoreCart } from '@woocommerce/base-context';
+import { useStoreCart } from '@woocommerce/base-context/hooks';
 import {
 	formatShippingAddress,
 	isAddressComplete,
