@@ -1,0 +1,4 @@
+Significance: minor
+Type: add
+
+Add a fallback query id to the product collection block
