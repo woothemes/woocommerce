@@ -29,10 +29,31 @@ printf "\n\n\n"
 echo "--------------------------------------------------------"
 echo -e "Installing mu plugins"
 echo "--------------------------------------------------------"
-wp plugin install --force --activate https://github.com/woocommerce/woocommerce/raw/trunk/plugins/woocommerce/tests/e2e-pw/bin/filter-setter.zip \
-    https://github.com/woocommerce/woocommerce/raw/trunk/plugins/woocommerce/tests/e2e-pw/bin/process-waiting-actions.zip \
-    https://github.com/woocommerce/woocommerce/raw/trunk/plugins/woocommerce/tests/e2e-pw/bin/test-helper-apis.zip \
-    https://github.com/woocommerce/woocommerce/raw/trunk/plugins/woocommerce/tests/e2e-pw/bin/wp-cache-flush.zip
+
+# Define the list of PHP files to process
+mu_plugins=(
+    "filter-setter"
+    "process-waiting-actions"
+    "test-helper-apis"
+    "wp-cache-flush"
+	"woocommerce-cleanup"
+)
+
+# Process each plugin
+for plugin in "${mu_plugins[@]}"; do
+    echo "Processing $plugin..."
+
+    # Download the PHP file
+    curl -o "$plugin.php" "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/plugins/woocommerce/tests/e2e-pw/bin/$plugin.php"
+
+    # Create a zip file
+    (chmod 755 "$plugin.php" && zip "${plugin%}.zip" "$plugin.php")
+
+    # Install the plugin from the local zip
+    wp plugin install --force --activate "${plugin%}.zip"
+
+    # rm "$plugin.php" "${plugin%}.zip"
+done
 
 printf "\n\n\n"
 
