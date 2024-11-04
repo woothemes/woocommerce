@@ -1,23 +1,22 @@
 /**
  * External dependencies
  */
-import { registerBlockType } from '@wordpress/blocks';
-import { button as icon } from '@wordpress/icons';
 import { isExperimentalBlocksEnabled } from '@woocommerce/block-settings';
+import { productFilterOptions } from '@woocommerce/icons';
+import { registerBlockType } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
  */
 import metadata from './block.json';
 import Edit from './edit';
-import save from './save';
-import { blockVariations } from './block-variations';
+import Save from './save';
+import './style.scss';
 
 if ( isExperimentalBlocksEnabled() ) {
 	registerBlockType( metadata, {
-		icon,
 		edit: Edit,
-		save,
-		variations: blockVariations,
+		icon: productFilterOptions,
+		save: Save,
 	} );
 }
