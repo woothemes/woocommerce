@@ -2,11 +2,7 @@
  * External dependencies
  */
 import { createElement } from '@wordpress/element';
-
-/**
- * Internal dependencies
- */
-import { Layout } from './layout';
+import { Layout } from '@woocommerce/admin-layout';
 
 const Sidebar = <div>Sidebar content goes here</div>;
 
@@ -18,6 +14,7 @@ export const SettingsEditor = () => {
 				areas: { sidebar: Sidebar },
 				widths: {},
 			} }
+			showNewNavigation={ true }
 		/>
 	);
 };
