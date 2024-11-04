@@ -33,6 +33,7 @@ declare global {
 		wcAdminFeatures: {
 			'activity-panels': boolean;
 			analytics: boolean;
+			'coming-soon-newsletter': boolean;
 			coupons: boolean;
 			'customer-effort-score-tracks': boolean;
 			homescreen: boolean;
