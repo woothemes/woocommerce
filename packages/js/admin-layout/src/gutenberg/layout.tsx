@@ -27,12 +27,27 @@ import {
  */
 import SidebarContent from './sidebar';
 import SiteHub from './site-hub';
-import { Route } from './router';
-import { unlock } from '../lock-unlock';
+import { unlock } from './lock-unlock';
 
 const { NavigableRegion } = unlock( editorPrivateApis );
 
 const ANIMATION_DURATION = 0.3;
+
+type Route = {
+	key: string;
+	areas: {
+		sidebar: React.JSX.Element | React.FunctionComponent;
+		content?: React.JSX.Element | React.FunctionComponent;
+		edit?: React.JSX.Element | React.FunctionComponent;
+		mobile?: React.JSX.Element | React.FunctionComponent | boolean;
+		preview?: boolean;
+	};
+	widths?: {
+		content?: number;
+		edit?: number;
+		sidebar?: number;
+	};
+};
 
 type LayoutProps = {
 	route: Route;
