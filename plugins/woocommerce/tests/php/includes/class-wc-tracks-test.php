@@ -15,6 +15,9 @@ class WC_Tracks_Test extends \WC_Unit_Test_Case {
 		include_once WC_ABSPATH . 'includes/tracks/class-wc-tracks.php';
 		include_once WC_ABSPATH . 'includes/tracks/class-wc-tracks-client.php';
 		include_once WC_ABSPATH . 'includes/tracks/class-wc-tracks-event.php';
+
+		$user = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $user );
 	}
 
 	/**
@@ -44,6 +47,20 @@ class WC_Tracks_Test extends \WC_Unit_Test_Case {
 		);
 		$this->assertContains( '_ui', array_keys( $properties ) );
 		$this->assertContains( '_ut', array_keys( $properties ) );
+	}
+
+
+	/**
+	 * Test that the role property is added to the properties.
+	 */
+	public function test_addition_of_role() {
+		$properties = \WC_Tracks::get_properties(
+			'test_event',
+			array(),
+		);
+
+		$this->assertContains( '_role', array_keys( $properties ) );
+		$this->assertEquals( 'administrator', $properties['_role'] );
 	}
 
 	/**
