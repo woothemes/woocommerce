@@ -4,9 +4,7 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { speak } from '@wordpress/a11y';
 import { Icon, chevronDown } from '@wordpress/icons';
-import Rating, {
-	RatingValues,
-} from '@woocommerce/base-components/product-rating';
+import Rating from '@woocommerce/base-components/product-rating';
 import { usePrevious, useShallowEqual } from '@woocommerce/base-hooks';
 import {
 	useQueryStateByKey,
@@ -34,6 +32,7 @@ import './style.scss';
 import { Attributes } from './types';
 import { formatSlug, getActiveFilters, generateUniqueId } from './utils';
 import { useSetWraperVisibility } from '../filter-wrapper/context';
+import type { RatingValues } from '../product-collection/types';
 
 export const QUERY_PARAM_KEY = 'rating_filter';
 

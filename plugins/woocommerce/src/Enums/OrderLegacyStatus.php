@@ -4,8 +4,6 @@ declare( strict_types = 1 );
 
 namespace Automattic\WooCommerce\Enums;
 
-use Automattic\WooCommerce\Blocks\Domain\Services\DraftOrders;
-
 /**
  * Enum class for all the legacy order statuses.
  */
@@ -58,11 +56,4 @@ final class OrderLegacyStatus {
 	 * @var string
 	 */
 	const FAILED = 'wc-failed';
-
-	/**
-	 * The order is a draft.
-	 *
-	 * @var string
-	 */
-	const DRAFT = DraftOrders::DB_STATUS;
 }
