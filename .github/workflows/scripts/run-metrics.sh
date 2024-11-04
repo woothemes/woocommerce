@@ -19,9 +19,13 @@ function title() {
 if [ "$GITHUB_EVENT_NAME" == "push" ] || [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
 	mkdir -p $ARTIFACTS_PATH && export WP_ARTIFACTS_PATH=$ARTIFACTS_PATH
 
-	# It should be 3d7d7f02017383937f1a4158d433d0e5d44b3dc9, but we pick 55f855a2e6d769b5ae44305b2772eb30d3e721df
-	# where compare-perf reporting mode was introduced for processing the provided reports.
-	BASE_SHA=55f855a2e6d769b5ae44305b2772eb30d3e721df
+	if [ "$GITHUB_EVENT_NAME" == "push" ] then
+		# It should be 3d7d7f02017383937f1a4158d433d0e5d44b3dc9, but we pick 55f855a2e6d769b5ae44305b2772eb30d3e721df
+		# where compare-perf reporting mode was introduced for processing the provided reports.
+		BASE_SHA=55f855a2e6d769b5ae44305b2772eb30d3e721df
+	else
+		BASE_SHA=$GITHUB_BASE_SHA
+	fi
 	HEAD_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 	WP_VERSION=$(awk -F ': ' '/^Tested up to/{print $2}' readme.txt)
 	title "Comparing performance between: $BASE_SHA@trunk (base) and $GITHUB_SHA@$HEAD_BRANCH (head) on WordPress v$WP_VERSION"
@@ -89,7 +93,8 @@ if [ "$GITHUB_EVENT_NAME" == "push" ] || [ "$GITHUB_EVENT_NAME" == "pull_request
 	# - Be tracked on https://www.codevitals.run/project/woo for all existing
 	#   metrics.
 	IFS=. read -ra WP_VERSION_ARRAY <<< "$WP_VERSION"
-	pnpm --filter="compare-perf" run compare perf $GITHUB_SHA $BASE_SHA --tests-branch $GITHUB_SHA --wp-version "${WP_VERSION_ARRAY[0]}.${WP_VERSION_ARRAY[1]}" --ci --skip-benchmarking
+	PERF_RESULTS=$(pnpm --filter="compare-perf" run compare perf $GITHUB_SHA $BASE_SHA --tests-branch $GITHUB_SHA --wp-version "${WP_VERSION_ARRAY[0]}.${WP_VERSION_ARRAY[1]}" --ci --skip-benchmarking --delta)
+	echo $PERF_RESULTS
 	echo '##[endgroup]'
 
 	if [[ "$GITHUB_EVENT_NAME" == "push" ]]; then
@@ -98,6 +103,18 @@ if [ "$GITHUB_EVENT_NAME" == "push" ] || [ "$GITHUB_EVENT_NAME" == "pull_request
 		pnpm --filter="compare-perf" run log $CODEVITALS_PROJECT_TOKEN trunk $GITHUB_SHA $BASE_SHA $COMMITTED_AT
 		echo '##[endgroup]'
 	fi
+
+	# Compare server response delta compared to the base branch and fail if greater than 10% difference.
+	DELTAS=$(echo $PERF_RESULTS | grep 'delta:' | sed 's/^.*: //')
+	DELTAS_ARRAY=($result)
+	for i in "${DELTAS_ARRAY[@]}"
+	do
+		if [ "$i" -gt "10" ] then
+			echo "::error::The server response delta of ${i}% is greater than the maximum allowed 10%."
+			exit 1
+		fi
+	done
+
 else
   	echo "Unsupported event: $GITHUB_EVENT_NAME"
 fi
