@@ -13,7 +13,7 @@ require_once __DIR__ . '/../features/onboarding-tasks/test-task.php';
 
 // Wrokaround to suppress exif_read_data errors from
 // https://github.com/WordPress/WordPress/blob/master/wp-admin/includes/image.php#L835
-define('WP_RUN_CORE_TESTS', false);
+define( 'WP_RUN_CORE_TESTS', false );
 
 /**
  * WC Tests API Onboarding Tasks
@@ -52,7 +52,6 @@ class WC_Admin_Tests_API_Onboarding_Tasks extends WC_REST_Unit_Test_Case {
 		// Resetting task list options and lists.
 		update_option( Task::DISMISSED_OPTION, array() );
 		TaskLists::clear_lists();
-
 	}
 
 	/**
@@ -85,6 +84,26 @@ class WC_Admin_Tests_API_Onboarding_Tasks extends WC_REST_Unit_Test_Case {
 		wp_set_current_user( $this->user );
 
 		$this->remove_color_or_logo_attribute_taxonomy();
+		add_filter(
+			'pre_http_request',
+			function ( $preempt, $parsed_args, $url ) {
+				if ( preg_match( '/\.(jpg|jpeg|png|gif|bmp|tiff|tif|ico|webp)$/i', $url ) ) {
+					// Create a fake image file.
+					$temp_file = $parsed_args['filename'];
+					$img       = imagecreatetruecolor( 1, 1 );
+					imagejpeg( $img, $temp_file );
+					imagedestroy( $img );
+
+					return array(
+						'response' => array( 'code' => 200 ),
+						'filename' => $temp_file,
+					);
+				}
+				return $preempt;
+			},
+			10,
+			3
+		);
 
 		$request  = new WP_REST_Request( 'POST', $this->endpoint . '/import_sample_products' );
 		$response = $this->server->dispatch( $request );
@@ -102,6 +121,8 @@ class WC_Admin_Tests_API_Onboarding_Tasks extends WC_REST_Unit_Test_Case {
 		}
 		$this->assertArrayHasKey( 'updated', $data );
 		$this->assertEquals( 0, count( $data['updated'] ) );
+
+		remove_all_filters( 'pre_http_request' );
 	}
 
 	/**
@@ -400,5 +421,4 @@ class WC_Admin_Tests_API_Onboarding_Tasks extends WC_REST_Unit_Test_Case {
 		$this->assertEquals( $test_task['id'], 'test-task' );
 		$this->assertEquals( $test_task['isDismissable'], true );
 	}
-
 }
