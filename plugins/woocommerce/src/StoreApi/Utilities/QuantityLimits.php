@@ -83,7 +83,7 @@ final class QuantityLimits {
 	 * @return int
 	 */
 	public function normalize_cart_item_quantity( int $quantity, array $cart_item ) {
-		$product = $cart_item['data'];
+		$product = $cart_item['data'] ?? false;
 
 		if ( ! $product instanceof \WC_Product ) {
 			return $quantity;
@@ -132,7 +132,11 @@ final class QuantityLimits {
 	 */
 	public function validate_cart_item_quantity( $quantity, $cart_item ) {
 		$limits  = $this->get_cart_item_quantity_limits( $cart_item );
-		$product = $cart_item['data'];
+		$product = $cart_item['data'] ?? false;
+
+		if ( ! $product instanceof \WC_Product ) {
+			return true;
+		}
 
 		if ( ! $limits['editable'] ) {
 			/* translators: 1: product name */

@@ -226,7 +226,7 @@ class CartController {
 			throw new RouteException( 'woocommerce_rest_cart_invalid_key', esc_html__( 'Cart item does not exist.', 'woocommerce' ), 409 );
 		}
 
-		$product = $cart_item['data'];
+		$product = $cart_item['data'] ?? false;
 
 		if ( ! $product instanceof \WC_Product ) {
 			throw new RouteException( 'woocommerce_rest_cart_invalid_product', esc_html__( 'Cart item is invalid.', 'woocommerce' ), 404 );
@@ -643,7 +643,7 @@ class CartController {
 	 * @param array $cart_item Cart item array.
 	 */
 	public function validate_cart_item( $cart_item ) {
-		$product = $cart_item['data'];
+		$product = $cart_item['data'] ?? false;
 
 		if ( ! $product instanceof \WC_Product ) {
 			return;
