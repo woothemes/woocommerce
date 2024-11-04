@@ -8,7 +8,7 @@ import { createElement, useState } from '@wordpress/element';
 import { OPTIONS_STORE_NAME } from '@woocommerce/data';
 import { __ } from '@wordpress/i18n';
 import { recordEvent } from '@woocommerce/tracks';
-import { apiFetch } from '@wordpress/data-controls';
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
@@ -95,12 +95,14 @@ function _CustomerEffortScoreTracks( {
 
 		if ( ! cesShownForActions || ! cesShownForActions.includes( action ) ) {
 			apiFetch( {
-				path: 'wc/admin/options/options',
+				path: 'wc-admin/options',
 				method: 'POST',
-				[ SHOWN_FOR_ACTIONS_OPTION_NAME ]: [
-					action,
-					...( cesShownForActions || [] ),
-				],
+				data: {
+					[ SHOWN_FOR_ACTIONS_OPTION_NAME ]: [
+						action,
+						...( cesShownForActions || [] ),
+					],
+				},
 			} );
 		}
 	};
