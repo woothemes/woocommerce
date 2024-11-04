@@ -109,8 +109,6 @@ class WC_Admin_Tests_API_Onboarding_Tasks extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 		$data     = $response->get_data();
 
-		echo print_r( $data, true );
-
 		$this->assertEquals( 200, $response->get_status() );
 
 		$this->assertArrayHasKey( 'failed', $data );
