@@ -455,11 +455,12 @@ jobs:
         id: checkout_depth
         shell: bash
         run: |
-          fetch_commits=$(( ${{ github.event.pull_request.commits }} + 1 ))
+          fetch_commits=$(( ${{ github.event.pull_request.commits }} + 2 ))
           echo "fetch_commits=$fetch_commits" >> $GITHUB_OUTPUT
 
       - uses: 'actions/checkout@v4'
         with:
+          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: ${{ steps.checkout_depth.outputs.fetch_commits }}
 
       - uses: './.github/actions/setup-woocommerce-monorepo'
@@ -489,7 +490,7 @@ jobs:
         id: checkout_depth
         shell: bash
         run: |
-          fetch_commits=$(( ${{ github.event.pull_request.commits }} + 1 ))
+          fetch_commits=$(( ${{ github.event.pull_request.commits }} + 2 ))
           echo "fetch_commits=$fetch_commits" >> $GITHUB_OUTPUT
 
       - uses: 'actions/checkout@v4'
