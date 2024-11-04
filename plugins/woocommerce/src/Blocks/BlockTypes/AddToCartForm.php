@@ -131,7 +131,6 @@ class AddToCartForm extends AbstractBlock {
 
 		$previous_product = $product;
 		$product          = wc_get_product( $post_id );
-		$product_name     = $product->get_name();
 		if ( ! $product instanceof \WC_Product ) {
 			$product = $previous_product;
 
@@ -150,23 +149,24 @@ class AddToCartForm extends AbstractBlock {
 		 */
 		do_action( 'woocommerce_' . $product->get_type() . '_add_to_cart' );
 
-		$product = ob_get_clean();
+		$product_html = ob_get_clean();
 
-		if ( ! $product ) {
+		if ( ! $product_html ) {
 			$product = $previous_product;
 
 			return '';
 		}
-		$product = $is_stepper_style ? $this->add_steppers( $product, $product_name ) : $product;
+		$product_name = $product->get_name();
+		$product_html = $is_stepper_style ? $this->add_steppers( $product_html, $product_name ) : $product;
 
 		$parsed_attributes                     = $this->parse_attributes( $attributes );
 		$is_descendent_of_single_product_block = $parsed_attributes['isDescendentOfSingleProductBlock'];
 
 		if ( ! $is_external_product_with_url ) {
-			$product = $this->add_is_descendent_of_single_product_block_hidden_input_to_product_form( $product, $is_descendent_of_single_product_block );
+			$product_html = $this->add_is_descendent_of_single_product_block_hidden_input_to_product_form( $product, $is_descendent_of_single_product_block );
 		}
 
-		$product            = $is_stepper_style ? $this->add_stepper_classes_to_add_to_cart_form_input( $product ) : $product;
+		$product_html       = $is_stepper_style ? $this->add_stepper_classes_to_add_to_cart_form_input( $product_html ) : $product_html;
 		$classes_and_styles = StyleAttributesUtils::get_classes_and_styles_by_attributes( $attributes, array(), array( 'extra_classes' ) );
 
 		$product_classname = $is_descendent_of_single_product_block ? 'product' : '';
@@ -199,7 +199,7 @@ class AddToCartForm extends AbstractBlock {
 				),
 				JSON_NUMERIC_CHECK | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
 			) . '\'' : '',
-			$product
+			$product_html
 		);
 
 		$product = $previous_product;
