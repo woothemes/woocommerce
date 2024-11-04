@@ -1,7 +1,11 @@
 /**
  * External dependencies
  */
-import { BlockInstance, getBlockTypes } from '@wordpress/blocks';
+import {
+	BlockAttributes,
+	BlockInstance,
+	getBlockTypes,
+} from '@wordpress/blocks';
 
 /**
  * Returns an array of allowed block names excluding the specified blocks.
@@ -57,4 +61,19 @@ export const getInnerBlockByName = (
 	return getInnerBlockBy( block, function ( innerBlock ) {
 		return innerBlock.name === name;
 	} );
+};
+
+function getCSSVar( slug: string | undefined, value: string | undefined ) {
+	if ( slug ) {
+		return `var(--wp--preset--color--${ slug })`;
+	}
+	return value || '';
+}
+
+export const getColorsFromBlockSupports = ( attributes: BlockAttributes ) => {
+	const { backgroundColor, textColor, style } = attributes;
+	return {
+		textColor: getCSSVar( textColor, style?.color?.text ),
+		backgroundColor: getCSSVar( backgroundColor, style?.color?.background ),
+	};
 };

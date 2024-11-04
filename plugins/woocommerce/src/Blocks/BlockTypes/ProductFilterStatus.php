@@ -34,7 +34,7 @@ final class ProductFilterStatus extends AbstractBlock {
 	}
 
 	/**
-	{{{;;{{hhi{,,,kkkiiiiijkjkffasdfj}}}}}} * Register the query param keys.
+	 * Register the query param keys.
 	 *
 	 * @param array $filter_param_keys The active filters data.
 	 * @param array $url_param_keys    The query param parsed from the URL.
