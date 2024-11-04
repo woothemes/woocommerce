@@ -55,6 +55,11 @@
 	.wc-block-components-shipping-placeholder__value {
 		@include font-size(small);
 	}
+
+	.wc-block-components-totals-shipping__via {
+		@include font-size(small);
+		width: 100%;
+	}
 }
 
 // Extra classes for specificity.
