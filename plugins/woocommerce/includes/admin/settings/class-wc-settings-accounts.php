@@ -264,15 +264,6 @@ class WC_Settings_Accounts extends WC_Settings_Page {
 			),
 		);
 
-		if ( ! Features::is_enabled( 'experimental-blocks' ) ) {
-			$account_settings = array_filter(
-				$account_settings,
-				function ( $setting ) {
-					return 'woocommerce_enable_delayed_account_creation' !== $setting['id'];
-				},
-			);
-		}
-
 		// Change settings when using the block based checkout.
 		if ( CartCheckoutUtils::is_checkout_block_default() ) {
 			$account_settings = array_filter(
