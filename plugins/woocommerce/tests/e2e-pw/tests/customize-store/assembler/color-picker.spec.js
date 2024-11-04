@@ -20,16 +20,16 @@ const test = base.extend( {
 } );
 
 const colorPalette = {
-	'Blueberry Sorbet': {
+	Slate: {
 		button: {
-			background: 'rgb(189, 64, 137)',
+			background: 'rgb(255, 223, 109)',
 			color: 'rgb(253, 251, 239)',
 		},
 		paragraph: {
-			color: [ 'rgb(255, 255, 255)', 'rgb(32, 56, 182)' ],
+			color: [ 'rgb(239, 242, 249)', 'rgb(255, 255, 255)' ],
 		},
 		header: {
-			color: [ 'rgb(255, 255, 255)', 'rgb(32, 56, 182)' ],
+			color: [ 'rgb(239, 242, 249)', 'rgb(255, 255, 255)' ],
 		},
 	},
 };
