@@ -66,13 +66,12 @@ jobs:
         id: checkout_depth
         shell: bash
         run: |
-          pull_request_commits=$(( ${{ ( github.event_name == 'pull_request' && github.event.pull_request.commits ) || 1 }} + 1 ))
-          echo "pull_request_commits=$pull_request_commits" >> $GITHUB_OUTPUT
+          fetch_commits=$(( ${{ ( github.event_name == 'pull_request' && github.event.pull_request.commits ) || 1 }} + 1 ))
+          echo "fetch_commits=$fetch_commits" >> $GITHUB_OUTPUT
       - name: Setup - checkout
         uses: 'actions/checkout@v4'
         with:
-          ref: ${{ ( github.event_name == 'pull_request' && github.head_ref ) || '' }}
-          fetch-depth: ${{ steps.checkout_depth.outputs.pull_request_commits }}
+          fetch-depth: ${{ steps.checkout_depth.outputs.fetch_commits }}
       - name: Setup - pnpm
         uses: 'pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d'
       - name: Setup - spawn linting and testing jobs
@@ -132,13 +131,13 @@ jobs:
         id: checkout_depth
         shell: bash
         run: |
-          pull_request_commits=$(( ${{ github.event.pull_request.commits }} + 1 ))
-          echo "pull_request_commits=$pull_request_commits" >> $GITHUB_OUTPUT
+          fetch_commits=$(( ${{ github.event.pull_request.commits }} + 1 ))
+          echo "fetch_commits=$fetch_commits" >> $GITHUB_OUTPUT
 
       - uses: 'actions/checkout@v4'
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: ${{ steps.checkout_depth.outputs.pull_request_commits }}
+          fetch-depth: ${{ steps.checkout_depth.outputs.fetch_commits }}
 
       - uses: './.github/actions/setup-woocommerce-monorepo'
         id: 'setup-monorepo'
@@ -452,17 +451,10 @@ jobs:
       contents: read
 
     steps:
-      - name: 'Calculate checkout depth'
-        id: checkout_depth
-        shell: bash
-        run: |
-          pull_request_commits=$(( ${{ github.event.pull_request.commits }} + 1 ))
-          echo "pull_request_commits=$pull_request_commits" >> $GITHUB_OUTPUT
-
       - uses: 'actions/checkout@v4'
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: ${{ steps.checkout_depth.outputs.pull_request_commits }}
+          fetch-depth: '0'
 
       - uses: './.github/actions/setup-woocommerce-monorepo'
         with:
@@ -491,13 +483,13 @@ jobs:
         id: checkout_depth
         shell: bash
         run: |
-          pull_request_commits=$(( ${{ github.event.pull_request.commits }} + 1 ))
-          echo "pull_request_commits=$pull_request_commits" >> $GITHUB_OUTPUT
+          fetch_commits=$(( ${{ github.event.pull_request.commits }} + 2 ))
+          echo "fetch_commits=$fetch_commits" >> $GITHUB_OUTPUT
 
       - uses: 'actions/checkout@v4'
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: ${{ steps.checkout_depth.outputs.pull_request_commits }}
+          fetch-depth: ${{ steps.checkout_depth.outputs.fetch_commits }}
 
       - name: Scan - markdown files from monorepo packages
         id: repo-changed-files
