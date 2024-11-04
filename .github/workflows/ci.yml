@@ -9,6 +9,7 @@ on:
     branches:
       - 'trunk'
       - 'release/*'
+      - 'fix/ci-worflow-prs-from-forks'
   release:
     types: [published, edited]
   workflow_call:
