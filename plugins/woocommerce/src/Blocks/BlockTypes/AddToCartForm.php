@@ -81,7 +81,7 @@ class AddToCartForm extends AbstractBlock {
 		$minus_button = '<button aria-label="' . esc_html( sprintf( __( 'Reduce quantity of %s', 'woocommerce' ), $product_name ) ) . '"type="button" data-wc-on--click="actions.removeQuantity" class="wc-block-components-quantity-selector__button wc-block-components-quantity-selector__button--minus">-</button>$1';
 		// Replacement string to add button AFTER the matched <input> element.
 		/* translators: %s refers to the item name in the cart. */
-		$plus_button = '$1<button  aria-label="' . esc_html( sprintf( __( 'Increase quantity of %s', 'woocommerce' ), $product_name ) ) . '" type="button" data-wc-on--click="actions.addQuantity" class="wc-block-components-quantity-selector__button wc-block-components-quantity-selector__button--plus">+</button>';
+		$plus_button = '$1<button aria-label="' . esc_html( sprintf( __( 'Increase quantity of %s', 'woocommerce' ), $product_name ) ) . '" type="button" data-wc-on--click="actions.addQuantity" class="wc-block-components-quantity-selector__button wc-block-components-quantity-selector__button--plus">+</button>';
 		$new_html    = preg_replace( $pattern, $minus_button, $product );
 		$new_html    = preg_replace( $pattern, $plus_button, $new_html );
 		return $new_html;
