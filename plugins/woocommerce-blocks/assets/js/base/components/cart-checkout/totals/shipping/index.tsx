@@ -131,6 +131,7 @@ export const TotalsShipping = ( {
 									}
 								/>
 								<ShippingAddress
+									showCalculator={ showCalculator }
 									shippingAddress={ shippingAddress }
 								/>
 							</>
