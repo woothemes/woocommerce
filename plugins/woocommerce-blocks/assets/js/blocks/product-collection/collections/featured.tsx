@@ -13,7 +13,7 @@ import { CoreCollectionNames, CoreFilterNames } from '../types';
 
 const collection = {
 	name: CoreCollectionNames.FEATURED,
-	title: __( 'Featured', 'woocommerce' ),
+	title: __( 'Featured Products', 'woocommerce' ),
 	icon: <Icon icon={ starFilled } />,
 	description: __( 'Showcase your featured products.', 'woocommerce' ),
 	keywords: [ 'product collection' ],

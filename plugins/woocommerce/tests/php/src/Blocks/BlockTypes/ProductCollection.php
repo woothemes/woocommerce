@@ -1291,4 +1291,15 @@ class ProductCollection extends \WP_UnitTestCase {
 		$this->assertEquals( 'menu_order', $merged_query['orderby'] );
 		$this->assertEquals( 'ASC', $merged_query['order'] );
 	}
+
+	/**
+	 * Test the random sorting functionality.
+	 */
+	public function test_random_sorting() {
+		$parsed_block                              = $this->get_base_parsed_block();
+		$parsed_block['attrs']['query']['orderBy'] = 'random';
+		$merged_query                              = $this->initialize_merged_query( $parsed_block );
+
+		$this->assertEquals( 'rand', $merged_query['orderby'] );
+	}
 }

@@ -13,7 +13,7 @@ import { CoreCollectionNames, CoreFilterNames } from '../types';
 
 const collection = {
 	name: CoreCollectionNames.TOP_RATED,
-	title: __( 'Top Rated', 'woocommerce' ),
+	title: __( 'Top Rated Products', 'woocommerce' ),
 	icon: <Icon icon={ starEmpty } />,
 	description: __(
 		'Recommend products with the highest review ratings.',

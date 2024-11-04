@@ -163,6 +163,9 @@ const recordTracksPluginsLearnMoreLinkClicked = (
 	} );
 };
 
+const recordTracksPluginsInstallationNoPermissionError = () =>
+	recordEvent( 'coreprofiler_store_extensions_no_permission_error' );
+
 const recordFailedPluginInstallations = ( {
 	event,
 }: {
@@ -236,6 +239,7 @@ export default {
 	recordTracksBusinessInfoCompleted,
 	recordTracksPluginsLearnMoreLinkClicked,
 	recordFailedPluginInstallations,
+	recordTracksPluginsInstallationNoPermissionError,
 	recordSuccessfulPluginInstallation,
 	recordTracksPluginsInstallationRequest,
 	recordTracksIsEmailChanged,

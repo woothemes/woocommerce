@@ -90,10 +90,10 @@ export type Collections =
 
 const collectionToButtonNameMap = {
 	newArrivals: 'New Arrivals',
-	topRated: 'Top Rated',
+	topRated: 'Top Rated Products',
 	bestSellers: 'Best Sellers',
-	onSale: 'On Sale',
-	featured: 'Featured',
+	onSale: 'On Sale Products',
+	featured: 'Featured Products',
 	productCatalog: 'create your own',
 	myCustomCollection: 'My Custom Collection',
 	myCustomCollectionWithPreview: 'My Custom Collection with Preview',
