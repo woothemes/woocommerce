@@ -14,7 +14,51 @@
 		"woocommerce/product-filters"
 	],
 	"supports": {
-		"interactivity": true
+		"interactivity": true,
+		"layout": {
+			"allowSwitching": false,
+			"allowInheriting": false,
+			"allowJustification": false,
+			"allowVerticalAlignment": false,
+			"default": {
+				"type": "flex"
+			}
+		},
+		"__experimentalBorder": {
+			"color": true,
+			"radius": true,
+			"style": true,
+			"width": true,
+			"__experimentalDefaultControls": {
+				"color": false,
+				"radius": false,
+				"style": false,
+				"width": false
+			}
+		},
+		"typography": {
+			"fontSize": true,
+			"lineHeight": true,
+			"__experimentalFontWeight": true,
+			"__experimentalFontFamily": true,
+			"__experimentalFontStyle": true,
+			"__experimentalTextTransform": true,
+			"__experimentalTextDecoration": true,
+			"__experimentalLetterSpacing": true,
+			"__experimentalDefaultControls": {
+				"fontSize": false
+			}
+		},
+		"spacing": {
+			"margin": true,
+			"padding": true,
+			"blockGap": true,
+			"__experimentalDefaultControls": {
+				"margin": false,
+				"padding": false,
+				"blockGap": false
+			}
+		}
 	},
 	"usesContext": [
 		"queryId"
