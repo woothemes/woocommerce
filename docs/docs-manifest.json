@@ -745,13 +745,14 @@
           "post_title": "WooCommerce extension development best practices",
           "menu_title": "Best Practices",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/extension-development/extension-development-best-practices.md",
-          "hash": "671f19d378c8ad3ebe0eb009524054bd5769d4fb3d8f48dd6a410e0c9de2b953",
+          "hash": "e70da25a57254820d094df736e79974d345deee234dcd2e56897d1feb76700d4",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/extension-development/extension-development-best-practices.md",
           "id": "83050f0142b6de00b73b3638d46ddddc5a2f8b12",
           "links": {
             "./check-if-woo-is-active.md": "2c2e89013ad76ff2596680224047723163512bc2",
             "./data-storage.md": "b3e0b17ca74596e858c26887c1e4c8ee6c8f6102",
             "../security/prevent-data-leaks.md": "91b86abe2953e1cd4e9d6d407238093245346cf9",
+            "./changelog-txt.md": "05308ae6632158907efc55b3dcbd693c265f25c8",
             "./example-plugin-header-comment.md": "2fb49dc6ccad894e02f123940a9db98c7724dddc",
             "../code-snippets/link-to-logged-data.md": "34da337f79be5ce857024f541a99d302174ca37d"
           }
@@ -764,6 +765,15 @@
           "hash": "0745d2f89373776a45701061e6bc9250231067a73a2ff118ceb63f1fe41cf231",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/extension-development/example-plugin-header-comment.md",
           "id": "2fb49dc6ccad894e02f123940a9db98c7724dddc"
+        },
+        {
+          "post_title": "Example WordPress plugin header comment for WooCommerce extensions",
+          "menu_title": "Plugin header comments",
+          "tags": "reference",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/extension-development/example-header-plugin-comment.md",
+          "hash": "5d7ce1f4368f287a7cd307f3d0b54c89a7febdbacd51833a7bf1312cdfa139e0",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/extension-development/example-header-plugin-comment.md",
+          "id": "25f90713ff8eaef0032082de7660261eb1e3f85e"
         },
         {
           "post_title": "Data storage primer",
@@ -800,6 +810,14 @@
           "hash": "dca930ebe334bb3bb276ec912d050830b784ec9f755be491d41c3c32f5b65637",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/extension-development/check-if-woo-is-active.md",
           "id": "2c2e89013ad76ff2596680224047723163512bc2"
+        },
+        {
+          "post_title": "Formatting for Changelog.txt",
+          "menu_title": "Changelog.txt",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/extension-development/changelog-txt.md",
+          "hash": "f5688b3bd4dde0379fb0b863dc3ab1983cf63c291e087658a35c2f90164955c5",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/extension-development/changelog-txt.md",
+          "id": "05308ae6632158907efc55b3dcbd693c265f25c8"
         },
         {
           "post_title": "How to build your first extension",
@@ -875,7 +893,7 @@
           "menu_title": "Development environment setup",
           "tags": "tutorial, setup",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/getting-started/development-environment.md",
-          "hash": "bf5d77349ea64d1b8e19fe6b7472be35ed92406c5aafe677ce92363fb13f94d4",
+          "hash": "8203129a577f40208cef0f75bf121176e2226a5d8399445418cadc827fd9de0c",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/getting-started/development-environment.md",
           "id": "9080572a3904349c44c565ca7e1bef1212c58757"
         },
@@ -1499,7 +1517,7 @@
           "post_title": "Classic theme development handbook",
           "menu_title": "Classic theme development",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/theme-development/classic-theme-developer-handbook.md",
-          "hash": "95ce7250479a5133bba6c68939d86e4e79708c65044d70727c73f6a88f716da7",
+          "hash": "0a8c8178ad4a83cd3d44f931cc37635e8f8cf26a53f0ee1bc1a0e6a7ca117ece",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/theme-development/classic-theme-developer-handbook.md",
           "id": "c2fde53e1dc3efbded3cfe1fb4df27136a3799a4"
         }
@@ -1805,5 +1823,5 @@
       "categories": []
     }
   ],
-  "hash": "89c74bc9d8b10a5b2727820ae5e5e80b6142bf4d35ea0a810e9288eae1f76232"
+  "hash": "b493fa620b4f693f8165bd4cdcd474badf1659f4ae65e71a012bdde28351e8eb"
 }
