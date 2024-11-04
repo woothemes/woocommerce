@@ -85,7 +85,8 @@ jobs:
             // - PRs: run CI jobs aiming PRs and filter out jobs based on the content changes
             // - Pushes: run CI jobs aiming pushes without filtering based on the content changes
 
-            let baseSha = ${{ toJson( github.event.pull_request.base.sha ) }};
+            let baseRef   = '';
+            const baseSha = ${{ toJson( github.event.pull_request.base.sha ) }};
             if ( baseSha ) {
               // Use-case: trigger is pull request
               baseRef = `--base-ref ${ baseSha }`;
