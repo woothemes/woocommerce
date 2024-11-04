@@ -82,6 +82,8 @@ class WC_Admin_Tests_API_Onboarding_Tasks extends WC_REST_Unit_Test_Case {
 		wp_set_current_user( $this->user );
 
 		$this->remove_color_or_logo_attribute_taxonomy();
+
+		// Downloading product images are slow and tests shouldn't rely on external resources so we mock the request.
 		add_filter(
 			'pre_http_request',
 			function ( $preempt, $parsed_args, $url ) {
