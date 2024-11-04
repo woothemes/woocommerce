@@ -18,7 +18,10 @@ const Block = ( {
 
 	return (
 		<TotalsWrapper className={ className }>
-			<OrderSummary cartItems={ cartItems } />
+			<OrderSummary
+				cartItems={ cartItems }
+				disableProductDescriptions={ disableProductDescriptions }
+			/>
 		</TotalsWrapper>
 	);
 };

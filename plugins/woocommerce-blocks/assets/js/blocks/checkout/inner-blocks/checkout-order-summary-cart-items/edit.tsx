@@ -52,7 +52,10 @@ export const Edit = ( {
 					</PanelBody>
 				</InspectorControls>
 			) }
-			<Block className={ className } />
+			<Block
+				disableProductDescriptions={ disableProductDescriptions }
+				className={ className }
+			/>
 		</div>
 	);
 };
