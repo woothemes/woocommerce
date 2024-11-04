@@ -3,7 +3,6 @@ declare( strict_types = 1 );
 
 namespace Automattic\WooCommerce\Tests\Internal\DataStores\Orders;
 
-use Automattic\WooCommerce\Blocks\Domain\Services\DraftOrders;
 use Automattic\WooCommerce\Database\Migrations\CustomOrderTable\PostsToOrdersMigrationController;
 use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareUnitTestSuiteTrait;
@@ -3470,7 +3469,7 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 
 		add_action( 'woocommerce_new_order', $callback );
 
-		$draft_statuses = array( OrderStatus::AUTO_DRAFT, DraftOrders::STATUS );
+		$draft_statuses = array( OrderStatus::AUTO_DRAFT, 'checkout-draft' );
 
 		$orders_data_store = new OrdersTableDataStore();
 
@@ -3502,7 +3501,7 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 
 		$this->assertEquals( 0, $new_count );
 
-		$order->set_status( DraftOrders::STATUS );
+		$order->set_status( 'checkout-draft' );
 		$this->sut->update( $order );
 		$order->save();
 		$this->assertEquals( 0, $new_count );
@@ -3512,7 +3511,7 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 		foreach ( $triggering_order_statuses as $status ) {
 			$order->set_status( $status );
 			$this->sut->update( $order );
-			$order->set_status( DraftOrders::STATUS ); // Revert back to draft.
+			$order->set_status( 'checkout-draft' ); // Revert back to draft.
 			$order->save();
 		}
 
