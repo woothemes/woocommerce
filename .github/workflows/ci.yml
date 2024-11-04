@@ -460,7 +460,6 @@ jobs:
 
       - uses: 'actions/checkout@v4'
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: ${{ steps.checkout_depth.outputs.fetch_commits }}
 
       - uses: './.github/actions/setup-woocommerce-monorepo'
