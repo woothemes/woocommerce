@@ -19,7 +19,6 @@ import { ShippingCalculatorContext } from '@woocommerce/base-components/cart-che
 /**
  * Internal dependencies
  */
-import { ShippingCalculator } from '../../shipping-calculator';
 import {
 	hasShippingRate,
 	getTotalShippingValue,
@@ -59,8 +58,6 @@ export const TotalsShipping = ( {
 	} = useStoreCart();
 	const totalShippingValue = getTotalShippingValue( values );
 	const hasRates = hasShippingRate( shippingRates ) || totalShippingValue > 0;
-	const showShippingCalculatorForm =
-		showCalculator && isShippingCalculatorOpen;
 
 	const prefersCollection = useSelect( ( select ) => {
 		return select( CHECKOUT_STORE_KEY ).prefersCollection();
@@ -117,16 +114,10 @@ export const TotalsShipping = ( {
 				<TotalsItem
 					label={ __( 'Delivery', 'woocommerce' ) }
 					value={
+						// Don't display the shipping total if the address is not complete.
 						! shippingMethodsMissing && cartHasCalculatedShipping
-							? // if address is not complete, display the link to add an address.
-							  valueToDisplay
-							: ( ! addressComplete || isCheckout ) && (
-									<ShippingPlaceholder
-										showCalculator={ showCalculator }
-										isCheckout={ isCheckout }
-										addressProvided={ addressComplete }
-									/>
-							  )
+							? valueToDisplay
+							: null
 					}
 					description={
 						( ! shippingMethodsMissing &&
@@ -143,14 +134,19 @@ export const TotalsShipping = ( {
 									shippingAddress={ shippingAddress }
 								/>
 							</>
-						) : null
+						) : (
+							<ShippingPlaceholder
+								showCalculator={ showCalculator }
+								isCheckout={ isCheckout }
+								addressProvided={ addressComplete }
+							/>
+						)
 					}
 					currency={ currency }
 				/>
-				{ showShippingCalculatorForm && <ShippingCalculator /> }
 				{ showRateSelector &&
 					cartHasCalculatedShipping &&
-					! showShippingCalculatorForm && (
+					! ( showCalculator && isShippingCalculatorOpen ) && (
 						<ShippingRateSelector
 							hasRates={ hasRates }
 							shippingRates={ shippingRates }

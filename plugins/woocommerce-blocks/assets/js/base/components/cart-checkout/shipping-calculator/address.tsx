@@ -58,7 +58,7 @@ const ShippingCalculatorAddress = ( {
 			/>
 			<Button
 				className="wc-block-components-shipping-calculator-address__button"
-				disabled={ isCustomerDataUpdating }
+				disabled={ isCustomerDataUpdating || hasValidationErrors() }
 				variant="outlined"
 				onClick={ ( e ) => {
 					e.preventDefault();

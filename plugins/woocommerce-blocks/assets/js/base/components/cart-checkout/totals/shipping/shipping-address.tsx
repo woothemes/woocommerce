@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { formatShippingAddress } from '@woocommerce/base-utils';
 import { ShippingAddress as ShippingAddressType } from '@woocommerce/settings';
 import {
 	ShippingLocation,
 	PickupLocation,
 	ShippingCalculatorButton,
+	ShippingCalculatorPanel,
 } from '@woocommerce/base-components/cart-checkout';
 import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
 import { useSelect } from '@wordpress/data';
@@ -23,20 +24,25 @@ export const ShippingAddress = ( {
 		select( CHECKOUT_STORE_KEY ).prefersCollection()
 	);
 
-	const hasFormattedAddress = !! formatShippingAddress( shippingAddress );
-
-	const label = hasFormattedAddress
-		? __( 'Change address', 'woocommerce' )
-		: __( 'Enter address to check delivery options', 'woocommerce' );
 	const formattedLocation = formatShippingAddress( shippingAddress );
+	const hasFormattedAddress = !! formattedLocation;
+
+	const title = hasFormattedAddress ? (
+		<>
+			{ __( 'Delivers to ', 'woocommerce' ) }
+			<strong>{ formattedLocation }</strong>
+		</>
+	) : (
+		__( 'Enter address to check delivery options', 'woocommerce' )
+	);
+
 	return (
 		<>
 			{ prefersCollection ? (
 				<PickupLocation />
 			) : (
-				<ShippingLocation formattedLocation={ formattedLocation } />
+				<ShippingCalculatorPanel title={ title } />
 			) }
-			<ShippingCalculatorButton label={ label } />
 		</>
 	);
 };

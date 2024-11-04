@@ -15,7 +15,9 @@
 	.wc-block-components-main {
 		box-sizing: border-box;
 		margin: 0;
-		padding-right: math.percentage(math.div($gap-largest, 1060px)); // ~1060px is the default width of the content area in Storefront.
+		padding-right: math.percentage(
+			math.div($gap-largest, 1060px)
+		); // ~1060px is the default width of the content area in Storefront.
 		width: 65%;
 	}
 }
@@ -58,6 +60,14 @@
 			padding-left: $gap;
 			padding-right: $gap;
 		}
+
+		// Panels nested inside a totals item, should not have additional padding.
+		.wc-block-components-totals-item {
+			.wc-block-components-panel {
+				padding: 0;
+			}
+		}
+
 		.wc-block-components-panel {
 			.wc-block-components-totals-item {
 				padding: 0;

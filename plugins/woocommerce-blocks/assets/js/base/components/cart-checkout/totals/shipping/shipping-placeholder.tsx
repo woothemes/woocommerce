@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { ShippingCalculatorButton } from '@woocommerce/base-components/cart-checkout';
+import { ShippingCalculatorPanel } from '@woocommerce/base-components/cart-checkout';
 
 export interface ShippingPlaceholderProps {
 	showCalculator: boolean;
@@ -28,14 +28,7 @@ export const ShippingPlaceholder = ( {
 		);
 	}
 
-	return (
-		<ShippingCalculatorButton
-			label={ __(
-				'Enter address to check delivery options',
-				'woocommerce'
-			) }
-		/>
-	);
+	return <ShippingCalculatorPanel />;
 };
 
 export default ShippingPlaceholder;
