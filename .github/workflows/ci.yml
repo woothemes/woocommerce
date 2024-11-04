@@ -164,6 +164,7 @@ jobs:
         name: 'Checkout'
 
       - uses: './.github/actions/setup-woocommerce-monorepo'
+        name: 'Install Monorepo'
         id: 'install-monorepo'
         with:
           install: '${{ matrix.projectName }}...'
