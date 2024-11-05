@@ -7,7 +7,7 @@ import { Button, SelectControl } from '@wordpress/components';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 import { PaymentGateway } from '@woocommerce/data';
-import { EllipsisMenu, List, Pill } from '@woocommerce/components';
+import { EllipsisMenu, List } from '@woocommerce/components';
 import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
 import { getAdminLink } from '@woocommerce/settings';
 
