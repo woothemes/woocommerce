@@ -15,8 +15,9 @@ const test = base.extend< { templateCompiler: TemplateCompiler } >( {
 test.describe.skip( 'Product Filter: Price Filter Block', () => {
 	test.describe( 'frontend', () => {
 		test.beforeEach( async ( { requestUtils, templateCompiler } ) => {
-			await requestUtils.activatePlugin(
-				'woocommerce-blocks-test-enable-experimental-features'
+			await requestUtils.setFeatureFlag(
+				'woocommerce-blocks-test-enable-experimental-features',
+				true
 			);
 			await templateCompiler.compile();
 		} );
