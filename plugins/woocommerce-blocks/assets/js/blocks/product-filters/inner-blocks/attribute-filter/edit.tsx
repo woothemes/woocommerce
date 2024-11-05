@@ -33,7 +33,7 @@ import { EXCLUDED_BLOCKS } from '../../constants';
 import { FilterOptionItem } from '../../types';
 import { InitialDisabled } from '../../components/initial-disabled';
 import { Notice } from '../../components/notice';
-import { useProductFilterClearButtonManager } from './use-product-filter-clear-button-manager';
+import { useProductFilterClearButtonManager } from '../../hooks/use-product-filter-clear-button-manager';
 
 const ATTRIBUTES = getSetting< AttributeSetting[] >( 'attributes', [] );
 

@@ -9,7 +9,7 @@ import { useEffect, useState } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import { getInnerBlockByName } from '../../utils';
+import { getInnerBlockByName } from '../utils';
 
 function findClientIdByName(
 	block: BlockAttributes,
@@ -41,9 +41,13 @@ function findClientIdByName(
 export const useProductFilterClearButtonManager = ( {
 	clientId,
 	showClearButton,
+	positionIndexToInsertBlock,
+	parentClientIdToInsertBlock,
 }: {
 	clientId: string;
 	showClearButton: boolean;
+	positionIndexToInsertBlock: number;
+	parentClientIdToInsertBlock: string;
 } ) => {
 	const [ previousShowClearButtonState, setPreviousShowClearButtonState ] =
 		useState< boolean >( showClearButton );
@@ -80,6 +84,15 @@ export const useProductFilterClearButtonManager = ( {
 	);
 
 	function findPositionToAddTheClearButtonBlock() {
+		if (
+			positionIndexToInsertBlock !== undefined &&
+			parentClientIdToInsertBlock !== undefined
+		) {
+			return {
+				clearButtonBlockPosition: positionIndexToInsertBlock,
+				clearButtonParentBlockId: parentClientIdToInsertBlock,
+			};
+		}
 		if ( clearButtonParentBlock ) {
 			return {
 				clearButtonBlockPosition: 1,

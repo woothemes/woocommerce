@@ -18,7 +18,7 @@ import type { WCStoreV1ProductsCollectionProps } from '@woocommerce/blocks/produ
 import { InitialDisabled } from '../../components/initial-disabled';
 import { Inspector } from './inspector';
 import type { EditProps } from './types';
-import { useProductFilterClearButtonManager } from '../attribute-filter/use-product-filter-clear-button-manager';
+import { useProductFilterClearButtonManager } from '../../hooks/use-product-filter-clear-button-manager';
 
 const Edit = ( props: EditProps ) => {
 	const { showCounts, hideEmpty, clearButton } = props.attributes;
