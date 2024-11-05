@@ -10,10 +10,10 @@
 		// Load composer manifest for class mapping (we'll pick PRS4 only, as it's where new classes are introduced).
 		static $namespaces = [];
 		$declarations      = json_decode( file_get_contents( $plugin_path . DIRECTORY_SEPARATOR . 'composer.json' ), true );
-		foreach ($declarations['autoload']['psr-4'] ?? [] as $namespace => $path) {
+		foreach ( $declarations['autoload']['psr-4'] ?? [] as $namespace => $path ) {
 			$namespaces[$namespace] = $plugin_path . DIRECTORY_SEPARATOR . $path;
 		}
-		foreach ($declarations['autoload-dev']['psr-4'] ?? [] as $namespace => $path) {
+		foreach ( $declarations['autoload-dev']['psr-4'] ?? [] as $namespace => $path ) {
 			$namespaces[$namespace] = $plugin_path . DIRECTORY_SEPARATOR . $path;
 		}
 
