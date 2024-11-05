@@ -4,7 +4,7 @@
 	"version": "3.3.0",
 	"license": "GPL-3.0-or-later",
 	"author": "Automattic",
-	"homepage": "https://github.com/woocommerce/woocommerce/tree/trunk/plugins/woocommerce-admin/README.md",
+	"homepage": "https://github.com/woocommerce/woocommerce/tree/trunk/plugins/woocommerce/client/admin/README.md",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com:woocommerce/woocommerce.git"
@@ -163,6 +163,7 @@
 		"@woocommerce/number": "workspace:*",
 		"@woocommerce/onboarding": "workspace:*",
 		"@woocommerce/product-editor": "workspace:*",
+		"@woocommerce/settings-editor": "workspace:*",
 		"@woocommerce/remote-logging": "workspace:*",
 		"@woocommerce/tracks": "workspace:*",
 		"@wordpress/babel-preset-default": "^6.17.0",
@@ -308,6 +309,10 @@
 				"node_modules/@woocommerce/remote-logging/build",
 				"node_modules/@woocommerce/remote-logging/build-module",
 				"node_modules/@woocommerce/remote-logging/build-types",
+				"node_modules/@woocommerce/settings-editor/build",
+				"node_modules/@woocommerce/settings-editor/build-module",
+				"node_modules/@woocommerce/settings-editor/build-style",
+				"node_modules/@woocommerce/settings-editor/build-types",
 				"node_modules/@woocommerce/product-editor/build",
 				"node_modules/@woocommerce/product-editor/build-module",
 				"node_modules/@woocommerce/product-editor/build-style",

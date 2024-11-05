@@ -1,11 +1,12 @@
 /**
  * External dependencies
  */
+import React, { useEffect, useState } from 'react';
 import { Gridicon } from '@automattic/components';
 import { Button, SelectControl } from '@wordpress/components';
-import React from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
+import { PaymentGateway } from '@woocommerce/data';
 import { EllipsisMenu, List, Pill } from '@woocommerce/components';
 import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
 import { getAdminLink } from '@woocommerce/settings';
@@ -14,129 +15,153 @@ import { getAdminLink } from '@woocommerce/settings';
  * Internal dependencies
  */
 import './payment-gateways.scss';
+import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
+
+// TODO: This should either be a util function, or handled in a different way e.g. passing the data as props.
+const parseScriptTag = ( elementId: string ) => {
+	const scriptTag = document.getElementById( elementId );
+	return scriptTag ? JSON.parse( scriptTag.textContent || '' ) : [];
+};
+
+interface WooPaymentsGatewayData {
+	isSupported: boolean;
+	isAccountOnboarded: boolean;
+	isInTestMode: boolean;
+}
 
 export const PaymentGateways = () => {
-	// Mock payment gateways for now.
-	// TODO Get the list of gateways via the API in future PR.
-	const mockPaymentGateways = [
-		{
-			id: 'woocommerce_payments',
-			title: __( 'Accept payments with Woo', 'woocommerce' ),
-			content: __(
-				'Credit/debit cards, Apple Pay, Google Pay & more.',
-				'woocommerce'
-			),
-			image: 'https://woocommerce.com/wp-content/plugins/wccom-plugins/payment-gateway-suggestions/images/wcpay.svg',
-			square_image:
-				'https://woocommerce.com/wp-content/plugins/wccom-plugins/payment-gateway-suggestions/images/woocommerce.svg',
-			image_72x72:
-				'https://woocommerce.com/wp-content/plugins/wccom-plugins/payment-gateway-suggestions/images/wcpay.svg',
-			actionText: '',
-			recommended: true,
-		},
-		{
-			id: 'ppcp-gateway',
-			title: 'PayPal Payments',
-			content: __(
-				"Safe and secure payments using credit cards or your customer's PayPal account.",
-				'woocommerce'
-			),
-			image: 'https://woocommerce.com/wp-content/plugins/woocommerce/assets/images/paypal.png',
-			image_72x72:
-				'https://woocommerce.com/wp-content/plugins/wccom-plugins/payment-gateway-suggestions/images/72x72/paypal.png',
-			square_image:
-				'https://woocommerce.com/wp-content/plugins/wccom-plugins/payment-gateway-suggestions/images/paypal.svg',
-			actionText: '',
-			recommended: false,
-		},
-	];
+	const [ paymentGateways, setPaymentGateways ] = useState<
+		PaymentGateway[]
+	>( [] );
+	const [ wooPaymentsGatewayData, setWooPaymentsGatewayData ] =
+		useState< WooPaymentsGatewayData | null >( null );
+
+	useEffect( () => {
+		setWooPaymentsGatewayData(
+			parseScriptTag( 'experimental_wc_settings_payments_woopayments' )
+		);
+		setPaymentGateways(
+			parseScriptTag( 'experimental_wc_settings_payments_gateways' )
+		);
+	}, [] );
+
+	const recommendedGateways = [ 'woocommerce_payments' ];
+
+	const setupLivePayments = () => {
+		// TODO: Implement in future PR.
+	};
 
 	// Transform plugins comply with List component format.
-	const paymentGatewaysList = mockPaymentGateways.map( ( gateway ) => {
-		// todo: add logic to check if the incentive is available for the gateway.
-		const hasIncentive = gateway.id === 'woocommerce_payments';
+	const paymentGatewaysList = paymentGateways.map(
+		( gateway: PaymentGateway ) => {
+			// todo: add logic to check if the incentive is available for the gateway.
+			const hasIncentive = gateway.id === 'woocommerce_payments';
 
-		// Determine the class names needed for the list item.
-		let className = 'woocommerce-list__item--payment-gateway';
-		if ( hasIncentive ) {
-			className += ' has-incentive';
-		}
+			// Determine the class names needed for the list item.
+			let className = 'woocommerce-list__item--payment-gateway';
+			if ( hasIncentive ) {
+				className += ' has-incentive';
+			}
 
-		return {
-			key: gateway.id,
-			className: `${ className }`,
-			title: (
-				<>
-					{ gateway.title }
-					{ ( hasIncentive || gateway.recommended ) && (
-						<Pill>
-							{
-								// TODO: Replace with actual incentive text.
-								// TODO: add tooltip
-								hasIncentive
-									? __(
-											'Save 10% on processing fees',
-											'woocommerce'
-									  )
-									: __( 'Recommended', 'woocommerce' )
-							}
-						</Pill>
-					) }
-				</>
-			),
-			content: (
-				<>
-					{ decodeEntities( gateway.content ) }
-					{ gateway.id === 'woocommerce_payments' && (
-						<WooPaymentMethodsLogos
-							maxElements={ 10 }
-							isWooPayEligible={ true }
-						/>
-					) }
-				</>
-			),
-			after: (
-				<div className="woocommerce-list__item-after__actions">
-					<Button
-						variant={ 'primary' }
-						// onClick={ () => ( console.log('test') ) }
-						isBusy={ false }
-						disabled={ false }
-					>
-						{ gateway.actionText ||
-							__( 'Get started', 'woocommerce' ) }
-					</Button>
-					<EllipsisMenu
-						label={ __( 'Task List Options', 'woocommerce' ) }
-						renderContent={ () => (
-							<div>
-								<Button>
-									{ __( 'Learn more', 'woocommerce' ) }
-								</Button>
-								<Button>
-									{ __(
-										'See Terms of Service',
-										'woocommerce'
-									) }
-								</Button>
-							</div>
+			return {
+				key: gateway.id,
+				title: (
+					<>
+						{ gateway.title }
+						{ ( hasIncentive ||
+							gateway.id in recommendedGateways ) && (
+							<Pill>
+								{
+									// TODO: Replace with actual incentive text.
+									// TODO: add tooltip
+									hasIncentive
+										? __(
+												'Save 10% on processing fees',
+												'woocommerce'
+										  )
+										: __( 'Recommended', 'woocommerce' )
+								}
+							</Pill>
 						) }
+					</>
+				),
+				className: hasIncentive
+					? 'woocommerce-list__item--payment-gateway has-incentive'
+					: 'woocommerce-list__item--payment-gateway',
+				content: (
+					<>
+						{ decodeEntities( gateway.method_description ) }
+						{ gateway.id === 'woocommerce_payments' && (
+							<WooPaymentMethodsLogos
+								maxElements={ 10 }
+								isWooPayEligible={ true }
+							/>
+						) }
+					</>
+				),
+				after: (
+					<div className="woocommerce-list__item-after__actions">
+						<>
+							<PaymentGatewayButton
+								id={ gateway.id }
+								enabled={ gateway.enabled }
+								settings_url={ gateway.settings_url }
+							/>
+							{ gateway.id === 'woocommerce_payments' &&
+								wooPaymentsGatewayData?.isInTestMode && (
+									<Button
+										variant="primary"
+										onClick={ setupLivePayments }
+										isBusy={ false }
+										disabled={ false }
+									>
+										{ __(
+											'Set up live payments',
+											'woocommerce'
+										) }
+									</Button>
+								) }
+							<EllipsisMenu
+								label={ __(
+									'Task List Options',
+									'woocommerce'
+								) }
+								renderContent={ () => (
+									<div>
+										<Button>
+											{ __(
+												'Learn more',
+												'woocommerce'
+											) }
+										</Button>
+										<Button>
+											{ __(
+												'See Terms of Service',
+												'woocommerce'
+											) }
+										</Button>
+									</div>
+								) }
+							/>
+						</>
+					</div>
+				),
+				// TODO add drag-and-drop icon before image (future PR)
+				before: (
+					<img
+						src={
+							// TODO: Need a way to make images available here.
+							// gateway.square_image ||
+							// gateway.image_72x72 ||
+							// gateway.image ||
+							'https://woocommerce.com/wp-content/plugins/wccom-plugins/payment-gateway-suggestions/images/wcpay.svg'
+						}
+						alt={ gateway.title + ' logo' }
 					/>
-				</div>
-			),
-			// TODO add drag-and-drop icon before image (future PR)
-			before: (
-				<img
-					src={
-						gateway.square_image ||
-						gateway.image_72x72 ||
-						gateway.image
-					}
-					alt={ gateway.title + ' logo' }
-				/>
-			),
-		};
-	} );
+				),
+			};
+		}
+	);
 
 	// Add offline payment provider.
 	paymentGatewaysList.push( {
@@ -179,7 +204,7 @@ export const PaymentGateways = () => {
 				</div>
 				<div className="settings-payment-gateways__header-select-container">
 					<SelectControl
-						className="woocommerce-profiler-select-control__country"
+						className="woocommerce-select-control__country"
 						prefix={ __( 'Business location :', 'woocommerce' ) }
 						placeholder={ '' }
 						label={ '' }

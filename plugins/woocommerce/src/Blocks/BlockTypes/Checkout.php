@@ -287,10 +287,13 @@ class Checkout extends AbstractBlock {
 		$post_blocks = parse_blocks( $post->post_content );
 		$title       = $this->find_local_pickup_text_in_checkout_block( $post_blocks );
 
-		if ( $title ) {
-			$pickup_location_settings['title'] = $title;
-			update_option( 'woocommerce_pickup_location_settings', $pickup_location_settings );
+		// Set the title to be an empty string if it isn't a string. This will make it fall back to the default value of "Pickup".
+		if ( ! is_string( $title ) ) {
+			$title = '';
 		}
+
+		$pickup_location_settings['title'] = $title;
+		update_option( 'woocommerce_pickup_location_settings', $pickup_location_settings );
 	}
 
 	/**
@@ -410,7 +413,7 @@ class Checkout extends AbstractBlock {
 			$this->asset_data_registry->add( 'activeShippingZones', CartCheckoutUtils::get_shipping_zones() );
 		}
 
-		if ( $is_block_editor && ! $this->asset_data_registry->exists( 'globalPaymentMethods' ) ) {
+		if ( ! $this->asset_data_registry->exists( 'globalPaymentMethods' ) ) {
 			// These are used to show options in the sidebar. We want to get the full list of enabled payment methods,
 			// not just the ones that are available for the current cart (which may not exist yet).
 			$payment_methods           = $this->get_enabled_payment_gateways();
@@ -419,8 +422,8 @@ class Checkout extends AbstractBlock {
 				function ( $acc, $method ) {
 					$acc[] = [
 						'id'          => $method->id,
-						'title'       => $method->method_title,
-						'description' => $method->method_description,
+						'title'       => $method->get_method_title() !== '' ? $method->get_method_title() : $method->get_title(),
+						'description' => $method->get_method_description() !== '' ? $method->get_method_description() : $method->get_description(),
 					];
 					return $acc;
 				},
