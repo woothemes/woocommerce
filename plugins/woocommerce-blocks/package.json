@@ -437,14 +437,13 @@
 			"service": true
 		},
 		"build:project:blocks-json-to-php": {
-			"command": "node ./bin/blocks-json-to-php.js",
+			"command": "wp-scripts build-blocks-manifest --input=build --output=build/blocks-json.php",
 			"dependencies": [
 				"build:project:bundle",
 				"dependencyOutputs"
 			],
 			"files": [
 				"assets/js/blocks/**/block.json",
-				"bin/blocks-json-to-php.js",
 				"build/**/block.json"
 			],
 			"output": [
