@@ -78,7 +78,7 @@
 	},
 	"usesContext": [
 		"query",
-		"queryId"
+		"filterParams"
 	],
 	"example": {
 		"attributes": {

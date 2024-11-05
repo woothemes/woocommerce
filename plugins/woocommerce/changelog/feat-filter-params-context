@@ -1,0 +1,5 @@
+Significance: patch
+Type: enhancement
+Comment: Experimental: process filter params on in Product Filters and pass it down through block context.
+
+
