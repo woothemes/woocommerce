@@ -20,18 +20,18 @@ interface StatusBadgeProps {
 		| 'has_incentive';
 }
 
-export const StatusBadge: React.FC< StatusBadgeProps > = ( { status } ) => {
+export const StatusBadge = ( { status }: StatusBadgeProps ) => {
 	const getStatusClass = () => {
 		switch ( status ) {
 			case 'active':
 			case 'has_incentive':
-				return 'status-badge--success';
+				return 'woocommerce-status-badge--success';
 			case 'needs_setup':
 			case 'test_mode':
-				return 'status-badge--warning';
+				return 'woocommerce-status-badge--warning';
 			case 'recommended':
 			case 'inactive':
-				return 'status-badge--info';
+				return 'woocommerce-status-badge--info';
 			default:
 				return '';
 		}
@@ -58,7 +58,7 @@ export const StatusBadge: React.FC< StatusBadgeProps > = ( { status } ) => {
 	};
 
 	return (
-		<Pill className={ `status-badge ${ getStatusClass() }` }>
+		<Pill className={ `woocommerce-status-badge ${ getStatusClass() }` }>
 			{ getStatusMessage() }
 		</Pill>
 	);
