@@ -89,7 +89,7 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 	 * @return bool Whether the section should be rendered using React.
 	 */
 	private function should_render_react_section( $section ) {
-		// TODO remove this when WooPayments reactified settings page is done.
+		// remove this when WooPayments reactified settings page is done.
 		if ( 'woocommerce_payments' === $section ) {
 			return false;
 		}
