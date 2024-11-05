@@ -10,7 +10,6 @@ import { useCollectionData } from '@woocommerce/base-context/hooks';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from '@wordpress/element';
 import { getSetting } from '@woocommerce/settings';
-import type { WCStoreV1ProductsCollectionProps } from '@woocommerce/blocks/product-collection/types';
 
 /**
  * Internal dependencies
