@@ -17,7 +17,7 @@
 	],
 	"usesContext": [
 		"query",
-		"queryId"
+		"filterParams"
 	],
 	"attributes": {
 		"className": {

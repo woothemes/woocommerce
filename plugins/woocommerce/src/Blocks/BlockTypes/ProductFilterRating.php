@@ -77,7 +77,7 @@ final class ProductFilterRating extends AbstractBlock {
 		}
 
 		$active_ratings = array_map(
-			function( $rating ) {
+			function ( $rating ) {
 				return array(
 					/* translators: %d is the rating value. */
 					'title'      => sprintf( __( 'Rated %d out of 5', 'woocommerce' ), $rating ),
@@ -115,8 +115,9 @@ final class ProductFilterRating extends AbstractBlock {
 		$rating_counts = $this->get_rating_counts( $block );
 
 		// Pick the selected ratings from the query string.
-		$query           = isset( $_GET[ self::RATING_FILTER_QUERY_VAR ] ) ? sanitize_text_field( wp_unslash( $_GET[ self::RATING_FILTER_QUERY_VAR ] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$selected_rating = array_filter( explode( ',', $query ) );
+		$filter_params   = $block->context['filterParams'] ?? array();
+		$rating_query    = $filter_params[ self::RATING_FILTER_QUERY_VAR ] ?? '';
+		$selected_rating = array_filter( explode( ',', $rating_query ) );
 
 		/*
 		 * Get the rating items
@@ -238,7 +239,7 @@ final class ProductFilterRating extends AbstractBlock {
 
 		$selected_items = array_reduce(
 			$rating_counts,
-			function( $carry, $rating ) use ( $ratings_array, $show_counts ) {
+			function ( $carry, $rating ) use ( $ratings_array, $show_counts ) {
 				if ( in_array( (string) $rating['rating'], $ratings_array, true ) ) {
 					$count       = $rating['count'];
 					$count_label = $show_counts ? "($count)" : '';
