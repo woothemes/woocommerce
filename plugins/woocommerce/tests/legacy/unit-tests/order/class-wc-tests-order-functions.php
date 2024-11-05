@@ -90,11 +90,11 @@ class WC_Tests_Order_Functions extends WC_Unit_Test_Case {
 		// Fake some datastores and order types for testing.
 		$test_counts = array(
 			'order'           => array(
-				array( 'wc-on-hold', 2 ),
+				array( OrderLegacyStatus::ON_HOLD, 2 ),
 				array( 'trash', 1 ),
 			),
 			'order-fake-type' => array(
-				array( 'wc-on-hold', 3 ),
+				array( OrderLegacyStatus::ON_HOLD, 3 ),
 				array( 'trash', 0 ),
 			),
 		);
