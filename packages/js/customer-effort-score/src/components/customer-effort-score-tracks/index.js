@@ -39,7 +39,6 @@ import { getStoreAgeInWeeks } from '../../utils';
  * @param {boolean}  props.allowTracking      Whether tracking is allowed or not.
  * @param {boolean}  props.resolving          Are values still being resolved.
  * @param {number}   props.storeAgeInWeeks    The age of the store in weeks.
- * @param {Function} props.updateOptions      Function to update options.
  * @param {Function} props.createNotice       Function to create a snackbar.
  */
 function _CustomerEffortScoreTracks( {
