@@ -3453,6 +3453,9 @@ importers:
       prettier:
         specifier: npm:wp-prettier@^2.8.5
         version: wp-prettier@2.8.5
+      rimraf:
+        specifier: 5.0.5
+        version: 5.0.5
       stylelint:
         specifier: ^14.16.1
         version: 14.16.1
