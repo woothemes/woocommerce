@@ -44,6 +44,7 @@ export const PaymentGateways = () => {
 		);
 	}, [] );
 
+	// TODO add PayPal etc.
 	const recommendedGateways = [ 'woocommerce_payments' ];
 
 	const setupLivePayments = () => {
