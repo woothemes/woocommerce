@@ -1,4 +1,4 @@
 Significance: patch
 Type: tweak
 
-Define type of the useCollectionData() hook
+Define TS types for the useCollectionData() hook
