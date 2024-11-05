@@ -11,10 +11,12 @@ import { OtherPaymentGateways } from '~/settings-payments/components/other-payme
 
 export const SettingsPaymentsMain: React.FC = () => {
 	return (
-		<div className="settings-payments-main__container">
-			<PaymentGateways />
-			<OtherPaymentGateways />
-		</div>
+		<>
+			<div className="settings-payments-main__container">
+				<PaymentGateways />
+				<OtherPaymentGateways />
+			</div>
+		</>
 	);
 };
 

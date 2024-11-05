@@ -5,6 +5,7 @@ const {
 	insertBlock,
 	insertBlockByShortcut,
 	publishPage,
+	getCanvas,
 } = require( '../../utils/editor' );
 const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
 
@@ -21,40 +22,6 @@ const test = baseTest.extend( {
 	storageState: process.env.ADMINSTATE,
 	testPageTitlePrefix: 'Products filter',
 } );
-
-const chooseCollectionInPage = async ( page ) => {
-	const placeholderSelector = page
-		.frameLocator( 'iframe[name="editor-canvas"]' )
-		.locator(
-			'[data-type="woocommerce/product-collection"] .components-placeholder'
-		);
-
-	const chooseCollectionFromPlaceholder = async () => {
-		await placeholderSelector
-			.getByRole( 'button', { name: 'create your own', exact: true } )
-			.click();
-	};
-
-	const chooseCollectionFromDropdown = async () => {
-		await placeholderSelector
-			.getByRole( 'button', {
-				name: 'Choose collection',
-			} )
-			.click();
-
-		await page
-			.locator(
-				'.wc-blocks-product-collection__collections-dropdown-content'
-			)
-			.getByRole( 'button', { name: 'create your own', exact: true } )
-			.click();
-	};
-
-	return await Promise.any( [
-		chooseCollectionFromPlaceholder(),
-		chooseCollectionFromDropdown(),
-	] );
-};
 
 test.describe(
 	'Filter items in the shop by product price',
@@ -124,7 +91,13 @@ test.describe(
 			await insertBlockByShortcut( page, 'Filter by Price' );
 			const wordPressVersion = await getInstalledWordPressVersion();
 			await insertBlock( page, 'Product Collection', wordPressVersion );
-			await chooseCollectionInPage( page );
+			const canvas = await getCanvas( page );
+			await canvas
+				.getByRole( 'button', {
+					name: 'create your own',
+					exact: true,
+				} )
+				.click();
 			await publishPage( page, testPage.title );
 
 			// go to the page to test filtering products by price
