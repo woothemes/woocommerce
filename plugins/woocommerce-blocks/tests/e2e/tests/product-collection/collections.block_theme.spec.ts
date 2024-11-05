@@ -20,7 +20,7 @@ const test = base.extend< { pageObject: ProductCollectionPage } >( {
 } );
 
 test.describe( 'Product Collection: Collections', () => {
-	test( 'New Arrivals Collection can be added and displays proper products', async ( {
+	test( 'New Arrivals collection can be added and displays proper products', async ( {
 		pageObject,
 	} ) => {
 		await pageObject.createNewPostAndInsertBlock( 'newArrivals' );
@@ -38,7 +38,7 @@ test.describe( 'Product Collection: Collections', () => {
 	// When creating reviews programmatically the ratings are not propagated
 	// properly so products order by rating is undeterministic in test env.
 	// eslint-disable-next-line playwright/no-skipped-test
-	test.skip( 'Top Rated Collection can be added and displays proper products', async ( {
+	test.skip( 'Top Rated Products collection can be added and displays proper products', async ( {
 		pageObject,
 	} ) => {
 		await pageObject.createNewPostAndInsertBlock( 'topRated' );
@@ -62,7 +62,7 @@ test.describe( 'Product Collection: Collections', () => {
 	// There's no orders in test env so the order of Best Sellers
 	// is undeterministic in test env. Requires further work.
 	// eslint-disable-next-line playwright/no-skipped-test
-	test.skip( 'Best Sellers Collection can be added and displays proper products', async ( {
+	test.skip( 'Best Sellers collection can be added and displays proper products', async ( {
 		pageObject,
 	} ) => {
 		await pageObject.createNewPostAndInsertBlock( 'bestSellers' );
@@ -85,7 +85,7 @@ test.describe( 'Product Collection: Collections', () => {
 		await expect( pageObject.products ).toHaveCount( 5 );
 	} );
 
-	test( 'On Sale Collection can be added and displays proper products', async ( {
+	test( 'On Sale Products collection can be added and displays proper products', async ( {
 		pageObject,
 	} ) => {
 		await pageObject.createNewPostAndInsertBlock( 'onSale' );
@@ -106,7 +106,7 @@ test.describe( 'Product Collection: Collections', () => {
 		await expect( pageObject.products ).toHaveCount( 5 );
 	} );
 
-	test( 'Featured Collection can be added and displays proper products', async ( {
+	test( 'Featured Products collection can be added and displays proper products', async ( {
 		pageObject,
 	} ) => {
 		await pageObject.createNewPostAndInsertBlock( 'featured' );
@@ -126,7 +126,7 @@ test.describe( 'Product Collection: Collections', () => {
 		await expect( pageObject.products ).toHaveCount( 4 );
 	} );
 
-	test( 'Product Catalog Collection can be added in post and syncs query with template', async ( {
+	test( 'Product Catalog collection can be added in post and syncs query with template', async ( {
 		pageObject,
 	} ) => {
 		await pageObject.createNewPostAndInsertBlock( 'productCatalog' );
@@ -176,7 +176,7 @@ test.describe( 'Product Collection: Collections', () => {
 			await expect( input ).toBeHidden();
 		} );
 
-		test( 'Top Rated', async ( { pageObject } ) => {
+		test( 'Top Rated Products', async ( { pageObject } ) => {
 			await pageObject.createNewPostAndInsertBlock( 'topRated' );
 			const input = await pageObject.getOrderByElement();
 
@@ -190,7 +190,7 @@ test.describe( 'Product Collection: Collections', () => {
 			await expect( input ).toBeHidden();
 		} );
 
-		test( 'On Sale', async ( { pageObject } ) => {
+		test( 'On Sale Products', async ( { pageObject } ) => {
 			await pageObject.createNewPostAndInsertBlock( 'onSale' );
 			const sidebarSettings = pageObject.locateSidebarSettings();
 			const input = sidebarSettings.getByLabel(
@@ -200,7 +200,7 @@ test.describe( 'Product Collection: Collections', () => {
 			await expect( input ).toBeHidden();
 		} );
 
-		test( 'Featured', async ( { pageObject } ) => {
+		test( 'Featured Products', async ( { pageObject } ) => {
 			await pageObject.createNewPostAndInsertBlock( 'featured' );
 			const sidebarSettings = pageObject.locateSidebarSettings();
 			const input = sidebarSettings.getByLabel(
