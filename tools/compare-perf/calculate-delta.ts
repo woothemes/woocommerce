@@ -48,7 +48,7 @@ function calculateDelta( testSuites: string[], branches: string[] ): void {
 		logAtIndent(
 			2,
 			'Server response delta:',
-			formats.success( percentage )
+			formats.success( percentage.toFixed( 2 ) + '%' )
 		);
 	}
 }
