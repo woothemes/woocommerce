@@ -1,0 +1,4 @@
+Significance: minor
+Type: fix
+
+Avoid rendering the dash in the receipts when there's no info about the card used to pay the order.
