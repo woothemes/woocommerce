@@ -143,19 +143,21 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 		 * - Filter out ratings below the minimum rating
 		 * - Map the ratings to the format expected by the filter component
 		 */
-		const productsRating = collectionFilters.rating_counts
-			.sort( ( a, b ) => b.rating - a.rating )
-			.filter( ( { rating } ) => rating >= minimumRating )
-			.map( ( { rating, count } ) => ( {
-				label: (
-					<Rating
-						key={ rating }
-						rating={ rating }
-						ratedProductsCount={ showCounts ? count : null }
-					/>
-				),
-				value: rating?.toString(),
-			} ) );
+		const productsRating = collectionFilters?.rating_counts?.length
+			? collectionFilters.rating_counts
+					.sort( ( a, b ) => b.rating - a.rating )
+					.filter( ( { rating } ) => rating >= minimumRating )
+					.map( ( { rating, count } ) => ( {
+						label: (
+							<Rating
+								key={ rating }
+								rating={ rating }
+								ratedProductsCount={ showCounts ? count : null }
+							/>
+						),
+						value: rating?.toString(),
+					} ) )
+			: [];
 
 		setDisplayedOptions( productsRating );
 	}, [
