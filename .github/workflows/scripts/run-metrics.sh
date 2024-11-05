@@ -106,11 +106,11 @@ if [ "$GITHUB_EVENT_NAME" == "push" ] || [ "$GITHUB_EVENT_NAME" == "pull_request
 	fi
 
 	# Compare server response delta compared to the base branch and fail if greater than 10% difference.
-	DELTAS=$(echo $PERF_RESULTS | grep 'delta:' | sed 's/^.*: //')
+	DELTAS=$(echo $PERF_RESULTS | grep 'delta:' | sed -e 's/[^-0-9. ]//g')
 	DELTAS_ARRAY=($result)
 	for i in "${DELTAS_ARRAY[@]}"
 	do
-		if [ "$i" -gt "10" ]
+		if (( $(echo "$i > 10" | bc -l) ))
 		then
 			echo "::error::The server response delta of ${i}% is greater than the maximum allowed 10%."
 			exit 1
