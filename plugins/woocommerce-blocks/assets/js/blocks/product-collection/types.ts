@@ -229,25 +229,27 @@ type StockStatusCount = {
 	count: number;
 };
 
+type PriceRangeProps = {
+	min_price: string;
+	max_price: string;
+	currency_code: CurrencyCode;
+	currency_decimal_separator: '.' | string;
+	currency_minor_unit: number;
+	currency_prefix: '$' | string;
+	currency_suffix: '' | string;
+	currency_symbol: '$' | string;
+	currency_thousand_separator: ',' | string;
+};
+
 /*
  * Prop types for the `wc/store/v1/products/collection-data` endpoint
  */
 export type WCStoreV1ProductsCollectionProps = {
-	price_range: {
-		min_price: string;
-		max_price: string;
-		currency_code: CurrencyCode;
-		currency_decimal_separator: '.' | string;
-		currency_minor_unit: number;
-		currency_prefix: '$' | string;
-		currency_suffix: '' | string;
-		currency_symbol: '$' | string;
-		currency_thousand_separator: ',' | string;
-	};
+	price_range: PriceRangeProps | null;
 
-	attribute_counts: AttributeCount[];
+	attribute_counts: AttributeCount[] | null;
 
-	rating_counts: RatingCount[];
+	rating_counts: RatingCount[] | null;
 
-	stock_status_counts: StockStatusCount[];
+	stock_status_counts: StockStatusCount[] | null;
 };
