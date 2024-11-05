@@ -377,12 +377,7 @@ class Features {
 	 * @return boolean
 	 */
 	private static function should_load_features() {
-		if ( class_exists( 'WC_Unit_Tests_Bootstrap' ) ) {
-			// Always load features in unit tests.
-			return true;
-		}
-
-		return (
+		$should_load = (
 			is_admin() ||
 			wp_doing_ajax() ||
 			wp_doing_cron() ||
@@ -391,5 +386,13 @@ class Features {
 			// Allow features to be loaded in frontend for admin users. This is needed for the use case such as the coming soon footer banner.
 			current_user_can( 'manage_woocommerce' )
 		);
+
+		/**
+		 * Filter to determine if admin features should be loaded.
+		 *
+		 * @since 9.5.0
+		 * @param boolean $should_load Whether admin features should be loaded. It defaults to true when the current request is in an admin context.
+		 */
+		return apply_filters( 'woocommerce_admin_should_load_features', $should_load );
 	}
 }
