@@ -26,7 +26,7 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 	 */
 	private function get_reactify_render_sections() {
 		$sections = array(
-			'offline', // TODO add 'woocommerce_payments' when it's ready.
+			'offline', // @TODO add 'woocommerce_payments' when it's ready.
 			'main',
 		);
 
