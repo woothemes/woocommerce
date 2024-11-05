@@ -1,4 +1,0 @@
-Significance: patch
-Type: tweak
-
-Limit the amount of Feature Controller logic that will run before init, to improve compatibility with translation-related changes in WP 6.7.
