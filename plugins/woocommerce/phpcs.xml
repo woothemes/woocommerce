@@ -132,7 +132,6 @@
 		<exclude-pattern>tests/php/</exclude-pattern>
 	</rule>
 
-
 	<rule ref="PEAR.Functions.FunctionCallSignature.EmptyLine">
 		<exclude-pattern>tests/e2e-tests/</exclude-pattern>
 	</rule>
