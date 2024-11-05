@@ -27,6 +27,7 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 	private function get_reactify_render_sections() {
 		$sections = array(
 			'offline',
+			'woocommerce_payments',
 			'main',
 		);
 
@@ -88,6 +89,10 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 	 * @return bool Whether the section should be rendered using React.
 	 */
 	private function should_render_react_section( $section ) {
+		// TODO remove this when WooPayments reactified settings page is done.
+		if ( $section === 'woocommerce_payments' ) {
+			return false;
+		}
 		return in_array( $section, $this->get_reactify_render_sections(), true );
 	}
 
