@@ -40,7 +40,7 @@ test.describe( 'Frontend Performance', () => {
 	} );
 
 	test.describe( 'Loading', () => {
-		const samples = 2;
+		const samples = 10;
 		const throwaway = 1;
 		const iterations = samples + throwaway;
 		for ( let i = 1; i <= iterations; i++ ) {
