@@ -48,7 +48,11 @@ describe( 'ShippingAddress', () => {
 				shippingAddress={ testShippingAddress }
 			/>
 		);
-		expect( screen.getByText( /Delivers to 94107/ ) ).toBeInTheDocument();
+		expect(
+			screen.getByText( ( content ) =>
+				/Delivers to 94107/.test( content )
+			)
+		).toBeInTheDocument();
 		expect(
 			screen.queryByText( /Collection from/ )
 		).not.toBeInTheDocument();
