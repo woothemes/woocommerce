@@ -13,8 +13,6 @@ import apiFetch from '@wordpress/api-fetch';
  */
 import { FlowType, aiStatusResponse } from '../types';
 import { isIframe } from '~/customize-store/utils';
-import { isWooExpress } from '~/utils/is-woo-express';
-import { trackEvent } from '../tracking';
 
 export const fetchAiStatus = async (): Promise< aiStatusResponse > => {
 	const response = await fetch(
