@@ -28,7 +28,11 @@ export const ShippingPlaceholder = ( {
 		);
 	}
 
-	return <ShippingCalculatorPanel />;
+	const title = (
+		<>{ __( 'Enter address to check delivery options', 'woocommerce' ) }</>
+	);
+
+	return <ShippingCalculatorPanel title={ title } />;
 };
 
 export default ShippingPlaceholder;

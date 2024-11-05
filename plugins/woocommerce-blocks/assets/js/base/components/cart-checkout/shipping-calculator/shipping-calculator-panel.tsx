@@ -16,7 +16,7 @@ type ShippingCalculatorPanelProps = {
 };
 
 export const ShippingCalculatorPanel = ( {
-	title = 'hello',
+	title,
 }: ShippingCalculatorPanelProps ) => {
 	const { isShippingCalculatorOpen, setIsShippingCalculatorOpen } =
 		useContext( ShippingCalculatorContext );
