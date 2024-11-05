@@ -17,6 +17,17 @@
 	.woocommerce-layout__main {
 		padding-right: 0;
 	}
+
+	.woocommerce-select-control__control.is-active,
+	.woocommerce-select-control__control-input[aria-expanded="true"] {
+		// Disable pointer events when select control is already active so that we can close the dropdown by clicking on the component itself.
+		pointer-events: none;
+	}
+
+	.woocommerce-select-control__control-input,
+	.components-base-control__help {
+		cursor: pointer;
+	}
 }
 
 .woocommerce-profiler-page__content {
