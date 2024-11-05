@@ -6,6 +6,7 @@ import { useDebounce } from 'use-debounce';
 import { objectHasProp } from '@woocommerce/types';
 import { sort } from 'fast-sort';
 import { useShallowEqual } from '@woocommerce/base-hooks';
+import type { WCStoreV1ProductsCollectionProps } from '@woocommerce/blocks/product-collection/types';
 
 /**
  * Internal dependencies
@@ -49,7 +50,7 @@ interface UseCollectionDataProps {
 	isEditor?: boolean;
 }
 
-export const useCollectionData = < T >( {
+export const useCollectionData = ( {
 	queryAttribute,
 	queryPrices,
 	queryStock,
@@ -155,7 +156,7 @@ export const useCollectionData = < T >( {
 		return buildCollectionDataQuery( collectionDataQueryState );
 	}, [ collectionDataQueryState ] );
 
-	return useCollection< T, false >( {
+	return useCollection< WCStoreV1ProductsCollectionProps, false >( {
 		namespace: '/wc/store/v1',
 		resourceName: 'products/collection-data',
 		query: {

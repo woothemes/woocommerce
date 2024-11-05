@@ -95,7 +95,7 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 	const [ queryState ] = useQueryStateByContext();
 
 	const { results: collectionFilters, isLoading: filteredCountsLoading } =
-		useCollectionData< WCStoreV1ProductsCollectionProps >( {
+		useCollectionData( {
 			queryRating: true,
 			queryState,
 			isEditor: true,
