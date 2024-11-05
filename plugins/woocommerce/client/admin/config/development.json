@@ -5,6 +5,7 @@
 		"product-block-editor": true,
 		"product-data-views": false,
 		"experimental-blocks": true,
+		"coming-soon-newsletter-template": false,
 		"coupons": true,
 		"core-profiler": true,
 		"customize-store": true,
