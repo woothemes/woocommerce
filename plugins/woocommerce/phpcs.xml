@@ -126,6 +126,13 @@
 		<exclude-pattern>tests/</exclude-pattern>
 	</rule>
 
+	<rule ref="Generic.Commenting.Todo">
+		<exclude-pattern>includes/</exclude-pattern>
+		<exclude-pattern>src/</exclude-pattern>
+		<exclude-pattern>tests/php/</exclude-pattern>
+	</rule>
+
+
 	<rule ref="PEAR.Functions.FunctionCallSignature.EmptyLine">
 		<exclude-pattern>tests/e2e-tests/</exclude-pattern>
 	</rule>
@@ -146,12 +153,6 @@
 		<exclude-pattern>patterns</exclude-pattern>
 	</rule>
 	<rule ref="Squiz.Commenting.FileComment.Missing">
-		<exclude-pattern>includes/</exclude-pattern>
-		<exclude-pattern>src/</exclude-pattern>
-		<exclude-pattern>tests/php/</exclude-pattern>
-	</rule>
-
-	<rule ref="Squiz.Commenting.Todo">
 		<exclude-pattern>includes/</exclude-pattern>
 		<exclude-pattern>src/</exclude-pattern>
 		<exclude-pattern>tests/php/</exclude-pattern>
