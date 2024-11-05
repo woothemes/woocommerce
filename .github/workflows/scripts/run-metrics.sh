@@ -76,7 +76,7 @@ if [ "$GITHUB_EVENT_NAME" == "push" ] || [ "$GITHUB_EVENT_NAME" == "pull_request
 		echo '##[endgroup]'
 
 		title "##[group]Restoring codebase state back to head"
-		git -c core.hooksPath=/dev/null checkout --quiet $HEAD_BRANCH > /dev/null && echo 'On' $(git rev-parse HEAD)
+		git -c core.hooksPath=/dev/null checkout --quiet $GITHUB_SHA > /dev/null && echo 'On' $(git rev-parse HEAD)
 		pnpm install --frozen-lockfile > /dev/null &
 		pnpm run --if-present clean:build
 		echo '##[endgroup]'
