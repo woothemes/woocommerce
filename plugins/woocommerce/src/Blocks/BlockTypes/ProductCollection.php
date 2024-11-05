@@ -442,8 +442,8 @@ class ProductCollection extends AbstractBlock {
 		$query_context                  = $instance->context['query'] ?? array();
 		$is_product_collection_block    = $query_context['isProductCollectionBlock'] ?? false;
 		$query_id                       = $instance->context['queryId'] ?? null;
-		$parsed_query_id                = $$block->attributes['queryId'] ?? null;
-		$is_enhanced_pagination_enabled = ! ( $$block->attributes['forcePageReload'] ?? false );
+		$parsed_query_id                = $block->attributes['queryId'] ?? null;
+		$is_enhanced_pagination_enabled = ! ( $block->attributes['forcePageReload'] ?? false );
 
 		// Only proceed if the block is a product collection block,
 		// enhanced pagination is enabled and query IDs match.
