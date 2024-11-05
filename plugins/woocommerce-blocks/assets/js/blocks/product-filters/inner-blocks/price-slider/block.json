@@ -6,7 +6,12 @@
 	"category": "woocommerce",
 	"keywords": [ "WooCommerce" ],
 	"supports": {
-		"html": false
+		"html": false,
+		"color": {
+			"enableContrastChecker": false,
+			"background": false,
+			"text": false
+		}
 	},
 	"attributes": {
 		"showInputFields": {
@@ -16,6 +21,31 @@
 		"inlineInput": {
 			"type": "boolean",
 			"default": false
+		},
+
+		"sliderHandle": {
+			"type": "string",
+			"default": ""
+		},
+		"customSliderHandle": {
+			"type": "string",
+			"default": ""
+		},
+		"sliderHandleBorder": {
+			"type": "string",
+			"default": ""
+		},
+		"customSliderHandleBorder": {
+			"type": "string",
+			"default": ""
+		},
+		"slider": {
+			"type": "string",
+			"default": ""
+		},
+		"customSlider": {
+			"type": "string",
+			"default": ""
 		}
 	},
 	"ancestor": [ "woocommerce/product-filter-price" ],
