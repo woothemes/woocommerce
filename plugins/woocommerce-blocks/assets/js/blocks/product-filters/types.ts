@@ -47,8 +47,8 @@ export type FilterBlockContext = {
 };
 
 export type Color = {
-	slug: string;
-	class: string;
-	name: string;
+	slug?: string;
+	class?: string;
+	name?: string;
 	color: string;
 };
