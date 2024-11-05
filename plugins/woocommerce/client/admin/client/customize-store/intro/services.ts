@@ -147,33 +147,5 @@ export const setFlags = async () => {
 		await Promise.all( Object.values( _featureFlags ) );
 	}
 
-	// Set FlowType flag. We want to set the flag only in the parent window.
-	if ( isWooExpress() && ! isIframe( window ) ) {
-		try {
-			const { status } = await fetchAiStatus();
-
-			const isAiOnline =
-				status.indicator !== 'critical' && status.indicator !== 'major';
-
-			// @ts-expect-error temp workaround;
-			window.cys_aiOnline = status;
-			trackEvent( 'customize_your_store_ai_status', {
-				online: isAiOnline ? 'yes' : 'no',
-			} );
-
-			// @ts-expect-error temp workaround;
-			window.cys_aiFlow = true;
-
-			return isAiOnline ? FlowType.AIOnline : FlowType.AIOffline;
-		} catch ( e ) {
-			// @ts-expect-error temp workaround;
-			window.cys_aiOnline = false;
-			trackEvent( 'customize_your_store_ai_status', {
-				online: 'no',
-			} );
-			return FlowType.AIOffline;
-		}
-	}
-
 	return FlowType.noAI;
 };
