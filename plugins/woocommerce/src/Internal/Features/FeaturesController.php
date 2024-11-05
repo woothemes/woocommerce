@@ -92,7 +92,6 @@ class FeaturesController {
 	 */
 	public function __construct() {
 		self::add_filter( 'init', array( $this, 'start_listening_for_option_changes' ), 10, 0 );
-
 		self::add_filter( 'woocommerce_get_sections_advanced', array( $this, 'add_features_section' ), 10, 1 );
 		self::add_filter( 'woocommerce_get_settings_advanced', array( $this, 'add_feature_settings' ), 10, 2 );
 		self::add_filter( 'deactivated_plugin', array( $this, 'handle_plugin_deactivation' ), 10, 1 );
