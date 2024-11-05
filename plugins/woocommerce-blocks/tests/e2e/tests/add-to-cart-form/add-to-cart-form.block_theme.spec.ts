@@ -2,29 +2,17 @@
  * External dependencies
  */
 import { Page } from '@playwright/test';
-import {
-	test as base,
-	expect,
-	Editor,
-	BlockData,
-	wpCLI,
-} from '@woocommerce/e2e-utils';
+import { test as base, expect, Editor, wpCLI } from '@woocommerce/e2e-utils';
 
 /**
  * Internal dependencies
  */
 
-const blockData: BlockData = {
+const blockData = {
 	name: 'Add to Cart with Options',
 	slug: 'woocommerce/add-to-cart-form',
 	mainClass: '.wc-block-add-to-cart-form',
 	selectors: {
-		frontend: {
-			stepperMinusButton:
-				'.wc-block-components-quantity-selector__button--minus',
-			stepperPlusButton:
-				'.wc-block-components-quantity-selector__button--plus',
-		},
 		editor: {
 			stepperMinusButton:
 				'.wc-block-components-quantity-selector__button--minus',
@@ -216,10 +204,10 @@ test.describe( `${ blockData.name } Block`, () => {
 		await blockUtils.enableStepperMode();
 
 		const minusButton = editor.canvas.locator(
-			'.wc-block-components-quantity-selector__button--minus'
+			blockData.selectors.editor.stepperMinusButton
 		);
 		const plusButton = editor.canvas.locator(
-			'.wc-block-components-quantity-selector__button--plus'
+			blockData.selectors.editor.stepperPlusButton
 		);
 
 		await expect( minusButton ).toBeVisible();
@@ -243,12 +231,8 @@ test.describe( `${ blockData.name } Block`, () => {
 
 		await editor.publishAndVisitPost();
 
-		const minusButton = page.getByLabel(
-			`Reduce quantity of ${ productName }`
-		);
-		const plusButton = page.getByLabel(
-			`Increase quantity of ${ productName }`
-		);
+		const minusButton = page.getByLabel( `Reduce quantity` );
+		const plusButton = page.getByLabel( `Increase quantity` );
 
 		await expect( minusButton ).toBeVisible();
 		await expect( plusButton ).toBeVisible();
@@ -282,12 +266,8 @@ test.describe( `${ blockData.name } Block`, () => {
 
 		await editor.publishAndVisitPost();
 
-		const minusButton = page.getByLabel(
-			`Reduce quantity of ${ productName }`
-		);
-		const plusButton = page.getByLabel(
-			`Increase quantity of ${ productName }`
-		);
+		const minusButton = page.getByLabel( `Reduce quantity` );
+		const plusButton = page.getByLabel( `Increase quantity ` );
 
 		await expect( minusButton ).toBeHidden();
 		await expect( plusButton ).toBeHidden();
@@ -315,12 +295,8 @@ test.describe( `${ blockData.name } Block`, () => {
 			step: 2,
 		} );
 
-		const minusButton = page.getByLabel(
-			`Reduce quantity of ${ productName }`
-		);
-		const plusButton = page.getByLabel(
-			`Increase quantity of ${ productName }`
-		);
+		const minusButton = page.getByLabel( `Reduce quantity` );
+		const plusButton = page.getByLabel( `Increase quantity` );
 
 		await expect( minusButton ).toBeVisible();
 		await expect( plusButton ).toBeVisible();
