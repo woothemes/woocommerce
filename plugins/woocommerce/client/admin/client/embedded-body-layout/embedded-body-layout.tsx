@@ -13,7 +13,6 @@ import QueryString, { parse } from 'qs';
 /**
  * Internal dependencies
  */
-import { PaymentRecommendations } from '../payments';
 import { ShippingRecommendations } from '../shipping';
 import { EmbeddedBodyProps } from './embedded-body-props';
 import { StoreAddressTour } from '../guided-tours/store-address-tour';
