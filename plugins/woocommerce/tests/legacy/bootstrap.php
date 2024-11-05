@@ -37,7 +37,7 @@ class WC_Unit_Tests_Bootstrap {
 	 * @since 2.2
 	 */
 	public function __construct() {
-		$this->tests_dir  = dirname( __FILE__ );
+		$this->tests_dir  = __DIR__;
 		$this->plugin_dir = dirname( dirname( $this->tests_dir ) );
 
 		$this->register_autoloader_for_testing_tools();
@@ -61,6 +61,9 @@ class WC_Unit_Tests_Bootstrap {
 
 		// load WC.
 		tests_add_filter( 'muplugins_loaded', array( $this, 'load_wc' ) );
+
+		// Load admin features.
+		tests_add_filter( 'woocommerce_admin_should_load_features', '__return_true' );
 
 		// install WC.
 		tests_add_filter( 'setup_theme', array( $this, 'install_wc' ) );
@@ -92,7 +95,7 @@ class WC_Unit_Tests_Bootstrap {
 			$this->initialize_hpos();
 		}
 
-		error_reporting(error_reporting() & ~E_DEPRECATED);
+		error_reporting( error_reporting() & ~E_DEPRECATED );
 	}
 
 	/**
@@ -101,7 +104,7 @@ class WC_Unit_Tests_Bootstrap {
 	protected static function register_autoloader_for_testing_tools() {
 		spl_autoload_register(
 			function ( $class ) {
-				$tests_directory   = dirname( __FILE__, 2 );
+				$tests_directory   = dirname( __DIR__, 1 );
 				$helpers_directory = $tests_directory . '/php/helpers';
 
 				// Support loading top-level classes from the `php/helpers` directory.
