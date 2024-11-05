@@ -85,6 +85,42 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 		}
 
 		/**
+		 * Get page settings data to populate the settings editor.
+		 *
+		 * @param array $pages The settings array where we'll add data.
+		 *
+		 * @return array
+		 */
+		public function add_settings_page_data( $pages ) {
+			$sections      = $this->get_sections();
+			$sections_data = array();
+
+			// Loop through each section and get the settings for that section.
+			foreach ( $sections as $section_id => $section_label ) {
+				$section_settings = count( $sections ) > 1
+					? $this->get_settings_for_section( $section_id )
+					: $this->get_settings();
+
+				// Loop through each setting in the section and add the value to the settings data.
+				foreach ( $section_settings as $section_setting ) {
+					if ( isset( $section_setting['id'] ) ) {
+						$section_setting['value'] = isset( $section_setting['default'] )
+							// Fallback to the default value if it exists.
+							? get_option( $section_setting['id'], $section_setting['default'] )
+							// Otherwise, fallback to false.
+							: get_option( $section_setting['id'] );
+					}
+
+					$sections_data[] = $section_setting;
+				}
+			}
+
+			$pages[ $this->id ] = $sections_data;
+
+			return $pages;
+		}
+
+		/**
 		 * Get settings array for the default section.
 		 *
 		 * External settings classes (registered via 'woocommerce_get_settings_pages' filter)

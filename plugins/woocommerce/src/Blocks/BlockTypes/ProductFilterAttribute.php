@@ -192,12 +192,13 @@ final class ProductFilterAttribute extends AbstractBlock {
 			);
 		}
 
-		$selected_terms = array_filter(
-			explode(
-				',',
-				get_query_var( 'filter_' . str_replace( 'pa_', '', $product_attribute->slug ) )
-			)
-		);
+		$filter_param_key = 'filter_' . str_replace( 'pa_', '', $product_attribute->slug );
+		$filter_params    = $block->context['filterParams'] ?? array();
+		$selected_terms   = array();
+
+		if ( $filter_params && ! empty( $filter_params[ $filter_param_key ] ) ) {
+			$selected_terms = array_filter( explode( ',', $filter_params[ $filter_param_key ] ) );
+		}
 
 		$filter_context = array();
 

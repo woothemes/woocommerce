@@ -7,8 +7,15 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import { EditProps } from './types';
 
-const Edit = () => {
+const Edit = ( props: EditProps ) => {
+	let text = __( 'Clear', 'woocommerce' );
+
+	if ( props.attributes?.clearType === 'all' ) {
+		text = __( 'Clear all', 'woocommerce' );
+	}
+
 	return (
 		<InnerBlocks
 			template={ [
@@ -19,7 +26,7 @@ const Edit = () => {
 						[
 							'core/button',
 							{
-								text: __( 'Clear', 'woocommerce' ),
+								text,
 								className:
 									'wc-block-product-filter-clear-button is-style-outline',
 								style: {
