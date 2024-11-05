@@ -28,7 +28,6 @@ function isWPPage(
 }
 
 const EMBEDDED_BODY_COMPONENT_LIST: React.ElementType[] = [
-	PaymentRecommendations,
 	ShippingRecommendations,
 	StoreAddressTour,
 ];
