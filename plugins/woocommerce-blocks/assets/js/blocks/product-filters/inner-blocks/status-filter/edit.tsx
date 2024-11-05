@@ -80,12 +80,11 @@ const Edit = ( props: EditProps ) => {
 		{}
 	);
 
-	const { results: filteredCounts, isLoading } =
-		useCollectionData< WCStoreV1ProductsCollectionProps >( {
-			queryStock: true,
-			queryState: {},
-			isEditor: true,
-		} );
+	const { results: filteredCounts, isLoading } = useCollectionData( {
+		queryStock: true,
+		queryState: {},
+		isEditor: true,
+	} );
 
 	const items = useMemo( () => {
 		return Object.entries( stockStatusOptions )
