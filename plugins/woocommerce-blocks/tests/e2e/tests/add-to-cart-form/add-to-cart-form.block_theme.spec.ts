@@ -176,88 +176,96 @@ test.describe( `${ blockData.name } Block`, () => {
 		).toBeVisible();
 	} );
 
-	test( 'has the stepper option visible', async ( {
-		admin,
-		editor,
-		blockUtils,
-	} ) => {
-		await admin.createNewPost();
-		await editor.insertBlock( { name: 'woocommerce/single-product' } );
+	test.describe( 'Stepper Layout', () => {
+		test.beforeEach( async ( { requestUtils } ) => {
+			await requestUtils.setFeatureFlag(
+				'add-to-cart-with-options-stepper-layout',
+				true
+			);
+		} );
+		test( 'has the stepper option visible', async ( {
+			admin,
+			editor,
+			blockUtils,
+		} ) => {
+			await admin.createNewPost();
+			await editor.insertBlock( { name: 'woocommerce/single-product' } );
 
-		await blockUtils.configureSingleProductBlock();
+			await blockUtils.configureSingleProductBlock();
 
-		await blockUtils.enableStepperMode();
+			await blockUtils.enableStepperMode();
 
-		const minusButton = editor.canvas.locator(
-			'.wc-block-components-quantity-selector__button--minus'
-		);
-		const plusButton = editor.canvas.locator(
-			'.wc-block-components-quantity-selector__button--plus'
-		);
+			const minusButton = editor.canvas.locator(
+				'.wc-block-components-quantity-selector__button--minus'
+			);
+			const plusButton = editor.canvas.locator(
+				'.wc-block-components-quantity-selector__button--plus'
+			);
 
-		await expect( minusButton ).toBeVisible();
-		await expect( plusButton ).toBeVisible();
-	} );
+			await expect( minusButton ).toBeVisible();
+			await expect( plusButton ).toBeVisible();
+		} );
 
-	test( 'has the stepper mode working on the frontend', async ( {
-		admin,
-		editor,
-		blockUtils,
-		page,
-	} ) => {
-		await admin.createNewPost();
-		await editor.insertBlock( { name: 'woocommerce/single-product' } );
+		test( 'has the stepper mode working on the frontend', async ( {
+			admin,
+			editor,
+			blockUtils,
+			page,
+		} ) => {
+			await admin.createNewPost();
+			await editor.insertBlock( { name: 'woocommerce/single-product' } );
 
-		await blockUtils.configureSingleProductBlock();
+			await blockUtils.configureSingleProductBlock();
 
-		await blockUtils.enableStepperMode();
+			await blockUtils.enableStepperMode();
 
-		await editor.publishAndVisitPost();
+			await editor.publishAndVisitPost();
 
-		const minusButton = page.locator(
-			'.wc-block-components-quantity-selector__button--minus'
-		);
-		const plusButton = page.locator(
-			'.wc-block-components-quantity-selector__button--plus'
-		);
+			const minusButton = page.locator(
+				'.wc-block-components-quantity-selector__button--minus'
+			);
+			const plusButton = page.locator(
+				'.wc-block-components-quantity-selector__button--plus'
+			);
 
-		await expect( minusButton ).toBeVisible();
-		await expect( plusButton ).toBeVisible();
+			await expect( minusButton ).toBeVisible();
+			await expect( plusButton ).toBeVisible();
 
-		const input = page.getByLabel( 'Product quantity' );
+			const input = page.getByLabel( 'Product quantity' );
 
-		await expect( input ).toHaveValue( '1' );
-		await plusButton.click();
-		await expect( input ).toHaveValue( '2' );
-		await minusButton.click();
-		await expect( input ).toHaveValue( '1' );
-		// Ensure the quantity doesn't go below 1.
-		await minusButton.click();
-		await expect( input ).toHaveValue( '1' );
-	} );
+			await expect( input ).toHaveValue( '1' );
+			await plusButton.click();
+			await expect( input ).toHaveValue( '2' );
+			await minusButton.click();
+			await expect( input ).toHaveValue( '1' );
+			// Ensure the quantity doesn't go below 1.
+			await minusButton.click();
+			await expect( input ).toHaveValue( '1' );
+		} );
 
-	test( "doesn't render stepper when the product is sold individually", async ( {
-		admin,
-		editor,
-		blockUtils,
-		page,
-	} ) => {
-		await blockUtils.createSoldIndividuallyProduct();
-		await admin.createNewPost();
-		await editor.insertBlock( { name: 'woocommerce/single-product' } );
+		test( "doesn't render stepper when the product is sold individually", async ( {
+			admin,
+			editor,
+			blockUtils,
+			page,
+		} ) => {
+			await blockUtils.createSoldIndividuallyProduct();
+			await admin.createNewPost();
+			await editor.insertBlock( { name: 'woocommerce/single-product' } );
 
-		await blockUtils.configureSingleProductBlock( 'Sold Individually' );
-		await blockUtils.enableStepperMode();
-		await editor.publishAndVisitPost();
+			await blockUtils.configureSingleProductBlock( 'Sold Individually' );
+			await blockUtils.enableStepperMode();
+			await editor.publishAndVisitPost();
 
-		const minusButton = page.locator(
-			'.wc-block-components-quantity-selector__button--minus'
-		);
-		const plusButton = page.locator(
-			'.wc-block-components-quantity-selector__button--plus'
-		);
+			const minusButton = page.locator(
+				'.wc-block-components-quantity-selector__button--minus'
+			);
+			const plusButton = page.locator(
+				'.wc-block-components-quantity-selector__button--plus'
+			);
 
-		await expect( minusButton ).toBeHidden();
-		await expect( plusButton ).toBeHidden();
+			await expect( minusButton ).toBeHidden();
+			await expect( plusButton ).toBeHidden();
+		} );
 	} );
 } );
