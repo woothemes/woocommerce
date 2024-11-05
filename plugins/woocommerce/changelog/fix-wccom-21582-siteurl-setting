@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Correctly fetch `siteUrl` to fix broken `Back to Store` button

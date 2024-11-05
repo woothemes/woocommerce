@@ -1,0 +1,4 @@
+Significance: patch
+Type: tweak
+
+Remove duplicate TS definition for currency code
