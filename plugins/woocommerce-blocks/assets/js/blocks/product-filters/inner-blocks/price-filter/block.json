@@ -13,6 +13,6 @@
 		"interactivity": true,
 		"html": false
 	},
-	"usesContext": [ "query", "queryId" ],
+	"usesContext": [ "query", "filterParams" ],
 	"attributes": {}
 }
