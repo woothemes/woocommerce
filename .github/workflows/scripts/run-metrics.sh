@@ -95,7 +95,7 @@ if [ "$GITHUB_EVENT_NAME" == "push" ] || [ "$GITHUB_EVENT_NAME" == "pull_request
 	#   metrics.
 	IFS=. read -ra WP_VERSION_ARRAY <<< "$WP_VERSION"
 	PERF_RESULTS=$(pnpm --filter="compare-perf" run compare perf $GITHUB_SHA $BASE_SHA --tests-branch $GITHUB_SHA --wp-version "${WP_VERSION_ARRAY[0]}.${WP_VERSION_ARRAY[1]}" --ci --skip-benchmarking --delta)
-	echo $PERF_RESULTS
+	echo "$PERF_RESULTS"
 	echo '##[endgroup]'
 
 	if [[ "$GITHUB_EVENT_NAME" == "push" ]]; then
