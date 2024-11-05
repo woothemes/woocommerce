@@ -75,11 +75,11 @@ if [ "$GITHUB_EVENT_NAME" == "push" ] || [ "$GITHUB_EVENT_NAME" == "pull_request
 		RESULTS_ID="frontend_${BASE_SHA}_round-1" pnpm --filter="@woocommerce/plugin-woocommerce" test:metrics frontend
 		echo '##[endgroup]'
 
-		# title "##[group]Restoring codebase state back to head"
-		# git -c core.hooksPath=/dev/null checkout --quiet $HEAD_BRANCH > /dev/null && echo 'On' $(git rev-parse HEAD)
-		# pnpm install --frozen-lockfile > /dev/null &
-		# pnpm run --if-present clean:build
-		# echo '##[endgroup]'
+		title "##[group]Restoring codebase state back to head"
+		git -c core.hooksPath=/dev/null checkout --quiet $HEAD_BRANCH > /dev/null && echo 'On' $(git rev-parse HEAD)
+		pnpm install --frozen-lockfile > /dev/null &
+		pnpm run --if-present clean:build
+		echo '##[endgroup]'
 	fi
 
   	title "##[group]Processing reports under $ARTIFACTS_PATH"
