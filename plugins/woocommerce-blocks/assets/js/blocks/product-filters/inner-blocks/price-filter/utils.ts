@@ -8,13 +8,16 @@ import {
 	Currency,
 	isString,
 } from '@woocommerce/types';
+import type { WCStoreV1ProductsCollectionProps } from '@woocommerce/blocks/product-collection/types';
 
 function formatPriceInt( price: string | number, currency: Currency ) {
 	const priceInt = typeof price === 'number' ? price : parseInt( price, 10 );
 	return priceInt / 10 ** currency.minorUnit;
 }
 
-export function getPriceFilterData( results: unknown[] ) {
+export function getPriceFilterData(
+	results: WCStoreV1ProductsCollectionProps
+) {
 	if ( ! objectHasProp( results, 'price_range' ) ) {
 		return {
 			minPrice: 0,
