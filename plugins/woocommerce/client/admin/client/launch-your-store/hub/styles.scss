@@ -54,10 +54,12 @@
 						height: 64px;
 						padding: 16px 12px 0 0;
 						color: #ccc;
+						width: auto;
 					}
 
 					.woocommerce-edit-site-sidebar-navigation-screen__title-icon {
 						align-items: center;
+						background-color: transparent;
 						padding-top: 16px;
 						padding-bottom: 0;
 						margin-bottom: 8px;
@@ -120,8 +122,9 @@
 
 					.woocommerce-edit-site-sidebar-navigation-screen__main {
 						height: 100%;
+						margin-bottom: 0;
 
-						.woocommerce-edit-site-sidebar-button {
+						.edit-site-sidebar-button {
 							color: $gray-900;
 							height: 40px;
 						}
@@ -316,5 +319,9 @@
 				flex-grow: 1;
 			}
 		}
+	}
+
+	.woocommerce-edit-site-layout__header-container {
+		position: static;
 	}
 }
