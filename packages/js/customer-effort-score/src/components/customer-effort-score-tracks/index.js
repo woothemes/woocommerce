@@ -56,7 +56,6 @@ function _CustomerEffortScoreTracks( {
 	allowTracking,
 	resolving,
 	storeAgeInWeeks,
-	updateOptions,
 	createNotice,
 } ) {
 	const [ modalShown, setModalShown ] = useState( false );
@@ -253,11 +252,9 @@ export const CustomerEffortScoreTracks = compose(
 		};
 	} ),
 	withDispatch( ( dispatch ) => {
-		const { updateOptions } = dispatch( OPTIONS_STORE_NAME );
 		const { createNotice } = dispatch( 'core/notices' );
 
 		return {
-			updateOptions,
 			createNotice,
 		};
 	} )
