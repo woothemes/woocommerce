@@ -1,0 +1,4 @@
+Significance: minor
+Type: update
+
+Show the payment method as text if there's no brand or last4 digits are present.
