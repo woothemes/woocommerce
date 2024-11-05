@@ -3,7 +3,7 @@
     {
       "post_title": "WooCommerce developer documentation",
       "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/README.md",
-      "hash": "79afb7569e960c643f381904c7b7aa0eaa8306a9dfa01d22be8356f1d7d271ff",
+      "hash": "30f0a75b508a1dd7dd3c2f322daa0a4fb7bafee0856ccf9f3ffd1ce0bf8d3422",
       "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/README.md",
       "id": "65f434b31529b2793f7f7adcadfec487c797bdd2",
       "links": {
@@ -74,7 +74,7 @@
           "post_title": "Blocks reference",
           "menu_title": "Blocks Reference",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/building-a-woo-store/block-references.md",
-          "hash": "9bbd3555641a70a0d7c24c818323a9270e437a6446998de9a6506e0c2ed6ddf5",
+          "hash": "8f0edfe9aa2bb36103f78f38aa61b871d0c5dfa5d76e4cb6f762c5b7648405f8",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/building-a-woo-store/block-references.md",
           "id": "1fbe91d7fa4fafaf35f0297e4cee1e7958756aed"
         },
@@ -728,7 +728,7 @@
           "menu_title": "Implement merchant onboarding",
           "tags": "how-to",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/extension-development/handling-merchant-onboarding.md",
-          "hash": "85fc7d70f47fdb195ad2c690d3b95565169221f9e4d7afa98e88f3824ad0e267",
+          "hash": "f53a89603209f12124eff5d21b3abb3edd2f8d07d6819522100c8e0e03c5d5e6",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/extension-development/handling-merchant-onboarding.md",
           "id": "89fe15dc232379f546852822230c334d3d940b93"
         },
@@ -1823,5 +1823,5 @@
       "categories": []
     }
   ],
-  "hash": "b493fa620b4f693f8165bd4cdcd474badf1659f4ae65e71a012bdde28351e8eb"
+  "hash": "37344610a42f59b00f6ffedd8c03061f778c0846d5c7bbd5389acf00055a3745"
 }
