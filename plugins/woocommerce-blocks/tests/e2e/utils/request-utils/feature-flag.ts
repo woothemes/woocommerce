@@ -8,14 +8,18 @@ export async function setFeatureFlag(
 	flag: string,
 	value: boolean
 ) {
-	return this.request.post( '/wp-json/e2e-feature-flags/update', {
-		failOnStatusCode: true,
+	return this.rest( {
+		method: 'POST',
+		path: '/e2e-feature-flags/update',
 		data: { [ flag ]: value },
+		failOnStatusCode: true,
 	} );
 }
 
 export async function resetFeatureFlag( this: RequestUtils ) {
-	return this.request.get( '/wp-json/e2e-feature-flags/reset', {
+	return this.rest( {
+		method: 'GET',
+		path: '/e2e-feature-flags/reset',
 		failOnStatusCode: true,
 	} );
 }
