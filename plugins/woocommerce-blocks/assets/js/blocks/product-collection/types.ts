@@ -117,7 +117,14 @@ export interface ProductCollectionQuery {
 	priceRange: undefined | PriceRange;
 	filterable: boolean;
 	productReference?: number;
+	relatedBy?: RelatedBy | undefined;
 }
+
+export type RelatedBy = {
+	categories: boolean;
+	tags: boolean;
+	attributes: boolean;
+};
 
 export type ProductCollectionEditComponentProps =
 	BlockEditProps< ProductCollectionAttributes > & {
