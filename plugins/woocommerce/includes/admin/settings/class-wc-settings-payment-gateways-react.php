@@ -25,9 +25,10 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 	 * @return array List of section identifiers.
 	 */
 	private function get_reactify_render_sections() {
+		// TODO uncomment 'woocommerce_payments' when it's ready.
 		$sections = array(
 			'offline',
-			'woocommerce_payments',
+//			'woocommerce_payments',
 			'main',
 		);
 
