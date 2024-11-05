@@ -1,0 +1,25 @@
+.woocommerce-incentive-modal {
+	background-color: $studio-woocommerce-purple-0;
+	margin: 32px;	// TODO: correctly import the $content-spacing-large variable
+	box-shadow: none;
+	border-radius: 8px;
+}
+
+.woocommerce-incentive-banner__content {
+	display: flex;
+	align-items: center;
+}
+
+.woocommerce-incentive-banner__body {
+	flex: 1;
+
+	& > p {
+		color: $gray-700; // #757575
+	}
+}
+
+.woocommerce-incentive-banner__content img {
+	width: 315px;
+	padding-left: 65px;
+	margin-right: 20px;
+}
