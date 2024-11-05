@@ -21,6 +21,17 @@ $gap-small: 12px;
 $gap-smaller: 8px;
 
 /**
+* Colors
+*/
+$Upcoming-Blueberry: #3858E9;
+$Scales-gray-12: #070707;
+
+:root {
+	--Upcoming-Blueberry: #3858E9;
+	--Scales-gray-12: #070707;
+}
+
+/**
   * Styling begins
   */
 .blockUI.blockOverlay {
@@ -5644,6 +5655,15 @@ img.help_tip {
 	.wrap {
 		margin: 0;
 	}
+
+	.panel-wrap {
+		display: flex;
+		align-items: flex-start;
+		flex: 1 0 0;
+		align-self: stretch;
+
+		background: #FFF;
+	}
 }
 
 #woocommerce-coupon-description {
@@ -5716,7 +5736,76 @@ img.help_tip {
 	.panel-wrap {
 		overflow: hidden;
 	}
+	li {
+		margin: 0;
+		padding: 0;
 
+		a {
+			margin: 0;
+			display: block;
+			box-shadow: none;
+			text-decoration: none;
+
+			&::before {
+				@include iconbeforedashicons("\f107");
+			}
+		}
+
+		&.general_options a::before {
+			content: "\f107";
+		}
+
+		&.inventory_options a::before {
+			content: "\f481";
+		}
+
+		&.shipping_options a::before {
+			font-family: "WooCommerce";
+			content: "\e01a";
+		}
+
+		&.linked_product_options a::before {
+			content: "\f103";
+		}
+
+		&.attribute_options a::before {
+			content: "\f175";
+		}
+
+		&.advanced_options a::before {
+			font-family: "Dashicons";
+			content: "\f111";
+		}
+
+		&.marketplace-suggestions_options a::before {
+			content: none;
+		}
+
+		&.variations_options a::before {
+			content: "\f509";
+		}
+
+		&.usage_restriction_options a::before {
+			font-family: "WooCommerce";
+			content: "\e602";
+		}
+
+		&.usage_limit_options a::before {
+			font-family: "WooCommerce";
+			content: "\e601";
+		}
+
+		&.general_coupon_data a::before {
+			font-family: "WooCommerce";
+			content: "\e600";
+		}
+	}
+}
+
+
+
+#woocommerce-coupon-data,
+.woocommerce {
 	ul.wc-tabs {
 		margin: 0;
 		width: 20%;
@@ -5727,6 +5816,26 @@ img.help_tip {
 		background-color: #fafafa;
 		border-right: 1px solid #eee;
 		box-sizing: border-box;
+
+		li {
+			display: block;
+			position: relative;
+
+			a {
+				padding: 10px;
+				line-height: 20px !important;
+				border-bottom: 1px solid #eee;
+
+				span {
+					margin-left: 0.618em;
+					margin-right: 0.618em;
+				}
+
+				&::before {
+					@include iconbeforedashicons("\f107");
+				}
+			}
+		}
 
 		&::after {
 			content: "";
@@ -5740,84 +5849,46 @@ img.help_tip {
 			border-right: 1px solid #eee;
 		}
 
+		&.active a {
+			color: #555;
+			position: relative;
+			background-color: #eee;
+		}
+	}
+}
+
+#woocommerce-product-data {
+
+	ul.wc-tabs {
+		margin: 0;
+		width: 20%;
+		padding: 0;
+		border-right: 1px solid #BBBCBF;
+		align-self: stretch;
+
 		li {
 			margin: 0;
 			padding: 0;
 			display: block;
 			position: relative;
+			min-height: var(--grid-unit-50, 40px);
 
 			a {
-				margin: 0;
-				padding: 10px;
-				display: block;
-				box-shadow: none;
-				text-decoration: none;
-				line-height: 20px !important;
-				border-bottom: 1px solid #eee;
+				display: flex;
+				flex-wrap: wrap;
+				padding: 20px 24px;
+				align-items: center;
+				gap: 10px;
+				align-self: stretch;
 
-				span {
-					margin-left: 0.618em;
-					margin-right: 0.618em;
-				}
-
-				&::before {
-					@include iconbeforedashicons("\f107");
-				}
-			}
-
-			&.general_options a::before {
-				content: "\f107";
-			}
-
-			&.inventory_options a::before {
-				content: "\f481";
-			}
-
-			&.shipping_options a::before {
-				font-family: "WooCommerce";
-				content: "\e01a";
-			}
-
-			&.linked_product_options a::before {
-				content: "\f103";
-			}
-
-			&.attribute_options a::before {
-				content: "\f175";
-			}
-
-			&.advanced_options a::before {
-				font-family: "Dashicons";
-				content: "\f111";
-			}
-
-			&.marketplace-suggestions_options a::before {
-				content: none;
-			}
-
-			&.variations_options a::before {
-				content: "\f509";
-			}
-
-			&.usage_restriction_options a::before {
-				font-family: "WooCommerce";
-				content: "\e602";
-			}
-
-			&.usage_limit_options a::before {
-				font-family: "WooCommerce";
-				content: "\e601";
-			}
-
-			&.general_coupon_data a::before {
-				font-family: "WooCommerce";
-				content: "\e600";
+				color: var(--Gray-Gray-60, #50575E);
 			}
 
 			&.active a {
-				color: #555;
-				position: relative;
-				background-color: #eee;
+				color: var(--Scales-gray-12, #070707);
+				font-weight: 700;
+
+				border-left: 3px solid var(--Upcoming-Blueberry, #3858E9);
 			}
 		}
 	}
