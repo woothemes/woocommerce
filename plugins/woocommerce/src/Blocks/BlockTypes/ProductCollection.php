@@ -85,7 +85,7 @@ class ProductCollection extends AbstractBlock {
 			2
 		);
 		
-		// Ensure query Id is defined.
+		// Ensure query ID is defined.
 		add_filter( 'render_block_data', array( $this, 'set_fallback_query_id' ), 10 );
 
 		// Update the query for Editor.
