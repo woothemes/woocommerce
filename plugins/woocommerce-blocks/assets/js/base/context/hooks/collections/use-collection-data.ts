@@ -155,7 +155,7 @@ export const useCollectionData = < T >( {
 		return buildCollectionDataQuery( collectionDataQueryState );
 	}, [ collectionDataQueryState ] );
 
-	return useCollection< T >( {
+	return useCollection< T, false >( {
 		namespace: '/wc/store/v1',
 		resourceName: 'products/collection-data',
 		query: {
