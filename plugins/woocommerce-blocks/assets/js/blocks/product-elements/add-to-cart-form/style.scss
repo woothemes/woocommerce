@@ -32,7 +32,7 @@
 div.wc-block-add-to-cart-form.wc-block-add-to-cart-form--stepper {
 	form.cart {
 		&:not(.grouped_form):not(.variations_form) {
-			display: flex;
+			display: block;
 		}
 
 		div.wc-block-components-quantity-selector {
@@ -61,7 +61,6 @@ div.wc-block-add-to-cart-form.wc-block-add-to-cart-form--stepper {
 	// Grouped Product
 	table.woocommerce-grouped-product-list.group_table > tbody {
 		td .wc-block-components-quantity-selector {
-
 			input.input-text.qty.text {
 				min-width: 60px;
 			}

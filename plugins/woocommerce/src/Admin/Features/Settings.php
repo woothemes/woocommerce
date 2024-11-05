@@ -41,11 +41,20 @@ class Settings {
 	}
 
 	/**
+	 * Check if the current screen is the WooCommerce settings page.
+	 *
+	 * @return bool
+	 */
+	public function is_settings_page() {
+		$screen = get_current_screen();
+		return $screen && 'woocommerce_page_wc-settings' === $screen->id;
+	}
+
+	/**
 	 * Enqueue scripts for the settings editor.
 	 */
 	public function enqueue_settings_editor_scripts() {
-		$screen = get_current_screen();
-		if ( ! $screen || 'woocommerce_page_wc-settings' !== $screen->id ) {
+		if ( ! self::get_instance()->is_settings_page() ) {
 			return;
 		}
 
@@ -77,14 +86,14 @@ class Settings {
 	 * @return array Array of component settings.
 	 */
 	public static function add_component_settings( $settings ) {
-		if ( ! is_admin() ) {
+		if ( ! self::get_instance()->is_settings_page() ) {
 			return $settings;
 		}
 
 		$setting_pages = \WC_Admin_Settings::get_settings_pages();
 		$pages         = array();
 		foreach ( $setting_pages as $setting_page ) {
-			$pages = $setting_page->add_settings_page( $pages );
+			$pages = $setting_page->add_settings_page_data( $pages );
 		}
 
 		$settings['settingsPages'] = $pages;
