@@ -12,6 +12,15 @@
 @import "fonts";
 
 /**
+ * Copy of some internal-style-build CSS variables
+ */
+
+$gap-large: 24px;
+$gap: 16px;
+$gap-small: 12px;
+$gap-smaller: 8px;
+
+/**
   * Styling begins
   */
 .blockUI.blockOverlay {
@@ -1196,8 +1205,7 @@ mark.amount {
 	}
 }
 
-h2 .woocommerce-help-tip,
-.woocommerce-product-type-tip {
+h2 .woocommerce-help-tip {
 	margin-top: -5px;
 	margin-left: 0.25em;
 }
@@ -5566,30 +5574,38 @@ img.help_tip {
 	}
 }
 
+/* Product data metabox */
 #woocommerce-product-data {
+	border: 0;
+	border-radius: 8px;
+
+	.postbox-header {
+		padding: 12px 16px;
+		flex-shrink: 0;
+		align-self: stretch;
+		border-color: #BBBCBF;
+	}
+
 	.hndle {
-		padding: 10px;
+		padding: 0;
+		gap: $gap-small;
+		flex-wrap: wrap;
 
 		span {
-			display: block;
 			line-height: 24px;
 		}
 
 		.product-data-wrapper {
-			label > * {
-				display: inline-block;
-			}
+			display: flex;
+			align-items: center;
+			gap: 16px;
+			flex: 1;
+			display: flex;
+			flex-wrap: wrap;
 
 			.woocommerce-product-type-tip {
 				font-size: 1.4em;
-				margin-left: 9px;
 			}
-		}
-
-		.type_box {
-			display: inline;
-			line-height: inherit;
-			vertical-align: baseline;
 		}
 
 		select {
@@ -5597,14 +5613,21 @@ img.help_tip {
 		}
 
 		label {
-			padding-right: 1em;
 			font-size: 12px;
 			vertical-align: baseline;
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: $gap-smaller;
+			margin-right: $gap;
 		}
 
 		label:first-child {
-			margin-right: 1.4em;
+			padding-right: $gap;
 			border-right: 1px solid #dfdfdf;
+			gap: $gap-small;
+			margin-left: calc(-1 * (16px - 12px));
+			margin-right: 0;
 		}
 
 		input,
@@ -5613,21 +5636,9 @@ img.help_tip {
 			vertical-align: middle;
 		}
 
-		label.has-checkbox {
-			margin-right: 15px;
-		}
-
 		label.has-checkbox > input[type="checkbox"] {
-			margin-right: 3px;
+			margin-right: 0;
 		}
-
-		select {
-			margin-left: 0.5em;
-		}
-	}
-
-	> .handlediv {
-		margin-top: 4px;
 	}
 
 	.wrap {
@@ -8108,21 +8119,6 @@ table.bar_chart {
 	.woocommerce table.form-table .select2-container {
 		@media only screen and (max-width: 782px) {
 			min-width: 100% !important;
-		}
-	}
-}
-
-.wc-wp-version-gte-55 {
-	#woocommerce-product-data {
-		.hndle {
-			display: block;
-			line-height: 28px;
-
-			.type_box {
-				display: inline;
-				line-height: inherit;
-				vertical-align: baseline;
-			}
 		}
 	}
 }
