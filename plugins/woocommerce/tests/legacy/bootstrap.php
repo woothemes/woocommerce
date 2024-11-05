@@ -95,7 +95,7 @@ class WC_Unit_Tests_Bootstrap {
 			$this->initialize_hpos();
 		}
 
-		error_reporting( error_reporting() & ~E_DEPRECATED );
+		error_reporting( error_reporting() & ~E_DEPRECATED );  // phpcs:ignore WordPress.PHP.DevelopmentFunctions.prevent_path_disclosure_error_reporting, WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_error_reporting
 	}
 
 	/**
