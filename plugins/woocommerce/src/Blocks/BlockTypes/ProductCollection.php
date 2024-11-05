@@ -133,22 +133,6 @@ class ProductCollection extends AbstractBlock {
 	}
 
 	/**
-	 * Get the block's attributes.
-	 *
-	 * @param array $attributes Block attributes. Default empty array.
-	 * @return array  Block attributes merged with defaults.
-	 */
-	private function parse_attributes( $attributes ) {
-		// These should match what's set in JS `registerBlockType`.
-		$defaults = array(
-			'isDescendentOfSingleProductBlock' => false,
-			'quantitySelectorStyle'            => 'input',
-		);
-
-		return wp_parse_args( $attributes, $defaults );
-	}
-
-	/**
 	 * Get the styles for the list element (fixed width).
 	 *
 	 * @param string $fixed_width Fixed width value.
