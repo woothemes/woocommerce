@@ -16,7 +16,7 @@ import {
 
 /**
  * Internal dependencies
- */	
+ */
 import { unlock } from '../lock-unlock';
 
 const { useHistory } = unlock( routerPrivateApis );
