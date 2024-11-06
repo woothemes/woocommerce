@@ -3,10 +3,12 @@
  */
 import { useState, useEffect, useMemo } from '@wordpress/element';
 import { useDebounce } from 'use-debounce';
-import { objectHasProp } from '@woocommerce/types';
+import {
+	objectHasProp,
+	type WCStoreV1ProductsCollectionProps,
+} from '@woocommerce/types';
 import { sort } from 'fast-sort';
 import { useShallowEqual } from '@woocommerce/base-hooks';
-import type { WCStoreV1ProductsCollectionProps } from '@woocommerce/blocks/product-collection/types';
 
 /**
  * Internal dependencies
@@ -156,7 +158,7 @@ export const useCollectionData = ( {
 		return buildCollectionDataQuery( collectionDataQueryState );
 	}, [ collectionDataQueryState ] );
 
-	return useCollection< WCStoreV1ProductsCollectionProps, false >( {
+	return useCollection< WCStoreV1ProductsCollectionProps >( {
 		namespace: '/wc/store/v1',
 		resourceName: 'products/collection-data',
 		query: {
