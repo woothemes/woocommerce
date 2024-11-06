@@ -254,6 +254,12 @@ importers:
       '@types/wordpress__components':
         specifier: ^19.10.5
         version: 19.10.5(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
+      '@types/wordpress__core-data':
+        specifier: 2.4.5
+        version: 2.4.5
+      '@types/wordpress__data':
+        specifier: 6.0.2
+        version: 6.0.2
       '@types/wordpress__editor':
         specifier: 13.0.0
         version: 13.0.0(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
