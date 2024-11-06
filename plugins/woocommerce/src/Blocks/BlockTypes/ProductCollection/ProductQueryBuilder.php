@@ -119,7 +119,7 @@ class ProductQueryBuilder {
 		);
 
 		return $this->valid_query_vars;
-    }
+	}
 
 	/**
 	 * Get custom order options.
