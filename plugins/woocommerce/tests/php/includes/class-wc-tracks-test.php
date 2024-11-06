@@ -59,8 +59,17 @@ class WC_Tracks_Test extends \WC_Unit_Test_Case {
 			array(),
 		);
 
-		$this->assertContains( '_role', array_keys( $properties ) );
-		$this->assertEquals( 'administrator', $properties['_role'] );
+		$this->assertContains( 'role', array_keys( $properties ) );
+		$this->assertEquals( 'administrator', $properties['role'] );
+
+		$this->assertContains( 'can_install_plugins', array_keys( $properties ) );
+		$this->assertEquals( true, $properties['can_install_plugins'] );
+
+		$this->assertContains( 'can_activate_plugins', array_keys( $properties ) );
+		$this->assertEquals( true, $properties['can_activate_plugins'] );
+
+		$this->assertContains( 'can_manage_woocommerce', array_keys( $properties ) );
+		$this->assertEquals( true, $properties['can_manage_woocommerce'] );
 	}
 
 	/**
