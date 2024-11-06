@@ -104,8 +104,8 @@ if [ "$GITHUB_EVENT_NAME" == "push" ] || [ "$GITHUB_EVENT_NAME" == "pull_request
 	fi
 
 	# Compare server response delta compared to the base branch and fail if greater than 10% difference.
-	DELTAS=$(echo $PERF_RESULTS | grep 'delta:' | sed -e 's/[^-0-9. ]//g')
-	DELTAS_ARRAY=($result)
+	DELTAS=$(echo "$PERF_RESULTS" | grep -o '.*delta:.*' | sed -re 's/.*delta:(.*)%/\1/' )
+	DELTAS_ARRAY=($DELTAS)
 	for i in "${DELTAS_ARRAY[@]}"
 	do
 		if (( $(echo "$i > 10" | bc -l) ))
