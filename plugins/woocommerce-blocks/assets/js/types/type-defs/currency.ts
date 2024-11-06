@@ -35,12 +35,23 @@ export interface Currency {
 
 export interface CurrencyResponse {
 	currency_code: CurrencyCode;
-	currency_symbol: '$' | string;
+
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	currency_symbol: '$' | '€' | '£' | '₣' | '₽' | ( string & {} );
+
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	currency_prefix: '€' | '₫' | ( string & {} );
+
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	currency_decimal_separator: '.' | ',' | ( string & {} );
+
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	currency_thousand_separator: ',' | '.' | ( string & {} );
+
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	currency_suffix: '' | '€' | ( string & {} );
+
 	currency_minor_unit: number;
-	currency_decimal_separator: '.' | string;
-	currency_thousand_separator: ',' | string;
-	currency_prefix: '$' | string;
-	currency_suffix: '' | string;
 }
 
 export type SymbolPosition = 'left' | 'left_space' | 'right' | 'right_space';
