@@ -167,6 +167,22 @@ class ProductRenderer {
 	}
 
 	/**
+	 * Get the styles for the list element (fixed width).
+	 *
+	 * @param string $fixed_width Fixed width value.
+	 * @return string
+	 */
+	protected function get_list_styles( $fixed_width ) {
+		$style = '';
+
+		if ( isset( $fixed_width ) ) {
+			$style .= sprintf( 'width:%s;', esc_attr( $fixed_width ) );
+			$style .= 'margin: 0 auto;';
+		}
+		return $style;
+	}
+
+	/**
 	 * Set the style attribute for fixed width.
 	 *
 	 * @param WP_HTML_Tag_Processor $p          The HTML tag processor.
