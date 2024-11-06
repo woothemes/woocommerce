@@ -84,7 +84,7 @@ class ProductCollection extends AbstractBlock {
 			10,
 			2
 		);
-		
+
 		// Ensure query ID is defined.
 		add_filter( 'render_block_data', array( $this, 'set_fallback_query_id' ), 10 );
 
@@ -332,7 +332,7 @@ class ProductCollection extends AbstractBlock {
 	 * for client-side navigation.
 	 *
 	 * @param string $block_content The HTML content of the block.
-	 * @param array $block Block details, including its attributes.
+	 * @param array  $block Block details, including its attributes.
 	 *
 	 * @return string Updated HTML content.
 	 */
@@ -799,7 +799,7 @@ class ProductCollection extends AbstractBlock {
 	/**
 	 * Return a custom query based on attributes, filters and global WP_Query.
 	 *
-	 * @param array $parsed_block  A representative array of the block being rendered. See WP_Block_Parser_Block
+	 * @param array $parsed_block  A representative array of the block being rendered. See WP_Block_Parser_Block.
 	 *
 	 * @return array
 	 */
@@ -811,13 +811,13 @@ class ProductCollection extends AbstractBlock {
 			return $parsed_block;
 		}
 
-		if ( empty ( $parsed_block['attrs']['queryId'] ) ) {
 			$parsed_block['attrs']['queryId'] = rand();
+		if ( empty( $parsed_block['attrs']['queryId'] ) ) {
 		}
 
 		return $parsed_block;
 	}
-	
+
 
 	/**
 	 * Get the final query arguments for the frontend.
