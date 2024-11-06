@@ -18,11 +18,22 @@ import { applyCheckoutFilter } from '@woocommerce/blocks-checkout';
 import { defaultPlaceOrderButtonLabel } from './constants';
 import './style.scss';
 
+export type BlockAttributes = {
+	cartPageId: number;
+	showReturnToCart: boolean;
+	className?: string;
+	placeOrderButtonLabel: string;
+	priceSeparator: string;
+	returnToCartButtonLabel: string;
+};
+
 const Block = ( {
 	cartPageId,
 	showReturnToCart,
 	className,
 	placeOrderButtonLabel,
+	returnToCartButtonLabel,
+	priceSeparator,
 }: {
 	cartPageId: number;
 	showReturnToCart: boolean;
@@ -39,6 +50,8 @@ const Block = ( {
 			defaultPlaceOrderButtonLabel,
 	} );
 
+	const showPrice = className?.includes( 'is-style-with-price' ) || false;
+
 	return (
 		<div className={ clsx( 'wc-block-checkout__actions', className ) }>
 			<StoreNoticesContainer
@@ -47,12 +60,27 @@ const Block = ( {
 			<div className="wc-block-checkout__actions_row">
 				{ showReturnToCart && (
 					<ReturnToCartButton
-						link={ getSetting( 'page-' + cartPageId, false ) }
-					/>
+						href={ getSetting( 'page-' + cartPageId, false ) }
+					>
+						{ returnToCartButtonLabel }
+					</ReturnToCartButton>
+				) }
+				{ showPrice && (
+					<style>
+						{ `.wp-block-woocommerce-checkout-actions-block {
+						.wc-block-components-checkout-place-order-button__separator {
+							&::after {
+								content: "${ priceSeparator }";
+							}
+						}
+					}` }
+					</style>
 				) }
 				<PlaceOrderButton
 					label={ label }
 					fullWidth={ ! showReturnToCart }
+					showPrice={ showPrice }
+					priceSeparator={ priceSeparator }
 				/>
 			</div>
 		</div>

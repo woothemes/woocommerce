@@ -1,4 +1,7 @@
 .wc-block-components-order-summary {
+	// Compensate for removing Panel.
+	padding: 0 $gap;
+
 	.wc-block-components-order-summary__button-text {
 		font-weight: 500;
 	}

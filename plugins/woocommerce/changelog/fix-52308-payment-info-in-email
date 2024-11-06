@@ -1,0 +1,4 @@
+Significance: minor
+Type: add
+
+Include the last 4 digits of a payment card in the order details shown to customers when the info is available
