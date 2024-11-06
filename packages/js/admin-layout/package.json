@@ -53,6 +53,7 @@
 	},
 	"dependencies": {
 		"@woocommerce/components": "workspace:*",
+		"@woocommerce/settings": "^1.0.0",
 		"@wordpress/components": "wp-6.0",
 		"@wordpress/compose": "wp-6.0",
 		"@wordpress/core-data": "wp-6.0",

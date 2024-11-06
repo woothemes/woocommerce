@@ -4,3 +4,4 @@ export * from './lock-unlock';
 export * from './layout';
 export * from './sidebar-navigation-screen';
 export * from './sidebar-navigation-item';
+export * from './get-gutenberg-version';
