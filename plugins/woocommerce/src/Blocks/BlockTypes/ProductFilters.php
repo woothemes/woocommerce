@@ -61,23 +61,31 @@ class ProductFilters extends AbstractBlock {
 	 * @return string Rendered block type output.
 	 */
 	protected function render( $attributes, $content, $block ) {
-		$inner_blocks = array_reduce(
+		$query_id      = $block->context['queryId'] ?? 0;
+		$filter_params = $this->get_filter_params( $query_id );
+		$block_context = array_merge(
+			$block->context,
+			array(
+				'filterParams' => $filter_params,
+			),
+		);
+		$inner_blocks  = array_reduce(
 			$block->parsed_block['innerBlocks'],
-			function ( $carry, $parsed_block ) use ( $block ) {
-				$carry .= ( new \WP_Block( $parsed_block, $block->context ) )->render();
+			function ( $carry, $parsed_block ) use ( $block_context ) {
+				$carry .= ( new \WP_Block( $parsed_block, $block_context ) )->render();
 				return $carry;
 			},
 			''
 		);
-		$icontext     = array(
+		$icontext      = array(
 			'isOverlayOpened' => false,
-			'params'          => $this->get_filter_query_params( 0 ),
-			'originalParams'  => $this->get_filter_query_params( 0 ),
+			'params'          => $filter_params,
+			'originalParams'  => $filter_params,
 		);
-		$classes      = array(
+		$classes       = array(
 			'wc-block-product-filters' => true,
 		);
-		$styles       = array(
+		$styles        = array(
 			'--wc-product-filters-text-color'       => StyleAttributesUtils::get_text_color_class_and_style( $attributes )['value'],
 			'--wc-product-filters-background-color' => StyleAttributesUtils::get_background_color_class_and_style( $attributes )['value'],
 		);
@@ -203,7 +211,7 @@ class ProductFilters extends AbstractBlock {
 	 * @param int $query_id Query ID.
 	 * @return array Parsed filter params.
 	 */
-	private function get_filter_query_params( $query_id ) {
+	private function get_filter_params( $query_id ) {
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
 

@@ -17,7 +17,7 @@
 		"interactivity": true
 	},
 	"usesContext": [
-		"queryId"
+		"filterParams"
 	],
 	"attributes": {
 		"clearButton": {
