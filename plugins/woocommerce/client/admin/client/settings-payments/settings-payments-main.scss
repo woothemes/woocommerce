@@ -210,4 +210,20 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 			}
 		}
 	}
+
+	.woocommerce-list__item {
+		&:not(.transitions-disabled) {
+			&.woocommerce-list__item-enter {
+				transform: none;
+			}
+
+			&.woocommerce-list__item-enter-active {
+				transform: none;
+			}
+
+			&.woocommerce-list__item-exit-active {
+				display: none;
+			}
+		}
+	}
 }
