@@ -2,11 +2,11 @@
  * External dependencies
  */
 import { createElement, Fragment } from '@wordpress/element';
+import { unlock } from '@woocommerce/admin-layout';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 // @ts-expect-error missing type.
 // eslint-disable-next-line @wordpress/no-unsafe-wp-apis, @woocommerce/dependency-group
 import { __experimentalItemGroup as ItemGroup } from '@wordpress/components';
-import { unlock } from '@woocommerce/admin-layout';
 
 /**
  * Internal dependencies

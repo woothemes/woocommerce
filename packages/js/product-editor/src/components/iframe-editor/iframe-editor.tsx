@@ -15,6 +15,7 @@ import { useResizeObserver } from '@wordpress/compose';
 import { PluginArea } from '@wordpress/plugins';
 import classNames from 'classnames';
 import { isWpVersion } from '@woocommerce/settings';
+import { getGutenbergVersion } from '@woocommerce/admin-layout';
 import {
 	store as preferencesStore,
 	// @ts-expect-error No types for this exist yet.
@@ -38,7 +39,6 @@ import {
 	ComplementaryArea,
 	// @ts-expect-error No types for this exist yet.
 } from '@wordpress/interface';
-import { getGutenbergVersion } from '@woocommerce/admin-layout';
 
 /**
  * Internal dependencies

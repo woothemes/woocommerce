@@ -5,13 +5,13 @@ import { MenuGroup } from '@wordpress/components';
 import { createElement, Fragment } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { isWpVersion } from '@woocommerce/settings';
+import { getGutenbergVersion } from '@woocommerce/admin-layout';
 // eslint-disable-next-line @woocommerce/dependency-group
 import {
 	ActionItem,
 	MoreMenuDropdown,
 	// @ts-expect-error No types for this exist yet.
 } from '@wordpress/interface';
-import { getGutenbergVersion } from '@woocommerce/admin-layout';
 
 /**
  * Internal dependencies

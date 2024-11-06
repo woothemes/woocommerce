@@ -17,6 +17,7 @@ import { store as coreStore } from '@wordpress/core-data';
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import classNames from 'classnames';
+import { unlock } from '@woocommerce/admin-layout';
 import {
 	// @ts-expect-error missing types.
 	__experimentalHeading as Heading,
@@ -32,7 +33,6 @@ import {
 // @ts-expect-error missing type.
 // eslint-disable-next-line @woocommerce/dependency-group
 import { privateApis as editorPrivateApis } from '@wordpress/editor';
-import { unlock } from '@woocommerce/admin-layout';
 
 /**
  * Internal dependencies

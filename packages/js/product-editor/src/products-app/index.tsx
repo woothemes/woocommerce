@@ -3,12 +3,12 @@
  */
 import { createElement } from '@wordpress/element';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
+import { Layout, unlock } from '@woocommerce/admin-layout';
 import {
 	UnsavedChangesWarning,
 	// @ts-expect-error No types for this exist yet.
 	privateApis as editorPrivateApis,
 } from '@wordpress/editor';
-import { Layout, unlock } from '@woocommerce/admin-layout';
 
 /**
  * Internal dependencies

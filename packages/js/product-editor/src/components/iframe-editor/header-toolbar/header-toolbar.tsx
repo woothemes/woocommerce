@@ -4,6 +4,7 @@
 import { useSelect } from '@wordpress/data';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
+import { getGutenbergVersion } from '@woocommerce/admin-layout';
 import { plus, next, previous } from '@wordpress/icons';
 import {
 	createElement,
@@ -40,7 +41,6 @@ import {
 // @ts-ignore No types for this exist yet.
 // eslint-disable-next-line @woocommerce/dependency-group
 import { PinnedItems } from '@wordpress/interface';
-import { getGutenbergVersion } from '@woocommerce/admin-layout';
 
 /**
  * Internal dependencies

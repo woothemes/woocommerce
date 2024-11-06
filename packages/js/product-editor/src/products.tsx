@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { getGutenbergVersion } from '@woocommerce/admin-layout';
 import {
 	StrictMode,
 	Suspense,
@@ -10,7 +11,6 @@ import {
 	createRoot,
 	lazy,
 } from '@wordpress/element';
-import { getGutenbergVersion } from '@woocommerce/admin-layout';
 
 const ProductsApp = lazy( () =>
 	import( './products-app' ).then( ( module ) => ( {
