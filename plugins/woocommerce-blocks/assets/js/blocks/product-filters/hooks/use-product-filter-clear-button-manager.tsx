@@ -1,88 +1,27 @@
 /**
  * External dependencies
  */
-import { useDispatch, useSelect, select } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { store as blockEditorStore } from '@wordpress/block-editor';
-import { BlockAttributes, createBlock } from '@wordpress/blocks';
+import { createBlock } from '@wordpress/blocks';
 import { useEffect, useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-import { getInnerBlockByName } from '../utils';
-
-function findClientIdByName(
-	block: BlockAttributes,
-	targetName: string
-): string | undefined {
-	if ( ! block ) {
-		return undefined;
-	}
-
-	if ( block.name === targetName ) {
-		return block.clientId;
-	}
-
-	if ( block.innerBlocks && block.innerBlocks.length > 0 ) {
-		for ( const innerBlock of block.innerBlocks ) {
-			const blockId: string | undefined = findClientIdByName(
-				innerBlock,
-				targetName
-			);
-			if ( blockId ) {
-				return blockId;
-			}
-		}
-	}
-
-	return undefined;
-}
+import {
+	getProductFilterClearButtonBlock,
+	getClientIdByBlockName,
+	getInnerBlockByName,
+} from '../utils';
+import {
+	BlockPosition,
+	getCurrentBlockPositionByClientId,
+} from '../utils/get-current-block-position-by-client-id';
 
 const clearButtonDefaultAttributes = {
 	lock: { remove: true, move: false },
 };
-
-interface BlockPosition {
-	blockPositionIndex: number;
-	parentBlockId: string;
-}
-
-function getCurrentBlockPositionByClientId(
-	clientId: string
-): BlockPosition | undefined {
-	if ( ! clientId ) {
-		return undefined;
-	}
-	const { getBlock, getBlockParents, getBlockOrder } =
-		select( blockEditorStore );
-	const blockParents = getBlockParents( clientId, true );
-	const parentBlock = blockParents.length
-		? getBlock( blockParents[ 0 ] )
-		: null;
-	const parentBlockInnerBlocksOrder = getBlockOrder( parentBlock?.clientId );
-	const clearButtonIndex = parentBlockInnerBlocksOrder?.findIndex(
-		( blockId ) => blockId === clientId
-	);
-
-	return {
-		blockPositionIndex: clearButtonIndex,
-		parentBlockId: parentBlock?.clientId,
-	};
-}
-
-function getClearButtonBlock( parentBlockClientId: string ) {
-	const { getBlock } = select( blockEditorStore );
-	const filterBlockInstance = getBlock( parentBlockClientId );
-	const clearButtonId = findClientIdByName(
-		filterBlockInstance,
-		'woocommerce/product-filter-clear-button'
-	);
-	const clearButtonBlock = clearButtonId
-		? getBlock( clearButtonId )
-		: undefined;
-
-	return { clearButtonBlock };
-}
 
 export const useProductFilterClearButtonManager = ( {
 	clientId,
@@ -92,12 +31,12 @@ export const useProductFilterClearButtonManager = ( {
 }: {
 	clientId: string;
 	showClearButton: boolean;
-	positionIndexToInsertBlock: number;
-	parentClientIdToInsertBlock: string;
+	positionIndexToInsertBlock?: number;
+	parentClientIdToInsertBlock?: string;
 } ) => {
 	const [ previousShowClearButtonState, setPreviousShowClearButtonState ] =
 		useState< boolean >( showClearButton );
-	const { clearButtonBlock } = getClearButtonBlock( clientId );
+	const { clearButtonBlock } = getProductFilterClearButtonBlock( clientId );
 	const currentClearButtonBlockPosition = getCurrentBlockPositionByClientId(
 		clearButtonBlock?.clientId
 	);
@@ -106,6 +45,7 @@ export const useProductFilterClearButtonManager = ( {
 		setPreviousClearButtonBlockPosition,
 	] = useState< BlockPosition | undefined >( undefined );
 	const { getBlock } = useSelect( ( select ) => ( {
+		// @ts-expect-error @wordpress/data types are outdated.
 		getBlock: select( blockEditorStore ).getBlock,
 	} ) );
 	// @ts-expect-error @wordpress/data types are outdated.
@@ -172,7 +112,7 @@ export const useProductFilterClearButtonManager = ( {
 		if ( ! filterBlockHeader ) {
 			return false;
 		}
-		const filterBlockHeading = findClientIdByName(
+		const filterBlockHeading = getClientIdByBlockName(
 			filterBlockHeader,
 			'core/heading'
 		);
@@ -243,5 +183,6 @@ export const useProductFilterClearButtonManager = ( {
 			}
 		}
 		setPreviousShowClearButtonState( showClearButton );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ showClearButton, previousShowClearButtonState ] );
 };
