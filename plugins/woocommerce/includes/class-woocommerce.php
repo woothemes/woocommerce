@@ -234,6 +234,9 @@ final class WooCommerce {
 	 * WooCommerce Constructor.
 	 */
 	public function __construct() {
+		if ( ! is_admin() ) {
+			sleep( 1 );
+		}
 		$this->define_constants();
 		$this->define_tables();
 		$this->includes();
