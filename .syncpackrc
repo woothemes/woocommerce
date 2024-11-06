@@ -215,6 +215,7 @@
 				"@woocommerce/block-templates",
 				"@woocommerce/product-editor",
 				"@woocommerce/settings-editor",
+				"@woocommerce/admin-layout",
 				"@woocommerce/admin-library",
 				"@woocommerce/components"
 			],
