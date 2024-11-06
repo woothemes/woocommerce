@@ -6,7 +6,7 @@ import { Gridicon } from '@automattic/components';
 import { Button, SelectControl } from '@wordpress/components';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
-import { PaymentGateway } from '@woocommerce/data';
+import { Plugin, PaymentGateway } from '@woocommerce/data';
 import { EllipsisMenu, List, Pill } from '@woocommerce/components';
 import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
 import { getAdminLink } from '@woocommerce/settings';
@@ -32,6 +32,10 @@ export const PaymentGateways = () => {
 	const [ paymentGateways, setPaymentGateways ] = useState<
 		PaymentGateway[]
 	>( [] );
+	const [
+		preferredPaymentExtensionSuggestions,
+		setPreferredPaymentExtensionSuggestions,
+	] = useState< Plugin[] >( [] );
 	const [ wooPaymentsGatewayData, setWooPaymentsGatewayData ] =
 		useState< WooPaymentsGatewayData | null >( null );
 
@@ -41,6 +45,11 @@ export const PaymentGateways = () => {
 		);
 		setPaymentGateways(
 			parseScriptTag( 'experimental_wc_settings_payments_gateways' )
+		);
+		setPreferredPaymentExtensionSuggestions(
+			parseScriptTag(
+				'experimental_wc_settings_payments_preferred_extensions_suggestions'
+			)
 		);
 	}, [] );
 
@@ -52,6 +61,95 @@ export const PaymentGateways = () => {
 	};
 
 	// Transform plugins comply with List component format.
+	const preferredPaymentExtensionsList =
+		preferredPaymentExtensionSuggestions.map( ( plugin: Plugin ) => {
+			return {
+				key: plugin.id,
+				title: (
+					<>
+						{ plugin.title }
+						{ recommendedGateways.includes( plugin.id ) && (
+							<Pill>{ __( 'Recommended', 'woocommerce' ) }</Pill>
+						) }
+					</>
+				),
+				content: (
+					<>
+						{ decodeEntities( plugin.content ) }
+						{ plugin.id === 'woocommerce_payments' && (
+							<WooPaymentMethodsLogos
+								maxElements={ 10 }
+								isWooPayEligible={ true }
+							/>
+						) }
+					</>
+				),
+				after: (
+					<div className="woocommerce-list__item-after__actions">
+						<>
+							<Button
+								id={ plugin.id }
+								// enabled={ plugin.enabled }
+								// settings_url={ plugin.settings_url }
+							/>
+
+							<Button
+								variant="primary"
+								onClick={ () => {} }
+								isBusy={ false }
+								disabled={ false }
+							>
+								{ __( 'Install', 'woocommerce' ) }
+							</Button>
+
+							{ plugin.id === 'woocommerce_payments' &&
+								wooPaymentsGatewayData?.isInTestMode && (
+									<Button
+										variant="primary"
+										onClick={ setupLivePayments }
+										isBusy={ false }
+										disabled={ false }
+									>
+										{ __(
+											'Set up live payments',
+											'woocommerce'
+										) }
+									</Button>
+								) }
+							<EllipsisMenu
+								label={ __(
+									'Task List Options',
+									'woocommerce'
+								) }
+								renderContent={ () => (
+									<div>
+										<Button>
+											{ __(
+												'Learn more',
+												'woocommerce'
+											) }
+										</Button>
+										<Button>
+											{ __(
+												'See Terms of Service',
+												'woocommerce'
+											) }
+										</Button>
+									</div>
+								) }
+							/>
+						</>
+					</div>
+				),
+				before: (
+					<img
+						src={ plugin.image_72x72 }
+						alt={ plugin.title + ' logo' }
+					/>
+				),
+			};
+		} );
+
 	const paymentGatewaysList = paymentGateways.map(
 		( gateway: PaymentGateway ) => {
 			return {
@@ -191,6 +289,7 @@ export const PaymentGateways = () => {
 					/>
 				</div>
 			</div>
+			<List items={ preferredPaymentExtensionsList } />
 			<List items={ paymentGatewaysList } />
 		</div>
 	);

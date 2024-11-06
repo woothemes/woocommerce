@@ -2,154 +2,39 @@
  * External dependencies
  */
 import { Gridicon } from '@automattic/components';
-import React, { useMemo, useState } from '@wordpress/element';
+import React, { useState } from '@wordpress/element';
 import { Button } from '@wordpress/components';
-import {
-	ONBOARDING_STORE_NAME,
-	PAYMENT_GATEWAYS_STORE_NAME,
-	SETTINGS_STORE_NAME,
-} from '@woocommerce/data';
-import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { Plugin } from '@woocommerce/data';
 
 /**
  * Internal dependencies
  */
-import { getCountryCode } from '~/dashboard/utils';
-import {
-	getEnrichedPaymentGateways,
-	getIsGatewayWCPay,
-	getIsWCPayOrOtherCategoryDoneSetup,
-	getSplitGateways,
-} from '~/task-lists/fills/PaymentGatewaySuggestions/utils';
 import { getAdminSetting } from '~/utils/admin-settings';
+import {useEffect} from "react";
 
-type PaymentGateway = {
-	id: string;
-	image_72x72: string;
-	title: string;
-	content: string;
-	enabled: boolean;
-	needsSetup: boolean;
-	// Add other properties as needed...
+// TODO: This should either be a util function, or handled in a different way e.g. passing the data as props.
+const parseScriptTag = ( elementId: string ) => {
+	const scriptTag = document.getElementById( elementId );
+	return scriptTag ? JSON.parse( scriptTag.textContent || '' ) : [];
 };
 
 const assetUrl = getAdminSetting( 'wcAdminAssetUrl' );
 
-const usePaymentGatewayData = () => {
-	return useSelect( ( select ) => {
-		const { getSettings } = select( SETTINGS_STORE_NAME );
-		const { general: settings = {} } = getSettings( 'general' );
-		return {
-			getPaymentGateway: select( PAYMENT_GATEWAYS_STORE_NAME )
-				.getPaymentGateway,
-			installedPaymentGateways: select(
-				PAYMENT_GATEWAYS_STORE_NAME
-			).getPaymentGateways(),
-			isResolving: select( ONBOARDING_STORE_NAME ).isResolving(
-				'getPaymentGatewaySuggestions'
-			),
-			paymentGatewaySuggestions: select(
-				ONBOARDING_STORE_NAME
-			).getPaymentGatewaySuggestions(),
-			countryCode: getCountryCode( settings.woocommerce_default_country ),
-		};
-	}, [] );
-};
-
 export const OtherPaymentGateways = () => {
 	const [ isExpanded, setIsExpanded ] = useState( false );
-	// Mock other payment gateways for now.
-	// TODO Get the list of gateways via the API in future PR.
-	const mockOtherPaymentGateways = [
-		{
-			id: 'amazon-pay',
-			title: 'Amazon Pay',
-			content:
-				'Enable a familiar, fast checkout for hundreds of millions of active Amazon customers globally.',
-			image_72x72:
-				'https://woocommerce.com/wp-content/plugins/wccom-plugins/payment-gateway-suggestions/images/72x72/paypal.png',
-			enabled: false,
-			needsSetup: false,
-		},
-		{
-			id: 'affirm',
-			title: 'Affirm Payments',
-			content:
-				"Safe and secure payments using credit cards or your customer's PayPal account.",
-			image_72x72:
-				'https://woocommerce.com/wp-content/plugins/wccom-plugins/payment-gateway-suggestions/images/72x72/paypal.png',
-			enabled: false,
-			needsSetup: false,
-		},
-		{
-			id: 'afterpay',
-			title: 'Afterpay',
-			content:
-				'Afterpay allows customers to purchase products and choose to pay in four installments over six weeks or pay monthly.',
-			image_72x72:
-				'https://woocommerce.com/wp-content/plugins/wccom-plugins/payment-gateway-suggestions/images/72x72/paypal.png',
-			enabled: false,
-			needsSetup: false,
-		},
-		{
-			id: 'klarna',
-			title: 'Klarna Payments',
-			content:
-				'Grow your business for increased sales and enhanced shopping experiences at no extra cost.',
-			image_72x72:
-				'https://woocommerce.com/wp-content/plugins/wccom-plugins/payment-gateway-suggestions/images/72x72/paypal.png',
-			enabled: false,
-			needsSetup: false,
-		},
-	];
+	const [
+		otherPaymentExtensionSuggestions,
+		setOtherPaymentExtensionSuggestions,
+	] = useState< Plugin[] >( [] );
 
-	const {
-		paymentGatewaySuggestions,
-		installedPaymentGateways,
-		isResolving,
-		countryCode,
-	} = usePaymentGatewayData();
-
-	const paymentGateways = useMemo(
-		() =>
-			getEnrichedPaymentGateways(
-				installedPaymentGateways,
-				paymentGatewaySuggestions
-			),
-		[ installedPaymentGateways, paymentGatewaySuggestions ]
-	);
-
-	const isWCPayOrOtherCategoryDoneSetup = useMemo(
-		() =>
-			getIsWCPayOrOtherCategoryDoneSetup( paymentGateways, countryCode ),
-		[ countryCode, paymentGateways ]
-	);
-
-	const isWCPaySupported = Array.from( paymentGateways.values() ).some(
-		getIsGatewayWCPay
-	);
-
-	// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-	const [ wcPayGateway, _offlineGateways, additionalGateways ] = useMemo(
-		() =>
-			getSplitGateways(
-				paymentGateways,
-				countryCode ?? '',
-				isWCPaySupported,
-				isWCPayOrOtherCategoryDoneSetup
-			),
-		[
-			paymentGateways,
-			countryCode,
-			isWCPaySupported,
-			isWCPayOrOtherCategoryDoneSetup,
-		]
-	);
-
-	if ( isResolving || ! wcPayGateway ) {
-		return null;
-	}
+	useEffect( () => {
+		setOtherPaymentExtensionSuggestions(
+			parseScriptTag(
+				'experimental_wc_settings_payments_other_extensions_suggestions'
+			)
+		);
+	}, [] );
 
 	return (
 		<div className="other-payment-gateways">
@@ -160,12 +45,12 @@ export const OtherPaymentGateways = () => {
 					</span>
 					{ ! isExpanded && (
 						<>
-							{ mockOtherPaymentGateways.map(
-								( gateway: PaymentGateway ) => (
+							{ otherPaymentExtensionSuggestions.map(
+								( plugin: Plugin ) => (
 									<img
-										key={ gateway.id }
-										src={ gateway.image_72x72 }
-										alt={ gateway.title }
+										key={ plugin.id }
+										src={ plugin.image_72x72 }
+										alt={ plugin.title }
 										width="24"
 										height="24"
 										className="other-payment-gateways__header__title__image"
@@ -192,22 +77,22 @@ export const OtherPaymentGateways = () => {
 			{ isExpanded && (
 				<div className="other-payment-gateways__content">
 					<div className="other-payment-gateways__content__grid">
-						{ mockOtherPaymentGateways.map(
-							( gateway: PaymentGateway ) => (
+						{ otherPaymentExtensionSuggestions.map(
+							( plugin: Plugin ) => (
 								<div
 									className="other-payment-gateways__content__grid-item"
-									key={ gateway.id }
+									key={ plugin.id }
 								>
 									<img
-										src={ gateway.image_72x72 }
-										alt={ gateway.title }
+										src={ plugin.image_72x72 }
+										alt={ plugin.title }
 									/>
 									<div className="other-payment-gateways__content__grid-item__content">
 										<span className="other-payment-gateways__content__grid-item__content__title">
-											{ gateway.title }
+											{ plugin.title }
 										</span>
 										<span className="other-payment-gateways__content__grid-item__content__description">
-											{ gateway.content }
+											{ plugin.content }
 										</span>
 										<div className="other-payment-gateways__content__grid-item__content__actions">
 											<Button variant={ 'primary' }>
