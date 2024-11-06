@@ -98,22 +98,6 @@ export function* triggerWcaInstall() {
 	} );
 }
 
-// Helper function to trigger updates in parallel
-function Updates( defaultOptions ) {
-	const promises = Object.entries( defaultOptions ).map(
-		( [ optionName, optionValue ] ) =>
-			apiFetch( {
-				method: 'POST',
-				path: `${ API_NAMESPACE }/options`,
-				data: {
-					option_name: optionName,
-					option_value: optionValue,
-				},
-			} )
-	);
-	return Promise.all( promises ); // Return a single promise that resolves when all requests complete
-}
-
 export function* resetOnboardingWizard() {
 	yield runCommand( 'Reset Onboarding Wizard', function* () {
 		const optionsToDelete = [
