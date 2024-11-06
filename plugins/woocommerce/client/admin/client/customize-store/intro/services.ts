@@ -44,19 +44,38 @@ export const fetchCustomizeStoreCompleted = async () => {
 };
 
 export const fetchIntroData = async () => {
+	const currentTemplatePromise =
+		// @ts-expect-error No types for this exist yet.
+		resolveSelect( coreStore ).getDefaultTemplateId( { slug: 'home' } );
+
+	const maybePreviousTemplatePromise = resolveSelect(
+		OPTIONS_STORE_NAME
+	).getOption( 'woocommerce_admin_customize_store_completed_theme_id' );
+
 	const getTaskPromise = resolveSelect( ONBOARDING_STORE_NAME ).getTask(
 		'customize-store'
 	);
-	
+
 	const themeDataPromise = fetchThemeCards();
-	
-	const [ task, themeData ] =
-	await Promise.all( [
-		getTaskPromise,
-		themeDataPromise,
-	] );
+
+	const [ currentTemplateId, maybePreviousTemplate, task, themeData ] =
+		await Promise.all( [
+			currentTemplatePromise,
+			maybePreviousTemplatePromise,
+			getTaskPromise,
+			themeDataPromise,
+		] );
+
+	let currentThemeIsAiGenerated = false;
+	if (
+		maybePreviousTemplate &&
+		currentTemplateId === maybePreviousTemplate
+	) {
+		currentThemeIsAiGenerated = true;
+	}
+
 	const customizeStoreTaskCompleted = task?.isComplete;
-	
+
 	interface Theme {
 		stylesheet?: string;
 	}
@@ -67,7 +86,7 @@ export const fetchIntroData = async () => {
 		customizeStoreTaskCompleted,
 		themeData,
 		activeTheme: theme.stylesheet || '',
-		currentThemeIsAiGenerated: false,
+		currentThemeIsAiGenerated,
 	};
 };
 
