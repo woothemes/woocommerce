@@ -204,8 +204,16 @@ abstract class WC_Payment_Gateway extends WC_Settings_API {
 	 * Output the gateway settings screen.
 	 */
 	public function admin_options() {
+		$offline_payment_gateways   = array( 'bacs', 'cheque', 'cod' );
+		$is_offline_payment_gateway = in_array( $this->id, $offline_payment_gateways, true );
+
 		echo '<h2>' . esc_html( $this->get_method_title() );
-		wc_back_link( __( 'Return to payments', 'woocommerce' ), admin_url( 'admin.php?page=wc-settings&tab=checkout' ) );
+		wc_back_link(
+			__( 'Return to payments', 'woocommerce' ),
+			$is_offline_payment_gateway
+				? admin_url( 'admin.php?page=wc-settings&tab=checkout&section=offline' )
+				: admin_url( 'admin.php?page=wc-settings&tab=checkout' )
+		);
 		echo '</h2>';
 		echo wp_kses_post( wpautop( $this->get_method_description() ) );
 		parent::admin_options();
