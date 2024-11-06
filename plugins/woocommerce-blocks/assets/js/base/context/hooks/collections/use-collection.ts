@@ -52,11 +52,9 @@ export interface useCollectionOptions {
 	isEditor?: boolean;
 }
 
-export const useCollection = < T, IsCollection extends boolean = false >(
+export const useCollection = < T >(
 	options: useCollectionOptions
-): IsCollection extends true
-	? { results: T[]; isLoading: boolean }
-	: { results: T; isLoading: boolean } => {
+): { results: T; isLoading: boolean } => {
 	const {
 		namespace,
 		resourceName,
@@ -131,7 +129,5 @@ export const useCollection = < T, IsCollection extends boolean = false >(
 		currentResults.current = results;
 	}
 
-	return currentResults.current as IsCollection extends true
-		? { results: T[]; isLoading: boolean }
-		: { results: T; isLoading: boolean };
+	return currentResults.current as { results: T; isLoading: boolean };
 };
