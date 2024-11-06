@@ -52,6 +52,7 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 
 		// Add filters and actions.
 		add_filter( 'woocommerce_admin_shared_settings', array( $this, 'preload_settings' ) );
+		add_action( 'admin_head', array( $this, 'hide_help_tabs' ) );
 
 		parent::__construct();
 	}
@@ -244,6 +245,24 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 
 			$this->do_update_options_action();
 		}
+	}
+
+	/**
+	 * Hide the help tabs.
+	 */
+	public function hide_help_tabs() {
+		$screen = get_current_screen();
+
+		if ( ! $screen instanceof WP_Screen || 'woocommerce_page_wc-settings' !== $screen->id ) {
+			return;
+		}
+
+		global $current_tab;
+		if ( 'checkout' !== $current_tab ) {
+			return;
+		}
+
+		$screen->remove_help_tabs();
 	}
 }
 
