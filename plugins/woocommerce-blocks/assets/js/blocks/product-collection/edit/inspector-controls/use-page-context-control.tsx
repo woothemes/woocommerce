@@ -31,23 +31,18 @@ import {
 } from '../../utils';
 
 const label = __( 'Query type', 'woocommerce' );
+const defaultOptionLabel = __( 'Default', 'woocommerce' );
+const customOptionLabel = __( 'Custom', 'woocommerce' );
 
 const defaultInheritHelpText = __(
 	'Display products based on the current template and allow shoppers to filter.',
 	'woocommerce'
 );
-
-const customInheritHelpText = __(
-	'Show a list of products based on fixed criteria.',
-	'woocommerce'
-);
-
 const defaultFilterableHelpText = __(
 	'Show products based on specific criteria and allow shoppers to filter.',
 	'woocommerce'
 );
-
-const customFilterableHelpText = __(
+const customHelpText = __(
 	'Show a list of products based on fixed criteria.',
 	'woocommerce'
 );
@@ -82,38 +77,32 @@ const InheritQueryControl = ( {
 		>
 			<ToggleGroupControl
 				className="wc-block-product-collection__inherit-query-control"
-				__next40pxDefaultSize
-				label={ label }
 				isBlock
-				onChange={ ( newInherit: boolean ) => {
-					if ( newInherit ) {
+				label={ label }
+				help={ inherit ? defaultInheritHelpText : customHelpText }
+				value={ !! inherit }
+				onChange={ ( value: boolean ) => {
+					if ( value ) {
 						// If the inherit is enabled, we want to reset the query to the default.
 						setQueryAttribute( {
 							...DEFAULT_QUERY,
-							inherit: newInherit,
+							inherit: value,
 						} );
 					} else {
 						// If the inherit is disabled, we want to reset the query to the previous query before the inherit was enabled.
 						setQueryAttribute( {
 							...DEFAULT_QUERY,
 							...queryObjectBeforeInheritEnabled,
-							inherit: newInherit,
+							inherit: value,
 						} );
 					}
 					trackInteraction( CoreFilterNames.INHERIT );
 				} }
-				help={
-					inherit ? defaultInheritHelpText : customInheritHelpText
-				}
-				value={ !! inherit }
 			>
-				<ToggleGroupControlOption
-					value
-					label={ __( 'Default', 'woocommerce' ) }
-				/>
+				<ToggleGroupControlOption value label={ defaultOptionLabel } />
 				<ToggleGroupControlOption
 					value={ false }
-					label={ __( 'Custom', 'woocommerce' ) }
+					label={ customOptionLabel }
 				/>
 			</ToggleGroupControl>
 		</ToolsPanelItem>
@@ -143,29 +132,21 @@ const FilterableControl = ( {
 		>
 			<ToggleGroupControl
 				className="wc-block-product-collection__inherit-query-control"
-				__next40pxDefaultSize
-				label={ label }
 				isBlock
+				label={ label }
+				help={ filterable ? defaultFilterableHelpText : customHelpText }
+				value={ !! filterable }
 				onChange={ ( value: boolean ) => {
 					setQueryAttribute( {
 						filterable: value,
 					} );
 					trackInteraction( CoreFilterNames.FILTERABLE );
 				} }
-				help={
-					filterable
-						? defaultFilterableHelpText
-						: customFilterableHelpText
-				}
-				value={ !! filterable }
 			>
-				<ToggleGroupControlOption
-					value
-					label={ __( 'Default', 'woocommerce' ) }
-				/>
+				<ToggleGroupControlOption value label={ defaultOptionLabel } />
 				<ToggleGroupControlOption
 					value={ false }
-					label={ __( 'Custom', 'woocommerce' ) }
+					label={ customOptionLabel }
 				/>
 			</ToggleGroupControl>
 		</ToolsPanelItem>
