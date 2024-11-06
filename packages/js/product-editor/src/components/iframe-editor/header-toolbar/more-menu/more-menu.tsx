@@ -11,13 +11,13 @@ import {
 	MoreMenuDropdown,
 	// @ts-expect-error No types for this exist yet.
 } from '@wordpress/interface';
+import { getGutenbergVersion } from '@woocommerce/admin-layout';
 
 /**
  * Internal dependencies
  */
 import { ToolsMenuGroup } from './tools-menu-group';
 import { WritingMenu } from '../writing-menu';
-import { getGutenbergVersion } from '../../../../utils/get-gutenberg-version';
 import { MORE_MENU_ACTION_ITEM_SLOT_NAME } from '../../constants';
 
 export const MoreMenu = () => {

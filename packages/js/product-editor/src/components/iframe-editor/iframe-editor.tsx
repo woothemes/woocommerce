@@ -38,6 +38,7 @@ import {
 	ComplementaryArea,
 	// @ts-expect-error No types for this exist yet.
 } from '@wordpress/interface';
+import { getGutenbergVersion } from '@woocommerce/admin-layout';
 
 /**
  * Internal dependencies
@@ -52,7 +53,6 @@ import { SecondarySidebar } from './secondary-sidebar/secondary-sidebar';
 import { SettingsSidebar } from './sidebar/settings-sidebar';
 import { useEditorHistory } from './hooks/use-editor-history';
 import { store as productEditorUiStore } from '../../store/product-editor-ui';
-import { getGutenbergVersion } from '../../utils/get-gutenberg-version';
 import { SIDEBAR_COMPLEMENTARY_AREA_SCOPE } from './constants';
 import {
 	KeyboardShortcuts,

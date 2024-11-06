@@ -10,11 +10,7 @@ import {
 	createRoot,
 	lazy,
 } from '@wordpress/element';
-
-/**
- * Internal dependencies
- */
-import { getGutenbergVersion } from './utils/get-gutenberg-version';
+import { getGutenbergVersion } from '@woocommerce/admin-layout';
 
 const ProductsApp = lazy( () =>
 	import( './products-app' ).then( ( module ) => ( {

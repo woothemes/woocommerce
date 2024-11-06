@@ -8,13 +8,13 @@ import { recordEvent } from '@woocommerce/tracks';
 import { dispatch } from '@wordpress/data';
 import { useEntityProp } from '@wordpress/core-data';
 import { parse, rawHandler } from '@wordpress/blocks';
+import { getGutenbergVersion } from '@woocommerce/admin-layout';
 
 /**
  * Internal dependencies
  */
 import { store } from '../../../../store/product-editor-ui';
 import { getContentFromFreeform } from '../edit';
-import { getGutenbergVersion } from '../../../../utils/get-gutenberg-version';
 
 // There is a bug in Gutenberg 17.9 that causes a crash in the full editor.
 // This should be fixed in Gutenberg 18.0 (see https://github.com/WordPress/gutenberg/pull/59800).

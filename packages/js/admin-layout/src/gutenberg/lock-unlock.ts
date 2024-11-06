@@ -9,7 +9,9 @@ import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/pri
 import { getGutenbergVersion } from './get-gutenberg-version';
 
 const isGutenbergEnabled = getGutenbergVersion() > 0;
-const noop = () => {};
+const noop = () => {
+	return {};
+};
 
 const { lock, unlock } = isGutenbergEnabled
 	? __dangerousOptInToUnstableAPIsOnlyForCoreModules(

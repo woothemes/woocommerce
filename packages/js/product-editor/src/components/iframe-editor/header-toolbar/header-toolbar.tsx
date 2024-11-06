@@ -40,6 +40,7 @@ import {
 // @ts-ignore No types for this exist yet.
 // eslint-disable-next-line @woocommerce/dependency-group
 import { PinnedItems } from '@wordpress/interface';
+import { getGutenbergVersion } from '@woocommerce/admin-layout';
 
 /**
  * Internal dependencies
@@ -49,7 +50,6 @@ import EditorHistoryRedo from './editor-history-redo';
 import EditorHistoryUndo from './editor-history-undo';
 import { DocumentOverview } from './document-overview';
 import { MoreMenu } from './more-menu';
-import { getGutenbergVersion } from '../../../utils/get-gutenberg-version';
 import { SIDEBAR_COMPLEMENTARY_AREA_SCOPE } from '../constants';
 
 type HeaderToolbarProps = {
