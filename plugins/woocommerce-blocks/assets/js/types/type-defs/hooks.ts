@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import type { ProductResponseItem } from '@woocommerce/types';
+import type { CurrencyResponse, ProductResponseItem } from '@woocommerce/types';
 
 /**
  * Internal dependencies
@@ -68,4 +68,45 @@ export type Query = {
 	page: number;
 	orderby: string;
 	order: string;
+};
+
+export type RatingValues = 0 | 1 | 2 | 3 | 4 | 5;
+
+type AttributeCount = {
+	term: number;
+	count: number;
+};
+
+type RatingCount = {
+	rating: RatingValues;
+	count: number;
+};
+
+type StockStatusCount = {
+	status: 'instock' | 'outofstock' | 'onbackorder';
+	count: number;
+};
+
+type PriceRangeProps = CurrencyResponse & {
+	min_price: string;
+	max_price: string;
+	currency_decimal_separator: '.' | string;
+	currency_minor_unit: number;
+	currency_prefix: '$' | string;
+	currency_suffix: '' | string;
+	currency_symbol: '$' | string;
+	currency_thousand_separator: ',' | string;
+};
+
+/*
+ * Prop types for the `wc/store/v1/products/collection-data` endpoint
+ */
+export type WCStoreV1ProductsCollectionProps = {
+	price_range: PriceRangeProps | null;
+
+	attribute_counts: AttributeCount[] | null;
+
+	rating_counts: RatingCount[] | null;
+
+	stock_status_counts: StockStatusCount[] | null;
 };

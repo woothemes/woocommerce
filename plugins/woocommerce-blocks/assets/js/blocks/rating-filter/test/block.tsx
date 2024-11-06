@@ -12,7 +12,7 @@ import {
 } from '@testing-library/react';
 import * as hooks from '@woocommerce/base-context/hooks';
 import userEvent from '@testing-library/user-event';
-import type { WCStoreV1ProductsCollectionProps } from '@woocommerce/blocks/product-collection/types';
+import type { WCStoreV1ProductsCollectionProps } from '@woocommerce/types';
 
 /**
  * Internal dependencies

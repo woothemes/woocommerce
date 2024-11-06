@@ -4,11 +4,11 @@
 import { getCurrencyFromPriceResponse } from '@woocommerce/price-format';
 import {
 	objectHasProp,
-	CurrencyResponse,
 	Currency,
 	isString,
+	type CurrencyResponse,
+	type WCStoreV1ProductsCollectionProps,
 } from '@woocommerce/types';
-import type { WCStoreV1ProductsCollectionProps } from '@woocommerce/blocks/product-collection/types';
 
 function formatPriceInt( price: string | number, currency: Currency ) {
 	const priceInt = typeof price === 'number' ? price : parseInt( price, 10 );
