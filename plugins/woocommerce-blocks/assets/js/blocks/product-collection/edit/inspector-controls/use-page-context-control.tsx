@@ -33,22 +33,22 @@ import {
 const label = __( 'Query type', 'woocommerce' );
 
 const defaultInheritHelpText = __(
-	'Display a list of products based on the current template.',
+	'Display products based on the current template and allow shoppers to filter.',
 	'woocommerce'
 );
 
 const customInheritHelpText = __(
-	'Display a list of products based on specific criteria.',
+	'Show a list of products based on fixed criteria.',
 	'woocommerce'
 );
 
 const defaultFilterableHelpText = __(
-	'Display a list of products based on any applied filters.',
+	'Show products based on specific criteria and allow shoppers to filter.',
 	'woocommerce'
 );
 
 const customFilterableHelpText = __(
-	'Display a list of products based on specific criteria.',
+	'Show a list of products based on fixed criteria.',
 	'woocommerce'
 );
 
