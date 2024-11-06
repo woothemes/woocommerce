@@ -249,6 +249,7 @@ WooCommerce comes with some sample data you can use to see how products look; im
 * Add - Provide screen readers with product sorting status message. [#50573](https://github.com/woocommerce/woocommerce/pull/50573)
 * Add - Synchronise the express payment controls between the Cart & Checkout blocks [#50791](https://github.com/woocommerce/woocommerce/pull/50791)
 * Add - Track data for font and color pairings including 'Create your own' option in CYS [#51206](https://github.com/woocommerce/woocommerce/pull/51206)
+* Update - Fix CYS error with latest Gutenberg nightly builds [#52623](https://github.com/woocommerce/woocommerce/pull/52623)
 * Update - Added experimental delayed order creation block. [#50934](https://github.com/woocommerce/woocommerce/pull/50934)
 * Update - Added Stripe tax in onboarding tax task [#50989](https://github.com/woocommerce/woocommerce/pull/50989)
 * Update - Change the way search results are displayed in the in-app marketplace [#51413](https://github.com/woocommerce/woocommerce/pull/51413)
