@@ -22,12 +22,8 @@ const RelatedByControl = ( {
 
 	return (
 		<PanelBody title={ __( 'Relate by', 'woocommerce' ) }>
-			<VStack
-				className="wc-block-editor-product-collection-inspector-controls__relate-by"
-				gap={ 0 }
-			>
+			<div className="wc-block-editor-product-collection-inspector-controls__relate-by">
 				<CheckboxControl
-					__nextHasNoMarginBottom
 					label={ __( 'Categories', 'woocommerce' ) }
 					checked={ relatedBy?.categories }
 					onChange={ ( value ) => {
@@ -44,7 +40,6 @@ const RelatedByControl = ( {
 				/>
 
 				<CheckboxControl
-					__nextHasNoMarginBottom
 					label={ __( 'Tags', 'woocommerce' ) }
 					checked={ relatedBy?.tags }
 					onChange={ ( value ) => {
@@ -59,7 +54,7 @@ const RelatedByControl = ( {
 						// );
 					} }
 				/>
-			</VStack>
+			</div>
 		</PanelBody>
 	);
 };
