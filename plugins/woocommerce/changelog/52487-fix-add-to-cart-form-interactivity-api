@@ -1,0 +1,4 @@
+Significance: minor
+Type: fix
+
+Add to Cart Form: Ensure compliance with min, max, and step HTML attributes.
