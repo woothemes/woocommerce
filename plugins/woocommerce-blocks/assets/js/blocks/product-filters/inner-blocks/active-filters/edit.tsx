@@ -72,7 +72,10 @@ const Edit = ( props: EditProps ) => {
 						label={ __( 'Horizontal', 'woocommerce' ) }
 						onClick={ () =>
 							setAttributes( {
-								layout: { orientation: 'horizontal' },
+								layout: {
+									...usedLayout,
+									orientation: 'horizontal',
+								},
 							} )
 						}
 						isPressed={
@@ -85,7 +88,10 @@ const Edit = ( props: EditProps ) => {
 						label={ __( 'Vertical', 'woocommerce' ) }
 						onClick={ () =>
 							setAttributes( {
-								layout: { orientation: 'vertical' },
+								layout: {
+									...usedLayout,
+									orientation: 'vertical',
+								},
 							} )
 						}
 						isPressed={ usedLayout.orientation === 'vertical' }
