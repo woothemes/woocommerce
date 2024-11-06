@@ -811,8 +811,13 @@ class ProductCollection extends AbstractBlock {
 			return $parsed_block;
 		}
 
-			$parsed_block['attrs']['queryId'] = rand();
 		if ( empty( $parsed_block['attrs']['queryId'] ) ) {
+
+			// Build a consistent query ID based on the query parameters.
+			$hashed_args = $parsed_block['attrs']['query'] ?? array();
+			unset( $hashed_args['paged'] );
+
+			$parsed_block['attrs']['queryId'] = md5( wp_json_encode( $hashed_args ) );
 		}
 
 		return $parsed_block;
