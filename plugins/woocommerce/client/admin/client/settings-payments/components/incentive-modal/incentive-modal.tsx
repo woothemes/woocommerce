@@ -22,7 +22,7 @@ import IncentiveIcon from './incentives-modal-icon.svg';
 
 export const IncentiveModal = () => {
 	const [ isSubmitted, setIsSubmitted ] = useState( false );
-	const [ isDismissClicked, setIsDismissClicked ] = useState( false );
+	const [ isOpen, setIsOpen ] = useState( true );
 
 	const handleSetup = () => {
 		console.log( 'Handle setup' );
@@ -31,75 +31,84 @@ export const IncentiveModal = () => {
 
 	const onClose = () => {
 		console.log( 'Close modal' );
-	};
-
-	const handleDismiss = () => {
-		console.log( 'Handle dismiss' );
-		setIsDismissClicked( true );
+		setIsOpen( false );
 	};
 
 	return (
-		<Modal title={ 'Incentive' } onRequestClose={ onClose }>
-			<Card
-				className={ 'woocommerce-incentive-modal__card' }
-				isRounded={ true }
-			>
-				<div className="woocommerce-incentive-modal__content">
-					<CardMedia>
-						<img
-							src={ IncentiveIcon }
-							alt={ __( 'Incentive hero image', 'woocommerce' ) }
-						/>
-					</CardMedia>
-					<CardBody
-						className={ 'woocommerce-incentive-modal__body' }
-					>
-						<div>
-							<Pill>
-								{ __( 'Limited time offer', 'woocommerce' ) }
-							</Pill>
+		<>
+			{ isOpen && (
+				<Modal className='woocommerce-incentive-modal' onRequestClose={ onClose }>
+					<Card className={ 'woocommerce-incentive-modal__card' }>
+						<div className="woocommerce-incentive-modal__content">
+							<CardMedia className={ 'woocommerce-incentive-modal__media' }>
+								<img
+									src={ IncentiveIcon }
+									alt={ __(
+										'Incentive hero image',
+										'woocommerce'
+									) }
+								/>
+							</CardMedia>
+							<CardBody
+								className={
+									'woocommerce-incentive-modal__body'
+								}
+							>
+								<div>
+									<Pill>
+										{ __(
+											'Limited time offer',
+											'woocommerce'
+										) }
+									</Pill>
+								</div>
+								<h2>
+									{ __(
+										'Save 10% on processing fees for your first 3 months when you sign up for WooPayments',
+										'woocommerce'
+									) }
+								</h2>
+								<p>
+									{ __(
+										'Use the native payments solution build and supported by Woo to accept online and in-person payments, track revenue, and handle all payment activity in one place.',
+										'woocommerce'
+									) }
+								</p>
+								<p
+									className={
+										'woocommerce-incentive-modal__terms'
+									}
+								>
+									{ interpolateComponents( {
+										mixedString: __(
+											'See {{link}}Terms and Conditions{{/link}} for details.',
+											'woocommerce'
+										),
+										components: {
+											link: (
+												<Link
+													href="https://woocommerce.com/terms-conditions/woopayments-action-promotion-2023/"
+													target="_blank"
+												>
+													<></>
+												</Link>
+											),
+										},
+									} ) }
+								</p>
+								<Button
+									variant={ 'primary' }
+									isBusy={ isSubmitted }
+									disabled={ isSubmitted }
+									onClick={ handleSetup }
+								>
+									{ __( 'Get started', 'woocommerce' ) }
+								</Button>
+							</CardBody>
 						</div>
-						<h2>
-							{ __(
-								'Save 10% on processing fees for your first 3 months when you sign up for WooPayments',
-								'woocommerce'
-							) }
-						</h2>
-						<p>
-							{ __(
-								'Use the native payments solution build and supported by Woo to accept online and in-person payments, track revenue, and handle all payment activity in one place.',
-								'woocommerce'
-							) }
-						</p>
-						<p className={ 'woocommerce-incentive-modal__terms' }>
-							{ interpolateComponents( {
-								mixedString: __(
-									'See {{link}}Terms and Conditions{{/link}} for details.',
-									'woocommerce'
-								),
-								components: {
-									link: (
-										<Link
-											href="https://woocommerce.com/terms-conditions/woopayments-action-promotion-2023/"
-											target="_blank"
-										>
-											<></>
-										</Link>
-									),
-								},
-							} ) }
-						</p>
-						<Button
-							variant={ 'primary' }
-							isBusy={ isSubmitted }
-							disabled={ isSubmitted }
-							onClick={ handleSetup }
-						>
-							{ __( 'Get started', 'woocommerce' ) }
-						</Button>
-					</CardBody>
-				</div>
-			</Card>
-		</Modal>
+					</Card>
+				</Modal>
+			) }
+		</>
 	);
 };
