@@ -6,6 +6,8 @@
  * @version 3.2.0
  */
 
+use Automattic\WooCommerce\Enums\OrderStatus;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -523,7 +525,7 @@ class WC_Shortcodes {
 		 * @param int   $product_id       Product ID.
 		 * @return array
 		 */
-		$invalid_statuses = apply_filters( 'woocommerce_shortcode_product_page_invalid_statuses', array( WC_Order::STATUS_TRASH ), $product_id );
+		$invalid_statuses = apply_filters( 'woocommerce_shortcode_product_page_invalid_statuses', array( OrderStatus::TRASH ), $product_id );
 		if ( in_array( $product_status, $invalid_statuses, true ) ) {
 			return '';
 		}

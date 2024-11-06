@@ -8,6 +8,7 @@
  * @version 2.2.0
  */
 
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Internal\DataStores\Orders\DataSynchronizer;
 use Automattic\WooCommerce\Internal\ProductAttributesLookup\LookupDataStore as ProductAttributesLookupDataStore;
 use Automattic\WooCommerce\Proxies\LegacyProxy;
@@ -273,7 +274,7 @@ class WC_Post_Data {
 					$data['post_parent'] = 0;
 					break;
 			}
-		} elseif ( 'product' === $data['post_type'] && WC_Order::STATUS_AUTO_DRAFT === $data['post_status'] ) {
+		} elseif ( 'product' === $data['post_type'] && OrderStatus::AUTO_DRAFT === $data['post_status'] ) {
 			$data['post_title'] = 'AUTO-DRAFT';
 		} elseif ( 'shop_coupon' === $data['post_type'] ) {
 			// Coupons should never allow unfiltered HTML.
@@ -364,7 +365,7 @@ class WC_Post_Data {
 			$refunds = $wpdb->get_results( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type = 'shop_order_refund' AND post_parent = %d", $id ) );
 
 			foreach ( $refunds as $refund ) {
-				$wpdb->update( $wpdb->posts, array( 'post_status' => WC_Order::STATUS_TRASH ), array( 'ID' => $refund->ID ) );
+				$wpdb->update( $wpdb->posts, array( 'post_status' => OrderStatus::TRASH ), array( 'ID' => $refund->ID ) );
 			}
 
 			wc_delete_shop_order_transients( $id );

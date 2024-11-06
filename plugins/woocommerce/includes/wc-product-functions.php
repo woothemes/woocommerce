@@ -9,6 +9,7 @@
  */
 
 use Automattic\Jetpack\Constants;
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Proxies\LegacyProxy;
 use Automattic\WooCommerce\Utilities\ArrayUtil;
 use Automattic\WooCommerce\Utilities\NumberUtil;
@@ -1483,7 +1484,7 @@ function wc_deferred_product_sync( $product_id ) {
 function wc_update_product_lookup_tables_is_running() {
 	$table_updates_pending = WC()->queue()->search(
 		array(
-			'status'   => WC_Order::STATUS_PENDING,
+			'status'   => OrderStatus::PENDING,
 			'group'    => 'wc_update_product_lookup_tables',
 			'per_page' => 1,
 		)

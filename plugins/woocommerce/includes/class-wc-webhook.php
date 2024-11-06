@@ -12,6 +12,7 @@
  */
 
 use Automattic\Jetpack\Constants;
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Utilities\NumberUtil;
 use Automattic\WooCommerce\Utilities\OrderUtil;
 use Automattic\WooCommerce\Utilities\RestApiUtil;
@@ -280,7 +281,7 @@ class WC_Webhook extends WC_Legacy_Webhook {
 			$status = get_post_status( absint( $arg ) );
 
 			// Ignore auto drafts for all resources.
-			if ( in_array( $status, array( WC_Order::STATUS_AUTO_DRAFT, 'new' ), true ) ) {
+			if ( in_array( $status, array( OrderStatus::AUTO_DRAFT, 'new' ), true ) ) {
 				return false;
 			}
 		}
@@ -294,7 +295,7 @@ class WC_Webhook extends WC_Legacy_Webhook {
 			$order = wc_get_order( absint( $arg ) );
 
 			// Ignore standard drafts for orders.
-			if ( in_array( $order->get_status(), array( WC_Order::STATUS_DRAFT, WC_Order::STATUS_AUTO_DRAFT, 'new' ), true ) ) {
+			if ( in_array( $order->get_status(), array( OrderStatus::DRAFT, OrderStatus::AUTO_DRAFT, 'new' ), true ) ) {
 				return false;
 			}
 		}

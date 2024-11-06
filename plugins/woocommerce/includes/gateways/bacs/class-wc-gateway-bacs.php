@@ -5,6 +5,8 @@
  * @package WooCommerce\Gateways
  */
 
+use Automattic\WooCommerce\Enums\OrderStatus;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -285,7 +287,7 @@ class WC_Gateway_BACS extends WC_Payment_Gateway {
 		 * @param string $terms The order status.
 		 * @param object $order The order object.
 		 */
-		if ( ! $sent_to_admin && 'bacs' === $order->get_payment_method() && $order->has_status( apply_filters( 'woocommerce_bacs_email_instructions_order_status', WC_Order::STATUS_ON_HOLD, $order ) ) ) {
+		if ( ! $sent_to_admin && 'bacs' === $order->get_payment_method() && $order->has_status( apply_filters( 'woocommerce_bacs_email_instructions_order_status', OrderStatus::ON_HOLD, $order ) ) ) {
 			if ( $this->instructions ) {
 				echo wp_kses_post( wpautop( wptexturize( $this->instructions ) ) . PHP_EOL );
 			}
@@ -387,7 +389,7 @@ class WC_Gateway_BACS extends WC_Payment_Gateway {
 
 		if ( $order->get_total() > 0 ) {
 			// Mark as on-hold (we're awaiting the payment).
-			$order->update_status( apply_filters( 'woocommerce_bacs_process_payment_order_status', WC_Order::STATUS_ON_HOLD, $order ), __( 'Awaiting BACS payment', 'woocommerce' ) );
+			$order->update_status( apply_filters( 'woocommerce_bacs_process_payment_order_status', OrderStatus::ON_HOLD, $order ), __( 'Awaiting BACS payment', 'woocommerce' ) );
 		} else {
 			$order->payment_complete();
 		}

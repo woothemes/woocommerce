@@ -6,6 +6,7 @@
  * @version  2.4.0
  */
 
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Utilities\OrderUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -102,7 +103,7 @@ function wc_create_page( $slug, $option = '', $page_title = '', $page_content = 
 	if ( $option_value > 0 ) {
 		$page_object = get_post( $option_value );
 
-		if ( $page_object && 'page' === $page_object->post_type && ! in_array( $page_object->post_status, array( WC_Order::STATUS_PENDING, WC_Order::STATUS_TRASH, 'future', WC_Order::STATUS_AUTO_DRAFT ), true ) ) {
+		if ( $page_object && 'page' === $page_object->post_type && ! in_array( $page_object->post_status, array( OrderStatus::PENDING, OrderStatus::TRASH, 'future', OrderStatus::AUTO_DRAFT ), true ) ) {
 			// Valid page is already in place.
 			return $page_object->ID;
 		}
@@ -383,7 +384,7 @@ function wc_save_order_items( $order_id, $items ) {
 
 			$item->save();
 
-			if ( in_array( $order->get_status(), array( WC_Order::STATUS_PROCESSING, WC_Order::STATUS_COMPLETED, WC_Order::STATUS_ON_HOLD ), true ) ) {
+			if ( in_array( $order->get_status(), array( OrderStatus::PROCESSING, OrderStatus::COMPLETED, OrderStatus::ON_HOLD ), true ) ) {
 				$changed_stock = wc_maybe_adjust_line_item_product_stock( $item );
 				if ( $changed_stock && ! is_wp_error( $changed_stock ) ) {
 					$qty_change_order_notes[] = $item->get_name() . ' (' . $changed_stock['from'] . '&rarr;' . $changed_stock['to'] . ')';

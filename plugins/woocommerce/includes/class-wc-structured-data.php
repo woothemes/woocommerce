@@ -7,6 +7,8 @@
  * @version 3.0.0
  */
 
+use Automattic\WooCommerce\Enums\OrderStatus;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -556,13 +558,13 @@ class WC_Structured_Data {
 		$shop_url       = home_url();
 		$order_url      = $sent_to_admin ? $order->get_edit_order_url() : $order->get_view_order_url();
 		$order_statuses = array(
-			WC_Order::STATUS_PENDING    => 'https://schema.org/OrderPaymentDue',
-			WC_Order::STATUS_PROCESSING => 'https://schema.org/OrderProcessing',
-			WC_Order::STATUS_ON_HOLD    => 'https://schema.org/OrderProblem',
-			WC_Order::STATUS_COMPLETED  => 'https://schema.org/OrderDelivered',
-			WC_Order::STATUS_CANCELLED  => 'https://schema.org/OrderCancelled',
-			WC_Order::STATUS_REFUNDED   => 'https://schema.org/OrderReturned',
-			WC_Order::STATUS_FAILED     => 'https://schema.org/OrderProblem',
+			OrderStatus::PENDING    => 'https://schema.org/OrderPaymentDue',
+			OrderStatus::PROCESSING => 'https://schema.org/OrderProcessing',
+			OrderStatus::ON_HOLD    => 'https://schema.org/OrderProblem',
+			OrderStatus::COMPLETED  => 'https://schema.org/OrderDelivered',
+			OrderStatus::CANCELLED  => 'https://schema.org/OrderCancelled',
+			OrderStatus::REFUNDED   => 'https://schema.org/OrderReturned',
+			OrderStatus::FAILED     => 'https://schema.org/OrderProblem',
 		);
 
 		$markup_offers = array();

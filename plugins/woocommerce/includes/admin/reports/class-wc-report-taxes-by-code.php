@@ -5,6 +5,8 @@
  * @package     WooCommerce\Admin\Reports
  */
 
+use Automattic\WooCommerce\Enums\OrderStatus;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -128,7 +130,7 @@ class WC_Report_Taxes_By_Code extends WC_Admin_Report {
 				'query_type'   => 'get_results',
 				'filter_range' => true,
 				'order_types'  => wc_get_order_types( 'sales-reports' ),
-				'order_status' => array( WC_Order::STATUS_COMPLETED, WC_Order::STATUS_PROCESSING, WC_Order::STATUS_REFUNDED ),
+				'order_status' => array( OrderStatus::COMPLETED, OrderStatus::PROCESSING, OrderStatus::REFUNDED ),
 			)
 		);
 
@@ -140,7 +142,7 @@ class WC_Report_Taxes_By_Code extends WC_Admin_Report {
 				'query_type'          => 'get_results',
 				'filter_range'        => true,
 				'order_types'         => array( 'shop_order_refund' ),
-				'parent_order_status' => array( WC_Order::STATUS_COMPLETED, WC_Order::STATUS_PROCESSING ), // Partial refunds inside refunded orders should be ignored.
+				'parent_order_status' => array( OrderStatus::COMPLETED, OrderStatus::PROCESSING ), // Partial refunds inside refunded orders should be ignored.
 			)
 		);
 
@@ -152,7 +154,7 @@ class WC_Report_Taxes_By_Code extends WC_Admin_Report {
 				'query_type'          => 'get_results',
 				'filter_range'        => true,
 				'order_types'         => array( 'shop_order_refund' ),
-				'parent_order_status' => array( WC_Order::STATUS_REFUNDED ),
+				'parent_order_status' => array( OrderStatus::REFUNDED ),
 			)
 		);
 
