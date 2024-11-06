@@ -227,7 +227,7 @@ export const SidebarNavigationScreenHomepage = ( {
 			description={ sidebarMessage }
 			content={
 				<div className="woocommerce-customize-store__sidebar-homepage-content">
-					<div className="edit-site-sidebar-navigation-screen-patterns__group-homepage">
+					<div className="woocommerce-edit-site-sidebar-navigation-screen-patterns__group-homepage">
 						{ /* This is necessary to fix this issue: https://github.com/woocommerce/woocommerce/issues/45711
 						  If the user switch the homepage while the editor is loading, header and footer could disappear.
 						  For more details check: https://github.com/woocommerce/woocommerce/pull/45735

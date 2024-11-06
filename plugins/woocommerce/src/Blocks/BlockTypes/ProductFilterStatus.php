@@ -34,7 +34,7 @@ final class ProductFilterStatus extends AbstractBlock {
 	}
 
 	/**
-	{{{;;{{hhi{,,,kkkiiiiijkjkffasdfj}}}}}} * Register the query param keys.
+	 * Register the query param keys.
 	 *
 	 * @param array $filter_param_keys The active filters data.
 	 * @param array $url_param_keys    The query param parsed from the URL.
@@ -125,7 +125,8 @@ final class ProductFilterStatus extends AbstractBlock {
 
 		$stock_status_data       = $this->get_stock_status_counts( $block );
 		$stock_statuses          = wc_get_product_stock_status_options();
-		$query                   = isset( $_GET[ self::STOCK_STATUS_QUERY_VAR ] ) ? sanitize_text_field( wp_unslash( $_GET[ self::STOCK_STATUS_QUERY_VAR ] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$filter_params           = $block->context['filterParams'] ?? array();
+		$query                   = $filter_params[ self::STOCK_STATUS_QUERY_VAR ] ?? '';
 		$selected_stock_statuses = array_filter( explode( ',', $query ) );
 
 		$filter_options = array_map(

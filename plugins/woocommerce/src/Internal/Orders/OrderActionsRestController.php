@@ -68,11 +68,18 @@ class OrderActionsRestController extends RestApiControllerBase {
 	 */
 	private function get_args_for_order_actions(): array {
 		return array(
-			'id' => array(
+			'id'    => array(
 				'description' => __( 'Unique identifier of the order.', 'woocommerce' ),
 				'type'        => 'integer',
 				'context'     => array( 'view', 'edit' ),
 				'readonly'    => true,
+			),
+			'email' => array(
+				'description'       => __( 'Email address to send the order details to.', 'woocommerce' ),
+				'type'              => 'string',
+				'format'            => 'email',
+				'required'          => false,
+				'validate_callback' => 'rest_validate_request_arg',
 			),
 		);
 	}
@@ -105,6 +112,15 @@ class OrderActionsRestController extends RestApiControllerBase {
 		$order    = wc_get_order( $order_id );
 		if ( ! $order ) {
 			return new WP_Error( 'woocommerce_rest_invalid_order', __( 'Invalid order ID.', 'woocommerce' ), array( 'status' => 404 ) );
+		}
+
+		$email = $request->get_param( 'email' );
+		if ( $email ) {
+			$order->set_billing_email( $email );
+		}
+
+		if ( ! is_email( $order->get_billing_email() ) ) {
+			return new WP_Error( 'woocommerce_rest_missing_email', __( 'Order does not have an email address.', 'woocommerce' ), array( 'status' => 400 ) );
 		}
 
 		// phpcs:disable WooCommerce.Commenting.CommentHooks.MissingSinceComment
