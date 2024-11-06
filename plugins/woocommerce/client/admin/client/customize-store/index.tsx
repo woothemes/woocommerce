@@ -140,8 +140,7 @@ const markTaskComplete = async () => {
 	return dispatch( OPTIONS_STORE_NAME ).updateOptions( {
 		woocommerce_admin_customize_store_completed: 'yes',
 		// we use this on the intro page to determine if this same theme was used in the last customization
-		woocommerce_admin_customize_store_completed_theme_id:
-			currentTemplateId,
+		woocommerce_admin_customize_store_completed_theme_id: currentTemplateId,
 	} );
 };
 
