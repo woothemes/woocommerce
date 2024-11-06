@@ -105,7 +105,7 @@ class WC_Order_Data_Store_CPT extends Abstract_WC_Order_Data_Store_CPT implement
 		parent::create( $order );
 
 		// Do not fire 'woocommerce_new_order' for draft statuses.
-		if ( in_array( $order->get_status( 'edit' ), array( OrderStatus::AUTO_DRAFT, OrderStatus::DRAFT, \Automattic\WooCommerce\Blocks\Domain\Services\DraftOrders::STATUS ), true ) ) {
+		if ( in_array( $order->get_status( 'edit' ), array( OrderStatus::AUTO_DRAFT, OrderStatus::DRAFT, 'checkout-draft' ), true ) ) {
 			return;
 		}
 
@@ -206,7 +206,7 @@ class WC_Order_Data_Store_CPT extends Abstract_WC_Order_Data_Store_CPT implement
 		$previous_status = OrderUtil::remove_status_prefix( $previous_status );
 		$current_status  = OrderUtil::remove_status_prefix( $current_status );
 
-		$draft_statuses = array( 'new', OrderStatus::AUTO_DRAFT, OrderStatus::DRAFT, \Automattic\WooCommerce\Blocks\Domain\Services\DraftOrders::STATUS );
+		$draft_statuses = array( 'new', OrderStatus::AUTO_DRAFT, OrderStatus::DRAFT, 'checkout-draft' );
 
 		// This hook should be fired only if the new status is not one of draft statuses and the previous status was one of the draft statuses.
 		if (
