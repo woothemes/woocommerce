@@ -15,9 +15,6 @@ class WC_Tracks_Test extends \WC_Unit_Test_Case {
 		include_once WC_ABSPATH . 'includes/tracks/class-wc-tracks.php';
 		include_once WC_ABSPATH . 'includes/tracks/class-wc-tracks-client.php';
 		include_once WC_ABSPATH . 'includes/tracks/class-wc-tracks-event.php';
-
-		$user = $this->factory->user->create( array( 'role' => 'administrator' ) );
-		wp_set_current_user( $user );
 	}
 
 	/**
@@ -49,29 +46,6 @@ class WC_Tracks_Test extends \WC_Unit_Test_Case {
 		$this->assertContains( '_ut', array_keys( $properties ) );
 	}
 
-
-	/**
-	 * Test that the role property is added to the properties.
-	 */
-	public function test_addition_of_role() {
-		$properties = \WC_Tracks::get_properties(
-			'test_event',
-			array(),
-		);
-
-		$this->assertContains( 'role', array_keys( $properties ) );
-		$this->assertEquals( 'administrator', $properties['role'] );
-
-		$this->assertContains( 'can_install_plugins', array_keys( $properties ) );
-		$this->assertEquals( true, $properties['can_install_plugins'] );
-
-		$this->assertContains( 'can_activate_plugins', array_keys( $properties ) );
-		$this->assertEquals( true, $properties['can_activate_plugins'] );
-
-		$this->assertContains( 'can_manage_woocommerce', array_keys( $properties ) );
-		$this->assertEquals( true, $properties['can_manage_woocommerce'] );
-	}
-
 	/**
 	 * Test that custom identity properties cannot be added.
 	 */
@@ -85,6 +59,52 @@ class WC_Tracks_Test extends \WC_Unit_Test_Case {
 		);
 		$this->assertNotEquals( 'bad', $properties['_ui'] );
 		$this->assertNotEquals( 'bad', $properties['_ut'] );
+	}
+
+
+	/**
+	 * Test role properties for logged out user
+	 */
+	public function test_role_properties_for_logged_out_user() {
+		$properties = \WC_Tracks::get_properties( 'test_event', array() );
+
+		$this->assertContains( 'role', array_keys( $properties ) );
+		$this->assertEquals( '', $properties['role'] );
+		$this->assertEquals( false, $properties['can_install_plugins'] );
+		$this->assertEquals( false, $properties['can_activate_plugins'] );
+		$this->assertEquals( false, $properties['can_manage_woocommerce'] );
+	}
+
+	/**
+	 * Test role properties for administrator
+	 */
+	public function test_role_properties_for_administrator() {
+		$user = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $user );
+
+		$properties = \WC_Tracks::get_properties( 'test_event', array() );
+
+		$this->assertEquals( 'administrator', $properties['role'] );
+		$this->assertEquals( true, $properties['can_install_plugins'] );
+		$this->assertEquals( true, $properties['can_activate_plugins'] );
+		$this->assertEquals( true, $properties['can_manage_woocommerce'] );
+	}
+
+	/**
+	 * Test role properties for user with multiple roles
+	 */
+	public function test_role_properties_for_multiple_roles() {
+		$user = $this->factory->user->create( array( 'role' => 'shop_manager' ) );
+		wp_set_current_user( $user );
+		$current_user = wp_get_current_user();
+		$current_user->add_role( 'editor' );
+
+		$properties = \WC_Tracks::get_properties( 'test_event', array() );
+
+		$this->assertEquals( 'shop_manager', $properties['role'] );
+		$this->assertEquals( false, $properties['can_install_plugins'] );
+		$this->assertEquals( false, $properties['can_activate_plugins'] );
+		$this->assertEquals( true, $properties['can_manage_woocommerce'] );
 	}
 
 	/**
