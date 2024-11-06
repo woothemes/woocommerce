@@ -53,20 +53,16 @@ export const SaveHub = () => {
 	const { sendEvent } = useContext( CustomizeStoreContext );
 	const [ isResolving, setIsResolving ] = useState< boolean >( false );
 
-	const currentTemplate:
-		| {
-				id: string;
-		  }
-		| undefined = useSelect(
+	const currentTemplateId: string | undefined = useSelect(
 		( select ) =>
 			// @ts-expect-error No types for this exist yet.
-			select( coreStore ).__experimentalGetTemplateForLink( '/' ),
+			select( coreStore ).getDefaultTemplateId( { slug: 'home' } ),
 		[]
 	);
 
 	const [ blocks ] = useEditorBlocks(
 		'wp_template',
-		currentTemplate?.id ?? ''
+		currentTemplateId || ''
 	);
 
 	const isNoBlocksPlaceholderPresent =
