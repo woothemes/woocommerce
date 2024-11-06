@@ -14,8 +14,10 @@ import {
  */
 import { QueryControlProps, RelatedBy } from '../../types';
 
-const RelatedByControl = ( props: QueryControlProps ) => {
-	const { query, setQueryAttribute } = props;
+const RelatedByControl = ( {
+	query,
+	setQueryAttribute,
+}: QueryControlProps ) => {
 	const relatedBy = query.relatedBy as RelatedBy;
 
 	return (
@@ -54,23 +56,6 @@ const RelatedByControl = ( props: QueryControlProps ) => {
 						} );
 						// trackInteraction(
 						// 	CoreFilterNames.RELATED_BY_TAG
-						// );
-					} }
-				/>
-
-				<CheckboxControl
-					__nextHasNoMarginBottom
-					label={ __( 'Attributes', 'woocommerce' ) }
-					checked={ relatedBy?.attributes }
-					onChange={ ( value ) => {
-						setQueryAttribute( {
-							relatedBy: {
-								...relatedBy,
-								attributes: value,
-							},
-						} );
-						// trackInteraction(
-						// 	CoreFilterNames.RELATED_BY_ATTRIBUTE
 						// );
 					} }
 				/>

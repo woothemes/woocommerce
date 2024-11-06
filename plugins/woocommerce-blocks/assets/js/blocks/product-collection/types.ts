@@ -123,7 +123,6 @@ export interface ProductCollectionQuery {
 export type RelatedBy = {
 	categories: boolean;
 	tags: boolean;
-	attributes: boolean;
 };
 
 export type ProductCollectionEditComponentProps =

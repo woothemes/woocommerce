@@ -1980,9 +1980,6 @@ class ProductCollection extends AbstractBlock {
 					);
 				}
 
-				$related_by_categories = $collection_args['relatedBy']['categories'] ?? false;
-				$related_by_tags       = $collection_args['relatedBy']['tags'] ?? false;
-
 				$category_callback = function () use ( $collection_args ) {
 					return $collection_args['relatedBy']['categories'];
 				};
@@ -1991,17 +1988,17 @@ class ProductCollection extends AbstractBlock {
 					return $collection_args['relatedBy']['tags'];
 				};
 
-				add_filter( 'woocommerce_product_related_posts_relate_by_category', $category_callback, 99999 );
-				add_filter( 'woocommerce_product_related_posts_relate_by_tag', $tag_callback, 99999 );
+				add_filter( 'woocommerce_product_related_posts_relate_by_category', $category_callback, PHP_INT_MAX );
+				add_filter( 'woocommerce_product_related_posts_relate_by_tag', $tag_callback, PHP_INT_MAX );
 
 				$related_products = wc_get_related_products(
 					$collection_args['relatedProductReference'],
 					// Use a higher limit so that the result set contains enough products for the collection to subsequently filter.
-					100,
+					100
 				);
 
-				remove_filter( 'woocommerce_product_related_posts_relate_by_category', $category_callback, 99999 );
-				remove_filter( 'woocommerce_product_related_posts_relate_by_tag', $tag_callback, 99999 );
+				remove_filter( 'woocommerce_product_related_posts_relate_by_category', $category_callback, PHP_INT_MAX );
+				remove_filter( 'woocommerce_product_related_posts_relate_by_tag', $tag_callback, PHP_INT_MAX );
 
 				if ( empty( $related_products ) ) {
 					return array(
