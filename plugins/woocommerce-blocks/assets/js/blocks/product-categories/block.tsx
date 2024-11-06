@@ -76,6 +76,7 @@ const ProductCategoriesBlock = ( {
 				>
 					<ToggleGroupControl
 						label={ __( 'Display style', 'woocommerce' ) }
+						isBlock
 						value={ isDropdown ? 'dropdown' : 'list' }
 						onChange={ ( value: string ) =>
 							setAttributes( {
