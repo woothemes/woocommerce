@@ -6,6 +6,8 @@ use Automattic\WooCommerce\Admin\PageController;
 use Automattic\WooCommerce\Blocks\Utils\BlockTemplateUtils;
 use Automattic\WooCommerce\Admin\WCAdminHelper;
 use Automattic\WooCommerce\Internal\Admin\WCAdminUser;
+use Automattic\WooCommerce\Internal\Admin\WCAdminAssets;
+
 
 /**
  * Takes care of Launch Your Store related actions.
@@ -23,6 +25,9 @@ class LaunchYourStore {
 		add_filter( 'woocommerce_tracks_event_properties', array( $this, 'append_coming_soon_global_tracks' ), 10, 2 );
 		add_action( 'wp_login', array( $this, 'reset_woocommerce_coming_soon_banner_dismissed' ), 10, 2 );
 		add_filter( 'woocommerce_admin_get_user_data_fields', array( $this, 'add_user_data_fields' ) );
+		if ( Features::is_enabled( 'coming-soon-newsletter-template' ) ) {
+			add_action( 'admin_enqueue_scripts', array( $this, 'load_newsletter_scripts' ) );
+		}
 	}
 
 	/**
@@ -263,5 +268,9 @@ class LaunchYourStore {
 		if ( 'yes' === $existing_meta ) {
 			WCAdminUser::update_user_data_field( $user->ID, self::BANNER_DISMISS_USER_META_KEY, 'no' );
 		}
+	}
+
+	public function load_newsletter_scripts() {
+		WCAdminAssets::register_script( 'wp-admin-scripts', 'coming-soon-newsletter', true );
 	}
 }
