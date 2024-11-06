@@ -12,11 +12,12 @@ import {
 /**
  * Internal dependencies
  */
-import { QueryControlProps, RelatedBy } from '../../types';
+import { QueryControlProps, RelatedBy, CoreFilterNames } from '../../types';
 
 const RelatedByControl = ( {
 	query,
 	setQueryAttribute,
+	trackInteraction,
 }: QueryControlProps ) => {
 	const relatedBy = query.relatedBy as RelatedBy;
 
@@ -33,9 +34,7 @@ const RelatedByControl = ( {
 								categories: value,
 							},
 						} );
-						// trackInteraction(
-						// 	CoreFilterNames.RELATED_BY_CATEGORY
-						// );
+						trackInteraction( CoreFilterNames.RELATED_BY );
 					} }
 				/>
 
@@ -49,9 +48,7 @@ const RelatedByControl = ( {
 								tags: value,
 							},
 						} );
-						// trackInteraction(
-						// 	CoreFilterNames.RELATED_BY_TAG
-						// );
+						trackInteraction( CoreFilterNames.RELATED_BY );
 					} }
 				/>
 			</div>
