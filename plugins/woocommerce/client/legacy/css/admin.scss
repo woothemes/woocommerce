@@ -5593,6 +5593,15 @@ img.help_tip {
 		display: flex;
 		flex-direction: column;
 	}
+	// Mimic wider gap between postboxes.
+	.post-body-content,
+	.postbox {
+		margin-bottom: 28px;
+	}
+	#postdivrich {
+		margin-top: 28px;
+	}
+	// -
 
 	.postbox-header {
 		padding: 12px 16px;
@@ -5623,6 +5632,21 @@ img.help_tip {
 		margin: 0;
 	}
 }
+// Gap between Title and Slug edit should be 8px, so we need to clear margins.
+.woocommerce-admin-page.post-type-product {
+	#titlediv .inside {
+		padding: 0;
+		margin-top: $gap-smaller;
+	}
+	#edit-slug-box {
+		padding: 0;
+		margin: 0;
+	}
+	#titlediv #title {
+		margin: 0;
+	}
+}
+
 
 /* Product data metabox */
 #woocommerce-product-data {
