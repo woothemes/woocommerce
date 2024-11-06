@@ -61,7 +61,7 @@
 		}
 	},
 	"usesContext": [
-		"queryId"
+		"filterParams"
 	],
 	"attributes": {
 		"clearButton": {

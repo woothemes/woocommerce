@@ -17,7 +17,7 @@ After running the command above, you should see an `add-task` plugin folder in t
 <!-- markdownlint-disable-next-line no-inline-html -->
 <img src="./images/task-example.png" width="500px" alt="Screenshot of the onboarding wizard with the custom task" />
 
-You can make changes to the example plugin in the `plugins/woocommerce-admin/docs/examples/extensions/add-task` directory. To watch for changes in the example plugin and rebuild it automatically, run the following command:
+You can make changes to the example plugin in the `plugins/woocommerce/client/admin/docs/examples/extensions/add-task` directory. To watch for changes in the example plugin and rebuild it automatically, run the following command:
 
 ```bash
 WC_EXT=add-task pnpm --filter=@woocommerce/admin-library example --watch
