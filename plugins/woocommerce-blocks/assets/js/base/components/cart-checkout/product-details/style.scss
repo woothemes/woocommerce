@@ -10,6 +10,7 @@
 
 	li {
 		margin-left: 0;
+		margin-top: $gap-smaller;
 	}
 }
 
@@ -18,7 +19,7 @@
 	display: inline-block;
 }
 
-.is-large:not(.wc-block-checkout) {
+.wc-block-components-product-details {
 	.wc-block-components-product-details__name {
 		font-weight: bold;
 	}
