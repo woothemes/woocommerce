@@ -19,6 +19,7 @@ $gap-large: 24px;
 $gap: 16px;
 $gap-small: 12px;
 $gap-smaller: 8px;
+$gap-smallest: 4px;
 
 /**
 * Colors
@@ -5585,8 +5586,30 @@ img.help_tip {
 	}
 }
 
-/* All postboxes on product post type */
+/* Match product editor page */
 .woocommerce-admin-page.post-type-product {
+	// Hide duplicated h1.
+	.wrap h1.wp-heading-inline {
+		display: none;
+	}
+
+	#titlediv {
+		#title-prompt-text,
+		#title  {
+			padding: $gap-smallest $gap;
+			font-size: 20px;
+			line-height: 46px;
+			height: auto;
+		}
+		#title-prompt-text {
+			color: var(--Gray-Gray-30, #8C8F94);
+		}
+		#title {
+			border-radius: 8px;
+			border: 1px solid #BBBCBF;
+		}
+	}
+
 	.postbox {
 		border: 0;
 		border-radius: 8px;
@@ -5608,6 +5631,7 @@ img.help_tip {
 		flex-shrink: 0;
 		align-self: stretch;
 		border-color: #BBBCBF;
+		min-height: 30px;
 
 		.hndle {
 			gap: $gap-small;
