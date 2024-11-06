@@ -2,13 +2,13 @@
 
 The Orders Report provides insight about your store's orders.
 
-By default, orders with non-excluded statuses are listed by order date descending. Excluded statuses can be edited on the [Settings page](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-admin/docs/woocommerce.com/analytics-settings.md#excluded-statuses)
+By default, orders with non-excluded statuses are listed by order date descending. Excluded statuses can be edited on the [Settings page](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/client/admin/docs/woocommerce.com/analytics-settings.md#excluded-statuses)
 
 Refunded orders cannot be excluded from the orders report. Refunded orders have two rows in the report: one for the date of the original order and one for the date of refund.
 
 ![Orders Report Overview](images/analytics-orders-report.png)
 
-### Advanced Filters
+## Advanced Filters
 
 The advanced filters allow adding multiple filters to the report. These filters can be applied in two ways:
 
@@ -28,7 +28,7 @@ The following fields can be used for filtering:
 
 ![Customers Report Advanced Filters](images/analytics-orders-report-advanced-filters.png)
 
-### Report Sorting
+## Report Sorting
 
 The report table allows sorting by the following columns:
 
