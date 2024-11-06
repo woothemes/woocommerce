@@ -5605,6 +5605,10 @@ img.help_tip {
 			flex-wrap: wrap;
 		}
 	}
+
+	.inside {
+		padding: 16px;
+	}
 }
 // Separate rule, not to overspecify the above ones with id selector.
 .woocommerce-admin-page.post-type-product #poststuff {
@@ -5613,6 +5617,10 @@ img.help_tip {
 	}
 	.hndle {
 		padding: 0;
+	}
+
+	.inside {
+		margin: 0;
 	}
 }
 
