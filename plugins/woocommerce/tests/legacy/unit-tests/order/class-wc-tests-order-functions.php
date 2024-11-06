@@ -6,7 +6,7 @@
  */
 
 use Automattic\Jetpack\Constants;
-use Automattic\WooCommerce\Enums\OrderLegacyStatus;
+use Automattic\WooCommerce\Enums\OrderInternalStatus;
 
 /**
  * Class Functions.
@@ -26,13 +26,13 @@ class WC_Tests_Order_Functions extends WC_Unit_Test_Case {
 		$order_statuses = apply_filters(
 			'wc_order_statuses',
 			array(
-				OrderLegacyStatus::PENDING    => _x( 'Pending payment', 'Order status', 'woocommerce' ),
-				OrderLegacyStatus::PROCESSING => _x( 'Processing', 'Order status', 'woocommerce' ),
-				OrderLegacyStatus::ON_HOLD    => _x( 'On hold', 'Order status', 'woocommerce' ),
-				OrderLegacyStatus::COMPLETED  => _x( 'Completed', 'Order status', 'woocommerce' ),
-				OrderLegacyStatus::CANCELLED  => _x( 'Cancelled', 'Order status', 'woocommerce' ),
-				OrderLegacyStatus::REFUNDED   => _x( 'Refunded', 'Order status', 'woocommerce' ),
-				OrderLegacyStatus::FAILED     => _x( 'Failed', 'Order status', 'woocommerce' ),
+				OrderInternalStatus::PENDING    => _x( 'Pending payment', 'Order status', 'woocommerce' ),
+				OrderInternalStatus::PROCESSING => _x( 'Processing', 'Order status', 'woocommerce' ),
+				OrderInternalStatus::ON_HOLD    => _x( 'On hold', 'Order status', 'woocommerce' ),
+				OrderInternalStatus::COMPLETED  => _x( 'Completed', 'Order status', 'woocommerce' ),
+				OrderInternalStatus::CANCELLED  => _x( 'Cancelled', 'Order status', 'woocommerce' ),
+				OrderInternalStatus::REFUNDED   => _x( 'Refunded', 'Order status', 'woocommerce' ),
+				OrderInternalStatus::FAILED     => _x( 'Failed', 'Order status', 'woocommerce' ),
 			)
 		);
 
@@ -45,7 +45,7 @@ class WC_Tests_Order_Functions extends WC_Unit_Test_Case {
 	 * @since 2.3.0
 	 */
 	public function test_wc_is_order_status() {
-		$this->assertTrue( wc_is_order_status( OrderLegacyStatus::PENDING ) );
+		$this->assertTrue( wc_is_order_status( OrderInternalStatus::PENDING ) );
 		$this->assertFalse( wc_is_order_status( 'wc-another-status' ) );
 	}
 
@@ -56,7 +56,7 @@ class WC_Tests_Order_Functions extends WC_Unit_Test_Case {
 	 */
 	public function test_wc_get_order_status_name() {
 
-		$this->assertEquals( _x( 'Pending payment', 'Order status', 'woocommerce' ), wc_get_order_status_name( OrderLegacyStatus::PENDING ) );
+		$this->assertEquals( _x( 'Pending payment', 'Order status', 'woocommerce' ), wc_get_order_status_name( OrderInternalStatus::PENDING ) );
 		$this->assertEquals( _x( 'Pending payment', 'Order status', 'woocommerce' ), wc_get_order_status_name( 'pending' ) );
 	}
 
@@ -83,18 +83,18 @@ class WC_Tests_Order_Functions extends WC_Unit_Test_Case {
 		$this->assertEquals( 0, wc_orders_count( 'unkown-status' ) );
 
 		// Invalid order type should return 0.
-		$this->assertEquals( 0, wc_orders_count( OrderLegacyStatus::PENDING, 'invalid-order-type' ) );
+		$this->assertEquals( 0, wc_orders_count( OrderInternalStatus::PENDING, 'invalid-order-type' ) );
 
 		wp_cache_flush();
 
 		// Fake some datastores and order types for testing.
 		$test_counts = array(
 			'order'           => array(
-				array( OrderLegacyStatus::ON_HOLD, 2 ),
+				array( OrderInternalStatus::ON_HOLD, 2 ),
 				array( 'trash', 1 ),
 			),
 			'order-fake-type' => array(
-				array( OrderLegacyStatus::ON_HOLD, 3 ),
+				array( OrderInternalStatus::ON_HOLD, 3 ),
 				array( 'trash', 0 ),
 			),
 		);

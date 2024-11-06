@@ -1,6 +1,6 @@
 <?php
 
-use Automattic\WooCommerce\Enums\OrderLegacyStatus;
+use Automattic\WooCommerce\Enums\OrderInternalStatus;
 
 /**
  * Class CustomerCRUD.
@@ -267,7 +267,7 @@ class WC_Tests_CustomerCRUD extends WC_Unit_Test_Case {
 		$order       = WC_Helper_Order::create_order( $customer_id );
 		$customer    = new WC_Customer( $customer_id );
 		$this->assertEquals( 0, $customer->get_total_spent() );
-		$order->update_status( OrderLegacyStatus::COMPLETED );
+		$order->update_status( OrderInternalStatus::COMPLETED );
 		$customer = new WC_Customer( $customer_id );
 		$this->assertEquals( 50, $customer->get_total_spent() );
 		$order->delete();

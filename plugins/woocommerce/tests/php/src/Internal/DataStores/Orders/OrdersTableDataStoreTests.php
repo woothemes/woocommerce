@@ -1254,7 +1254,7 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 		}
 
 		// Confirm not all orders are unpaid.
-		$this->assertEquals( $orders_by_status[ OrderInternalStatus::COMPLETED ], $this->sut->get_order_count( OrderLegacyStatus::COMPLETED ) );
+		$this->assertEquals( $orders_by_status[ OrderInternalStatus::COMPLETED ], $this->sut->get_order_count( OrderInternalStatus::COMPLETED ) );
 
 		// Find unpaid orders.
 		$this->assertEqualsCanonicalizing( $unpaid_ids, $this->sut->get_unpaid_orders( $now_ist ) );
