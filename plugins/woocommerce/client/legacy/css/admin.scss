@@ -5589,6 +5589,9 @@ img.help_tip {
 #woocommerce-product-data {
 	border: 0;
 	border-radius: 8px;
+	min-height: 640px;
+	display: flex;
+	flex-direction: column;
 
 	.postbox-header {
 		padding: 12px 16px;
@@ -5650,6 +5653,11 @@ img.help_tip {
 		label.has-checkbox > input[type="checkbox"] {
 			margin-right: 0;
 		}
+	}
+
+	.inside {
+		flex: 1;
+		display: flex;
 	}
 
 	.wrap {
@@ -6332,6 +6340,19 @@ img.help_tip {
 		.woocommerce-help-tip {
 			align-self: center;
 		}
+	}
+}
+
+/** Consider sharign with coupons */
+#woocommerce-product-data .woocommerce_options_panel {
+
+	.options_group {
+		border: 0; // reset shared styles
+		border-bottom: 1px solid #EDEDED;
+		padding: 36px 48px;
+		display: flex;
+		flex-direction: column;
+		gap: $gap-small;
 	}
 }
 
