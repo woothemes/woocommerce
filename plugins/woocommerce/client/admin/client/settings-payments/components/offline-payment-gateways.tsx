@@ -117,7 +117,7 @@ export const OfflinePaymentGateways = () => {
 
 	return (
 		<Card size="medium" className="settings-payment-gateways">
-			<CardHeader>
+			<CardHeader className="settings-payment-gateways__header">
 				<div className="settings-payment-gateways__header-title">
 					{ __( 'Payment methods', 'woocommerce' ) }
 				</div>

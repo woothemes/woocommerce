@@ -90,6 +90,10 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 				&__actions {
 					display: flex;
 					gap: $gap;
+
+					.components-button {
+						height: 32px;
+					}
 				}
 			}
 
