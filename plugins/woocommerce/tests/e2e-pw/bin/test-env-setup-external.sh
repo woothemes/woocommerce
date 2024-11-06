@@ -35,7 +35,6 @@ mu_plugins=(
     "filter-setter"
     "process-waiting-actions"
     "test-helper-apis"
-    "wp-cache-flush"
 	"woocommerce-cleanup"
 )
 
@@ -52,7 +51,7 @@ for plugin in "${mu_plugins[@]}"; do
     # Install the plugin from the local zip
     wp plugin install --force --activate "${plugin%}.zip"
 
-    # rm "$plugin.php" "${plugin%}.zip"
+    rm "$plugin.php" "${plugin%}.zip"
 done
 
 printf "\n\n\n"
