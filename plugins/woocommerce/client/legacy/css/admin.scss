@@ -5614,6 +5614,9 @@ img.help_tip {
 			flex-wrap: wrap;
 		}
 	}
+	.closed .postbox-header {
+		border: 0;
+	}
 
 	.inside {
 		padding: 16px;
@@ -5650,7 +5653,6 @@ img.help_tip {
 
 /* Product data metabox */
 #woocommerce-product-data {
-	min-height: 640px;
 
 	.hndle {
 		span {
@@ -5706,6 +5708,10 @@ img.help_tip {
 	.inside {
 		flex: 1;
 		display: flex;
+		min-height: 586px;
+	}
+	&.closed .inside {
+		display: none;
 	}
 
 	.wrap {
