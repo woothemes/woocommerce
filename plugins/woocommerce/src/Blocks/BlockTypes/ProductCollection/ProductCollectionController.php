@@ -4,9 +4,7 @@ declare(strict_types=1);
 namespace Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection;
 
 use Automattic\WooCommerce\Blocks\BlockTypes\AbstractBlock;
-use InvalidArgumentException;
 use WP_Query;
-use WC_Tax;
 
 /**
  * ProductCollectionController class.
@@ -28,18 +26,6 @@ class ProductCollectionController extends AbstractBlock {
 	protected $collection_handler_registry;
 
 	/**
-	 * The render state of the product collection block.
-	 *
-	 * These props are runtime-based and reinitialize for every block on a page.
-	 *
-	 * @var array
-	 */
-	private $render_state = array(
-		'has_results'          => false,
-		'has_no_results_block' => false,
-	);
-
-	/**
 	 * Instance of ProductQueryBuilder.
 	 *
 	 * @var ProductQueryBuilder
@@ -56,9 +42,8 @@ class ProductCollectionController extends AbstractBlock {
 	/**
 	 * Initialize this block type.
 	 *
-	 * - Hook into WP lifecycle.
-	 * - Register the block with WordPress.
-	 * - Hook into pre_render_block to update the query.
+	 * - Register hooks and filters.
+	 * - Set up ProductQueryBuilder, ProductRenderer and CollectionHandlerRegistry.
 	 */
 	protected function initialize() {
 		parent::initialize();
@@ -93,22 +78,6 @@ class ProductCollectionController extends AbstractBlock {
 		add_filter( 'render_block_data', array( $this, 'disable_enhanced_pagination' ), 10, 1 );
 
 		$this->register_core_collections_and_set_handler_store();
-	}
-
-	/**
-	 * Get the styles for the list element (fixed width).
-	 *
-	 * @param string $fixed_width Fixed width value.
-	 * @return string
-	 */
-	protected function get_list_styles( $fixed_width ) {
-		$style = '';
-
-		if ( isset( $fixed_width ) ) {
-			$style .= sprintf( 'width:%s;', esc_attr( $fixed_width ) );
-			$style .= 'margin: 0 auto;';
-		}
-		return $style;
 	}
 
 	/**
