@@ -64,7 +64,7 @@ const Block = ( {
 	noShippingPlaceholder = null,
 }: {
 	noShippingPlaceholder?: ReactElement | null;
-} ): ReactElement | null => {
+} ) => {
 	const { isEditor } = useEditorContext();
 
 	const {
