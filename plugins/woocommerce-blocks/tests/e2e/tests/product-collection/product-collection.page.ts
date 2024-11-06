@@ -705,13 +705,13 @@ class ProductCollectionPage {
 
 	async setInheritQueryFromTemplate( inheritQueryFromTemplate: boolean ) {
 		const sidebarSettings = this.locateSidebarSettings();
-		const input = sidebarSettings.locator(
-			`${ SELECTORS.usePageContextControl } input`
+		const queryTypeLocator = sidebarSettings.locator(
+			SELECTORS.usePageContextControl
 		);
 		if ( inheritQueryFromTemplate ) {
-			await input.check();
+			await queryTypeLocator.getByLabel( 'Default' ).click();
 		} else {
-			await input.uncheck();
+			await queryTypeLocator.getByLabel( 'Custom' ).click();
 		}
 	}
 
