@@ -16,6 +16,38 @@ $wc-setting-email-preview-gap: 16px;
 
 }
 
+.wc-settings-email-preview-device-type {
+	display: grid;
+	grid-gap: 8px;
+	grid-template-columns: 32px 32px;
+
+	button {
+		align-items: center;
+		background: none;
+		border: none;
+		border-radius: 2px;
+		cursor: pointer;
+		display: flex;
+		justify-content: center;
+		height: 32px;
+		width: 32px;
+
+		&:hover,
+		&:focus {
+			background: $gray-200;
+		}
+
+		&.active {
+			background: #1e1e1e;
+
+			&:hover,
+			&:focus {
+				background: #000;
+			}
+		}
+	}
+}
+
 .wc-settings-email-preview {
 	background: #fff;
 	border: 1px solid $gray-200;

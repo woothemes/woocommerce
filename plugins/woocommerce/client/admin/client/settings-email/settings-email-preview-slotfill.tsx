@@ -3,13 +3,18 @@
  */
 import { createSlotFill } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
-import {__} from "@wordpress/i18n";
+import { __ } from '@wordpress/i18n';
+import { useState } from 'react';
 
 /**
  * Internal dependencies
  */
 import './style.scss';
-import { SETTINGS_SLOT_FILL_CONSTANT } from '../settings/settings-slots';
+import { SETTINGS_SLOT_FILL_CONSTANT } from '~/settings/settings-slots';
+import {
+	EmailPreviewDeviceType,
+	DEVICE_TYPE_DESKTOP,
+} from './settings-email-preview-device-type';
 
 const { Fill } = createSlotFill( SETTINGS_SLOT_FILL_CONSTANT );
 
@@ -20,10 +25,17 @@ type EmailPreviewFillProps = {
 const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 	previewUrl,
 } ) => {
+	const [ deviceType, setDeviceType ] =
+		useState< string >( DEVICE_TYPE_DESKTOP );
 	return (
 		<Fill>
 			<div className="wc-settings-email-preview-container">
-				<div className="wc-settings-email-preview-controls"></div>
+				<div className="wc-settings-email-preview-controls">
+					<EmailPreviewDeviceType
+						deviceType={ deviceType }
+						setDeviceType={ setDeviceType }
+					/>
+				</div>
 				<div className="wc-settings-email-preview">
 					<div className="wc-settings-email-preview-header"></div>
 					<iframe
