@@ -19,6 +19,7 @@
 
 	form.cart {
 		&:before {
+			content: " ";
 			grid-column: span 9999;
 		}
 
