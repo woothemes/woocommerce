@@ -61,7 +61,7 @@ export const updateTemplatePrePTK = async ( {
 
 	// Ensure that the patterns are up to date because we populate images and content in previous step.
 	invalidateResolutionForStoreSelector( 'getBlockPatterns' );
-	invalidateResolutionForStoreSelector( '__experimentalGetTemplateForLink' );
+	invalidateResolutionForStoreSelector( 'getDefaultTemplateId' );
 
 	const patterns = ( await resolveSelect(
 		coreStore
@@ -108,10 +108,10 @@ export const updateTemplatePrePTK = async ( {
 	// Replace the logo width with the default width.
 	content = setLogoWidth( content );
 
-	const currentTemplate = await resolveSelect(
+	const currentTemplateId: string | undefined = await resolveSelect(
 		coreStore
 		// @ts-ignore No types for this exist yet.
-	).__experimentalGetTemplateForLink( '/' );
+	).getDefaultTemplateId( { slug: 'home' } );
 
 	// @ts-ignore No types for this exist yet.
 	const { saveEntityRecord } = dispatch( coreStore );
@@ -141,9 +141,9 @@ export const updateTemplatePrePTK = async ( {
 		),
 		saveEntityRecord(
 			'postType',
-			currentTemplate.type,
+			'wp_template',
 			{
-				id: currentTemplate.id,
+				id: currentTemplateId,
 				content,
 			},
 			{
@@ -159,7 +159,7 @@ const updateTemplatePTK = async () => {
 
 	// Ensure that the patterns are up to date because we populate images and content in previous step.
 	invalidateResolutionForStoreSelector( 'getBlockPatterns' );
-	invalidateResolutionForStoreSelector( '__experimentalGetTemplateForLink' );
+	invalidateResolutionForStoreSelector( 'getDefaultTemplateId' );
 	registerCoreBlocks( __experimentalGetCoreBlocks() );
 
 	const DEFAULT_PATTERNS = {
@@ -207,10 +207,10 @@ const updateTemplatePTK = async () => {
 	// Replace the logo width with the default width.
 	content = setLogoWidth( content );
 
-	const currentTemplate = await resolveSelect(
+	const currentTemplateId: string | undefined = await resolveSelect(
 		coreStore
 		// @ts-ignore No types for this exist yet.
-	).__experimentalGetTemplateForLink( '/' );
+	).getDefaultTemplateId( { slug: 'home' } );
 
 	// @ts-ignore No types for this exist yet.
 	const { saveEntityRecord } = dispatch( coreStore );
@@ -240,9 +240,9 @@ const updateTemplatePTK = async () => {
 		),
 		saveEntityRecord(
 			'postType',
-			currentTemplate.type,
+			'wp_template',
 			{
-				id: currentTemplate.id,
+				id: currentTemplateId,
 				content,
 			},
 			{

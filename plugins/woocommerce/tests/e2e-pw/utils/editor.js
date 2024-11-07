@@ -42,24 +42,14 @@ const getCanvas = async ( page ) => {
 };
 
 const goToPageEditor = async ( { page } ) => {
-	const responsePromise = page.waitForResponse(
-		( response ) =>
-			response.url().includes( '//page' ) && response.status() === 200
-	);
 	await page.goto( 'wp-admin/post-new.php?post_type=page' );
 	await disableWelcomeModal( { page } );
 	await closeChoosePatternModal( { page } );
-	await responsePromise;
 };
 
 const goToPostEditor = async ( { page } ) => {
-	const responsePromise = page.waitForResponse(
-		( response ) =>
-			response.url().includes( '//single' ) && response.status() === 200
-	);
 	await page.goto( 'wp-admin/post-new.php' );
 	await disableWelcomeModal( { page } );
-	await responsePromise;
 };
 
 const fillPageTitle = async ( page, title ) => {

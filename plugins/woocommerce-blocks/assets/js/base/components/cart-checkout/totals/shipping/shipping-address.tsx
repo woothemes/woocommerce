@@ -1,43 +1,46 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { formatShippingAddress } from '@woocommerce/base-utils';
-import { ShippingAddress as ShippingAddressType } from '@woocommerce/settings';
-import {
-	ShippingLocation,
-	PickupLocation,
-	ShippingCalculatorButton,
-} from '@woocommerce/base-components/cart-checkout';
-import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { useStoreCart } from '@woocommerce/base-context';
+import { ShippingCalculatorButton } from '@woocommerce/base-components/cart-checkout';
 import { useSelect } from '@wordpress/data';
+import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
 
-export interface ShippingAddressProps {
-	shippingAddress: ShippingAddressType;
-}
+/**
+ * Internal dependencies
+ */
+import { getPickupLocation } from './utils';
 
-export const ShippingAddress = ( {
-	shippingAddress,
-}: ShippingAddressProps ): JSX.Element | null => {
+export const ShippingAddress = (): JSX.Element => {
+	const { shippingRates, shippingAddress } = useStoreCart();
 	const prefersCollection = useSelect( ( select ) =>
 		select( CHECKOUT_STORE_KEY ).prefersCollection()
 	);
 
-	const hasFormattedAddress = !! formatShippingAddress( shippingAddress );
+	const formattedAddress = prefersCollection
+		? getPickupLocation( shippingRates )
+		: formatShippingAddress( shippingAddress );
 
-	const label = hasFormattedAddress
-		? __( 'Change address', 'woocommerce' )
-		: __( 'Enter address to check delivery options', 'woocommerce' );
-	const formattedLocation = formatShippingAddress( shippingAddress );
+	const addressLabel = prefersCollection
+		? /* translators: %s location. */
+		  __( 'Collection from %s', 'woocommerce' )
+		: /* translators: %s location. */
+		  __( 'Delivers to %s', 'woocommerce' );
+
+	const calculatorLabel =
+		! formattedAddress || prefersCollection
+			? __( 'Enter address to check delivery options', 'woocommerce' )
+			: __( 'Change address', 'woocommerce' );
+
 	return (
-		<>
-			{ prefersCollection ? (
-				<PickupLocation />
-			) : (
-				<ShippingLocation formattedLocation={ formattedLocation } />
-			) }
-			<ShippingCalculatorButton label={ label } />
-		</>
+		<div className="wc-block-components-shipping-address">
+			{ formattedAddress
+				? sprintf( addressLabel, formattedAddress ) + ' '
+				: null }
+			<ShippingCalculatorButton label={ calculatorLabel } />
+		</div>
 	);
 };
 

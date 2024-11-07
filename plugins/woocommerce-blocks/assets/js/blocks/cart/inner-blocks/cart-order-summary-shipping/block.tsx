@@ -1,43 +1,104 @@
 /**
  * External dependencies
  */
-import { TotalsShipping } from '@woocommerce/base-components/cart-checkout';
-import { getCurrencyFromPriceResponse } from '@woocommerce/price-format';
-import { useStoreCart, useEditorContext } from '@woocommerce/base-context/';
-import { TotalsWrapper } from '@woocommerce/blocks-components';
+import { __ } from '@wordpress/i18n';
+import { useState } from '@wordpress/element';
+import {
+	TotalsShipping,
+	ShippingCalculatorButton,
+	ShippingCalculator,
+} from '@woocommerce/base-components/cart-checkout';
+import { ShippingCalculatorContext } from '@woocommerce/base-components/cart-checkout/shipping-calculator/context';
+import { useEditorContext, useStoreCart } from '@woocommerce/base-context';
+import { TotalsWrapper } from '@woocommerce/blocks-checkout';
+import {
+	getShippingRatesPackageCount,
+	selectedRatesAreCollectable,
+	allRatesAreCollectable,
+} from '@woocommerce/base-utils';
 import { getSetting } from '@woocommerce/settings';
-import { getShippingRatesPackageCount } from '@woocommerce/base-utils';
-import { select } from '@wordpress/data';
+
+/**
+ * Internal dependencies
+ */
+import { ShippingRateSelector } from './shipping-rate-selector';
 
 const Block = ( { className }: { className: string } ): JSX.Element | null => {
-	const { cartTotals, cartNeedsShipping } = useStoreCart();
 	const { isEditor } = useEditorContext();
+	const { cartNeedsShipping, shippingRates } = useStoreCart();
+	const [ isShippingCalculatorOpen, setIsShippingCalculatorOpen ] =
+		useState( false );
 
 	if ( ! cartNeedsShipping ) {
 		return null;
 	}
 
-	const shippingRates = select( 'wc/store/cart' ).getShippingRates();
-	const shippingRatesPackageCount =
-		getShippingRatesPackageCount( shippingRates );
-
-	if ( ! shippingRatesPackageCount && isEditor ) {
+	if ( isEditor && getShippingRatesPackageCount( shippingRates ) === 0 ) {
 		return null;
 	}
 
-	const totalsCurrency = getCurrencyFromPriceResponse( cartTotals );
+	const showCalculator = getSetting< boolean >(
+		'isShippingCalculatorEnabled',
+		true
+	);
+
+	const hasSelectedCollectionOnly =
+		selectedRatesAreCollectable( shippingRates );
 
 	return (
 		<TotalsWrapper className={ className }>
-			<TotalsShipping
-				showCalculator={ getSetting< boolean >(
-					'isShippingCalculatorEnabled',
-					true
-				) }
-				showRateSelector={ true }
-				values={ cartTotals }
-				currency={ totalsCurrency }
-			/>
+			<ShippingCalculatorContext.Provider
+				value={ {
+					showCalculator,
+					shippingCalculatorID: 'shipping-calculator-form-wrapper',
+					isShippingCalculatorOpen,
+					setIsShippingCalculatorOpen,
+				} }
+			>
+				<TotalsShipping
+					label={
+						hasSelectedCollectionOnly
+							? __( 'Collection', 'woocommerce' )
+							: __( 'Delivery', 'woocommerce' )
+					}
+					placeholder={
+						showCalculator ? (
+							<ShippingCalculatorButton
+								label={ __(
+									'Enter address to check delivery options',
+									'woocommerce'
+								) }
+							/>
+						) : (
+							<span className="wc-block-components-shipping-placeholder__value">
+								{ __(
+									'Calculated on checkout',
+									'woocommerce'
+								) }
+							</span>
+						)
+					}
+					collaterals={
+						<>
+							{ isShippingCalculatorOpen && (
+								<ShippingCalculator />
+							) }
+							{ ! isShippingCalculatorOpen && (
+								<ShippingRateSelector />
+							) }
+							{ ! showCalculator &&
+								allRatesAreCollectable( shippingRates ) && (
+									<div className="wc-block-components-totals-shipping__delivery-options-notice">
+										{ __(
+											'Delivery options will be calculated during checkout',
+											'woocommerce'
+										) }
+									</div>
+								) }
+						</>
+					}
+				/>
+			</ShippingCalculatorContext.Provider>
 		</TotalsWrapper>
 	);
 };
