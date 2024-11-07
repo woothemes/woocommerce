@@ -1,0 +1,4 @@
+Significance: minor
+Type: fix
+
+Refactored core profiler plugins page and added an error screen for when the user does not have permission to install plugins.

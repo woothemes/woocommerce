@@ -1,0 +1,4 @@
+Significance: patch
+Type: performance
+
+Optimize `test_import_sample_products` unit test performance

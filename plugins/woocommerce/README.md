@@ -46,7 +46,7 @@ pnpm --filter='@woocommerce/plugin-woocommerce' build:classic-assets
 pnpm --filter='@woocommerce/classic-assets' lint 
 ```
 
-### `plugins/woocommerce-admin`
+### `plugins/woocommerce/client/admin`
 
 This directory contains the React-based admin interface.
 

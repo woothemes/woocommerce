@@ -2,7 +2,7 @@
  * External dependencies
  */
 import type { BlockEditProps } from '@wordpress/blocks';
-import { type AttributeMetadata } from '@woocommerce/types';
+import type { CurrencyCode, AttributeMetadata } from '@woocommerce/types';
 
 /**
  * Internal dependencies
@@ -130,6 +130,7 @@ export type ProductCollectionEditComponentProps =
 		context: {
 			templateSlug: string;
 		};
+		tracksLocation: string;
 	};
 
 export type ProductCollectionContentProps =
@@ -179,6 +180,7 @@ export enum CoreCollectionNames {
 	HAND_PICKED = 'woocommerce/product-collection/hand-picked',
 	RELATED = 'woocommerce/product-collection/related',
 	UPSELLS = 'woocommerce/product-collection/upsells',
+	CROSS_SELLS = 'woocommerce/product-collection/cross-sells',
 }
 
 export enum CoreFilterNames {
@@ -209,3 +211,43 @@ export type SetPreviewState = ( args: {
 	location: WooCommerceBlockLocation;
 	attributes: ProductCollectionAttributes;
 } ) => void | ( () => void );
+
+type AttributeCount = {
+	term: number;
+	count: number;
+};
+
+export type RatingValues = 0 | 1 | 2 | 3 | 4 | 5;
+
+type RatingCount = {
+	rating: RatingValues;
+	count: number;
+};
+
+type StockStatusCount = {
+	status: 'instock' | 'outofstock' | 'onbackorder';
+	count: number;
+};
+
+/*
+ * Prop types for the `wc/store/v1/products/collection-data` endpoint
+ */
+export type WCStoreV1ProductsCollectionProps = {
+	price_range: {
+		min_price: string;
+		max_price: string;
+		currency_code: CurrencyCode;
+		currency_decimal_separator: '.' | string;
+		currency_minor_unit: number;
+		currency_prefix: '$' | string;
+		currency_suffix: '' | string;
+		currency_symbol: '$' | string;
+		currency_thousand_separator: ',' | string;
+	};
+
+	attribute_counts: AttributeCount[];
+
+	rating_counts: RatingCount[];
+
+	stock_status_counts: StockStatusCount[];
+};
