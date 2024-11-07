@@ -524,7 +524,7 @@
 					"name": "Metrics",
 					"testType": "performance",
 					"command": "test:metrics:ci",
-					"optional": true,
+					"optional": false,
 					"changes": [
 						"client/admin/config/*.json",
 						"composer.json",
