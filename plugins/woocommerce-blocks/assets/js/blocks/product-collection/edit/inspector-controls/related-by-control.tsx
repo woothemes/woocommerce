@@ -42,7 +42,7 @@ const RelatedByControl = ( {
 	};
 
 	return (
-		<PanelBody title={ __( 'Relate by', 'woocommerce' ) }>
+		<PanelBody title={ __( 'Related by', 'woocommerce' ) }>
 			<div className="wc-block-editor-product-collection-inspector-controls__relate-by">
 				<CheckboxControl
 					label={ __( 'Categories', 'woocommerce' ) }
