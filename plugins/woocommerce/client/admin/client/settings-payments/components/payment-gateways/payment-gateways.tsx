@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Gridicon } from '@automattic/components';
 import { Button, SelectControl } from '@wordpress/components';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 import { PaymentGateway } from '@woocommerce/data';
-import { EllipsisMenu, List, Pill } from '@woocommerce/components';
+import { EllipsisMenu, List } from '@woocommerce/components';
 import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
 import { getAdminLink } from '@woocommerce/settings';
 
@@ -16,6 +16,7 @@ import { getAdminLink } from '@woocommerce/settings';
  */
 import './payment-gateways.scss';
 import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
+import { StatusBadge } from '~/settings-payments/components/status-badge';
 
 // TODO: This should either be a util function, or handled in a different way e.g. passing the data as props.
 const parseScriptTag = ( elementId: string ) => {
@@ -45,122 +46,134 @@ export const PaymentGateways = () => {
 		);
 	}, [] );
 
-	const recommendedGateways = [ 'woocommerce_payments' ];
-
 	const setupLivePayments = () => {
 		// TODO: Implement in future PR.
 	};
 
-	// Transform plugins comply with List component format.
-	const paymentGatewaysList = paymentGateways.map(
-		( gateway: PaymentGateway ) => {
-			// todo: add logic to check if the incentive is available for the gateway.
-			const hasIncentive = gateway.id === 'woocommerce_payments';
-
-			// Determine the class names needed for the list item.
-			let className = 'woocommerce-list__item--payment-gateway';
-			if ( hasIncentive ) {
-				className += ' has-incentive';
-			}
-
-			return {
-				key: gateway.id,
-				title: (
-					<>
-						{ gateway.title }
-						{ ( hasIncentive ||
-							gateway.id in recommendedGateways ) && (
-							<Pill>
-								{
-									// TODO: Replace with actual incentive text.
-									// TODO: add tooltip
-									hasIncentive
-										? __(
-												'Save 10% on processing fees',
-												'woocommerce'
-										  )
-										: __( 'Recommended', 'woocommerce' )
-								}
-							</Pill>
-						) }
-					</>
-				),
-				className: hasIncentive
-					? 'woocommerce-list__item--payment-gateway has-incentive'
-					: 'woocommerce-list__item--payment-gateway',
-				content: (
-					<>
-						{ decodeEntities( gateway.method_description ) }
-						{ gateway.id === 'woocommerce_payments' && (
-							<WooPaymentMethodsLogos
-								maxElements={ 10 }
-								isWooPayEligible={ true }
-							/>
-						) }
-					</>
-				),
-				after: (
-					<div className="woocommerce-list__item-after__actions">
-						<>
-							<PaymentGatewayButton
-								id={ gateway.id }
-								enabled={ gateway.enabled }
-								settings_url={ gateway.settings_url }
-							/>
-							{ gateway.id === 'woocommerce_payments' &&
-								wooPaymentsGatewayData?.isInTestMode && (
-									<Button
-										variant="primary"
-										onClick={ setupLivePayments }
-										isBusy={ false }
-										disabled={ false }
-									>
-										{ __(
-											'Set up live payments',
-											'woocommerce'
-										) }
-									</Button>
-								) }
-							<EllipsisMenu
-								label={ __(
-									'Task List Options',
-									'woocommerce'
-								) }
-								renderContent={ () => (
-									<div>
-										<Button>
-											{ __(
-												'Learn more',
-												'woocommerce'
-											) }
-										</Button>
-										<Button>
-											{ __(
-												'See Terms of Service',
-												'woocommerce'
-											) }
-										</Button>
-									</div>
-								) }
-							/>
-						</>
-					</div>
-				),
-				// TODO add drag-and-drop icon before image (future PR)
-				before: (
-					<img
-						src={
-							// TODO: Need a way to make images available here.
-							// gateway.square_image ||
-							// gateway.image_72x72 ||
-							// gateway.image ||
-							'https://woocommerce.com/wp-content/plugins/wccom-plugins/payment-gateway-suggestions/images/wcpay.svg'
+	// Transform payment gateways to comply with List component format.
+	const paymentGatewaysList = useMemo(
+		() =>
+			paymentGateways.map( ( gateway: PaymentGateway ) => {
+				// todo: add logic to check if the incentive is available for the gateway.
+				const hasIncentive = gateway.id === 'woocommerce_payments';
+				const determineGatewayStatus = () => {
+					if ( gateway.enabled ) {
+						if ( gateway.needs_setup ?? false ) {
+							return 'needs_setup';
 						}
-						alt={ gateway.title + ' logo' }
-					/>
-				),
-			};
-		}
+
+						if ( gateway.id === 'woocommerce_payments' ) {
+							if ( wooPaymentsGatewayData?.isInTestMode ) {
+								return 'test_mode';
+							}
+						}
+						return 'active';
+					}
+
+					if ( gateway.id === 'woocommerce_payments' ) {
+						return 'recommended';
+					}
+
+					return 'inactive';
+				};
+
+				const status = determineGatewayStatus();
+
+				return {
+					key: gateway.id,
+					title: (
+						<>
+							{ gateway.method_title }
+							{ hasIncentive ? (
+								<StatusBadge
+									status="has_incentive"
+									message={ __(
+										'Save 10% on processing fees',
+										'woocommerce'
+									) }
+								/>
+							) : (
+								<StatusBadge status={ status } />
+							) }
+						</>
+					),
+					className: hasIncentive
+						? 'woocommerce-list__item--payment-gateway has-incentive'
+						: 'woocommerce-list__item--payment-gateway',
+					content: (
+						<>
+							{ decodeEntities( gateway.method_description ) }
+							{ gateway.id === 'woocommerce_payments' && (
+								<WooPaymentMethodsLogos
+									maxElements={ 10 }
+									isWooPayEligible={ true }
+								/>
+							) }
+						</>
+					),
+					after: (
+						<div className="woocommerce-list__item-after__actions">
+							<>
+								<PaymentGatewayButton
+									id={ gateway.id }
+									enabled={ gateway.enabled }
+									settings_url={ gateway.settings_url }
+								/>
+								{ gateway.id === 'woocommerce_payments' &&
+									wooPaymentsGatewayData?.isInTestMode && (
+										<Button
+											variant="primary"
+											onClick={ setupLivePayments }
+											isBusy={ false }
+											disabled={ false }
+										>
+											{ __(
+												'Set up live payments',
+												'woocommerce'
+											) }
+										</Button>
+									) }
+								<EllipsisMenu
+									label={ __(
+										'Task List Options',
+										'woocommerce'
+									) }
+									renderContent={ () => (
+										<div>
+											<Button>
+												{ __(
+													'Learn more',
+													'woocommerce'
+												) }
+											</Button>
+											<Button>
+												{ __(
+													'See Terms of Service',
+													'woocommerce'
+												) }
+											</Button>
+										</div>
+									) }
+								/>
+							</>
+						</div>
+					),
+					// TODO add drag-and-drop icon before image (future PR)
+					before: (
+						<img
+							src={
+								// TODO: Need a way to make images available here.
+								// gateway.square_image ||
+								// gateway.image_72x72 ||
+								// gateway.image ||
+								'https://woocommerce.com/wp-content/plugins/wccom-plugins/payment-gateway-suggestions/images/wcpay.svg'
+							}
+							alt={ gateway.title + ' logo' }
+						/>
+					),
+				};
+			} ),
+		[ paymentGateways, wooPaymentsGatewayData ]
 	);
 
 	// Add offline payment provider.

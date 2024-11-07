@@ -73,12 +73,6 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 				display: inline-flex;
 				gap: 10px;
 				align-items: center;
-
-				.woocommerce-pill {
-					background: var(--Alias-bg-bg-surface-secondary, #f5f5f5);
-					border: none;
-					border-radius: var(--radius-primitive, 4px);
-				}
 			}
 
 			&__item-content {
