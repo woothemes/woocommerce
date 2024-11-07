@@ -1,0 +1,4 @@
+Significance: patch
+Type: update
+
+Update CYS class names to avoid conflicts with future updates of Gutenberg or WordPress

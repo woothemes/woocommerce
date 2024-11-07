@@ -75,7 +75,11 @@ const NoShippingAddressMessage = () => {
 	);
 };
 
-const Block = ( { noShippingPlaceholder = null } ): ReactElement | null => {
+const Block = ( {
+	noShippingPlaceholder = null,
+}: {
+	noShippingPlaceholder?: ReactElement | null;
+} ) => {
 	const { isEditor } = useEditorContext();
 
 	const {
