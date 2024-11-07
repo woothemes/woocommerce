@@ -5675,6 +5675,28 @@ img.help_tip {
 			margin: 0;
 		}
 	}
+
+	// Rich editor tabs.
+	.wp-editor-tabs {
+		display: flex;
+
+		.wp-switch-editor {
+			float: none;
+			background: none;
+			margin: 0;
+			padding: 10px $gap;
+			color: var(--Alias-text-text-tertiary, #505050);
+			border-width: 0 0 2px 0;
+			border-bottom-color: transparent;
+			justify-content: center;
+			align-items: center;
+		}
+	}
+	.html-active .switch-html,
+	.tmce-active .switch-tmce {
+		border-bottom-color: #3858E9;
+		color: var(--Alias-text-text, #070707);
+	}
 }
 
 
