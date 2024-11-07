@@ -40,7 +40,6 @@ export const Inspector = ( {
 		hideEmpty,
 		clearButton,
 		onsale,
-		featured,
 		instock,
 		onbackorder,
 		outofstock,
@@ -88,14 +87,6 @@ export const Inspector = ( {
 									setAttributes( { onsale: value } );
 								} }
 								checked={ onsale }
-							/>
-							<CheckboxControl
-								className="wp-block-woocommerce-product-filter-status__checkbox"
-								label={ __( 'Featured', 'woocommerce' ) }
-								onChange={ ( value ) => {
-									setAttributes( { featured: value } );
-								} }
-								checked={ featured }
 							/>
 						</BaseControl>
 					</PanelRow>

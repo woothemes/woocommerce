@@ -11,7 +11,6 @@ export type BlockAttributes = {
 	hideEmpty: boolean;
 	clearButton: boolean;
 	onsale: boolean;
-	featured: boolean;
 	instock: boolean;
 	onbackorder: boolean;
 	outofstock: boolean;

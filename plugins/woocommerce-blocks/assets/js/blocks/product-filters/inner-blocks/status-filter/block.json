@@ -54,48 +54,6 @@
 			}
 		}
 	},
-	"attributes": {
-		"showCounts": {
-			"type": "boolean",
-			"default": false
-		},
-		"displayStyle": {
-			"type": "string",
-			"default": "woocommerce/product-filter-checkbox-list"
-		},
-		"isPreview": {
-			"type": "boolean",
-			"default": false
-		},
-		"hideEmpty": {
-			"type": "boolean",
-			"default": true
-		},
-		"clearButton": {
-			"type": "boolean",
-			"default": true
-		},
-		"onsale": {
-			"type": "boolean",
-			"default": false
-		},
-		"featured": {
-			"type": "boolean",
-			"default": false
-		},
-		"instock": {
-			"type": "boolean",
-			"default": false
-		},
-		"outofstock": {
-			"type": "boolean",
-			"default": false
-		},
-		"onbackorder": {
-			"type": "boolean",
-			"default": false
-		}
-	},
 	"example": {
 		"attributes": {
 			"isPreview": true

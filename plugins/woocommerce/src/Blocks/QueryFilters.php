@@ -165,65 +165,6 @@ final class QueryFilters {
 	}
 
 	/**
-	 * Get the count of featured products.
-	 *
-	 * @param array $query_vars The WP_Query arguments.
-	 */
-	public function get_featured_status_counts( array $query_vars ) {
-		global $wpdb;
-
-		add_filter( 'posts_clauses', array( $this, 'add_query_clauses' ), 10, 2 );
-		add_filter( 'posts_pre_query', '__return_empty_array' );
-
-		$query_vars['no_found_rows']  = true;
-		$query_vars['posts_per_page'] = -1;
-		$query_vars['fields']         = 'ids';
-		// phpcs:disable WordPress.DB.SlowDBQuery.slow_db_query_tax_query
-		$query_vars['tax_query'] = array(
-			'relation' => 'AND',
-			array(
-				'taxonomy' => 'product_visibility',
-				'field'    => 'name',
-				'terms'    => 'featured',
-			),
-			array(
-				'taxonomy' => 'product_visibility',
-				'field'    => 'name',
-				'terms'    => 'exclude-from-search',
-				'operator' => 'NOT IN',
-			),
-			array(
-				'taxonomy' => 'product_visibility',
-				'field'    => 'name',
-				'terms'    => 'exclude-from-catalog',
-				'operator' => 'NOT IN',
-			),
-		);
-		// phpcs:enable WordPress.DB.SlowDBQuery.slow_db_query_tax_query
-
-		$query             = new \WP_Query();
-		$result            = $query->query( $query_vars );
-		$product_query_sql = $query->request;
-
-		remove_filter( 'posts_clauses', array( $this, 'add_query_clauses' ), 10 );
-		remove_filter( 'posts_pre_query', '__return_empty_array' );
-
-		$count_sql = "
-			SELECT COUNT( DISTINCT product_id ) as status_count
-			FROM {$wpdb->wc_product_meta_lookup}
-			WHERE product_id IN ( {$product_query_sql} )
-		"; // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-
-		$result = $wpdb->get_var( $count_sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-
-		$featured_status_counts = array(
-			'featured' => $result,
-		);
-
-		return $featured_status_counts;
-	}
-
-	/**
 	 * Get rating counts for the current products.
 	 *
 	 * @param array $query_vars The WP_Query arguments.
@@ -319,7 +260,7 @@ final class QueryFilters {
 
 	/**
 	 * Add query clauses for status filter.
-	 * { onsale, featured, instock, onbackorder, outofstock }
+	 * { onsale, instock, onbackorder, outofstock }
 	 *
 	 * @param array     $args     Query args.
 	 * @param \WP_Query $wp_query WP_Query object.
@@ -337,14 +278,6 @@ final class QueryFilters {
 			switch ( $status ) {
 				case 'onsale':
 					$args['where'] .= ' AND wc_product_meta_lookup.onsale = 1';
-					break;
-				case 'featured':
-					$featured_term             = get_term_by( 'name', 'featured', 'product_visibility' );
-					$exclude_from_search_term  = get_term_by( 'name', 'exclude-from-search', 'product_visibility' );
-					$exclude_from_catalog_term = get_term_by( 'name', 'exclude-from-catalog', 'product_visibility' );
-
-					$args['join']  .= "INNER JOIN {$wpdb->term_relationships} ON {$wpdb->posts}.ID = {$wpdb->term_relationships}.object_id";
-					$args['where'] .= $wpdb->prepare( " AND {$wpdb->term_relationships}.term_taxonomy_id = %d AND {$wpdb->term_relationships}.term_taxonomy_id != %d AND {$wpdb->term_relationships}.term_taxonomy_id != %d", array( $featured_term->term_taxonomy_id, $exclude_from_search_term->term_taxonomy_id, $exclude_from_catalog_term->term_taxonomy_id ) );
 					break;
 				case 'instock':
 					$args['where'] .= ' AND wc_product_meta_lookup.stock_status = "instock"';
