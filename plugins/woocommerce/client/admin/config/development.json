@@ -40,6 +40,7 @@
 		"product-editor-template-system": false,
 		"blueprint": true,
 		"reactify-classic-payments-settings": false,
-		"use-wp-horizon": false
+		"use-wp-horizon": false,
+		"add-to-cart-with-options-stepper-layout": true
 	}
 }

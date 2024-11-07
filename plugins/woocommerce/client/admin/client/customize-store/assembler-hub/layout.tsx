@@ -54,6 +54,7 @@ import { isOfflineAIFlow } from '../guards';
 import { isWooExpress } from '~/utils/is-woo-express';
 import { trackEvent } from '../tracking';
 import { SidebarNavigationExtraScreen } from './sidebar/navigation-extra-screen/sidebar-navigation-extra-screen';
+import './gutenberg-styles/layout.scss';
 
 const { useGlobalStyle } = unlock( blockEditorPrivateApis );
 
@@ -157,9 +158,11 @@ export const Layout = () => {
 						type={ templateType }
 						id={ templateId }
 					>
-						<div className={ clsx( 'edit-site-layout' ) }>
+						<div
+							className={ clsx( 'woocommerce-edit-site-layout' ) }
+						>
 							<motion.div
-								className="edit-site-layout__header-container"
+								className="woocommerce-edit-site-layout__header-container"
 								animate={ 'view' }
 							>
 								<SiteHub
@@ -167,18 +170,18 @@ export const Layout = () => {
 										view: { x: 0 },
 									} }
 									isTransparent={ false }
-									className="edit-site-layout__hub"
+									className="woocommerce-edit-site-layout__hub"
 								/>
 							</motion.div>
 
-							<div className="edit-site-layout__content">
-								<div className="edit-site-layout__sidebar">
+							<div className="woocommerce-edit-site-layout__content">
+								<div className="woocommerce-edit-site-layout__sidebar">
 									<NavigableRegion
 										ariaLabel={ __(
 											'Navigation',
 											'woocommerce'
 										) }
-										className="edit-site-layout__sidebar-region"
+										className="woocommerce-edit-site-layout__sidebar-region"
 									>
 										<motion.div
 											animate={ { opacity: 1 } }
@@ -192,7 +195,7 @@ export const Layout = () => {
 														: ANIMATION_DURATION,
 												ease: 'easeOut',
 											} }
-											className="edit-site-layout__sidebar"
+											className="woocommerce-edit-site-layout__sidebar"
 										>
 											<Sidebar />
 										</motion.div>
@@ -201,14 +204,14 @@ export const Layout = () => {
 								</div>
 
 								{ ! isMobileViewport && (
-									<div className="edit-site-layout__canvas-container">
+									<div className="woocommerce-edit-site-layout__canvas-container">
 										{ canvasResizer }
 										{ !! canvasSize.width && (
 											<motion.div
 												initial={ false }
 												layout="position"
 												className={ clsx(
-													'edit-site-layout__canvas'
+													'woocommerce-edit-site-layout__canvas'
 												) }
 											>
 												<ErrorBoundary>
