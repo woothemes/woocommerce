@@ -65,7 +65,7 @@ class WC_Customer_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 	 * @return string[]
 	 */
 	public function get_pending_only_as_order_statuses() {
-		return array( OrderInternalStatus::PENDING => 'pending' );
+		return array( OrderInternalStatus::PENDING => OrderStatus::PENDING );
 	}
 
 	/**
