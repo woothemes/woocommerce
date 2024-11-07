@@ -22,7 +22,7 @@ These scripts outline the naming scheme used in order to facilitate [task parall
 - `--if-present`: Ensures that PNPM will not error if a script is not found.
 - `--workspace-concurrency=Infinity`: Runs as many of the tasks in parallel as possible.
 - `--stream`: Makes the script output legible by putting all of their output into a single stream.
-- `--filter="$npm_package_name..."`: This filter tells PNPM that we want to run the script against the current project _and_ all of its dependencies down the graph.
+- `--filter="$npm_package_name..."`: This filter tells PNPM that we want to run the script against the current project _and_ all of its dependencies down the graph (e.g. for `@woocommerce/plugin-woocommerce`, it would be `@woocommerce/admin-library`, `@woocommerce/block-library` and etc.).
 
 We also provide `build:project` and `watch:build:project` scripts which only run the associated scripts on the current package without any of its dependencies.
 
