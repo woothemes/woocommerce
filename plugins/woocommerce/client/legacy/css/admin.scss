@@ -5586,13 +5586,15 @@ img.help_tip {
 	}
 }
 
-/* Match product editor page */
-.woocommerce-admin-page.post-type-product {
+/* Match product & coupon editor page */
+.post-type-product,
+.post-type-shop_coupon {
 	// Hide duplicated h1.
 	.wrap h1.wp-heading-inline {
 		display: none;
 	}
 
+	// Title input.
 	#titlediv {
 		#title-prompt-text,
 		#title  {
@@ -5610,6 +5612,20 @@ img.help_tip {
 		}
 	}
 
+	// Gap between Title and Slug edit should be 8px, so we need to clear margins.
+	#titlediv .inside {
+		padding: 0;
+		margin-top: $gap-smaller;
+	}
+	#edit-slug-box {
+		padding: 0;
+		margin: 0;
+	}
+	#titlediv #title {
+		margin: 0;
+	}
+
+	// Postbox cards.
 	.postbox {
 		border: 0;
 		border-radius: 8px;
@@ -5624,7 +5640,7 @@ img.help_tip {
 	#postdivrich {
 		margin-top: 28px;
 	}
-	// -
+	//
 
 	.postbox-header {
 		padding: 12px 16px;
@@ -5645,37 +5661,26 @@ img.help_tip {
 	.inside {
 		padding: 16px;
 	}
-}
-// Separate rule, not to overspecify the above ones with id selector.
-.woocommerce-admin-page.post-type-product #poststuff {
-	h2.postbox-header{
-		padding: 12px 16px;
-	}
-	.hndle {
-		padding: 0;
-	}
 
-	.inside {
-		margin: 0;
-	}
-}
-// Gap between Title and Slug edit should be 8px, so we need to clear margins.
-.woocommerce-admin-page.post-type-product {
-	#titlediv .inside {
-		padding: 0;
-		margin-top: $gap-smaller;
-	}
-	#edit-slug-box {
-		padding: 0;
-		margin: 0;
-	}
-	#titlediv #title {
-		margin: 0;
+	// Separate rule, not to overspecify the above ones with id selector.
+	#poststuff {
+		h2.postbox-header{
+			padding: 12px 16px;
+		}
+		.hndle {
+			padding: 0;
+		}
+
+		.inside {
+			margin: 0;
+		}
 	}
 }
 
 
-/* Product data metabox */
+
+/* Product/coupon data metabox */
+#woocommerce-coupon-data,
 #woocommerce-product-data {
 
 	.hndle {
@@ -5753,14 +5758,16 @@ img.help_tip {
 }
 
 #woocommerce-coupon-description {
-	padding: 3px 8px;
+	padding: $gap-smallest $gap;
 	font-size: 1.7em;
 	line-height: 1.42em;
 	height: auto;
 	width: 100%;
 	outline: 0;
-	margin: 10px 0;
+	margin: $gap-smaller 0;
 	display: block;
+	border-radius: 8px;
+	border: 1px solid #BBBCBF;
 
 	&::-webkit-input-placeholder {
 		line-height: 1.42em;
@@ -5888,9 +5895,6 @@ img.help_tip {
 	}
 }
 
-
-
-#woocommerce-coupon-data,
 .woocommerce {
 	ul.wc-tabs {
 		margin: 0;
@@ -5943,6 +5947,7 @@ img.help_tip {
 	}
 }
 
+#woocommerce-coupon-data,
 #woocommerce-product-data {
 
 	ul.wc-tabs {
@@ -6422,7 +6427,7 @@ img.help_tip {
 }
 
 /** Consider sharign with coupons */
-#woocommerce-product-data .woocommerce_options_panel {
+.woocommerce_options_panel {
 
 	.options_group {
 		border: 0; // reset shared styles
