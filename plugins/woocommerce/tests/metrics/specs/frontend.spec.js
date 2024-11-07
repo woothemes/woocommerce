@@ -56,10 +56,6 @@ test.describe( 'Frontend Performance', () => {
 				// Get the durations.
 				const loadingDurations = await metrics.getLoadingDurations();
 
-				// Measure CLS
-				const cumulativeLayoutShift =
-					await metrics.getCumulativeLayoutShift();
-
 				// Measure LCP
 				const largestContentfulPaint =
 					await metrics.getLargestContentfulPaint();
@@ -86,9 +82,6 @@ test.describe( 'Frontend Performance', () => {
 					);
 					results.totalBlockingTime = results.tbt || [];
 					results.totalBlockingTime.push( totalBlockingTime );
-					results.cumulativeLayoutShift =
-						results.cumulativeLayoutShift || [];
-					results.cumulativeLayoutShift.push( cumulativeLayoutShift );
 					results.largestContentfulPaint =
 						results.largestContentfulPaint || [];
 					results.largestContentfulPaint.push(
