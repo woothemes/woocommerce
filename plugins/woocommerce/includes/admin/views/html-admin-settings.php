@@ -34,6 +34,11 @@ $hide_nav = Features::is_enabled( 'reactify-classic-payments-settings' ) &&
 					echo '<a href="' . esc_html( admin_url( 'admin.php?page=wc-settings&tab=' . esc_attr( $slug ) ) ) . '" class="nav-tab ' . ( $current_tab === $slug ? 'nav-tab-active' : '' ) . '">' . esc_html( $label ) . '</a>';
 				}
 
+				/**
+				 * Hook for adding additional settings tabs.
+				 *
+				 * @since 1.0.0
+				 */
 				do_action( 'woocommerce_settings_tabs' );
 
 				?>
