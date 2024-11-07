@@ -60,6 +60,21 @@ const renderShippingRatesControlOption = (
 	};
 };
 
+const NoShippingAddressMessage = () => {
+	return (
+		<p
+			role="status"
+			aria-live="polite"
+			className="wc-block-components-shipping-rates-control__no-shipping-address-message"
+		>
+			{ __(
+				'Enter a shipping address to view shipping options.',
+				'woocommerce'
+			) }
+		</p>
+	);
+};
+
 const Block = ( {
 	noShippingPlaceholder = null,
 }: {
@@ -99,14 +114,7 @@ const Block = ( {
 		getShippingRatesPackageCount( shippingRates );
 
 	if ( ! hasCalculatedShipping && ! shippingRatesPackageCount ) {
-		return (
-			<p>
-				{ __(
-					'Shipping options will be displayed here after entering your full shipping address.',
-					'woocommerce'
-				) }
-			</p>
-		);
+		return <NoShippingAddressMessage />;
 	}
 	const addressComplete = isAddressComplete( shippingAddress );
 
@@ -128,15 +136,12 @@ const Block = ( {
 									status="warning"
 								>
 									{ __(
-										'There are no shipping options available. Please check your shipping address.',
+										'No shipping options are available for this address. Please verify the address is correct or try a different address.',
 										'woocommerce'
 									) }
 								</NoticeBanner>
 							) : (
-								__(
-									'Add a shipping address to view shipping options.',
-									'woocommerce'
-								)
+								<NoShippingAddressMessage />
 							) }
 						</>
 					}
