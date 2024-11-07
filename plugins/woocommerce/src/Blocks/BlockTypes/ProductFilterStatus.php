@@ -32,6 +32,13 @@ final class ProductFilterStatus extends AbstractBlock {
 	 */
 	protected $stock_status_options;
 
+	/**
+	 * All status options.
+	 *
+	 * @var array
+	 */
+	protected $all_status_options;
+
 	const FILTER_STATUS_QUERY_VAR = 'filter_status';
 
 	/**
@@ -49,7 +56,7 @@ final class ProductFilterStatus extends AbstractBlock {
 			'onsale' => __( 'On sale', 'woocommerce' ),
 		);
 
-		$this->status_options = array_merge( $this->stock_status_options, $this->status_options );
+		$this->all_status_options = array_merge( $this->stock_status_options, $this->status_options );
 
 		add_filter( 'collection_filter_query_param_keys', array( $this, 'get_filter_query_param_keys' ), 10, 2 );
 		add_filter( 'collection_active_filters_data', array( $this, 'register_active_filters_data' ), 10, 2 );
@@ -89,7 +96,7 @@ final class ProductFilterStatus extends AbstractBlock {
 			return $data;
 		}
 
-		$status_options = $this->status_options;
+		$status_options = $this->all_status_options;
 
 		$active_statuses = array_filter(
 			explode( ',', $params[ self::FILTER_STATUS_QUERY_VAR ] )
@@ -185,7 +192,7 @@ final class ProductFilterStatus extends AbstractBlock {
 
 		$filter_options = array_map(
 			function ( $item ) use ( $selected_statuses, $attributes ) {
-				$statuses = $this->status_options;
+				$statuses = $this->all_status_options;
 				$label    = $statuses[ $item['status'] ] . ( $attributes['showCounts'] ? ' (' . $item['count'] . ')' : '' );
 
 				return array(

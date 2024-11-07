@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { Block, createBlock, getBlockTypes } from '@wordpress/blocks';
 import { useState } from '@wordpress/element';
 import { dispatch, useSelect } from '@wordpress/data';
+import { getSetting } from '@woocommerce/settings';
 import {
 	PanelBody,
 	PanelRow,
@@ -34,16 +35,10 @@ export const Inspector = ( {
 	setAttributes,
 	clientId,
 }: EditProps ) => {
-	const {
-		displayStyle,
-		showCounts,
-		hideEmpty,
-		clearButton,
-		onsale,
-		instock,
-		onbackorder,
-		outofstock,
-	} = attributes;
+	const { displayStyle, showCounts, hideEmpty, clearButton } = attributes;
+
+	const statusOptions = getSetting( 'statusOptions' );
+	const stockStatusOptions = getSetting( 'stockStatusOptions' );
 
 	if ( displayStyleOptions.length === 0 ) {
 		displayStyleOptions = getBlockTypes().filter( ( blockType ) =>
@@ -80,14 +75,19 @@ export const Inspector = ( {
 							id="product"
 							label={ __( 'PRODUCT', 'woocommerce' ) }
 						>
-							<CheckboxControl
-								className="wp-block-woocommerce-product-filter-status__checkbox"
-								label={ __( 'On sale', 'woocommerce' ) }
-								onChange={ ( value ) => {
-									setAttributes( { onsale: value } );
-								} }
-								checked={ onsale }
-							/>
+							{ Object.entries( statusOptions ).map(
+								( [ key, label ] ) => (
+									<CheckboxControl
+										key={ key }
+										className="wp-block-woocommerce-product-filter-status__checkbox"
+										label={ label }
+										onChange={ ( value ) => {
+											setAttributes( { [ key ]: value } );
+										} }
+										checked={ attributes[ key ] }
+									/>
+								)
+							) }
 						</BaseControl>
 					</PanelRow>
 					<PanelRow>
@@ -96,30 +96,19 @@ export const Inspector = ( {
 							label={ __( 'STOCK', 'woocommerce' ) }
 							className="wp-block-woocommerce-product-filter-status"
 						>
-							<CheckboxControl
-								className="wp-block-woocommerce-product-filter-status__checkbox"
-								label={ __( 'In stock', 'woocommerce' ) }
-								onChange={ ( value ) => {
-									setAttributes( { instock: value } );
-								} }
-								checked={ instock }
-							/>
-							<CheckboxControl
-								className="wp-block-woocommerce-product-filter-status__checkbox"
-								label={ __( 'On backorder', 'woocommerce' ) }
-								onChange={ ( value ) => {
-									setAttributes( { onbackorder: value } );
-								} }
-								checked={ onbackorder }
-							/>
-							<CheckboxControl
-								className="wp-block-woocommerce-product-filter-status__checkbox"
-								label={ __( 'Out of stock', 'woocommerce' ) }
-								onChange={ ( value ) => {
-									setAttributes( { outofstock: value } );
-								} }
-								checked={ outofstock }
-							/>
+							{ Object.entries( stockStatusOptions ).map(
+								( [ key, label ] ) => (
+									<CheckboxControl
+										key={ key }
+										className="wp-block-woocommerce-product-filter-status__checkbox"
+										label={ label }
+										onChange={ ( value ) => {
+											setAttributes( { [ key ]: value } );
+										} }
+										checked={ attributes[ key ] }
+									/>
+								)
+							) }
 						</BaseControl>
 					</PanelRow>
 				</PanelBody>
