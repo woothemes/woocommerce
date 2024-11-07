@@ -2,6 +2,8 @@
 post_title: WooCommerce developer documentation
 ---
 
+# WooCommerce Developer Documentation
+
 > ⚠️ **Notice:** This documentation is currently a **work in progress**. While it's open to the public for transparency and collaboration, please be aware that some sections might be incomplete or subject to change. We appreciate your patience and welcome any contributions!
 
 This is your go-to place to find everything you need to know to get started with WooCommerce development, including implementation details for specific parts of the WooCommerce code base. 
@@ -66,25 +68,24 @@ Available READMe files for the WooCommerce plugin:
 
 Available READMe files for the WooCommerce Admin plugin:
 
-- [`Root README`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-admin/README.md)
-- [`client/activity-panel`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-admin/client/activity-panel/README.md)
-- [`client/activity-panel/activity-card`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-admin/client/activity-panel/activity-card/README.md)
-- [`client/activity-panel/activity-header`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-admin/client/activity-panel/activity-header/README.md)
-- [`client/analytics/report`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-admin/client/analytics/report/README.md)
-- [`client/analytics/settings`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-admin/client/analytics/settings/README.md)
-- [`client/dashboard`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-admin/client/dashboard/README.md)
-- [`client/header`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-admin/client/header/README.md)
-- [`client/marketing`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-admin/client/marketing/README.md)
-- [`client/marketing/components/button`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-admin/client/marketing/components/button/README.md)
-- [`client/marketing/coupons/card`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-admin/client/marketing/coupons/card/README.md)
-- [`client/marketing/components/product-icon`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-admin/client/marketing/components/product-icon/README.md)
-- [`client/utils`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-admin/client/utils/README.md)
-- [`client/wp-admin-scripts`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-admin/client/wp-admin-scripts/README.md)
-- [`docs`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-admin/docs/README.md)
-- [`docs/examples`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-admin/docs/examples/README.md)
-- [`docs/examples/extensions`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-admin/docs/examples/extensions/README.md)
-- [`docs/features`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-admin/docs/features/README.md)
-- [`docs/woocommerce.com`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-admin/docs/woocommerce.com/README.md)
+- [`Root README`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/client/admin/README.md)
+- [`client/activity-panel`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/client/admin/client/activity-panel/README.md)
+- [`client/activity-panel/activity-card`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/client/admin/client/activity-panel/activity-card/README.md)
+- [`client/activity-panel/activity-header`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/client/admin/client/activity-panel/activity-header/README.md)
+- [`client/analytics/report`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/client/admin/client/analytics/report/README.md)
+- [`client/analytics/settings`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/client/admin/client/analytics/settings/README.md)
+- [`client/dashboard`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/client/admin/client/dashboard/README.md)
+- [`client/header`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/client/admin/client/header/README.md)
+- [`client/marketing`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/client/admin/client/marketing/README.md)
+- [`client/marketing/coupons/card`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/client/admin/client/marketing/coupons/card/README.md)
+- [`client/marketing/components/product-icon`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/client/admin/client/marketing/components/product-icon/README.md)
+- [`client/utils`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/client/admin/client/utils/README.md)
+- [`client/wp-admin-scripts`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/client/admin/client/wp-admin-scripts/README.md)
+- [`docs`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/client/admin/docs/README.md)
+- [`docs/examples`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/client/admin/docs/examples/README.md)
+- [`docs/examples/extensions`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/client/admin/docs/examples/extensions/README.md)
+- [`docs/features`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/client/admin/docs/features/README.md)
+- [`docs/woocommerce.com`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/client/admin/docs/woocommerce.com/README.md)
 
 Available READMe files for the WooCommerce Beta Tested plugin:
 

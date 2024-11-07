@@ -94,8 +94,7 @@ const webpackConfig = {
 		filename: ( data ) => {
 			// Output wpAdminScripts to wp-admin-scripts folder
 			// See https://github.com/woocommerce/woocommerce-admin/pull/3061
-			return wpAdminScripts.includes( data.chunk.name ) ||
-				data.chunk.name === 'settings'
+			return wpAdminScripts.includes( data.chunk.name )
 				? `wp-admin-scripts/[name]${ outputSuffix }.js`
 				: `[name]/index${ outputSuffix }.js`;
 		},
