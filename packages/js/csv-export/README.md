@@ -29,28 +29,28 @@ onClick = () => {
 }
 ```
 
-### generateCSVDataFromTable(headers, rows) ⇒ <code>String</code>
+### generateCSVDataFromTable(headers, rows) ⇒ `String`
 
 Generates a CSV string from table contents
 
-**Returns**: <code>String</code> - Table contents in a CSV format
+**Returns**: `String` - Table contents in a CSV format
 
 | Param | Type | Description |
 | --- | --- | --- |
-| headers | <code>Array.&lt;Object&gt;</code> | Object with table header information |
-| rows | <code>Array.Array.&lt;Object&gt;</code> | Object with table rows information |
+| headers | `Array.&lt;Object&gt;` | Object with table header information |
+| rows | `Array.Array.&lt;Object&gt;` | Object with table rows information |
 
-### generateCSVFileName([name], [params]) ⇒ <code>String</code>
+### generateCSVFileName([name], [params]) ⇒ `String`
 
 Generates a file name for CSV files based on the provided name, the current date
 and the provided params, which are all appended with hyphens.
 
-**Returns**: <code>String</code> - Formatted file name
+**Returns**: `String` - Formatted file name
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| [name] | <code>String</code> | <code>&#x27;&#x27;</code> | Name of the file |
-| [params] | <code>Object</code> | <code>{}</code> | Object of key-values to append to the file name |
+| [name] | `String` | `&#x27;&#x27;` | Name of the file |
+| [params] | `Object` | `{}` | Object of key-values to append to the file name |
 
 ### downloadCSVFile(fileName, content)
 
@@ -58,5 +58,5 @@ Downloads a CSV file with the given file name and contents
 
 | Param | Type | Description |
 | --- | --- | --- |
-| fileName | <code>String</code> | Name of the file to download |
-| content | <code>String</code> | Contents of the file to download |
+| fileName | `String` | Name of the file to download |
+| content | `String` | Contents of the file to download |
