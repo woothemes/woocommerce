@@ -55,7 +55,6 @@
 		"@types/lodash": "^4.14.202",
 		"@types/prop-types": "^15.7.11",
 		"@types/wordpress__blocks": "11.0.7",
-		"@woocommerce/admin-layout": "workspace:*",
 		"@woocommerce/block-templates": "workspace:*",
 		"@woocommerce/components": "workspace:*",
 		"@woocommerce/currency": "workspace:*",
