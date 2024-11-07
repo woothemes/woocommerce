@@ -10,13 +10,13 @@ Add a project inside of your favorite environment setup or use the built in [wp-
 
 ## Usage
 
-```
+```bash
 npx @wordpress/create-block -t @woocommerce/create-woo-extension my-extension-name
 ```
 
 Navigate to the newly created folder and get started.
 
-```
+```bash
 cd my-extension-name
 npm install # Install dependencies
 npm run build # Build the javascript
@@ -30,7 +30,7 @@ See the new plugin activated from the WordPress plugins page and navigate to `wp
 
 For development on this tool itself, you can also install from a local directory.
 
-```
+```bash
 npx @wordpress/create-block -t ./path/to/woocommerce/packages/js/create-woo-extension my-extension-name
 ```
 
