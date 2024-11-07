@@ -19,7 +19,7 @@
 
 	form.cart {
 		&:before {
-			grid-column: span 2; // ensure the form spans the full width of the container
+			grid-column: span 9999;
 		}
 
 		display: grid;
