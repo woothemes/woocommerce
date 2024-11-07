@@ -817,7 +817,7 @@ class ProductCollection extends AbstractBlock {
 			$hashed_args = $parsed_block['attrs']['query'] ?? array();
 			unset( $hashed_args['paged'] );
 
-			$parsed_block['attrs']['queryId'] = md5( wp_json_encode( $hashed_args ) );
+			$parsed_block['attrs']['queryId'] = crc32( wp_json_encode( $hashed_args ) );
 		}
 
 		return $parsed_block;
