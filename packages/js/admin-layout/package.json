@@ -52,8 +52,12 @@
 		"watch:build:project:esm": "wireit"
 	},
 	"dependencies": {
+		"@types/wordpress__blocks": "11.0.7",
+		"@woocommerce/block-templates": "workspace:*",
 		"@woocommerce/components": "workspace:*",
 		"@woocommerce/settings": "^1.0.0",
+		"@wordpress/block-editor": "^9.8.0",
+		"@wordpress/blocks": "^12.24.0",
 		"@wordpress/components": "wp-6.0",
 		"@wordpress/compose": "wp-6.0",
 		"@wordpress/core-data": "wp-6.0",
@@ -70,12 +74,16 @@
 	},
 	"devDependencies": {
 		"@types/react": "17.0.x",
+		"@types/wordpress__block-editor": "7.0.0",
+		"@types/wordpress__block-library": "2.6.1",
+		"@types/wordpress__blocks": "11.0.7",
 		"@types/wordpress__components": "^19.10.5",
 		"@types/wordpress__core-data": "2.4.5",
 		"@types/wordpress__data": "6.0.2",
 		"@types/wordpress__editor": "13.0.0",
 		"@types/wordpress__rich-text": "3.4.6",
 		"@woocommerce/eslint-plugin": "workspace:*",
+		"@woocommerce/internal-js-tests": "workspace:*",
 		"@woocommerce/internal-style-build": "workspace:*",
 		"@wordpress/browserslist-config": "wp-6.0",
 		"concurrently": "^7.6.0",
@@ -176,6 +184,9 @@
 			"files": [
 				"node_modules/@woocommerce/internal-style-build/index.js",
 				"node_modules/@woocommerce/internal-style-build/abstracts",
+				"node_modules/@woocommerce/internal-js-tests/build",
+				"node_modules/@woocommerce/internal-js-tests/build-module",
+				"node_modules/@woocommerce/internal-js-tests/jest-preset.js",
 				"node_modules/@woocommerce/eslint-plugin/configs",
 				"node_modules/@woocommerce/eslint-plugin/rules",
 				"node_modules/@woocommerce/eslint-plugin/index.js",
@@ -183,6 +194,10 @@
 				"node_modules/@woocommerce/components/build-module",
 				"node_modules/@woocommerce/components/build-style",
 				"node_modules/@woocommerce/components/build-types",
+				"node_modules/@woocommerce/block-templates/build",
+				"node_modules/@woocommerce/block-templates/build-module",
+				"node_modules/@woocommerce/block-templates/build-style",
+				"node_modules/@woocommerce/block-templates/build-types",
 				"package.json"
 			]
 		}
