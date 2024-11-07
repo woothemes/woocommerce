@@ -11,6 +11,7 @@
 		text-transform: uppercase;
 	}
 
+	.wc-block-components-totals-shipping__delivery-options-notice,
 	.wc-block-components-shipping-address {
 		margin-top: $gap;
 		display: block;
@@ -53,6 +54,11 @@
 
 	.wc-block-components-shipping-placeholder__value {
 		@include font-size(small);
+	}
+
+	.wc-block-components-totals-shipping__via {
+		@include font-size(small);
+		width: 100%;
 	}
 }
 
