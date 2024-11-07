@@ -15,7 +15,7 @@ export const SettingsPaymentsMain: React.FC = () => {
 	return (
 		<>
 			<div className="settings-payments-main__container">
-				<IncentiveModal />
+				{/*<IncentiveModal />*/}
 				<IncentiveBanner />
 				<PaymentGateways />
 				<OtherPaymentGateways />
