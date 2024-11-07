@@ -33,6 +33,7 @@ import { Notice } from '../../components/notice';
 import type { Attributes } from './types';
 import './style.scss';
 import { InitialDisabled } from '../../components/initial-disabled';
+import { useProductFilterClearButtonManager } from '../../hooks/use-product-filter-clear-button-manager';
 
 const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 	const { attributes, setAttributes } = props;
@@ -164,6 +165,11 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 		productRatingsQuery,
 		minRating,
 	] );
+
+	useProductFilterClearButtonManager( {
+		clientId: props.clientId,
+		showClearButton: attributes.clearButton,
+	} );
 
 	if ( ! filteredCountsLoading && displayedOptions.length === 0 ) {
 		return null;
