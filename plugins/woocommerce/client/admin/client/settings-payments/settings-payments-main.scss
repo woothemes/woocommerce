@@ -4,6 +4,10 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 	background-color: #fff;
 }
 
+.woocommerce-embed-page .woocommerce-layout__notice-list-hide + .wrap {
+	padding-top: 0;
+}
+
 .settings-payments-main__container {
 	margin: 0 -20px;
 	padding-bottom: 32px;
