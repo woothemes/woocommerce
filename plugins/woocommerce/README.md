@@ -12,19 +12,21 @@ If you are not a developer, please use the [WooCommerce plugin page](https://wor
 
 ## Getting Started
 
-### Prerequisites
+### Quick start
 
--   [Repository "Getting Started" Guide](../../README.md#getting-started)
--   [Docker](https://docs.docker.com/get-docker/)
+Ensure your system meets [the requirements](../../README.md#getting-started) (TLDR: NVM, PNPM 9.1.3, PHP 7.4+, Composer are required for development).
 
-Once you have completed the prerequisites, you can start the development environment:
+Depending on the preferred environment for running the development instance of WooCommerce, you might need [Docker](https://docs.docker.com/get-docker/) as well.
+You can learn more about supported environments here: https://developer.woocommerce.com/docs/setting-up-your-development-environment/.
+
+Once you have verified the prerequisites, you can start the development environment:
 
 ```bash
 ## Watch for changes in WooCommerce and all of its dependencies.
 pnpm --filter='@woocommerce/plugin-woocommerce' watch:build
 
 # Start wp-env based development environment, which will be accessible via http://localhost:8888/.
-# You can learn more about supported environments here: https://developer.woocommerce.com/docs/setting-up-your-development-environment/.
+# This step is optional and you can skip it if you are running WooCommerce on a custom setup.
 pnpm --filter='@woocommerce/plugin-woocommerce' env:dev
 ```
 
