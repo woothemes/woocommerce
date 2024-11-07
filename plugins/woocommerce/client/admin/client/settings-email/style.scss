@@ -54,6 +54,9 @@ $wc-setting-email-preview-gap: 16px;
 	border-radius: 4px;
 	display: grid;
 	grid-template-rows: 100px 1fr;
+	margin: 0 auto;
+	transition: max-width 0.3s ease-in-out;
+	width: 100%;
 
 	iframe {
 		border-radius: 0 0 3px 3px;
@@ -61,6 +64,14 @@ $wc-setting-email-preview-gap: 16px;
 		height: 100%;
 		width: 100%;
 	}
+}
+
+.wc-settings-email-preview-desktop {
+	max-width: 650px;
+}
+
+.wc-settings-email-preview-mobile {
+	max-width: 360px;
 }
 
 .wc-settings-email-preview-header {

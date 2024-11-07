@@ -36,7 +36,9 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 						setDeviceType={ setDeviceType }
 					/>
 				</div>
-				<div className="wc-settings-email-preview">
+				<div
+					className={ `wc-settings-email-preview wc-settings-email-preview-${ deviceType }` }
+				>
 					<div className="wc-settings-email-preview-header"></div>
 					<iframe
 						src={ previewUrl }
