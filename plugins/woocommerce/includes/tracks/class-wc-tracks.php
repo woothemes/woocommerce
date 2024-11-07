@@ -68,6 +68,21 @@ class WC_Tracks {
 	}
 
 	/**
+	 * Get role-related details.
+	 *
+	 * @param WP_User $user The user object.
+	 * @return array The role details.
+	 */
+	public static function get_role_details( $user ) {
+		return array(
+			'role'                   => ! empty( $user->roles ) ? $user->roles[0] : '',
+			'can_install_plugins'    => $user->has_cap( 'install_plugins' ),
+			'can_activate_plugins'   => $user->has_cap( 'activate_plugins' ),
+			'can_manage_woocommerce' => $user->has_cap( 'manage_woocommerce' ),
+		);
+	}
+
+	/**
 	 * Record an event in Tracks - this is the preferred way to record events from PHP.
 	 * Note: the event request won't be made if $properties has a member called `error`.
 	 *
@@ -130,7 +145,8 @@ class WC_Tracks {
 
 		$server_details = self::get_server_details();
 		$blog_details   = self::get_blog_details( $user->ID );
+		$role_details   = self::get_role_details( $user );
 
-		return array_merge( $properties, $data, $server_details, $identity, $blog_details );
+		return array_merge( $properties, $data, $server_details, $identity, $blog_details, $role_details );
 	}
 }
