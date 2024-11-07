@@ -55,16 +55,16 @@ export const SidebarNavigationScreenHomepage = ( {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const { selectedPattern, setSelectedPattern } = useSelectedPattern();
 
-	const currentTemplate = useSelect(
+	const currentTemplateId: string | undefined = useSelect(
 		( sel ) =>
 			// @ts-expect-error No types for this exist yet.
-			sel( coreStore ).__experimentalGetTemplateForLink( '/' ),
+			sel( coreStore ).getDefaultTemplateId( { slug: 'home' } ),
 		[]
 	);
 
 	const [ blocks, , onChange ] = useEditorBlocks(
 		'wp_template',
-		currentTemplate?.id ?? ''
+		currentTemplateId || ''
 	);
 
 	const onClickPattern = useCallback(

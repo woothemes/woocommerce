@@ -17,10 +17,12 @@ import './style.scss';
 
 /**
  * PaymentMethods component.
- *
- * @return {*} The rendered component.
  */
-const PaymentMethods = () => {
+const PaymentMethods = ( {
+	noPaymentMethods = <NoPaymentMethods />,
+}: {
+	noPaymentMethods?: JSX.Element | undefined;
+} ) => {
 	const [ showPaymentMethodsToggle, setShowPaymentMethodsToggle ] =
 		useState( false );
 	const {
@@ -50,7 +52,7 @@ const PaymentMethods = () => {
 		paymentMethodsInitialized &&
 		Object.keys( availablePaymentMethods ).length === 0
 	) {
-		return <NoPaymentMethods />;
+		return noPaymentMethods;
 	}
 
 	// Show payment methods if the toggle is on or if there are no saved payment methods, or if the active saved token is not set.

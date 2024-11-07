@@ -38,14 +38,10 @@ import { useIsActiveNewNeutralVariation } from './hooks/use-is-active-new-neutra
 export const BlockEditorContainer = () => {
 	const settings = useSiteEditorSettings();
 
-	const currentTemplate:
-		| {
-				id: string;
-		  }
-		| undefined = useSelect(
+	const currentTemplateId: string | undefined = useSelect(
 		( select ) =>
 			// @ts-expect-error No types for this exist yet.
-			select( coreStore ).__experimentalGetTemplateForLink( '/' ),
+			select( coreStore ).getDefaultTemplateId( { slug: 'home' } ),
 		[]
 	);
 
@@ -61,7 +57,7 @@ export const BlockEditorContainer = () => {
 
 	const [ blocks, , onChange ] = useEditorBlocks(
 		templateType,
-		currentTemplate?.id ?? ''
+		currentTemplateId || ''
 	);
 
 	const urlParams = useQuery();
