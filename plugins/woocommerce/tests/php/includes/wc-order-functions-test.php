@@ -5,6 +5,8 @@
  * @package WooCommerce\Tests\Order.
  */
 
+use Automattic\WooCommerce\Enums\OrderStatus;
+
 /**
  * Class WC_Order_Functions_Test
  */
@@ -79,22 +81,22 @@ class WC_Order_Functions_Test extends \WC_Unit_Test_Case {
 
 		$order = new WC_Order( $order_id );
 
-		$order->update_status( 'processing' );
+		$order->update_status( OrderStatus::PROCESSING );
 		$this->assertEquals( 1, wc_get_product( $product_id )->get_total_sales() );
 
-		$order->update_status( 'cancelled' );
+		$order->update_status( OrderStatus::CANCELLED );
 		$this->assertEquals( 0, wc_get_product( $product_id )->get_total_sales() );
 
-		$order->update_status( 'processing' );
+		$order->update_status( OrderStatus::PROCESSING );
 		$this->assertEquals( 1, wc_get_product( $product_id )->get_total_sales() );
 
-		$order->update_status( 'completed' );
+		$order->update_status( OrderStatus::COMPLETED );
 		$this->assertEquals( 1, wc_get_product( $product_id )->get_total_sales() );
 
-		$order->update_status( 'refunded' );
+		$order->update_status( OrderStatus::REFUNDED );
 		$this->assertEquals( 1, wc_get_product( $product_id )->get_total_sales() );
 
-		$order->update_status( 'processing' );
+		$order->update_status( OrderStatus::PROCESSING );
 		$this->assertEquals( 1, wc_get_product( $product_id )->get_total_sales() );
 
 		// Test trashing the order.
@@ -131,35 +133,35 @@ class WC_Order_Functions_Test extends \WC_Unit_Test_Case {
 		$this->assertEquals( 1, $order->get_data_store()->get_recorded_coupon_usage_counts( $order ) );
 		$this->assertEquals( 1, ( new WC_Coupon( $coupon ) )->get_usage_count() );
 
-		$order->update_status( 'processing' );
+		$order->update_status( OrderStatus::PROCESSING );
 		$this->assertEquals( 1, $order->get_data_store()->get_recorded_coupon_usage_counts( $order ) );
 		$this->assertEquals( 1, ( new WC_Coupon( $coupon ) )->get_usage_count() );
 
-		$order->update_status( 'cancelled' );
+		$order->update_status( OrderStatus::CANCELLED );
 		$this->assertEquals( 0, $order->get_data_store()->get_recorded_coupon_usage_counts( $order ) );
 		$this->assertEquals( 0, ( new WC_Coupon( $coupon ) )->get_usage_count() );
 
-		$order->update_status( 'pending' );
+		$order->update_status( OrderStatus::PENDING );
 		$this->assertEquals( 1, $order->get_data_store()->get_recorded_coupon_usage_counts( $order ) );
 		$this->assertEquals( 1, ( new WC_Coupon( $coupon ) )->get_usage_count() );
 
-		$order->update_status( 'failed' );
+		$order->update_status( OrderStatus::FAILED );
 		$this->assertEquals( 0, $order->get_data_store()->get_recorded_coupon_usage_counts( $order ) );
 		$this->assertEquals( 0, ( new WC_Coupon( $coupon ) )->get_usage_count() );
 
-		$order->update_status( 'processing' );
+		$order->update_status( OrderStatus::PROCESSING );
 		$this->assertEquals( 1, $order->get_data_store()->get_recorded_coupon_usage_counts( $order ) );
 		$this->assertEquals( 1, ( new WC_Coupon( $coupon ) )->get_usage_count() );
 
-		$order->update_status( 'completed' );
+		$order->update_status( OrderStatus::COMPLETED );
 		$this->assertEquals( 1, $order->get_data_store()->get_recorded_coupon_usage_counts( $order ) );
 		$this->assertEquals( 1, ( new WC_Coupon( $coupon ) )->get_usage_count() );
 
-		$order->update_status( 'refunded' );
+		$order->update_status( OrderStatus::REFUNDED );
 		$this->assertEquals( 1, $order->get_data_store()->get_recorded_coupon_usage_counts( $order ) );
 		$this->assertEquals( 1, ( new WC_Coupon( $coupon ) )->get_usage_count() );
 
-		$order->update_status( 'processing' );
+		$order->update_status( OrderStatus::PROCESSING );
 		$this->assertEquals( 1, $order->get_data_store()->get_recorded_coupon_usage_counts( $order ) );
 		$this->assertEquals( 1, ( new WC_Coupon( $coupon ) )->get_usage_count() );
 

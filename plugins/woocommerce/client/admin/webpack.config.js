@@ -59,12 +59,14 @@ const wcAdminPackages = [
 	'onboarding',
 	'block-templates',
 	'product-editor',
+	'settings-editor',
 	'remote-logging',
 ];
 
 const getEntryPoints = () => {
 	const entryPoints = {
 		app: './client/index.js',
+		settings: './client/settings/index.js',
 	};
 	wcAdminPackages.forEach( ( name ) => {
 		entryPoints[ name ] = `${ WC_ADMIN_PACKAGES_DIR }/${ name }`;

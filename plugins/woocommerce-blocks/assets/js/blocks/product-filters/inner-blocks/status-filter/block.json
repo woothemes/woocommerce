@@ -54,6 +54,10 @@
 			}
 		}
 	},
+	"usesContext": [
+		"query",
+		"filterParams"
+	],
 	"example": {
 		"attributes": {
 			"isPreview": true

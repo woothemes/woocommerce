@@ -190,6 +190,10 @@ final class ProductFilterStatus extends AbstractBlock {
 		// Re-index the array.
 		$status_data = array_values( $status_data );
 
+		$filter_params           = $block->context['filterParams'] ?? array();
+		$query                   = $filter_params[ self::STOCK_STATUS_QUERY_VAR ] ?? '';
+		$selected_stock_statuses = array_filter( explode( ',', $query ) );
+
 		$filter_options = array_map(
 			function ( $item ) use ( $selected_statuses, $attributes ) {
 				$statuses = $this->all_status_options;

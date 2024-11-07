@@ -6,7 +6,7 @@ import { getContext, getElement, store } from '@woocommerce/interactivity';
 /**
  * Internal dependencies
  */
-import { ProductFiltersContext } from '../../frontend';
+import type { ProductFiltersContext } from '../../frontend';
 
 const filterStatusKey = 'filter_status';
 
