@@ -387,7 +387,10 @@ class WC_Settings_Emails extends WC_Settings_Page {
 	 */
 	public function email_preview() {
 		?>
-		<div id="wc_settings_email_preview_slotfill"></div>
+		<div
+			id="wc_settings_email_preview_slotfill"
+			data-preview-url="<?php echo wp_nonce_url( admin_url( '?preview_woocommerce_mail=true' ), 'preview-mail' ); ?>"
+		></div>
 		<?php
 	}
 }
