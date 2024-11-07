@@ -1,4 +1,9 @@
 .wc-block-add-to-cart-form {
+	.woocommerce_after_add_to_cart_quantity_and_button {
+		display: flex;
+		gap: 0.5rem;
+	}
+
 	/**
 	* This is a base style for the input text element in WooCommerce that prevents inputs from appearing too small.
 	*
@@ -16,14 +21,16 @@
 	.quantity {
 		display: inline-block;
 		float: none;
-		margin-right: 4px;
 		vertical-align: middle;
+		align-self: stretch;
 
 		// WooCommerce core styles: https://github.com/woocommerce/woocommerce/blob/c9f62609155825cd817976c7611b9b0415e90f2f/plugins/woocommerce/client/legacy/css/woocommerce.scss/#L111-L112
 		.qty {
-			margin-right: 0.5rem;
 			width: 3.631em;
 			text-align: center;
+			padding-top: 0px;
+			padding-bottom: 0px;
+			height: calc( 100% - 4px ) // 4px is the border width
 		}
 	}
 }

@@ -80,7 +80,7 @@ const Edit = ( props: BlockEditProps< Attributes > ) => {
 							{ ( props.attributes.quantitySelectorStyle ===
 								QuantitySelectorStyle.Input ||
 								! isStepperLayoutFeatureEnabled ) && (
-								<>
+								<div className="woocommerce_after_add_to_cart_quantity_and_button">
 									<div className="quantity">
 										<input
 											style={
@@ -109,7 +109,7 @@ const Edit = ( props: BlockEditProps< Attributes > ) => {
 									>
 										{ __( 'Add to cart', 'woocommerce' ) }
 									</button>
-								</>
+								</div>
 							) }
 							{ props.attributes.quantitySelectorStyle ===
 								QuantitySelectorStyle.Stepper &&
