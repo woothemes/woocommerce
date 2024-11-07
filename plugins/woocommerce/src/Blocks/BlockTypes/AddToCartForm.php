@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
+use Automattic\WooCommerce\Admin\Features\Features;
 use Automattic\WooCommerce\Blocks\Utils\StyleAttributesUtils;
 
 /**
@@ -64,6 +65,18 @@ class AddToCartForm extends AbstractBlock {
 		}
 
 		parent::enqueue_assets( $attributes, $content, $block );
+	}
+
+	/**
+	 * Extra data passed through from server to client for block.
+	 *
+	 * @param array $attributes  Any attributes that currently are available from the block.
+	 *                           Note, this will be empty in the editor context when the block is
+	 *                           not in the post content on editor load.
+	 */
+	protected function enqueue_data( array $attributes = [] ) {
+		parent::enqueue_data( $attributes );
+		$this->asset_data_registry->add( 'isStepperLayoutFeatureEnabled', Features::is_enabled( 'add-to-cart-with-options-stepper-layout' ) );
 	}
 
 	/**
@@ -138,7 +151,7 @@ class AddToCartForm extends AbstractBlock {
 		}
 
 		$is_external_product_with_url = $product instanceof \WC_Product_External && $product->get_product_url();
-		$is_stepper_style             = 'stepper' === $attributes['quantitySelectorStyle'] && ! $product->is_sold_individually();
+		$is_stepper_style             = 'stepper' === $attributes['quantitySelectorStyle'] && ! $product->is_sold_individually() && Features::is_enabled( 'add-to-cart-with-options-stepper-layout' );
 
 		ob_start();
 

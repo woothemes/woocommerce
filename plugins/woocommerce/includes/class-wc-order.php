@@ -2348,9 +2348,16 @@ class WC_Order extends WC_Abstract_Order {
 	 */
 	protected function add_order_item_totals_payment_method_row( &$total_rows, $tax_display ) {
 		if ( $this->get_total() > 0 && $this->get_payment_method_title() && 'other' !== $this->get_payment_method() ) {
+			$value = $this->get_payment_method_title();
+
+			$card_info = $this->get_payment_card_info();
+			if ( isset( $card_info['last4'] ) && $card_info['last4'] ) {
+				$value .= ' - ' . $card_info['last4'];
+			}
+
 			$total_rows['payment_method'] = array(
 				'label' => __( 'Payment method:', 'woocommerce' ),
-				'value' => $this->get_payment_method_title(),
+				'value' => $value,
 			);
 		}
 	}
