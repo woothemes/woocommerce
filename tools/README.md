@@ -66,5 +66,5 @@ The goal is to minimize the amount of time that developers spend waiting for pro
 
 In the example above, `build:project:bundle` invokes `wireit`, which conditionally executes `webpack` (based on the state of resources).
 A simplified take on `wireit` is the following:
-- if input sources are changed or output sources are not generated yet, wireit` will execute `webpack` command and cache output sources
+- if input sources are changed or output sources are not generated yet, `wireit` will execute `webpack` command and cache output sources
 - if input sources are unchanged, `wireit` will create output sources from their cached version
