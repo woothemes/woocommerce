@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
 import { clsx } from 'clsx';
 import {
 	unregisterPlugin,
@@ -19,23 +18,6 @@ import {
 import { BackButton } from './back-button';
 import './header.scss';
 
-const HEADER_PLUGIN_NAME = 'settings-payments-offline-header';
-const ITEMS_TO_REMOVE = [ 'activity-panel-header-item' ];
-let hasRegisteredPlugins = false;
-
-/**
- * Unregister existing header plugins to prevent duplicates
- */
-const unRegisterHeaderItems = () => {
-	// @ts-expect-error scope param is not typed
-	const plugins = getPlugins( 'woocommerce-admin' );
-	plugins.forEach( ( plugin ) => {
-		if ( ITEMS_TO_REMOVE.includes( plugin.name ) ) {
-			unregisterPlugin( plugin.name );
-		}
-	} );
-};
-
 interface HeaderProps {
 	/**
 	 * The title of the header.
@@ -47,15 +29,30 @@ interface HeaderProps {
 	backLink?: string;
 }
 
+const HEADER_PLUGIN_NAME = 'settings-payments-offline-header';
+const ITEMS_TO_REMOVE = [ 'activity-panel-header-item' ];
+let hasRegisteredPlugins = false;
+
 /**
- * Registers the header component as a plugin
+ * Registers the header component as a plugin to customize the header of the settings payments page.
  */
 export const Header = ( { title, backLink }: HeaderProps ) => {
 	if ( ! hasRegisteredPlugins ) {
-		// Clean up existing plugins first
+		/**
+		 * Unregister existing header plugins since we don't want to show the default items such as activity panel.
+		 */
+		const unRegisterHeaderItems = () => {
+			// @ts-expect-error scope param is not typed
+			const plugins = getPlugins( 'woocommerce-admin' );
+			plugins.forEach( ( plugin ) => {
+				if ( ITEMS_TO_REMOVE.includes( plugin.name ) ) {
+					unregisterPlugin( plugin.name );
+				}
+			} );
+		};
+
 		unRegisterHeaderItems();
 
-		// Register new header plugin
 		registerPlugin( HEADER_PLUGIN_NAME, {
 			render: () => (
 				<>
