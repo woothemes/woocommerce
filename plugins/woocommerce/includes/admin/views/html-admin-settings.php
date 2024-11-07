@@ -19,14 +19,14 @@ if ( ! $tab_exists ) {
 	exit;
 }
 
-$hide_tab = Features::is_enabled( 'reactify-classic-payments-settings' ) &&
+$hide_nav = Features::is_enabled( 'reactify-classic-payments-settings' ) &&
 	'checkout' === $current_tab && 'offline' === $current_section;
 ?>
 
 <div class="wrap woocommerce">
 	<?php do_action( 'woocommerce_before_settings_' . $current_tab ); ?>
 	<form method="<?php echo esc_attr( apply_filters( 'woocommerce_settings_form_method_tab_' . $current_tab, 'post' ) ); ?>" id="mainform" action="" enctype="multipart/form-data">
-		<?php if ( ! $hide_tab ) : ?>
+		<?php if ( ! $hide_nav ) : ?>
 			<nav class="nav-tab-wrapper woo-nav-tab-wrapper">
 				<?php
 
