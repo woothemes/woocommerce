@@ -3,12 +3,16 @@
  * Container class file.
  */
 
+declare( strict_types=1 );
+
 namespace Automattic\WooCommerce;
 
 use Automattic\WooCommerce\Internal\DependencyManagement\ExtendedContainer;
+use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\CostOfGoodsSoldServiceProvider;
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\COTMigrationServiceProvider;
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\DownloadPermissionsAdjusterServiceProvider;
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\AssignDefaultCategoryServiceProvider;
+use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\EmailPreviewServiceProvider;
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\EnginesServiceProvider;
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\FeaturesServiceProvider;
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\LoggingServiceProvider;
@@ -32,6 +36,7 @@ use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\BatchP
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\LayoutTemplatesServiceProvider;
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\ComingSoonServiceProvider;
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\StatsServiceProvider;
+use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\ImportExportServiceProvider;
 
 /**
  * PSR11 compliant dependency injection container for WooCommerce.
@@ -59,6 +64,7 @@ final class Container {
 	private $service_providers = array(
 		AssignDefaultCategoryServiceProvider::class,
 		DownloadPermissionsAdjusterServiceProvider::class,
+		EmailPreviewServiceProvider::class,
 		OptionSanitizerServiceProvider::class,
 		OrdersDataStoreServiceProvider::class,
 		ProductAttributesLookupServiceProvider::class,
@@ -83,6 +89,8 @@ final class Container {
 		EnginesServiceProvider::class,
 		ComingSoonServiceProvider::class,
 		StatsServiceProvider::class,
+		ImportExportServiceProvider::class,
+		CostOfGoodsSoldServiceProvider::class,
 	);
 
 	/**

@@ -1,5 +1,26 @@
 == Changelog ==
 
+= 9.3.3 2024-09-25 =
+
+**WooCommerce**
+
+* Fix - An issue where virtual products could not be purchased when using the Additional Fields API [#51630](https://github.com/woocommerce/woocommerce/pull/51630)
+* Fix - Restore the previous default for `woocommerce_product_import_batch_size` (process 30 lines per batch when importing product CSV data) [#51631] (https://github.com/woocommerce/woocommerce/pull/51631)
+
+= 9.3.2 2024-09-18 =
+
+**WooCommerce**
+
+* Fix - Improve the product importer's handling of filepaths under Windows [#51456](https://github.com/woocommerce/woocommerce/pull/51456)
+* Fix - Revert changes related to low stock product notifications [#51441](https://github.com/woocommerce/woocommerce/pull/51441)
+* Fix - Resolve a bug where manually triggering `added_to_cart` event without a button element caused an Exception [#51449](https://github.com/woocommerce/woocommerce/pull/51449)
+
+= 9.3.1 2024-09-12 =
+
+**WooCommerce**
+
+* Tweak - Disable remote logging feature by default [#51312](https://github.com/woocommerce/woocommerce/pull/51312)
+
 = 9.3.0 2024-09-10 =
 
 **WooCommerce**
@@ -141,6 +162,7 @@
 * Update - Update core profiler continue button container on extension screen [#50582](https://github.com/woocommerce/woocommerce/pull/50582)
 * Update - Update Store Alert actions to have unique keys. [#50424](https://github.com/woocommerce/woocommerce/pull/50424)
 * Update - Update WooCommercePayments task is_supported to use default suggestions [#50585](https://github.com/woocommerce/woocommerce/pull/50585)
+* Update - Enhance CSV path and upload handling in product import [#51344](https://github.com/woocommerce/woocommerce/pull/51344)
 * Dev - Execute test env setup on host instead of wp-env container [#51021](https://github.com/woocommerce/woocommerce/pull/51021)
 * Dev - Added code docs with examples to the Analytics classes [#49425](https://github.com/woocommerce/woocommerce/pull/49425)
 * Dev - Add lost password e2e tests [#50611](https://github.com/woocommerce/woocommerce/pull/50611)
@@ -241,14 +263,12 @@
 
 * Fix - Ensure translation is fully loaded for certain parts of Checkout block. [#50892](https://github.com/woocommerce/woocommerce/pull/50892)
 
-
 = 9.2.2 2024-08-22 =
 
 **WooCommerce**
 
 * Fix - Revert PR#48731 to address possible issues with plugins using WC's bundled select2 package. [#50854](https://github.com/woocommerce/woocommerce/pull/50854)
 * Fix - Partially revert PR#48709 as it could cause issues for some users of the REST API system_status endpoint. [#50881](https://github.com/woocommerce/woocommerce/pull/50881)
-
 
 = 9.2.1 2024-08-21 =
 
