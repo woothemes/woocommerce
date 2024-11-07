@@ -30,7 +30,6 @@ pnpm --filter='@woocommerce/plugin-woocommerce' env:dev
 
 If desired, you can also run commands without `--filter='@woocommrece/plugin-woocommerce'` by running `pnpm <command>` from within the `plugins/woocommerce` directory.
 
-
 ## Building Components
 
 There are three major client-side components included in WooCommerce Core that can be built, linted, and tested independently. We've organized these components
