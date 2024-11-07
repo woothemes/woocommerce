@@ -3,6 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { CheckboxControl, PanelBody } from '@wordpress/components';
+import { recordEvent } from '@woocommerce/tracks';
 
 /**
  * Internal dependencies
@@ -16,6 +17,30 @@ const RelatedByControl = ( {
 }: QueryControlProps ) => {
 	const relatedBy = query?.relatedBy as RelatedBy;
 
+	const handleRelatedByChange = (
+		value: boolean,
+		type: 'categories' | 'tags'
+	) => {
+		const newRelatedBy = {
+			...relatedBy,
+			[ type ]: value,
+		};
+
+		setQueryAttribute( {
+			relatedBy: newRelatedBy,
+		} );
+
+		trackInteraction( CoreFilterNames.RELATED_BY );
+
+		recordEvent(
+			'blocks_product_collection_inspector_control_related_by_changed',
+			{
+				categories: newRelatedBy?.categories || false,
+				tags: newRelatedBy?.tags || false,
+			}
+		);
+	};
+
 	return (
 		<PanelBody title={ __( 'Relate by', 'woocommerce' ) }>
 			<div className="wc-block-editor-product-collection-inspector-controls__relate-by">
@@ -23,13 +48,7 @@ const RelatedByControl = ( {
 					label={ __( 'Categories', 'woocommerce' ) }
 					checked={ relatedBy?.categories }
 					onChange={ ( value ) => {
-						setQueryAttribute( {
-							relatedBy: {
-								...relatedBy,
-								categories: value,
-							},
-						} );
-						trackInteraction( CoreFilterNames.RELATED_BY );
+						handleRelatedByChange( value, 'categories' );
 					} }
 				/>
 
@@ -37,13 +56,7 @@ const RelatedByControl = ( {
 					label={ __( 'Tags', 'woocommerce' ) }
 					checked={ relatedBy?.tags }
 					onChange={ ( value ) => {
-						setQueryAttribute( {
-							relatedBy: {
-								...relatedBy,
-								tags: value,
-							},
-						} );
-						trackInteraction( CoreFilterNames.RELATED_BY );
+						handleRelatedByChange( value, 'tags' );
 					} }
 				/>
 			</div>
