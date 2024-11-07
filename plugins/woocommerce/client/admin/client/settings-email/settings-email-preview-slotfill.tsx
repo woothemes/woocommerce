@@ -15,6 +15,7 @@ import {
 	EmailPreviewDeviceType,
 	DEVICE_TYPE_DESKTOP,
 } from './settings-email-preview-device-type';
+import { EmailPreviewHeader } from './settings-email-preview-header';
 
 const { Fill } = createSlotFill( SETTINGS_SLOT_FILL_CONSTANT );
 
@@ -39,7 +40,7 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 				<div
 					className={ `wc-settings-email-preview wc-settings-email-preview-${ deviceType }` }
 				>
-					<div className="wc-settings-email-preview-header"></div>
+					<EmailPreviewHeader />
 					<iframe
 						src={ previewUrl }
 						title={ __( 'Email preview frame', 'woocommerce' ) }

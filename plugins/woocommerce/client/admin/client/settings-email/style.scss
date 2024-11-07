@@ -53,7 +53,7 @@ $wc-setting-email-preview-gap: 16px;
 	border: 1px solid $gray-200;
 	border-radius: 4px;
 	display: grid;
-	grid-template-rows: 100px 1fr;
+	grid-template-rows: auto 1fr;
 	margin: 0 auto;
 	transition: max-width 0.3s ease-in-out;
 	width: 100%;
@@ -76,5 +76,42 @@ $wc-setting-email-preview-gap: 16px;
 
 .wc-settings-email-preview-header {
 	border-bottom: 1px solid $gray-200;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 	padding: $wc-setting-email-preview-gap;
+}
+
+.wc-settings-email-preview-header-subject {
+	font-size: 21px;
+	font-weight: normal;
+	line-height: 21px;
+	margin: 0 0 $wc-setting-email-preview-gap
+}
+
+.wc-settings-email-preview-header-data {
+	align-items: center;
+	display: flex;
+}
+
+.wc-settings-email-preview-header-icon {
+	align-items: center;
+	background: rgba(#cbbeff, 0.3);
+	border-radius: 16px;
+	display: flex;
+	height: 32px;
+	justify-content: center;
+	margin-right: 8px;
+	width: 32px;
+}
+
+.wc-settings-email-preview-header-sender {
+	font-size: 13px;
+	font-weight: 600;
+
+	span {
+		font-size: 11px;
+		font-weight: 400;
+		margin-left: 4px;
+	}
 }
