@@ -92,6 +92,7 @@ const StyledTable = styled.table`
 		text-align: right;
 		.components-flex {
 			justify-content: flex-end;
+			flex-direction: row-reverse;
 			gap: 0;
 		}
 	}
