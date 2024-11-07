@@ -162,6 +162,12 @@ class AddToCartForm extends AbstractBlock {
 		 */
 		do_action( 'woocommerce_' . $product->get_type() . '_add_to_cart' );
 
+		$test    = wp_get_global_styles( array(), array( 'block_name' => 'core/button' ) );
+		$padding = $test['variations']['outline']['spacing']['padding'];
+
+		$padding_top    = $padding['top'];
+		$padding_bottom = $padding['bottom'];
+
 		$product_html = ob_get_clean();
 
 		if ( ! $product_html ) {
@@ -215,9 +221,19 @@ class AddToCartForm extends AbstractBlock {
 			$product_html
 		);
 
+		$processor = new \WP_HTML_Processor( $form );
+		if ( $processor->next_tag( array( 'class_name' => 'qty' ) ) ) {
+			$processor->set_attribute(
+				'style',
+				'padding-top: ' . $padding_top . '; padding-bottom: ' . $padding_bottom . ';'
+			);
+		}
+
+		$new_html = $processor->get_updated_html();
+
 		$product = $previous_product;
 
-		return $form;
+		return $new_html;
 	}
 
 	/**
