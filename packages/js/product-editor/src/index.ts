@@ -40,6 +40,10 @@ export { PostTypeContext } from './contexts/post-type-context';
  */
 export * from './products';
 
+export { default as SiteHub } from './products-app/site-hub';
+export { default as SidebarContent } from './products-app/sidebar';
+export { unlock } from './lock-unlock';
+
 // Init the store
 registerProductEditorUiStore();
 

@@ -14,8 +14,8 @@
 		padding-top: $gap-largest;
 		border-top: 1px solid $universal-border-light;
 
-
 		.is-mobile &,
+		.is-medium &,
 		.is-small & {
 			border-top: 0;
 		}
