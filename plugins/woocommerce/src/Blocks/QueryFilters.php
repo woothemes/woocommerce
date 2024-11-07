@@ -275,21 +275,10 @@ final class QueryFilters {
 		$statuses = array_map( 'esc_sql', explode( ',', $wp_query->get( 'filter_status' ) ) );
 
 		foreach ( $statuses as $status ) {
-			switch ( $status ) {
-				case 'onsale':
-					$args['where'] .= ' AND wc_product_meta_lookup.onsale = 1';
-					break;
-				case 'instock':
-					$args['where'] .= ' AND wc_product_meta_lookup.stock_status = "instock"';
-					break;
-				case 'onbackorder':
-					$args['where'] .= ' AND wc_product_meta_lookup.stock_status = "onbackorder"';
-					break;
-				case 'outofstock':
-					$args['where'] .= ' AND wc_product_meta_lookup.stock_status = "outofstock"';
-					break;
-				default:
-					break;
+			if ( 'onsale' === $status ) {
+				$args['where'] .= ' AND wc_product_meta_lookup.onsale = 1';
+			} else {
+				$args['where'] .= $wpdb->prepare( ' AND wc_product_meta_lookup.stock_status = "%s"', array( $status ) );
 			}
 		}
 
