@@ -77,6 +77,7 @@ export const PaymentGateways = () => {
 				const status = determineGatewayStatus();
 				return {
 					key: gateway.id,
+					className: 'transitions-disabled',
 					title: (
 						<>
 							{ gateway.method_title }
@@ -162,6 +163,7 @@ export const PaymentGateways = () => {
 	// Add offline payment provider.
 	paymentGatewaysList.push( {
 		key: 'offline',
+		className: 'transitions-disabled',
 		title: <>{ __( 'Offline payment methods', 'woocommerce' ) }</>,
 		content: (
 			<>
