@@ -56,13 +56,13 @@ const TableRow = ( {
 		<tr ref={ setNodeRef } style={ style }>
 			<>
 				<td style={ { width: '1%' } }>
-					<Icon
-						icon={ dragHandle }
-						size={ 14 }
+					<span
 						className={ 'sortable-table__handle' }
 						{ ...attributes }
 						{ ...listeners }
-					/>
+					>
+						<Icon icon={ dragHandle } size={ 14 } />
+					</span>
 				</td>
 				{ children }
 			</>
