@@ -103,9 +103,11 @@ export interface CurrencyResponse {
 		| CurrencyBoth
 		| ( string & {} ); // eslint-disable-line @typescript-eslint/ban-types
 
-	currency_prefix: '' | CurrencyPrefix | CurrencyBoth;
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	currency_prefix: '' | CurrencyPrefix | CurrencyBoth | ( string & {} );
 
-	currency_suffix: '' | CurrencySuffix | CurrencyBoth;
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	currency_suffix: '' | CurrencySuffix | CurrencyBoth | ( string & {} );
 
 	// eslint-disable-next-line @typescript-eslint/ban-types
 	currency_decimal_separator: '.' | ',' | ( string & {} );
