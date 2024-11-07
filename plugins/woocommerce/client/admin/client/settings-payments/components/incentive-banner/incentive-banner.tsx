@@ -13,6 +13,7 @@ import { Link, Pill } from '@woocommerce/components';
  */
 import './incentive-banner.scss';
 import IncentiveIcon from './incentive-icon.svg';
+import { StatusBadge } from '~/settings-payments/components/status-badge';
 
 export const IncentiveBanner = () => {
 	const [ isSubmitted, setIsSubmitted ] = useState( false );
@@ -39,9 +40,13 @@ export const IncentiveBanner = () => {
 				</CardMedia>
 				<CardBody className={ 'woocommerce-incentive-banner__body' }>
 					<div>
-						<Pill>
-							{ __( 'Limited time offer', 'woocommerce' ) }
-						</Pill>
+						<StatusBadge
+							status={ 'has_incentive' }
+							message={ __(
+								'Limited time offer',
+								'woocommerce'
+							) }
+						/>
 					</div>
 					<h2>
 						{ __(

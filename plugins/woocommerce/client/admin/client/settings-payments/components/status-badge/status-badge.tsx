@@ -17,7 +17,8 @@ interface StatusBadgeProps {
 		| 'needs_setup'
 		| 'test_mode'
 		| 'recommended'
-		| 'has_incentive';
+		| 'has_incentive'
+		| 'info';
 	message?: string;
 }
 

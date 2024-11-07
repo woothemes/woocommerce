@@ -19,6 +19,7 @@ import { Link, Pill } from '@woocommerce/components';
  */
 import './incentive-modal.scss';
 import IncentiveIcon from './incentives-modal-icon.svg';
+import { StatusBadge } from '~/settings-payments/components/status-badge';
 
 interface IncentiveModalProps {
 	isOpen: boolean;
@@ -62,12 +63,13 @@ export const IncentiveModal = ( {
 								}
 							>
 								<div>
-									<Pill>
-										{ __(
+									<StatusBadge
+										status={ 'has_incentive' }
+										message={ __(
 											'Limited time offer',
 											'woocommerce'
 										) }
-									</Pill>
+									/>
 								</div>
 								<h2>
 									{ __(
