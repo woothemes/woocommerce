@@ -14,7 +14,7 @@ const RelatedByControl = ( {
 	setQueryAttribute,
 	trackInteraction,
 }: QueryControlProps ) => {
-	const relatedBy = query.relatedBy as RelatedBy;
+	const relatedBy = query?.relatedBy as RelatedBy;
 
 	return (
 		<PanelBody title={ __( 'Relate by', 'woocommerce' ) }>
