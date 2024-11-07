@@ -1,40 +1,47 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { formatShippingAddress } from '@woocommerce/base-utils';
-import { ShippingAddress as ShippingAddressType } from '@woocommerce/settings';
-import {
-	PickupLocation,
-	ShippingCalculatorContext,
-	ShippingCalculatorPanel,
-} from '@woocommerce/base-components/cart-checkout';
-import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { useStoreCart } from '@woocommerce/base-context';
 import { useSelect } from '@wordpress/data';
+import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
 import { useContext } from '@wordpress/element';
 
-export interface ShippingAddressProps {
-	shippingAddress: ShippingAddressType;
-	showCalculator: boolean;
-}
+/**
+ * Internal dependencies
+ */
+import { getPickupLocation } from './utils';
+import {
+	ShippingCalculatorContext,
+	ShippingCalculatorPanel,
+} from '../../shipping-calculator';
 
-export const ShippingAddress = ( {
-	shippingAddress,
-}: ShippingAddressProps ): JSX.Element | null => {
+export const ShippingAddress = (): JSX.Element => {
+	const { shippingRates, shippingAddress } = useStoreCart();
+	const { showCalculator } = useContext( ShippingCalculatorContext );
 	const prefersCollection = useSelect( ( select ) =>
 		select( CHECKOUT_STORE_KEY ).prefersCollection()
 	);
 
-	const { showCalculator } = useContext( ShippingCalculatorContext );
-	const formattedLocation = formatShippingAddress( shippingAddress );
-	const hasFormattedAddress = !! formattedLocation;
+	const formattedAddress = prefersCollection
+		? getPickupLocation( shippingRates )
+		: formatShippingAddress( shippingAddress );
+
+	const addressLabel = prefersCollection
+		? /* translators: %s location. */
+		  __( 'Collection from %s', 'woocommerce' )
+		: /* translators: %s location. */
+		  __( 'Delivers to %s', 'woocommerce' );
+
+	const hasFormattedAddress = !! formattedAddress;
 
 	const title = (
 		<p className="wc-block-components-totals-shipping-address-summary">
 			{ hasFormattedAddress ? (
 				<>
-					{ __( 'Delivers to ', 'woocommerce' ) }
-					<strong>{ formattedLocation }</strong>
+					{ sprintf( addressLabel, formattedAddress ) }
+					<strong>{ formattedAddress }</strong>
 				</>
 			) : (
 				<>
@@ -47,12 +54,15 @@ export const ShippingAddress = ( {
 		</p>
 	);
 
-	const DeliverySummary = showCalculator ? (
-		<ShippingCalculatorPanel title={ title } />
-	) : (
-		title
+	return (
+		<>
+			{ showCalculator ? (
+				<ShippingCalculatorPanel title={ title } />
+			) : (
+				title
+			) }
+		</>
 	);
-	return <>{ prefersCollection ? <PickupLocation /> : DeliverySummary }</>;
 };
 
 export default ShippingAddress;

@@ -34,12 +34,7 @@ const Block = ( {
 	placeOrderButtonLabel,
 	returnToCartButtonLabel,
 	priceSeparator,
-}: {
-	cartPageId: number;
-	showReturnToCart: boolean;
-	className?: string;
-	placeOrderButtonLabel: string;
-} ): JSX.Element => {
+}: BlockAttributes ): JSX.Element => {
 	const { paymentMethodButtonLabel } = useCheckoutSubmit();
 
 	const label = applyCheckoutFilter( {

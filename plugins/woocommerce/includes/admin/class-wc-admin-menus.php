@@ -355,7 +355,6 @@ class WC_Admin_Menus {
 	 */
 	public function settings_page() {
 		if ( Features::is_enabled( 'settings' ) ) {
-			echo '<div style="padding: 20px;">The current screen is: ' . esc_html( get_current_screen()->id ) . '</div>';
 			echo '<div id="wc-settings-page"/>';
 		} else {
 			WC_Admin_Settings::output();
