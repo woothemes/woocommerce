@@ -107,7 +107,7 @@ if [ "$GITHUB_EVENT_NAME" == "push" ] || [ "$GITHUB_EVENT_NAME" == "pull_request
 	FRONTEND_DELTA=$(jq .serverResponse $ARTIFACTS_PATH/frontend.delta-results.json)
 	if (( $(echo "$FRONTEND_DELTA > 5" | bc -l) ))
 	then
-		echo "::error::The server response delta of ${i}% is greater than the maximum allowed 5%."
+		echo "::error::The frontend server response delta of ${FRONTEND_DELTA}% is greater than the maximum allowed 5%."
 		exit 1
 	fi
 
