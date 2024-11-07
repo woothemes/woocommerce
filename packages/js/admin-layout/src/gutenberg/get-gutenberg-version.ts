@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-// @ts-expect-error missing type.
 import { getSetting } from '@woocommerce/settings';
 
 export function getGutenbergVersion() {
