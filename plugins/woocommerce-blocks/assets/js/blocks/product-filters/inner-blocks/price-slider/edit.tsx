@@ -24,7 +24,6 @@ import {
 import { colorNames } from './constants';
 import { getHasColorClasses, getStyleColorVars } from '../../utils/colors';
 import type { EditProps } from './types';
-import { useProductFilterClearButtonManager } from '../../hooks/use-product-filter-clear-button-manager';
 
 const PriceSliderEdit = ( {
 	clientId,
@@ -48,7 +47,6 @@ const PriceSliderEdit = ( {
 		customSliderHandle,
 		customSliderHandleBorder,
 		customSlider,
-		clearButton,
 	} = attributes;
 
 	const { isLoading, price } = context.filterData;
