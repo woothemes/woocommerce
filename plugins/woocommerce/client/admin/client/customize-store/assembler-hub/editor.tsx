@@ -77,7 +77,7 @@ export const Editor = ( { isLoading }: { isLoading: boolean } ) => {
 					enableRegionNavigation={ false }
 					className={ clsx(
 						'woocommerce-customize-store__edit-site-editor',
-						'edit-site-editor__interface-skeleton',
+						'woocommerce-edit-site-editor__interface-skeleton',
 						{
 							'show-icon-labels': false,
 							'is-loading': isLoading,
