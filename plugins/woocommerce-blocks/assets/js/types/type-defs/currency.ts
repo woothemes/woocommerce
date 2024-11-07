@@ -103,7 +103,7 @@ export interface CurrencyResponse {
 		| CurrencyBoth
 		| ( string & {} ); // eslint-disable-line @typescript-eslint/ban-types
 
-	currency_prefix: CurrencyPrefix | CurrencyBoth;
+	currency_prefix: '' | CurrencyPrefix | CurrencyBoth;
 
 	currency_suffix: '' | CurrencySuffix | CurrencyBoth;
 
