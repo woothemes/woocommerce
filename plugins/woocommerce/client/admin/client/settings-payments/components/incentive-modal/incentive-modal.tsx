@@ -37,10 +37,18 @@ export const IncentiveModal = () => {
 	return (
 		<>
 			{ isOpen && (
-				<Modal className='woocommerce-incentive-modal' onRequestClose={ onClose }>
+				<Modal
+					title=""
+					className="woocommerce-incentive-modal"
+					onRequestClose={ onClose }
+				>
 					<Card className={ 'woocommerce-incentive-modal__card' }>
 						<div className="woocommerce-incentive-modal__content">
-							<CardMedia className={ 'woocommerce-incentive-modal__media' }>
+							<CardMedia
+								className={
+									'woocommerce-incentive-modal__media'
+								}
+							>
 								<img
 									src={ IncentiveIcon }
 									alt={ __(
