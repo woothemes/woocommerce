@@ -20,19 +20,18 @@ import { Link, Pill } from '@woocommerce/components';
 import './incentive-modal.scss';
 import IncentiveIcon from './incentives-modal-icon.svg';
 
-export const IncentiveModal = () => {
+interface IncentiveModalProps {
+	isOpen: boolean;
+	onClose: () => void;
+	onSubmit: () => void;
+}
+
+export const IncentiveModal = ( {
+	isOpen,
+	onClose,
+	onSubmit,
+}: IncentiveModalProps ) => {
 	const [ isSubmitted, setIsSubmitted ] = useState( false );
-	const [ isOpen, setIsOpen ] = useState( true );
-
-	const handleSetup = () => {
-		console.log( 'Handle setup' );
-		setIsSubmitted( true );
-	};
-
-	const onClose = () => {
-		console.log( 'Close modal' );
-		setIsOpen( false );
-	};
 
 	return (
 		<>
@@ -108,7 +107,10 @@ export const IncentiveModal = () => {
 									variant={ 'primary' }
 									isBusy={ isSubmitted }
 									disabled={ isSubmitted }
-									onClick={ handleSetup }
+									onClick={ () => {
+										setIsSubmitted( true );
+										onSubmit();
+									} }
 								>
 									{ __( 'Get started', 'woocommerce' ) }
 								</Button>
