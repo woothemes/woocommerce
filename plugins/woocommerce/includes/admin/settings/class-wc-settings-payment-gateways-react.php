@@ -205,7 +205,11 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 
 		// Remove offline methods from the list of gateways (these are handled differently). Also remove the pre_install_woocommerce_payments_promotion gateway.
 		foreach ( $payment_gateways as $gateway ) {
-			if ( ! in_array( $gateway['id'], $offline_methods, true ) && 'pre_install_woocommerce_payments_promotion' !== $gateway['id'] ) {
+			if ( ! in_array( $gateway['id'], $offline_methods, true ) ) {
+				// Hack to change the ID so we don't show two gateways - one suggested, one installed.
+				if ( 'pre_install_woocommerce_payments_promotion' === $gateway['id'] ) {
+					$gateway['id'] = 'woocommerce_payments';
+				}
 				$display_payment_gateways[] = $gateway;
 			}
 		}
