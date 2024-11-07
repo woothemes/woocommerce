@@ -27,6 +27,7 @@ These scripts outline the naming scheme used in order to facilitate [task parall
 - `--filter="$npm_package_name..."`: This filter tells PNPM that we want to run the script against the current project _and_ all of its dependencies down the graph (dependencies first).
 
 To further improve the build times, we used two additional techniques:
+
 - In the case of the `build` script, we offer both building packages with (`build`) and without (`build:project`) its dependencies.
 - Using `wireit`-based task output caching (details are below).
 
@@ -66,5 +67,6 @@ The goal is to minimize the amount of time that developers spend waiting for pro
 
 In the example above, `build:project:bundle` invokes `wireit`, which conditionally executes `webpack` (based on the state of resources).
 A simplified take on `wireit` is the following:
+
 - if input sources are changed or output sources are not generated yet, `wireit` will execute `webpack` command and cache output sources
 - if input sources are unchanged, `wireit` will create output sources from their cached version
