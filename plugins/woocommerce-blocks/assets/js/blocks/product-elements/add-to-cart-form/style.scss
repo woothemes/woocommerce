@@ -18,6 +18,10 @@
 	width: unset;
 
 	form.cart {
+		&:before {
+			grid-column: span 2; // ensure the form spans the full width of the container
+		}
+
 		display: grid;
 		grid-template-columns: max-content;
 
