@@ -1645,7 +1645,7 @@ class OrdersTableDataStoreTests extends \HposTestCase {
 		foreach ( $orders_test_data as $i => $order_data ) {
 			$order = new \WC_Order();
 			$this->switch_data_store( $order, $this->sut );
-			$order->set_status( OrderInternalStatus::COMPLETED);
+			$order->set_status( OrderInternalStatus::COMPLETED );
 			$order->set_shipping_city( 'The Universe' );
 			$order->set_billing_first_name( $order_data[0] );
 			$order->set_billing_last_name( $order_data[1] );
