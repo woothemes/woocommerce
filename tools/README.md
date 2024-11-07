@@ -10,9 +10,11 @@ Our repository makes aggressive use of [parallelization using PNPM's `--filter` 
 {
 	"scripts": {
 		"build": "pnpm --if-present --workspace-concurrency=Infinity --stream --filter=\"$npm_package_name...\" '/^build:project:.*$/'",
+    "build:project": "pnpm --if-present '/^build:project:.*$/'",
 		"lint": "pnpm --if-present '/^lint:lang:.*$/'",
 		"lint:fix": "pnpm --if-present '/^lint:fix:lang:.*$/'",
 		"watch:build": "pnpm --if-present --workspace-concurrency=Infinity --filter=\"$npm_package_name...\" --parallel '/^watch:build:project:.*$/'",
+    "watch:build:project": "pnpm --if-present run '/^watch:build:project:.*$/'"
 	}
 }
 ```
@@ -24,8 +26,44 @@ These scripts outline the naming scheme used in order to facilitate [task parall
 - `--stream`: Makes the script output legible by putting all of their output into a single stream.
 - `--filter="$npm_package_name..."`: This filter tells PNPM that we want to run the script against the current project _and_ all of its dependencies down the graph (dependencies first).
 
-We also provide `build:project` and `watch:build:project` scripts which only run the associated scripts on the current package without any of its dependencies.
+To further improve the build times, we used two additional techniques:
+- In the case of the `build` script, we offer both building packages with (`build`) and without (`build:project`) its dependencies.
+- Using `wireit`-based task output caching (details are below).
 
 ## Task Output Caching
 
-Our repository uses [`wireit`](https://github.com/google/wireit) to provide task output caching. In particular, this allows us to cache the output of `build` scripts so that they don't run unnecessarily. The goal is to minimize the amount of time that developers spend waiting for projects to build.
+Our repository uses [`wireit`](https://github.com/google/wireit) to provide task output caching. In particular, this allows us to cache the output of `build` scripts so that they don't run unnecessarily.
+The goal is to minimize the amount of time that developers spend waiting for projects to build.
+
+```json
+{
+  "scripts": {
+    "build": "pnpm --if-present --workspace-concurrency=Infinity --stream --filter=\"$npm_package_name...\" '/^build:project:.*$/'",
+    "build:project": "pnpm --if-present '/^build:project:.*$/'",
+    "build:project:bundle": "wireit"
+  },
+  "wireit": {
+    "build:project:bundle": {
+      "command": "webpack",
+      "files": [
+        // Package resources as input
+      ],
+      "output": [
+        // Package resources as output
+      ],
+      "dependencies": [
+        "dependencyOutputs"
+      ]
+    },
+    "dependencyOutputs": {
+      "files": [
+        // Dependecies resources as input
+      ]
+    }
+  }
+```
+
+In the example above, `build:project:bundle` invokes `wireit`, which conditionally executes `webpack` (based on the state of resources).
+A simplified take on `wireit` is the following:
+- if input sources are changed or output sources are not generated yet, wireit` will execute `webpack` command and cache output sources
+- if input sources are unchanged, `wireit` will create output sources from their cached version
