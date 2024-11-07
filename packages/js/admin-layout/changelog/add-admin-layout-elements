@@ -1,0 +1,4 @@
+Significance: patch
+Type: update
+
+Move Site Editor Sidebar elements to @woocommerce/admin-layout package
