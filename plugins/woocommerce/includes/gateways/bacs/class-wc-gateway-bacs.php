@@ -284,16 +284,17 @@ class WC_Gateway_BACS extends WC_Payment_Gateway {
 		 * Filter the email instructions order status.
 		 *
 		 * @since 7.4
+		 *
 		 * @param string $terms The order status.
 		 * @param object $order The order object.
 		 */
-		if ( ! $sent_to_admin && 'bacs' === $order->get_payment_method() && $order->has_status( apply_filters( 'woocommerce_bacs_email_instructions_order_status', OrderStatus::ON_HOLD, $order ) ) ) {
+		$instructions_order_status = apply_filters( 'woocommerce_bacs_email_instructions_order_status', OrderStatus::ON_HOLD, $order );
+		if ( ! $sent_to_admin && 'bacs' === $order->get_payment_method() && $order->has_status( $instructions_order_status ) ) {
 			if ( $this->instructions ) {
 				echo wp_kses_post( wpautop( wptexturize( $this->instructions ) ) . PHP_EOL );
 			}
 			$this->bank_details( $order->get_id() );
 		}
-
 	}
 
 	/**

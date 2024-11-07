@@ -185,8 +185,17 @@ class WC_Order_Data_Store_CPT extends Abstract_WC_Order_Data_Store_CPT implement
 	 * @param WC_Order $order Order object.
 	 */
 	public function update( &$order ) {
+		/**
+		 * Filter the order status to use when payment is complete.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param string   $payment_complete_status Default status to use when payment is complete.
+		 * @param int      $order_id               Order ID.
+		 */
+		$payment_complete_status = apply_filters( 'woocommerce_payment_complete_order_status', $order->needs_processing() ? OrderStatus::PROCESSING : OrderStatus::COMPLETED, $order->get_id(), $order );
 		// Before updating, ensure date paid is set if missing.
-		if ( ! $order->get_date_paid( 'edit' ) && version_compare( $order->get_version( 'edit' ), '3.0', '<' ) && $order->has_status( apply_filters( 'woocommerce_payment_complete_order_status', $order->needs_processing() ? OrderStatus::PROCESSING : OrderStatus::COMPLETED, $order->get_id(), $order ) ) ) {
+		if ( ! $order->get_date_paid( 'edit' ) && version_compare( $order->get_version( 'edit' ), '3.0', '<' ) && $order->has_status( $payment_complete_status ) ) {
 			$order->set_date_paid( $order->get_date_created( 'edit' ) );
 		}
 

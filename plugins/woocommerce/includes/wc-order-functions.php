@@ -127,6 +127,13 @@ function wc_is_order_status( $maybe_status ) {
  * @return array
  */
 function wc_get_is_paid_statuses() {
+	/**
+	 * Filter the list of statuses which are considered 'paid'.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param array $statuses List of statuses.
+	 */
 	return apply_filters( 'woocommerce_order_is_paid_statuses', array( OrderStatus::PROCESSING, OrderStatus::COMPLETED ) );
 }
 
@@ -137,6 +144,13 @@ function wc_get_is_paid_statuses() {
  * @return array
  */
 function wc_get_is_pending_statuses() {
+	/**
+	 * Filter the list of statuses which are considered 'pending payment'.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @param array $statuses List of statuses.
+	 */
 	return apply_filters( 'woocommerce_order_is_pending_statuses', array( OrderStatus::PENDING ) );
 }
 
@@ -676,6 +690,15 @@ function wc_create_refund( $args = array() ) {
 			} else {
 				do_action( 'woocommerce_order_fully_refunded', $order->get_id(), $refund->get_id() );
 
+				/**
+				 * Filter the status to set the order to when fully refunded.
+				 *
+				 * @since 2.7.0
+				 *
+				 * @param string $parent_status The status to set the order to when fully refunded.
+				 * @param int    $order_id      The order ID.
+				 * @param int    $refund_id     The refund ID.
+				 */
 				$parent_status = apply_filters( 'woocommerce_order_fully_refunded_status', OrderStatus::REFUNDED, $order->get_id(), $refund->get_id() );
 
 				if ( $parent_status ) {

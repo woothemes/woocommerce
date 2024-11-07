@@ -346,8 +346,16 @@ class WC_Gateway_COD extends WC_Payment_Gateway {
 		$order = wc_get_order( $order_id );
 
 		if ( $order->get_total() > 0 ) {
+			/**
+			 * Filter the order status for COD orders.
+			 *
+			 * @since 2.6.0
+			 *
+			 * @param string $order_status Default status for COD orders.
+			 */
+			$process_payment_status = apply_filters( 'woocommerce_cod_process_payment_order_status', $order->has_downloadable_item() ? OrderStatus::ON_HOLD : OrderStatus::PROCESSING, $order );
 			// Mark as processing or on-hold (payment won't be taken until delivery).
-			$order->update_status( apply_filters( 'woocommerce_cod_process_payment_order_status', $order->has_downloadable_item() ? OrderStatus::ON_HOLD : OrderStatus::PROCESSING, $order ), __( 'Payment to be made upon delivery.', 'woocommerce' ) );
+			$order->update_status( $process_payment_status, __( 'Payment to be made upon delivery.', 'woocommerce' ) );
 		} else {
 			$order->payment_complete();
 		}

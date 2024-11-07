@@ -407,7 +407,13 @@ abstract class WC_Abstract_Order extends WC_Abstract_Legacy_Order {
 		$status = $this->get_prop( 'status', $context );
 
 		if ( empty( $status ) && 'view' === $context ) {
-			// In view context, return the default status if no status has been set.
+			/**
+			 * In view context, return the default status if no status has been set.
+			 *
+			 * @since 3.0.0
+			 *
+			 * @param string $status Default status.
+			 */
 			$status = apply_filters( 'woocommerce_default_order_status', OrderStatus::PENDING );
 		}
 		return $status;
