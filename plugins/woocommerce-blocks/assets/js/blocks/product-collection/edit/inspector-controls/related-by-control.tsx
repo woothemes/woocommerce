@@ -2,12 +2,7 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import {
-	CheckboxControl,
-	PanelBody,
-	// @ts-expect-error missing types.
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { CheckboxControl, PanelBody } from '@wordpress/components';
 
 /**
  * Internal dependencies
