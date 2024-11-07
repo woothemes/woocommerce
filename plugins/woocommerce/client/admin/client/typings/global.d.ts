@@ -33,6 +33,7 @@ declare global {
 		wcAdminFeatures: {
 			'activity-panels': boolean;
 			analytics: boolean;
+			'coming-soon-newsletter-template': boolean;
 			coupons: boolean;
 			'customer-effort-score-tracks': boolean;
 			homescreen: boolean;
@@ -62,6 +63,7 @@ declare global {
 			'launch-your-store': boolean;
 			'blueprint': boolean;
 			'reactify-classic-payments-settings': boolean;
+			"add-to-cart-with-options-stepper-layout": boolean
 		};
 		wp: {
 			updates?: {
