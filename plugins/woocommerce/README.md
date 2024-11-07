@@ -22,13 +22,14 @@ Once you have completed the prerequisites, you can start the development environ
 ```bash
 ## Watch for changes in WooCommerce and all of its dependencies.
 pnpm --filter='@woocommerce/plugin-woocommerce' watch:build
-# Start the development environment
+
+# Start wp-env based development environment, which will be accessible via http://localhost:8888/.
+# You can learn more about supported environments here: https://developer.woocommerce.com/docs/setting-up-your-development-environment/.
 pnpm --filter='@woocommerce/plugin-woocommerce' env:dev
 ```
 
 If desired, you can also run commands without `--filter='@woocommrece/plugin-woocommerce'` by running `pnpm <command>` from within the `plugins/woocommerce` directory.
 
-You should now be able to visit `http://localhost:8888/` and access a WooCommerce development environment.
 
 ## Building Components
 
