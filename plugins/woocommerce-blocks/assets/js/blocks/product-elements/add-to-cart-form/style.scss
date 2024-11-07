@@ -23,7 +23,6 @@
 		}
 
 		display: grid;
-		width: fit-content;
 
 		& > * {
 			// Hack to ensure input + button stat on the same row, together.
@@ -41,6 +40,10 @@
 			padding-top: 0;
 			padding-bottom: 0;
 			height: calc( 100% - 4px ); // 4px border width
+		}
+
+		&.grouped_form {
+			width: fit-content;
 		}
 	}
 
