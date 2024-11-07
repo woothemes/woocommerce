@@ -146,17 +146,25 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 			return $gateway['id'];
 		}, $payment_gateways );
 
-		// Then, filter the suggestions to get the preferred payment extensions (not including installed extensions).
-		// Sort them by recommendation_priority and get the first one.
-		$preferred_payment_extensions_suggestions = array_filter( $all_suggestions, function ( $suggestion ) use ( $payment_gateway_ids ) {
-			return isset( $suggestion->category_additional )
+		// Then, filter the suggestions to get the preferred and additional payment extensions (not including installed extensions).
+		$preferred_payment_extension_suggestions = array_values( array_filter( $all_suggestions, function ( $suggestion ) use ( $payment_gateway_ids ) {
+			// Currently it will be only WooPayments, since we don't have category_preferred or something like that.
+			return $suggestion->id === 'woocommerce_payments:without-in-person-payments' && ! in_array( 'woocommerce_payments', $payment_gateway_ids, true );
+		} ) );
+
+		// Sort additional by recommendation_priority and get the first one.
+		$additional_payment_extensions_suggestions = array_filter( $all_suggestions, function ( $suggestion ) use ( $payment_gateway_ids ) {
+				return isset( $suggestion->category_additional )
 				&& in_array( WC()->countries->get_base_country(), $suggestion->category_additional, true )
 				&& ! in_array( $suggestion->id, $payment_gateway_ids, true );
 		} );
-		usort( $preferred_payment_extensions_suggestions, function ( $a, $b ) {
+		usort( $additional_payment_extensions_suggestions, function ( $a, $b ) {
 			return $a->recommendation_priority <=> $b->recommendation_priority;
 		} );
-		$preferred_payment_extensions_suggestions = array_slice( $preferred_payment_extensions_suggestions, 0, 1 );
+		$additional_payment_extension_suggestions = array_slice( $additional_payment_extensions_suggestions, 0, 1 );
+
+		// Combine two into one.
+		$preferred_payment_extension_suggestions = array_merge( $preferred_payment_extension_suggestions, $additional_payment_extension_suggestions );
 
 		// Then, filter the suggestions to get the other payment extensions (not including installed extensions).
 		// Also, we don't need suggestions both in additional and other categories.
@@ -178,8 +186,10 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 			)
 		) . '</script>';
 		echo '<script type="application/json" id="experimental_wc_settings_payments_gateways">' . wp_json_encode( $payment_gateways ) . '</script>';
-		echo '<script type="application/json" id="experimental_wc_settings_payments_preferred_extensions_suggestions">' . wp_json_encode( $preferred_payment_extensions_suggestions ) . '</script>';
+		echo '<script type="application/json" id="experimental_wc_settings_payments_preferred_extensions_suggestions">' . wp_json_encode( $preferred_payment_extension_suggestions ) . '</script>';
 		echo '<script type="application/json" id="experimental_wc_settings_payments_other_extensions_suggestions">' . wp_json_encode( $other_payment_extensions_suggestions ) . '</script>';
+		// TODO remove this after testing.
+		echo '<script type="application/json" id="experimental_wc_settings_payments_all_suggestions">' . wp_json_encode( $all_suggestions ) . '</script>';
 	}
 
 	/**
@@ -193,9 +203,9 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 		$offline_methods          = array( 'bacs', 'cheque', 'cod' );
 		$display_payment_gateways = array();
 
-		// Remove offline methods from the list of gateways (these are handled differently).
+		// Remove offline methods from the list of gateways (these are handled differently). Also remove the pre_install_woocommerce_payments_promotion gateway.
 		foreach ( $payment_gateways as $gateway ) {
-			if ( ! in_array( $gateway['id'], $offline_methods, true ) ) {
+			if ( ! in_array( $gateway['id'], $offline_methods, true ) && 'pre_install_woocommerce_payments_promotion' !== $gateway['id'] ) {
 				$display_payment_gateways[] = $gateway;
 			}
 		}
