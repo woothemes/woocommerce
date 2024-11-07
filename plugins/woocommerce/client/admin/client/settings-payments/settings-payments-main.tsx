@@ -19,34 +19,23 @@ interface activatePromoResponse {
 }
 
 export const SettingsPaymentsMain = () => {
-	const incentive = getAdminSetting( 'wcpayWelcomePageIncentive' );
+	// TODO: Implement. See `payments-welcome/index.tsx` for an example.
+	// const incentive = getAdminSetting( 'wcpayWelcomePageIncentive' );
 
-	const activatePromo = async () => {
-		const activatePromoRequest: activatePromoResponse = await apiFetch( {
-			path: `/wc-analytics/admin/notes/experimental-activate-promo/${ incentive.id }`,
-			method: 'POST',
-		} );
-		if ( activatePromoRequest?.success ) {
-			window.location.href = connectUrl;
-		}
-	};
-
-	const { connectUrl } = useSelect( () => {
-		return {
-			connectUrl:
-				'admin.php?wcpay-connect=1&promo=' +
-				encodeURIComponent( incentive.id ) +
-				'&_wpnonce=' +
-				getAdminSetting( 'wcpay_welcome_page_connect_nonce' ) +
-				'&from=WCADMIN_PAYMENT_INCENTIVE',
-		};
-	} );
+	// TODO: This will come from the incentive data.
+	const incentiveType = 'action';
 
 	return (
 		<>
 			<div className="settings-payments-main__container">
-				{ /*<IncentiveModal />*/ }
-				<IncentiveBanner />
+				{ incentiveType === 'action' && (
+					<IncentiveModal
+						isOpen={ true }
+						onClose={ () => {} }
+						onSubmit={ () => {} }
+					/>
+				) }
+				{ incentiveType === 'switch' && <IncentiveBanner /> }
 				<PaymentGateways />
 				<OtherPaymentGateways />
 			</div>
