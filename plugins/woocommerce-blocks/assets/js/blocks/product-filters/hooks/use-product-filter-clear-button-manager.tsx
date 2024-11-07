@@ -139,7 +139,7 @@ export const useProductFilterClearButtonManager = ( {
 		insertBlock(
 			createBlock(
 				'woocommerce/product-filter-clear-button',
-				clearButtonBlock
+				clearButtonDefaultAttributes
 			),
 			0,
 			clientId,
