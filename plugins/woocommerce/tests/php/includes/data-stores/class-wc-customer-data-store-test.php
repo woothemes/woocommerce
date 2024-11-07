@@ -103,11 +103,14 @@ class WC_Customer_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 		update_option( CustomOrdersTableController::CUSTOM_ORDERS_TABLE_USAGE_ENABLED_OPTION, 'yes' );
 
 		$sql =
-			"INSERT INTO " . OrdersTableDataStore::get_orders_table_name() . "
-			( id, customer_id, status, type )
+			'INSERT INTO ' . OrdersTableDataStore::get_orders_table_name() . '
+				( id, customer_id, status, type )
 			VALUES
-			( 1, %d, '" . OrderInternalStatus::COMPLETED . "', 'shop_order' ), ( %d, %d, '" . OrderInternalStatus::COMPLETED . "', 'shop_order' ), ( 3, %d, 'wc-invalid-status', 'shop_order' ),
-			( 4, %d, '" . OrderInternalStatus::COMPLETED . "', 'shop_order' ), ( 5, %d, '" . OrderInternalStatus::COMPLETED . "', 'shop_order' )";
+				( 1, %d, ' . OrderInternalStatus::COMPLETED . ', \'shop_order\' ),
+				( %d, %d, ' . OrderInternalStatus::COMPLETED . ', \'shop_order\' ),
+				( 3, %d, \'wc-invalid-status\', \'shop_order\' ),
+				( 4, %d, ' . OrderInternalStatus::COMPLETED . ', \'shop_order\' ),
+				( 5, %d, ' . OrderInternalStatus::COMPLETED . ', \'shop_order\' )';
 
 		$customer_1_id = $customer_1->get_id();
 		$customer_2_id = $customer_2->get_id();
@@ -191,11 +194,15 @@ class WC_Customer_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 		$customer_2 = WC_Helper_Customer::create_customer( 'test2', 'pass2', 'test2@example.com' );
 
 		$sql =
-			"INSERT INTO " . OrdersTableDataStore::get_orders_table_name() . "
-			( id, customer_id, status )
+			'INSERT INTO ' . OrdersTableDataStore::get_orders_table_name() . '
+				( id, customer_id, status )
 			VALUES
-			( 1, %d, '" . OrderInternalStatus::COMPLETED . "' ), ( 2, %d, '" . OrderInternalStatus::COMPLETED . "' ), ( 3, %d, '" . OrderInternalStatus::COMPLETED . "' ), ( 4, %d, 'wc-invalid-status' ),
-			( 5, %d, '" . OrderInternalStatus::COMPLETED . "' ), ( 6, %d, '" . OrderInternalStatus::COMPLETED . "' )";
+				( 1, %d, ' . OrderInternalStatus::COMPLETED . ' ),
+				( 2, %d, ' . OrderInternalStatus::COMPLETED . ' ),
+				( 3, %d, ' . OrderInternalStatus::COMPLETED . ' ),
+				( 4, %d, \'wc-invalid-status\' ),
+				( 5, %d, ' . OrderInternalStatus::COMPLETED . ' ),
+				( 6, %d, ' . OrderInternalStatus::COMPLETED . ' )';
 
 		$customer_1_id = $customer_1->get_id();
 		$customer_2_id = $customer_2->get_id();
@@ -246,11 +253,15 @@ class WC_Customer_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 		$customer_2 = WC_Helper_Customer::create_customer( 'test2', 'pass2', 'test2@example.com' );
 
 		$sql =
-			"INSERT INTO " . OrdersTableDataStore::get_orders_table_name() . "
-			( id, customer_id, status, total_amount )
+			'INSERT INTO ' . OrdersTableDataStore::get_orders_table_name() . '
+				( id, customer_id, status, total_amount )
 			VALUES
-			( 1, %d, '" . OrderInternalStatus::COMPLETED . "', 10 ), ( 2, %d, '" . OrderInternalStatus::COMPLETED . "', 20 ), ( 3, %d, '" . OrderInternalStatus::COMPLETED . "', 30 ), ( 4, %d, 'wc-invalid-status', 40 ),
-			( 5, %d, '" . OrderInternalStatus::COMPLETED . "', 200 ), ( 6, %d, '" . OrderInternalStatus::COMPLETED . "', 300 )";
+				( 1, %d, ' . OrderInternalStatus::COMPLETED . ', 10 ),
+				( 2, %d, ' . OrderInternalStatus::COMPLETED . ', 20 ),
+				( 3, %d, ' . OrderInternalStatus::COMPLETED . ', 30 ),
+				( 4, %d, \'wc-invalid-status\', 40 ),
+				( 5, %d, ' . OrderInternalStatus::COMPLETED . ', 200 ),
+				( 6, %d, ' . OrderInternalStatus::COMPLETED . ', 300 )';
 
 		$customer_1_id = $customer_1->get_id();
 		$customer_2_id = $customer_2->get_id();
