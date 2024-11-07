@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { clsx } from 'clsx';
 import {
 	unregisterPlugin,
 	registerPlugin,
@@ -62,14 +61,7 @@ export const Header = ( { title, backLink }: HeaderProps ) => {
 						</WooHeaderNavigationItem>
 					) }
 					<WooHeaderPageTitle>
-						<span
-							className={ clsx(
-								'woocommerce-settings-payments-header__title',
-								{
-									'has-back-link': backLink,
-								}
-							) }
-						>
+						<span className="woocommerce-settings-payments-header__title">
 							{ title }
 						</span>
 					</WooHeaderPageTitle>
