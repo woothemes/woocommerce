@@ -234,10 +234,18 @@ final class WooCommerce {
 	 * WooCommerce Constructor.
 	 */
 	public function __construct() {
+		$this->slow_function();
 		$this->define_constants();
 		$this->define_tables();
 		$this->includes();
 		$this->init_hooks();
+	}
+
+	private function slow_function() {
+		$i = 1;
+		while ($i < 5000000) {
+			$i++;
+		}
 	}
 
 	/**
