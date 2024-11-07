@@ -10,7 +10,11 @@
 	width: 100%;
 	margin-top: em($gap-large);
 }
-
-.wc-block-components-totals-shipping-panel {
-	margin-top: em($gap-smaller);
+.is-large .wc-block-components-sidebar {
+	.wc-block-components-totals-item__description {
+		.wc-block-components-totals-shipping-panel {
+			margin-top: em($gap-smaller);
+			padding: 0;
+		}
+	}
 }

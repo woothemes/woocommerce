@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { formatShippingAddress } from '@woocommerce/base-utils';
 import { useStoreCart } from '@woocommerce/base-context';
 import { useSelect } from '@wordpress/data';
@@ -29,10 +29,8 @@ export const ShippingAddress = (): JSX.Element => {
 		: formatShippingAddress( shippingAddress );
 
 	const addressLabel = prefersCollection
-		? /* translators: %s location. */
-		  __( 'Collection from %s', 'woocommerce' )
-		: /* translators: %s location. */
-		  __( 'Delivers to %s', 'woocommerce' );
+		? __( 'Collection from ', 'woocommerce' )
+		: __( 'Delivers to ', 'woocommerce' );
 
 	const hasFormattedAddress = !! formattedAddress;
 
@@ -40,7 +38,7 @@ export const ShippingAddress = (): JSX.Element => {
 		<p className="wc-block-components-totals-shipping-address-summary">
 			{ hasFormattedAddress ? (
 				<>
-					{ sprintf( addressLabel, formattedAddress ) }
+					{ addressLabel }
 					<strong>{ formattedAddress }</strong>
 				</>
 			) : (

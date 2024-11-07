@@ -24,7 +24,6 @@ export interface TotalShippingProps {
 export const TotalsShipping = ( {
 	label = __( 'Shipping', 'woocommerce' ),
 	placeholder = null,
-	collaterals = null,
 }: TotalShippingProps ): JSX.Element | null => {
 	const { cartTotals, shippingRates } = useStoreCart();
 	const hasRates = hasShippingRate( shippingRates );
@@ -41,11 +40,6 @@ export const TotalsShipping = ( {
 					<>
 						<ShippingVia />
 						<ShippingAddress />
-						{ collaterals && (
-							<div className="wc-block-components-totals-shipping__collaterals">
-								{ collaterals }
-							</div>
-						) }
 					</>
 				}
 				currency={ getCurrencyFromPriceResponse( cartTotals ) }
