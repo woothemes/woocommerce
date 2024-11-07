@@ -3,8 +3,10 @@
  */
 import { screen, render } from '@testing-library/react';
 import { SlotFillProvider } from '@woocommerce/blocks-checkout';
-import { previewCart as mockPreviewCart } from '@woocommerce/resource-previews';
+import { ShippingCalculatorContext } from '@woocommerce/base-components/cart-checkout/shipping-calculator/context';
 import * as wpData from '@wordpress/data';
+import { CartShippingRate } from '@woocommerce/types';
+import { previewCart as mockPreviewCart } from '@woocommerce/resource-previews';
 import * as baseContextHooks from '@woocommerce/base-context/hooks';
 
 /**
@@ -51,6 +53,54 @@ const shippingAddress = {
 	phone: '+1234567890',
 };
 
+const shippingRates = [
+	{
+		package_id: 0,
+		name: 'Initial Shipment',
+		destination: {
+			address_1: '30 Test Street',
+			address_2: 'Apt 1 Shipping',
+			city: 'Liverpool',
+			state: '',
+			postcode: 'L1 0BP',
+			country: 'GB',
+		},
+		items: [
+			{
+				key: 'acf4b89d3d503d8252c9c4ba75ddbf6d',
+				name: 'Test product',
+				quantity: 1,
+			},
+		],
+		shipping_rates: [
+			{
+				rate_id: 'flat_rate:1',
+				name: 'Shipping',
+				description: '',
+				delivery_time: '',
+				price: '0',
+				taxes: '0',
+				instance_id: 13,
+				method_id: 'flat_rate',
+				meta_data: [
+					{
+						key: 'Items',
+						value: 'Test product &times; 1',
+					},
+				],
+				selected: false,
+				currency_code: 'USD',
+				currency_symbol: '$',
+				currency_minor_unit: 2,
+				currency_decimal_separator: '.',
+				currency_thousand_separator: ',',
+				currency_prefix: '$',
+				currency_suffix: '',
+			},
+		],
+	},
+] as CartShippingRate[];
+
 jest.mock( '@woocommerce/base-context/hooks', () => {
 	return {
 		__esModule: true,
@@ -59,117 +109,20 @@ jest.mock( '@woocommerce/base-context/hooks', () => {
 		useStoreCart: jest.fn(),
 	};
 } );
+
 baseContextHooks.useShippingData.mockReturnValue( {
 	needsShipping: true,
 	selectShippingRate: jest.fn(),
-	shippingRates: [
-		{
-			package_id: 0,
-			name: 'Shipping method',
-			destination: {
-				address_1: '',
-				address_2: '',
-				city: '',
-				state: '',
-				postcode: '',
-				country: '',
-			},
-			items: [
-				{
-					key: 'fb0c0a746719a7596f296344b80cb2b6',
-					name: 'Hoodie - Blue, Yes',
-					quantity: 1,
-				},
-				{
-					key: '1f0e3dad99908345f7439f8ffabdffc4',
-					name: 'Beanie',
-					quantity: 1,
-				},
-			],
-			shipping_rates: [
-				{
-					rate_id: 'flat_rate:1',
-					name: 'Flat rate',
-					description: '',
-					delivery_time: '',
-					price: '500',
-					taxes: '0',
-					instance_id: 1,
-					method_id: 'flat_rate',
-					meta_data: [
-						{
-							key: 'Items',
-							value: 'Hoodie - Blue, Yes &times; 1, Beanie &times; 1',
-						},
-					],
-					selected: false,
-					currency_code: 'USD',
-					currency_symbol: '$',
-					currency_minor_unit: 2,
-					currency_decimal_separator: '.',
-					currency_thousand_separator: ',',
-					currency_prefix: '$',
-					currency_suffix: '',
-				},
-				{
-					rate_id: 'local_pickup:2',
-					name: 'Local pickup',
-					description: '',
-					delivery_time: '',
-					price: '0',
-					taxes: '0',
-					instance_id: 2,
-					method_id: 'local_pickup',
-					meta_data: [
-						{
-							key: 'Items',
-							value: 'Hoodie - Blue, Yes &times; 1, Beanie &times; 1',
-						},
-					],
-					selected: false,
-					currency_code: 'USD',
-					currency_symbol: '$',
-					currency_minor_unit: 2,
-					currency_decimal_separator: '.',
-					currency_thousand_separator: ',',
-					currency_prefix: '$',
-					currency_suffix: '',
-				},
-				{
-					rate_id: 'free_shipping:5',
-					name: 'Free shipping',
-					description: '',
-					delivery_time: '',
-					price: '0',
-					taxes: '0',
-					instance_id: 5,
-					method_id: 'free_shipping',
-					meta_data: [
-						{
-							key: 'Items',
-							value: 'Hoodie - Blue, Yes &times; 1, Beanie &times; 1',
-						},
-					],
-					selected: true,
-					currency_code: 'USD',
-					currency_symbol: '$',
-					currency_minor_unit: 2,
-					currency_decimal_separator: '.',
-					currency_thousand_separator: ',',
-					currency_prefix: '$',
-					currency_suffix: '',
-				},
-			],
-		},
-	],
+	shippingRates,
 } );
+
 baseContextHooks.useStoreCart.mockReturnValue( {
 	cartItems: mockPreviewCart.items,
-	cartTotals: [ mockPreviewCart.totals ],
+	cartTotals: mockPreviewCart.totals,
 	cartCoupons: mockPreviewCart.coupons,
 	cartFees: mockPreviewCart.fees,
 	cartNeedsShipping: mockPreviewCart.needs_shipping,
-	shippingRates: [],
+	shippingRates,
 	shippingAddress,
 	billingAddress: mockPreviewCart.billing_address,
 	cartHasCalculatedShipping: mockPreviewCart.has_calculated_shipping,
@@ -179,141 +132,73 @@ baseContextHooks.useStoreCart.mockReturnValue( {
 describe( 'TotalsShipping', () => {
 	it( 'shows FREE if shipping cost is 0', () => {
 		baseContextHooks.useStoreCart.mockReturnValue( {
-			cartItems: mockPreviewCart.items,
-			cartTotals: [ mockPreviewCart.totals ],
-			cartCoupons: mockPreviewCart.coupons,
-			cartFees: mockPreviewCart.fees,
-			cartNeedsShipping: mockPreviewCart.needs_shipping,
+			...baseContextHooks.useStoreCart(),
 			shippingRates: [
-				{
-					package_id: 0,
-					name: 'Initial Shipment',
-					destination: {
-						address_1: '30 Test Street',
-						address_2: 'Apt 1 Shipping',
-						city: 'Liverpool',
-						state: '',
-						postcode: 'L1 0BP',
-						country: 'GB',
-					},
-					items: [
-						{
-							key: 'acf4b89d3d503d8252c9c4ba75ddbf6d',
-							name: 'Test product',
-							quantity: 1,
-						},
-					],
-					shipping_rates: [
-						{
-							rate_id: 'free_shipping:1',
-							name: 'Free shipping',
-							description: '',
-							delivery_time: '',
-							price: '0',
-							taxes: '0',
-							instance_id: 13,
-							method_id: 'free_shipping',
-							meta_data: [
-								{
-									key: 'Items',
-									value: 'Test product &times; 1',
-								},
-							],
-							selected: false,
-							currency_code: 'USD',
-							currency_symbol: '$',
-							currency_minor_unit: 2,
-							currency_decimal_separator: '.',
-							currency_thousand_separator: ',',
-							currency_prefix: '$',
-							currency_suffix: '',
-						},
-					],
-				},
+				...shippingRates,
+				{ ...shippingRates[ 0 ], price: '0' },
 			],
-			shippingAddress,
-			billingAddress: mockPreviewCart.billing_address,
-			cartHasCalculatedShipping: mockPreviewCart.has_calculated_shipping,
-			isLoadingRates: false,
+			cartTotals: {
+				...mockPreviewCart.totals,
+				total_shipping: '0',
+				total_shipping_tax: '0',
+			},
 		} );
 
 		const { rerender } = render(
 			<SlotFillProvider>
-				<TotalsShipping
-					currency={ {
-						code: 'USD',
-						symbol: '$',
-						minorUnit: 2,
-						decimalSeparator: '.',
-						prefix: '',
-						suffix: '',
-						thousandSeparator: ', ',
-					} }
-					values={ {
-						total_shipping: '0',
-						total_shipping_tax: '0',
-					} }
-					showCalculator={ true }
-					showRateSelector={ false }
-					isCheckout={ false }
-					className={ '' }
-				/>
+				<TotalsShipping />
 			</SlotFillProvider>
 		);
+
 		expect(
 			screen.getByText( 'Free', { exact: true } )
 		).toBeInTheDocument();
 		expect( screen.queryByText( '0.00' ) ).not.toBeInTheDocument();
 
+		baseContextHooks.useStoreCart.mockReturnValue( {
+			...baseContextHooks.useStoreCart(),
+			shippingRates: [
+				...shippingRates,
+				{ ...shippingRates[ 0 ], price: '5678' },
+			],
+			cartTotals: {
+				...mockPreviewCart.totals,
+				total_shipping: '5678',
+				total_shipping_tax: '0',
+				currency_code: 'USD',
+				currency_symbol: '$',
+				currency_minor_unit: 2,
+				currency_decimal_separator: '.',
+				currency_prefix: '',
+				currency_suffix: '',
+				currency_thousand_separator: ', ',
+			},
+		} );
+
 		rerender(
 			<SlotFillProvider>
-				<TotalsShipping
-					currency={ {
-						code: 'USD',
-						symbol: '$',
-						minorUnit: 2,
-						decimalSeparator: '.',
-						prefix: '',
-						suffix: '',
-						thousandSeparator: ', ',
-					} }
-					values={ {
-						total_shipping: '5678',
-						total_shipping_tax: '0',
-					} }
-					showCalculator={ true }
-					showRateSelector={ false }
-					isCheckout={ false }
-					className={ '' }
-				/>
+				<TotalsShipping />
 			</SlotFillProvider>
 		);
 
 		expect( screen.queryByText( 'Free' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( '56.78' ) ).toBeInTheDocument();
 	} );
+
 	it( 'should show correct calculator button label if address is complete', () => {
 		render(
 			<SlotFillProvider>
-				<TotalsShipping
-					currency={ {
-						code: 'USD',
-						symbol: '$',
-						minorUnit: 2,
-						decimalSeparator: '.',
-						prefix: '',
-						suffix: '',
-						thousandSeparator: ', ',
+				<ShippingCalculatorContext.Provider
+					value={ {
+						showCalculator: true,
+						isShippingCalculatorOpen: false,
+						setIsShippingCalculatorOpen: jest.fn(),
+						shippingCalculatorID:
+							'shipping-calculator-form-wrapper',
 					} }
-					values={ {
-						total_shipping: '0',
-						total_shipping_tax: '0',
-					} }
-					showCalculator={ true }
-					showRateSelector={ true }
-					isCheckout={ false }
-					className={ '' }
-				/>
+				>
+					<TotalsShipping />
+				</ShippingCalculatorContext.Provider>
 			</SlotFillProvider>
 		);
 		expect(
@@ -323,45 +208,31 @@ describe( 'TotalsShipping', () => {
 		).toBeInTheDocument();
 		expect( screen.getByText( 'Change address' ) ).toBeInTheDocument();
 	} );
+
 	it( 'should show correct calculator button label if address is incomplete', () => {
 		baseContextHooks.useStoreCart.mockReturnValue( {
-			cartItems: mockPreviewCart.items,
-			cartTotals: [ mockPreviewCart.totals ],
-			cartCoupons: mockPreviewCart.coupons,
-			cartFees: mockPreviewCart.fees,
-			cartNeedsShipping: mockPreviewCart.needs_shipping,
-			shippingRates: [],
+			...baseContextHooks.useStoreCart(),
 			shippingAddress: {
 				...shippingAddress,
 				city: '',
 				country: '',
 				postcode: '',
 			},
-			billingAddress: mockPreviewCart.billing_address,
-			cartHasCalculatedShipping: mockPreviewCart.has_calculated_shipping,
-			isLoadingRates: false,
 		} );
+
 		render(
 			<SlotFillProvider>
-				<TotalsShipping
-					currency={ {
-						code: 'USD',
-						symbol: '$',
-						minorUnit: 2,
-						decimalSeparator: '.',
-						prefix: '',
-						suffix: '',
-						thousandSeparator: ', ',
+				<ShippingCalculatorContext.Provider
+					value={ {
+						showCalculator: true,
+						isShippingCalculatorOpen: false,
+						setIsShippingCalculatorOpen: jest.fn(),
+						shippingCalculatorID:
+							'shipping-calculator-form-wrapper',
 					} }
-					values={ {
-						total_shipping: '0',
-						total_shipping_tax: '0',
-					} }
-					showCalculator={ true }
-					showRateSelector={ true }
-					isCheckout={ false }
-					className={ '' }
-				/>
+				>
+					<TotalsShipping />
+				</ShippingCalculatorContext.Provider>
 			</SlotFillProvider>
 		);
 		expect(
@@ -371,14 +242,10 @@ describe( 'TotalsShipping', () => {
 			screen.getByText( 'Enter address to check delivery options' )
 		).toBeInTheDocument();
 	} );
+
 	it( 'does show the calculator button when default rates are available and has formatted address', () => {
 		baseContextHooks.useStoreCart.mockReturnValue( {
-			cartItems: mockPreviewCart.items,
-			cartTotals: [ mockPreviewCart.totals ],
-			cartCoupons: mockPreviewCart.coupons,
-			cartFees: mockPreviewCart.fees,
-			cartNeedsShipping: mockPreviewCart.needs_shipping,
-			shippingRates: mockPreviewCart.shipping_rates,
+			...baseContextHooks.useStoreCart(),
 			shippingAddress: {
 				...shippingAddress,
 				city: '',
@@ -386,31 +253,21 @@ describe( 'TotalsShipping', () => {
 				country: 'US',
 				postcode: '',
 			},
-			billingAddress: mockPreviewCart.billing_address,
-			cartHasCalculatedShipping: mockPreviewCart.has_calculated_shipping,
-			isLoadingRates: false,
 		} );
+
 		render(
 			<SlotFillProvider>
-				<TotalsShipping
-					currency={ {
-						code: 'USD',
-						symbol: '$',
-						minorUnit: 2,
-						decimalSeparator: '.',
-						prefix: '',
-						suffix: '',
-						thousandSeparator: ', ',
+				<ShippingCalculatorContext.Provider
+					value={ {
+						showCalculator: true,
+						isShippingCalculatorOpen: false,
+						setIsShippingCalculatorOpen: jest.fn(),
+						shippingCalculatorID:
+							'shipping-calculator-form-wrapper',
 					} }
-					values={ {
-						total_shipping: '0',
-						total_shipping_tax: '0',
-					} }
-					showCalculator={ true }
-					showRateSelector={ true }
-					isCheckout={ false }
-					className={ '' }
-				/>
+				>
+					<TotalsShipping />
+				</ShippingCalculatorContext.Provider>
 			</SlotFillProvider>
 		);
 		expect( screen.queryByText( 'Change address' ) ).toBeInTheDocument();

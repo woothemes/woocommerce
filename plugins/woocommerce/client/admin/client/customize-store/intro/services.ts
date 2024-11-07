@@ -46,7 +46,7 @@ export const fetchCustomizeStoreCompleted = async () => {
 export const fetchIntroData = async () => {
 	const currentTemplatePromise =
 		// @ts-expect-error No types for this exist yet.
-		resolveSelect( coreStore ).__experimentalGetTemplateForLink( '/' );
+		resolveSelect( coreStore ).getDefaultTemplateId( { slug: 'home' } );
 
 	const maybePreviousTemplatePromise = resolveSelect(
 		OPTIONS_STORE_NAME
@@ -58,7 +58,7 @@ export const fetchIntroData = async () => {
 
 	const themeDataPromise = fetchThemeCards();
 
-	const [ currentTemplate, maybePreviousTemplate, task, themeData ] =
+	const [ currentTemplateId, maybePreviousTemplate, task, themeData ] =
 		await Promise.all( [
 			currentTemplatePromise,
 			maybePreviousTemplatePromise,
@@ -69,7 +69,7 @@ export const fetchIntroData = async () => {
 	let currentThemeIsAiGenerated = false;
 	if (
 		maybePreviousTemplate &&
-		currentTemplate?.id === maybePreviousTemplate
+		currentTemplateId === maybePreviousTemplate
 	) {
 		currentThemeIsAiGenerated = true;
 	}

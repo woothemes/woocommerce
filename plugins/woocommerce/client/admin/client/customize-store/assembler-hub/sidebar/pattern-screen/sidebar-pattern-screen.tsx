@@ -108,16 +108,16 @@ export const SidebarPatternScreen = ( { category }: { category: string } ) => {
 
 	const refElement = useRef< HTMLDivElement >( null );
 
-	const currentTemplate = useSelect(
+	const currentTemplateId: string | undefined = useSelect(
 		( sel ) =>
 			// @ts-expect-error No types for this exist yet.
-			sel( coreStore ).__experimentalGetTemplateForLink( '/' ),
+			sel( coreStore ).getDefaultTemplateId( { slug: 'home' } ),
 		[]
 	);
 
 	const [ blocks ] = useEditorBlocks(
 		'wp_template',
-		currentTemplate?.id ?? ''
+		currentTemplateId || ''
 	);
 
 	const isEditorLoading = useIsSiteEditorLoading();
