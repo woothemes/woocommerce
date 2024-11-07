@@ -46,10 +46,10 @@ The goal is to minimize the amount of time that developers spend waiting for pro
     "build:project:bundle": {
       "command": "webpack",
       "files": [
-        // Package resources as input
+        "... - package resources as input"
       ],
       "output": [
-        // Package resources as output
+        "... - package resources as output"
       ],
       "dependencies": [
         "dependencyOutputs"
@@ -57,10 +57,11 @@ The goal is to minimize the amount of time that developers spend waiting for pro
     },
     "dependencyOutputs": {
       "files": [
-        // Dependecies resources as input
+        "... - dependencies resources as input"
       ]
     }
   }
+}
 ```
 
 In the example above, `build:project:bundle` invokes `wireit`, which conditionally executes `webpack` (based on the state of resources).
