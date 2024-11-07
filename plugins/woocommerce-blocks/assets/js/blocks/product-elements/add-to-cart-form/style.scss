@@ -23,11 +23,11 @@
 		}
 
 		display: grid;
-		grid-template-columns: max-content;
 		width: fit-content;
 
 		& > * {
-			grid-column: span 2;
+			// Hack to ensure input + button stat on the same row, together.
+			grid-column: span 9999;
 		}
 
 		> .quantity,
