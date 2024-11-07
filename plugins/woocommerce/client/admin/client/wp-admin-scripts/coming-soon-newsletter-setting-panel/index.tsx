@@ -1,0 +1,84 @@
+/**
+ * External dependencies
+ */
+import { registerPlugin } from '@wordpress/plugins';
+import { useSelect } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
+import { Button } from '@wordpress/components';
+import { getAdminLink } from '@woocommerce/settings';
+
+/**
+ * Internal dependencies
+ */
+import './style.scss';
+
+declare global {
+	interface Window {
+		comingSoonNewsletter: {
+			mailpoet_installed: boolean;
+			mailpoet_connected: boolean;
+		};
+	}
+}
+
+const PluginComingSoonNewsletterMailpoet = () => {
+	// @ts-ignore temp fix for missing type -- I wasn't able to build wc admin with @wordpress/editor installed.
+	const { PluginDocumentSettingPanel } = window.wp.editor;
+
+	const postId = useSelect( ( select ) =>
+		select( 'core/editor' ).getCurrentPostId()
+	);
+
+	// Restrict the panel to only show on the coming soon page tempalte
+	if ( postId !== 'woocommerce/woocommerce//coming-soon' ) {
+		return null;
+	}
+
+	// For whatever reason,  if PluginDocumentSettingPanel is not available, abort.
+	if ( ! PluginDocumentSettingPanel ) {
+		return null;
+	}
+
+	// comingSoonNewsletter is set up from LaunchYourStore.php
+	const { mailpoet_connected, mailpoet_installed } =
+		window.comingSoonNewsletter || {};
+
+	// If MailPoet is connected, don't show the panel
+	if ( mailpoet_connected ) {
+		return null;
+	}
+
+	// If MailPoet is not installed, link to the plugin install page.
+	// Otherwise, link to the MailPoet homepage to connect.
+	const setupLink = ! mailpoet_installed
+		? getAdminLink(
+				'plugin-install.php?tab=plugin-information&plugin=mailpoet'
+		  )
+		: getAdminLink( 'admin.php?page=mailpoet-homepage' );
+
+	return (
+		<PluginDocumentSettingPanel
+			name="coming-soon-newsletter-mailpoet-setting-panel"
+			title={ __( 'Launch Newsletter', 'woocommerce' ) }
+			className="coming-soon-newsletter-mailpoet-setting-panel"
+		>
+			<div className="coming-soon-newsletter-mailpoet-setting-panel-body">
+				<h3>{ __( 'Set up email marketing', 'woocommerce' ) }</h3>
+				<p>
+					{ __(
+						'To collect email and notify your subscribers, set up MailPoet.',
+						'woocommerce'
+					) }
+				</p>
+				<Button variant="link" href={ setupLink }>
+					{ __( 'Set up MailPoet', 'woocommerce' ) }
+				</Button>
+			</div>
+		</PluginDocumentSettingPanel>
+	);
+};
+
+registerPlugin( 'plugin-coming-soon-newsletter-setting-panel', {
+	render: PluginComingSoonNewsletterMailpoet,
+	icon: 'palmtree',
+} );
