@@ -8,6 +8,7 @@ import {__} from "@wordpress/i18n";
 /**
  * Internal dependencies
  */
+import './style.scss';
 import { SETTINGS_SLOT_FILL_CONSTANT } from '../settings/settings-slots';
 
 const { Fill } = createSlotFill( SETTINGS_SLOT_FILL_CONSTANT );
@@ -21,8 +22,10 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 } ) => {
 	return (
 		<Fill>
-			<div>
-				<div>
+			<div className="wc-settings-email-preview-container">
+				<div className="wc-settings-email-preview-controls"></div>
+				<div className="wc-settings-email-preview">
+					<div className="wc-settings-email-preview-header"></div>
 					<iframe
 						src={ previewUrl }
 						title={ __( 'Email preview frame', 'woocommerce' ) }

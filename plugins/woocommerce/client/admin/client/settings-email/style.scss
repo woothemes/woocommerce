@@ -1,0 +1,37 @@
+$wc-setting-email-preview-gap: 16px;
+
+.wc-settings-email-preview-container {
+	background: $gray-100;
+	border: 1px solid $gray-200;
+	border-radius: 4px;
+	display: grid;
+	grid-gap: $wc-setting-email-preview-gap;
+	grid-template-rows: 36px 1fr;
+	height: 960px;
+	padding: $wc-setting-email-preview-gap;
+	width: 652px;
+}
+
+.wc-settings-email-preview-controls {
+
+}
+
+.wc-settings-email-preview {
+	background: #fff;
+	border: 1px solid $gray-200;
+	border-radius: 4px;
+	display: grid;
+	grid-template-rows: 100px 1fr;
+
+	iframe {
+		border-radius: 0 0 3px 3px;
+		display: block;
+		height: 100%;
+		width: 100%;
+	}
+}
+
+.wc-settings-email-preview-header {
+	border-bottom: 1px solid $gray-200;
+	padding: $wc-setting-email-preview-gap;
+}
