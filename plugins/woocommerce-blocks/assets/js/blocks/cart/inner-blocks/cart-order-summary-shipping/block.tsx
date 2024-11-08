@@ -73,9 +73,7 @@ const Block = ( { className }: { className: string } ): JSX.Element | null => {
 					}
 					collaterals={
 						<>
-							{ ! isShippingCalculatorOpen && (
-								<ShippingRateSelector />
-							) }
+							<ShippingRateSelector />
 							{ ! showCalculator &&
 								allRatesAreCollectable( shippingRates ) && (
 									<div className="wc-block-components-totals-shipping__delivery-options-notice">

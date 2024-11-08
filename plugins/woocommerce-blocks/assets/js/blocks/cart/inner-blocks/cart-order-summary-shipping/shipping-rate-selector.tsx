@@ -11,7 +11,7 @@ import {
 	isAddressComplete,
 } from '@woocommerce/base-utils';
 
-export const ShippingRateSelector = (): JSX.Element => {
+export const ShippingRateSelector = () => {
 	const { shippingRates, isLoadingRates, shippingAddress } = useStoreCart();
 
 	const hasCompleteAddress = isAddressComplete( shippingAddress, [

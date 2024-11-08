@@ -4,9 +4,13 @@
 import { __ } from '@wordpress/i18n';
 import { formatShippingAddress } from '@woocommerce/base-utils';
 import { useStoreCart } from '@woocommerce/base-context';
-import { ShippingCalculatorPanel } from '@woocommerce/base-components/cart-checkout';
+import {
+	ShippingCalculatorPanel,
+	ShippingCalculatorContext,
+} from '@woocommerce/base-components/cart-checkout';
 import { useSelect } from '@wordpress/data';
 import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { useContext } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -18,6 +22,8 @@ export const ShippingAddress = (): JSX.Element => {
 	const prefersCollection = useSelect( ( select ) =>
 		select( CHECKOUT_STORE_KEY ).prefersCollection()
 	);
+
+	const { showCalculator } = useContext( ShippingCalculatorContext );
 
 	const formattedAddress = prefersCollection
 		? getPickupLocation( shippingRates )
@@ -47,7 +53,7 @@ export const ShippingAddress = (): JSX.Element => {
 
 	return (
 		<div className="wc-block-components-shipping-address">
-			<ShippingCalculatorPanel title={ title } />
+			{ showCalculator && <ShippingCalculatorPanel title={ title } /> }
 		</div>
 	);
 };
