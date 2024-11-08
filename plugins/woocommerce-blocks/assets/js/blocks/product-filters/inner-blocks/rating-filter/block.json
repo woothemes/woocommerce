@@ -17,7 +17,7 @@
 	],
 	"usesContext": [
 		"query",
-		"queryId"
+		"filterParams"
 	],
 	"attributes": {
 		"className": {
@@ -28,17 +28,17 @@
 			"type": "boolean",
 			"default": false
 		},
-		"displayStyle": {
+		"minRating": {
 			"type": "string",
-			"default": "list"
-		},
-		"selectType": {
-			"type": "string",
-			"default": "multiple"
+			"default": "0"
 		},
 		"isPreview": {
 			"type": "boolean",
 			"default": false
+		},
+		"clearButton": {
+			"type": "boolean",
+			"default":true
 		}
 	},
 	"textdomain": "woocommerce",

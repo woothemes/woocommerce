@@ -15,10 +15,11 @@ import {
 	useCollectionData,
 } from '@woocommerce/base-context/hooks';
 import { getSettingWithCoercion } from '@woocommerce/settings';
-import { isBoolean, isObject, objectHasProp } from '@woocommerce/types';
+import { isBoolean } from '@woocommerce/types';
 import { useState, useMemo, useEffect } from '@wordpress/element';
 import { withSpokenMessages } from '@wordpress/components';
 import type { BlockEditProps } from '@wordpress/blocks';
+import type { WCStoreV1ProductsCollectionProps } from '@woocommerce/blocks/product-collection/types';
 
 /**
  * Internal dependencies
@@ -26,17 +27,18 @@ import type { BlockEditProps } from '@wordpress/blocks';
 import { previewOptions } from './preview';
 import { getActiveFilters } from './utils';
 import { Inspector } from './components/inspector';
-import { PreviewDropdown } from '../components/preview-dropdown';
 import { getAllowedBlocks } from '../../utils';
 import { EXCLUDED_BLOCKS } from '../../constants';
 import { Notice } from '../../components/notice';
 import type { Attributes } from './types';
 import './style.scss';
+import { InitialDisabled } from '../../components/initial-disabled';
+import { useProductFilterClearButtonManager } from '../../hooks/use-product-filter-clear-button-manager';
 
 const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 	const { attributes, setAttributes } = props;
 
-	const { displayStyle, isPreview, showCounts, selectType } = attributes;
+	const { isPreview, showCounts, minRating } = attributes;
 
 	const { children, ...innerBlocksProps } = useInnerBlocksProps(
 		useBlockProps(),
@@ -92,8 +94,8 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 
 	const [ queryState ] = useQueryStateByContext();
 
-	const { results: filteredCounts, isLoading: filteredCountsLoading } =
-		useCollectionData( {
+	const { results: collectionFilters, isLoading: filteredCountsLoading } =
+		useCollectionData< WCStoreV1ProductsCollectionProps >( {
 			queryRating: true,
 			queryState,
 			isEditor: true,
@@ -121,55 +123,53 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 	 * and filtered counts to get a list of options to display.
 	 */
 	useEffect( () => {
-		/**
-		 * Checks if a status slug is in the query state.
-		 *
-		 * @param {string} queryStatus The status slug to check.
-		 */
-
 		if ( filteredCountsLoading || isPreview ) {
 			return;
 		}
 
-		const orderedRatings =
-			! filteredCountsLoading &&
-			objectHasProp( filteredCounts, 'rating_counts' ) &&
-			Array.isArray( filteredCounts.rating_counts )
-				? [ ...filteredCounts.rating_counts ].reverse()
-				: [];
-
-		if ( orderedRatings.length === 0 ) {
+		if ( collectionFilters?.rating_counts?.length === 0 ) {
 			setDisplayedOptions( previewOptions );
 			return;
 		}
 
-		const newOptions = orderedRatings
-			.filter(
-				( item ) => isObject( item ) && Object.keys( item ).length > 0
-			)
-			.map( ( item ) => {
-				return {
-					label: (
-						<Rating
-							key={ item?.rating }
-							rating={ item?.rating }
-							ratedProductsCount={
-								showCounts ? item?.count : null
-							}
-						/>
-					),
-					value: item?.rating?.toString(),
-				};
-			} );
+		const minimumRating =
+			typeof minRating === 'string' ? parseFloat( minRating ) : 0;
 
-		setDisplayedOptions( newOptions );
+		/*
+		 * Process the ratings counts:
+		 * - Sort the ratings in descending order
+		 *   Todo: consider to handle this in the API request
+		 * - Filter out ratings below the minimum rating
+		 * - Map the ratings to the format expected by the filter component
+		 */
+		const productsRating = collectionFilters.rating_counts
+			.sort( ( a, b ) => b.rating - a.rating )
+			.filter( ( { rating } ) => rating >= minimumRating )
+			.map( ( { rating, count } ) => ( {
+				label: (
+					<Rating
+						key={ rating }
+						rating={ rating }
+						ratedProductsCount={ showCounts ? count : null }
+					/>
+				),
+				value: rating?.toString(),
+			} ) );
+
+		setDisplayedOptions( productsRating );
 	}, [
 		showCounts,
 		isPreview,
-		filteredCounts,
+		collectionFilters,
 		filteredCountsLoading,
 		productRatingsQuery,
+		minRating,
 	] );
+
+	useProductFilterClearButtonManager( {
+		clientId: props.clientId,
+		showClearButton: attributes.clearButton,
+	} );
 
 	if ( ! filteredCountsLoading && displayedOptions.length === 0 ) {
 		return null;
@@ -185,7 +185,8 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 		return null;
 	}
 
-	const showNoProductsNotice = ! filteredCountsLoading && ! filteredCounts;
+	const showNoProductsNotice =
+		! filteredCountsLoading && ! collectionFilters.rating_counts?.length;
 
 	return (
 		<>
@@ -195,28 +196,20 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 			/>
 
 			<div { ...innerBlocksProps }>
-				{ showNoProductsNotice && (
-					<Notice>
-						{ __(
-							"Your store doesn't have any products with ratings yet. This filter option will display when a product receives a review.",
-							'woocommerce'
-						) }
-					</Notice>
-				) }
-				<div
-					className={ clsx( `style-${ displayStyle }`, {
-						'is-loading': isLoading,
-					} ) }
-				>
-					{ displayStyle === 'dropdown' ? (
-						<PreviewDropdown
-							placeholder={
-								selectType === 'single'
-									? __( 'Select a rating', 'woocommerce' )
-									: __( 'Select ratings', 'woocommerce' )
-							}
-						/>
-					) : (
+				<InitialDisabled>
+					{ showNoProductsNotice && (
+						<Notice>
+							{ __(
+								"Your store doesn't have any products with ratings yet. This filter option will display when a product receives a review.",
+								'woocommerce'
+							) }
+						</Notice>
+					) }
+					<div
+						className={ clsx( {
+							'is-loading': isLoading,
+						} ) }
+					>
 						<BlockContextProvider
 							value={ {
 								filterData: {
@@ -227,8 +220,8 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 						>
 							{ children }
 						</BlockContextProvider>
-					) }
-				</div>
+					</div>
+				</InitialDisabled>
 			</div>
 		</>
 	);

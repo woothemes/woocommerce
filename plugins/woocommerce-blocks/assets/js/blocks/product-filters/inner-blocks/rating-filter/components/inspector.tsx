@@ -3,92 +3,134 @@
  */
 import { InspectorControls } from '@wordpress/block-editor';
 import { BlockEditProps } from '@wordpress/blocks';
-import { __, _x } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import {
+	Flex,
+	FlexItem,
 	PanelBody,
+	RadioControl,
 	ToggleControl,
-	// @ts-expect-error - no types.
-	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
-	__experimentalToggleGroupControl as ToggleGroupControl,
-	// @ts-expect-error - no types.
-	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
-	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import { Attributes } from '../types';
+import RatingStars from './rating-stars';
+import type { Attributes } from '../types';
+
+function MinimumRatingLabel( {
+	stars,
+	ariaLabel,
+}: {
+	stars: number;
+	ariaLabel: string;
+} ) {
+	return (
+		<Flex
+			title={ ariaLabel }
+			aria-label={ ariaLabel }
+			justify="flex-start"
+			gap={ 1 }
+		>
+			<FlexItem>
+				<RatingStars stars={ stars } />
+			</FlexItem>
+			<FlexItem>{ __( '& up', 'woocommerce' ) }</FlexItem>
+		</Flex>
+	);
+}
 
 export const Inspector = ( {
 	attributes,
 	setAttributes,
 }: Pick< BlockEditProps< Attributes >, 'attributes' | 'setAttributes' > ) => {
-	const { showCounts, displayStyle, selectType } = attributes;
+	const { showCounts, minRating, clearButton } = attributes;
+
+	function setCountVisibility( value: boolean ) {
+		setAttributes( {
+			showCounts: value,
+		} );
+	}
+
+	function setMinRating( value: string ) {
+		setAttributes( {
+			minRating: value,
+		} );
+	}
+
 	return (
-		<InspectorControls key="inspector">
-			<PanelBody title={ __( 'Display Settings', 'woocommerce' ) }>
-				<ToggleControl
-					label={ __( 'Display product count', 'woocommerce' ) }
-					checked={ showCounts }
-					onChange={ () =>
-						setAttributes( {
-							showCounts: ! showCounts,
-						} )
-					}
-				/>
-				{ displayStyle === 'dropdown' && (
-					<ToggleGroupControl
-						label={ __(
-							'Allow selecting multiple options?',
-							'woocommerce'
-						) }
-						value={ selectType || 'multiple' }
-						onChange={ ( value: string ) =>
-							setAttributes( {
-								selectType: value,
-							} )
+		<>
+			<InspectorControls key="inspector">
+				<PanelBody title={ __( 'Display', 'woocommerce' ) }>
+					<ToggleControl
+						label={ __( 'Display product count', 'woocommerce' ) }
+						checked={ showCounts }
+						onChange={ setCountVisibility }
+					/>
+				</PanelBody>
+
+				<PanelBody title={ __( 'Minimum rating', 'woocommerce' ) }>
+					<RadioControl
+						selected={ minRating }
+						className="wc-block-rating-filter__rating-control"
+						options={ [
+							{
+								label: (
+									<MinimumRatingLabel
+										stars={ 4 }
+										ariaLabel={ __(
+											'Four stars and up',
+											'woocommerce'
+										) }
+									/>
+								),
+								value: '4',
+							},
+							{
+								label: (
+									<MinimumRatingLabel
+										stars={ 3 }
+										ariaLabel={ __(
+											'Three stars and up',
+											'woocommerce'
+										) }
+									/>
+								),
+								value: '3',
+							},
+							{
+								label: (
+									<MinimumRatingLabel
+										stars={ 2 }
+										ariaLabel={ __(
+											'Two stars and up',
+											'woocommerce'
+										) }
+									/>
+								),
+								value: '2',
+							},
+							{
+								label: __( 'No limit', 'woocommerce' ),
+								value: '0', // no limit
+							},
+						] }
+						onChange={ setMinRating }
+					/>
+				</PanelBody>
+			</InspectorControls>
+
+			<InspectorControls group="styles">
+				<PanelBody title={ __( 'Display', 'woocommerce' ) }>
+					<ToggleControl
+						label={ __( 'Clear button', 'woocommerce' ) }
+						checked={ clearButton }
+						onChange={ ( value ) =>
+							setAttributes( { clearButton: value } )
 						}
-						className="wc-block-attribute-filter__multiple-toggle"
-					>
-						<ToggleGroupControlOption
-							value="multiple"
-							label={ _x(
-								'Multiple',
-								'Number of filters',
-								'woocommerce'
-							) }
-						/>
-						<ToggleGroupControlOption
-							value="single"
-							label={ _x(
-								'Single',
-								'Number of filters',
-								'woocommerce'
-							) }
-						/>
-					</ToggleGroupControl>
-				) }
-				<ToggleGroupControl
-					label={ __( 'Display Style', 'woocommerce' ) }
-					value={ displayStyle }
-					onChange={ ( value: string ) =>
-						setAttributes( {
-							displayStyle: value,
-						} )
-					}
-					className="wc-block-attribute-filter__display-toggle"
-				>
-					<ToggleGroupControlOption
-						value="list"
-						label={ __( 'List', 'woocommerce' ) }
 					/>
-					<ToggleGroupControlOption
-						value="dropdown"
-						label={ __( 'Dropdown', 'woocommerce' ) }
-					/>
-				</ToggleGroupControl>
-			</PanelBody>
-		</InspectorControls>
+				</PanelBody>
+			</InspectorControls>
+		</>
 	);
 };

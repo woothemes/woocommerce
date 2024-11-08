@@ -5,6 +5,7 @@
 		"product-block-editor": true,
 		"product-data-views": false,
 		"experimental-blocks": true,
+		"coming-soon-newsletter-template": false,
 		"coupons": true,
 		"core-profiler": true,
 		"customize-store": true,
@@ -39,6 +40,7 @@
 		"product-editor-template-system": false,
 		"blueprint": true,
 		"reactify-classic-payments-settings": false,
-		"use-wp-horizon": false
+		"use-wp-horizon": false,
+		"add-to-cart-with-options-stepper-layout": true
 	}
 }
