@@ -23,9 +23,12 @@ export const UpgradeNotice = ( props: { upgradeBlock: () => void } ) => {
 
 	const handleClick = () => {
 		props.upgradeBlock();
-		recordEvent( 'product_collection_block_transform', {
-			transform_to: 'product_collection',
-		} );
+		recordEvent(
+			'blocks_product_collection_migration_between_products_beta',
+			{
+				transform_to: 'product_collection',
+			}
+		);
 	};
 
 	return (
