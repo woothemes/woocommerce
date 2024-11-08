@@ -72,7 +72,7 @@ const Block = ( { className }: { className: string } ): JSX.Element | null => {
 						) : (
 							<span className="wc-block-components-shipping-placeholder__value">
 								{ __(
-									'Calculated on checkout',
+									'Calculated at checkout',
 									'woocommerce'
 								) }
 							</span>
