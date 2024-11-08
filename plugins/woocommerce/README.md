@@ -24,7 +24,7 @@ Once you have verified the prerequisites, you can start the development environm
 ## Watch for changes in WooCommerce and all of its dependencies.
 pnpm --filter='@woocommerce/plugin-woocommerce' watch:build
 
-# Start wp-env based development environment, which will be accessible via http://localhost:8888/.
+# Start a wp-env based development environment, which will be accessible via http://localhost:8888/.
 # This step is optional and you can skip it if you are running WooCommerce on a custom setup.
 pnpm --filter='@woocommerce/plugin-woocommerce' env:dev
 ```
