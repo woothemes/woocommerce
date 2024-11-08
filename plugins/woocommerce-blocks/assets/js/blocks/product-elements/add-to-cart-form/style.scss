@@ -18,16 +18,17 @@
 	width: unset;
 
 	form.cart {
+		--whole-width-in-grid: span 9999; // A large number to span the whole width of the grid.
 		&::before {
 			content: " ";
-			grid-column: span 9999;
+			grid-column: var(--whole-width-in-grid);
 		}
 
 		display: grid;
 
-		& > * {
+		> * {
 			// Hack to ensure input + button stat on the same row, together.
-			grid-column: span 9999;
+			grid-column: var(--whole-width-in-grid);
 		}
 
 		> .quantity,
