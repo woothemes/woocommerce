@@ -7,7 +7,7 @@
  */
 import './settings-payments-main.scss';
 import { PaymentGateways } from '~/settings-payments/components/payment-gateways';
-import { OtherPaymentGateways } from '~/settings-payments/components/other-payment-gateways/other-payment-gateways';
+import { OtherPaymentGateways } from '~/settings-payments/components/other-payment-gateways';
 
 export const SettingsPaymentsMain = () => {
 	return (
