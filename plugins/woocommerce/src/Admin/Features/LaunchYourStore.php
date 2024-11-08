@@ -307,6 +307,15 @@ class LaunchYourStore {
 	 * @return void
 	 */
 	public function load_newsletter_scripts() {
+		$screen = get_current_screen();
+		if ( ! $screen instanceof \WP_Screen ) {
+			return;
+		}
+
+		if ( 'site-editor' !== $screen->id ) {
+			return;
+		}
+
 		$mailpoet = array(
 			'mailpoet_installed' => PluginsHelper::is_plugin_installed( 'mailpoet' ),
 			'mailpoet_connected' => $this->is_mailpoet_connected(),
