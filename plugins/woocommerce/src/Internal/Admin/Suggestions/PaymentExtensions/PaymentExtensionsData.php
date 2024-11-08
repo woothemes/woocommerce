@@ -80,7 +80,21 @@ class PaymentExtensionsData {
 	 * Each payment extension can be identified by its ID (the shorthand version) or by an array with the following format:
 	 * array(
 	 *   'id' => 'woopayments', // This is required.
-	 *   'type' => 'provider', // Overrides the default type.
+	 *   'type' => 'provider', // Overrides the 'type' key.
+	 *   // Special entry that instructs the system to append the given items to a list-type entry.
+	 *   // If the original entry is not a list, we will ignore the instruction.
+	 *   // If the original entry does not exist, we will create it.
+	 *   // This is useful when you want to add tags to an existing list of tags.
+	 *   '_append' => array(
+	 *		 'tags' => array( self::TAG_PREFERRED ),
+	 *   ),
+	 *   // Special entry that instructs the system to remove the given items from a list-type entry.
+	 *   // If the original entry is not a list, we will ignore the instruction.
+	 *   // If the original entry does not exist, we will create it.
+	 *   // This is useful when you want to remove tags from an existing list of tags.
+	 *   '_remove' => array(
+	 *       'tags' => array( self::TAG_PREFERRED ),
+	 *   )
 	 * )
 	 * Use the extended format when you need to override the extension's default details for a particular country.
 	 *
