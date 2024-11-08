@@ -17,8 +17,7 @@ interface StatusBadgeProps {
 		| 'needs_setup'
 		| 'test_mode'
 		| 'recommended'
-		| 'has_incentive'
-		| 'info';
+		| 'has_incentive';
 	message?: string;
 }
 
@@ -51,9 +50,6 @@ export const StatusBadge = ( { status, message }: StatusBadgeProps ) => {
 				return __( 'Test mode', 'woocommerce' );
 			case 'recommended':
 				return __( 'Recommended', 'woocommerce' );
-			case 'has_incentive':
-				// TODO: in this case we'd need to pass the incentive message as a prop.
-				return __( 'Has incentive', 'woocommerce' );
 			default:
 				return '';
 		}
