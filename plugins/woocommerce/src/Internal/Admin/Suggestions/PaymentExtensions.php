@@ -1,18 +1,18 @@
 <?php
 /**
- * Provides the raw data related to our partner payment extensions.
+ * Provides the data related to our partner payment extensions.
  */
 
-namespace Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensions;
+namespace Automattic\WooCommerce\Internal\Admin\Suggestions;
 
 defined( 'ABSPATH' ) || exit;
 
 use Automattic\WooCommerce\Internal\Utilities\ArrayUtil;
 
 /**
- * Payment extensions raw data source.
+ * Payment extensions data source.
  */
-class PaymentExtensionsData {
+class PaymentExtensions {
 
 	/*
 	 * The unique IDs for the payment extension suggestions.
@@ -1136,6 +1136,8 @@ class PaymentExtensionsData {
 
 	/**
 	 * Get the base details for a specific extension.
+	 *
+	 * @see self::standardize_extension_details() for the supported entries.
 	 *
 	 * @return ?array The extension base details.
 	 *                Null if the extension is not one we have details for.
