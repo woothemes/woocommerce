@@ -60,4 +60,12 @@ describe( 'StatusBadge component', () => {
 			'woocommerce-status-badge--info'
 		);
 	} );
+
+	it( 'renders the correct custom message when message prop is passed', () => {
+		const customMessage = 'Custom message';
+		const { getByText } = render(
+			<StatusBadge status="active" message={ customMessage } />
+		);
+		expect( getByText( customMessage ) ).toBeInTheDocument();
+	} );
 } );
