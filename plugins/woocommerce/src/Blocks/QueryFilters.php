@@ -85,10 +85,11 @@ final class QueryFilters {
 	/**
 	 * Get stock status counts for the current products.
 	 *
-	 * @param array $query_vars The WP_Query arguments.
+	 * @param array  $query_vars The WP_Query arguments.
+	 * @param array  $attributes Block attributes.
 	 * @return array status=>count pairs.
 	 */
-	public function get_stock_status_counts( $query_vars ) {
+	public function get_stock_status_counts( $query_vars, $attributes ) {
 		global $wpdb;
 		$stock_status_options = array_map( 'esc_sql', array_keys( wc_get_product_stock_status_options() ) );
 
@@ -108,6 +109,10 @@ final class QueryFilters {
 		$stock_status_counts = array();
 
 		foreach ( $stock_status_options as $status ) {
+			if ( empty( $attributes[ $status ] ) ) {
+				continue;
+			}
+
 			$stock_status_count_sql = $this->generate_stock_status_count_query( $status, $product_query_sql, $stock_status_options );
 
 			$result = $wpdb->get_row( $stock_status_count_sql ); // phpcs:ignore

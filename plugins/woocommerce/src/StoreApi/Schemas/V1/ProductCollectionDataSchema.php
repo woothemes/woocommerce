@@ -118,6 +118,29 @@ class ProductCollectionDataSchema extends AbstractSchema {
 					],
 				],
 			],
+			'onsale_status_counts' => [
+				'description' => __( 'Returns number of products with each onsale status.', 'woocommerce' ),
+				'type'        => [ 'array', 'null' ],
+				'context'     => [ 'view', 'edit' ],
+				'readonly'    => true,
+				'items'       => [
+					'type'       => 'object',
+					'properties' => [
+						'status' => [
+							'description' => __( 'Status', 'woocommerce' ),
+							'type'        => 'string',
+							'context'     => [ 'view', 'edit' ],
+							'readonly'    => true,
+						],
+						'count'  => [
+							'description' => __( 'Number of products.', 'woocommerce' ),
+							'type'        => 'integer',
+							'context'     => [ 'view', 'edit' ],
+							'readonly'    => true,
+						],
+					],
+				],
+			],
 		];
 	}
 
@@ -129,15 +152,16 @@ class ProductCollectionDataSchema extends AbstractSchema {
 	 */
 	public function get_item_response( $data ) {
 		return [
-			'price_range'         => ! is_null( $data['min_price'] ) && ! is_null( $data['max_price'] ) ? (object) $this->prepare_currency_response(
+			'price_range'          => ! is_null( $data['min_price'] ) && ! is_null( $data['max_price'] ) ? (object) $this->prepare_currency_response(
 				[
 					'min_price' => $this->prepare_money_response( $data['min_price'], wc_get_price_decimals() ),
 					'max_price' => $this->prepare_money_response( $data['max_price'], wc_get_price_decimals() ),
 				]
 			) : null,
-			'attribute_counts'    => $data['attribute_counts'],
-			'rating_counts'       => $data['rating_counts'],
-			'stock_status_counts' => $data['stock_status_counts'],
+			'attribute_counts'     => $data['attribute_counts'],
+			'rating_counts'        => $data['rating_counts'],
+			'stock_status_counts'  => $data['stock_status_counts'],
+			'onsale_status_counts' => $data['onsale_status_counts'],
 		];
 	}
 }

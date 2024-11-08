@@ -79,14 +79,20 @@ const Edit = ( props: EditProps ) => {
 		{}
 	);
 
+	const statusOptions: Record< string, string > = getSetting(
+		'statusOptions',
+		{}
+	);
+
 	const { results: filteredCounts, isLoading } =
 		useCollectionData< WCStoreV1ProductsCollectionProps >( {
 			queryStock: true,
+			queryOnSale: true,
 			queryState: {},
 			isEditor: true,
 		} );
 
-	const items = useMemo( () => {
+	const stockStatusItems = useMemo( () => {
 		return Object.entries( stockStatusOptions )
 			.map( ( [ key, value ] ) => {
 				const count =
@@ -104,6 +110,27 @@ const Edit = ( props: EditProps ) => {
 			} )
 			.filter( ( item ) => ! hideEmpty || item.count > 0 );
 	}, [ stockStatusOptions, filteredCounts, showCounts, hideEmpty ] );
+
+	const statusItems = useMemo( () => {
+		return Object.entries( statusOptions )
+			.map( ( [ key, value ] ) => {
+				const count =
+					filteredCounts?.onsale_status_counts?.find(
+						( item ) => item.status === key
+					)?.count ?? 0;
+
+				return {
+					value: key,
+					label: showCounts
+						? `${ value } (${ count.toString() })`
+						: value,
+					count,
+				};
+			} )
+			.filter( ( item ) => ! hideEmpty || item.count > 0 );
+	}, [ statusOptions, filteredCounts, showCounts, hideEmpty ] );
+
+	const items = [ ...stockStatusItems, ...statusItems ];
 
 	useProductFilterClearButtonManager( {
 		clientId,

@@ -45,6 +45,7 @@ interface UseCollectionDataProps {
 	queryPrices?: boolean;
 	queryStock?: boolean;
 	queryRating?: boolean;
+	queryOnSale?: boolean;
 	queryState: Record< string, unknown >;
 	isEditor?: boolean;
 }
@@ -54,6 +55,7 @@ export const useCollectionData = < T >( {
 	queryPrices,
 	queryStock,
 	queryRating,
+	queryOnSale,
 	queryState,
 	isEditor = false,
 }: UseCollectionDataProps ) => {
@@ -71,11 +73,14 @@ export const useCollectionData = < T >( {
 	] = useQueryStateByKey( 'calculate_stock_status_counts', null, context );
 	const [ calculateRatingQueryState, setCalculateRatingQueryState ] =
 		useQueryStateByKey( 'calculate_rating_counts', null, context );
+	const [ calculateOnSaleQueryState, setCalculateOnSaleQueryState ] =
+		useQueryStateByKey( 'calculate_onsale_status_counts', null, context );
 
 	const currentQueryAttribute = useShallowEqual( queryAttribute || {} );
 	const currentQueryPrices = useShallowEqual( queryPrices );
 	const currentQueryStock = useShallowEqual( queryStock );
 	const currentQueryRating = useShallowEqual( queryRating );
+	const currentQueryOnSale = useShallowEqual( queryOnSale );
 
 	useEffect( () => {
 		if (
@@ -141,6 +146,19 @@ export const useCollectionData = < T >( {
 		currentQueryRating,
 		setCalculateRatingQueryState,
 		calculateRatingQueryState,
+	] );
+
+	useEffect( () => {
+		if (
+			calculateOnSaleQueryState !== currentQueryOnSale &&
+			currentQueryOnSale !== undefined
+		) {
+			setCalculateOnSaleQueryState( currentQueryOnSale );
+		}
+	}, [
+		currentQueryOnSale,
+		setCalculateOnSaleQueryState,
+		calculateOnSaleQueryState,
 	] );
 
 	// Defer the select query so all collection-data query vars can be gathered.
