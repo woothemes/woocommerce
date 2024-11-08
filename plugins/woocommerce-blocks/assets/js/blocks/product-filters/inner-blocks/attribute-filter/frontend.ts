@@ -27,6 +27,18 @@ store( 'woocommerce/product-filter-attribute', {
 				params[ `filter_${ attributeSlug }` ]
 			);
 		},
+		get isSelected() {
+			const { params } = getContext< ProductFiltersContext >(
+				'woocommerce/product-filters'
+			);
+			const { attributeSlug } = getContext< AttributeFilterContext >();
+			const { props } = getElement();
+
+			return (
+				`filter_${ attributeSlug }` in params &&
+				params[ `filter_${ attributeSlug }` ].includes( props?.value )
+			);
+		},
 	},
 	actions: {
 		toggleFilter: () => {

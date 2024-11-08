@@ -225,10 +225,10 @@ final class ProductFilterAttribute extends AbstractBlock {
 
 			$filter_context = array(
 				'items'   => $attribute_options,
+				'parent'  => $this->get_full_block_name(),
 				'actions' => array(
 					'toggleFilter' => "{$this->get_full_block_name()}::actions.toggleFilter",
 				),
-
 			);
 		}
 
