@@ -95,7 +95,11 @@ declare global {
 			nonces: {
 				gateway_toggle?: string;
 			}
-		}
+		},
+		comingSoonNewsletter: {
+			mailpoet_installed: boolean;
+			mailpoet_connected: boolean;
+		};
 	}
 }
 

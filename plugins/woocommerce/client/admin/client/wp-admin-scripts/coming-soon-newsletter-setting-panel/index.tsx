@@ -12,15 +12,6 @@ import { getAdminLink } from '@woocommerce/settings';
  */
 import './style.scss';
 
-declare global {
-	interface Window {
-		comingSoonNewsletter: {
-			mailpoet_installed: boolean;
-			mailpoet_connected: boolean;
-		};
-	}
-}
-
 const PluginComingSoonNewsletterMailpoet = () => {
 	// @ts-ignore temp fix for missing type -- I wasn't able to build wc admin with @wordpress/editor installed.
 	const { PluginDocumentSettingPanel } = window.wp.editor;
