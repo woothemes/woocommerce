@@ -120,8 +120,10 @@ describe( 'ShippingAddress', () => {
 			</ShippingCalculatorContext.Provider>
 		);
 		expect(
-			screen.getByText(
-				/Collection from 123 Easy Street, New York, 12345/
+			screen.getByText( ( content ) =>
+				/Collection from 123 Easy Street, New York, 12345/.test(
+					content
+				)
 			)
 		).toBeInTheDocument();
 	} );
@@ -149,8 +151,10 @@ describe( 'ShippingAddress', () => {
 
 		render( <ShippingAddress /> );
 		expect(
-			screen.getByText(
-				/Collection from 123 Easy Street, New York, 12345/
+			screen.getByText( ( content ) =>
+				/Collection from 123 Easy Street, New York, 12345/.test(
+					content
+				)
 			)
 		).toBeInTheDocument();
 	} );
