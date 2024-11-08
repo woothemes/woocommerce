@@ -292,7 +292,8 @@ class CartController {
 			$this->get_product_id( $product ),
 			$request['quantity'],
 			$this->get_variation_id( $product ),
-			$request['variation']
+			$request['variation'],
+			$request['cart_item_data']
 		);
 
 		if ( ! $passed_validation ) {

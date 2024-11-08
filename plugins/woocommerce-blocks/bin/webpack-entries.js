@@ -91,14 +91,6 @@ const blocks = {
 	'product-filters': {
 		isExperimental: true,
 	},
-	'product-filters-overlay': {
-		isExperimental: true,
-		customDir: 'product-filters/inner-blocks/overlay',
-	},
-	'product-filters-overlay-navigation': {
-		isExperimental: true,
-		customDir: 'product-filters/inner-blocks/overlay-navigation',
-	},
 	'product-filter-status': {
 		isExperimental: true,
 		customDir: 'product-filters/inner-blocks/status-filter',

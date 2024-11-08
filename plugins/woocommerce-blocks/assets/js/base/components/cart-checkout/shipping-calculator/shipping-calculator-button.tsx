@@ -31,7 +31,6 @@ export const ShippingCalculatorButton = ( {
 		<Button
 			render={ <span /> }
 			className="wc-block-components-totals-shipping__change-address__link"
-			id="wc-block-components-totals-shipping__change-address__link"
 			onClick={ ( e ) => {
 				e.preventDefault();
 				setIsShippingCalculatorOpen( ! isShippingCalculatorOpen );

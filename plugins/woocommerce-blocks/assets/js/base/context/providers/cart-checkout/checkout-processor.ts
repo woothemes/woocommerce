@@ -225,6 +225,9 @@ const CheckoutProcessor = () => {
 
 	// Redirect when checkout is complete and there is a redirect url.
 	useEffect( () => {
+		window.localStorage.removeItem(
+			'WOOCOMMERCE_CHECKOUT_IS_CUSTOMER_DATA_DIRTY'
+		);
 		if ( currentRedirectUrl.current ) {
 			window.location.href = currentRedirectUrl.current;
 		}

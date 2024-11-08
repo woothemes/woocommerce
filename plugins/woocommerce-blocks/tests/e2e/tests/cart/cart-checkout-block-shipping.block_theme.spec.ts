@@ -78,7 +78,7 @@ test.describe( 'Shopper → Shipping', () => {
 
 		await expect(
 			userPage.getByText(
-				'Shipping options will be displayed here after entering your full shipping address'
+				'Enter a shipping address to view shipping options.'
 			)
 		).toBeVisible();
 
@@ -86,7 +86,7 @@ test.describe( 'Shopper → Shipping', () => {
 
 		await expect(
 			userPage.getByText(
-				'Shipping options will be displayed here after entering your full shipping address'
+				'Enter a shipping address to view shipping options.'
 			)
 		).toBeHidden();
 	} );
