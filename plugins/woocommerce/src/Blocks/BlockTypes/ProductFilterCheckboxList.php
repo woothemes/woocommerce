@@ -50,6 +50,7 @@ final class ProductFilterCheckboxList extends AbstractBlock {
 		$show_initially              = $context['show_initially'] ?? 15;
 		$remaining_initial_unchecked = count( $checked_items ) > $show_initially ? count( $checked_items ) : $show_initially - count( $checked_items );
 		$count                       = 0;
+		$is_selected_state           = empty( $context['parent'] ) ? '' : $context['parent'] . '::state.isSelected';
 
 		$wrapper_attributes = array(
 			'data-wc-interactive' => esc_attr( $namespace ),
@@ -97,6 +98,7 @@ final class ProductFilterCheckboxList extends AbstractBlock {
 									data-wc-on--change--parent-action="<?php echo esc_attr( $action ); ?>"
 									value="<?php echo esc_attr( $item['value'] ); ?>"
 									<?php checked( $item['selected'], 1 ); ?>
+								data-wc-bind--checked="<?php echo esc_attr( $is_selected_state ); ?>"
 								>
 								<svg class="wc-block-product-filter-checkbox-list__mark" viewBox="0 0 10 8" fill="none" xmlns="http://www.w3.org/2000/svg">
 									<path d="M9.25 1.19922L3.75 6.69922L1 3.94922" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
