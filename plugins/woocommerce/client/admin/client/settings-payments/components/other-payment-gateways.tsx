@@ -15,19 +15,19 @@ import { getAdminSetting } from '~/utils/admin-settings';
 const assetUrl = getAdminSetting( 'wcAdminAssetUrl' );
 
 interface OtherPaymentGatewaysProps {
-	otherPaymentExtensionSuggestions: Plugin[];
+	otherPluginSuggestions: Plugin[];
 	installingPlugin: string | null;
 	setupPlugin: ( plugin: Plugin ) => void;
 }
 
 export const OtherPaymentGateways = ( {
-	otherPaymentExtensionSuggestions,
+	otherPluginSuggestions,
 	installingPlugin,
 	setupPlugin,
 }: OtherPaymentGatewaysProps ) => {
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
-	if ( otherPaymentExtensionSuggestions.length === 0 ) {
+	if ( otherPluginSuggestions.length === 0 ) {
 		return null; // Don't render the component if there are no suggestions
 	}
 
@@ -40,7 +40,7 @@ export const OtherPaymentGateways = ( {
 					</span>
 					{ ! isExpanded && (
 						<>
-							{ otherPaymentExtensionSuggestions.map(
+							{ otherPluginSuggestions.map(
 								( plugin: Plugin ) => (
 									<img
 										key={ plugin.id }
@@ -72,45 +72,39 @@ export const OtherPaymentGateways = ( {
 			{ isExpanded && (
 				<div className="other-payment-gateways__content">
 					<div className="other-payment-gateways__content__grid">
-						{ otherPaymentExtensionSuggestions.map(
-							( plugin: Plugin ) => (
-								<div
-									className="other-payment-gateways__content__grid-item"
-									key={ plugin.id }
-								>
-									<img
-										src={ plugin.image_72x72 }
-										alt={ plugin.title }
-									/>
-									<div className="other-payment-gateways__content__grid-item__content">
-										<span className="other-payment-gateways__content__grid-item__content__title">
-											{ plugin.title }
-										</span>
-										<span className="other-payment-gateways__content__grid-item__content__description">
-											{ plugin.content }
-										</span>
-										<div className="other-payment-gateways__content__grid-item__content__actions">
-											<Button
-												variant="primary"
-												onClick={ () =>
-													setupPlugin( plugin )
-												}
-												isBusy={
-													installingPlugin ===
-													plugin.id
-												}
-												disabled={ !! installingPlugin }
-											>
-												{ __(
-													'Install',
-													'woocommerce'
-												) }
-											</Button>
-										</div>
+						{ otherPluginSuggestions.map( ( plugin: Plugin ) => (
+							<div
+								className="other-payment-gateways__content__grid-item"
+								key={ plugin.id }
+							>
+								<img
+									src={ plugin.image_72x72 }
+									alt={ plugin.title }
+								/>
+								<div className="other-payment-gateways__content__grid-item__content">
+									<span className="other-payment-gateways__content__grid-item__content__title">
+										{ plugin.title }
+									</span>
+									<span className="other-payment-gateways__content__grid-item__content__description">
+										{ plugin.content }
+									</span>
+									<div className="other-payment-gateways__content__grid-item__content__actions">
+										<Button
+											variant="primary"
+											onClick={ () =>
+												setupPlugin( plugin )
+											}
+											isBusy={
+												installingPlugin === plugin.id
+											}
+											disabled={ !! installingPlugin }
+										>
+											{ __( 'Install', 'woocommerce' ) }
+										</Button>
 									</div>
 								</div>
-							)
-						) }
+							</div>
+						) ) }
 					</div>
 					<div className="other-payment-gateways__content__external-icon">
 						<Button

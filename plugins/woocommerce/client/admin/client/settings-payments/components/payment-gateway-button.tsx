@@ -18,12 +18,13 @@ export const PaymentGatewayButton = ( {
 	text_settings = __( 'Manage', 'woocommerce' ),
 	text_enable = __( 'Enable', 'woocommerce' ),
 	text_needs_setup = __( 'Continue setup', 'woocommerce' ),
+	setIsEnabled,
 }: Pick< PaymentGateway, 'id' | 'enabled' | 'needs_setup' | 'settings_url' > & {
 	text_settings?: string;
 	text_enable?: string;
 	text_needs_setup?: string;
+	setIsEnabled: ( isEnabled: boolean ) => void;
 } ) => {
-	const [ isEnabled, setIsEnabled ] = useState( enabled );
 	const [ needsSetup, setNeedsSetup ] = useState( needs_setup );
 	const [ isLoading, setIsLoading ] = useState( false );
 
@@ -74,7 +75,7 @@ export const PaymentGatewayButton = ( {
 	};
 
 	const onClick = ( e: React.MouseEvent ) => {
-		if ( ! isEnabled ) {
+		if ( ! enabled ) {
 			e.preventDefault();
 			toggleEnabled();
 		}
@@ -85,13 +86,13 @@ export const PaymentGatewayButton = ( {
 			return text_needs_setup;
 		}
 
-		return isEnabled ? text_settings : text_enable;
+		return enabled ? text_settings : text_enable;
 	};
 
 	return (
 		<div className="woocommerce-list__item-after__actions">
 			<Button
-				variant={ isEnabled ? 'secondary' : 'primary' }
+				variant={ enabled ? 'secondary' : 'primary' }
 				isBusy={ isLoading }
 				disabled={ isLoading }
 				onClick={ onClick }

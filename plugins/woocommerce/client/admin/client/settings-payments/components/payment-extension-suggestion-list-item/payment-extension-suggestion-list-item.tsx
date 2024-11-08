@@ -17,12 +17,14 @@ type PaymentExtensionSuggestionListItemProps = {
 	plugin: Plugin;
 	installingPlugin: string | null;
 	setupPlugin: ( plugin: Plugin ) => void;
+	pluginInstalled: boolean;
 };
 
 export const PaymentExtensionSuggestionListItem = ( {
 	plugin,
 	installingPlugin,
 	setupPlugin,
+	pluginInstalled,
 }: PaymentExtensionSuggestionListItemProps ) => {
 	return {
 		key: plugin.id,
@@ -47,7 +49,9 @@ export const PaymentExtensionSuggestionListItem = ( {
 						isBusy={ installingPlugin === plugin.id }
 						disabled={ !! installingPlugin }
 					>
-						{ __( 'Install', 'woocommerce' ) }
+						{ pluginInstalled
+							? __( 'Enable', 'woocommerce' )
+							: __( 'Install', 'woocommerce' ) }
 					</Button>
 
 					<EllipsisMenu

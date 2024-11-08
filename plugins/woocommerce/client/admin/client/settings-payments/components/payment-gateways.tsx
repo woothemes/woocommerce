@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { Gridicon } from '@automattic/components';
-import React, { useMemo } from 'react';
 import { List } from '@woocommerce/components';
 import { Plugin, PaymentGateway } from '@woocommerce/data';
 import { getAdminLink } from '@woocommerce/settings';
@@ -17,16 +16,18 @@ import { PaymentExtensionSuggestionListItem } from '~/settings-payments/componen
 import { WooPaymentsGatewayData } from '~/settings-payments/types';
 
 interface PaymentGatewaysProps {
-	paymentGateways: PaymentGateway[];
-	preferredPaymentExtensionSuggestions: Plugin[];
+	registeredPaymentGateways: PaymentGateway[];
+	installedPluginSlugs: string[];
+	preferredPluginSuggestions: Plugin[];
 	wooPaymentsGatewayData?: WooPaymentsGatewayData;
 	installingPlugin: string | null;
 	setupPlugin: ( plugin: Plugin ) => void;
 }
 
 export const PaymentGateways = ( {
-	paymentGateways,
-	preferredPaymentExtensionSuggestions,
+	registeredPaymentGateways,
+	installedPluginSlugs,
+	preferredPluginSuggestions,
 	wooPaymentsGatewayData,
 	installingPlugin,
 	setupPlugin,
@@ -35,27 +36,30 @@ export const PaymentGateways = ( {
 		// TODO: Implement in future PR.
 	};
 
-	// Transform suggested preferred extensions comply with List component format.
-	const preferredPaymentExtensionsList =
-		preferredPaymentExtensionSuggestions.map( ( plugin: Plugin ) => {
+	// Transform suggested preferred plugins comply with List component format.
+	const preferredPluginSuggestionsList = preferredPluginSuggestions.map(
+		( plugin: Plugin ) => {
+			const pluginInstalled = installedPluginSlugs.includes(
+				plugin.plugins[ 0 ]
+			);
 			return PaymentExtensionSuggestionListItem( {
 				plugin,
 				installingPlugin,
 				setupPlugin,
+				pluginInstalled,
 			} );
-		} );
+		}
+	);
 
 	// Transform payment gateways to comply with List component format.
-	const paymentGatewaysList = useMemo(
-		() =>
-			paymentGateways.map( ( gateway: PaymentGateway ) => {
-				return PaymentGatewayListItem( {
-					gateway,
-					wooPaymentsGatewayData,
-					setupLivePayments,
-				} );
-			} ),
-		[ paymentGateways, wooPaymentsGatewayData ]
+	const paymentGatewaysList = registeredPaymentGateways.map(
+		( gateway: PaymentGateway ) => {
+			return PaymentGatewayListItem( {
+				gateway,
+				wooPaymentsGatewayData,
+				setupLivePayments,
+			} );
+		}
 	);
 
 	// Add offline payment provider.
@@ -112,7 +116,7 @@ export const PaymentGateways = ( {
 			</div>
 			<List
 				items={ [
-					...preferredPaymentExtensionsList,
+					...preferredPluginSuggestionsList,
 					...paymentGatewaysList,
 				] }
 			/>

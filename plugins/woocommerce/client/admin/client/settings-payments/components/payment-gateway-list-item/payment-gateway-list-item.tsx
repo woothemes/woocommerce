@@ -14,6 +14,7 @@ import { decodeEntities } from '@wordpress/html-entities';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
 import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
 import { WooPaymentsGatewayData } from '~/settings-payments/types';
+import { useState } from 'react';
 
 type PaymentGatewayItemProps = {
 	gateway: PaymentGateway;
@@ -26,11 +27,13 @@ export const PaymentGatewayListItem = ( {
 	wooPaymentsGatewayData,
 	setupLivePayments,
 }: PaymentGatewayItemProps ) => {
+	const [ isEnabled, setIsEnabled ] = useState( gateway.enabled );
+
 	const determineGatewayStatus = () => {
-		if ( ! gateway.enabled && gateway?.needs_setup ) {
+		if ( ! isEnabled && gateway?.needs_setup ) {
 			return 'needs_setup';
 		}
-		if ( gateway.enabled ) {
+		if ( isEnabled ) {
 			if ( gateway.id === 'woocommerce_payments' ) {
 				if ( wooPaymentsGatewayData?.isInTestMode ) {
 					return 'test_mode';
@@ -70,9 +73,10 @@ export const PaymentGatewayListItem = ( {
 				<>
 					<PaymentGatewayButton
 						id={ gateway.id }
-						enabled={ gateway.enabled }
+						enabled={ isEnabled }
 						needs_setup={ gateway.needs_setup }
 						settings_url={ gateway.settings_url }
+						setIsEnabled={ setIsEnabled }
 					/>
 					{ gateway.id === 'woocommerce_payments' &&
 						wooPaymentsGatewayData?.isInTestMode && (

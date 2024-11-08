@@ -4,7 +4,7 @@
 import { useCallback, useEffect } from 'react';
 import { Plugin, PaymentGateway, PLUGINS_STORE_NAME } from '@woocommerce/data';
 import { useState } from '@wordpress/element';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -17,17 +17,13 @@ import { WooPaymentsGatewayData } from '~/settings-payments/types';
 import { parseScriptTag } from '~/settings-payments/utils';
 
 export const SettingsPaymentsMain = () => {
-	const [ paymentGateways, setPaymentGateways ] = useState<
-		PaymentGateway[]
+	const [ registeredPaymentGateways, setRegisteredPaymentGateways ] =
+		useState< PaymentGateway[] >( [] );
+	const [ preferredPluginSuggestions, setPreferredPluginSuggestions ] =
+		useState< Plugin[] >( [] );
+	const [ otherPluginSuggestions, setOtherPluginSuggestions ] = useState<
+		Plugin[]
 	>( [] );
-	const [
-		preferredPaymentExtensionSuggestions,
-		setPreferredPaymentExtensionSuggestions,
-	] = useState< Plugin[] >( [] );
-	const [
-		otherPaymentExtensionSuggestions,
-		setOtherPaymentExtensionSuggestions,
-	] = useState< Plugin[] >( [] );
 	const [ wooPaymentsGatewayData, setWooPaymentsGatewayData ] = useState<
 		WooPaymentsGatewayData | undefined
 	>( undefined );
@@ -36,20 +32,24 @@ export const SettingsPaymentsMain = () => {
 	);
 	const { installAndActivatePlugins } = useDispatch( PLUGINS_STORE_NAME );
 
+	const installedPluginSlugs = useSelect( ( select ) => {
+		return select( PLUGINS_STORE_NAME ).getInstalledPlugins();
+	}, [] );
+
 	// TODO get the real data from server instead of parsing script tag.
 	useEffect( () => {
 		setWooPaymentsGatewayData(
 			parseScriptTag( 'experimental_wc_settings_payments_woopayments' )
 		);
-		setPaymentGateways(
+		setRegisteredPaymentGateways(
 			parseScriptTag( 'experimental_wc_settings_payments_gateways' )
 		);
-		setPreferredPaymentExtensionSuggestions(
+		setPreferredPluginSuggestions(
 			parseScriptTag(
 				'experimental_wc_settings_payments_preferred_extensions_suggestions'
 			)
 		);
-		setOtherPaymentExtensionSuggestions(
+		setOtherPluginSuggestions(
 			parseScriptTag(
 				'experimental_wc_settings_payments_other_extensions_suggestions'
 			)
@@ -64,6 +64,7 @@ export const SettingsPaymentsMain = () => {
 		installAndActivatePlugins( [ plugin.plugins[ 0 ] ] )
 			.then( ( response ) => {
 				createNoticesFromResponse( response );
+				// TODO remove the reload after we use woocommerce/data to pull the data instead of script tags.
 				window.location.reload();
 			} )
 			.catch( ( response: { errors: Record< string, string > } ) => {
@@ -76,18 +77,15 @@ export const SettingsPaymentsMain = () => {
 		<>
 			<div className="settings-payments-main__container">
 				<PaymentGateways
-					paymentGateways={ paymentGateways }
-					preferredPaymentExtensionSuggestions={
-						preferredPaymentExtensionSuggestions
-					}
+					registeredPaymentGateways={ registeredPaymentGateways }
+					installedPluginSlugs={ installedPluginSlugs }
+					preferredPluginSuggestions={ preferredPluginSuggestions }
 					wooPaymentsGatewayData={ wooPaymentsGatewayData }
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
 				/>
 				<OtherPaymentGateways
-					otherPaymentExtensionSuggestions={
-						otherPaymentExtensionSuggestions
-					}
+					otherPluginSuggestions={ otherPluginSuggestions }
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
 				/>
