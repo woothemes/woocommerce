@@ -85,8 +85,8 @@ final class QueryFilters {
 	/**
 	 * Get stock status counts for the current products.
 	 *
-	 * @param array  $query_vars The WP_Query arguments.
-	 * @param array  $attributes Block attributes.
+	 * @param array $query_vars The WP_Query arguments.
+	 * @param array $attributes Block attributes.
 	 * @return array status=>count pairs.
 	 */
 	public function get_stock_status_counts( $query_vars, $attributes ) {
@@ -283,7 +283,7 @@ final class QueryFilters {
 			if ( 'onsale' === $status ) {
 				$args['where'] .= ' AND wc_product_meta_lookup.onsale = 1';
 			} else {
-				$args['where'] .= $wpdb->prepare( ' AND wc_product_meta_lookup.stock_status = "%s"', array( $status ) );
+				$args['where'] .= $wpdb->prepare( ' AND wc_product_meta_lookup.stock_status = %s', array( $status ) );
 			}
 		}
 

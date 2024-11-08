@@ -73,57 +73,59 @@ final class ProductFilterStatus extends AbstractBlock {
 			'api_version'  => 3,
 			'ancestor'     => [ 'woocommerce/product-filters' ],
 			'uses_context' => [ 'query', 'filterParams' ],
-			'example'      => [ 'attributes' => [
-				'isPreview' => true,
-			] ],
+			'example'      => [
+				'attributes' => [
+					'isPreview' => true,
+				],
+			],
 			'supports'     => [
-				'interactivity' => true,
-				'html' => false,
-				'color' => [
-					'text' => true,
-					'background' => false,
+				'interactivity'        => true,
+				'html'                 => false,
+				'color'                => [
+					'text'                          => true,
+					'background'                    => false,
 					'__experimentalDefaultControls' => [
 						'text' => false,
 					],
 				],
-				'typography' => [
-					'fontSize' => true,
-					'lineHeight' => true,
-					'__experimentalFontWeight' => true,
-					'__experimentalFontFamily' => true,
-					'__experimentalFontStyle' => true,
-					'__experimentalTextTransform' => true,
-					'__experimentalTextDecoration' => true,
-					'__experimentalLetterSpacing' => true,
+				'typography'           => [
+					'fontSize'                      => true,
+					'lineHeight'                    => true,
+					'__experimentalFontWeight'      => true,
+					'__experimentalFontFamily'      => true,
+					'__experimentalFontStyle'       => true,
+					'__experimentalTextTransform'   => true,
+					'__experimentalTextDecoration'  => true,
+					'__experimentalLetterSpacing'   => true,
 					'__experimentalDefaultControls' => [
 						'fontSize' => false,
 					],
 				],
-				'spacing' => [
-					'margin' => true,
-					'padding' => true,
-					'blockGap' => true,
+				'spacing'              => [
+					'margin'                        => true,
+					'padding'                       => true,
+					'blockGap'                      => true,
 					'__experimentalDefaultControls' => [
-						'margin' => false,
-						'padding' => false,
+						'margin'   => false,
+						'padding'  => false,
 						'blockGap' => false,
 					],
 				],
 				'__experimentalBorder' => [
-					'color' => true,
-					'radius' => true,
-					'style' => true,
-					'width' => true,
+					'color'                         => true,
+					'radius'                        => true,
+					'style'                         => true,
+					'width'                         => true,
 					'__experimentalDefaultControls' => [
-						'color' => false,
+						'color'  => false,
 						'radius' => false,
-						'style' => false,
-						'width' => false,
+						'style'  => false,
+						'width'  => false,
 					],
 				],
 			],
-			'attributes'  => [
-				'showCounts' => [
+			'attributes'   => [
+				'showCounts'   => [
 					'type'    => 'boolean',
 					'default' => false,
 				],
@@ -131,25 +133,25 @@ final class ProductFilterStatus extends AbstractBlock {
 					'type'    => 'string',
 					'default' => 'woocommerce/product-filter-checkbox-list',
 				],
-				'isPreview' => [
+				'isPreview'    => [
 					'type'    => 'boolean',
 					'default' => false,
 				],
-				'hideEmpty' => [
+				'hideEmpty'    => [
 					'type'    => 'boolean',
 					'default' => true,
 				],
-				'clearButton' => [
+				'clearButton'  => [
 					'type'    => 'boolean',
 					'default' => false,
 				],
 			],
 		];
 
-		$block_settings[ 'render_callback' ] = $this->get_block_type_render_callback();
-		$block_settings[ 'editor_script' ]   = $this->get_block_type_editor_script( 'handle' );
-		$block_settings[ 'editor_style' ]    = $this->get_block_type_editor_style();
-		$block_settings[ 'style' ]           = $this->get_block_type_style();
+		$block_settings['render_callback'] = $this->get_block_type_render_callback();
+		$block_settings['editor_script']   = $this->get_block_type_editor_script( 'handle' );
+		$block_settings['editor_style']    = $this->get_block_type_editor_style();
+		$block_settings['style']           = $this->get_block_type_style();
 
 		if ( isset( $this->api_version ) && '2' === $this->api_version ) {
 			$block_settings['api_version'] = 2;
@@ -314,15 +316,15 @@ final class ProductFilterStatus extends AbstractBlock {
 	 * @return string Rendered block type output.
 	 */
 	protected function render( $attributes, $content, $block ) {
-		$stock_status_data    = array();
-		$onsale_status_data   = array();
-		$query                = isset( $_GET[ self::FILTER_STATUS_QUERY_VAR ] ) ? sanitize_text_field( wp_unslash( $_GET[ self::FILTER_STATUS_QUERY_VAR ] ) ) : '';  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$selected_statuses    = array_filter( explode( ',', $query ) );
-		$onsale_status_data   = $attributes['onsale'] ? $this->get_onsale_status_counts( $block ) : array();
-		$stock_status_data    = $this->get_stock_status_counts( $block, $attributes );
-		$status_data          = array_merge( $stock_status_data, $onsale_status_data );
-		$filter_params        = $block->context['filterParams'] ?? array();
-		$query                = $filter_params[ self::FILTER_STATUS_QUERY_VAR ] ?? '';
+		$stock_status_data  = array();
+		$onsale_status_data = array();
+		$query              = isset( $_GET[ self::FILTER_STATUS_QUERY_VAR ] ) ? sanitize_text_field( wp_unslash( $_GET[ self::FILTER_STATUS_QUERY_VAR ] ) ) : '';  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$selected_statuses  = array_filter( explode( ',', $query ) );
+		$onsale_status_data = $attributes['onsale'] ? $this->get_onsale_status_counts( $block ) : array();
+		$stock_status_data  = $this->get_stock_status_counts( $block, $attributes );
+		$status_data        = array_merge( $stock_status_data, $onsale_status_data );
+		$filter_params      = $block->context['filterParams'] ?? array();
+		$query              = $filter_params[ self::FILTER_STATUS_QUERY_VAR ] ?? '';
 
 		$filter_options = array_map(
 			function ( $item ) use ( $selected_statuses, $attributes ) {

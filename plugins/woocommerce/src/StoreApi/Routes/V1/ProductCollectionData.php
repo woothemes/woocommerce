@@ -67,12 +67,12 @@ class ProductCollectionData extends AbstractRoute {
 	 */
 	protected function get_route_response( \WP_REST_Request $request ) {
 		$data    = [
-			'min_price'           => null,
-			'max_price'           => null,
-			'attribute_counts'    => null,
-			'stock_status_counts' => null,
-			'rating_counts'       => null,
-			'onsale_status_counts'       => null,
+			'min_price'            => null,
+			'max_price'            => null,
+			'attribute_counts'     => null,
+			'stock_status_counts'  => null,
+			'rating_counts'        => null,
+			'onsale_status_counts' => null,
 		];
 		$filters = new ProductQueryFilters();
 
