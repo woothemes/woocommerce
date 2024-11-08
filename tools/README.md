@@ -14,7 +14,7 @@ Our repository makes aggressive use of [parallelization using PNPM's `--filter` 
 		"lint": "pnpm --if-present '/^lint:lang:.*$/'",
 		"lint:fix": "pnpm --if-present '/^lint:fix:lang:.*$/'",
 		"watch:build": "pnpm --if-present --workspace-concurrency=Infinity --filter=\"$npm_package_name...\" --parallel '/^watch:build:project:.*$/'",
-    "watch:build:project": "pnpm --if-present run '/^watch:build:project:.*$/'"
+		"watch:build:project": "pnpm --if-present run '/^watch:build:project:.*$/'"
 	}
 }
 ```
