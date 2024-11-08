@@ -16,6 +16,7 @@ import { getAdminLink } from '@woocommerce/settings';
  */
 import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
+import EllipsisMenuContent from '~/settings-payments/components/ellipsis-menu-content/ellipsis-menu-content';
 
 // TODO: This should either be a util function, or handled in a different way e.g. passing the data as props.
 const parseScriptTag = ( elementId: string ) => {
@@ -122,36 +123,18 @@ export const PaymentGateways = () => {
 										'woocommerce'
 									) }
 									renderContent={ () => (
-										<div className="woocommerce-list__item-after__ellipsis-menu">
-											{ gateway.id ===
-												'woocommerce_payments' && (
-												<Button>
-													{ __(
-														'See pricing & fees',
-														'woocommerce'
-													) }
-												</Button>
-											) }
-											<Button>
-												{ __(
-													'Learn more',
-													'woocommerce'
-												) }
-											</Button>
-											<Button>
-												{ __(
-													'See Terms of Service',
-													'woocommerce'
-												) }
-											</Button>
-											<CardDivider />
-											<Button>
-												{ __(
-													'Hide suggestion',
-													'woocommerce'
-												) }
-											</Button>
-										</div>
+										<EllipsisMenuContent
+											isEnabled={ gateway.enabled }
+											isInstalled={ true }
+											gatewayType={
+												gateway.id === 'woopayments'
+													? 'woopayments'
+													: 'preferred'
+											}
+											needsSetup={
+												!! gateway.needs_setup
+											}
+										/>
 									) }
 								/>
 							</>
