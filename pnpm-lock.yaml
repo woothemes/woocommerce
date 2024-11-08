@@ -1667,6 +1667,8 @@ importers:
         specifier: 0.14.3
         version: 0.14.3
 
+  packages/js/e2e-utils-playwright: {}
+
   packages/js/eslint-plugin:
     dependencies:
       '@typescript-eslint/eslint-plugin':
@@ -3375,6 +3377,9 @@ importers:
       '@woocommerce/e2e-utils':
         specifier: workspace:*
         version: link:../../packages/js/e2e-utils
+      '@woocommerce/e2e-utils-playwright':
+        specifier: workspace:*
+        version: link:../../packages/js/e2e-utils-playwright
       '@woocommerce/eslint-plugin':
         specifier: workspace:*
         version: link:../../packages/js/eslint-plugin
@@ -65336,11 +65341,11 @@ snapshots:
       '@webassemblyjs/ast': 1.11.6
       '@webassemblyjs/wasm-edit': 1.11.6
       '@webassemblyjs/wasm-parser': 1.11.6
-      acorn: 8.11.2
-      acorn-import-assertions: 1.9.0(acorn@8.11.2)
+      acorn: 8.12.1
+      acorn-import-assertions: 1.9.0(acorn@8.12.1)
       browserslist: 4.19.3
       chrome-trace-event: 1.0.3
-      enhanced-resolve: 5.15.0
+      enhanced-resolve: 5.16.0
       es-module-lexer: 1.4.1
       eslint-scope: 5.1.1
       events: 3.3.0
