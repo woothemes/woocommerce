@@ -17,12 +17,17 @@ type ForcePageReloadControlProps = {
 	setAttributes: ProductCollectionSetAttributes;
 };
 
-const helpTextIfEnabled = __(
-	'Enforce full page reload on certain interactions, like using paginations controls.',
+const helpTextClientSideNav = __(
+	'Enable to enforce full page reload on certain interactions, like using paginations controls.',
 	'woocommerce'
 );
-const helpTextIfDisabled = __(
-	"Force page reload can't be disabled because there are non-compatible blocks inside the Product Collection block.",
+const helpTextReloadFullPage = __(
+	'Browsing between pages requires a full page reload.',
+	'woocommerce'
+);
+
+const helpTextIncompatibleBlocks = __(
+	"Reload full page can't be disabled because there are incompatible blocks inside the Product Collection block.",
 	'woocommerce'
 );
 
@@ -36,13 +41,22 @@ const ForcePageReloadControl = ( props: ForcePageReloadControlProps ) => {
 		}
 	}, [ forcePageReload, hasUnsupportedBlocks, setAttributes ] );
 
-	const helpText = hasUnsupportedBlocks
-		? helpTextIfDisabled
-		: helpTextIfEnabled;
+	// Client side navigation is on (control is off).
+	let helpText = helpTextClientSideNav;
+
+	// Client side navigation is off (control is on).
+	if ( forcePageReload ) {
+		helpText = helpTextReloadFullPage;
+	}
+
+	// Client side navigation is forcefully off (control is on and disabled).
+	if ( hasUnsupportedBlocks ) {
+		helpText = helpTextIncompatibleBlocks;
+	}
 
 	return (
 		<ToggleControl
-			label={ __( 'Force Page Reload', 'woocommerce' ) }
+			label={ __( 'Reload full page', 'woocommerce' ) }
 			help={ helpText }
 			checked={ forcePageReload }
 			onChange={ () =>
