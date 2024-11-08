@@ -53,9 +53,12 @@ const UpgradeNotice = ( { revertMigration }: UpgradeNoticeProps ) => {
 
 	const handleRevert = () => {
 		revertMigration();
-		recordEvent( 'blocks_product_collection_migration_between_products_beta', {
-			transform_to: 'products_beta',
-		} );
+		recordEvent(
+			'blocks_product_collection_migration_between_products_beta',
+			{
+				transform_to: 'products_beta',
+			}
+		);
 	};
 
 	// Prevent the possibility to count displays multiple times when the
