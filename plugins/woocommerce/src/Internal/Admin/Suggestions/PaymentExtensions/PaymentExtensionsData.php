@@ -1050,7 +1050,7 @@ class PaymentExtensionsData {
 			$priority += 10;
 			$extension_details['_priority'] = $priority;
 
-			$processed_extensions[] = $extension_details;
+			$processed_extensions[] = self::standardize_extension_details( $extension_details );
 		}
 
 		return $processed_extensions;
@@ -1717,5 +1717,36 @@ class PaymentExtensionsData {
 		}
 
 		return $extensions[ $extension_id ];
+	}
+
+	/**
+	 * Standardize the details for an extension.
+	 *
+	 * Ensures that the details array has all the required fields, and fills in any missing optional fields with defaults.
+	 * We also enforce a consistent order for the fields.
+	 *
+	 * @param array $extension_details The extension details.
+	 *
+	 * @return array The standardized extension details.
+	 */
+	private static function standardize_extension_details( array $extension_details ): array {
+		$standardized = array();
+
+		// Required fields.
+		$standardized['_id']         = $extension_details['_id'];
+		$standardized['_priority']   = $extension_details['_priority'];
+		$standardized['_type']       = $extension_details['_type'];
+		$standardized['title']       = $extension_details['title'];
+		$standardized['description'] = $extension_details['description'];
+		$standardized['plugin']      = $extension_details['plugin'];
+
+		// Optional fields.
+		$standardized['image']             = $extension_details['image'] ?? null;
+		$standardized['image_72x72']       = $extension_details['image_72x72'] ?? null;
+		$standardized['short_description'] = $extension_details['short_description'] ?? null;
+		$standardized['links']             = $extension_details['links'] ?? array();
+		$standardized['tags']              = $extension_details['tags'] ?? array();
+
+		return $standardized;
 	}
 }
