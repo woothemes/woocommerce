@@ -591,7 +591,7 @@ class ProductCollection extends AbstractBlock {
 		$is_product_collection_block = $parsed_block['attrs']['query']['isProductCollectionBlock'] ?? false;
 		$force_page_reload_global    =
 			$parsed_block['attrs']['forcePageReload'] ?? false &&
-			isset( $block['attrs']['queryId'] );
+			isset( $parsed_block['attrs']['queryId'] );
 
 		if (
 			$is_product_collection_block &&
