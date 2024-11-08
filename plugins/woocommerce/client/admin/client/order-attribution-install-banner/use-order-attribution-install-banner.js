@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback } from '@wordpress/element';
+import { useCallback, useMemo, useEffect } from '@wordpress/element';
 import {
 	OPTIONS_STORE_NAME,
 	PLUGINS_STORE_NAME,
@@ -12,41 +12,54 @@ import { recordEvent } from '@woocommerce/tracks';
 import { getPath } from '@woocommerce/navigation';
 import { isWcVersion } from '@woocommerce/settings';
 
+/**
+ * Internal dependencies
+ */
+import { STORE_KEY } from '~/marketing/data/constants';
+import '~/marketing/data';
+
 const OPTION_NAME_BANNER_DISMISSED =
 	'woocommerce_order_attribution_install_banner_dismissed';
 const OPTION_VALUE_YES = 'yes';
 const OPTION_NAME_REMOTE_VARIANT_ASSIGNMENT =
 	'woocommerce_remote_variant_assignment';
 
-const get_threshold = () => {
-	// Using Map() to ensure the order of the thresholds so the below comparison is correct.
-	// I.e. the larger version should be checked first.
-	const version_thresholds = new Map( [
-		[ '9.7', 120 ], // 100% of 120
-		[ '9.6', 72 ], // 60% of 120
-		[ '9.5', 12 ], // 10% of 120
-	] );
+const getThreshold = ( percentages ) => {
+	const defaultPercentages = [
+		[ '9.7', 100 ], // 100%
+		[ '9.6', 60 ], // 60%
+		[ '9.5', 10 ], // 10%
+	];
 
-	for ( const [
-		threshold_version,
-		threshold,
-	] of version_thresholds.entries() ) {
-		if ( isWcVersion( threshold_version, '>=' ) ) {
-			return threshold;
+	if ( ! Array.isArray( percentages ) || percentages.length === 0 ) {
+		percentages = defaultPercentages;
+	}
+
+	for ( let [ version, percentage ] of percentages ) {
+		if ( isWcVersion( version, '>=' ) ) {
+			percentage = parseInt( percentage, 10 );
+			if ( isNaN( percentage ) ) {
+				return 12; // Default to 10% if the percentage is not a number.
+			}
+			// Since remoteVariantAssignment ranges from 0 to 120, we need to convert the percentage to a number between 0 and 120.
+			return ( percentage / 100 ) * 120;
 		}
 	}
 
 	return 12; // Default to 10% if version is lower than 9.5
 };
 
-const shouldPromoteOrderAttribution = ( remoteVariantAssignment ) => {
+const shouldPromoteOrderAttribution = (
+	remoteVariantAssignment,
+	percentages
+) => {
 	remoteVariantAssignment = parseInt( remoteVariantAssignment, 10 );
 
 	if ( isNaN( remoteVariantAssignment ) ) {
 		return false;
 	}
 
-	const threshold = get_threshold();
+	const threshold = getThreshold( percentages );
 
 	return remoteVariantAssignment <= threshold;
 };
@@ -102,6 +115,35 @@ export const useOrderAttributionInstallBanner = () => {
 		[]
 	);
 
+	const { loadingRecommendations, recommendations } = useSelect(
+		( select ) => {
+			const { getMiscRecommendations, hasFinishedResolution } =
+				select( STORE_KEY );
+
+			return {
+				loadingRecommendations: ! hasFinishedResolution(
+					'getMiscRecommendations'
+				),
+				recommendations: getMiscRecommendations(),
+			};
+		},
+		[]
+	);
+
+	const percentages = useMemo( () => {
+		if ( loadingRecommendations || recommendations.length === 0 ) {
+			return null;
+		}
+
+		for ( const recommendation of recommendations ) {
+			if ( recommendation.id === 'woocommerce-analytics' ) {
+				return recommendation?.order_attribution_promotion_percentage;
+			}
+		}
+
+		return null;
+	}, [ loadingRecommendations, recommendations ] );
+
 	const getShouldShowBanner = useCallback( () => {
 		if ( ! canUserInstallPlugins || loading ) {
 			return false;
@@ -115,12 +157,16 @@ export const useOrderAttributionInstallBanner = () => {
 			return false;
 		}
 
-		return shouldPromoteOrderAttribution( remoteVariantAssignment );
+		return shouldPromoteOrderAttribution(
+			remoteVariantAssignment,
+			percentages
+		);
 	}, [
 		loading,
 		canUserInstallPlugins,
 		orderAttributionInstallState,
 		remoteVariantAssignment,
+		percentages,
 	] );
 
 	return {
