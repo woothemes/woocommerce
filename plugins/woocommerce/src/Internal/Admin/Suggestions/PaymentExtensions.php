@@ -1,7 +1,5 @@
 <?php
-/**
- * Provides the data related to our partner payment extensions.
- */
+declare( strict_types=1 );
 
 namespace Automattic\WooCommerce\Internal\Admin\Suggestions;
 
@@ -10,9 +8,9 @@ defined( 'ABSPATH' ) || exit;
 use Automattic\WooCommerce\Internal\Utilities\ArrayUtil;
 
 /**
- * Payment extensions data source.
+ * Partner payment extensions provider
  */
-class PaymentExtensions {
+final class PaymentExtensions {
 
 	/*
 	 * The unique IDs for the payment extension suggestions.
