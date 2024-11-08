@@ -18,7 +18,7 @@
 	width: unset;
 
 	form.cart {
-		&:before {
+		&::before {
 			content: " ";
 			grid-column: span 9999;
 		}
