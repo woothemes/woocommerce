@@ -10,7 +10,7 @@ Our repository makes aggressive use of [parallelization using PNPM's `--filter` 
 {
 	"scripts": {
 		"build": "pnpm --if-present --workspace-concurrency=Infinity --stream --filter=\"$npm_package_name...\" '/^build:project:.*$/'",
-    "build:project": "pnpm --if-present '/^build:project:.*$/'",
+		"build:project": "pnpm --if-present '/^build:project:.*$/'",
 		"lint": "pnpm --if-present '/^lint:lang:.*$/'",
 		"lint:fix": "pnpm --if-present '/^lint:fix:lang:.*$/'",
 		"watch:build": "pnpm --if-present --workspace-concurrency=Infinity --filter=\"$npm_package_name...\" --parallel '/^watch:build:project:.*$/'",
