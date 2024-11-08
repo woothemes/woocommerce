@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { formatShippingAddress } from '@woocommerce/base-utils';
 import { useStoreCart } from '@woocommerce/base-context';
-import { ShippingCalculatorButton } from '@woocommerce/base-components/cart-checkout';
+import { ShippingCalculatorPanel } from '@woocommerce/base-components/cart-checkout';
 import { useSelect } from '@wordpress/data';
 import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
 
@@ -12,7 +12,6 @@ import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
  * Internal dependencies
  */
 import { getPickupLocation } from './utils';
-import { ShippingCalculatorPanel } from '../../shipping-calculator/shipping-calculator-panel';
 
 export const ShippingAddress = (): JSX.Element => {
 	const { shippingRates, shippingAddress } = useStoreCart();
