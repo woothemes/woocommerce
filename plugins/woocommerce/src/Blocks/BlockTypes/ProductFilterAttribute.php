@@ -229,11 +229,10 @@ final class ProductFilterAttribute extends AbstractBlock {
 		}
 
 		$context = array(
-			'attributeSlug'      => str_replace( 'pa_', '', $product_attribute->slug ),
-			'queryType'          => $block_attributes['queryType'],
-			'selectType'         => 'multiple',
-			'hasSelectedFilters' => count( $selected_terms ) > 0,
-			'hasFilterOptions'   => ! empty( $filter_context ),
+			'attributeSlug'    => str_replace( 'pa_', '', $product_attribute->slug ),
+			'queryType'        => $block_attributes['queryType'],
+			'selectType'       => 'multiple',
+			'hasFilterOptions' => ! empty( $filter_context ),
 		);
 
 		$wrapper_attributes = array(
