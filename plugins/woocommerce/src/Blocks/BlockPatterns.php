@@ -140,6 +140,7 @@ class BlockPatterns {
 			'blockTypes'    => 'Block Types',
 			'inserter'      => 'Inserter',
 			'featureFlag'   => 'Feature Flag',
+			'templateTypes' => 'Template Types',
 		);
 
 		if ( ! file_exists( $this->patterns_path ) ) {
