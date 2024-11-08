@@ -67,7 +67,6 @@ class WC_Order_Item_Product extends WC_Order_Item {
 	 */
 	public function set_quantity( $value ) {
 		$this->set_prop( 'quantity', wc_stock_amount( $value ) );
-		$this->calculate_line_discount();
 	}
 
 	/**
@@ -79,7 +78,7 @@ class WC_Order_Item_Product extends WC_Order_Item {
 		if ( $value && ! in_array( $value, WC_Tax::get_tax_class_slugs(), true ) ) {
 			$this->error( 'order_item_product_invalid_tax_class', __( 'Invalid tax class', 'woocommerce' ) );
 		}
-	
+		
 		$this->set_prop( 'tax_class', $value );
 	}
 
@@ -114,7 +113,7 @@ class WC_Order_Item_Product extends WC_Order_Item {
 	 */
 	public function set_subtotal( $value ) {
 		$value = wc_format_decimal( $value );
-
+		
 		if ( ! is_numeric( $value ) ) {
 			$value = 0;
 		}
@@ -150,6 +149,7 @@ class WC_Order_Item_Product extends WC_Order_Item {
 	public function set_subtotal_tax( $value ) {
 		$this->set_prop( 'subtotal_tax', wc_format_decimal( $value ) );
 	}
+	
 
 	/**
 	 * Line total tax (after discounts).
@@ -158,6 +158,25 @@ class WC_Order_Item_Product extends WC_Order_Item {
 	 */
 	public function set_total_tax( $value ) {
 		$this->set_prop( 'total_tax', wc_format_decimal( $value ) );
+	}
+
+	/**
+	 * Set line discount.
+	 *
+	 * @param string $value Line discount.
+	 */
+	public function set_line_discount() {
+		$line_discount = 0;
+		$product = $this->get_product();
+		if ( $product ) {
+			$regular_price = $product->get_regular_price();
+			$sale_price = $product->get_sale_price();
+
+			if ( '' !== $sale_price && $sale_price < $regular_price ) {
+				$line_discount = ((float) $regular_price - (float) $sale_price) * $this->get_quantity();
+			}
+		}
+		$this->set_prop( 'line_discount', wc_format_decimal( $line_discount ) );
 	}
 
 	/**
@@ -188,6 +207,7 @@ class WC_Order_Item_Product extends WC_Order_Item {
 			$this->set_total_tax( NumberUtil::array_sum( array_map( 'wc_round_tax_total', $tax_data['total'] ) ) );
 			$this->set_subtotal_tax( NumberUtil::array_sum( array_map( 'wc_round_tax_total', $tax_data['subtotal'] ) ) );
 		}
+		  
 	}
 
 	/**
@@ -209,6 +229,7 @@ class WC_Order_Item_Product extends WC_Order_Item {
 	 * @param WC_Product $product Product instance.
 	 */
 	public function set_product( $product ) {
+	
 		if ( ! is_a( $product, 'WC_Product' ) ) {
 			$this->error( 'order_item_product_invalid_product', __( 'Invalid product', 'woocommerce' ) );
 		}
@@ -221,7 +242,7 @@ class WC_Order_Item_Product extends WC_Order_Item {
 		}
 		$this->set_name( $product->get_name() );
 		$this->set_tax_class( $product->get_tax_class() );
-		$this->calculate_line_discount();
+		
 	}
 
 	/**
@@ -234,43 +255,12 @@ class WC_Order_Item_Product extends WC_Order_Item {
 		}
 	}
 
-	/**
-	 * Calculate and set the line discount.
-	 */
-	protected function calculate_line_discount() {
-		$product = $this->get_product();
-		$line_discount = 0;
-
-		if ( $product ) {
-			$regular_price = $product->get_regular_price();
-			$sale_price = $product->get_sale_price();
-
-			if ( '' !== $sale_price && $sale_price < $regular_price ) {
-				$line_discount = ((float) $regular_price - (float) $sale_price) * $this->get_quantity();
-			}
-		}
-
-		$line_discount = wc_format_decimal($line_discount);
-		$line_discount = apply_filters('woocommerce_order_item_line_discount', $line_discount, $this);
-
-		$this->set_line_discount($line_discount);
-	}
-
-	/**
-	 * Set line discount.
-	 *
-	 * @param float $value Line discount.
-	 */
-	public function set_line_discount( $value ) {
-		$this->set_prop( 'line_discount', wc_format_decimal( $value ) );
-	}
 
 	/**
 	 * Hook to recalculate line discount when saving.
 	 */
 	protected function before_save() {
 		parent::before_save();
-		$this->calculate_line_discount();
 	}
 
 	/*
@@ -472,6 +462,7 @@ class WC_Order_Item_Product extends WC_Order_Item {
 	 */
 	public function get_tax_status() {
 		$product = $this->get_product();
+		error_log("get_tax_status called, returning: " . $product ? $product->get_tax_status() : 'taxable');
 		return $product ? $product->get_tax_status() : 'taxable';
 	}
 	
@@ -482,7 +473,8 @@ class WC_Order_Item_Product extends WC_Order_Item {
 	 * @return float
 	 */
 	public function get_line_discount( $context = 'view' ) {
-		return $this->get_prop( 'line_discount', $context );
+		$line_discount = $this->get_prop( 'line_discount', $context );
+		return $line_discount;
 	}
 
 
@@ -515,7 +507,10 @@ class WC_Order_Item_Product extends WC_Order_Item {
 			$offset = 'taxes';
 		} elseif ( 'qty' === $offset ) {
 			$offset = 'quantity';
+		} else if('line_discount' === $offset) {
+			$offset = 'line_discount';
 		}
+
 		return parent::offsetGet( $offset );
 	}
 
@@ -541,6 +536,8 @@ class WC_Order_Item_Product extends WC_Order_Item {
 			$offset = 'taxes';
 		} elseif ( 'qty' === $offset ) {
 			$offset = 'quantity';
+		} else if('line_discount' === $offset) {
+			$offset = 'line_discount';
 		}
 		parent::offsetSet( $offset, $value );
 	}
@@ -553,7 +550,7 @@ class WC_Order_Item_Product extends WC_Order_Item {
 	 */
 	#[\ReturnTypeWillChange]
 	public function offsetExists( $offset ) {
-		if ( in_array( $offset, array( 'line_subtotal', 'line_subtotal_tax', 'line_total', 'line_tax', 'line_tax_data', 'item_meta_array', 'item_meta', 'qty' ), true ) ) {
+		if ( in_array( $offset, array( 'line_subtotal', 'line_subtotal_tax', 'line_total', 'line_tax', 'line_tax_data', 'item_meta_array', 'item_meta', 'line_discount',  'qty' ), true ) ) {
 			return true;
 		}
 		return parent::offsetExists( $offset );
