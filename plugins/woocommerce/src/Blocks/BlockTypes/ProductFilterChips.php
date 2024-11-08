@@ -27,15 +27,12 @@ final class ProductFilterChips extends AbstractBlock {
 		if ( empty( $block->context['filterData'] ) || empty( $block->context['filterData']['items'] ) ) {
 			return '';
 		}
-		$classes               = '';
-		$style                 = '';
-		$context               = $block->context['filterData'];
-		$items                 = $context['items'] ?? array();
-		$interactivity_context = array(
-			'filterParamKeys' => $context['filterParamKeys'] ?? array(),
-		);
-		$action                = $context['actions']['toggleFilter'] ?? '';
-		$namespace             = wp_json_encode( array( 'namespace' => 'woocommerce/product-filter-chips' ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP );
+		$classes   = '';
+		$style     = '';
+		$context   = $block->context['filterData'];
+		$items     = $context['items'] ?? array();
+		$action    = $context['actions']['toggleFilter'] ?? '';
+		$namespace = wp_json_encode( array( 'namespace' => 'woocommerce/product-filter-chips' ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP );
 
 		$tags = new \WP_HTML_Tag_Processor( $content );
 		if ( $tags->next_tag( array( 'class_name' => 'wc-block-product-filter-chips' ) ) ) {
@@ -55,7 +52,6 @@ final class ProductFilterChips extends AbstractBlock {
 
 		$wrapper_attributes = array(
 			'data-wc-interactive' => esc_attr( $namespace ),
-			'data-wc-context'     => wp_json_encode( $interactivity_context, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
 			'data-wc-key'         => wp_unique_prefixed_id( $this->get_full_block_name() ),
 			'class'               => esc_attr( $classes ),
 			'style'               => esc_attr( $style ),
@@ -84,7 +80,6 @@ final class ProductFilterChips extends AbstractBlock {
 						data-wc-on--click--parent-action="<?php echo esc_attr( $action ); ?>"
 						value="<?php echo esc_attr( $item['value'] ); ?>"
 						aria-checked="<?php echo $item['selected'] ? 'true' : 'false'; ?>"
-						data-wc-bind--aria-checked="state.isItemSelected"
 					>
 						<span class="wc-block-product-filter-chips__label">
 							<?php echo wp_kses_post( $item['label'] ); ?>

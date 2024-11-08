@@ -127,11 +127,10 @@ final class ProductFilterRating extends AbstractBlock {
 
 		$filter_context = array(
 			'filterData'         => array(
-				'items'           => $items,
-				'actions'         => array(
+				'items'   => $items,
+				'actions' => array(
 					'toggleFilter' => "{$this->get_full_block_name()}::actions.toggleFilter",
 				),
-				'filterParamKeys' => array( self::RATING_FILTER_QUERY_VAR ),
 			),
 			'hasSelectedFilters' => count( $selected_rating ) > 0,
 		);

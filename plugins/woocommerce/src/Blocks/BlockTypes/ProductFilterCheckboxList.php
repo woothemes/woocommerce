@@ -28,15 +28,12 @@ final class ProductFilterCheckboxList extends AbstractBlock {
 			return '';
 		}
 
-		$context               = $block->context['filterData'];
-		$items                 = $context['items'] ?? array();
-		$interactivity_context = array(
-			'filterParamKeys' => $context['filterParamKeys'] ?? array(),
-		);
-		$action                = $context['actions']['toggleFilter'] ?? '';
-		$namespace             = wp_json_encode( array( 'namespace' => 'woocommerce/product-filter-checkbox-list' ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP );
-		$classes               = '';
-		$style                 = '';
+		$context   = $block->context['filterData'];
+		$items     = $context['items'] ?? array();
+		$action    = $context['actions']['toggleFilter'] ?? '';
+		$namespace = wp_json_encode( array( 'namespace' => 'woocommerce/product-filter-checkbox-list' ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP );
+		$classes   = '';
+		$style     = '';
 
 		$tags = new \WP_HTML_Tag_Processor( $content );
 		if ( $tags->next_tag( array( 'class_name' => 'wc-block-product-filter-checkbox-list' ) ) ) {
@@ -56,7 +53,6 @@ final class ProductFilterCheckboxList extends AbstractBlock {
 
 		$wrapper_attributes = array(
 			'data-wc-interactive' => esc_attr( $namespace ),
-			'data-wc-context'     => wp_json_encode( $interactivity_context, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
 			'data-wc-key'         => wp_unique_prefixed_id( $this->get_full_block_name() ),
 			'class'               => esc_attr( $classes ),
 			'style'               => esc_attr( $style ),
@@ -101,7 +97,6 @@ final class ProductFilterCheckboxList extends AbstractBlock {
 									data-wc-on--change--parent-action="<?php echo esc_attr( $action ); ?>"
 									value="<?php echo esc_attr( $item['value'] ); ?>"
 									<?php checked( $item['selected'], 1 ); ?>
-									data-wc-bind--checked="state.isItemSelected"
 								>
 								<svg class="wc-block-product-filter-checkbox-list__mark" viewBox="0 0 10 8" fill="none" xmlns="http://www.w3.org/2000/svg">
 									<path d="M9.25 1.19922L3.75 6.69922L1 3.94922" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
