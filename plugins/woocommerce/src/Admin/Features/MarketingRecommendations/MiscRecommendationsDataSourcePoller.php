@@ -8,6 +8,19 @@ use WC_Helper;
 /**
  * Specs data source poller class for misc recommendations.
  *
+ * The misc recommendations are fetched from the WooCommerce.com API, the data structure looks like this:
+ *
+ * [
+ *   {
+ *     "id": "woocommerce-analytics",
+ *     "order_attribution_promotion_percentage": [
+ *       [ "9.7", 100 ],
+ *       [ "9.6", 60 ],
+ *       [ "9.5", 10 ]
+ *     ]
+ *   }
+ * ]
+ *
  * @since 9.5.0
  */
 class MiscRecommendationsDataSourcePoller extends DataSourcePoller {
@@ -33,7 +46,7 @@ class MiscRecommendationsDataSourcePoller extends DataSourcePoller {
 				self::ID,
 				self::get_data_sources(),
 				array(
-					'transient_expiry' => 1 * DAY_IN_SECONDS,
+					'transient_expiry' => DAY_IN_SECONDS,
 				)
 			);
 		}

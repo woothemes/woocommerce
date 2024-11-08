@@ -35,13 +35,17 @@ const getThreshold = ( percentages ) => {
 		percentages = defaultPercentages;
 	}
 
+	// Sort the percentages in descending order by version, to ensure we get the highest version first so the isWcVersion() check works correctly.
+	// E.g. if we are on 9.7 but the percentages are in version ascending order, we would get 10% instead of 100%.
+	percentages.sort( ( a, b ) => parseFloat( b[ 0 ] ) - parseFloat( a[ 0 ] ) );
+
 	for ( let [ version, percentage ] of percentages ) {
 		if ( isWcVersion( version, '>=' ) ) {
 			percentage = parseInt( percentage, 10 );
 			if ( isNaN( percentage ) ) {
 				return 12; // Default to 10% if the percentage is not a number.
 			}
-			// Since remoteVariantAssignment ranges from 0 to 120, we need to convert the percentage to a number between 0 and 120.
+			// Since remoteVariantAssignment ranges from 1 to 120, we need to convert the percentage to a number between 1 and 120.
 			return ( percentage / 100 ) * 120;
 		}
 	}
@@ -131,13 +135,20 @@ export const useOrderAttributionInstallBanner = () => {
 	);
 
 	const percentages = useMemo( () => {
-		if ( loadingRecommendations || recommendations.length === 0 ) {
+		if (
+			loadingRecommendations ||
+			! Array.isArray( recommendations ) ||
+			recommendations.length === 0
+		) {
 			return null;
 		}
 
 		for ( const recommendation of recommendations ) {
 			if ( recommendation.id === 'woocommerce-analytics' ) {
-				return recommendation?.order_attribution_promotion_percentage;
+				return (
+					recommendation?.order_attribution_promotion_percentage ||
+					null
+				);
 			}
 		}
 

@@ -80,24 +80,23 @@ class Init extends RemoteSpecsEngine {
 	 * Process specs.
 	 *
 	 * @param array|null $specs Marketing recommendations spec array.
-	 * @param string     $results_key The key of the results for the returning array.
 	 * @return array
 	 */
-	protected static function evaluate_specs( array $specs = null, string $results_key = 'suggestions' ) {
-		$results = array();
+	protected static function evaluate_specs( array $specs = null ) {
+		$suggestions = array();
 		$errors  = array();
 
 		foreach ( $specs as $spec ) {
 			try {
-				$results[] = self::object_to_array( $spec );
+				$suggestions[] = self::object_to_array( $spec );
 			} catch ( \Throwable $e ) {
 				$errors[] = $e;
 			}
 		}
 
 		return array(
-			$results_key => $results,
-			'errors'     => $errors,
+			'suggestions' => $suggestions,
+			'errors'      => $errors,
 		);
 	}
 
@@ -169,9 +168,9 @@ class Init extends RemoteSpecsEngine {
 	 */
 	public static function get_misc_recommendations(): array {
 		$specs   = self::get_misc_recommendations_specs();
-		$results = self::evaluate_specs( $specs, 'misc_recommendations' );
+		$results = self::evaluate_specs( $specs );
 
-		$specs_to_return = $results['misc_recommendations'];
+		$specs_to_return = $results['suggestions'];
 		$specs_to_save   = null;
 
 		if ( empty( $specs_to_return ) ) {
