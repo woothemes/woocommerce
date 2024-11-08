@@ -85,8 +85,9 @@ class Marketing extends \WC_REST_Data_Controller {
 			'/' . $this->rest_base . '/misc-recommendations',
 			array(
 				array(
-					'methods'  => \WP_REST_Server::READABLE,
-					'callback' => array( $this, 'get_misc_recommendations' ),
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_misc_recommendations' ),
+					'permission_callback' => array( $this, 'get_recommended_plugins_permissions_check' ),
 				),
 				'schema' => array( $this, 'get_public_item_schema' ),
 			)

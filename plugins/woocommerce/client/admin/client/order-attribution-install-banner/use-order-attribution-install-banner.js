@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback, useMemo, useEffect } from '@wordpress/element';
+import { useCallback, useMemo } from '@wordpress/element';
 import {
 	OPTIONS_STORE_NAME,
 	PLUGINS_STORE_NAME,
