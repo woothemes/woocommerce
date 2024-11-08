@@ -379,14 +379,10 @@ const updateOnboardingProfileOption = fromPromise(
 	async ( { input }: { input: CoreProfilerStateMachineContext } ) => {
 		const { businessChoice, sellingOnlineAnswer, sellingPlatforms } =
 			input.userProfile;
-
-		return dispatch( OPTIONS_STORE_NAME ).updateOptions( {
-			woocommerce_onboarding_profile: {
-				...input.onboardingProfile,
-				business_choice: businessChoice,
-				selling_online_answer: sellingOnlineAnswer,
-				selling_platforms: sellingPlatforms,
-			},
+		return dispatch( ONBOARDING_STORE_NAME ).updateProfileItems( {
+			business_choice: businessChoice,
+			selling_online_answer: sellingOnlineAnswer,
+			selling_platforms: sellingPlatforms,
 		} );
 	}
 );
@@ -473,26 +469,23 @@ const updateBusinessInfo = fromPromise(
 			payload: BusinessInfoPayload;
 		};
 	} ) => {
-		const refreshedOnboardingProfile = ( await resolveSelect(
-			OPTIONS_STORE_NAME
-		).getOption( 'woocommerce_onboarding_profile' ) ) as OnboardingProfile;
-
-		await updateStoreCurrency( input.payload.storeLocation );
-
-		return dispatch( OPTIONS_STORE_NAME ).updateOptions( {
-			blogname: input.payload.storeName,
-			woocommerce_default_country: input.payload.storeLocation,
-			woocommerce_onboarding_profile: {
-				...refreshedOnboardingProfile,
+		return Promise.all( [
+			updateStoreCurrency( input.payload.storeLocation ),
+			dispatch( ONBOARDING_STORE_NAME ).updateProfileItems( {
 				is_store_country_set: true,
-				industry: [ input.payload.industry ],
 				is_agree_marketing: input.payload.isOptInMarketing,
-				store_email:
-					input.payload.storeEmailAddress.length > 0
-						? input.payload.storeEmailAddress
-						: null,
-			},
-		} );
+				...( input.payload.industry && {
+					industry: [ input.payload.industry ],
+				} ),
+				...( input.payload.storeEmailAddress.length > 0 && {
+					store_email: input.payload.storeEmailAddress,
+				} ),
+			} ),
+			dispatch( OPTIONS_STORE_NAME ).updateOptions( {
+				blogname: input.payload.storeName,
+				woocommerce_default_country: input.payload.storeLocation,
+			} ),
+		] );
 	}
 );
 
