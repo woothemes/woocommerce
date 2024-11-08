@@ -1024,6 +1024,7 @@ class PaymentExtensionsData {
 
 		// Process the extensions.
 		$processed_extensions = array();
+		$priority = 0;
 		foreach ( self::$country_extensions[ $country_code ] as $key => $details ) {
 			// Check the formats we support.
 			if ( is_int( $key ) && is_string( $details ) ) {
@@ -1038,8 +1039,18 @@ class PaymentExtensionsData {
 			}
 
 			$extension_base_details = self::get_extension_base_details( $extension_id ) ?? array();
+			$extension_details      = self::with_country_details( $extension_base_details, $extension_country_details );
 
-			$processed_extensions[] = self::with_country_details( $extension_base_details, $extension_country_details );
+			// Include the extension ID.
+			$extension_details['_id'] = $extension_id;
+
+			// Lock in the priority for ordering purposes.
+			// We respect the order in the country extensions list.
+			// We use increments of 10 to allow for easy insertions.
+			$priority += 10;
+			$extension_details['_priority'] = $priority;
+
+			$processed_extensions[] = $extension_details;
 		}
 
 		return $processed_extensions;
