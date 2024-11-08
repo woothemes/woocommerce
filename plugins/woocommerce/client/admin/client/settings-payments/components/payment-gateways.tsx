@@ -53,13 +53,18 @@ export const PaymentGateways = () => {
 	const paymentGatewaysList = useMemo(
 		() =>
 			paymentGateways.map( ( gateway: PaymentGateway ) => {
+				const isWCPay = [
+					'pre_install_woocommerce_payments_promotion',
+					'woocommerce_payments',
+				].includes( gateway.id );
+
 				const determineGatewayStatus = () => {
 					if ( gateway.enabled ) {
 						if ( gateway.needs_setup ?? false ) {
 							return 'needs_setup';
 						}
 
-						if ( gateway.id === 'woocommerce_payments' ) {
+						if ( isWCPay ) {
 							if ( wooPaymentsGatewayData?.isInTestMode ) {
 								return 'test_mode';
 							}
@@ -67,7 +72,7 @@ export const PaymentGateways = () => {
 						return 'active';
 					}
 
-					if ( gateway.id === 'woocommerce_payments' ) {
+					if ( isWCPay ) {
 						return 'recommended';
 					}
 
@@ -77,7 +82,9 @@ export const PaymentGateways = () => {
 				const status = determineGatewayStatus();
 				return {
 					key: gateway.id,
-					className: 'transitions-disabled',
+					className: isWCPay
+						? 'woocommerce-item__woocommerce-payment transitions-disabled'
+						: 'transitions-disabled',
 					title: (
 						<>
 							{ gateway.method_title }
@@ -87,7 +94,7 @@ export const PaymentGateways = () => {
 					content: (
 						<>
 							{ decodeEntities( gateway.method_description ) }
-							{ gateway.id === 'woocommerce_payments' && (
+							{ isWCPay && (
 								<WooPaymentMethodsLogos
 									maxElements={ 10 }
 									isWooPayEligible={ true }
@@ -103,7 +110,7 @@ export const PaymentGateways = () => {
 									enabled={ gateway.enabled }
 									settings_url={ gateway.settings_url }
 								/>
-								{ gateway.id === 'woocommerce_payments' &&
+								{ isWCPay &&
 									wooPaymentsGatewayData?.isInTestMode && (
 										<Button
 											variant="primary"
