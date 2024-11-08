@@ -58,7 +58,7 @@ test.describe( 'Shopper → Shipping', () => {
 		await userFrontendUtils.goToCart();
 
 		await expect(
-			userPage.getByLabel( 'Enter address to check delivery options' )
+			userPage.getByText( 'Enter address to check delivery options' )
 		).toBeVisible();
 	} );
 

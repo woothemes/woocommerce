@@ -141,7 +141,7 @@ test.describe(
 
 				// Set shipping country to Netherlands
 				await page
-					.getByLabel( 'Enter address to check delivery options' )
+					.getByText( 'Enter address to check delivery options' )
 					.click();
 				await page
 					.getByRole( 'combobox' )
@@ -182,7 +182,7 @@ test.describe(
 
 				// Set shipping country to Portugal
 				await page
-					.getByLabel( 'Enter address to check delivery options' )
+					.getByText( 'Enter address to check delivery options' )
 					.click();
 				await page
 					.getByRole( 'combobox' )
@@ -235,7 +235,7 @@ test.describe(
 
 				// Set shipping country to Portugal
 				await page
-					.getByLabel( 'Enter address to check delivery options' )
+					.getByText( 'Enter address to check delivery options' )
 					.click();
 				await page
 					.getByRole( 'combobox' )
@@ -276,7 +276,7 @@ test.describe(
 
 				// Set shipping country to Portugal
 				await page
-					.getByLabel( 'Enter address to check delivery options' )
+					.getByText( 'Enter address to check delivery options' )
 					.click();
 				await page
 					.getByRole( 'combobox' )
