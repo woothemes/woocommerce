@@ -15,12 +15,23 @@ type AttributeFilterContext = {
 };
 
 store( 'woocommerce/product-filter-attribute', {
+	state: {
+		get hasSelectedFilters() {
+			const { params } = getContext< ProductFiltersContext >(
+				'woocommerce/product-filters'
+			);
+			const { attributeSlug } = getContext< AttributeFilterContext >();
+
+			return (
+				`filter_${ attributeSlug }` in params &&
+				params[ `filter_${ attributeSlug }` ]
+			);
+		},
+	},
 	actions: {
 		toggleFilter: () => {
-			const { ref } = getElement();
-			const targetAttribute =
-				ref.getAttribute( 'data-target-value' ) ?? 'value';
-			const termSlug = ref.getAttribute( targetAttribute );
+			const { props } = getElement();
+			const termSlug = props.value;
 
 			if ( ! termSlug ) return;
 

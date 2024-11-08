@@ -27,15 +27,15 @@ final class ProductFilterChips extends AbstractBlock {
 		if ( empty( $block->context['filterData'] ) || empty( $block->context['filterData']['items'] ) ) {
 			return '';
 		}
-		$classes   = '';
-		$style     = '';
-		$context   = $block->context['filterData'];
-		$items     = $context['items'] ?? array();
-		$icontext  = array(
+		$classes             = '';
+		$style               = '';
+		$context             = $block->context['filterData'];
+		$items               = $context['items'] ?? array();
+		$interactive_context = array(
 			'filterParamKeys' => $context['filterParamKeys'] ?? array(),
 		);
-		$action    = $context['actions']['toggleFilter'] ?? '';
-		$namespace = wp_json_encode( array( 'namespace' => 'woocommerce/product-filter-chips' ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP );
+		$action              = $context['actions']['toggleFilter'] ?? '';
+		$namespace           = wp_json_encode( array( 'namespace' => 'woocommerce/product-filter-chips' ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP );
 
 		$tags = new \WP_HTML_Tag_Processor( $content );
 		if ( $tags->next_tag( array( 'class_name' => 'wc-block-product-filter-chips' ) ) ) {
@@ -55,7 +55,7 @@ final class ProductFilterChips extends AbstractBlock {
 
 		$wrapper_attributes = array(
 			'data-wc-interactive' => esc_attr( $namespace ),
-			'data-wc-context'     => wp_json_encode( $icontext, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
+			'data-wc-context'     => wp_json_encode( $interactive_context, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
 			'data-wc-key'         => wp_unique_prefixed_id( $this->get_full_block_name() ),
 			'class'               => esc_attr( $classes ),
 			'style'               => esc_attr( $style ),

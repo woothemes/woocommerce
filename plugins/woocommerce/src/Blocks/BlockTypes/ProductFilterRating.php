@@ -125,22 +125,20 @@ final class ProductFilterRating extends AbstractBlock {
 		$items = $this->get_rating_items( $rating_counts, $selected_rating, $attributes['showCounts'] ?? false );
 
 		$filter_context = array(
-			'filterData'         => array(
+			'filterData' => array(
 				'items'           => $items,
 				'actions'         => array(
 					'toggleFilter' => "{$this->get_full_block_name()}::actions.toggleFilter",
 				),
 				'filterParamKeys' => array( self::RATING_FILTER_QUERY_VAR ),
 			),
-			'hasSelectedFilters' => count( $selected_rating ) > 0,
 		);
 
 		$wrapper_attributes = array(
 			'data-wc-interactive'  => wp_json_encode( array( 'namespace' => $this->get_full_block_name() ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
 			'data-wc-context'      => wp_json_encode(
 				array(
-					'hasSelectedFilters' => $filter_context['hasSelectedFilters'],
-					'hasFilterOptions'   => ! empty( $items ),
+					'hasFilterOptions' => ! empty( $items ),
 				),
 				JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
 			),

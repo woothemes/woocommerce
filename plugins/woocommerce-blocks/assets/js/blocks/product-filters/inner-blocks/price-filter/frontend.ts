@@ -2,12 +2,12 @@
  * External dependencies
  */
 import { store, getContext, getElement } from '@woocommerce/interactivity';
+import { HTMLElementEvent } from '@woocommerce/types';
 
 /**
  * Internal dependencies
  */
 import { ProductFiltersContext } from '../../frontend';
-import { HTMLElementEvent } from '@woocommerce/types';
 
 export type PriceFilterContext = {
 	minRange: number;
@@ -28,7 +28,6 @@ const { state, actions } = store( 'woocommerce/product-filter-price', {
 			const price = params?.min_price
 				? parseInt( params.min_price, 10 )
 				: context.minRange;
-			console.log( price );
 			return price;
 		},
 		get maxPrice() {
@@ -39,6 +38,13 @@ const { state, actions } = store( 'woocommerce/product-filter-price', {
 			return params?.max_price
 				? parseInt( params.max_price, 10 )
 				: context.maxRange;
+		},
+		get hasSelectedFilters() {
+			const context = getContext< PriceFilterContext >();
+			return (
+				state.minPrice > context.minRange ||
+				state.maxPrice < context.maxRange
+			);
 		},
 	},
 	actions: {

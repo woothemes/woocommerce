@@ -13,6 +13,7 @@ import {
 	PriceFilterContext,
 	ProductFilterPriceStore,
 } from '../price-filter/frontend';
+import { parseInt } from 'lodash';
 
 function inRange( value: number, min: number, max: number ) {
 	return value >= min && value <= max;
@@ -175,7 +176,13 @@ store( 'woocommerce/product-filter-price-slider', {
 			const { minRange, maxRange } = getContext< PriceFilterContext >(
 				'woocommerce/product-filter-price'
 			);
-			console.log( minPrice, maxPrice, minRange, maxRange );
+			console.log(
+				minPrice,
+				maxPrice,
+				minRange,
+				maxRange,
+				( 100 * ( maxPrice - minRange ) ) / ( maxRange - minRange )
+			);
 
 			return `--low: ${
 				( 100 * ( minPrice - minRange ) ) / ( maxRange - minRange )
@@ -203,6 +210,23 @@ store( 'woocommerce/product-filter-price-slider', {
 			const element = getElement();
 			if ( element && element.ref ) {
 				element.ref.select();
+			}
+		},
+		limitRange: ( e: HTMLElementEvent< HTMLInputElement > ) => {
+			const { state } = store< ProductFilterPriceStore >(
+				'woocommerce/product-filter-price'
+			);
+			const { minPrice, maxPrice } = state;
+			if ( e.target.classList.contains( 'min' ) ) {
+				e.target.value = Math.min(
+					parseInt( e.target.value, 10 ),
+					maxPrice - 1
+				).toString();
+			} else {
+				e.target.value = Math.max(
+					parseInt( e.target.value, 10 ),
+					minPrice + 1
+				).toString();
 			}
 		},
 	},

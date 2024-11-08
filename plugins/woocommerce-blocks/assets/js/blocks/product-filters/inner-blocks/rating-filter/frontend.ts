@@ -26,6 +26,14 @@ function getRatingFilters( context: ProductFiltersContext ): Array< string > {
 }
 
 store( 'woocommerce/product-filter-rating', {
+	state: {
+		get hasSelectedFilters() {
+			const { params } = getContext< ProductFiltersContext >(
+				'woocommerce/product-filters'
+			);
+			return filterRatingKey in params && params[ filterRatingKey ];
+		},
+	},
 	actions: {
 		toggleFilter: () => {
 			const context = getContext< ProductFiltersContext >(
@@ -35,10 +43,8 @@ store( 'woocommerce/product-filter-rating', {
 			// Pick out the active filters from the context
 			const filtersList = getRatingFilters( context );
 
-			const { ref } = getElement();
-			const value =
-				ref.getAttribute( 'data-target-value' ) ??
-				ref.getAttribute( 'value' );
+			const { props } = getElement();
+			const { value } = props;
 
 			const updatedFiltersList = filtersList.includes( value )
 				? [ ...filtersList.filter( ( filter ) => filter !== value ) ]

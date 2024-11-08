@@ -142,22 +142,20 @@ final class ProductFilterStatus extends AbstractBlock {
 		);
 
 		$filter_context = array(
-			'filterData'         => array(
+			'filterData' => array(
 				'items'           => $filter_options,
 				'actions'         => array(
 					'toggleFilter' => "{$this->get_full_block_name()}::actions.toggleFilter",
 				),
 				'filterParamKeys' => array( self::STOCK_STATUS_QUERY_VAR ),
 			),
-			'hasSelectedFilters' => ! empty( $selected_stock_statuses ),
 		);
 
 		$wrapper_attributes = array(
 			'data-wc-interactive'  => wp_json_encode( array( 'namespace' => $this->get_full_block_name() ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
 			'data-wc-context'      => wp_json_encode(
 				array(
-					'hasSelectedFilters' => $filter_context['hasSelectedFilters'],
-					'hasFilterOptions'   => ! empty( $filter_options ),
+					'hasFilterOptions' => ! empty( $filter_options ),
 				),
 				JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
 			),

@@ -110,18 +110,20 @@ class ProductFilterPriceSlider extends AbstractBlock {
 						data-wc-bind--value="woocommerce/product-filter-price::state.minPrice"
 						data-wc-bind--min="woocommerce/product-filter-price::context.minRange"
 						data-wc-bind--max="woocommerce/product-filter-price::context.maxRange"
-						data-wc-on--input="woocommerce/product-filter-price::actions.setMinPrice"
+						data-wc-on--input--update-price="woocommerce/product-filter-price::actions.setMinPrice"
+						data-wc-on--input--limit-range="actions.limitRange"
 					/>
 					<input
 						type="range"
 						class="max"
-						max="<?php echo esc_attr( $max_range ); ?>"
+						min="<?php echo esc_attr( $min_range ); ?>"
 						max="<?php echo esc_attr( $max_range ); ?>"
 						value="<?php echo esc_attr( $max_price ); ?>"
 						data-wc-bind--value="woocommerce/product-filter-price::state.maxPrice"
 						data-wc-bind--max="woocommerce/product-filter-price::context.maxRange"
 						data-wc-bind--max="woocommerce/product-filter-price::context.maxRange"
-						data-wc-on--input="woocommerce/product-filter-price::actions.setMaxPrice"
+						data-wc-on--input--update-price="woocommerce/product-filter-price::actions.setMaxPrice"
+						data-wc-on--input--limit-range="actions.limitRange"
 					/>
 				</div>
 				<div class="wc-block-product-filter-price-slider__right text">

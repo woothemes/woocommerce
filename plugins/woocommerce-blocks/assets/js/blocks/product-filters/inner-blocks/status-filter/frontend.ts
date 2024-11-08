@@ -11,6 +11,18 @@ import type { ProductFiltersContext } from '../../frontend';
 const filterStockStatusKey = 'filter_stock_status';
 
 store( 'woocommerce/product-filter-status', {
+	state: {
+		get hasSelectedFilters() {
+			const { params } = getContext< ProductFiltersContext >(
+				'woocommerce/product-filters'
+			);
+
+			return (
+				filterStockStatusKey in params && params[ filterStockStatusKey ]
+			);
+		},
+	},
+
 	actions: {
 		toggleFilter: () => {
 			const productFiltersContext = getContext< ProductFiltersContext >(
@@ -23,10 +35,8 @@ store( 'woocommerce/product-filter-status', {
 			const filtersArr =
 				currentFilters === undefined ? [] : currentFilters.split( ',' );
 
-			const { ref } = getElement();
-			const value =
-				ref.getAttribute( 'data-target-value' ) ??
-				ref.getAttribute( 'value' );
+			const { props } = getElement();
+			const { value } = props;
 
 			const newFilterArr = filtersArr.includes( value )
 				? [ ...filtersArr.filter( ( filter ) => filter !== value ) ]

@@ -61,7 +61,7 @@ class ProductFilters extends AbstractBlock {
 	 * @return string Rendered block type output.
 	 */
 	protected function render( $attributes, $content, $block ) {
-		$inner_blocks = array_reduce(
+		$inner_blocks        = array_reduce(
 			$block->parsed_block['innerBlocks'],
 			function ( $carry, $parsed_block ) use ( $block ) {
 				$carry .= ( new \WP_Block( $parsed_block, $block->context ) )->render();
@@ -69,14 +69,14 @@ class ProductFilters extends AbstractBlock {
 			},
 			''
 		);
-		$icontext     = array(
+		$interactive_context = array(
 			'params'         => $this->get_filter_query_params( 0 ),
 			'originalParams' => $this->get_filter_query_params( 0 ),
 		);
-		$classes      = array(
+		$classes             = array(
 			'wc-block-product-filters' => true,
 		);
-		$styles       = array(
+		$styles              = array(
 			'--wc-product-filters-text-color'       => StyleAttributesUtils::get_text_color_class_and_style( $attributes )['value'],
 			'--wc-product-filters-background-color' => StyleAttributesUtils::get_background_color_class_and_style( $attributes )['value'],
 		);
@@ -91,7 +91,7 @@ class ProductFilters extends AbstractBlock {
 			'data-wc-watch--scrolling'         => 'callbacks.scrollLimit',
 			'data-wc-on--keyup'                => 'actions.closeOverlayOnEscape',
 			'data-wc-navigation-id'            => $this->generate_navigation_id( $block ),
-			'data-wc-context'                  => wp_json_encode( $icontext, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
+			'data-wc-context'                  => wp_json_encode( $interactive_context, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
 			'data-wc-class--is-overlay-opened' => 'context.isOverlayOpened',
 			'style'                            => array_reduce(
 				array_keys( $styles ),
