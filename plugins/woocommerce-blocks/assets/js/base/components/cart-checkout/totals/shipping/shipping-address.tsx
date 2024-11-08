@@ -12,6 +12,7 @@ import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
  * Internal dependencies
  */
 import { getPickupLocation } from './utils';
+import { ShippingCalculatorPanel } from '../../shipping-calculator/shipping-calculator-panel';
 
 export const ShippingAddress = (): JSX.Element => {
 	const { shippingRates, shippingAddress } = useStoreCart();
@@ -24,22 +25,35 @@ export const ShippingAddress = (): JSX.Element => {
 		: formatShippingAddress( shippingAddress );
 
 	const addressLabel = prefersCollection
-		? /* translators: %s location. */
-		  __( 'Collection from %s', 'woocommerce' )
-		: /* translators: %s location. */
-		  __( 'Delivers to %s', 'woocommerce' );
+		? __( 'Collection from ', 'woocommerce' )
+		: __( 'Delivers to ', 'woocommerce' );
 
-	const calculatorLabel =
-		! formattedAddress || prefersCollection
-			? __( 'Enter address to check delivery options', 'woocommerce' )
-			: __( 'Change address', 'woocommerce' );
+	// const calculatorLabel =
+	// 	! formattedAddress || prefersCollection
+	// 		? __( 'Enter address to check delivery options', 'woocommerce' )
+	// 		: __( 'Change address', 'woocommerce' );
+
+	const title = (
+		<p className="wc-block-components-totals-shipping-address-summary">
+			{ !! formattedAddress ? (
+				<>
+					{ addressLabel }
+					<strong>{ formattedAddress }</strong>
+				</>
+			) : (
+				<>
+					{ __(
+						'Enter address to check delivery options',
+						'woocommerce'
+					) }
+				</>
+			) }
+		</p>
+	);
 
 	return (
 		<div className="wc-block-components-shipping-address">
-			{ formattedAddress
-				? sprintf( addressLabel, formattedAddress ) + ' '
-				: null }
-			<ShippingCalculatorButton label={ calculatorLabel } />
+			<ShippingCalculatorPanel title={ title } />
 		</div>
 	);
 };
