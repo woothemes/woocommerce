@@ -27,7 +27,8 @@ export const SettingsPaymentsMain: React.FC = () => {
 		}
 		setInstallingPlugin( plugin.id );
 		installAndActivatePlugins( [ plugin.plugins[ 0 ] ] )
-			.then( () => {
+			.then( ( response ) => {
+				createNoticesFromResponse( response );
 				setIsInstalled( true );
 				window.location.reload();
 			} )
