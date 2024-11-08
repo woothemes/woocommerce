@@ -53,7 +53,7 @@ const UpgradeNotice = ( { revertMigration }: UpgradeNoticeProps ) => {
 
 	const handleRevert = () => {
 		revertMigration();
-		recordEvent( 'product_collection_block_transform', {
+		recordEvent( 'blocks_product_collection_migration_between_products_beta', {
 			transform_to: 'products_beta',
 		} );
 	};
