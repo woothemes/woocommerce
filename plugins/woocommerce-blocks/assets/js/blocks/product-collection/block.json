@@ -60,7 +60,8 @@
 		"dimensions": "dimensions",
 		"queryContextIncludes": "queryContextIncludes",
 		"collection": "collection",
-		"__privateProductCollectionPreviewState": "__privatePreviewState"
+		"forcePageReload": "forcePageReload",
+		"__privateProductCollectionPreviewState": "__privatePreviewState",
 	},
 	"usesContext": [ "templateSlug", "postId" ],
 	"supports": {
