@@ -16,7 +16,6 @@ const HOME = '/';
 
 const results = {
 	totalBlockingTime: [],
-	cumulativeLayoutShift: [],
 	largestContentfulPaint: [],
 	type: [],
 };
