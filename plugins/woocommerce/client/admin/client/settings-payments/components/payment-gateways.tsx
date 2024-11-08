@@ -3,7 +3,7 @@
  */
 import React, { useEffect, useState, useMemo } from 'react';
 import { Gridicon } from '@automattic/components';
-import { Button, SelectControl } from '@wordpress/components';
+import { Button, CardDivider, SelectControl } from '@wordpress/components';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 import { PaymentGateway } from '@woocommerce/data';
@@ -118,11 +118,24 @@ export const PaymentGateways = () => {
 									) }
 								<EllipsisMenu
 									label={ __(
-										'Task List Options',
+										'Payment Gateway Options',
 										'woocommerce'
 									) }
 									renderContent={ () => (
-										<div>
+										<div className="woocommerce-list__item-after__ellipsis-menu">
+											{ gateway.id ===
+												'woocommerce_payments' && (
+												<Button
+													href={
+														'https://woocommerce.com/document/woopayments/fees-and-debits/fees/'
+													}
+												>
+													{ __(
+														'See pricing & fees',
+														'woocommerce'
+													) }
+												</Button>
+											) }
 											<Button>
 												{ __(
 													'Learn more',
@@ -132,6 +145,13 @@ export const PaymentGateways = () => {
 											<Button>
 												{ __(
 													'See Terms of Service',
+													'woocommerce'
+												) }
+											</Button>
+											<CardDivider />
+											<Button>
+												{ __(
+													'Hide suggestion',
 													'woocommerce'
 												) }
 											</Button>

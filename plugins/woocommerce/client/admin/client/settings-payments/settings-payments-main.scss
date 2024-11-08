@@ -4,6 +4,15 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 	background-color: #fff;
 }
 
+.woocommerce-ellipsis-menu__popover {
+	left: -40px !important;	// Fix to ensure it stays in frame
+
+	> .components-popover__content {
+		padding: 0;
+		margin: 8px;
+	}
+}
+
 .settings-payments-main__container {
 	margin: 0 -20px;
 	padding-bottom: 32px;
