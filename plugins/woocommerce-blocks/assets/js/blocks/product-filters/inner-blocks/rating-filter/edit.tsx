@@ -32,6 +32,8 @@ import { EXCLUDED_BLOCKS } from '../../constants';
 import { Notice } from '../../components/notice';
 import type { Attributes } from './types';
 import './style.scss';
+import { InitialDisabled } from '../../components/initial-disabled';
+import { useProductFilterClearButtonManager } from '../../hooks/use-product-filter-clear-button-manager';
 
 const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 	const { attributes, setAttributes } = props;
@@ -164,6 +166,11 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 		minRating,
 	] );
 
+	useProductFilterClearButtonManager( {
+		clientId: props.clientId,
+		showClearButton: attributes.clearButton,
+	} );
+
 	if ( ! filteredCountsLoading && displayedOptions.length === 0 ) {
 		return null;
 	}
@@ -189,30 +196,32 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 			/>
 
 			<div { ...innerBlocksProps }>
-				{ showNoProductsNotice && (
-					<Notice>
-						{ __(
-							"Your store doesn't have any products with ratings yet. This filter option will display when a product receives a review.",
-							'woocommerce'
-						) }
-					</Notice>
-				) }
-				<div
-					className={ clsx( {
-						'is-loading': isLoading,
-					} ) }
-				>
-					<BlockContextProvider
-						value={ {
-							filterData: {
-								items: displayedOptions,
-								isLoading,
-							},
-						} }
+				<InitialDisabled>
+					{ showNoProductsNotice && (
+						<Notice>
+							{ __(
+								"Your store doesn't have any products with ratings yet. This filter option will display when a product receives a review.",
+								'woocommerce'
+							) }
+						</Notice>
+					) }
+					<div
+						className={ clsx( {
+							'is-loading': isLoading,
+						} ) }
 					>
-						{ children }
-					</BlockContextProvider>
-				</div>
+						<BlockContextProvider
+							value={ {
+								filterData: {
+									items: displayedOptions,
+									isLoading,
+								},
+							} }
+						>
+							{ children }
+						</BlockContextProvider>
+					</div>
+				</InitialDisabled>
 			</div>
 		</>
 	);
