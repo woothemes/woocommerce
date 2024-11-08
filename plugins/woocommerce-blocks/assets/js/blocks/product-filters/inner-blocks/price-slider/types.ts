@@ -20,6 +20,8 @@ export type BlockAttributes = {
 
 	slider: string;
 	customSlider: string;
+
+	clearButton: boolean;
 };
 
 export interface EditProps extends BlockEditProps< BlockAttributes > {
