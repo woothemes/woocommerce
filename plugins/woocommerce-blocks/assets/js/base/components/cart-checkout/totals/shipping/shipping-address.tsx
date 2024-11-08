@@ -28,11 +28,6 @@ export const ShippingAddress = (): JSX.Element => {
 		? __( 'Collection from ', 'woocommerce' )
 		: __( 'Delivers to ', 'woocommerce' );
 
-	// const calculatorLabel =
-	// 	! formattedAddress || prefersCollection
-	// 		? __( 'Enter address to check delivery options', 'woocommerce' )
-	// 		: __( 'Change address', 'woocommerce' );
-
 	const title = (
 		<p className="wc-block-components-totals-shipping-address-summary">
 			{ !! formattedAddress ? (
