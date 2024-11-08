@@ -125,11 +125,7 @@ export const PaymentGateways = () => {
 										<div className="woocommerce-list__item-after__ellipsis-menu">
 											{ gateway.id ===
 												'woocommerce_payments' && (
-												<Button
-													href={
-														'https://woocommerce.com/document/woopayments/fees-and-debits/fees/'
-													}
-												>
+												<Button>
 													{ __(
 														'See pricing & fees',
 														'woocommerce'
