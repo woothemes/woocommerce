@@ -32,7 +32,15 @@ final class QueryFilters {
 			return $args;
 		}
 
-		return $this->add_query_clauses( $args, $wp_query );
+		if ( $wp_query->get( 'filter_stock_status' ) ) {
+			$args = $this->stock_filter_clauses( $args, $wp_query );
+		}
+
+		if ( $wp_query->get( 'filter_status' ) ) {
+			$args = $this->status_filter_clauses( $args, $wp_query );
+		}
+
+		return $args;
 	}
 
 	/**
