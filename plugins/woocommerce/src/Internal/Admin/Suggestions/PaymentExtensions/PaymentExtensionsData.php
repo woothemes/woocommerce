@@ -21,7 +21,6 @@ class PaymentExtensionsData {
 	 */
 	const AIRWALLEX = 'airwallex';
 	const ANTOM = 'antom';
-	const MASTERCARD = 'mastercard';
 	const MERCADO_PAGO = 'mercado_pago';
 	const MOLLIE = 'mollie';
 	const PAYFAST = 'payfast';
