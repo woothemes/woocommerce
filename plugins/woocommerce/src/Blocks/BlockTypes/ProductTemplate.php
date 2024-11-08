@@ -62,7 +62,9 @@ class ProductTemplate extends AbstractBlock {
 		if ( isset( $block->context['displayLayout'] ) && isset( $block->context['query'] ) ) {
 			$classnames = 'is-product-collection-layout-' . $block->context['displayLayout']['type'] . ' ';
 
-			if ( isset( $block->context['displayLayout']['type'] ) && 'flex' === $block->context['displayLayout']['type'] ) {
+			if ( isset( $block->context['displayLayout']['type'] ) && (
+				'flex' === $block->context['displayLayout']['type'] ||
+				'carousel' === $block->context['displayLayout']['type'] ) ) {
 				if ( isset( $block->context['displayLayout']['shrinkColumns'] ) && $block->context['displayLayout']['shrinkColumns'] ) {
 					$classnames = "wc-block-product-template__responsive columns-{$block->context['displayLayout']['columns']}";
 				} else {
@@ -139,6 +141,13 @@ class ProductTemplate extends AbstractBlock {
 		* Since we use two custom loops, it's safest to always restore.
 		*/
 		wp_reset_postdata();
+
+		$is_carousel_layout = 'carousel' === $block->context['displayLayout']['type'];
+		$carousel_pagination = '';
+
+		if ( $is_carousel_layout ) {
+			$carousel_pagination =
+		}
 
 		return sprintf(
 			'<ul %1$s>%2$s</ul>',
