@@ -149,7 +149,7 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 		// Then, filter the suggestions to get the preferred and additional payment extensions (not including installed extensions).
 		$preferred_payment_extension_suggestions = array_values( array_filter( $all_suggestions, function ( $suggestion ) use ( $payment_gateway_ids ) {
 			// Currently it will be only WooPayments, since we don't have category_preferred or something like that.
-			return $suggestion->id === 'woocommerce_payments:without-in-person-payments' && ! in_array( 'woocommerce_payments', $payment_gateway_ids, true );
+			return $suggestion->id === 'woocommerce_payments:with-in-person-payments' && ! in_array( 'woocommerce_payments', $payment_gateway_ids, true );
 		} ) );
 
 		// Sort additional by recommendation_priority and get the first one.
@@ -206,9 +206,9 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 		// Remove offline methods from the list of gateways (these are handled differently). Also remove the pre_install_woocommerce_payments_promotion gateway.
 		foreach ( $payment_gateways as $gateway ) {
 			if ( ! in_array( $gateway['id'], $offline_methods, true ) ) {
-				// Hack to change the ID so we don't show two gateways - one suggested, one installed.
+				// Temporary condition: so we don't show two gateways - one suggested, one installed.
 				if ( 'pre_install_woocommerce_payments_promotion' === $gateway['id'] ) {
-					$gateway['id'] = 'woocommerce_payments';
+					continue;
 				}
 				$display_payment_gateways[] = $gateway;
 			}
