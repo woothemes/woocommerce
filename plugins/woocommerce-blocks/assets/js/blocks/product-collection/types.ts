@@ -196,6 +196,9 @@ export enum CoreFilterNames {
 	TAXONOMY = 'taxonomy',
 	PRICE_RANGE = 'price-range',
 	FILTERABLE = 'filterable',
+	PRODUCTS_PER_PAGE = 'products-per-page',
+	MAX_PAGES_TO_SHOW = 'max-pages-to-show',
+	OFFSET = 'offset',
 }
 
 export type CollectionName = CoreCollectionNames | string;

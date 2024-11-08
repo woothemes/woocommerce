@@ -54,6 +54,7 @@ import CreatedControl from './created-control';
 import PriceRangeControl from './price-range-control';
 import LinkedProductControl from './linked-product-control';
 import WidthOptionsControl from './width-options-control';
+import DisplaySettings from './display-settings';
 
 const prepareShouldShowFilter =
 	( hideControls: FilterName[] ) => ( filter: FilterName ) => {
@@ -158,6 +159,8 @@ const ProductCollectionInspectorControls = (
 					<OrderByControl { ...queryControlProps } />
 				) }
 			</ToolsPanel>
+
+			<DisplaySettings { ...queryControlProps } />
 
 			<ToolsPanel
 				label={ __( 'Dimensions', 'woocommerce' ) }
