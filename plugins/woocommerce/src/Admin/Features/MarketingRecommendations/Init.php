@@ -84,7 +84,7 @@ class Init extends RemoteSpecsEngine {
 	 */
 	protected static function evaluate_specs( array $specs = null ) {
 		$suggestions = array();
-		$errors  = array();
+		$errors      = array();
 
 		foreach ( $specs as $spec ) {
 			try {
