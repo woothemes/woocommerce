@@ -918,6 +918,31 @@ class PaymentExtensionsData {
 					),
 				),
 			),
+			self::ANTOM             => array(
+				'type'              => self::TYPE_PSP,
+				'title'             => esc_html__( 'Antom', 'woocommerce' ),
+				'short_description' => esc_html__( 'Your trusted payments partner in Asia and around the world.', 'woocommerce' ),
+				'description'       => esc_html__( 'Start accepting debit/credit card, bank transfers, wallet payments, mobile payments and local payment methods your customers use in Asia Pacific and beyond.', 'woocommerce' ),
+				// @todo add image.
+				'plugin'            => array(
+					'type' => self::PLUGIN_TYPE_WPORG,
+					'slug' => 'antom-payments',
+				),
+				'links'             => array(
+					array(
+						'type' => self::LINK_TYPE_ABOUT,
+						'url'  => 'https://woocommerce.com/products/antom-payments/',
+					),
+					array(
+						'type' => self::LINK_TYPE_DOCS,
+						'url'  => 'https://woocommerce.com/document/antom-payment/',
+					),
+					array(
+						'type' => self::LINK_TYPE_SUPPORT,
+						'url'  => 'https://woocommerce.com/my-account/contact-support/?select=antom-payments',
+					),
+				),
+			),
 			self::MERCADO_PAGO      => array(
 				'type'        => self::TYPE_PSP,
 				'title'       => esc_html__( 'Mercado Pago', 'woocommerce' ),
