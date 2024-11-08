@@ -7,10 +7,10 @@ use Automattic\WooCommerce\Blocks\Utils\ProductCollectionUtils;
 use WP_HTML_Tag_Processor;
 
 /**
- * ProductRenderer class.
+ * ProductCollectionRenderer class.
  * Handles rendering of the block and adds interactivity.
  */
-class ProductRenderer {
+class ProductCollectionRenderer {
 
 	/**
 	 * The render state of the product collection block.
