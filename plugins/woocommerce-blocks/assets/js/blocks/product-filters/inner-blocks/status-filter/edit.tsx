@@ -18,11 +18,9 @@ import type { WCStoreV1ProductsCollectionProps } from '@woocommerce/blocks/produ
 import { InitialDisabled } from '../../components/initial-disabled';
 import { Inspector } from './inspector';
 import type { EditProps } from './types';
-import { useProductFilterClearButtonManager } from '../../hooks/use-product-filter-clear-button-manager';
 
 const Edit = ( props: EditProps ) => {
 	const { showCounts, hideEmpty, clearButton } = props.attributes;
-	const { clientId } = props;
 	const { children, ...innerBlocksProps } = useInnerBlocksProps(
 		useBlockProps(),
 		{
@@ -104,11 +102,6 @@ const Edit = ( props: EditProps ) => {
 			} )
 			.filter( ( item ) => ! hideEmpty || item.count > 0 );
 	}, [ stockStatusOptions, filteredCounts, showCounts, hideEmpty ] );
-
-	useProductFilterClearButtonManager( {
-		clientId,
-		showClearButton: clearButton,
-	} );
 
 	return (
 		<div { ...innerBlocksProps }>
