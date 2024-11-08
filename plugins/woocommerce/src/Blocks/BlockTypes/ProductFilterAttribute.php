@@ -120,11 +120,16 @@ final class ProductFilterAttribute extends AbstractBlock {
 		$action_namespace = $this->get_full_block_name();
 
 		foreach ( $active_product_attributes as $product_attribute ) {
-			$terms = explode( ',', get_query_var( "filter_{$product_attribute}" ) );
+			if ( empty( $params[ "filter_{$product_attribute}" ] ) ) {
+				continue;
+			}
+
+			$terms      = explode( ',', $params[ "filter_{$product_attribute}" ] );
+			$query_type = $params[ "query_type_{$product_attribute}" ] ?? 'or';
 
 			// Get attribute term by slug.
 			$terms = array_map(
-				function ( $term ) use ( $product_attribute, $action_namespace ) {
+				function ( $term ) use ( $product_attribute, $action_namespace, $query_type ) {
 					$term_object = get_term_by( 'slug', $term, "pa_{$product_attribute}" );
 					return array(
 						'title'      => $term_object->name,
@@ -134,7 +139,7 @@ final class ProductFilterAttribute extends AbstractBlock {
 							'data-wc-context'   => "$action_namespace::" . wp_json_encode(
 								array(
 									'attributeSlug' => $product_attribute,
-									'queryType'     => get_query_var( "query_type_{$product_attribute}" ),
+									'queryType'     => $query_type,
 								),
 								JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
 							),
