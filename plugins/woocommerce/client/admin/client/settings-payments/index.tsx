@@ -8,7 +8,7 @@ import { getAdminLink } from '@woocommerce/settings';
 /**
  * Internal dependencies
  */
-import { Header } from './components/header';
+import { Header } from './components/header/header';
 
 const SettingsPaymentsMainChunk = lazy(
 	() =>

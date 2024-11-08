@@ -14,7 +14,7 @@ import {
 /**
  * Internal dependencies
  */
-import { BackButton } from './back-button';
+import { BackButton } from '../back-button/back-button';
 import './header.scss';
 
 interface HeaderProps {
