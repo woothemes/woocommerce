@@ -22,7 +22,7 @@ class WooSubscriptionsNotes {
 	const CONNECTION_NOTE_NAME    = 'wc-admin-wc-helper-connection'; // deprecated.
 	const SUBSCRIPTION_NOTE_NAME  = 'wc-admin-wc-helper-subscription';
 	const NOTIFY_WHEN_DAYS_LEFT   = 60;
-	const BUMP_THRESHOLDS         = array( 60, 45, 20, 7, 1 ); // days
+	const BUMP_THRESHOLDS         = array( 60, 45, 20, 7, 1 ); // days.
 
 	/**
 	 * Hook all the things.
