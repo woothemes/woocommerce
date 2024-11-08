@@ -240,7 +240,11 @@ class PaymentExtensionsData {
 			self::KLARNA,
 		),
 		'GI' => array(
-			self::STRIPE,
+			self::STRIPE => array(
+				'_append' => array(
+					'tags' => array ( self::TAG_PREFERRED ),
+				),
+			),
 			self::PAYPAL_FULL_STACK,
 			self::PAYPAL_WALLET,
 		),
@@ -309,7 +313,11 @@ class PaymentExtensionsData {
 			self::PAYPAL_WALLET,
 		),
 		'LI' => array(
-			self::STRIPE,
+			self::STRIPE => array(
+				'_append' => array(
+					'tags' => array ( self::TAG_PREFERRED ),
+				),
+			),
 			self::PAYPAL_FULL_STACK,
 			self::MOLLIE,
 			self::PAYPAL_WALLET,
@@ -476,9 +484,17 @@ class PaymentExtensionsData {
 			self::TILOPAY,
 		),
 		'BR' => array(
-			self::STRIPE,
+			self::STRIPE => array(
+				'_append' => array(
+					'tags' => array ( self::TAG_PREFERRED ),
+				),
+			),
 			self::PAYPAL_FULL_STACK,
-			self::MERCADO_PAGO,
+			self::MERCADO_PAGO  => array(
+				'_remove' => array(
+					'tags' => array ( self::TAG_PREFERRED ),
+				),
+			),
 			self::PAYPAL_WALLET,
 		),
 		'VG' => array(
@@ -563,9 +579,17 @@ class PaymentExtensionsData {
 			self::PAYPAL_WALLET,
 		),
 		'MX' => array(
-			self::STRIPE,
+			self::STRIPE => array(
+				'_append' => array(
+					'tags' => array ( self::TAG_PREFERRED ),
+				),
+			),
 			self::PAYPAL_FULL_STACK,
-			self::MERCADO_PAGO,
+			self::MERCADO_PAGO  => array(
+				'_remove' => array(
+					'tags' => array ( self::TAG_PREFERRED ),
+				),
+			),
 			self::PAYPAL_WALLET,
 			self::KLARNA,
 		),
@@ -640,11 +664,18 @@ class PaymentExtensionsData {
 			self::KLARNA,
 		),
 		'BD' => array(
-			self::PAYONEER,
+			self::PAYONEER => array(
+				'_append' => array(
+					'tags' => array ( self::TAG_PREFERRED ),
+				),
+			),
 		),
 		'CN' => array(
 			self::PAYPAL_FULL_STACK => array(
 				'type' => self::TYPE_PSP,
+				'_append' => array(
+					'tags' => array ( self::TAG_PREFERRED ),
+				),
 			),
 			self::ANTOM,
 			self::AIRWALLEX,
@@ -665,7 +696,11 @@ class PaymentExtensionsData {
 			self::PAYPAL_FULL_STACK,
 		),
 		'IN' => array(
-			self::STRIPE,
+			self::STRIPE => array(
+				'_append' => array(
+					'tags' => array ( self::TAG_PREFERRED ),
+				),
+			),
 			self::PAYPAL_FULL_STACK,
 			self::RAZORPAY,
 			self::PAYU_INDIA,
@@ -673,7 +708,11 @@ class PaymentExtensionsData {
 			self::PAYPAL_WALLET,
 		),
 		'ID' => array(
-			self::ANTOM,
+			self::ANTOM => array(
+				'_append' => array(
+					'tags' => array ( self::TAG_PREFERRED ),
+				),
+			),
 			self::PAYPAL_FULL_STACK,
 			self::PAYONEER,
 			self::PAYPAL_WALLET,
@@ -688,7 +727,11 @@ class PaymentExtensionsData {
 			self::AMAZON_PAY,
 		),
 		'MY' => array(
-			self::STRIPE,
+			self::STRIPE => array(
+				'_append' => array(
+					'tags' => array ( self::TAG_PREFERRED ),
+				),
+			),
 			self::PAYPAL_FULL_STACK,
 			self::ANTOM,
 			self::PAYONEER,
@@ -712,7 +755,11 @@ class PaymentExtensionsData {
 			self::PAYPAL_WALLET,
 		),
 		'PH' => array(
-			self::ANTOM,
+			self::ANTOM => array(
+				'_append' => array(
+					'tags' => array ( self::TAG_PREFERRED ),
+				),
+			),
 			self::PAYPAL_FULL_STACK,
 			self::PAYONEER,
 			self::PAYPAL_WALLET,
@@ -726,21 +773,33 @@ class PaymentExtensionsData {
 			self::PAYPAL_WALLET,
 		),
 		'LK' => array(
-			self::PAYONEER,
+			self::PAYONEER => array(
+				'_append' => array(
+					'tags' => array ( self::TAG_PREFERRED ),
+				),
+			),
 		),
 		'KR' => array(
 			self::PAYPAL_FULL_STACK,
 			self::PAYPAL_WALLET,
 		),
 		'TH' => array(
-			self::STRIPE,
+			self::STRIPE => array(
+				'_append' => array(
+					'tags' => array ( self::TAG_PREFERRED ),
+				),
+			),
 			self::PAYPAL_FULL_STACK,
 			self::ANTOM,
 			self::PAYONEER,
 			self::PAYPAL_WALLET,
 		),
 		'VN' => array(
-			self::ANTOM,
+			self::ANTOM => array(
+				'_append' => array(
+					'tags' => array ( self::TAG_PREFERRED ),
+				),
+			),
 			self::PAYPAL_FULL_STACK,
 			self::PAYONEER,
 			self::PAYPAL_WALLET,
@@ -767,7 +826,11 @@ class PaymentExtensionsData {
 		'CG' => array(),
 		'CI' => array(),
 		'EG' => array(
-			self::PAYMOB,
+			self::PAYMOB => array(
+				'_append' => array(
+					'tags' => array ( self::TAG_PREFERRED ),
+				),
+			),
 			self::PAYPAL_FULL_STACK,
 			self::PAYPAL_WALLET,
 		),
@@ -782,7 +845,11 @@ class PaymentExtensionsData {
 		'ET' => array(),
 		'GA' => array(),
 		'GH' => array(
-			self::PAYSTACK,
+			self::PAYSTACK => array(
+				'_append' => array(
+					'tags' => array ( self::TAG_PREFERRED ),
+				),
+			),
 		),
 		'GM' => array(),
 		'GN' => array(),
@@ -809,7 +876,11 @@ class PaymentExtensionsData {
 			self::PAYPAL_WALLET,
 		),
 		'MA' => array(
-			self::PAYONEER,
+			self::PAYONEER => array(
+				'_append' => array(
+					'tags' => array ( self::TAG_PREFERRED ),
+				),
+			),
 			self::PAYPAL_FULL_STACK,
 			self::PAYPAL_WALLET,
 		),
@@ -820,7 +891,11 @@ class PaymentExtensionsData {
 		'NA' => array(),
 		'NE' => array(),
 		'NG' => array(
-			self::PAYSTACK,
+			self::PAYSTACK => array(
+				'_append' => array(
+					'tags' => array ( self::TAG_PREFERRED ),
+				),
+			),
 		),
 		'RE' => array(
 			self::PAYPAL_FULL_STACK,
@@ -839,7 +914,11 @@ class PaymentExtensionsData {
 		'SL' => array(),
 		'SO' => array(),
 		'ZA' => array(
-			self::PAYFAST,
+			self::PAYFAST => array(
+				'_append' => array(
+					'tags' => array ( self::TAG_PREFERRED ),
+				),
+			),
 			self::PAYPAL_FULL_STACK,
 			self::PAYSTACK,
 			self::PAYPAL_WALLET,
@@ -860,7 +939,11 @@ class PaymentExtensionsData {
 		),
 		'IQ' => array(),
 		'IL' => array(
-			self::AIRWALLEX,
+			self::AIRWALLEX => array(
+				'_append' => array(
+					'tags' => array ( self::TAG_PREFERRED ),
+				),
+			),
 		),
 		'JO' => array(
 			self::PAYPAL_FULL_STACK,
@@ -872,12 +955,20 @@ class PaymentExtensionsData {
 		),
 		'LB' => array(),
 		'OM' => array(
-			self::PAYMOB,
+			self::PAYMOB => array(
+				'_append' => array(
+					'tags' => array ( self::TAG_PREFERRED ),
+				),
+			),
 			self::PAYPAL_FULL_STACK,
 			self::PAYPAL_WALLET,
 		),
 		'PK' => array(
-			self::PAYONEER,
+			self::PAYONEER => array(
+				'_append' => array(
+					'tags' => array ( self::TAG_PREFERRED ),
+				),
+			),
 			self::PAYMOB,
 		),
 		'QA' => array(
@@ -885,7 +976,11 @@ class PaymentExtensionsData {
 			self::PAYPAL_WALLET,
 		),
 		'SA' => array(
-			self::PAYMOB,
+			self::PAYMOB => array(
+				'_append' => array(
+					'tags' => array ( self::TAG_PREFERRED ),
+				),
+			),
 			self::PAYPAL_FULL_STACK,
 			self::PAYPAL_WALLET,
 		),
@@ -981,6 +1076,7 @@ class PaymentExtensionsData {
 						'url'  => 'https://www.mercadopago.com.ar/developers/es/docs/woocommerce/introduction',
 					),
 				),
+				'tags'        => array( self::TAG_PREFERRED ),
 			),
 			self::MOLLIE            => array(
 				'type'        => self::TYPE_PSP,
@@ -1031,7 +1127,7 @@ class PaymentExtensionsData {
 						'url'  => 'https://woocommerce.com/my-account/contact-support/?select=payfast-payment-gateway',
 					),
 				),
-				'tags' => array( self::TAG_MADE_IN_WOO ),
+				'tags'        => array( self::TAG_MADE_IN_WOO ),
 			),
 			self::PAYMOB            => array(
 				'type'        => self::TYPE_PSP,
@@ -1081,7 +1177,7 @@ class PaymentExtensionsData {
 						'url'  => 'https://woocommerce.com/my-account/contact-support/?select=woocommerce-paypal-payments',
 					),
 				),
-				'tags' => array( self::TAG_MADE_IN_WOO ),
+				'tags'        => array( self::TAG_MADE_IN_WOO, self::TAG_PREFERRED ),
 			),
 			self::PAYPAL_WALLET     => array(
 				'type'        => self::TYPE_EXPRESS_CHECKOUT,
@@ -1107,7 +1203,7 @@ class PaymentExtensionsData {
 						'url'  => 'https://woocommerce.com/my-account/contact-support/?select=woocommerce-paypal-payments',
 					),
 				),
-				'tags' => array( self::TAG_MADE_IN_WOO ),
+				'tags'        => array( self::TAG_MADE_IN_WOO ),
 			),
 			self::PAYONEER          => array(
 				'type'        => self::TYPE_PSP,
@@ -1234,7 +1330,7 @@ class PaymentExtensionsData {
 						'url'  => 'https://woocommerce.com/my-account/contact-support/?select=square',
 					),
 				),
-				'tags' => array( self::TAG_MADE_IN_WOO ),
+				'tags'        => array( self::TAG_MADE_IN_WOO ),
 			),
 			self::STRIPE            => array(
 				'type'        => self::TYPE_PSP,
@@ -1260,7 +1356,7 @@ class PaymentExtensionsData {
 						'url'  => 'https://woocommerce.com/my-account/contact-support/?select=stripe',
 					),
 				),
-				'tags' => array( self::TAG_MADE_IN_WOO ),
+				'tags'        => array( self::TAG_MADE_IN_WOO ),
 			),
 			self::TILOPAY           => array(
 				'type'        => self::TYPE_PSP,
@@ -1285,6 +1381,7 @@ class PaymentExtensionsData {
 						'url'  => 'https://cst.support.tilopay.com/servicedesk/customer/portals',
 					),
 				),
+				'tags'        => array( self::TAG_PREFERRED ),
 			),
 			self::VIVA_WALLET       => array(
 				'type'        => self::TYPE_PSP,
@@ -1321,7 +1418,7 @@ class PaymentExtensionsData {
 					'type' => self::PLUGIN_TYPE_WPORG,
 					'slug' => 'woocommerce-payments',
 				),
-				'links'       => array(
+				'links'             => array(
 					array(
 						'type' => self::LINK_TYPE_PRICING,
 						'url'  => 'https://woocommerce.com/document/woopayments/fees-and-debits/',
@@ -1343,7 +1440,7 @@ class PaymentExtensionsData {
 						'url'  => 'https://woocommerce.com/my-account/contact-support/?select=woopayments',
 					),
 				),
-				'tags' => array( self::TAG_MADE_IN_WOO ),
+				'tags'              => array( self::TAG_MADE_IN_WOO, self::TAG_PREFERRED ),
 			),
 			self::AMAZON_PAY        => array(
 				'type'        => self::TYPE_EXPRESS_CHECKOUT,
@@ -1369,7 +1466,7 @@ class PaymentExtensionsData {
 						'url'  => 'https://woocommerce.com/my-account/contact-support/?select=pay-with-amazon',
 					),
 				),
-				'tags' => array( self::TAG_MADE_IN_WOO ),
+				'tags'        => array( self::TAG_MADE_IN_WOO ),
 			),
 			self::AFFIRM            => array(
 				'type'        => self::TYPE_BNPL,
@@ -1395,7 +1492,7 @@ class PaymentExtensionsData {
 						'url'  => 'https://woocommerce.com/my-account/contact-support/?select=woocommerce-gateway-affirm',
 					),
 				),
-				'tags' => array( self::TAG_MADE_IN_WOO ),
+				'tags'        => array( self::TAG_MADE_IN_WOO ),
 			),
 			self::AFTERPAY          => array(
 				'type'        => self::TYPE_BNPL,
