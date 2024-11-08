@@ -13,14 +13,18 @@ import { Button } from '@wordpress/components';
 export const PaymentGatewayButton = ( {
 	id,
 	enabled,
+	needs_setup,
 	settings_url,
 	text_settings = __( 'Manage', 'woocommerce' ),
 	text_enable = __( 'Enable', 'woocommerce' ),
-}: Pick< PaymentGateway, 'id' | 'enabled' | 'settings_url' > & {
+	text_needs_setup = __( 'Continue setup', 'woocommerce' ),
+}: Pick< PaymentGateway, 'id' | 'enabled' | 'needs_setup' | 'settings_url' > & {
 	text_settings?: string;
 	text_enable?: string;
+	text_needs_setup?: string;
 } ) => {
 	const [ isEnabled, setIsEnabled ] = useState( enabled );
+	const [ needsSetup, setNeedsSetup ] = useState( needs_setup );
 	const [ isLoading, setIsLoading ] = useState( false );
 
 	const toggleEnabled = async () => {
@@ -55,6 +59,7 @@ export const PaymentGatewayButton = ( {
 				} else if ( result.data === false ) {
 					setIsEnabled( false );
 				} else if ( result.data === 'needs_setup' ) {
+					setNeedsSetup( true );
 					window.location.href = settings_url;
 				}
 			} else {
@@ -75,6 +80,14 @@ export const PaymentGatewayButton = ( {
 		}
 	};
 
+	const determineButtonText = () => {
+		if ( needsSetup ) {
+			return text_needs_setup;
+		}
+
+		return isEnabled ? text_settings : text_enable;
+	};
+
 	return (
 		<div className="woocommerce-list__item-after__actions">
 			<Button
@@ -84,7 +97,7 @@ export const PaymentGatewayButton = ( {
 				onClick={ onClick }
 				href={ settings_url }
 			>
-				{ isEnabled ? text_settings : text_enable }
+				{ determineButtonText() }
 			</Button>
 		</div>
 	);

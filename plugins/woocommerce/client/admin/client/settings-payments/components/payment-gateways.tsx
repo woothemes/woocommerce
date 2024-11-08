@@ -3,33 +3,31 @@
  */
 import React, { useEffect, useState, useMemo } from 'react';
 import { Gridicon } from '@automattic/components';
-import { Button, SelectControl } from '@wordpress/components';
-import { decodeEntities } from '@wordpress/html-entities';
+import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Plugin, PaymentGateway } from '@woocommerce/data';
-import { EllipsisMenu, List } from '@woocommerce/components';
-import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
+import { List } from '@woocommerce/components';
 import { getAdminLink } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
  */
-import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
-import { StatusBadge } from '~/settings-payments/components/status-badge';
+import { PaymentGatewayListItem } from '~/settings-payments/components/payment-gateway-list-item';
+import { PaymentExtensionSuggestionListItem } from '~/settings-payments/components/payment-extension-suggestion-list-item';
+import { WooPaymentsGatewayData } from '~/settings-payments/types';
+import { parseScriptTag } from '~/settings-payments/utils';
 
-// TODO: This should either be a util function, or handled in a different way e.g. passing the data as props.
-const parseScriptTag = ( elementId: string ) => {
-	const scriptTag = document.getElementById( elementId );
-	return scriptTag ? JSON.parse( scriptTag.textContent || '' ) : [];
+type PaymentGatewaysProps = {
+	isInstalled: boolean;
+	installingPlugin: string | null;
+	setupPlugin: ( plugin: Plugin ) => void;
 };
 
-interface WooPaymentsGatewayData {
-	isSupported: boolean;
-	isAccountOnboarded: boolean;
-	isInTestMode: boolean;
-}
-
-export const PaymentGateways = () => {
+export const PaymentGateways = ( {
+	isInstalled,
+	installingPlugin,
+	setupPlugin,
+}: PaymentGatewaysProps ) => {
 	const [ paymentGateways, setPaymentGateways ] = useState<
 		PaymentGateway[]
 	>( [] );
@@ -37,8 +35,9 @@ export const PaymentGateways = () => {
 		preferredPaymentExtensionSuggestions,
 		setPreferredPaymentExtensionSuggestions,
 	] = useState< Plugin[] >( [] );
-	const [ wooPaymentsGatewayData, setWooPaymentsGatewayData ] =
-		useState< WooPaymentsGatewayData | null >( null );
+	const [ wooPaymentsGatewayData, setWooPaymentsGatewayData ] = useState<
+		WooPaymentsGatewayData | undefined
+	>( undefined );
 
 	useEffect( () => {
 		setWooPaymentsGatewayData(
@@ -52,201 +51,31 @@ export const PaymentGateways = () => {
 				'experimental_wc_settings_payments_preferred_extensions_suggestions'
 			)
 		);
-	}, [] );
+	}, [ isInstalled ] );
 
 	const setupLivePayments = () => {
 		// TODO: Implement in future PR.
 	};
 
-	// Transform plugins comply with List component format.
+	// Transform suggested preferred extensions comply with List component format.
 	const preferredPaymentExtensionsList =
 		preferredPaymentExtensionSuggestions.map( ( plugin: Plugin ) => {
-			return {
-				key: plugin.id,
-				title: <>{ plugin.title }</>,
-				content: (
-					<>
-						{ decodeEntities( plugin.content ) }
-						{ plugin.id === 'woocommerce_payments' && (
-							<WooPaymentMethodsLogos
-								maxElements={ 10 }
-								isWooPayEligible={ true }
-							/>
-						) }
-					</>
-				),
-				after: (
-					<div className="woocommerce-list__item-after__actions">
-						<>
-							<Button
-								id={ plugin.id }
-								// enabled={ plugin.enabled }
-								// settings_url={ plugin.settings_url }
-							/>
-
-							<Button
-								variant="primary"
-								onClick={ () => {} }
-								isBusy={ false }
-								disabled={ false }
-							>
-								{ __( 'Install', 'woocommerce' ) }
-							</Button>
-
-							{ plugin.id === 'woocommerce_payments' &&
-								wooPaymentsGatewayData?.isInTestMode && (
-									<Button
-										variant="primary"
-										onClick={ setupLivePayments }
-										isBusy={ false }
-										disabled={ false }
-									>
-										{ __(
-											'Set up live payments',
-											'woocommerce'
-										) }
-									</Button>
-								) }
-							<EllipsisMenu
-								label={ __(
-									'Task List Options',
-									'woocommerce'
-								) }
-								renderContent={ () => (
-									<div>
-										<Button>
-											{ __(
-												'Learn more',
-												'woocommerce'
-											) }
-										</Button>
-										<Button>
-											{ __(
-												'See Terms of Service',
-												'woocommerce'
-											) }
-										</Button>
-									</div>
-								) }
-							/>
-						</>
-					</div>
-				),
-				before: (
-					<img
-						src={ plugin.image_72x72 }
-						alt={ plugin.title + ' logo' }
-					/>
-				),
-			};
+			return PaymentExtensionSuggestionListItem( {
+				plugin,
+				installingPlugin,
+				setupPlugin,
+			} );
 		} );
 
 	// Transform payment gateways to comply with List component format.
 	const paymentGatewaysList = useMemo(
 		() =>
 			paymentGateways.map( ( gateway: PaymentGateway ) => {
-				const determineGatewayStatus = () => {
-					if ( gateway.enabled ) {
-						if ( gateway.needs_setup ?? false ) {
-							return 'needs_setup';
-						}
-
-						if ( gateway.id === 'woocommerce_payments' ) {
-							if ( wooPaymentsGatewayData?.isInTestMode ) {
-								return 'test_mode';
-							}
-						}
-						return 'active';
-					}
-
-					if ( gateway.id === 'woocommerce_payments' ) {
-						return 'recommended';
-					}
-
-					return 'inactive';
-				};
-
-				const status = determineGatewayStatus();
-				return {
-					key: gateway.id,
-					title: (
-						<>
-							{ gateway.method_title }
-							<StatusBadge status={ status } />
-						</>
-					),
-					content: (
-						<>
-							{ decodeEntities( gateway.method_description ) }
-							{ gateway.id === 'woocommerce_payments' && (
-								<WooPaymentMethodsLogos
-									maxElements={ 10 }
-									isWooPayEligible={ true }
-								/>
-							) }
-						</>
-					),
-					after: (
-						<div className="woocommerce-list__item-after__actions">
-							<>
-								<PaymentGatewayButton
-									id={ gateway.id }
-									enabled={ gateway.enabled }
-									settings_url={ gateway.settings_url }
-								/>
-								{ gateway.id === 'woocommerce_payments' &&
-									wooPaymentsGatewayData?.isInTestMode && (
-										<Button
-											variant="primary"
-											onClick={ setupLivePayments }
-											isBusy={ false }
-											disabled={ false }
-										>
-											{ __(
-												'Set up live payments',
-												'woocommerce'
-											) }
-										</Button>
-									) }
-								<EllipsisMenu
-									label={ __(
-										'Task List Options',
-										'woocommerce'
-									) }
-									renderContent={ () => (
-										<div>
-											<Button>
-												{ __(
-													'Learn more',
-													'woocommerce'
-												) }
-											</Button>
-											<Button>
-												{ __(
-													'See Terms of Service',
-													'woocommerce'
-												) }
-											</Button>
-										</div>
-									) }
-								/>
-							</>
-						</div>
-					),
-					// TODO add drag-and-drop icon before image (future PR)
-					before: (
-						<img
-							src={
-								// TODO: Need a way to make images available here.
-								// gateway.square_image ||
-								// gateway.image_72x72 ||
-								// gateway.image ||
-								'https://woocommerce.com/wp-content/plugins/wccom-plugins/payment-gateway-suggestions/images/wcpay.svg'
-							}
-							alt={ gateway.title + ' logo' }
-						/>
-					),
-				};
+				return PaymentGatewayListItem( {
+					gateway,
+					wooPaymentsGatewayData,
+					setupLivePayments,
+				} );
 			} ),
 		[ paymentGateways, wooPaymentsGatewayData ]
 	);
@@ -303,8 +132,12 @@ export const PaymentGateways = () => {
 					/>
 				</div>
 			</div>
-			<List items={ preferredPaymentExtensionsList } />
-			<List items={ paymentGatewaysList } />
+			<List
+				items={ [
+					...preferredPaymentExtensionsList,
+					...paymentGatewaysList,
+				] }
+			/>
 		</div>
 	);
 };

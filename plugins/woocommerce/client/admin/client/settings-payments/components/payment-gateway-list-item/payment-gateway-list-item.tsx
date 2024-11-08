@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-import { PaymentGateway } from '@woocommerce/data';
 import { EllipsisMenu } from '@woocommerce/components';
+import { PaymentGateway } from '@woocommerce/data';
+import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
 import { decodeEntities } from '@wordpress/html-entities';
 
 /**
  * Internal dependencies
  */
-import { WooPaymentsGatewayData } from '~/settings-payments/components/types';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
 import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
+import { WooPaymentsGatewayData } from '~/settings-payments/types';
 
 type PaymentGatewayItemProps = {
 	gateway: PaymentGateway;
@@ -27,10 +27,10 @@ export const PaymentGatewayListItem = ( {
 	setupLivePayments,
 }: PaymentGatewayItemProps ) => {
 	const determineGatewayStatus = () => {
+		if ( ! gateway.enabled && gateway?.needs_setup ) {
+			return 'needs_setup';
+		}
 		if ( gateway.enabled ) {
-			if ( gateway.needs_setup ?? false ) {
-				return 'needs_setup';
-			}
 			if ( gateway.id === 'woocommerce_payments' ) {
 				if ( wooPaymentsGatewayData?.isInTestMode ) {
 					return 'test_mode';

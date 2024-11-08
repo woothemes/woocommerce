@@ -2,26 +2,31 @@
  * External dependencies
  */
 import { Gridicon } from '@automattic/components';
-import React, { useState } from '@wordpress/element';
-import { Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
 import { Plugin } from '@woocommerce/data';
+import { Button } from '@wordpress/components';
+import React, { useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import { useEffect } from 'react';
 
 /**
  * Internal dependencies
  */
 import { getAdminSetting } from '~/utils/admin-settings';
-import {useEffect} from "react";
-
-// TODO: This should either be a util function, or handled in a different way e.g. passing the data as props.
-const parseScriptTag = ( elementId: string ) => {
-	const scriptTag = document.getElementById( elementId );
-	return scriptTag ? JSON.parse( scriptTag.textContent || '' ) : [];
-};
+import { parseScriptTag } from '~/settings-payments/utils';
 
 const assetUrl = getAdminSetting( 'wcAdminAssetUrl' );
 
-export const OtherPaymentGateways = () => {
+type OtherPaymentGatewaysProps = {
+	isInstalled: boolean;
+	installingPlugin: string | null;
+	setupPlugin: ( plugin: Plugin ) => void;
+};
+
+export const OtherPaymentGateways = ( {
+	isInstalled,
+	installingPlugin,
+	setupPlugin,
+}: OtherPaymentGatewaysProps ) => {
 	const [ isExpanded, setIsExpanded ] = useState( false );
 	const [
 		otherPaymentExtensionSuggestions,
@@ -34,7 +39,11 @@ export const OtherPaymentGateways = () => {
 				'experimental_wc_settings_payments_other_extensions_suggestions'
 			)
 		);
-	}, [] );
+	}, [ isInstalled ] );
+
+	if ( otherPaymentExtensionSuggestions.length === 0 ) {
+		return null; // Don't render the component if there are no suggestions
+	}
 
 	return (
 		<div className="other-payment-gateways">
@@ -95,7 +104,17 @@ export const OtherPaymentGateways = () => {
 											{ plugin.content }
 										</span>
 										<div className="other-payment-gateways__content__grid-item__content__actions">
-											<Button variant={ 'primary' }>
+											<Button
+												variant="primary"
+												onClick={ () =>
+													setupPlugin( plugin )
+												}
+												isBusy={
+													installingPlugin ===
+													plugin.id
+												}
+												disabled={ !! installingPlugin }
+											>
 												{ __(
 													'Install',
 													'woocommerce'
