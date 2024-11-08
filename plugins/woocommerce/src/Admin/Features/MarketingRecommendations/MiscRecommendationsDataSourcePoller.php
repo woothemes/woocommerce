@@ -32,6 +32,9 @@ class MiscRecommendationsDataSourcePoller extends DataSourcePoller {
 			self::$instance = new self(
 				self::ID,
 				self::get_data_sources(),
+				array(
+					'transient_expiry' => 1 * DAY_IN_SECONDS,
+				)
 			);
 		}
 		return self::$instance;
