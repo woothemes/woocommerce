@@ -16,8 +16,7 @@ If you are not a developer, please use the [WooCommerce plugin page](https://wor
 
 Ensure your system meets [the requirements](../../README.md#getting-started) (TLDR: NVM, PNPM 9.1.3, PHP 7.4+, Composer are required for development).
 
-Depending on the preferred environment for running the development instance of WooCommerce, you might need [Docker](https://docs.docker.com/get-docker/) as well.
-You can learn more about supported environments here: https://developer.woocommerce.com/docs/setting-up-your-development-environment/.
+Depending on the preferred environment for running the development instance of WooCommerce, you might need [Docker](https://docs.docker.com/get-docker/) as well. You can learn more about supported environments [here](https://developer.woocommerce.com/docs/setting-up-your-development-environment/).
 
 Once you have verified the prerequisites, you can start the development environment:
 
