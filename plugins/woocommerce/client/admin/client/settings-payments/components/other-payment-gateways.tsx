@@ -6,40 +6,26 @@ import { Plugin } from '@woocommerce/data';
 import { Button } from '@wordpress/components';
 import React, { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useEffect } from 'react';
 
 /**
  * Internal dependencies
  */
 import { getAdminSetting } from '~/utils/admin-settings';
-import { parseScriptTag } from '~/settings-payments/utils';
 
 const assetUrl = getAdminSetting( 'wcAdminAssetUrl' );
 
-type OtherPaymentGatewaysProps = {
-	isInstalled: boolean;
+interface OtherPaymentGatewaysProps {
+	otherPaymentExtensionSuggestions: Plugin[];
 	installingPlugin: string | null;
 	setupPlugin: ( plugin: Plugin ) => void;
-};
+}
 
 export const OtherPaymentGateways = ( {
-	isInstalled,
+	otherPaymentExtensionSuggestions,
 	installingPlugin,
 	setupPlugin,
 }: OtherPaymentGatewaysProps ) => {
 	const [ isExpanded, setIsExpanded ] = useState( false );
-	const [
-		otherPaymentExtensionSuggestions,
-		setOtherPaymentExtensionSuggestions,
-	] = useState< Plugin[] >( [] );
-
-	useEffect( () => {
-		setOtherPaymentExtensionSuggestions(
-			parseScriptTag(
-				'experimental_wc_settings_payments_other_extensions_suggestions'
-			)
-		);
-	}, [ isInstalled ] );
 
 	if ( otherPaymentExtensionSuggestions.length === 0 ) {
 		return null; // Don't render the component if there are no suggestions

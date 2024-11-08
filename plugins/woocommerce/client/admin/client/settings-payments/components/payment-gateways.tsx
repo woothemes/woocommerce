@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useState, useMemo } from 'react';
 import { Gridicon } from '@automattic/components';
+import React, { useMemo } from 'react';
+import { List } from '@woocommerce/components';
+import { Plugin, PaymentGateway } from '@woocommerce/data';
+import { getAdminLink } from '@woocommerce/settings';
 import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Plugin, PaymentGateway } from '@woocommerce/data';
-import { List } from '@woocommerce/components';
-import { getAdminLink } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
@@ -15,44 +15,22 @@ import { getAdminLink } from '@woocommerce/settings';
 import { PaymentGatewayListItem } from '~/settings-payments/components/payment-gateway-list-item';
 import { PaymentExtensionSuggestionListItem } from '~/settings-payments/components/payment-extension-suggestion-list-item';
 import { WooPaymentsGatewayData } from '~/settings-payments/types';
-import { parseScriptTag } from '~/settings-payments/utils';
 
-type PaymentGatewaysProps = {
-	isInstalled: boolean;
+interface PaymentGatewaysProps {
+	paymentGateways: PaymentGateway[];
+	preferredPaymentExtensionSuggestions: Plugin[];
+	wooPaymentsGatewayData?: WooPaymentsGatewayData;
 	installingPlugin: string | null;
 	setupPlugin: ( plugin: Plugin ) => void;
-};
+}
 
 export const PaymentGateways = ( {
-	isInstalled,
+	paymentGateways,
+	preferredPaymentExtensionSuggestions,
+	wooPaymentsGatewayData,
 	installingPlugin,
 	setupPlugin,
 }: PaymentGatewaysProps ) => {
-	const [ paymentGateways, setPaymentGateways ] = useState<
-		PaymentGateway[]
-	>( [] );
-	const [
-		preferredPaymentExtensionSuggestions,
-		setPreferredPaymentExtensionSuggestions,
-	] = useState< Plugin[] >( [] );
-	const [ wooPaymentsGatewayData, setWooPaymentsGatewayData ] = useState<
-		WooPaymentsGatewayData | undefined
-	>( undefined );
-
-	useEffect( () => {
-		setWooPaymentsGatewayData(
-			parseScriptTag( 'experimental_wc_settings_payments_woopayments' )
-		);
-		setPaymentGateways(
-			parseScriptTag( 'experimental_wc_settings_payments_gateways' )
-		);
-		setPreferredPaymentExtensionSuggestions(
-			parseScriptTag(
-				'experimental_wc_settings_payments_preferred_extensions_suggestions'
-			)
-		);
-	}, [ isInstalled ] );
-
 	const setupLivePayments = () => {
 		// TODO: Implement in future PR.
 	};
