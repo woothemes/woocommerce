@@ -58,7 +58,9 @@ The goal is to minimize the amount of time that developers spend waiting for pro
     },
     "dependencyOutputs": {
       "files": [
-        "... - dependencies resources as input (updated automatically by monorepo tooling which hooks up into `pnpm install`)"
+        "... - dependencies resources as input",
+        "... - updated automatically by monorepo tooling which hooks up into `pnpm install`",
+        "... - see `.pnpmfile.cjs` file and https://pnpm.io/pnpmfile for details"
       ]
     }
   }
