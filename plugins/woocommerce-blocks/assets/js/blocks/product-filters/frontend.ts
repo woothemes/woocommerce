@@ -101,8 +101,12 @@ const { actions } = store( 'woocommerce/product-filters', {
 			}
 		},
 		navigate: () => {
-			const { params, originalParams } =
+			const { isOverlayOpened, params, originalParams } =
 				getContext< ProductFiltersContext >();
+
+			if ( isOverlayOpened ) {
+				return;
+			}
 
 			if ( isParamsEqual( params, originalParams ) ) {
 				return;
@@ -118,19 +122,11 @@ const { actions } = store( 'woocommerce/product-filters', {
 			for ( const key in params ) {
 				searchParams.set( key, params[ key ] );
 			}
+
 			navigate( url.href );
 		},
 	},
 	callbacks: {
-		maybeNavigate: () => {
-			const { isOverlayOpened } = getContext< ProductFiltersContext >();
-
-			if ( isOverlayOpened ) {
-				return;
-			}
-
-			actions.navigate();
-		},
 		scrollLimit: () => {
 			const { isOverlayOpened } = getContext< ProductFiltersContext >();
 			if ( isOverlayOpened ) {
@@ -141,3 +137,7 @@ const { actions } = store( 'woocommerce/product-filters', {
 		},
 	},
 } );
+
+export type ProductFiltersStore = {
+	actions: typeof actions;
+};

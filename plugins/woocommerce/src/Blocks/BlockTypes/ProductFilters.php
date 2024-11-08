@@ -96,7 +96,6 @@ class ProductFilters extends AbstractBlock {
 		$wrapper_attributes = array(
 			'class'                            => implode( ' ', array_keys( array_filter( $classes ) ) ),
 			'data-wc-interactive'              => wp_json_encode( array( 'namespace' => $this->get_full_block_name() ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
-			'data-wc-watch--navigation'        => 'callbacks.maybeNavigate',
 			'data-wc-watch--scrolling'         => 'callbacks.scrollLimit',
 			'data-wc-on--keyup'                => 'actions.closeOverlayOnEscape',
 			'data-wc-navigation-id'            => $this->generate_navigation_id( $block ),
