@@ -62,21 +62,14 @@ const Block = ( { className }: { className: string } ): JSX.Element | null => {
 							: __( 'Delivery', 'woocommerce' )
 					}
 					placeholder={
-						showCalculator ? (
-							<ShippingCalculatorButton
-								label={ __(
-									'Enter address to check delivery options',
-									'woocommerce'
-								) }
-							/>
-						) : (
+						! showCalculator ? (
 							<span className="wc-block-components-shipping-placeholder__value">
 								{ __(
 									'Calculated on checkout',
 									'woocommerce'
 								) }
 							</span>
-						)
+						) : null
 					}
 					collaterals={
 						<>
