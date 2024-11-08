@@ -7,10 +7,9 @@ import { store, getContext, getElement } from '@woocommerce/interactivity';
  * Internal dependencies
  */
 import { ProductFiltersContext } from '../../frontend';
+import { HTMLElementEvent } from '@woocommerce/types';
 
 export type PriceFilterContext = {
-	minPrice: number;
-	maxPrice: number;
 	minRange: number;
 	maxRange: number;
 };
@@ -19,66 +18,79 @@ function inRange( value: number, min: number, max: number ) {
 	return value >= min && value <= max;
 }
 
-store( 'woocommerce/product-filter-price', {
-	actions: {
-		setPrices: () => {
+const { state, actions } = store( 'woocommerce/product-filter-price', {
+	state: {
+		get minPrice() {
 			const context = getContext< PriceFilterContext >();
-			const prices: Record< string, string > = {};
-			const { ref } = getElement();
-			const targetMinPriceAttribute =
-				ref.getAttribute( 'data-target-min-price' ) ?? 'data-min-price';
-			const targetMaxPriceAttribute =
-				ref.getAttribute( 'data-target-max-price' ) ?? 'data-max-price';
-
-			const minPrice = ref.getAttribute( targetMinPriceAttribute );
-			if (
-				minPrice &&
-				inRange( minPrice, context.minRange, context.maxRange ) &&
-				minPrice < context.maxPrice
-			) {
-				prices.minPrice = minPrice;
-			}
-
-			const maxPrice = ref.getAttribute( targetMaxPriceAttribute );
-			if (
-				maxPrice &&
-				inRange( maxPrice, context.minRange, context.maxRange ) &&
-				maxPrice > context.minPrice
-			) {
-				prices.maxPrice = maxPrice;
-			}
-
-			Object.assign( context, prices );
-
+			const { params } = getContext< ProductFiltersContext >(
+				'woocommerce/product-filters'
+			);
+			const price = params?.min_price
+				? parseInt( params.min_price, 10 )
+				: context.minRange;
+			console.log( price );
+			return price;
+		},
+		get maxPrice() {
+			const context = getContext< PriceFilterContext >();
+			const { params } = getContext< ProductFiltersContext >(
+				'woocommerce/product-filters'
+			);
+			return params?.max_price
+				? parseInt( params.max_price, 10 )
+				: context.maxRange;
+		},
+	},
+	actions: {
+		setMinPrice: ( e: HTMLElementEvent< HTMLInputElement > ) => {
+			const context = getContext< PriceFilterContext >();
 			const productFiltersContext = getContext< ProductFiltersContext >(
 				'woocommerce/product-filters'
 			);
-
-			const validatedPrices: Record< string, string > = {};
 			const params = { ...productFiltersContext.params };
+			const minPrice = parseInt( e.target.value, 10 );
 
 			if (
-				Number( context.minPrice ) > context.minRange &&
-				Number( context.minPrice ) < context.maxRange
+				minPrice &&
+				inRange( minPrice, context.minRange, context.maxRange ) &&
+				minPrice < state.maxPrice
 			) {
-				validatedPrices.min_price = context.minPrice.toString();
-			} else {
-				delete params.min_price;
+				if (
+					Number( minPrice ) > context.minRange &&
+					Number( minPrice ) < context.maxRange
+				) {
+					params.min_price = minPrice.toString();
+				} else {
+					delete params.min_price;
+				}
 			}
+
+			productFiltersContext.params = params;
+		},
+		setMaxPrice: ( e: HTMLElementEvent< HTMLInputElement > ) => {
+			const context = getContext< PriceFilterContext >();
+			const productFiltersContext = getContext< ProductFiltersContext >(
+				'woocommerce/product-filters'
+			);
+			const params = { ...productFiltersContext.params };
+			const maxPrice = parseInt( e.target.value, 10 );
 
 			if (
-				Number( context.maxPrice ) > context.minRange &&
-				Number( context.maxPrice ) < context.maxRange
+				maxPrice &&
+				inRange( maxPrice, context.minRange, context.maxRange ) &&
+				maxPrice > state.minPrice
 			) {
-				validatedPrices.max_price = context.maxPrice.toString();
-			} else {
-				delete params.max_price;
+				if (
+					Number( maxPrice ) > context.minRange &&
+					Number( maxPrice ) < context.maxRange
+				) {
+					params.max_price = maxPrice.toString();
+				} else {
+					delete params.max_price;
+				}
 			}
 
-			productFiltersContext.params = {
-				...params,
-				...validatedPrices,
-			};
+			productFiltersContext.params = params;
 		},
 		clearFilters: () => {
 			const productFiltersContext = getContext< ProductFiltersContext >(
@@ -93,3 +105,8 @@ store( 'woocommerce/product-filter-price', {
 		},
 	},
 } );
+
+export type ProductFilterPriceStore = {
+	state: typeof state;
+	actions: typeof actions;
+};

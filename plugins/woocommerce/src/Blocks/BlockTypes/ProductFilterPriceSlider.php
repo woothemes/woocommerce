@@ -60,7 +60,6 @@ class ProductFilterPriceSlider extends AbstractBlock {
 					),
 					JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
 				),
-				'data-wc-context'     => wp_json_encode( $price_data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
 				'data-wc-key'         => wp_unique_prefixed_id( $this->get_full_block_name() ),
 
 			)
@@ -88,10 +87,9 @@ class ProductFilterPriceSlider extends AbstractBlock {
 							value="<?php echo esc_attr( wp_strip_all_tags( $formatted_min_price ) ); ?>"
 							data-wc-bind--value="state.formattedMinPrice"
 							data-wc-on--focus="actions.selectInputContent"
-							data-wc-on--input="actions.debounceUpdateRange"
-							data-wc-on--change="<?php echo esc_attr( $actions['setPrices'] ); ?>"
+							data-wc-on--change="woocommerce/product-filter-price::actions.setMinPrice"
 							data-min-price="<?php echo esc_attr( $min_price ); ?>"
-							data-wc-bind--data-min-price="context.minPrice"
+							data-wc-bind--data-min-price="woocommerce/product-filter-price::state.minPrice"
 						/>
 					<?php else : ?>
 						<span><?php echo wp_kses_post( $formatted_min_price ); ?></span>
@@ -109,31 +107,21 @@ class ProductFilterPriceSlider extends AbstractBlock {
 						min="<?php echo esc_attr( $min_range ); ?>"
 						max="<?php echo esc_attr( $max_range ); ?>"
 						value="<?php echo esc_attr( $min_price ); ?>"
-						data-wc-bind--value="context.minPrice"
-						data-wc-bind--min="context.minRange"
-						data-wc-bind--max="context.maxRange"
-						data-wc-on--input="actions.updateRange"
-						data-wc-on--mouseup="<?php echo esc_attr( $actions['setPrices'] ); ?>"
-						data-wc-on--keyup="<?php echo esc_attr( $actions['setPrices'] ); ?>"
-						data-wc-on--touchend="<?php echo esc_attr( $actions['setPrices'] ); ?>"
-						data-min-price="<?php echo esc_attr( $min_price ); ?>"
-						data-wc-bind--data-min-price="context.minPrice"
+						data-wc-bind--value="woocommerce/product-filter-price::state.minPrice"
+						data-wc-bind--min="woocommerce/product-filter-price::context.minRange"
+						data-wc-bind--max="woocommerce/product-filter-price::context.maxRange"
+						data-wc-on--input="woocommerce/product-filter-price::actions.setMinPrice"
 					/>
 					<input
 						type="range"
 						class="max"
-						min="<?php echo esc_attr( $min_range ); ?>"
+						max="<?php echo esc_attr( $max_range ); ?>"
 						max="<?php echo esc_attr( $max_range ); ?>"
 						value="<?php echo esc_attr( $max_price ); ?>"
-						data-wc-bind--value="context.maxPrice"
-						data-wc-bind--min="context.minRange"
-						data-wc-bind--max="context.maxRange"
-						data-wc-on--input="actions.updateRange"
-						data-wc-on--mouseup="<?php echo esc_attr( $actions['setPrices'] ); ?>"
-						data-wc-on--keyup="<?php echo esc_attr( $actions['setPrices'] ); ?>"
-						data-wc-on--touchend="<?php echo esc_attr( $actions['setPrices'] ); ?>"
-						data-max-price="<?php echo esc_attr( $max_price ); ?>"
-						data-wc-bind--data-max-price="context.maxPrice"
+						data-wc-bind--value="woocommerce/product-filter-price::state.maxPrice"
+						data-wc-bind--max="woocommerce/product-filter-price::context.maxRange"
+						data-wc-bind--max="woocommerce/product-filter-price::context.maxRange"
+						data-wc-on--input="woocommerce/product-filter-price::actions.setMaxPrice"
 					/>
 				</div>
 				<div class="wc-block-product-filter-price-slider__right text">
@@ -144,10 +132,9 @@ class ProductFilterPriceSlider extends AbstractBlock {
 							value="<?php echo esc_attr( wp_strip_all_tags( $formatted_max_price ) ); ?>"
 							data-wc-bind--value="state.formattedMaxPrice"
 							data-wc-on--focus="actions.selectInputContent"
-							data-wc-on--input="actions.debounceUpdateRange"
-							data-wc-on--change="<?php echo esc_attr( $actions['setPrices'] ); ?>"
+							data-wc-on--change="woocommerce/product-filter-price::actions.setmaxPrice"
 							data-max-price="<?php echo esc_attr( $max_price ); ?>"
-							data-wc-bind--data-max-price="context.maxPrice"
+							data-wc-bind--data-max-price="woocommerce/product-filter-price::context.maxPrice"
 						/>
 					<?php else : ?>
 						<span><?php echo wp_kses_post( $formatted_max_price ); ?></span>

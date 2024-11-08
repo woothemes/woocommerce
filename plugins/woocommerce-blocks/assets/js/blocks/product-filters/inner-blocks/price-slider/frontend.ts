@@ -6,12 +6,13 @@ import { formatPrice, getCurrency } from '@woocommerce/price-format';
 import { HTMLElementEvent } from '@woocommerce/types';
 import { debounce } from '@woocommerce/base-utils';
 
-type PriceSliderContext = {
-	minPrice: number;
-	maxPrice: number;
-	minRange: number;
-	maxRange: number;
-};
+/**
+ * Internal dependencies
+ */
+import {
+	PriceFilterContext,
+	ProductFilterPriceStore,
+} from '../price-filter/frontend';
 
 function inRange( value: number, min: number, max: number ) {
 	return value >= min && value <= max;
@@ -167,8 +168,14 @@ const _debounceUpdateRange = debounce(
 store( 'woocommerce/product-filter-price-slider', {
 	state: {
 		rangeStyle: () => {
-			const { minPrice, maxPrice, minRange, maxRange } =
-				getContext< PriceSliderContext >();
+			const { state } = store< ProductFilterPriceStore >(
+				'woocommerce/product-filter-price'
+			);
+			const { minPrice, maxPrice } = state;
+			const { minRange, maxRange } = getContext< PriceFilterContext >(
+				'woocommerce/product-filter-price'
+			);
+			console.log( minPrice, maxPrice, minRange, maxRange );
 
 			return `--low: ${
 				( 100 * ( minPrice - minRange ) ) / ( maxRange - minRange )
@@ -177,11 +184,17 @@ store( 'woocommerce/product-filter-price-slider', {
 			}%;`;
 		},
 		formattedMinPrice: () => {
-			const { minPrice } = getContext< PriceSliderContext >();
+			const { state } = store< ProductFilterPriceStore >(
+				'woocommerce/product-filter-price'
+			);
+			const { minPrice } = state;
 			return formatPrice( minPrice, getCurrency( { minorUnit: 0 } ) );
 		},
 		formattedMaxPrice: () => {
-			const { maxPrice } = getContext< PriceSliderContext >();
+			const { state } = store< ProductFilterPriceStore >(
+				'woocommerce/product-filter-price'
+			);
+			const { maxPrice } = state;
 			return formatPrice( maxPrice, getCurrency( { minorUnit: 0 } ) );
 		},
 	},
@@ -191,16 +204,6 @@ store( 'woocommerce/product-filter-price-slider', {
 			if ( element && element.ref ) {
 				element.ref.select();
 			}
-		},
-		updateRange: ( event: HTMLElementEvent< HTMLInputElement > ) => {
-			const context = getContext< PriceSliderContext >();
-			_updateRange( event, context );
-		},
-		debounceUpdateRange: (
-			event: HTMLElementEvent< HTMLInputElement >
-		) => {
-			const context = getContext< PriceSliderContext >();
-			_debounceUpdateRange( event, context );
 		},
 	},
 } );
