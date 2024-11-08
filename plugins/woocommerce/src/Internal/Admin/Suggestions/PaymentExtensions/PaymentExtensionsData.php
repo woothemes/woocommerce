@@ -1,11 +1,13 @@
 <?php
 /**
- * Holds all the raw data related to our partner payment extensions.
+ * Provides the raw data related to our partner payment extensions.
  */
 
 namespace Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensions;
 
 defined( 'ABSPATH' ) || exit;
+
+use Automattic\WooCommerce\Internal\Utilities\ArrayUtil;
 
 /**
  * Payment extensions raw data source.
@@ -53,11 +55,15 @@ class PaymentExtensionsData {
 
 	/*
 	 * The extension plugin types.
+	 *
+	 * This will inform how we handle the extension installation and activation.
 	 */
 	const PLUGIN_TYPE_WPORG = 'wporg';
 
 	/*
 	 * The extension link types.
+	 *
+	 * These are hints for the UI to determine if and how to display the link.
 	 */
 	const LINK_TYPE_PRICING = 'pricing';
 	const LINK_TYPE_ABOUT = 'about';
@@ -67,6 +73,9 @@ class PaymentExtensionsData {
 
 	/*
 	 * Extension tags.
+	 *
+	 * These are used to categorize the extensions and provide additional information to the system.
+	 * Some tags may carry special meaning and will be used to influence the suggestions' behavior.
 	 */
 	const TAG_PREFERRED = 'preferred';
 	const TAG_MADE_IN_WOO = 'made_in_woo'; // For extensions developed by Woo.
@@ -84,14 +93,14 @@ class PaymentExtensionsData {
 	 *   // Special entry that instructs the system to append the given items to a list-type entry.
 	 *   // If the original entry is not a list, we will ignore the instruction.
 	 *   // If the original entry does not exist, we will create it.
-	 *   // This is useful when you want to add tags to an existing list of tags.
+	 *   // This is useful when you want to add tags to a suggestion's default list of tags.
 	 *   '_append' => array(
 	 *		 'tags' => array( self::TAG_PREFERRED ),
 	 *   ),
 	 *   // Special entry that instructs the system to remove the given items from a list-type entry.
 	 *   // If the original entry is not a list, we will ignore the instruction.
-	 *   // If the original entry does not exist, we will create it.
-	 *   // This is useful when you want to remove tags from an existing list of tags.
+	 *   // If the original entry does not exist, we will ignore the instruction.
+	 *   // This is useful when you want to remove tags from a suggestion's default list of tags.
 	 *   '_remove' => array(
 	 *       'tags' => array( self::TAG_PREFERRED ),
 	 *   )
@@ -672,7 +681,7 @@ class PaymentExtensionsData {
 		),
 		'CN' => array(
 			self::PAYPAL_FULL_STACK => array(
-				'type' => self::TYPE_PSP,
+				'type' => self::TYPE_PSP, // Change the type to PSP.
 				'_append' => array(
 					'tags' => array ( self::TAG_PREFERRED ),
 				),
@@ -996,12 +1005,133 @@ class PaymentExtensionsData {
 	);
 
 	/**
-	 * Get the entire list of payment extensions details.
+	 * Get the list of payment extensions details for a specific country.
 	 *
-	 * @return array The list of all payment extensions details.
+	 * @param string $country_code The two-letter country code.
+	 *
+	 * @return array The list of payment extensions (their full details) for the given country.
+	 *               Empty array if no extensions are available for the country or the country is not supported.
+	 * @throws \Exception If there were malformed or invalid extension details.
 	 */
-	private static function get_list(): array {
-		return array(
+	public static function get_country_extensions( string $country_code ): array {
+		$country_code = strtoupper( $country_code );
+
+		if ( empty( self::$country_extensions[ $country_code ] ) ||
+ 			! is_array( self::$country_extensions[ $country_code ] ) ) {
+
+			return array();
+		}
+
+		// Process the extensions.
+		$processed_extensions = array();
+		foreach ( self::$country_extensions[ $country_code ] as $key => $details ) {
+			// Check the formats we support.
+			if ( is_int( $key ) && is_string( $details ) ) {
+				$extension_id = $details;
+				$extension_country_details = array();
+			} elseif ( is_string( $key ) && is_array( $details ) ) {
+				$extension_id = $key;
+				$extension_country_details = $details;
+			} else {
+				// Just ignore the entry as it is malformed.
+				continue;
+			}
+
+			$extension_base_details = self::get_extension_base_details( $extension_id ) ?? array();
+
+			$processed_extensions[] = self::with_country_details( $extension_base_details, $extension_country_details );
+		}
+
+		return $processed_extensions;
+	}
+
+	/**
+	 * Merges country-specific details into the base details of a payment extension.
+	 *
+	 * This function processes special `_append` and `_remove` instructions to modify
+	 * list-type entries within the base details.
+	 *
+	 * @param array $base_details The base details of the payment extension.
+	 * @param array $country_details The country-specific details, which may include
+	 *                               special `_append` and `_remove` instructions.
+	 *
+	 * @return array The merged details, with country-specific modifications applied.
+	 *
+	 * @throws \Exception If the country extension details are malformed or invalid.
+	 */
+	private static function with_country_details( array $base_details, array $country_details ): array {
+		// Process the append instructions.
+		if ( isset( $country_details['_append'] ) ) {
+			if ( ! is_array( $country_details['_append'] ) ) {
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+				throw new \Exception( 'Malformed country extension details _append entry.' );
+			}
+			foreach ( $country_details['_append'] as $append_key => $append_list ) {
+				// Sanity checks.
+				if ( ! is_string( $append_key ) ||
+					 ! is_array( $append_list ) ||
+					 ! ArrayUtil::array_is_list( $append_list )
+				) {
+					// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+					throw new \Exception( 'Malformed country extension details _append details.' );
+				}
+				if ( ! isset( $base_details[ $append_key ] ) ||
+					 ! is_array( $base_details[ $append_key ] ) ||
+					 ! ArrayUtil::array_is_list( $base_details[ $append_key ] )
+				) {
+					// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+					throw new \Exception( 'Invalid country extension details _append target.' );
+				}
+
+				$base_details[ $append_key ] = array_merge( $base_details[ $append_key ], $append_list );
+			}
+
+			// Remove the special entry because we don't need it anymore.
+			unset( $country_details['_append'] );
+		}
+
+		// Process the remove instructions.
+		if ( isset( $country_details['_remove'] ) ) {
+			if ( ! is_array( $country_details['_remove'] ) ) {
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+				throw new \Exception( 'Malformed country extension details _remove entry.' );
+			}
+			foreach ( $country_details['_remove'] as $removal_key => $removal_list ) {
+				// Sanity checks.
+				if ( ! is_string( $removal_key ) ||
+					 ! is_array( $removal_list ) ||
+					 ! ArrayUtil::array_is_list( $removal_list )
+				) {
+					// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+					throw new \Exception( 'Malformed country extension details _remove details.' );
+				}
+				if ( ! isset( $base_details[ $removal_key ] ) ||
+					 ! is_array( $base_details[ $removal_key ] ) ||
+					 ! ArrayUtil::array_is_list( $base_details[ $removal_key ] )
+				) {
+					// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+					throw new \Exception( 'Invalid country extension details _remove target.' );
+				}
+
+				$base_details[ $removal_key ] = array_diff( $base_details[ $removal_key ], $removal_list );
+			}
+
+			// Remove the special entry because we don't need it anymore.
+			unset( $country_details['_remove'] );
+		}
+
+		// Merge any remaining country details so they overwrite the base details.
+		return array_merge( $base_details, $country_details );
+	}
+
+	/**
+	 * Get the base details for a specific extension.
+	 *
+	 * @return ?array The extension base details.
+	 *                Null if the extension is not one we have details for.
+	 */
+	private static function get_extension_base_details( string $extension_id ): ?array {
+		$extensions = array(
 			self::AIRWALLEX         => array(
 				'type'        => self::TYPE_PSP,
 				'title'       => esc_html__( 'Airwallex Payments', 'woocommerce' ),
@@ -1156,7 +1286,7 @@ class PaymentExtensionsData {
 			self::PAYPAL_FULL_STACK => array(
 				'type'        => self::TYPE_APM,
 				'title'       => esc_html__( 'PayPal Payments', 'woocommerce' ),
-				'description' => esc_html__( "Safe and secure payments using credit cards or your customer's PayPal account.", 'woocommerce' ),
+				'description' => esc_html__( 'Safe and secure payments using credit cards or your customer\'s PayPal account.', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/paypal.png', WC_PLUGIN_FILE ),
 				'image_72x72' => plugins_url( 'assets/images/payment_methods/72x72/paypal.png', WC_PLUGIN_FILE ),
 				'plugin'      => array(
@@ -1182,7 +1312,7 @@ class PaymentExtensionsData {
 			self::PAYPAL_WALLET     => array(
 				'type'        => self::TYPE_EXPRESS_CHECKOUT,
 				'title'       => esc_html__( 'PayPal Payments', 'woocommerce' ),
-				'description' => esc_html__( "Safe and secure payments using your customer's PayPal account.", 'woocommerce' ),
+				'description' => esc_html__( 'Safe and secure payments using your customer\'s PayPal account.', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/paypal.png', WC_PLUGIN_FILE ),
 				'image_72x72' => plugins_url( 'assets/images/payment_methods/72x72/paypal.png', WC_PLUGIN_FILE ),
 				'plugin'      => array(
@@ -1570,5 +1700,11 @@ class PaymentExtensionsData {
 				),
 			),
 		);
+
+		if ( ! isset( $extensions[ $extension_id ] ) ) {
+			return null;
+		}
+
+		return $extensions[ $extension_id ];
 	}
 }
