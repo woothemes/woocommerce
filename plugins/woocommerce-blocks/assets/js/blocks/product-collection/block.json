@@ -61,7 +61,7 @@
 		"queryContextIncludes": "queryContextIncludes",
 		"collection": "collection",
 		"forcePageReload": "forcePageReload",
-		"__privateProductCollectionPreviewState": "__privatePreviewState",
+		"__privateProductCollectionPreviewState": "__privatePreviewState"
 	},
 	"usesContext": [ "templateSlug", "postId" ],
 	"supports": {
