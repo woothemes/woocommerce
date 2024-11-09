@@ -3,4 +3,5 @@ export interface Attributes {
 	showCounts: boolean;
 	isPreview?: boolean;
 	minRating?: string;
+	clearButton: boolean;
 }
