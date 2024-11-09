@@ -5619,7 +5619,7 @@ img.help_tip {
 	}
 
 	// Gap between Title and Slug edit should be 8px, so we need to clear margins.
-	#titlediv .inside {
+	#poststuff #titlediv .inside {
 		padding: 0;
 		margin-top: $gap-smaller;
 	}
