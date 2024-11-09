@@ -90,10 +90,10 @@ final class ProductFilterAttribute extends AbstractBlock {
 	 * @return array Active filters data.
 	 */
 	public function register_active_filters_data( $data, $params ) {
-		$product_attributes_map = array_reduce(
+		$attribute_taxonomies = array_reduce(
 			wc_get_attribute_taxonomies(),
 			function ( $acc, $attribute_object ) {
-				$acc[ $attribute_object->attribute_name ] = $attribute_object->attribute_label;
+				$acc[ $attribute_object->attribute_name ] = (array) $attribute_object;
 				return $acc;
 			},
 			array()
@@ -112,8 +112,8 @@ final class ProductFilterAttribute extends AbstractBlock {
 
 		$active_product_attributes = array_filter(
 			$active_product_attributes,
-			function ( $item ) use ( $product_attributes_map ) {
-				return in_array( $item, array_keys( $product_attributes_map ), true );
+			function ( $item ) use ( $attribute_taxonomies ) {
+				return in_array( $item, array_keys( $attribute_taxonomies ), true );
 			}
 		);
 
@@ -127,16 +127,15 @@ final class ProductFilterAttribute extends AbstractBlock {
 			$terms      = explode( ',', $params[ "filter_{$product_attribute}" ] );
 			$query_type = $params[ "query_type_{$product_attribute}" ] ?? 'or';
 
-			// Get attribute term by slug.
-			$terms = array_map(
-				function ( $term ) use ( $product_attribute, $action_namespace, $query_type ) {
-					$term_object = get_term_by( 'slug', $term, "pa_{$product_attribute}" );
-					return array(
-						'title'      => $term_object->name,
-						'attributes' => array(
-							'value'             => $term,
-							'data-wc-on--click' => "$action_namespace::actions.toggleFilter",
-							'data-wc-context'   => "$action_namespace::" . wp_json_encode(
+			foreach ( $terms as $term ) {
+				$term_data = get_term_by( 'slug', $term, "pa_{$product_attribute}", ARRAY_A );
+				$data[]    = array(
+					'label'      => $attribute_taxonomies[ $product_attribute ]['attribute_label'] . ': ' . $term_data['name'],
+					'attributes' => array(
+						'wrapper'       => array(
+							'value'                => $term,
+							'data-wc-bind--hidden' => "$action_namespace::!state.isSelected",
+							'data-wc-context'      => "$action_namespace::" . wp_json_encode(
 								array(
 									'attributeSlug' => $product_attribute,
 									'queryType'     => $query_type,
@@ -144,15 +143,17 @@ final class ProductFilterAttribute extends AbstractBlock {
 								JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
 							),
 						),
-					);
-				},
-				$terms
-			);
-
-			$data[ $product_attribute ] = array(
-				'type'  => $product_attributes_map[ $product_attribute ],
-				'items' => $terms,
-			);
+						'remove_button' => array(
+							'value'             => $term,
+							'data-wc-on--click' => "$action_namespace::actions.toggleFilter",
+						),
+					),
+					'data'       => array(
+						'term'     => $term_data,
+						'taxonomy' => array( $attribute_taxonomies[ $product_attribute ] ),
+					),
+				);
+			}
 		}
 
 		return $data;
