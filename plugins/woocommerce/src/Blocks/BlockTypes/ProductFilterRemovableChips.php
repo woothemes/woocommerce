@@ -28,9 +28,9 @@ final class ProductFilterRemovableChips extends AbstractBlock {
 			return '';
 		}
 
-		$style   = '';
-		$context = $block->context['filterData'];
-		$filters = $context['items'] ?? array();
+		$style        = '';
+		$filter_data  = $block->context['filterData'];
+		$filter_items = $filter_data['items'] ?? array();
 
 		$tags = new \WP_HTML_Tag_Processor( $content );
 		if ( $tags->next_tag( array( 'class_name' => 'wc-block-product-filter-removable-chips' ) ) ) {
@@ -51,12 +51,10 @@ final class ProductFilterRemovableChips extends AbstractBlock {
 		?>
 
 		<div <?php echo $wrapper_attributes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-			<?php if ( ! empty( $filters ) ) : ?>
+			<?php if ( ! empty( $filter_items ) ) : ?>
 				<ul class="wc-block-product-filter-removable-chips__items">
-					<?php foreach ( $filters as $filter ) : ?>
-						<?php foreach ( $filter['items'] as $item ) : ?>
-							<?php $this->render_chip_item( $filter['type'], $item ); ?>
-						<?php endforeach; ?>
+					<?php foreach ( $filter_items as $item ) : ?>
+						<?php $this->render_chip_item( $item ); ?>
 					<?php endforeach; ?>
 				</ul>
 			<?php endif; ?>
@@ -69,33 +67,20 @@ final class ProductFilterRemovableChips extends AbstractBlock {
 	/**
 	 * Render the chip item of an active filter.
 	 *
-	 * @param string $type Filter type.
-	 * @param array  $item Item data.
+	 * @param array $item Item data.
 	 * @return string Item HTML.
 	 */
-	private function render_chip_item( $type, $item ) {
-		list ( 'title' => $title, 'attributes' => $attributes ) = wp_parse_args(
-			$item,
-			array(
-				'title'      => '',
-				'attributes' => array(),
-			)
-		);
-
-		if ( ! $title || empty( $attributes ) ) {
-			return;
-		}
-
-		$remove_label = sprintf( 'Remove %s filter', wp_strip_all_tags( $title ) );
+	private function render_chip_item( $item ) {
 		?>
-		<li class="wc-block-product-filter-removable-chips__item">
+		<?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		<li class="wc-block-product-filter-removable-chips__item" <?php echo $this->get_html_attributes( $item['attributes']['wrapper'] ); ?>>
 			<span class="wc-block-product-filter-removable-chips__label">
-				<?php printf( '%s: %s', esc_html( $type ), wp_kses_post( $title ) ); ?>
+				<?php echo wp_kses_post( $item['label'] ); ?>
 			</span>
 			<?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-			<button class="wc-block-product-filter-removable-chips__remove" aria-label="<?php echo esc_attr( $remove_label ); ?>" <?php echo $this->get_html_attributes( $attributes ); ?>>
+			<button class="wc-block-product-filter-removable-chips__remove" aria-label="<?php echo esc_attr( $item['label'] ); ?>" <?php echo $this->get_html_attributes( $item['attributes']['remove_button'] ); ?>>
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="25" height="25" class="wc-block-product-filter-removable-chips__remove-icon" aria-hidden="true" focusable="false"><path d="M12 13.06l3.712 3.713 1.061-1.06L13.061 12l3.712-3.712-1.06-1.06L12 10.938 8.288 7.227l-1.061 1.06L10.939 12l-3.712 3.712 1.06 1.061L12 13.061z"></path></svg>
-				<span class="screen-reader-text"><?php echo esc_html( $remove_label ); ?></span>
+				<span class="screen-reader-text"><?php echo esc_html( $item['label'] ); ?></span>
 			</button>
 		</li>
 		<?php

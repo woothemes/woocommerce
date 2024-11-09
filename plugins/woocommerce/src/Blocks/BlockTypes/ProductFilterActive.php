@@ -27,17 +27,18 @@ final class ProductFilterActive extends AbstractBlock {
 		 * Filters the active filter data provided by filter blocks.
 		 *
 		 * $data = array(
-		 *     <id> => array(
-		 *         'type' => string,
-		 *         'items' => array(
-		 *             array(
-		 *                 'title' => string,
-		 *                 'attributes' => array(
-		 *                     <key> => string
-		 *                 )
-		 *             )
-		 *         )
-		 *     ),
+		 *     array(
+		 *         'title' => string,
+		 *         'attributes' => array(
+		 *             'wrapper' => array(
+		 *                 <key> => string
+		 *             ),
+		 *             'remove_button' => array(
+		 *                 <key> => string
+		 *             ),
+		 *         ),
+		 *         'data' => array(...),
+		 *     )
 		 * );
 		 *
 		 * @since 11.7.0
