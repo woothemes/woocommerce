@@ -446,7 +446,7 @@ class ProductCollection extends AbstractBlock {
 
 		// Only proceed if the block is a product collection block,
 		// enhanced pagination is enabled and query IDs match.
-		if ( $is_product_collection_block && $is_enhanced_pagination_enabled && $query_id ) {
+		if ( $is_product_collection_block && $is_enhanced_pagination_enabled && ! is_null( $query_id ) ) {
 			$block_content = $this->process_pagination_links( $block_content );
 		}
 
