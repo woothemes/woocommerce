@@ -6,7 +6,7 @@ import { store, getContext, getElement } from '@woocommerce/interactivity';
 /**
  * Internal dependencies
  */
-import { ProductFiltersContext } from '../../frontend';
+import { ProductFiltersContext, ProductFiltersStore } from '../../frontend';
 
 type AttributeFilterContext = {
 	attributeSlug: string;
@@ -14,7 +14,7 @@ type AttributeFilterContext = {
 	selectType: 'single' | 'multiple';
 };
 
-store( 'woocommerce/product-filter-attribute', {
+const { actions } = store( 'woocommerce/product-filter-attribute', {
 	state: {
 		get hasSelectedFilters() {
 			const { params } = getContext< ProductFiltersContext >(
@@ -41,7 +41,7 @@ store( 'woocommerce/product-filter-attribute', {
 		},
 	},
 	actions: {
-		toggleFilter: () => {
+		toggleFilterWithoutNavigation: () => {
 			const { props } = getElement();
 			const termSlug = props?.value;
 
@@ -90,6 +90,14 @@ store( 'woocommerce/product-filter-attribute', {
 				productFiltersContext.params[ `filter_${ attributeSlug }` ] =
 					selectedTerms.concat( termSlug ).join( ',' );
 			}
+		},
+
+		toggleFilter: () => {
+			actions.toggleFilterWithoutNavigation();
+			const productFilterStore = store< ProductFiltersStore >(
+				'woocommerce/product-filters'
+			);
+			productFilterStore.actions.navigate();
 		},
 
 		clearFilters: () => {
