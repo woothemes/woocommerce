@@ -22,15 +22,14 @@ import {
 } from '@wordpress/components';
 // eslint-disable-next-line @woocommerce/dependency-group
 import { createElement, Fragment, useRef } from '@wordpress/element';
+/* eslint-disable @woocommerce/dependency-group */
 // @ts-ignore No types for this exist yet.
-// eslint-disable-next-line @woocommerce/dependency-group
 import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
 // @ts-ignore No types for this exist yet.
-// eslint-disable-next-line @woocommerce/dependency-group
 import SiteHub from '@wordpress/edit-site/build-module/components/site-hub';
 // @ts-ignore No types for this exist yet.
-// eslint-disable-next-line @woocommerce/dependency-group
 import SidebarContent from '@wordpress/edit-site/build-module/components/sidebar';
+/* eslint-enable @woocommerce/dependency-group */
 
 type Route = {
 	key: string;
