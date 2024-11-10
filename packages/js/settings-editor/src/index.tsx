@@ -22,6 +22,8 @@ import { Layout } from './layout';
 const { RouterProvider } = unlock( routerPrivateApis );
 const { GlobalStylesProvider } = unlock( editorPrivateApis );
 
+const pages = window.wcSettings?.admin?.settingsPages || [];
+
 export const SettingsEditor = () => {
 	const isRequiredGutenbergVersion = isGutenbergVersionAtLeast( 19.0 );
 
@@ -48,7 +50,7 @@ export const SettingsEditor = () => {
 								<SidebarNavigationScreen
 									title={ 'Settings Title' }
 									isRoot
-									content={ <Sidebar /> }
+									content={ <Sidebar pages={ pages } /> }
 								/>
 							),
 						},
