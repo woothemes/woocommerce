@@ -5760,6 +5760,10 @@ img.help_tip {
 				vertical-align: middle;
 			}
 		}
+		&.button-primary {
+			color: var(--Gutenberg-White, #FFF);
+			background: var(--Upcoming-Blueberry, #3858E9);
+		}
 	}
 
 	#postexcerpt >.postbox-header > .hndle >.woocommerce-help-tip,
@@ -5775,6 +5779,32 @@ img.help_tip {
 		p {
 			padding: 0;
 		}
+	}
+
+	// Publish metabox.
+	#minor-publishing-actions {
+		display: flex;
+		justify-content: space-between;
+		padding: 16px 16px 0 16px;
+
+		.clear {
+			display: none;
+		}
+	}
+
+	#misc-publishing-actions {
+		display: flex;
+		flex-direction: column;
+		gap: $gap-small;
+		padding: 12px 16px 16px 16px;
+	}
+	.misc-pub-section {
+		padding: 0;
+	}
+	#major-publishing-actions {
+		padding: $gap;
+		border-top: 1px solid #BBBCBF;
+		background: none;
 	}
 }
 
