@@ -5595,6 +5595,19 @@ img.help_tip {
 .post-new-php.post-type-product,
 .post-php.post-type-shop_coupon,
 .post-new-php.post-type-shop_coupon {
+	// Screen meta links.
+	#screen-meta-links {
+		padding: $gap-small 0;
+		display: flex;
+		gap: $gap-smaller;
+
+		.screen-meta-toggle,
+		#screen-options-link-wrap,
+		#contextual-help-link-wrap {
+			margin: 0;
+		}
+	}
+
 	// Title input.
 	#titlediv {
 		#title-prompt-text,
