@@ -5672,7 +5672,8 @@ img.help_tip {
 		border: 0;
 	}
 
-	.inside {
+	.inside,
+	#commentsdiv.postbox .inside {
 		padding: 16px;
 	}
 
@@ -5764,6 +5765,16 @@ img.help_tip {
 	#postexcerpt >.postbox-header > .hndle >.woocommerce-help-tip,
 	#wp-content-media-buttons > .woocommerce-help-tip {
 		margin: 0;
+	}
+
+	#commentsdiv .inside {
+		display: flex;
+		flex-direction: column;
+		gap: $gap-smaller;
+
+		p {
+			padding: 0;
+		}
 	}
 }
 
