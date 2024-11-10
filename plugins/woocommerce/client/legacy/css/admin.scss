@@ -5750,10 +5750,11 @@ img.help_tip {
 				vertical-align: middle;
 			}
 		}
+	}
 
-		#wp-content-media-buttons > .woocommerce-help-tip {
-			margin: 0;
-		}
+	#postexcerpt >.postbox-header > .hndle >.woocommerce-help-tip,
+	#wp-content-media-buttons > .woocommerce-help-tip {
+		margin: 0;
 	}
 }
 
@@ -8944,6 +8945,7 @@ table.bar_chart {
 	}
 }
 
+// Consider unifying it with product editor look.
 #wp-content-media-buttons {
 	display: flex;
 	align-items: center;
@@ -8953,6 +8955,7 @@ table.bar_chart {
 	}
 }
 
+// Consider unifying it with product editor look.
 #postexcerpt {
 	> .postbox-header {
 		> .hndle {
