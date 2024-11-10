@@ -5595,11 +5595,6 @@ img.help_tip {
 .post-new-php.post-type-product,
 .post-php.post-type-shop_coupon,
 .post-new-php.post-type-shop_coupon {
-	// Hide duplicated h1.
-	.wrap h1.wp-heading-inline {
-		display: none;
-	}
-
 	// Title input.
 	#titlediv {
 		#title-prompt-text,
@@ -5724,7 +5719,8 @@ img.help_tip {
 
 	/* Style all buttons */
 	.button,
-	.wp-media-buttons .button {
+	.wp-media-buttons .button,
+	#screen-meta-links .button {
 		background: none;
 		padding: 0 $gap-smaller;
 		margin: 0;
