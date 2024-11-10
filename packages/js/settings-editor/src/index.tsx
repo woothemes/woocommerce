@@ -3,14 +3,20 @@
  */
 import { createElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+// @ts-ignore No types for this exist yet.
+import SidebarNavigationScreen from '@wordpress/edit-site/build-module/components/sidebar-navigation-screen';
+import { privateApis as routerPrivateApis } from '@wordpress/router';
+// @ts-ignore No types for this exist yet.
+import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
 
 /**
  * Internal dependencies
  */
 import { isGutenbergVersionAtLeast } from './utils';
+import { Sidebar } from './sidebar';
 import { Layout } from './layout';
 
-const Sidebar = <div>Sidebar content goes here</div>;
+const { RouterProvider } = unlock( routerPrivateApis );
 
 export const SettingsEditor = () => {
 	const isRequiredGutenbergVersion = isGutenbergVersionAtLeast( 19.0 );
@@ -28,12 +34,22 @@ export const SettingsEditor = () => {
 	}
 
 	return (
-		<Layout
-			route={ {
-				key: 'settings',
-				areas: { sidebar: Sidebar },
-				widths: {},
-			} }
-		/>
+		<RouterProvider>
+			<Layout
+				route={ {
+					key: 'settings',
+					areas: {
+						sidebar: (
+							<SidebarNavigationScreen
+								title={ 'Settings Title' }
+								isRoot
+								content={ <Sidebar /> }
+							/>
+						),
+					},
+					widths: {},
+				} }
+			/>
+		</RouterProvider>
 	);
 };
