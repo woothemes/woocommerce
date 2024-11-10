@@ -18,11 +18,13 @@ import {
 import { isGutenbergVersionAtLeast } from './utils';
 import { Sidebar } from './sidebar';
 import { Layout } from './layout';
+import { Page } from './types';
 
 const { RouterProvider } = unlock( routerPrivateApis );
 const { GlobalStylesProvider } = unlock( editorPrivateApis );
 
-const pages = window.wcSettings?.admin?.settingsPages || [];
+const pages: Record< string, Page > =
+	( window.wcSettings?.admin?.settingsPages as Record< string, Page > ) || {};
 
 export const SettingsEditor = () => {
 	const isRequiredGutenbergVersion = isGutenbergVersionAtLeast( 19.0 );
