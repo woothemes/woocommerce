@@ -1,10 +1,10 @@
 <?php
 declare( strict_types=1 );
 
-namespace Automattic\WooCommerce\Internal\Admin\Settings\Payments;
+namespace Automattic\WooCommerce\Internal\Admin\Settings;
 
 use Automattic\WooCommerce\Admin\PluginsHelper;
-use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestions;
+use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestions as ExtensionSuggestions;
 use Automattic\WooCommerce\Internal\Traits\AccessiblePrivateMethods;
 use Automattic\WooCommerce\Internal\RestApiControllerBase;
 use Exception;
@@ -39,9 +39,9 @@ class PaymentsRestController extends RestApiControllerBase {
 	/**
 	 * The payment extension suggestions.
 	 *
-	 * @var PaymentExtensionSuggestions
+	 * @var ExtensionSuggestions
 	 */
-	private PaymentExtensionSuggestions $extension_suggestions;
+	private ExtensionSuggestions $extension_suggestions;
 
 	/**
 	 * Get the WooCommerce REST API namespace for the class.
@@ -49,7 +49,29 @@ class PaymentsRestController extends RestApiControllerBase {
 	 * @return string
 	 */
 	protected function get_rest_api_namespace(): string {
-		return 'settings/payments';
+		return 'wc-admin';
+	}
+
+	/**
+	 * Register the hooks used by the class.
+	 */
+	public function register() {
+		parent::register();
+
+		self::add_action( 'plugins_loaded', array( $this, 'mock_is_admin' ), 0 );
+	}
+
+	/**
+	 * Mock the environment so that we are in a WP admin screen (the WooCommerce settings page).
+	 *
+	 * @return void
+	 */
+	protected function mock_is_admin() {
+		global $current_screen;
+
+		require_once ABSPATH . 'wp-admin/includes/screen.php';
+		require_once ABSPATH . 'wp-admin/includes/class-wp-screen.php';
+		$current_screen = \WP_Screen::get( 'woocommerce_page_wc-settings' );
 	}
 
 	/**
@@ -57,7 +79,7 @@ class PaymentsRestController extends RestApiControllerBase {
 	 */
 	public function register_routes() {
 		register_rest_route(
-			$this->route_namespace,
+			'wc-admin',
 			'/' . $this->rest_base . '/providers',
 			array(
 				array(
@@ -71,15 +93,15 @@ class PaymentsRestController extends RestApiControllerBase {
 		);
 	}
 
-//	/**
-//	 * Initialize the class instance.
-//	 *
-//	 * @internal
-//	 * @param PaymentExtensionSuggestions $payment_extension_suggestions The payment extension suggestions service.
-//	 */
-//	final public function init( PaymentExtensionSuggestions $payment_extension_suggestions ) {
-//		$this->extension_suggestions = $payment_extension_suggestions;
-//	}
+	/**
+	 * Initialize the class instance.
+	 *
+	 * @internal
+	 * @param ExtensionSuggestions $payment_extension_suggestions The payment extension suggestions service.
+	 */
+	final public function init( ExtensionSuggestions $payment_extension_suggestions ) {
+		$this->extension_suggestions = $payment_extension_suggestions;
+	}
 
 	/**
 	 * Get the payment providers for the given location.
@@ -113,10 +135,8 @@ class PaymentsRestController extends RestApiControllerBase {
 	 * @return array The registered payment gateways.
 	 */
 	private function get_payment_gateways( $request ): array {
-		// Get all payment gateways, ordered by the user.
-		$payment_gateways = WC()->payment_gateways()->payment_gateways;
-		$items            = array();
-		foreach ( $payment_gateways as $payment_gateway_order => $payment_gateway ) {
+		$items = array();
+		foreach ( $this->get_settings_page_payment_gateways() as $payment_gateway_order => $payment_gateway ) {
 			if ( in_array( $payment_gateway->id, self::OFFLINE_METHODS, true ) ) {
 				// We don't want offline payment methods in the list of payment gateways.
 				continue;
@@ -136,10 +156,8 @@ class PaymentsRestController extends RestApiControllerBase {
 	 * @return array The offline payment methods.
 	 */
 	private function get_offline_payment_methods( $request ): array {
-		// Get all payment gateways, ordered by the user.
-		$payment_gateways = WC()->payment_gateways()->payment_gateways;
-		$items            = array();
-		foreach ( $payment_gateways as $payment_gateway_order => $payment_gateway ) {
+		$items = array();
+		foreach ( $this->get_settings_page_payment_gateways() as $payment_gateway_order => $payment_gateway ) {
 			if ( ! in_array( $payment_gateway->id, self::OFFLINE_METHODS, true ) ) {
 				// We only want offline payment methods.
 				continue;
@@ -149,6 +167,31 @@ class PaymentsRestController extends RestApiControllerBase {
 		}
 
 		return $items;
+	}
+
+	/**
+	 * Get the payment gateways from the settings page.
+	 *
+	 * We apply the same actions and logic that the non-React Payments settings page uses to get the gateways.
+	 * This way we maintain backwards compatibility.
+	 *
+	 * @return array The payment gateways list
+	 */
+	private function get_settings_page_payment_gateways(): array {
+
+		// We don't want to output anything from the action. So we buffer it and discard it.
+		// We just want to give the payment gateways a chance to adjust the payment gateways list for the settings page.
+		ob_start();
+		/**
+		 * Fires before the payment gateways settings fields are rendered.
+		 *
+		 * @since 1.5.7
+		 */
+		do_action( 'woocommerce_admin_field_payment_gateways' );
+		ob_end_clean();
+
+		// Get all payment gateways, ordered by the user.
+		return WC()->payment_gateways()->payment_gateways;
 	}
 
 	/**
@@ -437,11 +480,13 @@ class PaymentsRestController extends RestApiControllerBase {
 		);
 
 		return array(
-			'preferred' => array(
-				// The PSP should naturally have a higher priority than the APM.
-				// No need to impose a specific order here.
-				$preferred_psp,
-				$preferred_apm,
+			'preferred' => array_filter(
+				array(
+					// The PSP should naturally have a higher priority than the APM.
+					// No need to impose a specific order here.
+					$preferred_psp,
+					$preferred_apm,
+				)
 			),
 			'other'     => $other,
 		);

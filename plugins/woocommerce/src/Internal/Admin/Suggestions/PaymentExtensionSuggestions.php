@@ -1013,8 +1013,8 @@ final class PaymentExtensionSuggestions {
 	public function get_country_extensions( string $country_code ): array {
 		$country_code = strtoupper( $country_code );
 
-		if ( empty( $this->$country_extensions[ $country_code ] ) ||
- 			! is_array( $this->$country_extensions[ $country_code ] ) ) {
+		if ( empty( $this->country_extensions[ $country_code ] ) ||
+ 			! is_array( $this->country_extensions[ $country_code ] ) ) {
 
 			return array();
 		}
@@ -1022,7 +1022,7 @@ final class PaymentExtensionSuggestions {
 		// Process the extensions.
 		$processed_extensions = array();
 		$priority = 0;
-		foreach ( $this->$country_extensions[ $country_code ] as $key => $details ) {
+		foreach ( $this->country_extensions[ $country_code ] as $key => $details ) {
 			// Check the formats we support.
 			if ( is_int( $key ) && is_string( $details ) ) {
 				$extension_id = $details;
