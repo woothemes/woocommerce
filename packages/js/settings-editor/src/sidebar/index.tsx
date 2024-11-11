@@ -14,7 +14,6 @@ import { Page } from '../types';
 import { SettingItem } from './setting-item';
 
 export const Sidebar = ( { pages }: { pages: Record< string, Page > } ) => {
-	console.log( pages );
 	return (
 		<ItemGroup>
 			{ Object.keys( pages ).map( ( slug ) => {
