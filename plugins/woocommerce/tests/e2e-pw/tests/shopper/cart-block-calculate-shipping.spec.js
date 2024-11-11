@@ -31,6 +31,10 @@ const test = baseTest.extend( {
 	},
 } );
 
+// Note: Shipping Settings for these tests default to shipping to user's default billing address,
+// when we go to change the country, we click the "Delivers to CALIFORNIA, UNITED STATES (US)" to open the address panel.
+const DEFAULT_BILLING_LABEL = 'CALIFORNIA, UNITED STATES (US)';
+
 test.describe(
 	'Cart Block Calculate Shipping',
 	{ tag: [ '@payments', '@services' ] },
@@ -141,7 +145,7 @@ test.describe(
 
 				// Set shipping country to Netherlands
 				await page
-					.getByText( 'Enter address to check delivery options' )
+					.getByText( `Delivers to ${ DEFAULT_BILLING_LABEL }` )
 					.click();
 				await page
 					.getByRole( 'combobox' )
@@ -182,7 +186,7 @@ test.describe(
 
 				// Set shipping country to Portugal
 				await page
-					.getByText( 'Enter address to check delivery options' )
+					.getByText( `Delivers to ${ DEFAULT_BILLING_LABEL }` )
 					.click();
 				await page
 					.getByRole( 'combobox' )
@@ -235,7 +239,7 @@ test.describe(
 
 				// Set shipping country to Portugal
 				await page
-					.getByText( 'Enter address to check delivery options' )
+					.getByText( `Delivers to ${ DEFAULT_BILLING_LABEL }` )
 					.click();
 				await page
 					.getByRole( 'combobox' )
@@ -276,7 +280,7 @@ test.describe(
 
 				// Set shipping country to Portugal
 				await page
-					.getByText( 'Enter address to check delivery options' )
+					.getByText( `Delivers to ${ DEFAULT_BILLING_LABEL }` )
 					.click();
 				await page
 					.getByRole( 'combobox' )
