@@ -58,6 +58,7 @@ class PaymentsRestController extends RestApiControllerBase {
 	public function register() {
 		parent::register();
 
+		// We need to mock broadly because plugins will conditionally load logic very early on.
 		self::add_action( 'plugins_loaded', array( $this, 'mock_is_admin' ), 0 );
 	}
 
@@ -286,11 +287,11 @@ class PaymentsRestController extends RestApiControllerBase {
 		$gateway_class_filename = $reflector->getFileName();
 		// Determine the gateway's plugin directory from the class path.
 		$gateway_class_path = trim( dirname( plugin_basename( $gateway_class_filename ) ), DIRECTORY_SEPARATOR );
-		if ( ! strpos( $gateway_class_path, DIRECTORY_SEPARATOR ) ) {
+		if ( false === strpos( $gateway_class_path, DIRECTORY_SEPARATOR ) ) {
 			// The gateway class file is in the root of the plugin's directory.
 			$plugin_slug = $gateway_class_path;
 		} else {
-			$plugin_slug = explode( $gateway_class_path, DIRECTORY_SEPARATOR )[0];
+			$plugin_slug = explode( DIRECTORY_SEPARATOR, $gateway_class_path )[0];
 		}
 
 		return $plugin_slug;
