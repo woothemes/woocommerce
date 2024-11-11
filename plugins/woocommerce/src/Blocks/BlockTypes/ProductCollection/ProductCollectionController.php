@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection;
 
 use Automattic\WooCommerce\Blocks\BlockTypes\AbstractBlock;
-use Automattic\WooCommerce\Blocks\Utils\ProductCollectionUtils;
 use InvalidArgumentException;
 use WP_Query;
 use WC_Tax;
@@ -22,19 +21,11 @@ class ProductCollectionController extends AbstractBlock {
 	protected $block_name = 'product-collection';
 
 	/**
-	 * An associative array of collection handlers.
+	 * Instance of CollectionHandlerRegistry.
 	 *
-	 * @var array<string, callable> $collection_handler_store
-	 * Keys are collection names, values are callable handlers for custom collection behavior.
+	 * @var CollectionHandlerRegistry
 	 */
-	protected $collection_handler_store = array();
-
-	/**
-	 * The Block with its attributes before it gets rendered
-	 *
-	 * @var array
-	 */
-	protected $parsed_block;
+	protected $collection_handler_registry;
 
 	/**
 	 * The render state of the product collection block.
@@ -56,6 +47,13 @@ class ProductCollectionController extends AbstractBlock {
 	protected $query_builder;
 
 	/**
+	 * Instance of ProductRenderer.
+	 *
+	 * @var ProductRenderer
+	 */
+	protected $renderer;
+
+	/**
 	 * Initialize this block type.
 	 *
 	 * - Hook into WP lifecycle.
@@ -65,7 +63,9 @@ class ProductCollectionController extends AbstractBlock {
 	protected function initialize() {
 		parent::initialize();
 
-		$this->query_builder = new ProductQueryBuilder();
+		$this->query_builder               = new ProductQueryBuilder();
+		$this->renderer                    = new ProductRenderer();
+		$this->collection_handler_registry = new CollectionHandlerRegistry();
 
 		// Update query for frontend rendering.
 		add_filter(
@@ -87,41 +87,12 @@ class ProductCollectionController extends AbstractBlock {
 
 		// Extend allowed `collection_params` for the REST API.
 		add_filter( 'rest_product_collection_params', array( $this, 'extend_rest_query_allowed_params' ), 10, 1 );
-
-		// Provide location context into block's context.
-		add_filter( 'render_block_context', array( $this, 'provide_location_context_for_inner_blocks' ), 11, 1 );
-
-		// Disable block render if the ProductTemplate block is empty.
-		add_filter(
-			'render_block_woocommerce/product-template',
-			function ( $html ) {
-				$this->render_state['has_results'] = ! empty( $html );
-				return $html;
-			},
-			100,
-			1
-		);
-
-		// Enable block render if the ProductCollectionNoResults block is rendered.
-		add_filter(
-			'render_block_woocommerce/product-collection-no-results',
-			function ( $html ) {
-				$this->render_state['has_no_results_block'] = ! empty( $html );
-				return $html;
-			},
-			100,
-			1
-		);
-
-		// Interactivity API: Add navigation directives to the product collection block.
-		add_filter( 'render_block_woocommerce/product-collection', array( $this, 'handle_rendering' ), 10, 2 );
-		add_filter( 'render_block_core/query-pagination', array( $this, 'add_navigation_link_directives' ), 10, 3 );
 		add_filter( 'render_block_core/post-title', array( $this, 'add_product_title_click_event_directives' ), 10, 3 );
 
 		// Disable client-side-navigation if incompatible blocks are detected.
 		add_filter( 'render_block_data', array( $this, 'disable_enhanced_pagination' ), 10, 1 );
 
-		$this->register_core_collections();
+		$this->register_core_collections_and_set_handler_store();
 	}
 
 	/**
@@ -138,311 +109,6 @@ class ProductCollectionController extends AbstractBlock {
 			$style .= 'margin: 0 auto;';
 		}
 		return $style;
-	}
-
-	/**
-	 * Set the style attribute for fixed width.
-	 *
-	 * @param WP_HTML_Tag_Processor $p          The HTML tag processor.
-	 * @param string                $fixed_width The fixed width value.
-	 */
-	private function set_fixed_width_style( $p, $fixed_width ) {
-		$p->set_attribute( 'style', $this->get_list_styles( $fixed_width ) );
-	}
-
-	/**
-	 * Handle block dimensions if width type is set to 'fixed'.
-	 *
-	 * @param WP_HTML_Tag_Processor $p     The HTML tag processor.
-	 * @param array                 $block The block details.
-	 */
-	private function handle_block_dimensions( $p, $block ) {
-		if ( isset( $block['attrs']['dimensions'] ) && isset( $block['attrs']['dimensions']['widthType'] ) ) {
-			if ( 'fixed' === $block['attrs']['dimensions']['widthType'] ) {
-				$this->set_fixed_width_style( $p, $block['attrs']['dimensions']['fixedWidth'] );
-			}
-		}
-	}
-
-	/**
-	 * Handle the rendering of the block.
-	 *
-	 * @param string $block_content The block content about to be rendered.
-	 * @param array  $block The block being rendered.
-	 *
-	 * @return string
-	 */
-	public function handle_rendering( $block_content, $block ) {
-		if ( $this->should_prevent_render() ) {
-			return ''; // Prevent rendering.
-		}
-
-		// Reset the render state for the next render.
-		$this->reset_render_state();
-
-		return $this->enhance_product_collection_with_interactivity( $block_content, $block );
-	}
-
-	/**
-	 * Check if the block should be prevented from rendering.
-	 *
-	 * @return bool
-	 */
-	private function should_prevent_render() {
-		return ! $this->render_state['has_results'] && ! $this->render_state['has_no_results_block'];
-	}
-
-	/**
-	 * Reset the render state.
-	 */
-	private function reset_render_state() {
-		$this->render_state = array(
-			'has_results'          => false,
-			'has_no_results_block' => false,
-		);
-	}
-
-
-
-	/**
-	 * Provides the location context to each inner block of the product collection block.
-	 * Hint: Only blocks using the 'query' context will be affected.
-	 *
-	 * The sourceData structure depends on the context type as follows:
-	 * - site:    [ ]
-	 * - order:   [ 'orderId'    => int ]
-	 * - cart:    [ 'productIds' => int[] ]
-	 * - archive: [ 'taxonomy'   => string, 'termId' => int ]
-	 * - product: [ 'productId'  => int ]
-	 *
-	 * @example array(
-	 *   'type'       => 'product',
-	 *   'sourceData' => array( 'productId' => 123 ),
-	 * )
-	 *
-	 * @param array $context  The block context.
-	 * @return array $context {
-	 *     The block context including the product collection location context.
-	 *
-	 *     @type array $productCollectionLocation {
-	 *         @type string  $type        The context type. Possible values are 'site', 'order', 'cart', 'archive', 'product'.
-	 *         @type array   $sourceData  The context source data. Can be the product ID of the viewed product, the order ID of the current order viewed, etc. See structure above for more details.
-	 *     }
-	 * }
-	 */
-	public function provide_location_context_for_inner_blocks( $context ) {
-		// Run only on frontend.
-		// This is needed to avoid SSR renders while in editor. @see https://github.com/woocommerce/woocommerce/issues/45181.
-		if ( is_admin() || \WC()->is_rest_api_request() ) {
-			return $context;
-		}
-
-		// Target only product collection's inner blocks that use the 'query' context.
-		if ( ! isset( $context['query'] ) || ! isset( $context['query']['isProductCollectionBlock'] ) || ! $context['query']['isProductCollectionBlock'] ) {
-			return $context;
-		}
-
-		$is_in_single_product                 = isset( $context['singleProduct'] ) && ! empty( $context['postId'] );
-		$context['productCollectionLocation'] = $is_in_single_product ? array(
-			'type'       => 'product',
-			'sourceData' => array(
-				'productId' => absint( $context['postId'] ),
-			),
-		) : $this->get_location_context();
-
-		return $context;
-	}
-
-	/**
-	 * Get the global location context.
-	 * Serve as a runtime cache for the location context.
-	 *
-	 * @see ProductCollectionUtils::parse_frontend_location_context()
-	 *
-	 * @return array The location context.
-	 */
-	private function get_location_context() {
-		static $location_context = null;
-		if ( null === $location_context ) {
-			$location_context = ProductCollectionUtils::parse_frontend_location_context();
-		}
-		return $location_context;
-	}
-
-	/**
-	 * Check if next tag is a PC block.
-	 *
-	 * @param WP_HTML_Tag_processor $p Initial tag processor.
-	 *
-	 * @return bool Answer if PC block is available.
-	 */
-	private function is_next_tag_product_collection( $p ) {
-		return $p->next_tag( array( 'class_name' => 'wp-block-woocommerce-product-collection' ) );
-	}
-
-	/**
-	 * Set PC block namespace for Interactivity API.
-	 *
-	 * @param WP_HTML_Tag_processor $p Initial tag processor.
-	 */
-	private function set_product_collection_namespace( $p ) {
-		$p->set_attribute( 'data-wc-interactive', wp_json_encode( array( 'namespace' => 'woocommerce/product-collection' ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ) );
-	}
-
-	/**
-	 * Attach the init directive to Product Collection block to call
-	 * the onRender callback.
-	 *
-	 * @param string $block_content The HTML content of the block.
-	 * @param string $collection Collection type.
-	 *
-	 * @return string Updated HTML content.
-	 */
-	private function add_rendering_callback( $block_content, $collection ) {
-		$p = new \WP_HTML_Tag_Processor( $block_content );
-
-		// Add `data-init to the product collection block so we trigger JS event on render.
-		if ( $this->is_next_tag_product_collection( $p ) ) {
-			$p->set_attribute(
-				'data-wc-init',
-				'callbacks.onRender'
-			);
-			$p->set_attribute(
-				'data-wc-context',
-				$collection ? wp_json_encode(
-					array( 'collection' => $collection ),
-					JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
-				) : '{}'
-			);
-		}
-
-		return $p->get_updated_html();
-	}
-
-	/**
-	 * Attach all the Interactivity API directives responsible
-	 * for client-side navigation.
-	 *
-	 * @param string $block_content The HTML content of the block.
-	 *
-	 * @return string Updated HTML content.
-	 */
-	private function enable_client_side_navigation( $block_content ) {
-		$p = new \WP_HTML_Tag_Processor( $block_content );
-
-		// Add `data-wc-navigation-id to the product collection block.
-		if ( $this->is_next_tag_product_collection( $p ) ) {
-			$p->set_attribute(
-				'data-wc-navigation-id',
-				'wc-product-collection-' . $this->parsed_block['attrs']['queryId']
-			);
-			$current_context = json_decode( $p->get_attribute( 'data-wc-context' ) ?? '{}', true );
-			$p->set_attribute(
-				'data-wc-context',
-				wp_json_encode(
-					array_merge(
-						$current_context,
-						array(
-							// The message to be announced by the screen reader when the page is loading or loaded.
-							'accessibilityLoadingMessage'  => __( 'Loading page, please wait.', 'woocommerce' ),
-							'accessibilityLoadedMessage'   => __( 'Page Loaded.', 'woocommerce' ),
-							// We don't prefetch the links if user haven't clicked on pagination links yet.
-							// This way we avoid prefetching when the page loads.
-							'isPrefetchNextOrPreviousLink' => false,
-						),
-					),
-					JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
-				)
-			);
-			$block_content = $p->get_updated_html();
-		}
-
-		/**
-		 * Add two div's:
-		 * 1. Pagination animation for visual users.
-		 * 2. Accessibility div for screen readers, to announce page load states.
-		 */
-		$last_tag_position                = strripos( $block_content, '</div>' );
-		$accessibility_and_animation_html = '
-				<div
-					data-wc-interactive="{&quot;namespace&quot;:&quot;woocommerce/product-collection&quot;}"
-					class="wc-block-product-collection__pagination-animation"
-					data-wc-class--start-animation="state.startAnimation"
-					data-wc-class--finish-animation="state.finishAnimation">
-				</div>
-				<div
-					data-wc-interactive="{&quot;namespace&quot;:&quot;woocommerce/product-collection&quot;}"
-					class="screen-reader-text"
-					aria-live="polite"
-					data-wc-text="context.accessibilityMessage">
-				</div>
-			';
-		return substr_replace(
-			$block_content,
-			$accessibility_and_animation_html,
-			$last_tag_position,
-			0
-		);
-	}
-
-	/**
-	 * Enhances the Product Collection block with client-side pagination.
-	 *
-	 * This function identifies Product Collection blocks and adds necessary data attributes
-	 * to enable client-side navigation and animation effects. It also enqueues the Interactivity API runtime.
-	 *
-	 * @param string $block_content The HTML content of the block.
-	 * @param array  $block         Block details, including its attributes.
-	 *
-	 * @return string Updated block content with added interactivity attributes.
-	 */
-	public function enhance_product_collection_with_interactivity( $block_content, $block ) {
-		$is_product_collection_block = $block['attrs']['query']['isProductCollectionBlock'] ?? false;
-
-		if ( $is_product_collection_block ) {
-			// Enqueue the Interactivity API runtime and set the namespace.
-			wp_enqueue_script( 'wc-interactivity' );
-			$p = new \WP_HTML_Tag_Processor( $block_content );
-			if ( $this->is_next_tag_product_collection( $p ) ) {
-				$this->set_product_collection_namespace( $p );
-			}
-			// Check if dimensions need to be set and handle accordingly.
-			$this->handle_block_dimensions( $p, $block );
-			$block_content = $p->get_updated_html();
-
-			$collection    = $block['attrs']['collection'] ?? '';
-			$block_content = $this->add_rendering_callback( $block_content, $collection );
-
-			$is_enhanced_pagination_enabled = ! ( $block['attrs']['forcePageReload'] ?? false );
-			if ( $is_enhanced_pagination_enabled ) {
-				$block_content = $this->enable_client_side_navigation( $block_content );
-			}
-		}
-		return $block_content;
-	}
-
-	/**
-	 * Add interactive links to all anchors inside the Query Pagination block.
-	 * This enabled client-side navigation for the product collection block.
-	 *
-	 * @param string    $block_content The block content.
-	 * @param array     $block         The full block, including name and attributes.
-	 * @param \WP_Block $instance      The block instance.
-	 */
-	public function add_navigation_link_directives( $block_content, $block, $instance ) {
-		$query_context                  = $instance->context['query'] ?? array();
-		$is_product_collection_block    = $query_context['isProductCollectionBlock'] ?? false;
-		$query_id                       = $instance->context['queryId'] ?? null;
-		$parsed_query_id                = $this->parsed_block['attrs']['queryId'] ?? null;
-		$is_enhanced_pagination_enabled = ! ( $this->parsed_block['attrs']['forcePageReload'] ?? false );
-
-		// Only proceed if the block is a product collection block,
-		// enhanced pagination is enabled and query IDs match.
-		if ( $is_product_collection_block && $is_enhanced_pagination_enabled && $query_id === $parsed_query_id ) {
-			$block_content = $this->process_pagination_links( $block_content );
-		}
-
-		return $block_content;
 	}
 
 	/**
@@ -473,58 +139,6 @@ class ProductCollectionController extends AbstractBlock {
 		}
 
 		return $block_content;
-	}
-
-	/**
-	 * Process pagination links within the block content.
-	 *
-	 * @param string $block_content The block content.
-	 * @return string The updated block content.
-	 */
-	private function process_pagination_links( $block_content ) {
-		if ( ! $block_content ) {
-			return $block_content;
-		}
-
-		$p = new \WP_HTML_Tag_Processor( $block_content );
-		$p->next_tag( array( 'class_name' => 'wp-block-query-pagination' ) );
-
-		// This will help us to find the start of the block content using the `seek` method.
-		$p->set_bookmark( 'start' );
-
-		$this->update_pagination_anchors( $p, 'page-numbers', 'product-collection-pagination-numbers' );
-		$this->update_pagination_anchors( $p, 'wp-block-query-pagination-next', 'product-collection-pagination--next' );
-		$this->update_pagination_anchors( $p, 'wp-block-query-pagination-previous', 'product-collection-pagination--previous' );
-
-		return $p->get_updated_html();
-	}
-
-	/**
-	 * Sets up data attributes required for interactivity and client-side navigation.
-	 *
-	 * @param \WP_HTML_Tag_Processor $processor The HTML tag processor.
-	 * @param string                 $class_name The class name of the anchor tags.
-	 * @param string                 $key_prefix The prefix for the data-wc-key attribute.
-	 */
-	private function update_pagination_anchors( $processor, $class_name, $key_prefix ) {
-		// Start from the beginning of the block content.
-		$processor->seek( 'start' );
-
-		while ( $processor->next_tag(
-			array(
-				'tag_name'   => 'a',
-				'class_name' => $class_name,
-			)
-		) ) {
-			$this->set_product_collection_namespace( $processor );
-			$processor->set_attribute( 'data-wc-on--click', 'actions.navigate' );
-			$processor->set_attribute( 'data-wc-key', $key_prefix . '--' . esc_attr( wp_rand() ) );
-
-			if ( in_array( $class_name, array( 'wp-block-query-pagination-next', 'wp-block-query-pagination-previous' ), true ) ) {
-				$processor->set_attribute( 'data-wc-watch', 'callbacks.prefetch' );
-				$processor->set_attribute( 'data-wc-on--mouseenter', 'actions.prefetchOnHover' );
-			}
-		}
 	}
 
 	/**
@@ -679,7 +293,7 @@ class ProductCollectionController extends AbstractBlock {
 		);
 
 		// Allow collections to modify the collection arguments passed to the query builder.
-		$handlers = $this->collection_handler_store[ $collection_args['name'] ] ?? null;
+		$handlers = $this->collection_handler_registry->get_collection_handler( $collection_args['name'] );
 		if ( isset( $handlers['editor_args'] ) ) {
 			$collection_args = call_user_func( $handlers['editor_args'], $collection_args, $query, $request );
 		}
@@ -736,7 +350,7 @@ class ProductCollectionController extends AbstractBlock {
 			return $pre_render;
 		}
 
-		$this->parsed_block = $parsed_block;
+		$this->renderer->set_parsed_block( $parsed_block );
 		$this->asset_data_registry->add( 'hasFilterableProducts', true );
 		/**
 		 * It enables the page to refresh when a filter is applied, ensuring that the product collection block,
@@ -804,309 +418,11 @@ class ProductCollectionController extends AbstractBlock {
 	}
 
 	/**
-	 * Registers handlers for a collection.
-	 *
-	 * @param string        $collection_name The name of the custom collection.
-	 * @param callable      $build_query     A hook returning any custom query arguments to merge with the collection's query.
-	 * @param callable|null $frontend_args   An optional hook that returns any frontend collection arguments to pass to the query builder.
-	 * @param callable|null $editor_args     An optional hook that returns any REST collection arguments to pass to the query builder.
-	 * @param callable|null $preview_query   An optional hook that returns a query to use in preview mode.
-	 *
-	 * @throws \InvalidArgumentException If collection handlers are already registered for the given collection name.
+	 * Registers core collections and sets the handler store.
 	 */
-	protected function register_collection_handlers( $collection_name, $build_query, $frontend_args = null, $editor_args = null, $preview_query = null ) {
-		if ( isset( $this->collection_handler_store[ $collection_name ] ) ) {
-			throw new \InvalidArgumentException( 'Collection handlers already registered for ' . esc_html( $collection_name ) );
-		}
-
-		$handlers = array(
-			'build_query'   => $build_query,
-			'frontend_args' => $frontend_args,
-			'editor_args'   => $editor_args,
-			'preview_query' => $preview_query,
-		);
-		$this->collection_handler_store[ $collection_name ] = $handlers;
-		$this->query_builder->set_collection_handler_store( $collection_name, $handlers );
-	}
-
-	/**
-	 * Registers any handlers for the core collections.
-	 */
-	protected function register_core_collections() {
-		$this->register_collection_handlers(
-			'woocommerce/product-collection/hand-picked',
-			function ( $collection_args, $common_query_values, $query ) {
-				// For Hand-Picked collection, if no products are selected, we should return an empty result set.
-				// This ensures that the collection doesn't display any products until the user explicitly chooses them.
-				if ( empty( $query['handpicked_products'] ) ) {
-					return array(
-						'post__in' => array( -1 ),
-					);
-				}
-			}
-		);
-
-		$this->register_collection_handlers(
-			'woocommerce/product-collection/related',
-			function ( $collection_args ) {
-				// No products should be shown if no related product reference is set.
-				if ( empty( $collection_args['relatedProductReference'] ) ) {
-					return array(
-						'post__in' => array( -1 ),
-					);
-				}
-
-				$category_callback = function () use ( $collection_args ) {
-					return $collection_args['relatedBy']['categories'];
-				};
-
-				$tag_callback = function () use ( $collection_args ) {
-					return $collection_args['relatedBy']['tags'];
-				};
-
-				add_filter( 'woocommerce_product_related_posts_relate_by_category', $category_callback, PHP_INT_MAX );
-				add_filter( 'woocommerce_product_related_posts_relate_by_tag', $tag_callback, PHP_INT_MAX );
-
-				$related_products = wc_get_related_products(
-					$collection_args['relatedProductReference'],
-					// Use a higher limit so that the result set contains enough products for the collection to subsequently filter.
-					100
-				);
-
-				remove_filter( 'woocommerce_product_related_posts_relate_by_category', $category_callback, PHP_INT_MAX );
-				remove_filter( 'woocommerce_product_related_posts_relate_by_tag', $tag_callback, PHP_INT_MAX );
-
-				if ( empty( $related_products ) ) {
-					return array(
-						'post__in' => array( -1 ),
-					);
-				}
-
-				// Have it filter the results to products related to the one provided.
-				return array(
-					'post__in' => $related_products,
-				);
-			},
-			function ( $collection_args, $query ) {
-				$product_reference = $query['productReference'] ?? null;
-				// Infer the product reference from the location if an explicit product is not set.
-				if ( empty( $product_reference ) ) {
-					$location = $collection_args['productCollectionLocation'];
-					if ( isset( $location['type'] ) && 'product' === $location['type'] ) {
-						$product_reference = $location['sourceData']['productId'];
-					}
-				}
-
-				$collection_args['relatedProductReference'] = $product_reference;
-				$collection_args['relatedBy']               = array(
-					'categories' => isset( $query['relatedBy']['categories'] ) && true === $query['relatedBy']['categories'],
-					'tags'       => isset( $query['relatedBy']['tags'] ) && true === $query['relatedBy']['tags'],
-				);
-
-				return $collection_args;
-			},
-			function ( $collection_args, $query, $request ) {
-				$product_reference = $request->get_param( 'productReference' );
-				// In some cases the editor will send along block location context that we can infer the product reference from.
-				if ( empty( $product_reference ) ) {
-					$location = $collection_args['productCollectionLocation'];
-					if ( isset( $location['type'] ) && 'product' === $location['type'] ) {
-						$product_reference = $location['sourceData']['productId'];
-					}
-				}
-
-				$collection_args['relatedProductReference'] = $product_reference;
-
-				$collection_args['relatedBy'] = array(
-					'categories' => rest_sanitize_boolean( $request->get_param( 'relatedBy' )['categories'] ?? false ),
-					'tags'       => rest_sanitize_boolean( $request->get_param( 'relatedBy' )['tags'] ?? false ),
-				);
-
-				return $collection_args;
-			}
-		);
-
-		$this->register_collection_handlers(
-			'woocommerce/product-collection/upsells',
-			function ( $collection_args ) {
-				$product_reference = $collection_args['upsellsProductReferences'] ?? null;
-				// No products should be shown if no upsells product reference is set.
-				if ( empty( $product_reference ) ) {
-					return array(
-						'post__in' => array( -1 ),
-					);
-				}
-
-				$products = array_map( 'wc_get_product', $product_reference );
-
-				if ( empty( $products ) ) {
-					return array(
-						'post__in' => array( -1 ),
-					);
-				}
-
-				$all_upsells = array_reduce(
-					$products,
-					function ( $acc, $product ) {
-						return array_merge(
-							$acc,
-							$product->get_upsell_ids()
-						);
-					},
-					array()
-				);
-
-				// Remove duplicates and product references. We don't want to display
-				// what's already in cart.
-				$unique_upsells = array_unique( $all_upsells );
-				$upsells        = array_diff( $unique_upsells, $product_reference );
-
-				return array(
-					'post__in' => empty( $upsells ) ? array( -1 ) : $upsells,
-				);
-			},
-			function ( $collection_args, $query ) {
-				$product_references = isset( $query['productReference'] ) ? array( $query['productReference'] ) : null;
-				// Infer the product reference from the location if an explicit product is not set.
-				if ( empty( $product_references ) ) {
-					$location = $collection_args['productCollectionLocation'];
-					if ( isset( $location['type'] ) && 'product' === $location['type'] ) {
-						$product_references = array( $location['sourceData']['productId'] );
-					}
-
-					if ( isset( $location['type'] ) && 'cart' === $location['type'] ) {
-						$product_references = $location['sourceData']['productIds'];
-					}
-
-					if ( isset( $location['type'] ) && 'order' === $location['type'] ) {
-						$product_references = $this->get_product_ids_from_order( $location['sourceData']['orderId'] ?? 0 );
-					}
-				}
-
-				$collection_args['upsellsProductReferences'] = $product_references;
-				return $collection_args;
-			},
-			function ( $collection_args, $query, $request ) {
-				$product_reference = $request->get_param( 'productReference' );
-				// In some cases the editor will send along block location context that we can infer the product reference from.
-				if ( empty( $product_reference ) ) {
-					$location = $collection_args['productCollectionLocation'];
-					if ( isset( $location['type'] ) && 'product' === $location['type'] ) {
-						$product_reference = $location['sourceData']['productId'];
-					}
-				}
-
-				$collection_args['upsellsProductReferences'] = array( $product_reference );
-				return $collection_args;
-			}
-		);
-
-		$this->register_collection_handlers(
-			'woocommerce/product-collection/cross-sells',
-			function ( $collection_args ) {
-				$product_reference = $collection_args['crossSellsProductReferences'] ?? null;
-				// No products should be shown if no cross-sells product reference is set.
-				if ( empty( $product_reference ) ) {
-					return array(
-						'post__in' => array( -1 ),
-					);
-				}
-
-				$products = array_filter( array_map( 'wc_get_product', $product_reference ) );
-
-				if ( empty( $products ) ) {
-					return array(
-						'post__in' => array( -1 ),
-					);
-				}
-
-				$product_ids = array_map(
-					function ( $product ) {
-						return $product->get_id();
-					},
-					$products
-				);
-
-				$all_cross_sells = array_reduce(
-					$products,
-					function ( $acc, $product ) {
-						return array_merge(
-							$acc,
-							$product->get_cross_sell_ids()
-						);
-					},
-					array()
-				);
-
-				// Remove duplicates and product references. We don't want to display
-				// what's already in cart.
-				$unique_cross_sells = array_unique( $all_cross_sells );
-				$cross_sells        = array_diff( $unique_cross_sells, $product_ids );
-
-				return array(
-					'post__in' => empty( $cross_sells ) ? array( -1 ) : $cross_sells,
-				);
-			},
-			function ( $collection_args, $query ) {
-				$product_references = isset( $query['productReference'] ) ? array( $query['productReference'] ) : null;
-				// Infer the product reference from the location if an explicit product is not set.
-				if ( empty( $product_references ) ) {
-					$location = $collection_args['productCollectionLocation'];
-					if ( isset( $location['type'] ) && 'product' === $location['type'] ) {
-						$product_references = array( $location['sourceData']['productId'] );
-					}
-
-					if ( isset( $location['type'] ) && 'cart' === $location['type'] ) {
-						$product_references = $location['sourceData']['productIds'];
-					}
-
-					if ( isset( $location['type'] ) && 'order' === $location['type'] ) {
-						$product_references = $this->get_product_ids_from_order( $location['sourceData']['orderId'] ?? 0 );
-					}
-				}
-
-				$collection_args['crossSellsProductReferences'] = $product_references;
-				return $collection_args;
-			},
-			function ( $collection_args, $query, $request ) {
-				$product_reference = $request->get_param( 'productReference' );
-				// In some cases the editor will send along block location context that we can infer the product reference from.
-				if ( empty( $product_reference ) ) {
-					$location = $collection_args['productCollectionLocation'];
-					if ( isset( $location['type'] ) && 'product' === $location['type'] ) {
-						$product_reference = $location['sourceData']['productId'];
-					}
-				}
-
-				$collection_args['crossSellsProductReferences'] = array( $product_reference );
-				return $collection_args;
-			}
-		);
-	}
-
-	/**
-	 * Get product IDs from an order.
-	 *
-	 * @param int $order_id The order ID.
-	 * @return array<int> The product IDs.
-	 */
-	private function get_product_ids_from_order( $order_id ) {
-		$product_references = array();
-		if ( empty( $order_id ) ) {
-			return $product_references;
-		}
-
-		$order = wc_get_order( $order_id );
-		if ( $order ) {
-			$product_references = array_filter(
-				array_map(
-					function ( $item ) {
-						return $item->get_product_id();
-					},
-					$order->get_items( 'line_item' )
-				)
-			);
-		}
-		return $product_references;
+	protected function register_core_collections_and_set_handler_store() {
+		// Use CollectionHandlerRegistry to register collections.
+		$collection_handler_store = $this->collection_handler_registry->register_core_collections();
+		$this->query_builder->set_collection_handler_store( $collection_handler_store );
 	}
 }

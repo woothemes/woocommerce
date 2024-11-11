@@ -5,6 +5,7 @@ namespace Automattic\WooCommerce\Tests\Blocks\Mocks;
 
 use Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection\ProductCollectionController;
 use Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection\ProductQueryBuilder;
+use Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection\CollectionHandlerRegistry;
 use Automattic\WooCommerce\Blocks\Package;
 use Automattic\WooCommerce\Blocks\Assets\Api;
 use Automattic\WooCommerce\Blocks\Assets\AssetDataRegistry;
@@ -32,8 +33,9 @@ class ProductCollectionMock extends ProductCollectionController {
 	 * Override the normal initialization behavior to prevent registering the block with WordPress filters.
 	 */
 	protected function initialize() {
-		$this->query_builder = new ProductQueryBuilder();
-		$this->register_core_collections();
+		$this->query_builder               = new ProductQueryBuilder();
+		$this->collection_handler_registry = new CollectionHandlerRegistry();
+		$this->register_core_collections_and_set_handler_store();
 	}
 
 	/**
@@ -64,7 +66,8 @@ class ProductCollectionMock extends ProductCollectionController {
 	 * @param callable|null $preview_query   An optional hook that returns a query to use in preview mode.
 	 */
 	public function register_collection_handlers( $collection_name, $build_query, $frontend_args = null, $editor_args = null, $preview_query = null ) {
-		parent::register_collection_handlers( $collection_name, $build_query, $frontend_args, $editor_args, $preview_query );
+		$handlers = $this->collection_handler_registry->register_collection_handlers( $collection_name, $build_query, $frontend_args, $editor_args, $preview_query );
+		$this->query_builder->set_collection_handler( $collection_name, $handlers );
 	}
 
 	/**
@@ -73,6 +76,6 @@ class ProductCollectionMock extends ProductCollectionController {
 	 * @param string $collection_name The name of the collection to unregister.
 	 */
 	public function unregister_collection_handlers( $collection_name ) {
-		unset( $this->collection_handlers[ $collection_name ] );
+		$this->collection_handler_registry->unregister_collection_handlers( $collection_name );
 	}
 }
