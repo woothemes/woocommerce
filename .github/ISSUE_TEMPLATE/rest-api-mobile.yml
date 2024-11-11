@@ -12,29 +12,29 @@ body:
         
         P.S. If you want to request changes to the native mobile apps, please create your request directly in the [iOS](https://github.com/woocommerce/woocommerce-ios/issues) or [Android](https://github.com/woocommerce/woocommerce-android/issues) repositories.
   - type: textarea
-    id: Problem Statement
+    id: Problem
     attributes:
       label: Describe the issue or limitation
       description: A clear and concise description of what is happening and what you would like to see happen.
     validations:
       required: true
   - type: textarea
-    id: Solution Proposal
+    id: Solution
     attributes:
       label: Describe a solution you suggest
       description: A clear and concise description of the solution you propose to address the issue or limitation.
   - type: textarea
-    id: Value/Why Now
+    id: Value
     attributes:
       label: Describe the value it will bring
       description: A clear and concise description of the benefits the solution will unlock or why now is the right time to address this.
   - type: textarea
-    id: Alternative Solutions
+    id: Alternatives
     attributes:
       label: Describe alternative solutions
       description: A clear and concise description of other solutions you have considered and their potential downsides.
   - type: textarea
-    id: Optimal Timeline
+    id: Timeline
     attributes:
       label: When do you need this solved
       description: By when do you need this issue or limitation resolved? (This is an indication for prioritization; we cannot guarantee delivery within the suggested timeline.)
