@@ -7,6 +7,8 @@
 
 namespace Automattic\WooCommerce\Internal\Admin\WCPayPromotion;
 
+use Automattic\WooCommerce\Admin\Features\Features;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -24,6 +26,10 @@ class WCPaymentGatewayPreInstallWCPayPromotion extends \WC_Payment_Gateway {
 	 * Constructor
 	 */
 	public function __construct() {
+		if ( Features::is_enabled( 'reactify-classic-payments-settings' ) ) {
+			return;
+		}
+
 		$wc_pay_spec = Init::get_wc_pay_promotion_spec();
 		if ( ! $wc_pay_spec ) {
 			return;
