@@ -8,11 +8,13 @@
 import './settings-payments-main.scss';
 import { PaymentGateways } from '~/settings-payments/components/payment-gateways';
 import { OtherPaymentGateways } from '~/settings-payments/components/other-payment-gateways';
+import { IncentiveBanner } from '~/settings-payments/components/incentive-banner';
 
 export const SettingsPaymentsMain = () => {
 	return (
 		<>
 			<div className="settings-payments-main__container">
+				<IncentiveBanner />
 				<PaymentGateways />
 				<OtherPaymentGateways />
 			</div>

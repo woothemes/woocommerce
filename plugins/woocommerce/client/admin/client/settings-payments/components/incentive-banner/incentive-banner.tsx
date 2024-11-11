@@ -12,7 +12,7 @@ import { Link } from '@woocommerce/components';
  * Internal dependencies
  */
 import './incentive-banner.scss';
-import IncentiveIcon from './incentive-icon.svg';
+import IncentiveIcon from '~/settings-payments/assets/incentives-icon.svg';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
 
 export const IncentiveBanner = () => {
@@ -36,16 +36,11 @@ export const IncentiveBanner = () => {
 						alt={ __( 'Incentive hero image', 'woocommerce' ) }
 					/>
 				</CardMedia>
-				<CardBody className={ 'woocommerce-incentive-banner__body' }>
-					<div>
-						<StatusBadge
-							status="has_incentive"
-							message={ __(
-								'Limited time offer',
-								'woocommerce'
-							) }
-						/>
-					</div>
+				<CardBody className="woocommerce-incentive-banner__body">
+					<StatusBadge
+						status="has_incentive"
+						message={ __( 'Limited time offer', 'woocommerce' ) }
+					/>
 					<h2>
 						{ __(
 							'Save 10% on processing fees for your first 3 months when you sign up for WooPayments',
@@ -76,13 +71,14 @@ export const IncentiveBanner = () => {
 							},
 						} ) }
 					</p>
+
 					<Button
 						variant={ 'primary' }
 						isBusy={ isSubmitted }
 						disabled={ isSubmitted }
 						onClick={ handleSetup }
 					>
-						{ __( 'Get started', 'woocommerce' ) }
+						{ __( 'Save 10%', 'woocommerce' ) }
 					</Button>
 					<Button
 						variant={ 'tertiary' }

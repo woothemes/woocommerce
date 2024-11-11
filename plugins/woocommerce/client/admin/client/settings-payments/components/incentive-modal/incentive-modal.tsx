@@ -18,7 +18,7 @@ import { Link } from '@woocommerce/components';
  * Internal dependencies
  */
 import './incentive-modal.scss';
-import IncentiveIcon from './incentives-modal-icon.svg';
+import IncentiveIcon from '~/settings-payments/assets/incentives-icon.svg';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
 
 interface IncentiveModalProps {
@@ -115,7 +115,7 @@ export const IncentiveModal = ( {
 										setIsBusy( false );
 									} }
 								>
-									{ __( 'Get started', 'woocommerce' ) }
+									{ __( 'Save 10%', 'woocommerce' ) }
 								</Button>
 							</CardBody>
 						</div>
