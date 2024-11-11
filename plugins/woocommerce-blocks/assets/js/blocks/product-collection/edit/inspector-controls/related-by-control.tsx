@@ -3,7 +3,6 @@
  */
 import { __ } from '@wordpress/i18n';
 import { CheckboxControl, PanelBody } from '@wordpress/components';
-import { recordEvent } from '@woocommerce/tracks';
 
 /**
  * Internal dependencies
@@ -31,14 +30,6 @@ const RelatedByControl = ( {
 		} );
 
 		trackInteraction( CoreFilterNames.RELATED_BY );
-
-		recordEvent(
-			'blocks_product_collection_inspector_control_related_by_changed',
-			{
-				categories: newRelatedBy?.categories || false,
-				tags: newRelatedBy?.tags || false,
-			}
-		);
 	};
 
 	return (
