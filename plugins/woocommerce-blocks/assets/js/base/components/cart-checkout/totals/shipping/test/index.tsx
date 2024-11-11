@@ -202,11 +202,12 @@ describe( 'TotalsShipping', () => {
 			</SlotFillProvider>
 		);
 		expect(
-			screen.getByText( ( content ) =>
-				/Delivers to W1T 4JG, London, United Kingdom \(UK\)/.test(
-					content
-				)
-			)
+			screen.getByText( ( _, element ) => {
+				const text = element?.textContent || '';
+				return /Delivers to W1T 4JG, London, United Kingdom \(UK\)/.test(
+					text
+				);
+			} )
 		).toBeInTheDocument();
 		expect( screen.getByText( 'Change address' ) ).toBeInTheDocument();
 	} );

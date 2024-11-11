@@ -77,9 +77,10 @@ describe( 'ShippingAddress', () => {
 			</ShippingCalculatorContext.Provider>
 		);
 		expect(
-			screen.getByText( ( content ) =>
-				/Delivers to 94107/.test( content )
-			)
+			screen.getByText( ( _, element ) => {
+				const text = element?.textContent || '';
+				return /Delivers to 94107/.test( text );
+			} )
 		).toBeInTheDocument();
 		expect( screen.getByText( 'Change address' ) ).toBeInTheDocument();
 		expect(
@@ -124,9 +125,10 @@ describe( 'ShippingAddress', () => {
 			</ShippingCalculatorContext.Provider>
 		);
 		expect(
-			screen.getByText( ( content ) =>
-				/Collection from 123 Easy Street/.test( content )
-			)
+			screen.getByText( ( _, element ) => {
+				const text = element?.textContent || '';
+				return /Collection from 123 Easy Street/.test( text );
+			} )
 		).toBeInTheDocument();
 	} );
 
@@ -153,9 +155,10 @@ describe( 'ShippingAddress', () => {
 
 		render( <ShippingAddress /> );
 		expect(
-			screen.getByText( ( content ) =>
-				/Collection from 123 Easy Street/.test( content )
-			)
+			screen.getByText( ( _, element ) => {
+				const text = element?.textContent || '';
+				return /Collection from 123 Easy Street/.test( text );
+			} )
 		).toBeInTheDocument();
 	} );
 	it( 'renders no address if one is not set in the methods metadata', async () => {
