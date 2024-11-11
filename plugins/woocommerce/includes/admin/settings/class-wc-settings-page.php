@@ -25,6 +25,13 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 		protected $id = '';
 
 		/**
+		 * Setting page icon.
+		 *
+		 * @var string
+		 */
+		protected $icon = 'settings';
+
+		/**
 		 * Setting page label.
 		 *
 		 * @var string
@@ -125,7 +132,7 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 			$pages[ $this->id ] = array(
 				'label'   => html_entity_decode( $this->label ),
 				'slug'    => $this->id,
-				'icon'    => 'box',
+				'icon'    => $this->icon,
 				'sections' => $sections_data,
 			);
 
