@@ -250,20 +250,28 @@ class PaymentsRestController extends RestApiControllerBase {
 			if ( empty( $gateway_details['tags'] ) ) {
 				$gateway_details['tags'] = $suggestion['tags'];
 			}
+			if ( empty( $gateway_details['plugin'] ) ) {
+				$gateway_details['plugin'] = $suggestion['plugin'];
+			}
 		}
 
-		// If there are no links, try to get them from the plugin headers.
-		if ( empty( $gateway_details['links'] ) ) {
-			// Get the gateway's plugin details.
-			$plugin_data = PluginsHelper::get_plugin_data( $plugin_slug );
-			if ( is_array( $plugin_data ) && ! empty( $plugin_data['PluginURI'] ) ) {
-				$gateway_details['links'] = array(
-					array(
-						'_type' => ExtensionSuggestions::LINK_TYPE_ABOUT,
-						'url'   => $plugin_data['PluginURI'],
-					),
-				);
+		// Get the gateway's plugin details.
+		$plugin_data = PluginsHelper::get_plugin_data( $plugin_slug );
+		if ( ! empty( $plugin_data ) ) {
+			// If there are no links, try to get them from the plugin data.
+			if ( empty( $gateway_details['links'] ) ) {
+				if ( is_array( $plugin_data ) && ! empty( $plugin_data['PluginURI'] ) ) {
+					$gateway_details['links'] = array(
+						array(
+							'_type' => ExtensionSuggestions::LINK_TYPE_ABOUT,
+							'url'   => $plugin_data['PluginURI'],
+						),
+					);
+				}
 			}
+
+			$gateway_details['plugin']['slug'] = $plugin_slug;
+			$gateway_details['plugin']['status'] = self::EXTENSION_ACTIVE;
 		}
 
 		return $gateway_details;
@@ -692,28 +700,28 @@ class PaymentsRestController extends RestApiControllerBase {
 	 */
 	private function get_schema_for_payment_gateway(): array {
 		return array(
-			'type'       => 'object',
+			'type'        => 'object',
 			'description' => esc_html__( 'A payment gateway.', 'woocommerce' ),
-			'properties' => array(
-				'_id'                => array(
+			'properties'  => array(
+				'_id'         => array(
 					'type'        => 'string',
 					'description' => esc_html__( 'The unique identifier for the payment gateway.', 'woocommerce' ),
 					'context'     => array( 'view', 'edit' ),
 					'readonly'    => true,
 				),
-				'_order'             => array(
+				'_order'      => array(
 					'type'        => 'integer',
 					'description' => esc_html__( 'The sort order of the payment gateway.', 'woocommerce' ),
 					'context'     => array( 'view', 'edit' ),
 					'readonly'    => true,
 				),
-				'title'              => array(
+				'title'       => array(
 					'type'        => 'string',
 					'description' => esc_html__( 'The title of the payment gateway.', 'woocommerce' ),
 					'context'     => array( 'view', 'edit' ),
 					'readonly'    => true,
 				),
-				'description'        => array(
+				'description' => array(
 					'type'        => 'string',
 					'description' => esc_html__( 'The description of the payment gateway.', 'woocommerce' ),
 					'context'     => array( 'view', 'edit' ),
@@ -728,12 +736,47 @@ class PaymentsRestController extends RestApiControllerBase {
 						'type' => 'string',
 					),
 				),
-				'links' 			=> array(
+				'plugin'      => array(
+					'type'       => 'object',
+					'context'    => array( 'view', 'edit' ),
+					'readonly'   => true,
+					'properties' => array(
+						'_type'  => array(
+							'type'        => 'string',
+							'description' => esc_html__( 'The type of the plugin.', 'woocommerce' ),
+							'context'     => array( 'view', 'edit' ),
+							'readonly'    => true,
+						),
+						'slug'   => array(
+							'type'        => 'string',
+							'description' => esc_html__( 'The slug of the plugin.', 'woocommerce' ),
+							'context'     => array( 'view', 'edit' ),
+							'readonly'    => true,
+						),
+						'status' => array(
+							'type'        => 'string',
+							'description' => esc_html__( 'The status of the plugin.', 'woocommerce' ),
+							'context'     => array( 'view', 'edit' ),
+							'readonly'    => true,
+						),
+					),
+				),
+				'image'       => array(
+					'type'        => 'string',
+					'description' => esc_html__( 'The URL of the image.', 'woocommerce' ),
+					'readonly'    => true,
+				),
+				'image_72x72' => array(
+					'type'        => 'string',
+					'description' => esc_html__( 'The URL of the 72x72 image.', 'woocommerce' ),
+					'readonly'    => true,
+				),
+				'links'       => array(
 					'description' => __( 'Links for the payment gateway.', 'woocommerce' ),
-					'type'  => 'array',
+					'type'        => 'array',
 					'context'     => array( 'view', 'edit' ),
 					'readonly'    => true,
-					'items' => array(
+					'items'       => array(
 						'type'       => 'object',
 						'properties' => array(
 							'_type' => array(
@@ -751,8 +794,8 @@ class PaymentsRestController extends RestApiControllerBase {
 						),
 					),
 				),
-				'state' 			=> array(
-					'type'       => 'object',
+				'state'       => array(
+					'type'        => 'object',
 					'description' => esc_html__( 'The state of the payment gateway.', 'woocommerce' ),
 					'properties'  => array(
 						'enabled'     => array(
@@ -775,8 +818,8 @@ class PaymentsRestController extends RestApiControllerBase {
 						),
 					),
 				),
-				'management' => array(
-					'type'       => 'object',
+				'management'  => array(
+					'type'        => 'object',
 					'description' => esc_html__( 'The management details of the payment gateway.', 'woocommerce' ),
 					'properties'  => array(
 						'settings_url' => array(
@@ -847,6 +890,12 @@ class PaymentsRestController extends RestApiControllerBase {
 						'slug'  => array(
 							'type'        => 'string',
 							'description' => esc_html__( 'The slug of the plugin.', 'woocommerce' ),
+							'context'     => array( 'view', 'edit' ),
+							'readonly'    => true,
+						),
+						'status' => array(
+							'type'        => 'string',
+							'description' => esc_html__( 'The status of the plugin.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
 						),
