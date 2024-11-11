@@ -399,6 +399,8 @@ class PaymentsRestController extends RestApiControllerBase {
 			}
 		);
 
+		$has_enabled_ecommerce_gateways = $this->has_enabled_ecommerce_gateways();
+
 		// Keep track of the active extensions.
 		$active_extensions = array();
 
@@ -443,7 +445,7 @@ class PaymentsRestController extends RestApiControllerBase {
 			if ( (
 					ExtensionSuggestions::TYPE_EXPRESS_CHECKOUT === $extension['_type'] ||
 					ExtensionSuggestions::TYPE_BNPL === $extension['_type']
-				) && ! $this->has_enabled_ecommerce_gateways() ) {
+				) && ! $has_enabled_ecommerce_gateways ) {
 				continue;
 			}
 
