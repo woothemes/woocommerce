@@ -1310,10 +1310,10 @@ class ProductCollection extends \WP_UnitTestCase {
 		$expected_product_ids = array( 2, 3, 4 );
 
 		// Frontend.
-		$parsed_block                                       = $this->get_base_parsed_block();
-		$parsed_block['attrs']['collection']                = 'woocommerce/product-collection/hand-picked';
+		$parsed_block                                                    = $this->get_base_parsed_block();
+		$parsed_block['attrs']['collection']                             = 'woocommerce/product-collection/hand-picked';
 		$parsed_block['attrs']['query']['woocommerceHandPickedProducts'] = $expected_product_ids;
-		$result_frontend                                    = $this->initialize_merged_query( $parsed_block );
+		$result_frontend                                                 = $this->initialize_merged_query( $parsed_block );
 
 		// Editor.
 		$request = $this->build_request(
@@ -1336,10 +1336,10 @@ class ProductCollection extends \WP_UnitTestCase {
 	 */
 	public function test_collection_hand_picked_empty() {
 		// Frontend.
-		$parsed_block                                       = $this->get_base_parsed_block();
-		$parsed_block['attrs']['collection']                = 'woocommerce/product-collection/hand-picked';
+		$parsed_block                                                    = $this->get_base_parsed_block();
+		$parsed_block['attrs']['collection']                             = 'woocommerce/product-collection/hand-picked';
 		$parsed_block['attrs']['query']['woocommerceHandPickedProducts'] = array();
-		$result_frontend                                    = $this->initialize_merged_query( $parsed_block );
+		$result_frontend                                                 = $this->initialize_merged_query( $parsed_block );
 
 		// Editor.
 		$request = $this->build_request(
@@ -1364,10 +1364,10 @@ class ProductCollection extends \WP_UnitTestCase {
 		$product_ids = array( 4, 2, 7, 1 );
 
 		// Frontend.
-		$parsed_block                                       = $this->get_base_parsed_block();
-		$parsed_block['attrs']['collection']                = 'woocommerce/product-collection/hand-picked';
+		$parsed_block                                                    = $this->get_base_parsed_block();
+		$parsed_block['attrs']['collection']                             = 'woocommerce/product-collection/hand-picked';
 		$parsed_block['attrs']['query']['woocommerceHandPickedProducts'] = $product_ids;
-		$result_frontend                                    = $this->initialize_merged_query( $parsed_block );
+		$result_frontend                                                 = $this->initialize_merged_query( $parsed_block );
 
 		// Editor.
 		$request = $this->build_request(
