@@ -54,7 +54,7 @@ a.button {
 
 			label {
 				@include woocommerce-float-label();
-				left: 0.8em;
+				left: 0.85em;
 				transform: translateY(0.7em);
 
 				&.is-active {
@@ -2909,7 +2909,7 @@ button.reset_variations {
 	
 			label {
 				@include woocommerce-float-label();
-				left: 0.8em;
+				left: 0.85em;
 				transform: translateY(0.8em);
 				
 				@media only screen and (max-width: 768px) {

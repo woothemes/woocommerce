@@ -504,6 +504,7 @@
 
 			label {
 				@include woocommerce-float-label();
+				left: 1.2em;
 			}
 		}
 	}
@@ -595,6 +596,7 @@ ul.wc-tabs {
 
 			label {
 				@include woocommerce-float-label();
+				left: 1.1em;
 				transform: translateY(1em);
 				
 				@media only screen and (max-width: 768px) {

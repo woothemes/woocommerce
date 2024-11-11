@@ -512,6 +512,7 @@ $tt2-gray: #f7f7f7;
 
 			label {
 				@include woocommerce-float-label();
+				left: 1.15rem;
 				transform: translateY(0.8em);
 			}
 		}
@@ -766,6 +767,7 @@ ul.wc-tabs {
 
 			label {
 				@include woocommerce-float-label();
+				left: 1.15em;
 				transform: translateY(1.1em);
 
 				&.is-active {
