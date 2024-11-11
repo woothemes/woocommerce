@@ -30,6 +30,27 @@ const ContentPlaceholder = () => {
 	return <div>Content Placeholder</div>;
 };
 
+const SettingsLayout = () => {
+	return (
+		<Layout
+			route={ {
+				key: 'settings',
+				areas: {
+					content: <ContentPlaceholder />,
+					sidebar: (
+						<SidebarNavigationScreen
+							title={ 'Settings Title' }
+							isRoot
+							content={ <Sidebar pages={ pages } /> }
+						/>
+					),
+				},
+				widths: {},
+			} }
+		/>
+	);
+};
+
 export const SettingsEditor = () => {
 	const isRequiredGutenbergVersion = isGutenbergVersionAtLeast( 19.0 );
 
@@ -48,22 +69,7 @@ export const SettingsEditor = () => {
 	return (
 		<GlobalStylesProvider>
 			<RouterProvider>
-				<Layout
-					route={ {
-						key: 'settings',
-						areas: {
-							content: <ContentPlaceholder />,
-							sidebar: (
-								<SidebarNavigationScreen
-									title={ 'Settings Title' }
-									isRoot
-									content={ <Sidebar pages={ pages } /> }
-								/>
-							),
-						},
-						widths: {},
-					} }
-				/>
+				<SettingsLayout />
 			</RouterProvider>
 		</GlobalStylesProvider>
 	);

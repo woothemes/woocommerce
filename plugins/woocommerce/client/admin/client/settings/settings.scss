@@ -41,6 +41,10 @@ body.woocommerce_page_wc-settings {
 		color: #1e1e1e;
 	}
 
+	.edit-site-site-hub_toggle-command-center {
+		display: none;
+	}
+
 	@media (min-width: 782px) {
 		.edit-site-layout__area {
 			border-radius: 8px;
