@@ -126,6 +126,7 @@ export function useModernRoutes() {
 
 /**
  * Hook to get the current path and other query parameters.
+ * TODO: Replace with useLocation from @wordpress/router once it's available.
  */
 const useLocation = () => {
 	const { path, ...otherQueryParams } = getQuery() as {
