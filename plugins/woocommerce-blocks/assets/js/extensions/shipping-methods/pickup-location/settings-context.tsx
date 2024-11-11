@@ -71,6 +71,14 @@ export const SettingsProvider = ( {
 		[]
 	);
 
+	const setPickupLocationsState = useCallback(
+		( newLocations: SortablePickupLocation[] ) => {
+			setIsDirty( true );
+			setPickupLocations( newLocations );
+		},
+		[]
+	);
+
 	const toggleLocation = useCallback( ( rowId: UniqueIdentifier ) => {
 		setIsDirty( true );
 		setPickupLocations( ( previousLocations: SortablePickupLocation[] ) => {
@@ -169,7 +177,7 @@ export const SettingsProvider = ( {
 		setSettingField,
 		readOnlySettings,
 		pickupLocations,
-		setPickupLocations,
+		setPickupLocations: setPickupLocationsState,
 		toggleLocation,
 		updateLocation,
 		isSaving,
