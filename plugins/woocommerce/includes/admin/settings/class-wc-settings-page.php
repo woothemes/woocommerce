@@ -123,16 +123,16 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 					$section_settings_data[] = $section_setting;
 
 					$sections_data[ $section_id ] = array(
-						'label'   => html_entity_decode( $section_label ),
+						'label'    => html_entity_decode( $section_label ),
 						'settings' => $section_settings_data,
 					);
 				}
 			}
 
 			$pages[ $this->id ] = array(
-				'label'   => html_entity_decode( $this->label ),
-				'slug'    => $this->id,
-				'icon'    => $this->icon,
+				'label'    => html_entity_decode( $this->label ),
+				'slug'     => $this->id,
+				'icon'     => $this->icon,
 				'sections' => $sections_data,
 			);
 
