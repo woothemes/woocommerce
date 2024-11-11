@@ -4,7 +4,7 @@ declare( strict_types=1 );
 namespace Automattic\WooCommerce\Internal\Admin\Settings\Payments;
 
 use Automattic\WooCommerce\Admin\PluginsHelper;
-use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestions as ExtensionSuggestions;
+use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestions;
 use Automattic\WooCommerce\Internal\Traits\AccessiblePrivateMethods;
 use Automattic\WooCommerce\Internal\RestApiControllerBase;
 use Exception;
@@ -34,14 +34,14 @@ class PaymentsRestController extends RestApiControllerBase {
 	 *
 	 * @var string
 	 */
-	protected string $rest_base = 'wc-settings/payments';
+	protected string $rest_base = 'settings/payments';
 
 	/**
 	 * The payment extension suggestions.
 	 *
-	 * @var ExtensionSuggestions
+	 * @var PaymentExtensionSuggestions
 	 */
-	private ExtensionSuggestions $extension_suggestions;
+	private PaymentExtensionSuggestions $extension_suggestions;
 
 	/**
 	 * Get the WooCommerce REST API namespace for the class.
@@ -49,7 +49,7 @@ class PaymentsRestController extends RestApiControllerBase {
 	 * @return string
 	 */
 	protected function get_rest_api_namespace(): string {
-		return 'wc-settings';
+		return 'settings/payments';
 	}
 
 	/**
@@ -71,15 +71,15 @@ class PaymentsRestController extends RestApiControllerBase {
 		);
 	}
 
-	/**
-	 * Initialize the class instance.
-	 *
-	 * @internal
-	 * @param ExtensionSuggestions $payment_extension_suggestions The payment extension suggestions service.
-	 */
-	final public function init( ExtensionSuggestions $payment_extension_suggestions ) {
-		$this->extension_suggestions = $payment_extension_suggestions;
-	}
+//	/**
+//	 * Initialize the class instance.
+//	 *
+//	 * @internal
+//	 * @param PaymentExtensionSuggestions $payment_extension_suggestions The payment extension suggestions service.
+//	 */
+//	final public function init( PaymentExtensionSuggestions $payment_extension_suggestions ) {
+//		$this->extension_suggestions = $payment_extension_suggestions;
+//	}
 
 	/**
 	 * Get the payment providers for the given location.
@@ -91,7 +91,7 @@ class PaymentsRestController extends RestApiControllerBase {
 		$location = $request->get_param( 'location' );
 
 		try {
-			$suggestions = $this->get_payment_extension_suggestions( $location, $request );
+			$suggestions = $this->get_extension_suggestions( $location, $request );
 		} catch ( Exception $e ) {
 			return new WP_Error( 'woocommerce_rest_payment_providers_error', $e->getMessage(), array( 'status' => 500 ) );
 		}
@@ -101,7 +101,7 @@ class PaymentsRestController extends RestApiControllerBase {
 			'offline_payment_methods' => $this->get_offline_payment_methods( $request ),
 			'preferred_suggestions'   => $suggestions['preferred'],
 			'other_suggestions'       => $suggestions['other'],
-			'suggestion_categories'   => $this->get_payment_extension_suggestion_categories( $location, $request ),
+			'suggestion_categories'   => $this->get_extension_suggestion_categories( $location, $request ),
 		);
 
 		return rest_ensure_response( $response );
@@ -329,7 +329,15 @@ class PaymentsRestController extends RestApiControllerBase {
 	 * @return array[] The payment extension suggestions for the given location, split into preferred and other.
 	 * @throws Exception If there are malformed or invalid suggestions.
 	 */
-	private function get_payment_extension_suggestions( string $location, WP_REST_Request $request ): array {
+	private function get_extension_suggestions( string $location, WP_REST_Request $request ): array {
+		// If the requesting user can't install plugins, we don't suggest any extensions.
+		if ( ! current_user_can( 'install_plugins' ) ) {
+			return array(
+				'preferred' => array(),
+				'other'     => array(),
+			);
+		}
+
 		$preferred_psp = null;
 		$preferred_apm = null;
 		$other         = array();
@@ -479,7 +487,7 @@ class PaymentsRestController extends RestApiControllerBase {
 	 *
 	 * @return array The payment extension suggestions categories.
 	 */
-	private function get_payment_extension_suggestion_categories( string $location, WP_REST_Request $request ): array {
+	private function get_extension_suggestion_categories( string $location, WP_REST_Request $request ): array {
 		$categories   = array();
 		$categories[] = array(
 			'_id'         => 'express_checkout',
