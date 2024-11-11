@@ -20,12 +20,10 @@ export const IncentiveBanner = () => {
 	const [ isDismissClicked, setIsDismissClicked ] = useState( false );
 
 	const handleSetup = () => {
-		console.log( 'Handle setup' );
 		setIsSubmitted( true );
 	};
 
 	const handleDismiss = () => {
-		console.log( 'Handle dismiss' );
 		setIsDismissClicked( true );
 	};
 
