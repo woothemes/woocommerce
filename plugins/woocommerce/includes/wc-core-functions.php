@@ -416,8 +416,19 @@ function wc_locate_template( $template_name, $template_path = '', $default_path 
 		}
 	}
 
-	// Return what we found.
-	return apply_filters( 'woocommerce_locate_template', $template, $template_name, $template_path );
+	/**
+	 * Filter to customize the path of a given WooCommerce template.
+	 *
+	 * Note: the $default_path argument was added in WooCommerce 9.5.0.
+	 *
+	 * @param string $template Full file path of the template.
+	 * @param string $template_name Template name.
+	 * @param string $template_path Template path.
+	 * @param string $template_path Default WooCommerce templates path.
+	 *
+	 * @since 9.5.0 $default_path argument added.
+	 */
+	return apply_filters( 'woocommerce_locate_template', $template, $template_name, $template_path, $default_path );
 }
 
 /**
@@ -1783,22 +1794,26 @@ function wc_get_shipping_method_count( $include_legacy = false, $enabled_only = 
 		return absint( $transient_value['value'] );
 	}
 
-	if ( $enabled_only ) {
-		$method_count = absint( $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}woocommerce_shipping_zone_methods WHERE is_enabled=1" ) );
-	} else {
-		$method_count = absint( $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}woocommerce_shipping_zone_methods" ) );
-	}
+	// Count activated methods that don't support shipping zones if $include_legacy is true.
+	$methods      = WC()->shipping()->get_shipping_methods();
+	$method_ids   = array();
+	$method_count = 0;
 
-	if ( $include_legacy ) {
-		// Count activated methods that don't support shipping zones.
-		$methods = WC()->shipping()->get_shipping_methods();
+	foreach ( $methods as $method ) {
+		$method_ids[] = $method->id;
 
-		foreach ( $methods as $method ) {
-			if ( isset( $method->enabled ) && 'yes' === $method->enabled && ! $method->supports( 'shipping-zones' ) ) {
-				++$method_count;
-			}
+		if ( $include_legacy && isset( $method->enabled ) && 'yes' === $method->enabled && ! $method->supports( 'shipping-zones' ) ) {
+			++$method_count;
 		}
 	}
+
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
+	if ( $enabled_only ) {
+		$method_count = $method_count + absint( $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}woocommerce_shipping_zone_methods WHERE is_enabled=1 AND method_id IN ('" . implode( "','", array_map( 'esc_sql', $method_ids ) ) . "')" ) );
+	} else {
+		$method_count = $method_count + absint( $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}woocommerce_shipping_zone_methods WHERE method_id IN ('" . implode( "','", array_map( 'esc_sql', $method_ids ) ) . "')" ) );
+	}
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
 
 	$transient_value = array(
 		'version' => $transient_version,

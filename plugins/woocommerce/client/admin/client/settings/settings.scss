@@ -1,0 +1,49 @@
+@include wordpress-admin-schemes();
+
+body.woocommerce_page_wc-settings {
+	#wpcontent {
+		margin-left: 0 !important;
+	}
+	#wpadminbar {
+		display: block;
+	}
+
+	#adminmenumain,
+	#woocommerce-embedded-root {
+		display: none;
+	}
+
+	#wpbody {
+		background: #1d2327;
+	}
+
+	#wc-settings-page {
+		// Because this uses negative margins, we have to compensate for the height.
+		margin-top: -14px;
+		min-height: calc(100vh - #{$admin-bar-height});
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		display: flex !important;
+
+		@media (max-width: 782px) {
+			margin-top: 0;
+			min-height: calc(100vh - 46px);
+		}
+
+		.edit-site-layout {
+			background: #1d2327;
+			flex: 1 1 0;
+			min-height: 100%;
+			height: auto;
+		}
+	}
+
+	@media (min-width: 782px) {
+		.edit-site-layout__area {
+			border-radius: 8px;
+		}
+	}
+}

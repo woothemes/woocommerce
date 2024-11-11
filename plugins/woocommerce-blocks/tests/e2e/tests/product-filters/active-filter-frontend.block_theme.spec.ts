@@ -14,102 +14,81 @@ const test = base.extend< { templateCompiler: TemplateCompiler } >( {
 
 test.describe( 'woocommerce/product-filter-active - Frontend', () => {
 	test.beforeEach( async ( { requestUtils } ) => {
-		await requestUtils.activatePlugin(
-			'woocommerce-blocks-test-enable-experimental-features'
-		);
+		await requestUtils.setFeatureFlag( 'experimental-blocks', true );
 	} );
 
-	test( 'Without any filters selected, only a wrapper block is rendered', async ( {
+	test( 'Without any filters selected, active block should not be rendered', async ( {
 		page,
 		templateCompiler,
 	} ) => {
-		await templateCompiler.compile( {
-			attributes: {
-				displayStyle: 'list',
-			},
-		} );
+		await templateCompiler.compile( {} );
 
 		await page.goto( '/shop' );
 
-		const locator = page.locator(
+		const chips = page.locator(
 			'.wp-block-woocommerce-product-filter-active'
 		);
 
-		await expect( locator ).toHaveCount( 1 );
-
-		const html = await locator.innerHTML();
-		expect( html.trim() ).toBe( '' );
+		await expect( chips ).toHaveCount( 1 );
 	} );
 
 	test( 'With rating filters applied it shows the correct active filters', async ( {
 		page,
 		templateCompiler,
 	} ) => {
-		await templateCompiler.compile( {
-			attributes: {
-				displayStyle: 'list',
-			},
-		} );
+		await templateCompiler.compile( {} );
 
 		await page.goto( `${ '/shop' }?rating_filter=1,2,5` );
 
-		await expect( page.getByText( 'Rating:' ) ).toBeVisible();
-		await expect( page.getByText( 'Rated 1 out of 5' ) ).toBeVisible();
-		await expect( page.getByText( 'Rated 2 out of 5' ) ).toBeVisible();
-		await expect( page.getByText( 'Rated 5 out of 5' ) ).toBeVisible();
+		await expect(
+			page.getByText( 'Rating: Rated 1 out of 5' )
+		).toBeVisible();
+		await expect(
+			page.getByText( 'Rating: Rated 2 out of 5' )
+		).toBeVisible();
+		await expect(
+			page.getByText( 'Rating: Rated 5 out of 5' )
+		).toBeVisible();
 	} );
 
 	test( 'With stock filters applied it shows the correct active filters', async ( {
 		page,
 		templateCompiler,
 	} ) => {
-		await templateCompiler.compile( {
-			attributes: {
-				displayStyle: 'list',
-			},
-		} );
+		await templateCompiler.compile( {} );
 
 		await page.goto(
 			`${ '/shop' }?filter_stock_status=instock,onbackorder`
 		);
 
-		await expect( page.getByText( 'Status:' ) ).toBeVisible();
-		await expect( page.getByText( 'In stock' ) ).toBeVisible();
-		await expect( page.getByText( 'On backorder' ) ).toBeVisible();
+		await expect( page.getByText( 'Status: In stock' ) ).toBeVisible();
+		await expect( page.getByText( 'Status: On backorder' ) ).toBeVisible();
 	} );
 
 	test( 'With attribute filters applied it shows the correct active filters', async ( {
 		page,
 		templateCompiler,
 	} ) => {
-		await templateCompiler.compile( {
-			attributes: {
-				displayStyle: 'list',
-			},
-		} );
+		await templateCompiler.compile( {} );
 
 		await page.goto(
 			`${ '/shop' }?filter_color=blue,gray&query_type_color=or`
 		);
 
-		await expect( page.getByText( 'Color:' ) ).toBeVisible();
-		await expect( page.getByText( 'Blue' ) ).toBeVisible();
-		await expect( page.getByText( 'Gray' ) ).toBeVisible();
+		await expect( page.getByText( 'Color: Blue' ) ).toBeVisible();
+		await expect( page.getByText( 'Color: Gray' ) ).toBeVisible();
 	} );
 
 	test( 'With price filters applied it shows the correct active filters', async ( {
 		page,
 		templateCompiler,
 	} ) => {
-		await templateCompiler.compile( {
-			attributes: {
-				displayStyle: 'list',
-			},
-		} );
+		await templateCompiler.compile( {} );
 
 		await page.goto( `${ '/shop' }?min_price=17&max_price=71` );
 
-		await expect( page.getByText( 'Price:' ) ).toBeVisible();
-		await expect( page.getByText( 'Between $17 and $71' ) ).toBeVisible();
+		await expect(
+			page.getByText( 'Price: Between $17 and $71' )
+		).toBeVisible();
 	} );
 } );

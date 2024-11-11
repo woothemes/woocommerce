@@ -131,11 +131,14 @@ test.describe( 'Product Collection: Collections', () => {
 	} ) => {
 		await pageObject.createNewPostAndInsertBlock( 'productCatalog' );
 
-		const usePageContextToggle = pageObject
+		const queryTypeLocator = pageObject
 			.locateSidebarSettings()
-			.locator( `${ SELECTORS.usePageContextControl } input` );
+			.getByLabel( SELECTORS.usePageContextControl );
 
-		await expect( usePageContextToggle ).toBeVisible();
+		await expect( queryTypeLocator.getByLabel( 'Default' ) ).toBeChecked();
+		await expect(
+			queryTypeLocator.getByLabel( 'Custom' )
+		).not.toBeChecked();
 		await expect( pageObject.products ).toHaveCount( 9 );
 
 		await pageObject.publishAndGoToFrontend();
@@ -160,12 +163,14 @@ test.describe( 'Product Collection: Collections', () => {
 		await pageObject.chooseCollectionInTemplate();
 		await editor.openDocumentSettingsSidebar();
 
-		const sidebarSettings = pageObject.locateSidebarSettings();
-		const input = sidebarSettings.locator(
-			`${ SELECTORS.usePageContextControl } input`
-		);
+		const queryTypeLocator = pageObject
+			.locateSidebarSettings()
+			.getByLabel( SELECTORS.usePageContextControl );
 
-		await expect( input ).toBeChecked();
+		await expect( queryTypeLocator.getByLabel( 'Default' ) ).toBeChecked();
+		await expect(
+			queryTypeLocator.getByLabel( 'Custom' )
+		).not.toBeChecked();
 	} );
 
 	test.describe( 'Have hidden implementation in UI', () => {
