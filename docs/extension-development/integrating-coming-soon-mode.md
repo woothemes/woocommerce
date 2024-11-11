@@ -35,7 +35,9 @@ function clear_server_cache( $old_value, $new_value, $option ) {
 
 By default, Coming-soon pages are set with `Cache-Control: max-age=60` header. This setting enables CDNs and other caching mechanisms to cache the page for 60 seconds, balancing the need for efficient performance with reasonable update times.
 
-However, when user changes the coming soon template, it's recommended to ensure that any cached versions of the page are purged so the changes take effect immediately. You can use the `save_post_wp_template`, `save_post_wp_template_part`, and `save_post_wp_global_styles` hooks to detect when a template is updated and trigger the cache purge.
+When the user changes the coming soon template, it's recommended that any cache be purged so the changes take effect immediately when the client-side cache expires.
+
+You can use the `save_post_wp_template`, `save_post_wp_template_part`, and `save_post_wp_global_styles` hooks to detect when a template is updated and trigger the cache purge.
 
 ```php
 add_action( 'save_post_wp_template', 'purge_cache_on_template_change', 10, 3 );
