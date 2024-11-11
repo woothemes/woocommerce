@@ -17,13 +17,19 @@ import {
 /* eslint-disable @woocommerce/dependency-group */
 // @ts-ignore No types for this exist yet.
 import SidebarNavigationScreen from '@wordpress/edit-site/build-module/components/sidebar-navigation-screen';
+// @ts-ignore No types for this exist yet.
+import { privateApis as routerPrivateApis } from '@wordpress/router';
+// @ts-ignore No types for this exist yet.
+import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
 /* eslint-enable @woocommerce/dependency-group */
 
 /**
  * Internal dependencies
  */
 import { Sidebar } from './sidebar';
-import { Route } from './types';
+import { Route, Location } from './types';
+
+const { useLocation } = unlock( routerPrivateApis );
 
 const NotFound = () => {
 	return (
@@ -53,7 +59,7 @@ const getNotFoundRoute = ( page: string ): Route => ( {
 /**
  * Creates a route configuration for legacy settings pages.
  *
- * @param {string} page - The page identifier.
+ * @param {string} tab - The page identifier.
  */
 const getLegacyRoute = (
 	page: string,
@@ -68,7 +74,7 @@ const getLegacyRoute = (
 				content={ <Sidebar pages={ pages } /> }
 			/>
 		),
-		content: <div>(Legacy) Content Placeholder</div>,
+		content: <div>Content Placeholder: current tab: { page }</div>,
 		edit: null,
 	},
 	widths: {
@@ -125,27 +131,15 @@ export function useModernRoutes() {
 }
 
 /**
- * Hook to get the current path and other query parameters.
- * TODO: Replace with useLocation from @wordpress/router once it's available.
- */
-const useLocation = () => {
-	const { path, ...otherQueryParams } = getQuery() as {
-		[ key: string ]: string | undefined;
-	};
-	const page = path?.split( '/' ).pop() || '';
-	return { ...otherQueryParams, page };
-};
-
-/**
  * Hook to determine and return the active route based on the current path.
  */
 export const useActiveRoute = () => {
 	const settingsPages = window.wcSettings?.admin?.settingsPages;
-
-	const { page } = useLocation();
+	const location = useLocation() as Location;
 	const modernRoutes = useModernRoutes();
 
 	return useMemo( () => {
+		const { tab: page = 'general' } = location.params;
 		const pageSettings = settingsPages?.[ page ];
 
 		if ( ! pageSettings ) {
@@ -159,5 +153,5 @@ export const useActiveRoute = () => {
 
 		// Handle modern pages.
 		return modernRoutes[ page ] || getNotFoundRoute( page );
-	}, [ settingsPages, page, modernRoutes ] );
+	}, [ settingsPages, location, modernRoutes ] );
 };

@@ -1,7 +1,7 @@
 type SettingField = {
     title?: string;
     type: string;
-    id: string;
+    id?: string;
     desc?: string;
     desc_tip?: boolean | string;
     default?: string | number | boolean | object;
@@ -29,9 +29,7 @@ type SettingsSection = {
 
 type SettingsPage = {
     label: string;
-    sections: {
-        [key: string]: SettingsSection;
-    };
+    sections: SettingsSection[];
     is_modern: boolean;
 };
 

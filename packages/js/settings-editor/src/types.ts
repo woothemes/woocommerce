@@ -40,3 +40,12 @@ export type Route = {
 		edit?: number;
 	};
 };
+
+export type Location = {
+	pathname: string;
+	search: string;
+	hash: string;
+	state: null;
+	key: string;
+	params: Record< string, string >;
+};
