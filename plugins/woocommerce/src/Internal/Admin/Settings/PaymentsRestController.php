@@ -572,7 +572,6 @@ class PaymentsRestController extends RestApiControllerBase {
 	 * @return bool|WP_Error True if the current user has the capability, otherwise an "Unauthorized" error or False if no error is available for the request method.
 	 */
 	private function check_permissions( WP_REST_Request $request ) {
-//		return true;
 		$context = 'read';
 		if ( 'POST' == $request->get_method() ) {
 			$context = 'edit';
