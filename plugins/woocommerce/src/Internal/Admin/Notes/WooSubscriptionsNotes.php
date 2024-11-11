@@ -267,7 +267,7 @@ class WooSubscriptionsNotes {
 
 		// Note: There is no reason this property should not exist. This is just defensive programming.
 		if ( $note && property_exists( $note->get_content_data(), 'days_until_expiration' ) ) {
-			$note_days_until_expiration = intval( $content_data->days_until_expiration );
+			$note_days_until_expiration = intval( $note->get_content_data()->days_until_expiration );
 			if ( $days_until_expiration === $note_days_until_expiration ) {
 				// Note is already up to date. Bail.
 				return;
