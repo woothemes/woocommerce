@@ -97,9 +97,9 @@ export const PaymentGateways = () => {
 							) }
 						</>
 					),
-					className: hasIncentive
-						? 'woocommerce-list__item--payment-gateway has-incentive'
-						: 'woocommerce-list__item--payment-gateway',
+					className: `woocommerce-list__item--payment-gateway ${
+						hasIncentive ?? 'has-incentive'
+					}`,
 					content: (
 						<>
 							{ decodeEntities( gateway.method_description ) }

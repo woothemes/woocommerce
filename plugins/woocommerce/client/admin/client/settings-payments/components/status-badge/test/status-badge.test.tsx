@@ -36,8 +36,10 @@ describe( 'StatusBadge component', () => {
 	} );
 
 	it( 'renders the correct message for has_incentive status', () => {
-		const { getByText } = render( <StatusBadge status="has_incentive" /> );
-		expect( getByText( 'Has incentive' ) ).toBeInTheDocument();
+		const { getByText } = render(
+			<StatusBadge status="has_incentive" message={ 'Custom message' } />
+		);
+		expect( getByText( 'Custom message' ) ).toBeInTheDocument();
 	} );
 
 	it( 'applies the correct class for success statuses', () => {

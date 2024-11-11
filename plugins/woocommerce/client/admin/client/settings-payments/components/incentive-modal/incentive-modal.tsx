@@ -12,7 +12,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
-import { Link, Pill } from '@woocommerce/components';
+import { Link } from '@woocommerce/components';
 
 /**
  * Internal dependencies
@@ -32,7 +32,7 @@ export const IncentiveModal = ( {
 	onClose,
 	onSubmit,
 }: IncentiveModalProps ) => {
-	const [ isSubmitted, setIsSubmitted ] = useState( false );
+	const [ isBusy, setIsBusy ] = useState( false );
 
 	return (
 		<>
@@ -79,7 +79,7 @@ export const IncentiveModal = ( {
 								</h2>
 								<p>
 									{ __(
-										'Use the native payments solution build and supported by Woo to accept online and in-person payments, track revenue, and handle all payment activity in one place.',
+										'Use the native payments solution built and supported by Woo to accept online and in-person payments, track revenue, and handle all payment activity in one place.',
 										'woocommerce'
 									) }
 								</p>
@@ -107,11 +107,12 @@ export const IncentiveModal = ( {
 								</p>
 								<Button
 									variant={ 'primary' }
-									isBusy={ isSubmitted }
-									disabled={ isSubmitted }
+									isBusy={ isBusy }
+									disabled={ isBusy }
 									onClick={ () => {
-										setIsSubmitted( true );
+										setIsBusy( true );
 										onSubmit();
+										setIsBusy( false );
 									} }
 								>
 									{ __( 'Get started', 'woocommerce' ) }

@@ -6,7 +6,7 @@ import interpolateComponents from '@automattic/interpolate-components';
 import { Button, Card, CardBody, CardMedia } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
-import { Link, Pill } from '@woocommerce/components';
+import { Link } from '@woocommerce/components';
 
 /**
  * Internal dependencies
@@ -30,7 +30,7 @@ export const IncentiveBanner = () => {
 	};
 
 	return (
-		<Card className={ 'woocommerce-incentive-banner' } isRounded={ true }>
+		<Card className="woocommerce-incentive-banner" isRounded={ true }>
 			<div className="woocommerce-incentive-banner__content">
 				<CardMedia>
 					<img
@@ -41,7 +41,7 @@ export const IncentiveBanner = () => {
 				<CardBody className={ 'woocommerce-incentive-banner__body' }>
 					<div>
 						<StatusBadge
-							status={ 'has_incentive' }
+							status="has_incentive"
 							message={ __(
 								'Limited time offer',
 								'woocommerce'
@@ -56,7 +56,7 @@ export const IncentiveBanner = () => {
 					</h2>
 					<p>
 						{ __(
-							'Use the native payments solution build and supported by Woo to accept online and in-person payments, track revenue, and handle all payment activity in one place.',
+							'Use the native payments solution built and supported by Woo to accept online and in-person payments, track revenue, and handle all payment activity in one place.',
 							'woocommerce'
 						) }
 					</p>

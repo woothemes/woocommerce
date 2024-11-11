@@ -11,6 +11,10 @@ import { Pill } from '@woocommerce/components';
 import './status-badge.scss';
 
 interface StatusBadgeProps {
+	/**
+	 * Status of the badge. This decides which class to apply, and what the
+	 * status message should be.
+	 */
 	status:
 		| 'active'
 		| 'inactive'
@@ -18,6 +22,9 @@ interface StatusBadgeProps {
 		| 'test_mode'
 		| 'recommended'
 		| 'has_incentive';
+	/**
+	 * Override the default status message to display a custom one. Optional.
+	 */
 	message?: string;
 }
 
