@@ -478,13 +478,13 @@ class PaymentsRestController extends RestApiControllerBase {
 		}
 
 		// Make sure that the preferred suggestions are not among the other list by removing any entries with their plugin slug.
-		$other = array_filter(
+		$other = array_values( array_filter(
 			$other,
 			function( $suggestion ) use ( $preferred_psp, $preferred_apm ) {
 				return ( empty( $preferred_psp ) || $suggestion['plugin']['slug'] !== $preferred_psp['plugin']['slug'] ) &&
 					   ( empty( $preferred_apm ) || $suggestion['plugin']['slug'] !== $preferred_apm['plugin']['slug'] );
 			}
-		);
+		) );
 
 		return array(
 			'preferred' => array_filter(
