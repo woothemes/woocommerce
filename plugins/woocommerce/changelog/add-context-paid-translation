@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Internationalization: provide additional context for "Paid" label in the sstore customization page to avoid mistranslations.
