@@ -5,13 +5,14 @@ import { createElement } from '@wordpress/element';
 import classNames from 'classnames';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 import { addQueryArgs, getQueryArgs, removeQueryArgs } from '@wordpress/url';
+/* eslint-disable @woocommerce/dependency-group */
 // @ts-expect-error missing type.
-// eslint-disable-next-line @woocommerce/dependency-group
 import { __experimentalHStack as HStack } from '@wordpress/components';
 // @ts-ignore No types for this exist yet.
 import SidebarNavigationItem from '@wordpress/edit-site/build-module/components/sidebar-navigation-item';
 // @ts-ignore No types for this exist yet.
 import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
+/* eslint-enable @woocommerce/dependency-group */
 
 const { useHistory, useLocation } = unlock( routerPrivateApis );
 

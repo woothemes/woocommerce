@@ -2,10 +2,12 @@
  * External dependencies
  */
 import { createElement } from '@wordpress/element';
+/* eslint-disable @woocommerce/dependency-group */
 // @ts-expect-error missing type.
-// eslint-disable-next-line @wordpress/no-unsafe-wp-apis, @woocommerce/dependency-group
+// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 import { __experimentalItemGroup as ItemGroup } from '@wordpress/components';
 import * as IconPackage from '@wordpress/icons';
+/* eslint-enable @woocommerce/dependency-group */
 
 /**
  * Internal dependencies
