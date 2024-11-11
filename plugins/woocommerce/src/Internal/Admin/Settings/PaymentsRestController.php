@@ -241,8 +241,8 @@ class PaymentsRestController extends RestApiControllerBase {
 			if ( empty( $gateway_details['image'] ) ) {
 				$gateway_details['image'] = $suggestion['image'];
 			}
-			if ( empty( $gateway_details['image_72x72'] ) ) {
-				$gateway_details['image_72x72'] = $suggestion['image_72x72'];
+			if ( empty( $gateway_details['icon'] ) ) {
+				$gateway_details['icon'] = $suggestion['icon'];
 			}
 			if ( empty( $gateway_details['links'] ) ) {
 				$gateway_details['links'] = $suggestion['links'];
@@ -572,6 +572,7 @@ class PaymentsRestController extends RestApiControllerBase {
 	 * @return bool|WP_Error True if the current user has the capability, otherwise an "Unauthorized" error or False if no error is available for the request method.
 	 */
 	private function check_permissions( WP_REST_Request $request ) {
+//		return true;
 		$context = 'read';
 		if ( 'POST' == $request->get_method() ) {
 			$context = 'edit';
@@ -579,7 +580,7 @@ class PaymentsRestController extends RestApiControllerBase {
 			$context = 'delete';
 		}
 
-		if ( wc_rest_check_manager_permissions( 'settings', $context ) ) {
+		if ( wc_rest_check_manager_permissions( 'payment_gateways', $context ) ) {
 			return true;
 		}
 
@@ -769,9 +770,9 @@ class PaymentsRestController extends RestApiControllerBase {
 					'description' => esc_html__( 'The URL of the image.', 'woocommerce' ),
 					'readonly'    => true,
 				),
-				'image_72x72' => array(
+				'icon' => array(
 					'type'        => 'string',
-					'description' => esc_html__( 'The URL of the 72x72 image.', 'woocommerce' ),
+					'description' => esc_html__( 'The URL of the icon (square aspect ratio).', 'woocommerce' ),
 					'readonly'    => true,
 				),
 				'links'       => array(
@@ -909,9 +910,9 @@ class PaymentsRestController extends RestApiControllerBase {
 					'description' => esc_html__( 'The URL of the image.', 'woocommerce' ),
 					'readonly'    => true,
 				),
-				'image_72x72'       => array(
+				'icon'       => array(
 					'type'        => 'string',
-					'description' => esc_html__( 'The URL of the 72x72 image.', 'woocommerce' ),
+					'description' => esc_html__( 'The URL of the icon (square aspect ratio).', 'woocommerce' ),
 					'readonly'    => true,
 				),
 				'short_description' => array(
