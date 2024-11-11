@@ -14,6 +14,7 @@ import {
 	getInitialStatusLSValue,
 	incrementUpgradeStatusDisplayCount,
 } from '@woocommerce/blocks/migration-products-to-product-collection';
+import { recordEvent } from '@woocommerce/tracks';
 
 const notice = createInterpolateElement(
 	__(
@@ -52,6 +53,12 @@ const UpgradeNotice = ( { revertMigration }: UpgradeNoticeProps ) => {
 
 	const handleRevert = () => {
 		revertMigration();
+		recordEvent(
+			'blocks_product_collection_migration_between_products_beta',
+			{
+				transform_to: 'products_beta',
+			}
+		);
 	};
 
 	// Prevent the possibility to count displays multiple times when the
