@@ -39,7 +39,7 @@ const SettingsLayout = () => {
 					content: <ContentPlaceholder />,
 					sidebar: (
 						<SidebarNavigationScreen
-							title={ 'Settings Title' }
+							title={ 'Settings Title TBD' }
 							isRoot
 							content={ <Sidebar pages={ pages } /> }
 						/>
