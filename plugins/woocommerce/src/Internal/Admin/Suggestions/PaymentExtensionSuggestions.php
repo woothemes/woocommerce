@@ -8,9 +8,9 @@ defined( 'ABSPATH' ) || exit;
 use Automattic\WooCommerce\Internal\Utilities\ArrayUtil;
 
 /**
- * Partner payment extensions provider
+ * Partner payment extensions provider class.
  */
-final class PaymentExtensions {
+final class PaymentExtensionSuggestions {
 
 	/*
 	 * The unique IDs for the payment extension suggestions.
@@ -108,7 +108,7 @@ final class PaymentExtensions {
 	 *
 	 * @var array
 	 */
-	private static array $country_extensions = array(
+	private array $country_extensions = array(
 		// North America.
 		'CA' => array(
 			self::WOOPAYMENTS,
@@ -1010,11 +1010,11 @@ final class PaymentExtensions {
 	 *               Empty array if no extensions are available for the country or the country is not supported.
 	 * @throws \Exception If there were malformed or invalid extension details.
 	 */
-	public static function get_country_extensions( string $country_code ): array {
+	public function get_country_extensions( string $country_code ): array {
 		$country_code = strtoupper( $country_code );
 
-		if ( empty( self::$country_extensions[ $country_code ] ) ||
- 			! is_array( self::$country_extensions[ $country_code ] ) ) {
+		if ( empty( $this->$country_extensions[ $country_code ] ) ||
+ 			! is_array( $this->$country_extensions[ $country_code ] ) ) {
 
 			return array();
 		}
@@ -1022,7 +1022,7 @@ final class PaymentExtensions {
 		// Process the extensions.
 		$processed_extensions = array();
 		$priority = 0;
-		foreach ( self::$country_extensions[ $country_code ] as $key => $details ) {
+		foreach ( $this->$country_extensions[ $country_code ] as $key => $details ) {
 			// Check the formats we support.
 			if ( is_int( $key ) && is_string( $details ) ) {
 				$extension_id = $details;
@@ -1035,8 +1035,8 @@ final class PaymentExtensions {
 				continue;
 			}
 
-			$extension_base_details = self::get_extension_base_details( $extension_id ) ?? array();
-			$extension_details      = self::with_country_details( $extension_base_details, $extension_country_details );
+			$extension_base_details = $this->get_extension_base_details( $extension_id ) ?? array();
+			$extension_details      = $this->with_country_details( $extension_base_details, $extension_country_details );
 
 			// Include the extension ID.
 			$extension_details['_id'] = $extension_id;
@@ -1047,10 +1047,33 @@ final class PaymentExtensions {
 			$priority += 10;
 			$extension_details['_priority'] = $priority;
 
-			$processed_extensions[] = self::standardize_extension_details( $extension_details );
+			$processed_extensions[] = $this->standardize_extension_details( $extension_details );
 		}
 
 		return $processed_extensions;
+	}
+
+	/**
+	 * Get the base details of a payment extension by its plugin slug.
+	 *
+	 * @param string $plugin_slug The plugin slug.
+	 *
+	 * @return array|null The extension details for the given plugin slug. Null if not found.
+	 */
+	public function get_by_plugin_slug( string $plugin_slug ): ?array {
+		$plugin_slug = sanitize_title( $plugin_slug );
+
+		$extensions = $this->get_all_extensions_base_details();
+		foreach ( $extensions as $extension_id => $extension_details ) {
+			if ( isset( $extension_details['plugin']['slug'] ) &&
+				 $plugin_slug === $extension_details['plugin']['slug']
+			) {
+				$extension_details['_id'] = $extension_id;
+				return $this->standardize_extension_details( $extension_details );
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -1067,7 +1090,7 @@ final class PaymentExtensions {
 	 *
 	 * @throws \Exception If the country extension details are malformed or invalid.
 	 */
-	private static function with_country_details( array $base_details, array $country_details ): array {
+	private function with_country_details( array $base_details, array $country_details ): array {
 		// Process any append instructions.
 		if ( isset( $country_details['_append'] ) ) {
 			if ( ! is_array( $country_details['_append'] ) ) {
@@ -1133,15 +1156,12 @@ final class PaymentExtensions {
 	}
 
 	/**
-	 * Get the base details for a specific extension.
+	 * Get the base details of all extensions.
 	 *
-	 * @see self::standardize_extension_details() for the supported entries.
-	 *
-	 * @return ?array The extension base details.
-	 *                Null if the extension is not one we have details for.
+	 * @return array[] The base details of all extensions.
 	 */
-	private static function get_extension_base_details( string $extension_id ): ?array {
-		$extensions = array(
+	private function get_all_extensions_base_details(): array {
+		return array(
 			self::AIRWALLEX         => array(
 				'_type'        => self::TYPE_PSP,
 				'title'       => esc_html__( 'Airwallex Payments', 'woocommerce' ),
@@ -1710,7 +1730,18 @@ final class PaymentExtensions {
 				),
 			),
 		);
+	}
 
+	/**
+	 * Get the base details for a specific extension.
+	 *
+	 * @see self::standardize_extension_details() for the supported entries.
+	 *
+	 * @return ?array The extension base details.
+	 *                Null if the extension is not one we have details for.
+	 */
+	private function get_extension_base_details( string $extension_id ): ?array {
+		$extensions = $this->get_all_extensions_base_details();
 		if ( ! isset( $extensions[ $extension_id ] ) ) {
 			return null;
 		}
@@ -1728,7 +1759,7 @@ final class PaymentExtensions {
 	 *
 	 * @return array The standardized extension details.
 	 */
-	private static function standardize_extension_details( array $extension_details ): array {
+	private function standardize_extension_details( array $extension_details ): array {
 		$standardized = array();
 
 		// Required fields.
