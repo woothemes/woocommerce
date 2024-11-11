@@ -17,8 +17,10 @@ import '../data';
 const CouponsOverview = () => {
 	const { currentUserCan } = useUser();
 
+	const showSuggestions = !! ( getAdminSetting( 'allowMarketplaceSuggestions', false ) );
+
 	const showExtensions = !! (
-		getAdminSetting( 'allowMarketplaceSuggestions', false ) &&
+		showSuggestions &&
 		currentUserCan( 'install_plugins' )
 	);
 
@@ -38,13 +40,14 @@ const CouponsOverview = () => {
 					category="coupons"
 				/>
 			) }
-			<KnowledgeBase
+			{ showSuggestions && ( <KnowledgeBase
 				category="coupons"
-				description={ __(
+				description={__(
 					'Learn the ins and outs of successful coupon marketing from the experts at WooCommerce.',
 					'woocommerce'
-				) }
+				)}
 			/>
+			) }
 		</div>
 	);
 };
