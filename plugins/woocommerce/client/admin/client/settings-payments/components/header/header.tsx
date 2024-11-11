@@ -26,6 +26,10 @@ interface HeaderProps {
 	 * The link to go back to. If not provided, the back button will not be shown.
 	 */
 	backLink?: string;
+	/**
+	 * The description of the header.
+	 */
+	description?: string;
 }
 
 const HEADER_PLUGIN_NAME = 'settings-payments-offline-header';
@@ -35,7 +39,7 @@ let hasRegisteredPlugins = false;
 /**
  * Registers the header component as a plugin to customize the header of the settings payments page.
  */
-export const Header = ( { title, backLink }: HeaderProps ) => {
+export const Header = ( { title, backLink, description }: HeaderProps ) => {
 	if ( ! hasRegisteredPlugins ) {
 		/**
 		 * Unregister existing header plugins since we don't want to show the default items such as activity panel.
@@ -64,6 +68,11 @@ export const Header = ( { title, backLink }: HeaderProps ) => {
 						<span className="woocommerce-settings-payments-header__title">
 							{ title }
 						</span>
+						{ description && (
+							<span className="woocommerce-settings-payments-header__description">
+								{ description }
+							</span>
+						) }
 					</WooHeaderPageTitle>
 				</>
 			),
