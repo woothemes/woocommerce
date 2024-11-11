@@ -264,7 +264,8 @@ class WC_Settings_Accounts extends WC_Settings_Page {
 			),
 		);
 
-		if ( ! Features::is_enabled( 'experimental-blocks' ) ) {
+		// Feature requires a block theme.
+		if ( ! wc_current_theme_is_fse_theme() ) {
 			$account_settings = array_filter(
 				$account_settings,
 				function ( $setting ) {

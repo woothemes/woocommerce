@@ -10,6 +10,7 @@ import { apiFetch } from '@wordpress/data-controls';
 import {
 	handleFetchError,
 	receiveRecommendedPlugins,
+	receiveMiscRecommendations,
 	receiveBlogPosts,
 	setError,
 } from './actions';
@@ -32,6 +33,28 @@ export function* getRecommendedPlugins( category ) {
 			error,
 			__(
 				'There was an error loading recommended extensions.',
+				'woocommerce'
+			)
+		);
+	}
+}
+
+export function* getMiscRecommendations() {
+	try {
+		const response = yield apiFetch( {
+			path: `${ API_NAMESPACE }/misc-recommendations`,
+		} );
+
+		if ( response ) {
+			yield receiveMiscRecommendations( response );
+		} else {
+			throw new Error();
+		}
+	} catch ( error ) {
+		yield handleFetchError(
+			error,
+			__(
+				'There was an error loading misc recommendations',
 				'woocommerce'
 			)
 		);
