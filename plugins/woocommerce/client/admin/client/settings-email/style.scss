@@ -12,10 +12,6 @@ $wc-setting-email-preview-gap: 16px;
 	width: 652px;
 }
 
-.wc-settings-email-preview-controls {
-
-}
-
 .wc-settings-email-preview-device-type {
 	display: grid;
 	grid-gap: 8px;
@@ -86,7 +82,7 @@ $wc-setting-email-preview-gap: 16px;
 	font-size: 21px;
 	font-weight: normal;
 	line-height: 21px;
-	margin: 0 0 $wc-setting-email-preview-gap
+	margin: 0 0 $wc-setting-email-preview-gap;
 }
 
 .wc-settings-email-preview-header-data {
