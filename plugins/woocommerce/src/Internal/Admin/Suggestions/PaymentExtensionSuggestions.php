@@ -1068,7 +1068,9 @@ final class PaymentExtensionSuggestions {
 			if ( isset( $extension_details['plugin']['slug'] ) &&
 				 $plugin_slug === $extension_details['plugin']['slug']
 			) {
-				$extension_details['_id'] = $extension_id;
+				$extension_details['_id']       = $extension_id;
+				$extension_details['_priority'] = 0;
+
 				return $this->standardize_extension_details( $extension_details );
 			}
 		}
