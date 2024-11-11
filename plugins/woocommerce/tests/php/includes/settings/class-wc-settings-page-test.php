@@ -342,12 +342,10 @@ HTML;
 	 * Test for add_settings_page_data.
 	 */
 	public function test_add_settings_page_data() {
-		$migration                = new WC_Settings_Migration_Test();
-		$setting_data             = $migration->add_settings_page_data( array() );
-		$migration_page_data      = $setting_data[ $migration->get_id() ];
-		$migration_sections_data  = $migration_page_data['sections'];
-
-		print_r( $migration_sections_data['foobar']['settings'][0]['title'] );
+		$migration               = new WC_Settings_Migration_Test();
+		$setting_data            = $migration->add_settings_page_data( array() );
+		$migration_page_data     = $setting_data[ $migration->get_id() ];
+		$migration_sections_data = $migration_page_data['sections'];
 
 		$this->assertTrue( isset( $migration_page_data ) );
 		$this->assertEquals( count( $migration->get_sections() ), count( $migration_sections_data ) );
