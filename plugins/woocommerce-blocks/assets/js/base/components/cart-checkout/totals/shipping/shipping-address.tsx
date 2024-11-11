@@ -2,7 +2,10 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { formatShippingAddress } from '@woocommerce/base-utils';
+import {
+	formatShippingAddress,
+	hasShippingRate,
+} from '@woocommerce/base-utils';
 import { useStoreCart } from '@woocommerce/base-context';
 import {
 	ShippingCalculatorPanel,
@@ -23,15 +26,21 @@ export const ShippingAddress = (): JSX.Element => {
 		select( CHECKOUT_STORE_KEY ).prefersCollection()
 	);
 
+	const hasRates = hasShippingRate( shippingRates );
+
 	const { showCalculator } = useContext( ShippingCalculatorContext );
 
 	const formattedAddress = prefersCollection
 		? getPickupLocation( shippingRates )
 		: formatShippingAddress( shippingAddress );
 
+	const deliversToLabel = hasRates
+		? __( 'Delivers to ', 'woocommerce' )
+		: __( 'No delivery options available for ', 'woocommerce' );
+
 	const addressLabel = prefersCollection
 		? __( 'Collection from ', 'woocommerce' )
-		: __( 'Delivers to ', 'woocommerce' );
+		: deliversToLabel;
 
 	const title = (
 		<p className="wc-block-components-totals-shipping-address-summary">
