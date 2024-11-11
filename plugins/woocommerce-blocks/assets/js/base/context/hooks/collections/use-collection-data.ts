@@ -158,17 +158,20 @@ export const useCollectionData = ( {
 		return buildCollectionDataQuery( collectionDataQueryState );
 	}, [ collectionDataQueryState ] );
 
-	return useCollection< WCStoreV1ProductsCollectionProps >( {
-		namespace: '/wc/store/v1',
-		resourceName: 'products/collection-data',
-		query: {
-			...queryState,
-			page: undefined,
-			per_page: undefined,
-			orderby: undefined,
-			order: undefined,
-			...collectionDataQueryVars,
-		},
-		shouldSelect: debouncedShouldSelect,
-	} );
+	const { results, isLoading }: { results: unknown; isLoading: boolean } =
+		useCollection( {
+			namespace: '/wc/store/v1',
+			resourceName: 'products/collection-data',
+			query: {
+				...queryState,
+				page: undefined,
+				per_page: undefined,
+				orderby: undefined,
+				order: undefined,
+				...collectionDataQueryVars,
+			},
+			shouldSelect: debouncedShouldSelect,
+		} );
+
+	return { results: results as WCStoreV1ProductsCollectionProps, isLoading };
 };
