@@ -7,7 +7,9 @@ This guide provides examples for third-party developers and hosting providers on
 
 ## Introduction
 
-WooCommerce's coming soon mode allows you to temporarily make your site invisible to the public while you work on it. This guide will show you how to integrate this feature with your system, clear server cache when site visibility settings change, and sync coming soon mode with other plugins.
+WooCommerce's coming soon mode allows you to temporarily make your site invisible to the public while you work on it. By default, Coming-soon pages are set with `Cache-Control: max-age=60` header. This setting enables CDNs and other caching mechanisms to cache the page for 60 seconds, balancing the need for efficient performance with reasonable update times.
+
+This guide will show you how to integrate this feature with your system, clear server cache when site visibility settings change, and sync coming soon mode with other plugins.
 
 ## Prerequisites
 
@@ -27,6 +29,26 @@ function clear_server_cache( $old_value, $new_value, $option ) {
     // Implement your logic to clear the server cache.
     if ( function_exists( 'your_cache_clear_function' ) ) {
         your_cache_clear_function();
+    }
+}
+```
+
+### Clear server cache on template changes
+
+When user changes the coming soon template, it's essential to ensure that any cached versions of the page are purged so the changes take effect immediately. You can use the `save_post_wp_template`, `save_post_wp_template_part`, and `save_post_wp_global_styles` hooks to detect when a template is updated and trigger the cache purge.
+
+```php
+add_action( 'save_post_wp_template', 'purge_cache_on_template_change', 10, 3 );
+add_action( 'save_post_wp_template_part', 'purge_cache_on_template_change', 10, 3 );
+add_action( 'save_post_wp_global_styles', 'purge_cache_on_template_change', 10, 3 );
+
+function purge_cache_on_template_change( $post_id, $post, $update ) {
+    // Check if the template is associated with the coming soon mode.
+    if ( 'coming-soon' === $post->post_name ) {
+        // Implement your logic to clear the server cache.
+        if ( function_exists( 'your_cache_clear_function' ) ) {
+            your_cache_clear_function();
+        }
     }
 }
 ```
