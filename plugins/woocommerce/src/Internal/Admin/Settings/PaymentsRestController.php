@@ -58,21 +58,8 @@ class PaymentsRestController extends RestApiControllerBase {
 	public function register() {
 		parent::register();
 
-		// We need to mock broadly because plugins will conditionally load logic very early on.
-		self::add_action( 'plugins_loaded', array( $this, 'mock_is_admin' ), 0 );
-	}
-
-	/**
-	 * Mock the environment so that we are in a WP admin screen (the WooCommerce settings page).
-	 *
-	 * @return void
-	 */
-	protected function mock_is_admin() {
-//		global $current_screen;
-//
-//		require_once ABSPATH . 'wp-admin/includes/screen.php';
-//		require_once ABSPATH . 'wp-admin/includes/class-wp-screen.php';
-//		$current_screen = \WP_Screen::get( 'woocommerce_page_wc-settings' );
+//		// We need to mock broadly because plugins will conditionally load logic very early on.
+//		self::add_action( 'plugins_loaded', array( $this, 'mock_is_admin' ), 0 );
 	}
 
 	/**
@@ -192,7 +179,16 @@ class PaymentsRestController extends RestApiControllerBase {
 		ob_end_clean();
 
 		// Get all payment gateways, ordered by the user.
-		return WC()->payment_gateways()->payment_gateways;
+		$payment_gateways = WC()->payment_gateways()->payment_gateways;
+		// Remove shell gateways that are not intended for display.
+		$payment_gateways = array_filter(
+			$payment_gateways,
+			function( $gateway ) {
+				return ! empty( $gateway->method_title ) && ! empty( $gateway->method_description );
+			}
+		);
+
+		return $payment_gateways;
 	}
 
 	/**
