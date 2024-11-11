@@ -39,6 +39,13 @@ export function receiveRecommendedPlugins( plugins, category ) {
 	};
 }
 
+export function receiveMiscRecommendations( miscRecommendations ) {
+	return {
+		type: TYPES.SET_MISC_RECOMMENDATIONS,
+		data: { miscRecommendations },
+	};
+}
+
 export function receiveBlogPosts( posts, category ) {
 	return {
 		type: TYPES.SET_BLOG_POSTS,

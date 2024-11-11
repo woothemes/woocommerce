@@ -13,8 +13,6 @@ import apiFetch from '@wordpress/api-fetch';
  */
 import { FlowType, aiStatusResponse } from '../types';
 import { isIframe } from '~/customize-store/utils';
-import { isWooExpress } from '~/utils/is-woo-express';
-import { trackEvent } from '../tracking';
 
 export const fetchAiStatus = async (): Promise< aiStatusResponse > => {
 	const response = await fetch(
@@ -145,34 +143,6 @@ export const setFlags = async () => {
 		// Since the _featureFlags values are promises, we need to wait for
 		// all of them to resolve before returning.
 		await Promise.all( Object.values( _featureFlags ) );
-	}
-
-	// Set FlowType flag. We want to set the flag only in the parent window.
-	if ( isWooExpress() && ! isIframe( window ) ) {
-		try {
-			const { status } = await fetchAiStatus();
-
-			const isAiOnline =
-				status.indicator !== 'critical' && status.indicator !== 'major';
-
-			// @ts-expect-error temp workaround;
-			window.cys_aiOnline = status;
-			trackEvent( 'customize_your_store_ai_status', {
-				online: isAiOnline ? 'yes' : 'no',
-			} );
-
-			// @ts-expect-error temp workaround;
-			window.cys_aiFlow = true;
-
-			return isAiOnline ? FlowType.AIOnline : FlowType.AIOffline;
-		} catch ( e ) {
-			// @ts-expect-error temp workaround;
-			window.cys_aiOnline = false;
-			trackEvent( 'customize_your_store_ai_status', {
-				online: 'no',
-			} );
-			return FlowType.AIOffline;
-		}
 	}
 
 	return FlowType.noAI;
