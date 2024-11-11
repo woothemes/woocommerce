@@ -2,29 +2,17 @@
  * External dependencies
  */
 import { Page } from '@playwright/test';
-import {
-	test as base,
-	expect,
-	Editor,
-	BlockData,
-	wpCLI,
-} from '@woocommerce/e2e-utils';
+import { test as base, expect, Editor, wpCLI } from '@woocommerce/e2e-utils';
 
 /**
  * Internal dependencies
  */
 
-const blockData: BlockData = {
+const blockData = {
 	name: 'Add to Cart with Options',
 	slug: 'woocommerce/add-to-cart-form',
 	mainClass: '.wc-block-add-to-cart-form',
 	selectors: {
-		frontend: {
-			stepperMinusButton:
-				'.wc-block-components-quantity-selector__button--minus',
-			stepperPlusButton:
-				'.wc-block-components-quantity-selector__button--plus',
-		},
 		editor: {
 			stepperMinusButton:
 				'.wc-block-components-quantity-selector__button--minus',
@@ -77,6 +65,33 @@ class BlockUtils {
 	async createSoldIndividuallyProduct() {
 		await wpCLI(
 			'wc product create --name="Sold Individually" --regular_price=10 --sold_individually=true --user=admin'
+		);
+	}
+
+	/**
+	 * Sets the min, max, and step attributes for the input field.
+	 * This is useful for simulating extensions that set these attributes via woocommerce_quantity_input
+	 * https://github.com/woocommerce/woocommerce/blob/89945ca8fc4589c061ba2130bf72bf24dc9268bd/plugins/woocommerce/includes/wc-template-functions.php#L1877-L1878
+	 *
+	 */
+	async setMinMaxAndStep( {
+		min,
+		max,
+		step,
+	}: {
+		min: number;
+		max: number;
+		step: number;
+	} ) {
+		const input = this.page.locator( "input[type='number']" );
+		await input.evaluate(
+			( el: HTMLInputElement, data ) => {
+				el.setAttribute( 'min', data.min.toString() );
+				el.setAttribute( 'max', data.max.toString() );
+				el.setAttribute( 'step', data.step.toString() );
+				el.value = data.min.toString();
+			},
+			{ min, max, step }
 		);
 	}
 }
@@ -176,88 +191,138 @@ test.describe( `${ blockData.name } Block`, () => {
 		).toBeVisible();
 	} );
 
-	test( 'has the stepper option visible', async ( {
-		admin,
-		editor,
-		blockUtils,
-	} ) => {
-		await admin.createNewPost();
-		await editor.insertBlock( { name: 'woocommerce/single-product' } );
+	test.describe( 'Stepper Layout', () => {
+		test.beforeEach( async ( { requestUtils } ) => {
+			await requestUtils.setFeatureFlag(
+				'add-to-cart-with-options-stepper-layout',
+				true
+			);
+		} );
+		test( 'has the stepper option visible', async ( {
+			admin,
+			editor,
+			blockUtils,
+		} ) => {
+			await admin.createNewPost();
+			await editor.insertBlock( { name: 'woocommerce/single-product' } );
 
-		await blockUtils.configureSingleProductBlock();
+			await blockUtils.configureSingleProductBlock();
 
-		await blockUtils.enableStepperMode();
+			await blockUtils.enableStepperMode();
 
-		const minusButton = editor.canvas.locator(
-			'.wc-block-components-quantity-selector__button--minus'
-		);
-		const plusButton = editor.canvas.locator(
-			'.wc-block-components-quantity-selector__button--plus'
-		);
+			const minusButton = editor.canvas.locator(
+				blockData.selectors.editor.stepperMinusButton
+			);
+			const plusButton = editor.canvas.locator(
+				blockData.selectors.editor.stepperPlusButton
+			);
 
-		await expect( minusButton ).toBeVisible();
-		await expect( plusButton ).toBeVisible();
-	} );
+			await expect( minusButton ).toBeVisible();
+			await expect( plusButton ).toBeVisible();
+		} );
 
-	test( 'has the stepper mode working on the frontend', async ( {
-		admin,
-		editor,
-		blockUtils,
-		page,
-	} ) => {
-		await admin.createNewPost();
-		await editor.insertBlock( { name: 'woocommerce/single-product' } );
+		test( 'has the stepper mode working on the frontend', async ( {
+			admin,
+			editor,
+			blockUtils,
+			page,
+		} ) => {
+			await admin.createNewPost();
+			await editor.insertBlock( { name: 'woocommerce/single-product' } );
 
-		await blockUtils.configureSingleProductBlock();
+			const productName = 'Hoodie with Logo';
 
-		await blockUtils.enableStepperMode();
+			await blockUtils.configureSingleProductBlock( productName );
 
-		await editor.publishAndVisitPost();
+			await blockUtils.enableStepperMode();
 
-		const minusButton = page.locator(
-			'.wc-block-components-quantity-selector__button--minus'
-		);
-		const plusButton = page.locator(
-			'.wc-block-components-quantity-selector__button--plus'
-		);
+			await editor.publishAndVisitPost();
 
-		await expect( minusButton ).toBeVisible();
-		await expect( plusButton ).toBeVisible();
+			const minusButton = page.getByLabel( `Reduce quantity` );
+			const plusButton = page.getByLabel( `Increase quantity` );
 
-		const input = page.getByLabel( 'Product quantity' );
+			await expect( minusButton ).toBeVisible();
+			await expect( plusButton ).toBeVisible();
 
-		await expect( input ).toHaveValue( '1' );
-		await plusButton.click();
-		await expect( input ).toHaveValue( '2' );
-		await minusButton.click();
-		await expect( input ).toHaveValue( '1' );
-		// Ensure the quantity doesn't go below 1.
-		await minusButton.click();
-		await expect( input ).toHaveValue( '1' );
-	} );
+			const input = page.getByLabel( 'Product quantity' );
 
-	test( "doesn't render stepper when the product is sold individually", async ( {
-		admin,
-		editor,
-		blockUtils,
-		page,
-	} ) => {
-		await blockUtils.createSoldIndividuallyProduct();
-		await admin.createNewPost();
-		await editor.insertBlock( { name: 'woocommerce/single-product' } );
+			await expect( input ).toHaveValue( '1' );
+			await plusButton.click();
+			await expect( input ).toHaveValue( '2' );
+			await minusButton.click();
+			await expect( input ).toHaveValue( '1' );
+			// Ensure the quantity doesn't go below 1.
+			await minusButton.click();
+			await expect( input ).toHaveValue( '1' );
+		} );
 
-		await blockUtils.configureSingleProductBlock( 'Sold Individually' );
-		await blockUtils.enableStepperMode();
-		await editor.publishAndVisitPost();
+		test( "doesn't render stepper when the product is sold individually", async ( {
+			admin,
+			editor,
+			blockUtils,
+			page,
+		} ) => {
+			await blockUtils.createSoldIndividuallyProduct();
+			await admin.createNewPost();
+			await editor.insertBlock( { name: 'woocommerce/single-product' } );
 
-		const minusButton = page.locator(
-			'.wc-block-components-quantity-selector__button--minus'
-		);
-		const plusButton = page.locator(
-			'.wc-block-components-quantity-selector__button--plus'
-		);
+			const productName = 'Sold Individually';
 
-		await expect( minusButton ).toBeHidden();
-		await expect( plusButton ).toBeHidden();
+			await blockUtils.configureSingleProductBlock( productName );
+			await blockUtils.enableStepperMode();
+
+			await editor.publishAndVisitPost();
+
+			const minusButton = page.getByLabel( `Reduce quantity` );
+			const plusButton = page.getByLabel( `Increase quantity ` );
+
+			await expect( minusButton ).toBeHidden();
+			await expect( plusButton ).toBeHidden();
+		} );
+
+		test( 'has the stepper mode working on the frontend with min, max, and step attributes', async ( {
+			admin,
+			editor,
+			blockUtils,
+			page,
+		} ) => {
+			await admin.createNewPost();
+			await editor.insertBlock( { name: 'woocommerce/single-product' } );
+
+			const productName = 'Hoodie with Logo';
+
+			await blockUtils.configureSingleProductBlock( productName );
+
+			await blockUtils.enableStepperMode();
+			await editor.publishAndVisitPost();
+
+			await blockUtils.setMinMaxAndStep( {
+				min: 2,
+				max: 10,
+				step: 2,
+			} );
+
+			const minusButton = page.getByLabel( `Reduce quantity` );
+			const plusButton = page.getByLabel( `Increase quantity` );
+
+			await expect( minusButton ).toBeVisible();
+			await expect( plusButton ).toBeVisible();
+
+			const input = page.getByLabel( 'Product quantity' );
+
+			await expect( input ).toHaveValue( '2' );
+			await minusButton.click();
+			await expect( input ).toHaveValue( '2' );
+			await plusButton.click();
+			await expect( input ).toHaveValue( '4' );
+			await plusButton.click();
+			await expect( input ).toHaveValue( '6' );
+			await plusButton.click();
+			await expect( input ).toHaveValue( '8' );
+			await plusButton.click();
+			await expect( input ).toHaveValue( '10' );
+			await plusButton.click();
+			await expect( input ).toHaveValue( '10' );
+		} );
 	} );
 } );

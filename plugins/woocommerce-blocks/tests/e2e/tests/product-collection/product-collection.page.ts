@@ -38,8 +38,7 @@ export const SELECTORS = {
 	},
 	onSaleControlLabel: 'Show only products on sale',
 	featuredControlLabel: 'Show only featured products',
-	usePageContextControl:
-		'.wc-block-product-collection__inherit-query-control',
+	usePageContextControl: 'Query type',
 	shrinkColumnsToFit: 'Responsive',
 	productSearchLabel: 'Search',
 	productSearchButton: '.wp-block-search__button wp-element-button',
@@ -90,10 +89,10 @@ export type Collections =
 
 const collectionToButtonNameMap = {
 	newArrivals: 'New Arrivals',
-	topRated: 'Top Rated',
+	topRated: 'Top Rated Products',
 	bestSellers: 'Best Sellers',
-	onSale: 'On Sale',
-	featured: 'Featured',
+	onSale: 'On Sale Products',
+	featured: 'Featured Products',
 	productCatalog: 'create your own',
 	myCustomCollection: 'My Custom Collection',
 	myCustomCollectionWithPreview: 'My Custom Collection with Preview',
@@ -706,13 +705,13 @@ class ProductCollectionPage {
 
 	async setInheritQueryFromTemplate( inheritQueryFromTemplate: boolean ) {
 		const sidebarSettings = this.locateSidebarSettings();
-		const input = sidebarSettings.locator(
-			`${ SELECTORS.usePageContextControl } input`
+		const queryTypeLocator = sidebarSettings.locator(
+			SELECTORS.usePageContextControl
 		);
 		if ( inheritQueryFromTemplate ) {
-			await input.check();
+			await queryTypeLocator.getByLabel( 'Default' ).click();
 		} else {
-			await input.uncheck();
+			await queryTypeLocator.getByLabel( 'Custom' ).click();
 		}
 	}
 

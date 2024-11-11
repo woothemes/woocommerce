@@ -299,19 +299,19 @@ const CollectionSpecificControls = (
 
 	return (
 		<InspectorControls>
-			<PanelBody>
-				{
-					/**
-					 * Hand-Picked collection-specific controls.
-					 */
-					props.attributes.collection ===
-						'woocommerce/product-collection/hand-picked' && (
+			{
+				/**
+				 * Hand-Picked collection-specific controls.
+				 */
+				props.attributes.collection ===
+					'woocommerce/product-collection/hand-picked' && (
+					<PanelBody>
 						<HandPickedProductsControlField
 							{ ...queryControlProps }
 						/>
-					)
-				}
-			</PanelBody>
+					</PanelBody>
+				)
+			}
 		</InspectorControls>
 	);
 };

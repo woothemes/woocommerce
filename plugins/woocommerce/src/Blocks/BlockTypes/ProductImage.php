@@ -165,12 +165,14 @@ class ProductImage extends AbstractBlock {
 			$image_style .= sprintf( 'aspect-ratio:%s;', $attributes['aspectRatio'] );
 		}
 
+		$image_id = $product->get_image_id();
+
 		return $product->get_image(
 			$image_size,
 			array(
-				'alt'         => $product->get_title(),
 				'data-testid' => 'product-image',
 				'style'       => $image_style,
+				'title'       => $image_id ? get_the_title( $image_id ) : '',
 			)
 		);
 	}

@@ -1,10 +1,11 @@
 {
-	"core": "https://wordpress.org/wordpress-latest.zip",
+	"core": "https://wordpress.org/wordpress-6.7-RC2.zip",
 	"phpVersion": "7.4",
 	"plugins": [
 		"https://github.com/WP-API/Basic-Auth/archive/master.zip",
 		"https://downloads.wordpress.org/plugin/wordpress-importer.0.8.zip",
 		"./tests/mocks/woo-test-helper",
+		"../woocommerce/tests/e2e-pw/bin/test-helper-apis.php",
 		"../woocommerce"
 	],
 	"env": {
