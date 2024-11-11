@@ -132,20 +132,14 @@ final class ProductFilterAttribute extends AbstractBlock {
 				$data[]    = array(
 					'label'      => $attribute_taxonomies[ $product_attribute ]['attribute_label'] . ': ' . $term_data['name'],
 					'attributes' => array(
-						'wrapper'       => array(
-							'value'                => $term,
-							'data-wc-bind--hidden' => "$action_namespace::!state.isSelected",
-							'data-wc-context'      => "$action_namespace::" . wp_json_encode(
-								array(
-									'attributeSlug' => $product_attribute,
-									'queryType'     => $query_type,
-								),
-								JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
+						'value'             => $term,
+						'data-wc-on--click' => "$action_namespace::actions.toggleFilter",
+						'data-wc-context'   => "$action_namespace::" . wp_json_encode(
+							array(
+								'attributeSlug' => $product_attribute,
+								'queryType'     => $query_type,
 							),
-						),
-						'remove_button' => array(
-							'value'             => $term,
-							'data-wc-on--click' => "$action_namespace::actions.toggleFilter",
+							JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
 						),
 					),
 					'data'       => array(
