@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Fix border cut issue on tasklist and inbox widgets in WooCommerce homescreen
