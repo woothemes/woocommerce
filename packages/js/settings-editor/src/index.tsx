@@ -26,6 +26,10 @@ const { GlobalStylesProvider } = unlock( editorPrivateApis );
 const pages: Record< string, Page > =
 	( window.wcSettings?.admin?.settingsPages as Record< string, Page > ) || {};
 
+const ContentPlaceholder = () => {
+	return <div>Content Placeholder</div>;
+};
+
 export const SettingsEditor = () => {
 	const isRequiredGutenbergVersion = isGutenbergVersionAtLeast( 19.0 );
 
@@ -48,6 +52,7 @@ export const SettingsEditor = () => {
 					route={ {
 						key: 'settings',
 						areas: {
+							content: <ContentPlaceholder />,
 							sidebar: (
 								<SidebarNavigationScreen
 									title={ 'Settings Title' }
