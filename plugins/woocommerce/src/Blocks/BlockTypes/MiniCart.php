@@ -343,7 +343,7 @@ class MiniCart extends AbstractBlock {
 			foreach ( $this->scripts_to_lazy_load as $script_handle => $script ) {
 				// Load the before and after script data which includes
 				// data such as nonces that should not be cached.
-				$this->append_script_before_and_after( $script_handle );
+				$this->append_script_data( $script_handle );
 			}
 		}
 	}
@@ -441,21 +441,31 @@ class MiniCart extends AbstractBlock {
 			'translations' => $wp_scripts->print_translations( $script->handle, false ),
 		);
 
-		$this->append_script_before_and_after( $script->handle );
+		$this->append_script_data( $script->handle );
 	}
 
 	/**
-	 * Append the before and after script data.
+	 * Append the before, after, and translation script data.
 	 *
 	 * @param string $script_handle Script handle.
 	 */
-	protected function append_script_before_and_after( $script_handle ) {
+	protected function append_script_data( $script_handle ) {
 		$wp_scripts    = wp_scripts();
 		$script_before = $wp_scripts->get_inline_script_data( $script_handle, 'before' );
 		$script_after  = $wp_scripts->get_inline_script_data( $script_handle, 'after' );
+		$translations  = $wp_scripts->print_translations( $script_handle, false );
 
-		$this->scripts_to_lazy_load[ $script_handle ]['before'] = $script_before;
-		$this->scripts_to_lazy_load[ $script_handle ]['after']  = $script_after;
+		$this->scripts_to_lazy_load[ $script_handle ]['before']       = $script_before;
+		$this->scripts_to_lazy_load[ $script_handle ]['after']        = $script_after;
+		$this->scripts_to_lazy_load[ $script_handle ]['translations'] = $translations;
+
+		$script_data = $this->asset_api->get_script_data( 'assets/client/blocks/mini-cart-component-frontend.js' );
+
+		$this->scripts_to_lazy_load['wc-block-mini-cart-component-frontend'] = array(
+			'src'          => $script_data['src'],
+			'version'      => $script_data['version'],
+			'translations' => $this->get_inner_blocks_translations(),
+		);
 	}
 
 	/**
