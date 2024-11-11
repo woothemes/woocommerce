@@ -1,8 +1,6 @@
 /**
  * External dependencies
  */
-import { createElement, Fragment, useRef } from '@wordpress/element';
-import { unlock, SiteHub, SidebarContent } from '@woocommerce/product-editor';
 import {
 	useViewportMatch,
 	useResizeObserver,
@@ -22,6 +20,16 @@ import {
 	// @ts-expect-error missing type.
 	__unstableAnimatePresence as AnimatePresence,
 } from '@wordpress/components';
+// eslint-disable-next-line @woocommerce/dependency-group
+import { createElement, Fragment, useRef } from '@wordpress/element';
+/* eslint-disable @woocommerce/dependency-group */
+// @ts-ignore No types for this exist yet.
+import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
+// @ts-ignore No types for this exist yet.
+import SiteHub from '@wordpress/edit-site/build-module/components/site-hub';
+// @ts-ignore No types for this exist yet.
+import SidebarContent from '@wordpress/edit-site/build-module/components/sidebar';
+/* eslint-enable @woocommerce/dependency-group */
 
 type Route = {
 	key: string;
