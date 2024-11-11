@@ -323,6 +323,21 @@ class PaymentsRestController extends RestApiControllerBase {
 			}
 		}
 
+		// If it is PayPal, we need to check the test mode.
+		if ( 'ppcp-gateway' === $payment_gateway->id &&
+			class_exists( '\WooCommerce\PayPalCommerce\PPCP' ) &&
+			method_exists( '\WooCommerce\PayPalCommerce\PPCP', 'container' ) ) {
+
+			try {
+				$sandbox = filter_var( \WooCommerce\PayPalCommerce\PPCP::container()->get( 'wcgateway.settings' )->get( 'sandbox_on' ), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE );
+				if ( ! is_null( $sandbox ) ) {
+					return $sandbox;
+				}
+			} catch ( \Exception $e ) {
+				// Ignore any exceptions.
+			}
+		}
+
 		// Try various gateway methods to check if the payment gateway is in test mode.
 		if ( method_exists( $payment_gateway, 'is_test_mode' ) ) {
 			return filter_var( $payment_gateway->is_test_mode(), FILTER_VALIDATE_BOOLEAN );
