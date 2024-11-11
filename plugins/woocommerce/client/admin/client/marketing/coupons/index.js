@@ -19,7 +19,7 @@ const CouponsOverview = () => {
 
 	const showSuggestions = !! ( getAdminSetting( 'allowMarketplaceSuggestions', false ) );
 
-	const showExtensions = !! (
+	const showExtensions = (
 		showSuggestions &&
 		currentUserCan( 'install_plugins' )
 	);
@@ -42,10 +42,10 @@ const CouponsOverview = () => {
 			) }
 			{ showSuggestions && ( <KnowledgeBase
 				category="coupons"
-				description={__(
+				description={ __(
 					'Learn the ins and outs of successful coupon marketing from the experts at WooCommerce.',
 					'woocommerce'
-				)}
+				) }
 			/>
 			) }
 		</div>
