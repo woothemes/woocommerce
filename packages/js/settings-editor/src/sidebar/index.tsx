@@ -13,8 +13,9 @@ import * as IconPackage from '@wordpress/icons';
 import { Page } from '../types';
 import { SettingItem } from './setting-item';
 
+const { Icon, ...icons } = IconPackage;
+
 export const Sidebar = ( { pages }: { pages: Record< string, Page > } ) => {
-	const { Icon, ...icons } = IconPackage;
 	return (
 		<ItemGroup>
 			{ Object.keys( pages ).map( ( slug ) => {
@@ -27,7 +28,10 @@ export const Sidebar = ( { pages }: { pages: Record< string, Page > } ) => {
 						isActive={ false }
 						icon={
 							<Icon
-								icon={ icons[ icon as keyof typeof icons ] }
+								icon={
+									icons[ icon as keyof typeof icons ] ||
+									icons.settings
+								}
 							/>
 						}
 					/>

@@ -33,6 +33,13 @@ class WC_Settings_Advanced extends WC_Settings_Page {
 	}
 
 	/**
+	 * Setting page icon.
+	 *
+	 * @var string
+	 */
+	public $icon = 'more';
+
+	/**
 	 * Get own sections.
 	 *
 	 * @return array

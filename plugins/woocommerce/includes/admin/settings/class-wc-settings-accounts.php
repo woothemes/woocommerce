@@ -29,6 +29,13 @@ class WC_Settings_Accounts extends WC_Settings_Page {
 	}
 
 	/**
+	 * Setting page icon.
+	 *
+	 * @var string
+	 */
+	public $icon = 'people';
+
+	/**
 	 * Get settings array.
 	 *
 	 * @return array

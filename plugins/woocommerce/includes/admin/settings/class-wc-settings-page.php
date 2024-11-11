@@ -29,7 +29,7 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 		 *
 		 * @var string
 		 */
-		protected $icon = 'settings';
+		public $icon = 'settings';
 
 		/**
 		 * Setting page label.
