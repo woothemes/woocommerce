@@ -1353,7 +1353,6 @@ class ProductCollection extends \WP_UnitTestCase {
 		);
 		$result_editor = $this->block_instance->update_rest_query_in_editor( array(), $request );
 
-		// When no products are selected, should return impossible query to return no results
 		$this->assertEquals( array( -1 ), $result_frontend['post__in'] );
 		$this->assertEquals( array( -1 ), $result_editor['post__in'] );
 	}
