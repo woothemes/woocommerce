@@ -6,6 +6,7 @@ import { useState } from '@wordpress/element';
 import {
 	TotalsShipping,
 	ShippingCalculator,
+	ShippingCalculatorButton,
 } from '@woocommerce/base-components/cart-checkout';
 import { ShippingCalculatorContext } from '@woocommerce/base-components/cart-checkout/shipping-calculator/context';
 import { useEditorContext, useStoreCart } from '@woocommerce/base-context';
@@ -61,14 +62,21 @@ const Block = ( { className }: { className: string } ): JSX.Element | null => {
 							: __( 'Delivery', 'woocommerce' )
 					}
 					placeholder={
-						! showCalculator ? (
+						showCalculator ? (
+							<ShippingCalculatorButton
+								label={ __(
+									'Enter address to check delivery options',
+									'woocommerce'
+								) }
+							/>
+						) : (
 							<span className="wc-block-components-shipping-placeholder__value">
 								{ __(
 									'Calculated on checkout',
 									'woocommerce'
 								) }
 							</span>
-						) : null
+						)
 					}
 					collaterals={
 						<>
