@@ -23,7 +23,7 @@ final class ProductFilterStatus extends AbstractBlock {
 	 *
 	 * @var array
 	 */
-	protected $status_options;
+	protected $product_status_options;
 
 	/**
 	 * Stock status options.
@@ -42,173 +42,6 @@ final class ProductFilterStatus extends AbstractBlock {
 	const FILTER_STATUS_QUERY_VAR = 'filter_status';
 
 	/**
-	 * Registers the block type with WordPress.
-	 *
-	 * @return void
-	 */
-	protected function register_block_type() {
-		register_block_type(
-			$this->get_block_type(),
-			$this->get_block_settings(),
-		);
-	}
-
-	/**
-	 * Get the block settings.
-	 * Because this block processes dynamic stock status, the block settings
-	 * will also need to be dynamic and therefore we cannot use block.json during
-	 * registration.
-	 *
-	 * @return array $block_settings
-	 */
-	protected function get_block_settings() {
-		$block_settings = [
-			'name'         => 'woocommerce/product-filter-status',
-			'version'      => '1.0.0',
-			'title'        => __( 'Status (Experimental)', 'woocommerce' ),
-			'description'  => __( 'Let shoppers filter by product status, like stock or sale.', 'woocommerce' ),
-			'category'     => 'woocommerce',
-			'keywords'     => [ 'WooCommerce' ],
-			'textdomain'   => 'woocommerce',
-			'api_version'  => 3,
-			'ancestor'     => [ 'woocommerce/product-filters' ],
-			'uses_context' => [ 'query', 'filterParams' ],
-			'example'      => [
-				'attributes' => [
-					'isPreview' => true,
-				],
-			],
-			'supports'     => [
-				'interactivity'        => true,
-				'html'                 => false,
-				'color'                => [
-					'text'                          => true,
-					'background'                    => false,
-					'__experimentalDefaultControls' => [
-						'text' => false,
-					],
-				],
-				'typography'           => [
-					'fontSize'                      => true,
-					'lineHeight'                    => true,
-					'__experimentalFontWeight'      => true,
-					'__experimentalFontFamily'      => true,
-					'__experimentalFontStyle'       => true,
-					'__experimentalTextTransform'   => true,
-					'__experimentalTextDecoration'  => true,
-					'__experimentalLetterSpacing'   => true,
-					'__experimentalDefaultControls' => [
-						'fontSize' => false,
-					],
-				],
-				'spacing'              => [
-					'margin'                        => true,
-					'padding'                       => true,
-					'blockGap'                      => true,
-					'__experimentalDefaultControls' => [
-						'margin'   => false,
-						'padding'  => false,
-						'blockGap' => false,
-					],
-				],
-				'__experimentalBorder' => [
-					'color'                         => true,
-					'radius'                        => true,
-					'style'                         => true,
-					'width'                         => true,
-					'__experimentalDefaultControls' => [
-						'color'  => false,
-						'radius' => false,
-						'style'  => false,
-						'width'  => false,
-					],
-				],
-			],
-			'attributes'   => [
-				'showCounts'   => [
-					'type'    => 'boolean',
-					'default' => false,
-				],
-				'displayStyle' => [
-					'type'    => 'string',
-					'default' => 'woocommerce/product-filter-checkbox-list',
-				],
-				'isPreview'    => [
-					'type'    => 'boolean',
-					'default' => false,
-				],
-				'hideEmpty'    => [
-					'type'    => 'boolean',
-					'default' => true,
-				],
-				'clearButton'  => [
-					'type'    => 'boolean',
-					'default' => false,
-				],
-			],
-		];
-
-		$block_settings['render_callback'] = $this->get_block_type_render_callback();
-		$block_settings['editor_script']   = $this->get_block_type_editor_script( 'handle' );
-		$block_settings['editor_style']    = $this->get_block_type_editor_style();
-		$block_settings['style']           = $this->get_block_type_style();
-
-		if ( isset( $this->api_version ) && '2' === $this->api_version ) {
-			$block_settings['api_version'] = 2;
-		}
-
-		/**
-		 * We always want to load block styles separately, for every theme.
-		 * When the core assets are loaded separately, other blocks' styles get
-		 * enqueued separately too. Thus we only need to handle the remaining
-		 * case.
-		 */
-		if (
-			! is_admin() &&
-			! wc_current_theme_is_fse_theme() &&
-			$block_settings['style'] &&
-			(
-				! function_exists( 'wp_should_load_separate_core_block_assets' ) ||
-				! wp_should_load_separate_core_block_assets()
-			)
-		) {
-			$style_handles           = $block_settings['style'];
-			$block_settings['style'] = null;
-			add_filter(
-				'render_block',
-				function ( $html, $block ) use ( $style_handles ) {
-					if ( $block['blockName'] === $this->get_block_type() ) {
-						array_map( 'wp_enqueue_style', $style_handles );
-					}
-					return $html;
-				},
-				10,
-				2
-			);
-		}
-
-		if ( $this->stock_status_options ) {
-			foreach ( wc_get_product_stock_status_options() as $key => $value ) {
-				$block_settings['attributes'][ $key ] = [
-					'type'    => 'boolean',
-					'default' => true,
-				];
-			}
-		}
-
-		if ( $this->status_options ) {
-			foreach ( $this->status_options as $key => $value ) {
-				$block_settings['attributes'][ $key ] = [
-					'type'    => 'boolean',
-					'default' => true,
-				];
-			}
-		}
-
-		return $block_settings;
-	}
-
-	/**
 	 * Initialize this block type.
 	 *
 	 * - Hook into WP lifecycle.
@@ -217,11 +50,11 @@ final class ProductFilterStatus extends AbstractBlock {
 	protected function initialize() {
 		$this->stock_status_options = wc_get_product_stock_status_options();
 
-		$this->status_options = array(
+		$this->product_status_options = array(
 			'onsale' => __( 'On sale', 'woocommerce' ),
 		);
 
-		$this->all_status_options = array_merge( $this->stock_status_options, $this->status_options );
+		$this->all_status_options = array_merge( $this->stock_status_options, $this->product_status_options );
 
 		parent::initialize();
 
@@ -301,10 +134,9 @@ final class ProductFilterStatus extends AbstractBlock {
 	 */
 	protected function enqueue_data( array $statuses = array() ) {
 		parent::enqueue_data( $statuses );
-		$this->asset_data_registry->add( 'statusOptions', $this->status_options );
+		$this->asset_data_registry->add( 'productStatusOptions', $this->product_status_options );
 		$this->asset_data_registry->add( 'stockStatusOptions', $this->stock_status_options );
 		$this->asset_data_registry->add( 'hideOutOfStockItems', 'yes' === get_option( 'woocommerce_hide_out_of_stock_items' ) );
-		$this->asset_data_registry->add( 'blockSettings', $this->get_block_settings() );
 	}
 
 	/**
@@ -320,8 +152,17 @@ final class ProductFilterStatus extends AbstractBlock {
 		$onsale_status_data = array();
 		$query              = isset( $_GET[ self::FILTER_STATUS_QUERY_VAR ] ) ? sanitize_text_field( wp_unslash( $_GET[ self::FILTER_STATUS_QUERY_VAR ] ) ) : '';  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$selected_statuses  = array_filter( explode( ',', $query ) );
-		$onsale_status_data = $attributes['onsale'] ? $this->get_onsale_status_counts( $block ) : array();
-		$stock_status_data  = $this->get_stock_status_counts( $block, $attributes );
+		$onsale_status_data = $attributes['productStatuses']['onsale']['enabled'] ? $this->get_onsale_status_counts( $block ) : array();
+		$excluded_statuses  =
+			array_keys(
+				array_filter(
+					$attributes['stockStatuses'],
+					function ( $status ) {
+						return ! isset( $status['enabled'] ) || true !== $status['enabled'];
+					}
+				)
+			);
+		$stock_status_data  = $this->get_stock_status_counts( $block, $excluded_statuses );
 		$status_data        = array_merge( $stock_status_data, $onsale_status_data );
 		$filter_params      = $block->context['filterParams'] ?? array();
 		$query              = $filter_params[ self::FILTER_STATUS_QUERY_VAR ] ?? '';
@@ -387,9 +228,9 @@ final class ProductFilterStatus extends AbstractBlock {
 	 * Retrieve the status filter data for current block.
 	 *
 	 * @param WP_Block $block Block instance.
-	 * @param array    $attributes Block attributes.
+	 * @param array    $excluded_statuses Excluded statuses.
 	 */
-	private function get_stock_status_counts( $block, $attributes ) {
+	private function get_stock_status_counts( $block, $excluded_statuses ) {
 		$filters    = Package::container()->get( QueryFilters::class );
 		$query_vars = ProductCollectionUtils::get_query_vars( $block, 1 );
 
@@ -400,7 +241,7 @@ final class ProductFilterStatus extends AbstractBlock {
 			$query_vars['meta_query'] = ProductCollectionUtils::remove_query_array( $query_vars['meta_query'], 'key', '_stock_status' );
 		}
 
-		$counts = $filters->get_stock_status_counts( $query_vars, $attributes );
+		$counts = $filters->get_stock_status_counts( $query_vars, $excluded_statuses );
 		$data   = array();
 
 		foreach ( $counts as $key => $value ) {

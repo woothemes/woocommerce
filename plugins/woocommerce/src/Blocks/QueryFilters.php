@@ -117,7 +117,7 @@ final class QueryFilters {
 		$stock_status_counts = array();
 
 		foreach ( $stock_status_options as $status ) {
-			if ( empty( $excluded_statuses[ $status ] ) ) {
+			if ( in_array( $status, $excluded_statuses ) ) {
 				continue;
 			}
 

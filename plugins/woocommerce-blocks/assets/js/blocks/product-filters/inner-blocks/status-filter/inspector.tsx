@@ -6,7 +6,6 @@ import { __ } from '@wordpress/i18n';
 import { Block, createBlock, getBlockTypes } from '@wordpress/blocks';
 import { useState } from '@wordpress/element';
 import { dispatch, useSelect } from '@wordpress/data';
-import { getSetting } from '@woocommerce/settings';
 import {
 	PanelBody,
 	PanelRow,
@@ -35,10 +34,14 @@ export const Inspector = ( {
 	setAttributes,
 	clientId,
 }: EditProps ) => {
-	const { displayStyle, showCounts, hideEmpty, clearButton } = attributes;
-
-	const statusOptions = getSetting( 'statusOptions' );
-	const stockStatusOptions = getSetting( 'stockStatusOptions' );
+	const {
+		displayStyle,
+		showCounts,
+		hideEmpty,
+		clearButton,
+		productStatuses,
+		stockStatuses,
+	} = attributes;
 
 	if ( displayStyleOptions.length === 0 ) {
 		displayStyleOptions = getBlockTypes().filter(
@@ -79,16 +82,24 @@ export const Inspector = ( {
 							id="product"
 							label={ __( 'PRODUCT', 'woocommerce' ) }
 						>
-							{ Object.entries( statusOptions ).map(
-								( [ key, label ] ) => (
+							{ Object.entries( productStatuses ).map(
+								( [ key, obj ] ) => (
 									<CheckboxControl
 										key={ key }
 										className="wp-block-woocommerce-product-filter-status__checkbox"
-										label={ label }
+										label={ obj.label }
 										onChange={ ( value ) => {
-											setAttributes( { [ key ]: value } );
+											setAttributes( {
+												productStatuses: {
+													...productStatuses,
+													[ key ]: {
+														enabled: value,
+														label: obj.label,
+													},
+												},
+											} );
 										} }
-										checked={ attributes[ key ] }
+										checked={ obj.enabled }
 									/>
 								)
 							) }
@@ -100,16 +111,24 @@ export const Inspector = ( {
 							label={ __( 'STOCK', 'woocommerce' ) }
 							className="wp-block-woocommerce-product-filter-status"
 						>
-							{ Object.entries( stockStatusOptions ).map(
-								( [ key, label ] ) => (
+							{ Object.entries( stockStatuses ).map(
+								( [ key, obj ] ) => (
 									<CheckboxControl
 										key={ key }
 										className="wp-block-woocommerce-product-filter-status__checkbox"
-										label={ label }
+										label={ obj.label }
 										onChange={ ( value ) => {
-											setAttributes( { [ key ]: value } );
+											setAttributes( {
+												stockStatuses: {
+													...stockStatuses,
+													[ key ]: {
+														enabled: value,
+														label: obj.label,
+													},
+												},
+											} );
 										} }
-										checked={ attributes[ key ] }
+										checked={ obj.enabled }
 									/>
 								)
 							) }

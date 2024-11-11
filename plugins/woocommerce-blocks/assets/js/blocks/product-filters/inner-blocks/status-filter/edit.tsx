@@ -8,7 +8,7 @@ import {
 } from '@wordpress/block-editor';
 import { useCollectionData } from '@woocommerce/base-context/hooks';
 import { __ } from '@wordpress/i18n';
-import { useMemo } from '@wordpress/element';
+import { useMemo, useEffect } from '@wordpress/element';
 import { getSetting } from '@woocommerce/settings';
 import type { WCStoreV1ProductsCollectionProps } from '@woocommerce/blocks/product-collection/types';
 
@@ -21,8 +21,15 @@ import type { EditProps } from './types';
 import { useProductFilterClearButtonManager } from '../../hooks/use-product-filter-clear-button-manager';
 
 const Edit = ( props: EditProps ) => {
-	const { showCounts, hideEmpty, clearButton } = props.attributes;
-	const { clientId } = props;
+	const { attributes, setAttributes, clientId } = props;
+	const {
+		showCounts,
+		hideEmpty,
+		clearButton,
+		stockStatuses,
+		productStatuses,
+	} = attributes;
+
 	const { children, ...innerBlocksProps } = useInnerBlocksProps(
 		useBlockProps(),
 		{
@@ -79,10 +86,39 @@ const Edit = ( props: EditProps ) => {
 		{}
 	);
 
-	const statusOptions: Record< string, string > = getSetting(
-		'statusOptions',
+	const productStatusOptions: Record< string, string > = getSetting(
+		'productStatusOptions',
 		{}
 	);
+
+	const defaultStockStatusesAttributes = Object.entries(
+		stockStatusOptions
+	).reduce( ( acc, [ key, value ] ) => {
+		acc[ key ] = { label: value, enabled: true };
+		return acc;
+	}, {} as Record< string, { label: string; enabled: boolean } > );
+
+	const defaultProductStatusesAttributes = Object.entries(
+		productStatusOptions
+	).reduce( ( acc, [ key, value ] ) => {
+		acc[ key ] = { label: value, enabled: true };
+		return acc;
+	}, {} as Record< string, { label: string; enabled: boolean } > );
+
+	// Because stock statuses and product statuses are dynamically added,
+	// we need to first set default values for them. This should only run
+	// once when the block is inserted.
+	useEffect( () => {
+		if ( Object.keys( stockStatuses ).length === 0 ) {
+			setAttributes( { stockStatuses: defaultStockStatusesAttributes } );
+		}
+
+		if ( Object.keys( productStatuses ).length === 0 ) {
+			setAttributes( {
+				productStatuses: defaultProductStatusesAttributes,
+			} );
+		}
+	}, [] );
 
 	const { results: filteredCounts, isLoading } =
 		useCollectionData< WCStoreV1ProductsCollectionProps >( {
@@ -111,8 +147,8 @@ const Edit = ( props: EditProps ) => {
 			.filter( ( item ) => ! hideEmpty || item.count > 0 );
 	}, [ stockStatusOptions, filteredCounts, showCounts, hideEmpty ] );
 
-	const statusItems = useMemo( () => {
-		return Object.entries( statusOptions )
+	const productStatusItems = useMemo( () => {
+		return Object.entries( productStatusOptions )
 			.map( ( [ key, value ] ) => {
 				const count =
 					filteredCounts?.onsale_status_counts?.find(
@@ -128,9 +164,9 @@ const Edit = ( props: EditProps ) => {
 				};
 			} )
 			.filter( ( item ) => ! hideEmpty || item.count > 0 );
-	}, [ statusOptions, filteredCounts, showCounts, hideEmpty ] );
+	}, [ productStatusOptions, filteredCounts, showCounts, hideEmpty ] );
 
-	const items = [ ...stockStatusItems, ...statusItems ];
+	const items = [ ...stockStatusItems, ...productStatusItems ];
 
 	useProductFilterClearButtonManager( {
 		clientId,
