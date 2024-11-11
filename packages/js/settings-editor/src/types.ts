@@ -16,6 +16,7 @@ export type Route = {
 
 export type Setting = {
 	id: string;
+	type: string;
 	value: unknown;
 };
 
@@ -26,5 +27,7 @@ export type Section = {
 
 export type Page = {
 	label: string;
+	slug: string;
+	icon: string;
 	sections: Section[];
 };

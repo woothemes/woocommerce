@@ -124,6 +124,8 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 
 			$pages[ $this->id ] = array(
 				'label'   => html_entity_decode( $this->label ),
+				'slug'    => $this->id,
+				'icon'    => 'box',
 				'sections' => $sections_data,
 			);
 
