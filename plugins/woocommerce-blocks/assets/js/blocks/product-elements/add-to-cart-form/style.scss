@@ -8,33 +8,61 @@
 		font-size: var(--wp--preset--font-size--small);
 		padding: 0.9rem 1.1rem;
 	}
+
 }
 
-.wc-block-add-to-cart-form.wc-block-add-to-cart-form--input {
+/*
+ * Set the layout of the add-to-cart form to a grid.
+ */
+.wp-block-woocommerce-add-to-cart-form {
 	width: unset;
 
-	.quantity {
-		display: inline-block;
-		float: none;
-		margin-right: 4px;
-		vertical-align: middle;
+	form.cart {
+		--whole-width-in-grid: span 9999; // A large number to span the whole width of the grid.
+		&::before {
+			content: " ";
+			grid-column: var(--whole-width-in-grid);
+		}
 
+		display: grid;
+
+		> * {
+			// Hack to ensure input + button stat on the same row, together.
+			grid-column: var(--whole-width-in-grid);
+		}
+
+		> .quantity,
+		> .single_add_to_cart_button {
+			grid-column: span 1;
+			justify-self: start;
+		}
+
+		> .quantity:not(.wc-block-components-quantity-selector) .qty {
+			margin-right: 0.5em;
+			padding-top: 0;
+			padding-bottom: 0;
+			height: calc(100% - 4px); // 4px border width
+		}
+
+		&.grouped_form {
+			width: fit-content;
+		}
+	}
+
+	.quantity {
+		margin-right: 4px;
 		// WooCommerce core styles: https://github.com/woocommerce/woocommerce/blob/c9f62609155825cd817976c7611b9b0415e90f2f/plugins/woocommerce/client/legacy/css/woocommerce.scss/#L111-L112
 		.qty {
-			margin-right: 0.5rem;
 			width: 3.631em;
 			text-align: center;
 		}
 	}
 }
 
+
 // Stepper CSS
 div.wc-block-add-to-cart-form.wc-block-add-to-cart-form--stepper {
 	form.cart {
-		&:not(.grouped_form):not(.variations_form) {
-			display: block;
-		}
-
 		div.wc-block-components-quantity-selector {
 			display: inline-flex;
 			width: unset;
