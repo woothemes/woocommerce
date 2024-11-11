@@ -20,6 +20,13 @@ const SettingsPaymentsMainChunk = lazy(
 		)
 );
 
+const SettingsPaymentsMethodsChunk = lazy(
+	() =>
+		import(
+			/* webpackChunkName: "settings-payments-methods" */ './settings-payments-methods'
+		)
+);
+
 const SettingsPaymentsOfflineChunk = lazy(
 	() =>
 		import(
@@ -134,7 +141,24 @@ export const SettingsPaymentsOfflineWrapper = () => {
 	);
 };
 
-export const SettingsPaymentsWooCommercePaymentsWrapper = () => {
+export const SettingsPaymentsMethodsWrapper: React.FC = () => {
+	return (
+		<>
+			<Header
+				title={ __( 'Choose your payment methods', 'woocommerce' ) }
+				description={ __( 'Select which payment methods you`d like to offer to your shoppers. You can update these here at any time.', 'woocommerce' ) }	
+				backLink={ getAdminLink(
+					'admin.php?page=wc-settings&tab=checkout'
+				) }
+			/>
+			<Suspense fallback={ <div>Loading payment methods settings...</div> }>
+				<SettingsPaymentsMethodsChunk />
+			</Suspense>
+		</>
+	);
+};
+
+export const SettingsPaymentsWooCommercePaymentsWrapper: React.FC = () => {
 	return (
 		<>
 			<Header title={ __( 'WooCommerce Settings', 'woocommerce' ) } />
