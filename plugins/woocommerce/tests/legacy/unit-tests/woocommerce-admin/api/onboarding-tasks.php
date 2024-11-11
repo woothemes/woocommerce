@@ -13,13 +13,11 @@ require_once __DIR__ . '/../features/onboarding-tasks/test-task.php';
 
 // Wrokaround to suppress exif_read_data errors from
 // https://github.com/WordPress/WordPress/blob/master/wp-admin/includes/image.php#L835
-define('WP_RUN_CORE_TESTS', false);
+define( 'WP_RUN_CORE_TESTS', false );
 
 /**
  * WC Tests API Onboarding Tasks
- * @runTestsInSeparateProcesses
  * @preserveGlobalState disabled
- * @group run-in-separate-process
  */
 class WC_Admin_Tests_API_Onboarding_Tasks extends WC_REST_Unit_Test_Case {
 
@@ -52,7 +50,6 @@ class WC_Admin_Tests_API_Onboarding_Tasks extends WC_REST_Unit_Test_Case {
 		// Resetting task list options and lists.
 		update_option( Task::DISMISSED_OPTION, array() );
 		TaskLists::clear_lists();
-
 	}
 
 	/**
@@ -60,19 +57,19 @@ class WC_Admin_Tests_API_Onboarding_Tasks extends WC_REST_Unit_Test_Case {
 	 */
 	public function tearDown(): void {
 		parent::tearDown();
-		$this->remove_color_or_logo_attribute_taxonomy();
+		$this->cleanup_test_product_attributes();
 		TaskLists::clear_lists();
 		TaskLists::init_default_lists();
 	}
 
 	/**
-	 * Remove product attributes that where created in previous tests.
+	 * Clean up product attribute taxonomies created during tests.
 	 */
-	public function remove_color_or_logo_attribute_taxonomy() {
+	public function cleanup_test_product_attributes() {
 		$taxonomies = get_taxonomies();
 		foreach ( (array) $taxonomies as $taxonomy ) {
-			// pa - product attribute.
-			if ( 'pa_color' === $taxonomy || 'pa_logo' === $taxonomy ) {
+			// pa_ prefix indicates product attribute taxonomy.
+			if ( in_array( $taxonomy, array( 'pa_color', 'pa_logo', 'pa_size' ), true ) ) {
 				unregister_taxonomy( $taxonomy );
 			}
 		}
@@ -84,7 +81,29 @@ class WC_Admin_Tests_API_Onboarding_Tasks extends WC_REST_Unit_Test_Case {
 	public function test_import_sample_products() {
 		wp_set_current_user( $this->user );
 
-		$this->remove_color_or_logo_attribute_taxonomy();
+		$this->cleanup_test_product_attributes();
+
+		// Downloading product images are slow and tests shouldn't rely on external resources so we mock the request.
+		add_filter(
+			'pre_http_request',
+			function ( $preempt, $parsed_args, $url ) {
+				if ( preg_match( '/\.(jpg|jpeg|png|gif|bmp|tiff|tif|ico|webp)$/i', $url ) ) {
+					// Create a fake image file.
+					$temp_file = $parsed_args['filename'];
+					$img       = imagecreatetruecolor( 1, 1 );
+					imagejpeg( $img, $temp_file );
+					imagedestroy( $img );
+
+					return array(
+						'response' => array( 'code' => 200 ),
+						'filename' => $temp_file,
+					);
+				}
+				return $preempt;
+			},
+			10,
+			3
+		);
 
 		$request  = new WP_REST_Request( 'POST', $this->endpoint . '/import_sample_products' );
 		$response = $this->server->dispatch( $request );
@@ -102,6 +121,8 @@ class WC_Admin_Tests_API_Onboarding_Tasks extends WC_REST_Unit_Test_Case {
 		}
 		$this->assertArrayHasKey( 'updated', $data );
 		$this->assertEquals( 0, count( $data['updated'] ) );
+
+		remove_all_filters( 'pre_http_request' );
 	}
 
 	/**
@@ -400,5 +421,4 @@ class WC_Admin_Tests_API_Onboarding_Tasks extends WC_REST_Unit_Test_Case {
 		$this->assertEquals( $test_task['id'], 'test-task' );
 		$this->assertEquals( $test_task['isDismissable'], true );
 	}
-
 }
