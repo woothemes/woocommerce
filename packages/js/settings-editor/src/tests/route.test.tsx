@@ -4,8 +4,12 @@
 import { createElement } from '@wordpress/element';
 import { renderHook } from '@testing-library/react-hooks';
 import { screen, render } from '@testing-library/react';
-import { getQuery } from '@woocommerce/navigation';
 import { addAction, applyFilters, didFilter } from '@wordpress/hooks';
+/* eslint-disable @woocommerce/dependency-group */
+// @ts-ignore No types for this exist yet.
+import { privateApis } from '@wordpress/router';
+/* eslint-enable @woocommerce/dependency-group */
+
 /**
  * Internal dependencies
  */
@@ -23,11 +27,38 @@ jest.mock( '@wordpress/hooks', () => ( {
 	didFilter: jest.fn(),
 } ) );
 
+jest.mock( '@wordpress/router', () => ( {
+	privateApis: {
+		useLocation: jest.fn(),
+	},
+} ) );
+
+jest.mock( '@wordpress/edit-site/build-module/lock-unlock', () => ( {
+	unlock: jest.fn( ( apis ) => apis ),
+} ) );
+
+jest.mock(
+	'@wordpress/edit-site/build-module/components/sidebar-navigation-screen',
+	() => ( {
+		__esModule: true,
+		default: ( { children }: { children: React.ReactNode } ) => (
+			<div data-testid="sidebar-navigation-screen">{ children }</div>
+		),
+	} )
+);
+
+jest.mock( '../sidebar', () => ( {
+	__esModule: true,
+	Sidebar: jest.fn(),
+} ) );
+
 const mockSettingsPages = {
 	general: {
 		label: 'General',
-		sections: {
-			'': {
+		icon: 'settings',
+		slug: 'general',
+		sections: [
+			{
 				label: 'General',
 				settings: [
 					{
@@ -39,7 +70,7 @@ const mockSettingsPages = {
 					},
 				],
 			},
-		},
+		],
 		is_modern: false,
 	},
 };
@@ -56,9 +87,13 @@ describe( 'route.tsx', () => {
 			},
 		};
 
-		// Default query mock
-		( getQuery as jest.Mock ).mockReturnValue( {
-			path: '/settings/general',
+		// Mock default location
+		(
+			privateApis as {
+				useLocation: jest.Mock;
+			}
+		 ).useLocation.mockReturnValue( {
+			params: { tab: 'general' },
 		} );
 	} );
 
@@ -69,11 +104,23 @@ describe( 'route.tsx', () => {
 			expect( result.current.key ).toBe( 'general' );
 			expect( result.current.areas.content ).toBeDefined();
 			expect( result.current.areas.sidebar ).toBeDefined();
+
+			render( result.current.areas.sidebar as JSX.Element );
+			expect(
+				screen.getByTestId( 'sidebar-navigation-screen' )
+			).toBeInTheDocument();
+
+			expect( result.current.areas.edit ).toBeNull();
 		} );
 
 		it( 'should return not found route for non-existent pages', () => {
-			( getQuery as jest.Mock ).mockReturnValue( {
-				path: '/non-existent',
+			// Mock location for non-existent page
+			(
+				privateApis as {
+					useLocation: jest.Mock;
+				}
+			 ).useLocation.mockReturnValue( {
+				params: { tab: 'non-existent' },
 			} );
 
 			const { result } = renderHook( () => useActiveRoute() );
@@ -85,6 +132,14 @@ describe( 'route.tsx', () => {
 		} );
 
 		it( 'should return modern route for modern pages', () => {
+			(
+				privateApis as {
+					useLocation: jest.Mock;
+				}
+			 ).useLocation.mockReturnValue( {
+				params: { tab: 'modern' },
+			} );
+
 			// Mock a modern page
 			window.wcSettings = {
 				admin: {
@@ -92,15 +147,14 @@ describe( 'route.tsx', () => {
 						modern: {
 							is_modern: true,
 							label: 'Modern',
-							sections: {},
+							slug: 'modern',
+							icon: 'settings',
+							sections: [],
 						},
 					},
 				},
 			};
 
-			( getQuery as jest.Mock ).mockReturnValue( {
-				path: '/modern',
-			} );
 			( applyFilters as jest.Mock ).mockReturnValue( {
 				modern: {
 					key: 'modern',

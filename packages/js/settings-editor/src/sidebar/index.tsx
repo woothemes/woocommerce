@@ -12,12 +12,15 @@ import * as IconPackage from '@wordpress/icons';
 /**
  * Internal dependencies
  */
-import { Page } from '../types';
 import { SettingItem } from './setting-item';
 
 const { Icon, ...icons } = IconPackage;
 
-export const Sidebar = ( { pages }: { pages: Record< string, Page > } ) => {
+export const Sidebar = ( {
+	pages,
+}: {
+	pages: typeof window.wcSettings.admin.settingsPages;
+} ) => {
 	return (
 		<ItemGroup>
 			{ Object.keys( pages ).map( ( slug ) => {

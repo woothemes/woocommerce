@@ -59,7 +59,7 @@ const getNotFoundRoute = ( page: string ): Route => ( {
 /**
  * Creates a route configuration for legacy settings pages.
  *
- * @param {string} tab - The page identifier.
+ * @param {string} page - The page identifier.
  */
 const getLegacyRoute = (
 	page: string,

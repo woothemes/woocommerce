@@ -28,7 +28,9 @@ type SettingsSection = {
 };
 
 type SettingsPage = {
-    label: string;
+	label: string;
+	slug: string;
+	icon: string;
     sections: SettingsSection[];
     is_modern: boolean;
 };
