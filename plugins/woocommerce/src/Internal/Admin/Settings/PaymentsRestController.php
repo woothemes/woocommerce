@@ -68,11 +68,11 @@ class PaymentsRestController extends RestApiControllerBase {
 	 * @return void
 	 */
 	protected function mock_is_admin() {
-		global $current_screen;
-
-		require_once ABSPATH . 'wp-admin/includes/screen.php';
-		require_once ABSPATH . 'wp-admin/includes/class-wp-screen.php';
-		$current_screen = \WP_Screen::get( 'woocommerce_page_wc-settings' );
+//		global $current_screen;
+//
+//		require_once ABSPATH . 'wp-admin/includes/screen.php';
+//		require_once ABSPATH . 'wp-admin/includes/class-wp-screen.php';
+//		$current_screen = \WP_Screen::get( 'woocommerce_page_wc-settings' );
 	}
 
 	/**
