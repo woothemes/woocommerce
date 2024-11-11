@@ -54,15 +54,22 @@ export const PaymentGateways = () => {
 	const paymentGatewaysList = useMemo(
 		() =>
 			paymentGateways.map( ( gateway: PaymentGateway ) => {
+				const isWCPay = [
+					'pre_install_woocommerce_payments_promotion',
+					'woocommerce_payments',
+				].includes( gateway.id );
+
 				// todo: add logic to check if the incentive is available for the gateway.
-				const hasIncentive = gateway.id === 'woocommerce_payments';
+				const hasIncentive =
+					gateway.id === 'pre_install_woocommerce_payments_promotion';
+
 				const determineGatewayStatus = () => {
 					if ( gateway.enabled ) {
 						if ( gateway.needs_setup ?? false ) {
 							return 'needs_setup';
 						}
 
-						if ( gateway.id === 'woocommerce_payments' ) {
+						if ( isWCPay ) {
 							if ( wooPaymentsGatewayData?.isInTestMode ) {
 								return 'test_mode';
 							}
@@ -70,7 +77,7 @@ export const PaymentGateways = () => {
 						return 'active';
 					}
 
-					if ( gateway.id === 'woocommerce_payments' ) {
+					if ( isWCPay ) {
 						return 'recommended';
 					}
 
@@ -81,6 +88,9 @@ export const PaymentGateways = () => {
 
 				return {
 					key: gateway.id,
+					className: `transitions-disabled woocommerce-item__payment-gateway ${
+						isWCPay ?? `woocommerce-item__woocommerce-payment`
+					} ${ hasIncentive ?? `has-incentive` }`,
 					title: (
 						<>
 							{ gateway.method_title }
@@ -97,13 +107,10 @@ export const PaymentGateways = () => {
 							) }
 						</>
 					),
-					className: `woocommerce-list__item--payment-gateway ${
-						hasIncentive ?? 'has-incentive'
-					}`,
 					content: (
 						<>
 							{ decodeEntities( gateway.method_description ) }
-							{ gateway.id === 'woocommerce_payments' && (
+							{ isWCPay && (
 								<WooPaymentMethodsLogos
 									maxElements={ 10 }
 									isWooPayEligible={ true }
@@ -119,7 +126,7 @@ export const PaymentGateways = () => {
 									enabled={ gateway.enabled }
 									settings_url={ gateway.settings_url }
 								/>
-								{ gateway.id === 'woocommerce_payments' &&
+								{ isWCPay &&
 									wooPaymentsGatewayData?.isInTestMode && (
 										<Button
 											variant="primary"
@@ -179,7 +186,7 @@ export const PaymentGateways = () => {
 	// Add offline payment provider.
 	paymentGatewaysList.push( {
 		key: 'offline',
-		className: 'woocommerce-list__item--payment-gateway',
+		className: 'woocommerce-item__payment-gateway transitions-disabled',
 		title: <>{ __( 'Offline payment methods', 'woocommerce' ) }</>,
 		content: (
 			<>
