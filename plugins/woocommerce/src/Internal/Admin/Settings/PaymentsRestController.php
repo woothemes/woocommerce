@@ -88,8 +88,8 @@ class PaymentsRestController extends RestApiControllerBase {
 					'callback'            => fn( $request ) => $this->run( $request, 'get_providers' ),
 					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
 					'args'                => $this->get_args_for_get_payment_providers(),
-					'schema'              => $this->get_schema_for_get_payment_providers(),
 				),
+				'schema' => fn() => $this->get_schema_for_get_payment_providers(),
 			)
 		);
 	}
@@ -618,8 +618,11 @@ class PaymentsRestController extends RestApiControllerBase {
 	 * @return array[]
 	 */
 	private function get_schema_for_get_payment_providers(): array {
-		$schema               = $this->get_base_schema();
-		$schema['title'] 	  = 'The payment providers for the given location.';
+		$schema               = array(
+			'$schema' => 'http://json-schema.org/draft-04/schema#',
+			'title'   => 'WooCommerce Settings Payments providers for the given location.',
+			'type'    => 'object',
+		);
 		$schema['properties'] = array(
 			'gateways' => array(
 				'type'       => 'array',
