@@ -5,8 +5,8 @@ import { __ } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
 import {
 	TotalsShipping,
-	ShippingCalculator,
 	ShippingCalculatorButton,
+	ShippingCalculator,
 } from '@woocommerce/base-components/cart-checkout';
 import { ShippingCalculatorContext } from '@woocommerce/base-components/cart-checkout/shipping-calculator/context';
 import { useEditorContext, useStoreCart } from '@woocommerce/base-context';
