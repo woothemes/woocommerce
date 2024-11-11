@@ -99,7 +99,7 @@ test.describe( 'Assembler -> Font Picker', { tag: '@gutenberg' }, () => {
 			);
 
 			// Reset theme back to default.
-			await activateTheme( DEFAULT_THEME );
+			await activateTheme( baseURL, DEFAULT_THEME );
 		} catch ( error ) {
 			console.log( 'Store completed option not updated' );
 		}
@@ -202,7 +202,7 @@ test.describe( 'Assembler -> Font Picker', { tag: '@gutenberg' }, () => {
 
 		await assembler.locator( '[aria-label="Back"]' ).click();
 
-		const saveButton = assembler.getByText( 'Save' );
+		const saveButton = assembler.getByText( 'Finish customizing' );
 
 		const waitResponse = page.waitForResponse(
 			( response ) =>

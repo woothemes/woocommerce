@@ -51,7 +51,7 @@ test.describe( 'Assembler -> headers', { tag: '@gutenberg' }, () => {
 				'no'
 			);
 
-			await activateTheme( DEFAULT_THEME );
+			await activateTheme( baseURL, DEFAULT_THEME );
 		} catch ( error ) {
 			console.log( 'Store completed option not updated' );
 		}
@@ -73,7 +73,7 @@ test.describe( 'Assembler -> headers', { tag: '@gutenberg' }, () => {
 			'.block-editor-block-patterns-list__list-item'
 		);
 
-		await expect( headers ).toHaveCount( 4 );
+		await expect( headers ).toHaveCount( 5 );
 	} );
 
 	test( 'The selected header should be focused when is clicked', async ( {
@@ -108,7 +108,7 @@ test.describe( 'Assembler -> headers', { tag: '@gutenberg' }, () => {
 
 		await assembler.locator( '[aria-label="Back"]' ).click();
 
-		const saveButton = assembler.getByText( 'Save' );
+		const saveButton = assembler.getByText( 'Finish customizing' );
 
 		const waitResponse = page.waitForResponse(
 			( response ) =>

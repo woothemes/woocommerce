@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Prevented phone numbers containing Unicode control characters from failing validation during Checkout.

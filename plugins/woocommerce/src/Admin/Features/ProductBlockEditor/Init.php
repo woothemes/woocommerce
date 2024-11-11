@@ -3,6 +3,8 @@
  * WooCommerce Product Block Editor
  */
 
+declare(strict_types = 1);
+
 namespace Automattic\WooCommerce\Admin\Features\ProductBlockEditor;
 
 use Automattic\WooCommerce\Admin\Features\Features;
@@ -49,6 +51,10 @@ class Init {
 	 * Constructor
 	 */
 	public function __construct() {
+		if ( ! is_admin() && ! WC()->is_rest_api_request() ) {
+			return;
+		}
+
 		array_push( $this->supported_product_types, 'variable' );
 		array_push( $this->supported_product_types, 'external' );
 		array_push( $this->supported_product_types, 'grouped' );
@@ -172,7 +178,7 @@ class Init {
 		if ( ! PageController::is_admin_page() ) {
 			return;
 		}
-		// Dequeing this to avoid conflicts, until we remove the 'woocommerce-page' class.
+		// Dequeuing this to avoid conflicts, until we remove the 'woocommerce-page' class.
 		wp_dequeue_style( 'woocommerce-blocktheme' );
 	}
 

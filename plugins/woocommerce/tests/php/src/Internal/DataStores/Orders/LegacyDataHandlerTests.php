@@ -1,14 +1,18 @@
 <?php
+declare( strict_types = 1 );
+
+namespace Automattic\WooCommerce\Tests\Internal\DataStores\Orders;
 
 use Automattic\WooCommerce\Internal\DataStores\Orders\DataSynchronizer;
-use Automattic\WooCommerce\RestApi\UnitTests\HPOSToggleTrait;
 use Automattic\WooCommerce\Internal\DataStores\Orders\LegacyDataHandler;
 use Automattic\WooCommerce\RestApi\UnitTests\Helpers\OrderHelper;
+use Automattic\WooCommerce\RestApi\UnitTests\HPOSToggleTrait;
+use Automattic\WooCommerce\Enums\OrderStatus;
 
 /**
  * Class OrdersTableQueryTests.
  */
-class LegacyDataHandlerTests extends WC_Unit_Test_Case {
+class LegacyDataHandlerTests extends \WC_Unit_Test_Case {
 	use HPOSToggleTrait;
 
 	/**
@@ -200,13 +204,13 @@ class LegacyDataHandlerTests extends WC_Unit_Test_Case {
 		// Test order.
 		$this->enable_cot_sync();
 		$order = new \WC_Order();
-		$order->set_status( 'on-hold' );
+		$order->set_status( OrderStatus::ON_HOLD );
 		$order->add_meta_data( 'my_meta', 'hpos+posts' );
 		$order->save();
 		$this->disable_cot_sync();
 
 		$order_hpos = $this->sut->get_order_from_datastore( $order->get_id(), 'hpos' );
-		$order_hpos->set_status( 'completed' );
+		$order_hpos->set_status( OrderStatus::COMPLETED );
 		$order_hpos->set_billing_first_name( 'Mr. HPOS' );
 		$order_hpos->set_billing_address_1( 'HPOS Street' );
 		$order_hpos->update_meta_data( 'my_meta', 'hpos' );
