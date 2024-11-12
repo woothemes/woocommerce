@@ -202,7 +202,7 @@ class PaymentsRestController extends RestApiControllerBase {
 	 */
 	private function prepare_payment_gateway_for_response( WC_Payment_Gateway $payment_gateway, int $payment_gateway_order ): array {
 		return array(
-			'_id'         => $payment_gateway->id,
+			'id'          => $payment_gateway->id,
 			'_order'      => $payment_gateway_order,
 			'title'       => $payment_gateway->get_method_title(),       // This is the WC admin title.
 			'description' => $payment_gateway->get_method_description(), // This is the WC admin description.
@@ -759,7 +759,7 @@ class PaymentsRestController extends RestApiControllerBase {
 			'type'        => 'object',
 			'description' => esc_html__( 'A payment gateway.', 'woocommerce' ),
 			'properties'  => array(
-				'_id'         => array(
+				'id'          => array(
 					'type'        => 'string',
 					'description' => esc_html__( 'The unique identifier for the payment gateway.', 'woocommerce' ),
 					'context'     => array( 'view', 'edit' ),

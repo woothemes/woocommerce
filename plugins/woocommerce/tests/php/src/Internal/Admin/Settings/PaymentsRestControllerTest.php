@@ -118,7 +118,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 
 		// Assert that the PayPal gateway has all the details.
 		$gateway = $data['gateways'][0];
-		$this->assertArrayHasKey( '_id', $gateway, 'Gateway `_id` entry is missing' );
+		$this->assertArrayHasKey( 'id', $gateway, 'Gateway `id` entry is missing' );
 		$this->assertArrayHasKey( '_order', $gateway, 'Gateway `_order` entry is missing' );
 		$this->assertArrayHasKey( 'title', $gateway, 'Gateway `title` entry is missing' );
 		$this->assertArrayHasKey( 'description', $gateway, 'Gateway `description` entry is missing' );
@@ -138,7 +138,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 
 		// Assert that the offline payment methods have all the details.
 		$offline_pm = $data['offline_payment_methods'][0];
-		$this->assertArrayHasKey( '_id', $offline_pm, 'Offline payment method `_id` entry is missing' );
+		$this->assertArrayHasKey( 'id', $offline_pm, 'Offline payment method `id` entry is missing' );
 		$this->assertArrayHasKey( '_order', $offline_pm, 'Offline payment method `_order` entry is missing' );
 		$this->assertArrayHasKey( 'title', $offline_pm, 'Offline payment method `title` entry is missing' );
 		$this->assertArrayHasKey( 'description', $offline_pm, 'Offline payment method `description` entry is missing' );
