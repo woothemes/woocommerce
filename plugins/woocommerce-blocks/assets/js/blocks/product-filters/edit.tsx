@@ -23,6 +23,10 @@ const TEMPLATE: InnerBlockTemplate[] = [
 		{
 			level: 3,
 			content: __( 'Filters', 'woocommerce' ),
+			style: {
+				margin: { top: '0', bottom: '0' },
+				spacing: { margin: { top: '0', bottom: '0' } },
+			},
 		},
 	],
 	[ 'woocommerce/product-filter-active' ],
