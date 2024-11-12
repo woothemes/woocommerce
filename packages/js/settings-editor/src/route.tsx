@@ -24,7 +24,7 @@ import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
 /**
  * Internal dependencies
  */
-import { Sidebar, SidebarNavigationScreenContent } from './sidebar';
+import { Sidebar } from './sidebar';
 import { Route, Location } from './types';
 
 const { useLocation } = unlock( routerPrivateApis );

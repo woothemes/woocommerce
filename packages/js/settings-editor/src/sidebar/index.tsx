@@ -18,7 +18,7 @@ import { SettingItem } from './setting-item';
 
 const { Icon, ...icons } = IconPackage;
 
-export const SidebarNavigationScreenContent = ( {
+const SidebarNavigationScreenContent = ( {
 	activePage,
 	pages,
 }: {
