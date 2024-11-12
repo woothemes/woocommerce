@@ -69,20 +69,18 @@ class ProductFilters extends AbstractBlock {
 			'params'         => $filter_params,
 			'originalParams' => $filter_params,
 		);
-		$classes               = array(
-			'wc-block-product-filters' => true,
-		);
-		$styles                = array(
-			'--wc-product-filters-text-color'       => StyleAttributesUtils::get_text_color_class_and_style( $attributes )['value'],
-			'--wc-product-filters-background-color' => StyleAttributesUtils::get_background_color_class_and_style( $attributes )['value'],
-		);
 
-		if ( ! empty( $attributes['overlayIconSize'] ) ) {
-			$styles['--wc-product-filters-overlay-icon-size'] = "{$attributes['overlayIconSize']}px";
+		$classes = '';
+		$styles  = '';
+		$tags    = new \WP_HTML_Tag_Processor( $content );
+
+		if ( $tags->next_tag( array( 'class_name' => 'wc-block-product-filters' ) ) ) {
+			$classes = $tags->get_attribute( 'class' );
+			$styles  = $tags->get_attribute( 'style' );
 		}
 
 		$wrapper_attributes = array(
-			'class'                            => implode( ' ', array_keys( array_filter( $classes ) ) ),
+			'class'                            => $classes,
 			'data-wc-interactive'              => wp_json_encode( array( 'namespace' => $this->get_full_block_name() ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
 			'data-wc-watch--navigation'        => 'callbacks.maybeNavigate',
 			'data-wc-watch--scrolling'         => 'callbacks.scrollLimit',
@@ -90,16 +88,7 @@ class ProductFilters extends AbstractBlock {
 			'data-wc-navigation-id'            => $this->generate_navigation_id( $block ),
 			'data-wc-context'                  => wp_json_encode( $interactivity_context, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
 			'data-wc-class--is-overlay-opened' => 'context.isOverlayOpened',
-			'style'                            => array_reduce(
-				array_keys( $styles ),
-				function ( $carry, $key ) use ( $styles ) {
-					if ( $styles[ $key ] ) {
-						$carry .= $key . ':' . $styles[ $key ] . ';';
-					}
-					return $carry;
-				},
-				''
-			),
+			'style'                            => $styles,
 		);
 
 		ob_start();
