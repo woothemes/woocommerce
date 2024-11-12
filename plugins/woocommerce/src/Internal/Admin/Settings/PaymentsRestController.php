@@ -29,6 +29,8 @@ class PaymentsRestController extends RestApiControllerBase {
 	const EXTENSION_INSTALLED = 'installed';
 	const EXTENSION_ACTIVE = 'active';
 
+	const BADGE_TYPE_INFO = 'info';
+
 	/**
 	 * Route base.
 	 *
@@ -179,10 +181,10 @@ class PaymentsRestController extends RestApiControllerBase {
 		ob_end_clean();
 
 		// Get all payment gateways, ordered by the user.
-		$payment_gateways = WC()->payment_gateways()->payment_gateways;
-		// Remove shell gateways that are not intended for display.
+		// Remove "shell" gateways that are not intended for display.
+		// We consider a gateway to a "shell" if it has no WC admin title or description.
 		$payment_gateways = array_filter(
-			$payment_gateways,
+			WC()->payment_gateways()->payment_gateways,
 			function( $gateway ) {
 				return ! empty( $gateway->method_title ) && ! empty( $gateway->method_description );
 			}
@@ -205,15 +207,15 @@ class PaymentsRestController extends RestApiControllerBase {
 			'_order'      => $payment_gateway_order,
 			'title'       => $payment_gateway->get_method_title(),       // This is the WC admin title.
 			'description' => $payment_gateway->get_method_description(), // This is the WC admin description.
-			'supports'    => $payment_gateway->supports,
+			'supports'    => $payment_gateway->supports ?? array(),
 			'state'       => array(
 				'enabled'     => filter_var( $payment_gateway->enabled, FILTER_VALIDATE_BOOLEAN ),
-				'needs_setup' => $payment_gateway->needs_setup(),
+				'needs_setup' => filter_var( $payment_gateway->needs_setup(), FILTER_VALIDATE_BOOLEAN ),
 				'test_mode'   => $this->is_payment_gateway_in_test_mode( $payment_gateway ),
 			),
 			'management'  => array(
 				'settings_url' => method_exists( $payment_gateway, 'get_settings_url' )
-					? $payment_gateway->get_settings_url()
+					? esc_url( $payment_gateway->get_settings_url() )
 					: admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . strtolower( $payment_gateway->id ) ),
 			),
 		);
@@ -251,7 +253,7 @@ class PaymentsRestController extends RestApiControllerBase {
 			}
 		}
 
-		// Get the gateway's plugin details.
+		// Get the gateway's corresponding plugin details.
 		$plugin_data = PluginsHelper::get_plugin_data( $plugin_slug );
 		if ( ! empty( $plugin_data ) ) {
 			// If there are no links, try to get them from the plugin data.
@@ -260,7 +262,7 @@ class PaymentsRestController extends RestApiControllerBase {
 					$gateway_details['links'] = array(
 						array(
 							'_type' => ExtensionSuggestions::LINK_TYPE_ABOUT,
-							'url'   => $plugin_data['PluginURI'],
+							'url'   => esc_url( $plugin_data['PluginURI'] ),
 						),
 					);
 				}
@@ -323,7 +325,7 @@ class PaymentsRestController extends RestApiControllerBase {
 			}
 		}
 
-		// If it is PayPal, we need to check the test mode.
+		// If it is PayPal, we need to check the sandbox mode.
 		if ( 'ppcp-gateway' === $payment_gateway->id &&
 			class_exists( '\WooCommerce\PayPalCommerce\PPCP' ) &&
 			method_exists( '\WooCommerce\PayPalCommerce\PPCP', 'container' ) ) {
@@ -501,6 +503,14 @@ class PaymentsRestController extends RestApiControllerBase {
 			}
 		) );
 
+		// The preferred PSP gets a recommended info badge.
+		if ( ! empty( $preferred_psp ) ) {
+			$preferred_psp['badges'][] = array(
+				'_type' => self::BADGE_TYPE_INFO,
+				'text'  => esc_html__( 'Recommended', 'woocommerce' ),
+			);
+		}
+
 		return array(
 			'preferred' => array_filter(
 				array(
@@ -540,7 +550,13 @@ class PaymentsRestController extends RestApiControllerBase {
 			}
 		}
 
+		// Ensure we have a badges entry.
+		if ( empty( $extension['badges'] ) ) {
+			$extension['badges'] = array();
+		}
+
 		// Determine if the suggestion was hidden.
+		// @todo Use the real option logic.
 		$extension['_hidden'] = false;
 
 		return $extension;
@@ -779,12 +795,12 @@ class PaymentsRestController extends RestApiControllerBase {
 				),
 				'image'       => array(
 					'type'        => 'string',
-					'description' => esc_html__( 'The URL of the image.', 'woocommerce' ),
+					'description' => esc_html__( 'The URL of the payment gateway image.', 'woocommerce' ),
 					'readonly'    => true,
 				),
 				'icon' => array(
 					'type'        => 'string',
-					'description' => esc_html__( 'The URL of the icon (square aspect ratio).', 'woocommerce' ),
+					'description' => esc_html__( 'The URL of the payment gateway icon (square aspect ratio).', 'woocommerce' ),
 					'readonly'    => true,
 				),
 				'links'       => array(
@@ -816,7 +832,7 @@ class PaymentsRestController extends RestApiControllerBase {
 					'properties'  => array(
 						'enabled'     => array(
 							'type'        => 'boolean',
-							'description' => esc_html__( 'The enabled status of the payment gateway.', 'woocommerce' ),
+							'description' => esc_html__( 'Whether the payment gateway is enabled for use.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
 						),
@@ -964,6 +980,23 @@ class PaymentsRestController extends RestApiControllerBase {
 						'description' => esc_html__( 'The tags associated with the suggestion.', 'woocommerce' ),
 						'readonly'    => true,
 					),
+				),
+				'category'          => array(
+					'type'        => 'string',
+					'description' => esc_html__( 'The category of the suggestion.', 'woocommerce' ),
+					'context'     => array( 'view', 'edit' ),
+					'readonly'    => true,
+				),
+				'badges'            => array(
+					'type'        => 'array',
+					'description' => esc_html__( 'Whether the suggestion has badges.', 'woocommerce' ),
+					'context'     => array( 'view', 'edit' ),
+					'readonly'    => true,
+				),
+				'_hidden'           => array(
+					'type'        => 'boolean',
+					'description' => esc_html__( 'Whether the suggestion is hidden.', 'woocommerce' ),
+					'context'     => array( 'view', 'edit' ),
 				),
 			),
 		);
