@@ -465,7 +465,7 @@ class OnboardingProfile extends \WC_REST_Data_Controller {
 				'readonly'    => true,
 				'nullable'    => true,
 				'items'       => array(
-					'type' => array( 'array', 'null' ),
+					'type' => array( 'string', 'null' ),
 				),
 			),
 		);
