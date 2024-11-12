@@ -5852,60 +5852,6 @@ img.help_tip {
 	}
 }
 
-/**
-	* Email settings
-	*/
-td.forminp-image_url_with_preview {
-	.new_image {
-		border: 1px #cccccc solid;
-		border-radius: 4px;
-		width: 400px;
-		height: 88px;
-		position: relative;
-
-		a.select_image {
-			display: block;
-			height: 100%;
-			width: 100%;
-		}
-
-		img.new_image_icon {
-			position: absolute;
-			margin: auto;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-		}
-	}
-
-	.existing_image {
-		> div {
-			margin-bottom: 8px;
-		}
-
-		.image_preview {
-			max-width: 400px;
-			border: 1px #cccccc solid;
-			border-radius: 4px;
-		}
-
-		a.select_image:not(.button):focus {
-			box-shadow: none;
-		}
-
-		> a.select_image.button, > a.remove_image.button {
-			height: 40px;
-			line-height: 2.8;
-			background-color: transparent;
-		}
-
-		> a.remove_image.button {
-			border: none;
-		}
-	}
-}
-
 #woocommerce-product-data,
 #woocommerce-product-type-options,
 #woocommerce-order-data,

@@ -260,11 +260,6 @@ if ( ! class_exists( 'WC_Admin_Settings', false ) ) :
 					$value['value'] = self::get_option( $value['id'], $value['default'] );
 				}
 
-				// Show no preview if image url is empty.
-				if ( 'image_url_with_preview' === $value['type'] && empty( $value['value'] ) ) {
-					$value['type'] = 'text';
-				}
-
 				// Custom attribute handling.
 				$custom_attributes = array();
 
@@ -790,39 +785,6 @@ if ( ! class_exists( 'WC_Admin_Settings', false ) ) :
 							class="<?php echo esc_attr( $value['class'] ); ?>"
 						>
 						</div>
-						<?php
-						break;
-					case 'image_url_with_preview':
-						$option_value         = $value['value'];
-						$hidden_with_image    = $option_value ? 'hidden' : '';
-						$hidden_without_image = $option_value ? '' : 'hidden';
-						?>
-						<tr class="<?php echo esc_attr( $value['row_class'] ); ?>">
-							<th scope="row" class="titledesc">
-								<label for="<?php echo esc_attr( $value['id'] ); ?>"><?php echo esc_html( $value['title'] ); ?> <?php echo $tooltip_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></label>
-							</th>
-							<td class="forminp forminp-<?php echo esc_attr( sanitize_title( $value['type'] ) ); ?>">
-								<input
-										name="<?php echo esc_attr( $value['field_name'] ); ?>"
-										id="<?php echo esc_attr( $value['id'] ); ?>"
-										type="hidden"
-										style="<?php echo esc_attr( $value['css'] ); ?>"
-										value="<?php echo esc_attr( $option_value ); ?>"
-										class="image_url <?php echo esc_attr( $value['class'] ); ?>"
-										placeholder="<?php echo esc_attr( $value['placeholder'] ); ?>"
-										<?php echo implode( ' ', $custom_attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-										/><?php echo esc_html( $value['suffix'] ); ?> <?php echo $description; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-								<div class="new_image <?php echo esc_attr( $hidden_with_image ); ?>">
-									<a href="#" class="select_image"><img src="<?php echo esc_attr( WC()->plugin_url() ); ?>/assets/images/settings/image-upload.svg" width="24" height="24" class="new_image_icon" /></a>
-								</div>
-								<div class="existing_image <?php echo esc_attr( $hidden_without_image ); ?>">
-									<div>
-										<a href="#" class="select_image"><img src="<?php echo esc_attr( $option_value ); ?>" class="image_preview" /></a>
-									</div>
-									<a href="#" class="select_image button"><?php esc_html_e( 'Change image', 'woocommerce' ); ?></a> <a href="#" class="remove_image button"><?php esc_html_e( 'Remove', 'woocommerce' ); ?></a>
-								</div>
-							</td>
-						</tr>
 						<?php
 						break;
 					// Default: run an action.

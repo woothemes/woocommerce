@@ -307,45 +307,6 @@
 			}
 		} );
 
-		$( '.woocommerce .select_image' ).on( 'click', function ( e ) {
-			e.preventDefault();
-			if ( wp.media.frames.img_select ) {
-				wp.media.frames.img_select.open();
-				return;
-			}
-			wp.media.frames.img_select = wp.media({
-        library: {
-          type: 'image'
-        }
-			});
-			const select_image_button = $( this );
-			const select_image = function () {
-        const sel = wp.media.frames.img_select.state()
-          .get( 'selection' );
-        if ( ! sel ) {
-          return;
-        }
-        sel.each(function (item) {
-          const wrapper = select_image_button.closest( '.forminp' );
-          wrapper.find( 'input.image_url' ).val( item.attributes.url ).trigger( 'change' );
-          wrapper.find( '.image_preview' ).attr( 'src', item.attributes.url );
-          wrapper.find( '.new_image' ).addClass( 'hidden' );
-          wrapper.find( '.existing_image' ).removeClass( 'hidden' );
-        });
-			};
-			wp.media.frames.img_select.on( 'select', select_image );
-			wp.media.frames.img_select.open();
-		} );
-
-		$( '.woocommerce .remove_image' ).on( 'click', function ( e ) {
-			e.preventDefault();
-			const remove_image_button = $( this );
-			const wrapper = remove_image_button.closest( '.forminp' );
-			wrapper.find( 'input.image_url' ).val( '' ).trigger( 'change' );
-			wrapper.find( '.new_image' ).removeClass( 'hidden' );
-			wrapper.find( '.existing_image' ).addClass( 'hidden' );
-		} );
-
 		/**
 		 * Support conditionally displaying a settings field description when another element
 		 * is set to a specific value.
