@@ -16,10 +16,6 @@ import { privateApis } from '@wordpress/router';
 import { useActiveRoute, useModernRoutes } from '../route';
 
 // Mock external dependencies
-jest.mock( '@woocommerce/navigation', () => ( {
-	getQuery: jest.fn(),
-} ) );
-
 jest.mock( '@wordpress/hooks', () => ( {
 	addAction: jest.fn(),
 	removeAction: jest.fn(),
