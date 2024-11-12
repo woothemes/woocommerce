@@ -12,6 +12,7 @@ import { decodeEntities } from '@wordpress/html-entities';
 /**
  * Internal dependencies
  */
+import sanitizeHTML from '~/lib/sanitize-html';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
 import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
 import { WooPaymentsGatewayData } from '~/settings-payments/types';
@@ -68,7 +69,11 @@ export const PaymentGatewayListItem = ( {
 		),
 		content: (
 			<>
-				{ decodeEntities( gateway.method_description ) }
+				<span
+					dangerouslySetInnerHTML={ sanitizeHTML(
+						decodeEntities( gateway.method_description )
+					) }
+				/>
 				{ isWCPay && (
 					<WooPaymentMethodsLogos
 						maxElements={ 10 }

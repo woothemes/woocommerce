@@ -7,6 +7,7 @@ import { decodeEntities } from '@wordpress/html-entities';
 /**
  * Internal dependencies
  */
+import sanitizeHTML from '~/lib/sanitize-html';
 import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
 
 interface OfflinePaymentGateway {
@@ -34,7 +35,13 @@ export const OfflinePaymentGatewayListItem = ( {
 		key: gateway.id,
 		title: <>{ gateway.title }</>,
 		className: 'transitions-disabled',
-		content: <>{ decodeEntities( gateway.content ) }</>,
+		content: (
+			<span
+				dangerouslySetInnerHTML={ sanitizeHTML(
+					decodeEntities( gateway.content )
+				) }
+			/>
+		),
 		after: (
 			<PaymentGatewayButton
 				id={ gateway.id }

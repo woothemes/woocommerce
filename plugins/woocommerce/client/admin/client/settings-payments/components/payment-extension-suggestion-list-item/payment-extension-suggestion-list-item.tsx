@@ -12,6 +12,7 @@ import { EllipsisMenu } from '@woocommerce/components';
 /**
  * Internal dependencies
  */
+import sanitizeHTML from '~/lib/sanitize-html';
 
 type PaymentExtensionSuggestionListItemProps = {
 	plugin: Plugin;
@@ -31,7 +32,11 @@ export const PaymentExtensionSuggestionListItem = ( {
 		title: <>{ plugin.title }</>,
 		content: (
 			<>
-				{ decodeEntities( plugin.content ) }
+				<span
+					dangerouslySetInnerHTML={ sanitizeHTML(
+						decodeEntities( plugin.content )
+					) }
+				/>
 				{ plugin.id === 'woocommerce_payments' && (
 					<WooPaymentMethodsLogos
 						maxElements={ 10 }
