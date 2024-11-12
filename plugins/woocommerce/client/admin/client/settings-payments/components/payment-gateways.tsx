@@ -1,170 +1,65 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useState, useMemo } from 'react';
 import { Gridicon } from '@automattic/components';
-import { Button, SelectControl } from '@wordpress/components';
-import { decodeEntities } from '@wordpress/html-entities';
-import { __ } from '@wordpress/i18n';
-import { PaymentGateway } from '@woocommerce/data';
-import { EllipsisMenu, List } from '@woocommerce/components';
-import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
+import { List } from '@woocommerce/components';
+import { Plugin, PaymentGateway } from '@woocommerce/data';
 import { getAdminLink } from '@woocommerce/settings';
+import { SelectControl } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
-import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
-import { StatusBadge } from '~/settings-payments/components/status-badge';
+import { PaymentGatewayListItem } from '~/settings-payments/components/payment-gateway-list-item';
+import { PaymentExtensionSuggestionListItem } from '~/settings-payments/components/payment-extension-suggestion-list-item';
+import { WooPaymentsGatewayData } from '~/settings-payments/types';
 
-// TODO: This should either be a util function, or handled in a different way e.g. passing the data as props.
-const parseScriptTag = ( elementId: string ) => {
-	const scriptTag = document.getElementById( elementId );
-	return scriptTag ? JSON.parse( scriptTag.textContent || '' ) : [];
-};
-
-interface WooPaymentsGatewayData {
-	isSupported: boolean;
-	isAccountOnboarded: boolean;
-	isInTestMode: boolean;
+interface PaymentGatewaysProps {
+	registeredPaymentGateways: PaymentGateway[];
+	installedPluginSlugs: string[];
+	preferredPluginSuggestions: Plugin[];
+	wooPaymentsGatewayData?: WooPaymentsGatewayData;
+	installingPlugin: string | null;
+	setupPlugin: ( plugin: Plugin ) => void;
 }
 
-export const PaymentGateways = () => {
-	const [ paymentGateways, setPaymentGateways ] = useState<
-		PaymentGateway[]
-	>( [] );
-	const [ wooPaymentsGatewayData, setWooPaymentsGatewayData ] =
-		useState< WooPaymentsGatewayData | null >( null );
-
-	useEffect( () => {
-		setWooPaymentsGatewayData(
-			parseScriptTag( 'experimental_wc_settings_payments_woopayments' )
-		);
-		setPaymentGateways(
-			parseScriptTag( 'experimental_wc_settings_payments_gateways' )
-		);
-	}, [] );
-
+export const PaymentGateways = ( {
+	registeredPaymentGateways,
+	installedPluginSlugs,
+	preferredPluginSuggestions,
+	wooPaymentsGatewayData,
+	installingPlugin,
+	setupPlugin,
+}: PaymentGatewaysProps ) => {
 	const setupLivePayments = () => {
 		// TODO: Implement in future PR.
 	};
 
+	// Transform suggested preferred plugins comply with List component format.
+	const preferredPluginSuggestionsList = preferredPluginSuggestions.map(
+		( plugin: Plugin ) => {
+			const pluginInstalled = installedPluginSlugs.includes(
+				plugin.plugins[ 0 ]
+			);
+			return PaymentExtensionSuggestionListItem( {
+				plugin,
+				installingPlugin,
+				setupPlugin,
+				pluginInstalled,
+			} );
+		}
+	);
+
 	// Transform payment gateways to comply with List component format.
-	const paymentGatewaysList = useMemo(
-		() =>
-			paymentGateways.map( ( gateway: PaymentGateway ) => {
-				const isWCPay = [
-					'pre_install_woocommerce_payments_promotion',
-					'woocommerce_payments',
-				].includes( gateway.id );
-
-				const determineGatewayStatus = () => {
-					if ( gateway.enabled ) {
-						if ( gateway.needs_setup ?? false ) {
-							return 'needs_setup';
-						}
-
-						if ( isWCPay ) {
-							if ( wooPaymentsGatewayData?.isInTestMode ) {
-								return 'test_mode';
-							}
-						}
-						return 'active';
-					}
-
-					if ( isWCPay ) {
-						return 'recommended';
-					}
-
-					return 'inactive';
-				};
-
-				const status = determineGatewayStatus();
-				return {
-					key: gateway.id,
-					className: isWCPay
-						? 'woocommerce-item__woocommerce-payment transitions-disabled'
-						: 'transitions-disabled',
-					title: (
-						<>
-							{ gateway.method_title }
-							<StatusBadge status={ status } />
-						</>
-					),
-					content: (
-						<>
-							{ decodeEntities( gateway.method_description ) }
-							{ isWCPay && (
-								<WooPaymentMethodsLogos
-									maxElements={ 10 }
-									isWooPayEligible={ true }
-								/>
-							) }
-						</>
-					),
-					after: (
-						<div className="woocommerce-list__item-after__actions">
-							<>
-								<PaymentGatewayButton
-									id={ gateway.id }
-									enabled={ gateway.enabled }
-									settings_url={ gateway.settings_url }
-								/>
-								{ isWCPay &&
-									wooPaymentsGatewayData?.isInTestMode && (
-										<Button
-											variant="primary"
-											onClick={ setupLivePayments }
-											isBusy={ false }
-											disabled={ false }
-										>
-											{ __(
-												'Set up live payments',
-												'woocommerce'
-											) }
-										</Button>
-									) }
-								<EllipsisMenu
-									label={ __(
-										'Task List Options',
-										'woocommerce'
-									) }
-									renderContent={ () => (
-										<div>
-											<Button>
-												{ __(
-													'Learn more',
-													'woocommerce'
-												) }
-											</Button>
-											<Button>
-												{ __(
-													'See Terms of Service',
-													'woocommerce'
-												) }
-											</Button>
-										</div>
-									) }
-								/>
-							</>
-						</div>
-					),
-					// TODO add drag-and-drop icon before image (future PR)
-					before: (
-						<img
-							src={
-								// TODO: Need a way to make images available here.
-								// gateway.square_image ||
-								// gateway.image_72x72 ||
-								// gateway.image ||
-								'https://woocommerce.com/wp-content/plugins/wccom-plugins/payment-gateway-suggestions/images/wcpay.svg'
-							}
-							alt={ gateway.title + ' logo' }
-						/>
-					),
-				};
-			} ),
-		[ paymentGateways, wooPaymentsGatewayData ]
+	const paymentGatewaysList = registeredPaymentGateways.map(
+		( gateway: PaymentGateway ) => {
+			return PaymentGatewayListItem( {
+				gateway,
+				wooPaymentsGatewayData,
+				setupLivePayments,
+			} );
+		}
 	);
 
 	// Add offline payment provider.
@@ -220,7 +115,12 @@ export const PaymentGateways = () => {
 					/>
 				</div>
 			</div>
-			<List items={ paymentGatewaysList } />
+			<List
+				items={ [
+					...preferredPluginSuggestionsList,
+					...paymentGatewaysList,
+				] }
+			/>
 		</div>
 	);
 };
