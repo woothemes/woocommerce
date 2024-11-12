@@ -30,6 +30,7 @@ export const PaymentExtensionSuggestionListItem = ( {
 	return {
 		key: plugin.id,
 		title: <>{ plugin.title }</>,
+		className: 'transitions-disabled',
 		content: (
 			<>
 				<span
