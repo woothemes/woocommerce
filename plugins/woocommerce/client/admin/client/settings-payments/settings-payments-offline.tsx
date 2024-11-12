@@ -2,6 +2,8 @@
  * External dependencies
  */
 import '@wordpress/element';
+import { useSelect } from '@wordpress/data';
+import { PAYMENT_GATEWAYS_STORE_NAME } from '@woocommerce/data';
 
 /**
  * Internal dependencies
@@ -9,10 +11,16 @@ import '@wordpress/element';
 import './settings-payments-offline.scss';
 import { OfflinePaymentGateways } from './components/offline-payment-gateways';
 
-export const SettingsPaymentsOffline: React.FC = () => {
+export const SettingsPaymentsOffline = () => {
+	const registeredPaymentGateways = useSelect( ( select ) => {
+		return select( PAYMENT_GATEWAYS_STORE_NAME ).getPaymentGateways();
+	}, [] );
+
 	return (
 		<div className="settings-payments-offline__container">
-			<OfflinePaymentGateways />
+			<OfflinePaymentGateways
+				registeredPaymentGateways={ registeredPaymentGateways }
+			/>
 		</div>
 	);
 };
