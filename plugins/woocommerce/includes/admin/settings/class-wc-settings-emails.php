@@ -77,7 +77,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 				array(
 					'title' => __( 'Email sender options', 'woocommerce' ),
 					'type'  => 'title',
-					'desc'  => '',
+					'desc'  => __( "Set the name and email address you'd like your outgoing emails to use.", 'woocommerce' ),
 					'id'    => 'email_options',
 				),
 
