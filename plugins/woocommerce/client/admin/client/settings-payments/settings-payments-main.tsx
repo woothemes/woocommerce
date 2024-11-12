@@ -56,22 +56,25 @@ export const SettingsPaymentsMain = () => {
 		);
 	}, [] );
 
-	const setupPlugin = useCallback( ( plugin: Plugin ) => {
-		if ( installingPlugin ) {
-			return;
-		}
-		setInstallingPlugin( plugin.id );
-		installAndActivatePlugins( [ plugin.plugins[ 0 ] ] )
-			.then( ( response ) => {
-				createNoticesFromResponse( response );
-				// TODO remove the reload after we use woocommerce/data to pull the data instead of script tags.
-				window.location.reload();
-			} )
-			.catch( ( response: { errors: Record< string, string > } ) => {
-				createNoticesFromResponse( response );
-				setInstallingPlugin( null );
-			} );
-	}, [] );
+	const setupPlugin = useCallback(
+		( plugin: Plugin ) => {
+			if ( installingPlugin ) {
+				return;
+			}
+			setInstallingPlugin( plugin.id );
+			installAndActivatePlugins( [ plugin.plugins[ 0 ] ] )
+				.then( ( response ) => {
+					createNoticesFromResponse( response );
+					// TODO remove the reload after we use woocommerce/data to pull the data instead of script tags.
+					window.location.reload();
+				} )
+				.catch( ( response: { errors: Record< string, string > } ) => {
+					createNoticesFromResponse( response );
+					setInstallingPlugin( null );
+				} );
+		},
+		[ installAndActivatePlugins, installingPlugin ]
+	);
 
 	return (
 		<>

@@ -11,7 +11,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { getAdminSetting } from '~/utils/admin-settings';
-import { OfflinePaymentGatewayListItem } from './offline-gateway-list-item';
+import { OfflinePaymentGatewayListItem } from '../offline-gateway-list-item';
 
 const assetUrl = getAdminSetting( 'wcAdminAssetUrl' );
 
