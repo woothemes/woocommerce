@@ -390,7 +390,7 @@ class Features {
 		/**
 		 * Filter to determine if admin features should be loaded.
 		 *
-		 * @since 9.5.0
+		 * @since 9.6.0
 		 * @param boolean $should_load Whether admin features should be loaded. It defaults to true when the current request is in an admin context.
 		 */
 		return apply_filters( 'woocommerce_admin_should_load_features', $should_load );
