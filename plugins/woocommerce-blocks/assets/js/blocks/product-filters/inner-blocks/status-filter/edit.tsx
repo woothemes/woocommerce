@@ -20,7 +20,7 @@ import { Inspector } from './inspector';
 import type { EditProps } from './types';
 
 const Edit = ( props: EditProps ) => {
-	const { showCounts, hideEmpty, clearButton } = props.attributes;
+	const { showCounts, hideEmpty } = props.attributes;
 	const { children, ...innerBlocksProps } = useInnerBlocksProps(
 		useBlockProps(),
 		{
