@@ -173,6 +173,7 @@ WooCommerce comes with some sample data you can use to see how products look; im
 
 **WooCommerce**
 
+* Fix - Fix StoreAPI erroring when a param is an integer [#52361](https://github.com/woocommerce/woocommerce/pull/52361)
 * Fix - Product grid blocks: fix Image aspect ratio with WordPress 6.7 [#52431](https://github.com/woocommerce/woocommerce/pull/52431)
 * Fix - Product Image Gallery: Render placeholder in Editor in WordPress 6.7 [#52432](https://github.com/woocommerce/woocommerce/pull/52432)
 * Fix - Support situations in which (WooCommerce) translations are inadvertently loaded too early. [#52199](https://github.com/woocommerce/woocommerce/pull/52199)
