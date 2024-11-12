@@ -97,6 +97,9 @@ class ProductCollection extends AbstractBlock {
 		// Provide location context into block's context.
 		add_filter( 'render_block_context', array( $this, 'provide_location_context_for_inner_blocks' ), 11, 1 );
 
+		// Provide location context into block's context.
+		add_filter( 'render_block_context', array( $this, 'provide_context_for_pagination' ), 20, 3 );
+
 		// Disable block render if the ProductTemplate block is empty.
 		add_filter(
 			'render_block_woocommerce/product-template',
@@ -257,6 +260,32 @@ class ProductCollection extends AbstractBlock {
 				'productId' => absint( $context['postId'] ),
 			),
 		) : $this->get_location_context();
+
+		return $context;
+	}
+
+	/**
+	 * Provides forcePageReload context for the pagination block.
+	 *
+	 * @param array $context  The block context.
+	 * @param array         $parsed_block An associative array of the block being rendered. See WP_Block_Parser_Block.
+	 * @param WP_Block|null $parent_block If this is a nested block, a reference to the parent block.
+	 * @return array $context The block context including the forcePageReload context.
+	 */
+	public function provide_context_for_pagination( $context, $parsed_block, $parent_block ) {
+
+		// Run only on frontend.
+		// This is needed to avoid SSR renders while in editor. @see https://github.com/woocommerce/woocommerce/issues/45181.
+		if ( is_admin() || \WC()->is_rest_api_request() ) {
+			return $context;
+		}
+
+		// Target only product collection's inner block navigation blocks that use the 'query' context.
+		if ('core/query-pagination' !== $parsed_block['blockName'] || ! isset( $context['query'] ) || ! isset( $context['query']['isProductCollectionBlock'] ) || ! $context['query']['isProductCollectionBlock'] ) {
+			return $context;
+		}
+
+		$context['forcePageReload'] = $parent_block->parsed_block['attrs']['forcePageReload'] ?? false;
 
 		return $context;
 	}
