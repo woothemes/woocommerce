@@ -57,7 +57,7 @@ export {
 	MenuSlot as __experimentalSelectControlMenuSlot,
 } from './experimental-select-control/menu';
 export { default as ScrollTo } from './scroll-to';
-export { Sortable } from './sortable';
+export { Sortable, SortableHandle } from './sortable';
 export { ListItem } from './list-item';
 export { default as Spinner } from './spinner';
 export { default as Stepper, StepperProps } from './stepper';

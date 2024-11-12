@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { List } from '@woocommerce/components';
+import { Sortable } from '@woocommerce/components';
 import { PaymentGateway } from '@woocommerce/data';
 import { Card, CardHeader } from '@wordpress/components';
 import React from '@wordpress/element';
@@ -81,12 +81,15 @@ export const OfflinePaymentGateways = ( {
 		.filter( Boolean );
 
 	// Transform plugins comply with List component format.
-	const paymentGatewaysList = availableOfflineGateways.map( ( gateway ) => {
-		if ( ! gateway ) return null;
-		return OfflinePaymentGatewayListItem( {
-			gateway,
-		} );
-	} );
+	const paymentGatewaysList = availableOfflineGateways.map(
+		( gateway, index ) => {
+			if ( ! gateway ) return null;
+			return OfflinePaymentGatewayListItem( {
+				gateway,
+				index,
+			} );
+		}
+	);
 
 	return (
 		<Card size="medium" className="settings-payment-gateways">
@@ -95,7 +98,9 @@ export const OfflinePaymentGateways = ( {
 					{ __( 'Payment methods', 'woocommerce' ) }
 				</div>
 			</CardHeader>
-			<List items={ paymentGatewaysList } />
+			<Sortable className="woocommerce-list" isHorizontal={ false }>
+				{ paymentGatewaysList }
+			</Sortable>
 		</Card>
 	);
 };
