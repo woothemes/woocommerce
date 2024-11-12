@@ -87,14 +87,14 @@ final class PaymentExtensionSuggestions {
 	 *   'id' => 'woopayments', // This is required.
 	 *   '_type' => 'provider', // Overrides the '_type' key.
 	 *   // Special entry that instructs the system to append the given items to a list-type entry.
-	 *   // If the original entry is not a list, we will ignore the instruction.
+	 *   // If the original entry is not a list, we will throw an exception.
 	 *   // If the original entry does not exist, we will create it.
 	 *   // This is useful when you want to add tags to a suggestion's default list of tags.
 	 *   '_append' => array(
 	 *       'tags' => array( self::TAG_PREFERRED ),
 	 *   ),
 	 *   // Special entry that instructs the system to remove the given items from a list-type entry.
-	 *   // If the original entry is not a list, we will ignore the instruction.
+	 *   // If the original entry is not a list, we will throw an exception.
 	 *   // If the original entry does not exist, we will ignore the instruction.
 	 *   // This is useful when you want to remove tags from a suggestion's default list of tags.
 	 *   '_remove' => array(
@@ -1294,8 +1294,11 @@ final class PaymentExtensionSuggestions {
 					// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 					throw new \Exception( 'Malformed country extension details _append details.' );
 				}
-				if ( ! isset( $base_details[ $append_key ] ) ||
-					! is_array( $base_details[ $append_key ] ) ||
+				// If the target entry doesn't exist, create it as an empty list.
+				if ( ! isset( $base_details[ $append_key ] ) ) {
+					$base_details[ $append_key ] = array();
+				}
+				if ( ! is_array( $base_details[ $append_key ] ) ||
 					! ArrayUtil::array_is_list( $base_details[ $append_key ] )
 				) {
 					// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
@@ -1324,8 +1327,11 @@ final class PaymentExtensionSuggestions {
 					// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 					throw new \Exception( 'Malformed country extension details _remove details.' );
 				}
-				if ( ! isset( $base_details[ $removal_key ] ) ||
-					! is_array( $base_details[ $removal_key ] ) ||
+				if ( ! isset( $base_details[ $removal_key ] ) ) {
+					// If the target entry doesn't exist, we don't need to do anything.
+					continue;
+				}
+				if ( ! is_array( $base_details[ $removal_key ] ) ||
 					! ArrayUtil::array_is_list( $base_details[ $removal_key ] )
 				) {
 					// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
