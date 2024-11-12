@@ -28,6 +28,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 
 		add_action( 'woocommerce_admin_field_email_notification', array( $this, 'email_notification_setting' ) );
 		add_action( 'woocommerce_admin_field_email_preview', array( $this, 'email_preview' ) );
+		add_action( 'woocommerce_admin_field_email_image_url', array( $this, 'email_image_url' ) );
 		parent::__construct();
 	}
 
@@ -83,7 +84,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 				'title'       => __( 'Logo', 'woocommerce' ),
 				'desc'        => '',
 				'id'          => 'woocommerce_email_header_image',
-				'type'        => 'image_url_with_preview',
+				'type'        => 'email_image_url',
 				'css'         => 'min-width:400px;',
 				'placeholder' => __( 'N/A', 'woocommerce' ),
 				'default'     => '',
@@ -438,6 +439,38 @@ class WC_Settings_Emails extends WC_Settings_Page {
 			id="wc_settings_email_preview_slotfill"
 			data-preview-url="<?php echo esc_url( wp_nonce_url( admin_url( '?preview_woocommerce_mail=true' ), 'preview-mail' ) ); ?>"
 		></div>
+		<?php
+	}
+
+	/**
+	 * Creates the React mount point for the email image url.
+	 *
+	 * @param array $value Field value array.
+	 */
+	public function email_image_url( $value ) {
+		$option_value = $value['value'];
+		if ( ! isset( $value['field_name'] ) ) {
+			$value['field_name'] = $value['id'];
+		}
+		?>
+		<tr class="<?php echo esc_attr( $value['row_class'] ); ?>">
+			<th scope="row" class="titledesc">
+				<label for="<?php echo esc_attr( $value['id'] ); ?>"><?php echo esc_html( $value['title'] ); ?></label>
+			</th>
+			<td class="forminp forminp-<?php echo esc_attr( sanitize_title( $value['type'] ) ); ?>">
+				<input
+					name="<?php echo esc_attr( $value['field_name'] ); ?>"
+					id="<?php echo esc_attr( $value['id'] ); ?>"
+					type="hidden"
+					value="<?php echo esc_attr( $option_value ); ?>"
+				/>
+				<div
+					id="wc_settings_email_image_url_slotfill"
+					data-id="<?php echo esc_attr( $value['id'] ); ?>"
+					data-image-url="<?php echo esc_attr( $option_value ); ?>"
+				></div>
+			</td>
+		</tr>
 		<?php
 	}
 }

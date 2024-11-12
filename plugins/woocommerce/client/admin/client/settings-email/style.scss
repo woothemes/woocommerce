@@ -111,3 +111,61 @@ $wc-setting-email-preview-gap: 16px;
 		margin-left: 4px;
 	}
 }
+
+.wc-settings-email-image-url-new-image {
+	border: 1px #ccc solid;
+	border-radius: 4px;
+	width: 400px;
+	height: 88px;
+	position: relative;
+
+	button.wc-settings-email-image-url-select-image {
+		background-color: transparent;
+		border: none;
+		display: block;
+		height: 100%;
+		width: 100%;
+	}
+
+	img.wc-settings-email-image-url-new-image-icon {
+		position: absolute;
+		margin: auto;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+	}
+}
+
+.wc-settings-email-image-url-existing-image {
+	> div {
+		margin-bottom: 8px;
+	}
+
+	.wc-settings-email-image-url-image-preview {
+		max-width: 400px;
+		border: 1px #ccc solid;
+		border-radius: 4px;
+	}
+
+	button.wc-settings-email-image-url-select-image:not(.button) {
+		background-color: transparent;
+		border: none;
+		padding: 0;
+
+		&:focus {
+			box-shadow: none;
+		}
+	}
+
+	> button.wc-settings-email-image-url-select-image.button,
+	> button.wc-settings-email-image-url-remove-image.button {
+		height: 40px;
+		line-height: 2.8;
+		background-color: transparent;
+	}
+
+	> button.wc-settings-email-image-url-remove-image.button {
+		border: none;
+	}
+}
