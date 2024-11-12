@@ -75,6 +75,7 @@ export type Collections =
 	| 'bestSellers'
 	| 'onSale'
 	| 'featured'
+	| 'relatedProducts'
 	| 'productCatalog'
 	| 'myCustomCollection'
 	| 'myCustomCollectionWithPreview'
@@ -93,6 +94,7 @@ const collectionToButtonNameMap = {
 	bestSellers: 'Best Sellers',
 	onSale: 'On Sale Products',
 	featured: 'Featured Products',
+	relatedProducts: 'Related Products',
 	productCatalog: 'create your own',
 	myCustomCollection: 'My Custom Collection',
 	myCustomCollectionWithPreview: 'My Custom Collection with Preview',
