@@ -33,6 +33,7 @@ export const OfflinePaymentGatewayListItem = ({
 	return {
 		key: gateway.id,
 		title: <>{ gateway.title }</>,
+		className: 'transitions-disabled',
 		content: <>{ decodeEntities( gateway.content ) }</>,
 		after: (
 			<PaymentGatewayButton

@@ -29,12 +29,17 @@ export const PaymentGatewayListItem = ( {
 }: PaymentGatewayItemProps ) => {
 	const [ isEnabled, setIsEnabled ] = useState( gateway.enabled );
 
+	const isWCPay = [
+		'pre_install_woocommerce_payments_promotion',
+		'woocommerce_payments',
+	].includes( gateway.id );
+
 	const determineGatewayStatus = () => {
 		if ( ! isEnabled && gateway?.needs_setup ) {
 			return 'needs_setup';
 		}
 		if ( isEnabled ) {
-			if ( gateway.id === 'woocommerce_payments' ) {
+			if ( isWCPay ) {
 				if ( wooPaymentsGatewayData?.isInTestMode ) {
 					return 'test_mode';
 				}
@@ -42,7 +47,7 @@ export const PaymentGatewayListItem = ( {
 			return 'active';
 		}
 
-		if ( gateway.id === 'woocommerce_payments' ) {
+		if ( isWCPay ) {
 			return 'recommended';
 		}
 
@@ -51,6 +56,9 @@ export const PaymentGatewayListItem = ( {
 
 	return {
 		key: gateway.id,
+		className: isWCPay
+			? 'woocommerce-item__woocommerce-payment transitions-disabled'
+			: 'transitions-disabled',
 		title: (
 			<>
 				{ gateway.method_title }
@@ -60,7 +68,7 @@ export const PaymentGatewayListItem = ( {
 		content: (
 			<>
 				{ decodeEntities( gateway.method_description ) }
-				{ gateway.id === 'woocommerce_payments' && (
+				{ isWCPay && (
 					<WooPaymentMethodsLogos
 						maxElements={ 10 }
 						isWooPayEligible={ true }
@@ -78,17 +86,16 @@ export const PaymentGatewayListItem = ( {
 						settings_url={ gateway.settings_url }
 						setIsEnabled={ setIsEnabled }
 					/>
-					{ gateway.id === 'woocommerce_payments' &&
-						wooPaymentsGatewayData?.isInTestMode && (
-							<Button
-								variant="primary"
-								onClick={ setupLivePayments }
-								isBusy={ false }
-								disabled={ false }
-							>
-								{ __( 'Set up live payments', 'woocommerce' ) }
-							</Button>
-						) }
+					{ isWCPay && wooPaymentsGatewayData?.isInTestMode && (
+						<Button
+							variant="primary"
+							onClick={ setupLivePayments }
+							isBusy={ false }
+							disabled={ false }
+						>
+							{ __( 'Set up live payments', 'woocommerce' ) }
+						</Button>
+					) }
 					<EllipsisMenu
 						label={ __( 'Task List Options', 'woocommerce' ) }
 						renderContent={ () => (

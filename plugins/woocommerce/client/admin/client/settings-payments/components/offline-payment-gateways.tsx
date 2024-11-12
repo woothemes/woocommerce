@@ -32,9 +32,9 @@ export const OfflinePaymentGateways = ( {
 				'Take payments in person via BACS. More commonly known as direct bank/wire transfer.',
 				'woocommerce'
 			),
-			image: assetUrl + '/payment_methods/cod.svg',
-			square_image: assetUrl + '/payment_methods/cod.svg',
-			image_72x72: assetUrl + '/payment_methods/cod.svg',
+			image: assetUrl + '/payment_methods/bacs.svg',
+			square_image: assetUrl + '/payment_methods/bacs.svg',
+			image_72x72: assetUrl + '/payment_methods/bacs.svg',
 			actionText: '',
 		},
 		{
@@ -91,7 +91,7 @@ export const OfflinePaymentGateways = ( {
 
 	return (
 		<Card size="medium" className="settings-payment-gateways">
-			<CardHeader>
+			<CardHeader className="settings-payment-gateways__header">
 				<div className="settings-payment-gateways__header-title">
 					{ __( 'Payment methods', 'woocommerce' ) }
 				</div>
