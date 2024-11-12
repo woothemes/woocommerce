@@ -1,0 +1,4 @@
+Significance: minor
+Type: fix
+
+Fix: Unable to connect sub-directory based multi-sites to WooCommerce.com.
