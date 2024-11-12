@@ -5595,6 +5595,9 @@ img.help_tip {
 .post-new-php.post-type-product,
 .post-php.post-type-shop_coupon,
 .post-new-php.post-type-shop_coupon {
+	a {
+		color:  var(--Gutenberg-Blueberry, #3858E9);
+	}
 	// Screen meta links.
 	#screen-meta-links {
 		padding: $gap-small 0;
