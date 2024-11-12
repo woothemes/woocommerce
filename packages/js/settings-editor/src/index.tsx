@@ -53,3 +53,5 @@ export const SettingsEditor = () => {
 		</GlobalStylesProvider>
 	);
 };
+
+export * from './sidebar';
