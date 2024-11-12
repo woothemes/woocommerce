@@ -11,7 +11,6 @@ use Automattic\WooCommerce\Internal\Utilities\ArrayUtil;
  * Partner payment extensions provider class.
  */
 final class PaymentExtensionSuggestions {
-
 	/*
 	 * The unique IDs for the payment extension suggestions.
 	 *
@@ -1988,6 +1987,8 @@ final class PaymentExtensionSuggestions {
 	 * Get the base details for a specific extension.
 	 *
 	 * @see self::standardize_extension_details() for the supported entries.
+	 *
+	 * @param string $extension_id The extension ID.
 	 *
 	 * @return ?array The extension base details.
 	 *                Null if the extension is not one we have details for.

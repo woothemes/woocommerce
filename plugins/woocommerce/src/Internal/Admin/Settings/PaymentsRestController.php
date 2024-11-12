@@ -56,16 +56,6 @@ class PaymentsRestController extends RestApiControllerBase {
 	}
 
 	/**
-	 * Register the hooks used by the class.
-	 */
-	public function register() {
-		parent::register();
-
-		// We need to mock broadly because plugins will conditionally load logic very early on.
-		// self::add_action( 'plugins_loaded', array( $this, 'mock_is_admin' ), 0 );
-	}
-
-	/**
 	 * Register the REST API endpoints handled by this controller.
 	 */
 	public function register_routes() {
@@ -123,9 +113,11 @@ class PaymentsRestController extends RestApiControllerBase {
 	/**
 	 * Get the registered payment gateways.
 	 *
+	 * @param WP_REST_Request $request The request object.
+	 *
 	 * @return array The registered payment gateways.
 	 */
-	private function get_payment_gateways( $request ): array {
+	private function get_payment_gateways( WP_REST_Request $request ): array {
 		$items = array();
 		foreach ( $this->get_settings_page_payment_gateways() as $payment_gateway_order => $payment_gateway ) {
 			if ( in_array( $payment_gateway->id, self::OFFLINE_METHODS, true ) ) {
@@ -144,9 +136,11 @@ class PaymentsRestController extends RestApiControllerBase {
 	/**
 	 * Get the offline payment methods.
 	 *
+	 * @param WP_REST_Request $request The request object.
+	 *
 	 * @return array The offline payment methods.
 	 */
-	private function get_offline_payment_methods( $request ): array {
+	private function get_offline_payment_methods( WP_REST_Request $request ): array {
 		$items = array();
 		foreach ( $this->get_settings_page_payment_gateways() as $payment_gateway_order => $payment_gateway ) {
 			if ( ! in_array( $payment_gateway->id, self::OFFLINE_METHODS, true ) ) {
@@ -336,7 +330,7 @@ class PaymentsRestController extends RestApiControllerBase {
 				if ( ! is_null( $sandbox ) ) {
 					return $sandbox;
 				}
-			} catch ( \Exception $e ) {
+			} catch ( \Exception $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
 				// Ignore any exceptions.
 			}
 		}
@@ -527,7 +521,14 @@ class PaymentsRestController extends RestApiControllerBase {
 		);
 	}
 
-	private function enhance_payment_extension_suggestion( $extension ) {
+	/**
+	 * Enhance a payment extension suggestion with additional information.
+	 *
+	 * @param array $extension The extension suggestion.
+	 *
+	 * @return array The enhanced payment extension suggestion.
+	 */
+	private function enhance_payment_extension_suggestion( array $extension ): array {
 		// Determine the category of the extension.
 		switch ( $extension['_type'] ) {
 			case ExtensionSuggestions::TYPE_PSP:
@@ -567,6 +568,7 @@ class PaymentsRestController extends RestApiControllerBase {
 				'description' =>
 					'<p>' . esc_html__( 'Save 10% on processing fees during your first 3 months when you sign up for WooPayments.', 'woocommerce' ) . '</p>' .
 					'<p>' . sprintf(
+						/* translators: 1: opening anchor tag, 2: closing anchor tag */
 						esc_html__( 'See $1%1$sTerms and conditions$2%2$s for details', 'woocommerce' ),
 						'<a href="#">',
 						'</a>'
@@ -621,9 +623,9 @@ class PaymentsRestController extends RestApiControllerBase {
 	 */
 	private function check_permissions( WP_REST_Request $request ) {
 		$context = 'read';
-		if ( 'POST' == $request->get_method() ) {
+		if ( 'POST' === $request->get_method() ) {
 			$context = 'edit';
-		} elseif ( 'DELETE' == $request->get_method() ) {
+		} elseif ( 'DELETE' === $request->get_method() ) {
 			$context = 'delete';
 		}
 
