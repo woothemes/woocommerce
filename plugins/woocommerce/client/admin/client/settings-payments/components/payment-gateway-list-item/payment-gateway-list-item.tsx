@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { useState } from 'react';
 import { EllipsisMenu } from '@woocommerce/components';
 import { PaymentGateway } from '@woocommerce/data';
