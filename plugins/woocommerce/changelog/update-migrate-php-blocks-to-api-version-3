@@ -1,4 +1,4 @@
 Significance: patch
 Type: update
 
-Update PHP blocks definition to version 3
+Remove API version from PHP blocks definition
