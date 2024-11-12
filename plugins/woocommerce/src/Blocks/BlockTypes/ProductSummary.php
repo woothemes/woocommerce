@@ -22,7 +22,7 @@ class ProductSummary extends AbstractBlock {
 
 
 	/**
-	 * Get block supports. Shared with the frontend.
+	 * Get blo$api_version = '3'd with the frontend.
 	 * IMPORTANT: If you change anything here, make sure to update the JS file too.
 	 *
 	 * @return array
