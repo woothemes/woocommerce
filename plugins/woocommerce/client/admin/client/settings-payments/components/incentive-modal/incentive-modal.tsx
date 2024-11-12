@@ -97,6 +97,8 @@ export const IncentiveModal = ( {
 												<Link
 													href="https://woocommerce.com/terms-conditions/woopayments-action-promotion-2023/"
 													target="_blank"
+													rel="noreferrer"
+													type="external"
 												>
 													{ __(
 														'Terms and Conditions',
