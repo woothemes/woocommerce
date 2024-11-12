@@ -17,8 +17,10 @@ import { SettingItem } from './setting-item';
 const { Icon, ...icons } = IconPackage;
 
 export const Sidebar = ( {
+	activePage,
 	pages,
 }: {
+	activePage: string;
 	pages: typeof window.wcSettings.admin.settingsPages;
 } ) => {
 	return (
@@ -30,7 +32,7 @@ export const Sidebar = ( {
 						key={ slug }
 						slug={ slug }
 						label={ label }
-						isActive={ false }
+						isActive={ activePage === slug }
 						icon={
 							<Icon
 								icon={

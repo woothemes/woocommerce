@@ -32,19 +32,15 @@ import { Route, Location } from './types';
 const { useLocation } = unlock( routerPrivateApis );
 
 const NotFound = () => {
-	return (
-		<h1 style={ { color: 'white' } }>
-			{ __( 'Page not found', 'woocommerce' ) }
-		</h1>
-	);
+	return <h1>{ __( 'Page not found', 'woocommerce' ) }</h1>;
 };
 
 /**
- * Default route when a page is not found.
+ * Default route when active page is not found.
  *
  */
-const getNotFoundRoute = ( page: string ): Route => ( {
-	key: page,
+const getNotFoundRoute = ( activePage: string ): Route => ( {
+	key: activePage,
 	areas: {
 		sidebar: null,
 		content: <NotFound />,
@@ -59,29 +55,37 @@ const getNotFoundRoute = ( page: string ): Route => ( {
 /**
  * Creates a route configuration for legacy settings pages.
  *
- * @param {string} page - The page identifier.
+ * @param {string}                                       activePage - The active page.
+ * @param {typeof window.wcSettings.admin.settingsPages} pages      - The pages.
  */
 const getLegacyRoute = (
-	page: string,
+	activePage: string,
 	pages: typeof window.wcSettings.admin.settingsPages
-): Route => ( {
-	key: page,
-	areas: {
-		sidebar: (
-			<SidebarNavigationScreen
-				title={ 'Settings Title TBD' }
-				isRoot
-				content={ <Sidebar pages={ pages } /> }
-			/>
-		),
-		content: <div>Content Placeholder: current tab: { page }</div>,
-		edit: null,
-	},
-	widths: {
-		content: undefined,
-		edit: undefined,
-	},
-} );
+): Route => {
+	const pageTitle =
+		pages[ activePage ]?.label || __( 'Settings', 'woocommerce' );
+
+	return {
+		key: activePage,
+		areas: {
+			sidebar: (
+				<SidebarNavigationScreen
+					title={ pageTitle }
+					isRoot
+					content={
+						<Sidebar activePage={ activePage } pages={ pages } />
+					}
+				/>
+			),
+			content: <div>Content Placeholder</div>,
+			edit: null,
+		},
+		widths: {
+			content: undefined,
+			edit: undefined,
+		},
+	};
+};
 
 const PAGES_FILTER = 'woocommerce_admin_settings_pages';
 
@@ -139,19 +143,19 @@ export const useActiveRoute = () => {
 	const modernRoutes = useModernRoutes();
 
 	return useMemo( () => {
-		const { tab: page = 'general' } = location.params;
-		const pageSettings = settingsPages?.[ page ];
+		const { tab: activePage = 'general' } = location.params;
+		const pageSettings = settingsPages?.[ activePage ];
 
 		if ( ! pageSettings ) {
-			return getNotFoundRoute( page );
+			return getNotFoundRoute( activePage );
 		}
 
 		// Handle legacy pages.
 		if ( ! pageSettings.is_modern ) {
-			return getLegacyRoute( page, settingsPages );
+			return getLegacyRoute( activePage, settingsPages );
 		}
 
 		// Handle modern pages.
-		return modernRoutes[ page ] || getNotFoundRoute( page );
-	}, [ settingsPages, location, modernRoutes ] );
+		return modernRoutes[ activePage ] || getNotFoundRoute( activePage );
+	}, [ settingsPages, location.params, modernRoutes ] );
 };
