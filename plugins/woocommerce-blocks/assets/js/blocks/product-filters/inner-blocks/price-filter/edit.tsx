@@ -11,6 +11,7 @@ import { useCollectionData } from '@woocommerce/base-context/hooks';
 import { __ } from '@wordpress/i18n';
 import { PanelBody, ToggleControl } from '@wordpress/components';
 import { BlockEditProps } from '@wordpress/blocks';
+import { useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -34,6 +35,14 @@ const Edit = ( props: BlockEditProps< BlockAttributes > ) => {
 		queryState: {},
 		isEditor: true,
 	} );
+
+	useEffect( () => {
+		toggleProductFilterClearButtonVisibility( {
+			clientId,
+			showClearButton: clearButton,
+		} );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	return (
 		<div { ...blockProps }>
