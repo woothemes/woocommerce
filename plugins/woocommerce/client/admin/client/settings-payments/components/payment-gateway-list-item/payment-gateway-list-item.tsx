@@ -17,6 +17,7 @@ import sanitizeHTML from '~/lib/sanitize-html';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
 import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
 import { WooPaymentsGatewayData } from '~/settings-payments/types';
+import { WC_ASSET_URL } from '~/utils/admin-settings';
 
 type PaymentGatewayItemProps = {
 	gateway: PaymentGateway;
@@ -31,12 +32,17 @@ export const PaymentGatewayListItem = ( {
 }: PaymentGatewayItemProps ) => {
 	const [ isEnabled, setIsEnabled ] = useState( gateway.enabled );
 
+	const isWCPay = [
+		'pre_install_woocommerce_payments_promotion',
+		'woocommerce_payments',
+	].includes( gateway.id );
+
 	const determineGatewayStatus = () => {
 		if ( ! isEnabled && gateway?.needs_setup ) {
 			return 'needs_setup';
 		}
 		if ( isEnabled ) {
-			if ( gateway.id === 'woocommerce_payments' ) {
+			if ( isWCPay ) {
 				if ( wooPaymentsGatewayData?.isInTestMode ) {
 					return 'test_mode';
 				}
@@ -44,7 +50,7 @@ export const PaymentGatewayListItem = ( {
 			return 'active';
 		}
 
-		if ( gateway.id === 'woocommerce_payments' ) {
+		if ( isWCPay ) {
 			return 'recommended';
 		}
 
@@ -53,6 +59,9 @@ export const PaymentGatewayListItem = ( {
 
 	return {
 		key: gateway.id,
+		className: isWCPay
+			? 'woocommerce-item__woocommerce-payment transitions-disabled'
+			: 'transitions-disabled',
 		title: (
 			<>
 				{ gateway.method_title }
@@ -62,11 +71,11 @@ export const PaymentGatewayListItem = ( {
 		content: (
 			<>
 				<span
-					dangerouslySetInnerHTML={ sanitizeHTML(
-						decodeEntities( gateway.method_description )
-					) }
-				/>
-				{ gateway.id === 'woocommerce_payments' && (
+                    dangerouslySetInnerHTML={ sanitizeHTML(
+                        decodeEntities( gateway.method_description )
+                    ) }
+                />
+				{ isWCPay && (
 					<WooPaymentMethodsLogos
 						maxElements={ 10 }
 						isWooPayEligible={ true }
@@ -84,17 +93,16 @@ export const PaymentGatewayListItem = ( {
 						settings_url={ gateway.settings_url }
 						setIsEnabled={ setIsEnabled }
 					/>
-					{ gateway.id === 'woocommerce_payments' &&
-						wooPaymentsGatewayData?.isInTestMode && (
-							<Button
-								variant="primary"
-								onClick={ setupLivePayments }
-								isBusy={ false }
-								disabled={ false }
-							>
-								{ __( 'Set up live payments', 'woocommerce' ) }
-							</Button>
-						) }
+					{ isWCPay && wooPaymentsGatewayData?.isInTestMode && (
+						<Button
+							variant="primary"
+							onClick={ setupLivePayments }
+							isBusy={ false }
+							disabled={ false }
+						>
+							{ __( 'Set up live payments', 'woocommerce' ) }
+						</Button>
+					) }
 					<EllipsisMenu
 						label={ __( 'Task List Options', 'woocommerce' ) }
 						renderContent={ () => (
@@ -117,10 +125,8 @@ export const PaymentGatewayListItem = ( {
 		// TODO add drag-and-drop icon before image (future PR)
 		before: (
 			<img
-				src={
-					// TODO: Need a way to make images available here.
-					'https://woocommerce.com/wp-content/plugins/wccom-plugins/payment-gateway-suggestions/images/wcpay.svg'
-				}
+				// TODO: Need a way to make images available here. For now it'll be a WooPayments image everywhere.
+				src={ `${ WC_ASSET_URL }images/onboarding/wcpay.svg` }
 				alt={ gateway.title + ' logo' }
 			/>
 		),

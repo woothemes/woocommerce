@@ -54,6 +54,7 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 
 		// Add filters and actions.
 		add_filter( 'woocommerce_admin_shared_settings', array( $this, 'preload_settings' ) );
+		add_action( 'admin_head', array( $this, 'hide_help_tabs' ) );
 
 		parent::__construct();
 	}
@@ -141,26 +142,40 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 			WC_Payments::mode()->is_test_mode_onboarding();
 
 		// First, get all the payment extensions suggestions.
-		$all_suggestions = Suggestions::get_suggestions( DefaultPaymentGateways::get_all() );
-		$payment_gateway_ids = array_map( function ( $gateway ) {
-			return $gateway['id'];
-		}, $payment_gateways );
+		$all_suggestions     = Suggestions::get_suggestions( DefaultPaymentGateways::get_all() );
+		$payment_gateway_ids = array_map(
+			function ( $gateway ) {
+				return $gateway['id'];
+			},
+			$payment_gateways
+		);
 
 		// Then, filter the suggestions to get the preferred and additional payment extensions (not including installed extensions).
-		$preferred_payment_extension_suggestions = array_values( array_filter( $all_suggestions, function ( $suggestion ) use ( $payment_gateway_ids ) {
-			// Currently it will be only WooPayments, since we don't have category_preferred or something like that.
-			return $suggestion->id === 'woocommerce_payments:with-in-person-payments' && ! in_array( 'woocommerce_payments', $payment_gateway_ids, true );
-		} ) );
+		$preferred_payment_extension_suggestions = array_values(
+			array_filter(
+				$all_suggestions,
+				function ( $suggestion ) use ( $payment_gateway_ids ) {
+					// Currently it will be only WooPayments, since we don't have category_preferred or something like that.
+					return 'woocommerce_payments:with-in-person-payments' === $suggestion->id && ! in_array( 'woocommerce_payments', $payment_gateway_ids, true );
+				}
+			)
+		);
 
 		// Sort additional by recommendation_priority and get the first one.
-		$additional_payment_extensions_suggestions = array_filter( $all_suggestions, function ( $suggestion ) use ( $payment_gateway_ids ) {
+		$additional_payment_extensions_suggestions = array_filter(
+			$all_suggestions,
+			function ( $suggestion ) use ( $payment_gateway_ids ) {
 				return isset( $suggestion->category_additional )
-				&& in_array( WC()->countries->get_base_country(), $suggestion->category_additional, true )
-				&& ! in_array( $suggestion->id, $payment_gateway_ids, true );
-		} );
-		usort( $additional_payment_extensions_suggestions, function ( $a, $b ) {
-			return $a->recommendation_priority <=> $b->recommendation_priority;
-		} );
+					&& in_array( WC()->countries->get_base_country(), $suggestion->category_additional, true )
+					&& ! in_array( $suggestion->id, $payment_gateway_ids, true );
+			}
+		);
+		usort(
+			$additional_payment_extensions_suggestions,
+			function ( $a, $b ) {
+				return $a->recommendation_priority <=> $b->recommendation_priority;
+			}
+		);
 		$additional_payment_extension_suggestions = array_slice( $additional_payment_extensions_suggestions, 0, 1 );
 
 		// Combine two into one.
@@ -169,12 +184,15 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 		// Then, filter the suggestions to get the other payment extensions (not including installed extensions).
 		// Also, we don't need suggestions both in additional and other categories.
 		$other_payment_extensions_suggestions = array_values(
-			array_filter( $all_suggestions, function ( $suggestion ) use ( $payment_gateway_ids ) {
-				return isset( $suggestion->category_other )
-					&& in_array( WC()->countries->get_base_country(), $suggestion->category_other, true )
-					&& ! in_array( WC()->countries->get_base_country(), $suggestion->category_additional, true )
-					&& ! in_array( $suggestion->id, $payment_gateway_ids, true );
-			} )
+			array_filter(
+				$all_suggestions,
+				function ( $suggestion ) use ( $payment_gateway_ids ) {
+					return isset( $suggestion->category_other )
+						&& in_array( WC()->countries->get_base_country(), $suggestion->category_other, true )
+						&& ! in_array( WC()->countries->get_base_country(), $suggestion->category_additional, true )
+						&& ! in_array( $suggestion->id, $payment_gateway_ids, true );
+				}
+			)
 		);
 
 		// TODO: we should think about a better way to pass this data to the frontend.
@@ -188,8 +206,6 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 		echo '<script type="application/json" id="experimental_wc_settings_payments_gateways">' . wp_json_encode( $payment_gateways ) . '</script>';
 		echo '<script type="application/json" id="experimental_wc_settings_payments_preferred_extensions_suggestions">' . wp_json_encode( $preferred_payment_extension_suggestions ) . '</script>';
 		echo '<script type="application/json" id="experimental_wc_settings_payments_other_extensions_suggestions">' . wp_json_encode( $other_payment_extensions_suggestions ) . '</script>';
-		// TODO remove this after testing.
-		echo '<script type="application/json" id="experimental_wc_settings_payments_all_suggestions">' . wp_json_encode( $all_suggestions ) . '</script>';
 	}
 
 	/**
@@ -292,6 +308,24 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 
 			$this->do_update_options_action();
 		}
+	}
+
+	/**
+	 * Hide the help tabs.
+	 */
+	public function hide_help_tabs() {
+		$screen = get_current_screen();
+
+		if ( ! $screen instanceof WP_Screen || 'woocommerce_page_wc-settings' !== $screen->id ) {
+			return;
+		}
+
+		global $current_tab;
+		if ( 'checkout' !== $current_tab ) {
+			return;
+		}
+
+		$screen->remove_help_tabs();
 	}
 }
 

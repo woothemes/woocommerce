@@ -65,6 +65,7 @@ export const PaymentGateways = ( {
 	// Add offline payment provider.
 	paymentGatewaysList.push( {
 		key: 'offline',
+		className: 'transitions-disabled',
 		title: <>{ __( 'Offline payment methods', 'woocommerce' ) }</>,
 		content: (
 			<>
