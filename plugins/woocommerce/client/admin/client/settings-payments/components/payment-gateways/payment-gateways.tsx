@@ -6,6 +6,7 @@ import { List } from '@woocommerce/components';
 import { Plugin, PaymentGateway } from '@woocommerce/data';
 import { getAdminLink } from '@woocommerce/settings';
 import { SelectControl } from '@wordpress/components';
+import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -36,6 +37,7 @@ export const PaymentGateways = ( {
 		// TODO: Implement in future PR.
 	};
 
+	// TODO: Update to use useMemo to avoid re-rendering.
 	// Transform suggested preferred plugins comply with List component format.
 	const preferredPluginSuggestionsList = preferredPluginSuggestions.map(
 		( plugin: Plugin ) => {
@@ -51,6 +53,7 @@ export const PaymentGateways = ( {
 		}
 	);
 
+	// TODO: Update to use useMemo to avoid re-rendering.
 	// Transform payment gateways to comply with List component format.
 	const paymentGatewaysList = registeredPaymentGateways.map(
 		( gateway: PaymentGateway ) => {
