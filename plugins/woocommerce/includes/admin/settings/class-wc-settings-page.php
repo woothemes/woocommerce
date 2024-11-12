@@ -25,6 +25,13 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 		protected $id = '';
 
 		/**
+		 * Setting page icon.
+		 *
+		 * @var string
+		 */
+		public $icon = 'settings';
+
+		/**
 		 * Setting page label.
 		 *
 		 * @var string
@@ -101,6 +108,8 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 					? $this->get_settings_for_section( $section_id )
 					: $this->get_settings();
 
+				$section_settings_data = array();
+
 				// Loop through each setting in the section and add the value to the settings data.
 				foreach ( $section_settings as $section_setting ) {
 					if ( isset( $section_setting['id'] ) ) {
@@ -111,11 +120,21 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 							: get_option( $section_setting['id'] );
 					}
 
-					$sections_data[] = $section_setting;
+					$section_settings_data[] = $section_setting;
+
+					$sections_data[ $section_id ] = array(
+						'label'    => html_entity_decode( $section_label ),
+						'settings' => $section_settings_data,
+					);
 				}
 			}
 
-			$pages[ $this->id ] = $sections_data;
+			$pages[ $this->id ] = array(
+				'label'    => html_entity_decode( $this->label ),
+				'slug'     => $this->id,
+				'icon'     => $this->icon,
+				'sections' => $sections_data,
+			);
 
 			return $pages;
 		}

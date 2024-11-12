@@ -30,6 +30,13 @@ class WC_Settings_Emails extends WC_Settings_Page {
 	}
 
 	/**
+	 * Setting page icon.
+	 *
+	 * @var string
+	 */
+	public $icon = 'atSymbol';
+
+	/**
 	 * Get own sections.
 	 *
 	 * @return array
