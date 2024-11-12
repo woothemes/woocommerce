@@ -20,6 +20,13 @@ class ProductCollection extends AbstractBlock {
 	protected $block_name = 'product-collection';
 
 	/**
+	 * Instance counter.
+	 *
+	 * @var int
+	 */
+	protected $counter = 0;
+
+	/**
 	 * An associative array of collection handlers.
 	 *
 	 * @var array<string, callable> $collection_handler_store
@@ -844,6 +851,10 @@ class ProductCollection extends AbstractBlock {
 			// Build a consistent query ID based on the query parameters.
 			$hashed_args = $parsed_block['attrs']['query'] ?? array();
 			unset( $hashed_args['paged'] );
+
+			// Include a counter to ensure uniqueness.
+			$hashed_args['counter'] = $this->counter;
+			$this->counter++;
 
 			$parsed_block['attrs']['queryId'] = abs( crc32( wp_json_encode( $hashed_args ) ) );
 		}
