@@ -16,7 +16,7 @@
  */
 .wp-block-woocommerce-add-to-cart-form {
 	width: unset;
-
+	.variations_button,
 	form.cart {
 		--whole-width-in-grid: span 9999; // A large number to span the whole width of the grid.
 		&::before {

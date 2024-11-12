@@ -69,6 +69,9 @@ class WC_Unit_Tests_Bootstrap {
 		// load WC.
 		tests_add_filter( 'muplugins_loaded', array( $this, 'load_wc' ) );
 
+		// Load admin features.
+		tests_add_filter( 'woocommerce_admin_should_load_features', '__return_true' );
+
 		// install WC.
 		tests_add_filter( 'setup_theme', array( $this, 'install_wc' ) );
 
