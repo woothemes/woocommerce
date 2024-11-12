@@ -145,7 +145,9 @@ test.describe(
 
 				// Set shipping country to Netherlands
 				await page
-					.getByText( `Delivers to ${ DEFAULT_BILLING_LABEL }` )
+					.getByText(
+						`No shipping options available for ${ DEFAULT_BILLING_LABEL }`
+					)
 					.click();
 				await page
 					.getByRole( 'combobox' )
@@ -186,7 +188,9 @@ test.describe(
 
 				// Set shipping country to Portugal
 				await page
-					.getByText( `Delivers to ${ DEFAULT_BILLING_LABEL }` )
+					.getByText(
+						`No shipping options available for ${ DEFAULT_BILLING_LABEL }`
+					)
 					.click();
 				await page
 					.getByRole( 'combobox' )
@@ -239,7 +243,9 @@ test.describe(
 
 				// Set shipping country to Portugal
 				await page
-					.getByText( `Delivers to ${ DEFAULT_BILLING_LABEL }` )
+					.getByText(
+						`No shipping options available for ${ DEFAULT_BILLING_LABEL }`
+					)
 					.click();
 				await page
 					.getByRole( 'combobox' )
@@ -280,7 +286,9 @@ test.describe(
 
 				// Set shipping country to Portugal
 				await page
-					.getByText( `Delivers to ${ DEFAULT_BILLING_LABEL }` )
+					.getByText(
+						`No shipping options available for ${ DEFAULT_BILLING_LABEL }`
+					)
 					.click();
 				await page
 					.getByRole( 'combobox' )
