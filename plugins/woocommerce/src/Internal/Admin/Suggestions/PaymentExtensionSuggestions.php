@@ -17,38 +17,38 @@ final class PaymentExtensionSuggestions {
 	 *
 	 * The ID is the primary extension identifier throughout the system.
 	 */
-	const AIRWALLEX = 'airwallex';
-	const ANTOM = 'antom';
-	const MERCADO_PAGO = 'mercado_pago';
-	const MOLLIE = 'mollie';
-	const PAYFAST = 'payfast';
-	const PAYMOB = 'paymob';
+	const AIRWALLEX         = 'airwallex';
+	const ANTOM             = 'antom';
+	const MERCADO_PAGO      = 'mercado_pago';
+	const MOLLIE            = 'mollie';
+	const PAYFAST           = 'payfast';
+	const PAYMOB            = 'paymob';
 	const PAYPAL_FULL_STACK = 'paypal_full_stack';
-	const PAYPAL_WALLET = 'paypal_wallet';
-	const PAYONEER = 'payoneer';
-	const PAYSTACK = 'paystack';
-	const PAYU_INDIA = 'payu_india';
-	const RAZORPAY = 'razorpay';
-	const SQUARE_IN_PERSON = 'square_in_person';
-	const STRIPE = 'stripe';
-	const TILOPAY = 'tilopay';
-	const VIVA_WALLET = 'viva_wallet';
-	const WOOPAYMENTS = 'woopayments';
-	const AMAZON_PAY = 'amazon_pay';
-	const AFFIRM = 'affirm';
-	const AFTERPAY = 'afterpay';
-	const CLEARPAY = 'clearpay';
-	const KLARNA = 'klarna';
+	const PAYPAL_WALLET     = 'paypal_wallet';
+	const PAYONEER          = 'payoneer';
+	const PAYSTACK          = 'paystack';
+	const PAYU_INDIA        = 'payu_india';
+	const RAZORPAY          = 'razorpay';
+	const SQUARE_IN_PERSON  = 'square_in_person';
+	const STRIPE            = 'stripe';
+	const TILOPAY           = 'tilopay';
+	const VIVA_WALLET       = 'viva_wallet';
+	const WOOPAYMENTS       = 'woopayments';
+	const AMAZON_PAY        = 'amazon_pay';
+	const AFFIRM            = 'affirm';
+	const AFTERPAY          = 'afterpay';
+	const CLEARPAY          = 'clearpay';
+	const KLARNA            = 'klarna';
 
 	/*
 	 * The extension types.
 	 *
 	 * The type is related to the extension's underlying payments methods scope and type.
 	 */
-	const TYPE_PSP = 'psp'; // Payment Service Provider.
-	const TYPE_APM = 'apm'; // Alternative Payment Methods.
+	const TYPE_PSP              = 'psp'; // Payment Service Provider.
+	const TYPE_APM              = 'apm'; // Alternative Payment Methods.
 	const TYPE_EXPRESS_CHECKOUT = 'express_checkout';
-	const TYPE_BNPL = 'bnpl'; // Buy now, pay later.
+	const TYPE_BNPL             = 'bnpl'; // Buy now, pay later.
 
 	/*
 	 * The extension plugin types.
@@ -63,9 +63,9 @@ final class PaymentExtensionSuggestions {
 	 * These are hints for the UI to determine if and how to display the link.
 	 */
 	const LINK_TYPE_PRICING = 'pricing';
-	const LINK_TYPE_ABOUT = 'about';
-	const LINK_TYPE_TERMS = 'terms';
-	const LINK_TYPE_DOCS = 'documentation';
+	const LINK_TYPE_ABOUT   = 'about';
+	const LINK_TYPE_TERMS   = 'terms';
+	const LINK_TYPE_DOCS    = 'documentation';
 	const LINK_TYPE_SUPPORT = 'support';
 
 	/*
@@ -74,7 +74,7 @@ final class PaymentExtensionSuggestions {
 	 * These are used to categorize the extensions and provide additional information to the system.
 	 * Some tags may carry special meaning and will be used to influence the suggestions' behavior.
 	 */
-	const TAG_PREFERRED = 'preferred';
+	const TAG_PREFERRED   = 'preferred';
 	const TAG_MADE_IN_WOO = 'made_in_woo'; // For extensions developed by Woo.
 
 	/**
@@ -92,7 +92,7 @@ final class PaymentExtensionSuggestions {
 	 *   // If the original entry does not exist, we will create it.
 	 *   // This is useful when you want to add tags to a suggestion's default list of tags.
 	 *   '_append' => array(
-	 *		 'tags' => array( self::TAG_PREFERRED ),
+	 *       'tags' => array( self::TAG_PREFERRED ),
 	 *   ),
 	 *   // Special entry that instructs the system to remove the given items from a list-type entry.
 	 *   // If the original entry is not a list, we will ignore the instruction.
@@ -248,7 +248,7 @@ final class PaymentExtensionSuggestions {
 		'GI' => array(
 			self::STRIPE => array(
 				'_append' => array(
-					'tags' => array ( self::TAG_PREFERRED ),
+					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
 			self::PAYPAL_FULL_STACK,
@@ -321,7 +321,7 @@ final class PaymentExtensionSuggestions {
 		'LI' => array(
 			self::STRIPE => array(
 				'_append' => array(
-					'tags' => array ( self::TAG_PREFERRED ),
+					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
 			self::PAYPAL_FULL_STACK,
@@ -459,7 +459,7 @@ final class PaymentExtensionSuggestions {
 		),
 		'AR' => array(
 			self::MERCADO_PAGO => array(
-				'links'       => array(
+				'links' => array(
 					// This is country specific.
 					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
 					array(
@@ -517,14 +517,14 @@ final class PaymentExtensionSuggestions {
 			self::TILOPAY,
 		),
 		'BR' => array(
-			self::STRIPE => array(
+			self::STRIPE       => array(
 				'_append' => array(
-					'tags' => array ( self::TAG_PREFERRED ),
+					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
 			self::PAYPAL_FULL_STACK,
-			self::MERCADO_PAGO  => array(
-				'links'       => array(
+			self::MERCADO_PAGO => array(
+				'links'   => array(
 					// This is country specific.
 					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
 					array(
@@ -551,7 +551,7 @@ final class PaymentExtensionSuggestions {
 					),
 				),
 				'_remove' => array(
-					'tags' => array ( self::TAG_PREFERRED ),
+					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
 			self::PAYPAL_WALLET,
@@ -566,7 +566,7 @@ final class PaymentExtensionSuggestions {
 		),
 		'CL' => array(
 			self::MERCADO_PAGO => array(
-				'links'       => array(
+				'links' => array(
 					// This is country specific.
 					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
 					array(
@@ -598,7 +598,7 @@ final class PaymentExtensionSuggestions {
 		),
 		'CO' => array(
 			self::MERCADO_PAGO => array(
-				'links'       => array(
+				'links' => array(
 					// This is country specific.
 					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
 					array(
@@ -692,14 +692,14 @@ final class PaymentExtensionSuggestions {
 			self::PAYPAL_WALLET,
 		),
 		'MX' => array(
-			self::STRIPE => array(
+			self::STRIPE       => array(
 				'_append' => array(
-					'tags' => array ( self::TAG_PREFERRED ),
+					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
 			self::PAYPAL_FULL_STACK,
-			self::MERCADO_PAGO  => array(
-				'links'       => array(
+			self::MERCADO_PAGO => array(
+				'links'   => array(
 					// This is country specific.
 					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
 					array(
@@ -726,7 +726,7 @@ final class PaymentExtensionSuggestions {
 					),
 				),
 				'_remove' => array(
-					'tags' => array ( self::TAG_PREFERRED ),
+					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
 			self::PAYPAL_WALLET,
@@ -745,7 +745,7 @@ final class PaymentExtensionSuggestions {
 		'PY' => array(),
 		'PE' => array(
 			self::MERCADO_PAGO => array(
-				'links'       => array(
+				'links' => array(
 					// This is country specific.
 					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
 					array(
@@ -806,7 +806,7 @@ final class PaymentExtensionSuggestions {
 		),
 		'UY' => array(
 			self::MERCADO_PAGO => array(
-				'links'       => array(
+				'links' => array(
 					// This is country specific.
 					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
 					array(
@@ -859,15 +859,15 @@ final class PaymentExtensionSuggestions {
 		'BD' => array(
 			self::PAYONEER => array(
 				'_append' => array(
-					'tags' => array ( self::TAG_PREFERRED ),
+					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
 		),
 		'CN' => array(
 			self::PAYPAL_FULL_STACK => array(
-				'_type' => self::TYPE_PSP, // Change the type to PSP.
+				'_type'   => self::TYPE_PSP, // Change the type to PSP.
 				'_append' => array(
-					'tags' => array ( self::TAG_PREFERRED ),
+					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
 			self::ANTOM,
@@ -891,7 +891,7 @@ final class PaymentExtensionSuggestions {
 		'IN' => array(
 			self::STRIPE => array(
 				'_append' => array(
-					'tags' => array ( self::TAG_PREFERRED ),
+					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
 			self::PAYPAL_FULL_STACK,
@@ -903,7 +903,7 @@ final class PaymentExtensionSuggestions {
 		'ID' => array(
 			self::ANTOM => array(
 				'_append' => array(
-					'tags' => array ( self::TAG_PREFERRED ),
+					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
 			self::PAYPAL_FULL_STACK,
@@ -922,7 +922,7 @@ final class PaymentExtensionSuggestions {
 		'MY' => array(
 			self::STRIPE => array(
 				'_append' => array(
-					'tags' => array ( self::TAG_PREFERRED ),
+					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
 			self::PAYPAL_FULL_STACK,
@@ -950,7 +950,7 @@ final class PaymentExtensionSuggestions {
 		'PH' => array(
 			self::ANTOM => array(
 				'_append' => array(
-					'tags' => array ( self::TAG_PREFERRED ),
+					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
 			self::PAYPAL_FULL_STACK,
@@ -968,7 +968,7 @@ final class PaymentExtensionSuggestions {
 		'LK' => array(
 			self::PAYONEER => array(
 				'_append' => array(
-					'tags' => array ( self::TAG_PREFERRED ),
+					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
 		),
@@ -979,7 +979,7 @@ final class PaymentExtensionSuggestions {
 		'TH' => array(
 			self::STRIPE => array(
 				'_append' => array(
-					'tags' => array ( self::TAG_PREFERRED ),
+					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
 			self::PAYPAL_FULL_STACK,
@@ -990,7 +990,7 @@ final class PaymentExtensionSuggestions {
 		'VN' => array(
 			self::ANTOM => array(
 				'_append' => array(
-					'tags' => array ( self::TAG_PREFERRED ),
+					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
 			self::PAYPAL_FULL_STACK,
@@ -1021,7 +1021,7 @@ final class PaymentExtensionSuggestions {
 		'EG' => array(
 			self::PAYMOB => array(
 				'_append' => array(
-					'tags' => array ( self::TAG_PREFERRED ),
+					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
 			self::PAYPAL_FULL_STACK,
@@ -1040,7 +1040,7 @@ final class PaymentExtensionSuggestions {
 		'GH' => array(
 			self::PAYSTACK => array(
 				'_append' => array(
-					'tags' => array ( self::TAG_PREFERRED ),
+					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
 		),
@@ -1071,7 +1071,7 @@ final class PaymentExtensionSuggestions {
 		'MA' => array(
 			self::PAYONEER => array(
 				'_append' => array(
-					'tags' => array ( self::TAG_PREFERRED ),
+					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
 			self::PAYPAL_FULL_STACK,
@@ -1086,7 +1086,7 @@ final class PaymentExtensionSuggestions {
 		'NG' => array(
 			self::PAYSTACK => array(
 				'_append' => array(
-					'tags' => array ( self::TAG_PREFERRED ),
+					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
 		),
@@ -1109,7 +1109,7 @@ final class PaymentExtensionSuggestions {
 		'ZA' => array(
 			self::PAYFAST => array(
 				'_append' => array(
-					'tags' => array ( self::TAG_PREFERRED ),
+					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
 			self::PAYPAL_FULL_STACK,
@@ -1134,7 +1134,7 @@ final class PaymentExtensionSuggestions {
 		'IL' => array(
 			self::AIRWALLEX => array(
 				'_append' => array(
-					'tags' => array ( self::TAG_PREFERRED ),
+					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
 		),
@@ -1150,7 +1150,7 @@ final class PaymentExtensionSuggestions {
 		'OM' => array(
 			self::PAYMOB => array(
 				'_append' => array(
-					'tags' => array ( self::TAG_PREFERRED ),
+					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
 			self::PAYPAL_FULL_STACK,
@@ -1159,7 +1159,7 @@ final class PaymentExtensionSuggestions {
 		'PK' => array(
 			self::PAYONEER => array(
 				'_append' => array(
-					'tags' => array ( self::TAG_PREFERRED ),
+					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
 			self::PAYMOB,
@@ -1171,7 +1171,7 @@ final class PaymentExtensionSuggestions {
 		'SA' => array(
 			self::PAYMOB => array(
 				'_append' => array(
-					'tags' => array ( self::TAG_PREFERRED ),
+					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
 			self::PAYPAL_FULL_STACK,
@@ -1201,21 +1201,21 @@ final class PaymentExtensionSuggestions {
 		$country_code = strtoupper( $country_code );
 
 		if ( empty( $this->country_extensions[ $country_code ] ) ||
- 			! is_array( $this->country_extensions[ $country_code ] ) ) {
+			! is_array( $this->country_extensions[ $country_code ] ) ) {
 
 			return array();
 		}
 
 		// Process the extensions.
 		$processed_extensions = array();
-		$priority = 0;
+		$priority             = 0;
 		foreach ( $this->country_extensions[ $country_code ] as $key => $details ) {
 			// Check the formats we support.
 			if ( is_int( $key ) && is_string( $details ) ) {
-				$extension_id = $details;
+				$extension_id              = $details;
 				$extension_country_details = array();
 			} elseif ( is_string( $key ) && is_array( $details ) ) {
-				$extension_id = $key;
+				$extension_id              = $key;
 				$extension_country_details = $details;
 			} else {
 				// Just ignore the entry as it is malformed.
@@ -1231,7 +1231,7 @@ final class PaymentExtensionSuggestions {
 			// Lock in the priority for ordering purposes.
 			// We respect the order in the country extensions list.
 			// We use increments of 10 to allow for easy insertions.
-			$priority += 10;
+			$priority                      += 10;
 			$extension_details['_priority'] = $priority;
 
 			$processed_extensions[] = $this->standardize_extension_details( $extension_details );
@@ -1253,7 +1253,7 @@ final class PaymentExtensionSuggestions {
 		$extensions = $this->get_all_extensions_base_details();
 		foreach ( $extensions as $extension_id => $extension_details ) {
 			if ( isset( $extension_details['plugin']['slug'] ) &&
-				 $plugin_slug === $extension_details['plugin']['slug']
+				$plugin_slug === $extension_details['plugin']['slug']
 			) {
 				$extension_details['_id']       = $extension_id;
 				$extension_details['_priority'] = 0;
@@ -1289,15 +1289,15 @@ final class PaymentExtensionSuggestions {
 			foreach ( $country_details['_append'] as $append_key => $append_list ) {
 				// Sanity checks.
 				if ( ! is_string( $append_key ) ||
-					 ! is_array( $append_list ) ||
-					 ! ArrayUtil::array_is_list( $append_list )
+					! is_array( $append_list ) ||
+					! ArrayUtil::array_is_list( $append_list )
 				) {
 					// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 					throw new \Exception( 'Malformed country extension details _append details.' );
 				}
 				if ( ! isset( $base_details[ $append_key ] ) ||
-					 ! is_array( $base_details[ $append_key ] ) ||
-					 ! ArrayUtil::array_is_list( $base_details[ $append_key ] )
+					! is_array( $base_details[ $append_key ] ) ||
+					! ArrayUtil::array_is_list( $base_details[ $append_key ] )
 				) {
 					// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 					throw new \Exception( 'Invalid country extension details _append target.' );
@@ -1319,15 +1319,15 @@ final class PaymentExtensionSuggestions {
 			foreach ( $country_details['_remove'] as $removal_key => $removal_list ) {
 				// Sanity checks.
 				if ( ! is_string( $removal_key ) ||
-					 ! is_array( $removal_list ) ||
-					 ! ArrayUtil::array_is_list( $removal_list )
+					! is_array( $removal_list ) ||
+					! ArrayUtil::array_is_list( $removal_list )
 				) {
 					// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 					throw new \Exception( 'Malformed country extension details _remove details.' );
 				}
 				if ( ! isset( $base_details[ $removal_key ] ) ||
-					 ! is_array( $base_details[ $removal_key ] ) ||
-					 ! ArrayUtil::array_is_list( $base_details[ $removal_key ] )
+					! is_array( $base_details[ $removal_key ] ) ||
+					! ArrayUtil::array_is_list( $base_details[ $removal_key ] )
 				) {
 					// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 					throw new \Exception( 'Invalid country extension details _remove target.' );

@@ -1,7 +1,5 @@
 <?php
-/**
- * A class of utilities for dealing with arrays.
- */
+declare( strict_types=1 );
 
 namespace Automattic\WooCommerce\Internal\Utilities;
 
@@ -30,10 +28,10 @@ class ArrayUtil {
 			return true;
 		}
 
-		$next_key = - 1;
+		$next_key = -1;
 
 		foreach ( $arr as $k => $v ) {
-			if ( ++ $next_key !== $k ) {
+			if ( ++$next_key !== $k ) {
 				return false;
 			}
 		}

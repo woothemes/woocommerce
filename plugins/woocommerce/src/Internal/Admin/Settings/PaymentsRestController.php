@@ -22,14 +22,14 @@ class PaymentsRestController extends RestApiControllerBase {
 	const OFFLINE_METHODS = array( 'bacs', 'cheque', 'cod' );
 
 	const CATEGORY_EXPRESS_CHECKOUT = 'express_checkout';
-	const CATEGORY_BNPL = 'bnpl';
-	const CATEGORY_PSP = 'psp';
+	const CATEGORY_BNPL             = 'bnpl';
+	const CATEGORY_PSP              = 'psp';
 
 	const EXTENSION_NOT_INSTALLED = 'not_installed';
-	const EXTENSION_INSTALLED = 'installed';
-	const EXTENSION_ACTIVE = 'active';
+	const EXTENSION_INSTALLED     = 'installed';
+	const EXTENSION_ACTIVE        = 'active';
 
-	const BADGE_TYPE_INFO = 'info';
+	const BADGE_TYPE_INFO  = 'info';
 	const BADGE_TYPE_PROMO = 'promo';
 
 	/**
@@ -61,8 +61,8 @@ class PaymentsRestController extends RestApiControllerBase {
 	public function register() {
 		parent::register();
 
-//		// We need to mock broadly because plugins will conditionally load logic very early on.
-//		self::add_action( 'plugins_loaded', array( $this, 'mock_is_admin' ), 0 );
+		// We need to mock broadly because plugins will conditionally load logic very early on.
+		// self::add_action( 'plugins_loaded', array( $this, 'mock_is_admin' ), 0 );
 	}
 
 	/**
@@ -186,7 +186,7 @@ class PaymentsRestController extends RestApiControllerBase {
 		// We consider a gateway to a "shell" if it has no WC admin title or description.
 		$payment_gateways = array_filter(
 			WC()->payment_gateways()->payment_gateways,
-			function( $gateway ) {
+			function ( $gateway ) {
 				return ! empty( $gateway->method_title ) && ! empty( $gateway->method_description );
 			}
 		);
@@ -269,7 +269,7 @@ class PaymentsRestController extends RestApiControllerBase {
 				}
 			}
 
-			$gateway_details['plugin']['slug'] = $plugin_slug;
+			$gateway_details['plugin']['slug']   = $plugin_slug;
 			$gateway_details['plugin']['status'] = self::EXTENSION_ACTIVE;
 		}
 
@@ -379,7 +379,7 @@ class PaymentsRestController extends RestApiControllerBase {
 			function ( $gateway ) {
 				// Filter out offline gateways.
 				return 'yes' === $gateway->enabled
-					   && ! in_array( $gateway->id, self::OFFLINE_METHODS, true );
+						&& ! in_array( $gateway->id, self::OFFLINE_METHODS, true );
 			}
 		);
 
@@ -412,7 +412,7 @@ class PaymentsRestController extends RestApiControllerBase {
 		// Sort them by _priority.
 		usort(
 			$extensions,
-			function( $a, $b ) {
+			function ( $a, $b ) {
 				return $a['_priority'] <=> $b['_priority'];
 			}
 		);
@@ -481,10 +481,10 @@ class PaymentsRestController extends RestApiControllerBase {
 			// But first, make sure there isn't already an extension added to the other list with the same plugin slug.
 			// This can happen if the same extension is suggested as both a PSP and an APM.
 			// The first entry that we encounter is the one that we keep.
-			$extension_slug = $extension['plugin']['slug'];
+			$extension_slug   = $extension['plugin']['slug'];
 			$extension_exists = array_filter(
 				$other,
-				function( $suggestion ) use ( $extension_slug ) {
+				function ( $suggestion ) use ( $extension_slug ) {
 					return $suggestion['plugin']['slug'] === $extension_slug;
 				}
 			);
@@ -496,13 +496,15 @@ class PaymentsRestController extends RestApiControllerBase {
 		}
 
 		// Make sure that the preferred suggestions are not among the other list by removing any entries with their plugin slug.
-		$other = array_values( array_filter(
-			$other,
-			function( $suggestion ) use ( $preferred_psp, $preferred_apm ) {
-				return ( empty( $preferred_psp ) || $suggestion['plugin']['slug'] !== $preferred_psp['plugin']['slug'] ) &&
-					   ( empty( $preferred_apm ) || $suggestion['plugin']['slug'] !== $preferred_apm['plugin']['slug'] );
-			}
-		) );
+		$other = array_values(
+			array_filter(
+				$other,
+				function ( $suggestion ) use ( $preferred_psp, $preferred_apm ) {
+					return ( empty( $preferred_psp ) || $suggestion['plugin']['slug'] !== $preferred_psp['plugin']['slug'] ) &&
+							( empty( $preferred_apm ) || $suggestion['plugin']['slug'] !== $preferred_apm['plugin']['slug'] );
+				}
+			)
+		);
 
 		// The preferred PSP gets a recommended info badge.
 		if ( ! empty( $preferred_psp ) ) {
@@ -565,7 +567,7 @@ class PaymentsRestController extends RestApiControllerBase {
 				'description' =>
 					'<p>' . esc_html__( 'Save 10% on processing fees during your first 3 months when you sign up for WooPayments.', 'woocommerce' ) . '</p>' .
 					'<p>' . sprintf(
-						esc_html__( 'See $1%sTerms and conditions$2%s for details', 'woocommerce' ),
+						esc_html__( 'See $1%1$sTerms and conditions$2%2$s for details', 'woocommerce' ),
 						'<a href="#">',
 						'</a>'
 					) . '</p>',
@@ -649,10 +651,10 @@ class PaymentsRestController extends RestApiControllerBase {
 	private function get_args_for_get_payment_providers(): array {
 		return array(
 			'location' => array(
-				'description' => __( 'ISO3166 alpha-2 country code. Defaults to WooCommerce\'s base location.', 'woocommerce' ),
-				'type'        => 'string',
-				'required'    => false,
-				'default'     => WC()->countries->get_base_country(),
+				'description'       => __( 'ISO3166 alpha-2 country code. Defaults to WooCommerce\'s base location.', 'woocommerce' ),
+				'type'              => 'string',
+				'required'          => false,
+				'default'           => WC()->countries->get_base_country(),
 				'sanitize_callback' => 'sanitize_text_field',
 			),
 		);
@@ -670,58 +672,58 @@ class PaymentsRestController extends RestApiControllerBase {
 			'type'    => 'object',
 		);
 		$schema['properties'] = array(
-			'gateways' => array(
-				'type'       => 'array',
+			'gateways'                => array(
+				'type'        => 'array',
 				'description' => esc_html__( 'The registered payment gateways.', 'woocommerce' ),
 				'context'     => array( 'view', 'edit' ),
 				'readonly'    => true,
-				'items'      => $this->get_schema_for_payment_gateway(),
+				'items'       => $this->get_schema_for_payment_gateway(),
 			),
 			'offline_payment_methods' => array(
-				'type'       => 'array',
+				'type'        => 'array',
 				'description' => esc_html__( 'The offline payment methods.', 'woocommerce' ),
 				'context'     => array( 'view', 'edit' ),
 				'readonly'    => true,
-				'items'      => $this->get_schema_for_payment_gateway(),
+				'items'       => $this->get_schema_for_payment_gateway(),
 			),
-			'preferred_suggestions' => array(
-				'type'       => 'array',
+			'preferred_suggestions'   => array(
+				'type'        => 'array',
 				'description' => esc_html__( 'The preferred suggestions.', 'woocommerce' ),
 				'context'     => array( 'view', 'edit' ),
 				'readonly'    => true,
-				'items'      => $this->get_schema_for_suggestion(),
+				'items'       => $this->get_schema_for_suggestion(),
 			),
-			'other_suggestions' => array(
-				'type'       => 'array',
+			'other_suggestions'       => array(
+				'type'        => 'array',
 				'description' => esc_html__( 'The other suggestions.', 'woocommerce' ),
 				'context'     => array( 'view', 'edit' ),
 				'readonly'    => true,
-				'items'      => $this->get_schema_for_suggestion(),
+				'items'       => $this->get_schema_for_suggestion(),
 			),
-			'suggestion_categories' => array(
-				'type' => 'array',
+			'suggestion_categories'   => array(
+				'type'        => 'array',
 				'description' => esc_html__( 'The suggestion categories.', 'woocommerce' ),
 				'context'     => array( 'view', 'edit' ),
 				'readonly'    => true,
-				'items' => array(
+				'items'       => array(
 					'type'        => 'object',
 					'description' => esc_html__( 'A suggestion category.', 'woocommerce' ),
 					'context'     => array( 'view', 'edit' ),
 					'readonly'    => true,
 					'properties'  => array(
-						'_id' => array(
+						'_id'         => array(
 							'type'        => 'string',
 							'description' => esc_html__( 'The unique identifier for the category.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
 						),
-						'_priority' => array(
+						'_priority'   => array(
 							'type'        => 'integer',
 							'description' => esc_html__( 'The priority of the category.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
 						),
-						'title'  => array(
+						'title'       => array(
 							'type'        => 'string',
 							'description' => esc_html__( 'The title of the category.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
@@ -815,7 +817,7 @@ class PaymentsRestController extends RestApiControllerBase {
 					'description' => esc_html__( 'The URL of the payment gateway image.', 'woocommerce' ),
 					'readonly'    => true,
 				),
-				'icon' => array(
+				'icon'        => array(
 					'type'        => 'string',
 					'description' => esc_html__( 'The URL of the payment gateway icon (square aspect ratio).', 'woocommerce' ),
 					'readonly'    => true,
@@ -930,13 +932,13 @@ class PaymentsRestController extends RestApiControllerBase {
 					'context'    => array( 'view', 'edit' ),
 					'readonly'   => true,
 					'properties' => array(
-						'_type' => array(
+						'_type'  => array(
 							'type'        => 'string',
 							'description' => esc_html__( 'The type of the plugin.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
 						),
-						'slug'  => array(
+						'slug'   => array(
 							'type'        => 'string',
 							'description' => esc_html__( 'The slug of the plugin.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
@@ -955,7 +957,7 @@ class PaymentsRestController extends RestApiControllerBase {
 					'description' => esc_html__( 'The URL of the image.', 'woocommerce' ),
 					'readonly'    => true,
 				),
-				'icon'       => array(
+				'icon'              => array(
 					'type'        => 'string',
 					'description' => esc_html__( 'The URL of the icon (square aspect ratio).', 'woocommerce' ),
 					'readonly'    => true,
@@ -1015,13 +1017,13 @@ class PaymentsRestController extends RestApiControllerBase {
 						'context'     => array( 'view', 'edit' ),
 						'readonly'    => true,
 						'properties'  => array(
-							'_type' => array(
+							'_type'       => array(
 								'type'        => 'string',
 								'description' => esc_html__( 'The type of the badge.', 'woocommerce' ),
 								'context'     => array( 'view', 'edit' ),
 								'readonly'    => true,
 							),
-							'text'  => array(
+							'text'        => array(
 								'type'        => 'string',
 								'description' => esc_html__( 'The text of the badge.', 'woocommerce' ),
 								'context'     => array( 'view', 'edit' ),

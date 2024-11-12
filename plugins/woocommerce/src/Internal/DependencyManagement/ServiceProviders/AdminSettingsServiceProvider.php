@@ -1,7 +1,5 @@
 <?php
-/**
- * AdminSettingsServiceProvider class file.
- */
+declare( strict_types=1 );
 
 namespace Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders;
 
@@ -28,6 +26,6 @@ class AdminSettingsServiceProvider extends AbstractInterfaceServiceProvider {
 	 */
 	public function register() {
 		$this->share_with_implements_tags( PaymentsRestController::class )
-			 ->addArgument( PaymentExtensionSuggestions::class );
+			->addArgument( PaymentExtensionSuggestions::class );
 	}
 }
