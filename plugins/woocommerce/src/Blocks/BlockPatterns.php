@@ -159,7 +159,7 @@ class BlockPatterns {
 			// By only logging when patterns are empty and no fetch is scheduled,
 			// we ensure that warnings are only generated in genuinely problematic situations,
 			// such as when the pattern fetching mechanism has failed entirely.
-			if ( call_user_func( $has_scheduled_action, 'fetch_patterns' ) ) {
+			if ( ! call_user_func( $has_scheduled_action, 'fetch_patterns' ) ) {
 				wc_get_logger()->warning(
 					__( 'Empty patterns received from the PTK Pattern Store', 'woocommerce' ),
 				);
