@@ -440,6 +440,7 @@ final class BlockTypesController {
 			'OrderConfirmation\AdditionalInformation',
 			'OrderConfirmation\AdditionalFieldsWrapper',
 			'OrderConfirmation\AdditionalFields',
+			'OrderConfirmation\CreateAccount',
 		);
 
 		$block_types = array_merge(
@@ -453,8 +454,6 @@ final class BlockTypesController {
 		// when modifying this list.
 		if ( Features::is_enabled( 'experimental-blocks' ) ) {
 			$block_types[] = 'ProductFilters';
-			$block_types[] = 'ProductFiltersOverlay';
-			$block_types[] = 'ProductFiltersOverlayNavigation';
 			$block_types[] = 'ProductFilterStatus';
 			$block_types[] = 'ProductFilterPrice';
 			$block_types[] = 'ProductFilterPriceSlider';
@@ -465,7 +464,6 @@ final class BlockTypesController {
 			$block_types[] = 'ProductFilterClearButton';
 			$block_types[] = 'ProductFilterCheckboxList';
 			$block_types[] = 'ProductFilterChips';
-			$block_types[] = 'OrderConfirmation\CreateAccount';
 		}
 
 		/**

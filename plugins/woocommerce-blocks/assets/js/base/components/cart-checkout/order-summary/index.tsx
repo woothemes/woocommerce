@@ -13,10 +13,12 @@ import './style.scss';
 
 interface OrderSummaryProps {
 	cartItems: CartItem[];
+	disableProductDescriptions: boolean;
 }
 
 const OrderSummary = ( {
 	cartItems = [],
+	disableProductDescriptions = false,
 }: OrderSummaryProps ): null | JSX.Element => {
 	const { isLarge, hasContainerWidth } = useContainerWidthContext();
 
@@ -34,6 +36,9 @@ const OrderSummary = ( {
 				{ cartItems.map( ( cartItem ) => {
 					return (
 						<OrderSummaryItem
+							disableProductDescriptions={
+								disableProductDescriptions
+							}
 							key={ cartItem.key }
 							cartItem={ cartItem }
 						/>

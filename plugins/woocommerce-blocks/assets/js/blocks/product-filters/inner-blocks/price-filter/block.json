@@ -14,5 +14,10 @@
 		"html": false
 	},
 	"usesContext": [ "query", "filterParams" ],
-	"attributes": {}
+	"attributes": {
+		"clearButton": {
+			"type": "boolean",
+			"default": true
+		}
+	}
 }

@@ -14,7 +14,10 @@
 		},
 		{
 			"type": "path",
-			"url": "../../packages/php/monorepo-plugin"
+			"url": "../../packages/php/monorepo-plugin",
+			"options": {
+				"symlink": false
+			}
 		},
 		{
 			"type": "path",
