@@ -576,7 +576,7 @@ class PaymentsRestController extends RestApiControllerBase {
 					'<p>' . esc_html__( 'Save 10% on processing fees during your first 3 months when you sign up for WooPayments.', 'woocommerce' ) . '</p>' .
 					'<p>' . sprintf(
 						/* translators: 1: opening anchor tag, 2: closing anchor tag */
-						esc_html__( 'See $1%1$sTerms and conditions$2%2$s for details', 'woocommerce' ),
+						esc_html__( 'See %1$sTerms and conditions%2$s for details', 'woocommerce' ),
 						'<a href="#">',
 						'</a>'
 					) . '</p>',
