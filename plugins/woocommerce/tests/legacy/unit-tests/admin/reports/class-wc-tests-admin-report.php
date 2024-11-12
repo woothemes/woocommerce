@@ -40,7 +40,7 @@ class WC_Tests_Admin_Report extends WC_Unit_Test_Case {
 	/**
 	 * Test: get_order_report_data
 	 */
-	public function test_get_order_report_data() {
+	public function test_get_order_report_data(): void {
 		$order = WC_Helper_Order::create_order();
 		$order->set_status( 'completed' );
 		$order->save();
