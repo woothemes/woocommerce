@@ -27,16 +27,6 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	protected $controller;
 
 	/**
-	 * @var int User ID for site admin.
-	 */
-	private $user_admin;
-
-	/**
-	 * @var int User ID for shop manager.
-	 */
-	private $user_shop_manager;
-
-	/**
 	 * The initial country that is set before running tests in this test suite.
 	 *
 	 * @var string $initial_country
@@ -77,9 +67,6 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$this->controller = new PaymentsRestController();
 		$this->controller->init( wc_get_container()->get( PaymentExtensionSuggestions::class ) );
 		$this->controller->register_routes();
-
-		$this->user_admin        = $this->factory->user->create( array( 'role' => 'administrator' ) );
-		$this->user_shop_manager = $this->factory->user->create( array( 'role' => 'shop_manager' ) );
 	}
 
 	/**
@@ -89,7 +76,8 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	 */
 	public function test_get_payment_providers_by_shop_manager() {
 		// Arrange.
-		wp_set_current_user( $this->user_shop_manager );
+		$user_shop_manager = $this->factory->user->create( array( 'role' => 'shop_manager' ) );
+		wp_set_current_user( $user_shop_manager );
 
 		// Act.
 		$request  = new WP_REST_Request( 'GET', self::ENDPOINT . '/providers' );
@@ -149,7 +137,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 
 		// Assert that the suggestion categories have all the details.
 		$suggestion_category = $data['suggestion_categories'][0];
-		$this->assertArrayHasKey( '_id', $suggestion_category, 'Suggestion category `_id` entry is missing' );
+		$this->assertArrayHasKey( 'id', $suggestion_category, 'Suggestion category `id` entry is missing' );
 		$this->assertArrayHasKey( '_priority', $suggestion_category, 'Suggestion category `_order` entry is missing' );
 		$this->assertArrayHasKey( 'title', $suggestion_category, 'Suggestion category `title` entry is missing' );
 		$this->assertArrayHasKey( 'description', $suggestion_category, 'Suggestion category `description` entry is missing' );
@@ -162,7 +150,8 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	 */
 	public function test_get_payment_providers_by_admin() {
 		// Arrange.
-		wp_set_current_user( $this->user_admin );
+		$user_admin = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $user_admin );
 
 		// Act.
 		$request = new WP_REST_Request( 'GET', self::ENDPOINT . '/providers' );
@@ -193,8 +182,8 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 
 		// Assert that the preferred suggestions are WooPayments and PayPal (full stack), in this order.
 		$preferred_suggestions = $data['preferred_suggestions'];
-		$this->assertEquals( PaymentExtensionSuggestions::WOOPAYMENTS, $preferred_suggestions[0]['_id'] );
-		$this->assertEquals( PaymentExtensionSuggestions::PAYPAL_FULL_STACK, $preferred_suggestions[1]['_id'] );
+		$this->assertEquals( PaymentExtensionSuggestions::WOOPAYMENTS, $preferred_suggestions[0]['id'] );
+		$this->assertEquals( PaymentExtensionSuggestions::PAYPAL_FULL_STACK, $preferred_suggestions[1]['id'] );
 
 		// Assert that the other suggestions are all PSPs.
 		$other_suggestions = $data['other_suggestions'];
@@ -202,7 +191,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 
 		// Assert that the suggestions have all the details.
 		foreach ( $preferred_suggestions as $suggestion ) {
-			$this->assertArrayHasKey( '_id', $suggestion, 'Suggestion `_id` entry is missing' );
+			$this->assertArrayHasKey( 'id', $suggestion, 'Suggestion `id` entry is missing' );
 			$this->assertArrayHasKey( '_priority', $suggestion, 'Suggestion `_priority` entry is missing' );
 			$this->assertIsInteger( $suggestion['_priority'], 'Suggestion `_priority` entry is not an integer' );
 			$this->assertArrayHasKey( '_type', $suggestion, 'Suggestion `_type` entry is missing' );
@@ -235,7 +224,8 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	 */
 	public function test_get_payment_providers_with_enabled_pg() {
 		// Arrange.
-		wp_set_current_user( $this->user_admin );
+		$user_admin = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $user_admin );
 		$this->enable_core_paypal_pg();
 
 		// Act.
@@ -271,12 +261,12 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 
 		// Assert that the preferred suggestions are WooPayments and PayPal (full stack), in this order.
 		$preferred_suggestions = $data['preferred_suggestions'];
-		$this->assertEquals( PaymentExtensionSuggestions::WOOPAYMENTS, $preferred_suggestions[0]['_id'] );
-		$this->assertEquals( PaymentExtensionSuggestions::PAYPAL_FULL_STACK, $preferred_suggestions[1]['_id'] );
+		$this->assertEquals( PaymentExtensionSuggestions::WOOPAYMENTS, $preferred_suggestions[0]['id'] );
+		$this->assertEquals( PaymentExtensionSuggestions::PAYPAL_FULL_STACK, $preferred_suggestions[1]['id'] );
 
 		// Assert that PayPal Wallet is not in the other suggestions since we have the full stack variant in the preferred suggestions.
 		$other_suggestions = $data['other_suggestions'];
-		$this->assertNotContains( PaymentExtensionSuggestions::PAYPAL_WALLET, array_column( $other_suggestions, '_id' ) );
+		$this->assertNotContains( PaymentExtensionSuggestions::PAYPAL_WALLET, array_column( $other_suggestions, 'id' ) );
 	}
 
 	/**
@@ -286,7 +276,8 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	 */
 	public function test_get_payment_providers_with_no_location() {
 		// Arrange.
-		wp_set_current_user( $this->user_admin );
+		$user_admin = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $user_admin );
 		$this->enable_core_paypal_pg();
 
 		update_option( 'woocommerce_default_country', 'LI' ); // Liechtenstein.
@@ -319,12 +310,12 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 
 		// Assert that the preferred suggestions are Stripe and PayPal (full stack), in this order.
 		$preferred_suggestions = $data['preferred_suggestions'];
-		$this->assertEquals( PaymentExtensionSuggestions::STRIPE, $preferred_suggestions[0]['_id'] );
-		$this->assertEquals( PaymentExtensionSuggestions::PAYPAL_FULL_STACK, $preferred_suggestions[1]['_id'] );
+		$this->assertEquals( PaymentExtensionSuggestions::STRIPE, $preferred_suggestions[0]['id'] );
+		$this->assertEquals( PaymentExtensionSuggestions::PAYPAL_FULL_STACK, $preferred_suggestions[1]['id'] );
 
 		// The other suggestion is Mollie.
 		$other_suggestions = $data['other_suggestions'];
-		$this->assertEquals( PaymentExtensionSuggestions::MOLLIE, $other_suggestions[0]['_id'] );
+		$this->assertEquals( PaymentExtensionSuggestions::MOLLIE, $other_suggestions[0]['id'] );
 	}
 
 	/**
@@ -334,7 +325,8 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	 */
 	public function test_get_payment_providers_with_unsupported_location() {
 		// Arrange.
-		wp_set_current_user( $this->user_admin );
+		$user_admin = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $user_admin );
 		$this->enable_core_paypal_pg();
 
 		// Act.

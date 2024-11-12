@@ -426,7 +426,7 @@ class PaymentsRestController extends RestApiControllerBase {
 			if ( self::EXTENSION_ACTIVE === $extension['plugin']['status'] ) {
 				// If the suggested extension is active, we no longer suggest it.
 				// But remember it for later.
-				$active_extensions[] = $extension['_id'];
+				$active_extensions[] = $extension['id'];
 				continue;
 			}
 
@@ -450,7 +450,7 @@ class PaymentsRestController extends RestApiControllerBase {
 
 			if ( $is_hidden &&
 				ExtensionSuggestions::TYPE_APM === $extension['_type'] &&
-				ExtensionSuggestions::PAYPAL_FULL_STACK === $extension['_id'] ) {
+				ExtensionSuggestions::PAYPAL_FULL_STACK === $extension['id'] ) {
 				// If the PayPal Full Stack suggestion is hidden, we no longer suggest it,
 				// because we have the PayPal Express Checkout (Wallet) suggestion.
 				continue;
@@ -564,7 +564,7 @@ class PaymentsRestController extends RestApiControllerBase {
 		}
 
 		// If this is WooPayments, determine if there is an incentive active for it.
-		if ( ExtensionSuggestions::WOOPAYMENTS === $extension['_id'] ) {
+		if ( ExtensionSuggestions::WOOPAYMENTS === $extension['id'] ) {
 			// @todo Use the real incentives logic.
 			$extension['badges'][] = array(
 				'_type'       => self::BADGE_TYPE_PROMO,
@@ -598,19 +598,19 @@ class PaymentsRestController extends RestApiControllerBase {
 	private function get_extension_suggestion_categories( string $location, WP_REST_Request $request ): array {
 		$categories   = array();
 		$categories[] = array(
-			'_id'         => 'express_checkout',
+			'id'         => 'express_checkout',
 			'_priority'   => 10,
 			'title'       => esc_html__( 'Express Checkouts', 'woocommerce' ),
 			'description' => esc_html__( 'Allow shoppers to fast-track the checkout process with express options like Apple Pay and Google Pay.', 'woocommerce' ),
 		);
 		$categories[] = array(
-			'_id'         => 'bnpl',
+			'id'         => 'bnpl',
 			'_priority'   => 20,
 			'title'       => esc_html__( 'Buy Now, Pay Later', 'woocommerce' ),
 			'description' => esc_html__( 'Offer flexible payment options to your shoppers.', 'woocommerce' ),
 		);
 		$categories[] = array(
-			'_id'         => 'psp',
+			'id'         => 'psp',
 			'_priority'   => 30,
 			'title'       => esc_html__( 'Payment Providers', 'woocommerce' ),
 			'description' => esc_html__( 'Give your shoppers additional ways to pay.', 'woocommerce' ),
@@ -716,7 +716,7 @@ class PaymentsRestController extends RestApiControllerBase {
 					'context'     => array( 'view', 'edit' ),
 					'readonly'    => true,
 					'properties'  => array(
-						'_id'         => array(
+						'id'          => array(
 							'type'        => 'string',
 							'description' => esc_html__( 'The unique identifier for the category.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
@@ -902,7 +902,7 @@ class PaymentsRestController extends RestApiControllerBase {
 			'context'     => array( 'view', 'edit' ),
 			'readonly'    => true,
 			'properties'  => array(
-				'_id'               => array(
+				'id'              => array(
 					'type'        => 'string',
 					'description' => esc_html__( 'The unique identifier for the suggestion.', 'woocommerce' ),
 					'context'     => array( 'view', 'edit' ),

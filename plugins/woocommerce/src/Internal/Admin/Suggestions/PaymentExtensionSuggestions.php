@@ -1225,7 +1225,7 @@ final class PaymentExtensionSuggestions {
 			$extension_details      = $this->with_country_details( $extension_base_details, $extension_country_details );
 
 			// Include the extension ID.
-			$extension_details['_id'] = $extension_id;
+			$extension_details['id'] = $extension_id;
 
 			// Lock in the priority for ordering purposes.
 			// We respect the order in the country extensions list.
@@ -1254,7 +1254,7 @@ final class PaymentExtensionSuggestions {
 			if ( isset( $extension_details['plugin']['slug'] ) &&
 				$plugin_slug === $extension_details['plugin']['slug']
 			) {
-				$extension_details['_id']       = $extension_id;
+				$extension_details['id']        = $extension_id;
 				$extension_details['_priority'] = 0;
 
 				return $this->standardize_extension_details( $extension_details );
@@ -2022,7 +2022,7 @@ final class PaymentExtensionSuggestions {
 		$standardized = array();
 
 		// Required fields.
-		$standardized['_id']         = $extension_details['_id'];
+		$standardized['id']          = $extension_details['id'];
 		$standardized['_priority']   = $extension_details['_priority'];
 		$standardized['_type']       = $extension_details['_type'];
 		$standardized['title']       = $extension_details['title'];
