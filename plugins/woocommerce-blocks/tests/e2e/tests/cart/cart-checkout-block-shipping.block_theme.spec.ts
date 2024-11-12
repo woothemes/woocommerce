@@ -48,10 +48,13 @@ test.describe( 'Shopper → Shipping', () => {
 		requestUtils,
 		browser,
 	} ) => {
-		const guestContext = await browser.newContext( {
-			storageState: { cookies: [], origins: [] },
-		} );
+		const guestContext = await browser.newContext();
 		const userPage = await guestContext.newPage();
+
+		await userPage.evaluate( () => {
+			localStorage.clear();
+			sessionStorage.clear();
+		} );
 
 		const userFrontendUtils = new FrontendUtils( userPage, requestUtils );
 
