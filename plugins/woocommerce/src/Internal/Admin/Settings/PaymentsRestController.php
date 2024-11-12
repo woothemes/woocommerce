@@ -92,6 +92,10 @@ class PaymentsRestController extends RestApiControllerBase {
 	 */
 	protected function get_providers( WP_REST_Request $request ) {
 		$location = $request->get_param( 'location' );
+		if ( empty( $location ) ) {
+			// Fall back to the base country if no location is provided.
+			$location = WC()->countries->get_base_country();
+		}
 
 		try {
 			$suggestions = $this->get_extension_suggestions( $location, $request );
@@ -653,10 +657,9 @@ class PaymentsRestController extends RestApiControllerBase {
 	private function get_args_for_get_payment_providers(): array {
 		return array(
 			'location' => array(
-				'description'       => __( 'ISO3166 alpha-2 country code. Defaults to WooCommerce\'s base location.', 'woocommerce' ),
+				'description'       => __( 'ISO3166 alpha-2 country code. Defaults to WooCommerce\'s base location country.', 'woocommerce' ),
 				'type'              => 'string',
 				'required'          => false,
-				'default'           => WC()->countries->get_base_country(),
 				'sanitize_callback' => 'sanitize_text_field',
 			),
 		);
