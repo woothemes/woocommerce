@@ -174,8 +174,7 @@ WooCommerce comes with some sample data you can use to see how products look; im
 **WooCommerce**
 
 * Fix - Fix StoreAPI erroring when a param is an integer [#52361](https://github.com/woocommerce/woocommerce/pull/52361)
-* Fix - Add a check to confirm that `as_has_scheduled_action` exists in the
-condition that uses it to conditionally run the warning log [#52725](https://github.com/woocommerce/woocommerce/pull/52725)
+* Fix - Add a check to confirm that `as_has_scheduled_action` exists in the condition that uses it to conditionally run the warning log [#52725](https://github.com/woocommerce/woocommerce/pull/52725)
 
 
 [See changelog for all versions](https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/changelog.txt).
