@@ -16,8 +16,6 @@ import {
 } from '@wordpress/hooks';
 /* eslint-disable @woocommerce/dependency-group */
 // @ts-ignore No types for this exist yet.
-import SidebarNavigationScreen from '@wordpress/edit-site/build-module/components/sidebar-navigation-screen';
-// @ts-ignore No types for this exist yet.
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 // @ts-ignore No types for this exist yet.
 import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
@@ -26,7 +24,7 @@ import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
 /**
  * Internal dependencies
  */
-import { Sidebar } from './sidebar';
+import { Sidebar, SidebarNavigationScreenContent } from './sidebar';
 import { Route, Location } from './types';
 
 const { useLocation } = unlock( routerPrivateApis );
@@ -69,12 +67,10 @@ const getLegacyRoute = (
 		key: activePage,
 		areas: {
 			sidebar: (
-				<SidebarNavigationScreen
-					title={ pageTitle }
-					isRoot
-					content={
-						<Sidebar activePage={ activePage } pages={ pages } />
-					}
+				<Sidebar
+					activePage={ activePage }
+					pages={ pages }
+					pageTitle={ pageTitle }
 				/>
 			),
 			content: <div>Content Placeholder</div>,
