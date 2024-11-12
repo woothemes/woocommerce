@@ -3,11 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
-import {
-	TotalsShipping,
-	ShippingCalculatorButton,
-	ShippingCalculator,
-} from '@woocommerce/base-components/cart-checkout';
+import { TotalsShipping } from '@woocommerce/base-components/cart-checkout';
 import { ShippingCalculatorContext } from '@woocommerce/base-components/cart-checkout/shipping-calculator/context';
 import { useEditorContext, useStoreCart } from '@woocommerce/base-context';
 import { TotalsWrapper } from '@woocommerce/blocks-checkout';
