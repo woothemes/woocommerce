@@ -14,7 +14,9 @@ import {
 	UPGRADE_NOTICE_DISPLAY_COUNT_THRESHOLD,
 } from '@woocommerce/blocks/migration-products-to-product-collection';
 import { recordEvent } from '@woocommerce/tracks';
+import { Feedback } from '@woocommerce/icons';
 import {
+	Button,
 	PanelBody,
 	// @ts-expect-error Using experimental features
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
@@ -300,6 +302,21 @@ const CollectionSpecificControls = (
 
 	return (
 		<InspectorControls>
+			{
+				<PanelBody>
+					<Button
+						variant="tertiary"
+						icon={ Feedback }
+						iconSize={ 12 }
+						onClick={ () => {
+							// Add your feedback handling logic here
+						} }
+						className="wc-block-editor-product-collection__feedback-button"
+					>
+						{ __( 'Help us improve', 'woocommerce' ) }
+					</Button>
+				</PanelBody>
+			}
 			{
 				/**
 				 * Hand-Picked collection-specific controls.

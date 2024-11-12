@@ -37,3 +37,4 @@ export { default as thumbnailsPositionRight } from './library/thumbnails-positio
 export { default as toggle } from './library/toggle';
 export { default as totals } from './library/totals';
 export { default as woo } from './library/woo';
+export { default as Feedback } from './library/feedback';
