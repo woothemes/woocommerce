@@ -40,13 +40,14 @@ const CouponsOverview = () => {
 					category="coupons"
 				/>
 			) }
-			{ showSuggestions && ( <KnowledgeBase
-				category="coupons"
-				description={ __(
-					'Learn the ins and outs of successful coupon marketing from the experts at WooCommerce.',
-					'woocommerce'
-				) }
-			/>
+			{ showSuggestions && (
+				<KnowledgeBase
+					category="coupons"
+					description={ __(
+						'Learn the ins and outs of successful coupon marketing from the experts at WooCommerce.',
+						'woocommerce'
+					) }
+				/>
 			) }
 		</div>
 	);
