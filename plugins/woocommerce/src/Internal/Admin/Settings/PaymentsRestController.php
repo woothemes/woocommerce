@@ -330,9 +330,10 @@ class PaymentsRestController extends RestApiControllerBase {
 			method_exists( '\WooCommerce\PayPalCommerce\PPCP', 'container' ) ) {
 
 			try {
-				$sandbox = filter_var( \WooCommerce\PayPalCommerce\PPCP::container()->get( 'wcgateway.settings' )->get( 'sandbox_on' ), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE );
-				if ( ! is_null( $sandbox ) ) {
-					return $sandbox;
+				$sandbox_on_option = \WooCommerce\PayPalCommerce\PPCP::container()->get( 'wcgateway.settings' )->get( 'sandbox_on' );
+				$sandbox_on_option = filter_var( $sandbox_on_option, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE );
+				if ( ! is_null( $sandbox_on_option ) ) {
+					return $sandbox_on_option;
 				}
 			} catch ( \Exception $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
 				// Ignore any exceptions.
