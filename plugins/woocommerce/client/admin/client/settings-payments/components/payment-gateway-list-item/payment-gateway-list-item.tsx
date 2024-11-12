@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { useState } from 'react';
 import { EllipsisMenu } from '@woocommerce/components';
 import { PaymentGateway } from '@woocommerce/data';
 import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
@@ -14,7 +15,6 @@ import { decodeEntities } from '@wordpress/html-entities';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
 import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
 import { WooPaymentsGatewayData } from '~/settings-payments/types';
-import { useState } from 'react';
 
 type PaymentGatewayItemProps = {
 	gateway: PaymentGateway;

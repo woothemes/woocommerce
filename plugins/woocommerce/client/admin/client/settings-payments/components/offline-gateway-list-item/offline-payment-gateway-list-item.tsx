@@ -1,31 +1,31 @@
 /**
  * External dependencies
  */
+import { useState } from 'react';
 import { decodeEntities } from '@wordpress/html-entities';
 
 /**
  * Internal dependencies
  */
 import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
-import { useState } from 'react';
 
 interface OfflinePaymentGateway {
-	id: string,
-	title: string,
-	content: string,
-	image: string,
-	square_image: string,
-	image_72x72: string,
-	actionText: string,
-	settings_url: string,
-	enabled: boolean,
+	id: string;
+	title: string;
+	content: string;
+	image: string;
+	square_image: string;
+	image_72x72: string;
+	actionText: string;
+	settings_url: string;
+	enabled: boolean;
 }
 
 type OfflinePaymentGatewayListItemProps = {
 	gateway: OfflinePaymentGateway;
 };
 
-export const OfflinePaymentGatewayListItem = ({
+export const OfflinePaymentGatewayListItem = ( {
 	gateway,
 }: OfflinePaymentGatewayListItemProps ) => {
 	const [ isEnabled, setIsEnabled ] = useState( gateway.enabled );
@@ -47,9 +47,7 @@ export const OfflinePaymentGatewayListItem = ({
 		before: (
 			<img
 				src={
-					gateway.square_image ||
-					gateway.image_72x72 ||
-					gateway.image
+					gateway.square_image || gateway.image_72x72 || gateway.image
 				}
 				alt={ gateway.title + ' logo' }
 			/>
