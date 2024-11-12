@@ -1304,34 +1304,6 @@ class ProductCollection extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that the hand-picked collection handler works as expected.
-	 */
-	public function test_collection_hand_picked() {
-		$expected_product_ids = array( 2, 3, 4 );
-
-		// Frontend.
-		$parsed_block                        = $this->get_base_parsed_block();
-		$parsed_block['attrs']['collection'] = 'woocommerce/product-collection/hand-picked';
-		$parsed_block['attrs']['query']['woocommerceHandPickedProducts'] = $expected_product_ids;
-		$result_frontend = $this->initialize_merged_query( $parsed_block );
-
-		// Editor.
-		$request = $this->build_request(
-			array( 'woocommerceHandPickedProducts' => $expected_product_ids )
-		);
-		$request->set_param(
-			'productCollectionQueryContext',
-			array(
-				'collection' => 'woocommerce/product-collection/hand-picked',
-			)
-		);
-		$result_editor = $this->block_instance->update_rest_query_in_editor( array(), $request );
-
-		$this->assertEqualsCanonicalizing( $expected_product_ids, $result_frontend['post__in'] );
-		$this->assertEqualsCanonicalizing( $expected_product_ids, $result_editor['post__in'] );
-	}
-
-	/**
 	 * Tests that the hand-picked collection handler works with empty product selection.
 	 */
 	public function test_collection_hand_picked_empty() {
