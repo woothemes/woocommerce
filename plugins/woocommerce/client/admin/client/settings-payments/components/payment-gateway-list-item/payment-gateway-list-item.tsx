@@ -15,6 +15,7 @@ import { decodeEntities } from '@wordpress/html-entities';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
 import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
 import { WooPaymentsGatewayData } from '~/settings-payments/types';
+import { WC_ASSET_URL } from '~/utils/admin-settings';
 
 type PaymentGatewayItemProps = {
 	gateway: PaymentGateway;
@@ -118,10 +119,8 @@ export const PaymentGatewayListItem = ( {
 		// TODO add drag-and-drop icon before image (future PR)
 		before: (
 			<img
-				src={
-					// TODO: Need a way to make images available here.
-					'https://woocommerce.com/wp-content/plugins/wccom-plugins/payment-gateway-suggestions/images/wcpay.svg'
-				}
+				// TODO: Need a way to make images available here. For now it'll be a WooPayments image everywhere.
+				src={ `${ WC_ASSET_URL }images/onboarding/wcpay.svg` }
 				alt={ gateway.title + ' logo' }
 			/>
 		),
