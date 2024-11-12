@@ -824,7 +824,7 @@ class PaymentsRestController extends RestApiControllerBase {
 				),
 				'icon'        => array(
 					'type'        => 'string',
-					'description' => esc_html__( 'The URL of the payment gateway icon (square aspect ratio).', 'woocommerce' ),
+					'description' => esc_html__( 'The URL of the payment gateway icon (square aspect ratio - 72px by 72px).', 'woocommerce' ),
 					'readonly'    => true,
 				),
 				'links'       => array(
