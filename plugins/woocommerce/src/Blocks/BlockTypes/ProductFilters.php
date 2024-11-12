@@ -24,18 +24,6 @@ class ProductFilters extends AbstractBlock {
 	}
 
 	/**
-	 * Initialize this block type.
-	 *
-	 * - Hook into WP lifecycle.
-	 * - Register the block with WordPress.
-	 * - Hook into pre_render_block to update the query.
-	 */
-	protected function initialize() {
-		add_filter( 'block_type_metadata_settings', array( $this, 'add_block_type_metadata_settings' ), 10, 2 );
-		parent::initialize();
-	}
-
-	/**
 	 * Extra data passed through from server to client for block.
 	 *
 	 * @param array $attributes  Any attributes that currently are available from the block.
@@ -242,20 +230,5 @@ class ProductFilters extends AbstractBlock {
 			},
 			ARRAY_FILTER_USE_KEY
 		);
-	}
-
-	/**
-	 * This block renders inner blocks manually so we need to skip default
-	 * rendering routine for its inner blocks
-	 *
-	 * @param array $settings Array of determined settings for registering a block type.
-	 * @param array $metadata Metadata provided for registering a block type.
-	 * @return array
-	 */
-	public function add_block_type_metadata_settings( $settings, $metadata ) {
-		if ( ! empty( $metadata['name'] ) && $this->get_full_block_name() === $metadata['name'] ) {
-			$settings['skip_inner_blocks'] = true;
-		}
-			return $settings;
 	}
 }
