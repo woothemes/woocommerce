@@ -55,3 +55,4 @@ export const SettingsEditor = () => {
 };
 
 export * from './sidebar';
+export * from './route';
