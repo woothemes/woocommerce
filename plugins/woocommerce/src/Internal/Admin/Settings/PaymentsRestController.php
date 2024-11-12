@@ -30,6 +30,7 @@ class PaymentsRestController extends RestApiControllerBase {
 	const EXTENSION_ACTIVE = 'active';
 
 	const BADGE_TYPE_INFO = 'info';
+	const BADGE_TYPE_PROMO = 'promo';
 
 	/**
 	 * Route base.
@@ -550,9 +551,25 @@ class PaymentsRestController extends RestApiControllerBase {
 			}
 		}
 
-		// Ensure we have a badges entry.
+		// Ensure we have a `badges` entry.
 		if ( empty( $extension['badges'] ) ) {
 			$extension['badges'] = array();
+		}
+
+		// If this is WooPayments, determine if there is an incentive active for it.
+		if ( ExtensionSuggestions::WOOPAYMENTS === $extension['_id'] ) {
+			// @todo Use the real incentives logic.
+			$extension['badges'][] = array(
+				'_type'       => self::BADGE_TYPE_PROMO,
+				'text'        => esc_html__( 'Save 10% on processing fees', 'woocommerce' ),
+				'description' =>
+					'<p>' . esc_html__( 'Save 10% on processing fees during your first 3 months when you sign up for WooPayments.', 'woocommerce' ) . '</p>' .
+					'<p>' . sprintf(
+						esc_html__( 'See $1%sTerms and conditions$2%s for details', 'woocommerce' ),
+						'<a href="#">',
+						'</a>'
+					) . '</p>',
+			);
 		}
 
 		// Determine if the suggestion was hidden.
@@ -992,6 +1009,32 @@ class PaymentsRestController extends RestApiControllerBase {
 					'description' => esc_html__( 'Whether the suggestion has badges.', 'woocommerce' ),
 					'context'     => array( 'view', 'edit' ),
 					'readonly'    => true,
+					'items'       => array(
+						'type'        => 'object',
+						'description' => esc_html__( 'A badge for the suggestion.', 'woocommerce' ),
+						'context'     => array( 'view', 'edit' ),
+						'readonly'    => true,
+						'properties'  => array(
+							'_type' => array(
+								'type'        => 'string',
+								'description' => esc_html__( 'The type of the badge.', 'woocommerce' ),
+								'context'     => array( 'view', 'edit' ),
+								'readonly'    => true,
+							),
+							'text'  => array(
+								'type'        => 'string',
+								'description' => esc_html__( 'The text of the badge.', 'woocommerce' ),
+								'context'     => array( 'view', 'edit' ),
+								'readonly'    => true,
+							),
+							'description' => array(
+								'type'        => 'string',
+								'description' => esc_html__( 'The description of the badge (it can include HTML tags like paragraphs or anchors).', 'woocommerce' ),
+								'context'     => array( 'view', 'edit' ),
+								'readonly'    => true,
+							),
+						),
+					),
 				),
 				'_hidden'           => array(
 					'type'        => 'boolean',
