@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import debugFactory from 'debug';
 import {
 	withCurrentUserHydration,
 	withSettingsHydration,
@@ -10,6 +9,9 @@ import {
 // @ts-expect-error createRoot is not exported in @wordpress/element
 // eslint-disable-next-line @woocommerce/dependency-group
 import { createRoot } from '@wordpress/element';
+// @ts-expect-error Need to add types for debug
+// eslint-disable-next-line @woocommerce/dependency-group
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
