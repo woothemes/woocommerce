@@ -710,7 +710,7 @@
           "menu_title": "Design a simple extension",
           "tags": "how-to",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/extension-development/how-to-design-a-simple-extension.md",
-          "hash": "10afdef1875fb51e6163589535b6bfec86fe09624559e0dbed916e7e1c0bd777",
+          "hash": "5bd671921996f43d12f5be9675c3d98c59f9fc9b79d63ed3b5bad990424fbebc",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/extension-development/how-to-design-a-simple-extension.md",
           "id": "375f7e18a2e656e662d3189041caeb9c80e7c9e3"
         },
@@ -975,7 +975,7 @@
           "post_title": "HPOS CLI Tools",
           "tags": "reference",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/high-performance-order-storage/cli-tools.md",
-          "hash": "63e5edd55720c963de6700854515ea51946ff734b716ab61793955308b72af91",
+          "hash": "b9a313ba52cd08284e7a23be32c28bcb93be8f9389b0e5fcc041506ff0d2bd46",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/high-performance-order-storage/cli-tools.md",
           "id": "cdd9d9ad5777d978ba953e3478fbb61cab8fdf59"
         }
@@ -1823,5 +1823,5 @@
       "categories": []
     }
   ],
-  "hash": "1dc26e2507697f338903de7916bb1677d86d117381647c21ea228897dcff4795"
+  "hash": "47ff900e2d38339bf7cd36fb5f3384cc7eff6aef4a2f00953106149e3a2491a3"
 }
