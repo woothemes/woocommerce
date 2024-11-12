@@ -54,7 +54,6 @@ const renderHydratedLayout = (
 	}
 
 	createRoot( embeddedRoot ).render( <HydratedEmbedLayout /> );
-	embeddedRoot.classList.remove( 'is-embed-loading' );
 };
 
 /**
@@ -144,6 +143,9 @@ export const renderEmbeddedLayout = (
 	try {
 		// Render the header
 		renderHydratedLayout( embeddedRoot, hydrateUser, settingsGroup );
+
+		// Remove the loading class
+		embeddedRoot.classList.remove( 'is-embed-loading' );
 
 		// Get and verify wpBody exists
 		const wpBody = document.getElementById( 'wpbody-content' );
