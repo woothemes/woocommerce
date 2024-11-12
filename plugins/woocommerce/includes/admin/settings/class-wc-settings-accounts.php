@@ -92,7 +92,7 @@ class WC_Settings_Accounts extends WC_Settings_Page {
 					'</a>'
 				),
 				'id'                => 'woocommerce_enable_delayed_account_creation',
-				'default'           => 'yes',
+				'default'           => 'no',
 				'type'              => 'checkbox',
 				'checkboxgroup'     => '',
 				'autoload'          => false,

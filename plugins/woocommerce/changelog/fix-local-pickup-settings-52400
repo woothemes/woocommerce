@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Fix local pickup table styling and saving after sorting locations.

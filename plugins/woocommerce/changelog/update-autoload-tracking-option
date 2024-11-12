@@ -1,0 +1,4 @@
+Significance: minor
+Type: tweak
+
+Add autoloading for woocommerce_allow_tracking option
