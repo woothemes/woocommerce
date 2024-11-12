@@ -34,21 +34,41 @@ describe( 'generateCSVDataFromTable', () => {
 
 	it( 'should prefix single quote character when the cell value starts with one of =, +, -, @, tab, and carriage return', () => {
 		[
-			'=12',
-			'+12',
-			'-12',
-			'@12',
+			'=',
+			'+',
+			'-',
+			'@',
 			String.fromCharCode( 0x09 ), // tab
 			String.fromCharCode( 0x0d ), // carriage return
-			-12,
 		].forEach( ( val ) => {
+			const injectionSuffix = '2+injection';
 			// If the value is not a number, it should be escaped to prevent CSV injection.
-			let expected = 'value\n"\'' + val + '"';
+			const expected = 'value\n"\'' + val + injectionSuffix + '"';
 
+			const result = generateCSVDataFromTable(
+				[
+					{
+						label: 'value',
+						key: 'value',
+					},
+				],
+				[
+					[
+						{
+							display: 'value',
+							value: val + injectionSuffix,
+						},
+					],
+				]
+			);
+			expect( result ).toBe( expected );
+		} );
+	} );
+
+	it( 'should not prefix single quote character for numeric values', () => {
+		[ 12, 12.34, -12, -12.34 ].forEach( ( val ) => {
 			// If the value is a number, no need to escape it since pure numeric values cannot form a valid formula to be injected.
-			if ( typeof val === 'number' ) {
-				expected = 'value\n' + val;
-			}
+			const expected = 'value\n' + val;
 
 			const result = generateCSVDataFromTable(
 				[
