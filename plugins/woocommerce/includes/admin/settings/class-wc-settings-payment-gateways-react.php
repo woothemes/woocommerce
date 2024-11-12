@@ -197,17 +197,15 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 
 		// TODO: we should think about a better way to pass this data to the frontend.
 		echo '<script type="application/json" id="experimental_wc_settings_payments_woopayments">' . wp_json_encode(
-				array(
-					'isSupported'        => WooCommercePayments::is_supported(),
-					'isAccountOnboarded' => $is_woopayments_onboarded,
-					'isInTestMode'       => $is_woopayments_in_test_mode,
-				)
-			) . '</script>';
+			array(
+				'isSupported'        => WooCommercePayments::is_supported(),
+				'isAccountOnboarded' => $is_woopayments_onboarded,
+				'isInTestMode'       => $is_woopayments_in_test_mode,
+			)
+		) . '</script>';
 		echo '<script type="application/json" id="experimental_wc_settings_payments_gateways">' . wp_json_encode( $payment_gateways ) . '</script>';
 		echo '<script type="application/json" id="experimental_wc_settings_payments_preferred_extensions_suggestions">' . wp_json_encode( $preferred_payment_extension_suggestions ) . '</script>';
 		echo '<script type="application/json" id="experimental_wc_settings_payments_other_extensions_suggestions">' . wp_json_encode( $other_payment_extensions_suggestions ) . '</script>';
-		// TODO remove this after testing.
-		echo '<script type="application/json" id="experimental_wc_settings_payments_all_suggestions">' . wp_json_encode( $all_suggestions ) . '</script>';
 	}
 
 	/**
