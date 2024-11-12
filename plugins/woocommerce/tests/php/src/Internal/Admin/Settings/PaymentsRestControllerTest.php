@@ -165,7 +165,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		wp_set_current_user( $this->user_admin );
 
 		// Act.
-		$request  = new WP_REST_Request( 'GET', self::ENDPOINT . '/providers' );
+		$request = new WP_REST_Request( 'GET', self::ENDPOINT . '/providers' );
 		$request->set_param( 'location', 'US' );
 		$response = $this->server->dispatch( $request );
 
@@ -239,7 +239,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$this->enable_core_paypal_pg();
 
 		// Act.
-		$request  = new WP_REST_Request( 'GET', self::ENDPOINT . '/providers' );
+		$request = new WP_REST_Request( 'GET', self::ENDPOINT . '/providers' );
 		$request->set_param( 'location', 'US' );
 		$response = $this->server->dispatch( $request );
 
@@ -289,7 +289,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		wp_set_current_user( $this->user_admin );
 		$this->enable_core_paypal_pg();
 
-		update_option( 'woocommerce_default_country', 'LI' ); // Liechtenstein
+		update_option( 'woocommerce_default_country', 'LI' ); // Liechtenstein.
 
 		// Act.
 		$request  = new WP_REST_Request( 'GET', self::ENDPOINT . '/providers' );
@@ -325,7 +325,6 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		// The other suggestion is Mollie.
 		$other_suggestions = $data['other_suggestions'];
 		$this->assertEquals( PaymentExtensionSuggestions::MOLLIE, $other_suggestions[0]['_id'] );
-
 	}
 
 	/**
@@ -339,7 +338,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$this->enable_core_paypal_pg();
 
 		// Act.
-		$request  = new WP_REST_Request( 'GET', self::ENDPOINT . '/providers' );
+		$request = new WP_REST_Request( 'GET', self::ENDPOINT . '/providers' );
 		$request->set_param( 'location', 'XX' );
 		$response = $this->server->dispatch( $request );
 

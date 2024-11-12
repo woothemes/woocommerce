@@ -48,6 +48,9 @@ class PaymentExtensionSuggestionsTest extends WC_REST_Unit_Test_Case {
 	 * This guards against misconfigurations in the data.
 	 *
 	 * @dataProvider data_provider_get_country_extensions_count
+	 *
+	 * @param string $country        The country code.
+	 * @param int    $expected_count The expected number of suggestions.
 	 */
 	public function test_get_country_extensions_count( $country, $expected_count ) {
 		$extensions = $this->provider->get_country_extensions( $country );
