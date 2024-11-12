@@ -1,5 +1,4 @@
 Significance: patch
 Type: tweak
-
-Comment: Fix: woocommerce_upsell_display was receiving a string instead of an integer in $limit
+Comment: Fix wrong type
 
