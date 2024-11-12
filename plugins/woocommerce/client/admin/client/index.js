@@ -22,7 +22,7 @@ initRemoteLogging();
 import './stylesheets/_index.scss';
 import { getAdminSetting } from '~/utils/admin-settings';
 import { PageLayout } from './layout';
-
+import { renderEmbeddedLayout } from './embedded-body-layout';
 import './xstate.js';
 import { deriveWpAdminBackgroundColours } from './utils/derive-wp-admin-background-colours';
 
@@ -32,7 +32,6 @@ import {
 	SettingsPaymentsWooCommercePaymentsWrapper,
 } from './settings-payments';
 import { ErrorBoundary } from './error-boundary';
-import { initializeEmbeddedLayout } from './embedded-layout';
 
 const debug = debugFactory( 'wc-admin:client' );
 const appRoot = document.getElementById( 'root' );
@@ -68,7 +67,7 @@ if ( appRoot ) {
 		</ErrorBoundary>
 	);
 } else if ( embeddedRoot ) {
-	initializeEmbeddedLayout( embeddedRoot, hydrateUser, settingsGroup );
+	renderEmbeddedLayout( embeddedRoot, hydrateUser, settingsGroup );
 }
 
 // Render the CustomerEffortScoreTracksContainer only if

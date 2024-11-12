@@ -16,20 +16,20 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { EmbedLayout, PrimaryLayout as NoticeArea } from './layout';
-import { EmbeddedBodyLayout } from './embedded-body-layout/embedded-body-layout';
+import { EmbedLayout, PrimaryLayout as NoticeArea } from '../layout';
+import { EmbeddedBodyLayout } from './embedded-body-layout';
 import { isFeatureEnabled } from '~/utils/features';
 
-import { possiblyRenderSettingsSlots } from './settings/settings-slots';
-import { registerTaxSettingsConflictErrorFill } from './settings/conflict-error-slotfill';
-import { registerPaymentsSettingsBannerFill } from './payments/payments-settings-banner-slotfill';
-import { registerSiteVisibilitySlotFill } from './launch-your-store';
-import { registerBlueprintSlotfill } from './blueprint';
+import { possiblyRenderSettingsSlots } from '../settings/settings-slots';
+import { registerTaxSettingsConflictErrorFill } from '../settings/conflict-error-slotfill';
+import { registerPaymentsSettingsBannerFill } from '../payments/payments-settings-banner-slotfill';
+import { registerSiteVisibilitySlotFill } from '../launch-your-store';
+import { registerBlueprintSlotfill } from '../blueprint';
 import {
 	possiblyRenderOrderAttributionSlot,
 	registerOrderAttributionSlotFill,
-} from './order-attribution-install-banner/order-editor/slot';
-import { registerSettingsEmailPreviewFill } from './settings-email/settings-email-preview-slotfill';
+} from '../order-attribution-install-banner/order-editor/slot';
+import { registerSettingsEmailPreviewFill } from '../settings-email/settings-email-preview-slotfill';
 
 const debug = debugFactory( 'wc-admin:client' );
 
@@ -138,7 +138,7 @@ const registerSlotFills = () => {
  * @param {WCUser}      hydrateUser   - The user to hydrate.
  * @param {string}      settingsGroup - The settings group to hydrate.
  */
-export const initializeEmbeddedLayout = (
+export const renderEmbeddedLayout = (
 	embeddedRoot: HTMLElement,
 	hydrateUser: WCUser,
 	settingsGroup: string
