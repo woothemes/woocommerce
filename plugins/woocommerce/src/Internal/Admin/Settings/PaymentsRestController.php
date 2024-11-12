@@ -513,12 +513,14 @@ class PaymentsRestController extends RestApiControllerBase {
 		}
 
 		return array(
-			'preferred' => array_filter(
-				array(
-					// The PSP should naturally have a higher priority than the APM.
-					// No need to impose a specific order here.
-					$preferred_psp,
-					$preferred_apm,
+			'preferred' => array_values(
+				array_filter(
+					array(
+						// The PSP should naturally have a higher priority than the APM.
+						// No need to impose a specific order here.
+						$preferred_psp,
+						$preferred_apm,
+					)
 				)
 			),
 			'other'     => $other,
@@ -783,6 +785,11 @@ class PaymentsRestController extends RestApiControllerBase {
 					'context'     => array( 'view', 'edit' ),
 					'readonly'    => true,
 				),
+				'short_description' => array(
+					'type'        => 'string',
+					'description' => esc_html__( 'The short description of the payment gateway.', 'woocommerce' ),
+					'readonly'    => true,
+				),
 				'supports'    => array(
 					'description' => __( 'Supported features for this payment gateway.', 'woocommerce' ),
 					'type'        => 'array',
@@ -886,6 +893,38 @@ class PaymentsRestController extends RestApiControllerBase {
 						),
 					),
 				),
+				'badges'            => array(
+					'type'        => 'array',
+					'description' => esc_html__( 'A list of badges to display for this payment gateway.', 'woocommerce' ),
+					'context'     => array( 'view', 'edit' ),
+					'readonly'    => true,
+					'items'       => array(
+						'type'        => 'object',
+						'description' => esc_html__( 'A badge for the suggestion.', 'woocommerce' ),
+						'context'     => array( 'view', 'edit' ),
+						'readonly'    => true,
+						'properties'  => array(
+							'_type'       => array(
+								'type'        => 'string',
+								'description' => esc_html__( 'The type of the badge.', 'woocommerce' ),
+								'context'     => array( 'view', 'edit' ),
+								'readonly'    => true,
+							),
+							'text'        => array(
+								'type'        => 'string',
+								'description' => esc_html__( 'The text of the badge.', 'woocommerce' ),
+								'context'     => array( 'view', 'edit' ),
+								'readonly'    => true,
+							),
+							'description' => array(
+								'type'        => 'string',
+								'description' => esc_html__( 'The description of the badge (it can include HTML tags like paragraphs or anchors).', 'woocommerce' ),
+								'context'     => array( 'view', 'edit' ),
+								'readonly'    => true,
+							),
+						),
+					),
+				),
 			),
 		);
 	}
@@ -932,6 +971,11 @@ class PaymentsRestController extends RestApiControllerBase {
 					'context'     => array( 'view', 'edit' ),
 					'readonly'    => true,
 				),
+				'short_description' => array(
+					'type'        => 'string',
+					'description' => esc_html__( 'The short description of the suggestion.', 'woocommerce' ),
+					'readonly'    => true,
+				),
 				'plugin'            => array(
 					'type'       => 'object',
 					'context'    => array( 'view', 'edit' ),
@@ -965,11 +1009,6 @@ class PaymentsRestController extends RestApiControllerBase {
 				'icon'              => array(
 					'type'        => 'string',
 					'description' => esc_html__( 'The URL of the icon (square aspect ratio).', 'woocommerce' ),
-					'readonly'    => true,
-				),
-				'short_description' => array(
-					'type'        => 'string',
-					'description' => esc_html__( 'The short description of the suggestion.', 'woocommerce' ),
 					'readonly'    => true,
 				),
 				'links'             => array(
@@ -1013,7 +1052,7 @@ class PaymentsRestController extends RestApiControllerBase {
 				),
 				'badges'            => array(
 					'type'        => 'array',
-					'description' => esc_html__( 'Whether the suggestion has badges.', 'woocommerce' ),
+					'description' => esc_html__( 'A list of badges to display for this suggestion.', 'woocommerce' ),
 					'context'     => array( 'view', 'edit' ),
 					'readonly'    => true,
 					'items'       => array(
