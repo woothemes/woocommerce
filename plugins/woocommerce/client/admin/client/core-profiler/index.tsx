@@ -380,9 +380,11 @@ const updateOnboardingProfileOption = fromPromise(
 		const { businessChoice, sellingOnlineAnswer, sellingPlatforms } =
 			input.userProfile;
 		return dispatch( ONBOARDING_STORE_NAME ).updateProfileItems( {
-			business_choice: businessChoice,
-			selling_online_answer: sellingOnlineAnswer,
-			selling_platforms: sellingPlatforms,
+			...( businessChoice && { business_choice: businessChoice } ),
+			...( sellingOnlineAnswer && {
+				selling_online_answer: sellingOnlineAnswer,
+			} ),
+			...( sellingPlatforms && { selling_platforms: sellingPlatforms } ),
 		} );
 	}
 );
@@ -467,6 +469,7 @@ const updateBusinessInfo = fromPromise(
 	}: {
 		input: {
 			payload: BusinessInfoPayload;
+			context: CoreProfilerStateMachineContext;
 		};
 	} ) => {
 		return Promise.all( [
@@ -477,7 +480,8 @@ const updateBusinessInfo = fromPromise(
 				...( input.payload.industry && {
 					industry: [ input.payload.industry ],
 				} ),
-				...( input.payload.storeEmailAddress.length > 0 && {
+				...( input.payload.storeEmailAddress !==
+					input.context.onboardingProfile.store_email && {
 					store_email: input.payload.storeEmailAddress,
 				} ),
 			} ),
@@ -1168,7 +1172,10 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 				postBusinessInfo: {
 					invoke: {
 						src: 'updateBusinessInfo',
-						input: ( { event } ) => event,
+						input: ( { event, context } ) => {
+							assertEvent( event, 'BUSINESS_INFO_COMPLETED' );
+							return { payload: event.payload, context };
+						},
 						onDone: {
 							target: '#plugins',
 						},

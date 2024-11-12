@@ -280,6 +280,7 @@ class OnboardingProfile extends \WC_REST_Data_Controller {
 				'description'       => __( 'Industry.', 'woocommerce' ),
 				'context'           => array( 'view' ),
 				'readonly'          => true,
+				'nullable'          => true,
 				'validate_callback' => 'rest_validate_request_arg',
 				'items'             => array(
 					'type' => 'string',
@@ -426,6 +427,7 @@ class OnboardingProfile extends \WC_REST_Data_Controller {
 				'description'       => __( 'Store email address.', 'woocommerce' ),
 				'context'           => array( 'view' ),
 				'readonly'          => true,
+				'nullable'          => true,
 				'validate_callback' => array( __CLASS__, 'rest_validate_marketing_email' ),
 			),
 			'is_store_country_set'    => array(
@@ -447,20 +449,23 @@ class OnboardingProfile extends \WC_REST_Data_Controller {
 				'description' => __( 'Business choice.', 'woocommerce' ),
 				'context'     => array( 'view' ),
 				'readonly'    => true,
+				'nullable'    => true,
 			),
 			'selling_online_answer'   => array(
 				'type'        => 'string',
 				'description' => __( 'Selling online answer.', 'woocommerce' ),
 				'context'     => array( 'view' ),
 				'readonly'    => true,
+				'nullable'    => true,
 			),
 			'selling_platforms'       => array(
-				'type'        => 'array',
+				'type'        => array( 'array', 'null' ),
 				'description' => __( 'Selling platforms.', 'woocommerce' ),
 				'context'     => array( 'view' ),
 				'readonly'    => true,
+				'nullable'    => true,
 				'items'       => array(
-					'type' => 'string',
+					'type' => array( 'array', 'null' ),
 				),
 			),
 		);

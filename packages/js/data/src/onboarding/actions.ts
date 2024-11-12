@@ -303,14 +303,6 @@ export function* updateProfileItems( items: ProfileItems ) {
 	yield setIsRequesting( 'updateProfileItems', true );
 	yield setError( 'updateProfileItems', null );
 
-	// Remove keys for values that are null or undefined because the API doesn't accept them
-	const filteredItems = Object.fromEntries(
-		Object.entries( items ).filter(
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			( [ _unused, value ] ) => value !== null && value !== undefined
-		)
-	);
-
 	try {
 		const results: {
 			items: ProfileItems;
@@ -318,7 +310,7 @@ export function* updateProfileItems( items: ProfileItems ) {
 		} = yield apiFetch( {
 			path: `${ WC_ADMIN_NAMESPACE }/onboarding/profile`,
 			method: 'POST',
-			data: filteredItems,
+			data: items,
 		} );
 
 		if ( results && results.status === 'success' ) {
