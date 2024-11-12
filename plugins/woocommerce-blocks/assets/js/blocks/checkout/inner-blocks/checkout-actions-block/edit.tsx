@@ -5,29 +5,35 @@ import clsx from 'clsx';
 import { useRef } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
+import {
+	InspectorControls,
+	RichText,
+	useBlockProps,
+} from '@wordpress/block-editor';
 import PageSelector from '@woocommerce/editor-components/page-selector';
-import { PanelBody, ToggleControl } from '@wordpress/components';
+import { PanelBody, ToggleControl, TextControl } from '@wordpress/components';
 import { CHECKOUT_PAGE_ID } from '@woocommerce/block-settings';
-import { getSetting } from '@woocommerce/settings';
 import { ReturnToCartButton } from '@woocommerce/base-components/cart-checkout';
 import EditableButton from '@woocommerce/editor-components/editable-button';
-import Noninteractive from '@woocommerce/base-components/noninteractive';
+import { useStoreCart } from '@woocommerce/base-context';
+import { getCurrencyFromPriceResponse } from '@woocommerce/price-format';
+import { FormattedMonetaryAmount } from '@woocommerce/blocks-components';
 
 /**
  * Internal dependencies
  */
-import { defaultPlaceOrderButtonLabel } from './constants';
+import { BlockAttributes } from './block';
+import './editor.scss';
+import {
+	defaultPlaceOrderButtonLabel,
+	defaultReturnToCartButtonLabel,
+} from './constants';
 
 export const Edit = ( {
 	attributes,
 	setAttributes,
 }: {
-	attributes: {
-		showReturnToCart: boolean;
-		cartPageId: number;
-		placeOrderButtonLabel: string;
-	};
+	attributes: BlockAttributes;
 	setAttributes: ( attributes: Record< string, unknown > ) => void;
 } ): JSX.Element => {
 	const blockProps = useBlockProps();
@@ -35,7 +41,10 @@ export const Edit = ( {
 		cartPageId = 0,
 		showReturnToCart = false,
 		placeOrderButtonLabel,
+		returnToCartButtonLabel,
 	} = attributes;
+	const { cartTotals } = useStoreCart();
+	const totalsCurrency = getCurrencyFromPriceResponse( cartTotals );
 	const { current: savedCartPageId } = useRef( cartPageId );
 	const currentPostId = useSelect(
 		( select ) => {
@@ -48,10 +57,12 @@ export const Edit = ( {
 		[ savedCartPageId ]
 	);
 
+	const showPrice = blockProps.className.includes( 'is-style-with-price' );
+
 	return (
 		<div { ...blockProps }>
 			<InspectorControls>
-				<PanelBody title={ __( 'Navigation options', 'woocommerce' ) }>
+				<PanelBody title={ __( 'Options', 'woocommerce' ) }>
 					<ToggleControl
 						label={ __(
 							'Show a "Return to Cart" link',
@@ -68,7 +79,21 @@ export const Edit = ( {
 							} )
 						}
 					/>
+
+					{ showPrice && (
+						<TextControl
+							label={ __( 'Price separator', 'woocommerce' ) }
+							id="price-separator"
+							value={ attributes.priceSeparator }
+							onChange={ ( value ) => {
+								setAttributes( {
+									priceSeparator: value,
+								} );
+							} }
+						/>
+					) }
 				</PanelBody>
+
 				{ showReturnToCart &&
 					! (
 						currentPostId === CHECKOUT_PAGE_ID &&
@@ -94,16 +119,21 @@ export const Edit = ( {
 			</InspectorControls>
 			<div className="wc-block-checkout__actions">
 				<div className="wc-block-checkout__actions_row">
-					<Noninteractive>
-						{ showReturnToCart && (
-							<ReturnToCartButton
-								link={ getSetting(
-									'page-' + cartPageId,
-									false
-								) }
+					{ showReturnToCart && (
+						<ReturnToCartButton href="#cart-page-placeholder">
+							<RichText
+								multiline={ false }
+								allowedFormats={ [] }
+								value={ returnToCartButtonLabel }
+								placeholder={ defaultReturnToCartButtonLabel }
+								onChange={ ( content ) => {
+									setAttributes( {
+										returnToCartButtonLabel: content,
+									} );
+								} }
 							/>
-						) }
-					</Noninteractive>
+						</ReturnToCartButton>
+					) }
 					<EditableButton
 						className={ clsx(
 							'wc-block-cart__submit-button',
@@ -120,7 +150,28 @@ export const Edit = ( {
 								placeOrderButtonLabel: content,
 							} );
 						} }
-					/>
+					>
+						{ showPrice && (
+							<>
+								<style>
+									{ `.wp-block-woocommerce-checkout-actions-block {
+										.wc-block-components-checkout-place-order-button__separator {
+											&::after {
+												content: "${ attributes.priceSeparator }";
+											}
+										}
+									}` }
+								</style>
+								<div className="wc-block-components-checkout-place-order-button__separator"></div>
+								<div className="wc-block-components-checkout-place-order-button__price">
+									<FormattedMonetaryAmount
+										value={ cartTotals.total_price }
+										currency={ totalsCurrency }
+									/>
+								</div>
+							</>
+						) }
+					</EditableButton>
 				</div>
 			</div>
 		</div>
