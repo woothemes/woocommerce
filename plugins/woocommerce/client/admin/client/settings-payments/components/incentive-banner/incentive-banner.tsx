@@ -10,8 +10,8 @@ import { Link } from '@woocommerce/components';
 /**
  * Internal dependencies
  */
+import { WC_ASSET_URL } from '~/utils/admin-settings';
 import './incentive-banner.scss';
-import IncentiveIcon from '~/settings-payments/assets/incentives-icon.svg';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
 
 export const IncentiveBanner = () => {
@@ -31,7 +31,10 @@ export const IncentiveBanner = () => {
 			<div className="woocommerce-incentive-banner__content">
 				<CardMedia>
 					<img
-						src={ IncentiveIcon }
+						src={
+							WC_ASSET_URL +
+							'images/settings-payments/incentives-icon.svg'
+						}
 						alt={ __( 'Incentive hero image', 'woocommerce' ) }
 					/>
 				</CardMedia>

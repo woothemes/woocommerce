@@ -17,8 +17,8 @@ import { Link } from '@woocommerce/components';
  * Internal dependencies
  */
 import './incentive-modal.scss';
-import IncentiveIcon from '~/settings-payments/assets/incentives-icon.svg';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
+import { WC_ASSET_URL } from '~/utils/admin-settings';
 
 interface IncentiveModalProps {
 	isOpen: boolean;
@@ -49,7 +49,10 @@ export const IncentiveModal = ( {
 								}
 							>
 								<img
-									src={ IncentiveIcon }
+									src={
+										WC_ASSET_URL +
+										'images/settings-payments/incentives-icon.svg'
+									}
 									alt={ __(
 										'Incentive hero image',
 										'woocommerce'
