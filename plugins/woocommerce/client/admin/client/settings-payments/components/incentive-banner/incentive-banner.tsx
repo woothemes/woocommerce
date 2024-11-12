@@ -2,10 +2,9 @@
  * External dependencies
  */
 import React from 'react';
-import interpolateComponents from '@automattic/interpolate-components';
 import { Button, Card, CardBody, CardMedia } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useState } from '@wordpress/element';
+import { createInterpolateElement, useState } from '@wordpress/element';
 import { Link } from '@woocommerce/components';
 
 /**
@@ -54,22 +53,25 @@ export const IncentiveBanner = () => {
 						) }
 					</p>
 					<p className={ 'woocommerce-incentive-banner__terms' }>
-						{ interpolateComponents( {
-							mixedString: __(
-								'See {{link}}Terms and Conditions{{/link}} for details.',
+						{ createInterpolateElement(
+							__(
+								'See <termsLink /> for details.',
 								'woocommerce'
 							),
-							components: {
-								link: (
+							{
+								termsLink: (
 									<Link
 										href="https://woocommerce.com/terms-conditions/woopayments-action-promotion-2023/"
 										target="_blank"
 									>
-										<></>
+										{ __(
+											'Terms and Conditions',
+											'woocommerce'
+										) }
 									</Link>
 								),
-							},
-						} ) }
+							}
+						) }
 					</p>
 
 					<Button
