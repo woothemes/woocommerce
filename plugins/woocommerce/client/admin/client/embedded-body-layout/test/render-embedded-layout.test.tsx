@@ -6,7 +6,7 @@ import { WCUser } from '@woocommerce/data';
 /**
  * Internal dependencies
  */
-import { initializeEmbeddedLayout } from '../embedded-layout';
+import { renderEmbeddedLayout } from '../render-embedded-layout';
 
 // Mock dependencies
 jest.mock( '@wordpress/element', () => ( {
@@ -28,12 +28,12 @@ jest.mock( '@woocommerce/data', () => ( {
 	/* eslint-enable @typescript-eslint/no-unused-vars */
 } ) );
 
-jest.mock( '../layout', () => ( {
+jest.mock( '../../layout', () => ( {
 	EmbedLayout: jest.fn( () => null ),
 	PrimaryLayout: jest.fn( () => null ),
 } ) );
 
-jest.mock( '../embedded-body-layout/embedded-body-layout', () => ( {
+jest.mock( '../', () => ( {
 	EmbeddedBodyLayout: jest.fn( () => null ),
 } ) );
 
@@ -55,7 +55,7 @@ describe( 'embedded-layout', () => {
 	} );
 
 	test( 'should initialize embedded layout successfully', () => {
-		const result = initializeEmbeddedLayout(
+		const result = renderEmbeddedLayout(
 			mockEmbeddedRoot,
 			mockHydrateUser,
 			mockSettingsGroup
@@ -71,7 +71,7 @@ describe( 'embedded-layout', () => {
 	test( 'should handle missing wpbody-content', () => {
 		document.body.innerHTML = '';
 
-		const result = initializeEmbeddedLayout(
+		const result = renderEmbeddedLayout(
 			mockEmbeddedRoot,
 			mockHydrateUser,
 			mockSettingsGroup
@@ -83,7 +83,7 @@ describe( 'embedded-layout', () => {
 	test( 'should handle missing wrap element', () => {
 		document.body.innerHTML = '<div id="wpbody-content"></div>';
 
-		const result = initializeEmbeddedLayout(
+		const result = renderEmbeddedLayout(
 			mockEmbeddedRoot,
 			mockHydrateUser,
 			mockSettingsGroup
