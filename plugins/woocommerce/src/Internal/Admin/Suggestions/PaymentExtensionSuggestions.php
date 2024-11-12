@@ -458,7 +458,34 @@ final class PaymentExtensionSuggestions {
 			self::TILOPAY,
 		),
 		'AR' => array(
-			self::MERCADO_PAGO,
+			self::MERCADO_PAGO => array(
+				'links'       => array(
+					// This is country specific.
+					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+					array(
+						'_type' => self::LINK_TYPE_PRICING,
+						'url'   => 'https://www.mercadopago.com.ar/costs-section',
+					),
+					array(
+						'_type' => self::LINK_TYPE_ABOUT,
+						'url'   => 'https://woocommerce.com/products/mercado-pago-checkout/',
+					),
+					// This is country specific.
+					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+					array(
+						'_type' => self::LINK_TYPE_TERMS,
+						'url'   => 'https://www.mercadopago.com.ar/ayuda/terminos-y-politicas_194',
+					),
+					array(
+						'_type' => self::LINK_TYPE_DOCS,
+						'url'   => 'https://woocommerce.com/document/mercado-pago/',
+					),
+					array(
+						'_type' => self::LINK_TYPE_SUPPORT,
+						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=mercado-pago-checkout',
+					),
+				),
+			),
 			self::PAYPAL_FULL_STACK,
 			self::PAYPAL_WALLET,
 		),
@@ -497,6 +524,32 @@ final class PaymentExtensionSuggestions {
 			),
 			self::PAYPAL_FULL_STACK,
 			self::MERCADO_PAGO  => array(
+				'links'       => array(
+					// This is country specific.
+					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+					array(
+						'_type' => self::LINK_TYPE_PRICING,
+						'url'   => 'https://www.mercadopago.com.br/costs-section',
+					),
+					array(
+						'_type' => self::LINK_TYPE_ABOUT,
+						'url'   => 'https://woocommerce.com/products/mercado-pago-checkout/',
+					),
+					// This is country specific.
+					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+					array(
+						'_type' => self::LINK_TYPE_TERMS,
+						'url'   => 'https://www.mercadopago.com.br/ajuda/termos-e-politicas_194',
+					),
+					array(
+						'_type' => self::LINK_TYPE_DOCS,
+						'url'   => 'https://woocommerce.com/document/mercado-pago/',
+					),
+					array(
+						'_type' => self::LINK_TYPE_SUPPORT,
+						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=mercado-pago-checkout',
+					),
+				),
 				'_remove' => array(
 					'tags' => array ( self::TAG_PREFERRED ),
 				),
@@ -512,12 +565,66 @@ final class PaymentExtensionSuggestions {
 			self::PAYPAL_WALLET,
 		),
 		'CL' => array(
-			self::MERCADO_PAGO,
+			self::MERCADO_PAGO => array(
+				'links'       => array(
+					// This is country specific.
+					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+					array(
+						'_type' => self::LINK_TYPE_PRICING,
+						'url'   => 'https://www.mercadopago.cl/costs-section',
+					),
+					array(
+						'_type' => self::LINK_TYPE_ABOUT,
+						'url'   => 'https://woocommerce.com/products/mercado-pago-checkout/',
+					),
+					// This is country specific.
+					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+					array(
+						'_type' => self::LINK_TYPE_TERMS,
+						'url'   => 'https://www.mercadopago.cl/ayuda/terminos-y-politicas_194',
+					),
+					array(
+						'_type' => self::LINK_TYPE_DOCS,
+						'url'   => 'https://woocommerce.com/document/mercado-pago/',
+					),
+					array(
+						'_type' => self::LINK_TYPE_SUPPORT,
+						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=mercado-pago-checkout',
+					),
+				),
+			),
 			self::PAYPAL_FULL_STACK,
 			self::PAYPAL_WALLET,
 		),
 		'CO' => array(
-			self::MERCADO_PAGO,
+			self::MERCADO_PAGO => array(
+				'links'       => array(
+					// This is country specific.
+					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+					array(
+						'_type' => self::LINK_TYPE_PRICING,
+						'url'   => 'https://www.mercadopago.com.co/costs-section',
+					),
+					array(
+						'_type' => self::LINK_TYPE_ABOUT,
+						'url'   => 'https://woocommerce.com/products/mercado-pago-checkout/',
+					),
+					// This is country specific.
+					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+					array(
+						'_type' => self::LINK_TYPE_TERMS,
+						'url'   => 'https://www.mercadopago.com.co/ayuda/terminos-y-politicas_194',
+					),
+					array(
+						'_type' => self::LINK_TYPE_DOCS,
+						'url'   => 'https://woocommerce.com/document/mercado-pago/',
+					),
+					array(
+						'_type' => self::LINK_TYPE_SUPPORT,
+						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=mercado-pago-checkout',
+					),
+				),
+			),
 			self::PAYPAL_FULL_STACK,
 			self::PAYPAL_WALLET,
 		),
@@ -592,6 +699,32 @@ final class PaymentExtensionSuggestions {
 			),
 			self::PAYPAL_FULL_STACK,
 			self::MERCADO_PAGO  => array(
+				'links'       => array(
+					// This is country specific.
+					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+					array(
+						'_type' => self::LINK_TYPE_PRICING,
+						'url'   => 'https://www.mercadopago.com.mx/costs-section',
+					),
+					array(
+						'_type' => self::LINK_TYPE_ABOUT,
+						'url'   => 'https://woocommerce.com/products/mercado-pago-checkout/',
+					),
+					// This is country specific.
+					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+					array(
+						'_type' => self::LINK_TYPE_TERMS,
+						'url'   => 'https://www.mercadopago.com.mx/ayuda/terminos-y-politicas_194',
+					),
+					array(
+						'_type' => self::LINK_TYPE_DOCS,
+						'url'   => 'https://woocommerce.com/document/mercado-pago/',
+					),
+					array(
+						'_type' => self::LINK_TYPE_SUPPORT,
+						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=mercado-pago-checkout',
+					),
+				),
 				'_remove' => array(
 					'tags' => array ( self::TAG_PREFERRED ),
 				),
@@ -611,7 +744,34 @@ final class PaymentExtensionSuggestions {
 		),
 		'PY' => array(),
 		'PE' => array(
-			self::MERCADO_PAGO,
+			self::MERCADO_PAGO => array(
+				'links'       => array(
+					// This is country specific.
+					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+					array(
+						'_type' => self::LINK_TYPE_PRICING,
+						'url'   => 'https://www.mercadopago.com.pe/costs-section',
+					),
+					array(
+						'_type' => self::LINK_TYPE_ABOUT,
+						'url'   => 'https://woocommerce.com/products/mercado-pago-checkout/',
+					),
+					// This is country specific.
+					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+					array(
+						'_type' => self::LINK_TYPE_TERMS,
+						'url'   => 'https://www.mercadopago.com.pe/ayuda/terminos-y-politicas_194',
+					),
+					array(
+						'_type' => self::LINK_TYPE_DOCS,
+						'url'   => 'https://woocommerce.com/document/mercado-pago/',
+					),
+					array(
+						'_type' => self::LINK_TYPE_SUPPORT,
+						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=mercado-pago-checkout',
+					),
+				),
+			),
 			self::PAYPAL_FULL_STACK,
 			self::PAYPAL_WALLET,
 		),
@@ -645,7 +805,34 @@ final class PaymentExtensionSuggestions {
 			self::PAYPAL_WALLET,
 		),
 		'UY' => array(
-			self::MERCADO_PAGO,
+			self::MERCADO_PAGO => array(
+				'links'       => array(
+					// This is country specific.
+					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+					array(
+						'_type' => self::LINK_TYPE_PRICING,
+						'url'   => 'https://www.mercadopago.com.uy/costs-section',
+					),
+					array(
+						'_type' => self::LINK_TYPE_ABOUT,
+						'url'   => 'https://woocommerce.com/products/mercado-pago-checkout/',
+					),
+					// This is country specific.
+					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+					array(
+						'_type' => self::LINK_TYPE_TERMS,
+						'url'   => 'https://www.mercadopago.com.uy/ayuda/terminos-y-politicas_194',
+					),
+					array(
+						'_type' => self::LINK_TYPE_DOCS,
+						'url'   => 'https://woocommerce.com/document/mercado-pago/',
+					),
+					array(
+						'_type' => self::LINK_TYPE_SUPPORT,
+						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=mercado-pago-checkout',
+					),
+				),
+			),
 			self::PAYPAL_FULL_STACK,
 			self::PAYPAL_WALLET,
 		),
@@ -1176,8 +1363,16 @@ final class PaymentExtensionSuggestions {
 				),
 				'links'       => array(
 					array(
+						'_type' => self::LINK_TYPE_PRICING,
+						'url'   => 'https://www.airwallex.com/pricing',
+					),
+					array(
 						'_type' => self::LINK_TYPE_ABOUT,
 						'url'   => 'https://www.airwallex.com/',
+					),
+					array(
+						'_type' => self::LINK_TYPE_TERMS,
+						'url'   => 'https://www.airwallex.com/terms/',
 					),
 					array(
 						'_type' => self::LINK_TYPE_DOCS,
@@ -1203,6 +1398,10 @@ final class PaymentExtensionSuggestions {
 					array(
 						'_type' => self::LINK_TYPE_ABOUT,
 						'url'   => 'https://woocommerce.com/products/antom-payments/',
+					),
+					array(
+						'_type' => self::LINK_TYPE_TERMS,
+						'url'   => 'https://global.alipay.com/docs/ac/Platform/',
 					),
 					array(
 						'_type' => self::LINK_TYPE_DOCS,
@@ -1235,7 +1434,7 @@ final class PaymentExtensionSuggestions {
 					),
 					array(
 						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://www.mercadopago.com.ar/developers/es/docs/woocommerce/introduction',
+						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=mercado-pago-checkout',
 					),
 				),
 				'tags'        => array( self::TAG_PREFERRED ),
@@ -1277,8 +1476,16 @@ final class PaymentExtensionSuggestions {
 				),
 				'links'       => array(
 					array(
+						'_type' => self::LINK_TYPE_PRICING,
+						'url'   => 'https://payfast.io/fees/',
+					),
+					array(
 						'_type' => self::LINK_TYPE_ABOUT,
 						'url'   => 'https://woocommerce.com/products/payfast-payment-gateway/',
+					),
+					array(
+						'_type' => self::LINK_TYPE_TERMS,
+						'url'   => 'https://payfast.io/legal/',
 					),
 					array(
 						'_type' => self::LINK_TYPE_DOCS,
@@ -1302,8 +1509,16 @@ final class PaymentExtensionSuggestions {
 				),
 				'links'       => array(
 					array(
+						'_type' => self::LINK_TYPE_PRICING,
+						'url'   => 'https://paymob.com/en/pricing',
+					),
+					array(
 						'_type' => self::LINK_TYPE_ABOUT,
 						'url'   => 'https://woocommerce.com/products/paymob/',
+					),
+					array(
+						'_type' => self::LINK_TYPE_TERMS,
+						'url'   => 'https://paymob.com/en/policy',
 					),
 					array(
 						'_type' => self::LINK_TYPE_DOCS,
@@ -1331,8 +1546,8 @@ final class PaymentExtensionSuggestions {
 						'url'   => 'https://woocommerce.com/products/woocommerce-paypal-payments/',
 					),
 					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/woocommerce-paypal-payments/',
+						'_type' => self::LINK_TYPE_TERMS,
+						'url'   => 'https://www.paypal.com/legalhub/home',
 					),
 					array(
 						'_type' => self::LINK_TYPE_SUPPORT,
@@ -1357,6 +1572,10 @@ final class PaymentExtensionSuggestions {
 						'url'   => 'https://woocommerce.com/products/woocommerce-paypal-payments/',
 					),
 					array(
+						'_type' => self::LINK_TYPE_TERMS,
+						'url'   => 'https://www.paypal.com/legalhub/home',
+					),
+					array(
 						'_type' => self::LINK_TYPE_DOCS,
 						'url'   => 'https://woocommerce.com/document/woocommerce-paypal-payments/',
 					),
@@ -1379,8 +1598,16 @@ final class PaymentExtensionSuggestions {
 				),
 				'links'       => array(
 					array(
+						'_type' => self::LINK_TYPE_PRICING,
+						'url'   => 'https://www.payoneer.com/about/pricing/',
+					),
+					array(
 						'_type' => self::LINK_TYPE_ABOUT,
 						'url'   => 'https://woocommerce.com/products/payoneer-checkout/',
+					),
+					array(
+						'_type' => self::LINK_TYPE_TERMS,
+						'url'   => 'https://www.payoneer.com/legal-agreements/',
 					),
 					array(
 						'_type' => self::LINK_TYPE_DOCS,
@@ -1404,8 +1631,16 @@ final class PaymentExtensionSuggestions {
 				),
 				'links'       => array(
 					array(
+						'_type' => self::LINK_TYPE_PRICING,
+						'url'   => 'https://paystack.com/pricing',
+					),
+					array(
 						'_type' => self::LINK_TYPE_ABOUT,
 						'url'   => 'https://woocommerce.com/products/paystack/',
+					),
+					array(
+						'_type' => self::LINK_TYPE_TERMS,
+						'url'   => 'https://paystack.com/terms',
 					),
 					array(
 						'_type' => self::LINK_TYPE_DOCS,
@@ -1505,8 +1740,16 @@ final class PaymentExtensionSuggestions {
 				),
 				'links'       => array(
 					array(
+						'_type' => self::LINK_TYPE_PRICING,
+						'url'   => 'https://stripe.com/pricing',
+					),
+					array(
 						'_type' => self::LINK_TYPE_ABOUT,
 						'url'   => 'https://woocommerce.com/products/stripe/',
+					),
+					array(
+						'_type' => self::LINK_TYPE_TERMS,
+						'url'   => 'https://stripe.com/legal/connect-account',
 					),
 					array(
 						'_type' => self::LINK_TYPE_DOCS,
@@ -1530,8 +1773,16 @@ final class PaymentExtensionSuggestions {
 				),
 				'links'       => array(
 					array(
+						'_type' => self::LINK_TYPE_PRICING,
+						'url'   => 'https://tilopay.com/tarifas',
+					),
+					array(
 						'_type' => self::LINK_TYPE_ABOUT,
 						'url'   => 'https://tilopay.com/tilopay-checkout',
+					),
+					array(
+						'_type' => self::LINK_TYPE_TERMS,
+						'url'   => 'https://tilopay.com/terminos-condiciones',
 					),
 					array(
 						'_type' => self::LINK_TYPE_DOCS,
@@ -1570,8 +1821,8 @@ final class PaymentExtensionSuggestions {
 			),
 			self::WOOPAYMENTS       => array(
 				'_type'             => self::TYPE_PSP,
-				'title'             => esc_html__( 'WooPayments', 'woocommerce' ),
-				'short_description' => esc_html__( 'Manage transactions without leaving your WordPress Dashboard. Only with WooPayments.', 'woocommerce' ),
+				'title'             => esc_html__( 'Accept payments with Woo', 'woocommerce' ),
+				'short_description' => esc_html__( 'Credit/debit cards, Apple Pay, Google Pay and more.', 'woocommerce' ),
 				'description'       => esc_html__( 'With WooPayments, you can securely accept major cards, Apple Pay, and payments in over 100 currencies. Track cash flow and manage recurring revenue directly from your store’s dashboard - with no setup costs or monthly fees.', 'woocommerce' ),
 				'image'             => plugins_url( 'assets/images/onboarding/wcpay.svg', WC_PLUGIN_FILE ),
 				'icon'              => plugins_url( 'assets/images/onboarding/wcpay.svg', WC_PLUGIN_FILE ),
