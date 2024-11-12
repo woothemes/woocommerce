@@ -70,10 +70,10 @@ export const PaymentGatewayListItem = ( {
 		content: (
 			<>
 				<span
-                    dangerouslySetInnerHTML={ sanitizeHTML(
-                        decodeEntities( gateway.method_description )
-                    ) }
-                />
+					dangerouslySetInnerHTML={ sanitizeHTML(
+						decodeEntities( gateway.method_description )
+					) }
+				/>
 				{ isWCPay && (
 					<WooPaymentMethodsLogos
 						maxElements={ 10 }

@@ -35,13 +35,13 @@ export const OfflinePaymentGatewayListItem = ( {
 		key: gateway.id,
 		title: <>{ gateway.title }</>,
 		className: 'transitions-disabled',
-        content: (
-            <span
-                dangerouslySetInnerHTML={ sanitizeHTML(
-                    decodeEntities( gateway.content )
-                ) }
-            />
-        ),
+		content: (
+			<span
+				dangerouslySetInnerHTML={ sanitizeHTML(
+					decodeEntities( gateway.content )
+				) }
+			/>
+		),
 		after: (
 			<PaymentGatewayButton
 				id={ gateway.id }
