@@ -143,36 +143,19 @@ export const useActiveRoute = () => {
 	const modernRoutes = useModernRoutes();
 
 	return useMemo( () => {
-<<<<<<< HEAD
 		const { tab: activePage = 'general' } = location.params;
 		const pageSettings = settingsPages?.[ activePage ];
 
 		if ( ! pageSettings ) {
 			return getNotFoundRoute( activePage );
-=======
-		const { tab: page = 'general' } = location.params;
-		const pageSettings = settingsPages?.[ page ];
-
-		if ( ! pageSettings ) {
-			return getNotFoundRoute( page );
->>>>>>> trunk
 		}
 
 		// Handle legacy pages.
 		if ( ! pageSettings.is_modern ) {
-<<<<<<< HEAD
 			return getLegacyRoute( activePage, settingsPages );
 		}
 
 		// Handle modern pages.
 		return modernRoutes[ activePage ] || getNotFoundRoute( activePage );
 	}, [ settingsPages, location.params, modernRoutes ] );
-=======
-			return getLegacyRoute( page, settingsPages );
-		}
-
-		// Handle modern pages.
-		return modernRoutes[ page ] || getNotFoundRoute( page );
-	}, [ settingsPages, location, modernRoutes ] );
->>>>>>> trunk
 };
