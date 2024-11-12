@@ -1,33 +1,51 @@
 export type Route = {
+	/**
+	 * The page id.
+	 */
 	key: string;
 	areas: {
-		sidebar: React.JSX.Element | React.FunctionComponent;
-		content?: React.JSX.Element | React.FunctionComponent;
-		edit?: React.JSX.Element | React.FunctionComponent;
-		mobile?: React.JSX.Element | React.FunctionComponent | boolean;
+		/**
+		 * The sidebar component.
+		 */
+		sidebar: React.JSX.Element | React.ComponentType | null;
+		/**
+		 * The content component.
+		 */
+		content?: React.JSX.Element | React.ComponentType;
+		/**
+		 * The edit component.
+		 */
+		edit?: React.JSX.Element | React.ComponentType | null;
+		/**
+		 * The mobile component.
+		 */
+		mobile?: React.JSX.Element | React.ComponentType | boolean;
+		/**
+		 * Whether the page can be previewed.
+		 */
 		preview?: boolean;
 	};
 	widths?: {
-		content?: number;
-		edit?: number;
+		/**
+		 * The sidebar width.
+		 */
 		sidebar?: number;
+		/**
+		 * The main content width.
+		 */
+		content?: number;
+		/**
+		 * The edit component width.
+		 */
+		edit?: number;
 	};
 };
 
-export type Setting = {
-	id: string;
-	type: string;
-	value: unknown;
-};
-
-export type Section = {
-	label: string;
-	settings: Setting[];
-};
-
-export type Page = {
-	label: string;
-	slug: string;
-	icon: string;
-	sections: Section[];
+export type Location = {
+	pathname: string;
+	search: string;
+	hash: string;
+	state: null;
+	key: string;
+	params: Record< string, string >;
 };
