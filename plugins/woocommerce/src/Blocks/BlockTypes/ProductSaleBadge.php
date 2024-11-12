@@ -16,13 +16,6 @@ class ProductSaleBadge extends AbstractBlock {
 	protected $block_name = 'product-sale-badge';
 
 	/**
-	 * API version name.
-	 *
-	 * @var string
-	 */
-	protected $api_version = '3';
-
-	/**
 	 * Get block attributes.
 	 *
 	 * @return array

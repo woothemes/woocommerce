@@ -19,13 +19,6 @@ class ClassicShortcode extends AbstractDynamicBlock {
 	protected $block_name = 'classic-shortcode';
 
 	/**
-	 * API version.
-	 *
-	 * @var string
-	 */
-	protected $api_version = '3';
-
-	/**
 	 * Render method for the Classic Template block. This method will determine which template to render.
 	 *
 	 * @param array    $attributes Block attributes.

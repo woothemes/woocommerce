@@ -16,13 +16,6 @@ class ProductStockIndicator extends AbstractBlock {
 	protected $block_name = 'product-stock-indicator';
 
 	/**
-	 * API version name.
-	 *
-	 * @var string
-	 */
-	protected $api_version = '3';
-
-	/**
 	 * Register script and style assets for the block type before it is registered.
 	 *
 	 * This registers the scripts; it does not enqueue them.

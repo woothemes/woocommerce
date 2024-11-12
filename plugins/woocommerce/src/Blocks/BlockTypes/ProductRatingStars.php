@@ -15,13 +15,6 @@ class ProductRatingStars extends AbstractBlock {
 	protected $block_name = 'product-rating-stars';
 
 	/**
-	 * API version name.
-	 *
-	 * @var string
-	 */
-	protected $api_version = '3';
-
-	/**
 	 * Get block supports. Shared with the frontend.
 	 * IMPORTANT: If you change anything here, make sure to update the JS file too.
 	 *
