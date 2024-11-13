@@ -17,7 +17,7 @@ interface EllipsisMenuContentProps {
 	needsSetup: boolean;
 }
 
-const EllipsisMenuContent = ( {
+export const EllipsisMenuContent = ( {
 	gatewayType,
 	isEnabled,
 	isInstalled,
@@ -54,7 +54,11 @@ const EllipsisMenuContent = ( {
 			{ gatewayType === 'woopayments' && isEnabled && needsSetup && (
 				<Button>{ __( 'Reset account', 'woocommerce' ) }</Button>
 			) }
-			{ isEnabled && <Button className={ 'components-button__danger' }>{ __( 'Disable', 'woocommerce' ) }</Button> }
+			{ isEnabled && (
+				<Button className={ 'components-button__danger' }>
+					{ __( 'Disable', 'woocommerce' ) }
+				</Button>
+			) }
 			{ ! isInstalled && ! isEnabled && (
 				<Button>{ __( 'Hide suggestion', 'woocommerce' ) }</Button>
 			) }
@@ -64,5 +68,3 @@ const EllipsisMenuContent = ( {
 		</div>
 	);
 };
-
-export default EllipsisMenuContent;

@@ -17,6 +17,7 @@ import { StatusBadge } from '~/settings-payments/components/status-badge';
 import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
 import { WooPaymentsGatewayData } from '~/settings-payments/types';
 import { WC_ASSET_URL } from '~/utils/admin-settings';
+import { EllipsisMenuContent } from '~/settings-payments/components/ellipsis-menu-content';
 
 type PaymentGatewayItemProps = {
 	gateway: PaymentGateway;
@@ -116,19 +117,18 @@ export const PaymentGatewayListItem = ( {
 						</Button>
 					) }
 					<EllipsisMenu
-						label={ __( 'Task List Options', 'woocommerce' ) }
+						label={ __( 'Payment Gateway Options', 'woocommerce' ) }
 						renderContent={ () => (
-							<div>
-								<Button>
-									{ __( 'Learn more', 'woocommerce' ) }
-								</Button>
-								<Button>
-									{ __(
-										'See Terms of Service',
-										'woocommerce'
-									) }
-								</Button>
-							</div>
+							<EllipsisMenuContent
+								isEnabled={ gateway.enabled }
+								isInstalled={ true }
+								gatewayType={
+									gateway.id === 'woopayments'
+										? 'woopayments'
+										: 'preferred'
+								}
+								needsSetup={ !! gateway.needs_setup }
+							/>
 						) }
 					/>
 				</>
