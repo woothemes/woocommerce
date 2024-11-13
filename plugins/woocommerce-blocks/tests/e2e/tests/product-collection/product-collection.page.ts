@@ -600,15 +600,6 @@ class ProductCollectionPage {
 		] );
 	}
 
-	async clickDisplaySettings() {
-		// Select the block, so that toolbar is visible.
-		await this.focusProductCollection();
-		// Open the display settings.
-		await this.page
-			.getByRole( 'button', { name: 'Display settings' } )
-			.click();
-	}
-
 	async changeCollectionUsingToolbar( collection: Collections ) {
 		// Click "Choose collection" button in the toolbar.
 		await this.admin.page
@@ -631,37 +622,6 @@ class ProductCollectionPage {
 				name: 'Continue',
 			} )
 			.click();
-	}
-
-	async setDisplaySettings( {
-		itemsPerPage,
-		offset,
-		maxPageToShow,
-	}: {
-		itemsPerPage: number;
-		offset: number;
-		maxPageToShow: number;
-		isOnFrontend?: boolean;
-	} ) {
-		// Set the values.
-		const displaySettingsContainer = this.page.locator(
-			'.wc-block-editor-product-collection__display-settings'
-		);
-		await displaySettingsContainer.getByLabel( 'Items per Page' ).click();
-		await displaySettingsContainer
-			.getByLabel( 'Items per Page' )
-			.fill( itemsPerPage.toString() );
-		await displaySettingsContainer.getByLabel( 'Offset' ).click();
-		await displaySettingsContainer
-			.getByLabel( 'Offset' )
-			.fill( offset.toString() );
-		await displaySettingsContainer.getByLabel( 'Max page to show' ).click();
-		await displaySettingsContainer
-			.getByLabel( 'Max page to show' )
-			.fill( maxPageToShow.toString() );
-
-		await this.page.click( 'body' );
-		await this.refreshLocators( 'editor' );
 	}
 
 	async setShrinkColumnsToFit( value = true ) {
