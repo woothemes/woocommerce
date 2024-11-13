@@ -33,19 +33,11 @@ jest.mock( '@wordpress/edit-site/build-module/lock-unlock', () => ( {
 	unlock: jest.fn( ( apis ) => apis ),
 } ) );
 
-jest.mock(
-	'@wordpress/edit-site/build-module/components/sidebar-navigation-screen',
-	() => ( {
-		__esModule: true,
-		default: ( { children }: { children: React.ReactNode } ) => (
-			<div data-testid="sidebar-navigation-screen">{ children }</div>
-		),
-	} )
-);
-
 jest.mock( '../sidebar', () => ( {
 	__esModule: true,
-	Sidebar: jest.fn(),
+	Sidebar: ( { children }: { children: React.ReactNode } ) => (
+		<div data-testid="sidebar-navigation-screen">{ children }</div>
+	),
 } ) );
 
 const mockSettingsPages = {
@@ -141,11 +133,11 @@ describe( 'route.tsx', () => {
 				admin: {
 					settingsPages: {
 						modern: {
-							is_modern: true,
 							label: 'Modern',
+							icon: 'published',
 							slug: 'modern',
-							icon: 'settings',
 							sections: [],
+							is_modern: true,
 						},
 					},
 				},
@@ -153,9 +145,7 @@ describe( 'route.tsx', () => {
 
 			( applyFilters as jest.Mock ).mockReturnValue( {
 				modern: {
-					key: 'modern',
 					areas: {
-						sidebar: null,
 						content: <div>Modern Page</div>,
 					},
 				},
@@ -163,6 +153,7 @@ describe( 'route.tsx', () => {
 
 			const { result } = renderHook( () => useActiveRoute() );
 			expect( result.current.key ).toBe( 'modern' );
+			expect( result.current.areas.sidebar ).toBeDefined();
 		} );
 	} );
 

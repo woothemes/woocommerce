@@ -178,6 +178,8 @@ export const useActiveRoute = () => {
 				pageTitle={ pageSettings.label }
 			/>
 		);
+		// Make sure we have a key.
+		modernRoute.key = activePage;
 
 		return modernRoute;
 	}, [ settingsPages, location.params, modernRoutes ] );
