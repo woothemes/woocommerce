@@ -47,7 +47,7 @@ class ProductCollectionRenderer {
 			1
 		);
 
-		// Enable block render if the ProductCollectionNoResults block is rendered.
+		// Enable block render if the NoResults block is rendered.
 		add_filter(
 			'render_block_woocommerce/product-collection-no-results',
 			function ( $html ) {

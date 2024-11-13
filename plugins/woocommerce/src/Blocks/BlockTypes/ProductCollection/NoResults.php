@@ -7,9 +7,9 @@ use Automattic\WooCommerce\Blocks\Utils\ProductCollectionUtils;
 use Automattic\WooCommerce\Blocks\BlockTypes\AbstractBlock;
 
 /**
- * ProductCollectionNoResults class.
+ * NoResults class.
  */
-class ProductCollectionNoResults extends AbstractBlock {
+class NoResults extends AbstractBlock {
 
 	/**
 	 * Block name.
