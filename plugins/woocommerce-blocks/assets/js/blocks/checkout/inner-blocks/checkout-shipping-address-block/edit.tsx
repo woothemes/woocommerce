@@ -32,14 +32,7 @@ export const Edit = ( {
 	};
 	setAttributes: ( attributes: Record< string, unknown > ) => void;
 } ): JSX.Element | null => {
-	const {
-		showCompanyField,
-		requireCompanyField,
-		showApartmentField,
-		requireApartmentField,
-		showPhoneField,
-		requirePhoneField,
-	} = useCheckoutBlockContext();
+	const { requireApartmentField } = useCheckoutBlockContext();
 	const { addressFieldControls: Controls } =
 		useCheckoutBlockControlsContext();
 	const { showShippingFields } = useCheckoutAddress();
@@ -63,15 +56,7 @@ export const Edit = ( {
 			) }
 		>
 			<Controls />
-			<Block
-				key={ blockKey }
-				showCompanyField={ showCompanyField }
-				requireCompanyField={ requireCompanyField }
-				showApartmentField={ showApartmentField }
-				requireApartmentField={ requireApartmentField }
-				showPhoneField={ showPhoneField }
-				requirePhoneField={ requirePhoneField }
-			/>
+			<Block key={ blockKey } />
 			<AdditionalFields block={ innerBlockAreas.SHIPPING_ADDRESS } />
 		</FormStepBlock>
 	);

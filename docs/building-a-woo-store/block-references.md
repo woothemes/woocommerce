@@ -425,7 +425,7 @@ Display a checkout form so your customers can submit orders.
 -   **Ancestor:** 
 -   **Parent:** 
 -	**Supports:** align (wide), ~~html~~, ~~multiple~~
--	**Attributes:** align, isPreview, requireApartmentField, requireCompanyField, requirePhoneField, showApartmentField, showCompanyField, showFormStepNumbers, showPhoneField
+-	**Attributes:** align, isPreview, showFormStepNumbers
 
 ## Actions - woocommerce/checkout-actions-block
 

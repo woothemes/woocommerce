@@ -7,12 +7,6 @@ import { createContext, useContext } from '@wordpress/element';
  * Context consumed by inner blocks.
  */
 export type CheckoutBlockContextProps = {
-	showCompanyField: boolean;
-	requireCompanyField: boolean;
-	showApartmentField: boolean;
-	requireApartmentField: boolean;
-	showPhoneField: boolean;
-	requirePhoneField: boolean;
 	showOrderNotes: boolean;
 	showPolicyLinks: boolean;
 	showReturnToCart: boolean;
@@ -27,12 +21,6 @@ export type CheckoutBlockControlsContextProps = {
 
 export const CheckoutBlockContext: React.Context< CheckoutBlockContextProps > =
 	createContext< CheckoutBlockContextProps >( {
-		showCompanyField: false,
-		requireCompanyField: false,
-		showApartmentField: false,
-		requireApartmentField: false,
-		showPhoneField: false,
-		requirePhoneField: false,
 		showOrderNotes: true,
 		showPolicyLinks: true,
 		showReturnToCart: true,

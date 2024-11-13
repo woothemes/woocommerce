@@ -58,15 +58,7 @@ const Checkout = ( {
 	} );
 	const { cartItems, cartIsLoading } = useStoreCart();
 
-	const {
-		showCompanyField,
-		requireCompanyField,
-		showApartmentField,
-		requireApartmentField,
-		showPhoneField,
-		requirePhoneField,
-		showFormStepNumbers,
-	} = attributes;
+	const { showFormStepNumbers } = attributes;
 
 	if ( ! cartIsLoading && cartItems.length === 0 ) {
 		return <EmptyCart />;
@@ -92,12 +84,6 @@ const Checkout = ( {
 		<CheckoutBlockContext.Provider
 			value={
 				{
-					showCompanyField,
-					requireCompanyField,
-					showApartmentField,
-					requireApartmentField,
-					showPhoneField,
-					requirePhoneField,
 					showFormStepNumbers,
 				} as Attributes
 			}
