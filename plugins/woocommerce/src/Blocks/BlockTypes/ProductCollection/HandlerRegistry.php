@@ -6,10 +6,10 @@ namespace Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection;
 use InvalidArgumentException;
 
 /**
- * CollectionHandlerRegistry class.
+ * HandlerRegistry class.
  * Manages collection handlers.
  */
-class CollectionHandlerRegistry {
+class HandlerRegistry {
 
 	/**
 	 * Associative array of collection handlers.

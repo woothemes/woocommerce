@@ -19,9 +19,9 @@ class ProductCollectionController extends AbstractBlock {
 	protected $block_name = 'product-collection';
 
 	/**
-	 * Instance of CollectionHandlerRegistry.
+	 * Instance of HandlerRegistry.
 	 *
-	 * @var CollectionHandlerRegistry
+	 * @var HandlerRegistry
 	 */
 	protected $collection_handler_registry;
 
@@ -43,14 +43,14 @@ class ProductCollectionController extends AbstractBlock {
 	 * Initialize this block type.
 	 *
 	 * - Register hooks and filters.
-	 * - Set up ProductQueryBuilder, ProductCollectionRenderer and CollectionHandlerRegistry.
+	 * - Set up ProductQueryBuilder, ProductCollectionRenderer and HandlerRegistry.
 	 */
 	protected function initialize() {
 		parent::initialize();
 
 		$this->query_builder               = new ProductQueryBuilder();
 		$this->renderer                    = new ProductCollectionRenderer();
-		$this->collection_handler_registry = new CollectionHandlerRegistry();
+		$this->collection_handler_registry = new HandlerRegistry();
 
 		// Update query for frontend rendering.
 		add_filter(
@@ -390,7 +390,7 @@ class ProductCollectionController extends AbstractBlock {
 	 * Registers core collections and sets the handler store.
 	 */
 	protected function register_core_collections_and_set_handler_store() {
-		// Use CollectionHandlerRegistry to register collections.
+		// Use HandlerRegistry to register collections.
 		$collection_handler_store = $this->collection_handler_registry->register_core_collections();
 		$this->query_builder->set_collection_handler_store( $collection_handler_store );
 	}

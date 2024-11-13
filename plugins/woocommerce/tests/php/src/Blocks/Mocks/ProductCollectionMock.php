@@ -5,7 +5,7 @@ namespace Automattic\WooCommerce\Tests\Blocks\Mocks;
 
 use Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection\ProductCollectionController;
 use Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection\ProductQueryBuilder;
-use Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection\CollectionHandlerRegistry;
+use Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection\HandlerRegistry;
 use Automattic\WooCommerce\Blocks\Package;
 use Automattic\WooCommerce\Blocks\Assets\Api;
 use Automattic\WooCommerce\Blocks\Assets\AssetDataRegistry;
@@ -34,7 +34,7 @@ class ProductCollectionMock extends ProductCollectionController {
 	 */
 	protected function initialize() {
 		$this->query_builder               = new ProductQueryBuilder();
-		$this->collection_handler_registry = new CollectionHandlerRegistry();
+		$this->collection_handler_registry = new HandlerRegistry();
 		$this->register_core_collections_and_set_handler_store();
 	}
 
