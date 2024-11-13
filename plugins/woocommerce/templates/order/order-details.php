@@ -12,7 +12,7 @@
  *
  * @see     https://woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates
- * @version 9.0.0
+ * @version 9.6.0
  *
  * @var bool $show_downloads Controls whether the downloads table should be rendered.
  */
@@ -90,7 +90,7 @@ if ( $show_downloads ) {
 		<?php if ( ! empty( $actions ) ) : ?>
 		<tfoot>
 			<tr>
-				<th>Actions: </th>
+				<th style="vertical-align:middle">Actions: </th>
 				<td>
 						<?php
 						$actions     = wc_get_account_orders_actions( $order );
