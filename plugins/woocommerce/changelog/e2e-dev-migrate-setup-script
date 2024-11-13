@@ -1,4 +1,0 @@
-Significance: patch
-Type: dev
-
-Moved the e2e environment setup script to the monorepo
