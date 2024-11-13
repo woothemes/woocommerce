@@ -19,7 +19,8 @@ import { SlotFillProvider } from '@woocommerce/blocks-checkout';
 import type { TemplateArray } from '@wordpress/blocks';
 import { useEffect, useRef } from '@wordpress/element';
 import { getQueryArg } from '@wordpress/url';
-import { dispatch, select } from '@wordpress/data';
+import { dispatch, select, useSelect } from '@wordpress/data';
+import { store as coreStore } from '@wordpress/core-data';
 
 /**
  * Internal dependencies
@@ -54,12 +55,6 @@ export const Edit = ( {
 	setAttributes: ( attributes: Record< string, unknown > ) => undefined;
 } ): JSX.Element => {
 	const {
-		showCompanyField,
-		requireCompanyField,
-		showApartmentField,
-		requireApartmentField,
-		showPhoneField,
-		requirePhoneField,
 		showOrderNotes,
 		showPolicyLinks,
 		showReturnToCart,
@@ -68,6 +63,36 @@ export const Edit = ( {
 		isPreview = false,
 		showFormStepNumbers = false,
 	} = attributes;
+
+	const fieldEntities = useSelect( ( select ) => {
+		const registeredSettings = select( coreStore ).getEditedEntityRecord(
+			'root',
+			'site'
+		) as Record< string, string >;
+
+		return {
+			phone:
+				registeredSettings?.woocommerce_checkout_phone_field ||
+				'optional',
+			company:
+				registeredSettings?.woocommerce_checkout_company_field ||
+				'optional',
+			apartment:
+				registeredSettings?.woocommerce_checkout_apartment_field ||
+				'optional',
+		};
+	}, [] );
+
+	const setFieldEntity = ( field: string, value: string ) => {
+		if (
+			[ 'phone', 'company', 'apartment' ].includes( field ) &&
+			[ 'optional', 'required', 'hidden' ].includes( value )
+		) {
+			dispatch( coreStore ).editEntityRecord( 'root', 'site', undefined, {
+				[ `woocommerce_checkout_${ field }_field` ]: value,
+			} );
+		}
+	};
 
 	// This focuses on the block when a certain query param is found. This is used on the link from the task list.
 	const focus = useRef( getQueryArg( window.location.href, 'focus' ) );
@@ -90,11 +115,16 @@ export const Edit = ( {
 		[ 'woocommerce/checkout-fields-block', {}, [] ],
 	] as TemplateArray;
 
-	const toggleAttribute = ( key: keyof Attributes ): void => {
-		const newAttributes = {} as Partial< Attributes >;
-		newAttributes[ key ] = ! ( attributes[ key ] as boolean );
-		setAttributes( newAttributes );
-	};
+	const requiredOptions = [
+		{
+			label: __( 'Optional', 'woocommerce' ),
+			value: 'false',
+		},
+		{
+			label: __( 'Required', 'woocommerce' ),
+			value: 'true',
+		},
+	];
 
 	const addressFieldControls = (): JSX.Element => (
 		<InspectorControls>
@@ -118,72 +148,87 @@ export const Edit = ( {
 				</p>
 				<ToggleControl
 					label={ __( 'Company', 'woocommerce' ) }
-					checked={ showCompanyField }
-					onChange={ () => toggleAttribute( 'showCompanyField' ) }
+					checked={ fieldEntities.company !== 'hidden' }
+					onChange={ () =>
+						setFieldEntity(
+							'company',
+							fieldEntities.company === 'hidden'
+								? 'required'
+								: 'hidden'
+						)
+					}
 				/>
-				{ showCompanyField && (
+				{ fieldEntities.company !== 'hidden' && (
 					<RadioControl
-						selected={ requireCompanyField }
-						options={ [
-							{
-								label: __( 'Optional', 'woocommerce' ),
-								value: false,
-							},
-							{
-								label: __( 'Required', 'woocommerce' ),
-								value: true,
-							},
-						] }
-						onChange={ () =>
-							toggleAttribute( 'requireCompanyField' )
+						selected={
+							fieldEntities.company === 'required'
+								? 'true'
+								: 'false'
 						}
+						options={ requiredOptions }
+						onChange={ ( value: string ) => {
+							setFieldEntity(
+								'company',
+								value === 'true' ? 'required' : 'optional'
+							);
+						} }
 						className="components-base-control--nested wc-block-components-require-company-field"
 					/>
 				) }
 				<ToggleControl
 					label={ __( 'Address line 2', 'woocommerce' ) }
-					checked={ showApartmentField }
-					onChange={ () => toggleAttribute( 'showApartmentField' ) }
+					checked={ fieldEntities.apartment !== 'hidden' }
+					onChange={ () =>
+						setFieldEntity(
+							'apartment',
+							fieldEntities.apartment === 'hidden'
+								? 'required'
+								: 'hidden'
+						)
+					}
 				/>
-				{ showApartmentField && (
+				{ fieldEntities.apartment !== 'hidden' && (
 					<RadioControl
-						selected={ requireApartmentField }
-						options={ [
-							{
-								label: __( 'Optional', 'woocommerce' ),
-								value: false,
-							},
-							{
-								label: __( 'Required', 'woocommerce' ),
-								value: true,
-							},
-						] }
-						onChange={ () =>
-							toggleAttribute( 'requireApartmentField' )
+						selected={
+							fieldEntities.apartment === 'required'
+								? 'true'
+								: 'false'
+						}
+						options={ requiredOptions }
+						onChange={ ( value: string ) =>
+							setFieldEntity(
+								'apartment',
+								value === 'true' ? 'required' : 'optional'
+							)
 						}
 						className="components-base-control--nested wc-block-components-require-apartment-field"
 					/>
 				) }
 				<ToggleControl
 					label={ __( 'Phone', 'woocommerce' ) }
-					checked={ showPhoneField }
-					onChange={ () => toggleAttribute( 'showPhoneField' ) }
+					checked={ fieldEntities.phone !== 'hidden' }
+					onChange={ () =>
+						setFieldEntity(
+							'phone',
+							fieldEntities.phone === 'hidden'
+								? 'required'
+								: 'hidden'
+						)
+					}
 				/>
-				{ showPhoneField && (
+				{ fieldEntities.phone !== 'hidden' && (
 					<RadioControl
-						selected={ requirePhoneField }
-						options={ [
-							{
-								label: __( 'Optional', 'woocommerce' ),
-								value: false,
-							},
-							{
-								label: __( 'Required', 'woocommerce' ),
-								value: true,
-							},
-						] }
-						onChange={ () =>
-							toggleAttribute( 'requirePhoneField' )
+						selected={
+							fieldEntities.phone === 'required'
+								? 'true'
+								: 'false'
+						}
+						options={ requiredOptions }
+						onChange={ ( value: string ) =>
+							setFieldEntity(
+								'phone',
+								value === 'true' ? 'required' : 'optional'
+							)
 						}
 						className="components-base-control--nested wc-block-components-require-phone-field"
 					/>
@@ -216,12 +261,6 @@ export const Edit = ( {
 							>
 								<CheckoutBlockContext.Provider
 									value={ {
-										showApartmentField,
-										showCompanyField,
-										showPhoneField,
-										requireApartmentField,
-										requireCompanyField,
-										requirePhoneField,
 										showOrderNotes,
 										showPolicyLinks,
 										showReturnToCart,
