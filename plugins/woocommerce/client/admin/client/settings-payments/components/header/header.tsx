@@ -9,7 +9,9 @@ import {
 import {
 	WooHeaderNavigationItem,
 	WooHeaderPageTitle,
+	WooHeaderItem
 } from '@woocommerce/admin-layout';
+import { Button } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -30,6 +32,18 @@ interface HeaderProps {
 	 * The description of the header.
 	 */
 	description?: string;
+	/**
+	 * Whether to show the button or not.
+	 */
+	hasButton?: boolean;
+	/**
+	 * The label of the button.
+	 */
+	buttonLabel?: string;
+	/**
+	 * The callback function when the button is clicked.
+	 */
+	onButtonClick?: () => void;
 }
 
 const HEADER_PLUGIN_NAME = 'settings-payments-offline-header';
@@ -39,7 +53,14 @@ let hasRegisteredPlugins = false;
 /**
  * Registers the header component as a plugin to customize the header of the settings payments page.
  */
-export const Header = ( { title, backLink, description }: HeaderProps ) => {
+export const Header = ( { 
+	title, 
+	backLink, 
+	description,
+	hasButton,
+	buttonLabel,
+	onButtonClick
+}: HeaderProps ) => {
 	if ( ! hasRegisteredPlugins ) {
 		/**
 		 * Unregister existing header plugins since we don't want to show the default items such as activity panel.
@@ -74,6 +95,18 @@ export const Header = ( { title, backLink, description }: HeaderProps ) => {
 							</span>
 						) }
 					</WooHeaderPageTitle>
+					{ hasButton && (
+						<WooHeaderItem>
+							<Button
+								variant="primary"
+								onClick={ onButtonClick }
+								isBusy={ false }
+								disabled={ false }
+							>
+								{ buttonLabel }
+							</Button>
+						</WooHeaderItem>
+					) }
 				</>
 			),
 			// @ts-expect-error scope param is not typed
