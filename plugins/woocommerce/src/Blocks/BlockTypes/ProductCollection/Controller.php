@@ -26,9 +26,9 @@ class Controller extends AbstractBlock {
 	protected $collection_handler_registry;
 
 	/**
-	 * Instance of ProductQueryBuilder.
+	 * Instance of QueryBuilder.
 	 *
-	 * @var ProductQueryBuilder
+	 * @var QueryBuilder
 	 */
 	protected $query_builder;
 
@@ -43,12 +43,12 @@ class Controller extends AbstractBlock {
 	 * Initialize this block type.
 	 *
 	 * - Register hooks and filters.
-	 * - Set up ProductQueryBuilder, Renderer and HandlerRegistry.
+	 * - Set up QueryBuilder, Renderer and HandlerRegistry.
 	 */
 	protected function initialize() {
 		parent::initialize();
 
-		$this->query_builder               = new ProductQueryBuilder();
+		$this->query_builder               = new QueryBuilder();
 		$this->renderer                    = new Renderer();
 		$this->collection_handler_registry = new HandlerRegistry();
 
@@ -285,7 +285,7 @@ class Controller extends AbstractBlock {
 		// Most likely this argument is being accessed in the test environment image.
 		$query['author'] = '';
 
-		// Use ProductQueryBuilder to get the final query args.
+		// Use QueryBuilder to get the final query args.
 		return $this->query_builder->get_final_query_args(
 			$collection_args,
 			$query,
@@ -361,7 +361,7 @@ class Controller extends AbstractBlock {
 			'productCollectionLocation' => $block->context['productCollectionLocation'] ?? null,
 		);
 
-		// Use ProductQueryBuilder to construct the query.
+		// Use QueryBuilder to construct the query.
 		return $this->query_builder->get_final_frontend_query(
 			$collection_args,
 			$block_context_query,

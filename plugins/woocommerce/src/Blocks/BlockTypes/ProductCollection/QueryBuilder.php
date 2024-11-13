@@ -11,10 +11,10 @@ use WP_Query;
 use WC_Tax;
 
 /**
- * ProductQueryBuilder class.
+ * QueryBuilder class.
  * Responsible for constructing and modifying product queries.
  */
-class ProductQueryBuilder {
+class QueryBuilder {
 
 	/**
 	 * All query args from WP_Query.

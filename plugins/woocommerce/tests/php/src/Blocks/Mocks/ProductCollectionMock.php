@@ -4,7 +4,7 @@ declare( strict_types = 1 );
 namespace Automattic\WooCommerce\Tests\Blocks\Mocks;
 
 use Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection\Controller;
-use Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection\ProductQueryBuilder;
+use Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection\QueryBuilder;
 use Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection\HandlerRegistry;
 use Automattic\WooCommerce\Blocks\Package;
 use Automattic\WooCommerce\Blocks\Assets\Api;
@@ -33,7 +33,7 @@ class ProductCollectionMock extends Controller {
 	 * Override the normal initialization behavior to prevent registering the block with WordPress filters.
 	 */
 	protected function initialize() {
-		$this->query_builder               = new ProductQueryBuilder();
+		$this->query_builder               = new QueryBuilder();
 		$this->collection_handler_registry = new HandlerRegistry();
 		$this->register_core_collections_and_set_handler_store();
 	}
