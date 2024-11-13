@@ -33,18 +33,33 @@ describe( 'generateCSVDataFromTable', () => {
 	} );
 
 	it( 'should prefix single quote character when the cell value starts with one of =, +, -, @, tab, and carriage return', () => {
-		[
-			'=',
-			'+',
-			'-',
-			'@',
-			String.fromCharCode( 0x09 ), // tab
-			String.fromCharCode( 0x0d ), // carriage return
-		].forEach( ( val ) => {
-			const injectionSuffix = '2+injection';
-			// If the value is not a number, it should be escaped to prevent CSV injection.
-			const expected = 'value\n"\'' + val + injectionSuffix + '"';
+		const testValues = [
+			// The values below should be escaped to prevent CSV formula injection.
+			{ inputValue: '=danger', expectedValue: `"'=danger"` },
+			{ inputValue: '+danger', expectedValue: `"'+danger"` },
+			{ inputValue: '-danger', expectedValue: `"'-danger"` },
+			{ inputValue: '@danger', expectedValue: `"'@danger"` },
+			{
+				inputValue: String.fromCharCode( 0x09 ) + 'danger',
+				expectedValue: `"'${ String.fromCharCode( 0x09 ) }danger"`,
+			},
+			{
+				inputValue: String.fromCharCode( 0x0d ) + 'danger',
+				expectedValue: `"'${ String.fromCharCode( 0x0d ) }danger"`,
+			},
 
+			// The values below should not be escaped since they are pure numeric values.
+			{ inputValue: 12, expectedValue: '12' },
+			{ inputValue: 12.34, expectedValue: '12.34' },
+			{ inputValue: -12, expectedValue: '-12' },
+			{ inputValue: -12.34, expectedValue: '-12.34' },
+			{
+				inputValue: Number.MIN_SAFE_INTEGER,
+				expectedValue: '-9007199254740991',
+			},
+		];
+
+		testValues.forEach( ( { inputValue, expectedValue } ) => {
 			const result = generateCSVDataFromTable(
 				[
 					{
@@ -56,37 +71,12 @@ describe( 'generateCSVDataFromTable', () => {
 					[
 						{
 							display: 'value',
-							value: val + injectionSuffix,
+							value: inputValue,
 						},
 					],
 				]
 			);
-			expect( result ).toBe( expected );
-		} );
-	} );
-
-	it( 'should not prefix single quote character for numeric values', () => {
-		[ 12, 12.34, -12, -12.34 ].forEach( ( val ) => {
-			// If the value is a number, no need to escape it since pure numeric values cannot form a valid formula to be injected.
-			const expected = 'value\n' + val;
-
-			const result = generateCSVDataFromTable(
-				[
-					{
-						label: 'value',
-						key: 'value',
-					},
-				],
-				[
-					[
-						{
-							display: 'value',
-							value: val,
-						},
-					],
-				]
-			);
-			expect( result ).toBe( expected );
+			expect( result ).toBe( `value\n${ expectedValue }` );
 		} );
 	} );
 } );
