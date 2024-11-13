@@ -10,7 +10,7 @@ import { paramCase as kebabCase } from 'change-case';
  * @param {string} value Value of the color.
  * @return {string} CSS variable value.
  */
-function getCSSVar(
+export function getCSSVar(
 	slug: string | undefined,
 	value: string | undefined = ''
 ): string {
@@ -18,7 +18,7 @@ function getCSSVar(
 		return `var(--wp--preset--color--${ slug })`;
 	}
 
-	return value;
+	return value || '';
 }
 
 /**

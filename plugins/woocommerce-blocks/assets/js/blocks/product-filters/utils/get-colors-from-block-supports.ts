@@ -3,12 +3,10 @@
  */
 import { BlockAttributes } from '@wordpress/blocks';
 
-function getCSSVar( slug: string | undefined, value: string | undefined ) {
-	if ( slug ) {
-		return `var(--wp--preset--color--${ slug })`;
-	}
-	return value || '';
-}
+/**
+ * Internal dependencies
+ */
+import { getCSSVar } from './colors';
 
 export const getColorsFromBlockSupports = ( attributes: BlockAttributes ) => {
 	const { backgroundColor, textColor, style } = attributes;
