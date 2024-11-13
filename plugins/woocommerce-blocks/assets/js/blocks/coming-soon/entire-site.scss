@@ -86,7 +86,7 @@ body:has(.woocommerce-coming-soon-banner) {
 			line-height: normal;
 			text-align: center;
 			text-decoration: none;
-			padding: 17px 16px;
+			padding: 12px 16px;
 		}
 	}
 
@@ -143,10 +143,6 @@ body:has(.woocommerce-coming-soon-banner) {
 		.wp-block-cover__background {
 			background-color: var(--woocommerce-coming-soon-color) !important;
 		}
-	}
-
-	.woocommerce-coming-soon-header {
-		height: 40px;
 	}
 
 	h1.wp-block-heading.woocommerce-coming-soon-banner {
