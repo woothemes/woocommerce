@@ -14,7 +14,7 @@ use WP_REST_Request;
 use WP_REST_Response;
 
 /**
- * Controller for the REST endpoints to service the WooCommerce Payments settings page.
+ * Controller for the REST endpoints to service the Payments settings page.
  */
 class PaymentsRestController extends RestApiControllerBase {
 	use AccessiblePrivateMethods;
