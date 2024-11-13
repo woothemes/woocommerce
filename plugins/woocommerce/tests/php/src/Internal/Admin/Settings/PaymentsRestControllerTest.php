@@ -133,6 +133,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'enabled', $offline_pm['state'], 'Offline payment method `state[enabled]` entry is missing' );
 		$this->assertArrayHasKey( 'needs_setup', $offline_pm['state'], 'Offline payment method `state[needs_setup]` entry is missing' );
 		$this->assertArrayHasKey( 'management', $offline_pm, 'Offline payment method `management` entry is missing' );
+		$this->assertArrayHasKey( 'icon', $offline_pm, 'Offline payment method `icon` entry is missing' );
 
 		// Assert that the suggestion categories have all the details.
 		$suggestion_category = $data['suggestion_categories'][0];

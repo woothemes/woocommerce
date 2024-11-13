@@ -243,7 +243,21 @@ class PaymentsRestController extends RestApiControllerBase {
 				continue;
 			}
 
-			$items[] = $this->prepare_payment_gateway_for_response( $payment_gateway, $payment_gateway_order );
+			$item = $this->prepare_payment_gateway_for_response( $payment_gateway, $payment_gateway_order );
+			// Enhance the response with additional information.
+			switch ( $payment_gateway->id ) {
+				case 'bacs':
+					$item['icon'] = plugins_url( 'assets/images/payment_methods/bacs.svg', WC_PLUGIN_FILE );
+					break;
+				case 'cheque':
+					$item['icon'] = plugins_url( 'assets/images/payment_methods/cheque.svg', WC_PLUGIN_FILE );
+					break;
+				case 'cod':
+					$item['icon'] = plugins_url( 'assets/images/payment_methods/cod.svg', WC_PLUGIN_FILE );
+					break;
+			}
+
+			$items[] = $item;
 		}
 
 		return $items;
