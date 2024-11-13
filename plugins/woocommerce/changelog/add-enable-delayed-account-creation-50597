@@ -1,0 +1,4 @@
+Significance: minor
+Type: add
+
+Enabled delayed account creation after checkout on the order confirmation page.

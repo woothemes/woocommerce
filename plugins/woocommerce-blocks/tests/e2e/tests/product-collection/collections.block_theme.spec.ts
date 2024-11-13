@@ -131,11 +131,14 @@ test.describe( 'Product Collection: Collections', () => {
 	} ) => {
 		await pageObject.createNewPostAndInsertBlock( 'productCatalog' );
 
-		const usePageContextToggle = pageObject
+		const queryTypeLocator = pageObject
 			.locateSidebarSettings()
-			.locator( `${ SELECTORS.usePageContextControl } input` );
+			.getByLabel( SELECTORS.usePageContextControl );
 
-		await expect( usePageContextToggle ).toBeVisible();
+		await expect( queryTypeLocator.getByLabel( 'Default' ) ).toBeChecked();
+		await expect(
+			queryTypeLocator.getByLabel( 'Custom' )
+		).not.toBeChecked();
 		await expect( pageObject.products ).toHaveCount( 9 );
 
 		await pageObject.publishAndGoToFrontend();
@@ -160,12 +163,14 @@ test.describe( 'Product Collection: Collections', () => {
 		await pageObject.chooseCollectionInTemplate();
 		await editor.openDocumentSettingsSidebar();
 
-		const sidebarSettings = pageObject.locateSidebarSettings();
-		const input = sidebarSettings.locator(
-			`${ SELECTORS.usePageContextControl } input`
-		);
+		const queryTypeLocator = pageObject
+			.locateSidebarSettings()
+			.getByLabel( SELECTORS.usePageContextControl );
 
-		await expect( input ).toBeChecked();
+		await expect( queryTypeLocator.getByLabel( 'Default' ) ).toBeChecked();
+		await expect(
+			queryTypeLocator.getByLabel( 'Custom' )
+		).not.toBeChecked();
 	} );
 
 	test.describe( 'Have hidden implementation in UI', () => {
@@ -208,6 +213,51 @@ test.describe( 'Product Collection: Collections', () => {
 			);
 
 			await expect( input ).toBeHidden();
+		} );
+	} );
+
+	test.describe( 'Related Products collection', () => {
+		test( 'Can configure related products criteria using "Related by" settings', async ( {
+			pageObject,
+			editor,
+		} ) => {
+			// "Related by" control shouldn't be visible for other collections
+			await pageObject.createNewPostAndInsertBlock( 'bestSellers' );
+			const sidebarSettings = pageObject.locateSidebarSettings();
+
+			const relatedByControl = sidebarSettings.locator(
+				'.wc-block-editor-product-collection-inspector-controls__relate-by'
+			);
+			await expect( relatedByControl ).toBeHidden();
+
+			// Change collection type to "Related Products"
+			// And verify that "Related by" control is visible
+			await pageObject.changeCollectionUsingToolbar( 'relatedProducts' );
+			await pageObject.chooseProductInEditorProductPickerIfAvailable(
+				editor.canvas
+			);
+			await expect( relatedByControl ).toBeVisible();
+
+			// Verify that both checkboxes (Categories and Tags) are checked by default
+			const categoriesCheckbox =
+				sidebarSettings.getByLabel( 'Categories' );
+			const tagsCheckbox = sidebarSettings.getByLabel( 'Tags' );
+			await expect( categoriesCheckbox ).toBeChecked();
+			await expect( tagsCheckbox ).toBeChecked();
+			await expect( pageObject.productTitles ).toHaveText( [ 'Single' ] );
+
+			// Uncheck "Categories" checkbox
+			await categoriesCheckbox.uncheck();
+			await expect(
+				editor.canvas.getByText(
+					'No products to display. Try adjusting the filters in the block settings panel.'
+				)
+			).toBeVisible();
+
+			// Verify on frontend
+			await categoriesCheckbox.check();
+			await pageObject.publishAndGoToFrontend();
+			await expect( pageObject.productTitles ).toHaveText( [ 'Single' ] );
 		} );
 	} );
 } );
