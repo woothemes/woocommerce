@@ -39,6 +39,13 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 		protected $label = '';
 
 		/**
+		 * Setting page is modern.
+		 *
+		 * @var bool
+		 */
+		protected $is_modern = false;
+
+		/**
 		 * Constructor.
 		 */
 		public function __construct() {
@@ -130,10 +137,11 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 			}
 
 			$pages[ $this->id ] = array(
-				'label'    => html_entity_decode( $this->label ),
-				'slug'     => $this->id,
-				'icon'     => $this->icon,
-				'sections' => $sections_data,
+				'label'     => html_entity_decode( $this->label ),
+				'slug'      => $this->id,
+				'icon'      => $this->icon,
+				'sections'  => $sections_data,
+				'is_modern' => $this->is_modern,
 			);
 
 			return $pages;

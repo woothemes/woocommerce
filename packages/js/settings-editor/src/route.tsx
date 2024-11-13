@@ -16,8 +16,6 @@ import {
 } from '@wordpress/hooks';
 /* eslint-disable @woocommerce/dependency-group */
 // @ts-ignore No types for this exist yet.
-import SidebarNavigationScreen from '@wordpress/edit-site/build-module/components/sidebar-navigation-screen';
-// @ts-ignore No types for this exist yet.
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 // @ts-ignore No types for this exist yet.
 import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
@@ -38,11 +36,23 @@ const NotFound = () => {
 /**
  * Default route when active page is not found.
  *
+ * @param {string}                                       activePage - The active page.
+ * @param {typeof window.wcSettings.admin.settingsPages} pages      - The pages.
+ *
  */
-const getNotFoundRoute = ( activePage: string ): Route => ( {
+const getNotFoundRoute = (
+	activePage: string,
+	pages: typeof window.wcSettings.admin.settingsPages
+): Route => ( {
 	key: activePage,
 	areas: {
-		sidebar: null,
+		sidebar: (
+			<Sidebar
+				activePage={ activePage }
+				pages={ pages }
+				pageTitle={ 'Settings' }
+			/>
+		),
 		content: <NotFound />,
 		edit: null,
 	},
@@ -69,12 +79,10 @@ const getLegacyRoute = (
 		key: activePage,
 		areas: {
 			sidebar: (
-				<SidebarNavigationScreen
-					title={ pageTitle }
-					isRoot
-					content={
-						<Sidebar activePage={ activePage } pages={ pages } />
-					}
+				<Sidebar
+					activePage={ activePage }
+					pages={ pages }
+					pageTitle={ pageTitle }
 				/>
 			),
 			content: <div>Content Placeholder</div>,
@@ -147,7 +155,7 @@ export const useActiveRoute = () => {
 		const pageSettings = settingsPages?.[ activePage ];
 
 		if ( ! pageSettings ) {
-			return getNotFoundRoute( activePage );
+			return getNotFoundRoute( activePage, settingsPages );
 		}
 
 		// Handle legacy pages.
@@ -155,7 +163,24 @@ export const useActiveRoute = () => {
 			return getLegacyRoute( activePage, settingsPages );
 		}
 
+		const modernRoute = modernRoutes[ activePage ];
+
 		// Handle modern pages.
-		return modernRoutes[ activePage ] || getNotFoundRoute( activePage );
+		if ( ! modernRoute ) {
+			return getNotFoundRoute( activePage, settingsPages );
+		}
+
+		// Sidebar is responsibility of WooCommerce, not extensions so add it here.
+		modernRoute.areas.sidebar = (
+			<Sidebar
+				activePage={ activePage }
+				pages={ settingsPages }
+				pageTitle={ pageSettings.label }
+			/>
+		);
+		// Make sure we have a key.
+		modernRoute.key = activePage;
+
+		return modernRoute;
 	}, [ settingsPages, location.params, modernRoutes ] );
 };
