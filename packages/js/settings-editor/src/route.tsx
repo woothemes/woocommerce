@@ -36,11 +36,23 @@ const NotFound = () => {
 /**
  * Default route when active page is not found.
  *
+ * @param {string}                                       activePage - The active page.
+ * @param {typeof window.wcSettings.admin.settingsPages} pages      - The pages.
+ *
  */
-const getNotFoundRoute = ( activePage: string ): Route => ( {
+const getNotFoundRoute = (
+	activePage: string,
+	pages: typeof window.wcSettings.admin.settingsPages
+): Route => ( {
 	key: activePage,
 	areas: {
-		sidebar: null,
+		sidebar: (
+			<Sidebar
+				activePage={ activePage }
+				pages={ pages }
+				pageTitle={ 'Settings' }
+			/>
+		),
 		content: <NotFound />,
 		edit: null,
 	},
@@ -143,7 +155,7 @@ export const useActiveRoute = () => {
 		const pageSettings = settingsPages?.[ activePage ];
 
 		if ( ! pageSettings ) {
-			return getNotFoundRoute( activePage );
+			return getNotFoundRoute( activePage, settingsPages );
 		}
 
 		// Handle legacy pages.
@@ -152,6 +164,19 @@ export const useActiveRoute = () => {
 		}
 
 		// Handle modern pages.
-		return modernRoutes[ activePage ] || getNotFoundRoute( activePage );
+		if ( ! modernRoutes[ activePage ] ) {
+			return getNotFoundRoute( activePage, settingsPages );
+		}
+
+		const modernRoute = modernRoutes[ activePage ];
+		modernRoute.areas.sidebar = (
+			<Sidebar
+				activePage={ activePage }
+				pages={ settingsPages }
+				pageTitle={ pageSettings.label }
+			/>
+		);
+
+		return modernRoute;
 	}, [ settingsPages, location.params, modernRoutes ] );
 };
