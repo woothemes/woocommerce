@@ -46,6 +46,13 @@ class PaymentsRestController extends RestApiControllerBase {
 	private ExtensionSuggestions $extension_suggestions;
 
 	/**
+	 * The memoized payment gateways to avoid computing the list multiple times during a request.
+	 *
+	 * @var array|null
+	 */
+	private ?array $payment_gateways_memo = null;
+
+	/**
 	 * Get the WooCommerce REST API namespace for the class.
 	 *
 	 * @return string
@@ -92,6 +99,16 @@ class PaymentsRestController extends RestApiControllerBase {
 	 */
 	final public function init( ExtensionSuggestions $payment_extension_suggestions ): void {
 		$this->extension_suggestions = $payment_extension_suggestions;
+	}
+
+	/**
+	 * Reset the memoized data. Useful for testing purposes.
+	 *
+	 * @internal
+	 * @return void
+	 */
+	public function reset_memo(): void {
+		$this->payment_gateways_memo = null;
 	}
 
 	/**
@@ -233,6 +250,9 @@ class PaymentsRestController extends RestApiControllerBase {
 	 * @return array The payment gateways list
 	 */
 	private function get_settings_page_payment_gateways(): array {
+		if ( ! is_null( $this->payment_gateways_memo ) ) {
+			return $this->payment_gateways_memo;
+		}
 
 		// We don't want to output anything from the action. So we buffer it and discard it.
 		// We just want to give the payment gateways a chance to adjust the payment gateways list for the settings page.
@@ -254,6 +274,8 @@ class PaymentsRestController extends RestApiControllerBase {
 				return ! empty( $gateway->method_title ) && ! empty( $gateway->method_description );
 			}
 		);
+
+		$this->payment_gateways_memo = $payment_gateways;
 
 		return $payment_gateways;
 	}
