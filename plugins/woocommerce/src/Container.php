@@ -7,7 +7,9 @@ declare( strict_types=1 );
 
 namespace Automattic\WooCommerce;
 
+use Automattic\WooCommerce\Internal\DependencyManagement\ContainerException;
 use Automattic\WooCommerce\Internal\DependencyManagement\ExtendedContainer;
+use Automattic\WooCommerce\Internal\DependencyManagement\RuntimeContainer;
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\AdminSettingsServiceProvider;
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\CostOfGoodsSoldServiceProvider;
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\COTMigrationServiceProvider;
@@ -56,8 +58,81 @@ use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\Import
  * Class registration should be done via service providers that inherit from Automattic\WooCommerce\Internal\DependencyManagement
  * and those should go in the `src\Internal\DependencyManagement\ServiceProviders` folder unless there's a good reason
  * to put them elsewhere. All the service provider class names must be in the `SERVICE_PROVIDERS` constant.
+ *
+ * IMPORTANT NOTE: By default an instance of RuntimeContainer will be used as the underlying container,
+ * but it's possible to use the old ExtendedContainer (backed by the PHP League's container package) instead,
+ * see RuntimeContainer::should_use() for configuration instructions.
+ * The League's container, the ExtendedContainer class and the related support code will be removed in WooCommerce 10.0.
  */
 final class Container {
+	/**
+	 * The underlying container.
+	 *
+	 * @var RuntimeContainer
+	 */
+	private $container;
+
+	/**
+	 * Class constructor.
+	 */
+	public function __construct() {
+		if ( RuntimeContainer::should_use() ) {
+			// When the League container was in use we allowed to retrieve the container itself
+			// by using 'Psr\Container\ContainerInterface' as the class identifier,
+			// we continue allowing that for compatibility.
+			$this->container = new RuntimeContainer(
+				array(
+					__CLASS__                          => $this,
+					'Psr\Container\ContainerInterface' => $this,
+				)
+			);
+			return;
+		}
+
+		$this->container = new ExtendedContainer();
+
+		// Add ourselves as the shared instance of ContainerInterface,
+		// register everything else using service providers.
+
+		$this->container->share( __CLASS__, $this );
+
+		foreach ( $this->get_service_providers() as $service_provider_class ) {
+			$this->container->addServiceProvider( $service_provider_class );
+		}
+	}
+
+	/**
+	 * Finds an entry of the container by its identifier and returns it.
+	 * See the comment about ContainerException in RuntimeContainer::get.
+	 *
+	 * @param string $id Identifier of the entry to look for.
+	 *
+	 * @return mixed Resolved entry.
+	 *
+	 * @throws NotFoundExceptionInterface No entry was found for the supplied identifier (only when using ExtendedContainer).
+	 * @throws Psr\Container\ContainerExceptionInterface Error while retrieving the entry.
+	 * @throws ContainerException Error when resolving the class to an object instance, or (when using RuntimeContainer) class not found.
+	 * @throws \Exception Exception thrown in the constructor or in the 'init' method of one of the resolved classes.
+	 */
+	public function get( string $id ) {
+		return $this->container->get( $id );
+	}
+
+	/**
+	 * Returns true if the container can return an entry for the given identifier.
+	 * Returns false otherwise.
+	 *
+	 * `has($id)` returning true does not mean that `get($id)` will not throw an exception.
+	 * It does however mean that `get($id)` will not throw a `NotFoundExceptionInterface`.
+	 *
+	 * @param string $id Identifier of the entry to look for.
+	 *
+	 * @return bool
+	 */
+	public function has( string $id ): bool {
+		return $this->container->has( $id );
+	}
+
 	/**
 	 * The list of service provider classes to register.
 	 *
@@ -96,56 +171,4 @@ final class Container {
 		AdminSettingsServiceProvider::class,
 		SuggestionsServiceProvider::class,
 	);
-
-	/**
-	 * The underlying container.
-	 *
-	 * @var \League\Container\Container
-	 */
-	private $container;
-
-	/**
-	 * Class constructor.
-	 */
-	public function __construct() {
-		$this->container = new ExtendedContainer();
-
-		// Add ourselves as the shared instance of ContainerInterface,
-		// register everything else using service providers.
-
-		$this->container->share( __CLASS__, $this );
-
-		foreach ( $this->service_providers as $service_provider_class ) {
-			$this->container->addServiceProvider( $service_provider_class );
-		}
-	}
-
-	/**
-	 * Finds an entry of the container by its identifier and returns it.
-	 *
-	 * @param string $id Identifier of the entry to look for.
-	 *
-	 * @throws NotFoundExceptionInterface  No entry was found for **this** identifier.
-	 * @throws Psr\Container\ContainerExceptionInterface Error while retrieving the entry.
-	 *
-	 * @return mixed Entry.
-	 */
-	public function get( string $id ) {
-		return $this->container->get( $id );
-	}
-
-	/**
-	 * Returns true if the container can return an entry for the given identifier.
-	 * Returns false otherwise.
-	 *
-	 * `has($id)` returning true does not mean that `get($id)` will not throw an exception.
-	 * It does however mean that `get($id)` will not throw a `NotFoundExceptionInterface`.
-	 *
-	 * @param string $id Identifier of the entry to look for.
-	 *
-	 * @return bool
-	 */
-	public function has( string $id ): bool {
-		return $this->container->has( $id );
-	}
 }

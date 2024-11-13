@@ -1,5 +1,10 @@
 <?php
 /**
+ * Note: This pattern is deprecated, it will be removed once newsletter feature flag is deployed.
+ * If you are updating this pattern, please also update page-coming-soon-default.php.
+ */
+
+/**
  * Title: Coming Soon Entire Site
  * Slug: woocommerce/coming-soon-entire-site
  * Categories: WooCommerce
@@ -22,8 +27,8 @@ if ( 'twentytwentyfour' === $current_theme ) {
 <!-- wp:woocommerce/coming-soon {"color":"#bea0f2","storeOnly":false,"className":"woocommerce-coming-soon-entire-site wp-block-woocommerce-background-color"} -->
 <div class="woocommerce-coming-soon-entire-site wp-block-woocommerce-coming-soon wp-block-woocommerce-background-color"><!-- wp:cover {"minHeight":100,"minHeightUnit":"vh","isDark":false,"className":"coming-soon-is-vertically-aligned-center coming-soon-cover","layout":{"type":"default"}} -->
 <div class="wp-block-cover is-light coming-soon-is-vertically-aligned-center coming-soon-cover" style="min-height:100vh"><span aria-hidden="true" class="wp-block-cover__background has-background-dim-100 has-background-dim" style=""></span><div class="wp-block-cover__inner-container"><!-- wp:group {"className":"woocommerce-coming-soon-banner-container","layout":{"type":"default"}} -->
-<div class="wp-block-group woocommerce-coming-soon-banner-container"><!-- wp:group {"align":"wide","style":{"spacing":{"padding":{"top":"3px","bottom":"20px"}}},"className":"woocommerce-coming-soon-header","layout":{"type":"constrained"}} -->
-<div class="wp-block-group alignwide woocommerce-coming-soon-header has-background" style="padding-top:3px;padding-bottom:20px"><!-- wp:group {"align":"wide","layout":{"type":"flex","justifyContent":"space-between","flexWrap":"wrap"}} -->
+<div class="wp-block-group woocommerce-coming-soon-banner-container"><!-- wp:group {"align":"wide","style":{"spacing":{"padding":{"top":"10px","bottom":"14px"}}},"className":"woocommerce-coming-soon-header","layout":{"type":"constrained"}} -->
+<div class="wp-block-group alignwide woocommerce-coming-soon-header has-background" style="padding-top:10px;padding-bottom:14px"><!-- wp:group {"align":"wide","layout":{"type":"flex","justifyContent":"space-between","flexWrap":"wrap"}} -->
 <div class="wp-block-group alignwide"><!-- wp:group {"style":{"spacing":{"blockGap":"var:preset|spacing|20"},"layout":{"selfStretch":"fit","flexSize":null}},"layout":{"type":"flex"}} -->
 <div class="wp-block-group"><!-- wp:site-logo {"width":60} /-->
 

@@ -7,6 +7,9 @@ import {
 	getBlockTypes,
 } from '@wordpress/blocks';
 
+export * from './get-current-block-position-by-client-id';
+export * from './get-client-id-by-block-name';
+export * from './get-product-filter-clear-button-block';
 /**
  * Returns an array of allowed block names excluding the specified blocks.
  *
