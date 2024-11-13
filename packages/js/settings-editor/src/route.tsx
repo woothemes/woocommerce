@@ -163,12 +163,14 @@ export const useActiveRoute = () => {
 			return getLegacyRoute( activePage, settingsPages );
 		}
 
+		const modernRoute = modernRoutes[ activePage ];
+
 		// Handle modern pages.
-		if ( ! modernRoutes[ activePage ] ) {
+		if ( ! modernRoute ) {
 			return getNotFoundRoute( activePage, settingsPages );
 		}
 
-		const modernRoute = modernRoutes[ activePage ];
+		// Sidebar is responsibility of WooCommerce, not extensions so add it here.
 		modernRoute.areas.sidebar = (
 			<Sidebar
 				activePage={ activePage }
