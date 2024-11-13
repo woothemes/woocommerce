@@ -3979,6 +3979,7 @@ test.describe( 'Data API tests', () => {
 									href: expect.stringContaining(
 										`/wp-json/wc/v3/data/countries/${ country }`
 									),
+									targetHints: { allow: [ 'GET' ] },
 								},
 							],
 							collection: [
@@ -4014,6 +4015,7 @@ test.describe( 'Data API tests', () => {
 								href: expect.stringContaining(
 									'data/currencies/AED'
 								),
+								targetHints: { allow: [ 'GET' ] },
 							},
 						],
 						collection: [
