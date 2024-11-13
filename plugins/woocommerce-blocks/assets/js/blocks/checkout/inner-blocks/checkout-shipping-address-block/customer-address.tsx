@@ -4,10 +4,7 @@
 import { useCallback, useEffect } from '@wordpress/element';
 import { Form } from '@woocommerce/base-components/cart-checkout';
 import { useCheckoutAddress, useStoreEvents } from '@woocommerce/base-context';
-import type {
-	FormFieldsConfig,
-	AddressFormValues,
-} from '@woocommerce/settings';
+import type { AddressFormValues } from '@woocommerce/settings';
 import { useSelect } from '@wordpress/data';
 import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
 import { ADDRESS_FORM_KEYS } from '@woocommerce/block-settings';
