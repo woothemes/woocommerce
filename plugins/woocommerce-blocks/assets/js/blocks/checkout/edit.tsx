@@ -201,7 +201,6 @@ export const Edit = ( {
 				/>
 			</InspectorControls>
 			<EditorProvider
-				isPreview={ isPreview }
 				isPreview={ !! isPreview }
 				previewData={ { previewCart, previewSavedPaymentMethods } }
 			>
