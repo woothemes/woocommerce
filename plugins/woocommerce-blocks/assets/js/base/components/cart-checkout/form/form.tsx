@@ -19,11 +19,7 @@ import { useInstanceId } from '@wordpress/compose';
 import { useShallowEqual } from '@woocommerce/base-hooks';
 import isShallowEqual from '@wordpress/is-shallow-equal';
 import clsx from 'clsx';
-import {
-	AddressFormValues,
-	ContactFormValues,
-	FormFieldsConfig,
-} from '@woocommerce/settings';
+import { AddressFormValues, ContactFormValues } from '@woocommerce/settings';
 import { objectHasProp } from '@woocommerce/types';
 
 /**
@@ -48,7 +44,6 @@ import { validateState } from './validate-state';
 const Form = < T extends AddressFormValues | ContactFormValues >( {
 	id = '',
 	fields,
-	fieldConfig = {} as FormFieldsConfig,
 	onChange,
 	addressType = 'shipping',
 	values,
@@ -61,7 +56,6 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 
 	// Track incoming props.
 	const currentFields = useShallowEqual( fields );
-	const currentFieldConfig = useShallowEqual( fieldConfig );
 	const currentCountry = useShallowEqual(
 		objectHasProp( values, 'country' ) ? values.country : ''
 	);
@@ -70,7 +64,7 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 	const addressFormFields = useMemo( (): AddressFormFields => {
 		const preparedFields = prepareFormFields(
 			currentFields,
-			currentFieldConfig,
+			{},
 			currentCountry
 		);
 		return {
@@ -79,7 +73,7 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 			required: preparedFields.filter( ( field ) => field.required ),
 			hidden: preparedFields.filter( ( field ) => field.hidden ),
 		};
-	}, [ currentFields, currentFieldConfig, currentCountry, addressType ] );
+	}, [ currentFields, currentCountry, addressType ] );
 
 	// Stores refs for rendered fields so we can access them later.
 	const fieldsRef = useRef<
