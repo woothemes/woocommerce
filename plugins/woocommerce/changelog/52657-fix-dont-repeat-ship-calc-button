@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Cart block: Fix a bug where duplicate links are rendered to open the cart shipping calculator.
