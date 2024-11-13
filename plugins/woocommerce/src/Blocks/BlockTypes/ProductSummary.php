@@ -3,12 +3,12 @@
 namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 use Automattic\WooCommerce\Blocks\Utils\StyleAttributesUtils;
+use Automattic\WooCommerce\Blocks\Utils\ProductSummaryUtils;
 
 /**
  * ProductSummary class.
  */
 class ProductSummary extends AbstractBlock {
-
 
 	/**
 	 * Block name.
@@ -102,17 +102,6 @@ class ProductSummary extends AbstractBlock {
 	}
 
 	/**
-	 * Trim the product description.
-	 *
-	 * @param string $input  Product description.
-	 * @param number $length Expected length of final description.
-	 * @return string
-	 */
-	private function trim_keeping_html_formatting( $input, $length ) {
-		return html_entity_decode( wp_trim_words( htmlentities( wpautop( $input, true ) ), $length ) );
-	}
-
-	/**
 	 * Include and render the block.
 	 *
 	 * @param array    $attributes Block attributes. Default empty array.
@@ -144,7 +133,8 @@ class ProductSummary extends AbstractBlock {
 		$summary_length = isset( $attributes['summaryLength'] ) ? $attributes['summaryLength'] : false;
 		$link_text      = isset( $attributes['linkText'] ) ? $attributes['linkText'] : '';
 		$show_link      = isset( $attributes['showLink'] ) && $attributes['showLink'];
-		$summary        = $summary_length ? $this->trim_keeping_html_formatting( $source, $summary_length ) : wpautop( $source );
+		$summary_autop  = wpautop( $source );
+		$summary        = $summary_length ? ProductSummaryUtils::trim_keeping_html_formatting( $summary_autop, $summary_length ) : $summary_autop;
 		$final_summary  = $show_link && $link_text ? $summary . $this->create_anchor( $product, $link_text ) : $summary;
 
 		$styles_and_classes = StyleAttributesUtils::get_classes_and_styles_by_attributes( $attributes );
