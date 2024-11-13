@@ -26,6 +26,7 @@ import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
  */
 import { Sidebar } from './sidebar';
 import { Route, Location } from './types';
+import { LegacyContent } from './legacy';
 
 const { useLocation } = unlock( routerPrivateApis );
 
@@ -72,8 +73,8 @@ const getLegacyRoute = (
 	activePage: string,
 	pages: typeof window.wcSettings.admin.settingsPages
 ): Route => {
-	const pageTitle =
-		pages[ activePage ]?.label || __( 'Settings', 'woocommerce' );
+	const pageSettings = pages[ activePage ];
+	const pageTitle = pageSettings?.label || __( 'Settings', 'woocommerce' );
 
 	return {
 		key: activePage,
@@ -85,7 +86,7 @@ const getLegacyRoute = (
 					pageTitle={ pageTitle }
 				/>
 			),
-			content: <div>Content Placeholder</div>,
+			content: <LegacyContent settings={ pageSettings } />,
 			edit: null,
 		},
 		widths: {
