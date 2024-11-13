@@ -5,11 +5,7 @@ import { getSetting } from '@woocommerce/settings';
 import { AttributeSetting } from '@woocommerce/types';
 import { InspectorControls } from '@wordpress/block-editor';
 import { dispatch, useSelect } from '@wordpress/data';
-import {
-	createInterpolateElement,
-	useEffect,
-	useState,
-} from '@wordpress/element';
+import { createInterpolateElement, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Block, getBlockTypes, createBlock } from '@wordpress/blocks';
 import {
@@ -64,14 +60,6 @@ export const Inspector = ( {
 	);
 	const [ displayStyleBlocksAttributes, setDisplayStyleBlocksAttributes ] =
 		useState< Record< string, unknown > >( {} );
-
-	useEffect( () => {
-		toggleProductFilterClearButtonVisibility( {
-			clientId,
-			showClearButton: clearButton,
-		} );
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
 
 	const filterHeadingBlock = getInnerBlockByName(
 		filterBlock,

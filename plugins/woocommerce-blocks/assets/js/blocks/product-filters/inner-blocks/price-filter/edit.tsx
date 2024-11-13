@@ -10,8 +10,7 @@ import {
 import { useCollectionData } from '@woocommerce/base-context/hooks';
 import { __ } from '@wordpress/i18n';
 import { PanelBody, ToggleControl } from '@wordpress/components';
-import { BlockEditProps } from '@wordpress/blocks';
-import { useEffect } from '@wordpress/element';
+import { BlockEditProps, TemplateArray } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -35,14 +34,6 @@ const Edit = ( props: BlockEditProps< BlockAttributes > ) => {
 		queryState: {},
 		isEditor: true,
 	} );
-
-	useEffect( () => {
-		toggleProductFilterClearButtonVisibility( {
-			clientId,
-			showClearButton: clearButton,
-		} );
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
 
 	return (
 		<div { ...blockProps }>
@@ -101,16 +92,18 @@ const Edit = ( props: BlockEditProps< BlockAttributes > ) => {
 											),
 										},
 									],
-									[
-										'woocommerce/product-filter-clear-button',
-										{
-											lock: {
-												remove: true,
-												move: false,
-											},
-										},
-									],
-								],
+									clearButton
+										? [
+												'woocommerce/product-filter-clear-button',
+												{
+													lock: {
+														remove: true,
+														move: false,
+													},
+												},
+										  ]
+										: null,
+								].filter( Boolean ) as unknown as TemplateArray,
 							],
 							[ 'woocommerce/product-filter-price-slider', {} ],
 						] }

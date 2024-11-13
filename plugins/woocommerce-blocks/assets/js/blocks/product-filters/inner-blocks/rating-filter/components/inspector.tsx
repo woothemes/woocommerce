@@ -11,7 +11,6 @@ import {
 	RadioControl,
 	ToggleControl,
 } from '@wordpress/components';
-import { useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -66,14 +65,6 @@ export const Inspector = ( {
 			minRating: value,
 		} );
 	}
-
-	useEffect( () => {
-		toggleProductFilterClearButtonVisibility( {
-			clientId,
-			showClearButton: clearButton,
-		} );
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
 
 	return (
 		<>

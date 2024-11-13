@@ -4,7 +4,7 @@
 import { InspectorControls } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { Block, createBlock, getBlockTypes } from '@wordpress/blocks';
-import { useEffect, useState } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 import { dispatch, useSelect } from '@wordpress/data';
 import {
 	PanelBody,
@@ -34,14 +34,6 @@ export const Inspector = ( {
 	clientId,
 }: EditProps ) => {
 	const { displayStyle, showCounts, hideEmpty, clearButton } = attributes;
-
-	useEffect( () => {
-		toggleProductFilterClearButtonVisibility( {
-			clientId,
-			showClearButton: clearButton,
-		} );
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
 
 	if ( displayStyleOptions.length === 0 ) {
 		displayStyleOptions = getBlockTypes().filter(
