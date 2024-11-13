@@ -242,4 +242,42 @@ class PaymentExtensionSuggestionsTest extends WC_REST_Unit_Test_Case {
 
 		return $data;
 	}
+
+	/**
+	 * Test getting payment extension suggestions by ID.
+	 */
+	public function test_get_extension_by_id() {
+		$extension = $this->provider->get_by_id( 'woopayments' );
+		$this->assertNotEmpty( $extension );
+		$this->assertIsArray( $extension );
+		$this->assertArrayHasKey( 'id', $extension );
+		$this->assertEquals( 'woopayments', $extension['id'] );
+	}
+
+	/**
+	 * Test getting payment extension suggestions by ID with invalid ID.
+	 */
+	public function test_get_extension_by_id_with_invalid_id() {
+		$extension = $this->provider->get_by_id( 'bogus_id' );
+		$this->assertNull( $extension );
+	}
+
+	/**
+	 * Test getting payment extension suggestions by plugin slug.
+	 */
+	public function test_get_extension_by_plugin_slug() {
+		$extension = $this->provider->get_by_plugin_slug( 'woocommerce-payments' );
+		$this->assertNotEmpty( $extension );
+		$this->assertIsArray( $extension );
+		$this->assertArrayHasKey( 'id', $extension );
+		$this->assertEquals( 'woopayments', $extension['id'] );
+	}
+
+	/**
+	 * Test getting payment extension suggestions by plugin slug with invalid slug.
+	 */
+	public function test_get_extension_by_plugin_slug_with_invalid_slug() {
+		$extension = $this->provider->get_by_plugin_slug( 'bogus_slug' );
+		$this->assertNull( $extension );
+	}
 }

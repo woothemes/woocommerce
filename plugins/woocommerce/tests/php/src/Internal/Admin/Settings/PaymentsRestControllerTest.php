@@ -353,6 +353,56 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	}
 
 	/**
+	 * Test hiding a payment extension suggestion.
+	 */
+	public function test_hide_payment_extension_suggestion() {
+		// Arrange.
+		$user_admin = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $user_admin );
+
+		// Act.
+		$request = new WP_REST_Request( 'POST', self::ENDPOINT . '/suggestion/woopayments/hide' );
+		$response = $this->server->dispatch( $request );
+
+		// Assert.
+		$this->assertEquals( 200, $response->get_status() );
+
+		// Act.
+		$request = new WP_REST_Request( 'GET', self::ENDPOINT . '/providers' );
+		$request->set_param( 'location', 'US' );
+		$response = $this->server->dispatch( $request );
+
+		// Assert.
+		$this->assertEquals( 200, $response->get_status() );
+
+		$data = $response->get_data();
+
+		// Assert that the suggestion is not in the preferred suggestions anymore.
+		$preferred_suggestions = $data['preferred_suggestions'];
+		$this->assertNotContains( PaymentExtensionSuggestions::WOOPAYMENTS, array_column( $preferred_suggestions, 'id' ) );
+		// But it is in the other list.
+		$other_suggestions = $data['other_suggestions'];
+		$this->assertContains( PaymentExtensionSuggestions::WOOPAYMENTS, array_column( $other_suggestions, 'id' ) );
+
+		// Delete the user meta.
+		delete_user_meta( $user_admin, PaymentsRestController::USER_PAYMENTS_NOX_PROFILE_KEY );
+
+		// Act.
+		$request = new WP_REST_Request( 'GET', self::ENDPOINT . '/providers' );
+		$request->set_param( 'location', 'US' );
+		$response = $this->server->dispatch( $request );
+
+		// Assert.
+		$this->assertEquals( 200, $response->get_status() );
+
+		$data = $response->get_data();
+
+		// Assert that the suggestion is in the preferred suggestions again.
+		$preferred_suggestions = $data['preferred_suggestions'];
+		$this->assertContains( PaymentExtensionSuggestions::WOOPAYMENTS, array_column( $preferred_suggestions, 'id' ) );
+	}
+
+	/**
 	 * Enable the WC core PayPal gateway.
 	 *
 	 * @return void
