@@ -80,7 +80,7 @@ class PaymentsRestController extends RestApiControllerBase {
 	 * @internal
 	 * @param ExtensionSuggestions $payment_extension_suggestions The payment extension suggestions service.
 	 */
-	final public function init( ExtensionSuggestions $payment_extension_suggestions ) {
+	final public function init( ExtensionSuggestions $payment_extension_suggestions ): void {
 		$this->extension_suggestions = $payment_extension_suggestions;
 	}
 
@@ -98,17 +98,17 @@ class PaymentsRestController extends RestApiControllerBase {
 		}
 
 		try {
-			$suggestions = $this->get_extension_suggestions( $location, $request );
+			$suggestions = $this->get_extension_suggestions( $location );
 		} catch ( Exception $e ) {
 			return new WP_Error( 'woocommerce_rest_payment_providers_error', $e->getMessage(), array( 'status' => 500 ) );
 		}
 
 		$response = array(
-			'gateways'                => $this->get_payment_gateways( $request ),
-			'offline_payment_methods' => $this->get_offline_payment_methods( $request ),
+			'gateways'                => $this->get_payment_gateways(),
+			'offline_payment_methods' => $this->get_offline_payment_methods(),
 			'preferred_suggestions'   => $suggestions['preferred'],
 			'other_suggestions'       => $suggestions['other'],
-			'suggestion_categories'   => $this->get_extension_suggestion_categories( $location, $request ),
+			'suggestion_categories'   => $this->get_extension_suggestion_categories(),
 		);
 
 		return rest_ensure_response( $response );
@@ -117,11 +117,9 @@ class PaymentsRestController extends RestApiControllerBase {
 	/**
 	 * Get the registered payment gateways.
 	 *
-	 * @param WP_REST_Request $request The request object.
-	 *
 	 * @return array The registered payment gateways.
 	 */
-	private function get_payment_gateways( WP_REST_Request $request ): array {
+	private function get_payment_gateways(): array {
 		$items = array();
 		foreach ( $this->get_settings_page_payment_gateways() as $payment_gateway_order => $payment_gateway ) {
 			if ( in_array( $payment_gateway->id, self::OFFLINE_METHODS, true ) ) {
@@ -140,11 +138,9 @@ class PaymentsRestController extends RestApiControllerBase {
 	/**
 	 * Get the offline payment methods.
 	 *
-	 * @param WP_REST_Request $request The request object.
-	 *
 	 * @return array The offline payment methods.
 	 */
-	private function get_offline_payment_methods( WP_REST_Request $request ): array {
+	private function get_offline_payment_methods(): array {
 		$items = array();
 		foreach ( $this->get_settings_page_payment_gateways() as $payment_gateway_order => $payment_gateway ) {
 			if ( ! in_array( $payment_gateway->id, self::OFFLINE_METHODS, true ) ) {
@@ -181,7 +177,7 @@ class PaymentsRestController extends RestApiControllerBase {
 
 		// Get all payment gateways, ordered by the user.
 		// Remove "shell" gateways that are not intended for display.
-		// We consider a gateway to a "shell" if it has no WC admin title or description.
+		// We consider a gateway to be a "shell" if it has no WC admin title or description.
 		$payment_gateways = array_filter(
 			WC()->payment_gateways()->payment_gateways,
 			function ( $gateway ) {
@@ -388,13 +384,12 @@ class PaymentsRestController extends RestApiControllerBase {
 	/**
 	 * Get the payment extension suggestions for the given location.
 	 *
-	 * @param string          $location The location for which the suggestions are being fetched.
-	 * @param WP_REST_Request $request The request object.
+	 * @param string $location The location for which the suggestions are being fetched.
 	 *
 	 * @return array[] The payment extension suggestions for the given location, split into preferred and other.
 	 * @throws Exception If there are malformed or invalid suggestions.
 	 */
-	private function get_extension_suggestions( string $location, WP_REST_Request $request ): array {
+	private function get_extension_suggestions( string $location ): array {
 		// If the requesting user can't install plugins, we don't suggest any extensions.
 		if ( ! current_user_can( 'install_plugins' ) ) {
 			return array(
@@ -593,12 +588,9 @@ class PaymentsRestController extends RestApiControllerBase {
 	/**
 	 * Get the payment extension suggestions categories details.
 	 *
-	 * @param string          $location The location for which the suggestions are being fetched.
-	 * @param WP_REST_Request $request The request object.
-	 *
 	 * @return array The payment extension suggestions categories.
 	 */
-	private function get_extension_suggestion_categories( string $location, WP_REST_Request $request ): array {
+	private function get_extension_suggestion_categories(): array {
 		$categories   = array();
 		$categories[] = array(
 			'id'          => 'express_checkout',
