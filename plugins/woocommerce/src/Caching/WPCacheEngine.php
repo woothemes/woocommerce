@@ -49,7 +49,6 @@ class WPCacheEngine implements CacheEngine {
 				$return_values[ $key ] = $cached_values[ $prefixed_key ];
 			} else {
 				$return_values[ $key ] = null;
-
 			}
 		}
 

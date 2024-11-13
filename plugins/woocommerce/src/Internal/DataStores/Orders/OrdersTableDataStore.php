@@ -2020,8 +2020,8 @@ FROM $order_meta_table
 		if ( $order->has_cogs() && $this->cogs_is_enabled() ) {
 			$this->save_cogs_data( $order );
 		}
-    
-    $this->clear_cached_data( array( $order->get_id() ) );
+
+		$this->clear_cached_data( array( $order->get_id() ) );
 	}
 
 	/**

@@ -19,8 +19,7 @@ class OrderCache extends ObjectCache {
 		if ( 'yes' === get_option( CustomOrdersTableController::HPOS_DATASTORE_CACHING_ENABLED_OPTION ) ) {
 			/**
 			 * The use of datastore caching moves persistent data caching to the datastore. Order object caching then only
-			 * acts as request level caching.
-			 * work as a
+			 * acts as request level caching as the `order_objects` cache group is set as non-persistent.
 			 */
 			return 'order_objects';
 		} else {
