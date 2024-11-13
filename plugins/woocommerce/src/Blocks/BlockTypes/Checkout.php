@@ -32,6 +32,7 @@ class Checkout extends AbstractBlock {
 	 */
 	protected function initialize() {
 		parent::initialize();
+		add_action( 'rest_api_init', array( $this, 'register_settings' ) );
 		add_action( 'wp_loaded', array( $this, 'register_patterns' ) );
 		// This prevents the page redirecting when the cart is empty. This is so the editor still loads the page preview.
 		add_filter(
@@ -55,6 +56,63 @@ class Checkout extends AbstractBlock {
 		wp_dequeue_script( 'wc-password-strength-meter' );
 		wp_dequeue_script( 'selectWoo' );
 		wp_dequeue_style( 'select2' );
+	}
+
+	/**
+	 * Exposes settings exposed by the checkout block.
+	 */
+	public function register_settings() {
+		register_setting(
+			'options',
+			'woocommerce_checkout_phone_field',
+			array(
+				'type'         => 'object',
+				'description'  => __( 'Controls the display of the phone field in checkout.', 'woocommerce' ),
+				'label'        => __( 'Phone number', 'woocommerce' ),
+				'show_in_rest' => array(
+					'name'   => 'woocommerce_checkout_phone_field',
+					'schema' => array(
+						'type' => 'string',
+						'enum' => array( 'optional', 'required', 'hidden' ),
+					),
+				),
+				'default'      => get_option( 'woocommerce_checkout_phone_field', 'optional' ),
+			)
+		);
+		register_setting(
+			'options',
+			'woocommerce_checkout_company_field',
+			array(
+				'type'         => 'object',
+				'description'  => __( 'Controls the display of the company field in checkout.', 'woocommerce' ),
+				'label'        => __( 'Company', 'woocommerce' ),
+				'show_in_rest' => array(
+					'name'   => 'woocommerce_checkout_company_field',
+					'schema' => array(
+						'type' => 'string',
+						'enum' => array( 'optional', 'required', 'hidden' ),
+					),
+				),
+				'default'      => get_option( 'woocommerce_checkout_company_field', 'optional' ),
+			)
+		);
+		register_setting(
+			'options',
+			'woocommerce_checkout_apartment_field',
+			array(
+				'type'         => 'object',
+				'description'  => __( 'Controls the display of the apartment field in checkout.', 'woocommerce' ),
+				'label'        => __( 'Apartment', 'woocommerce' ),
+				'show_in_rest' => array(
+					'name'   => 'woocommerce_checkout_apartment_field',
+					'schema' => array(
+						'type' => 'string',
+						'enum' => array( 'optional', 'required', 'hidden' ),
+					),
+				),
+				'default'      => get_option( 'woocommerce_checkout_apartment_field', 'optional' ),
+			)
+		);
 	}
 
 	/**

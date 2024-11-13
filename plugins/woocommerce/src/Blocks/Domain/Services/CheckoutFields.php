@@ -497,7 +497,7 @@ class CheckoutFields {
 	 * @return array An array of fields.
 	 */
 	public function get_core_fields() {
-		return [
+		$fields = [
 			'email'      => [
 				'label'          => __( 'Email address', 'woocommerce' ),
 				'optionalLabel'  => __(
@@ -632,6 +632,16 @@ class CheckoutFields {
 				'index'          => 100,
 			],
 		];
+
+		$fields_with_config = [ 'phone', 'company', 'address_2' ];
+
+		foreach ( $fields_with_config as $field_key ) {
+			$field_config                     = get_option( 'woocommerce_checkout_' . $field_key . '_field', 'optional' );
+			$fields[ $field_key ]['required'] = 'required' === $field_config;
+			$fields[ $field_key ]['hidden']   = 'hidden' === $field_config;
+		}
+
+		return $fields;
 	}
 
 	/**
