@@ -73,14 +73,22 @@ class PaymentsRestController extends RestApiControllerBase {
 					'methods'             => \WP_REST_Server::READABLE,
 					'callback'            => fn( $request ) => $this->run( $request, 'get_providers' ),
 					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
-					'args'                => $this->get_args_for_get_payment_providers(),
+					'args'                => array(
+						'location' => array(
+							'description'       => __( 'ISO3166 alpha-2 country code. Defaults to WooCommerce\'s base location country.', 'woocommerce' ),
+							'type'              => 'string',
+							'pattern'           => '[a-zA-Z]{2}', // Two alpha characters.
+							'required'          => false,
+							'validate_callback' => fn( $value, $request, $param ) => $this->check_location_arg( $value, $request ),
+						),
+					),
 				),
 				'schema' => fn() => $this->get_schema_for_get_payment_providers(),
 			)
 		);
 		register_rest_route(
 			'wc-admin',
-			'/' . $this->rest_base . '/suggestion/(?P<id>[\w\d\-_]+)/hide',
+			'/' . $this->rest_base . '/suggestion/(?P<id>[\w\d\-]+)/hide',
 			array(
 				array(
 					'methods'             => \WP_REST_Server::CREATABLE,
@@ -708,19 +716,31 @@ class PaymentsRestController extends RestApiControllerBase {
 	}
 
 	/**
-	 * Get the accepted arguments for the GET payment providers request.
+	 * Validate the location argument.
 	 *
-	 * @return array[] The accepted arguments for the GET request.
+	 * @param  mixed          $value   Value of the argument.
+	 * @param WP_REST_Request $request The current request object.
+	 *
+	 * @return WP_Error|true True if the location argument is valid, otherwise a WP_Error object.
 	 */
-	private function get_args_for_get_payment_providers(): array {
-		return array(
-			'location' => array(
-				'description'       => __( 'ISO3166 alpha-2 country code. Defaults to WooCommerce\'s base location country.', 'woocommerce' ),
-				'type'              => 'string',
-				'required'          => false,
-				'sanitize_callback' => 'sanitize_text_field',
-			),
-		);
+	private function check_location_arg( $value, WP_REST_Request $request ) {
+		// If the 'location' argument is not a string return an error.
+		if ( ! is_string( $value ) ) {
+			return new WP_Error( 'rest_invalid_param', esc_html__( 'The location argument must be a string.', 'woocommerce' ), array( 'status' => 400 ) );
+		}
+
+		// Get the registered attributes for this endpoint request.
+		$attributes = $request->get_attributes();
+
+		// Grab the location param schema.
+		$args = $attributes['args']['location'];
+
+		// If the location param doesn't match the regex pattern then we should return an error as well.
+		if ( ! preg_match( '/^' . $args['pattern'] .'$/', $value ) ) {
+			return new WP_Error( 'rest_invalid_param', esc_html__( 'The location argument must be a valid ISO3166 alpha-2 country code.', 'woocommerce' ), array( 'status' => 400 ) );
+		}
+
+		return true;
 	}
 
 	/**

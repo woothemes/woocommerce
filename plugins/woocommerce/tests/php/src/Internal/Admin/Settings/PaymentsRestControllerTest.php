@@ -352,6 +352,40 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	}
 
 	/**
+	 * Test getting payment providers with invalid location.
+	 */
+	public function test_get_payment_providers_with_invalid_location() {
+		// Arrange.
+		$user_admin = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $user_admin );
+		$this->enable_core_paypal_pg();
+
+		// Act.
+		$request = new WP_REST_Request( 'GET', self::ENDPOINT . '/providers' );
+		$request->set_param( 'location', 'U' );
+		$response = $this->server->dispatch( $request );
+
+		// Assert.
+		$this->assertEquals( 400, $response->get_status() );
+
+		// Act.
+		$request = new WP_REST_Request( 'GET', self::ENDPOINT . '/providers' );
+		$request->set_param( 'location', '12' );
+		$response = $this->server->dispatch( $request );
+
+		// Assert.
+		$this->assertEquals( 400, $response->get_status() );
+
+		// Act.
+		$request = new WP_REST_Request( 'GET', self::ENDPOINT . '/providers' );
+		$request->set_param( 'location', 'USA' );
+		$response = $this->server->dispatch( $request );
+
+		// Assert.
+		$this->assertEquals( 400, $response->get_status() );
+	}
+
+	/**
 	 * Test hiding a payment extension suggestion.
 	 */
 	public function test_hide_payment_extension_suggestion() {
