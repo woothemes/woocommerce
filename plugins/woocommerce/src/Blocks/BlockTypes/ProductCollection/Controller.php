@@ -33,9 +33,9 @@ class Controller extends AbstractBlock {
 	protected $query_builder;
 
 	/**
-	 * Instance of ProductCollectionRenderer.
+	 * Instance of Renderer.
 	 *
-	 * @var ProductCollectionRenderer
+	 * @var Renderer
 	 */
 	protected $renderer;
 
@@ -43,13 +43,13 @@ class Controller extends AbstractBlock {
 	 * Initialize this block type.
 	 *
 	 * - Register hooks and filters.
-	 * - Set up ProductQueryBuilder, ProductCollectionRenderer and HandlerRegistry.
+	 * - Set up ProductQueryBuilder, Renderer and HandlerRegistry.
 	 */
 	protected function initialize() {
 		parent::initialize();
 
 		$this->query_builder               = new ProductQueryBuilder();
-		$this->renderer                    = new ProductCollectionRenderer();
+		$this->renderer                    = new Renderer();
 		$this->collection_handler_registry = new HandlerRegistry();
 
 		// Update query for frontend rendering.
