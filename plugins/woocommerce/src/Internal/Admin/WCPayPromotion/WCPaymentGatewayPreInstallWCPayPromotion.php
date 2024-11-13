@@ -26,6 +26,8 @@ class WCPaymentGatewayPreInstallWCPayPromotion extends \WC_Payment_Gateway {
 	 * Constructor
 	 */
 	public function __construct() {
+		// If the React-based Payments settings page is enabled, we don't need to register this pseudo-gateway
+		// as we will show the WooPayments suggestion with the new system.
 		if ( Features::is_enabled( 'reactify-classic-payments-settings' ) ) {
 			return;
 		}
