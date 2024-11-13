@@ -7,6 +7,7 @@ namespace Automattic\WooCommerce\Internal\DataStores\Orders;
 
 use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Caches\OrderCache;
+use Automattic\WooCommerce\Enums\OrderInternalStatus;
 use Automattic\WooCommerce\Internal\Admin\Orders\EditLock;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareTrait;
 use Automattic\WooCommerce\Internal\Utilities\DatabaseUtil;
@@ -1096,7 +1097,7 @@ WHERE
 				{$orders_table}.type IN {$order_types_sql}
 				AND {$orders_table}.status = %s
 				AND {$orders_table}.date_updated_gmt < %s",
-				'wc-pending',
+				OrderInternalStatus::PENDING,
 				gmdate( 'Y-m-d H:i:s', absint( $gmt_timestamp ) )
 			)
 		);
@@ -2500,7 +2501,7 @@ FROM $order_meta_table
 		$previous_status           = $order->get_meta( '_wp_trash_meta_status' );
 		$valid_statuses            = wc_get_order_statuses();
 		$previous_state_is_invalid = ! array_key_exists( $previous_status, $valid_statuses );
-		$pending_is_valid_status   = array_key_exists( 'wc-pending', $valid_statuses );
+		$pending_is_valid_status   = array_key_exists( OrderInternalStatus::PENDING, $valid_statuses );
 
 		if ( $previous_state_is_invalid && $pending_is_valid_status ) {
 			// If the previous status is no longer valid, let's try to restore it to "pending" instead.

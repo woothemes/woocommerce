@@ -21,6 +21,7 @@ defined( 'ABSPATH' ) || exit;
 use Automattic\WooCommerce\Admin\Notes\Note;
 use Automattic\WooCommerce\Admin\Notes\Notes;
 use Automattic\WooCommerce\Database\Migrations\MigrationHelper;
+use Automattic\WooCommerce\Enums\OrderInternalStatus;
 use Automattic\WooCommerce\Internal\Admin\Marketing\MarketingSpecs;
 use Automattic\WooCommerce\Internal\Admin\Notes\WooSubscriptionsNotes;
 use Automattic\WooCommerce\Internal\AssignDefaultCategory;
@@ -567,7 +568,7 @@ function wc_update_220_order_status() {
 		LEFT JOIN {$wpdb->term_relationships} AS rel ON posts.ID = rel.object_id
 		LEFT JOIN {$wpdb->term_taxonomy} AS tax USING( term_taxonomy_id )
 		LEFT JOIN {$wpdb->terms} AS term USING( term_id )
-		SET posts.post_status = 'wc-pending'
+		SET posts.post_status = '" . OrderInternalStatus::PENDING . "'
 		WHERE posts.post_type = 'shop_order'
 		AND posts.post_status = 'publish'
 		AND tax.taxonomy = 'shop_order_status'
@@ -578,7 +579,7 @@ function wc_update_220_order_status() {
 		LEFT JOIN {$wpdb->term_relationships} AS rel ON posts.ID = rel.object_id
 		LEFT JOIN {$wpdb->term_taxonomy} AS tax USING( term_taxonomy_id )
 		LEFT JOIN {$wpdb->terms} AS term USING( term_id )
-		SET posts.post_status = 'wc-processing'
+		SET posts.post_status = '" . OrderInternalStatus::PROCESSING . "'
 		WHERE posts.post_type = 'shop_order'
 		AND posts.post_status = 'publish'
 		AND tax.taxonomy = 'shop_order_status'
@@ -589,7 +590,7 @@ function wc_update_220_order_status() {
 		LEFT JOIN {$wpdb->term_relationships} AS rel ON posts.ID = rel.object_id
 		LEFT JOIN {$wpdb->term_taxonomy} AS tax USING( term_taxonomy_id )
 		LEFT JOIN {$wpdb->terms} AS term USING( term_id )
-		SET posts.post_status = 'wc-on-hold'
+		SET posts.post_status = '" . OrderInternalStatus::ON_HOLD . "'
 		WHERE posts.post_type = 'shop_order'
 		AND posts.post_status = 'publish'
 		AND tax.taxonomy = 'shop_order_status'
@@ -600,7 +601,7 @@ function wc_update_220_order_status() {
 		LEFT JOIN {$wpdb->term_relationships} AS rel ON posts.ID = rel.object_id
 		LEFT JOIN {$wpdb->term_taxonomy} AS tax USING( term_taxonomy_id )
 		LEFT JOIN {$wpdb->terms} AS term USING( term_id )
-		SET posts.post_status = 'wc-completed'
+		SET posts.post_status = '" . OrderInternalStatus::COMPLETED . "'
 		WHERE posts.post_type = 'shop_order'
 		AND posts.post_status = 'publish'
 		AND tax.taxonomy = 'shop_order_status'
@@ -611,7 +612,7 @@ function wc_update_220_order_status() {
 		LEFT JOIN {$wpdb->term_relationships} AS rel ON posts.ID = rel.object_id
 		LEFT JOIN {$wpdb->term_taxonomy} AS tax USING( term_taxonomy_id )
 		LEFT JOIN {$wpdb->terms} AS term USING( term_id )
-		SET posts.post_status = 'wc-cancelled'
+		SET posts.post_status = '" . OrderInternalStatus::CANCELLED . "'
 		WHERE posts.post_type = 'shop_order'
 		AND posts.post_status = 'publish'
 		AND tax.taxonomy = 'shop_order_status'
@@ -622,7 +623,7 @@ function wc_update_220_order_status() {
 		LEFT JOIN {$wpdb->term_relationships} AS rel ON posts.ID = rel.object_id
 		LEFT JOIN {$wpdb->term_taxonomy} AS tax USING( term_taxonomy_id )
 		LEFT JOIN {$wpdb->terms} AS term USING( term_id )
-		SET posts.post_status = 'wc-refunded'
+		SET posts.post_status = '" . OrderInternalStatus::REFUNDED . "'
 		WHERE posts.post_type = 'shop_order'
 		AND posts.post_status = 'publish'
 		AND tax.taxonomy = 'shop_order_status'
@@ -633,7 +634,7 @@ function wc_update_220_order_status() {
 		LEFT JOIN {$wpdb->term_relationships} AS rel ON posts.ID = rel.object_id
 		LEFT JOIN {$wpdb->term_taxonomy} AS tax USING( term_taxonomy_id )
 		LEFT JOIN {$wpdb->terms} AS term USING( term_id )
-		SET posts.post_status = 'wc-failed'
+		SET posts.post_status = '" . OrderInternalStatus::REFUNDED . "'
 		WHERE posts.post_type = 'shop_order'
 		AND posts.post_status = 'publish'
 		AND tax.taxonomy = 'shop_order_status'
@@ -923,7 +924,7 @@ function wc_update_240_refunds() {
 		array(
 			'posts_per_page' => -1,
 			'post_type'      => 'shop_order',
-			'post_status'    => array( 'wc-refunded' ),
+			'post_status'    => array( OrderInternalStatus::REFUNDED ),
 		)
 	);
 

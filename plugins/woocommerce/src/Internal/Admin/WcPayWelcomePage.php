@@ -6,6 +6,7 @@ use Automattic\WooCommerce\Admin\Features\OnboardingTasks\Task;
 use Automattic\WooCommerce\Admin\Features\OnboardingTasks\TaskLists;
 use Automattic\WooCommerce\Admin\WCAdminHelper;
 use Automattic\WooCommerce\Admin\PageController;
+use Automattic\WooCommerce\Enums\OrderInternalStatus;
 use WC_Abstract_Order;
 
 /**
@@ -359,7 +360,7 @@ class WcPayWelcomePage {
 		// Get the latest completed, processing, or refunded order.
 		$latest_order = wc_get_orders(
 			array(
-				'status'  => array( 'wc-completed', 'wc-processing', 'wc-refunded' ),
+				'status'  => array( OrderInternalStatus::COMPLETED, OrderInternalStatus::PROCESSING, OrderInternalStatus::REFUNDED ),
 				'limit'   => 1,
 				'orderby' => 'date',
 				'order'   => 'DESC',
