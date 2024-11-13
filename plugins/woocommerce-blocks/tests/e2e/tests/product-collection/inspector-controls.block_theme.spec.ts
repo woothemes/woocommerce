@@ -60,7 +60,6 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 		await expect( pageObject.productTitles ).toHaveText( sortedTitles );
 	} );
 
-	// Products can be filtered based on 'on sale' status.
 	test( 'Products can be filtered based on "on sale" status', async ( {
 		pageObject,
 	} ) => {
@@ -97,9 +96,9 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 	} ) => {
 		await pageObject.createNewPostAndInsertBlock();
 
-		await pageObject.addFilter( 'Show Hand-picked Products' );
+		await pageObject.addFilter( 'Show Hand-picked' );
 
-		const filterName = 'Hand-picked Products';
+		const filterName = 'Hand-picked';
 		await pageObject.setFilterComboboxValue( filterName, [ 'Album' ] );
 		await expect( pageObject.products ).toHaveCount( 1 );
 
@@ -289,7 +288,7 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 
 		await pageObject.addFilter( 'Price Range' );
 		await pageObject.setPriceRange( {
-			min: '18.33',
+			min: '25',
 		} );
 
 		await expect( pageObject.products ).toHaveCount( 7 );
@@ -299,17 +298,17 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 			max: '17.21',
 		} );
 
-		await expect( pageObject.products ).toHaveCount( 1 );
+		await expect( pageObject.products ).toHaveCount( 2 );
 
 		await pageObject.setPriceRange( {
 			max: '17.29',
 		} );
 
-		await expect( pageObject.products ).toHaveCount( 4 );
+		await expect( pageObject.products ).toHaveCount( 5 );
 
 		await pageObject.publishAndGoToFrontend();
 
-		await expect( pageObject.products ).toHaveCount( 4 );
+		await expect( pageObject.products ).toHaveCount( 5 );
 	} );
 
 	// See https://github.com/woocommerce/woocommerce/pull/49917
@@ -382,14 +381,14 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 		).not.toHaveCount( 0 );
 	} );
 
-	test.describe( '"Use page context" control', () => {
+	test.describe( '"Query Type" control', () => {
 		test( 'should be visible on posts', async ( { pageObject } ) => {
 			await pageObject.createNewPostAndInsertBlock();
 
 			await expect(
 				pageObject
 					.locateSidebarSettings()
-					.locator( SELECTORS.usePageContextControl )
+					.getByLabel( SELECTORS.usePageContextControl )
 			).toBeVisible();
 		} );
 
@@ -413,7 +412,7 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 				await expect(
 					pageObject
 						.locateSidebarSettings()
-						.locator( SELECTORS.usePageContextControl )
+						.getByLabel( SELECTORS.usePageContextControl )
 				).toBeVisible();
 			} );
 		} );
@@ -436,7 +435,7 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 				await expect(
 					pageObject
 						.locateSidebarSettings()
-						.locator( SELECTORS.usePageContextControl )
+						.getByLabel( SELECTORS.usePageContextControl )
 				).toBeVisible();
 			} );
 		} );
@@ -450,16 +449,15 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 			await editor.openDocumentSettingsSidebar();
 
 			const sidebarSettings = pageObject.locateSidebarSettings();
+			const queryTypeLocator = sidebarSettings.getByLabel(
+				SELECTORS.usePageContextControl
+			);
+
+			const defaultQueryType = queryTypeLocator.getByLabel( 'Default' );
+			const customQueryType = queryTypeLocator.getByLabel( 'Custom' );
 
 			// Inherit query from template should be visible & enabled by default
-			await expect(
-				sidebarSettings.locator( SELECTORS.usePageContextControl )
-			).toBeVisible();
-			await expect(
-				sidebarSettings.locator(
-					`${ SELECTORS.usePageContextControl } input`
-				)
-			).toBeChecked();
+			await expect( defaultQueryType ).toBeChecked();
 
 			// "On sale control" should be hidden when inherit query from template is enabled
 			await expect(
@@ -467,7 +465,7 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 			).toBeHidden();
 
 			// "On sale control" should be visible when inherit query from template is disabled
-			await pageObject.setInheritQueryFromTemplate( false );
+			await customQueryType.click();
 			await expect(
 				sidebarSettings.getByLabel( SELECTORS.onSaleControlLabel )
 			).toBeVisible();
@@ -480,11 +478,11 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 			await expect(
 				sidebarSettings.getByLabel( SELECTORS.onSaleControlLabel )
 			).toBeChecked();
-			await pageObject.setInheritQueryFromTemplate( true );
+			await defaultQueryType.click();
 			await expect(
 				sidebarSettings.getByLabel( SELECTORS.onSaleControlLabel )
 			).toBeHidden();
-			await pageObject.setInheritQueryFromTemplate( false );
+			await customQueryType.click();
 			await expect(
 				sidebarSettings.getByLabel( SELECTORS.onSaleControlLabel )
 			).toBeVisible();
@@ -501,10 +499,13 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 				'Block: Product Collection',
 				{ exact: true }
 			);
-			const usePageContextToggle = pageObject
-				.locateSidebarSettings()
-				.locator( SELECTORS.usePageContextControl )
-				.locator( 'input' );
+			const sidebarSettings = pageObject.locateSidebarSettings();
+			const queryTypeLocator = sidebarSettings.getByLabel(
+				SELECTORS.usePageContextControl
+			);
+
+			const defaultQueryType = queryTypeLocator.getByLabel( 'Default' );
+			const customQueryType = queryTypeLocator.getByLabel( 'Custom' );
 
 			// First Product Catalog
 			// Option should be visible & ENABLED by default
@@ -512,7 +513,8 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 			await editor.selectBlocks( productCollection.first() );
 			await editor.openDocumentSettingsSidebar();
 
-			await expect( usePageContextToggle ).toBeChecked();
+			await expect( defaultQueryType ).toBeChecked();
+			await expect( customQueryType ).not.toBeChecked();
 
 			// Second Product Catalog
 			// Option should be visible & DISABLED by default
@@ -520,11 +522,12 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 			await pageObject.chooseCollectionInTemplate( 'productCatalog' );
 			await editor.selectBlocks( productCollection.last() );
 
-			await expect( usePageContextToggle ).not.toBeChecked();
+			await expect( defaultQueryType ).not.toBeChecked();
+			await expect( customQueryType ).toBeChecked();
 
 			// Disable the option in the first Product Catalog
 			await editor.selectBlocks( productCollection.first() );
-			await usePageContextToggle.click();
+			await customQueryType.click();
 
 			// Third Product Catalog
 			// Option should be visible & ENABLED by default
@@ -532,7 +535,8 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 			await pageObject.chooseCollectionInTemplate( 'productCatalog' );
 			await editor.selectBlocks( productCollection.last() );
 
-			await expect( usePageContextToggle ).toBeChecked();
+			await expect( defaultQueryType ).toBeChecked();
+			await expect( customQueryType ).not.toBeChecked();
 		} );
 
 		test( 'allows filtering in non-archive context', async ( {

@@ -80,7 +80,7 @@ class WC_Admin_Marketplace_Promotions {
 	 */
 	private static function schedule_cron_event() {
 		if ( ! wp_next_scheduled( self::CRON_NAME ) ) {
-			wp_schedule_event( time(), 'daily', self::CRON_NAME );
+			wp_schedule_event( time(), 'twicedaily', self::CRON_NAME );
 		}
 	}
 
@@ -115,6 +115,8 @@ class WC_Admin_Marketplace_Promotions {
 		if ( ! $promotions ) {
 			return array();
 		}
+
+		$promotions = self::merge_promos( $promotions );
 
 		return self::filter_out_inactive_promotions( $promotions );
 	}
@@ -163,6 +165,7 @@ class WC_Admin_Marketplace_Promotions {
 		}
 
 		$promotions = json_decode( wp_remote_retrieve_body( $raw_promotions ), true );
+
 		if ( ! is_array( $promotions ) ) {
 			$promotions = array();
 
@@ -294,6 +297,27 @@ class WC_Admin_Marketplace_Promotions {
 		);
 
 		return $active_promotions;
+	}
+
+	/**
+	 * Promos arrive in the array of promotions as an array of arrays with the key 'promos'.
+	 * We merge them into the main array.
+	 *
+	 * @param ?array $promotions  Promotions data received from WCCOM.
+	 *                            May have an element with the key 'promos', which contains an array.
+	 *
+	 * @return array
+	 * */
+	private static function merge_promos( ?array $promotions = array() ): array {
+		if (
+			! empty( $promotions['promos'] )
+			&& is_array( $promotions['promos'] )
+		) {
+			$promotions = array_merge( $promotions, $promotions['promos'] );
+			unset( $promotions['promos'] );
+		}
+
+		return $promotions;
 	}
 
 	/**

@@ -1,0 +1,4 @@
+Significance: patch
+Type: add
+
+Adds a flag to allow WC Blocks to render with React 18 for testing
