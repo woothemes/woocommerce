@@ -11,6 +11,10 @@ import { Pill } from '@woocommerce/components';
 import './status-badge.scss';
 
 interface StatusBadgeProps {
+	/**
+	 * Status of the badge. This decides which class to apply, and what the
+	 * status message should be.
+	 */
 	status:
 		| 'active'
 		| 'inactive'
@@ -18,9 +22,13 @@ interface StatusBadgeProps {
 		| 'test_mode'
 		| 'recommended'
 		| 'has_incentive';
+	/**
+	 * Override the default status message to display a custom one. Optional.
+	 */
+	message?: string;
 }
 
-export const StatusBadge = ( { status }: StatusBadgeProps ) => {
+export const StatusBadge = ( { status, message }: StatusBadgeProps ) => {
 	const getStatusClass = () => {
 		switch ( status ) {
 			case 'active':
@@ -49,9 +57,6 @@ export const StatusBadge = ( { status }: StatusBadgeProps ) => {
 				return __( 'Test mode', 'woocommerce' );
 			case 'recommended':
 				return __( 'Recommended', 'woocommerce' );
-			case 'has_incentive':
-				// TODO: in this case we'd need to pass the incentive message as a prop.
-				return __( 'Has incentive', 'woocommerce' );
 			default:
 				return '';
 		}
@@ -59,7 +64,7 @@ export const StatusBadge = ( { status }: StatusBadgeProps ) => {
 
 	return (
 		<Pill className={ `woocommerce-status-badge ${ getStatusClass() }` }>
-			{ getStatusMessage() }
+			{ message || getStatusMessage() }
 		</Pill>
 	);
 };

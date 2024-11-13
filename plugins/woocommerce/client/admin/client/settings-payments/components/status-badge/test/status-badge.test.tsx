@@ -36,8 +36,10 @@ describe( 'StatusBadge component', () => {
 	} );
 
 	it( 'renders the correct message for has_incentive status', () => {
-		const { getByText } = render( <StatusBadge status="has_incentive" /> );
-		expect( getByText( 'Has incentive' ) ).toBeInTheDocument();
+		const { getByText } = render(
+			<StatusBadge status="has_incentive" message={ 'Custom message' } />
+		);
+		expect( getByText( 'Custom message' ) ).toBeInTheDocument();
 	} );
 
 	it( 'applies the correct class for success statuses', () => {
@@ -59,5 +61,13 @@ describe( 'StatusBadge component', () => {
 		expect( container.firstChild ).toHaveClass(
 			'woocommerce-status-badge--info'
 		);
+	} );
+
+	it( 'renders the correct custom message when message prop is passed', () => {
+		const customMessage = 'Custom message';
+		const { getByText } = render(
+			<StatusBadge status="active" message={ customMessage } />
+		);
+		expect( getByText( customMessage ) ).toBeInTheDocument();
 	} );
 } );
