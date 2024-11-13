@@ -1252,7 +1252,7 @@ final class PaymentExtensionSuggestions {
 
 		$extensions = $this->get_all_extensions_base_details();
 		if ( isset( $extensions[ $extension_id ] ) ) {
-			$extension_details = $extensions[ $extension_id ];
+			$extension_details              = $extensions[ $extension_id ];
 			$extension_details['id']        = $extension_id;
 			$extension_details['_priority'] = 0;
 

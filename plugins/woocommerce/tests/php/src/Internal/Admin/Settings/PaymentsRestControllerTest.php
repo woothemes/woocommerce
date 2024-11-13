@@ -394,7 +394,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		wp_set_current_user( $user_admin );
 
 		// Act.
-		$request = new WP_REST_Request( 'POST', self::ENDPOINT . '/suggestion/woopayments/hide' );
+		$request  = new WP_REST_Request( 'POST', self::ENDPOINT . '/suggestion/woopayments/hide' );
 		$response = $this->server->dispatch( $request );
 
 		// Assert.

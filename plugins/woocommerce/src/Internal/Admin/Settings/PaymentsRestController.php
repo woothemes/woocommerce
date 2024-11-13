@@ -79,7 +79,7 @@ class PaymentsRestController extends RestApiControllerBase {
 							'type'              => 'string',
 							'pattern'           => '[a-zA-Z]{2}', // Two alpha characters.
 							'required'          => false,
-							'validate_callback' => fn( $value, $request, $param ) => $this->check_location_arg( $value, $request ),
+							'validate_callback' => fn( $value, $request ) => $this->check_location_arg( $value, $request ),
 						),
 					),
 				),
@@ -158,12 +158,12 @@ class PaymentsRestController extends RestApiControllerBase {
 	 */
 	protected function hide_payment_extension_suggestion( WP_REST_Request $request ) {
 		$suggestion_id = $request->get_param( 'id' );
-		$suggestion = $this->extension_suggestions->get_by_id( $suggestion_id );
+		$suggestion    = $this->extension_suggestions->get_by_id( $suggestion_id );
 		if ( is_null( $suggestion ) ) {
 			return new WP_Error( 'woocommerce_rest_payment_extension_suggestion_error', __( 'Invalid suggestion ID.', 'woocommerce' ), array( 'status' => 400 ) );
 		}
 
-		$user_payments_nox_profile = get_user_meta( get_current_user_id(), self::USER_PAYMENTS_NOX_PROFILE_KEY , true );
+		$user_payments_nox_profile = get_user_meta( get_current_user_id(), self::USER_PAYMENTS_NOX_PROFILE_KEY, true );
 		if ( empty ( $user_payments_nox_profile ) ) {
 			$user_payments_nox_profile = array();
 		} else {
@@ -718,7 +718,7 @@ class PaymentsRestController extends RestApiControllerBase {
 	/**
 	 * Validate the location argument.
 	 *
-	 * @param  mixed          $value   Value of the argument.
+	 * @param mixed           $value   Value of the argument.
 	 * @param WP_REST_Request $request The current request object.
 	 *
 	 * @return WP_Error|true True if the location argument is valid, otherwise a WP_Error object.
@@ -736,7 +736,7 @@ class PaymentsRestController extends RestApiControllerBase {
 		$args = $attributes['args']['location'];
 
 		// If the location param doesn't match the regex pattern then we should return an error as well.
-		if ( ! preg_match( '/^' . $args['pattern'] .'$/', $value ) ) {
+		if ( ! preg_match( '/^' . $args['pattern'] . '$/', $value ) ) {
 			return new WP_Error( 'rest_invalid_param', esc_html__( 'The location argument must be a valid ISO3166 alpha-2 country code.', 'woocommerce' ), array( 'status' => 400 ) );
 		}
 
