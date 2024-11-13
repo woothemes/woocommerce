@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useMemo, Fragment } from '@wordpress/element';
+import { Fragment } from '@wordpress/element';
 import { useEffectOnce } from 'usehooks-ts';
 import {
 	useCheckoutAddress,
@@ -14,7 +14,7 @@ import {
 	CheckboxControl,
 } from '@woocommerce/blocks-components';
 import Noninteractive from '@woocommerce/base-components/noninteractive';
-import type { BillingAddress, FormFieldsConfig } from '@woocommerce/settings';
+import type { BillingAddress } from '@woocommerce/settings';
 import { getSetting } from '@woocommerce/settings';
 import { useSelect } from '@wordpress/data';
 import { CART_STORE_KEY } from '@woocommerce/block-data';
@@ -26,22 +26,9 @@ import type { CartResponseBillingAddress } from '@woocommerce/types';
  */
 import CustomerAddress from './customer-address';
 
-const Block = ( {
-	showCompanyField = false,
-	requireCompanyField = false,
-	showApartmentField = false,
-	requireApartmentField = false,
-	showPhoneField = false,
-	requirePhoneField = false,
-}: {
-	showCompanyField: boolean;
-	requireCompanyField: boolean;
-	showApartmentField: boolean;
-	requireApartmentField: boolean;
-	showPhoneField: boolean;
-	requirePhoneField: boolean;
-} ): JSX.Element => {
+const Block = (): JSX.Element => {
 	const {
+		defaultFields,
 		setBillingAddress,
 		shippingAddress,
 		billingAddress,
@@ -58,11 +45,11 @@ const Block = ( {
 			...shippingAddress,
 		};
 
-		if ( ! showPhoneField ) {
+		if ( ! defaultFields?.phone || defaultFields.phone.hidden ) {
 			delete syncValues.phone;
 		}
 
-		if ( showCompanyField ) {
+		if ( ! defaultFields?.company || defaultFields.company.hidden ) {
 			delete syncValues.company;
 		}
 
@@ -88,31 +75,6 @@ const Block = ( {
 		}
 	} );
 
-	// Create address fields config from block attributes.
-	const addressFieldsConfig = useMemo( () => {
-		return {
-			company: {
-				hidden: ! showCompanyField,
-				required: requireCompanyField,
-			},
-			address_2: {
-				hidden: ! showApartmentField,
-				required: requireApartmentField,
-			},
-			phone: {
-				hidden: ! showPhoneField,
-				required: requirePhoneField,
-			},
-		};
-	}, [
-		showCompanyField,
-		requireCompanyField,
-		showApartmentField,
-		requireApartmentField,
-		showPhoneField,
-		requirePhoneField,
-	] ) as FormFieldsConfig;
-
 	const WrapperComponent = isEditor ? Noninteractive : Fragment;
 	const noticeContext = useShippingAsBilling
 		? [ noticeContexts.SHIPPING_ADDRESS, noticeContexts.BILLING_ADDRESS ]
@@ -129,11 +91,7 @@ const Block = ( {
 		<>
 			<StoreNoticesContainer context={ noticeContext } />
 			<WrapperComponent>
-				{ cartDataLoaded ? (
-					<CustomerAddress
-						addressFieldsConfig={ addressFieldsConfig }
-					/>
-				) : null }
+				{ cartDataLoaded ? <CustomerAddress /> : null }
 			</WrapperComponent>
 			<CheckboxControl
 				className="wc-block-checkout__use-address-for-billing"

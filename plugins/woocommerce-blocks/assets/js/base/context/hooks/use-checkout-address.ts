@@ -5,10 +5,12 @@ import {
 	ShippingAddress,
 	BillingAddress,
 	getSetting,
+	FormFields,
 } from '@woocommerce/settings';
 import { useCallback } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { useCheckoutBlockContext } from '@woocommerce/blocks/checkout/context';
 
 /**
  * Internal dependencies
@@ -17,6 +19,7 @@ import { useCustomerData } from './use-customer-data';
 import { useShippingData } from './shipping/use-shipping-data';
 
 interface CheckoutAddress {
+	defaultFields: FormFields;
 	shippingAddress: ShippingAddress;
 	billingAddress: BillingAddress;
 	setShippingAddress: ( data: Partial< ShippingAddress > ) => void;
@@ -66,6 +69,7 @@ export const useCheckoutAddress = (): CheckoutAddress => {
 		shippingAddress,
 		setShippingAddress,
 	} = useCustomerData();
+	const { defaultFields } = useCheckoutBlockContext();
 
 	const setEmail = useCallback(
 		( value: string ) =>
@@ -80,6 +84,7 @@ export const useCheckoutAddress = (): CheckoutAddress => {
 		false
 	);
 	return {
+		defaultFields,
 		shippingAddress,
 		billingAddress,
 		setShippingAddress,

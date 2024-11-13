@@ -21,7 +21,7 @@ import isShallowEqual from '@wordpress/is-shallow-equal';
 import clsx from 'clsx';
 import { AddressFormValues, ContactFormValues } from '@woocommerce/settings';
 import { objectHasProp } from '@woocommerce/types';
-import { useCheckoutBlockContext } from '@woocommerce/blocks/checkout/context';
+import { useCheckoutAddress } from '@woocommerce/base-context';
 
 /**
  * Internal dependencies
@@ -54,7 +54,7 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 }: AddressFormProps< T > ): JSX.Element => {
 	const instanceId = useInstanceId( Form );
 	const isFirstRender = useRef( true );
-	const { defaultFields } = useCheckoutBlockContext();
+	const { defaultFields } = useCheckoutAddress();
 
 	// Track incoming props.
 	const currentFields = useShallowEqual( fields );
