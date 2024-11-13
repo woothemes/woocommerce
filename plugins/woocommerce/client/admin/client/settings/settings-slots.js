@@ -26,6 +26,10 @@ export const possiblyRenderSettingsSlots = () => {
 			id: 'wc_settings_blueprint_slotfill',
 			scope: 'woocommerce-blueprint-settings',
 		},
+		{
+			id: 'wc_settings_email_preview_slotfill',
+			scope: 'woocommerce-email-preview-settings',
+		},
 	];
 
 	slots.forEach( ( slot ) => {
