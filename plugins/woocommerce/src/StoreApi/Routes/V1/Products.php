@@ -1,4 +1,6 @@
 <?php
+declare( strict_types = 1 );
+
 namespace Automattic\WooCommerce\StoreApi\Routes\V1;
 
 use Automattic\WooCommerce\StoreApi\Utilities\Pagination;
@@ -299,6 +301,10 @@ class Products extends AbstractRoute {
 
 		// If the $_REQUEST contains a taxonomy query, add it to the params and sanitize it.
 		foreach ( $_REQUEST as $param => $value ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if ( ! is_string( $param ) ) {
+				continue;
+			}
+
 			if ( str_starts_with( $param, '_unstable_tax_' ) && ! str_ends_with( $param, '_operator' ) ) {
 				$params[ $param ] = array(
 					'description'       => __( 'Limit result set to products assigned a specific category ID.', 'woocommerce' ),

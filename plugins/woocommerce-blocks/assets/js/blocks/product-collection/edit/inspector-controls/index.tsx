@@ -54,6 +54,7 @@ import CreatedControl from './created-control';
 import PriceRangeControl from './price-range-control';
 import LinkedProductControl from './linked-product-control';
 import WidthOptionsControl from './width-options-control';
+import RelatedByControl from './related-by-control';
 
 const prepareShouldShowFilter =
 	( hideControls: FilterName[] ) => ( filter: FilterName ) => {
@@ -299,19 +300,28 @@ const CollectionSpecificControls = (
 
 	return (
 		<InspectorControls>
-			<PanelBody>
-				{
-					/**
-					 * Hand-Picked collection-specific controls.
-					 */
-					props.attributes.collection ===
-						'woocommerce/product-collection/hand-picked' && (
+			{
+				/**
+				 * Hand-Picked collection-specific controls.
+				 */
+				props.attributes.collection ===
+					'woocommerce/product-collection/hand-picked' && (
+					<PanelBody>
 						<HandPickedProductsControlField
 							{ ...queryControlProps }
 						/>
-					)
-				}
-			</PanelBody>
+					</PanelBody>
+				)
+			}
+			{
+				/**
+				 * "Related Products" collection-specific controls.
+				 */
+				props.attributes.collection ===
+					'woocommerce/product-collection/related' && (
+					<RelatedByControl { ...queryControlProps } />
+				)
+			}
 		</InspectorControls>
 	);
 };
