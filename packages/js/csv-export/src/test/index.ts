@@ -35,31 +35,31 @@ describe( 'generateCSVDataFromTable', () => {
 	it( 'should prefix single quote character when the cell value starts with one of =, +, -, @, tab, and carriage return', () => {
 		const testValues = [
 			// The values below should be escaped to prevent CSV formula injection.
-			{ inputValue: '=danger', expectedValue: `"'=danger"` },
-			{ inputValue: '+danger', expectedValue: `"'+danger"` },
-			{ inputValue: '-danger', expectedValue: `"'-danger"` },
-			{ inputValue: '@danger', expectedValue: `"'@danger"` },
+			{ input: '=danger', expected: `"'=danger"` },
+			{ input: '+danger', expected: `"'+danger"` },
+			{ input: '-danger', expected: `"'-danger"` },
+			{ input: '@danger', expected: `"'@danger"` },
 			{
-				inputValue: String.fromCharCode( 0x09 ) + 'danger',
-				expectedValue: `"'${ String.fromCharCode( 0x09 ) }danger"`,
+				input: String.fromCharCode( 0x09 ) + 'danger',
+				expected: `"'${ String.fromCharCode( 0x09 ) }danger"`,
 			},
 			{
-				inputValue: String.fromCharCode( 0x0d ) + 'danger',
-				expectedValue: `"'${ String.fromCharCode( 0x0d ) }danger"`,
+				input: String.fromCharCode( 0x0d ) + 'danger',
+				expected: `"'${ String.fromCharCode( 0x0d ) }danger"`,
 			},
 
 			// The values below should not be escaped since they are pure numeric values.
-			{ inputValue: 12, expectedValue: '12' },
-			{ inputValue: 12.34, expectedValue: '12.34' },
-			{ inputValue: -12, expectedValue: '-12' },
-			{ inputValue: -12.34, expectedValue: '-12.34' },
+			{ input: 12, expected: '12' },
+			{ input: 12.34, expected: '12.34' },
+			{ input: -12, expected: '-12' },
+			{ input: -12.34, expected: '-12.34' },
 			{
-				inputValue: Number.MIN_SAFE_INTEGER,
-				expectedValue: '-9007199254740991',
+				input: Number.MIN_SAFE_INTEGER,
+				expected: '-9007199254740991',
 			},
 		];
 
-		testValues.forEach( ( { inputValue, expectedValue } ) => {
+		testValues.forEach( ( { input, expected } ) => {
 			const result = generateCSVDataFromTable(
 				[
 					{
@@ -71,12 +71,12 @@ describe( 'generateCSVDataFromTable', () => {
 					[
 						{
 							display: 'value',
-							value: inputValue,
+							value: input,
 						},
 					],
 				]
 			);
-			expect( result ).toBe( `value\n${ expectedValue }` );
+			expect( result ).toBe( `value\n${ expected }` );
 		} );
 	} );
 } );
