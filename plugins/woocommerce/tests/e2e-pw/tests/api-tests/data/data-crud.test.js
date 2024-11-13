@@ -5861,6 +5861,7 @@ test.describe( 'Data API tests', () => {
 								href: expect.stringContaining(
 									'data/currencies/JMD'
 								),
+								targetHints: { allow: [ 'GET' ] },
 							},
 						],
 						collection: [
