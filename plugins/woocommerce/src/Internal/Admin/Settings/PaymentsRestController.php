@@ -29,6 +29,7 @@ class PaymentsRestController extends RestApiControllerBase {
 	const EXTENSION_INSTALLED     = 'installed';
 	const EXTENSION_ACTIVE        = 'active';
 
+	const USER_PAYMENTS_NOX_PROFILE_KEY = 'woocommerce_payments_nox_profile';
 
 	/**
 	 * Route base.
@@ -68,6 +69,17 @@ class PaymentsRestController extends RestApiControllerBase {
 					'args'                => $this->get_args_for_get_payment_providers(),
 				),
 				'schema' => fn() => $this->get_schema_for_get_payment_providers(),
+			)
+		);
+		register_rest_route(
+			'wc-admin',
+			'/' . $this->rest_base . '/suggestion/(?P<id>[\w\d\-_]+)/hide',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::CREATABLE,
+					'callback'            => fn( $request ) => $this->run( $request, 'hide_payment_extension_suggestion' ),
+					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
+				),
 			)
 		);
 	}
@@ -110,6 +122,66 @@ class PaymentsRestController extends RestApiControllerBase {
 		);
 
 		return rest_ensure_response( $response );
+	}
+
+	/**
+	 * Hide a payment extension suggestion.
+	 *
+	 * @param WP_REST_Request $request The request object.
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	protected function hide_payment_extension_suggestion( WP_REST_Request $request ) {
+		$suggestion_id = $request->get_param( 'id' );
+		$suggestion = $this->extension_suggestions->get_by_id( $suggestion_id );
+		if ( is_null( $suggestion ) ) {
+			return new WP_Error( 'woocommerce_rest_payment_extension_suggestion_error', __( 'Invalid suggestion ID.', 'woocommerce' ), array( 'status' => 400 ) );
+		}
+
+		$user_payments_nox_profile = get_user_meta( get_current_user_id(), self::USER_PAYMENTS_NOX_PROFILE_KEY , true );
+		if ( empty ( $user_payments_nox_profile ) ) {
+			$user_payments_nox_profile = array();
+		} else {
+			$user_payments_nox_profile = maybe_unserialize( $user_payments_nox_profile );
+		}
+
+		// Mark the suggestion as hidden.
+		if ( empty( $user_payments_nox_profile['hidden_suggestions'] ) ) {
+			$user_payments_nox_profile['hidden_suggestions'] = array();
+		}
+		// Check if it is already hidden.
+		if ( in_array( $suggestion_id, array_column( $user_payments_nox_profile['hidden_suggestions'], 'id' ), true ) ) {
+			return rest_ensure_response( array( 'success' => true ) );
+		}
+		$user_payments_nox_profile['hidden_suggestions'][] = array(
+			'id'        => $suggestion_id,
+			'timestamp' => time(),
+		);
+
+		update_user_meta( get_current_user_id(), self::USER_PAYMENTS_NOX_PROFILE_KEY, $user_payments_nox_profile );
+
+		return rest_ensure_response( array( 'success' => true ) );
+	}
+
+	/**
+	 * Check if a payment extension suggestion has been hidden by the user.
+	 *
+	 * @param array $extension The extension suggestion.
+	 *
+	 * @return bool True if the extension suggestion is hidden, false otherwise.
+	 */
+	private function is_payment_extension_suggestion_hidden( array $extension ): bool {
+		$user_payments_nox_profile = get_user_meta( get_current_user_id(), self::USER_PAYMENTS_NOX_PROFILE_KEY , true );
+		if ( empty ( $user_payments_nox_profile ) ) {
+			return false;
+		}
+		$user_payments_nox_profile = maybe_unserialize( $user_payments_nox_profile );
+
+		if ( empty( $user_payments_nox_profile['hidden_suggestions'] ) ) {
+			return false;
+		}
+
+		return in_array( $extension['id'], array_column( $user_payments_nox_profile['hidden_suggestions'], 'id' ), true );
 	}
 
 	/**
@@ -427,7 +499,7 @@ class PaymentsRestController extends RestApiControllerBase {
 			// Determine if the suggestion is preferred or not by looking at its tags.
 			$is_preferred = in_array( ExtensionSuggestions::TAG_PREFERRED, $extension['tags'], true );
 			// Determine if the suggestion is hidden (from the preferred locations).
-			$is_hidden = $extension['_hidden'];
+			$is_hidden = $this->is_payment_extension_suggestion_hidden( $extension );
 
 			if ( ! $is_hidden && $is_preferred ) {
 				// If the suggestion is preferred, add it to the preferred list.
@@ -979,11 +1051,6 @@ class PaymentsRestController extends RestApiControllerBase {
 					'description' => esc_html__( 'The category of the suggestion.', 'woocommerce' ),
 					'context'     => array( 'view', 'edit' ),
 					'readonly'    => true,
-				),
-				'_hidden'           => array(
-					'type'        => 'boolean',
-					'description' => esc_html__( 'Whether the suggestion is hidden.', 'woocommerce' ),
-					'context'     => array( 'view', 'edit' ),
 				),
 			),
 		);

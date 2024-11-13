@@ -75,6 +75,7 @@ final class PaymentExtensionSuggestions {
 	 */
 	const TAG_PREFERRED   = 'preferred';
 	const TAG_MADE_IN_WOO = 'made_in_woo'; // For extensions developed by Woo.
+	const TAG_RECOMMENDED = 'recommended'; // For extensions that should be further emphasized.
 
 	/**
 	 * The payment extension list for each country.
@@ -1240,7 +1241,31 @@ final class PaymentExtensionSuggestions {
 	}
 
 	/**
+	 * Get the base details of a payment extension by its ID.
+	 *
+	 * @param string $extension_id The extension id.
+	 *
+	 * @return array|null The extension details for the given ID. Null if not found.
+	 */
+	public function get_by_id( string $extension_id ): ?array {
+		$extension_id = sanitize_title( $extension_id );
+
+		$extensions = $this->get_all_extensions_base_details();
+		if ( isset( $extensions[ $extension_id ] ) ) {
+			$extension_details = $extensions[ $extension_id ];
+			$extension_details['id']        = $extension_id;
+			$extension_details['_priority'] = 0;
+
+			return $this->standardize_extension_details( $extension_details );
+		}
+
+		return null;
+	}
+
+	/**
 	 * Get the base details of a payment extension by its plugin slug.
+	 *
+	 * If there are multiple extensions with the same plugin slug, the first one found will be returned.
 	 *
 	 * @param string $plugin_slug The plugin slug.
 	 *
