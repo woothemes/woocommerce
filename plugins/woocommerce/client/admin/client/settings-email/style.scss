@@ -119,21 +119,26 @@ $wc-setting-email-preview-gap: 16px;
 	height: 88px;
 	position: relative;
 
+	&:hover {
+		filter: brightness(0.87);
+	}
+
 	button.wc-settings-email-image-url-select-image {
 		background-color: transparent;
 		border: none;
 		display: block;
 		height: 100%;
 		width: 100%;
+
+		&:hover {
+			cursor: pointer;
+		}
 	}
 
 	img.wc-settings-email-image-url-new-image-icon {
 		position: absolute;
+		inset: 0;
 		margin: auto;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
 	}
 }
 
@@ -146,6 +151,10 @@ $wc-setting-email-preview-gap: 16px;
 		max-width: 400px;
 		border: 1px #ccc solid;
 		border-radius: 4px;
+
+		&:hover {
+			cursor: pointer;
+		}
 	}
 
 	button.wc-settings-email-image-url-select-image:not(.button) {
@@ -156,16 +165,5 @@ $wc-setting-email-preview-gap: 16px;
 		&:focus {
 			box-shadow: none;
 		}
-	}
-
-	> button.wc-settings-email-image-url-select-image.button,
-	> button.wc-settings-email-image-url-remove-image.button {
-		height: 40px;
-		line-height: 2.8;
-		background-color: transparent;
-	}
-
-	> button.wc-settings-email-image-url-remove-image.button {
-		border: none;
 	}
 }

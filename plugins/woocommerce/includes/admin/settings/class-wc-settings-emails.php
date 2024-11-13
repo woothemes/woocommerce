@@ -79,10 +79,10 @@ class WC_Settings_Emails extends WC_Settings_Page {
 		$header_alignment           = null;
 
 		if ( FeaturesUtil::feature_is_enabled( 'email_improvements' ) ) {
-			$email_template_description = sprintf( __( 'Customize your WooCommerce email template and preview it below.', 'woocommerce' ) );
+			$email_template_description = __( 'Customize your WooCommerce email template and preview it below.', 'woocommerce' );
 			$logo_image                 = array(
 				'title'       => __( 'Logo', 'woocommerce' ),
-				'desc'        => '',
+				'desc'        => __( 'Add your logo to each of your WooCommerce emails. If no logo is uploaded, your site title will be used instead.', 'woocommerce' ),
 				'id'          => 'woocommerce_email_header_image',
 				'type'        => 'email_image_url',
 				'css'         => 'min-width:400px;',
@@ -95,7 +95,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 				'title'    => __( 'Header alignment', 'woocommerce' ),
 				'id'       => 'woocommerce_email_header_alignment',
 				'desc_tip' => '',
-				'default'  => 'base',
+				'default'  => 'left',
 				'type'     => 'select',
 				'class'    => 'wc-enhanced-select',
 				'options'  => array(
@@ -455,7 +455,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 		?>
 		<tr class="<?php echo esc_attr( $value['row_class'] ); ?>">
 			<th scope="row" class="titledesc">
-				<label for="<?php echo esc_attr( $value['id'] ); ?>"><?php echo esc_html( $value['title'] ); ?></label>
+				<label for="<?php echo esc_attr( $value['id'] ); ?>"><?php echo esc_html( $value['title'] ); ?> <?php echo wc_help_tip( $value['desc'] ); // WPCS: XSS ok. ?></label>
 			</th>
 			<td class="forminp forminp-<?php echo esc_attr( sanitize_title( $value['type'] ) ); ?>">
 				<input

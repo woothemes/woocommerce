@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -34,20 +35,18 @@ export const ExistingImage: React.FC< ExistingImageProps > = ( {
 					/>
 				</button>
 			</div>
-			<button
+			<Button
+				variant="secondary"
 				onClick={ () => selectImage( inputId, setImageUrl ) }
-				className="wc-settings-email-image-url-select-image button"
-				type="button"
 			>
 				{ __( 'Change image', 'woocommerce' ) }
-			</button>
-			<button
+			</Button>{ ' ' }
+			<Button
+				variant="tertiary"
 				onClick={ () => removeImage( inputId, setImageUrl ) }
-				className="wc-settings-email-image-url-remove-image button"
-				type="button"
 			>
 				{ __( 'Remove', 'woocommerce' ) }
-			</button>
+			</Button>
 		</div>
 	);
 };
