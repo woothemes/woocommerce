@@ -23,6 +23,9 @@ export type BlockAttributes = {
 	customChipBackground?: string;
 	chipBorder?: string;
 	customChipBorder?: string;
+	layout: {
+		orientation: string;
+	};
 };
 
 export type EditProps = BlockEditProps< BlockAttributes > & {
@@ -34,4 +37,5 @@ export type EditProps = BlockEditProps< BlockAttributes > & {
 	setChipBackground: ( value: string ) => void;
 	chipBorder: Color;
 	setChipBorder: ( value: string ) => void;
+	name: string;
 };

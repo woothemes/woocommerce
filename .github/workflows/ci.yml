@@ -226,6 +226,7 @@ jobs:
           BUILDKITE_ANALYTICS_TOKEN: ${{ secrets.BUILDKITE_CORE_E2E_TOKEN }}
           CODEVITALS_PROJECT_TOKEN: ${{ secrets.CODEVITALS_PROJECT_TOKEN }} # required by Metrics tests
           LAST_FAILED_RUN: ${{ vars.LAST_FAILED_RUN }}
+          GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
           lastRunFile="${{ steps.download-last-run-info.outputs.download-path }}/last-run__${{ strategy.job-index }}/.last-run.json"
           lastRunFileDest="$ARTIFACTS_PATH/.last-run.json"
