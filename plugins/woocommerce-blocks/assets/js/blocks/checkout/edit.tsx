@@ -21,6 +21,7 @@ import { useEffect, useRef } from '@wordpress/element';
 import { getQueryArg } from '@wordpress/url';
 import { dispatch, select, useSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
+import { defaultFields } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
@@ -93,6 +94,18 @@ export const Edit = ( {
 			} );
 		}
 	};
+
+	const editedDefaultFields = {
+		...defaultFields,
+	};
+
+	editedDefaultFields.phone.required = fieldEntities.phone === 'required';
+	editedDefaultFields.company.required = fieldEntities.company === 'required';
+	editedDefaultFields.address_2.required =
+		fieldEntities.apartment === 'required';
+	editedDefaultFields.phone.hidden = fieldEntities.phone === 'hidden';
+	editedDefaultFields.company.hidden = fieldEntities.company === 'hidden';
+	editedDefaultFields.address_2.hidden = fieldEntities.apartment === 'hidden';
 
 	// This focuses on the block when a certain query param is found. This is used on the link from the task list.
 	const focus = useRef( getQueryArg( window.location.href, 'focus' ) );
@@ -261,6 +274,7 @@ export const Edit = ( {
 							>
 								<CheckoutBlockContext.Provider
 									value={ {
+										defaultFields: editedDefaultFields,
 										showOrderNotes,
 										showPolicyLinks,
 										showReturnToCart,

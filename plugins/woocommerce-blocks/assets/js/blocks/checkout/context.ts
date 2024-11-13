@@ -1,12 +1,14 @@
 /**
  * External dependencies
  */
+import { defaultFields, FormFields } from '@woocommerce/settings';
 import { createContext, useContext } from '@wordpress/element';
 
 /**
  * Context consumed by inner blocks.
  */
 export type CheckoutBlockContextProps = {
+	defaultFields: FormFields;
 	showOrderNotes: boolean;
 	showPolicyLinks: boolean;
 	showReturnToCart: boolean;
@@ -15,19 +17,23 @@ export type CheckoutBlockContextProps = {
 	showFormStepNumbers: boolean;
 };
 
+const defaultCheckoutBlockContext = {
+	defaultFields,
+	showOrderNotes: true,
+	showPolicyLinks: true,
+	showReturnToCart: true,
+	cartPageId: 0,
+	showRateAfterTaxName: false,
+	showFormStepNumbers: false,
+};
+
 export type CheckoutBlockControlsContextProps = {
 	addressFieldControls: () => JSX.Element | null;
 };
 
-export const CheckoutBlockContext: React.Context< CheckoutBlockContextProps > =
-	createContext< CheckoutBlockContextProps >( {
-		showOrderNotes: true,
-		showPolicyLinks: true,
-		showReturnToCart: true,
-		cartPageId: 0,
-		showRateAfterTaxName: false,
-		showFormStepNumbers: false,
-	} );
+export const CheckoutBlockContext: React.Context<
+	Partial< CheckoutBlockContextProps >
+> = createContext< CheckoutBlockContextProps >( defaultCheckoutBlockContext );
 
 export const CheckoutBlockControlsContext: React.Context< CheckoutBlockControlsContextProps > =
 	createContext< CheckoutBlockControlsContextProps >( {
@@ -35,7 +41,11 @@ export const CheckoutBlockControlsContext: React.Context< CheckoutBlockControlsC
 	} );
 
 export const useCheckoutBlockContext = (): CheckoutBlockContextProps => {
-	return useContext( CheckoutBlockContext );
+	const context = useContext( CheckoutBlockContext );
+	return {
+		...defaultCheckoutBlockContext,
+		...context,
+	};
 };
 
 export const useCheckoutBlockControlsContext =

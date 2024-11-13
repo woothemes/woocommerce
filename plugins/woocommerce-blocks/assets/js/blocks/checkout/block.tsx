@@ -81,13 +81,7 @@ const Checkout = ( {
 	}
 
 	return (
-		<CheckoutBlockContext.Provider
-			value={
-				{
-					showFormStepNumbers,
-				} as Attributes
-			}
-		>
+		<CheckoutBlockContext.Provider value={ { showFormStepNumbers } }>
 			{ children }
 		</CheckoutBlockContext.Provider>
 	);
