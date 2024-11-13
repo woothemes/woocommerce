@@ -66,45 +66,6 @@ use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\Import
  */
 final class Container {
 	/**
-	 * The list of service provider classes to register.
-	 *
-	 * @var string[]
-	 */
-	private $service_providers = array(
-		AssignDefaultCategoryServiceProvider::class,
-		DownloadPermissionsAdjusterServiceProvider::class,
-		EmailPreviewServiceProvider::class,
-		OptionSanitizerServiceProvider::class,
-		OrdersDataStoreServiceProvider::class,
-		ProductAttributesLookupServiceProvider::class,
-		ProductDownloadsServiceProvider::class,
-		ProductImageBySKUServiceProvider::class,
-		ProductReviewsServiceProvider::class,
-		ProxiesServiceProvider::class,
-		RestockRefundedItemsAdjusterServiceProvider::class,
-		UtilsClassesServiceProvider::class,
-		COTMigrationServiceProvider::class,
-		OrdersControllersServiceProvider::class,
-		OrderAttributionServiceProvider::class,
-		ObjectCacheServiceProvider::class,
-		BatchProcessingServiceProvider::class,
-		OrderMetaBoxServiceProvider::class,
-		OrderAdminServiceProvider::class,
-		FeaturesServiceProvider::class,
-		MarketingServiceProvider::class,
-		MarketplaceServiceProvider::class,
-		LayoutTemplatesServiceProvider::class,
-		LoggingServiceProvider::class,
-		EnginesServiceProvider::class,
-		ComingSoonServiceProvider::class,
-		StatsServiceProvider::class,
-		ImportExportServiceProvider::class,
-		CostOfGoodsSoldServiceProvider::class,
-		AdminSettingsServiceProvider::class,
-		SuggestionsServiceProvider::class,
-	);
-
-	/**
 	 * The underlying container.
 	 *
 	 * @var RuntimeContainer
@@ -135,7 +96,7 @@ final class Container {
 
 		$this->container->share( __CLASS__, $this );
 
-		foreach ( $this->service_providers as $service_provider_class ) {
+		foreach ( $this->get_service_providers() as $service_provider_class ) {
 			$this->container->addServiceProvider( $service_provider_class );
 		}
 	}
@@ -170,5 +131,46 @@ final class Container {
 	 */
 	public function has( string $id ): bool {
 		return $this->container->has( $id );
+	}
+
+	/**
+	 * The list of service provider classes to register.
+	 *
+	 * @var string[]
+	 */
+	private function get_service_providers(): array {
+		return array(
+			AssignDefaultCategoryServiceProvider::class,
+			DownloadPermissionsAdjusterServiceProvider::class,
+			EmailPreviewServiceProvider::class,
+			OptionSanitizerServiceProvider::class,
+			OrdersDataStoreServiceProvider::class,
+			ProductAttributesLookupServiceProvider::class,
+			ProductDownloadsServiceProvider::class,
+			ProductImageBySKUServiceProvider::class,
+			ProductReviewsServiceProvider::class,
+			ProxiesServiceProvider::class,
+			RestockRefundedItemsAdjusterServiceProvider::class,
+			UtilsClassesServiceProvider::class,
+			COTMigrationServiceProvider::class,
+			OrdersControllersServiceProvider::class,
+			OrderAttributionServiceProvider::class,
+			ObjectCacheServiceProvider::class,
+			BatchProcessingServiceProvider::class,
+			OrderMetaBoxServiceProvider::class,
+			OrderAdminServiceProvider::class,
+			FeaturesServiceProvider::class,
+			MarketingServiceProvider::class,
+			MarketplaceServiceProvider::class,
+			LayoutTemplatesServiceProvider::class,
+			LoggingServiceProvider::class,
+			EnginesServiceProvider::class,
+			ComingSoonServiceProvider::class,
+			StatsServiceProvider::class,
+			ImportExportServiceProvider::class,
+			CostOfGoodsSoldServiceProvider::class,
+			AdminSettingsServiceProvider::class,
+			SuggestionsServiceProvider::class,
+		);
 	}
 }
