@@ -1,5 +1,29 @@
+.is-vertical {
+	.wc-block-product-filter-removable-chips__items {
+		flex-direction: column;
+	}
+}
+
+.is-content-justification-center {
+	.wc-block-product-filter-removable-chips__items {
+		justify-content: center;
+	}
+}
+
+.is-content-justification-right {
+	.wc-block-product-filter-removable-chips__items {
+		justify-content: flex-end;
+	}
+}
+
+.is-content-justification-space-between {
+	.wc-block-product-filter-removable-chips__items {
+		justify-content: space-between;
+	}
+}
+
 .wc-block-product-filter-removable-chips__items {
-	display: flex;
+	display: inline-flex;
 	gap: 4px;
 	flex-wrap: wrap;
 	list-style: none;
@@ -16,13 +40,14 @@
 		font-size: 0.875em;
 		display: flex;
 		align-items: center;
+		justify-content: space-between;
 
 		.wc-block-product-filter-removable-chips__remove {
 			background: none;
 			border: none;
 			cursor: pointer;
 			padding: 0;
-			margin: 0 0 0 5px;
+			margin: 0;
 			display: flex;
 			align-items: center;
 			fill: var(--wc-product-filter-removable-chips-text, currentColor);
