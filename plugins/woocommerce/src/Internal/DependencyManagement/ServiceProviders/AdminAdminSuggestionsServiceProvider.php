@@ -7,9 +7,9 @@ use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestion
 use Automattic\WooCommerce\Internal\DependencyManagement\AbstractServiceProvider;
 
 /**
- * SuggestionsServiceProvider class.
+ * Service provider for the suggestions controller classes in the Automattic\WooCommerce\Internal\Admin\Suggestions namespace.
  */
-class SuggestionsServiceProvider extends AbstractServiceProvider {
+class AdminSuggestionsServiceProvider extends AbstractServiceProvider {
 	/**
 	 * List services provided by this class.
 	 *

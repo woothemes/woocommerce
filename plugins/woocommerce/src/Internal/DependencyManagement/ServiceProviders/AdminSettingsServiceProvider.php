@@ -7,7 +7,7 @@ use Automattic\WooCommerce\Internal\Admin\Settings\PaymentsRestController;
 use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestions;
 
 /**
- * AdminSettingsServiceProvider class.
+ * Service provider for the admin settings controller classes in the Automattic\WooCommerce\Internal\Admin\Settings namespace.
  */
 class AdminSettingsServiceProvider extends AbstractInterfaceServiceProvider {
 	/**

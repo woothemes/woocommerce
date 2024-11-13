@@ -34,7 +34,7 @@ use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\Produc
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\ProductReviewsServiceProvider;
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\ProxiesServiceProvider;
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\RestockRefundedItemsAdjusterServiceProvider;
-use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\SuggestionsServiceProvider;
+use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\AdminSuggestionsServiceProvider;
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\UtilsClassesServiceProvider;
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\BatchProcessingServiceProvider;
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\LayoutTemplatesServiceProvider;
@@ -170,7 +170,7 @@ final class Container {
 			ImportExportServiceProvider::class,
 			CostOfGoodsSoldServiceProvider::class,
 			AdminSettingsServiceProvider::class,
-			SuggestionsServiceProvider::class,
+			AdminSuggestionsServiceProvider::class,
 		);
 	}
 }
