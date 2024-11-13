@@ -73,7 +73,7 @@ class Filterer {
 		 * @param bool $option_value The behavior configured in WooCommerce settings.
 		 * @return bool The behavior to use in the catalog when product filtering by attribute.
 		 *
-		 * @since 9.5.0.
+		 * @since 9.6.0.
 		 */
 		$hide_out_of_stock = apply_filters( 'woocommerce_product_attributes_filterer_hide_out_of_stock', 'yes' === get_option( 'woocommerce_hide_out_of_stock_items' ) );
 		if ( $hide_out_of_stock ) {
