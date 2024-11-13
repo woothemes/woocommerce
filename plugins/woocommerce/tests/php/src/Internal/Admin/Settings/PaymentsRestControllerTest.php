@@ -64,8 +64,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->controller = new PaymentsRestController();
-		$this->controller->init( wc_get_container()->get( PaymentExtensionSuggestions::class ) );
+		$this->controller = wc_get_container()->get( PaymentsRestController::class );
 		$this->controller->register_routes();
 	}
 
@@ -413,5 +412,8 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		// Make sure the store currency is supported by the gateway.
 		update_option( 'woocommerce_currency', 'USD' );
 		WC()->payment_gateways()->init();
+
+		// Reset the controller memo to pick up the new gateway details.
+		$this->controller->reset_memo();
 	}
 }
