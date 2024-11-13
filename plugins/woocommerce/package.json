@@ -2,7 +2,7 @@
 	"name": "@woocommerce/plugin-woocommerce",
 	"private": true,
 	"title": "WooCommerce",
-	"version": "9.5.0",
+	"version": "9.6.0",
 	"homepage": "https://woocommerce.com/",
 	"repository": {
 		"type": "git",
@@ -524,7 +524,7 @@
 					"name": "Metrics",
 					"testType": "performance",
 					"command": "test:metrics:ci",
-					"optional": true,
+					"optional": false,
 					"changes": [
 						"client/admin/config/*.json",
 						"composer.json",
@@ -541,7 +541,8 @@
 						"start": "env:test"
 					},
 					"events": [
-						"push"
+						"push",
+						"pull_request"
 					],
 					"report": {
 						"resultsBlobName": "core-metrics-report",

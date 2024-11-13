@@ -33,6 +33,13 @@ class WC_Settings_Payment_Gateways extends WC_Settings_Page {
 	}
 
 	/**
+	 * Setting page icon.
+	 *
+	 * @var string
+	 */
+	public $icon = 'payment';
+
+	/**
 	 * Get own sections.
 	 *
 	 * @return array
