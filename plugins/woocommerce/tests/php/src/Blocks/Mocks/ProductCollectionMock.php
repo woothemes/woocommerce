@@ -3,7 +3,7 @@ declare( strict_types = 1 );
 
 namespace Automattic\WooCommerce\Tests\Blocks\Mocks;
 
-use Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection\ProductCollectionController;
+use Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection\Controller;
 use Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection\ProductQueryBuilder;
 use Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection\HandlerRegistry;
 use Automattic\WooCommerce\Blocks\Package;
@@ -16,7 +16,7 @@ use Automattic\WooCommerce\Blocks\Integrations\IntegrationRegistry;
 /**
  * ProductCollectionMock used to test Product Query block functions.
  */
-class ProductCollectionMock extends ProductCollectionController {
+class ProductCollectionMock extends Controller {
 
 	/**
 	 * Initialize our mock class.

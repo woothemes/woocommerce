@@ -7,9 +7,9 @@ use Automattic\WooCommerce\Blocks\BlockTypes\AbstractBlock;
 use WP_Query;
 
 /**
- * ProductCollectionController class.
+ * Controller class.
  */
-class ProductCollectionController extends AbstractBlock {
+class Controller extends AbstractBlock {
 
 	/**
 	 * Block name.
