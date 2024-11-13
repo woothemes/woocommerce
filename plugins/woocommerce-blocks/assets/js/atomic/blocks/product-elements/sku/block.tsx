@@ -44,15 +44,17 @@ const Preview = ( {
 		style={ style }
 	>
 		<RichText
+			className="wc-block-components-product-sku__prefix"
 			tagName="span"
 			placeholder="Prefix"
 			value={ prefix }
 			onChange={ ( value ) => setAttributes( { prefix: value } ) }
 		/>
-		<strong>{ sku }</strong>
+		<span> { sku }</span>
 		<RichText
+			className="wc-block-components-product-sku__suffix"
 			tagName="span"
-			placeholder="Suffix"
+			placeholder=" Suffix"
 			value={ suffix }
 			onChange={ ( value ) => setAttributes( { suffix: value } ) }
 		/>
