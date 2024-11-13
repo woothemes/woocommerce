@@ -29,8 +29,6 @@ class PaymentsRestController extends RestApiControllerBase {
 	const EXTENSION_INSTALLED     = 'installed';
 	const EXTENSION_ACTIVE        = 'active';
 
-	const BADGE_TYPE_INFO  = 'info';
-	const BADGE_TYPE_PROMO = 'promo';
 
 	/**
 	 * Route base.
@@ -500,12 +498,9 @@ class PaymentsRestController extends RestApiControllerBase {
 			)
 		);
 
-		// The preferred PSP gets a recommended info badge.
+		// The preferred PSP gets a recommended tag that instructs the UI to highlight it further.
 		if ( ! empty( $preferred_psp ) ) {
-			$preferred_psp['badges'][] = array(
-				'_type' => self::BADGE_TYPE_INFO,
-				'text'  => esc_html__( 'Recommended', 'woocommerce' ),
-			);
+			$preferred_psp['tags'][] = ExtensionSuggestions::TAG_RECOMMENDED;
 		}
 
 		return array(
@@ -555,32 +550,6 @@ class PaymentsRestController extends RestApiControllerBase {
 				$extension['plugin']['status'] = self::EXTENSION_ACTIVE;
 			}
 		}
-
-		// Ensure we have a `badges` entry.
-		if ( empty( $extension['badges'] ) ) {
-			$extension['badges'] = array();
-		}
-
-		// If this is WooPayments, determine if there is an incentive active for it.
-		if ( ExtensionSuggestions::WOOPAYMENTS === $extension['id'] ) {
-			// @todo Use the real incentives logic.
-			$extension['badges'][] = array(
-				'_type'       => self::BADGE_TYPE_PROMO,
-				'text'        => esc_html__( 'Save 10% on processing fees', 'woocommerce' ),
-				'description' =>
-					'<p>' . esc_html__( 'Save 10% on processing fees during your first 3 months when you sign up for WooPayments.', 'woocommerce' ) . '</p>' .
-					'<p>' . sprintf(
-						/* translators: 1: opening anchor tag, 2: closing anchor tag */
-						esc_html__( 'See %1$sTerms and conditions%2$s for details', 'woocommerce' ),
-						'<a href="#">',
-						'</a>'
-					) . '</p>',
-			);
-		}
-
-		// Determine if the suggestion was hidden.
-		// @todo Use the real option logic.
-		$extension['_hidden'] = false;
 
 		return $extension;
 	}
@@ -886,38 +855,6 @@ class PaymentsRestController extends RestApiControllerBase {
 						),
 					),
 				),
-				'badges'            => array(
-					'type'        => 'array',
-					'description' => esc_html__( 'A list of badges to display for this payment gateway.', 'woocommerce' ),
-					'context'     => array( 'view', 'edit' ),
-					'readonly'    => true,
-					'items'       => array(
-						'type'        => 'object',
-						'description' => esc_html__( 'A badge for the suggestion.', 'woocommerce' ),
-						'context'     => array( 'view', 'edit' ),
-						'readonly'    => true,
-						'properties'  => array(
-							'_type'       => array(
-								'type'        => 'string',
-								'description' => esc_html__( 'The type of the badge.', 'woocommerce' ),
-								'context'     => array( 'view', 'edit' ),
-								'readonly'    => true,
-							),
-							'text'        => array(
-								'type'        => 'string',
-								'description' => esc_html__( 'The text of the badge.', 'woocommerce' ),
-								'context'     => array( 'view', 'edit' ),
-								'readonly'    => true,
-							),
-							'description' => array(
-								'type'        => 'string',
-								'description' => esc_html__( 'The description of the badge (it can include HTML tags like paragraphs or anchors).', 'woocommerce' ),
-								'context'     => array( 'view', 'edit' ),
-								'readonly'    => true,
-							),
-						),
-					),
-				),
 			),
 		);
 	}
@@ -1042,38 +979,6 @@ class PaymentsRestController extends RestApiControllerBase {
 					'description' => esc_html__( 'The category of the suggestion.', 'woocommerce' ),
 					'context'     => array( 'view', 'edit' ),
 					'readonly'    => true,
-				),
-				'badges'            => array(
-					'type'        => 'array',
-					'description' => esc_html__( 'A list of badges to display for this suggestion.', 'woocommerce' ),
-					'context'     => array( 'view', 'edit' ),
-					'readonly'    => true,
-					'items'       => array(
-						'type'        => 'object',
-						'description' => esc_html__( 'A badge for the suggestion.', 'woocommerce' ),
-						'context'     => array( 'view', 'edit' ),
-						'readonly'    => true,
-						'properties'  => array(
-							'_type'       => array(
-								'type'        => 'string',
-								'description' => esc_html__( 'The type of the badge.', 'woocommerce' ),
-								'context'     => array( 'view', 'edit' ),
-								'readonly'    => true,
-							),
-							'text'        => array(
-								'type'        => 'string',
-								'description' => esc_html__( 'The text of the badge.', 'woocommerce' ),
-								'context'     => array( 'view', 'edit' ),
-								'readonly'    => true,
-							),
-							'description' => array(
-								'type'        => 'string',
-								'description' => esc_html__( 'The description of the badge (it can include HTML tags like paragraphs or anchors).', 'woocommerce' ),
-								'context'     => array( 'view', 'edit' ),
-								'readonly'    => true,
-							),
-						),
-					),
 				),
 				'_hidden'           => array(
 					'type'        => 'boolean',

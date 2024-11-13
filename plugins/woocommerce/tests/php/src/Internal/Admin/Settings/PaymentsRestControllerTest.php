@@ -210,10 +210,6 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 			$this->assertArrayHasKey( 'tags', $suggestion, 'Suggestion `tags` entry is missing' );
 			$this->assertIsArray( $suggestion['tags'] );
 			$this->assertArrayHasKey( 'category', $suggestion, 'Suggestion `category` entry is missing' );
-			$this->assertArrayHasKey( 'badges', $suggestion, 'Suggestion `badges` entry is missing' );
-			$this->assertIsArray( $suggestion['badges'] );
-			$this->assertArrayHasKey( '_hidden', $suggestion, 'Suggestion `_hidden` entry is missing' );
-			$this->assertIsBool( $suggestion['_hidden'], 'Suggestion `_hidden` entry is not a boolean' );
 		}
 	}
 
