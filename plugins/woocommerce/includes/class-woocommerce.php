@@ -209,13 +209,13 @@ final class WooCommerce {
 	 *
 	 * @param string $key Property name.
 	 * @param mixed  $value Property value.
+	 * @throws Exception Attempt to access a property that's private or protected.
 	 */
 	public function __set( string $key, $value ) {
 		if ( 'api' === $key ) {
 			$this->api = $value;
 		} elseif ( property_exists( $this, $key ) ) {
-			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
-			trigger_error( 'Cannot access private property WooCommerce::$' . esc_html( $key ), E_USER_ERROR );
+			throw new Exception( 'Cannot access private property ' . __CLASS__ . '::$' . esc_html( $key ) );
 		} else {
 			$this->$key = $value;
 		}
