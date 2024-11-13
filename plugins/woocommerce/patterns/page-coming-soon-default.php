@@ -17,6 +17,7 @@ if ( 'twentytwentyfour' === $current_theme ) {
 	$cardo_font_family = 'heading';
 }
 ?>
+
 <!-- wp:woocommerce/coming-soon {"color":"#bea0f2","storeOnly":false,"className":"woocommerce-coming-soon-entire-site wp-block-woocommerce-background-color"} -->
 <div class="woocommerce-coming-soon-entire-site wp-block-woocommerce-coming-soon wp-block-woocommerce-background-color"><!-- wp:cover {"minHeight":100,"minHeightUnit":"vh","isDark":false,"className":"coming-soon-is-vertically-aligned-center coming-soon-cover","layout":{"type":"default"}} -->
 <div class="wp-block-cover is-light coming-soon-is-vertically-aligned-center coming-soon-cover" style="min-height:100vh"><span aria-hidden="true" class="wp-block-cover__background has-background-dim-100 has-background-dim" style=""></span><div class="wp-block-cover__inner-container"><!-- wp:group {"className":"woocommerce-coming-soon-banner-container","layout":{"type":"default"}} -->
