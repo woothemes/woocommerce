@@ -16,8 +16,6 @@ import {
 } from '@wordpress/hooks';
 /* eslint-disable @woocommerce/dependency-group */
 // @ts-ignore No types for this exist yet.
-import SidebarNavigationScreen from '@wordpress/edit-site/build-module/components/sidebar-navigation-screen';
-// @ts-ignore No types for this exist yet.
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 // @ts-ignore No types for this exist yet.
 import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
@@ -32,21 +30,29 @@ import { Route, Location } from './types';
 const { useLocation } = unlock( routerPrivateApis );
 
 const NotFound = () => {
-	return (
-		<h1 style={ { color: 'white' } }>
-			{ __( 'Page not found', 'woocommerce' ) }
-		</h1>
-	);
+	return <h1>{ __( 'Page not found', 'woocommerce' ) }</h1>;
 };
 
 /**
- * Default route when a page is not found.
+ * Default route when active page is not found.
+ *
+ * @param {string}                                       activePage - The active page.
+ * @param {typeof window.wcSettings.admin.settingsPages} pages      - The pages.
  *
  */
-const getNotFoundRoute = ( page: string ): Route => ( {
-	key: page,
+const getNotFoundRoute = (
+	activePage: string,
+	pages: typeof window.wcSettings.admin.settingsPages
+): Route => ( {
+	key: activePage,
 	areas: {
-		sidebar: null,
+		sidebar: (
+			<Sidebar
+				activePage={ activePage }
+				pages={ pages }
+				pageTitle={ 'Settings' }
+			/>
+		),
 		content: <NotFound />,
 		edit: null,
 	},
@@ -59,29 +65,35 @@ const getNotFoundRoute = ( page: string ): Route => ( {
 /**
  * Creates a route configuration for legacy settings pages.
  *
- * @param {string} page - The page identifier.
+ * @param {string}                                       activePage - The active page.
+ * @param {typeof window.wcSettings.admin.settingsPages} pages      - The pages.
  */
 const getLegacyRoute = (
-	page: string,
+	activePage: string,
 	pages: typeof window.wcSettings.admin.settingsPages
-): Route => ( {
-	key: page,
-	areas: {
-		sidebar: (
-			<SidebarNavigationScreen
-				title={ 'Settings Title TBD' }
-				isRoot
-				content={ <Sidebar pages={ pages } /> }
-			/>
-		),
-		content: <div>Content Placeholder: current tab: { page }</div>,
-		edit: null,
-	},
-	widths: {
-		content: undefined,
-		edit: undefined,
-	},
-} );
+): Route => {
+	const pageTitle =
+		pages[ activePage ]?.label || __( 'Settings', 'woocommerce' );
+
+	return {
+		key: activePage,
+		areas: {
+			sidebar: (
+				<Sidebar
+					activePage={ activePage }
+					pages={ pages }
+					pageTitle={ pageTitle }
+				/>
+			),
+			content: <div>Content Placeholder</div>,
+			edit: null,
+		},
+		widths: {
+			content: undefined,
+			edit: undefined,
+		},
+	};
+};
 
 const PAGES_FILTER = 'woocommerce_admin_settings_pages';
 
@@ -139,19 +151,36 @@ export const useActiveRoute = () => {
 	const modernRoutes = useModernRoutes();
 
 	return useMemo( () => {
-		const { tab: page = 'general' } = location.params;
-		const pageSettings = settingsPages?.[ page ];
+		const { tab: activePage = 'general' } = location.params;
+		const pageSettings = settingsPages?.[ activePage ];
 
 		if ( ! pageSettings ) {
-			return getNotFoundRoute( page );
+			return getNotFoundRoute( activePage, settingsPages );
 		}
 
 		// Handle legacy pages.
 		if ( ! pageSettings.is_modern ) {
-			return getLegacyRoute( page, settingsPages );
+			return getLegacyRoute( activePage, settingsPages );
 		}
 
+		const modernRoute = modernRoutes[ activePage ];
+
 		// Handle modern pages.
-		return modernRoutes[ page ] || getNotFoundRoute( page );
-	}, [ settingsPages, location, modernRoutes ] );
+		if ( ! modernRoute ) {
+			return getNotFoundRoute( activePage, settingsPages );
+		}
+
+		// Sidebar is responsibility of WooCommerce, not extensions so add it here.
+		modernRoute.areas.sidebar = (
+			<Sidebar
+				activePage={ activePage }
+				pages={ settingsPages }
+				pageTitle={ pageSettings.label }
+			/>
+		);
+		// Make sure we have a key.
+		modernRoute.key = activePage;
+
+		return modernRoute;
+	}, [ settingsPages, location.params, modernRoutes ] );
 };

@@ -6,6 +6,8 @@ import { createElement } from '@wordpress/element';
 // @ts-expect-error missing type.
 // eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 import { __experimentalItemGroup as ItemGroup } from '@wordpress/components';
+// @ts-ignore No types for this exist yet.
+import SidebarNavigationScreen from '@wordpress/edit-site/build-module/components/sidebar-navigation-screen';
 import * as IconPackage from '@wordpress/icons';
 /* eslint-enable @woocommerce/dependency-group */
 
@@ -16,9 +18,11 @@ import { SettingItem } from './setting-item';
 
 const { Icon, ...icons } = IconPackage;
 
-export const Sidebar = ( {
+const SidebarNavigationScreenContent = ( {
+	activePage,
 	pages,
 }: {
+	activePage: string;
 	pages: typeof window.wcSettings.admin.settingsPages;
 } ) => {
 	return (
@@ -30,7 +34,7 @@ export const Sidebar = ( {
 						key={ slug }
 						slug={ slug }
 						label={ label }
-						isActive={ false }
+						isActive={ activePage === slug }
 						icon={
 							<Icon
 								icon={
@@ -43,5 +47,28 @@ export const Sidebar = ( {
 				);
 			} ) }
 		</ItemGroup>
+	);
+};
+
+export const Sidebar = ( {
+	activePage,
+	pages,
+	pageTitle,
+}: {
+	activePage: string;
+	pages: typeof window.wcSettings.admin.settingsPages;
+	pageTitle: string;
+} ) => {
+	return (
+		<SidebarNavigationScreen
+			title={ pageTitle }
+			isRoot
+			content={
+				<SidebarNavigationScreenContent
+					activePage={ activePage }
+					pages={ pages }
+				/>
+			}
+		/>
 	);
 };
