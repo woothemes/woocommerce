@@ -94,13 +94,13 @@ const getTextFromDomElements = (
 			) {
 				const trimmedText = paragraphText
 					.split( ' ' )
-					.slice( 0, remainingLength )
+					.slice( 0, remainingLength - 1 )
 					.join( ' ' );
 
 				return {
 					text: acc.text + ' ' + trimmedText,
 					html: acc.html.concat(
-						wrapElementByTag( trimmedText + '...', tag )
+						wrapElementByTag( trimmedText + '…', tag )
 					),
 					isLast: true,
 				} as { text: string; html: string[] };
@@ -148,9 +148,39 @@ const getTrimmedDomElements = (
 export const generateSummary = (
 	source: string,
 	maxLength = 15,
-	countType: CountType = 'words'
+	countType: CountType = 'words',
+	truncateToFirstParagraph = true
 ) => {
 	const sourceWithParagraphs = autop( source );
 
-	return getTrimmedDomElements( sourceWithParagraphs, maxLength, countType );
+	if ( ! truncateToFirstParagraph ) {
+		return getTrimmedDomElements(
+			sourceWithParagraphs,
+			maxLength,
+			countType
+		);
+	}
+
+	const sourceWordCount = count( sourceWithParagraphs, countType );
+
+	if ( sourceWordCount <= maxLength ) {
+		return sourceWithParagraphs;
+	}
+
+	const firstParagraph = getFirstParagraph( sourceWithParagraphs );
+	const firstParagraphWordCount = count( firstParagraph, countType );
+
+	if ( firstParagraphWordCount <= maxLength ) {
+		return firstParagraph;
+	}
+
+	if ( countType === 'words' ) {
+		return trimWords( firstParagraph, maxLength );
+	}
+
+	return trimCharacters(
+		firstParagraph,
+		maxLength,
+		countType === 'characters_including_spaces'
+	);
 };
