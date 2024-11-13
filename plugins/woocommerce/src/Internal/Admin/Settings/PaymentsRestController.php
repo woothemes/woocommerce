@@ -164,7 +164,7 @@ class PaymentsRestController extends RestApiControllerBase {
 		}
 
 		$user_payments_nox_profile = get_user_meta( get_current_user_id(), self::USER_PAYMENTS_NOX_PROFILE_KEY, true );
-		if ( empty ( $user_payments_nox_profile ) ) {
+		if ( empty( $user_payments_nox_profile ) ) {
 			$user_payments_nox_profile = array();
 		} else {
 			$user_payments_nox_profile = maybe_unserialize( $user_payments_nox_profile );
@@ -196,8 +196,8 @@ class PaymentsRestController extends RestApiControllerBase {
 	 * @return bool True if the extension suggestion is hidden, false otherwise.
 	 */
 	private function is_payment_extension_suggestion_hidden( array $extension ): bool {
-		$user_payments_nox_profile = get_user_meta( get_current_user_id(), self::USER_PAYMENTS_NOX_PROFILE_KEY , true );
-		if ( empty ( $user_payments_nox_profile ) ) {
+		$user_payments_nox_profile = get_user_meta( get_current_user_id(), self::USER_PAYMENTS_NOX_PROFILE_KEY, true );
+		if ( empty( $user_payments_nox_profile ) ) {
 			return false;
 		}
 		$user_payments_nox_profile = maybe_unserialize( $user_payments_nox_profile );
