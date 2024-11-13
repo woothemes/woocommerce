@@ -44,18 +44,6 @@ class OrdersTableDataStoreMeta extends CustomMetaDataStore {
 	}
 
 	/**
-	 * Returns an array of meta for an object.
-	 *
-	 * @param  \WC_Data $object WC_Data object.
-	 * @return array
-	 */
-	public function read_meta( &$object ) {
-		$raw_meta_data = $this->get_meta_data_for_object_ids( array( $object->get_id() ) );
-
-		return isset( $raw_meta_data[ $object->get_id() ] ) ? (array) $raw_meta_data[ $object->get_id() ] : array();
-	}
-
-	/**
 	 * Deletes meta based on meta ID.
 	 *
 	 * @param  \WC_Data  $object WC_Data object.
@@ -64,22 +52,7 @@ class OrdersTableDataStoreMeta extends CustomMetaDataStore {
 	 * @return bool
 	 */
 	public function delete_meta( &$object, $meta ): bool {
-		global $wpdb;
-
-		if ( ! isset( $meta->id ) ) {
-			return false;
-		}
-
-		$db_info = $this->get_db_info();
-		$meta_id = absint( $meta->id );
-
-		$successful = (bool) $wpdb->delete(
-			$db_info['table'],
-			array(
-				$db_info['meta_id_field']   => $meta_id,
-				$db_info['object_id_field'] => $object->get_id(),
-			)
-		);
+		$successful = parent::delete_meta( $object, $meta );
 		if ( $successful ) {
 			$this->clear_cached_data( array( $object->get_id() ) );
 		}
