@@ -72,9 +72,9 @@ jobs:
             
             // Determine the type of message based on the label name
             if (labelName === 'code freeze exception') {
-              message = `:arrow_right: New CFE request: ${issueTitle} ${issueUrl}`;
+              message = `:arrow_right: :ice_cube: New Code Freeze Exception request: ${issueTitle} ${issueUrl}`;
             } else {
-              message = `:arrow_right: New PRR request: ${issueTitle} ${issueUrl}`;
+              message = `:arrow_right: :release: New Point Release Request: ${issueTitle} ${issueUrl}`;
             }
             
             // Set the message as a core output
