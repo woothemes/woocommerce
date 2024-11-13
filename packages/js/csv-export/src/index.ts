@@ -22,8 +22,8 @@ function escapeCSVValue( value: string | number ) {
 	// See: https://owasp.org/www-community/attacks/CSV_Injection
 	// See: WC_CSV_Exporter::escape_data()
 
-	// Negative numeric numbers are not escaped, since a pure numeric value cannot form a valid formula to be injected.
-	//This preserves the value as a number in the CSV output.
+	// Numbers are not escaped, since a pure numeric value cannot form a valid formula to be injected.
+	// This preserves negative numeric values (e.g. `-42`) as numbers in the CSV output.
 	if ( typeof value === 'number' ) {
 		return stringValue;
 	}
