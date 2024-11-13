@@ -66,74 +66,6 @@ use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\Import
  */
 final class Container {
 	/**
-	 * The underlying container.
-	 *
-	 * @var RuntimeContainer
-	 */
-	private $container;
-
-	/**
-	 * Class constructor.
-	 */
-	public function __construct() {
-		if ( RuntimeContainer::should_use() ) {
-			// When the League container was in use we allowed to retrieve the container itself
-			// by using 'Psr\Container\ContainerInterface' as the class identifier,
-			// we continue allowing that for compatibility.
-			$this->container = new RuntimeContainer(
-				array(
-					__CLASS__                          => $this,
-					'Psr\Container\ContainerInterface' => $this,
-				)
-			);
-			return;
-		}
-
-		$this->container = new ExtendedContainer();
-
-		// Add ourselves as the shared instance of ContainerInterface,
-		// register everything else using service providers.
-
-		$this->container->share( __CLASS__, $this );
-
-		foreach ( $this->get_service_providers() as $service_provider_class ) {
-			$this->container->addServiceProvider( $service_provider_class );
-		}
-	}
-
-	/**
-	 * Finds an entry of the container by its identifier and returns it.
-	 * See the comment about ContainerException in RuntimeContainer::get.
-	 *
-	 * @param string $id Identifier of the entry to look for.
-	 *
-	 * @return mixed Resolved entry.
-	 *
-	 * @throws NotFoundExceptionInterface No entry was found for the supplied identifier (only when using ExtendedContainer).
-	 * @throws Psr\Container\ContainerExceptionInterface Error while retrieving the entry.
-	 * @throws ContainerException Error when resolving the class to an object instance, or (when using RuntimeContainer) class not found.
-	 * @throws \Exception Exception thrown in the constructor or in the 'init' method of one of the resolved classes.
-	 */
-	public function get( string $id ) {
-		return $this->container->get( $id );
-	}
-
-	/**
-	 * Returns true if the container can return an entry for the given identifier.
-	 * Returns false otherwise.
-	 *
-	 * `has($id)` returning true does not mean that `get($id)` will not throw an exception.
-	 * It does however mean that `get($id)` will not throw a `NotFoundExceptionInterface`.
-	 *
-	 * @param string $id Identifier of the entry to look for.
-	 *
-	 * @return bool
-	 */
-	public function has( string $id ): bool {
-		return $this->container->has( $id );
-	}
-
-	/**
 	 * The list of service provider classes to register.
 	 *
 	 * @var string[]
@@ -171,4 +103,72 @@ final class Container {
 		AdminSettingsServiceProvider::class,
 		SuggestionsServiceProvider::class,
 	);
+
+	/**
+	 * The underlying container.
+	 *
+	 * @var RuntimeContainer
+	 */
+	private $container;
+
+	/**
+	 * Class constructor.
+	 */
+	public function __construct() {
+		if ( RuntimeContainer::should_use() ) {
+			// When the League container was in use we allowed to retrieve the container itself
+			// by using 'Psr\Container\ContainerInterface' as the class identifier,
+			// we continue allowing that for compatibility.
+			$this->container = new RuntimeContainer(
+				array(
+					__CLASS__                          => $this,
+					'Psr\Container\ContainerInterface' => $this,
+				)
+			);
+			return;
+		}
+
+		$this->container = new ExtendedContainer();
+
+		// Add ourselves as the shared instance of ContainerInterface,
+		// register everything else using service providers.
+
+		$this->container->share( __CLASS__, $this );
+
+		foreach ( $this->service_providers as $service_provider_class ) {
+			$this->container->addServiceProvider( $service_provider_class );
+		}
+	}
+
+	/**
+	 * Finds an entry of the container by its identifier and returns it.
+	 * See the comment about ContainerException in RuntimeContainer::get.
+	 *
+	 * @param string $id Identifier of the entry to look for.
+	 *
+	 * @return mixed Resolved entry.
+	 *
+	 * @throws NotFoundExceptionInterface No entry was found for the supplied identifier (only when using ExtendedContainer).
+	 * @throws Psr\Container\ContainerExceptionInterface Error while retrieving the entry.
+	 * @throws ContainerException Error when resolving the class to an object instance, or (when using RuntimeContainer) class not found.
+	 * @throws \Exception Exception thrown in the constructor or in the 'init' method of one of the resolved classes.
+	 */
+	public function get( string $id ) {
+		return $this->container->get( $id );
+	}
+
+	/**
+	 * Returns true if the container can return an entry for the given identifier.
+	 * Returns false otherwise.
+	 *
+	 * `has($id)` returning true does not mean that `get($id)` will not throw an exception.
+	 * It does however mean that `get($id)` will not throw a `NotFoundExceptionInterface`.
+	 *
+	 * @param string $id Identifier of the entry to look for.
+	 *
+	 * @return bool
+	 */
+	public function has( string $id ): bool {
+		return $this->container->has( $id );
+	}
 }
