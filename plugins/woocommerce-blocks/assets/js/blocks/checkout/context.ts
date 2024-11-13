@@ -1,14 +1,12 @@
 /**
  * External dependencies
  */
-import { defaultFields, FormFields } from '@woocommerce/settings';
 import { createContext, useContext } from '@wordpress/element';
 
 /**
  * Context consumed by inner blocks.
  */
 export type CheckoutBlockContextProps = {
-	defaultFields: FormFields;
 	showOrderNotes: boolean;
 	showPolicyLinks: boolean;
 	showReturnToCart: boolean;
@@ -18,7 +16,6 @@ export type CheckoutBlockContextProps = {
 };
 
 const defaultCheckoutBlockContext = {
-	defaultFields,
 	showOrderNotes: true,
 	showPolicyLinks: true,
 	showReturnToCart: true,

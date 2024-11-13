@@ -2,6 +2,7 @@
  * External dependencies
  */
 import {
+	defaultFields,
 	ShippingAddress,
 	BillingAddress,
 	getSetting,
@@ -10,13 +11,13 @@ import {
 import { useCallback } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
-import { useCheckoutBlockContext } from '@woocommerce/blocks/checkout/context';
 
 /**
  * Internal dependencies
  */
 import { useCustomerData } from './use-customer-data';
 import { useShippingData } from './shipping/use-shipping-data';
+import { useEditorContext } from '../providers/editor-context';
 
 interface CheckoutAddress {
 	defaultFields: FormFields;
@@ -43,6 +44,7 @@ interface CheckoutAddress {
  * Custom hook for exposing address related functionality for the checkout address form.
  */
 export const useCheckoutAddress = (): CheckoutAddress => {
+	const { isEditor, getPreviewData } = useEditorContext();
 	const { needsShipping } = useShippingData();
 	const {
 		useShippingAsBilling,
@@ -69,7 +71,6 @@ export const useCheckoutAddress = (): CheckoutAddress => {
 		shippingAddress,
 		setShippingAddress,
 	} = useCustomerData();
-	const { defaultFields } = useCheckoutBlockContext();
 
 	const setEmail = useCallback(
 		( value: string ) =>
@@ -84,7 +85,9 @@ export const useCheckoutAddress = (): CheckoutAddress => {
 		false
 	);
 	return {
-		defaultFields,
+		defaultFields: isEditor
+			? ( getPreviewData( 'defaultFields', defaultFields ) as FormFields )
+			: defaultFields,
 		shippingAddress,
 		billingAddress,
 		setShippingAddress,

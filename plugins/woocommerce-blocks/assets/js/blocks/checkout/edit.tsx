@@ -21,7 +21,7 @@ import { useEffect, useRef } from '@wordpress/element';
 import { getQueryArg } from '@wordpress/url';
 import { dispatch, select, useSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
-import { defaultFields } from '@woocommerce/settings';
+import { defaultFields as defaultFieldsSetting } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
@@ -65,24 +65,36 @@ export const Edit = ( {
 		showFormStepNumbers = false,
 	} = attributes;
 
-	const fieldEntities = useSelect( ( select ) => {
-		const registeredSettings = select( coreStore ).getEditedEntityRecord(
+	const defaultFields = useSelect( ( select ) => {
+		const settings = select( coreStore ).getEditedEntityRecord(
 			'root',
 			'site'
 		) as Record< string, string >;
-
+		const phoneField =
+			settings.woocommerce_checkout_phone_field || 'optional';
+		const companyField =
+			settings.woocommerce_checkout_company_field || 'optional';
+		const apartmentField =
+			settings.woocommerce_checkout_apartment_field || 'optional';
 		return {
-			phone:
-				registeredSettings?.woocommerce_checkout_phone_field ||
-				'optional',
-			company:
-				registeredSettings?.woocommerce_checkout_company_field ||
-				'optional',
-			apartment:
-				registeredSettings?.woocommerce_checkout_apartment_field ||
-				'optional',
+			...defaultFieldsSetting,
+			phone: {
+				...defaultFieldsSetting.phone,
+				required: phoneField === 'required',
+				hidden: phoneField === 'hidden',
+			},
+			company: {
+				...defaultFieldsSetting.company,
+				required: companyField === 'required',
+				hidden: companyField === 'hidden',
+			},
+			address_2: {
+				...defaultFieldsSetting.address_2,
+				required: apartmentField === 'required',
+				hidden: apartmentField === 'hidden',
+			},
 		};
-	}, [] );
+	} );
 
 	const setFieldEntity = ( field: string, value: string ) => {
 		if (
@@ -94,18 +106,6 @@ export const Edit = ( {
 			} );
 		}
 	};
-
-	const editedDefaultFields = {
-		...defaultFields,
-	};
-
-	editedDefaultFields.phone.required = fieldEntities.phone === 'required';
-	editedDefaultFields.company.required = fieldEntities.company === 'required';
-	editedDefaultFields.address_2.required =
-		fieldEntities.apartment === 'required';
-	editedDefaultFields.phone.hidden = fieldEntities.phone === 'hidden';
-	editedDefaultFields.company.hidden = fieldEntities.company === 'hidden';
-	editedDefaultFields.address_2.hidden = fieldEntities.apartment === 'hidden';
 
 	// This focuses on the block when a certain query param is found. This is used on the link from the task list.
 	const focus = useRef( getQueryArg( window.location.href, 'focus' ) );
@@ -161,22 +161,18 @@ export const Edit = ( {
 				</p>
 				<ToggleControl
 					label={ __( 'Company', 'woocommerce' ) }
-					checked={ fieldEntities.company !== 'hidden' }
+					checked={ ! defaultFields.company.hidden }
 					onChange={ () =>
 						setFieldEntity(
 							'company',
-							fieldEntities.company === 'hidden'
-								? 'required'
-								: 'hidden'
+							defaultFields.company.hidden ? 'required' : 'hidden'
 						)
 					}
 				/>
-				{ fieldEntities.company !== 'hidden' && (
+				{ ! defaultFields.company.hidden && (
 					<RadioControl
 						selected={
-							fieldEntities.company === 'required'
-								? 'true'
-								: 'false'
+							defaultFields.company.required ? 'true' : 'false'
 						}
 						options={ requiredOptions }
 						onChange={ ( value: string ) => {
@@ -190,22 +186,20 @@ export const Edit = ( {
 				) }
 				<ToggleControl
 					label={ __( 'Address line 2', 'woocommerce' ) }
-					checked={ fieldEntities.apartment !== 'hidden' }
+					checked={ ! defaultFields.address_2.hidden }
 					onChange={ () =>
 						setFieldEntity(
 							'apartment',
-							fieldEntities.apartment === 'hidden'
+							defaultFields.address_2.hidden
 								? 'required'
 								: 'hidden'
 						)
 					}
 				/>
-				{ fieldEntities.apartment !== 'hidden' && (
+				{ ! defaultFields.address_2.hidden && (
 					<RadioControl
 						selected={
-							fieldEntities.apartment === 'required'
-								? 'true'
-								: 'false'
+							defaultFields.address_2.required ? 'true' : 'false'
 						}
 						options={ requiredOptions }
 						onChange={ ( value: string ) =>
@@ -219,22 +213,18 @@ export const Edit = ( {
 				) }
 				<ToggleControl
 					label={ __( 'Phone', 'woocommerce' ) }
-					checked={ fieldEntities.phone !== 'hidden' }
+					checked={ ! defaultFields.phone.hidden }
 					onChange={ () =>
 						setFieldEntity(
 							'phone',
-							fieldEntities.phone === 'hidden'
-								? 'required'
-								: 'hidden'
+							defaultFields.phone.hidden ? 'required' : 'hidden'
 						)
 					}
 				/>
-				{ fieldEntities.phone !== 'hidden' && (
+				{ ! defaultFields.phone.hidden && (
 					<RadioControl
 						selected={
-							fieldEntities.phone === 'required'
-								? 'true'
-								: 'false'
+							defaultFields.phone.required ? 'true' : 'false'
 						}
 						options={ requiredOptions }
 						onChange={ ( value: string ) =>
@@ -260,7 +250,11 @@ export const Edit = ( {
 			</InspectorControls>
 			<EditorProvider
 				isPreview={ !! isPreview }
-				previewData={ { previewCart, previewSavedPaymentMethods } }
+				previewData={ {
+					previewCart,
+					previewSavedPaymentMethods,
+					defaultFields,
+				} }
 			>
 				<SlotFillProvider>
 					<CheckoutProvider>
@@ -274,7 +268,6 @@ export const Edit = ( {
 							>
 								<CheckoutBlockContext.Provider
 									value={ {
-										defaultFields: editedDefaultFields,
 										showOrderNotes,
 										showPolicyLinks,
 										showReturnToCart,

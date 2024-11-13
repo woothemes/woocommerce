@@ -18,7 +18,10 @@ interface EditorContextType {
 	previewData: Record< string, unknown >;
 
 	// Get data by name.
-	getPreviewData: ( name: string ) => Record< string, unknown >;
+	getPreviewData: (
+		name: string,
+		fallback?: Record< string, unknown >
+	) => Record< string, unknown >;
 
 	// Indicates whether in the preview context.
 	isPreview?: boolean;
@@ -58,11 +61,14 @@ export const EditorProvider = ( {
 	);
 
 	const getPreviewData = useCallback(
-		( name: string ): Record< string, unknown > => {
+		(
+			name: string,
+			fallback: Record< string, unknown > = {}
+		): Record< string, unknown > => {
 			if ( previewData && name in previewData ) {
 				return previewData[ name ] as Record< string, unknown >;
 			}
-			return {};
+			return fallback;
 		},
 		[ previewData ]
 	);
