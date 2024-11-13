@@ -49,6 +49,10 @@ export const PaymentGateways = () => {
 		// TODO: Implement in future PR.
 	};
 
+	const setupWooPayments = () => {
+		window.location.href = getAdminLink( 'admin.php?page=wc-settings&tab=checkout&section=recommended' );
+	}
+
 	// Transform payment gateways to comply with List component format.
 	const paymentGatewaysList = useMemo(
 		() =>
@@ -120,6 +124,20 @@ export const PaymentGateways = () => {
 										>
 											{ __(
 												'Set up live payments',
+												'woocommerce'
+											) }
+										</Button>
+									) }
+								{ isWCPay &&
+									! wooPaymentsGatewayData?.isAccountOnboarded && (
+										<Button
+											variant="primary"
+											onClick={ setupWooPayments }
+											isBusy={ false }
+											disabled={ false }
+										>
+											{ __(
+												'Complete setup',
 												'woocommerce'
 											) }
 										</Button>
