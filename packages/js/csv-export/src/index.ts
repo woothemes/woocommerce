@@ -19,18 +19,23 @@ function escapeCSVValue( value: string | number ) {
 	let stringValue = value.toString();
 
 	// Prevent CSV injection.
-	// Negative numeric numbers are not escaped, since a pure numeric value cannot form a valid formula to be injected.
 	// See: https://owasp.org/www-community/attacks/CSV_Injection
 	// See: WC_CSV_Exporter::escape_data()
+
+	// Negative numeric numbers are not escaped, since a pure numeric value cannot form a valid formula to be injected.
+	//This preserves the value as a number in the CSV output.
+	if ( typeof value === 'number' ) {
+		return stringValue;
+	}
+
 	if (
 		[
 			'=',
 			'+',
+			'-', // Only escape '-' if it's not part of a numeric value.
 			'@',
 			String.fromCharCode( 0x09 ), // tab
 			String.fromCharCode( 0x0d ), // carriage return
-			// Only escape '-' if it's not part of a numeric value.
-			...( typeof value === 'number' ? [] : [ '-' ] ),
 		].includes( stringValue.charAt( 0 ) )
 	) {
 		stringValue = '"\'' + stringValue + '"';
