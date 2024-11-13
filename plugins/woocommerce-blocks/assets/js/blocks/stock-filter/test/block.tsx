@@ -95,7 +95,14 @@ const setup = ( params: SetupParams = {} ) => {
 	};
 
 	const { container, ...utils } = render(
-		<Block attributes={ attributes } />
+		<Block attributes={ attributes } />,
+		{ legacyRoot: true }
+	);
+
+	// We need to switch to React 17 rendering to allow these tests to keep passing, but as a result the React
+	// rendering error will be shown.
+	expect( console ).toHaveErroredWith(
+		`Warning: ReactDOM.render is no longer supported in React 18. Use createRoot instead. Until you switch to the new API, your app will behave as if it's running React 17. Learn more: https://reactjs.org/link/switch-to-createroot`
 	);
 
 	const getList = () => container.querySelector( selectors.list );

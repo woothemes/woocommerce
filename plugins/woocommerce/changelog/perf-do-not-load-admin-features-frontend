@@ -1,0 +1,4 @@
+Significance: minor
+Type: performance
+
+Optimize admin features loading to improve frontend performance
