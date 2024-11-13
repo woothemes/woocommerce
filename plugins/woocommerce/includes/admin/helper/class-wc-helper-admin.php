@@ -27,11 +27,9 @@ class WC_Helper_Admin {
 	 * @return void
 	 */
 	public static function load() {
-		global $pagenow;
-
 		if ( is_admin() ) {
-			$is_in_app_marketplace = ( 'admin.php' === $pagenow
-				&& isset( $_GET['page'] ) && 'wc-admin' === $_GET['page'] //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$is_in_app_marketplace = (
+				isset( $_GET['page'] ) && 'wc-admin' === $_GET['page'] //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				&& isset( $_GET['path'] ) && '/extensions' === $_GET['path'] //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			);
 

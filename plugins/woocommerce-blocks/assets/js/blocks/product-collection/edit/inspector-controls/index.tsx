@@ -55,6 +55,7 @@ import PriceRangeControl from './price-range-control';
 import LinkedProductControl from './linked-product-control';
 import WidthOptionsControl from './width-options-control';
 import DisplaySettings from './display-settings';
+import RelatedByControl from './related-by-control';
 
 const prepareShouldShowFilter =
 	( hideControls: FilterName[] ) => ( filter: FilterName ) => {
@@ -313,6 +314,15 @@ const CollectionSpecificControls = (
 							{ ...queryControlProps }
 						/>
 					</PanelBody>
+				)
+			}
+			{
+				/**
+				 * "Related Products" collection-specific controls.
+				 */
+				props.attributes.collection ===
+					'woocommerce/product-collection/related' && (
+					<RelatedByControl { ...queryControlProps } />
 				)
 			}
 		</InspectorControls>

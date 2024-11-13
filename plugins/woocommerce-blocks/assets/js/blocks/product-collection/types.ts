@@ -117,7 +117,13 @@ export interface ProductCollectionQuery {
 	priceRange: undefined | PriceRange;
 	filterable: boolean;
 	productReference?: number;
+	relatedBy?: RelatedBy | undefined;
 }
+
+export type RelatedBy = {
+	categories: boolean;
+	tags: boolean;
+};
 
 export type ProductCollectionEditComponentProps =
 	BlockEditProps< ProductCollectionAttributes > & {
@@ -199,6 +205,7 @@ export enum CoreFilterNames {
 	PRODUCTS_PER_PAGE = 'products-per-page',
 	MAX_PAGES_TO_SHOW = 'max-pages-to-show',
 	OFFSET = 'offset',
+	RELATED_BY = 'related-by',
 }
 
 export type CollectionName = CoreCollectionNames | string;
