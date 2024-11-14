@@ -80,7 +80,8 @@ test.describe(
 
 				await expect(
 					page.getByRole( 'heading', {
-						name: `${ products[ 0 ].name }`,
+						name: `${ simpleProductName } 1`,
+						level: 1,
 					} )
 				).toBeVisible();
 				await expect( page.getByLabel( 'Breadcrumb' ) ).toContainText(
@@ -116,7 +117,8 @@ test.describe(
 				await page.locator( `text=${ products[ 1 ].name }` ).click();
 				await expect(
 					page.getByRole( 'heading', {
-						name: products[ 1 ].name,
+						name: simpleProductName + ' 2',
+						level: 1,
 					} )
 				).toBeVisible();
 			} );
