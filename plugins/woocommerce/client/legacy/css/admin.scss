@@ -5925,6 +5925,9 @@ img.help_tip {
 		.howto {
 			margin: 0;
 		}
+		.the-tagcloud {
+			margin-bottom: 0;
+		}
 	}
 
 }
@@ -5933,6 +5936,7 @@ img.help_tip {
 	.post-new-php.post-type-product,
 	.post-php.post-type-shop_coupon,
 	.post-new-php.post-type-shop_coupon {
+		// Tags metabox.
 		.tagsdiv .newtag {
 			margin-bottom: 0;
 		}
