@@ -73,6 +73,8 @@
 	"pnpm": {
 		"overrides": {
 			"@types/react": "17.0.x",
+			"@wordpress/data": "$@wordpress/data",
+			"@wordpress/rich-text": "wp-6.0",
 			"react-resize-aware": "3.1.1",
 			"@automattic/tour-kit>@wordpress/element": "4.4.1"
 		},
