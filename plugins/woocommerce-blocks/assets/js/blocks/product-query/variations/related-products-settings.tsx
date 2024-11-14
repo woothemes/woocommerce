@@ -6,10 +6,7 @@ import { stacks } from '@woocommerce/icons';
 import { __ } from '@wordpress/i18n';
 import { getSettingWithCoercion } from '@woocommerce/settings';
 import { isBoolean } from '@woocommerce/types';
-import {
-	BlockAttributes,
-	InnerBlockTemplate
-} from '@wordpress/blocks';
+import { BlockAttributes, InnerBlockTemplate } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -45,14 +42,11 @@ export const BLOCK_ATTRIBUTES = {
 	},
 };
 
-
 const postTemplateHasSupportForGridView = getSettingWithCoercion(
 	'postTemplateHasSupportForGridView',
 	false,
 	isBoolean
 );
-
-
 
 export const INNER_BLOCKS_TEMPLATE: InnerBlockTemplate[] = [
 	[

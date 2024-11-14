@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-import {
-	registerBlockVariation,
-} from '@wordpress/blocks';
+import { registerBlockVariation } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -11,7 +9,6 @@ import { __ } from '@wordpress/i18n';
  */
 import { QUERY_LOOP_ID } from '../constants';
 import { RelatedProductsControlsBlockVariationSettings } from './related-products-settings';
-
 
 registerBlockVariation(
 	QUERY_LOOP_ID,
