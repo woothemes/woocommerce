@@ -152,17 +152,17 @@ final class ProductFilterStatus extends AbstractBlock {
 		$onsale_status_data = array();
 		$query              = isset( $_GET[ self::FILTER_STATUS_QUERY_VAR ] ) ? sanitize_text_field( wp_unslash( $_GET[ self::FILTER_STATUS_QUERY_VAR ] ) ) : '';  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$selected_statuses  = array_filter( explode( ',', $query ) );
-		$onsale_status_data = $attributes['productStatuses']['onsale']['enabled'] ? $this->get_onsale_status_counts( $block ) : array();
-		$excluded_statuses  =
+		$onsale_status_data = ( ! empty( $attributes['productStatuses']['onsale']['enabled'] ) && $attributes['productStatuses']['onsale']['enabled'] ) ? $this->get_onsale_status_counts( $block ) : array();
+		$include_statuses   =
 			array_keys(
 				array_filter(
 					$attributes['stockStatuses'],
 					function ( $status ) {
-						return ! isset( $status['enabled'] ) || true !== $status['enabled'];
+						return isset( $status['enabled'] ) && true === $status['enabled'];
 					}
 				)
 			);
-		$stock_status_data  = $this->get_stock_status_counts( $block, $excluded_statuses );
+		$stock_status_data  = $this->get_stock_status_counts( $block, $include_statuses );
 		$status_data        = array_merge( $stock_status_data, $onsale_status_data );
 		$filter_params      = $block->context['filterParams'] ?? array();
 		$query              = $filter_params[ self::FILTER_STATUS_QUERY_VAR ] ?? '';
@@ -228,9 +228,9 @@ final class ProductFilterStatus extends AbstractBlock {
 	 * Retrieve the status filter data for current block.
 	 *
 	 * @param WP_Block $block Block instance.
-	 * @param array    $excluded_statuses Excluded statuses.
+	 * @param array    $include_statuses Included statuses.
 	 */
-	private function get_stock_status_counts( $block, $excluded_statuses ) {
+	private function get_stock_status_counts( $block, $include_statuses ) {
 		$filters    = Package::container()->get( QueryFilters::class );
 		$query_vars = ProductCollectionUtils::get_query_vars( $block, 1 );
 
@@ -241,7 +241,7 @@ final class ProductFilterStatus extends AbstractBlock {
 			$query_vars['meta_query'] = ProductCollectionUtils::remove_query_array( $query_vars['meta_query'], 'key', '_stock_status' );
 		}
 
-		$counts = $filters->get_stock_status_counts( $query_vars, $excluded_statuses );
+		$counts = $filters->get_stock_status_counts( $query_vars, $include_statuses );
 		$data   = array();
 
 		foreach ( $counts as $key => $value ) {
