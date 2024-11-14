@@ -3,7 +3,10 @@
  */
 import { createElement } from '@wordpress/element';
 
-export const LegacyContent = ( { settings }: { settings: SettingsPage } ) => {
-	console.log( settings );
-	return <div>Legacy Content</div>;
+export const LegacyContent = ( {
+	settingsPage,
+}: {
+	settingsPage: SettingsPage;
+} ) => {
+	return <div>Legacy Content: { settingsPage.label }</div>;
 };

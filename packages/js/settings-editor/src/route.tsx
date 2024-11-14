@@ -73,8 +73,8 @@ const getLegacyRoute = (
 	activePage: string,
 	pages: typeof window.wcSettings.admin.settingsPages
 ): Route => {
-	const pageSettings = pages[ activePage ];
-	const pageTitle = pageSettings?.label || __( 'Settings', 'woocommerce' );
+	const settingsPage = pages[ activePage ];
+	const pageTitle = settingsPage?.label || __( 'Settings', 'woocommerce' );
 
 	return {
 		key: activePage,
@@ -86,7 +86,7 @@ const getLegacyRoute = (
 					pageTitle={ pageTitle }
 				/>
 			),
-			content: <LegacyContent settings={ pageSettings } />,
+			content: <LegacyContent settingsPage={ settingsPage } />,
 			edit: null,
 		},
 		widths: {
@@ -153,14 +153,14 @@ export const useActiveRoute = () => {
 
 	return useMemo( () => {
 		const { tab: activePage = 'general' } = location.params;
-		const pageSettings = settingsPages?.[ activePage ];
+		const settingsPage = settingsPages?.[ activePage ];
 
-		if ( ! pageSettings ) {
+		if ( ! settingsPage ) {
 			return getNotFoundRoute( activePage, settingsPages );
 		}
 
 		// Handle legacy pages.
-		if ( ! pageSettings.is_modern ) {
+		if ( ! settingsPage.is_modern ) {
 			return getLegacyRoute( activePage, settingsPages );
 		}
 
@@ -176,7 +176,7 @@ export const useActiveRoute = () => {
 			<Sidebar
 				activePage={ activePage }
 				pages={ settingsPages }
-				pageTitle={ pageSettings.label }
+				pageTitle={ settingsPage.label }
 			/>
 		);
 		// Make sure we have a key.
