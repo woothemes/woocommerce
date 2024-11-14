@@ -1606,7 +1606,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		$params['include_status'] = array(
 			'description'       => __( 'Limit result set to products with any of the statuses.', 'woocommerce' ),
 			'type'              => 'array',
-			'item'              => array(
+			'items'             => array(
 				'type' => 'string',
 				'enum' => array_merge( array( 'any', 'trash' ), array_keys( get_post_statuses() ) ),
 			),
