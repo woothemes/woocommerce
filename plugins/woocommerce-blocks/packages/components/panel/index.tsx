@@ -17,6 +17,7 @@ export interface PanelProps {
 	className?: string | undefined;
 	initialOpen?: boolean;
 	hasBorder?: boolean;
+	headingLevel?: 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 	title: ReactNode;
 	titleTag?: keyof JSX.IntrinsicElements;
 	state?: [ boolean, React.Dispatch< React.SetStateAction< boolean > > ];
@@ -27,6 +28,7 @@ const Panel = ( {
 	className,
 	initialOpen = false,
 	hasBorder = false,
+	headingLevel,
 	title,
 	/**
 	 * @deprecated The `titleTag` prop is deprecated and will be removed in a future version.
@@ -36,6 +38,9 @@ const Panel = ( {
 	state,
 }: PanelProps ): ReactElement => {
 	let [ isOpen, setIsOpen ] = useState< boolean >( initialOpen );
+	const HeadingTag = headingLevel
+		? ( headingLevel as keyof JSX.IntrinsicElements )
+		: undefined;
 	// If state is managed externally, we override the internal state.
 	if ( Array.isArray( state ) && state.length === 2 ) {
 		[ isOpen, setIsOpen ] = state;
@@ -47,25 +52,35 @@ const Panel = ( {
 		} );
 	}
 
+	const button = (
+		<Button
+			render={ <div /> }
+			aria-expanded={ isOpen }
+			className="wc-block-components-panel__button"
+			onClick={ () => setIsOpen( ! isOpen ) }
+		>
+			<Icon
+				aria-hidden="true"
+				className="wc-block-components-panel__button-icon"
+				icon={ isOpen ? chevronUp : chevronDown }
+			/>
+			{ title }
+		</Button>
+	);
+
 	return (
 		<div
 			className={ clsx( className, 'wc-block-components-panel', {
 				'has-border': hasBorder,
 			} ) }
 		>
-			<Button
-				render={ <div /> }
-				aria-expanded={ isOpen }
-				className="wc-block-components-panel__button"
-				onClick={ () => setIsOpen( ! isOpen ) }
-			>
-				<Icon
-					aria-hidden="true"
-					className="wc-block-components-panel__button-icon"
-					icon={ isOpen ? chevronUp : chevronDown }
-				/>
-				{ title }
-			</Button>
+			{ HeadingTag ? (
+				<HeadingTag className="wc-block-components-panel__heading">
+					{ button }
+				</HeadingTag>
+			) : (
+				button
+			) }
 			{ isOpen && (
 				<div className="wc-block-components-panel__content">
 					{ children }
