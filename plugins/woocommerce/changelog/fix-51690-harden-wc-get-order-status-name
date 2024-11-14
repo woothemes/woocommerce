@@ -1,0 +1,4 @@
+Significance: patch
+Type: tweak
+
+Minimize the potential for fatal errors if an unexpected type is passed to the `wc_get_order_status_name` function.

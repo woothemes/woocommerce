@@ -148,7 +148,15 @@ function wc_get_is_pending_statuses() {
  */
 function wc_get_order_status_name( $status ) {
 	$statuses = wc_get_order_statuses();
-	$status   = OrderUtil::remove_status_prefix( $status );
+	$status   = OrderUtil::remove_status_prefix( (string) $status );
+
+	if ( ! is_string( $status ) || ! isset( $statuses[ 'wc-' . $status ] ) ) {
+		wc_doing_it_wrong(
+			__FUNCTION__,
+			__( 'An invalid order status slug was supplied.', 'woocommerce' ),
+			'9.6'
+		);
+	}
 
 	return $statuses[ 'wc-' . $status ] ?? $status;
 }
