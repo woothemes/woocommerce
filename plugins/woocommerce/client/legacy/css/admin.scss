@@ -5931,6 +5931,8 @@ img.help_tip {
 			margin-bottom: 0;
 		}
 	}
+
+	// Product image.
 	#postimagediv .inside {
 		display: flex;
 		flex-direction: column;
@@ -5940,7 +5942,27 @@ img.help_tip {
 		}
 	}
 
+	// Product gallery.
+	#woocommerce-product-images .inside {
+		padding: $gap;
+		display: flex;
+		flex-direction: column;
+		gap: $gap-smaller;
+
+		#product_images_container {
+			padding: 0;
+			margin: -$gap-smallest calc( $gap-smallest * -2 );
+			ul li.image {
+				margin: $gap-smallest;
+			}
+		}
+		.add_product_images{
+			padding: 0;
+			margin: 0;
+		}
+	}
 }
+
 @media screen and (max-width: 782px) {
     .post-php.post-type-product,
 	.post-new-php.post-type-product,
