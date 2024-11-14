@@ -9,7 +9,7 @@ import {
 import {
 	WooHeaderNavigationItem,
 	WooHeaderPageTitle,
-	WooHeaderItem
+	WooHeaderItem,
 } from '@woocommerce/admin-layout';
 import { Button } from '@wordpress/components';
 
@@ -53,13 +53,13 @@ let hasRegisteredPlugins = false;
 /**
  * Registers the header component as a plugin to customize the header of the settings payments page.
  */
-export const Header = ( { 
-	title, 
-	backLink, 
+export const Header = ( {
+	title,
+	backLink,
 	description,
 	hasButton,
 	buttonLabel,
-	onButtonClick
+	onButtonClick,
 }: HeaderProps ) => {
 	if ( ! hasRegisteredPlugins ) {
 		/**

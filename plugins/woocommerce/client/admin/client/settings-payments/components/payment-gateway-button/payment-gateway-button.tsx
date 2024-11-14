@@ -57,7 +57,9 @@ export const PaymentGatewayButton = ( {
 	const onClick = ( e: React.MouseEvent ) => {
 		if ( isWCPay && needsSetup ) {
 			e.preventDefault();
-			window.location.href = getAdminLink( 'admin.php?page=wc-settings&tab=checkout&section=recommended' );
+			window.location.href = getAdminLink(
+				'admin.php?page=wc-settings&tab=checkout&section=recommended'
+			);
 		}
 		if ( ! enabled ) {
 			e.preventDefault();
