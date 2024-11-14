@@ -380,6 +380,7 @@ if ( ! class_exists( 'WC_Admin_Settings', false ) ) :
 					// Textarea.
 					case 'textarea':
 						$option_value = $value['value'];
+						$show_desc_at_end = $value['desc_at_end'] ?? false;
 
 						?>
 						<tr class="<?php echo esc_attr( $value['row_class'] ); ?>">
@@ -387,6 +388,11 @@ if ( ! class_exists( 'WC_Admin_Settings', false ) ) :
 								<label for="<?php echo esc_attr( $value['id'] ); ?>"><?php echo esc_html( $value['title'] ); ?> <?php echo $tooltip_html; // WPCS: XSS ok. ?></label>
 							</th>
 							<td class="forminp forminp-<?php echo esc_attr( sanitize_title( $value['type'] ) ); ?>">
+								<?php
+								if ( ! $show_desc_at_end ) {
+									echo wp_kses_post( $description );
+								}
+								?>
 								<textarea
 									name="<?php echo esc_attr( $value['field_name'] ); ?>"
 									id="<?php echo esc_attr( $value['id'] ); ?>"
@@ -394,7 +400,12 @@ if ( ! class_exists( 'WC_Admin_Settings', false ) ) :
 									class="<?php echo esc_attr( $value['class'] ); ?>"
 									placeholder="<?php echo esc_attr( $value['placeholder'] ); ?>"
 									<?php echo implode( ' ', $custom_attributes ); // WPCS: XSS ok. ?>
-									><?php echo esc_textarea( $option_value ); // WPCS: XSS ok. ?></textarea> <?php echo $description; // WPCS: XSS ok. ?>
+									><?php echo esc_textarea( $option_value ); // WPCS: XSS ok. ?></textarea>
+								<?php
+								if ( $show_desc_at_end ) {
+									echo wp_kses_post( $description );
+								}
+								?>
 							</td>
 						</tr>
 						<?php
