@@ -17,10 +17,12 @@ const assetUrl = getAdminSetting( 'wcAdminAssetUrl' );
 
 interface OfflinePaymentGatewaysProps {
 	registeredPaymentGateways: PaymentGateway[];
+	togglePlugin: ( id: string, settings_url: string ) => void;
 }
 
 export const OfflinePaymentGateways = ( {
 	registeredPaymentGateways,
+	togglePlugin
 }: OfflinePaymentGatewaysProps ) => {
 	// Mock payment gateways for now.
 	// TODO Get the list of gateways via the API in future PR.
@@ -86,6 +88,7 @@ export const OfflinePaymentGateways = ( {
 		if ( ! gateway ) return null;
 		return OfflinePaymentGatewayListItem( {
 			gateway,
+			togglePlugin
 		} );
 	} );
 

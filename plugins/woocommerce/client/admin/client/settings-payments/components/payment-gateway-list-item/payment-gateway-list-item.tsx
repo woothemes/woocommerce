@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-import { useState } from 'react';
 import { EllipsisMenu } from '@woocommerce/components';
-import { PaymentGateway } from '@woocommerce/data';
 import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -15,22 +13,24 @@ import { decodeEntities } from '@wordpress/html-entities';
 import sanitizeHTML from '~/lib/sanitize-html';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
 import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
-import { WooPaymentsGatewayData } from '~/settings-payments/types';
-import { WC_ASSET_URL } from '~/utils/admin-settings';
+import {
+	RegisteredPaymentGateway,
+	WooPaymentsGatewayData,
+} from '~/settings-payments/types';
 
 type PaymentGatewayItemProps = {
-	gateway: PaymentGateway;
+	gateway: RegisteredPaymentGateway;
 	wooPaymentsGatewayData?: WooPaymentsGatewayData;
 	setupLivePayments: () => void;
+	togglePlugin: ( id: string, settings_url: string ) => void;
 };
 
 export const PaymentGatewayListItem = ( {
 	gateway,
 	wooPaymentsGatewayData,
 	setupLivePayments,
+	togglePlugin,
 }: PaymentGatewayItemProps ) => {
-	const [ isEnabled, setIsEnabled ] = useState( gateway.enabled );
-
 	const isWCPay = [
 		'pre_install_woocommerce_payments_promotion',
 		'woocommerce_payments',
@@ -40,10 +40,10 @@ export const PaymentGatewayListItem = ( {
 	const hasIncentive =
 		gateway.id === 'pre_install_woocommerce_payments_promotion';
 	const determineGatewayStatus = () => {
-		if ( ! isEnabled && gateway?.needs_setup ) {
+		if ( ! gateway.state.enabled && gateway.state.needs_setup ) {
 			return 'needs_setup';
 		}
-		if ( isEnabled ) {
+		if ( gateway.state.enabled ) {
 			if ( isWCPay ) {
 				if ( wooPaymentsGatewayData?.isInTestMode ) {
 					return 'test_mode';
@@ -66,7 +66,7 @@ export const PaymentGatewayListItem = ( {
 		} ${ hasIncentive ?? `has-incentive` }`,
 		title: (
 			<>
-				{ gateway.method_title }
+				{ gateway.title }
 				{ hasIncentive ? (
 					<StatusBadge
 						status="has_incentive"
@@ -84,7 +84,7 @@ export const PaymentGatewayListItem = ( {
 			<>
 				<span
 					dangerouslySetInnerHTML={ sanitizeHTML(
-						decodeEntities( gateway.method_description )
+						decodeEntities( gateway.description )
 					) }
 				/>
 				{ isWCPay && (
@@ -100,10 +100,10 @@ export const PaymentGatewayListItem = ( {
 				<>
 					<PaymentGatewayButton
 						id={ gateway.id }
-						enabled={ isEnabled }
-						needs_setup={ gateway.needs_setup }
-						settings_url={ gateway.settings_url }
-						setIsEnabled={ setIsEnabled }
+						enabled={ gateway.state.enabled }
+						needs_setup={ gateway.state.needs_setup }
+						settings_url={ gateway.management.settings_url }
+						togglePlugin={ togglePlugin }
 					/>
 					{ isWCPay && wooPaymentsGatewayData?.isInTestMode && (
 						<Button
@@ -135,12 +135,6 @@ export const PaymentGatewayListItem = ( {
 			</div>
 		),
 		// TODO add drag-and-drop icon before image (future PR)
-		before: (
-			<img
-				// TODO: Need a way to make images available here. For now it'll be a WooPayments image everywhere.
-				src={ `${ WC_ASSET_URL }images/onboarding/wcpay.svg` }
-				alt={ gateway.title + ' logo' }
-			/>
-		),
+		before: <img src={ gateway.icon } alt={ gateway.title + ' logo' } />,
 	};
 };

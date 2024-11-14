@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { useState } from 'react';
 import { decodeEntities } from '@wordpress/html-entities';
 
 /**
@@ -24,12 +23,13 @@ interface OfflinePaymentGateway {
 
 type OfflinePaymentGatewayListItemProps = {
 	gateway: OfflinePaymentGateway;
+	togglePlugin: ( id: string, settings_url: string ) => void;
 };
 
 export const OfflinePaymentGatewayListItem = ( {
 	gateway,
+	togglePlugin,
 }: OfflinePaymentGatewayListItemProps ) => {
-	const [ isEnabled, setIsEnabled ] = useState( gateway.enabled );
 
 	return {
 		key: gateway.id,
@@ -45,9 +45,9 @@ export const OfflinePaymentGatewayListItem = ( {
 		after: (
 			<PaymentGatewayButton
 				id={ gateway.id }
-				enabled={ isEnabled }
+				enabled={ gateway.enabled }
 				settings_url={ gateway.settings_url }
-				setIsEnabled={ setIsEnabled }
+				togglePlugin={ togglePlugin	}
 			/>
 		),
 		// TODO add drag-and-drop icon before image (future PR)
