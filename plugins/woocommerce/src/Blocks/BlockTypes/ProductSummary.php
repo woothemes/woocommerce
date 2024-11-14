@@ -104,6 +104,15 @@ class ProductSummary extends AbstractBlock {
 	/**
 	 * Trim the product description.
 	 *
+	 * This method is far from perfection. It works well and reliably with the simple text
+	 * but works much worse with the rich text (HTML). It can be considered a good balance
+	 * between the what we want and what we can. Unfortunately, ATM there's no good
+	 * tool for robust solution:
+	 * - DOMDocument is reasource-heavy and isn’t available on many hosting platforms
+	 * (POC: https://github.com/woocommerce/woocommerce/pull/52769).
+	 * - HTML API doesn't support HTML manipulations just yet.
+	 * TODO: https://github.com/woocommerce/woocommerce/issues/52835
+	 *
 	 * @param string $input  Product description.
 	 * @param number $length Expected length of final description.
 	 * @return string
