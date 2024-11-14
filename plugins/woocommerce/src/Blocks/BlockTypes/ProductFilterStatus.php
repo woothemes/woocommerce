@@ -148,24 +148,14 @@ final class ProductFilterStatus extends AbstractBlock {
 	 * @return string Rendered block type output.
 	 */
 	protected function render( $attributes, $content, $block ) {
-		$stock_status_data  = array();
-		$onsale_status_data = array();
-		$query              = isset( $_GET[ self::FILTER_STATUS_QUERY_VAR ] ) ? sanitize_text_field( wp_unslash( $_GET[ self::FILTER_STATUS_QUERY_VAR ] ) ) : '';  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$selected_statuses  = array_filter( explode( ',', $query ) );
-		$onsale_status_data = ( ! empty( $attributes['productStatuses']['onsale']['enabled'] ) && $attributes['productStatuses']['onsale']['enabled'] ) ? $this->get_onsale_status_counts( $block ) : array();
-		$include_statuses   =
-			array_keys(
-				array_filter(
-					$attributes['stockStatuses'],
-					function ( $status ) {
-						return isset( $status['enabled'] ) && true === $status['enabled'];
-					}
-				)
-			);
-		$stock_status_data  = $this->get_stock_status_counts( $block, $include_statuses );
+		$stock_statuses     = $attributes['stockStatuses'] ?? array_keys( wc_get_product_stock_status_options() );
+		$product_statuses   = $attributes['productStatuses'] ?? array( 'onsale' );
+		$stock_status_data  = $this->get_stock_status_counts( $block, $stock_statuses );
+		$onsale_status_data = in_array( 'onsale', $product_statuses, true ) ? $this->get_onsale_status_counts( $block ) : array();
 		$status_data        = array_merge( $stock_status_data, $onsale_status_data );
 		$filter_params      = $block->context['filterParams'] ?? array();
 		$query              = $filter_params[ self::FILTER_STATUS_QUERY_VAR ] ?? '';
+		$selected_statuses  = array_filter( explode( ',', $query ) );
 
 		$filter_options = array_map(
 			function ( $item ) use ( $selected_statuses, $attributes ) {

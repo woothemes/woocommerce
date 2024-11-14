@@ -8,7 +8,7 @@ import {
 } from '@wordpress/block-editor';
 import { useCollectionData } from '@woocommerce/base-context/hooks';
 import { __ } from '@wordpress/i18n';
-import { useMemo, useEffect } from '@wordpress/element';
+import { useMemo } from '@wordpress/element';
 import { getSetting } from '@woocommerce/settings';
 import type { WCStoreV1ProductsCollectionProps } from '@woocommerce/blocks/product-collection/types';
 
@@ -20,15 +20,26 @@ import { Inspector } from './inspector';
 import type { EditProps } from './types';
 import { useProductFilterClearButtonManager } from '../../hooks/use-product-filter-clear-button-manager';
 
+const stockStatusOptions: Record< string, string > = getSetting(
+	'stockStatusOptions',
+	{}
+);
+
+const productStatusOptions: Record< string, string > = getSetting(
+	'productStatusOptions',
+	{}
+);
+
 const Edit = ( props: EditProps ) => {
-	const { attributes, setAttributes, clientId } = props;
-	const {
-		showCounts,
-		hideEmpty,
-		clearButton,
-		stockStatuses,
-		productStatuses,
-	} = attributes;
+	const { attributes, clientId } = props;
+	const { showCounts, hideEmpty, clearButton } = attributes;
+
+	const productStatuses = Array.isArray( attributes.productStatuses )
+		? attributes.productStatuses
+		: Object.keys( productStatusOptions );
+	const stockStatuses = Array.isArray( attributes.stockStatuses )
+		? attributes.stockStatuses
+		: Object.keys( stockStatusOptions );
 
 	const { children, ...innerBlocksProps } = useInnerBlocksProps(
 		useBlockProps(),
@@ -81,45 +92,6 @@ const Edit = ( props: EditProps ) => {
 		}
 	);
 
-	const stockStatusOptions: Record< string, string > = getSetting(
-		'stockStatusOptions',
-		{}
-	);
-
-	const productStatusOptions: Record< string, string > = getSetting(
-		'productStatusOptions',
-		{}
-	);
-
-	const defaultStockStatusesAttributes = Object.entries(
-		stockStatusOptions
-	).reduce( ( acc, [ key, value ] ) => {
-		acc[ key ] = { label: value, enabled: true };
-		return acc;
-	}, {} as Record< string, { label: string; enabled: boolean } > );
-
-	const defaultProductStatusesAttributes = Object.entries(
-		productStatusOptions
-	).reduce( ( acc, [ key, value ] ) => {
-		acc[ key ] = { label: value, enabled: true };
-		return acc;
-	}, {} as Record< string, { label: string; enabled: boolean } > );
-
-	// Because stock statuses and product statuses are dynamically added,
-	// we need to first set default values for them. This should only run
-	// once when the block is inserted.
-	useEffect( () => {
-		if ( Object.keys( stockStatuses ).length === 0 ) {
-			setAttributes( { stockStatuses: defaultStockStatusesAttributes } );
-		}
-
-		if ( Object.keys( productStatuses ).length === 0 ) {
-			setAttributes( {
-				productStatuses: defaultProductStatusesAttributes,
-			} );
-		}
-	}, [] );
-
 	const { results: filteredCounts, isLoading } =
 		useCollectionData< WCStoreV1ProductsCollectionProps >( {
 			queryStock: true,
@@ -144,8 +116,9 @@ const Edit = ( props: EditProps ) => {
 					count,
 				};
 			} )
-			.filter( ( item ) => ! hideEmpty || item.count > 0 );
-	}, [ stockStatusOptions, filteredCounts, showCounts, hideEmpty ] );
+			.filter( ( item ) => ! hideEmpty || item.count > 0 )
+			.filter( ( item ) => stockStatuses.includes( item.value ) );
+	}, [ filteredCounts, showCounts, hideEmpty, stockStatuses ] );
 
 	const productStatusItems = useMemo( () => {
 		return Object.entries( productStatusOptions )
@@ -163,8 +136,9 @@ const Edit = ( props: EditProps ) => {
 					count,
 				};
 			} )
-			.filter( ( item ) => ! hideEmpty || item.count > 0 );
-	}, [ productStatusOptions, filteredCounts, showCounts, hideEmpty ] );
+			.filter( ( item ) => ! hideEmpty || item.count > 0 )
+			.filter( ( item ) => productStatuses.includes( item.value ) );
+	}, [ filteredCounts, showCounts, hideEmpty, productStatuses ] );
 
 	const items = [ ...stockStatusItems, ...productStatusItems ];
 
