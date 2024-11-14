@@ -59,6 +59,7 @@ export const Inspector = ( {
 				<PanelBody title={ __( 'Display', 'woocommerce' ) }>
 					<ToggleGroupControl
 						value={ displayStyle }
+						isBlock
 						onChange={ (
 							value: BlockAttributes[ 'displayStyle' ]
 						) => {

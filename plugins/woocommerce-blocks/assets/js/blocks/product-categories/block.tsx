@@ -78,7 +78,6 @@ const ProductCategoriesBlock = ( {
 						label={ __( 'Display style', 'woocommerce' ) }
 						isBlock
 						value={ isDropdown ? 'dropdown' : 'list' }
-						isBlock
 						onChange={ ( value: string ) =>
 							setAttributes( {
 								isDropdown: value === 'dropdown',
