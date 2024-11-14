@@ -106,7 +106,6 @@ final class QueryFilters {
 			$stock_status_options = $include_statuses;
 		}
 
-
 		add_filter( 'posts_clauses', array( $this, 'add_query_clauses' ), 10, 2 );
 		add_filter( 'posts_pre_query', '__return_empty_array' );
 
