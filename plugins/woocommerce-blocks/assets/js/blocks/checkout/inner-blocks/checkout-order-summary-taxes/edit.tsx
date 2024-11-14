@@ -5,23 +5,18 @@ import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, ToggleControl } from '@wordpress/components';
 import { getSetting } from '@woocommerce/settings';
+import { BlockEditProps } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
  */
-import Block from './block';
+import Block, { BlockAttributes } from './block';
 
 export const Edit = ( {
 	attributes,
 	setAttributes,
-}: {
-	attributes: {
-		className: string;
-		showRateAfterTaxName: boolean;
-	};
-	setAttributes: ( attributes: Record< string, unknown > ) => void;
-} ): JSX.Element => {
-	const { className, showRateAfterTaxName } = attributes;
+}: BlockEditProps< BlockAttributes > ): JSX.Element => {
+	const { className, showRateAfterTaxName, sectionHeading } = attributes;
 	const blockProps = useBlockProps();
 	const taxesEnabled = getSetting( 'taxesEnabled' ) as boolean;
 	const displayItemizedTaxes = getSetting(
@@ -32,6 +27,7 @@ export const Edit = ( {
 		'displayCartPricesIncludingTax',
 		false
 	) as boolean;
+
 	return (
 		<div { ...blockProps }>
 			<InspectorControls>
