@@ -38,19 +38,19 @@ const NotFound = () => {
  * Default route when active page is not found.
  *
  * @param {string}       activePage - The active page.
- * @param {SettingsData} pages      - The pages.
+ * @param {SettingsData} settingsData - The settings data.
  *
  */
 const getNotFoundRoute = (
 	activePage: string,
-	pages: SettingsData
+	settingsData: SettingsData
 ): Route => ( {
 	key: activePage,
 	areas: {
 		sidebar: (
 			<Sidebar
 				activePage={ activePage }
-				settingsData={ pages }
+				settingsData={ settingsData }
 				pageTitle={ __( 'Settings', 'woocommerce' ) }
 			/>
 		),
@@ -64,13 +64,16 @@ const getNotFoundRoute = (
 } );
 
 /**
- * Creates a route configuration for legacy settings pages.
+ * Creates a route configuration for legacy settings.
  *
- * @param {string}                                       activePage - The active page.
- * @param {SettingsData}                                   pages      - The pages.
+ * @param {string}       activePage - The active page.
+ * @param {SettingsData} settingsData - The settings data.
  */
-const getLegacyRoute = ( activePage: string, pages: SettingsData ): Route => {
-	const settingsPage = pages[ activePage ];
+const getLegacyRoute = (
+	activePage: string,
+	settingsData: SettingsData
+): Route => {
+	const settingsPage = settingsData[ activePage ];
 	const pageTitle = settingsPage?.label || __( 'Settings', 'woocommerce' );
 
 	return {
@@ -79,7 +82,7 @@ const getLegacyRoute = ( activePage: string, pages: SettingsData ): Route => {
 			sidebar: (
 				<Sidebar
 					activePage={ activePage }
-					settingsData={ pages }
+					settingsData={ settingsData }
 					pageTitle={ pageTitle }
 				/>
 			),
