@@ -539,8 +539,11 @@ class ProductCollectionPage {
 		const maxInputSelector = SELECTORS.priceRangeFilter.max;
 
 		const sidebarSettings = this.locateSidebarSettings();
-		const minInput = sidebarSettings.getByLabel( minInputSelector );
-		const maxInput = sidebarSettings.getByLabel( maxInputSelector );
+		const priceRangeContainer = sidebarSettings.locator(
+			'.wc-block-product-price-range-control'
+		);
+		const minInput = priceRangeContainer.getByLabel( minInputSelector );
+		const maxInput = priceRangeContainer.getByLabel( maxInputSelector );
 
 		await minInput.fill( min || '' );
 		await maxInput.fill( max || '' );
