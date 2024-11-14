@@ -1,4 +1,0 @@
-Significance: minor
-Type: tweak
-
-Update storybook build commands to avoid conflicts with the build:project wildcard.
