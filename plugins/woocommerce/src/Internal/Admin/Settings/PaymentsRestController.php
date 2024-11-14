@@ -30,6 +30,7 @@ class PaymentsRestController extends RestApiControllerBase {
 	const EXTENSION_ACTIVE        = 'active';
 
 	const USER_PAYMENTS_NOX_PROFILE_KEY = 'woocommerce_payments_nox_profile';
+	const PAYMENT_GATEWAYS_ORDERING_OPTION_KEY = 'woocommerce_payments_nox_gateways_ordering';
 
 	/**
 	 * Route base.
@@ -94,6 +95,64 @@ class PaymentsRestController extends RestApiControllerBase {
 					'methods'             => \WP_REST_Server::CREATABLE,
 					'callback'            => fn( $request ) => $this->run( $request, 'hide_payment_extension_suggestion' ),
 					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
+				),
+			)
+		);
+
+		register_rest_route(
+			'wc-admin',
+			'/' . $this->rest_base . '/ordering/(?P<id>[a-zA-Z\-]+)',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => fn( $request ) => $this->run( $request, 'get_payment_gateways_ordering' ),
+					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
+					'args'                => array(
+						'id' => array(
+							'description' => __( 'The group ID', 'woocommerce' ),
+							'type'        => 'string',
+							'required'    => true,
+							'pattern'     => '[a-zA-Z\-]+', // Letters and dashes only
+						),
+					),
+					'schema' => array(
+						'$schema'    => 'http://json-schema.org/draft-04/schema#',
+						'title'      => 'payment_gateways_ordering',
+						'type'       => 'object',
+						'properties' => array(
+							'gateway_id' => array(
+								'description' => __( 'The order position of the gateway', 'woocommerce' ),
+								'type'        => 'integer',
+							),
+						),
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			'wc-admin',
+			'/' . $this->rest_base . '/ordering',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::EDITABLE,
+					'callback'            => fn( $request ) => $this->run( $request, 'update_payment_gateways_ordering' ),
+					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
+					'args'                => array(
+						'id' => array(
+							'description' => __( 'The group ID', 'woocommerce' ),
+							'type'        => 'string',
+							'required'    => true,
+						),
+						'ordering' => array(
+							'description' => __( 'The ordering of members of the group', 'woocommerce' ),
+							'type'        => 'object',
+							'required'    => true,
+							'additionalProperties' => array(
+								'type' => 'integer',
+							),
+						),
+					),
 				),
 			)
 		);
@@ -185,6 +244,45 @@ class PaymentsRestController extends RestApiControllerBase {
 
 		update_user_meta( get_current_user_id(), self::USER_PAYMENTS_NOX_PROFILE_KEY, $user_payments_nox_profile );
 
+		return rest_ensure_response( array( 'success' => true ) );
+	}
+	/**
+	 * Get the payment gateways ordering.
+	 *
+	 * @return array The payment gateways ordering.
+	 */
+	protected function get_payment_gateways_ordering( WP_REST_Request $request ): array {
+		$id = $request->get_param( 'id' );
+		if ( empty( $id ) ) {
+			return array();
+		}
+		$ordering = get_option( self::PAYMENT_GATEWAYS_ORDERING_OPTION_KEY, array() );
+		if ( ! isset( $ordering[ $id ] ) ) {
+			return array();
+		}
+		return $ordering[ $id ];
+	}
+
+	/**
+	 * Update the payment gateways ordering.
+	 *
+	 * @param WP_REST_Request $request The request object.
+	 * @return WP_Error|WP_REST_Response The response.
+	 */
+	protected function update_payment_gateways_ordering( WP_REST_Request $request ) {
+		$id = $request->get_param( 'id' );
+		$ordering = $request->get_param( 'ordering' );
+		if ( empty( $id ) || ! is_array( $ordering ) ) {
+			return new WP_Error(
+				'woocommerce_rest_payment_gateways_ordering_error',
+				__( 'Invalid ordering.', 'woocommerce' ),
+				array( 'status' => 400 )
+			);
+		}
+
+		$option_value = get_option( self::PAYMENT_GATEWAYS_ORDERING_OPTION_KEY, array() );
+		$option_value[ $id ] = $ordering;
+		update_option( self::PAYMENT_GATEWAYS_ORDERING_OPTION_KEY, $option_value );
 		return rest_ensure_response( array( 'success' => true ) );
 	}
 
