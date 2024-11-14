@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { SelectControl } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 
 type EmailPreviewTypeProps = {
 	emailTypes: SelectControl.Option[];
@@ -20,6 +21,7 @@ export const EmailPreviewType: React.FC< EmailPreviewTypeProps > = ( {
 				onChange={ setEmailType }
 				options={ emailTypes }
 				value={ emailType }
+				aria-label={ __( 'Email preview type', 'woocommerce' ) }
 			></SelectControl>
 		</div>
 	);
