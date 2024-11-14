@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import { useBlockProps, InnerBlocks } from '@wordpress/block-editor';
-import type { TemplateArray } from '@wordpress/blocks';
+import { useBlockProps, InnerBlocks, RichText } from '@wordpress/block-editor';
+import type { BlockEditProps, TemplateArray } from '@wordpress/blocks';
 import { innerBlockAreas } from '@woocommerce/blocks-checkout';
 import { TotalsFooterItem } from '@woocommerce/base-components/cart-checkout';
 import { getCurrencyFromPriceResponse } from '@woocommerce/price-format';
@@ -24,7 +24,17 @@ import {
 } from '../../../cart-checkout-shared';
 import { OrderMetaSlotFill } from './slotfills';
 
-export const Edit = ( { clientId }: { clientId: string } ): JSX.Element => {
+export type BlockAttributes = {
+	sectionHeading: string | null;
+	footerHeading: string | null;
+};
+
+export const Edit = ( {
+	clientId,
+	attributes,
+	setAttributes,
+}: BlockEditProps< BlockAttributes > ) => {
+	const { sectionHeading, footerHeading } = attributes;
 	const blockProps = useBlockProps();
 	const { cartTotals } = useStoreCart();
 	const totalsCurrency = getCurrencyFromPriceResponse( cartTotals );
@@ -35,6 +45,34 @@ export const Edit = ( { clientId }: { clientId: string } ): JSX.Element => {
 	const { isLarge } = useContainerWidthContext();
 	const [ isOpen, setIsOpen ] = useState( false );
 	const ariaControlsId = useId();
+
+	const headingText = sectionHeading ?? __( 'Order summary', 'woocommerce' );
+
+	const onChangeSectionHeading = ( newSectionHeading: string ) => {
+		setAttributes( { sectionHeading: newSectionHeading } );
+	};
+
+	const onChangeFooterHeading = ( newFooterHeading: string ) => {
+		setAttributes( { footerHeading: newFooterHeading } );
+	};
+
+	const heading = (
+		<RichText
+			tagName="span"
+			identifier="headingText"
+			value={ headingText }
+			onChange={ onChangeSectionHeading }
+		/>
+	);
+
+	const footerHeadingLabel = (
+		<RichText
+			tagName="span"
+			identifier="footerHeadingText"
+			value={ footerHeading || __( 'Total', 'woocommerce' ) }
+			onChange={ onChangeFooterHeading }
+		/>
+	);
 
 	const orderSummaryProps = ! isLarge
 		? {
@@ -73,7 +111,7 @@ export const Edit = ( { clientId }: { clientId: string } ): JSX.Element => {
 					className="wc-block-components-checkout-order-summary__title-text"
 					role="heading"
 				>
-					{ __( 'Order summary', 'woocommerce' ) }
+					{ heading }
 				</p>
 				{ ! isLarge && (
 					<>
@@ -103,6 +141,7 @@ export const Edit = ( { clientId }: { clientId: string } ): JSX.Element => {
 					<TotalsFooterItem
 						currency={ totalsCurrency }
 						values={ cartTotals }
+						label={ footerHeadingLabel }
 					/>
 				</div>
 				<OrderMetaSlotFill />
