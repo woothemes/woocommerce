@@ -22,12 +22,42 @@ import { getSetting } from '@woocommerce/settings';
  * Internal dependencies
  */
 import { ShippingRateSelector } from './shipping-rate-selector';
+import { EditableText } from '../../../../../../packages/components/editable-text';
 
-const Block = ( { className }: { className: string } ): JSX.Element | null => {
+export type BlockAttributes = {
+	sectionHeading: string | null;
+	className: string;
+};
+
+export type BlockProps = {
+	className: string;
+	sectionHeading: string | null;
+	onChangeHeading: ( heading: string ) => void;
+};
+
+const Block = ( {
+	className,
+	sectionHeading,
+	onChangeHeading,
+}: BlockProps ) => {
 	const { isEditor } = useEditorContext();
 	const { cartNeedsShipping, shippingRates } = useStoreCart();
 	const [ isShippingCalculatorOpen, setIsShippingCalculatorOpen ] =
 		useState( false );
+
+	const hasSelectedCollectionOnly =
+		selectedRatesAreCollectable( shippingRates );
+
+	const collectionOrDelivery = hasSelectedCollectionOnly
+		? __( 'Collection', 'woocommerce' )
+		: __( 'Delivery', 'woocommerce' );
+
+	const heading =
+		sectionHeading === null ? collectionOrDelivery : sectionHeading;
+
+	const label = (
+		<EditableText value={ heading } onChange={ onChangeHeading } />
+	);
 
 	if ( ! cartNeedsShipping ) {
 		return null;
@@ -42,9 +72,6 @@ const Block = ( { className }: { className: string } ): JSX.Element | null => {
 		true
 	);
 
-	const hasSelectedCollectionOnly =
-		selectedRatesAreCollectable( shippingRates );
-
 	return (
 		<TotalsWrapper className={ className }>
 			<ShippingCalculatorContext.Provider
@@ -56,11 +83,7 @@ const Block = ( { className }: { className: string } ): JSX.Element | null => {
 				} }
 			>
 				<TotalsShipping
-					label={
-						hasSelectedCollectionOnly
-							? __( 'Collection', 'woocommerce' )
-							: __( 'Delivery', 'woocommerce' )
-					}
+					label={ label }
 					placeholder={
 						showCalculator ? (
 							<ShippingCalculatorButton

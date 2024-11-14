@@ -13,13 +13,29 @@ import {
 	selectedRatesAreCollectable,
 } from '@woocommerce/base-utils';
 
+/**
+ * Internal dependencies
+ */
+import { EditableText } from '../../../../../../packages/components/editable-text';
+// todo alias import
+
+export type BlockAttributes = {
+	sectionHeading: string | null;
+	className: string;
+};
+
+export type BlockProps = BlockAttributes & {
+	onChangeSectionHeading: ( label: string ) => void;
+};
+
 const Block = ( {
 	className = '',
-}: {
-	className?: string;
-} ): JSX.Element | null => {
+	sectionHeading,
+	onChangeSectionHeading,
+}: BlockProps ) => {
 	const { cartNeedsShipping, shippingRates, shippingAddress } =
 		useStoreCart();
+
 	const prefersCollection = useSelect( ( select ) =>
 		select( CHECKOUT_STORE_KEY ).prefersCollection()
 	);
@@ -35,6 +51,16 @@ const Block = ( {
 		)
 	);
 
+	const defaultLabel = hasSelectedCollectionOnly
+		? __( 'Collection', 'woocommerce' )
+		: __( 'Delivery', 'woocommerce' );
+
+	const heading = sectionHeading === null ? defaultLabel : sectionHeading;
+
+	const label = (
+		<EditableText value={ heading } onChange={ onChangeSectionHeading } />
+	);
+
 	const hasCompleteAddress = isAddressComplete( shippingAddress, [
 		'state',
 		'country',
@@ -45,11 +71,7 @@ const Block = ( {
 	return (
 		<TotalsWrapper className={ className }>
 			<TotalsShipping
-				label={
-					hasSelectedCollectionOnly
-						? __( 'Collection', 'woocommerce' )
-						: __( 'Delivery', 'woocommerce' )
-				}
+				label={ label }
 				placeholder={
 					<span className="wc-block-components-shipping-placeholder__value">
 						{ hasCompleteAddress
