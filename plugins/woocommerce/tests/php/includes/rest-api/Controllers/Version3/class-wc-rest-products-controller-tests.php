@@ -351,6 +351,60 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	}
 
 	/**
+	 * Test that the products endpoint can filter by global_unique_id.
+	 *
+	 * @return void
+	 */
+	public function test_products_query_by_global_unique_id_param() {
+		$product = WC_Helper_Product::create_simple_product(
+			true,
+			array(
+				'name' 			   => 'Waffle 6',
+				'sku'  			   => 'waffle-6',
+				'global_unique_id' => '6'
+			)
+		);
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'global_unique_id' => '6'
+			)
+		);
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+		$response_products = $response->get_data();
+
+		$this->assertEquals( 1, count( $response_products ) );
+		$this->assertEquals( $response_products[0]['name'], 'Waffle 6' );
+	}
+
+	/**
+	 * Test that the products endpoint can filter by global_unique_id and also return matched variations.
+	 *
+	 * @return void
+	 */
+	public function test_products_query_by_global_unique_id_param_for_variations() {
+		$parent_product = WC_Helper_Product::create_variation_product();
+		$variation      = $parent_product->get_available_variations()[0];
+		$variation      = wc_get_product( $variation['variation_id'] );
+		$unique_id		= $parent_product->get_id() . '-1';
+		$variation->set_global_unique_id( $unique_id );
+		$variation->save();
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'global_unique_id' => $unique_id
+			)
+		);
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+		$response_products = $response->get_data();
+
+		$this->assertEquals( 1, count( $response_products ) );
+		$this->assertEquals( $response_products[0]['name'], $variation->get_name() );
+	}
+
+	/**
 	 * Test that the `include_meta` param filters the `meta_data` prop correctly.
 	 */
 	public function test_collection_param_include_meta() {
