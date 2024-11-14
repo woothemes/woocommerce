@@ -15,6 +15,8 @@ if ( process.env.NODE_ENV && process.env.NODE_ENV === 'production' ) {
 }
 module.exports = {
 	stories: [
+		// Introductory documentation
+		'../stories/**/*.mdx',
 		// WooCommerce Admin / @woocommerce/components components
 		'../../../packages/js/components/src/**/stories/*.story.@(js|tsx)',
 		// WooCommerce Admin / @woocommerce/experimental components
