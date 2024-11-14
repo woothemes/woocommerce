@@ -8,7 +8,7 @@ use Automattic\WooCommerce\Internal\ProductFilters\FilterData;
 use Automattic\WooCommerce\Internal\ProductFilters\QueryClauses;
 
 /**
- * LoggingServiceProvider class.
+ * ProductFiltersServiceProvider class.
  */
 class ProductFiltersServiceProvider extends AbstractInterfaceServiceProvider {
 	/**
