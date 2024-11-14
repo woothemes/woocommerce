@@ -36,6 +36,10 @@ final class QueryFilters {
 			$args = $this->stock_filter_clauses( $args, $wp_query );
 		}
 
+		if ( $wp_query->get( 'filter_status' ) ) {
+			$args = $this->status_filter_clauses( $args, $wp_query );
+		}
+
 		return $args;
 	}
 
@@ -50,6 +54,7 @@ final class QueryFilters {
 		$args = $this->stock_filter_clauses( $args, $wp_query );
 		$args = $this->price_filter_clauses( $args, $wp_query );
 		$args = $this->attribute_filter_clauses( $args, $wp_query );
+		$args = $this->status_filter_clauses( $args, $wp_query );
 
 		return $args;
 	}
@@ -89,11 +94,17 @@ final class QueryFilters {
 	 * Get stock status counts for the current products.
 	 *
 	 * @param array $query_vars The WP_Query arguments.
+	 * @param array $include_statuses Stock statuses to include.
 	 * @return array status=>count pairs.
 	 */
-	public function get_stock_status_counts( $query_vars ) {
+	public function get_stock_status_counts( $query_vars, $include_statuses = array() ) {
 		global $wpdb;
-		$stock_status_options = array_map( 'esc_sql', array_keys( wc_get_product_stock_status_options() ) );
+
+		if ( empty( $include_statuses ) ) {
+			$stock_status_options = array_map( 'esc_sql', array_keys( wc_get_product_stock_status_options() ) );
+		} else {
+			$stock_status_options = $include_statuses;
+		}
 
 		add_filter( 'posts_clauses', array( $this, 'add_query_clauses' ), 10, 2 );
 		add_filter( 'posts_pre_query', '__return_empty_array' );
@@ -118,6 +129,53 @@ final class QueryFilters {
 		}
 
 		return $stock_status_counts;
+	}
+
+	/**
+	 * Get the count of on sale products.
+	 *
+	 * @param array $query_vars The WP_Query arguments.
+	 */
+	public function get_onsale_status_counts( array $query_vars ) {
+		$transient_key = 'wc_onsale_status_count_' . md5( wp_json_encode( $query_vars ) );
+		$cached_data   = get_transient( $transient_key );
+
+		if ( isset( $cached_data ) && ( ! defined( 'WP_DEBUG' ) || true !== WP_DEBUG ) ) {
+			return $cached_data;
+		}
+
+		global $wpdb;
+
+		add_filter( 'posts_clauses', array( $this, 'add_query_clauses' ), 10, 2 );
+		add_filter( 'posts_pre_query', '__return_empty_array' );
+
+		$query_vars['no_found_rows']  = true;
+		$query_vars['posts_per_page'] = -1;
+		$query_vars['fields']         = 'ids';
+		$query                        = new \WP_Query();
+
+		$result            = $query->query( $query_vars );
+		$product_query_sql = $query->request;
+
+		remove_filter( 'posts_clauses', array( $this, 'add_query_clauses' ), 10 );
+		remove_filter( 'posts_pre_query', '__return_empty_array' );
+
+		$count_sql = "
+			SELECT COUNT( DISTINCT product_id ) as status_count
+			FROM {$wpdb->wc_product_meta_lookup}
+			WHERE product_id IN ( {$product_query_sql} )
+			AND onsale > 0
+		"; // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+		$result = $wpdb->get_var( $count_sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+		$onsale_status_counts = array(
+			'onsale' => $result,
+		);
+
+		set_transient( $transient_key, $onsale_status_counts );
+
+		return $onsale_status_counts;
 	}
 
 	/**
@@ -210,6 +268,35 @@ final class QueryFilters {
 
 		$args['join']   = $this->append_product_sorting_table_join( $args['join'] );
 		$args['where'] .= ' AND wc_product_meta_lookup.stock_status IN (\'' . implode( '\',\'', array_map( 'esc_sql', explode( ',', $wp_query->get( 'filter_stock_status' ) ) ) ) . '\')';
+
+		return $args;
+	}
+
+	/**
+	 * Add query clauses for status filter.
+	 * { onsale, instock, onbackorder, outofstock }
+	 *
+	 * @param array     $args     Query args.
+	 * @param \WP_Query $wp_query WP_Query object.
+	 * @return array
+	 */
+	private function status_filter_clauses( $args, $wp_query ) {
+		if ( ! $wp_query->get( 'filter_status' ) ) {
+			return $args;
+		}
+
+		global $wpdb;
+		$statuses = array_map( 'esc_sql', explode( ',', $wp_query->get( 'filter_status' ) ) );
+
+		foreach ( $statuses as $status ) {
+			if ( 'onsale' === $status ) {
+				$args['where'] .= ' AND wc_product_meta_lookup.onsale = 1';
+			} else {
+				$args['where'] .= $wpdb->prepare( ' AND wc_product_meta_lookup.stock_status = %s', array( $status ) );
+			}
+		}
+
+		$args['join'] = $this->append_product_sorting_table_join( $args['join'] );
 
 		return $args;
 	}

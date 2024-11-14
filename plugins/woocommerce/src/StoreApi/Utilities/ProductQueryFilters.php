@@ -212,4 +212,56 @@ class ProductQueryFilters {
 
 		return array_map( 'absint', wp_list_pluck( $results, 'product_count', 'rounded_average_rating' ) );
 	}
+
+	/**
+	 * Get onsale counts for the current products.
+	 *
+	 * @param \WP_REST_Request $request The request object.
+	 * @return array rating=>count pairs.
+	 */
+	public function get_onsale_status_counts( $request ) {
+		$transient_key = 'wc_onsale_status_count_' . md5( wp_json_encode( $request ) );
+		$cached_data   = get_transient( $transient_key );
+
+		if ( isset( $cached_data ) && ( ! defined( 'WP_DEBUG' ) || true !== WP_DEBUG ) ) {
+			return $cached_data;
+		}
+
+		global $wpdb;
+
+		// Grab the request from the WP Query object, and remove SQL_CALC_FOUND_ROWS and Limits so we get a list of all products.
+		$product_query = new ProductQuery();
+
+		add_filter( 'posts_clauses', array( $product_query, 'add_query_clauses' ), 10, 2 );
+		add_filter( 'posts_pre_query', '__return_empty_array' );
+
+		$query_args                   = $product_query->prepare_objects_query( $request );
+		$query_args['no_found_rows']  = true;
+		$query_args['posts_per_page'] = -1;
+		$query_args['fields']         = 'ids';
+		$query                        = new \WP_Query();
+
+		$result            = $query->query( $query_args );
+		$product_query_sql = $query->request;
+
+		remove_filter( 'posts_clauses', array( $product_query, 'add_query_clauses' ), 10 );
+		remove_filter( 'posts_pre_query', '__return_empty_array' );
+
+		$count_sql = "
+			SELECT COUNT( DISTINCT product_id ) as status_count
+			FROM {$wpdb->wc_product_meta_lookup}
+			WHERE product_id IN ( {$product_query_sql} )
+			AND onsale > 0
+		"; // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+		$results = $wpdb->get_var( $count_sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+		$onsale_status_counts = array(
+			'onsale' => $results,
+		);
+
+		set_transient( $transient_key, $onsale_status_counts );
+
+		return $onsale_status_counts;
+	}
 }
