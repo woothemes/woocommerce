@@ -151,9 +151,7 @@ test.describe(
 				).toBeVisible();
 
 				// sort by price high to low
-				await page
-					.getByLabel( 'Shop order' )
-					.selectOption( 'price-desc' );
+				await page.getByLabel( 'Sort by' ).selectOption( 'price-desc' );
 				await page.waitForURL( /.*?orderby=price-desc.*/ );
 
 				await expect(
@@ -183,7 +181,7 @@ test.describe(
 				).toBeVisible();
 
 				// sort by price low to high
-				await page.getByLabel( 'Shop order' ).selectOption( 'price' );
+				await page.getByLabel( 'Sort by' ).selectOption( 'price' );
 				await page.waitForURL( /.*?orderby=price.*/ );
 
 				await expect(
