@@ -38,7 +38,7 @@ const NotFound = () => {
  * Default route when active page is not found.
  *
  * @param {string}       activePage - The active page.
- * @param {SettingsData} settingsData - The settings data.
+ * @param {settingsData} settingsData - The settings data.
  *
  */
 const getNotFoundRoute = (
@@ -67,7 +67,7 @@ const getNotFoundRoute = (
  * Creates a route configuration for legacy settings.
  *
  * @param {string}       activePage - The active page.
- * @param {SettingsData} settingsData - The settings data.
+ * @param {settingsData} settingsData - The settings data.
  */
 const getLegacyRoute = (
 	activePage: string,
