@@ -168,6 +168,7 @@ final class Container {
 			StatsServiceProvider::class,
 			ImportExportServiceProvider::class,
 			CostOfGoodsSoldServiceProvider::class,
+			ProductFiltersServiceProvider::class,
 		);
 	}
 }
