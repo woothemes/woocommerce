@@ -45,7 +45,7 @@ declare global {
 	interface Window {
 		wcSettings: {
 			admin: {
-				settingsPages: SettingsData;
+				settingsData: SettingsData;
 			};
 		};
 		wcTracks: {

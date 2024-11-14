@@ -37,8 +37,8 @@ const NotFound = () => {
 /**
  * Default route when active page is not found.
  *
- * @param {string}                                       activePage - The active page.
- * @param {typeof window.wcSettings.admin.settingsPages} pages      - The pages.
+ * @param {string}       activePage - The active page.
+ * @param {SettingsData} pages      - The pages.
  *
  */
 const getNotFoundRoute = (
@@ -50,8 +50,8 @@ const getNotFoundRoute = (
 		sidebar: (
 			<Sidebar
 				activePage={ activePage }
-				pages={ pages }
-				pageTitle={ 'Settings' }
+				settingsData={ pages }
+				pageTitle={ __( 'Settings', 'woocommerce' ) }
 			/>
 		),
 		content: <NotFound />,
@@ -67,7 +67,7 @@ const getNotFoundRoute = (
  * Creates a route configuration for legacy settings pages.
  *
  * @param {string}                                       activePage - The active page.
- * @param {typeof window.wcSettings.admin.settingsPages} pages      - The pages.
+ * @param {SettingsData}                                   pages      - The pages.
  */
 const getLegacyRoute = ( activePage: string, pages: SettingsData ): Route => {
 	const settingsPage = pages[ activePage ];
@@ -79,7 +79,7 @@ const getLegacyRoute = ( activePage: string, pages: SettingsData ): Route => {
 			sidebar: (
 				<Sidebar
 					activePage={ activePage }
-					pages={ pages }
+					settingsData={ pages }
 					pageTitle={ pageTitle }
 				/>
 			),
@@ -144,35 +144,35 @@ export function useModernRoutes() {
  * Hook to determine and return the active route based on the current path.
  */
 export const useActiveRoute = () => {
-	const settingsPages = window.wcSettings?.admin?.settingsPages;
+	const settingsData = window.wcSettings?.admin?.settingsData;
 	const location = useLocation() as Location;
 	const modernRoutes = useModernRoutes();
 
 	return useMemo( () => {
 		const { tab: activePage = 'general' } = location.params;
-		const settingsPage = settingsPages?.[ activePage ];
+		const settingsPage = settingsData?.[ activePage ];
 
 		if ( ! settingsPage ) {
-			return getNotFoundRoute( activePage, settingsPages );
+			return getNotFoundRoute( activePage, settingsData );
 		}
 
 		// Handle legacy pages.
 		if ( ! settingsPage.is_modern ) {
-			return getLegacyRoute( activePage, settingsPages );
+			return getLegacyRoute( activePage, settingsData );
 		}
 
 		const modernRoute = modernRoutes[ activePage ];
 
 		// Handle modern pages.
 		if ( ! modernRoute ) {
-			return getNotFoundRoute( activePage, settingsPages );
+			return getNotFoundRoute( activePage, settingsData );
 		}
 
 		// Sidebar is responsibility of WooCommerce, not extensions so add it here.
 		modernRoute.areas.sidebar = (
 			<Sidebar
 				activePage={ activePage }
-				pages={ settingsPages }
+				settingsData={ settingsData }
 				pageTitle={ settingsPage.label }
 			/>
 		);
@@ -180,5 +180,5 @@ export const useActiveRoute = () => {
 		modernRoute.key = activePage;
 
 		return modernRoute;
-	}, [ settingsPages, location.params, modernRoutes ] );
+	}, [ settingsData, location.params, modernRoutes ] );
 };
