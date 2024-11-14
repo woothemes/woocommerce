@@ -1684,7 +1684,7 @@ final class PaymentExtensionSuggestions {
 			),
 			self::PAYU_INDIA        => array(
 				'_type'       => self::TYPE_PSP,
-				'title'       => esc_html__( 'PayU India for WooCommerce', 'woocommerce' ),
+				'title'       => esc_html__( 'PayU India', 'woocommerce' ),
 				'description' => esc_html__( 'Enable PayU\’s exclusive plugin for WooCommerce to start accepting payments in 100+ payment methods available in India including credit cards, debit cards, UPI, & more!', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/payu.svg', WC_PLUGIN_FILE ),
 				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/payu.png', WC_PLUGIN_FILE ),
