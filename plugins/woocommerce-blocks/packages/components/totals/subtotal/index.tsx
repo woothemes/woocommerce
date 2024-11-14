@@ -20,12 +20,14 @@ export interface SubtotalProps {
 	className?: string;
 	currency: Currency;
 	values: Values | Record< string, never >;
+	label: React.ReactNode;
 }
 
 const Subtotal = ( {
 	currency,
 	values,
 	className,
+	label = __( 'Subtotal', 'woocommerce' ),
 }: SubtotalProps ): ReactElement => {
 	const { total_items: totalItems, total_items_tax: totalItemsTax } = values;
 	const itemsValue = parseInt( totalItems, 10 );
@@ -35,7 +37,7 @@ const Subtotal = ( {
 		<TotalsItem
 			className={ className }
 			currency={ currency }
-			label={ __( 'Subtotal', 'woocommerce' ) }
+			label={ label }
 			value={
 				getSetting( 'displayCartPricesIncludingTax', false )
 					? itemsValue + itemsTaxValue

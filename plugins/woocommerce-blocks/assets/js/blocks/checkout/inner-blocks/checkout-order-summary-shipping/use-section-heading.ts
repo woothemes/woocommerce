@@ -32,7 +32,7 @@ export const useSectionHeading = ( {
 		? __( 'Collection', 'woocommerce' )
 		: __( 'Delivery', 'woocommerce' );
 
-	const heading = sectionHeading === null ? defaultLabel : sectionHeading;
+	const heading = sectionHeading ?? defaultLabel;
 
 	return heading;
 };

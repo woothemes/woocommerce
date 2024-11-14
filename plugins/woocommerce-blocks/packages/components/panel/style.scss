@@ -37,6 +37,14 @@
 		padding-left: 0 !important;
 	}
 
+	&.is-editor-panel {
+		&:hover,
+		&:focus,
+		&:active {
+			cursor: auto;
+		}
+	}
+
 	> .wc-block-components-panel__button-icon {
 		fill: currentColor;
 		position: absolute;
