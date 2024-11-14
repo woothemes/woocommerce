@@ -8,6 +8,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+use Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils;
+
 /**
  * The WooCommerce countries class stores country/state data.
  */
@@ -721,6 +723,33 @@ class WC_Countries {
 	}
 
 	/**
+	 * Get the default visibility for the address_2 field.
+	 *
+	 * @return string
+	 */
+	public function get_company_field_visibility() {
+		return get_option( 'woocommerce_checkout_company_field', CartCheckoutUtils::is_checkout_block_default() ? 'hidden' : 'optional' );
+	}
+
+	/**
+	 * Get the default visibility for the address_2 field.
+	 *
+	 * @return string
+	 */
+	public function get_address_2_field_visibility() {
+		return get_option( 'woocommerce_checkout_address_2_field', 'optional' );
+	}
+
+	/**
+	 * Get the default visibility for the address_2 field.
+	 *
+	 * @return string
+	 */
+	public function get_phone_field_visibility() {
+		return get_option( 'woocommerce_checkout_phone_field', CartCheckoutUtils::is_checkout_block_default() ? 'optional' : 'required' );
+	}
+
+	/**
 	 * Returns the fields we show by default. This can be filtered later on.
 	 *
 	 * @return array
@@ -730,7 +759,7 @@ class WC_Countries {
 
 		// If necessary, append '(optional)' to the placeholder: we don't need to worry about the
 		// label, though, as woocommerce_form_field() takes care of that.
-		if ( 'optional' === get_option( 'woocommerce_checkout_address_2_field', 'optional' ) ) {
+		if ( 'optional' === $this->get_address_2_field_visibility() ) {
 			$address_2_placeholder = __( 'Apartment, suite, unit, etc. (optional)', 'woocommerce' );
 		} else {
 			$address_2_placeholder = $address_2_label;
@@ -756,7 +785,7 @@ class WC_Countries {
 				'class'        => array( 'form-row-wide' ),
 				'autocomplete' => 'organization',
 				'priority'     => 30,
-				'required'     => 'required' === get_option( 'woocommerce_checkout_company_field', 'optional' ),
+				'required'     => 'required' === $this->get_company_field_visibility(),
 			),
 			'country'    => array(
 				'type'         => 'country',
@@ -782,7 +811,7 @@ class WC_Countries {
 				'class'        => array( 'form-row-wide', 'address-field' ),
 				'autocomplete' => 'address-line2',
 				'priority'     => 60,
-				'required'     => 'required' === get_option( 'woocommerce_checkout_address_2_field', 'optional' ),
+				'required'     => 'required' === $this->get_address_2_field_visibility(),
 			),
 			'city'       => array(
 				'label'        => __( 'Town / City', 'woocommerce' ),
@@ -810,11 +839,11 @@ class WC_Countries {
 			),
 		);
 
-		if ( 'hidden' === get_option( 'woocommerce_checkout_company_field', 'optional' ) ) {
+		if ( 'hidden' === $this->get_company_field_visibility() ) {
 			unset( $fields['company'] );
 		}
 
-		if ( 'hidden' === get_option( 'woocommerce_checkout_address_2_field', 'optional' ) ) {
+		if ( 'hidden' === $this->get_address_2_field_visibility() ) {
 			unset( $fields['address_2'] );
 		}
 
@@ -1696,10 +1725,10 @@ class WC_Countries {
 
 		// Add email and phone fields.
 		if ( 'billing_' === $type ) {
-			if ( 'hidden' !== get_option( 'woocommerce_checkout_phone_field', 'required' ) ) {
+			if ( 'hidden' !== $this->get_phone_field_visibility() ) {
 				$address_fields['billing_phone'] = array(
 					'label'        => __( 'Phone', 'woocommerce' ),
-					'required'     => 'required' === get_option( 'woocommerce_checkout_phone_field', 'required' ),
+					'required'     => 'required' === $this->get_phone_field_visibility(),
 					'type'         => 'tel',
 					'class'        => array( 'form-row-wide' ),
 					'validate'     => array( 'phone' ),
