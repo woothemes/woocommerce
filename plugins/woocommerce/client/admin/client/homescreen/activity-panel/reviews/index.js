@@ -209,10 +209,7 @@ class ReviewsPanel extends Component {
 		const icon = (
 			<div className="woocommerce-review-activity-card__image-overlay">
 				<div className={ productImageClasses }>
-					<ProductImage
-						product={ product }
-						width={ 33 }
-					/>
+					<ProductImage product={ product } width={ 33 } />
 				</div>
 			</div>
 		);
