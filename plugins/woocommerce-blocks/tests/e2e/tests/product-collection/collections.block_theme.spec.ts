@@ -215,4 +215,49 @@ test.describe( 'Product Collection: Collections', () => {
 			await expect( input ).toBeHidden();
 		} );
 	} );
+
+	test.describe( 'Related Products collection', () => {
+		test( 'Can configure related products criteria using "Related by" settings', async ( {
+			pageObject,
+			editor,
+		} ) => {
+			// "Related by" control shouldn't be visible for other collections
+			await pageObject.createNewPostAndInsertBlock( 'bestSellers' );
+			const sidebarSettings = pageObject.locateSidebarSettings();
+
+			const relatedByControl = sidebarSettings.locator(
+				'.wc-block-editor-product-collection-inspector-controls__relate-by'
+			);
+			await expect( relatedByControl ).toBeHidden();
+
+			// Change collection type to "Related Products"
+			// And verify that "Related by" control is visible
+			await pageObject.changeCollectionUsingToolbar( 'relatedProducts' );
+			await pageObject.chooseProductInEditorProductPickerIfAvailable(
+				editor.canvas
+			);
+			await expect( relatedByControl ).toBeVisible();
+
+			// Verify that both checkboxes (Categories and Tags) are checked by default
+			const categoriesCheckbox =
+				sidebarSettings.getByLabel( 'Categories' );
+			const tagsCheckbox = sidebarSettings.getByLabel( 'Tags' );
+			await expect( categoriesCheckbox ).toBeChecked();
+			await expect( tagsCheckbox ).toBeChecked();
+			await expect( pageObject.productTitles ).toHaveText( [ 'Single' ] );
+
+			// Uncheck "Categories" checkbox
+			await categoriesCheckbox.uncheck();
+			await expect(
+				editor.canvas.getByText(
+					'No products to display. Try adjusting the filters in the block settings panel.'
+				)
+			).toBeVisible();
+
+			// Verify on frontend
+			await categoriesCheckbox.check();
+			await pageObject.publishAndGoToFrontend();
+			await expect( pageObject.productTitles ).toHaveText( [ 'Single' ] );
+		} );
+	} );
 } );

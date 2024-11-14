@@ -14,7 +14,7 @@ import {
 } from '@woocommerce/admin-layout';
 import { getSetting } from '@woocommerce/settings';
 import { Text, useSlot } from '@woocommerce/experimental';
-import { getScreenFromPath, isWCAdmin } from '@woocommerce/navigation';
+import { getScreenFromPath, isWCAdmin, getPath } from '@woocommerce/navigation';
 
 /**
  * Internal dependencies
@@ -26,6 +26,10 @@ import {
 	LaunchYourStoreStatus,
 	useLaunchYourStore,
 } from '../launch-your-store';
+import {
+	OrderAttributionInstallBanner,
+	BANNER_TYPE_HEADER as ORDER_ATTRIBUTION_INSTALL_BANNER_TYPE_HEADER,
+} from '~/order-attribution-install-banner';
 
 export const PAGE_TITLE_FILTER = 'woocommerce_admin_header_page_title';
 
@@ -128,6 +132,9 @@ export const Header = ( { sections, isEmbedded = false, query } ) => {
 	const showLaunchYourStoreStatus =
 		isHomescreen && launchYourStoreEnabled && ! isLoading;
 
+	const isAnalyticsOverviewScreen =
+		isWCAdmin() && getPath() === '/analytics/overview';
+
 	return (
 		<div className={ className } ref={ headerElement }>
 			{ activeSetupList && (
@@ -161,6 +168,14 @@ export const Header = ( { sections, isEmbedded = false, query } ) => {
 				</Text>
 
 				{ showLaunchYourStoreStatus && <LaunchYourStoreStatus /> }
+				{ isAnalyticsOverviewScreen && (
+					<OrderAttributionInstallBanner
+						bannerType={
+							ORDER_ATTRIBUTION_INSTALL_BANNER_TYPE_HEADER
+						}
+						eventContext="analytics-overview-header"
+					/>
+				) }
 
 				<WooHeaderItem.Slot fillProps={ { isEmbedded, query } } />
 			</div>
