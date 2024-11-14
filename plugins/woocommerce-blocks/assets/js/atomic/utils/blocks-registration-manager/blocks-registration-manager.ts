@@ -172,12 +172,6 @@ export class BlockRegistrationManager
 			? new BlockVariationStrategy()
 			: new BlockTypeStrategy();
 
-		console.log( {
-			registering: blockWithRestrictionName,
-			blockMetadata,
-			blockSettings,
-		} );
-
 		this.blockRegistrationStrategy.register(
 			blockMetadata || blockWithRestrictionName,
 			blockSettings
@@ -240,7 +234,7 @@ export class BlockRegistrationManager
 	 * This method is the main entry point for the block registration manager. It is called with a EditorViewChangeDetector object,
 	 * and registers and unregisters blocks based on the current template and whether the editor is in a post or page.
 	 *
-	 * @param {EditorViewChangeDetector} EditorViewChangeDetector - The template change detector object.
+	 * @param {editorViewChangeDetector} editorViewChangeDetector - The template change detector object.
 	 */
 	run( editorViewChangeDetector: EditorViewChangeDetector ) {
 		this.registerBlocksBeforeEnteringRestrictedArea( {
