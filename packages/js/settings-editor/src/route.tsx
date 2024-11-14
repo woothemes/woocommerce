@@ -3,6 +3,7 @@
  */
 import {
 	createElement,
+	Fragment,
 	useEffect,
 	useMemo,
 	useState,
@@ -24,8 +25,7 @@ import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
 /**
  * Internal dependencies
  */
-import { Sidebar } from './components/sidebar';
-import { SectionTabs } from './components/section-tabs';
+import { Sidebar, SectionTabs, Header } from './components';
 import { Route, Location } from './types';
 import { LegacyContent } from './legacy';
 
@@ -65,6 +65,26 @@ const getNotFoundRoute = (
 } );
 
 /**
+ * Get the tabs for a settings page.
+ *
+ * @param {SettingsPage} settingsPage - The settings page.
+ * @return {Array<{ name: string; title: string }>} The tabs.
+ */
+const getSettingsPageTabs = (
+	settingsPage: SettingsPage
+): Array< {
+	name: string;
+	title: string;
+} > => {
+	const sections = Object.keys( settingsPage.sections );
+
+	return sections.map( ( key ) => ( {
+		name: settingsPage.sections[ key ].label,
+		title: settingsPage.sections[ key ].label,
+	} ) );
+};
+
+/**
  * Creates a route configuration for legacy settings.
  *
  * @param {string}       activePage - The active page.
@@ -76,6 +96,7 @@ const getLegacyRoute = (
 ): Route => {
 	const settingsPage = settingsData[ activePage ];
 	const pageTitle = settingsPage?.label || __( 'Settings', 'woocommerce' );
+	const tabs = getSettingsPageTabs( settingsPage );
 
 	return {
 		key: activePage,
@@ -88,9 +109,12 @@ const getLegacyRoute = (
 				/>
 			),
 			content: (
-				<SectionTabs settingsPage={ settingsPage }>
-					<LegacyContent settingsPage={ settingsPage } />
-				</SectionTabs>
+				<>
+					<Header />
+					<SectionTabs tabs={ tabs }>
+						<LegacyContent settingsPage={ settingsPage } />
+					</SectionTabs>
+				</>
 			),
 			edit: null,
 		},
@@ -159,6 +183,7 @@ export const useActiveRoute = () => {
 	return useMemo( () => {
 		const { tab: activePage = 'general' } = location.params;
 		const settingsPage = settingsData?.[ activePage ];
+		const tabs = getSettingsPageTabs( settingsPage );
 
 		if ( ! settingsPage ) {
 			return getNotFoundRoute( activePage, settingsData );
@@ -185,9 +210,12 @@ export const useActiveRoute = () => {
 			/>
 		);
 		modernRoute.areas.content = (
-			<SectionTabs settingsPage={ settingsPage }>
-				{ modernRoute.areas.content }
-			</SectionTabs>
+			<>
+				<Header />
+				<SectionTabs tabs={ tabs }>
+					{ modernRoute.areas.content }
+				</SectionTabs>
+			</>
 		);
 		// Make sure we have a key.
 		modernRoute.key = activePage;

@@ -6,25 +6,17 @@ import { TabPanel } from '@wordpress/components';
 
 export const SectionTabs = ( {
 	children,
-	settingsPage,
+	tabs,
 }: {
 	children: React.ReactNode;
-	settingsPage: SettingsPage;
+	tabs: Array< {
+		name: string;
+		title: string;
+	} >;
 } ) => {
-	const sections = Object.keys( settingsPage.sections );
-
-	if ( sections.length <= 1 ) {
+	if ( tabs.length <= 1 ) {
 		return <>{ children }</>;
 	}
 
-	return (
-		<TabPanel
-			tabs={ sections.map( ( key ) => ( {
-				name: settingsPage.sections[ key ].label,
-				title: settingsPage.sections[ key ].label,
-			} ) ) }
-		>
-			{ () => <>{ children }</> }
-		</TabPanel>
-	);
+	return <TabPanel tabs={ tabs }>{ () => <>{ children }</> }</TabPanel>;
 };
