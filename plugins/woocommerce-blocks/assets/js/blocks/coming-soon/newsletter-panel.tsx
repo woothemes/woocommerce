@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { registerPlugin } from '@wordpress/plugins';
 import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
@@ -10,9 +9,9 @@ import { getAdminLink } from '@woocommerce/settings';
 /**
  * Internal dependencies
  */
-import './style.scss';
+import './newsletter-panel.scss';
 
-const PluginComingSoonNewsletterMailpoet = () => {
+const NewsletterPanel = () => {
 	// @ts-ignore temp fix for missing type -- I wasn't able to build wc admin with @wordpress/editor installed.
 	const { PluginDocumentSettingPanel } = window.wp.editor;
 
@@ -31,6 +30,7 @@ const PluginComingSoonNewsletterMailpoet = () => {
 	}
 
 	// comingSoonNewsletter is set up from LaunchYourStore.php
+	// eslint-disable-next-line
 	const { mailpoet_connected, mailpoet_installed } =
 		window.comingSoonNewsletter || {};
 
@@ -69,7 +69,4 @@ const PluginComingSoonNewsletterMailpoet = () => {
 	);
 };
 
-registerPlugin( 'plugin-coming-soon-newsletter-setting-panel', {
-	render: PluginComingSoonNewsletterMailpoet,
-	icon: 'palmtree',
-} );
+export default NewsletterPanel;

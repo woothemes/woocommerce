@@ -325,8 +325,5 @@ class LaunchYourStore {
 		wp_register_script( 'coming-soon-newsletter-mailpoet', '' );
 		wp_enqueue_script( 'coming-soon-newsletter-mailpoet' );
 		wp_add_inline_script( 'coming-soon-newsletter-mailpoet', 'var comingSoonNewsletter = ' . wp_json_encode( $mailpoet ) . ';' );
-
-		WCAdminAssets::register_style( 'coming-soon-newsletter-setting-panel', 'style' );
-		WCAdminAssets::register_script( 'wp-admin-scripts', 'coming-soon-newsletter-setting-panel', true );
 	}
 }
