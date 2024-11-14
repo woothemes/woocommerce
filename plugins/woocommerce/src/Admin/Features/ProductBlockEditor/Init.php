@@ -3,6 +3,8 @@
  * WooCommerce Product Block Editor
  */
 
+declare(strict_types = 1);
+
 namespace Automattic\WooCommerce\Admin\Features\ProductBlockEditor;
 
 use Automattic\WooCommerce\Admin\Features\Features;
@@ -49,6 +51,10 @@ class Init {
 	 * Constructor
 	 */
 	public function __construct() {
+		if ( ! is_admin() && ! WC()->is_rest_api_request() ) {
+			return;
+		}
+
 		array_push( $this->supported_product_types, 'variable' );
 		array_push( $this->supported_product_types, 'external' );
 		array_push( $this->supported_product_types, 'grouped' );
@@ -127,7 +133,7 @@ class Init {
 		$editor_settings = $this->get_product_editor_settings();
 
 		$script_handle = 'wc-admin-edit-product';
-		wp_register_script( $script_handle, '', array(), '0.1.0', true );
+		wp_register_script( $script_handle, '', array( 'wp-blocks' ), '0.1.0', true );
 		wp_enqueue_script( $script_handle );
 		wp_add_inline_script(
 			$script_handle,
@@ -150,9 +156,10 @@ class Init {
 	 * Enqueue styles needed for the rich text editor.
 	 */
 	public function enqueue_styles() {
-		if ( ! PageController::is_admin_or_embed_page() ) {
+		if ( ! PageController::is_admin_page() ) {
 			return;
 		}
+		wp_enqueue_style( 'wc-product-editor' );
 		wp_enqueue_style( 'wp-edit-blocks' );
 		wp_enqueue_style( 'wp-format-library' );
 		wp_enqueue_editor();
@@ -168,10 +175,10 @@ class Init {
 	 * Dequeue conflicting styles.
 	 */
 	public function dequeue_conflicting_styles() {
-		if ( ! PageController::is_admin_or_embed_page() ) {
+		if ( ! PageController::is_admin_page() ) {
 			return;
 		}
-		// Dequeing this to avoid conflicts, until we remove the 'woocommerce-page' class.
+		// Dequeuing this to avoid conflicts, until we remove the 'woocommerce-page' class.
 		wp_dequeue_style( 'woocommerce-blocktheme' );
 	}
 

@@ -202,6 +202,7 @@ class Options extends \WC_REST_Data_Controller {
 			'woocommerce_product_tour_modal_hidden',
 			'woocommerce_block_product_tour_shown',
 			'woocommerce_revenue_report_date_tour_shown',
+			'woocommerce_orders_report_date_tour_shown',
 			'woocommerce_show_prepublish_checks_enabled',
 			'woocommerce_date_type',
 			'date_format',
@@ -222,6 +223,8 @@ class Options extends \WC_REST_Data_Controller {
 			'woocommerce_private_link',
 			'woocommerce_share_key',
 			'woocommerce_show_lys_tour',
+			'woocommerce_order_attribution_install_banner_dismissed',
+			'woocommerce_remote_variant_assignment',
 			// WC Test helper options.
 			'wc-admin-test-helper-rest-api-filters',
 			'wc_admin_helper_feature_values',

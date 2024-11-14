@@ -1,84 +1,46 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { formatShippingAddress } from '@woocommerce/base-utils';
-import { useEditorContext } from '@woocommerce/base-context';
-import {
-	ShippingAddress as ShippingAddressType,
-	getSetting,
-} from '@woocommerce/settings';
-import PickupLocation from '@woocommerce/base-components/cart-checkout/pickup-location';
-import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { useStoreCart } from '@woocommerce/base-context';
+import { ShippingCalculatorButton } from '@woocommerce/base-components/cart-checkout';
 import { useSelect } from '@wordpress/data';
+import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
 
 /**
  * Internal dependencies
  */
-import ShippingLocation from '../../shipping-location';
-import { CalculatorButton, CalculatorButtonProps } from './calculator-button';
+import { getPickupLocation } from './utils';
 
-export interface ShippingAddressProps {
-	showCalculator: boolean;
-	isShippingCalculatorOpen: boolean;
-	setIsShippingCalculatorOpen: CalculatorButtonProps[ 'setIsShippingCalculatorOpen' ];
-	shippingAddress: ShippingAddressType;
-}
-
-export type ActiveShippingZones = {
-	description: string;
-}[];
-
-export const ShippingAddress = ( {
-	showCalculator,
-	isShippingCalculatorOpen,
-	setIsShippingCalculatorOpen,
-	shippingAddress,
-}: ShippingAddressProps ): JSX.Element | null => {
-	const { isEditor } = useEditorContext();
+export const ShippingAddress = (): JSX.Element => {
+	const { shippingRates, shippingAddress } = useStoreCart();
 	const prefersCollection = useSelect( ( select ) =>
 		select( CHECKOUT_STORE_KEY ).prefersCollection()
 	);
-	const activeShippingZones: ActiveShippingZones = getSetting(
-		'activeShippingZones'
-	);
 
-	const hasMultipleAndDefaultZone =
-		activeShippingZones.length > 1 &&
-		activeShippingZones.some(
-			( zone: { description: string } ) =>
-				zone.description === 'Everywhere' ||
-				zone.description === 'Locations outside all other zones'
-		);
+	const formattedAddress = prefersCollection
+		? getPickupLocation( shippingRates )
+		: formatShippingAddress( shippingAddress );
 
-	const hasFormattedAddress = !! formatShippingAddress( shippingAddress );
+	const addressLabel = prefersCollection
+		? /* translators: %s location. */
+		  __( 'Collection from %s', 'woocommerce' )
+		: /* translators: %s location. */
+		  __( 'Delivers to %s', 'woocommerce' );
 
-	// If there is no default customer location set in the store,
-	// and the customer hasn't provided their address,
-	// and only one default shipping method is available for all locations,
-	// then the shipping calculator will be hidden to avoid confusion.
-	if ( ! hasFormattedAddress && ! isEditor && ! hasMultipleAndDefaultZone ) {
-		return null;
-	}
-	const label = hasFormattedAddress
-		? __( 'Change address', 'woocommerce' )
-		: __( 'Calculate shipping for your location', 'woocommerce' );
-	const formattedLocation = formatShippingAddress( shippingAddress );
+	const calculatorLabel =
+		! formattedAddress || prefersCollection
+			? __( 'Enter address to check delivery options', 'woocommerce' )
+			: __( 'Change address', 'woocommerce' );
+
 	return (
-		<>
-			{ prefersCollection ? (
-				<PickupLocation />
-			) : (
-				<ShippingLocation formattedLocation={ formattedLocation } />
-			) }
-			{ showCalculator && (
-				<CalculatorButton
-					label={ label }
-					isShippingCalculatorOpen={ isShippingCalculatorOpen }
-					setIsShippingCalculatorOpen={ setIsShippingCalculatorOpen }
-				/>
-			) }
-		</>
+		<div className="wc-block-components-shipping-address">
+			{ formattedAddress
+				? sprintf( addressLabel, formattedAddress ) + ' '
+				: null }
+			<ShippingCalculatorButton label={ calculatorLabel } />
+		</div>
 	);
 };
 

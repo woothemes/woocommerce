@@ -25,8 +25,16 @@ class WC_Settings_Emails extends WC_Settings_Page {
 		$this->label = __( 'Emails', 'woocommerce' );
 
 		add_action( 'woocommerce_admin_field_email_notification', array( $this, 'email_notification_setting' ) );
+		add_action( 'woocommerce_admin_field_email_preview', array( $this, 'email_preview' ) );
 		parent::__construct();
 	}
+
+	/**
+	 * Setting page icon.
+	 *
+	 * @var string
+	 */
+	public $icon = 'atSymbol';
 
 	/**
 	 * Get own sections.
@@ -76,13 +84,13 @@ class WC_Settings_Emails extends WC_Settings_Page {
 				array(
 					'title' => __( 'Email sender options', 'woocommerce' ),
 					'type'  => 'title',
-					'desc'  => '',
+					'desc'  => __( "Set the name and email address you'd like your outgoing emails to use.", 'woocommerce' ),
 					'id'    => 'email_options',
 				),
 
 				array(
 					'title'    => __( '"From" name', 'woocommerce' ),
-					'desc'     => __( 'How the sender name appears in outgoing WooCommerce emails.', 'woocommerce' ),
+					'desc'     => '',
 					'id'       => 'woocommerce_email_from_name',
 					'type'     => 'text',
 					'css'      => 'min-width:400px;',
@@ -93,7 +101,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 
 				array(
 					'title'             => __( '"From" address', 'woocommerce' ),
-					'desc'              => __( 'How the sender email appears in outgoing WooCommerce emails.', 'woocommerce' ),
+					'desc'              => '',
 					'id'                => 'woocommerce_email_from_address',
 					'type'              => 'email',
 					'custom_attributes' => array(
@@ -126,19 +134,6 @@ class WC_Settings_Emails extends WC_Settings_Page {
 					'css'         => 'min-width:400px;',
 					'placeholder' => __( 'N/A', 'woocommerce' ),
 					'default'     => '',
-					'autoload'    => false,
-					'desc_tip'    => true,
-				),
-
-				array(
-					'title'       => __( 'Footer text', 'woocommerce' ),
-					/* translators: %s: Available placeholders for use */
-					'desc'        => __( 'The text to appear in the footer of all WooCommerce emails.', 'woocommerce' ) . ' ' . sprintf( __( 'Available placeholders: %s', 'woocommerce' ), '{site_title} {site_url}' ),
-					'id'          => 'woocommerce_email_footer_text',
-					'css'         => 'width:400px; height: 75px;',
-					'placeholder' => __( 'N/A', 'woocommerce' ),
-					'type'        => 'textarea',
-					'default'     => '{site_title} &mdash; Built with {WooCommerce}',
 					'autoload'    => false,
 					'desc_tip'    => true,
 				),
@@ -192,9 +187,36 @@ class WC_Settings_Emails extends WC_Settings_Page {
 				),
 
 				array(
+					'title'       => __( 'Footer text', 'woocommerce' ),
+					/* translators: %s: Available placeholders for use */
+					'desc'        => __( 'The text to appear in the footer of all WooCommerce emails.', 'woocommerce' ) . ' ' . sprintf( __( 'Available placeholders: %s', 'woocommerce' ), '{site_title} {site_url}' ),
+					'id'          => 'woocommerce_email_footer_text',
+					'css'         => 'width:400px; height: 75px;',
+					'placeholder' => __( 'N/A', 'woocommerce' ),
+					'type'        => 'textarea',
+					'default'     => '{site_title} &mdash; Built with {WooCommerce}',
+					'autoload'    => false,
+					'desc_tip'    => true,
+				),
+
+				array(
+					'title'    => __( 'Footer text color', 'woocommerce' ),
+					/* translators: %s: footer default color */
+					'desc'     => sprintf( __( 'The footer text color. Default %s.', 'woocommerce' ), '<code>#3c3c3c</code>' ),
+					'id'       => 'woocommerce_email_footer_text_color',
+					'type'     => 'color',
+					'css'      => 'width:6em;',
+					'default'  => '#3c3c3c',
+					'autoload' => false,
+					'desc_tip' => true,
+				),
+
+				array(
 					'type' => 'sectionend',
 					'id'   => 'email_template_options',
 				),
+
+				array( 'type' => 'email_preview' ),
 
 				array(
 					'title' => __( 'Store management insights', 'woocommerce' ),
@@ -364,6 +386,18 @@ class WC_Settings_Emails extends WC_Settings_Page {
 				</table>
 			</td>
 		</tr>
+		<?php
+	}
+
+	/**
+	 * Creates the React mount point for the email preview.
+	 */
+	public function email_preview() {
+		?>
+		<div
+			id="wc_settings_email_preview_slotfill"
+			data-preview-url="<?php echo esc_url( wp_nonce_url( admin_url( '?preview_woocommerce_mail=true' ), 'preview-mail' ) ); ?>"
+		></div>
 		<?php
 	}
 }

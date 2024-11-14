@@ -25,11 +25,25 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 		protected $id = '';
 
 		/**
+		 * Setting page icon.
+		 *
+		 * @var string
+		 */
+		public $icon = 'settings';
+
+		/**
 		 * Setting page label.
 		 *
 		 * @var string
 		 */
 		protected $label = '';
+
+		/**
+		 * Setting page is modern.
+		 *
+		 * @var bool
+		 */
+		protected $is_modern = false;
 
 		/**
 		 * Constructor.
@@ -80,6 +94,55 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 		 */
 		public function add_settings_page( $pages ) {
 			$pages[ $this->id ] = $this->label;
+
+			return $pages;
+		}
+
+		/**
+		 * Get page settings data to populate the settings editor.
+		 *
+		 * @param array $pages The settings array where we'll add data.
+		 *
+		 * @return array
+		 */
+		public function add_settings_page_data( $pages ) {
+			$sections      = $this->get_sections();
+			$sections_data = array();
+
+			// Loop through each section and get the settings for that section.
+			foreach ( $sections as $section_id => $section_label ) {
+				$section_settings = count( $sections ) > 1
+					? $this->get_settings_for_section( $section_id )
+					: $this->get_settings();
+
+				$section_settings_data = array();
+
+				// Loop through each setting in the section and add the value to the settings data.
+				foreach ( $section_settings as $section_setting ) {
+					if ( isset( $section_setting['id'] ) ) {
+						$section_setting['value'] = isset( $section_setting['default'] )
+							// Fallback to the default value if it exists.
+							? get_option( $section_setting['id'], $section_setting['default'] )
+							// Otherwise, fallback to false.
+							: get_option( $section_setting['id'] );
+					}
+
+					$section_settings_data[] = $section_setting;
+
+					$sections_data[ $section_id ] = array(
+						'label'    => html_entity_decode( $section_label ),
+						'settings' => $section_settings_data,
+					);
+				}
+			}
+
+			$pages[ $this->id ] = array(
+				'label'     => html_entity_decode( $this->label ),
+				'slug'      => $this->id,
+				'icon'      => $this->icon,
+				'sections'  => $sections_data,
+				'is_modern' => $this->is_modern,
+			);
 
 			return $pages;
 		}

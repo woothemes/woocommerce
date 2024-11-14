@@ -1,15 +1,13 @@
 /**
  * External dependencies
  */
-import type { BlockEditProps } from '@wordpress/blocks';
 import { InspectorControls } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { type ElementType, useMemo } from '@wordpress/element';
-import { EditorBlock, isEmpty } from '@woocommerce/types';
+import { EditorBlock } from '@woocommerce/types';
 import { addFilter } from '@wordpress/hooks';
 import { ProductCollectionFeedbackPrompt } from '@woocommerce/editor-components/feedback-prompt';
 import {
-	enableAutoUpdate,
 	revertMigration,
 	getUpgradeStatus,
 	HOURS_TO_DISPLAY_UPGRADE_NOTICE,
@@ -17,6 +15,7 @@ import {
 } from '@woocommerce/blocks/migration-products-to-product-collection';
 import { recordEvent } from '@woocommerce/tracks';
 import {
+	PanelBody,
 	// @ts-expect-error Using experimental features
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalToolsPanel as ToolsPanel,
@@ -29,26 +28,33 @@ import metadata from '../../block.json';
 import { useTracksLocation } from '../../tracks-utils';
 import {
 	ProductCollectionEditComponentProps,
-	ProductCollectionAttributes,
+	ProductCollectionContentProps,
 	CoreFilterNames,
 	FilterName,
 } from '../../types';
-import { setQueryAttribute } from '../../utils';
-import { getDefaultSettings } from '../../constants';
+import { setQueryAttribute, getDefaultSettings } from '../../utils';
 import UpgradeNotice from './upgrade-notice';
 import ColumnsControl from './columns-control';
-import InheritQueryControl from './inherit-query-control';
+import {
+	InheritQueryControl,
+	FilterableControl,
+} from './use-page-context-control';
 import OrderByControl from './order-by-control';
 import OnSaleControl from './on-sale-control';
 import StockStatusControl from './stock-status-control';
 import KeywordControl from './keyword-control';
 import AttributesControl from './attributes-control';
 import TaxonomyControls from './taxonomy-controls';
-import HandPickedProductsControl from './hand-picked-products-control';
+import HandPickedProductsControl, {
+	HandPickedProductsControlField,
+} from './hand-picked-products-control';
 import LayoutOptionsControl from './layout-options-control';
 import FeaturedProductsControl from './featured-products-control';
 import CreatedControl from './created-control';
 import PriceRangeControl from './price-range-control';
+import LinkedProductControl from './linked-product-control';
+import WidthOptionsControl from './width-options-control';
+import RelatedByControl from './related-by-control';
 
 const prepareShouldShowFilter =
 	( hideControls: FilterName[] ) => ( filter: FilterName ) => {
@@ -56,10 +62,10 @@ const prepareShouldShowFilter =
 	};
 
 const ProductCollectionInspectorControls = (
-	props: ProductCollectionEditComponentProps
+	props: ProductCollectionContentProps
 ) => {
 	const { attributes, context, setAttributes } = props;
-	const { query, collection, hideControls, displayLayout } = attributes;
+	const { query, hideControls, dimensions, displayLayout } = attributes;
 
 	const tracksLocation = useTracksLocation( context.templateSlug );
 	const trackInteraction = ( filter: FilterName ) =>
@@ -69,16 +75,38 @@ const ProductCollectionInspectorControls = (
 			filter,
 		} );
 
-	const inherit = query?.inherit;
+	const inherit = query?.inherit || false;
+
 	const shouldShowFilter = prepareShouldShowFilter( hideControls );
 
+	const isArchiveTemplate =
+		tracksLocation === 'product-catalog' ||
+		tracksLocation === 'product-archive';
+
 	const showQueryControls = inherit === false;
-	const showInheritQueryControls =
-		isEmpty( collection ) || shouldShowFilter( CoreFilterNames.INHERIT );
+	const showInheritQueryControl =
+		isArchiveTemplate && shouldShowFilter( CoreFilterNames.INHERIT );
+	const showFilterableControl =
+		! isArchiveTemplate && shouldShowFilter( CoreFilterNames.FILTERABLE );
 	const showOrderControl =
 		showQueryControls && shouldShowFilter( CoreFilterNames.ORDER );
-	const showFeaturedControl = shouldShowFilter( CoreFilterNames.FEATURED );
 	const showOnSaleControl = shouldShowFilter( CoreFilterNames.ON_SALE );
+	const showStockStatusControl = shouldShowFilter(
+		CoreFilterNames.STOCK_STATUS
+	);
+	const showHandPickedProductsControl = shouldShowFilter(
+		CoreFilterNames.HAND_PICKED
+	);
+	const showKeywordControl = shouldShowFilter( CoreFilterNames.KEYWORD );
+	const showAttributesControl = shouldShowFilter(
+		CoreFilterNames.ATTRIBUTES
+	);
+	const showTaxonomyControls = shouldShowFilter( CoreFilterNames.TAXONOMY );
+	const showFeaturedControl = shouldShowFilter( CoreFilterNames.FEATURED );
+	const showCreatedControl = shouldShowFilter( CoreFilterNames.CREATED );
+	const showPriceRangeControl = shouldShowFilter(
+		CoreFilterNames.PRICE_RANGE
+	);
 
 	const setQueryAttributeBind = useMemo(
 		() => setQueryAttribute.bind( null, props ),
@@ -90,6 +118,11 @@ const ProductCollectionInspectorControls = (
 		displayLayout,
 	};
 
+	const dimensionsControlProps = {
+		setAttributes,
+		dimensions,
+	};
+
 	const queryControlProps = {
 		setQueryAttribute: setQueryAttributeBind,
 		trackInteraction,
@@ -98,6 +131,13 @@ const ProductCollectionInspectorControls = (
 
 	return (
 		<InspectorControls>
+			<LinkedProductControl
+				query={ props.attributes.query }
+				setAttributes={ props.setAttributes }
+				usesReference={ props.usesReference }
+				location={ props.location }
+			/>
+
 			<ToolsPanel
 				label={ __( 'Settings', 'woocommerce' ) }
 				resetAll={ () => {
@@ -107,14 +147,29 @@ const ProductCollectionInspectorControls = (
 					props.setAttributes( defaultSettings );
 				} }
 			>
-				{ showInheritQueryControls && (
+				{ showInheritQueryControl && (
 					<InheritQueryControl { ...queryControlProps } />
+				) }
+				{ showFilterableControl && (
+					<FilterableControl { ...queryControlProps } />
 				) }
 				<LayoutOptionsControl { ...displayControlProps } />
 				<ColumnsControl { ...displayControlProps } />
 				{ showOrderControl && (
 					<OrderByControl { ...queryControlProps } />
 				) }
+			</ToolsPanel>
+
+			<ToolsPanel
+				label={ __( 'Dimensions', 'woocommerce' ) }
+				resetAll={ () => {
+					const defaultSettings = getDefaultSettings(
+						props.attributes
+					);
+					props.setAttributes( defaultSettings );
+				} }
+			>
+				<WidthOptionsControl { ...dimensionsControlProps } />
 			</ToolsPanel>
 
 			{ showQueryControls ? (
@@ -130,16 +185,30 @@ const ProductCollectionInspectorControls = (
 					{ showOnSaleControl && (
 						<OnSaleControl { ...queryControlProps } />
 					) }
-					<StockStatusControl { ...queryControlProps } />
-					<HandPickedProductsControl { ...queryControlProps } />
-					<KeywordControl { ...queryControlProps } />
-					<AttributesControl { ...queryControlProps } />
-					<TaxonomyControls { ...queryControlProps } />
+					{ showStockStatusControl && (
+						<StockStatusControl { ...queryControlProps } />
+					) }
+					{ showHandPickedProductsControl && (
+						<HandPickedProductsControl { ...queryControlProps } />
+					) }
+					{ showKeywordControl && (
+						<KeywordControl { ...queryControlProps } />
+					) }
+					{ showAttributesControl && (
+						<AttributesControl { ...queryControlProps } />
+					) }
+					{ showTaxonomyControls && (
+						<TaxonomyControls { ...queryControlProps } />
+					) }
 					{ showFeaturedControl && (
 						<FeaturedProductsControl { ...queryControlProps } />
 					) }
-					<CreatedControl { ...queryControlProps } />
-					<PriceRangeControl { ...queryControlProps } />
+					{ showCreatedControl && (
+						<CreatedControl { ...queryControlProps } />
+					) }
+					{ showPriceRangeControl && (
+						<PriceRangeControl { ...queryControlProps } />
+					) }
 				</ToolsPanel>
 			) : null }
 			<ProductCollectionFeedbackPrompt />
@@ -148,13 +217,6 @@ const ProductCollectionInspectorControls = (
 };
 
 export default ProductCollectionInspectorControls;
-
-// Trigger Auto Upgrade of Products only once when module is loaded.
-// This triggers subscription but only if:
-// - auto update is enabled
-// - user haven't reverted the migration
-// - no other subscription is in place
-enableAutoUpdate();
 
 const isProductCollection = ( blockName: string ) =>
 	blockName === metadata.name;
@@ -174,7 +236,9 @@ const displayedLessThanThreshold = ( displayCount = 0 ) => {
 // - user haven't acknowledged seeing the notice
 // - less than X hours since the notice was first displayed
 // - notice was displayed less than X times
-const shouldDisplayUpgradeNotice = ( props ) => {
+const shouldDisplayUpgradeNotice = (
+	props: ProductCollectionEditComponentProps
+) => {
 	const { attributes } = props;
 	const { convertedFromProducts } = attributes;
 	const { status, time, displayCount } = getUpgradeStatus();
@@ -195,7 +259,9 @@ const shouldDisplayUpgradeNotice = ( props ) => {
 // We do that to prevent showing the notice again after Products on
 // other page were updated or local storage was cleared or user
 // switched to another machine/browser etc.
-const shouldBeUnmarkedAsConverted = ( props ) => {
+const shouldBeUnmarkedAsConverted = (
+	props: ProductCollectionEditComponentProps
+) => {
 	const { attributes } = props;
 	const { convertedFromProducts } = attributes;
 	const { status, time, displayCount } = getUpgradeStatus();
@@ -208,9 +274,78 @@ const shouldBeUnmarkedAsConverted = ( props ) => {
 	);
 };
 
+const CollectionSpecificControls = (
+	props: ProductCollectionEditComponentProps
+) => {
+	const setQueryAttributeBind = useMemo(
+		() => setQueryAttribute.bind( null, props ),
+		[ props ]
+	);
+	const tracksLocation = useTracksLocation( props.context.templateSlug );
+	const trackInteraction = ( filter: FilterName ) => {
+		return recordEvent(
+			'blocks_product_collection_inspector_control_clicked',
+			{
+				collection: props.attributes.collection,
+				location: tracksLocation,
+				filter,
+			}
+		);
+	};
+	const queryControlProps = {
+		setQueryAttribute: setQueryAttributeBind,
+		trackInteraction,
+		query: props.attributes.query,
+	};
+
+	return (
+		<InspectorControls>
+			{
+				/**
+				 * Hand-Picked collection-specific controls.
+				 */
+				props.attributes.collection ===
+					'woocommerce/product-collection/hand-picked' && (
+					<PanelBody>
+						<HandPickedProductsControlField
+							{ ...queryControlProps }
+						/>
+					</PanelBody>
+				)
+			}
+			{
+				/**
+				 * "Related Products" collection-specific controls.
+				 */
+				props.attributes.collection ===
+					'woocommerce/product-collection/related' && (
+					<RelatedByControl { ...queryControlProps } />
+				)
+			}
+		</InspectorControls>
+	);
+};
+
+const withCollectionSpecificControls =
+	< T extends EditorBlock< T > >( BlockEdit: ElementType ) =>
+	( props: ProductCollectionEditComponentProps ) => {
+		if ( ! isProductCollection( props.name ) || ! props.isSelected ) {
+			return <BlockEdit { ...props } />;
+		}
+
+		return (
+			<>
+				<CollectionSpecificControls { ...props } />
+				<BlockEdit { ...props } />
+			</>
+		);
+	};
+
+addFilter( 'editor.BlockEdit', metadata.name, withCollectionSpecificControls );
+
 export const withUpgradeNoticeControls =
 	< T extends EditorBlock< T > >( BlockEdit: ElementType ) =>
-	( props: BlockEditProps< ProductCollectionAttributes > ) => {
+	( props: ProductCollectionEditComponentProps ) => {
 		if ( ! isProductCollection( props.name ) ) {
 			return <BlockEdit { ...props } />;
 		}

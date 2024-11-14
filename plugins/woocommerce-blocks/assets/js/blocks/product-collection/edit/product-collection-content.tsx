@@ -10,20 +10,21 @@ import { useInstanceId } from '@wordpress/compose';
 import { useEffect, useRef, useMemo } from '@wordpress/element';
 import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { useGetLocation } from '@woocommerce/blocks/product-template/utils';
 import fastDeepEqual from 'fast-deep-equal/es6';
 
 /**
  * Internal dependencies
  */
-import type {
+import {
 	ProductCollectionAttributes,
 	ProductCollectionQuery,
-	ProductCollectionEditComponentProps,
+	ProductCollectionContentProps,
+	WidthOptions,
 } from '../types';
 import { DEFAULT_ATTRIBUTES, INNER_BLOCKS_TEMPLATE } from '../constants';
 import {
-	getDefaultValueOfInheritQueryFromTemplate,
+	getDefaultValueOfInherit,
+	getDefaultValueOfFilterable,
 	useSetPreviewState,
 } from '../utils';
 import InspectorControls from './inspector-controls';
@@ -68,16 +69,22 @@ const useQueryId = (
 const ProductCollectionContent = ( {
 	preview: { setPreviewState, initialPreviewState } = {},
 	...props
-}: ProductCollectionEditComponentProps ) => {
+}: ProductCollectionContentProps ) => {
 	const isInitialAttributesSet = useRef( false );
-	const { clientId, attributes, setAttributes } = props;
-	const location = useGetLocation( props.context, props.clientId );
+	const {
+		clientId,
+		attributes,
+		setAttributes,
+		location,
+		isUsingReferencePreviewMode,
+	} = props;
 
 	useSetPreviewState( {
 		setPreviewState,
 		setAttributes,
 		location,
 		attributes,
+		isUsingReferencePreviewMode,
 	} );
 
 	const blockProps = useBlockProps();
@@ -95,7 +102,8 @@ const ProductCollectionContent = ( {
 		...DEFAULT_ATTRIBUTES,
 		query: {
 			...( DEFAULT_ATTRIBUTES.query as ProductCollectionQuery ),
-			inherit: getDefaultValueOfInheritQueryFromTemplate(),
+			inherit: getDefaultValueOfInherit(),
+			filterable: getDefaultValueOfFilterable(),
 		},
 		...( attributes as Partial< ProductCollectionAttributes > ),
 		queryId,
@@ -105,6 +113,21 @@ const ProductCollectionContent = ( {
 				__privatePreviewState: initialPreviewState,
 			} ),
 	};
+
+	let style = {};
+
+	/**
+	 * Set max-width if fixed width is set.
+	 */
+	if (
+		WidthOptions.FIXED === attributes?.dimensions?.widthType &&
+		attributes?.dimensions?.fixedWidth
+	) {
+		style = {
+			maxWidth: attributes.dimensions.fixedWidth,
+			margin: '0 auto',
+		};
+	}
 
 	/**
 	 * Because of issue https://github.com/WordPress/gutenberg/issues/7342,
@@ -120,34 +143,6 @@ const ProductCollectionContent = ( {
 		[]
 	);
 
-	const isSelectedOrInnerBlockSelected = useSelect(
-		( select ) => {
-			const { getSelectedBlockClientId, hasSelectedInnerBlock } =
-				select( 'core/block-editor' );
-
-			// Check if the current block is selected.
-			const isSelected = getSelectedBlockClientId() === clientId;
-
-			// Check if any inner block of the current block is selected.
-			const isInnerBlockSelected = hasSelectedInnerBlock(
-				clientId,
-				true
-			);
-
-			return isSelected || isInnerBlockSelected;
-		},
-		[ clientId ]
-	);
-
-	/**
-	 * If inherit is not a boolean, then we haven't set default attributes yet.
-	 * We don't wanna render anything until default attributes are set.
-	 * Default attributes are set in the useEffect above.
-	 */
-	if ( typeof attributes?.query?.inherit !== 'boolean' ) {
-		return null;
-	}
-
 	/**
 	 * If default attributes are not set, we don't wanna render anything.
 	 * Default attributes are set in the useEffect above.
@@ -162,7 +157,7 @@ const ProductCollectionContent = ( {
 	return (
 		<div { ...blockProps }>
 			{ attributes.__privatePreviewState?.isPreview &&
-				isSelectedOrInnerBlockSelected && (
+				props.isSelected && (
 					<Button
 						variant="primary"
 						size="small"
@@ -171,7 +166,7 @@ const ProductCollectionContent = ( {
 							attributes.__privatePreviewState?.previewMessage
 						}
 						className="wc-block-product-collection__preview-button"
-						data-test-id="product-collection-preview-button"
+						data-testid="product-collection-preview-button"
 					>
 						Preview
 					</Button>
@@ -180,7 +175,7 @@ const ProductCollectionContent = ( {
 			<InspectorControls { ...props } />
 			<InspectorAdvancedControls { ...props } />
 			<ToolbarControls { ...props } />
-			<div { ...innerBlocksProps } />
+			<div { ...innerBlocksProps } style={ style } />
 		</div>
 	);
 };

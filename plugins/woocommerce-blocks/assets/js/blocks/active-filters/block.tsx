@@ -35,7 +35,7 @@ import {
 } from './utils';
 import ActiveAttributeFilters from './active-attribute-filters';
 import FilterPlaceholders from './filter-placeholders';
-import { useSetWraperVisibility } from '../filter-wrapper/context';
+import { useSetWrapperVisibility } from '../filter-wrapper/context';
 
 interface ActiveFiltersBlockProps {
 	/**
@@ -55,7 +55,7 @@ const ActiveFiltersBlock = ( {
 	attributes: blockAttributes,
 	isEditor = false,
 }: ActiveFiltersBlockProps ) => {
-	const setWrapperVisibility = useSetWraperVisibility();
+	const setWrapperVisibility = useSetWrapperVisibility();
 	const isMounted = useIsMounted();
 	const componentHasMounted = isMounted();
 	const filteringForPhpTemplate = getSettingWithCoercion(
@@ -212,7 +212,7 @@ const ActiveFiltersBlock = ( {
 	] );
 
 	/**
-	 * Parse the filter URL to set the active rating fitlers.
+	 * Parse the filter URL to set the active rating filters.
 	 * This code should be moved to Rating Filter block once it's implemented.
 	 */
 	useEffect( () => {

@@ -95,21 +95,18 @@ test.describe( 'Shopper → Translations', () => {
 		).toBeVisible();
 
 		await expect(
-			page.getByRole( 'link', { name: 'Terug naar winkelwagen' } )
-		).toBeVisible();
-
-		await expect(
 			page.getByRole( 'button', { name: 'Bestel en betaal' } )
 		).toBeVisible();
 
 		await expect(
-			page.getByRole( 'button', {
+			page.getByRole( 'heading', {
 				name: 'Besteloverzicht',
 			} )
 		).toBeVisible();
 
 		await expect( page.getByText( 'Subtotaal' ) ).toBeVisible();
-		await expect( page.getByText( 'Verzending' ) ).toBeVisible();
+		// TODO: Skipped test for now because translation is not ready. New string will be included with WC 9.4 - https://github.com/woocommerce/woocommerce/issues/51089
+		//await expect( page.getByText( 'Verzending' ) ).toBeVisible();
 
 		await expect(
 			page.getByText( 'Totaal', { exact: true } )

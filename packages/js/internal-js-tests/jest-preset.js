@@ -5,7 +5,7 @@ const path = require( 'path' );
 
 // These modules need to be transformed because they are not transpiled to CommonJS.
 // The top-level keys are the names of the packages and the values are the file
-// regexes that need to be transformed. Note that these are relative to the 
+// regexes that need to be transformed. Note that these are relative to the
 // package root and should be treated as such.
 const transformModules = {
 	'is-plain-obj': {
@@ -26,7 +26,7 @@ module.exports = {
 		),
 		'~/(.*)': path.resolve(
 			__dirname,
-			'../../../plugins/woocommerce-admin/client/$1'
+			'../../../plugins/woocommerce/client/admin/client/$1'
 		),
 		'\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
 			path.resolve( __dirname, 'build/mocks/static' ),
@@ -76,4 +76,8 @@ module.exports = {
 	testEnvironment: 'jest-environment-jsdom',
 	timers: 'modern',
 	verbose: true,
+	cacheDirectory: path.resolve(
+		__dirname,
+		'../../../node_modules/.cache/jest'
+	),
 };

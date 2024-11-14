@@ -1,10 +1,10 @@
 === WooCommerce ===
 Contributors: automattic, woocommerce, mikejolley, jameskoster, claudiosanches, rodrigosprimo, peterfabian1000, vedjain, jamosova, obliviousharmony, konamiman, sadowski, wpmuguru, royho, barryhughes-1, claudiulodro, tiagonoronha, ryelle, levinmedia, aljullu, nerrad, joshuawold, assassinateur, haszari, mppfeiffer, nielslange, opr18, ralucastn, tjcafferkey, danielwrobert, patriciahillebrandt, albarin, dinhtungdu, imanish003, karolmanijak, sunyatasattva, alexandrelara, gigitux, danieldudzic, samueljseay, alexflorisca, opr18, tarunvijwani, pauloarromba, saadtarhi, bor0, kloon, coreymckrill, jorgeatorres, leifsinger
 Tags: online store, ecommerce, shop, shopping cart, sell online
-Requires at least: 6.4
-Tested up to: 6.5
+Requires at least: 6.5
+Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 8.9.2
+Stable tag: 9.4.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -60,7 +60,7 @@ Developers can use [WooCommerce](https://woocommerce.com/woocommerce/) to create
 - Integrate virtually any service using a robust [REST API](https://developer.woocommerce.com/docs/getting-started-with-the-woocommerce-rest-api/?utm_medium=referral&utm_source=wordpress.org&utm_campaign=wp_org_repo_listing) and webhooks.
 - Design and build custom content blocks with React.
 - [Inspect and modify](https://developer.woocommerce.com/docs/category/extension-development/?utm_medium=referral&utm_source=wordpress.org&utm_campaign=wp_org_repo_listing) any aspect of the core plugin code.
-- Speed up development with a lightning-fast [CLI](https://woocommerce.github.io/code-reference/classes/wc-cli-rest-command.html?utm_medium=referral&utm_source=wordpress.org&utm_campaign=wp_org_repo_listing).
+- Speed up development with a lightning-fast [CLI](https://developer.woocommerce.com/docs/category/wc-cli/?utm_medium=referral&utm_source=wordpress.org&utm_campaign=wp_org_repo_listing).
 
 The core platform is tested rigorously and often, supported by a dedicated development team working across time zones. Comprehensive documentation is updated with each release, empowering you to build exactly the store required.
 
@@ -77,6 +77,10 @@ WooCommerce also has a regular presence at WordCamps across the globe – we’d
 WooCommerce is developed and supported by Automattic, the creators of WordPress.com and Jetpack. We also have hundreds of independent contributors, and there’s always room for more. Head to the [WooCommerce GitHub Repository](https://github.com/woocommerce/woocommerce?utm_medium=referral&utm_source=wordpress.org&utm_campaign=wp_org_repo_listing) to find out how you can pitch in.
 
 WooCommerce is translated into multiple languages, including Danish, Ukrainian, and Persian. Help localize WooCommerce even further by adding your locale – visit [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/woocommerce/?utm_medium=referral&utm_source=wordpress.org&utm_campaign=wp_org_repo_listing).
+
+= Connection to WooCommerce.com =
+
+You can connect your store to [WooCommerce.com](https://woocommerce.com/) to manage your subscriptions on WooCommerce Marketplace and receive product updates without leaving WordPress admin. Connection also enables installation of purchased products right from WooCommerce.com and streamlines access to technical support. If you’d like to learn about what data is gathered and how it is used, please refer to our [Privacy Policy](https://automattic.com/privacy/).
 
 == Frequently Asked Questions ==
 
@@ -165,6 +169,6 @@ WooCommerce comes with some sample data you can use to see how products look; im
 
 == Changelog ==
 
-= 9.1.0 2024-XX-XX =
+= 9.6.0 2024-XX-XX =
 
 [See changelog for all versions](https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/changelog.txt).

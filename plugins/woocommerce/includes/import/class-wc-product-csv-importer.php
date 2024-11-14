@@ -198,7 +198,7 @@ class WC_Product_CSV_Importer extends WC_Product_Importer {
 				return absint( $original_id );
 			}
 
-			// See if the given ID maps to a valid product allready.
+			// See if the given ID maps to a valid product already.
 			$existing_id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_type IN ( 'product', 'product_variation' ) AND ID = %d;", $id ) ); // WPCS: db call ok, cache ok.
 
 			if ( $existing_id ) {
@@ -1135,24 +1135,24 @@ class WC_Product_CSV_Importer extends WC_Product_Importer {
 				$sku_exists  = $product && 'importing' !== $product->get_status();
 			}
 
-			if ( $id_exists && ! $update_existing ) {
-				$data['skipped'][] = new WP_Error(
-					'woocommerce_product_importer_error',
-					esc_html__( 'A product with this ID already exists.', 'woocommerce' ),
-					array(
-						'id'  => $id,
-						'row' => $this->get_row_id( $parsed_data ),
-					)
-				);
-				continue;
-			}
-
 			if ( $sku_exists && ! $update_existing ) {
 				$data['skipped'][] = new WP_Error(
 					'woocommerce_product_importer_error',
 					esc_html__( 'A product with this SKU already exists.', 'woocommerce' ),
 					array(
 						'sku' => esc_attr( $sku ),
+						'row' => $this->get_row_id( $parsed_data ),
+					)
+				);
+				continue;
+			}
+
+			if ( $id_exists && ! $update_existing ) {
+				$data['skipped'][] = new WP_Error(
+					'woocommerce_product_importer_error',
+					esc_html__( 'A product with this ID already exists.', 'woocommerce' ),
+					array(
+						'id'  => $id,
 						'row' => $this->get_row_id( $parsed_data ),
 					)
 				);

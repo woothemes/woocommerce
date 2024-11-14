@@ -15,10 +15,23 @@ const blockData = {
 		frontend: {},
 		editor: {
 			settings: {},
+			layoutWrapper:
+				'.wp-block-woocommerce-product-filters-is-layout-flex',
+			blocks: {
+				filters: {
+					title: 'Product Filters (Experimental)',
+					label: 'Block: Product Filters (Experimental)',
+				},
+				overlay: {
+					title: 'Overlay Navigation (Experimental)',
+					label: 'Block: Overlay Navigation (Experimental)',
+				},
+			},
 		},
 	},
 	slug: 'archive-product',
 	productPage: '/product/hoodie/',
+	shopPage: '/shop/',
 };
 
 const test = base.extend< { pageObject: ProductFiltersPage } >( {
@@ -33,15 +46,13 @@ const test = base.extend< { pageObject: ProductFiltersPage } >( {
 } );
 
 test.describe( `${ blockData.name }`, () => {
-	test.beforeEach( async ( { admin, editor, requestUtils } ) => {
-		await requestUtils.activatePlugin(
-			'woocommerce-blocks-test-enable-experimental-features'
-		);
+	test.beforeEach( async ( { admin, requestUtils } ) => {
+		await requestUtils.setFeatureFlag( 'experimental-blocks', true );
 		await admin.visitSiteEditor( {
 			postId: `woocommerce/woocommerce//${ blockData.slug }`,
 			postType: 'wp_template',
+			canvas: 'edit',
 		} );
-		await editor.enterEditMode();
 	} );
 
 	test( 'should be visible and contain correct inner blocks', async ( {
@@ -51,47 +62,20 @@ test.describe( `${ blockData.name }`, () => {
 		await pageObject.addProductFiltersBlock( { cleanContent: true } );
 
 		const block = editor.canvas.getByLabel(
-			'Block: Product Filters (Experimental)'
+			blockData.selectors.editor.blocks.filters.label
 		);
 		await expect( block ).toBeVisible();
 
-		const filtersbBlockHeading = block.getByRole( 'document', {
-			name: 'Filters',
-		} );
-		await expect( filtersbBlockHeading ).toBeVisible();
-
-		const activeHeading = block.getByRole( 'document', {
-			name: 'Active',
-		} );
 		const activeFilterBlock = block.getByLabel(
-			'Block: Product Filter: Active'
+			'Block: Active (Experimental)'
 		);
-		await expect( activeHeading ).toBeVisible();
 		await expect( activeFilterBlock ).toBeVisible();
-
-		const priceHeading = block.getByRole( 'document', {
-			name: 'Price',
-		} );
-		const priceFilterBlock = block.getByLabel(
-			'Block: Product Filter: Price'
-		);
-		await expect( priceHeading ).toBeVisible();
-		await expect( priceFilterBlock ).toBeVisible();
-
-		const statusHeading = block.getByRole( 'document', {
-			name: 'Status',
-		} );
-		const statusFilterBlock = block.getByLabel(
-			'Block: Product Filter: Stock'
-		);
-		await expect( statusHeading ).toBeVisible();
-		await expect( statusFilterBlock ).toBeVisible();
 
 		const colorHeading = block.getByText( 'Color', {
 			exact: true,
 		} );
 		const colorFilterBlock = block.getByLabel(
-			'Block: Product Filter: Attribute (Experimental)'
+			'Block: Color (Experimental)'
 		);
 		const expectedColorFilterOptions = [
 			'Blue',
@@ -100,63 +84,52 @@ test.describe( `${ blockData.name }`, () => {
 			'Red',
 			'Yellow',
 		];
-		const colorFilterOptions = (
-			await colorFilterBlock.allInnerTexts()
-		 )[ 0 ].split( '\n' );
 		await expect( colorHeading ).toBeVisible();
 		await expect( colorFilterBlock ).toBeVisible();
-		expect( colorFilterOptions ).toEqual(
-			expect.arrayContaining( expectedColorFilterOptions )
-		);
-
-		const ratingHeading = block.getByRole( 'document', {
-			name: 'Rating',
-		} );
-		const ratingFilterBlock = block.getByLabel(
-			'Block: Product Filter: Rating (Experimental)'
-		);
-		await expect( ratingHeading ).toBeVisible();
-		await expect( ratingFilterBlock ).toBeVisible();
+		for ( const option of expectedColorFilterOptions ) {
+			await expect( colorFilterBlock ).toContainText( option );
+		}
 	} );
 
-	test( 'should display the correct customization settings', async ( {
+	test( 'should contain the correct inner block names in the list view', async ( {
 		editor,
 		pageObject,
 	} ) => {
 		await pageObject.addProductFiltersBlock( { cleanContent: true } );
 
 		const block = editor.canvas.getByLabel(
-			'Block: Product Filters (Experimental)'
+			blockData.selectors.editor.blocks.filters.label
 		);
 		await expect( block ).toBeVisible();
 
-		await editor.openDocumentSettingsSidebar();
+		await pageObject.page.getByLabel( 'Document Overview' ).click();
+		const listView = pageObject.page.getByLabel( 'List View' );
 
-		// Color settings
-		const colorSettings = editor.page.getByText( 'ColorTextBackground' );
-		const colorTextStylesSetting =
-			colorSettings.getByLabel( 'Color Text styles' );
-		const colorBackgroundStylesSetting = colorSettings.getByLabel(
-			'Color Background styles'
+		await expect( listView ).toBeVisible();
+
+		const productFiltersBlockListItem = listView.getByRole( 'link', {
+			name: blockData.selectors.editor.blocks.filters.title,
+		} );
+		await expect( productFiltersBlockListItem ).toBeVisible();
+		const listViewExpander =
+			pageObject.page.getByTestId( 'list-view-expander' );
+		const listViewExpanderIcon = listViewExpander.locator( 'svg' );
+
+		await listViewExpanderIcon.click();
+
+		const productFilterHeadingListItem = listView.getByText( 'Filters', {
+			exact: true,
+		} );
+		await expect( productFilterHeadingListItem ).toBeVisible();
+
+		const productFilterActiveBlocksListItem = listView.getByText(
+			'Active (Experimental)'
 		);
+		await expect( productFilterActiveBlocksListItem ).toBeVisible();
 
-		await expect( colorSettings ).toBeVisible();
-		await expect( colorTextStylesSetting ).toBeVisible();
-		await expect( colorBackgroundStylesSetting ).toBeVisible();
-
-		// Typography settings
-		const typographySettings = editor.page.getByText( 'TypographyFont' );
-		const typographySizeSetting = typographySettings.getByRole( 'group', {
-			name: 'Font size',
-		} );
-
-		await expect( typographySettings ).toBeVisible();
-		await expect( typographySizeSetting ).toBeVisible();
-
-		// Border settings
-		const borderSettings = editor.page.getByRole( 'heading', {
-			name: 'Border',
-		} );
-		await expect( borderSettings ).toBeVisible();
+		const productFilterAttributeBlockListItem = listView.getByText(
+			'Color (Experimental)' // it must select the attribute with the highest product count
+		);
+		await expect( productFilterAttributeBlockListItem ).toBeVisible();
 	} );
 } );

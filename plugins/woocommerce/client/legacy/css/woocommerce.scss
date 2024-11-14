@@ -80,14 +80,14 @@ p.demo_store,
 		text-align: center;
 		line-height: 1;
 		border-radius: 100%;
-		color: red !important; // Required for default theme compatibility
+		color: var(--wc-red) !important; // Required for default theme compatibility
 		text-decoration: none;
 		font-weight: 700;
 		border: 0;
 
 		&:hover {
 			color: #fff !important; // Required for default theme compatibility
-			background: red;
+			background: var(--wc-red);
 		}
 	}
 
@@ -183,44 +183,7 @@ p.demo_store,
 			}
 
 			.woocommerce-product-gallery__trigger {
-				position: absolute;
-				top: 0.5em;
-				right: 0.5em;
-				font-size: 2em;
-				z-index: 9;
-				width: 36px;
-				height: 36px;
-				background: #fff;
-				text-indent: -9999px;
-				border-radius: 100%;
-				box-sizing: content-box;
-
-				&::before {
-					content: "";
-					display: block;
-					width: 10px;
-					height: 10px;
-					border: 2px solid #000;
-					border-radius: 100%;
-					position: absolute;
-					top: 9px;
-					left: 9px;
-					box-sizing: content-box;
-				}
-
-				&::after {
-					content: "";
-					display: block;
-					width: 2px;
-					height: 8px;
-					background: #000;
-					border-radius: 6px;
-					position: absolute;
-					top: 19px;
-					left: 22px;
-					transform: rotate(-45deg);
-					box-sizing: content-box;
-				}
+				@include woocommerce-product-gallery__trigger;
 			}
 
 			.flex-control-thumbs {
@@ -424,8 +387,9 @@ p.demo_store,
 			}
 
 			.variations {
-				margin-bottom: 1em;
 				border: 0;
+				margin-bottom: 1em;
+				border-spacing: 0;
 				width: 100%;
 
 				td,
@@ -445,6 +409,18 @@ p.demo_store,
 					min-width: 75%;
 					display: inline-block;
 					margin-right: 1em;
+
+					/* We hide the default chevron because it cannot be directly modified. Instead, we add a custom chevron using a background image. */
+					appearance: none;
+					-webkit-appearance: none;
+					-moz-appearance: none;
+					padding-right: 2em;
+					background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJmZWF0aGVyIGZlYXRoZXItY2hldnJvbi1kb3duIj48cG9seWxpbmUgcG9pbnRzPSI2IDkgMTIgMTUgMTggOSI+PC9wb2x5bGluZT48L3N2Zz4=)
+						no-repeat;
+					background-size: 16px;
+					-webkit-background-size: 16px;
+					background-position: calc(100% - 12px) 50%;
+					-webkit-background-position: calc(100% - 12px) 50%;
 				}
 
 				td.label {
@@ -457,6 +433,7 @@ p.demo_store,
 			}
 
 			.reset_variations {
+				display: none;
 				visibility: hidden;
 				font-size: 0.83em;
 			}
@@ -1224,7 +1201,7 @@ p.demo_store,
 		}
 
 		.required {
-			color: red;
+			color: var(--wc-red);
 			font-weight: 700;
 			border: 0 !important;
 			text-decoration: none;
@@ -1265,13 +1242,13 @@ p.demo_store,
 
 		&.woocommerce-invalid {
 			label {
-				color: $red;
+				color: var(--wc-red);
 			}
 
 			.select2-container,
 			input.input-text,
 			select {
-				border-color: $red;
+				border-color: var(--wc-red);
 			}
 		}
 
@@ -1304,6 +1281,16 @@ p.demo_store,
 		margin: 2em 0;
 		text-align: left;
 		border-radius: 5px;
+	}
+
+	form.checkout_coupon {
+		.coupon-error-notice {
+			@include coupon-error-notice-checkout();
+		}
+
+		.input-text.has-error:focus {
+			border-color: var(--wc-red);
+		}
 	}
 
 	ul#shipping_method {
@@ -1521,7 +1508,7 @@ p.demo_store,
 
 		.woocommerce-widget-layered-nav-list__item--chosen a::before {
 			@include iconbefore("\e013");
-			color: $red;
+			color: var(--wc-red);
 		}
 	}
 
@@ -1547,7 +1534,7 @@ p.demo_store,
 
 				&::before {
 					@include iconbefore("\e013");
-					color: $red;
+					color: var(--wc-red);
 					vertical-align: inherit;
 					margin-right: 0.5em;
 				}
@@ -1657,7 +1644,7 @@ p.demo_store,
 
 		li.chosen a::before {
 			@include iconbefore("\e013");
-			color: $red;
+			color: var(--wc-red);
 		}
 	}
 
@@ -1677,7 +1664,10 @@ p.demo_store,
  * Buttons
  */
 .woocommerce:where(body:not(.woocommerce-block-theme-has-button-styles)),
-:where(body:not(.woocommerce-block-theme-has-button-styles)) .woocommerce {
+:where(body:not(.woocommerce-block-theme-has-button-styles)):where(
+		:not(.edit-post-visual-editor *)
+	)
+	.woocommerce {
 	a.button,
 	button.button,
 	input.button,
@@ -1793,7 +1783,7 @@ p.demo_store,
 		}
 
 		.out-of-stock {
-			color: red;
+			color: var(--wc-red);
 		}
 	}
 
@@ -1838,6 +1828,7 @@ p.demo_store,
 	&::before {
 		font-family: "WooCommerce";
 		content: "\e028";
+		content: "\e028" / ""; // Add an empty alternative text so screen readers ignore it
 		display: inline-block;
 		position: absolute;
 		top: 1em;
@@ -1970,6 +1961,14 @@ p.demo_store,
 			padding: 6px 6px 5px;
 			margin: 0 4px 0 0;
 			outline: 0;
+
+			&.has-error:focus {
+				border-color: var(--wc-red);
+			}
+		}
+
+		td.actions .coupon .coupon-error-notice {
+			@include coupon-error-notice-cart();
 		}
 
 		input {
@@ -2095,17 +2094,23 @@ p.demo_store,
 		.shipping_address {
 			clear: both;
 		}
+
+		.checkout-inline-error-message {
+			color: var(--wc-red);
+			font-size: 0.75em;
+			margin-bottom: 0;
+		}
 	}
 
 	#payment {
-		background: $secondary;
+		background: desaturate(rgba($primary, .14), 21%);
 		border-radius: 5px;
 
 		ul.payment_methods {
 			@include clearfix();
 			text-align: left;
 			padding: 1em;
-			border-bottom: 1px solid darken($secondary, 10%);
+			border-bottom: 1px solid darken(desaturate(rgba($primary, .14), 21%), 10%);
 			margin: 0;
 			list-style: none outside;
 
@@ -2290,7 +2295,7 @@ p.demo_store,
 
 .woocommerce-invalid {
 	#terms {
-		outline: 2px solid red;
+		outline: 2px solid var(--wc-red);
 		outline-offset: 2px;
 	}
 }
@@ -2376,41 +2381,4 @@ body:not(.search-results) .twentysixteen .entry-summary {
 .twentysixteen .price ins {
 	background: inherit;
 	color: inherit;
-}
-
-#coming-soon-footer-banner {
-	width: 100%;
-	min-height: 56px;
-	background: #fff;
-	position: fixed;
-	display: flex;
-	font-size: 13px;
-	bottom: 0;
-	line-height: 16px;
-	align-items: center;
-	border-top: 1px solid #dcdcdc;
-	padding: 16px;
-	box-sizing: border-box;
-	z-index: 100;
-
-	.coming-soon-footer-banner__content {
-		text-align: center;
-		flex: 1;
-		margin-right: 10px;
-		line-height: 16px;
-		text-wrap: pretty;
-	}
-
-	a {
-		color: #3858e9;
-		text-decoration: none;
-	}
-
-	a.coming-soon-footer-banner-dismiss {
-		background-image: url('data:image/svg+xml,<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.4995 13.0602L16.2118 16.7725L17.2725 15.7118L13.5602 11.9995L17.2725 8.28723L16.2119 7.22657L12.4995 10.9389L8.78722 7.22656L7.72656 8.28722L11.4389 11.9995L7.72657 15.7119L8.78723 16.7725L12.4995 13.0602Z" fill="%23757575"/></svg>');
-		width: 24px;
-		height: 24px;
-		cursor: pointer;
-		background-repeat: no-repeat;
-	}
 }

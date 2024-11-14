@@ -150,12 +150,25 @@ class WCAdminHelper {
 		}
 		$normalized_path = self::get_normalized_url_path( $url );
 
+		$params = array(
+			'post_type' => 'product',
+		);
+
+		$query_string = wp_parse_url( $url, PHP_URL_QUERY );
+		if ( $query_string ) {
+			parse_str( $query_string, $url_params );
+			foreach ( $params as $key => $param ) {
+				if ( isset( $url_params[ $key ] ) && $url_params[ $key ] === $param ) {
+					return true;
+				}
+			}
+		}
+
 		// WC store pages.
 		$store_pages = array(
 			'shop'        => wc_get_page_id( 'shop' ),
 			'cart'        => wc_get_page_id( 'cart' ),
 			'checkout'    => wc_get_page_id( 'checkout' ),
-			'privacy'     => wc_privacy_policy_page_id(),
 			'terms'       => wc_terms_and_conditions_page_id(),
 			'coming_soon' => wc_get_page_id( 'coming_soon' ),
 		);
@@ -168,12 +181,25 @@ class WCAdminHelper {
 		 */
 		$store_pages = apply_filters( 'woocommerce_store_pages', $store_pages );
 
+		// If the shop page is not set, we will still show the product archive page.
+		// Therefore, we need to check if the URL is a product archive page when the shop page is not set.
+		if ( $store_pages['shop'] <= 0 ) {
+			$product_post_archive_link = get_post_type_archive_link( 'product' );
+
+			if ( is_string( $product_post_archive_link ) &&
+				0 === strpos( $normalized_path, self::get_normalized_url_path( $product_post_archive_link ) )
+			) {
+				return true;
+			}
+		}
+
 		foreach ( $store_pages as $page => $page_id ) {
 			if ( 0 >= $page_id ) {
 				continue;
 			}
 
 			$permalink = get_permalink( $page_id );
+
 			if ( ! $permalink ) {
 				continue;
 			}
@@ -183,42 +209,91 @@ class WCAdminHelper {
 			}
 		}
 
-		// Check product, category and tag pages.
-		$permalink_structure = wc_get_permalink_structure();
-		$permalink_keys      = array(
-			'category_base',
-			'tag_base',
-			'product_base',
-		);
+		$url_path = wp_parse_url( $normalized_path, PHP_URL_PATH );
 
-		foreach ( $permalink_keys as $key ) {
-			if ( ! isset( $permalink_structure[ $key ] ) || ! is_string( $permalink_structure[ $key ] ) ) {
-				continue;
-			}
+		// Check if the URL matches any of the WooCommerce permalink structures.
+		if ( $url_path ) {
+			$permalink_structure = wc_get_permalink_structure();
+			$permalink_keys      = array(
+				'category_base',
+				'tag_base',
+				'product_base',
+			);
 
-			// Check if the URL path starts with the matching base.
-			if ( 0 === strpos( $normalized_path, trim( $permalink_structure[ $key ], '/' ) ) ) {
-				return true;
-			}
+			foreach ( $permalink_keys as $key ) {
+				if ( ! isset( $permalink_structure[ $key ] ) || ! is_string( $permalink_structure[ $key ] ) ) {
+					continue;
+				}
 
-			// If the permalink structure contains placeholders, we need to check if the URL matches the structure using regex.
-			if ( strpos( $permalink_structure[ $key ], '%' ) !== false ) {
-				global $wp_rewrite;
-				$rules = $wp_rewrite->generate_rewrite_rule( $permalink_structure[ $key ] );
+				/**
+				 * Check if the URL path starts with a URL segment matching the permalink base.
+				 *
+				 * Match examples:
+				 *    1. product_base = 'product'
+				 *       $url_path: '/product/blue-t-shirt'
+				 *    2. category_base = 'product-category'
+				 *       $url_path: '/product-category/clothing/'
+				 *
+				 * Non-match examples:
+				 *    1. product_base = 'product'
+				 *       $url_path: '/products' (URL segment partial match)
+				 */
+				if ( 0 === strncmp( $url_path, trim( $permalink_structure[ $key ], '/' ), strlen( trim( $permalink_structure[ $key ], '/' ) ) ) ) {
+					$base_length = strlen( trim( $permalink_structure[ $key ], '/' ) );
+					$next_char   = substr( $url_path, $base_length, 1 );
 
-				if ( is_array( $rules ) && ! empty( $rules ) ) {
-					// rule key is the regex pattern.
-					$rule = array_keys( $rules )[0];
-					$rule = '#^' . str_replace( '?$', '', $rule ) . '#';
-
-					if ( preg_match( $rule, $normalized_path ) ) {
+					// If the next character is a slash, we're confident we're on a valid product page.
+					if ( '/' === $next_char ) {
 						return true;
+					}
+				}
+
+				/**
+				 * If the permalink structure contains placeholders, we need to check if the URL matches the structure using regex.
+				 *
+				 * Match examples:
+				 *    1. product_base = 'product/%product_cat%'
+				 *       $url_path: '/product/t-shirts/blue-t-shirt'
+				 *       $url_path: '/product/electronics/smartphones/iphone-12'
+				 *    2. product_base = 'shop/%product_cat%/%product%'
+				 *       $url_path: '/shop/clothing/mens/summer-shirt'
+				 *    3. product_base = '%product_cat%'
+				 *       $url_path: '/electronics/laptops/macbook-pro'
+				 *
+				 * Non-match examples:
+				 *    1. product_base = 'product/%product_cat%'
+				 *       $url_path: '/blog/top-10-products'
+				 *       $url_path: '/product-reviews/best-sellers'
+				 *    2. product_base = 'shop/%product_cat%/%product%'
+				 *       $url_path: '/shop/new-arrivals'
+				 */
+				if ( strpos( $permalink_structure[ $key ], '%' ) !== false ) {
+					global $wp_rewrite;
+					$rules = $wp_rewrite->generate_rewrite_rule( $permalink_structure[ $key ] );
+
+					if ( is_array( $rules ) && ! empty( $rules ) ) {
+						// rule key is the regex pattern.
+						$rule = array_keys( $rules )[0];
+						$rule = '#^' . str_replace( '?$', '', $rule ) . '#';
+
+						if ( preg_match( $rule, $normalized_path ) ) {
+							return true;
+						}
 					}
 				}
 			}
 		}
 
-		return false;
+		/**
+		 * Filter if a URL is a store page.
+		 *
+		 * @since 9.3.0
+		 * @param bool   $is_store_page Whether or not the URL is a store page.
+		 * @param string $url           URL to check.
+		 */
+		$is_store_page = apply_filters( 'woocommerce_is_extension_store_page', false, $url );
+
+		return filter_var( $is_store_page, FILTER_VALIDATE_BOOL );
 	}
 
 	/**

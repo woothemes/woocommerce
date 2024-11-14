@@ -283,6 +283,47 @@ function wc_product_post_type_link( $permalink, $post ) {
 add_filter( 'post_type_link', 'wc_product_post_type_link', 10, 2 );
 
 /**
+ * Ensure that the product_cat value determined in `wc_product_post_type_link` is the canonical value.
+ *
+ * If other values are used in this part of the permalink, it will be redirected.
+ *
+ * @return void
+ */
+function wc_product_canonical_redirect(): void {
+	global $wp_rewrite;
+
+	if (
+		! did_action( 'woocommerce_init' )
+		|| ! is_product()
+		|| ! is_a( $wp_rewrite, WP_Rewrite::class )
+	) {
+		return;
+	}
+
+	// In the event we are dealing with ugly permalinks, this will be empty.
+	$specified_category_slug = get_query_var( 'product_cat' );
+
+	if ( ! is_string( $specified_category_slug ) || strlen( $specified_category_slug ) < 1 ) {
+		return;
+	}
+
+	// What category slug did we expect? Normally this maps back to the first assigned product_cat
+	// term. However, this is filterable so we use the relevant helper function to figure this out.
+	$expected_category_slug = wc_product_post_type_link( '%product_cat%', get_post( get_the_ID() ) );
+
+	if ( $specified_category_slug === $expected_category_slug ) {
+		return;
+	}
+
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$query_vars = isset( $_GET ) && is_array( $_GET ) ? $_GET : array();
+
+	wp_safe_redirect( add_query_arg( $query_vars, wc_get_product( get_the_ID() )->get_permalink() ), 301 );
+	exit();
+}
+add_action( 'template_redirect', 'wc_product_canonical_redirect', 5 );
+
+/**
  * Get the placeholder image URL either from media, or use the fallback image.
  *
  * @param string $size Thumbnail size to use.
@@ -640,6 +681,52 @@ function wc_product_has_unique_sku( $product_id, $sku ) {
 }
 
 /**
+ * Check if product unique ID is unique.
+ *
+ * @since 9.1.0
+ * @param int    $product_id Product ID.
+ * @param string $global_unique_id Product Unique ID.
+ * @return bool
+ */
+function wc_product_has_global_unique_id( $product_id, $global_unique_id ) {
+	/**
+	 * Gives plugins an opportunity to verify Unique ID uniqueness themselves.
+	 *
+	 * @since 9.1.0
+	 *
+	 * @param bool|null $has_global_unique_id Set to a boolean value to short-circuit the default Unique ID check.
+	 * @param int $product_id The ID of the current product.
+	 * @param string $sku The Unique ID to check for uniqueness.
+	 */
+	$has_global_unique_id = apply_filters( 'wc_product_pre_has_global_unique_id', null, $product_id, $global_unique_id );
+	if ( ! is_null( $has_global_unique_id ) ) {
+		return boolval( $has_global_unique_id );
+	}
+
+	$data_store = WC_Data_Store::load( 'product' );
+	if ( $data_store->has_callable( 'is_existing_global_unique_id' ) ) {
+		$global_unique_id_found = $data_store->is_existing_global_unique_id( $product_id, $global_unique_id );
+	} else {
+		$logger = wc_get_logger();
+		$logger->error( 'The method is_existing_global_unique_id is not implemented in the data store.', array( 'source' => 'wc_product_has_global_unique_id' ) );
+	}
+	/**
+	 * Gives plugins an opportunity to verify Unique ID uniqueness themselves.
+	 *
+	 * @since 9.1.0
+	 *
+	 * @param boolean $global_unique_id_found Whether the Unique ID is found.
+	 * @param int $product_id The ID of the current product.
+	 * @param string $sku The Unique ID to check for uniqueness.
+	 */
+	if ( apply_filters( 'wc_product_has_global_unique_id', $global_unique_id_found, $product_id, $global_unique_id ) ) {
+		return false;
+	}
+
+	return true;
+}
+
+/**
  * Force a unique SKU.
  *
  * @since  3.0.0
@@ -690,6 +777,24 @@ function wc_product_generate_unique_sku( $product_id, $sku, $index = 0 ) {
 function wc_get_product_id_by_sku( $sku ) {
 	$data_store = WC_Data_Store::load( 'product' );
 	return $data_store->get_product_id_by_sku( $sku );
+}
+
+/**
+ * Get product ID by Unique ID.
+ *
+ * @since  9.1.0
+ * @param  string $global_unique_id Product Unique ID.
+ * @return int|null
+ */
+function wc_get_product_id_by_global_unique_id( $global_unique_id ) {
+	$data_store = WC_Data_Store::load( 'product' );
+	if ( $data_store->has_callable( 'get_product_id_by_global_unique_id' ) ) {
+		return $data_store->get_product_id_by_global_unique_id( $global_unique_id );
+	} else {
+		$logger = wc_get_logger();
+		$logger->error( 'The method get_product_id_by_global_unique_id is not implemented in the data store.', array( 'source' => 'wc_get_product_id_by_global_unique_id' ) );
+	}
+	return null;
 }
 
 /**
@@ -1421,6 +1526,7 @@ function wc_update_product_lookup_tables() {
 		'min_max_price',
 		'stock_quantity',
 		'sku',
+		'global_unique_id',
 		'stock_status',
 		'average_rating',
 		'total_sales',
@@ -1517,6 +1623,7 @@ function wc_update_product_lookup_tables_column( $column ) {
 			);
 			break;
 		case 'sku':
+		case 'global_unique_id':
 		case 'stock_status':
 		case 'average_rating':
 		case 'total_sales':
