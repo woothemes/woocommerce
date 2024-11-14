@@ -12,9 +12,9 @@ import {
 /**
  * Internal dependencies
  */
-import { AddToCartFormBlockSettings } from '../../../atomic/blocks/product-elements/add-to-cart-form/settings';
+import { AddToCartFormBlockSettings } from '../../../blocks/product-elements/add-to-cart-form/settings';
 import productGalleryBlockMetadata from '../../../blocks/product-gallery/block.json';
-import addToCartFormBlockMetadata from '../../../atomic/blocks/product-elements/add-to-cart-form/block.json';
+import addToCartFormBlockMetadata from '../../../blocks/product-elements/add-to-cart-form/block.json';
 import productMetaBlockMetadata from '../../../atomic/blocks/product-elements/product-meta/block.json';
 import productImageGalleryBlockMetadata from '../../../atomic/blocks/product-elements/product-image-gallery/block.json';
 import productRatingBlockMetadata from '../../../atomic/blocks/product-elements/rating/block.json';
@@ -75,7 +75,7 @@ const createBlockWithRestriction = (
 		allowedTemplates: undefined,
 		allowedTemplateParts: undefined,
 		isVariationBlock: false,
-	};
+	} as unknown as BlockWithRestriction;
 
 	if ( context.availableInPageEditor !== undefined ) {
 		defaultBlockWithRestriction.availableInPageEditor =
