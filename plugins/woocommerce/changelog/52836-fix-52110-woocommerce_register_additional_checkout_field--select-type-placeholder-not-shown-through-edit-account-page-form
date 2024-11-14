@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Fixed a bug causing placeholder for additional select fields not to be shown when editing addresses on My Account screen.
