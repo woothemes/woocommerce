@@ -33,8 +33,6 @@
 		"@woocommerce/types": "assets/js/types",
 		"@woocommerce/utils": "assets/js/utils",
 		"@woocommerce/interactivity": "assets/js/interactivity",
-		"@wordpress/data": "<rootDir>/node_modules/@wordpress/data",
-		"@wordpress/core-data": "<rootDir>/node_modules/@wordpress/core-data",
 		"^react$": "<rootDir>/node_modules/react",
 		"^react-dom$": "<rootDir>/node_modules/react-dom"
 	},

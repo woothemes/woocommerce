@@ -37,6 +37,14 @@ import Taxes from '../inner-blocks/checkout-order-summary-taxes/frontend';
 import { defaultCartState } from '../../../data/cart/default-state';
 import Checkout from '../block';
 
+jest.mock( '@wordpress/data', () => {
+	const wpData = jest.requireActual( 'wordpress-data-6-7' );
+	return {
+		__esModule: true,
+		...wpData,
+	};
+} );
+
 jest.mock( '@wordpress/compose', () => ( {
 	...jest.requireActual( '@wordpress/compose' ),
 	useResizeObserver: jest.fn().mockReturnValue( [ null, { width: 0 } ] ),

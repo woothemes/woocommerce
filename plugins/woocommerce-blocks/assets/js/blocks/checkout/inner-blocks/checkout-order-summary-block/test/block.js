@@ -46,6 +46,13 @@ const defaultUseStoreCartValue = {
 	cartHasCalculatedShipping: mockPreviewCart.has_calculated_shipping,
 };
 
+jest.mock( '@wordpress/data', () => {
+	return {
+		__esModule: true,
+		...jest.requireActual( 'wordpress-data-6-7' ),
+	};
+} );
+
 jest.mock( '@woocommerce/settings', () => ( {
 	...jest.requireActual( '@woocommerce/settings' ),
 	SITE_CURRENCY: {

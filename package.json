@@ -75,7 +75,6 @@
 			"@types/react": "17.0.x",
 			"@wordpress/data": "wp-6.0",
 			"@wordpress/rich-text": "wp-6.0",
-			"@woocommerce/block-library>@wordpress/data": "wp-6.7",
 			"react-resize-aware": "3.1.1",
 			"@automattic/tour-kit>@wordpress/element": "4.4.1"
 		},
