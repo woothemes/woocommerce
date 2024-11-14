@@ -5905,8 +5905,39 @@ img.help_tip {
 		justify-content: center;
 		padding: $gap-smallest;
 	}
-}
 
+	// Tags metabox.
+	#poststuff .tagsdiv {
+		.jaxtag {
+			display: flex;
+			flex-direction: column;
+			gap: $gap-smaller;
+		}
+		.ajaxtag {
+			margin: 0;
+			display: flex;
+			flex-wrap: wrap;
+			gap: $gap-smallest;
+		}
+		.newtag {
+			flex: 1;
+		}
+		.howto {
+			margin: 0;
+		}
+	}
+
+}
+@media screen and (max-width: 782px) {
+    .post-php.post-type-product,
+	.post-new-php.post-type-product,
+	.post-php.post-type-shop_coupon,
+	.post-new-php.post-type-shop_coupon {
+		.tagsdiv .newtag {
+			margin-bottom: 0;
+		}
+	}
+}
 
 
 
