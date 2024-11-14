@@ -36,11 +36,11 @@ const Block = (): JSX.Element => {
 				...addressValues,
 			};
 
-			if ( ! defaultFields?.phone || defaultFields.phone.hidden ) {
+			if ( defaultFields?.phone?.hidden ) {
 				delete syncValues.phone;
 			}
 
-			if ( ! defaultFields?.company || defaultFields.company.hidden ) {
+			if ( defaultFields?.company?.hidden ) {
 				delete syncValues.company;
 			}
 
