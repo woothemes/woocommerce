@@ -40,7 +40,7 @@ const SettingsPaymentsWooCommercePaymentsChunk = lazy(
 
 const onButtonClick = () => {
 	//TODO: Implement in future PR.
-}
+};
 
 export const SettingsPaymentsMainWrapper: React.FC = () => {
 	return (
@@ -74,7 +74,10 @@ export const SettingsPaymentsMethodsWrapper: React.FC = () => {
 		<>
 			<Header
 				title={ __( 'Choose your payment methods', 'woocommerce' ) }
-				description={ __( 'Select which payment methods you\'d like to offer to your shoppers. You can update these here at any time.', 'woocommerce' ) }	
+				description={ __(
+					'Select which payment methods you\'d like to offer to your shoppers. You can update these here at any time.',
+					'woocommerce'
+				) }	
 				backLink={ getAdminLink(
 					'admin.php?page=wc-settings&tab=checkout'
 				) }
@@ -82,7 +85,9 @@ export const SettingsPaymentsMethodsWrapper: React.FC = () => {
 				buttonLabel={ __( 'Continue', 'woocommerce' ) }
 				onButtonClick={ onButtonClick }
 			/>
-			<Suspense fallback={ <div>Loading payment methods settings...</div> }>
+			<Suspense
+				fallback={ <div>Loading payment methods settings...</div> }
+			>
 				<SettingsPaymentsMethodsChunk />
 			</Suspense>
 		</>
