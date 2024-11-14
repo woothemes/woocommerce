@@ -10,25 +10,33 @@ import {
 	useSensor,
 	useSensors,
 	DragEndEvent,
+	DragStartEvent,
 } from '@dnd-kit/core';
-import { restrictToHorizontalAxis, restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import {
 	SortableContext,
 	verticalListSortingStrategy,
 	horizontalListSortingStrategy,
 	arrayMove,
 } from '@dnd-kit/sortable';
+import {
+	restrictToHorizontalAxis,
+	restrictToVerticalAxis,
+} from '@dnd-kit/modifiers';
 
 export const SortableContainer = < T extends { id: string } >( {
 	items,
 	setItems,
 	children,
 	sorting = 'vertical',
+	onDragStart = () => {},
+	onDragEnd = () => {},
 }: {
 	items: T[];
 	setItems: ( items: T[] ) => void;
 	children: React.ReactNode;
 	sorting?: 'vertical' | 'horizontal';
+	onDragStart?: ( event: DragStartEvent ) => void;
+	onDragEnd?: ( event: DragEndEvent ) => void;
 } ) => {
 	const sensors = useSensors(
 		useSensor( MouseSensor, {} ),
@@ -36,7 +44,12 @@ export const SortableContainer = < T extends { id: string } >( {
 		useSensor( KeyboardSensor, {} )
 	);
 
+	const handleDragStart = ( event: DragStartEvent ) => {
+		onDragStart( event );
+	};
+
 	const handleDragEnd = ( event: DragEndEvent ) => {
+		onDragEnd( event );
 		const { active, over } = event;
 
 		if ( active && over && active.id !== over.id ) {
@@ -63,6 +76,7 @@ export const SortableContainer = < T extends { id: string } >( {
 	return (
 		<DndContext
 			sensors={ sensors }
+			onDragStart={ handleDragStart }
 			onDragEnd={ handleDragEnd }
 			collisionDetection={ closestCenter }
 			modifiers={ modifiers }
