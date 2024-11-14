@@ -5677,7 +5677,8 @@ img.help_tip {
 	}
 
 	.inside,
-	#commentsdiv.postbox .inside {
+	#commentsdiv.postbox .inside,
+	#postimagediv .inside {
 		padding: 16px;
 	}
 
@@ -5928,6 +5929,14 @@ img.help_tip {
 		}
 		.the-tagcloud {
 			margin-bottom: 0;
+		}
+	}
+	#postimagediv .inside {
+		display: flex;
+		flex-direction: column;
+		gap: $gap-smaller;
+		p {
+			padding: 0;
 		}
 	}
 
