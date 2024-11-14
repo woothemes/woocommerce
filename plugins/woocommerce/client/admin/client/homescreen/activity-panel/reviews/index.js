@@ -212,7 +212,6 @@ class ReviewsPanel extends Component {
 					<ProductImage
 						product={ product }
 						width={ 33 }
-						height={ 33 }
 					/>
 				</div>
 			</div>

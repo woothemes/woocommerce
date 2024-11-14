@@ -262,9 +262,7 @@
 }
 
 .woocommerce-stock-activity-card__image-overlay__product {
-	height: 33px;
 	position: relative;
-	width: 33px;
 
 	&.is-placeholder::before {
 		background-color: $gray-700;
