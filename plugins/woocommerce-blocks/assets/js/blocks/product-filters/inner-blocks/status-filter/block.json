@@ -76,12 +76,10 @@
 			"default": true
 		},
 		"productStatuses": {
-			"type": "object",
-			"default": {}
+			"type": "array"
 		},
 		"stockStatuses": {
-			"type": "object",
-			"default": {}
+			"type": "array"
 		}
 	},
 	"usesContext": [
