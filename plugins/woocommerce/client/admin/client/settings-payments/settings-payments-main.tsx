@@ -36,7 +36,6 @@ export const SettingsPaymentsMain = () => {
 		return select( PLUGINS_STORE_NAME ).getInstalledPlugins();
 	}, [] );
 
-	// TODO get the real data from server instead of parsing script tag.
 	useEffect( () => {
 		setWooPaymentsGatewayData(
 			parseScriptTag( 'experimental_wc_settings_payments_woopayments' )
@@ -65,7 +64,7 @@ export const SettingsPaymentsMain = () => {
 			installAndActivatePlugins( [ plugin.plugins[ 0 ] ] )
 				.then( ( response ) => {
 					createNoticesFromResponse( response );
-					// TODO remove the reload after we use woocommerce/data to pull the data instead of script tags.
+					// Reload the page to reflect the changes - will be replaced with a more elegant solution in the future.
 					window.location.reload();
 				} )
 				.catch( ( response: { errors: Record< string, string > } ) => {
