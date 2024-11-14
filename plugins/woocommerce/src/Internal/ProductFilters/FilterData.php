@@ -116,9 +116,6 @@ class FilterData {
 			return $cached_data;
 		}
 
-		global $wpdb;
-		$stock_status_options = array_map( 'esc_sql', array_keys( wc_get_product_stock_status_options() ) );
-
 		add_filter( 'posts_clauses', array( $this->query_clauses, 'add_query_clauses' ), 10, 2 );
 		add_filter( 'posts_pre_query', '__return_empty_array' );
 
@@ -133,9 +130,12 @@ class FilterData {
 		remove_filter( 'posts_clauses', array( $this->query_clauses, 'add_query_clauses' ), 10 );
 		remove_filter( 'posts_pre_query', '__return_empty_array' );
 
-		$stock_status_counts = array();
+		global $wpdb;
+		$stock_status_options = array_keys( wc_get_product_stock_status_options() );
+		$stock_status_counts  = array();
 
 		foreach ( $stock_status_options as $status ) {
+			$status                 = esc_sql( $status );
 			$stock_status_count_sql = "
 				SELECT COUNT( DISTINCT posts.ID ) as status_count
 				FROM {$wpdb->posts} as posts
