@@ -19,7 +19,7 @@ import { SlotFillProvider } from '@woocommerce/blocks-checkout';
 import type { TemplateArray } from '@wordpress/blocks';
 import { useEffect, useRef } from '@wordpress/element';
 import { getQueryArg } from '@wordpress/url';
-import { dispatch, select, useSelect } from '@wordpress/data';
+import { dispatch, select as selectData, useSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
 import { defaultFields as defaultFieldsSetting } from '@woocommerce/settings';
 
@@ -71,11 +71,11 @@ export const Edit = ( {
 			'site'
 		) as Record< string, string >;
 		const phoneField =
-			settings.woocommerce_checkout_phone_field || 'optional';
+			settings.woocommerce_checkout_phone_field || 'required';
 		const companyField =
 			settings.woocommerce_checkout_company_field || 'optional';
-		const apartmentField =
-			settings.woocommerce_checkout_apartment_field || 'optional';
+		const address2Field =
+			settings.woocommerce_checkout_address_2_field || 'optional';
 		return {
 			...defaultFieldsSetting,
 			phone: {
@@ -90,20 +90,25 @@ export const Edit = ( {
 			},
 			address_2: {
 				...defaultFieldsSetting.address_2,
-				required: apartmentField === 'required',
-				hidden: apartmentField === 'hidden',
+				required: address2Field === 'required',
+				hidden: address2Field === 'hidden',
 			},
 		};
 	} );
 
 	const setFieldEntity = ( field: string, value: string ) => {
 		if (
-			[ 'phone', 'company', 'apartment' ].includes( field ) &&
+			[ 'phone', 'company', 'address_2' ].includes( field ) &&
 			[ 'optional', 'required', 'hidden' ].includes( value )
 		) {
-			dispatch( coreStore ).editEntityRecord( 'root', 'site', undefined, {
-				[ `woocommerce_checkout_${ field }_field` ]: value,
-			} );
+			dispatch( coreStore as unknown as string ).editEntityRecord(
+				'root',
+				'site',
+				undefined,
+				{
+					[ `woocommerce_checkout_${ field }_field` ]: value,
+				}
+			);
 		}
 	};
 
@@ -113,7 +118,7 @@ export const Edit = ( {
 	useEffect( () => {
 		if (
 			focus.current === 'checkout' &&
-			! select( 'core/block-editor' ).hasSelectedBlock()
+			! selectData( 'core/block-editor' ).hasSelectedBlock()
 		) {
 			dispatch( 'core/block-editor' ).selectBlock( clientId );
 			dispatch( 'core/interface' ).enableComplementaryArea(
@@ -189,7 +194,7 @@ export const Edit = ( {
 					checked={ ! defaultFields.address_2.hidden }
 					onChange={ () =>
 						setFieldEntity(
-							'apartment',
+							'address_2',
 							defaultFields.address_2.hidden
 								? 'required'
 								: 'hidden'
@@ -204,11 +209,11 @@ export const Edit = ( {
 						options={ requiredOptions }
 						onChange={ ( value: string ) =>
 							setFieldEntity(
-								'apartment',
+								'address_2',
 								value === 'true' ? 'required' : 'optional'
 							)
 						}
-						className="components-base-control--nested wc-block-components-require-apartment-field"
+						className="components-base-control--nested wc-block-components-require-address_2-field"
 					/>
 				) }
 				<ToggleControl

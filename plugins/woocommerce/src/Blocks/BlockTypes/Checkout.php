@@ -76,7 +76,7 @@ class Checkout extends AbstractBlock {
 						'enum' => array( 'optional', 'required', 'hidden' ),
 					),
 				),
-				'default'      => get_option( 'woocommerce_checkout_phone_field', 'optional' ),
+				'default'      => get_option( 'woocommerce_checkout_phone_field', 'required' ),
 			)
 		);
 		register_setting(
@@ -98,19 +98,19 @@ class Checkout extends AbstractBlock {
 		);
 		register_setting(
 			'options',
-			'woocommerce_checkout_apartment_field',
+			'woocommerce_checkout_address_2_field',
 			array(
 				'type'         => 'object',
-				'description'  => __( 'Controls the display of the apartment field in checkout.', 'woocommerce' ),
+				'description'  => __( 'Controls the display of the apartment (address_2) field in checkout.', 'woocommerce' ),
 				'label'        => __( 'Apartment', 'woocommerce' ),
 				'show_in_rest' => array(
-					'name'   => 'woocommerce_checkout_apartment_field',
+					'name'   => 'woocommerce_checkout_address_2_field',
 					'schema' => array(
 						'type' => 'string',
 						'enum' => array( 'optional', 'required', 'hidden' ),
 					),
 				),
-				'default'      => get_option( 'woocommerce_checkout_apartment_field', 'optional' ),
+				'default'      => get_option( 'woocommerce_checkout_address_2_field', 'optional' ),
 			)
 		);
 	}

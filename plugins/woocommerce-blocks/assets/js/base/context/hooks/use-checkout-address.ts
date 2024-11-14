@@ -3,10 +3,10 @@
  */
 import {
 	defaultFields,
+	FormFields,
 	ShippingAddress,
 	BillingAddress,
 	getSetting,
-	FormFields,
 } from '@woocommerce/settings';
 import { useCallback } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -20,7 +20,6 @@ import { useShippingData } from './shipping/use-shipping-data';
 import { useEditorContext } from '../providers/editor-context';
 
 interface CheckoutAddress {
-	defaultFields: FormFields;
 	shippingAddress: ShippingAddress;
 	billingAddress: BillingAddress;
 	setShippingAddress: ( data: Partial< ShippingAddress > ) => void;
@@ -32,6 +31,7 @@ interface CheckoutAddress {
 	setUseShippingAsBilling: ( useShippingAsBilling: boolean ) => void;
 	setEditingBillingAddress: ( isEditing: boolean ) => void;
 	setEditingShippingAddress: ( isEditing: boolean ) => void;
+	defaultFields: FormFields;
 	showShippingFields: boolean;
 	showBillingFields: boolean;
 	forcedBillingAddress: boolean;
@@ -85,14 +85,14 @@ export const useCheckoutAddress = (): CheckoutAddress => {
 		false
 	);
 	return {
-		defaultFields: isEditor
-			? ( getPreviewData( 'defaultFields', defaultFields ) as FormFields )
-			: defaultFields,
 		shippingAddress,
 		billingAddress,
 		setShippingAddress,
 		setBillingAddress,
 		setEmail,
+		defaultFields: isEditor
+			? ( getPreviewData( 'defaultFields', defaultFields ) as FormFields )
+			: defaultFields,
 		useShippingAsBilling,
 		setUseShippingAsBilling: __internalSetUseShippingAsBilling,
 		editingBillingAddress,
