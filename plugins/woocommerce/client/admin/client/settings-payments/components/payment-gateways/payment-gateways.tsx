@@ -38,9 +38,7 @@ export const PaymentGateways = ( {
 	setupPlugin,
 	togglePlugin
 }: PaymentGatewaysProps ) => {
-	const setupLivePayments = () => {
-		// TODO: Implement in future PR.
-	};
+	const setupLivePayments = () => {};
 
 	// Transform suggested preferred plugins comply with List component format.
 	const preferredPluginSuggestionsList = useMemo(

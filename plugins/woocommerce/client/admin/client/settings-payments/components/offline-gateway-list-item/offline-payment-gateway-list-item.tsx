@@ -50,7 +50,6 @@ export const OfflinePaymentGatewayListItem = ( {
 				togglePlugin={ togglePlugin	}
 			/>
 		),
-		// TODO add drag-and-drop icon before image (future PR)
 		before: (
 			<img
 				src={

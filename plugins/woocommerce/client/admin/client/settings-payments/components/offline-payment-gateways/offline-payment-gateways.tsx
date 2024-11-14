@@ -25,7 +25,6 @@ export const OfflinePaymentGateways = ( {
 	togglePlugin
 }: OfflinePaymentGatewaysProps ) => {
 	// Mock payment gateways for now.
-	// TODO Get the list of gateways via the API in future PR.
 	const mockOfflinePaymentGateways = [
 		{
 			id: 'bacs',

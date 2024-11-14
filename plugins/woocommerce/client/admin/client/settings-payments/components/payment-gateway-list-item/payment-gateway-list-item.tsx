@@ -36,7 +36,6 @@ export const PaymentGatewayListItem = ( {
 		'woocommerce_payments',
 	].includes( gateway.id );
 
-	// todo: add logic to check if the incentive is available for the gateway.
 	const hasIncentive =
 		gateway.id === 'pre_install_woocommerce_payments_promotion';
 	const determineGatewayStatus = () => {
@@ -134,7 +133,6 @@ export const PaymentGatewayListItem = ( {
 				</>
 			</div>
 		),
-		// TODO add drag-and-drop icon before image (future PR)
 		before: <img src={ gateway.icon } alt={ gateway.title + ' logo' } />,
 	};
 };

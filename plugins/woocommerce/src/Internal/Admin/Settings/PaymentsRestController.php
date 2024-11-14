@@ -374,6 +374,16 @@ class PaymentsRestController extends RestApiControllerBase {
 							'url'   => esc_url( $plugin_data['PluginURI'] ),
 						),
 					);
+				} elseif ( ! empty( $gateway_details['plugin']['_type'] ) &&
+					ExtensionSuggestions::PLUGIN_TYPE_WPORG === $gateway_details['plugin']['_type'] ) {
+
+					// Fallback to constructing the WPORG plugin URI from the plugin slug.
+					$gateway_details['links'] = array(
+						array(
+							'_type' => ExtensionSuggestions::LINK_TYPE_ABOUT,
+							'url'   => 'https://wordpress.org/plugins/' . $plugin_slug,
+						),
+					);
 				}
 			}
 
