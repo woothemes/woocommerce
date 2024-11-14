@@ -4,7 +4,7 @@
 import { createSlotFill, SelectControl } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 /**
  * Internal dependencies
@@ -34,6 +34,13 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 	const [ emailType, setEmailType ] = useState< string >(
 		'WC_Email_Customer_Processing_Order'
 	);
+	const [ finalPreviewUrl, setFinalPreviewUrl ] =
+		useState< string >( previewUrl );
+
+	useEffect( () => {
+		setFinalPreviewUrl( `${ previewUrl }&type=${ emailType }` );
+	}, [ emailType, previewUrl ] );
+
 	return (
 		<Fill>
 			<div className="wc-settings-email-preview-container">
@@ -53,7 +60,7 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 				>
 					<EmailPreviewHeader />
 					<iframe
-						src={ previewUrl }
+						src={ finalPreviewUrl }
 						title={ __( 'Email preview frame', 'woocommerce' ) }
 					/>
 				</div>
