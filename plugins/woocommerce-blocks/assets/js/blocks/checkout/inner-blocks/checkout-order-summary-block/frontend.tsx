@@ -15,17 +15,25 @@ import { OrderMetaSlotFill, CheckoutOrderSummaryFill } from './slotfills';
 import { useContainerWidthContext } from '../../../../base/context';
 import { FormattedMonetaryAmount } from '../../../../../../packages/components';
 import { FormStepHeading } from '../../form-step';
+import { BlockAttributes } from './edit';
+
+type FrontendBlockProps = {
+	children: JSX.Element | JSX.Element[];
+	className?: string;
+} & BlockAttributes;
 
 const FrontendBlock = ( {
 	children,
 	className = '',
-}: {
-	children: JSX.Element | JSX.Element[];
-	className?: string;
-} ): JSX.Element | null => {
+	sectionHeading,
+	footerHeading,
+}: FrontendBlockProps ) => {
 	const { cartTotals } = useStoreCart();
 	const { isLarge } = useContainerWidthContext();
 	const [ isOpen, setIsOpen ] = useState( false );
+
+	const heading = sectionHeading ?? __( 'Order summary', 'woocommerce' );
+	const footerHeadingLabel = footerHeading ?? __( 'Total', 'woocommerce' );
 
 	const totalsCurrency = getCurrencyFromPriceResponse( cartTotals );
 	const totalPrice = parseInt( cartTotals.total_price, 10 );
@@ -64,7 +72,7 @@ const FrontendBlock = ( {
 						className="wc-block-components-checkout-order-summary__title-text"
 						role="heading"
 					>
-						{ __( 'Order summary', 'woocommerce' ) }
+						{ heading }
 					</p>
 					{ ! isLarge && (
 						<>
@@ -94,6 +102,7 @@ const FrontendBlock = ( {
 						<TotalsFooterItem
 							currency={ totalsCurrency }
 							values={ cartTotals }
+							label={ footerHeadingLabel }
 						/>
 					</div>
 					<OrderMetaSlotFill />
@@ -114,6 +123,7 @@ const FrontendBlock = ( {
 								<TotalsFooterItem
 									currency={ totalsCurrency }
 									values={ cartTotals }
+									label={ footerHeadingLabel }
 								/>
 							</div>
 							<OrderMetaSlotFill />
