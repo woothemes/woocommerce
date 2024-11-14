@@ -1,4 +1,0 @@
-Significance: patch
-Type: tweak
-Comment: Increases frequency of cron job from daily to twice daily.
-

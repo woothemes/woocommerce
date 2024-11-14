@@ -1431,6 +1431,9 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 							],
 							target: 'pluginsSkipped',
 						},
+						PLUGINS_PAGE_COMPLETED_WITHOUT_SELECTING_PLUGINS: {
+							target: 'postPluginInstallation.noPluginsSelected',
+						},
 						PLUGINS_LEARN_MORE_LINK_CLICKED: {
 							actions: [
 								{
@@ -1449,33 +1452,73 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 					},
 				},
 				postPluginInstallation: {
-					invoke: {
-						input: ( { event } ) => {
-							assertEvent(
-								event,
-								'PLUGINS_INSTALLATION_COMPLETED'
-							);
-							return event;
-						},
-						src: fromPromise( async ( { input: event } ) => {
-							return await dispatch(
-								ONBOARDING_STORE_NAME
-							).updateProfileItems( {
-								business_extensions:
-									event.payload.installationCompletedResult.installedPlugins.map(
-										( extension: InstalledPlugin ) =>
-											extension.plugin
-									),
-								completed: true,
-							} );
-						} ),
-						onDone: [
-							{
-								target: 'isJetpackConnected',
-								guard: 'hasJetpackSelectedForInstallation',
+					initial: 'noPluginsSelected',
+					states: {
+						withPluginsSelected: {
+							invoke: {
+								input: ( { event } ) => {
+									assertEvent(
+										event,
+										'PLUGINS_INSTALLATION_COMPLETED'
+									);
+									return event;
+								},
+								src: fromPromise(
+									async ( { input: event } ) => {
+										return await dispatch(
+											ONBOARDING_STORE_NAME
+										).updateProfileItems( {
+											business_extensions:
+												event.payload.installationCompletedResult.installedPlugins.map(
+													(
+														extension: InstalledPlugin
+													) => extension.plugin
+												),
+											completed: true,
+										} );
+									}
+								),
+								onDone: [
+									{
+										target: '#isJetpackConnected',
+										guard: or( [
+											'hasJetpackSelectedForInstallation',
+											'hasJetpackActivated',
+										] ),
+									},
+									{ actions: 'redirectToWooHome' },
+								],
+								onError: {
+									actions: 'redirectToWooHome',
+								},
 							},
-							{ actions: 'redirectToWooHome' },
-						],
+						},
+						noPluginsSelected: {
+							entry: assign( {
+								loader: {
+									progress: 80,
+								},
+							} ),
+							invoke: {
+								src: fromPromise( () =>
+									dispatch(
+										ONBOARDING_STORE_NAME
+									).updateProfileItems( {
+										completed: true,
+									} )
+								),
+								onDone: [
+									{
+										target: '#isJetpackConnected',
+										guard: 'hasJetpackActivated',
+									},
+									{ actions: 'redirectToWooHome' },
+								],
+								onError: {
+									actions: 'redirectToWooHome',
+								},
+							},
+						},
 					},
 					meta: {
 						component: CoreProfilerLoader,
@@ -1483,6 +1526,7 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 					},
 				},
 				isJetpackConnected: {
+					id: 'isJetpackConnected',
 					invoke: {
 						src: 'getJetpackIsConnected',
 						onDone: [
@@ -1566,7 +1610,7 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 							],
 						},
 						PLUGINS_INSTALLATION_COMPLETED: {
-							target: 'postPluginInstallation',
+							target: 'postPluginInstallation.withPluginsSelected',
 							actions: [
 								{
 									type: 'recordSuccessfulPluginInstallation',

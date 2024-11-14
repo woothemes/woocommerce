@@ -1,5 +1,0 @@
-Significance: patch
-Type: add
-Comment: This change replaces static email preview with order processing email. This is in development behind a hidden experimental flag and not yet ready for public use.
-
-
