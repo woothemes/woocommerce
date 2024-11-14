@@ -14,7 +14,7 @@
 	"main": "src/index.js",
 	"module": "build-module/index.js",
 	"scripts": {
-    "changelog": "XDEBUG_MODE=off composer install --quiet && composer exec -- changelogger"
+		"changelog": "XDEBUG_MODE=off composer install --quiet && composer exec -- changelogger",
 		"lint": "eslint --ext=js,ts,tsx src",
 		"lint:fix": "eslint --ext=js,ts,tsx src --fix"
 	},
