@@ -89,12 +89,13 @@ export const PaymentGatewayListItem = ( {
 		after: (
 			<div className="woocommerce-list__item-after__actions">
 				<>
-					<PaymentGatewayButton
+				<PaymentGatewayButton
 						id={ gateway.id }
 						isOffline={ false }
 						enabled={ gateway.state?.enabled || false }
 						needsSetup={ gateway.state?.needs_setup }
 						settingsUrl={ gateway.management?.settings_url || '' }
+						isWCPay={ isWCPay }
 					/>
 					{ isWCPay &&
 						gateway.state?.enabled &&
