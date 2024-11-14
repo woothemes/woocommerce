@@ -140,6 +140,7 @@ class BlockPatterns {
 			'blockTypes'    => 'Block Types',
 			'inserter'      => 'Inserter',
 			'featureFlag'   => 'Feature Flag',
+			'templateTypes' => 'Template Types',
 		);
 
 		if ( ! file_exists( $this->patterns_path ) ) {
@@ -204,12 +205,16 @@ class BlockPatterns {
 			return;
 		}
 
+		// The most efficient way to check for an existing action is to use `as_has_scheduled_action`, but in unusual
+		// cases where another plugin has loaded a very old version of Action Scheduler, it may not be available to us.
+		$has_scheduled_action = function_exists( 'as_has_scheduled_action' ) ? 'as_has_scheduled_action' : 'as_next_scheduled_action';
+
 		$patterns = $this->ptk_patterns_store->get_patterns();
 		if ( empty( $patterns ) ) {
 			// By only logging when patterns are empty and no fetch is scheduled,
 			// we ensure that warnings are only generated in genuinely problematic situations,
 			// such as when the pattern fetching mechanism has failed entirely.
-			if ( ! as_has_scheduled_action( 'fetch_patterns' ) ) {
+			if ( ! call_user_func( $has_scheduled_action, 'fetch_patterns' ) ) {
 				wc_get_logger()->warning(
 					__( 'Empty patterns received from the PTK Pattern Store', 'woocommerce' ),
 				);
