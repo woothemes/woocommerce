@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Fix the social links icon color from footer-large pattern to automatically pick the icon color from the site theme styles

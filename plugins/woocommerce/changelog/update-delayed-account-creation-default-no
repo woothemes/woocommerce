@@ -1,4 +1,0 @@
-Significance: patch
-Type: tweak
-
-Delayed account creation off by default so merchants can enable it manually
