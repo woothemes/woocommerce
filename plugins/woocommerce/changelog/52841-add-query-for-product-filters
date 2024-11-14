@@ -1,0 +1,4 @@
+Significance: patch
+Type: add
+
+Add onsale and filter_status clauses and queries
