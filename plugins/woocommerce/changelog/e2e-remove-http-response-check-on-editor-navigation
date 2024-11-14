@@ -1,4 +1,0 @@
-Significance: patch
-Type: dev
-
-E2E tests: update utils to not wait for http reponse when navigating to editor page

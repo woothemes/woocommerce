@@ -2,6 +2,12 @@
 	border: 1px solid $universal-border-light;
 	border-radius: 5px;
 
+	&.checkout-order-summary-block-fill-wrapper {
+		.wc-block-components-order-summary {
+			padding: 0 $gap;
+		}
+	}
+
 	.wc-block-components-formatted-money-amount {
 		font-weight: 600;
 	}

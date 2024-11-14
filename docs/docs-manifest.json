@@ -692,7 +692,7 @@
           "post_title": "Integrating with coming soon mode",
           "tags": "how-to, coming-soon",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/extension-development/integrating-coming-soon-mode.md",
-          "hash": "791cd6d3928b3aafc72a24d0283a404a90a0f021c7c36edaa445eb44978114a3",
+          "hash": "1b782f4585b66355e31cccec4064f03f37df17d2a06d0a66cd9be7f715516e06",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/extension-development/integrating-coming-soon-mode.md",
           "id": "787743efb6ef0ad509b17735eaf58b2a9a08afbc"
         },
@@ -710,7 +710,7 @@
           "menu_title": "Design a simple extension",
           "tags": "how-to",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/extension-development/how-to-design-a-simple-extension.md",
-          "hash": "10afdef1875fb51e6163589535b6bfec86fe09624559e0dbed916e7e1c0bd777",
+          "hash": "5bd671921996f43d12f5be9675c3d98c59f9fc9b79d63ed3b5bad990424fbebc",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/extension-development/how-to-design-a-simple-extension.md",
           "id": "375f7e18a2e656e662d3189041caeb9c80e7c9e3"
         },
@@ -975,7 +975,7 @@
           "post_title": "HPOS CLI Tools",
           "tags": "reference",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/high-performance-order-storage/cli-tools.md",
-          "hash": "63e5edd55720c963de6700854515ea51946ff734b716ab61793955308b72af91",
+          "hash": "b9a313ba52cd08284e7a23be32c28bcb93be8f9389b0e5fcc041506ff0d2bd46",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/high-performance-order-storage/cli-tools.md",
           "id": "cdd9d9ad5777d978ba953e3478fbb61cab8fdf59"
         }
@@ -1470,7 +1470,7 @@
         {
           "post_title": "Template structure & Overriding templates via a theme",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/theme-development/template-structure.md",
-          "hash": "8bb4925cfc5ca1f9d8839675fafbf1941d6a23ae257827cead075bd4956b80bc",
+          "hash": "932567a5d398a8624fbb0bf64bd7a913902fe3c4f4933fc434ea2a7915085d45",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/theme-development/template-structure.md",
           "id": "34bfebec9fc45e680976814928a7b8a1778af14e"
         },
@@ -1823,5 +1823,5 @@
       "categories": []
     }
   ],
-  "hash": "37344610a42f59b00f6ffedd8c03061f778c0846d5c7bbd5389acf00055a3745"
+  "hash": "8cd07dec61c2ddf169022adc3616e0ba4141d685689b83ca2d45e42ff6ca3583"
 }
