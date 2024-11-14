@@ -5825,6 +5825,19 @@ img.help_tip {
 		gap: $gap-small;
 		padding: 12px 16px 16px 16px;
 	}
+	// Hide all icons.
+	#post-body {
+		.misc-pub-post-status:before,
+		#visibility:before,
+		.curtime #timestamp:before,
+		.misc-pub-uploadedby:before,
+		.misc-pub-uploadedto:before,
+		.misc-pub-revisions:before,
+		.misc-pub-response-to:before,
+		.misc-pub-comment-status:before {
+			display: none;
+		}
+	}
 	.misc-pub-section {
 		padding: 0;
 	}
