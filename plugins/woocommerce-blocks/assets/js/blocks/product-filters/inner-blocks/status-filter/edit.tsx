@@ -41,9 +41,6 @@ const Edit = ( props: EditProps ) => {
 		? attributes.stockStatuses
 		: Object.keys( stockStatusOptions );
 
-	console.log( 'productStatuses', productStatuses );
-	console.log( 'stockStatuses', stockStatuses );
-
 	const { children, ...innerBlocksProps } = useInnerBlocksProps(
 		useBlockProps(),
 		{
