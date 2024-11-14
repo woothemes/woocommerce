@@ -25,6 +25,7 @@ import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
  * Internal dependencies
  */
 import { Sidebar } from './components/sidebar';
+import { SectionTabs } from './components/section-tabs';
 import { Route, Location } from './types';
 import { LegacyContent } from './legacy';
 
@@ -86,7 +87,11 @@ const getLegacyRoute = (
 					pageTitle={ pageTitle }
 				/>
 			),
-			content: <LegacyContent settingsPage={ settingsPage } />,
+			content: (
+				<SectionTabs settingsPage={ settingsPage }>
+					<LegacyContent settingsPage={ settingsPage } />
+				</SectionTabs>
+			),
 			edit: null,
 		},
 		widths: {
@@ -178,6 +183,11 @@ export const useActiveRoute = () => {
 				settingsData={ settingsData }
 				pageTitle={ settingsPage.label }
 			/>
+		);
+		modernRoute.areas.content = (
+			<SectionTabs settingsPage={ settingsPage }>
+				{ modernRoute.areas.content }
+			</SectionTabs>
 		);
 		// Make sure we have a key.
 		modernRoute.key = activePage;

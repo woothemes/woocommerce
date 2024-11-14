@@ -35,7 +35,6 @@ import SidebarContent from '@wordpress/edit-site/build-module/components/sidebar
  * Internal dependencies
  */
 import { Route } from './types';
-import { SectionTabs } from './components/section-tabs';
 
 const { NavigableRegion } = unlock( editorPrivateApis );
 
@@ -104,7 +103,7 @@ export function Layout( { route }: LayoutProps ) {
 								maxWidth: widths?.content,
 							} }
 						>
-							<SectionTabs>{ areas.content }</SectionTabs>
+							{ areas.content }
 						</div>
 					) }
 

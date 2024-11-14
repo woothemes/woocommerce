@@ -4,15 +4,24 @@
 import { createElement, Fragment } from '@wordpress/element';
 import { TabPanel } from '@wordpress/components';
 
-export const SectionTabs = ( { children }: { children: React.ReactNode } ) => {
-	const settingsData: SettingsData = window.wcSettings?.admin?.settingsData;
-	const sections = Object.values( settingsData );
+export const SectionTabs = ( {
+	children,
+	settingsPage,
+}: {
+	children: React.ReactNode;
+	settingsPage: SettingsPage;
+} ) => {
+	const sections = Object.keys( settingsPage.sections );
+
+	if ( sections.length <= 1 ) {
+		return <>{ children }</>;
+	}
 
 	return (
 		<TabPanel
-			tabs={ sections.map( ( section ) => ( {
-				name: section.slug,
-				title: section.label,
+			tabs={ sections.map( ( key ) => ( {
+				name: settingsPage.sections[ key ].label,
+				title: settingsPage.sections[ key ].label,
 			} ) ) }
 		>
 			{ () => <>{ children }</> }
