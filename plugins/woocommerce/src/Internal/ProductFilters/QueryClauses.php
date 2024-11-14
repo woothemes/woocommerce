@@ -22,12 +22,14 @@ class QueryClauses implements QueryClausesGenerator {
 	/**
 	 * Add conditional query clauses based on the filter params in query vars.
 	 *
+	 * There isn't a clause for rating filter because we use tax_query for it
+	 * (product_visibility).
+	 *
 	 * @param array     $args     Query args.
 	 * @param \WP_Query $wp_query WP_Query object.
 	 * @return array
 	 */
 	public function add_query_clauses( $args, $wp_query ) {
-		// Rating filter is handled by tax query.
 		if ( $wp_query->get( 'filter_stock_status' ) ) {
 			$stock_statuses = trim( $wp_query->get( 'filter_stock_status' ) );
 			$stock_statuses = explode( ',', $stock_statuses );
