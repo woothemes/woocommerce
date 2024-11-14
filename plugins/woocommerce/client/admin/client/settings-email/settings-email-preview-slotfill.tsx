@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { createSlotFill } from '@wordpress/components';
+import { createSlotFill, SelectControl } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
@@ -20,10 +20,12 @@ import { EmailPreviewHeader } from './settings-email-preview-header';
 const { Fill } = createSlotFill( SETTINGS_SLOT_FILL_CONSTANT );
 
 type EmailPreviewFillProps = {
+	emailTypes: SelectControl.Option[];
 	previewUrl: string;
 };
 
 const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
+	emailTypes,
 	previewUrl,
 } ) => {
 	const [ deviceType, setDeviceType ] =
@@ -52,15 +54,29 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 };
 
 export const registerSettingsEmailPreviewFill = () => {
-	const slot_element_id = 'wc_settings_email_preview_slotfill';
-	const slot_element = document.getElementById( slot_element_id );
-	const preview_url = slot_element?.getAttribute( 'data-preview-url' );
-	if ( ! preview_url ) {
+	const slotElementId = 'wc_settings_email_preview_slotfill';
+	const slotElement = document.getElementById( slotElementId );
+	if ( ! slotElement ) {
 		return null;
 	}
+	const previewUrl = slotElement.getAttribute( 'data-preview-url' );
+	if ( ! previewUrl ) {
+		return null;
+	}
+	const emailTypesData = slotElement.getAttribute( 'data-email-types' );
+	let emailTypes: SelectControl.Option[] = [];
+	try {
+		emailTypes = JSON.parse( emailTypesData || '' );
+	} catch ( e ) {}
+
 	registerPlugin( 'woocommerce-admin-settings-email-preview', {
 		// @ts-expect-error 'scope' does exist. @types/wordpress__plugins is outdated.
 		scope: 'woocommerce-email-preview-settings',
-		render: () => <EmailPreviewFill previewUrl={ preview_url } />,
+		render: () => (
+			<EmailPreviewFill
+				emailTypes={ emailTypes }
+				previewUrl={ previewUrl }
+			/>
+		),
 	} );
 };
