@@ -18,7 +18,7 @@ import { getSettingWithCoercion } from '@woocommerce/settings';
 import { isBoolean } from '@woocommerce/types';
 import { useState, useMemo, useEffect } from '@wordpress/element';
 import { withSpokenMessages } from '@wordpress/components';
-import type { BlockEditProps } from '@wordpress/blocks';
+import type { BlockEditProps, TemplateArray } from '@wordpress/blocks';
 import type { WCStoreV1ProductsCollectionProps } from '@woocommerce/blocks/product-collection/types';
 
 /**
@@ -33,12 +33,11 @@ import { Notice } from '../../components/notice';
 import type { Attributes } from './types';
 import './style.scss';
 import { InitialDisabled } from '../../components/initial-disabled';
-import { useProductFilterClearButtonManager } from '../../hooks/use-product-filter-clear-button-manager';
 
 const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
-	const { attributes, setAttributes } = props;
+	const { attributes, setAttributes, clientId } = props;
 
-	const { isPreview, showCounts, minRating } = attributes;
+	const { isPreview, showCounts, minRating, clearButton } = attributes;
 
 	const { children, ...innerBlocksProps } = useInnerBlocksProps(
 		useBlockProps(),
@@ -69,16 +68,18 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 								content: __( 'Rating', 'woocommerce' ),
 							},
 						],
-						[
-							'woocommerce/product-filter-clear-button',
-							{
-								lock: {
-									remove: true,
-									move: false,
-								},
-							},
-						],
-					],
+						clearButton
+							? [
+									'woocommerce/product-filter-clear-button',
+									{
+										lock: {
+											remove: true,
+											move: false,
+										},
+									},
+							  ]
+							: null,
+					].filter( Boolean ) as unknown as TemplateArray,
 				],
 				[
 					'woocommerce/product-filter-checkbox-list',
@@ -166,11 +167,6 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 		minRating,
 	] );
 
-	useProductFilterClearButtonManager( {
-		clientId: props.clientId,
-		showClearButton: attributes.clearButton,
-	} );
-
 	if ( ! filteredCountsLoading && displayedOptions.length === 0 ) {
 		return null;
 	}
@@ -191,6 +187,7 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 	return (
 		<>
 			<Inspector
+				clientId={ clientId }
 				attributes={ attributes }
 				setAttributes={ setAttributes }
 			/>

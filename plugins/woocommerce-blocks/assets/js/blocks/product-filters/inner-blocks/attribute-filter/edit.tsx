@@ -19,6 +19,7 @@ import { withSpokenMessages } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { getSetting } from '@woocommerce/settings';
+import type { TemplateArray } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -33,12 +34,11 @@ import { EXCLUDED_BLOCKS } from '../../constants';
 import { FilterOptionItem } from '../../types';
 import { InitialDisabled } from '../../components/initial-disabled';
 import { Notice } from '../../components/notice';
-import { useProductFilterClearButtonManager } from '../../hooks/use-product-filter-clear-button-manager';
 
 const ATTRIBUTES = getSetting< AttributeSetting[] >( 'attributes', [] );
 
 const Edit = ( props: EditProps ) => {
-	const { attributes: blockAttributes, clientId } = props;
+	const { attributes: blockAttributes } = props;
 
 	const {
 		attributeId,
@@ -58,11 +58,6 @@ const Edit = ( props: EditProps ) => {
 	>( [] );
 	const [ isOptionsLoading, setIsOptionsLoading ] =
 		useState< boolean >( true );
-
-	useProductFilterClearButtonManager( {
-		clientId,
-		showClearButton: clearButton,
-	} );
 
 	const { results: attributeTerms, isLoading: isTermsLoading } =
 		useCollection< AttributeTerm[] >( {
@@ -168,16 +163,18 @@ const Edit = ( props: EditProps ) => {
 									__( 'Attribute', 'woocommerce' ),
 							},
 						],
-						[
-							'woocommerce/product-filter-clear-button',
-							{
-								lock: {
-									remove: true,
-									move: false,
-								},
-							},
-						],
-					],
+						clearButton
+							? [
+									'woocommerce/product-filter-clear-button',
+									{
+										lock: {
+											remove: true,
+											move: false,
+										},
+									},
+							  ]
+							: null,
+					].filter( Boolean ) as unknown as TemplateArray,
 				],
 				[
 					displayStyle,
