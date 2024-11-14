@@ -24,7 +24,7 @@ import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
 /**
  * Internal dependencies
  */
-import { Sidebar } from './sidebar';
+import { Sidebar } from './components/sidebar';
 import { Route, Location } from './types';
 import { LegacyContent } from './legacy';
 
@@ -147,7 +147,7 @@ export function useModernRoutes() {
  * Hook to determine and return the active route based on the current path.
  */
 export const useActiveRoute = () => {
-	const settingsData = window.wcSettings?.admin?.settingsData;
+	const settingsData: SettingsData = window.wcSettings?.admin?.settingsData;
 	const location = useLocation() as Location;
 	const modernRoutes = useModernRoutes();
 
