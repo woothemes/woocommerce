@@ -73,6 +73,7 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 	// Store previous fields to track changes.
 	const previousFormFields = usePrevious( formFields );
 	const previousIsEditing = usePrevious( isEditing );
+	const previousValues = usePrevious( values );
 
 	// Stores refs for rendered inputs so we can access them later.
 	const inputsRef = useRef<
@@ -151,7 +152,10 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 
 	// Maybe validate country and state when other fields change so user is notified that they're required.
 	useEffect( () => {
-		if ( fastDeepEqual( previousFormFields, formFields ) ) {
+		if (
+			fastDeepEqual( previousFormFields, formFields ) &&
+			fastDeepEqual( previousValues, values )
+		) {
 			return;
 		}
 		if ( objectHasProp( values, 'country' ) ) {
@@ -164,7 +168,13 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 				validateState( addressType, values, stateField );
 			}
 		}
-	}, [ values, addressType, formFields, previousFormFields ] );
+	}, [
+		values,
+		previousValues,
+		addressType,
+		formFields,
+		previousFormFields,
+	] );
 
 	id = id || `${ instanceId }`;
 
