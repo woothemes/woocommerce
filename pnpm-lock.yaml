@@ -4204,7 +4204,7 @@ importers:
     dependencies:
       '@automattic/components':
         specifier: ^2.1.1
-        version: 2.1.1(@types/react@17.0.71)(@wordpress/data@10.10.0(react@17.0.2))(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
+        version: 2.1.1(@types/react@17.0.71)(@wordpress/data@6.6.1(react@17.0.2))(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
       '@automattic/explat-client':
         specifier: ^0.0.5
         version: 0.0.5
@@ -4218,11 +4218,11 @@ importers:
         specifier: ^6.1.0
         version: 6.1.0(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
       '@dnd-kit/modifiers':
-        specifier: 7.0.0
-        version: 7.0.0(@dnd-kit/core@6.1.0(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(react@17.0.2)
+        specifier: ^6.0.1
+        version: 6.0.1(@dnd-kit/core@6.1.0(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(react@17.0.2)
       '@dnd-kit/sortable':
-        specifier: 8.0.0
-        version: 8.0.0(@dnd-kit/core@6.1.0(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(react@17.0.2)
+        specifier: ^7.0.2
+        version: 7.0.2(@dnd-kit/core@6.1.0(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(react@17.0.2)
       '@react-spring/web':
         specifier: ^9.7.3
         version: 9.7.3(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
@@ -4258,7 +4258,7 @@ importers:
         version: 4.4.5(react@17.0.2)
       '@wordpress/data':
         specifier: wp-6.0
-        version: 10.10.0(react@17.0.2)
+        version: 6.6.1(react@17.0.2)
       '@wordpress/data-controls':
         specifier: wp-6.0
         version: 2.6.1(react@17.0.2)
@@ -6861,10 +6861,22 @@ packages:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
 
+  '@dnd-kit/modifiers@6.0.1':
+    resolution: {integrity: sha512-rbxcsg3HhzlcMHVHWDuh9LCjpOVAgqbV78wLGI8tziXY3+qcMQ61qVXIvNKQFuhj75dSfD+o+PYZQ/NUk2A23A==}
+    peerDependencies:
+      '@dnd-kit/core': ^6.0.6
+      react: '>=16.8.0'
+
   '@dnd-kit/modifiers@7.0.0':
     resolution: {integrity: sha512-BG/ETy3eBjFap7+zIti53f0PCLGDzNXyTmn6fSdrudORf+OH04MxrW4p5+mPu4mgMk9kM41iYONjc3DOUWTcfg==}
     peerDependencies:
       '@dnd-kit/core': ^6.1.0
+      react: '>=16.8.0'
+
+  '@dnd-kit/sortable@7.0.2':
+    resolution: {integrity: sha512-wDkBHHf9iCi1veM834Gbk1429bd4lHX4RpAwT0y2cHLf246GAvU2sVw/oxWNpPKQNQRQaeGXhAVgrOl1IT+iyA==}
+    peerDependencies:
+      '@dnd-kit/core': ^6.0.7
       react: '>=16.8.0'
 
   '@dnd-kit/sortable@8.0.0':
@@ -26469,37 +26481,6 @@ snapshots:
 
   '@automattic/color-studio@2.5.0': {}
 
-  '@automattic/components@2.1.1(@types/react@17.0.71)(@wordpress/data@10.10.0(react@17.0.2))(react-dom@17.0.2(react@17.0.2))(react@17.0.2)':
-    dependencies:
-      '@automattic/calypso-analytics': 1.1.2
-      '@automattic/calypso-url': 1.1.0
-      '@automattic/format-currency': 2.0.0
-      '@automattic/i18n-utils': 1.2.1
-      '@automattic/material-design-icons': 1.0.0
-      '@automattic/typography': 1.0.0
-      '@automattic/viewport-react': 1.0.0(react@17.0.2)
-      '@wordpress/base-styles': 4.48.0
-      '@wordpress/components': 27.5.0(@types/react@17.0.71)(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
-      '@wordpress/data': 10.10.0(react@17.0.2)
-      '@wordpress/icons': 9.48.0
-      '@wordpress/react-i18n': 3.55.0
-      canvas-confetti: 1.9.2
-      classnames: 2.3.2
-      gridicons: 3.4.2(react@17.0.2)
-      i18n-calypso: 7.0.0(@types/react@17.0.71)(react@17.0.2)
-      lodash: 4.17.21
-      prop-types: 15.8.1
-      react: 17.0.2
-      react-dom: 17.0.2(react@17.0.2)
-      react-modal: 3.16.1(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
-      react-router-dom: 6.23.0(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
-      react-slider: 2.0.6(react@17.0.2)
-      utility-types: 3.10.0
-      uuid: 9.0.1
-    transitivePeerDependencies:
-      - '@types/react'
-      - supports-color
-
   '@automattic/components@2.1.1(@types/react@17.0.71)(@wordpress/data@10.6.0(react@17.0.2))(react-dom@17.0.2(react@17.0.2))(react@17.0.2)':
     dependencies:
       '@automattic/calypso-analytics': 1.1.2
@@ -26512,7 +26493,7 @@ snapshots:
       '@wordpress/base-styles': 4.48.0
       '@wordpress/components': 27.5.0(@types/react@17.0.71)(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
       '@wordpress/data': 10.6.0(react@17.0.2)
-      '@wordpress/icons': 9.48.0
+      '@wordpress/icons': 9.49.0
       '@wordpress/react-i18n': 3.55.0
       canvas-confetti: 1.9.2
       classnames: 2.3.2
@@ -26543,7 +26524,7 @@ snapshots:
       '@wordpress/base-styles': 4.48.0
       '@wordpress/components': 27.5.0(@types/react@17.0.71)(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
       '@wordpress/data': 6.6.1(react@17.0.2)
-      '@wordpress/icons': 9.48.0
+      '@wordpress/icons': 9.49.0
       '@wordpress/react-i18n': 3.55.0
       canvas-confetti: 1.9.2
       classnames: 2.3.2
@@ -30930,7 +30911,7 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       tslib: 2.6.3
 
-  '@dnd-kit/modifiers@7.0.0(@dnd-kit/core@6.1.0(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(react@17.0.2)':
+  '@dnd-kit/modifiers@6.0.1(@dnd-kit/core@6.1.0(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(react@17.0.2)':
     dependencies:
       '@dnd-kit/core': 6.1.0(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
       '@dnd-kit/utilities': 3.2.2(react@17.0.2)
@@ -30944,7 +30925,7 @@ snapshots:
       react: 18.3.1
       tslib: 2.6.3
 
-  '@dnd-kit/sortable@8.0.0(@dnd-kit/core@6.1.0(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(react@17.0.2)':
+  '@dnd-kit/sortable@7.0.2(@dnd-kit/core@6.1.0(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(react@17.0.2)':
     dependencies:
       '@dnd-kit/core': 6.1.0(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
       '@dnd-kit/utilities': 3.2.2(react@17.0.2)
@@ -48617,7 +48598,7 @@ snapshots:
 
   carlo@0.9.46:
     dependencies:
-      debug: 4.3.6
+      debug: 4.3.5
       puppeteer-core: 1.12.2
     transitivePeerDependencies:
       - bufferutil
@@ -51600,7 +51581,7 @@ snapshots:
       ajv: 6.12.6
       chalk: 2.4.2
       cross-spawn: 6.0.5
-      debug: 4.3.6
+      debug: 4.3.5
       doctrine: 3.0.0
       eslint-scope: 5.1.1
       eslint-utils: 1.4.3
@@ -53885,7 +53866,7 @@ snapshots:
       '@babel/runtime': 7.25.7
       '@tannin/sprintf': 1.2.0
       '@wordpress/compose': 3.25.3(react@17.0.2)
-      debug: 4.3.6
+      debug: 4.3.5
       events: 3.3.0
       hash.js: 1.1.7
       interpolate-components: 1.1.1
@@ -62561,7 +62542,7 @@ snapshots:
       loader-utils: 2.0.4
       neo-async: 2.6.2
       schema-utils: 3.3.0
-      semver: 7.6.3
+      semver: 7.5.4
       webpack: 5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)
     optionalDependencies:
       sass: 1.69.5
@@ -63697,7 +63678,7 @@ snapshots:
     dependencies:
       component-emitter: 1.3.1
       cookiejar: 2.1.4
-      debug: 4.3.6
+      debug: 4.3.5
       fast-safe-stringify: 2.1.1
       form-data: 4.0.0
       formidable: 2.1.2
@@ -66337,9 +66318,9 @@ snapshots:
       '@webassemblyjs/ast': 1.12.1
       '@webassemblyjs/wasm-edit': 1.12.1
       '@webassemblyjs/wasm-parser': 1.12.1
-      acorn: 8.12.1
-      acorn-import-assertions: 1.9.0(acorn@8.12.1)
-      browserslist: 4.23.3
+      acorn: 8.11.2
+      acorn-import-assertions: 1.9.0(acorn@8.11.2)
+      browserslist: 4.22.2
       chrome-trace-event: 1.0.3
       enhanced-resolve: 5.16.0
       es-module-lexer: 1.4.1
