@@ -66,33 +66,36 @@ export const Edit = ( {
 	} = attributes;
 
 	const defaultFields = useSelect( ( select ) => {
-		const settings = select( coreStore ).getEditedEntityRecord(
-			'root',
-			'site'
-		) as Record< string, string >;
-		const phoneField =
-			settings.woocommerce_checkout_phone_field || 'required';
-		const companyField =
-			settings.woocommerce_checkout_company_field || 'optional';
-		const address2Field =
-			settings.woocommerce_checkout_address_2_field || 'optional';
+		const settings = select(
+			coreStore as unknown as string
+		).getEditedEntityRecord( 'root', 'site' ) as Record< string, string >;
+
+		const fieldsWithDefaults = {
+			phone: 'required',
+			company: 'optional',
+			address_2: 'optional',
+		} as const;
+
 		return {
 			...defaultFieldsSetting,
-			phone: {
-				...defaultFieldsSetting.phone,
-				required: phoneField === 'required',
-				hidden: phoneField === 'hidden',
-			},
-			company: {
-				...defaultFieldsSetting.company,
-				required: companyField === 'required',
-				hidden: companyField === 'hidden',
-			},
-			address_2: {
-				...defaultFieldsSetting.address_2,
-				required: address2Field === 'required',
-				hidden: address2Field === 'hidden',
-			},
+			...Object.fromEntries(
+				Object.entries( fieldsWithDefaults ).map(
+					( [ field, defaultValue ] ) => {
+						const value =
+							settings[
+								`woocommerce_checkout_${ field }_field`
+							] || defaultValue;
+						return [
+							field,
+							{
+								...defaultFieldsSetting[ field ],
+								required: value === 'required',
+								hidden: value === 'hidden',
+							},
+						];
+					}
+				)
+			),
 		};
 	} );
 
