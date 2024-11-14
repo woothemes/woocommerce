@@ -71,7 +71,7 @@
 		overflow-y: scroll;
 		flex-grow: 1;
 		flex-direction: column;
-		gap: var(--wc-product-filter-block-spacing, inherit);
+		gap: var(--wc-product-filter-block-spacing, var(--wp--style--block-gap, 1.2rem));
 
 		> *:first-child {
 			margin-top: 0;
