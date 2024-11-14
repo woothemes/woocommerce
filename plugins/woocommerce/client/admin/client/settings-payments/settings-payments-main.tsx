@@ -59,7 +59,6 @@ export const SettingsPaymentsMain = () => {
 				path: '/wc-admin/settings/payments/providers',
 				method: 'GET',
 			} );
-			console.log( response );
 			setRegisteredPaymentGateways( response.gateways );
 			setPreferredPluginSuggestions( response.preferred_suggestions );
 			setOtherPluginSuggestions( response.other_suggestions );
