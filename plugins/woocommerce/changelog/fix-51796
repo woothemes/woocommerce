@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Wrap coupon accordion title with h2 on the block-based Checkout page
