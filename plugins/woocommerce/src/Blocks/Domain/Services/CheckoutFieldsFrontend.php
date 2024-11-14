@@ -243,10 +243,9 @@ class CheckoutFieldsFrontend {
 			if ( 'select' === $field['type'] ) {
 				$address[ $field_key ]['options'] = array_column( $field['options'], 'label', 'value' );
 
-				// If the select box is not required, and a placeholder is set, add a placeholder option.
+				// If a placeholder is set, add a placeholder option if it doesn't exist already.
 				if (
-					! $address[ $field_key ]['required']
-					&& ! empty( $address[ $field_key ]['placeholder'] )
+					! empty( $address[ $field_key ]['placeholder'] )
 					&& ! array_key_exists( '', $address[ $field_key ]['options'] )
 				) {
 					$address[ $field_key ]['options'] = array_merge( array( '' => $address[ $field_key ]['placeholder'] ), $address[ $field_key ]['options'] );
