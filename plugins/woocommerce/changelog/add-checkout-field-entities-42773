@@ -1,0 +1,4 @@
+Significance: minor
+Type: enhancement
+
+Checkout fields (phone, compaony, address_2) that can be toggled on and off now sync across all blocks globally.
