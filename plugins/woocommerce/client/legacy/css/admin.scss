@@ -5595,10 +5595,12 @@ img.help_tip {
 .post-new-php.post-type-product,
 .post-php.post-type-shop_coupon,
 .post-new-php.post-type-shop_coupon {
+	// Link color.
 	a,
 	.button-link  {
 		color:  var(--Gutenberg-Blueberry, #3858E9);
 	}
+
 	// Screen meta links.
 	#screen-meta-links {
 		padding: $gap-small 0;
@@ -5610,6 +5612,14 @@ img.help_tip {
 		#contextual-help-link-wrap {
 			margin: 0;
 		}
+	}
+
+	// Gap between title input and generate coupon code.
+	#titlewrap {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 4px;
 	}
 
 	// Title input.
@@ -5660,6 +5670,7 @@ img.help_tip {
 	}
 	//
 
+	// Post/meta boxes.
 	.postbox-header {
 		padding: 12px 12px 12px 16px;
 		flex-shrink: 0;
@@ -5774,6 +5785,20 @@ img.help_tip {
 	#postexcerpt >.postbox-header > .hndle >.woocommerce-help-tip,
 	#wp-content-media-buttons > .woocommerce-help-tip {
 		margin: 0;
+	}
+
+	// Product/coupon data options panel.
+	.woocommerce_options_panel {
+		.options_group:not(.hidden),
+		// General coupos data does not have options group wrapper, make it look like it has.
+		&#general_coupon_data:not(.hidden) {
+			border: 0; // reset shared styles
+			border-bottom: 1px solid #EDEDED;
+			padding: 36px 48px;
+			display: flex;
+			flex-direction: column;
+			gap: $gap-small;
+		}
 	}
 
 	#commentsdiv .inside {
@@ -5909,20 +5934,29 @@ img.help_tip {
 	}
 
 	// Tags metabox.
-	#poststuff .tagsdiv {
+	.tagsdiv {
 		.jaxtag {
 			display: flex;
 			flex-direction: column;
 			gap: $gap-smaller;
 		}
 		.ajaxtag {
-			margin: 0;
 			display: flex;
 			flex-wrap: wrap;
 			gap: $gap-smallest;
 		}
+		.the-tags {
+			margin: 0;
+			width: 100%;
+		}
 		.newtag {
 			flex: 1;
+		}
+	}
+	// For margins we need id specificity.
+	#poststuff .tagsdiv {
+		.ajaxtag {
+			margin: 0;
 		}
 		.howto {
 			margin: 0;
@@ -5962,6 +5996,25 @@ img.help_tip {
 		}
 	}
 }
+
+.post-php.post-type-product,
+.post-new-php.post-type-product,
+.post-php.post-type-shop_coupon,
+.post-new-php.post-type-shop_coupon {
+	// Duplicate the rule, for increased specificity
+	.hidden,
+	&.js .closed .inside,
+	&.js .hide-if-js,
+	&.js .wp-core-ui .hide-if-js,
+	&.js.wp-core-ui .hide-if-js,
+	&.no-js .hide-if-no-js,
+	&.no-js .wp-core-ui .hide-if-no-js {
+		display: none;
+	}
+}
+// .no-js.post-php.post-type-product .wp-core-ui .hide-if-no-js{
+// 	display: none;
+// }
 
 @media screen and (max-width: 782px) {
     .post-php.post-type-product,
@@ -6715,19 +6768,6 @@ img.help_tip {
 		.woocommerce-help-tip {
 			align-self: center;
 		}
-	}
-}
-
-/** Consider sharign with coupons */
-.woocommerce_options_panel {
-
-	.options_group {
-		border: 0; // reset shared styles
-		border-bottom: 1px solid #EDEDED;
-		padding: 36px 48px;
-		display: flex;
-		flex-direction: column;
-		gap: $gap-small;
 	}
 }
 
