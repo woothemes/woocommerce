@@ -103,6 +103,7 @@ export const PaymentGatewayListItem = ( {
 						needs_setup={ gateway.needs_setup }
 						settings_url={ gateway.settings_url }
 						setIsEnabled={ setIsEnabled }
+						isWCPay={ isWCPay }
 					/>
 					{ isWCPay && wooPaymentsGatewayData?.isInTestMode && (
 						<Button

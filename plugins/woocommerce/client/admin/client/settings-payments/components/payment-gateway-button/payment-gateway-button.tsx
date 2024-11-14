@@ -5,6 +5,7 @@ import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { PaymentGateway } from '@woocommerce/data';
 import { Button } from '@wordpress/components';
+import { getAdminLink } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
@@ -18,11 +19,13 @@ export const PaymentGatewayButton = ( {
 	text_settings = __( 'Manage', 'woocommerce' ),
 	text_enable = __( 'Enable', 'woocommerce' ),
 	text_needs_setup = __( 'Continue setup', 'woocommerce' ),
+	isWCPay,
 	setIsEnabled,
 }: Pick< PaymentGateway, 'id' | 'enabled' | 'needs_setup' | 'settings_url' > & {
 	text_settings?: string;
 	text_enable?: string;
 	text_needs_setup?: string;
+	isWCPay?: boolean;
 	setIsEnabled: ( isEnabled: boolean ) => void;
 } ) => {
 	const [ needsSetup, setNeedsSetup ] = useState( needs_setup );
@@ -75,6 +78,10 @@ export const PaymentGatewayButton = ( {
 	};
 
 	const onClick = ( e: React.MouseEvent ) => {
+		if ( isWCPay && needsSetup ) {
+			e.preventDefault();
+			window.location.href = getAdminLink( 'admin.php?page=wc-settings&tab=checkout&section=recommended' );
+		}
 		if ( ! enabled ) {
 			e.preventDefault();
 			toggleEnabled();
