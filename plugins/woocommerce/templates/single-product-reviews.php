@@ -98,6 +98,7 @@ if ( ! comments_open() ) {
 						'value'        => $commenter['comment_author_email'],
 						'required'     => $name_email_required,
 						'autocomplete' => 'email',
+					),
 				);
 
 				$comment_form['fields'] = array();
