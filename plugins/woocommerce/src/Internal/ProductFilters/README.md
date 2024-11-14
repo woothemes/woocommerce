@@ -1,10 +1,10 @@
-# ProductQueryFiltersServiceProvider
+# ProductFilters
 
 ## Decisions
 
-This section contains all the decisions we've made for this service provider and serves as a record for whenever we wonder why certain decisions were made.
+This section contains all the decisions we've made for this service.
 
-Decisions here are never final. But these documents should serve as a good way for someone to come up to speed on why certain decisions were made.
+Decisions here are never final. But these documents should serve as a record for whenever we wonder why certain decisions were made.
 
 ### Using WP_Query arguments to calculate contextual filter data
 
@@ -12,7 +12,7 @@ Decisions here are never final. But these documents should serve as a good way f
 
 Current filter blocks and former filter widgets only care about the product catalog query or the query that returns all products. For example, even when added to the Hoodies category, the filter blocks still show data for all products, including ones belonging to the T-shirts category.
 
-Before Gutenberg, we have product archive contexts including Catalog, Taxonomy, Attribute, and Search. With blocks, we have StoreAPI and Product CollectionBoth. All types of context can be customized by altering the product archive query, passing more parameters, or adding Product Collection backend filters.
+Before Gutenberg, we have product archive contexts including Catalog, Taxonomy, Attribute, and Search. With blocks, we have StoreAPI and Product Collection. All types of context can be customized by altering the product archive query, passing more parameters, or adding Product Collection backend filters.
 
 WooCommerce has some solutions, but each has its own limitations:
 
@@ -23,7 +23,7 @@ We need a more robust solution to show only relevant filter data under the curre
 
 #### Decision
 
-Learning from `WC_Query`, `Filterer`, and `ProductCollectionData`, we create a new service provider named `ProductQueryFiltersServiceProvider`, which can be used in all contexts. The key difference between the new service provider and existing solutions is the data we pass to the provider: `WP_Query` arguments.
+Learning from `WC_Query`, `Filterer`, and `ProductCollectionData`, we create a new service named it `ProducFilters`, which can be used in all contexts. The key difference between the new service and existing solutions is the data we pass to the service: `WP_Query` arguments.
 
 Every loop in WordPress is powered by `WP_Query`. By taking the common contract (query arguments) to recreate the product query being requested we can ensure a safe boundary for filter data calculation. In other words, filter data is always calculated from the set of products being displayed, which eliminates the possibility of data mismatch between filter data and actual products.
 
