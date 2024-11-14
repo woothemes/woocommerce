@@ -17,12 +17,13 @@ import '../data';
 const CouponsOverview = () => {
 	const { currentUserCan } = useUser();
 
-	const showSuggestions = !! ( getAdminSetting( 'allowMarketplaceSuggestions', false ) );
-
-	const showExtensions = (
-		showSuggestions &&
-		currentUserCan( 'install_plugins' )
+	const showSuggestions = !! getAdminSetting(
+		'allowMarketplaceSuggestions',
+		false
 	);
+
+	const showExtensions =
+		showSuggestions && currentUserCan( 'install_plugins' );
 
 	return (
 		<div className="woocommerce-marketing-coupons">

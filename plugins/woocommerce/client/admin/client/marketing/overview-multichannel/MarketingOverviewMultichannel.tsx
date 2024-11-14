@@ -73,12 +73,13 @@ export const MarketingOverviewMultichannel: React.FC = () => {
 		( dataRegistered.length || dataRecommended.length )
 	);
 
-	const showSuggestions = !! ( getAdminSetting( 'allowMarketplaceSuggestions', false ) );
-
-	const showExtensions = (
-		showSuggestions &&
-		currentUserCan('install_plugins')
+	const showSuggestions = !! getAdminSetting(
+		'allowMarketplaceSuggestions',
+		false
 	);
+
+	const showExtensions =
+		showSuggestions && currentUserCan( 'install_plugins' );
 
 	const onInstalledAndActivated = ( pluginSlug: string ) => {
 		refetchCampaignTypes();
