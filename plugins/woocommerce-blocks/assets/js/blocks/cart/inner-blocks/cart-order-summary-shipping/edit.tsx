@@ -5,27 +5,24 @@ import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, ExternalLink } from '@wordpress/components';
 import { ADMIN_URL, getSetting } from '@woocommerce/settings';
-import Noninteractive from '@woocommerce/base-components/noninteractive';
+import { BlockEditProps } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
  */
-import Block from './block';
+import Block, { BlockAttributes } from './block';
 
 export const Edit = ( {
 	attributes,
-}: {
-	attributes: {
-		className: string;
-		lock: {
-			move: boolean;
-			remove: boolean;
-		};
-	};
-} ): JSX.Element => {
-	const { className } = attributes;
+	setAttributes,
+}: BlockEditProps< BlockAttributes > ): JSX.Element => {
+	const { className, sectionHeading } = attributes;
 	const shippingEnabled = getSetting( 'shippingEnabled', true );
 	const blockProps = useBlockProps();
+
+	const onChangeHeading = ( heading: string ) => {
+		setAttributes( { sectionHeading: heading } );
+	};
 
 	return (
 		<div { ...blockProps }>
@@ -48,9 +45,12 @@ export const Edit = ( {
 					</PanelBody>
 				) }
 			</InspectorControls>
-			<Noninteractive>
-				<Block className={ className } />
-			</Noninteractive>
+
+			<Block
+				onChangeHeading={ onChangeHeading }
+				sectionHeading={ sectionHeading }
+				className={ className }
+			/>
 		</div>
 	);
 };

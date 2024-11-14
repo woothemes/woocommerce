@@ -2,28 +2,31 @@
  * External dependencies
  */
 import { useBlockProps } from '@wordpress/block-editor';
-import Noninteractive from '@woocommerce/base-components/noninteractive';
+import { BlockEditProps } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
  */
-import Block from './block';
+import Block, { BlockAttributes } from './block';
 
 export const Edit = ( {
 	attributes,
-}: {
-	attributes: {
-		className: string;
-	};
-} ): JSX.Element => {
-	const { className } = attributes;
+	setAttributes,
+}: BlockEditProps< BlockAttributes > ) => {
+	const { className, sectionHeading } = attributes;
 	const blockProps = useBlockProps();
+
+	const onChangeSectionHeading = ( heading: string ) => {
+		setAttributes( { sectionHeading: heading } );
+	};
 
 	return (
 		<div { ...blockProps }>
-			<Noninteractive>
-				<Block className={ className } />
-			</Noninteractive>
+			<Block
+				sectionHeading={ sectionHeading }
+				onChangeSectionHeading={ onChangeSectionHeading }
+				className={ className }
+			/>
 		</div>
 	);
 };

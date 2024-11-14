@@ -55,7 +55,6 @@ export const Edit = ( { clientId }: { clientId: string } ): JSX.Element => {
 					values={ cartTotals }
 				/>
 			</div>
-			{ /* do I put an totals wrapper here? */ }
 			<OrderMetaSlotFill />
 		</div>
 	);

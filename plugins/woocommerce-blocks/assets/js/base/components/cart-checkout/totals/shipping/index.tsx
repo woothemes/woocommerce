@@ -16,7 +16,7 @@ import { renderShippingTotalValue } from './utils';
 import './style.scss';
 
 export interface TotalShippingProps {
-	label?: string;
+	label?: React.ReactNode;
 	placeholder?: React.ReactNode;
 	collaterals?: React.ReactNode;
 }
@@ -25,7 +25,7 @@ export const TotalsShipping = ( {
 	label = __( 'Shipping', 'woocommerce' ),
 	placeholder = null,
 	collaterals = null,
-}: TotalShippingProps ): JSX.Element | null => {
+}: TotalShippingProps ) => {
 	const { cartTotals, shippingRates } = useStoreCart();
 	const hasRates = hasShippingRate( shippingRates );
 	return (
