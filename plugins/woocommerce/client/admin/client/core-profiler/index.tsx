@@ -1481,7 +1481,10 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 								onDone: [
 									{
 										target: '#isJetpackConnected',
-										guard: 'hasJetpackSelectedForInstallation',
+										guard: or( [
+											'hasJetpackSelectedForInstallation',
+											'hasJetpackActivated',
+										] ),
 									},
 									{ actions: 'redirectToWooHome' },
 								],
