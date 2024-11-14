@@ -39,6 +39,7 @@ use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\Layout
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\ComingSoonServiceProvider;
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\StatsServiceProvider;
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\ImportExportServiceProvider;
+use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\ProductFiltersServiceProvider;
 
 /**
  * PSR11 compliant dependency injection container for WooCommerce.
@@ -167,6 +168,7 @@ final class Container {
 			StatsServiceProvider::class,
 			ImportExportServiceProvider::class,
 			CostOfGoodsSoldServiceProvider::class,
+			ProductFiltersServiceProvider::class,
 		);
 	}
 }
