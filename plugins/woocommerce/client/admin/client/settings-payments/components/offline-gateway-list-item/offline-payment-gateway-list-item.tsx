@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { decodeEntities } from '@wordpress/html-entities';
-import { SortableHandle } from '@woocommerce/components';
 import { useState } from '@wordpress/element';
 
 /**
@@ -10,8 +9,13 @@ import { useState } from '@wordpress/element';
  */
 import sanitizeHTML from '~/lib/sanitize-html';
 import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
+import {
+	DefaultDragHandle,
+	SortableContainer,
+	SortableItem,
+} from '../sortable';
 
-interface OfflinePaymentGateway {
+export type OfflinePaymentGateway = {
 	id: string;
 	title: string;
 	content: string;
@@ -21,24 +25,27 @@ interface OfflinePaymentGateway {
 	actionText: string;
 	settings_url: string;
 	enabled: boolean;
-}
+};
 
 type OfflinePaymentGatewayListItemProps = {
 	gateway: OfflinePaymentGateway;
-	index: number;
 };
 
 export const OfflinePaymentGatewayListItem = ( {
 	gateway,
-	index,
+	...props
 }: OfflinePaymentGatewayListItemProps ) => {
 	const [ isEnabled, setIsEnabled ] = useState( gateway.enabled );
 
 	return (
-		<div className="woocommerce-list__item woocommerce-list__item-enter-done">
+		<SortableItem
+			id={ gateway.id }
+			className="woocommerce-list__item woocommerce-list__item-enter-done"
+			{ ...props }
+		>
 			<div className="woocommerce-list__item-inner">
 				<div className="woocommerce-list__item-before">
-					<SortableHandle itemIndex={ index } />
+					<DefaultDragHandle />
 					<img
 						src={
 							gateway.square_image ||
@@ -70,6 +77,30 @@ export const OfflinePaymentGatewayListItem = ( {
 					</div>
 				</div>
 			</div>
+		</SortableItem>
+	);
+};
+
+export const OfflinePaymentGatewayList = ( {
+	gateways,
+	setGateways,
+}: {
+	gateways: OfflinePaymentGateway[];
+	setGateways: ( gateways: OfflinePaymentGateway[] ) => void;
+} ) => {
+	return (
+		<div className="woocommerce-list">
+			<SortableContainer< OfflinePaymentGateway >
+				items={ gateways }
+				setItems={ setGateways }
+			>
+				{ gateways.map( ( method ) => (
+					<OfflinePaymentGatewayListItem
+						gateway={ method }
+						key={ method.id }
+					/>
+				) ) }
+			</SortableContainer>
 		</div>
 	);
 };
