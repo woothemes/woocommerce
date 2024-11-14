@@ -150,7 +150,7 @@ export const SettingsPaymentsMethodsWrapper: React.FC = () => {
 		<>
 			<Header
 				title={ __( 'Choose your payment methods', 'woocommerce' ) }
-				description={ __( 'Select which payment methods you`d like to offer to your shoppers. You can update these here at any time.', 'woocommerce' ) }	
+				description={ __( 'Select which payment methods you\'d like to offer to your shoppers. You can update these here at any time.', 'woocommerce' ) }	
 				backLink={ getAdminLink(
 					'admin.php?page=wc-settings&tab=checkout'
 				) }
