@@ -27,6 +27,10 @@ test.describe( 'WooCommerce Email Settings', () => {
 		const hasIframe = async () => {
 			return ( await page.locator( emailPreviewElement ).count() ) > 0;
 		};
+		const iframeContains = async ( text ) => {
+			const iframe = await page.frameLocator( emailPreviewElement );
+			return iframe.getByText( text );
+		};
 
 		// Disable the email_improvements feature flag
 		await setFeatureFlag( baseURL, 'no' );
@@ -37,6 +41,18 @@ test.describe( 'WooCommerce Email Settings', () => {
 		await setFeatureFlag( baseURL, 'yes' );
 		await page.reload();
 		expect( await hasIframe() ).toBeTruthy();
+
+		await expect(
+			await iframeContains( 'Thank you for your order' )
+		).toBeVisible();
+
+		// Select different email type and check that iframe is updated
+		await page
+			.getByLabel( 'Email preview type' )
+			.selectOption( 'Reset password' );
+		await expect(
+			await iframeContains( 'Password Reset Request' )
+		).toBeVisible();
 	} );
 
 	test( 'See email image url field with a feature flag', async ( {
