@@ -16,6 +16,7 @@ import {
 	DEVICE_TYPE_DESKTOP,
 } from './settings-email-preview-device-type';
 import { EmailPreviewHeader } from './settings-email-preview-header';
+import { EmailPreviewType } from './settings-email-preview-type';
 
 const { Fill } = createSlotFill( SETTINGS_SLOT_FILL_CONSTANT );
 
@@ -30,10 +31,18 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 } ) => {
 	const [ deviceType, setDeviceType ] =
 		useState< string >( DEVICE_TYPE_DESKTOP );
+	const [ emailType, setEmailType ] = useState< string >(
+		'WC_Email_Customer_Processing_Order'
+	);
 	return (
 		<Fill>
 			<div className="wc-settings-email-preview-container">
 				<div className="wc-settings-email-preview-controls">
+					<EmailPreviewType
+						emailTypes={ emailTypes }
+						emailType={ emailType }
+						setEmailType={ setEmailType }
+					/>
 					<EmailPreviewDeviceType
 						deviceType={ deviceType }
 						setDeviceType={ setDeviceType }
