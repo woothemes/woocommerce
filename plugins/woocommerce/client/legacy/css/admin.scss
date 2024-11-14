@@ -6050,8 +6050,6 @@ img.help_tip {
 		align-items: flex-start;
 		flex: 1 0 0;
 		align-self: stretch;
-
-		background: #FFF;
 	}
 }
 
@@ -6090,10 +6088,6 @@ img.help_tip {
 
 #woocommerce-product-data,
 #woocommerce-coupon-data {
-	.panel-wrap {
-		background: #fff;
-	}
-
 	.woocommerce_options_panel,
 	.wc-metaboxes-wrapper {
 		float: left;
