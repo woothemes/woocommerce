@@ -131,6 +131,7 @@ const coreModules = [
 	'@woocommerce/shared-hocs',
 	'@woocommerce/tracks',
 	'@woocommerce/data',
+	'@woocommerce/customer-effort-score',
 	'@wordpress/a11y',
 	'@wordpress/api-fetch',
 	'@wordpress/block-editor',

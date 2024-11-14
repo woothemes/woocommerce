@@ -14,9 +14,7 @@ import {
 	UPGRADE_NOTICE_DISPLAY_COUNT_THRESHOLD,
 } from '@woocommerce/blocks/migration-products-to-product-collection';
 import { recordEvent } from '@woocommerce/tracks';
-import { Feedback } from '@woocommerce/icons';
 import {
-	Button,
 	PanelBody,
 	// @ts-expect-error Using experimental features
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
@@ -57,6 +55,7 @@ import PriceRangeControl from './price-range-control';
 import LinkedProductControl from './linked-product-control';
 import WidthOptionsControl from './width-options-control';
 import RelatedByControl from './related-by-control';
+import { FeedbackButton } from './feedback-button';
 
 const prepareShouldShowFilter =
 	( hideControls: FilterName[] ) => ( filter: FilterName ) => {
@@ -301,45 +300,37 @@ const CollectionSpecificControls = (
 	};
 
 	return (
-		<InspectorControls>
-			{
-				<PanelBody>
-					<Button
-						variant="tertiary"
-						icon={ Feedback }
-						iconSize={ 12 }
-						onClick={ () => {
-							// Add your feedback handling logic here
-						} }
-						className="wc-block-editor-product-collection__feedback-button"
-					>
-						{ __( 'Help us improve', 'woocommerce' ) }
-					</Button>
-				</PanelBody>
-			}
-			{
-				/**
-				 * Hand-Picked collection-specific controls.
-				 */
-				props.attributes.collection ===
-					'woocommerce/product-collection/hand-picked' && (
+		<>
+			<InspectorControls>
+				{
 					<PanelBody>
-						<HandPickedProductsControlField
-							{ ...queryControlProps }
-						/>
+						<FeedbackButton />
 					</PanelBody>
-				)
-			}
-			{
-				/**
-				 * "Related Products" collection-specific controls.
-				 */
-				props.attributes.collection ===
-					'woocommerce/product-collection/related' && (
-					<RelatedByControl { ...queryControlProps } />
-				)
-			}
-		</InspectorControls>
+				}
+				{
+					/**
+					 * Hand-Picked collection-specific controls.
+					 */
+					props.attributes.collection ===
+						'woocommerce/product-collection/hand-picked' && (
+						<PanelBody>
+							<HandPickedProductsControlField
+								{ ...queryControlProps }
+							/>
+						</PanelBody>
+					)
+				}
+				{
+					/**
+					 * "Related Products" collection-specific controls.
+					 */
+					props.attributes.collection ===
+						'woocommerce/product-collection/related' && (
+						<RelatedByControl { ...queryControlProps } />
+					)
+				}
+			</InspectorControls>
+		</>
 	);
 };
 

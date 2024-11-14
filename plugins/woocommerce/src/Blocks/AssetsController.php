@@ -99,10 +99,37 @@ final class AssetsController {
 		$this->api->register_script( 'wc-blocks-classic-template-revert-button', 'assets/client/blocks/wc-blocks-classic-template-revert-button.js' );
 		$this->api->register_style( 'wc-blocks-classic-template-revert-button-style', 'assets/client/blocks/wc-blocks-classic-template-revert-button-style.css' );
 
+		// Customer Effort Score.
+		$this->api->register_script(
+			'wc-customer-effort-score',
+			'assets/client/admin/customer-effort-score/index.js'
+		);
+		$this->api->register_style(
+			'wc-customer-effort-score',
+			'assets/client/admin/customer-effort-score/style.css',
+		);
+
+		// Experimental
+		$this->api->register_script(
+			'wc-experimental',
+			'assets/client/admin/experimental/index.min.js'
+		);
+		$this->api->register_style(
+			'wc-experimental',
+			'assets/client/admin/experimental/style.css',
+		);
+
+		// Add customer effort score enqueueing.
+		wp_enqueue_script( 'wc-customer-effort-score' );
+		wp_enqueue_style( 'wc-customer-effort-score' );
+		wp_enqueue_script( 'wc-experimental' );
+		wp_enqueue_style( 'wc-experimental' );
+
 		$current_screen = get_current_screen();
 		if ( $current_screen instanceof \WP_Screen && 'site-editor' === $current_screen->base ) {
 			wp_enqueue_script( 'wc-blocks-classic-template-revert-button' );
 			wp_enqueue_style( 'wc-blocks-classic-template-revert-button-style' );
+			do_action( 'qm/debug', 'enqueue_style wc-customer-effort-score' );
 		}
 	}
 

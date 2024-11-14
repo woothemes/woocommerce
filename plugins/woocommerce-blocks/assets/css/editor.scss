@@ -28,11 +28,11 @@
 
 // Style inline notices in the inspector.
 .components-base-control {
-	+ .wc-block-base-control-notice {
+	+.wc-block-base-control-notice {
 		margin: -$gap 0 $gap;
 	}
 
-	+ .wc-block-base-control-notice:last-child {
+	+.wc-block-base-control-notice:last-child {
 		margin: -$gap 0 $gap-small;
 	}
 }
@@ -51,6 +51,7 @@ svg.wc-block-editor-components-block-icon--sparkles path {
 
 .theme-twentytwenty {
 	.wp-block {
+
 		.wc-block-grid__product-title,
 		.wc-block-active-filters__title,
 		.wc-block-attribute-filter__title,
@@ -59,4 +60,10 @@ svg.wc-block-editor-components-block-icon--sparkles path {
 			@include font-size(regular);
 		}
 	}
+}
+
+// Style the error message in the CES modal.
+.woocommerce-customer-effort-score__errors > p {
+	color: #d94f4f;
+	margin-bottom: 16px;
 }
