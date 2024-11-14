@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Fix StoreAPI erroring when a param is an integer
