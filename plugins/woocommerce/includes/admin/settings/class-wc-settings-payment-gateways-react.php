@@ -72,8 +72,6 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 			return $settings;
 		}
 
-		// TODO: Add any values we need to pass to the React frontend here.
-
 		return $settings;
 	}
 
@@ -195,7 +193,6 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 			)
 		);
 
-		// TODO: we should think about a better way to pass this data to the frontend.
 		echo '<script type="application/json" id="experimental_wc_settings_payments_woopayments">' . wp_json_encode(
 			array(
 				'isSupported'        => WooCommercePayments::is_supported(),
@@ -230,8 +227,6 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 			}
 		}
 
-		// TODO: Add Recommended Gateways (region dependent) to the list of gateways to display.
-		// TODO: we need to add a way to detect if a plugin is onboarded or not. This will determine some aspects of how it displays.
 		return $display_payment_gateways;
 	}
 
