@@ -168,6 +168,7 @@
 		"@wordpress/browserslist-config": "5.21.0",
 		"@wordpress/components": "19.17.0",
 		"@wordpress/core-data": "5.5.0",
+		"@wordpress/data": "wp-6.7",
 		"@wordpress/data-controls": "2.2.7",
 		"@wordpress/date": "4.44.0",
 		"@wordpress/editor": "wp-6.7",
@@ -306,8 +307,7 @@
 	},
 	"peerDependencies": {
 		"react": "18.3.x",
-		"react-dom": "18.3.x",
-		"@wordpress/data": "wp-6.0"
+		"react-dom": "18.3.x"
 	},
 	"optionalDependencies": {
 		"ndb": "1.1.5"
