@@ -5,61 +5,24 @@ import { __ } from '@wordpress/i18n';
 import { TotalsShipping } from '@woocommerce/base-components/cart-checkout';
 import { useStoreCart } from '@woocommerce/base-context';
 import { TotalsWrapper } from '@woocommerce/blocks-checkout';
-import { useSelect } from '@wordpress/data';
-import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
-import {
-	filterShippingRatesByPrefersCollection,
-	isAddressComplete,
-	selectedRatesAreCollectable,
-} from '@woocommerce/base-utils';
-
-/**
- * Internal dependencies
- */
-import { EditableText } from '../../../../../../packages/components/editable-text';
-// todo alias import
+import { isAddressComplete } from '@woocommerce/base-utils';
 
 export type BlockAttributes = {
-	sectionHeading: string | null;
+	sectionHeading: string;
 	className: string;
 };
 
-export type BlockProps = BlockAttributes & {
-	onChangeSectionHeading: ( label: string ) => void;
+export type BlockProps = {
+	heading: React.ReactNode;
+	className: string;
 };
 
-const Block = ( {
-	className = '',
-	sectionHeading,
-	onChangeSectionHeading,
-}: BlockProps ) => {
-	const { cartNeedsShipping, shippingRates, shippingAddress } =
-		useStoreCart();
-
-	const prefersCollection = useSelect( ( select ) =>
-		select( CHECKOUT_STORE_KEY ).prefersCollection()
-	);
+const Block = ( { className = '', heading }: BlockProps ) => {
+	const { cartNeedsShipping, shippingAddress } = useStoreCart();
 
 	if ( ! cartNeedsShipping ) {
 		return null;
 	}
-
-	const hasSelectedCollectionOnly = selectedRatesAreCollectable(
-		filterShippingRatesByPrefersCollection(
-			shippingRates,
-			prefersCollection ?? false
-		)
-	);
-
-	const defaultLabel = hasSelectedCollectionOnly
-		? __( 'Collection', 'woocommerce' )
-		: __( 'Delivery', 'woocommerce' );
-
-	const heading = sectionHeading === null ? defaultLabel : sectionHeading;
-
-	const label = (
-		<EditableText value={ heading } onChange={ onChangeSectionHeading } />
-	);
 
 	const hasCompleteAddress = isAddressComplete( shippingAddress, [
 		'state',
@@ -71,7 +34,7 @@ const Block = ( {
 	return (
 		<TotalsWrapper className={ className }>
 			<TotalsShipping
-				label={ label }
+				label={ heading }
 				placeholder={
 					<span className="wc-block-components-shipping-placeholder__value">
 						{ hasCompleteAddress
