@@ -3,6 +3,7 @@
  */
 import { test, expect, BlockData } from '@woocommerce/e2e-utils';
 
+// Block is soft-depreacted meaning that it's hidden from the inserter.
 const blockData: BlockData = {
 	name: 'Related Products',
 	slug: 'woocommerce/related-products',
@@ -57,7 +58,7 @@ test.describe( `${ blockData.name } Block`, () => {
 		).toBeHidden();
 	} );
 
-	test( 'can be added in the Post Editor - Single Product Template', async ( {
+	test( "can't be added in the Post Editor - Single Product Template", async ( {
 		admin,
 		editor,
 	} ) => {
@@ -67,8 +68,12 @@ test.describe( `${ blockData.name } Block`, () => {
 			canvas: 'edit',
 		} );
 		await editor.setContent( '' );
-		await editor.insertBlock( { name: blockData.slug } );
 
+		// Inserting Related Products by name
+		// (but it's a Product Collection variation).
+		await editor.insertBlockUsingGlobalInserter( blockData.name );
+
+		// Verifying by slug - it's expected it's NOT woocommerce/related-products.
 		await expect(
 			await editor.getBlockByName( blockData.slug )
 		).toBeVisible();

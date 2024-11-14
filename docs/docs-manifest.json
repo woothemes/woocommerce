@@ -3,7 +3,7 @@
     {
       "post_title": "WooCommerce developer documentation",
       "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/README.md",
-      "hash": "79afb7569e960c643f381904c7b7aa0eaa8306a9dfa01d22be8356f1d7d271ff",
+      "hash": "30f0a75b508a1dd7dd3c2f322daa0a4fb7bafee0856ccf9f3ffd1ce0bf8d3422",
       "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/README.md",
       "id": "65f434b31529b2793f7f7adcadfec487c797bdd2",
       "links": {
@@ -74,7 +74,7 @@
           "post_title": "Blocks reference",
           "menu_title": "Blocks Reference",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/building-a-woo-store/block-references.md",
-          "hash": "9bbd3555641a70a0d7c24c818323a9270e437a6446998de9a6506e0c2ed6ddf5",
+          "hash": "8f0edfe9aa2bb36103f78f38aa61b871d0c5dfa5d76e4cb6f762c5b7648405f8",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/building-a-woo-store/block-references.md",
           "id": "1fbe91d7fa4fafaf35f0297e4cee1e7958756aed"
         },
@@ -145,7 +145,7 @@
           "menu_title": "Additional Checkout Fields",
           "tags": "reference",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/cart-and-checkout-blocks/additional-checkout-fields.md",
-          "hash": "641615864f627be4bb42574df378cea91f4a7fda9edab099558bad06b92ce62d",
+          "hash": "79d03c2dbe66ff1bea1e40e58b83f304006b1ff52ffc22de6328d136a559cb84",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/additional-checkout-fields.md",
           "id": "cb5dd8d59043a4e53929121b45da7b33b1661ab8"
         }
@@ -219,15 +219,16 @@
           "category_title": "Payment Methods",
           "posts": [
             {
-              "post_title": "Cart and Checkout - Payment method integration for the Checkout block",
+              "post_title": "Checkout Block - Payment method integration",
               "menu_title": "Payment Method Integration",
               "tags": "reference",
               "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/cart-and-checkout-blocks/checkout-payment-methods/payment-method-integration.md",
-              "hash": "015aae25bb331364c224fe8eb2b7675e4cbed0a9e6bee0dde5f5311388161b0a",
+              "hash": "50086a6f4c20ad6b3cd293f2a304263beafdc67be724de5c203fac0b237b9efc",
               "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/checkout-payment-methods/payment-method-integration.md",
               "id": "c9a763b6976ecf03aeb961577c17c31f1ac7c420",
               "links": {
-                "./checkout-flow-and-events.md": "499384cbb48ed96a2e12653cd68bd82d123a20a1"
+                "./checkout-flow-and-events.md": "499384cbb48ed96a2e12653cd68bd82d123a20a1",
+                "../../payments/payment-gateway-api.md": "b337203996650b567f91c70306e1010d6f1ae552"
               }
             },
             {
@@ -642,7 +643,7 @@
           "menu_title": "Integrating admin pages",
           "tags": "how-to",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/extension-development/working-with-woocommerce-admin-pages.md",
-          "hash": "c172fff2814f552e2ab5712edb9e716f75c27946d993a1ade8f2269cc9a8689d",
+          "hash": "9a8dc2055f8ea1abd30a57711a3d93168e7104ba40be65a7f7a704eaff2f04fb",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/extension-development/working-with-woocommerce-admin-pages.md",
           "id": "6f9cc63bc4c614b9e01174069a5ddc4f3d7aa467"
         },
@@ -691,7 +692,7 @@
           "post_title": "Integrating with coming soon mode",
           "tags": "how-to, coming-soon",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/extension-development/integrating-coming-soon-mode.md",
-          "hash": "791cd6d3928b3aafc72a24d0283a404a90a0f021c7c36edaa445eb44978114a3",
+          "hash": "1b782f4585b66355e31cccec4064f03f37df17d2a06d0a66cd9be7f715516e06",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/extension-development/integrating-coming-soon-mode.md",
           "id": "787743efb6ef0ad509b17735eaf58b2a9a08afbc"
         },
@@ -709,7 +710,7 @@
           "menu_title": "Design a simple extension",
           "tags": "how-to",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/extension-development/how-to-design-a-simple-extension.md",
-          "hash": "10afdef1875fb51e6163589535b6bfec86fe09624559e0dbed916e7e1c0bd777",
+          "hash": "5bd671921996f43d12f5be9675c3d98c59f9fc9b79d63ed3b5bad990424fbebc",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/extension-development/how-to-design-a-simple-extension.md",
           "id": "375f7e18a2e656e662d3189041caeb9c80e7c9e3"
         },
@@ -727,7 +728,7 @@
           "menu_title": "Implement merchant onboarding",
           "tags": "how-to",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/extension-development/handling-merchant-onboarding.md",
-          "hash": "85fc7d70f47fdb195ad2c690d3b95565169221f9e4d7afa98e88f3824ad0e267",
+          "hash": "f53a89603209f12124eff5d21b3abb3edd2f8d07d6819522100c8e0e03c5d5e6",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/extension-development/handling-merchant-onboarding.md",
           "id": "89fe15dc232379f546852822230c334d3d940b93"
         },
@@ -744,13 +745,14 @@
           "post_title": "WooCommerce extension development best practices",
           "menu_title": "Best Practices",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/extension-development/extension-development-best-practices.md",
-          "hash": "671f19d378c8ad3ebe0eb009524054bd5769d4fb3d8f48dd6a410e0c9de2b953",
+          "hash": "e70da25a57254820d094df736e79974d345deee234dcd2e56897d1feb76700d4",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/extension-development/extension-development-best-practices.md",
           "id": "83050f0142b6de00b73b3638d46ddddc5a2f8b12",
           "links": {
             "./check-if-woo-is-active.md": "2c2e89013ad76ff2596680224047723163512bc2",
             "./data-storage.md": "b3e0b17ca74596e858c26887c1e4c8ee6c8f6102",
             "../security/prevent-data-leaks.md": "91b86abe2953e1cd4e9d6d407238093245346cf9",
+            "./changelog-txt.md": "05308ae6632158907efc55b3dcbd693c265f25c8",
             "./example-plugin-header-comment.md": "2fb49dc6ccad894e02f123940a9db98c7724dddc",
             "../code-snippets/link-to-logged-data.md": "34da337f79be5ce857024f541a99d302174ca37d"
           }
@@ -763,6 +765,15 @@
           "hash": "0745d2f89373776a45701061e6bc9250231067a73a2ff118ceb63f1fe41cf231",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/extension-development/example-plugin-header-comment.md",
           "id": "2fb49dc6ccad894e02f123940a9db98c7724dddc"
+        },
+        {
+          "post_title": "Example WordPress plugin header comment for WooCommerce extensions",
+          "menu_title": "Plugin header comments",
+          "tags": "reference",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/extension-development/example-header-plugin-comment.md",
+          "hash": "5d7ce1f4368f287a7cd307f3d0b54c89a7febdbacd51833a7bf1312cdfa139e0",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/extension-development/example-header-plugin-comment.md",
+          "id": "25f90713ff8eaef0032082de7660261eb1e3f85e"
         },
         {
           "post_title": "Data storage primer",
@@ -799,6 +810,14 @@
           "hash": "dca930ebe334bb3bb276ec912d050830b784ec9f755be491d41c3c32f5b65637",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/extension-development/check-if-woo-is-active.md",
           "id": "2c2e89013ad76ff2596680224047723163512bc2"
+        },
+        {
+          "post_title": "Formatting for Changelog.txt",
+          "menu_title": "Changelog.txt",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/extension-development/changelog-txt.md",
+          "hash": "f5688b3bd4dde0379fb0b863dc3ab1983cf63c291e087658a35c2f90164955c5",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/extension-development/changelog-txt.md",
+          "id": "05308ae6632158907efc55b3dcbd693c265f25c8"
         },
         {
           "post_title": "How to build your first extension",
@@ -874,7 +893,7 @@
           "menu_title": "Development environment setup",
           "tags": "tutorial, setup",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/getting-started/development-environment.md",
-          "hash": "bf5d77349ea64d1b8e19fe6b7472be35ed92406c5aafe677ce92363fb13f94d4",
+          "hash": "8203129a577f40208cef0f75bf121176e2226a5d8399445418cadc827fd9de0c",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/getting-started/development-environment.md",
           "id": "9080572a3904349c44c565ca7e1bef1212c58757"
         },
@@ -956,7 +975,7 @@
           "post_title": "HPOS CLI Tools",
           "tags": "reference",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/high-performance-order-storage/cli-tools.md",
-          "hash": "63e5edd55720c963de6700854515ea51946ff734b716ab61793955308b72af91",
+          "hash": "b9a313ba52cd08284e7a23be32c28bcb93be8f9389b0e5fcc041506ff0d2bd46",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/high-performance-order-storage/cli-tools.md",
           "id": "cdd9d9ad5777d978ba953e3478fbb61cab8fdf59"
         }
@@ -990,7 +1009,7 @@
           "menu_title": "Payment Token API",
           "tags": "reference",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/payments/payment-token-api.md",
-          "hash": "441908f0678b9ff90f33adc3831ac75a5c49038a0b068dfc41456c232a851c7d",
+          "hash": "ee6753e946e6533dff62a26ece1911442080de12d449c4d5d28fe1e68adc72b7",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/payments/payment-token-api.md",
           "id": "5f345b53875981703d4b80e8d04eae2daafe4c81"
         },
@@ -1050,7 +1069,7 @@
           "menu_title": "Registering custom collections",
           "tags": "how-to",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/product-collection-block/register-product-collection.md",
-          "hash": "021a567cece90d4c56991d0778d7f291d1489c7a559b6fade5f001cd9920dc77",
+          "hash": "1f376130cf31aabd077c48e70cb518a7f635bfd904dc9c82dfc29a3b6913afd4",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/product-collection-block/register-product-collection.md",
           "id": "3bf26fc7c56ae6e6a56e1171f750f5204fcfcece"
         },
@@ -1451,7 +1470,7 @@
         {
           "post_title": "Template structure & Overriding templates via a theme",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/theme-development/template-structure.md",
-          "hash": "a82d885c8395385dc51c976b2b51eec88cdcce72bf905fda78f97d77533ce079",
+          "hash": "932567a5d398a8624fbb0bf64bd7a913902fe3c4f4933fc434ea2a7915085d45",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/theme-development/template-structure.md",
           "id": "34bfebec9fc45e680976814928a7b8a1778af14e"
         },
@@ -1460,7 +1479,7 @@
           "menu_title": "Set up and use a child theme",
           "tags": "how-to",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/theme-development/set-up-a-child-theme.md",
-          "hash": "b362d5ddd34d8b81f6a2ee2369dd2cd68e51700836a85f96d629e87d564b0844",
+          "hash": "e343a623970fb22db7e109e0623d877ba42d5938885dde99a5701fa42bf7d197",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/theme-development/set-up-a-child-theme.md",
           "id": "00b6916595cbde7766f080260a9ea26f53f3271c"
         },
@@ -1469,7 +1488,7 @@
           "menu_title": "Image sizing",
           "tags": "reference",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/theme-development/image-sizes.md",
-          "hash": "9883e7931ff8bd56dcd707974fe8ec992f21148818206aec354b0368dc999239",
+          "hash": "94d30b875d0c26b88ebd040a686f802f974f89997a30954fc5bb448de57aefdc",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/theme-development/image-sizes.md",
           "id": "3f5301ac3040d38bc449b440733da6a466209df3",
           "links": {
@@ -1498,7 +1517,7 @@
           "post_title": "Classic theme development handbook",
           "menu_title": "Classic theme development",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/theme-development/classic-theme-developer-handbook.md",
-          "hash": "95ce7250479a5133bba6c68939d86e4e79708c65044d70727c73f6a88f716da7",
+          "hash": "0a8c8178ad4a83cd3d44f931cc37635e8f8cf26a53f0ee1bc1a0e6a7ca117ece",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/theme-development/classic-theme-developer-handbook.md",
           "id": "c2fde53e1dc3efbded3cfe1fb4df27136a3799a4"
         }
@@ -1804,5 +1823,5 @@
       "categories": []
     }
   ],
-  "hash": "0344db5f1a802e436d9f949849b969bdabc88f4ef2a1886c9fc4e8e6ff7c7518"
+  "hash": "8cd07dec61c2ddf169022adc3616e0ba4141d685689b83ca2d45e42ff6ca3583"
 }

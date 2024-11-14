@@ -3,7 +3,10 @@
  */
 import { SVG, Path } from '@wordpress/primitives';
 import { Icon } from '@wordpress/icons';
-import type { InnerBlockTemplate } from '@wordpress/blocks';
+import type {
+	InnerBlockTemplate,
+	BlockVariationScope,
+} from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -44,14 +47,20 @@ export const handPickedIcon = (
 
 const collection = {
 	name: CoreCollectionNames.HAND_PICKED,
-	title: __( 'Hand-Picked', 'woocommerce' ),
+	title: __( 'Hand-Picked Products', 'woocommerce' ),
 	icon: <Icon icon={ handPickedIcon } />,
 	description: __(
 		'Select specific products to recommend to customers.',
 		'woocommerce'
 	),
-	keywords: [ 'specific', 'choose', 'recommend' ],
-	scope: [],
+	keywords: [
+		'specific',
+		'choose',
+		'recommend',
+		'handpicked',
+		'hand picked',
+	],
+	scope: [ 'inserter', 'block' ] as BlockVariationScope[],
 };
 
 const attributes = {
