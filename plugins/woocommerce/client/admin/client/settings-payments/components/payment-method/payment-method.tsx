@@ -11,7 +11,7 @@ import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
  */
 import { getAdminSetting } from '~/utils/admin-settings';
 import sanitizeHTML from '~/lib/sanitize-html';
-import { WCPayInstallButton } from '../wcpay-install-button/wcpay-install-button';
+import { WCPayInstallButton } from '../wcpay-install-button';
 
 // This logic replicates the previous settings experience for payment methods as a React component.
 export const PaymentMethod = ( {

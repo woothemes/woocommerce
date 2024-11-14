@@ -33,11 +33,8 @@ export const PaymentGateways = ( {
 	installingPlugin,
 	setupPlugin,
 }: PaymentGatewaysProps ) => {
-	const setupLivePayments = () => {
-		// TODO: Implement in future PR.
-	};
+	const setupLivePayments = () => {};
 
-	// TODO: Update to use useMemo to avoid re-rendering.
 	// Transform suggested preferred plugins comply with List component format.
 	const preferredPluginSuggestionsList = preferredPluginSuggestions.map(
 		( plugin: Plugin ) => {
@@ -53,7 +50,6 @@ export const PaymentGateways = ( {
 		}
 	);
 
-	// TODO: Update to use useMemo to avoid re-rendering.
 	// Transform payment gateways to comply with List component format.
 	const paymentGatewaysList = registeredPaymentGateways.map(
 		( gateway: PaymentGateway ) => {
