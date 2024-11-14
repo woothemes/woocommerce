@@ -17,7 +17,7 @@ import { isBoolean } from '@woocommerce/types';
  */
 import './editor.scss';
 import { useIsDescendentOfSingleProductBlock } from '../../../atomic/blocks/product-elements/shared/use-is-descendent-of-single-product-block';
-import { QuantitySelectorStyle, Settings } from './settings';
+import { QuantitySelectorStyle, Settings } from './inspector';
 
 export interface Attributes {
 	className?: string;
