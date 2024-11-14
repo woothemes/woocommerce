@@ -71,8 +71,8 @@ export const Edit = ( {
 		).getEditedEntityRecord( 'root', 'site' ) as Record< string, string >;
 
 		const fieldsWithDefaults = {
-			phone: 'required',
-			company: 'optional',
+			phone: 'optional',
+			company: 'hidden',
 			address_2: 'optional',
 		} as const;
 
@@ -173,7 +173,7 @@ export const Edit = ( {
 					onChange={ () =>
 						setFieldEntity(
 							'company',
-							defaultFields.company.hidden ? 'required' : 'hidden'
+							defaultFields.company.hidden ? 'optional' : 'hidden'
 						)
 					}
 				/>
@@ -199,7 +199,7 @@ export const Edit = ( {
 						setFieldEntity(
 							'address_2',
 							defaultFields.address_2.hidden
-								? 'required'
+								? 'optional'
 								: 'hidden'
 						)
 					}
@@ -225,7 +225,7 @@ export const Edit = ( {
 					onChange={ () =>
 						setFieldEntity(
 							'phone',
-							defaultFields.phone.hidden ? 'required' : 'hidden'
+							defaultFields.phone.hidden ? 'optional' : 'hidden'
 						)
 					}
 				/>

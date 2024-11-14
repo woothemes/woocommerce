@@ -497,7 +497,7 @@ class CheckoutFields {
 	 * @return array An array of fields.
 	 */
 	public function get_core_fields() {
-		$fields = [
+		return [
 			'email'      => [
 				'label'          => __( 'Email address', 'woocommerce' ),
 				'optionalLabel'  => __(
@@ -552,8 +552,8 @@ class CheckoutFields {
 					'Company (optional)',
 					'woocommerce'
 				),
-				'required'       => false,
-				'hidden'         => false,
+				'required'       => 'required' === WC()->countries->get_company_field_visibility(),
+				'hidden'         => 'hidden' === WC()->countries->get_company_field_visibility(),
 				'autocomplete'   => 'organization',
 				'autocapitalize' => 'sentences',
 				'index'          => 30,
@@ -576,8 +576,8 @@ class CheckoutFields {
 					'Apartment, suite, etc. (optional)',
 					'woocommerce'
 				),
-				'required'       => false,
-				'hidden'         => false,
+				'required'       => 'required' === WC()->countries->get_address_2_field_visibility(),
+				'hidden'         => 'hidden' === WC()->countries->get_address_2_field_visibility(),
 				'autocomplete'   => 'address-line2',
 				'autocapitalize' => 'sentences',
 				'index'          => 50,
@@ -624,24 +624,14 @@ class CheckoutFields {
 					'Phone (optional)',
 					'woocommerce'
 				),
-				'required'       => false,
-				'hidden'         => false,
+				'required'       => 'required' === WC()->countries->get_phone_field_visibility(),
+				'hidden'         => 'hidden' === WC()->countries->get_phone_field_visibility(),
 				'type'           => 'tel',
 				'autocomplete'   => 'tel',
 				'autocapitalize' => 'characters',
 				'index'          => 100,
 			],
 		];
-
-		$fields_with_config = [ 'phone', 'company', 'address_2' ];
-
-		foreach ( $fields_with_config as $field_key ) {
-			$field_config                     = get_option( 'woocommerce_checkout_' . $field_key . '_field', 'optional' );
-			$fields[ $field_key ]['required'] = 'required' === $field_config;
-			$fields[ $field_key ]['hidden']   = 'hidden' === $field_config;
-		}
-
-		return $fields;
 	}
 
 	/**
