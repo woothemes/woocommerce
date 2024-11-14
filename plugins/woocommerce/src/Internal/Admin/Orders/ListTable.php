@@ -1717,5 +1717,7 @@ class ListTable extends WP_List_Table {
 				<option value="<?php echo esc_attr( wp_unslash( sanitize_text_field( $value ) ) ); ?>" <?php selected( $value, sanitize_text_field( wp_unslash( $selected ) ) ); ?>><?php echo esc_html( $label ); ?></option>
 				<?php
 			}
+			
+		echo '</select>';
 	}
 }
