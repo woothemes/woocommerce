@@ -11,12 +11,49 @@
 	"textdomain": "woocommerce",
 	"apiVersion": 3,
 	"ancestor": [
-		"woocommerce/product-filter-attribute"
+		"woocommerce/product-filter-attribute",
+		"woocommerce/product-filter-status"
 	],
 	"supports": {},
 	"usesContext": [
-		"filterData",
-		"isParentSelected"
+		"filterData"
 	],
-	"attributes": {}
+	"attributes": {
+		"chipText":{
+			"type": "string"
+		},
+		"customChipText":{
+			"type": "string"
+		},
+		"chipBackground":{
+			"type": "string"
+		},
+		"customChipBackground":{
+			"type": "string"
+		},
+		"chipBorder":{
+			"type": "string"
+		},
+		"customChipBorder":{
+			"type": "string"
+		},
+		"selectedChipText":{
+			"type": "string"
+		},
+		"customSelectedChipText":{
+			"type": "string"
+		},
+		"selectedChipBackground":{
+			"type": "string"
+		},
+		"customSelectedChipBackground":{
+			"type": "string"
+		},
+		"selectedChipBorder":{
+			"type": "string"
+		},
+		"customSelectedChipBorder":{
+			"type": "string"
+		}
+	}
 }

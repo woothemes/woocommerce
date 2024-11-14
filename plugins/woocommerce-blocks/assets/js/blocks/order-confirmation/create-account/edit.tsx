@@ -10,6 +10,7 @@ import {
 	useBlockProps,
 	InspectorControls,
 } from '@wordpress/block-editor';
+import { getSetting } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
@@ -32,7 +33,9 @@ const defaultTemplate = [
 	],
 	[
 		'core/list',
-		{},
+		{
+			className: 'is-style-checkmark-list',
+		},
 		[
 			[
 				'core/list-item',
@@ -69,13 +72,20 @@ type EditProps = {
 export const Edit = ( {
 	attributes,
 	setAttributes,
-}: EditProps ): JSX.Element => {
+}: EditProps ): JSX.Element | null => {
 	const className = clsx( 'wc-block-order-confirmation-create-account', {
 		'has-dark-controls': attributes.hasDarkControls,
 	} );
 	const blockProps = useBlockProps( {
 		className,
 	} );
+	const isEnabled = getSetting( 'delayedAccountCreationEnabled', true );
+
+	if ( ! isEnabled ) {
+		return null;
+	}
+
+	const generatePassword = getSetting( 'registrationGeneratePassword', true );
 
 	return (
 		<div { ...blockProps }>
@@ -93,23 +103,26 @@ export const Edit = ( {
 			<Disabled>
 				<Form isEditor={ true } />
 			</Disabled>
-			<InspectorControls>
-				<PanelBody title={ __( 'Style', 'woocommerce' ) }>
-					<ToggleControl
-						label={ __( 'Dark mode inputs', 'woocommerce' ) }
-						help={ __(
-							'Inputs styled specifically for use on dark background colors.',
-							'woocommerce'
-						) }
-						checked={ attributes.hasDarkControls }
-						onChange={ () =>
-							setAttributes( {
-								hasDarkControls: ! attributes.hasDarkControls,
-							} )
-						}
-					/>
-				</PanelBody>
-			</InspectorControls>
+			{ ! generatePassword && (
+				<InspectorControls>
+					<PanelBody title={ __( 'Style', 'woocommerce' ) }>
+						<ToggleControl
+							label={ __( 'Dark mode inputs', 'woocommerce' ) }
+							help={ __(
+								'Inputs styled specifically for use on dark background colors.',
+								'woocommerce'
+							) }
+							checked={ attributes.hasDarkControls }
+							onChange={ () =>
+								setAttributes( {
+									hasDarkControls:
+										! attributes.hasDarkControls,
+								} )
+							}
+						/>
+					</PanelBody>
+				</InspectorControls>
+			) }
 		</div>
 	);
 };

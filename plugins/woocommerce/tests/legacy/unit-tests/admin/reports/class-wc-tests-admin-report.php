@@ -5,6 +5,8 @@
  * @package WooCommerce\Tests\Admin\Reports
  */
 
+use Automattic\WooCommerce\Enums\OrderInternalStatus;
+
 /**
  * Tests for the WC_Admin_Report class.
  */
@@ -146,7 +148,7 @@ class WC_Tests_Admin_Report extends WC_Unit_Test_Case {
 			)
 		);
 
-		$this->assertEquals( 'wc-completed', $data->post_status );
+		$this->assertEquals( OrderInternalStatus::COMPLETED, $data->post_status );
 	}
 
 	/**

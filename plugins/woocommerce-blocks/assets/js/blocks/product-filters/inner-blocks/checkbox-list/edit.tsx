@@ -24,8 +24,9 @@ import {
 import './style.scss';
 import './editor.scss';
 import { EditProps } from './types';
+import { getColorClasses, getColorVars } from './utils';
 
-const Edit = ( props: EditProps ): JSX.Element => {
+const CheckboxListEdit = ( props: EditProps ): JSX.Element => {
 	const {
 		clientId,
 		context,
@@ -51,21 +52,9 @@ const Edit = ( props: EditProps ): JSX.Element => {
 	const blockProps = useBlockProps( {
 		className: clsx( 'wc-block-product-filter-checkbox-list', {
 			'is-loading': isLoading,
-			'has-option-element-border-color':
-				optionElementBorder.color || customOptionElementBorder,
-			'has-option-element-selected-color':
-				optionElementSelected.color || customOptionElementSelected,
-			'has-option-element-color':
-				optionElement.color || customOptionElement,
+			...getColorClasses( attributes ),
 		} ),
-		style: {
-			'--wc-product-filter-checkbox-list-option-element-border':
-				optionElementBorder.color || customOptionElementBorder,
-			'--wc-product-filter-checkbox-list-option-element-selected':
-				optionElementSelected.color || customOptionElementSelected,
-			'--wc-product-filter-checkbox-list-option-element':
-				optionElement.color || customOptionElement,
-		},
+		style: getColorVars( attributes ),
 	} );
 
 	const loadingState = useMemo( () => {
@@ -107,21 +96,17 @@ const Edit = ( props: EditProps ): JSX.Element => {
 									htmlFor={ `interactive-checkbox-${ index }` }
 									className=" wc-block-product-filter-checkbox-list__label"
 								>
-									<span className="wc-block-interactive-components-checkbox-list__input-wrapper">
-										<span className="wc-block-product-filter-checkbox-list__input-wrapper">
-											<input
-												name={ `interactive-checkbox-${ index }` }
-												type="checkbox"
-												className="wc-block-product-filter-checkbox-list__input"
-												defaultChecked={
-													!! item.selected
-												}
-											/>
-											<Icon
-												className="wc-block-product-filter-checkbox-list__mark"
-												icon={ checkMark }
-											/>
-										</span>
+									<span className="wc-block-product-filter-checkbox-list__input-wrapper">
+										<input
+											name={ `interactive-checkbox-${ index }` }
+											type="checkbox"
+											className="wc-block-product-filter-checkbox-list__input"
+											defaultChecked={ !! item.selected }
+										/>
+										<Icon
+											className="wc-block-product-filter-checkbox-list__mark"
+											icon={ checkMark }
+										/>
 									</span>
 									<span className="wc-block-product-filter-checkbox-list__text">
 										{ item.label }
@@ -131,9 +116,9 @@ const Edit = ( props: EditProps ): JSX.Element => {
 						) ) }
 				</ul>
 				{ ! isLoading && isLongList && (
-					<span className="wc-block-product-filter-checkbox-list__show-more">
-						<small>{ __( 'Show more…', 'woocommerce' ) }</small>
-					</span>
+					<button className="wc-block-product-filter-checkbox-list__show-more">
+						{ __( 'Show more…', 'woocommerce' ) }
+					</button>
 				) }
 			</div>
 			<InspectorControls group="color">
@@ -220,4 +205,4 @@ export default withColors( {
 	optionElementBorder: 'option-element-border',
 	optionElementSelected: 'option-element-border',
 	optionElement: 'option-element',
-} )( Edit );
+} )( CheckboxListEdit );
