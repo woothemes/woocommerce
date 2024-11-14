@@ -33,17 +33,17 @@ class FilterData {
 	 * @return void
 	 */
 	final public function init( QueryClauses $query_clauses ): void {
-		$this->set_query_clauses( $query_clauses );
+		$this->set_query_clauses_generator( $query_clauses );
 	}
 
 	/**
-	 * Allow setting the clauses provider at run time.
+	 * Allow setting the clauses generator at run time.
 	 *
 	 * @param QueryClausesGenerator $query_clauses Instance of QueryClauses.
 	 *
 	 * @return void
 	 */
-	final public function set_query_clauses( QueryClausesGenerator $query_clauses ): void {
+	final public function set_query_clauses_generator( QueryClausesGenerator $query_clauses ): void {
 		$this->query_clauses = $query_clauses;
 	}
 
