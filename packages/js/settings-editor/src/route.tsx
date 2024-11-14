@@ -43,7 +43,7 @@ const NotFound = () => {
  */
 const getNotFoundRoute = (
 	activePage: string,
-	pages: typeof window.wcSettings.admin.settingsPages
+	pages: SettingsData
 ): Route => ( {
 	key: activePage,
 	areas: {
@@ -69,10 +69,7 @@ const getNotFoundRoute = (
  * @param {string}                                       activePage - The active page.
  * @param {typeof window.wcSettings.admin.settingsPages} pages      - The pages.
  */
-const getLegacyRoute = (
-	activePage: string,
-	pages: typeof window.wcSettings.admin.settingsPages
-): Route => {
+const getLegacyRoute = ( activePage: string, pages: SettingsData ): Route => {
 	const settingsPage = pages[ activePage ];
 	const pageTitle = settingsPage?.label || __( 'Settings', 'woocommerce' );
 
@@ -98,7 +95,7 @@ const getLegacyRoute = (
 
 const PAGES_FILTER = 'woocommerce_admin_settings_pages';
 
-const getPages = () => {
+const getModernPages = () => {
 	/**
 	 * Get the modern settings pages.
 	 *
@@ -113,7 +110,7 @@ const getPages = () => {
  * @return {Record<string, Route>} The pages.
  */
 export function useModernRoutes() {
-	const [ routes, setRoutes ] = useState( getPages() );
+	const [ routes, setRoutes ] = useState( getModernPages() );
 
 	/*
 	 * Handler for new pages being added after the initial filter has been run,
@@ -128,7 +125,7 @@ export function useModernRoutes() {
 
 			const filterCount = didFilter( PAGES_FILTER );
 			if ( filterCount && filterCount > 0 ) {
-				setRoutes( getPages() );
+				setRoutes( getModernPages() );
 			}
 		};
 
