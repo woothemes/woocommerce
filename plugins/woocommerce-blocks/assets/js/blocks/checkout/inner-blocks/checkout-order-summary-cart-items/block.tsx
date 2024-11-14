@@ -5,12 +5,23 @@ import { OrderSummary } from '@woocommerce/base-components/cart-checkout';
 import { useStoreCart } from '@woocommerce/base-context/hooks';
 import { TotalsWrapper } from '@woocommerce/blocks-components';
 
-const Block = ( { className = '' }: { className?: string } ): JSX.Element => {
+/**
+ * Internal dependencies
+ */
+import { BlockAttributes } from './edit';
+
+const Block = ( {
+	className = '',
+	disableProductDescriptions = false,
+}: BlockAttributes ): JSX.Element => {
 	const { cartItems } = useStoreCart();
 
 	return (
 		<TotalsWrapper className={ className }>
-			<OrderSummary cartItems={ cartItems } />
+			<OrderSummary
+				cartItems={ cartItems }
+				disableProductDescriptions={ disableProductDescriptions }
+			/>
 		</TotalsWrapper>
 	);
 };

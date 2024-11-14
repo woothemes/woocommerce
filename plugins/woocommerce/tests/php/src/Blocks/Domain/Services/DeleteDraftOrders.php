@@ -1,12 +1,14 @@
 <?php
+declare( strict_types = 1 );
 
-namespace Automattic\WooCommerce\Tests\Blocks\Library;
+namespace Automattic\WooCommerce\Tests\Blocks\Domain\Services;
 
-use Yoast\PHPUnitPolyfills\TestCases\TestCase;
-use \WC_Order;
+use Automattic\WooCommerce\Blocks\Domain\Package;
 use Automattic\WooCommerce\Blocks\Domain\Services\DraftOrders;
 use Automattic\WooCommerce\Blocks\Domain\Services\FeatureGating;
-use Automattic\WooCommerce\Blocks\Domain\Package;
+use Automattic\WooCommerce\Enums\OrderStatus;
+use WC_Order;
+use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Tests Delete Draft Orders functionality
@@ -63,7 +65,7 @@ class DeleteDraftOrders extends TestCase {
 
 		// set a non-draft order to make sure it's unaffected
 		$order = new WC_Order();
-		$order->set_status( 'on-hold' );
+		$order->set_status( OrderStatus::ON_HOLD );
 		$order->save();
 		$wpdb->update(
 			$wpdb->posts,
@@ -152,7 +154,7 @@ class DeleteDraftOrders extends TestCase {
 		$sample_results = function( $results, $args ) {
 			if ( isset( $args[ 'status' ] ) && DraftOrders::DB_STATUS === $args[ 'status' ] ) {
 				$test_order = new WC_Order();
-				$test_order->set_status( 'on-hold' );
+				$test_order->set_status( OrderStatus::ON_HOLD );
 				return [ $test_order ];
 			}
 			return $results;

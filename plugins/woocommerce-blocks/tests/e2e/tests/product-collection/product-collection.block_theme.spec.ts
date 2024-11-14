@@ -81,6 +81,89 @@ test.describe( 'Product Collection', () => {
 		).toBeVisible();
 	} );
 
+	test.describe( 'when no results are found', () => {
+		test.beforeEach( async ( { admin } ) => {
+			await admin.createNewPost();
+		} );
+
+		test( 'does not render', async ( { page, editor, pageObject } ) => {
+			await pageObject.insertProductCollection();
+			await pageObject.chooseCollectionInPost( 'featured' );
+			await pageObject.addFilter( 'Price Range' );
+			await pageObject.setPriceRange( {
+				max: '1',
+			} );
+
+			const featuredBlock = editor.canvas.getByLabel( 'Block: Featured' );
+
+			await expect(
+				featuredBlock.getByText( 'Featured products' )
+			).toBeVisible();
+			// The "No results found" info is rendered in editor for all collections.
+			await expect(
+				featuredBlock.getByText( 'No products to display' )
+			).toBeVisible();
+
+			await pageObject.publishAndGoToFrontend();
+
+			const content = page.locator( 'main' );
+
+			await expect( content ).not.toContainText( 'Featured products' );
+			await expect( content ).not.toContainText(
+				'No products to display'
+			);
+		} );
+
+		// This test ensures the runtime render state is correctly reset for
+		// each block.
+		test( 'does not prevent subsequent blocks from render', async ( {
+			page,
+			pageObject,
+		} ) => {
+			await pageObject.insertProductCollection();
+			await pageObject.chooseCollectionInPost( 'featured' );
+			await pageObject.addFilter( 'Price Range' );
+			await pageObject.setPriceRange( {
+				max: '1',
+			} );
+
+			await pageObject.insertProductCollection();
+			await pageObject.chooseCollectionInPost( 'topRated' );
+
+			await pageObject.refreshLocators( 'editor' );
+			await expect( pageObject.products ).toHaveCount( 5 );
+
+			await pageObject.publishAndGoToFrontend();
+
+			await pageObject.refreshLocators( 'frontend' );
+			await expect( pageObject.products ).toHaveCount( 5 );
+			await expect( page.locator( 'main' ) ).not.toContainText(
+				'Featured products'
+			);
+		} );
+
+		test( 'renders if No Results block is present', async ( {
+			page,
+			editor,
+			pageObject,
+		} ) => {
+			await pageObject.insertProductCollection();
+			await pageObject.chooseCollectionInPost( 'productCatalog' );
+			await pageObject.addFilter( 'Price Range' );
+			await pageObject.setPriceRange( {
+				max: '1',
+			} );
+
+			await expect(
+				editor.canvas.getByText( 'No results found' )
+			).toBeVisible();
+
+			await pageObject.publishAndGoToFrontend();
+
+			await expect( page.getByText( 'No results found' ) ).toBeVisible();
+		} );
+	} );
+
 	test.describe( 'Renders correctly with all Product Elements', () => {
 		const expectedProductContent = [
 			'Beanie', // core/post-title
@@ -321,7 +404,7 @@ test.describe( 'Product Collection', () => {
 		} );
 	} );
 
-	test.describe( 'Location is recognised', () => {
+	test.describe( 'Location is recognized', () => {
 		const filterRequest = ( request: Request ) => {
 			const url = request.url();
 			return (
@@ -337,7 +420,9 @@ test.describe( 'Product Collection', () => {
 			return (
 				url.includes( 'wp/v2/product' ) &&
 				searchParams.get( 'isProductCollectionBlock' ) === 'true' &&
-				!! searchParams.get( `location[sourceData][productId]` )
+				!! searchParams.get(
+					`productCollectionLocation[sourceData][productId]`
+				)
 			);
 		};
 
@@ -349,26 +434,30 @@ test.describe( 'Product Collection', () => {
 
 			if ( locationType === 'product' ) {
 				return {
-					type: searchParams.get( 'location[type]' ),
+					type: searchParams.get( 'productCollectionLocation[type]' ),
 					productId: searchParams.get(
-						`location[sourceData][productId]`
+						`productCollectionLocation[sourceData][productId]`
 					),
 				};
 			}
 
 			if ( locationType === 'archive' ) {
 				return {
-					type: searchParams.get( 'location[type]' ),
+					type: searchParams.get( 'productCollectionLocation[type]' ),
 					taxonomy: searchParams.get(
-						`location[sourceData][taxonomy]`
+						`productCollectionLocation[sourceData][taxonomy]`
 					),
-					termId: searchParams.get( `location[sourceData][termId]` ),
+					termId: searchParams.get(
+						`productCollectionLocation[sourceData][termId]`
+					),
 				};
 			}
 
 			return {
-				type: searchParams.get( 'location[type]' ),
-				sourceData: searchParams.get( `location[sourceData]` ),
+				type: searchParams.get( 'productCollectionLocation[type]' ),
+				sourceData: searchParams.get(
+					`productCollectionLocation[sourceData]`
+				),
 			};
 		};
 
@@ -401,10 +490,10 @@ test.describe( 'Product Collection', () => {
 				pageObject.BLOCK_NAME
 			);
 
-			const locationReuqestPromise =
+			const locationRequestPromise =
 				page.waitForRequest( filterProductRequest );
 			await pageObject.chooseCollectionInTemplate( 'featured' );
-			const locationRequest = await locationReuqestPromise;
+			const locationRequest = await locationRequestPromise;
 
 			const { type, productId } = getLocationDetailsFromRequest(
 				locationRequest,
@@ -429,9 +518,9 @@ test.describe( 'Product Collection', () => {
 				pageObject.BLOCK_NAME
 			);
 
-			const locationReuqestPromise = page.waitForRequest( filterRequest );
+			const locationRequestPromise = page.waitForRequest( filterRequest );
 			await pageObject.chooseCollectionInTemplate( 'featured' );
-			const locationRequest = await locationReuqestPromise;
+			const locationRequest = await locationRequestPromise;
 			const { type, taxonomy, termId } = getLocationDetailsFromRequest(
 				locationRequest,
 				'archive'
@@ -458,9 +547,9 @@ test.describe( 'Product Collection', () => {
 				pageObject.BLOCK_NAME
 			);
 
-			const locationReuqestPromise = page.waitForRequest( filterRequest );
+			const locationRequestPromise = page.waitForRequest( filterRequest );
 			await pageObject.chooseCollectionInTemplate( 'featured' );
-			const locationRequest = await locationReuqestPromise;
+			const locationRequest = await locationRequestPromise;
 			const { type, taxonomy, termId } = getLocationDetailsFromRequest(
 				locationRequest,
 				'archive'
@@ -483,9 +572,9 @@ test.describe( 'Product Collection', () => {
 				pageObject.BLOCK_NAME
 			);
 
-			const locationReuqestPromise = page.waitForRequest( filterRequest );
+			const locationRequestPromise = page.waitForRequest( filterRequest );
 			await pageObject.chooseCollectionInPost( 'featured' );
-			const locationRequest = await locationReuqestPromise;
+			const locationRequest = await locationRequestPromise;
 			const { type, sourceData } =
 				getLocationDetailsFromRequest( locationRequest );
 
@@ -502,10 +591,10 @@ test.describe( 'Product Collection', () => {
 		} ) => {
 			await admin.createNewPost();
 			await pageObject.insertProductCollectionInSingleProductBlock();
-			const locationReuqestPromise =
+			const locationRequestPromise =
 				page.waitForRequest( filterProductRequest );
 			await pageObject.chooseCollectionInPost( 'featured' );
-			const locationRequest = await locationReuqestPromise;
+			const locationRequest = await locationRequestPromise;
 			const { type, productId } = getLocationDetailsFromRequest(
 				locationRequest,
 				'product'
@@ -609,7 +698,7 @@ test.describe( 'Product Collection', () => {
 			await expect( pageObject.productTemplate ).toBeVisible();
 		} );
 
-		test( 'On Sale collection should be visible after Refresh', async ( {
+		test( 'On Sale Products collection should be visible after Refresh', async ( {
 			page,
 			pageObject,
 			editor,
@@ -624,7 +713,7 @@ test.describe( 'Product Collection', () => {
 
 			await expect( productTemplate ).toHaveCount( 2 );
 
-			// Refresh the template and verify "On Sale" collection is still visible
+			// Refresh the template and verify "On Sale Products" collection is still visible
 			await editor.saveSiteEditorEntities( {
 				isOnlyCurrentEntityDirty: true,
 			} );
@@ -632,7 +721,7 @@ test.describe( 'Product Collection', () => {
 			await expect( productTemplate ).toHaveCount( 2 );
 		} );
 
-		test( 'On Sale collection should be visible after Refresh in a Post', async ( {
+		test( 'On Sale Products collection should be visible after Refresh in a Post', async ( {
 			page,
 			pageObject,
 			editor,
@@ -640,14 +729,14 @@ test.describe( 'Product Collection', () => {
 			await pageObject.createNewPostAndInsertBlock( 'onSale' );
 			await expect( pageObject.productTemplate ).toBeVisible();
 
-			// Refresh the post and verify "On Sale" collection is still visible
+			// Refresh the post and verify "On Sale Products" collection is still visible
 			await editor.saveDraft();
 			await page.reload();
 			await expect( pageObject.productTemplate ).toBeVisible();
 		} );
 	} );
 
-	const templates = {
+	const templates = [
 		// This test is disabled because archives are disabled for attributes by default. This can be uncommented when this is toggled on.
 		//'taxonomy-product_attribute': {
 		//	templateTitle: 'Product Attribute',
@@ -655,102 +744,104 @@ test.describe( 'Product Collection', () => {
 		//	frontendPage: '/product-attribute/color/',
 		//	legacyBlockName: 'woocommerce/legacy-template',
 		//},
-		'taxonomy-product_cat': {
+		{
 			templateTitle: 'Product Category',
 			slug: 'taxonomy-product_cat',
 			frontendPage: '/product-category/music/',
 			legacyBlockName: 'woocommerce/legacy-template',
 			expectedProductsCount: 2,
 		},
-		'taxonomy-product_tag': {
+		{
 			templateTitle: 'Product Tag',
 			slug: 'taxonomy-product_tag',
 			frontendPage: '/product-tag/recommended/',
 			legacyBlockName: 'woocommerce/legacy-template',
 			expectedProductsCount: 2,
 		},
-		'archive-product': {
+		{
 			templateTitle: 'Product Catalog',
 			slug: 'archive-product',
 			frontendPage: '/shop/',
 			legacyBlockName: 'woocommerce/legacy-template',
 			expectedProductsCount: 16,
 		},
-		'product-search-results': {
+		{
 			templateTitle: 'Product Search Results',
 			slug: 'product-search-results',
 			frontendPage: '/?s=shirt&post_type=product',
 			legacyBlockName: 'woocommerce/legacy-template',
 			expectedProductsCount: 3,
 		},
-	};
+	];
 
-	for ( const {
-		templateTitle,
-		slug,
-		frontendPage,
-		legacyBlockName,
-		expectedProductsCount,
-	} of Object.values( templates ) ) {
-		test.describe( `${ templateTitle } template`, () => {
-			test( 'Product Collection block matches with classic template block', async ( {
-				pageObject,
-				requestUtils,
-				admin,
-				editor,
-				page,
-			} ) => {
-				await pageObject.refreshLocators( 'frontend' );
+	templates.forEach(
+		( {
+			templateTitle,
+			slug,
+			frontendPage,
+			legacyBlockName,
+			expectedProductsCount,
+		} ) => {
+			test.describe( `${ templateTitle } template`, () => {
+				test( 'Product Collection block matches with classic template block', async ( {
+					pageObject,
+					requestUtils,
+					admin,
+					editor,
+					page,
+				} ) => {
+					await pageObject.refreshLocators( 'frontend' );
 
-				await page.goto( frontendPage );
+					await page.goto( frontendPage );
 
-				const productCollectionProductNames =
-					await pageObject.getProductNames();
+					const productCollectionProductNames =
+						await pageObject.getProductNames();
 
-				const template = await requestUtils.createTemplate(
-					'wp_template',
-					{
-						slug,
-						title: 'classic template test',
-						content: 'howdy',
-					}
-				);
+					const template = await requestUtils.createTemplate(
+						'wp_template',
+						{
+							slug,
+							title: 'classic template test',
+							content: 'howdy',
+						}
+					);
 
-				await admin.visitSiteEditor( {
-					postId: template.id,
-					postType: 'wp_template',
-					canvas: 'edit',
+					await admin.visitSiteEditor( {
+						postId: template.id,
+						postType: 'wp_template',
+						canvas: 'edit',
+					} );
+
+					await expect(
+						editor.canvas.getByText( 'howdy' )
+					).toBeVisible();
+
+					await editor.insertBlock( { name: legacyBlockName } );
+
+					await editor.saveSiteEditorEntities( {
+						isOnlyCurrentEntityDirty: true,
+					} );
+
+					await page.goto( frontendPage );
+
+					const classicProducts = page.locator(
+						'.woocommerce-loop-product__title'
+					);
+
+					await expect( classicProducts ).toHaveCount(
+						expectedProductsCount
+					);
+
+					const classicProductsNames =
+						await classicProducts.allTextContents();
+
+					expect( classicProductsNames ).toEqual(
+						productCollectionProductNames
+					);
 				} );
-
-				await expect(
-					editor.canvas.getByText( 'howdy' )
-				).toBeVisible();
-
-				await editor.insertBlock( { name: legacyBlockName } );
-
-				await editor.saveSiteEditorEntities( {
-					isOnlyCurrentEntityDirty: true,
-				} );
-
-				await page.goto( frontendPage );
-
-				const classicProducts = page.locator(
-					'.woocommerce-loop-product__title'
-				);
-
-				await expect( classicProducts ).toHaveCount(
-					expectedProductsCount
-				);
-
-				const classicProductsNames =
-					await classicProducts.allTextContents();
-
-				expect( classicProductsNames ).toEqual(
-					productCollectionProductNames
-				);
 			} );
-		} );
-	}
+		}
+	);
 	test.describe( 'Editor: In taxonomies templates', () => {
 		test( 'Products by specific category template displays products from this category', async ( {
 			admin,
@@ -811,72 +902,6 @@ test.describe( 'Product Collection', () => {
 			const products = editor.canvas.getByLabel( 'Block: Title' );
 
 			await expect( products ).toHaveText( expectedProducts );
-		} );
-	} );
-
-	test.describe( 'Extensibility - JS events', () => {
-		test( 'emits wc-blocks_product_list_rendered event on init and on page change', async ( {
-			pageObject,
-			page,
-		} ) => {
-			await pageObject.createNewPostAndInsertBlock();
-
-			await page.addInitScript( () => {
-				let eventFired = 0;
-				window.document.addEventListener(
-					'wc-blocks_product_list_rendered',
-					( e ) => {
-						const { collection } = e.detail;
-						window.eventPayload = collection;
-						window.eventFired = ++eventFired;
-					}
-				);
-			} );
-
-			await pageObject.publishAndGoToFrontend();
-
-			await expect
-				.poll(
-					async () => await page.evaluate( 'window.eventPayload' )
-				)
-				.toBe( undefined );
-			await expect
-				.poll( async () => await page.evaluate( 'window.eventFired' ) )
-				.toBe( 1 );
-
-			await page.getByRole( 'link', { name: 'Next Page' } ).click();
-
-			await expect
-				.poll( async () => await page.evaluate( 'window.eventFired' ) )
-				.toBe( 2 );
-		} );
-
-		test( 'emits one wc-blocks_product_list_rendered event per block', async ( {
-			pageObject,
-			page,
-		} ) => {
-			// Adding three blocks in total
-			await pageObject.createNewPostAndInsertBlock();
-			await pageObject.insertProductCollection();
-			await pageObject.chooseCollectionInPost();
-			await pageObject.insertProductCollection();
-			await pageObject.chooseCollectionInPost();
-
-			await page.addInitScript( () => {
-				let eventFired = 0;
-				window.document.addEventListener(
-					'wc-blocks_product_list_rendered',
-					() => {
-						window.eventFired = ++eventFired;
-					}
-				);
-			} );
-
-			await pageObject.publishAndGoToFrontend();
-
-			await expect
-				.poll( async () => await page.evaluate( 'window.eventFired' ) )
-				.toBe( 3 );
 		} );
 	} );
 } );
