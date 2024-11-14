@@ -159,7 +159,7 @@ The `WC_Logger` class can be substituted for another class via the `woocommerce_
 
 In WooCommerce, a log handler is a PHP class that takes the raw log data and transforms it into a log entry that can be stored or dispatched. WooCommerce ships with four different log handler classes:
 
-* `Automattic\\WooCommerce\\Internal\\Admin\\Logging\\LogHandlerFileV2`: This is the default handler, representing the "file system" log storage method. It records log entries to files.
+* `Automattic\WooCommerce\Internal\Admin\Logging\LogHandlerFileV2`: This is the default handler, representing the "file system" log storage method. It records log entries to files.
 * `WC_Log_Handler_File`: This is the old default handler that also records log entries to files. It may be deprecated in the future, and it is not recommended to use this class or extend it.
 * `WC_Log_Handler_DB`: This handler represents the "database" log storage method. It records log entries to the database.
 * `WC_Log_Handler_Email`: This handler does not store log entries, but instead sends them as email messages. Emails are sent to the site admin email address. This handler has [some limitations](https://github.com/woocommerce/woocommerce/blob/fe81a4cf27601473ad5c394a4f0124c785aaa4e6/plugins/woocommerce/includes/log-handlers/class-wc-log-handler-email.php#L15-L27).

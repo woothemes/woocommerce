@@ -8,8 +8,8 @@ Logging is a crucial part of any WooCommerce extension. It helps you track error
 
 ```php
 // Define the label and description for the logging option
-$label = \_\_( 'Enable Logging', 'your-textdomain-here' );
-$description = \_\_( 'Enable the logging of errors.', 'your-textdomain-here' );
+$label = __( 'Enable Logging', 'your-textdomain-here' );
+$description = __( 'Enable the logging of errors.', 'your-textdomain-here' );
 
 // Check if the WooCommerce logging directory is defined
 if ( defined( 'WC_LOG_DIR' ) ) {
@@ -19,12 +19,12 @@ if ( defined( 'WC_LOG_DIR' ) ) {
   $log_url = add_query_arg( 'log_file', $log_key, $log_url );
 
   // Add a link to the logs to the label
-  $label .= ' | ' . sprintf( \_\_( '%1$sView Log%2$s', 'your-textdomain-here' ), '&lt;a href\="' . esc_url( $log_url ) . '"&gt;', '&lt;/a\&gt;' );
+  $label .= ' | ' . sprintf( __( '%1$sView Log%2$s', 'your-textdomain-here' ), '&lt;a href\="' . esc_url( $log_url ) . '"&gt;', '&lt;/a\&gt;' );
 }
 
 // Add the logging option to the form fields
-$form_fields\['wc_yourpluginslug_debug'\] = array(
-  'title' => \_\_( 'Debug Log', 'your-textdomain-here' ),
+$form_fields['wc_yourpluginslug_debug'[ = array(
+  'title' => __( 'Debug Log', 'your-textdomain-here' ),
   'label' => $label,
   'description' => $description,
   'type' => 'checkbox',
