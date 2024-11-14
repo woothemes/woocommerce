@@ -1,5 +1,5 @@
 declare global {
-	interface SettingField {
+	interface SettingsField {
 		title?: string;
 		type: string;
 		id?: string;
