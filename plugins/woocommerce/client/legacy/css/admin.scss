@@ -5784,6 +5784,30 @@ img.help_tip {
 		}
 	}
 
+	// Custom Fields.
+	#postcustomstuff {
+		table {
+			border-radius: 2px;
+			background: none;
+
+
+		}
+		td {
+			padding: 0;
+		}
+		td > input,
+		select,
+		textarea {
+			margin: $gap-smaller;
+			width: calc( 100% - 2 * $gap-smaller );
+		}
+		thead th {
+			padding: $gap-smaller;
+			background: none;
+			border-bottom: 1px solid #bbbcbf;
+		}
+	}
+
 	// Publish metabox.
 	#minor-publishing-actions {
 		display: flex;
