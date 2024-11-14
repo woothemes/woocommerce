@@ -109,9 +109,9 @@ export const Inspector = ( {
 												productStatuses: newStatuses,
 											} );
 										} }
-										checked={ Object.values(
-											productStatuses
-										).includes( key ) }
+										checked={ productStatuses.includes(
+											key
+										) }
 									/>
 								)
 							) }
@@ -139,9 +139,9 @@ export const Inspector = ( {
 												stockStatuses: newStatuses,
 											} );
 										} }
-										checked={ Object.values(
-											stockStatuses
-										).includes( key ) }
+										checked={ stockStatuses.includes(
+											key
+										) }
 									/>
 								)
 							) }
