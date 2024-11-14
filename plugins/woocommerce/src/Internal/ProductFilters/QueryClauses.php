@@ -33,7 +33,6 @@ class QueryClauses implements QueryClausesGenerator {
 		if ( $wp_query->get( 'filter_stock_status' ) ) {
 			$stock_statuses = trim( $wp_query->get( 'filter_stock_status' ) );
 			$stock_statuses = explode( ',', $stock_statuses );
-			$stock_statuses = array_filter( $stock_statuses );
 
 			$args = $this->add_stock_clauses( $args, $stock_statuses );
 		}
@@ -63,6 +62,8 @@ class QueryClauses implements QueryClausesGenerator {
 	 * @return array
 	 */
 	public function add_stock_clauses( $args, $stock_statuses ) {
+		$stock_statuses = array_filter( $stock_statuses );
+
 		if ( empty( $stock_statuses ) ) {
 			return $args;
 		}
