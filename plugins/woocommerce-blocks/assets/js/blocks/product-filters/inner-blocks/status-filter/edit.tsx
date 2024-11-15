@@ -31,7 +31,7 @@ const productStatusOptions: Record< string, string > = getSetting(
 );
 
 const Edit = ( props: EditProps ) => {
-	const { attributes, clientId } = props;
+	const { attributes } = props;
 	const { showCounts, hideEmpty, clearButton } = attributes;
 
 	const productStatuses = Array.isArray( attributes.productStatuses )

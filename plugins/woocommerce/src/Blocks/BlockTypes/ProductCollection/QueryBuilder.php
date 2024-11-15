@@ -136,7 +136,7 @@ class QueryBuilder {
 
 		return array_reduce(
 			array_values( $query_vars ),
-			function( $acc, $query_vars_filter_block ) {
+			function ( $acc, $query_vars_filter_block ) {
 				return array_merge( $query_vars_filter_block, $acc );
 			},
 			$public_query_vars
