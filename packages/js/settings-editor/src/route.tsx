@@ -95,7 +95,6 @@ const getLegacyRoute = (
 	settingsData: SettingsData
 ): Route => {
 	const settingsPage = settingsData[ activePage ];
-	const pageTitle = settingsPage?.label || __( 'Settings', 'woocommerce' );
 	const tabs = getSettingsPageTabs( settingsPage );
 
 	return {
@@ -105,12 +104,12 @@ const getLegacyRoute = (
 				<Sidebar
 					activePage={ activePage }
 					settingsData={ settingsData }
-					pageTitle={ pageTitle }
+					pageTitle={ __( 'Store settings', 'woocommerce' ) }
 				/>
 			),
 			content: (
 				<>
-					<Header />
+					<Header pageTitle={ settingsPage?.label } />
 					<SectionTabs tabs={ tabs }>
 						<LegacyContent settingsPage={ settingsPage } />
 					</SectionTabs>
@@ -206,12 +205,12 @@ export const useActiveRoute = () => {
 			<Sidebar
 				activePage={ activePage }
 				settingsData={ settingsData }
-				pageTitle={ settingsPage.label }
+				pageTitle={ __( 'Store settings', 'woocommerce' ) }
 			/>
 		);
 		modernRoute.areas.content = (
 			<>
-				<Header />
+				<Header pageTitle={ settingsPage?.label } />
 				<SectionTabs tabs={ tabs }>
 					{ modernRoute.areas.content }
 				</SectionTabs>

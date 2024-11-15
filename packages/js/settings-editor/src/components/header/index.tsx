@@ -3,6 +3,6 @@
  */
 import { createElement } from '@wordpress/element';
 
-export const Header = () => {
-	return <div>Header</div>;
+export const Header = ( { pageTitle }: { pageTitle: string } ) => {
+	return <div>Header: { pageTitle }</div>;
 };
