@@ -145,7 +145,7 @@ class Settings {
 			$pages = $setting_page->add_settings_page_data( $pages );
 		}
 
-		$settings['settingsPages'] = $pages;
+		$settings['settingsData'] = $pages;
 
 		return $settings;
 	}

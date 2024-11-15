@@ -1940,7 +1940,6 @@ final class PaymentExtensionSuggestions {
 				'_type'       => self::TYPE_BNPL,
 				'title'       => esc_html__( 'Afterpay', 'woocommerce' ),
 				'description' => esc_html__( 'Afterpay allows customers to receive products immediately and pay for purchases over four installments, always interest-free.', 'woocommerce' ),
-				// @todo need to refresh these images.
 				'image'       => plugins_url( 'assets/images/onboarding/afterpay.png', WC_PLUGIN_FILE ),
 				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/afterpay.png', WC_PLUGIN_FILE ),
 				'plugin'      => array(
