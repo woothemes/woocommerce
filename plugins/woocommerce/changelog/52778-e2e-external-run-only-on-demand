@@ -1,0 +1,4 @@
+Significance: patch
+Type: update
+
+Disable e2e and API test run against external envs as a part of `release-checks`.

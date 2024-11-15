@@ -1,5 +1,5 @@
 <?php
-declare( strict_types = 1 );
+declare( strict_types = 1);
 namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 use Automattic\WooCommerce\Blocks\Utils\ProductCollectionUtils;
@@ -80,7 +80,7 @@ final class ProductFilterStatus extends AbstractBlock {
 
 		return array_merge(
 			$filter_param_keys,
-			$filter_status_param_keys,
+			$filter_status_param_keys
 		);
 	}
 
@@ -92,6 +92,8 @@ final class ProductFilterStatus extends AbstractBlock {
 	 * @return array Active filters data.
 	 */
 	public function register_active_filters_data( $data, $params ) {
+		$stock_status_options = wc_get_product_stock_status_options();
+
 		if ( empty( $params[ self::FILTER_STATUS_QUERY_VAR ] ) ) {
 			return $data;
 		}
@@ -150,7 +152,7 @@ final class ProductFilterStatus extends AbstractBlock {
 	protected function render( $attributes, $content, $block ) {
 		$stock_statuses     = $attributes['stockStatuses'] ?? array_keys( wc_get_product_stock_status_options() );
 		$product_statuses   = $attributes['productStatuses'] ?? array( 'onsale' );
-		$stock_status_data  = empty( $stock_statuses ) ? array() : $this->get_stock_status_counts( $block, $stock_statuses );
+		$stock_status_data  = $this->get_stock_status_counts( $block, $stock_statuses );
 		$onsale_status_data = in_array( 'onsale', $product_statuses, true ) ? $this->get_onsale_status_counts( $block ) : array();
 		$status_data        = array_merge( $stock_status_data, $onsale_status_data );
 		$filter_params      = $block->context['filterParams'] ?? array();
@@ -224,7 +226,16 @@ final class ProductFilterStatus extends AbstractBlock {
 		$filters    = Package::container()->get( QueryFilters::class );
 		$query_vars = ProductCollectionUtils::get_query_vars( $block, 1 );
 
-		unset( $query_vars['filter_status'] );
+		unset(
+			$query_vars['filter_stock_status'],
+		);
+
+		if ( isset( $query_vars['taxonomy'] ) && false !== strpos( $query_vars['taxonomy'], 'pa_' ) ) {
+			unset(
+				$query_vars['taxonomy'],
+				$query_vars['term']
+			);
+		}
 
 		if ( ! empty( $query_vars['meta_query'] ) ) {
 			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
