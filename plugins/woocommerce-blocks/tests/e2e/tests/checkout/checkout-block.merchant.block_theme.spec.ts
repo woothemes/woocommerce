@@ -539,10 +539,6 @@ test.describe( 'Merchant → Checkout', () => {
 					}
 				);
 
-				const billingApartmentOptionalToggle = editor.page.locator(
-					'.wc-block-components-require-address_2-field >> text="Optional"'
-				);
-
 				const billingApartmentRequiredToggle = editor.page.locator(
 					'.wc-block-components-require-address_2-field >> text="Required"'
 				);
