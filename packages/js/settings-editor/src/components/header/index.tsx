@@ -6,8 +6,6 @@ import {
 	// @ts-expect-error missing types.
 	__experimentalHeading as Heading,
 	// @ts-expect-error missing types.
-	__experimentalText as Text,
-	// @ts-expect-error missing types.
 	__experimentalHStack as HStack,
 	// @ts-expect-error missing types.
 	__experimentalVStack as VStack,
@@ -16,7 +14,11 @@ import {
 
 export const Header = ( { pageTitle }: { pageTitle: string } ) => {
 	return (
-		<VStack className="edit-site-page-header" as="header" spacing={ 0 }>
+		<VStack
+			className="woocommerce-settings-header edit-site-page-header"
+			as="header"
+			spacing={ 0 }
+		>
 			<HStack className="edit-site-page-header__page-title">
 				<Heading
 					as="h2"
