@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
+import { parseAdminUrl } from '@woocommerce/navigation';
 import { captureException } from '@woocommerce/remote-logging';
-import { getAdminLink } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
@@ -42,14 +42,6 @@ export function onBackButtonClicked( callback ) {
 	} );
 }
 
-export function sanitizeUrl( url ) {
-	if ( url.startsWith( 'http' ) ) {
-		return new URL( url );
-	}
-
-	return new URL( getAdminLink( url ) );
-}
-
 /**
  * Attach a listener to the window object to listen for messages from the parent window.
  *
@@ -79,7 +71,7 @@ export function attachParentListeners() {
 		if ( event.data.type === 'navigate' ) {
 			// Validate the URL format.
 			try {
-				const url = sanitizeUrl( event.data.url );
+				const url = parseAdminUrl( event.data.url );
 				// Further restrict navigation to trusted domains.
 				if (
 					! allowedOrigins.some( ( origin ) => url.origin === origin )
@@ -111,14 +103,18 @@ export function attachParentListeners() {
  * @param {*} url
  */
 export function navigateOrParent( windowObject, url ) {
-	if ( isIframe( windowObject ) ) {
-		windowObject.parent.postMessage(
-			{ type: 'navigate', url },
-			getAdminSetting( 'homeUrl' )
-		);
-	} else {
-		const fullUrl = sanitizeUrl( url );
-		windowObject.location.href = fullUrl.href;
+	try {
+		if ( isIframe( windowObject ) ) {
+			windowObject.parent.postMessage(
+				{ type: 'navigate', url },
+				getAdminSetting( 'homeUrl' )
+			);
+		} else {
+			const fullUrl = parseAdminUrl( url );
+			windowObject.location.href = fullUrl.href;
+		}
+	} catch ( error ) {
+		captureException( error );
 	}
 }
 
