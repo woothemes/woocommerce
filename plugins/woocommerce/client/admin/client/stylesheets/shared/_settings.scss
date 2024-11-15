@@ -77,5 +77,57 @@ body.woocommerce_page_wc-settings {
 				}
 			}
 		}
+
+		.woocommerce-embedded-layout__primary {
+			padding: 0 $page-large;
+		}
+
+		// The admin sidebar is folded to the left.
+		@media screen and (max-width: $break-large) {
+			.woocommerce-layout__header-heading {
+				padding: $page-small $page-medium;
+			}
+
+			#wpbody-content {
+				.woocommerce {
+					#mainform {
+						margin: 0 $page-medium;
+
+						.woo-nav-tab-wrapper {
+							margin: $page-small (-$page-medium);
+							padding: 0 $page-medium;
+						}
+					}
+				}
+			}
+
+			.woocommerce-embedded-layout__primary {
+				padding: 0;
+			}
+		}
+
+		// The admin sidebar is hidden.
+		@media screen and (max-width: $break-medium) {
+			.woocommerce-layout__header-heading {
+				padding: $page-small $page-small;
+			}
+
+			#wpbody-content {
+				.woocommerce {
+					#mainform {
+						margin: 0 $page-small;
+
+						.woo-nav-tab-wrapper {
+							margin: $page-small (-$page-small);
+							padding: 0 $page-small;
+						}
+					}
+				}
+			}
+
+			.woocommerce-embedded-layout__primary {
+				padding: 0;
+			}
+		}
 	}
 }
