@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { captureException } from '@woocommerce/remote-logging';
 import { getAdminLink } from '@woocommerce/settings';
 
 /**
@@ -83,13 +84,15 @@ export function attachParentListeners() {
 				if (
 					! allowedOrigins.some( ( origin ) => url.origin === origin )
 				) {
-					// Blocked navigation to untrusted URL: url.href.
-					return;
+					throw new Error(
+						`Blocked navigation to untrusted URL: ${ url.href }`
+					);
 				}
 
 				window.location.href = url.href;
-			} catch {
+			} catch ( error ) {
 				// Invalid URL: event.data.url.
+				captureException( error );
 			}
 		}
 	}
