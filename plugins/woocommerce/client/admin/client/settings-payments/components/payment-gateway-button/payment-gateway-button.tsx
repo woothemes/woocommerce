@@ -17,7 +17,7 @@ export const PaymentGatewayButton = ( {
 	togglePlugin,
 	text_settings = __( 'Manage', 'woocommerce' ),
 	text_enable = __( 'Enable', 'woocommerce' ),
-	text_needs_setup = __( 'Continue setup', 'woocommerce' ),
+	text_needs_setup = __( 'Complete setup', 'woocommerce' ),
 }: {
 	id: string;
 	enabled: boolean;

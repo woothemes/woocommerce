@@ -18,6 +18,7 @@ import { useMemo } from '@wordpress/element';
 import { PaymentGatewayListItem } from '~/settings-payments/components/payment-gateway-list-item';
 import { PaymentExtensionSuggestionListItem } from '~/settings-payments/components/payment-extension-suggestion-list-item';
 import { WooPaymentsGatewayData } from '~/settings-payments/types';
+import { WC_ASSET_URL } from '~/utils/admin-settings';
 
 interface PaymentGatewaysProps {
 	registeredPaymentGateways: RegisteredPaymentGateway[];
@@ -84,11 +85,11 @@ export const PaymentGateways = ( {
 	paymentGatewaysList.push( {
 		key: 'offline',
 		className: 'woocommerce-item__payment-gateway transitions-disabled',
-		title: <>{ __( 'Offline payment methods', 'woocommerce' ) }</>,
+		title: <>{ __( 'Take offline payments', 'woocommerce' ) }</>,
 		content: (
 			<>
 				{ __(
-					'Take payments via multiple offline methods. These can also be useful to test purchases.',
+					'Accept payments offline using multiple different methods. These can also be used to test purchases.',
 					'woocommerce'
 				) }
 			</>
@@ -102,12 +103,9 @@ export const PaymentGateways = ( {
 				<Gridicon icon="chevron-right" />
 			</a>
 		),
-		// todo change logo to appropriate one.
 		before: (
 			<img
-				src={
-					'https://woocommerce.com/wp-content/plugins/wccom-plugins/payment-gateway-suggestions/images/paypal.svg'
-				}
+				src={ WC_ASSET_URL + 'images/payment_methods/cod.svg' }
 				alt="offline payment methods"
 			/>
 		),
