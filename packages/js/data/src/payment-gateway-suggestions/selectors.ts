@@ -33,9 +33,7 @@ export function getOtherPluginSuggestions(
 	return state.other_suggestions;
 }
 
-export function isFetchingPaymentGatewaySuggestions(
-	state: PaymentGatewaySuggestionsState
-): boolean {
+export function isFetching( state: PaymentGatewaySuggestionsState ): boolean {
 	return state.isFetching || false;
 }
 
@@ -50,7 +48,5 @@ export type PaymentGatewaySuggestionsSelectors = {
 	getOtherPluginSuggestions: WPDataSelector<
 		typeof getOtherPluginSuggestions
 	>;
-	isFetchingPaymentGatewaySuggestions: WPDataSelector<
-		typeof isFetchingPaymentGatewaySuggestions
-	>;
+	isFetching: WPDataSelector< typeof isFetching >;
 } & WPDataSelectors;

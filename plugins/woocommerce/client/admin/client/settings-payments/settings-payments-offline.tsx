@@ -22,16 +22,14 @@ export const SettingsPaymentsOffline = () => {
 		if ( isEnabled ) {
 			invalidateResolution(
 				PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME,
-				'getPaymentGateways'
+				'getOfflinePaymentGateways'
 			);
+			setIsEnabled( false );
 		}
 	}, [ isEnabled, invalidateResolution ] );
 
 	const { offlinePaymentGateways } = useSelect( ( select ) => {
 		return {
-			registeredPaymentGateways: select(
-				PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME
-			).getPaymentGateways(),
 			offlinePaymentGateways: select(
 				PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME
 			).getOfflinePaymentGateways(),

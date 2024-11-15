@@ -20,18 +20,22 @@ const reducer = (
 	if ( payload && 'type' in payload ) {
 		switch ( payload.type ) {
 			case ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_REQUEST:
+			case ACTION_TYPES.GET_OFFLINE_PAYMENT_GATEWAYS_REQUEST:
 				return {
 					...state,
 					isFetching: true,
+				};
+			case ACTION_TYPES.GET_OFFLINE_PAYMENT_GATEWAYS_SUCCESS:
+				return {
+					...state,
+					isFetching: false,
+					offline_payment_methods: payload.offlineGateways,
 				};
 			case ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_SUCCESS:
 				return {
 					...state,
 					isFetching: false,
 					gateways: payload.paymentGatewaySuggestions.gateways,
-					offline_payment_methods:
-						payload.paymentGatewaySuggestions
-							.offline_payment_methods,
 					preferred_suggestions:
 						payload.paymentGatewaySuggestions.preferred_suggestions,
 					other_suggestions:
@@ -46,6 +50,15 @@ const reducer = (
 					errors: {
 						...state.errors,
 						getPaymentGatewaySuggestions: payload.error,
+					},
+				};
+			case ACTION_TYPES.GET_OFFLINE_PAYMENT_GATEWAYS_ERROR:
+				return {
+					...state,
+					isFetching: false,
+					errors: {
+						...state.errors,
+						offlineGateways: payload.error,
 					},
 				};
 		}

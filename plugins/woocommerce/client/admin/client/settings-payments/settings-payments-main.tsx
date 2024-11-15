@@ -44,6 +44,7 @@ export const SettingsPaymentsMain = () => {
 				PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME,
 				'getPaymentGateways'
 			);
+			setIsInstalled( false );
 		}
 	}, [ isInstalled, invalidateResolution ] );
 
