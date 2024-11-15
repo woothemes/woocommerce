@@ -16,6 +16,13 @@ class ProductSKU extends AbstractBlock {
 	protected $block_name = 'product-sku';
 
 	/**
+	 * API version name.
+	 *
+	 * @var string
+	 */
+	protected $api_version = '3';
+
+	/**
 	 * Overwrite parent method to prevent script registration.
 	 *
 	 * It is necessary to register and enqueues assets during the render

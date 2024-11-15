@@ -14,7 +14,15 @@ class ProductSummary extends AbstractBlock {
 	protected $block_name = 'product-summary';
 
 	/**
-	 * Get block supports. Shared with the frontend.
+	 * API version name.
+	 *
+	 * @var string
+	 */
+	protected $api_version = '2';
+
+
+	/**
+	 * Get blo$api_version = '3'd with the frontend.
 	 * IMPORTANT: If you change anything here, make sure to update the JS file too.
 	 *
 	 * @return array
