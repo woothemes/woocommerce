@@ -89,18 +89,17 @@ export const OfflinePaymentGatewayList = ( {
 	setGateways: ( gateways: OfflinePaymentGateway[] ) => void;
 } ) => {
 	return (
-		<div className="woocommerce-list">
-			<SortableContainer< OfflinePaymentGateway >
-				items={ gateways }
-				setItems={ setGateways }
-			>
-				{ gateways.map( ( method ) => (
-					<OfflinePaymentGatewayListItem
-						gateway={ method }
-						key={ method.id }
-					/>
-				) ) }
-			</SortableContainer>
-		</div>
+		<SortableContainer< OfflinePaymentGateway >
+			className="woocommerce-list"
+			items={ gateways }
+			setItems={ setGateways }
+		>
+			{ gateways.map( ( method ) => (
+				<OfflinePaymentGatewayListItem
+					gateway={ method }
+					key={ method.id }
+				/>
+			) ) }
+		</SortableContainer>
 	);
 };

@@ -1,9 +1,17 @@
 /**
  * External dependencies
  */
-import { DraggableSyntheticListeners, DraggableAttributes } from '@dnd-kit/core';
+import {
+	DraggableSyntheticListeners,
+	DraggableAttributes,
+} from '@dnd-kit/core';
 import { createContext, useContext } from '@wordpress/element';
 import { dragHandle, Icon } from '@wordpress/icons';
+
+/**
+ * Internal dependencies
+ */
+import './sortable.scss';
 
 type DragHandleContextType = {
 	attributes: DraggableAttributes | null;
@@ -19,10 +27,11 @@ export const useDragHandle = () => useContext( DragHandleContext );
 
 export const DefaultDragHandle = () => {
 	const { attributes, listeners } = useDragHandle();
+
 	return (
 		<div className="drag-handle-wrapper" { ...attributes } { ...listeners }>
 			<div className="drag-handle">
-				<Icon icon={ dragHandle } size={ 24 } />
+				<Icon icon={ dragHandle } size={ 20 } />
 			</div>
 		</div>
 	);

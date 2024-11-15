@@ -22,6 +22,13 @@ import {
 	restrictToHorizontalAxis,
 	restrictToVerticalAxis,
 } from '@dnd-kit/modifiers';
+import clsx from 'clsx';
+import { useState } from '@wordpress/element';
+
+/**
+ * Internal dependencies
+ */
+import './sortable.scss';
 
 export const SortableContainer = < T extends { id: string } >( {
 	items,
@@ -30,6 +37,7 @@ export const SortableContainer = < T extends { id: string } >( {
 	sorting = 'vertical',
 	onDragStart = () => {},
 	onDragEnd = () => {},
+	className = '',
 }: {
 	items: T[];
 	setItems: ( items: T[] ) => void;
@@ -37,6 +45,7 @@ export const SortableContainer = < T extends { id: string } >( {
 	sorting?: 'vertical' | 'horizontal';
 	onDragStart?: ( event: DragStartEvent ) => void;
 	onDragEnd?: ( event: DragEndEvent ) => void;
+	className?: string;
 } ) => {
 	const sensors = useSensors(
 		useSensor( MouseSensor, {} ),
@@ -44,11 +53,15 @@ export const SortableContainer = < T extends { id: string } >( {
 		useSensor( KeyboardSensor, {} )
 	);
 
+	const [ isDragging, setIsDragging ] = useState( false );
+
 	const handleDragStart = ( event: DragStartEvent ) => {
+		setIsDragging( true );
 		onDragStart( event );
 	};
 
 	const handleDragEnd = ( event: DragEndEvent ) => {
+		setIsDragging( false );
 		onDragEnd( event );
 		const { active, over } = event;
 
@@ -73,20 +86,26 @@ export const SortableContainer = < T extends { id: string } >( {
 			? [ restrictToVerticalAxis ]
 			: [ restrictToHorizontalAxis ];
 
+	const containerClassName = clsx( 'sortable-container', className, {
+		'has-dragging-item': isDragging,
+	} );
+
 	return (
-		<DndContext
-			sensors={ sensors }
-			onDragStart={ handleDragStart }
-			onDragEnd={ handleDragEnd }
-			collisionDetection={ closestCenter }
-			modifiers={ modifiers }
-		>
-			<SortableContext
-				items={ items.map( ( item ) => item.id ) }
-				strategy={ strategy }
+		<div className={ containerClassName }>
+			<DndContext
+				sensors={ sensors }
+				onDragStart={ handleDragStart }
+				onDragEnd={ handleDragEnd }
+				collisionDetection={ closestCenter }
+				modifiers={ modifiers }
 			>
-				{ children }
-			</SortableContext>
-		</DndContext>
+				<SortableContext
+					items={ items.map( ( item ) => item.id ) }
+					strategy={ strategy }
+				>
+					{ children }
+				</SortableContext>
+			</DndContext>
+		</div>
 	);
 };
