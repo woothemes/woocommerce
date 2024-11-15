@@ -6,6 +6,11 @@ import { List } from '@woocommerce/components';
 import { getAdminLink } from '@woocommerce/settings';
 import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import {
+	RegisteredPaymentGateway,
+	SuggestedPaymentExtension,
+} from '@woocommerce/data';
+import { useMemo } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -13,12 +18,6 @@ import { __ } from '@wordpress/i18n';
 import { PaymentGatewayListItem } from '~/settings-payments/components/payment-gateway-list-item';
 import { PaymentExtensionSuggestionListItem } from '~/settings-payments/components/payment-extension-suggestion-list-item';
 import { WooPaymentsGatewayData } from '~/settings-payments/types';
-
-import {
-	RegisteredPaymentGateway,
-	SuggestedPaymentExtension,
-} from '@woocommerce/data';
-import { useMemo } from '@wordpress/element';
 
 interface PaymentGatewaysProps {
 	registeredPaymentGateways: RegisteredPaymentGateway[];

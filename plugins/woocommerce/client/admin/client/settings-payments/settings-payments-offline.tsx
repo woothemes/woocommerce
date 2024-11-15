@@ -3,9 +3,8 @@
  */
 import { useSelect, useDispatch } from '@wordpress/data';
 import { PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME } from '@woocommerce/data';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useState } from '@wordpress/element';
-import { useEffect } from 'react';
 
 /**
  * Internal dependencies
@@ -28,7 +27,7 @@ export const SettingsPaymentsOffline = () => {
 		}
 	}, [ isEnabled, invalidateResolution ] );
 
-	const { offlinePaymentGateways, isFetching } = useSelect( ( select ) => {
+	const { offlinePaymentGateways } = useSelect( ( select ) => {
 		return {
 			registeredPaymentGateways: select(
 				PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME
@@ -36,9 +35,6 @@ export const SettingsPaymentsOffline = () => {
 			offlinePaymentGateways: select(
 				PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME
 			).getOfflinePaymentGateways(),
-			isFetching: select(
-				PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME
-			).isFetchingPaymentGatewaySuggestions(),
 		};
 	} );
 

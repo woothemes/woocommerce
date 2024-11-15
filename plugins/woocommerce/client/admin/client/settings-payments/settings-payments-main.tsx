@@ -83,7 +83,7 @@ export const SettingsPaymentsMain = () => {
 					setInstallingPlugin( null );
 				} );
 		},
-		[ installingPlugin, isInstalled ]
+		[ installingPlugin, isInstalled, installAndActivatePlugins ]
 	);
 
 	const togglePlugin = useCallback(
@@ -131,7 +131,7 @@ export const SettingsPaymentsMain = () => {
 				console.error( 'Error toggling gateway:', error );
 			}
 		},
-		[ isEnabled ]
+		[]
 	);
 
 	useEffect( () => {
