@@ -28,7 +28,7 @@ export const OfflinePaymentGateways = ( {
 			id: 'bacs',
 			title: __( 'Direct bank transfer', 'woocommerce' ),
 			content: __(
-				'Take payments in person via BACS. More commonly known as direct bank/wire transfer.',
+				'Accept payments via Bacs — more commonly known as direct/wire transfer.',
 				'woocommerce'
 			),
 			image: assetUrl + '/payment_methods/bacs.svg',
@@ -40,7 +40,7 @@ export const OfflinePaymentGateways = ( {
 			id: 'cheque',
 			title: __( 'Check payments', 'woocommerce' ),
 			content: __(
-				'Take payments in person via checks. This offline gateway can also be useful to test purchases.',
+				'Take payments in person via checks. This payment method can also be used for testing purposes.',
 				'woocommerce'
 			),
 			image: assetUrl + '/payment_methods/cheque.svg',
