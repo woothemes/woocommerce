@@ -27,7 +27,6 @@ interface PaymentGatewaysProps {
 	wooPaymentsGatewayData?: WooPaymentsGatewayData;
 	installingPlugin: string | null;
 	setupPlugin: ( extension: SuggestedPaymentExtension ) => void;
-	togglePlugin: ( id: string, settings_url: string ) => void;
 }
 
 export const PaymentGateways = ( {
@@ -37,7 +36,6 @@ export const PaymentGateways = ( {
 	wooPaymentsGatewayData,
 	installingPlugin,
 	setupPlugin,
-	togglePlugin,
 }: PaymentGatewaysProps ) => {
 	const setupLivePayments = () => {};
 
@@ -74,7 +72,6 @@ export const PaymentGateways = ( {
 						gateway,
 						wooPaymentsGatewayData,
 						setupLivePayments,
-						togglePlugin,
 					} );
 				}
 			),

@@ -73,5 +73,11 @@ export type PaymentGatewaySuggestionsState = {
 	other_suggestions: SuggestedPaymentExtension[];
 	suggestion_categories: SuggestedPaymentExtensionCategory[];
 	isFetching: boolean;
+	isUpdating: Record< string, boolean >;
 	errors: Record< string, unknown >;
+};
+
+export type EnablePaymentGatewayResponse = {
+	success: boolean;
+	data: unknown;
 };

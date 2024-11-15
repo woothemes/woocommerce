@@ -12,12 +12,10 @@ import { PaymentGatewayButton } from '~/settings-payments/components/payment-gat
 
 type OfflinePaymentGatewayListItemProps = {
 	gateway: OfflinePaymentGateway;
-	togglePlugin: ( id: string, settings_url: string ) => void;
 };
 
 export const OfflinePaymentGatewayListItem = ( {
 	gateway,
-	togglePlugin,
 }: OfflinePaymentGatewayListItemProps ) => {
 	return {
 		key: gateway.id,
@@ -33,9 +31,9 @@ export const OfflinePaymentGatewayListItem = ( {
 		after: (
 			<PaymentGatewayButton
 				id={ gateway.id }
+				is_offline={ true }
 				enabled={ gateway.state.enabled }
 				settings_url={ gateway.management.settings_url }
-				togglePlugin={ togglePlugin }
 			/>
 		),
 		before: <img src={ gateway.icon } alt={ gateway.title + ' logo' } />,

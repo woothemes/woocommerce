@@ -14,19 +14,16 @@ import { OfflinePaymentGatewayListItem } from '../offline-gateway-list-item';
 
 interface OfflinePaymentGatewaysProps {
 	offlinePaymentGateways: OfflinePaymentGateway[];
-	togglePlugin: ( id: string, settings_url: string ) => void;
 }
 
 export const OfflinePaymentGateways = ( {
 	offlinePaymentGateways,
-	togglePlugin,
 }: OfflinePaymentGatewaysProps ) => {
 	// Transform plugins comply with List component format.
 	const paymentGatewaysList = offlinePaymentGateways.map(
 		( gateway: OfflinePaymentGateway ) => {
 			return OfflinePaymentGatewayListItem( {
 				gateway,
-				togglePlugin,
 			} );
 		}
 	);

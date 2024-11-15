@@ -1,12 +1,18 @@
 /**
  * External dependencies
  */
+import { DispatchFromMap } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
  */
 import { ACTION_TYPES } from './action-types';
-import { PaymentGatewaySuggestionsState, OfflinePaymentGateway } from './types';
+import {
+	PaymentGatewaySuggestionsState,
+	OfflinePaymentGateway,
+	EnablePaymentGatewayResponse,
+} from './types';
+import * as actions from './actions';
 
 export function getPaymentGatewaySuggestionsRequest(): {
 	type: ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_REQUEST;
@@ -68,10 +74,105 @@ export function getOfflinePaymentGatewaysError( error: unknown ): {
 	};
 }
 
+export function enablePaymentGatewayRequest( gatewayId: string ): {
+	type: ACTION_TYPES.ENABLE_PAYMENT_GATEWAY_REQUEST;
+	gatewayId: string;
+} {
+	return {
+		type: ACTION_TYPES.ENABLE_PAYMENT_GATEWAY_REQUEST,
+		gatewayId,
+	};
+}
+
+export function enablePaymentGatewaySuccess(
+	gatewayId: string,
+	isOffline: boolean,
+	success: boolean,
+	data: unknown
+): {
+	type: ACTION_TYPES.ENABLE_PAYMENT_GATEWAY_SUCCESS;
+	gatewayId: string;
+	isOffline: boolean;
+	success: boolean;
+	data: unknown;
+} {
+	return {
+		type: ACTION_TYPES.ENABLE_PAYMENT_GATEWAY_SUCCESS,
+		gatewayId,
+		isOffline,
+		success,
+		data,
+	};
+}
+
+export function enablePaymentGatewayError(
+	gatewayId: string,
+	error: unknown
+): {
+	type: ACTION_TYPES.ENABLE_PAYMENT_GATEWAY_ERROR;
+	gatewayId: string;
+	error: unknown;
+} {
+	return {
+		type: ACTION_TYPES.ENABLE_PAYMENT_GATEWAY_ERROR,
+		gatewayId,
+		error,
+	};
+}
+
+export const enablePaymentGateway =
+	(
+		gatewayId: string,
+		isOffline: boolean,
+		ajaxUrl: string,
+		settings_url: string,
+		gatewayToggleNonce?: string
+	) =>
+	async ( { dispatch }: { dispatch: DispatchFromMap< typeof actions > } ) => {
+		if ( gatewayToggleNonce === undefined ) {
+			window.location.href = settings_url;
+			return;
+		}
+
+		dispatch.enablePaymentGatewayRequest( gatewayId );
+
+		try {
+			const response: Response = await fetch( ajaxUrl, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
+				body: new URLSearchParams( {
+					action: 'woocommerce_toggle_gateway_enabled',
+					security: gatewayToggleNonce,
+					gateway_id: gatewayId,
+				} ),
+			} );
+
+			const result: EnablePaymentGatewayResponse = await response.json();
+
+			if ( result.success && result.data === 'needs_setup' ) {
+				window.location.href = settings_url;
+			}
+			dispatch.enablePaymentGatewaySuccess(
+				gatewayId,
+				isOffline,
+				result.success,
+				result.data
+			);
+		} catch ( e ) {
+			window.location.href = settings_url;
+		}
+	};
+
 export type Actions =
 	| ReturnType< typeof getPaymentGatewaySuggestionsRequest >
 	| ReturnType< typeof getPaymentGatewaySuggestionsSuccess >
 	| ReturnType< typeof getPaymentGatewaySuggestionsError >
 	| ReturnType< typeof getOfflinePaymentGatewaysRequest >
 	| ReturnType< typeof getOfflinePaymentGatewaysSuccess >
-	| ReturnType< typeof getOfflinePaymentGatewaysError >;
+	| ReturnType< typeof getOfflinePaymentGatewaysError >
+	| ReturnType< typeof enablePaymentGatewayRequest >
+	| ReturnType< typeof enablePaymentGatewaySuccess >
+	| ReturnType< typeof enablePaymentGatewayError >
+	| ReturnType< typeof enablePaymentGateway >;

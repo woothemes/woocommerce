@@ -37,6 +37,13 @@ export function isFetching( state: PaymentGatewaySuggestionsState ): boolean {
 	return state.isFetching || false;
 }
 
+export function isUpdating(
+	state: PaymentGatewaySuggestionsState,
+	gatewayId: string
+): boolean {
+	return state.isUpdating[ gatewayId ] || false;
+}
+
 export type PaymentGatewaySuggestionsSelectors = {
 	getPaymentGateways: WPDataSelector< typeof getPaymentGateways >;
 	getOfflinePaymentGateways: WPDataSelector<

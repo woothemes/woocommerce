@@ -28,7 +28,6 @@ export const SettingsPaymentsMain = () => {
 		null
 	);
 	const [ isInstalled, setIsInstalled ] = useState< boolean >( false );
-	const [ isEnabled, setIsEnabled ] = useState< boolean >( false );
 	const { installAndActivatePlugins } = useDispatch( PLUGINS_STORE_NAME );
 
 	const installedPluginSlugs = useSelect( ( select ) => {
@@ -87,59 +86,11 @@ export const SettingsPaymentsMain = () => {
 		[ installingPlugin, isInstalled, installAndActivatePlugins ]
 	);
 
-	const togglePlugin = useCallback(
-		async ( id: string, settings_url: string ) => {
-			if ( ! window.woocommerce_admin.nonces?.gateway_toggle ) {
-				// eslint-disable-next-line no-console
-				console.warn( 'Unexpected error: Nonce not found' );
-				// Redirect to payment setting page if nonce is not found. Users should still be able to toggle the payment method from that page.
-				window.location.href = settings_url;
-				return;
-			}
-
-			try {
-				const response = await fetch(
-					window.woocommerce_admin.ajax_url,
-					{
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/x-www-form-urlencoded',
-						},
-						body: new URLSearchParams( {
-							action: 'woocommerce_toggle_gateway_enabled',
-							security:
-								window.woocommerce_admin.nonces?.gateway_toggle,
-							gateway_id: id,
-						} ),
-					}
-				);
-
-				const result = await response.json();
-
-				if ( result.success ) {
-					if ( result.data === true ) {
-						setIsEnabled( true );
-					} else if ( result.data === false ) {
-						setIsEnabled( false );
-					} else if ( result.data === 'needs_setup' ) {
-						window.location.href = settings_url;
-					}
-				} else {
-					window.location.href = settings_url;
-				}
-			} catch ( error ) {
-				// eslint-disable-next-line no-console
-				console.error( 'Error toggling gateway:', error );
-			}
-		},
-		[]
-	);
-
 	useEffect( () => {
 		setWooPaymentsGatewayData(
 			parseScriptTag( 'experimental_wc_settings_payments_woopayments' )
 		);
-	}, [ isInstalled, isEnabled ] );
+	}, [ isInstalled ] );
 
 	return (
 		<>
@@ -151,7 +102,6 @@ export const SettingsPaymentsMain = () => {
 					wooPaymentsGatewayData={ wooPaymentsGatewayData }
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
-					togglePlugin={ togglePlugin }
 				/>
 				<OtherPaymentGateways
 					otherPluginSuggestions={ otherPluginSuggestions }

@@ -20,14 +20,12 @@ type PaymentGatewayItemProps = {
 	gateway: RegisteredPaymentGateway;
 	wooPaymentsGatewayData?: WooPaymentsGatewayData;
 	setupLivePayments: () => void;
-	togglePlugin: ( id: string, settings_url: string ) => void;
 };
 
 export const PaymentGatewayListItem = ( {
 	gateway,
 	wooPaymentsGatewayData,
 	setupLivePayments,
-	togglePlugin,
 }: PaymentGatewayItemProps ) => {
 	const isWCPay = [
 		'pre_install_woocommerce_payments_promotion',
@@ -97,10 +95,10 @@ export const PaymentGatewayListItem = ( {
 				<>
 					<PaymentGatewayButton
 						id={ gateway.id }
+						is_offline={ false }
 						enabled={ gateway.state.enabled }
 						needs_setup={ gateway.state.needs_setup }
 						settings_url={ gateway.management.settings_url }
-						togglePlugin={ togglePlugin }
 					/>
 					{ isWCPay && wooPaymentsGatewayData?.isInTestMode && (
 						<Button
