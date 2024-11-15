@@ -13,10 +13,13 @@ import { __ } from '@wordpress/i18n';
 import { PaymentGatewayListItem } from '~/settings-payments/components/payment-gateway-list-item';
 import { PaymentExtensionSuggestionListItem } from '~/settings-payments/components/payment-extension-suggestion-list-item';
 import {
-	RegisteredPaymentGateway,
-	SuggestedPaymentExtension,
 	WooPaymentsGatewayData,
 } from '~/settings-payments/types';
+
+import {
+	RegisteredPaymentGateway,
+	SuggestedPaymentExtension
+} from '@woocommerce/data';
 import { useMemo } from '@wordpress/element';
 
 interface PaymentGatewaysProps {

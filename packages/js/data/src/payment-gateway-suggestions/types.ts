@@ -68,10 +68,10 @@ export type SuggestedPaymentExtensionCategory = {
 
 export type PaymentGatewaySuggestionsState = {
 	gateways: RegisteredPaymentGateway[];
-	offline_gateways: OfflinePaymentGateway[];
+	offline_payment_methods: OfflinePaymentGateway[];
 	preferred_suggestions: SuggestedPaymentExtension[];
 	other_suggestions: SuggestedPaymentExtension[];
-	suggested_categories: SuggestedPaymentExtensionCategory[];
+	suggestion_categories: SuggestedPaymentExtensionCategory[];
 	isFetching: boolean;
 	errors: Record< string, unknown >;
 };

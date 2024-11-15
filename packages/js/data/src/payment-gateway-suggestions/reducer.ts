@@ -8,10 +8,10 @@ import { Actions } from './actions';
 const reducer = (
 	state: PaymentGatewaySuggestionsState = {
 		gateways: [],
-		offline_gateways: [],
+		offline_payment_methods: [],
 		preferred_suggestions: [],
 		other_suggestions: [],
-		suggested_categories: [],
+		suggestion_categories: [],
 		isFetching: false,
 		errors: {},
 	},
@@ -29,14 +29,15 @@ const reducer = (
 					...state,
 					isFetching: false,
 					gateways: payload.paymentGatewaySuggestions.gateways,
-					offline_gateways:
-						payload.paymentGatewaySuggestions.offline_gateways,
+					offline_payment_methods:
+						payload.paymentGatewaySuggestions
+							.offline_payment_methods,
 					preferred_suggestions:
 						payload.paymentGatewaySuggestions.preferred_suggestions,
 					other_suggestions:
 						payload.paymentGatewaySuggestions.other_suggestions,
-					suggested_categories:
-						payload.paymentGatewaySuggestions.suggested_categories,
+					suggestion_categories:
+						payload.paymentGatewaySuggestions.suggestion_categories,
 				};
 			case ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_ERROR:
 				return {

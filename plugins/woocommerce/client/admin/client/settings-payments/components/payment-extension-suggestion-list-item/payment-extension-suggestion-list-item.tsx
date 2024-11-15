@@ -7,12 +7,12 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
 import { EllipsisMenu } from '@woocommerce/components';
+import { SuggestedPaymentExtension } from '@woocommerce/data';
 
 /**
  * Internal dependencies
  */
 import sanitizeHTML from '~/lib/sanitize-html';
-import { SuggestedPaymentExtension } from '~/settings-payments/types';
 
 type PaymentExtensionSuggestionListItemProps = {
 	extension: SuggestedPaymentExtension;

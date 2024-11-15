@@ -18,7 +18,7 @@ export function getPaymentGateways(
 export function getOfflinePaymentGateways(
 	state: PaymentGatewaySuggestionsState
 ): Array< OfflinePaymentGateway > {
-	return state.offline_gateways;
+	return state.offline_payment_methods;
 }
 
 export function getPreferredPluginSuggestions(

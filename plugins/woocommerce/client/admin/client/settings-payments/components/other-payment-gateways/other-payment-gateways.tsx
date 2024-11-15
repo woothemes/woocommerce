@@ -10,7 +10,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { getAdminSetting } from '~/utils/admin-settings';
-import { SuggestedPaymentExtension } from '~/settings-payments/types';
+import { SuggestedPaymentExtension } from '@woocommerce/data';
 
 const assetUrl = getAdminSetting( 'wcAdminAssetUrl' );
 

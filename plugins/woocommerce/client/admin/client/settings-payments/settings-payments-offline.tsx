@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-import '@wordpress/element';
-import { select } from '@wordpress/data';
-import { PAYMENT_GATEWAYS_STORE_NAME, PaymentGateway } from '@woocommerce/data';
-import { useCallback, useEffect } from 'react';
+import { useSelect, useDispatch } from '@wordpress/data';
+import { PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME } from '@woocommerce/data';
+import { useCallback } from 'react';
 import { useState } from '@wordpress/element';
+import { useEffect } from 'react';
 
 /**
  * Internal dependencies
@@ -15,14 +15,32 @@ import { OfflinePaymentGateways } from './components/offline-payment-gateways';
 
 export const SettingsPaymentsOffline = () => {
 	const [ isEnabled, setIsEnabled ] = useState< boolean >( false );
-	const [ registeredPaymentGateways, setRegisteredPaymentGateways ] =
-		useState< PaymentGateway[] >( [] );
+
+	// Make UI to refresh when plugin is installed.
+	const { invalidateResolution } = useDispatch( 'core/data' );
 
 	useEffect( () => {
-		setRegisteredPaymentGateways(
-			select( PAYMENT_GATEWAYS_STORE_NAME ).getPaymentGateways()
-		);
-	}, [ isEnabled ] );
+		if ( isEnabled ) {
+			invalidateResolution(
+				PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME,
+				'getPaymentGateways'
+			);
+		}
+	}, [ isEnabled, invalidateResolution ] );
+
+	const { offlinePaymentGateways, isFetching } = useSelect( ( select ) => {
+		return {
+			registeredPaymentGateways: select(
+				PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME
+			).getPaymentGateways(),
+			offlinePaymentGateways: select(
+				PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME
+			).getOfflinePaymentGateways(),
+			isFetching: select(
+				PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME
+			).isFetchingPaymentGatewaySuggestions(),
+		};
+	} );
 
 	// TODO remove duplication alongside with settings-payments-main.
 	const togglePlugin = useCallback(
@@ -76,7 +94,7 @@ export const SettingsPaymentsOffline = () => {
 	return (
 		<div className="settings-payments-offline__container">
 			<OfflinePaymentGateways
-				registeredPaymentGateways={ registeredPaymentGateways }
+				offlinePaymentGateways={ offlinePaymentGateways }
 				togglePlugin={ togglePlugin }
 			/>
 		</div>
