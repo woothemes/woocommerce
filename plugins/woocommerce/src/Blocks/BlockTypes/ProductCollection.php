@@ -133,6 +133,8 @@ class ProductCollection extends AbstractBlock {
 		// Disable client-side-navigation if incompatible blocks are detected.
 		add_filter( 'render_block_data', array( $this, 'disable_enhanced_pagination' ), 10, 1 );
 
+		add_filter( 'query_vars', array( $this, 'set_query_vars' ) );
+
 		$this->register_core_collections();
 	}
 
@@ -799,6 +801,25 @@ class ProductCollection extends AbstractBlock {
 		);
 	}
 
+	/**
+	 * Set the query vars that are used by filter blocks.
+	 *
+	 * @param array $public_query_vars Public query vars.
+	 * @return array
+	 */
+	public function set_query_vars( $public_query_vars ) {
+		$query_vars = array(
+			'status_filter_query_args' => array( ProductFilterStatus::FILTER_STATUS_QUERY_VAR ),
+		);
+
+		return array_reduce(
+			array_values( $query_vars ),
+			function( $acc, $query_vars_filter_block ) {
+				return array_merge( $query_vars_filter_block, $acc );
+			},
+			$public_query_vars
+		);
+	}
 
 	/**
 	 * Get the final query arguments for the frontend.
