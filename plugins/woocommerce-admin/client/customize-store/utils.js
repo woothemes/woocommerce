@@ -10,7 +10,7 @@ import { getAdminSetting } from '~/utils/admin-settings';
 import { DEFAULT_LOGO_WIDTH } from './assembler-hub/sidebar/constants';
 
 export function sendMessageToParent( message ) {
-	window.parent.postMessage( message, '*' );
+	window.parent.postMessage( message, getAdminSetting( 'homeUrl' ) );
 }
 
 export function isIframe( windowObject ) {
@@ -23,7 +23,10 @@ export function isIframe( windowObject ) {
 }
 
 export function editorIsLoaded() {
-	window.parent.postMessage( { type: 'iframe-loaded' }, '*' );
+	window.parent.postMessage(
+		{ type: 'iframe-loaded' },
+		getAdminSetting( 'homeUrl' )
+	);
 }
 
 export function onIframeLoad( callback ) {
@@ -110,7 +113,10 @@ export function attachParentListeners() {
  */
 export function navigateOrParent( windowObject, url ) {
 	if ( isIframe( windowObject ) ) {
-		windowObject.parent.postMessage( { type: 'navigate', url }, '*' );
+		windowObject.parent.postMessage(
+			{ type: 'navigate', url },
+			getAdminSetting( 'homeUrl' )
+		);
 	} else {
 		const fullUrl = sanitizeUrl( url );
 		windowObject.location.href = fullUrl.href;
