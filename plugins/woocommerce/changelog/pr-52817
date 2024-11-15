@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Fix the registration of routes in controllers inheriting from RestApiControllerBase
