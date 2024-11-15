@@ -28,8 +28,11 @@ import { sortOrderOptions } from './constants';
 import { BlockAttributes, EditProps } from './types';
 import { getAttributeFromId } from './utils';
 import { getInnerBlockByName } from '../../utils';
+import { toggleProductFilterClearButtonVisibilityFactory } from '../../utils/toggle-product-filter-clear-button-visibility';
 
 const ATTRIBUTES = getSetting< AttributeSetting[] >( 'attributes', [] );
+const toggleProductFilterClearButtonVisibility =
+	toggleProductFilterClearButtonVisibilityFactory();
 
 let displayStyleOptions: Block[] = [];
 
@@ -226,9 +229,13 @@ export const Inspector = ( {
 					<ToggleControl
 						label={ __( 'Clear button', 'woocommerce' ) }
 						checked={ clearButton }
-						onChange={ ( value ) =>
-							setAttributes( { clearButton: value } )
-						}
+						onChange={ ( value ) => {
+							setAttributes( { clearButton: value } );
+							toggleProductFilterClearButtonVisibility( {
+								clientId,
+								showClearButton: value,
+							} );
+						} }
 					/>
 				</PanelBody>
 			</InspectorControls>

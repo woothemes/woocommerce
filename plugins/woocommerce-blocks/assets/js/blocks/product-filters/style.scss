@@ -35,8 +35,8 @@
 		inset: 0;
 		pointer-events: none;
 		top: var(--top-padding);
-		transition: all 500ms;
 		background-color: transparent;
+		transition: background-color 500ms;
 		z-index: 9999;
 	}
 
@@ -118,6 +118,7 @@
 				inset: 0;
 				background: inherit;
 				color: inherit;
+				transition: none;
 			}
 			.wc-block-product-filters__overlay-wrapper {
 				width: auto;
