@@ -13,7 +13,7 @@ import {
 } from '@woocommerce/base-components/cart-checkout';
 import { useSelect } from '@wordpress/data';
 import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
-import { useContext } from '@wordpress/element';
+import { createInterpolateElement, useContext } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -35,20 +35,26 @@ export const ShippingAddress = (): JSX.Element => {
 		: formatShippingAddress( shippingAddress );
 
 	const deliversToLabel = hasRates
-		? __( 'Delivers to ', 'woocommerce' )
-		: __( 'No delivery options available for ', 'woocommerce' );
+		? // Translators: <address/> is the formatted shipping address.
+		  __( 'Delivers to <strong><address/></strong>', 'woocommerce' )
+		: // Translators: <address/> is the formatted shipping address.
+		  __(
+				'No delivery options available for <strong><address/></strong>',
+				'woocommerce'
+		  );
 
 	const addressLabel = prefersCollection
-		? __( 'Collection from ', 'woocommerce' )
+		? // Translators: <address/> is the pickup location.
+		  __( 'Collection from <strong><address/></strong>', 'woocommerce' )
 		: deliversToLabel;
 
 	const title = (
 		<p className="wc-block-components-totals-shipping-address-summary">
 			{ !! formattedAddress ? (
-				<>
-					{ addressLabel }
-					<strong>{ formattedAddress }</strong>
-				</>
+				createInterpolateElement( addressLabel, {
+					strong: <strong />,
+					address: <>{ formattedAddress }</>,
+				} )
 			) : (
 				<>
 					{ __(
