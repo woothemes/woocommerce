@@ -154,6 +154,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            const event = context.payload;
             const issueTitle = event.issue.title;
             const issueUrl = event.issue.html_url;
             const message = `:white_check_mark: Request approved: ${issueTitle} ${issueUrl}`;
@@ -189,6 +190,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            const event = context.payload;
             const issueTitle = event.issue.title;
             const issueUrl = event.issue.html_url;
 
