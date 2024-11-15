@@ -55,3 +55,5 @@ export const SettingsEditor = () => {
 		</GlobalStylesProvider>
 	);
 };
+
+export * from './components';
