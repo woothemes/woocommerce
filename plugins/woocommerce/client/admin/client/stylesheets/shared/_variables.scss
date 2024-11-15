@@ -1,5 +1,5 @@
 @import "@wordpress/base-styles/_colors.native.scss";
-@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/_breakpoints.scss";
 
 // Spacings
 // Taken from base style system
@@ -39,7 +39,7 @@ $wp-gray-0: $gray-0;
 $wp-gray-50: $gray-50;
 $wp-gray-60: $gray-60;
 $skeleton-loader-color: #f0f0f0;
-$wp-upcoming-blueberry: #3858E9;
+$wp-upcoming-blueberry: #3858e9;
 
 // Modal
 $modal-min-width: 350px;
