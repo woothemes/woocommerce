@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Update product link display prop to support focus ring
