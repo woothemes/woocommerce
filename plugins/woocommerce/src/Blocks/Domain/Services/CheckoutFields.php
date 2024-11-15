@@ -2,6 +2,7 @@
 
 namespace Automattic\WooCommerce\Blocks\Domain\Services;
 
+use Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils;
 use Automattic\WooCommerce\Blocks\Assets\AssetDataRegistry;
 use WC_Customer;
 use WC_Data;
@@ -552,8 +553,8 @@ class CheckoutFields {
 					'Company (optional)',
 					'woocommerce'
 				),
-				'required'       => 'required' === WC()->countries->get_company_field_visibility(),
-				'hidden'         => 'hidden' === WC()->countries->get_company_field_visibility(),
+				'required'       => 'required' === CartCheckoutUtils::get_company_field_visibility(),
+				'hidden'         => 'hidden' === CartCheckoutUtils::get_company_field_visibility(),
 				'autocomplete'   => 'organization',
 				'autocapitalize' => 'sentences',
 				'index'          => 30,
@@ -576,8 +577,8 @@ class CheckoutFields {
 					'Apartment, suite, etc. (optional)',
 					'woocommerce'
 				),
-				'required'       => 'required' === WC()->countries->get_address_2_field_visibility(),
-				'hidden'         => 'hidden' === WC()->countries->get_address_2_field_visibility(),
+				'required'       => 'required' === CartCheckoutUtils::get_address_2_field_visibility(),
+				'hidden'         => 'hidden' === CartCheckoutUtils::get_address_2_field_visibility(),
 				'autocomplete'   => 'address-line2',
 				'autocapitalize' => 'sentences',
 				'index'          => 50,
@@ -624,8 +625,8 @@ class CheckoutFields {
 					'Phone (optional)',
 					'woocommerce'
 				),
-				'required'       => 'required' === WC()->countries->get_phone_field_visibility(),
-				'hidden'         => 'hidden' === WC()->countries->get_phone_field_visibility(),
+				'required'       => 'required' === CartCheckoutUtils::get_phone_field_visibility(),
+				'hidden'         => 'hidden' === CartCheckoutUtils::get_phone_field_visibility(),
 				'type'           => 'tel',
 				'autocomplete'   => 'tel',
 				'autocapitalize' => 'characters',

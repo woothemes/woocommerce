@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore Generic.PHP.RequireStrictTypes.MissingDeclaration
 namespace Automattic\WooCommerce\Blocks\Utils;
 
 /**
@@ -44,6 +44,112 @@ class CartCheckoutUtils {
 		return $checkout_page_id && has_block( 'woocommerce/checkout', $checkout_page_id );
 	}
 
+	/**
+	 * Migrate checkout block field visibility attributes to settings.
+	 */
+	protected static function migrate_checkout_block_field_visibility_attributes() {
+		// Before migrating attributes, migrate the "default" options checkout block uses into the settings.
+		update_option( 'woocommerce_checkout_phone_field', 'optional' );
+		update_option( 'woocommerce_checkout_company_field', 'hidden' );
+		update_option( 'woocommerce_checkout_address_2_field', 'optional' );
+
+		// Parse the block from the checkout page.
+		$checkout_blocks = \WC_Blocks_Utils::get_blocks_from_page( 'woocommerce/checkout', 'checkout' );
+
+		if ( empty( $checkout_blocks ) ) {
+			return;
+		}
+
+		$checkout_block = $checkout_blocks[0];
+
+		if ( ! isset( $checkout_block['attrs'] ) ) {
+			return;
+		}
+
+		if ( isset( $checkout_block['attrs']['showPhoneField'], $checkout_block['attrs']['requirePhoneField'] ) ) {
+			if ( $checkout_block['attrs']['showPhoneField'] ) {
+				update_option( 'woocommerce_checkout_phone_field', $checkout_block['attrs']['requirePhoneField'] ? 'required' : 'optional' );
+			} else {
+				update_option( 'woocommerce_checkout_phone_field', 'hidden' );
+			}
+		}
+
+		if ( isset( $checkout_block['attrs']['showCompanyField'], $checkout_block['attrs']['requireCompanyField'] ) ) {
+			if ( $checkout_block['attrs']['showCompanyField'] ) {
+				update_option( 'woocommerce_checkout_company_field', $checkout_block['attrs']['requireCompanyField'] ? 'required' : 'optional' );
+			} else {
+				update_option( 'woocommerce_checkout_company_field', 'hidden' );
+			}
+		}
+
+		if ( isset( $checkout_block['attrs']['showApartmentField'], $checkout_block['attrs']['requireApartmentField'] ) ) {
+			if ( $checkout_block['attrs']['showApartmentField'] ) {
+				update_option( 'woocommerce_checkout_address_2_field', $checkout_block['attrs']['requireApartmentField'] ? 'required' : 'optional' );
+			} else {
+				update_option( 'woocommerce_checkout_address_2_field', 'hidden' );
+			}
+		}
+	}
+
+	/**
+	 * Get the default visibility for the address_2 field.
+	 *
+	 * @return string
+	 */
+	public static function get_company_field_visibility() {
+		$option_value = get_option( 'woocommerce_checkout_company_field' );
+
+		if ( $option_value ) {
+			return $option_value;
+		}
+
+		if ( self::is_checkout_block_default() ) {
+			self::migrate_checkout_block_field_visibility_attributes();
+			return get_option( 'woocommerce_checkout_company_field', 'hidden' );
+		}
+
+		return 'optional';
+	}
+
+	/**
+	 * Get the default visibility for the address_2 field.
+	 *
+	 * @return string
+	 */
+	public static function get_address_2_field_visibility() {
+		$option_value = get_option( 'woocommerce_checkout_address_2_field' );
+
+		if ( $option_value ) {
+			return $option_value;
+		}
+
+		if ( self::is_checkout_block_default() ) {
+			self::migrate_checkout_block_field_visibility_attributes();
+			return get_option( 'woocommerce_checkout_address_2_field', 'optional' );
+		}
+
+		return 'optional';
+	}
+
+	/**
+	 * Get the default visibility for the address_2 field.
+	 *
+	 * @return string
+	 */
+	public static function get_phone_field_visibility() {
+		$option_value = get_option( 'woocommerce_checkout_phone_field' );
+
+		if ( $option_value ) {
+			return $option_value;
+		}
+
+		if ( self::is_checkout_block_default() ) {
+			self::migrate_checkout_block_field_visibility_attributes();
+			return get_option( 'woocommerce_checkout_phone_field', 'optional' );
+		}
+
+		return 'required';
+	}
 
 	/**
 	 * Checks if the template overriding the page loads the page content or not.

@@ -76,7 +76,7 @@ class Checkout extends AbstractBlock {
 						'enum' => array( 'optional', 'required', 'hidden' ),
 					),
 				),
-				'default'      => WC()->countries->get_phone_field_visibility(),
+				'default'      => CartCheckoutUtils::get_phone_field_visibility(),
 			)
 		);
 		register_setting(
@@ -93,7 +93,7 @@ class Checkout extends AbstractBlock {
 						'enum' => array( 'optional', 'required', 'hidden' ),
 					),
 				),
-				'default'      => WC()->countries->get_company_field_visibility(),
+				'default'      => CartCheckoutUtils::get_company_field_visibility(),
 			)
 		);
 		register_setting(
@@ -110,7 +110,7 @@ class Checkout extends AbstractBlock {
 						'enum' => array( 'optional', 'required', 'hidden' ),
 					),
 				),
-				'default'      => WC()->countries->get_address_2_field_visibility(),
+				'default'      => CartCheckoutUtils::get_address_2_field_visibility(),
 			)
 		);
 	}
