@@ -154,18 +154,9 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const event = context.payload; // Accessing the event directly from the context
-            const labelName = event.label?.name;
             const issueTitle = event.issue.title;
             const issueUrl = event.issue.html_url;
-
-            let message = '';
-
-            if (labelName === 'code freeze exception') {
-              message = `:white_check_mark: CFE request approved: ${issueTitle} ${issueUrl}`;
-            } else {
-              message = `:white_check_mark: PRR request approved: ${issueTitle} ${issueUrl}`;
-            }
+            const message = `:white_check_mark: Request approved: ${issueTitle} ${issueUrl}`;
 
             core.setOutput('SLACK_MESSAGE', message);
 
