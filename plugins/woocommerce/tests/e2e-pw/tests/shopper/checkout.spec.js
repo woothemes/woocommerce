@@ -32,6 +32,25 @@ test.describe(
 				consumerSecret: process.env.CONSUMER_SECRET,
 				version: 'wc/v3',
 			} );
+			// Set field visibility options
+			await api.put(
+				'settings/general/woocommerce_phone_field_visibility',
+				{
+					value: 'required',
+				}
+			);
+			await api.put(
+				'settings/general/woocommerce_company_field_visibility',
+				{
+					value: 'optional',
+				}
+			);
+			await api.put(
+				'settings/general/woocommerce_address_2_field_visibility',
+				{
+					value: 'optional',
+				}
+			);
 			// ensure store address is US
 			await api.post( 'settings/general/batch', {
 				update: [
