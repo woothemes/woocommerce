@@ -189,18 +189,10 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const event = context.payload;
-            const labelName = event.label?.name;
             const issueTitle = event.issue.title;
             const issueUrl = event.issue.html_url;
 
-            let message = '';
-
-            if (labelName === 'code freeze exception') {
-              message = `:x: CFE request rejected: ${issueTitle} ${issueUrl}`;
-            } else {
-              message = `:x: PRR request rejected: ${issueTitle} ${issueUrl}`;
-            }
+            const message = `:x: Request rejected: ${issueTitle} ${issueUrl}`;
 
             core.setOutput('SLACK_MESSAGE', message);
 
