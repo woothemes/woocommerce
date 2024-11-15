@@ -575,6 +575,48 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	}
 
 	/**
+	 * Test that the `include_status` parameter with any status returns all products.
+	 */
+	public function test_collection_filter_with_include_status_any() {
+		$all_statuses = get_post_statuses();
+		foreach ( $all_statuses as $status => $label ) {
+			WC_Helper_Product::create_simple_product(
+				true,
+				array(
+					'name'   => "$label Product",
+					'status' => $status,
+				)
+			);
+		}
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'include_status' => array( 'any' ),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertEquals( 200, $response->get_status() );
+		$response_products = $response->get_data();
+
+		$statuses = array_unique(
+			array_map(
+				function ( $product ) {
+					return $product['status'];
+				},
+				$response_products
+			)
+		);
+		$this->assertCount( 4, $statuses );
+		$this->assertEqualsCanonicalizing(
+			array_keys( $all_statuses ),
+			$statuses
+		);
+	}
+
+	/**
 	 * Test the duplicate product endpoint with simple products.
 	 */
 	public function test_duplicate_simple_product() {
