@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Fix unable to close the Core Profiler dropdowns by clicking the dropdown self

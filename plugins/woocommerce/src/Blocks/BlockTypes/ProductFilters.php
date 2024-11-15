@@ -61,15 +61,15 @@ class ProductFilters extends AbstractBlock {
 	 * @return string Rendered block type output.
 	 */
 	protected function render( $attributes, $content, $block ) {
-		$query_id      = $block->context['queryId'] ?? 0;
-		$filter_params = $this->get_filter_params( $query_id );
-		$block_context = array_merge(
+		$query_id              = $block->context['queryId'] ?? 0;
+		$filter_params         = $this->get_filter_params( $query_id );
+		$block_context         = array_merge(
 			$block->context,
 			array(
 				'filterParams' => $filter_params,
 			),
 		);
-		$inner_blocks  = array_reduce(
+		$inner_blocks          = array_reduce(
 			$block->parsed_block['innerBlocks'],
 			function ( $carry, $parsed_block ) use ( $block_context ) {
 				$carry .= ( new \WP_Block( $parsed_block, $block_context ) )->render();
@@ -77,15 +77,14 @@ class ProductFilters extends AbstractBlock {
 			},
 			''
 		);
-		$icontext      = array(
-			'isOverlayOpened' => false,
-			'params'          => $filter_params,
-			'originalParams'  => $filter_params,
+		$interactivity_context = array(
+			'params'         => $filter_params,
+			'originalParams' => $filter_params,
 		);
-		$classes       = array(
+		$classes               = array(
 			'wc-block-product-filters' => true,
 		);
-		$styles        = array(
+		$styles                = array(
 			'--wc-product-filters-text-color'       => StyleAttributesUtils::get_text_color_class_and_style( $attributes )['value'],
 			'--wc-product-filters-background-color' => StyleAttributesUtils::get_background_color_class_and_style( $attributes )['value'],
 		);
@@ -101,7 +100,7 @@ class ProductFilters extends AbstractBlock {
 			'data-wc-watch--scrolling'         => 'callbacks.scrollLimit',
 			'data-wc-on--keyup'                => 'actions.closeOverlayOnEscape',
 			'data-wc-navigation-id'            => $this->generate_navigation_id( $block ),
-			'data-wc-context'                  => wp_json_encode( $icontext, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
+			'data-wc-context'                  => wp_json_encode( $interactivity_context, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
 			'data-wc-class--is-overlay-opened' => 'context.isOverlayOpened',
 			'style'                            => array_reduce(
 				array_keys( $styles ),
@@ -152,6 +151,7 @@ class ProductFilters extends AbstractBlock {
 						>
 							<button
 								class="wc-block-product-filters__apply wp-element-button"
+								data-wc-interactive="<?php echo esc_attr( wp_json_encode( array( 'namespace' => $this->get_full_block_name() ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ) ); ?>"
 								data-wc-on--click="actions.closeOverlay"
 							>
 								<span><?php echo esc_html__( 'Apply', 'woocommerce' ); ?></span>

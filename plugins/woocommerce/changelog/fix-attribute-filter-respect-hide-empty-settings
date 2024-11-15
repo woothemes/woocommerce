@@ -1,5 +1,0 @@
-Significance: patch
-Type: fix
-Comment: Experimental: Respect empty filter options setting in the Attribute filter block.
-
-
