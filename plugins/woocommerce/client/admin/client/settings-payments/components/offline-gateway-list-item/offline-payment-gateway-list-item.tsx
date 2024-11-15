@@ -15,7 +15,7 @@ import {
 	SortableItem,
 } from '../sortable';
 
-export type OfflinePaymentGateway = {
+export interface OfflinePaymentGateway {
 	id: string;
 	title: string;
 	content: string;
@@ -25,7 +25,8 @@ export type OfflinePaymentGateway = {
 	actionText: string;
 	settings_url: string;
 	enabled: boolean;
-};
+	needs_setup: boolean;
+}
 
 type OfflinePaymentGatewayListItemProps = {
 	gateway: OfflinePaymentGateway;
@@ -73,6 +74,7 @@ export const OfflinePaymentGatewayListItem = ( {
 							enabled={ isEnabled }
 							settings_url={ gateway.settings_url }
 							setIsEnabled={ setIsEnabled }
+							needs_setup={ gateway.needs_setup }
 						/>
 					</div>
 				</div>

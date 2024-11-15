@@ -88,6 +88,7 @@ export const OfflinePaymentGateways = ( {
 				return {
 					enabled: installedGateway.enabled,
 					settings_url: installedGateway.settings_url,
+					needs_setup: installedGateway.needs_setup,
 					...gateway,
 				};
 			} )
