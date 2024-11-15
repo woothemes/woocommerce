@@ -64,7 +64,7 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 						[
 							'core/heading',
 							{
-								level: 3,
+								level: 4,
 								content: __( 'Rating', 'woocommerce' ),
 							},
 						],

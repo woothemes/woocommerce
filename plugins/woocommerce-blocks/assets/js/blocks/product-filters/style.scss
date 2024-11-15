@@ -4,7 +4,7 @@
 		--top-padding: var(--adminbar-mobile-padding, 0);
 	}
 
-	display: inline-block;
+	display: inline-flex;
 
 	.wc-block-product-filters__open-overlay,
 	.wc-block-product-filters__close-overlay {
@@ -66,9 +66,12 @@
 	}
 
 	.wc-block-product-filters__overlay-content {
+		display: flex;
 		padding: 0 var(--wp--preset--spacing--40);
 		overflow-y: scroll;
 		flex-grow: 1;
+		flex-direction: column;
+		gap: var(--wc-product-filter-block-spacing, var(--wp--style--block-gap, 1.2rem));
 
 		> *:first-child {
 			margin-top: 0;
@@ -104,7 +107,7 @@
 		// &:not(.always-show) {
 		&,
 		&.is-overlay-opened {
-			display: block;
+			display: flex;
 
 			.wc-block-product-filters__overlay-header,
 			.wc-block-product-filters__overlay-footer,
