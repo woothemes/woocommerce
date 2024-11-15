@@ -17,7 +17,7 @@ import {
 import { PanelBody, ToggleControl, RadioControl } from '@wordpress/components';
 import { SlotFillProvider } from '@woocommerce/blocks-checkout';
 import type { TemplateArray } from '@wordpress/blocks';
-import { useEffect, useRef } from '@wordpress/element';
+import { useEffect, useRef, useState } from '@wordpress/element';
 import { getQueryArg } from '@wordpress/url';
 import { dispatch, select as selectData, useSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
@@ -99,6 +99,36 @@ export const Edit = ( {
 		};
 	} );
 
+	// These state objects are in place so the required toggles remember their last value after being hidden and shown.
+	const [ lastPhoneRequired, setLastPhoneRequired ] = useState(
+		defaultFields.phone.required
+	);
+	const [ lastCompanyRequired, setLastCompanyRequired ] = useState(
+		defaultFields.company.required
+	);
+	const [ lastAddress2Required, setLastAddress2Required ] = useState(
+		defaultFields.address_2.required
+	);
+
+	useEffect( () => {
+		if ( ! defaultFields.phone.hidden ) {
+			setLastPhoneRequired( defaultFields.phone.required );
+		}
+		if ( ! defaultFields.company.hidden ) {
+			setLastCompanyRequired( defaultFields.company.required );
+		}
+		if ( ! defaultFields.address_2.hidden ) {
+			setLastAddress2Required( defaultFields.address_2.required );
+		}
+	}, [
+		defaultFields.phone.hidden,
+		defaultFields.company.hidden,
+		defaultFields.address_2.hidden,
+		defaultFields.phone.required,
+		defaultFields.company.required,
+		defaultFields.address_2.required,
+	] );
+
 	const setFieldEntity = ( field: string, value: string ) => {
 		if (
 			[ 'phone', 'company', 'address_2' ].includes( field ) &&
@@ -170,12 +200,16 @@ export const Edit = ( {
 				<ToggleControl
 					label={ __( 'Company', 'woocommerce' ) }
 					checked={ ! defaultFields.company.hidden }
-					onChange={ () =>
-						setFieldEntity(
-							'company',
-							defaultFields.company.hidden ? 'optional' : 'hidden'
-						)
-					}
+					onChange={ () => {
+						if ( defaultFields.company.hidden ) {
+							setFieldEntity(
+								'company',
+								lastCompanyRequired ? 'required' : 'optional'
+							);
+						} else {
+							setFieldEntity( 'company', 'hidden' );
+						}
+					} }
 				/>
 				{ ! defaultFields.company.hidden && (
 					<RadioControl
@@ -195,14 +229,16 @@ export const Edit = ( {
 				<ToggleControl
 					label={ __( 'Address line 2', 'woocommerce' ) }
 					checked={ ! defaultFields.address_2.hidden }
-					onChange={ () =>
-						setFieldEntity(
-							'address_2',
-							defaultFields.address_2.hidden
-								? 'optional'
-								: 'hidden'
-						)
-					}
+					onChange={ () => {
+						if ( defaultFields.address_2.hidden ) {
+							setFieldEntity(
+								'address_2',
+								lastAddress2Required ? 'required' : 'optional'
+							);
+						} else {
+							setFieldEntity( 'address_2', 'hidden' );
+						}
+					} }
 				/>
 				{ ! defaultFields.address_2.hidden && (
 					<RadioControl
@@ -210,24 +246,28 @@ export const Edit = ( {
 							defaultFields.address_2.required ? 'true' : 'false'
 						}
 						options={ requiredOptions }
-						onChange={ ( value: string ) =>
+						onChange={ ( value: string ) => {
 							setFieldEntity(
 								'address_2',
 								value === 'true' ? 'required' : 'optional'
-							)
-						}
+							);
+						} }
 						className="components-base-control--nested wc-block-components-require-address_2-field"
 					/>
 				) }
 				<ToggleControl
 					label={ __( 'Phone', 'woocommerce' ) }
 					checked={ ! defaultFields.phone.hidden }
-					onChange={ () =>
-						setFieldEntity(
-							'phone',
-							defaultFields.phone.hidden ? 'optional' : 'hidden'
-						)
-					}
+					onChange={ () => {
+						if ( defaultFields.phone.hidden ) {
+							setFieldEntity(
+								'phone',
+								lastPhoneRequired ? 'required' : 'optional'
+							);
+						} else {
+							setFieldEntity( 'phone', 'hidden' );
+						}
+					} }
 				/>
 				{ ! defaultFields.phone.hidden && (
 					<RadioControl
@@ -235,12 +275,12 @@ export const Edit = ( {
 							defaultFields.phone.required ? 'true' : 'false'
 						}
 						options={ requiredOptions }
-						onChange={ ( value: string ) =>
+						onChange={ ( value: string ) => {
 							setFieldEntity(
 								'phone',
 								value === 'true' ? 'required' : 'optional'
-							)
-						}
+							);
+						} }
 						className="components-base-control--nested wc-block-components-require-phone-field"
 					/>
 				) }

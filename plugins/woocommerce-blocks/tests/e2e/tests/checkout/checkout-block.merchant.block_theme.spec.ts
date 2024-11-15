@@ -377,9 +377,6 @@ test.describe( 'Merchant → Checkout', () => {
 
 				// Verify that the company field is required.
 				await expect( shippingCompanyRequiredToggle ).toBeChecked();
-				await expect( shippingCompanyInput ).toHaveAttribute(
-					'required'
-				);
 
 				// Disable the company field.
 				await shippingCompanyToggle.uncheck();
@@ -423,19 +420,21 @@ test.describe( 'Merchant → Checkout', () => {
 				// Enable the company field.
 				await billingCompanyToggle.check();
 
-				// Verify that the company field is visible and the field is optional.
+				// Verify that the company field is visible.
 				await expect( billingCompanyInput ).toBeVisible();
-				await expect( billingCompanyOptionalToggle ).toBeChecked();
-				await expect( billingCompanyInput ).not.toHaveAttribute(
+
+				// Verify that the company field is currently required.
+				await expect( billingCompanyRequiredToggle ).toBeChecked();
+				await expect( billingCompanyInput ).toHaveAttribute(
 					'required'
 				);
 
-				// Make the company field required.
-				await billingCompanyRequiredToggle.check();
+				// Make the company field optional.
+				await billingCompanyOptionalToggle.check();
 
-				// Verify that the company field is required.
-				await expect( billingCompanyRequiredToggle ).toBeChecked();
-				await expect( billingCompanyInput ).toHaveAttribute(
+				// Verify that the company field is optional.
+				await expect( billingCompanyOptionalToggle ).toBeChecked();
+				await expect( billingCompanyInput ).not.toHaveAttribute(
 					'required'
 				);
 
@@ -477,11 +476,11 @@ test.describe( 'Merchant → Checkout', () => {
 				);
 
 				const shippingApartmentOptionalToggle = editor.page.locator(
-					'.wc-block-components-require-address_2-field >> text="Optional"'
+					'.wc-block-components-require-apartment-field >> text="Optional"'
 				);
 
 				const shippingApartmentRequiredToggle = editor.page.locator(
-					'.wc-block-components-require-address_2-field >> text="Required"'
+					'.wc-block-components-require-apartment-field >> text="Required"'
 				);
 
 				// Verify that the apartment link is visible by default.
@@ -539,36 +538,38 @@ test.describe( 'Merchant → Checkout', () => {
 					}
 				);
 
+				const billingApartmentOptionalToggle = editor.page.locator(
+					'.wc-block-components-require-apartment-field >> text="Optional"'
+				);
+
 				const billingApartmentRequiredToggle = editor.page.locator(
-					'.wc-block-components-require-address_2-field >> text="Required"'
+					'.wc-block-components-require-apartment-field >> text="Required"'
 				);
 
 				// Enable the apartment field.
 				await billingApartmentToggle.check();
 
-				// Verify that the apartment link is visible.
-				await expect( billingApartmentLink ).toBeVisible();
-
-				// Verify that the apartment field is hidden.
-				await expect( billingApartmentInput ).not.toBeInViewport();
-
-				// Verify that the apartment field is currently not required.
-				await expect(
-					billingApartmentRequiredToggle
-				).not.toBeChecked();
-				await expect( billingApartmentInput ).not.toHaveAttribute(
-					'required'
-				);
-
-				// Make the apartment field required.
-				await billingApartmentRequiredToggle.check();
-
 				// Verify that the apartment link is hidden.
 				await expect( billingApartmentLink ).toBeHidden();
 
-				// Verify that the apartment field is required.
+				// Verify that the apartment field is visible.
 				await expect( billingApartmentInput ).toBeVisible();
+
+				// Verify that the apartment field is currently required.
 				await expect( billingApartmentRequiredToggle ).toBeChecked();
+				await expect( billingApartmentInput ).toHaveAttribute(
+					'required'
+				);
+
+				// Make the apartment field optional.
+				await billingApartmentOptionalToggle.check();
+
+				// Verify that the apartment link is visible.
+				await expect( billingApartmentLink ).toBeVisible();
+
+				// Verify that the apartment field is hidden and optional.
+				await expect( billingApartmentInput ).not.toBeInViewport();
+				await expect( billingApartmentOptionalToggle ).toBeChecked();
 
 				// Disable the apartment field.
 				await billingApartmentToggle.uncheck();
@@ -661,19 +662,21 @@ test.describe( 'Merchant → Checkout', () => {
 				// Enable the phone field.
 				await billingPhoneToggle.check();
 
-				// Verify that the phone field is visible by default and the field is optional.
+				// Verify that the phone field is visible.
 				await expect( billingPhoneInput ).toBeVisible();
+
+				// Verify that the phone field is currently required.
+				await expect( billingPhoneRequiredToggle ).toBeChecked();
+				await expect( billingPhoneInput ).toHaveAttribute( 'required' );
+
+				// Make the phone field optional.
+				await billingPhoneOptionalToggle.check();
+
+				// Verify that the phone field is optional.
 				await expect( billingPhoneOptionalToggle ).toBeChecked();
 				await expect( billingPhoneInput ).not.toHaveAttribute(
 					'required'
 				);
-
-				// Make the phone number required.
-				await billingPhoneRequiredToggle.check();
-
-				// Verify that the phone field is required.
-				await expect( billingPhoneRequiredToggle ).toBeChecked();
-				await expect( billingPhoneInput ).toHaveAttribute( 'required' );
 
 				// Disable the phone field.
 				await billingPhoneToggle.uncheck();
