@@ -526,6 +526,10 @@ p.demo_store,
 			font-size: 1em;
 		}
 
+		.woocommerce-loop-product__link {
+			display: inline-block;
+		}
+
 		a {
 			text-decoration: none;
 		}
