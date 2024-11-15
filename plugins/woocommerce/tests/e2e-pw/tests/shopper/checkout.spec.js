@@ -1,7 +1,8 @@
-const { test, expect } = require( '@playwright/test' );
+const { test, expect, request } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const { admin, customer } = require( '../../test-data/data' );
 const { setFilterValue, clearFilters } = require( '../../utils/filters' );
+const { setOption } = require( '../../utils/options' );
 
 /**
  * External dependencies
@@ -33,23 +34,23 @@ test.describe(
 				version: 'wc/v3',
 			} );
 			// Set field visibility options
-			await api.put(
-				'settings/general/woocommerce_phone_field_visibility',
-				{
-					value: 'required',
-				}
+			await setOption(
+				request,
+				baseURL,
+				'woocommerce_checkout_phone_field',
+				'required'
 			);
-			await api.put(
-				'settings/general/woocommerce_company_field_visibility',
-				{
-					value: 'optional',
-				}
+			await setOption(
+				request,
+				baseURL,
+				'woocommerce_checkout_phone_field',
+				'optional'
 			);
-			await api.put(
-				'settings/general/woocommerce_address_2_field_visibility',
-				{
-					value: 'optional',
-				}
+			await setOption(
+				request,
+				baseURL,
+				'woocommerce_checkout_phone_field',
+				'optional'
 			);
 			// ensure store address is US
 			await api.post( 'settings/general/batch', {
