@@ -550,27 +550,29 @@ test.describe( 'Merchant → Checkout', () => {
 				// Enable the apartment field.
 				await billingApartmentToggle.check();
 
-				// Verify that the apartment link is hidden.
-				await expect( billingApartmentLink ).toBeHidden();
-
-				// Verify that the apartment field is visible.
-				await expect( billingApartmentInput ).toBeVisible();
-
-				// Verify that the apartment field is currently required.
-				await expect( billingApartmentRequiredToggle ).toBeChecked();
-				await expect( billingApartmentInput ).toHaveAttribute(
-					'required'
-				);
-
-				// Make the apartment field optional.
-				await billingApartmentOptionalToggle.check();
-
 				// Verify that the apartment link is visible.
 				await expect( billingApartmentLink ).toBeVisible();
 
-				// Verify that the apartment field is hidden and optional.
+				// Verify that the apartment field is hidden.
 				await expect( billingApartmentInput ).not.toBeInViewport();
-				await expect( billingApartmentOptionalToggle ).toBeChecked();
+
+				// Verify that the apartment field is currently not required.
+				await expect(
+					billingApartmentRequiredToggle
+				).not.toBeChecked();
+				await expect( billingApartmentInput ).not.toHaveAttribute(
+					'required'
+				);
+
+				// Make the apartment field required.
+				await billingApartmentRequiredToggle.check();
+
+				// Verify that the apartment link is hidden.
+				await expect( billingApartmentLink ).toBeHidden();
+
+				// Verify that the apartment field is required.
+				await expect( billingApartmentInput ).toBeInViewport();
+				await expect( billingApartmentRequiredToggle ).toBeChecked();
 
 				// Disable the apartment field.
 				await billingApartmentToggle.uncheck();
