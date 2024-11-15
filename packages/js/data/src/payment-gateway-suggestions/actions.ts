@@ -1,16 +1,13 @@
 /**
  * External dependencies
  */
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
  */
 import { ACTION_TYPES } from './action-types';
-import {
-	PaymentGatewaySuggestionsState,
-	OfflinePaymentGateway,
-} from './types';
-import apiFetch from '@wordpress/api-fetch';
+import { PaymentGatewaySuggestionsState, OfflinePaymentGateway } from './types';
 
 export function getPaymentGatewaySuggestionsRequest(): {
 	type: ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_REQUEST;
