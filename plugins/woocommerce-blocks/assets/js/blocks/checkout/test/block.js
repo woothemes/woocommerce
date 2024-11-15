@@ -38,7 +38,7 @@ import { defaultCartState } from '../../../data/cart/default-state';
 import Checkout from '../block';
 
 jest.mock( '@wordpress/data', () => {
-	const wpData = jest.requireActual( 'wordpress-data-6-7' );
+	const wpData = jest.requireActual( 'wordpress-data-wp-6-7' );
 	return {
 		__esModule: true,
 		...wpData,

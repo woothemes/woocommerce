@@ -4192,7 +4192,7 @@ importers:
       wireit:
         specifier: 0.14.3
         version: 0.14.3
-      wordpress-data-6-7:
+      wordpress-data-wp-6-7:
         specifier: npm:@wordpress/data@wp-6.7
         version: '@wordpress/data@10.8.3(react@18.3.1)'
       wp-types:
