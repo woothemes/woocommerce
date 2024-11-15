@@ -1,4 +1,4 @@
-name: ✨ REST API MOBILE
+name: 📱 REST API issue for mobile apps
 description: If you need to modify an existing REST API endpoint or introduce a new one, please let us know or submit a Pull Request!
 title: "[REST API]: "
 labels: ["type: task", "focus: rest api", "stakeholder: mobile teams"]
