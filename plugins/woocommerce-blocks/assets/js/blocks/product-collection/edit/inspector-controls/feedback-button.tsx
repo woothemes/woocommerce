@@ -6,14 +6,7 @@ import {
 	CustomerEffortScoreModalContainer,
 	useCustomerEffortScoreModal,
 } from '@woocommerce/customer-effort-score';
-import {
-	Button,
-	// @ts-expect-error Using experimental features
-	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
-	__experimentalText as Text,
-	TextareaControl,
-	TextControl,
-} from '@wordpress/components';
+import { Button, TextareaControl, TextControl } from '@wordpress/components';
 
 export const FeedbackButton = () => {
 	const { showCesModal } = useCustomerEffortScoreModal();

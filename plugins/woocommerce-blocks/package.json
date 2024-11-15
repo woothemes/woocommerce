@@ -160,7 +160,6 @@
 		"@woocommerce/eslint-plugin": "workspace:*",
 		"@woocommerce/woocommerce-rest-api": "1.0.1",
 		"@woocommerce/customer-effort-score": "workspace:*",
-		"@woocommerce/experimental": "workspace:*",
 		"@wordpress/api-fetch": "6.21.0",
 		"@wordpress/babel-preset-default": "7.28.0",
 		"@wordpress/base-styles": "4.35.0",

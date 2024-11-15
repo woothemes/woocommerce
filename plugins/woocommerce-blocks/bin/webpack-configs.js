@@ -303,20 +303,6 @@ const getMainConfig = ( options = {} ) => {
 					},
 				],
 			} ),
-			new CopyWebpackPlugin( {
-				patterns: [
-					{
-						from: '../../packages/js/customer-effort-score/build-style/*.{css,php}',
-						to: './customer-effort-score/[name][ext]',
-						noErrorOnMissing: true,
-						force: true,
-						transform( content, path1 ) {
-							console.log( 'Copying file:', path1 );
-							return content;
-						},
-					},
-				],
-			} ),
 		],
 		resolve: {
 			...resolve,

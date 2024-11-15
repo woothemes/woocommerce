@@ -78,7 +78,6 @@ export function showCesModal(
 	onSubmitNoticeProps = {},
 	tracksProps = {}
 ) {
-	console.log( 'showCesModal' );
 	return {
 		type: TYPES.SHOW_CES_MODAL,
 		surveyProps,
