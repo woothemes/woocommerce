@@ -370,10 +370,10 @@ class WC_Structured_Data {
 			}
 
 			$markup_offer += array(
-				'priceCurrency' => $currency,
-				'availability'  => 'http://schema.org/' . $stock_status_schema,
-				'url'           => $permalink,
-				'seller'        => array(
+				'priceValidUntil' => $sale_price_valid_until ?? $price_valid_until,
+				'availability'    => 'http://schema.org/' . $stock_status_schema,
+				'url'             => $permalink,
+				'seller'          => array(
 					'@type' => 'Organization',
 					'name'  => $shop_name,
 					'url'   => $shop_url,
