@@ -210,6 +210,7 @@ export type Extension = {
 	is_activated?: boolean;
 	learn_more_link?: string;
 	install_priority?: number;
+	requires_jpc?: boolean;
 };
 
 export type InstallAndActivatePluginsAsyncResponse = {
