@@ -85,7 +85,7 @@ const Edit = ( props: BlockEditProps< BlockAttributes > ) => {
 									[
 										'core/heading',
 										{
-											level: 3,
+											level: 4,
 											content: __(
 												'Price',
 												'woocommerce'
