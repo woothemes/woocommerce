@@ -11,7 +11,7 @@ jobs:
             - uses: actions/github-script@v6
               with:
                 script: |
-                  console.log( octokit.rest.users.getAuthenticated() );
+                  console.log( github.rest.users.getAuthenticated() );
               env:
                 GITHUB_TOKEN: ${{ secrets.PR_ASSIGN_TOKEN }}
 
