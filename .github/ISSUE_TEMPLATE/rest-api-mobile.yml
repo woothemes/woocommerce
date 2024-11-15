@@ -10,7 +10,7 @@ body:
 
         Please provide the information requested in this form.
         
-        P.S. If you want to request changes to the native mobile apps, please create your request directly in the [iOS](https://github.com/woocommerce/woocommerce-ios/issues) or [Android](https://github.com/woocommerce/woocommerce-android/issues) repositories.
+        **Note:** To report a bug or request an enhancement to the native mobile apps, please create your request directly in the [iOS](https://github.com/woocommerce/woocommerce-ios/issues) or [Android](https://github.com/woocommerce/woocommerce-android/issues) repositories.
   - type: textarea
     id: Problem
     attributes:
