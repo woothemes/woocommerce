@@ -62,7 +62,9 @@
 		"wireit": "0.14.3"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "wp-6.0"
+		"@wordpress/data": "wp-6.0",
+		"react": "17.0.x",
+		"react-dom": "17.0.x"
 	},
 	"lint-staged": {
 		"*.(t|j)s?(x)": [
