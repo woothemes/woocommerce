@@ -44,6 +44,13 @@ export function isUpdating(
 	return state.isUpdating[ gatewayId ] || false;
 }
 
+export function shouldRedirect(
+	state: PaymentGatewaySuggestionsState,
+	gatewayId: string
+): boolean {
+	return state.shouldRedirect[ gatewayId ] || false;
+}
+
 export type PaymentGatewaySuggestionsSelectors = {
 	getPaymentGateways: WPDataSelector< typeof getPaymentGateways >;
 	getOfflinePaymentGateways: WPDataSelector<
@@ -56,4 +63,6 @@ export type PaymentGatewaySuggestionsSelectors = {
 		typeof getOtherPluginSuggestions
 	>;
 	isFetching: WPDataSelector< typeof isFetching >;
+	isUpdating: WPDataSelector< typeof isUpdating >;
+	shouldRedirect: WPDataSelector< typeof shouldRedirect >;
 } & WPDataSelectors;

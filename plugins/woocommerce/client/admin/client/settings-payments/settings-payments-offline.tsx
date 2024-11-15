@@ -1,10 +1,8 @@
 /**
  * External dependencies
  */
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME } from '@woocommerce/data';
-import { useEffect } from 'react';
-import { useState } from '@wordpress/element';
 
 /**
  * Internal dependencies

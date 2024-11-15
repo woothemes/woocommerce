@@ -125,15 +125,9 @@ export const enablePaymentGateway =
 		gatewayId: string,
 		isOffline: boolean,
 		ajaxUrl: string,
-		settings_url: string,
-		gatewayToggleNonce?: string
+		gatewayToggleNonce: string
 	) =>
 	async ( { dispatch }: { dispatch: DispatchFromMap< typeof actions > } ) => {
-		if ( gatewayToggleNonce === undefined ) {
-			window.location.href = settings_url;
-			return;
-		}
-
 		dispatch.enablePaymentGatewayRequest( gatewayId );
 
 		try {
@@ -151,9 +145,6 @@ export const enablePaymentGateway =
 
 			const result: EnablePaymentGatewayResponse = await response.json();
 
-			if ( result.success && result.data === 'needs_setup' ) {
-				window.location.href = settings_url;
-			}
 			dispatch.enablePaymentGatewaySuccess(
 				gatewayId,
 				isOffline,
@@ -161,7 +152,7 @@ export const enablePaymentGateway =
 				result.data
 			);
 		} catch ( e ) {
-			window.location.href = settings_url;
+			dispatch.enablePaymentGatewayError( gatewayId, e );
 		}
 	};
 

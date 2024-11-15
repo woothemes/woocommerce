@@ -9,7 +9,8 @@ function updatePaymentGatewayList(
 	state: PaymentGatewaySuggestionsState,
 	gatewayId: string,
 	isOffline: boolean,
-	success: boolean
+	success: boolean,
+	data: unknown
 ): PaymentGatewaySuggestionsState {
 	if ( ! success ) {
 		return {
@@ -26,6 +27,8 @@ function updatePaymentGatewayList(
 		( gateway ) => gateway.id === gatewayId
 	);
 
+	const shouldRedirect = success && data === 'needs_setup';
+
 	const paymentGateway = {
 		...state[ neededArray ][ targetIndex ],
 		state: {
@@ -41,6 +44,10 @@ function updatePaymentGatewayList(
 			paymentGateway,
 			...state[ neededArray ].slice( targetIndex + 1 ),
 		],
+		shouldRedirect: {
+			...state.shouldRedirect,
+			[ gatewayId ]: shouldRedirect,
+		},
 		isUpdating: {
 			...state.isUpdating,
 			[ gatewayId ]: false, // Set the specific gateway's updating status to true
@@ -57,6 +64,7 @@ const reducer = (
 		suggestion_categories: [],
 		isFetching: false,
 		isUpdating: {},
+		shouldRedirect: {},
 		errors: {},
 	},
 	payload?: Actions
@@ -118,7 +126,8 @@ const reducer = (
 					state,
 					payload.gatewayId,
 					payload.isOffline,
-					payload.success
+					payload.success,
+					payload.data
 				);
 			case ACTION_TYPES.ENABLE_PAYMENT_GATEWAY_ERROR:
 				return {
@@ -126,6 +135,10 @@ const reducer = (
 					isUpdating: {
 						...state.isUpdating,
 						[ payload.gatewayId ]: false, // Set the specific gateway's updating status to true
+					},
+					shouldRedirect: {
+						...state.shouldRedirect,
+						[ payload.gatewayId ]: true,
 					},
 					errors: {
 						...state.errors,

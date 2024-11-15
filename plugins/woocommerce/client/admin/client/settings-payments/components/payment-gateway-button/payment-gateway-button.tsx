@@ -33,24 +33,32 @@ export const PaymentGatewayButton = ( {
 		PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME
 	);
 
-	const { isUpdating } = useSelect( ( select ) => {
+	const { isUpdating, shouldRedirect } = useSelect( ( select ) => {
 		return {
 			isUpdating: select(
 				PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME
 			).isUpdating( id ),
+			shouldRedirect: select(
+				PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME
+			).shouldRedirect( id ),
 		};
 	} );
 
 	const onClick = ( e: React.MouseEvent ) => {
 		if ( ! enabled ) {
 			e.preventDefault();
+			const gateway_toggle_nonce =
+				window.woocommerce_admin.nonces?.gateway_toggle || '';
 			enablePaymentGateway(
 				id,
 				is_offline,
 				window.woocommerce_admin.ajax_url,
-				settings_url,
-				window.woocommerce_admin.nonces?.gateway_toggle
+				gateway_toggle_nonce
 			);
+
+			if ( shouldRedirect ) {
+				window.location.href = settings_url;
+			}
 		}
 	};
 
