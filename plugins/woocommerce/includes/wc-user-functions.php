@@ -450,34 +450,33 @@ function wc_customer_bought_product( $customer_email, $user_id, $product_id ) {
 			if ( $user_id ) {
 				$user_id_clause = 'OR o.customer_id = ' . absint( $user_id );
 			}
-			$sql    = "
-SELECT im.meta_value FROM $order_table AS o
+			$sql = "
+SELECT 1 FROM $order_table AS o
 INNER JOIN {$wpdb->prefix}woocommerce_order_items AS i ON o.id = i.order_id
 INNER JOIN {$wpdb->prefix}woocommerce_order_itemmeta AS im ON i.order_item_id = im.order_item_id
 WHERE o.status IN ('" . implode( "','", $statuses ) . "')
+AND im.meta_value = %d
 AND im.meta_key IN ('_product_id', '_variation_id' )
 AND im.meta_value != 0
 AND ( o.billing_email IN ('" . implode( "','", $customer_data ) . "') $user_id_clause )
-GROUP BY im.meta_value
+LIMIT 1
 ";
-			$result = $wpdb->get_col( $sql );
 		} else {
-			$result = $wpdb->get_col(
-				"
-SELECT im.meta_value FROM {$wpdb->posts} AS p
+			$sql = "
+SELECT 1 FROM {$wpdb->posts} AS p
 INNER JOIN {$wpdb->postmeta} AS pm ON p.ID = pm.post_id
 INNER JOIN {$wpdb->prefix}woocommerce_order_items AS i ON p.ID = i.order_id
 INNER JOIN {$wpdb->prefix}woocommerce_order_itemmeta AS im ON i.order_item_id = im.order_item_id
 WHERE p.post_status IN ( 'wc-" . implode( "','wc-", $statuses ) . "' )
+AND im.meta_value = %d
 AND pm.meta_key IN ( '_billing_email', '_customer_user' )
 AND im.meta_key IN ( '_product_id', '_variation_id' )
 AND im.meta_value != 0
 AND pm.meta_value IN ( '" . implode( "','", $customer_data ) . "' )
-GROUP BY im.meta_value
-		"
-			); // WPCS: unprepared SQL ok.
+LIMIT 1
+";
 		}
-		$result = array_map( 'absint', $result );
+		$result = ! empty( $wpdb->get_col( $wpdb->prepare( $sql, $product_id ) ) );
 
 		$transient_value = array(
 			'version' => $transient_version,
@@ -486,7 +485,7 @@ GROUP BY im.meta_value
 
 		set_transient( $transient_name, $transient_value, DAY_IN_SECONDS * 30 );
 	}
-	return in_array( absint( $product_id ), $result, true );
+	return $result;
 }
 
 /**
