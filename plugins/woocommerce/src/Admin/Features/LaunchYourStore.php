@@ -1,4 +1,4 @@
-<?php //phpcs:ignore Generic.PHP.RequireStrictTypes.MissingDeclaration
+<?php declare( strict_types = 1 );
 
 namespace Automattic\WooCommerce\Admin\Features;
 
