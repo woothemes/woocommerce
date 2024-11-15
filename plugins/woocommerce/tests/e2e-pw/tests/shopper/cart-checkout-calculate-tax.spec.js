@@ -47,6 +47,12 @@ test.describe.serial(
 			await api.put( 'settings/general/woocommerce_calc_taxes', {
 				value: 'yes',
 			} );
+			await api.put(
+				'settings/general/woocommerce_phone_field_visibility',
+				{
+					value: 'required',
+				}
+			);
 		} );
 
 		test.afterAll( async ( { baseURL } ) => {
