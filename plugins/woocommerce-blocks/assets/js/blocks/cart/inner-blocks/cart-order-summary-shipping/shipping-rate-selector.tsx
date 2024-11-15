@@ -15,8 +15,6 @@ export const ShippingRateSelector = () => {
 			</legend>
 			<ShippingRatesControl
 				className="wc-block-components-totals-shipping__options"
-				// No longer needed as we display notice in the address panel instead.
-				noResultsMessage={ <></> }
 				shippingRates={ shippingRates }
 				isLoadingRates={ isLoadingRates }
 				context="woocommerce/cart"
