@@ -9,10 +9,6 @@ import { getAdminLink } from '@woocommerce/settings';
 import { getAdminSetting } from '~/utils/admin-settings';
 import { DEFAULT_LOGO_WIDTH } from './assembler-hub/sidebar/constants';
 
-export function sendMessageToParent( message ) {
-	window.parent.postMessage( message, getAdminSetting( 'homeUrl' ) );
-}
-
 export function isIframe( windowObject ) {
 	return (
 		windowObject.document !== windowObject.parent.document &&
