@@ -8,26 +8,12 @@ import { Actions } from './actions';
 function updatePaymentGatewayList(
 	state: PaymentGatewaySuggestionsState,
 	gatewayId: string,
-	isOffline: boolean,
-	success: boolean,
-	data: unknown
+	isOffline: boolean
 ): PaymentGatewaySuggestionsState {
-	if ( ! success ) {
-		return {
-			...state,
-			isUpdating: {
-				...state.isUpdating,
-				[ gatewayId ]: false, // Set the specific gateway's updating status to true
-			},
-		};
-	}
-
 	const neededArray = isOffline ? 'offline_payment_methods' : 'gateways';
 	const targetIndex = state[ neededArray ].findIndex(
 		( gateway ) => gateway.id === gatewayId
 	);
-
-	const shouldRedirect = success && data === 'needs_setup';
 
 	const paymentGateway = {
 		...state[ neededArray ][ targetIndex ],
@@ -46,7 +32,7 @@ function updatePaymentGatewayList(
 		],
 		shouldRedirect: {
 			...state.shouldRedirect,
-			[ gatewayId ]: shouldRedirect,
+			[ gatewayId ]: false,
 		},
 		isUpdating: {
 			...state.isUpdating,
@@ -125,9 +111,7 @@ const reducer = (
 				return updatePaymentGatewayList(
 					state,
 					payload.gatewayId,
-					payload.isOffline,
-					payload.success,
-					payload.data
+					payload.isOffline
 				);
 			case ACTION_TYPES.ENABLE_PAYMENT_GATEWAY_ERROR:
 				return {

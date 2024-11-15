@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { DispatchFromMap } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -10,9 +9,8 @@ import { ACTION_TYPES } from './action-types';
 import {
 	PaymentGatewaySuggestionsState,
 	OfflinePaymentGateway,
-	EnablePaymentGatewayResponse,
 } from './types';
-import * as actions from './actions';
+import apiFetch from '@wordpress/api-fetch';
 
 export function getPaymentGatewaySuggestionsRequest(): {
 	type: ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_REQUEST;
@@ -86,22 +84,16 @@ export function enablePaymentGatewayRequest( gatewayId: string ): {
 
 export function enablePaymentGatewaySuccess(
 	gatewayId: string,
-	isOffline: boolean,
-	success: boolean,
-	data: unknown
+	isOffline: boolean
 ): {
 	type: ACTION_TYPES.ENABLE_PAYMENT_GATEWAY_SUCCESS;
 	gatewayId: string;
 	isOffline: boolean;
-	success: boolean;
-	data: unknown;
 } {
 	return {
 		type: ACTION_TYPES.ENABLE_PAYMENT_GATEWAY_SUCCESS,
 		gatewayId,
 		isOffline,
-		success,
-		data,
 	};
 }
 
@@ -120,41 +112,37 @@ export function enablePaymentGatewayError(
 	};
 }
 
-export const enablePaymentGateway =
-	(
-		gatewayId: string,
-		isOffline: boolean,
-		ajaxUrl: string,
-		gatewayToggleNonce: string
-	) =>
-	async ( { dispatch }: { dispatch: DispatchFromMap< typeof actions > } ) => {
-		dispatch.enablePaymentGatewayRequest( gatewayId );
+export function* enablePaymentGateway(
+	gatewayId: string,
+	isOffline: boolean,
+	ajaxUrl: string,
+	gatewayToggleNonce: string
+) {
+	// Dispatch the request action
+	yield enablePaymentGatewayRequest( gatewayId );
 
-		try {
-			const response: Response = await fetch( ajaxUrl, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded',
-				},
-				body: new URLSearchParams( {
-					action: 'woocommerce_toggle_gateway_enabled',
-					security: gatewayToggleNonce,
-					gateway_id: gatewayId,
-				} ),
-			} );
+	try {
+		// Use apiFetch for the AJAX request
+		yield apiFetch( {
+			url: ajaxUrl,
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			body: new URLSearchParams( {
+				action: 'woocommerce_toggle_gateway_enabled',
+				security: gatewayToggleNonce,
+				gateway_id: gatewayId,
+			} ),
+		} );
 
-			const result: EnablePaymentGatewayResponse = await response.json();
-
-			dispatch.enablePaymentGatewaySuccess(
-				gatewayId,
-				isOffline,
-				result.success,
-				result.data
-			);
-		} catch ( e ) {
-			dispatch.enablePaymentGatewayError( gatewayId, e );
-		}
-	};
+		// Dispatch the success action
+		yield enablePaymentGatewaySuccess( gatewayId, isOffline );
+	} catch ( error ) {
+		// Dispatch the error action
+		yield enablePaymentGatewayError( gatewayId, error );
+	}
+}
 
 export type Actions =
 	| ReturnType< typeof getPaymentGatewaySuggestionsRequest >
