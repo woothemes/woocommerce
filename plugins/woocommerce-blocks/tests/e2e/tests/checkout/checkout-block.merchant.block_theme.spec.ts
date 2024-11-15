@@ -567,7 +567,7 @@ test.describe( 'Merchant → Checkout', () => {
 				await expect( billingApartmentLink ).toBeHidden();
 
 				// Verify that the apartment field is required.
-				await expect( billingApartmentInput ).toBeInViewport();
+				await expect( billingApartmentInput ).toBeVisible();
 				await expect( billingApartmentRequiredToggle ).toBeChecked();
 
 				// Disable the apartment field.
