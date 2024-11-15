@@ -6,7 +6,6 @@ import { List } from '@woocommerce/components';
 import { Plugin, PaymentGateway } from '@woocommerce/data';
 import { getAdminLink } from '@woocommerce/settings';
 import { SelectControl } from '@wordpress/components';
-import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 /**

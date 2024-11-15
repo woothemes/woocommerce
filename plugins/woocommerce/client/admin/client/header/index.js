@@ -137,8 +137,8 @@ export const Header = ( { sections, isEmbedded = false, query } ) => {
 
 	const isReactifyPaymentsSettingsScreen = Boolean(
 		window.wcAdminFeatures?.[ 'reactify-classic-payments-settings' ] &&
-		query?.page === 'wc-settings' &&
-		query?.tab === 'checkout'
+			query?.page === 'wc-settings' &&
+			query?.tab === 'checkout'
 	);
 
 	const showReminderBar = Boolean(
