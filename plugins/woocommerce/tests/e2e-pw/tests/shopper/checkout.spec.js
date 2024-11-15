@@ -43,13 +43,13 @@ test.describe(
 			await setOption(
 				request,
 				baseURL,
-				'woocommerce_checkout_phone_field',
+				'woocommerce_checkout_company_field',
 				'optional'
 			);
 			await setOption(
 				request,
 				baseURL,
-				'woocommerce_checkout_phone_field',
+				'woocommerce_checkout_address_2_field',
 				'optional'
 			);
 			// ensure store address is US
