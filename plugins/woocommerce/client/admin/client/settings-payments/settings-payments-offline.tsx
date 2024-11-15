@@ -4,7 +4,6 @@
 import '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 import { PAYMENT_GATEWAYS_STORE_NAME } from '@woocommerce/data';
-import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies

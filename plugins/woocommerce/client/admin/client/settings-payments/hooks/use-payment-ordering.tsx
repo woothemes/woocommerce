@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { useState, useEffect } from 'react';
-import apiFetch from '@wordpress/api-fetch';
 
 const usePaymentOrdering = ( id: string ) => {
 	const [ ordering, setOrdering ] = useState< Record< string, number > >(
@@ -15,9 +14,15 @@ const usePaymentOrdering = ( id: string ) => {
 		const fetchOrdering = async () => {
 			try {
 				setLoading( true );
-				const response = await apiFetch( {
-					path: `wc-admin/settings/payments/ordering/${ id }`,
-				} );
+				// const response = await apiFetch( {
+				// 	path: `wc-admin/settings/payments/ordering/${ id }`,
+				// } );
+				const storedOrdering = localStorage.getItem(
+					`wc_payment_ordering_${ id }`
+				);
+				const response = storedOrdering
+					? JSON.parse( storedOrdering )
+					: {};
 				setOrdering( response as Record< string, number > );
 			} catch ( err ) {
 				setError( err );
@@ -34,11 +39,15 @@ const usePaymentOrdering = ( id: string ) => {
 			setLoading( true );
 			// Optimistically update.
 			setOrdering( newOrdering );
-			await apiFetch( {
-				path: 'wc-admin/settings/payments/ordering',
-				method: 'PUT',
-				data: { id, ordering: newOrdering },
-			} );
+			// await apiFetch( {
+			// 	path: 'wc-admin/settings/payments/ordering',
+			// 	method: 'PUT',
+			// 	data: { id, ordering: newOrdering },
+			// } );
+			localStorage.setItem(
+				`wc_payment_ordering_${ id }`,
+				JSON.stringify( newOrdering )
+			);
 		} catch ( err ) {
 			setError( err );
 			setOrdering( backupOrdering );
