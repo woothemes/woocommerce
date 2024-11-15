@@ -14,9 +14,6 @@ const usePaymentOrdering = ( id: string ) => {
 		const fetchOrdering = async () => {
 			try {
 				setLoading( true );
-				// const response = await apiFetch( {
-				// 	path: `wc-admin/settings/payments/ordering/${ id }`,
-				// } );
 				const storedOrdering = localStorage.getItem(
 					`wc_payment_ordering_${ id }`
 				);
@@ -39,11 +36,6 @@ const usePaymentOrdering = ( id: string ) => {
 			setLoading( true );
 			// Optimistically update.
 			setOrdering( newOrdering );
-			// await apiFetch( {
-			// 	path: 'wc-admin/settings/payments/ordering',
-			// 	method: 'PUT',
-			// 	data: { id, ordering: newOrdering },
-			// } );
 			localStorage.setItem(
 				`wc_payment_ordering_${ id }`,
 				JSON.stringify( newOrdering )
