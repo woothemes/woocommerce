@@ -79,7 +79,7 @@ const getSettingsPageTabs = (
 	const sections = Object.keys( settingsPage.sections );
 
 	return sections.map( ( key ) => ( {
-		name: settingsPage.sections[ key ].label,
+		name: key,
 		title: settingsPage.sections[ key ].label,
 	} ) );
 };
