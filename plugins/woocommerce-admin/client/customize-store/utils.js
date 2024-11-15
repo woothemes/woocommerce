@@ -42,7 +42,7 @@ export function onBackButtonClicked( callback ) {
 	} );
 }
 
-export function getAdminUrl( url ) {
+export function sanitizeUrl( url ) {
 	if ( url.startsWith( 'http' ) ) {
 		return new URL( url );
 	}
@@ -79,7 +79,7 @@ export function attachParentListeners() {
 		if ( event.data.type === 'navigate' ) {
 			// Validate the URL format.
 			try {
-				const url = new getAdminUrl( event.data.url );
+				const url = sanitizeUrl( event.data.url );
 				// Further restrict navigation to trusted domains.
 				if (
 					! allowedOrigins.some( ( origin ) => url.origin === origin )
@@ -112,7 +112,7 @@ export function navigateOrParent( windowObject, url ) {
 	if ( isIframe( windowObject ) ) {
 		windowObject.parent.postMessage( { type: 'navigate', url }, '*' );
 	} else {
-		const fullUrl = getAdminUrl( url );
+		const fullUrl = sanitizeUrl( url );
 		windowObject.location.href = fullUrl.href;
 	}
 }
