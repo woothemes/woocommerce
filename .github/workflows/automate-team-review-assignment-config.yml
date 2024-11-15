@@ -13,7 +13,7 @@ jobs:
                 script: |
                   console.log( github.rest.users.getAuthenticated() );
               env:
-                GITHUB_TOKEN: ${{ secrets.PR_ASSIGN_TOKEN }}
+                GITHUB_TOKEN: ${{ secrets.FINE_GRAINED_TOKEN_ACTIONS }}
 
             - name: Check config and assign reviews
               uses: acq688/Request-Reviewer-For-Team-Action@v1.1
