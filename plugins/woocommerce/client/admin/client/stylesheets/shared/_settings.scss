@@ -1,0 +1,81 @@
+@import "_variables.scss";
+
+body.woocommerce_page_wc-settings {
+	// The new styling for the WC Settings pages, mainly affecting the tabbed navigation.
+	&.woocommerce-feature-enabled-reactify-classic-payments-settings.woocommerce-embed-page {
+		background: white;
+
+		#woocommerce-embedded-root {
+			font-family: $font-sf-pro-display;
+		}
+
+		.woocommerce-layout__header {
+			border-bottom: 1px solid #ebebeb;
+		}
+
+		.woocommerce-layout__header-heading {
+			font-size: 20px;
+			font-weight: normal;
+			line-height: 28px;
+			padding: $page-small $page-large;
+		}
+
+		#wpbody-content {
+			font-family: $font-sf-pro-display;
+
+			.woocommerce {
+				padding: 0;
+
+				#mainform {
+					margin: 0 $page-large;
+
+					.woo-nav-tab-wrapper {
+						display: flex;
+						flex-direction: row;
+						gap: $medium-gap;
+						margin: $page-small (-$page-large);
+						padding: 0 $page-large;
+
+						.nav-tab {
+							border: none;
+							background: none;
+							color: $gutenberg-gray-900;
+							font-family: $font-sf-pro-display;
+							font-size: 13px;
+							line-height: 16px;
+							font-weight: 600;
+							padding: 10px 0;
+							margin: 0 0 -1px 0;
+
+							&:hover, &:focus {
+								background: none;
+								color: $gutenberg-gray-900;
+								border-bottom: 2px solid var(--wp-admin-theme-color, $wp-upcoming-blueberry);
+							}
+
+							&:focus, &:active, &:focus:active, &:focus-visible {
+								box-shadow: 0 0 0 1px var(--wp-admin-theme-color, $wp-upcoming-blueberry);
+								outline: 1px solid transparent;
+							}
+						}
+
+						.nav-tab-active {
+							&, &:hover, &:focus, &:active, &:focus:active {
+								background: none;
+								color: $gutenberg-gray-900;
+								border-bottom: 2px solid var(--wp-admin-theme-color, $wp-upcoming-blueberry);
+							}
+						}
+					}
+
+					h2 {
+						font-family: $font-sf-pro-display;
+						font-size: 16px;
+						font-weight: 600;
+						line-height: 24px;
+					}
+				}
+			}
+		}
+	}
+}
