@@ -66,7 +66,10 @@ const MaxWordCountControl = ( {
 	setAttributes,
 }: ControlProps< 'summaryLength' > ) => {
 	const label = __( 'Max word count', 'woocommerce' );
-	const help = __( 'Set to 0 to remove the limit completely', 'woocommerce' );
+	const help = __(
+		'When there is a word limit, only the first paragraph will be considered and displayed. Set to 0 to remove the word limit.',
+		'woocommerce'
+	);
 
 	return (
 		<ToolsPanelItem
