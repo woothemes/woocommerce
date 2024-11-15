@@ -48,6 +48,7 @@
 		"changelog": "XDEBUG_MODE=off composer install --quiet && composer exec -- changelogger",
 		"build": "pnpm --if-present --workspace-concurrency=Infinity --stream --filter=\"$npm_package_name...\" '/^build:project:.*$/'",
 		"build:project": "pnpm --if-present '/^build:project:.*$/'",
+		"build:project:validate-blocks-manifests": "wireit",
 		"build:project:bundle": "wireit",
 		"build:check-assets": "rimraf build/* && cross-env ASSET_CHECK=true BABEL_ENV=default NODE_ENV=production webpack",
 		"prebuild:docs": "rimraf docs/extensibility/actions.md & rimraf docs/extensibility/filters.md",
@@ -187,6 +188,7 @@
 		"@wordpress/prettier-config": "1.4.0",
 		"@wordpress/scripts": "24.6.0",
 		"@wordpress/stylelint-config": "^21.36.0",
+		"ajv-cli": "3.3.x",
 		"allure-playwright": "^2.9.2",
 		"autoprefixer": "10.4.14",
 		"babel-jest": "^29.7.0",
@@ -393,6 +395,14 @@
 			"dependencies": [
 				"dependencyOutputs"
 			]
+		},
+		"build:project:validate-blocks-manifests": {
+			"command": "npx ajv validate -s bin/block.json-validation-schema.json -d assets/js/**/block.json",
+			"clean": "if-file-deleted",
+			"files": [
+				"assets/js/**/block.json"
+			],
+			"output": []
 		},
 		"build:storybook": {
 			"command": "storybook build  -c ./storybook -o ./storybook/dist",
