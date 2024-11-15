@@ -1,6 +1,12 @@
 /**
+ * External dependencies
+ */
+import { getAdminLink } from '@woocommerce/settings';
+
+/**
  * Internal dependencies
  */
+import { getAdminSetting } from '~/utils/admin-settings';
 import { DEFAULT_LOGO_WIDTH } from './assembler-hub/sidebar/constants';
 
 export function sendMessageToParent( message ) {
@@ -36,22 +42,63 @@ export function onBackButtonClicked( callback ) {
 	} );
 }
 
+export function getAdminUrl( url ) {
+	if ( url.startsWith( 'http' ) ) {
+		return new URL( url );
+	}
+
+	return new URL( getAdminLink( url ) );
+}
+
 /**
  * Attach a listener to the window object to listen for messages from the parent window.
  *
  * @return {() => void} Remove listener function
  */
 export function attachParentListeners() {
-	const listener = ( event ) => {
-		if ( event.data.type === 'navigate' ) {
-			window.location.href = event.data.url;
+	const allowedOrigins = [ getAdminSetting( 'homeUrl' ) ];
+
+	function handleMessage( event ) {
+		// Validate the origin.
+		if ( ! allowedOrigins.includes( event.origin ) ) {
+			// Blocked message from untrusted origin: event.origin.
+			return;
 		}
-	};
 
-	window.addEventListener( 'message', listener, false );
+		// Validate the structure of event.data.
+		if (
+			! event.data ||
+			typeof event.data.type !== 'string' ||
+			typeof event.data.url !== 'string'
+		) {
+			// Invalid message structure: event.data.
+			return;
+		}
 
-	return () => {
-		window.removeEventListener( 'message', listener, false );
+		// Only allow the 'navigate' type.
+		if ( event.data.type === 'navigate' ) {
+			// Validate the URL format.
+			try {
+				const url = new getAdminUrl( event.data.url );
+				// Further restrict navigation to trusted domains.
+				if (
+					! allowedOrigins.some( ( origin ) => url.origin === origin )
+				) {
+					// Blocked navigation to untrusted URL: url.href.
+					return;
+				}
+
+				window.location.href = url.href;
+			} catch {
+				// Invalid URL: event.data.url.
+			}
+		}
+	}
+
+	window.addEventListener( 'message', handleMessage, false );
+
+	return function removeListener() {
+		window.removeEventListener( 'message', handleMessage, false );
 	};
 }
 
@@ -65,7 +112,8 @@ export function navigateOrParent( windowObject, url ) {
 	if ( isIframe( windowObject ) ) {
 		windowObject.parent.postMessage( { type: 'navigate', url }, '*' );
 	} else {
-		windowObject.location.href = url;
+		const fullUrl = getAdminUrl( url );
+		windowObject.location.href = fullUrl.href;
 	}
 }
 
