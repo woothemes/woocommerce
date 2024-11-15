@@ -517,7 +517,8 @@
 						"start": "test:perf:ci-setup"
 					},
 					"events": [
-						"push"
+						"push",
+						"pull_request"
 					]
 				},
 				{
