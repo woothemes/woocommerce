@@ -39,7 +39,7 @@ const Preview = ( {
 	suffix?: string;
 } ) => (
 	<div
-		className={ clsx( className, {
+		className={ clsx( className, 'wp-block-post-terms', {
 			[ `${ parentClassName }__product-sku` ]: parentClassName,
 		} ) }
 		style={ style }
