@@ -35,6 +35,7 @@ import SidebarContent from '@wordpress/edit-site/build-module/components/sidebar
  * Internal dependencies
  */
 import { Route } from './types';
+import { SectionTabs, Header } from './components';
 
 const { NavigableRegion } = unlock( editorPrivateApis );
 
@@ -42,9 +43,11 @@ const ANIMATION_DURATION = 0.3;
 
 type LayoutProps = {
 	route: Route;
+	settingsPage?: SettingsPage;
+	tabs?: Array< { name: string; title: string } >;
 };
 
-export function Layout( { route }: LayoutProps ) {
+export function Layout( { route, settingsPage, tabs }: LayoutProps ) {
 	const [ fullResizer ] = useResizeObserver();
 	const toggleRef = useRef< HTMLAnchorElement >( null );
 	const isMobileViewport = useViewportMatch( 'medium', '<' );
@@ -103,7 +106,10 @@ export function Layout( { route }: LayoutProps ) {
 								maxWidth: widths?.content,
 							} }
 						>
-							{ areas.content }
+							<Header pageTitle={ settingsPage?.label } />
+							<SectionTabs tabs={ tabs }>
+								{ areas.content }
+							</SectionTabs>
 						</div>
 					) }
 

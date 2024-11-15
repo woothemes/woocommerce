@@ -25,9 +25,11 @@ const { RouterProvider } = unlock( routerPrivateApis );
 const { GlobalStylesProvider } = unlock( editorPrivateApis );
 
 const SettingsLayout = () => {
-	const activeRoute = useActiveRoute();
+	const { route, settingsPage, tabs } = useActiveRoute();
 
-	return <Layout route={ activeRoute } />;
+	return (
+		<Layout route={ route } settingsPage={ settingsPage } tabs={ tabs } />
+	);
 };
 
 export const SettingsEditor = () => {

@@ -95,7 +95,6 @@ const getLegacyRoute = (
 	settingsData: SettingsData
 ): Route => {
 	const settingsPage = settingsData[ activePage ];
-	const tabs = getSettingsPageTabs( settingsPage );
 
 	return {
 		key: activePage,
@@ -107,14 +106,7 @@ const getLegacyRoute = (
 					pageTitle={ __( 'Store settings', 'woocommerce' ) }
 				/>
 			),
-			content: (
-				<>
-					<Header pageTitle={ settingsPage?.label } />
-					<SectionTabs tabs={ tabs }>
-						<LegacyContent settingsPage={ settingsPage } />
-					</SectionTabs>
-				</>
-			),
+			content: <LegacyContent settingsPage={ settingsPage } />,
 			edit: null,
 		},
 		widths: {
@@ -174,7 +166,12 @@ export function useModernRoutes() {
 /**
  * Hook to determine and return the active route based on the current path.
  */
-export const useActiveRoute = () => {
+export const useActiveRoute = (): {
+	route: Route;
+	settingsPage?: SettingsPage;
+	activePage?: string;
+	tabs?: Array< { name: string; title: string } >;
+} => {
 	const settingsData: SettingsData = window.wcSettings?.admin?.settingsData;
 	const location = useLocation() as Location;
 	const modernRoutes = useModernRoutes();
@@ -185,19 +182,24 @@ export const useActiveRoute = () => {
 		const tabs = getSettingsPageTabs( settingsPage );
 
 		if ( ! settingsPage ) {
-			return getNotFoundRoute( activePage, settingsData );
+			return { route: getNotFoundRoute( activePage, settingsData ) };
 		}
 
 		// Handle legacy pages.
 		if ( ! settingsPage.is_modern ) {
-			return getLegacyRoute( activePage, settingsData );
+			return {
+				route: getLegacyRoute( activePage, settingsData ),
+				settingsPage,
+				activePage,
+				tabs,
+			};
 		}
 
 		const modernRoute = modernRoutes[ activePage ];
 
 		// Handle modern pages.
 		if ( ! modernRoute ) {
-			return getNotFoundRoute( activePage, settingsData );
+			return { route: getNotFoundRoute( activePage, settingsData ) };
 		}
 
 		// Sidebar is responsibility of WooCommerce, not extensions so add it here.
@@ -208,17 +210,9 @@ export const useActiveRoute = () => {
 				pageTitle={ __( 'Store settings', 'woocommerce' ) }
 			/>
 		);
-		modernRoute.areas.content = (
-			<>
-				<Header pageTitle={ settingsPage?.label } />
-				<SectionTabs tabs={ tabs }>
-					{ modernRoute.areas.content }
-				</SectionTabs>
-			</>
-		);
 		// Make sure we have a key.
 		modernRoute.key = activePage;
 
-		return modernRoute;
+		return { route: modernRoute, settingsPage, activePage, tabs };
 	}, [ settingsData, location.params, modernRoutes ] );
 };

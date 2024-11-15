@@ -6,10 +6,10 @@ import { TabPanel } from '@wordpress/components';
 
 export const SectionTabs = ( {
 	children,
-	tabs,
+	tabs = [],
 }: {
 	children: React.ReactNode;
-	tabs: Array< {
+	tabs?: Array< {
 		name: string;
 		title: string;
 	} >;

@@ -12,7 +12,7 @@ import {
 	FlexItem,
 } from '@wordpress/components';
 
-export const Header = ( { pageTitle }: { pageTitle: string } ) => {
+export const Header = ( { pageTitle = '' }: { pageTitle?: string } ) => {
 	return (
 		<VStack
 			className="woocommerce-settings-header edit-site-page-header"
