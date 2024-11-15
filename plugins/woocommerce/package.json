@@ -130,7 +130,6 @@
 						}
 					},
 					"events": [
-						"pull_request",
 						"push"
 					]
 				},
@@ -157,7 +156,6 @@
 						}
 					},
 					"events": [
-						"pull_request",
 						"push"
 					]
 				},
@@ -185,7 +183,6 @@
 						}
 					},
 					"events": [
-						"pull_request",
 						"push"
 					]
 				},
@@ -218,7 +215,6 @@
 						"start": "env:test"
 					},
 					"events": [
-						"pull_request",
 						"push",
 						"release-checks"
 					],
@@ -463,7 +459,6 @@
 						"start": "env:test"
 					},
 					"events": [
-						"pull_request",
 						"push"
 					],
 					"report": {
@@ -542,8 +537,7 @@
 						"start": "env:test"
 					},
 					"events": [
-						"push",
-						"pull_request"
+						"push"
 					],
 					"report": {
 						"resultsBlobName": "core-metrics-report",
@@ -575,7 +569,6 @@
 						"start": "env:start:blocks"
 					},
 					"events": [
-						"pull_request",
 						"push",
 						"release-checks",
 						"nightly-checks"
