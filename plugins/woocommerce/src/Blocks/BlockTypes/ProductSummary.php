@@ -102,23 +102,99 @@ class ProductSummary extends AbstractBlock {
 	}
 
 	/**
-	 * Trim the product description.
+	 * Get first paragraph from some HTML text, or return the whole string.
 	 *
-	 * This method is far from perfection. It works well and reliably with the simple text
-	 * but works much worse with the rich text (HTML). It can be considered a good balance
-	 * between the what we want and what we can. Unfortunately, ATM there's no good
-	 * tool for robust solution:
-	 * - DOMDocument is reasource-heavy and isn’t available on many hosting platforms
-	 * (POC: https://github.com/woocommerce/woocommerce/pull/52769).
-	 * - HTML API doesn't support HTML manipulations just yet.
+	 * @param string $source Source text.
+	 * @return string First paragraph found in string.
+	 */
+	private function get_first_paragraph( $source ) {
+		$p_index = strpos( $source, '</p>' );
+
+		if ( $p_index === false ) {
+			return $source;
+		}
+
+		return substr( $source, 0, $p_index + 4 );
+	}
+
+
+	/**
+	 * Count words, characters (excluding spaces), or characters (including spaces).
+	 *
+	 * @param string $text      Text to count.
+	 * @param string $count_type Count type: 'words', 'characters_excluding_spaces', or 'characters_including_spaces'.
+	 * @return int Count of specified type.
+	 */
+	function count_text( $text, $count_type ) {
+		switch ( $count_type ) {
+			case 'characters_excluding_spaces':
+				return strlen( preg_replace( '/\s+/', '', $text ) );
+			case 'characters_including_spaces':
+				return strlen( $text );
+			case 'words':
+			default:
+				return str_word_count( wp_strip_all_tags( $text ) );
+		}
+	}
+
+	/**
+	 * Trim characters to a specified length.
+	 *
+	 * @param string $text               Text to trim.
+	 * @param int    $max_length          Maximum length of the text.
+	 * @param bool   $includeSpaces      Whether to count spaces as characters.
+	 * @return string Trimmed text.
+	 */
+	function trim_characters( $text, $max_length, $includeSpaces = true ) {
+		$trimmed = $text;
+
+		// TODO write logic that takes into account spaces and not
+		if ( ! $includeSpaces ) {
+			// TODO write logic that takes into account spaces and not
+		}
+
+		$trimmed = mb_substr( $text, 0, $max_length );
+
+		return $trimmed;
+	}
+
+	/**
+	 * Generates the summary text from a string of text. It's not ideal
+	 * but allows keeping the editor and frontend consistent.
+	 *
+	 * NOTE: If editing, keep it in sync with generateSummary function from
+	 * plugins/woocommerce-blocks/assets/js/base/components/summary/utils.ts!
+	 *
+	 * Once HTML API allow for HTML manipulation both functions (PHP and JS)
+	 * should be updated to solution fully respecting the word count.
 	 * TODO: https://github.com/woocommerce/woocommerce/issues/52835
 	 *
-	 * @param string $input  Product description.
-	 * @param number $length Expected length of final description.
-	 * @return string
+	 * @param string $source     Source text.
+	 * @param int    $max_length  Limit number of items returned if text has multiple paragraphs.
+	 * @param string $count_type  What is being counted. One of 'words', 'characters_excluding_spaces', or 'characters_including_spaces'.
+	 * @return string Generated summary.
 	 */
-	private function trim_keeping_html_formatting( $input, $length ) {
-		return html_entity_decode( wp_trim_words( htmlentities( wpautop( $input, true ) ), $length ) );
+	function generate_summary( $source, $max_length ) {
+		$count_type            = wp_get_word_count_type();
+		$source_with_paragraphs = wpautop( $source );
+		$source_word_count      = $this->count_text( $source_with_paragraphs, $count_type );
+
+		if ( $source_word_count <= $max_length ) {
+			return $source_with_paragraphs;
+		}
+
+		$first_paragraph = $this->get_first_paragraph( $source_with_paragraphs );
+		$first_paragraph_word_count = $this->count_text( $first_paragraph, $count_type );
+
+		if ( $first_paragraph_word_count <= $max_length ) {
+			return $first_paragraph;
+		}
+
+		if ( $count_type === 'words' ) {
+			return wp_trim_words( $first_paragraph, $max_length );
+		}
+
+		return trim_characters( $first_paragraph, $max_length, $count_type === 'characters_including_spaces' );
 	}
 
 	/**
@@ -153,7 +229,7 @@ class ProductSummary extends AbstractBlock {
 		$summary_length = isset( $attributes['summaryLength'] ) ? $attributes['summaryLength'] : false;
 		$link_text      = isset( $attributes['linkText'] ) ? $attributes['linkText'] : '';
 		$show_link      = isset( $attributes['showLink'] ) && $attributes['showLink'];
-		$summary        = $summary_length ? $this->trim_keeping_html_formatting( $source, $summary_length ) : wpautop( $source );
+		$summary        = $summary_length ? $this->generate_summary( $source, $summary_length ) : wpautop( $source );
 		$final_summary  = $show_link && $link_text ? $summary . $this->create_anchor( $product, $link_text ) : $summary;
 
 		$styles_and_classes = StyleAttributesUtils::get_classes_and_styles_by_attributes( $attributes );
