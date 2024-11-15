@@ -25,10 +25,15 @@ const { RouterProvider } = unlock( routerPrivateApis );
 const { GlobalStylesProvider } = unlock( editorPrivateApis );
 
 const SettingsLayout = () => {
-	const { route, settingsPage, tabs } = useActiveRoute();
+	const { route, settingsPage, tabs, activeSection } = useActiveRoute();
 
 	return (
-		<Layout route={ route } settingsPage={ settingsPage } tabs={ tabs } />
+		<Layout
+			route={ route }
+			settingsPage={ settingsPage }
+			tabs={ tabs }
+			activeSection={ activeSection }
+		/>
 	);
 };
 

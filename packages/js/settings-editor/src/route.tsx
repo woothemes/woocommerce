@@ -25,7 +25,7 @@ import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
 /**
  * Internal dependencies
  */
-import { Sidebar, SectionTabs, Header } from './components';
+import { Sidebar } from './components';
 import { Route, Location } from './types';
 import { LegacyContent } from './legacy';
 
@@ -92,6 +92,7 @@ const getSettingsPageTabs = (
  */
 const getLegacyRoute = (
 	activePage: string,
+	activeSection: string,
 	settingsData: SettingsData
 ): Route => {
 	const settingsPage = settingsData[ activePage ];
@@ -106,7 +107,12 @@ const getLegacyRoute = (
 					pageTitle={ __( 'Store settings', 'woocommerce' ) }
 				/>
 			),
-			content: <LegacyContent settingsPage={ settingsPage } />,
+			content: (
+				<LegacyContent
+					settingsPage={ settingsPage }
+					activeSection={ activeSection }
+				/>
+			),
 			edit: null,
 		},
 		widths: {
@@ -170,6 +176,7 @@ export const useActiveRoute = (): {
 	route: Route;
 	settingsPage?: SettingsPage;
 	activePage?: string;
+	activeSection?: string;
 	tabs?: Array< { name: string; title: string } >;
 } => {
 	const settingsData: SettingsData = window.wcSettings?.admin?.settingsData;
@@ -177,7 +184,8 @@ export const useActiveRoute = (): {
 	const modernRoutes = useModernRoutes();
 
 	return useMemo( () => {
-		const { tab: activePage = 'general' } = location.params;
+		const { tab: activePage = 'general', section: activeSection } =
+			location.params;
 		const settingsPage = settingsData?.[ activePage ];
 		const tabs = getSettingsPageTabs( settingsPage );
 
@@ -188,7 +196,11 @@ export const useActiveRoute = (): {
 		// Handle legacy pages.
 		if ( ! settingsPage.is_modern ) {
 			return {
-				route: getLegacyRoute( activePage, settingsData ),
+				route: getLegacyRoute(
+					activePage,
+					activeSection,
+					settingsData
+				),
 				settingsPage,
 				activePage,
 				tabs,

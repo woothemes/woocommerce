@@ -44,10 +44,16 @@ const ANIMATION_DURATION = 0.3;
 type LayoutProps = {
 	route: Route;
 	settingsPage?: SettingsPage;
+	activeSection?: string;
 	tabs?: Array< { name: string; title: string } >;
 };
 
-export function Layout( { route, settingsPage, tabs }: LayoutProps ) {
+export function Layout( {
+	route,
+	settingsPage,
+	tabs,
+	activeSection,
+}: LayoutProps ) {
 	const [ fullResizer ] = useResizeObserver();
 	const toggleRef = useRef< HTMLAnchorElement >( null );
 	const isMobileViewport = useViewportMatch( 'medium', '<' );
@@ -107,7 +113,10 @@ export function Layout( { route, settingsPage, tabs }: LayoutProps ) {
 							} }
 						>
 							<Header pageTitle={ settingsPage?.label } />
-							<SectionTabs tabs={ tabs }>
+							<SectionTabs
+								tabs={ tabs }
+								activeSection={ activeSection }
+							>
 								{ areas.content }
 							</SectionTabs>
 						</div>
