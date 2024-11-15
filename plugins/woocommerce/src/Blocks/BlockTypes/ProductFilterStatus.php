@@ -150,7 +150,7 @@ final class ProductFilterStatus extends AbstractBlock {
 	protected function render( $attributes, $content, $block ) {
 		$stock_statuses     = $attributes['stockStatuses'] ?? array_keys( wc_get_product_stock_status_options() );
 		$product_statuses   = $attributes['productStatuses'] ?? array( 'onsale' );
-		$stock_status_data  = $this->get_stock_status_counts( $block, $stock_statuses );
+		$stock_status_data  = empty( $stock_statuses ) ? array() : $this->get_stock_status_counts( $block, $stock_statuses );
 		$onsale_status_data = in_array( 'onsale', $product_statuses, true ) ? $this->get_onsale_status_counts( $block ) : array();
 		$status_data        = array_merge( $stock_status_data, $onsale_status_data );
 		$filter_params      = $block->context['filterParams'] ?? array();
