@@ -6,9 +6,7 @@ import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
-import {
-	RegisteredPaymentGateway,
-} from '@woocommerce/data';
+import { RegisteredPaymentGateway } from '@woocommerce/data';
 
 /**
  * Internal dependencies
@@ -16,9 +14,7 @@ import {
 import sanitizeHTML from '~/lib/sanitize-html';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
 import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
-import {
-	WooPaymentsGatewayData,
-} from '~/settings-payments/types';
+import { WooPaymentsGatewayData } from '~/settings-payments/types';
 
 type PaymentGatewayItemProps = {
 	gateway: RegisteredPaymentGateway;

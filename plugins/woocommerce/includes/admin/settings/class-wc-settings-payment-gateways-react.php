@@ -9,8 +9,6 @@ declare( strict_types = 1);
  */
 
 use Automattic\WooCommerce\Admin\Features\OnboardingTasks\Tasks\WooCommercePayments;
-use Automattic\WooCommerce\Admin\Features\PaymentGatewaySuggestions\DefaultPaymentGateways;
-use Automattic\WooCommerce\Admin\Features\PaymentGatewaySuggestions\Init as Suggestions;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -127,14 +125,12 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 		$hide_save_button = true;
 		echo '<div id="experimental_wc_settings_payments_' . esc_attr( $section ) . '"></div>';
 
-
 		// Add WooPayments data to the page.
 		$is_woopayments_onboarded    = WooCommercePayments::is_connected() && ! WooCommercePayments::is_account_partially_onboarded();
 		$is_woopayments_in_test_mode = $is_woopayments_onboarded &&
 			method_exists( WC_Payments::class, 'mode' ) &&
 			method_exists( WC_Payments::mode(), 'is_test_mode_onboarding' ) &&
 			WC_Payments::mode()->is_test_mode_onboarding();
-
 
 		echo '<script type="application/json" id="experimental_wc_settings_payments_woopayments">' . wp_json_encode(
 			array(

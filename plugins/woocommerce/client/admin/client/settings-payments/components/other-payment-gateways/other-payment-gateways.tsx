@@ -5,12 +5,12 @@ import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import React, { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { SuggestedPaymentExtension } from '@woocommerce/data';
 
 /**
  * Internal dependencies
  */
 import { getAdminSetting } from '~/utils/admin-settings';
-import { SuggestedPaymentExtension } from '@woocommerce/data';
 
 const assetUrl = getAdminSetting( 'wcAdminAssetUrl' );
 

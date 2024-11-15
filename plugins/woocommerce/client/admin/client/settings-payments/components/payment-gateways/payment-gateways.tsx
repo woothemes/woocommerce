@@ -12,13 +12,11 @@ import { __ } from '@wordpress/i18n';
  */
 import { PaymentGatewayListItem } from '~/settings-payments/components/payment-gateway-list-item';
 import { PaymentExtensionSuggestionListItem } from '~/settings-payments/components/payment-extension-suggestion-list-item';
-import {
-	WooPaymentsGatewayData,
-} from '~/settings-payments/types';
+import { WooPaymentsGatewayData } from '~/settings-payments/types';
 
 import {
 	RegisteredPaymentGateway,
-	SuggestedPaymentExtension
+	SuggestedPaymentExtension,
 } from '@woocommerce/data';
 import { useMemo } from '@wordpress/element';
 
@@ -39,7 +37,7 @@ export const PaymentGateways = ( {
 	wooPaymentsGatewayData,
 	installingPlugin,
 	setupPlugin,
-	togglePlugin
+	togglePlugin,
 }: PaymentGatewaysProps ) => {
 	const setupLivePayments = () => {};
 
@@ -76,7 +74,7 @@ export const PaymentGateways = ( {
 						gateway,
 						wooPaymentsGatewayData,
 						setupLivePayments,
-						togglePlugin
+						togglePlugin,
 					} );
 				}
 			),

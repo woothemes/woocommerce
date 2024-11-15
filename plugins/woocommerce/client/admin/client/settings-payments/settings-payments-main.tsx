@@ -51,7 +51,6 @@ export const SettingsPaymentsMain = () => {
 		registeredPaymentGateways,
 		preferredPluginSuggestions,
 		otherPluginSuggestions,
-		isFetching,
 	} = useSelect( ( select ) => {
 		return {
 			registeredPaymentGateways: select(
@@ -63,9 +62,6 @@ export const SettingsPaymentsMain = () => {
 			otherPluginSuggestions: select(
 				PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME
 			).getOtherPluginSuggestions(),
-			isFetching: select(
-				PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME
-			).isFetchingPaymentGatewaySuggestions(),
 		};
 	} );
 
