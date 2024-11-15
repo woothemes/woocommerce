@@ -89,9 +89,16 @@ export type OnboardingState = {
 	jetpackAuthUrls: Record< string, GetJetpackAuthUrlResponse >;
 };
 
-export type Industry = {
-	slug: string;
-};
+export type Industry =
+	| 'clothing_and_accessories'
+	| 'food_and_drink'
+	| 'electronics_and_computers'
+	| 'health_and_beauty'
+	| 'education_and_learning'
+	| 'home_furniture_and_garden'
+	| 'arts_and_crafts'
+	| 'sports_and_recreation'
+	| 'other';
 
 export type GetJetpackAuthUrlResponse = {
 	url: string;
@@ -143,6 +150,9 @@ export type ProfileItems = {
 	setup_client?: boolean | null;
 	skipped?: boolean | null;
 	is_plugins_page_skipped?: boolean | null;
+	business_choice?: string | null;
+	selling_online_answer?: string | null;
+	selling_platforms?: string[] | null;
 	/** @deprecated This is always null, the theme step has been removed since WC 7.7. */
 	theme?: string | null;
 	wccom_connected?: boolean | null;
