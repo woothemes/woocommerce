@@ -5802,6 +5802,10 @@ img.help_tip {
 		.options_group:not(.hidden),
 		// General coupos data does not have options group wrapper, make it look like it has.
 		&#general_coupon_data:not(.hidden) {
+			display: flex;
+		}
+		.options_group,
+		&#general_coupon_data {
 			border: 0; // reset shared styles
 			border-bottom: 1px solid #EDEDED;
 			padding: 36px 48px;
@@ -6125,6 +6129,21 @@ img.help_tip {
 		align-items: flex-start;
 		flex: 1 0 0;
 		align-self: stretch;
+
+
+		display: grid;
+		grid-template-columns: [nav] 20% [content] 80%;
+
+		> * {
+			grid-column: content;
+			align-self: stretch;
+			border-left: 1px solid #BBBCBF;
+		}
+
+		> .wc-tabs {
+			grid-column: nav;
+			border-left: none;
+		}
 	}
 }
 
@@ -6165,9 +6184,6 @@ img.help_tip {
 #woocommerce-coupon-data {
 	.woocommerce_options_panel,
 	.wc-metaboxes-wrapper {
-		float: left;
-		width: 80%;
-
 		._backorders_field .wc-radios li {
 			display: block;
 			padding: 0 0 2px;
@@ -6319,9 +6335,7 @@ img.help_tip {
 
 	ul.wc-tabs {
 		margin: 0;
-		width: 20%;
 		padding: 0;
-		border-right: 1px solid #BBBCBF;
 		align-self: stretch;
 
 		li {
@@ -6332,14 +6346,19 @@ img.help_tip {
 			min-height: var(--grid-unit-50, 40px);
 
 			a {
-				display: flex;
-				flex-wrap: wrap;
 				padding: 20px 24px;
-				align-items: center;
-				gap: 10px;
-				align-self: stretch;
 
 				color: var(--Gray-Gray-60, #50575E);
+
+				&::before {
+					margin-right: $gap-smallest;
+					vertical-align: middle;
+					display: inline-block;
+					height: 14px;
+				}
+				span {
+					vertical-align: middle;
+				}
 			}
 
 			&.active a {
@@ -6348,6 +6367,10 @@ img.help_tip {
 
 				border-left: 3px solid var(--Upcoming-Blueberry, #3858E9);
 			}
+		}
+		// Overwrite marketplace css with higher specificity.
+		li.marketplace-suggestions_options.marketplace-suggestions_tab a span {
+			margin: 0;
 		}
 	}
 }
@@ -8070,40 +8093,55 @@ table.bar_chart {
 	}
 }
 
+@media only screen and (max-width: 1280px) {
+	#woocommerce-product-data,
+	#woocommerce-coupon-data {
+		.options_group,
+		// General coupos data does not have options group wrapper, make it look like it has.
+		&#general_coupon_data {
+			padding: $gap calc( $gap * 4 / 3);
+		}
+	}
+}
+
 /**
   * Optimisation for screens 900px and smaller
   */
 @media only screen and (max-width: 900px) {
-	#woocommerce-coupon-data ul.coupon_data_tabs,
-	#woocommerce-product-data ul.product_data_tabs,
-	#woocommerce-product-data .wc-tabs-back {
-		width: 10%;
+	#woocommerce-product-data,
+	#woocommerce-coupon-data {
+		.panel-wrap {
+			grid-template-columns: [nav] 10% [content] 90%;
+		}
+
+		.options_group,
+		// General coupos data does not have options group wrapper, make it look like it has.
+		&#general_coupon_data {
+			padding: $gap-small $gap;
+		}
 	}
 
-	#woocommerce-coupon-data .wc-metaboxes-wrapper,
-	#woocommerce-coupon-data .woocommerce_options_panel,
-	#woocommerce-product-data .wc-metaboxes-wrapper,
-	#woocommerce-product-data .woocommerce_options_panel {
-		width: 90%;
-	}
+	#woocommerce-coupon-data ul.coupon_data_tabs li,
+	#woocommerce-product-data ul.product_data_tabs li {
+		min-height: calc( var(--grid-unit-50, 40px) / 2);
 
-	#woocommerce-coupon-data ul.coupon_data_tabs li a,
-	#woocommerce-product-data ul.product_data_tabs li a {
-		position: relative;
-		text-indent: -999px;
-		padding: 10px;
+		a {
+			position: relative;
+			text-indent: -999px;
+			padding: $gap-smaller;
 
-		&::before {
-			position: absolute;
-			top: 0;
-			right: 0;
-			bottom: 0;
-			left: 0;
-			text-indent: 0;
-			text-align: center;
-			line-height: 40px;
-			width: 100%;
-			height: 40px;
+			&::before {
+				position: absolute;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				text-indent: 0;
+				text-align: center;
+				line-height: 40px;
+				width: 100%;
+				height: 40px;
+			}
 		}
 	}
 }
