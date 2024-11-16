@@ -2,7 +2,8 @@
 namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 use Automattic\WooCommerce\Blocks\Utils\ProductCollectionUtils;
-use Automattic\WooCommerce\Internal\ProductFilters\FilterData;
+use Automattic\WooCommerce\Internal\ProductFilters\FilterDataProvider;
+use Automattic\WooCommerce\Internal\ProductFilters\QueryClauses;
 
 /**
  * Product Filter: Price Block.
@@ -204,7 +205,8 @@ final class ProductFilterPrice extends AbstractBlock {
 			$query_vars['meta_query'] = ProductCollectionUtils::remove_query_array( $query_vars['meta_query'], 'key', '_price' );
 		}
 
-		$price_results = wc_get_container()->get( FilterData::class )->get_filtered_price( $query_vars );
+		$container     = wc_get_container();
+		$price_results = $container->get( FilterDataProvider::class )->with( $container->get( QueryClauses::class ) )->get_filtered_price( $query_vars );
 
 		return array(
 			'min_price' => intval( floor( $price_results->min_price ?? 0 ) ),

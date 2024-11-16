@@ -23,27 +23,7 @@ class FilterData {
 	 */
 	private $query_clauses;
 
-	/**
-	 * Initialize dependencies.
-	 *
-	 * @internal
-	 *
-	 * @param QueryClauses $query_clauses Instance of QueryClauses.
-	 *
-	 * @return void
-	 */
-	final public function init( QueryClauses $query_clauses ): void {
-		$this->set_query_clauses_generator( $query_clauses );
-	}
-
-	/**
-	 * Allow setting the clauses generator at run time.
-	 *
-	 * @param QueryClausesGenerator $query_clauses Instance of QueryClauses.
-	 *
-	 * @return void
-	 */
-	final public function set_query_clauses_generator( QueryClausesGenerator $query_clauses ): void {
+	public function __construct( QueryClausesGenerator $query_clauses ) {
 		$this->query_clauses = $query_clauses;
 	}
 
