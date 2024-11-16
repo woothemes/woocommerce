@@ -82,7 +82,7 @@ class FilterData {
 	 * @param array $query_vars The WP_Query arguments.
 	 * @return array status=>count pairs.
 	 */
-	public function get_stock_status_counts( array $query_vars ) {
+	public function get_stock_status_counts( array $query_vars, array $statuses ) {
 		$pre_filter_counts = $this->pre_get_filter_counts( 'stock', $query_vars );
 
 		if ( isset( $pre_filter_counts ) ) {
@@ -111,10 +111,9 @@ class FilterData {
 		remove_filter( 'posts_pre_query', '__return_empty_array' );
 
 		global $wpdb;
-		$stock_status_options = array_keys( wc_get_product_stock_status_options() );
-		$stock_status_counts  = array();
+		$stock_status_counts = array();
 
-		foreach ( $stock_status_options as $status ) {
+		foreach ( $statuses as $status ) {
 			$status                 = esc_sql( $status );
 			$stock_status_count_sql = "
 				SELECT COUNT( DISTINCT posts.ID ) as status_count

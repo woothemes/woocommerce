@@ -199,7 +199,7 @@ final class ProductFilterStatus extends AbstractBlock {
 		}
 
 		$container = wc_get_container();
-		$counts    = $container->get( FilterDataProvider::class )->with( $container->get( QueryClauses::class ) )->get_stock_status_counts( $query_vars );
+		$counts    = $container->get( FilterDataProvider::class )->with( $container->get( QueryClauses::class ) )->get_stock_status_counts( $query_vars, array_keys( wc_get_product_stock_status_options() ) );
 		$data      = array();
 
 		foreach ( $counts as $key => $value ) {
