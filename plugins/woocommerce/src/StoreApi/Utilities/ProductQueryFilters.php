@@ -1,6 +1,7 @@
 <?php
 namespace Automattic\WooCommerce\StoreApi\Utilities;
 
+use Automattic\WooCommerce\Internal\ProductFilters\FilterDataProvider;
 use Automattic\WooCommerce\StoreApi\Utilities\ProductQuery;
 
 /**
@@ -51,7 +52,6 @@ class ProductQueryFilters {
 	 * @return array status=>count pairs.
 	 */
 	public function get_stock_status_counts( $request ) {
-		global $wpdb;
 		$product_query         = new ProductQuery();
 		$stock_status_options  = array_map( 'esc_sql', array_keys( wc_get_product_stock_status_options() ) );
 		$hide_outofstock_items = get_option( 'woocommerce_hide_out_of_stock_items' );
@@ -59,28 +59,12 @@ class ProductQueryFilters {
 			unset( $stock_status_options['outofstock'] );
 		}
 
-		add_filter( 'posts_clauses', array( $product_query, 'add_query_clauses' ), 10, 2 );
-		add_filter( 'posts_pre_query', '__return_empty_array' );
-
 		$query_args = $product_query->prepare_objects_query( $request );
 		unset( $query_args['stock_status'] );
 		$query_args['no_found_rows']  = true;
 		$query_args['posts_per_page'] = -1;
-		$query                        = new \WP_Query();
-		$result                       = $query->query( $query_args );
-		$product_query_sql            = $query->request;
 
-		remove_filter( 'posts_clauses', array( $product_query, 'add_query_clauses' ), 10 );
-		remove_filter( 'posts_pre_query', '__return_empty_array' );
-
-		$stock_status_counts = array();
-
-		foreach ( $stock_status_options as $status ) {
-			$stock_status_count_sql = $this->generate_stock_status_count_query( $status, $product_query_sql, $stock_status_options );
-
-			$result = $wpdb->get_row( $stock_status_count_sql ); // phpcs:ignore
-			$stock_status_counts[ $status ] = $result->status_count;
-		}
+		$stock_status_counts = wc_get_container()->get( FilterDataProvider::class )->with( $product_query )->get_stock_status_counts( $query_args, $stock_status_options );
 
 		return $stock_status_counts;
 	}
@@ -117,7 +101,7 @@ class ProductQueryFilters {
 	 * @param array            $attributes Attributes to count, either names or ids.
 	 * @return array termId=>count pairs.
 	 */
-	public function get_attribute_counts( $request, $attributes = [] ) {
+	public function get_attribute_counts( $request, $attributes = array() ) {
 		global $wpdb;
 
 		// Remove paging and sorting params from the request.
