@@ -5691,6 +5691,14 @@ img.help_tip {
 	#commentsdiv.postbox .inside,
 	#postimagediv .inside {
 		padding: 16px;
+
+		// Remove margins of paragraph wrappers that probably should have been divs separated with gap.
+		p:first-child {
+			margin-top: 0;
+		}
+		p:last-child {
+			margin-bottom: 0;
+		}
 	}
 
 	// Separate rule, not to overspecify the above ones with id selector.
