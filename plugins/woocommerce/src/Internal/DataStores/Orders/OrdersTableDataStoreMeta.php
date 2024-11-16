@@ -106,7 +106,7 @@ class OrdersTableDataStoreMeta extends CustomMetaDataStore {
 			return parent::get_meta_data_for_object_ids( $object_ids );
 		}
 
-		$meta_data = $this->get_meta_data_for_object_ids_from_cache( $object_ids );
+		$meta_data  = $this->get_meta_data_for_object_ids_from_cache( $object_ids );
 		$object_ids = array_diff( $object_ids, array_keys( $meta_data ) );
 
 		if ( empty( $object_ids ) ) {
@@ -127,11 +127,9 @@ class OrdersTableDataStoreMeta extends CustomMetaDataStore {
 	 * @return \stdClass[][] An array, keyed by the object IDs, containing arrays of raw meta data for each object.
 	 */
 	private function get_meta_data_for_object_ids_from_cache( array $object_ids ): array {
-		/**
-		 * @var WPCacheEngine $cache_engine
-		 */
-		$cache_engine        = wc_get_container()->get( WPCacheEngine::class );
-		$meta_data           = $cache_engine->get_cached_objects( $object_ids, $this->get_cache_group() );
+		$cache_engine = wc_get_container()->get( WPCacheEngine::class );
+		$meta_data    = $cache_engine->get_cached_objects( $object_ids, $this->get_cache_group() );
+
 		return array_filter( $meta_data );
 	}
 
@@ -143,10 +141,7 @@ class OrdersTableDataStoreMeta extends CustomMetaDataStore {
 	 * @return void
 	 */
 	private function set_meta_data_for_objects_in_cache( array $meta_data ) {
-		/**
-		 * @var WPCacheEngine $cache_engine
-		 */
-		$cache_engine        = wc_get_container()->get( WPCacheEngine::class );
+		$cache_engine = wc_get_container()->get( WPCacheEngine::class );
 		$cache_engine->cache_objects( $meta_data, 0, $this->get_cache_group() );
 	}
 
@@ -166,9 +161,6 @@ class OrdersTableDataStoreMeta extends CustomMetaDataStore {
 			return array_fill_keys( $object_ids, true );
 		}
 
-		/**
-		 * @var WPCacheEngine $cache_engine
-		 */
 		$cache_engine  = wc_get_container()->get( WPCacheEngine::class );
 		$return_values = array();
 		foreach ( $object_ids as $object_id ) {
@@ -190,9 +182,6 @@ class OrdersTableDataStoreMeta extends CustomMetaDataStore {
 			return true;
 		}
 
-		/**
-		 * @var WPCacheEngine $cache_engine
-		 */
 		$cache_engine = wc_get_container()->get( WPCacheEngine::class );
 
 		return $cache_engine->delete_cache_group( $this->get_cache_group() );

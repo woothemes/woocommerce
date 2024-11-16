@@ -556,9 +556,6 @@ class OrdersTableDataStore extends \Abstract_WC_Order_Data_Store_CPT implements 
 			return array_fill_keys( $order_ids, true );
 		}
 
-		/**
-		 * @var WPCacheEngine $cache_engine
-		 */
 		$cache_engine  = wc_get_container()->get( WPCacheEngine::class );
 		$return_values = array();
 
@@ -589,9 +586,6 @@ class OrdersTableDataStore extends \Abstract_WC_Order_Data_Store_CPT implements 
 			return true;
 		}
 
-		/**
-		 * @var WPCacheEngine $cache_engine
-		 */
 		$cache_engine       = wc_get_container()->get( WPCacheEngine::class );
 		$orders_invalidated = $cache_engine->delete_cache_group( $this->get_cache_group() );
 		if ( is_callable( array( $this->data_store_meta, 'clear_cached_data' ) ) ) {
@@ -1836,9 +1830,6 @@ WHERE
 	 * @return \stdClass[] Keyed array of objects containing raw order data keyed by the order IDs.
 	 */
 	private function get_order_data_for_ids_from_cache( array $ids ): array {
-		/**
-		 * @var $cache_engine WPCacheEngine
-		 */
 		$cache_engine = wc_get_container()->get( WPCacheEngine::class );
 
 		return array_filter( $cache_engine->get_cached_objects( $ids, $this->get_cache_group() ) );
@@ -1847,14 +1838,11 @@ WHERE
 	/**
 	 * Store the raw data for a set of orders in cache.
 	 *
-	 * @param \stdClass[] An array of raw order records to set in cache keyed by the order IDs.
+	 * @param \stdClass[][] $order_data An array of raw order records to set in cache keyed by the order IDs.
 	 *
 	 * @return void
 	 */
 	private function set_order_data_in_cache( array $order_data ) {
-		/**
-		 * @var $cache_engine WPCacheEngine
-		 */
 		$cache_engine = wc_get_container()->get( WPCacheEngine::class );
 		$cache_engine->cache_objects( $order_data, 0, $this->get_cache_group() );
 	}
