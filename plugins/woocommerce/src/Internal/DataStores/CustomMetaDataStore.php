@@ -267,7 +267,7 @@ abstract class CustomMetaDataStore {
 	 *
 	 * @param array $object_ids List of object IDs.
 	 *
-	 * @return \stdClass[] DB Order objects or error.
+	 * @return \stdClass[][] DB Order objects.
 	 */
 	public function get_meta_data_for_object_ids( array $object_ids ): array {
 		global $wpdb;

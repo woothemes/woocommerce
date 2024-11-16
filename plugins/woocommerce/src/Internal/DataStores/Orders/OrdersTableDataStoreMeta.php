@@ -99,25 +99,55 @@ class OrdersTableDataStoreMeta extends CustomMetaDataStore {
 	 *
 	 * @param array $object_ids List of order IDs.
 	 *
-	 * @return \stdClass[] DB Order objects or error.
+	 * @return \stdClass[][] An array, keyed by the object IDs, containing arrays of raw meta data for each object.
 	 */
 	public function get_meta_data_for_object_ids( array $object_ids ): array {
 		if ( ! OrderUtil::custom_orders_table_datastore_cache_enabled() ) {
 			return parent::get_meta_data_for_object_ids( $object_ids );
 		}
-		$cache_engine        = wc_get_container()->get( WPCacheEngine::class );
-		$meta_data           = $cache_engine->get_cached_objects( $object_ids, $this->get_cache_group() );
-		$meta_data           = array_filter( $meta_data );
-		$uncached_object_ids = array_diff( $object_ids, array_keys( $meta_data ) );
 
-		if ( empty( $uncached_object_ids ) ) {
+		$meta_data = $this->get_meta_data_for_object_ids_from_cache( $object_ids );
+		$object_ids = array_diff( $object_ids, array_keys( $meta_data ) );
+
+		if ( empty( $object_ids ) ) {
 			return $meta_data;
 		}
 
-		$uncached_meta_data = parent::get_meta_data_for_object_ids( $uncached_object_ids );
-		$cache_engine->cache_objects( $uncached_meta_data, 0, $this->get_cache_group() );
+		$db_meta_data = parent::get_meta_data_for_object_ids( $object_ids );
+		$this->set_meta_data_for_objects_in_cache( $db_meta_data );
 
-		return $uncached_meta_data + $meta_data;
+		return $db_meta_data + $meta_data;
+	}
+
+	/**
+	 * Retrieve raw object meta from cache for the given a set of IDs.
+	 *
+	 * @param int[] $object_ids List of object IDs.
+	 *
+	 * @return \stdClass[][] An array, keyed by the object IDs, containing arrays of raw meta data for each object.
+	 */
+	private function get_meta_data_for_object_ids_from_cache( array $object_ids ): array {
+		/**
+		 * @var WPCacheEngine $cache_engine
+		 */
+		$cache_engine        = wc_get_container()->get( WPCacheEngine::class );
+		$meta_data           = $cache_engine->get_cached_objects( $object_ids, $this->get_cache_group() );
+		return array_filter( $meta_data );
+	}
+
+	/**
+	 * Store the raw meta data for a set of objects in cache.
+	 *
+	 * @param \stdClass[][] $meta_data An array, keyed by the object IDs, containing arrays of raw meta data for each object.
+	 *
+	 * @return void
+	 */
+	private function set_meta_data_for_objects_in_cache( array $meta_data ) {
+		/**
+		 * @var WPCacheEngine $cache_engine
+		 */
+		$cache_engine        = wc_get_container()->get( WPCacheEngine::class );
+		$cache_engine->cache_objects( $meta_data, 0, $this->get_cache_group() );
 	}
 
 	/**
@@ -135,6 +165,10 @@ class OrdersTableDataStoreMeta extends CustomMetaDataStore {
 		if ( ! OrderUtil::custom_orders_table_datastore_cache_enabled() ) {
 			return array_fill_keys( $object_ids, true );
 		}
+
+		/**
+		 * @var WPCacheEngine $cache_engine
+		 */
 		$cache_engine  = wc_get_container()->get( WPCacheEngine::class );
 		$return_values = array();
 		foreach ( $object_ids as $object_id ) {
@@ -155,6 +189,10 @@ class OrdersTableDataStoreMeta extends CustomMetaDataStore {
 		if ( ! OrderUtil::custom_orders_table_datastore_cache_enabled() ) {
 			return true;
 		}
+
+		/**
+		 * @var WPCacheEngine $cache_engine
+		 */
 		$cache_engine = wc_get_container()->get( WPCacheEngine::class );
 
 		return $cache_engine->delete_cache_group( $this->get_cache_group() );
