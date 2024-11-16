@@ -476,11 +476,11 @@ test.describe( 'Merchant → Checkout', () => {
 				);
 
 				const shippingApartmentOptionalToggle = editor.page.locator(
-					'.wc-block-components-require-apartment-field >> text="Optional"'
+					'.wc-block-components-require-address_2-field >> text="Optional"'
 				);
 
 				const shippingApartmentRequiredToggle = editor.page.locator(
-					'.wc-block-components-require-apartment-field >> text="Required"'
+					'.wc-block-components-require-address_2-field >> text="Required"'
 				);
 
 				// Verify that the apartment link is visible by default.
@@ -539,11 +539,11 @@ test.describe( 'Merchant → Checkout', () => {
 				);
 
 				const billingApartmentOptionalToggle = editor.page.locator(
-					'.wc-block-components-require-apartment-field >> text="Optional"'
+					'.wc-block-components-require-address_2-field >> text="Optional"'
 				);
 
 				const billingApartmentRequiredToggle = editor.page.locator(
-					'.wc-block-components-require-apartment-field >> text="Required"'
+					'.wc-block-components-require-address_2-field >> text="Required"'
 				);
 
 				// Enable the apartment field.
