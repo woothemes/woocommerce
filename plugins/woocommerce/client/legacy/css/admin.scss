@@ -5717,6 +5717,7 @@ img.help_tip {
 
 	.wp-editor-tools {
 		display: flex;
+		flex-wrap: wrap;
 		justify-content: space-between;
 	}
 
@@ -5747,6 +5748,7 @@ img.help_tip {
 	.wp-media-buttons {
 		display: flex;
 		align-self: flex-start;
+		flex-wrap: wrap;
 		gap: $gap-small;
 		padding-bottom: $gap;
 	}
