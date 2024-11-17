@@ -173,6 +173,11 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		// Set post_status.
 		$args['post_status'] = $request['status'];
 
+		// Filter by a list of product statuses.
+		if ( ! empty( $request['include_status'] ) ) {
+			$args['post_status'] = $request['include_status'];
+		}
+
 		// Taxonomy query to filter products by type, category,
 		// tag, shipping class, and attribute.
 		$tax_query = array();
@@ -1567,7 +1572,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		}
 
 		if ( $this->cogs_is_enabled() ) {
-			$schema = $this->add_cogs_related_schema( $schema, false );
+			$schema = $this->add_cogs_related_product_schema( $schema, false );
 		}
 
 		return $this->add_additional_fields_schema( $schema );
@@ -1595,6 +1600,17 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			'description'       => __( 'Limit results to those with a SKU that partial matches a string.', 'woocommerce' ),
 			'type'              => 'string',
 			'sanitize_callback' => 'sanitize_text_field',
+			'validate_callback' => 'rest_validate_request_arg',
+		);
+
+		$params['include_status'] = array(
+			'description'       => __( 'Limit result set to products with any of the statuses.', 'woocommerce' ),
+			'type'              => 'array',
+			'items'             => array(
+				'type' => 'string',
+				'enum' => array_merge( array( 'any', 'trash' ), array_keys( get_post_statuses() ) ),
+			),
+			'sanitize_callback' => 'wp_parse_list',
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 
@@ -1772,7 +1788,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		$data = parent::prepare_object_for_response_core( $object_data, $request, $context );
 
 		if ( $this->cogs_is_enabled() ) {
-			$this->add_cogs_info_to_returned_data( $data, $object_data );
+			$this->add_cogs_info_to_returned_product_data( $data, $object_data );
 		}
 
 		return $data;

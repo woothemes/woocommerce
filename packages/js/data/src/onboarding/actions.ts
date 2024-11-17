@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { apiFetch } from '@wordpress/data-controls';
-import { controls } from '@wordpress/data';
+import { controls, dispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -324,6 +324,11 @@ export function* updateProfileItems( items: ProfileItems ) {
 		yield setError( 'updateProfileItems', error );
 		yield setIsRequesting( 'updateProfileItems', false );
 		throw error;
+	} finally {
+		yield dispatch( OPTIONS_STORE_NAME ).invalidateResolution(
+			'getOption',
+			[ 'woocommerce_onboarding_profile' ]
+		);
 	}
 }
 

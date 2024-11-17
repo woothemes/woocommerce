@@ -5,9 +5,12 @@ import {
 	BlockContextProvider,
 	useBlockProps,
 	InnerBlocks,
+	InspectorControls,
 } from '@wordpress/block-editor';
 import { useCollectionData } from '@woocommerce/base-context/hooks';
 import { __ } from '@wordpress/i18n';
+import { PanelBody, ToggleControl } from '@wordpress/components';
+import { BlockEditProps, TemplateArray } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -15,8 +18,15 @@ import { __ } from '@wordpress/i18n';
 import { getAllowedBlocks } from '../../utils';
 import { getPriceFilterData } from './utils';
 import { InitialDisabled } from '../../components/initial-disabled';
+import { BlockAttributes } from './types';
+import { toggleProductFilterClearButtonVisibilityFactory } from '../../utils/toggle-product-filter-clear-button-visibility';
 
-const Edit = () => {
+const toggleProductFilterClearButtonVisibility =
+	toggleProductFilterClearButtonVisibilityFactory();
+
+const Edit = ( props: BlockEditProps< BlockAttributes > ) => {
+	const { attributes, setAttributes, clientId } = props;
+	const { clearButton } = attributes;
 	const blockProps = useBlockProps();
 
 	const { results, isLoading } = useCollectionData( {
@@ -27,6 +37,22 @@ const Edit = () => {
 
 	return (
 		<div { ...blockProps }>
+			<InspectorControls group="styles">
+				<PanelBody title={ __( 'Display', 'woocommerce' ) }>
+					<ToggleControl
+						label={ __( 'Clear button', 'woocommerce' ) }
+						checked={ clearButton }
+						onChange={ ( value ) => {
+							setAttributes( { clearButton: value } );
+							toggleProductFilterClearButtonVisibility( {
+								clientId,
+								showClearButton: value,
+							} );
+						} }
+					/>
+				</PanelBody>
+			</InspectorControls>
+
 			<InitialDisabled>
 				<BlockContextProvider
 					value={ {
@@ -59,23 +85,25 @@ const Edit = () => {
 									[
 										'core/heading',
 										{
-											level: 3,
+											level: 4,
 											content: __(
 												'Price',
 												'woocommerce'
 											),
 										},
 									],
-									[
-										'woocommerce/product-filter-clear-button',
-										{
-											lock: {
-												remove: true,
-												move: false,
-											},
-										},
-									],
-								],
+									clearButton
+										? [
+												'woocommerce/product-filter-clear-button',
+												{
+													lock: {
+														remove: true,
+														move: false,
+													},
+												},
+										  ]
+										: null,
+								].filter( Boolean ) as unknown as TemplateArray,
 							],
 							[ 'woocommerce/product-filter-price-slider', {} ],
 						] }

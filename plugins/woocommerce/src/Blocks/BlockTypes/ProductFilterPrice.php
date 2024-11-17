@@ -120,11 +120,12 @@ final class ProductFilterPrice extends AbstractBlock {
 			return '';
 		}
 
-		$price_range = $this->get_filtered_price( $block );
-		$min_range   = $price_range['min_price'] ?? 0;
-		$max_range   = $price_range['max_price'] ?? 0;
-		$min_price   = intval( get_query_var( self::MIN_PRICE_QUERY_VAR, $min_range ) );
-		$max_price   = intval( get_query_var( self::MAX_PRICE_QUERY_VAR, $max_range ) );
+		$price_range   = $this->get_filtered_price( $block );
+		$min_range     = $price_range['min_price'] ?? 0;
+		$max_range     = $price_range['max_price'] ?? 0;
+		$filter_params = $block->context['filterParams'] ?? array();
+		$min_price     = intval( $filter_params[ self::MIN_PRICE_QUERY_VAR ] ?? $min_range );
+		$max_price     = intval( $filter_params[ self::MAX_PRICE_QUERY_VAR ] ?? $max_range );
 
 		$filter_context = array(
 			'price'   => array(
@@ -203,6 +204,13 @@ final class ProductFilterPrice extends AbstractBlock {
 		if ( ! empty( $query_vars['meta_query'] ) ) {
 			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 			$query_vars['meta_query'] = ProductCollectionUtils::remove_query_array( $query_vars['meta_query'], 'key', '_price' );
+		}
+
+		if ( isset( $query_vars['taxonomy'] ) && false !== strpos( $query_vars['taxonomy'], 'pa_' ) ) {
+			unset(
+				$query_vars['taxonomy'],
+				$query_vars['term']
+			);
 		}
 
 		$price_results = $filters->get_filtered_price( $query_vars );

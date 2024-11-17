@@ -18,6 +18,8 @@ defined( 'ABSPATH' ) || exit;
  * Class to define the WooCommerce features that can be enabled and disabled by admin users,
  * provides also a mechanism for WooCommerce plugins to declare that they are compatible
  * (or incompatible) with a given feature.
+ *
+ * Features should not be enabled, or disabled, before init.
  */
 class FeaturesController {
 
@@ -89,8 +91,7 @@ class FeaturesController {
 	 * Creates a new instance of the class.
 	 */
 	public function __construct() {
-		self::add_filter( 'updated_option', array( $this, 'process_updated_option' ), 999, 3 );
-		self::add_filter( 'added_option', array( $this, 'process_added_option' ), 999, 3 );
+		self::add_filter( 'init', array( $this, 'start_listening_for_option_changes' ), 10, 0 );
 		self::add_filter( 'woocommerce_get_sections_advanced', array( $this, 'add_features_section' ), 10, 1 );
 		self::add_filter( 'woocommerce_get_settings_advanced', array( $this, 'add_feature_settings' ), 10, 2 );
 		self::add_filter( 'deactivated_plugin', array( $this, 'handle_plugin_deactivation' ), 10, 1 );
@@ -614,6 +615,19 @@ class FeaturesController {
 	 */
 	public function allow_activating_plugins_with_incompatible_features(): void {
 		$this->force_allow_enabling_plugins = true;
+	}
+
+	/**
+	 * Adds our callbacks for the `updated_option` and `added_option` filter hooks.
+	 *
+	 * We delay adding these hooks until `init`, because both callbacks need to load our list of feature definitions,
+	 * and building that list requires translating various strings (which should not be done earlier than `init`).
+	 *
+	 * @return void
+	 */
+	private function start_listening_for_option_changes(): void {
+		self::add_filter( 'updated_option', array( $this, 'process_updated_option' ), 999, 3 );
+		self::add_filter( 'added_option', array( $this, 'process_added_option' ), 999, 3 );
 	}
 
 	/**
