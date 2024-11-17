@@ -21,12 +21,13 @@ $gap-smaller: 8px;
 $gap-smallest: 4px;
 
 /**
- * Refubrished classic product editor colors.
+ * Refubrished classic product editor.
  */
 $blueberry: #3858E9;
 $alias-text: #070707;
 $alias-text-tertiary: #505050;
 $gray-30: #8C8F94;
+$border-radius: 8px;
 
 /**
   * Styling begins
@@ -5614,7 +5615,7 @@ img.help_tip {
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
-		gap: 4px;
+		gap: $gap-smallest;
 	}
 
 	// Title input.
@@ -5630,12 +5631,12 @@ img.help_tip {
 			color: var(--Gray-Gray-30, $gray-30);
 		}
 		#title {
-			border-radius: 8px;
+			border-radius: $border-radius;
 			border: 1px solid #BBBCBF;
 		}
 	}
 
-	// Gap between Title and Slug edit should be 8px, so we need to clear margins.
+	// Gap between Title and Slug edit should be 8px = $gap-smaller, so we need to clear margins.
 	#poststuff #titlediv .inside {
 		padding: 0;
 		margin-top: $gap-smaller;
@@ -5651,7 +5652,7 @@ img.help_tip {
 	// Postbox cards.
 	.postbox {
 		border: 0;
-		border-radius: 8px;
+		border-radius: $border-radius;
 		display: flex;
 		flex-direction: column;
 	}
@@ -6070,7 +6071,7 @@ img.help_tip {
 		.product-data-wrapper {
 			display: flex;
 			align-items: center;
-			gap: 16px;
+			gap: $gap;
 			flex: 1;
 			display: flex;
 			flex-wrap: wrap;
@@ -6098,7 +6099,8 @@ img.help_tip {
 			padding-right: $gap;
 			border-right: 1px solid #dfdfdf;
 			gap: $gap-small;
-			margin-left: calc(-1 * (16px - 12px));
+			// Make it look like product type select pertain to the same group as header and "—".
+			margin-left: calc(-1 * ($gap - $gap-small));
 			margin-right: 0;
 		}
 
@@ -6162,7 +6164,7 @@ img.help_tip {
 	outline: 0;
 	margin: $gap-smaller 0;
 	display: block;
-	border-radius: 8px;
+	border-radius: $border-radius;
 	border: 1px solid #BBBCBF;
 
 	&::-webkit-input-placeholder {
