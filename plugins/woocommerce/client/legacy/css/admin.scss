@@ -27,6 +27,7 @@ $blueberry: #3858E9;
 $alias-text: #070707;
 $alias-text-tertiary: #505050;
 $gray-30: #8C8F94;
+$separator-color: #BBBCBF;
 $border-radius: 8px;
 
 /**
@@ -5632,7 +5633,6 @@ img.help_tip {
 		}
 		#title {
 			border-radius: $border-radius;
-			border: 1px solid #BBBCBF;
 		}
 	}
 
@@ -5678,7 +5678,7 @@ img.help_tip {
 		padding: 12px 12px 12px 16px;
 		flex-shrink: 0;
 		align-self: stretch;
-		border-color: #BBBCBF;
+		border-color: $separator-color;
 		min-height: 30px;
 
 		.hndle {
@@ -5896,7 +5896,7 @@ img.help_tip {
 	}
 	#major-publishing-actions {
 		padding: $gap;
-		border-top: 1px solid #BBBCBF;
+		border-top: 1px solid $separator-color;
 		background: none;
 	}
 
@@ -5910,7 +5910,7 @@ img.help_tip {
 	.category-tabs {
 		margin: 0;
 		display: flex;
-		border-bottom: 1px solid #BBBCBF;
+		border-bottom: 1px solid $separator-color;
 
 		> li {
 			border: 0;
@@ -5943,7 +5943,7 @@ img.help_tip {
 		.tabs-panel {
 			padding: $gap;
 			border:0;
-			border-bottom: 1px solid #BBBCBF;
+			border-bottom: 1px solid $separator-color;
 
 			ul {
 				margin: 0;
@@ -6130,7 +6130,7 @@ img.help_tip {
 		> * {
 			grid-column: content;
 			align-self: stretch;
-			border-left: 1px solid #BBBCBF;
+			border-left: 1px solid $separator-color;
 		}
 
 		> .wc-tabs {
@@ -6154,7 +6154,6 @@ img.help_tip {
 	margin: $gap-smaller 0;
 	display: block;
 	border-radius: $border-radius;
-	border: 1px solid #BBBCBF;
 
 	&::-webkit-input-placeholder {
 		line-height: 1.42em;
