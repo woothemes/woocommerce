@@ -26,6 +26,7 @@ $gap-smallest: 4px;
 $blueberry: #3859E9;
 $alias-text: #070707;
 $alias-text-tertiary: #505050;
+$gray-30: #8C8F94;
 
 /**
   * Styling begins
@@ -5626,7 +5627,7 @@ img.help_tip {
 			height: auto;
 		}
 		#title-prompt-text {
-			color: var(--Gray-Gray-30, #8C8F94);
+			color: var(--Gray-Gray-30, $gray-30);
 		}
 		#title {
 			border-radius: 8px;
