@@ -293,12 +293,12 @@ class WC_Admin {
 		$version_parts = explode( '-', $raw_version );
 		$version       = count( $version_parts ) > 1 ? $version_parts[0] : $raw_version;
 
-		// Add WP 5.3+ compatibility class.
+		// Add WP 5.3+ compatibility class. Not used by WooCommerce core, but may be useful for extensions.
 		if ( $raw_version && version_compare( $version, '5.3', '>=' ) ) {
 			$classes .= ' wc-wp-version-gte-53';
 		}
 
-		// Add WP 5.5+ compatibility class.
+		// Add WP 5.5+ compatibility class. Not used by WooCommerce core, but may be useful for extensions.
 		if ( $raw_version && version_compare( $version, '5.5', '>=' ) ) {
 			$classes .= ' wc-wp-version-gte-55';
 		}
