@@ -5,6 +5,8 @@
  * @package WooCommerce\Tests\Functions\Stock
  */
 
+use Automattic\WooCommerce\Enums\OrderInternalStatus;
+
 /**
  * Class WC_Stock_Functions_Tests.
  */
@@ -24,7 +26,7 @@ class WC_Stock_Functions_Tests extends \WC_Unit_Test_Case {
 	 */
 	public $order_stock_restore_statuses = array(
 		'wc-cancelled',
-		'wc-pending',
+		OrderInternalStatus::PENDING,
 	);
 
 	/**

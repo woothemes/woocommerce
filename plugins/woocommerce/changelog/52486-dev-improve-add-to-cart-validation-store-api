@@ -1,4 +1,0 @@
-Significance: minor
-Type: tweak
-
-Provide cart_item_data to backward compatible cart validation code in the Store API.
