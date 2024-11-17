@@ -5801,7 +5801,7 @@ img.help_tip {
 		}
 		.options_group,
 		&#general_coupon_data {
-			border: 0; // reset shared styles
+			// border: 0; // reset shared styles
 			border-bottom: 1px solid #EDEDED;
 			padding: 36px 48px;
 			display: flex;
@@ -6139,6 +6139,10 @@ img.help_tip {
 			grid-column: nav;
 			border-left: none;
 		}
+	}
+	// Hide element that was used for CSS hack, that's no longer needed.
+	.wc-tabs-back {
+		display: none;
 	}
 }
 
