@@ -5662,6 +5662,13 @@ img.help_tip {
 	}
 	#postdivrich {
 		margin-top: 28px;
+		.wp-editor-wrap {
+			margin: $gap $gap 0;
+		}
+		#post-status-info {
+			margin: 0px $gap $gap;
+			width: calc(100% - 2 * $gap);
+		}
 	}
 	//
 
@@ -9278,8 +9285,9 @@ table.bar_chart {
 	}
 }
 
+// Consider unifying it with product editor look.
 #postdivrich.woocommerce-product-description {
-	margin-top: 28px;
+	margin-top: 20px;
 	margin-bottom: 0px;
 
 	.wp-editor-tools {
@@ -9288,11 +9296,11 @@ table.bar_chart {
 		width: 100%;
 	}
 	.wp-editor-wrap {
-		margin: $gap $gap 0;
+		margin: 6px 12px 0;
 	}
 	#post-status-info {
-		margin: 0px $gap $gap;
-		width: calc(100% - 2 * $gap);
+		margin: 0px 12px 12px;
+		width: calc(100% - 24px);
 	}
 }
 
