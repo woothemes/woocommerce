@@ -5809,7 +5809,6 @@ img.help_tip {
 		}
 		.options_group,
 		&#general_coupon_data {
-			// border: 0; // reset shared styles
 			border-bottom: 1px solid #EDEDED;
 			padding: 36px 48px;
 			display: flex;
@@ -5845,8 +5844,6 @@ img.help_tip {
 		table {
 			border-radius: 2px;
 			background: none;
-
-
 		}
 		td {
 			padding: 0;
@@ -6041,9 +6038,6 @@ img.help_tip {
 		display: none;
 	}
 }
-// .no-js.post-php.post-type-product .wp-core-ui .hide-if-no-js{
-// 	display: none;
-// }
 
 @media screen and (max-width: 782px) {
     .post-php.post-type-product,
@@ -6129,12 +6123,7 @@ img.help_tip {
 	}
 
 	.panel-wrap {
-		display: flex;
-		align-items: flex-start;
-		flex: 1 0 0;
 		align-self: stretch;
-
-
 		display: grid;
 		grid-template-columns: [nav] 20% [content] 80%;
 
