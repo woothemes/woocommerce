@@ -25,6 +25,7 @@ $gap-smallest: 4px;
  */
 $blueberry: #3859E9;
 $alias-text: #070707;
+$alias-text-tertiary: #505050;
 
 /**
   * Styling begins
@@ -5724,7 +5725,7 @@ img.help_tip {
 			background: none;
 			margin: 0;
 			padding: 10px $gap;
-			color: var(--Alias-text-text-tertiary, #505050);
+			color: var(--Alias-text-text-tertiary, $alias-text-tertiary);
 			border-width: 0 0 2px 0;
 			border-bottom-color: transparent;
 			justify-content: center;
@@ -5917,7 +5918,7 @@ img.help_tip {
 			border-bottom: 2px solid transparent;
 
 			> a {
-				color: var(--Alias-text-text-tertiary, #505050);
+				color: var(--Alias-text-text-tertiary, $alias-text-tertiary);
 				padding: $gap;
 
 				&:focus {
