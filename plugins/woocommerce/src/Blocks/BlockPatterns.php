@@ -80,13 +80,24 @@ class BlockPatterns {
 		$this->pattern_registry   = $pattern_registry;
 		$this->ptk_patterns_store = $ptk_patterns_store;
 
-		$this->dictionary = PatternsHelper::get_patterns_dictionary();
-
 		add_action( 'init', array( $this, 'register_block_patterns' ) );
 
 		if ( Features::is_enabled( 'pattern-toolkit-full-composability' ) ) {
 			add_action( 'init', array( $this, 'register_ptk_patterns' ) );
 		}
+	}
+
+	/**
+	 * Returns the Patterns dictionary.
+	 *
+	 * @return array|WP_Error
+	 */
+	private function get_patterns_dictionary() {
+		if ( null === $this->dictionary ) {
+			$this->dictionary = PatternsHelper::get_patterns_dictionary();
+		}
+
+		return $this->dictionary;
 	}
 
 	/**
@@ -123,7 +134,7 @@ class BlockPatterns {
 		foreach ( $files as $file ) {
 			$pattern_data = get_file_data( $file, $default_headers );
 
-			$this->pattern_registry->register_block_pattern( $file, $pattern_data, $this->dictionary );
+			$this->pattern_registry->register_block_pattern( $file, $pattern_data, $this->get_patterns_dictionary() );
 		}
 	}
 
@@ -139,12 +150,16 @@ class BlockPatterns {
 			return;
 		}
 
+		// The most efficient way to check for an existing action is to use `as_has_scheduled_action`, but in unusual
+		// cases where another plugin has loaded a very old version of Action Scheduler, it may not be available to us.
+		$has_scheduled_action = function_exists( 'as_has_scheduled_action' ) ? 'as_has_scheduled_action' : 'as_next_scheduled_action';
+
 		$patterns = $this->ptk_patterns_store->get_patterns();
 		if ( empty( $patterns ) ) {
 			// By only logging when patterns are empty and no fetch is scheduled,
 			// we ensure that warnings are only generated in genuinely problematic situations,
 			// such as when the pattern fetching mechanism has failed entirely.
-			if ( ! as_has_scheduled_action( 'fetch_patterns' ) ) {
+			if ( ! call_user_func( $has_scheduled_action, 'fetch_patterns' ) ) {
 				wc_get_logger()->warning(
 					__( 'Empty patterns received from the PTK Pattern Store', 'woocommerce' ),
 				);
@@ -158,7 +173,7 @@ class BlockPatterns {
 			$pattern['slug']    = $pattern['name'];
 			$pattern['content'] = $pattern['html'];
 
-			$this->pattern_registry->register_block_pattern( $pattern['ID'], $pattern, $this->dictionary );
+			$this->pattern_registry->register_block_pattern( $pattern['ID'], $pattern, $this->get_patterns_dictionary() );
 		}
 	}
 

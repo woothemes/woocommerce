@@ -45,7 +45,7 @@ final class WooCommerce {
 	 *
 	 * @var string
 	 */
-	public $version = '9.4.0';
+	public $version = '9.4.1';
 
 	/**
 	 * WooCommerce Schema version.
@@ -868,7 +868,7 @@ final class WooCommerce {
 		 */
 		$locale = apply_filters( 'plugin_locale', $locale, 'woocommerce' ); // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingSinceComment
 
-		unload_textdomain( 'woocommerce' );
+		unload_textdomain( 'woocommerce', true );
 		load_textdomain( 'woocommerce', WP_LANG_DIR . '/woocommerce/woocommerce-' . $locale . '.mo' );
 		load_plugin_textdomain( 'woocommerce', false, plugin_basename( dirname( WC_PLUGIN_FILE ) ) . '/i18n/languages' );
 	}
