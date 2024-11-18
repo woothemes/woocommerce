@@ -60,7 +60,7 @@ const Edit = ( props: EditProps ) => {
 		useState< boolean >( true );
 
 	const { results: attributeTerms, isLoading: isTermsLoading } =
-		useCollection< AttributeTerm[] >( {
+		useCollection< AttributeTerm >( {
 			namespace: '/wc/store/v1',
 			resourceName: 'products/attributes/terms',
 			resourceValues: [ attributeObject?.id || 0 ],
