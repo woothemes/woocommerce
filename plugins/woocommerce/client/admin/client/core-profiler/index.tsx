@@ -336,7 +336,7 @@ const redirectToJetpackAuthPage = ( {
 	context,
 }: {
 	context: CoreProfilerStateMachineContext;
-	event: { output: { url: string; color_scheme: string } };
+	event: { output: { url: string; color_scheme?: string } };
 } ) => {
 	const url = new URL( event.output.url );
 	url.searchParams.set( 'installed_ext_success', '1' );
