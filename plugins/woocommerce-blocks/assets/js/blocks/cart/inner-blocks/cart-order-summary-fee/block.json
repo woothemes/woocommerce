@@ -22,11 +22,13 @@
 				"remove": true,
 				"move": true
 			}
+		},
+		"sectionHeading": {
+			"type": "string",
+			"default": null
 		}
 	},
-	"parent": [
-		"woocommerce/cart-order-summary-totals-block"
-	],
+	"parent": [ "woocommerce/cart-order-summary-totals-block" ],
 	"textdomain": "woocommerce",
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3

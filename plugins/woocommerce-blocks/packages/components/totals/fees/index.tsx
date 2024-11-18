@@ -27,12 +27,18 @@ export interface TotalsFeesProps {
 	 * @default 'wc-block-components-totals-fees'
 	 */
 	className?: string;
+
+	/**
+	 * Heading
+	 */
+	heading: React.ReactNode;
 }
 
 const TotalsFees = ( {
 	currency,
 	cartFees,
 	className,
+	heading,
 }: TotalsFeesProps ): ReactElement | null => {
 	return (
 		<>
@@ -54,7 +60,7 @@ const TotalsFees = ( {
 							className
 						) }
 						currency={ currency }
-						label={ name || __( 'Fee', 'woocommerce' ) }
+						label={ heading }
 						value={
 							getSetting( 'displayCartPricesIncludingTax', false )
 								? feesValue + feesTaxValue
