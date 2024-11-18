@@ -22,7 +22,7 @@ export const registeredPaymentGatewaysStub: RegisteredPaymentGateway[] = [
 			'add_payment_method',
 		],
 		state: {
-			enabled: true,
+			enabled: false,
 			needs_setup: false,
 			test_mode: true,
 		},

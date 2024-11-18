@@ -99,7 +99,9 @@ describe( 'payment settings reducer', () => {
 			gatewayId: 'woocommerce_payments',
 		} );
 
-		expect( state.isGatewayUpdating ).toBe( true );
+		expect( state.isGatewayUpdating ).toStrictEqual( {
+			woocommerce_payments: true,
+		} );
 	} );
 
 	it( 'should handle ENABLE_PAYMENT_GATEWAY_ERROR', () => {
@@ -107,16 +109,6 @@ describe( 'payment settings reducer', () => {
 			type: ACTION_TYPES.ENABLE_PAYMENT_GATEWAY_ERROR,
 			gatewayId: 'woocommerce_payments',
 			error: restApiError,
-		} );
-
-		expect( state.errors.enablePaymentGateway ).toBe( restApiError );
-	} );
-
-	it( 'should handle ENABLE_PAYMENT_GATEWAY_SUCCESS', () => {
-		const state = reducer( defaultState, {
-			type: ACTION_TYPES.ENABLE_PAYMENT_GATEWAY_SUCCESS,
-			gatewayId: 'woocommerce_payments',
-			isOffline: false,
 		} );
 
 		expect( state.errors.enablePaymentGateway ).toBe( restApiError );
@@ -136,7 +128,7 @@ describe( 'payment settings reducer', () => {
 		);
 
 		expect( state.registeredPaymentGateways[ 0 ].state.enabled ).toBe(
-			false
+			true
 		);
 	} );
 } );
