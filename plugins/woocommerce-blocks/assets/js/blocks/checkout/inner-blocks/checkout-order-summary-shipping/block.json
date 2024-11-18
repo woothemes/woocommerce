@@ -21,7 +21,7 @@
 		},
 		"sectionHeading": {
 			"type": "string",
-			"default": ""
+			"default": null
 		}
 	},
 	"parent": [ "woocommerce/checkout-order-summary-totals-block" ],
