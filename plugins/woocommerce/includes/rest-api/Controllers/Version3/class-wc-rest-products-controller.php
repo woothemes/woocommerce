@@ -8,6 +8,7 @@
  * @since   2.6.0
  */
 
+use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareRestControllerTrait;
 use Automattic\WooCommerce\Utilities\I18nUtil;
 
 defined( 'ABSPATH' ) || exit;
@@ -19,6 +20,8 @@ defined( 'ABSPATH' ) || exit;
  * @extends WC_REST_Products_V2_Controller
  */
 class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
+
+	use CogsAwareRestControllerTrait;
 
 	/**
 	 * Endpoint namespace.
@@ -169,6 +172,11 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 
 		// Set post_status.
 		$args['post_status'] = $request['status'];
+
+		// Filter by a list of product statuses.
+		if ( ! empty( $request['include_status'] ) ) {
+			$args['post_status'] = $request['include_status'];
+		}
 
 		// Taxonomy query to filter products by type, category,
 		// tag, shipping class, and attribute.
@@ -330,6 +338,11 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		 */
 		if ( ! empty( $this->suggested_products_ids ) ) {
 			$args['post__in'] = $this->suggested_products_ids;
+		}
+
+		// Force the post_type argument, since it's not a user input variable.
+		if ( ! empty( $request['global_unique_id'] ) ) {
+			$args['post_type'] = array( 'product', 'product_variation' );
 		}
 
 		return $args;
@@ -893,6 +906,10 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			if ( $date ) {
 				$product->set_date_created( $date );
 			}
+		}
+
+		if ( $this->cogs_is_enabled() ) {
+			$this->set_cogs_info_in_product_object( $request, $product );
 		}
 
 		/**
@@ -1559,6 +1576,10 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			);
 		}
 
+		if ( $this->cogs_is_enabled() ) {
+			$schema = $this->add_cogs_related_product_schema( $schema, false );
+		}
+
 		return $this->add_additional_fields_schema( $schema );
 	}
 
@@ -1584,6 +1605,17 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			'description'       => __( 'Limit results to those with a SKU that partial matches a string.', 'woocommerce' ),
 			'type'              => 'string',
 			'sanitize_callback' => 'sanitize_text_field',
+			'validate_callback' => 'rest_validate_request_arg',
+		);
+
+		$params['include_status'] = array(
+			'description'       => __( 'Limit result set to products with any of the statuses.', 'woocommerce' ),
+			'type'              => 'array',
+			'items'             => array(
+				'type' => 'string',
+				'enum' => array_merge( array( 'any', 'trash' ), array_keys( get_post_statuses() ) ),
+			),
+			'sanitize_callback' => 'wp_parse_list',
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 
@@ -1746,5 +1778,24 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		$this->suggested_products_ids = array_slice( $this->suggested_products_ids, 0, $limit );
 
 		return parent::get_items( $request );
+	}
+
+	/**
+	 * Core function to prepare a single product output for response
+	 * (doesn't fire hooks, ensure_response, or add links).
+	 *
+	 * @param WC_Data         $object_data Object data.
+	 * @param WP_REST_Request $request Request object.
+	 * @param string          $context Request context.
+	 * @return array Product data to be included in the response.
+	 */
+	protected function prepare_object_for_response_core( $object_data, $request, $context ): array {
+		$data = parent::prepare_object_for_response_core( $object_data, $request, $context );
+
+		if ( $this->cogs_is_enabled() ) {
+			$this->add_cogs_info_to_returned_product_data( $data, $object_data );
+		}
+
+		return $data;
 	}
 }

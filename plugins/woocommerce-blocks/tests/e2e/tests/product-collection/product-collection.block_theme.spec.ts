@@ -698,7 +698,7 @@ test.describe( 'Product Collection', () => {
 			await expect( pageObject.productTemplate ).toBeVisible();
 		} );
 
-		test( 'On Sale collection should be visible after Refresh', async ( {
+		test( 'On Sale Products collection should be visible after Refresh', async ( {
 			page,
 			pageObject,
 			editor,
@@ -713,7 +713,7 @@ test.describe( 'Product Collection', () => {
 
 			await expect( productTemplate ).toHaveCount( 2 );
 
-			// Refresh the template and verify "On Sale" collection is still visible
+			// Refresh the template and verify "On Sale Products" collection is still visible
 			await editor.saveSiteEditorEntities( {
 				isOnlyCurrentEntityDirty: true,
 			} );
@@ -721,7 +721,7 @@ test.describe( 'Product Collection', () => {
 			await expect( productTemplate ).toHaveCount( 2 );
 		} );
 
-		test( 'On Sale collection should be visible after Refresh in a Post', async ( {
+		test( 'On Sale Products collection should be visible after Refresh in a Post', async ( {
 			page,
 			pageObject,
 			editor,
@@ -729,7 +729,7 @@ test.describe( 'Product Collection', () => {
 			await pageObject.createNewPostAndInsertBlock( 'onSale' );
 			await expect( pageObject.productTemplate ).toBeVisible();
 
-			// Refresh the post and verify "On Sale" collection is still visible
+			// Refresh the post and verify "On Sale Products" collection is still visible
 			await editor.saveDraft();
 			await page.reload();
 			await expect( pageObject.productTemplate ).toBeVisible();
