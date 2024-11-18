@@ -5,16 +5,13 @@ import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { getAdminLink } from '@woocommerce/settings';
-
+import { PluginDocumentSettingPanel } from '@wordpress/editor';
 /**
  * Internal dependencies
  */
 import './newsletter-panel.scss';
 
 const NewsletterPanel = () => {
-	// @ts-ignore temp fix for missing type -- I wasn't able to build wc admin with @wordpress/editor installed.
-	const { PluginDocumentSettingPanel } = window.wp.editor;
-
 	const postId = useSelect( ( select ) =>
 		select( 'core/editor' ).getCurrentPostId()
 	);
