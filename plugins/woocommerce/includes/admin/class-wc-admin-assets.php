@@ -499,6 +499,11 @@ if ( ! class_exists( 'WC_Admin_Assets', false ) ) :
 				);
 			}
 
+			// Email settings.
+			if ( $wc_screen_id . '_page_wc-settings' === $screen_id && isset( $_GET['tab'] ) && 'email' === $_GET['tab'] ) {
+				wp_enqueue_media();
+			}
+
 			// System status.
 			if ( $wc_screen_id . '_page_wc-status' === $screen_id ) {
 				wp_register_script( 'wc-admin-system-status', WC()->plugin_url() . '/assets/js/admin/system-status' . $suffix . '.js', array( 'wc-clipboard' ), $version );
