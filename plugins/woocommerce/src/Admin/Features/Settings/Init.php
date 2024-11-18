@@ -1,20 +1,22 @@
-<?php //phpcs:ignore Generic.PHP.RequireStrictTypes.MissingDeclaration
+<?php
 /**
  * WooCommerce Settings.
  */
 
-namespace Automattic\WooCommerce\Admin\Features;
+declare( strict_types = 1 );
+
+namespace Automattic\WooCommerce\Admin\Features\Settings;
 
 use Automattic\WooCommerce\Internal\Admin\WCAdminAssets;
 
 /**
  * Contains backend logic for the Settings feature.
  */
-class Settings {
+class Init {
 	/**
 	 * Class instance.
 	 *
-	 * @var Settings instance
+	 * @var transform instance
 	 */
 	protected static $instance = null;
 
@@ -146,7 +148,7 @@ class Settings {
 			$pages = $setting_page->add_settings_page_data( $pages );
 		}
 
-		$settings['settingsData'] = $pages;
+		$settings['settingsData'] = Transformer::transform( $pages );
 
 		return $settings;
 	}
