@@ -5,7 +5,7 @@ import {
 	store,
 	getContext as getContextFn,
 	getElement,
-} from '@woocommerce/interactivity';
+} from '@wordpress/interactivity';
 import { StorePart } from '@woocommerce/utils';
 
 export interface ProductGalleryContext {
@@ -23,7 +23,7 @@ const getContext = ( ns?: string ) =>
 	getContextFn< ProductGalleryContext >( ns );
 
 type Store = typeof productGallery & StorePart< ProductGallery >;
-const { state, actions } = store< Store >( 'woocommerce/product-gallery' );
+const { state, actions } = store< Store >( 'woocommerce/product-gallery', {} );
 
 const selectImage = (
 	context: ProductGalleryContext,

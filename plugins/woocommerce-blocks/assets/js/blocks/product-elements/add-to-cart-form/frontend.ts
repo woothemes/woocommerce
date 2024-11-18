@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { store } from '@woocommerce/interactivity';
+import { store } from '@wordpress/interactivity';
 import { HTMLElementEvent } from '@woocommerce/types';
 
 const getInputData = ( event: HTMLElementEvent< HTMLButtonElement > ) => {
@@ -34,6 +34,7 @@ const getInputData = ( event: HTMLElementEvent< HTMLButtonElement > ) => {
 	};
 };
 
+console.log( 'initiating store' );
 store( 'woocommerce/add-to-cart-form', {
 	state: {},
 	actions: {

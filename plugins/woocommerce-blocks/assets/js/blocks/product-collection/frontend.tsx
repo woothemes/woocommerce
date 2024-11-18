@@ -1,13 +1,8 @@
 /**
  * External dependencies
  */
-import {
-	store,
-	navigate,
-	prefetch,
-	getElement,
-	getContext,
-} from '@woocommerce/interactivity';
+import { store, getElement, getContext } from '@wordpress/interactivity';
+import { navigate, prefetch } from '@woocommerce/interactivity';
 import {
 	triggerProductListRenderedEvent,
 	triggerViewedProductEvent,

@@ -26,7 +26,7 @@
 		"assets/"
 	],
 	"dependencies": {
-		"@wordpress/dependency-extraction-webpack-plugin": "^3.7.0"
+		"@wordpress/dependency-extraction-webpack-plugin": "^6.11.0"
 	},
 	"publishConfig": {
 		"access": "public"

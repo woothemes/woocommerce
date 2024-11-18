@@ -85,7 +85,7 @@ final class ProductFilterStatus extends AbstractBlock {
 					'title'      => $stock_status_options[ $status ],
 					'attributes' => array(
 						'value'             => $status,
-						'data-wc-on--click' => "$action_namespace::actions.toggleFilter",
+						'data-wp-on--click' => "$action_namespace::actions.toggleFilter",
 					),
 				);
 			},
@@ -153,15 +153,15 @@ final class ProductFilterStatus extends AbstractBlock {
 		);
 
 		$wrapper_attributes = array(
-			'data-wc-interactive'  => wp_json_encode( array( 'namespace' => $this->get_full_block_name() ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
-			'data-wc-context'      => wp_json_encode(
+			'data-wp-interactive'  => wp_json_encode( array( 'namespace' => $this->get_full_block_name() ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
+			'data-wp-context'      => wp_json_encode(
 				array(
 					'hasSelectedFilters' => $filter_context['hasSelectedFilters'],
 					'hasFilterOptions'   => ! empty( $filter_options ),
 				),
 				JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
 			),
-			'data-wc-bind--hidden' => '!context.hasFilterOptions',
+			'data-wp-bind--hidden' => '!context.hasFilterOptions',
 		);
 
 		if ( empty( $filter_options ) ) {

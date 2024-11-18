@@ -6,9 +6,7 @@
 	"title": "Product Filters (Experimental)",
 	"description": "Let shoppers filter products displayed on the page.",
 	"category": "woocommerce",
-	"keywords": [
-		"WooCommerce"
-	],
+	"keywords": [ "WooCommerce" ],
 	"supports": {
 		"align": true,
 		"color": {
@@ -29,7 +27,7 @@
 				"type": "flex",
 				"orientation": "vertical",
 				"flexWrap": "nowrap",
-				"justifyContent":"stretch"
+				"justifyContent": "stretch"
 			},
 			"allowEditing": false
 		},
@@ -39,7 +37,6 @@
 	},
 	"textdomain": "woocommerce",
 	"usesContext": [ "postId", "query", "queryId" ],
-	"viewScript": "wc-product-filters-frontend",
 	"example": {},
 	"attributes": {
 		"overlayIcon": {

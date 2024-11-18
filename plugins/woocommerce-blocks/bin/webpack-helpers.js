@@ -105,6 +105,14 @@ const getAlias = ( options = {} ) => {
 };
 
 const requestToExternal = ( request ) => {
+	if ( request === '@wordpress/interactivity' ) {
+		// This is a special case. Interactivity does not support dynamic imports at
+		// this time. We add the external "module" type to indicate that webpack
+		// should externalize this as a module (instead of our default `import()`
+		// external type) which forces @wordpress/interactivity imports to be
+		// hoisted to static imports.
+		return null; // `module ${ request }`;
+	}
 	if ( wcDepMap[ request ] ) {
 		return wcDepMap[ request ];
 	}

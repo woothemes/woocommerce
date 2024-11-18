@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { store, getContext, getElement } from '@woocommerce/interactivity';
+import { store, getContext, getElement } from '@wordpress/interactivity';
 
 /**
  * Internal dependencies
@@ -19,31 +19,43 @@ function inRange( value: number, min: number, max: number ) {
 	return value >= min && value <= max;
 }
 
+console.log( 'price' );
 store( 'woocommerce/product-filter-price', {
 	actions: {
 		setPrices: () => {
+			console.log( 'setPrices' );
 			const context = getContext< PriceFilterContext >();
 			const prices: Record< string, string > = {};
 			const { ref } = getElement();
 			const targetMinPriceAttribute =
-				ref.getAttribute( 'data-target-min-price' ) ?? 'data-min-price';
+				ref?.getAttribute( 'data-target-min-price' ) ??
+				'data-min-price';
 			const targetMaxPriceAttribute =
-				ref.getAttribute( 'data-target-max-price' ) ?? 'data-max-price';
+				ref?.getAttribute( 'data-target-max-price' ) ??
+				'data-max-price';
 
-			const minPrice = ref.getAttribute( targetMinPriceAttribute );
+			const minPrice = ref?.getAttribute( targetMinPriceAttribute );
 			if (
 				minPrice &&
-				inRange( minPrice, context.minRange, context.maxRange ) &&
-				minPrice < context.maxPrice
+				inRange(
+					parseFloat( minPrice ),
+					context.minRange,
+					context.maxRange
+				) &&
+				parseFloat( minPrice ) < context.maxPrice
 			) {
 				prices.minPrice = minPrice;
 			}
 
-			const maxPrice = ref.getAttribute( targetMaxPriceAttribute );
+			const maxPrice = ref?.getAttribute( targetMaxPriceAttribute );
 			if (
 				maxPrice &&
-				inRange( maxPrice, context.minRange, context.maxRange ) &&
-				maxPrice > context.minPrice
+				inRange(
+					parseFloat( maxPrice ),
+					context.minRange,
+					context.maxRange
+				) &&
+				parseFloat( maxPrice ) > context.minPrice
 			) {
 				prices.maxPrice = maxPrice;
 			}

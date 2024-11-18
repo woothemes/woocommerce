@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { getContext, getElement, store } from '@woocommerce/interactivity';
+import { getContext, getElement, store } from '@wordpress/interactivity';
 import { HTMLElementEvent } from '@woocommerce/types';
 
 /**
@@ -22,9 +22,9 @@ store( 'woocommerce/product-filter-checkbox-list', {
 	state: {
 		get isItemSelected() {
 			const context = getContext< CheckboxListContext >();
-			const { props } = getElement();
+			const { attributes } = getElement();
 			const result = context.items.find(
-				( item ) => item.value === props.value
+				( item ) => item.value === attributes.value
 			);
 
 			if ( result ) return result.selected;

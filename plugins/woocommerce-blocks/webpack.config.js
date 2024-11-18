@@ -12,6 +12,7 @@ const {
 	getStylingConfig,
 	getInteractivityAPIConfig,
 	getCartAndCheckoutFrontendConfig,
+	getWPInteractivityFrontConfig,
 } = require( './bin/webpack-configs.js' );
 
 // Only options shared between all configs should be defined here.
@@ -60,6 +61,11 @@ const FrontendConfig = {
 	...getFrontConfig( { alias: getAlias() } ),
 };
 
+// Frontend config for scripts used in the store itself.
+const WPInteractivityFrontendConfig = {
+	...sharedConfig,
+	...getWPInteractivityFrontConfig( { alias: getAlias() } ),
+};
 /**
  * Config for building experimental extension scripts.
  */
@@ -105,6 +111,7 @@ module.exports = [
 	CoreConfig,
 	MainConfig,
 	FrontendConfig,
+	WPInteractivityFrontendConfig,
 	ExtensionsConfig,
 	PaymentsConfig,
 	SiteEditorConfig,

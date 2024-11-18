@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { getContext, store, getElement } from '@woocommerce/interactivity';
+import { getContext, store, getElement } from '@wordpress/interactivity';
 
 /**
  * Internal dependencies
@@ -28,17 +28,19 @@ function getRatingFilters( context: ProductFiltersContext ): Array< string > {
 store( 'woocommerce/product-filter-rating', {
 	actions: {
 		toggleFilter: () => {
+			const { ref } = getElement();
+			const value =
+				ref?.getAttribute( 'data-target-value' ) ??
+				ref?.getAttribute( 'value' );
+			if ( ! value ) {
+				return;
+			}
+
 			const context = getContext< ProductFiltersContext >(
 				'woocommerce/product-filters'
 			);
-
 			// Pick out the active filters from the context
 			const filtersList = getRatingFilters( context );
-
-			const { ref } = getElement();
-			const value =
-				ref.getAttribute( 'data-target-value' ) ??
-				ref.getAttribute( 'value' );
 
 			const updatedFiltersList = filtersList.includes( value )
 				? [ ...filtersList.filter( ( filter ) => filter !== value ) ]

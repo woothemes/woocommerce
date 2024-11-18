@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { store, getContext, getElement } from '@woocommerce/interactivity';
+import { store, getContext, getElement } from '@wordpress/interactivity';
 
 /**
  * Internal dependencies
@@ -17,10 +17,11 @@ type AttributeFilterContext = {
 store( 'woocommerce/product-filter-attribute', {
 	actions: {
 		toggleFilter: () => {
+			console.log( 'toggle' );
 			const { ref } = getElement();
 			const targetAttribute =
-				ref.getAttribute( 'data-target-value' ) ?? 'value';
-			const termSlug = ref.getAttribute( targetAttribute );
+				ref?.getAttribute( 'data-target-value' ) ?? 'value';
+			const termSlug = ref?.getAttribute( targetAttribute );
 
 			if ( ! termSlug ) return;
 

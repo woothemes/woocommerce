@@ -5,7 +5,7 @@ import {
 	store,
 	getContext as getContextFn,
 	getElement,
-} from '@woocommerce/interactivity';
+} from '@wordpress/interactivity';
 import { StorePart } from '@woocommerce/utils';
 
 /**
@@ -25,7 +25,7 @@ type Context = {
 const getContext = ( ns?: string ) => getContextFn< Context >( ns );
 
 type Store = typeof productGalleryLargeImage & StorePart< ProductGallery >;
-const { state, actions } = store< Store >( 'woocommerce/product-gallery' );
+const { state, actions } = store< Store >( 'woocommerce/product-gallery', {} );
 
 let isDialogStatusChanged = false;
 
@@ -83,7 +83,7 @@ const productGalleryLargeImage = {
 			const { ref } = getElement();
 			// Scroll to the selected image with a smooth animation.
 			if ( isDialogOpen === isDialogStatusChanged ) {
-				ref.scrollIntoView( {
+				ref?.scrollIntoView( {
 					behavior: 'smooth',
 					block: 'nearest',
 					inline: 'center',
@@ -94,9 +94,9 @@ const productGalleryLargeImage = {
 			if (
 				isDialogOpen &&
 				isDialogOpen !== isDialogStatusChanged &&
-				ref.closest( 'dialog' )
+				ref?.closest( 'dialog' )
 			) {
-				ref.scrollIntoView( {
+				ref?.scrollIntoView( {
 					behavior: 'instant',
 					block: 'nearest',
 					inline: 'center',
@@ -107,7 +107,7 @@ const productGalleryLargeImage = {
 
 			// Scroll to the selected image when the dialog is being closed without an animation.
 			if ( ! isDialogOpen && isDialogOpen !== isDialogStatusChanged ) {
-				ref.scrollIntoView( {
+				ref?.scrollIntoView( {
 					behavior: 'instant',
 					block: 'nearest',
 					inline: 'center',

@@ -163,7 +163,7 @@ class Renderer {
 	 * @param WP_HTML_Tag_processor $p Initial tag processor.
 	 */
 	private function set_product_collection_namespace( $p ) {
-		$p->set_attribute( 'data-wc-interactive', wp_json_encode( array( 'namespace' => 'woocommerce/product-collection' ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ) );
+		$p->set_attribute( 'data-wp-interactive', wp_json_encode( array( 'namespace' => 'woocommerce/product-collection' ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ) );
 	}
 
 	/**
@@ -221,11 +221,11 @@ class Renderer {
 		// Add `data-init to the product collection block so we trigger JS event on render.
 		if ( $this->is_next_tag_product_collection( $p ) ) {
 			$p->set_attribute(
-				'data-wc-init',
+				'data-wp-init',
 				'callbacks.onRender'
 			);
 			$p->set_attribute(
-				'data-wc-context',
+				'data-wp-context',
 				$collection ? wp_json_encode(
 					array( 'collection' => $collection ),
 					JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
@@ -247,15 +247,15 @@ class Renderer {
 	private function enable_client_side_navigation( $block_content ) {
 		$p = new \WP_HTML_Tag_Processor( $block_content );
 
-		// Add `data-wc-navigation-id to the product collection block.
+		// Add `data-wp-navigation-id to the product collection block.
 		if ( $this->is_next_tag_product_collection( $p ) && isset( $this->parsed_block ) ) {
 			$p->set_attribute(
-				'data-wc-navigation-id',
+				'data-wp-navigation-id',
 				'wc-product-collection-' . $this->parsed_block['attrs']['queryId']
 			);
-			$current_context = json_decode( $p->get_attribute( 'data-wc-context' ) ?? '{}', true );
+			$current_context = json_decode( $p->get_attribute( 'data-wp-context' ) ?? '{}', true );
 			$p->set_attribute(
-				'data-wc-context',
+				'data-wp-context',
 				wp_json_encode(
 					array_merge(
 						$current_context,
@@ -282,16 +282,16 @@ class Renderer {
 		$last_tag_position                = strripos( $block_content, '</div>' );
 		$accessibility_and_animation_html = '
 				<div
-					data-wc-interactive="{&quot;namespace&quot;:&quot;woocommerce/product-collection&quot;}"
+					data-wp-interactive="{&quot;namespace&quot;:&quot;woocommerce/product-collection&quot;}"
 					class="wc-block-product-collection__pagination-animation"
-					data-wc-class--start-animation="state.startAnimation"
-					data-wc-class--finish-animation="state.finishAnimation">
+					data-wp-class--start-animation="state.startAnimation"
+					data-wp-class--finish-animation="state.finishAnimation">
 				</div>
 				<div
-					data-wc-interactive="{&quot;namespace&quot;:&quot;woocommerce/product-collection&quot;}"
+					data-wp-interactive="{&quot;namespace&quot;:&quot;woocommerce/product-collection&quot;}"
 					class="screen-reader-text"
 					aria-live="polite"
-					data-wc-text="context.accessibilityMessage">
+					data-wp-text="context.accessibilityMessage">
 				</div>
 			';
 		return substr_replace(
@@ -355,7 +355,7 @@ class Renderer {
 	 *
 	 * @param \WP_HTML_Tag_Processor $processor The HTML tag processor.
 	 * @param string                 $class_name The class name of the anchor tags.
-	 * @param string                 $key_prefix The prefix for the data-wc-key attribute.
+	 * @param string                 $key_prefix The prefix for the data-wp-key attribute.
 	 */
 	private function update_pagination_anchors( $processor, $class_name, $key_prefix ) {
 		// Start from the beginning of the block content.
@@ -368,12 +368,12 @@ class Renderer {
 			)
 		) ) {
 			$this->set_product_collection_namespace( $processor );
-			$processor->set_attribute( 'data-wc-on--click', 'actions.navigate' );
-			$processor->set_attribute( 'data-wc-key', $key_prefix . '--' . esc_attr( wp_rand() ) );
+			$processor->set_attribute( 'data-wp-on--click', 'actions.navigate' );
+			$processor->set_attribute( 'data-wp-key', $key_prefix . '--' . esc_attr( wp_rand() ) );
 
 			if ( in_array( $class_name, array( 'wp-block-query-pagination-next', 'wp-block-query-pagination-previous' ), true ) ) {
-				$processor->set_attribute( 'data-wc-watch', 'callbacks.prefetch' );
-				$processor->set_attribute( 'data-wc-on--mouseenter', 'actions.prefetchOnHover' );
+				$processor->set_attribute( 'data-wp-watch', 'callbacks.prefetch' );
+				$processor->set_attribute( 'data-wp-on--mouseenter', 'actions.prefetchOnHover' );
 			}
 		}
 	}

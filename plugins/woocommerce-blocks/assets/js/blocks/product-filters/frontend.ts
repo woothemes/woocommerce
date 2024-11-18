@@ -1,11 +1,8 @@
 /**
  * External dependencies
  */
-import {
-	getContext,
-	store,
-	navigate as navigateFn,
-} from '@woocommerce/interactivity';
+import { getContext, store } from '@wordpress/interactivity';
+import { navigate as navigateFn } from '@woocommerce/interactivity';
 import { getSetting } from '@woocommerce/settings';
 
 const isBlockTheme = getSetting< boolean >( 'isBlockTheme' );
@@ -73,6 +70,7 @@ export interface ProductFiltersContext {
 	originalParams: Record< string, string >;
 }
 
+console.log( 'initiating store' );
 const { actions } = store( 'woocommerce/product-filters', {
 	actions: {
 		openOverlay: () => {

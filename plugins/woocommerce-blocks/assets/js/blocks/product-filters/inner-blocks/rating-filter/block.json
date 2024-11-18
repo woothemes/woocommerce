@@ -12,13 +12,8 @@
 			"text": true
 		}
 	},
-	"ancestor": [
-		"woocommerce/product-filters"
-	],
-	"usesContext": [
-		"query",
-		"filterParams"
-	],
+	"ancestor": [ "woocommerce/product-filters" ],
+	"usesContext": [ "query", "filterParams" ],
 	"attributes": {
 		"className": {
 			"type": "string",
@@ -38,7 +33,7 @@
 		},
 		"clearButton": {
 			"type": "boolean",
-			"default":true
+			"default": true
 		}
 	},
 	"textdomain": "woocommerce",

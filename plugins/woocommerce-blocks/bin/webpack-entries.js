@@ -207,6 +207,9 @@ const getBlockEntries = ( relativePath, blockEntries = blocks ) => {
 	);
 };
 
+const wooInteractivityBlocks = getBlockEntries( 'frontend.{t,j}s{,x}' );
+delete wooInteractivityBlocks[ 'add-to-cart-form' ];
+
 const entries = {
 	styling: {
 		// Packages styles
@@ -265,9 +268,13 @@ const entries = {
 	},
 	frontend: {
 		reviews: './assets/js/blocks/reviews/frontend.ts',
-		...getBlockEntries( 'frontend.{t,j}s{,x}' ),
+		...wooInteractivityBlocks,
 		'product-button-interactivity':
 			'./assets/js/atomic/blocks/product-elements/button/frontend.tsx',
+	},
+	frontendWpInteractivity: {
+		'add-to-cart-form':
+			'./assets/js/blocks/product-elements/add-to-cart-form/frontend.ts',
 	},
 	payments: {
 		'wc-payment-method-cheque':

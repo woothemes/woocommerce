@@ -52,9 +52,9 @@ final class ProductFilterChips extends AbstractBlock {
 		$count                       = 0;
 
 		$wrapper_attributes = array(
-			'data-wc-interactive' => esc_attr( $namespace ),
-			'data-wc-context'     => wp_json_encode( $checkbox_list_context, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
-			'data-wc-key'         => wp_unique_prefixed_id( $this->get_full_block_name() ),
+			'data-wp-interactive' => esc_attr( $namespace ),
+			'data-wp-context'     => wp_json_encode( $checkbox_list_context, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
+			'data-wp-key'         => wp_unique_prefixed_id( $this->get_full_block_name() ),
 			'class'               => esc_attr( $classes ),
 			'style'               => esc_attr( $style ),
 		);
@@ -66,21 +66,21 @@ final class ProductFilterChips extends AbstractBlock {
 				<?php foreach ( $items as $item ) { ?>
 					<?php $item['id'] = $item['id'] ?? uniqid( 'chips-' ); ?>
 					<button
-						data-wc-key="<?php echo esc_attr( $item['id'] ); ?>"
+						data-wp-key="<?php echo esc_attr( $item['id'] ); ?>"
 						<?php
 						if ( ! $item['selected'] ) :
 							if ( $count >= $remaining_initial_unchecked ) :
 								?>
 								class="wc-block-product-filter-chips__item"
-								data-wc-bind--hidden="!context.showAll"
+								data-wp-bind--hidden="!context.showAll"
 								hidden
 							<?php else : ?>
 								<?php ++$count; ?>
 							<?php endif; ?>
 						<?php endif; ?>
 						class="wc-block-product-filter-chips__item"
-						data-wc-on--click--select-item="actions.selectItem"
-						data-wc-on--click--parent-action="<?php echo esc_attr( $action ); ?>"
+						data-wp-on--click--select-item="actions.selectItem"
+						data-wp-on--click--parent-action="<?php echo esc_attr( $action ); ?>"
 						value="<?php echo esc_attr( $item['value'] ); ?>"
 						aria-checked="<?php echo $item['selected'] ? 'true' : 'false'; ?>"
 					>
@@ -93,8 +93,8 @@ final class ProductFilterChips extends AbstractBlock {
 			<?php if ( count( $items ) > $show_initially ) : ?>
 				<button
 					class="wc-block-product-filter-chips__show-more"
-					data-wc-bind--hidden="context.showAll"
-					data-wc-on--click="actions.showAllItems"
+					data-wp-bind--hidden="context.showAll"
+					data-wp-on--click="actions.showAllItems"
 					hidden
 				>
 					<?php echo esc_html__( 'Show more...', 'woocommerce' ); ?>

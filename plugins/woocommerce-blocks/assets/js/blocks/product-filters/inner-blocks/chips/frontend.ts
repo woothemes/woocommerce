@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { getElement, getContext, store } from '@woocommerce/interactivity';
+import { getElement, getContext, store } from '@wordpress/interactivity';
 
 /**
  * Internal dependencies
@@ -26,7 +26,7 @@ store( 'woocommerce/product-filter-chips', {
 
 		selectItem: () => {
 			const { ref } = getElement();
-			const value = ref.getAttribute( 'value' );
+			const value = ref?.getAttribute( 'value' );
 
 			if ( ! value ) return;
 

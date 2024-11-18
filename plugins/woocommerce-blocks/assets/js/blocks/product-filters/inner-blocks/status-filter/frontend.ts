@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { getContext, getElement, store } from '@woocommerce/interactivity';
+import { getContext, getElement, store } from '@wordpress/interactivity';
 
 /**
  * Internal dependencies
@@ -25,8 +25,11 @@ store( 'woocommerce/product-filter-status', {
 
 			const { ref } = getElement();
 			const value =
-				ref.getAttribute( 'data-target-value' ) ??
-				ref.getAttribute( 'value' );
+				ref?.getAttribute( 'data-target-value' ) ??
+				ref?.getAttribute( 'value' );
+			if ( ! value ) {
+				return;
+			}
 
 			const newFilterArr = filtersArr.includes( value )
 				? [ ...filtersArr.filter( ( filter ) => filter !== value ) ]

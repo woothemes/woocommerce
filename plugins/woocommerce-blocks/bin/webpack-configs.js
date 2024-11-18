@@ -330,7 +330,11 @@ const getFrontConfig = ( options = {} ) => {
 		  };
 	return {
 		entry: getEntryConfig( 'frontend', options.exclude || [] ),
+		// experiments: {
+		// 	outputModule: true,
+		// },
 		output: {
+			// module: true,
 			devtoolNamespace: 'wc',
 			path: path.resolve( __dirname, '../build/' ),
 			// This is a cache busting mechanism which ensures that the script is loaded via the browser with a ?ver=hash
@@ -346,6 +350,147 @@ const getFrontConfig = ( options = {} ) => {
 			},
 			uniqueName: 'webpackWcBlocksFrontendJsonp',
 			library: [ 'wc', '[name]' ],
+		},
+		module: {
+			rules: [
+				{
+					test: /\.(j|t)sx?$/,
+					exclude: [ /[\/\\](node_modules|build|docs|vendor)[\/\\]/ ],
+					use: {
+						loader: 'babel-loader',
+						options: {
+							presets: [
+								[
+									'@wordpress/babel-preset-default',
+									{
+										modules: false,
+										targets: {
+											browsers: [
+												'extends @wordpress/browserslist-config',
+											],
+										},
+									},
+								],
+							],
+							plugins: [
+								isProduction
+									? require.resolve(
+											'babel-plugin-transform-react-remove-prop-types'
+									  )
+									: false,
+								'@babel/plugin-proposal-optional-chaining',
+								'@babel/plugin-proposal-class-properties',
+							].filter( Boolean ),
+							cacheDirectory: path.resolve(
+								__dirname,
+								'../../../node_modules/.cache/babel-loader'
+							),
+							cacheCompression: false,
+						},
+					},
+				},
+				{
+					test: /\.s[c|a]ss$/,
+					use: {
+						loader: 'ignore-loader',
+					},
+				},
+			],
+		},
+		optimization: {
+			concatenateModules:
+				isProduction && ! process.env.WP_BUNDLE_ANALYZER,
+			splitChunks: {
+				minSize: 200000,
+				automaticNameDelimiter: '--',
+				cacheGroups: {
+					vendor: {
+						test: /[\\/]node_modules[\\/]/,
+						// Note that filenames are suffixed with `frontend` so the generated file is `wc-blocks-frontend-vendors-frontend`.
+						name: 'wc-blocks-frontend-vendors',
+						chunks: ( chunk ) => {
+							return (
+								chunk.name !== 'product-button-interactivity'
+							);
+						},
+						enforce: true,
+					},
+					...getCacheGroups(),
+				},
+			},
+			minimizer: [
+				new TerserPlugin( {
+					parallel: true,
+					terserOptions: {
+						output: {
+							comments: /translators:/i,
+						},
+						compress: {
+							passes: 2,
+						},
+						mangle: {
+							reserved: [ '__', '_n', '_nx', '_x' ],
+						},
+					},
+					extractComments: false,
+				} ),
+			],
+		},
+		plugins: [
+			...getSharedPlugins( {
+				bundleAnalyzerReportTitle: 'Frontend',
+			} ),
+			new ProgressBarPlugin( getProgressBarPluginConfig( 'Frontend' ) ),
+			new AddSplitChunkDependencies(),
+		],
+		resolve: {
+			...resolve,
+			extensions: [ '.js', '.ts', '.tsx' ],
+		},
+	};
+};
+
+/**
+ * Build config for Blocks in the frontend context.
+ *
+ * @param {Object} options Build options.
+ */
+const getWPInteractivityFrontConfig = ( options = {} ) => {
+	let { fileSuffix } = options;
+	const { alias, resolvePlugins = [] } = options;
+	fileSuffix = fileSuffix ? `-${ fileSuffix }` : '';
+	const resolve = alias
+		? {
+				alias,
+				plugins: resolvePlugins,
+		  }
+		: {
+				plugins: resolvePlugins,
+		  };
+	return {
+		entry: getEntryConfig(
+			'frontendWpInteractivity',
+			options.exclude || []
+		),
+		experiments: {
+			outputModule: true,
+		},
+		output: {
+			module: true,
+			devtoolNamespace: 'wc',
+			path: path.resolve( __dirname, '../build/' ),
+			// This is a cache busting mechanism which ensures that the script is loaded via the browser with a ?ver=hash
+			// string. The hash is based on the built file contents.
+			// @see https://github.com/webpack/webpack/issues/2329
+			// Using the ?ver string is needed here so the filename does not change between builds. The WordPress
+			// i18n system relies on the hash of the filename, so changing that frequently would result in broken
+			// translations which we must avoid.
+			// @see https://github.com/Automattic/jetpack/pull/20926
+			chunkFilename: `[name]-frontend${ fileSuffix }.js?ver=[contenthash]`,
+			filename: () => {
+				return `[name]-frontend${ fileSuffix }.js`;
+			},
+			uniqueName: 'webpackWcBlocksFrontendJsonp',
 		},
 		module: {
 			rules: [
@@ -1174,4 +1319,5 @@ module.exports = {
 	getStylingConfig,
 	getInteractivityAPIConfig,
 	getCartAndCheckoutFrontendConfig,
+	getWPInteractivityFrontConfig,
 };
