@@ -173,6 +173,7 @@ WooCommerce comes with some sample data you can use to see how products look; im
 
 **WooCommerce**
 
+* Fix - Modify product import file check to use the WP filesystem API [#51540](https://github.com/woocommerce/woocommerce/pull/51540)
 * Fix - Fix StoreAPI erroring when a param is an integer [#52361](https://github.com/woocommerce/woocommerce/pull/52361)
 * Fix - Add a check to confirm that `as_has_scheduled_action` exists in the condition that uses it to conditionally run the warning log [#52725](https://github.com/woocommerce/woocommerce/pull/52725)
 
