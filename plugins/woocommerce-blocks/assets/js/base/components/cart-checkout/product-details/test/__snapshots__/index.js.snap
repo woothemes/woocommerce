@@ -1,10 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ProductDetails should not render hidden details 1`] = `
-<ul
+<div
   className="wc-block-components-product-details"
 >
-  <li
+  <div
     className="wc-block-components-product-details__lorem"
   >
     <span
@@ -19,8 +19,8 @@ exports[`ProductDetails should not render hidden details 1`] = `
     >
       IPSUM
     </span>
-  </li>
-</ul>
+  </div>
+</div>
 `;
 
 exports[`ProductDetails should not rendering anything if all details are hidden 1`] = `null`;
