@@ -410,7 +410,8 @@ function wc_customer_bought_product( $customer_email, $user_id, $product_id ) {
 		return $result;
 	}
 
-	$transient_name    = 'wc_customer_bought_product_' . md5( $customer_email . $user_id );
+	$transient_name = 'wc_customer_bought_product_' . md5( $customer_email . $user_id );
+	// Lookup tables get refreshed along with the `woocommerce_reports` transient version.
 	$transient_version = WC_Cache_Helper::get_transient_version( 'woocommerce_reports' );
 	$transient_value   = get_transient( $transient_name );
 
@@ -450,7 +451,7 @@ function wc_customer_bought_product( $customer_email, $user_id, $product_id ) {
 			if ( $user_id ) {
 				$user_id_clause = 'OR o.customer_id = ' . absint( $user_id );
 			}
-			$sql = "
+			$sql    = "
 SELECT DISTINCT product_or_variation_id FROM (
 SELECT CASE WHEN product_id != 0 THEN product_id ELSE variation_id END AS product_or_variation_id
 FROM {$wpdb->prefix}wc_order_product_lookup lookup
