@@ -8,6 +8,11 @@ import {
 } from '@woocommerce/customer-effort-score';
 import { Button, TextareaControl, TextControl } from '@wordpress/components';
 
+/**
+ * Internal dependencies
+ */
+import FeedbackIcon from './feedback-icon';
+
 interface CesFeedbackButtonProps {
 	blockName: string;
 	title?: string;
@@ -107,6 +112,7 @@ export const CesFeedbackButton = ( {
 			<CustomerEffortScoreModalContainer />
 			<Button
 				variant="tertiary"
+				icon={ <FeedbackIcon /> }
 				iconSize={ 12 }
 				onClick={ handleFeedbackClick }
 				className="wc-block-editor__feedback-button"
