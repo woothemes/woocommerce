@@ -140,22 +140,22 @@ class ProductSummary extends AbstractBlock {
 	/**
 	 * Trim characters to a specified length.
 	 *
-	 * @param string $text               Text to trim.
-	 * @param int    $max_length          Maximum length of the text.
-	 * @param bool   $includeSpaces      Whether to count spaces as characters.
+	 * @param string $text Text to trim.
+	 * @param int    $max_length Maximum length of the text.
+	 * @param string $count_type What is being counted. One of 'words', 'characters_excluding_spaces', or 'characters_including_spaces'.
 	 * @return string Trimmed text.
 	 */
-	function trim_characters( $text, $max_length, $includeSpaces = true ) {
-		$trimmed = $text;
+	function trim_characters( $text, $max_length, $count_type ) {
+		$pure_text = wp_strip_all_tags( $text );
+		$trimmed   = mb_substr( $pure_text, 0, $max_length );
 
-		// TODO write logic that takes into account spaces and not
-		if ( ! $includeSpaces ) {
-			// TODO write logic that takes into account spaces and not
+		if ( 'characters_including_spaces' === $count_type ) {
+			return $trimmed;
 		}
 
-		$trimmed = mb_substr( $text, 0, $max_length );
-
-		return $trimmed;
+		preg_match_all( '/([\s]+)/', $trimmed , $spaces );
+		$space_count = ! empty( $spaces[0] ) ? count( $spaces[0] ) : 0;
+		return mb_substr( $pure_text, 0, $max_length + $space_count );
 	}
 
 	/**
