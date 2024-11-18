@@ -14,7 +14,7 @@ import clsx from 'clsx';
  */
 import './editor.scss';
 import { type BlockAttributes } from './types';
-import { getColorsFromBlockSupports } from './utils';
+import { getProductFiltersCss } from './utils';
 import { Inspector } from './inspector';
 
 const TEMPLATE: InnerBlockTemplate[] = [
@@ -23,6 +23,10 @@ const TEMPLATE: InnerBlockTemplate[] = [
 		{
 			level: 3,
 			content: __( 'Filters', 'woocommerce' ),
+			style: {
+				margin: { top: '0', bottom: '0' },
+				spacing: { margin: { top: '0', bottom: '0' } },
+			},
 		},
 	],
 	[ 'woocommerce/product-filter-active' ],
@@ -41,21 +45,13 @@ const icons = {
 
 export const Edit = ( props: BlockEditProps< BlockAttributes > ) => {
 	const { attributes } = props;
-	const { overlayIcon, overlayButtonType, overlayIconSize } = attributes;
+	const { overlayIcon, overlayButtonType } = attributes;
 	const [ isOpen, setIsOpen ] = useState( false );
-	const colors = getColorsFromBlockSupports( attributes );
 	const blockProps = useBlockProps( {
 		className: clsx( 'wc-block-product-filters', {
 			'is-overlay-opened': isOpen,
 		} ),
-		style: {
-			'--wc-product-filters-text-color': colors.textColor || '#111',
-			'--wc-product-filters-background-color':
-				colors.backgroundColor || '#fff',
-			'--wc-product-filters-overlay-icon-size': overlayIconSize
-				? `${ overlayIconSize }px`
-				: undefined,
-		} as Record< string, string >,
+		style: getProductFiltersCss( attributes ),
 	} );
 
 	return (
