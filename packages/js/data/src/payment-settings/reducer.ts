@@ -2,14 +2,14 @@
  * Internal dependencies
  */
 import { ACTION_TYPES } from './action-types';
-import { PaymentGatewaySuggestionsState } from './types';
+import { PaymentSettingsState } from './types';
 import { Actions } from './actions';
 
 function updatePaymentGatewayList(
-	state: PaymentGatewaySuggestionsState,
+	state: PaymentSettingsState,
 	gatewayId: string,
 	isOffline: boolean
-): PaymentGatewaySuggestionsState {
+): PaymentSettingsState {
 	const neededArray = isOffline ? 'offline_payment_methods' : 'gateways';
 	const targetIndex = state[ neededArray ].findIndex(
 		( gateway ) => gateway.id === gatewayId
@@ -42,7 +42,7 @@ function updatePaymentGatewayList(
 }
 
 const reducer = (
-	state: PaymentGatewaySuggestionsState = {
+	state: PaymentSettingsState = {
 		gateways: [],
 		offline_payment_methods: [],
 		preferred_suggestions: [],
@@ -54,7 +54,7 @@ const reducer = (
 		errors: {},
 	},
 	payload?: Actions
-): PaymentGatewaySuggestionsState => {
+): PaymentSettingsState => {
 	if ( payload && 'type' in payload ) {
 		switch ( payload.type ) {
 			case ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_REQUEST:

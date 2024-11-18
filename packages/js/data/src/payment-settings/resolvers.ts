@@ -14,14 +14,14 @@ import {
 	getOfflinePaymentGatewaysSuccess,
 	getOfflinePaymentGatewaysError,
 } from './actions';
-import { PaymentGatewaySuggestionsState } from './types';
+import { PaymentSettingsState } from './types';
 import { WC_ADMIN_NAMESPACE } from '../constants';
 
 export function* getPaymentGateways() {
 	yield getPaymentGatewaySuggestionsRequest();
 
 	try {
-		const paymentGatewaySuggestions: PaymentGatewaySuggestionsState =
+		const paymentGatewaySuggestions: PaymentSettingsState =
 			yield apiFetch( {
 				path: WC_ADMIN_NAMESPACE + '/settings/payments/providers',
 			} );
@@ -35,7 +35,7 @@ export function* getOfflinePaymentGateways() {
 	yield getOfflinePaymentGatewaysRequest();
 
 	try {
-		const paymentGatewaySuggestions: PaymentGatewaySuggestionsState =
+		const paymentGatewaySuggestions: PaymentSettingsState =
 			yield apiFetch( {
 				path: WC_ADMIN_NAMESPACE + '/settings/payments/providers',
 			} );

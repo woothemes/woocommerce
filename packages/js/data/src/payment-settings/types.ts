@@ -66,7 +66,7 @@ export type SuggestedPaymentExtensionCategory = {
 	description: string;
 };
 
-export type PaymentGatewaySuggestionsState = {
+export type PaymentSettingsState = {
 	gateways: RegisteredPaymentGateway[];
 	offline_payment_methods: OfflinePaymentGateway[];
 	preferred_suggestions: SuggestedPaymentExtension[];

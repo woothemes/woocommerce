@@ -4,54 +4,54 @@
 import {
 	RegisteredPaymentGateway,
 	OfflinePaymentGateway,
-	PaymentGatewaySuggestionsState,
+	PaymentSettingsState,
 	SuggestedPaymentExtension,
 } from './types';
 import { WPDataSelector, WPDataSelectors } from '../types';
 
 export function getPaymentGateways(
-	state: PaymentGatewaySuggestionsState
+	state: PaymentSettingsState
 ): Array< RegisteredPaymentGateway > {
 	return state.gateways;
 }
 
 export function getOfflinePaymentGateways(
-	state: PaymentGatewaySuggestionsState
+	state: PaymentSettingsState
 ): Array< OfflinePaymentGateway > {
 	return state.offline_payment_methods;
 }
 
 export function getPreferredPluginSuggestions(
-	state: PaymentGatewaySuggestionsState
+	state: PaymentSettingsState
 ): Array< SuggestedPaymentExtension > {
 	return state.preferred_suggestions;
 }
 
 export function getOtherPluginSuggestions(
-	state: PaymentGatewaySuggestionsState
+	state: PaymentSettingsState
 ): Array< SuggestedPaymentExtension > {
 	return state.other_suggestions;
 }
 
-export function isFetching( state: PaymentGatewaySuggestionsState ): boolean {
+export function isFetching( state: PaymentSettingsState ): boolean {
 	return state.isFetching || false;
 }
 
 export function isUpdating(
-	state: PaymentGatewaySuggestionsState,
+	state: PaymentSettingsState,
 	gatewayId: string
 ): boolean {
 	return state.isUpdating[ gatewayId ] || false;
 }
 
 export function shouldRedirect(
-	state: PaymentGatewaySuggestionsState,
+	state: PaymentSettingsState,
 	gatewayId: string
 ): boolean {
 	return state.shouldRedirect[ gatewayId ] || false;
 }
 
-export type PaymentGatewaySuggestionsSelectors = {
+export type PaymentSettingsSelectors = {
 	getPaymentGateways: WPDataSelector< typeof getPaymentGateways >;
 	getOfflinePaymentGateways: WPDataSelector<
 		typeof getOfflinePaymentGateways
