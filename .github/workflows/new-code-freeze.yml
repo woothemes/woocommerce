@@ -61,7 +61,8 @@ jobs:
         runs-on: ubuntu-20.04
         outputs:
             nextReleaseBranch: ${{ steps.extract-version.outputs.nextReleaseBranch }}
-            nextMajorMilestone: ${{ steps.extract-version.outputs.nextMajorMilestone }}
+            nextReleaseVersion: ${{ steps.extract-version.outputs.nextReleaseVersion }}
+            milestoneForTrunk: ${{ steps.extract-version.outputs.milestoneForTrunk }}
         steps:
             - name: Extract version from release tag
               id: extract-version
@@ -69,22 +70,39 @@ jobs:
               with:
                   script: |
                       const event = context.payload;
-                      const currentTag = event.release.tag_name;
-                      const [major, minor, patch] = currentTag.split('.').map(Number);
 
-                      let nextMajor = major;
-                      let nextMinor = minor + 1;
-                      if (nextMinor > 9) {
-                          nextMajor += 1;
-                          nextMinor = 0;
+                      function bumpMinorVersion(currentVersion) {
+                          const [major, minor, patch] = currentVersion.split('.').map(Number);
+
+                          let nextMajor = major;
+                          let nextMinor = minor + 1;
+                          if (nextMinor > 9) {
+                              nextMajor += 1;
+                              nextMinor = 0;
+                          }
+
+                          return {
+                              nextMajor,
+                              nextMinor
+                          };
                       }
 
+                      const currentReleaseTag = event.release.tag_name;
+                      let { nextMajor, nextMinor } = bumpMinorVersion( currentReleaseTag );
+                      const nextReleaseVersion = `${nextMajor}.${nextMinor}.0`;
                       const nextReleaseBranch = `release/${nextMajor}.${nextMinor}`;
-                      const nextMajorMilestone = `${nextMajor}.${nextMinor}.0`;
+
+
+                      let { nextMajor, nextMinor } = bumpMinorVersion( nextReleaseVersion );
+                      const milestoneForTrunk = `${nextMajor}.${nextMinor}.0`;
+
                       core.setOutput('nextReleaseBranch', nextReleaseBranch);
-                      core.setOutput('nextMajorMilestone', nextMajorMilestone);
+                      core.setOutput('nextReleaseVersion', nextReleaseVersion);
+                      core.setOutput('milestoneForTrunk', milestoneForTrunk);
+
                       console.log(`Next release branch: ${nextReleaseBranch}`);
-                      console.log(`Next milestone: ${nextMajorMilestone}`);
+                      console.log(`Next release version: ${nextReleaseVersion}`);
+                      console.log(`Milestone for trunk: ${milestoneForTrunk}`);
     
     create-code-freeze-branch-and-milestone:
         name: 'Create the code freeze branch and milestone for next release'
@@ -94,36 +112,57 @@ jobs:
           issues: write
           contents: write
         steps:
-            - name: Fetch all the branches
+            - name: Fetch trunk branch
               uses: actions/checkout@v3
               with:
                 ref: trunk
 
+            - name: Setup PNPM
+              uses: pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d
+
+            - name: Setup Node
+              uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c
+              with:
+                  node-version-file: .nvmrc
+                  cache: pnpm
+                  registry-url: 'https://registry.npmjs.org'
+
+            - name: Install prerequisites
+              run: |
+                  pnpm install --filter monorepo-utils --ignore-scripts
+                  # ignore scripts speeds up setup signficantly, but we still need to build monorepo utils
+                  pnpm build
+              working-directory: tools/monorepo-utils
+
             - name: Create code freeze branch out of trunk
+              env:
+                RELEASE_BRANCH: ${{ needs.prep-for-code-freeze.outputs.nextReleaseBranch }}
               run: |
                   git checkout trunk
                   git checkout -b $RELEASE_BRANCH
-              env:
-                RELEASE_BRANCH: ${{ needs.prep-for-code-freeze.outputs.nextReleaseBranch }}
 
             - name: Push the new branch to the remote repository
-              run: git push origin $RELEASE_BRANCH
               env:
                 RELEASE_BRANCH: ${{ needs.prep-for-code-freeze.outputs.nextReleaseBranch }}
+              run: git push origin $RELEASE_BRANCH
 
-            - name: Create milestone in Github repository
-              uses: actions/github-script@v6
-              with:
-                  script: |
-                      const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
-                      await github.rest.issues.createMilestone({
-                          owner: owner,
-                          repo: repo,
-                          title: process.env.MILESTONE
-                      });
+            - name: Create next monthly milestone
+              id: milestone
               env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                MILESTONE: ${{ needs.prep-for-code-freeze.outputs.nextMajorMilestone }}
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: pnpm utils code-freeze milestone -o ${{ github.repository_owner }} -m ${{ needs.prep-for-code-freeze.outputs.milestoneForTrunk }}
+
+            - name: Bump versions for Beta.1 monthly release
+              id: version-bump
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: pnpm utils code-freeze version-bump -o ${{ github.repository_owner }} -b ${{ needs.prep-for-code-freeze.outputs.nextReleaseBranch }} -c ${{ needs.prep-for-code-freeze.outputs.nextReleaseVersion }}-beta.1
+
+            - name: Prepare trunk for next development cycle
+              id: prep-trunk
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: pnpm utils code-freeze version-bump ${{ needs.prep-for-code-freeze.outputs.milestoneForTrunk }}-dev -o ${{ github.repository_owner }}
 
             - name: Notify Slack on success
               if: ${{ success() }}
@@ -133,7 +172,7 @@ jobs:
                   slack-channel: ${{ secrets.WOO_RELEASE_SLACK_CHANNEL }}
                   slack-text: |
                       :ice_cube: Code Freeze completed for `${{ needs.prep-for-code-freeze.outputs.nextReleaseBranch }}` :checking:
-                      You can raise a code freeze exception if you need something to be included in this release, see the <${{ secrets.FG_LINK }}/code-freeze-for-woocommerce-core-release|fieldguide page for the code freeze>.
+                      You can raise a code freeze exception if you need something to be included in this release.
                   slack-optional-unfurl_links: false
                   slack-optional-unfurl_media: false
 
@@ -146,21 +185,17 @@ jobs:
                   slack-text: |
                       :warning-8c: Code freeze failed for `${{ needs.prep-for-code-freeze.outputs.nextReleaseBranch }}`. Please check the logs for more details. Workflow run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
-    changelog-version-update-for-trunk-and-next-release:
-        name: Update changelog and version for trunk and next release
+    changelog-version-update-for-trunk:
+        name: Update changelog and version for trunk
         runs-on: ubuntu-20.04
-        needs: [create-code-freeze-branch-and-milestone, prep-for-code-freeze]
+        needs: [create-code-freeze-branch-and-milestone]
         permissions:
           contents: write
           pull-requests: write
         steps:
             - uses: actions/checkout@v3
-
-            - name: Git fetch trunk branch
-              run: git fetch origin trunk
-
-            - name: Git fetch next release branch
-              run: git fetch origin ${{ needs.prep-for-code-freeze.outputs.nextReleaseBranch }}
+              with:
+                ref: trunk
 
             - name: Copy readme.txt to vm root
               run: cp ./plugins/woocommerce/readme.txt ../../readme.txt
@@ -244,20 +279,11 @@ jobs:
             - name: Push branch up
               run: git push origin prep/post-release-tasks-${{ github.event.release.tag_name }}
 
-            - name: Switch to next release branch
-              run: git checkout ${{ needs.prep-for-code-freeze.outputs.nextReleaseBranch }}
-
-            - name: Cherry pick commit to next release branch
-              run: git cherry-pick ${{ steps.commit-changes.outputs.commit_hash }}
-
-            - name: Push next release branch up
-              run: git push origin ${{ needs.prep-for-code-freeze.outputs.nextReleaseBranch }}
-
             - name: Create the PR
               uses: actions/github-script@v6
               with:
                   script: |
-                      const body = "This PR updates the changelog.txt entries based on the latest release: ${{ github.event.release.tag_name }}"
+                      const body = "This PR updates the changelog.txt entries for trunk based on the latest release: ${{ github.event.release.tag_name }}"
 
                       const pr = await github.rest.pulls.create({
                         owner: context.repo.owner,
