@@ -55,9 +55,11 @@ class WC_Brands_Admin {
 			}
 		);
 
-		$this->settings_tabs = array(
-			'brands' => __( 'Brands', 'woocommerce' ),
-		);
+		add_action( 'before_woocommerce_init', function() {
+			$this->settings_tabs = array(
+				'brands' => __( 'Brands', 'woocommerce' ),
+			);
+		} );
 
 		// Hiding setting for future depreciation. Only users who have touched this settings should see it.
 		$setting_value = get_option( 'wc_brands_show_description' );
