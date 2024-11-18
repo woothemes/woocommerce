@@ -1,235 +1,201 @@
 /**
+ * Internal dependencies
+ */
+import { proxifyState, proxifyStore, deepMerge } from './proxies';
+/**
  * External dependencies
  */
-import { deepSignal } from 'deepsignal';
-import { computed } from '@preact/signals';
-import {
-	getScope,
-	setScope,
-	resetScope,
-	setNamespace,
-	resetNamespace,
-} from './hooks';
-
-const isObject = ( item: unknown ): boolean =>
-	!! item && typeof item === 'object' && ! Array.isArray( item );
-
-const deepMerge = ( target: any, source: any ) => {
-	if ( isObject( target ) && isObject( source ) ) {
-		for ( const key in source ) {
-			const getter = Object.getOwnPropertyDescriptor( source, key )?.get;
-			if ( typeof getter === 'function' ) {
-				Object.defineProperty( target, key, { get: getter } );
-			} else if ( isObject( source[ key ] ) ) {
-				if ( ! target[ key ] ) Object.assign( target, { [ key ]: {} } );
-				deepMerge( target[ key ], source[ key ] );
-			} else {
-				Object.assign( target, { [ key ]: source[ key ] } );
-			}
-		}
-	}
-};
-
-const parseInitialState = () => {
-	const storeTag = document.querySelector(
-		`script[type="application/json"]#wc-interactivity-initial-state`
-	);
-	if ( ! storeTag?.textContent ) return {};
-	try {
-		const initialState = JSON.parse( storeTag.textContent );
-		if ( isObject( initialState ) ) return initialState;
-		throw Error( 'Parsed state is not an object' );
-	} catch ( e ) {
-		// eslint-disable-next-line no-console
-		console.log( e );
-	}
-	return {};
-};
+import { getNamespace } from './namespaces';
+import { isPlainObject } from './utils';
 
 export const stores = new Map();
 const rawStores = new Map();
 const storeLocks = new Map();
-
-const objToProxy = new WeakMap();
-const proxyToNs = new WeakMap();
-const scopeToGetters = new WeakMap();
-
-const proxify = ( obj: any, ns: string ) => {
-	if ( ! objToProxy.has( obj ) ) {
-		const proxy = new Proxy( obj, handlers );
-		objToProxy.set( obj, proxy );
-		proxyToNs.set( proxy, ns );
-	}
-	return objToProxy.get( obj );
-};
-
-const handlers = {
-	get: ( target: any, key: string | symbol, receiver: any ) => {
-		const ns = proxyToNs.get( receiver );
-
-		// Check if the property is a getter and we are inside an scope. If that is
-		// the case, we clone the getter to avoid overwriting the scoped
-		// dependencies of the computed each time that getter runs.
-		const getter = Object.getOwnPropertyDescriptor( target, key )?.get;
-		if ( getter ) {
-			const scope = getScope();
-			if ( scope ) {
-				const getters =
-					scopeToGetters.get( scope ) ||
-					scopeToGetters.set( scope, new Map() ).get( scope );
-				if ( ! getters.has( getter ) ) {
-					getters.set(
-						getter,
-						computed( () => {
-							setNamespace( ns );
-							setScope( scope );
-							try {
-								return getter.call( target );
-							} finally {
-								resetScope();
-								resetNamespace();
-							}
-						} )
-					);
-				}
-				return getters.get( getter ).value;
-			}
-		}
-
-		const result = Reflect.get( target, key, receiver );
-
-		// Check if the proxy is the store root and no key with that name exist. In
-		// that case, return an empty object for the requested key.
-		if ( typeof result === 'undefined' && receiver === stores.get( ns ) ) {
-			const obj = {};
-			Reflect.set( target, key, obj, receiver );
-			return proxify( obj, ns );
-		}
-
-		// Check if the property is a generator. If it is, we turn it into an
-		// asynchronous function where we restore the default namespace and scope
-		// each time it awaits/yields.
-		if ( result?.constructor?.name === 'GeneratorFunction' ) {
-			return async ( ...args: unknown[] ) => {
-				const scope = getScope();
-				const gen: Generator< any > = result( ...args );
-
-				let value: any;
-				let it: IteratorResult< any >;
-
-				while ( true ) {
-					setNamespace( ns );
-					setScope( scope );
-					try {
-						it = gen.next( value );
-					} finally {
-						resetScope();
-						resetNamespace();
-					}
-
-					try {
-						value = await it.value;
-					} catch ( e ) {
-						gen.throw( e );
-					}
-
-					if ( it.done ) break;
-				}
-
-				return value;
-			};
-		}
-
-		// Check if the property is a synchronous function. If it is, set the
-		// default namespace. Synchronous functions always run in the proper scope,
-		// which is set by the Directives component.
-		if ( typeof result === 'function' ) {
-			return ( ...args: unknown[] ) => {
-				setNamespace( ns );
-				try {
-					return result( ...args );
-				} finally {
-					resetNamespace();
-				}
-			};
-		}
-
-		// Check if the property is an object. If it is, proxyify it.
-		if ( isObject( result ) ) return proxify( result, ns );
-
-		return result;
-	},
-};
+const storeConfigs = new Map();
+const serverStates = new Map();
 
 /**
- * @typedef StoreProps Properties object passed to `store`.
- * @property {Object} state State to be added to the global store. All the
- *                          properties included here become reactive.
- */
-
-/**
- * @typedef StoreOptions Options object.
- */
-
-/**
- * Extends the Interactivity API global store with the passed properties.
+ * Get the defined config for the store with the passed namespace.
  *
- * These props typically consist of `state`, which is reactive, and other
- * properties like `selectors`, `actions`, `effects`, etc. which can store
- * callbacks and derived state. These props can then be referenced by any
- * directive to make the HTML interactive.
+ * @param namespace Store's namespace from which to retrieve the config.
+ * @return Defined config for the given namespace.
+ */
+export const getConfig = ( namespace?: string ) =>
+	storeConfigs.get( namespace || getNamespace() ) || {};
+
+/**
+ * Get the part of the state defined and updated from the server.
+ *
+ * The object returned is read-only, and includes the state defined in PHP with
+ * `wp_interactivity_state()`. When using `actions.navigate()`, this object is
+ * updated to reflect the changes in its properites, without affecting the state
+ * returned by `store()`. Directives can subscribe to those changes to update
+ * the state if needed.
  *
  * @example
  * ```js
- *  store({
- *    state: {
- *      counter: { value: 0 },
- *    },
- *    actions: {
- *      counter: {
- *        increment: ({ state }) => {
- *          state.counter.value += 1;
- *        },
+ *  const { state } = store('myStore', {
+ *    callbacks: {
+ *      updateServerState() {
+ *        const serverState = getServerState();
+ *        // Override some property with the new value that came from the server.
+ *        state.overridableProp = serverState.overridableProp;
  *      },
  *    },
  *  });
+ * ```
+ *
+ * @param namespace Store's namespace from which to retrieve the server state.
+ * @return The server state for the given namespace.
+ */
+export const getServerState = ( namespace?: string ) => {
+	const ns = namespace || getNamespace();
+	if ( ! serverStates.has( ns ) ) {
+		serverStates.set( ns, proxifyState( ns, {}, { readOnly: true } ) );
+	}
+	return serverStates.get( ns );
+};
+
+interface StoreOptions {
+	/**
+	 * Property to block/unblock private store namespaces.
+	 *
+	 * If the passed value is `true`, it blocks the given namespace, making it
+	 * accessible only trough the returned variables of the `store()` call. In
+	 * the case a lock string is passed, it also blocks the namespace, but can
+	 * be unblocked for other `store()` calls using the same lock string.
+	 *
+	 * @example
+	 * ```
+	 * // The store can only be accessed where the `state` const can.
+	 * const { state } = store( 'myblock/private', { ... }, { lock: true } );
+	 * ```
+	 *
+	 * @example
+	 * ```
+	 * // Other modules knowing `SECRET_LOCK_STRING` can access the namespace.
+	 * const { state } = store(
+	 *   'myblock/private',
+	 *   { ... },
+	 *   { lock: 'SECRET_LOCK_STRING' }
+	 * );
+	 * ```
+	 */
+	lock?: boolean | string;
+}
+
+type Prettify< T > = { [ K in keyof T ]: T[ K ] } & {};
+type DeepPartial< T > = T extends object
+	? { [ P in keyof T ]?: DeepPartial< T[ P ] > }
+	: T;
+type DeepPartialState< T extends { state: object } > = Omit< T, 'state' > & {
+	state?: DeepPartial< T[ 'state' ] >;
+};
+type ConvertGeneratorToPromise< T > = T extends (
+	...args: infer A
+) => Generator< any, infer R, any >
+	? ( ...args: A ) => Promise< R >
+	: never;
+type ConvertGeneratorsToPromises< T > = {
+	[ K in keyof T ]: T[ K ] extends ( ...args: any[] ) => any
+		? ConvertGeneratorToPromise< T[ K ] > extends never
+			? T[ K ]
+			: ConvertGeneratorToPromise< T[ K ] >
+		: T[ K ] extends object
+		? Prettify< ConvertGeneratorsToPromises< T[ K ] > >
+		: T[ K ];
+};
+type ConvertPromiseToGenerator< T > = T extends (
+	...args: infer A
+) => Promise< infer R >
+	? ( ...args: A ) => Generator< any, R, any >
+	: never;
+type ConvertPromisesToGenerators< T > = {
+	[ K in keyof T ]: T[ K ] extends ( ...args: any[] ) => any
+		? ConvertPromiseToGenerator< T[ K ] > extends never
+			? T[ K ]
+			: ConvertPromiseToGenerator< T[ K ] >
+		: T[ K ] extends object
+		? Prettify< ConvertPromisesToGenerators< T[ K ] > >
+		: T[ K ];
+};
+
+export const universalUnlock =
+	'I acknowledge that using a private store means my plugin will inevitably break on the next store release.';
+
+/**
+ * Extends the Interactivity API global store adding the passed properties to
+ * the given namespace. It also returns stable references to the namespace
+ * content.
+ *
+ * These props typically consist of `state`, which is the reactive part of the
+ * store ― which means that any directive referencing a state property will be
+ * re-rendered anytime it changes ― and function properties like `actions` and
+ * `callbacks`, mostly used for event handlers. These props can then be
+ * referenced by any directive to make the HTML interactive.
+ *
+ * @example
+ * ```js
+ *  const { state } = store( 'counter', {
+ *    state: {
+ *      value: 0,
+ *      get double() { return state.value * 2; },
+ *    },
+ *    actions: {
+ *      increment() {
+ *        state.value += 1;
+ *      },
+ *    },
+ *  } );
  * ```
  *
  * The code from the example above allows blocks to subscribe and interact with
  * the store by using directives in the HTML, e.g.:
  *
  * ```html
- * <div data-wp-interactive>
+ * <div data-wp-interactive="counter">
  *   <button
- *     data-wp-text="state.counter.value"
- *     data-wp-on--click="actions.counter.increment"
+ *     data-wp-text="state.double"
+ *     data-wp-on--click="actions.increment"
  *   >
  *     0
  *   </button>
  * </div>
  * ```
+ * @param namespace The store namespace to interact with.
+ * @param storePart Properties to add to the store namespace.
+ * @param options   Options for the given namespace.
  *
- * @param {StoreProps}   properties Properties to be added to the global store.
- * @param {StoreOptions} [options]  Options passed to the `store` call.
+ * @return A reference to the namespace content.
  */
 
-interface StoreOptions {
-	lock?: boolean | string;
-}
-
-const universalUnlock =
-	'I acknowledge that using a private store means my plugin will inevitably break on the next store release.';
-
-export function store< S extends object = {} >(
-	namespace: string,
-	storePart?: S,
-	options?: StoreOptions
-): S;
+// Overload for when the types are inferred.
 export function store< T extends object >(
 	namespace: string,
-	storePart?: T,
+	storePart: T,
 	options?: StoreOptions
-): T;
+): Prettify< ConvertGeneratorsToPromises< T > >;
+
+// Overload for when types are passed via generics and they contain state.
+export function store< T extends { state: object } >(
+	namespace: string,
+	storePart: ConvertPromisesToGenerators< DeepPartialState< T > >,
+	options?: StoreOptions
+): Prettify< ConvertGeneratorsToPromises< T > >;
+
+// Overload for when types are passed via generics and they don't contain state.
+export function store< T extends object >(
+	namespace: string,
+	storePart: ConvertPromisesToGenerators< T >,
+	options?: StoreOptions
+): Prettify< ConvertGeneratorsToPromises< T > >;
+
+// Overload for when types are divided into multiple parts.
+export function store< T extends object >(
+	namespace: string,
+	storePart: ConvertPromisesToGenerators< DeepPartial< T > >,
+	options?: StoreOptions
+): Prettify< ConvertGeneratorsToPromises< T > >;
 
 export function store(
 	namespace: string,
@@ -243,11 +209,16 @@ export function store(
 		if ( lock !== universalUnlock ) {
 			storeLocks.set( namespace, lock );
 		}
-		const rawStore = { state: deepSignal( state ), ...block };
-		const proxiedStore = new Proxy( rawStore, handlers );
+		const rawStore = {
+			state: proxifyState(
+				namespace,
+				isPlainObject( state ) ? state : {}
+			),
+			...block,
+		};
+		const proxifiedStore = proxifyStore( namespace, rawStore );
 		rawStores.set( namespace, rawStore );
-		stores.set( namespace, proxiedStore );
-		proxyToNs.set( proxiedStore, namespace );
+		stores.set( namespace, proxifiedStore );
 	} else {
 		// Lock the store if it wasn't locked yet and the passed lock is
 		// different from the universal unlock. If no lock is given, the store
@@ -279,7 +250,40 @@ export function store(
 	return stores.get( namespace );
 }
 
-// Parse and populate the initial state.
-Object.entries( parseInitialState() ).forEach( ( [ namespace, state ] ) => {
-	store( namespace, { state } );
-} );
+export const parseServerData = ( dom = document ) => {
+	const jsonDataScriptTag =
+		// Preferred Script Module data passing form
+		dom.getElementById(
+			'wp-script-module-data-@wordpress/interactivity'
+		) ??
+		// Legacy form
+		dom.getElementById( 'wp-interactivity-data' );
+	if ( jsonDataScriptTag?.textContent ) {
+		try {
+			return JSON.parse( jsonDataScriptTag.textContent );
+		} catch {}
+	}
+	return {};
+};
+
+export const populateServerData = ( data?: {
+	state?: Record< string, unknown >;
+	config?: Record< string, unknown >;
+} ) => {
+	if ( isPlainObject( data?.state ) ) {
+		Object.entries( data!.state ).forEach( ( [ namespace, state ] ) => {
+			const st = store< any >( namespace, {}, { lock: universalUnlock } );
+			deepMerge( st.state, state, false );
+			deepMerge( getServerState( namespace ), state );
+		} );
+	}
+	if ( isPlainObject( data?.config ) ) {
+		Object.entries( data!.config ).forEach( ( [ namespace, config ] ) => {
+			storeConfigs.set( namespace, config );
+		} );
+	}
+};
+
+// Parse and populate the initial state and config.
+const data = parseServerData();
+populateServerData( data );
