@@ -27,7 +27,6 @@ export const SettingsPaymentsMain = () => {
 	const [ installingPlugin, setInstallingPlugin ] = useState< string | null >(
 		null
 	);
-	const [ isInstalled, setIsInstalled ] = useState< boolean >( false );
 	const { installAndActivatePlugins } = useDispatch( PLUGINS_STORE_NAME );
 
 	const installedPluginSlugs = useSelect( ( select ) => {
@@ -35,17 +34,7 @@ export const SettingsPaymentsMain = () => {
 	}, [] );
 
 	// Make UI to refresh when plugin is installed.
-	const { invalidateResolution } = useDispatch( 'core/data' );
-
-	useEffect( () => {
-		if ( isInstalled ) {
-			invalidateResolution(
-				PAYMENT_SETTINGS_STORE_NAME,
-				'getRegisteredPaymentGateways'
-			);
-			setIsInstalled( false );
-		}
-	}, [ isInstalled, invalidateResolution ] );
+	const { invalidateResolutionForStoreSelector } = useDispatch( PAYMENT_SETTINGS_STORE_NAME );
 
 	const {
 		registeredPaymentGateways,
@@ -74,7 +63,7 @@ export const SettingsPaymentsMain = () => {
 			installAndActivatePlugins( [ extension.plugin.slug ] )
 				.then( ( response ) => {
 					createNoticesFromResponse( response );
-					setIsInstalled( true );
+					invalidateResolutionForStoreSelector( 'getRegisteredPaymentGateways' )
 					setInstallingPlugin( null );
 				} )
 				.catch( ( response: { errors: Record< string, string > } ) => {
@@ -82,14 +71,14 @@ export const SettingsPaymentsMain = () => {
 					setInstallingPlugin( null );
 				} );
 		},
-		[ installingPlugin, isInstalled, installAndActivatePlugins ]
+		[ installingPlugin, installAndActivatePlugins ]
 	);
 
 	useEffect( () => {
 		setWooPaymentsGatewayData(
 			parseScriptTag( 'experimental_wc_settings_payments_woopayments' )
 		);
-	}, [ isInstalled ] );
+	}, [] );
 
 	return (
 		<>
