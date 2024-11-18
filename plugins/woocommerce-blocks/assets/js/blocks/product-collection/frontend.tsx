@@ -1,13 +1,7 @@
 /**
  * External dependencies
  */
-import {
-	store,
-	navigate,
-	prefetch,
-	getElement,
-	getContext,
-} from '@woocommerce/interactivity';
+import { store, getElement, getContext } from '@woocommerce/interactivity';
 import {
 	triggerProductListRenderedEvent,
 	triggerViewedProductEvent,
@@ -56,14 +50,14 @@ const forcePageReload = ( href: string ) => {
  * Ensures the visibility of the first product in the collection.
  * Scrolls the page to the first product if it's not in the viewport.
  *
- * @param {string} wcNavigationId Unique ID for each Product Collection block on page/post.
+ * @param {string} wcRouterRegion Unique ID for each Product Collection block on page/post.
  */
-function scrollToFirstProductIfNotVisible( wcNavigationId?: string ) {
-	if ( ! wcNavigationId ) {
+function scrollToFirstProductIfNotVisible( wcRouterRegion?: string ) {
+	if ( ! wcRouterRegion ) {
 		return;
 	}
 
-	const productSelector = `[data-wc-navigation-id=${ wcNavigationId }] .wc-block-product-template .wc-block-product`;
+	const productSelector = `[data-wc-router-region=${ wcRouterRegion }] .wc-block-product-template .wc-block-product`;
 	const product = document.querySelector( productSelector );
 	if ( product ) {
 		const rect = product.getBoundingClientRect();
@@ -106,11 +100,12 @@ const productCollectionStore = {
 			const ctx = getContext< ProductCollectionStoreContext >();
 			const { ref } = getElement();
 			const wcNavigationId = (
-				ref?.closest( '[data-wc-navigation-id]' ) as HTMLDivElement
+				ref?.closest( '[data-wc-router-region]' ) as HTMLDivElement
 			 )?.dataset?.wcNavigationId;
 			const isDisabled = (
-				ref?.closest( '[data-wc-navigation-id]' ) as HTMLDivElement
+				ref?.closest( '[data-wc-router-region]' ) as HTMLDivElement
 			 )?.dataset.wcNavigationDisabled;
+			console.log( isDisabled );
 
 			if ( isDisabled ) {
 				yield forcePageReload( ref.href );
@@ -125,7 +120,10 @@ const productCollectionStore = {
 					ctx.animation = 'start';
 				}, 400 );
 
-				yield navigate( ref.href );
+				const { actions } = yield import(
+					'@woocommerce/interactivity-router'
+				);
+				yield actions.navigate( ref.href );
 
 				// Clear the timeout if the navigation is fast.
 				clearTimeout( timeout );
@@ -158,7 +156,7 @@ const productCollectionStore = {
 			const { ref } = getElement();
 
 			const isDisabled = (
-				ref?.closest( '[data-wc-navigation-id]' ) as HTMLDivElement
+				ref?.closest( '[data-wc-router-region]' ) as HTMLDivElement
 			 )?.dataset.wcNavigationDisabled;
 
 			if ( isDisabled ) {
@@ -166,7 +164,10 @@ const productCollectionStore = {
 			}
 
 			if ( isValidLink( ref ) ) {
-				yield prefetch( ref.href );
+				const { actions } = yield import(
+					'@woocommerce/interactivity-router'
+				);
+				yield actions.prefetch( ref.href );
 			}
 		},
 		*viewProduct() {
@@ -186,7 +187,7 @@ const productCollectionStore = {
 		*prefetch() {
 			const { ref } = getElement();
 			const isDisabled = (
-				ref?.closest( '[data-wc-navigation-id]' ) as HTMLDivElement
+				ref?.closest( '[data-wc-router-region]' ) as HTMLDivElement
 			 )?.dataset.wcNavigationDisabled;
 
 			if ( isDisabled ) {
@@ -196,7 +197,10 @@ const productCollectionStore = {
 			const context = getContext< ProductCollectionStoreContext >();
 
 			if ( context?.isPrefetchNextOrPreviousLink && isValidLink( ref ) ) {
-				yield prefetch( ref.href );
+				const { actions } = yield import(
+					'@woocommerce/interactivity-router'
+				);
+				yield actions.prefetch( ref.href );
 			}
 		},
 		*onRender() {

@@ -17,10 +17,10 @@ class Renderer {
 	 *
 	 * @var array
 	 */
-	private $render_state = [
+	private $render_state = array(
 		'has_results'          => false,
 		'has_no_results_block' => false,
-	];
+	);
 
 	/**
 	 * The Block with its attributes before it gets rendered
@@ -247,10 +247,10 @@ class Renderer {
 	private function enable_client_side_navigation( $block_content ) {
 		$p = new \WP_HTML_Tag_Processor( $block_content );
 
-		// Add `data-wc-navigation-id to the product collection block.
+		// Add `data-wc-router-region to the product collection block.
 		if ( $this->is_next_tag_product_collection( $p ) && isset( $this->parsed_block ) ) {
 			$p->set_attribute(
-				'data-wc-navigation-id',
+				'data-wc-router-region',
 				'wc-product-collection-' . $this->parsed_block['attrs']['queryId']
 			);
 			$current_context = json_decode( $p->get_attribute( 'data-wc-context' ) ?? '{}', true );

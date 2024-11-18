@@ -24,11 +24,11 @@ class ProductButton extends AbstractBlock {
 	 * @param string $key Data to get, or default to everything.
 	 */
 	protected function get_block_type_script( $key = null ) {
-		$script = [
+		$script = array(
 			'handle'       => 'wc-' . $this->block_name . '-interactivity-frontend',
 			'path'         => $this->asset_api->get_block_asset_build_path( $this->block_name . '-interactivity-frontend' ),
-			'dependencies' => [ 'wc-interactivity' ],
-		];
+			'dependencies' => array( 'wc-interactivity' ),
+		);
 
 		return $key ? $script[ $key ] : $script;
 	}
@@ -37,7 +37,7 @@ class ProductButton extends AbstractBlock {
 	 * Register the context.
 	 */
 	protected function get_block_type_uses_context() {
-		return [ 'query', 'queryId', 'postId' ];
+		return array( 'query', 'queryId', 'postId' );
 	}
 
 	/**
@@ -196,10 +196,10 @@ class ProductButton extends AbstractBlock {
 					'class' => implode(
 						' ',
 						array_filter(
-							[
+							array(
 								'wp-block-button wc-block-components-product-button',
 								esc_attr( $classname . ' ' . $custom_width_classes . ' ' . $custom_align_classes ),
-							]
+							)
 						)
 					),
 				)
