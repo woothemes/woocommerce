@@ -317,7 +317,7 @@ const getMainConfig = ( options = {} ) => {
  * @param {Object} options Build options.
  */
 const getFrontConfig = ( options = {} ) => {
-	let { fileSuffix } = options;
+	let { fileSuffix, module = false } = options;
 	const { alias, resolvePlugins = [] } = options;
 	fileSuffix = fileSuffix ? `-${ fileSuffix }` : '';
 	const resolve = alias
@@ -328,9 +328,26 @@ const getFrontConfig = ( options = {} ) => {
 		: {
 				plugins: resolvePlugins,
 		  };
+
+	const plugins = [
+		...getSharedPlugins( {
+			bundleAnalyzerReportTitle: 'Frontend',
+		} ),
+		new ProgressBarPlugin( getProgressBarPluginConfig( 'Frontend' ) ),
+	];
+	if ( ! module ) {
+		plugins.push( new AddSplitChunkDependencies() );
+	}
 	return {
-		entry: getEntryConfig( 'frontend', options.exclude || [] ),
+		entry: getEntryConfig(
+			module ? 'frontendModuleSupported' : 'frontend',
+			options.exclude || []
+		),
+		experiments: {
+			outputModule: module,
+		},
 		output: {
+			module,
 			devtoolNamespace: 'wc',
 			path: path.resolve( __dirname, '../build/' ),
 			// This is a cache busting mechanism which ensures that the script is loaded via the browser with a ?ver=hash
@@ -345,7 +362,7 @@ const getFrontConfig = ( options = {} ) => {
 				return `[name]-frontend${ fileSuffix }.js`;
 			},
 			uniqueName: 'webpackWcBlocksFrontendJsonp',
-			library: [ 'wc', '[name]' ],
+			library: module ? undefined : [ 'wc', '[name]' ],
 		},
 		module: {
 			rules: [
@@ -432,13 +449,7 @@ const getFrontConfig = ( options = {} ) => {
 				} ),
 			],
 		},
-		plugins: [
-			...getSharedPlugins( {
-				bundleAnalyzerReportTitle: 'Frontend',
-			} ),
-			new ProgressBarPlugin( getProgressBarPluginConfig( 'Frontend' ) ),
-			new AddSplitChunkDependencies(),
-		],
+		plugins,
 		resolve: {
 			...resolve,
 			extensions: [ '.js', '.ts', '.tsx' ],

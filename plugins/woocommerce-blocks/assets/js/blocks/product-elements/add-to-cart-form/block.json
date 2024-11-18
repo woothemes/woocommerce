@@ -18,6 +18,7 @@
 	"keywords": [ "WooCommerce" ],
 	"usesContext": [ "postId" ],
 	"textdomain": "woocommerce",
+	"viewScriptModule": "file:../add-to-cart-form-frontend.js",
 	"supports": {
 		"interactivity": true
 	},
