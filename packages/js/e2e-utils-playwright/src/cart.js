@@ -1,5 +1,5 @@
 /**
- * Adds a specified quantity of a product by ID to the WooCommerce cart
+ * Adds a specified quantity of a product by ID to the WooCommerce cart.
  *
  * @param {import('playwright').Page} page
  * @param {string}                    productId
