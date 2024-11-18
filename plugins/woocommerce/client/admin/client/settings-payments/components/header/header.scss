@@ -1,0 +1,28 @@
+.woocommerce-layout__header:has(.woocommerce-settings-payments-header__title) {
+	padding: $gap-large 2 * $gap-large;
+	border-bottom: 1px solid #ebebeb;
+
+	.woocommerce-layout__header-wrapper {
+		min-height: 40px;
+		gap: $gap-smaller;
+	}
+
+	.woocommerce-layout__header-heading {
+		height: initial;
+		padding: 0;
+		color: $gray-900;
+		font-size: 20px;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 28px;
+	}
+
+	.woocommerce-settings-payments__back-button {
+		+ .woocommerce-layout__header-heading {
+			font-size: 16px;
+			font-style: normal;
+			font-weight: 600;
+			line-height: 24px;
+		}
+	}
+}

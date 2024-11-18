@@ -379,14 +379,12 @@ const updateOnboardingProfileOption = fromPromise(
 	async ( { input }: { input: CoreProfilerStateMachineContext } ) => {
 		const { businessChoice, sellingOnlineAnswer, sellingPlatforms } =
 			input.userProfile;
-
-		return dispatch( OPTIONS_STORE_NAME ).updateOptions( {
-			woocommerce_onboarding_profile: {
-				...input.onboardingProfile,
-				business_choice: businessChoice,
+		return dispatch( ONBOARDING_STORE_NAME ).updateProfileItems( {
+			...( businessChoice && { business_choice: businessChoice } ),
+			...( sellingOnlineAnswer && {
 				selling_online_answer: sellingOnlineAnswer,
-				selling_platforms: sellingPlatforms,
-			},
+			} ),
+			...( sellingPlatforms && { selling_platforms: sellingPlatforms } ),
 		} );
 	}
 );
@@ -471,28 +469,27 @@ const updateBusinessInfo = fromPromise(
 	}: {
 		input: {
 			payload: BusinessInfoPayload;
+			context: CoreProfilerStateMachineContext;
 		};
 	} ) => {
-		const refreshedOnboardingProfile = ( await resolveSelect(
-			OPTIONS_STORE_NAME
-		).getOption( 'woocommerce_onboarding_profile' ) ) as OnboardingProfile;
-
-		await updateStoreCurrency( input.payload.storeLocation );
-
-		return dispatch( OPTIONS_STORE_NAME ).updateOptions( {
-			blogname: input.payload.storeName,
-			woocommerce_default_country: input.payload.storeLocation,
-			woocommerce_onboarding_profile: {
-				...refreshedOnboardingProfile,
+		return Promise.all( [
+			updateStoreCurrency( input.payload.storeLocation ),
+			dispatch( ONBOARDING_STORE_NAME ).updateProfileItems( {
 				is_store_country_set: true,
-				industry: [ input.payload.industry ],
 				is_agree_marketing: input.payload.isOptInMarketing,
-				store_email:
-					input.payload.storeEmailAddress.length > 0
-						? input.payload.storeEmailAddress
-						: null,
-			},
-		} );
+				...( input.payload.industry && {
+					industry: [ input.payload.industry ],
+				} ),
+				...( input.payload.storeEmailAddress !==
+					input.context.onboardingProfile.store_email && {
+					store_email: input.payload.storeEmailAddress,
+				} ),
+			} ),
+			dispatch( OPTIONS_STORE_NAME ).updateOptions( {
+				blogname: input.payload.storeName,
+				woocommerce_default_country: input.payload.storeLocation,
+			} ),
+		] );
 	}
 );
 
@@ -1175,7 +1172,10 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 				postBusinessInfo: {
 					invoke: {
 						src: 'updateBusinessInfo',
-						input: ( { event } ) => event,
+						input: ( { event, context } ) => {
+							assertEvent( event, 'BUSINESS_INFO_COMPLETED' );
+							return { payload: event.payload, context };
+						},
 						onDone: {
 							target: '#plugins',
 						},
@@ -1431,6 +1431,9 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 							],
 							target: 'pluginsSkipped',
 						},
+						PLUGINS_PAGE_COMPLETED_WITHOUT_SELECTING_PLUGINS: {
+							target: 'postPluginInstallation.noPluginsSelected',
+						},
 						PLUGINS_LEARN_MORE_LINK_CLICKED: {
 							actions: [
 								{
@@ -1449,33 +1452,73 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 					},
 				},
 				postPluginInstallation: {
-					invoke: {
-						input: ( { event } ) => {
-							assertEvent(
-								event,
-								'PLUGINS_INSTALLATION_COMPLETED'
-							);
-							return event;
-						},
-						src: fromPromise( async ( { input: event } ) => {
-							return await dispatch(
-								ONBOARDING_STORE_NAME
-							).updateProfileItems( {
-								business_extensions:
-									event.payload.installationCompletedResult.installedPlugins.map(
-										( extension: InstalledPlugin ) =>
-											extension.plugin
-									),
-								completed: true,
-							} );
-						} ),
-						onDone: [
-							{
-								target: 'isJetpackConnected',
-								guard: 'hasJetpackSelectedForInstallation',
+					initial: 'noPluginsSelected',
+					states: {
+						withPluginsSelected: {
+							invoke: {
+								input: ( { event } ) => {
+									assertEvent(
+										event,
+										'PLUGINS_INSTALLATION_COMPLETED'
+									);
+									return event;
+								},
+								src: fromPromise(
+									async ( { input: event } ) => {
+										return await dispatch(
+											ONBOARDING_STORE_NAME
+										).updateProfileItems( {
+											business_extensions:
+												event.payload.installationCompletedResult.installedPlugins.map(
+													(
+														extension: InstalledPlugin
+													) => extension.plugin
+												),
+											completed: true,
+										} );
+									}
+								),
+								onDone: [
+									{
+										target: '#isJetpackConnected',
+										guard: or( [
+											'hasJetpackSelectedForInstallation',
+											'hasJetpackActivated',
+										] ),
+									},
+									{ actions: 'redirectToWooHome' },
+								],
+								onError: {
+									actions: 'redirectToWooHome',
+								},
 							},
-							{ actions: 'redirectToWooHome' },
-						],
+						},
+						noPluginsSelected: {
+							entry: assign( {
+								loader: {
+									progress: 80,
+								},
+							} ),
+							invoke: {
+								src: fromPromise( () =>
+									dispatch(
+										ONBOARDING_STORE_NAME
+									).updateProfileItems( {
+										completed: true,
+									} )
+								),
+								onDone: [
+									{
+										target: '#isJetpackConnected',
+										guard: 'hasJetpackActivated',
+									},
+									{ actions: 'redirectToWooHome' },
+								],
+								onError: {
+									actions: 'redirectToWooHome',
+								},
+							},
+						},
 					},
 					meta: {
 						component: CoreProfilerLoader,
@@ -1483,6 +1526,7 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 					},
 				},
 				isJetpackConnected: {
+					id: 'isJetpackConnected',
 					invoke: {
 						src: 'getJetpackIsConnected',
 						onDone: [
@@ -1566,7 +1610,7 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 							],
 						},
 						PLUGINS_INSTALLATION_COMPLETED: {
-							target: 'postPluginInstallation',
+							target: 'postPluginInstallation.withPluginsSelected',
 							actions: [
 								{
 									type: 'recordSuccessfulPluginInstallation',
