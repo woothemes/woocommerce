@@ -170,8 +170,8 @@ class ProductSummary extends AbstractBlock {
 	 * TODO: https://github.com/woocommerce/woocommerce/issues/52835
 	 *
 	 * @param string $source     Source text.
-	 * @param int    $max_length  Limit number of items returned if text has multiple paragraphs.
-	 * @param string $count_type  What is being counted. One of 'words', 'characters_excluding_spaces', or 'characters_including_spaces'.
+	 * @param int    $max_length Limit number of items returned if text has multiple paragraphs.
+	 * @param string $count_type What is being counted. One of 'words', 'characters_excluding_spaces', or 'characters_including_spaces'.
 	 * @return string Generated summary.
 	 */
 	function generate_summary( $source, $max_length ) {
@@ -194,7 +194,7 @@ class ProductSummary extends AbstractBlock {
 			return wp_trim_words( $first_paragraph, $max_length );
 		}
 
-		return trim_characters( $first_paragraph, $max_length, $count_type === 'characters_including_spaces' );
+		return $this->trim_characters( $first_paragraph, $max_length, $count_type ) . '…';
 	}
 
 	/**
