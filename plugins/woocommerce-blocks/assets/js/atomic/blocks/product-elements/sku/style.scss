@@ -1,9 +1,15 @@
 .wc-block-components-product-sku {
 	display: block;
-	@include font-size(small);
 	overflow-wrap: break-word;
 
-	strong {
-		text-transform: uppercase;
+	&__prefix {
+		color: var(--wp--preset--color--contrast-2);
+	}
+	&__suffix {
+		display: none;
+
+		.wc-block-components-product-sku.is-selected & {
+			display: inline;
+		}
 	}
 }
