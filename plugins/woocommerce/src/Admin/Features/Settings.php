@@ -89,6 +89,15 @@ class Settings {
 			);
 			// phpcs:enable WordPress.WP.EnqueuedResourceParameters.MissingVersion
 			wp_enqueue_style( 'wp-gutenberg-posts-dashboard' );
+
+			// phpcs:disable WordPress.WP.EnqueuedResourceParameters.MissingVersion
+			wp_register_style(
+				'wp-gutenberg-edit-site',
+				gutenberg_url( 'build/edit-site/style.css', __FILE__ ),
+				array( 'wp-components' ),
+			);
+			// phpcs:enable WordPress.WP.EnqueuedResourceParameters.MissingVersion
+			wp_enqueue_style( 'wp-gutenberg-edit-site' );
 		}
 	}
 
@@ -136,7 +145,7 @@ class Settings {
 			$pages = $setting_page->add_settings_page_data( $pages );
 		}
 
-		$settings['settingsPages'] = $pages;
+		$settings['settingsData'] = $pages;
 
 		return $settings;
 	}

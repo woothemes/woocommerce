@@ -23,6 +23,18 @@
 		"interactivity": true,
 		"typography": {
 			"fontSize": true
+		},
+		"layout": {
+			"default": {
+				"type": "flex",
+				"orientation": "vertical",
+				"flexWrap": "nowrap",
+				"justifyContent":"stretch"
+			},
+			"allowEditing": false
+		},
+		"spacing": {
+			"blockGap": true
 		}
 	},
 	"textdomain": "woocommerce",

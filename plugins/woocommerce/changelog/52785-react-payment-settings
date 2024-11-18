@@ -1,0 +1,5 @@
+Significance: patch
+Type: dev
+
+Add Reactified Settings page for managing payment gateways (under feature flag)
+
