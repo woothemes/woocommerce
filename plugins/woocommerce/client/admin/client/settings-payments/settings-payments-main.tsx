@@ -34,7 +34,9 @@ export const SettingsPaymentsMain = () => {
 	}, [] );
 
 	// Make UI to refresh when plugin is installed.
-	const { invalidateResolutionForStoreSelector } = useDispatch( PAYMENT_SETTINGS_STORE_NAME );
+	const { invalidateResolutionForStoreSelector } = useDispatch(
+		PAYMENT_SETTINGS_STORE_NAME
+	);
 
 	const {
 		registeredPaymentGateways,
@@ -63,7 +65,9 @@ export const SettingsPaymentsMain = () => {
 			installAndActivatePlugins( [ extension.plugin.slug ] )
 				.then( ( response ) => {
 					createNoticesFromResponse( response );
-					invalidateResolutionForStoreSelector( 'getRegisteredPaymentGateways' )
+					invalidateResolutionForStoreSelector(
+						'getRegisteredPaymentGateways'
+					);
 					setInstallingPlugin( null );
 				} )
 				.catch( ( response: { errors: Record< string, string > } ) => {
