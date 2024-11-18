@@ -23,7 +23,7 @@ $id_suffix = wp_unique_id();
 
 ?>
 <form class="woocommerce-ordering" method="get">
-	<label for="woocommerce-orderby-<?php echo esc_attr( $id_suffix ); ?>"><?php echo esc_html( 'Sort by', 'woocommerce' ); ?></label>
+	<label for="woocommerce-orderby-<?php echo esc_attr( $id_suffix ); ?>"><?php echo esc_html__( 'Sort by', 'woocommerce' ); ?></label>
 	<select id="woocommerce-orderby-<?php echo esc_attr( $id_suffix ); ?>" name="orderby" class="orderby">
 		<?php foreach ( $catalog_orderby_options as $id => $name ) : ?>
 			<option value="<?php echo esc_attr( $id ); ?>" <?php selected( $orderby, $id ); ?>><?php echo esc_html( $name ); ?></option>
