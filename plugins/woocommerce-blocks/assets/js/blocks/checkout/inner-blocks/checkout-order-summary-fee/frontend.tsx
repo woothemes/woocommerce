@@ -1,6 +1,20 @@
 /**
+ * External dependencies
+ */
+import { __ } from '@wordpress/i18n';
+
+/**
  * Internal dependencies
  */
-import Block from './block';
+import Block, { BlockAttributes } from './block';
 
-export default Block;
+const Frontend = ( {
+	sectionHeading,
+	className,
+}: BlockAttributes ): JSX.Element => {
+	const heading = sectionHeading ?? __( 'Fees', 'woocommerce' );
+
+	return <Block heading={ heading } className={ className } />;
+};
+
+export default Frontend;
