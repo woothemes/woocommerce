@@ -65,6 +65,7 @@ test.describe( 'Product Collection: Register Product Collection', () => {
 		pageObject,
 		editor,
 		admin,
+		isWordPressLatestMinus1Version,
 	} ) => {
 		await admin.createNewPost();
 		await editor.insertBlockUsingGlobalInserter( pageObject.BLOCK_NAME );
@@ -74,11 +75,18 @@ test.describe( 'Product Collection: Register Product Collection', () => {
 			} )
 			.click();
 
+		const productCollectionBlock = editor.canvas.getByLabel(
+			'Block: Product Collection'
+		);
+
 		for ( const myCollection of Object.values(
 			MY_REGISTERED_COLLECTIONS
 		) ) {
 			await expect(
-				page.getByRole( 'button', {
+				( isWordPressLatestMinus1Version
+					? productCollectionBlock
+					: page
+				).getByRole( 'button', {
 					name: myCollection.name,
 					exact: true,
 				} )

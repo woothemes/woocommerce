@@ -34,6 +34,7 @@ test.describe( 'Template customization', () => {
 				editor,
 				frontendUtils,
 				page,
+				isWordPressLatestMinus1Version,
 			} ) => {
 				// Edit the theme template.
 				await admin.visitSiteEditor( {
@@ -49,11 +50,16 @@ test.describe( 'Template customization', () => {
 				await editor.saveSiteEditorEntities( {
 					isOnlyCurrentEntityDirty: true,
 				} );
+
+				const name = isWordPressLatestMinus1Version
+					? `Editing ${ templateTypeName }: ${ testData.templateName }`
+					: `${ testData.templateName } · ${ templateTypeName }`;
+
 				// Verify template name didn't change.
 				// See: https://github.com/woocommerce/woocommerce/issues/42221
 				await expect(
 					page.getByRole( 'heading', {
-						name: `${ testData.templateName } · ${ templateTypeName }`,
+						name,
 					} )
 				).toBeVisible();
 

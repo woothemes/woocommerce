@@ -60,6 +60,7 @@ test.describe( 'Template part customization', () => {
 			editor,
 			page,
 			testUtils,
+			isWordPressLatestMinus1Version,
 		} ) => {
 			await admin.visitSiteEditor( {
 				postId: `woocommerce/woocommerce//${ templatePath }`,
@@ -74,11 +75,16 @@ test.describe( 'Template part customization', () => {
 			await editor.saveSiteEditorEntities( {
 				isOnlyCurrentEntityDirty: true,
 			} );
+
+			const name = isWordPressLatestMinus1Version
+				? `Editing template part: ${ templateName }`
+				: `${ templateName } · Template Part`;
+
 			// Verify template name didn't change.
 			// See: https://github.com/woocommerce/woocommerce/issues/42221
 			await expect(
 				page.getByRole( 'heading', {
-					name: `${ templateName } · Template Part`,
+					name,
 				} )
 			).toBeVisible();
 

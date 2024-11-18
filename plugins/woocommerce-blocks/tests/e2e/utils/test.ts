@@ -17,6 +17,10 @@ import {
 	RequestUtils,
 	ShippingUtils,
 } from '@woocommerce/e2e-utils';
+/**
+ * Internal dependencies
+ */
+import { getInstalledWordPressVersion } from './wordpress';
 
 /**
  * Set of console logging types observed to protect against unexpected yet
@@ -112,6 +116,7 @@ const test = base.extend<
 		shippingUtils: ShippingUtils;
 		localPickupUtils: LocalPickupUtils;
 		miniCartUtils: MiniCartUtils;
+		isWordPressLatestMinus1Version: boolean;
 	},
 	{
 		requestUtils: RequestUtils;
@@ -168,6 +173,12 @@ const test = base.extend<
 		},
 		{ scope: 'worker', auto: true },
 	],
+	isWordPressLatestMinus1Version: async ( {}, use ) => {
+		// The latest minus 1 version of WordPress is 6.6.
+		const latestMinus1Version = 6.6;
+		const installedVersion = await getInstalledWordPressVersion();
+		await use( installedVersion <= latestMinus1Version );
+	},
 } );
 
 export { test, expect };
