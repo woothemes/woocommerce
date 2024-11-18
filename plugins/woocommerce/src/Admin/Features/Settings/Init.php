@@ -16,7 +16,7 @@ class Init {
 	/**
 	 * Class instance.
 	 *
-	 * @var transform instance
+	 * @var Init instance
 	 */
 	protected static $instance = null;
 
