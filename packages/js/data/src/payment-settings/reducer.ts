@@ -10,7 +10,9 @@ function updatePaymentGatewayList(
 	gatewayId: string,
 	isOffline: boolean
 ): PaymentSettingsState {
-	const neededArray = isOffline ? 'offline_payment_methods' : 'gateways';
+	const neededArray = isOffline
+		? 'offlinePaymentGateways'
+		: 'registeredPaymentGateways';
 	const targetIndex = state[ neededArray ].findIndex(
 		( gateway ) => gateway.id === gatewayId
 	);
@@ -34,8 +36,8 @@ function updatePaymentGatewayList(
 			...state.shouldRedirect,
 			[ gatewayId ]: false,
 		},
-		isUpdating: {
-			...state.isUpdating,
+		isGatewayUpdating: {
+			...state.isGatewayUpdating,
 			[ gatewayId ]: false, // Set the specific gateway's updating status to true
 		},
 	};
@@ -43,13 +45,13 @@ function updatePaymentGatewayList(
 
 const reducer = (
 	state: PaymentSettingsState = {
-		gateways: [],
-		offline_payment_methods: [],
-		preferred_suggestions: [],
-		other_suggestions: [],
-		suggestion_categories: [],
+		registeredPaymentGateways: [],
+		offlinePaymentGateways: [],
+		preferredExtensionSuggestions: [],
+		otherExtensionSuggestions: [],
+		suggestionCategories: [],
 		isFetching: false,
-		isUpdating: {},
+		isGatewayUpdating: {},
 		shouldRedirect: {},
 		errors: {},
 	},
@@ -58,28 +60,22 @@ const reducer = (
 	if ( payload && 'type' in payload ) {
 		switch ( payload.type ) {
 			case ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_REQUEST:
-			case ACTION_TYPES.GET_OFFLINE_PAYMENT_GATEWAYS_REQUEST:
 				return {
 					...state,
 					isFetching: true,
-				};
-			case ACTION_TYPES.GET_OFFLINE_PAYMENT_GATEWAYS_SUCCESS:
-				return {
-					...state,
-					isFetching: false,
-					offline_payment_methods: payload.offlineGateways,
 				};
 			case ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_SUCCESS:
 				return {
 					...state,
 					isFetching: false,
-					gateways: payload.paymentGatewaySuggestions.gateways,
-					preferred_suggestions:
-						payload.paymentGatewaySuggestions.preferred_suggestions,
-					other_suggestions:
-						payload.paymentGatewaySuggestions.other_suggestions,
-					suggestion_categories:
-						payload.paymentGatewaySuggestions.suggestion_categories,
+					registeredPaymentGateways:
+						payload.registeredPaymentGateways,
+					offlinePaymentGateways: payload.offlinePaymentGateways,
+					preferredExtensionSuggestions:
+						payload.preferredExtensionSuggestions,
+					otherExtensionSuggestions:
+						payload.otherExtensionSuggestions,
+					suggestionCategories: payload.suggestionCategories,
 				};
 			case ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_ERROR:
 				return {
@@ -90,20 +86,11 @@ const reducer = (
 						getPaymentGatewaySuggestions: payload.error,
 					},
 				};
-			case ACTION_TYPES.GET_OFFLINE_PAYMENT_GATEWAYS_ERROR:
-				return {
-					...state,
-					isFetching: false,
-					errors: {
-						...state.errors,
-						offlineGateways: payload.error,
-					},
-				};
 			case ACTION_TYPES.ENABLE_PAYMENT_GATEWAY_REQUEST:
 				return {
 					...state,
-					isUpdating: {
-						...state.isUpdating,
+					isGatewayUpdating: {
+						...state.isGatewayUpdating,
 						[ payload.gatewayId ]: true,
 					},
 				};
@@ -116,8 +103,8 @@ const reducer = (
 			case ACTION_TYPES.ENABLE_PAYMENT_GATEWAY_ERROR:
 				return {
 					...state,
-					isUpdating: {
-						...state.isUpdating,
+					isGatewayUpdating: {
+						...state.isGatewayUpdating,
 						[ payload.gatewayId ]: false, // Set the specific gateway's updating status to true
 					},
 					shouldRedirect: {

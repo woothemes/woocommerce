@@ -6,7 +6,7 @@ export interface PaymentGatewayLink {
 export interface PluginData {
 	_type: string;
 	slug: string;
-	status: 'active';
+	status: 'active' | 'not_installed';
 }
 
 export interface StateData {
@@ -57,6 +57,7 @@ export type SuggestedPaymentExtension = {
 	short_description: string | null;
 	tags: string[];
 	plugin: PluginData;
+	links: PaymentGatewayLink[];
 };
 
 export type SuggestedPaymentExtensionCategory = {
@@ -67,18 +68,21 @@ export type SuggestedPaymentExtensionCategory = {
 };
 
 export type PaymentSettingsState = {
+	registeredPaymentGateways: RegisteredPaymentGateway[];
+	offlinePaymentGateways: OfflinePaymentGateway[];
+	preferredExtensionSuggestions: SuggestedPaymentExtension[];
+	otherExtensionSuggestions: SuggestedPaymentExtension[];
+	suggestionCategories: SuggestedPaymentExtensionCategory[];
+	isFetching: boolean;
+	isGatewayUpdating: Record< string, boolean >;
+	shouldRedirect: Record< string, boolean >;
+	errors: Record< string, unknown >;
+};
+
+export type PaymentSuggestionsResponse = {
 	gateways: RegisteredPaymentGateway[];
 	offline_payment_methods: OfflinePaymentGateway[];
 	preferred_suggestions: SuggestedPaymentExtension[];
 	other_suggestions: SuggestedPaymentExtension[];
 	suggestion_categories: SuggestedPaymentExtensionCategory[];
-	isFetching: boolean;
-	isUpdating: Record< string, boolean >;
-	shouldRedirect: Record< string, boolean >;
-	errors: Record< string, unknown >;
-};
-
-export type EnablePaymentGatewayResponse = {
-	success: boolean;
-	data: unknown;
 };

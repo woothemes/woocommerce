@@ -4,7 +4,7 @@
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME } from '@woocommerce/data';
+import { PAYMENT_SETTINGS_STORE_NAME } from '@woocommerce/data';
 
 /**
  * Internal dependencies
@@ -12,34 +12,32 @@ import { PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME } from '@woocommerce/data';
 
 export const PaymentGatewayButton = ( {
 	id,
-	is_offline,
+	isOffline,
 	enabled,
-	needs_setup,
-	settings_url,
-	text_settings = __( 'Manage', 'woocommerce' ),
-	text_enable = __( 'Enable', 'woocommerce' ),
-	text_needs_setup = __( 'Complete setup', 'woocommerce' ),
+	needsSetup,
+	settingsUrl,
+	textSettings = __( 'Manage', 'woocommerce' ),
+	textEnable = __( 'Enable', 'woocommerce' ),
+	textNeedsSetup = __( 'Complete setup', 'woocommerce' ),
 }: {
 	id: string;
-	is_offline: boolean;
+	isOffline: boolean;
 	enabled: boolean;
-	needs_setup?: boolean;
-	settings_url: string;
-	text_settings?: string;
-	text_enable?: string;
-	text_needs_setup?: string;
+	needsSetup?: boolean;
+	settingsUrl: string;
+	textSettings?: string;
+	textEnable?: string;
+	textNeedsSetup?: string;
 } ) => {
-	const { enablePaymentGateway } = useDispatch(
-		PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME
-	);
+	const { enablePaymentGateway } = useDispatch( PAYMENT_SETTINGS_STORE_NAME );
 
 	const { isUpdating, shouldRedirect } = useSelect( ( select ) => {
 		return {
-			isUpdating: select(
-				PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME
-			).isUpdating( id ),
+			isUpdating: select( PAYMENT_SETTINGS_STORE_NAME ).isGatewayUpdating(
+				id
+			),
 			shouldRedirect: select(
-				PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME
+				PAYMENT_SETTINGS_STORE_NAME
 			).shouldRedirect( id ),
 		};
 	} );
@@ -47,27 +45,27 @@ export const PaymentGatewayButton = ( {
 	const onClick = ( e: React.MouseEvent ) => {
 		if ( ! enabled ) {
 			e.preventDefault();
-			const gateway_toggle_nonce =
+			const gatewayToggleNonce =
 				window.woocommerce_admin.nonces?.gateway_toggle || '';
 			enablePaymentGateway(
 				id,
-				is_offline,
+				isOffline,
 				window.woocommerce_admin.ajax_url,
-				gateway_toggle_nonce
+				gatewayToggleNonce
 			);
 
 			if ( shouldRedirect ) {
-				window.location.href = settings_url;
+				window.location.href = settingsUrl;
 			}
 		}
 	};
 
 	const determineButtonText = () => {
-		if ( needs_setup ) {
-			return text_needs_setup;
+		if ( needsSetup ) {
+			return textNeedsSetup;
 		}
 
-		return enabled ? text_settings : text_enable;
+		return enabled ? textSettings : textEnable;
 	};
 
 	return (
@@ -77,7 +75,7 @@ export const PaymentGatewayButton = ( {
 				isBusy={ isUpdating }
 				disabled={ isUpdating }
 				onClick={ onClick }
-				href={ settings_url }
+				href={ settingsUrl }
 			>
 				{ determineButtonText() }
 			</Button>

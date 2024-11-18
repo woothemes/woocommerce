@@ -31,9 +31,9 @@ export const OfflinePaymentGatewayListItem = ( {
 		after: (
 			<PaymentGatewayButton
 				id={ gateway.id }
-				is_offline={ true }
+				isOffline={ true }
 				enabled={ gateway.state.enabled }
-				settings_url={ gateway.management.settings_url }
+				settingsUrl={ gateway.management.settings_url }
 			/>
 		),
 		before: <img src={ gateway.icon } alt={ gateway.title + ' logo' } />,

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useSelect } from '@wordpress/data';
-import { PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME } from '@woocommerce/data';
+import { PAYMENT_SETTINGS_STORE_NAME } from '@woocommerce/data';
 
 /**
  * Internal dependencies
@@ -14,7 +14,7 @@ export const SettingsPaymentsOffline = () => {
 	const { offlinePaymentGateways } = useSelect( ( select ) => {
 		return {
 			offlinePaymentGateways: select(
-				PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME
+				PAYMENT_SETTINGS_STORE_NAME
 			).getOfflinePaymentGateways(),
 		};
 	} );

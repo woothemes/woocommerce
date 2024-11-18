@@ -2,12 +2,19 @@
  * External dependencies
  */
 import apiFetch from '@wordpress/api-fetch';
+import { dispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import { ACTION_TYPES } from './action-types';
-import { PaymentSettingsState, OfflinePaymentGateway } from './types';
+import {
+	RegisteredPaymentGateway,
+	OfflinePaymentGateway,
+	SuggestedPaymentExtension,
+	SuggestedPaymentExtensionCategory,
+} from './types';
+import { STORE_NAME } from '../settings/constants';
 
 export function getPaymentGatewaySuggestionsRequest(): {
 	type: ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_REQUEST;
@@ -18,14 +25,26 @@ export function getPaymentGatewaySuggestionsRequest(): {
 }
 
 export function getPaymentGatewaySuggestionsSuccess(
-	paymentGatewaySuggestions: PaymentSettingsState
+	registeredPaymentGateways: RegisteredPaymentGateway[],
+	offlinePaymentGateways: OfflinePaymentGateway[],
+	preferredExtensionSuggestions: SuggestedPaymentExtension[],
+	otherExtensionSuggestions: SuggestedPaymentExtension[],
+	suggestionCategories: SuggestedPaymentExtensionCategory[]
 ): {
 	type: ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_SUCCESS;
-	paymentGatewaySuggestions: PaymentSettingsState;
+	registeredPaymentGateways: RegisteredPaymentGateway[];
+	offlinePaymentGateways: OfflinePaymentGateway[];
+	preferredExtensionSuggestions: SuggestedPaymentExtension[];
+	otherExtensionSuggestions: SuggestedPaymentExtension[];
+	suggestionCategories: SuggestedPaymentExtensionCategory[];
 } {
 	return {
 		type: ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_SUCCESS,
-		paymentGatewaySuggestions,
+		registeredPaymentGateways,
+		offlinePaymentGateways,
+		preferredExtensionSuggestions,
+		otherExtensionSuggestions,
+		suggestionCategories,
 	};
 }
 
@@ -35,36 +54,6 @@ export function getPaymentGatewaySuggestionsError( error: unknown ): {
 } {
 	return {
 		type: ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_ERROR,
-		error,
-	};
-}
-
-export function getOfflinePaymentGatewaysRequest(): {
-	type: ACTION_TYPES.GET_OFFLINE_PAYMENT_GATEWAYS_REQUEST;
-} {
-	return {
-		type: ACTION_TYPES.GET_OFFLINE_PAYMENT_GATEWAYS_REQUEST,
-	};
-}
-
-export function getOfflinePaymentGatewaysSuccess(
-	offlineGateways: OfflinePaymentGateway[]
-): {
-	type: ACTION_TYPES.GET_OFFLINE_PAYMENT_GATEWAYS_SUCCESS;
-	offlineGateways: OfflinePaymentGateway[];
-} {
-	return {
-		type: ACTION_TYPES.GET_OFFLINE_PAYMENT_GATEWAYS_SUCCESS,
-		offlineGateways,
-	};
-}
-
-export function getOfflinePaymentGatewaysError( error: unknown ): {
-	type: ACTION_TYPES.GET_OFFLINE_PAYMENT_GATEWAYS_ERROR;
-	error: unknown;
-} {
-	return {
-		type: ACTION_TYPES.GET_OFFLINE_PAYMENT_GATEWAYS_ERROR,
 		error,
 	};
 }
@@ -138,6 +127,10 @@ export function* enablePaymentGateway(
 	} catch ( error ) {
 		// Dispatch the error action
 		yield enablePaymentGatewayError( gatewayId, error );
+	} finally {
+		yield dispatch( STORE_NAME ).invalidateResolution(
+			'getRegisteredPaymentGateways'
+		);
 	}
 }
 
@@ -145,9 +138,6 @@ export type Actions =
 	| ReturnType< typeof getPaymentGatewaySuggestionsRequest >
 	| ReturnType< typeof getPaymentGatewaySuggestionsSuccess >
 	| ReturnType< typeof getPaymentGatewaySuggestionsError >
-	| ReturnType< typeof getOfflinePaymentGatewaysRequest >
-	| ReturnType< typeof getOfflinePaymentGatewaysSuccess >
-	| ReturnType< typeof getOfflinePaymentGatewaysError >
 	| ReturnType< typeof enablePaymentGatewayRequest >
 	| ReturnType< typeof enablePaymentGatewaySuccess >
 	| ReturnType< typeof enablePaymentGatewayError >

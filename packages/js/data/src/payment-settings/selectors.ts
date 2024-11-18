@@ -9,39 +9,39 @@ import {
 } from './types';
 import { WPDataSelector, WPDataSelectors } from '../types';
 
-export function getPaymentGateways(
+export function getRegisteredPaymentGateways(
 	state: PaymentSettingsState
 ): Array< RegisteredPaymentGateway > {
-	return state.gateways;
+	return state.registeredPaymentGateways;
 }
 
 export function getOfflinePaymentGateways(
 	state: PaymentSettingsState
 ): Array< OfflinePaymentGateway > {
-	return state.offline_payment_methods;
+	return state.offlinePaymentGateways;
 }
 
-export function getPreferredPluginSuggestions(
+export function getPreferredExtensionSuggestions(
 	state: PaymentSettingsState
 ): Array< SuggestedPaymentExtension > {
-	return state.preferred_suggestions;
+	return state.preferredExtensionSuggestions;
 }
 
-export function getOtherPluginSuggestions(
+export function getOtherExtensionSuggestions(
 	state: PaymentSettingsState
 ): Array< SuggestedPaymentExtension > {
-	return state.other_suggestions;
+	return state.otherExtensionSuggestions;
 }
 
 export function isFetching( state: PaymentSettingsState ): boolean {
 	return state.isFetching || false;
 }
 
-export function isUpdating(
+export function isGatewayUpdating(
 	state: PaymentSettingsState,
 	gatewayId: string
 ): boolean {
-	return state.isUpdating[ gatewayId ] || false;
+	return state.isGatewayUpdating[ gatewayId ] || false;
 }
 
 export function shouldRedirect(
@@ -52,17 +52,19 @@ export function shouldRedirect(
 }
 
 export type PaymentSettingsSelectors = {
-	getPaymentGateways: WPDataSelector< typeof getPaymentGateways >;
+	getRegisteredPaymentGateways: WPDataSelector<
+		typeof getRegisteredPaymentGateways
+	>;
 	getOfflinePaymentGateways: WPDataSelector<
 		typeof getOfflinePaymentGateways
 	>;
-	getPreferredPluginSuggestions: WPDataSelector<
-		typeof getPreferredPluginSuggestions
+	getPreferredExtensionSuggestions: WPDataSelector<
+		typeof getPreferredExtensionSuggestions
 	>;
-	getOtherPluginSuggestions: WPDataSelector<
-		typeof getOtherPluginSuggestions
+	getOtherExtensionSuggestions: WPDataSelector<
+		typeof getOtherExtensionSuggestions
 	>;
 	isFetching: WPDataSelector< typeof isFetching >;
-	isUpdating: WPDataSelector< typeof isUpdating >;
+	isGatewayUpdating: WPDataSelector< typeof isGatewayUpdating >;
 	shouldRedirect: WPDataSelector< typeof shouldRedirect >;
 } & WPDataSelectors;

@@ -4,7 +4,7 @@
 import { useCallback, useEffect } from 'react';
 import {
 	PLUGINS_STORE_NAME,
-	PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME,
+	PAYMENT_SETTINGS_STORE_NAME,
 	SuggestedPaymentExtension,
 } from '@woocommerce/data';
 import { useState } from '@wordpress/element';
@@ -40,7 +40,7 @@ export const SettingsPaymentsMain = () => {
 	useEffect( () => {
 		if ( isInstalled ) {
 			invalidateResolution(
-				PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME,
+				PAYMENT_SETTINGS_STORE_NAME,
 				'getPaymentGateways'
 			);
 			setIsInstalled( false );
@@ -54,14 +54,14 @@ export const SettingsPaymentsMain = () => {
 	} = useSelect( ( select ) => {
 		return {
 			registeredPaymentGateways: select(
-				PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME
-			).getPaymentGateways(),
+				PAYMENT_SETTINGS_STORE_NAME
+			).getRegisteredPaymentGateways(),
 			preferredPluginSuggestions: select(
-				PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME
-			).getPreferredPluginSuggestions(),
+				PAYMENT_SETTINGS_STORE_NAME
+			).getPreferredExtensionSuggestions(),
 			otherPluginSuggestions: select(
-				PAYMENT_GATEWAYS_SUGGESTIONS_STORE_NAME
-			).getOtherPluginSuggestions(),
+				PAYMENT_SETTINGS_STORE_NAME
+			).getOtherExtensionSuggestions(),
 		};
 	} );
 

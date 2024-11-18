@@ -10,39 +10,30 @@ import {
 	getPaymentGatewaySuggestionsSuccess,
 	getPaymentGatewaySuggestionsError,
 	getPaymentGatewaySuggestionsRequest,
-	getOfflinePaymentGatewaysRequest,
-	getOfflinePaymentGatewaysSuccess,
-	getOfflinePaymentGatewaysError,
 } from './actions';
-import { PaymentSettingsState } from './types';
+import { PaymentSuggestionsResponse } from './types';
 import { WC_ADMIN_NAMESPACE } from '../constants';
 
 export function* getPaymentGateways() {
 	yield getPaymentGatewaySuggestionsRequest();
 
 	try {
-		const paymentGatewaySuggestions: PaymentSettingsState =
+		const paymentSuggestionsResponse: PaymentSuggestionsResponse =
 			yield apiFetch( {
 				path: WC_ADMIN_NAMESPACE + '/settings/payments/providers',
 			} );
-		yield getPaymentGatewaySuggestionsSuccess( paymentGatewaySuggestions );
+		yield getPaymentGatewaySuggestionsSuccess(
+			paymentSuggestionsResponse.gateways,
+			paymentSuggestionsResponse.offline_payment_methods,
+			paymentSuggestionsResponse.preferred_suggestions,
+			paymentSuggestionsResponse.other_suggestions,
+			paymentSuggestionsResponse.suggestion_categories
+		);
 	} catch ( e ) {
 		yield getPaymentGatewaySuggestionsError( e );
 	}
 }
 
 export function* getOfflinePaymentGateways() {
-	yield getOfflinePaymentGatewaysRequest();
-
-	try {
-		const paymentGatewaySuggestions: PaymentSettingsState =
-			yield apiFetch( {
-				path: WC_ADMIN_NAMESPACE + '/settings/payments/providers',
-			} );
-		yield getOfflinePaymentGatewaysSuccess(
-			paymentGatewaySuggestions.offline_payment_methods
-		);
-	} catch ( e ) {
-		yield getOfflinePaymentGatewaysError( e );
-	}
+	yield getPaymentGateways();
 }
