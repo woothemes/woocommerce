@@ -303,11 +303,6 @@ const CollectionSpecificControls = (
 		<>
 			<InspectorControls>
 				{
-					<PanelBody>
-						<CesFeedbackButton blockName={ metadata.title } />
-					</PanelBody>
-				}
-				{
 					/**
 					 * Hand-Picked collection-specific controls.
 					 */
@@ -382,3 +377,29 @@ export const withUpgradeNoticeControls =
 	};
 
 addFilter( 'editor.BlockEdit', metadata.name, withUpgradeNoticeControls );
+
+const withCESFeedbackButton =
+	< T extends EditorBlock< T > >( BlockEdit: ElementType ) =>
+	( props: ProductCollectionEditComponentProps ) => {
+		if ( ! isProductCollection( props.name ) ) {
+			return <BlockEdit { ...props } />;
+		}
+
+		return (
+			<>
+				<InspectorControls>
+					<div className="wc-block-product-collection-inspector-controls__ces-feedback-button">
+						<CesFeedbackButton blockName={ metadata.title } />
+					</div>
+				</InspectorControls>
+				<BlockEdit { ...props } />
+			</>
+		);
+	};
+
+addFilter(
+	'editor.BlockEdit',
+	metadata.name,
+	withCESFeedbackButton,
+	Number.MAX_SAFE_INTEGER
+);
