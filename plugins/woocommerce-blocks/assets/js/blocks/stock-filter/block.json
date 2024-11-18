@@ -10,7 +10,11 @@
 	"supports": {
 		"html": false,
 		"multiple": false,
-		"color": true,
+		"color": {
+			"background": true,
+			"text": true,
+			"button": true
+		},
 		"inserter": false,
 		"lock": false
 	},

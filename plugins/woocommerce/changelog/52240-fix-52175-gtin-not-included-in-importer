@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Adds the missing global_unique_id field to the product import mapper
