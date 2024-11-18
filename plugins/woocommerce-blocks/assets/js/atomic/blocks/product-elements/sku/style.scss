@@ -1,9 +1,6 @@
 .wc-block-components-product-sku {
 	display: block;
-	@include font-size(small);
 	overflow-wrap: break-word;
-
-	font-size: var(--wp--preset--font-size--small);
 
 	&__prefix {
 		color: var(--wp--preset--color--contrast-2);
