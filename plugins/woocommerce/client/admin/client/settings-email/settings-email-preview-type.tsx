@@ -16,7 +16,7 @@ export const EmailPreviewType: React.FC< EmailPreviewTypeProps > = ( {
 	setEmailType,
 } ) => {
 	return (
-		<div className="wc-settings-email-preview-order-type">
+		<div className="wc-settings-email-preview-type">
 			<SelectControl
 				onChange={ setEmailType }
 				options={ emailTypes }
