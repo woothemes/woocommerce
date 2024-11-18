@@ -1,29 +1,43 @@
 /**
  * External dependencies
  */
-import { useBlockProps } from '@wordpress/block-editor';
-import Noninteractive from '@woocommerce/base-components/noninteractive';
+import { RichText, useBlockProps } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
  */
-import Block from './block';
+import Block, { BlockAttributes } from './block';
+import { BlockEditProps } from '@wordpress/blocks';
+import { __ } from '@wordpress/i18n';
 
 export const Edit = ( {
 	attributes,
-}: {
-	attributes: {
-		className: string;
-	};
-	setAttributes: ( attributes: Record< string, unknown > ) => void;
-} ): JSX.Element => {
-	const { className } = attributes;
+	setAttributes,
+}: BlockEditProps< BlockAttributes > ) => {
+	const { className, sectionHeading } = attributes;
 	const blockProps = useBlockProps();
+
+	const onSectionHeadingChange = ( heading: string ) => {
+		setAttributes( { sectionHeading: heading } );
+	};
+
+	const headingLabel = sectionHeading ?? __( 'Add a coupon', 'woocommerce' );
+
+	const heading = (
+		<RichText
+			value={ headingLabel }
+			onChange={ onSectionHeadingChange }
+			label={ headingLabel }
+		/>
+	);
+
 	return (
 		<div { ...blockProps }>
-			<Noninteractive>
-				<Block className={ className } />
-			</Noninteractive>
+			<Block
+				heading={ heading }
+				isEditor={ true }
+				className={ className }
+			/>
 		</div>
 	);
 };

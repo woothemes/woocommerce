@@ -42,6 +42,10 @@ export interface TotalsCouponProps {
 	 * Heading
 	 */
 	heading: React.ReactNode;
+	/**
+	 * Whether the component is in the editor
+	 */
+	isEditor: boolean;
 }
 
 export const TotalsCoupon = ( {
