@@ -300,32 +300,30 @@ const CollectionSpecificControls = (
 	};
 
 	return (
-		<>
-			<InspectorControls>
-				{
-					/**
-					 * Hand-Picked collection-specific controls.
-					 */
-					props.attributes.collection ===
-						'woocommerce/product-collection/hand-picked' && (
-						<PanelBody>
-							<HandPickedProductsControlField
-								{ ...queryControlProps }
-							/>
-						</PanelBody>
-					)
-				}
-				{
-					/**
-					 * "Related Products" collection-specific controls.
-					 */
-					props.attributes.collection ===
-						'woocommerce/product-collection/related' && (
-						<RelatedByControl { ...queryControlProps } />
-					)
-				}
-			</InspectorControls>
-		</>
+		<InspectorControls>
+			{
+				/**
+				 * Hand-Picked collection-specific controls.
+				 */
+				props.attributes.collection ===
+					'woocommerce/product-collection/hand-picked' && (
+					<PanelBody>
+						<HandPickedProductsControlField
+							{ ...queryControlProps }
+						/>
+					</PanelBody>
+				)
+			}
+			{
+				/**
+				 * "Related Products" collection-specific controls.
+				 */
+				props.attributes.collection ===
+					'woocommerce/product-collection/related' && (
+					<RelatedByControl { ...queryControlProps } />
+				)
+			}
+		</InspectorControls>
 	);
 };
 
