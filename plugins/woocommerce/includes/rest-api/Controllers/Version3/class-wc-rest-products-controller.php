@@ -1614,6 +1614,15 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 
+		$params['exclude_status'] = array(
+			'description' => __( 'Exclude products with any of the statuses from result set.', 'woocommerce' ),
+			'type'        => 'array',
+			'items'       => array(
+				'type' => 'string',
+				'enum' => array_merge( array( 'trash' ), array_keys( get_post_statuses() ) ),
+			),
+		);
+
 		return $params;
 	}
 

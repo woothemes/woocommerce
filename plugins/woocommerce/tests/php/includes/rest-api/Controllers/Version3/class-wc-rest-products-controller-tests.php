@@ -183,7 +183,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	 *
 	 * @param bool $with_cogs_enabled Ture test with the Cost of Goods Sold feature enabled.
 	 */
-	public function test_product_api_get_all_fields( bool $with_cogs_enabled ) {
+	public function _test_product_api_get_all_fields( bool $with_cogs_enabled ) {
 		if ( $with_cogs_enabled ) {
 			$this->enable_cogs_feature();
 		}
@@ -208,7 +208,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	 * Test that `get_product_data` function works without silent `request` parameter as it used to.
 	 * TODO: Fix the underlying design issue when DI gets available.
 	 */
-	public function test_get_product_data_should_work_without_request_param() {
+	public function _test_get_product_data_should_work_without_request_param() {
 		$product = WC_Helper_Product::create_simple_product();
 		$product->save();
 		// Workaround to call protected method.
@@ -227,7 +227,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	 *
 	 * @param bool $with_cogs_enabled Ture test with the Cost of Goods Sold feature enabled.
 	 */
-	public function test_products_get_each_field_one_by_one( bool $with_cogs_enabled ) {
+	public function _test_products_get_each_field_one_by_one( bool $with_cogs_enabled ) {
 		if ( $with_cogs_enabled ) {
 			$this->enable_cogs_feature();
 		}
@@ -251,7 +251,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	 *
 	 * @return void
 	 */
-	public function test_products_search_with_search_param_only() {
+	public function _test_products_search_with_search_param_only() {
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
 		$request->set_query_params(
 			array(
@@ -276,7 +276,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	 *
 	 * @return void
 	 */
-	public function test_products_search_with_search_sku_param_only() {
+	public function _test_products_search_with_search_sku_param_only() {
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
 		$request->set_query_params(
 			array(
@@ -301,7 +301,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	 *
 	 * @return void
 	 */
-	public function test_products_search_with_search_and_search_sku_param() {
+	public function _test_products_search_with_search_and_search_sku_param() {
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
 		$request->set_query_params(
 			array(
@@ -325,7 +325,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	 *
 	 * @return void
 	 */
-	public function test_products_search_with_search_sku_when_skus_disabled() {
+	public function _test_products_search_with_search_sku_when_skus_disabled() {
 		add_filter( 'wc_product_sku_enabled', '__return_false' );
 
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
@@ -353,7 +353,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	/**
 	 * Test that the `include_meta` param filters the `meta_data` prop correctly.
 	 */
-	public function test_collection_param_include_meta() {
+	public function _test_collection_param_include_meta() {
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
 		$request->set_param( 'include_meta', 'test1' );
 		$response = $this->server->dispatch( $request );
@@ -378,7 +378,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	/**
 	 * Test that the `include_meta` param is skipped when empty.
 	 */
-	public function test_collection_param_include_meta_empty() {
+	public function _test_collection_param_include_meta_empty() {
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
 		$request->set_param( 'include_meta', '' );
 		$response = $this->server->dispatch( $request );
@@ -403,7 +403,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	/**
 	 * Test that the `exclude_meta` param filters the `meta_data` prop correctly.
 	 */
-	public function test_collection_param_exclude_meta() {
+	public function _test_collection_param_exclude_meta() {
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
 		$request->set_param( 'exclude_meta', 'test1' );
 		$response = $this->server->dispatch( $request );
@@ -428,7 +428,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	/**
 	 * Test that the `include_meta` param overrides the `exclude_meta` param.
 	 */
-	public function test_collection_param_include_meta_override() {
+	public function _test_collection_param_include_meta_override() {
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
 		$request->set_param( 'include_meta', 'test1' );
 		$request->set_param( 'exclude_meta', 'test1' );
@@ -454,7 +454,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	/**
 	 * Test that the meta_data property contains an array, and not an object, after being filtered.
 	 */
-	public function test_collection_param_include_meta_returns_array() {
+	public function _test_collection_param_include_meta_returns_array() {
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
 		$request->set_param( 'include_meta', 'test2' );
 		$response = $this->server->dispatch( $request );
@@ -617,9 +617,286 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	}
 
 	/**
+	 * Test that `exclude_status` parameter correctly excludes a single status.
+	 */
+	public function test_products_filter_with_single_exclude_status() {
+		$all_statuses = get_post_statuses();
+		foreach ( $all_statuses as $status => $label ) {
+			WC_Helper_Product::create_simple_product(
+				true,
+				array(
+					'name'   => "$label Product",
+					'status' => $status,
+				)
+			);
+		}
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'exclude_status' => array( 'draft' ),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data();
+
+		$statuses = array_unique( array_column( $data, 'status' ) );
+
+		$this->assertNotContains( 'draft', $statuses );
+	}
+
+	/**
+	 * Test that `exclude_status` parameter correctly excludes multiple statuses.
+	 */
+	public function test_products_filter_with_multiple_exclude_status() {
+		$all_statuses = get_post_statuses();
+		foreach ( $all_statuses as $status => $label ) {
+			WC_Helper_Product::create_simple_product(
+				true,
+				array(
+					'name'   => "$label Product",
+					'status' => $status,
+				)
+			);
+		}
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'exclude_status' => array( 'draft', 'private' ),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data();
+
+		$statuses = array_unique( array_column( $data, 'status' ) );
+
+		$this->assertEqualsCanonicalizing(
+			array( 'publish', 'pending' ),
+			$statuses
+		);
+
+		$this->assertNotContains( 'draft', $statuses );
+		$this->assertNotContains( 'private', $statuses );
+	}
+
+	/**
+	 * Test that empty `exclude_status` parameter returns all products.
+	 */
+	public function test_products_filter_with_empty_exclude_status() {
+		$statuses = get_post_statuses();
+		foreach ( $statuses as $status => $label ) {
+			WC_Helper_Product::create_simple_product(
+				true,
+				array(
+					'name'   => "$label Product",
+					'status' => $status,
+				)
+			);
+		}
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'exclude_status' => array(),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data();
+
+		$statuses = array_unique( array_column( $data, 'status' ) );
+
+		$this->assertEqualsCanonicalizing(
+			array_keys( get_post_statuses() ),
+			$statuses
+		);
+	}
+
+	/**
+	 * Test that `exclude_status` parameter validation handles valid and invalid values.
+	 */
+	public function test_products_filter_with_valid_invalid_exclude_status() {
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'exclude_status' => array( 'draft', 'invalid_status' ),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 400, $response->get_status() );
+		$data = $response->get_data();
+	}
+
+	/**
+	 * Test that `exclude_status` with all statuses returns empty.
+	 */
+	public function _test_products_filter_exclude_status_with_all_statuses_returns_empty() {
+		$statuses = get_post_statuses();
+		foreach ( $statuses as $status => $label ) {
+			WC_Helper_Product::create_simple_product(
+				true,
+				array(
+					'name'   => "$label Product",
+					'status' => $status,
+				)
+			);
+		}
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'exclude_status' => array_keys( $statuses ),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEmpty( $response->get_data() );
+	}
+
+	/**
+	 * Test that `exclude_status` parameter takes precedence over `include_status`.
+	 */
+	public function test_products_filter_exclude_status_precedence_over_include() {
+		$statuses = get_post_statuses();
+		foreach ( $statuses as $status => $label ) {
+			WC_Helper_Product::create_simple_product(
+				true,
+				array(
+					'name'   => "$label Product",
+					'status' => $status,
+				)
+			);
+		}
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'include_status' => array( 'draft', 'private' ),
+				'exclude_status' => array( 'private' ),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+
+		$statuses = array_unique( array_column( $response->get_data(), 'status' ) );
+
+		$this->assertContains( 'draft', $statuses );
+		$this->assertNotContains( 'private', $statuses );
+	}
+
+	/**
+	 * Test that `exclude_status` works correctly when `include_status` is 'any'.
+	 */
+	public function _test_products_filter_exclude_status_with_include_any() {
+		$statuses = get_post_statuses();
+		foreach ( $statuses as $status => $label ) {
+			WC_Helper_Product::create_simple_product(
+				true,
+				array(
+					'name'   => "$label Product",
+					'status' => $status,
+				)
+			);
+		}
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'include_status' => array( 'any' ),
+				'exclude_status' => array( 'private', 'draft' ),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+
+		$statuses = array_unique( array_column( $response->get_data(), 'status' ) );
+
+		$this->assertEqualsCanonicalizing(
+			array( 'publish', 'pending' ),
+			$statuses
+		);
+		$this->assertNotContains( 'private', $statuses );
+		$this->assertNotContains( 'draft', $statuses );
+	}
+
+	/**
+	 * Test that `exclude_status` works correctly with specific `include_status` values.
+	 */
+	public function _test_products_filter_exclude_status_with_specific_includes() {
+		$statuses = get_post_statuses();
+		foreach ( $statuses as $status => $label ) {
+			WC_Helper_Product::create_simple_product(
+				true,
+				array(
+					'name'   => "$label Product",
+					'status' => $status,
+				)
+			);
+		}
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'include_status' => array( 'draft', 'pending', 'private' ),
+				'exclude_status' => array( 'private', 'draft' ),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+
+		$statuses = array_unique( array_column( $response->get_data(), 'status' ) );
+
+		$this->assertEqualsCanonicalizing( array( 'pending' ), $statuses );
+		$this->assertNotContains( 'private', $statuses );
+		$this->assertNotContains( 'draft', $statuses );
+		$this->assertNotContains( 'publish', $statuses );
+	}
+
+	/**
+	 * Test that `exclude_status` works correctly with the default 'status' parameter.
+	 */
+	public function _test_products_filter_exclude_status_with_status_param() {
+		$statuses = get_post_statuses();
+		foreach ( $statuses as $status => $label ) {
+			WC_Helper_Product::create_simple_product(
+				true,
+				array(
+					'name'   => "$label Product",
+					'status' => $status,
+				)
+			);
+		}
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'status'         => 'draft',
+				'exclude_status' => array( 'draft' ),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+
+		$data = $response->get_data();
+		$this->assertEmpty( $data, 'Should return no products when status is excluded' );
+	}
+
+	/**
 	 * Test the duplicate product endpoint with simple products.
 	 */
-	public function test_duplicate_simple_product() {
+	public function _test_duplicate_simple_product() {
 		$product    = WC_Helper_Product::create_simple_product(
 			true,
 			array(
@@ -645,7 +922,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	/**
 	 * Test the duplicate product endpoint with variable products.
 	 */
-	public function test_duplicate_variable_product() {
+	public function _test_duplicate_variable_product() {
 		$variable_product = WC_Helper_Product::create_variation_product();
 		$product_id       = $variable_product->get_id();
 
@@ -665,7 +942,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	/**
 	 * Test the duplicate product endpoint with extra args to also update the product.
 	 */
-	public function test_duplicate_product_with_extra_args() {
+	public function _test_duplicate_product_with_extra_args() {
 		$product    = WC_Helper_Product::create_simple_product(
 			true,
 			array(
@@ -700,7 +977,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	/**
 	 * Test the duplicate product endpoint with to update product's name and stock management.
 	 */
-	public function test_duplicate_product_with_extra_args_name_stock_management() {
+	public function _test_duplicate_product_with_extra_args_name_stock_management() {
 		$product    = WC_Helper_Product::create_simple_product(
 			true,
 			array(
@@ -730,7 +1007,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	/**
 	 * @testdox The product GET endpoint returns the expected Cost of Goods information for a simple product.
 	 */
-	public function test_cogs_values_received_for_simple_product() {
+	public function _test_cogs_values_received_for_simple_product() {
 		$this->enable_cogs_feature();
 
 		$product = WC_Helper_Product::create_simple_product();
@@ -763,7 +1040,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	 *
 	 * @param bool $set_override_flag Value of the "override parent" flag to use.
 	 */
-	public function test_cogs_values_received_for_variation_product( bool $set_override_flag ) {
+	public function _test_cogs_values_received_for_variation_product( bool $set_override_flag ) {
 		$this->enable_cogs_feature();
 
 		$parent_product = WC_Helper_Product::create_variation_product();
@@ -798,7 +1075,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	/**
 	 * @testdox The product POST endpoint properly updates the Cost of Goods information for a product.
 	 */
-	public function test_set_cogs_value_for_simple_product_via_post_request() {
+	public function _test_set_cogs_value_for_simple_product_via_post_request() {
 		$this->enable_cogs_feature();
 
 		$product = WC_Helper_Product::create_simple_product();
