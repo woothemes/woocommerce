@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Improve CSV import performance by restoring the default value for `woocommerce_product_import_batch_size`.
