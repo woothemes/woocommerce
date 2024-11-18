@@ -108,7 +108,6 @@
         // TOUCH/USECSS:
         slider.transitions = !slider.vars.video && !fade && slider.vars.useCSS;
         if (slider.transitions) slider.prop = "transform";
-        slider.isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
         slider.ensureAnimationEnd = '';
         // CONTROLSCONTAINER:
         if (slider.vars.controlsContainer !== "") slider.controlsContainer = $(slider.vars.controlsContainer).length > 0 && $(slider.vars.controlsContainer);
@@ -918,7 +917,6 @@
           maxItems = slider.vars.maxItems;
 
       slider.w = (slider.viewport===undefined) ? slider.width() : slider.viewport.width();
-      if (slider.isFirefox) { slider.w = slider.width(); }
       slider.h = slide.height();
       slider.boxPadding = slide.outerWidth() - slide.width();
 
@@ -1095,9 +1093,6 @@
     maxItems: 0,                    //{NEW} Integer: Maximum number of carousel items that should be visible. Items will resize fluidly when above this limit.
     move: 0,                        //{NEW} Integer: Number of carousel items that should move on animation. If 0, slider will move all visible items.
     allowOneSlide: true,           //{NEW} Boolean: Whether or not to allow a slider comprised of a single slide
-
-    // Browser Specific
-    isFirefox: false,             // {NEW} Boolean: Set to true when Firefox is the browser used.
 
     // Callback API
     start: function(){},            //Callback: function(slider) - Fires when the slider loads the first slide
