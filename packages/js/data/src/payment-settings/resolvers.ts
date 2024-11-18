@@ -14,7 +14,7 @@ import {
 import { PaymentSuggestionsResponse } from './types';
 import { WC_ADMIN_NAMESPACE } from '../constants';
 
-export function* getPaymentGateways() {
+export function* getRegisteredPaymentGateways() {
 	yield getPaymentGatewaySuggestionsRequest();
 
 	try {
@@ -35,5 +35,5 @@ export function* getPaymentGateways() {
 }
 
 export function* getOfflinePaymentGateways() {
-	yield getPaymentGateways();
+	yield getRegisteredPaymentGateways();
 }

@@ -41,7 +41,7 @@ export const SettingsPaymentsMain = () => {
 		if ( isInstalled ) {
 			invalidateResolution(
 				PAYMENT_SETTINGS_STORE_NAME,
-				'getPaymentGateways'
+				'getRegisteredPaymentGateways'
 			);
 			setIsInstalled( false );
 		}
