@@ -14,6 +14,7 @@ import {
 	UPGRADE_NOTICE_DISPLAY_COUNT_THRESHOLD,
 } from '@woocommerce/blocks/migration-products-to-product-collection';
 import { recordEvent } from '@woocommerce/tracks';
+import { CesFeedbackButton } from '@woocommerce/editor-components/ces-feedback-button';
 import {
 	PanelBody,
 	// @ts-expect-error Using experimental features
@@ -55,7 +56,6 @@ import PriceRangeControl from './price-range-control';
 import LinkedProductControl from './linked-product-control';
 import WidthOptionsControl from './width-options-control';
 import RelatedByControl from './related-by-control';
-import { FeedbackButton } from './feedback-button';
 
 const prepareShouldShowFilter =
 	( hideControls: FilterName[] ) => ( filter: FilterName ) => {
@@ -304,7 +304,7 @@ const CollectionSpecificControls = (
 			<InspectorControls>
 				{
 					<PanelBody>
-						<FeedbackButton />
+						<CesFeedbackButton blockName={ metadata.title } />
 					</PanelBody>
 				}
 				{
