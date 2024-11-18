@@ -14,7 +14,6 @@ import {
 	ProfileItems,
 	GetJetpackAuthUrlResponse,
 	CoreProfilerCompletedSteps,
-	CoreProfilerStep,
 } from './types';
 import { WPDataSelectors } from '../types';
 import { Plugin } from '../plugins/types';
