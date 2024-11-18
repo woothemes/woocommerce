@@ -94,7 +94,7 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 
 	const [ queryState ] = useQueryStateByContext();
 
-	const { results: collectionFilters, isLoading: filteredCountsLoading } =
+	const { data: collectionFilters, isLoading: filteredCountsLoading } =
 		useCollectionData( {
 			queryRating: true,
 			queryState,

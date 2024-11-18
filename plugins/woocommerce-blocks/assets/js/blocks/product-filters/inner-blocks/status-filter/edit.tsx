@@ -79,7 +79,7 @@ const Edit = ( props: EditProps ) => {
 		{}
 	);
 
-	const { results: filteredCounts, isLoading } = useCollectionData( {
+	const { data: filteredCounts, isLoading } = useCollectionData( {
 		queryStock: true,
 		queryState: {},
 		isEditor: true,

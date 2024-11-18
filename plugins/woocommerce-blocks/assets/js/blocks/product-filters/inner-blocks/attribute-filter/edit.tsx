@@ -68,7 +68,7 @@ const Edit = ( props: EditProps ) => {
 			query: { orderby: 'menu_order', hide_empty: hideEmpty },
 		} );
 
-	const { results: filteredCounts, isLoading: isFilterCountsLoading } =
+	const { data: filteredCounts, isLoading: isFilterCountsLoading } =
 		useCollectionData( {
 			queryAttribute: {
 				taxonomy: attributeObject?.taxonomy || '',

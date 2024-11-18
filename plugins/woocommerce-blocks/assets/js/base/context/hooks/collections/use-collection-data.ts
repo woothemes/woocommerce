@@ -173,5 +173,5 @@ export const useCollectionData = ( {
 			shouldSelect: debouncedShouldSelect,
 		} );
 
-	return { results: results as WCStoreV1ProductsCollectionProps, isLoading };
+	return { data: results as WCStoreV1ProductsCollectionProps, isLoading };
 };

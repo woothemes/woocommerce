@@ -139,7 +139,7 @@ const AttributeFilterBlock = ( {
 		{},
 		isObject
 	);
-	const { results: filteredCounts, isLoading: filteredCountsLoading } =
+	const { data: filteredCounts, isLoading: filteredCountsLoading } =
 		useCollectionData( {
 			queryAttribute: {
 				taxonomy: attributeObject?.taxonomy || '',
