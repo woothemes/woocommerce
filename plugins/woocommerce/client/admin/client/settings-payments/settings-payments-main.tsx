@@ -65,7 +65,6 @@ export const SettingsPaymentsMain = () => {
 		};
 	} );
 
-	// test
 	const setupPlugin = useCallback(
 		( extension: SuggestedPaymentExtension ) => {
 			if ( installingPlugin ) {
