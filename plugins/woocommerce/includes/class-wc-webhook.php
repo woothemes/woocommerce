@@ -281,7 +281,7 @@ class WC_Webhook extends WC_Legacy_Webhook {
 			$status = get_post_status( absint( $arg ) );
 
 			// Ignore auto drafts for all resources.
-			if ( in_array( $status, array( OrderStatus::AUTO_DRAFT, 'new' ), true ) ) {
+			if ( in_array( $status, array( 'auto-draft', 'new' ), true ) ) {
 				return false;
 			}
 		}

@@ -274,7 +274,7 @@ class WC_Post_Data {
 					$data['post_parent'] = 0;
 					break;
 			}
-		} elseif ( 'product' === $data['post_type'] && OrderStatus::AUTO_DRAFT === $data['post_status'] ) {
+		} elseif ( 'product' === $data['post_type'] && 'auto-draft' === $data['post_status'] ) {
 			$data['post_title'] = 'AUTO-DRAFT';
 		} elseif ( 'shop_coupon' === $data['post_type'] ) {
 			// Coupons should never allow unfiltered HTML.

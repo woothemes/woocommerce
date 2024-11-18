@@ -1484,7 +1484,7 @@ function wc_deferred_product_sync( $product_id ) {
 function wc_update_product_lookup_tables_is_running() {
 	$table_updates_pending = WC()->queue()->search(
 		array(
-			'status'   => OrderStatus::PENDING,
+			'status'   => 'pending',
 			'group'    => 'wc_update_product_lookup_tables',
 			'per_page' => 1,
 		)
