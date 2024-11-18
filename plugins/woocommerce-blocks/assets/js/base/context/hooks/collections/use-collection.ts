@@ -9,10 +9,8 @@ import { isError } from '@woocommerce/types';
 
 /**
  * This is a custom hook that is wired up to the `wc/store/collections` data
- * store.
- * Given a collections option object, this will ensure a component is
+ * store. Given a collections option object, this will ensure a component is
  * kept up to date with the collection matching that query in the store state.
- * The results will be returned as an array of items or a single item.
  *
  * @throws {Object} Throws an exception object if there was a problem with the
  * 					API request, to be picked up by BlockErrorBoundary.
@@ -37,8 +35,7 @@ import { isError } from '@woocommerce/types';
  *                                           fire.
  *
  * @return {Object} This hook will return an object with two properties:
- *                  - results   An array of collection items, or an object if
- * 							    the collection is a single item.
+ *                  - results   An array of collection items returned.
  *                  - isLoading A boolean indicating whether the collection is
  *                              loading (true) or not.
  */
@@ -54,7 +51,10 @@ export interface useCollectionOptions {
 
 export const useCollection = < T >(
 	options: useCollectionOptions
-): { results: T; isLoading: boolean } => {
+): {
+	results: T[];
+	isLoading: boolean;
+} => {
 	const {
 		namespace,
 		resourceName,
@@ -68,15 +68,10 @@ export const useCollection = < T >(
 				'the resource properties.'
 		);
 	}
-
-	const currentResults = useRef< {
-		results: T[] | T;
-		isLoading: boolean;
-	} >( {
-		results: [] as T[],
+	const currentResults = useRef< { results: T[]; isLoading: boolean } >( {
+		results: [],
 		isLoading: true,
 	} );
-
 	// ensure we feed the previous reference if it's equivalent
 	const currentQuery = useShallowEqual( query );
 	const currentResourceValues = useShallowEqual( resourceValues );
@@ -128,6 +123,5 @@ export const useCollection = < T >(
 	if ( results !== null ) {
 		currentResults.current = results;
 	}
-
-	return currentResults.current as { results: T; isLoading: boolean };
+	return currentResults.current;
 };
