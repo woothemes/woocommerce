@@ -410,7 +410,7 @@ function wc_customer_bought_product( $customer_email, $user_id, $product_id ) {
 		return $result;
 	}
 
-	$transient_name    = 'wc_customer_bought_product_' . md5( $customer_email . $user_id );
+	$transient_name    = 'wc_customer_bought_product_' . md5( $customer_email . $user_id . $product_id );
 	$transient_version = WC_Cache_Helper::get_transient_version( 'orders' );
 	$transient_value   = get_transient( $transient_name );
 
