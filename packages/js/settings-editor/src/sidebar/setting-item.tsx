@@ -63,11 +63,12 @@ export function SettingItem( {
 		params: { postType, page },
 	} = useLocation();
 
-	const linkInfo = useLink( {
+	const { href, onClick } = useLink( {
 		page,
 		postType,
-		slug,
+		tab: slug,
 	} );
+
 	return (
 		<HStack
 			justify="flex-start"
@@ -77,7 +78,8 @@ export function SettingItem( {
 		>
 			<SidebarNavigationItem
 				icon={ icon }
-				{ ...linkInfo }
+				href={ href }
+				onClick={ onClick }
 				aria-current={ isActive ? 'true' : undefined }
 			>
 				{ label }
