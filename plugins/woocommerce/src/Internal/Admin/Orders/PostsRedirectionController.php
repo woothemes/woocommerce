@@ -149,11 +149,7 @@ class PostsRedirectionController {
 
 		switch ( $action ) {
 			case 'edit':
-				try {
-					$new_url = $this->page_controller->get_edit_url( $post_id );
-				} catch ( \Exception $e ) {
-					$new_url = ''; // If exception occured, do not redirect (WP core will takes care of it).
-				}
+				$new_url = $this->page_controller->get_edit_url( $post_id );
 				break;
 
 			case 'trash':
