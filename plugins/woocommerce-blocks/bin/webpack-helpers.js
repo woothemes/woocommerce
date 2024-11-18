@@ -20,6 +20,7 @@ const wcDepMap = {
 	'@woocommerce/blocks-components': [ 'wc', 'blocksComponents' ],
 	'@woocommerce/interactivity': [ 'wc', '__experimentalInteractivity' ],
 	'@woocommerce/types': [ 'wc', 'wcTypes' ],
+	'@woocommerce/customer-effort-score': [ 'wc', 'customerEffortScore' ],
 };
 
 const wcHandleMap = {
@@ -34,6 +35,7 @@ const wcHandleMap = {
 	'@woocommerce/blocks-components': 'wc-blocks-components',
 	'@woocommerce/interactivity': 'wc-interactivity',
 	'@woocommerce/types': 'wc-types',
+	'@woocommerce/customer-effort-score': 'wc-customer-effort-score',
 };
 
 const getAlias = ( options = {} ) => {
