@@ -88,13 +88,13 @@ jobs:
                       }
 
                       const currentReleaseTag = event.release.tag_name;
-                      let { nextMajor, nextMinor } = bumpMinorVersion( currentReleaseTag );
-                      const nextReleaseVersion = `${nextMajor}.${nextMinor}.0`;
-                      const nextReleaseBranch = `release/${nextMajor}.${nextMinor}`;
+                      const releaseBump = bumpMinorVersion( currentReleaseTag );
+                      const nextReleaseVersion = `${releaseBump.nextMajor}.${releaseBump.nextMinor}.0`;
+                      const nextReleaseBranch = `release/${releaseBump.nextMajor}.${releaseBump.nextMinor}`;
 
-
-                      let { nextMajor, nextMinor } = bumpMinorVersion( nextReleaseVersion );
-                      const milestoneForTrunk = `${nextMajor}.${nextMinor}.0`;
+                      // Get milestone version by bumping the next release version
+                      const milestoneBump = bumpMinorVersion( nextReleaseVersion );
+                      const milestoneForTrunk = `${milestoneBump.nextMajor}.${milestoneBump.nextMinor}.0`;
 
                       core.setOutput('nextReleaseBranch', nextReleaseBranch);
                       core.setOutput('nextReleaseVersion', nextReleaseVersion);
@@ -111,6 +111,7 @@ jobs:
         permissions:
           issues: write
           contents: write
+          pull-requests: write
         steps:
             - name: Fetch trunk branch
               uses: actions/checkout@v3
@@ -144,7 +145,7 @@ jobs:
             - name: Push the new branch to the remote repository
               env:
                 RELEASE_BRANCH: ${{ needs.prep-for-code-freeze.outputs.nextReleaseBranch }}
-              run: git push origin $RELEASE_BRANCH
+              run: git push origin $RELEASE_BRANCH -f
 
             - name: Create next monthly milestone
               id: milestone
@@ -188,7 +189,7 @@ jobs:
     changelog-version-update-for-trunk:
         name: Update changelog and version for trunk
         runs-on: ubuntu-20.04
-        needs: [create-code-freeze-branch-and-milestone]
+        needs: verify-release
         permissions:
           contents: write
           pull-requests: write
@@ -277,7 +278,7 @@ jobs:
                 echo "::set-output name=commit_hash::${commit_sha}"
 
             - name: Push branch up
-              run: git push origin prep/post-release-tasks-${{ github.event.release.tag_name }}
+              run: git push origin prep/post-release-tasks-${{ github.event.release.tag_name }} -f
 
             - name: Create the PR
               uses: actions/github-script@v6
