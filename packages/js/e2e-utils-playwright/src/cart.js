@@ -1,9 +1,9 @@
 /**
  * Adds a specified quantity of a product by ID to the WooCommerce cart.
  *
- * @param page
- * @param productId
- * @param quantity
+ * @param {import('playwright').Page} page
+ * @param {string}                    productId
+ * @param {number}                    [quantity=1]
  */
 export const addAProductToCart = async ( page, productId, quantity = 1 ) => {
 	for ( let i = 0; i < quantity; i++ ) {
@@ -19,11 +19,15 @@ export const addAProductToCart = async ( page, productId, quantity = 1 ) => {
 /**
  * Util helper made for adding multiple same products to cart
  *
- * @param page
- * @param productName
- * @param quantityCount
+ * @param {import('playwright').Page} page
+ * @param {string}                    productName
+ * @param {number}                    quantityCount
  */
-export async function addOneOrMoreProductToCart( page, productName, quantityCount ) {
+export async function addOneOrMoreProductToCart(
+	page,
+	productName,
+	quantityCount
+) {
 	await page.goto(
 		`product/${ productName.replace( / /gi, '-' ).toLowerCase() }`
 	);
