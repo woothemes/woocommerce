@@ -600,25 +600,25 @@ class WcPayWelcomePage {
 		}
 
 		// The Payments task in the setup task list.
-		if ( ! empty( $setup_task_list ) ) {
+		if ( ! empty( $setup_task_list ) && $setup_task_list->is_visible() ) {
 			$payments_task = $setup_task_list->get_task( 'payments' );
-			if ( $setup_task_list->is_visible() && ! empty( $payments_task ) && $payments_task->can_view() ) {
+			if ( ! empty( $payments_task ) && $payments_task->can_view() ) {
 				return 'payments';
 			}
 		}
 
 		// The Additional Payments task in the extended task list.
-		if ( ! empty( $extended_task_list ) ) {
+		if ( ! empty( $extended_task_list ) && $extended_task_list->is_visible() ) {
 			$payments_task = $extended_task_list->get_task( 'payments' );
-			if ( $extended_task_list->is_visible() && ! empty( $payments_task ) && $payments_task->can_view() ) {
+			if ( ! empty( $payments_task ) && $payments_task->can_view() ) {
 				return 'payments';
 			}
 		}
 
 		// The WooPayments task in the setup task list.
-		if ( ! empty( $setup_task_list ) ) {
+		if ( ! empty( $setup_task_list ) && $setup_task_list->is_visible() ) {
 			$payments_task = $setup_task_list->get_task( 'woocommerce-payments' );
-			if ( $setup_task_list->is_visible() && ! empty( $payments_task ) && $payments_task->can_view() ) {
+			if ( ! empty( $payments_task ) && $payments_task->can_view() ) {
 				return 'woocommerce-payments';
 			}
 		}
