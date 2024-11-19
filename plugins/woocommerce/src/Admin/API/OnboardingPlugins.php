@@ -247,6 +247,9 @@ class OnboardingPlugins extends WC_REST_Data_Controller {
 		}
 
 		$color_scheme = get_user_option( 'admin_color', get_current_user_id() );
+		if ( ! $color_scheme ) {
+			$color_scheme = 'default';
+		}
 
 		return array(
 			'success'      => ! $errors->has_errors(),
