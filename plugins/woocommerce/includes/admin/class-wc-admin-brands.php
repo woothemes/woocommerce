@@ -69,7 +69,7 @@ class WC_Brands_Admin {
 			// Add the settings fields to each tab.
 			add_action(
 				'before_woocommerce_init',
-				function() {
+				function () {
 					$this->init_form_fields();
 					$this->settings_tabs = array(
 						'brands' => __( 'Brands', 'woocommerce' ),
