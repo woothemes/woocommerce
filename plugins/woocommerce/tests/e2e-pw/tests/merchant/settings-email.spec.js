@@ -18,6 +18,10 @@ const pickImageFromLibrary = async ( page, imageName ) => {
 test.describe( 'WooCommerce Email Settings', () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
+	test.afterAll( async ( { baseURL } ) => {
+		await setFeatureFlag( baseURL, 'no' );
+	} );
+
 	test( 'See email preview with a feature flag', async ( {
 		page,
 		baseURL,
