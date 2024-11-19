@@ -5940,8 +5940,17 @@ img.help_tip {
 
 	}
 	.categorydiv {
+		margin-bottom: $gap;
+
+		// Cater for other elements injected to this meta box, like AI suggested categories.
+		> :not(.category-tabs) {
+			padding: 0 $gap;
+			// Pretend all things below tab panel are in a box with gap.
+			margin: $gap-small 0;
+		}
 		.tabs-panel {
 			padding: $gap;
+			margin: 0;
 			border:0;
 			border-bottom: 1px solid $separator-color;
 
@@ -5949,9 +5958,6 @@ img.help_tip {
 				margin: 0;
 			}
 		}
-	}
-	#product_cat-adder {
-		padding: $gap;
 	}
 	#product_cat-add-toggle {
 		display: flex;
