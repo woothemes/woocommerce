@@ -173,6 +173,11 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		// Set post_status.
 		$args['post_status'] = $request['status'];
 
+		// Filter by a list of product statuses.
+		if ( ! empty( $request['include_status'] ) ) {
+			$args['post_status'] = $request['include_status'];
+		}
+
 		// Taxonomy query to filter products by type, category,
 		// tag, shipping class, and attribute.
 		$tax_query = array();
@@ -333,6 +338,11 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		 */
 		if ( ! empty( $this->suggested_products_ids ) ) {
 			$args['post__in'] = $this->suggested_products_ids;
+		}
+
+		// Force the post_type argument, since it's not a user input variable.
+		if ( ! empty( $request['global_unique_id'] ) ) {
+			$args['post_type'] = array( 'product', 'product_variation' );
 		}
 
 		return $args;
@@ -1595,6 +1605,17 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			'description'       => __( 'Limit results to those with a SKU that partial matches a string.', 'woocommerce' ),
 			'type'              => 'string',
 			'sanitize_callback' => 'sanitize_text_field',
+			'validate_callback' => 'rest_validate_request_arg',
+		);
+
+		$params['include_status'] = array(
+			'description'       => __( 'Limit result set to products with any of the statuses.', 'woocommerce' ),
+			'type'              => 'array',
+			'items'             => array(
+				'type' => 'string',
+				'enum' => array_merge( array( 'any', 'trash' ), array_keys( get_post_statuses() ) ),
+			),
+			'sanitize_callback' => 'wp_parse_list',
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 

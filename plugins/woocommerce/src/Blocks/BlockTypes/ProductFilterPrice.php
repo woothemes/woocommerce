@@ -206,6 +206,13 @@ final class ProductFilterPrice extends AbstractBlock {
 			$query_vars['meta_query'] = ProductCollectionUtils::remove_query_array( $query_vars['meta_query'], 'key', '_price' );
 		}
 
+		if ( isset( $query_vars['taxonomy'] ) && false !== strpos( $query_vars['taxonomy'], 'pa_' ) ) {
+			unset(
+				$query_vars['taxonomy'],
+				$query_vars['term']
+			);
+		}
+
 		$price_results = $filters->get_filtered_price( $query_vars );
 
 		return array(

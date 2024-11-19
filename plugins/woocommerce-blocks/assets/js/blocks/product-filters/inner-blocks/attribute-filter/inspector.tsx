@@ -132,6 +132,7 @@ export const Inspector = ( {
 					/>
 					<ToggleGroupControl
 						label={ __( 'Logic', 'woocommerce' ) }
+						isBlock
 						value={ queryType }
 						onChange={ ( value: BlockAttributes[ 'queryType' ] ) =>
 							setAttributes( { queryType: value } )
@@ -169,6 +170,7 @@ export const Inspector = ( {
 				<PanelBody title={ __( 'Display', 'woocommerce' ) }>
 					<ToggleGroupControl
 						value={ displayStyle }
+						isBlock
 						onChange={ (
 							value: BlockAttributes[ 'displayStyle' ]
 						) => {
