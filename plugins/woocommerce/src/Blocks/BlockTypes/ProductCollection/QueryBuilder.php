@@ -134,13 +134,11 @@ class QueryBuilder {
 			'status_filter_query_args' => array( ProductFilterStatus::FILTER_STATUS_QUERY_VAR ),
 		);
 
-		return array_reduce(
-			array_values( $query_vars ),
-			function ( $acc, $query_vars_filter_block ) {
-				return array_merge( $query_vars_filter_block, $acc );
-			},
-			$public_query_vars
-		);
+		foreach ( $query_vars as $query_vars_filter_block ) {
+			$public_query_vars = array_merge( $query_vars_filter_block, $public_query_vars );
+		}
+
+		return $public_query_vars;
 	}
 
 	/**
