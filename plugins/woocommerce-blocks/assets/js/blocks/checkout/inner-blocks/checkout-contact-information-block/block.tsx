@@ -22,6 +22,8 @@ import { Form } from '@woocommerce/base-components/cart-checkout';
  */
 import CreatePassword from './create-password';
 
+const guestCheckoutNoticeId = 'wc-guest-checkout-notice';
+
 const CreateAccountUI = (): React.ReactElement | null => {
 	const { shouldCreateAccount } = useSelect( ( select ) => {
 		const store = select( CHECKOUT_STORE_KEY );
@@ -53,7 +55,10 @@ const CreateAccountUI = (): React.ReactElement | null => {
 	return (
 		<>
 			{ allowGuestCheckout && (
-				<p className="wc-block-checkout__guest-checkout-notice">
+				<p
+					id={ guestCheckoutNoticeId }
+					className="wc-block-checkout__guest-checkout-notice"
+				>
 					{ __(
 						'You are currently checking out as a guest.',
 						'woocommerce'
@@ -114,6 +119,7 @@ const Block = (): JSX.Element => {
 			<Form< ContactFormValues >
 				id="contact"
 				addressType="contact"
+				ariaDescribedBy={ guestCheckoutNoticeId }
 				onChange={ onChangeForm }
 				values={ contactFormValues }
 				fields={ CONTACT_FORM_KEYS }
