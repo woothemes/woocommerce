@@ -59,7 +59,7 @@ test.describe( 'Template part customization', () => {
 			editor,
 			page,
 			testUtils,
-			isWordPressLatestMinus1Version,
+			wordPressVersion,
 		} ) => {
 			// Edit the theme template.
 			await admin.visitSiteEditor( {
@@ -76,9 +76,10 @@ test.describe( 'Template part customization', () => {
 				isOnlyCurrentEntityDirty: true,
 			} );
 
-			const name = isWordPressLatestMinus1Version
-				? `Editing template part: ${ templateName }`
-				: `${ templateName } · Template Part`;
+			const name =
+				wordPressVersion === 'previous'
+					? `Editing template part: ${ templateName }`
+					: `${ templateName } · Template Part`;
 
 			// Verify template name didn't change.
 			// See: https://github.com/woocommerce/woocommerce/issues/42221

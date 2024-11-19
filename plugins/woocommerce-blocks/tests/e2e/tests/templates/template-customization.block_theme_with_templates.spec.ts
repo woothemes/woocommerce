@@ -34,7 +34,7 @@ test.describe( 'Template customization', () => {
 				editor,
 				frontendUtils,
 				page,
-				isWordPressLatestMinus1Version,
+				wordPressVersion,
 			} ) => {
 				// Edit the theme template.
 				await admin.visitSiteEditor( {
@@ -51,9 +51,10 @@ test.describe( 'Template customization', () => {
 					isOnlyCurrentEntityDirty: true,
 				} );
 
-				const name = isWordPressLatestMinus1Version
-					? `Editing ${ templateTypeName }: ${ testData.templateName }`
-					: `${ testData.templateName } · ${ templateTypeName }`;
+				const name =
+					wordPressVersion === 'previous'
+						? `Editing ${ templateTypeName }: ${ testData.templateName }`
+						: `${ testData.templateName } · ${ templateTypeName }`;
 
 				// Verify template name didn't change.
 				// See: https://github.com/woocommerce/woocommerce/issues/42221

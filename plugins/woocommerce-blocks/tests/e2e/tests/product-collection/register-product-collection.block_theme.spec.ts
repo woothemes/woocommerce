@@ -65,7 +65,7 @@ test.describe( 'Product Collection: Register Product Collection', () => {
 		pageObject,
 		editor,
 		admin,
-		isWordPressLatestMinus1Version,
+		wordPressVersion,
 	} ) => {
 		await admin.createNewPost();
 		await editor.insertBlockUsingGlobalInserter( pageObject.BLOCK_NAME );
@@ -83,7 +83,7 @@ test.describe( 'Product Collection: Register Product Collection', () => {
 			MY_REGISTERED_COLLECTIONS
 		) ) {
 			await expect(
-				( isWordPressLatestMinus1Version
+				( wordPressVersion === 'previous'
 					? productCollectionBlock
 					: page
 				).getByRole( 'button', {

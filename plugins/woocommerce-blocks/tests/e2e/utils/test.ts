@@ -116,7 +116,7 @@ const test = base.extend<
 		shippingUtils: ShippingUtils;
 		localPickupUtils: LocalPickupUtils;
 		miniCartUtils: MiniCartUtils;
-		isWordPressLatestMinus1Version: boolean;
+		wordPressVersion: 'stable' | 'previous' | 'nightly';
 	},
 	{
 		requestUtils: RequestUtils;
@@ -173,11 +173,25 @@ const test = base.extend<
 		},
 		{ scope: 'worker', auto: true },
 	],
-	isWordPressLatestMinus1Version: async ( {}, use ) => {
-		// The latest minus 1 version of WordPress is 6.6.
+	wordPressVersion: async ( {}, use ) => {
+		// Specific the version of WordPress only with x.y format.
 		const latestMinus1Version = 6.6;
+		const stableVersion = 6.7;
+		const nightlyVersion = 6.8;
 		const installedVersion = await getInstalledWordPressVersion();
-		await use( installedVersion <= latestMinus1Version );
+
+		if ( installedVersion === latestMinus1Version ) {
+			await use( 'previous' );
+			return;
+		}
+
+		if ( installedVersion === stableVersion ) {
+			await use( 'stable' );
+		}
+
+		if ( installedVersion === nightlyVersion ) {
+			await use( 'nightly' );
+		}
 	},
 } );
 
