@@ -729,7 +729,6 @@ const stateOptions = {
 	'CR:CR-L': 'Costa Rica - Limón',
 	'CR:CR-P': 'Costa Rica - Puntarenas',
 	'CR:CR-SJ': 'Costa Rica - San José',
-	HR: 'Croatia',
 	'HR:HR-01': 'Croatia - Zagreb County',
 	'HR:HR-02': 'Croatia - Krapina-Zagorje County',
 	'HR:HR-03': 'Croatia - Sisak-Moslavina County',
