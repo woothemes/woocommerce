@@ -74,8 +74,6 @@ export type PaymentSettingsState = {
 	otherExtensionSuggestions: SuggestedPaymentExtension[];
 	suggestionCategories: SuggestedPaymentExtensionCategory[];
 	isFetching: boolean;
-	isGatewayUpdating: Record< string, boolean >;
-	shouldRedirect: Record< string, boolean >;
 	errors: Record< string, unknown >;
 };
 
@@ -85,4 +83,9 @@ export type PaymentSuggestionsResponse = {
 	preferred_suggestions: SuggestedPaymentExtension[];
 	other_suggestions: SuggestedPaymentExtension[];
 	suggestion_categories: SuggestedPaymentExtensionCategory[];
+};
+
+export type EnableGatewayResponse = {
+	success: boolean;
+	data: unknown;
 };

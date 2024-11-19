@@ -3,8 +3,12 @@
  */
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
-import { dispatch, useDispatch, useSelect } from '@wordpress/data';
-import { PAYMENT_SETTINGS_STORE_NAME } from '@woocommerce/data';
+import { dispatch, useDispatch } from '@wordpress/data';
+import {
+	PAYMENT_SETTINGS_STORE_NAME,
+	EnableGatewayResponse,
+} from '@woocommerce/data';
+import { useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -30,18 +34,22 @@ export const PaymentGatewayButton = ( {
 	textNeedsSetup?: string;
 } ) => {
 	const { createErrorNotice } = dispatch( 'core/notices' );
-	const { enablePaymentGateway } = useDispatch( PAYMENT_SETTINGS_STORE_NAME );
+	const { enablePaymentGateway, invalidateResolutionForStoreSelector } =
+		useDispatch( PAYMENT_SETTINGS_STORE_NAME );
+	const [ isUpdating, setIsUpdating ] = useState( false );
 
-	const { isUpdating, shouldRedirect } = useSelect( ( select ) => {
-		return {
-			isUpdating: select( PAYMENT_SETTINGS_STORE_NAME ).isGatewayUpdating(
-				id
+	const createAPIErrorNotice = () => {
+		createErrorNotice(
+			__(
+				'An API error occurred. You will be redirected to the settings page, try enabling the gateway there.',
+				'woocommerce'
 			),
-			shouldRedirect: select(
-				PAYMENT_SETTINGS_STORE_NAME
-			).shouldRedirect( id ),
-		};
-	} );
+			{
+				type: 'snackbar',
+				explicitDismiss: true,
+			}
+		);
+	};
 
 	const onClick = ( e: React.MouseEvent ) => {
 		if ( ! enabled ) {
@@ -50,29 +58,33 @@ export const PaymentGatewayButton = ( {
 				window.woocommerce_admin.nonces?.gateway_toggle || '';
 
 			if ( ! gatewayToggleNonce ) {
-				createErrorNotice(
-					__(
-						'An API error occurred. You will be redirected to the settings page, try enabling the gateway there.',
-						'woocommerce'
-					),
-					{
-						type: 'snackbar',
-						explicitDismiss: true,
-					}
-				);
+				createAPIErrorNotice();
 				window.location.href = settingsUrl;
 				return;
 			}
+			setIsUpdating( true );
 			enablePaymentGateway(
 				id,
-				isOffline,
 				window.woocommerce_admin.ajax_url,
 				gatewayToggleNonce
-			);
-
-			if ( shouldRedirect ) {
-				window.location.href = settingsUrl;
-			}
+			)
+				.then( ( response: EnableGatewayResponse ) => {
+					if ( response.data === 'needs_setup' ) {
+						window.location.href = settingsUrl;
+						return;
+					}
+					invalidateResolutionForStoreSelector(
+						isOffline
+							? 'getOfflinePaymentGateways'
+							: 'getRegisteredPaymentGateways'
+					);
+					setIsUpdating( false );
+				} )
+				.catch( () => {
+					setIsUpdating( false );
+					createAPIErrorNotice();
+					window.location.href = settingsUrl;
+				} );
 		}
 	};
 

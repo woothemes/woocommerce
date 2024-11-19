@@ -2,7 +2,6 @@
  * External dependencies
  */
 import apiFetch from '@wordpress/api-fetch';
-import { dispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -13,8 +12,8 @@ import {
 	OfflinePaymentGateway,
 	SuggestedPaymentExtension,
 	SuggestedPaymentExtensionCategory,
+	EnableGatewayResponse,
 } from './types';
-import { STORE_NAME } from '../settings/constants';
 
 export function getPaymentGatewaySuggestionsRequest(): {
 	type: ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_REQUEST;
@@ -58,58 +57,14 @@ export function getPaymentGatewaySuggestionsError( error: unknown ): {
 	};
 }
 
-export function enablePaymentGatewayRequest( gatewayId: string ): {
-	type: ACTION_TYPES.ENABLE_PAYMENT_GATEWAY_REQUEST;
-	gatewayId: string;
-} {
-	return {
-		type: ACTION_TYPES.ENABLE_PAYMENT_GATEWAY_REQUEST,
-		gatewayId,
-	};
-}
-
-export function enablePaymentGatewaySuccess(
-	gatewayId: string,
-	isOffline: boolean
-): {
-	type: ACTION_TYPES.ENABLE_PAYMENT_GATEWAY_SUCCESS;
-	gatewayId: string;
-	isOffline: boolean;
-} {
-	return {
-		type: ACTION_TYPES.ENABLE_PAYMENT_GATEWAY_SUCCESS,
-		gatewayId,
-		isOffline,
-	};
-}
-
-export function enablePaymentGatewayError(
-	gatewayId: string,
-	error: unknown
-): {
-	type: ACTION_TYPES.ENABLE_PAYMENT_GATEWAY_ERROR;
-	gatewayId: string;
-	error: unknown;
-} {
-	return {
-		type: ACTION_TYPES.ENABLE_PAYMENT_GATEWAY_ERROR,
-		gatewayId,
-		error,
-	};
-}
-
 export function* enablePaymentGateway(
 	gatewayId: string,
-	isOffline: boolean,
 	ajaxUrl: string,
 	gatewayToggleNonce: string
 ) {
-	// Dispatch the request action
-	yield enablePaymentGatewayRequest( gatewayId );
-
 	try {
 		// Use apiFetch for the AJAX request
-		yield apiFetch( {
+		const result: EnableGatewayResponse = yield apiFetch( {
 			url: ajaxUrl,
 			method: 'POST',
 			headers: {
@@ -122,15 +77,9 @@ export function* enablePaymentGateway(
 			} ),
 		} );
 
-		// Dispatch the success action
-		yield enablePaymentGatewaySuccess( gatewayId, isOffline );
+		return result;
 	} catch ( error ) {
-		// Dispatch the error action
-		yield enablePaymentGatewayError( gatewayId, error );
-	} finally {
-		yield dispatch( STORE_NAME ).invalidateResolution(
-			'getRegisteredPaymentGateways'
-		);
+		throw error;
 	}
 }
 
@@ -138,7 +87,4 @@ export type Actions =
 	| ReturnType< typeof getPaymentGatewaySuggestionsRequest >
 	| ReturnType< typeof getPaymentGatewaySuggestionsSuccess >
 	| ReturnType< typeof getPaymentGatewaySuggestionsError >
-	| ReturnType< typeof enablePaymentGatewayRequest >
-	| ReturnType< typeof enablePaymentGatewaySuccess >
-	| ReturnType< typeof enablePaymentGatewayError >
 	| ReturnType< typeof enablePaymentGateway >;

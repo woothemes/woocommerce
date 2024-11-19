@@ -23,8 +23,6 @@ const defaultState: PaymentSettingsState = {
 	otherExtensionSuggestions: [],
 	suggestionCategories: [],
 	isFetching: false,
-	isGatewayUpdating: {},
-	shouldRedirect: {},
 	errors: {},
 };
 
@@ -91,44 +89,5 @@ describe( 'payment settings reducer', () => {
 
 		expect( state.suggestionCategories ).toHaveLength( 3 );
 		expect( state.suggestionCategories ).toBe( suggestionCategoriesStub );
-	} );
-
-	it( 'should handle ENABLE_PAYMENT_GATEWAY_REQUEST', () => {
-		const state = reducer( defaultState, {
-			type: ACTION_TYPES.ENABLE_PAYMENT_GATEWAY_REQUEST,
-			gatewayId: 'woocommerce_payments',
-		} );
-
-		expect( state.isGatewayUpdating ).toStrictEqual( {
-			woocommerce_payments: true,
-		} );
-	} );
-
-	it( 'should handle ENABLE_PAYMENT_GATEWAY_ERROR', () => {
-		const state = reducer( defaultState, {
-			type: ACTION_TYPES.ENABLE_PAYMENT_GATEWAY_ERROR,
-			gatewayId: 'woocommerce_payments',
-			error: restApiError,
-		} );
-
-		expect( state.errors.enablePaymentGateway ).toBe( restApiError );
-	} );
-
-	it( 'should replace an existing payment gateway on ENABLE_PAYMENT_GATEWAY_SUCCESS', () => {
-		const state = reducer(
-			{
-				...defaultState,
-				registeredPaymentGateways: registeredPaymentGatewaysStub,
-			},
-			{
-				type: ACTION_TYPES.ENABLE_PAYMENT_GATEWAY_SUCCESS,
-				gatewayId: 'woocommerce_payments',
-				isOffline: false,
-			}
-		);
-
-		expect( state.registeredPaymentGateways[ 0 ].state.enabled ).toBe(
-			true
-		);
 	} );
 } );

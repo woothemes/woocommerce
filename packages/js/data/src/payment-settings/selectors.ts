@@ -37,20 +37,6 @@ export function isFetching( state: PaymentSettingsState ): boolean {
 	return state.isFetching || false;
 }
 
-export function isGatewayUpdating(
-	state: PaymentSettingsState,
-	gatewayId: string
-): boolean {
-	return state.isGatewayUpdating[ gatewayId ] || false;
-}
-
-export function shouldRedirect(
-	state: PaymentSettingsState,
-	gatewayId: string
-): boolean {
-	return state.shouldRedirect[ gatewayId ] || false;
-}
-
 export type PaymentSettingsSelectors = {
 	getRegisteredPaymentGateways: WPDataSelector<
 		typeof getRegisteredPaymentGateways
@@ -65,6 +51,4 @@ export type PaymentSettingsSelectors = {
 		typeof getOtherExtensionSuggestions
 	>;
 	isFetching: WPDataSelector< typeof isFetching >;
-	isGatewayUpdating: WPDataSelector< typeof isGatewayUpdating >;
-	shouldRedirect: WPDataSelector< typeof shouldRedirect >;
 } & WPDataSelectors;
