@@ -5,7 +5,6 @@
 
 namespace Automattic\WooCommerce\Internal\ProductImage;
 
-
 defined( 'ABSPATH' ) || exit;
 
 /**

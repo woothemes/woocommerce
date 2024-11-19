@@ -653,7 +653,7 @@ class FeaturesController {
 	 * @param mixed  $value     The new value of the option.
 	 *
 	 * @return void
-	 * 
+	 *
 	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
 	public function process_updated_option( string $option, $old_value, $value ) {

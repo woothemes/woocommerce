@@ -2,7 +2,6 @@
 
 namespace Automattic\WooCommerce\Internal\Admin\Orders;
 
-
 /**
  * When Custom Order Tables are not the default order store (ie, posts are authoritative), we should take care of
  * redirecting requests for the order editor and order admin list table to the equivalent posts-table screens.

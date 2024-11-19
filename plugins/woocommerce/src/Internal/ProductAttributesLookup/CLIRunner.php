@@ -31,7 +31,7 @@ class CLIRunner {
 	 * for that method. Therefore, in this case we retrieve the dependencies manually instead.
 	 */
 	public function __construct() {
-		$container = wc_get_container();
+		$container               = wc_get_container();
 		$this->data_regenerator  = $container->get( DataRegenerator::class );
 		$this->lookup_data_store = $container->get( LookupDataStore::class );
 	}

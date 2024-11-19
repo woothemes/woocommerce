@@ -111,7 +111,7 @@ class WC_Payment_Gateways {
 			} else {
 				// Add to end of the array.
 				$this->payment_gateways[ $order_end ] = $gateway;
-				$order_end++;
+				++$order_end;
 			}
 		}
 
@@ -127,6 +127,8 @@ class WC_Payment_Gateways {
 		do_action( 'wc_payment_gateways_initialized', $this );
 	}
 
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.Found
+
 	/**
 	 * Hook into payment gateway settings changes.
 	 *
@@ -140,7 +142,7 @@ class WC_Payment_Gateways {
 			$option_key = $gateway->get_option_key();
 			add_action(
 				'add_option_' . $option_key,
-				function( $option, $value ) use ( $gateway ) {
+				function ( $option, $value ) use ( $gateway ) {
 					$this->payment_gateway_settings_option_changed( $gateway, $value, $option );
 				},
 				10,
@@ -148,7 +150,7 @@ class WC_Payment_Gateways {
 			);
 			add_action(
 				'update_option_' . $option_key,
-				function( $old_value, $value, $option ) use ( $gateway ) {
+				function ( $old_value, $value, $option ) use ( $gateway ) {
 					$this->payment_gateway_settings_option_changed( $gateway, $value, $option, $old_value );
 				},
 				10,
@@ -156,6 +158,8 @@ class WC_Payment_Gateways {
 			);
 		}
 	}
+
+	// phpcs:enable Generic.CodeAnalysis.UnusedFunctionParameter.Found
 
 	/**
 	 * Callback for when a gateway settings option was added or updated.
@@ -204,7 +208,7 @@ class WC_Payment_Gateways {
 		$email_addresses   = array_unique(
 			array_filter(
 				$email_addresses,
-				function( $email_address ) {
+				function ( $email_address ) {
 					return filter_var( $email_address, FILTER_VALIDATE_EMAIL );
 				}
 			)
@@ -385,7 +389,7 @@ All at %6$s
 			$loop = 0;
 			foreach ( $gateway_order as $gateway_id ) {
 				$order[ esc_attr( $gateway_id ) ] = $loop;
-				$loop++;
+				++$loop;
 			}
 		}
 

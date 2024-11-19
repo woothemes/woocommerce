@@ -5,7 +5,6 @@
 
 namespace Automattic\WooCommerce\Internal\Settings;
 
-
 defined( 'ABSPATH' ) || exit;
 
 /**

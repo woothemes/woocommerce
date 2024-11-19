@@ -26,7 +26,7 @@ class ReviewsCommentsOverrides {
 	 *
 	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	public function display_notices() : void {
+	public function display_notices(): void {
 		$screen = get_current_screen();
 
 		if ( empty( $screen ) || $screen->base !== 'edit-comments' ) {
@@ -125,7 +125,7 @@ class ReviewsCommentsOverrides {
 	 *
 	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	public function exclude_reviews_from_comments( $args ) : array {
+	public function exclude_reviews_from_comments( $args ): array {
 		$screen = get_current_screen();
 
 		// We only wish to intervene if the edit comments screen has been requested.
