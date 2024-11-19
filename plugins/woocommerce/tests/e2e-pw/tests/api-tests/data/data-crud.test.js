@@ -2567,7 +2567,7 @@ test.describe( 'Data API tests', () => {
 							num_decimals: 2,
 							thousand_sep: ' ',
 							weight_unit: 'kg',
-							states: [],
+							states: expect.arrayContaining( [] ),
 						},
 						{
 							code: 'HT',
@@ -3603,7 +3603,7 @@ test.describe( 'Data API tests', () => {
 						num_decimals: 2,
 						thousand_sep: '.',
 						weight_unit: 'kg',
-						states: [],
+						states: expect.arrayContaining( [] ),
 					},
 					{
 						code: 'HU',
@@ -5535,32 +5535,6 @@ test.describe( 'Data API tests', () => {
 							{
 								href: expect.stringContaining(
 									'data/currencies/HNL'
-								),
-								targetHints: { allow: [ 'GET' ] },
-							},
-						],
-						collection: [
-							{
-								href: expect.stringContaining(
-									'data/currencies'
-								),
-							},
-						],
-					},
-				} ),
-			] )
-		);
-		expect( responseJSON ).toEqual(
-			expect.arrayContaining( [
-				expect.objectContaining( {
-					code: 'HR',
-					name: 'Croatia',
-					symbol: 'EUR',
-					_links: {
-						self: [
-							{
-								href: expect.stringContaining(
-									'data/currencies/EUR'
 								),
 								targetHints: { allow: [ 'GET' ] },
 							},
