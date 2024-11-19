@@ -324,7 +324,7 @@ class PaymentsRestController extends RestApiControllerBase {
 			),
 			'management'  => array(
 				'settings_url' => method_exists( $payment_gateway, 'get_settings_url' )
-					? esc_url( $payment_gateway->get_settings_url() )
+					? sanitize_url( $payment_gateway->get_settings_url() )
 					: admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . strtolower( $payment_gateway->id ) ),
 			),
 		);
@@ -372,6 +372,16 @@ class PaymentsRestController extends RestApiControllerBase {
 						array(
 							'_type' => ExtensionSuggestions::LINK_TYPE_ABOUT,
 							'url'   => esc_url( $plugin_data['PluginURI'] ),
+						),
+					);
+				} elseif ( ! empty( $gateway_details['plugin']['_type'] ) &&
+					ExtensionSuggestions::PLUGIN_TYPE_WPORG === $gateway_details['plugin']['_type'] ) {
+
+					// Fallback to constructing the WPORG plugin URI from the plugin slug.
+					$gateway_details['links'] = array(
+						array(
+							'_type' => ExtensionSuggestions::LINK_TYPE_ABOUT,
+							'url'   => 'https://wordpress.org/plugins/' . $plugin_slug,
 						),
 					);
 				}

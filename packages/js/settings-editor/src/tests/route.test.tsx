@@ -71,7 +71,7 @@ describe( 'route.tsx', () => {
 		// Mock window.wcSettings
 		window.wcSettings = {
 			admin: {
-				settingsPages: mockSettingsPages,
+				settingsData: mockSettingsPages,
 			},
 		};
 
@@ -131,7 +131,7 @@ describe( 'route.tsx', () => {
 			// Mock a modern page
 			window.wcSettings = {
 				admin: {
-					settingsPages: {
+					settingsData: {
 						modern: {
 							label: 'Modern',
 							icon: 'published',

@@ -252,7 +252,7 @@
 					.attr( { tabindex: '-1', 'aria-hidden': 'true' } );
 				if ( ! data.isInitialLoad ) {
 					$( '.woocommerce-save-button' ).removeAttr( 'disabled' );
-				}	
+				}
 			} );
 
 		$( '.wc-item-reorder-nav' )

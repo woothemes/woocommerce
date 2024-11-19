@@ -1684,7 +1684,7 @@ final class PaymentExtensionSuggestions {
 			),
 			self::PAYU_INDIA        => array(
 				'_type'       => self::TYPE_PSP,
-				'title'       => esc_html__( 'PayU India for WooCommerce', 'woocommerce' ),
+				'title'       => esc_html__( 'PayU India', 'woocommerce' ),
 				'description' => esc_html__( 'Enable PayU\’s exclusive plugin for WooCommerce to start accepting payments in 100+ payment methods available in India including credit cards, debit cards, UPI, & more!', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/payu.svg', WC_PLUGIN_FILE ),
 				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/payu.png', WC_PLUGIN_FILE ),
@@ -1854,8 +1854,8 @@ final class PaymentExtensionSuggestions {
 				'title'             => esc_html__( 'Accept payments with Woo', 'woocommerce' ),
 				'short_description' => esc_html__( 'Credit/debit cards, Apple Pay, Google Pay and more.', 'woocommerce' ),
 				'description'       => esc_html__( 'With WooPayments, you can securely accept major cards, Apple Pay, and payments in over 100 currencies. Track cash flow and manage recurring revenue directly from your store’s dashboard - with no setup costs or monthly fees.', 'woocommerce' ),
-				'image'             => plugins_url( 'assets/images/onboarding/wcpay.svg', WC_PLUGIN_FILE ),
-				'icon'              => plugins_url( 'assets/images/onboarding/wcpay.svg', WC_PLUGIN_FILE ),
+				'image'             => plugins_url( 'assets/images/onboarding/woopayments.svg', WC_PLUGIN_FILE ),
+				'icon'              => plugins_url( 'assets/images/onboarding/woopayments.svg', WC_PLUGIN_FILE ),
 				'plugin'            => array(
 					'_type' => self::PLUGIN_TYPE_WPORG,
 					'slug'  => 'woocommerce-payments',
@@ -1940,7 +1940,6 @@ final class PaymentExtensionSuggestions {
 				'_type'       => self::TYPE_BNPL,
 				'title'       => esc_html__( 'Afterpay', 'woocommerce' ),
 				'description' => esc_html__( 'Afterpay allows customers to receive products immediately and pay for purchases over four installments, always interest-free.', 'woocommerce' ),
-				// @todo need to refresh these images.
 				'image'       => plugins_url( 'assets/images/onboarding/afterpay.png', WC_PLUGIN_FILE ),
 				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/afterpay.png', WC_PLUGIN_FILE ),
 				'plugin'      => array(
