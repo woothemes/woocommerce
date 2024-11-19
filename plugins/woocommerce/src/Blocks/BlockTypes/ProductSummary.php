@@ -98,7 +98,7 @@ class ProductSummary extends AbstractBlock {
 		$href = esc_url( $product->get_permalink() );
 		$text = wp_kses_post( $link_text );
 
-		return '</br></br><a class="wp-block-woocommerce-product-summary__read_more" href="' . $href . '#tab-description">' . $text . '</a>';
+		return '<a class="wp-block-woocommerce-product-summary__read_more" href="' . $href . '#tab-description">' . $text . '</a>';
 	}
 
 	/**
@@ -191,7 +191,7 @@ class ProductSummary extends AbstractBlock {
 		}
 
 		if ( $count_type === 'words' ) {
-			return wp_trim_words( $first_paragraph, $max_length );
+			return wpautop( wp_trim_words( $first_paragraph, $max_length ) );
 		}
 
 		return $this->trim_characters( $first_paragraph, $max_length, $count_type ) . '…';
