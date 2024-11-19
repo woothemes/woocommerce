@@ -183,8 +183,10 @@ export const useActiveRoute = (): {
 	const modernRoutes = useModernRoutes();
 
 	return useMemo( () => {
-		const { tab: activePage = 'general', section: activeSection } =
-			location.params;
+		const {
+			tab: activePage = 'general',
+			section: activeSection = 'default',
+		} = location.params;
 		const settingsPage = settingsData?.[ activePage ];
 		const tabs = getSettingsPageTabs( settingsPage );
 

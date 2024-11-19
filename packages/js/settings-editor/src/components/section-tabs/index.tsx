@@ -44,7 +44,7 @@ export const SectionTabs = ( {
 		}
 
 		const params =
-			tabName === ''
+			tabName === 'default'
 				? {
 						page,
 						postType,
