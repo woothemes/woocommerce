@@ -62,7 +62,6 @@ export const CesFeedbackButton = ( {
 				title,
 				firstQuestion,
 				showDescription: false,
-				shouldShowComments: () => false,
 				onsubmitLabel: submitLabel,
 				getExtraFieldsToBeShown: (
 					extraFieldsValues: { [ key: string ]: string },
@@ -101,7 +100,7 @@ export const CesFeedbackButton = ( {
 					);
 				},
 			},
-			{ blockName },
+			{ blockName, shouldShowComments: () => false },
 			{},
 			{}
 		);
