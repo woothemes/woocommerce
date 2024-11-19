@@ -23,6 +23,7 @@
 * [Writing unit tests](#writing-unit-tests)
     * [Mocking dependencies](#mocking-dependencies)
     * [Additional tools for writing unit tests](#additional-tools-for-writing-unit-tests)
+* [A note on @internal annotations](#a-note-on-internal-annotations)
 
 This directory is home to new WooCommerce class files under the `Automattic\WooCommerce` namespace using [PSR-4](https://www.php-fig.org/psr/psr-4/) file naming. This is to take full advantage of autoloading.
 
@@ -451,3 +452,10 @@ Note: of course all of this applies to dependencies from the `src` directory, fo
 
 * [The code hacker](https://github.com/woocommerce/woocommerce/tree/trunk/plugins/woocommerce/tests/Tools/CodeHacking#readme), which allows modifying the code before it's tested in order to mock functions, static methods and `final` classes. This is a last resort mechanism when using other mechanisms like [the `LegacyProxy` class](#the-legacyproxy-class) is not an option.
 * [The DynamicDecorator class](https://github.com/woocommerce/woocommerce/tree/trunk/plugins/woocommerce/tests/Tools/DynamicDecorator.php), which wraps an arbitrary object and allows to define replacements its for methods and properties; the decorator is then used in lieu of the original object. This can be useful when extending the class of the original object isn't possible or is too complicated. See [the unis tests](https://github.com/woocommerce/woocommerce/tree/trunk/plugins/woocommerce/tests/php/src/Proxies/DynamicDecoratorTest.php) for examples of how it's used.
+
+
+## A note on `@internal` annotations
+
+Some classes and methods in this folder have an `@internal` annotation in their documentation comment block. This means that the code entity is intended for internal usage of WooCommerce core only, and **must not** be used in extensions. Backwards compatibility for these code entities is not guaranteed: they could be renamed, modified (in behavior, return value or arguments accepted) or deleted.
+
+See also [the README file for the `Internal` folder](Internal/README.md).
