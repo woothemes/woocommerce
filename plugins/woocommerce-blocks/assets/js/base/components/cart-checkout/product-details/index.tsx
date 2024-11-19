@@ -49,11 +49,7 @@ const ProductDetails = ( {
 						: '' );
 				return (
 					<ChildTag
-						key={
-							details.length > 1
-								? name + ( detail.display || detail.value )
-								: undefined
-						}
+						key={ name + ( detail.display || detail.value ) }
 						className={ className }
 					>
 						{ name && (
