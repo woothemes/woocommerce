@@ -59,12 +59,12 @@ test.describe( 'Shopper → Shipping', () => {
 		await userFrontendUtils.addToCart( REGULAR_PRICED_PRODUCT_NAME );
 		await userFrontendUtils.goToCart();
 
-		// Note, the country should not be displayed here as we set the storageState to empty.
-		// However this behaviour of displaying the country despite storageState being empty
-		// is not new and only surfaced as we started displaying country in the shipping calculator panel.
-		// At some point in future we should determine why this happens.
+		// Note that the default customer location is set to the shop country/region, which
+		// is why this label is pre-populated with the shop country/region.
 		await expect(
-			userPage.getByText( 'No delivery options available for' )
+			userPage.getByText(
+				'No delivery options available for CALIFORNIA, UNITED STATES (US)'
+			)
 		).toBeVisible();
 	} );
 
