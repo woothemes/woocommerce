@@ -31,21 +31,10 @@ import SiteHub from '@wordpress/edit-site/build-module/components/site-hub';
 import SidebarContent from '@wordpress/edit-site/build-module/components/sidebar';
 /* eslint-enable @woocommerce/dependency-group */
 
-type Route = {
-	key: string;
-	areas: {
-		sidebar: React.JSX.Element | React.FunctionComponent;
-		content?: React.JSX.Element | React.FunctionComponent;
-		edit?: React.JSX.Element | React.FunctionComponent;
-		mobile?: React.JSX.Element | React.FunctionComponent | boolean;
-		preview?: boolean;
-	};
-	widths?: {
-		content?: number;
-		edit?: number;
-		sidebar?: number;
-	};
-};
+/**
+ * Internal dependencies
+ */
+import { Route } from './types';
 
 const { NavigableRegion } = unlock( editorPrivateApis );
 
