@@ -5,6 +5,8 @@
  * @package WooCommerce
  */
 
+use Automattic\WooCommerce\Admin\Features\Features;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -16,21 +18,32 @@ if ( ! $tab_exists ) {
 	wp_safe_redirect( admin_url( 'admin.php?page=wc-settings' ) );
 	exit;
 }
+
+$hide_nav = Features::is_enabled( 'reactify-classic-payments-settings' ) &&
+	'checkout' === $current_tab && 'offline' === $current_section;
 ?>
+
 <div class="wrap woocommerce">
 	<?php do_action( 'woocommerce_before_settings_' . $current_tab ); ?>
 	<form method="<?php echo esc_attr( apply_filters( 'woocommerce_settings_form_method_tab_' . $current_tab, 'post' ) ); ?>" id="mainform" action="" enctype="multipart/form-data">
-		<nav class="nav-tab-wrapper woo-nav-tab-wrapper">
-			<?php
+		<?php if ( ! $hide_nav ) : ?>
+			<nav class="nav-tab-wrapper woo-nav-tab-wrapper">
+				<?php
 
-			foreach ( $tabs as $slug => $label ) {
-				echo '<a href="' . esc_html( admin_url( 'admin.php?page=wc-settings&tab=' . esc_attr( $slug ) ) ) . '" class="nav-tab ' . ( $current_tab === $slug ? 'nav-tab-active' : '' ) . '">' . esc_html( $label ) . '</a>';
-			}
+				foreach ( $tabs as $slug => $label ) {
+					echo '<a href="' . esc_html( admin_url( 'admin.php?page=wc-settings&tab=' . esc_attr( $slug ) ) ) . '" class="nav-tab ' . ( $current_tab === $slug ? 'nav-tab-active' : '' ) . '">' . esc_html( $label ) . '</a>';
+				}
 
-			do_action( 'woocommerce_settings_tabs' );
+				/**
+				 * Hook for adding additional settings tabs.
+				 *
+				 * @since 1.0.0
+				 */
+				do_action( 'woocommerce_settings_tabs' );
 
-			?>
-		</nav>
+				?>
+			</nav>
+		<?php endif; ?>
 		<h1 class="screen-reader-text"><?php echo esc_html( $current_tab_label ); ?></h1>
 		<?php
 			do_action( 'woocommerce_sections_' . $current_tab );
