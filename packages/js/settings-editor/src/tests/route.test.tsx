@@ -33,7 +33,7 @@ jest.mock( '@wordpress/edit-site/build-module/lock-unlock', () => ( {
 	unlock: jest.fn( ( apis ) => apis ),
 } ) );
 
-jest.mock( '../sidebar', () => ( {
+jest.mock( '../components/sidebar', () => ( {
 	__esModule: true,
 	Sidebar: ( { children }: { children: React.ReactNode } ) => (
 		<div data-testid="sidebar-navigation-screen">{ children }</div>
