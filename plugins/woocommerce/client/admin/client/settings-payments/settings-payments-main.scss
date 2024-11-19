@@ -51,12 +51,6 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 			border-top: 1px solid $gray-200;
 			border-bottom: 1px solid $gray-200;
 
-			.woocommerce-item__woocommerce-payment {
-				.woocommerce-list__item-inner {
-					align-items: flex-start;
-				}
-			}
-
 			&__item {
 				padding: 0 48px;
 
@@ -75,6 +69,7 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 
 			&__item-inner {
 				padding: $gap-large 0;
+				align-items: flex-start;
 			}
 
 			&__item-title {

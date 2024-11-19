@@ -1,26 +1,14 @@
 /**
  * External dependencies
  */
-import { useState } from 'react';
 import { decodeEntities } from '@wordpress/html-entities';
+import { OfflinePaymentGateway } from '@woocommerce/data';
 
 /**
  * Internal dependencies
  */
 import sanitizeHTML from '~/lib/sanitize-html';
 import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
-
-interface OfflinePaymentGateway {
-	id: string;
-	title: string;
-	content: string;
-	image: string;
-	square_image: string;
-	image_72x72: string;
-	actionText: string;
-	settings_url: string;
-	enabled: boolean;
-}
 
 type OfflinePaymentGatewayListItemProps = {
 	gateway: OfflinePaymentGateway;
@@ -29,8 +17,6 @@ type OfflinePaymentGatewayListItemProps = {
 export const OfflinePaymentGatewayListItem = ( {
 	gateway,
 }: OfflinePaymentGatewayListItemProps ) => {
-	const [ isEnabled, setIsEnabled ] = useState( gateway.enabled );
-
 	return {
 		key: gateway.id,
 		title: <>{ gateway.title }</>,
@@ -38,25 +24,18 @@ export const OfflinePaymentGatewayListItem = ( {
 		content: (
 			<span
 				dangerouslySetInnerHTML={ sanitizeHTML(
-					decodeEntities( gateway.content )
+					decodeEntities( gateway.description )
 				) }
 			/>
 		),
 		after: (
 			<PaymentGatewayButton
 				id={ gateway.id }
-				enabled={ isEnabled }
-				settings_url={ gateway.settings_url }
-				setIsEnabled={ setIsEnabled }
+				isOffline={ true }
+				enabled={ gateway.state.enabled }
+				settingsUrl={ gateway.management.settings_url }
 			/>
 		),
-		before: (
-			<img
-				src={
-					gateway.square_image || gateway.image_72x72 || gateway.image
-				}
-				alt={ gateway.title + ' logo' }
-			/>
-		),
+		before: <img src={ gateway.icon } alt={ gateway.title + ' logo' } />,
 	};
 };
