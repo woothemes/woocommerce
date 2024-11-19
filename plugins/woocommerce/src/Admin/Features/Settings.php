@@ -111,6 +111,7 @@ class Settings {
 
 		// Make sure the Settings Editor package is loaded.
 		wp_enqueue_script( 'wc-settings-editor' );
+		wp_enqueue_style( 'wc-settings-editor' );
 
 		$script_name            = 'wc-admin-edit-settings';
 		$script_path_name       = 'settings';
@@ -145,7 +146,7 @@ class Settings {
 			$pages = $setting_page->add_settings_page_data( $pages );
 		}
 
-		$settings['settingsPages'] = $pages;
+		$settings['settingsData'] = $pages;
 
 		return $settings;
 	}
