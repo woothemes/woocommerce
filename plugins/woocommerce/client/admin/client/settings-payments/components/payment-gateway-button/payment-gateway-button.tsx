@@ -3,7 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { dispatch, useDispatch, useSelect } from '@wordpress/data';
 import { PAYMENT_SETTINGS_STORE_NAME } from '@woocommerce/data';
 
 /**
@@ -29,6 +29,7 @@ export const PaymentGatewayButton = ( {
 	textEnable?: string;
 	textNeedsSetup?: string;
 } ) => {
+	const { createErrorNotice } = dispatch( 'core/notices' );
 	const { enablePaymentGateway } = useDispatch( PAYMENT_SETTINGS_STORE_NAME );
 
 	const { isUpdating, shouldRedirect } = useSelect( ( select ) => {
@@ -47,6 +48,20 @@ export const PaymentGatewayButton = ( {
 			e.preventDefault();
 			const gatewayToggleNonce =
 				window.woocommerce_admin.nonces?.gateway_toggle || '';
+
+			if ( ! gatewayToggleNonce ) {
+				createErrorNotice(
+					__(
+						'An API error occurred. You will be redirected to the settings page, try enabling the gateway there.'
+					),
+					{
+						type: 'snackbar',
+						explicitDismiss: true,
+					}
+				);
+				window.location.href = settingsUrl;
+				return;
+			}
 			enablePaymentGateway(
 				id,
 				isOffline,
