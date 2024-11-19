@@ -75,7 +75,11 @@ export const SettingsPaymentsMain = () => {
 					setInstallingPlugin( null );
 				} );
 		},
-		[ installingPlugin, installAndActivatePlugins ]
+		[
+			installingPlugin,
+			installAndActivatePlugins,
+			invalidateResolutionForStoreSelector,
+		]
 	);
 
 	useEffect( () => {
