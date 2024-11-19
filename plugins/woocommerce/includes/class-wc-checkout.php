@@ -1086,6 +1086,13 @@ class WC_Checkout {
 
 			$result = apply_filters( 'woocommerce_payment_successful_result', $result, $order_id );
 
+			wc_log_order_step( '[Shortcode #6A] Order payment processed successfully', array(
+					'order_id'       => $order_id,
+					'payment_method' => $payment_method,
+					'redirected'     => ! wp_doing_ajax() ? 'yes' : 'no',
+				)
+			);
+
 			if ( ! wp_doing_ajax() ) {
 				// phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
 				wp_redirect( $result['redirect'] );
@@ -1107,6 +1114,12 @@ class WC_Checkout {
 		$order = wc_get_order( $order_id );
 		$order->payment_complete();
 		wc_empty_cart();
+
+		wc_log_order_step( '[Shortcode #6B] Order processed without payment', array(
+				'order_id'       => $order_id,
+				'redirected'     => ! wp_doing_ajax() ? 'yes' : 'no',
+			)
+		);
 
 		if ( ! wp_doing_ajax() ) {
 			wp_safe_redirect(
@@ -1275,6 +1288,8 @@ class WC_Checkout {
 				throw new Exception( $expiry_message );
 			}
 
+			wc_log_order_step( '[Shortcode #1] Place Order flow initiated' );
+
 			do_action( 'woocommerce_checkout_process' );
 
 			$errors      = new WP_Error();
@@ -1283,8 +1298,17 @@ class WC_Checkout {
 			// Update session for customer and totals.
 			$this->update_session( $posted_data );
 
+			wc_log_order_step( '[Shortcode #2] Session updated with checkout data and totals calculated' );
+
 			// Validate posted data and cart items before proceeding.
 			$this->validate_checkout( $posted_data, $errors );
+
+			if ( empty( $errors->errors ) ) {
+				wc_log_order_step( '[Shortcode #3] Checkout posted data validated', array(
+						'payment_method' => $posted_data['payment_method'],
+					)
+				);
+			}
 
 			foreach ( $errors->errors as $code => $messages ) {
 				$data = $errors->get_error_data( $code );
@@ -1306,7 +1330,17 @@ class WC_Checkout {
 					throw new Exception( __( 'Unable to create order.', 'woocommerce' ) );
 				}
 
+				wc_log_order_step( '[Shortcode #4] Validated/Created customer and created order object', array(
+						'order_id' => $order_id,
+					)
+				);
+
 				do_action( 'woocommerce_checkout_order_processed', $order_id, $posted_data, $order );
+
+				wc_log_order_step( '[Shortcode #5] woocommerce_checkout_order_processed hook ran successfully', array(
+						'order_id' => $order_id,
+					)
+				);
 
 				/**
 				 * Note that woocommerce_cart_needs_payment is only used in

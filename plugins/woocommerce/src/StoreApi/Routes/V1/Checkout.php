@@ -250,33 +250,44 @@ class Checkout extends AbstractCartRoute {
 		 */
 		$this->cart_controller->validate_cart_not_empty();
 
+		wc_log_order_step( '[Store API #1] Place Order flow initiated' );
 		/**
 		 * Validate items and fix violations before the order is processed.
 		 */
 		$this->cart_controller->validate_cart();
+		wc_log_order_step( '[Store API #2] Cart validated' );
 
 		/**
 		 * Validate additional fields on request.
 		 */
 		$this->validate_required_additional_fields( $request );
+		wc_log_order_step( '[Store API #3] Validated additional required fields' );
+
 
 		/**
 		 * Persist customer session data from the request first so that OrderController::update_addresses_from_cart
 		 * uses the up to date customer address.
 		 */
 		$this->update_customer_from_request( $request );
+		wc_log_order_step( '[Store API #4] Updated customer data from request' );
 
 		/**
 		 * Create (or update) Draft Order and process request data.
 		 */
 		$this->create_or_update_draft_order( $request );
+		wc_log_order_step( '[Store API #5] Created/Updated draft order', array( 'order_id' => $this->order->get_id() ) );
 		$this->update_order_from_request( $request );
+		wc_log_order_step( '[Store API #6] Updated order with posted data', array( 'order_id' => $this->order->get_id() ) );
 		$this->process_customer( $request );
+		wc_log_order_step( '[Store API #7] Created and/or persisted customer data from order', array( 'order_id' => $this->order->get_id() ) );
+
 
 		/**
 		 * Validate updated order before payment is attempted.
 		 */
 		$this->order_controller->validate_order_before_payment( $this->order );
+		wc_log_order_step( '[Store API #8] Validated order data', array( 'order_id' => $this->order->get_id() ) );
+
 
 		/**
 		 * Reserve stock for the order.
@@ -305,6 +316,8 @@ class Checkout extends AbstractCartRoute {
 				esc_html( $e->getCode() )
 			);
 		}
+		wc_log_order_step( '[Store API #9] Reserved stock for order', array( 'order_id' => $this->order->get_id() ) );
+
 
 		wc_do_deprecated_action(
 			'__experimental_woocommerce_blocks_checkout_order_processed',
@@ -354,6 +367,13 @@ class Checkout extends AbstractCartRoute {
 		} else {
 			$this->process_without_payment( $request, $payment_result );
 		}
+
+		wc_log_order_step( '[Store API #10] Order processed', array(
+			'order_id'               => $this->order->get_id(),
+			'processed_with_payment' => $this->order->needs_payment() ? 'yes' : 'no',
+			'payment_status'         => $payment_result->status,
+		) );
+
 
 		return $this->prepare_item_for_response(
 			(object) [
