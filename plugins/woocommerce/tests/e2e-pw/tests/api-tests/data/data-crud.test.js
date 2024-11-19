@@ -251,6 +251,7 @@ const countryCodes = [
 	'ye',
 	'zm',
 	'zw',
+	'hr',
 ];
 
 test.describe( 'Data API tests', () => {
@@ -2555,6 +2556,18 @@ test.describe( 'Data API tests', () => {
 							thousand_sep: ',',
 							weight_unit: 'kg',
 							states: expect.arrayContaining( [] ),
+						},
+						{
+							code: 'HR',
+							name: 'Euro',
+							currency_code: 'EUR',
+							currency_pos: 'right_space',
+							decimal_sep: ',',
+							dimension_unit: 'cm',
+							num_decimals: 2,
+							thousand_sep: ' ',
+							weight_unit: 'kg',
+							states: [],
 						},
 						{
 							code: 'HT',
@@ -5522,6 +5535,32 @@ test.describe( 'Data API tests', () => {
 							{
 								href: expect.stringContaining(
 									'data/currencies/HNL'
+								),
+								targetHints: { allow: [ 'GET' ] },
+							},
+						],
+						collection: [
+							{
+								href: expect.stringContaining(
+									'data/currencies'
+								),
+							},
+						],
+					},
+				} ),
+			] )
+		);
+		expect( responseJSON ).toEqual(
+			expect.arrayContaining( [
+				expect.objectContaining( {
+					code: 'HR',
+					name: 'Croatia',
+					symbol: 'EUR',
+					_links: {
+						self: [
+							{
+								href: expect.stringContaining(
+									'data/currencies/EUR'
 								),
 								targetHints: { allow: [ 'GET' ] },
 							},
