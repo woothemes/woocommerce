@@ -8,7 +8,6 @@
  * @package WooCommerce\Classes\Payment
  */
 
-use Automattic\WooCommerce\Internal\Traits\AccessiblePrivateMethods;
 use Automattic\WooCommerce\Proxies\LegacyProxy;
 use Automattic\WooCommerce\Utilities\ArrayUtil;
 
@@ -18,8 +17,6 @@ defined( 'ABSPATH' ) || exit;
  * Payment gateways class.
  */
 class WC_Payment_Gateways {
-
-	use AccessiblePrivateMethods;
 
 	/**
 	 * Payment gateway classes.
@@ -120,7 +117,7 @@ class WC_Payment_Gateways {
 
 		ksort( $this->payment_gateways );
 
-		self::add_action( 'wc_payment_gateways_initialized', array( $this, 'on_payment_gateways_initialized' ) );
+		add_action( 'wc_payment_gateways_initialized', array( $this, 'on_payment_gateways_initialized' ) );
 		/**
 		 * Hook that is called when the payment gateways have been initialized.
 		 *
@@ -135,11 +132,13 @@ class WC_Payment_Gateways {
 	 *
 	 * @param WC_Payment_Gateways $wc_payment_gateways The WC_Payment_Gateways instance.
 	 * @since 8.5.0
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function on_payment_gateways_initialized( WC_Payment_Gateways $wc_payment_gateways ) {
+	public function on_payment_gateways_initialized( WC_Payment_Gateways $wc_payment_gateways ) {
 		foreach ( $this->payment_gateways as $gateway ) {
 			$option_key = $gateway->get_option_key();
-			self::add_action(
+			add_action(
 				'add_option_' . $option_key,
 				function( $option, $value ) use ( $gateway ) {
 					$this->payment_gateway_settings_option_changed( $gateway, $value, $option );
@@ -147,7 +146,7 @@ class WC_Payment_Gateways {
 				10,
 				2
 			);
-			self::add_action(
+			add_action(
 				'update_option_' . $option_key,
 				function( $old_value, $value, $option ) use ( $gateway ) {
 					$this->payment_gateway_settings_option_changed( $gateway, $value, $option, $old_value );

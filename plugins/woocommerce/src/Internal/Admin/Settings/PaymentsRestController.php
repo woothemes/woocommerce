@@ -5,7 +5,6 @@ namespace Automattic\WooCommerce\Internal\Admin\Settings;
 
 use Automattic\WooCommerce\Admin\PluginsHelper;
 use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestions as ExtensionSuggestions;
-use Automattic\WooCommerce\Internal\Traits\AccessiblePrivateMethods;
 use Automattic\WooCommerce\Internal\RestApiControllerBase;
 use Exception;
 use WC_Payment_Gateway;
@@ -17,8 +16,6 @@ use WP_REST_Response;
  * Controller for the REST endpoints to service the Payments settings page.
  */
 class PaymentsRestController extends RestApiControllerBase {
-	use AccessiblePrivateMethods;
-
 	const OFFLINE_METHODS = array( 'bacs', 'cheque', 'cod' );
 
 	const CATEGORY_EXPRESS_CHECKOUT = 'express_checkout';

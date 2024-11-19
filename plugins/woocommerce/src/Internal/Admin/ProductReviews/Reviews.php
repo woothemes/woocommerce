@@ -5,7 +5,6 @@
 
 namespace Automattic\WooCommerce\Internal\Admin\ProductReviews;
 
-use Automattic\WooCommerce\Internal\Traits\AccessiblePrivateMethods;
 use WP_Ajax_Response;
 use WP_Comment;
 use WP_Screen;
@@ -14,8 +13,6 @@ use WP_Screen;
  * Handles backend logic for the Reviews component.
  */
 class Reviews {
-
-	use AccessiblePrivateMethods;
 
 	/**
 	 * Admin page identifier.
@@ -41,15 +38,15 @@ class Reviews {
 	 */
 	public function __construct() {
 
-		self::add_action( 'admin_menu', [ $this, 'add_reviews_page' ] );
-		self::add_action( 'admin_enqueue_scripts', [ $this, 'load_javascript' ] );
+		add_action( 'admin_menu', [ $this, 'add_reviews_page' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'load_javascript' ] );
 
 		// These ajax callbacks need a low priority to ensure they run before their WordPress core counterparts.
-		self::add_action( 'wp_ajax_edit-comment', [ $this, 'handle_edit_review' ], -1 );
-		self::add_action( 'wp_ajax_replyto-comment', [ $this, 'handle_reply_to_review' ], -1 );
+		add_action( 'wp_ajax_edit-comment', [ $this, 'handle_edit_review' ], -1 );
+		add_action( 'wp_ajax_replyto-comment', [ $this, 'handle_reply_to_review' ], -1 );
 
-		self::add_filter( 'parent_file', [ $this, 'edit_review_parent_file' ] );
-		self::add_action( 'admin_notices', [ $this, 'display_notices' ] );
+		add_filter( 'parent_file', [ $this, 'edit_review_parent_file' ] );
+		add_action( 'admin_notices', [ $this, 'display_notices' ] );
 	}
 
 	/**
@@ -77,8 +74,10 @@ class Reviews {
 	 * Registers the Product Reviews submenu page.
 	 *
 	 * @return void
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function add_reviews_page() : void {
+	public function add_reviews_page() : void {
 
 		$this->reviews_page_hook = add_submenu_page(
 			'edit.php?post_type=product',
@@ -89,7 +88,7 @@ class Reviews {
 			[ $this, 'render_reviews_list_table' ]
 		);
 
-		self::add_action( "load-{$this->reviews_page_hook}", array( $this, 'load_reviews_screen' ) );
+		add_action( "load-{$this->reviews_page_hook}", array( $this, 'load_reviews_screen' ) );
 	}
 
 	/**
@@ -124,8 +123,10 @@ class Reviews {
 	 * Loads the JavaScript required for inline replies and quick edit.
 	 *
 	 * @return void
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function load_javascript() : void {
+	public function load_javascript() : void {
 		if ( $this->is_reviews_page() ) {
 			wp_enqueue_script( 'admin-comments' );
 			enqueue_comment_hotkeys_js();
@@ -165,8 +166,10 @@ class Reviews {
 	 * to allow the WordPress core callback to take over.
 	 *
 	 * @return void
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function handle_edit_review(): void {
+	public function handle_edit_review(): void {
 		// Don't interfere with comment functionality relating to the reviews meta box within the product editor.
 		if ( sanitize_text_field( wp_unslash( $_POST['mode'] ?? '' ) ) === 'single' ) {
 			return;
@@ -237,8 +240,10 @@ class Reviews {
 	 * to allow the WordPress core callback to take over.
 	 *
 	 * @return void
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function handle_reply_to_review() : void {
+	public function handle_reply_to_review() : void {
 		// Don't interfere with comment functionality relating to the reviews meta box within the product editor.
 		if ( sanitize_text_field( wp_unslash( $_POST['mode'] ?? '' ) ) === 'single' ) {
 			return;
@@ -383,9 +388,10 @@ class Reviews {
 	 * Displays notices on the Reviews page.
 	 *
 	 * @return void
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	protected function display_notices() : void {
-
+	public function display_notices() : void {
 		if ( $this->is_reviews_page() ) {
 			$this->maybe_display_reviews_bulk_action_notice();
 		}
@@ -499,8 +505,10 @@ class Reviews {
 	 *
 	 * @param string|mixed $parent_file Parent menu item.
 	 * @return string
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	protected function edit_review_parent_file( $parent_file ) {
+	public function edit_review_parent_file( $parent_file ) {
 		global $submenu_file, $current_screen;
 
 		if ( isset( $current_screen->id, $_GET['c'] ) && $current_screen->id === 'comment' ) {
@@ -534,8 +542,10 @@ class Reviews {
 	 * Initializes the list table.
 	 *
 	 * @return void
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	protected function load_reviews_screen() : void {
+	public function load_reviews_screen() : void {
 		$this->reviews_list_table = $this->make_reviews_list_table();
 		$this->reviews_list_table->process_bulk_action();
 	}
