@@ -6,7 +6,6 @@ import { __ } from '@wordpress/i18n';
 import { type ElementType, useMemo } from '@wordpress/element';
 import { EditorBlock } from '@woocommerce/types';
 import { addFilter } from '@wordpress/hooks';
-import { ProductCollectionFeedbackPrompt } from '@woocommerce/editor-components/feedback-prompt';
 import {
 	revertMigration,
 	getUpgradeStatus,
@@ -212,7 +211,9 @@ const ProductCollectionInspectorControls = (
 					) }
 				</ToolsPanel>
 			) : null }
-			<ProductCollectionFeedbackPrompt />
+			<PanelBody>
+				<CesFeedbackButton blockName={ metadata.title } />
+			</PanelBody>
 		</InspectorControls>
 	);
 };
@@ -375,29 +376,3 @@ export const withUpgradeNoticeControls =
 	};
 
 addFilter( 'editor.BlockEdit', metadata.name, withUpgradeNoticeControls );
-
-const withCESFeedbackButton =
-	< T extends EditorBlock< T > >( BlockEdit: ElementType ) =>
-	( props: ProductCollectionEditComponentProps ) => {
-		if ( ! isProductCollection( props.name ) ) {
-			return <BlockEdit { ...props } />;
-		}
-
-		return (
-			<>
-				<InspectorControls>
-					<div className="wc-block-product-collection-inspector-controls__ces-feedback-button">
-						<CesFeedbackButton blockName={ metadata.title } />
-					</div>
-				</InspectorControls>
-				<BlockEdit { ...props } />
-			</>
-		);
-	};
-
-addFilter(
-	'editor.BlockEdit',
-	metadata.name,
-	withCESFeedbackButton,
-	Number.MAX_SAFE_INTEGER
-);

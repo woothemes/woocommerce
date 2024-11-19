@@ -228,11 +228,3 @@ $max-button-width: calc(100% / #{$max-button-columns});
 		padding: 0;
 	}
 }
-
-.wc-block-product-collection-inspector-controls__ces-feedback-button {
-	padding:
-		0 $grid-unit-15 $grid-unit-15 (
-			$grid-unit-10 * 5.5
-		);
-	margin-top: -$grid-unit-15;
-}
