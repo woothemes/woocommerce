@@ -110,7 +110,7 @@ class ProductSummary extends AbstractBlock {
 	private function get_first_paragraph( $source ) {
 		$p_index = strpos( $source, '</p>' );
 
-		if ( $p_index === false ) {
+		if ( false === $p_index ) {
 			return $source;
 		}
 
@@ -125,7 +125,7 @@ class ProductSummary extends AbstractBlock {
 	 * @param string $count_type Count type: 'words', 'characters_excluding_spaces', or 'characters_including_spaces'.
 	 * @return int Count of specified type.
 	 */
-	function count_text( $text, $count_type ) {
+	private function count_text( $text, $count_type ) {
 		switch ( $count_type ) {
 			case 'characters_excluding_spaces':
 				return strlen( preg_replace( '/\s+/', '', $text ) );
@@ -145,7 +145,7 @@ class ProductSummary extends AbstractBlock {
 	 * @param string $count_type What is being counted. One of 'words', 'characters_excluding_spaces', or 'characters_including_spaces'.
 	 * @return string Trimmed text.
 	 */
-	function trim_characters( $text, $max_length, $count_type ) {
+	private function trim_characters( $text, $max_length, $count_type ) {
 		$pure_text = wp_strip_all_tags( $text );
 		$trimmed   = mb_substr( $pure_text, 0, $max_length );
 
@@ -153,7 +153,7 @@ class ProductSummary extends AbstractBlock {
 			return $trimmed;
 		}
 
-		preg_match_all( '/([\s]+)/', $trimmed , $spaces );
+		preg_match_all( '/([\s]+)/', $trimmed, $spaces );
 		$space_count = ! empty( $spaces[0] ) ? count( $spaces[0] ) : 0;
 		return mb_substr( $pure_text, 0, $max_length + $space_count );
 	}
@@ -167,15 +167,15 @@ class ProductSummary extends AbstractBlock {
 	 *
 	 * Once HTML API allow for HTML manipulation both functions (PHP and JS)
 	 * should be updated to solution fully respecting the word count.
-	 * TODO: https://github.com/woocommerce/woocommerce/issues/52835
+	 * https://github.com/woocommerce/woocommerce/issues/52835
 	 *
 	 * @param string $source     Source text.
 	 * @param int    $max_length Limit number of items returned if text has multiple paragraphs.
-	 * @param string $count_type What is being counted. One of 'words', 'characters_excluding_spaces', or 'characters_including_spaces'.
+	 * @param string $count_type What is being counted, words or characters (including/excluding spaces).
 	 * @return string Generated summary.
 	 */
-	function generate_summary( $source, $max_length ) {
-		$count_type            = wp_get_word_count_type();
+	private function generate_summary( $source, $max_length ) {
+		$count_type             = wp_get_word_count_type();
 		$source_with_paragraphs = wpautop( $source );
 		$source_word_count      = $this->count_text( $source_with_paragraphs, $count_type );
 
@@ -183,14 +183,14 @@ class ProductSummary extends AbstractBlock {
 			return $source_with_paragraphs;
 		}
 
-		$first_paragraph = $this->get_first_paragraph( $source_with_paragraphs );
+		$first_paragraph            = $this->get_first_paragraph( $source_with_paragraphs );
 		$first_paragraph_word_count = $this->count_text( $first_paragraph, $count_type );
 
 		if ( $first_paragraph_word_count <= $max_length ) {
 			return $first_paragraph;
 		}
 
-		if ( $count_type === 'words' ) {
+		if ( 'words' === $count_type ) {
 			return wpautop( wp_trim_words( $first_paragraph, $max_length ) );
 		}
 
