@@ -10,6 +10,54 @@ on:
 permissions: {}
 
 jobs:
+  verify:
+        name: 'Verify if any PR is left open by author:app/github-actions'
+        runs-on: ubuntu-20.04
+        steps:
+            - name: Verify if any PR is left open by author:app/github-actions
+              id: verify-prs
+              uses: actions/github-script@v6
+              with:
+                  script: |
+                      const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
+                      const prs = await github.rest.pulls.list({ owner, repo, state: 'open', author: 'app/github-actions' });
+                      if (prs.data.length > 0) {
+                          core.setOutput('prs-left-open-count', prs.data.length);
+                          core.setFailed(`Found ${prs.data.length} open PRs from github-actions bot. Please close them before proceeding.`);
+                      }
+
+            - name: Notify Slack on failure
+              if: ${{ failure() }}
+              uses: archive/github-actions-slack@v2.0.0
+              with:
+                  slack-bot-user-oauth-access-token: ${{ secrets.CODE_FREEZE_BOT_TOKEN }}
+                  slack-channel: ${{ secrets.WOO_RELEASE_SLACK_CHANNEL }}
+                  slack-text: |
+                      :ice_cube: Code Freeze workflow failed.
+                      :warning-8c: There are `${{ steps.verify-prs.outputs.prs-left-open-count }}` PRs left open by `app/github-actions` bot. Please merge them and re-run the workflow. Merging them is essential to maintain the integrity of code across all branches. Workflow run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            - name: Verify if any PR has a title that includes "cherry" in it
+              id: verify-prs-title
+              uses: actions/github-script@v6
+              with:
+                  script: |
+                    const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
+                    const prs = await github.rest.pulls.list({ owner, repo, state: 'open', title: 'cherry' });
+                    if (prs.data.length > 0) {
+                        core.setOutput('prs-left-open-count', prs.data.length);
+                        core.setFailed(`Found ${prs.data.length} open PRs with "cherry" in the title. Please close them before proceeding.`);
+                    }
+
+            - name: Notify Slack on failure
+              if: ${{ failure() }}
+              uses: archive/github-actions-slack@v2.0.0
+              with:
+                  slack-bot-user-oauth-access-token: ${{ secrets.CODE_FREEZE_BOT_TOKEN }}
+                  slack-channel: ${{ secrets.WOO_RELEASE_SLACK_CHANNEL }}
+                  slack-text: |
+                      :ice_cube: Code Freeze workflow failed.
+                      :warning-8c: There are `${{ steps.verify-prs-title.outputs.prs-left-open-count }}` PRs left open with "cherry" in the title. Please close them before proceeding. Merging them is essential to maintain the integrity of code across all branches. Workflow run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
   build:
     name: Build release zip file
     runs-on: ubuntu-20.04
