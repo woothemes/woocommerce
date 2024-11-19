@@ -27,9 +27,19 @@ const stateReducer = <ItemType extends Item>(
 	state: UseSelectState<ItemType>,
 	action: StateChangeOptions<ItemType>
 ): Partial<UseSelectState<ItemType>> => {
+	const { selectedItem } = state;
 	const { type, changes } = action;
+	const items = action.props.items || [];
 
 	switch (type) {
+        case useSelect.stateChangeTypes.ToggleButtonKeyDownArrowDown:
+			return {
+				selectedItem: items[ selectedItem ? Math.min( items.indexOf(selectedItem ) + 1, items.length - 1 ) : 0 ],
+			};
+		case useSelect.stateChangeTypes.ToggleButtonKeyDownArrowUp:
+			return {
+				selectedItem: items[ selectedItem ? Math.max( items.indexOf( selectedItem ) - 1, 0 ) : items.length - 1 ],
+			};
 		case useSelect.stateChangeTypes.ItemClick:
 			return {
 				...changes,
@@ -89,12 +99,20 @@ export const CountrySelector = <ItemType extends Item>({
 	});
 
     const onApplyHandler = useCallback(
-        (e: React.MouseEvent<HTMLButtonElement>) => {
-            e.preventDefault();
+        ( e: React.MouseEvent<HTMLButtonElement> ) => {
+            e.stopPropagation();
             closeMenu();
         },
         [ onChange, selectedItem, closeMenu ]
     );
+
+    const onKeyDownHandler = useCallback(
+		( e: React.KeyboardEvent<HTMLUListElement> ) => {
+			e.stopPropagation();
+			menuProps?.onKeyDown?.( e );
+		},
+		[ menuProps ]
+	);
 
 	return (
 		<div className={ classNames( 'woopayments components-country-select-control', className ) }>
@@ -115,7 +133,7 @@ export const CountrySelector = <ItemType extends Item>({
 				</span>
 				<Icon icon={ chevronDown } className="components-custom-select-control__button-icon" />
 			</Button>
-			<ul { ...menuProps }>
+			<ul { ...menuProps } onKeyDown={ onKeyDownHandler }>
 				{ isOpen &&
 					items.map( ( item, index ) => (
 						<li
