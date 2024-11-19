@@ -135,7 +135,7 @@ class QueryBuilder {
 		);
 
 		foreach ( $query_vars as $query_vars_filter_block ) {
-			$public_query_vars = array_merge( $query_vars_filter_block, $public_query_vars) ;
+			$public_query_vars = array_merge( $query_vars_filter_block, $public_query_vars );
 		}
 
 		return $public_query_vars;
