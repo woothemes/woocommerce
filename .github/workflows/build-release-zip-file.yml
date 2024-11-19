@@ -95,7 +95,7 @@ jobs:
               slack-bot-user-oauth-access-token: ${{ secrets.CODE_FREEZE_BOT_TOKEN }}
               slack-channel: ${{ secrets.WOO_RELEASE_SLACK_CHANNEL }}
               slack-text: |
-                  :x: Building release zip file workflow failed.
+                  :x: WooCommerce release zip build failed.
                   :warning-8c: ${{ steps.verify-prs.outputs.failureMessage }}
                   <https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow Run>
 
