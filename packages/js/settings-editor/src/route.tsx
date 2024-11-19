@@ -93,10 +93,9 @@ const getSettingsPageTabs = (
 const getLegacyRoute = (
 	activePage: string,
 	activeSection: string,
+	settingsPage: SettingsPage,
 	settingsData: SettingsData
 ): Route => {
-	const settingsPage = settingsData[ activePage ];
-
 	return {
 		key: activePage,
 		areas: {
@@ -199,10 +198,12 @@ export const useActiveRoute = (): {
 				route: getLegacyRoute(
 					activePage,
 					activeSection,
+					settingsPage,
 					settingsData
 				),
 				settingsPage,
 				activePage,
+				activeSection,
 				tabs,
 			};
 		}
@@ -225,6 +226,12 @@ export const useActiveRoute = (): {
 		// Make sure we have a key.
 		modernRoute.key = activePage;
 
-		return { route: modernRoute, settingsPage, activePage, tabs };
+		return {
+			route: modernRoute,
+			settingsPage,
+			activePage,
+			activeSection,
+			tabs,
+		};
 	}, [ settingsData, location.params, modernRoutes ] );
 };
