@@ -314,7 +314,7 @@ test.describe.serial( 'Settings API tests: CRUD', () => {
 					} ),
 				] )
 			);
-			console.log(stateOptions);
+
 			expect( responseJSON ).toEqual(
 				expect.arrayContaining( [
 					expect.objectContaining( {
