@@ -74,14 +74,14 @@ jobs:
                   if (prsOpenByGithubActions.length > 0 || prsWithCherryInTitle.length > 0) {
                       runBuildZipJob = false;
                       if (prsOpenByGithubActions.length > 0) {
-                        failureMessage += `Found \`${prsOpenByGithubActions.length}\` open PRs from github-actions bot which should be merged or closed before proceeding. `;
+                        failureMessage += `Found \`${prsOpenByGithubActions.length}\` open PR(s) from \`github-actions\` bot which should be merged or closed before proceeding. `;
                       }
 
                       if (prsWithCherryInTitle.length > 0) {
-                        failureMessage += `Found \`${prsWithCherryInTitle.length}\` open PRs with "cherry" in the title which maybe opened by a human, please verify if they are relevant. `;
+                        failureMessage += `Found \`${prsWithCherryInTitle.length}\` open PR(s) with \`cherry\` in the title which maybe opened by a human, please verify if they are relevant. `;
                       }
 
-                      failureMessage += 'This step maintains the code integrity and is critical to avoid regression in future releases. Please merge them or close them before proceeding or set skip_verify to true to skip this step if you are confident that the PRs are irrelevant.';
+                      failureMessage += '\n\nThis step maintains the code integrity and is critical to avoid regression in future releases. Please merge them or close them before proceeding or set \`skip_verify\` to \`true\` before running the workflow to skip this step if you are confident that the PRs are irrelevant.';
 
                       console.error(failureMessage);
                       core.setOutput('failureMessage', failureMessage);
