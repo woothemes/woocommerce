@@ -1,24 +1,24 @@
 name: 'Label Pull Request Project'
 on:
-    pull_request_target:
-        types:
-            - opened
-            - reopened
-            - synchronize
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+      - synchronize
 concurrency:
-    group: label-pr-${{ github.event_name }}-${{ github.event.action }}-${{ github.event.pull_request.head.ref }}
-    cancel-in-progress: true
+  group: label-pr-${{ github.event_name }}-${{ github.event.action }}-${{ github.event.pull_request.head.ref }}
+  cancel-in-progress: true
 
-permissions: {}
+permissions: { }
 
 jobs:
-    label_project:
-        runs-on: ubuntu-20.04
-        permissions:
-            contents: read
-            pull-requests: write
-        steps:
-            - uses: actions/labeler@v5
-              with:
-                  repo-token: '${{ secrets.GITHUB_TOKEN }}'
-                  configuration-path: .github/project-pr-labeler.yml
+  label_project:
+    runs-on: ubuntu-20.04
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/labeler@v5
+        with:
+          repo-token: '${{ secrets.GITHUB_TOKEN }}'
+          configuration-path: .github/project-pr-labeler.yml
