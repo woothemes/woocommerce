@@ -8,6 +8,7 @@
 	.components-radio-control__group-wrapper {
 		display: flex;
 		flex-direction: row;
+		flex-wrap: wrap;
 		margin: 0 auto;
 		color: var(--wp-admin-theme-color);
 		gap: unset;
