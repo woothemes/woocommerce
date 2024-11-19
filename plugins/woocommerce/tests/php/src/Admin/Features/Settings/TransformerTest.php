@@ -24,45 +24,86 @@ class TransformerTest extends WC_Unit_Test_Case {
 	}
 
 	/**
-	 * Test basic transformation with no sections.
+	 * @dataProvider provide_basic_transformations
+	 * @param array $input Input data.
 	 */
-	public function test_transform_with_no_sections(): void {
-		$input = array(
-			'tab1' => array(
-				'label' => 'Tab 1',
-				'icon'  => 'icon1',
-			),
-		);
-
-		$expected = array(
-			'tab1' => array(
-				'label' => 'Tab 1',
-				'icon'  => 'icon1',
-			),
-		);
-
-		$this->assertEquals( $expected, Transformer::transform( $input ), 'Expected no sections to be transformed' );
+	public function test_basic_transformations( array $input ): void {
+		$this->assertEquals( $input, Transformer::transform( $input ) );
 	}
 
 	/**
-	 * Test transformation with empty sections.
+	 * Data provider for basic transformations.
+	 *
+	 * @return array
 	 */
-	public function test_transform_with_empty_sections(): void {
-		$input = array(
-			'tab1' => array(
-				'label'    => 'Tab 1',
-				'sections' => array(),
+	public function provide_basic_transformations(): array {
+		return array(
+			'no_sections'    => array(
+				array(
+					'tab1' => array(
+						'label' => 'Tab 1',
+						'icon'  => 'icon1',
+					),
+				),
+			),
+			'empty_sections' => array(
+				array(
+					'tab1' => array(
+						'label'    => 'Tab 1',
+						'sections' => array(),
+					),
+				),
 			),
 		);
+	}
 
-		$expected = array(
-			'tab1' => array(
-				'label'    => 'Tab 1',
-				'sections' => array(),
+	/**
+	 * Test malformed input structure.
+	 *
+	 * @dataProvider provide_malformed_inputs
+	 * @param array  $input Input data.
+	 * @param string $message Message.
+	 */
+	public function test_malformed_input( array $input, string $message ): void {
+		$this->assertEquals(
+			$input,
+			Transformer::transform( $input ),
+			$message
+		);
+	}
+
+	/**
+	 * Data provider for malformed inputs.
+	 *
+	 * @return array
+	 */
+	public function provide_malformed_inputs(): array {
+		return array(
+			'non_array_tab'           => array(
+				array(
+					'tab1' => 'not_an_array',
+				),
+				'Non-array tab should remain unchanged',
+			),
+			'missing_required_fields' => array(
+				array(
+					'tab1' => array(
+						'sections' => 'invalid',
+					),
+				),
+				'Tab missing required fields should remain unchanged',
+			),
+			'invalid_section_format'  => array(
+				array(
+					'tab1' => array(
+						'sections' => array(
+							'section1' => 'not_an_array',
+						),
+					),
+				),
+				'Invalid section format should remain unchanged',
 			),
 		);
-
-		$this->assertEquals( $expected, Transformer::transform( $input ), 'Expected empty sections to remain untransformed' );
 	}
 
 	/**
@@ -126,6 +167,201 @@ class TransformerTest extends WC_Unit_Test_Case {
 		);
 
 		$this->assertEquals( $expected, Transformer::transform( $input ), 'Expected group to be transformed' );
+	}
+
+
+	/**
+	 * Test multiple groups in a section.
+	 */
+	public function test_multiple_groups(): void {
+		$input = array(
+			'tab1' => array(
+				'sections' => array(
+					'section1' => array(
+						'settings' => array(
+							array(
+								'type'  => 'title',
+								'id'    => 'group_1',
+								'title' => 'group 1',
+							),
+							array(
+								'type' => 'text',
+								'id'   => 'setting1',
+							),
+							array(
+								'type' => 'sectionend',
+								'id'   => 'group_1',
+							),
+							array(
+								'type'  => 'title',
+								'id'    => 'group_2',
+								'title' => 'group 2',
+							),
+							array(
+								'type' => 'text',
+								'id'   => 'setting2',
+							),
+							array(
+								'type' => 'sectionend',
+								'id'   => 'group_2',
+							),
+						),
+					),
+				),
+			),
+		);
+
+		$transformed = Transformer::transform( $input );
+		$settings    = $transformed['tab1']['sections']['section1']['settings'];
+
+		$expected = array(
+			array(
+				'type'     => 'group',
+				'id'       => 'group_1',
+				'title'    => 'group 1',
+				'settings' => array(
+					array(
+						'type' => 'text',
+						'id'   => 'setting1',
+					),
+				),
+			),
+			array(
+				'type'     => 'group',
+				'id'       => 'group_2',
+				'title'    => 'group 2',
+				'settings' => array(
+					array(
+						'type' => 'text',
+						'id'   => 'setting2',
+					),
+				),
+			),
+		);
+
+		$this->assertCount( 2, $settings );
+		$this->assertEquals( $expected, $settings );
+	}
+
+		/**
+		 * Test mixed valid and invalid groups.
+		 */
+	public function test_mixed_valid_and_invalid_groups(): void {
+		$input = array(
+			'tab1' => array(
+				'sections' => array(
+					'section1' => array(
+						'settings' => array(
+							// Valid group.
+							array(
+								'type'  => 'title',
+								'id'    => 'valid_group',
+								'title' => 'Valid group',
+							),
+							array(
+								'type' => 'text',
+								'id'   => 'setting1',
+							),
+							array(
+								'type' => 'sectionend',
+								'id'   => 'valid_group',
+							),
+							// Invalid group.
+							array(
+								'type'  => 'title',
+								'id'    => 'invalid_group',
+								'title' => 'Invalid group',
+							),
+							array(
+								'type' => 'text',
+								'id'   => 'setting2',
+							),
+							// No matching sectionend
+							// Valid checkbox group.
+							array(
+								'type'          => 'checkbox',
+								'id'            => 'check1',
+								'title'         => 'Valid Group',
+								'checkboxgroup' => 'start',
+							),
+							array(
+								'type'          => 'checkbox',
+								'id'            => 'check2',
+								'checkboxgroup' => 'end',
+							),
+							// Invalid checkbox group.
+							array(
+								'type'          => 'checkbox',
+								'id'            => 'check3',
+								'title'         => 'Invalid Group',
+								'checkboxgroup' => 'start',
+							),
+							// No matching end.
+						),
+					),
+				),
+			),
+		);
+
+		$expected = array(
+			'tab1' => array(
+				'sections' => array(
+					'section1' => array(
+						'settings' => array(
+							// Valid group gets transformed.
+							array(
+								'type'     => 'group',
+								'id'       => 'valid_group',
+								'title'    => 'Valid group',
+								'settings' => array(
+									array(
+										'type' => 'text',
+										'id'   => 'setting1',
+									),
+								),
+							),
+							// Invalid group remains untransformed.
+							array(
+								'type'  => 'title',
+								'id'    => 'invalid_group',
+								'title' => 'Invalid group',
+							),
+							array(
+								'type' => 'text',
+								'id'   => 'setting2',
+							),
+							// Valid checkbox group gets transformed.
+							array(
+								'type'     => 'checkboxgroup',
+								'title'    => 'Valid Group',
+								'settings' => array(
+									array(
+										'type'          => 'checkbox',
+										'id'            => 'check1',
+										'title'         => 'Valid Group',
+										'checkboxgroup' => 'start',
+									),
+									array(
+										'type'          => 'checkbox',
+										'id'            => 'check2',
+										'checkboxgroup' => 'end',
+									),
+								),
+							),
+							// Invalid checkbox group remains untransformed.
+							array(
+								'type'          => 'checkbox',
+								'id'            => 'check3',
+								'title'         => 'Invalid Group',
+								'checkboxgroup' => 'start',
+							),
+						),
+					),
+				),
+			),
+		);
+
+		$this->assertEquals( $expected, Transformer::transform( $input ) );
 	}
 
 	/**
@@ -195,34 +431,23 @@ class TransformerTest extends WC_Unit_Test_Case {
 		$this->assertEquals( $expected, Transformer::transform( $input ), 'Expected checkbox group to be transformed' );
 	}
 
+
 	/**
-	 * Test nested sectionend and checkboxgroup.
+	 * Test multiple independent checkboxes.
 	 */
-	public function test_nested_sectionend_and_checkboxgroup(): void {
+	public function test_independent_checkboxes(): void {
 		$input = array(
 			'tab1' => array(
 				'sections' => array(
 					'section1' => array(
 						'settings' => array(
 							array(
-								'type'  => 'title',
-								'id'    => 'group_1',
-								'title' => 'group 1',
+								'type' => 'checkbox',
+								'id'   => 'check1',
 							),
 							array(
-								'type'          => 'checkbox',
-								'id'            => 'check1',
-								'title'         => 'Checkbox Group',
-								'checkboxgroup' => 'start',
-							),
-							array(
-								'type'          => 'checkbox',
-								'id'            => 'check2',
-								'checkboxgroup' => 'end',
-							),
-							array(
-								'type' => 'sectionend',
-								'id'   => 'group_1',
+								'type' => 'checkbox',
+								'id'   => 'check2',
 							),
 						),
 					),
@@ -236,28 +461,12 @@ class TransformerTest extends WC_Unit_Test_Case {
 					'section1' => array(
 						'settings' => array(
 							array(
-								'type'     => 'group',
-								'id'       => 'group_1',
-								'title'    => 'group 1',
-								'settings' => array(
-									array(
-										'type'     => 'checkboxgroup',
-										'title'    => 'Checkbox Group',
-										'settings' => array(
-											array(
-												'type'  => 'checkbox',
-												'id'    => 'check1',
-												'title' => 'Checkbox Group',
-												'checkboxgroup' => 'start',
-											),
-											array(
-												'type' => 'checkbox',
-												'id'   => 'check2',
-												'checkboxgroup' => 'end',
-											),
-										),
-									),
-								),
+								'type' => 'checkbox',
+								'id'   => 'check1',
+							),
+							array(
+								'type' => 'checkbox',
+								'id'   => 'check2',
 							),
 						),
 					),
@@ -265,7 +474,7 @@ class TransformerTest extends WC_Unit_Test_Case {
 			),
 		);
 
-		$this->assertEquals( $expected, Transformer::transform( $input ), 'Expected nested sectionend and checkboxgroup to be transformed' );
+		$this->assertEquals( $expected, Transformer::transform( $input ), 'Expected independent checkboxes to remain untransformed' );
 	}
 
 	/**
@@ -388,176 +597,10 @@ class TransformerTest extends WC_Unit_Test_Case {
 		$this->assertEquals( $expected, Transformer::transform( $input ), 'Expected orphaned end checkbox to remain untransformed' );
 	}
 
-	/**
-	 * Test multiple independent checkboxes.
-	 */
-	public function test_independent_checkboxes(): void {
-		$input = array(
-			'tab1' => array(
-				'sections' => array(
-					'section1' => array(
-						'settings' => array(
-							array(
-								'type' => 'checkbox',
-								'id'   => 'check1',
-							),
-							array(
-								'type' => 'checkbox',
-								'id'   => 'check2',
-							),
-						),
-					),
-				),
-			),
-		);
-
-		$expected = array(
-			'tab1' => array(
-				'sections' => array(
-					'section1' => array(
-						'settings' => array(
-							array(
-								'type' => 'checkbox',
-								'id'   => 'check1',
-							),
-							array(
-								'type' => 'checkbox',
-								'id'   => 'check2',
-							),
-						),
-					),
-				),
-			),
-		);
-
-		$this->assertEquals( $expected, Transformer::transform( $input ), 'Expected independent checkboxes to remain untransformed' );
-	}
-
-	/**
-	 * Test mixed valid and invalid groups.
-	 */
-	public function test_mixed_valid_and_invalid_groups(): void {
-		$input = array(
-			'tab1' => array(
-				'sections' => array(
-					'section1' => array(
-						'settings' => array(
-							// Valid group.
-							array(
-								'type'  => 'title',
-								'id'    => 'valid_group',
-								'title' => 'Valid group',
-							),
-							array(
-								'type' => 'text',
-								'id'   => 'setting1',
-							),
-							array(
-								'type' => 'sectionend',
-								'id'   => 'valid_group',
-							),
-							// Invalid group.
-							array(
-								'type'  => 'title',
-								'id'    => 'invalid_group',
-								'title' => 'Invalid group',
-							),
-							array(
-								'type' => 'text',
-								'id'   => 'setting2',
-							),
-							// No matching sectionend
-							// Valid checkbox group.
-							array(
-								'type'          => 'checkbox',
-								'id'            => 'check1',
-								'title'         => 'Valid Group',
-								'checkboxgroup' => 'start',
-							),
-							array(
-								'type'          => 'checkbox',
-								'id'            => 'check2',
-								'checkboxgroup' => 'end',
-							),
-							// Invalid checkbox group.
-							array(
-								'type'          => 'checkbox',
-								'id'            => 'check3',
-								'title'         => 'Invalid Group',
-								'checkboxgroup' => 'start',
-							),
-							// No matching end.
-						),
-					),
-				),
-			),
-		);
-
-		$expected = array(
-			'tab1' => array(
-				'sections' => array(
-					'section1' => array(
-						'settings' => array(
-							// Valid group gets transformed.
-							array(
-								'type'     => 'group',
-								'id'       => 'valid_group',
-								'title'    => 'Valid group',
-								'settings' => array(
-									array(
-										'type' => 'text',
-										'id'   => 'setting1',
-									),
-								),
-							),
-							// Invalid group remains untransformed.
-							array(
-								'type'  => 'title',
-								'id'    => 'invalid_group',
-								'title' => 'Invalid group',
-							),
-							array(
-								'type' => 'text',
-								'id'   => 'setting2',
-							),
-							// Valid checkbox group gets transformed.
-							array(
-								'type'     => 'checkboxgroup',
-								'title'    => 'Valid Group',
-								'settings' => array(
-									array(
-										'type'          => 'checkbox',
-										'id'            => 'check1',
-										'title'         => 'Valid Group',
-										'checkboxgroup' => 'start',
-									),
-									array(
-										'type'          => 'checkbox',
-										'id'            => 'check2',
-										'checkboxgroup' => 'end',
-									),
-								),
-							),
-							// Invalid checkbox group remains untransformed.
-							array(
-								'type'          => 'checkbox',
-								'id'            => 'check3',
-								'title'         => 'Invalid Group',
-								'checkboxgroup' => 'start',
-							),
-						),
-					),
-				),
-			),
-		);
-
-		$this->assertEquals( $expected, Transformer::transform( $input ) );
-	}
-
-	/**
-	 * Test multiple groups in a section.
-	 */
-	public function test_multiple_groups(): void {
+		/**
+		 * Test group with checkbox inside.
+		 */
+	public function test_group_with_checkbox_inside(): void {
 		$input = array(
 			'tab1' => array(
 				'sections' => array(
@@ -569,25 +612,19 @@ class TransformerTest extends WC_Unit_Test_Case {
 								'title' => 'group 1',
 							),
 							array(
-								'type' => 'text',
-								'id'   => 'setting1',
+								'type'          => 'checkbox',
+								'id'            => 'check1',
+								'title'         => 'Checkbox Group',
+								'checkboxgroup' => 'start',
+							),
+							array(
+								'type'          => 'checkbox',
+								'id'            => 'check2',
+								'checkboxgroup' => 'end',
 							),
 							array(
 								'type' => 'sectionend',
 								'id'   => 'group_1',
-							),
-							array(
-								'type'  => 'title',
-								'id'    => 'group_2',
-								'title' => 'group 2',
-							),
-							array(
-								'type' => 'text',
-								'id'   => 'setting2',
-							),
-							array(
-								'type' => 'sectionend',
-								'id'   => 'group_2',
 							),
 						),
 					),
@@ -595,11 +632,41 @@ class TransformerTest extends WC_Unit_Test_Case {
 			),
 		);
 
-		$transformed = Transformer::transform( $input );
-		$settings    = $transformed['tab1']['sections']['section1']['settings'];
+		$expected = array(
+			'tab1' => array(
+				'sections' => array(
+					'section1' => array(
+						'settings' => array(
+							array(
+								'type'     => 'group',
+								'id'       => 'group_1',
+								'title'    => 'group 1',
+								'settings' => array(
+									array(
+										'type'     => 'checkboxgroup',
+										'title'    => 'Checkbox Group',
+										'settings' => array(
+											array(
+												'type'  => 'checkbox',
+												'id'    => 'check1',
+												'title' => 'Checkbox Group',
+												'checkboxgroup' => 'start',
+											),
+											array(
+												'type' => 'checkbox',
+												'id'   => 'check2',
+												'checkboxgroup' => 'end',
+											),
+										),
+									),
+								),
+							),
+						),
+					),
+				),
+			),
+		);
 
-		$this->assertCount( 2, $settings );
-		$this->assertEquals( 'group_1', $settings[0]['id'] );
-		$this->assertEquals( 'group_2', $settings[1]['id'] );
+		$this->assertEquals( $expected, Transformer::transform( $input ), 'Expected nested sectionend and checkboxgroup to be transformed' );
 	}
 }
