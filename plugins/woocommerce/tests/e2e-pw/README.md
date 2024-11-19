@@ -73,7 +73,7 @@ run `pnpm playwright test --help`
 > Keep in mind that from a tool point of view they are only a folder in the main e2e tests project as any other folder.
 > 
 > For convenience, a `test:api` command is offered that will run all the tests in the `api-tests` folder against the 
-> default environment, but this may change. You can always find the setup by checking the `package.json scripts section and the `playwright.config.js`.
+> default environment, but this may change. You can always find the setup by checking the `package.json` scripts section and the `playwright.config.js`.
 >
 
 ## Test environment
