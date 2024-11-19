@@ -54,7 +54,7 @@ const notifyIfQuantityChanged = (
 				cartItem.quantity !== oldCartItem.quantity &&
 				isWithinQuantityLimits( cartItem ) &&
 				applyFilters(
-					'experimental__woocommerce_should_show_quantity_notice',
+					'woocommerce_show_cart_item_quantity_changed_notice',
 					true,
 					cartItem
 				)
@@ -106,7 +106,7 @@ const notifyIfRemoved = (
 		if (
 			! newCartItem &&
 			applyFilters(
-				'experimental__woocommerce_should_show_removed_notice',
+				'woocommerce_show_cart_item_removed_notice',
 				true,
 				oldCartItem
 			)
