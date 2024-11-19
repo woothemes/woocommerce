@@ -38,7 +38,7 @@ export const PaymentGatewayButton = ( {
 		useDispatch( PAYMENT_SETTINGS_STORE_NAME );
 	const [ isUpdating, setIsUpdating ] = useState( false );
 
-	const createAPIErrorNotice = () => {
+	const createApiErrorNotice = () => {
 		createErrorNotice(
 			__(
 				'An API error occurred. You will be redirected to the settings page, try enabling the gateway there.',
@@ -58,7 +58,7 @@ export const PaymentGatewayButton = ( {
 				window.woocommerce_admin.nonces?.gateway_toggle || '';
 
 			if ( ! gatewayToggleNonce ) {
-				createAPIErrorNotice();
+				createApiErrorNotice();
 				window.location.href = settingsUrl;
 				return;
 			}
@@ -82,7 +82,7 @@ export const PaymentGatewayButton = ( {
 				} )
 				.catch( () => {
 					setIsUpdating( false );
-					createAPIErrorNotice();
+					createApiErrorNotice();
 					window.location.href = settingsUrl;
 				} );
 		}
