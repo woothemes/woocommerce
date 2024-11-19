@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { createSlotFill, SelectControl } from '@wordpress/components';
+import { createSlotFill, SelectControl, Spinner } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
@@ -34,6 +34,7 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 	const [ emailType, setEmailType ] = useState< string >(
 		'WC_Email_Customer_Processing_Order'
 	);
+	const [ isLoading, setIsLoading ] = useState< boolean >( false );
 	const finalPreviewUrl = `${ previewUrl }&type=${ emailType }`;
 
 	return (
@@ -43,8 +44,15 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 					<EmailPreviewType
 						emailTypes={ emailTypes }
 						emailType={ emailType }
-						setEmailType={ setEmailType }
+						setEmailType={ ( newEmailType: string ) => {
+							setIsLoading( true );
+							setEmailType( newEmailType );
+						} }
 					/>
+					<div className="wc-settings-email-preview-spinner">
+						{ isLoading && <Spinner /> }
+					</div>
+					<div style={ { flexGrow: 1 } } />
 					<EmailPreviewDeviceType
 						deviceType={ deviceType }
 						setDeviceType={ setDeviceType }
@@ -57,6 +65,7 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 					<iframe
 						src={ finalPreviewUrl }
 						title={ __( 'Email preview frame', 'woocommerce' ) }
+						onLoad={ () => setIsLoading( false ) }
 					/>
 				</div>
 			</div>
