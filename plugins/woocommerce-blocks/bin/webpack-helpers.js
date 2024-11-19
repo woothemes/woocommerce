@@ -110,6 +110,12 @@ const requestToExternal = ( request ) => {
 	}
 };
 
+const requestToExternalModule = ( request ) => {
+	if ( request.startsWith( '@woocommerce/' ) ) {
+		return wcDepMap[ request ];
+	}
+};
+
 const requestToHandle = ( request ) => {
 	if ( wcHandleMap[ request ] ) {
 		return wcHandleMap[ request ];
@@ -196,6 +202,7 @@ module.exports = {
 	getAlias,
 	requestToHandle,
 	requestToExternal,
+	requestToExternalModule,
 	getProgressBarPluginConfig,
 	getCacheGroups,
 };

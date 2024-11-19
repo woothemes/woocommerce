@@ -7,7 +7,6 @@ const { paramCase } = require( 'change-case' );
 const RemoveFilesPlugin = require( './remove-files-webpack-plugin' );
 const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 const ProgressBarPlugin = require( 'progress-bar-webpack-plugin' );
-const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const WebpackRTLPlugin = require( './webpack-rtl-plugin' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
 const CreateFileWebpack = require( 'create-file-webpack' );
@@ -18,12 +17,14 @@ const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 /**
  * Internal dependencies
  */
+const DependencyExtractionWebpackPlugin = require( './dependency-extraction' );
 const { getEntryConfig } = require( './webpack-entries' );
 const {
 	ASSET_CHECK,
 	NODE_ENV,
 	CHECK_CIRCULAR_DEPS,
 	requestToExternal,
+	requestToExternalModule,
 	requestToHandle,
 	getProgressBarPluginConfig,
 	getCacheGroups,
@@ -60,6 +61,7 @@ const getSharedPlugins = ( {
 			combineAssets: ASSET_CHECK,
 			outputFormat: ASSET_CHECK ? 'json' : 'php',
 			requestToExternal,
+			requestToExternalModule,
 			requestToHandle,
 		} ),
 	].filter( Boolean );

@@ -3,6 +3,15 @@
  */
 import { store } from '@wordpress/interactivity';
 import { HTMLElementEvent } from '@woocommerce/types';
+import { getSetting } from '@woocommerce/settings';
+
+const isBlockTheme = getSetting< boolean >( 'isBlockTheme' );
+const isProductArchive = getSetting< boolean >( 'isProductArchive' );
+const needsRefresh = getSetting< boolean >(
+	'needsRefreshForInteractivityAPI',
+	false
+);
+console.log( isBlockTheme, isProductArchive, needsRefresh );
 
 const getInputData = ( event: HTMLElementEvent< HTMLButtonElement > ) => {
 	const target = event.target as HTMLButtonElement;
