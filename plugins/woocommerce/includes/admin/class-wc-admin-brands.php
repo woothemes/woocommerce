@@ -67,12 +67,15 @@ class WC_Brands_Admin {
 		if ( is_string( $setting_value ) ) {
 
 			// Add the settings fields to each tab.
-			add_action( 'before_woocommerce_init', function() {
-				$this->init_form_fields();
-				$this->settings_tabs = array(
+			add_action(
+				'before_woocommerce_init',
+				function() {
+					$this->init_form_fields();
+					$this->settings_tabs = array(
 						'brands' => __( 'Brands', 'woocommerce' ),
-				);
-			} );
+					);
+				}
+			);
 			add_action( 'woocommerce_get_sections_products', array( $this, 'add_settings_tab' ) );
 			add_action( 'woocommerce_get_settings_products', array( $this, 'add_settings_section' ), null, 2 );
 		}
