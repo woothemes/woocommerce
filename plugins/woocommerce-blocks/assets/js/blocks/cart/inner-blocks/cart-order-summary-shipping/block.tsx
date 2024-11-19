@@ -32,7 +32,7 @@ export type BlockAttributes = {
 export type BlockProps = {
 	className: string;
 	sectionHeading: string | null;
-	onChangeHeading: ( heading: string ) => void;
+	onChangeHeading?: ( heading: string ) => void;
 };
 
 const Block = ( {
@@ -55,9 +55,12 @@ const Block = ( {
 	const heading =
 		sectionHeading === null ? collectionOrDelivery : sectionHeading;
 
-	const label = (
-		<EditableText value={ heading } onChange={ onChangeHeading } />
-	);
+	const label =
+		isEditor && onChangeHeading ? (
+			<EditableText value={ heading } onChange={ onChangeHeading } />
+		) : (
+			heading
+		);
 
 	if ( ! cartNeedsShipping ) {
 		return null;
