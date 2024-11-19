@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Fix the Payments main menu item linking to a blank page when onboarding tasks are hidden.
