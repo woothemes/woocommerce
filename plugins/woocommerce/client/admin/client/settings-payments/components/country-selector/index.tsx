@@ -114,6 +114,11 @@ export const CountrySelector = <ItemType extends Item>({
 		[ menuProps ]
 	);
 
+    // Ensure aria compliance by removing 'downshift-null' from aria-activedescendant
+	if ( menuProps['aria-activedescendant']?.startsWith( 'downshift-null' ) ) {
+		delete menuProps['aria-activedescendant'];
+	}
+
 	return (
 		<div className={ classNames( 'woopayments components-country-select-control', className ) }>
 			<label { ...getLabelProps( { className: 'components-country-select-control__label' } ) }>
