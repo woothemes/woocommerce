@@ -9,7 +9,6 @@ import {
 	__experimentalHStack as HStack,
 	// @ts-expect-error missing types.
 	__experimentalVStack as VStack,
-	FlexItem,
 } from '@wordpress/components';
 
 export const Header = ( { pageTitle = '' }: { pageTitle?: string } ) => {

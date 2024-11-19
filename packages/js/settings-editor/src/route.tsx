@@ -3,7 +3,6 @@
  */
 import {
 	createElement,
-	Fragment,
 	useEffect,
 	useMemo,
 	useState,
@@ -67,7 +66,7 @@ const getNotFoundRoute = (
 /**
  * Get the tabs for a settings page.
  *
- * @param {SettingsPage} settingsPage - The settings page.
+ * @param {settingsPage} settingsPage - The settings page.
  * @return {Array<{ name: string; title: string }>} The tabs.
  */
 const getSettingsPageTabs = (
@@ -88,6 +87,8 @@ const getSettingsPageTabs = (
  * Creates a route configuration for legacy settings.
  *
  * @param {string}       activePage - The active page.
+ * @param {string}       activeSection - The active section.
+ * @param {settingsPage} settingsPage - The settings page.
  * @param {settingsData} settingsData - The settings data.
  */
 const getLegacyRoute = (
@@ -188,11 +189,12 @@ export const useActiveRoute = (): {
 			section: activeSection = 'default',
 		} = location.params;
 		const settingsPage = settingsData?.[ activePage ];
-		const tabs = getSettingsPageTabs( settingsPage );
 
 		if ( ! settingsPage ) {
 			return { route: getNotFoundRoute( activePage, settingsData ) };
 		}
+
+		const tabs = getSettingsPageTabs( settingsPage );
 
 		// Handle legacy pages.
 		if ( ! settingsPage.is_modern ) {
