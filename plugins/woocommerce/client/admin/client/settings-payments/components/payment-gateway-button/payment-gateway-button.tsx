@@ -52,7 +52,8 @@ export const PaymentGatewayButton = ( {
 			if ( ! gatewayToggleNonce ) {
 				createErrorNotice(
 					__(
-						'An API error occurred. You will be redirected to the settings page, try enabling the gateway there.'
+						'An API error occurred. You will be redirected to the settings page, try enabling the gateway there.',
+						'woocommerce'
 					),
 					{
 						type: 'snackbar',
