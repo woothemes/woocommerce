@@ -37,6 +37,8 @@ type ProductImageProps = {
 	className?: string;
 	/** Text to use as the image alt attribute. */
 	alt?: string;
+	/** Additional style attributes. */
+	style?: React.CSSProperties;
 };
 
 /**
@@ -71,6 +73,10 @@ const ProductImage: React.VFC< ProductImageProps > = ( {
 			height={ height }
 			alt={ altText }
 			{ ...props }
+			style={ {
+				maxHeight: typeof width === 'number' ? width * 3 : undefined,
+				...props.style,
+			} }
 		/>
 	);
 };
