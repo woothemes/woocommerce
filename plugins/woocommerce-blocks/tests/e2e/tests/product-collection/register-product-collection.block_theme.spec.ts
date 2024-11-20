@@ -61,11 +61,9 @@ test.describe( 'Product Collection: Register Product Collection', () => {
 	} );
 
 	test( `Registered collections should be available in Collection chooser`, async ( {
-		page,
 		pageObject,
 		editor,
 		admin,
-		wordPressVersion,
 	} ) => {
 		await admin.createNewPost();
 		await editor.insertBlockUsingGlobalInserter( pageObject.BLOCK_NAME );
@@ -75,18 +73,11 @@ test.describe( 'Product Collection: Register Product Collection', () => {
 			} )
 			.click();
 
-		const productCollectionBlock = editor.canvas.getByLabel(
-			'Block: Product Collection'
-		);
-
 		for ( const myCollection of Object.values(
 			MY_REGISTERED_COLLECTIONS
 		) ) {
 			await expect(
-				( wordPressVersion === 'previous'
-					? productCollectionBlock
-					: page
-				).getByRole( 'button', {
+				editor.canvas.getByRole( 'button', {
 					name: myCollection.name,
 					exact: true,
 				} )
