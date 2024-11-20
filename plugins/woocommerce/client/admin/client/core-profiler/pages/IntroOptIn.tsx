@@ -39,7 +39,7 @@ export const IntroOptIn = ( {
 		optInCheckboxInitialStatus
 	);
 
-	// we want the checkbox to be checked iff
+	// we want the checkbox to be checked if
 	// 1. the user has previously completed the profiler and opted in
 	//  1a. the user has completed the intro-opt-in step previously and opted in
 	// 2. the user has not previously completed the profiler
