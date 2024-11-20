@@ -2,6 +2,8 @@
  * External dependencies
  */
 import {
+	type DragEndEvent,
+	type DragStartEvent,
 	closestCenter,
 	DndContext,
 	KeyboardSensor,
@@ -9,8 +11,6 @@ import {
 	TouchSensor,
 	useSensor,
 	useSensors,
-	DragEndEvent,
-	DragStartEvent,
 } from '@dnd-kit/core';
 import {
 	SortableContext,

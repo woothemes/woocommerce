@@ -1,15 +1,17 @@
 /**
  * External dependencies
  */
-import { useSelect } from '@wordpress/data';
-import { PAYMENT_SETTINGS_STORE_NAME } from '@woocommerce/data';
+import { useDispatch, useSelect } from '@wordpress/data';
+import {
+	type OfflinePaymentGateway,
+	PAYMENT_SETTINGS_STORE_NAME,
+} from '@woocommerce/data';
 
 /**
  * Internal dependencies
  */
 import './settings-payments-offline.scss';
 import { OfflinePaymentGateways } from './components/offline-payment-gateways';
-import usePaymentOrdering from './hooks/use-payment-ordering';
 
 export const SettingsPaymentsOffline = () => {
 	const { offlinePaymentGateways } = useSelect( ( select ) => {
@@ -19,14 +21,17 @@ export const SettingsPaymentsOffline = () => {
 			).getOfflinePaymentGateways(),
 		};
 	} );
-
-	const { ordering, updateOrdering } = usePaymentOrdering( 'offline' );
+	const { updateOfflinePaymentGatewayOrdering } = useDispatch(
+		PAYMENT_SETTINGS_STORE_NAME
+	);
+	const handleOrderingUpdate = ( gateways: OfflinePaymentGateway[] ) => {
+		updateOfflinePaymentGatewayOrdering( gateways );
+	};
 
 	return (
 		<div className="settings-payments-offline__container">
 			<OfflinePaymentGateways
-				ordering={ ordering }
-				updateOrdering={ updateOrdering }
+				updateOrdering={ handleOrderingUpdate }
 				offlinePaymentGateways={ offlinePaymentGateways }
 			/>
 		</div>

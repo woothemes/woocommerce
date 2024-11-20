@@ -2,8 +2,8 @@
  * External dependencies
  */
 import {
-	DraggableSyntheticListeners,
-	DraggableAttributes,
+	type DraggableSyntheticListeners,
+	type DraggableAttributes,
 } from '@dnd-kit/core';
 import { createContext, useContext } from '@wordpress/element';
 import { dragHandle, Icon } from '@wordpress/icons';
