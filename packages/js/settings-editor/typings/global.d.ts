@@ -38,11 +38,6 @@ declare global {
 
     type SettingsField = BaseSettingsField | GroupSettingsField | CheckboxGroupSettingsField | CheckboxSettingsField;
 
-    interface SettingsSection {
-        label: string;
-        settings: SettingsField[];
-    }
-
 	interface SettingsSection {
 		label: string;
 		settings: SettingField[];
