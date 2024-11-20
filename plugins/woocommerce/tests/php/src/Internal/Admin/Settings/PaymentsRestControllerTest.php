@@ -491,6 +491,8 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 
 	/**
 	 * Mock the core PayPal gateway.
+	 *
+	 * @param bool $enabled Whether the gateway is enabled or not.
 	 */
 	private function mock_core_paypal_pg( bool $enabled = false ) {
 		$this->mock_service
@@ -532,6 +534,8 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 
 	/**
 	 * Mock the core offline payment methods.
+	 *
+	 * @param bool $enabled Whether the payment methods are enabled or not.
 	 */
 	private function mock_core_offline_payment_methods( bool $enabled = false ) {
 		$offline_payment_methods = array();
@@ -563,6 +567,8 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	 * Mock extension suggestions.
 	 *
 	 * If a location is provided, only when called with that location will return the suggestions.
+	 *
+	 * @param string|null $location The location to return the suggestions for.
 	 */
 	private function mock_extension_suggestions( string $location = null ) {
 		$mocker = $this->mock_service
