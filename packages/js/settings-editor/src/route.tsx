@@ -142,9 +142,6 @@ export function useModernRoutes() {
 	const [ routes, setRoutes ] = useState( getModernPages() );
 	const location = useLocation() as Location;
 
-	// console.log( 'updating routes' );
-	// console.log( getModernPages()[ 'shipping' ].paul );
-
 	/*
 	 * Handler for new pages being added after the initial filter has been run,
 	 * so that if any routing pages are added later, they can still be rendered
@@ -170,7 +167,12 @@ export function useModernRoutes() {
 		};
 	}, [] );
 
-	return getModernPages();
+	// Update modern when the location changes.
+	useEffect( () => {
+		setRoutes( getModernPages() );
+	}, [ location.params ] );
+
+	return routes;
 }
 
 /**
