@@ -24,9 +24,11 @@ export const enum StockStatus {
 
 export type FilterOptionItem = {
 	label: string;
+	ariaLabel: string;
 	value: string;
 	selected?: boolean;
-	rawData?: Record< string, unknown >;
+	type: string;
+	data?: Record< string, unknown >;
 };
 
 export type FilterBlockContext = {
