@@ -79,7 +79,7 @@ export class Editor extends CoreEditor {
 				name: templateName,
 				exact: true,
 			} )
-			.and( this.page.locator( '.page-templates-preview-field__button' ) )
+			.and( this.page.locator( '.is-link' ) )
 			.click();
 
 		await this.page.getByLabel( 'Actions' ).click();
