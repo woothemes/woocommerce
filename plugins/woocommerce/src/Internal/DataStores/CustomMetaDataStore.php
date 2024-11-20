@@ -57,9 +57,10 @@ abstract class CustomMetaDataStore {
 	 * @return array
 	 */
 	public function read_meta( &$object ) {
-		$raw_meta_data = $this->get_meta_data_for_object_ids( array( $object->get_id() ) );
+		$object_id = $object->get_id();
+		$raw_meta_data = $this->get_meta_data_for_object_ids( array( $object_id ) );
 
-		return isset( $raw_meta_data[ $object->get_id() ] ) ? (array) $raw_meta_data[ $object->get_id() ] : array();
+		return isset( $raw_meta_data[ $object_id ] ) ? (array) $raw_meta_data[ $object_id ] : array();
 	}
 
 	/**
@@ -267,15 +268,13 @@ abstract class CustomMetaDataStore {
 	 *
 	 * @param array $object_ids List of object IDs.
 	 *
-	 * @return \stdClass[][] DB Order objects.
+	 * @return \stdClass[][] An array, keyed by object_ids, containing array of raw meta data records for each object. Objects with no meta data will have an empty array.
 	 */
 	public function get_meta_data_for_object_ids( array $object_ids ): array {
 		global $wpdb;
 
-		$meta_data = array();
-
 		if ( empty( $object_ids ) ) {
-			return $meta_data;
+			return array();
 		}
 
 		$id_placeholder   = implode( ', ', array_fill( 0, count( $object_ids ), '%d' ) );
@@ -291,6 +290,7 @@ abstract class CustomMetaDataStore {
 		);
 		// phpcs:enable
 
+		$meta_data = array_fill_keys( $object_ids, array() );
 		foreach ( $meta_rows as $meta_row ) {
 			if ( ! isset( $meta_data[ $meta_row->object_id ] ) ) {
 				$meta_data[ $meta_row->object_id ] = array();

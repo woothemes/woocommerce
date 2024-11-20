@@ -557,11 +557,13 @@ class OrdersTableDataStore extends \Abstract_WC_Order_Data_Store_CPT implements 
 		}
 
 		$cache_engine  = wc_get_container()->get( WPCacheEngine::class );
+		$cache_group = $this->get_cache_group();
 		$return_values = array();
 
 		foreach ( $order_ids as $order_id ) {
-			$return_values[ $order_id ] = $cache_engine->delete_cached_object( $order_id, $this->get_cache_group() );
+			$return_values[ $order_id ] = $cache_engine->delete_cached_object( $order_id, $cache_group );
 		}
+
 		if ( is_callable( array( $this->data_store_meta, 'clear_cached_data' ) ) ) {
 			$successfully_deleted_cache_order_ids = array_keys( array_filter( $return_values ) );
 			$cache_deletion_results               = $this->data_store_meta->clear_cached_data( $successfully_deleted_cache_order_ids );
@@ -588,6 +590,7 @@ class OrdersTableDataStore extends \Abstract_WC_Order_Data_Store_CPT implements 
 
 		$cache_engine       = wc_get_container()->get( WPCacheEngine::class );
 		$orders_invalidated = $cache_engine->delete_cache_group( $this->get_cache_group() );
+		$meta_invalidated = true;
 		if ( is_callable( array( $this->data_store_meta, 'clear_cached_data' ) ) ) {
 			$meta_invalidated = $this->data_store_meta->clear_all_cached_data();
 		}
@@ -1216,6 +1219,11 @@ WHERE
 		$order_types = array();
 
 		if ( OrderUtil::custom_orders_table_datastore_cache_enabled() ) {
+			if ( ! is_array( $order_ids ) ) {
+				// self::get_order_data_for_ids() strict types the $order_ids parameter. Temporarily maintain backward compatibility
+				// for potential misuse of self::get_orders_type().
+				$order_ids = array( (int) $order_ids );
+			}
 			// If we're using order data caching, preemptively pull all the data and prime the cache as this method is
 			// almost exclusively used to determine the order class to later hydrate.
 			$orders_data = $this->get_order_data_for_ids( $order_ids );
@@ -1732,8 +1740,8 @@ WHERE
 	 *
 	 * @return \stdClass[] DB Order objects or error.
 	 */
-	protected function get_order_data_for_ids( $ids ): array {
-		if ( ! is_array( $ids ) || empty( $ids ) ) {
+	protected function get_order_data_for_ids( array $ids ): array {
+		if ( empty( $ids ) ) {
 			return array();
 		}
 
