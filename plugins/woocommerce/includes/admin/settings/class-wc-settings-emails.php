@@ -434,10 +434,19 @@ class WC_Settings_Emails extends WC_Settings_Page {
 	 * Creates the React mount point for the email preview.
 	 */
 	public function email_preview() {
+		$emails      = WC()->mailer()->get_emails();
+		$email_types = array();
+		foreach ( $emails as $type => $email ) {
+			$email_types[] = array(
+				'label' => $email->get_title(),
+				'value' => $type,
+			);
+		}
 		?>
 		<div
 			id="wc_settings_email_preview_slotfill"
 			data-preview-url="<?php echo esc_url( wp_nonce_url( admin_url( '?preview_woocommerce_mail=true' ), 'preview-mail' ) ); ?>"
+			data-email-types="<?php echo esc_attr( wp_json_encode( $email_types ) ); ?>"
 		></div>
 		<?php
 	}

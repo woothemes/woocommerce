@@ -47,6 +47,13 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 	private $suggested_products_ids = array();
 
 	/**
+	 * Product statuses to exclude from the query.
+	 *
+	 * @var array
+	 */
+	private $exclude_status = array();
+
+	/**
 	 * Register the routes for products.
 	 */
 	public function register_routes() {
@@ -176,6 +183,12 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		// Filter by a list of product statuses.
 		if ( ! empty( $request['include_status'] ) ) {
 			$args['post_status'] = $request['include_status'];
+		}
+
+		if ( ! empty( $request['exclude_status'] ) ) {
+			$this->exclude_status = $request['exclude_status'];
+		} else {
+			$this->exclude_status = array();
 		}
 
 		// Taxonomy query to filter products by type, category,
@@ -361,6 +374,11 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			add_filter( 'posts_where', array( $this, 'add_search_criteria_to_wp_query_where' ) );
 		}
 
+		// Add filters for excluding product statuses.
+		if ( ! empty( $this->exclude_status ) ) {
+			add_filter( 'posts_where', array( $this, 'exclude_product_statuses' ) );
+		}
+
 		$result = parent::get_objects( $query_args );
 
 		// Remove filters for search criteria in product postmeta via the lookup table.
@@ -370,6 +388,14 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 
 			$this->search_sku_in_product_lookup_table = '';
 		}
+
+		// Remove filters for excluding product statuses.
+		if ( ! empty( $this->exclude_status ) ) {
+			remove_filter( 'posts_where', array( $this, 'exclude_product_statuses' ) );
+
+			$this->exclude_status = array();
+		}
+
 		return $result;
 	}
 
@@ -400,6 +426,28 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			$like_search = '%' . $wpdb->esc_like( $this->search_sku_in_product_lookup_table ) . '%';
 			$where      .= ' AND ' . $wpdb->prepare( '(wc_product_meta_lookup.sku LIKE %s)', $like_search );
 		}
+		return $where;
+	}
+
+	/**
+	 * Exclude product statuses from the query.
+	 *
+	 * @param string $where Where clause used to search posts.
+	 * @return string
+	 */
+	public function exclude_product_statuses( $where ) {
+		if ( ! empty( $this->exclude_status ) && is_array( $this->exclude_status ) ) {
+			global $wpdb;
+
+			$not_in = array();
+			foreach ( $this->exclude_status as $status_to_exclude ) {
+				$not_in[] = $wpdb->prepare( '%s', $status_to_exclude );
+			}
+
+			$not_in = join( ', ', $not_in );
+			return $where . " AND $wpdb->posts.post_status NOT IN ( $not_in )";
+		}
+
 		return $where;
 	}
 
@@ -1614,6 +1662,17 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			'items'             => array(
 				'type' => 'string',
 				'enum' => array_merge( array( 'any', 'trash' ), array_keys( get_post_statuses() ) ),
+			),
+			'sanitize_callback' => 'wp_parse_list',
+			'validate_callback' => 'rest_validate_request_arg',
+		);
+
+		$params['exclude_status'] = array(
+			'description'       => __( 'Exclude products with any of the statuses from result set.', 'woocommerce' ),
+			'type'              => 'array',
+			'items'             => array(
+				'type' => 'string',
+				'enum' => array_merge( array( 'trash' ), array_keys( get_post_statuses() ) ),
 			),
 			'sanitize_callback' => 'wp_parse_list',
 			'validate_callback' => 'rest_validate_request_arg',

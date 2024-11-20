@@ -12,6 +12,26 @@ $wc-setting-email-preview-gap: 16px;
 	width: 652px;
 }
 
+.wc-settings-email-preview-controls {
+	display: flex;
+	justify-content: space-between;
+}
+
+.wc-settings-email-preview-type {
+	width: 200px;
+}
+
+.wc-settings-email-preview-spinner {
+	align-items: center;
+	display: flex;
+	justify-content: center;
+	width: 40px;
+
+	svg {
+		margin: 0;
+	}
+}
+
 .wc-settings-email-preview-device-type {
 	display: grid;
 	grid-gap: 8px;

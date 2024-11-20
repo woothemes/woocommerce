@@ -1,13 +1,12 @@
 /**
  * External dependencies
  */
-import { useState } from 'react';
 import { EllipsisMenu } from '@woocommerce/components';
-import { PaymentGateway } from '@woocommerce/data';
 import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
+import { RegisteredPaymentGateway } from '@woocommerce/data';
 
 /**
  * Internal dependencies
@@ -16,10 +15,9 @@ import sanitizeHTML from '~/lib/sanitize-html';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
 import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
 import { WooPaymentsGatewayData } from '~/settings-payments/types';
-import { WC_ASSET_URL } from '~/utils/admin-settings';
 
 type PaymentGatewayItemProps = {
-	gateway: PaymentGateway;
+	gateway: RegisteredPaymentGateway;
 	wooPaymentsGatewayData?: WooPaymentsGatewayData;
 	setupLivePayments: () => void;
 };
@@ -29,8 +27,6 @@ export const PaymentGatewayListItem = ( {
 	wooPaymentsGatewayData,
 	setupLivePayments,
 }: PaymentGatewayItemProps ) => {
-	const [ isEnabled, setIsEnabled ] = useState( gateway.enabled );
-
 	const isWCPay = [
 		'pre_install_woocommerce_payments_promotion',
 		'woocommerce_payments',
@@ -39,10 +35,10 @@ export const PaymentGatewayListItem = ( {
 	const hasIncentive =
 		gateway.id === 'pre_install_woocommerce_payments_promotion';
 	const determineGatewayStatus = () => {
-		if ( ! isEnabled && gateway?.needs_setup ) {
+		if ( ! gateway.state.enabled && gateway.state.needs_setup ) {
 			return 'needs_setup';
 		}
-		if ( isEnabled ) {
+		if ( gateway.state.enabled ) {
 			if ( isWCPay ) {
 				if ( wooPaymentsGatewayData?.isInTestMode ) {
 					return 'test_mode';
@@ -65,7 +61,7 @@ export const PaymentGatewayListItem = ( {
 		} ${ hasIncentive ?? `has-incentive` }`,
 		title: (
 			<>
-				{ gateway.method_title }
+				{ gateway.title }
 				{ hasIncentive ? (
 					<StatusBadge
 						status="has_incentive"
@@ -83,7 +79,7 @@ export const PaymentGatewayListItem = ( {
 			<>
 				<span
 					dangerouslySetInnerHTML={ sanitizeHTML(
-						decodeEntities( gateway.method_description )
+						decodeEntities( gateway.description )
 					) }
 				/>
 				{ isWCPay && (
@@ -99,10 +95,10 @@ export const PaymentGatewayListItem = ( {
 				<>
 					<PaymentGatewayButton
 						id={ gateway.id }
-						enabled={ isEnabled }
-						needs_setup={ gateway.needs_setup }
-						settings_url={ gateway.settings_url }
-						setIsEnabled={ setIsEnabled }
+						isOffline={ false }
+						enabled={ gateway.state.enabled }
+						needsSetup={ gateway.state.needs_setup }
+						settingsUrl={ gateway.management.settings_url }
 					/>
 					{ isWCPay && wooPaymentsGatewayData?.isInTestMode && (
 						<Button
@@ -133,11 +129,6 @@ export const PaymentGatewayListItem = ( {
 				</>
 			</div>
 		),
-		before: (
-			<img
-				src={ `${ WC_ASSET_URL }images/onboarding/wcpay.svg` }
-				alt={ gateway.title + ' logo' }
-			/>
-		),
+		before: <img src={ gateway.icon } alt={ gateway.title + ' logo' } />,
 	};
 };
