@@ -28,6 +28,7 @@ jobs:
               script: |
                   let runBuildZipJob = true;
                   const event = context.payload;
+
                   if (event.inputs.skip_verify !== 'false') {
                     core.setOutput('runBuildZipJob', runBuildZipJob);
                     console.log('Skipping verification step');
@@ -42,7 +43,7 @@ jobs:
                   // Function to handle API call with retry logic
                   const searchPRs = async (query) => {
                     let attempts = 0;
-                    while (attempts < 3) {
+                    while (attempts < 5) {
                       try {
                         return await github.rest.search.issuesAndPullRequests({ q: query });
                       } catch (error) {
@@ -93,7 +94,7 @@ jobs:
           uses: archive/github-actions-slack@v2.0.0
           with:
               slack-bot-user-oauth-access-token: ${{ secrets.CODE_FREEZE_BOT_TOKEN }}
-              slack-channel: ${{ secrets.WOO_RELEASE_SLACK_CHANNEL }}
+              slack-channel: ${{ secrets.TEST_WOO_CORE_RELEASE_NOTIFICATION_SLACK_CHANNEL }}
               slack-text: |
                   :x: WooCommerce release zip build failed.
                   :warning-8c: ${{ steps.verify-prs.outputs.failureMessage }}
