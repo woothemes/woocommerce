@@ -64,6 +64,7 @@ test.describe( 'Product Collection: Register Product Collection', () => {
 		pageObject,
 		editor,
 		admin,
+		page,
 	} ) => {
 		await admin.createNewPost();
 		await editor.insertBlockUsingGlobalInserter( pageObject.BLOCK_NAME );
@@ -77,7 +78,7 @@ test.describe( 'Product Collection: Register Product Collection', () => {
 			MY_REGISTERED_COLLECTIONS
 		) ) {
 			await expect(
-				editor.canvas.getByRole( 'button', {
+				page.getByRole( 'button', {
 					name: myCollection.name,
 					exact: true,
 				} )
