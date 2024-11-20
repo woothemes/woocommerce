@@ -33,19 +33,11 @@ jest.mock( '@wordpress/edit-site/build-module/lock-unlock', () => ( {
 	unlock: jest.fn( ( apis ) => apis ),
 } ) );
 
-jest.mock(
-	'@wordpress/edit-site/build-module/components/sidebar-navigation-screen',
-	() => ( {
-		__esModule: true,
-		default: ( { children }: { children: React.ReactNode } ) => (
-			<div data-testid="sidebar-navigation-screen">{ children }</div>
-		),
-	} )
-);
-
-jest.mock( '../sidebar', () => ( {
+jest.mock( '../components/sidebar', () => ( {
 	__esModule: true,
-	Sidebar: jest.fn(),
+	Sidebar: ( { children }: { children: React.ReactNode } ) => (
+		<div data-testid="sidebar-navigation-screen">{ children }</div>
+	),
 } ) );
 
 const mockSettingsPages = {
@@ -53,8 +45,8 @@ const mockSettingsPages = {
 		label: 'General',
 		icon: 'settings',
 		slug: 'general',
-		sections: [
-			{
+		sections: {
+			default: {
 				label: 'General',
 				settings: [
 					{
@@ -66,7 +58,7 @@ const mockSettingsPages = {
 					},
 				],
 			},
-		],
+		},
 		is_modern: false,
 	},
 };
@@ -79,7 +71,7 @@ describe( 'route.tsx', () => {
 		// Mock window.wcSettings
 		window.wcSettings = {
 			admin: {
-				settingsPages: mockSettingsPages,
+				settingsData: mockSettingsPages,
 			},
 		};
 
@@ -97,16 +89,16 @@ describe( 'route.tsx', () => {
 		it( 'should return legacy route for non-modern pages', () => {
 			const { result } = renderHook( () => useActiveRoute() );
 
-			expect( result.current.key ).toBe( 'general' );
-			expect( result.current.areas.content ).toBeDefined();
-			expect( result.current.areas.sidebar ).toBeDefined();
+			expect( result.current.route.key ).toBe( 'general' );
+			expect( result.current.route.areas.content ).toBeDefined();
+			expect( result.current.route.areas.sidebar ).toBeDefined();
 
-			render( result.current.areas.sidebar as JSX.Element );
+			render( result.current.route.areas.sidebar as JSX.Element );
 			expect(
 				screen.getByTestId( 'sidebar-navigation-screen' )
 			).toBeInTheDocument();
 
-			expect( result.current.areas.edit ).toBeNull();
+			expect( result.current.route.areas.edit ).toBeNull();
 		} );
 
 		it( 'should return not found route for non-existent pages', () => {
@@ -121,10 +113,10 @@ describe( 'route.tsx', () => {
 
 			const { result } = renderHook( () => useActiveRoute() );
 
-			expect( result.current.key ).toBe( 'non-existent' );
-			render( result.current.areas.content as JSX.Element );
+			expect( result.current.route.key ).toBe( 'non-existent' );
+			render( result.current.route.areas.content as JSX.Element );
 			expect( screen.getByText( 'Page not found' ) ).toBeInTheDocument();
-			expect( result.current.areas.sidebar ).toBeDefined();
+			expect( result.current.route.areas.sidebar ).toBeDefined();
 		} );
 
 		it( 'should return modern route for modern pages', () => {
@@ -139,13 +131,13 @@ describe( 'route.tsx', () => {
 			// Mock a modern page
 			window.wcSettings = {
 				admin: {
-					settingsPages: {
+					settingsData: {
 						modern: {
-							is_modern: true,
 							label: 'Modern',
+							icon: 'published',
 							slug: 'modern',
-							icon: 'settings',
-							sections: [],
+							sections: {},
+							is_modern: true,
 						},
 					},
 				},
@@ -153,16 +145,15 @@ describe( 'route.tsx', () => {
 
 			( applyFilters as jest.Mock ).mockReturnValue( {
 				modern: {
-					key: 'modern',
 					areas: {
-						sidebar: null,
 						content: <div>Modern Page</div>,
 					},
 				},
 			} );
 
 			const { result } = renderHook( () => useActiveRoute() );
-			expect( result.current.key ).toBe( 'modern' );
+			expect( result.current.route.key ).toBe( 'modern' );
+			expect( result.current.route.areas.sidebar ).toBeDefined();
 		} );
 	} );
 

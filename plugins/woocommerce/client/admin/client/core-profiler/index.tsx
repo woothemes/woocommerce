@@ -33,6 +33,9 @@ import {
 	SETTINGS_STORE_NAME,
 	USER_STORE_NAME,
 	WCUser,
+	ProfileItems,
+	CoreProfilerStep,
+	CoreProfilerCompletedSteps,
 } from '@woocommerce/data';
 import { initializeExPlat } from '@woocommerce/explat';
 import { CountryStateOption } from '@woocommerce/onboarding';
@@ -108,8 +111,7 @@ export type CoreProfilerStateMachineContext = {
 		businessChoice?: BusinessChoice;
 		sellingOnlineAnswer?: SellingOnlineAnswer | null;
 		sellingPlatforms?: SellingPlatform[] | null;
-		skipped?: boolean;
-	};
+	} & Partial< ProfileItems >;
 	pluginsAvailable: ExtensionList[ 'plugins' ] | [];
 	pluginsSelected: string[]; // extension slugs
 	pluginsInstallationErrors: PluginInstallError[];
@@ -126,6 +128,7 @@ export type CoreProfilerStateMachineContext = {
 		useStages?: string;
 		stageIndex?: number;
 	};
+	coreProfilerCompletedSteps: Partial< CoreProfilerCompletedSteps >;
 	onboardingProfile: OnboardingProfile;
 	jetpackAuthUrl?: string;
 	currentUserEmail: string | undefined;
@@ -234,6 +237,20 @@ const handleOnboardingProfileOption = assign( {
 			sellingOnlineAnswer,
 			sellingPlatforms,
 		};
+	},
+} );
+
+const getCoreProfilerCompletedSteps = fromPromise( async () =>
+	resolveSelect( ONBOARDING_STORE_NAME ).getCoreProfilerCompletedSteps()
+);
+
+const handleCoreProfilerCompletedSteps = assign( {
+	coreProfilerCompletedSteps: ( {
+		event,
+	}: {
+		event: DoneActorEvent< Partial< CoreProfilerCompletedSteps > >;
+	} ) => {
+		return event.output;
 	},
 } );
 
@@ -379,14 +396,12 @@ const updateOnboardingProfileOption = fromPromise(
 	async ( { input }: { input: CoreProfilerStateMachineContext } ) => {
 		const { businessChoice, sellingOnlineAnswer, sellingPlatforms } =
 			input.userProfile;
-
-		return dispatch( OPTIONS_STORE_NAME ).updateOptions( {
-			woocommerce_onboarding_profile: {
-				...input.onboardingProfile,
-				business_choice: businessChoice,
+		return dispatch( ONBOARDING_STORE_NAME ).updateProfileItems( {
+			...( businessChoice && { business_choice: businessChoice } ),
+			...( sellingOnlineAnswer && {
 				selling_online_answer: sellingOnlineAnswer,
-				selling_platforms: sellingPlatforms,
-			},
+			} ),
+			...( sellingPlatforms && { selling_platforms: sellingPlatforms } ),
 		} );
 	}
 );
@@ -471,28 +486,27 @@ const updateBusinessInfo = fromPromise(
 	}: {
 		input: {
 			payload: BusinessInfoPayload;
+			context: CoreProfilerStateMachineContext;
 		};
 	} ) => {
-		const refreshedOnboardingProfile = ( await resolveSelect(
-			OPTIONS_STORE_NAME
-		).getOption( 'woocommerce_onboarding_profile' ) ) as OnboardingProfile;
-
-		await updateStoreCurrency( input.payload.storeLocation );
-
-		return dispatch( OPTIONS_STORE_NAME ).updateOptions( {
-			blogname: input.payload.storeName,
-			woocommerce_default_country: input.payload.storeLocation,
-			woocommerce_onboarding_profile: {
-				...refreshedOnboardingProfile,
+		return Promise.all( [
+			updateStoreCurrency( input.payload.storeLocation ),
+			dispatch( ONBOARDING_STORE_NAME ).updateProfileItems( {
 				is_store_country_set: true,
-				industry: [ input.payload.industry ],
 				is_agree_marketing: input.payload.isOptInMarketing,
-				store_email:
-					input.payload.storeEmailAddress.length > 0
-						? input.payload.storeEmailAddress
-						: null,
-			},
-		} );
+				...( input.payload.industry && {
+					industry: [ input.payload.industry ],
+				} ),
+				...( input.payload.storeEmailAddress !==
+					input.context.onboardingProfile.store_email && {
+					store_email: input.payload.storeEmailAddress,
+				} ),
+			} ),
+			dispatch( OPTIONS_STORE_NAME ).updateOptions( {
+				blogname: input.payload.storeName,
+				woocommerce_default_country: input.payload.storeLocation,
+			} ),
+		] );
 	}
 );
 
@@ -567,13 +581,19 @@ const handlePlugins = assign( {
 	},
 } );
 
-const updateQueryStep = ( _: unknown, params: { step: string } ) => {
+const updateQueryStep = ( _: unknown, params: { step: CoreProfilerStep } ) => {
 	const { step } = getQuery() as { step: string };
 	// only update the query string if it has changed
 	if ( params.step !== step ) {
 		updateQueryString( { step: params.step } );
 	}
 };
+
+const updateProfilerCompletedSteps = fromPromise(
+	async ( { input }: { input: { step: CoreProfilerStep } } ) => {
+		dispatch( ONBOARDING_STORE_NAME ).updateCoreProfilerStep( input.step );
+	}
+);
 
 const assignPluginsSelected = assign( {
 	pluginsSelected: ( {
@@ -648,6 +668,7 @@ const coreProfilerMachineActions = {
 	handleGeolocation,
 	handleStoreNameOption,
 	handleStoreCountryOption,
+	handleCoreProfilerCompletedSteps,
 	assignOptInDataSharing,
 	assignStoreLocation,
 	assignPluginsSelected,
@@ -680,6 +701,8 @@ const coreProfilerMachineActors = {
 	updateBusinessInfo,
 	updateTrackingOption,
 	updateOnboardingProfileOption,
+	updateProfilerCompletedSteps,
+	getCoreProfilerCompletedSteps,
 	skipFlowUpdateBusinessLocation,
 	pluginInstallerMachine,
 	exitToWooHome,
@@ -707,7 +730,7 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 		// these are safe default values if for some reason the steps fail to complete correctly
 		// actual defaults displayed to the user should be handled in the steps themselves
 		optInDataSharing: false,
-		userProfile: { skipped: true },
+		userProfile: {},
 		geolocatedLocation: undefined,
 		businessInfo: {
 			storeName: undefined,
@@ -724,6 +747,7 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 		jetpackAuthUrl: undefined,
 		currentUserEmail: undefined,
 		currentUser: undefined,
+		coreProfilerCompletedSteps: {},
 	} as CoreProfilerStateMachineContext,
 	states: {
 		navigate: {
@@ -798,6 +822,7 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 						// these prefetch tasks are spawned actors in the background and do not block progression of the state machine
 						spawnChild( 'preFetchGetPlugins' ),
 						spawnChild( 'getCountries' ),
+						spawnChild( 'getCoreProfilerCompletedSteps' ),
 						spawnChild( 'preFetchOptions', {
 							id: 'prefetch-options',
 							input: [
@@ -836,6 +861,53 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 								},
 							},
 						},
+						onboardingProfileOption: {
+							initial: 'fetching',
+							states: {
+								fetching: {
+									invoke: {
+										systemId: 'getOnboardingProfileOption',
+										src: 'getOnboardingProfileOption',
+										onDone: [
+											{
+												actions: [
+													'handleOnboardingProfileOption',
+												],
+												target: 'done',
+											},
+										],
+										onError: {
+											target: 'done', // leave it as initialised default on error
+										},
+									},
+								},
+								done: {
+									type: 'final',
+								},
+							},
+						},
+						coreProfilerCompletedSteps: {
+							initial: 'fetching',
+							states: {
+								fetching: {
+									invoke: {
+										src: 'getCoreProfilerCompletedSteps',
+										onDone: {
+											actions: [
+												'handleCoreProfilerCompletedSteps',
+											],
+											target: 'done',
+										},
+										onError: {
+											target: 'done',
+										},
+									},
+								},
+								done: {
+									type: 'final',
+								},
+							},
+						},
 					},
 					onDone: {
 						target: 'introOptIn',
@@ -848,13 +920,21 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 					on: {
 						INTRO_COMPLETED: {
 							target: 'postIntroOptIn',
-							actions: [ 'assignOptInDataSharing' ],
+							actions: [
+								'assignOptInDataSharing',
+								spawnChild( 'updateProfilerCompletedSteps', {
+									input: { step: 'intro-opt-in' },
+								} ),
+							],
 						},
 						INTRO_SKIPPED: {
 							// if the user skips the intro, we set the optInDataSharing to false and go to the Business Location page
 							target: '#skipGuidedSetup',
 							actions: [
 								'assignOptInDataSharing',
+								spawnChild( 'updateProfilerCompletedSteps', {
+									input: { step: 'intro-opt-in' },
+								} ),
 								spawnChild( 'updateTrackingOption', {
 									input: ( {
 										event,
@@ -872,6 +952,9 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 							actions: [
 								'assignOptInDataSharing',
 								'updateTrackingOption',
+								spawnChild( 'updateProfilerCompletedSteps', {
+									input: { step: 'intro-opt-in' },
+								} ),
 							],
 						},
 					},
@@ -944,13 +1027,19 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 							target: 'postUserProfile',
 							actions: [
 								'assignUserProfile',
-								{ type: 'recordTracksUserProfileCompleted' },
+								'recordTracksUserProfileCompleted',
+								spawnChild( 'updateProfilerCompletedSteps', {
+									input: { step: 'user-profile' },
+								} ),
 							],
 						},
 						USER_PROFILE_SKIPPED: {
 							target: 'postUserProfile',
 							actions: [
 								'assignUserProfile',
+								spawnChild( 'updateProfilerCompletedSteps', {
+									input: { step: 'user-profile' },
+								} ),
 								{
 									type: 'recordTracksStepSkipped',
 									params: { step: 'user_profile' },
@@ -1156,6 +1245,9 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 							actions: [
 								'recordTracksBusinessInfoCompleted',
 								'recordTracksIsEmailChanged',
+								spawnChild( 'updateProfilerCompletedSteps', {
+									input: { step: 'business-info' },
+								} ),
 							],
 						},
 						RETRY_PRE_BUSINESS_INFO: {
@@ -1168,6 +1260,9 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 									type: 'recordTracksStepSkipped',
 									params: { step: 'business_info' },
 								},
+								spawnChild( 'updateProfilerCompletedSteps', {
+									input: { step: 'business-info' },
+								} ),
 							],
 						},
 					},
@@ -1175,7 +1270,10 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 				postBusinessInfo: {
 					invoke: {
 						src: 'updateBusinessInfo',
-						input: ( { event } ) => event,
+						input: ( { event, context } ) => {
+							assertEvent( event, 'BUSINESS_INFO_COMPLETED' );
+							return { payload: event.payload, context };
+						},
 						onDone: {
 							target: '#plugins',
 						},
@@ -1241,6 +1339,9 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 							actions: [
 								'assignStoreLocation',
 								'recordTracksSkipBusinessLocationCompleted',
+								spawnChild( 'updateProfilerCompletedSteps', {
+									input: { step: 'skip-guided-setup' },
+								} ),
 							],
 						},
 					},
@@ -1373,6 +1474,7 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 								ONBOARDING_STORE_NAME
 							).updateProfileItems( {
 								is_plugins_page_skipped: true,
+								skipped: false,
 								completed: true,
 							} );
 							return promiseDelay( 3000 );
@@ -1428,8 +1530,19 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 									type: 'recordTracksStepSkipped',
 									params: { step: 'plugins' },
 								},
+								spawnChild( 'updateProfilerCompletedSteps', {
+									input: { step: 'plugins' },
+								} ),
 							],
 							target: 'pluginsSkipped',
+						},
+						PLUGINS_PAGE_COMPLETED_WITHOUT_SELECTING_PLUGINS: {
+							target: 'postPluginInstallation.noPluginsSelected',
+							actions: [
+								spawnChild( 'updateProfilerCompletedSteps', {
+									input: { step: 'plugins' },
+								} ),
+							],
 						},
 						PLUGINS_LEARN_MORE_LINK_CLICKED: {
 							actions: [
@@ -1449,33 +1562,73 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 					},
 				},
 				postPluginInstallation: {
-					invoke: {
-						input: ( { event } ) => {
-							assertEvent(
-								event,
-								'PLUGINS_INSTALLATION_COMPLETED'
-							);
-							return event;
-						},
-						src: fromPromise( async ( { input: event } ) => {
-							return await dispatch(
-								ONBOARDING_STORE_NAME
-							).updateProfileItems( {
-								business_extensions:
-									event.payload.installationCompletedResult.installedPlugins.map(
-										( extension: InstalledPlugin ) =>
-											extension.plugin
-									),
-								completed: true,
-							} );
-						} ),
-						onDone: [
-							{
-								target: 'isJetpackConnected',
-								guard: 'hasJetpackSelectedForInstallation',
+					initial: 'noPluginsSelected',
+					states: {
+						withPluginsSelected: {
+							invoke: {
+								input: ( { event } ) => {
+									assertEvent(
+										event,
+										'PLUGINS_INSTALLATION_COMPLETED'
+									);
+									return event;
+								},
+								src: fromPromise(
+									async ( { input: event } ) => {
+										return await dispatch(
+											ONBOARDING_STORE_NAME
+										).updateProfileItems( {
+											business_extensions:
+												event.payload.installationCompletedResult.installedPlugins.map(
+													(
+														extension: InstalledPlugin
+													) => extension.plugin
+												),
+											completed: true,
+										} );
+									}
+								),
+								onDone: [
+									{
+										target: '#isJetpackConnected',
+										guard: or( [
+											'hasJetpackSelectedForInstallation',
+											'hasJetpackActivated',
+										] ),
+									},
+									{ actions: 'redirectToWooHome' },
+								],
+								onError: {
+									actions: 'redirectToWooHome',
+								},
 							},
-							{ actions: 'redirectToWooHome' },
-						],
+						},
+						noPluginsSelected: {
+							entry: assign( {
+								loader: {
+									progress: 80,
+								},
+							} ),
+							invoke: {
+								src: fromPromise( () =>
+									dispatch(
+										ONBOARDING_STORE_NAME
+									).updateProfileItems( {
+										completed: true,
+									} )
+								),
+								onDone: [
+									{
+										target: '#isJetpackConnected',
+										guard: 'hasJetpackActivated',
+									},
+									{ actions: 'redirectToWooHome' },
+								],
+								onError: {
+									actions: 'redirectToWooHome',
+								},
+							},
+						},
 					},
 					meta: {
 						component: CoreProfilerLoader,
@@ -1483,6 +1636,7 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 					},
 				},
 				isJetpackConnected: {
+					id: 'isJetpackConnected',
 					invoke: {
 						src: 'getJetpackIsConnected',
 						onDone: [
@@ -1566,8 +1720,11 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 							],
 						},
 						PLUGINS_INSTALLATION_COMPLETED: {
-							target: 'postPluginInstallation',
+							target: 'postPluginInstallation.withPluginsSelected',
 							actions: [
+								spawnChild( 'updateProfilerCompletedSteps', {
+									input: { step: 'plugins' },
+								} ),
 								{
 									type: 'recordSuccessfulPluginInstallation',
 								},

@@ -16,8 +16,6 @@ import {
 } from '@wordpress/hooks';
 /* eslint-disable @woocommerce/dependency-group */
 // @ts-ignore No types for this exist yet.
-import SidebarNavigationScreen from '@wordpress/edit-site/build-module/components/sidebar-navigation-screen';
-// @ts-ignore No types for this exist yet.
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 // @ts-ignore No types for this exist yet.
 import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
@@ -26,27 +24,36 @@ import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
 /**
  * Internal dependencies
  */
-import { Sidebar } from './sidebar';
+import { Sidebar } from './components';
 import { Route, Location } from './types';
+import { LegacyContent } from './legacy';
 
 const { useLocation } = unlock( routerPrivateApis );
 
 const NotFound = () => {
-	return (
-		<h1 style={ { color: 'white' } }>
-			{ __( 'Page not found', 'woocommerce' ) }
-		</h1>
-	);
+	return <h1>{ __( 'Page not found', 'woocommerce' ) }</h1>;
 };
 
 /**
- * Default route when a page is not found.
+ * Default route when active page is not found.
+ *
+ * @param {string}       activePage - The active page.
+ * @param {settingsData} settingsData - The settings data.
  *
  */
-const getNotFoundRoute = ( page: string ): Route => ( {
-	key: page,
+const getNotFoundRoute = (
+	activePage: string,
+	settingsData: SettingsData
+): Route => ( {
+	key: activePage,
 	areas: {
-		sidebar: null,
+		sidebar: (
+			<Sidebar
+				activePage={ activePage }
+				settingsData={ settingsData }
+				pageTitle={ __( 'Settings', 'woocommerce' ) }
+			/>
+		),
 		content: <NotFound />,
 		edit: null,
 	},
@@ -57,35 +64,67 @@ const getNotFoundRoute = ( page: string ): Route => ( {
 } );
 
 /**
- * Creates a route configuration for legacy settings pages.
+ * Get the tabs for a settings page.
  *
- * @param {string} page - The page identifier.
+ * @param {settingsPage} settingsPage - The settings page.
+ * @return {Array<{ name: string; title: string }>} The tabs.
+ */
+const getSettingsPageTabs = (
+	settingsPage: SettingsPage
+): Array< {
+	name: string;
+	title: string;
+} > => {
+	const sections = Object.keys( settingsPage.sections );
+
+	return sections.map( ( key ) => ( {
+		name: key,
+		title: settingsPage.sections[ key ].label,
+	} ) );
+};
+
+/**
+ * Creates a route configuration for legacy settings.
+ *
+ * @param {string}       activePage - The active page.
+ * @param {string}       activeSection - The active section.
+ * @param {settingsPage} settingsPage - The settings page.
+ * @param {settingsData} settingsData - The settings data.
  */
 const getLegacyRoute = (
-	page: string,
-	pages: typeof window.wcSettings.admin.settingsPages
-): Route => ( {
-	key: page,
-	areas: {
-		sidebar: (
-			<SidebarNavigationScreen
-				title={ 'Settings Title TBD' }
-				isRoot
-				content={ <Sidebar pages={ pages } /> }
-			/>
-		),
-		content: <div>Content Placeholder: current tab: { page }</div>,
-		edit: null,
-	},
-	widths: {
-		content: undefined,
-		edit: undefined,
-	},
-} );
+	activePage: string,
+	activeSection: string,
+	settingsPage: SettingsPage,
+	settingsData: SettingsData
+): Route => {
+	return {
+		key: activePage,
+		areas: {
+			sidebar: (
+				<Sidebar
+					activePage={ activePage }
+					settingsData={ settingsData }
+					pageTitle={ __( 'Store settings', 'woocommerce' ) }
+				/>
+			),
+			content: (
+				<LegacyContent
+					settingsPage={ settingsPage }
+					activeSection={ activeSection }
+				/>
+			),
+			edit: null,
+		},
+		widths: {
+			content: undefined,
+			edit: undefined,
+		},
+	};
+};
 
 const PAGES_FILTER = 'woocommerce_admin_settings_pages';
 
-const getPages = () => {
+const getModernPages = () => {
 	/**
 	 * Get the modern settings pages.
 	 *
@@ -100,7 +139,7 @@ const getPages = () => {
  * @return {Record<string, Route>} The pages.
  */
 export function useModernRoutes() {
-	const [ routes, setRoutes ] = useState( getPages() );
+	const [ routes, setRoutes ] = useState( getModernPages() );
 
 	/*
 	 * Handler for new pages being added after the initial filter has been run,
@@ -115,7 +154,7 @@ export function useModernRoutes() {
 
 			const filterCount = didFilter( PAGES_FILTER );
 			if ( filterCount && filterCount > 0 ) {
-				setRoutes( getPages() );
+				setRoutes( getModernPages() );
 			}
 		};
 
@@ -133,25 +172,70 @@ export function useModernRoutes() {
 /**
  * Hook to determine and return the active route based on the current path.
  */
-export const useActiveRoute = () => {
-	const settingsPages = window.wcSettings?.admin?.settingsPages;
+export const useActiveRoute = (): {
+	route: Route;
+	settingsPage?: SettingsPage;
+	activePage?: string;
+	activeSection?: string;
+	tabs?: Array< { name: string; title: string } >;
+} => {
+	const settingsData: SettingsData = window.wcSettings?.admin?.settingsData;
 	const location = useLocation() as Location;
 	const modernRoutes = useModernRoutes();
 
 	return useMemo( () => {
-		const { tab: page = 'general' } = location.params;
-		const pageSettings = settingsPages?.[ page ];
+		const {
+			tab: activePage = 'general',
+			section: activeSection = 'default',
+		} = location.params;
+		const settingsPage = settingsData?.[ activePage ];
 
-		if ( ! pageSettings ) {
-			return getNotFoundRoute( page );
+		if ( ! settingsPage ) {
+			return { route: getNotFoundRoute( activePage, settingsData ) };
 		}
+
+		const tabs = getSettingsPageTabs( settingsPage );
 
 		// Handle legacy pages.
-		if ( ! pageSettings.is_modern ) {
-			return getLegacyRoute( page, settingsPages );
+		if ( ! settingsPage.is_modern ) {
+			return {
+				route: getLegacyRoute(
+					activePage,
+					activeSection,
+					settingsPage,
+					settingsData
+				),
+				settingsPage,
+				activePage,
+				activeSection,
+				tabs,
+			};
 		}
 
+		const modernRoute = modernRoutes[ activePage ];
+
 		// Handle modern pages.
-		return modernRoutes[ page ] || getNotFoundRoute( page );
-	}, [ settingsPages, location, modernRoutes ] );
+		if ( ! modernRoute ) {
+			return { route: getNotFoundRoute( activePage, settingsData ) };
+		}
+
+		// Sidebar is responsibility of WooCommerce, not extensions so add it here.
+		modernRoute.areas.sidebar = (
+			<Sidebar
+				activePage={ activePage }
+				settingsData={ settingsData }
+				pageTitle={ __( 'Store settings', 'woocommerce' ) }
+			/>
+		);
+		// Make sure we have a key.
+		modernRoute.key = activePage;
+
+		return {
+			route: modernRoute,
+			settingsPage,
+			activePage,
+			activeSection,
+			tabs,
+		};
+	}, [ settingsData, location.params, modernRoutes ] );
 };
