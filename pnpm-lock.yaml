@@ -1005,6 +1005,9 @@ importers:
       '@types/jest':
         specifier: 27.5.x
         version: 27.5.2
+      '@types/react':
+        specifier: 17.0.x
+        version: 17.0.71
       '@woocommerce/eslint-plugin':
         specifier: workspace:*
         version: link:../eslint-plugin
@@ -22680,7 +22683,7 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
     peerDependencies:
-      react: ^17.0.2
+      react: 18.2.0
 
   react-number-format@4.9.3:
     resolution: {integrity: sha512-am1A1xYAbENuKJ+zpM7V+B1oRTSeOHYltqVKExznIVFweBzhLmOBmyb1DfIKjHo90E0bo1p3nzVJ2NgS5xh+sQ==}
@@ -22870,7 +22873,7 @@ packages:
   react-with-direction@1.4.0:
     resolution: {integrity: sha512-ybHNPiAmaJpoWwugwqry9Hd1Irl2hnNXlo/2SXQBwbLn/jGMauMS2y9jw+ydyX5V9ICryCqObNSthNt5R94xpg==}
     peerDependencies:
-      react: ^17.0.2
+      react: ^0.14 || ^15 || ^16
       react-dom: ^0.14 || ^15 || ^16
 
   react-with-styles-interface-css@4.0.3:
@@ -38001,7 +38004,7 @@ snapshots:
 
   '@testing-library/react-hooks@7.0.2(react-dom@17.0.2(react@17.0.2))(react-test-renderer@18.3.1(react@17.0.2))(react@17.0.2)':
     dependencies:
-      '@babel/runtime': 7.23.6
+      '@babel/runtime': 7.25.0
       '@types/react': 17.0.71
       '@types/react-dom': 17.0.25
       '@types/react-test-renderer': 18.0.7
@@ -38400,7 +38403,6 @@ snapshots:
   '@types/node@22.4.0':
     dependencies:
       undici-types: 6.19.6
-    optional: true
 
   '@types/normalize-package-data@2.4.4': {}
 
@@ -55450,7 +55452,7 @@ snapshots:
     dependencies:
       '@jest/types': 29.6.3
       '@types/graceful-fs': 4.1.9
-      '@types/node': 16.18.68
+      '@types/node': 22.4.0
       anymatch: 3.1.3
       fb-watchman: 2.0.2
       graceful-fs: 4.2.11
@@ -56454,7 +56456,7 @@ snapshots:
 
   jest-worker@29.7.0:
     dependencies:
-      '@types/node': 16.18.68
+      '@types/node': 22.4.0
       jest-util: 29.7.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
@@ -64607,8 +64609,7 @@ snapshots:
 
   undici-types@5.26.5: {}
 
-  undici-types@6.19.6:
-    optional: true
+  undici-types@6.19.6: {}
 
   undici@5.28.2:
     dependencies:
