@@ -825,9 +825,12 @@ if ( ! class_exists( 'WC_Admin_Settings', false ) ) :
 				$description = $value['desc'];
 			}
 
+			$desc_at_end = ( isset( $value['desc_at_end'] ) ? $value['desc_at_end'] : false );
 			$error_class = ( ! empty( $value['description_is_error'] ) ) ? 'is-error' : '';
 
-			if ( $description && in_array( $value['type'], array( 'radio' ), true ) ) {
+			if ( $description && in_array( $value['type'], array( 'textarea' ), true ) && true !== $desc_at_end ) {
+				$description = '<p class="description ' . $error_class . '" style="margin-top:0;">' . wp_kses_post( $description ) . '</p>';
+			} elseif ( $description && in_array( $value['type'], array( 'radio' ), true ) ) {
 				$description = '<p style="margin-top:0">' . wp_kses_post( $description ) . '</p>';
 			} elseif ( $description && in_array( $value['type'], array( 'checkbox' ), true ) ) {
 				$description = wp_kses_post( $description );
