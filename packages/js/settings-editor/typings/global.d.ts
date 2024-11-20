@@ -32,7 +32,9 @@ declare global {
 		label: string;
 		slug: string;
 		icon: string;
-		sections: SettingsSection[];
+		sections: {
+			[ key: string ]: SettingsSection;
+		};
 		is_modern: boolean;
 	}
 
