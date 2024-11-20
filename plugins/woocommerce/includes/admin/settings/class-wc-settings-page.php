@@ -131,12 +131,12 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 
 					// Replace empty string section ids with 'default'.
 					$section_id = '' === $section_id ? 'default' : $section_id;
-
-					$sections_data[ $section_id ] = array(
-						'label'    => html_entity_decode( $section_label ),
-						'settings' => $section_settings_data,
-					);
 				}
+
+				$sections_data[ $section_id ] = array(
+					'label'    => html_entity_decode( $section_label ),
+					'settings' => $section_settings_data,
+				);
 			}
 
 			$pages[ $this->id ] = array(
