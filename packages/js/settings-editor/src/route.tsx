@@ -139,7 +139,7 @@ const getModernPages = () => {
  * @return {Record<string, Route>} The pages.
  */
 export function useModernRoutes() {
-	const [ routes, setRoutes ] = useState( getModernPages() );
+	const [ routes, setRoutes ] = useState( {} );
 	const location = useLocation() as Location;
 
 	/*
