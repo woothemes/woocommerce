@@ -17,10 +17,6 @@ import {
 	RequestUtils,
 	ShippingUtils,
 } from '@woocommerce/e2e-utils';
-/**
- * Internal dependencies
- */
-import { getInstalledWordPressVersion } from './wordpress';
 
 /**
  * Set of console logging types observed to protect against unexpected yet
@@ -116,7 +112,6 @@ const test = base.extend<
 		shippingUtils: ShippingUtils;
 		localPickupUtils: LocalPickupUtils;
 		miniCartUtils: MiniCartUtils;
-		wordPressVersion: 'stable' | 'previous' | 'nightly';
 	},
 	{
 		requestUtils: RequestUtils;
@@ -173,26 +168,6 @@ const test = base.extend<
 		},
 		{ scope: 'worker', auto: true },
 	],
-	wordPressVersion: async ( {}, use ) => {
-		// Specific the version of WordPress only with x.y format.
-		const latestMinus1Version = 6.6;
-		const stableVersion = 6.7;
-		const nightlyVersion = 6.8;
-		const installedVersion = await getInstalledWordPressVersion();
-
-		if ( installedVersion === latestMinus1Version ) {
-			await use( 'previous' );
-			return;
-		}
-
-		if ( installedVersion === stableVersion ) {
-			await use( 'stable' );
-		}
-
-		if ( installedVersion === nightlyVersion ) {
-			await use( 'nightly' );
-		}
-	},
 } );
 
 export { test, expect };
