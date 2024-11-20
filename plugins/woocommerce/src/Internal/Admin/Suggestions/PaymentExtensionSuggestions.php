@@ -1854,8 +1854,8 @@ final class PaymentExtensionSuggestions {
 				'title'             => esc_html__( 'Accept payments with Woo', 'woocommerce' ),
 				'short_description' => esc_html__( 'Credit/debit cards, Apple Pay, Google Pay and more.', 'woocommerce' ),
 				'description'       => esc_html__( 'With WooPayments, you can securely accept major cards, Apple Pay, and payments in over 100 currencies. Track cash flow and manage recurring revenue directly from your store’s dashboard - with no setup costs or monthly fees.', 'woocommerce' ),
-				'image'             => plugins_url( 'assets/images/onboarding/wcpay.svg', WC_PLUGIN_FILE ),
-				'icon'              => plugins_url( 'assets/images/onboarding/wcpay.svg', WC_PLUGIN_FILE ),
+				'image'             => plugins_url( 'assets/images/onboarding/woopayments.svg', WC_PLUGIN_FILE ),
+				'icon'              => plugins_url( 'assets/images/onboarding/woopayments.svg', WC_PLUGIN_FILE ),
 				'plugin'            => array(
 					'_type' => self::PLUGIN_TYPE_WPORG,
 					'slug'  => 'woocommerce-payments',
