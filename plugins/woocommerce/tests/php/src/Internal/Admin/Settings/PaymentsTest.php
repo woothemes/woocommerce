@@ -143,7 +143,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->mock_extension_suggestions->expects( $this->once() )
 			->method( 'get_country_extensions' )
 			->with( $location )
-			->willReturn( [] );
+			->willReturn( array() );
 
 		// Act.
 		$suggestions = $this->service->get_extension_suggestions( $location );
@@ -161,7 +161,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 	 */
 	public function test_get_extension_suggestions_with_no_psp_enabled() {
 		// Arrange.
-		$location = 'US';
+		$location         = 'US';
 		$base_suggestions = array(
 			array(
 				'id'                => 'suggestion1',
@@ -267,7 +267,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 					),
 				),
 				'tags'              => array( 'tag5' ),
-			)
+			),
 		);
 
 		$this->mock_extension_suggestions->expects( $this->once() )
@@ -360,7 +360,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		// Arrange.
 		$this->enable_core_paypal_pg();
 
-		$location = 'US';
+		$location         = 'US';
 		$base_suggestions = array(
 			array(
 				'id'                => 'suggestion1',
@@ -466,13 +466,13 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 					),
 				),
 				'tags'              => array( 'tag5' ),
-			)
+			),
 		);
 
 		$this->mock_extension_suggestions->expects( $this->once() )
-										 ->method( 'get_country_extensions' )
-										 ->with( $location )
-										 ->willReturn( $base_suggestions );
+										->method( 'get_country_extensions' )
+										->with( $location )
+										->willReturn( $base_suggestions );
 
 		// Act.
 		$suggestions = $this->service->get_extension_suggestions( $location );
@@ -499,7 +499,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 	 */
 	public function test_get_extension_suggestions_ordered_by_priority() {
 		// Arrange.
-		$location = 'US';
+		$location         = 'US';
 		$base_suggestions = array(
 			array(
 				'id'                => 'suggestion1',
@@ -605,7 +605,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 					),
 				),
 				'tags'              => array( 'tag5', ExtensionSuggestions::TAG_PREFERRED ),
-			)
+			),
 		);
 
 		$this->mock_extension_suggestions->expects( $this->once() )
@@ -650,7 +650,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 			)
 		);
 
-		$location = 'US';
+		$location         = 'US';
 		$base_suggestions = array(
 			array(
 				'id'                => 'suggestion1', // This suggestion is hidden.
@@ -791,7 +791,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		// Arrange.
 		$this->enable_core_paypal_pg();
 
-		$location = 'US';
+		$location         = 'US';
 		$base_suggestions = array(
 			array(
 				'id'                => 'suggestion1',
@@ -897,7 +897,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 					),
 				),
 				'tags'              => array( 'tag5' ),
-			)
+			),
 		);
 
 		$this->mock_extension_suggestions->expects( $this->once() )
@@ -949,7 +949,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 	 */
 	public function test_get_extension_suggestion_by_id() {
 		// Arrange.
-		$suggestion_id = 'suggestion1';
+		$suggestion_id      = 'suggestion1';
 		$suggestion_details = array(
 			'id'                => $suggestion_id,
 			'_priority'         => 1,
@@ -1015,7 +1015,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 	 */
 	public function test_get_extension_suggestion_by_plugin_slug() {
 		// Arrange.
-		$slug = 'slug1';
+		$slug               = 'slug1';
 		$suggestion_details = array(
 			'id'                => 'suggestion1',
 			'_priority'         => 1,
@@ -1127,14 +1127,14 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 	 */
 	public function test_hide_extension_suggestion_already_hidden() {
 		// Arrange.
-		$suggestion_id = 'suggestion1';
+		$suggestion_id  = 'suggestion1';
 		$hide_timestamp = 123;
 
 		update_user_meta(
 			$this->store_admin_id,
 			Payments::USER_PAYMENTS_NOX_PROFILE_KEY,
 			array(
-				'something_other' => 'value',
+				'something_other'    => 'value',
 				'hidden_suggestions' => array(
 					array(
 						'id'        => $suggestion_id,
@@ -1175,7 +1175,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 			$this->store_admin_id,
 			Payments::USER_PAYMENTS_NOX_PROFILE_KEY,
 			array(
-				'something_other' => 'value',
+				'something_other'    => 'value',
 				'hidden_suggestions' => array(
 					array(
 						'id'        => 'suggestion2',
@@ -1213,7 +1213,13 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 	 */
 	private function load_core_paypal_pg() {
 		// Make sure the WC core PayPal gateway is loaded.
-		update_option( 'woocommerce_paypal_settings', array( '_should_load' => 'yes', 'enabled' => 'no' ) );
+		update_option(
+			'woocommerce_paypal_settings',
+			array(
+				'_should_load' => 'yes',
+				'enabled'      => 'no',
+			)
+		);
 		// Make sure the store currency is supported by the gateway.
 		update_option( 'woocommerce_currency', 'USD' );
 		WC()->payment_gateways()->init();
@@ -1229,7 +1235,13 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 	 */
 	private function enable_core_paypal_pg() {
 		// Enable the WC core PayPal gateway.
-		update_option( 'woocommerce_paypal_settings', array( '_should_load' => 'yes', 'enabled' => 'yes' ) );
+		update_option(
+			'woocommerce_paypal_settings',
+			array(
+				'_should_load' => 'yes',
+				'enabled'      => 'yes',
+			)
+		);
 		// Make sure the store currency is supported by the gateway.
 		update_option( 'woocommerce_currency', 'USD' );
 		WC()->payment_gateways()->init();
