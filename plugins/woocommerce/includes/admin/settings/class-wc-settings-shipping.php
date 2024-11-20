@@ -8,6 +8,7 @@
 
 use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Internal\Admin\WCAdminAssets;
+use Automattic\WooCommerce\Admin\Features\Features;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -26,6 +27,11 @@ class WC_Settings_Shipping extends WC_Settings_Page {
 	public function __construct() {
 		$this->id    = 'shipping';
 		$this->label = __( 'Shipping', 'woocommerce' );
+
+		if ( Features::is_enabled( 'settings' ) ) {
+			$this->is_modern = true;
+			WCAdminAssets::register_script( 'wp-admin-scripts', 'shipping-settings', true, array() );
+		}
 
 		parent::__construct();
 	}
