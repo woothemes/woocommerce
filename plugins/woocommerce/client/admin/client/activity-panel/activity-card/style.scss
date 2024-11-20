@@ -263,17 +263,24 @@
 
 .woocommerce-stock-activity-card__image-overlay__product {
 	position: relative;
+	display: inline-block;
 
-	&.is-placeholder::before {
-		background-color: $gray-700;
-		border-radius: 2px;
-		content: "";
-		position: absolute;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		top: 0;
-		opacity: 0.1;
+	&.is-placeholder {
+		&::before {
+			background-color: $gray-700;
+			border-radius: 2px;
+			content: "";
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			top: 0;
+			opacity: 0.1;
+		}
+
+		.woocommerce-product-image {
+			display: block;
+		}
 	}
 }
 
