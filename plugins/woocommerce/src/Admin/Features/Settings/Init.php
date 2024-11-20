@@ -147,8 +147,8 @@ class Init {
 		foreach ( $setting_pages as $setting_page ) {
 			$pages = $setting_page->add_settings_page_data( $pages );
 		}
-
-		$settings['settingsData'] = Transformer::transform( $pages );
+		$transformer              = new Transformer();
+		$settings['settingsData'] = $transformer->transform( $pages );
 
 		return $settings;
 	}

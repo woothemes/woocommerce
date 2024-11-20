@@ -16,14 +16,14 @@ class Transformer {
 	 *
 	 * @var array|null
 	 */
-	private static ?array $current_group = null;
+	private ?array $current_group = null;
 
 	/**
 	 * Current checkbox group being processed.
 	 *
 	 * @var array|null
 	 */
-	private static ?array $current_checkbox_group = null;
+	private ?array $current_checkbox_group = null;
 
 	/**
 	 * Transform settings data.
@@ -32,7 +32,7 @@ class Transformer {
 	 *
 	 * @return array Transformed settings data.
 	 */
-	public static function transform( array $raw_settings ): array {
+	public function transform( array $raw_settings ): array {
 		$transformed = array();
 
 		foreach ( $raw_settings as $tab_id => $tab ) {
@@ -43,7 +43,7 @@ class Transformer {
 			}
 
 			$transformed[ $tab_id ]             = $tab;
-			$transformed[ $tab_id ]['sections'] = self::transform_sections( $tab['sections'] );
+			$transformed[ $tab_id ]['sections'] = $this->transform_sections( $tab['sections'] );
 		}
 
 		return $transformed;
@@ -56,7 +56,7 @@ class Transformer {
 	 *
 	 * @return array Transformed sections.
 	 */
-	private static function transform_sections( array $sections ): array {
+	private function transform_sections( array $sections ): array {
 		$transformed_sections = array();
 
 		foreach ( $sections as $section_id => $section ) {
@@ -67,7 +67,7 @@ class Transformer {
 			}
 
 			$transformed_sections[ $section_id ]             = $section;
-			$transformed_sections[ $section_id ]['settings'] = self::transform_section_settings( $section['settings'] );
+			$transformed_sections[ $section_id ]['settings'] = $this->transform_section_settings( $section['settings'] );
 		}
 
 		return $transformed_sections;
@@ -80,14 +80,14 @@ class Transformer {
 	 *
 	 * @return array Transformed settings.
 	 */
-	private static function transform_section_settings( array $settings ): array {
-		self::reset_state();
+	private function transform_section_settings( array $settings ): array {
+		$this->reset_state();
 		$transformed_settings = array();
 
 		foreach ( $settings as $setting ) {
-			self::process_setting( $setting, $transformed_settings );
+			$this->process_setting( $setting, $transformed_settings );
 		}
-		self::finalize_transformation( $transformed_settings );
+		$this->finalize_transformation( $transformed_settings );
 
 		return $transformed_settings;
 	}
@@ -98,30 +98,30 @@ class Transformer {
 	 * @param array $setting Setting to process.
 	 * @param array $transformed_settings Transformed settings array.
 	 */
-	private static function process_setting( array $setting, array &$transformed_settings ): void {
+	private function process_setting( array $setting, array &$transformed_settings ): void {
 		$type = $setting['type'] ?? '';
 
-		if ( self::$current_checkbox_group && 'checkbox' !== $type ) {
+		if ( $this->current_checkbox_group && 'checkbox' !== $type ) {
 			// It's expected that a checkbox group will always be closed before a non-checkbox setting.
 			// If not, it's likely a checkbox group was not closed properly so we flush the current checkbox group and add the setting as-is.
-			self::flush_current_checkbox_group( $transformed_settings );
+			$this->flush_current_checkbox_group( $transformed_settings );
 		}
 
 		switch ( $type ) {
 			case 'title':
-				self::handle_group_start( $setting, $transformed_settings );
+				$this->handle_group_start( $setting, $transformed_settings );
 				break;
 
 			case 'sectionend':
-				self::handle_group_end( $setting, $transformed_settings );
+				$this->handle_group_end( $setting, $transformed_settings );
 				break;
 
 			case 'checkbox':
-				self::handle_checkbox_setting( $setting, $transformed_settings );
+				$this->handle_checkbox_setting( $setting, $transformed_settings );
 				break;
 
 			default:
-				self::add_setting( $setting, $transformed_settings );
+				$this->add_setting( $setting, $transformed_settings );
 				break;
 		}
 	}
@@ -132,19 +132,19 @@ class Transformer {
 	 * @param array $setting Setting to add.
 	 * @param array $transformed_settings Transformed settings array.
 	 */
-	private static function handle_group_start( array $setting, array &$transformed_settings ): void {
+	private function handle_group_start( array $setting, array &$transformed_settings ): void {
 		// If setting doesn't have an ID, add it as-is since we will be unable to match it with a sectionend.
 		if ( ! isset( $setting['id'] ) ) {
-			self::add_setting( $setting, $transformed_settings );
+			$this->add_setting( $setting, $transformed_settings );
 			return;
 		}
 
 		// If we already have a group, flush it to settings before starting a new one.
-		if ( self::$current_group ) {
-			self::flush_current_group( $transformed_settings );
+		if ( $this->current_group ) {
+			$this->flush_current_group( $transformed_settings );
 		}
 
-		self::$current_group = array( $setting );
+		$this->current_group = array( $setting );
 	}
 
 	/**
@@ -153,30 +153,30 @@ class Transformer {
 	 * @param array $setting Setting to add.
 	 * @param array $transformed_settings Transformed settings array.
 	 */
-	private static function handle_group_end( array $setting, array &$transformed_settings ): void {
-		$ids_match = self::$current_group &&
-			isset( self::$current_group[0]['id'] ) &&
+	private function handle_group_end( array $setting, array &$transformed_settings ): void {
+		$ids_match = $this->current_group &&
+			isset( $this->current_group[0]['id'] ) &&
 			isset( $setting['id'] ) &&
-			self::$current_group[0]['id'] === $setting['id'];
+			$this->current_group[0]['id'] === $setting['id'];
 
 		// If IDs match, add the group and close it.
 		if ( $ids_match ) {
 			// Compose the group setting.
-			$title_setting          = array_shift( self::$current_group );
+			$title_setting          = array_shift( $this->current_group );
 			$transformed_settings[] = array_merge(
 				$title_setting,
 				array(
 					'type'     => 'group',
-					'settings' => self::$current_group,
+					'settings' => $this->current_group,
 				)
 			);
-			self::$current_group    = null;
+			$this->current_group    = null;
 			return;
 		}
 
 		// If IDs don't match, we don't need to transform anything so flush the current group.
-		self::flush_current_group( $transformed_settings );
-		self::add_setting( $setting, $transformed_settings );
+		$this->flush_current_group( $transformed_settings );
+		$this->add_setting( $setting, $transformed_settings );
 	}
 
 	/**
@@ -184,10 +184,10 @@ class Transformer {
 	 *
 	 * @param array $transformed_settings Transformed settings array.
 	 */
-	private static function flush_current_group( array &$transformed_settings ): void {
-		if ( is_array( self::$current_group ) ) {
-			$transformed_settings = array_merge( $transformed_settings, self::$current_group );
-			self::$current_group  = null;
+	private function flush_current_group( array &$transformed_settings ): void {
+		if ( is_array( $this->current_group ) ) {
+			$transformed_settings = array_merge( $transformed_settings, $this->current_group );
+			$this->current_group  = null;
 		}
 	}
 
@@ -197,20 +197,20 @@ class Transformer {
 	 * @param array $setting Setting to add.
 	 * @param array $transformed_settings Transformed settings array.
 	 */
-	private static function handle_checkbox_setting( array $setting, array &$transformed_settings ): void {
+	private function handle_checkbox_setting( array $setting, array &$transformed_settings ): void {
 		$checkboxgroup = $setting['checkboxgroup'] ?? '';
 
 		switch ( $checkboxgroup ) {
 			case 'start':
-				self::start_checkbox_group( $setting, $transformed_settings );
+				$this->start_checkbox_group( $setting, $transformed_settings );
 				break;
 
 			case 'end':
-				self::end_checkbox_group( $setting, $transformed_settings );
+				$this->end_checkbox_group( $setting, $transformed_settings );
 				break;
 
 			default:
-				self::handle_checkbox_group_item( $setting, $transformed_settings );
+				$this->handle_checkbox_group_item( $setting, $transformed_settings );
 				break;
 		}
 	}
@@ -221,13 +221,13 @@ class Transformer {
 	 * @param array $setting Setting to add.
 	 * @param array $transformed_settings Transformed settings array.
 	 */
-	private static function start_checkbox_group( array $setting, array &$transformed_settings ): void {
+	private function start_checkbox_group( array $setting, array &$transformed_settings ): void {
 		// If we already have an open checkbox group, flush it to settings before starting a new one.
-		if ( is_array( self::$current_checkbox_group ) ) {
-			self::flush_current_checkbox_group( $transformed_settings );
+		if ( is_array( $this->current_checkbox_group ) ) {
+			$this->flush_current_checkbox_group( $transformed_settings );
 		}
 
-		self::$current_checkbox_group = array( $setting );
+		$this->current_checkbox_group = array( $setting );
 	}
 
 	/**
@@ -236,24 +236,24 @@ class Transformer {
 	 * @param array $setting Setting to add.
 	 * @param array $transformed_settings Transformed settings array.
 	 */
-	private static function end_checkbox_group( array $setting, array &$transformed_settings ): void {
-		if ( empty( self::$current_checkbox_group ) ) {
+	private function end_checkbox_group( array $setting, array &$transformed_settings ): void {
+		if ( empty( $this->current_checkbox_group ) ) {
 			// If we don't have an open checkbox group, add the setting as-is.
-			self::add_setting( $setting, $transformed_settings );
+			$this->add_setting( $setting, $transformed_settings );
 			return;
 		}
 
-		self::$current_checkbox_group[] = $setting;
-		$first_setting                  = self::$current_checkbox_group[0];
+		$this->current_checkbox_group[] = $setting;
+		$first_setting                  = $this->current_checkbox_group[0];
 
 		$checkbox_group_setting = array(
 			'type'     => 'checkboxgroup',
 			'title'    => $first_setting['title'] ?? '',
-			'settings' => self::$current_checkbox_group,
+			'settings' => $this->current_checkbox_group,
 		);
 
-		self::add_setting( $checkbox_group_setting, $transformed_settings );
-		self::$current_checkbox_group = null;
+		$this->add_setting( $checkbox_group_setting, $transformed_settings );
+		$this->current_checkbox_group = null;
 	}
 
 	/**
@@ -262,14 +262,14 @@ class Transformer {
 	 * @param array $setting Setting to add.
 	 * @param array $transformed_settings Transformed settings array.
 	 */
-	private static function handle_checkbox_group_item( array $setting, array &$transformed_settings ): void {
-		if ( is_array( self::$current_checkbox_group ) ) {
-			self::$current_checkbox_group[] = $setting;
+	private function handle_checkbox_group_item( array $setting, array &$transformed_settings ): void {
+		if ( is_array( $this->current_checkbox_group ) ) {
+			$this->current_checkbox_group[] = $setting;
 			return;
 		}
 
 		// If we don't have an open checkbox group, add the setting as-is.
-		self::add_setting( $setting, $transformed_settings );
+		$this->add_setting( $setting, $transformed_settings );
 	}
 
 	/**
@@ -277,10 +277,10 @@ class Transformer {
 	 *
 	 * @param array $transformed_settings Transformed settings array.
 	 */
-	private static function flush_current_checkbox_group( array &$transformed_settings ): void {
-		if ( is_array( self::$current_checkbox_group ) ) {
-			$transformed_settings         = array_merge( $transformed_settings, self::$current_checkbox_group );
-			self::$current_checkbox_group = null;
+	private function flush_current_checkbox_group( array &$transformed_settings ): void {
+		if ( is_array( $this->current_checkbox_group ) ) {
+			$transformed_settings         = array_merge( $transformed_settings, $this->current_checkbox_group );
+			$this->current_checkbox_group = null;
 		}
 	}
 
@@ -290,9 +290,9 @@ class Transformer {
 	 * @param array $setting Setting to add.
 	 * @param array $transformed_settings Transformed settings array.
 	 */
-	private static function add_setting( array $setting, array &$transformed_settings ): void {
-		if ( is_array( self::$current_group ) ) {
-			self::$current_group[] = $setting;
+	private function add_setting( array $setting, array &$transformed_settings ): void {
+		if ( is_array( $this->current_group ) ) {
+			$this->current_group[] = $setting;
 			return;
 		}
 
@@ -304,16 +304,16 @@ class Transformer {
 	 *
 	 * @param array &$transformed_settings Transformed settings array.
 	 */
-	private static function finalize_transformation( array &$transformed_settings ): void {
-		self::flush_current_group( $transformed_settings );
-		self::flush_current_checkbox_group( $transformed_settings );
+	private function finalize_transformation( array &$transformed_settings ): void {
+		$this->flush_current_group( $transformed_settings );
+		$this->flush_current_checkbox_group( $transformed_settings );
 	}
 
 	/**
 	 * Reset the state to its initial values.
 	 */
-	public static function reset_state(): void {
-		self::$current_group          = null;
-		self::$current_checkbox_group = null;
+	public function reset_state(): void {
+		$this->current_group          = null;
+		$this->current_checkbox_group = null;
 	}
 }

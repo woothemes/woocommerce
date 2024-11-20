@@ -14,13 +14,20 @@ use WC_Unit_Test_Case;
  */
 class TransformerTest extends WC_Unit_Test_Case {
 	/**
+	 * Transformer instance.
+	 *
+	 * @var Transformer
+	 */
+	private Transformer $transformer;
+
+	/**
 	 * Set things up before each test case.
 	 *
 	 * @return void
 	 */
 	public function setUp(): void {
 		parent::setUp();
-		Transformer::reset_state();
+		$this->transformer = new Transformer();
 	}
 
 	/**
@@ -28,7 +35,7 @@ class TransformerTest extends WC_Unit_Test_Case {
 	 * @param array $input Input data.
 	 */
 	public function test_basic_transformations( array $input ): void {
-		$this->assertEquals( $input, Transformer::transform( $input ) );
+		$this->assertEquals( $input, $this->transformer->transform( $input ) );
 	}
 
 	/**
@@ -67,7 +74,7 @@ class TransformerTest extends WC_Unit_Test_Case {
 	public function test_malformed_input( array $input, string $message ): void {
 		$this->assertEquals(
 			$input,
-			Transformer::transform( $input ),
+			$this->transformer->transform( $input ),
 			$message
 		);
 	}
@@ -166,7 +173,7 @@ class TransformerTest extends WC_Unit_Test_Case {
 			),
 		);
 
-		$this->assertEquals( $expected, Transformer::transform( $input ), 'Expected group to be transformed' );
+		$this->assertEquals( $expected, $this->transformer->transform( $input ), 'Expected group to be transformed' );
 	}
 
 
@@ -211,7 +218,7 @@ class TransformerTest extends WC_Unit_Test_Case {
 			),
 		);
 
-		$transformed = Transformer::transform( $input );
+		$transformed = $this->transformer->transform( $input );
 		$settings    = $transformed['tab1']['sections']['section1']['settings'];
 
 		$expected = array(
@@ -361,7 +368,7 @@ class TransformerTest extends WC_Unit_Test_Case {
 			),
 		);
 
-		$this->assertEquals( $expected, Transformer::transform( $input ) );
+		$this->assertEquals( $expected, $this->transformer->transform( $input ) );
 	}
 
 	/**
@@ -428,7 +435,7 @@ class TransformerTest extends WC_Unit_Test_Case {
 			),
 		);
 
-		$this->assertEquals( $expected, Transformer::transform( $input ), 'Expected checkbox group to be transformed' );
+		$this->assertEquals( $expected, $this->transformer->transform( $input ), 'Expected checkbox group to be transformed' );
 	}
 
 
@@ -474,7 +481,7 @@ class TransformerTest extends WC_Unit_Test_Case {
 			),
 		);
 
-		$this->assertEquals( $expected, Transformer::transform( $input ), 'Expected independent checkboxes to remain untransformed' );
+		$this->assertEquals( $expected, $this->transformer->transform( $input ), 'Expected independent checkboxes to remain untransformed' );
 	}
 
 	/**
@@ -529,7 +536,7 @@ class TransformerTest extends WC_Unit_Test_Case {
 			),
 		);
 
-		$this->assertEquals( $expected, Transformer::transform( $input ), 'Expected unmatched title and sectionend to remain untransformed' );
+		$this->assertEquals( $expected, $this->transformer->transform( $input ), 'Expected unmatched title and sectionend to remain untransformed' );
 	}
 
 	/**
@@ -565,7 +572,7 @@ class TransformerTest extends WC_Unit_Test_Case {
 
 		$expected = $input;
 
-		$this->assertEquals( $expected, Transformer::transform( $input ), 'Expected incomplete checkbox group to remain untransformed' );
+		$this->assertEquals( $expected, $this->transformer->transform( $input ), 'Expected incomplete checkbox group to remain untransformed' );
 	}
 
 	/**
@@ -594,7 +601,7 @@ class TransformerTest extends WC_Unit_Test_Case {
 
 		$expected = $input;
 
-		$this->assertEquals( $expected, Transformer::transform( $input ), 'Expected orphaned end checkbox to remain untransformed' );
+		$this->assertEquals( $expected, $this->transformer->transform( $input ), 'Expected orphaned end checkbox to remain untransformed' );
 	}
 
 		/**
@@ -667,6 +674,6 @@ class TransformerTest extends WC_Unit_Test_Case {
 			),
 		);
 
-		$this->assertEquals( $expected, Transformer::transform( $input ), 'Expected nested sectionend and checkboxgroup to be transformed' );
+		$this->assertEquals( $expected, $this->transformer->transform( $input ), 'Expected nested sectionend and checkboxgroup to be transformed' );
 	}
 }
