@@ -36,24 +36,20 @@ export const ShippingAddress = (): JSX.Element => {
 
 	const deliversToLabel = hasRates
 		? // Translators: <address/> is the formatted shipping address.
-		  __( 'Delivers to <strong><address/></strong>', 'woocommerce' )
+		  __( 'Delivers to <address/>', 'woocommerce' )
 		: // Translators: <address/> is the formatted shipping address.
-		  __(
-				'No delivery options available for <strong><address/></strong>',
-				'woocommerce'
-		  );
+		  __( 'No delivery options available for <address/>', 'woocommerce' );
 
 	const addressLabel = prefersCollection
 		? // Translators: <address/> is the pickup location.
-		  __( 'Collection from <strong><address/></strong>', 'woocommerce' )
+		  __( 'Collection from <address/>', 'woocommerce' )
 		: deliversToLabel;
 
 	const title = (
 		<p className="wc-block-components-totals-shipping-address-summary">
 			{ !! formattedAddress ? (
 				createInterpolateElement( addressLabel, {
-					strong: <strong />,
-					address: <>{ formattedAddress }</>,
+					address: <strong>{ formattedAddress }</strong>,
 				} )
 			) : (
 				<>
