@@ -103,10 +103,6 @@ const Block = (): JSX.Element => {
 		setAdditionalFields( additionalValues );
 
 		if ( billingAddress.email === newAddress.email ) {
-			console.log(
-				'Additional fields changed, PUTTING',
-				newAddress.additionalValues
-			);
 			apiFetchWithHeaders( {
 				path: '/wc/store/v1/checkout',
 				method: 'PUT',

@@ -26,7 +26,6 @@ const Block: FunctionComponent = () => {
 
 	const onChangeForm = ( additionalValues ) => {
 		setAdditionalFields( additionalValues );
-		console.log( 'additional info changed, PUTTING' );
 		apiFetchWithHeaders( {
 			path: '/wc/store/v1/checkout',
 			method: 'PUT',
