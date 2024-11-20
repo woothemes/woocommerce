@@ -240,7 +240,7 @@ class Checkout extends AbstractCartRoute {
 	 */
 	protected function get_route_post_response( \WP_REST_Request $request ) {
 		/**
-		 * Ensure required privileges are met to place the order.
+		 * Ensure required permissions based on store settings are valid to place the order.
 		 */
 		$this->validate_user_can_place_order();
 
