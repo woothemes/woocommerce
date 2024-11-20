@@ -140,6 +140,10 @@ const getModernPages = () => {
  */
 export function useModernRoutes() {
 	const [ routes, setRoutes ] = useState( getModernPages() );
+	const location = useLocation() as Location;
+
+	// console.log( 'updating routes' );
+	// console.log( getModernPages()[ 'shipping' ].paul );
 
 	/*
 	 * Handler for new pages being added after the initial filter has been run,
@@ -166,7 +170,7 @@ export function useModernRoutes() {
 		};
 	}, [] );
 
-	return routes;
+	return getModernPages();
 }
 
 /**
