@@ -165,6 +165,7 @@
 		"postcss-loader": "^4.3.0",
 		"qrcode.react": "^3.1.0",
 		"react": "17.0.x",
+		"redux": "4.2.1",
 		"rimraf": "5.0.5",
 		"sass-loader": "^10.5.0",
 		"ts-jest": "29.1.x",

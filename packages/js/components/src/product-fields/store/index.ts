@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { createReduxStore, register } from '@wordpress/data';
-import type { StoreConfig } from '@wordpress/data';
+import type { Reducer } from 'redux';
 
 /**
  * Internal dependencies
@@ -14,7 +14,7 @@ import { STORE_NAME } from './constants';
 import type { ProductFieldState } from './types';
 
 export const store = createReduxStore( STORE_NAME, {
-	reducer: reducer as StoreConfig< ProductFieldState >[ 'reducer' ],
+	reducer: reducer as Reducer< ProductFieldState >,
 	selectors,
 	actions,
 } );
