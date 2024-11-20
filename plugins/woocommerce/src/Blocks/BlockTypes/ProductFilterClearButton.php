@@ -43,13 +43,16 @@ final class ProductFilterClearButton extends AbstractBlock {
 	 */
 	protected function render( $attributes, $content, $block ) {
 		// don't render if its admin, or ajax in progress.
-		if ( is_admin() || wp_doing_ajax() ) {
+		if ( is_admin() || wp_doing_ajax() || empty( $block->context['filterData'] ) ) {
 			return '';
 		}
 
+		$parent = $block->context['filterData']['parent'] ?? '';
+
 		$wrapper_attributes = get_block_wrapper_attributes(
 			array(
-				'data-wc-bind--hidden' => '!context.hasSelectedFilters',
+				'data-wc-bind--hidden' => '!state.hasSelectedFilters',
+				'data-wc-interactive'  => wp_json_encode( array( 'namespace' => $parent ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
 			)
 		);
 
