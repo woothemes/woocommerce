@@ -187,6 +187,8 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 
 		if ( ! empty( $request['exclude_status'] ) ) {
 			$this->exclude_status = $request['exclude_status'];
+		} else {
+			$this->exclude_status = array();
 		}
 
 		// Taxonomy query to filter products by type, category,
