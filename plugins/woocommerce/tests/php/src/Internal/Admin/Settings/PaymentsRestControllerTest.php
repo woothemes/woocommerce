@@ -90,6 +90,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	 */
 	public function test_get_payment_providers_by_user_without_caps() {
 		// Arrange.
+		// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 		$filter_callback = fn( $caps ) => array(
 			'manage_woocommerce' => false,
 			'install_plugins'    => false,
@@ -114,6 +115,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	 */
 	public function test_get_payment_providers_by_manager_without_install_plugins_cap() {
 		// Arrange.
+		// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 		$filter_callback = fn( $caps ) => array(
 			'manage_woocommerce' => true,
 			'install_plugins'    => false,
@@ -205,6 +207,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$this->mock_extension_suggestions( 'US' );
 		$this->mock_extension_suggestions_categories();
 
+		// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 		$filter_callback = fn( $caps ) => array(
 			'manage_woocommerce' => true,
 			'install_plugins'    => true,
