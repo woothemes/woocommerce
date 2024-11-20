@@ -21,6 +21,7 @@ import { Form } from '@woocommerce/base-components/cart-checkout';
  * Internal dependencies
  */
 import CreatePassword from './create-password';
+import { apiFetchWithHeaders } from '../../../../data/shared-controls';
 
 const CreateAccountUI = (): React.ReactElement | null => {
 	const { shouldCreateAccount } = useSelect( ( select ) => {
@@ -100,6 +101,18 @@ const Block = (): JSX.Element => {
 		const { email, ...additionalValues } = newAddress;
 		onChangeEmail( email );
 		setAdditionalFields( additionalValues );
+
+		if ( billingAddress.email === newAddress.email ) {
+			console.log(
+				'Additional fields changed, PUTTING',
+				newAddress.additionalValues
+			);
+			apiFetchWithHeaders( {
+				path: '/wc/store/v1/checkout',
+				method: 'PUT',
+				body: JSON.stringify( additionalValues ),
+			} );
+		}
 	};
 	const contactFormValues = {
 		email: billingAddress.email,
