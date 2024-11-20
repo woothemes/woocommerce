@@ -13,6 +13,6 @@ export interface ControlProps<ItemType> {
 	options: ItemType[];
 	value: ItemType;
 	placeholder?: string;
-	onChange?: (value: ItemType) => void;
-	children?: (item: ItemType) => JSX.Element;
+	onChange: ( value: string ) => void;
+	children?: ( item: ItemType ) => JSX.Element;
 }
