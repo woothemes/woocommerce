@@ -1,5 +1,7 @@
 == Changelog ==
 
+= 9.5.0 2024-XX-XX =
+
 = 9.3.3 2024-09-25 =
 
 **WooCommerce**
