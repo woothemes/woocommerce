@@ -1,20 +1,72 @@
 /**
  * External dependencies
  */
-import { store, getContext } from '@woocommerce/interactivity';
+import { store, getContext, getElement } from '@woocommerce/interactivity';
 
 /**
  * Internal dependencies
  */
-import { ProductFiltersContext } from '../../frontend';
+import { ProductFiltersContext, ProductFiltersStore } from '../../frontend';
 
-store( 'woocommerce/product-filter-active', {
+type ProductFilterActiveContext = {
+	removeLabelTemplate: string;
+};
+
+const productFilterActiveStore = store( 'woocommerce/product-filter-active', {
+	state: {
+		get items() {
+			const context = getContext< ProductFilterActiveContext >();
+			const productFiltersStore = store< ProductFiltersStore >(
+				'woocommerce/product-filters'
+			);
+
+			return productFiltersStore.state.activeFilters.map( ( item ) => ( {
+				...item,
+				removeLabel: context.removeLabelTemplate.replace(
+					'{{label}}',
+					item.label
+				),
+			} ) );
+		},
+		get hasSelectedFilters() {
+			const productFiltersStore = store< ProductFiltersStore >(
+				'woocommerce/product-filters'
+			);
+			return productFiltersStore.state.activeFilters.length > 0;
+		},
+	},
 	actions: {
+		removeFilter: () => {
+			const { props } = getElement();
+			let filterItem = props[ 'data-filter-item' ];
+
+			if ( typeof filterItem === 'string' )
+				filterItem = JSON.parse( filterItem );
+
+			const { type, value } = filterItem;
+
+			if ( ! type || ! value ) return;
+
+			const productFiltersStore = store< ProductFiltersStore >(
+				'woocommerce/product-filters'
+			);
+
+			productFiltersStore.actions.removeActiveFilter( type, value );
+
+			productFiltersStore.actions.navigate();
+		},
 		clearFilters: () => {
 			const productFiltersContext = getContext< ProductFiltersContext >(
 				'woocommerce/product-filters'
 			);
-			productFiltersContext.params = {};
+			productFiltersContext.activeFilters = [];
+
+			const productFiltersStore = store< ProductFiltersStore >(
+				'woocommerce/product-filters'
+			);
+			productFiltersStore.actions.navigate();
 		},
 	},
 } );
+
+export type ProductFilterActiveStore = typeof productFilterActiveStore;
