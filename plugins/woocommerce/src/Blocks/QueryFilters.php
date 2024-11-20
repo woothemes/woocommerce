@@ -136,7 +136,7 @@ final class QueryFilters {
 	 *
 	 * @param array $query_vars The WP_Query arguments.
 	 */
-	public function get_onsale_status_counts( array $query_vars ) {
+	public function get_onsale_status_count( array $query_vars ) {
 		$transient_key = 'wc_onsale_status_count_' . md5( wp_json_encode( $query_vars ) );
 		$cached_data   = get_transient( $transient_key );
 
@@ -169,13 +169,9 @@ final class QueryFilters {
 
 		$result = $wpdb->get_var( $count_sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
-		$onsale_status_counts = array(
-			'onsale' => $result,
-		);
+		set_transient( $transient_key, $result );
 
-		set_transient( $transient_key, $onsale_status_counts );
-
-		return $onsale_status_counts;
+		return $result;
 	}
 
 	/**

@@ -214,12 +214,12 @@ class ProductQueryFilters {
 	}
 
 	/**
-	 * Get onsale counts for the current products.
+	 * Get onsale count for the current products.
 	 *
 	 * @param \WP_REST_Request $request The request object.
 	 * @return array rating=>count pairs.
 	 */
-	public function get_onsale_status_counts( $request ) {
+	public function get_onsale_status_count( $request ) {
 		$transient_key = 'wc_onsale_status_count_' . md5( wp_json_encode( $request ) );
 		$cached_data   = get_transient( $transient_key );
 
@@ -256,12 +256,8 @@ class ProductQueryFilters {
 
 		$results = $wpdb->get_var( $count_sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
-		$onsale_status_counts = array(
-			'onsale' => $results,
-		);
+		set_transient( $transient_key, $results );
 
-		set_transient( $transient_key, $onsale_status_counts );
-
-		return $onsale_status_counts;
+		return $results;
 	}
 }
