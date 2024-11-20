@@ -171,7 +171,6 @@ class ProductSummary extends AbstractBlock {
 	 *
 	 * @param string $source     Source text.
 	 * @param int    $max_length Limit number of items returned if text has multiple paragraphs.
-	 * @param string $count_type What is being counted, words or characters with/without spaces.
 	 * @return string Generated summary.
 	 */
 	private function generate_summary( $source, $max_length ) {
