@@ -188,10 +188,8 @@ export const useActiveRoute = (): {
 	const modernRoutes = useModernRoutes();
 
 	return useMemo( () => {
-		const {
-			tab: activePage = 'general',
-			section: activeSection = 'default',
-		} = location.params;
+		const { tab: activePage = 'general', section: activeSection } =
+			location.params;
 		const settingsPage = settingsData?.[ activePage ];
 
 		if ( ! settingsPage ) {
@@ -205,7 +203,7 @@ export const useActiveRoute = (): {
 			return {
 				route: getLegacyRoute(
 					activePage,
-					activeSection,
+					activeSection || 'default',
 					settingsPage,
 					settingsData
 				),
