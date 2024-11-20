@@ -557,7 +557,7 @@ class OrdersTableDataStore extends \Abstract_WC_Order_Data_Store_CPT implements 
 		}
 
 		$cache_engine  = wc_get_container()->get( WPCacheEngine::class );
-		$cache_group = $this->get_cache_group();
+		$cache_group   = $this->get_cache_group();
 		$return_values = array();
 
 		foreach ( $order_ids as $order_id ) {
@@ -590,7 +590,7 @@ class OrdersTableDataStore extends \Abstract_WC_Order_Data_Store_CPT implements 
 
 		$cache_engine       = wc_get_container()->get( WPCacheEngine::class );
 		$orders_invalidated = $cache_engine->delete_cache_group( $this->get_cache_group() );
-		$meta_invalidated = true;
+		$meta_invalidated   = true;
 		if ( is_callable( array( $this->data_store_meta, 'clear_cached_data' ) ) ) {
 			$meta_invalidated = $this->data_store_meta->clear_all_cached_data();
 		}

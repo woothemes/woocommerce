@@ -57,7 +57,7 @@ abstract class CustomMetaDataStore {
 	 * @return array
 	 */
 	public function read_meta( &$object ) {
-		$object_id = $object->get_id();
+		$object_id     = $object->get_id();
 		$raw_meta_data = $this->get_meta_data_for_object_ids( array( $object_id ) );
 
 		return isset( $raw_meta_data[ $object_id ] ) ? (array) $raw_meta_data[ $object_id ] : array();
