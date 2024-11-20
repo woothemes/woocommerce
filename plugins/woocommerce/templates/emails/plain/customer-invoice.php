@@ -15,6 +15,8 @@
  * @version 9.6.0
  */
 
+// phpcs:disable Universal.WhiteSpace.PrecisionAlignment.Found, Generic.WhiteSpace.DisallowSpaceIndent.SpacesUsed -- Plain text output needs specific spacing without tabs
+
 use Automattic\WooCommerce\Enums\OrderStatus;
 
 defined( 'ABSPATH' ) || exit;
@@ -29,21 +31,21 @@ echo sprintf( esc_html__( 'Hi %s,', 'woocommerce' ), esc_html( $order->get_billi
 if ( $order->needs_payment() ) {
 	if ( $order->has_status( OrderStatus::FAILED ) ) {
 		echo wp_kses_post(
-		     sprintf(
-		        /* translators: %1$s: Site title, %2$s: Order pay link */
-			     __( 'Sorry, your order on %1$s was unsuccessful. Your order details are below, with a link to try your payment again: %2$s', 'woocommerce' ),
-			     esc_html( get_bloginfo( 'name', 'display' ) ),
-			     esc_url( $order->get_checkout_payment_url() )
-		     )
+			sprintf(
+				/* translators: %1$s: Site title, %2$s: Order pay link */
+				__( 'Sorry, your order on %1$s was unsuccessful. Your order details are below, with a link to try your payment again: %2$s', 'woocommerce' ),
+				esc_html( get_bloginfo( 'name', 'display' ) ),
+				esc_url( $order->get_checkout_payment_url() )
+			)
 	    ) . "\n\n";
 	} else {
 		echo wp_kses_post(
-		     sprintf(
-		        /* translators: %1$s: Site title, %2$s: Order pay link */
-			     __( 'An order has been created for you on %1$s. Your invoice is below, with a link to make payment when you’re ready: %2$s', 'woocommerce' ),
-			     esc_html( get_bloginfo( 'name', 'display' ) ),
-			     esc_url( $order->get_checkout_payment_url() )
-		     )
+			sprintf(
+				/* translators: %1$s: Site title, %2$s: Order pay link */
+				__( 'An order has been created for you on %1$s. Your invoice is below, with a link to make payment when you’re ready: %2$s', 'woocommerce' ),
+				esc_html( get_bloginfo( 'name', 'display' ) ),
+				esc_url( $order->get_checkout_payment_url() )
+			)
 	    ) . "\n\n";
 	}
 } else {
@@ -89,3 +91,5 @@ if ( $additional_content ) {
 }
 
 echo wp_kses_post( apply_filters( 'woocommerce_email_footer_text', get_option( 'woocommerce_email_footer_text' ) ) );
+
+// phpcs:enable Universal.WhiteSpace.PrecisionAlignment.Found, Generic.WhiteSpace.DisallowSpaceIndent.SpacesUsed
