@@ -136,7 +136,11 @@ const productFiltersStore = store( 'woocommerce/product-filters', {
 					return a.label
 						.toLowerCase()
 						.localeCompare( b.label.toLowerCase() );
-				} );
+				} )
+				.map( ( item ) => ( {
+					...item,
+					uid: `${ item.type }/${ item.value }`,
+				} ) );
 		},
 	},
 	actions: {
