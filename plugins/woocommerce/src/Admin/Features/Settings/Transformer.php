@@ -42,10 +42,8 @@ class Transformer {
 				continue;
 			}
 
-			$transformed[ $tab_id ] = array_merge(
-				$tab,
-				array( 'sections' => self::transform_sections( $tab['sections'] ) )
-			);
+			$transformed[ $tab_id ]             = $tab;
+			$transformed[ $tab_id ]['sections'] = self::transform_sections( $tab['sections'] );
 		}
 
 		return $transformed;
@@ -68,10 +66,8 @@ class Transformer {
 				continue;
 			}
 
-			$transformed_sections[ $section_id ] = array_merge(
-				$section,
-				array( 'settings' => self::transform_section_settings( $section['settings'] ) )
-			);
+			$transformed_sections[ $section_id ]             = $section;
+			$transformed_sections[ $section_id ]['settings'] = self::transform_section_settings( $section['settings'] );
 		}
 
 		return $transformed_sections;
