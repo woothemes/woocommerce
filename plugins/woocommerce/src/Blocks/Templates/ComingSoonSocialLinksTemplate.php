@@ -36,7 +36,7 @@ class ComingSoonSocialLinksTemplate extends AbstractTemplatePart {
 	 * @return string
 	 */
 	public function get_template_title() {
-		return _x( 'Page: Coming soon social links', 'Template name', 'woocommerce' );
+		return _x( 'Coming soon social links', 'Template name', 'woocommerce' );
 	}
 
 	/**
