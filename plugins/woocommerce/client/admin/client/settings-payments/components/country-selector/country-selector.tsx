@@ -6,13 +6,14 @@ import { Button } from '@wordpress/components';
 import { useCallback } from '@wordpress/element';
 import classNames from 'classnames';
 import { __, sprintf } from '@wordpress/i18n';
-import { chevronDown, Icon } from '@wordpress/icons';
+import { check, chevronDown, Icon } from '@wordpress/icons';
 import { useSelect, UseSelectState, StateChangeOptions } from 'downshift';
 
 /**
  * Internal Dependencies
  */
 import { Item, ControlProps } from './types';
+import './style.scss';
 
 // Get the label for the selected option
 const getOptionLabel = ( value: string, options: Item[] ) => { 
@@ -101,6 +102,7 @@ export const CountrySelector = <ItemType extends Item>({
     const onApplyHandler = useCallback(
         ( e: React.MouseEvent<HTMLButtonElement> ) => {
             e.stopPropagation();
+			onChange( selectedItem.key );
             closeMenu();
         },
         [ onChange, selectedItem, closeMenu ]
