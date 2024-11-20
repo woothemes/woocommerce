@@ -90,7 +90,10 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	 */
 	public function test_get_payment_providers_by_user_without_caps() {
 		// Arrange.
-		$filter_callback = fn( $caps ) => [ 'manage_woocommerce' => false, 'install_plugins' => false ];
+		$filter_callback = fn( $caps ) => array(
+			'manage_woocommerce' => false,
+			'install_plugins'    => false,
+		);
 		add_filter( 'user_has_cap', $filter_callback );
 
 		// Act.
@@ -101,7 +104,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$this->assertEquals( rest_authorization_required_code(), $response->get_status() );
 
 		// Clean up.
-		remove_filter( 'user_has_cap', $filter_callback  );
+		remove_filter( 'user_has_cap', $filter_callback );
 	}
 
 	/**
@@ -111,7 +114,10 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	 */
 	public function test_get_payment_providers_by_manager_without_install_plugins_cap() {
 		// Arrange.
-		$filter_callback = fn( $caps ) => [ 'manage_woocommerce' => true, 'install_plugins' => false ];
+		$filter_callback = fn( $caps ) => array(
+			'manage_woocommerce' => true,
+			'install_plugins'    => false,
+		);
 		add_filter( 'user_has_cap', $filter_callback );
 
 		$this->mock_core_paypal_pg();
@@ -184,7 +190,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'description', $suggestion_category, 'Suggestion category `description` entry is missing' );
 
 		// Clean up.
-		remove_filter( 'user_has_cap', $filter_callback  );
+		remove_filter( 'user_has_cap', $filter_callback );
 	}
 
 	/**
@@ -199,7 +205,10 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$this->mock_extension_suggestions( 'US' );
 		$this->mock_extension_suggestions_categories();
 
-		$filter_callback = fn( $caps ) => [ 'manage_woocommerce' => true, 'install_plugins' => true ];
+		$filter_callback = fn( $caps ) => array(
+			'manage_woocommerce' => true,
+			'install_plugins'    => true,
+		);
 		add_filter( 'user_has_cap', $filter_callback );
 
 		// Act.
@@ -252,7 +261,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		}
 
 		// Clean up.
-		remove_filter( 'user_has_cap', $filter_callback  );
+		remove_filter( 'user_has_cap', $filter_callback );
 	}
 
 	/**
@@ -378,9 +387,11 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 			->expects( $this->once() )
 			->method( 'get_payment_extension_suggestion_by_id' )
 			->with( 'suggestion_id' )
-			->willReturn( array(
-				'id' => 'suggestion_id',
-			) );
+			->willReturn(
+				array(
+					'id' => 'suggestion_id',
+				)
+			);
 
 		// Assert.
 		$this->mock_service
@@ -407,9 +418,11 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 			->expects( $this->once() )
 			->method( 'get_payment_extension_suggestion_by_id' )
 			->with( 'suggestion_id' )
-			->willReturn( array(
-				'id' => 'suggestion_id',
-			) );
+			->willReturn(
+				array(
+					'id' => 'suggestion_id',
+				)
+			);
 
 		// Assert.
 		$this->mock_service
@@ -492,14 +505,14 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 						'description' => 'PayPal',
 						'supports'    => array( 'products' ),
 						'state'       => array(
-							'enabled'    => $enabled,
+							'enabled'     => $enabled,
 							'needs_setup' => false,
 							'test_mode'   => false,
 						),
 						'management'  => array(
 							'settings_url' => 'admin.php?page=wc-settings&tab=checkout&section=paypal',
 						),
-						'image' 	  => 'https://example.com/image.png',
+						'image'       => 'https://example.com/image.png',
 						'icon'        => 'https://example.com/icon.png',
 						'links'       => array(
 							array(
@@ -508,8 +521,8 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 							),
 						),
 						'plugin'      => array(
-							'_type' => 'wporg',
-							'slug'  => 'woocommerce',
+							'_type'  => 'wporg',
+							'slug'   => 'woocommerce',
 							'status' => 'active',
 						),
 					),
@@ -522,7 +535,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	 */
 	private function mock_core_offline_payment_methods( bool $enabled = false ) {
 		$offline_payment_methods = array();
-		$order = 0;
+		$order                   = 0;
 		foreach ( Payments::OFFLINE_METHODS as $id ) {
 			$offline_payment_methods[] = array(
 				'id'          => $id,
@@ -530,7 +543,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 				'title'       => $id,
 				'description' => 'Offline payment method',
 				'state'       => array(
-					'enabled'    => $enabled,
+					'enabled'     => $enabled,
 					'needs_setup' => false,
 					'test_mode'   => false,
 				),
@@ -561,101 +574,101 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		}
 
 		$mocker->willReturn(
-				array(
-					'preferred' => array(
-						array(
-							'id'          => 'woopayments',
-							'_priority'   => 1,
-							'_type'       => 'psp',
-							'title'       => 'WooPayments',
-							'description' => 'WooPayments',
-							'plugin'      => array(
-								'_type' => 'wporg',
-								'slug'  => 'woocommerce-payments',
-								'status' => 'not_installed',
-							),
-							'image' 	  => 'https://example.com/image.png',
-							'icon'        => 'https://example.com/icon.png',
-							'links'       => array(
-								array(
-									'_type' => 'link',
-									'url'   => 'https://woocommerce.com/payments',
-								),
-							),
-							'tags'        => array( 'preferred' ),
-							'category'    => '',
+			array(
+				'preferred' => array(
+					array(
+						'id'          => 'woopayments',
+						'_priority'   => 1,
+						'_type'       => 'psp',
+						'title'       => 'WooPayments',
+						'description' => 'WooPayments',
+						'plugin'      => array(
+							'_type'  => 'wporg',
+							'slug'   => 'woocommerce-payments',
+							'status' => 'not_installed',
 						),
-						array(
-							'id'          => 'paypal_full_stack',
-							'_priority'   => 2,
-							'_type'       => 'apm',
-							'title'       => 'PayPal',
-							'description' => 'PayPal',
-							'plugin'      => array(
-								'_type' => 'wporg',
-								'slug'  => 'some-slug',
-								'status' => 'not_installed',
+						'image'       => 'https://example.com/image.png',
+						'icon'        => 'https://example.com/icon.png',
+						'links'       => array(
+							array(
+								'_type' => 'link',
+								'url'   => 'https://woocommerce.com/payments',
 							),
-							'image' 	  => 'https://example.com/image.png',
-							'icon'        => 'https://example.com/icon.png',
-							'links'       => array(
-								array(
-									'_type' => 'link',
-									'url'   => 'https://woocommerce.com/payments',
-								),
-							),
-							'tags'        => array( 'preferred' ),
-							'category'    => '',
 						),
+						'tags'        => array( 'preferred' ),
+						'category'    => '',
 					),
-					'other'     => array(
-						array(
-							'id'          => 'stripe',
-							'_priority'   => 0,
-							'_type'       => 'psp',
-							'title'       => 'Stripe',
-							'description' => 'Stripe',
-							'plugin'      => array(
-								'_type' => 'wporg',
-								'slug'  => 'some-slug',
-								'status' => 'not_installed',
-							),
-							'image' 	  => 'https://example.com/image.png',
-							'icon'        => 'https://example.com/icon.png',
-							'links'       => array(
-								array(
-									'_type' => 'link',
-									'url'   => 'https://woocommerce.com/stripe',
-								),
-							),
-							'tags'        => array(),
-							'category'    => 'category3',
+					array(
+						'id'          => 'paypal_full_stack',
+						'_priority'   => 2,
+						'_type'       => 'apm',
+						'title'       => 'PayPal',
+						'description' => 'PayPal',
+						'plugin'      => array(
+							'_type'  => 'wporg',
+							'slug'   => 'some-slug',
+							'status' => 'not_installed',
 						),
-						array(
-							'id'          => 'affirm',
-							'_priority'   => 1,
-							'_type'       => 'bnpl',
-							'title'       => 'Affirm',
-							'description' => 'Affirm',
-							'plugin'      => array(
-								'_type' => 'wporg',
-								'slug'  => 'some-slug',
-								'status' => 'not_installed',
+						'image'       => 'https://example.com/image.png',
+						'icon'        => 'https://example.com/icon.png',
+						'links'       => array(
+							array(
+								'_type' => 'link',
+								'url'   => 'https://woocommerce.com/payments',
 							),
-							'image' 	  => 'https://example.com/image.png',
-							'icon'        => 'https://example.com/icon.png',
-							'links'       => array(
-								array(
-									'_type' => 'link',
-									'url'   => 'https://woocommerce.com/affirm',
-								),
-							),
-							'tags'        => array(),
-							'category'    => 'category2',
 						),
+						'tags'        => array( 'preferred' ),
+						'category'    => '',
 					),
-				)
-			);
+				),
+				'other'     => array(
+					array(
+						'id'          => 'stripe',
+						'_priority'   => 0,
+						'_type'       => 'psp',
+						'title'       => 'Stripe',
+						'description' => 'Stripe',
+						'plugin'      => array(
+							'_type'  => 'wporg',
+							'slug'   => 'some-slug',
+							'status' => 'not_installed',
+						),
+						'image'       => 'https://example.com/image.png',
+						'icon'        => 'https://example.com/icon.png',
+						'links'       => array(
+							array(
+								'_type' => 'link',
+								'url'   => 'https://woocommerce.com/stripe',
+							),
+						),
+						'tags'        => array(),
+						'category'    => 'category3',
+					),
+					array(
+						'id'          => 'affirm',
+						'_priority'   => 1,
+						'_type'       => 'bnpl',
+						'title'       => 'Affirm',
+						'description' => 'Affirm',
+						'plugin'      => array(
+							'_type'  => 'wporg',
+							'slug'   => 'some-slug',
+							'status' => 'not_installed',
+						),
+						'image'       => 'https://example.com/image.png',
+						'icon'        => 'https://example.com/icon.png',
+						'links'       => array(
+							array(
+								'_type' => 'link',
+								'url'   => 'https://woocommerce.com/affirm',
+							),
+						),
+						'tags'        => array(),
+						'category'    => 'category2',
+					),
+				),
+			)
+		);
 	}
 
 	/**
@@ -684,9 +697,8 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 						'_priority'   => 30,
 						'title'       => esc_html__( 'Category3', 'woocommerce' ),
 						'description' => esc_html__( 'Description.', 'woocommerce' ),
-					)
+					),
 				)
 			);
-
 	}
 }

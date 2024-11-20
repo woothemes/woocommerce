@@ -93,7 +93,10 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 	 */
 	public function test_get_payment_providers_by_user_without_caps() {
 		// Arrange.
-		$filter_callback = fn( $caps ) => [ 'manage_woocommerce' => false, 'install_plugins' => false ];
+		$filter_callback = fn( $caps ) => array(
+			'manage_woocommerce' => false,
+			'install_plugins'    => false,
+		);
 		add_filter( 'user_has_cap', $filter_callback );
 
 		// Act.
@@ -104,7 +107,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$this->assertEquals( rest_authorization_required_code(), $response->get_status() );
 
 		// Clean up.
-		remove_filter( 'user_has_cap', $filter_callback  );
+		remove_filter( 'user_has_cap', $filter_callback );
 	}
 
 	/**
@@ -114,7 +117,10 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 	 */
 	public function test_get_payment_providers_by_manager_without_install_plugins_cap() {
 		// Arrange.
-		$filter_callback = fn( $caps ) => [ 'manage_woocommerce' => true, 'install_plugins' => false ];
+		$filter_callback = fn( $caps ) => array(
+			'manage_woocommerce' => true,
+			'install_plugins'    => false,
+		);
 		add_filter( 'user_has_cap', $filter_callback );
 
 		// Act.
@@ -182,7 +188,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'description', $suggestion_category, 'Suggestion category `description` entry is missing' );
 
 		// Clean up.
-		remove_filter( 'user_has_cap', $filter_callback  );
+		remove_filter( 'user_has_cap', $filter_callback );
 	}
 
 	/**
@@ -192,7 +198,10 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 	 */
 	public function test_get_payment_providers_by_manager_with_install_plugins_cap() {
 		// Arrange.
-		$filter_callback = fn( $caps ) => [ 'manage_woocommerce' => true, 'install_plugins' => true ];
+		$filter_callback = fn( $caps ) => array(
+			'manage_woocommerce' => true,
+			'install_plugins'    => true,
+		);
 		add_filter( 'user_has_cap', $filter_callback );
 
 		// Act.
@@ -255,7 +264,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		}
 
 		// Clean up.
-		remove_filter( 'user_has_cap', $filter_callback  );
+		remove_filter( 'user_has_cap', $filter_callback );
 	}
 
 	/**
@@ -477,7 +486,13 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 	 */
 	private function load_core_paypal_pg() {
 		// Make sure the WC core PayPal gateway is loaded.
-		update_option( 'woocommerce_paypal_settings', array( '_should_load' => 'yes', 'enabled' => 'no' ) );
+		update_option(
+			'woocommerce_paypal_settings',
+			array(
+				'_should_load' => 'yes',
+				'enabled'      => 'no',
+			)
+		);
 		// Make sure the store currency is supported by the gateway.
 		update_option( 'woocommerce_currency', 'USD' );
 		WC()->payment_gateways()->init();
