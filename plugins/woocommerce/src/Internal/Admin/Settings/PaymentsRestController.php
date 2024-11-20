@@ -324,7 +324,7 @@ class PaymentsRestController extends RestApiControllerBase {
 			),
 			'management'  => array(
 				'settings_url' => method_exists( $payment_gateway, 'get_settings_url' )
-					? esc_url( $payment_gateway->get_settings_url() )
+					? sanitize_url( $payment_gateway->get_settings_url() )
 					: admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . strtolower( $payment_gateway->id ) ),
 			),
 		);

@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Prevented a i10n-related warning when using WordPress 6.7 with Brands
