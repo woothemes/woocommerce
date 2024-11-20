@@ -173,6 +173,7 @@ WooCommerce comes with some sample data you can use to see how products look; im
 
 **WooCommerce**
 
+* Fix - Prevented a i10n-related warning when using WordPress 6.7 with Brands [#52912](https://github.com/woocommerce/woocommerce/pull/52912)
 * Fix - Added strict check for PR and release number extracted from Issue body [#52002](https://github.com/woocommerce/woocommerce/pull/52002)
 * Fix - Add focus indicator to image on product card [#52011](https://github.com/woocommerce/woocommerce/pull/52011)
 * Fix - Add focus indicator to select and text inputs on Cart/Checkout block pages [#52010](https://github.com/woocommerce/woocommerce/pull/52010)
