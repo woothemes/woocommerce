@@ -1484,14 +1484,15 @@ function wc_transaction_query( $type = 'start', $force = false ) {
  * @return string Url to cart page
  */
 function wc_get_cart_url() {
+	global $post;
+
 	// We don't use is_cart() here because that also checks for a defined constant. We are only interested in the page.
 	$page_id      = wc_get_page_id( 'cart' );
-	$is_cart_page = ( $page_id && is_page( $page_id ) ) || wc_post_content_has_shortcode( 'woocommerce_cart' );
+	$is_cart_page = $page_id && is_page( $page_id );
 
-	if ( $is_cart_page && isset( $_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI'] ) ) {
-		$protocol    = is_ssl() ? 'https' : 'http';
-		$current_url = esc_url_raw( $protocol . '://' . wp_unslash( $_SERVER['HTTP_HOST'] ) . wp_unslash( $_SERVER['REQUEST_URI'] ) );
-		$cart_url    = remove_query_arg( array( 'remove_item', 'add-to-cart', 'added-to-cart', 'order_again', '_wpnonce' ), $current_url );
+	// If this isn't the cart page, but the page does contain the cart shortcode, we'll return the current page permalink.
+	if ( ! $is_cart_page && is_a( $post, 'WP_Post' ) && wc_post_content_has_shortcode( 'woocommerce_cart' ) ) {
+		$cart_url = get_permalink( $post->ID );
 	} else {
 		$cart_url = wc_get_page_permalink( 'cart' );
 	}
