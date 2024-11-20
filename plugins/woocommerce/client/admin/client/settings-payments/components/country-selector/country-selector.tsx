@@ -156,6 +156,12 @@ export const CountrySelector = <ItemType extends Item>({
 								style: item.style,
 							})}
 						>
+							{ item.key === selectedItem.key && (
+								<Icon
+									icon={ check }
+									className="components-country-select-control__item-icon"
+								/>
+							) }
 							{ children ? children( item ) : item.name }
 						</li>
 					))
