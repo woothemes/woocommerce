@@ -110,6 +110,20 @@ class TransformerTest extends WC_Unit_Test_Case {
 				),
 				'Invalid section format should remain unchanged',
 			),
+			'null_sections'           => array(
+				array(
+					'tab1' => array(
+						'sections' => null,
+					),
+				),
+				'Null sections should remain unchanged',
+			),
+			'null_tab_content'        => array(
+				array(
+					'tab1' => null,
+				),
+				'Null tab content should remain unchanged',
+			),
 		);
 	}
 
