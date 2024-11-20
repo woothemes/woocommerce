@@ -54,8 +54,10 @@ import CreatedControl from './created-control';
 import PriceRangeControl from './price-range-control';
 import LinkedProductControl from './linked-product-control';
 import WidthOptionsControl from './width-options-control';
-import DisplaySettings from './display-settings';
 import RelatedByControl from './related-by-control';
+import ProductsPerPageControl from './products-per-page-control';
+import OffsetControl from './offset-control';
+import MaxPagesToShowControl from './max-pages-to-show-control';
 
 const prepareShouldShowFilter =
 	( hideControls: FilterName[] ) => ( filter: FilterName ) => {
@@ -91,6 +93,14 @@ const ProductCollectionInspectorControls = (
 		! isArchiveTemplate && shouldShowFilter( CoreFilterNames.FILTERABLE );
 	const showOrderControl =
 		showQueryControls && shouldShowFilter( CoreFilterNames.ORDER );
+	const showOffsetControl =
+		showQueryControls && shouldShowFilter( CoreFilterNames.OFFSET );
+	const showMaxPagesToShowControl =
+		showQueryControls &&
+		shouldShowFilter( CoreFilterNames.MAX_PAGES_TO_SHOW );
+	const showProductsPerPageControl =
+		showQueryControls &&
+		shouldShowFilter( CoreFilterNames.PRODUCTS_PER_PAGE );
 	const showOnSaleControl = shouldShowFilter( CoreFilterNames.ON_SALE );
 	const showStockStatusControl = shouldShowFilter(
 		CoreFilterNames.STOCK_STATUS
@@ -156,12 +166,19 @@ const ProductCollectionInspectorControls = (
 				) }
 				<LayoutOptionsControl { ...displayControlProps } />
 				<ColumnsControl { ...displayControlProps } />
+				{ showProductsPerPageControl && (
+					<ProductsPerPageControl { ...queryControlProps } />
+				) }
 				{ showOrderControl && (
 					<OrderByControl { ...queryControlProps } />
 				) }
+				{ showOffsetControl && (
+					<OffsetControl { ...queryControlProps } />
+				) }
+				{ showMaxPagesToShowControl && (
+					<MaxPagesToShowControl { ...queryControlProps } />
+				) }
 			</ToolsPanel>
-
-			<DisplaySettings { ...queryControlProps } />
 
 			<ToolsPanel
 				label={ __( 'Dimensions', 'woocommerce' ) }

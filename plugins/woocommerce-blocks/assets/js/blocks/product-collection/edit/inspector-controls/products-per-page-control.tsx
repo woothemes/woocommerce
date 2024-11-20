@@ -32,7 +32,7 @@ const ProductsPerPageControl = ( {
 		<ToolsPanelItem
 			label={ __( 'Products per page', 'woocommerce' ) }
 			isShownByDefault
-			hasValue={ () => true }
+			hasValue={ () => query.perPage !== DEFAULT_QUERY.perPage }
 			onDeselect={ deselectCallback }
 			resetAllFilter={ deselectCallback }
 		>

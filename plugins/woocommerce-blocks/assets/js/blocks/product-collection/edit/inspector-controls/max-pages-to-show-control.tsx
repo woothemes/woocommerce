@@ -30,7 +30,7 @@ const MaxPagesToShowControl = ( {
 	return (
 		<ToolsPanelItem
 			label={ __( 'Max pages to show', 'woocommerce' ) }
-			hasValue={ () => query.pages > 0 }
+			hasValue={ () => query.pages !== DEFAULT_QUERY.pages }
 			onDeselect={ deselectCallback }
 			resetAllFilter={ deselectCallback }
 		>

@@ -34,7 +34,7 @@ const OffsetControl = ( {
 	return (
 		<ToolsPanelItem
 			label={ __( 'Offset', 'woocommerce' ) }
-			hasValue={ () => query.offset > 0 }
+			hasValue={ () => query.offset !== DEFAULT_QUERY.offset }
 			onDeselect={ deselectCallback }
 			resetAllFilter={ deselectCallback }
 		>

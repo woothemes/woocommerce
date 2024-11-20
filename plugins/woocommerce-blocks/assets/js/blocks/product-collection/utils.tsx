@@ -421,16 +421,6 @@ export const useSetPreviewState = ( {
 	] );
 };
 
-export const getDefaultQuery = (
-	currentQuery: ProductCollectionQuery
-): ProductCollectionQuery => ( {
-	...currentQuery,
-	orderBy: DEFAULT_QUERY.orderBy as TProductCollectionOrderBy,
-	order: DEFAULT_QUERY.order as TProductCollectionOrder,
-	inherit: getDefaultValueOfInherit(),
-	filterable: getDefaultValueOfFilterable(),
-} );
-
 export const getDefaultDisplayLayout = () =>
 	DEFAULT_ATTRIBUTES.displayLayout as ProductCollectionDisplayLayout;
 
@@ -438,7 +428,16 @@ export const getDefaultSettings = (
 	currentAttributes: ProductCollectionAttributes
 ): Partial< ProductCollectionAttributes > => ( {
 	displayLayout: getDefaultDisplayLayout(),
-	query: getDefaultQuery( currentAttributes.query ),
+	query: {
+		...currentAttributes.query,
+		orderBy: DEFAULT_QUERY.orderBy as TProductCollectionOrderBy,
+		order: DEFAULT_QUERY.order as TProductCollectionOrder,
+		inherit: getDefaultValueOfInherit(),
+		filterable: getDefaultValueOfFilterable(),
+		perPage: DEFAULT_QUERY.perPage,
+		offset: DEFAULT_QUERY.offset,
+		pages: DEFAULT_QUERY.pages,
+	},
 } );
 
 export const getDefaultProductCollection = () =>
