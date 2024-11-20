@@ -165,6 +165,7 @@ const ProductCollectionInspectorControls = (
 					<FilterableControl { ...queryControlProps } />
 				) }
 				<LayoutOptionsControl { ...displayControlProps } />
+				<WidthOptionsControl { ...dimensionsControlProps } />
 				<ColumnsControl { ...displayControlProps } />
 				{ showProductsPerPageControl && (
 					<ProductsPerPageControl { ...queryControlProps } />
@@ -178,18 +179,6 @@ const ProductCollectionInspectorControls = (
 				{ showMaxPagesToShowControl && (
 					<MaxPagesToShowControl { ...queryControlProps } />
 				) }
-			</ToolsPanel>
-
-			<ToolsPanel
-				label={ __( 'Dimensions', 'woocommerce' ) }
-				resetAll={ () => {
-					const defaultSettings = getDefaultSettings(
-						props.attributes
-					);
-					props.setAttributes( defaultSettings );
-				} }
-			>
-				<WidthOptionsControl { ...dimensionsControlProps } />
 			</ToolsPanel>
 
 			{ showQueryControls ? (

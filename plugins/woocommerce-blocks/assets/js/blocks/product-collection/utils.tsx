@@ -441,6 +441,7 @@ export const getDefaultSettings = (
 ): Partial< ProductCollectionAttributes > => ( {
 	displayLayout: getDefaultDisplayLayout(),
 	query: getDefaultQueryForSettingsSection( currentAttributes.query ),
+	dimensions: DEFAULT_ATTRIBUTES.dimensions,
 } );
 
 export const getDefaultProductCollection = () =>
