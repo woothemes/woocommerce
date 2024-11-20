@@ -46,6 +46,11 @@ const reducer = (
 						getPaymentGatewaySuggestions: payload.error,
 					},
 				};
+			case ACTION_TYPES.UPDATE_OFFLINE_PAYMENT_GATEWAY_ORDERING:
+				return {
+					...state,
+					offlinePaymentGateways: payload.offlinePaymentGateways,
+				};
 		}
 	}
 	return state;
