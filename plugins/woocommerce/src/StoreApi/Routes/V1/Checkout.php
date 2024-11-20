@@ -663,7 +663,9 @@ class Checkout extends AbstractCartRoute {
 	 */
 	private function validate_user_can_place_order() {
 		if (
+			// "woocommerce_enable_signup_and_login_from_checkout" === no.
 			false === filter_var( wc()->checkout()->is_registration_enabled(), FILTER_VALIDATE_BOOLEAN ) &&
+			// "woocommerce_enable_guest_checkout" === no.
 			true === filter_var( wc()->checkout()->is_registration_required(), FILTER_VALIDATE_BOOLEAN ) &&
 			! is_user_logged_in()
 		) {
