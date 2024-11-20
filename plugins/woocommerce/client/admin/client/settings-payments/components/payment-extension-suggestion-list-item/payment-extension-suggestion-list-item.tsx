@@ -6,8 +6,8 @@ import { decodeEntities } from '@wordpress/html-entities';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
-import { Plugin } from '@woocommerce/data';
 import { EllipsisMenu } from '@woocommerce/components';
+import { SuggestedPaymentExtension } from '@woocommerce/data';
 
 /**
  * Internal dependencies
@@ -15,30 +15,30 @@ import { EllipsisMenu } from '@woocommerce/components';
 import sanitizeHTML from '~/lib/sanitize-html';
 
 type PaymentExtensionSuggestionListItemProps = {
-	plugin: Plugin;
+	extension: SuggestedPaymentExtension;
 	installingPlugin: string | null;
-	setupPlugin: ( plugin: Plugin ) => void;
+	setupPlugin: ( extension: SuggestedPaymentExtension ) => void;
 	pluginInstalled: boolean;
 };
 
 export const PaymentExtensionSuggestionListItem = ( {
-	plugin,
+	extension,
 	installingPlugin,
 	setupPlugin,
 	pluginInstalled,
 }: PaymentExtensionSuggestionListItemProps ) => {
 	return {
-		key: plugin.id,
-		title: <>{ plugin.title }</>,
+		key: extension.id,
+		title: <>{ extension.title }</>,
 		className: 'transitions-disabled',
 		content: (
 			<>
 				<span
 					dangerouslySetInnerHTML={ sanitizeHTML(
-						decodeEntities( plugin.content )
+						decodeEntities( extension.description )
 					) }
 				/>
-				{ plugin.id === 'woocommerce_payments' && (
+				{ extension.id === 'woocommerce_payments' && (
 					<WooPaymentMethodsLogos
 						maxElements={ 10 }
 						isWooPayEligible={ true }
@@ -51,8 +51,8 @@ export const PaymentExtensionSuggestionListItem = ( {
 				<>
 					<Button
 						variant="primary"
-						onClick={ () => setupPlugin( plugin ) }
-						isBusy={ installingPlugin === plugin.id }
+						onClick={ () => setupPlugin( extension ) }
+						isBusy={ installingPlugin === extension.id }
 						disabled={ !! installingPlugin }
 					>
 						{ pluginInstalled
@@ -83,7 +83,7 @@ export const PaymentExtensionSuggestionListItem = ( {
 			</div>
 		),
 		before: (
-			<img src={ plugin.image_72x72 } alt={ plugin.title + ' logo' } />
+			<img src={ extension.icon } alt={ extension.title + ' logo' } />
 		),
 	};
 };

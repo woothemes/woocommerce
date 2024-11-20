@@ -340,6 +340,11 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			$args['post__in'] = $this->suggested_products_ids;
 		}
 
+		// Force the post_type argument, since it's not a user input variable.
+		if ( ! empty( $request['global_unique_id'] ) ) {
+			$args['post_type'] = array( 'product', 'product_variation' );
+		}
+
 		return $args;
 	}
 

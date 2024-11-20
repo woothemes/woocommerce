@@ -52,7 +52,7 @@ export const StatusBadge = ( { status, message }: StatusBadgeProps ) => {
 			case 'inactive':
 				return __( 'Inactive', 'woocommerce' );
 			case 'needs_setup':
-				return __( 'Needs setup', 'woocommerce' );
+				return __( 'Action needed', 'woocommerce' );
 			case 'test_mode':
 				return __( 'Test mode', 'woocommerce' );
 			case 'recommended':
