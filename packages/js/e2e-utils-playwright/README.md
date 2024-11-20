@@ -1,6 +1,6 @@
 # End-to-End Test Utilities For WooCommerce
 
-This package contains utilities to simplify writing e2e tests specific to WooCommerce using Playwright.
+This package contains utilities to help writing e2e tests specific to WooCommerce using Playwright.
 
 > [!WARNING]
 > 
@@ -32,3 +32,8 @@ test( 'can add products to cart', async ( { page } ) => {
     await expect( page.locator( 'td.product-name' ) ).toContainText( product.name );
 } );
 ```
+## Contributing to this package
+
+This is an individual package that's part of the WooCommerce project, which is organized as a monorepo.
+
+To find out more about contributing to this package or WooCommerce as a whole, please read the project's main [contributor guide](https://developer.woocommerce.com/docs/category/contributing/).
