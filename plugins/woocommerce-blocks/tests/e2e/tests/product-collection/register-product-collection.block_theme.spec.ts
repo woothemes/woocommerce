@@ -78,7 +78,7 @@ test.describe( 'Product Collection: Register Product Collection', () => {
 			MY_REGISTERED_COLLECTIONS
 		) ) {
 			await expect(
-				page.getByRole( 'button', {
+				page.getByRole( 'option', {
 					name: myCollection.name,
 					exact: true,
 				} )
