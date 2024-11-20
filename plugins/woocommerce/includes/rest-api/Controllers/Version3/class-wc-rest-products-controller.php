@@ -191,6 +191,17 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			$this->exclude_status = array();
 		}
 
+		// Filter virtual products.
+		if ( isset( $request['virtual'] ) ) {
+			$args['meta_query'] = $this->add_meta_query(
+				$args,
+				array(
+					'key'   => '_virtual',
+					'value' => wc_bool_to_string( $request['virtual'] ),
+				)
+			);
+		}
+
 		// Taxonomy query to filter products by type, category,
 		// tag, shipping class, and attribute.
 		$tax_query = array();
@@ -1675,6 +1686,14 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 				'enum' => array_merge( array( 'trash' ), array_keys( get_post_statuses() ) ),
 			),
 			'sanitize_callback' => 'wp_parse_list',
+			'validate_callback' => 'rest_validate_request_arg',
+		);
+
+		$params['virtual'] = array(
+			'description'       => __( 'Limit result set to virtual products.', 'woocommerce' ),
+			'type'              => 'boolean',
+			'default'           => false,
+			'sanitize_callback' => 'rest_sanitize_boolean',
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 
