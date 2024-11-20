@@ -34,7 +34,6 @@ test.describe( 'Template customization', () => {
 				editor,
 				frontendUtils,
 				page,
-				wordPressVersion,
 			} ) => {
 				// Edit the theme template.
 				await admin.visitSiteEditor( {
@@ -51,16 +50,11 @@ test.describe( 'Template customization', () => {
 					isOnlyCurrentEntityDirty: true,
 				} );
 
-				const name =
-					wordPressVersion === 'previous'
-						? `Editing ${ templateTypeName }: ${ testData.templateName }`
-						: `${ testData.templateName } · ${ templateTypeName }`;
-
 				// Verify template name didn't change.
 				// See: https://github.com/woocommerce/woocommerce/issues/42221
 				await expect(
 					page.getByRole( 'heading', {
-						name,
+						name: templateTypeName,
 					} )
 				).toBeVisible();
 
