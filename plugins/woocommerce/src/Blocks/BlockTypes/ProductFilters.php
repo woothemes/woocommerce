@@ -74,7 +74,6 @@ class ProductFilters extends AbstractBlock {
 			''
 		);
 		$interactivity_context = array(
-			'params'         => $filter_params,
 			'originalParams' => $filter_params,
 			'activeFilters'  => $active_filters,
 		);

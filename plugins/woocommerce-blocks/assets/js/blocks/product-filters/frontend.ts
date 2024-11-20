@@ -83,7 +83,6 @@ export type ActiveFilter = {
 
 export type ProductFiltersContext = {
 	isOverlayOpened: boolean;
-	params: Record< string, string >;
 	originalParams: Record< string, string >;
 	activeFilters: ActiveFilter[];
 };
