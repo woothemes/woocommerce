@@ -111,6 +111,7 @@ class Settings {
 
 		// Make sure the Settings Editor package is loaded.
 		wp_enqueue_script( 'wc-settings-editor' );
+		wp_enqueue_style( 'wc-settings-editor' );
 
 		$script_name            = 'wc-admin-edit-settings';
 		$script_path_name       = 'settings';
