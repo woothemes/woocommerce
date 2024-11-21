@@ -51,10 +51,10 @@
 	},
 	"dependencies": {
 		"@woocommerce/expression-evaluation": "workspace:*",
-		"@wordpress/block-editor": "wp-6.0",
-		"@wordpress/blocks": "wp-6.0",
-		"@wordpress/core-data": "wp-6.0",
-		"@wordpress/element": "wp-6.0"
+		"@wordpress/block-editor": "wp-6.6",
+		"@wordpress/blocks": "wp-6.6",
+		"@wordpress/core-data": "wp-6.6",
+		"@wordpress/element": "wp-6.6"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.23.5",
@@ -62,14 +62,14 @@
 		"@testing-library/jest-dom": "5.16.2",
 		"@testing-library/react-hooks": "8.0.1",
 		"@types/jest": "27.5.x",
-		"@types/react": "17.0.x",
+		"@types/react": "18.3.x",
 		"@types/testing-library__jest-dom": "^5.14.9",
 		"@types/wordpress__block-editor": "7.0.0",
 		"@types/wordpress__blocks": "11.0.7",
 		"@woocommerce/eslint-plugin": "workspace:*",
 		"@woocommerce/internal-js-tests": "workspace:*",
 		"@woocommerce/internal-style-build": "workspace:*",
-		"@wordpress/browserslist-config": "wp-6.0",
+		"@wordpress/browserslist-config": "wp-6.6",
 		"copy-webpack-plugin": "^9.1.0",
 		"css-loader": "^3.6.0",
 		"eslint": "^8.55.0",
@@ -77,8 +77,8 @@
 		"jest-cli": "27.5.x",
 		"postcss": "^8.4.32",
 		"postcss-loader": "^4.3.0",
-		"react": "17.0.x",
-		"react-dom": "17.0.x",
+		"react": "18.3.x",
+		"react-dom": "18.3.x",
 		"rimraf": "5.0.5",
 		"sass-loader": "^10.5.0",
 		"ts-jest": "29.1.x",
@@ -88,10 +88,10 @@
 		"wireit": "0.14.3"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "wp-6.0",
-		"@types/react": "17.0.x",
-		"react": "17.0.x",
-		"react-dom": "17.0.x"
+		"@wordpress/data": "wp-6.6",
+		"@types/react": "18.3.x",
+		"react": "18.3.x",
+		"react-dom": "18.3.x"
 	},
 	"publishConfig": {
 		"access": "public"

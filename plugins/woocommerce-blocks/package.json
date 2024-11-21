@@ -310,7 +310,7 @@
 		"wordpress-components-slotfill": "npm:@wordpress/components@wp-6.5"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "wp-6.0",
+		"@wordpress/data": "wp-6.6",
 		"react": "18.3.x",
 		"react-dom": "18.3.x"
 	},

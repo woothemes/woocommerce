@@ -101,7 +101,7 @@
 			]
 		},
 		{
-			"label": "React-related dependencies: React 18",
+			"label": "React-related dependencies: @woocommerce/blocks-library",
 			"dependencies": [
 				"react",
 				"react-dom",
@@ -115,14 +115,14 @@
 			]
 		},
 		{
-			"label": "React-related dependencies: React 17",
+			"label": "React-related dependencies: Everything else",
 			"dependencies": [
 				"react",
 				"react-dom",
 				"@types/react-dom",
 				"@types/react"
 			],
-			"pinVersion": "17.0.x",
+			"pinVersion": "18.3.x",
 			"packages": [
 				"**"
 			]
@@ -273,7 +273,7 @@
 			"packages": [
 				"**"
 			],
-			"pinVersion": "wp-6.0"
+			"pinVersion": "wp-6.6"
 		},
 		{
 			"dependencies": [

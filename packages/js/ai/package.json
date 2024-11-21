@@ -51,10 +51,10 @@
 		"watch:build:project:esm": "wireit"
 	},
 	"dependencies": {
-		"@wordpress/api-fetch": "wp-6.0",
-		"@wordpress/compose": "wp-6.0",
-		"@wordpress/core-data": "wp-6.0",
-		"@wordpress/element": "wp-6.0",
+		"@wordpress/api-fetch": "wp-6.6",
+		"@wordpress/compose": "wp-6.6",
+		"@wordpress/core-data": "wp-6.6",
+		"@wordpress/element": "wp-6.6",
 		"classnames": "^2.3.2",
 		"debug": "^4.3.4",
 		"dompurify": "^2.5.7",
@@ -65,19 +65,19 @@
 		"@babel/core": "^7.23.5",
 		"@babel/runtime": "^7.23.5",
 		"@testing-library/jest-dom": "5.16.2",
-		"@testing-library/react": "12.1.3",
+		"@testing-library/react": "^14.0.0",
 		"@testing-library/react-hooks": "8.0.1",
 		"@testing-library/user-event": "13.5.0",
 		"@types/debug": "^4.1.12",
 		"@types/dompurify": "^2.4.0",
 		"@types/jest": "27.5.x",
-		"@types/react": "17.0.x",
+		"@types/react": "18.3.x",
 		"@types/testing-library__jest-dom": "^5.14.9",
 		"@types/wordpress__core-data": "2.4.5",
 		"@woocommerce/eslint-plugin": "workspace:*",
 		"@woocommerce/internal-js-tests": "workspace:*",
 		"@woocommerce/internal-style-build": "workspace:*",
-		"@wordpress/browserslist-config": "wp-6.0",
+		"@wordpress/browserslist-config": "wp-6.6",
 		"concurrently": "^7.6.0",
 		"copy-webpack-plugin": "^9.1.0",
 		"css-loader": "^3.6.0",
@@ -87,8 +87,8 @@
 		"mini-css-extract-plugin": "^2.7.6",
 		"postcss": "^8.4.32",
 		"postcss-loader": "^4.3.0",
-		"react": "17.0.x",
-		"react-dom": "17.0.x",
+		"react": "18.3.x",
+		"react-dom": "18.3.x",
 		"react-hooks^8.0.1": "link:@testing-library/react-hooks^8.0.1",
 		"rimraf": "5.0.5",
 		"sass-loader": "^10.5.0",
@@ -100,10 +100,10 @@
 		"wireit": "0.14.3"
 	},
 	"peerDependencies": {
-		"@types/react": "17.0.x",
-		"@wordpress/data": "wp-6.0",
-		"react": "17.0.x",
-		"react-dom": "17.0.x"
+		"@types/react": "18.3.x",
+		"@wordpress/data": "wp-6.6",
+		"react": "18.3.x",
+		"react-dom": "18.3.x"
 	},
 	"config": {
 		"ci": {

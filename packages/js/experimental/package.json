@@ -37,11 +37,11 @@
 	],
 	"dependencies": {
 		"@woocommerce/components": "workspace:*",
-		"@wordpress/components": "^19.17.0",
-		"@wordpress/element": "^4.20.0",
-		"@wordpress/i18n": "^4.47.0",
-		"@wordpress/icons": "^8.4.0",
-		"@wordpress/keycodes": "^3.47.0",
+		"@wordpress/components": "wp-6.6",
+		"@wordpress/element": "wp-6.6",
+		"@wordpress/i18n": "wp-6.6",
+		"@wordpress/icons": "wp-6.6",
+		"@wordpress/keycodes": "wp-6.6",
 		"classnames": "^2.3.2",
 		"dompurify": "^2.5.7",
 		"gridicons": "^3.4.2",
@@ -59,7 +59,7 @@
 		"@storybook/addon-console": "^1.2.3",
 		"@storybook/react": "6.5.17-alpha.0",
 		"@testing-library/dom": "8.11.3",
-		"@testing-library/react": "12.1.3",
+		"@testing-library/react": "^14.0.0",
 		"@testing-library/user-event": "13.5.0",
 		"@types/dompurify": "^2.4.0",
 		"@types/jest": "27.5.x",
@@ -69,7 +69,7 @@
 		"@woocommerce/eslint-plugin": "workspace:*",
 		"@woocommerce/internal-js-tests": "workspace:*",
 		"@woocommerce/internal-style-build": "workspace:*",
-		"@wordpress/browserslist-config": "wp-6.0",
+		"@wordpress/browserslist-config": "wp-6.6",
 		"concurrently": "^7.6.0",
 		"css-loader": "^3.6.0",
 		"eslint": "^8.55.0",
@@ -86,8 +86,8 @@
 		"wireit": "0.14.3"
 	},
 	"peerDependencies": {
-		"react": "17.0.x",
-		"react-dom": "17.0.x"
+		"react": "18.3.x",
+		"react-dom": "18.3.x"
 	},
 	"scripts": {
 		"build": "pnpm --if-present --workspace-concurrency=Infinity --stream --filter=\"$npm_package_name...\" '/^build:project:.*$/'",
