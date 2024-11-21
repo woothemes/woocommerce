@@ -66,7 +66,7 @@ const ShippingRatesControl = ( {
 	className,
 	collapsible,
 	showItems,
-	noResultsMessage,
+	noResultsMessage = <></>,
 	renderOption,
 	context,
 }: ShippingRatesControlProps ): JSX.Element => {

@@ -79,6 +79,7 @@ export type TaskListType = {
 export type OnboardingState = {
 	freeExtensions: ExtensionList[];
 	profileItems: ProfileItems;
+	profileProgress: Partial< CoreProfilerCompletedSteps >;
 	taskLists: Record< string, TaskListType >;
 	paymentMethods: Plugin[];
 	productTypes: OnboardingProductTypes;
@@ -136,6 +137,7 @@ export type RevenueTypeSlug =
 	| '50000-250000'
 	| 'more-than-250000';
 
+/** Types should match the schema in plugins/woocommerce/src/Admin/API/OnboardingProfile.php */
 export type ProfileItems = {
 	business_extensions?: string[] | null;
 	completed?: boolean | null;
@@ -150,6 +152,7 @@ export type ProfileItems = {
 	setup_client?: boolean | null;
 	skipped?: boolean | null;
 	is_plugins_page_skipped?: boolean | null;
+	core_profiler_completed_steps?: CoreProfilerCompletedSteps | null;
 	business_choice?: string | null;
 	selling_online_answer?: string | null;
 	selling_platforms?: string[] | null;
@@ -160,6 +163,20 @@ export type ProfileItems = {
 	store_email?: string | null;
 	is_store_country_set?: boolean | null;
 };
+
+export type CoreProfilerStep =
+	| 'intro-opt-in'
+	| 'skip-guided-setup'
+	| 'user-profile'
+	| 'business-info'
+	| 'plugins'
+	| 'intro-builder'
+	| 'skip-guided-setup';
+
+export type CoreProfilerCompletedSteps = Record<
+	CoreProfilerStep,
+	{ completed_at: string } // ISO 8601 date string
+>;
 
 export type FieldLocale = {
 	locale: string;
