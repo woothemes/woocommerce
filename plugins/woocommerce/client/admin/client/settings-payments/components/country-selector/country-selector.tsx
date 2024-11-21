@@ -13,7 +13,7 @@ import { useSelect, UseSelectState, StateChangeOptions } from 'downshift';
  * Internal Dependencies
  */
 import { Item, ControlProps } from './types';
-import './style.scss';
+import './country-selector.scss';
 
 // Get the label for the selected option
 const getOptionLabel = ( value: string, options: Item[] ) => { 
@@ -238,30 +238,31 @@ export const CountrySelector = <ItemType extends Item>({
 								{ getSearchSuffix( isSearchFocused ) }
 							</span>
 						</div>
-				
-						{ itemsToRender.map( ( item, index ) => (
-							<div
-								{ ...getItemProps( {
-									item,
-									index,
-									key: item.key,
-									className: classNames(
-										item.className,
-										'components-country-select-control__item',
-										{ 'is-highlighted': index === highlightedIndex }
-									),
-									style: item.style,
-								})}
-							>
-								{ item.key === selectedItem.key && (
-									<Icon
-										icon={ check }
-										className="components-country-select-control__item-icon"
-									/>
-								) }
-								{ children ? children( item ) : item.name }
-							</div>
-						) ) }
+						<div className="components-country-select-control__list">
+							{ itemsToRender.map( ( item, index ) => (
+								<div
+									{ ...getItemProps( {
+										item,
+										index,
+										key: item.key,
+										className: classNames(
+											item.className,
+											'components-country-select-control__item',
+											{ 'is-highlighted': index === highlightedIndex }
+										),
+										style: item.style,
+									})}
+								>
+									{ item.key === selectedItem.key && (
+										<Icon
+											icon={ check }
+											className="components-country-select-control__item-icon"
+										/>
+									) }
+									{ children ? children( item ) : item.name }
+								</div>
+							) ) }
+						</div>
 						<div>
 							<button onClick={ onApplyHandler }>{ __( 'Apply', 'woocommerce' ) }</button>
 						</div>

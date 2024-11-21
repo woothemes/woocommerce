@@ -1,6 +1,6 @@
 .components-country-select-control {
 	font-size: 13px;
-	color: #666;
+	color: $gray-900;
 	position: relative;
 
 	.components-country-select-control__label {
@@ -20,7 +20,7 @@
 		list-style-type: none;
 
 		&.is-highlighted {
-			background: #000;
+			background: $gray-300;
 		}
 	}
 
@@ -64,11 +64,11 @@
 		}
 	}
 
-	.components-country-select-control__menu[aria-hidden='true'] {
+	&__menu[aria-hidden='true'] {
 		display: none;
 	}
 
-	.components-country-select-control__menu {
+	&__menu {
 		margin: -1px 1px;
 		background-color: #fff;
 		border: 1px solid #999;
@@ -76,10 +76,44 @@
 		max-height: 300px;
 		min-width: 100%;
 		outline: none;
-		overflow: auto;
+		overflow: hidden;
 		padding: 0;
 		position: absolute;
 		transition: none;
 		z-index: 1000000;
+	}
+
+    &__list {
+        overflow: auto;
+        max-height: 200px;
+        padding: $grid-unit-10 $grid-unit-15;
+    }
+
+    &__search {
+		min-width: 150px;
+		margin: $gap-small;
+		position: relative;
+
+		&--input {
+			height: 40px;
+			line-height: 1;
+			min-height: 40px;
+			min-width: 100%;
+			border: none;
+			background-color: #ccc;
+			padding-right: 40px;
+			position: relative;
+
+			&:focus {
+				background-color: #fff;
+			}
+		}
+
+		&--input-suffix {
+			position: absolute;
+			right: 10px;
+			top: 8px;
+			background: transparent;
+		}
 	}
 }
