@@ -74,18 +74,13 @@ export class Editor extends CoreEditor {
 	async revertTemplate( { templateName }: { templateName: string } ) {
 		await this.page.getByPlaceholder( 'Search' ).fill( templateName );
 
-		await this.page
-			.getByRole( 'link', {
-				name: templateName,
-				exact: true,
-			} )
-			.or(
-				this.page.getByRole( 'button', {
-					name: templateName,
-					exact: true,
-				} )
+		const linkOrButton = await this.page
+			.locator(
+				`role=link[name="${ templateName }"][exact=true], role=button[name="${ templateName }"][exact=true]`
 			)
-			.click();
+			.first();
+
+		await linkOrButton.click();
 
 		await this.page.getByLabel( 'Actions' ).click();
 		await this.page
