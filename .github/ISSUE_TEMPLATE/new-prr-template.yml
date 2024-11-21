@@ -93,7 +93,11 @@ body:
           required: true
         - label: "I understand that I need to create an issue as a result of the Escape Analysis and reference it in a comment on this post. This can be done at a later time, but it is required for this request to be closed."
           required: true
-        - label: "I understand that I will need to merge the followup cherry-picked PR(s) created by the github-actions bot"
+        - label: "I understand that I will need to merge the PR to the target `release` branch when my request is approved"
+          required: true
+        - label: "I understand that I will need to merge the followup cherry-picked PR(s) created by the github-actions bot to `trunk`"
+          required: true
+        - label: "I understand that I will need to merge the followup cherry-picked PR(s) created by the github-actions bot to `frozen release` branch"
           required: true
   - type: markdown
     attributes:
