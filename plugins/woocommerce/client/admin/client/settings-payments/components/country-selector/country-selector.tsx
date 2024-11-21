@@ -125,18 +125,16 @@ export const CountrySelector = <ItemType extends Item>({
 	const getSearchSuffix = ( focused: boolean ) => {
 		if ( focused ) {
 			return (
-				<div>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						viewBox="0 0 24 24"
-						width="24"
-						height="24"
-						aria-hidden="true"
-						focusable="false"
-					>
-						<path d="M12 13.06l3.712 3.713 1.061-1.06L13.061 12l3.712-3.712-1.06-1.06L12 10.938 8.288 7.227l-1.061 1.06L10.939 12l-3.712 3.712 1.06 1.061L12 13.061z"></path>
-					</svg>
-				</div>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="0 0 24 24"
+					width="24"
+					height="24"
+					aria-hidden="true"
+					focusable="false"
+				>
+					<path d="M12 13.06l3.712 3.713 1.061-1.06L13.061 12l3.712-3.712-1.06-1.06L12 10.938 8.288 7.227l-1.061 1.06L10.939 12l-3.712 3.712 1.06 1.061L12 13.061z"></path>
+				</svg>
 			);
 		}
 	
@@ -153,6 +151,9 @@ export const CountrySelector = <ItemType extends Item>({
 			</svg>
 		);
 	};
+
+	// Check if the search input is clearable.
+	const isSearchClearable = isSearchFocused || searchText !== '';
 
 	const menuProps = getMenuProps({
 		className: 'components-country-select-control__menu',
@@ -205,6 +206,22 @@ export const CountrySelector = <ItemType extends Item>({
 		setSearchText( target.value );
 	};
 
+	const onClearClickedHandler = useCallback(
+		( e: React.MouseEvent<HTMLButtonElement> ) => {
+			e.preventDefault();
+
+			if ( isSearchClearable ) {
+				setSearchText( '' );
+				const syntheticEvent = {
+					target: { value: '' },
+				} as unknown as React.ChangeEvent<HTMLInputElement>;
+		
+				handleSearch( syntheticEvent );
+			}
+		},
+		[ isSearchClearable, handleSearch ]
+	);
+
     // Ensure aria compliance by removing 'downshift-null' from aria-activedescendant
 	if ( menuProps['aria-activedescendant']?.startsWith( 'downshift-null' ) ) {
 		delete menuProps['aria-activedescendant'];
@@ -244,9 +261,9 @@ export const CountrySelector = <ItemType extends Item>({
 									'woocommerce'
 								) }
 							/>
-							<span className="components-country-select-control__search--input-suffix">
-								{ getSearchSuffix( isSearchFocused ) }
-							</span>
+							<button className="components-country-select-control__search--input-suffix" onClick={ onClearClickedHandler }>
+								{ getSearchSuffix( isSearchClearable ) }
+							</button>
 						</div>
 						<div className="components-country-select-control__list">
 							{ itemsToRender.map( ( item, index ) => (
