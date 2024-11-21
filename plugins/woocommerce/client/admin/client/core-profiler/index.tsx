@@ -353,7 +353,7 @@ const redirectToJetpackAuthPage = ( {
 	context,
 }: {
 	context: CoreProfilerStateMachineContext;
-	event: { output: { url: string } };
+	event: { output: { url: string; color_scheme?: string } };
 } ) => {
 	const url = new URL( event.output.url );
 	url.searchParams.set( 'installed_ext_success', '1' );
@@ -361,6 +361,12 @@ const redirectToJetpackAuthPage = ( {
 		'plugin_name',
 		getPluginNameParam( context.pluginsSelected )
 	);
+
+	// Add current user's color scheme to the URL.
+	// We'll use this value to set the color scheme in the Jetpack connection page.
+	if ( event.output.color_scheme ) {
+		url.searchParams.set( 'color_scheme', event.output.color_scheme );
+	}
 	window.location.href = url.toString();
 };
 
