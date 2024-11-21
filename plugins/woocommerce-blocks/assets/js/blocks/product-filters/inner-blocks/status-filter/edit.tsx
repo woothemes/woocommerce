@@ -46,7 +46,7 @@ const Edit = ( props: EditProps ) => {
 						[
 							'core/heading',
 							{
-								level: 3,
+								level: 4,
 								content: __( 'Status', 'woocommerce' ),
 							},
 						],
