@@ -33,9 +33,7 @@ class WC_Settings_Shipping extends WC_Settings_Page {
 			$this->is_modern = true;
 			// Include the script to power the modern settings page.
 			WCAdminAssets::register_script( 'wp-admin-scripts', 'shipping-settings', true, array() );
-
-			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_modern_screen_data' ) );
-			$this->zones_screen();
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_modern_screen_data' ) );
 		}
 
 		parent::__construct();
@@ -185,7 +183,31 @@ class WC_Settings_Shipping extends WC_Settings_Page {
 	}
 
 	public function enqueue_modern_screen_data() {
-		$this->zones_screen();
+		error_log( 'enqueue_modern_screen_data' );
+		$allowed_countries   = WC()->countries->get_shipping_countries();
+		$shipping_continents = WC()->countries->get_shipping_continents();
+
+		wp_localize_script(
+			'wc-admin-shipping-settings',
+			'shippingZonesLocalizeScript',
+			array(
+				'zones'                   => WC_Shipping_Zones::get_zones( 'json' ),
+				'default_zone'            => array(
+					'zone_id'    => 0,
+					'zone_name'  => '',
+					'zone_order' => null,
+				),
+				'wc_shipping_zones_nonce' => wp_create_nonce( 'wc_shipping_zones_nonce' ),
+				'strings'                 => array(
+					'unload_confirmation_msg'     => __( 'Your changed data will be lost if you leave this page without saving.', 'woocommerce' ),
+					'delete_confirmation_msg'     => __( 'Are you sure you want to delete this zone? This action cannot be undone.', 'woocommerce' ),
+					'save_failed'                 => __( 'Your changes were not saved. Please retry.', 'woocommerce' ),
+					'no_shipping_methods_offered' => __( 'No shipping methods offered to this zone.', 'woocommerce' ),
+				),
+				'regionOptions'            => $this->get_region_options( $allowed_countries, $shipping_continents ),
+			)
+		);
+		wp_enqueue_script('wc-admin-shipping-settings' );
 	}
 
 	/**
@@ -382,11 +404,9 @@ class WC_Settings_Shipping extends WC_Settings_Page {
 	 */
 	protected function zones_screen() {
 		$method_count = wc_get_shipping_method_count( false, true );
-		$modern       = Features::is_enabled( 'settings' );
-		$script_name  = $modern ? 'wc-admin-shipping-settings' : 'wc-shipping-zones';
 
 		wp_localize_script(
-			$script_name,
+			'wc-shipping-zones',
 			'shippingZonesLocalizeScript',
 			array(
 				'zones'                   => WC_Shipping_Zones::get_zones( 'json' ),
@@ -404,11 +424,7 @@ class WC_Settings_Shipping extends WC_Settings_Page {
 				),
 			)
 		);
-		wp_enqueue_script( $script_name );
-
-		if ( $modern ) {
-			return;
-		}
+		wp_enqueue_script( 'wc-shipping-zones' );
 
 		include_once dirname( __FILE__ ) . '/views/html-admin-page-shipping-zones.php';
 	}
