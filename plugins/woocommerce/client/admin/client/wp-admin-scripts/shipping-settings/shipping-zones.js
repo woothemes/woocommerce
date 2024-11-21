@@ -10,7 +10,7 @@ const { useHistory } = unlock( routerPrivateApis );
 
 export const ShippingZones = () => {
 	const history = useHistory();
-	const { zones = [] } = window.shippingZonesLocalizeScript;
+	const { zones } = window.shippingZonesLocalizeScript;
 	const zoneList = Object.keys( zones ).map( ( zoneId ) => zones[ zoneId ] );
 
 	const onEdit = ( zoneId ) => {
@@ -48,7 +48,15 @@ export const ShippingZones = () => {
 						<tr key={ zone.zone_id }>
 							<td>{ zone.zone_name }</td>
 							<td>{ zone.formatted_zone_location }</td>
-							<td>TBD</td>
+							<td>
+								{ Object.keys( zone.shipping_methods )
+									.map(
+										( methodId ) =>
+											zone.shipping_methods[ methodId ]
+												.method_title
+									)
+									.join( ', ' ) }
+							</td>
 							<td>
 								<Button
 									variant="secondary"

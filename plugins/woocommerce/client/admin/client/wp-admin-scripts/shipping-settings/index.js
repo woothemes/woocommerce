@@ -8,6 +8,7 @@ import { getQueryArgs } from '@wordpress/url';
  * Internal dependencies
  */
 import { ShippingZones } from './shipping-zones';
+import { EditZone } from './edit-zone';
 
 const ShippingLegacyView = () => {
 	// Replace with <LegacyContent /> when available from @woocommerce/settings-editor package.
@@ -15,22 +16,21 @@ const ShippingLegacyView = () => {
 };
 
 addFilter( 'woocommerce_admin_settings_pages', 'woocommerce', ( pages ) => {
-	const currentArgs = getQueryArgs( window.location.href );
+	const { section, quickEdit, zoneId } = getQueryArgs( window.location.href );
 	pages[ 'shipping' ] = {
 		areas: {
 			content:
-				currentArgs.section === undefined ? (
+				section === undefined ? (
 					<ShippingZones />
 				) : (
 					<ShippingLegacyView />
 				),
-			edit: null,
+			edit: quickEdit && zoneId ? <EditZone zoneId={ zoneId } /> : null,
 		},
 		widths: {
 			content: undefined,
 			edit: 380,
 		},
-		paul: currentArgs.section ? 'Shipping legacy' : 'Shipping zones',
 	};
 	return pages;
 } );
