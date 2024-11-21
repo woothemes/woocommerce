@@ -124,7 +124,7 @@ class ProductCollectionDataSchema extends AbstractSchema {
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,
 				'items'       => [
-					'type'       => 'object',
+					'type'       => 'array',
 					'properties' => [
 						'count'  => [
 							'description' => __( 'Number of products.', 'woocommerce' ),

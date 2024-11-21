@@ -136,8 +136,8 @@ final class QueryFilters {
 	 *
 	 * @param array $query_vars The WP_Query arguments.
 	 */
-	public function get_onsale_status_count( array $query_vars ) {
-		$transient_key = 'wc_onsale_status_count_' . md5( wp_json_encode( $query_vars ) );
+	public function get_onsale_count( array $query_vars ) {
+		$transient_key = 'wc_onsale_count_' . md5( wp_json_encode( $query_vars ) );
 		$cached_data   = get_transient( $transient_key );
 
 		if ( isset( $cached_data ) && ( ! defined( 'WP_DEBUG' ) || true !== WP_DEBUG ) ) {

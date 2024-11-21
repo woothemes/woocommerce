@@ -171,7 +171,7 @@ class ProductCollectionData extends AbstractRoute {
 			$filter_request = clone $request;
 			$count          = $filters->get_onsale_count( $filter_request );
 
-			$data['onsale_count'][] = (object) [
+			$data['onsale_count'] = [
 				'count' => $count,
 			];
 		}
