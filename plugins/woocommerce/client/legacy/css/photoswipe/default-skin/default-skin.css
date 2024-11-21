@@ -29,7 +29,7 @@
   border: 0;
   padding: 0;
   margin: 0;
-  float: right;
+  float: left;
   opacity: 0.75;
   -webkit-transition: opacity 0.2s;
           transition: opacity 0.2s;
@@ -425,7 +425,10 @@ a.pswp__share--download:hover {
   left: 0;
   top: 0;
   height: 44px;
-  width: 100%; }
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
 
 .pswp__caption,
 .pswp__top-bar,
