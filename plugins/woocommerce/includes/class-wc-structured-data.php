@@ -2,6 +2,11 @@
 /**
  * Structured data's handler and generator using JSON-LD format.
  *
+ * When making changes to this file, please make sure to test the generated
+ * markup with Schema Markup Validator and Google Search Console.
+ * * https://validator.schema.org/
+ * * https://search.google.com/test/rich-results
+ *
  * @package WooCommerce\Classes
  * @since   3.0.0
  * @version 3.0.0
