@@ -54,9 +54,8 @@ export const registerBlockSingleProductTemplate = ( {
 			editSiteStore?.getEditedPostId< string | number | undefined >()
 		);
 		const hasChangedTemplate = previousTemplateId !== currentTemplateId;
-		const hasTemplateId = Boolean( currentTemplateId );
 
-		if ( ! hasChangedTemplate || ! hasTemplateId || ! blockName ) {
+		if ( ! hasChangedTemplate || ! blockName ) {
 			return;
 		}
 
@@ -106,6 +105,7 @@ export const registerBlockSingleProductTemplate = ( {
 		const isBlockRegistered = Boolean( variationName )
 			? blocksRegistered.has( variationName )
 			: blocksRegistered.has( blockName );
+
 		// This subscribe callback could be invoked with the core/blocks store
 		// which would cause infinite registration loops because of the `registerBlockType` call.
 		// This local cache helps prevent that.
