@@ -1,20 +1,22 @@
-<?php //phpcs:ignore Generic.PHP.RequireStrictTypes.MissingDeclaration
+<?php
 /**
  * WooCommerce Settings.
  */
 
-namespace Automattic\WooCommerce\Admin\Features;
+declare( strict_types = 1 );
+
+namespace Automattic\WooCommerce\Admin\Features\Settings;
 
 use Automattic\WooCommerce\Internal\Admin\WCAdminAssets;
 
 /**
  * Contains backend logic for the Settings feature.
  */
-class Settings {
+class Init {
 	/**
 	 * Class instance.
 	 *
-	 * @var Settings instance
+	 * @var Init instance
 	 */
 	protected static $instance = null;
 
@@ -111,6 +113,7 @@ class Settings {
 
 		// Make sure the Settings Editor package is loaded.
 		wp_enqueue_script( 'wc-settings-editor' );
+		wp_enqueue_style( 'wc-settings-editor' );
 
 		$script_name            = 'wc-admin-edit-settings';
 		$script_path_name       = 'settings';
@@ -144,8 +147,8 @@ class Settings {
 		foreach ( $setting_pages as $setting_page ) {
 			$pages = $setting_page->add_settings_page_data( $pages );
 		}
-
-		$settings['settingsData'] = $pages;
+		$transformer              = new Transformer();
+		$settings['settingsData'] = $transformer->transform( $pages );
 
 		return $settings;
 	}
