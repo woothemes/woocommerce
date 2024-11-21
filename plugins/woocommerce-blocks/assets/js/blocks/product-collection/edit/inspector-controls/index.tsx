@@ -166,10 +166,10 @@ const ProductCollectionInspectorControls = (
 				) }
 				<LayoutOptionsControl { ...displayControlProps } />
 				<WidthOptionsControl { ...dimensionsControlProps } />
-				<ColumnsControl { ...displayControlProps } />
 				{ showProductsPerPageControl && (
 					<ProductsPerPageControl { ...queryControlProps } />
 				) }
+				<ColumnsControl { ...displayControlProps } />
 				{ showOrderControl && (
 					<OrderByControl { ...queryControlProps } />
 				) }
