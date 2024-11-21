@@ -25,5 +25,8 @@
 				"changes": "src/**/*.{js,ts,tsx}"
 			}
 		}
+	},
+	"publishConfig": {
+		"access": "public"
 	}
 }

@@ -671,6 +671,283 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	}
 
 	/**
+	 * Test that `exclude_status` parameter correctly excludes a single status.
+	 */
+	public function test_products_filter_with_single_exclude_status() {
+		$all_statuses = get_post_statuses();
+		foreach ( $all_statuses as $status => $label ) {
+			WC_Helper_Product::create_simple_product(
+				true,
+				array(
+					'name'   => "$label Product",
+					'status' => $status,
+				)
+			);
+		}
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'exclude_status' => array( 'draft' ),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data();
+
+		$statuses = array_unique( array_column( $data, 'status' ) );
+
+		$this->assertNotContains( 'draft', $statuses );
+	}
+
+	/**
+	 * Test that `exclude_status` parameter correctly excludes multiple statuses.
+	 */
+	public function test_products_filter_with_multiple_exclude_status() {
+		$all_statuses = get_post_statuses();
+		foreach ( $all_statuses as $status => $label ) {
+			WC_Helper_Product::create_simple_product(
+				true,
+				array(
+					'name'   => "$label Product",
+					'status' => $status,
+				)
+			);
+		}
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'exclude_status' => array( 'draft', 'private' ),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data();
+
+		$statuses = array_unique( array_column( $data, 'status' ) );
+
+		$this->assertEqualsCanonicalizing(
+			array( 'publish', 'pending' ),
+			$statuses
+		);
+
+		$this->assertNotContains( 'draft', $statuses );
+		$this->assertNotContains( 'private', $statuses );
+	}
+
+	/**
+	 * Test that empty `exclude_status` parameter returns all products.
+	 */
+	public function test_products_filter_with_empty_exclude_status() {
+		$statuses = get_post_statuses();
+		foreach ( $statuses as $status => $label ) {
+			WC_Helper_Product::create_simple_product(
+				true,
+				array(
+					'name'   => "$label Product",
+					'status' => $status,
+				)
+			);
+		}
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'exclude_status' => array(),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data();
+
+		$statuses = array_unique( array_column( $data, 'status' ) );
+
+		$this->assertEqualsCanonicalizing(
+			array_keys( get_post_statuses() ),
+			$statuses
+		);
+	}
+
+	/**
+	 * Test that `exclude_status` parameter validation handles invalid values.
+	 */
+	public function test_products_filter_with_valid_invalid_exclude_status() {
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'exclude_status' => array( 'draft', 'invalid_status' ),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 400, $response->get_status() );
+		$data = $response->get_data();
+	}
+
+	/**
+	 * Test that `exclude_status` with all statuses returns empty.
+	 */
+	public function test_products_filter_exclude_status_with_all_statuses_returns_empty() {
+		$statuses = get_post_statuses();
+		foreach ( $statuses as $status => $label ) {
+			WC_Helper_Product::create_simple_product(
+				true,
+				array(
+					'name'   => "$label Product",
+					'status' => $status,
+				)
+			);
+		}
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'exclude_status' => array_keys( $statuses ),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEmpty( $response->get_data() );
+	}
+
+	/**
+	 * Test that `exclude_status` parameter takes precedence over `include_status`.
+	 */
+	public function test_products_filter_exclude_status_precedence_over_include() {
+		$statuses = get_post_statuses();
+		foreach ( $statuses as $status => $label ) {
+			WC_Helper_Product::create_simple_product(
+				true,
+				array(
+					'name'   => "$label Product",
+					'status' => $status,
+				)
+			);
+		}
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'include_status' => array( 'draft', 'private' ),
+				'exclude_status' => array( 'private' ),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+
+		$statuses = array_unique( array_column( $response->get_data(), 'status' ) );
+
+		$this->assertContains( 'draft', $statuses );
+		$this->assertNotContains( 'private', $statuses );
+	}
+
+	/**
+	 * Test that `exclude_status` works correctly when `include_status` is 'any'.
+	 */
+	public function test_products_filter_exclude_status_with_include_any() {
+		$statuses = get_post_statuses();
+		foreach ( $statuses as $status => $label ) {
+			WC_Helper_Product::create_simple_product(
+				true,
+				array(
+					'name'   => "$label Product",
+					'status' => $status,
+				)
+			);
+		}
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'include_status' => array( 'any' ),
+				'exclude_status' => array( 'private', 'draft' ),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+
+		$statuses = array_unique( array_column( $response->get_data(), 'status' ) );
+
+		$this->assertEqualsCanonicalizing(
+			array( 'publish', 'pending' ),
+			$statuses
+		);
+		$this->assertNotContains( 'private', $statuses );
+		$this->assertNotContains( 'draft', $statuses );
+	}
+
+	/**
+	 * Test that `exclude_status` works correctly with specific `include_status` values.
+	 */
+	public function test_products_filter_exclude_status_with_specific_includes() {
+		$statuses = get_post_statuses();
+		foreach ( $statuses as $status => $label ) {
+			WC_Helper_Product::create_simple_product(
+				true,
+				array(
+					'name'   => "$label Product",
+					'status' => $status,
+				)
+			);
+		}
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'include_status' => array( 'draft', 'pending', 'private' ),
+				'exclude_status' => array( 'private', 'draft' ),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+
+		$statuses = array_unique( array_column( $response->get_data(), 'status' ) );
+
+		$this->assertEqualsCanonicalizing( array( 'pending' ), $statuses );
+		$this->assertNotContains( 'private', $statuses );
+		$this->assertNotContains( 'draft', $statuses );
+		$this->assertNotContains( 'publish', $statuses );
+	}
+
+	/**
+	 * Test that `exclude_status` works correctly with the 'status' parameter.
+	 */
+	public function test_products_filter_exclude_status_with_status_param() {
+		$statuses = get_post_statuses();
+		foreach ( $statuses as $status => $label ) {
+			WC_Helper_Product::create_simple_product(
+				true,
+				array(
+					'name'   => "$label Product",
+					'status' => $status,
+				)
+			);
+		}
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'status'         => 'draft',
+				'exclude_status' => array( 'draft' ),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+
+		$data = $response->get_data();
+		$this->assertEmpty( $data, 'Should return no products when status is excluded' );
+	}
+
+	/**
 	 * Test the duplicate product endpoint with simple products.
 	 */
 	public function test_duplicate_simple_product() {
