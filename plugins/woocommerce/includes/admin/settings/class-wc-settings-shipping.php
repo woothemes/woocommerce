@@ -29,8 +29,13 @@ class WC_Settings_Shipping extends WC_Settings_Page {
 		$this->label = __( 'Shipping', 'woocommerce' );
 
 		if ( Features::is_enabled( 'settings' ) ) {
+			// Register as a modern page.
 			$this->is_modern = true;
+			// Include the script to power the modern settings page.
 			WCAdminAssets::register_script( 'wp-admin-scripts', 'shipping-settings', true, array() );
+
+			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_modern_screen_data' ) );
+			$this->zones_screen();
 		}
 
 		parent::__construct();
@@ -177,6 +182,10 @@ class WC_Settings_Shipping extends WC_Settings_Page {
 			);
 
 		return apply_filters( 'woocommerce_shipping_settings', $settings );
+	}
+
+	public function enqueue_modern_screen_data() {
+		$this->zones_screen();
 	}
 
 	/**
@@ -373,9 +382,11 @@ class WC_Settings_Shipping extends WC_Settings_Page {
 	 */
 	protected function zones_screen() {
 		$method_count = wc_get_shipping_method_count( false, true );
+		$modern       = Features::is_enabled( 'settings' );
+		$script_name  = $modern ? 'wc-admin-shipping-settings' : 'wc-shipping-zones';
 
 		wp_localize_script(
-			'wc-shipping-zones',
+			$script_name,
 			'shippingZonesLocalizeScript',
 			array(
 				'zones'                   => WC_Shipping_Zones::get_zones( 'json' ),
@@ -393,7 +404,11 @@ class WC_Settings_Shipping extends WC_Settings_Page {
 				),
 			)
 		);
-		wp_enqueue_script( 'wc-shipping-zones' );
+		wp_enqueue_script( $script_name );
+
+		if ( $modern ) {
+			return;
+		}
 
 		include_once dirname( __FILE__ ) . '/views/html-admin-page-shipping-zones.php';
 	}

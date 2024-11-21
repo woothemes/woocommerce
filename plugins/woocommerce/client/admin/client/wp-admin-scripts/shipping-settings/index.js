@@ -4,11 +4,13 @@
 import { addFilter } from '@wordpress/hooks';
 import { getQueryArgs } from '@wordpress/url';
 
-const ShippingZones = () => {
-	return <div>Shipping Zones View</div>;
-};
+/**
+ * Internal dependencies
+ */
+import { ShippingZones } from './shipping-zones';
 
 const ShippingLegacyView = () => {
+	// Replace with <LegacyContent /> when available from @woocommerce/settings-editor package.
 	return <div>Shipping Legacy View</div>;
 };
 
