@@ -28,6 +28,11 @@
 		padding-top: $gap;
 		width: 100%;
 
+		ins,
+		del {
+			@include font-size(small);
+		}
+
 		&:first-child {
 			padding-top: 0;
 		}
@@ -45,7 +50,7 @@
 		}
 
 		.wc-block-components-product-metadata {
-			@include font-size(regular);
+			@include font-size(small);
 		}
 	}
 
@@ -97,7 +102,8 @@
 		p,
 		.wc-block-components-product-metadata {
 			line-height: 1.375;
-			margin-top: $gap-smaller;
+			// We don't have a standard gap size for this.
+			margin-top: 6px;
 		}
 	}
 
@@ -112,6 +118,12 @@
 
 	.wc-block-components-order-summary-item__individual-prices {
 		display: block;
-		padding-top: $gap-smaller;
+		// We don't have a standard gap size for this.
+		padding-top: 6px;
+
+		.wc-block-formatted-money-amount {
+			font-weight: 400;
+			@include font-size(small);
+		}
 	}
 }

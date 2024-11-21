@@ -1,4 +1,6 @@
 .wc-block-components-product-name {
 	@include font-size(regular);
+	line-height: 1.4em;
+	font-weight: 500;
 	@include wrap-break-word();
 }
