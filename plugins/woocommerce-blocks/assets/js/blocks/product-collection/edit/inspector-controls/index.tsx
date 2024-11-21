@@ -157,6 +157,7 @@ const ProductCollectionInspectorControls = (
 					);
 					props.setAttributes( defaultSettings );
 				} }
+				className="wc-block-editor-product-collection__settings_panel"
 			>
 				{ showInheritQueryControl && (
 					<InheritQueryControl { ...queryControlProps } />

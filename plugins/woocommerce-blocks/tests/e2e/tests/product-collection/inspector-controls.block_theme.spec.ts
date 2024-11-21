@@ -635,23 +635,20 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 		await pageObject.createNewPostAndInsertBlock();
 
 		// Add all display controls
-		await page.getByRole( 'button', { name: 'Display options' } ).click();
+		await page.getByRole( 'button', { name: 'Settings options' } ).click();
 		await page.getByRole( 'menuitemcheckbox', { name: 'Offset' } ).click();
 		await page
 			.getByRole( 'menuitemcheckbox', { name: 'Max pages to show' } )
 			.click();
-		await page.getByRole( 'button', { name: 'Display options' } ).click();
+		await page.getByRole( 'button', { name: 'Settings options' } ).click();
 
 		// Get the products per page input
-		const displaySettingsContainer = page.locator(
-			'.wc-block-editor-product-collection__display-settings'
+		const settingsPanel = page.locator(
+			'.wc-block-editor-product-collection__settings_panel'
 		);
-		const productsPerPageInput = displaySettingsContainer.getByRole(
-			'spinbutton',
-			{
-				name: 'Products per page',
-			}
-		);
+		const productsPerPageInput = settingsPanel.getByRole( 'spinbutton', {
+			name: 'Products per page',
+		} );
 
 		// Test setting products per page to 2
 		await productsPerPageInput.fill( '2' );
@@ -664,7 +661,7 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 		await expect( pageObject.products ).toHaveCount( 3 );
 
 		// Set offset to 1 and verify it skips the first product
-		const offsetInput = displaySettingsContainer.getByRole( 'spinbutton', {
+		const offsetInput = settingsPanel.getByRole( 'spinbutton', {
 			name: 'Offset',
 		} );
 		await offsetInput.fill( '1' );
@@ -676,12 +673,9 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 		await expect( pageObject.productTitles.first() ).toHaveText( 'Beanie' );
 
 		// Set max pages to show
-		const maxPagesInput = displaySettingsContainer.getByRole(
-			'spinbutton',
-			{
-				name: 'Max pages to show',
-			}
-		);
+		const maxPagesInput = settingsPanel.getByRole( 'spinbutton', {
+			name: 'Max pages to show',
+		} );
 		await maxPagesInput.fill( '2' );
 
 		await pageObject.publishAndGoToFrontend();
