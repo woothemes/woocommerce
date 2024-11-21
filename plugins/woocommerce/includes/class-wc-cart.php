@@ -9,7 +9,6 @@
  * @version 2.1.0
  */
 
-use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Utilities\DiscountsUtil;
 use Automattic\WooCommerce\Utilities\NumberUtil;
 
