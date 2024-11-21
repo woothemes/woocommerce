@@ -187,7 +187,7 @@ jQuery( function( $ ) {
 			// View cart text.
 			if ( fragments && ! wc_add_to_cart_params.is_cart && $button.parent().find( '.added_to_cart' ).length === 0 ) {
 				var anchor = document.createElement( 'a' );
-				anchor.href = encodeURI( wc_add_to_cart_params.cart_url );
+				anchor.href = wc_add_to_cart_params.cart_url;
 				anchor.className = 'added_to_cart wc-forward';
 				anchor.title = wc_add_to_cart_params.i18n_view_cart;
 				anchor.textContent = wc_add_to_cart_params.i18n_view_cart;
