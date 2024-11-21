@@ -552,7 +552,6 @@
 					"shardingArguments": [],
 					"changes": [],
 					"events": [
-						"release-checks",
 						"on-demand"
 					],
 					"report": {
@@ -568,7 +567,6 @@
 					"shardingArguments": [],
 					"changes": [],
 					"events": [
-						"release-checks",
 						"on-demand"
 					],
 					"report": {

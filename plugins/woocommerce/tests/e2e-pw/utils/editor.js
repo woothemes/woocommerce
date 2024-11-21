@@ -39,24 +39,14 @@ const getCanvas = async ( page ) => {
 };
 
 const goToPageEditor = async ( { page } ) => {
-	const responsePromise = page.waitForResponse(
-		( response ) =>
-			response.url().includes( '//page' ) && response.status() === 200
-	);
 	await page.goto( 'wp-admin/post-new.php?post_type=page' );
 	await disableWelcomeModal( { page } );
 	await closeChoosePatternModal( { page } );
-	await responsePromise;
 };
 
 const goToPostEditor = async ( { page } ) => {
-	const responsePromise = page.waitForResponse(
-		( response ) =>
-			response.url().includes( '//single' ) && response.status() === 200
-	);
 	await page.goto( 'wp-admin/post-new.php' );
 	await disableWelcomeModal( { page } );
-	await responsePromise;
 };
 
 const fillPageTitle = async ( page, title ) => {
@@ -65,9 +55,10 @@ const fillPageTitle = async ( page, title ) => {
 };
 
 const insertBlock = async ( page, blockName, wpVersion = null ) => {
+	// With Gutenberg active we have Block Inserter name
 	await page
 		.getByRole( 'button', {
-			name: 'Toggle block inserter',
+			name: /Toggle block inserter|Block Inserter/,
 			expanded: false,
 		} )
 		.click();

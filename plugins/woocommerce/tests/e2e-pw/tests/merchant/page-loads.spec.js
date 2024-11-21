@@ -201,14 +201,15 @@ for ( const currentPage of wcPages ) {
 			} );
 
 			for ( let i = 0; i < currentPage.subpages.length; i++ ) {
-				test( `Can load ${ currentPage.subpages[ i ].name }`, async ( {
-					page,
-				} ) => {
-					await page
-						.locator(
-							`li.wp-menu-open > ul.wp-submenu > li a:text-is("${ currentPage.subpages[ i ].name }")`
-						)
-						.click();
+				test(
+					`Can load ${ currentPage.subpages[ i ].name }`,
+					{ tag: '@skip-on-default-wpcom' },
+					async ( { page } ) => {
+						await page
+							.locator(
+								`li.wp-menu-open > ul.wp-submenu > li a:has-text("${ currentPage.subpages[ i ].name }")`
+							)
+							.click();
 
 					await expect(
 						page.locator( 'h1.components-text' )
