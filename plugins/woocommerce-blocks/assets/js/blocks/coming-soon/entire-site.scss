@@ -170,12 +170,6 @@ body:has(.woocommerce-coming-soon-banner) {
 		.wp-block-columns-is-layout-flex {
 			justify-content: center;
 		}
-
-		&-text {
-			display: flex;
-			flex-direction: column;
-			justify-content: space-between;
-		}
 	}
 }
 
