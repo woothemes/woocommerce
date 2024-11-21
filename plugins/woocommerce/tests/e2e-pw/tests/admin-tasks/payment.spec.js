@@ -101,8 +101,8 @@ test.describe( 'Payment setup task', () => {
 			.getByRole( 'link', { name: 'Payments', exact: true } )
 			.click();
 		await expect(
-			page.locator( '.woocommerce-layout__header-wrapper > h1' )
-		).toHaveText( 'Get paid' );
+			page.getByRole( 'heading', { name: 'Payment Methods' } )
+		).toBeVisible();
 	} );
 
 	test( 'Enabling cash on delivery enables the payment method', async ( {
