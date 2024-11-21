@@ -150,14 +150,14 @@ final class ProductFilterStatus extends AbstractBlock {
 	 * @return string Rendered block type output.
 	 */
 	protected function render( $attributes, $content, $block ) {
-		$stock_statuses     = $attributes['stockStatuses'] ?? array_keys( wc_get_product_stock_status_options() );
-		$product_statuses   = $attributes['productStatuses'] ?? array( 'onsale' );
-		$stock_status_data  = $this->get_stock_status_counts( $block, $stock_statuses );
-		$onsale_data = in_array( 'onsale', $product_statuses, true ) ? $this->get_onsale_count( $block ) : array();
-		$status_data        = array_merge( $stock_status_data, $onsale_data );
-		$filter_params      = $block->context['filterParams'] ?? array();
-		$query              = $filter_params[ self::FILTER_STATUS_QUERY_VAR ] ?? '';
-		$selected_statuses  = array_filter( explode( ',', $query ) );
+		$stock_statuses    = $attributes['stockStatuses'] ?? array_keys( wc_get_product_stock_status_options() );
+		$product_statuses  = $attributes['productStatuses'] ?? array( 'onsale' );
+		$stock_status_data = $this->get_stock_status_counts( $block, $stock_statuses );
+		$onsale_data       = in_array( 'onsale', $product_statuses, true ) ? $this->get_onsale_count( $block ) : array();
+		$status_data       = array_merge( $stock_status_data, $onsale_data );
+		$filter_params     = $block->context['filterParams'] ?? array();
+		$query             = $filter_params[ self::FILTER_STATUS_QUERY_VAR ] ?? '';
+		$selected_statuses = array_filter( explode( ',', $query ) );
 
 		$filter_options = array_map(
 			function ( $item ) use ( $selected_statuses, $attributes ) {
@@ -276,7 +276,7 @@ final class ProductFilterStatus extends AbstractBlock {
 			$query_vars['meta_query'] = ProductCollectionUtils::remove_query_array( $query_vars['meta_query'], 'key', '_onsale' );
 		}
 
-		$count = $filters->get_onsale_count( $query_vars );
+		$count  = $filters->get_onsale_count( $query_vars );
 		$data[] = array(
 			'status' => 'onsale',
 			'count'  => $count,

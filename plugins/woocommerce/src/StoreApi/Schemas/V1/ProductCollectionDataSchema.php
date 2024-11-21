@@ -26,7 +26,7 @@ class ProductCollectionDataSchema extends AbstractSchema {
 	 */
 	public function get_properties() {
 		return [
-			'price_range'          => [
+			'price_range'         => [
 				'description' => __( 'Min and max prices found in collection of products, provided using the smallest unit of the currency.', 'woocommerce' ),
 				'type'        => [ 'object', 'null' ],
 				'context'     => [ 'view', 'edit' ],
@@ -49,7 +49,7 @@ class ProductCollectionDataSchema extends AbstractSchema {
 					]
 				),
 			],
-			'attribute_counts'     => [
+			'attribute_counts'    => [
 				'description' => __( 'Returns number of products within attribute terms.', 'woocommerce' ),
 				'type'        => [ 'array', 'null' ],
 				'context'     => [ 'view', 'edit' ],
@@ -72,7 +72,7 @@ class ProductCollectionDataSchema extends AbstractSchema {
 					],
 				],
 			],
-			'rating_counts'        => [
+			'rating_counts'       => [
 				'description' => __( 'Returns number of products with each average rating.', 'woocommerce' ),
 				'type'        => [ 'array', 'null' ],
 				'context'     => [ 'view', 'edit' ],
@@ -95,7 +95,7 @@ class ProductCollectionDataSchema extends AbstractSchema {
 					],
 				],
 			],
-			'stock_status_counts'  => [
+			'stock_status_counts' => [
 				'description' => __( 'Returns number of products with each stock status.', 'woocommerce' ),
 				'type'        => [ 'array', 'null' ],
 				'context'     => [ 'view', 'edit' ],
