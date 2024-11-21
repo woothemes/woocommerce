@@ -107,7 +107,9 @@ body:
       options:
         - label: "Escape analysis completed"
           required: false
-        - label: "Two Cherry-picked PRs merged (you can find the links in PR comments)"
+        - label: "PR cherry-picked to `trunk` (you can find the links in PR comments to verify)"
+          required: false
+        - label: "PR merged to `release` branch"
           required: false
         - label: "Followup issue if any"
           required: false
