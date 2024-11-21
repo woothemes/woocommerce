@@ -47,9 +47,7 @@ const test = base.extend< { pageObject: ProductFiltersPage } >( {
 
 test.describe( `${ blockData.name }`, () => {
 	test.beforeEach( async ( { admin, requestUtils } ) => {
-		await requestUtils.activatePlugin(
-			'woocommerce-blocks-test-enable-experimental-features'
-		);
+		await requestUtils.setFeatureFlag( 'experimental-blocks', true );
 		await admin.visitSiteEditor( {
 			postId: `woocommerce/woocommerce//${ blockData.slug }`,
 			postType: 'wp_template',
@@ -68,53 +66,17 @@ test.describe( `${ blockData.name }`, () => {
 		);
 		await expect( block ).toBeVisible();
 
-		const activeHeading = block.getByText( 'Active', { exact: true } );
-		const activeFilterBlock = block
-			.getByLabel( 'Block: Filter Options' )
-			.and(
-				editor.canvas.locator(
-					'[data-type="woocommerce/product-filter-active"]'
-				)
-			);
-		await expect( activeHeading ).toBeVisible();
+		const activeFilterBlock = block.getByLabel(
+			'Block: Active (Experimental)'
+		);
 		await expect( activeFilterBlock ).toBeVisible();
-
-		const priceHeading = block.getByText( 'Price', {
-			exact: true,
-		} );
-		const priceFilterBlock = block
-			.getByLabel( 'Block: Filter Options' )
-			.and(
-				editor.canvas.locator(
-					'[data-type="woocommerce/product-filter-price"]'
-				)
-			);
-		await expect( priceHeading ).toBeVisible();
-		await expect( priceFilterBlock ).toBeVisible();
-
-		const statusHeading = block.getByText( 'Status', {
-			exact: true,
-		} );
-		const statusFilterBlock = block
-			.getByLabel( 'Block: Filter Options' )
-			.and(
-				editor.canvas.locator(
-					'[data-type="woocommerce/product-filter-stock-status"]'
-				)
-			);
-		await expect( statusHeading ).toBeVisible();
-		await expect( statusFilterBlock ).toBeVisible();
 
 		const colorHeading = block.getByText( 'Color', {
 			exact: true,
 		} );
-		const colorFilterBlock = block
-			.getByLabel( 'Block: Filter Options' )
-			.and(
-				editor.canvas.locator(
-					'[data-type="woocommerce/product-filter-attribute"]'
-				)
-			);
+		const colorFilterBlock = block.getByLabel(
+			'Block: Color (Experimental)'
+		);
 		const expectedColorFilterOptions = [
 			'Blue',
 			'Green',
@@ -122,27 +84,11 @@ test.describe( `${ blockData.name }`, () => {
 			'Red',
 			'Yellow',
 		];
-		const colorFilterOptions = (
-			await colorFilterBlock.allInnerTexts()
-		 )[ 0 ].split( '\n' );
 		await expect( colorHeading ).toBeVisible();
 		await expect( colorFilterBlock ).toBeVisible();
-		expect( colorFilterOptions ).toEqual(
-			expect.arrayContaining( expectedColorFilterOptions )
-		);
-
-		const ratingHeading = block.getByText( 'Rating', {
-			exact: true,
-		} );
-		const ratingFilterBlock = block
-			.getByLabel( 'Block: Filter Options' )
-			.and(
-				editor.canvas.locator(
-					'[data-type="woocommerce/product-filter-rating"]'
-				)
-			);
-		await expect( ratingHeading ).toBeVisible();
-		await expect( ratingFilterBlock ).toBeVisible();
+		for ( const option of expectedColorFilterOptions ) {
+			await expect( colorFilterBlock ).toContainText( option );
+		}
 	} );
 
 	test( 'should contain the correct inner block names in the list view', async ( {
@@ -181,253 +127,9 @@ test.describe( `${ blockData.name }`, () => {
 		);
 		await expect( productFilterActiveBlocksListItem ).toBeVisible();
 
-		const productFilterPriceBlockListItem = listView.getByText(
-			'Price (Experimental)'
-		);
-		await expect( productFilterPriceBlockListItem ).toBeVisible();
-
-		const productFilterStatusBlockListItem = listView.getByText(
-			'Status (Experimental)'
-		);
-		await expect( productFilterStatusBlockListItem ).toBeVisible();
-
 		const productFilterAttributeBlockListItem = listView.getByText(
 			'Color (Experimental)' // it must select the attribute with the highest product count
 		);
 		await expect( productFilterAttributeBlockListItem ).toBeVisible();
-
-		const productFilterRatingBlockListItem = listView.getByText(
-			'Rating (Experimental)'
-		);
-		await expect( productFilterRatingBlockListItem ).toBeVisible();
-	} );
-
-	test( 'should display the correct inspector style controls', async ( {
-		editor,
-		pageObject,
-	} ) => {
-		await pageObject.addProductFiltersBlock( { cleanContent: true } );
-
-		const block = editor.canvas.getByLabel(
-			blockData.selectors.editor.blocks.filters.label
-		);
-		await expect( block ).toBeVisible();
-
-		await editor.openDocumentSettingsSidebar();
-
-		await editor.page.getByRole( 'tab', { name: 'Styles' } ).click();
-
-		// Color settings
-		const colorSettings = editor.page.getByText( 'ColorTextBackground' );
-		const colorTextStylesSetting =
-			colorSettings.getByLabel( 'Color Text styles' );
-		const colorBackgroundStylesSetting = colorSettings.getByLabel(
-			'Color Background styles'
-		);
-
-		await expect( colorSettings ).toBeVisible();
-		await expect( colorTextStylesSetting ).toBeVisible();
-		await expect( colorBackgroundStylesSetting ).toBeVisible();
-
-		// Typography settings
-		const typographySettings = editor.page.getByText( 'TypographyFont' );
-		const typographySizeSetting = typographySettings.getByRole( 'group', {
-			name: 'Font size',
-		} );
-
-		await expect( typographySettings ).toBeVisible();
-		await expect( typographySizeSetting ).toBeVisible();
-
-		// Border settings
-		const borderSettings = editor.page.getByRole( 'heading', {
-			name: 'Border',
-		} );
-		await expect( borderSettings ).toBeVisible();
-
-		// Block spacing settings
-		await expect(
-			editor.page.getByText( 'DimensionsBlock spacing' )
-		).toBeVisible();
-	} );
-
-	test( 'should display the correct inspector setting controls', async ( {
-		editor,
-		pageObject,
-	} ) => {
-		await pageObject.addProductFiltersBlock( { cleanContent: true } );
-
-		const filtersBlock = editor.canvas.getByLabel(
-			blockData.selectors.editor.blocks.filters.label
-		);
-		await expect( filtersBlock ).toBeVisible();
-
-		const overlayBlock = editor.canvas.getByLabel(
-			blockData.selectors.editor.blocks.overlay.label
-		);
-
-		// Overlay mode is set to 'Never' by default so the block should be hidden
-		await expect( overlayBlock ).toBeHidden();
-
-		await editor.openDocumentSettingsSidebar();
-
-		// Layout settings
-		await expect(
-			editor.page.getByText( 'LayoutJustificationOrientation' )
-		).toBeVisible();
-
-		// Overlay settings
-		const overlayModeSettings = [ 'Never', 'Mobile', 'Always' ];
-
-		await expect( editor.page.getByText( 'Overlay' ) ).toBeVisible();
-
-		for ( const mode of overlayModeSettings ) {
-			await expect( editor.page.getByText( mode ) ).toBeVisible();
-		}
-
-		await editor.page.getByLabel( 'Never' ).click();
-
-		await expect( editor.page.getByText( 'Edit overlay' ) ).toBeHidden();
-
-		await expect( overlayBlock ).toBeHidden();
-
-		await editor.page.getByLabel( 'Mobile' ).click();
-
-		await expect( editor.page.getByText( 'Edit overlay' ) ).toBeVisible();
-
-		await expect( overlayBlock ).toBeVisible();
-
-		await editor.page.getByLabel( 'Always' ).click();
-
-		await expect( editor.page.getByText( 'Edit overlay' ) ).toBeVisible();
-
-		await expect( overlayBlock ).toBeVisible();
-
-		await editor.page.getByLabel( 'Never' ).click();
-
-		await expect( overlayBlock ).toBeHidden();
-	} );
-
-	test( 'Layout > default to vertical stretch', async ( {
-		editor,
-		pageObject,
-	} ) => {
-		await pageObject.addProductFiltersBlock( { cleanContent: true } );
-
-		const block = editor.canvas.getByLabel(
-			'Block: Product Filters (Experimental)'
-		);
-		await expect( block ).toBeVisible();
-
-		await editor.openDocumentSettingsSidebar();
-
-		const layoutSettings = editor.page.getByText(
-			'LayoutJustificationOrientation'
-		);
-		await expect(
-			layoutSettings.getByLabel( 'Justify items left' )
-		).not.toHaveAttribute( 'data-active-item' );
-		await expect(
-			layoutSettings.getByLabel( 'Stretch items' )
-		).toHaveAttribute( 'data-active-item' );
-		await expect(
-			layoutSettings.getByLabel( 'Horizontal' )
-		).not.toHaveAttribute( 'data-active-item' );
-		await expect( layoutSettings.getByLabel( 'Vertical' ) ).toHaveAttribute(
-			'data-active-item'
-		);
-	} );
-
-	test( 'Layout > Justification: changing option should update the preview', async ( {
-		editor,
-		pageObject,
-	} ) => {
-		await pageObject.addProductFiltersBlock( { cleanContent: true } );
-
-		const block = editor.canvas.getByLabel(
-			'Block: Product Filters (Experimental)'
-		);
-		await expect( block ).toBeVisible();
-
-		await editor.openDocumentSettingsSidebar();
-
-		const layoutSettings = editor.page.getByText(
-			'LayoutJustificationOrientation'
-		);
-		await layoutSettings.getByLabel( 'Justify items left' ).click();
-		await expect(
-			layoutSettings.getByLabel( 'Justify items left' )
-		).toHaveAttribute( 'data-active-item' );
-		await expect(
-			block.locator( blockData.selectors.editor.layoutWrapper )
-		).toHaveCSS( 'align-items', 'flex-start' );
-
-		await layoutSettings.getByLabel( 'Justify items center' ).click();
-		await expect(
-			layoutSettings.getByLabel( 'Justify items center' )
-		).toHaveAttribute( 'data-active-item' );
-		await expect(
-			block.locator( blockData.selectors.editor.layoutWrapper )
-		).toHaveCSS( 'align-items', 'center' );
-	} );
-
-	test( 'Layout > Orientation: changing option should update the preview', async ( {
-		editor,
-		pageObject,
-	} ) => {
-		await pageObject.addProductFiltersBlock( { cleanContent: true } );
-
-		const block = editor.canvas.getByLabel(
-			'Block: Product Filters (Experimental)'
-		);
-		await expect( block ).toBeVisible();
-
-		await editor.openDocumentSettingsSidebar();
-
-		const layoutSettings = editor.page.getByText(
-			'LayoutJustificationOrientation'
-		);
-		await layoutSettings.getByLabel( 'Horizontal' ).click();
-		await expect(
-			layoutSettings.getByLabel( 'Stretch items' )
-		).toBeHidden();
-		await expect(
-			layoutSettings.getByLabel( 'Space between items' )
-		).toBeVisible();
-		await expect(
-			block.locator( ':text("Status"):right-of(:text("Price"))' )
-		).toBeVisible();
-
-		await layoutSettings.getByLabel( 'Vertical' ).click();
-		await expect(
-			block.locator( ':text("Status"):below(:text("Price"))' )
-		).toBeVisible();
-	} );
-
-	test( 'Dimensions > Block spacing: changing option should update the preview', async ( {
-		editor,
-		pageObject,
-	} ) => {
-		await pageObject.addProductFiltersBlock( { cleanContent: true } );
-
-		const block = editor.canvas.getByLabel(
-			'Block: Product Filters (Experimental)'
-		);
-		await expect( block ).toBeVisible();
-
-		await editor.openDocumentSettingsSidebar();
-
-		await editor.page.getByRole( 'tab', { name: 'Styles' } ).click();
-
-		const blockSpacingSettings = editor.page.getByLabel( 'Block spacing' );
-
-		await blockSpacingSettings.fill( '4' );
-		await expect(
-			block.locator( blockData.selectors.editor.layoutWrapper )
-		).not.toHaveCSS( 'gap', '0px' );
-
-		await blockSpacingSettings.fill( '0' );
-		await expect(
-			block.locator( blockData.selectors.editor.layoutWrapper )
-		).toHaveCSS( 'gap', '0px' );
 	} );
 } );

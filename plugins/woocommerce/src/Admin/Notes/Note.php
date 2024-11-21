@@ -578,7 +578,8 @@ class Note extends \WC_Data {
 		if ( empty( $layout ) ) {
 			$layout = 'plain';
 		}
-		$valid_layouts = array( 'banner', 'plain', 'thumbnail' );
+		$valid_layouts = array( 'plain', 'thumbnail' );
+
 		if ( in_array( $layout, $valid_layouts, true ) ) {
 			$this->set_prop( 'layout', $layout );
 		} else {

@@ -18,6 +18,8 @@ defined( 'ABSPATH' ) || exit;
  * Class to define the WooCommerce features that can be enabled and disabled by admin users,
  * provides also a mechanism for WooCommerce plugins to declare that they are compatible
  * (or incompatible) with a given feature.
+ *
+ * Features should not be enabled, or disabled, before init.
  */
 class FeaturesController {
 
@@ -89,8 +91,7 @@ class FeaturesController {
 	 * Creates a new instance of the class.
 	 */
 	public function __construct() {
-		self::add_filter( 'updated_option', array( $this, 'process_updated_option' ), 999, 3 );
-		self::add_filter( 'added_option', array( $this, 'process_added_option' ), 999, 3 );
+		self::add_filter( 'init', array( $this, 'start_listening_for_option_changes' ), 10, 0 );
 		self::add_filter( 'woocommerce_get_sections_advanced', array( $this, 'add_features_section' ), 10, 1 );
 		self::add_filter( 'woocommerce_get_settings_advanced', array( $this, 'add_feature_settings' ), 10, 2 );
 		self::add_filter( 'deactivated_plugin', array( $this, 'handle_plugin_deactivation' ), 10, 1 );
@@ -164,7 +165,7 @@ class FeaturesController {
 	private function get_feature_definitions() {
 		if ( empty( $this->features ) ) {
 			$legacy_features = array(
-				'analytics'            => array(
+				'analytics'             => array(
 					'name'               => __( 'Analytics', 'woocommerce' ),
 					'description'        => __( 'Enable WooCommerce Analytics', 'woocommerce' ),
 					'option_key'         => Analytics::TOGGLE_OPTION_NAME,
@@ -173,7 +174,7 @@ class FeaturesController {
 					'disable_ui'         => false,
 					'is_legacy'          => true,
 				),
-				'product_block_editor' => array(
+				'product_block_editor'  => array(
 					'name'            => __( 'New product editor', 'woocommerce' ),
 					'description'     => __( 'Try the new product editor (Beta)', 'woocommerce' ),
 					'is_experimental' => true,
@@ -194,13 +195,13 @@ class FeaturesController {
 						return $string;
 					},
 				),
-				'cart_checkout_blocks' => array(
+				'cart_checkout_blocks'  => array(
 					'name'            => __( 'Cart & Checkout Blocks', 'woocommerce' ),
 					'description'     => __( 'Optimize for faster checkout', 'woocommerce' ),
 					'is_experimental' => false,
 					'disable_ui'      => true,
 				),
-				'marketplace'          => array(
+				'marketplace'           => array(
 					'name'               => __( 'Marketplace', 'woocommerce' ),
 					'description'        => __(
 						'New, faster way to find extensions and themes for your WooCommerce store',
@@ -213,7 +214,7 @@ class FeaturesController {
 				),
 				// Marked as a legacy feature to avoid compatibility checks, which aren't really relevant to this feature.
 				// https://github.com/woocommerce/woocommerce/pull/39701#discussion_r1376976959.
-				'order_attribution'    => array(
+				'order_attribution'     => array(
 					'name'               => __( 'Order Attribution', 'woocommerce' ),
 					'description'        => __(
 						'Enable this feature to track and credit channels and campaigns that contribute to orders on your site',
@@ -224,7 +225,19 @@ class FeaturesController {
 					'is_legacy'          => true,
 					'is_experimental'    => false,
 				),
-				'hpos_fts_indexes'     => array(
+				'site_visibility_badge' => array(
+					'name'               => __( 'Site visibility badge', 'woocommerce' ),
+					'description'        => __(
+						'Enable the site visibility badge in the WordPress admin bar',
+						'woocommerce'
+					),
+					'enabled_by_default' => true,
+					'disable_ui'         => false,
+					'is_legacy'          => true,
+					'is_experimental'    => false,
+					'disabled'           => false,
+				),
+				'hpos_fts_indexes'      => array(
 					'name'               => __( 'HPOS Full text search indexes', 'woocommerce' ),
 					'description'        => __(
 						'Create and use full text search indexes for orders. This feature only works with high-performance order storage.',
@@ -235,16 +248,24 @@ class FeaturesController {
 					'is_legacy'          => true,
 					'option_key'         => CustomOrdersTableController::HPOS_FTS_INDEX_OPTION,
 				),
-				'remote_logging'       => array(
+				'remote_logging'        => array(
 					'name'               => __( 'Remote Logging', 'woocommerce' ),
 					'description'        => __(
 						'Enable this feature to log errors and related data to Automattic servers for debugging purposes and to improve WooCommerce',
 						'woocommerce'
 					),
-					'enabled_by_default' => false,
+					'enabled_by_default' => true,
 					'disable_ui'         => true,
 					'is_legacy'          => false,
 					'is_experimental'    => true,
+				),
+				'email_improvements'    => array(
+					'name'        => __( 'Email improvements', 'woocommerce' ),
+					'description' => __(
+						'Enable modern email design and live preview for transactional emails',
+						'woocommerce'
+					),
+					'disable_ui'  => true,
 				),
 			);
 
@@ -597,6 +618,19 @@ class FeaturesController {
 	}
 
 	/**
+	 * Adds our callbacks for the `updated_option` and `added_option` filter hooks.
+	 *
+	 * We delay adding these hooks until `init`, because both callbacks need to load our list of feature definitions,
+	 * and building that list requires translating various strings (which should not be done earlier than `init`).
+	 *
+	 * @return void
+	 */
+	private function start_listening_for_option_changes(): void {
+		self::add_filter( 'updated_option', array( $this, 'process_updated_option' ), 999, 3 );
+		self::add_filter( 'added_option', array( $this, 'process_added_option' ), 999, 3 );
+	}
+
+	/**
 	 * Handler for the 'added_option' hook.
 	 *
 	 * It fires FEATURE_ENABLED_CHANGED_ACTION when a feature is enabled or disabled.
@@ -840,7 +874,6 @@ class FeaturesController {
 		}
 
 		if ( ! $this->is_legacy_feature( $feature_id ) && ! $disabled && $this->verify_did_woocommerce_init() ) {
-			$disabled                = ! $this->feature_is_enabled( $feature_id );
 			$plugin_info_for_feature = $this->get_compatible_plugins_for_feature( $feature_id, true );
 			$desc_tip                = $this->plugin_util->generate_incompatible_plugin_feature_warning( $feature_id, $plugin_info_for_feature );
 		}

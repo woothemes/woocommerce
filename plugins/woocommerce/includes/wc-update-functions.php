@@ -2874,9 +2874,74 @@ function wc_update_940_add_phone_to_order_address_fts_index(): void {
 }
 
 /**
+ * Remove user meta associated with the key 'woocommerce_admin_help_panel_highlight_shown'.
+ *
+ * This key is no longer needed since the help panel spotlight tour has been removed.
+ *
+ * @return void
+ */
+function wc_update_940_remove_help_panel_highlight_shown() {
+	global $wpdb;
+
+	$meta_key = 'woocommerce_admin_help_panel_highlight_shown';
+
+	$deletions = $wpdb->query(
+		$wpdb->prepare(
+			"DELETE FROM $wpdb->usermeta WHERE meta_key = %s",
+			$meta_key
+		)
+	);
+
+	// Get the WooCommerce logger to track the results of the deletion.
+	$logger = wc_get_logger();
+
+	if ( null === $logger ) {
+		return;
+	}
+
+	if ( false === $deletions ) {
+		$logger->notice(
+			'During the update to 9.4.0, WooCommerce attempted to remove user meta with the key "woocommerce_admin_help_panel_highlight_shown", but was unable to do so.',
+			array(
+				'source' => 'wc-updater',
+			)
+		);
+	} else {
+		$logger->info(
+			sprintf(
+				1 === $deletions
+					? 'During the update to 9.4.0, WooCommerce removed %d user meta row associated with the meta key "woocommerce_admin_help_panel_highlight_shown".'
+					: 'During the update to 9.4.0, WooCommerce removed %d user meta rows associated with the meta key "woocommerce_admin_help_panel_highlight_shown".',
+				number_format_i18n( $deletions )
+			),
+			array(
+				'source' => 'wc-updater',
+			)
+		);
+	}
+}
+
+/**
+ * Add wc_feature_woocommerce_brands_enabled.
+ */
+function wc_update_950_add_brands_enabled_option() {
+	add_option( 'wc_feature_woocommerce_brands_enabled', 'yes' );
+}
+
+/**
+ * Autoloads woocommerce_allow_tracking option.
+ */
+function wc_update_950_tracking_option_autoload() {
+	$options = array(
+		'woocommerce_allow_tracking' => 'yes',
+	);
+	wp_set_option_autoload_values( $options );
+}
+
+/**
  * Add old refunded order items to the product_lookup_table.
  */
-function wc_update_940_add_old_refunded_order_items_to_product_lookup_table() {
+function wc_update_960_add_old_refunded_order_items_to_product_lookup_table() {
 	global $wpdb;
 
 	// Get every order ID where the total sales is less than 0 and is not present in the table wc_order_product_lookup.
@@ -2899,7 +2964,7 @@ function wc_update_940_add_old_refunded_order_items_to_product_lookup_table() {
 			 * Trigger an action to schedule the data import for old refunded order items.
 			 *
 			 * @param int $order_id The ID of the order to be synced.
-			 * @since 9.4.0
+			 * @since 9.6.0
 			 */
 			do_action( 'woocommerce_schedule_import', intval( $order->order_id ) );
 		}
@@ -2909,7 +2974,7 @@ function wc_update_940_add_old_refunded_order_items_to_product_lookup_table() {
 /**
  * Update primary key to composite (order_item_id, order_id) in the wc_order_product_lookup table.
  */
-function wc_update_940_update_primary_key_to_composite_in_order_product_lookup_table() {
+function wc_update_960_update_primary_key_to_composite_in_order_product_lookup_table() {
 	global $wpdb;
 	$wpdb->query( "ALTER TABLE {$wpdb->prefix}wc_order_product_lookup DROP PRIMARY KEY, ADD PRIMARY KEY (order_item_id, order_id)" );
 }

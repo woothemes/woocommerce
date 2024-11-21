@@ -472,7 +472,7 @@ if ( ! class_exists( 'WC_Admin_Assets', false ) ) :
 
 			// Reports Pages.
 			/* phpcs:disable WooCommerce.Commenting.CommentHooks.MissingHookComment */
-			if ( in_array( $screen_id, apply_filters( 'woocommerce_reports_screen_ids', array( $wc_screen_id . '_page_wc-reports', 'toplevel_page_wc-reports', 'dashboard' ) ) ) ) {
+			if ( in_array( $screen_id, apply_filters( 'woocommerce_reports_screen_ids', array( $wc_screen_id . '_page_wc-reports', 'toplevel_page_wc-reports' ) ) ) ) {
 				wp_register_script( 'wc-reports', WC()->plugin_url() . '/assets/js/admin/reports' . $suffix . '.js', array( 'jquery', 'jquery-ui-datepicker' ), $version );
 
 				wp_enqueue_script( 'wc-reports' );
@@ -497,6 +497,11 @@ if ( ! class_exists( 'WC_Admin_Assets', false ) ) :
 						'clipboard_failed' => esc_html__( 'Copying to clipboard failed. Please press Ctrl/Cmd+C to copy.', 'woocommerce' ),
 					)
 				);
+			}
+
+			// Email settings.
+			if ( $wc_screen_id . '_page_wc-settings' === $screen_id && isset( $_GET['tab'] ) && 'email' === $_GET['tab'] ) {
+				wp_enqueue_media();
 			}
 
 			// System status.
@@ -557,7 +562,7 @@ if ( ! class_exists( 'WC_Admin_Assets', false ) ) :
 			}
 
 			// Marketplace promotions.
-			if ( in_array( $screen_id, array( 'woocommerce_page_wc-admin' ), true ) ) {
+			if ( in_array( $screen_id, array( 'edit-shop_coupon', 'woocommerce_page_wc-admin' ), true ) ) {
 
 				$promotions = WC_Admin_Marketplace_Promotions::get_active_promotions();
 
