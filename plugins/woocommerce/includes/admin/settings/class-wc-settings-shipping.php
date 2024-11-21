@@ -33,6 +33,7 @@ class WC_Settings_Shipping extends WC_Settings_Page {
 			$this->is_modern = true;
 			// Include the script to power the modern settings page.
 			WCAdminAssets::register_script( 'wp-admin-scripts', 'shipping-settings', true, array() );
+			// Make sure the required data is available.
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_modern_screen_data' ) );
 		}
 
