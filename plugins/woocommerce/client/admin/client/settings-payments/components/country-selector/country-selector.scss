@@ -4,23 +4,28 @@
 	position: relative;
 
 	.components-country-select-control__label {
-		display: inline-block;
-		margin-bottom: $gap-smaller;
+		color: $gray-700;
 	}
 
 	.components-country-select-control__item {
 		padding: $gap-small;
 		margin: 0;
 		line-height: initial;
-		box-shadow: inset 0 1px 0 #f0f0f0;
-		align-items: center;
-		cursor: default;
-		display: grid;
-		grid-template-columns: auto auto;
-		list-style-type: none;
+		cursor: pointer;
+		position: relative;
+		padding-left: 48px;
 
 		&.is-highlighted {
-			background: $gray-300;
+			background: #3858e90A;
+		}
+
+		svg {
+			position: absolute;
+			left: 20px;
+			top: 50%;
+			-ms-transform: translateY(-50%);
+			transform: translateY(-50%);
+			color: $gray-700;
 		}
 	}
 
@@ -37,10 +42,19 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: 6px 8px;
-		border: 1px solid #666;
+		min-width: 240px;
+		border: 1px solid $gray-300;
 
 		&:hover {
 			color: initial;
+		}
+
+		&:focus {
+			box-shadow: none;
+		}
+
+		&[aria-expanded=true] {
+			color:var(--wp-components-color-foreground, #1e1e1e);
 		}
 
 		&.placeholder {
@@ -69,40 +83,58 @@
 	}
 
 	&__menu {
-		margin: -1px 1px;
+		margin: -3px 1px;
 		background-color: #fff;
-		border: 1px solid #999;
+		border: 1px solid $gray-300;
+		border-top: none;
 		border-radius: 2px;
-		max-height: 300px;
-		min-width: 100%;
+		max-height: 450px;
+		width: calc( 100% - 2px );
 		outline: none;
 		overflow: hidden;
 		padding: 0;
 		position: absolute;
 		transition: none;
 		z-index: 1000000;
+		box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.05), 0px 4px 5px 0px rgba(0, 0, 0, 0.04), 0px 4px 5px 0px rgba(0, 0, 0, 0.03), 0px 16px 16px 0px rgba(0, 0, 0, 0.02);
 	}
 
     &__list {
         overflow: auto;
-        max-height: 200px;
-        padding: $grid-unit-10 $grid-unit-15;
+        max-height: 300px;
+		-ms-overflow-style: none;  /* IE and Edge */
+  		scrollbar-width: none;  /* Firefox */
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
     }
 
+	&__apply {
+		width: auto;
+		padding: $gap-small;
+
+		button {
+			width: 100%;
+			text-align: center;
+			display: inline;
+		}
+	}
+
     &__search {
-		min-width: 150px;
+		width: auto;
 		margin: $gap-small;
 		position: relative;
 
 		&--input {
 			height: 40px;
 			line-height: 1;
-			min-height: 40px;
-			min-width: 100%;
+			width: 100%;
 			border: none;
-			background-color: #ccc;
 			padding-right: 40px;
 			position: relative;
+			color: $gray-600;
+			font-size: 13px;
 
 			&:focus {
 				background-color: #fff;
