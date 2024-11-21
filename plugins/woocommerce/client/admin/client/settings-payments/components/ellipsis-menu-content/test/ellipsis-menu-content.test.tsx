@@ -48,8 +48,8 @@ describe( 'EllipsisMenuContent component', () => {
 			<EllipsisMenuContent isSuggestion={ false } links={ links } />
 		);
 		expect( getByText( 'See pricing & fees' ) ).toBeInTheDocument();
-		expect( getByText( 'View documentation' ) ).toBeInTheDocument();
-		expect( getByText( 'Get support' ) ).toBeInTheDocument();
+		expect( getByText( 'Learn more' ) ).toBeInTheDocument();
+		expect( getByText( 'See Terms of Service' ) ).toBeInTheDocument();
 		expect( getByText( 'Deactivate' ) ).toBeInTheDocument();
 	} );
 
@@ -67,13 +67,13 @@ describe( 'EllipsisMenuContent component', () => {
 		expect( getByText( 'Disable' ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders the correct links for the non-enabled woopayments gateway in a test mode', () => {
+	it( 'renders the correct links for the enabled woopayments gateway in a test mode', () => {
 		const { getByText } = render(
 			<EllipsisMenuContent
 				isSuggestion={ false }
 				isWooPayments={ true }
-				isEnabled={ false }
-				needsSetup={ true }
+				isEnabled={ true }
+				needsSetup={ false }
 				testMode={ true }
 				links={ links }
 			/>

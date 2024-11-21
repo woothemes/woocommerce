@@ -96,16 +96,18 @@ export const PaymentGatewayListItem = ( {
 						needsSetup={ gateway.state.needs_setup }
 						settingsUrl={ gateway.management.settings_url }
 					/>
-					{ isWCPay && gateway.state.test_mode && (
-						<Button
-							variant="primary"
-							onClick={ setupLivePayments }
-							isBusy={ false }
-							disabled={ false }
-						>
-							{ __( 'Set up live payments', 'woocommerce' ) }
-						</Button>
-					) }
+					{ isWCPay &&
+						gateway.state.enabled &&
+						gateway.state.test_mode && (
+							<Button
+								variant="primary"
+								onClick={ setupLivePayments }
+								isBusy={ false }
+								disabled={ false }
+							>
+								{ __( 'Activate payments', 'woocommerce' ) }
+							</Button>
+						) }
 					<EllipsisMenu
 						label={ __( 'Task List Options', 'woocommerce' ) }
 						renderContent={ () => (

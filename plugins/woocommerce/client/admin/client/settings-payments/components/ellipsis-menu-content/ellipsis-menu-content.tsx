@@ -90,20 +90,16 @@ export const EllipsisMenuContent = ( {
 					{ __( 'Hide suggestion', 'woocommerce' ) }
 				</Button>
 			) }
-			{ ! isSuggestion &&
-				isWooPayments &&
-				! isEnabled &&
-				needsSetup &&
-				testMode && (
-					<Button
-						onClick={ resetWooPaymentsAccount }
-						isBusy={ false }
-						disabled={ false }
-						className={ 'components-button__danger' }
-					>
-						{ __( 'Reset account', 'woocommerce' ) }
-					</Button>
-				) }
+			{ ! isSuggestion && isWooPayments && ! needsSetup && testMode && (
+				<Button
+					onClick={ resetWooPaymentsAccount }
+					isBusy={ false }
+					disabled={ false }
+					className={ 'components-button__danger' }
+				>
+					{ __( 'Reset account', 'woocommerce' ) }
+				</Button>
+			) }
 			{ ! isSuggestion && ! isEnabled && (
 				<Button
 					className={ 'components-button__danger' }
