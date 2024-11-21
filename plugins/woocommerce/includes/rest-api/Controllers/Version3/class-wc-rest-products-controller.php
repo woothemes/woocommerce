@@ -1692,7 +1692,6 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		$params['virtual'] = array(
 			'description'       => __( 'Limit result set to virtual products.', 'woocommerce' ),
 			'type'              => 'boolean',
-			'default'           => false,
 			'sanitize_callback' => 'rest_sanitize_boolean',
 			'validate_callback' => 'rest_validate_request_arg',
 		);
