@@ -138,8 +138,9 @@ const getModernPages = () => {
  *
  * @return {Record<string, Route>} The pages.
  */
-export function useModernRoutes() {
-	const [ routes, setRoutes ] = useState( getModernPages() );
+export function useModernRoutes(): Record< string, Route > {
+	const [ routes, setRoutes ] = useState< Record< string, Route > >( {} );
+	const location = useLocation() as Location;
 
 	/*
 	 * Handler for new pages being added after the initial filter has been run,
@@ -166,6 +167,11 @@ export function useModernRoutes() {
 		};
 	}, [] );
 
+	// Update modern when the location changes.
+	useEffect( () => {
+		setRoutes( getModernPages() );
+	}, [ location.params ] );
+
 	return routes;
 }
 
@@ -184,10 +190,8 @@ export const useActiveRoute = (): {
 	const modernRoutes = useModernRoutes();
 
 	return useMemo( () => {
-		const {
-			tab: activePage = 'general',
-			section: activeSection = 'default',
-		} = location.params;
+		const { tab: activePage = 'general', section: activeSection } =
+			location.params;
 		const settingsPage = settingsData?.[ activePage ];
 
 		if ( ! settingsPage ) {
@@ -201,7 +205,7 @@ export const useActiveRoute = (): {
 			return {
 				route: getLegacyRoute(
 					activePage,
-					activeSection,
+					activeSection || 'default',
 					settingsPage,
 					settingsData
 				),
