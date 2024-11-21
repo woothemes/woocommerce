@@ -4,7 +4,13 @@
 import React from 'react';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { PaymentGatewayLink } from '@woocommerce/data';
+import {
+	PLUGINS_STORE_NAME,
+	PAYMENT_SETTINGS_STORE_NAME,
+	PaymentGatewayLink,
+} from '@woocommerce/data';
+import { useDispatch } from '@wordpress/data';
+import { useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -12,6 +18,7 @@ import { PaymentGatewayLink } from '@woocommerce/data';
 import './ellipsis-menu-content.scss';
 
 interface EllipsisMenuContentProps {
+	pluginName: string;
 	isSuggestion: boolean;
 	links: PaymentGatewayLink[];
 	isWooPayments?: boolean;
@@ -21,6 +28,7 @@ interface EllipsisMenuContentProps {
 }
 
 export const EllipsisMenuContent = ( {
+	pluginName,
 	isSuggestion,
 	links,
 	isWooPayments = false,
@@ -28,6 +36,15 @@ export const EllipsisMenuContent = ( {
 	needsSetup = false,
 	testMode = false,
 }: EllipsisMenuContentProps ) => {
+	const { deactivatePlugin, createErrorNotice } =
+		useDispatch( PLUGINS_STORE_NAME );
+	const [ isDeactivating, setIsDeactivating ] = useState( false );
+
+	const { invalidateResolutionForStoreSelector } = useDispatch(
+		PAYMENT_SETTINGS_STORE_NAME
+	);
+	const { createSuccessNotice } = useDispatch( 'core/notices' );
+
 	const typeToDisplayName: { [ key: string ]: string } = {
 		pricing: __( 'See pricing & fees', 'woocommerce' ),
 		about: __( 'Learn more', 'woocommerce' ),
@@ -38,6 +55,23 @@ export const EllipsisMenuContent = ( {
 
 	const deactivateGateway = ( e: React.MouseEvent ) => {
 		e.preventDefault();
+		setIsDeactivating( true );
+		deactivatePlugin( pluginName )
+			.then( () => {
+				createSuccessNotice(
+					__( 'Plugin was successfully deactivated.', 'woocommerce' )
+				);
+				invalidateResolutionForStoreSelector(
+					'getRegisteredPaymentGateways'
+				);
+				setIsDeactivating( false );
+			} )
+			.catch( () => {
+				createErrorNotice(
+					__( 'Failed to deactivate the plugin.', 'woocommerce' )
+				);
+				setIsDeactivating( false );
+			} );
 	};
 
 	const disableGateway = ( e: React.MouseEvent ) => {
@@ -104,8 +138,8 @@ export const EllipsisMenuContent = ( {
 				<Button
 					className={ 'components-button__danger' }
 					onClick={ deactivateGateway }
-					isBusy={ false }
-					disabled={ false }
+					isBusy={ isDeactivating }
+					disabled={ isDeactivating }
 				>
 					{ __( 'Deactivate', 'woocommerce' ) }
 				</Button>

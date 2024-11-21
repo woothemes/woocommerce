@@ -66,6 +66,7 @@ export const PaymentExtensionSuggestionListItem = ( {
 						label={ __( 'Task List Options', 'woocommerce' ) }
 						renderContent={ () => (
 							<EllipsisMenuContent
+								pluginName={ extension.plugin.slug }
 								isSuggestion={ true }
 								links={ extension.links }
 							/>
