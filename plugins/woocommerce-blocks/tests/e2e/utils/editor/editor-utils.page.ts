@@ -74,7 +74,8 @@ export class Editor extends CoreEditor {
 	async revertTemplate( { templateName }: { templateName: string } ) {
 		await this.page.getByPlaceholder( 'Search' ).fill( templateName );
 
-		// In some cases to visit the template we need to click on the link, in others we need to click on the button.
+		// Depending on the context, we need to click either on a link (in the template page)
+		// or a button (in the template-parts/patterns page) to visit the template.
 		const link = this.page.getByRole( 'link', {
 			name: templateName,
 			exact: true,
