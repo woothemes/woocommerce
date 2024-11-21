@@ -955,6 +955,8 @@ class FeaturesController {
 	 * looks like '?plugin_status=incompatible_with_feature&feature_id=<feature id>'.
 	 *
 	 * @param array $plugin_list The original list of plugins.
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
 	public function filter_plugins_list( $plugin_list ): array {
 		if ( ! $this->verify_did_woocommerce_init() ) {
@@ -1353,6 +1355,8 @@ class FeaturesController {
 	 * @param array $settings Component settings.
 	 *
 	 * @return array
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
 	public function set_change_feature_enable_nonce( $settings ) {
 		$settings['_feature_nonce'] = wp_create_nonce( 'change_feature_enable' );

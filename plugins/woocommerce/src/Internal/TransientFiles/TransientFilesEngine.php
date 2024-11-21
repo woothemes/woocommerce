@@ -425,6 +425,8 @@ class TransientFilesEngine implements RegisterHooksInterface {
 
 	/**
 	 * Handle the "init" action, add rewrite rules for the "wc/file" endpoint.
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
 	public static function add_endpoint() {
 		add_rewrite_rule( '^wc/file/transient/?$', 'index.php?wc-transient-file-name=', 'top' );
