@@ -2,6 +2,13 @@
  * External dependencies
  */
 import { lazy, Suspense } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import { getAdminLink } from '@woocommerce/settings';
+
+/**
+ * Internal dependencies
+ */
+import { Header } from './components/header/header';
 
 const SettingsPaymentsMainChunk = lazy(
 	() =>
@@ -26,26 +33,38 @@ const SettingsPaymentsWooCommercePaymentsChunk = lazy(
 
 export const SettingsPaymentsMainWrapper: React.FC = () => {
 	return (
-		<Suspense fallback={ <div>Loading main settings...</div> }>
-			<SettingsPaymentsMainChunk />
-		</Suspense>
+		<>
+			<Header title={ __( 'WooCommerce Settings', 'woocommerce' ) } />
+			<Suspense fallback={ <div>Loading main settings...</div> }>
+				<SettingsPaymentsMainChunk />
+			</Suspense>
+		</>
 	);
 };
 
 export const SettingsPaymentsOfflineWrapper: React.FC = () => {
 	return (
-		<Suspense fallback={ <div>Loading offline settings...</div> }>
-			<SettingsPaymentsOfflineChunk />
-		</Suspense>
+		<>
+			<Header
+				title={ __( 'Take offline payments', 'woocommerce' ) }
+				backLink={ getAdminLink(
+					'admin.php?page=wc-settings&tab=checkout'
+				) }
+			/>
+			<Suspense fallback={ <div>Loading offline settings...</div> }>
+				<SettingsPaymentsOfflineChunk />
+			</Suspense>
+		</>
 	);
 };
 
 export const SettingsPaymentsWooCommercePaymentsWrapper: React.FC = () => {
 	return (
-		<Suspense
-			fallback={ <div>Loading WooCommerce Payments settings...</div> }
-		>
-			<SettingsPaymentsWooCommercePaymentsChunk />
-		</Suspense>
+		<>
+			<Header title={ __( 'WooCommerce Settings', 'woocommerce' ) } />
+			<Suspense fallback={ <div>Loading WooPayments settings...</div> }>
+				<SettingsPaymentsWooCommercePaymentsChunk />
+			</Suspense>
+		</>
 	);
 };
