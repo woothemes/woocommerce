@@ -100,9 +100,9 @@ body:
       options:
         - label: "Escape analysis completed"
           required: false
-        - label: "PR merged to target `release` branch (you can find the links in PR comments to verify)"
+        - label: "PR merged to target `release` branch"
           required: false
-        - label: "PR cherry-picked to `trunk`"
+        - label: "PR cherry-picked to `trunk` (you can find the links in PR comments to verify)"
           required: false
         - label: "Followup issue if any"
           required: false
