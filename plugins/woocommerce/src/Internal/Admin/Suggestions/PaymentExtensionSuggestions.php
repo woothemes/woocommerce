@@ -10,7 +10,7 @@ use Automattic\WooCommerce\Internal\Utilities\ArrayUtil;
 /**
  * Partner payment extensions provider class.
  */
-final class PaymentExtensionSuggestions {
+class PaymentExtensionSuggestions {
 	/*
 	 * The unique IDs for the payment extension suggestions.
 	 *
@@ -2054,9 +2054,9 @@ final class PaymentExtensionSuggestions {
 		$standardized['plugin']      = $extension_details['plugin'];
 
 		// Optional fields.
-		$standardized['image']             = $extension_details['image'] ?? null;
-		$standardized['icon']              = $extension_details['icon'] ?? null;
-		$standardized['short_description'] = $extension_details['short_description'] ?? null;
+		$standardized['image']             = $extension_details['image'] ?? '';
+		$standardized['icon']              = $extension_details['icon'] ?? '';
+		$standardized['short_description'] = $extension_details['short_description'] ?? '';
 		$standardized['links']             = $extension_details['links'] ?? array();
 		$standardized['tags']              = $extension_details['tags'] ?? array();
 
