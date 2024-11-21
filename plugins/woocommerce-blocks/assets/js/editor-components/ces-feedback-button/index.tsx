@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import {
 	CustomerEffortScoreModalContainer,
 	useCustomerEffortScoreModal,
@@ -28,16 +28,22 @@ interface CesFeedbackButtonProps {
 export const CesFeedbackButton = ( {
 	blockName,
 	title = __( 'Share your experience', 'woocommerce' ),
-	// translators: %s is the block name.
-	firstQuestion = __(
-		'It was easy for me to accomplish what I wanted with the %s.',
-		'woocommerce'
-	).replace( '%s', blockName ),
-	// translators: %s is the block name.
-	feedbackLabel = __(
-		`How can we improve the %s block for you? (Optional)`,
-		'woocommerce'
-	).replace( '%s', blockName ),
+	firstQuestion = sprintf(
+		/* translators: %s is the block name. */
+		__(
+			'It was easy for me to accomplish what I wanted with the %s.',
+			'woocommerce'
+		),
+		blockName
+	),
+	feedbackLabel = sprintf(
+		/* translators: %s is the block name. */
+		__(
+			'How can we improve the %s block for you? (Optional)',
+			'woocommerce'
+		),
+		blockName
+	),
 	feedbackPlaceholder = __(
 		"What did you try to build using this block? What did and didn't work?",
 		'woocommerce'
