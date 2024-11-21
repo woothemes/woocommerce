@@ -138,8 +138,8 @@ const getModernPages = () => {
  *
  * @return {Record<string, Route>} The pages.
  */
-export function useModernRoutes() {
-	const [ routes, setRoutes ] = useState( {} );
+export function useModernRoutes(): Record< string, Route > {
+	const [ routes, setRoutes ] = useState< Record< string, Route > >( {} );
 	const location = useLocation() as Location;
 
 	/*
