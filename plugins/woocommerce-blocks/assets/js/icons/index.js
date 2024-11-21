@@ -4,6 +4,7 @@ export { default as bagAlt } from './library/bag-alt';
 export { default as barcode } from './library/barcode';
 export { default as cart } from './library/cart';
 export { default as cartOutline } from './library/cart-outline';
+export { default as checkMark } from './library/check-mark';
 export { default as checkPayment } from './library/check-payment';
 export { default as closeSquareShadow } from './library/close-square-shadow';
 export { default as customerAccount } from './library/customer-account';
@@ -24,7 +25,7 @@ export { default as productFilterAttribute } from './library/product-filter-attr
 export { default as productFilterOptions } from './library/product-filter-options';
 export { default as productFilterPrice } from './library/product-filter-price';
 export { default as productFilterRating } from './library/product-filter-rating';
-export { default as productFilterStockStatus } from './library/product-filter-stock-status';
+export { default as productFilterStatus } from './library/product-filter-status';
 export { default as productMeta } from './library/product-meta';
 export { default as removeCart } from './library/remove-cart';
 export { default as sparkles } from './library/sparkles';

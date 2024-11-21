@@ -27,7 +27,6 @@ use Automattic\WooCommerce\Internal\Traits\AccessiblePrivateMethods;
 use Automattic\WooCommerce\Internal\Utilities\LegacyRestApiStub;
 use Automattic\WooCommerce\Internal\Utilities\WebhookUtil;
 use Automattic\WooCommerce\Internal\Admin\Marketplace;
-use Automattic\WooCommerce\Internal\McStats;
 use Automattic\WooCommerce\Proxies\LegacyProxy;
 use Automattic\WooCommerce\Utilities\{LoggingUtil, RestApiUtil, TimeUtil};
 use Automattic\WooCommerce\Internal\Logging\RemoteLogger;
@@ -46,7 +45,7 @@ final class WooCommerce {
 	 *
 	 * @var string
 	 */
-	public $version = '9.4.0';
+	public $version = '9.6.0';
 
 	/**
 	 * WooCommerce Schema version.
@@ -210,13 +209,13 @@ final class WooCommerce {
 	 *
 	 * @param string $key Property name.
 	 * @param mixed  $value Property value.
+	 * @throws Exception Attempt to access a property that's private or protected.
 	 */
 	public function __set( string $key, $value ) {
 		if ( 'api' === $key ) {
 			$this->api = $value;
 		} elseif ( property_exists( $this, $key ) ) {
-			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
-			trigger_error( 'Cannot access private property WooCommerce::$' . esc_html( $key ), E_USER_ERROR );
+			throw new Exception( 'Cannot access private property ' . __CLASS__ . '::$' . esc_html( $key ) );
 		} else {
 			$this->$key = $value;
 		}
@@ -260,7 +259,7 @@ final class WooCommerce {
 	}
 
 	/**
-	 * Initiali Jetpack Connection Config.
+	 * Initialize Jetpack Connection Config.
 	 *
 	 * @return void
 	 */
@@ -336,13 +335,18 @@ final class WooCommerce {
 
 		/**
 		 * These classes have a register method for attaching hooks.
-		 *
-		 * @var RegisterHooksInterface[] $hook_register_classes
 		 */
-		$hook_register_classes = $container->get( RegisterHooksInterface::class );
-		foreach ( $hook_register_classes as $hook_register_class ) {
-			$hook_register_class->register();
-		}
+		$container->get( Automattic\WooCommerce\Internal\Utilities\PluginInstaller::class )->register();
+		$container->get( Automattic\WooCommerce\Internal\TransientFiles\TransientFilesEngine::class )->register();
+		$container->get( Automattic\WooCommerce\Internal\Orders\OrderAttributionController::class )->register();
+		$container->get( Automattic\WooCommerce\Internal\Orders\OrderAttributionBlocksController::class )->register();
+		$container->get( Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController::class )->register();
+		$container->get( Automattic\WooCommerce\Internal\Utilities\LegacyRestApiStub::class )->register();
+
+		// Classes inheriting from RestApiControllerBase.
+		$container->get( Automattic\WooCommerce\Internal\ReceiptRendering\ReceiptRenderingRestController::class )->register();
+		$container->get( Automattic\WooCommerce\Internal\Orders\OrderActionsRestController::class )->register();
+		$container->get( Automattic\WooCommerce\Internal\Admin\Settings\PaymentsRestController::class )->register();
 	}
 
 	/**
@@ -384,8 +388,10 @@ final class WooCommerce {
 			unset( $error_copy['message'] );
 
 			$context = array(
-				'source' => 'fatal-errors',
-				'error'  => $error_copy,
+				'source'         => 'fatal-errors',
+				'error'          => $error_copy,
+				// Indicate that this error should be logged remotely if remote logging is enabled.
+				'remote-logging' => true,
 			);
 
 			if ( false !== strpos( $message, 'Stack trace:' ) ) {
@@ -406,12 +412,6 @@ final class WooCommerce {
 				$message,
 				$context
 			);
-
-			// Record fatal error stats.
-			$container = wc_get_container();
-			$mc_stats  = $container->get( McStats::class );
-			$mc_stats->add( 'error', 'fatal-errors-during-shutdown' );
-			$mc_stats->do_server_side_stats();
 
 			/**
 			 * Action triggered when there are errors during shutdown.
@@ -728,6 +728,9 @@ final class WooCommerce {
 
 		if ( $this->is_request( 'admin' ) ) {
 			include_once WC_ABSPATH . 'includes/admin/class-wc-admin.php';
+			// Simulate loading plugin for the legacy reports.
+			// This will be removed after moving the legacy reports to a separate plugin.
+			include_once WC_ABSPATH . 'includes/admin/woocommerce-legacy-reports.php';
 		}
 
 		// We load frontend includes in the post editor, because they may be invoked via pre-loading of blocks.
@@ -873,7 +876,7 @@ final class WooCommerce {
 		 */
 		$locale = apply_filters( 'plugin_locale', $locale, 'woocommerce' ); // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingSinceComment
 
-		unload_textdomain( 'woocommerce' );
+		unload_textdomain( 'woocommerce', true );
 		load_textdomain( 'woocommerce', WP_LANG_DIR . '/woocommerce/woocommerce-' . $locale . '.mo' );
 		load_plugin_textdomain( 'woocommerce', false, plugin_basename( dirname( WC_PLUGIN_FILE ) ) . '/i18n/languages' );
 	}

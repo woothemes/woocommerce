@@ -18,6 +18,7 @@ import { changeUrl, getUrlParameter } from '@woocommerce/utils';
 import {
 	CurrencyResponse,
 	isBoolean,
+	isObject,
 	isString,
 	objectHasProp,
 } from '@woocommerce/types';
@@ -28,7 +29,7 @@ import {
 import usePriceConstraints from './use-price-constraints';
 import './style.scss';
 import { Attributes } from './types';
-import { useSetWraperVisibility } from '../filter-wrapper/context';
+import { useSetWrapperVisibility } from '../filter-wrapper/context';
 
 /**
  * Formats filter values into a string for the URL parameters needed for filtering PHP templates.
@@ -93,7 +94,7 @@ const PriceFilterBlock = ( {
 	attributes,
 	isEditor = false,
 }: PriceFilterBlockProps ) => {
-	const setWrapperVisibility = useSetWraperVisibility();
+	const setWrapperVisibility = useSetWrapperVisibility();
 	const hasFilterableProducts = getSettingWithCoercion(
 		'hasFilterableProducts',
 		false,
@@ -112,9 +113,17 @@ const PriceFilterBlock = ( {
 	const minPriceParam = getUrlParameter( 'min_price' );
 	const maxPriceParam = getUrlParameter( 'max_price' );
 	const [ queryState ] = useQueryStateByContext();
+	const backendQueryState = getSettingWithCoercion(
+		'queryState',
+		{},
+		isObject
+	);
 	const { results, isLoading } = useCollectionData( {
 		queryPrices: true,
-		queryState,
+		queryState: {
+			...backendQueryState,
+			...queryState,
+		},
 		isEditor,
 	} );
 
