@@ -97,11 +97,9 @@ test.describe( 'Payment setup task', () => {
 		page,
 	} ) => {
 		await page.goto( 'wp-admin/admin.php?page=wc-admin' );
-		await page
-			.getByRole( 'link', { name: 'Payments', exact: true } )
-			.click();
+		await page.getByRole( 'button', { name: 'Get paid' } ).click();
 		await expect(
-			page.getByRole( 'heading', { name: 'Payment Methods' } )
+			page.getByRole( 'heading', { name: 'Offline payment methods' } )
 		).toBeVisible();
 	} );
 

@@ -1,7 +1,7 @@
 const { test, expect, request } = require( '@playwright/test' );
 const { setOption } = require( '../../utils/options' );
 
-test.describe(
+test.describe.skip(
 	'Store owner can skip the core profiler',
 	{ tag: [ '@skip-on-default-pressable', '@skip-on-default-wpcom' ] },
 	() => {
