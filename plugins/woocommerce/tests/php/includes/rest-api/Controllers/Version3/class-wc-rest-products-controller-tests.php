@@ -359,15 +359,15 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 		$product = WC_Helper_Product::create_simple_product(
 			true,
 			array(
-				'name' 			   => 'Waffle 6',
-				'sku'  			   => 'waffle-6',
-				'global_unique_id' => '6'
+				'name'             => 'Waffle 6',
+				'sku'              => 'waffle-6',
+				'global_unique_id' => '6',
 			)
 		);
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
 		$request->set_query_params(
 			array(
-				'global_unique_id' => '6'
+				'global_unique_id' => '6',
 			)
 		);
 		$response = $this->server->dispatch( $request );
@@ -387,13 +387,13 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 		$parent_product = WC_Helper_Product::create_variation_product();
 		$variation      = $parent_product->get_available_variations()[0];
 		$variation      = wc_get_product( $variation['variation_id'] );
-		$unique_id		= $parent_product->get_id() . '-1';
+		$unique_id      = $parent_product->get_id() . '-1';
 		$variation->set_global_unique_id( $unique_id );
 		$variation->save();
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
 		$request->set_query_params(
 			array(
-				'global_unique_id' => $unique_id
+				'global_unique_id' => $unique_id,
 			)
 		);
 		$response = $this->server->dispatch( $request );
@@ -945,6 +945,57 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 
 		$data = $response->get_data();
 		$this->assertEmpty( $data, 'Should return no products when status is excluded' );
+	}
+
+	/**
+	 * Test `downloadable` filter returns only downloadable products.
+	 */
+	public function test_downloadable_filter_returns_only_downloadable_products() {
+		WC_Helper_Product::create_simple_product( true, array( 'downloadable' => true ) );
+		WC_Helper_Product::create_simple_product();
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_param( 'downloadable', true );
+
+		$response = $this->server->dispatch( $request );
+		$products = $response->get_data();
+
+		$this->assertEquals( 200, $response->get_status() );
+		foreach ( $products as $product ) {
+			$this->assertTrue( $product['downloadable'] );
+		}
+	}
+
+	/**
+	 * Test `downloadable` filter returns only non-downloadable products when is false.
+	 */
+	public function test_downloadable_filter_returns_only_non_downloadable_products() {
+		WC_Helper_Product::create_simple_product( true, array( 'downloadable' => true ) );
+		WC_Helper_Product::create_simple_product();
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_param( 'downloadable', false );
+
+		$response = $this->server->dispatch( $request );
+		$products = $response->get_data();
+
+		$this->assertEquals( 200, $response->get_status() );
+		foreach ( $products as $product ) {
+			$this->assertFalse( $product['downloadable'] );
+		}
+	}
+
+	/**
+	 * Test invalid downloadable parameter type returns error.
+	 */
+	public function test_downloadable_filter_with_invalid_param() {
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_param( 'downloadable', 'invalid' );
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 'rest_invalid_param', $response->get_data()['code'] );
 	}
 
 	/**
