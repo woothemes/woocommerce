@@ -207,6 +207,15 @@ const getBlockEntries = ( relativePath, blockEntries = blocks ) => {
 	);
 };
 
+const moduleSupportedBlockNames = [ 'add-to-cart-form' ];
+const nonModuleSupportedBlocks = getBlockEntries( 'frontend.{t,j}s{,x}' );
+const moduleSupportedBlocks = {};
+
+for ( const block of moduleSupportedBlockNames ) {
+	moduleSupportedBlocks[ block ] = nonModuleSupportedBlocks[ block ];
+	delete nonModuleSupportedBlocks[ block ];
+}
+
 const entries = {
 	styling: {
 		// Packages styles
@@ -265,9 +274,12 @@ const entries = {
 	},
 	frontend: {
 		reviews: './assets/js/blocks/reviews/frontend.ts',
-		...getBlockEntries( 'frontend.{t,j}s{,x}' ),
+		...nonModuleSupportedBlocks,
 		'product-button-interactivity':
 			'./assets/js/atomic/blocks/product-elements/button/frontend.tsx',
+	},
+	frontendModuleSupported: {
+		...moduleSupportedBlocks,
 	},
 	payments: {
 		'wc-payment-method-cheque':

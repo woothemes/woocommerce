@@ -60,6 +60,12 @@ const FrontendConfig = {
 	...getFrontConfig( { alias: getAlias() } ),
 };
 
+// Frontend config for scripts used in the store itself.
+const ModuleFrontendConfig = {
+	...sharedConfig,
+	...getFrontConfig( { alias: getAlias(), module: true } ),
+};
+
 /**
  * Config for building experimental extension scripts.
  */
@@ -105,6 +111,7 @@ module.exports = [
 	CoreConfig,
 	MainConfig,
 	FrontendConfig,
+	ModuleFrontendConfig,
 	ExtensionsConfig,
 	PaymentsConfig,
 	SiteEditorConfig,
