@@ -416,8 +416,19 @@ function wc_locate_template( $template_name, $template_path = '', $default_path 
 		}
 	}
 
-	// Return what we found.
-	return apply_filters( 'woocommerce_locate_template', $template, $template_name, $template_path );
+	/**
+	 * Filter to customize the path of a given WooCommerce template.
+	 *
+	 * Note: the $default_path argument was added in WooCommerce 9.5.0.
+	 *
+	 * @param string $template Full file path of the template.
+	 * @param string $template_name Template name.
+	 * @param string $template_path Template path.
+	 * @param string $template_path Default WooCommerce templates path.
+	 *
+	 * @since 9.5.0 $default_path argument added.
+	 */
+	return apply_filters( 'woocommerce_locate_template', $template, $template_name, $template_path, $default_path );
 }
 
 /**
@@ -454,6 +465,15 @@ function wc_clear_template_cache() {
 
 		wp_cache_delete( 'cached_templates', 'woocommerce' );
 	}
+}
+
+/**
+ * Clear the system status theme info cache.
+ *
+ * @since 9.4.0
+ */
+function wc_clear_system_status_theme_info_cache() {
+	delete_transient( 'wc_system_status_theme_info' );
 }
 
 /**
@@ -824,7 +844,7 @@ function get_woocommerce_currency_symbols() {
 			'XAF' => 'CFA',
 			'XCD' => '&#36;',
 			'XOF' => 'CFA',
-			'XPF' => 'Fr',
+			'XPF' => 'XPF',
 			'YER' => '&#xfdfc;',
 			'ZAR' => '&#82;',
 			'ZMW' => 'ZK',
@@ -1102,20 +1122,21 @@ function wc_setcookie( $name, $value, $expire = 0, $secure = false, $httponly = 
 }
 
 /**
- * Get the URL to the WooCommerce REST API.
+ * Get the URL to the WooCommerce Legacy REST API.
+ *
+ * Note that as of WooCommerce 9.0 the WooCommerce Legacy REST API has been moved to a dedicated extension,
+ * and the implementation of its root endpoint in WooCommerce core is now just a stub that will always return an error.
+ * See the setup_legacy_api_stub method in includes/class-woocommerce.php and:
+ * https://developer.woocommerce.com/2023/10/03/the-legacy-rest-api-will-move-to-a-dedicated-extension-in-woocommerce-9-0/
+ *
+ * @deprecated 9.0.0 The Legacy REST API has been removed from WooCommerce core.
  *
  * @since 2.1
  * @param string $path an endpoint to include in the URL.
  * @return string the URL.
  */
 function get_woocommerce_api_url( $path ) {
-	if ( Constants::is_defined( 'WC_API_REQUEST_VERSION' ) ) {
-		$version = Constants::get_constant( 'WC_API_REQUEST_VERSION' );
-	} else {
-		$version = substr( WC_API::VERSION, 0, 1 );
-	}
-
-	$url = get_home_url( null, "wc-api/v{$version}/", is_ssl() ? 'https' : 'http' );
+	$url = get_home_url( null, 'wc-api/v3/', is_ssl() ? 'https' : 'http' );
 
 	if ( ! empty( $path ) && is_string( $path ) ) {
 		$url .= ltrim( $path, '/' );
@@ -1297,6 +1318,50 @@ function wc_get_base_location() {
 }
 
 /**
+ * Uses geolocation to get the customer country and state only if they are valid values.
+ *
+ * @since 9.5.0
+ * @param array $fallback Fallback location.
+ * @return array
+ */
+function wc_get_customer_geolocation( $fallback = array(
+	'country' => '',
+	'state'   => '',
+) ) {
+	$ua = wc_get_user_agent();
+
+	// Exclude common bots from geolocation by user agent.
+	if ( stripos( $ua, 'bot' ) !== false || stripos( $ua, 'spider' ) !== false || stripos( $ua, 'crawl' ) !== false ) {
+		return $fallback;
+	}
+
+	$geolocation = WC_Geolocation::geolocate_ip( '', true, false );
+
+	if ( empty( $geolocation['country'] ) ) {
+		return $fallback;
+	}
+
+	// Ensure geolocation is valid.
+	$allowed_countries = WC()->countries->get_allowed_countries();
+
+	if ( ! isset( $allowed_countries[ $geolocation['country'] ] ) ) {
+		return $fallback;
+	}
+
+	$allowed_states = WC()->countries->get_allowed_country_states();
+	$country_states = $allowed_states[ $geolocation['country'] ] ?? array();
+
+	if ( $country_states && ! isset( $country_states[ $geolocation['state'] ] ) ) {
+		$geolocation['state'] = '';
+	}
+
+	return array(
+		'country' => $geolocation['country'],
+		'state'   => $geolocation['state'],
+	);
+}
+
+/**
  * Get the customer's default location.
  *
  * Filtered, and set to base location or left blank. If cache-busting,
@@ -1307,32 +1372,46 @@ function wc_get_base_location() {
  */
 function wc_get_customer_default_location() {
 	$set_default_location_to = get_option( 'woocommerce_default_customer_address', 'base' );
-	$default_location        = '' === $set_default_location_to ? '' : get_option( 'woocommerce_default_country', 'US:CA' );
-	$location                = wc_format_country_state_string( apply_filters( 'woocommerce_customer_default_location', $default_location ) );
 
-	// Geolocation takes priority if used and if geolocation is possible.
-	if ( 'geolocation' === $set_default_location_to || 'geolocation_ajax' === $set_default_location_to ) {
-		$ua = wc_get_user_agent();
-
-		// Exclude common bots from geolocation by user agent.
-		if ( ! stristr( $ua, 'bot' ) && ! stristr( $ua, 'spider' ) && ! stristr( $ua, 'crawl' ) ) {
-			$geolocation = WC_Geolocation::geolocate_ip( '', true, false );
-
-			if ( ! empty( $geolocation['country'] ) ) {
-				$location = $geolocation;
-			}
-		}
+	// Unless the location should be blank, use the base location as the default.
+	if ( '' !== $set_default_location_to ) {
+		$default_location_string = get_option( 'woocommerce_default_country', 'US:CA' );
 	}
 
-	// Once we have a location, ensure it's valid, otherwise fallback to a valid location.
-	$allowed_country_codes = WC()->countries->get_allowed_countries();
+	$default_location = wc_format_country_state_string(
+		/**
+		 * Filter the customer default location before geolocation.
+		 *
+		 * @since 2.3.0
+		 * @param string $default_location_string The default location.
+		 * @return string
+		 */
+		apply_filters( 'woocommerce_customer_default_location', $default_location_string ?? '' )
+	);
 
-	if ( ! empty( $location['country'] ) && ! array_key_exists( $location['country'], $allowed_country_codes ) ) {
-		$location['country'] = current( array_keys( $allowed_country_codes ) );
-		$location['state']   = '';
+	// Ensure defaults are valid.
+	$allowed_countries = WC()->countries->get_allowed_countries();
+
+	if ( ! in_array( $default_location['country'], array_keys( $allowed_countries ), true ) ) {
+		$default_location = array(
+			'country' => '',
+			'state'   => '',
+		);
 	}
 
-	return apply_filters( 'woocommerce_customer_default_location_array', $location );
+	// Geolocation takes priority if geolocation is possible.
+	if ( in_array( $set_default_location_to, array( 'geolocation', 'geolocation_ajax' ), true ) ) {
+		$default_location = wc_get_customer_geolocation( $default_location );
+	}
+
+	/**
+	 * Filter the customer default location after geolocation.
+	 *
+	 * @since 2.3.0
+	 * @param array $customer_location The customer location with keys 'country' and 'state'.
+	 * @return array
+	 */
+	return apply_filters( 'woocommerce_customer_default_location_array', $default_location );
 }
 
 /**
@@ -1468,12 +1547,31 @@ function wc_transaction_query( $type = 'start', $force = false ) {
 /**
  * Gets the url to the cart page.
  *
- * @since  2.5.0
+ * @since 2.5.0
+ * @since 9.3.0 To support shortcodes on other pages besides the main cart page, this returns the current URL if it is the cart page.
  *
  * @return string Url to cart page
  */
 function wc_get_cart_url() {
-	return apply_filters( 'woocommerce_get_cart_url', wc_get_page_permalink( 'cart' ) );
+	// We don't use is_cart() here because that also checks for a defined constant. We are only interested in the page.
+	$page_id      = wc_get_page_id( 'cart' );
+	$is_cart_page = ( $page_id && is_page( $page_id ) ) || wc_post_content_has_shortcode( 'woocommerce_cart' );
+
+	if ( $is_cart_page && isset( $_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI'] ) ) {
+		$protocol    = is_ssl() ? 'https' : 'http';
+		$current_url = esc_url_raw( $protocol . '://' . wp_unslash( $_SERVER['HTTP_HOST'] ) . wp_unslash( $_SERVER['REQUEST_URI'] ) );
+		$cart_url    = remove_query_arg( array( 'remove_item', 'add-to-cart', 'added-to-cart', 'order_again', '_wpnonce' ), $current_url );
+	} else {
+		$cart_url = wc_get_page_permalink( 'cart' );
+	}
+
+	/**
+	 * Filter the cart URL.
+	 *
+	 * @since 2.5.0
+	 * @param string $cart_url Cart URL.
+	 */
+	return apply_filters( 'woocommerce_get_cart_url', $cart_url );
 }
 
 /**
@@ -1579,6 +1677,8 @@ function wc_help_tip( $tip, $allow_html = false ) {
 		$sanitized_tip = esc_attr( $tip );
 	}
 
+	$aria_label = wp_strip_all_tags( $tip );
+
 	/**
 	 * Filter the help tip.
 	 *
@@ -1591,7 +1691,7 @@ function wc_help_tip( $tip, $allow_html = false ) {
 	 *
 	 * @return string
 	 */
-	return apply_filters( 'wc_help_tip', '<span class="woocommerce-help-tip" tabindex="0" aria-label="' . $sanitized_tip . '" data-tip="' . $sanitized_tip . '"></span>', $sanitized_tip, $tip, $allow_html );
+	return apply_filters( 'wc_help_tip', '<span class="woocommerce-help-tip" tabindex="0" aria-label="' . esc_attr( $aria_label ) . '" data-tip="' . $sanitized_tip . '"></span>', $sanitized_tip, $tip, $allow_html );
 }
 
 /**
@@ -1611,7 +1711,7 @@ function wc_get_wildcard_postcodes( $postcode, $country = '' ) {
 		$formatted_postcode . '*',
 	);
 
-	for ( $i = 0; $i < $length; $i ++ ) {
+	for ( $i = 0; $i < $length; $i++ ) {
 		$postcodes[] = ( function_exists( 'mb_substr' ) ? mb_substr( $formatted_postcode, 0, ( $i + 1 ) * -1 ) : substr( $formatted_postcode, 0, ( $i + 1 ) * -1 ) ) . '*';
 	}
 
@@ -1694,22 +1794,26 @@ function wc_get_shipping_method_count( $include_legacy = false, $enabled_only = 
 		return absint( $transient_value['value'] );
 	}
 
-	if ( $enabled_only ) {
-		$method_count = absint( $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}woocommerce_shipping_zone_methods WHERE is_enabled=1" ) );
-	} else {
-		$method_count = absint( $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}woocommerce_shipping_zone_methods" ) );
-	}
+	// Count activated methods that don't support shipping zones if $include_legacy is true.
+	$methods      = WC()->shipping()->get_shipping_methods();
+	$method_ids   = array();
+	$method_count = 0;
 
-	if ( $include_legacy ) {
-		// Count activated methods that don't support shipping zones.
-		$methods = WC()->shipping()->get_shipping_methods();
+	foreach ( $methods as $method ) {
+		$method_ids[] = $method->id;
 
-		foreach ( $methods as $method ) {
-			if ( isset( $method->enabled ) && 'yes' === $method->enabled && ! $method->supports( 'shipping-zones' ) ) {
-				$method_count++;
-			}
+		if ( $include_legacy && isset( $method->enabled ) && 'yes' === $method->enabled && ! $method->supports( 'shipping-zones' ) ) {
+			++$method_count;
 		}
 	}
+
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
+	if ( $enabled_only ) {
+		$method_count = $method_count + absint( $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}woocommerce_shipping_zone_methods WHERE is_enabled=1 AND method_id IN ('" . implode( "','", array_map( 'esc_sql', $method_ids ) ) . "')" ) );
+	} else {
+		$method_count = $method_count + absint( $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}woocommerce_shipping_zone_methods WHERE method_id IN ('" . implode( "','", array_map( 'esc_sql', $method_ids ) ) . "')" ) );
+	}
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
 
 	$transient_value = array(
 		'version' => $transient_version,
@@ -1806,7 +1910,7 @@ function wc_uasort_comparison( $a, $b ) {
 }
 
 /**
- * Sort values based on ascii, usefull for special chars in strings.
+ * Sort values based on ascii, useful for special chars in strings.
  *
  * @param string $a First value.
  * @param string $b Second value.
@@ -2263,7 +2367,7 @@ function wc_get_var( &$var, $default = null ) {
  */
 function wc_enable_wc_plugin_headers( $headers ) {
 	if ( ! class_exists( 'WC_Plugin_Updates' ) ) {
-		include_once dirname( __FILE__ ) . '/admin/plugin-updates/class-wc-plugin-updates.php';
+		include_once __DIR__ . '/admin/plugin-updates/class-wc-plugin-updates.php';
 	}
 
 	// WC requires at least - allows developers to define which version of WooCommerce the plugin requires to run.
@@ -2298,7 +2402,7 @@ function wc_prevent_dangerous_auto_updates( $should_update, $plugin ) {
 	}
 
 	if ( ! class_exists( 'WC_Plugin_Updates' ) ) {
-		include_once dirname( __FILE__ ) . '/admin/plugin-updates/class-wc-plugin-updates.php';
+		include_once __DIR__ . '/admin/plugin-updates/class-wc-plugin-updates.php';
 	}
 
 	$new_version    = wc_clean( $plugin->new_version );
@@ -2497,7 +2601,7 @@ function wc_selected( $value, $options ) {
  * Retrieves the MySQL server version. Based on $wpdb.
  *
  * @since 3.4.1
- * @return array Vesion information.
+ * @return array Version information.
  */
 function wc_get_server_database_version() {
 	global $wpdb;

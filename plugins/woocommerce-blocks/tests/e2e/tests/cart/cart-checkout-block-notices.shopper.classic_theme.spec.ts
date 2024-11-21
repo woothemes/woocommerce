@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import { expect, test as base } from '@woocommerce/e2e-playwright-utils';
 import {
-	cli,
+	expect,
+	test as base,
+	wpCLI,
 	CLASSIC_THEME_SLUG,
 	CLASSIC_CHILD_THEME_WITH_CLASSIC_NOTICES_TEMPLATE_SLUG,
 	CLASSIC_CHILD_THEME_WITH_BLOCK_NOTICES_FILTER_SLUG,
@@ -14,7 +15,10 @@ import {
  * Internal dependencies
  */
 import { CheckoutPage } from '../checkout/checkout.page';
-import { REGULAR_PRICED_PRODUCT_NAME } from '../checkout/constants';
+import {
+	REGULAR_PRICED_PRODUCT_NAME,
+	INVALID_COUPON,
+} from '../checkout/constants';
 
 const test = base.extend< { checkoutPageObject: CheckoutPage } >( {
 	checkoutPageObject: async ( { page }, use ) => {
@@ -26,19 +30,23 @@ const test = base.extend< { checkoutPageObject: CheckoutPage } >( {
 } );
 
 test.describe( 'Shopper → Notice Templates', () => {
-	test.beforeEach( async ( { wpCliUtils, frontendUtils } ) => {
-		const cartShortcodeID = await wpCliUtils.getPostIDByTitle(
-			'Cart Shortcode'
+	test.beforeEach( async ( { requestUtils, frontendUtils } ) => {
+		await requestUtils.activateTheme( CLASSIC_THEME_SLUG );
+
+		const cliOutput = await wpCLI(
+			'post list --title="Cart Shortcode" --post_type=page --field=ID'
 		);
-		await cli(
-			`npm run wp-env run tests-cli -- wp option update woocommerce_cart_page_id ${ cartShortcodeID }`
+		const cartShortcodeID = cliOutput.stdout.match( /\d+/g )?.pop();
+
+		await wpCLI(
+			`option update woocommerce_cart_page_id ${ cartShortcodeID }`
 		);
 
 		await frontendUtils.goToShop();
 		await frontendUtils.addToCart( REGULAR_PRICED_PRODUCT_NAME );
 	} );
 
-	test( 'default classic notice templates are visible', async ( {
+	test( 'default classic notice templates, except for coupon errors, are visible', async ( {
 		frontendUtils,
 		page,
 	} ) => {
@@ -68,7 +76,7 @@ test.describe( 'Shopper → Notice Templates', () => {
 		// We're explicitly checking the CSS classes of the classic notices.
 		await expect(
 			page.locator( '.woocommerce-notices-wrapper .woocommerce-error' )
-		).toBeVisible();
+		).toBeHidden();
 
 		await page.getByLabel( 'Remove Polo from cart' ).click();
 
@@ -82,7 +90,7 @@ test.describe( 'Shopper → Notice Templates', () => {
 		).toBeVisible();
 	} );
 
-	test( 'custom classic notice templates are visible by template overwrite', async ( {
+	test( 'custom classic notice templates, except for coupon errors, are visible by template overwrite', async ( {
 		requestUtils,
 		frontendUtils,
 		page,
@@ -119,7 +127,7 @@ test.describe( 'Shopper → Notice Templates', () => {
 		// We're explicitly checking the CSS classes of the classic notices.
 		await expect(
 			page.locator( '.woocommerce-notices-wrapper .woocommerce-error' )
-		).toBeVisible();
+		).toBeHidden();
 
 		await page.getByLabel( 'Remove Polo from cart' ).click();
 
@@ -137,7 +145,7 @@ test.describe( 'Shopper → Notice Templates', () => {
 		await requestUtils.activateTheme( CLASSIC_THEME_SLUG );
 	} );
 
-	test( 'custom block notice templates are visible by template overwrite', async ( {
+	test( 'custom block notice templates, except for coupon errors, are visible by template overwrite', async ( {
 		requestUtils,
 		frontendUtils,
 		page,
@@ -169,10 +177,10 @@ test.describe( 'Shopper → Notice Templates', () => {
 			page.getByText( 'BLOCK ERROR NOTICE: Coupon code already applied!' )
 		).toBeVisible();
 
-		// We're explicitly checking the CSS classes of the block notices, and that the SVG is visible.
+		// We're explicitly checking the CSS classes of the block notices, and that the SVG is hidden.
 		await expect(
 			page.locator( '.wc-block-components-notice-banner.is-error svg' )
-		).toBeVisible();
+		).toBeHidden();
 
 		await page.getByLabel( 'Remove Polo from cart' ).click();
 
@@ -188,7 +196,7 @@ test.describe( 'Shopper → Notice Templates', () => {
 		await requestUtils.activateTheme( CLASSIC_THEME_SLUG );
 	} );
 
-	test( 'default block notice templates are visible by filter', async ( {
+	test( 'default block notice templates, except for coupon errors, are visible by filter', async ( {
 		requestUtils,
 		frontendUtils,
 		page,
@@ -218,10 +226,10 @@ test.describe( 'Shopper → Notice Templates', () => {
 			page.getByText( 'Coupon code already applied!' )
 		).toBeVisible();
 
-		// We're explicitly checking the CSS classes and that the SVG is visible.
+		// We're explicitly checking the CSS classes and that the SVG is hidden.
 		await expect(
 			page.locator( '.wc-block-components-notice-banner.is-error svg' )
-		).toBeVisible();
+		).toBeHidden();
 
 		await page.getByLabel( 'Remove Polo from cart' ).click();
 
@@ -235,5 +243,27 @@ test.describe( 'Shopper → Notice Templates', () => {
 		).toBeVisible();
 
 		await requestUtils.activateTheme( CLASSIC_THEME_SLUG );
+	} );
+
+	test( 'coupon inline notice is visible', async ( {
+		frontendUtils,
+		page,
+	} ) => {
+		await frontendUtils.goToCartShortcode();
+		await page.getByPlaceholder( 'Coupon code' ).fill( INVALID_COUPON );
+		await page.getByRole( 'button', { name: 'Apply coupon' } ).click();
+
+		await expect(
+			page.getByText( `Coupon "${ INVALID_COUPON }" does not exist!`, {
+				exact: true,
+			} )
+		).toBeVisible();
+
+		// We're explicitly checking the CSS classes of the block notices, and that the SVG is hidden.
+		await expect(
+			page.locator( '.wc-block-components-notice-banner.is-error svg' )
+		).toBeHidden();
+
+		await expect( page.locator( '.coupon-error-notice' ) ).toBeVisible();
 	} );
 } );

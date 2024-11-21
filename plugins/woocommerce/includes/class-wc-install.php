@@ -17,7 +17,7 @@ use Automattic\WooCommerce\Internal\ProductDownloads\ApprovedDirectories\Synchro
 use Automattic\WooCommerce\Internal\Utilities\DatabaseUtil;
 use Automattic\WooCommerce\Internal\WCCom\ConnectionHelper as WCConnectionHelper;
 use Automattic\WooCommerce\Internal\Traits\AccessiblePrivateMethods;
-use Automattic\WooCommerce\Utilities\OrderUtil;
+use Automattic\WooCommerce\Utilities\{ OrderUtil, PluginUtil };
 use Automattic\WooCommerce\Internal\Utilities\PluginInstaller;
 
 defined( 'ABSPATH' ) || exit;
@@ -250,6 +250,29 @@ class WC_Install {
 		),
 		'8.9.0' => array(
 			'wc_update_890_update_connect_to_woocommerce_note',
+			'wc_update_890_update_paypal_standard_load_eligibility',
+		),
+		'8.9.1' => array(
+			'wc_update_891_create_plugin_autoinstall_history_option',
+		),
+		'9.1.0' => array(
+			'wc_update_910_add_launch_your_store_tour_option',
+			'wc_update_910_remove_obsolete_user_meta',
+		),
+		'9.2.0' => array(
+			'wc_update_920_add_wc_hooked_blocks_version_option',
+		),
+		'9.3.0' => array(
+			'wc_update_930_add_woocommerce_coming_soon_option',
+			'wc_update_930_migrate_user_meta_for_launch_your_store_tour',
+		),
+		'9.4.0' => array(
+			'wc_update_940_add_phone_to_order_address_fts_index',
+			'wc_update_940_remove_help_panel_highlight_shown',
+		),
+		'9.5.0' => array(
+			'wc_update_950_add_brands_enabled_option',
+			'wc_update_950_tracking_option_autoload',
 		),
 	);
 
@@ -259,6 +282,13 @@ class WC_Install {
 	 * @var string
 	 */
 	const NEWLY_INSTALLED_OPTION = 'woocommerce_newly_installed';
+
+	/**
+	 * Option name used to track new installation versions of WooCommerce.
+	 *
+	 * @var string
+	 */
+	const INITIAL_INSTALLED_VERSION = 'woocommerce_initial_installed_version';
 
 	/**
 	 * Option name used to uniquely identify installations of WooCommerce.
@@ -274,6 +304,7 @@ class WC_Install {
 		add_action( 'init', array( __CLASS__, 'check_version' ), 5 );
 		add_action( 'init', array( __CLASS__, 'manual_database_update' ), 20 );
 		add_action( 'woocommerce_newly_installed', array( __CLASS__, 'maybe_enable_hpos' ), 20 );
+		add_action( 'woocommerce_newly_installed', array( __CLASS__, 'add_coming_soon_option' ), 20 );
 		add_action( 'admin_init', array( __CLASS__, 'wc_admin_db_update_notice' ) );
 		add_action( 'admin_init', array( __CLASS__, 'add_admin_note_after_page_created' ) );
 		add_action( 'woocommerce_run_update_callback', array( __CLASS__, 'run_update_callback' ) );
@@ -304,6 +335,13 @@ class WC_Install {
 			do_action_deprecated( 'woocommerce_admin_newly_installed', array(), '6.5.0', 'woocommerce_newly_installed' );
 
 			update_option( self::NEWLY_INSTALLED_OPTION, 'no' );
+
+			/**
+			 * This option is used to track the initial version of WooCommerce that was installed.
+			 *
+			 * @since 9.2.0
+			 */
+			add_option( self::INITIAL_INSTALLED_VERSION, WC()->version, '', false );
 		}
 	}
 
@@ -416,6 +454,11 @@ class WC_Install {
 			check_admin_referer( 'wc_db_update', 'wc_db_update_nonce' );
 			self::update();
 			WC_Admin_Notices::add_notice( 'update', true );
+
+			if ( ! empty( $_GET['return_url'] ) ) { // WPCS: input var ok.
+				$return_url = esc_url_raw( wp_unslash( $_GET['return_url'] ) );
+				wp_safe_redirect( $return_url ); // WPCS: input var ok.
+			}
 		}
 	}
 
@@ -436,31 +479,11 @@ class WC_Install {
 		set_transient( 'wc_installing', 'yes', MINUTE_IN_SECONDS * 10 );
 		wc_maybe_define_constant( 'WC_INSTALLING', true );
 
-		if ( self::is_new_install() && ! get_option( self::NEWLY_INSTALLED_OPTION, false ) ) {
-			update_option( self::NEWLY_INSTALLED_OPTION, 'yes' );
+		try {
+			self::install_core();
+		} finally {
+			delete_transient( 'wc_installing' );
 		}
-
-		WC()->wpdb_table_fix();
-		self::remove_admin_notices();
-		self::create_tables();
-		self::verify_base_tables();
-		self::create_options();
-		self::migrate_options();
-		self::create_roles();
-		self::setup_environment();
-		self::create_terms();
-		self::create_cron_jobs();
-		self::delete_obsolete_notes();
-		self::create_files();
-		self::maybe_create_pages();
-		self::maybe_set_activation_transients();
-		self::set_paypal_standard_load_eligibility();
-		self::update_wc_version();
-		self::maybe_update_db_version();
-		self::maybe_set_store_id();
-		self::maybe_install_legacy_api_plugin();
-
-		delete_transient( 'wc_installing' );
 
 		// Use add_option() here to avoid overwriting this value with each
 		// plugin version update. We base plugin age off of this value.
@@ -489,6 +512,36 @@ class WC_Install {
 		 * @since 6.5.0
 		 */
 		do_action( 'woocommerce_admin_installed' );
+	}
+
+	/**
+	 * Core function that performs the WooCommerce install.
+	 */
+	private static function install_core() {
+		if ( self::is_new_install() && ! get_option( self::NEWLY_INSTALLED_OPTION, false ) ) {
+			update_option( self::NEWLY_INSTALLED_OPTION, 'yes' );
+		}
+
+		WC()->wpdb_table_fix();
+		self::remove_admin_notices();
+		self::create_tables();
+		self::verify_base_tables();
+		self::create_options();
+		self::migrate_options();
+		self::create_roles();
+		self::setup_environment();
+		self::create_terms();
+		self::create_cron_jobs();
+		self::delete_obsolete_notes();
+		self::create_files();
+		self::maybe_create_pages();
+		self::maybe_set_activation_transients();
+		self::set_paypal_standard_load_eligibility();
+		self::update_wc_version();
+		self::maybe_update_db_version();
+		self::maybe_set_store_id();
+		self::maybe_install_legacy_api_plugin();
+		self::maybe_activate_legacy_api_enabled_option();
 	}
 
 	/**
@@ -571,7 +624,6 @@ class WC_Install {
 		WC_Post_types::register_taxonomies();
 		WC()->query->init_query_vars();
 		WC()->query->add_endpoints();
-		WC_API::add_endpoint();
 		WC_Auth::add_endpoint();
 		TransientFilesEngine::add_endpoint();
 	}
@@ -948,6 +1000,17 @@ class WC_Install {
 	}
 
 	/**
+	 * Add the woocommerce_coming_soon option for new shops.
+	 *
+	 * Ensure that the option is set for all shops, even if core profiler is disabled on the host.
+	 *
+	 * @since 9.3.0
+	 */
+	public static function add_coming_soon_option() {
+		add_option( 'woocommerce_coming_soon', 'no' );
+	}
+
+	/**
 	 * Checks whether HPOS should be enabled for new shops.
 	 *
 	 * @return bool
@@ -1186,16 +1249,30 @@ class WC_Install {
 			return;
 		}
 
+		// Did we previously install this plugin?
+		// We check both the woocommerce_history_of_autoinstalled_plugins options (introduced in 9.0)
+		// and the woocommerce_autoinstalled_plugins option (info should still exist here if the plugin has been uninstalled but not manually reinstalled).
+		$legacy_api_plugin          = 'woocommerce-legacy-rest-api/woocommerce-legacy-rest-api.php';
+		$autoinstalled_plugins      = (array) get_site_option( 'woocommerce_history_of_autoinstalled_plugins', array() );
+		$previously_installed_by_us = isset( $autoinstalled_plugins[ $legacy_api_plugin ] );
+		if ( ! $previously_installed_by_us ) {
+			$autoinstalled_plugins      = (array) get_site_option( 'woocommerce_autoinstalled_plugins', array() );
+			$previously_installed_by_us = isset( $autoinstalled_plugins[ $legacy_api_plugin ] );
+		}
+
 		/**
 		 * Filter to skip the automatic installation of the WooCommerce Legacy REST API plugin
 		 * from the WordPress.org plugins directory.
+		 *
+		 * By default, this is true (skip installation) if we have a record of previously installing the legacy plugin,
+		 * and false (do not skip) if we have no record of previously installing the plugin.
 		 *
 		 * @since 8.8.0
 		 *
 		 * @param bool $skip_auto_install False, defaulting to "don't skip the plugin automatic installation".
 		 * @returns bool True to skip the plugin automatic installation, false to install the plugin if necessary.
 		 */
-		if ( apply_filters( 'woocommerce_skip_legacy_rest_api_plugin_auto_install', false ) ) {
+		if ( apply_filters( 'woocommerce_skip_legacy_rest_api_plugin_auto_install', $previously_installed_by_us ) ) {
 			return;
 		}
 
@@ -1204,40 +1281,50 @@ class WC_Install {
 			return;
 		}
 
-		$plugin_name = 'woocommerce-legacy-rest-api/woocommerce-legacy-rest-api.php';
-
 		wp_clean_plugins_cache();
 		if ( ! function_exists( 'get_plugins' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
-		if ( isset( get_plugins()[ $plugin_name ] ) ) {
-			if ( ! ( get_site_option( 'woocommerce_autoinstalled_plugins', array() )[ $plugin_name ] ?? null ) ) {
+		if ( isset( get_plugins()[ $legacy_api_plugin ] ) ) {
+			if ( ! $previously_installed_by_us ) {
 				// The plugin was installed manually so let's not interfere.
 				return;
 			}
 
-			if ( in_array( $plugin_name, wp_get_active_and_valid_plugins(), true ) ) {
+			$active_valid_plugins = wc_get_container()->get( PluginUtil::class )->get_all_active_valid_plugins();
+			if ( in_array( $legacy_api_plugin, $active_valid_plugins, true ) ) {
 				return;
 			}
 
 			// The plugin was automatically installed in a different installation process - can happen in multisite.
 			$install_ok = true;
 		} else {
-			$install_result = wc_get_container()->get( PluginInstaller::class )->install_plugin(
-				'https://downloads.wordpress.org/plugin/woocommerce-legacy-rest-api.latest-stable.zip',
-				array(
-					'info_link' => 'https://developer.woocommerce.com/2023/10/03/the-legacy-rest-api-will-move-to-a-dedicated-extension-in-woocommerce-9-0/',
-				)
-			);
+			try {
+				$install_result = wc_get_container()->get( PluginInstaller::class )->install_plugin(
+					'https://downloads.wordpress.org/plugin/woocommerce-legacy-rest-api.latest-stable.zip',
+					array(
+						'info_link' => 'https://developer.woocommerce.com/2023/10/03/the-legacy-rest-api-will-move-to-a-dedicated-extension-in-woocommerce-9-0/',
+					)
+				);
 
-			if ( $install_result['already_installing'] ?? null ) {
-				// The plugin is in the process of being installed already (can happen in multisite),
-				// but we still need to activate it for ourselves once it's installed.
-				as_schedule_single_action( time() + 10, 'woocommerce_activate_legacy_rest_api_plugin' );
-				return;
+				if ( $install_result['already_installing'] ?? null ) {
+					// The plugin is in the process of being installed already (can happen in multisite),
+					// but we still need to activate it for ourselves once it's installed.
+					as_schedule_single_action( time() + 10, 'woocommerce_activate_legacy_rest_api_plugin' );
+					return;
+				}
+
+				$install_ok = $install_result['install_ok'];
+			} catch ( \Exception $ex ) {
+				wc_get_logger()->error(
+					'The autoinstall of the WooCommerce Legacy REST API plugin failed: ' . $ex->getMessage(),
+					array(
+						'source'    => 'plugin_auto_installs',
+						'exception' => $ex,
+					)
+				);
+				$install_ok = false;
 			}
-
-			$install_ok = $install_result['install_ok'];
 		}
 
 		$plugin_page_url              = 'https://wordpress.org/plugins/woocommerce-legacy-rest-api/';
@@ -1247,7 +1334,7 @@ class WC_Install {
 		$site_logs_url                = get_admin_url( null, '/admin.php?page=wc-status&tab=logs' );
 
 		if ( $install_ok ) {
-			$activation_result = activate_plugin( $plugin_name );
+			$activation_result = activate_plugin( $legacy_api_plugin );
 			if ( $activation_result instanceof \WP_Error ) {
 				$message = sprintf(
 				/* translators: 1 = URL of Legacy REST API plugin page, 2 = URL of Legacy API settings in current site, 3 = URL of webhooks settings in current site, 4 = URL of logs page in current site, 5 = URL of plugins page in current site, 6 = URL of blog post about the Legacy REST API removal */
@@ -1298,6 +1385,17 @@ class WC_Install {
 		}
 
 		\WC_Admin_Notices::store_notices();
+	}
+
+	/**
+	 * If in a previous version of WooCommerce the Legacy REST API plugin was installed manually but the core Legacy REST API was kept disabled,
+	 * now the Legacy API is still disabled and can't be manually enabled from settings UI (the plugin, which is now in control, won't allow that),
+	 * which is weird and confusing. So we detect this case and explicitly enable it.
+	 */
+	private static function maybe_activate_legacy_api_enabled_option() {
+		if ( ! self::is_new_install() && is_plugin_active( 'woocommerce-legacy-rest-api/woocommerce-legacy-rest-api.php' ) && 'yes' !== get_option( 'woocommerce_api_enabled' ) ) {
+			update_option( 'woocommerce_api_enabled', 'yes' );
+		}
 	}
 
 	/**
@@ -1580,6 +1678,7 @@ CREATE TABLE {$wpdb->prefix}wc_download_log (
 CREATE TABLE {$wpdb->prefix}wc_product_meta_lookup (
   `product_id` bigint(20) NOT NULL,
   `sku` varchar(100) NULL default '',
+  `global_unique_id` varchar(100) NULL default '',
   `virtual` tinyint(1) NULL default 0,
   `downloadable` tinyint(1) NULL default 0,
   `min_price` decimal(19,4) NULL default NULL,
@@ -2475,9 +2574,9 @@ $hpos_table_schema;
 </ul>
 <!-- /wp:list -->
 
-<!-- wp:paragraph -->
-<h2>Refunds</h2>
-<!-- /wp:paragraph -->
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Refunds</h2>
+<!-- /wp:heading -->
 
 <!-- wp:paragraph -->
 <p>Once your return is received and inspected, we will send you an email to notify you that we have received your returned item. We will also notify you of the approval or rejection of your refund.</p>
@@ -2515,17 +2614,17 @@ $hpos_table_schema;
 <p>Only regular priced items may be refunded. Sale items cannot be refunded.</p>
 <!-- /wp:paragraph -->
 
-<!-- wp:paragraph -->
-<h2>Exchanges</h2>
-<!-- /wp:paragraph -->
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Exchanges</h2>
+<!-- /wp:heading -->
 
 <!-- wp:paragraph -->
 <p>We only replace items if they are defective or damaged. If you need to exchange it for the same item, send us an email at {email address} and send your item to: {physical address}.</p>
 <!-- /wp:paragraph -->
 
-<!-- wp:paragraph -->
-<h2>Gifts</h2>
-<!-- /wp:paragraph -->
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Gifts</h2>
+<!-- /wp:heading -->
 
 <!-- wp:paragraph -->
 <p>If the item was marked as a gift when purchased and shipped directly to you, you’ll receive a gift credit for the value of your return. Once the returned item is received, a gift certificate will be mailed to you.</p>
@@ -2535,9 +2634,9 @@ $hpos_table_schema;
 <p>If the item wasn’t marked as a gift when purchased, or the gift giver had the order shipped to themselves to give to you later, we will send a refund to the gift giver and they will find out about your return.</p>
 <!-- /wp:paragraph -->
 
-<!-- wp:paragraph -->
-<h2>Shipping returns</h2>
-<!-- /wp:paragraph -->
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Shipping returns</h2>
+<!-- /wp:heading -->
 
 <!-- wp:paragraph -->
 <p>To return your product, you should mail your product to: {physical address}.</p>
@@ -2555,9 +2654,9 @@ $hpos_table_schema;
 <p>If you are returning more expensive items, you may consider using a trackable shipping service or purchasing shipping insurance. We don’t guarantee that we will receive your returned item.</p>
 <!-- /wp:paragraph -->
 
-<!-- wp:paragraph -->
-<h2>Need help?</h2>
-<!-- /wp:paragraph -->
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Need help?</h2>
+<!-- /wp:heading -->
 
 <!-- wp:paragraph -->
 <p>Contact us at {email} for questions related to refunds and returns.</p>

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { expect, test } from '@woocommerce/e2e-playwright-utils';
+import { expect, test } from '@woocommerce/e2e-utils';
 
 /**
  * Internal dependencies
@@ -28,12 +28,13 @@ test.describe( `${ BLOCK_NAME } Block`, () => {
 
 	test( 'block can be inserted and it sorts reviews by most recent by default', async ( {
 		frontendUtils,
-		page,
-		editorUtils,
+		editor,
 	} ) => {
-		await expect( page.getByText( allReviews[ 0 ].review ) ).toBeVisible();
+		await expect(
+			editor.canvas.getByText( allReviews[ 0 ].review )
+		).toBeVisible();
 
-		await editorUtils.publishAndVisitPost();
+		await editor.publishAndVisitPost();
 
 		const block = await frontendUtils.getBlockByName( BLOCK_NAME );
 		const reviews = block.locator(
@@ -46,9 +47,9 @@ test.describe( `${ BLOCK_NAME } Block`, () => {
 	test( 'can sort by highest rating in the frontend', async ( {
 		page,
 		frontendUtils,
-		editorUtils,
+		editor,
 	} ) => {
-		await editorUtils.publishAndVisitPost();
+		await editor.publishAndVisitPost();
 
 		const block = await frontendUtils.getBlockByName( BLOCK_NAME );
 		const reviews = block.locator(
@@ -66,9 +67,9 @@ test.describe( `${ BLOCK_NAME } Block`, () => {
 	test( 'can sort by lowest rating in the frontend', async ( {
 		page,
 		frontendUtils,
-		editorUtils,
+		editor,
 	} ) => {
-		await editorUtils.publishAndVisitPost();
+		await editor.publishAndVisitPost();
 
 		const block = await frontendUtils.getBlockByName( BLOCK_NAME );
 		const reviews = block.locator(

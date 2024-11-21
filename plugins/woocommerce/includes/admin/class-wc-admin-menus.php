@@ -120,7 +120,14 @@ class WC_Admin_Menus {
 	 * Add menu item.
 	 */
 	public function settings_menu() {
-		$settings_page = add_submenu_page( 'woocommerce', __( 'WooCommerce settings', 'woocommerce' ), __( 'Settings', 'woocommerce' ), 'manage_woocommerce', 'wc-settings', array( $this, 'settings_page' ) );
+		$settings_page = add_submenu_page(
+			'woocommerce',
+			__( 'WooCommerce settings', 'woocommerce' ),
+			__( 'Settings', 'woocommerce' ),
+			'manage_woocommerce',
+			'wc-settings',
+			array( $this, 'settings_page' )
+		);
 
 		add_action( 'load-' . $settings_page, array( $this, 'settings_page_init' ) );
 	}
@@ -190,7 +197,7 @@ class WC_Admin_Menus {
 
 		add_action(
 			'load-' . $status_page,
-			function() {
+			function () {
 				if ( 'logs' === filter_input( INPUT_GET, 'tab' ) ) {
 					// Initialize the logging page controller early so that it can hook into things.
 					wc_get_container()->get( LoggingPageController::class );
@@ -347,7 +354,11 @@ class WC_Admin_Menus {
 	 * Init the settings page.
 	 */
 	public function settings_page() {
-		WC_Admin_Settings::output();
+		if ( Features::is_enabled( 'settings' ) ) {
+			echo '<div id="wc-settings-page"/>';
+		} else {
+			WC_Admin_Settings::output();
+		}
 	}
 
 	/**
@@ -368,7 +379,7 @@ class WC_Admin_Menus {
 	 * Init the addons page.
 	 */
 	public function addons_page() {
-		WC_Admin_Addons::output();
+		WC_Admin_Addons::handle_legacy_marketplace_redirects();
 	}
 
 	/**
@@ -428,7 +439,7 @@ class WC_Admin_Menus {
 							<input type="hidden" class="menu-item-classes" name="menu-item[<?php echo esc_attr( $i ); ?>][menu-item-classes]" />
 						</li>
 						<?php
-						$i--;
+						--$i;
 					endforeach;
 					?>
 				</ul>
@@ -485,7 +496,7 @@ class WC_Admin_Menus {
 	 * Maybe add new management product experience.
 	 */
 	public function maybe_add_new_product_management_experience() {
-		if ( Features::is_enabled( 'new-product-management-experience' ) || FeaturesUtil::feature_is_enabled( 'product_block_editor' ) ) {
+		if ( FeaturesUtil::feature_is_enabled( 'product_block_editor' ) ) {
 			global $submenu;
 			if ( isset( $submenu['edit.php?post_type=product'][10] ) ) {
 				// Disable phpcs since we need to override submenu classes.

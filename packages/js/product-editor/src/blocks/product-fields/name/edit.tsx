@@ -45,7 +45,8 @@ export function NameBlockEdit( {
 }: ProductEditorBlockEditProps< NameBlockAttributes > ) {
 	const blockProps = useWooBlockProps( attributes );
 
-	// @ts-expect-error There are no types for this.
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore
 	const { editEntityRecord, saveEntityRecord } = useDispatch( 'core' );
 
 	const { hasEdit } = useProductEdits();
@@ -55,7 +56,8 @@ export function NameBlockEdit( {
 
 	const productId = useEntityId( 'postType', 'product' );
 	const product: Product = useSelect( ( select ) =>
-		// @ts-expect-error There are no types for this.
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
 		select( 'core' ).getEditedEntityRecord(
 			'postType',
 			'product',
@@ -81,14 +83,18 @@ export function NameBlockEdit( {
 		'name',
 		async function nameValidator() {
 			if ( ! name || name === AUTO_DRAFT_NAME ) {
-				return __( 'Name field is required.', 'woocommerce' );
+				return {
+					message: __( 'Product name is required.', 'woocommerce' ),
+				};
 			}
 
 			if ( name.length > 120 ) {
-				return __(
-					'Please enter a product name shorter than 120 characters.',
-					'woocommerce'
-				);
+				return {
+					message: __(
+						'Please enter a product name shorter than 120 characters.',
+						'woocommerce'
+					),
+				};
 			}
 		},
 		[ name ]
@@ -217,7 +223,8 @@ export function NameBlockEdit( {
 						onCancel={ () => setShowProductLinkEditModal( false ) }
 						onSaved={ () => setShowProductLinkEditModal( false ) }
 						saveHandler={ async ( updatedSlug ) => {
-							// @ts-expect-error There are no types for this.
+							// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+							// @ts-ignore
 							const { slug, permalink }: Product =
 								await saveEntityRecord( 'postType', 'product', {
 									id: product.id,

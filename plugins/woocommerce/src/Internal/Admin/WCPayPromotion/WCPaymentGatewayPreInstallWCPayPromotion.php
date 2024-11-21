@@ -7,14 +7,16 @@
 
 namespace Automattic\WooCommerce\Internal\Admin\WCPayPromotion;
 
+use Automattic\WooCommerce\Admin\Features\Features;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * A Psuedo WCPay gateway class.
+ * A pseudo WCPay gateway class.
  *
- * @extends WC_Payment_Gateway
+ * @extends \WC_Payment_Gateway
  */
 class WCPaymentGatewayPreInstallWCPayPromotion extends \WC_Payment_Gateway {
 
@@ -24,6 +26,12 @@ class WCPaymentGatewayPreInstallWCPayPromotion extends \WC_Payment_Gateway {
 	 * Constructor
 	 */
 	public function __construct() {
+		// If the React-based Payments settings page is enabled, we don't need to register this pseudo-gateway
+		// as we will show the WooPayments suggestion with the new system.
+		if ( Features::is_enabled( 'reactify-classic-payments-settings' ) ) {
+			return;
+		}
+
 		$wc_pay_spec = Init::get_wc_pay_promotion_spec();
 		if ( ! $wc_pay_spec ) {
 			return;
@@ -87,7 +95,7 @@ class WCPaymentGatewayPreInstallWCPayPromotion extends \WC_Payment_Gateway {
 	}
 
 	/**
-	 * Check if the promotional gateaway has been dismissed.
+	 * Check if the promotional gateway has been dismissed.
 	 *
 	 * @return bool
 	 */

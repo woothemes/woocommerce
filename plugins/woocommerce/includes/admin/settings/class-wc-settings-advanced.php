@@ -33,18 +33,31 @@ class WC_Settings_Advanced extends WC_Settings_Page {
 	}
 
 	/**
+	 * Setting page icon.
+	 *
+	 * @var string
+	 */
+	public $icon = 'more';
+
+	/**
 	 * Get own sections.
 	 *
 	 * @return array
 	 */
 	protected function get_own_sections() {
-		return array(
+		$sections = array(
 			''                => __( 'Page setup', 'woocommerce' ),
 			'keys'            => __( 'REST API', 'woocommerce' ),
 			'webhooks'        => __( 'Webhooks', 'woocommerce' ),
 			'legacy_api'      => __( 'Legacy API', 'woocommerce' ),
 			'woocommerce_com' => __( 'WooCommerce.com', 'woocommerce' ),
 		);
+
+		if ( Features::is_enabled( 'blueprint' ) ) {
+			$sections['blueprint'] = __( 'Blueprint', 'woocommerce' );
+		}
+
+		return $sections;
 	}
 
 	/**
@@ -348,7 +361,7 @@ class WC_Settings_Advanced extends WC_Settings_Page {
 					'type'          => 'checkbox',
 					'checkboxgroup' => 'start',
 					'default'       => 'no',
-					'autoload'      => false,
+					'autoload'      => true,
 				),
 				array(
 					'type' => 'sectionend',
@@ -385,26 +398,20 @@ class WC_Settings_Advanced extends WC_Settings_Page {
 	 * @return array
 	 */
 	protected function get_settings_for_legacy_api_section() {
-		$enable_legacy_api_setting = array(
-			'title'   => __( 'Legacy API', 'woocommerce' ),
-			'desc'    => __( 'Enable the legacy REST API', 'woocommerce' ),
-			'id'      => 'woocommerce_api_enabled',
-			'type'    => 'checkbox',
-			'default' => 'no',
-		);
+		$legacy_api_setting_desc =
+			'yes' === get_option( 'woocommerce_api_enabled' ) ?
+			__( 'The legacy REST API is enabled', 'woocommerce' ) :
+			__( 'The legacy REST API is NOT enabled', 'woocommerce' );
 
-		if ( ! is_plugin_active( 'woocommerce-legacy-rest-api/woocommerce-legacy-rest-api.php' ) ) {
-			$enable_legacy_api_setting['desc_tip'] = sprintf(
-			// translators: Placeholders are URLs.
-				__(
-					'⚠️ <b>️The Legacy REST API will be removed in WooCommerce 9.0.</b> <a target="_blank" href="%1$s">A separate WooCommerce extension is available</a> to keep it enabled. You can check Legacy REST API usages in <b><a target="_blank" href="%2$s">the WooCommerce log files</a></b> (file names start with <code>legacy_rest_api_usages</code>). <b><a target="_blank" href="%3$s">Learn more about this change.</a></b>',
-					'woocommerce'
-				),
+		$legacy_api_setting_tip =
+			WC()->legacy_rest_api_is_available() ?
+			__( 'ℹ️️ The WooCommerce Legacy REST API extension is installed and active.', 'woocommerce' ) :
+			sprintf(
+				/* translators: placeholders are URLs */
+				__( '⚠️ The WooCommerce Legacy REST API has been moved to <a target=”_blank” href="%1$s">a dedicated extension</a>. <b><a target=”_blank” href="%2$s">Learn more about this change</a></b>', 'woocommerce' ),
 				'https://wordpress.org/plugins/woocommerce-legacy-rest-api/',
-				admin_url( 'admin.php?page=wc-status&tab=logs' ),
 				'https://developer.woocommerce.com/2023/10/03/the-legacy-rest-api-will-move-to-a-dedicated-extension-in-woocommerce-9-0/'
 			);
-		}
 
 		$settings =
 			array(
@@ -414,7 +421,15 @@ class WC_Settings_Advanced extends WC_Settings_Page {
 					'desc'  => '',
 					'id'    => 'legacy_api_options',
 				),
-				$enable_legacy_api_setting,
+				array(
+					'title'    => __( 'Legacy API', 'woocommerce' ),
+					'desc'     => $legacy_api_setting_desc,
+					'id'       => 'woocommerce_api_enabled',
+					'type'     => 'checkbox',
+					'default'  => 'no',
+					'disabled' => true,
+					'desc_tip' => $legacy_api_setting_tip,
+				),
 				array(
 					'type' => 'sectionend',
 					'id'   => 'legacy_api_options',
@@ -422,6 +437,27 @@ class WC_Settings_Advanced extends WC_Settings_Page {
 			);
 
 		return apply_filters( 'woocommerce_settings_rest_api', $settings );
+	}
+
+	/**
+	 * Get settings for the Blueprint section.
+	 *
+	 * @return array
+	 */
+	protected function get_settings_for_blueprint_section() {
+		$settings =
+			array(
+				array(
+					'title' => esc_html__( 'Blueprint', 'woocommerce' ),
+					'type'  => 'title',
+				),
+				array(
+					'id'   => 'wc_settings_blueprint_slotfill',
+					'type' => 'slotfill_placeholder',
+				),
+			);
+
+		return $settings;
 	}
 
 	/**

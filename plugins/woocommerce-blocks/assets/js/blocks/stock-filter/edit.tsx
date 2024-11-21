@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { __, _x } from '@wordpress/i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import BlockTitle from '@woocommerce/editor-components/block-title';
 import type { BlockEditProps } from '@wordpress/blocks';
@@ -41,7 +41,7 @@ const Edit = ( {
 	} = attributes;
 
 	const blockProps = useBlockProps( {
-		className: classnames( 'wc-block-stock-filter', className ),
+		className: clsx( 'wc-block-stock-filter', className ),
 	} );
 
 	const getInspectorControls = () => {
@@ -62,6 +62,7 @@ const Edit = ( {
 							'Allow selecting multiple options?',
 							'woocommerce'
 						) }
+						isBlock
 						value={ selectType || 'multiple' }
 						onChange={ ( value: string ) =>
 							setAttributes( {
@@ -89,6 +90,7 @@ const Edit = ( {
 					</ToggleGroupControl>
 					<ToggleGroupControl
 						label={ __( 'Display Style', 'woocommerce' ) }
+						isBlock
 						value={ displayStyle }
 						onChange={ ( value ) =>
 							setAttributes( {

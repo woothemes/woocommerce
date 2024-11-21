@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { __, _x } from '@wordpress/i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import type { BlockEditProps } from '@wordpress/blocks';
 import {
@@ -21,7 +21,7 @@ import {
  * Internal dependencies
  */
 import Block from './block';
-import { Attributes } from './types';
+import type { Attributes } from './types';
 import './editor.scss';
 
 const noRatingsNotice = (
@@ -48,7 +48,7 @@ const Edit = ( {
 	} = attributes;
 
 	const blockProps = useBlockProps( {
-		className: classnames( 'wc-block-rating-filter', className ),
+		className: clsx( 'wc-block-rating-filter', className ),
 	} );
 
 	const getInspectorControls = () => {
@@ -69,6 +69,7 @@ const Edit = ( {
 							'Allow selecting multiple options?',
 							'woocommerce'
 						) }
+						isBlock
 						value={ selectType || 'multiple' }
 						onChange={ ( value: string ) =>
 							setAttributes( {
@@ -96,6 +97,7 @@ const Edit = ( {
 					</ToggleGroupControl>
 					<ToggleGroupControl
 						label={ __( 'Display Style', 'woocommerce' ) }
+						isBlock
 						value={ displayStyle }
 						onChange={ ( value: string ) =>
 							setAttributes( {

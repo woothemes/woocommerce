@@ -162,20 +162,9 @@ class WC_REST_Products_V2_Controller extends WC_REST_CRUD_Controller {
 	public function prepare_object_for_response( $object, $request ) {
 		$context       = ! empty( $request['context'] ) ? $request['context'] : 'view';
 		$this->request = $request;
-		$data          = $this->get_product_data( $object, $context, $request );
 
-		// Add variations to variable products.
-		if ( $object->is_type( 'variable' ) && $object->has_child() ) {
-			$data['variations'] = $object->get_children();
-		}
+		$data = $this->prepare_object_for_response_core( $object, $request, $context );
 
-		// Add grouped products data.
-		if ( $object->is_type( 'grouped' ) && $object->has_child() ) {
-			$data['grouped_products'] = $object->get_children();
-		}
-
-		$data     = $this->add_additional_fields_to_object( $data, $request );
-		$data     = $this->filter_response_by_context( $data, $context );
 		$response = rest_ensure_response( $data );
 		$response->add_links( $this->prepare_links( $object, $request ) );
 
@@ -190,6 +179,33 @@ class WC_REST_Products_V2_Controller extends WC_REST_CRUD_Controller {
 		 * @param WP_REST_Request  $request  Request object.
 		 */
 		return apply_filters( "woocommerce_rest_prepare_{$this->post_type}_object", $response, $object, $request );
+	}
+
+	/**
+	 * Core function to prepare a single product output for response
+	 * (doesn't fire hooks, ensure_response, or add links).
+	 *
+	 * @param WC_Data         $object_data Object data.
+	 * @param WP_REST_Request $request Request object.
+	 * @param string          $context Request context.
+	 * @return array Product data to be included in the response.
+	 */
+	protected function prepare_object_for_response_core( $object_data, $request, $context ): array {
+		$data = $this->get_product_data( $object_data, $context, $request );
+
+		// Add variations to variable products.
+		if ( $object_data->is_type( 'variable' ) && $object_data->has_child() ) {
+			$data['variations'] = $object_data->get_children();
+		}
+
+		// Add grouped products data.
+		if ( $object_data->is_type( 'grouped' ) && $object_data->has_child() ) {
+			$data['grouped_products'] = $object_data->get_children();
+		}
+
+		$data = $this->add_additional_fields_to_object( $data, $request );
+		$data = $this->filter_response_by_context( $data, $context );
+		return $data;
 	}
 
 	/**
@@ -462,8 +478,12 @@ class WC_REST_Products_V2_Controller extends WC_REST_CRUD_Controller {
 	protected function get_attribute_taxonomy_name( $slug, $product ) {
 		// Format slug so it matches attributes of the product.
 		$slug       = wc_attribute_taxonomy_slug( $slug );
-		$attributes = $product->get_attributes();
-		$attribute  = false;
+		$attributes = array_combine(
+			array_map( 'wc_sanitize_taxonomy_name', array_keys( $product->get_attributes() ) ),
+			array_values( $product->get_attributes() )
+		);
+
+		$attribute = false;
 
 		// pa_ attributes.
 		if ( isset( $attributes[ wc_attribute_taxonomy_name( $slug ) ] ) ) {
@@ -1904,7 +1924,7 @@ class WC_REST_Products_V2_Controller extends WC_REST_CRUD_Controller {
 				),
 				'stock_quantity'        => array(
 					'description' => __( 'Stock quantity.', 'woocommerce' ),
-					'type'        => 'integer',
+					'type'        => has_filter( 'woocommerce_stock_amount', 'intval' ) ? 'integer' : 'number',
 					'context'     => array( 'view', 'edit' ),
 				),
 				'in_stock'              => array(

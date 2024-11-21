@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { sprintf, _n } from '@wordpress/i18n';
 import { Label } from '@woocommerce/blocks-components';
 import ProductPrice from '@woocommerce/base-components/product-price';
@@ -30,9 +30,13 @@ import ProductMetadata from '../product-metadata';
 
 interface OrderSummaryProps {
 	cartItem: CartItem;
+	disableProductDescriptions: boolean;
 }
 
-const OrderSummaryItem = ( { cartItem }: OrderSummaryProps ): JSX.Element => {
+const OrderSummaryItem = ( {
+	cartItem,
+	disableProductDescriptions,
+}: OrderSummaryProps ): JSX.Element => {
 	const {
 		images,
 		low_stock_remaining: lowStockRemaining,
@@ -41,6 +45,8 @@ const OrderSummaryItem = ( { cartItem }: OrderSummaryProps ): JSX.Element => {
 		permalink,
 		prices,
 		quantity,
+		short_description: shortDescription,
+		description: fullDescription,
 		item_data: itemData,
 		variation,
 		totals,
@@ -120,9 +126,21 @@ const OrderSummaryItem = ( { cartItem }: OrderSummaryProps ): JSX.Element => {
 		arg,
 	} );
 
+	const productMetaProps = disableProductDescriptions
+		? {
+				itemData,
+				variation,
+		  }
+		: {
+				itemData,
+				variation,
+				shortDescription,
+				fullDescription,
+		  };
+
 	return (
 		<div
-			className={ classnames(
+			className={ clsx(
 				'wc-block-components-order-summary-item',
 				cartItemClassNameFilter
 			) }
@@ -172,10 +190,7 @@ const OrderSummaryItem = ( { cartItem }: OrderSummaryProps ): JSX.Element => {
 						/>
 					)
 				) }
-				<ProductMetadata
-					itemData={ itemData }
-					variation={ variation }
-				/>
+				<ProductMetadata { ...productMetaProps } />
 			</div>
 			<span className="screen-reader-text">
 				{ sprintf(

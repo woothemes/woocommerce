@@ -4,17 +4,14 @@
 import { dispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import type { Product, ProductStatus } from '@woocommerce/data';
-
+import type { ReactElement } from 'react';
 /**
  * Internal dependencies
  */
 import { formatScheduleDatetime } from '../../../../utils';
 
 function getNoticeContent( product: Product, prevStatus?: ProductStatus ) {
-	if (
-		window.wcAdminFeatures[ 'product-pre-publish-modal' ] &&
-		product.status === 'future'
-	) {
+	if ( product.status === 'future' ) {
 		return sprintf(
 			// translators: %s: The datetime the product is scheduled for.
 			__( 'Product scheduled for %s.', 'woocommerce' ),
@@ -37,7 +34,7 @@ export function showSuccessNotice(
 
 	const noticeContent = getNoticeContent( product, prevStatus );
 	const noticeOptions = {
-		icon: '🎉',
+		icon: '🎉' as unknown as ReactElement,
 		actions: [
 			{
 				label: __( 'View in store', 'woocommerce' ),

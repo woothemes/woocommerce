@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { __ } from '@wordpress/i18n';
 import { PanelBody, ToggleControl } from '@wordpress/components';
 import { Icon, store, shipping } from '@wordpress/icons';
@@ -13,7 +13,7 @@ import {
 	useBlockProps,
 	RichText,
 } from '@wordpress/block-editor';
-import Button from '@woocommerce/base-components/button';
+import { Button } from '@ariakit/react';
 import { useShippingData } from '@woocommerce/base-context/hooks';
 import { innerBlockAreas } from '@woocommerce/blocks-checkout';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -53,15 +53,12 @@ const LocalPickupSelector = ( {
 } ) => {
 	return (
 		<Button
-			className={ classnames(
-				'wc-block-checkout__shipping-method-option',
-				{
-					'wc-block-checkout__shipping-method-option--selected':
-						checked === 'pickup',
-				}
-			) }
+			render={ <div /> }
+			className={ clsx( 'wc-block-checkout__shipping-method-option', {
+				'wc-block-checkout__shipping-method-option--selected':
+					checked === 'pickup',
+			} ) }
 			onClick={ onClick }
-			removeTextWrap
 		>
 			{ showIcon === true && (
 				<Icon
@@ -116,15 +113,12 @@ const ShippingSelector = ( {
 
 	return (
 		<Button
-			className={ classnames(
-				'wc-block-checkout__shipping-method-option',
-				{
-					'wc-block-checkout__shipping-method-option--selected':
-						checked === 'shipping',
-				}
-			) }
+			render={ <div /> }
+			className={ clsx( 'wc-block-checkout__shipping-method-option', {
+				'wc-block-checkout__shipping-method-option--selected':
+					checked === 'shipping',
+			} ) }
 			onClick={ onClick }
-			removeTextWrap
 		>
 			{ showIcon === true && (
 				<Icon
@@ -214,7 +208,7 @@ export const Edit = ( {
 		<FormStepBlock
 			attributes={ attributes }
 			setAttributes={ setAttributes }
-			className={ classnames(
+			className={ clsx(
 				'wc-block-checkout__shipping-method',
 				className
 			) }

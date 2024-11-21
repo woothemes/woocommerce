@@ -8,14 +8,10 @@ import {
 } from '@wordpress/block-editor';
 import { addFilter, hasFilter } from '@wordpress/hooks';
 import type { StoreDescriptor } from '@wordpress/data';
-import { CartCheckoutSidebarCompatibilityNotice } from '@woocommerce/editor-components/sidebar-compatibility-notice';
-import { NoPaymentMethodsNotice } from '@woocommerce/editor-components/no-payment-methods-notice';
-import { PAYMENT_STORE_KEY } from '@woocommerce/block-data';
 import { DefaultNotice } from '@woocommerce/editor-components/default-notice';
 import { IncompatibleExtensionsNotice } from '@woocommerce/editor-components/incompatible-extension-notice';
 import { useSelect } from '@wordpress/data';
 import { CartCheckoutFeedbackPrompt } from '@woocommerce/editor-components/feedback-prompt';
-import { useState } from '@wordpress/element';
 
 declare module '@wordpress/editor' {
 	let store: StoreDescriptor;
@@ -37,24 +33,7 @@ const withSidebarNotices = createHigherOrderComponent(
 			isSelected: isBlockSelected,
 		} = props;
 
-		const [
-			isIncompatibleExtensionsNoticeDismissed,
-			setIsIncompatibleExtensionsNoticeDismissed,
-		] = useState( true );
-
-		const toggleIncompatibleExtensionsNoticeDismissedStatus = (
-			isDismissed: boolean
-		) => {
-			setIsIncompatibleExtensionsNoticeDismissed( isDismissed );
-		};
-
-		const {
-			isCart,
-			isCheckout,
-			isPaymentMethodsBlock,
-			hasPaymentMethods,
-			parentId,
-		} = useSelect( ( select ) => {
+		const { isCart, isCheckout, parentId } = useSelect( ( select ) => {
 			const { getBlockParentsByBlockName, getBlockName } =
 				select( blockEditorStore );
 
@@ -95,13 +74,6 @@ const withSidebarNotices = createHigherOrderComponent(
 					currentBlockName === targetParentBlock
 						? clientId
 						: parents[ targetParentBlock ],
-				isPaymentMethodsBlock:
-					currentBlockName === 'woocommerce/checkout-payment-block',
-				hasPaymentMethods:
-					select( PAYMENT_STORE_KEY ).paymentMethodsInitialized() &&
-					Object.keys(
-						select( PAYMENT_STORE_KEY ).getAvailablePaymentMethods()
-					).length > 0,
 			};
 		} );
 
@@ -118,9 +90,6 @@ const withSidebarNotices = createHigherOrderComponent(
 			<>
 				<InspectorControls>
 					<IncompatibleExtensionsNotice
-						toggleDismissedStatus={
-							toggleIncompatibleExtensionsNoticeDismissedStatus
-						}
 						block={
 							isCart ? 'woocommerce/cart' : 'woocommerce/checkout'
 						}
@@ -128,18 +97,6 @@ const withSidebarNotices = createHigherOrderComponent(
 					/>
 
 					<DefaultNotice block={ isCheckout ? 'checkout' : 'cart' } />
-
-					{ isIncompatibleExtensionsNoticeDismissed ? (
-						<CartCheckoutSidebarCompatibilityNotice
-							block={ isCheckout ? 'checkout' : 'cart' }
-							clientId={ parentId }
-						/>
-					) : null }
-
-					{ isPaymentMethodsBlock && ! hasPaymentMethods && (
-						<NoPaymentMethodsNotice />
-					) }
-
 					<CartCheckoutFeedbackPrompt />
 				</InspectorControls>
 				<BlockEdit key="edit" { ...props } />

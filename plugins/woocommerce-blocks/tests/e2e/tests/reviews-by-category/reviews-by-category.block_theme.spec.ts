@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { expect, test } from '@woocommerce/e2e-playwright-utils';
+import { expect, test } from '@woocommerce/e2e-utils';
 
 /**
  * Internal dependencies
@@ -28,19 +28,21 @@ test.describe( `${ BLOCK_NAME } Block`, () => {
 
 	test( 'block can be inserted and it successfully renders a review in the editor and the frontend', async ( {
 		page,
-		editorUtils,
+		editor,
 	} ) => {
-		const categoryCheckbox = page.getByLabel( 'Clothing' );
+		const categoryCheckbox = editor.canvas.getByLabel( 'Clothing' ).first();
 		await categoryCheckbox.check();
 		await expect( categoryCheckbox ).toBeChecked();
-		const doneButton = page.getByRole( 'button', { name: 'Done' } );
+		const doneButton = editor.canvas.getByRole( 'button', {
+			name: 'Done',
+		} );
 		await doneButton.click();
 
 		await expect(
-			page.getByText( hoodieReviews[ 0 ].review )
+			editor.canvas.getByText( hoodieReviews[ 0 ].review )
 		).toBeVisible();
 
-		await editorUtils.publishAndVisitPost();
+		await editor.publishAndVisitPost();
 
 		await expect(
 			page.getByText( hoodieReviews[ 0 ].review )
@@ -50,9 +52,9 @@ test.describe( `${ BLOCK_NAME } Block`, () => {
 	test( 'sorts by most recent review by default and can sort by highest rating', async ( {
 		page,
 		frontendUtils,
-		editorUtils,
+		editor,
 	} ) => {
-		await editorUtils.publishAndVisitPost();
+		await editor.publishAndVisitPost();
 
 		const block = await frontendUtils.getBlockByName( BLOCK_NAME );
 
@@ -71,9 +73,9 @@ test.describe( `${ BLOCK_NAME } Block`, () => {
 	test( 'can sort by lowest rating', async ( {
 		page,
 		frontendUtils,
-		editorUtils,
+		editor,
 	} ) => {
-		await editorUtils.publishAndVisitPost();
+		await editor.publishAndVisitPost();
 
 		const block = await frontendUtils.getBlockByName( BLOCK_NAME );
 

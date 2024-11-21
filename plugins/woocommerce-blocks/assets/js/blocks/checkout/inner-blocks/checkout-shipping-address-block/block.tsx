@@ -28,15 +28,17 @@ import CustomerAddress from './customer-address';
 
 const Block = ( {
 	showCompanyField = false,
-	showApartmentField = false,
-	showPhoneField = false,
 	requireCompanyField = false,
+	showApartmentField = false,
+	requireApartmentField = false,
+	showPhoneField = false,
 	requirePhoneField = false,
 }: {
 	showCompanyField: boolean;
-	showApartmentField: boolean;
-	showPhoneField: boolean;
 	requireCompanyField: boolean;
+	showApartmentField: boolean;
+	requireApartmentField: boolean;
+	showPhoneField: boolean;
 	requirePhoneField: boolean;
 } ): JSX.Element => {
 	const {
@@ -45,6 +47,7 @@ const Block = ( {
 		billingAddress,
 		useShippingAsBilling,
 		setUseShippingAsBilling,
+		setEditingBillingAddress,
 	} = useCheckoutAddress();
 	const { isEditor } = useEditorContext();
 	const isGuest = getSetting( 'currentUserId' ) === 0;
@@ -94,6 +97,7 @@ const Block = ( {
 			},
 			address_2: {
 				hidden: ! showApartmentField,
+				required: requireApartmentField,
 			},
 			phone: {
 				hidden: ! showPhoneField,
@@ -104,6 +108,7 @@ const Block = ( {
 		showCompanyField,
 		requireCompanyField,
 		showApartmentField,
+		requireApartmentField,
 		showPhoneField,
 		requirePhoneField,
 	] ) as FormFieldsConfig;
@@ -112,10 +117,6 @@ const Block = ( {
 	const noticeContext = useShippingAsBilling
 		? [ noticeContexts.SHIPPING_ADDRESS, noticeContexts.BILLING_ADDRESS ]
 		: [ noticeContexts.SHIPPING_ADDRESS ];
-	const hasAddress = !! (
-		shippingAddress.address_1 &&
-		( shippingAddress.first_name || shippingAddress.last_name )
-	);
 
 	const { cartDataLoaded } = useSelect( ( select ) => {
 		const store = select( CART_STORE_KEY );
@@ -124,9 +125,6 @@ const Block = ( {
 		};
 	} );
 
-	// Default editing state for CustomerAddress component comes from the current address and whether or not we're in the editor.
-	const defaultEditingAddress = isEditor || ! hasAddress;
-
 	return (
 		<>
 			<StoreNoticesContainer context={ noticeContext } />
@@ -134,7 +132,6 @@ const Block = ( {
 				{ cartDataLoaded ? (
 					<CustomerAddress
 						addressFieldsConfig={ addressFieldsConfig }
-						defaultEditing={ defaultEditingAddress }
 					/>
 				) : null }
 			</WrapperComponent>
@@ -147,6 +144,7 @@ const Block = ( {
 					if ( checked ) {
 						syncBillingWithShipping();
 					} else {
+						setEditingBillingAddress( true );
 						clearBillingAddress( billingAddress );
 					}
 				} }

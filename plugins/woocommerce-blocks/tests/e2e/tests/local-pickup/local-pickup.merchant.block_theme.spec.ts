@@ -1,11 +1,10 @@
 /**
  * External dependencies
  */
-import { test, expect } from '@woocommerce/e2e-playwright-utils';
+import { test, expect } from '@woocommerce/e2e-utils';
 
 test.describe( 'Merchant → Local Pickup Settings', () => {
 	test.beforeEach( async ( { localPickupUtils } ) => {
-		await localPickupUtils.deleteLocations();
 		await localPickupUtils.disableLocalPickupCosts();
 		await localPickupUtils.enableLocalPickup();
 	} );
@@ -96,7 +95,6 @@ test.describe( 'Merchant → Local Pickup Settings', () => {
 		localPickupUtils,
 	} ) => {
 		await localPickupUtils.addPickupLocation( {
-			page,
 			location: {
 				name: 'Automattic, Inc.',
 				address: '60 29th Street, Suite 343',
@@ -116,7 +114,6 @@ test.describe( 'Merchant → Local Pickup Settings', () => {
 
 	test( 'user can edit a location', async ( { page, localPickupUtils } ) => {
 		await localPickupUtils.addPickupLocation( {
-			page,
 			location: {
 				name: 'Automattic, Inc.',
 				address: '60 29th Street, Suite 343',
@@ -134,7 +131,6 @@ test.describe( 'Merchant → Local Pickup Settings', () => {
 		).toBeVisible();
 
 		await localPickupUtils.editPickupLocation( {
-			page,
 			location: {
 				name: 'Ministry of Automattic Limited',
 				address: '100 New Bridge Street',
@@ -157,7 +153,6 @@ test.describe( 'Merchant → Local Pickup Settings', () => {
 		localPickupUtils,
 	} ) => {
 		await localPickupUtils.addPickupLocation( {
-			page,
 			location: {
 				name: 'Ausomattic Pty Ltd',
 				address:

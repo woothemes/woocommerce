@@ -28,13 +28,13 @@ import { VariableProductTour } from './variable-product-tour';
 import { TRACKS_SOURCE } from '../../../constants';
 import { handlePrompt } from '../../../utils/handle-prompt';
 import { ProductEditorBlockEditProps } from '../../../types';
-import { EmptyState } from './empty-state';
+import { EmptyState } from '../../../components/empty-state';
 
 export function Edit( {
 	attributes,
-	context,
+	context: { isInSelectedTab },
 }: ProductEditorBlockEditProps< VariationOptionsBlockAttributes > ) {
-	const noticeDimissed = useRef( false );
+	const noticeDismissed = useRef( false );
 	const { invalidateResolution } = useDispatch(
 		EXPERIMENTAL_PRODUCT_VARIATIONS_STORE_NAME
 	);
@@ -107,7 +107,7 @@ export function Edit( {
 			 */
 			if (
 				totalCountWithoutPrice > 0 &&
-				! noticeDimissed.current &&
+				! noticeDismissed.current &&
 				productStatus !== 'publish' &&
 				// New status.
 				newData?.status === 'publish'
@@ -120,10 +120,12 @@ export function Edit( {
 						},
 					} );
 				}
-				return __(
-					'Set variation prices before adding this product.',
-					'woocommerce'
-				);
+				return {
+					message: __(
+						'Set variation prices before adding this product.',
+						'woocommerce'
+					),
+				};
 			}
 		},
 		[ totalCountWithoutPrice ]
@@ -178,16 +180,25 @@ export function Edit( {
 			: '';
 
 	if ( ! hasVariationOptions ) {
-		return <EmptyState />;
+		return (
+			<EmptyState
+				names={ [
+					__( 'Variation', 'woocommerce' ),
+					__( 'Colors', 'woocommerce' ),
+					__( 'Sizes', 'woocommerce' ),
+				] }
+			/>
+		);
 	}
 
 	return (
 		<div { ...blockProps }>
 			<VariationsTable
+				isVisible={ isInSelectedTab }
 				ref={ variationTableRef as React.Ref< HTMLDivElement > }
 				noticeText={ noticeText }
 				onNoticeDismiss={ () => {
-					noticeDimissed.current = true;
+					noticeDismissed.current = true;
 					updateUserPreferences( {
 						variable_items_without_price_notice_dismissed: {
 							...( itemsWithoutPriceNoticeDismissed || {} ),
@@ -220,7 +231,7 @@ export function Edit( {
 					}
 				} }
 			/>
-			{ context.isInSelectedTab && <VariableProductTour /> }
+			{ isInSelectedTab && <VariableProductTour /> }
 		</div>
 	);
 }

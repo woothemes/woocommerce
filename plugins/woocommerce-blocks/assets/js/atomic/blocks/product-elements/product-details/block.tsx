@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { __ } from '@wordpress/i18n';
 
 interface SingleProductTab {
 	id: string;
 	title: string;
 	active: boolean;
-	content: string | undefined;
+	content: React.JSX.Element | undefined;
 }
 
 const ProductTabTitle = ( {
@@ -18,7 +18,7 @@ const ProductTabTitle = ( {
 }: Pick< SingleProductTab, 'id' | 'title' | 'active' > ) => {
 	return (
 		<li
-			className={ classnames( `${ id }_tab`, {
+			className={ clsx( `${ id }_tab`, {
 				active,
 			} ) }
 			id={ `tab-title-${ id }` }
@@ -46,15 +46,28 @@ const ProductTabContent = ( {
 	);
 };
 
-export const SingleProductDetails = () => {
+export const SingleProductDetails = ( {
+	hideTabTitle,
+}: {
+	hideTabTitle: boolean;
+} ) => {
 	const productTabs = [
 		{
 			id: 'description',
 			title: 'Description',
 			active: true,
-			content: __(
-				'This block lists description, attributes and reviews for a single product.',
-				'woocommerce'
+			content: (
+				<>
+					{ ! hideTabTitle && (
+						<h2>{ __( 'Description', 'woocommerce' ) }</h2>
+					) }
+					<p>
+						{ __(
+							'This block lists description, attributes and reviews for a single product.',
+							'woocommerce'
+						) }
+					</p>
+				</>
 			),
 		},
 		{

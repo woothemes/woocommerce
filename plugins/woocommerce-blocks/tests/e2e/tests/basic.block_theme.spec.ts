@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import { test, expect } from '@woocommerce/e2e-playwright-utils';
-import { customerFile, guestFile } from '@woocommerce/e2e-utils';
+import { test, expect, customerFile, guestFile } from '@woocommerce/e2e-utils';
 
 test.describe( 'Basic role-based functionality tests', () => {
 	test.describe( 'As admin', () => {
@@ -14,12 +13,18 @@ test.describe( 'Basic role-based functionality tests', () => {
 				page.getByRole( 'heading', { name: 'Dashboard' } )
 			).toHaveText( 'Dashboard' );
 		} );
+
+		test( 'Load iframed post editor', async ( { admin, editor } ) => {
+			await admin.createNewPost();
+			await expect( editor.canvas.owner() ).toBeVisible();
+		} );
 	} );
 
 	test.describe( 'As customer', () => {
 		test.use( {
 			storageState: customerFile,
 		} );
+
 		test( 'Load My Account page', async ( { page } ) => {
 			await page.goto( '/my-account' );
 

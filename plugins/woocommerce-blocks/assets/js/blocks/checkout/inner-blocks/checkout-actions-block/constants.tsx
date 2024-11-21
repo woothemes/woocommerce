@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 
-export const defaultPlaceOrderButtonLabel = sprintf(
-	// translators: %s: is the price.
-	__( 'Place Order · %s', 'woocommerce' ),
-	'<price/>'
+export const defaultPlaceOrderButtonLabel = __( 'Place Order', 'woocommerce' );
+export const defaultReturnToCartButtonLabel = __(
+	'Return to Cart',
+	'woocommerce'
 );

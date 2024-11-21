@@ -143,7 +143,7 @@ class PageController {
 		}
 
 		// Not on an Orders page.
-		if ( 'admin.php' !== $pagenow || 0 !== strpos( $plugin_page, 'wc-orders' ) ) {
+		if ( empty( $plugin_page ) || 'admin.php' !== $pagenow || 0 !== strpos( $plugin_page, 'wc-orders' ) ) {
 			return;
 		}
 
@@ -447,12 +447,18 @@ class PageController {
 			$order_type = $order->get_type();
 		}
 
+		try {
+			$base_url = $this->get_base_page_url( $order_type );
+		} catch ( \Exception $e ) {
+			return '';
+		}
+
 		return add_query_arg(
 			array(
 				'action' => 'edit',
 				'id'     => absint( $order_id ),
 			),
-			$this->get_base_page_url( $order_type )
+			$base_url
 		);
 	}
 

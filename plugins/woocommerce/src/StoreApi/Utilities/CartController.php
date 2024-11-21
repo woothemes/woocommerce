@@ -12,7 +12,6 @@ use Automattic\WooCommerce\StoreApi\Utilities\ArrayUtils;
 use Automattic\WooCommerce\StoreApi\Utilities\DraftOrderTrait;
 use Automattic\WooCommerce\StoreApi\Utilities\NoticeHandler;
 use Automattic\WooCommerce\StoreApi\Utilities\QuantityLimits;
-use Automattic\WooCommerce\Blocks\Package;
 use WP_Error;
 
 /**
@@ -27,20 +26,56 @@ class CartController {
 	 * Makes the cart and sessions available to a route by loading them from core.
 	 */
 	public function load_cart() {
-		if ( ! did_action( 'woocommerce_load_cart_from_session' ) && function_exists( 'wc_load_cart' ) ) {
-			wc_load_cart();
+		if ( did_action( 'woocommerce_load_cart_from_session' ) ) {
+			return;
+		}
+
+		// Initialize the cart.
+		wc_load_cart();
+
+		// Load cart from session.
+		$cart = $this->get_cart_instance();
+		$cart->get_cart();
+	}
+
+	/**
+	 * Normalizes the cart by fixing any quantity violations.
+	 */
+	public function normalize_cart() {
+		$quantity_limits = new QuantityLimits();
+		$cart_items      = $this->get_cart_items();
+
+		foreach ( $cart_items as $cart_item ) {
+			$normalized_qty = $quantity_limits->normalize_cart_item_quantity( $cart_item['quantity'], $cart_item );
+
+			if ( $normalized_qty !== $cart_item['quantity'] ) {
+				$this->set_cart_item_quantity( $cart_item['key'], $normalized_qty );
+			}
 		}
 	}
 
 	/**
-	 * Recalculates the cart totals.
+	 * Gets the latest cart instance, and ensures totals have been calculated before returning.
+	 *
+	 * @return \WC_Cart
+	 */
+	public function get_cart_for_response() {
+		return did_action( 'woocommerce_after_calculate_totals' ) ? $this->get_cart_instance() : $this->calculate_totals();
+	}
+
+	/**
+	 * Recalculates the cart totals and returns the updated cart instance.
+	 *
+	 * @since 9.2.0 Calculate shipping was removed here because it's called already by calculate_totals.
+	 *
+	 * @return \WC_Cart
 	 */
 	public function calculate_totals() {
 		$cart = $this->get_cart_instance();
 		$cart->get_cart();
 		$cart->calculate_fees();
-		$cart->calculate_shipping();
 		$cart->calculate_totals();
+		return $cart;
 	}
 
 	/**
@@ -188,19 +223,19 @@ class CartController {
 		$cart_item = $this->get_cart_item( $item_id );
 
 		if ( empty( $cart_item ) ) {
-			throw new RouteException( 'woocommerce_rest_cart_invalid_key', __( 'Cart item does not exist.', 'woocommerce' ), 409 );
+			throw new RouteException( 'woocommerce_rest_cart_invalid_key', esc_html__( 'Cart item does not exist.', 'woocommerce' ), 409 );
 		}
 
-		$product = $cart_item['data'];
+		$product = $cart_item['data'] ?? false;
 
 		if ( ! $product instanceof \WC_Product ) {
-			throw new RouteException( 'woocommerce_rest_cart_invalid_product', __( 'Cart item is invalid.', 'woocommerce' ), 404 );
+			throw new RouteException( 'woocommerce_rest_cart_invalid_product', esc_html__( 'Cart item is invalid.', 'woocommerce' ), 404 );
 		}
 
 		$quantity_validation = ( new QuantityLimits() )->validate_cart_item_quantity( $quantity, $cart_item );
 
 		if ( is_wp_error( $quantity_validation ) ) {
-			throw new RouteException( $quantity_validation->get_error_code(), $quantity_validation->get_error_message(), 400 );
+			throw new RouteException( $quantity_validation->get_error_code(), $quantity_validation->get_error_message(), 400 ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		$cart = $this->get_cart_instance();
@@ -273,7 +308,8 @@ class CartController {
 			$this->get_product_id( $product ),
 			$request['quantity'],
 			$this->get_variation_id( $product ),
-			$request['variation']
+			$request['variation'],
+			$request['cart_item_data']
 		);
 
 		if ( ! $passed_validation ) {
@@ -468,12 +504,29 @@ class CartController {
 	}
 
 	/**
+	 * When placing an order, validate that the cart is not empty.
+	 *
+	 * @throws InvalidCartException Exception if the cart is empty.
+	 */
+	public function validate_cart_not_empty() {
+		$cart_items = $this->get_cart_items();
+
+		if ( empty( $cart_items ) ) {
+			throw new InvalidCartException(
+				'woocommerce_cart_error',
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Errors are converted to response objects later.
+				new WP_Error( 'woocommerce_rest_cart_empty', __( 'Cannot place an order, your cart is empty.', 'woocommerce' ), 400 ),
+				400
+			);
+		}
+	}
+
+	/**
 	 * Validate all items in the cart and check for errors.
 	 *
 	 * @throws InvalidCartException Exception if invalid data is detected due to insufficient stock levels.
 	 */
 	public function validate_cart_items() {
-		$cart       = $this->get_cart_instance();
 		$cart_items = $this->get_cart_items();
 
 		$errors                        = [];
@@ -482,7 +535,7 @@ class CartController {
 		$partial_out_of_stock_products = [];
 		$not_purchasable_products      = [];
 
-		foreach ( $cart_items as $cart_item_key => $cart_item ) {
+		foreach ( $cart_items as $cart_item ) {
 			try {
 				$this->validate_cart_item( $cart_item );
 			} catch ( RouteException $error ) {
@@ -591,7 +644,7 @@ class CartController {
 	 * @param array $cart_item Cart item array.
 	 */
 	public function validate_cart_item( $cart_item ) {
-		$product = $cart_item['data'];
+		$product = $cart_item['data'] ?? false;
 
 		if ( ! $product instanceof \WC_Product ) {
 			return;
@@ -725,7 +778,7 @@ class CartController {
 		$cart = wc()->cart;
 
 		if ( ! $cart || ! $cart instanceof \WC_Cart ) {
-			throw new RouteException( 'woocommerce_rest_cart_error', __( 'Unable to retrieve cart.', 'woocommerce' ), 500 );
+			throw new RouteException( 'woocommerce_rest_cart_error', esc_html__( 'Unable to retrieve cart.', 'woocommerce' ), 500 );
 		}
 
 		return $cart;
@@ -824,7 +877,7 @@ class CartController {
 
 		// Add extra package data to array.
 		$packages = array_map(
-			function( $key, $package, $index ) {
+			function ( $key, $package, $index ) {
 				$package['package_id']   = isset( $package['package_id'] ) ? $package['package_id'] : $key;
 				$package['package_name'] = isset( $package['package_name'] ) ? $package['package_name'] : $this->get_package_name( $package, $index );
 				return $package;
@@ -909,7 +962,7 @@ class CartController {
 				'woocommerce_rest_cart_coupon_error',
 				sprintf(
 					/* translators: %s coupon code */
-					__( '"%s" is an invalid coupon code.', 'woocommerce' ),
+					esc_html__( '"%s" is an invalid coupon code.', 'woocommerce' ),
 					esc_html( $coupon_code )
 				),
 				400
@@ -921,7 +974,7 @@ class CartController {
 				'woocommerce_rest_cart_coupon_error',
 				sprintf(
 					/* translators: %s coupon code */
-					__( 'Coupon code "%s" has already been applied.', 'woocommerce' ),
+					esc_html__( 'Coupon code "%s" has already been applied.', 'woocommerce' ),
 					esc_html( $coupon_code )
 				),
 				400
@@ -942,7 +995,7 @@ class CartController {
 
 		// Prevents new coupons being added if individual use coupons are already in the cart.
 		$individual_use_coupons = $this->get_cart_coupons(
-			function( $code ) {
+			function ( $code ) {
 				$coupon = new \WC_Coupon( $code );
 				return $coupon->get_individual_use();
 			}
@@ -969,8 +1022,8 @@ class CartController {
 					'woocommerce_rest_cart_coupon_error',
 					sprintf(
 						/* translators: %s: coupon code */
-						__( '"%s" has already been applied and cannot be used in conjunction with other coupons.', 'woocommerce' ),
-						$code
+						esc_html__( '"%s" has already been applied and cannot be used in conjunction with other coupons.', 'woocommerce' ),
+						esc_html( $code )
 					),
 					400
 				);

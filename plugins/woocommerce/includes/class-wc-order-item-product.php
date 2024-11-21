@@ -7,6 +7,8 @@
  * @since   3.0.0
  */
 
+use Automattic\WooCommerce\Utilities\NumberUtil;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -171,18 +173,18 @@ class WC_Order_Item_Product extends WC_Order_Item {
 			$tax_data['total']    = array_map( 'wc_format_decimal', $raw_tax_data['total'] );
 
 			// Subtotal cannot be less than total!
-			if ( array_sum( $tax_data['subtotal'] ) < array_sum( $tax_data['total'] ) ) {
+			if ( NumberUtil::array_sum( $tax_data['subtotal'] ) < NumberUtil::array_sum( $tax_data['total'] ) ) {
 				$tax_data['subtotal'] = $tax_data['total'];
 			}
 		}
 		$this->set_prop( 'taxes', $tax_data );
 
 		if ( 'yes' === get_option( 'woocommerce_tax_round_at_subtotal' ) ) {
-			$this->set_total_tax( array_sum( $tax_data['total'] ) );
-			$this->set_subtotal_tax( array_sum( $tax_data['subtotal'] ) );
+			$this->set_total_tax( NumberUtil::array_sum( $tax_data['total'] ) );
+			$this->set_subtotal_tax( NumberUtil::array_sum( $tax_data['subtotal'] ) );
 		} else {
-			$this->set_total_tax( array_sum( array_map( 'wc_round_tax_total', $tax_data['total'] ) ) );
-			$this->set_subtotal_tax( array_sum( array_map( 'wc_round_tax_total', $tax_data['subtotal'] ) ) );
+			$this->set_total_tax( NumberUtil::array_sum( array_map( 'wc_round_tax_total', $tax_data['total'] ) ) );
+			$this->set_subtotal_tax( NumberUtil::array_sum( array_map( 'wc_round_tax_total', $tax_data['subtotal'] ) ) );
 		}
 	}
 
@@ -502,5 +504,30 @@ class WC_Order_Item_Product extends WC_Order_Item {
 			return true;
 		}
 		return parent::offsetExists( $offset );
+	}
+
+	/**
+	 * Indicates that product line items have an associated Cost of Goods Sold value.
+	 * Note that this is true even if the product has np COGS value (in that case the COGS value for the line item will be zero)-
+	 *
+	 * @return bool Always true.
+	 */
+	public function has_cogs(): bool {
+		return true;
+	}
+
+	/**
+	 * Calculate the Cost of Goods Sold value for this line item.
+	 *
+	 * @return float|null The calculated value, null if the product associated to the line item no longer exists.
+	 */
+	public function calculate_cogs_value_core(): ?float {
+		$product = $this->get_product();
+		if ( ! $product ) {
+			return null;
+		}
+
+		$cogs_per_unit = $product->get_cogs_total_value();
+		return $cogs_per_unit * $this->get_quantity();
 	}
 }

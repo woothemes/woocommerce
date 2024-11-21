@@ -17,9 +17,25 @@ when:
         - woo-fse
   - author:
       teamIs:
-        - vortex
+        - flux
       ignore:
         nameIs:
     assign:
       teams:
-        - vortex
+        - flux
+  - author:
+      teamIs:
+        - proton
+      ignore:
+        nameIs:
+    assign:
+      teams:
+        - proton
+  - author:
+      teamIs:
+        - mailpoet
+      ignore:
+        nameIs:
+    assign:
+      teams:
+        - mailpoet

@@ -1,4 +1,6 @@
 <?php
+declare( strict_types = 1 );
+
 namespace Automattic\WooCommerce\Blocks;
 
 use Automattic\WooCommerce\Blocks\Assets\Api as AssetApi;
@@ -31,7 +33,7 @@ final class AssetsController {
 	/**
 	 * Initialize class features.
 	 */
-	protected function init() {
+	protected function init() { // phpcs:ignore WooCommerce.Functions.InternalInjectionMethod.MissingPublic
 		add_action( 'init', array( $this, 'register_assets' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'register_and_enqueue_site_editor_assets' ) );
 		add_filter( 'wp_resource_hints', array( $this, 'add_resource_hints' ), 10, 2 );
@@ -40,6 +42,7 @@ final class AssetsController {
 		add_action( 'admin_enqueue_scripts', array( $this, 'update_block_style_dependencies' ), 20 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'update_block_settings_dependencies' ), 100 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'update_block_settings_dependencies' ), 100 );
+		add_filter( 'js_do_concat', array( $this, 'skip_boost_minification_for_cart_checkout' ), 10, 2 );
 	}
 
 	/**
@@ -62,9 +65,14 @@ final class AssetsController {
 		// The price package is shared externally so has no blocks prefix.
 		$this->api->register_script( 'wc-price-format', 'assets/client/blocks/price-format.js', array(), false );
 
-		$this->api->register_script( 'wc-blocks-vendors-frontend', $this->api->get_block_asset_build_path( 'wc-blocks-vendors-frontend' ), array(), false );
-		$this->api->register_script( 'wc-blocks-checkout', 'assets/client/blocks/blocks-checkout.js', array( 'wc-blocks-vendors-frontend' ) );
-		$this->api->register_script( 'wc-blocks-components', 'assets/client/blocks/blocks-components.js', array( 'wc-blocks-vendors-frontend' ) );
+		// Vendor scripts for blocks frontends (not including cart and checkout).
+		$this->api->register_script( 'wc-blocks-frontend-vendors', $this->api->get_block_asset_build_path( 'wc-blocks-frontend-vendors-frontend' ), array(), true );
+
+		// Cart and checkout frontend scripts.
+		$this->api->register_script( 'wc-cart-checkout-vendors', $this->api->get_block_asset_build_path( 'wc-cart-checkout-vendors-frontend' ), array(), true );
+		$this->api->register_script( 'wc-cart-checkout-base', $this->api->get_block_asset_build_path( 'wc-cart-checkout-base-frontend' ), array(), true );
+		$this->api->register_script( 'wc-blocks-checkout', 'assets/client/blocks/blocks-checkout.js' );
+		$this->api->register_script( 'wc-blocks-components', 'assets/client/blocks/blocks-components.js' );
 
 		// Register the interactivity components here for now.
 		$this->api->register_script( 'wc-interactivity-dropdown', 'assets/client/blocks/wc-interactivity-dropdown.js', array() );
@@ -191,6 +199,50 @@ final class AssetsController {
 	}
 
 	/**
+	 * Get the block asset resource hints in the cache or null if not found.
+	 *
+	 * @return array|null Array of resource hints.
+	 */
+	private function get_block_asset_resource_hints_cache() {
+		if ( wp_is_development_mode( 'plugin' ) ) {
+			return null;
+		}
+
+		$cache = get_site_transient( 'woocommerce_block_asset_resource_hints' );
+
+		$current_version = array(
+			'woocommerce' => WOOCOMMERCE_VERSION,
+			'wordpress'   => get_bloginfo( 'version' ),
+		);
+
+		if ( isset( $cache['version'] ) && $cache['version'] === $current_version ) {
+			return $cache['files'];
+		}
+
+		return null;
+	}
+
+	/**
+	 * Set the block asset resource hints in the cache.
+	 *
+	 * @param string $filename File name.
+	 * @param array  $data Array of resource hints.
+	 */
+	private function set_block_asset_resource_hints_cache( $filename, $data ) {
+		$cache   = $this->get_block_asset_resource_hints_cache();
+		$updated = array(
+			'files'   => $cache ?? array(),
+			'version' => array(
+				'woocommerce' => WOOCOMMERCE_VERSION,
+				'wordpress'   => get_bloginfo( 'version' ),
+			),
+		);
+
+		$updated['files'][ $filename ] = $data;
+		set_site_transient( 'woocommerce_block_asset_resource_hints', $updated, WEEK_IN_SECONDS );
+	}
+
+	/**
 	 * Get resource hint for a block by name.
 	 *
 	 * @param string $filename Block filename.
@@ -200,6 +252,13 @@ final class AssetsController {
 		if ( ! $filename ) {
 			return array();
 		}
+
+		$cached = $this->get_block_asset_resource_hints_cache();
+
+		if ( isset( $cached[ $filename ] ) ) {
+			return $cached[ $filename ];
+		}
+
 		$script_data = $this->api->get_script_data(
 			$this->api->get_block_asset_build_path( $filename )
 		);
@@ -207,7 +266,8 @@ final class AssetsController {
 			array( esc_url( add_query_arg( 'ver', $script_data['version'], $script_data['src'] ) ) ),
 			$this->get_script_dependency_src_array( $script_data['dependencies'] )
 		);
-		return array_map(
+
+		$data = array_map(
 			function ( $src ) {
 				return array(
 					'href' => $src,
@@ -216,6 +276,10 @@ final class AssetsController {
 			},
 			array_unique( array_filter( $resources ) )
 		);
+
+		$this->set_block_asset_resource_hints_cache( $filename, $data );
+
+		return $data;
 	}
 
 	/**
@@ -251,6 +315,23 @@ final class AssetsController {
 			$src = $wp_scripts->base_url . $src;
 		}
 		return $src;
+	}
+
+	/**
+	 * Skip Jetpack Boost minification on older versions of Jetpack Boost where it causes issues.
+	 *
+	 * @param mixed $do_concat Whether to concatenate the script or not.
+	 * @param mixed $handle The script handle.
+	 * @return mixed
+	 */
+	public function skip_boost_minification_for_cart_checkout( $do_concat, $handle ) {
+		$boost_is_outdated = defined( 'JETPACK_BOOST_VERSION' ) && version_compare( JETPACK_BOOST_VERSION, '3.4.2', '<' );
+		$scripts_to_ignore = [
+			'wc-cart-checkout-vendors',
+			'wc-cart-checkout-base',
+		];
+
+		return $boost_is_outdated && in_array( $handle, $scripts_to_ignore, true ) ? false : $do_concat;
 	}
 
 	/**

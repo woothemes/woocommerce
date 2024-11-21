@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { getSetting } from '@woocommerce/settings';
 import {
 	PlaceOrderButton,
@@ -11,9 +11,6 @@ import { useCheckoutSubmit } from '@woocommerce/base-context/hooks';
 import { noticeContexts } from '@woocommerce/base-context';
 import { StoreNoticesContainer } from '@woocommerce/blocks-components';
 import { applyCheckoutFilter } from '@woocommerce/blocks-checkout';
-import { CART_STORE_KEY } from '@woocommerce/block-data';
-import { useSelect } from '@wordpress/data';
-import { formatPrice } from '@woocommerce/price-format';
 
 /**
  * Internal dependencies
@@ -21,11 +18,22 @@ import { formatPrice } from '@woocommerce/price-format';
 import { defaultPlaceOrderButtonLabel } from './constants';
 import './style.scss';
 
+export type BlockAttributes = {
+	cartPageId: number;
+	showReturnToCart: boolean;
+	className?: string;
+	placeOrderButtonLabel: string;
+	priceSeparator: string;
+	returnToCartButtonLabel: string;
+};
+
 const Block = ( {
 	cartPageId,
 	showReturnToCart,
 	className,
 	placeOrderButtonLabel,
+	returnToCartButtonLabel,
+	priceSeparator,
 }: {
 	cartPageId: number;
 	showReturnToCart: boolean;
@@ -34,14 +42,7 @@ const Block = ( {
 } ): JSX.Element => {
 	const { paymentMethodButtonLabel } = useCheckoutSubmit();
 
-	const cartTotals = useSelect( ( select ) => {
-		const store = select( CART_STORE_KEY );
-		return store.getCartTotals();
-	}, [] );
-
-	const totalPrice = formatPrice( cartTotals.total_price );
-
-	let label = applyCheckoutFilter( {
+	const label = applyCheckoutFilter( {
 		filterName: 'placeOrderButtonLabel',
 		defaultValue:
 			paymentMethodButtonLabel ||
@@ -49,31 +50,37 @@ const Block = ( {
 			defaultPlaceOrderButtonLabel,
 	} );
 
-	if ( label.includes( '<price/>' ) ) {
-		if ( cartTotals.total_price === '0' ) {
-			label = label.replace( '<price/>', '' );
-			label = label.replace( /[^a-zA-Z\s]/g, '' );
-		} else {
-			label = label.replace( '<price/>', totalPrice );
-		}
-	}
+	const showPrice = className?.includes( 'is-style-with-price' ) || false;
 
 	return (
-		<div
-			className={ classnames( 'wc-block-checkout__actions', className ) }
-		>
+		<div className={ clsx( 'wc-block-checkout__actions', className ) }>
 			<StoreNoticesContainer
 				context={ noticeContexts.CHECKOUT_ACTIONS }
 			/>
 			<div className="wc-block-checkout__actions_row">
 				{ showReturnToCart && (
 					<ReturnToCartButton
-						link={ getSetting( 'page-' + cartPageId, false ) }
-					/>
+						href={ getSetting( 'page-' + cartPageId, false ) }
+					>
+						{ returnToCartButtonLabel }
+					</ReturnToCartButton>
+				) }
+				{ showPrice && (
+					<style>
+						{ `.wp-block-woocommerce-checkout-actions-block {
+						.wc-block-components-checkout-place-order-button__separator {
+							&::after {
+								content: "${ priceSeparator }";
+							}
+						}
+					}` }
+					</style>
 				) }
 				<PlaceOrderButton
 					label={ label }
 					fullWidth={ ! showReturnToCart }
+					showPrice={ showPrice }
+					priceSeparator={ priceSeparator }
 				/>
 			</div>
 		</div>

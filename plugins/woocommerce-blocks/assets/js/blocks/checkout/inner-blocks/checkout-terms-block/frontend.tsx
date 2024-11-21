@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useState, useEffect } from '@wordpress/element';
 import { CheckboxControl } from '@woocommerce/blocks-components';
 import { useCheckoutSubmit } from '@woocommerce/base-context/hooks';
@@ -14,15 +14,18 @@ import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
  * Internal dependencies
  */
 import { termsConsentDefaultText, termsCheckboxDefaultText } from './constants';
+import { CheckoutOrderSummarySlot } from '../checkout-order-summary-block/slotfills';
 
 const FrontendBlock = ( {
 	text,
 	checkbox,
 	instanceId,
 	className,
+	showSeparator,
 }: {
 	text: string;
 	checkbox: boolean;
+	showSeparator: string | boolean;
 	instanceId: string;
 	className?: string;
 } ): JSX.Element => {
@@ -71,39 +74,47 @@ const FrontendBlock = ( {
 	] );
 
 	return (
-		<div
-			className={ classnames(
-				'wc-block-checkout__terms',
-				{
-					'wc-block-checkout__terms--disabled': isDisabled,
-				},
-				className
-			) }
-		>
-			{ checkbox ? (
-				<>
-					<CheckboxControl
-						id="terms-and-conditions"
-						checked={ checked }
-						onChange={ () => setChecked( ( value ) => ! value ) }
-						hasError={ hasError }
-						disabled={ isDisabled }
-					>
-						<span
-							dangerouslySetInnerHTML={ {
-								__html: text || termsCheckboxDefaultText,
-							} }
-						/>
-					</CheckboxControl>
-				</>
-			) : (
-				<span
-					dangerouslySetInnerHTML={ {
-						__html: text || termsConsentDefaultText,
-					} }
-				/>
-			) }
-		</div>
+		<>
+			<CheckoutOrderSummarySlot />
+			<div
+				className={ clsx(
+					'wc-block-checkout__terms',
+					{
+						'wc-block-checkout__terms--disabled': isDisabled,
+						'wc-block-checkout__terms--with-separator':
+							showSeparator !== 'false' &&
+							showSeparator !== false,
+					},
+					className
+				) }
+			>
+				{ checkbox ? (
+					<>
+						<CheckboxControl
+							id="terms-and-conditions"
+							checked={ checked }
+							onChange={ () =>
+								setChecked( ( value ) => ! value )
+							}
+							hasError={ hasError }
+							disabled={ isDisabled }
+						>
+							<span
+								dangerouslySetInnerHTML={ {
+									__html: text || termsCheckboxDefaultText,
+								} }
+							/>
+						</CheckboxControl>
+					</>
+				) : (
+					<span
+						dangerouslySetInnerHTML={ {
+							__html: text || termsConsentDefaultText,
+						} }
+					/>
+				) }
+			</div>
+		</>
 	);
 };
 

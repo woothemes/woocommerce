@@ -38,13 +38,9 @@ const PackageRates = ( {
 	const previousSelectedRateId = usePrevious( selectedRateId );
 
 	// Store selected rate ID in local state so shipping rates changes are shown in the UI instantly.
-	const [ selectedOption, setSelectedOption ] = useState( () => {
-		if ( selectedRateId ) {
-			return selectedRateId;
-		}
-		// Default to first rate if no rate is selected.
-		return rates[ 0 ]?.rate_id;
-	} );
+	const [ selectedOption, setSelectedOption ] = useState(
+		selectedRateId ?? ''
+	);
 
 	// Update the selected option if cart state changes in the data store.
 	useEffect( () => {
@@ -57,12 +53,13 @@ const PackageRates = ( {
 		}
 	}, [ selectedRateId, selectedOption, previousSelectedRateId ] );
 
-	// Update the data store when the local selected rate changes.
+	// Update the selected option if there is no rate selected on mount.
 	useEffect( () => {
-		if ( selectedOption ) {
-			onSelectRate( selectedOption );
+		if ( ! selectedOption && rates.length > 0 ) {
+			setSelectedOption( rates[ 0 ].rate_id );
+			onSelectRate( rates[ 0 ].rate_id );
 		}
-	}, [ onSelectRate, selectedOption ] );
+	}, [ onSelectRate, rates, selectedOption ] );
 
 	if ( rates.length === 0 ) {
 		return noResultsMessage;

@@ -1,12 +1,8 @@
 /**
  * External dependencies
  */
-import { removeAllNotices, debounce, pick } from '@woocommerce/base-utils';
-import {
-	CartBillingAddress,
-	CartShippingAddress,
-	BillingAddressShippingAddress,
-} from '@woocommerce/types';
+import { debounce } from '@woocommerce/base-utils';
+import { CartBillingAddress, CartShippingAddress } from '@woocommerce/types';
 import { select, dispatch } from '@wordpress/data';
 import isShallowEqual from '@wordpress/is-shallow-equal';
 
@@ -68,6 +64,40 @@ const updateDirtyProps = () => {
 
 	// Update local cache of customer data so the next time this runs, it can compare against the latest data.
 	localState.customerData = newCustomerData;
+
+	const dirtyShippingAddress = localState.dirtyProps.shippingAddress;
+	const dirtyBillingAddress = localState.dirtyProps.billingAddress;
+
+	const customerShippingAddress = localState.customerData.shippingAddress;
+	const customerBillingAddress = localState.customerData.billingAddress;
+
+	// Check if country is changing without state
+	const shippingCountryChanged = dirtyShippingAddress.includes( 'country' );
+	const billingCountryChanged = dirtyBillingAddress.includes( 'country' );
+	const shippingStateChanged = dirtyShippingAddress.includes( 'state' );
+	const billingStateChanged = dirtyBillingAddress.includes( 'state' );
+	const shippingPostcodeChanged = dirtyShippingAddress.includes( 'postcode' );
+	const billingPostcodeChanged = dirtyBillingAddress.includes( 'postcode' );
+
+	if ( shippingCountryChanged && ! shippingPostcodeChanged ) {
+		dirtyShippingAddress.push( 'postcode' );
+		customerShippingAddress.postcode = '';
+	}
+
+	if ( billingCountryChanged && ! billingPostcodeChanged ) {
+		dirtyBillingAddress.push( 'postcode' );
+		customerBillingAddress.postcode = '';
+	}
+
+	if ( shippingCountryChanged && ! shippingStateChanged ) {
+		dirtyShippingAddress.push( 'state' );
+		customerShippingAddress.state = '';
+	}
+
+	if ( billingCountryChanged && ! billingStateChanged ) {
+		dirtyBillingAddress.push( 'state' );
+		customerBillingAddress.state = '';
+	}
 };
 
 /**
@@ -100,30 +130,15 @@ const updateCustomerData = (): void => {
 		return;
 	}
 
-	// Find valid data from the list of dirtyProps and prepare to push to the server.
-	const customerDataToUpdate = {} as Partial< BillingAddressShippingAddress >;
-
-	if ( localState.dirtyProps.billingAddress.length ) {
-		customerDataToUpdate.billing_address = pick(
-			localState.customerData.billingAddress,
-			localState.dirtyProps.billingAddress
-		);
-	}
-
-	if ( localState.dirtyProps.shippingAddress.length ) {
-		customerDataToUpdate.shipping_address = pick(
-			localState.customerData.shippingAddress,
-			localState.dirtyProps.shippingAddress
-		);
-	}
-
 	dispatch( STORE_KEY )
-		.updateCustomerData( customerDataToUpdate )
+		.updateCustomerData( {
+			billing_address: localState.customerData.billingAddress,
+			shipping_address: localState.customerData.shippingAddress,
+		} )
 		.then( () => {
 			localState.dirtyProps.billingAddress = [];
 			localState.dirtyProps.shippingAddress = [];
 			localState.doingPush = false;
-			removeAllNotices();
 		} )
 		.catch( ( response ) => {
 			localState.doingPush = false;

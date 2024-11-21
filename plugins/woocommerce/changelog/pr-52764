@@ -1,0 +1,4 @@
+Significance: patch
+Type: tweak
+
+Replace trigger_error in WooCommerce::__set with an exception

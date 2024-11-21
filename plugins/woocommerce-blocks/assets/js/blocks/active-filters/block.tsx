@@ -5,7 +5,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useQueryStateByKey } from '@woocommerce/base-context/hooks';
 import { getSetting, getSettingWithCoercion } from '@woocommerce/settings';
 import { useMemo, useEffect, useState } from '@wordpress/element';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { Label } from '@woocommerce/blocks-components';
 import {
 	isAttributeQueryCollection,
@@ -35,7 +35,7 @@ import {
 } from './utils';
 import ActiveAttributeFilters from './active-attribute-filters';
 import FilterPlaceholders from './filter-placeholders';
-import { useSetWraperVisibility } from '../filter-wrapper/context';
+import { useSetWrapperVisibility } from '../filter-wrapper/context';
 
 interface ActiveFiltersBlockProps {
 	/**
@@ -55,7 +55,7 @@ const ActiveFiltersBlock = ( {
 	attributes: blockAttributes,
 	isEditor = false,
 }: ActiveFiltersBlockProps ) => {
-	const setWrapperVisibility = useSetWraperVisibility();
+	const setWrapperVisibility = useSetWrapperVisibility();
 	const isMounted = useIsMounted();
 	const componentHasMounted = isMounted();
 	const filteringForPhpTemplate = getSettingWithCoercion(
@@ -212,7 +212,7 @@ const ActiveFiltersBlock = ( {
 	] );
 
 	/**
-	 * Parse the filter URL to set the active rating fitlers.
+	 * Parse the filter URL to set the active rating filters.
 	 * This code should be moved to Rating Filter block once it's implemented.
 	 */
 	useEffect( () => {
@@ -329,7 +329,7 @@ const ActiveFiltersBlock = ( {
 
 	setWrapperVisibility( true );
 
-	const listClasses = classnames( 'wc-block-active-filters__list', {
+	const listClasses = clsx( 'wc-block-active-filters__list', {
 		'wc-block-active-filters__list--chips':
 			blockAttributes.displayStyle === 'chips',
 		'wc-block-active-filters--loading': shouldShowLoadingPlaceholders,

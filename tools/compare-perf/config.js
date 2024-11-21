@@ -1,17 +1,34 @@
-const packageJson = require( '../../package.json' );
-let pnpm_package = 'pnpm';
+const path = require( 'path' );
 
-if ( packageJson.engines.pnpm ) {
-	pnpm_package = `pnpm@${ packageJson.engines.pnpm }`;
-}
+const getPnpmPackage = ( sourceDir ) => {
+	const packageJson = require( path.join( sourceDir, 'package.json' ) );
+	let pnpmPackage = 'pnpm';
+
+	if ( packageJson.engines.pnpm ) {
+		pnpmPackage = `pnpm@${ packageJson.engines.pnpm }`;
+	}
+
+	return pnpmPackage;
+};
 
 const config = {
 	gitRepositoryURL: 'https://github.com/woocommerce/woocommerce.git',
-	setupTestRunner: `npm install -g ${ pnpm_package } && pnpm install --filter="@woocommerce/plugin-woocommerce" &> /dev/null && cd plugins/woocommerce && pnpm exec playwright install chromium`,
-	setupCommand: `npm install -g ${ pnpm_package } && pnpm install &> /dev/null && pnpm build &> /dev/null`,
 	pluginPath: '/plugins/woocommerce',
 	testsPath: '/plugins/woocommerce/tests/metrics/specs',
-	testCommand: `npm install -g ${ pnpm_package } && cd plugins/woocommerce && pnpm test:metrics`,
+	getSetupTestRunner: ( sourceDir ) => {
+		const pnpmPackage = getPnpmPackage( sourceDir );
+
+		return `npm install -g ${ pnpmPackage } && pnpm install --frozen-lockfile --filter="@woocommerce/plugin-woocommerce" &> /dev/null && cd plugins/woocommerce && pnpm exec playwright install chromium`;
+	},
+	getSetupCommand: ( sourceDir ) => {
+		const pnpmPackage = getPnpmPackage( sourceDir );
+
+		return `npm install -g ${ pnpmPackage } && pnpm install --frozen-lockfile &> /dev/null && pnpm build &> /dev/null`;
+	},
+	getTestCommand: ( sourceDir ) => {
+		const pnpmPackage = getPnpmPackage( sourceDir );
+		return `npm install -g ${ pnpmPackage } && cd plugins/woocommerce && pnpm test:metrics`;
+	},
 };
 
 module.exports = config;

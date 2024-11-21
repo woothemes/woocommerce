@@ -1,15 +1,20 @@
 <?php
+declare( strict_types = 1 );
 
-use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
+namespace Automattic\WooCommerce\Tests\Internal\DataStores\Orders;
+
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTableQuery;
 use Automattic\WooCommerce\RestApi\UnitTests\Helpers\OrderHelper;
 use Automattic\WooCommerce\RestApi\UnitTests\HPOSToggleTrait;
 use Automattic\WooCommerce\Utilities\OrderUtil;
+use WC_Helper_Product;
+use WC_Order;
 
 /**
  * Class OrdersTableQueryTests.
  */
-class OrdersTableQueryTests extends WC_Unit_Test_Case {
+class OrdersTableQueryTests extends \WC_Unit_Test_Case {
 	use HPOSToggleTrait;
 
 	/**
@@ -410,7 +415,7 @@ class OrdersTableQueryTests extends WC_Unit_Test_Case {
 	public function test_query_s_argument() {
 		$order1 = new \WC_Order();
 		$order1->set_billing_first_name( '%ir Woo' );
-		$order1->set_billing_email( 'test_user@woo.test' );
+		$order1->set_billing_email( 'test_user+shop@woo.test' );
 		$order1->save();
 
 		$order2 = new \WC_Order();
@@ -434,6 +439,22 @@ class OrdersTableQueryTests extends WC_Unit_Test_Case {
 		$query           = new OrdersTableQuery( $query_args );
 		$this->assertEqualsCanonicalizing( array( $order1->get_id() ), $query->orders );
 
+		$query_args['s'] = 'test_user+shop';
+		$query           = new OrdersTableQuery( $query_args );
+		$this->assertEqualsCanonicalizing( array( $order1->get_id() ), $query->orders );
+
+		$query_args['s'] = 'test_user+shop@woo.test';
+		$query           = new OrdersTableQuery( $query_args );
+		$this->assertEqualsCanonicalizing( array( $order1->get_id() ), $query->orders );
+
+		$query_args['s'] = rawurlencode( 'test_user+shop@woo.test' );
+		$query           = new OrdersTableQuery( $query_args );
+		$this->assertCount( 0, $query->orders );
+
+		$query_args['s'] = 'other_user';
+		$query           = new OrdersTableQuery( $query_args );
+		$this->assertEqualsCanonicalizing( array( $order2->get_id() ), $query->orders );
+
 		$query_args['s'] = 'woo.test';
 		$query           = new OrdersTableQuery( $query_args );
 		$this->assertEqualsCanonicalizing( array( $order1->get_id(), $order2->get_id() ), $query->orders );
@@ -456,14 +477,14 @@ class OrdersTableQueryTests extends WC_Unit_Test_Case {
 		$customer_order = new \WC_Order();
 		$customer_order->set_billing_first_name( 'Customer name' );
 		$customer_order->set_billing_email( 'customer@woo.test' );
-		$customer_order->set_status( 'completed' );
+		$customer_order->set_status( OrderStatus::COMPLETED );
 		$customer_order->save();
 
 		$test_product = WC_Helper_Product::create_simple_product( true, array( 'name' => 'Product name' ) );
 		$test_product->save();
 		$product_order = new WC_Order();
 		$product_order->add_product( $test_product );
-		$product_order->set_status( 'completed' );
+		$product_order->set_status( OrderStatus::COMPLETED );
 		$product_order->save();
 
 		return array( $customer_order->get_id(), $product_order->get_id() );
