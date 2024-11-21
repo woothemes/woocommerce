@@ -75,6 +75,8 @@ class ProductButton extends AbstractBlock {
 	 */
 	protected function render( $attributes, $content, $block ) {
 
+		// This workaround ensures that WordPress loads the core/button block styles.
+		// For more details, see https://github.com/woocommerce/woocommerce/pull/53052.
 		( new \WP_Block( array( 'blockName' => 'core/button' ) ) )->render();
 
 		$post_id = isset( $block->context['postId'] ) ? $block->context['postId'] : '';
