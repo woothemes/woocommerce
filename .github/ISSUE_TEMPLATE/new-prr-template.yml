@@ -107,7 +107,7 @@ body:
   - type: checkboxes
     id: closing-checklist
     attributes:
-      label: "Checklist for Solaris"
+      label: "Closing checklist for Solaris"
       options:
         - label: "Escape analysis completed"
           required: false
