@@ -236,8 +236,7 @@ type StockStatusCount = {
 	count: number;
 };
 
-type OnSaleStatusCount = {
-	status: 'onsale';
+type OnSaleCount = {
 	count: number;
 };
 
@@ -263,5 +262,5 @@ export type WCStoreV1ProductsCollectionProps = {
 
 	stock_status_counts: StockStatusCount[];
 
-	onsale_status_counts: OnSaleStatusCount[];
+	onsale_count: OnSaleCount[];
 };

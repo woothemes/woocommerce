@@ -125,10 +125,7 @@ const Edit = ( props: EditProps ) => {
 	const productStatusItems = useMemo( () => {
 		return Object.entries( productStatusOptions )
 			.map( ( [ key, value ] ) => {
-				const count =
-					filteredCounts?.onsale_status_counts?.find(
-						( item ) => item.status === key
-					)?.count ?? 0;
+				const count = filteredCounts?.onsale_count?.count ?? 0;
 
 				return {
 					value: key,

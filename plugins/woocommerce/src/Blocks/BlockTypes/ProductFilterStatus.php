@@ -153,8 +153,8 @@ final class ProductFilterStatus extends AbstractBlock {
 		$stock_statuses     = $attributes['stockStatuses'] ?? array_keys( wc_get_product_stock_status_options() );
 		$product_statuses   = $attributes['productStatuses'] ?? array( 'onsale' );
 		$stock_status_data  = $this->get_stock_status_counts( $block, $stock_statuses );
-		$onsale_status_data = in_array( 'onsale', $product_statuses, true ) ? $this->get_onsale_status_counts( $block ) : array();
-		$status_data        = array_merge( $stock_status_data, $onsale_status_data );
+		$onsale_data = in_array( 'onsale', $product_statuses, true ) ? $this->get_onsale_count( $block ) : array();
+		$status_data        = array_merge( $stock_status_data, $onsale_data );
 		$filter_params      = $block->context['filterParams'] ?? array();
 		$query              = $filter_params[ self::FILTER_STATUS_QUERY_VAR ] ?? '';
 		$selected_statuses  = array_filter( explode( ',', $query ) );
@@ -265,7 +265,7 @@ final class ProductFilterStatus extends AbstractBlock {
 	 *
 	 * @param WP_Block $block Block instance.
 	 */
-	private function get_onsale_status_counts( $block ) {
+	private function get_onsale_count( $block ) {
 		$filters    = Package::container()->get( QueryFilters::class );
 		$query_vars = ProductCollectionUtils::get_query_vars( $block, 1 );
 
@@ -273,18 +273,14 @@ final class ProductFilterStatus extends AbstractBlock {
 
 		if ( ! empty( $query_vars['meta_query'] ) ) {
 			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
-			$query_vars['meta_query'] = ProductCollectionUtils::remove_query_array( $query_vars['meta_query'], 'key', '_onsale_status' );
+			$query_vars['meta_query'] = ProductCollectionUtils::remove_query_array( $query_vars['meta_query'], 'key', '_onsale' );
 		}
 
-		$counts = $filters->get_onsale_status_counts( $query_vars );
-		$data   = array();
-
-		foreach ( $counts as $key => $value ) {
-			$data[] = array(
-				'status' => $key,
-				'count'  => $value,
-			);
-		}
+		$count = $filters->get_onsale_count( $query_vars );
+		$data[] = array(
+			'status' => 'onsale',
+			'count'  => $count,
+		);
 
 		return array_filter(
 			$data,
