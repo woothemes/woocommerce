@@ -1,10 +1,14 @@
 /**
  * External dependencies
  */
-import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { PaymentGateway } from '@woocommerce/data';
 import { Button } from '@wordpress/components';
+import { dispatch, useDispatch } from '@wordpress/data';
+import {
+	PAYMENT_SETTINGS_STORE_NAME,
+	EnableGatewayResponse,
+} from '@woocommerce/data';
+import { useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -12,91 +16,94 @@ import { Button } from '@wordpress/components';
 
 export const PaymentGatewayButton = ( {
 	id,
+	isOffline,
 	enabled,
-	needs_setup,
-	settings_url,
-	text_settings = __( 'Manage', 'woocommerce' ),
-	text_enable = __( 'Enable', 'woocommerce' ),
-	text_needs_setup = __( 'Continue setup', 'woocommerce' ),
-	setIsEnabled,
-}: Pick< PaymentGateway, 'id' | 'enabled' | 'needs_setup' | 'settings_url' > & {
-	text_settings?: string;
-	text_enable?: string;
-	text_needs_setup?: string;
-	setIsEnabled: ( isEnabled: boolean ) => void;
+	needsSetup,
+	settingsUrl,
+	textSettings = __( 'Manage', 'woocommerce' ),
+	textEnable = __( 'Enable', 'woocommerce' ),
+	textNeedsSetup = __( 'Complete setup', 'woocommerce' ),
+}: {
+	id: string;
+	isOffline: boolean;
+	enabled: boolean;
+	needsSetup?: boolean;
+	settingsUrl: string;
+	textSettings?: string;
+	textEnable?: string;
+	textNeedsSetup?: string;
 } ) => {
-	const [ needsSetup, setNeedsSetup ] = useState( needs_setup );
-	const [ isLoading, setIsLoading ] = useState( false );
+	const { createErrorNotice } = dispatch( 'core/notices' );
+	const { enablePaymentGateway, invalidateResolutionForStoreSelector } =
+		useDispatch( PAYMENT_SETTINGS_STORE_NAME );
+	const [ isUpdating, setIsUpdating ] = useState( false );
 
-	const toggleEnabled = async () => {
-		setIsLoading( true );
-
-		if ( ! window.woocommerce_admin.nonces?.gateway_toggle ) {
-			// eslint-disable-next-line no-console
-			console.warn( 'Unexpected error: Nonce not found' );
-			// Redirect to payment setting page if nonce is not found. Users should still be able to toggle the payment method from that page.
-			window.location.href = settings_url;
-			return;
-		}
-
-		try {
-			const response = await fetch( window.woocommerce_admin.ajax_url, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded',
-				},
-				body: new URLSearchParams( {
-					action: 'woocommerce_toggle_gateway_enabled',
-					security: window.woocommerce_admin.nonces?.gateway_toggle,
-					gateway_id: id,
-				} ),
-			} );
-
-			const result = await response.json();
-
-			if ( result.success ) {
-				if ( result.data === true ) {
-					setIsEnabled( true );
-				} else if ( result.data === false ) {
-					setIsEnabled( false );
-				} else if ( result.data === 'needs_setup' ) {
-					setNeedsSetup( true );
-					window.location.href = settings_url;
-				}
-			} else {
-				window.location.href = settings_url;
+	const createApiErrorNotice = () => {
+		createErrorNotice(
+			__(
+				'An API error occurred. You will be redirected to the settings page, try enabling the gateway there.',
+				'woocommerce'
+			),
+			{
+				type: 'snackbar',
+				explicitDismiss: true,
 			}
-		} catch ( error ) {
-			// eslint-disable-next-line no-console
-			console.error( 'Error toggling gateway:', error );
-		} finally {
-			setIsLoading( false );
-		}
+		);
 	};
 
 	const onClick = ( e: React.MouseEvent ) => {
 		if ( ! enabled ) {
 			e.preventDefault();
-			toggleEnabled();
+			const gatewayToggleNonce =
+				window.woocommerce_admin.nonces?.gateway_toggle || '';
+
+			if ( ! gatewayToggleNonce ) {
+				createApiErrorNotice();
+				window.location.href = settingsUrl;
+				return;
+			}
+			setIsUpdating( true );
+			enablePaymentGateway(
+				id,
+				window.woocommerce_admin.ajax_url,
+				gatewayToggleNonce
+			)
+				.then( ( response: EnableGatewayResponse ) => {
+					if ( response.data === 'needs_setup' ) {
+						window.location.href = settingsUrl;
+						return;
+					}
+					invalidateResolutionForStoreSelector(
+						isOffline
+							? 'getOfflinePaymentGateways'
+							: 'getRegisteredPaymentGateways'
+					);
+					setIsUpdating( false );
+				} )
+				.catch( () => {
+					setIsUpdating( false );
+					createApiErrorNotice();
+					window.location.href = settingsUrl;
+				} );
 		}
 	};
 
 	const determineButtonText = () => {
 		if ( needsSetup ) {
-			return text_needs_setup;
+			return textNeedsSetup;
 		}
 
-		return enabled ? text_settings : text_enable;
+		return enabled ? textSettings : textEnable;
 	};
 
 	return (
 		<div className="woocommerce-list__item-after__actions">
 			<Button
 				variant={ enabled ? 'secondary' : 'primary' }
-				isBusy={ isLoading }
-				disabled={ isLoading }
+				isBusy={ isUpdating }
+				disabled={ isUpdating }
 				onClick={ onClick }
-				href={ settings_url }
+				href={ settingsUrl }
 			>
 				{ determineButtonText() }
 			</Button>
