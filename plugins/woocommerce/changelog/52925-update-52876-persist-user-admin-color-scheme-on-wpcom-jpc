@@ -1,0 +1,4 @@
+Significance: minor
+Type: tweak
+
+Pass color_scheme parameter to the Jetpack connection URL.
