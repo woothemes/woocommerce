@@ -100,7 +100,7 @@ body:
       options:
         - label: "Escape analysis completed"
           required: false
-        - label: "One Cherry-picked PR(s) merged (you can find the links in PR comments)"
+        - label: "PR cherry-picked to trunk (you can find the links in PR comments to verify)"
           required: false
         - label: "Followup issue if any"
           required: false
