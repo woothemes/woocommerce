@@ -74,7 +74,6 @@ export const CountrySelector = <ItemType extends Item>({
 	);
 
 	const {
-		getLabelProps,
 		getToggleButtonProps,
 		getMenuProps,
 		getItemProps,
@@ -260,8 +259,8 @@ export const CountrySelector = <ItemType extends Item>({
 								</div>
 							) ) }
 						</div>
-						<div>
-							<button onClick={ onApplyHandler }>{ __( 'Apply', 'woocommerce' ) }</button>
+						<div className="components-country-select-control__apply">
+							<button className="components-button is-primary" onClick={ onApplyHandler }>{ __( 'Apply', 'woocommerce' ) }</button>
 						</div>
 					</>
            		) }
