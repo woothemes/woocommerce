@@ -439,6 +439,15 @@
 			"pinVersion": "0.14.3"
 		},
 		{
+			"dependencies": [
+				"dompurify"
+			],
+			"packages": [
+				"**"
+			],
+			"pinVersion": "^2.5.7"
+		},
+		{
 			"label": "Only manage versions for these dependencies",
 			"dependencies": [
 				"@types/node",
