@@ -75,11 +75,10 @@ export class Editor extends CoreEditor {
 		await this.page.getByPlaceholder( 'Search' ).fill( templateName );
 
 		await this.page
-			.getByRole( 'button', {
+			.getByRole( 'link', {
 				name: templateName,
 				exact: true,
 			} )
-			.and( this.page.locator( '.is-link' ) )
 			.click();
 
 		await this.page.getByLabel( 'Actions' ).click();
