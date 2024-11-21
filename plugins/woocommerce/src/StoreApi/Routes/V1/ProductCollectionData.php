@@ -72,7 +72,7 @@ class ProductCollectionData extends AbstractRoute {
 			'attribute_counts'    => null,
 			'stock_status_counts' => null,
 			'rating_counts'       => null,
-			'onsale_status_count' => null,
+			'onsale_count'        => null,
 		];
 		$filters = new ProductQueryFilters();
 
@@ -167,18 +167,13 @@ class ProductCollectionData extends AbstractRoute {
 			}
 		}
 
-		if ( ! empty( $request['calculate_onsale_status_count'] ) ) {
+		if ( ! empty( $request['calculate_onsale_count'] ) ) {
 			$filter_request = clone $request;
-			$counts         = $filters->get_onsale_status_count( $filter_request );
+			$count          = $filters->get_onsale_count( $filter_request );
 
-			$data['onsale_status_count'] = [];
-
-			foreach ( $counts as $key => $value ) {
-				$data['onsale_status_count'][] = (object) [
-					'status' => $key,
-					'count'  => $value,
-				];
-			}
+			$data['onsale_count'][] = (object) [
+				'count' => $count,
+			];
 		}
 
 		return rest_ensure_response( $this->schema->get_item_response( $data ) );
@@ -234,7 +229,7 @@ class ProductCollectionData extends AbstractRoute {
 			'default'     => false,
 		];
 
-		$params['calculate_onsale_status_count'] = [
+		$params['calculate_onsale_count'] = [
 			'description' => __( 'If true, calculates onsale count for products in the collection.', 'woocommerce' ),
 			'type'        => 'boolean',
 			'default'     => false,

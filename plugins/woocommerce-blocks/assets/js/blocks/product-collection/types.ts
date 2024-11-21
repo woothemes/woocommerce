@@ -263,5 +263,5 @@ export type WCStoreV1ProductsCollectionProps = {
 
 	stock_status_counts: StockStatusCount[];
 
-	onsale_status_counts: OnSaleStatusCount[];
+	onsale_status_count: OnSaleStatusCount[];
 };

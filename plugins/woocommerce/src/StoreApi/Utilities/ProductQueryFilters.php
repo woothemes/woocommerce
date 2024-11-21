@@ -219,8 +219,8 @@ class ProductQueryFilters {
 	 * @param \WP_REST_Request $request The request object.
 	 * @return array rating=>count pairs.
 	 */
-	public function get_onsale_status_count( $request ) {
-		$transient_key = 'wc_onsale_status_count_' . md5( wp_json_encode( $request ) );
+	public function get_onsale_count( $request ) {
+		$transient_key = 'wc_onsale_count_' . md5( wp_json_encode( $request ) );
 		$cached_data   = get_transient( $transient_key );
 
 		if ( isset( $cached_data ) && ( ! defined( 'WP_DEBUG' ) || true !== WP_DEBUG ) ) {
