@@ -74,7 +74,7 @@ export function getPaymentGatewaySuggestionsError( error: unknown ): {
 	};
 }
 
-export function* enablePaymentGateway(
+export function* togglePaymentGateway(
 	gatewayId: string,
 	ajaxUrl: string,
 	gatewayToggleNonce: string
@@ -122,5 +122,5 @@ export type Actions =
 	| ReturnType< typeof getPaymentGatewaySuggestionsRequest >
 	| ReturnType< typeof getPaymentGatewaySuggestionsSuccess >
 	| ReturnType< typeof getPaymentGatewaySuggestionsError >
-	| ReturnType< typeof enablePaymentGateway >
+	| ReturnType< typeof togglePaymentGateway >
 	| ReturnType< typeof updateOfflinePaymentGatewayOrdering >;

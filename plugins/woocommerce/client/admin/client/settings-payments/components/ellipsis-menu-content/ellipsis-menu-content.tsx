@@ -18,6 +18,7 @@ import { useState } from '@wordpress/element';
 import './ellipsis-menu-content.scss';
 
 interface EllipsisMenuContentProps {
+	pluginId: string;
 	pluginName: string;
 	isSuggestion: boolean;
 	links: PaymentGatewayLink[];
@@ -28,6 +29,7 @@ interface EllipsisMenuContentProps {
 }
 
 export const EllipsisMenuContent = ( {
+	pluginId,
 	pluginName,
 	isSuggestion,
 	links,
@@ -39,10 +41,10 @@ export const EllipsisMenuContent = ( {
 	const { deactivatePlugin, createErrorNotice } =
 		useDispatch( PLUGINS_STORE_NAME );
 	const [ isDeactivating, setIsDeactivating ] = useState( false );
+	const [ isDisabling, setIsDisabling ] = useState( false );
 
-	const { invalidateResolutionForStoreSelector } = useDispatch(
-		PAYMENT_SETTINGS_STORE_NAME
-	);
+	const { invalidateResolutionForStoreSelector, togglePaymentGateway } =
+		useDispatch( PAYMENT_SETTINGS_STORE_NAME );
 	const { createSuccessNotice } = useDispatch( 'core/notices' );
 
 	const typeToDisplayName: { [ key: string ]: string } = {
@@ -76,6 +78,33 @@ export const EllipsisMenuContent = ( {
 
 	const disableGateway = ( e: React.MouseEvent ) => {
 		e.preventDefault();
+		const gatewayToggleNonce =
+			window.woocommerce_admin.nonces?.gateway_toggle || '';
+
+		if ( ! gatewayToggleNonce ) {
+			createErrorNotice(
+				__( 'Failed to disable the plugin.', 'woocommerce' )
+			);
+			return;
+		}
+		setIsDisabling( true );
+		togglePaymentGateway(
+			pluginId,
+			window.woocommerce_admin.ajax_url,
+			gatewayToggleNonce
+		)
+			.then( () => {
+				invalidateResolutionForStoreSelector(
+					'getRegisteredPaymentGateways'
+				);
+				setIsDisabling( false );
+			} )
+			.catch( () => {
+				createErrorNotice(
+					__( 'Failed to disable the plugin.', 'woocommerce' )
+				);
+				setIsDisabling( false );
+			} );
 	};
 
 	const hideSuggestion = ( e: React.MouseEvent ) => {
@@ -148,8 +177,8 @@ export const EllipsisMenuContent = ( {
 				<Button
 					className={ 'components-button__danger' }
 					onClick={ disableGateway }
-					isBusy={ false }
-					disabled={ false }
+					isBusy={ isDisabling }
+					disabled={ isDisabling }
 				>
 					{ __( 'Disable', 'woocommerce' ) }
 				</Button>
