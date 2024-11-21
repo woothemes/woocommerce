@@ -53,6 +53,7 @@ export const registerBlockSingleProductTemplate = ( {
 		currentTemplateId = parseTemplateId(
 			editSiteStore?.getEditedPostId< string | number | undefined >()
 		);
+
 		const hasChangedTemplate = previousTemplateId !== currentTemplateId;
 
 		if ( ! hasChangedTemplate || ! blockName ) {
