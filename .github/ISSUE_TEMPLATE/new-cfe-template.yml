@@ -88,7 +88,7 @@ body:
           required: true
         - label: "I understand that I will need to merge the PR to the target `release` branch when my request is approved"
           required: true
-        - label: "I understand that I will need to merge the followup cherry-picked PR(s) created by the github-actions bot to `trunk` when my request is approved"
+        - label: "I understand that I will need to merge the followup cherry-picked PR created by the github-actions bot to `trunk` when my request is approved"
           required: true
   - type: markdown
     attributes:
