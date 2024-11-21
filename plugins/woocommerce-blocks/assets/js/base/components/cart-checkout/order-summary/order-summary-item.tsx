@@ -171,7 +171,7 @@ const OrderSummaryItem = ( {
 					disabled={ true }
 					name={ name }
 					permalink={ permalink }
-					disabledTagName='h3'
+					disabledTagName="h3"
 				/>
 				<ProductPrice
 					currency={ priceCurrency }

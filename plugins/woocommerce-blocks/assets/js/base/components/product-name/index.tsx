@@ -58,7 +58,9 @@ export const ProductName = ( {
 	const classes = clsx( 'wc-block-components-product-name', className );
 	const DisabledTagName = disabledTagName as DisabledTagNameType;
 	if ( disabled ) {
-		const disabledProps = props as HTMLAttributes< HTMLHeadingElement | HTMLSpanElement >;
+		const disabledProps = props as HTMLAttributes<
+			HTMLHeadingElement | HTMLSpanElement
+		>;
 		return (
 			<DisabledTagName
 				className={ classes }
