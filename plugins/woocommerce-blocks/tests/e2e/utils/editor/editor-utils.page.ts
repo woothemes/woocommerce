@@ -79,6 +79,12 @@ export class Editor extends CoreEditor {
 				name: templateName,
 				exact: true,
 			} )
+			.or(
+				this.page.getByRole( 'button', {
+					name: templateName,
+					exact: true,
+				} )
+			)
 			.click();
 
 		await this.page.getByLabel( 'Actions' ).click();
