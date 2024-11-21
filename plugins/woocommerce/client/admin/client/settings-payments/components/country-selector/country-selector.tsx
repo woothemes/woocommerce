@@ -81,11 +81,14 @@ export const CountrySelector = <ItemType extends Item>({
 		highlightedIndex,
 		selectedItem,
         closeMenu,
+		selectItem
 	} = useSelect<ItemType>({
 		initialSelectedItem: value,
 		items: itemsToRender,
 		getOptionLabel,
 		stateReducer,
+		onIsOpenChange: () =>
+			selectItem( value )
 	});
 
 	const itemString = getOptionLabel( value.key, items );
