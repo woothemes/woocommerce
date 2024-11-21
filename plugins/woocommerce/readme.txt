@@ -450,6 +450,7 @@ WooCommerce comes with some sample data you can use to see how products look; im
 * Performance - Limit loading product block editor to admin pages and rest requests [#51954](https://github.com/woocommerce/woocommerce/pull/51954)
 * Performance - Optimize Coming Soon badge performance with early exits [#52477](https://github.com/woocommerce/woocommerce/pull/52477)
 * Performance - Optimize `test_import_sample_products` unit test performance [#52523](https://github.com/woocommerce/woocommerce/pull/52523)
+* Enhancement - Update dompurify to 2.5.7 [#52961](https://github.com/woocommerce/woocommerce/pull/52961)
 * Enhancement - Add additional body class for the account dashboard [#51147](https://github.com/woocommerce/woocommerce/pull/51147)
 * Enhancement - Add a setting to the Mini-Cart block to navigate to checkout on click instead of opening the drawer. [#51283](https://github.com/woocommerce/woocommerce/pull/51283)
 * Enhancement - Add support for `email` query parameter in `OrderActionsRestController`. [#52454](https://github.com/woocommerce/woocommerce/pull/52454)
