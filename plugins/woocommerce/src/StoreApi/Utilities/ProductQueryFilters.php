@@ -223,7 +223,7 @@ class ProductQueryFilters {
 		$transient_key = 'wc_onsale_count_' . md5( wp_json_encode( $request ) );
 		$cached_data   = get_transient( $transient_key );
 
-		if ( isset( $cached_data ) && ( ! defined( 'WP_DEBUG' ) || true !== WP_DEBUG ) ) {
+		if ( $cached_data && ( ! defined( 'WP_DEBUG' ) || true !== WP_DEBUG ) ) {
 			return $cached_data;
 		}
 
@@ -256,7 +256,7 @@ class ProductQueryFilters {
 
 		$results = $wpdb->get_var( $count_sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
-		set_transient( $transient_key, $results );
+		set_transient( $transient_key, $results, DAY_IN_SECONDS );
 
 		return $results;
 	}

@@ -59,6 +59,7 @@ class ProductCollectionData extends ControllerTestCase {
 		$this->assertEquals( null, $data['price_range'] );
 		$this->assertEquals( null, $data['attribute_counts'] );
 		$this->assertEquals( null, $data['rating_counts'] );
+		$this->assertEquals( null, $data['onsale_count'] );
 	}
 
 	/**
@@ -76,6 +77,7 @@ class ProductCollectionData extends ControllerTestCase {
 		$this->assertEquals( '10000', $data['price_range']->max_price );
 		$this->assertEquals( null, $data['attribute_counts'] );
 		$this->assertEquals( null, $data['rating_counts'] );
+		$this->assertEquals( null, $data['onsale_count'] );
 	}
 
 	/**
