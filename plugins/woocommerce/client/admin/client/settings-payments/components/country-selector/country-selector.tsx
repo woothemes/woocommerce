@@ -15,12 +15,23 @@ import { useSelect, UseSelectState, StateChangeOptions } from 'downshift';
 import { Item, ControlProps } from './types';
 import './country-selector.scss';
 
-// Get the label for the selected option
+// Truncate the option label if it exceeds the max length.
+const truncateOptionlabel = ( label: string, maxLength: number ) => {
+	if ( label.length > maxLength ) {
+		return `${ label.substring( 0, maxLength ) }...`;
+	}
+
+	return label;
+}
+
+// Get the label for the selected option.
 const getOptionLabel = ( value: string, options: Item[] ) => { 
     const item = options.find( ( option ) =>
         option.key === value );
 
-    return item?.name;
+	const label = item?.name ? item.name : '';
+
+    return truncateOptionlabel( label, 20 );
 }
 
 // State reducer to control selection navigation
