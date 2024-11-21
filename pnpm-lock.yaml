@@ -299,8 +299,8 @@ importers:
         specifier: ^4.3.4
         version: 4.3.4(supports-color@9.4.0)
       dompurify:
-        specifier: ^2.4.7
-        version: 2.4.7
+        specifier: ^2.5.7
+        version: 2.5.7
       prop-types:
         specifier: ^15.8.1
         version: 15.8.1
@@ -759,8 +759,8 @@ importers:
         specifier: ^2.3.0
         version: 2.3.0
       dompurify:
-        specifier: ^2.4.7
-        version: 2.4.7
+        specifier: ^2.5.7
+        version: 2.5.7
       downshift:
         specifier: ^6.1.12
         version: 6.1.12(react@17.0.2)
@@ -1744,8 +1744,8 @@ importers:
         specifier: ^2.3.2
         version: 2.3.2
       dompurify:
-        specifier: ^2.4.7
-        version: 2.4.7
+        specifier: ^2.5.7
+        version: 2.5.7
       gridicons:
         specifier: ^3.4.2
         version: 3.4.2(react@17.0.2)
@@ -2666,8 +2666,8 @@ importers:
         specifier: ^2.3.2
         version: 2.3.2
       dompurify:
-        specifier: ^2.4.7
-        version: 2.4.7
+        specifier: ^2.5.7
+        version: 2.5.7
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -2980,8 +2980,8 @@ importers:
         specifier: ^2.3.2
         version: 2.3.2
       dompurify:
-        specifier: ^2.4.7
-        version: 2.4.7
+        specifier: ^2.5.7
+        version: 2.5.7
       prop-types:
         specifier: ^15.8.1
         version: 15.8.1
@@ -3702,8 +3702,8 @@ importers:
         specifier: 1.9.1
         version: 1.9.1
       dompurify:
-        specifier: ^2.4.7
-        version: 2.4.7
+        specifier: ^2.5.7
+        version: 2.5.7
       downshift:
         specifier: 6.1.7
         version: 6.1.7(react@18.3.1)
@@ -4349,8 +4349,8 @@ importers:
         specifier: ^4.3.4
         version: 4.3.4(supports-color@9.4.0)
       dompurify:
-        specifier: ^2.4.7
-        version: 2.4.7
+        specifier: ^2.5.7
+        version: 2.5.7
       github-label-sync:
         specifier: ^2.3.1
         version: 2.3.1
@@ -15462,8 +15462,8 @@ packages:
     resolution: {integrity: sha512-cgwlv/1iFQiFnU96XXgROh8xTeetsnJiDsTc7TYCLFd9+/WNkIqPTxiM/8pSd8VIrhXGTf1Ny1q1hquVqDJB5w==}
     engines: {node: '>= 4'}
 
-  dompurify@2.4.7:
-    resolution: {integrity: sha512-kxxKlPEDa6Nc5WJi+qRgPbOAbgTpSULL+vI3NUXsZMlkJxTqYI9wg5ZTay2sFrdZRWHPWNi+EdAhcJf81WtoMQ==}
+  dompurify@2.5.7:
+    resolution: {integrity: sha512-2q4bEI+coQM8f5ez7kt2xclg1XsecaV9ASJk/54vwlfRRNQfDqJz2pzQ8t0Ix/ToBpXlVjrRIx7pFC/o8itG2Q==}
 
   domutils@1.7.0:
     resolution: {integrity: sha512-Lgd2XcJ/NjEw+7tFvfKxOzCYKZsdct5lczQ2ZaQY8Djz7pfAD3Gbp8ySJWtreII/vDlMVmxwa6pHmdxIYgttDg==}
@@ -22474,7 +22474,7 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
     peerDependencies:
-      react: ^17.0.2
+      react: 18.2.0
 
   react-number-format@4.9.3:
     resolution: {integrity: sha512-am1A1xYAbENuKJ+zpM7V+B1oRTSeOHYltqVKExznIVFweBzhLmOBmyb1DfIKjHo90E0bo1p3nzVJ2NgS5xh+sQ==}
@@ -22664,7 +22664,7 @@ packages:
   react-with-direction@1.4.0:
     resolution: {integrity: sha512-ybHNPiAmaJpoWwugwqry9Hd1Irl2hnNXlo/2SXQBwbLn/jGMauMS2y9jw+ydyX5V9ICryCqObNSthNt5R94xpg==}
     peerDependencies:
-      react: ^17.0.2
+      react: ^0.14 || ^15 || ^16
       react-dom: ^0.14 || ^15 || ^16
 
   react-with-styles-interface-css@4.0.3:
@@ -49414,7 +49414,7 @@ snapshots:
     dependencies:
       domelementtype: 2.3.0
 
-  dompurify@2.4.7: {}
+  dompurify@2.5.7: {}
 
   domutils@1.7.0:
     dependencies:

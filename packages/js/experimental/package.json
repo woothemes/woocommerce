@@ -43,7 +43,7 @@
 		"@wordpress/icons": "^8.4.0",
 		"@wordpress/keycodes": "^3.47.0",
 		"classnames": "^2.3.2",
-		"dompurify": "^2.4.7",
+		"dompurify": "^2.5.7",
 		"gridicons": "^3.4.2",
 		"moment": "^2.29.4",
 		"react-transition-group": "^4.4.5",
