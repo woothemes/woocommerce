@@ -13,6 +13,8 @@ import { SuggestedPaymentExtension } from '@woocommerce/data';
  * Internal dependencies
  */
 import sanitizeHTML from '~/lib/sanitize-html';
+import { EllipsisMenuContent } from '~/settings-payments/components/ellipsis-menu-content';
+import { isWooPayments } from '~/settings-payments/utils';
 
 type PaymentExtensionSuggestionListItemProps = {
 	extension: SuggestedPaymentExtension;
@@ -38,7 +40,7 @@ export const PaymentExtensionSuggestionListItem = ( {
 						decodeEntities( extension.description )
 					) }
 				/>
-				{ extension.id === 'woocommerce_payments' && (
+				{ isWooPayments( extension.id ) && (
 					<WooPaymentMethodsLogos
 						maxElements={ 10 }
 						isWooPayEligible={ true }
@@ -63,20 +65,10 @@ export const PaymentExtensionSuggestionListItem = ( {
 					<EllipsisMenu
 						label={ __( 'Task List Options', 'woocommerce' ) }
 						renderContent={ () => (
-							<div>
-								<Button>
-									{ __( 'Learn more', 'woocommerce' ) }
-								</Button>
-								<Button>
-									{ __(
-										'See Terms of Service',
-										'woocommerce'
-									) }
-								</Button>
-								<Button>
-									{ __( 'Hide suggestion', 'woocommerce' ) }
-								</Button>
-							</div>
+							<EllipsisMenuContent
+								isSuggestion={ true }
+								links={ extension.links }
+							/>
 						) }
 					/>
 				</>

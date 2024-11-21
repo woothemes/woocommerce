@@ -14,23 +14,19 @@ import { RegisteredPaymentGateway } from '@woocommerce/data';
 import sanitizeHTML from '~/lib/sanitize-html';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
 import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
-import { WooPaymentsGatewayData } from '~/settings-payments/types';
+import { EllipsisMenuContent } from '~/settings-payments/components/ellipsis-menu-content';
+import { isWooPayments } from '~/settings-payments/utils';
 
 type PaymentGatewayItemProps = {
 	gateway: RegisteredPaymentGateway;
-	wooPaymentsGatewayData?: WooPaymentsGatewayData;
 	setupLivePayments: () => void;
 };
 
 export const PaymentGatewayListItem = ( {
 	gateway,
-	wooPaymentsGatewayData,
 	setupLivePayments,
 }: PaymentGatewayItemProps ) => {
-	const isWCPay = [
-		'pre_install_woocommerce_payments_promotion',
-		'woocommerce_payments',
-	].includes( gateway.id );
+	const isWCPay = isWooPayments( gateway.id );
 
 	const hasIncentive =
 		gateway.id === 'pre_install_woocommerce_payments_promotion';
@@ -40,7 +36,7 @@ export const PaymentGatewayListItem = ( {
 		}
 		if ( gateway.state.enabled ) {
 			if ( isWCPay ) {
-				if ( wooPaymentsGatewayData?.isInTestMode ) {
+				if ( gateway.state.test_mode ) {
 					return 'test_mode';
 				}
 			}
@@ -100,7 +96,7 @@ export const PaymentGatewayListItem = ( {
 						needsSetup={ gateway.state.needs_setup }
 						settingsUrl={ gateway.management.settings_url }
 					/>
-					{ isWCPay && wooPaymentsGatewayData?.isInTestMode && (
+					{ isWCPay && gateway.state.test_mode && (
 						<Button
 							variant="primary"
 							onClick={ setupLivePayments }
@@ -113,17 +109,14 @@ export const PaymentGatewayListItem = ( {
 					<EllipsisMenu
 						label={ __( 'Task List Options', 'woocommerce' ) }
 						renderContent={ () => (
-							<div>
-								<Button>
-									{ __( 'Learn more', 'woocommerce' ) }
-								</Button>
-								<Button>
-									{ __(
-										'See Terms of Service',
-										'woocommerce'
-									) }
-								</Button>
-							</div>
+							<EllipsisMenuContent
+								isSuggestion={ false }
+								links={ gateway.links }
+								isWooPayments={ isWCPay }
+								isEnabled={ gateway.state.enabled }
+								needsSetup={ gateway.state.needs_setup }
+								testMode={ gateway.state.test_mode }
+							/>
 						) }
 					/>
 				</>
