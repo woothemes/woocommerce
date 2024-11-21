@@ -199,9 +199,6 @@ export const CountrySelector = <ItemType extends Item>({
 
 	return (
 		<div className={ classNames( 'woopayments components-country-select-control', className ) }>
-			<label { ...getLabelProps( { className: 'components-country-select-control__label' } ) }>
-				{label}
-			</label>
 			<Button
 				{...getToggleButtonProps( {
 					'aria-label': label,
@@ -212,7 +209,7 @@ export const CountrySelector = <ItemType extends Item>({
 				})}
 			>
 				<span className="components-country-select-control__button-value">
-					{ itemString || placeholder }
+					<span className="components-country-select-control__label">{ label }</span> { itemString || placeholder }
 				</span>
 				<Icon icon={ chevronDown } className="components-custom-select-control__button-icon" />
 			</Button>
@@ -221,7 +218,7 @@ export const CountrySelector = <ItemType extends Item>({
 					<>
 						<div className="components-country-select-control__search">
 							<input
-								className="wcpay-filter components-custom-select-control__search--input"
+								className="components-country-select-control__search--input"
 								ref={ searchRef }
 								type="text"
 								value={ searchText }
@@ -234,7 +231,7 @@ export const CountrySelector = <ItemType extends Item>({
 									'woocommerce'
 								) }
 							/>
-							<span className="wcpay-filter components-custom-select-control__search--input-suffix">
+							<span className="components-country-select-control__search--input-suffix">
 								{ getSearchSuffix( isSearchFocused ) }
 							</span>
 						</div>
