@@ -3,8 +3,6 @@ declare( strict_types=1 );
 
 namespace Automattic\WooCommerce\Internal\Admin\Settings;
 
-use Automattic\WooCommerce\Admin\PluginsHelper;
-use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestions as ExtensionSuggestions;
 use Automattic\WooCommerce\Internal\RestApiControllerBase;
 use Exception;
 use WP_Error;
@@ -15,17 +13,6 @@ use WP_REST_Response;
  * Controller for the REST endpoints to service the Payments settings page.
  */
 class PaymentsRestController extends RestApiControllerBase {
-	const OFFLINE_METHODS = array( 'bacs', 'cheque', 'cod' );
-
-	const CATEGORY_EXPRESS_CHECKOUT = 'express_checkout';
-	const CATEGORY_BNPL             = 'bnpl';
-	const CATEGORY_PSP              = 'psp';
-
-	const EXTENSION_NOT_INSTALLED = 'not_installed';
-	const EXTENSION_INSTALLED     = 'installed';
-	const EXTENSION_ACTIVE        = 'active';
-
-	const USER_PAYMENTS_NOX_PROFILE_KEY = 'woocommerce_payments_nox_profile';
 
 	/**
 	 * Route base.
