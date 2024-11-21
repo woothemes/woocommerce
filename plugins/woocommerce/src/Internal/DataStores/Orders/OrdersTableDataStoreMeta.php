@@ -63,8 +63,8 @@ class OrdersTableDataStoreMeta extends CustomMetaDataStore {
 	/**
 	 * Add new piece of meta.
 	 *
-	 * @param  WC_Data  $object WC_Data object.
-	 * @param  stdClass $meta (containing ->key and ->value).
+	 * @param  \WC_Data  $object WC_Data object.
+	 * @param  \stdClass $meta (containing ->key and ->value).
 	 *
 	 * @return int|false meta ID
 	 */
