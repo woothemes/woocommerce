@@ -164,7 +164,7 @@ class OrdersTableSearchQuery {
 
 		$where_statement = implode( ' OR ', $where );
 
-		return " ( $where_statement ) ";
+		return $where_statement ? " ( $where_statement ) " : '';
 	}
 
 	/**
