@@ -1470,7 +1470,7 @@
         {
           "post_title": "Template structure & Overriding templates via a theme",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/theme-development/template-structure.md",
-          "hash": "8bb4925cfc5ca1f9d8839675fafbf1941d6a23ae257827cead075bd4956b80bc",
+          "hash": "932567a5d398a8624fbb0bf64bd7a913902fe3c4f4933fc434ea2a7915085d45",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/theme-development/template-structure.md",
           "id": "34bfebec9fc45e680976814928a7b8a1778af14e"
         },
@@ -1823,5 +1823,5 @@
       "categories": []
     }
   ],
-  "hash": "47ff900e2d38339bf7cd36fb5f3384cc7eff6aef4a2f00953106149e3a2491a3"
+  "hash": "8cd07dec61c2ddf169022adc3616e0ba4141d685689b83ca2d45e42ff6ca3583"
 }
