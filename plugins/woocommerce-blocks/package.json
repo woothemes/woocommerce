@@ -179,7 +179,7 @@
 		"@wordpress/editor": "wp-6.7",
 		"@wordpress/element": "5.22.0",
 		"@wordpress/env": "10.10.x",
-		"@wordpress/hooks": "^3.6.1",
+		"@wordpress/hooks": "wp-6.0",
 		"@wordpress/html-entities": "3.24.0",
 		"@wordpress/i18n": "4.45.0",
 		"@wordpress/is-shallow-equal": "4.24.0",
