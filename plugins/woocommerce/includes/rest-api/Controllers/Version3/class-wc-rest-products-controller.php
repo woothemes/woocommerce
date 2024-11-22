@@ -193,7 +193,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 
 		// Filter downloadable products.
 		if ( isset( $request['downloadable'] ) ) {
-			$args['meta_query'] = $this->add_meta_query(
+			$args['meta_query'] = $this->add_meta_query( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 				$args,
 				array(
 					'key'   => '_downloadable',
