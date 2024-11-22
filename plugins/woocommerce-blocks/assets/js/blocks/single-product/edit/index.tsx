@@ -72,7 +72,7 @@ const Editor = ( {
 			? productPreview[ 0 ]?.id
 			: null;
 
-		// If the product is not set, and we have a preview product, set the product ID.
+		// If the product is set, do not override it with the preview.
 		if ( ! productPreviewId || productId ) {
 			return;
 		}
