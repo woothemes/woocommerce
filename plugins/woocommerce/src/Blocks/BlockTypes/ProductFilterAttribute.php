@@ -5,7 +5,7 @@ namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 use Automattic\WooCommerce\Blocks\QueryFilters;
 use Automattic\WooCommerce\Blocks\Package;
-use Automattic\WooCommerce\Blocks\Utils\ProductCollectionUtils;
+use Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection\Utils as ProductCollectionUtils;
 
 /**
  * Product Filter: Attribute Block.
