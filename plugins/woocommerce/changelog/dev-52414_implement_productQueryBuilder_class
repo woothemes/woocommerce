@@ -1,0 +1,4 @@
+Significance: minor
+Type: dev
+
+Implement ProductQueryBuilder class to handle product queries #52429

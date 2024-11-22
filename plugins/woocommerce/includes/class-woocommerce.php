@@ -45,7 +45,7 @@ final class WooCommerce {
 	 *
 	 * @var string
 	 */
-	public $version = '9.5.0';
+	public $version = '9.6.0';
 
 	/**
 	 * WooCommerce Schema version.
@@ -209,13 +209,13 @@ final class WooCommerce {
 	 *
 	 * @param string $key Property name.
 	 * @param mixed  $value Property value.
+	 * @throws Exception Attempt to access a property that's private or protected.
 	 */
 	public function __set( string $key, $value ) {
 		if ( 'api' === $key ) {
 			$this->api = $value;
 		} elseif ( property_exists( $this, $key ) ) {
-			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
-			trigger_error( 'Cannot access private property WooCommerce::$' . esc_html( $key ), E_USER_ERROR );
+			throw new Exception( 'Cannot access private property ' . __CLASS__ . '::$' . esc_html( $key ) );
 		} else {
 			$this->$key = $value;
 		}
@@ -259,7 +259,7 @@ final class WooCommerce {
 	}
 
 	/**
-	 * Initiali Jetpack Connection Config.
+	 * Initialize Jetpack Connection Config.
 	 *
 	 * @return void
 	 */
@@ -335,13 +335,18 @@ final class WooCommerce {
 
 		/**
 		 * These classes have a register method for attaching hooks.
-		 *
-		 * @var RegisterHooksInterface[] $hook_register_classes
 		 */
-		$hook_register_classes = $container->get( RegisterHooksInterface::class );
-		foreach ( $hook_register_classes as $hook_register_class ) {
-			$hook_register_class->register();
-		}
+		$container->get( Automattic\WooCommerce\Internal\Utilities\PluginInstaller::class )->register();
+		$container->get( Automattic\WooCommerce\Internal\TransientFiles\TransientFilesEngine::class )->register();
+		$container->get( Automattic\WooCommerce\Internal\Orders\OrderAttributionController::class )->register();
+		$container->get( Automattic\WooCommerce\Internal\Orders\OrderAttributionBlocksController::class )->register();
+		$container->get( Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController::class )->register();
+		$container->get( Automattic\WooCommerce\Internal\Utilities\LegacyRestApiStub::class )->register();
+
+		// Classes inheriting from RestApiControllerBase.
+		$container->get( Automattic\WooCommerce\Internal\ReceiptRendering\ReceiptRenderingRestController::class )->register();
+		$container->get( Automattic\WooCommerce\Internal\Orders\OrderActionsRestController::class )->register();
+		$container->get( Automattic\WooCommerce\Internal\Admin\Settings\PaymentsRestController::class )->register();
 	}
 
 	/**
@@ -871,7 +876,7 @@ final class WooCommerce {
 		 */
 		$locale = apply_filters( 'plugin_locale', $locale, 'woocommerce' ); // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingSinceComment
 
-		unload_textdomain( 'woocommerce' );
+		unload_textdomain( 'woocommerce', true );
 		load_textdomain( 'woocommerce', WP_LANG_DIR . '/woocommerce/woocommerce-' . $locale . '.mo' );
 		load_plugin_textdomain( 'woocommerce', false, plugin_basename( dirname( WC_PLUGIN_FILE ) ) . '/i18n/languages' );
 	}

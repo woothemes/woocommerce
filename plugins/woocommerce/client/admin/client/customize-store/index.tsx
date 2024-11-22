@@ -77,7 +77,24 @@ const updateQueryStep = (
 		if ( pathFragments[ 2 ] !== step ) {
 			// this state machine is only concerned with [2], so we ignore changes to [3]
 			// [1] is handled by router at root of wc-admin
-			updateQueryString( {}, `/customize-store/${ step }` );
+			const newPath = `/customize-store/${ step }`;
+
+			// Since CYS also runs inside an iframe and because the getHistory
+			// creates an instance per window context, making a push to the
+			// history only alters that instance. Here we need to alter the
+			// browser's (window.top) history and not the history of the iframe.
+			if ( isIframe( window ) && window.top ) {
+				// window.location.href does not fit in this case since it produces
+				// a hard refresh to the page.
+				window.top.history.pushState(
+					{},
+					'',
+					getNewPath( {}, newPath )
+				);
+				return;
+			}
+
+			updateQueryString( {}, newPath );
 		}
 	}
 };
@@ -116,15 +133,14 @@ const redirectToThemes = ( _context: customizeStoreStateMachineContext ) => {
 };
 
 const markTaskComplete = async () => {
-	const currentTemplate = await resolveSelect(
+	const currentTemplateId: string | undefined = await resolveSelect(
 		coreStore
 		// @ts-expect-error No types for this exist yet.
-	).__experimentalGetTemplateForLink( '/' );
+	).getDefaultTemplateId( { slug: 'home' } );
 	return dispatch( OPTIONS_STORE_NAME ).updateOptions( {
 		woocommerce_admin_customize_store_completed: 'yes',
-		// we use this on the intro page to determine if this same theme was used in the last customization
-		woocommerce_admin_customize_store_completed_theme_id:
-			currentTemplate.id ?? undefined,
+		// We use this on the intro page to determine if this same theme was used in the last customization.
+		woocommerce_admin_customize_store_completed_theme_id: currentTemplateId,
 	} );
 };
 
