@@ -225,6 +225,7 @@ class WC_Admin_Tests_Admin_Helper extends WC_Unit_Test_Case {
 			array( 'https://example.com/shop/uncategorized/test/', true ), // Test case 5: URL matches product page.
 			array( '/shop/t-shirt/test/', true ), // Test case 6: URL path matches product page.
 			array( 'https://example.com/about-us/', false ), // Test case 7: URL does not match any store page.
+			array( 'https://example.com/shopping-url/', false ), // Test case 8: URL path contains aprt of 'shop' page.
 		);
 	}
 

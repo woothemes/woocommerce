@@ -200,11 +200,12 @@ class WCAdminHelper {
 
 			$permalink = get_permalink( $page_id );
 
+
 			if ( ! $permalink ) {
 				continue;
 			}
 
-			if ( 0 === strpos( $normalized_path, self::get_normalized_url_path( $permalink ) ) ) {
+			if ( $normalized_path === self::get_normalized_url_path( $permalink ) ) {
 				return true;
 			}
 		}
