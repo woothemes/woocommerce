@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-20.04
     outputs:
       release_number: ${{ steps.extract-release.outputs.RELEASE_NUMBER }}
+      pr_number: ${{ steps.extract-pr.outputs.PR_NUMBER }}
     steps:
       - name: Extract Release Number from Issue Body
         id: extract-release
@@ -37,12 +38,90 @@ jobs:
               core.setFailed("No valid release number found after the 'Which release does this request apply to?' section. Aborting.");
             }
 
+      - name: Extract PR number from issue body
+        id: extract-pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.issue.body;
+
+            // Regular expression to match the PR link that follows the specific question
+            const prRegex = /Which PR needs to be included\?.*?\n(https:\/\/github\.com\/[a-zA-Z0-9_\-]+\/[a-zA-Z0-9_\-]+\/pull\/([0-9]+))/s;
+
+            // Match the body against the regex
+            const match = body.match(prRegex);
+
+            // Check if a valid PR number was found
+            if (match && match[2]) {
+              const prNumber = match[2];
+
+              // Log the PR number and set it as a GitHub output
+              console.log(`Valid PR number: ${prNumber}`);
+              core.setOutput('PR_NUMBER', prNumber);
+            } else {
+              // If no valid PR number is found, fail the step
+              core.setFailed("No valid PR found after the 'Which PR' section. Aborting.");
+            }
+
+  verify:
+    if: github.event.label.name == 'code freeze exception' || github.event.label.name == 'point release request'
+    runs-on: ubuntu-20.04
+    needs:
+      - prep
+    steps:
+      - name: Fetch PR details and verify the base_ref starts with release/
+        id: verify-pr
+        env:
+          PR_NUMBER: ${{ needs.prep.outputs.pr_number }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issueUrl = context.payload.issue.html_url;
+            const issueTitle = context.payload.issue.title;
+            const labelName = context.payload.label?.name;
+
+            const prData = await gh.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: env.PR_NUMBER
+            });
+
+            const baseRefName = prData.data.baseRefName;
+            console.log(`PR base ref: ${baseRefName}`);
+
+            if (!baseRefName.startsWith('release/')) {
+              core.setFailed('The PR base_ref must start with release/.');
+              if (labelName === 'code freeze exception') {
+                core.setOutput('SLACK_MESSAGE', `:x: We didn't open your Code Freeze Exception request as the PR you entered with the request does not originate from the release branch. Please switch your PR base to release branch and open a new request. Your base ref was: ${baseRefName}. ${issueTitle} ${issueUrl}`);
+              } else {
+                core.setOutput('SLACK_MESSAGE', `:x: We didn't open your Point Release Request as the PR you entered with the request does not originate from the release branch. Please switch your PR base to release branch and open a new request. Your base ref was: ${baseRefName}. ${issueTitle} ${issueUrl}`);
+              }
+            }
+
+      - name: Notify Slack
+        uses: archive/github-actions-slack@v2.0.0
+        if: ${{ failure()}}
+        id: notify
+        with:
+          slack-bot-user-oauth-access-token: ${{ secrets.CODE_FREEZE_BOT_TOKEN }}
+          slack-channel: ${{ secrets.WOO_RELEASE_SLACK_CHANNEL }}
+          slack-text: ${{ steps.verify-pr.outputs.SLACK_MESSAGE }}
+
+      - name: Close the issue
+        if: ${{ failure()}}
+        env:
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+        run: |
+          gh issue close "$ISSUE_URL" --comment "Closing issue as the PR base ref does not start with release/. Please switch the base to release branch and open a new request."
+
   apply-milestone:
     if: github.event.label.name == 'code freeze exception' || github.event.label.name == 'point release request' || github.event.label.name == 'Approved' || github.event.label.name == 'Rejected'
     runs-on: ubuntu-20.04
     permissions:
       issues: write
     needs:
+      - verify
       - prep
     steps:
       - name: Apply Milestone to the Issue
@@ -57,6 +136,8 @@ jobs:
   cfe-created:
     if: github.event.label.name == 'code freeze exception' || github.event.label.name == 'point release request'
     runs-on: ubuntu-20.04
+    needs:
+      - verify
     steps:
       - name: Set Slack Message
         id: set-message
@@ -97,37 +178,14 @@ jobs:
     permissions:
       pull-requests: write
       issues: write
+    needs:
+      - prep
     steps:
-      - name: Extract PR number from issue body
-        id: extract-pr
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const body = context.payload.issue.body;
-
-            // Regular expression to match the PR link that follows the specific question
-            const prRegex = /Which PR needs to be included\?.*?\n(https:\/\/github\.com\/[a-zA-Z0-9_\-]+\/[a-zA-Z0-9_\-]+\/pull\/([0-9]+))/s;
-
-            // Match the body against the regex
-            const match = body.match(prRegex);
-
-            // Check if a valid PR number was found
-            if (match && match[2]) {
-              const prNumber = match[2];
-
-              // Log the PR number and set it as a GitHub output
-              console.log(`Valid PR number: ${prNumber}`);
-              core.setOutput('PR_NUMBER', prNumber);
-            } else {
-              // If no valid PR number is found, fail the step
-              core.setFailed("No valid PR found after the 'Which PR' section. Aborting.");
-            }
-
       - name: Add label 'cherry pick to trunk' to PR
         env:
           OWNER: ${{ github.event.repository.owner.login }}
           REPO: ${{ github.event.repository.name }}
-          PR_NUMBER: ${{ steps.extract-pr.outputs.PR_NUMBER }}
+          PR_NUMBER: ${{ needs.prep.outputs.pr_number }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr edit $PR_NUMBER --add-label "cherry pick to trunk" --repo "$OWNER/$REPO"
@@ -137,7 +195,7 @@ jobs:
         env:
           OWNER: ${{ github.event.repository.owner.login }}
           REPO: ${{ github.event.repository.name }}
-          PR_NUMBER: ${{ steps.extract-pr.outputs.PR_NUMBER }}
+          PR_NUMBER: ${{ needs.prep.outputs.pr_number }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr edit $PR_NUMBER --add-label "cherry pick to frozen release" --repo "$OWNER/$REPO"
