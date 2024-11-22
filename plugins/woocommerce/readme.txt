@@ -260,7 +260,6 @@ WooCommerce comes with some sample data you can use to see how products look; im
 * Fix - Make coupon code errors announced by screen readers [#52040](https://github.com/woocommerce/woocommerce/pull/52040)
 * Fix - Make sure session exists before calling its functions in the Cart StoreApi route [#52410](https://github.com/woocommerce/woocommerce/pull/52410)
 * Fix - Modify Product Collection block image alt #52593 [#52593](https://github.com/woocommerce/woocommerce/pull/52593)
-* Fix - Modify product import file check to use the WP filesystem API [#51540](https://github.com/woocommerce/woocommerce/pull/51540)
 * Fix - Patterns: Remove broken Product Hero 2 Column 2 Row pattern [#52624](https://github.com/woocommerce/woocommerce/pull/52624)
 * Fix - Preserve dash when saving Mongolia postcode. [#51674](https://github.com/woocommerce/woocommerce/pull/51674)
 * Fix - Prevent Business Services products from showing pricing information when they're displayed as regular product cards on the Extensions page. [#52118](https://github.com/woocommerce/woocommerce/pull/52118)
