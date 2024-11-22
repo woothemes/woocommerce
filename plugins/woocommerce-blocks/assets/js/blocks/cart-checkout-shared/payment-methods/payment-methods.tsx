@@ -2,10 +2,9 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useState } from '@wordpress/element';
+import { Label } from '@woocommerce/blocks-components';
 import { useSelect } from '@wordpress/data';
 import { PAYMENT_STORE_KEY } from '@woocommerce/block-data';
-import { Button } from '@ariakit/react';
 
 /**
  * Internal dependencies
@@ -17,81 +16,49 @@ import './style.scss';
 
 /**
  * PaymentMethods component.
+ *
+ * @return {*} The rendered component.
  */
-const PaymentMethods = ( {
-	noPaymentMethods = <NoPaymentMethods />,
-}: {
-	noPaymentMethods?: JSX.Element | undefined;
-} ) => {
-	const [ showPaymentMethodsToggle, setShowPaymentMethodsToggle ] =
-		useState( false );
+const PaymentMethods = () => {
 	const {
 		paymentMethodsInitialized,
 		availablePaymentMethods,
-		hasSavedPaymentMethods,
-		isExpressPaymentMethodActive,
-		activeSavedToken,
+		savedPaymentMethods,
 	} = useSelect( ( select ) => {
 		const store = select( PAYMENT_STORE_KEY );
 		return {
 			paymentMethodsInitialized: store.paymentMethodsInitialized(),
-			activeSavedToken: store.getActiveSavedToken(),
 			availablePaymentMethods: store.getAvailablePaymentMethods(),
-			hasSavedPaymentMethods:
-				Object.keys( store.getSavedPaymentMethods() || {} ).length > 0,
-			isExpressPaymentMethodActive: store.isExpressPaymentMethodActive(),
+			savedPaymentMethods: store.getSavedPaymentMethods(),
 		};
 	} );
-
-	// If using an express payment method, don't show the regular payment methods.
-	if ( isExpressPaymentMethodActive ) {
-		return null;
-	}
 
 	if (
 		paymentMethodsInitialized &&
 		Object.keys( availablePaymentMethods ).length === 0
 	) {
-		return noPaymentMethods;
+		return <NoPaymentMethods />;
 	}
-
-	// Show payment methods if the toggle is on or if there are no saved payment methods, or if the active saved token is not set.
-	const showPaymentMethods =
-		showPaymentMethodsToggle ||
-		! hasSavedPaymentMethods ||
-		( paymentMethodsInitialized && ! activeSavedToken );
 
 	return (
 		<>
-			{ hasSavedPaymentMethods && (
-				<>
-					<SavedPaymentMethodOptions />
-					<p className="wc-block-components-checkout-step__description wc-block-components-checkout-step__description-payments-aligned">
-						<Button
-							render={ <span /> }
-							type="button"
-							className="wc-block-components-show-payment-methods__link"
-							onClick={ ( e ) => {
-								e.preventDefault();
-								setShowPaymentMethodsToggle(
-									! showPaymentMethodsToggle
-								);
-							} }
-							aria-label={ __(
-								'Use another payment method',
-								'woocommerce'
-							) }
-							aria-expanded={ showPaymentMethodsToggle }
-						>
-							{ __(
-								'Use another payment method',
-								'woocommerce'
-							) }
-						</Button>
-					</p>
-				</>
+			<SavedPaymentMethodOptions />
+			{ Object.keys( savedPaymentMethods ).length > 0 && (
+				<Label
+					label={ __( 'Use another payment method.', 'woocommerce' ) }
+					screenReaderLabel={ __(
+						'Other available payment methods',
+						'woocommerce'
+					) }
+					wrapperElement="p"
+					wrapperProps={ {
+						className: [
+							'wc-block-components-checkout-step__description wc-block-components-checkout-step__description-payments-aligned',
+						],
+					} }
+				/>
 			) }
-			{ showPaymentMethods && <PaymentMethodOptions /> }
+			<PaymentMethodOptions />
 		</>
 	);
 };
