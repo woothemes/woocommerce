@@ -36,7 +36,7 @@ Using the [WooCommerce Testing Instructions Guide](https://github.com/woocommerc
 
 <!-- Due to org permissions, the job might fail for PRs crated from a fork under GitHub organizations. Possible solutions: -->
 <!-- * Create entry manually with `pnpm --filter='package-name-here' changelog add` and push it into the branch -->
-<!-- * Create entry from supplied data in the PR and push it automatically `pnpm utils changefile pr-number-here -o github-org-name-here` -->
+<!-- * Create entry from supplied PR data and push it automatically `pnpm utils changefile pr-number-here -o github-org-name-here` -->
 
 -   [ ] Automatically create a changelog entry from the details below.
 
