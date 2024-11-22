@@ -93,12 +93,12 @@ body:
   - type: markdown
     attributes:
       value: |
-        ## Closing checklist for Solaris
+        ## Closing checklist
         Please ensure that the following checklist is completed before closing the request:
   - type: checkboxes
     id: closing-checklist
     attributes:
-      label: "Checklist"
+      label: "Closing checklist for Solaris"
       options:
         - label: "Escape analysis completed"
           required: false
