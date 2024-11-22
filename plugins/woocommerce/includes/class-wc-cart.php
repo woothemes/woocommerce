@@ -1170,7 +1170,7 @@ class WC_Cart extends WC_Legacy_Cart {
 					$message         = apply_filters( 'woocommerce_cart_product_cannot_add_another_message', $message, $product_data );
 					$wp_button_class = wc_wp_theme_get_element_class_name( 'button' ) ? ' ' . wc_wp_theme_get_element_class_name( 'button' ) : '';
 
-					throw new Exception( sprintf( '%s <a href="%s" class="button wc-forward%s">%s</a>', $message, wc_get_cart_url(), esc_attr( $wp_button_class ), __( 'View cart', 'woocommerce' ) ) );
+					throw new Exception( sprintf( '%s <a href="%s" class="button wc-forward%s">%s</a>', $message, esc_url( wc_get_cart_url() ), esc_attr( $wp_button_class ), __( 'View cart', 'woocommerce' ) ) );
 				}
 			}
 
@@ -1235,7 +1235,7 @@ class WC_Cart extends WC_Legacy_Cart {
 						'%s <a href="%s" class="button wc-forward%s">%s</a>',
 						/* translators: 1: quantity in stock 2: current quantity */
 						sprintf( __( 'You cannot add that amount to the cart &mdash; we have %1$s in stock and you already have %2$s in your cart.', 'woocommerce' ), wc_format_stock_quantity_for_display( $stock_quantity, $product_data ), wc_format_stock_quantity_for_display( $stock_quantity_in_cart, $product_data ) ),
-						wc_get_cart_url(),
+						esc_url( wc_get_cart_url() ),
 						esc_attr( $wp_button_class ),
 						__( 'View cart', 'woocommerce' )
 					);
