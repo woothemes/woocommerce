@@ -8,7 +8,7 @@ import { withProduct } from '@woocommerce/block-hocs';
 import BlockErrorBoundary from '@woocommerce/base-components/block-error-boundary';
 import EditProductLink from '@woocommerce/editor-components/edit-product-link';
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
-import { ProductResponseItem } from '@woocommerce/types';
+import { isNull, ProductResponseItem } from '@woocommerce/types';
 import ErrorPlaceholder, {
 	ErrorObject,
 } from '@woocommerce/editor-components/error-placeholder';
@@ -71,7 +71,9 @@ const Editor = ( {
 		const productPreviewId = productPreview
 			? productPreview[ 0 ]?.id
 			: null;
-		if ( ! productPreviewId ) {
+
+		// If the product is not set, and we have a preview product, set the product ID.
+		if ( ! productPreviewId || productId ) {
 			return;
 		}
 
@@ -80,7 +82,7 @@ const Editor = ( {
 			productId: productPreviewId,
 		} );
 		setIsEditing( false );
-	}, [ attributes, productPreview, setAttributes ] );
+	}, [ attributes, productId, productPreview, setAttributes ] );
 
 	if ( error ) {
 		return (
