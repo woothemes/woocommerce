@@ -948,6 +948,72 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	}
 
 	/**
+	 * Test that the `include_types` parameter filters products by a single type.
+	 */
+	public function test_collection_filter_with_include_types() {
+		WC_Helper_Product::create_simple_product();
+		WC_Helper_Product::create_variation_product();
+		WC_Helper_Product::create_grouped_product();
+		WC_Helper_Product::create_external_product();
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'include_types' => array( 'grouped' ),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+		$response_products = $response->get_data();
+
+		$this->assertCount( 1, $response_products );
+		$this->assertEquals( 'grouped', $response_products[0]['type'] );
+	}
+
+	/**
+	 * Test that the `include_types` parameter filters products by multiple types.
+	 */
+	public function test_collection_filter_with_multiple_include_types() {
+		WC_Helper_Product::create_simple_product();
+		WC_Helper_Product::create_variation_product();
+		WC_Helper_Product::create_grouped_product();
+		WC_Helper_Product::create_external_product();
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'include_types' => array( 'external', 'grouped' ),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+
+		$response_products = $response->get_data();
+		$this->assertCount( 2, $response_products );
+
+		$product_types = wp_list_pluck( $response_products, 'type' );
+		$this->assertEqualsCanonicalizing( array( 'external', 'grouped' ), $product_types );
+	}
+
+	/**
+	 * Test that the `include_types` parameter handles invalid status values.
+	 */
+	public function test_collection_filter_with_invalid_include_types() {
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'include_types' => array( 'invalid_type' ),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertEquals( 400, $response->get_status() );
+	}
+
+	/**
 	 * Test `downloadable` filter returns only downloadable products.
 	 */
 	public function test_downloadable_filter_returns_only_downloadable_products() {

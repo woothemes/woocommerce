@@ -74,7 +74,7 @@
 		"@wordpress/private-apis": "^1.6.0",
 		"@wordpress/url": "wp-6.0",
 		"classnames": "^2.3.2",
-		"dompurify": "^2.4.7",
+		"dompurify": "^2.5.7",
 		"lodash": "^4.17.21",
 		"moment": "^2.29.4",
 		"prop-types": "^15.8.1",
