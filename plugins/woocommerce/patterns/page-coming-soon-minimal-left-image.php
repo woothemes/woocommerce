@@ -19,7 +19,18 @@ if ( 'twentytwentyfour' === $current_theme ) {
 	$cardo_font_family = 'heading';
 }
 
-$default_image = PatternsHelper::get_image_url( $images, 0, 'assets/images/pattern-placeholders/green-glass-jars-on-stairs.png' );
+$default_image = PatternsHelper::get_image_url( $images, 0, 'assets/images/pattern-placeholders/green-glass-jars-on-stairs.jpg' );
+
+$site_tagline = get_bloginfo( 'description' );
+
+// If the site tagline is empty, use a default copy. Otherwise, use the site tagline.
+$store_description = ! empty( $site_tagline )
+	? $site_tagline
+	: sprintf(
+		/* translators: %s: Site name. */
+		__( '%s transforms your home with our curated collection of home decor, bringing inspiration and style to every corner.', 'woocommerce' ),
+		get_bloginfo( 'name' )
+	);
 
 ?>
 <!-- wp:woocommerce/coming-soon {"color":"#f9f9f9","storeOnly":false,"className":"woocommerce-coming-soon-entire-site woocommerce-coming-soon-minimal-left-image wp-block-woocommerce-background-color"} -->
@@ -60,10 +71,9 @@ $default_image = PatternsHelper::get_image_url( $images, 0, 'assets/images/patte
 
 <!-- wp:group {"layout":{"type":"constrained","justifyContent":"left","contentSize":"338px"}} -->
 							<div class="wp-block-group"><!-- wp:paragraph {"style":{"color":{"text":"#000"},"elements":{"link":{"color":{"text":"#000"}}},"typography":{"lineHeight":"1.6","letterSpacing":"0px"}}} -->
-								<p class="has-text-color has-link-color" style="color:#000;letter-spacing:0px;line-height:1.6"><?php echo esc_html__( 'Marianne Renoir transforms your home with our curated collection of home decor, bringing inspiration and style to every corner.', 'woocommerce' ); ?></p>
-								<!-- /wp:paragraph --></div>
-							<!-- /wp:group -->
-						</div>
+								<p class="has-text-color has-link-color" style="color:#000;letter-spacing:0px;line-height:1.6"><?php echo esc_html( $store_description ); ?></p>
+							<!-- /wp:paragraph --></div>
+							<!-- /wp:group --></div>
 						<!-- /wp:group --></div>
 					<!-- /wp:column -->
 				</div>
