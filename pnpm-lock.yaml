@@ -4207,6 +4207,12 @@ importers:
       wireit:
         specifier: 0.14.3
         version: 0.14.3
+      wordpress-data-wp-6-7:
+        specifier: npm:@wordpress/data@wp-6.7
+        version: '@wordpress/data@10.8.3(react@18.3.1)'
+      wp-types:
+        specifier: 3.63.0
+        version: 3.63.0
 
   plugins/woocommerce-blocks/bin/eslint-plugin-woocommerce:
     devDependencies:
@@ -11740,6 +11746,12 @@ packages:
     peerDependencies:
       react: ^17.0.0
 
+  '@wordpress/data@10.8.3':
+    resolution: {integrity: sha512-JunqBEVVwJJz45N8JTZNh9WHFn857SUtbp7Efp55oesH/g3ejLMuNu6Ewf9/qEEGQut8VeVQ7yGhl+GQDu9u+w==}
+    engines: {node: '>=18.12.0', npm: '>=8.19.2'}
+    peerDependencies:
+      react: ^18.0.0
+
   '@wordpress/data@6.6.2':
     resolution: {integrity: sha512-k3FTSY2HUPEBJ2xsV5QK/3EVb2jp1cOI1ym1fOBgAZn5cdxNeyIL7Ya7JlAHG+NzYeK+jb3cIHoX6kePMHA4LA==}
     engines: {node: '>=12'}
@@ -12679,6 +12691,12 @@ packages:
   '@wordpress/redux-routine@4.58.0':
     resolution: {integrity: sha512-r0mMWFeJr93yPy2uY/M5+gdUUYj0Zu8+21OFFb5hyQ0z7UHIa3IdgQxzCaTbV1LDA1ZYJrjHeCnA6s4gNHjA2Q==}
     engines: {node: '>=12'}
+    peerDependencies:
+      redux: '>=4'
+
+  '@wordpress/redux-routine@5.12.0':
+    resolution: {integrity: sha512-kK9Um75L21i+IqFMUL8zNtsx0xZTe35tKoxMI5TqZQeQQPFcYbQJwibW2fg7IpmK8Ma9MWK7zTeLgnnNz8GzLw==}
+    engines: {node: '>=18.12.0', npm: '>=8.19.2'}
     peerDependencies:
       redux: '>=4'
 
@@ -26131,6 +26149,9 @@ packages:
   wp-textdomain@1.0.1:
     resolution: {integrity: sha512-6Guapw25yCmnQHyz62TEi1OvRnIzGfyj0sVaPBhwx19QoxeD6HI2zZHWeBIUXSauJK3BIyxWPYnxlwmnqHUskg==}
 
+  wp-types@3.63.0:
+    resolution: {integrity: sha512-y+v3HPoDmCD5WTIvpB+MnTMK2wwQ7hjvlztOF6EomZoc7GN2rOT7mbSnlyL4pgEyXYFAiRGgv0LoWt94oJetaw==}
+
   wrap-ansi@2.1.0:
     resolution: {integrity: sha512-vAaEaDM946gbNpH5pLVNR+vX2ht6n0Bt3GXwVB1AuAqZosOvHNF3P7wDnh8KLkSqgUh0uh77le7Owgoz+Z9XBw==}
     engines: {node: '>=0.10.0'}
@@ -31813,7 +31834,7 @@ snapshots:
   '@eslint/eslintrc@0.4.3':
     dependencies:
       ajv: 6.12.6
-      debug: 4.3.4(supports-color@9.4.0)
+      debug: 4.3.7
       espree: 7.3.1
       globals: 13.24.0
       ignore: 4.0.6
@@ -31949,7 +31970,7 @@ snapshots:
   '@humanwhocodes/config-array@0.5.0':
     dependencies:
       '@humanwhocodes/object-schema': 1.2.1
-      debug: 4.3.4(supports-color@9.4.0)
+      debug: 4.3.7
       minimatch: 3.1.2
     transitivePeerDependencies:
       - supports-color
@@ -39567,7 +39588,7 @@ snapshots:
       '@typescript-eslint/experimental-utils': 4.33.0(eslint@7.32.0)(typescript@5.3.3)
       '@typescript-eslint/parser': 4.33.0(eslint@7.32.0)(typescript@5.3.3)
       '@typescript-eslint/scope-manager': 4.33.0
-      debug: 4.3.4(supports-color@9.4.0)
+      debug: 4.3.7
       eslint: 7.32.0
       functional-red-black-tree: 1.0.1
       ignore: 5.3.0
@@ -39665,7 +39686,7 @@ snapshots:
       '@typescript-eslint/scope-manager': 4.33.0
       '@typescript-eslint/types': 4.33.0
       '@typescript-eslint/typescript-estree': 4.33.0(typescript@5.3.3)
-      debug: 4.3.4(supports-color@9.4.0)
+      debug: 4.3.7
       eslint: 7.32.0
     optionalDependencies:
       typescript: 5.3.3
@@ -42963,6 +42984,25 @@ snapshots:
       '@wordpress/deprecated': 3.41.0
       react: 17.0.2
 
+  '@wordpress/data@10.8.3(react@18.3.1)':
+    dependencies:
+      '@babel/runtime': 7.26.0
+      '@wordpress/compose': 7.10.0(react@18.3.1)
+      '@wordpress/deprecated': 4.10.0
+      '@wordpress/element': 6.10.0
+      '@wordpress/is-shallow-equal': 5.10.0
+      '@wordpress/priority-queue': 3.10.0
+      '@wordpress/private-apis': 1.10.0
+      '@wordpress/redux-routine': 5.12.0(redux@4.2.1)
+      deepmerge: 4.3.1
+      equivalent-key-map: 0.2.2
+      is-plain-object: 5.0.0
+      is-promise: 4.0.0
+      react: 18.3.1
+      redux: 4.2.1
+      rememo: 4.0.2
+      use-memo-one: 1.1.3(react@18.3.1)
+
   '@wordpress/data@6.6.2(react@17.0.2)':
     dependencies:
       '@babel/runtime': 7.25.7
@@ -45399,6 +45439,14 @@ snapshots:
   '@wordpress/redux-routine@4.58.0(redux@4.2.1)':
     dependencies:
       '@babel/runtime': 7.23.5
+      is-plain-object: 5.0.0
+      is-promise: 4.0.0
+      redux: 4.2.1
+      rungen: 0.3.2
+
+  '@wordpress/redux-routine@5.12.0(redux@4.2.1)':
+    dependencies:
+      '@babel/runtime': 7.25.7
       is-plain-object: 5.0.0
       is-promise: 4.0.0
       redux: 4.2.1
@@ -50754,7 +50802,7 @@ snapshots:
 
   esbuild-register@3.5.0(esbuild@0.18.20):
     dependencies:
-      debug: 4.3.6
+      debug: 4.3.7
       esbuild: 0.18.20
     transitivePeerDependencies:
       - supports-color
@@ -51155,7 +51203,7 @@ snapshots:
     dependencies:
       '@es-joy/jsdoccomment': 0.10.8
       comment-parser: 1.2.4
-      debug: 4.3.4(supports-color@9.4.0)
+      debug: 4.3.7
       eslint: 7.32.0
       esquery: 1.5.0
       jsdoc-type-pratt-parser: 1.2.0
@@ -53704,7 +53752,7 @@ snapshots:
   https-proxy-agent@5.0.0:
     dependencies:
       agent-base: 6.0.2
-      debug: 4.3.4(supports-color@9.4.0)
+      debug: 4.3.7
     transitivePeerDependencies:
       - supports-color
 
@@ -66586,6 +66634,10 @@ snapshots:
       moment: 2.29.4
       php-parser: 3.1.5
       text-table: 0.2.0
+
+  wp-types@3.63.0:
+    dependencies:
+      typescript: 5.3.3
 
   wrap-ansi@2.1.0:
     dependencies:
