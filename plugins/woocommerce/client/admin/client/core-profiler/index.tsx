@@ -340,12 +340,16 @@ const exitToWooHome = fromPromise( async () => {
 } );
 
 const getPluginNameParam = (
-	pluginsSelected: CoreProfilerStateMachineContext[ 'pluginsSelected' ]
+	pluginsSelected: CoreProfilerStateMachineContext[ 'pluginsSelected' ],
+	availablePlugins: CoreProfilerStateMachineContext[ 'pluginsAvailable' ]
 ) => {
-	if ( pluginsSelected.includes( 'woocommerce-payments' ) ) {
-		return 'woocommerce-payments';
-	}
-	return 'jetpack-ai';
+	const JpcRequiredPlugins = pluginsSelected.filter( ( plugin ) => {
+		return availablePlugins.find( ( availablePlugin ) => {
+			return availablePlugin.key === plugin;
+		} )?.requires_jpc;
+	} );
+
+	return JpcRequiredPlugins.join( ',' );
 };
 
 const redirectToJetpackAuthPage = ( {
@@ -359,7 +363,7 @@ const redirectToJetpackAuthPage = ( {
 	url.searchParams.set( 'installed_ext_success', '1' );
 	url.searchParams.set(
 		'plugin_name',
-		getPluginNameParam( context.pluginsSelected )
+		getPluginNameParam( context.pluginsSelected, context.pluginsAvailable )
 	);
 
 	// Add current user's color scheme to the URL.
@@ -1598,8 +1602,7 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 									{
 										target: '#isJetpackConnected',
 										guard: or( [
-											'hasJetpackSelectedForInstallation',
-											'hasJetpackActivated',
+											'hasJpcRequiredPluginSelected',
 										] ),
 									},
 									{ actions: 'redirectToWooHome' },
@@ -1742,7 +1745,7 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 							check(
 								or( [
 									{
-										type: 'hasJetpackSelectedForInstallation',
+										type: 'hasJpcRequiredPluginSelected',
 									},
 									{ type: 'hasJetpackActivated' },
 								] )
@@ -1812,12 +1815,15 @@ export const CoreProfilerController = ( {
 						!! step && step === ( params as { step: string } ).step
 					);
 				},
-				hasJetpackSelectedForInstallation: ( { context } ) => {
-					return (
-						context.pluginsSelected.find(
-							( plugin ) => plugin === 'jetpack'
-						) !== undefined
-					);
+				hasJpcRequiredPluginSelected: ( { context } ) => {
+					return context.pluginsSelected.some( ( selectedPlugin ) => {
+						// Find the plugin details in pluginsAvailable
+						const pluginDetails = context.pluginsAvailable.find(
+							( plugin ) => plugin.key === selectedPlugin
+						);
+						// Return true if the plugin requires jpc
+						return pluginDetails?.requires_jpc === true;
+					} );
 				},
 				hasJetpackActivated: ( { context } ) => {
 					return (

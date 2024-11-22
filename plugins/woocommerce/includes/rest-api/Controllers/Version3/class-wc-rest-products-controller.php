@@ -214,11 +214,18 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		}
 
 		// Filter product type by slug.
-		if ( ! empty( $request['type'] ) ) {
+		$terms = array();
+		if ( ! empty( $request['include_types'] ) ) {
+			$terms = $request['include_types'];
+		} elseif ( ! empty( $request['type'] ) ) {
+			$terms[] = $request['type'];
+		}
+
+		if ( ! empty( $terms ) ) {
 			$tax_query[] = array(
 				'taxonomy' => 'product_type',
 				'field'    => 'slug',
-				'terms'    => $request['type'],
+				'terms'    => $terms,
 			);
 		}
 
@@ -1673,6 +1680,17 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			'items'             => array(
 				'type' => 'string',
 				'enum' => array_merge( array( 'trash' ), array_keys( get_post_statuses() ) ),
+			),
+			'sanitize_callback' => 'wp_parse_list',
+			'validate_callback' => 'rest_validate_request_arg',
+		);
+
+		$params['include_types'] = array(
+			'description'       => __( 'Limit result set to products with any of the types.', 'woocommerce' ),
+			'type'              => 'array',
+			'items'             => array(
+				'type' => 'string',
+				'enum' => array_keys( wc_get_product_types() ),
 			),
 			'sanitize_callback' => 'wp_parse_list',
 			'validate_callback' => 'rest_validate_request_arg',
