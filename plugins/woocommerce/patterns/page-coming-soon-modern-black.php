@@ -36,7 +36,7 @@ $email         = get_option( 'admin_email', 'marianne.renoir@mail.com' );
 					<div class="wp-block-group">
 						<!-- wp:group {"style":{"spacing":{"blockGap":"0px"}}} -->
 						<div class="wp-block-group">
-							<!-- wp:site-title {"level":0,"style":{"elements":{"link":{"color":{"text":"var:preset|color|theme-1"}}},"typography":{"fontSize":"18px","fontStyle":"normal","fontWeight":"500","letterSpacing":"-0.36px","textTransform":"capitalize"}},"textColor":"theme-1","fontFamily":"body"} /-->
+							<!-- wp:site-title {"level":0,"style":{"elements":{"link":{"color":{"text":"var:preset|color|theme-1"}}},"typography":{"fontSize":"18px","fontStyle":"normal","fontWeight":"500","letterSpacing":"-0.36px","textTransform":"capitalize"}},"textColor":"theme-1","fontFamily":"<?php echo esc_attr( $inter_font_family ); ?>"} /-->
 						</div>
 						<!-- /wp:group -->
 					</div>
@@ -46,14 +46,13 @@ $email         = get_option( 'admin_email', 'marianne.renoir@mail.com' );
 				</div>
 				<!-- /wp:group -->
 
-				<!-- wp:group {"align":"wide","style":{"spacing":{"padding":{"top":"0px","bottom":"0px","right":"0","left":"0"},"margin":{"top":"485px","bottom":"0"}},"dimensions":{"minHeight":"100%"}},"layout":{"type":"flex","orientation":"vertical","justifyContent":"stretch"}} -->
-				<div class="wp-block-group alignwide" style="min-height:100%;margin-top:485px;margin-bottom:0;padding-top:0px;padding-right:0;padding-bottom:0px;padding-left:0">
-					<!-- wp:heading {"textAlign":"center","style":{"spacing":{"margin":{"bottom":"153px","top":"0"}},"typography":{"fontSize":"100px","lineHeight":"1.19","fontStyle":"normal","fontWeight":"400"}},"fontFamily":"heading"} -->
-					<h2 class="wp-block-heading has-text-align-center has-heading-font-family" style="margin-top:0;margin-bottom:153px;font-size:100px;font-style:normal;font-weight:400;line-height:1.19"><?php echo esc_html( 'Stay tuned.' ); ?></h2>
+			<!-- wp:group {"align":"wide","style":{"spacing":{"padding":{"top":"0px","bottom":"0px","right":"0","left":"0"},"margin":{"bottom":"0"}},"dimensions":{"minHeight":"650px"}},"layout":{"type":"flex","orientation":"vertical","justifyContent":"stretch","verticalAlignment":"bottom"}} -->
+			<div class="wp-block-group alignwide" style="min-height:650px;margin-bottom:0;padding-top:0px;padding-right:0;padding-bottom:0px;padding-left:0">
+				<!-- wp:heading {"textAlign":"center","style":{"spacing":{"margin":{"bottom":"153px","top":"0"}},"typography":{"fontSize":"100px","lineHeight":"1.19","fontStyle":"normal","fontWeight":"400"}},"fontFamily":"<?php echo esc_attr( $cardo_font_family ); ?>"} -->
+				<h2 class="wp-block-heading has-text-align-center has-heading-font-family" style="margin-top:0;margin-bottom:153px;font-size:100px;font-style:normal;font-weight:400;line-height:1.19"><?php echo esc_html( 'Stay tuned.' ); ?></h2>
 					<!-- /wp:heading -->
-
 					<!-- wp:paragraph {"align":"center","style":{"color":{"text":"#a7aaad"},"elements":{"link":{"color":{"text":"#a7aaad"}}},"typography":{"fontSize":"14px"}}} -->
-					<p class="has-text-align-center has-text-color has-link-color" style="color:#a7aaad;font-size:14px"><?php echo esc_html( $email ); ?></p>
+					<p class="has-text-align-center has-text-color has-link-color" style="color:#a7aaad;font-size:14px;"><?php echo esc_html( $email ); ?></p>
 					<!-- /wp:paragraph -->
 				</div>
 				<!-- /wp:group -->
