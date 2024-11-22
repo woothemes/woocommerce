@@ -62,7 +62,7 @@ jobs:
                       console.log("isBot:", isBot);
                       console.log("baseRef.startsWith('release/'):", baseRef.startsWith('release/'));
 
-                      if ( !isBot && baseRef.startsWith( 'release/' ) ) {
+                      if ( baseRef.startsWith( 'release/' ) ) {
                         core.setOutput( 'run', 'true' );
                       } else {
                         core.setOutput( 'run', 'false' );
