@@ -106,7 +106,7 @@ test.describe.skip(
 
 // these tests run in sequence and depend on the previous tests. They can't retry unfortunately.
 // hopefully we can find a way to manage state between tests in the future
-test.describe.skip.serial(
+test.describe.skip(
 	'Store owner can skip the core profiler and proceed to setup',
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
