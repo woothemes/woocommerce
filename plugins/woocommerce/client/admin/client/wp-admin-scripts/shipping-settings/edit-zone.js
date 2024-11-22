@@ -24,7 +24,14 @@ const { useHistory } = unlock( routerPrivateApis );
 export const EditZone = ( { zoneId } ) => {
 	const history = useHistory();
 	const { zones, regionOptions } = window.shippingZonesLocalizeScript;
-	const zone = zones[ zoneId ];
+	const zone =
+		zoneId === '0'
+			? {
+					zone_locations: [],
+					zone_name: '',
+					shipping_methods: {},
+			  }
+			: zones[ zoneId ];
 	const options =
 		recursivelyTransformLabels( regionOptions, decodeEntities ) ?? [];
 	const initialValues = zone.zone_locations.map( ( location ) => {
@@ -79,11 +86,6 @@ export const EditZone = ( { zoneId } ) => {
 						gap: '20px',
 					} }
 				>
-					<input
-						type="text"
-						value={ zone.zone_name }
-						onChange={ () => {} }
-					/>
 					<InputControl
 						label="Zone name"
 						value={ zone.zone_name }
@@ -91,6 +93,7 @@ export const EditZone = ( { zoneId } ) => {
 					/>
 					<ShippingCurrencyContext />
 					<RegionPicker
+						label="Zone regions"
 						options={ options }
 						initialValues={ initialValues }
 					/>

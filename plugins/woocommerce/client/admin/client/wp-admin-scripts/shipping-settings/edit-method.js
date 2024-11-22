@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { close, chevronLeft, Icon } from '@wordpress/icons';
+import { close, Icon } from '@wordpress/icons';
 import { getQueryArgs } from '@wordpress/url';
 import {
 	Button,

@@ -5,7 +5,7 @@ import { useState } from '@wordpress/element';
 import { TreeSelectControl } from '@woocommerce/components';
 import { __ } from '@wordpress/i18n';
 
-export const RegionPicker = ( { options, initialValues } ) => {
+export const RegionPicker = ( { options, initialValues, label } ) => {
 	const [ selected, setSelected ] = useState( initialValues );
 	const onChange = ( value ) => {
 		document.body.dispatchEvent(
@@ -17,6 +17,7 @@ export const RegionPicker = ( { options, initialValues } ) => {
 	return (
 		<TreeSelectControl
 			value={ selected }
+			label={ label }
 			onChange={ onChange }
 			options={ options }
 			placeholder={ __( 'Start typing to filter zones', 'woocommerce' ) }
