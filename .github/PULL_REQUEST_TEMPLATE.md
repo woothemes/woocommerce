@@ -31,7 +31,12 @@ Using the [WooCommerce Testing Instructions Guide](https://github.com/woocommerc
 
 ### Changelog entry
 
-<!-- You can optionally choose to enter a changelog entry by checking the box and supplying data. -->
+<!-- You can optionally choose to enter a changelog entry by checking the box below and supplying data. -->
+<!-- It will trigger the 'Add changelog to PR' CI job to create and push the entry into the branch. -->
+
+<!-- Due to org permissions, the job might fail for PRs crated from a fork under GitHub organizations. Possible solutions: -->
+<!-- * Create entry manually with `pnpm --filter='package-name-here' changelog add` and push it into the branch -->
+<!-- * Create and push entry automatically `pnpm utils changefile pr-number-here -o github-org-name-here` using your GitHub account -->
 
 -   [ ] Automatically create a changelog entry from the details below.
 
