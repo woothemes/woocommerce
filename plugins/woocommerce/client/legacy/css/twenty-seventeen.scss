@@ -489,6 +489,17 @@ table.variations {
 			}
 		}
 
+		.comment-form-rating {
+			@include reset-rating-fieldset();
+
+			fieldset {
+				legend {
+					font-weight: 800;
+					margin-bottom: 0.5em;
+				}
+			}
+		}
+
 		p.stars {
 
 			a {
