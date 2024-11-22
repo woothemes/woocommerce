@@ -5598,6 +5598,42 @@ img.help_tip {
 		color:  var(--wp-admin-theme-color, $blueberry);
 	}
 
+
+	/* Style all buttons */
+	.button,
+	.wp-media-buttons .button,
+	#screen-meta-links .show-settings {
+		background: none;
+		padding: 0 $gap-smaller;
+		margin: 0;
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		line-height: inherit;
+		gap: $gap-smallest;
+
+		border-radius: 2px;
+		border: 1px solid var(--wp-admin-theme-color, $blueberry);
+		color: var(--wp-admin-theme-color, $blueberry);
+
+		.jetpack-contact-form-icon,
+		.wp-media-buttons-icon {
+			height: 16px;
+			width: 16px;
+			font-size: 16px;
+			margin: 0;
+
+			&:before {
+				font-size: inherit;
+				vertical-align: middle;
+			}
+		}
+		&.button-primary {
+			color: var(--Gutenberg-White, #FFF);
+			background: var(--wp-admin-theme-color, $blueberry);
+		}
+	}
+
 	// Screen meta links.
 	#screen-meta-links {
 		padding: $gap-small 0;
@@ -5609,6 +5645,18 @@ img.help_tip {
 		#contextual-help-link-wrap {
 			margin: 0;
 		}
+		.show-settings {
+			padding-left: $gap-small;
+			// Deduct the inner spacing of the icon.
+			padding-right: calc( $gap-small - 5px );
+		}
+		// Adjust spacing as the element is vertically aligned with flexbox, reset additional padding.
+		.show-settings:after {
+			padding: 0;
+			bottom: none;
+			position: static;
+		}
+
 	}
 
 	// Gap between title input and generate coupon code.
@@ -5758,41 +5806,6 @@ img.help_tip {
 	.wp-editor-tools:after {
 		content: none;
 		display: none;
-	}
-
-	/* Style all buttons */
-	.button,
-	.wp-media-buttons .button,
-	#screen-meta-links .show-settings {
-		background: none;
-		padding: 0 $gap-smaller;
-		margin: 0;
-		display: inline-flex;
-		justify-content: center;
-		align-items: center;
-		line-height: inherit;
-		gap: $gap-smallest;
-
-		border-radius: 2px;
-		border: 1px solid var(--wp-admin-theme-color, $blueberry);
-		color: var(--wp-admin-theme-color, $blueberry);
-
-		.jetpack-contact-form-icon,
-		.wp-media-buttons-icon {
-			height: 16px;
-			width: 16px;
-			font-size: 16px;
-			margin: 0;
-
-			&:before {
-				font-size: inherit;
-				vertical-align: middle;
-			}
-		}
-		&.button-primary {
-			color: var(--Gutenberg-White, #FFF);
-			background: var(--wp-admin-theme-color, $blueberry);
-		}
 	}
 
 	#postexcerpt >.postbox-header > .hndle >.woocommerce-help-tip,
