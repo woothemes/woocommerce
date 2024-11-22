@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Update show password input to use a button element
