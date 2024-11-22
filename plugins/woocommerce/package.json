@@ -645,7 +645,7 @@
 					"testEnv": {
 						"start": "env:start:blocks",
 						"config": {
-							"wpVersion": "prerelease"
+							"wpVersion": "latest-1"
 						}
 					},
 					"events": [
