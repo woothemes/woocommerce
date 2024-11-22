@@ -27,11 +27,24 @@ export class Admin extends CoreAdmin {
 		}
 
 		await this.page.getByRole( 'button', { name: 'Add' } ).click();
-		// Wait for Editor to load.
-		await this.page
-			.getByRole( 'heading', {
-				name: `${ name } · Pattern`,
-			} )
-			.waitFor();
+
+		const welcomePopUp = async () => {
+			await this.page
+				.getByRole( 'button', {
+					name: 'Get started',
+				} )
+				.click();
+		};
+
+		const editorLoaded = async () => {
+			// Wait for Editor to load.
+			await this.page
+				.getByRole( 'heading', {
+					name: `${ name } · Pattern`,
+				} )
+				.waitFor();
+		};
+
+		await Promise.any( [ welcomePopUp(), editorLoaded() ] );
 	}
 }
