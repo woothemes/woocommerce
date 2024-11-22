@@ -9,8 +9,6 @@ declare( strict_types = 1);
  */
 
 use Automattic\WooCommerce\Admin\Features\OnboardingTasks\Tasks\WooCommercePayments;
-use Automattic\WooCommerce\Admin\Features\PaymentGatewaySuggestions\DefaultPaymentGateways;
-use Automattic\WooCommerce\Admin\Features\PaymentGatewaySuggestions\Init as Suggestions;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -127,71 +125,12 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 		$hide_save_button = true;
 		echo '<div id="experimental_wc_settings_payments_' . esc_attr( $section ) . '"></div>';
 
-		// Output the gateways data to the page so the React app can use it.
-		$controller       = new WC_REST_Payment_Gateways_Controller();
-		$response         = $controller->get_items( new WP_REST_Request( 'GET', '/wc/v3/payment_gateways' ) );
-		$payment_gateways = $this->format_payment_gateways_for_output( $response->data );
-
 		// Add WooPayments data to the page.
 		$is_woopayments_onboarded    = WooCommercePayments::is_connected() && ! WooCommercePayments::is_account_partially_onboarded();
 		$is_woopayments_in_test_mode = $is_woopayments_onboarded &&
 			method_exists( WC_Payments::class, 'mode' ) &&
 			method_exists( WC_Payments::mode(), 'is_test_mode_onboarding' ) &&
 			WC_Payments::mode()->is_test_mode_onboarding();
-
-		// First, get all the payment extensions suggestions.
-		$all_suggestions     = Suggestions::get_suggestions( DefaultPaymentGateways::get_all() );
-		$payment_gateway_ids = array_map(
-			function ( $gateway ) {
-				return $gateway['id'];
-			},
-			$payment_gateways
-		);
-
-		// Then, filter the suggestions to get the preferred and additional payment extensions (not including installed extensions).
-		$preferred_payment_extension_suggestions = array_values(
-			array_filter(
-				$all_suggestions,
-				function ( $suggestion ) use ( $payment_gateway_ids ) {
-					// Currently it will be only WooPayments, since we don't have category_preferred or something like that.
-					return 'woocommerce_payments:with-in-person-payments' === $suggestion->id && ! in_array( 'woocommerce_payments', $payment_gateway_ids, true );
-				}
-			)
-		);
-
-		// Sort additional by recommendation_priority and get the first one.
-		$additional_payment_extensions_suggestions = array_filter(
-			$all_suggestions,
-			function ( $suggestion ) use ( $payment_gateway_ids ) {
-				return isset( $suggestion->category_additional )
-					&& in_array( WC()->countries->get_base_country(), $suggestion->category_additional, true )
-					&& ! in_array( $suggestion->id, $payment_gateway_ids, true );
-			}
-		);
-		usort(
-			$additional_payment_extensions_suggestions,
-			function ( $a, $b ) {
-				return $a->recommendation_priority <=> $b->recommendation_priority;
-			}
-		);
-		$additional_payment_extension_suggestions = array_slice( $additional_payment_extensions_suggestions, 0, 1 );
-
-		// Combine two into one.
-		$preferred_payment_extension_suggestions = array_merge( $preferred_payment_extension_suggestions, $additional_payment_extension_suggestions );
-
-		// Then, filter the suggestions to get the other payment extensions (not including installed extensions).
-		// Also, we don't need suggestions both in additional and other categories.
-		$other_payment_extensions_suggestions = array_values(
-			array_filter(
-				$all_suggestions,
-				function ( $suggestion ) use ( $payment_gateway_ids ) {
-					return isset( $suggestion->category_other )
-						&& in_array( WC()->countries->get_base_country(), $suggestion->category_other, true )
-						&& ! in_array( WC()->countries->get_base_country(), $suggestion->category_additional, true )
-						&& ! in_array( $suggestion->id, $payment_gateway_ids, true );
-				}
-			)
-		);
 
 		echo '<script type="application/json" id="experimental_wc_settings_payments_woopayments">' . wp_json_encode(
 			array(
@@ -200,9 +139,6 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 				'isInTestMode'       => $is_woopayments_in_test_mode,
 			)
 		) . '</script>';
-		echo '<script type="application/json" id="experimental_wc_settings_payments_gateways">' . wp_json_encode( $payment_gateways ) . '</script>';
-		echo '<script type="application/json" id="experimental_wc_settings_payments_preferred_extensions_suggestions">' . wp_json_encode( $preferred_payment_extension_suggestions ) . '</script>';
-		echo '<script type="application/json" id="experimental_wc_settings_payments_other_extensions_suggestions">' . wp_json_encode( $other_payment_extensions_suggestions ) . '</script>';
 	}
 
 	/**

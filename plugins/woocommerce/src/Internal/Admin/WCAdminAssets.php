@@ -368,6 +368,9 @@ class WCAdminAssets {
 				'handle' => 'wc-product-editor',
 			),
 			array(
+				'handle' => 'wc-settings-editor',
+			),
+			array(
 				'handle' => 'wc-customer-effort-score',
 			),
 			array(
