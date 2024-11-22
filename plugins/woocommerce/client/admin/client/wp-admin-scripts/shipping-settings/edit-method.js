@@ -3,26 +3,30 @@
  */
 import { close, chevronLeft, Icon } from '@wordpress/icons';
 import { getQueryArgs } from '@wordpress/url';
-import { Button, CheckboxControl } from '@wordpress/components';
+import {
+	Button,
+	CheckboxControl,
+	SelectControl,
+	__experimentalInputControl as InputControl,
+} from '@wordpress/components';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
 
 const { useHistory } = unlock( routerPrivateApis );
+
+const options = [
+	{ label: 'No requirement', value: '' },
+	{ label: 'A valid free shipping coupon', value: 'coupon' },
+	{ label: 'A minimum order amount', value: 'min_amount' },
+	{ label: 'A minimum order amount OR coupon', value: 'either' },
+	{ label: 'A minimum order amount AND coupon', value: 'both' },
+];
 
 export const EditMethod = ( { zoneId, methodId } ) => {
 	const history = useHistory();
 	const { zones } = window.shippingZonesLocalizeScript;
 	const zone = zones[ zoneId ];
 	const method = zone.shipping_methods[ methodId ];
-	const closeQuickEdit = () => {
-		const currentArgs = getQueryArgs( window.location.href );
-
-		history.push( {
-			...currentArgs,
-			methodId: undefined,
-			zoneId: undefined,
-		} );
-	};
 
 	const back = () => {
 		const currentArgs = getQueryArgs( window.location.href );
@@ -43,13 +47,10 @@ export const EditMethod = ( { zoneId, methodId } ) => {
 					justifyContent: 'space-between',
 				} }
 			>
-				<Button onClick={ back }>
-					<Icon icon={ chevronLeft } />
-				</Button>
 				<h2>
 					Edit Zone { zone.zone_name } - { method.title }
 				</h2>
-				<Button onClick={ closeQuickEdit }>
+				<Button onClick={ back }>
 					<Icon icon={ close } />
 				</Button>
 			</div>
@@ -68,6 +69,18 @@ export const EditMethod = ( { zoneId, methodId } ) => {
 					<CheckboxControl
 						label="Enabled"
 						checked={ method.enabled === 'yes' }
+						onChange={ () => {} }
+					/>
+					<InputControl
+						label="Name"
+						value={ method.title }
+						onChange={ () => {} }
+					/>
+					<SelectControl
+						label="Free shipping requires"
+						value={ options[ 0 ].value }
+						options={ options }
+						onChange={ () => {} }
 					/>
 				</div>
 			</div>

@@ -2,7 +2,11 @@
  * External dependencies
  */
 import { close, Icon } from '@wordpress/icons';
-import { Button, CheckboxControl } from '@wordpress/components';
+import {
+	Button,
+	CheckboxControl,
+	__experimentalInputControl as InputControl,
+} from '@wordpress/components';
 import { decodeEntities } from '@wordpress/html-entities';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 import { getQueryArgs } from '@wordpress/url';
@@ -80,6 +84,11 @@ export const EditZone = ( { zoneId } ) => {
 						value={ zone.zone_name }
 						onChange={ () => {} }
 					/>
+					<InputControl
+						label="Zone name"
+						value={ zone.zone_name }
+						onChange={ () => {} }
+					/>
 					<ShippingCurrencyContext />
 					<RegionPicker
 						options={ options }
@@ -129,6 +138,7 @@ export const EditZone = ( { zoneId } ) => {
 						) }
 					</tbody>
 				</table>
+				<Button variant="primary">Add Method</Button>
 			</div>
 		</>
 	);
