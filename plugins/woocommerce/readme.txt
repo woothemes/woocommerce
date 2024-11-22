@@ -329,6 +329,7 @@ WooCommerce comes with some sample data you can use to see how products look; im
 * Add - Record Cancel and Close events on modal to change collection type #52314 [#52314](https://github.com/woocommerce/woocommerce/pull/52314)
 * Add - Send a customer notification email when an order is marked as "failed". [#51778](https://github.com/woocommerce/woocommerce/pull/51778)
 * Add - Track first and last 20 orders to Weekly Tracker Snapshot [#52074](https://github.com/woocommerce/woocommerce/pull/52074)
+* Update - Disable e2e and API test run against external envs as a part of `release-checks`. [#52778](https://github.com/woocommerce/woocommerce/pull/52778)
 * Update - Added a new update function for WC 9.5 to add the wc_feature_woocommerce_brands_enabled option. [#52051](https://github.com/woocommerce/woocommerce/pull/52051)
 * Update - Add loading placeholder and payment method toggle to block checkout [#52044](https://github.com/woocommerce/woocommerce/pull/52044)
 * Update - Add parameter to woocommerce_locate_template filter [#52169](https://github.com/woocommerce/woocommerce/pull/52169)
