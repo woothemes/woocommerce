@@ -65,7 +65,6 @@ export type SidebarComponentProps = LaunchYourStoreComponentProps & {
 };
 export type SidebarMachineEvents =
 	| { type: 'EXTERNAL_URL_UPDATE' }
-	| { type: 'OPEN_EXTERNAL_URL'; url: string }
 	| { type: 'TASK_CLICKED'; task: TaskType }
 	| { type: 'OPEN_WC_ADMIN_URL'; url: string }
 	| { type: 'OPEN_WC_ADMIN_URL_IN_CONTENT_AREA'; url: string }
@@ -242,11 +241,6 @@ export const sidebarMachine = setup( {
 		};
 	},
 	actions: {
-		openExternalUrl: ( { event } ) => {
-			if ( event.type === 'OPEN_EXTERNAL_URL' ) {
-				navigateTo( { url: event.url } );
-			}
-		},
 		showLaunchStoreSuccessPage: sendTo(
 			( { context } ) => context.mainContentMachineRef,
 			{ type: 'SHOW_LAUNCH_STORE_SUCCESS' }
@@ -524,18 +518,10 @@ export const sidebarMachine = setup( {
 				} ),
 			],
 		},
-		openExternalUrl: {
-			id: 'openExternalUrl',
-			tags: 'sidebar-visible', // unintuitive but it prevents a layout shift just before leaving
-			entry: [ 'openExternalUrl' ],
-		},
 	},
 	on: {
 		EXTERNAL_URL_UPDATE: {
 			target: '.navigate',
-		},
-		OPEN_EXTERNAL_URL: {
-			target: '#openExternalUrl',
 		},
 		TASK_CLICKED: {
 			actions: 'taskClicked',

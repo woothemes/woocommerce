@@ -54,7 +54,6 @@ Other ways of running tests (make sure you are in the `plugins/woocommerce` fold
 - `pnpm test:e2e --debug` (runs tests in debug mode)
 - `pnpm test:e2e basic.spec.js` (runs a single test file - `basic.spec.js` in this case)
 - `pnpm test:e2e ./tests/e2e-pw/tests/merchant` (runs all tests that are found in the `merchant` folder)
-- `pnpm test:e2e ./tests/e2e-pw/tests/api-tests` (runs all tests that are found in the `api-tests` folder)
 - `pnpm test:e2e --ui` (open tests in [Playwright UI mode](https://playwright.dev/docs/test-ui-mode)). You may need
   to increase the [test timeout](https://playwright.dev/docs/api/class-testconfig#test-config-timeout) by setting
   the `DEFAULT_TIMEOUT_OVERRIDE` environment variable like so:
@@ -69,13 +68,13 @@ run `pnpm playwright test --help`
 
 > [!TIP]
 > 
-> If you're looking on how to run the API tests (which are part of the same project as the classic e2e tests), 
-> they can be run as you would run any other tests folder in the project.
+> If you're looking on how to run the API tests (which are part of the same suite as the classic e2e tests), 
+> they can be run as you would run any other tests folder in the suite. 
+> Keep in mind that from a tool point of view they are only a folder in the main e2e tests project as any other folder.
 > 
 > For convenience, a `test:api` command is offered that will run all the tests in the `api-tests` folder against the 
-> default environment, but this may change. 
+> default environment, but this may change. You can always find the setup by checking the `package.json` scripts section and the `playwright.config.js`.
 >
-> Keep in mind that from a tool point of view they are only a folder in the main e2e tests project as any other folder.
 
 ## Test environment
 
