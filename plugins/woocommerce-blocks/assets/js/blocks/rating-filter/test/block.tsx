@@ -82,7 +82,7 @@ const setup = ( params: SetupParams ) => {
 	};
 
 	jest.spyOn( hooks, 'useCollectionData' ).mockReturnValue( {
-		results: stubCollectionData(),
+		data: stubCollectionData(),
 		isLoading: false,
 	} );
 
