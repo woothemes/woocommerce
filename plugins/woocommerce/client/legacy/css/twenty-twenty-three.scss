@@ -372,8 +372,21 @@
 
 			p.stars {
 				display: inline;
+				margin-left: 0.25rem;
 				a::before {
 					color: var(--wp--preset--color--contrast);
+				}
+			}
+
+			@include reset-rating-fieldset();
+
+			fieldset {
+				margin-bottom: 1.6rem;
+				margin-top: 1.5rem;
+
+				legend {
+					float: left;
+					padding-right: var(--wp--style--block-gap);
 				}
 			}
 		}
