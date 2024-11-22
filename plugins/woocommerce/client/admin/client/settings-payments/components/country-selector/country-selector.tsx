@@ -144,14 +144,6 @@ export const CountrySelector = <ItemType extends Item>({
         [ onChange, selectedItem, closeMenu ]
     );
 
-    const onKeyDownHandler = useCallback(
-		( e: React.KeyboardEvent<HTMLUListElement> ) => {
-			e.stopPropagation();
-			menuProps?.onKeyDown?.( e );
-		},
-		[ menuProps ]
-	);
-
 	const handleSearch = ( {
 		target,
 	}: React.ChangeEvent< HTMLInputElement > ) => {
@@ -218,7 +210,7 @@ export const CountrySelector = <ItemType extends Item>({
 				</span>
 				<Icon icon={ chevronDown } className="components-custom-select-control__button-icon" />
 			</Button>
-			<div { ...menuProps } onKeyDown={ onKeyDownHandler }>
+			<div { ...menuProps }>
 				{ isOpen && (
 					<>
 						<div className="components-country-select-control__search">
