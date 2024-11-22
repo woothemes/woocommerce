@@ -4,7 +4,6 @@
 import { Gridicon } from '@automattic/components';
 import { List } from '@woocommerce/components';
 import { getAdminLink } from '@woocommerce/settings';
-import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import {
 	RegisteredPaymentGateway,
@@ -17,6 +16,7 @@ import { useMemo } from '@wordpress/element';
  */
 import { PaymentGatewayListItem } from '~/settings-payments/components/payment-gateway-list-item';
 import { PaymentExtensionSuggestionListItem } from '~/settings-payments/components/payment-extension-suggestion-list-item';
+import { CountrySelector } from '~/settings-payments/components/country-selector';
 import { WooPaymentsGatewayData } from '~/settings-payments/types';
 import { WC_ASSET_URL } from '~/utils/admin-settings';
 
@@ -38,6 +38,10 @@ export const PaymentGateways = ( {
 	setupPlugin,
 }: PaymentGatewaysProps ) => {
 	const setupLivePayments = () => {};
+
+	const countryOptions = Object.entries( wcSettings?.countries || [] )
+		.map( ( [ key, name ] ) => ( { key, name, types: [] } ) )
+		.sort( ( a, b ) => a.name.localeCompare( b.name ) );
 
 	// Transform suggested preferred plugins comply with List component format.
 	const preferredPluginSuggestionsList = useMemo(
@@ -115,17 +119,19 @@ export const PaymentGateways = ( {
 					{ __( 'Payment providers', 'woocommerce' ) }
 				</div>
 				<div className="settings-payment-gateways__header-select-container">
-					<SelectControl
-						className="woocommerce-select-control__country"
-						prefix={ __( 'Business location :', 'woocommerce' ) }
-						placeholder={ '' }
-						label={ '' }
-						options={ [
-							{ label: 'United States', value: 'US' },
-							{ label: 'Canada', value: 'Canada' },
-						] }
-						onChange={ () => {} }
-					/>
+					<CountrySelector
+    						className="woocommerce-select-control__country"
+    						label={ __( 'Business location :', 'woocommerce' ) }
+    						placeholder={ '' }
+    						value={ countryOptions.find(
+    							( country ) =>
+    								country.key === 'US'
+    						) }
+    						options={ countryOptions }
+    						onChange={ ( value: string ) => {
+    							
+    						} }
+    					/>
 				</div>
 			</div>
 			<List
