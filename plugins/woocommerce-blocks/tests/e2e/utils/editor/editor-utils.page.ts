@@ -85,10 +85,12 @@ export class Editor extends CoreEditor {
 			await link.click();
 		}
 
-		const button = this.page.getByRole( 'button', {
-			name: templateName,
-			exact: true,
-		} );
+		const button = this.page
+			.getByRole( 'button', {
+				name: templateName,
+				exact: true,
+			} )
+			.and( this.page.locator( '.is-link' ) );
 
 		if ( await button.isVisible() ) {
 			await button.click();
