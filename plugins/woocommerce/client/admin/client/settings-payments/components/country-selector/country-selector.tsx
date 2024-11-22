@@ -189,11 +189,6 @@ export const CountrySelector = <ItemType extends Item>({
 		[ isSearchClearable, handleSearch ]
 	);
 
-    // Ensure aria compliance by removing 'downshift-null' from aria-activedescendant
-	if ( ( menuProps as Record<string, any> )['aria-activedescendant']?.startsWith( 'downshift-null' ) ) {
-		delete menuProps['aria-activedescendant'];
-	}
-
 	return (
 		<div className={ classNames( 'woopayments components-country-select-control', className ) }>
 			<Button
