@@ -246,17 +246,23 @@ class OnboardingPlugins extends WC_REST_Data_Controller {
 			$calypso_env = 'horizon';
 		}
 
-		return [
-			'success' => ! $errors->has_errors(),
-			'errors'  => $errors->get_error_messages(),
-			'url'     => add_query_arg(
+		$color_scheme = get_user_option( 'admin_color', get_current_user_id() );
+		if ( ! $color_scheme ) {
+			$color_scheme = 'default';
+		}
+
+		return array(
+			'success'      => ! $errors->has_errors(),
+			'errors'       => $errors->get_error_messages(),
+			'color_scheme' => 'fresh' === $color_scheme ? 'default' : $color_scheme,
+			'url'          => add_query_arg(
 				array(
 					'from'        => $request->get_param( 'from' ),
 					'calypso_env' => $calypso_env,
 				),
 				$authorization_url,
 			),
-		];
+		);
 	}
 
 	/**
