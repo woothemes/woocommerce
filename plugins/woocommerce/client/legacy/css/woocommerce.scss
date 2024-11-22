@@ -839,6 +839,10 @@ p.demo_store,
 		}
 	}
 
+	.comment-form-rating {
+		@include reset-rating-fieldset();
+	}
+
 	p.stars {
 		a {
 			position: relative;
