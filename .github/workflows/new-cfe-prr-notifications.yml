@@ -66,6 +66,8 @@ jobs:
   verify:
     if: github.event.label.name == 'code freeze exception' || github.event.label.name == 'point release request'
     runs-on: ubuntu-20.04
+    permissions:
+      issues: write
     needs:
       - prep
     steps:
@@ -80,40 +82,69 @@ jobs:
             const issueUrl = context.payload.issue.html_url;
             const issueTitle = context.payload.issue.title;
             const labelName = context.payload.label?.name;
+            let prData;
 
-            const prData = await gh.rest.pulls.get({
-              owner: context.repo.owner,
+            try {
+              prData = await github.rest.pulls.get({
+                owner: context.repo.owner,
               repo: context.repo.repo,
-              pull_number: env.PR_NUMBER
-            });
+                pull_number: process.env.PR_NUMBER
+              });
+            } catch (error) {
+              core.setOutput('SLACK_MESSAGE', '');
+              core.setOutput('GITHUB_COMMENT', 'We couldn\'t find the PR you entered with the request. Please check if the PR number is correct.');
+              core.setFailed('Error fetching PR data. Please check if the PR number is correct.');
+              //skip the rest of the step
+              return;
+            }
 
-            const baseRefName = prData.data.baseRefName;
+            // added this for debugging
+            console.log(prData);
+
+            const baseRefName = prData.data.base.ref;
             console.log(`PR base ref: ${baseRefName}`);
 
             if (!baseRefName.startsWith('release/')) {
               core.setFailed('The PR base_ref must start with release/.');
-              if (labelName === 'code freeze exception') {
-                core.setOutput('SLACK_MESSAGE', `:x: We didn't open your Code Freeze Exception request as the PR you entered with the request does not originate from the release branch. Please switch your PR base to release branch and open a new request. Your base ref was: ${baseRefName}. ${issueTitle} ${issueUrl}`);
-              } else {
-                core.setOutput('SLACK_MESSAGE', `:x: We didn't open your Point Release Request as the PR you entered with the request does not originate from the release branch. Please switch your PR base to release branch and open a new request. Your base ref was: ${baseRefName}. ${issueTitle} ${issueUrl}`);
-              }
+
+              core.setOutput(
+                  'SLACK_MESSAGE',
+                  `:x: We did not process your ${labelName === 'code freeze exception' ? 'Code Freeze Exception' : 'Point Release Request'} because the PR associated with the request does not originate from the release branch. Please update the PR base to the release branch and submit a new request.\n\nThe current base branch is: \`${baseRefName}\`. ${issueTitle} ${issueUrl}`
+              );
+
+              core.setOutput(
+                  'GITHUB_COMMENT',
+                  'The PR you entered with the request does not originate from the release branch. Please switch your PR base to release branch and open a new request.'
+              );
             }
 
       - name: Notify Slack
         uses: archive/github-actions-slack@v2.0.0
-        if: ${{ failure()}}
+        if: ${{ failure() && steps.verify-pr.outputs.SLACK_MESSAGE != '' }}
         id: notify
         with:
           slack-bot-user-oauth-access-token: ${{ secrets.CODE_FREEZE_BOT_TOKEN }}
           slack-channel: ${{ secrets.WOO_RELEASE_SLACK_CHANNEL }}
           slack-text: ${{ steps.verify-pr.outputs.SLACK_MESSAGE }}
+          slack-optional-unfurl_links: false
+          slack-optional-unfurl_media: false
 
-      - name: Close the issue
-        if: ${{ failure()}}
+      - name: Remove the label(s)
+        if: ${{ failure() }}
         env:
           ISSUE_URL: ${{ github.event.issue.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh issue close "$ISSUE_URL" --comment "Closing issue as the PR base ref does not start with release/. Please switch the base to release branch and open a new request."
+          gh issue edit "$ISSUE_URL" --remove-label "code freeze exception"
+          gh issue edit "$ISSUE_URL" --remove-label "point release request"
+
+      - name: Close the issue
+        if: ${{ failure() }}
+        env:
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue close "$ISSUE_URL" --comment "${{ steps.verify-pr.outputs.GITHUB_COMMENT }}"
 
   apply-milestone:
     if: github.event.label.name == 'code freeze exception' || github.event.label.name == 'point release request' || github.event.label.name == 'Approved' || github.event.label.name == 'Rejected'
@@ -180,6 +211,7 @@ jobs:
       issues: write
     needs:
       - prep
+      - verify
     steps:
       - name: Add label 'cherry pick to trunk' to PR
         env:
