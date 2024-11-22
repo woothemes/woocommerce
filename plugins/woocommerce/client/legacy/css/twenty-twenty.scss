@@ -688,6 +688,18 @@ button.reset_variations {
 				max-width: 58rem;
 				margin: 0 auto;
 			}
+
+			@include reset-rating-fieldset();
+
+			fieldset {
+				margin: 0 auto;
+				max-width: 58rem;
+
+				legend {
+					font-size: 1.6rem;
+					font-weight: 400;
+				}
+			}
 		}
 
 		p.stars {
