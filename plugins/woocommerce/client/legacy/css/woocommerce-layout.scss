@@ -411,15 +411,29 @@
 		}
 
 		.show-password-input {
+			background-color: transparent;
+			border-radius: 0;
+			border: 0;
+			color: inherit;
+			cursor: pointer;
+			font-size: inherit;
+			line-height: inherit;
+			margin: 0;
+			padding: 0;
 			position: absolute;
 			right: 0.7em;
+			text-decoration: none;
 			top: 0.7em;
-			cursor: pointer;
+			-moz-osx-font-smoothing: inherit;
+			-webkit-appearance: none;
+			-webkit-font-smoothing: inherit;
 		}
 
 		.show-password-input::after {
 
 			@include iconafter( "\e010" ); 	// Icon styles and glyph
+
+			margin-left: 0; /* reset the left margin from iconafter mixin */
 		}
 
 		.show-password-input.display-password::after {
