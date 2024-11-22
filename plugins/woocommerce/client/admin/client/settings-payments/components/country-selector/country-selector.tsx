@@ -7,7 +7,11 @@ import { useCallback } from '@wordpress/element';
 import classNames from 'classnames';
 import { __, sprintf } from '@wordpress/i18n';
 import { check, chevronDown, Icon } from '@wordpress/icons';
-import { useSelect, UseSelectState, StateChangeOptions } from 'downshift';
+import {
+	useSelect,
+	UseSelectState,
+	UseSelectStateChangeOptions
+} from 'downshift';
 
 /**
  * Internal Dependencies
@@ -18,22 +22,11 @@ import './country-selector.scss';
 
 // State reducer to control selection navigation
 const stateReducer = <ItemType extends Item>(
-	state: UseSelectState<ItemType>,
-	action: StateChangeOptions<ItemType>
+	state: UseSelectState< ItemType | null >,
+	actionAndChanges: UseSelectStateChangeOptions< ItemType | null >
 ): Partial<UseSelectState<ItemType>> => {
-	const { selectedItem } = state;
-	const { type, changes } = action;
-	const items = action.props.items || [];
-
+	const { changes, type } = actionAndChanges;
 	switch (type) {
-        case useSelect.stateChangeTypes.ToggleButtonKeyDownArrowDown:
-			return {
-				selectedItem: items[ selectedItem ? Math.min( items.indexOf(selectedItem ) + 1, items.length - 1 ) : 0 ],
-			};
-		case useSelect.stateChangeTypes.ToggleButtonKeyDownArrowUp:
-			return {
-				selectedItem: items[ selectedItem ? Math.max( items.indexOf( selectedItem ) - 1, 0 ) : items.length - 1 ],
-			};
 		case useSelect.stateChangeTypes.ItemClick:
 			return {
 				...changes,
@@ -78,13 +71,13 @@ export const CountrySelector = <ItemType extends Item>({
 	} = useSelect<ItemType>({
 		initialSelectedItem: value,
 		items: itemsToRender,
-		getOptionLabel,
 		stateReducer,
 		onIsOpenChange: () =>
 			selectItem( value )
 	});
 
 	const itemString = getOptionLabel( value.key, items );
+	const selectedValue = selectedItem ? selectedItem.key : '';
 
 	const searchRef = useRef< HTMLInputElement >( null );
 	const previousStateRef = useRef< {
@@ -145,7 +138,7 @@ export const CountrySelector = <ItemType extends Item>({
     const onApplyHandler = useCallback(
         ( e: React.MouseEvent<HTMLButtonElement> ) => {
             e.stopPropagation();
-			onChange( selectedItem.key );
+			onChange( selectedValue );
             closeMenu();
         },
         [ onChange, selectedItem, closeMenu ]
@@ -262,7 +255,7 @@ export const CountrySelector = <ItemType extends Item>({
 										style: item.style,
 									})}
 								>
-									{ item.key === selectedItem.key && (
+									{ item.key === selectedValue && (
 										<Icon
 											icon={ check }
 											className="components-country-select-control__item-icon"
@@ -273,7 +266,12 @@ export const CountrySelector = <ItemType extends Item>({
 							) ) }
 						</div>
 						<div className="components-country-select-control__apply">
-							<button className="components-button is-primary" onClick={ onApplyHandler }>{ __( 'Apply', 'woocommerce' ) }</button>
+							<button
+								className="components-button is-primary"
+								onClick={ onApplyHandler }
+							>
+								{ __( 'Apply', 'woocommerce' ) }
+							</button>
 						</div>
 					</>
            		) }
