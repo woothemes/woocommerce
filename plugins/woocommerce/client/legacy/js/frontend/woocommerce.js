@@ -104,26 +104,36 @@ jQuery( function ( $ ) {
 		.filter( ':password' )
 		.parent( 'span' )
 		.addClass( 'password-input' );
-	$( '.password-input' ).append(
-		'<span class="show-password-input"></span>'
-	);
 
-	$( '.show-password-input' ).on( 'click', function () {
-		if ( $( this ).hasClass( 'display-password' ) ) {
-			$( this ).removeClass( 'display-password' );
-		} else {
-			$( this ).addClass( 'display-password' );
-		}
-		if ( $( this ).hasClass( 'display-password' ) ) {
-			$( this )
-				.siblings( [ 'input[type="password"]' ] )
-				.prop( 'type', 'text' );
-		} else {
-			$( this )
-				.siblings( 'input[type="text"]' )
-				.prop( 'type', 'password' );
-		}
-	} );
+		$('.password-input').each(function() {
+			const describedBy = $(this).find('input').attr('id');
+			$(this).append(
+				'<button class="show-password-input" aria-label="Show password" aria-describedBy="' + describedBy + '"></button>'
+			);
+		});
+
+		$( '.show-password-input' ).on( 'click', function (event) {
+			event.preventDefault();
+		
+			if ( $( this ).hasClass( 'display-password' ) ) {
+				$( this ).removeClass( 'display-password' );
+				$( this ).attr( 'aria-label', 'Show password' );
+			} else {
+				$( this ).addClass( 'display-password' );
+				$( this ).attr( 'aria-label', 'Hide password' );
+			}
+			if ( $( this ).hasClass( 'display-password' ) ) {
+				$( this )
+					.siblings( [ 'input[type="password"]' ] )
+					.prop( 'type', 'text' );
+			} else {
+				$( this )
+					.siblings( 'input[type="text"]' )
+					.prop( 'type', 'password' );
+			}
+		
+			$(this).siblings('input').focus();
+		} );
 
 	$( 'a.coming-soon-footer-banner-dismiss' ).on( 'click', function ( e ) {
 		var target = $( e.target );
