@@ -135,6 +135,34 @@
 					]
 				},
 				{
+					"name": "PHP: 8.4 WP: latest",
+					"testType": "unit:php",
+					"command": "test:php:env",
+					"shardingArguments": [
+						"--testsuite=wc-phpunit-legacy",
+						"--testsuite=wc-phpunit-main"
+					],
+					"changes": [
+						"client/admin/config/*.json",
+						"composer.json",
+						"composer.lock",
+						"**/*.php",
+						".wp-env.json",
+						"phpunit.xml"
+					],
+					"testEnv": {
+						"start": "env:test",
+						"config": {
+							"phpVersion": "8.4",
+							"wpVersion": "latest"
+						}
+					},
+					"events": [
+						"pull_request",
+						"push"
+					]
+				},
+				{
 					"name": "PHP WP: latest - 1",
 					"testType": "unit:php",
 					"command": "test:php:env",
