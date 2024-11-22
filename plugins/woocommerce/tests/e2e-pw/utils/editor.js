@@ -50,8 +50,12 @@ const goToPostEditor = async ( { page } ) => {
 };
 
 const fillPageTitle = async ( page, title ) => {
-	await ( await getCanvas( page ) ).getByLabel( 'Add title' ).click();
-	await ( await getCanvas( page ) ).getByLabel( 'Add title' ).fill( title );
+	await ( await getCanvas( page ) )
+		.getByLabel( /(Add title|Block: Title)/ )
+		.click();
+	await ( await getCanvas( page ) )
+		.getByLabel( /(Add title|Block: Title)/ )
+		.fill( title );
 };
 
 const insertBlock = async ( page, blockName, wpVersion = null ) => {
