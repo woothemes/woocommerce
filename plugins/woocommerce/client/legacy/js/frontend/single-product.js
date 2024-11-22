@@ -76,10 +76,11 @@ jQuery( function( $ ) {
 		} )
 		.on( 'click', '#respond p.stars a', function() {
 			var $star   	= $( this ),
+				starPos     = $star.closest( 'p.stars' ).find( 'a' ).index( $star ) + 1,
 				$rating 	= $( this ).closest( '#respond' ).find( '#rating' ),
 				$container 	= $( this ).closest( '.stars' );
 
-			$rating.val( $star.text() );
+			$rating.val( starPos );
 			$star.siblings( 'a' )
 				.removeClass( 'active' )
 				.attr( 'aria-checked', 'false' )
