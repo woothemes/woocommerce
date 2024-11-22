@@ -180,17 +180,28 @@ test.describe(
 								exact: true,
 							} )
 							.click();
+						// Click on the Reviews by Product block to show the Block Tools to be used later.
+						await canvas
+							.getByLabel( 'Block: Reviews by Product' )
+							.click();
 					}
 
 					// verify added blocks into page
 					await expect(
-						canvas
+						await canvas
 							.getByRole( 'document', {
 								name: `Block: ${ blocks[ i ] }`,
 								exact: true,
 							} )
 							.first()
 					).toBeVisible();
+
+					// Add a new empty block to insert the next block into.
+					await page
+						.getByLabel( 'Block tools' )
+						.getByLabel( 'Options' )
+						.click();
+					await page.getByText( 'Add after' ).click();
 				} );
 			}
 
