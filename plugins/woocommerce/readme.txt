@@ -173,6 +173,7 @@ WooCommerce comes with some sample data you can use to see how products look; im
 
 **WooCommerce**
 
+* Fix - Modify product import file check to use the WP filesystem API [#51540](https://github.com/woocommerce/woocommerce/pull/51540)
 * Fix - Prevented a i10n-related warning when using WordPress 6.7 with Brands [#52912](https://github.com/woocommerce/woocommerce/pull/52912)
 * Fix - Added strict check for PR and release number extracted from Issue body [#52002](https://github.com/woocommerce/woocommerce/pull/52002)
 * Fix - Add focus indicator to image on product card [#52011](https://github.com/woocommerce/woocommerce/pull/52011)
