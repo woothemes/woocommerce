@@ -274,6 +274,9 @@ trait OrderAttributionMeta {
 	 * @return string
 	 */
 	private function get_origin_label( string $source_type, string $source, bool $translated = true ): string {
+		// Store the unmodified source.
+		$source_unmodified = $source;
+		
 		// Set up the label based on the source type.
 		switch ( $source_type ) {
 			case 'utm':
@@ -326,13 +329,15 @@ trait OrderAttributionMeta {
 		 *
 		 * @since 8.5.0
 		 *
-		 * @param string $formatted_source The formatted source.
-		 * @param string $source           The source.
+		 * @param string $formatted_source  The formatted source.
+		 * @param string $source            The source.
+		 * @param string $source_unmodified The unmodified source.
 		 */
 		$formatted_source = apply_filters(
 			'wc_order_attribution_origin_formatted_source',
 			ucfirst( trim( $source, '()' ) ),
-			$source
+			$source,
+			$source_unmodified
 		);
 
 		/**
