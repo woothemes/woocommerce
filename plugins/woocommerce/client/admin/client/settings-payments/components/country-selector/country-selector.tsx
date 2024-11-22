@@ -190,7 +190,7 @@ export const CountrySelector = <ItemType extends Item>({
 	);
 
     // Ensure aria compliance by removing 'downshift-null' from aria-activedescendant
-	if ( menuProps['aria-activedescendant']?.startsWith( 'downshift-null' ) ) {
+	if ( ( menuProps as Record<string, any> )['aria-activedescendant']?.startsWith( 'downshift-null' ) ) {
 		delete menuProps['aria-activedescendant'];
 	}
 
