@@ -4342,6 +4342,9 @@ importers:
       '@xstate5/react':
         specifier: npm:@xstate/react@4
         version: '@xstate/react@4.1.0(@types/react@17.0.71)(react@17.0.2)(xstate@4.37.1)'
+      classnames:
+        specifier: ^2.3.2
+        version: 2.3.2
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -4354,6 +4357,9 @@ importers:
       dompurify:
         specifier: ^2.5.7
         version: 2.5.7
+      downshift:
+        specifier: ^9.0.8
+        version: 9.0.8(react@17.0.2)
       github-label-sync:
         specifier: ^2.3.1
         version: 2.3.1
@@ -14509,6 +14515,9 @@ packages:
   compute-scroll-into-view@1.0.20:
     resolution: {integrity: sha512-UCB0ioiyj8CRjtrvaceBLqqhZCVP+1B8+NWQhmdsm0VXOJtobBCf1dBQmebCCo34qZmUwZfIH2MZLqNHazrfjg==}
 
+  compute-scroll-into-view@3.1.0:
+    resolution: {integrity: sha512-rj8l8pD4bJ1nx+dAkMhV1xB5RuZEyVysfxJqB1pRchh1KVvwOv9b7CGB8ZfjTImVv2oF+sYMUkMZq6Na5Ftmbg==}
+
   computed-style@0.1.4:
     resolution: {integrity: sha512-WpAmaKbMNmS3OProfHIdJiNleNJdgUrJfbKArXua28QF7+0CoZjlLn0lp6vlc+dl5r2/X9GQiQRQQU4BzSa69w==}
 
@@ -15524,6 +15533,11 @@ packages:
 
   downshift@6.1.7:
     resolution: {integrity: sha512-cVprZg/9Lvj/uhYRxELzlu1aezRcgPWBjTvspiGTVEU64gF5pRdSRKFVLcxqsZC637cLAGMbL40JavEfWnqgNg==}
+    peerDependencies:
+      react: '>=16.12.0'
+
+  downshift@9.0.8:
+    resolution: {integrity: sha512-59BWD7+hSUQIM1DeNPLirNNnZIO9qMdIK5GQ/Uo8q34gT4B78RBlb9dhzgnh0HfQTJj4T/JKYD8KoLAlMWnTsA==}
     peerDependencies:
       react: '>=16.12.0'
 
@@ -48153,6 +48167,8 @@ snapshots:
 
   compute-scroll-into-view@1.0.20: {}
 
+  compute-scroll-into-view@3.1.0: {}
+
   computed-style@0.1.4: {}
 
   concat-map@0.0.1: {}
@@ -49492,6 +49508,15 @@ snapshots:
       react: 18.3.1
       react-is: 17.0.2
       tslib: 2.6.2
+
+  downshift@9.0.8(react@17.0.2):
+    dependencies:
+      '@babel/runtime': 7.25.7
+      compute-scroll-into-view: 3.1.0
+      prop-types: 15.8.1
+      react: 17.0.2
+      react-is: 18.2.0
+      tslib: 2.6.3
 
   duplexer3@0.1.5: {}
 
@@ -58764,7 +58789,7 @@ snapshots:
       loader-utils: 2.0.4
       postcss: 8.4.32
       schema-utils: 3.3.0
-      semver: 7.5.4
+      semver: 7.6.3
       webpack: 5.89.0(webpack-cli@4.10.0)
 
   postcss-loader@4.3.0(postcss@8.4.32)(webpack@5.89.0):
@@ -60470,13 +60495,13 @@ snapshots:
     dependencies:
       object-assign: 4.1.1
       react: 17.0.2
-      react-is: 18.2.0
+      react-is: 18.3.1
 
   react-shallow-renderer@16.15.0(react@18.3.1):
     dependencies:
       object-assign: 4.1.1
       react: 18.3.1
-      react-is: 18.2.0
+      react-is: 18.3.1
 
   react-slider@2.0.6(react@17.0.2):
     dependencies:
@@ -64681,7 +64706,7 @@ snapshots:
       sockjs: 0.3.24
       spdy: 4.0.2
       webpack-dev-middleware: 5.3.3(webpack@5.89.0(esbuild@0.18.20)(webpack-cli@3.3.12))
-      ws: 8.18.0
+      ws: 8.15.0
     optionalDependencies:
       webpack: 5.89.0(esbuild@0.18.20)(webpack-cli@3.3.12)
       webpack-cli: 3.3.12(webpack@5.89.0)
@@ -64723,7 +64748,7 @@ snapshots:
       sockjs: 0.3.24
       spdy: 4.0.2
       webpack-dev-middleware: 5.3.3(webpack@5.89.0(webpack-cli@3.3.12))
-      ws: 8.18.0
+      ws: 8.15.0
     optionalDependencies:
       webpack: 5.89.0(webpack-cli@3.3.12)
       webpack-cli: 3.3.12(webpack@5.89.0)
@@ -64765,7 +64790,7 @@ snapshots:
       sockjs: 0.3.24
       spdy: 4.0.2
       webpack-dev-middleware: 5.3.3(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))
-      ws: 8.18.0
+      ws: 8.15.0
     optionalDependencies:
       webpack: 5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@4.10.0)
       webpack-cli: 4.10.0(webpack-bundle-analyzer@4.7.0)(webpack-dev-server@4.15.1)(webpack@5.91.0)
@@ -64806,7 +64831,7 @@ snapshots:
       sockjs: 0.3.24
       spdy: 4.0.2
       webpack-dev-middleware: 5.3.3(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))
-      ws: 8.18.0
+      ws: 8.15.0
     optionalDependencies:
       webpack: 5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)
       webpack-cli: 5.1.4(webpack-bundle-analyzer@4.7.0)(webpack-dev-server@4.15.1)(webpack@5.91.0)
@@ -64847,7 +64872,7 @@ snapshots:
       sockjs: 0.3.24
       spdy: 4.0.2
       webpack-dev-middleware: 5.3.3(webpack@5.89.0(@swc/core@1.3.100)(esbuild@0.18.20))
-      ws: 8.18.0
+      ws: 8.15.0
     optionalDependencies:
       webpack: 5.89.0(@swc/core@1.3.100)(esbuild@0.18.20)
     transitivePeerDependencies:
