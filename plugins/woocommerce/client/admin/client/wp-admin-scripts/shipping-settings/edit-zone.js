@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { chevronLeft, Icon } from '@wordpress/icons';
+import { close, Icon } from '@wordpress/icons';
 import { Button, CheckboxControl } from '@wordpress/components';
 import { decodeEntities } from '@wordpress/html-entities';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
@@ -39,14 +39,29 @@ export const EditZone = ( { zoneId } ) => {
 			zoneId: undefined,
 		} );
 	};
+	const onMethodEdit = ( methodId ) => {
+		const currentArgs = getQueryArgs( window.location.href );
+
+		history.push( {
+			...currentArgs,
+			methodId,
+		} );
+	};
 
 	return (
 		<>
-			<div style={ { display: 'flex', alignItems: 'center' } }>
-				<Button onClick={ back }>
-					<Icon icon={ chevronLeft } />
-				</Button>
+			<div
+				style={ {
+					padding: '20px',
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'space-between',
+				} }
+			>
 				<h2>Edit Zone { zone.zone_name }</h2>
+				<Button onClick={ back }>
+					<Icon icon={ close } />
+				</Button>
 			</div>
 			<div
 				style={ {
@@ -100,7 +115,12 @@ export const EditZone = ( { zoneId } ) => {
 										/>
 									</td>
 									<td>
-										<Button variant="secondary">
+										<Button
+											variant="secondary"
+											onClick={ () =>
+												onMethodEdit( methodId )
+											}
+										>
 											Edit
 										</Button>
 									</td>
