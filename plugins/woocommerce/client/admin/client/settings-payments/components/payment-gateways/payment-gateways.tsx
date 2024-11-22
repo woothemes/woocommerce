@@ -40,7 +40,7 @@ export const PaymentGateways = ( {
 }: PaymentGatewaysProps ) => {
 	const setupLivePayments = () => {};
 	const [ storeCountry, setStoreCountry ] = useState( 'US' );
-	const countryOptions = Object.entries( wcSettings?.countries || [] )
+	const countryOptions = Object.entries( window.wcSettings.countries || [] )
 		.map( ( [ key, name ] ) => ( { key, name, types: [] } ) )
 		.sort( ( a, b ) => a.name.localeCompare( b.name ) );
 
