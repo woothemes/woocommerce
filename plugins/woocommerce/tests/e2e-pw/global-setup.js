@@ -5,6 +5,25 @@ const { site } = require( './utils' );
 const { logIn } = require( './utils/login' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const { DISABLE_HPOS, DISABLE_SITE_RESET } = process.env;
+const { exec } = require( 'child_process' );
+
+function dumpDatabase() {
+	return new Promise( ( resolve, reject ) => {
+		const dumpCommand = `wp-env run cli wp db export /var/www/html/wp-content/dump.sql --allow-root`;
+		exec( dumpCommand, ( error, stdout, stderr ) => {
+			if ( error ) {
+				console.error( `Error dumping database: ${ error.message }` );
+				return reject( error );
+			}
+			if ( stderr && ! stderr.includes( 'Ran `wp db export' ) ) {
+				console.error( `Error output: ${ stderr }` );
+				return reject( new Error( stderr ) );
+			}
+			console.log( 'Database dumped successfully.' );
+			resolve( stdout );
+		} );
+	} );
+}
 
 /**
  * @param {import('@playwright/test').FullConfig} config
@@ -215,80 +234,13 @@ module.exports = async ( config ) => {
 		console.error(
 			'Cannot proceed e2e test, as customer login failed. Please check if the test site has been setup correctly.'
 		);
+	}
+
+	// Dump the database
+	try {
+		await dumpDatabase();
+	} catch ( error ) {
+		console.error( 'Failed to dump the database:', error );
 		process.exit( 1 );
-	}
-
-	// While we're here, let's set HPOS according to the passed in DISABLE_HPOS env variable
-	// (if a value for DISABLE_HPOS was set)
-	// This was always being set to 'yes' after login in wp-env so this step ensures the
-	// correct value is set before we begin our tests
-	console.log( `DISABLE_HPOS: ${ DISABLE_HPOS }` );
-
-	const api = new wcApi( {
-		url: baseURL,
-		consumerKey: process.env.CONSUMER_KEY,
-		consumerSecret: process.env.CONSUMER_SECRET,
-		version: 'wc/v3',
-	} );
-
-	if ( DISABLE_HPOS ) {
-		const hposSettingRetries = 5;
-
-		const value = DISABLE_HPOS === '1' ? 'no' : 'yes';
-
-		for ( let i = 0; i < hposSettingRetries; i++ ) {
-			try {
-				console.log(
-					`Trying to switch ${
-						value === 'yes' ? 'on' : 'off'
-					} HPOS...`
-				);
-				const response = await api.post(
-					'settings/advanced/woocommerce_custom_orders_table_enabled',
-					{ value }
-				);
-				if ( response.data.value === value ) {
-					console.log(
-						`HPOS Switched ${
-							value === 'yes' ? 'on' : 'off'
-						} successfully`
-					);
-					hposConfigured = true;
-					break;
-				}
-			} catch ( e ) {
-				console.log(
-					`HPOS setup failed. Retrying... ${ i }/${ hposSettingRetries }`
-				);
-				console.log( e );
-			}
-		}
-
-		if ( ! hposConfigured ) {
-			console.error(
-				'Cannot proceed e2e test, HPOS configuration failed. Please check if the correct DISABLE_HPOS value was used and the test site has been setup correctly.'
-			);
-			process.exit( 1 );
-		}
-	}
-
-	const response = await api.get(
-		'settings/advanced/woocommerce_custom_orders_table_enabled'
-	);
-	const dataValue = response.data.value;
-	const enabledOption = response.data.options[ dataValue ];
-	console.log(
-		`HPOS configuration (woocommerce_custom_orders_table_enabled): ${ dataValue } - ${ enabledOption }`
-	);
-
-	await site.useCartCheckoutShortcodes( baseURL, userAgent, admin );
-
-	await browser.close();
-
-	if ( process.env.RESET_SITE === 'true' ) {
-		await site.reset(
-			process.env.CONSUMER_KEY,
-			process.env.CONSUMER_SECRET
-		);
 	}
 };

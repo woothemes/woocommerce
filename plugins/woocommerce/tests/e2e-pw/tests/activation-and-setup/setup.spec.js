@@ -1,7 +1,26 @@
 const { test, expect, request } = require( '@playwright/test' );
 const { setOption } = require( '../../utils/options' );
+const { exec } = require( 'child_process' );
 
-test.describe.skip(
+function loadDatabaseBackup() {
+	return new Promise( ( resolve, reject ) => {
+		const importCommand = `wp-env run cli wp db import /var/www/html/wp-content/dump.sql`;
+		exec( importCommand, ( error, stdout, stderr ) => {
+			if ( error ) {
+				console.error( `Error importing database: ${ error.message }` );
+				return reject( error );
+			}
+			if ( stderr && ! stderr.includes( 'Ran `wp db import' ) ) {
+				console.error( `Error output: ${ stderr }` );
+				return reject( new Error( stderr ) );
+			}
+			console.log( 'Database imported successfully.' );
+			resolve( stdout );
+		} );
+	} );
+}
+
+test.describe(
 	'Store owner can skip the core profiler',
 	{ tag: [ '@skip-on-default-pressable', '@skip-on-default-wpcom' ] },
 	() => {
@@ -17,6 +36,15 @@ test.describe.skip(
 				);
 			} catch ( error ) {
 				console.log( error );
+			}
+		} );
+
+		test.afterAll( async ( {} ) => {
+			// Load the database backup
+			try {
+				await loadDatabaseBackup();
+			} catch ( error ) {
+				console.error( 'Failed to load the database backup:', error );
 			}
 		} );
 
@@ -104,210 +132,202 @@ test.describe.skip(
 	}
 );
 
-// these tests run in sequence and depend on the previous tests. They can't retry unfortunately.
-// hopefully we can find a way to manage state between tests in the future
-test.describe.skip(
-	'Store owner can skip the core profiler and proceed to setup',
-	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+test.describe( 'Store owner can skip the core profiler and proceed to setup', () => {
+	test.afterAll( async ( {} ) => {
+		// Load the database backup
+		try {
+			await loadDatabaseBackup();
+		} catch ( error ) {
+			console.error( 'Failed to load the database backup:', error );
+		}
+	} );
 
-		test( 'Can click skip for the guided setup', async ( { page } ) => {
-			await page.goto(
-				'wp-admin/admin.php?page=wc-admin&path=%2Fsetup-wizard'
-			);
+	test.use( { storageState: process.env.ADMINSTATE } );
 
+	test( 'Can click skip for the guided setup', async ( { page } ) => {
+		await page.goto(
+			'wp-admin/admin.php?page=wc-admin&path=%2Fsetup-wizard'
+		);
+
+		await page.getByRole( 'button', { name: 'Skip guided setup' } ).click();
+
+		await expect(
+			page.getByRole( 'heading', {
+				name: 'Where is your business located?',
+			} )
+		).toBeVisible();
+		await page.getByLabel( 'Select country/region' ).click();
+		await page
+			.getByRole( 'option', {
+				name: 'United States (US) — California',
+			} )
+			.click();
+		await page.getByRole( 'button', { name: 'Go to my store' } ).click();
+
+		await expect(
+			page.getByRole( 'heading', { name: 'Turning on the lights' } )
+		).toBeVisible();
+
+		await expect(
+			page.getByRole( 'heading', {
+				name: 'Home',
+			} )
+		).toBeVisible();
+	} );
+
+	test( 'Not taking action does not complete task on task list', async ( {
+		page,
+	} ) => {
+		await page.goto( 'wp-admin/admin.php?page=wc-admin' );
+		// assert that the task list is shown
+		await expect(
+			page.getByRole( 'heading', {
+				name: 'Start customizing your store',
+			} )
+		).toBeVisible();
+
+		// click through to the first task, but don't change anything
+		await test.step( 'Do not complete the first task', async () => {
 			await page
-				.getByRole( 'button', { name: 'Skip guided setup' } )
-				.click();
-
-			await expect(
-				page.getByRole( 'heading', {
-					name: 'Where is your business located?',
-				} )
-			).toBeVisible();
-			await page.getByLabel( 'Select country/region' ).click();
-			await page
-				.getByRole( 'option', {
-					name: 'United States (US) — California',
-				} )
+				.getByRole( 'button', { name: 'Customize your store' } )
 				.click();
 			await page
-				.getByRole( 'button', { name: 'Go to my store' } )
+				.locator( 'div' )
+				.filter( { hasText: /^Customize your store$/ } )
+				.getByRole( 'button' )
 				.click();
-
-			await expect(
-				page.getByRole( 'heading', { name: 'Turning on the lights' } )
-			).toBeVisible();
-
-			await expect(
-				page.getByRole( 'heading', {
-					name: 'Home',
-				} )
-			).toBeVisible();
 		} );
 
-		test( 'Not taking action does not complete task on task list', async ( {
-			page,
-		} ) => {
-			await page.goto( 'wp-admin/admin.php?page=wc-admin' );
-			// assert that the task list is shown
-			await expect(
-				page.getByRole( 'heading', {
-					name: 'Start customizing your store',
-				} )
-			).toBeVisible();
+		// assert that the task is not marked as complete
+		await expect(
+			page.getByRole( 'button', { name: 'Customize your store' } )
+		).not.toHaveClass( 'complete' );
 
-			// click through to the first task, but don't change anything
-			await test.step( 'Do not complete the first task', async () => {
-				await page
-					.getByRole( 'button', { name: 'Customize your store' } )
-					.click();
-				await page
-					.locator( 'div' )
-					.filter( { hasText: /^Customize your store$/ } )
-					.getByRole( 'button' )
-					.click();
-			} );
+		await expect(
+			page.getByRole( 'heading', {
+				name: 'Start customizing your store',
+			} )
+		).toBeVisible();
+	} );
 
-			// assert that the task is not marked as complete
+	test( 'Taking action completes a task on the task list', async ( {
+		page,
+	} ) => {
+		await page.goto( 'wp-admin/admin.php?page=wc-admin' );
+
+		// assert that the task list is shown
+		await expect(
+			page.getByRole( 'heading', {
+				name: 'Start customizing your store',
+			} )
+		).toBeVisible();
+
+		await test.step( 'Perform some actions to complete the first task', async () => {
+			await page
+				.getByRole( 'button', { name: 'Customize your store' } )
+				.click();
+			await page
+				.getByRole( 'button', { name: 'Go to the Editor' } )
+				.click();
+
+			// Click the Style button and wait for the style panel
+			await page.getByRole( 'button', { name: 'Style' } ).click();
+
+			await page.keyboard.press( 'Tab' );
+			await page.keyboard.press( 'Tab' );
+			await page.keyboard.press( 'Tab' );
+			await page.keyboard.press( 'Tab' );
+			await page.keyboard.press( 'Enter' );
+
+			await page.getByLabel( 'Save' ).click();
+		} );
+
+		await test.step( 'Go back to the dashboard and confirm that the task is marked as complete', async () => {
+			await expect( page.getByLabel( 'Saved' ) ).toBeVisible();
+
+			await page.getByLabel( 'Back' ).click();
+
+			await page
+				.locator( 'div' )
+				.filter( { hasText: /^Design$/ } )
+				.getByLabel( 'Go to the Dashboard' )
+				.click();
+			await page
+				.getByRole( 'link', { name: 'WooCommerce', exact: true } )
+				.click();
 			await expect(
 				page.getByRole( 'button', { name: 'Customize your store' } )
-			).not.toHaveClass( 'complete' );
-
-			await expect(
-				page.getByRole( 'heading', {
-					name: 'Start customizing your store',
-				} )
-			).toBeVisible();
-		} );
-
-		test( 'Taking action completes a task on the task list', async ( {
-			page,
-		} ) => {
-			await page.goto( 'wp-admin/admin.php?page=wc-admin' );
-
-			// assert that the task list is shown
-			await expect(
-				page.getByRole( 'heading', {
-					name: 'Start customizing your store',
-				} )
-			).toBeVisible();
-
-			await test.step( 'Perform some actions to complete the first task', async () => {
-				await page
-					.getByRole( 'button', { name: 'Customize your store' } )
-					.click();
-				await page
-					.getByRole( 'button', { name: 'Go to the Editor' } )
-					.click();
-
-				// Click the Style button and wait for the style panel
-				await page.getByRole( 'button', { name: 'Style' } ).click();
-
-				await page.keyboard.press( 'Tab' );
-				await page.keyboard.press( 'Tab' );
-				await page.keyboard.press( 'Tab' );
-				await page.keyboard.press( 'Tab' );
-				await page.keyboard.press( 'Enter' );
-
-				await page.getByLabel( 'Save' ).click();
-			} );
-
-			await test.step( 'Go back to the dashboard and confirm that the task is marked as complete', async () => {
-				await expect( page.getByLabel( 'Saved' ) ).toBeVisible();
-
-				await page.getByLabel( 'Back' ).click();
-
-				await page
-					.locator( 'div' )
-					.filter( { hasText: /^Design$/ } )
-					.getByLabel( 'Go to the Dashboard' )
-					.click();
-				await page
-					.getByRole( 'link', { name: 'WooCommerce', exact: true } )
-					.click();
-				await expect(
-					page.getByRole( 'button', { name: 'Customize your store' } )
-				).toHaveClass(
-					'woocommerce-experimental-list__item has-action transitions-disabled woocommerce-task-list__item index-1 complete'
-				);
-			} );
-		} );
-
-		test( 'Can hide the task list', async ( { page } ) => {
-			await page.goto( 'wp-admin/admin.php?page=wc-admin' );
-
-			// assert that the task list is shown
-			await expect(
-				page.getByRole( 'heading', { name: 'Import your products' } )
-			).toBeVisible();
-
-			// hide the task list
-			await page
-				.getByRole( 'button', { name: 'Task List Options' } )
-				.first()
-				.click();
-			await page
-				.getByRole( 'button', { name: 'Hide setup list' } )
-				.click();
-
-			// assert that the task list is hidden
-			await expect(
-				page.getByRole( 'heading', {
-					name: 'Start customizing your store',
-				} )
-			).toBeHidden();
-		} );
-
-		test( 'Store management displayed after task list complete/hidden', async ( {
-			page,
-		} ) => {
-			await page.goto( 'wp-admin/admin.php?page=wc-admin' );
-
-			await expect(
-				page
-					.locator( 'div' )
-					.filter( { hasText: /^Store management$/ } )
-			).toBeVisible();
-			await expect(
-				page.getByText(
-					'Marketing & MerchandisingMarketingAdd productsPersonalize my storeView my store'
-				)
-			).toBeVisible();
-			await expect(
-				page.getByText( 'SettingsStore detailsPaymentsTaxShipping' )
-			).toBeVisible();
-		} );
-
-		test( 'Can access analytics reports from stats overview', async ( {
-			page,
-		} ) => {
-			await page.goto( 'wp-admin/admin.php?page=wc-admin' );
-
-			await expect(
-				page.locator( 'div' ).filter( { hasText: /^Stats overview$/ } )
-			).toBeVisible();
-
-			await page
-				.getByRole( 'link', { name: 'View detailed stats' } )
-				.click();
-
-			await expect( page.url() ).toContain(
-				'wp-admin/admin.php?page=wc-admin&path=%2Fanalytics%2Foverview'
+			).toHaveClass(
+				'woocommerce-experimental-list__item has-action transitions-disabled woocommerce-task-list__item index-1 complete'
 			);
 		} );
+	} );
 
-		test( 'Extended task list visible', async ( { page } ) => {
-			await page.goto( 'wp-admin/admin.php?page=wc-admin' );
+	test( 'Can hide the task list', async ( { page } ) => {
+		await page.goto( 'wp-admin/admin.php?page=wc-admin' );
 
-			await expect( page.getByText( 'Things to do next' ) ).toBeVisible();
+		// assert that the task list is shown
+		await expect(
+			page.getByRole( 'heading', { name: 'Import your products' } )
+		).toBeVisible();
 
-			await page
-				.getByRole( 'button', { name: 'Task List Options' } )
-				.click();
-			await page.getByRole( 'button', { name: 'Hide this' } ).click();
+		// hide the task list
+		await page
+			.getByRole( 'button', { name: 'Task List Options' } )
+			.first()
+			.click();
+		await page.getByRole( 'button', { name: 'Hide setup list' } ).click();
 
-			await expect( page.getByText( 'Things to do next' ) ).toBeHidden();
-		} );
-	}
-);
+		// assert that the task list is hidden
+		await expect(
+			page.getByRole( 'heading', {
+				name: 'Start customizing your store',
+			} )
+		).toBeHidden();
+	} );
+
+	test( 'Store management displayed after task list complete/hidden', async ( {
+		page,
+	} ) => {
+		await page.goto( 'wp-admin/admin.php?page=wc-admin' );
+
+		await expect(
+			page.locator( 'div' ).filter( { hasText: /^Store management$/ } )
+		).toBeVisible();
+		await expect(
+			page.getByText(
+				'Marketing & MerchandisingMarketingAdd productsPersonalize my storeView my store'
+			)
+		).toBeVisible();
+		await expect(
+			page.getByText( 'SettingsStore detailsPaymentsTaxShipping' )
+		).toBeVisible();
+	} );
+
+	test( 'Can access analytics reports from stats overview', async ( {
+		page,
+	} ) => {
+		await page.goto( 'wp-admin/admin.php?page=wc-admin' );
+
+		await expect(
+			page.locator( 'div' ).filter( { hasText: /^Stats overview$/ } )
+		).toBeVisible();
+
+		await page.getByRole( 'link', { name: 'View detailed stats' } ).click();
+
+		await expect( page.url() ).toContain(
+			'wp-admin/admin.php?page=wc-admin&path=%2Fanalytics%2Foverview'
+		);
+	} );
+
+	test( 'Extended task list visible', async ( { page } ) => {
+		await page.goto( 'wp-admin/admin.php?page=wc-admin' );
+
+		await expect( page.getByText( 'Things to do next' ) ).toBeVisible();
+
+		await page.getByRole( 'button', { name: 'Task List Options' } ).click();
+		await page.getByRole( 'button', { name: 'Hide this' } ).click();
+
+		await expect( page.getByText( 'Things to do next' ) ).toBeHidden();
+	} );
+} );

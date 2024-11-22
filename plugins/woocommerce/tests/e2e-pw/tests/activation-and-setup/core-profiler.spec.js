@@ -1,11 +1,30 @@
 const { test, expect, request } = require( '@playwright/test' );
 const { setOption } = require( '../../utils/options' );
+const { exec } = require( 'child_process' );
 
 const getPluginLocator = ( page, slug ) => {
 	return page.locator(
 		`.woocommerce-profiler-plugins-plugin-card[data-slug="${ slug }"]`
 	);
 };
+
+function loadDatabaseBackup() {
+	return new Promise( ( resolve, reject ) => {
+		const importCommand = `wp-env run cli wp db import /var/www/html/wp-content/dump.sql`;
+		exec( importCommand, ( error, stdout, stderr ) => {
+			if ( error ) {
+				console.error( `Error importing database: ${ error.message }` );
+				return reject( error );
+			}
+			if ( stderr && ! stderr.includes( 'Ran `wp db import' ) ) {
+				console.error( `Error output: ${ stderr }` );
+				return reject( new Error( stderr ) );
+			}
+			console.log( 'Database imported successfully.' );
+			resolve( stdout );
+		} );
+	} );
+}
 
 test.describe(
 	'Store owner can complete the core profiler',
@@ -29,6 +48,15 @@ test.describe(
 				);
 			} catch ( error ) {
 				console.log( error );
+			}
+		} );
+
+		test.afterAll( async ( {} ) => {
+			// Load the database backup
+			try {
+				await loadDatabaseBackup();
+			} catch ( error ) {
+				console.error( 'Failed to load the database backup:', error );
 			}
 		} );
 
