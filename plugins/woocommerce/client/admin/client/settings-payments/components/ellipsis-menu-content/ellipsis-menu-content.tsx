@@ -22,6 +22,7 @@ interface EllipsisMenuContentProps {
 	pluginName: string;
 	isSuggestion: boolean;
 	links: PaymentGatewayLink[];
+	onToggle: () => void;
 	isWooPayments?: boolean;
 	isEnabled?: boolean;
 	needsSetup?: boolean;
@@ -33,19 +34,24 @@ export const EllipsisMenuContent = ( {
 	pluginName,
 	isSuggestion,
 	links,
+	onToggle,
 	isWooPayments = false,
 	isEnabled = false,
 	needsSetup = false,
 	testMode = false,
 }: EllipsisMenuContentProps ) => {
-	const { deactivatePlugin, createErrorNotice } =
-		useDispatch( PLUGINS_STORE_NAME );
+	const { deactivatePlugin } = useDispatch( PLUGINS_STORE_NAME );
 	const [ isDeactivating, setIsDeactivating ] = useState( false );
 	const [ isDisabling, setIsDisabling ] = useState( false );
+	const [ isHidingSuggestion, setIsHidingSuggestion ] = useState( false );
 
-	const { invalidateResolutionForStoreSelector, togglePaymentGateway } =
-		useDispatch( PAYMENT_SETTINGS_STORE_NAME );
-	const { createSuccessNotice } = useDispatch( 'core/notices' );
+	const {
+		invalidateResolutionForStoreSelector,
+		togglePaymentGateway,
+		hideGatewaySuggestion,
+	} = useDispatch( PAYMENT_SETTINGS_STORE_NAME );
+	const { createErrorNotice, createSuccessNotice } =
+		useDispatch( 'core/notices' );
 
 	const typeToDisplayName: { [ key: string ]: string } = {
 		pricing: __( 'See pricing & fees', 'woocommerce' ),
@@ -55,8 +61,7 @@ export const EllipsisMenuContent = ( {
 		documentation: __( 'View documentation', 'woocommerce' ),
 	};
 
-	const deactivateGateway = ( e: React.MouseEvent ) => {
-		e.preventDefault();
+	const deactivateGateway = () => {
 		setIsDeactivating( true );
 		deactivatePlugin( pluginName )
 			.then( () => {
@@ -67,17 +72,18 @@ export const EllipsisMenuContent = ( {
 					'getRegisteredPaymentGateways'
 				);
 				setIsDeactivating( false );
+				onToggle();
 			} )
 			.catch( () => {
 				createErrorNotice(
 					__( 'Failed to deactivate the plugin.', 'woocommerce' )
 				);
 				setIsDeactivating( false );
+				onToggle();
 			} );
 	};
 
-	const disableGateway = ( e: React.MouseEvent ) => {
-		e.preventDefault();
+	const disableGateway = () => {
 		const gatewayToggleNonce =
 			window.woocommerce_admin.nonces?.gateway_toggle || '';
 
@@ -98,21 +104,43 @@ export const EllipsisMenuContent = ( {
 					'getRegisteredPaymentGateways'
 				);
 				setIsDisabling( false );
+				onToggle();
 			} )
 			.catch( () => {
 				createErrorNotice(
 					__( 'Failed to disable the plugin.', 'woocommerce' )
 				);
 				setIsDisabling( false );
+				onToggle();
 			} );
 	};
 
-	const hideSuggestion = ( e: React.MouseEvent ) => {
-		e.preventDefault();
+	const hideSuggestion = () => {
+		setIsHidingSuggestion( true );
+
+		hideGatewaySuggestion( pluginId )
+			.then( () => {
+				invalidateResolutionForStoreSelector(
+					'getRegisteredPaymentGateways'
+				);
+				setIsHidingSuggestion( false );
+				onToggle();
+			} )
+			.catch( () => {
+				createErrorNotice(
+					__(
+						'Failed to hide the payment gateway suggestion.',
+						'woocommerce'
+					)
+				);
+				setIsHidingSuggestion( false );
+				onToggle();
+			} );
 	};
 
-	const resetWooPaymentsAccount = ( e: React.MouseEvent ) => {
-		e.preventDefault();
+	const resetWooPaymentsAccount = () => {
+		createErrorNotice( __( 'Not implemented yet.', 'woocommerce' ) );
+		onToggle();
 	};
 
 	return (
@@ -147,8 +175,8 @@ export const EllipsisMenuContent = ( {
 			{ isSuggestion && (
 				<Button
 					onClick={ hideSuggestion }
-					isBusy={ false }
-					disabled={ false }
+					isBusy={ isHidingSuggestion }
+					disabled={ isHidingSuggestion }
 				>
 					{ __( 'Hide suggestion', 'woocommerce' ) }
 				</Button>

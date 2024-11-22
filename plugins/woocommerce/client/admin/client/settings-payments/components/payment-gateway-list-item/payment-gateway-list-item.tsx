@@ -110,12 +110,13 @@ export const PaymentGatewayListItem = ( {
 						) }
 					<EllipsisMenu
 						label={ __( 'Task List Options', 'woocommerce' ) }
-						renderContent={ () => (
+						renderContent={ ( { onToggle } ) => (
 							<EllipsisMenuContent
 								pluginId={ gateway.id }
 								pluginName={ gateway.plugin.slug }
 								isSuggestion={ false }
 								links={ gateway.links }
+								onToggle={ onToggle }
 								isWooPayments={ isWCPay }
 								isEnabled={ gateway.state.enabled }
 								needsSetup={ gateway.state.needs_setup }

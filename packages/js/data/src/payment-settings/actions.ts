@@ -15,6 +15,7 @@ import {
 	EnableGatewayResponse,
 } from './types';
 import { parseOrdering } from './utils';
+import { WC_ADMIN_NAMESPACE } from '../constants';
 
 export function getPaymentGatewaySuggestionsRequest(): {
 	type: ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_REQUEST;
@@ -100,6 +101,24 @@ export function* togglePaymentGateway(
 	}
 }
 
+export function* hideGatewaySuggestion( gatewayId: string ) {
+	try {
+		// Use apiFetch for the AJAX request
+		const result: { success: boolean } = yield apiFetch( {
+			path:
+				WC_ADMIN_NAMESPACE +
+				'/settings/payments/suggestion/' +
+				gatewayId +
+				'/hide',
+			method: 'POST',
+		} );
+
+		return result;
+	} catch ( error ) {
+		throw error;
+	}
+}
+
 export function updateOfflinePaymentGatewayOrdering(
 	offlinePaymentGateways: OfflinePaymentGateway[]
 ): {
@@ -123,4 +142,5 @@ export type Actions =
 	| ReturnType< typeof getPaymentGatewaySuggestionsSuccess >
 	| ReturnType< typeof getPaymentGatewaySuggestionsError >
 	| ReturnType< typeof togglePaymentGateway >
+	| ReturnType< typeof hideGatewaySuggestion >
 	| ReturnType< typeof updateOfflinePaymentGatewayOrdering >;
