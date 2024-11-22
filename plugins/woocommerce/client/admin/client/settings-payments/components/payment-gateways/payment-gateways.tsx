@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { useState } from 'react';
 import { Gridicon } from '@automattic/components';
 import { List } from '@woocommerce/components';
 import { getAdminLink } from '@woocommerce/settings';
@@ -38,7 +39,7 @@ export const PaymentGateways = ( {
 	setupPlugin,
 }: PaymentGatewaysProps ) => {
 	const setupLivePayments = () => {};
-
+	const [ storeCountry, setStoreCountry ] = useState( 'US' );
 	const countryOptions = Object.entries( wcSettings?.countries || [] )
 		.map( ( [ key, name ] ) => ( { key, name, types: [] } ) )
 		.sort( ( a, b ) => a.name.localeCompare( b.name ) );
@@ -125,11 +126,11 @@ export const PaymentGateways = ( {
     						placeholder={ '' }
     						value={ countryOptions.find(
     							( country ) =>
-    								country.key === 'US'
+    								country.key === storeCountry
     						) }
     						options={ countryOptions }
     						onChange={ ( value: string ) => {
-    							
+    							setStoreCountry( value );
     						} }
     					/>
 				</div>
