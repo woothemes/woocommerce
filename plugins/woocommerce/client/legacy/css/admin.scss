@@ -6003,6 +6003,10 @@ img.help_tip {
 		}
 		.newtag {
 			flex: 1;
+
+			@media screen and (max-width: 782px) {
+				margin-bottom: 0;
+			}
 		}
 	}
 	// For margins we need id specificity.
@@ -6064,20 +6068,6 @@ img.help_tip {
 		display: none;
 	}
 }
-
-@media screen and (max-width: 782px) {
-    .post-php.post-type-product,
-	.post-new-php.post-type-product,
-	.post-php.post-type-shop_coupon,
-	.post-new-php.post-type-shop_coupon {
-		// Tags metabox.
-		.tagsdiv .newtag {
-			margin-bottom: 0;
-		}
-	}
-}
-
-
 
 /* Product/coupon data metabox */
 #woocommerce-coupon-data,
