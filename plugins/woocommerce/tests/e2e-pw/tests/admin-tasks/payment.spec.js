@@ -1,4 +1,23 @@
 const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { exec } = require( 'child_process' );
+
+function loadDatabaseBackup() {
+	return new Promise( ( resolve, reject ) => {
+		const importCommand = `wp-env run cli wp db import /var/www/html/wp-content/dump.sql`;
+		exec( importCommand, ( error, stdout, stderr ) => {
+			if ( error ) {
+				console.error( `Error importing database: ${ error.message }` );
+				return reject( error );
+			}
+			if ( stderr && ! stderr.includes( 'Ran `wp db import' ) ) {
+				console.error( `Error output: ${ stderr }` );
+				return reject( new Error( stderr ) );
+			}
+			console.log( 'Database imported successfully.' );
+			resolve( stdout );
+		} );
+	} );
+}
 
 const test = baseTest.extend( {
 	storageState: process.env.ADMINSTATE,
@@ -43,6 +62,23 @@ const test = baseTest.extend( {
 } );
 
 test.describe( 'Payment setup task', () => {
+	test.beforeAll( async ( {} ) => {
+		// Load the database backup
+		try {
+			await loadDatabaseBackup();
+		} catch ( error ) {
+			console.error( 'Failed to load the database backup:', error );
+		}
+	} );
+	test.afterAll( async ( {} ) => {
+		// Load the database backup
+		try {
+			await loadDatabaseBackup();
+		} catch ( error ) {
+			console.error( 'Failed to load the database backup:', error );
+		}
+	} );
+
 	test( 'Saving valid bank account transfer details enables the payment method', async ( {
 		page,
 		api,

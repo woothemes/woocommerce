@@ -1,10 +1,8 @@
 const { chromium, expect, request } = require( '@playwright/test' );
 const { admin, customer } = require( './test-data/data' );
 const fs = require( 'fs' );
-const { site } = require( './utils' );
 const { logIn } = require( './utils/login' );
-const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
-const { DISABLE_HPOS, DISABLE_SITE_RESET } = process.env;
+const { DISABLE_SITE_RESET } = process.env;
 const { exec } = require( 'child_process' );
 
 function dumpDatabase() {
@@ -97,7 +95,6 @@ module.exports = async ( config ) => {
 	let adminLoggedIn = false;
 	let customerLoggedIn = false;
 	let customerKeyConfigured = false;
-	let hposConfigured = false;
 
 	// Specify user agent when running against an external test site to avoid getting HTTP 406 NOT ACCEPTABLE errors.
 	const contextOptions = { baseURL, userAgent };
