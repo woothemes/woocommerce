@@ -19,6 +19,7 @@ import { PaymentGatewayListItem } from '~/settings-payments/components/payment-g
 import { PaymentExtensionSuggestionListItem } from '~/settings-payments/components/payment-extension-suggestion-list-item';
 import { WooPaymentsGatewayData } from '~/settings-payments/types';
 import { WC_ASSET_URL } from '~/utils/admin-settings';
+import { ListPlaceholder } from '~/settings-payments/components/list-placeholder';
 
 interface PaymentGatewaysProps {
 	registeredPaymentGateways: RegisteredPaymentGateway[];
@@ -27,6 +28,7 @@ interface PaymentGatewaysProps {
 	wooPaymentsGatewayData?: WooPaymentsGatewayData;
 	installingPlugin: string | null;
 	setupPlugin: ( extension: SuggestedPaymentExtension ) => void;
+	isFetching: boolean;
 }
 
 export const PaymentGateways = ( {
@@ -36,6 +38,7 @@ export const PaymentGateways = ( {
 	wooPaymentsGatewayData,
 	installingPlugin,
 	setupPlugin,
+	isFetching,
 }: PaymentGatewaysProps ) => {
 	const setupLivePayments = () => {};
 
@@ -128,12 +131,16 @@ export const PaymentGateways = ( {
 					/>
 				</div>
 			</div>
-			<List
-				items={ [
-					...preferredPluginSuggestionsList,
-					...paymentGatewaysList,
-				] }
-			/>
+			{ isFetching ? (
+				<ListPlaceholder rows={ 5 } />
+			) : (
+				<List
+					items={ [
+						...preferredPluginSuggestionsList,
+						...paymentGatewaysList,
+					] }
+				/>
+			) }
 		</div>
 	);
 };

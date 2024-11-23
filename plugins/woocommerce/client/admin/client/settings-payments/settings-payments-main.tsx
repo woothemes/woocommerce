@@ -33,7 +33,7 @@ export const SettingsPaymentsMain = () => {
 		return select( PLUGINS_STORE_NAME ).getInstalledPlugins();
 	}, [] );
 
-	// Make UI to refresh when plugin is installed.
+	// Make UI refresh when plugin is installed.
 	const { invalidateResolutionForStoreSelector } = useDispatch(
 		PAYMENT_SETTINGS_STORE_NAME
 	);
@@ -42,6 +42,7 @@ export const SettingsPaymentsMain = () => {
 		registeredPaymentGateways,
 		preferredPluginSuggestions,
 		otherPluginSuggestions,
+		isFetching,
 	} = useSelect( ( select ) => {
 		return {
 			registeredPaymentGateways: select(
@@ -53,6 +54,7 @@ export const SettingsPaymentsMain = () => {
 			otherPluginSuggestions: select(
 				PAYMENT_SETTINGS_STORE_NAME
 			).getOtherExtensionSuggestions(),
+			isFetching: select( PAYMENT_SETTINGS_STORE_NAME ).isFetching(),
 		};
 	} );
 
@@ -98,6 +100,7 @@ export const SettingsPaymentsMain = () => {
 					wooPaymentsGatewayData={ wooPaymentsGatewayData }
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
+					isFetching={ isFetching }
 				/>
 				<OtherPaymentGateways
 					otherPluginSuggestions={ otherPluginSuggestions }
