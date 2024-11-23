@@ -1,0 +1,4 @@
+Significance: patch
+Type: tweak
+
+Remove dead CSS code for WP < 5.3
