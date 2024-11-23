@@ -5971,6 +5971,13 @@ img.help_tip {
 				margin: 0;
 			}
 		}
+		ul.categorychecklist ul {
+			margin-left: 15px;
+
+			@media screen and (max-width: 782px) {
+				margin-top: 15px;
+			}
+		}
 	}
 	#product_cat-add-toggle {
 		display: flex;
