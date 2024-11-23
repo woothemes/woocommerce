@@ -41,11 +41,12 @@ test.describe( 'Template customization', () => {
 				await editor.saveSiteEditorEntities( {
 					isOnlyCurrentEntityDirty: true,
 				} );
+
 				// Verify template name didn't change.
 				// See: https://github.com/woocommerce/woocommerce/issues/42221
 				await expect(
 					page.getByRole( 'heading', {
-						name: `${ testData.templateName } · ${ templateTypeName }`,
+						name: templateTypeName,
 					} )
 				).toBeVisible();
 
