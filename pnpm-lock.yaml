@@ -2169,8 +2169,8 @@ importers:
   packages/js/internal-style-build:
     dependencies:
       '@automattic/color-studio':
-        specifier: ^2.5.0
-        version: 2.5.0
+        specifier: ^4.0.0
+        version: 4.0.0
       '@wordpress/base-styles':
         specifier: wp-6.0
         version: 4.3.1
@@ -3764,8 +3764,8 @@ importers:
         version: 1.1.5
     devDependencies:
       '@automattic/color-studio':
-        specifier: 2.5.0
-        version: 2.5.0
+        specifier: 4.0.0
+        version: 4.0.0
       '@babel/cli':
         specifier: 7.23.0
         version: 7.23.0(@babel/core@7.23.2)
@@ -4407,8 +4407,8 @@ importers:
         version: 3.22.4
     devDependencies:
       '@automattic/color-studio':
-        specifier: ^2.5.0
-        version: 2.5.0
+        specifier: ^4.0.0
+        version: 4.0.0
       '@babel/cli':
         specifier: ^7.23.4
         version: 7.23.4(@babel/core@7.23.5)
@@ -5454,8 +5454,8 @@ packages:
   '@automattic/calypso-url@1.1.0':
     resolution: {integrity: sha512-oA6pzfrp538gq5JEjE0ARDjvR8Efhw+jrK15TJPjAq5Q+vhPSJhH8sYKEsMAoYZV3d5nnyUcmI5Evge+yq4zeg==}
 
-  '@automattic/color-studio@2.5.0':
-    resolution: {integrity: sha512-gZWaJbx3p1oennAIoJtMGluTmoM95Efk4rc44TSBxWSZZ8gH3Am2eh1o3i1NhrZmg2Zt3AiVFeZZ4AJccIpBKQ==}
+  '@automattic/color-studio@4.0.0':
+    resolution: {integrity: sha512-L49rqIzCLnqLFoNJsANUXfmIWqlfgsEaDWcgXHt+lUbpZYDtWphUCVS/kIkSlAPHo3LmcRRzCTIq/DyU5C/nEA==}
 
   '@automattic/components@2.1.1':
     resolution: {integrity: sha512-PqGwe1CI0PtQIaTka5cbX/gKqEkhk4GYTdkExigHdzifnYtPZSmuLsw5mlPdfA8qY141s8wokARU7cDIZE0DCw==}
@@ -26255,7 +26255,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@automattic/color-studio@2.5.0': {}
+  '@automattic/color-studio@4.0.0': {}
 
   '@automattic/components@2.1.1(@types/react@17.0.71)(@wordpress/data@6.6.2(react@17.0.2))(react-dom@17.0.2(react@17.0.2))(react@17.0.2)':
     dependencies:
@@ -58734,7 +58734,7 @@ snapshots:
       loader-utils: 2.0.4
       postcss: 7.0.39
       schema-utils: 3.3.0
-      semver: 7.6.3
+      semver: 7.5.4
       webpack: 4.47.0(webpack-cli@3.3.12(webpack@5.89.0))
 
   postcss-loader@4.3.0(postcss@8.4.32)(webpack@5.89.0(esbuild@0.18.20)(webpack-cli@3.3.12)):
@@ -58744,7 +58744,7 @@ snapshots:
       loader-utils: 2.0.4
       postcss: 8.4.32
       schema-utils: 3.3.0
-      semver: 7.6.3
+      semver: 7.5.4
       webpack: 5.89.0(esbuild@0.18.20)(webpack-cli@3.3.12)
 
   postcss-loader@4.3.0(postcss@8.4.32)(webpack@5.89.0(webpack-cli@3.3.12)):
@@ -58754,7 +58754,7 @@ snapshots:
       loader-utils: 2.0.4
       postcss: 8.4.32
       schema-utils: 3.3.0
-      semver: 7.6.3
+      semver: 7.5.4
       webpack: 5.89.0(webpack-cli@3.3.12)
 
   postcss-loader@4.3.0(postcss@8.4.32)(webpack@5.89.0(webpack-cli@4.10.0)):
@@ -58774,7 +58774,7 @@ snapshots:
       loader-utils: 2.0.4
       postcss: 8.4.32
       schema-utils: 3.3.0
-      semver: 7.6.3
+      semver: 7.5.4
       webpack: 5.89.0
 
   postcss-loader@4.3.0(postcss@8.4.32)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)):
@@ -58794,7 +58794,7 @@ snapshots:
       loader-utils: 2.0.4
       postcss: 8.4.32
       schema-utils: 3.3.0
-      semver: 7.6.3
+      semver: 7.5.4
       webpack: 5.91.0(webpack-cli@3.3.12)
 
   postcss-loader@6.2.1(postcss@8.4.32)(webpack@5.89.0(uglify-js@3.17.4)(webpack-cli@4.10.0)):
@@ -64681,7 +64681,7 @@ snapshots:
       sockjs: 0.3.24
       spdy: 4.0.2
       webpack-dev-middleware: 5.3.3(webpack@5.89.0(esbuild@0.18.20)(webpack-cli@3.3.12))
-      ws: 8.18.0
+      ws: 8.15.0
     optionalDependencies:
       webpack: 5.89.0(esbuild@0.18.20)(webpack-cli@3.3.12)
       webpack-cli: 3.3.12(webpack@5.89.0)
@@ -64723,7 +64723,7 @@ snapshots:
       sockjs: 0.3.24
       spdy: 4.0.2
       webpack-dev-middleware: 5.3.3(webpack@5.89.0(webpack-cli@3.3.12))
-      ws: 8.18.0
+      ws: 8.15.0
     optionalDependencies:
       webpack: 5.89.0(webpack-cli@3.3.12)
       webpack-cli: 3.3.12(webpack@5.89.0)
@@ -64765,7 +64765,7 @@ snapshots:
       sockjs: 0.3.24
       spdy: 4.0.2
       webpack-dev-middleware: 5.3.3(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))
-      ws: 8.18.0
+      ws: 8.15.0
     optionalDependencies:
       webpack: 5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@4.10.0)
       webpack-cli: 4.10.0(webpack-bundle-analyzer@4.7.0)(webpack-dev-server@4.15.1)(webpack@5.91.0)
@@ -64806,7 +64806,7 @@ snapshots:
       sockjs: 0.3.24
       spdy: 4.0.2
       webpack-dev-middleware: 5.3.3(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))
-      ws: 8.18.0
+      ws: 8.15.0
     optionalDependencies:
       webpack: 5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)
       webpack-cli: 5.1.4(webpack-bundle-analyzer@4.7.0)(webpack-dev-server@4.15.1)(webpack@5.91.0)
@@ -64847,7 +64847,7 @@ snapshots:
       sockjs: 0.3.24
       spdy: 4.0.2
       webpack-dev-middleware: 5.3.3(webpack@5.89.0(@swc/core@1.3.100)(esbuild@0.18.20))
-      ws: 8.18.0
+      ws: 8.15.0
     optionalDependencies:
       webpack: 5.89.0(@swc/core@1.3.100)(esbuild@0.18.20)
     transitivePeerDependencies:
