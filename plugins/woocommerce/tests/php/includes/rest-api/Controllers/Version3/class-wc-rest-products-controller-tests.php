@@ -1014,6 +1014,57 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	}
 
 	/**
+	 * Test `downloadable` filter returns only downloadable products.
+	 */
+	public function test_downloadable_filter_returns_only_downloadable_products() {
+		WC_Helper_Product::create_simple_product( true, array( 'downloadable' => true ) );
+		WC_Helper_Product::create_simple_product();
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_param( 'downloadable', true );
+
+		$response = $this->server->dispatch( $request );
+		$products = $response->get_data();
+
+		$this->assertEquals( 200, $response->get_status() );
+		foreach ( $products as $product ) {
+			$this->assertTrue( $product['downloadable'] );
+		}
+	}
+
+	/**
+	 * Test `downloadable` filter returns only non-downloadable products when is false.
+	 */
+	public function test_downloadable_filter_returns_only_non_downloadable_products() {
+		WC_Helper_Product::create_simple_product( true, array( 'downloadable' => true ) );
+		WC_Helper_Product::create_simple_product();
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_param( 'downloadable', false );
+
+		$response = $this->server->dispatch( $request );
+		$products = $response->get_data();
+
+		$this->assertEquals( 200, $response->get_status() );
+		foreach ( $products as $product ) {
+			$this->assertFalse( $product['downloadable'] );
+		}
+	}
+
+	/**
+	 * Test invalid downloadable parameter type returns error.
+	 */
+	public function test_downloadable_filter_with_invalid_param() {
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_param( 'downloadable', 'invalid' );
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 'rest_invalid_param', $response->get_data()['code'] );
+	}
+
+	/**
 	 * Test the duplicate product endpoint with simple products.
 	 */
 	public function test_duplicate_simple_product() {
