@@ -5541,6 +5541,42 @@ img.help_tip {
 		color:  var(--wp-admin-theme-color, $blueberry);
 	}
 
+
+	/* Style all buttons */
+	.button,
+	.wp-media-buttons .button,
+	#screen-meta-links .show-settings {
+		background: none;
+		padding: 0 $gap-smaller;
+		margin: 0;
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		line-height: inherit;
+		gap: $gap-smallest;
+
+		border-radius: 2px;
+		border: 1px solid var(--wp-admin-theme-color, $blueberry);
+		color: var(--wp-admin-theme-color, $blueberry);
+
+		.jetpack-contact-form-icon,
+		.wp-media-buttons-icon {
+			height: 16px;
+			width: 16px;
+			font-size: 16px;
+			margin: 0;
+
+			&:before {
+				font-size: inherit;
+				vertical-align: middle;
+			}
+		}
+		&.button-primary {
+			color: var(--Gutenberg-White, #FFF);
+			background: var(--wp-admin-theme-color, $blueberry);
+		}
+	}
+
 	// Screen meta links.
 	#screen-meta-links {
 		padding: $gap-small 0;
@@ -5552,6 +5588,18 @@ img.help_tip {
 		#contextual-help-link-wrap {
 			margin: 0;
 		}
+		.show-settings {
+			padding-left: $gap-small;
+			// Deduct the inner spacing of the icon.
+			padding-right: calc( $gap-small - 5px );
+		}
+		// Adjust spacing as the element is vertically aligned with flexbox, reset additional padding.
+		.show-settings:after {
+			padding: 0;
+			bottom: none;
+			position: static;
+		}
+
 	}
 
 	// Gap between title input and generate coupon code.
@@ -5703,41 +5751,6 @@ img.help_tip {
 		display: none;
 	}
 
-	/* Style all buttons */
-	.button,
-	.wp-media-buttons .button,
-	#screen-meta-links .button {
-		background: none;
-		padding: 0 $gap-smaller;
-		margin: 0;
-		display: inline-flex;
-		justify-content: center;
-		align-items: center;
-		line-height: inherit;
-		gap: $gap-smallest;
-
-		border-radius: 2px;
-		border: 1px solid var(--wp-admin-theme-color, $blueberry);
-		color: var(--wp-admin-theme-color, $blueberry);
-
-		.jetpack-contact-form-icon,
-		.wp-media-buttons-icon {
-			height: 16px;
-			width: 16px;
-			font-size: 16px;
-			margin: 0;
-
-			&:before {
-				font-size: inherit;
-				vertical-align: middle;
-			}
-		}
-		&.button-primary {
-			color: var(--Gutenberg-White, #FFF);
-			background: var(--wp-admin-theme-color, $blueberry);
-		}
-	}
-
 	#postexcerpt >.postbox-header > .hndle >.woocommerce-help-tip,
 	#wp-content-media-buttons > .woocommerce-help-tip {
 		margin: 0;
@@ -5883,8 +5896,17 @@ img.help_tip {
 
 	}
 	.categorydiv {
+		margin-bottom: $gap;
+
+		// Cater for other elements injected to this meta box, like AI suggested categories.
+		> :not(.category-tabs) {
+			padding: 0 $gap;
+			// Pretend all things below tab panel are in a box with gap.
+			margin: $gap-small 0;
+		}
 		.tabs-panel {
 			padding: $gap;
+			margin: 0;
 			border:0;
 			border-bottom: 1px solid $separator-color;
 
@@ -5892,9 +5914,13 @@ img.help_tip {
 				margin: 0;
 			}
 		}
-	}
-	#product_cat-adder {
-		padding: $gap;
+		ul.categorychecklist ul {
+			margin-left: 15px;
+
+			@media screen and (max-width: 782px) {
+				margin-top: 15px;
+			}
+		}
 	}
 	#product_cat-add-toggle {
 		display: flex;
@@ -5920,6 +5946,10 @@ img.help_tip {
 		}
 		.newtag {
 			flex: 1;
+
+			@media screen and (max-width: 782px) {
+				margin-bottom: 0;
+			}
 		}
 	}
 	// For margins we need id specificity.
@@ -5981,20 +6011,6 @@ img.help_tip {
 		display: none;
 	}
 }
-
-@media screen and (max-width: 782px) {
-    .post-php.post-type-product,
-	.post-new-php.post-type-product,
-	.post-php.post-type-shop_coupon,
-	.post-new-php.post-type-shop_coupon {
-		// Tags metabox.
-		.tagsdiv .newtag {
-			margin-bottom: 0;
-		}
-	}
-}
-
-
 
 /* Product/coupon data metabox */
 #woocommerce-coupon-data,

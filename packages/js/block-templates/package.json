@@ -51,9 +51,8 @@
 	},
 	"dependencies": {
 		"@woocommerce/expression-evaluation": "workspace:*",
-		"@wordpress/block-editor": "^9.8.0",
-		"@wordpress/blocks": "^12.24.0",
-		"@wordpress/data": "wp-6.0",
+		"@wordpress/block-editor": "wp-6.0",
+		"@wordpress/blocks": "wp-6.0",
 		"@wordpress/core-data": "wp-6.0",
 		"@wordpress/element": "wp-6.0"
 	},
@@ -89,6 +88,7 @@
 		"wireit": "0.14.3"
 	},
 	"peerDependencies": {
+		"@wordpress/data": "wp-6.0",
 		"@types/react": "17.0.x",
 		"react": "17.0.x",
 		"react-dom": "17.0.x"
