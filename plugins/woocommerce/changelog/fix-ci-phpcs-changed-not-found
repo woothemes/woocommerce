@@ -1,4 +1,0 @@
-Significance: patch
-Type: dev
-
-CI: install core composer dependencies synchronously in CI-environment.
