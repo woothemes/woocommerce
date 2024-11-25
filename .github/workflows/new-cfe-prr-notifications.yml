@@ -109,7 +109,7 @@ jobs:
 
               core.setOutput(
                   'SLACK_MESSAGE',
-                  `:x: We did not process your ${labelName === 'code freeze exception' ? 'Code Freeze Exception' : 'Point Release Request'} because the PR associated with the request does not originate from the release branch. Please update the PR base to the release branch and submit a new request.\n\nThe current base branch is: \`${baseRefName}\`. ${issueTitle} ${issueUrl}`
+                  `:x: We did not process your ${labelName === 'code freeze exception' ? 'Code Freeze Exception' : 'Point Release Request'} because the PR associated with the request does not originate from the release branch. Please update the PR base to the release branch and submit a new request. The current base branch is: \`${baseRefName}\`.\n\n${issueTitle} ${issueUrl}`
               );
 
               core.setOutput(
