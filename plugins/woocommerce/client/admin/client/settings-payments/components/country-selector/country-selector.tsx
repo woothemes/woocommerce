@@ -2,16 +2,16 @@
  * External Dependencies
  */
 import React, { useRef, useState } from 'react';
+import classNames from 'classnames';
+import { useSelect, UseSelectState, UseSelectStateChangeOptions } from 'downshift';
+
+/**
+ * WordPress Dependencies
+ */
 import { Button } from '@wordpress/components';
 import { useCallback } from '@wordpress/element';
-import classNames from 'classnames';
 import { __, sprintf } from '@wordpress/i18n';
 import { check, chevronDown, Icon } from '@wordpress/icons';
-import {
-	useSelect,
-	UseSelectState,
-	UseSelectStateChangeOptions
-} from 'downshift';
 
 /**
  * Internal Dependencies
@@ -38,7 +38,7 @@ const stateReducer = <ItemType extends Item>(
 	}
 };
 
-export const CountrySelector = <ItemType extends Item>({
+export const CountrySelector = < ItemType extends Item >({
 	name,
 	className,
 	label,
