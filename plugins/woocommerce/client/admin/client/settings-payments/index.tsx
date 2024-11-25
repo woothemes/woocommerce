@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React, { lazy, Suspense, useMemo } from '@wordpress/element';
+import { Gridicon } from '@automattic/components';
+import { Button, SelectControl } from '@wordpress/components';
+import React, { lazy, Suspense } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { getAdminLink } from '@woocommerce/settings';
 
@@ -9,9 +11,7 @@ import { getAdminLink } from '@woocommerce/settings';
  * Internal dependencies
  */
 import { Header } from './components/header/header';
-import { Button, SelectControl } from '@wordpress/components';
 import { ListPlaceholder } from '~/settings-payments/components/list-placeholder';
-import { Gridicon } from '@automattic/components';
 
 const SettingsPaymentsMainChunk = lazy(
 	() =>
