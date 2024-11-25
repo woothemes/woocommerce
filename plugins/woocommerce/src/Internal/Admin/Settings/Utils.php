@@ -120,7 +120,7 @@ class Utils {
 		// Bump the order of everything with an order equal or higher than the desired order.
 		foreach ( $order_map as $key => $value ) {
 			if ( $value >= $order ) {
-				$order_map[ $key ] ++;
+				++$order_map[ $key ];
 			}
 		}
 
@@ -177,7 +177,7 @@ class Utils {
 			return array();
 		}
 
-		$updated_map = [];
+		$updated_map = array();
 		$bump        = $new_min_order - min( $order_map );
 		foreach ( $order_map as $id => $order ) {
 			$updated_map[ $id ] = $order + $bump;
