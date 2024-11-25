@@ -31,6 +31,10 @@ class Payments {
 
 	const USER_PAYMENTS_NOX_PROFILE_KEY = 'woocommerce_payments_nox_profile';
 
+	const PROVIDERS_ORDER_OPTION         = 'woocommerce_gateway_order';
+	const SUGGESTION_ORDERING_PREFIX     = '_wc_pes_';
+	const OFFLINE_METHODS_ORDERING_GROUP = '_wc_offline_payment_methods_group';
+
 	/**
 	 * The payment extension suggestions service.
 	 *
@@ -359,6 +363,44 @@ class Payments {
 	}
 
 	/**
+	 * Update the payment providers order map.
+	 *
+	 * This has effects both on the Payments settings page and the checkout page
+	 * since registered payment gateways (enabled or not) are among the providers.
+	 *
+	 * @param array $order_map The new order for payment providers.
+	 *                         The order map should be an associative array where the keys are the payment provider IDs
+	 *                         and the values are the new integer order for the payment provider.
+	 *                         This can be a partial list of payment providers and their orders.
+	 *                         It can also contain new IDs and their orders.
+	 *
+	 * @return bool True if the payment providers ordering was successfully updated, false otherwise.
+	 */
+	public function update_payment_providers_order_map( array $order_map ): bool {
+		$existing_order_map = get_option( self::PROVIDERS_ORDER_OPTION, array() );
+
+		$new_order_map = $this->payment_providers_order_map_apply_mappings( $existing_order_map, $order_map );
+
+		// This will also handle backwards compatibility.
+		$new_order_map = $this->normalize_payment_providers_order_map( $new_order_map );
+
+		// Write the new order map to the DB.
+		$result = update_option( self::PROVIDERS_ORDER_OPTION, $new_order_map );
+
+		return $result;
+	}
+
+	/**
+	 * Reset the memoized data. Useful for testing purposes.
+	 *
+	 * @internal
+	 * @return void
+	 */
+	public function reset_memo(): void {
+		$this->payment_gateways_memo = null;
+	}
+
+	/**
 	 * Get the payment gateways for the settings page.
 	 *
 	 * We apply the same actions and logic that the non-React Payments settings page uses to get the gateways.
@@ -657,12 +699,228 @@ class Payments {
 	}
 
 	/**
-	 * Reset the memoized data. Useful for testing purposes.
+	 * Apply order mappings to a base payment providers order map.
 	 *
-	 * @internal
-	 * @return void
+	 * @param array $base_map     The base order map.
+	 * @param array $new_mappings The order mappings to apply.
+	 *                            This can be a full or partial list of the base one,
+	 *                            but it can also contain (only) new provider IDs and their orders.
+	 *
+	 * @return array The updated base order map, normalized.
 	 */
-	public function reset_memo(): void {
-		$this->payment_gateways_memo = null;
+	private function payment_providers_order_map_apply_mappings( array $base_map, array $new_mappings ): array {
+		// Sanity checks.
+		// Remove any null or non-integer values.
+		$new_mappings = array_filter( $new_mappings, 'is_int' );
+		if ( empty( $new_mappings ) ) {
+			$new_mappings = array();
+		}
+
+		// If we have no existing order map or
+		// both the base and the new map have the same length and keys, we can simply use the new map.
+		if ( empty( $base_map ) ||
+			( count( $base_map ) === count( $new_mappings ) &&
+				empty( array_diff( array_keys( $base_map ), array_keys( $new_mappings ) ) ) )
+		) {
+			$new_order_map = $new_mappings;
+		} else {
+			// If we are dealing with ONLY offline PMs updates (for all that are registered) and their group is present,
+			// normalize the new order map to keep behavior as intended (i.e., reorder only inside the offline PMs list).
+			$offline_pms = $this->get_offline_payment_methods_gateways();
+			// Make it a list keyed by the payment gateway ID.
+			$offline_pms = array_combine(
+				array_map(
+					fn( $gateway ) => $gateway->id,
+					$offline_pms
+				),
+				$offline_pms
+			);
+			if (
+				isset( $base_map[ self::OFFLINE_METHODS_ORDERING_GROUP ] ) &&
+				count( $new_mappings ) === count( $offline_pms ) &&
+				empty( array_diff( array_keys( $new_mappings ), array_keys( $offline_pms ) ) )
+			) {
+
+				$new_mappings = Utils::order_map_change_min_order( $new_mappings, $base_map[ self::OFFLINE_METHODS_ORDERING_GROUP ] + 1 );
+			}
+
+			$new_order_map = Utils::order_map_apply_mappings( $base_map, $new_mappings );
+		}
+
+		return Utils::order_map_normalize( $new_order_map );
+	}
+
+	/**
+	 * Normalize the payment providers order map.
+	 *
+	 * If the payments providers order map is empty, it will be initialized with the current WC payment gateway ordering.
+	 *
+	 * @param array $order_map The payment providers order map.
+	 *
+	 * @return array The updated payment providers order map.
+	 */
+	private function normalize_payment_providers_order_map( array $order_map ): array {
+		// We don't exclude shells here, because we need to get the order of all the registered payment gateways.
+		$payment_gateways = $this->get_payment_gateways( false );
+		// Make it a list keyed by the payment gateway ID.
+		$payment_gateways = array_combine(
+			array_map(
+				fn( $gateway ) => $gateway->id,
+				$payment_gateways
+			),
+			$payment_gateways
+		);
+		// Get the payment gateways order map.
+		$payment_gateways_order_map = array_flip( array_keys( $payment_gateways ) );
+		// Get the payment gateways to suggestions map.
+		$payment_gateways_to_suggestions_map = array_map(
+			fn( $gateway ) => $this->get_payment_extension_suggestion_by_plugin_slug( $this->get_payment_gateway_plugin_slug( $gateway ) ),
+			$payment_gateways
+		);
+
+		/*
+		 * Initialize the order map with the current ordering.
+		 */
+		if ( empty( $order_map ) ) {
+			$order_map = $payment_gateways_order_map;
+		}
+
+		$order_map = Utils::order_map_normalize( $order_map );
+
+		$handled_suggestion_ids = array();
+
+		/*
+		 * Go through the registered gateways and add any missing ones.
+		 */
+		foreach ( $payment_gateways_order_map as $id => $order ) {
+			if ( array_key_exists( $id, $order_map ) ) {
+				continue;
+			}
+
+			// Check if there is a suggestion entry for this payment gateway so we can add the payment gateway right after it.
+			if ( ! empty( $payment_gateways_to_suggestions_map[ $id ] ) ) {
+				$suggestion_order_map_id = $this->get_suggestion_order_map_id( $payment_gateways_to_suggestions_map[ $id ]['id'] );
+				if ( array_key_exists( $suggestion_order_map_id, $order_map ) ) {
+					$order_map = Utils::order_map_place_at_order( $order_map, $id, $order_map[ $suggestion_order_map_id ] + 1 );
+					// Remember that we handled this suggestion.
+					$handled_suggestion_ids[] = $payment_gateways_to_suggestions_map[ $id ]['id'];
+					continue;
+				}
+			}
+
+			// Add the missing payment gateway at the end.
+			$order_map[ $id ] = empty( $order_map ) ? 0 : max( $order_map ) + 1;
+		}
+
+		/*
+		 * Place not yet handled suggestion entries right before their matching registered payment gateway IDs.
+		 * This means that registered PGs already in the order map force the suggestions
+		 * to be placed/moved right before them. We rely on suggestions and registered PGs being mutually exclusive.
+		 */
+		foreach ( array_keys( $order_map ) as $id ) {
+			// If the id is not of a payment gateway or there is no suggestion for this payment gateway, ignore it.
+			if ( ! array_key_exists( $id, $payment_gateways_to_suggestions_map ) ||
+				empty( $payment_gateways_to_suggestions_map[ $id ] )
+			) {
+				continue;
+			}
+
+			$suggestion = $payment_gateways_to_suggestions_map[ $id ];
+			// If the suggestion was already handled, skip it.
+			if ( in_array( $suggestion['id'], $handled_suggestion_ids, true ) ) {
+				continue;
+			}
+
+			// Place the suggestion at the same order as the payment gateway
+			// thus ensuring that the suggestion is placed right before the payment gateway.
+			$order_map = Utils::order_map_place_at_order(
+				$order_map,
+				$this->get_suggestion_order_map_id( $suggestion['id'] ),
+				$order_map[ $id ]
+			);
+
+			// Remember that we've handled this suggestion to avoid adding it multiple times.
+			// We only want to attach the suggestion to the first payment gateway that matches the plugin slug.
+			$handled_suggestion_ids[] = $suggestion['id'];
+		}
+
+		// Extract all the registered offline PMs and keep their order values.
+		$offline_methods = array_filter(
+			$order_map,
+			function ( $key ) {
+				return in_array( $key, self::OFFLINE_METHODS, true );
+			},
+			ARRAY_FILTER_USE_KEY
+		);
+		if ( ! empty( $offline_methods ) ) {
+			/*
+			 * If the offline PMs group is missing, add it before the last offline PM.
+			 */
+			if ( ! array_key_exists( self::OFFLINE_METHODS_ORDERING_GROUP, $order_map ) ) {
+				$last_offline_method_order = max( $offline_methods );
+
+				$order_map = Utils::order_map_place_at_order( $order_map, self::OFFLINE_METHODS_ORDERING_GROUP, $last_offline_method_order );
+			}
+
+			/*
+			 * Place all the offline PMs right after the offline PMs group entry.
+			 */
+			$target_order = $order_map[ self::OFFLINE_METHODS_ORDERING_GROUP ] + 1;
+			// Sort the offline PMs by their order.
+			asort( $offline_methods );
+			foreach ( $offline_methods as $offline_method => $order ) {
+				$order_map = Utils::order_map_place_at_order( $order_map, $offline_method, $target_order );
+				++$target_order;
+			}
+		}
+
+		return Utils::order_map_normalize( $order_map );
+	}
+
+	/**
+	 * Get the offline payment methods gateways.
+	 *
+	 * @return array The registered offline payment methods gateways keyed by their global gateways list order/index.
+	 */
+	private function get_offline_payment_methods_gateways(): array {
+		return array_filter(
+			$this->get_payment_gateways( false ), // We include the shells to get the global order/index.
+			function ( $gateway ) {
+				return $this->is_offline_payment_method( $gateway->id );
+			}
+		);
+	}
+
+	/**
+	 * Get the ID of the suggestion order map entry.
+	 *
+	 * @param string $suggestion_id The ID of the suggestion.
+	 *
+	 * @return string The ID of the suggestion order map entry.
+	 */
+	private function get_suggestion_order_map_id( string $suggestion_id ): string {
+		return self::SUGGESTION_ORDERING_PREFIX . $suggestion_id;
+	}
+
+	/**
+	 * Check if the ID is a suggestion order map entry ID.
+	 *
+	 * @param string $id The ID to check.
+	 *
+	 * @return bool True if the ID is a suggestion order map entry ID, false otherwise.
+	 */
+	private function is_suggestion_order_map_id( string $id ): bool {
+		return 0 === strpos( $id, self::SUGGESTION_ORDERING_PREFIX );
+	}
+
+	/**
+	 * Get the ID of the suggestion from the suggestion order map entry ID.
+	 *
+	 * @param string $order_map_id The ID of the suggestion order map entry.
+	 *
+	 * @return string The ID of the suggestion.
+	 */
+	private function get_suggestion_id_from_order_map_id( string $order_map_id ): string {
+		return str_replace( self::SUGGESTION_ORDERING_PREFIX, '', $order_map_id );
 	}
 }
