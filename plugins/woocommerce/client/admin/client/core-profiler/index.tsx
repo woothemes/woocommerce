@@ -340,12 +340,16 @@ const exitToWooHome = fromPromise( async () => {
 } );
 
 const getPluginNameParam = (
-	pluginsSelected: CoreProfilerStateMachineContext[ 'pluginsSelected' ]
+	pluginsSelected: CoreProfilerStateMachineContext[ 'pluginsSelected' ],
+	availablePlugins: CoreProfilerStateMachineContext[ 'pluginsAvailable' ]
 ) => {
-	if ( pluginsSelected.includes( 'woocommerce-payments' ) ) {
-		return 'woocommerce-payments';
-	}
-	return 'jetpack-ai';
+	const JpcRequiredPlugins = pluginsSelected.filter( ( plugin ) => {
+		return availablePlugins.find( ( availablePlugin ) => {
+			return availablePlugin.key === plugin;
+		} )?.requires_jpc;
+	} );
+
+	return JpcRequiredPlugins.join( ',' );
 };
 
 const redirectToJetpackAuthPage = ( {
@@ -353,14 +357,20 @@ const redirectToJetpackAuthPage = ( {
 	context,
 }: {
 	context: CoreProfilerStateMachineContext;
-	event: { output: { url: string } };
+	event: { output: { url: string; color_scheme?: string } };
 } ) => {
 	const url = new URL( event.output.url );
 	url.searchParams.set( 'installed_ext_success', '1' );
 	url.searchParams.set(
 		'plugin_name',
-		getPluginNameParam( context.pluginsSelected )
+		getPluginNameParam( context.pluginsSelected, context.pluginsAvailable )
 	);
+
+	// Add current user's color scheme to the URL.
+	// We'll use this value to set the color scheme in the Jetpack connection page.
+	if ( event.output.color_scheme ) {
+		url.searchParams.set( 'color_scheme', event.output.color_scheme );
+	}
 	window.location.href = url.toString();
 };
 
@@ -1592,8 +1602,7 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 									{
 										target: '#isJetpackConnected',
 										guard: or( [
-											'hasJetpackSelectedForInstallation',
-											'hasJetpackActivated',
+											'hasJpcRequiredPluginSelected',
 										] ),
 									},
 									{ actions: 'redirectToWooHome' },
@@ -1736,7 +1745,7 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 							check(
 								or( [
 									{
-										type: 'hasJetpackSelectedForInstallation',
+										type: 'hasJpcRequiredPluginSelected',
 									},
 									{ type: 'hasJetpackActivated' },
 								] )
@@ -1806,12 +1815,15 @@ export const CoreProfilerController = ( {
 						!! step && step === ( params as { step: string } ).step
 					);
 				},
-				hasJetpackSelectedForInstallation: ( { context } ) => {
-					return (
-						context.pluginsSelected.find(
-							( plugin ) => plugin === 'jetpack'
-						) !== undefined
-					);
+				hasJpcRequiredPluginSelected: ( { context } ) => {
+					return context.pluginsSelected.some( ( selectedPlugin ) => {
+						// Find the plugin details in pluginsAvailable
+						const pluginDetails = context.pluginsAvailable.find(
+							( plugin ) => plugin.key === selectedPlugin
+						);
+						// Return true if the plugin requires jpc
+						return pluginDetails?.requires_jpc === true;
+					} );
 				},
 				hasJetpackActivated: ( { context } ) => {
 					return (
