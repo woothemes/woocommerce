@@ -16,7 +16,7 @@
 		padding-left: 48px;
 
 		&.is-highlighted {
-			background: #3858e90A;
+			background: #3858e90a;
 		}
 
 		svg {
@@ -30,7 +30,7 @@
 	}
 
 	.components-country-select-control__item
-		.components-country-select-control__item-icon {
+	.components-country-select-control__item-icon {
 		margin-left: auto;
 	}
 
@@ -53,8 +53,8 @@
 			box-shadow: none;
 		}
 
-		&[aria-expanded=true] {
-			color:var(--wp-components-color-foreground, #1e1e1e);
+		&[aria-expanded="true"] {
+			color: var( --wp-components-color-foreground, #1e1e1e );
 		}
 
 		&.placeholder {
@@ -99,8 +99,8 @@
 		box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.05), 0px 4px 5px 0px rgba(0, 0, 0, 0.04), 0px 4px 5px 0px rgba(0, 0, 0, 0.03), 0px 16px 16px 0px rgba(0, 0, 0, 0.02);
 	}
 
-    &__list {
-        overflow: auto;
+	&__list {
+		overflow: auto;
         max-height: 300px;
 		-ms-overflow-style: none;  /* IE and Edge */
   		scrollbar-width: none;  /* Firefox */
