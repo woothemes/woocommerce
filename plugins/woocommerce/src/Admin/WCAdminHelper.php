@@ -200,7 +200,6 @@ class WCAdminHelper {
 
 			$permalink = get_permalink( $page_id );
 
-
 			if ( ! $permalink ) {
 				continue;
 			}
