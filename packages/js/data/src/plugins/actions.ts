@@ -383,6 +383,7 @@ export function* connectToJetpackWithFailureRedirect(
 }
 
 const SUPPORTED_TYPES = [ 'payments' ];
+
 export function* dismissRecommendedPlugins( type: RecommendedTypes ) {
 	if ( ! SUPPORTED_TYPES.includes( type ) ) {
 		return [];
@@ -411,6 +412,18 @@ export function* dismissRecommendedPlugins( type: RecommendedTypes ) {
 	return success;
 }
 
+export function* deactivatePlugin( pluginName: string ) {
+	try {
+		yield apiFetch( {
+			path: 'wp/v2/plugins/' + pluginName + '/' + pluginName, // WP API specifics
+			method: 'POST',
+			data: { status: 'inactive' },
+		} );
+	} catch ( error ) {
+		throw error;
+	}
+}
+
 export type Actions = ReturnType<
 	| typeof updateActivePlugins
 	| typeof updateInstalledPlugins
@@ -432,4 +445,5 @@ export type ActionDispatchers = DispatchFromMap< {
 	installAndActivatePlugins: typeof installAndActivatePlugins;
 	connectToJetpackWithFailureRedirect: typeof connectToJetpackWithFailureRedirect;
 	dismissRecommendedPlugins: typeof dismissRecommendedPlugins;
+	deactivatePlugin: typeof deactivatePlugin;
 } >;
