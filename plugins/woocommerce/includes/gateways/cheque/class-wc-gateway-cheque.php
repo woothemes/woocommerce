@@ -121,7 +121,7 @@ class WC_Gateway_Cheque extends WC_Payment_Gateway {
 			 * @param object $order  The order object.
 			 */
 			$instructions_order_status = apply_filters( 'woocommerce_cheque_email_instructions_order_status', OrderStatus::ON_HOLD, $order );
-			if ( $order->has_status( $instructions_order_status )  ) {
+			if ( $order->has_status( $instructions_order_status ) ) {
 				echo wp_kses_post( wpautop( wptexturize( $this->instructions ) ) . PHP_EOL );
 			}
 		}
