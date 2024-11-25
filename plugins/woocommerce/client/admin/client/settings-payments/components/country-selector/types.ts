@@ -5,7 +5,7 @@ export interface Item {
 	style?: React.CSSProperties;
 }
 
-export interface ControlProps<ItemType> {
+export interface ControlProps< ItemType > {
 	name?: string;
 	className?: string;
 	label: string;

@@ -7,14 +7,14 @@ export const truncateOptionlabel = ( label: string, maxLength: number ) => {
 	}
 
 	return label;
-}
+};
 
 // Get the label for the selected option.
-export const getOptionLabel = ( value: string, options: Item[] ) => { 
-    const item = options.find( ( option ) =>
+export const getOptionLabel = ( value: string, options: Item[] ) => {
+	const item = options.find( ( option ) =>
         option.key === value );
 
 	const label = item?.name ? item.name : '';
 
-    return truncateOptionlabel( label, 20 );
-}
+	return truncateOptionlabel( label, 20 );
+};
