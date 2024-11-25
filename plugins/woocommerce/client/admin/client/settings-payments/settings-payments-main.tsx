@@ -7,8 +7,8 @@ import {
 	PAYMENT_SETTINGS_STORE_NAME,
 	SuggestedPaymentExtension,
 } from '@woocommerce/data';
-import { useState } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
