@@ -677,7 +677,7 @@
 	/**
 	 * Sets product images for the chosen variation
 	 */
-	$.fn.wc_variations_image_update = function( variation ) {
+	$.fn.wc_variations_image_update = function ( variation ) {
 		var $form             = this,
 			$product          = $form.closest( '.product' ),
 			$product_gallery  = $product.find( '.images' ),
