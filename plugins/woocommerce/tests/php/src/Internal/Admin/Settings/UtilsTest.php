@@ -16,8 +16,12 @@ class UtilsTest extends WC_Unit_Test_Case {
 	 * Test applying new order mappings to a base order map.
 	 *
 	 * @dataProvider data_provider_order_map_apply_mappings
+	 *
+	 * @param array $base_order_map The base order map.
+	 * @param array $new_order_map  The new order map.
+	 * @param array $expected_order The expected order of the order map.
 	 */
-	public function test_order_map_apply_mappings( $base_order_map, $new_order_map, $expected_order ) {
+	public function test_order_map_apply_mappings( array $base_order_map, array $new_order_map, array $expected_order ) {
 		// Act.
 		$update_order_map = Utils::order_map_apply_mappings( $base_order_map, $new_order_map );
 
@@ -39,7 +43,7 @@ class UtilsTest extends WC_Unit_Test_Case {
 				array(),
 				array(),
 			),
-			'old map is empty' => array(
+			'old map is empty'                => array(
 				array(),
 				array(
 					'new1' => 1,
@@ -52,7 +56,7 @@ class UtilsTest extends WC_Unit_Test_Case {
 					'new3',
 				),
 			),
-			'new map is empty' => array(
+			'new map is empty'                => array(
 				array(
 					'old1' => 1,
 					'old2' => 2,
@@ -65,7 +69,7 @@ class UtilsTest extends WC_Unit_Test_Case {
 					'old3',
 				),
 			),
-			'both maps have the same ids' => array(
+			'both maps have the same ids'     => array(
 				array(
 					'provider1' => 1,
 					'provider2' => 2,
@@ -268,7 +272,7 @@ class UtilsTest extends WC_Unit_Test_Case {
 				),
 				array(
 					'provider1',
-					'provider4' , // The provider takes the place of the existing one.
+					'provider4', // The provider takes the place of the existing one.
 					'provider2',
 					'provider3',
 				),
@@ -436,7 +440,7 @@ class UtilsTest extends WC_Unit_Test_Case {
 				array(
 					'provider1',
 					'provider2',
-					'provider3' ,
+					'provider3',
 					'provider4',
 					'provider5',
 				),
@@ -560,7 +564,7 @@ class UtilsTest extends WC_Unit_Test_Case {
 					'provider5' => 1,
 				),
 				array(
-					'provider4' ,
+					'provider4',
 					'provider5',
 					'provider1',
 					'provider2',
@@ -580,7 +584,7 @@ class UtilsTest extends WC_Unit_Test_Case {
 				array(
 					'provider4',
 					'provider2',
-					'provider1' ,
+					'provider1',
 					'provider3',
 				),
 			),
@@ -849,7 +853,7 @@ class UtilsTest extends WC_Unit_Test_Case {
 					'provider4',
 				),
 			),
-			'move one item lower #1' => array(
+			'move one item lower #1'          => array(
 				array(
 					'provider0' => 0,
 					'provider1' => 1,
@@ -866,7 +870,7 @@ class UtilsTest extends WC_Unit_Test_Case {
 					'provider3',
 				),
 			),
-			'move one item lower #2' => array(
+			'move one item lower #2'          => array(
 				array(
 					'provider0' => 0,
 					'provider1' => 1,
@@ -883,7 +887,7 @@ class UtilsTest extends WC_Unit_Test_Case {
 					'provider1',
 				),
 			),
-			'move one item higher #1' => array(
+			'move one item higher #1'         => array(
 				array(
 					'provider0' => 0,
 					'provider1' => 1,
@@ -900,7 +904,7 @@ class UtilsTest extends WC_Unit_Test_Case {
 					'provider3',
 				),
 			),
-			'move one item higher #2' => array(
+			'move one item higher #2'         => array(
 				array(
 					'provider0' => 0,
 					'provider1' => 1,
@@ -924,8 +928,13 @@ class UtilsTest extends WC_Unit_Test_Case {
 	 * Test moving an id at a specific order in an order map.
 	 *
 	 * @dataProvider data_provider_order_map_move_at_order
+	 *
+	 * @param array  $order_map          The order map.
+	 * @param string $id                 The id to move.
+	 * @param int    $order              The order to move the id at.
+	 * @param array  $expected_order_map The expected order map.
 	 */
-	public function test_order_map_move_at_order( $order_map, $id, $order, $expected_order_map ) {
+	public function test_order_map_move_at_order( array $order_map, string $id, int $order, array $expected_order_map ) {
 		// Act.
 		$updated_order_map = Utils::order_map_move_at_order( $order_map, $id, $order );
 
@@ -940,7 +949,7 @@ class UtilsTest extends WC_Unit_Test_Case {
 	 */
 	public function data_provider_order_map_move_at_order(): array {
 		return array(
-			'id does not exist' => array(
+			'id does not exist'                           => array(
 				array(
 					'provider1' => 1,
 					'provider2' => 2,
@@ -952,7 +961,7 @@ class UtilsTest extends WC_Unit_Test_Case {
 					'provider2' => 2,
 				),
 			),
-			'id is already at the desired order' => array(
+			'id is already at the desired order'          => array(
 				array(
 					'provider1' => 1,
 					'provider2' => 2,
@@ -1113,8 +1122,13 @@ class UtilsTest extends WC_Unit_Test_Case {
 	 * Test inserting an id at a specific order in an order map.
 	 *
 	 * @dataProvider data_provider_order_map_place_at_order
+	 *
+	 * @param array  $order_map          The order map.
+	 * @param string $id                 The id to insert.
+	 * @param int    $order              The order to insert the id at.
+	 * @param array  $expected_order_map The expected order map.
 	 */
-	public function test_order_map_place_at_order( $order_map, $id, $order, $expected_order_map ) {
+	public function test_order_map_place_at_order( array $order_map, string $id, int $order, array $expected_order_map ) {
 		// Act.
 		$updated_order_map = Utils::order_map_place_at_order( $order_map, $id, $order );
 
@@ -1129,7 +1143,7 @@ class UtilsTest extends WC_Unit_Test_Case {
 	 */
 	public function data_provider_order_map_place_at_order(): array {
 		return array(
-			'empty order map' => array(
+			'empty order map'                              => array(
 				array(),
 				'provider1',
 				1,
@@ -1147,7 +1161,7 @@ class UtilsTest extends WC_Unit_Test_Case {
 					'provider1' => 1,
 				),
 			),
-			'id exists and is not at the desired order' => array(
+			'id exists and is not at the desired order'    => array(
 				array(
 					'provider1' => 2,
 					'provider2' => 3,
@@ -1285,7 +1299,7 @@ class UtilsTest extends WC_Unit_Test_Case {
 					'provider3' => 0,
 				),
 			),
-			'id does not exist and order exists #1' => array(
+			'id does not exist and order exists #1'        => array(
 				array(
 					'provider1' => 1,
 					'provider2' => 2,
@@ -1298,7 +1312,7 @@ class UtilsTest extends WC_Unit_Test_Case {
 					'provider3' => 1,
 				),
 			),
-			'id does not exist and order exists #2' => array(
+			'id does not exist and order exists #2'        => array(
 				array(
 					'provider1' => 1,
 					'provider2' => 2,
@@ -1348,8 +1362,11 @@ class UtilsTest extends WC_Unit_Test_Case {
 	 * Test normalizing an order map.
 	 *
 	 * @dataProvider data_provider_order_map_normalize
+	 *
+	 * @param array $order_map          The order map.
+	 * @param array $expected_order_map The expected order map.
 	 */
-	public function test_order_map_normalize( $order_map, $expected_order_map ) {
+	public function test_order_map_normalize( array $order_map, array $expected_order_map ) {
 		// Act.
 		$updated_order_map = Utils::order_map_normalize( $order_map );
 
@@ -1364,11 +1381,11 @@ class UtilsTest extends WC_Unit_Test_Case {
 	 */
 	public function data_provider_order_map_normalize(): array {
 		return array(
-			'empty order map' => array(
+			'empty order map'                         => array(
 				array(),
 				array(),
 			),
-			'one item' => array(
+			'one item'                                => array(
 				array(
 					'provider1' => 1,
 				),
@@ -1376,7 +1393,7 @@ class UtilsTest extends WC_Unit_Test_Case {
 					'provider1' => 0,
 				),
 			),
-			'one item - already normalized' => array(
+			'one item - already normalized'           => array(
 				array(
 					'provider1' => 0,
 				),
@@ -1384,7 +1401,7 @@ class UtilsTest extends WC_Unit_Test_Case {
 					'provider1' => 0,
 				),
 			),
-			'multiple items' => array(
+			'multiple items'                          => array(
 				array(
 					'provider1' => 1,
 					'provider2' => 2,
@@ -1396,7 +1413,7 @@ class UtilsTest extends WC_Unit_Test_Case {
 					'provider3' => 2,
 				),
 			),
-			'multiple items - already normalized' => array(
+			'multiple items - already normalized'     => array(
 				array(
 					'provider1' => 0,
 					'provider2' => 1,
@@ -1420,7 +1437,7 @@ class UtilsTest extends WC_Unit_Test_Case {
 					'provider3' => 2,
 				),
 			),
-			'multiple items - not sorted #1' => array(
+			'multiple items - not sorted #1'          => array(
 				array(
 					'provider2' => 20,
 					'provider1' => 1,
@@ -1432,7 +1449,7 @@ class UtilsTest extends WC_Unit_Test_Case {
 					'provider3' => 2,
 				),
 			),
-			'multiple items - not sorted #2' => array(
+			'multiple items - not sorted #2'          => array(
 				array(
 					'provider3' => 30,
 					'provider2' => 20,

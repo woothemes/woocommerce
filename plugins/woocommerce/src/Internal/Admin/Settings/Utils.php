@@ -11,10 +11,10 @@ class Utils {
 	/**
 	 * Apply order mappings to a base order map.
 	 *
-	 * @param array     $base_map     The base order map.
-	 * @param array     $new_mappings The order mappings to apply.
-	 *                                This can be a full or partial list of the base one,
-	 *                                but it can also contain (only) new IDs and their orders.
+	 * @param array $base_map     The base order map.
+	 * @param array $new_mappings The order mappings to apply.
+	 *                            This can be a full or partial list of the base one,
+	 *                            but it can also contain (only) new IDs and their orders.
 	 *
 	 * @return array The updated base order map, normalized.
 	 */
@@ -77,14 +77,14 @@ class Utils {
 			// Moving down.
 			foreach ( $order_map as $key => $value ) {
 				if ( $value <= $order && $value >= $existing_order ) {
-					$order_map[ $key ] --;
+					--$order_map[ $key ];
 				}
 			}
 		} else {
 			// Moving up.
 			foreach ( $order_map as $key => $value ) {
 				if ( $value >= $order && $value <= $existing_order ) {
-					$order_map[ $key ] ++;
+					++$order_map[ $key ];
 				}
 			}
 		}
@@ -134,7 +134,7 @@ class Utils {
 	 * Add an id to a specific order in an order map.
 	 *
 	 * @param array  $order_map The order map.
-	 * @param string $id 	    The id to move.
+	 * @param string $id        The id to move.
 	 * @param int    $order     The order to move the id to.
 	 *
 	 * @return array The updated order map. If the id is already in the order map, the order map is returned as is.
@@ -178,7 +178,7 @@ class Utils {
 		}
 
 		$updated_map = [];
-		$bump = $new_min_order - min( $order_map);
+		$bump        = $new_min_order - min( $order_map );
 		foreach ( $order_map as $id => $order ) {
 			$updated_map[ $id ] = $order + $bump;
 		}
