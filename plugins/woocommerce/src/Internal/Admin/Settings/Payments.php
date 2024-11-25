@@ -63,39 +63,95 @@ class Payments {
 	/**
 	 * Get the payment provider details list for the settings page.
 	 *
+	 * @param string $location The location for which the providers are being determined.
+	 *                         This is a ISO 3166-1 alpha-2 country code.
+	 *
 	 * @return array The payment providers details list.
+	 * @throws Exception If there are malformed or invalid suggestions.
 	 */
-	public function get_payment_providers(): array {
+	public function get_payment_providers( string $location ): array {
 		$payment_gateways = $this->get_payment_gateways();
+		$suggestions      = array();
+
+		$providers_order_map = get_option( self::PROVIDERS_ORDER_OPTION, array() );
+		$providers_order_map = $this->normalize_payment_providers_order_map( $providers_order_map );
 
 		$payment_providers = array();
-		foreach ( $payment_gateways as $payment_gateway_order => $payment_gateway ) {
-			if ( $this->is_offline_payment_method( $payment_gateway->id ) ) {
-				continue;
-			}
 
-			$gateway_details     = $this->get_payment_gateway_base_details( $payment_gateway, $payment_gateway_order );
-			$gateway_details     = $this->enhance_payment_gateway_details( $gateway_details, $payment_gateway );
+		// Only include suggestions if the requesting user can install plugins.
+		if ( current_user_can( 'install_plugins' ) ) {
+			$suggestions = $this->get_extension_suggestions( $location );
+		}
+		// If we have preferred suggestions, add them to the providers list.
+		if ( ! empty( $suggestions['preferred'] ) ) {
+			// Sort them by priority, ASC.
+			usort(
+				$suggestions['preferred'],
+				function ( $a, $b ) {
+					return $a['_priority'] <=> $b['_priority'];
+				}
+			);
+			$added_to_top = 0;
+			foreach ( $suggestions['preferred'] as $suggestion ) {
+				$suggestion_order_map_id = $this->get_suggestion_order_map_id( $suggestion['id'] );
+				// Determine the suggestion's order value.
+				// If we don't have an order for it, add it to the top but keep the relative order (PSP first, APM second).
+				if ( ! isset( $providers_order_map[ $suggestion_order_map_id ] ) ) {
+					$providers_order_map = Utils::order_map_add_at_order( $providers_order_map, $suggestion_order_map_id, $added_to_top );
+					++$added_to_top;
+				}
+
+				// Change suggestion details to align it with a regular payment gateway.
+				$suggestion['id']     = $suggestion_order_map_id;
+				$suggestion['_type']  = self::PROVIDER_TYPE_SUGGESTION;
+				$suggestion['_order'] = $providers_order_map[ $suggestion_order_map_id ];
+				unset( $suggestion['_priority'] );
+
+				$payment_providers[] = $suggestion;
+			}
+		}
+
+		foreach ( $payment_gateways as $payment_gateway ) {
+			$gateway_details = $this->get_payment_gateway_base_details(
+				$payment_gateway,
+				$providers_order_map[ $payment_gateway->id ] ?? count( $payment_providers )
+			);
+			$gateway_details = $this->enhance_payment_gateway_details( $gateway_details, $payment_gateway );
+
+			$gateway_details['_type']  = $this->is_offline_payment_method( $payment_gateway->id ) ? self::PROVIDER_TYPE_OFFLINE_PM : self::PROVIDER_TYPE_GATEWAY;
+			$gateway_details['_order'] = $providers_order_map[ $payment_gateway->id ] ?? count( $payment_providers );
+
 			$payment_providers[] = $gateway_details;
 		}
+
+		// Add offline payment methods group entry.
+		$payment_providers[] = array(
+			'id'          => self::OFFLINE_METHODS_ORDERING_GROUP,
+			'_type'       => self::PROVIDER_TYPE_OFFLINE_PMS_GROUP,
+			'_order'      => $providers_order_map[ self::OFFLINE_METHODS_ORDERING_GROUP ] ?? count( $payment_providers ),
+			'title'       => __( 'Offline Payment Methods', 'woocommerce' ),
+			'description' => __( 'Allow shoppers to pay offline.', 'woocommerce' ),
+		);
+
+		// Sort the payment providers by order, ASC.
+		usort(
+			$payment_providers,
+			function ( $a, $b ) {
+				return $a['_order'] <=> $b['_order'];
+			}
+		);
 
 		return $payment_providers;
 	}
 
 	/**
-	 * Get the offline payment methods for the settings page.
+	 * Get the offline payment methods details for the settings page.
 	 *
 	 * @return array The offline payment methods details list.
 	 */
 	public function get_offline_payment_methods(): array {
-		$payment_gateways = $this->get_payment_gateways();
-
 		$offline_payment_methods = array();
-		foreach ( $payment_gateways as $payment_gateway_order => $payment_gateway ) {
-			if ( ! $this->is_offline_payment_method( $payment_gateway->id ) ) {
-				continue;
-			}
-
+		foreach ( $this->get_offline_payment_methods_gateways() as $payment_gateway_order => $payment_gateway ) {
 			$gateway_details           = $this->get_payment_gateway_base_details( $payment_gateway, $payment_gateway_order );
 			$gateway_details           = $this->enhance_payment_gateway_details( $gateway_details, $payment_gateway );
 			$offline_payment_methods[] = $gateway_details;
@@ -330,8 +386,20 @@ class Payments {
 	 * @param string $id The ID of the payment extension suggestion to hide.
 	 *
 	 * @return bool True if the suggestion was successfully hidden, false otherwise.
+	 * @throws Exception If the suggestion ID is invalid.
 	 */
 	public function hide_payment_extension_suggestion( string $id ): bool {
+		// We may receive a suggestion ID that is actually an order map ID used in the settings page providers list.
+		// Extract the suggestion ID from the order map ID.
+		if ( $this->is_suggestion_order_map_id( $id ) ) {
+			$id = $this->get_suggestion_id_from_order_map_id( $id );
+		}
+
+		$suggestion = $this->get_payment_extension_suggestion_by_id( $id );
+		if ( is_null( $suggestion ) ) {
+			throw new Exception( esc_html__( 'Invalid suggestion ID.', 'woocommerce' ) );
+		}
+
 		$user_payments_nox_profile = get_user_meta( get_current_user_id(), self::USER_PAYMENTS_NOX_PROFILE_KEY, true );
 		if ( empty( $user_payments_nox_profile ) ) {
 			$user_payments_nox_profile = array();
@@ -406,36 +474,45 @@ class Payments {
 	 * We apply the same actions and logic that the non-React Payments settings page uses to get the gateways.
 	 * This way we maintain backwards compatibility.
 	 *
-	 * @return array The payment gateways list.
+	 * @param bool $exclude_shells Whether to exclude "shell" gateways that are not intended for display.
+	 *                             Default is true.
+	 *
+	 * @return array The payment gateway objects list.
 	 */
-	private function get_payment_gateways(): array {
+	private function get_payment_gateways( bool $exclude_shells = true ): array {
 		if ( ! is_null( $this->payment_gateways_memo ) ) {
-			return $this->payment_gateways_memo;
+			$payment_gateways = $this->payment_gateways_memo;
+		} else {
+
+			// We don't want to output anything from the action. So we buffer it and discard it.
+			// We just want to give the payment extensions a chance to adjust the payment gateways list for the settings page.
+			// This is primarily for backwards compatibility.
+			ob_start();
+			/**
+			 * Fires before the payment gateways settings fields are rendered.
+			 *
+			 * @since 1.5.7
+			 */
+			do_action( 'woocommerce_admin_field_payment_gateways' );
+			ob_end_clean();
+
+			// Get all payment gateways, ordered by the user.
+			$payment_gateways = WC()->payment_gateways()->payment_gateways;
+
+			// Store the entire payment gateways list for later use.
+			$this->payment_gateways_memo = $payment_gateways;
 		}
 
-		// We don't want to output anything from the action. So we buffer it and discard it.
-		// We just want to give the payment extensions a chance to adjust the payment gateways list for the settings page.
-		// This is primarily for backwards compatibility.
-		ob_start();
-		/**
-		 * Fires before the payment gateways settings fields are rendered.
-		 *
-		 * @since 1.5.7
-		 */
-		do_action( 'woocommerce_admin_field_payment_gateways' );
-		ob_end_clean();
-
-		// Get all payment gateways, ordered by the user.
 		// Remove "shell" gateways that are not intended for display.
 		// We consider a gateway to be a "shell" if it has no WC admin title or description.
-		$payment_gateways = array_filter(
-			WC()->payment_gateways()->payment_gateways,
-			function ( $gateway ) {
-				return ! empty( $gateway->method_title ) && ! empty( $gateway->method_description );
-			}
-		);
-
-		$this->payment_gateways_memo = $payment_gateways;
+		if ( $exclude_shells ) {
+			$payment_gateways = array_filter(
+				$payment_gateways,
+				function ( $gateway ) {
+					return ! empty( $gateway->get_method_title() ) || ! empty( $gateway->get_method_description() );
+				}
+			);
+		}
 
 		return $payment_gateways;
 	}

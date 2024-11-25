@@ -128,17 +128,21 @@ class PaymentsRestController extends RestApiControllerBase {
 		}
 
 		try {
+			$providers = $this->payments->get_payment_providers( $location );
+		} catch ( Exception $e ) {
+			return new WP_Error( 'woocommerce_rest_payment_providers_error', $e->getMessage(), array( 'status' => 500 ) );
+		}
+
+		try {
 			$suggestions = $this->get_extension_suggestions( $location );
 		} catch ( Exception $e ) {
 			return new WP_Error( 'woocommerce_rest_payment_providers_error', $e->getMessage(), array( 'status' => 500 ) );
 		}
 
 		$response = array(
-			'gateways'                => $this->payments->get_payment_providers(),
-			'offline_payment_methods' => $this->payments->get_offline_payment_methods(),
-			'preferred_suggestions'   => $suggestions['preferred'],
-			'other_suggestions'       => $suggestions['other'],
-			'suggestion_categories'   => $this->payments->get_extension_suggestion_categories(),
+			'providers'             => $providers,
+			'suggestions'           => $suggestions,
+			'suggestion_categories' => $this->payments->get_extension_suggestion_categories(),
 		);
 
 		return rest_ensure_response( $this->prepare_payment_providers_response( $response ) );
@@ -168,34 +172,34 @@ class PaymentsRestController extends RestApiControllerBase {
 	 */
 	protected function hide_payment_extension_suggestion( WP_REST_Request $request ) {
 		$suggestion_id = $request->get_param( 'id' );
-		$suggestion    = $this->payments->get_payment_extension_suggestion_by_id( $suggestion_id );
-		if ( is_null( $suggestion ) ) {
-			return new WP_Error( 'woocommerce_rest_payment_extension_suggestion_error', __( 'Invalid suggestion ID.', 'woocommerce' ), array( 'status' => 400 ) );
-		}
 
-		$result = $this->payments->hide_payment_extension_suggestion( $suggestion_id );
+		try {
+			$result = $this->payments->hide_payment_extension_suggestion( $suggestion_id );
+		} catch ( Exception $e ) {
+			return new WP_Error( 'woocommerce_rest_payment_extension_suggestion_error', $e->getMessage(), array( 'status' => 400 ) );
+		}
 
 		return rest_ensure_response( array( 'success' => $result ) );
 	}
 
 	/**
-	 * Get the payment extension suggestions for the given location.
+	 * Get the payment extension suggestions (other) for the given location.
 	 *
 	 * @param string $location The location for which the suggestions are being fetched.
 	 *
-	 * @return array[] The payment extension suggestions for the given location, split into preferred and other.
+	 * @return array[]   The payment extension suggestions for the given location,
+	 *                   excluding the ones part of the main providers list.
 	 * @throws Exception If there are malformed or invalid suggestions.
 	 */
 	private function get_extension_suggestions( string $location ): array {
 		// If the requesting user can't install plugins, we don't suggest any extensions.
 		if ( ! current_user_can( 'install_plugins' ) ) {
-			return array(
-				'preferred' => array(),
-				'other'     => array(),
-			);
+			return array();
 		}
 
-		return $this->payments->get_extension_suggestions( $location );
+		$suggestions = $this->payments->get_extension_suggestions( $location );
+
+		return $suggestions['other'] ?? array();
 	}
 
 	/**
@@ -363,35 +367,21 @@ class PaymentsRestController extends RestApiControllerBase {
 			'type'    => 'object',
 		);
 		$schema['properties'] = array(
-			'gateways'                => array(
+			'providers'             => array(
 				'type'        => 'array',
-				'description' => esc_html__( 'The registered payment gateways.', 'woocommerce' ),
+				'description' => esc_html__( 'The ordered providers list. This includes registered payment gateways, suggestions, and offline payment methods and their group entry.', 'woocommerce' ),
 				'context'     => array( 'view', 'edit' ),
 				'readonly'    => true,
-				'items'       => $this->get_schema_for_payment_gateway(),
+				'items'       => $this->get_schema_for_payment_provider(),
 			),
-			'offline_payment_methods' => array(
+			'suggestions'           => array(
 				'type'        => 'array',
-				'description' => esc_html__( 'The offline payment methods.', 'woocommerce' ),
-				'context'     => array( 'view', 'edit' ),
-				'readonly'    => true,
-				'items'       => $this->get_schema_for_payment_gateway(),
-			),
-			'preferred_suggestions'   => array(
-				'type'        => 'array',
-				'description' => esc_html__( 'The preferred suggestions.', 'woocommerce' ),
+				'description' => esc_html__( 'The list of suggestions, excluding the ones part of the providers list.', 'woocommerce' ),
 				'context'     => array( 'view', 'edit' ),
 				'readonly'    => true,
 				'items'       => $this->get_schema_for_suggestion(),
 			),
-			'other_suggestions'       => array(
-				'type'        => 'array',
-				'description' => esc_html__( 'The other suggestions.', 'woocommerce' ),
-				'context'     => array( 'view', 'edit' ),
-				'readonly'    => true,
-				'items'       => $this->get_schema_for_suggestion(),
-			),
-			'suggestion_categories'   => array(
+			'suggestion_categories' => array(
 				'type'        => 'array',
 				'description' => esc_html__( 'The suggestion categories.', 'woocommerce' ),
 				'context'     => array( 'view', 'edit' ),
@@ -436,14 +426,14 @@ class PaymentsRestController extends RestApiControllerBase {
 	}
 
 	/**
-	 * Get the schema for a payment gateway.
+	 * Get the schema for a payment provider.
 	 *
-	 * @return array The schema for a payment gateway.
+	 * @return array The schema for a payment provider.
 	 */
-	private function get_schema_for_payment_gateway(): array {
+	private function get_schema_for_payment_provider(): array {
 		return array(
 			'type'        => 'object',
-			'description' => esc_html__( 'A payment gateway.', 'woocommerce' ),
+			'description' => esc_html__( 'A payment provider in the context of the main Payments Settings page list.', 'woocommerce' ),
 			'properties'  => array(
 				'id'                => array(
 					'type'        => 'string',
@@ -454,6 +444,12 @@ class PaymentsRestController extends RestApiControllerBase {
 				'_order'            => array(
 					'type'        => 'integer',
 					'description' => esc_html__( 'The sort order of the payment gateway.', 'woocommerce' ),
+					'context'     => array( 'view', 'edit' ),
+					'readonly'    => true,
+				),
+				'_type'             => array(
+					'type'        => 'string',
+					'description' => esc_html__( 'The type of payment provider. Use this to differentiate between the various items in the list and determine their intended use.', 'woocommerce' ),
 					'context'     => array( 'view', 'edit' ),
 					'readonly'    => true,
 				),
@@ -575,6 +571,18 @@ class PaymentsRestController extends RestApiControllerBase {
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
 						),
+					),
+				),
+				'tags'              => array(
+					'description' => esc_html__( 'The tags associated with the provider.', 'woocommerce' ),
+					'type'        => 'array',
+					'uniqueItems' => true,
+					'context'     => array( 'view', 'edit' ),
+					'readonly'    => true,
+					'items'       => array(
+						'type'        => 'string',
+						'description' => esc_html__( 'Tag associated with the provider.', 'woocommerce' ),
+						'readonly'    => true,
 					),
 				),
 			),
