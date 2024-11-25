@@ -9,7 +9,7 @@ use Automattic\WooCommerce\Admin\DeprecatedClassFacade;
  *
  * @internal
  * 
- * @deprecated since 9.5.0, use wp_get_environment_type() instead.
+ * @deprecated since 9.6.0, use wp_get_environment_type() instead.
  */
 class FeatureGating extends DeprecatedClassFacade {
 	/**
@@ -17,7 +17,7 @@ class FeatureGating extends DeprecatedClassFacade {
 	 *
 	 * @var string
 	 */
-	protected static $deprecated_in_version = '9.5.0';
+	protected static $deprecated_in_version = '9.6.0';
 
 	/**
 	 * Constructor

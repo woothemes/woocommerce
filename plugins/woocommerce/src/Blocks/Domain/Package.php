@@ -51,7 +51,7 @@ class Package {
 	 */
 	public function __construct( $version, $plugin_path, $deprecated = null ) {
 		if ( null !== $deprecated ) {
-			wc_deprecated_argument( 'FeatureGating', '9.5', 'FeatureGating class is deprecated, please use wp_get_environment_type() instead.' );
+			wc_deprecated_argument( 'FeatureGating', '9.6', 'FeatureGating class is deprecated, please use wp_get_environment_type() instead.' );
 			$this->feature_gating = new FeatureGating();
 		}
 		$this->version        = $version;
