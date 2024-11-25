@@ -18,7 +18,7 @@ import {
 	QueryControlProps,
 	CoreFilterNames,
 } from '../../types';
-import { getDefaultQuery } from '../../utils';
+import { DEFAULT_QUERY } from '../../constants';
 
 const orderOptions = [
 	{
@@ -76,10 +76,9 @@ const orderOptions = [
 const OrderByControl = ( props: QueryControlProps ) => {
 	const { query, trackInteraction, setQueryAttribute } = props;
 	const { order, orderBy } = query;
-	const defaultQuery = getDefaultQuery( query );
 
 	const deselectCallback = () => {
-		setQueryAttribute( { orderBy: defaultQuery.orderBy } );
+		setQueryAttribute( { orderBy: DEFAULT_QUERY.orderBy } );
 		trackInteraction( CoreFilterNames.ORDER );
 	};
 
@@ -94,8 +93,8 @@ const OrderByControl = ( props: QueryControlProps ) => {
 		<ToolsPanelItem
 			label={ __( 'Order by', 'woocommerce' ) }
 			hasValue={ () =>
-				order !== defaultQuery?.order ||
-				orderBy !== defaultQuery?.orderBy
+				order !== DEFAULT_QUERY.order ||
+				orderBy !== DEFAULT_QUERY.orderBy
 			}
 			isShownByDefault
 			onDeselect={ deselectCallback }
