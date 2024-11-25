@@ -70,6 +70,27 @@ class PaymentsRestController extends RestApiControllerBase {
 		);
 		register_rest_route(
 			'wc-admin',
+			'/' . $this->rest_base . '/providers/order',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::EDITABLE,
+					'callback'            => fn( $request ) => $this->run( $request, 'update_providers_order' ),
+					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
+					'args'                => array(
+						'order_map' => array(
+							'description'       => __( 'A map of provider ID to integer values representing the sort order.', 'woocommerce' ),
+							'type'              => 'object',
+							'required'          => true,
+							'validate_callback' => fn( $value ) => $this->check_providers_order_map_arg( $value ),
+							'sanitize_callback' => fn( $value ) => $this->sanitize_providers_order_arg( $value ),
+						),
+					),
+				),
+			),
+			$override
+		);
+		register_rest_route(
+			'wc-admin',
 			'/' . $this->rest_base . '/suggestion/(?P<id>[\w\d\-]+)/hide',
 			array(
 				array(
@@ -121,6 +142,21 @@ class PaymentsRestController extends RestApiControllerBase {
 		);
 
 		return rest_ensure_response( $this->prepare_payment_providers_response( $response ) );
+	}
+
+	/**
+	 * Update the payment providers order.
+	 *
+	 * @param WP_REST_Request $request The request object.
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	protected function update_providers_order( WP_REST_Request $request ) {
+		$order_map = $request->get_param( 'order_map' );
+
+		$result = $this->payments->update_payment_providers_order_map( $order_map );
+
+		return rest_ensure_response( array( 'success' => $result ) );
 	}
 
 	/**
@@ -218,6 +254,52 @@ class PaymentsRestController extends RestApiControllerBase {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Validate the providers order map argument.
+	 *
+	 * @param mixed $value Value of the argument.
+	 *
+	 * @return WP_Error|true True if the providers order map argument is valid, otherwise a WP_Error object.
+	 */
+	private function check_providers_order_map_arg( $value ) {
+		if ( ! is_array( $value ) ) {
+			return new WP_Error( 'rest_invalid_param', esc_html__( 'The ordering argument must be an object.', 'woocommerce' ), array( 'status' => 400 ) );
+		}
+
+		foreach ( $value as $provider_id => $order ) {
+			if ( ! is_string( $provider_id ) || ! is_numeric( $order ) ) {
+				return new WP_Error( 'rest_invalid_param', esc_html__( 'The ordering argument must be an object with provider IDs as keys and numeric values as values.', 'woocommerce' ), array( 'status' => 400 ) );
+			}
+
+			if ( sanitize_key( $provider_id ) !== $provider_id ) {
+				return new WP_Error( 'rest_invalid_param', esc_html__( 'The provider ID must be a valid string.', 'woocommerce' ), array( 'status' => 400 ) );
+			}
+
+			if ( false === filter_var( $order, FILTER_VALIDATE_INT ) ) {
+				return new WP_Error( 'rest_invalid_param', esc_html__( 'The order value must be an integer.', 'woocommerce' ), array( 'status' => 400 ) );
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Sanitize the providers ordering argument.
+	 *
+	 * @param array $value Value of the argument.
+	 *
+	 * @return array
+	 */
+	private function sanitize_providers_order_arg( array $value ): array {
+		// Sanitize the ordering object to ensure that the order values are integers and the provider IDs are safe strings.
+		foreach ( $value as $provider_id => $order ) {
+			$id           = sanitize_key( $provider_id );
+			$value[ $id ] = intval( $order );
+		}
+
+		return $value;
 	}
 
 	/**
