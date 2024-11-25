@@ -42,6 +42,8 @@ class WC_Tests_Admin_Report extends WC_Unit_Test_Case {
 
 	/**
 	 * Test: get_order_report_data
+	 *
+	 * @expectedDeprecated WC_Admin_Report
 	 */
 	public function test_get_order_report_data() {
 		$order = WC_Helper_Order::create_order();
@@ -68,6 +70,9 @@ class WC_Tests_Admin_Report extends WC_Unit_Test_Case {
 
 	/**
 	 * Test: get_order_report_data
+	 *
+	 * @expectedDeprecated WC_Admin_Report
+	 * @expectedDeprecated woocommerce_reports_get_order_report_data_args
 	 */
 	public function test_get_order_report_data_returns_empty_string_if_data_is_empty() {
 		$report = new WC_Admin_Report();
@@ -79,6 +84,8 @@ class WC_Tests_Admin_Report extends WC_Unit_Test_Case {
 
 	/**
 	 * Test: get_order_report_data
+	 *
+	 * @expectedDeprecated WC_Admin_Report
 	 */
 	public function test_get_order_report_data_for_post_meta() {
 		$order = WC_Helper_Order::create_order();
@@ -103,6 +110,8 @@ class WC_Tests_Admin_Report extends WC_Unit_Test_Case {
 
 	/**
 	 * Test: get_order_report_data
+	 *
+	 * @expectedDeprecated WC_Admin_Report
 	 */
 	public function test_get_order_report_data_for_parent_meta() {
 		$order  = WC_Helper_Order::create_order();
@@ -130,6 +139,8 @@ class WC_Tests_Admin_Report extends WC_Unit_Test_Case {
 
 	/**
 	 * Test: get_order_report_data
+	 *
+	 * @expectedDeprecated WC_Admin_Report
 	 */
 	public function test_get_order_report_data_for_post_data() {
 		$order = WC_Helper_Order::create_order();
@@ -154,6 +165,8 @@ class WC_Tests_Admin_Report extends WC_Unit_Test_Case {
 
 	/**
 	 * Test: get_order_report_data
+	 *
+	 * @expectedDeprecated WC_Admin_Report
 	 */
 	public function test_get_order_report_data_for_order_items() {
 		$product = WC_Helper_Product::create_simple_product();
