@@ -26,6 +26,7 @@ import { getValidityMessageForInput } from '../../checkout/utils';
 import { ValidatedTextInputProps } from './types';
 
 export type ValidatedTextInputHandle = {
+	focus?: () => void;
 	revalidate: () => void;
 };
 
@@ -147,6 +148,9 @@ const ValidatedTextInput = forwardRef<
 			forwardedRef,
 			function () {
 				return {
+					focus() {
+						inputRef.current?.focus();
+					},
 					revalidate() {
 						validateInput( ! value );
 					},
@@ -228,10 +232,6 @@ const ValidatedTextInput = forwardRef<
 		}
 
 		const hasError = validationError?.message && ! validationError?.hidden;
-		const describedBy =
-			showError && hasError && validationErrorId
-				? validationErrorId
-				: ariaDescribedBy;
 
 		return (
 			<TextInput
@@ -240,12 +240,20 @@ const ValidatedTextInput = forwardRef<
 				} ) }
 				aria-invalid={ hasError === true }
 				id={ textInputId }
+				aria-errormessage={
+					// we're using the internal `aria-errormessage` attribute, calculated from the data store.
+					// If a consumer wants to overwrite the attribute, they can pass a prop.
+					showError && hasError && validationErrorId
+						? validationErrorId
+						: undefined
+				}
 				type={ type }
 				feedback={
 					showError && hasError ? (
 						<ValidationInputError
 							errorMessage={ passedErrorMessage }
 							propertyName={ errorIdString }
+							elementId={ errorIdString }
 						/>
 					) : (
 						feedback
@@ -267,7 +275,7 @@ const ValidatedTextInput = forwardRef<
 					}
 				} }
 				onBlur={ () => validateInput( false ) }
-				ariaDescribedBy={ describedBy }
+				ariaDescribedBy={ ariaDescribedBy }
 				value={ value }
 				title="" // This prevents the same error being shown on hover.
 				label={ label }

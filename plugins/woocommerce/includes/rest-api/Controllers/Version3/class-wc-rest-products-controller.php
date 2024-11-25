@@ -8,6 +8,7 @@
  * @since   2.6.0
  */
 
+use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareRestControllerTrait;
 use Automattic\WooCommerce\Utilities\I18nUtil;
 
 defined( 'ABSPATH' ) || exit;
@@ -19,6 +20,8 @@ defined( 'ABSPATH' ) || exit;
  * @extends WC_REST_Products_V2_Controller
  */
 class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
+
+	use CogsAwareRestControllerTrait;
 
 	/**
 	 * Endpoint namespace.
@@ -42,6 +45,13 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 	 * @var array
 	 */
 	private $suggested_products_ids = array();
+
+	/**
+	 * Product statuses to exclude from the query.
+	 *
+	 * @var array
+	 */
+	private $exclude_status = array();
 
 	/**
 	 * Register the routes for products.
@@ -170,6 +180,28 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		// Set post_status.
 		$args['post_status'] = $request['status'];
 
+		// Filter by a list of product statuses.
+		if ( ! empty( $request['include_status'] ) ) {
+			$args['post_status'] = $request['include_status'];
+		}
+
+		if ( ! empty( $request['exclude_status'] ) ) {
+			$this->exclude_status = $request['exclude_status'];
+		} else {
+			$this->exclude_status = array();
+		}
+
+		// Filter downloadable products.
+		if ( isset( $request['downloadable'] ) ) {
+			$args['meta_query'] = $this->add_meta_query( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+				$args,
+				array(
+					'key'   => '_downloadable',
+					'value' => wc_bool_to_string( $request['downloadable'] ),
+				)
+			);
+		}
+
 		// Taxonomy query to filter products by type, category,
 		// tag, shipping class, and attribute.
 		$tax_query = array();
@@ -193,11 +225,18 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		}
 
 		// Filter product type by slug.
-		if ( ! empty( $request['type'] ) ) {
+		$terms = array();
+		if ( ! empty( $request['include_types'] ) ) {
+			$terms = $request['include_types'];
+		} elseif ( ! empty( $request['type'] ) ) {
+			$terms[] = $request['type'];
+		}
+
+		if ( ! empty( $terms ) ) {
 			$tax_query[] = array(
 				'taxonomy' => 'product_type',
 				'field'    => 'slug',
-				'terms'    => $request['type'],
+				'terms'    => $terms,
 			);
 		}
 
@@ -232,7 +271,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		}
 
 		if ( wc_product_sku_enabled() ) {
-			// Do a partial match for a sku. Supercedes sku parameter that does exact matching.
+			// Do a partial match for a sku. Supersedes sku parameter that does exact matching.
 			if ( ! empty( $request['search_sku'] ) ) {
 				// Store this for use in the query clause filters.
 				$this->search_sku_in_product_lookup_table = $request['search_sku'];
@@ -257,6 +296,18 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 					)
 				);
 			}
+		}
+
+		if ( ! empty( $request['global_unique_id'] ) ) {
+			$global_unique_ids  = array_map( 'trim', explode( ',', $request['global_unique_id'] ) );
+			$args['meta_query'] = $this->add_meta_query( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+				$args,
+				array(
+					'key'     => '_global_unique_id',
+					'value'   => $global_unique_ids,
+					'compare' => 'IN',
+				)
+			);
 		}
 
 		// Filter by tax class.
@@ -320,6 +371,11 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			$args['post__in'] = $this->suggested_products_ids;
 		}
 
+		// Force the post_type argument, since it's not a user input variable.
+		if ( ! empty( $request['global_unique_id'] ) ) {
+			$args['post_type'] = array( 'product', 'product_variation' );
+		}
+
 		return $args;
 	}
 
@@ -336,6 +392,11 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			add_filter( 'posts_where', array( $this, 'add_search_criteria_to_wp_query_where' ) );
 		}
 
+		// Add filters for excluding product statuses.
+		if ( ! empty( $this->exclude_status ) ) {
+			add_filter( 'posts_where', array( $this, 'exclude_product_statuses' ) );
+		}
+
 		$result = parent::get_objects( $query_args );
 
 		// Remove filters for search criteria in product postmeta via the lookup table.
@@ -345,6 +406,14 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 
 			$this->search_sku_in_product_lookup_table = '';
 		}
+
+		// Remove filters for excluding product statuses.
+		if ( ! empty( $this->exclude_status ) ) {
+			remove_filter( 'posts_where', array( $this, 'exclude_product_statuses' ) );
+
+			$this->exclude_status = array();
+		}
+
 		return $result;
 	}
 
@@ -375,6 +444,28 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			$like_search = '%' . $wpdb->esc_like( $this->search_sku_in_product_lookup_table ) . '%';
 			$where      .= ' AND ' . $wpdb->prepare( '(wc_product_meta_lookup.sku LIKE %s)', $like_search );
 		}
+		return $where;
+	}
+
+	/**
+	 * Exclude product statuses from the query.
+	 *
+	 * @param string $where Where clause used to search posts.
+	 * @return string
+	 */
+	public function exclude_product_statuses( $where ) {
+		if ( ! empty( $this->exclude_status ) && is_array( $this->exclude_status ) ) {
+			global $wpdb;
+
+			$not_in = array();
+			foreach ( $this->exclude_status as $status_to_exclude ) {
+				$not_in[] = $wpdb->prepare( '%s', $status_to_exclude );
+			}
+
+			$not_in = join( ', ', $not_in );
+			return $where . " AND $wpdb->posts.post_status NOT IN ( $not_in )";
+		}
+
 		return $where;
 	}
 
@@ -881,6 +972,10 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			if ( $date ) {
 				$product->set_date_created( $date );
 			}
+		}
+
+		if ( $this->cogs_is_enabled() ) {
+			$this->set_cogs_info_in_product_object( $request, $product );
 		}
 
 		/**
@@ -1547,6 +1642,10 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			);
 		}
 
+		if ( $this->cogs_is_enabled() ) {
+			$schema = $this->add_cogs_related_product_schema( $schema, false );
+		}
+
 		return $this->add_additional_fields_schema( $schema );
 	}
 
@@ -1572,6 +1671,46 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			'description'       => __( 'Limit results to those with a SKU that partial matches a string.', 'woocommerce' ),
 			'type'              => 'string',
 			'sanitize_callback' => 'sanitize_text_field',
+			'validate_callback' => 'rest_validate_request_arg',
+		);
+
+		$params['include_status'] = array(
+			'description'       => __( 'Limit result set to products with any of the statuses.', 'woocommerce' ),
+			'type'              => 'array',
+			'items'             => array(
+				'type' => 'string',
+				'enum' => array_merge( array( 'any', 'trash' ), array_keys( get_post_statuses() ) ),
+			),
+			'sanitize_callback' => 'wp_parse_list',
+			'validate_callback' => 'rest_validate_request_arg',
+		);
+
+		$params['exclude_status'] = array(
+			'description'       => __( 'Exclude products with any of the statuses from result set.', 'woocommerce' ),
+			'type'              => 'array',
+			'items'             => array(
+				'type' => 'string',
+				'enum' => array_merge( array( 'trash' ), array_keys( get_post_statuses() ) ),
+			),
+			'sanitize_callback' => 'wp_parse_list',
+			'validate_callback' => 'rest_validate_request_arg',
+		);
+
+		$params['include_types'] = array(
+			'description'       => __( 'Limit result set to products with any of the types.', 'woocommerce' ),
+			'type'              => 'array',
+			'items'             => array(
+				'type' => 'string',
+				'enum' => array_keys( wc_get_product_types() ),
+			),
+			'sanitize_callback' => 'wp_parse_list',
+			'validate_callback' => 'rest_validate_request_arg',
+		);
+
+		$params['downloadable'] = array(
+			'description'       => __( 'Limit result set to downloadable products.', 'woocommerce' ),
+			'type'              => 'boolean',
+			'sanitize_callback' => 'rest_sanitize_boolean',
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 
@@ -1734,5 +1873,24 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		$this->suggested_products_ids = array_slice( $this->suggested_products_ids, 0, $limit );
 
 		return parent::get_items( $request );
+	}
+
+	/**
+	 * Core function to prepare a single product output for response
+	 * (doesn't fire hooks, ensure_response, or add links).
+	 *
+	 * @param WC_Data         $object_data Object data.
+	 * @param WP_REST_Request $request Request object.
+	 * @param string          $context Request context.
+	 * @return array Product data to be included in the response.
+	 */
+	protected function prepare_object_for_response_core( $object_data, $request, $context ): array {
+		$data = parent::prepare_object_for_response_core( $object_data, $request, $context );
+
+		if ( $this->cogs_is_enabled() ) {
+			$this->add_cogs_info_to_returned_product_data( $data, $object_data );
+		}
+
+		return $data;
 	}
 }

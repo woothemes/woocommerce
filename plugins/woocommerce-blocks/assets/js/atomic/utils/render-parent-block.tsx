@@ -180,6 +180,11 @@ const renderInnerBlocks = ( {
 				return null;
 			}
 
+			// Return scripts without manipulation.
+			if ( parsedElement?.type === 'script' ) {
+				return parsedElement;
+			}
+
 			const renderedChildren = node.childNodes.length
 				? renderInnerBlocks( {
 						block,

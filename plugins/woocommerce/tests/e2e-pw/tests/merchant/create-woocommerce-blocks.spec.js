@@ -17,30 +17,29 @@ const singleProductPrice = '555.00';
 // - Product Gallery (Beta) - it's not intended to be used in posts
 const blocks = [
 	'Active Filters',
-	'All Products',
 	'All Reviews',
-	'Best Selling Products',
+	'Best Sellers',
+	'Cross-Sells',
 	'Customer account',
 	'Featured Category',
 	'Featured Product',
+	'Featured Products',
 	'Filter by Attribute',
 	'Filter by Price',
 	'Filter by Rating',
 	'Filter by Stock',
-	'Hand-picked Products',
-	'Newest Products',
+	'Hand-Picked Products',
+	'New Arrivals',
 	'On Sale Products',
 	'Product Categories List',
 	'Product Collection',
 	'Product Search',
-	'Products by Attribute',
-	'Products by Category',
-	'Products by Tag',
 	'Reviews by Category',
 	'Reviews by Product',
 	'Single Product',
 	'Store Notices',
 	'Top Rated Products',
+	'Upsells',
 ];
 
 let productId, shippingZoneId, productTagId, attributeId, productCategoryId;
@@ -52,7 +51,14 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Add WooCommerce Blocks Into Page',
-	{ tag: [ '@gutenberg', '@services' ] },
+	{
+		tag: [
+			'@gutenberg',
+			'@services',
+			'@skip-on-default-pressable',
+			'@skip-on-default-wpcom',
+		],
+	},
 	() => {
 		test.beforeAll( async ( { api } ) => {
 			// add product attribute
