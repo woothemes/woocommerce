@@ -497,6 +497,8 @@ class WC_Frontend_Scripts {
 				$params = array(
 					'ajax_url'    => WC()->ajax_url(),
 					'wc_ajax_url' => WC_AJAX::get_endpoint( '%%endpoint%%' ),
+					'i18n_password_show' => esc_attr__( 'Show password', 'woocommerce' ),
+					'i18n_password_hide' => esc_attr__( 'Hide password', 'woocommerce' ),
 				);
 				break;
 			case 'wc-geolocation':
