@@ -2,8 +2,6 @@
  * External dependencies
  */
 import { type OfflinePaymentGateway } from '@woocommerce/data';
-import { Card, CardHeader } from '@wordpress/components';
-import React from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 /**
