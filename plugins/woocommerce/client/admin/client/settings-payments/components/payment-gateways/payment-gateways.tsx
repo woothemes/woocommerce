@@ -117,18 +117,18 @@ export const PaymentGateways = ( {
 				</div>
 				<div className="settings-payment-gateways__header-select-container">
 					<CountrySelector
-    						className="woocommerce-select-control__country"
-    						label={ __( 'Business location :', 'woocommerce' ) }
-    						placeholder={ '' }
-    						value={
-								countryOptions.find((country) => country.key === storeCountry) ??
-								{ key: 'US', name: 'United States (US)' }
-							  }
-    						options={ countryOptions }
-    						onChange={ ( value: string ) => {
-    							setStoreCountry( value );
-    						} }
-    					/>
+    					className="woocommerce-select-control__country"
+    					label={ __( 'Business location :', 'woocommerce' ) }
+    					placeholder={ '' }
+    					value={
+							countryOptions.find((country) => country.key === storeCountry) ??
+							{ key: 'US', name: 'United States (US)' }
+						}
+    					options={ countryOptions }
+    					onChange={ ( value: string ) => {
+    						setStoreCountry( value );
+    					} }
+    				/>
 				</div>
 			</div>
 			<List
