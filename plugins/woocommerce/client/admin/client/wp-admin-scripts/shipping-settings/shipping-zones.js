@@ -20,12 +20,6 @@ export const ShippingZones = () => {
 		history.push( { ...remainingArgs, quickEdit: true, zoneId } );
 	};
 
-	const onAdd = () => {
-		const currentArgs = getQueryArgs( window.location.href );
-
-		history.push( { ...currentArgs, quickEdit: true, zoneId: 0 } );
-	};
-
 	return (
 		<div style={ { padding: '20px' } }>
 			<div
@@ -37,9 +31,7 @@ export const ShippingZones = () => {
 				} }
 			>
 				<h2>Shipping Zones</h2>
-				<Button variant="primary" onClick={ () => onAdd() }>
-					Add Zone
-				</Button>
+				<Button variant="primary">Add Zone</Button>
 			</div>
 			<table style={ { width: '100%' } }>
 				<thead>
