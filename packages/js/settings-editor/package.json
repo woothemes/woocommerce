@@ -65,7 +65,7 @@
 		"@wordpress/router": "1.11.0",
 		"@wordpress/url": "wp-6.0",
 		"classnames": "^2.3.2",
-		"dompurify": "^2.4.7",
+		"dompurify": "^2.5.7",
 		"prop-types": "^15.8.1",
 		"react-router-dom": "~6.3.0"
 	},
