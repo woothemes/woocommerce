@@ -170,15 +170,16 @@
 		"@wordpress/core-data": "5.5.0",
 		"@wordpress/data-controls": "2.2.7",
 		"@wordpress/date": "4.44.0",
-		"@wordpress/editor": "wp-6.7",
 		"@wordpress/dependency-extraction-webpack-plugin": "4.28.0",
 		"@wordpress/dom": "3.27.0",
 		"@wordpress/dom-ready": "3.27.0",
 		"@wordpress/e2e-test-utils": "10.12.0",
 		"@wordpress/e2e-test-utils-playwright": "wp-6.6",
 		"@wordpress/e2e-tests": "^4.9.2",
+		"@wordpress/editor": "wp-6.7",
 		"@wordpress/element": "5.22.0",
 		"@wordpress/env": "10.10.x",
+		"@wordpress/hooks": "wp-6.0",
 		"@wordpress/html-entities": "3.24.0",
 		"@wordpress/i18n": "4.45.0",
 		"@wordpress/is-shallow-equal": "4.24.0",
@@ -306,9 +307,9 @@
 		"wordpress-components-slotfill": "npm:@wordpress/components@wp-6.5"
 	},
 	"peerDependencies": {
+		"@wordpress/data": "wp-6.0",
 		"react": "18.3.x",
-		"react-dom": "18.3.x",
-		"@wordpress/data": "wp-6.0"
+		"react-dom": "18.3.x"
 	},
 	"optionalDependencies": {
 		"ndb": "1.1.5"

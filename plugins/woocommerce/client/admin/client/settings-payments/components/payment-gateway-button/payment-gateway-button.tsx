@@ -34,7 +34,7 @@ export const PaymentGatewayButton = ( {
 	textNeedsSetup?: string;
 } ) => {
 	const { createErrorNotice } = dispatch( 'core/notices' );
-	const { enablePaymentGateway, invalidateResolutionForStoreSelector } =
+	const { togglePaymentGateway, invalidateResolutionForStoreSelector } =
 		useDispatch( PAYMENT_SETTINGS_STORE_NAME );
 	const [ isUpdating, setIsUpdating ] = useState( false );
 
@@ -63,7 +63,7 @@ export const PaymentGatewayButton = ( {
 				return;
 			}
 			setIsUpdating( true );
-			enablePaymentGateway(
+			togglePaymentGateway(
 				id,
 				window.woocommerce_admin.ajax_url,
 				gatewayToggleNonce
