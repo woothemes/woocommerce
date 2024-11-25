@@ -17,14 +17,12 @@ import { useMemo } from '@wordpress/element';
  */
 import { PaymentGatewayListItem } from '~/settings-payments/components/payment-gateway-list-item';
 import { PaymentExtensionSuggestionListItem } from '~/settings-payments/components/payment-extension-suggestion-list-item';
-import { WooPaymentsGatewayData } from '~/settings-payments/types';
 import { WC_ASSET_URL } from '~/utils/admin-settings';
 
 interface PaymentGatewaysProps {
 	registeredPaymentGateways: RegisteredPaymentGateway[];
 	installedPluginSlugs: string[];
 	preferredPluginSuggestions: SuggestedPaymentExtension[];
-	wooPaymentsGatewayData?: WooPaymentsGatewayData;
 	installingPlugin: string | null;
 	setupPlugin: ( extension: SuggestedPaymentExtension ) => void;
 }
@@ -33,7 +31,6 @@ export const PaymentGateways = ( {
 	registeredPaymentGateways,
 	installedPluginSlugs,
 	preferredPluginSuggestions,
-	wooPaymentsGatewayData,
 	installingPlugin,
 	setupPlugin,
 }: PaymentGatewaysProps ) => {
@@ -70,12 +67,11 @@ export const PaymentGateways = ( {
 				( gateway: RegisteredPaymentGateway ) => {
 					return PaymentGatewayListItem( {
 						gateway,
-						wooPaymentsGatewayData,
 						setupLivePayments,
 					} );
 				}
 			),
-		[ registeredPaymentGateways, wooPaymentsGatewayData ]
+		[ registeredPaymentGateways ]
 	);
 
 	// Add offline payment provider.

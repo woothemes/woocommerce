@@ -191,6 +191,17 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			$this->exclude_status = array();
 		}
 
+		// Filter downloadable products.
+		if ( isset( $request['downloadable'] ) ) {
+			$args['meta_query'] = $this->add_meta_query( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+				$args,
+				array(
+					'key'   => '_downloadable',
+					'value' => wc_bool_to_string( $request['downloadable'] ),
+				)
+			);
+		}
+
 		// Taxonomy query to filter products by type, category,
 		// tag, shipping class, and attribute.
 		$tax_query = array();
@@ -1693,6 +1704,13 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 				'enum' => array_keys( wc_get_product_types() ),
 			),
 			'sanitize_callback' => 'wp_parse_list',
+			'validate_callback' => 'rest_validate_request_arg',
+		);
+
+		$params['downloadable'] = array(
+			'description'       => __( 'Limit result set to downloadable products.', 'woocommerce' ),
+			'type'              => 'boolean',
+			'sanitize_callback' => 'rest_sanitize_boolean',
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 
