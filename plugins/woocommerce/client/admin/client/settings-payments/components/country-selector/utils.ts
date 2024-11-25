@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import { Item } from './types';
 
 // Truncate the option label if it exceeds the max length.
@@ -11,8 +14,7 @@ export const truncateOptionlabel = ( label: string, maxLength: number ) => {
 
 // Get the label for the selected option.
 export const getOptionLabel = ( value: string, options: Item[] ) => {
-	const item = options.find( ( option ) =>
-        option.key === value );
+	const item = options.find( ( option ) => option.key === value );
 
 	const label = item?.name ? item.name : '';
 

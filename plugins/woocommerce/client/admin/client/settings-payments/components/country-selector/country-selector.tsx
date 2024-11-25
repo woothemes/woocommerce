@@ -1,44 +1,44 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import React, { useRef, useState } from 'react';
 import classNames from 'classnames';
-import { useSelect, UseSelectState, UseSelectStateChangeOptions } from 'downshift';
-
-/**
- * WordPress Dependencies
- */
+import {
+	useSelect,
+	UseSelectState,
+	UseSelectStateChangeOptions,
+} from 'downshift';
 import { Button } from '@wordpress/components';
 import { useCallback } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { check, chevronDown, Icon } from '@wordpress/icons';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { Item, ControlProps } from './types';
 import { getOptionLabel } from './utils';
 import './country-selector.scss';
 
 // State reducer to control selection navigation
-const stateReducer = <ItemType extends Item>(
+const stateReducer = < ItemType extends Item >(
 	state: UseSelectState< ItemType | null >,
 	actionAndChanges: UseSelectStateChangeOptions< ItemType | null >
-): Partial<UseSelectState<ItemType>> => {
+): Partial< UseSelectState< ItemType > > => {
 	const { changes, type } = actionAndChanges;
-	switch (type) {
+	switch ( type ) {
 		case useSelect.stateChangeTypes.ItemClick:
 			return {
 				...changes,
 				isOpen: true, // Keep menu open after selection.
 				highlightedIndex: state.highlightedIndex,
-			}
+			};
 		default:
 			return changes;
 	}
 };
 
-export const CountrySelector = < ItemType extends Item >({
+export const CountrySelector = < ItemType extends Item >( {
 	name,
 	className,
 	label,
@@ -48,7 +48,7 @@ export const CountrySelector = < ItemType extends Item >({
 	value,
 	placeholder,
 	children,
-}: ControlProps<ItemType>): JSX.Element => {
+}: ControlProps< ItemType > ): JSX.Element => {
 	const [ searchText, setSearchText ] = useState( '' );
 	const [ isSearchFocused, setSearchFocused ] = useState( false );
 	const [ visibleItems, setVisibleItems ] = useState(
@@ -66,15 +66,14 @@ export const CountrySelector = < ItemType extends Item >({
 		isOpen,
 		highlightedIndex,
 		selectedItem,
-        closeMenu,
-		selectItem
-	} = useSelect<ItemType>({
+		closeMenu,
+		selectItem,
+	} = useSelect< ItemType >( {
 		initialSelectedItem: value,
 		items: itemsToRender,
 		stateReducer,
-		onIsOpenChange: () =>
-			selectItem( value )
-	});
+		onIsOpenChange: () => selectItem( value ),
+	} );
 
 	const itemString = getOptionLabel( value.key, items );
 	const selectedValue = selectedItem ? selectedItem.key : '';
@@ -90,11 +89,14 @@ export const CountrySelector = < ItemType extends Item >({
 		}
 
 		if ( ! itemString ) {
-			return __( 'No selection' );
+			return __( 'No selection', 'woocommerce' );
 		}
 
-		// translators: %s: The selected option.
-		return sprintf( __( 'Currently selected: %s' ), itemString );
+		return sprintf(
+			// translators: %s: The selected option.
+			__( 'Currently selected: %s', 'woocommerce' ),
+			itemString
+		);
 	}
 
 	const getSearchSuffix = ( focused: boolean ) => {
@@ -112,7 +114,7 @@ export const CountrySelector = < ItemType extends Item >({
 				</svg>
 			);
 		}
-	
+
 		return (
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
@@ -130,26 +132,26 @@ export const CountrySelector = < ItemType extends Item >({
 	// Check if the search input is clearable.
 	const isSearchClearable = isSearchFocused || searchText !== '';
 
-	const menuProps = getMenuProps({
+	const menuProps = getMenuProps( {
 		className: 'components-country-select-control__menu',
 		'aria-hidden': ! isOpen,
-	});
+	} );
 
-    const onApplyHandler = useCallback(
-        ( e: React.MouseEvent<HTMLButtonElement> ) => {
-            e.stopPropagation();
+	const onApplyHandler = useCallback(
+		( e: React.MouseEvent< HTMLButtonElement > ) => {
+			e.stopPropagation();
 			onChange( selectedValue );
-            closeMenu();
-        },
-        [ onChange, selectedItem, closeMenu ]
-    );
+			closeMenu();
+		},
+		[ onChange, selectedValue, closeMenu ]
+	);
 
 	const handleSearch = ( {
 		target,
 	}: React.ChangeEvent< HTMLInputElement > ) => {
 		if ( ! previousStateRef.current ) {
 			previousStateRef.current = {
-				visibleItems: visibleItems,
+				visibleItems,
 			};
 		}
 
@@ -174,15 +176,15 @@ export const CountrySelector = < ItemType extends Item >({
 	};
 
 	const onClearClickedHandler = useCallback(
-		( e: React.MouseEvent<HTMLButtonElement> ) => {
+		( e: React.MouseEvent< HTMLButtonElement > ) => {
 			e.preventDefault();
 
 			if ( isSearchClearable ) {
 				setSearchText( '' );
 				const syntheticEvent = {
 					target: { value: '' },
-				} as unknown as React.ChangeEvent<HTMLInputElement>;
-		
+				} as unknown as React.ChangeEvent< HTMLInputElement >;
+
 				handleSearch( syntheticEvent );
 			}
 		},
@@ -190,20 +192,34 @@ export const CountrySelector = < ItemType extends Item >({
 	);
 
 	return (
-		<div className={ classNames( 'woopayments components-country-select-control', className ) }>
+		<div
+			className={ classNames(
+				'woopayments components-country-select-control',
+				className
+			) }
+		>
 			<Button
-				{...getToggleButtonProps( {
+				{ ...getToggleButtonProps( {
 					'aria-label': label,
 					'aria-labelledby': undefined,
 					'aria-describedby': getDescribedBy(),
-					className: classNames( 'components-country-select-control__button', { placeholder: !itemString } ),
+					className: classNames(
+						'components-country-select-control__button',
+						{ placeholder: ! itemString }
+					),
 					name,
-				})}
+				} ) }
 			>
 				<span className="components-country-select-control__button-value">
-					<span className="components-country-select-control__label">{ label }</span> { itemString || placeholder }
+					<span className="components-country-select-control__label">
+						{ label }
+					</span>
+					{ itemString || placeholder }
 				</span>
-				<Icon icon={ chevronDown } className="components-custom-select-control__button-icon" />
+				<Icon
+					icon={ chevronDown }
+					className="components-custom-select-control__button-icon"
+				/>
 			</Button>
 			<div { ...menuProps }>
 				{ isOpen && (
@@ -218,12 +234,12 @@ export const CountrySelector = < ItemType extends Item >({
 								onFocus={ () => setSearchFocused( true ) }
 								onBlur={ () => setSearchFocused( false ) }
 								tabIndex={ -1 }
-								placeholder={ __(
-									'Search…',
-									'woocommerce'
-								) }
+								placeholder={ __( 'Search…', 'woocommerce' ) }
 							/>
-							<button className="components-country-select-control__search--input-suffix" onClick={ onClearClickedHandler }>
+							<button
+								className="components-country-select-control__search--input-suffix"
+								onClick={ onClearClickedHandler }
+							>
 								{ getSearchSuffix( isSearchClearable ) }
 							</button>
 						</div>
@@ -237,10 +253,14 @@ export const CountrySelector = < ItemType extends Item >({
 										className: classNames(
 											item.className,
 											'components-country-select-control__item',
-											{ 'is-highlighted': index === highlightedIndex }
+											{
+												'is-highlighted':
+													index === highlightedIndex,
+											}
 										),
 										style: item.style,
-									})}
+									} ) }
+									key={ item.key }
 								>
 									{ item.key === selectedValue && (
 										<Icon
@@ -261,7 +281,7 @@ export const CountrySelector = < ItemType extends Item >({
 							</button>
 						</div>
 					</>
-           		) }
+				) }
 			</div>
 		</div>
 	);
