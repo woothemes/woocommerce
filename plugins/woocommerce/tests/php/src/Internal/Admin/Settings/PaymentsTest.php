@@ -1576,7 +1576,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 	 * @param array $gateways       The payment gateways to mock.
 	 * @param array $suggestions    The extension suggestions to mock.
 	 */
-	public function test_update_payment_providers_order_map( $start_order, $new_order_map, $expected_order, $gateways, $suggestions ) {
+	public function test_update_payment_providers_order_map( array $start_order, array $new_order_map, array $expected_order, array $gateways, array $suggestions ) {
 		// Arrange.
 		$mocked_service = $this->getMockBuilder( Payments::class )
 								->onlyMethods( array( 'get_payment_gateway_plugin_slug' ) )
@@ -1725,16 +1725,19 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$suggestions = array(
 			array(
 				'id'        => 'suggestion1',
+				'_type'     => ExtensionSuggestions::TYPE_PSP,
 				'_priority' => 0,
 				'plugin'    => array( 'slug' => 'plugin1' ),
 			),
 			array(
 				'id'        => 'suggestion3',
+				'_type'     => ExtensionSuggestions::TYPE_PSP,
 				'_priority' => 1,
 				'plugin'    => array( 'slug' => 'plugin3' ),
 			),
 			array(
 				'id'        => 'suggestion-other',
+				'_type'     => ExtensionSuggestions::TYPE_PSP,
 				'_priority' => 2,
 				'plugin'    => array( 'slug' => 'plugin-other' ),
 			),
