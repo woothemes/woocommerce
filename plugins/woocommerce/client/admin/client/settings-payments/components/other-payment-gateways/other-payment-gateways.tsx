@@ -11,6 +11,7 @@ import { SuggestedPaymentExtension } from '@woocommerce/data';
  * Internal dependencies
  */
 import { getAdminSetting } from '~/utils/admin-settings';
+import { GridItemPlaceholder } from '~/settings-payments/components/grid-item-placeholder';
 
 const assetUrl = getAdminSetting( 'wcAdminAssetUrl' );
 
@@ -53,35 +54,40 @@ export const OtherPaymentGateways = ( {
 
 	// Memoize the expanded content to avoid re-rendering when expanded
 	const expandedContent = useMemo( () => {
-		if ( isFetching ) {
-			return null;
-		}
-		return otherPluginSuggestions.map( ( extension ) => (
-			<div
-				className="other-payment-gateways__content__grid-item"
-				key={ extension.id }
-			>
-				<img src={ extension.icon } alt={ extension.title } />
-				<div className="other-payment-gateways__content__grid-item__content">
-					<span className="other-payment-gateways__content__grid-item__content__title">
-						{ extension.title }
-					</span>
-					<span className="other-payment-gateways__content__grid-item__content__description">
-						{ extension.description }
-					</span>
-					<div className="other-payment-gateways__content__grid-item__content__actions">
-						<Button
-							variant="primary"
-							onClick={ () => setupPlugin( extension ) }
-							isBusy={ installingPlugin === extension.id }
-							disabled={ !! installingPlugin }
-						>
-							{ __( 'Install', 'woocommerce' ) }
-						</Button>
+		return isFetching ? (
+			<>
+				<GridItemPlaceholder />
+				<GridItemPlaceholder />
+				<GridItemPlaceholder />
+			</>
+		) : (
+			otherPluginSuggestions.map( ( extension ) => (
+				<div
+					className="other-payment-gateways__content__grid-item"
+					key={ extension.id }
+				>
+					<img src={ extension.icon } alt={ extension.title } />
+					<div className="other-payment-gateways__content__grid-item__content">
+						<span className="other-payment-gateways__content__grid-item__content__title">
+							{ extension.title }
+						</span>
+						<span className="other-payment-gateways__content__grid-item__content__description">
+							{ extension.description }
+						</span>
+						<div className="other-payment-gateways__content__grid-item__content__actions">
+							<Button
+								variant="primary"
+								onClick={ () => setupPlugin( extension ) }
+								isBusy={ installingPlugin === extension.id }
+								disabled={ !! installingPlugin }
+							>
+								{ __( 'Install', 'woocommerce' ) }
+							</Button>
+						</div>
 					</div>
 				</div>
-			</div>
-		) );
+			) )
+		);
 	}, [ otherPluginSuggestions, installingPlugin ] );
 
 	if ( ! isFetching && otherPluginSuggestions.length === 0 ) {

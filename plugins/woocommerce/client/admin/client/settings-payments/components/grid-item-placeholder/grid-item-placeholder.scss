@@ -1,0 +1,30 @@
+.grid-item-placeholder {
+	&__title,
+	&__description,
+	&__actions,
+	&__img {
+		background-color: $gray-100;
+		border-radius: 4px;
+	}
+
+	&__title {
+		width: 120px;
+		height: 20px;
+	}
+
+	&__description {
+		width: 360px;
+		height: 20px;
+	}
+
+	&__actions {
+		height: 32px;
+		width: 60px;
+	}
+
+	&__img {
+		width: 40px;
+		height: 40px;
+		margin-right: 20px; /* Space between image and text */
+	}
+}
