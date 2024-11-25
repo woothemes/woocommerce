@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import {
 	PLUGINS_STORE_NAME,
 	PAYMENT_SETTINGS_STORE_NAME,
@@ -17,13 +17,8 @@ import './settings-payments-main.scss';
 import { createNoticesFromResponse } from '~/lib/notices';
 import { OtherPaymentGateways } from '~/settings-payments/components/other-payment-gateways';
 import { PaymentGateways } from '~/settings-payments/components/payment-gateways';
-import { WooPaymentsGatewayData } from '~/settings-payments/types';
-import { parseScriptTag } from '~/settings-payments/utils';
 
 export const SettingsPaymentsMain = () => {
-	const [ wooPaymentsGatewayData, setWooPaymentsGatewayData ] = useState<
-		WooPaymentsGatewayData | undefined
-	>( undefined );
 	const [ installingPlugin, setInstallingPlugin ] = useState< string | null >(
 		null
 	);
@@ -82,12 +77,6 @@ export const SettingsPaymentsMain = () => {
 		]
 	);
 
-	useEffect( () => {
-		setWooPaymentsGatewayData(
-			parseScriptTag( 'experimental_wc_settings_payments_woopayments' )
-		);
-	}, [] );
-
 	return (
 		<>
 			<div className="settings-payments-main__container">
@@ -95,7 +84,6 @@ export const SettingsPaymentsMain = () => {
 					registeredPaymentGateways={ registeredPaymentGateways }
 					installedPluginSlugs={ installedPluginSlugs }
 					preferredPluginSuggestions={ preferredPluginSuggestions }
-					wooPaymentsGatewayData={ wooPaymentsGatewayData }
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
 				/>
