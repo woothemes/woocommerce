@@ -16,6 +16,11 @@ class Payments {
 
 	const OFFLINE_METHODS = array( 'bacs', 'cheque', 'cod' );
 
+	const PROVIDER_TYPE_GATEWAY           = 'gateway';
+	const PROVIDER_TYPE_SUGGESTION        = 'suggestion';
+	const PROVIDER_TYPE_OFFLINE_PMS_GROUP = 'offline_pms_group';
+	const PROVIDER_TYPE_OFFLINE_PM        = 'offline_pm';
+
 	const CATEGORY_EXPRESS_CHECKOUT = 'express_checkout';
 	const CATEGORY_BNPL             = 'bnpl';
 	const CATEGORY_PSP              = 'psp';
