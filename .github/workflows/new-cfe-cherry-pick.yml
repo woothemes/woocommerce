@@ -238,7 +238,9 @@ jobs:
             - name: Comment on PR about the failed cherry pick
               if: ${{ failure() }}
               run: |
-                  gh pr comment $HTML_URL --body "Cherry picking failed for the trunk. Please do it manually. Or debug, what happened and run the workflow again. Workflow link for debugging: https://github.com/${{ github.repository_owner }}/${{ github.repository }}/actions/workflows/new-cfe-cherry-pick.yml"
+                  gh pr comment $HTML_URL --body "IMPORTANT: Merging this PR to the appropriate branches is critical to the release process and ensures that the bug does not cause regressions in the future releases.
+
+                  Cherry picking failed for the trunk. Please bring this to release team's attention. Workflow link for debugging: https://github.com/${{ github.repository_owner }}/${{ github.repository }}/actions/workflows/new-cfe-cherry-pick.yml"
               env:
                 GH_TOKEN: ${{ github.token }}
                 HTML_URL: ${{ github.event.pull_request.html_url }}
@@ -246,7 +248,9 @@ jobs:
             - name: Comment on PR about the cherry picked PRs to be merged
               if: ${{ success() }}
               run: |
-                gh pr comment $HTML_URL --body "Cherry picking was successful for trunk. Please merge the following PR: $CHERRY_PICK_PR"
+                gh pr comment $HTML_URL --body "IMPORTANT: Merging this PR to the appropriate branches is critical to the release process and ensures that the bug does not cause regressions in the future releases.
+
+                Cherry picking was successful for \`trunk\`. Please merge the following PR: $CHERRY_PICK_PR"
               env:
                 GH_TOKEN: ${{ github.token }}
                 HTML_URL: ${{ github.event.pull_request.html_url }}
