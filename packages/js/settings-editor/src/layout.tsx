@@ -122,6 +122,17 @@ export function Layout( {
 						</div>
 					) }
 
+					{ ! isMobileViewport && areas.fullEdit && (
+						<div
+							className="edit-site-layout__area"
+							style={ {
+								maxWidth: widths?.fullEdit,
+							} }
+						>
+							{ areas.fullEdit }
+						</div>
+					) }
+
 					{ ! isMobileViewport && areas.edit && (
 						<div
 							className="edit-site-layout__area"

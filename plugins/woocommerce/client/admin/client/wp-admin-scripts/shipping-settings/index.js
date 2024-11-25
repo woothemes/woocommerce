@@ -16,30 +16,44 @@ const ShippingLegacyView = () => {
 	return <div>Shipping Legacy View</div>;
 };
 
-const getEditScreen = ( zoneId, methodId ) => {
+const getAreas = ( section, zoneId, methodId ) => {
+	if ( section ) {
+		return {
+			content: <ShippingLegacyView />,
+			fullEdit: null,
+			edit: null,
+		};
+	}
+
+	if ( ! zoneId ) {
+		return {
+			content: <ShippingZones />,
+			fullEdit: null,
+			edit: null,
+		};
+	}
+
+	if ( zoneId && ! methodId ) {
+		return {
+			content: null,
+			fullEdit: <EditZone zoneId={ zoneId } />,
+			edit: null,
+		};
+	}
+
 	if ( zoneId && methodId ) {
-		return <EditMethod zoneId={ zoneId } methodId={ methodId } />;
+		return {
+			content: null,
+			fullEdit: <EditZone zoneId={ zoneId } />,
+			edit: <EditMethod zoneId={ zoneId } methodId={ methodId } />,
+		};
 	}
-	if ( zoneId ) {
-		return <EditZone zoneId={ zoneId } />;
-	}
-	return null;
 };
 
 addFilter( 'woocommerce_admin_settings_pages', 'woocommerce', ( pages ) => {
-	const { section, quickEdit, zoneId, methodId } = getQueryArgs(
-		window.location.href
-	);
+	const { section, zoneId, methodId } = getQueryArgs( window.location.href );
 	pages[ 'shipping' ] = {
-		areas: {
-			content:
-				section === undefined ? (
-					<ShippingZones />
-				) : (
-					<ShippingLegacyView />
-				),
-			edit: quickEdit && getEditScreen( zoneId, methodId ),
-		},
+		areas: { ...getAreas( section, zoneId, methodId ) },
 		widths: {
 			content: undefined,
 			edit: 380,

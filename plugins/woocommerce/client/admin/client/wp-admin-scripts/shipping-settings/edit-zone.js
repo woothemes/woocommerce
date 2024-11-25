@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { close, Icon } from '@wordpress/icons';
+import { chevronLeft, Icon } from '@wordpress/icons';
 import {
 	Button,
 	CheckboxControl,
@@ -46,7 +46,6 @@ export const EditZone = ( { zoneId } ) => {
 
 		history.push( {
 			...currentArgs,
-			quickEdit: undefined,
 			zoneId: undefined,
 		} );
 	};
@@ -66,13 +65,13 @@ export const EditZone = ( { zoneId } ) => {
 					padding: '20px',
 					display: 'flex',
 					alignItems: 'center',
-					justifyContent: 'space-between',
+					borderBottom: '1px solid #e0e0e0',
 				} }
 			>
-				<h2>Edit Zone { zone.zone_name }</h2>
 				<Button onClick={ back }>
-					<Icon icon={ close } />
+					<Icon icon={ chevronLeft } />
 				</Button>
+				<h2>Edit Zone { zone.zone_name }</h2>
 			</div>
 			<div
 				style={ {
@@ -84,6 +83,7 @@ export const EditZone = ( { zoneId } ) => {
 						display: 'flex',
 						flexDirection: 'column',
 						gap: '20px',
+						maxWidth: '350px',
 					} }
 				>
 					<InputControl

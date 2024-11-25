@@ -17,7 +17,7 @@ export const ShippingZones = () => {
 		const currentArgs = getQueryArgs( window.location.href );
 		const { methodId, ...remainingArgs } = currentArgs;
 
-		history.push( { ...remainingArgs, quickEdit: true, zoneId } );
+		history.push( { ...remainingArgs, zoneId } );
 	};
 
 	return (

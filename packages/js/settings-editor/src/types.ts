@@ -15,6 +15,10 @@ export type Route = {
 		/**
 		 * The edit component.
 		 */
+		fullEdit?: React.JSX.Element | React.ComponentType | null;
+		/**
+		 * The edit component.
+		 */
 		edit?: React.JSX.Element | React.ComponentType | null;
 		/**
 		 * The mobile component.
@@ -34,6 +38,10 @@ export type Route = {
 		 * The main content width.
 		 */
 		content?: number;
+		/**
+		 * The edit component width.
+		 */
+		fullEdit?: number;
 		/**
 		 * The edit component width.
 		 */
