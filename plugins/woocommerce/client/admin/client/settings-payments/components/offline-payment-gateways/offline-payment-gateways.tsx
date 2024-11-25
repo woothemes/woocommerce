@@ -14,22 +14,22 @@ import { ListPlaceholder } from '~/settings-payments/components/list-placeholder
 
 interface OfflinePaymentGatewaysProps {
 	isFetching: boolean;
-	offlinePaymentGateways?: OfflinePaymentGateway[];
-	updateOrdering?: ( gateways: OfflinePaymentGateway[] ) => void;
+	offlinePaymentGateways: OfflinePaymentGateway[];
+	updateOrdering: ( gateways: OfflinePaymentGateway[] ) => void;
 }
 
 export const OfflinePaymentGateways = ( {
 	isFetching,
-	offlinePaymentGateways = [],
-	updateOrdering = () => {},
+	offlinePaymentGateways,
+	updateOrdering,
 }: OfflinePaymentGatewaysProps ) => {
 	return (
-		<Card size="medium" className="settings-payment-gateways">
-			<CardHeader className="settings-payment-gateways__header">
+		<div className="settings-payment-gateways">
+			<div className="settings-payment-gateways__header">
 				<div className="settings-payment-gateways__header-title">
 					{ __( 'Payment methods', 'woocommerce' ) }
 				</div>
-			</CardHeader>
+			</div>
 			{ isFetching ? (
 				<ListPlaceholder rows={ 3 } />
 			) : (
@@ -38,6 +38,6 @@ export const OfflinePaymentGateways = ( {
 					setGateways={ updateOrdering }
 				/>
 			) }
-		</Card>
+		</div>
 	);
 };
