@@ -6,6 +6,8 @@
  * @version  3.3.0
  */
 
+use Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -30,6 +32,8 @@ class WC_Admin_List_Table_Products extends WC_Admin_List_Table {
 	 */
 	protected $list_table_type = 'product';
 
+	private bool $cogs_enabled;
+
 	/**
 	 * Constructor.
 	 */
@@ -41,6 +45,8 @@ class WC_Admin_List_Table_Products extends WC_Admin_List_Table {
 		add_filter( 'get_search_query', array( $this, 'search_label' ) );
 		add_filter( 'posts_clauses', array( $this, 'posts_clauses' ), 10, 2 );
 		add_action( 'manage_product_posts_custom_column', array( $this, 'add_sample_product_badge' ), 9, 2 );
+
+		$this->cogs_enabled = wc_get_container()->get(CostOfGoodsSoldController::class)->feature_is_enabled();
 	}
 
 	/**
@@ -199,8 +205,14 @@ class WC_Admin_List_Table_Products extends WC_Admin_List_Table {
 				<div class="tax_class">' . esc_html( $this->object->get_tax_class() ) . '</div>
 				<div class="backorders">' . esc_html( $this->object->get_backorders() ) . '</div>
 				<div class="low_stock_amount">' . esc_html( $this->object->get_low_stock_amount() ) . '</div>
-			</div>
-		';
+				';
+
+		if($this->cogs_enabled) {
+			$cogs_value = $this->object->get_cogs_value();
+			echo '<div class="cogs_value">' . esc_html( 0.0 === $cogs_value ? '' : $cogs_value ) . '</div>';
+		}
+
+		echo '</div>';
 	}
 
 	/**
@@ -315,6 +327,12 @@ class WC_Admin_List_Table_Products extends WC_Admin_List_Table {
 		$output = ob_get_clean();
 
 		echo apply_filters( 'woocommerce_product_filters', $output ); // WPCS: XSS ok.
+
+		if($this->cogs_enabled) {
+			?>
+				<input type='hidden' name='woocommerce-cogs-enabled' value='true' />
+			<?php
+		}
 	}
 
 	/**

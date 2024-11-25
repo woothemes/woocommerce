@@ -74,6 +74,22 @@ defined( 'ABSPATH' ) || exit;
 		?>
 	</div>
 
+	<?php if($context_object->cogs_enabled) { ?>
+		<div class="options_group">
+			<?php
+			woocommerce_wp_text_input(
+				array(
+					'id'        => '_cogs_value',
+					'value'     => $product_object->get_cogs_value(),
+					'label'     => __( 'Cost of Goods Sold', 'woocommerce' ) . ' (' . get_woocommerce_currency_symbol() . ')',
+					'data_type' => 'price',
+					'desc_tip'    => 'true',
+					'description' => __( 'Define the value of the Cost of Goods Sold for one unit of this product.', 'woocommerce' ),
+				)
+			);
+			echo '</div>';
+		} ?>
+
 	<div class="options_group show_if_downloadable hidden">
 		<div class="form-field downloadable_files">
 			<label><?php esc_html_e( 'Downloadable files', 'woocommerce' ); ?></label>

@@ -42,6 +42,16 @@ defined( 'ABSPATH' ) || exit;
 				</span>
 			</label>
 			<br class="clear" />
+
+			<?php if($context_object->cogs_enabled) { ?>
+				<label>
+					<span class="title"><?php esc_html_e( 'COGS', 'woocommerce' ); ?></span>
+					<span class="input-text-wrap">
+						<input type="text" name="_cogs_value" class="text wc_input_price cogs_value" placeholder="<?php esc_attr_e( 'Cost of Goods Sold value', 'woocommerce' ); ?>" value="">
+					</span>
+				</label>
+				<br class="clear" />
+			<?php } ?>
 		</div>
 
 		<?php if ( wc_tax_enabled() ) : ?>

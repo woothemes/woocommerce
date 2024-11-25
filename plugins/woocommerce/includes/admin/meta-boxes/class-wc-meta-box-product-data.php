@@ -8,6 +8,8 @@
  * @version  3.0.0
  */
 
+use \Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -23,10 +25,14 @@ class WC_Meta_Box_Product_Data {
 	 * @param WP_Post $post Post object.
 	 */
 	public static function output( $post ) {
-		global $thepostid, $product_object;
+		global $thepostid, $product_object, $context_object;
 
 		$thepostid      = $post->ID;
 		$product_object = $thepostid ? wc_get_product( $thepostid ) : new WC_Product();
+
+		$context_object = (object) [
+			'cogs_enabled' => wc_get_container()->get(CostOfGoodsSoldController::class)->feature_is_enabled()
+		];
 
 		wp_nonce_field( 'woocommerce_save_data', 'woocommerce_meta_nonce' );
 
@@ -37,7 +43,7 @@ class WC_Meta_Box_Product_Data {
 	 * Show tab content/settings.
 	 */
 	private static function output_tabs() {
-		global $post, $thepostid, $product_object;
+		global $post, $thepostid, $product_object, $context_object;
 
 		include __DIR__ . '/views/html-product-data-general.php';
 		include __DIR__ . '/views/html-product-data-inventory.php';
@@ -410,6 +416,10 @@ class WC_Meta_Box_Product_Data {
 				'default_attributes' => self::prepare_set_attributes( $attributes, 'default_attribute_' ),
 			)
 		);
+
+		if(wc_get_container()->get(CostOfGoodsSoldController::class)->feature_is_enabled() && '' !== ($_POST['_cogs_value'] ?? '')) {
+			$product->set_cogs_value(wc_clean( wp_unslash( $_POST['_cogs_value'] ) ));
+		}
 
 		if ( is_wp_error( $errors ) ) {
 			WC_Admin_Meta_Boxes::add_error( $errors->get_error_message() );

@@ -7,6 +7,7 @@
  */
 
 use Automattic\Jetpack\Constants;
+use Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController;
 use Automattic\WooCommerce\Utilities\NumberUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -25,10 +26,14 @@ if ( class_exists( 'WC_Admin_Post_Types', false ) ) {
  */
 class WC_Admin_Post_Types {
 
+	private bool $cogs_enabled;
+
 	/**
 	 * Constructor.
 	 */
 	public function __construct() {
+		$this->cogs_enabled = wc_get_container()->get(CostOfGoodsSoldController::class)->feature_is_enabled();
+
 		include_once __DIR__ . '/class-wc-admin-meta-boxes.php';
 
 		if ( ! function_exists( 'duplicate_post_plugin_activation' ) ) {
@@ -296,18 +301,7 @@ class WC_Admin_Post_Types {
 	 * @param string $post_type Post type being shown.
 	 */
 	public function bulk_edit( $column_name, $post_type ) {
-		if ( 'price' !== $column_name || 'product' !== $post_type ) {
-			return;
-		}
-
-		$shipping_class = get_terms(
-			'product_shipping_class',
-			array(
-				'hide_empty' => false,
-			)
-		);
-
-		include WC()->plugin_path() . '/includes/admin/views/html-bulk-edit-product.php';
+		$this->bulk_or_quick_edit($column_name, $post_type,'/includes/admin/views/html-bulk-edit-product.php');
 	}
 
 	/**
@@ -317,6 +311,10 @@ class WC_Admin_Post_Types {
 	 * @param string $post_type Post type being shown.
 	 */
 	public function quick_edit( $column_name, $post_type ) {
+		return $this->bulk_or_quick_edit($column_name, $post_type, '/includes/admin/views/html-quick-edit-product.php');
+	}
+
+	private function bulk_or_quick_edit($column_name, $post_type, $template_filename) {
 		if ( 'price' !== $column_name || 'product' !== $post_type ) {
 			return;
 		}
@@ -328,7 +326,11 @@ class WC_Admin_Post_Types {
 			)
 		);
 
-		include WC()->plugin_path() . '/includes/admin/views/html-quick-edit-product.php';
+		$context_object = (object) [
+			'cogs_enabled' => $this->cogs_enabled
+		];
+
+		include WC()->plugin_path() . $template_filename;
 	}
 
 	/**
@@ -409,6 +411,10 @@ class WC_Admin_Post_Types {
 			if ( isset( $request_data[ $input_var ] ) ) {
 				$product->{"set_{$prop}"}( wc_clean( wp_unslash( $request_data[ $input_var ] ) ) );
 			}
+		}
+
+		if($this->cogs_enabled && isset( $request_data[ '_cogs_value' ] )) {
+			$product->set_cogs_value( (float) wc_clean( wp_unslash( $request_data[ '_cogs_value' ] ) ) );
 		}
 
 		if ( isset( $request_data['_sku'] ) ) {
@@ -599,6 +605,10 @@ class WC_Admin_Post_Types {
 					$product->set_sale_price( '' );
 				}
 			}
+		}
+
+		if($this->cogs_enabled) {
+			$this->set_new_cogs_value( $product );
 		}
 
 		// Handle Stock Data.
@@ -953,6 +963,44 @@ class WC_Admin_Post_Types {
 		}
 
 		return $price_changed;
+
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+	}
+
+	private function set_new_cogs_value($product) {
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+
+		$request_data = $this->request_data();
+
+		if ( empty( $request_data[ "change_cogs_value" ] ) ) {
+			return;
+		}
+
+		$old_value     = $product->get_cogs_value();
+
+		$change_value  = absint( $request_data[ "change_cogs_value" ] );
+		$raw_value     = wc_clean( wp_unslash( $request_data[ "_cogs_value" ] ) );
+		$is_percentage = (bool) strstr( $raw_value, '%' );
+		$value         = wc_format_decimal( $raw_value );
+
+		switch ( $change_value ) {
+			case 1:
+				$new_value = $value;
+				break;
+			case 2:
+				$new_value = $is_percentage ? $old_value * ( 1 + $value/100 ) : $old_value + $value;
+				break;
+			case 3:
+				$new_value = max(0, $is_percentage ? $old_value * ( 1 - $value/100 ) : $old_value - $value );
+				break;
+			default:
+				return;
+		}
+
+		if ( $new_value !== $old_value ) {
+			$new_value     = NumberUtil::round( $new_value, wc_get_price_decimals() );
+			$product->set_cogs_value($new_value);
+		}
 
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 	}
