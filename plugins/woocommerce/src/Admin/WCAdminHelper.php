@@ -204,7 +204,7 @@ class WCAdminHelper {
 				continue;
 			}
 
-			if ( $normalized_path === self::get_normalized_url_path( $permalink ) ) {
+			if ( self::get_normalized_url_path( $permalink ) === $normalized_path ) {
 				return true;
 			}
 		}
