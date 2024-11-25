@@ -227,6 +227,12 @@ export type Extension = {
 	is_activated?: boolean;
 	learn_more_link?: string;
 	install_priority?: number;
+	/**
+	 * JPC stands for Jetpack Connection. This flag is used to determine if the plugin requires Jetpack Connection.
+	 * If set to true, the user will be redirected to the Jetpack Connection flow after installing the plugin during onboarding.
+	 * Use this flag if your plugin requires Jetpack Connection to work properly.
+	 */
+	requires_jpc?: boolean;
 };
 
 export type InstallAndActivatePluginsAsyncResponse = {

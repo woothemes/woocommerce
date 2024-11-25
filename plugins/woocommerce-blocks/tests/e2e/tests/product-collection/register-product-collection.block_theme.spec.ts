@@ -61,10 +61,10 @@ test.describe( 'Product Collection: Register Product Collection', () => {
 	} );
 
 	test( `Registered collections should be available in Collection chooser`, async ( {
-		page,
 		pageObject,
 		editor,
 		admin,
+		page,
 	} ) => {
 		await admin.createNewPost();
 		await editor.insertBlockUsingGlobalInserter( pageObject.BLOCK_NAME );
@@ -74,14 +74,22 @@ test.describe( 'Product Collection: Register Product Collection', () => {
 			} )
 			.click();
 
+		// This viewport size is required to ensure that the selectors are visible.
+		// For smaller viewports, a different DOM structure is rendered, which may cause the selectors to be hidden or not interactable.
+		await page.setViewportSize( {
+			width: 1920,
+			height: 1080,
+		} );
+
 		for ( const myCollection of Object.values(
 			MY_REGISTERED_COLLECTIONS
 		) ) {
 			await expect(
-				page.getByRole( 'button', {
-					name: myCollection.name,
-					exact: true,
-				} )
+				editor.canvas
+					.locator(
+						`.wc-blocks-product-collection__collection-button-title`
+					)
+					.getByText( myCollection.name, { exact: true } )
 			).toBeVisible();
 		}
 	} );
