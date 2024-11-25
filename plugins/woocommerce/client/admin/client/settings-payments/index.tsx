@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-import { Gridicon } from '@automattic/components';
-import { Button, SelectControl } from '@wordpress/components';
-import React, { lazy, Suspense } from '@wordpress/element';
+import { lazy, Suspense } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { getAdminLink } from '@woocommerce/settings';
 
@@ -11,7 +9,8 @@ import { getAdminLink } from '@woocommerce/settings';
  * Internal dependencies
  */
 import { Header } from './components/header/header';
-import { ListPlaceholder } from '~/settings-payments/components/list-placeholder';
+import { PaymentGateways } from '~/settings-payments/components/payment-gateways';
+import { OfflinePaymentGateways } from '~/settings-payments/components/offline-payment-gateways';
 
 const SettingsPaymentsMainChunk = lazy(
 	() =>
@@ -39,34 +38,10 @@ export const SettingsPaymentsMainWrapper = () => {
 		<>
 			<Header title={ __( 'WooCommerce Settings', 'woocommerce' ) } />
 			<Suspense
-				// TODO: Is there a better way to set fallback?
 				fallback={
 					<>
 						<div className="settings-payments-main__container">
-							<div className="settings-payment-gateways">
-								<div className="settings-payment-gateways__header">
-									<div className="settings-payment-gateways__header-title">
-										{ __(
-											'Payment providers',
-											'woocommerce'
-										) }
-									</div>
-									<div className="settings-payment-gateways__header-select-container">
-										<SelectControl
-											className="woocommerce-select-control__country"
-											prefix={ __(
-												'Business location :',
-												'woocommerce'
-											) }
-											placeholder={ '' }
-											label={ '' }
-											options={ [] }
-											onChange={ () => {} }
-										/>
-									</div>
-								</div>
-								<ListPlaceholder rows={ 5 } />
-							</div>
+							<PaymentGateways isFetching={ true } />
 						</div>
 					</>
 				}
@@ -88,29 +63,8 @@ export const SettingsPaymentsOfflineWrapper = () => {
 			/>
 			<Suspense
 				fallback={
-					<div className="other-payment-gateways">
-						<div className="other-payment-gateways__header">
-							<div className="other-payment-gateways__header__title">
-								<span>
-									{ __(
-										'Other payment options',
-										'woocommerce'
-									) }
-								</span>
-								<>
-									<div className="other-payment-gateways__header__title__image-placeholder" />
-									<div className="other-payment-gateways__header__title__image-placeholder" />
-									<div className="other-payment-gateways__header__title__image-placeholder" />
-								</>
-							</div>
-							<Button
-								variant={ 'link' }
-								onClick={ () => {} }
-								aria-expanded={ false }
-							>
-								<Gridicon icon="chevron-down" />
-							</Button>
-						</div>
+					<div className="settings-payments-offline__container">
+						<OfflinePaymentGateways isFetching={ true } />
 					</div>
 				}
 			>

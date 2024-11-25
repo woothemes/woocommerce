@@ -10,15 +10,18 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { OfflinePaymentGatewayList } from '../offline-gateway-list-item/offline-payment-gateway-list-item';
+import { ListPlaceholder } from '~/settings-payments/components/list-placeholder';
 
 interface OfflinePaymentGatewaysProps {
-	offlinePaymentGateways: OfflinePaymentGateway[];
-	updateOrdering: ( gateways: OfflinePaymentGateway[] ) => void;
+	isFetching: boolean;
+	offlinePaymentGateways?: OfflinePaymentGateway[];
+	updateOrdering?: ( gateways: OfflinePaymentGateway[] ) => void;
 }
 
 export const OfflinePaymentGateways = ( {
-	offlinePaymentGateways,
-	updateOrdering,
+	isFetching,
+	offlinePaymentGateways = [],
+	updateOrdering = () => {},
 }: OfflinePaymentGatewaysProps ) => {
 	return (
 		<Card size="medium" className="settings-payment-gateways">
@@ -27,10 +30,14 @@ export const OfflinePaymentGateways = ( {
 					{ __( 'Payment methods', 'woocommerce' ) }
 				</div>
 			</CardHeader>
-			<OfflinePaymentGatewayList
-				gateways={ offlinePaymentGateways }
-				setGateways={ updateOrdering }
-			/>
+			{ isFetching ? (
+				<ListPlaceholder rows={ 3 } />
+			) : (
+				<OfflinePaymentGatewayList
+					gateways={ offlinePaymentGateways }
+					setGateways={ updateOrdering }
+				/>
+			) }
 		</Card>
 	);
 };

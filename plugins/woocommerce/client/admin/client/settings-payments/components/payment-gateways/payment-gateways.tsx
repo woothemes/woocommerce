@@ -22,22 +22,22 @@ import { WC_ASSET_URL } from '~/utils/admin-settings';
 import { ListPlaceholder } from '~/settings-payments/components/list-placeholder';
 
 interface PaymentGatewaysProps {
-	registeredPaymentGateways: RegisteredPaymentGateway[];
-	installedPluginSlugs: string[];
-	preferredPluginSuggestions: SuggestedPaymentExtension[];
-	wooPaymentsGatewayData?: WooPaymentsGatewayData;
-	installingPlugin: string | null;
-	setupPlugin: ( extension: SuggestedPaymentExtension ) => void;
 	isFetching: boolean;
+	registeredPaymentGateways?: RegisteredPaymentGateway[];
+	installedPluginSlugs?: string[];
+	preferredPluginSuggestions?: SuggestedPaymentExtension[];
+	wooPaymentsGatewayData?: WooPaymentsGatewayData;
+	installingPlugin?: string | null;
+	setupPlugin?: ( extension: SuggestedPaymentExtension ) => void;
 }
 
 export const PaymentGateways = ( {
-	registeredPaymentGateways,
-	installedPluginSlugs,
-	preferredPluginSuggestions,
+	registeredPaymentGateways = [],
+	installedPluginSlugs = [],
+	preferredPluginSuggestions = [],
 	wooPaymentsGatewayData,
-	installingPlugin,
-	setupPlugin,
+	installingPlugin = null,
+	setupPlugin = () => {},
 	isFetching,
 }: PaymentGatewaysProps ) => {
 	const setupLivePayments = () => {};
