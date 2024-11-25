@@ -50,7 +50,7 @@ export const OtherPaymentGateways = ( {
 				/>
 			) )
 		);
-	}, [ otherPluginSuggestions ] );
+	}, [ otherPluginSuggestions, isFetching ] );
 
 	// Memoize the expanded content to avoid re-rendering when expanded
 	const expandedContent = useMemo( () => {
