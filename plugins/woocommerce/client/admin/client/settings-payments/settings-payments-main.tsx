@@ -106,6 +106,7 @@ export const SettingsPaymentsMain = () => {
 					otherPluginSuggestions={ otherPluginSuggestions }
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
+					isFetching={ isFetching }
 				/>
 			</div>
 		</>

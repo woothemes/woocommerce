@@ -18,18 +18,26 @@ interface OtherPaymentGatewaysProps {
 	otherPluginSuggestions: SuggestedPaymentExtension[];
 	installingPlugin: string | null;
 	setupPlugin: ( extension: SuggestedPaymentExtension ) => void;
+	isFetching: boolean;
 }
 
 export const OtherPaymentGateways = ( {
 	otherPluginSuggestions,
 	installingPlugin,
 	setupPlugin,
+	isFetching,
 }: OtherPaymentGatewaysProps ) => {
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
 	// Memoize the collapsed images to avoid re-rendering when not expanded
-	const collapsedImages = useMemo(
-		() =>
+	const collapsedImages = useMemo( () => {
+		return isFetching ? (
+			<>
+				<div className="other-payment-gateways__header__title__image-placeholder" />
+				<div className="other-payment-gateways__header__title__image-placeholder" />
+				<div className="other-payment-gateways__header__title__image-placeholder" />
+			</>
+		) : (
 			otherPluginSuggestions.map( ( extension ) => (
 				<img
 					key={ extension.id }
@@ -39,44 +47,45 @@ export const OtherPaymentGateways = ( {
 					height="24"
 					className="other-payment-gateways__header__title__image"
 				/>
-			) ),
-		[ otherPluginSuggestions ]
-	);
+			) )
+		);
+	}, [ otherPluginSuggestions ] );
 
 	// Memoize the expanded content to avoid re-rendering when expanded
-	const expandedContent = useMemo(
-		() =>
-			otherPluginSuggestions.map( ( extension ) => (
-				<div
-					className="other-payment-gateways__content__grid-item"
-					key={ extension.id }
-				>
-					<img src={ extension.icon } alt={ extension.title } />
-					<div className="other-payment-gateways__content__grid-item__content">
-						<span className="other-payment-gateways__content__grid-item__content__title">
-							{ extension.title }
-						</span>
-						<span className="other-payment-gateways__content__grid-item__content__description">
-							{ extension.description }
-						</span>
-						<div className="other-payment-gateways__content__grid-item__content__actions">
-							<Button
-								variant="primary"
-								onClick={ () => setupPlugin( extension ) }
-								isBusy={ installingPlugin === extension.id }
-								disabled={ !! installingPlugin }
-							>
-								{ __( 'Install', 'woocommerce' ) }
-							</Button>
-						</div>
+	const expandedContent = useMemo( () => {
+		if ( isFetching ) {
+			return null;
+		}
+		return otherPluginSuggestions.map( ( extension ) => (
+			<div
+				className="other-payment-gateways__content__grid-item"
+				key={ extension.id }
+			>
+				<img src={ extension.icon } alt={ extension.title } />
+				<div className="other-payment-gateways__content__grid-item__content">
+					<span className="other-payment-gateways__content__grid-item__content__title">
+						{ extension.title }
+					</span>
+					<span className="other-payment-gateways__content__grid-item__content__description">
+						{ extension.description }
+					</span>
+					<div className="other-payment-gateways__content__grid-item__content__actions">
+						<Button
+							variant="primary"
+							onClick={ () => setupPlugin( extension ) }
+							isBusy={ installingPlugin === extension.id }
+							disabled={ !! installingPlugin }
+						>
+							{ __( 'Install', 'woocommerce' ) }
+						</Button>
 					</div>
 				</div>
-			) ),
-		[ otherPluginSuggestions, installingPlugin ]
-	);
+			</div>
+		) );
+	}, [ otherPluginSuggestions, installingPlugin ] );
 
-	if ( otherPluginSuggestions.length === 0 ) {
-		return null; // Don't render the component if there are no suggestions
+	if ( ! isFetching && otherPluginSuggestions.length === 0 ) {
+		return null; // Don't render the component if there are no suggestions and fetch complete
 	}
 
 	return (
