@@ -20,6 +20,23 @@ if ( class_exists( 'WC_Settings_Emails', false ) ) {
 class WC_Settings_Emails extends WC_Settings_Page {
 
 	/**
+	 * Array of font families supported in email templates
+	 *
+	 * @var string[]
+	 */
+	public static $font = array(
+		'Arial'           => "Arial, 'Helvetica Neue', Helvetica, sans-serif",
+		'Comic Sans MS'   => "'Comic Sans MS', 'Marker Felt-Thin', Arial, sans-serif",
+		'Courier New'     => "'Courier New', Courier, 'Lucida Sans Typewriter', 'Lucida Typewriter', monospace",
+		'Georgia'         => "Georgia, Times, 'Times New Roman', serif",
+		'Lucida'          => "'Lucida Sans Unicode', 'Lucida Grande', sans-serif",
+		'Tahoma'          => 'Tahoma, Verdana, Segoe, sans-serif',
+		'Times New Roman' => "'Times New Roman', Times, Baskerville, Georgia, serif",
+		'Trebuchet MS'    => "'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif",
+		'Verdana'         => 'Verdana, Geneva, sans-serif',
+	);
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
@@ -77,6 +94,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 			'desc_tip'    => true,
 		);
 		$header_alignment           = null;
+		$font_family                = null;
 
 		$base_color_default        = '#7f54b3';
 		$bg_color_default          = '#f7f7f7';
@@ -131,6 +149,31 @@ class WC_Settings_Emails extends WC_Settings_Page {
 					'left'   => __( 'Left', 'woocommerce' ),
 					'center' => __( 'Center', 'woocommerce' ),
 					'right'  => __( 'Right', 'woocommerce' ),
+				),
+			);
+
+			$additional_fonts = array();
+			if ( wc_current_theme_is_fse_theme() && class_exists( 'WP_Font_Face_Resolver' ) ) {
+				$theme_fonts = WP_Font_Face_Resolver::get_fonts_from_theme_json();
+				if ( count( $theme_fonts ) > 0 ) {
+					foreach ( $theme_fonts as $font ) {
+						if ( ! empty( $font[0]['font-family'] ) ) {
+							$additional_fonts[ $font[0]['font-family'] ] = $font[0]['font-family'];
+						}
+					}
+					ksort( $additional_fonts );
+				}
+			}
+			$font_family = array(
+				'title'    => __( 'Font family', 'woocommerce' ),
+				'id'       => 'woocommerce_email_font_family',
+				'desc_tip' => '',
+				'default'  => 'Arial',
+				'type'     => 'select',
+				'class'    => 'wc-enhanced-select',
+				'options'  => array_merge(
+					array_combine( array_keys( self::$font ), array_keys( self::$font ) ),
+					$additional_fonts
 				),
 			);
 
@@ -321,6 +364,8 @@ class WC_Settings_Emails extends WC_Settings_Page {
 				$logo_image,
 
 				$header_alignment,
+
+				$font_family,
 
 				$base_color_setting_in_template_opts,
 
