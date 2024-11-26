@@ -17,6 +17,13 @@ class PaymentsRestController extends RestApiControllerBase {
 	use AccessiblePrivateMethods;
 
 	/**
+	 * The root namespace for the JSON REST API endpoints.
+	 *
+	 * @var string
+	 */
+	protected string $route_namespace = 'wc-admin';
+
+	/**
 	 * Route base.
 	 *
 	 * @var string
@@ -46,7 +53,7 @@ class PaymentsRestController extends RestApiControllerBase {
 	 */
 	public function register_routes( bool $override = false ) {
 		register_rest_route(
-			'wc-admin',
+			$this->route_namespace,
 			'/' . $this->rest_base . '/providers',
 			array(
 				array(
@@ -69,7 +76,28 @@ class PaymentsRestController extends RestApiControllerBase {
 			$override
 		);
 		register_rest_route(
-			'wc-admin',
+			$this->route_namespace,
+			'/' . $this->rest_base . '/providers/order',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::EDITABLE,
+					'callback'            => fn( $request ) => $this->run( $request, 'update_providers_order' ),
+					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
+					'args'                => array(
+						'order_map' => array(
+							'description'       => __( 'A map of provider ID to integer values representing the sort order.', 'woocommerce' ),
+							'type'              => 'object',
+							'required'          => true,
+							'validate_callback' => fn( $value ) => $this->check_providers_order_map_arg( $value ),
+							'sanitize_callback' => fn( $value ) => $this->sanitize_providers_order_arg( $value ),
+						),
+					),
+				),
+			),
+			$override
+		);
+		register_rest_route(
+			$this->route_namespace,
 			'/' . $this->rest_base . '/suggestion/(?P<id>[\w\d\-]+)/hide',
 			array(
 				array(
@@ -107,20 +135,54 @@ class PaymentsRestController extends RestApiControllerBase {
 		}
 
 		try {
+			$providers = $this->payments->get_payment_providers( $location );
+		} catch ( Exception $e ) {
+			return new WP_Error( 'woocommerce_rest_payment_providers_error', $e->getMessage(), array( 'status' => 500 ) );
+		}
+
+		try {
 			$suggestions = $this->get_extension_suggestions( $location );
 		} catch ( Exception $e ) {
 			return new WP_Error( 'woocommerce_rest_payment_providers_error', $e->getMessage(), array( 'status' => 500 ) );
 		}
 
+		// Separate the offline PMs from the main providers list.
+		$offline_payment_providers = array_values(
+			array_filter(
+				$providers,
+				fn( $provider ) => Payments::PROVIDER_TYPE_OFFLINE_PM === $provider['_type']
+			)
+		);
+		$providers                 = array_values(
+			array_filter(
+				$providers,
+				fn( $provider ) => Payments::PROVIDER_TYPE_OFFLINE_PM !== $provider['_type']
+			)
+		);
+
 		$response = array(
-			'gateways'                => $this->payments->get_payment_providers(),
-			'offline_payment_methods' => $this->payments->get_offline_payment_methods(),
-			'preferred_suggestions'   => $suggestions['preferred'],
-			'other_suggestions'       => $suggestions['other'],
+			'providers'               => $providers,
+			'offline_payment_methods' => $offline_payment_providers,
+			'suggestions'             => $suggestions,
 			'suggestion_categories'   => $this->payments->get_extension_suggestion_categories(),
 		);
 
 		return rest_ensure_response( $this->prepare_payment_providers_response( $response ) );
+	}
+
+	/**
+	 * Update the payment providers order.
+	 *
+	 * @param WP_REST_Request $request The request object.
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	protected function update_providers_order( WP_REST_Request $request ) {
+		$order_map = $request->get_param( 'order_map' );
+
+		$result = $this->payments->update_payment_providers_order_map( $order_map );
+
+		return rest_ensure_response( array( 'success' => $result ) );
 	}
 
 	/**
@@ -132,34 +194,34 @@ class PaymentsRestController extends RestApiControllerBase {
 	 */
 	protected function hide_payment_extension_suggestion( WP_REST_Request $request ) {
 		$suggestion_id = $request->get_param( 'id' );
-		$suggestion    = $this->payments->get_payment_extension_suggestion_by_id( $suggestion_id );
-		if ( is_null( $suggestion ) ) {
-			return new WP_Error( 'woocommerce_rest_payment_extension_suggestion_error', __( 'Invalid suggestion ID.', 'woocommerce' ), array( 'status' => 400 ) );
-		}
 
-		$result = $this->payments->hide_payment_extension_suggestion( $suggestion_id );
+		try {
+			$result = $this->payments->hide_payment_extension_suggestion( $suggestion_id );
+		} catch ( Exception $e ) {
+			return new WP_Error( 'woocommerce_rest_payment_extension_suggestion_error', $e->getMessage(), array( 'status' => 400 ) );
+		}
 
 		return rest_ensure_response( array( 'success' => $result ) );
 	}
 
 	/**
-	 * Get the payment extension suggestions for the given location.
+	 * Get the payment extension suggestions (other) for the given location.
 	 *
 	 * @param string $location The location for which the suggestions are being fetched.
 	 *
-	 * @return array[] The payment extension suggestions for the given location, split into preferred and other.
+	 * @return array[]   The payment extension suggestions for the given location,
+	 *                   excluding the ones part of the main providers list.
 	 * @throws Exception If there are malformed or invalid suggestions.
 	 */
 	private function get_extension_suggestions( string $location ): array {
 		// If the requesting user can't install plugins, we don't suggest any extensions.
 		if ( ! current_user_can( 'install_plugins' ) ) {
-			return array(
-				'preferred' => array(),
-				'other'     => array(),
-			);
+			return array();
 		}
 
-		return $this->payments->get_extension_suggestions( $location );
+		$suggestions = $this->payments->get_extension_suggestions( $location );
+
+		return $suggestions['other'] ?? array();
 	}
 
 	/**
@@ -218,6 +280,52 @@ class PaymentsRestController extends RestApiControllerBase {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Validate the providers order map argument.
+	 *
+	 * @param mixed $value Value of the argument.
+	 *
+	 * @return WP_Error|true True if the providers order map argument is valid, otherwise a WP_Error object.
+	 */
+	private function check_providers_order_map_arg( $value ) {
+		if ( ! is_array( $value ) ) {
+			return new WP_Error( 'rest_invalid_param', esc_html__( 'The ordering argument must be an object.', 'woocommerce' ), array( 'status' => 400 ) );
+		}
+
+		foreach ( $value as $provider_id => $order ) {
+			if ( ! is_string( $provider_id ) || ! is_numeric( $order ) ) {
+				return new WP_Error( 'rest_invalid_param', esc_html__( 'The ordering argument must be an object with provider IDs as keys and numeric values as values.', 'woocommerce' ), array( 'status' => 400 ) );
+			}
+
+			if ( sanitize_key( $provider_id ) !== $provider_id ) {
+				return new WP_Error( 'rest_invalid_param', esc_html__( 'The provider ID must be a valid string.', 'woocommerce' ), array( 'status' => 400 ) );
+			}
+
+			if ( false === filter_var( $order, FILTER_VALIDATE_INT ) ) {
+				return new WP_Error( 'rest_invalid_param', esc_html__( 'The order value must be an integer.', 'woocommerce' ), array( 'status' => 400 ) );
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Sanitize the providers ordering argument.
+	 *
+	 * @param array $value Value of the argument.
+	 *
+	 * @return array
+	 */
+	private function sanitize_providers_order_arg( array $value ): array {
+		// Sanitize the ordering object to ensure that the order values are integers and the provider IDs are safe strings.
+		foreach ( $value as $provider_id => $order ) {
+			$id           = sanitize_key( $provider_id );
+			$value[ $id ] = intval( $order );
+		}
+
+		return $value;
 	}
 
 	/**
@@ -281,30 +389,23 @@ class PaymentsRestController extends RestApiControllerBase {
 			'type'    => 'object',
 		);
 		$schema['properties'] = array(
-			'gateways'                => array(
+			'providers'               => array(
 				'type'        => 'array',
-				'description' => esc_html__( 'The registered payment gateways.', 'woocommerce' ),
+				'description' => esc_html__( 'The ordered providers list. This includes registered payment gateways, suggestions, and offline payment methods group entry. The individual offline payment methods are separate.', 'woocommerce' ),
 				'context'     => array( 'view', 'edit' ),
 				'readonly'    => true,
-				'items'       => $this->get_schema_for_payment_gateway(),
+				'items'       => $this->get_schema_for_payment_provider(),
 			),
 			'offline_payment_methods' => array(
 				'type'        => 'array',
-				'description' => esc_html__( 'The offline payment methods.', 'woocommerce' ),
+				'description' => esc_html__( 'The ordered offline payment methods providers list.', 'woocommerce' ),
 				'context'     => array( 'view', 'edit' ),
 				'readonly'    => true,
-				'items'       => $this->get_schema_for_payment_gateway(),
+				'items'       => $this->get_schema_for_payment_provider(),
 			),
-			'preferred_suggestions'   => array(
+			'suggestions'             => array(
 				'type'        => 'array',
-				'description' => esc_html__( 'The preferred suggestions.', 'woocommerce' ),
-				'context'     => array( 'view', 'edit' ),
-				'readonly'    => true,
-				'items'       => $this->get_schema_for_suggestion(),
-			),
-			'other_suggestions'       => array(
-				'type'        => 'array',
-				'description' => esc_html__( 'The other suggestions.', 'woocommerce' ),
+				'description' => esc_html__( 'The list of suggestions, excluding the ones part of the providers list.', 'woocommerce' ),
 				'context'     => array( 'view', 'edit' ),
 				'readonly'    => true,
 				'items'       => $this->get_schema_for_suggestion(),
@@ -354,14 +455,14 @@ class PaymentsRestController extends RestApiControllerBase {
 	}
 
 	/**
-	 * Get the schema for a payment gateway.
+	 * Get the schema for a payment provider.
 	 *
-	 * @return array The schema for a payment gateway.
+	 * @return array The schema for a payment provider.
 	 */
-	private function get_schema_for_payment_gateway(): array {
+	private function get_schema_for_payment_provider(): array {
 		return array(
 			'type'        => 'object',
-			'description' => esc_html__( 'A payment gateway.', 'woocommerce' ),
+			'description' => esc_html__( 'A payment provider in the context of the main Payments Settings page list.', 'woocommerce' ),
 			'properties'  => array(
 				'id'                => array(
 					'type'        => 'string',
@@ -372,6 +473,12 @@ class PaymentsRestController extends RestApiControllerBase {
 				'_order'            => array(
 					'type'        => 'integer',
 					'description' => esc_html__( 'The sort order of the payment gateway.', 'woocommerce' ),
+					'context'     => array( 'view', 'edit' ),
+					'readonly'    => true,
+				),
+				'_type'             => array(
+					'type'        => 'string',
+					'description' => esc_html__( 'The type of payment provider. Use this to differentiate between the various items in the list and determine their intended use.', 'woocommerce' ),
 					'context'     => array( 'view', 'edit' ),
 					'readonly'    => true,
 				),
@@ -493,6 +600,18 @@ class PaymentsRestController extends RestApiControllerBase {
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
 						),
+					),
+				),
+				'tags'              => array(
+					'description' => esc_html__( 'The tags associated with the provider.', 'woocommerce' ),
+					'type'        => 'array',
+					'uniqueItems' => true,
+					'context'     => array( 'view', 'edit' ),
+					'readonly'    => true,
+					'items'       => array(
+						'type'        => 'string',
+						'description' => esc_html__( 'Tag associated with the provider.', 'woocommerce' ),
+						'readonly'    => true,
 					),
 				),
 			),
