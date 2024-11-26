@@ -75,7 +75,7 @@ class DeprecatedClassFacade {
 			static::$deprecated_in_version,
 			static::$facade_over_classname . '::' . $function
 		);
-		
+
 		if ( '' !== static::$facade_over_classname ) {
 			$message = $message . sprintf(
 				' Use %s instead.',

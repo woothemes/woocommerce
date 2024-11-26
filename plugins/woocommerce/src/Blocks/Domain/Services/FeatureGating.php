@@ -8,7 +8,7 @@ use Automattic\WooCommerce\Admin\DeprecatedClassFacade;
  * is removed now and it is only used to determine "environment".
  *
  * @internal
- * 
+ *
  * @deprecated since 9.6.0, use wp_get_environment_type() instead.
  */
 class FeatureGating extends DeprecatedClassFacade {
