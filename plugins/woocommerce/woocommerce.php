@@ -77,7 +77,9 @@ function wc_log_order_step( string $message, array $context = array() ) {
 	// Generate a place order unique ID for logging purposes. If this is called multiple times,
 	// the same UID will be used, enabling us to track recursion and race-condition issues on order processing methods
 	// or other problems related to third-party plugins.
-	wc_maybe_define_constant( 'ORDER_UID', wp_generate_uuid4() );
+	if ( ! defined( 'ORDER_UID' ) ) {
+		define( 'ORDER_UID', wp_generate_uuid4() );
+	}
 
 	if ( empty( $message ) ) {
 		return;
