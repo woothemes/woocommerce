@@ -24,10 +24,8 @@ $gap-smallest: 4px;
 /**
  * Refubrished classic product editor.
  */
-$blueberry: $studio-wordpress-blue;
 $alias-text: #070707;
 $alias-text-tertiary: #505050;
-$gray-30: $studio-gray-30;
 $separator-color: #BBBCBF;
 $border-radius: 8px;
 
@@ -5596,7 +5594,7 @@ img.help_tip {
 	// Link color.
 	a,
 	.button-link  {
-		color:  var(--wp-admin-theme-color, $blueberry);
+		color:  var(--wp-admin-theme-color, $studio-wordpress-blue);
 	}
 
 
@@ -5614,8 +5612,8 @@ img.help_tip {
 		gap: $gap-smallest;
 
 		border-radius: 2px;
-		border: 1px solid var(--wp-admin-theme-color, $blueberry);
-		color: var(--wp-admin-theme-color, $blueberry);
+		border: 1px solid var(--wp-admin-theme-color, $studio-wordpress-blue);
+		color: var(--wp-admin-theme-color, $studio-wordpress-blue);
 
 		.jetpack-contact-form-icon,
 		.wp-media-buttons-icon {
@@ -5631,7 +5629,7 @@ img.help_tip {
 		}
 		&.button-primary {
 			color: var(--Gutenberg-White, #FFF);
-			background: var(--wp-admin-theme-color, $blueberry);
+			background: var(--wp-admin-theme-color, $studio-wordpress-blue);
 		}
 	}
 
@@ -5674,11 +5672,9 @@ img.help_tip {
 		#title  {
 			padding: $gap-smallest $gap;
 			font-size: 20px;
-			line-height: 46px;
-			height: auto;
+			line-height:
 		}
 		#title-prompt-text {
-			color: var(--Gray-Gray-30, $gray-30);
 		}
 		#title {
 			border-radius: $border-radius;
@@ -5792,7 +5788,7 @@ img.help_tip {
 	}
 	.html-active .switch-html,
 	.tmce-active .switch-tmce {
-		border-bottom-color: var(--wp-admin-theme-color, $blueberry);
+		border-bottom-color: var(--wp-admin-theme-color, $studio-wordpress-blue);
 		color: var(--Alias-text-text, $alias-text);
 	}
 
@@ -5942,13 +5938,13 @@ img.help_tip {
 				padding: $gap;
 
 				&:focus {
-					box-shadow: 0 0 0 2px var(--wp-admin-theme-color, $blueberry);
+					box-shadow: 0 0 0 2px var(--wp-admin-theme-color, $studio-wordpress-blue);
 				}
 			}
 
 			// Active state.
 			&.tabs {
-				border-color:  var(--wp-admin-theme-color, $blueberry);
+				border-color:  var(--wp-admin-theme-color, $studio-wordpress-blue);
 			}
 		}
 
@@ -6375,7 +6371,7 @@ img.help_tip {
 			&.active a {
 				color: var(--Alias-text-text, $alias-text);
 				font-weight: 700;
-				border-left: 3px solid var(--wp-admin-theme-color, $blueberry);
+				border-left: 3px solid var(--wp-admin-theme-color, $studio-wordpress-blue);
 			}
 		}
 		// Overwrite marketplace css with higher specificity.
