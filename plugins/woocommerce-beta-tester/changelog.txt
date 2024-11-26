@@ -1,5 +1,4 @@
-changelog.txt
-s*** WooCommerce Beta Tester Changelog ***
+*** WooCommerce Beta Tester Changelog ***
 
 2024-11-26 - version 2.5.1
 * Patch - Fix wc plugin file path
