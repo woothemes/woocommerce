@@ -16,7 +16,6 @@ module.exports = async ( config ) => {
 
 	// Clean up the consumer keys
 	const keysRetries = 5;
-	console.log( 'Clearing consumer token...', process.env.API_KEY_NAME );
 	if ( process.env.API_KEY_NAME ) {
 		for ( let i = 0; i < keysRetries; i++ ) {
 			try {
