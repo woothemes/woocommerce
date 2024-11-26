@@ -92,7 +92,7 @@ jobs:
 
               core.setOutput(
                   'GITHUB_COMMENT',
-                  'The PR you entered with the request does not originate from the release branch. Please switch your PR base to release branch and open a new request.'
+                  'The PR you entered with the request does not originate from the release branch. Please switch your PR base to the target release branch and open a new request.'
               );
               return;
             }
@@ -126,12 +126,12 @@ jobs:
 
               core.setOutput(
                 'SLACK_MESSAGE',
-                `:x: We did not process your ${labelName === 'code freeze exception' ? 'Code Freeze Exception' : 'Point Release Request'} because the release number doesn't seem to be correct. Please check if the release branch name is correct. The current release branch is: \`${baseRef}\`.\n\n${issueTitle} ${issueUrl}`
+                `:x: We did not process your ${labelName === 'code freeze exception' ? 'Code Freeze Exception' : 'Point Release Request'} because the release number doesn't seem to be correct. Please check if your PR base originates from the target release branch. The current release branch is: \`${baseRef}\`.\n\n${issueTitle} ${issueUrl}`
               );
 
               core.setOutput(
                 'GITHUB_COMMENT',
-                'The release number doesn\'t seem to be correct. Please check if the release branch name is correct.'
+                'The release number doesn\'t seem to be correct. Please check if your PR base originates from the target release branch.'
               );
             }
 
