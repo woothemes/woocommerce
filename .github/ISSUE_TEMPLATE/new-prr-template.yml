@@ -13,14 +13,6 @@ body:
         * If rejected, please change the base against `trunk` and merge it.
         
         In either case you are responsible for managing the pull request as usual (provide a description, assign reviewers, ensure that CI jobs pass...)
-  - type: input
-    id: release-number
-    attributes:
-      label: "Which release does this request apply to?"
-      description: "Format: X.Y (Major.Minor)"
-      placeholder: "9.2"
-    validations:
-      required: true
   - type: textarea
     id: pr-urls
     attributes:
