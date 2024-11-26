@@ -842,7 +842,7 @@
           "menu_title": "Add actions and filters",
           "tags": "how-to",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/extension-development/adding-actions-and-filters.md",
-          "hash": "ac6b6db9a4bc92d13c71b9d7d81614df4e4cd80120875e5f274238af062a8744",
+          "hash": "f7be5fd02a97b644b361cb709db884f6817551f662d6106dfe72e4d6a335d848",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/extension-development/adding-actions-and-filters.md",
           "id": "6f461e2f0ca9195097b36f987ee6c0212a65e8ab"
         },
@@ -1823,5 +1823,5 @@
       "categories": []
     }
   ],
-  "hash": "8cd07dec61c2ddf169022adc3616e0ba4141d685689b83ca2d45e42ff6ca3583"
+  "hash": "5e627da465a3602a29a7af90cb8627f3fb9d60bad3a7fcc25b1952474d95c9b7"
 }
