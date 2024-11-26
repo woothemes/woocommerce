@@ -181,6 +181,7 @@ export const useStoreCart = (
 						typeof previewCart?.receiveCartContents === 'function'
 							? previewCart.receiveCartContents
 							: () => undefined,
+					isApplyingExtensionCartUpdate: false,
 				};
 			}
 
@@ -203,6 +204,9 @@ export const useStoreCart = (
 							decodeValues( fee )
 					  )
 					: EMPTY_CART_FEES;
+
+			const isApplyingExtensionCartUpdate =
+				store.isApplyingExtensionCartUpdate();
 
 			// Add a text property to the coupon to allow extensions to modify
 			// the text used to display the coupon, without affecting the
@@ -240,6 +244,7 @@ export const useStoreCart = (
 				paymentRequirements: cartData.paymentRequirements,
 				receiveCart,
 				receiveCartContents,
+				isApplyingExtensionCartUpdate,
 			};
 		},
 		[ shouldSelect ]

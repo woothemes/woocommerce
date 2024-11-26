@@ -60,6 +60,7 @@ export interface StoreCart {
 	paymentRequirements: string[];
 	receiveCart: ( cart: CartResponse ) => void;
 	receiveCartContents: ( cart: CartResponse ) => void;
+	isApplyingExtensionCartUpdate: boolean;
 }
 
 export type Query = {
