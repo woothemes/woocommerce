@@ -129,8 +129,9 @@ class Payments {
 			'id'          => self::OFFLINE_METHODS_ORDERING_GROUP,
 			'_type'       => self::PROVIDER_TYPE_OFFLINE_PMS_GROUP,
 			'_order'      => $providers_order_map[ self::OFFLINE_METHODS_ORDERING_GROUP ] ?? count( $payment_providers ),
-			'title'       => __( 'Offline Payment Methods', 'woocommerce' ),
-			'description' => __( 'Allow shoppers to pay offline.', 'woocommerce' ),
+			'title'       => __( 'Take offline payments', 'woocommerce' ),
+			'description' => __( 'Accept payments offline using multiple different methods. These can also be used to test purchases.', 'woocommerce' ),
+			'icon'        => plugins_url( 'assets/images/payment_methods/cod.svg', WC_PLUGIN_FILE ),
 		);
 
 		// Sort the payment providers by order, ASC.
