@@ -17,6 +17,13 @@ class PaymentsRestController extends RestApiControllerBase {
 	use AccessiblePrivateMethods;
 
 	/**
+	 * The root namespace for the JSON REST API endpoints.
+	 *
+	 * @var string
+	 */
+	protected string $route_namespace = 'wc-admin';
+
+	/**
 	 * Route base.
 	 *
 	 * @var string
@@ -46,7 +53,7 @@ class PaymentsRestController extends RestApiControllerBase {
 	 */
 	public function register_routes( bool $override = false ) {
 		register_rest_route(
-			'wc-admin',
+			$this->route_namespace,
 			'/' . $this->rest_base . '/providers',
 			array(
 				array(
@@ -69,7 +76,7 @@ class PaymentsRestController extends RestApiControllerBase {
 			$override
 		);
 		register_rest_route(
-			'wc-admin',
+			$this->route_namespace,
 			'/' . $this->rest_base . '/providers/order',
 			array(
 				array(
@@ -90,7 +97,7 @@ class PaymentsRestController extends RestApiControllerBase {
 			$override
 		);
 		register_rest_route(
-			'wc-admin',
+			$this->route_namespace,
 			'/' . $this->rest_base . '/suggestion/(?P<id>[\w\d\-]+)/hide',
 			array(
 				array(
