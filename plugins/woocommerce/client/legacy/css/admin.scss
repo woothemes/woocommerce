@@ -5647,7 +5647,7 @@ img.help_tip {
 		.show-settings {
 			padding-left: $gap-small;
 			// Deduct the inner spacing of the icon.
-			padding-right: calc( $gap-small - 5px );
+			padding-right: calc($gap-small - 5px);
 		}
 		// Adjust spacing as the element is vertically aligned with flexbox, reset additional padding.
 		.show-settings:after {
@@ -5862,7 +5862,7 @@ img.help_tip {
 		select,
 		textarea {
 			margin: $gap-smaller;
-			width: calc( 100% - 2 * $gap-smaller );
+			width: calc(100% - 2 * $gap-smaller);
 		}
 		thead th {
 			padding: $gap-smaller;
@@ -6038,7 +6038,7 @@ img.help_tip {
 
 		#product_images_container {
 			padding: 0;
-			margin: -$gap-smallest calc( $gap-smallest * -2 );
+			margin: -$gap-smallest calc($gap-smallest * -2);
 			ul li.image {
 				margin: $gap-smallest;
 			}
@@ -8105,7 +8105,7 @@ table.bar_chart {
 		.options_group,
 		// General coupos data does not have options group wrapper, make it look like it has.
 		&#general_coupon_data {
-			padding: $gap calc( $gap * 4 / 3);
+			padding: $gap calc($gap * 4 / 3);
 		}
 	}
 }
@@ -8129,7 +8129,7 @@ table.bar_chart {
 
 	#woocommerce-coupon-data ul.coupon_data_tabs li,
 	#woocommerce-product-data ul.product_data_tabs li {
-		min-height: calc( var(--grid-unit-50, 40px) / 2);
+		min-height: calc(var(--grid-unit-50, 40px) / 2);
 
 		a {
 			position: relative;
