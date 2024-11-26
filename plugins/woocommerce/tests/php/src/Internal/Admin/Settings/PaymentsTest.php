@@ -3236,8 +3236,8 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 					'gateway2',
 				),
 				array(
-					'bacs' => 0, // Special offline PMs normalized order map - no-op.
-					'cod' => 1,
+					'bacs'   => 0, // Special offline PMs normalized order map - no-op.
+					'cod'    => 1,
 					'cheque' => 2,
 				),
 				array(
@@ -3245,7 +3245,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 					'gateway3_0', // Suggestion matching gateways (via the plugin slug) are added after their suggestion, in order.
 					'gateway3_1',
 					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs', // no-op
+					'bacs', // no-op.
 					'cod',
 					'cheque',
 					'_wc_pes_suggestion1',
@@ -3266,8 +3266,8 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 					'gateway2',
 				),
 				array(
-					'cod' => 0, // Special offline PMs normalized order map.
-					'bacs' => 1,
+					'cod'    => 0, // Special offline PMs normalized order map.
+					'bacs'   => 1,
 					'cheque' => 2,
 				),
 				array(
@@ -3296,8 +3296,8 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 					'gateway2',
 				),
 				array(
-					'cod' => 2, // Special offline PMs non-normalized order map.
-					'bacs' => 3,
+					'cod'    => 2, // Special offline PMs non-normalized order map.
+					'bacs'   => 3,
 					'cheque' => 4,
 				),
 				array(

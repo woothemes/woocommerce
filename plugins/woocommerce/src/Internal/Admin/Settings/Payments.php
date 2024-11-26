@@ -883,7 +883,7 @@ class Payments {
 			// we will add the payment gateway right after it so gateways pop-up in place of matching suggestions.
 			// We rely on suggestions and matching registered PGs being mutually exclusive in the UI.
 			if ( ! empty( $payment_gateways_to_suggestions_map[ $id ] ) ) {
-				$suggestion_id = $payment_gateways_to_suggestions_map[ $id ]['id'];
+				$suggestion_id           = $payment_gateways_to_suggestions_map[ $id ]['id'];
 				$suggestion_order_map_id = $this->get_suggestion_order_map_id( $suggestion_id );
 
 				if ( isset( $order_map[ $suggestion_order_map_id ] ) ) {
