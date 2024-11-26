@@ -32,7 +32,7 @@ export const OtherPaymentGateways = ( {
 
 	// Memoize the collapsed images to avoid re-rendering when not expanded
 	const collapsedImages = useMemo( () => {
-		return true ? (
+		return isFetching ? (
 			<>
 				<div className="other-payment-gateways__header__title__image-placeholder" />
 				<div className="other-payment-gateways__header__title__image-placeholder" />
@@ -54,7 +54,7 @@ export const OtherPaymentGateways = ( {
 
 	// Memoize the expanded content to avoid re-rendering when expanded
 	const expandedContent = useMemo( () => {
-		return true ? (
+		return isFetching ? (
 			<>
 				<GridItemPlaceholder />
 				<GridItemPlaceholder />
