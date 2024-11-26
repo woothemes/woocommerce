@@ -81,6 +81,8 @@ export const PaymentGateways = ( {
 							/>
 						),
 					};
+				} else {
+					return null;
 				}
 			} ),
 		[ providers, installedPluginSlugs, installingPlugin, setupPlugin ]

@@ -64,7 +64,7 @@ describe( 'payment settings reducer', () => {
 			suggestionCategories: suggestionCategoriesStub,
 		} );
 
-		expect( state.providers ).toHaveLength( 2 );
+		expect( state.providers ).toHaveLength( 3 );
 		expect( state.providers ).toBe( providersStub );
 
 		expect( state.offlinePaymentGateways ).toHaveLength( 3 );
