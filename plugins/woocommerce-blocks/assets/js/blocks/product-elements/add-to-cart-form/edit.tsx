@@ -17,7 +17,7 @@ import { isBoolean } from '@woocommerce/types';
  */
 import './editor.scss';
 import { useIsDescendentOfSingleProductBlock } from '../../../atomic/blocks/product-elements/shared/use-is-descendent-of-single-product-block';
-import { QuantitySelectorStyle, AddToCartSettings } from './settings';
+import { QuantitySelectorStyle, AddToCartFormSettings } from './settings';
 
 export interface Attributes {
 	className?: string;
@@ -78,7 +78,7 @@ const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
 
 	return (
 		<>
-			<AddToCartSettings
+			<AddToCartFormSettings
 				quantitySelectorStyle={ props.attributes.quantitySelectorStyle }
 				setAttributes={ setAttributes }
 				features={ {

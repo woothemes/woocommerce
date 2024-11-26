@@ -52,7 +52,7 @@ const getHelpText = ( quantitySelectorStyle: QuantitySelectorStyle ) => {
 	}
 };
 
-export const AddToCartSettings = ( {
+export const AddToCartFormSettings = ( {
 	quantitySelectorStyle,
 	setAttributes,
 	features,
