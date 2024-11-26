@@ -10,7 +10,7 @@ import { useCollectionData } from '@woocommerce/base-context/hooks';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from '@wordpress/element';
 import { getSetting } from '@woocommerce/settings';
-import type { WCStoreV1ProductsCollectionProps } from '@woocommerce/blocks/product-collection/types';
+import type { TemplateArray } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -18,11 +18,9 @@ import type { WCStoreV1ProductsCollectionProps } from '@woocommerce/blocks/produ
 import { InitialDisabled } from '../../components/initial-disabled';
 import { Inspector } from './inspector';
 import type { EditProps } from './types';
-import { useProductFilterClearButtonManager } from '../../hooks/use-product-filter-clear-button-manager';
 
 const Edit = ( props: EditProps ) => {
 	const { showCounts, hideEmpty, clearButton } = props.attributes;
-	const { clientId } = props;
 	const { children, ...innerBlocksProps } = useInnerBlocksProps(
 		useBlockProps(),
 		{
@@ -47,20 +45,22 @@ const Edit = ( props: EditProps ) => {
 						[
 							'core/heading',
 							{
-								level: 3,
+								level: 4,
 								content: __( 'Status', 'woocommerce' ),
 							},
 						],
-						[
-							'woocommerce/product-filter-clear-button',
-							{
-								lock: {
-									remove: true,
-									move: false,
-								},
-							},
-						],
-					],
+						clearButton
+							? [
+									'woocommerce/product-filter-clear-button',
+									{
+										lock: {
+											remove: true,
+											move: false,
+										},
+									},
+							  ]
+							: null,
+					].filter( Boolean ) as unknown as TemplateArray,
 				],
 				[
 					'woocommerce/product-filter-checkbox-list',
@@ -79,12 +79,11 @@ const Edit = ( props: EditProps ) => {
 		{}
 	);
 
-	const { results: filteredCounts, isLoading } =
-		useCollectionData< WCStoreV1ProductsCollectionProps >( {
-			queryStock: true,
-			queryState: {},
-			isEditor: true,
-		} );
+	const { data: filteredCounts, isLoading } = useCollectionData( {
+		queryStock: true,
+		queryState: {},
+		isEditor: true,
+	} );
 
 	const items = useMemo( () => {
 		return Object.entries( stockStatusOptions )
@@ -104,11 +103,6 @@ const Edit = ( props: EditProps ) => {
 			} )
 			.filter( ( item ) => ! hideEmpty || item.count > 0 );
 	}, [ stockStatusOptions, filteredCounts, showCounts, hideEmpty ] );
-
-	useProductFilterClearButtonManager( {
-		clientId,
-		showClearButton: clearButton,
-	} );
 
 	return (
 		<div { ...innerBlocksProps }>

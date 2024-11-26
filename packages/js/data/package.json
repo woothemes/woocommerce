@@ -59,7 +59,6 @@
 		"@wordpress/api-fetch": "wp-6.0",
 		"@wordpress/compose": "wp-6.0",
 		"@wordpress/core-data": "wp-6.0",
-		"@wordpress/data": "wp-6.0",
 		"@wordpress/data-controls": "wp-6.0",
 		"@wordpress/deprecated": "wp-6.0",
 		"@wordpress/element": "wp-6.0",
@@ -103,6 +102,7 @@
 		"wireit": "0.14.3"
 	},
 	"peerDependencies": {
+		"@wordpress/data": "wp-6.0",
 		"@wordpress/core-data": "wp-6.0",
 		"moment": "^2.18.1",
 		"react": "17.0.x",

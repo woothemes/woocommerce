@@ -1,109 +1,99 @@
 /**
  * External dependencies
  */
-import { useMemo } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
-import { PaymentGateway } from '@woocommerce/data';
+import { useCallback } from 'react';
+import {
+	PLUGINS_STORE_NAME,
+	PAYMENT_SETTINGS_STORE_NAME,
+	SuggestedPaymentExtension,
+} from '@woocommerce/data';
+import { useState } from '@wordpress/element';
+import { useDispatch, useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import './settings-payments-main.scss';
-import { PaymentMethod } from './components/payment-method';
-import { OtherPaymentMethods } from './components/other-payment-methods';
-import { PaymentsBannerWrapper } from '~/payments/payment-settings-banner';
+import { createNoticesFromResponse } from '~/lib/notices';
+import { OtherPaymentGateways } from '~/settings-payments/components/other-payment-gateways';
+import { PaymentGateways } from '~/settings-payments/components/payment-gateways';
 
-export const SettingsPaymentsMain: React.FC = () => {
-	const [ paymentGateways, error ] = useMemo( () => {
-		const script = document.getElementById(
-			'experimental_wc_settings_payments_gateways'
-		);
+export const SettingsPaymentsMain = () => {
+	const [ installingPlugin, setInstallingPlugin ] = useState< string | null >(
+		null
+	);
+	const { installAndActivatePlugins } = useDispatch( PLUGINS_STORE_NAME );
 
-		try {
-			if ( script && script.textContent ) {
-				return [
-					JSON.parse( script.textContent ) as PaymentGateway[],
-					null,
-				];
-			}
-			throw new Error( 'Could not find payment gateways data' );
-		} catch ( e ) {
-			return [ [], e as Error ];
-		}
+	const installedPluginSlugs = useSelect( ( select ) => {
+		return select( PLUGINS_STORE_NAME ).getInstalledPlugins();
 	}, [] );
 
-	if ( error ) {
-		// This is a temporary error message to be replaced by error boundary.
-		return (
-			<div>
-				<h1>
-					{ __( 'Error loading payment gateways', 'woocommerce' ) }
-				</h1>
-				<p>{ error.message }</p>
-			</div>
-		);
-	}
+	// Make UI to refresh when plugin is installed.
+	const { invalidateResolutionForStoreSelector } = useDispatch(
+		PAYMENT_SETTINGS_STORE_NAME
+	);
+
+	const {
+		registeredPaymentGateways,
+		preferredPluginSuggestions,
+		otherPluginSuggestions,
+	} = useSelect( ( select ) => {
+		return {
+			registeredPaymentGateways: select(
+				PAYMENT_SETTINGS_STORE_NAME
+			).getRegisteredPaymentGateways(),
+			preferredPluginSuggestions: select(
+				PAYMENT_SETTINGS_STORE_NAME
+			).getPreferredExtensionSuggestions(),
+			otherPluginSuggestions: select(
+				PAYMENT_SETTINGS_STORE_NAME
+			).getOtherExtensionSuggestions(),
+		};
+	} );
+
+	const setupPlugin = useCallback(
+		( extension: SuggestedPaymentExtension ) => {
+			if ( installingPlugin ) {
+				return;
+			}
+			setInstallingPlugin( extension.id );
+			installAndActivatePlugins( [ extension.plugin.slug ] )
+				.then( ( response ) => {
+					createNoticesFromResponse( response );
+					invalidateResolutionForStoreSelector(
+						'getRegisteredPaymentGateways'
+					);
+					setInstallingPlugin( null );
+				} )
+				.catch( ( response: { errors: Record< string, string > } ) => {
+					createNoticesFromResponse( response );
+					setInstallingPlugin( null );
+				} );
+		},
+		[
+			installingPlugin,
+			installAndActivatePlugins,
+			invalidateResolutionForStoreSelector,
+		]
+	);
 
 	return (
-		<div className="settings-payments-main__container">
-			<div id="wc_payments_settings_slotfill">
-				<PaymentsBannerWrapper />
+		<>
+			<div className="settings-payments-main__container">
+				<PaymentGateways
+					registeredPaymentGateways={ registeredPaymentGateways }
+					installedPluginSlugs={ installedPluginSlugs }
+					preferredPluginSuggestions={ preferredPluginSuggestions }
+					installingPlugin={ installingPlugin }
+					setupPlugin={ setupPlugin }
+				/>
+				<OtherPaymentGateways
+					otherPluginSuggestions={ otherPluginSuggestions }
+					installingPlugin={ installingPlugin }
+					setupPlugin={ setupPlugin }
+				/>
 			</div>
-			<table className="form-table">
-				<tbody>
-					<tr>
-						<td
-							className="wc_payment_gateways_wrapper"
-							colSpan={ 2 }
-						>
-							<table
-								className="wc_gateways widefat"
-								cellSpacing="0"
-								aria-describedby="payment_gateways_options-description"
-							>
-								<thead>
-									<tr>
-										<th className="sort"></th>
-										<th className="name">
-											{ __( 'Method', 'woocommerce' ) }
-										</th>
-										<th className="status">
-											{ __( 'Enabled', 'woocommerce' ) }
-										</th>
-										<th className="description">
-											{ __(
-												'Description',
-												'woocommerce'
-											) }
-										</th>
-										<th className="action"></th>
-									</tr>
-								</thead>
-								<tbody className="ui-sortable">
-									{ paymentGateways.map(
-										( gateway: PaymentGateway ) => (
-											<PaymentMethod
-												key={ gateway.id }
-												{ ...gateway }
-											/>
-										)
-									) }
-
-									<tr>
-										<td
-											className="other-payment-methods-row"
-											colSpan={ 5 }
-										>
-											<OtherPaymentMethods />
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+		</>
 	);
 };
 

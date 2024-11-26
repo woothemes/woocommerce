@@ -1,49 +1,68 @@
-type SettingField = {
-	title?: string;
-	type: string;
-	id?: string;
-	desc?: string;
-	desc_tip?: boolean | string;
-	default?: string | number | boolean | object;
-	value: string | number | boolean | object;
-	placeholder?: string;
-	custom_attributes?: {
-		[key: string]: string | number;
-	};
-	options?: {
-		[key: string]: string;
-	};
-	css?: string;
-	class?: string;
-	checkboxgroup?: 'start' | 'end' | '';
-	autoload?: boolean;
-	show_if_checked?: string;
-	content?: string;
-	[key: string]: any;
-};
+declare global {
+    interface BaseSettingsField {
+        title?: string;
+        type: string;
+        id?: string;
+        desc?: string;
+        desc_tip?: boolean | string;
+        default?: string | number | boolean | object;
+        value: string | number | boolean | object;
+        placeholder?: string;
+        custom_attributes?: {
+            [key: string]: string | number;
+        };
+        options?: {
+            [key: string]: string;
+        };
+        css?: string;
+        class?: string;
+        autoload?: boolean;
+        show_if_checked?: string;
+        content?: string;
+        [key: string]: any;
+    }
 
-type SettingsSection = {
-	label: string;
-	settings: SettingField[];
-};
+    interface GroupSettingsField extends BaseSettingsField {
+        type: 'group';
+        settings: SettingsField[];
+    }
+    interface CheckboxSettingsField extends BaseSettingsField {
+        type: 'checkbox';
+        checkboxgroup?: 'start' | 'end' | '';
+    }
 
-type SettingsPage = {
-	label: string;
-	slug: string;
-	icon: string;
-	sections: SettingsSection[];
-	is_modern: boolean;
-};
+    interface CheckboxGroupSettingsField extends BaseSettingsField {
+        type: 'checkboxgroup';
+        settings: CheckboxSettingsField[];
+    }
 
-type SettingsData = {
-	[key: string]: SettingsPage;
-};
+    type SettingsField = BaseSettingsField | GroupSettingsField | CheckboxGroupSettingsField | CheckboxSettingsField;
+
+	interface SettingsSection {
+		label: string;
+		settings: SettingField[];
+	}
+
+	interface SettingsPage {
+		label: string;
+		slug: string;
+		icon: string;
+		sections: {
+			[ key: string ]: SettingsSection;
+		};
+		is_modern: boolean;
+	}
+
+	interface SettingsData {
+		[ key: string ]: SettingsPage;
+	}
+}
 
 declare global {
 	interface Window {
 		wcSettings: {
 			admin: {
-				settingsPages: SettingsData;
+				settingsData: SettingsData;
 			};
 		};
 		wcTracks: {

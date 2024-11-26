@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { screen, render } from '@testing-library/react';
+import { screen, render, within } from '@testing-library/react';
 import { SlotFillProvider } from '@woocommerce/blocks-checkout';
 import { ShippingCalculatorContext } from '@woocommerce/base-components/cart-checkout/shipping-calculator/context';
 import * as wpData from '@wordpress/data';
@@ -185,7 +185,7 @@ describe( 'TotalsShipping', () => {
 		expect( screen.getByText( '56.78' ) ).toBeInTheDocument();
 	} );
 
-	it( 'should show correct calculator button label if address is complete', () => {
+	it( 'should show correct calculator panel label if address is complete', () => {
 		render(
 			<SlotFillProvider>
 				<ShippingCalculatorContext.Provider
@@ -201,12 +201,18 @@ describe( 'TotalsShipping', () => {
 				</ShippingCalculatorContext.Provider>
 			</SlotFillProvider>
 		);
+
+		const panel = screen.getByRole( 'button' );
+		const paragraph = within( panel ).getByRole( 'paragraph' );
+
 		expect(
-			screen.getByText(
-				'Delivers to W1T 4JG, London, United Kingdom (UK)'
-			)
+			within( paragraph ).getByText( ( _, element ) => {
+				const text = element?.textContent || '';
+				return /Delivers to W1T 4JG, London, United Kingdom \(UK\)/.test(
+					text
+				);
+			} )
 		).toBeInTheDocument();
-		expect( screen.getByText( 'Change address' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should show correct calculator button label if address is incomplete', () => {
@@ -236,14 +242,11 @@ describe( 'TotalsShipping', () => {
 			</SlotFillProvider>
 		);
 		expect(
-			screen.queryByText( 'Change address' )
-		).not.toBeInTheDocument();
-		expect(
 			screen.getByText( 'Enter address to check delivery options' )
 		).toBeInTheDocument();
 	} );
 
-	it( 'does show the calculator button when default rates are available and has formatted address', () => {
+	it( 'does show the calculator panel when default rates are available and has formatted address', () => {
 		baseContextHooks.useStoreCart.mockReturnValue( {
 			...baseContextHooks.useStoreCart(),
 			shippingAddress: {
@@ -270,7 +273,6 @@ describe( 'TotalsShipping', () => {
 				</ShippingCalculatorContext.Provider>
 			</SlotFillProvider>
 		);
-		expect( screen.queryByText( 'Change address' ) ).toBeInTheDocument();
 		expect(
 			screen.queryByText( 'Enter address to check delivery options' )
 		).not.toBeInTheDocument();

@@ -1,14 +1,8 @@
 /**
  * Internal dependencies
  */
+import { getColorCSSVar } from '../../utils/colors';
 import { BlockAttributes } from './types';
-
-function getCSSVar( slug: string | undefined, value: string | undefined ) {
-	if ( slug ) {
-		return `var(--wp--preset--color--${ slug })`;
-	}
-	return value || '';
-}
 
 export function getColorVars( attributes: BlockAttributes ) {
 	const {
@@ -21,15 +15,15 @@ export function getColorVars( attributes: BlockAttributes ) {
 	} = attributes;
 
 	const vars: Record< string, string > = {
-		'--wc-product-filter-removable-chips-text': getCSSVar(
+		'--wc-product-filter-removable-chips-text': getColorCSSVar(
 			chipText,
 			customChipText
 		),
-		'--wc-product-filter-removable-chips-background': getCSSVar(
+		'--wc-product-filter-removable-chips-background': getColorCSSVar(
 			chipBackground,
 			customChipBackground
 		),
-		'--wc-product-filter-removable-chips-border': getCSSVar(
+		'--wc-product-filter-removable-chips-border': getColorCSSVar(
 			chipBorder,
 			customChipBorder
 		),
