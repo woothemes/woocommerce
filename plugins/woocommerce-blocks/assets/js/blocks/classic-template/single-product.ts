@@ -2,7 +2,8 @@
  * External dependencies
  */
 import { __, sprintf } from '@wordpress/i18n';
-import { isWpVersion } from '@woocommerce/settings';
+import { getSettingWithCoercion, isWpVersion } from '@woocommerce/settings';
+import { isBoolean } from '@woocommerce/types';
 import { VARIATION_NAME as PRODUCT_TITLE_VARIATION_NAME } from '@woocommerce/blocks/product-query/variations/elements/product-title';
 import {
 	INNER_BLOCKS_PRODUCT_TEMPLATE as productCollectionInnerBlocksTemplate,
@@ -20,6 +21,13 @@ import {
  * Internal dependencies
  */
 import { OnClickCallbackParameter } from './types';
+
+// Pick the value of the "blockify add to cart flag"
+const isBlockifiedAddToCart = getSettingWithCoercion(
+	'isBlockifiedAddToCart',
+	false,
+	isBoolean
+);
 
 const getBlockifiedTemplate = () =>
 	[
@@ -52,7 +60,9 @@ const getBlockifiedTemplate = () =>
 					createBlock( 'woocommerce/product-summary', {
 						isDescendentOfSingleProductTemplate: true,
 					} ),
-					createBlock( 'woocommerce/add-to-cart-form' ),
+					isBlockifiedAddToCart
+						? createBlock( 'woocommerce/add-to-cart-with-options' )
+						: createBlock( 'woocommerce/add-to-cart-form' ),
 					createBlock( 'woocommerce/product-meta' ),
 				] ),
 			]

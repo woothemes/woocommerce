@@ -368,6 +368,7 @@ final class BlockTypesController {
 		$block_types = array(
 			'ActiveFilters',
 			'AddToCartForm',
+			'AddToCartWithOptions',
 			'AllProducts',
 			'AllReviews',
 			'AttributeFilter',
