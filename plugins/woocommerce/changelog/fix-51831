@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Update billing email autocomplete to use email only
