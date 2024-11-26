@@ -61,6 +61,7 @@ const ColumnsControl = ( props: DisplayLayoutControlProps ) => {
 				onDeselect={ onPanelDeselect }
 			>
 				<RangeControl
+					__next40pxDefaultSize
 					label={ columnsLabel }
 					onChange={ onColumnsChange }
 					value={ columns }
