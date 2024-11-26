@@ -31,7 +31,7 @@ export const OtherPaymentGateways = ( {
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
 	// Memoize the collapsed images to avoid re-rendering when not expanded
-	const collapsedImages = useMemo(() => {
+	const collapsedImages = useMemo( () => {
 		return isFetching ? (
 			<>
 				<div className="other-payment-gateways__header__title__image-placeholder" />
@@ -39,11 +39,11 @@ export const OtherPaymentGateways = ( {
 				<div className="other-payment-gateways__header__title__image-placeholder" />
 			</>
 		) : (
-			suggestions.map((extension) => (
+			suggestions.map( ( extension ) => (
 				<img
-					key={extension.id}
-					src={extension.icon}
-					alt={extension.title}
+					key={ extension.id }
+					src={ extension.icon }
+					alt={ extension.title }
 					width="24"
 					height="24"
 					className="other-payment-gateways__header__title__image"
@@ -53,7 +53,7 @@ export const OtherPaymentGateways = ( {
 	}, [ suggestions, isFetching ] );
 
 	// Memoize the expanded content to avoid re-rendering when expanded
-	const expandedContent = useMemo(() => {
+	const expandedContent = useMemo( () => {
 		return isFetching ? (
 			<>
 				<GridItemPlaceholder />
@@ -61,32 +61,32 @@ export const OtherPaymentGateways = ( {
 				<GridItemPlaceholder />
 			</>
 		) : (
-			suggestions.map((extension) => (
+			suggestions.map( ( extension ) => (
 				<div
 					className="other-payment-gateways__content__grid-item"
-					key={extension.id}
+					key={ extension.id }
 				>
-					<img src={extension.icon} alt={extension.title} />
+					<img src={ extension.icon } alt={ extension.title } />
 					<div className="other-payment-gateways__content__grid-item__content">
 						<span className="other-payment-gateways__content__grid-item__content__title">
-							{extension.title}
+							{ extension.title }
 						</span>
 						<span className="other-payment-gateways__content__grid-item__content__description">
-							{extension.description}
+							{ extension.description }
 						</span>
 						<div className="other-payment-gateways__content__grid-item__content__actions">
 							<Button
 								variant="primary"
-								onClick={() =>
+								onClick={ () =>
 									setupPlugin(
 										extension.id,
 										extension.plugin.slug
 									)
 								}
-								isBusy={installingPlugin === extension.id}
-								disabled={!!installingPlugin}
+								isBusy={ installingPlugin === extension.id }
+								disabled={ !! installingPlugin }
 							>
-								{__('Install', 'woocommerce')}
+								{ __( 'Install', 'woocommerce' ) }
 							</Button>
 						</div>
 					</div>
