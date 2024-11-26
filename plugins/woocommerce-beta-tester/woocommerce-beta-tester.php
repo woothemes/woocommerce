@@ -10,7 +10,7 @@
  * Requires PHP: 7.4
  * Tested up to: 6.7
  * WC requires at least: 9.4
- * WC tested up to: 9.3
+ * WC tested up to: 9.5
  * Text Domain: woocommerce-beta-tester
  *
  * @package WC_Beta_Tester
