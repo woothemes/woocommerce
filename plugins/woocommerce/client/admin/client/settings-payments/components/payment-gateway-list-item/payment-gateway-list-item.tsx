@@ -6,7 +6,7 @@ import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
-import { RegisteredPaymentGateway } from '@woocommerce/data';
+import { PaymentProvider } from '@woocommerce/data';
 
 /**
  * Internal dependencies
@@ -18,7 +18,7 @@ import { EllipsisMenuContent } from '~/settings-payments/components/ellipsis-men
 import { isWooPayments } from '~/settings-payments/utils';
 
 type PaymentGatewayItemProps = {
-	gateway: RegisteredPaymentGateway;
+	gateway: PaymentProvider;
 	setupLivePayments: () => void;
 };
 
@@ -31,12 +31,12 @@ export const PaymentGatewayListItem = ( {
 	const hasIncentive =
 		gateway.id === 'pre_install_woocommerce_payments_promotion';
 	const determineGatewayStatus = () => {
-		if ( ! gateway.state.enabled && gateway.state.needs_setup ) {
+		if ( ! gateway.state?.enabled && gateway.state?.needs_setup ) {
 			return 'needs_setup';
 		}
-		if ( gateway.state.enabled ) {
+		if ( gateway.state?.enabled ) {
 			if ( isWCPay ) {
-				if ( gateway.state.test_mode ) {
+				if ( gateway.state?.test_mode ) {
 					return 'test_mode';
 				}
 			}
@@ -92,13 +92,13 @@ export const PaymentGatewayListItem = ( {
 					<PaymentGatewayButton
 						id={ gateway.id }
 						isOffline={ false }
-						enabled={ gateway.state.enabled }
-						needsSetup={ gateway.state.needs_setup }
-						settingsUrl={ gateway.management.settings_url }
+						enabled={ gateway.state?.enabled || false }
+						needsSetup={ gateway.state?.needs_setup }
+						settingsUrl={ gateway.management?.settings_url || '' }
 					/>
 					{ isWCPay &&
-						gateway.state.enabled &&
-						gateway.state.test_mode && (
+						gateway.state?.enabled &&
+						gateway.state?.test_mode && (
 							<Button
 								variant="primary"
 								onClick={ setupLivePayments }
@@ -118,9 +118,9 @@ export const PaymentGatewayListItem = ( {
 								links={ gateway.links }
 								onToggle={ onToggle }
 								isWooPayments={ isWCPay }
-								isEnabled={ gateway.state.enabled }
-								needsSetup={ gateway.state.needs_setup }
-								testMode={ gateway.state.test_mode }
+								isEnabled={ gateway.state?.enabled }
+								needsSetup={ gateway.state?.needs_setup }
+								testMode={ gateway.state?.test_mode }
 							/>
 						) }
 					/>
