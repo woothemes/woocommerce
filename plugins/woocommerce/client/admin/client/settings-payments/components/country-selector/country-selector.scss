@@ -3,11 +3,12 @@
 	color: $gray-900;
 	position: relative;
 
-	.components-country-select-control__label {
+	&__label {
 		color: $gray-700;
+		margin-right: 3px;
 	}
 
-	.components-country-select-control__item {
+	&__item {
 		padding: $gap-small;
 		margin: 0;
 		line-height: initial;
@@ -27,14 +28,13 @@
 			transform: translateY(-50%);
 			color: $gray-700;
 		}
+
+		&-icon {
+			margin-left: auto;
+		}
 	}
 
-	.components-country-select-control__item
-	.components-country-select-control__item-icon {
-		margin-left: auto;
-	}
-
-	button.components-country-select-control__button {
+	&__button {
 		width: 100%;
 		background-color: #fff;
 		margin: 0 1px;
@@ -61,7 +61,7 @@
 			color: #000;
 		}
 
-		.components-country-select-control__button-value {
+		&-value {
 			text-overflow: ellipsis;
 			white-space: nowrap;
 			overflow-x: hidden;
