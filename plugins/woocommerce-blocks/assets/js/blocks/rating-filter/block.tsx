@@ -75,7 +75,7 @@ const RatingFilterBlock = ( {
 
 	const [ queryState ] = useQueryStateByContext();
 
-	const { results: filteredCounts, isLoading: filteredCountsLoading } =
+	const { data: filteredCounts, isLoading: filteredCountsLoading } =
 		useCollectionData( {
 			queryRating: true,
 			queryState,

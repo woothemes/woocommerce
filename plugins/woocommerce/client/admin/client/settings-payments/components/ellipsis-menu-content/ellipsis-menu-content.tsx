@@ -21,8 +21,8 @@ interface EllipsisMenuContentProps {
 	pluginId: string;
 	pluginName: string;
 	isSuggestion: boolean;
-	links: PaymentGatewayLink[];
 	onToggle: () => void;
+	links?: PaymentGatewayLink[];
 	isWooPayments?: boolean;
 	isEnabled?: boolean;
 	needsSetup?: boolean;
@@ -33,8 +33,8 @@ export const EllipsisMenuContent = ( {
 	pluginId,
 	pluginName,
 	isSuggestion,
-	links,
 	onToggle,
+	links = [],
 	isWooPayments = false,
 	isEnabled = false,
 	needsSetup = false,
@@ -68,9 +68,7 @@ export const EllipsisMenuContent = ( {
 				createSuccessNotice(
 					__( 'Plugin was successfully deactivated.', 'woocommerce' )
 				);
-				invalidateResolutionForStoreSelector(
-					'getRegisteredPaymentGateways'
-				);
+				invalidateResolutionForStoreSelector( 'getPaymentProviders' );
 				setIsDeactivating( false );
 				onToggle();
 			} )
@@ -100,9 +98,7 @@ export const EllipsisMenuContent = ( {
 			gatewayToggleNonce
 		)
 			.then( () => {
-				invalidateResolutionForStoreSelector(
-					'getRegisteredPaymentGateways'
-				);
+				invalidateResolutionForStoreSelector( 'getPaymentProviders' );
 				setIsDisabling( false );
 				onToggle();
 			} )
@@ -120,9 +116,7 @@ export const EllipsisMenuContent = ( {
 
 		hideGatewaySuggestion( pluginId )
 			.then( () => {
-				invalidateResolutionForStoreSelector(
-					'getRegisteredPaymentGateways'
-				);
+				invalidateResolutionForStoreSelector( 'getPaymentProviders' );
 				setIsHidingSuggestion( false );
 				onToggle();
 			} )
