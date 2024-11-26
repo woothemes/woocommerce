@@ -118,6 +118,23 @@ class ProductCollectionDataSchema extends AbstractSchema {
 					],
 				],
 			],
+			'onsale_count'        => [
+				'description' => __( 'Returns number of products that are onsale.', 'woocommerce' ),
+				'type'        => [ 'array', 'null' ],
+				'context'     => [ 'view', 'edit' ],
+				'readonly'    => true,
+				'items'       => [
+					'type'       => 'array',
+					'properties' => [
+						'count' => [
+							'description' => __( 'Number of products.', 'woocommerce' ),
+							'type'        => 'integer',
+							'context'     => [ 'view', 'edit' ],
+							'readonly'    => true,
+						],
+					],
+				],
+			],
 		];
 	}
 
@@ -138,6 +155,7 @@ class ProductCollectionDataSchema extends AbstractSchema {
 			'attribute_counts'    => $data['attribute_counts'],
 			'rating_counts'       => $data['rating_counts'],
 			'stock_status_counts' => $data['stock_status_counts'],
+			'onsale_count'        => $data['onsale_count'],
 		];
 	}
 }

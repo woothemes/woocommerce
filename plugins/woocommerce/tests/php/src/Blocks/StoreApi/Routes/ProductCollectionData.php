@@ -35,6 +35,13 @@ class ProductCollectionData extends ControllerTestCase {
 					'regular_price' => 100,
 				)
 			),
+			$fixtures->get_simple_product(
+				array(
+					'name'          => 'Test Product 3',
+					'regular_price' => 100,
+					'sale_price'    => 69,
+				)
+			),
 		);
 
 		$fixtures->add_product_review( $this->products[0]->get_id(), 5 );
@@ -52,6 +59,7 @@ class ProductCollectionData extends ControllerTestCase {
 		$this->assertEquals( null, $data['price_range'] );
 		$this->assertEquals( null, $data['attribute_counts'] );
 		$this->assertEquals( null, $data['rating_counts'] );
+		$this->assertEquals( null, $data['onsale_count'] );
 	}
 
 	/**
@@ -69,6 +77,7 @@ class ProductCollectionData extends ControllerTestCase {
 		$this->assertEquals( '10000', $data['price_range']->max_price );
 		$this->assertEquals( null, $data['attribute_counts'] );
 		$this->assertEquals( null, $data['rating_counts'] );
+		$this->assertEquals( null, $data['onsale_count'] );
 	}
 
 	/**
@@ -172,6 +181,24 @@ class ProductCollectionData extends ControllerTestCase {
 	}
 
 	/**
+	 * Test calculation method.
+	 */
+	public function test_calculate_onsale_count() {
+		$request = new \WP_REST_Request( 'GET', '/wc/store/v1/products/collection-data' );
+		$request->set_param( 'calculate_onsale_count', true );
+		$response = rest_get_server()->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEquals(
+			array(
+				'count' => 1,
+			),
+			$data['onsale_count']
+		);
+	}
+
+	/**
 	 * Test collection params getter.
 	 */
 	public function test_get_collection_params() {
@@ -182,6 +209,7 @@ class ProductCollectionData extends ControllerTestCase {
 		$this->assertArrayHasKey( 'calculate_price_range', $params );
 		$this->assertArrayHasKey( 'calculate_attribute_counts', $params );
 		$this->assertArrayHasKey( 'calculate_rating_counts', $params );
+		$this->assertArrayHasKey( 'calculate_onsale_count', $params );
 	}
 
 	/**
@@ -212,6 +240,7 @@ class ProductCollectionData extends ControllerTestCase {
 			)
 		);
 		$request->set_param( 'calculate_rating_counts', true );
+		$request->set_param( 'calculate_onsale_count', true );
 		$response = rest_get_server()->dispatch( $request );
 		$validate = new ValidateSchema( $schema );
 

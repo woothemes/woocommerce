@@ -18,7 +18,8 @@ final class ProductFilterStatus extends AbstractBlock {
 	 */
 	protected $block_name = 'product-filter-status';
 
-	const STOCK_STATUS_QUERY_VAR = 'filter_stock_status';
+	const STOCK_STATUS_QUERY_VAR  = 'filter_stock_status';
+	const FILTER_STATUS_QUERY_VAR = 'filter_status';
 
 	/**
 	 * Initialize this block type.
