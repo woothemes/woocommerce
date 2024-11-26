@@ -2,6 +2,8 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { date } from '@wordpress/date';
+import { getSetting } from '@woocommerce/settings';
 import { useEffect, useState } from 'react';
 
 /**
@@ -64,7 +66,17 @@ export const EmailPreviewHeader: React.FC< EmailPreviewHeaderProps > = ( {
 		if ( ! email ) {
 			return '';
 		}
-		return email.subject || '';
+		const subject = email.subject || '';
+		const today = date( getSetting( 'dateFormat' ), new Date(), undefined );
+		const placeholders: Record< string, string > = {
+			'{site_title}': getSetting( 'siteTitle' ),
+			'{order_number}': '12345',
+			'{order_date}': today,
+		};
+		return subject.replace(
+			/{\w+}/g,
+			( match ) => placeholders[ match ] ?? match
+		);
 	};
 
 	return (
