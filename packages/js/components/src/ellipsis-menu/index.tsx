@@ -50,8 +50,8 @@ const EllipsisMenu = ( {
 	renderContent,
 	className,
 	onToggle,
-  // if set bottom-start, it will fallback to bottom-end / top-end / top-start
-  // if it's bottom, it will fallback to only top
+	// if set bottom-start, it will fallback to bottom-end / top-end / top-start
+	// if it's bottom, it will fallback to only top
 	placement = 'bottom-start',
 }: EllipsisMenuProps ) => {
 	if ( ! renderContent ) {
