@@ -3913,6 +3913,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: 5.56.0
         version: 5.56.0(eslint@8.55.0)(typescript@5.3.3)
+      '@woocommerce/customer-effort-score':
+        specifier: workspace:*
+        version: link:../../packages/js/customer-effort-score
       '@woocommerce/data':
         specifier: workspace:*
         version: link:../../packages/js/data
