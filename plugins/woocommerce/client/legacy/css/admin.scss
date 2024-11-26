@@ -5622,7 +5622,7 @@ img.help_tip {
 			font-size: 16px;
 			margin: 0;
 
-			&:before {
+			&::before {
 				font-size: inherit;
 				vertical-align: middle;
 			}
@@ -5650,7 +5650,7 @@ img.help_tip {
 			padding-right: calc($gap-small - 5px);
 		}
 		// Adjust spacing as the element is vertically aligned with flexbox, reset additional padding.
-		.show-settings:after {
+		.show-settings::after {
 			padding: 0;
 			bottom: none;
 			position: static;
@@ -5800,7 +5800,7 @@ img.help_tip {
 		gap: $gap-small;
 		padding-bottom: $gap;
 	}
-	.wp-editor-tools:after {
+	.wp-editor-tools::after {
 		content: none;
 		display: none;
 	}
@@ -5890,14 +5890,14 @@ img.help_tip {
 	}
 	// Hide all icons.
 	#post-body {
-		.misc-pub-post-status:before,
-		#visibility:before,
-		.curtime #timestamp:before,
-		.misc-pub-uploadedby:before,
-		.misc-pub-uploadedto:before,
-		.misc-pub-revisions:before,
-		.misc-pub-response-to:before,
-		.misc-pub-comment-status:before {
+		.misc-pub-post-status::before,
+		#visibility::before,
+		.curtime #timestamp::before,
+		.misc-pub-uploadedby::before,
+		.misc-pub-uploadedto::before,
+		.misc-pub-revisions::before,
+		.misc-pub-response-to::before,
+		.misc-pub-comment-status::before {
 			display: none;
 		}
 	}
@@ -6080,7 +6080,6 @@ img.help_tip {
 			align-items: center;
 			gap: $gap;
 			flex: 1;
-			display: flex;
 			flex-wrap: wrap;
 
 			.woocommerce-product-type-tip {
