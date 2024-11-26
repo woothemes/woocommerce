@@ -8,7 +8,7 @@ const couponData = {
 	},
 	fixedProduct: {
 		code: `fixedProduct-${ Date.now() }`,
-		description: `Simple fixed product discount ${ Date.now() }`,
+		description: `Simple fixed product discount TEST ${ Date.now() }`,
 		amount: `${ Math.floor( Math.random() * 50 ) + 1 }`,
 	},
 	percentage: {
