@@ -379,7 +379,7 @@ class OrderController {
 	protected function validate_address_fields( \WC_Order $order, $address_type, \WP_Error $errors ) {
 		$all_locales    = wc()->countries->get_country_locale();
 		$address        = $order->get_address( $address_type );
-		$current_locale = isset( $all_locales[ $address['country'] ] ) ? $all_locales[ $address['country'] ] : array();
+		$current_locale = $all_locales[ $address['country'] ] ?? [];
 
 		foreach ( $all_locales['default'] as $key => $value ) {
 			// If $current_locale[ $key ] is not empty, merge it with $value, otherwise use $value from default locale.
