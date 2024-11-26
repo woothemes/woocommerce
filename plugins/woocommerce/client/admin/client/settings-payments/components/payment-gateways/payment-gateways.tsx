@@ -81,9 +81,8 @@ export const PaymentGateways = ( {
 							/>
 						),
 					};
-				} else {
-					return null;
 				}
+				return null; // if unsupported _type found
 			} ),
 		[ providers, installedPluginSlugs, installingPlugin, setupPlugin ]
 	);
