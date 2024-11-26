@@ -497,8 +497,6 @@ class WC_Frontend_Scripts {
 				$params = array(
 					'ajax_url'    => WC()->ajax_url(),
 					'wc_ajax_url' => WC_AJAX::get_endpoint( '%%endpoint%%' ),
-					'i18n_password_show' => esc_attr__( 'Show password', 'woocommerce' ),
-					'i18n_password_hide' => esc_attr__( 'Hide password', 'woocommerce' ),
 				);
 				break;
 			case 'wc-geolocation':
@@ -628,6 +626,8 @@ class WC_Frontend_Scripts {
 					'stop_checkout'         => apply_filters( 'woocommerce_enforce_password_strength_meter_on_checkout', false ),
 					'i18n_password_error'   => esc_attr__( 'Please enter a stronger password.', 'woocommerce' ),
 					'i18n_password_hint'    => esc_attr( wp_get_password_hint() ),
+					'i18n_password_show'    => esc_attr__( 'Show password', 'woocommerce' ),
+					'i18n_password_hide'    => esc_attr__( 'Hide password', 'woocommerce' ),
 				);
 				break;
 			default:
