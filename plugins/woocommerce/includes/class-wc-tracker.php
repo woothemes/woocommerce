@@ -479,7 +479,7 @@ class WC_Tracker {
 				$wpdb->prepare(
 					"SELECT SUM(total_amount) AS 'gross_total'
 						FROM $orders_table
-					WHERE status in ('%s', '%s');",
+					WHERE status in ( %s, %s );",
 					OrderInternalStatus::COMPLETED,
 					OrderInternalStatus::REFUNDED
 				)
@@ -493,7 +493,7 @@ class WC_Tracker {
 					FROM {$wpdb->prefix}posts AS orders
 					LEFT JOIN {$wpdb->prefix}postmeta AS order_meta ON order_meta.post_id = orders.ID
 					WHERE order_meta.meta_key = '_order_total'
-						AND orders.post_status in ( '%s', '%s' )
+						AND orders.post_status in ( %s, %s )
 					GROUP BY order_meta.meta_key",
 					OrderInternalStatus::COMPLETED,
 					OrderInternalStatus::REFUNDED
@@ -511,7 +511,7 @@ class WC_Tracker {
 				$wpdb->prepare(
 					"SELECT SUM(total_amount) AS 'gross_total'
 					FROM $orders_table
-					WHERE status = '%s';",
+					WHERE status = %s;",
 					OrderInternalStatus::PROCESSING
 				)
 			);
@@ -524,7 +524,7 @@ class WC_Tracker {
 					FROM {$wpdb->prefix}posts AS orders
 					LEFT JOIN {$wpdb->prefix}postmeta AS order_meta ON order_meta.post_id = orders.ID
 					WHERE order_meta.meta_key = '_order_total'
-						AND orders.post_status = '%s'
+						AND orders.post_status = %s
 					GROUP BY order_meta.meta_key",
 					OrderInternalStatus::PROCESSING
 				)
@@ -557,7 +557,7 @@ class WC_Tracker {
 					"SELECT
 						MIN( date_created_gmt ) as 'first', MAX( date_created_gmt ) as 'last'
 					FROM $orders_table
-					WHERE status = '%s';",
+					WHERE status = %s;",
 					OrderInternalStatus::COMPLETED
 				),
 				ARRAY_A
@@ -570,7 +570,7 @@ class WC_Tracker {
 						MIN( post_date_gmt ) as 'first', MAX( post_date_gmt ) as 'last'
 					FROM {$wpdb->prefix}posts
 					WHERE post_type = 'shop_order'
-					AND post_status = '%s'",
+					AND post_status = %s",
 					OrderInternalStatus::COMPLETED
 				),
 				ARRAY_A
@@ -591,7 +591,7 @@ class WC_Tracker {
 					"SELECT
 						MIN( date_created_gmt ) as 'processing_first', MAX( date_created_gmt ) as 'processing_last'
 					FROM $orders_table
-					WHERE status = '%s';",
+					WHERE status = %s;",
 					OrderInternalStatus::PROCESSING
 				),
 				ARRAY_A
@@ -604,7 +604,7 @@ class WC_Tracker {
 						MIN( post_date_gmt ) as 'processing_first', MAX( post_date_gmt ) as 'processing_last'
 					FROM {$wpdb->prefix}posts
 					WHERE post_type = 'shop_order'
-					AND post_status = '%s'",
+					AND post_status = %s",
 					OrderInternalStatus::PROCESSING
 				),
 				ARRAY_A
@@ -699,7 +699,7 @@ class WC_Tracker {
 				$wpdb->prepare(
 					"SELECT payment_method AS gateway, currency AS currency, SUM( total_amount ) AS totals, count( id ) AS counts
 					FROM $orders_table
-					WHERE status IN ( '%s', '%s', '%s' )
+					WHERE status IN ( %s, %s, %s )
 					GROUP BY gateway, currency;",
 					OrderInternalStatus::COMPLETED,
 					OrderInternalStatus::PROCESSING,
@@ -723,7 +723,7 @@ class WC_Tracker {
 						LEFT JOIN
 							{$wpdb->prefix}postmeta order_meta ON order_meta.post_id = orders.id
 						WHERE orders.post_type = 'shop_order'
-							AND orders.post_status in ( '%s', '%s', '%s' )
+							AND orders.post_status in ( %s, %s, %s )
 							AND meta_key in( '_payment_method','_order_total','_order_currency')
 						GROUP BY orders.id
 					) order_gateways
@@ -1263,7 +1263,7 @@ class WC_Tracker {
 					FROM $order_table_name
 					WHERE
 						type = 'shop_order'
-						AND status IN ('%s', '%s')
+						AND status IN ( %s, %s )
 					ORDER BY date_created_gmt $sort_order
 					LIMIT $limit;",
 					OrderInternalStatus::COMPLETED,
@@ -1284,7 +1284,7 @@ class WC_Tracker {
 					FROM $wpdb->posts
 					WHERE
 						post_type = 'shop_order'
-						AND post_status IN ('%s', '%s')
+						AND post_status IN ( %s, %s )
 					ORDER BY post_date_gmt $sort_order
 					LIMIT $limit;",
 					OrderInternalStatus::COMPLETED,
@@ -1387,7 +1387,7 @@ class WC_Tracker {
 					FROM $order_table_name
 					WHERE
 						type = 'shop_order_refund'
-						AND status = '%s'
+						AND status = %s
 						AND parent_order_id IN ($joined_ids)
 					GROUP BY parent_order_id",
 					OrderInternalStatus::COMPLETED
@@ -1406,7 +1406,7 @@ class WC_Tracker {
 					LEFT JOIN $wpdb->postmeta AS amount ON amount.post_id = refunds.ID AND amount.meta_key = '_order_total'
 					WHERE
 						refunds.post_type = 'shop_order_refund'
-						AND refunds.post_status = '%s'
+						AND refunds.post_status = %s
 						AND refunds.post_parent IN ($joined_ids)
 					GROUP BY refunds.post_parent",
 					OrderInternalStatus::COMPLETED
