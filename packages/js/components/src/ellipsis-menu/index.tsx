@@ -33,7 +33,7 @@ type EllipsisMenuProps = {
 	 */
 	onToggle?: ( e: MouseEvent | KeyboardEvent ) => void;
 	/**
-	 * Placement of the dropdown menu. Default is 'bottom'.
+	 * Placement of the dropdown menu. Default is 'bottom-start'.
 	 */
 	placement?: ComponentProps<
 		typeof Dropdown
@@ -50,7 +50,9 @@ const EllipsisMenu = ( {
 	renderContent,
 	className,
 	onToggle,
-	placement = 'bottom',
+  // if set bottom-start, it will fallback to bottom-end / top-end / top-start
+  // if it's bottom, it will fallback to only top
+	placement = 'bottom-start',
 }: EllipsisMenuProps ) => {
 	if ( ! renderContent ) {
 		return null;
