@@ -215,9 +215,7 @@ test.describe(
 				}
 
 				// set exclude product brands
-				if (
-					couponType === 'excludeProductBrands'
-				) {
+				if ( couponType === 'excludeProductBrands' ) {
 					await test.step( 'set exclude product brands coupon', async () => {
 						await page
 							.getByRole( 'link', {
