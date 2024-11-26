@@ -136,42 +136,46 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 
 		// Assert all the entries are in the response.
 		$this->assertArrayHasKey( 'providers', $data );
+		$this->assertArrayHasKey( 'offline_payment_methods', $data );
 		$this->assertArrayHasKey( 'suggestions', $data );
 		$this->assertArrayHasKey( 'suggestion_categories', $data );
 
-		// We have the core PayPal gateway registered and the 3 offline payment methods and their group entry.
-		$this->assertCount( 5, $data['providers'] );
+		// We have the core PayPal gateway registered and the offline PMs group entry.
+		$this->assertCount( 2, $data['providers'] );
 		// Because the core registers the PayPal PG after the offline PMs, the order we expect is this.
 		$this->assertSame(
-			array( Payments::OFFLINE_METHODS_ORDERING_GROUP, 'bacs', 'cheque', 'cod', 'paypal' ),
+			array( Payments::OFFLINE_METHODS_ORDERING_GROUP, 'paypal' ),
 			array_column( $data['providers'], 'id' )
 		);
+		// We have the 3 offline payment methods.
+		$this->assertCount( 3, $data['offline_payment_methods'] );
+		$this->assertSame( array( 'bacs', 'cheque', 'cod' ), array_column( $data['offline_payment_methods'], 'id' ) );
 		// No suggestions are returned because the user can't install plugins.
 		$this->assertCount( 0, $data['suggestions'] );
 		// But we do get the suggestion categories.
 		$this->assertCount( 3, $data['suggestion_categories'] );
 
 		// Assert that the PayPal gateway has all the details.
-		$gateway = $data['providers'][4];
-		$this->assertArrayHasKey( 'id', $gateway, 'Provider (gateway) `id` entry is missing' );
-		$this->assertArrayHasKey( '_order', $gateway, 'Provider (gateway) `_order` entry is missing' );
-		$this->assertArrayHasKey( '_type', $gateway, 'Provider (gateway) `_order` entry is missing' );
-		$this->assertEquals( Payments::PROVIDER_TYPE_GATEWAY, $gateway['_type'], 'Provider (gateway) `_type` entry is not `' . Payments::PROVIDER_TYPE_GATEWAY . '`' );
-		$this->assertArrayHasKey( 'title', $gateway, 'Provider (gateway) `title` entry is missing' );
-		$this->assertArrayHasKey( 'description', $gateway, 'Provider (gateway) `description` entry is missing' );
-		$this->assertArrayHasKey( 'supports', $gateway, 'Provider (gateway) `supports` entry is missing' );
-		$this->assertIsList( $gateway['supports'], 'Provider (gateway) `supports` entry is not a list' );
-		$this->assertArrayHasKey( 'state', $gateway, 'Provider (gateway) `state` entry is missing' );
-		$this->assertArrayHasKey( 'enabled', $gateway['state'], 'Provider (gateway) `state[enabled]` entry is missing' );
-		$this->assertArrayHasKey( 'needs_setup', $gateway['state'], 'Provider (gateway) `state[needs_setup]` entry is missing' );
-		$this->assertArrayHasKey( 'test_mode', $gateway['state'], 'Provider (gateway) `state[test_mode]` entry is missing' );
-		$this->assertArrayHasKey( 'management', $gateway, 'Provider (gateway) `management` entry is missing' );
-		$this->assertArrayHasKey( 'settings_url', $gateway['management'], 'Provider (gateway) `management[settings_url]` entry is missing' );
-		$this->assertArrayHasKey( 'links', $gateway, 'Provider (gateway) `links` entry is missing' );
-		$this->assertCount( 1, $gateway['links'] );
-		$this->assertArrayHasKey( 'plugin', $gateway, 'Provider (gateway) `plugin` entry is missing' );
-		$this->assertArrayHasKey( 'slug', $gateway['plugin'], 'Provider (gateway) `plugin[slug]` entry is missing' );
-		$this->assertArrayHasKey( 'status', $gateway['plugin'], 'Provider (gateway) `plugin[status]` entry is missing' );
+		$provider = $data['providers'][1];
+		$this->assertArrayHasKey( 'id', $provider, 'Provider (gateway) `id` entry is missing' );
+		$this->assertArrayHasKey( '_order', $provider, 'Provider (gateway) `_order` entry is missing' );
+		$this->assertArrayHasKey( '_type', $provider, 'Provider (gateway) `_order` entry is missing' );
+		$this->assertEquals( Payments::PROVIDER_TYPE_GATEWAY, $provider['_type'], 'Provider (gateway) `_type` entry is not `' . Payments::PROVIDER_TYPE_GATEWAY . '`' );
+		$this->assertArrayHasKey( 'title', $provider, 'Provider (gateway) `title` entry is missing' );
+		$this->assertArrayHasKey( 'description', $provider, 'Provider (gateway) `description` entry is missing' );
+		$this->assertArrayHasKey( 'supports', $provider, 'Provider (gateway) `supports` entry is missing' );
+		$this->assertIsList( $provider['supports'], 'Provider (gateway) `supports` entry is not a list' );
+		$this->assertArrayHasKey( 'state', $provider, 'Provider (gateway) `state` entry is missing' );
+		$this->assertArrayHasKey( 'enabled', $provider['state'], 'Provider (gateway) `state[enabled]` entry is missing' );
+		$this->assertArrayHasKey( 'needs_setup', $provider['state'], 'Provider (gateway) `state[needs_setup]` entry is missing' );
+		$this->assertArrayHasKey( 'test_mode', $provider['state'], 'Provider (gateway) `state[test_mode]` entry is missing' );
+		$this->assertArrayHasKey( 'management', $provider, 'Provider (gateway) `management` entry is missing' );
+		$this->assertArrayHasKey( 'settings_url', $provider['management'], 'Provider (gateway) `management[settings_url]` entry is missing' );
+		$this->assertArrayHasKey( 'links', $provider, 'Provider (gateway) `links` entry is missing' );
+		$this->assertCount( 1, $provider['links'] );
+		$this->assertArrayHasKey( 'plugin', $provider, 'Provider (gateway) `plugin` entry is missing' );
+		$this->assertArrayHasKey( 'slug', $provider['plugin'], 'Provider (gateway) `plugin[slug]` entry is missing' );
+		$this->assertArrayHasKey( 'status', $provider['plugin'], 'Provider (gateway) `plugin[status]` entry is missing' );
 
 		// Assert that the offline payment methods group has all the details.
 		$offline_pms_group = $data['providers'][0];
@@ -183,18 +187,18 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'description', $offline_pms_group, 'Provider (offline payment methods group) `description` entry is missing' );
 
 		// Assert that the offline payment methods have all the details.
-		$offline_pm = $data['providers'][1];
-		$this->assertArrayHasKey( 'id', $offline_pm, 'Provider (offline payment method) `id` entry is missing' );
-		$this->assertArrayHasKey( '_order', $offline_pm, 'Provider (offline payment method) `_order` entry is missing' );
-		$this->assertArrayHasKey( '_type', $offline_pm, 'Provider (offline payment method) `_type` entry is missing' );
-		$this->assertEquals( Payments::PROVIDER_TYPE_OFFLINE_PM, $offline_pm['_type'], 'Provider (offline payment method) `_type` entry is not `' . Payments::PROVIDER_TYPE_OFFLINE_PM . '`' );
-		$this->assertArrayHasKey( 'title', $offline_pm, 'Provider (offline payment method) `title` entry is missing' );
-		$this->assertArrayHasKey( 'description', $offline_pm, 'Provider (offline payment method) `description` entry is missing' );
-		$this->assertArrayHasKey( 'state', $offline_pm, 'Provider (offline payment method) `state` entry is missing' );
-		$this->assertArrayHasKey( 'enabled', $offline_pm['state'], 'Provider (offline payment method) `state[enabled]` entry is missing' );
-		$this->assertArrayHasKey( 'needs_setup', $offline_pm['state'], 'Provider (offline payment method) `state[needs_setup]` entry is missing' );
-		$this->assertArrayHasKey( 'management', $offline_pm, 'Provider (offline payment method) `management` entry is missing' );
-		$this->assertArrayHasKey( 'icon', $offline_pm, 'Provider (offline payment method) `icon` entry is missing' );
+		$offline_pm = $data['offline_payment_methods'][0];
+		$this->assertArrayHasKey( 'id', $offline_pm, 'Offline payment method `id` entry is missing' );
+		$this->assertArrayHasKey( '_order', $offline_pm, 'Offline payment method `_order` entry is missing' );
+		$this->assertArrayHasKey( '_type', $offline_pm, 'Offline payment method `_type` entry is missing' );
+		$this->assertEquals( Payments::PROVIDER_TYPE_OFFLINE_PM, $offline_pm['_type'], 'Offline payment method `_type` entry is not `' . Payments::PROVIDER_TYPE_OFFLINE_PM . '`' );
+		$this->assertArrayHasKey( 'title', $offline_pm, 'Offline payment method `title` entry is missing' );
+		$this->assertArrayHasKey( 'description', $offline_pm, 'Offline payment method `description` entry is missing' );
+		$this->assertArrayHasKey( 'state', $offline_pm, 'Offline payment method `state` entry is missing' );
+		$this->assertArrayHasKey( 'enabled', $offline_pm['state'], 'Offline payment method `state[enabled]` entry is missing' );
+		$this->assertArrayHasKey( 'needs_setup', $offline_pm['state'], 'Offline payment method `state[needs_setup]` entry is missing' );
+		$this->assertArrayHasKey( 'management', $offline_pm, 'Offline payment method `management` entry is missing' );
+		$this->assertArrayHasKey( 'icon', $offline_pm, 'Offline payment method `icon` entry is missing' );
 
 		// Assert that the suggestion categories have all the details.
 		$suggestion_category = $data['suggestion_categories'][0];
@@ -233,11 +237,14 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 
 		// Assert all the entries are in the response.
 		$this->assertArrayHasKey( 'providers', $data );
+		$this->assertArrayHasKey( 'offline_payment_methods', $data );
 		$this->assertArrayHasKey( 'suggestions', $data );
 		$this->assertArrayHasKey( 'suggestion_categories', $data );
 
-		// We have the core PayPal gateway registered, the 3 offline payment methods and their group entry, and 2 suggestions.
-		$this->assertCount( 7, $data['providers'] );
+		// We have the core PayPal gateway registered, the offline PMs group entry, and 2 suggestions.
+		$this->assertCount( 4, $data['providers'] );
+		// We also have the 3 offline payment methods.
+		$this->assertCount( 3, $data['offline_payment_methods'] );
 		// We only have PSPs because there is no payment gateway enabled.
 		$this->assertCount( 3, $data['suggestions'] );
 		// Assert we get the suggestion categories.
@@ -276,18 +283,21 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 
 		// Assert all the entries are in the response.
 		$this->assertArrayHasKey( 'providers', $data );
+		$this->assertArrayHasKey( 'offline_payment_methods', $data );
 		$this->assertArrayHasKey( 'suggestions', $data );
 		$this->assertArrayHasKey( 'suggestion_categories', $data );
 
-		// We have the core PayPal gateway registered, the 3 offline payment methods and their group entry, and 2 suggestions.
-		$this->assertCount( 7, $data['providers'] );
+		// We have the core PayPal gateway registered, the offline PMs group entry, and 2 suggestions.
+		$this->assertCount( 4, $data['providers'] );
+		// We also have the 3 offline payment methods.
+		$this->assertCount( 3, $data['offline_payment_methods'] );
 		// We get all the suggestions.
 		$this->assertCount( 7, $data['suggestions'] );
 		// Assert we get the suggestion categories.
 		$this->assertCount( 3, $data['suggestion_categories'] );
 
 		// Assert that the PayPal gateway is returned as enabled.
-		$gateway = $data['providers'][6];
+		$gateway = $data['providers'][3];
 		$this->assertTrue( $gateway['state']['enabled'] );
 
 		// Assert that the preferred suggestions are WooPayments and PayPal (full stack), in this order.
@@ -321,11 +331,14 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 
 		// Assert all the entries are in the response.
 		$this->assertArrayHasKey( 'providers', $data );
+		$this->assertArrayHasKey( 'offline_payment_methods', $data );
 		$this->assertArrayHasKey( 'suggestions', $data );
 		$this->assertArrayHasKey( 'suggestion_categories', $data );
 
-		// We have the core PayPal gateway registered, the 3 offline payment methods and their group entry, and 2 suggestions.
-		$this->assertCount( 7, $data['providers'] );
+		// We have the core PayPal gateway registered, the offline PMs group entry, and 2 suggestions.
+		$this->assertCount( 4, $data['providers'] );
+		// We also have the 3 offline payment methods.
+		$this->assertCount( 3, $data['offline_payment_methods'] );
 		// We get all the suggestions.
 		$this->assertCount( 1, $data['suggestions'] );
 		// Assert we get the suggestion categories.
@@ -361,11 +374,14 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 
 		// Assert all the entries are in the response.
 		$this->assertArrayHasKey( 'providers', $data );
+		$this->assertArrayHasKey( 'offline_payment_methods', $data );
 		$this->assertArrayHasKey( 'suggestions', $data );
 		$this->assertArrayHasKey( 'suggestion_categories', $data );
 
-		// We have the core PayPal gateway registered and the 3 offline payment methods and their group entry.
-		$this->assertCount( 5, $data['providers'] );
+		// We have the core PayPal gateway registered and the offline PMs group entry.
+		$this->assertCount( 2, $data['providers'] );
+		// We also have the 3 offline payment methods.
+		$this->assertCount( 3, $data['offline_payment_methods'] );
 		// No suggestions are returned.
 		$this->assertCount( 0, $data['suggestions'] );
 		// Assert we get the suggestion categories.

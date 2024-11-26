@@ -138,47 +138,50 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 
 		// Assert all the entries are in the response.
 		$this->assertArrayHasKey( 'providers', $data );
+		$this->assertArrayHasKey( 'offline_payment_methods', $data );
 		$this->assertArrayHasKey( 'suggestions', $data );
 		$this->assertArrayHasKey( 'suggestion_categories', $data );
 
-		// We have the core PayPal gateway registered and the 3 offline payment methods and their group.
-		$this->assertCount( 5, $data['providers'] );
+		// We have the core PayPal gateway registered and the offline PMs group entry.
+		$this->assertCount( 2, $data['providers'] );
+		// We also have the 3 offline payment methods.
+		$this->assertCount( 3, $data['offline_payment_methods'] );
 		// No suggestions are returned because the user can't install plugins.
 		$this->assertCount( 0, $data['suggestions'] );
 		// But we do get the suggestion categories.
 		$this->assertCount( 3, $data['suggestion_categories'] );
 
 		// Assert that the core PayPal gateway has all the details.
-		$gateway = $data['providers'][4];
-		$this->assertArrayHasKey( 'id', $gateway, 'Provider (gateway) `id` entry is missing' );
-		$this->assertArrayHasKey( '_order', $gateway, 'Provider (gateway) `_order` entry is missing' );
-		$this->assertArrayHasKey( 'title', $gateway, 'Provider (gateway) `title` entry is missing' );
-		$this->assertArrayHasKey( 'description', $gateway, 'Provider (gateway) `description` entry is missing' );
-		$this->assertArrayHasKey( 'supports', $gateway, 'Provider (gateway) `supports` entry is missing' );
-		$this->assertIsList( $gateway['supports'], 'Provider (gateway) `supports` entry is not a list' );
-		$this->assertArrayHasKey( 'state', $gateway, 'Provider (gateway) `state` entry is missing' );
-		$this->assertArrayHasKey( 'enabled', $gateway['state'], 'Provider (gateway) `state[enabled]` entry is missing' );
-		$this->assertArrayHasKey( 'needs_setup', $gateway['state'], 'Provider (gateway) `state[needs_setup]` entry is missing' );
-		$this->assertArrayHasKey( 'test_mode', $gateway['state'], 'Provider (gateway) `state[test_mode]` entry is missing' );
-		$this->assertArrayHasKey( 'management', $gateway, 'Provider (gateway) `management` entry is missing' );
-		$this->assertArrayHasKey( 'settings_url', $gateway['management'], 'Provider (gateway) `management[settings_url]` entry is missing' );
-		$this->assertArrayHasKey( 'links', $gateway, 'Provider (gateway) `links` entry is missing' );
-		$this->assertCount( 1, $gateway['links'] );
-		$this->assertArrayHasKey( 'plugin', $gateway, 'Provider (gateway) `plugin` entry is missing' );
-		$this->assertArrayHasKey( 'slug', $gateway['plugin'], 'Provider (gateway) `plugin[slug]` entry is missing' );
-		$this->assertArrayHasKey( 'status', $gateway['plugin'], 'Provider (gateway) `plugin[status]` entry is missing' );
+		$provider = $data['providers'][1];
+		$this->assertArrayHasKey( 'id', $provider, 'Provider (gateway) `id` entry is missing' );
+		$this->assertArrayHasKey( '_order', $provider, 'Provider (gateway) `_order` entry is missing' );
+		$this->assertArrayHasKey( 'title', $provider, 'Provider (gateway) `title` entry is missing' );
+		$this->assertArrayHasKey( 'description', $provider, 'Provider (gateway) `description` entry is missing' );
+		$this->assertArrayHasKey( 'supports', $provider, 'Provider (gateway) `supports` entry is missing' );
+		$this->assertIsList( $provider['supports'], 'Provider (gateway) `supports` entry is not a list' );
+		$this->assertArrayHasKey( 'state', $provider, 'Provider (gateway) `state` entry is missing' );
+		$this->assertArrayHasKey( 'enabled', $provider['state'], 'Provider (gateway) `state[enabled]` entry is missing' );
+		$this->assertArrayHasKey( 'needs_setup', $provider['state'], 'Provider (gateway) `state[needs_setup]` entry is missing' );
+		$this->assertArrayHasKey( 'test_mode', $provider['state'], 'Provider (gateway) `state[test_mode]` entry is missing' );
+		$this->assertArrayHasKey( 'management', $provider, 'Provider (gateway) `management` entry is missing' );
+		$this->assertArrayHasKey( 'settings_url', $provider['management'], 'Provider (gateway) `management[settings_url]` entry is missing' );
+		$this->assertArrayHasKey( 'links', $provider, 'Provider (gateway) `links` entry is missing' );
+		$this->assertCount( 1, $provider['links'] );
+		$this->assertArrayHasKey( 'plugin', $provider, 'Provider (gateway) `plugin` entry is missing' );
+		$this->assertArrayHasKey( 'slug', $provider['plugin'], 'Provider (gateway) `plugin[slug]` entry is missing' );
+		$this->assertArrayHasKey( 'status', $provider['plugin'], 'Provider (gateway) `plugin[status]` entry is missing' );
 
 		// Assert that the offline payment methods have all the details.
-		$offline_pm = $data['providers'][1];
-		$this->assertArrayHasKey( 'id', $offline_pm, 'Providers (offline payment method) `id` entry is missing' );
-		$this->assertArrayHasKey( '_order', $offline_pm, 'Providers (offline payment method) `_order` entry is missing' );
-		$this->assertArrayHasKey( 'title', $offline_pm, 'Providers (offline payment method) `title` entry is missing' );
-		$this->assertArrayHasKey( 'description', $offline_pm, 'Providers (offline payment method) `description` entry is missing' );
-		$this->assertArrayHasKey( 'state', $offline_pm, 'Providers (offline payment method) `state` entry is missing' );
-		$this->assertArrayHasKey( 'enabled', $offline_pm['state'], 'Providers (offline payment method) `state[enabled]` entry is missing' );
-		$this->assertArrayHasKey( 'needs_setup', $offline_pm['state'], 'Providers (offline payment method) `state[needs_setup]` entry is missing' );
-		$this->assertArrayHasKey( 'management', $offline_pm, 'Providers (offline payment method) `management` entry is missing' );
-		$this->assertArrayHasKey( 'icon', $offline_pm, 'Providers (offline payment method) `icon` entry is missing' );
+		$offline_pm = $data['offline_payment_methods'][0];
+		$this->assertArrayHasKey( 'id', $offline_pm, 'Offline payment method `id` entry is missing' );
+		$this->assertArrayHasKey( '_order', $offline_pm, 'Offline payment method `_order` entry is missing' );
+		$this->assertArrayHasKey( 'title', $offline_pm, 'Offline payment method `title` entry is missing' );
+		$this->assertArrayHasKey( 'description', $offline_pm, 'Offline payment method `description` entry is missing' );
+		$this->assertArrayHasKey( 'state', $offline_pm, 'Offline payment method `state` entry is missing' );
+		$this->assertArrayHasKey( 'enabled', $offline_pm['state'], 'Offline payment method `state[enabled]` entry is missing' );
+		$this->assertArrayHasKey( 'needs_setup', $offline_pm['state'], 'Offline payment method `state[needs_setup]` entry is missing' );
+		$this->assertArrayHasKey( 'management', $offline_pm, 'Offline payment method `management` entry is missing' );
+		$this->assertArrayHasKey( 'icon', $offline_pm, 'Offline payment method `icon` entry is missing' );
 
 		// Assert that the suggestion categories have all the details.
 		$suggestion_category = $data['suggestion_categories'][0];
@@ -221,11 +224,14 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 
 		// Assert all the entries are in the response.
 		$this->assertArrayHasKey( 'providers', $data );
+		$this->assertArrayHasKey( 'offline_payment_methods', $data );
 		$this->assertArrayHasKey( 'suggestions', $data );
 		$this->assertArrayHasKey( 'suggestion_categories', $data );
 
-		// We have the core PayPal gateway registered, the 3 offline payment methods and their group, and the 2 preferred suggestions.
-		$this->assertCount( 7, $data['providers'] );
+		// We have the core PayPal gateway registered, the offline PMs group entry, and the 2 preferred suggestions.
+		$this->assertCount( 4, $data['providers'] );
+		// We also have the 3 offline payment methods.
+		$this->assertCount( 3, $data['offline_payment_methods'] );
 		// Suggestions are returned because the user can install plugins.
 		$this->assertCount( 2, $data['suggestions'] );
 		// Assert we get the suggestion categories.
@@ -237,9 +243,6 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 				'_wc_pes_woopayments',
 				'_wc_pes_paypal_full_stack',
 				Payments::OFFLINE_METHODS_ORDERING_GROUP,
-				'bacs',
-				'cheque',
-				'cod',
 				'paypal',
 			),
 			array_column( $data['providers'], 'id' )
@@ -295,18 +298,60 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 
 		// Assert all the entries are in the response.
 		$this->assertArrayHasKey( 'providers', $data );
+		$this->assertArrayHasKey( 'offline_payment_methods', $data );
 		$this->assertArrayHasKey( 'suggestions', $data );
 		$this->assertArrayHasKey( 'suggestion_categories', $data );
 
-		// We have the core PayPal gateway registered, the 3 offline payment methods and their group, and the 2 preferred suggestions.
-		$this->assertCount( 7, $data['providers'] );
+		// We have the core PayPal gateway registered, the offline PMs group entry, and the 2 preferred suggestions.
+		$this->assertCount( 4, $data['providers'] );
+		// We also have the 3 offline payment methods.
+		$this->assertCount( 3, $data['offline_payment_methods'] );
 		// Suggestions are returned because the user can install plugins.
 		$this->assertCount( 2, $data['suggestions'] );
 		// Assert we get the suggestion categories.
 		$this->assertCount( 3, $data['suggestion_categories'] );
 
 		// Assert that the PayPal gateway is returned as enabled.
-		$gateway = $data['providers'][6];
+		$gateway = $data['providers'][3];
+		$this->assertTrue( $gateway['state']['enabled'] );
+	}
+
+	/**
+	 * Test getting payment providers with no registered offline PMs.
+	 */
+	public function test_get_payment_providers_without_offline_pms() {
+		// Arrange.
+		$this->mock_providers( true, true );
+		$this->mock_extension_suggestions( 'US' );
+		$this->mock_extension_suggestions_categories();
+
+		// Act.
+		$request = new WP_REST_Request( 'GET', self::ENDPOINT . '/providers' );
+		$request->set_param( 'location', 'US' );
+		$response = $this->server->dispatch( $request );
+
+		// Assert.
+		$this->assertEquals( 200, $response->get_status() );
+
+		$data = $response->get_data();
+
+		// Assert all the entries are in the response.
+		$this->assertArrayHasKey( 'providers', $data );
+		$this->assertArrayHasKey( 'offline_payment_methods', $data );
+		$this->assertArrayHasKey( 'suggestions', $data );
+		$this->assertArrayHasKey( 'suggestion_categories', $data );
+
+		// We have the core PayPal gateway registered, and the 2 preferred suggestions.
+		$this->assertCount( 3, $data['providers'] );
+		// We also have the 3 offline payment methods.
+		$this->assertCount( 0, $data['offline_payment_methods'] );
+		// Suggestions are returned because the user can install plugins.
+		$this->assertCount( 2, $data['suggestions'] );
+		// Assert we get the suggestion categories.
+		$this->assertCount( 3, $data['suggestion_categories'] );
+
+		// Assert that the PayPal gateway is returned as enabled.
+		$gateway = $data['providers'][2];
 		$this->assertTrue( $gateway['state']['enabled'] );
 	}
 
@@ -334,11 +379,14 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 
 		// Assert all the entries are in the response.
 		$this->assertArrayHasKey( 'providers', $data );
+		$this->assertArrayHasKey( 'offline_payment_methods', $data );
 		$this->assertArrayHasKey( 'suggestions', $data );
 		$this->assertArrayHasKey( 'suggestion_categories', $data );
 
-		// We have the core PayPal gateway registered, the 3 offline payment methods, and the 2 preferred suggestions.
-		$this->assertCount( 7, $data['providers'] );
+		// We have the core PayPal gateway registered, the offline PMs group entry, and the 2 preferred suggestions.
+		$this->assertCount( 4, $data['providers'] );
+		// We also have the 3 offline payment methods.
+		$this->assertCount( 3, $data['offline_payment_methods'] );
 		// Suggestions are returned because the user can install plugins.
 		// We get all the suggestions.
 		$this->assertCount( 2, $data['suggestions'] );
@@ -611,8 +659,9 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	 * Mock the providers.
 	 *
 	 * @param bool $enabled_core_paypal_pg Whether the core PayPal gateway is enabled or not.
+	 * @param bool $skip_offline_pms       Whether to not include the offline payment methods.
 	 */
-	private function mock_providers( bool $enabled_core_paypal_pg = false ) {
+	private function mock_providers( bool $enabled_core_paypal_pg = false, bool $skip_offline_pms = false ) {
 		$mock_providers = array();
 		$order          = 0;
 		if ( current_user_can( 'install_plugins' ) ) {
@@ -693,100 +742,103 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 			);
 		}
 
-		$mock_providers[] = array(
-			'id'          => '_wc_offline_payment_methods_group',
-			'_order'      => $order++,
-			'_type'       => 'offline_pms_group',
-			'title'       => 'Offline Payment Methods',
-			'description' => 'Allow shoppers to pay offline.',
-		);
-		$mock_providers[] = array(
-			'id'          => 'bacs',
-			'_order'      => $order++,
-			'_type'       => 'offline_pm',
-			'title'       => 'Direct bank transfer',
-			'description' => 'Take payments in person via BACS. More commonly known as direct bank/wire transfer.',
-			'supports'    => array(
-				'products',
-			),
-			'plugin'      => array(
-				'slug'   => 'woocommerce',
-				'status' => 'active',
-			),
-			'icon'        => 'http://localhost:8888/wp-content/plugins/woocommerce/assets/images/payment_methods/bacs.svg',
-			'links'       => array(
-				array(
-					'_type' => 'about',
-					'url'   => 'https://woocommerce.com/',
+		if ( ! $skip_offline_pms ) {
+			$mock_providers[] = array(
+				'id'          => '_wc_offline_payment_methods_group',
+				'_order'      => $order++,
+				'_type'       => 'offline_pms_group',
+				'title'       => 'Offline Payment Methods',
+				'description' => 'Allow shoppers to pay offline.',
+			);
+			$mock_providers[] = array(
+				'id'          => 'bacs',
+				'_order'      => $order++,
+				'_type'       => 'offline_pm',
+				'title'       => 'Direct bank transfer',
+				'description' => 'Take payments in person via BACS. More commonly known as direct bank/wire transfer.',
+				'supports'    => array(
+					'products',
 				),
-			),
-			'state'       => array(
-				'enabled'     => false,
-				'needs_setup' => false,
-				'test_mode'   => false,
-			),
-			'management'  => array(
-				'settings_url' => 'http://localhost:8888/wp-admin/admin.php?page=wc-settings&tab=checkout&section=bacs',
-			),
-		);
-		$mock_providers[] = array(
-			'id'          => 'cheque',
-			'_order'      => $order++,
-			'_type'       => 'offline_pm',
-			'title'       => 'Check payments',
-			'description' => 'Take payments in person via checks. This offline gateway can also be useful to test purchases.',
-			'supports'    => array(
-				'products',
-			),
-			'plugin'      => array(
-				'slug'   => 'woocommerce',
-				'status' => 'active',
-			),
-			'icon'        => 'http://localhost:8888/wp-content/plugins/woocommerce/assets/images/payment_methods/cheque.svg',
-			'links'       => array(
-				array(
-					'_type' => 'about',
-					'url'   => 'https://woocommerce.com/',
+				'plugin'      => array(
+					'slug'   => 'woocommerce',
+					'status' => 'active',
 				),
-			),
-			'state'       => array(
-				'enabled'     => false,
-				'needs_setup' => false,
-				'test_mode'   => false,
-			),
-			'management'  => array(
-				'settings_url' => 'http://localhost:8888/wp-admin/admin.php?page=wc-settings&tab=checkout&section=cheque',
-			),
-		);
-		$mock_providers[] = array(
-			'id'          => 'cod',
-			'_order'      => $order++,
-			'_type'       => 'offline_pm',
-			'title'       => 'Cash on delivery',
-			'description' => 'Have your customers pay with cash (or by other means) upon delivery.',
-			'supports'    => array(
-				'products',
-			),
-			'plugin'      => array(
-				'slug'   => 'woocommerce',
-				'status' => 'active',
-			),
-			'icon'        => 'http://localhost:8888/wp-content/plugins/woocommerce/assets/images/payment_methods/cod.svg',
-			'links'       => array(
-				array(
-					'_type' => 'about',
-					'url'   => 'https://woocommerce.com/',
+				'icon'        => 'http://localhost:8888/wp-content/plugins/woocommerce/assets/images/payment_methods/bacs.svg',
+				'links'       => array(
+					array(
+						'_type' => 'about',
+						'url'   => 'https://woocommerce.com/',
+					),
 				),
-			),
-			'state'       => array(
-				'enabled'     => false,
-				'needs_setup' => false,
-				'test_mode'   => false,
-			),
-			'management'  => array(
-				'settings_url' => 'http://localhost:8888/wp-admin/admin.php?page=wc-settings&tab=checkout&section=cod',
-			),
-		);
+				'state'       => array(
+					'enabled'     => false,
+					'needs_setup' => false,
+					'test_mode'   => false,
+				),
+				'management'  => array(
+					'settings_url' => 'http://localhost:8888/wp-admin/admin.php?page=wc-settings&tab=checkout&section=bacs',
+				),
+			);
+			$mock_providers[] = array(
+				'id'          => 'cheque',
+				'_order'      => $order++,
+				'_type'       => 'offline_pm',
+				'title'       => 'Check payments',
+				'description' => 'Take payments in person via checks. This offline gateway can also be useful to test purchases.',
+				'supports'    => array(
+					'products',
+				),
+				'plugin'      => array(
+					'slug'   => 'woocommerce',
+					'status' => 'active',
+				),
+				'icon'        => 'http://localhost:8888/wp-content/plugins/woocommerce/assets/images/payment_methods/cheque.svg',
+				'links'       => array(
+					array(
+						'_type' => 'about',
+						'url'   => 'https://woocommerce.com/',
+					),
+				),
+				'state'       => array(
+					'enabled'     => false,
+					'needs_setup' => false,
+					'test_mode'   => false,
+				),
+				'management'  => array(
+					'settings_url' => 'http://localhost:8888/wp-admin/admin.php?page=wc-settings&tab=checkout&section=cheque',
+				),
+			);
+			$mock_providers[] = array(
+				'id'          => 'cod',
+				'_order'      => $order++,
+				'_type'       => 'offline_pm',
+				'title'       => 'Cash on delivery',
+				'description' => 'Have your customers pay with cash (or by other means) upon delivery.',
+				'supports'    => array(
+					'products',
+				),
+				'plugin'      => array(
+					'slug'   => 'woocommerce',
+					'status' => 'active',
+				),
+				'icon'        => 'http://localhost:8888/wp-content/plugins/woocommerce/assets/images/payment_methods/cod.svg',
+				'links'       => array(
+					array(
+						'_type' => 'about',
+						'url'   => 'https://woocommerce.com/',
+					),
+				),
+				'state'       => array(
+					'enabled'     => false,
+					'needs_setup' => false,
+					'test_mode'   => false,
+				),
+				'management'  => array(
+					'settings_url' => 'http://localhost:8888/wp-admin/admin.php?page=wc-settings&tab=checkout&section=cod',
+				),
+			);
+		}
+
 		$mock_providers[] = array(
 			'id'          => 'paypal',
 			'_order'      => $order++,
