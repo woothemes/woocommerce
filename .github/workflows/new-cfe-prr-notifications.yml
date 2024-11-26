@@ -10,34 +10,8 @@ jobs:
     if: github.event.label.name == 'code freeze exception' || github.event.label.name == 'point release request' || github.event.label.name == 'Approved' || github.event.label.name == 'Rejected'
     runs-on: ubuntu-20.04
     outputs:
-      release_number: ${{ steps.extract-release.outputs.RELEASE_NUMBER }}
       pr_number: ${{ steps.extract-pr.outputs.PR_NUMBER }}
     steps:
-      - name: Extract Release Number from Issue Body
-        id: extract-release
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const body = context.payload.issue.body; // Accessing the issue body directly from the context
-
-            // Regular expression to match the release number after the specific question
-            const releaseRegex = /Which release does this request apply to\?.*?\n([0-9]+\.[0-9]+)/s;
-
-            // Match the body against the regex
-            const match = body.match(releaseRegex);
-
-            // Check if a valid release number was found
-            if (match && match[1]) {
-              const releaseNumber = match[1];
-
-              // Log the release number and set it as a GitHub output
-              console.log(`Valid release number: ${releaseNumber}`);
-              core.setOutput('RELEASE_NUMBER', releaseNumber);
-            } else {
-              // If no valid release number is found, fail the step
-              core.setFailed("No valid release number found after the 'Which release does this request apply to?' section. Aborting.");
-            }
-
       - name: Extract PR number from issue body
         id: extract-pr
         uses: actions/github-script@v7
@@ -66,6 +40,8 @@ jobs:
   verify:
     if: github.event.label.name == 'code freeze exception' || github.event.label.name == 'point release request' || github.event.label.name == 'Approved'
     runs-on: ubuntu-20.04
+    outputs:
+      release_number: ${{ steps.extract-release.outputs.RELEASE_NUMBER }}
     permissions:
       issues: write
     needs:
@@ -102,8 +78,10 @@ jobs:
             console.log(prData);
 
             const baseRefName = prData.data.base.ref;
-            console.log(`PR base ref: ${baseRefName}`);
+            core.setOutput('PR_BASE_REF', '');
 
+            console.log(`PR base ref: ${baseRefName}`);
+           
             if (!baseRefName.startsWith('release/')) {
               core.setFailed('The PR base_ref must start with release/.');
 
@@ -114,18 +92,81 @@ jobs:
 
               core.setOutput(
                   'GITHUB_COMMENT',
-                  'The PR you entered with the request does not originate from the release branch. Please switch your PR base to release branch and open a new request.'
+                  'We did not process your request because the PR you entered with the request does not originate from the release branch. Please switch your PR base to the target release branch and open a new request.'
+              );
+              return;
+            } else {
+              try {
+                // verify if the branch exists on github remote
+                await github.request( 'GET /repos/{owner}/{repo}/branches/{branch}', {
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  branch: baseRefName,
+                } );
+              } catch (error) {
+                core.setFailed('The PR base_ref does not exist.');
+
+                core.setOutput(
+                  'SLACK_MESSAGE',
+                  `:x: We did not process your ${labelName === 'code freeze exception' ? 'Code Freeze Exception' : 'Point Release Request'} because the release branch does not exist. Please check if your PR base originates from the target release branch. The current release branch is: \`${baseRefName}\`.\n\n${issueTitle} ${issueUrl}`
+                );
+
+                core.setOutput(
+                  'GITHUB_COMMENT',
+                  'We did not process your request because the target release branch does not exist for the PR you mentioned. Please check if your PR base originates from the target release branch and create a new request.'
+                );
+
+                return;
+              }
+
+              core.setOutput('PR_BASE_REF', baseRefName);
+            }
+
+      - name: Extract and verify the release number
+        id: extract-release
+        if: ${{ steps.verify-pr.outputs.PR_BASE_REF != '' }}
+        env:
+          PR_BASE_REF: ${{ steps.verify-pr.outputs.PR_BASE_REF }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issueUrl = context.payload.issue.html_url;
+            const issueTitle = context.payload.issue.title;
+            const labelName = context.payload.label?.name;
+
+            const baseRef = process.env.PR_BASE_REF;
+            console.log("baseRef:", baseRef);
+
+            const releaseNumber = baseRef.split('/')[1];
+            console.log("releaseNumber:", releaseNumber);
+          
+            const releaseRegex = /([0-9]+\.[0-9]+)/;
+            const match = releaseNumber.match(releaseRegex);
+            if (match && match[1]) {
+              const releaseNumber = match[1];
+              core.setOutput('RELEASE_NUMBER', releaseNumber);
+            } else {
+              core.setFailed('No valid release number found after the release branch name.');
+
+              core.setOutput(
+                'SLACK_MESSAGE',
+                `:x: We did not process your ${labelName === 'code freeze exception' ? 'Code Freeze Exception' : 'Point Release Request'} because the release number doesn't seem to be correct. Please check if your PR base originates from the target release branch. The current release branch is: \`${baseRef}\`.\n\n${issueTitle} ${issueUrl}`
+              );
+
+              core.setOutput(
+                'GITHUB_COMMENT',
+                'We did not process your request because the release number doesn\'t seem to be correct. Please check if your PR base originates from the target release branch and create a new request.'
               );
             }
 
       - name: Notify Slack
         uses: archive/github-actions-slack@v2.0.0
-        if: ${{ failure() && steps.verify-pr.outputs.SLACK_MESSAGE != '' }}
+        if: ${{ failure() && (steps.verify-pr.outputs.SLACK_MESSAGE != '' || steps.extract-release.outputs.SLACK_MESSAGE != '') }}
         id: notify
         with:
           slack-bot-user-oauth-access-token: ${{ secrets.CODE_FREEZE_BOT_TOKEN }}
           slack-channel: ${{ secrets.WOO_RELEASE_SLACK_CHANNEL }}
-          slack-text: ${{ steps.verify-pr.outputs.SLACK_MESSAGE }}
+          slack-text: ${{ steps.verify-pr.outputs.SLACK_MESSAGE || steps.extract-release.outputs.SLACK_MESSAGE }}
           slack-optional-unfurl_links: false
           slack-optional-unfurl_media: false
 
@@ -144,7 +185,7 @@ jobs:
           ISSUE_URL: ${{ github.event.issue.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh issue close "$ISSUE_URL" --comment "${{ steps.verify-pr.outputs.GITHUB_COMMENT }}"
+          gh issue close "$ISSUE_URL" --comment "${{ steps.verify-pr.outputs.GITHUB_COMMENT || steps.extract-release.outputs.GITHUB_COMMENT }}"
 
   apply-milestone:
     if: github.event.label.name == 'code freeze exception' || github.event.label.name == 'point release request' || github.event.label.name == 'Approved' || github.event.label.name == 'Rejected'
@@ -153,11 +194,10 @@ jobs:
       issues: write
     needs:
       - verify
-      - prep
     steps:
       - name: Apply Milestone to the Issue
         env:
-          MILESTONE: ${{ needs.prep.outputs.release_number }}.0
+          MILESTONE: ${{ needs.verify.outputs.release_number }}.0
           ISSUE_URL: ${{ github.event.issue.html_url }}
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -169,6 +209,10 @@ jobs:
     runs-on: ubuntu-20.04
     needs:
       - verify
+    permissions:
+      issues: write
+    env:
+      RELEASE_NUMBER: ${{ needs.verify.outputs.release_number }}
     steps:
       - name: Set Slack Message
         id: set-message
@@ -180,18 +224,13 @@ jobs:
             const issueTitle = event.issue.title;
             const issueUrl = event.issue.html_url;
             
-            let message = '';
-            
-            // Determine the type of message based on the label name
-            if (labelName === 'code freeze exception') {
-              message = `:arrow_right: :ice_cube: New Code Freeze Exception request: ${issueTitle} ${issueUrl}`;
-            } else {
-              message = `:arrow_right: :release: New Point Release Request: ${issueTitle} ${issueUrl}`;
-            }
+            const slackMessage = `:arrow_right: ${labelName === 'code freeze exception' ? ':ice_cube: New Code Freeze Exception request' : ':release: New Point Release Request'}: ${issueTitle} ${issueUrl}`;
+
+            const githubComment = `Your request for a ${labelName === 'code freeze exception' ? 'Code Freeze Exception' : 'Point Release'} has been successfully created and is pending approval from @woocommerce/solaris. Please be aware that you are targeting your fix for release: **${process.env.RELEASE_NUMBER}**, based on the base branch of your PR you entered with the request.`;
             
             // Set the message as a core output
-            core.setOutput('SLACK_MESSAGE', message);
-
+            core.setOutput('SLACK_MESSAGE', slackMessage);
+            core.setOutput('GITHUB_COMMENT', githubComment);
       - name: Notify Slack
         uses: archive/github-actions-slack@v2.0.0
         id: notify
@@ -202,6 +241,13 @@ jobs:
           slack-optional-unfurl_links: false
           slack-optional-unfurl_media: false
         continue-on-error: true
+
+      - name: Add comment to the issue
+        env:
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue comment "$ISSUE_URL" --body "${{ steps.set-message.outputs.GITHUB_COMMENT }}"
 
   request-approved:
     if: ${{ github.event.label.name == 'Approved' }}
