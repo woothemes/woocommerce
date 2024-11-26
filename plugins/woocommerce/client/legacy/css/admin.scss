@@ -5826,7 +5826,7 @@ img.help_tip {
 		 * Sold individually option has help tip icon as a direct child, not as a child of form-field paragraph.
 		 * Let's make it look as it would be structured as others.
 		 */
-		 .options_group.inventory_sold_individually {
+		.options_group.inventory_sold_individually {
 			flex-direction: row;
 			gap: 0;
 
