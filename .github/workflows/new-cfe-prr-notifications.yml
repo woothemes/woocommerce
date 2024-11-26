@@ -170,7 +170,6 @@ jobs:
       issues: write
     needs:
       - verify
-      - prep
     steps:
       - name: Apply Milestone to the Issue
         env:
