@@ -124,20 +124,22 @@ class Payments {
 			$payment_providers[] = $gateway_details;
 		}
 
-		// Add offline payment methods group entry.
-		$payment_providers[] = array(
-			'id'          => self::OFFLINE_METHODS_ORDERING_GROUP,
-			'_type'       => self::PROVIDER_TYPE_OFFLINE_PMS_GROUP,
-			'_order'      => $providers_order_map[ self::OFFLINE_METHODS_ORDERING_GROUP ] ?? count( $payment_providers ),
-			'title'       => __( 'Take offline payments', 'woocommerce' ),
-			'description' => __( 'Accept payments offline using multiple different methods. These can also be used to test purchases.', 'woocommerce' ),
-			'icon'        => plugins_url( 'assets/images/payment_methods/cod.svg', WC_PLUGIN_FILE ),
-			// The offline PMs are obviously from WooCommerce, and WC is always active.
-			'plugin' 	=> array(
-				'slug'   => 'woocommerce',
-				'status' => self::EXTENSION_ACTIVE,
-			),
-		);
+		// Add offline payment methods group entry if we have offline payment methods.
+		if ( in_array( self::PROVIDER_TYPE_OFFLINE_PM, array_column( $payment_providers, '_type' ), true ) ) {
+			$payment_providers[] = array(
+				'id'          => self::OFFLINE_METHODS_ORDERING_GROUP,
+				'_type'       => self::PROVIDER_TYPE_OFFLINE_PMS_GROUP,
+				'_order'      => $providers_order_map[ self::OFFLINE_METHODS_ORDERING_GROUP ] ?? count( $payment_providers ),
+				'title'       => __( 'Take offline payments', 'woocommerce' ),
+				'description' => __( 'Accept payments offline using multiple different methods. These can also be used to test purchases.', 'woocommerce' ),
+				'icon'        => plugins_url( 'assets/images/payment_methods/cod.svg', WC_PLUGIN_FILE ),
+				// The offline PMs (and their group) are obviously from WooCommerce, and WC is always active.
+				'plugin' 	=> array(
+					'slug'   => 'woocommerce',
+					'status' => self::EXTENSION_ACTIVE,
+				),
+			);
+		}
 
 		// Sort the payment providers by order, ASC.
 		usort(
