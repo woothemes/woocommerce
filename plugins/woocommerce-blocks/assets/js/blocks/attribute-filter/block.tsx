@@ -54,7 +54,7 @@ import {
 } from './utils';
 import { BlockAttributes, DisplayOption, GetNotice } from './types';
 import CheckboxFilter from './checkbox-filter';
-import { useSetWraperVisibility } from '../filter-wrapper/context';
+import { useSetWrapperVisibility } from '../filter-wrapper/context';
 
 /**
  * Component displaying an attribute filter.
@@ -139,7 +139,7 @@ const AttributeFilterBlock = ( {
 		{},
 		isObject
 	);
-	const { results: filteredCounts, isLoading: filteredCountsLoading } =
+	const { data: filteredCounts, isLoading: filteredCountsLoading } =
 		useCollectionData( {
 			queryAttribute: {
 				taxonomy: attributeObject?.taxonomy || '',
@@ -468,7 +468,7 @@ const AttributeFilterBlock = ( {
 		filteringForPhpTemplate,
 	] );
 
-	const setWrapperVisibility = useSetWraperVisibility();
+	const setWrapperVisibility = useSetWrapperVisibility();
 
 	if ( ! hasFilterableProducts ) {
 		setWrapperVisibility( false );

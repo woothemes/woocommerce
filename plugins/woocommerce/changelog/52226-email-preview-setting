@@ -1,0 +1,5 @@
+Significance: patch
+Type: add
+Comment: Add basic email preview in email settings. Behind a hidden experimental feature, not yet for public use
+
+

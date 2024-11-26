@@ -7,13 +7,7 @@
 import { __ } from '@wordpress/i18n';
 import { getSetting } from '@woocommerce/settings';
 import { getNewPath, getPersistedQuery } from '@woocommerce/navigation';
-import {
-	Button,
-	Modal,
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore No types for this exist yet.
-	__unstableMotion as motion,
-} from '@wordpress/components';
+import { Button, Modal } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -80,12 +74,11 @@ export const Transitional = ( {
 				</Modal>
 			) }
 			<SiteHub
-				as={ motion.div }
 				variants={ {
 					view: { x: 0 },
 				} }
 				isTransparent={ false }
-				className="edit-site-layout__hub"
+				className="woocommerce-edit-site-layout__hub"
 			/>
 			<div className="woocommerce-customize-store__transitional-content">
 				<h1 className="woocommerce-customize-store__transitional-heading">

@@ -59,12 +59,14 @@ const wcAdminPackages = [
 	'onboarding',
 	'block-templates',
 	'product-editor',
+	'settings-editor',
 	'remote-logging',
 ];
 
 const getEntryPoints = () => {
 	const entryPoints = {
 		app: './client/index.js',
+		settings: './client/settings/index.js',
 	};
 	wcAdminPackages.forEach( ( name ) => {
 		entryPoints[ name ] = `${ WC_ADMIN_PACKAGES_DIR }/${ name }`;
@@ -212,7 +214,10 @@ const webpackConfig = {
 		new CopyWebpackPlugin( {
 			patterns: [
 				{
-					from: '../../../../packages/js/product-editor/build/blocks',
+					from: path.join(
+						__dirname,
+						'../../../../packages/js/product-editor/build/blocks'
+					),
 					to: './product-editor/blocks',
 				},
 			],

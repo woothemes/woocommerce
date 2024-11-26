@@ -57,7 +57,7 @@
 		"@wordpress/element": "wp-6.0",
 		"classnames": "^2.3.2",
 		"debug": "^4.3.4",
-		"dompurify": "^2.4.7",
+		"dompurify": "^2.5.7",
 		"prop-types": "^15.8.1",
 		"react-router-dom": "~6.3.0"
 	},
@@ -115,7 +115,10 @@
 				{
 					"name": "JavaScript",
 					"command": "test:js",
-					"changes": "src/**/*.{js,jsx,ts,tsx}",
+					"changes": [
+						"jest.config.js",
+						"src/**/*.{js,jsx,ts,tsx}"
+					],
 					"cascade": "test:js",
 					"events": [
 						"pull_request",
