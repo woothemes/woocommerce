@@ -26,6 +26,7 @@ describe( 'ProductDetails', () => {
 		const details = [
 			{ name: 'Lorem', value: 'Ipsum', hidden: true },
 			{ name: 'LOREM', value: 'Ipsum', display: 'IPSUM' },
+			{ name: 'LOREM 2', value: 'Ipsum2', display: 'IPSUM 2' },
 		];
 		const component = TestRenderer.create(
 			<ProductDetails details={ details } />
@@ -48,6 +49,15 @@ describe( 'ProductDetails', () => {
 
 	test( 'should not rendering anything if details is an empty array', () => {
 		const details = [];
+		const component = TestRenderer.create(
+			<ProductDetails details={ details } />
+		);
+
+		expect( component.toJSON() ).toMatchSnapshot();
+	} );
+
+	test( 'should not render list if there is only one detail', () => {
+		const details = [ { name: 'LOREM', value: 'Ipsum', display: 'IPSUM' } ];
 		const component = TestRenderer.create(
 			<ProductDetails details={ details } />
 		);

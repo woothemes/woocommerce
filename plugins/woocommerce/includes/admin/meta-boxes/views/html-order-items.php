@@ -5,6 +5,8 @@
  * @package WooCommerce\Admin
  */
 
+use Automattic\WooCommerce\Enums\OrderStatus;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -229,7 +231,7 @@ if ( wc_tax_enabled() ) {
 
 	<div class="clear"></div>
 
-	<?php if ( in_array( $order->get_status(), array( 'processing', 'completed', 'refunded' ), true ) && ! empty( $order->get_date_paid() ) ) : ?>
+	<?php if ( in_array( $order->get_status(), array( OrderStatus::PROCESSING, OrderStatus::COMPLETED, OrderStatus::REFUNDED ), true ) && ! empty( $order->get_date_paid() ) ) : ?>
 
 		<table class="wc-order-totals" style="border-top: 1px solid #999; margin-top:12px; padding-top:12px">
 			<tr>

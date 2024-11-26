@@ -8,6 +8,7 @@
  * @since    2.6.0
  */
 
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareTrait;
 use Automattic\WooCommerce\Utilities\ArrayUtil;
 use Automattic\WooCommerce\Utilities\StringUtil;
@@ -414,7 +415,7 @@ class WC_REST_Orders_Controller extends WC_REST_Orders_V2_Controller {
 			'type'              => 'array',
 			'items'             => array(
 				'type' => 'string',
-				'enum' => array_merge( array( 'any', 'trash' ), $this->get_order_statuses() ),
+				'enum' => array_merge( array( 'any', OrderStatus::TRASH ), $this->get_order_statuses() ),
 			),
 			'validate_callback' => 'rest_validate_request_arg',
 		);
