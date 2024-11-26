@@ -1,22 +1,18 @@
 <?php
-/**
- * REST API Order Statuses controller
- *
- * Handles requests to the /orders/statuses endpoint.
- *
- * @package WooCommerce\RestApi
- * @since   2.6.0
- */
 
-defined( 'ABSPATH' ) || exit;
+namespace Automattic\WooCommerce\Internal\Orders;
+
+use Automattic\WooCommerce\Internal\Traits\AccessiblePrivateMethods;
+use Automattic\WooCommerce\Internal\RestApiControllerBase;
+use WP_Error;
+use WP_REST_Request;
+use WP_REST_Server;
 
 /**
- * REST API Order Statuses controller class.
- *
- * @package WooCommerce\RestApi
- * @extends WC_REST_Orders_V2_Controller
+ * Controller for the REST endpoint to add order statuses to the WooCommerce REST API.
  */
-class WC_REST_Order_Statuses_Controller extends WC_REST_Orders_V2_Controller {
+class OrderStatusController extends RestApiControllerBase {
+	use AccessiblePrivateMethods;
 
 	/**
 	 * Endpoint namespace.
@@ -33,11 +29,20 @@ class WC_REST_Order_Statuses_Controller extends WC_REST_Orders_V2_Controller {
 	protected $rest_base = 'orders/statuses';
 
 	/**
+	 * Get the WooCommerce REST API namespace for the class.
+	 *
+	 * @return string
+	 */
+	protected function get_rest_api_namespace(): string {
+		return $this->namespace;
+	}
+
+	/**
 	 * Register the routes for order statuses.
 	 */
 	public function register_routes() {
 		register_rest_route(
-			$this->namespace,
+			$this->get_rest_api_namespace(),
 			'/' . $this->rest_base,
 			array(
 				array(
@@ -56,7 +61,7 @@ class WC_REST_Order_Statuses_Controller extends WC_REST_Orders_V2_Controller {
 	 * @param WP_REST_Request $request Full details about the request.
 	 * @return WP_Error|WP_REST_Response
 	 */
-	public function get_items( $request ) {
+	public function get_items( WP_REST_Request $request ) {
 		$order_statuses     = wc_get_order_statuses();
 		$formatted_statuses = array();
 
@@ -67,6 +72,10 @@ class WC_REST_Order_Statuses_Controller extends WC_REST_Orders_V2_Controller {
 				'slug' => $slug,
 				'name' => wc_get_order_status_name( $slug ),
 			);
+		}
+
+		if ( ! $formatted_statuses ) {
+			return new WP_Error( 'woocommerce_rest_not_found', __( 'Order statuses not found', 'woocommerce' ), array( 'status' => 404 ) );
 		}
 
 		return rest_ensure_response( $formatted_statuses );

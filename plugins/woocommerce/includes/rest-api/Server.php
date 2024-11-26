@@ -159,7 +159,6 @@ class Server {
 			'network-orders'           => 'WC_REST_Network_Orders_Controller',
 			'order-notes'              => 'WC_REST_Order_Notes_Controller',
 			'order-refunds'            => 'WC_REST_Order_Refunds_Controller',
-			'order-statuses'           => 'WC_REST_Order_Statuses_Controller',
 			'orders'                   => 'WC_REST_Orders_Controller',
 			'product-attribute-terms'  => 'WC_REST_Product_Attribute_Terms_Controller',
 			'product-attributes'       => 'WC_REST_Product_Attributes_Controller',
