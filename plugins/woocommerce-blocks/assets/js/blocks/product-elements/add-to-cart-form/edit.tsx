@@ -25,6 +25,23 @@ export interface Attributes {
 	quantitySelectorStyle: QuantitySelectorStyle;
 }
 
+export type FeaturesKeys =
+	| 'isStepperLayoutFeatureEnabled'
+	| 'isBlockifyAddToCartEnabled';
+
+export type FeaturesProps = {
+	[ key in FeaturesKeys ]?: boolean;
+};
+
+export type UpdateFeaturesType = ( key: FeaturesKeys, value: boolean ) => void;
+
+// Pick the value of the "blockify add to cart flag"
+const isBlockifyAddToCartEnabled = getSettingWithCoercion(
+	'isBlockifyAddToCartEnabled',
+	false,
+	isBoolean
+);
+
 const Edit = ( props: BlockEditProps< Attributes > ) => {
 	const { setAttributes } = props;
 
@@ -67,6 +84,10 @@ const Edit = ( props: BlockEditProps< Attributes > ) => {
 						props.attributes.quantitySelectorStyle
 					}
 					setAttributes={ setAttributes }
+					features={ {
+						isStepperLayoutFeatureEnabled,
+						isBlockifyAddToCartEnabled,
+					} }
 				/>
 			) }
 			<div { ...blockProps }>

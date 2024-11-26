@@ -4,7 +4,9 @@
 import { InspectorControls } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import {
+	Flex,
 	PanelBody,
+	Notice,
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore - Ignoring because `__experimentalToggleGroupControl` is not yet in the type definitions.
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
@@ -14,6 +16,11 @@ import {
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
+
+/**
+ * Internal dependencies
+ */
+import type { FeaturesProps } from './edit';
 
 export enum QuantitySelectorStyle {
 	Input = 'input',
@@ -25,6 +32,8 @@ type AddToCartFormSettings = {
 	setAttributes: ( attributes: {
 		quantitySelectorStyle: QuantitySelectorStyle;
 	} ) => void;
+
+	features: FeaturesProps;
 };
 
 const getHelpText = ( quantitySelectorStyle: QuantitySelectorStyle ) => {
@@ -45,9 +54,23 @@ const getHelpText = ( quantitySelectorStyle: QuantitySelectorStyle ) => {
 export const Settings = ( {
 	quantitySelectorStyle,
 	setAttributes,
+	features: { isBlockifyAddToCartEnabled },
 }: AddToCartFormSettings ) => {
 	return (
 		<InspectorControls>
+			{ isBlockifyAddToCartEnabled && (
+				<PanelBody title={ 'Development' }>
+					<Flex>
+						<Notice status="warning" isDismissible={ false }>
+							{ __(
+								'Development features enabled.',
+								'woocommerce'
+							) }
+						</Notice>
+					</Flex>
+				</PanelBody>
+			) }
+
 			<PanelBody title={ __( 'Quantity Selector', 'woocommerce' ) }>
 				<ToggleGroupControl
 					className="wc-block-editor-quantity-selector-style"
