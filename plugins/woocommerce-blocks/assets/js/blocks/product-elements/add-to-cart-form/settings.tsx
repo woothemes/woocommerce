@@ -28,7 +28,7 @@ export enum QuantitySelectorStyle {
 	Stepper = 'stepper',
 }
 
-type AddToCartFormSettings = {
+type AddToCartFormSettingsProps = {
 	quantitySelectorStyle: QuantitySelectorStyle;
 	setAttributes: ( attributes: {
 		quantitySelectorStyle: QuantitySelectorStyle;
@@ -56,9 +56,8 @@ export const AddToCartFormSettings = ( {
 	quantitySelectorStyle,
 	setAttributes,
 	features,
-}: AddToCartFormSettings ) => {
-	const { isBlockifiedAddToCart, isStepperLayoutFeatureEnabled } =
-		features;
+}: AddToCartFormSettingsProps ) => {
+	const { isBlockifiedAddToCart, isStepperLayoutFeatureEnabled } = features;
 
 	const hasDevFeatures =
 		isStepperLayoutFeatureEnabled || isBlockifiedAddToCart;
