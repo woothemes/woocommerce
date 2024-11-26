@@ -73,8 +73,7 @@ class Payments {
 		$payment_gateways = $this->get_payment_gateways();
 		$suggestions      = array();
 
-		$providers_order_map = get_option( self::PROVIDERS_ORDER_OPTION, array() );
-		$providers_order_map = $this->enhance_payment_providers_order_map( $providers_order_map );
+		$providers_order_map = $this->get_payment_providers_order_map();
 
 		$payment_providers = array();
 
@@ -112,32 +111,54 @@ class Payments {
 		}
 
 		foreach ( $payment_gateways as $payment_gateway ) {
+			// Determine the gateway's order value.
+			// If we don't have an order for it, add it to the end.
+			if ( ! isset( $providers_order_map[ $payment_gateway->id ] ) ) {
+				$providers_order_map = Utils::order_map_add_at_order( $providers_order_map, $payment_gateway->id, count( $payment_providers ) );
+			}
+
 			$gateway_details = $this->get_payment_gateway_base_details(
 				$payment_gateway,
-				$providers_order_map[ $payment_gateway->id ] ?? count( $payment_providers )
+				$providers_order_map[ $payment_gateway->id ]
 			);
 			$gateway_details = $this->enhance_payment_gateway_details( $gateway_details, $payment_gateway );
 
-			$gateway_details['_type']  = $this->is_offline_payment_method( $payment_gateway->id ) ? self::PROVIDER_TYPE_OFFLINE_PM : self::PROVIDER_TYPE_GATEWAY;
-			$gateway_details['_order'] = $providers_order_map[ $payment_gateway->id ] ?? count( $payment_providers );
+			$gateway_details['_type'] = $this->is_offline_payment_method( $payment_gateway->id ) ? self::PROVIDER_TYPE_OFFLINE_PM : self::PROVIDER_TYPE_GATEWAY;
 
 			$payment_providers[] = $gateway_details;
 		}
 
-		// Add offline payment methods group entry.
-		$payment_providers[] = array(
-			'id'          => self::OFFLINE_METHODS_ORDERING_GROUP,
-			'_type'       => self::PROVIDER_TYPE_OFFLINE_PMS_GROUP,
-			'_order'      => $providers_order_map[ self::OFFLINE_METHODS_ORDERING_GROUP ] ?? count( $payment_providers ),
-			'title'       => __( 'Take offline payments', 'woocommerce' ),
-			'description' => __( 'Accept payments offline using multiple different methods. These can also be used to test purchases.', 'woocommerce' ),
-			'icon'        => plugins_url( 'assets/images/payment_methods/cod.svg', WC_PLUGIN_FILE ),
-			// The offline PMs are obviously from WooCommerce, and WC is always active.
-			'plugin' 	=> array(
-				'slug'   => 'woocommerce',
-				'status' => self::EXTENSION_ACTIVE,
-			),
-		);
+		// Add offline payment methods group entry if we have offline payment methods.
+		if ( in_array( self::PROVIDER_TYPE_OFFLINE_PM, array_column( $payment_providers, '_type' ), true ) ) {
+			// Determine the item's order value.
+			// If we don't have an order for it, add it to the end.
+			if ( ! isset( $providers_order_map[ self::OFFLINE_METHODS_ORDERING_GROUP ] ) ) {
+				$providers_order_map = Utils::order_map_add_at_order( $providers_order_map, self::OFFLINE_METHODS_ORDERING_GROUP, count( $payment_providers ) );
+			}
+
+			$payment_providers[] = array(
+				'id'          => self::OFFLINE_METHODS_ORDERING_GROUP,
+				'_type'       => self::PROVIDER_TYPE_OFFLINE_PMS_GROUP,
+				'_order'      => $providers_order_map[ self::OFFLINE_METHODS_ORDERING_GROUP ],
+				'title'       => __( 'Take offline payments', 'woocommerce' ),
+				'description' => __( 'Accept payments offline using multiple different methods. These can also be used to test purchases.', 'woocommerce' ),
+				'icon'        => plugins_url( 'assets/images/payment_methods/cod.svg', WC_PLUGIN_FILE ),
+				// The offline PMs (and their group) are obviously from WooCommerce, and WC is always active.
+				'plugin'      => array(
+					'slug'   => 'woocommerce',
+					'status' => self::EXTENSION_ACTIVE,
+				),
+			);
+		}
+
+		// Determine the final, standardized providers order map.
+		$providers_order_map = $this->enhance_payment_providers_order_map( $providers_order_map );
+		// Enforce the order map on all providers, just in case.
+		foreach ( $payment_providers as $key => $provider ) {
+			$payment_providers[ $key ]['_order'] = $providers_order_map[ $provider['id'] ];
+		}
+		// NOTE: For now, save it back to the DB. This is temporary until we have a better way to handle this!
+		$this->save_payment_providers_order_map( $providers_order_map );
 
 		// Sort the payment providers by order, ASC.
 		usort(
@@ -421,6 +442,27 @@ class Payments {
 	}
 
 	/**
+	 * Get the payment providers order map.
+	 *
+	 * @return array The payment providers order map.
+	 */
+	public function get_payment_providers_order_map(): array {
+		// This will also handle backwards compatibility.
+		return $this->enhance_payment_providers_order_map( get_option( self::PROVIDERS_ORDER_OPTION, array() ) );
+	}
+
+	/**
+	 * Save the payment providers order map.
+	 *
+	 * @param array $order_map The order map to save.
+	 *
+	 * @return bool True if the payment providers order map was successfully saved, false otherwise.
+	 */
+	public function save_payment_providers_order_map( array $order_map ): bool {
+		return update_option( self::PROVIDERS_ORDER_OPTION, $order_map );
+	}
+
+	/**
 	 * Update the payment providers order map.
 	 *
 	 * This has effects both on the Payments settings page and the checkout page
@@ -442,8 +484,8 @@ class Payments {
 		// This will also handle backwards compatibility.
 		$new_order_map = $this->enhance_payment_providers_order_map( $new_order_map );
 
-		// Write the new order map to the DB.
-		$result = update_option( self::PROVIDERS_ORDER_OPTION, $new_order_map );
+		// Save the new order map to the DB.
+		$result = $this->save_payment_providers_order_map( $new_order_map );
 
 		return $result;
 	}
