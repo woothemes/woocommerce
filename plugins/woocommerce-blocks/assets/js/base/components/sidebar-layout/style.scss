@@ -58,6 +58,13 @@
 			padding-left: $gap;
 			padding-right: $gap;
 		}
+
+		.wc-block-components-totals-item {
+			.wc-block-components-panel {
+				padding: 0;
+			}
+		}
+
 		.wc-block-components-panel {
 			.wc-block-components-totals-item {
 				padding: 0;

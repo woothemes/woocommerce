@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-import { useCallback, useEffect } from 'react';
-import { Plugin, PaymentGateway, PLUGINS_STORE_NAME } from '@woocommerce/data';
+import { useCallback } from 'react';
+import {
+	PLUGINS_STORE_NAME,
+	PAYMENT_SETTINGS_STORE_NAME,
+	SuggestedPaymentExtension,
+} from '@woocommerce/data';
 import { useState } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
 
@@ -13,20 +17,8 @@ import './settings-payments-main.scss';
 import { createNoticesFromResponse } from '~/lib/notices';
 import { OtherPaymentGateways } from '~/settings-payments/components/other-payment-gateways';
 import { PaymentGateways } from '~/settings-payments/components/payment-gateways';
-import { WooPaymentsGatewayData } from '~/settings-payments/types';
-import { parseScriptTag } from '~/settings-payments/utils';
 
 export const SettingsPaymentsMain = () => {
-	const [ registeredPaymentGateways, setRegisteredPaymentGateways ] =
-		useState< PaymentGateway[] >( [] );
-	const [ preferredPluginSuggestions, setPreferredPluginSuggestions ] =
-		useState< Plugin[] >( [] );
-	const [ otherPluginSuggestions, setOtherPluginSuggestions ] = useState<
-		Plugin[]
-	>( [] );
-	const [ wooPaymentsGatewayData, setWooPaymentsGatewayData ] = useState<
-		WooPaymentsGatewayData | undefined
-	>( undefined );
 	const [ installingPlugin, setInstallingPlugin ] = useState< string | null >(
 		null
 	);
@@ -36,43 +28,53 @@ export const SettingsPaymentsMain = () => {
 		return select( PLUGINS_STORE_NAME ).getInstalledPlugins();
 	}, [] );
 
-	useEffect( () => {
-		setWooPaymentsGatewayData(
-			parseScriptTag( 'experimental_wc_settings_payments_woopayments' )
-		);
-		setRegisteredPaymentGateways(
-			parseScriptTag( 'experimental_wc_settings_payments_gateways' )
-		);
-		setPreferredPluginSuggestions(
-			parseScriptTag(
-				'experimental_wc_settings_payments_preferred_extensions_suggestions'
-			)
-		);
-		setOtherPluginSuggestions(
-			parseScriptTag(
-				'experimental_wc_settings_payments_other_extensions_suggestions'
-			)
-		);
-	}, [] );
+	// Make UI to refresh when plugin is installed.
+	const { invalidateResolutionForStoreSelector } = useDispatch(
+		PAYMENT_SETTINGS_STORE_NAME
+	);
+
+	const {
+		registeredPaymentGateways,
+		preferredPluginSuggestions,
+		otherPluginSuggestions,
+	} = useSelect( ( select ) => {
+		return {
+			registeredPaymentGateways: select(
+				PAYMENT_SETTINGS_STORE_NAME
+			).getRegisteredPaymentGateways(),
+			preferredPluginSuggestions: select(
+				PAYMENT_SETTINGS_STORE_NAME
+			).getPreferredExtensionSuggestions(),
+			otherPluginSuggestions: select(
+				PAYMENT_SETTINGS_STORE_NAME
+			).getOtherExtensionSuggestions(),
+		};
+	} );
 
 	const setupPlugin = useCallback(
-		( plugin: Plugin ) => {
+		( extension: SuggestedPaymentExtension ) => {
 			if ( installingPlugin ) {
 				return;
 			}
-			setInstallingPlugin( plugin.id );
-			installAndActivatePlugins( [ plugin.plugins[ 0 ] ] )
+			setInstallingPlugin( extension.id );
+			installAndActivatePlugins( [ extension.plugin.slug ] )
 				.then( ( response ) => {
 					createNoticesFromResponse( response );
-					// Reload the page to reflect the changes - will be replaced with a more elegant solution in the future.
-					window.location.reload();
+					invalidateResolutionForStoreSelector(
+						'getRegisteredPaymentGateways'
+					);
+					setInstallingPlugin( null );
 				} )
 				.catch( ( response: { errors: Record< string, string > } ) => {
 					createNoticesFromResponse( response );
 					setInstallingPlugin( null );
 				} );
 		},
-		[ installAndActivatePlugins, installingPlugin ]
+		[
+			installingPlugin,
+			installAndActivatePlugins,
+			invalidateResolutionForStoreSelector,
+		]
 	);
 
 	return (
@@ -82,7 +84,6 @@ export const SettingsPaymentsMain = () => {
 					registeredPaymentGateways={ registeredPaymentGateways }
 					installedPluginSlugs={ installedPluginSlugs }
 					preferredPluginSuggestions={ preferredPluginSuggestions }
-					wooPaymentsGatewayData={ wooPaymentsGatewayData }
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
 				/>

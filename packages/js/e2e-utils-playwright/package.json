@@ -2,6 +2,7 @@
 	"name": "@woocommerce/e2e-utils-playwright",
 	"version": "0.1.0",
 	"description": "End-To-End (E2E) test Playwright utils for WooCommerce",
+	"homepage": "https://github.com/woocommerce/woocommerce/tree/trunk/packages/js/e2e-utils-playwright/README.md",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/woocommerce/woocommerce.git"
@@ -16,7 +17,8 @@
 	"scripts": {
 		"changelog": "XDEBUG_MODE=off composer install --quiet && composer exec -- changelogger",
 		"lint": "eslint --ext=js,ts,tsx src",
-		"lint:fix": "eslint --ext=js,ts,tsx src --fix"
+		"lint:fix": "eslint --ext=js,ts,tsx src --fix",
+		"test": "jest --passWithNoTests"
 	},
 	"config": {
 		"ci": {
@@ -25,5 +27,12 @@
 				"changes": "src/**/*.{js,ts,tsx}"
 			}
 		}
+	},
+	"devDependencies": {
+		"@babel/core": "^7.23.5",
+		"jest": "27.5.x"
+  },
+	"publishConfig": {
+		"access": "public"
 	}
 }
