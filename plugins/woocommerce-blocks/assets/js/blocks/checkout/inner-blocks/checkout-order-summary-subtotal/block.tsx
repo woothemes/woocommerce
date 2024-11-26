@@ -7,7 +7,6 @@ import { useStoreCart } from '@woocommerce/base-context/hooks';
 
 export type BlockAttributes = {
 	className?: string;
-	sectionHeading: string | null;
 };
 
 export type BlockProps = {

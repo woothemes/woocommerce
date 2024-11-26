@@ -9,22 +9,29 @@ import { BlockEditProps } from '@wordpress/blocks';
  * Internal dependencies
  */
 import Block, { BlockAttributes } from './block';
+import {
+	createSetOrderSummaryHeadingCallback,
+	useOrderSummaryHeadings,
+} from '../../../cart-checkout-shared/entities/order-summary-headings';
 
 export const Edit = ( {
 	attributes,
-	setAttributes,
 }: BlockEditProps< BlockAttributes > ): JSX.Element => {
-	const { className = '', sectionHeading } = attributes;
+	const { className = '' } = attributes;
 	const blockProps = useBlockProps();
 
-	const onChangeSectionHeading = ( heading: string ) => {
-		setAttributes( { sectionHeading: heading } );
-	};
+	const subtotalHeading = useOrderSummaryHeadings(
+		'woocommerce_order_summary_subtotal_heading'
+	);
 
-	const headingText = sectionHeading ?? __( 'Subtotal', 'woocommerce' );
+	const onSubtotalHeadingChange = createSetOrderSummaryHeadingCallback(
+		'woocommerce_order_summary_subtotal_heading'
+	);
+
+	const headingText = subtotalHeading ?? __( 'Subtotal', 'woocommerce' );
 
 	const label = (
-		<RichText value={ headingText } onChange={ onChangeSectionHeading } />
+		<RichText value={ headingText } onChange={ onSubtotalHeadingChange } />
 	);
 
 	return (

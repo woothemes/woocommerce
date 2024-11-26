@@ -6,7 +6,6 @@ import { getCurrencyFromPriceResponse } from '@woocommerce/price-format';
 import { useStoreCart } from '@woocommerce/base-context/hooks';
 
 export type BlockAttributes = {
-	sectionHeading: string | null;
 	className: string;
 };
 
@@ -15,10 +14,7 @@ export type BlockProps = BlockAttributes & {
 	heading: React.ReactNode;
 };
 
-const Block = ( {
-	className = '',
-	heading,
-}: Omit< BlockProps, 'sectionHeading' > ): JSX.Element => {
+const Block = ( { className = '', heading }: BlockProps ): JSX.Element => {
 	const { cartFees, cartTotals } = useStoreCart();
 	const totalsCurrency = getCurrencyFromPriceResponse( cartTotals );
 

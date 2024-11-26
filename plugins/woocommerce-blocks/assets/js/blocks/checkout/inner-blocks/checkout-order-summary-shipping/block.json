@@ -18,10 +18,6 @@
 				"remove": true,
 				"move": true
 			}
-		},
-		"sectionHeading": {
-			"type": "string",
-			"default": null
 		}
 	},
 	"parent": [ "woocommerce/checkout-order-summary-totals-block" ],

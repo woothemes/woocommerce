@@ -8,7 +8,6 @@ import { TotalsWrapper } from '@woocommerce/blocks-checkout';
 import { isAddressComplete } from '@woocommerce/base-utils';
 
 export type BlockAttributes = {
-	sectionHeading: string;
 	className: string;
 };
 

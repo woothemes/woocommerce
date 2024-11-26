@@ -3,28 +3,33 @@
  */
 import { RichText, useBlockProps } from '@wordpress/block-editor';
 import { BlockEditProps } from '@wordpress/blocks';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
 import Block, { BlockAttributes } from './block';
-import { useSectionHeading } from './use-section-heading';
+import {
+	createSetOrderSummaryHeadingCallback,
+	useOrderSummaryHeadings,
+} from '../../../cart-checkout-shared/entities/order-summary-headings';
 
-export const Edit = ( {
-	attributes,
-	setAttributes,
-}: BlockEditProps< BlockAttributes > ) => {
-	const { className, sectionHeading } = attributes;
+export const Edit = ( { attributes }: BlockEditProps< BlockAttributes > ) => {
+	const { className } = attributes;
 	const blockProps = useBlockProps();
 
-	const headingText = useSectionHeading( { sectionHeading } );
+	const shippingHeading = useOrderSummaryHeadings(
+		'woocommerce_order_summary_shipping_heading'
+	);
 
-	const onChangeSectionHeading = ( heading: string ) => {
-		setAttributes( { sectionHeading: heading } );
-	};
+	const onShippingHeadingChange = createSetOrderSummaryHeadingCallback(
+		'woocommerce_order_summary_shipping_heading'
+	);
+
+	const headingText = shippingHeading ?? __( 'Shipping', 'woocommerce' );
 
 	const heading = (
-		<RichText value={ headingText } onChange={ onChangeSectionHeading } />
+		<RichText value={ headingText } onChange={ onShippingHeadingChange } />
 	);
 
 	return (
