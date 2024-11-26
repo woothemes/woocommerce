@@ -256,6 +256,7 @@ class FeaturesController {
 					),
 					'enabled_by_default' => true,
 					'disable_ui'         => true,
+
 					/*
 					 * This is not truly a legacy feature (it is not a feature that pre-dates the FeaturesController),
 					 * but we wish to handle compatibility checking in a similar fashion to legacy features. The
@@ -264,7 +265,7 @@ class FeaturesController {
 					 *
 					 * @see https://github.com/woocommerce/woocommerce/pull/39701#discussion_r1376976959
 					 */
-					'is_legacy'          => true,
+					'is_legacy'          => false,
 					'is_experimental'    => true,
 				),
 				'email_improvements'    => array(
