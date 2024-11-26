@@ -78,7 +78,7 @@ jobs:
             console.log(prData);
 
             const baseRefName = prData.data.base.ref;
-            core.setOutput('PR_BASE_REF', baseRefName);
+            core.setOutput('PR_BASE_REF', '');
 
             console.log(`PR base ref: ${baseRefName}`);
 
@@ -94,10 +94,13 @@ jobs:
                   'GITHUB_COMMENT',
                   'The PR you entered with the request does not originate from the release branch. Please switch your PR base to release branch and open a new request.'
               );
+              return;
             }
+            core.setOutput('PR_BASE_REF', baseRefName);
 
       - name: Extract and verify the release number
         id: extract-release
+        if: ${{ steps.verify-pr.outputs.PR_BASE_REF != '' }}
         env:
           PR_BASE_REF: ${{ steps.verify-pr.outputs.PR_BASE_REF }}
         uses: actions/github-script@v7
