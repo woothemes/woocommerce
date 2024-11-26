@@ -185,6 +185,8 @@ jobs:
     runs-on: ubuntu-20.04
     needs:
       - verify
+    env:
+      RELEASE_NUMBER: ${{ needs.verify.outputs.release_number }}
     steps:
       - name: Set Slack Message
         id: set-message
@@ -196,18 +198,13 @@ jobs:
             const issueTitle = event.issue.title;
             const issueUrl = event.issue.html_url;
             
-            let message = '';
-            
-            // Determine the type of message based on the label name
-            if (labelName === 'code freeze exception') {
-              message = `:arrow_right: :ice_cube: New Code Freeze Exception request: ${issueTitle} ${issueUrl}`;
-            } else {
-              message = `:arrow_right: :release: New Point Release Request: ${issueTitle} ${issueUrl}`;
-            }
+            const slackMessage = `:arrow_right: ${labelName === 'code freeze exception' ? ':ice_cube: New Code Freeze Exception request' : ':release: New Point Release Request'}: ${issueTitle} ${issueUrl}`;
+
+            const githubComment = `Your ${labelName === 'code freeze exception' ? 'Code Freeze Exception' : 'Point Release'} request has been created and awaiting approval from @woocommerce/solaris. Please note that your are targeting your fix for release: \`${process.env.RELEASE_NUMBER}\`, as per your base branch of PR.`;
             
             // Set the message as a core output
-            core.setOutput('SLACK_MESSAGE', message);
-
+            core.setOutput('SLACK_MESSAGE', slackMessage);
+            core.setOutput('GITHUB_COMMENT', githubComment);
       - name: Notify Slack
         uses: archive/github-actions-slack@v2.0.0
         id: notify
@@ -218,6 +215,13 @@ jobs:
           slack-optional-unfurl_links: false
           slack-optional-unfurl_media: false
         continue-on-error: true
+
+      - name: Add comment to the issue
+        env:
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue comment "$ISSUE_URL" --body "${{ steps.set-message.outputs.GITHUB_COMMENT }}"
 
   request-approved:
     if: ${{ github.event.label.name == 'Approved' }}
