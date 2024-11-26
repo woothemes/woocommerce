@@ -103,6 +103,19 @@ jQuery( function( $ ) {
 				return false;
 			}
 		} )
+		.on( 'keyup', function() {
+			var $activeElement = $( document.activeElement );
+			var sliderKeyupBlockers = [ '.stars', '.tabs', '.wc-tabs'];
+			var $closestBlocker = $activeElement.closest( sliderKeyupBlockers.join( ', ' ) );
+
+			if ( $closestBlocker.length ) {
+				// Prevent keyup events from being triggered on the flexslider when the focus is on the stars or tabs.
+				productGalleryElement.data('flexslider').animating = true;
+				return;
+			}
+
+			productGalleryElement.data('flexslider').animating = false;
+		})
 		.on( 'keydown', '#respond p.stars a', function( e ) {
 			var direction = e.key;
 			var next = [ 'ArrowRight', 'ArrowDown' ];
@@ -126,6 +139,8 @@ jQuery( function( $ ) {
 
 	// Init Tabs and Star Ratings
 	$( '.wc-tabs-wrapper, .woocommerce-tabs, #rating' ).trigger( 'init' );
+
+	var productGalleryElement;
 
 	/**
 	 * Product gallery class.
@@ -458,7 +473,7 @@ jQuery( function( $ ) {
 
 		$( this ).trigger( 'wc-product-gallery-before-init', [ this, wc_single_product_params ] );
 
-		$( this ).wc_product_gallery( wc_single_product_params );
+		productGalleryElement = $( this ).wc_product_gallery( wc_single_product_params );
 
 		$( this ).trigger( 'wc-product-gallery-after-init', [ this, wc_single_product_params ] );
 
