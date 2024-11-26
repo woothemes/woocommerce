@@ -382,7 +382,7 @@ class OrderController {
 		$current_locale = $all_locales[ $address['country'] ] ?? [];
 
 		foreach ( $all_locales['default'] as $key => $value ) {
-			// If $current_locale[ $key ] is not empty, merge it with $value, otherwise use $value from default locale.
+			// If $current_locale[ $key ] is not empty, merge it with locale default, otherwise just use default locale.
 			$current_locale[ $key ] = ! empty( $current_locale[ $key ] )
 				? wp_parse_args( $current_locale[ $key ], $value )
 				: $value;
