@@ -101,7 +101,7 @@ function wc_log_order_step( string $message, array $context = array() ) {
 	$context['source'] = 'place-order-debug-' . $wc_log_order_hash;
 
 	// Add the place order request's unique ID to the log context if it's defined.
-	if ( defined( 'ORDER_UID' ) && is_string( ORDER_UID ) && '' !== ORDER_UID ) {
+	if ( defined( 'ORDER_UID' ) && is_string( ORDER_UID ) && '' !== trim(ORDER_UID ) ) {
 		$context['order_uid'] = ORDER_UID;
 	}
 
