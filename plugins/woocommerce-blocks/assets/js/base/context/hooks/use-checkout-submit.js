@@ -44,7 +44,7 @@ export const useCheckoutSubmit = () => {
 			return {
 				isCustomerDataUpdating: store.isCustomerDataUpdating(),
 				isApplyingExtensionCartUpdate:
-					store.isApplyingExtensionCartUpdate(),
+					store.getApplyingExtensionCartUpdates() > 0,
 			};
 		}
 	);
