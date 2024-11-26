@@ -8,6 +8,7 @@ use Automattic\WooCommerce\StoreApi\Utilities\DraftOrderTrait;
 use Automattic\WooCommerce\Checkout\Helpers\ReserveStockException;
 use Automattic\WooCommerce\StoreApi\Utilities\CheckoutTrait;
 use Automattic\WooCommerce\Utilities\RestApiUtil;
+use WP_REST_Response;
 
 /**
  * Checkout class.
@@ -109,6 +110,19 @@ class Checkout extends AbstractCartRoute {
 					$this->schema->get_endpoint_args_for_item_schema( \WP_REST_Server::CREATABLE )
 				),
 			],
+			[
+				'methods'             => \WP_REST_Server::EDITABLE,
+				'callback'            => [ $this, 'get_response' ],
+				'permission_callback' => '__return_true',
+				'args'                => array_merge(
+					[
+						'additional_fields' => [
+							'type' => 'object',
+						],
+					],
+					$this->schema->get_endpoint_args_for_item_schema( \WP_REST_Server::EDITABLE )
+				),
+			],
 			'schema'      => [ $this->schema, 'get_public_item_schema' ],
 			'allow_batch' => [ 'v1' => true ],
 		];
@@ -178,12 +192,22 @@ class Checkout extends AbstractCartRoute {
 	 * Validate required additional fields on request.
 	 *
 	 * @param \WP_REST_Request $request Request object.
-	 *
 	 * @throws RouteException When a required additional field is missing.
 	 */
 	public function validate_required_additional_fields( \WP_REST_Request $request ) {
+		$this->validate_required_additional_fields_for_order( $request );
+		$this->validate_required_additional_fields_for_customer( $request );
+	}
+
+	/**
+	 * Validate required order and contact fields.
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 * @throws RouteException When a required order or contact field is missing.
+	 */
+	private function validate_required_additional_fields_for_order( \WP_REST_Request $request ) {
 		$contact_fields           = $this->additional_fields_controller->get_fields_for_location( 'contact' );
-		$order_fields             = $this->additional_fields_controller->get_fields_for_location( 'order' );
+		$order_fields            = $this->additional_fields_controller->get_fields_for_location( 'order' );
 		$order_and_contact_fields = array_merge( $contact_fields, $order_fields );
 
 		if ( ! empty( $order_and_contact_fields ) ) {
@@ -198,7 +222,15 @@ class Checkout extends AbstractCartRoute {
 				}
 			}
 		}
+	}
 
+	/**
+	 * Validate required address fields.
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 * @throws RouteException When a required address field is missing.
+	 */
+	private function validate_required_additional_fields_for_customer( \WP_REST_Request $request ) {
 		$address_fields = $this->additional_fields_controller->get_fields_for_location( 'address' );
 		if ( ! empty( $address_fields ) ) {
 			$needs_shipping = WC()->cart->needs_shipping();
@@ -221,6 +253,26 @@ class Checkout extends AbstractCartRoute {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Get route response for PUT requests.
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 * @throws RouteException On error.
+	 * @return \WP_REST_Response
+	 */
+	protected function get_route_update_response( \WP_REST_Request $request ) {
+
+		$this->order = $this->get_draft_order();
+		$this->validate_required_additional_fields_for_order( $request );
+		$this->persist_additional_fields_for_order( $request );
+		
+		return new WP_REST_Response(array('status' => '200'));
+
+		/**
+		 * Validate additional fields on request.
+		 */
 	}
 
 	/**

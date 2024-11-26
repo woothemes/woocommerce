@@ -29,7 +29,9 @@ const Block: FunctionComponent = () => {
 		apiFetchWithHeaders( {
 			path: '/wc/store/v1/checkout',
 			method: 'PUT',
-			body: JSON.stringify( additionalValues ),
+			data: {
+				additional_fields: additionalValues,
+			},
 		} );
 	};
 

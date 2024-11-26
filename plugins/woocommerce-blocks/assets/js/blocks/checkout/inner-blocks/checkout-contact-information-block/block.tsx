@@ -16,12 +16,12 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
 import { CONTACT_FORM_KEYS } from '@woocommerce/block-settings';
 import { Form } from '@woocommerce/base-components/cart-checkout';
+import triggerFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
  */
 import CreatePassword from './create-password';
-import { apiFetchWithHeaders } from '../../../../data/shared-controls';
 
 const CreateAccountUI = (): React.ReactElement | null => {
 	const { shouldCreateAccount } = useSelect( ( select ) => {
@@ -103,10 +103,12 @@ const Block = (): JSX.Element => {
 		setAdditionalFields( additionalValues );
 
 		if ( billingAddress.email === newAddress.email ) {
-			apiFetchWithHeaders( {
+			triggerFetch( {
 				path: '/wc/store/v1/checkout',
 				method: 'PUT',
-				body: JSON.stringify( additionalValues ),
+				data: {
+					additional_fields: additionalValues,
+				},
 			} );
 		}
 	};
