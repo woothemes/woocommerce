@@ -573,8 +573,9 @@ function wc_update_220_order_status() {
 			WHERE posts.post_type = 'shop_order'
 			AND posts.post_status = 'publish'
 			AND tax.taxonomy = 'shop_order_status'
-			AND	term.slug LIKE 'pending%';",
-			OrderInternalStatus::PENDING
+			AND	term.slug LIKE %s;",
+			OrderInternalStatus::PENDING,
+			'pending%'
 		)
 	);
 	$wpdb->query(
@@ -587,8 +588,9 @@ function wc_update_220_order_status() {
 			WHERE posts.post_type = 'shop_order'
 			AND posts.post_status = 'publish'
 			AND tax.taxonomy = 'shop_order_status'
-			AND	term.slug LIKE 'processing%';",
-			OrderInternalStatus::PROCESSING
+			AND	term.slug LIKE %s;",
+			OrderInternalStatus::PROCESSING,
+			'processing%'
 		)
 	);
 	$wpdb->query(
@@ -601,8 +603,9 @@ function wc_update_220_order_status() {
 			WHERE posts.post_type = 'shop_order'
 			AND posts.post_status = 'publish'
 			AND tax.taxonomy = 'shop_order_status'
-			AND	term.slug LIKE 'on-hold%';",
-			OrderInternalStatus::ON_HOLD
+			AND	term.slug LIKE %s;",
+			OrderInternalStatus::ON_HOLD,
+			'on-hold%'
 		)
 	);
 	$wpdb->query(
@@ -615,8 +618,9 @@ function wc_update_220_order_status() {
 			WHERE posts.post_type = 'shop_order'
 			AND posts.post_status = 'publish'
 			AND tax.taxonomy = 'shop_order_status'
-			AND	term.slug LIKE 'completed%';",
-			OrderInternalStatus::COMPLETED
+			AND	term.slug LIKE %s;",
+			OrderInternalStatus::COMPLETED,
+			'completed%'
 		)
 	);
 	$wpdb->query(
@@ -629,8 +633,9 @@ function wc_update_220_order_status() {
 			WHERE posts.post_type = 'shop_order'
 			AND posts.post_status = 'publish'
 			AND tax.taxonomy = 'shop_order_status'
-			AND	term.slug LIKE 'cancelled%';",
-			OrderInternalStatus::CANCELLED
+			AND	term.slug LIKE %s;",
+			OrderInternalStatus::CANCELLED,
+			'cancelled%'
 		)
 	);
 	$wpdb->query(
@@ -643,8 +648,9 @@ function wc_update_220_order_status() {
 			WHERE posts.post_type = 'shop_order'
 			AND posts.post_status = 'publish'
 			AND tax.taxonomy = 'shop_order_status'
-			AND	term.slug LIKE 'refunded%';",
-			OrderInternalStatus::REFUNDED
+			AND	term.slug LIKE %s;",
+			OrderInternalStatus::REFUNDED,
+			'refunded%'
 		)
 	);
 	$wpdb->query(
@@ -657,8 +663,9 @@ function wc_update_220_order_status() {
 			WHERE posts.post_type = 'shop_order'
 			AND posts.post_status = 'publish'
 			AND tax.taxonomy = 'shop_order_status'
-			AND	term.slug LIKE 'failed%';",
-			OrderInternalStatus::REFUNDED
+			AND	term.slug LIKE %s;",
+			OrderInternalStatus::REFUNDED,
+			'failed%'
 		)
 	);
 }
