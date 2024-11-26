@@ -47,6 +47,13 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 	private $suggested_products_ids = array();
 
 	/**
+	 * Product statuses to exclude from the query.
+	 *
+	 * @var array
+	 */
+	private $exclude_status = array();
+
+	/**
 	 * Register the routes for products.
 	 */
 	public function register_routes() {
@@ -178,6 +185,34 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			$args['post_status'] = $request['include_status'];
 		}
 
+		if ( ! empty( $request['exclude_status'] ) ) {
+			$this->exclude_status = $request['exclude_status'];
+		} else {
+			$this->exclude_status = array();
+		}
+
+		// Filter downloadable products.
+		if ( isset( $request['downloadable'] ) ) {
+			$args['meta_query'] = $this->add_meta_query( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+				$args,
+				array(
+					'key'   => '_downloadable',
+					'value' => wc_bool_to_string( $request['downloadable'] ),
+				)
+			);
+		}
+
+		// Filter virtual products.
+		if ( isset( $request['virtual'] ) ) {
+			$args['meta_query'] = $this->add_meta_query( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+				$args,
+				array(
+					'key'   => '_virtual',
+					'value' => wc_bool_to_string( $request['virtual'] ),
+				)
+			);
+		}
+
 		// Taxonomy query to filter products by type, category,
 		// tag, shipping class, and attribute.
 		$tax_query = array();
@@ -201,11 +236,18 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		}
 
 		// Filter product type by slug.
-		if ( ! empty( $request['type'] ) ) {
+		$terms = array();
+		if ( ! empty( $request['include_types'] ) ) {
+			$terms = $request['include_types'];
+		} elseif ( ! empty( $request['type'] ) ) {
+			$terms[] = $request['type'];
+		}
+
+		if ( ! empty( $terms ) ) {
 			$tax_query[] = array(
 				'taxonomy' => 'product_type',
 				'field'    => 'slug',
-				'terms'    => $request['type'],
+				'terms'    => $terms,
 			);
 		}
 
@@ -340,6 +382,11 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			$args['post__in'] = $this->suggested_products_ids;
 		}
 
+		// Force the post_type argument, since it's not a user input variable.
+		if ( ! empty( $request['global_unique_id'] ) ) {
+			$args['post_type'] = array( 'product', 'product_variation' );
+		}
+
 		return $args;
 	}
 
@@ -356,6 +403,11 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			add_filter( 'posts_where', array( $this, 'add_search_criteria_to_wp_query_where' ) );
 		}
 
+		// Add filters for excluding product statuses.
+		if ( ! empty( $this->exclude_status ) ) {
+			add_filter( 'posts_where', array( $this, 'exclude_product_statuses' ) );
+		}
+
 		$result = parent::get_objects( $query_args );
 
 		// Remove filters for search criteria in product postmeta via the lookup table.
@@ -365,6 +417,14 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 
 			$this->search_sku_in_product_lookup_table = '';
 		}
+
+		// Remove filters for excluding product statuses.
+		if ( ! empty( $this->exclude_status ) ) {
+			remove_filter( 'posts_where', array( $this, 'exclude_product_statuses' ) );
+
+			$this->exclude_status = array();
+		}
+
 		return $result;
 	}
 
@@ -395,6 +455,28 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			$like_search = '%' . $wpdb->esc_like( $this->search_sku_in_product_lookup_table ) . '%';
 			$where      .= ' AND ' . $wpdb->prepare( '(wc_product_meta_lookup.sku LIKE %s)', $like_search );
 		}
+		return $where;
+	}
+
+	/**
+	 * Exclude product statuses from the query.
+	 *
+	 * @param string $where Where clause used to search posts.
+	 * @return string
+	 */
+	public function exclude_product_statuses( $where ) {
+		if ( ! empty( $this->exclude_status ) && is_array( $this->exclude_status ) ) {
+			global $wpdb;
+
+			$not_in = array();
+			foreach ( $this->exclude_status as $status_to_exclude ) {
+				$not_in[] = $wpdb->prepare( '%s', $status_to_exclude );
+			}
+
+			$not_in = join( ', ', $not_in );
+			return $where . " AND $wpdb->posts.post_status NOT IN ( $not_in )";
+		}
+
 		return $where;
 	}
 
@@ -1611,6 +1693,42 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 				'enum' => array_merge( array( 'any', 'trash' ), array_keys( get_post_statuses() ) ),
 			),
 			'sanitize_callback' => 'wp_parse_list',
+			'validate_callback' => 'rest_validate_request_arg',
+		);
+
+		$params['exclude_status'] = array(
+			'description'       => __( 'Exclude products with any of the statuses from result set.', 'woocommerce' ),
+			'type'              => 'array',
+			'items'             => array(
+				'type' => 'string',
+				'enum' => array_merge( array( 'trash' ), array_keys( get_post_statuses() ) ),
+			),
+			'sanitize_callback' => 'wp_parse_list',
+			'validate_callback' => 'rest_validate_request_arg',
+		);
+
+		$params['include_types'] = array(
+			'description'       => __( 'Limit result set to products with any of the types.', 'woocommerce' ),
+			'type'              => 'array',
+			'items'             => array(
+				'type' => 'string',
+				'enum' => array_keys( wc_get_product_types() ),
+			),
+			'sanitize_callback' => 'wp_parse_list',
+			'validate_callback' => 'rest_validate_request_arg',
+		);
+
+		$params['downloadable'] = array(
+			'description'       => __( 'Limit result set to downloadable products.', 'woocommerce' ),
+			'type'              => 'boolean',
+			'sanitize_callback' => 'rest_sanitize_boolean',
+			'validate_callback' => 'rest_validate_request_arg',
+		);
+
+		$params['virtual'] = array(
+			'description'       => __( 'Limit result set to virtual products.', 'woocommerce' ),
+			'type'              => 'boolean',
+			'sanitize_callback' => 'rest_sanitize_boolean',
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 

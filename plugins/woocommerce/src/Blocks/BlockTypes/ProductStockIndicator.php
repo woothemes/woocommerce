@@ -20,7 +20,7 @@ class ProductStockIndicator extends AbstractBlock {
 	 *
 	 * @var string
 	 */
-	protected $api_version = '2';
+	protected $api_version = '3';
 
 	/**
 	 * Register script and style assets for the block type before it is registered.
