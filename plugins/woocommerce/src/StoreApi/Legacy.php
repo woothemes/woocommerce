@@ -68,6 +68,6 @@ class Legacy {
 
 		// set payment_details from result.
 		$result->set_payment_details( array_merge( $result->payment_details, $gateway_result ) );
-		$result->set_redirect_url( $gateway_result['redirect'] );
+		$result->set_redirect_url( $gateway_result['redirect'] ?? '' );
 	}
 }
