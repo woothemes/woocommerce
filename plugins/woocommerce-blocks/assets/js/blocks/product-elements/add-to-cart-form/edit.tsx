@@ -78,18 +78,14 @@ const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
 
 	return (
 		<>
-			{ isStepperLayoutFeatureEnabled && (
-				<AddToCartSettings
-					quantitySelectorStyle={
-						props.attributes.quantitySelectorStyle
-					}
-					setAttributes={ setAttributes }
-					features={ {
-						isStepperLayoutFeatureEnabled,
-						isBlockifyAddToCartEnabled,
-					} }
-				/>
-			) }
+			<AddToCartSettings
+				quantitySelectorStyle={ props.attributes.quantitySelectorStyle }
+				setAttributes={ setAttributes }
+				features={ {
+					isStepperLayoutFeatureEnabled,
+					isBlockifyAddToCartEnabled,
+				} }
+			/>
 			<div { ...blockProps }>
 				<Tooltip
 					text="Customer will see product add-to-cart options in this space, dependent on the product type. "

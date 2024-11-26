@@ -5,6 +5,7 @@ import { InspectorControls } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import {
 	Flex,
+	FlexItem,
 	PanelBody,
 	Notice,
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -20,7 +21,7 @@ import {
 /**
  * Internal dependencies
  */
-import type { FeaturesProps } from './edit';
+import type { FeaturesKeys, FeaturesProps } from './edit';
 
 export enum QuantitySelectorStyle {
 	Input = 'input',
@@ -54,47 +55,63 @@ const getHelpText = ( quantitySelectorStyle: QuantitySelectorStyle ) => {
 export const AddToCartSettings = ( {
 	quantitySelectorStyle,
 	setAttributes,
-	features: { isBlockifyAddToCartEnabled },
+	features,
 }: AddToCartFormSettings ) => {
+	const { isBlockifyAddToCartEnabled, isStepperLayoutFeatureEnabled } =
+		features;
+
+	const hasDevFeatures =
+		isStepperLayoutFeatureEnabled || isBlockifyAddToCartEnabled;
+
+	if ( ! hasDevFeatures ) {
+		return null;
+	}
+
+	const featuresList = Object.keys( features ) as FeaturesKeys[];
+	const enabledFeatures = featuresList.filter(
+		( feature ) => features[ feature ]
+	);
+
 	return (
 		<InspectorControls>
-			{ isBlockifyAddToCartEnabled && (
-				<PanelBody title={ 'Development' }>
-					<Flex>
-						<Notice status="warning" isDismissible={ false }>
-							{ __(
-								'Development features enabled.',
-								'woocommerce'
-							) }
-						</Notice>
-					</Flex>
+			<PanelBody title={ 'Development' }>
+				<Flex gap={ 3 } direction="column">
+					<Notice status="warning" isDismissible={ false }>
+						{ __( 'Development features enabled.', 'woocommerce' ) }
+					</Notice>
+
+					{ enabledFeatures.map( ( feature ) => (
+						<FlexItem key={ feature }>{ feature }</FlexItem>
+					) ) }
+				</Flex>
+			</PanelBody>
+
+			{ isStepperLayoutFeatureEnabled && (
+				<PanelBody title={ __( 'Quantity Selector', 'woocommerce' ) }>
+					<ToggleGroupControl
+						className="wc-block-editor-quantity-selector-style"
+						__nextHasNoMarginBottom
+						value={ quantitySelectorStyle }
+						isBlock
+						onChange={ ( value: QuantitySelectorStyle ) => {
+							setAttributes( {
+								quantitySelectorStyle:
+									value as QuantitySelectorStyle,
+							} );
+						} }
+						help={ getHelpText( quantitySelectorStyle ) }
+					>
+						<ToggleGroupControlOption
+							label={ __( 'Input', 'woocommerce' ) }
+							value={ QuantitySelectorStyle.Input }
+						/>
+						<ToggleGroupControlOption
+							label={ __( 'Stepper', 'woocommerce' ) }
+							value={ QuantitySelectorStyle.Stepper }
+						/>
+					</ToggleGroupControl>
 				</PanelBody>
 			) }
-
-			<PanelBody title={ __( 'Quantity Selector', 'woocommerce' ) }>
-				<ToggleGroupControl
-					className="wc-block-editor-quantity-selector-style"
-					__nextHasNoMarginBottom
-					value={ quantitySelectorStyle }
-					isBlock
-					onChange={ ( value: QuantitySelectorStyle ) => {
-						setAttributes( {
-							quantitySelectorStyle:
-								value as QuantitySelectorStyle,
-						} );
-					} }
-					help={ getHelpText( quantitySelectorStyle ) }
-				>
-					<ToggleGroupControlOption
-						label={ __( 'Input', 'woocommerce' ) }
-						value={ QuantitySelectorStyle.Input }
-					/>
-					<ToggleGroupControlOption
-						label={ __( 'Stepper', 'woocommerce' ) }
-						value={ QuantitySelectorStyle.Stepper }
-					/>
-				</ToggleGroupControl>
-			</PanelBody>
 		</InspectorControls>
 	);
 };
