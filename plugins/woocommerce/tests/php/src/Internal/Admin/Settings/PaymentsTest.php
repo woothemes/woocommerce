@@ -3142,6 +3142,179 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 				$gateways + $offline_payment_methods_gateways,
 				$suggestions,
 			),
+			'new order with suggestions but no matching gateways, no ordering - gateways | offline PMs | suggestions'       => array(
+				array(
+					'_wc_pes_suggestion3',
+					Payments::OFFLINE_METHODS_ORDERING_GROUP,
+					'bacs',
+					'cod',
+					'cheque',
+					'_wc_pes_suggestion1',
+					'gateway2',
+				),
+				array(),
+				array(
+					'_wc_pes_suggestion3',
+					'gateway3_0', // Suggestion matching gateways (via the plugin slug) are added after their suggestion, in order.
+					'gateway3_1',
+					Payments::OFFLINE_METHODS_ORDERING_GROUP,
+					'bacs',
+					'cod',
+					'cheque',
+					'_wc_pes_suggestion1',
+					'gateway1', // Gateway added after its suggestion.
+					'gateway2',
+				),
+				$gateways + $offline_payment_methods_gateways,
+				$suggestions,
+			),
+			'new order with suggestions but no matching gateways, ordering #1 - gateways | offline PMs | suggestions'       => array(
+				array(
+					'_wc_pes_suggestion3',
+					Payments::OFFLINE_METHODS_ORDERING_GROUP,
+					'bacs',
+					'cod',
+					'cheque',
+					'_wc_pes_suggestion1',
+					'gateway2',
+				),
+				array(
+					'gateway2' => 0,
+				),
+				array(
+					'gateway2',
+					'_wc_pes_suggestion3',
+					'gateway3_0', // Suggestion matching gateways (via the plugin slug) are added after their suggestion, in order.
+					'gateway3_1',
+					Payments::OFFLINE_METHODS_ORDERING_GROUP,
+					'bacs',
+					'cod',
+					'cheque',
+					'_wc_pes_suggestion1',
+					'gateway1', // Gateway added after its suggestion.
+				),
+				$gateways + $offline_payment_methods_gateways,
+				$suggestions,
+			),
+			'new order with suggestions but no matching gateways, ordering #2 - gateways | offline PMs | suggestions'       => array(
+				array(
+					'_wc_pes_suggestion3',
+					Payments::OFFLINE_METHODS_ORDERING_GROUP,
+					'bacs',
+					'cod',
+					'cheque',
+					'_wc_pes_suggestion1',
+					'gateway2',
+				),
+				array(
+					'gateway2' => 0,
+					Payments::OFFLINE_METHODS_ORDERING_GROUP => 1,
+				),
+				array(
+					'gateway2',
+					Payments::OFFLINE_METHODS_ORDERING_GROUP,
+					'bacs',
+					'cod',
+					'cheque',
+					'_wc_pes_suggestion3',
+					'gateway3_0', // Suggestion matching gateways (via the plugin slug) are added after their suggestion, in order.
+					'gateway3_1',
+					'_wc_pes_suggestion1',
+					'gateway1', // Gateway added after its suggestion.
+				),
+				$gateways + $offline_payment_methods_gateways,
+				$suggestions,
+			),
+			'new order with suggestions but no matching gateways, ordering #3 - gateways | offline PMs | suggestions'       => array(
+				array(
+					'_wc_pes_suggestion3',
+					Payments::OFFLINE_METHODS_ORDERING_GROUP,
+					'bacs',
+					'cod',
+					'cheque',
+					'_wc_pes_suggestion1',
+					'gateway2',
+				),
+				array(
+					'bacs' => 0, // Special offline PMs normalized order map - no-op.
+					'cod' => 1,
+					'cheque' => 2,
+				),
+				array(
+					'_wc_pes_suggestion3',
+					'gateway3_0', // Suggestion matching gateways (via the plugin slug) are added after their suggestion, in order.
+					'gateway3_1',
+					Payments::OFFLINE_METHODS_ORDERING_GROUP,
+					'bacs', // no-op
+					'cod',
+					'cheque',
+					'_wc_pes_suggestion1',
+					'gateway1', // Gateway added after its suggestion.
+					'gateway2',
+				),
+				$gateways + $offline_payment_methods_gateways,
+				$suggestions,
+			),
+			'new order with suggestions but no matching gateways, ordering #4 - gateways | offline PMs | suggestions'       => array(
+				array(
+					'_wc_pes_suggestion3',
+					Payments::OFFLINE_METHODS_ORDERING_GROUP,
+					'bacs',
+					'cod',
+					'cheque',
+					'_wc_pes_suggestion1',
+					'gateway2',
+				),
+				array(
+					'cod' => 0, // Special offline PMs normalized order map.
+					'bacs' => 1,
+					'cheque' => 2,
+				),
+				array(
+					'_wc_pes_suggestion3',
+					'gateway3_0', // Suggestion matching gateways (via the plugin slug) are added after their suggestion, in order.
+					'gateway3_1',
+					Payments::OFFLINE_METHODS_ORDERING_GROUP,
+					'cod',
+					'bacs',
+					'cheque',
+					'_wc_pes_suggestion1',
+					'gateway1', // Gateway added after its suggestion.
+					'gateway2',
+				),
+				$gateways + $offline_payment_methods_gateways,
+				$suggestions,
+			),
+			'new order with suggestions but no matching gateways, ordering #5 - gateways | offline PMs | suggestions'       => array(
+				array(
+					'_wc_pes_suggestion3',
+					Payments::OFFLINE_METHODS_ORDERING_GROUP,
+					'bacs', // This has order 2.
+					'cod',
+					'cheque',
+					'_wc_pes_suggestion1',
+					'gateway2',
+				),
+				array(
+					'cod' => 2, // Special offline PMs non-normalized order map.
+					'bacs' => 3,
+					'cheque' => 4,
+				),
+				array(
+					'_wc_pes_suggestion3',
+					'gateway3_0', // Suggestion matching gateways (via the plugin slug) are added after their suggestion, in order.
+					'gateway3_1',
+					Payments::OFFLINE_METHODS_ORDERING_GROUP,
+					'cod',
+					'bacs',
+					'cheque',
+					'_wc_pes_suggestion1',
+					'gateway1', // Gateway added after its suggestion.
+					'gateway2',
+				),
+				$gateways + $offline_payment_methods_gateways,
+				$suggestions,
+			),
 			'new order with non-existent payment gateways, move payment gateways - gateways | offline PMs | suggestions'    => array(
 				array(
 					'non_existent_gateway1',

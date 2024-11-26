@@ -871,18 +871,38 @@ class Payments {
 		/*
 		 * Go through the registered gateways and add any missing ones.
 		 */
+		// Use a map to keep track of the insertion offset for each suggestion ID.
+		// We need this so we can place multiple PGs matching a suggestion right after it but maintain their relative order.
+		$suggestion_order_map_id_to_offset_map = array();
 		foreach ( $payment_gateways_order_map as $id => $order ) {
-			if ( array_key_exists( $id, $order_map ) ) {
+			if ( isset( $order_map[ $id ] ) ) {
 				continue;
 			}
 
-			// Check if there is a suggestion entry for this payment gateway so we can add the payment gateway right after it.
+			// If there is a suggestion entry matching this payment gateway,
+			// we will add the payment gateway right after it so gateways pop-up in place of matching suggestions.
+			// We rely on suggestions and matching registered PGs being mutually exclusive in the UI.
 			if ( ! empty( $payment_gateways_to_suggestions_map[ $id ] ) ) {
-				$suggestion_order_map_id = $this->get_suggestion_order_map_id( $payment_gateways_to_suggestions_map[ $id ]['id'] );
-				if ( array_key_exists( $suggestion_order_map_id, $order_map ) ) {
-					$order_map = Utils::order_map_place_at_order( $order_map, $id, $order_map[ $suggestion_order_map_id ] + 1 );
-					// Remember that we handled this suggestion.
-					$handled_suggestion_ids[] = $payment_gateways_to_suggestions_map[ $id ]['id'];
+				$suggestion_id = $payment_gateways_to_suggestions_map[ $id ]['id'];
+				$suggestion_order_map_id = $this->get_suggestion_order_map_id( $suggestion_id );
+
+				if ( isset( $order_map[ $suggestion_order_map_id ] ) ) {
+					// Determine the offset for placing missing PGs after this suggestion.
+					if ( ! isset( $suggestion_order_map_id_to_offset_map[ $suggestion_order_map_id ] ) ) {
+						$suggestion_order_map_id_to_offset_map[ $suggestion_order_map_id ] = 0;
+					}
+					$suggestion_order_map_id_to_offset_map[ $suggestion_order_map_id ] += 1;
+
+					// Place the missing payment gateway right after the suggestion,
+					// with an offset to maintain relative order between multiple PGs matching the same suggestion.
+					$order_map = Utils::order_map_place_at_order(
+						$order_map,
+						$id,
+						$order_map[ $suggestion_order_map_id ] + $suggestion_order_map_id_to_offset_map[ $suggestion_order_map_id ]
+					);
+
+					// Remember that we handled this suggestion - don't worry about remembering it multiple times.
+					$handled_suggestion_ids[] = $suggestion_id;
 					continue;
 				}
 			}
@@ -890,6 +910,8 @@ class Payments {
 			// Add the missing payment gateway at the end.
 			$order_map[ $id ] = empty( $order_map ) ? 0 : max( $order_map ) + 1;
 		}
+
+		$handled_suggestion_ids = array_unique( $handled_suggestion_ids );
 
 		/*
 		 * Place not yet handled suggestion entries right before their matching registered payment gateway IDs.
