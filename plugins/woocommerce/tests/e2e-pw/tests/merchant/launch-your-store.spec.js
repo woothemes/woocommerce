@@ -85,7 +85,7 @@ test.describe(
 				console.log( error );
 			}
 
-			await page.goto( baseURL + '/shop/' );
+			await page.goto( baseURL + 'shop/' );
 
 			await expect(
 				page.getByText(
@@ -121,7 +121,7 @@ test.describe(
 			}
 
 			await page.goto(
-				'/wp-admin/admin.php?page=wc-settings&tab=site-visibility'
+				'wp-admin/admin.php?page=wc-settings&tab=site-visibility'
 			);
 
 			// The Coming soon radio should not be checked.
@@ -209,7 +209,7 @@ test.describe(
 				console.log( error );
 			}
 
-			await page.goto( '/wp-admin/admin.php?page=wc-admin' );
+			await page.goto( 'wp-admin/admin.php?page=wc-admin' );
 
 			await expect(
 				page.getByRole( 'menuitem', {
@@ -241,7 +241,7 @@ test.describe(
 				console.log( error );
 			}
 
-			await page.goto( '/wp-admin/admin.php?page=wc-admin' );
+			await page.goto( 'wp-admin/admin.php?page=wc-admin' );
 
 			await expect(
 				page.getByRole( 'menuitem', {
@@ -270,7 +270,7 @@ test.describe(
 				console.log( error );
 			}
 
-			await page.goto( '/wp-admin/admin.php?page=wc-admin' );
+			await page.goto( 'wp-admin/admin.php?page=wc-admin' );
 
 			await expect(
 				page.getByRole( 'menuitem', {

@@ -92,7 +92,7 @@ test.describe( 'Merchant > Customer List', { tag: '@services' }, () => {
 					'**/wp-json/wc-analytics/reports/customers?orderby**'
 				);
 				await page.goto(
-					'/wp-admin/admin.php?page=wc-admin&path=%2Fcustomers'
+					'wp-admin/admin.php?page=wc-admin&path=%2Fcustomers'
 				);
 				await responsePromise;
 			} );
@@ -239,9 +239,7 @@ test.describe( 'Merchant > Customer List', { tag: '@services' }, () => {
 		page,
 		customers,
 	} ) => {
-		await page.goto(
-			'/wp-admin/admin.php?page=wc-admin&path=%2Fcustomers'
-		);
+		await page.goto( 'wp-admin/admin.php?page=wc-admin&path=%2Fcustomers' );
 
 		await test.step( 'Switch to single customer view', async () => {
 			await page.getByRole( 'button', { name: 'All Customers' } ).click();
@@ -280,9 +278,7 @@ test.describe( 'Merchant > Customer List', { tag: '@services' }, () => {
 		page,
 		customers,
 	} ) => {
-		await page.goto(
-			'/wp-admin/admin.php?page=wc-admin&path=%2Fcustomers'
-		);
+		await page.goto( 'wp-admin/admin.php?page=wc-admin&path=%2Fcustomers' );
 
 		await test.step( 'Switch to advanced filters', async () => {
 			await page.getByRole( 'button', { name: 'All Customers' } ).click();

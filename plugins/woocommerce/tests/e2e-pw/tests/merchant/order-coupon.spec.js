@@ -76,7 +76,7 @@ test.describe(
 		} );
 
 		test( 'can apply a coupon', async ( { page } ) => {
-			await page.goto( '/wp-admin/admin.php?page=wc-orders&action=new' );
+			await page.goto( 'wp-admin/admin.php?page=wc-orders&action=new' );
 
 			// open modal for adding line items
 			await page.locator( 'button.add-line-item' ).click();
@@ -124,7 +124,7 @@ test.describe(
 			{ tag: [ '@skip-on-default-wpcom' ] },
 			async ( { page } ) => {
 				await page.goto(
-					`/wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
+					`wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
 				);
 				// assert that there is a coupon on the order
 				await expect(
