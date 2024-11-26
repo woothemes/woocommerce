@@ -12,7 +12,6 @@
  * WC requires at least: 9.4
  * WC tested up to: 9.3
  * Text Domain: woocommerce-beta-tester
- * Woo: 18734002351694:04192c15b62a4ce6f5fa69df608aa3aa
  *
  * @package WC_Beta_Tester
  */
