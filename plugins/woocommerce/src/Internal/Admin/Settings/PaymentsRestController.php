@@ -139,10 +139,25 @@ class PaymentsRestController extends RestApiControllerBase {
 			return new WP_Error( 'woocommerce_rest_payment_providers_error', $e->getMessage(), array( 'status' => 500 ) );
 		}
 
+		// Separate the offline PMs from the main providers list.
+		$offline_payment_providers = array_values(
+			array_filter(
+				$providers,
+				fn( $provider ) => Payments::PROVIDER_TYPE_OFFLINE_PM === $provider['_type']
+			)
+		);
+		$providers                 = array_values(
+			array_filter(
+				$providers,
+				fn( $provider ) => Payments::PROVIDER_TYPE_OFFLINE_PM !== $provider['_type']
+			)
+		);
+
 		$response = array(
-			'providers'             => $providers,
-			'suggestions'           => $suggestions,
-			'suggestion_categories' => $this->payments->get_extension_suggestion_categories(),
+			'providers'               => $providers,
+			'offline_payment_methods' => $offline_payment_providers,
+			'suggestions'             => $suggestions,
+			'suggestion_categories'   => $this->payments->get_extension_suggestion_categories(),
 		);
 
 		return rest_ensure_response( $this->prepare_payment_providers_response( $response ) );
@@ -367,21 +382,28 @@ class PaymentsRestController extends RestApiControllerBase {
 			'type'    => 'object',
 		);
 		$schema['properties'] = array(
-			'providers'             => array(
+			'providers'               => array(
 				'type'        => 'array',
-				'description' => esc_html__( 'The ordered providers list. This includes registered payment gateways, suggestions, and offline payment methods and their group entry.', 'woocommerce' ),
+				'description' => esc_html__( 'The ordered providers list. This includes registered payment gateways, suggestions, and offline payment methods group entry. The individual offline payment methods are separate.', 'woocommerce' ),
 				'context'     => array( 'view', 'edit' ),
 				'readonly'    => true,
 				'items'       => $this->get_schema_for_payment_provider(),
 			),
-			'suggestions'           => array(
+			'offline_payment_methods' => array(
+				'type'        => 'array',
+				'description' => esc_html__( 'The ordered offline payment methods providers list.', 'woocommerce' ),
+				'context'     => array( 'view', 'edit' ),
+				'readonly'    => true,
+				'items'       => $this->get_schema_for_payment_provider(),
+			),
+			'suggestions'             => array(
 				'type'        => 'array',
 				'description' => esc_html__( 'The list of suggestions, excluding the ones part of the providers list.', 'woocommerce' ),
 				'context'     => array( 'view', 'edit' ),
 				'readonly'    => true,
 				'items'       => $this->get_schema_for_suggestion(),
 			),
-			'suggestion_categories' => array(
+			'suggestion_categories'   => array(
 				'type'        => 'array',
 				'description' => esc_html__( 'The suggestion categories.', 'woocommerce' ),
 				'context'     => array( 'view', 'edit' ),
