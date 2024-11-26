@@ -207,7 +207,7 @@ class WC_Settings_Shipping extends WC_Settings_Page {
 					'save_failed'                 => __( 'Your changes were not saved. Please retry.', 'woocommerce' ),
 					'no_shipping_methods_offered' => __( 'No shipping methods offered to this zone.', 'woocommerce' ),
 				),
-				'regionOptions'             => $this->get_region_options( $allowed_countries, $shipping_continents ),
+				'regionOptions'           => $this->get_region_options( $allowed_countries, $shipping_continents ),
 			)
 		);
 		wp_enqueue_script( 'wc-admin-shipping-settings' );
