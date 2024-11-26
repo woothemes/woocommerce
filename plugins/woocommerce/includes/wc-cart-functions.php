@@ -9,6 +9,7 @@
  */
 
 use Automattic\Jetpack\Constants;
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\StoreApi\Utilities\LocalPickupUtils;
 
 defined( 'ABSPATH' ) || exit;
@@ -195,7 +196,7 @@ function wc_clear_cart_after_payment() {
 
 		if ( $order instanceof WC_Order && $order->get_id() > 0 ) {
 			// If the order status is neither pending, failed, nor cancelled, the order must have gone through.
-			$should_clear_cart_after_payment = ! $order->has_status( array( 'failed', 'pending', 'cancelled' ) );
+			$should_clear_cart_after_payment = ! $order->has_status( array( OrderStatus::FAILED, OrderStatus::PENDING, OrderStatus::CANCELLED ) );
 			$after_payment                   = true;
 		}
 	}
