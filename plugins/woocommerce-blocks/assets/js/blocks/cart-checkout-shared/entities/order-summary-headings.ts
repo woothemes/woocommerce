@@ -9,6 +9,8 @@ type OrderSummaryHeadings = {
 	woocommerce_order_summary_coupon_heading: string;
 	woocommerce_order_summary_fee_heading: string;
 	woocommerce_order_summary_subtotal_heading: string;
+	woocommerce_order_summary_heading: string;
+	woocommerce_order_summary_footer_heading: string;
 };
 
 export const useOrderSummaryHeadings = (
@@ -16,16 +18,6 @@ export const useOrderSummaryHeadings = (
 ) => {
 	const heading = useSelect(
 		( select ) => {
-			console.log(
-				'heading: ',
-				select(
-					coreStore
-				).getEditedEntityRecord< OrderSummaryHeadings >(
-					'root',
-					'site',
-					undefined
-				)
-			);
 			return select(
 				coreStore
 			).getEditedEntityRecord< OrderSummaryHeadings >(
@@ -44,7 +36,6 @@ export const createSetOrderSummaryHeadingCallback = (
 	headingName: keyof OrderSummaryHeadings
 ) => {
 	return ( heading: string ) => {
-		console.log( 'saving heading', headingName, heading );
 		dispatch( coreStore ).editEntityRecord( 'root', 'site', undefined, {
 			[ headingName ]: heading,
 		} );

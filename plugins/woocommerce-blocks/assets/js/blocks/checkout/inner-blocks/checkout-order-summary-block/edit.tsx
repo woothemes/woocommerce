@@ -23,18 +23,12 @@ import {
 	getAllowedBlocks,
 } from '../../../cart-checkout-shared';
 import { OrderMetaSlotFill } from './slotfills';
+import {
+	createSetOrderSummaryHeadingCallback,
+	useOrderSummaryHeadings,
+} from '../../../cart-checkout-shared/entities/order-summary-headings';
 
-export type BlockAttributes = {
-	sectionHeading: string | null;
-	footerHeading: string | null;
-};
-
-export const Edit = ( {
-	clientId,
-	attributes,
-	setAttributes,
-}: BlockEditProps< BlockAttributes > ) => {
-	const { sectionHeading, footerHeading } = attributes;
+export const Edit = ( { clientId }: BlockEditProps< object > ) => {
 	const blockProps = useBlockProps();
 	const { cartTotals } = useStoreCart();
 	const totalsCurrency = getCurrencyFromPriceResponse( cartTotals );
@@ -46,22 +40,32 @@ export const Edit = ( {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const ariaControlsId = useId();
 
-	const headingText = sectionHeading ?? __( 'Order summary', 'woocommerce' );
+	const orderSummaryHeading = useOrderSummaryHeadings(
+		'woocommerce_order_summary_heading'
+	);
 
-	const onChangeSectionHeading = ( newSectionHeading: string ) => {
-		setAttributes( { sectionHeading: newSectionHeading } );
-	};
+	const orderSummaryFooterHeading = useOrderSummaryHeadings(
+		'woocommerce_order_summary_footer_heading'
+	);
 
-	const onChangeFooterHeading = ( newFooterHeading: string ) => {
-		setAttributes( { footerHeading: newFooterHeading } );
-	};
+	const onOrderSummaryHeadingChange = createSetOrderSummaryHeadingCallback(
+		'woocommerce_order_summary_heading'
+	);
+
+	const onOrderSummaryFooterHeadingChange =
+		createSetOrderSummaryHeadingCallback(
+			'woocommerce_order_summary_footer_heading'
+		);
+
+	const headingText =
+		orderSummaryHeading ?? __( 'Order summary', 'woocommerce' );
 
 	const heading = (
 		<RichText
 			tagName="span"
 			identifier="headingText"
 			value={ headingText }
-			onChange={ onChangeSectionHeading }
+			onChange={ onOrderSummaryHeadingChange }
 		/>
 	);
 
@@ -69,8 +73,8 @@ export const Edit = ( {
 		<RichText
 			tagName="span"
 			identifier="footerHeadingText"
-			value={ footerHeading || __( 'Total', 'woocommerce' ) }
-			onChange={ onChangeFooterHeading }
+			value={ orderSummaryFooterHeading || __( 'Total', 'woocommerce' ) }
+			onChange={ onOrderSummaryFooterHeadingChange }
 		/>
 	);
 

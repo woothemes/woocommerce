@@ -21,10 +21,6 @@
 				"remove": false,
 				"move": false
 			}
-		},
-		"sectionHeading": {
-			"type": "string",
-			"default": null
 		}
 	},
 	"parent": [ "woocommerce/cart-order-summary-block" ],

@@ -12,6 +12,32 @@ class CartCheckoutSharedSettings {
 	public static function register_order_summary_heading_options() {
 		register_setting(
 			'woocommerce_order_summary',
+			'woocommerce_order_summary_heading',
+			array(
+				'type'              => 'string',
+				'label'             => __( 'Order summary subtotal heading', 'woocommerce' ),
+				'description'       => __( 'Heading for the subtotal section in the order summary.', 'woocommerce' ),
+				'sanitize_callback' => 'sanitize_text_field',
+				'default'           => null,
+				'show_in_rest'      => true,
+			)
+		);
+
+		register_setting(
+			'woocommerce_order_summary',
+			'woocommerce_order_summary_footer_heading',
+			array(
+				'type'              => 'string',
+				'label'             => __( 'Order summary subtotal heading', 'woocommerce' ),
+				'description'       => __( 'Heading for the subtotal section in the order summary.', 'woocommerce' ),
+				'sanitize_callback' => 'sanitize_text_field',
+				'default'           => null,
+				'show_in_rest'      => true,
+			)
+		);
+
+		register_setting(
+			'woocommerce_order_summary',
 			'woocommerce_order_summary_subtotal_heading',
 			array(
 				'type'              => 'string',
@@ -38,7 +64,20 @@ class CartCheckoutSharedSettings {
 
 		register_setting(
 			'woocommerce_order_summary',
-			'woocommerce_order_summary_total_heading',
+			'woocommerce_order_summary_coupon_heading',
+			array(
+				'type'              => 'string',
+				'label'             => __( 'Order summary total heading', 'woocommerce' ),
+				'description'       => __( 'Heading for the total section in the order summary.', 'woocommerce' ),
+				'sanitize_callback' => 'sanitize_text_field',
+				'default'           => null,
+				'show_in_rest'      => true,
+			)
+		);
+
+		register_setting(
+			'woocommerce_order_summary',
+			'woocommerce_order_summary_fee_heading',
 			array(
 				'type'              => 'string',
 				'label'             => __( 'Order summary total heading', 'woocommerce' ),

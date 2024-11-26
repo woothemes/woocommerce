@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { RichText, useBlockProps } from '@wordpress/block-editor';
-import Noninteractive from '@woocommerce/base-components/noninteractive';
 import { BlockEditProps } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 
@@ -10,21 +9,28 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import Block, { BlockAttributes } from './block';
+import {
+	createSetOrderSummaryHeadingCallback,
+	useOrderSummaryHeadings,
+} from '../../../cart-checkout-shared/entities/order-summary-headings';
 
 export const Edit = ( {
 	attributes,
-	setAttributes,
 }: BlockEditProps< BlockAttributes > ): JSX.Element => {
-	const { className = '', sectionHeading } = attributes;
+	const { className = '' } = attributes;
 	const blockProps = useBlockProps();
 
-	const onChangeSectionHeading = ( heading: string ) => {
-		setAttributes( { sectionHeading: heading } );
-	};
+	const couponHeading = useOrderSummaryHeadings(
+		'woocommerce_order_summary_coupon_heading'
+	);
 
-	const headingText = sectionHeading ?? __( 'Add a coupon', 'woocommerce' );
+	const onCouponHeadingChange = createSetOrderSummaryHeadingCallback(
+		'woocommerce_order_summary_coupon_heading'
+	);
+
+	const headingText = couponHeading ?? __( 'Add a coupon', 'woocommerce' );
 	const heading = (
-		<RichText value={ headingText } onChange={ onChangeSectionHeading } />
+		<RichText value={ headingText } onChange={ onCouponHeadingChange } />
 	);
 
 	return (

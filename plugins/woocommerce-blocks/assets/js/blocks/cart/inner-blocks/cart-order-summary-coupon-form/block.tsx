@@ -5,7 +5,6 @@ import { TotalsCoupon } from '@woocommerce/base-components/cart-checkout';
 import { useStoreCartCoupons } from '@woocommerce/base-context/hooks';
 import { getSetting } from '@woocommerce/settings';
 import { TotalsWrapper } from '@woocommerce/blocks-components';
-import { __ } from '@wordpress/i18n';
 
 export type BlockAttributes = {
 	className: string;
@@ -19,7 +18,6 @@ type BlockProps = BlockAttributes & {
 
 const Block = ( {
 	className,
-	sectionHeading,
 	heading,
 	isEditor = false,
 }: BlockProps ): JSX.Element | null => {

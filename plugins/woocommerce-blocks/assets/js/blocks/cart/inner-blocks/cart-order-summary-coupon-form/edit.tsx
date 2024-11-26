@@ -9,24 +9,29 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import Block, { BlockAttributes } from './block';
+import {
+	createSetOrderSummaryHeadingCallback,
+	useOrderSummaryHeadings,
+} from '../../../cart-checkout-shared/entities/order-summary-headings';
 
-export const Edit = ( {
-	attributes,
-	setAttributes,
-}: BlockEditProps< BlockAttributes > ) => {
-	const { className, sectionHeading } = attributes;
+export const Edit = ( { attributes }: BlockEditProps< BlockAttributes > ) => {
+	const { className } = attributes;
 	const blockProps = useBlockProps();
 
-	const onSectionHeadingChange = ( heading: string ) => {
-		setAttributes( { sectionHeading: heading } );
-	};
+	const onCouponHeadingChange = createSetOrderSummaryHeadingCallback(
+		'woocommerce_order_summary_coupon_heading'
+	);
 
-	const headingLabel = sectionHeading ?? __( 'Add a coupon', 'woocommerce' );
+	const couponHeading = useOrderSummaryHeadings(
+		'woocommerce_order_summary_coupon_heading'
+	);
+
+	const headingLabel = couponHeading ?? __( 'Add a coupon', 'woocommerce' );
 
 	const heading = (
 		<RichText
 			value={ headingLabel }
-			onChange={ onSectionHeadingChange }
+			onChange={ onCouponHeadingChange }
 			label={ headingLabel }
 		/>
 	);
