@@ -35,11 +35,10 @@ export const EditZone = ( { zoneId } ) => {
 	const options =
 		recursivelyTransformLabels( regionOptions, decodeEntities ) ?? [];
 	const initialValues = zone.zone_locations.map( ( location ) => {
-		if ( 'postcode' === location.type ) {
+		if ( location.type === 'postcode' ) {
 			return location.code;
-		} else {
-			return location.type + ':' + location.code;
 		}
+		return location.type + ':' + location.code;
 	} );
 	const back = () => {
 		const currentArgs = getQueryArgs( window.location.href );
