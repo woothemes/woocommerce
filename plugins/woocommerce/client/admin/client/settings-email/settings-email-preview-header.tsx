@@ -50,7 +50,7 @@ export const EmailPreviewHeader: React.FC = () => {
 				</div>
 				<div className="wc-settings-email-preview-header-sender">
 					{ fromName }
-					<span>{ fromAddress }</span>
+					<span>&lt;{ fromAddress }&gt;</span>
 				</div>
 			</div>
 		</div>
