@@ -132,6 +132,11 @@ class Payments {
 			'title'       => __( 'Take offline payments', 'woocommerce' ),
 			'description' => __( 'Accept payments offline using multiple different methods. These can also be used to test purchases.', 'woocommerce' ),
 			'icon'        => plugins_url( 'assets/images/payment_methods/cod.svg', WC_PLUGIN_FILE ),
+			// The offline PMs are obviously from WooCommerce, and WC is always active.
+			'plugin' 	=> array(
+				'slug'   => 'woocommerce',
+				'status' => self::EXTENSION_ACTIVE,
+			),
 		);
 
 		// Sort the payment providers by order, ASC.

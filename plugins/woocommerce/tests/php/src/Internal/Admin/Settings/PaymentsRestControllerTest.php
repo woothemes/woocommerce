@@ -342,8 +342,9 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'suggestion_categories', $data );
 
 		// We have the core PayPal gateway registered, and the 2 preferred suggestions.
+		// There is no offline PMs group entry because there are no offline PMs.
 		$this->assertCount( 3, $data['providers'] );
-		// We also have the 3 offline payment methods.
+		// We have no offline payment methods.
 		$this->assertCount( 0, $data['offline_payment_methods'] );
 		// Suggestions are returned because the user can install plugins.
 		$this->assertCount( 2, $data['suggestions'] );
@@ -749,6 +750,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 				'_type'       => 'offline_pms_group',
 				'title'       => 'Offline Payment Methods',
 				'description' => 'Allow shoppers to pay offline.',
+				'icon'        => 'http://localhost:8888/wp-content/plugins/woocommerce/assets/images/payment_methods/cod.svg',
 			);
 			$mock_providers[] = array(
 				'id'          => 'bacs',
