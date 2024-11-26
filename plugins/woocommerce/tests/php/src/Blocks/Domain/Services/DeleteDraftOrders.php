@@ -6,7 +6,6 @@ namespace Automattic\WooCommerce\Tests\Blocks\Domain\Services;
 use Automattic\WooCommerce\Blocks\Domain\Package;
 use Automattic\WooCommerce\Blocks\Domain\Services\DraftOrders;
 use Automattic\WooCommerce\Blocks\Domain\Services\FeatureGating;
-use Automattic\WooCommerce\Enums\OrderInternalStatus;
 use Automattic\WooCommerce\Enums\OrderStatus;
 use WC_Order;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
@@ -122,7 +121,7 @@ class DeleteDraftOrders extends TestCase {
 		$this->assertEquals( 1, (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(ID) from $wpdb->posts posts WHERE posts.post_status = '%s'", [ $status ] ) ) );
 
 		// The non-draft order should still be present
-		$this->assertEquals( 1, (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(ID) from $wpdb->posts posts WHERE posts.post_status = %s", OrderInternalStatus::ON_HOLD ) ) );
+		$this->assertEquals( 1, (int) $wpdb->get_var( "SELECT COUNT(ID) from $wpdb->posts posts WHERE posts.post_status = 'wc-on-hold'" ) );
 	}
 
 	public function test_greater_than_batch_results_error() {
