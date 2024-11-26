@@ -74,6 +74,12 @@
 		"clearButton": {
 			"type": "boolean",
 			"default": true
+		},
+		"productStatuses": {
+			"type": "array"
+		},
+		"stockStatuses": {
+			"type": "array"
 		}
 	},
 	"usesContext": [

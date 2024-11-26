@@ -10,6 +10,8 @@ export type BlockAttributes = {
 	isPreview: boolean;
 	hideEmpty: boolean;
 	clearButton: boolean;
+	productStatuses: string[] | undefined;
+	stockStatuses: string[] | undefined;
 };
 
 export interface DisplayOption {

@@ -57,9 +57,7 @@ test.describe( 'woocommerce/product-filter-active - Frontend', () => {
 	} ) => {
 		await templateCompiler.compile( {} );
 
-		await page.goto(
-			`${ '/shop' }?filter_stock_status=instock,onbackorder`
-		);
+		await page.goto( `${ '/shop' }?filter_status=instock,onbackorder` );
 
 		await expect( page.getByText( 'Status: In stock' ) ).toBeVisible();
 		await expect( page.getByText( 'Status: On backorder' ) ).toBeVisible();

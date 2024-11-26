@@ -20,8 +20,27 @@ import { InitialDisabled } from '../../components/initial-disabled';
 import { Inspector } from './inspector';
 import type { EditProps } from './types';
 
+const stockStatusOptions: Record< string, string > = getSetting(
+	'stockStatusOptions',
+	{}
+);
+
+const productStatusOptions: Record< string, string > = getSetting(
+	'productStatusOptions',
+	{}
+);
+
 const Edit = ( props: EditProps ) => {
-	const { showCounts, hideEmpty, clearButton } = props.attributes;
+	const { attributes } = props;
+	const { showCounts, hideEmpty, clearButton } = attributes;
+
+	const productStatuses = Array.isArray( attributes.productStatuses )
+		? attributes.productStatuses
+		: Object.keys( productStatusOptions );
+	const stockStatuses = Array.isArray( attributes.stockStatuses )
+		? attributes.stockStatuses
+		: Object.keys( stockStatusOptions );
+
 	const { children, ...innerBlocksProps } = useInnerBlocksProps(
 		useBlockProps(),
 		{
@@ -75,19 +94,15 @@ const Edit = ( props: EditProps ) => {
 		}
 	);
 
-	const stockStatusOptions: Record< string, string > = getSetting(
-		'stockStatusOptions',
-		{}
-	);
-
 	const { results: filteredCounts, isLoading } =
 		useCollectionData< WCStoreV1ProductsCollectionProps >( {
 			queryStock: true,
+			queryOnSale: true,
 			queryState: {},
 			isEditor: true,
 		} );
 
-	const items = useMemo( () => {
+	const stockStatusItems = useMemo( () => {
 		return Object.entries( stockStatusOptions )
 			.map( ( [ key, value ] ) => {
 				const count =
@@ -103,8 +118,28 @@ const Edit = ( props: EditProps ) => {
 					count,
 				};
 			} )
-			.filter( ( item ) => ! hideEmpty || item.count > 0 );
-	}, [ stockStatusOptions, filteredCounts, showCounts, hideEmpty ] );
+			.filter( ( item ) => ! hideEmpty || item.count > 0 )
+			.filter( ( item ) => stockStatuses.includes( item.value ) );
+	}, [ filteredCounts, showCounts, hideEmpty, stockStatuses ] );
+
+	const productStatusItems = useMemo( () => {
+		return Object.entries( productStatusOptions )
+			.map( ( [ key, value ] ) => {
+				const count = filteredCounts?.onsale_count?.count ?? 0;
+
+				return {
+					value: key,
+					label: showCounts
+						? `${ value } (${ count.toString() })`
+						: value,
+					count,
+				};
+			} )
+			.filter( ( item ) => ! hideEmpty || item.count > 0 )
+			.filter( ( item ) => productStatuses.includes( item.value ) );
+	}, [ filteredCounts, showCounts, hideEmpty, productStatuses ] );
+
+	const items = [ ...stockStatusItems, ...productStatusItems ];
 
 	return (
 		<div { ...innerBlocksProps }>

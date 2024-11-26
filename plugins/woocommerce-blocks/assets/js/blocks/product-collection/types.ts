@@ -239,6 +239,10 @@ type StockStatusCount = {
 	count: number;
 };
 
+type OnSaleCount = {
+	count: number;
+};
+
 /*
  * Prop types for the `wc/store/v1/products/collection-data` endpoint
  */
@@ -260,4 +264,6 @@ export type WCStoreV1ProductsCollectionProps = {
 	rating_counts: RatingCount[];
 
 	stock_status_counts: StockStatusCount[];
+
+	onsale_count: OnSaleCount[];
 };

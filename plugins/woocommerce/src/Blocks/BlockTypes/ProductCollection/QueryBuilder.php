@@ -7,6 +7,7 @@ use Automattic\WooCommerce\Blocks\BlockTypes\AttributeFilter;
 use Automattic\WooCommerce\Blocks\BlockTypes\PriceFilter;
 use Automattic\WooCommerce\Blocks\BlockTypes\RatingFilter;
 use Automattic\WooCommerce\Blocks\BlockTypes\StockFilter;
+use Automattic\WooCommerce\Blocks\BlockTypes\ProductFilterStatus;
 use WP_Query;
 use WC_Tax;
 
@@ -50,6 +51,7 @@ class QueryBuilder {
 	public function __construct() {
 		$this->valid_query_vars = $this->get_valid_query_vars();
 		add_filter( 'posts_clauses', array( $this, 'add_price_range_filter_posts_clauses' ), 10, 2 );
+		add_filter( 'query_vars', array( $this, 'set_query_vars' ) );
 	}
 
 	/**
@@ -119,6 +121,24 @@ class QueryBuilder {
 		);
 
 		return $this->valid_query_vars;
+	}
+
+	/**
+	 * Set the query vars that are used by filter blocks.
+	 *
+	 * @param array $public_query_vars Public query vars.
+	 * @return array
+	 */
+	public function set_query_vars( $public_query_vars ) {
+		$query_vars = array(
+			'status_filter_query_args' => array( ProductFilterStatus::FILTER_STATUS_QUERY_VAR ),
+		);
+
+		foreach ( $query_vars as $query_vars_filter_block ) {
+			$public_query_vars = array_merge( $query_vars_filter_block, $public_query_vars );
+		}
+
+		return $public_query_vars;
 	}
 
 	/**
