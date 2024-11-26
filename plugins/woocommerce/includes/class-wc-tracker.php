@@ -476,24 +476,28 @@ class WC_Tracker {
 		if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
 			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$gross_total = $wpdb->get_var(
-				"
-				SELECT SUM(total_amount) AS 'gross_total'
-				FROM $orders_table
-				WHERE status in ('" . OrderInternalStatus::COMPLETED . "', '" . OrderInternalStatus::REFUNDED . "');
-			"
+				$wpdb->prepare(
+					"SELECT SUM(total_amount) AS 'gross_total'
+						FROM $orders_table
+					WHERE status in ('%s', '%s');",
+					OrderInternalStatus::COMPLETED,
+					OrderInternalStatus::REFUNDED
+				)
 			);
 			// phpcs:enable
 		} else {
 			$gross_total = $wpdb->get_var(
-				"
-					SELECT
+				$wpdb->prepare(
+					"SELECT
 						SUM( order_meta.meta_value ) AS 'gross_total'
 					FROM {$wpdb->prefix}posts AS orders
 					LEFT JOIN {$wpdb->prefix}postmeta AS order_meta ON order_meta.post_id = orders.ID
 					WHERE order_meta.meta_key = '_order_total'
-						AND orders.post_status in ( '" . OrderInternalStatus::COMPLETED . "', '" . OrderInternalStatus::REFUNDED . "' )
-					GROUP BY order_meta.meta_key
-				"
+						AND orders.post_status in ( '%s', '%s' )
+					GROUP BY order_meta.meta_key",
+					OrderInternalStatus::COMPLETED,
+					OrderInternalStatus::REFUNDED
+				)
 			);
 		}
 
@@ -504,24 +508,26 @@ class WC_Tracker {
 		if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
 			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$processing_gross_total = $wpdb->get_var(
-				"
-				SELECT SUM(total_amount) AS 'gross_total'
-				FROM $orders_table
-				WHERE status = '" . OrderInternalStatus::PROCESSING . "';
-			"
+				$wpdb->prepare(
+					"SELECT SUM(total_amount) AS 'gross_total'
+					FROM $orders_table
+					WHERE status = '%s';",
+					OrderInternalStatus::PROCESSING
+				)
 			);
 			// phpcs:enable
 		} else {
 			$processing_gross_total = $wpdb->get_var(
-				"
-				SELECT
-					SUM( order_meta.meta_value ) AS 'gross_total'
-				FROM {$wpdb->prefix}posts AS orders
-				LEFT JOIN {$wpdb->prefix}postmeta AS order_meta ON order_meta.post_id = orders.ID
-				WHERE order_meta.meta_key = '_order_total'
-					AND orders.post_status = '" . OrderInternalStatus::PROCESSING . "'
-				GROUP BY order_meta.meta_key
-			"
+				$wpdb->prepare(
+					"SELECT
+						SUM( order_meta.meta_value ) AS 'gross_total'
+					FROM {$wpdb->prefix}posts AS orders
+					LEFT JOIN {$wpdb->prefix}postmeta AS order_meta ON order_meta.post_id = orders.ID
+					WHERE order_meta.meta_key = '_order_total'
+						AND orders.post_status = '%s'
+					GROUP BY order_meta.meta_key",
+					OrderInternalStatus::PROCESSING
+				)
 			);
 		}
 
@@ -547,24 +553,26 @@ class WC_Tracker {
 		if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
 			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$min_max = $wpdb->get_row(
-				"
-				SELECT
-					MIN( date_created_gmt ) as 'first', MAX( date_created_gmt ) as 'last'
-				FROM $orders_table
-				WHERE status = '" . OrderInternalStatus::COMPLETED . "';
-				",
+				$wpdb->prepare(
+					"SELECT
+						MIN( date_created_gmt ) as 'first', MAX( date_created_gmt ) as 'last'
+					FROM $orders_table
+					WHERE status = '%s';",
+					OrderInternalStatus::COMPLETED
+				),
 				ARRAY_A
 			);
 			// phpcs:enable
 		} else {
 			$min_max = $wpdb->get_row(
-				"
-					SELECT
+				$wpdb->prepare(
+					"SELECT
 						MIN( post_date_gmt ) as 'first', MAX( post_date_gmt ) as 'last'
 					FROM {$wpdb->prefix}posts
 					WHERE post_type = 'shop_order'
-					AND post_status = '" . OrderInternalStatus::COMPLETED . "'
-				",
+					AND post_status = '%s'",
+					OrderInternalStatus::COMPLETED
+				),
 				ARRAY_A
 			);
 		}
@@ -579,24 +587,26 @@ class WC_Tracker {
 		if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
 			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$processing_min_max = $wpdb->get_row(
-				"
-				SELECT
-					MIN( date_created_gmt ) as 'processing_first', MAX( date_created_gmt ) as 'processing_last'
-				FROM $orders_table
-				WHERE status = '" . OrderInternalStatus::PROCESSING . "';
-				",
+				$wpdb->prepare(
+					"SELECT
+						MIN( date_created_gmt ) as 'processing_first', MAX( date_created_gmt ) as 'processing_last'
+					FROM $orders_table
+					WHERE status = '%s';",
+					OrderInternalStatus::PROCESSING
+				),
 				ARRAY_A
 			);
 			// phpcs:enable
 		} else {
 			$processing_min_max = $wpdb->get_row(
-				"
-				SELECT
-					MIN( post_date_gmt ) as 'processing_first', MAX( post_date_gmt ) as 'processing_last'
-				FROM {$wpdb->prefix}posts
-				WHERE post_type = 'shop_order'
-				AND post_status = '" . OrderInternalStatus::PROCESSING . "'
-			",
+				$wpdb->prepare(
+					"SELECT
+						MIN( post_date_gmt ) as 'processing_first', MAX( post_date_gmt ) as 'processing_last'
+					FROM {$wpdb->prefix}posts
+					WHERE post_type = 'shop_order'
+					AND post_status = '%s'",
+					OrderInternalStatus::PROCESSING
+				),
 				ARRAY_A
 			);
 		}
@@ -686,36 +696,42 @@ class WC_Tracker {
 			$orders_table = OrdersTableDataStore::get_orders_table_name();
 			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$orders_and_gateway_details = $wpdb->get_results(
-				"
-				SELECT payment_method AS gateway, currency AS currency, SUM( total_amount ) AS totals, count( id ) AS counts
-				FROM $orders_table
-				WHERE status IN ( '" . OrderInternalStatus::COMPLETED . "', '" . OrderInternalStatus::PROCESSING . "', '" . OrderInternalStatus::REFUNDED . "' )
-				GROUP BY gateway, currency;
-				"
+				$wpdb->prepare(
+					"SELECT payment_method AS gateway, currency AS currency, SUM( total_amount ) AS totals, count( id ) AS counts
+					FROM $orders_table
+					WHERE status IN ( '%s', '%s', '%s' )
+					GROUP BY gateway, currency;",
+					OrderInternalStatus::COMPLETED,
+					OrderInternalStatus::PROCESSING,
+					OrderInternalStatus::REFUNDED
+				)
 			);
 			// phpcs:enable
 		} else {
 			$orders_and_gateway_details = $wpdb->get_results(
-				"
-				SELECT
-					gateway, currency, SUM(total) AS totals, COUNT(order_id) AS counts
-				FROM (
-					SELECT
-						orders.id AS order_id,
-						MAX(CASE WHEN meta_key = '_payment_method' THEN meta_value END) gateway,
-						MAX(CASE WHEN meta_key = '_order_total' THEN meta_value END) total,
-						MAX(CASE WHEN meta_key = '_order_currency' THEN meta_value END) currency
-					FROM
-						{$wpdb->prefix}posts orders
-					LEFT JOIN
-						{$wpdb->prefix}postmeta order_meta ON order_meta.post_id = orders.id
-					WHERE orders.post_type = 'shop_order'
-						AND orders.post_status in ( '" . OrderInternalStatus::COMPLETED . "', '" . OrderInternalStatus::PROCESSING . "', '" . OrderInternalStatus::REFUNDED . "' )
-						AND meta_key in( '_payment_method','_order_total','_order_currency')
-					GROUP BY orders.id
-				) order_gateways
-				GROUP BY gateway, currency
-				"
+				$wpdb->prepare(
+					"SELECT
+						gateway, currency, SUM(total) AS totals, COUNT(order_id) AS counts
+					FROM (
+						SELECT
+							orders.id AS order_id,
+							MAX(CASE WHEN meta_key = '_payment_method' THEN meta_value END) gateway,
+							MAX(CASE WHEN meta_key = '_order_total' THEN meta_value END) total,
+							MAX(CASE WHEN meta_key = '_order_currency' THEN meta_value END) currency
+						FROM
+							{$wpdb->prefix}posts orders
+						LEFT JOIN
+							{$wpdb->prefix}postmeta order_meta ON order_meta.post_id = orders.id
+						WHERE orders.post_type = 'shop_order'
+							AND orders.post_status in ( '%s', '%s', '%s' )
+							AND meta_key in( '_payment_method','_order_total','_order_currency')
+						GROUP BY orders.id
+					) order_gateways
+					GROUP BY gateway, currency",
+					OrderInternalStatus::COMPLETED,
+					OrderInternalStatus::PROCESSING,
+					OrderInternalStatus::REFUNDED
+				)
 			);
 		}
 
@@ -1234,38 +1250,46 @@ class WC_Tracker {
 
 			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$orders = $wpdb->get_results(
-				"SELECT
-					id,
-					row_number() OVER (ORDER BY date_created_gmt) AS order_rank,
-					date_created_gmt AS order_created_at,
-					date_updated_gmt AS order_updated_at,
-					currency,
-					total_amount,
-					payment_method,
-					payment_method_title
-				FROM $order_table_name
-				WHERE
-					type = 'shop_order'
-					AND status IN ('" . OrderInternalStatus::COMPLETED . "', '" . OrderInternalStatus::REFUNDED . "')
-				ORDER BY date_created_gmt $sort_order
-				LIMIT $limit;",
+				$wpdb->prepare(
+					"SELECT
+						id,
+						row_number() OVER (ORDER BY date_created_gmt) AS order_rank,
+						date_created_gmt AS order_created_at,
+						date_updated_gmt AS order_updated_at,
+						currency,
+						total_amount,
+						payment_method,
+						payment_method_title
+					FROM $order_table_name
+					WHERE
+						type = 'shop_order'
+						AND status IN ('%s', '%s')
+					ORDER BY date_created_gmt $sort_order
+					LIMIT $limit;",
+					OrderInternalStatus::COMPLETED,
+					OrderInternalStatus::REFUNDED
+				),
 				ARRAY_A
 			);
 			// phpcs:enable
 		} else {
 			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$orders = $wpdb->get_results(
-				"SELECT
-					ID AS id,
-					row_number() OVER (ORDER BY post_date_gmt) AS order_rank,
-					post_date_gmt AS order_created_at,
-					post_modified_gmt AS order_updated_at
-				FROM $wpdb->posts
-				WHERE
-					post_type = 'shop_order'
-					AND post_status IN ('" . OrderInternalStatus::COMPLETED . "', '" . OrderInternalStatus::REFUNDED . "')
-				ORDER BY post_date_gmt $sort_order
-				LIMIT $limit;",
+				$wpdb->prepare(
+					"SELECT
+						ID AS id,
+						row_number() OVER (ORDER BY post_date_gmt) AS order_rank,
+						post_date_gmt AS order_created_at,
+						post_modified_gmt AS order_updated_at
+					FROM $wpdb->posts
+					WHERE
+						post_type = 'shop_order'
+						AND post_status IN ('%s', '%s')
+					ORDER BY post_date_gmt $sort_order
+					LIMIT $limit;",
+					OrderInternalStatus::COMPLETED,
+					OrderInternalStatus::REFUNDED
+				),
 				ARRAY_A
 			);
 			// phpcs:enable
@@ -1356,31 +1380,37 @@ class WC_Tracker {
 
 			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$data = $wpdb->get_results(
-				"SELECT
-					parent_order_id AS order_id,
-					SUM(total_amount) AS refund_amount
-				FROM $order_table_name
-				WHERE
-					type = 'shop_order_refund'
-					AND status = '" . OrderInternalStatus::COMPLETED . "'
-					AND parent_order_id IN ($joined_ids)
-				GROUP BY parent_order_id",
+				$wpdb->prepare(
+					"SELECT
+						parent_order_id AS order_id,
+						SUM(total_amount) AS refund_amount
+					FROM $order_table_name
+					WHERE
+						type = 'shop_order_refund'
+						AND status = '%s'
+						AND parent_order_id IN ($joined_ids)
+					GROUP BY parent_order_id",
+					OrderInternalStatus::COMPLETED
+				),
 				ARRAY_A
 			);
 			// phpcs:enable
 		} else {
 			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$data = $wpdb->get_results(
-				"SELECT
-					refunds.post_parent AS order_id,
-					SUM(amount.meta_value) AS refund_amount
-				FROM $wpdb->posts AS refunds
-				LEFT JOIN $wpdb->postmeta AS amount ON amount.post_id = refunds.ID AND amount.meta_key = '_order_total'
-				WHERE
-					refunds.post_type = 'shop_order_refund'
-					AND refunds.post_status = '" . OrderInternalStatus::COMPLETED . "'
-					AND refunds.post_parent IN ($joined_ids)
-				GROUP BY refunds.post_parent",
+				$wpdb->prepare(
+					"SELECT
+						refunds.post_parent AS order_id,
+						SUM(amount.meta_value) AS refund_amount
+					FROM $wpdb->posts AS refunds
+					LEFT JOIN $wpdb->postmeta AS amount ON amount.post_id = refunds.ID AND amount.meta_key = '_order_total'
+					WHERE
+						refunds.post_type = 'shop_order_refund'
+						AND refunds.post_status = '%s'
+						AND refunds.post_parent IN ($joined_ids)
+					GROUP BY refunds.post_parent",
+					OrderInternalStatus::COMPLETED
+				),
 				ARRAY_A
 			);
 			// phpcs:enable
