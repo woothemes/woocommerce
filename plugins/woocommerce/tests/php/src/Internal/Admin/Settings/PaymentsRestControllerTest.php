@@ -282,7 +282,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	 */
 	public function test_get_payment_providers_with_enabled_pg() {
 		// Arrange.
-		$this->mock_providers( false, false, false,true );
+		$this->mock_providers( false, false, false, true );
 		$this->mock_extension_suggestions( 'US' );
 		$this->mock_extension_suggestions_categories();
 
@@ -725,9 +725,9 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	/**
 	 * Mock the providers.
 	 *
-	 * @param bool $skip_suggestions 	   Whether to not include the suggestions.
+	 * @param bool $skip_suggestions       Whether to not include the suggestions.
 	 * @param bool $skip_offline_pms       Whether to not include the offline payment methods.
-	 * @param bool $skip_paypal 		   Whether to not include the PayPal gateway.
+	 * @param bool $skip_paypal            Whether to not include the PayPal gateway.
 	 * @param bool $enabled_core_paypal_pg Whether the core PayPal gateway is enabled or not.
 	 */
 	private function mock_providers( bool $skip_suggestions = false, bool $skip_offline_pms = false, bool $skip_paypal = false, bool $enabled_core_paypal_pg = false ) {
@@ -912,7 +912,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		if ( ! $skip_paypal ) {
 			$mock_providers[] = array(
 				'id'          => 'paypal',
-				'_order'      => $order ++,
+				'_order'      => $order++,
 				'title'       => 'PayPal',
 				'description' => 'PayPal',
 				'supports'    => array( 'products' ),
