@@ -7,19 +7,29 @@
 		border-radius: 4px;
 	}
 
+	&__content {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		height: auto;
+	}
+
 	&__title {
-		width: 120px;
+		flex: 0 0 auto;
 		height: 20px;
+		max-width: 40%
 	}
 
 	&__description {
-		width: 360px;
+		flex: 0 0 auto;
 		height: 20px;
+		max-width: 100%
 	}
 
 	&__actions {
 		height: 32px;
-		width: 60px;
+		flex: 0 0 auto;
+		max-width: 20%
 	}
 
 	&__img {

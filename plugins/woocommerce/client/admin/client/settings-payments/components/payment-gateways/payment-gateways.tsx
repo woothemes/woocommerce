@@ -39,53 +39,57 @@ export const PaymentGateways = ( {
 	const providersList = useMemo(
 		() =>
 			providers.map( ( provider: PaymentProvider ) => {
-				if ( provider._type === 'suggestion' ) {
-					const pluginInstalled = installedPluginSlugs.includes(
-						provider.plugin.slug
-					);
-					return PaymentExtensionSuggestionListItem( {
-						extension: provider,
-						installingPlugin,
-						setupPlugin,
-						pluginInstalled,
-					} );
-				} else if ( provider._type === 'gateway' ) {
-					return PaymentGatewayListItem( {
-						gateway: provider,
-						setupLivePayments,
-					} );
-				} else if ( provider._type === 'offline_pms_group' ) {
-					return {
-						key: provider.id,
-						className: 'transitions-disabled',
-						title: <>{ provider.title }</>,
-						content: (
-							<>
-								<span
-									dangerouslySetInnerHTML={ sanitizeHTML(
-										decodeEntities( provider.description )
+				switch ( provider._type ) {
+					case 'suggestion':
+						const pluginInstalled = installedPluginSlugs.includes(
+							provider.plugin.slug
+						);
+						return PaymentExtensionSuggestionListItem( {
+							extension: provider,
+							installingPlugin,
+							setupPlugin,
+							pluginInstalled,
+						} );
+					case 'gateway':
+						return PaymentGatewayListItem( {
+							gateway: provider,
+							setupLivePayments,
+						} );
+					case 'offline_pms_group':
+						return {
+							key: provider.id,
+							className: 'transitions-disabled',
+							title: <>{ provider.title }</>,
+							content: (
+								<>
+									<span
+										dangerouslySetInnerHTML={ sanitizeHTML(
+											decodeEntities(
+												provider.description
+											)
+										) }
+									/>
+								</>
+							),
+							after: (
+								<a
+									href={ getAdminLink(
+										'admin.php?page=wc-settings&tab=checkout&section=offline'
 									) }
+								>
+									<Gridicon icon="chevron-right" />
+								</a>
+							),
+							before: (
+								<img
+									src={ provider.icon }
+									alt={ provider.title + ' logo' }
 								/>
-							</>
-						),
-						after: (
-							<a
-								href={ getAdminLink(
-									'admin.php?page=wc-settings&tab=checkout&section=offline'
-								) }
-							>
-								<Gridicon icon="chevron-right" />
-							</a>
-						),
-						before: (
-							<img
-								src={ provider.icon }
-								alt={ provider.title + ' logo' }
-							/>
-						),
-					};
+							),
+						};
+					default:
+						return null; // if unsupported type found
 				}
-				return null; // if unsupported _type found
 			} ),
 		[ providers, installedPluginSlugs, installingPlugin, setupPlugin ]
 	);
