@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-import { SETTINGS_STORE_NAME } from '@woocommerce/data';
 import { __ } from '@wordpress/i18n';
-import { resolveSelect } from '@wordpress/data';
 import { useEffect, useState } from 'react';
 
 /**
@@ -11,29 +9,45 @@ import { useEffect, useState } from 'react';
  */
 import avatarIcon from './icon-avatar.svg';
 
-type FromSettings = {
-	woocommerce_email_from_name?: string;
-	woocommerce_email_from_address?: string;
-};
-
 export const EmailPreviewHeader: React.FC = () => {
 	const [ fromName, setFromName ] = useState( '' );
 	const [ fromAddress, setFromAddress ] = useState( '' );
-	useEffect( () => {
-		const fetchSettings = async () => {
-			const {
-				woocommerce_email_from_name = '',
-				woocommerce_email_from_address = '',
-			} = (
-				await resolveSelect( SETTINGS_STORE_NAME ).getSettings(
-					'email'
-				)
-			 ).email as FromSettings;
 
-			setFromName( woocommerce_email_from_name );
-			setFromAddress( woocommerce_email_from_address );
+	useEffect( () => {
+		const fromNameEl = document.getElementById(
+			'woocommerce_email_from_name'
+		) as HTMLInputElement;
+		const fromAddressEl = document.getElementById(
+			'woocommerce_email_from_address'
+		) as HTMLInputElement;
+
+		if ( ! fromNameEl || ! fromAddressEl ) {
+			return;
+		}
+
+		// Set initial values
+		setFromName( fromNameEl.value || '' );
+		setFromAddress( fromAddressEl.value || '' );
+
+		const handleFromNameChange = ( event: Event ) => {
+			const target = event.target as HTMLInputElement;
+			setFromName( target.value || '' );
 		};
-		fetchSettings();
+		const handleFromAddressChange = ( event: Event ) => {
+			const target = event.target as HTMLInputElement;
+			setFromAddress( target.value || '' );
+		};
+
+		fromNameEl.addEventListener( 'change', handleFromNameChange );
+		fromAddressEl.addEventListener( 'change', handleFromAddressChange );
+
+		return () => {
+			fromNameEl.removeEventListener( 'change', handleFromNameChange );
+			fromAddressEl.removeEventListener(
+				'change',
+				handleFromAddressChange
+			);
+		};
 	}, [] );
 
 	return (
