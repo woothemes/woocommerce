@@ -112,6 +112,11 @@ async function fetchSearchResults(
 	totalPages: number;
 	totalProducts: number;
 } > {
+	// add user locale to search params if not already present
+	if ( LOCALE.userLocale && ! params.get( 'locale' ) ) {
+		params.set( 'locale', LOCALE.userLocale );
+	}
+
 	const url =
 		MARKETPLACE_HOST +
 		MARKETPLACE_SEARCH_API_PATH +
