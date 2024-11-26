@@ -22,7 +22,6 @@ import {
  */
 import { OnClickCallbackParameter } from './types';
 
-// Pick the value of the "blockify add to cart flag"
 const isBlockifiedAddToCart = getSettingWithCoercion(
 	'isBlockifiedAddToCart',
 	false,
