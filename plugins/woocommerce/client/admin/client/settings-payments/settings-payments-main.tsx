@@ -17,6 +17,7 @@ import './settings-payments-main.scss';
 import { createNoticesFromResponse } from '~/lib/notices';
 import { OtherPaymentGateways } from '~/settings-payments/components/other-payment-gateways';
 import { PaymentGateways } from '~/settings-payments/components/payment-gateways';
+import { onWCPayEnable } from '~/settings-payments/hooks';
 
 export const SettingsPaymentsMain = () => {
 	const [ installingPlugin, setInstallingPlugin ] = useState< string | null >(
@@ -58,8 +59,12 @@ export const SettingsPaymentsMain = () => {
 			}
 			setInstallingPlugin( extension.id );
 			installAndActivatePlugins( [ extension.plugin.slug ] )
-				.then( ( response ) => {
+				.then( async ( response ) => {
 					createNoticesFromResponse( response );
+					if ( extension.id === 'woopayments' ) {
+						await onWCPayEnable();
+						return;
+					}
 					invalidateResolutionForStoreSelector(
 						'getRegisteredPaymentGateways'
 					);

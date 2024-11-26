@@ -9,6 +9,8 @@ import {
 	EnableGatewayResponse,
 } from '@woocommerce/data';
 import { useState } from '@wordpress/element';
+import { onWCPayEnable } from '~/settings-payments/hooks';
+import { isWooPayments } from '~/settings-payments/utils';
 
 /**
  * Internal dependencies
@@ -68,10 +70,15 @@ export const PaymentGatewayButton = ( {
 				window.woocommerce_admin.ajax_url,
 				gatewayToggleNonce
 			)
-				.then( ( response: EnableGatewayResponse ) => {
+				.then( async ( response: EnableGatewayResponse ) => {
 					if ( response.data === 'needs_setup' ) {
-						window.location.href = settingsUrl;
-						return;
+						if ( isWooPayments( id ) ) {
+							await onWCPayEnable();
+							return;
+						} else {
+							window.location.href = settingsUrl;
+							return;
+						}
 					}
 					invalidateResolutionForStoreSelector(
 						isOffline
@@ -89,7 +96,7 @@ export const PaymentGatewayButton = ( {
 	};
 
 	const determineButtonText = () => {
-		if ( needsSetup ) {
+		if ( ! enabled && needsSetup ) {
 			return textNeedsSetup;
 		}
 
@@ -99,7 +106,7 @@ export const PaymentGatewayButton = ( {
 	return (
 		<div className="woocommerce-list__item-after__actions">
 			<Button
-				variant={ enabled ? 'secondary' : 'primary' }
+				variant={ enabled && ! needsSetup ? 'secondary' : 'primary' }
 				isBusy={ isUpdating }
 				disabled={ isUpdating }
 				onClick={ onClick }
