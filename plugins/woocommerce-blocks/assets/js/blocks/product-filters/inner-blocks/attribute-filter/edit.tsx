@@ -60,7 +60,7 @@ const Edit = ( props: EditProps ) => {
 		useState< boolean >( true );
 
 	const { results: attributeTerms, isLoading: isTermsLoading } =
-		useCollection< AttributeTerm[] >( {
+		useCollection< AttributeTerm >( {
 			namespace: '/wc/store/v1',
 			resourceName: 'products/attributes/terms',
 			resourceValues: [ attributeObject?.id || 0 ],
@@ -68,7 +68,7 @@ const Edit = ( props: EditProps ) => {
 			query: { orderby: 'menu_order', hide_empty: hideEmpty },
 		} );
 
-	const { results: filteredCounts, isLoading: isFilterCountsLoading } =
+	const { data: filteredCounts, isLoading: isFilterCountsLoading } =
 		useCollectionData( {
 			queryAttribute: {
 				taxonomy: attributeObject?.taxonomy || '',

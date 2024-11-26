@@ -35,12 +35,11 @@ export const useStoreProducts = (
 		namespace: '/wc/store/v1',
 		resourceName: 'products',
 	};
-	const { results: products, isLoading: productsLoading } = useCollection<
-		ProductResponseItem[]
-	>( {
-		...collectionOptions,
-		query,
-	} );
+	const { results: products, isLoading: productsLoading } =
+		useCollection< ProductResponseItem >( {
+			...collectionOptions,
+			query,
+		} );
 	const { value: totalProducts } = useCollectionHeader( 'x-wp-total', {
 		...collectionOptions,
 		query,

@@ -1,5 +1,7 @@
 <?php
-namespace Automattic\WooCommerce\Blocks\Utils;
+declare(strict_types=1);
+
+namespace Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection;
 
 use WP_Query;
 
@@ -7,7 +9,7 @@ use WP_Query;
  * Utility methods used for the Product Collection block.
  * {@internal This class and its methods are not intended for public use.}
  */
-class ProductCollectionUtils {
+class Utils {
 
 	/**
 	 * Prepare and execute a query for the Product Collection block.
