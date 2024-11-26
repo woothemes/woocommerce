@@ -74,7 +74,7 @@ class Payments {
 		$suggestions      = array();
 
 		$providers_order_map = get_option( self::PROVIDERS_ORDER_OPTION, array() );
-		$providers_order_map = $this->normalize_payment_providers_order_map( $providers_order_map );
+		$providers_order_map = $this->enhance_payment_providers_order_map( $providers_order_map );
 
 		$payment_providers = array();
 
@@ -450,7 +450,7 @@ class Payments {
 		$new_order_map = $this->payment_providers_order_map_apply_mappings( $existing_order_map, $order_map );
 
 		// This will also handle backwards compatibility.
-		$new_order_map = $this->normalize_payment_providers_order_map( $new_order_map );
+		$new_order_map = $this->enhance_payment_providers_order_map( $new_order_map );
 
 		// Write the new order map to the DB.
 		$result = update_option( self::PROVIDERS_ORDER_OPTION, $new_order_map );
@@ -828,15 +828,17 @@ class Payments {
 	}
 
 	/**
-	 * Normalize the payment providers order map.
+	 * Enhance a payment providers order map.
 	 *
 	 * If the payments providers order map is empty, it will be initialized with the current WC payment gateway ordering.
+	 * If there are missing entries (registered payment gateways, suggestions, offline PMs, etc.), they will be added.
+	 * Various rules will be enforced (e.g., offline PMs and their relation with the offline PMs group).
 	 *
 	 * @param array $order_map The payment providers order map.
 	 *
 	 * @return array The updated payment providers order map.
 	 */
-	private function normalize_payment_providers_order_map( array $order_map ): array {
+	private function enhance_payment_providers_order_map( array $order_map ): array {
 		// We don't exclude shells here, because we need to get the order of all the registered payment gateways.
 		$payment_gateways = $this->get_payment_gateways( false );
 		// Make it a list keyed by the payment gateway ID.
