@@ -162,7 +162,9 @@ const reducer: Reducer< CartState > = ( state = defaultCartState, action ) => {
 				...state,
 				metaData: {
 					...state.metaData,
-					applyingExtensionCartUpdate: !! action.isApplying,
+					applyingExtensionCartUpdates: action.isApplying
+						? state.metaData.applyingExtensionCartUpdates + 1
+						: state.metaData.applyingExtensionCartUpdates - 1,
 				},
 			};
 			break;
