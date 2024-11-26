@@ -14,7 +14,7 @@ export type BlockProps = {
 	label: React.ReactNode;
 };
 
-const Block = ( { className = '', label }: BlockProps ): JSX.Element => {
+const Block = ( { className = '', label }: BlockProps ) => {
 	const { cartTotals } = useStoreCart();
 	const totalsCurrency = getCurrencyFromPriceResponse( cartTotals );
 

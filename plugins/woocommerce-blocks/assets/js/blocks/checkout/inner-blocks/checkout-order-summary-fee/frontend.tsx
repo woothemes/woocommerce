@@ -9,7 +9,7 @@ import { __ } from '@wordpress/i18n';
 import Block, { BlockAttributes } from './block';
 import { useOrderSummaryHeadings } from '../../../cart-checkout-shared/entities/order-summary-headings';
 
-const Frontend = ( { className }: BlockAttributes ): JSX.Element => {
+const Frontend = ( { className }: BlockAttributes ) => {
 	const feeHeading = useOrderSummaryHeadings(
 		'woocommerce_order_summary_fee_heading'
 	);

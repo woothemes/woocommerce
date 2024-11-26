@@ -143,19 +143,6 @@ class Checkout extends AbstractBlock {
 		do_action( 'woocommerce_blocks_enqueue_checkout_block_scripts_after' );
 	}
 
-	// public function register_settings() {
-	// register_setting(
-	// 'options',
-	// 'woocommerce_order_summary_shipping_heading',
-	// array(
-	// 'type'        => 'string',
-	// 'description' => 'Thing for stuff',
-	// 'label'       => 'Shipping Heading',
-	// 'default'     => null,
-	// )
-	// );
-	// }
-
 	/**
 	 * Append frontend scripts when rendering the block.
 	 *

@@ -10,12 +10,4 @@ export default {
 			remove: true,
 		},
 	},
-	sectionHeading: {
-		type: 'string',
-		default: null,
-	},
-	footerHeading: {
-		type: 'string',
-		default: null,
-	},
 };

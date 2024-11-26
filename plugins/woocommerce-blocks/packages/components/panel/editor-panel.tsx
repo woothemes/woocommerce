@@ -11,7 +11,7 @@ import { Button } from '@ariakit/react';
 import './style.scss';
 import { PanelProps } from '.';
 
-// A dummy panel component for the editor, useful if you want the title to be editable.
+// An empty/fake panel component for the editor, useful if you to render editable text in the title.
 const EditorPanel = ( { className, hasBorder = false, title }: PanelProps ) => {
 	return (
 		<div

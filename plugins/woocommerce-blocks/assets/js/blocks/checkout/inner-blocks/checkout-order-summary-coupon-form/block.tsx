@@ -17,10 +17,7 @@ export type BlockProps = {
 	heading: React.ReactNode;
 };
 
-const Block = ( {
-	className = '',
-	heading,
-}: BlockProps ): JSX.Element | null => {
+const Block = ( { className = '', heading }: BlockProps ) => {
 	const couponsEnabled = getSetting( 'couponsEnabled', true );
 
 	const { isEditor } = useEditorContext();

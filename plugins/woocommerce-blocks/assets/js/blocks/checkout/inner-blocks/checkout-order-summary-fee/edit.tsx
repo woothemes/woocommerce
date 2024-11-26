@@ -14,9 +14,7 @@ import {
 	useOrderSummaryHeadings,
 } from '../../../cart-checkout-shared/entities/order-summary-headings';
 
-export const Edit = ( {
-	attributes,
-}: BlockEditProps< BlockAttributes > ): JSX.Element => {
+export const Edit = ( { attributes }: BlockEditProps< BlockAttributes > ) => {
 	const { className } = attributes;
 	const blockProps = useBlockProps();
 
