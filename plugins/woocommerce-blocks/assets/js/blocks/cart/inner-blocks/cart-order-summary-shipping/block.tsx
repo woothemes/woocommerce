@@ -13,7 +13,6 @@ import { useEditorContext, useStoreCart } from '@woocommerce/base-context';
 import { TotalsWrapper } from '@woocommerce/blocks-checkout';
 import {
 	getShippingRatesPackageCount,
-	selectedRatesAreCollectable,
 	allRatesAreCollectable,
 } from '@woocommerce/base-utils';
 import { getSetting } from '@woocommerce/settings';
@@ -22,44 +21,21 @@ import { getSetting } from '@woocommerce/settings';
  * Internal dependencies
  */
 import { ShippingRateSelector } from './shipping-rate-selector';
-import { EditableText } from '../../../../../../packages/components/editable-text';
-import { useOrderSummaryHeadings } from '../../../cart-checkout-shared/entities/order-summary-headings';
 
 export type BlockAttributes = {
-	sectionHeading: string | null;
 	className: string;
 };
 
-export type BlockProps = {
-	className: string;
+export type BlockProps = BlockAttributes & {
 	onChangeHeading?: ( heading: string ) => void;
+	heading: React.ReactNode;
 };
 
-const Block = ( { className, onChangeHeading }: BlockProps ) => {
+const Block = ( { className, heading }: BlockProps ) => {
 	const { isEditor } = useEditorContext();
 	const { cartNeedsShipping, shippingRates } = useStoreCart();
 	const [ isShippingCalculatorOpen, setIsShippingCalculatorOpen ] =
 		useState( false );
-
-	const hasSelectedCollectionOnly =
-		selectedRatesAreCollectable( shippingRates );
-
-	const collectionOrDelivery = hasSelectedCollectionOnly
-		? __( 'Collection', 'woocommerce' )
-		: __( 'Delivery', 'woocommerce' );
-
-	const sectionHeading = useOrderSummaryHeadings(
-		'woocommerce_order_summary_shipping_heading'
-	);
-
-	const heading = sectionHeading ?? collectionOrDelivery;
-
-	const label =
-		isEditor && onChangeHeading ? (
-			<EditableText value={ heading } onChange={ onChangeHeading } />
-		) : (
-			heading
-		);
 
 	if ( ! cartNeedsShipping ) {
 		return null;
@@ -85,7 +61,7 @@ const Block = ( { className, onChangeHeading }: BlockProps ) => {
 				} }
 			>
 				<TotalsShipping
-					label={ label }
+					label={ heading }
 					placeholder={
 						showCalculator ? (
 							<ShippingCalculatorButton
