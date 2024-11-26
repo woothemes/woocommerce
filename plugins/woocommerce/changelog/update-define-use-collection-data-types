@@ -1,0 +1,4 @@
+Significance: patch
+Type: tweak
+
+Define TS types for the useCollectionData() hook
