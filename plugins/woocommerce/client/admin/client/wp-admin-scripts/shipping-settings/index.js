@@ -52,7 +52,7 @@ const getAreas = ( section, zoneId, methodId ) => {
 
 addFilter( 'woocommerce_admin_settings_pages', 'woocommerce', ( pages ) => {
 	const { section, zoneId, methodId } = getQueryArgs( window.location.href );
-	pages[ 'shipping' ] = {
+	pages.shipping = {
 		areas: { ...getAreas( section, zoneId, methodId ) },
 		widths: {
 			content: undefined,
