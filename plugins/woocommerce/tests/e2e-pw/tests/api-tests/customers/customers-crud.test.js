@@ -47,6 +47,9 @@ test.describe(
 						},
 					}
 				);
+
+				expect( userResponse.status() ).toEqual( 201 );
+
 				const userResponseJSON = await userResponse.json();
 				// set subscriber user id to newly created user
 				subscriberUserId = userResponseJSON.id;
@@ -58,9 +61,7 @@ test.describe(
 				`/wp-json/wc/v3/customers/${ subscriberUserId }`
 			);
 			const responseJSON = await response.json();
-			// eslint-disable-next-line jest/no-standalone-expect
 			expect( response.status() ).toEqual( 200 );
-			// eslint-disable-next-line jest/no-standalone-expect
 			expect( responseJSON.role ).toEqual( 'subscriber' );
 		} );
 
