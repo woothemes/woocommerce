@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import { List } from '@woocommerce/components';
-import { OfflinePaymentGateway } from '@woocommerce/data';
+import { type OfflinePaymentGateway } from '@woocommerce/data';
 import { Card, CardHeader } from '@wordpress/components';
 import React from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -10,24 +9,17 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { OfflinePaymentGatewayListItem } from '../offline-gateway-list-item';
+import { OfflinePaymentGatewayList } from '../offline-gateway-list-item/offline-payment-gateway-list-item';
 
 interface OfflinePaymentGatewaysProps {
 	offlinePaymentGateways: OfflinePaymentGateway[];
+	updateOrdering: ( gateways: OfflinePaymentGateway[] ) => void;
 }
 
 export const OfflinePaymentGateways = ( {
 	offlinePaymentGateways,
+	updateOrdering,
 }: OfflinePaymentGatewaysProps ) => {
-	// Transform plugins comply with List component format.
-	const paymentGatewaysList = offlinePaymentGateways.map(
-		( gateway: OfflinePaymentGateway ) => {
-			return OfflinePaymentGatewayListItem( {
-				gateway,
-			} );
-		}
-	);
-
 	return (
 		<Card size="medium" className="settings-payment-gateways">
 			<CardHeader className="settings-payment-gateways__header">
@@ -35,7 +27,10 @@ export const OfflinePaymentGateways = ( {
 					{ __( 'Payment methods', 'woocommerce' ) }
 				</div>
 			</CardHeader>
-			<List items={ paymentGatewaysList } />
+			<OfflinePaymentGatewayList
+				gateways={ offlinePaymentGateways }
+				setGateways={ updateOrdering }
+			/>
 		</Card>
 	);
 };

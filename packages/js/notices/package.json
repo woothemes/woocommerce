@@ -54,10 +54,10 @@
 	},
 	"dependencies": {
 		"@wordpress/a11y": "wp-6.0",
-		"@wordpress/data": "wp-6.0",
 		"@wordpress/notices": "wp-6.0"
 	},
 	"peerDependencies": {
+		"@wordpress/data": "wp-6.0",
 		"lodash": "^4.17.0",
 		"react": "17.0.x",
 		"react-dom": "17.0.x"
