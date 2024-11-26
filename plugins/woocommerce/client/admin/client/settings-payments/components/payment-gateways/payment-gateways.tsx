@@ -3,72 +3,86 @@
  */
 import { Gridicon } from '@automattic/components';
 import { List } from '@woocommerce/components';
-import { Plugin, PaymentGateway } from '@woocommerce/data';
 import { getAdminLink } from '@woocommerce/settings';
 import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import {
+	RegisteredPaymentGateway,
+	SuggestedPaymentExtension,
+} from '@woocommerce/data';
+import { useMemo } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import { PaymentGatewayListItem } from '~/settings-payments/components/payment-gateway-list-item';
 import { PaymentExtensionSuggestionListItem } from '~/settings-payments/components/payment-extension-suggestion-list-item';
-import { WooPaymentsGatewayData } from '~/settings-payments/types';
+import { WC_ASSET_URL } from '~/utils/admin-settings';
 
 interface PaymentGatewaysProps {
-	registeredPaymentGateways: PaymentGateway[];
+	registeredPaymentGateways: RegisteredPaymentGateway[];
 	installedPluginSlugs: string[];
-	preferredPluginSuggestions: Plugin[];
-	wooPaymentsGatewayData?: WooPaymentsGatewayData;
+	preferredPluginSuggestions: SuggestedPaymentExtension[];
 	installingPlugin: string | null;
-	setupPlugin: ( plugin: Plugin ) => void;
+	setupPlugin: ( extension: SuggestedPaymentExtension ) => void;
 }
 
 export const PaymentGateways = ( {
 	registeredPaymentGateways,
 	installedPluginSlugs,
 	preferredPluginSuggestions,
-	wooPaymentsGatewayData,
 	installingPlugin,
 	setupPlugin,
 }: PaymentGatewaysProps ) => {
 	const setupLivePayments = () => {};
 
 	// Transform suggested preferred plugins comply with List component format.
-	const preferredPluginSuggestionsList = preferredPluginSuggestions.map(
-		( plugin: Plugin ) => {
-			const pluginInstalled = installedPluginSlugs.includes(
-				plugin.plugins[ 0 ]
-			);
-			return PaymentExtensionSuggestionListItem( {
-				plugin,
-				installingPlugin,
-				setupPlugin,
-				pluginInstalled,
-			} );
-		}
+	const preferredPluginSuggestionsList = useMemo(
+		() =>
+			preferredPluginSuggestions.map(
+				( extension: SuggestedPaymentExtension ) => {
+					const pluginInstalled = installedPluginSlugs.includes(
+						extension.plugin.slug
+					);
+					return PaymentExtensionSuggestionListItem( {
+						extension,
+						installingPlugin,
+						setupPlugin,
+						pluginInstalled,
+					} );
+				}
+			),
+		[
+			preferredPluginSuggestions,
+			installedPluginSlugs,
+			installingPlugin,
+			setupPlugin,
+		]
 	);
 
 	// Transform payment gateways to comply with List component format.
-	const paymentGatewaysList = registeredPaymentGateways.map(
-		( gateway: PaymentGateway ) => {
-			return PaymentGatewayListItem( {
-				gateway,
-				wooPaymentsGatewayData,
-				setupLivePayments,
-			} );
-		}
+	const paymentGatewaysList = useMemo(
+		() =>
+			registeredPaymentGateways.map(
+				( gateway: RegisteredPaymentGateway ) => {
+					return PaymentGatewayListItem( {
+						gateway,
+						setupLivePayments,
+					} );
+				}
+			),
+		[ registeredPaymentGateways ]
 	);
 
 	// Add offline payment provider.
 	paymentGatewaysList.push( {
 		key: 'offline',
 		className: 'woocommerce-item__payment-gateway transitions-disabled',
-		title: <>{ __( 'Offline payment methods', 'woocommerce' ) }</>,
+		title: <>{ __( 'Take offline payments', 'woocommerce' ) }</>,
 		content: (
 			<>
 				{ __(
-					'Take payments via multiple offline methods. These can also be useful to test purchases.',
+					'Accept payments offline using multiple different methods. These can also be used to test purchases.',
 					'woocommerce'
 				) }
 			</>
@@ -82,12 +96,9 @@ export const PaymentGateways = ( {
 				<Gridicon icon="chevron-right" />
 			</a>
 		),
-		// todo change logo to appropriate one.
 		before: (
 			<img
-				src={
-					'https://woocommerce.com/wp-content/plugins/wccom-plugins/payment-gateway-suggestions/images/paypal.svg'
-				}
+				src={ WC_ASSET_URL + 'images/payment_methods/cod.svg' }
 				alt="offline payment methods"
 			/>
 		),
