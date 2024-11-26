@@ -108,7 +108,7 @@ jQuery( function ( $ ) {
 		$('.password-input').each(function() {
 			const describedBy = $(this).find('input').attr('id');
 			$(this).append(
-				'<button class="show-password-input" aria-label="' + woocommerce_params.i18n_password_show + '" aria-describedBy="' + describedBy + '"></button>'
+				'<button class="show-password-input" aria-label="' + wc_password_strength_meter_params.i18n_password_show + '" aria-describedBy="' + describedBy + '"></button>'
 			);
 		});
 
@@ -117,10 +117,10 @@ jQuery( function ( $ ) {
 		
 			if ( $( this ).hasClass( 'display-password' ) ) {
 				$( this ).removeClass( 'display-password' );
-				$( this ).attr( 'aria-label', woocommerce_params.i18n_password_show );
+				$( this ).attr( 'aria-label', wc_password_strength_meter_params.i18n_password_show );
 			} else {
 				$( this ).addClass( 'display-password' );
-				$( this ).attr( 'aria-label', woocommerce_params.i18n_password_hide );
+				$( this ).attr( 'aria-label', wc_password_strength_meter_params.i18n_password_hide );
 			}
 			if ( $( this ).hasClass( 'display-password' ) ) {
 				$( this )
