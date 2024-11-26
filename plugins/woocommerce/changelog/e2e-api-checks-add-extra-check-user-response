@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+API core tests: add an extra check for response code on user create
