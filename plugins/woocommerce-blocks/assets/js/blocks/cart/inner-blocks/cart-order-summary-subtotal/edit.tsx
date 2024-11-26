@@ -21,11 +21,11 @@ export const Edit = ( { attributes }: BlockEditProps< BlockAttributes > ) => {
 		'woocommerce_order_summary_subtotal_heading'
 	);
 
-	const sectionHeading = useOrderSummaryHeadings(
+	const subtotalHeading = useOrderSummaryHeadings(
 		'woocommerce_order_summary_subtotal_heading'
 	);
 
-	const headingText = sectionHeading ?? __( 'Subtotal', 'woocommerce' );
+	const headingText = subtotalHeading ?? __( 'Subtotal', 'woocommerce' );
 
 	const heading = (
 		<RichText

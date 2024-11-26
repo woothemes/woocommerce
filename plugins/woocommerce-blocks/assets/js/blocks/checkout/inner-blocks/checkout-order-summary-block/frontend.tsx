@@ -15,25 +15,29 @@ import { OrderMetaSlotFill, CheckoutOrderSummaryFill } from './slotfills';
 import { useContainerWidthContext } from '../../../../base/context';
 import { FormattedMonetaryAmount } from '../../../../../../packages/components';
 import { FormStepHeading } from '../../form-step';
-import { BlockAttributes } from './edit';
+import { useOrderSummaryHeadings } from '../../../cart-checkout-shared/entities/order-summary-headings';
 
 type FrontendBlockProps = {
 	children: JSX.Element | JSX.Element[];
 	className?: string;
-} & BlockAttributes;
+};
 
-const FrontendBlock = ( {
-	children,
-	className = '',
-	sectionHeading,
-	footerHeading,
-}: FrontendBlockProps ) => {
+const FrontendBlock = ( { children, className = '' }: FrontendBlockProps ) => {
 	const { cartTotals } = useStoreCart();
 	const { isLarge } = useContainerWidthContext();
 	const [ isOpen, setIsOpen ] = useState( false );
 
-	const heading = sectionHeading ?? __( 'Order summary', 'woocommerce' );
-	const footerHeadingLabel = footerHeading ?? __( 'Total', 'woocommerce' );
+	const orderSummaryHeading = useOrderSummaryHeadings(
+		'woocommerce_order_summary_heading'
+	);
+
+	const orderSummaryFooterHeading = useOrderSummaryHeadings(
+		'woocommerce_order_summary_footer_heading'
+	);
+
+	const heading = orderSummaryHeading ?? __( 'Order summary', 'woocommerce' );
+	const footerHeadingLabel =
+		orderSummaryFooterHeading ?? __( 'Total', 'woocommerce' );
 
 	const totalsCurrency = getCurrencyFromPriceResponse( cartTotals );
 	const totalPrice = parseInt( cartTotals.total_price, 10 );

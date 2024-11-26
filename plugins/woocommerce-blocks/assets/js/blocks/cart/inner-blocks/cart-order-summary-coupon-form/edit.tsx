@@ -26,13 +26,14 @@ export const Edit = ( { attributes }: BlockEditProps< BlockAttributes > ) => {
 		'woocommerce_order_summary_coupon_heading'
 	);
 
-	const headingLabel = couponHeading ?? __( 'Add a coupon', 'woocommerce' );
+	const couponHeadingLabel =
+		couponHeading ?? __( 'Add a coupon', 'woocommerce' );
 
 	const heading = (
 		<RichText
-			value={ headingLabel }
+			value={ couponHeadingLabel }
 			onChange={ onCouponHeadingChange }
-			label={ headingLabel }
+			label={ couponHeadingLabel }
 		/>
 	);
 

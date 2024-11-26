@@ -20,10 +20,6 @@ export const Edit = ( {
 	const shippingEnabled = getSetting( 'shippingEnabled', true );
 	const blockProps = useBlockProps();
 
-	// const onChangeHeading = ( heading: string ) => {
-	// 	setAttributes( { sectionHeading: heading } );
-	// };
-
 	const onChangeHeading = createSetOrderSummaryHeadingCallback(
 		'woocommerce_order_summary_shipping_heading'
 	);

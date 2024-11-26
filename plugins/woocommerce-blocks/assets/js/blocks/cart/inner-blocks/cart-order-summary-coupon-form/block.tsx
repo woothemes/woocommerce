@@ -8,7 +8,6 @@ import { TotalsWrapper } from '@woocommerce/blocks-components';
 
 export type BlockAttributes = {
 	className: string;
-	sectionHeading?: string;
 };
 
 type BlockProps = BlockAttributes & {

@@ -7,12 +7,15 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import Block, { BlockAttributes } from './block';
+import { useOrderSummaryHeadings } from '../../../cart-checkout-shared/entities/order-summary-headings';
 
-const Frontend = ( { className = '', sectionHeading }: BlockAttributes ) => {
+const Frontend = ( { className = '' }: BlockAttributes ) => {
+	const orderSummarySubtotalHeading = useOrderSummaryHeadings(
+		'woocommerce_order_summary_subtotal_heading'
+	);
+
 	const headingText =
-		sectionHeading === null
-			? __( 'Subtotal', 'woocommerce' )
-			: sectionHeading;
+		orderSummarySubtotalHeading ?? __( 'Subtotal', 'woocommerce' );
 
 	return <Block label={ headingText } className={ className } />;
 };

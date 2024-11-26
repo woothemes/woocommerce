@@ -4,11 +4,13 @@
 import { TotalsFooterItem } from '@woocommerce/base-components/cart-checkout';
 import { getCurrencyFromPriceResponse } from '@woocommerce/price-format';
 import { useStoreCart } from '@woocommerce/base-context/hooks';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
 import { OrderMetaSlotFill } from './slotfills';
+import { useOrderSummaryHeadings } from '../../../cart-checkout-shared/entities/order-summary-headings';
 
 const FrontendBlock = ( {
 	children,
@@ -16,9 +18,16 @@ const FrontendBlock = ( {
 }: {
 	children?: JSX.Element | JSX.Element[];
 	className?: string;
-} ): JSX.Element | null => {
+} ) => {
 	const { cartTotals } = useStoreCart();
 	const totalsCurrency = getCurrencyFromPriceResponse( cartTotals );
+
+	const orderSummaryFooterHeading = useOrderSummaryHeadings(
+		'woocommerce_order_summary_footer_heading'
+	);
+
+	const footerHeadingLabel =
+		orderSummaryFooterHeading ?? __( 'Total', 'woocommerce' );
 
 	return (
 		<div className={ className }>
@@ -27,6 +36,7 @@ const FrontendBlock = ( {
 				<TotalsFooterItem
 					currency={ totalsCurrency }
 					values={ cartTotals }
+					label={ footerHeadingLabel }
 				/>
 			</div>
 			<OrderMetaSlotFill />

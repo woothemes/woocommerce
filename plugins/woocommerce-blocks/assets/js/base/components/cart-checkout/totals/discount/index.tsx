@@ -42,7 +42,7 @@ const TotalsDiscount = ( {
 	isRemovingCoupon,
 	removeCoupon,
 	values,
-}: TotalsDiscountProps ) => {
+}: TotalsDiscountProps ): JSX.Element | null => {
 	const {
 		total_discount: totalDiscount,
 		total_discount_tax: totalDiscountTax,

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useBlockProps, InnerBlocks } from '@wordpress/block-editor';
+import { useBlockProps, InnerBlocks, RichText } from '@wordpress/block-editor';
 import type { TemplateArray } from '@wordpress/blocks';
 import { innerBlockAreas } from '@woocommerce/blocks-checkout';
 import { __ } from '@wordpress/i18n';
@@ -17,6 +17,10 @@ import {
 	getAllowedBlocks,
 } from '../../../cart-checkout-shared';
 import { OrderMetaSlotFill } from './slotfills';
+import {
+	createSetOrderSummaryHeadingCallback,
+	useOrderSummaryHeadings,
+} from '../../../cart-checkout-shared/entities/order-summary-headings';
 
 export const Edit = ( { clientId }: { clientId: string } ): JSX.Element => {
 	const blockProps = useBlockProps();
@@ -25,6 +29,27 @@ export const Edit = ( { clientId }: { clientId: string } ): JSX.Element => {
 	const allowedBlocks = getAllowedBlocks(
 		innerBlockAreas.CART_ORDER_SUMMARY
 	);
+
+	const orderSummaryFooterHeading = useOrderSummaryHeadings(
+		'woocommerce_order_summary_footer_heading'
+	);
+
+	const orderSummaryFooterHeadingText =
+		orderSummaryFooterHeading ?? __( 'Total', 'woocommerce' );
+
+	const onChangeOrderSummaryFooterHeading =
+		createSetOrderSummaryHeadingCallback(
+			'woocommerce_order_summary_footer_heading'
+		);
+
+	const editableFooterHeading = (
+		<RichText
+			className="wc-block-components-totals-footer-heading"
+			value={ orderSummaryFooterHeadingText }
+			onChange={ onChangeOrderSummaryFooterHeading }
+		/>
+	);
+
 	const defaultTemplate = [
 		[
 			'woocommerce/cart-order-summary-heading-block',
@@ -53,6 +78,7 @@ export const Edit = ( { clientId }: { clientId: string } ): JSX.Element => {
 				<TotalsFooterItem
 					currency={ totalsCurrency }
 					values={ cartTotals }
+					label={ editableFooterHeading }
 				/>
 			</div>
 			<OrderMetaSlotFill />
