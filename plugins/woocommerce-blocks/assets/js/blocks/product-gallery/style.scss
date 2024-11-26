@@ -29,6 +29,10 @@ $admin-bar-mobile-height: 46px;
 
 		.admin-bar & {
 			margin-top: $admin-bar-desktop-height;
+
+			.wc-block-product-gallery-dialog__header {
+				padding-top: $dialog-header-padding-top;
+			}
 		}
 
 		@media screen and (max-width: 782px) {
@@ -50,18 +54,6 @@ $admin-bar-mobile-height: 46px;
 		}
 
 		#{$large-image} {
-			height: calc(100vh - $dialog-header-height - $dialog-header-padding-top);
-
-			.admin-bar & {
-				height: calc(100vh - $admin-bar-desktop-height - $dialog-header-height - $dialog-header-padding-top);
-			}
-
-			@media screen and (max-width: 782px) {
-				.admin-bar & {
-					height: calc(100vh - $admin-bar-mobile-height - $dialog-header-height - $dialog-header-padding-top);
-				}
-			}
-
 			img {
 				max-height: calc(100vh - (2 * $dialog-header-height) - $dialog-header-padding-top);
 				width: auto;
