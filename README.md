@@ -17,6 +17,8 @@ To get up and running within the WooCommerce Monorepo, you will need to make sur
 -   [PHP 7.4+](https://www.php.net/manual/en/install.php): WooCommerce Core currently features a minimum PHP version of 7.4. It is also needed to run Composer and various project build scripts. See [troubleshooting](DEVELOPMENT.md#troubleshooting) for troubleshooting problems installing PHP.
 -   [Composer](https://getcomposer.org/doc/00-intro.md): We use Composer to manage all of the dependencies for PHP packages and plugins.
 
+Note: A POSIX compliant operating system (e.g., Linux, macOS) is assumed. If you're working on a Windows machine, the recommended approach is to use [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) (available since Windows 10).
+
 Once you've installed all of the prerequisites, the following will prepare all of the build outputs necessary for development:
 
 ```bash
