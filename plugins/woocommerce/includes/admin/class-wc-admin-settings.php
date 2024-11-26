@@ -379,7 +379,7 @@ if ( ! class_exists( 'WC_Admin_Settings', false ) ) :
 
 					// Textarea.
 					case 'textarea':
-						$option_value = $value['value'];
+						$option_value     = $value['value'];
 						$show_desc_at_end = $value['desc_at_end'] ?? false;
 
 						?>
