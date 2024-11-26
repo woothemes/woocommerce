@@ -5672,9 +5672,11 @@ img.help_tip {
 		#title  {
 			padding: $gap-smallest $gap;
 			font-size: 20px;
-			line-height:
+			line-height: 46px;
+			height: auto;
 		}
 		#title-prompt-text {
+			color: var(--Gray-Gray-30, $studio-gray-30);
 		}
 		#title {
 			border-radius: $border-radius;
