@@ -59,6 +59,49 @@ test.describe( 'WooCommerce Email Settings', () => {
 		).toBeVisible();
 	} );
 
+	test( 'Email sender options live change in email preview', async ( {
+		page,
+		baseURL,
+	} ) => {
+		await setFeatureFlag( baseURL, 'yes' );
+		await page.goto( 'wp-admin/admin.php?page=wc-settings&tab=email' );
+
+		const fromNameElement = '#woocommerce_email_from_name';
+		const fromAddressElement = '#woocommerce_email_from_address';
+		const senderElement = '.wc-settings-email-preview-header-sender';
+
+		const getSender = async () => {
+			return await page.locator( senderElement ).textContent();
+		};
+
+		// Verify initial sender contains fromName and fromAddress
+		const initialFromName = await page
+			.locator( fromNameElement )
+			.inputValue();
+		const initialFromAddress = await page
+			.locator( fromAddressElement )
+			.inputValue();
+		let sender = await getSender();
+		expect( sender ).toContain( initialFromName );
+		expect( sender ).toContain( initialFromAddress );
+
+		// Change the fromName and verify the sender updates
+		const newFromName = 'New Name';
+		await page.fill( fromNameElement, newFromName );
+		await page.locator( fromNameElement ).blur();
+		sender = await getSender();
+		expect( sender ).toContain( newFromName );
+		expect( sender ).toContain( initialFromAddress );
+
+		// Change the fromAddress and verify the sender updates
+		const newFromAddress = 'new@example.com';
+		await page.fill( fromAddressElement, newFromAddress );
+		await page.locator( fromAddressElement ).blur();
+		sender = await getSender();
+		expect( sender ).toContain( newFromName );
+		expect( sender ).toContain( newFromAddress );
+	} );
+
 	test( 'See email image url field with a feature flag', async ( {
 		page,
 		baseURL,
