@@ -81,7 +81,7 @@ jobs:
             core.setOutput('PR_BASE_REF', '');
 
             console.log(`PR base ref: ${baseRefName}`);
-
+           
             if (!baseRefName.startsWith('release/')) {
               core.setFailed('The PR base_ref must start with release/.');
 
@@ -95,8 +95,31 @@ jobs:
                   'The PR you entered with the request does not originate from the release branch. Please switch your PR base to the target release branch and open a new request.'
               );
               return;
+            } else {
+              try {
+                await github.request( 'GET /repos/{owner}/{repo}/branches/{branch}', {
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  branch: baseRefName,
+                } );
+              } catch (error) {
+                core.setFailed('The PR base_ref does not exist.');
+
+                core.setOutput(
+                  'SLACK_MESSAGE',
+                  `:x: We did not process your ${labelName === 'code freeze exception' ? 'Code Freeze Exception' : 'Point Release Request'} because the release branch does not exist. Please check if your PR base originates from the target release branch. The current release branch is: \`${baseRefName}\`.\n\n${issueTitle} ${issueUrl}`
+                );
+
+                core.setOutput(
+                  'GITHUB_COMMENT',
+                  'The release branch does not exist. Please check if your PR base originates from the target release branch.'
+                );
+
+                return;
+              }
+
+              core.setOutput('PR_BASE_REF', baseRefName);
             }
-            core.setOutput('PR_BASE_REF', baseRefName);
 
       - name: Extract and verify the release number
         id: extract-release
