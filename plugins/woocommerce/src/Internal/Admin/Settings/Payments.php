@@ -145,22 +145,6 @@ class Payments {
 	}
 
 	/**
-	 * Get the offline payment methods details for the settings page.
-	 *
-	 * @return array The offline payment methods details list.
-	 */
-	public function get_offline_payment_methods(): array {
-		$offline_payment_methods = array();
-		foreach ( $this->get_offline_payment_methods_gateways() as $payment_gateway_order => $payment_gateway ) {
-			$gateway_details           = $this->get_payment_gateway_base_details( $payment_gateway, $payment_gateway_order );
-			$gateway_details           = $this->enhance_payment_gateway_details( $gateway_details, $payment_gateway );
-			$offline_payment_methods[] = $gateway_details;
-		}
-
-		return $offline_payment_methods;
-	}
-
-	/**
 	 * Get the source plugin slug of a payment gateway instance.
 	 *
 	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
