@@ -27,7 +27,7 @@ export interface Attributes {
 
 export type FeaturesKeys =
 	| 'isStepperLayoutFeatureEnabled'
-	| 'isBlockifyAddToCartEnabled';
+	| 'isBlockifiedAddToCart';
 
 export type FeaturesProps = {
 	[ key in FeaturesKeys ]?: boolean;
@@ -36,8 +36,8 @@ export type FeaturesProps = {
 export type UpdateFeaturesType = ( key: FeaturesKeys, value: boolean ) => void;
 
 // Pick the value of the "blockify add to cart flag"
-const isBlockifyAddToCartEnabled = getSettingWithCoercion(
-	'isBlockifyAddToCartEnabled',
+const isBlockifiedAddToCart = getSettingWithCoercion(
+	'isBlockifiedAddToCart',
 	false,
 	isBoolean
 );
@@ -83,7 +83,7 @@ const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
 				setAttributes={ setAttributes }
 				features={ {
 					isStepperLayoutFeatureEnabled,
-					isBlockifyAddToCartEnabled,
+					isBlockifiedAddToCart,
 				} }
 			/>
 			<div { ...blockProps }>

@@ -57,11 +57,11 @@ export const AddToCartFormSettings = ( {
 	setAttributes,
 	features,
 }: AddToCartFormSettings ) => {
-	const { isBlockifyAddToCartEnabled, isStepperLayoutFeatureEnabled } =
+	const { isBlockifiedAddToCart, isStepperLayoutFeatureEnabled } =
 		features;
 
 	const hasDevFeatures =
-		isStepperLayoutFeatureEnabled || isBlockifyAddToCartEnabled;
+		isStepperLayoutFeatureEnabled || isBlockifiedAddToCart;
 
 	if ( ! hasDevFeatures ) {
 		return null;

@@ -42,6 +42,6 @@
 		"reactify-classic-payments-settings": false,
 		"use-wp-horizon": false,
 		"add-to-cart-with-options-stepper-layout": true,
-		"blockify-add-to-cart": true
+		"blockified-add-to-cart": true
 	}
 }
