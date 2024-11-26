@@ -17,7 +17,7 @@ import { isBoolean } from '@woocommerce/types';
  */
 import './editor.scss';
 import { useIsDescendentOfSingleProductBlock } from '../../../atomic/blocks/product-elements/shared/use-is-descendent-of-single-product-block';
-import { QuantitySelectorStyle, Settings } from './settings';
+import { QuantitySelectorStyle, AddToCartSettings } from './settings';
 
 export interface Attributes {
 	className?: string;
@@ -42,7 +42,7 @@ const isBlockifyAddToCartEnabled = getSettingWithCoercion(
 	isBoolean
 );
 
-const Edit = ( props: BlockEditProps< Attributes > ) => {
+const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
 	const { setAttributes } = props;
 
 	const isStepperLayoutFeatureEnabled = getSettingWithCoercion(
@@ -79,7 +79,7 @@ const Edit = ( props: BlockEditProps< Attributes > ) => {
 	return (
 		<>
 			{ isStepperLayoutFeatureEnabled && (
-				<Settings
+				<AddToCartSettings
 					quantitySelectorStyle={
 						props.attributes.quantitySelectorStyle
 					}
@@ -187,4 +187,4 @@ const Edit = ( props: BlockEditProps< Attributes > ) => {
 	);
 };
 
-export default Edit;
+export default AddToCartFormEdit;

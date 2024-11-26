@@ -51,7 +51,7 @@ const getHelpText = ( quantitySelectorStyle: QuantitySelectorStyle ) => {
 	}
 };
 
-export const Settings = ( {
+export const AddToCartSettings = ( {
 	quantitySelectorStyle,
 	setAttributes,
 	features: { isBlockifyAddToCartEnabled },
