@@ -96,6 +96,10 @@ class WC_Settings_Emails extends WC_Settings_Page {
 		$header_alignment           = null;
 		$font_family                = null;
 
+		/* translators: %s: Available placeholders for use */
+		$footer_text_description = __( 'The text to appear in the footer of all WooCommerce emails.', 'woocommerce' ) . ' ' . sprintf( __( 'Available placeholders: %s', 'woocommerce' ), '{site_title} {site_url}' );
+		$footer_text_default     = '{site_title} &mdash; Built with {WooCommerce}';
+
 		$base_color_default        = '#7f54b3';
 		$bg_color_default          = '#f7f7f7';
 		$body_bg_color_default     = '#ffffff';
@@ -176,6 +180,10 @@ class WC_Settings_Emails extends WC_Settings_Page {
 					$additional_fonts
 				),
 			);
+
+			/* translators: %s: Available placeholders for use */
+			$footer_text_description = __( 'This text will appear in the footer of all of your WooCommerce emails.', 'woocommerce' ) . ' ' . sprintf( __( 'Available placeholders: %s', 'woocommerce' ), '{site_title} {site_url} {store_address} {store_email}' );
+			$footer_text_default     = '{site_title}<br />{store_address}';
 
 			$base_color_default        = '#8526ff';
 			$bg_color_default          = '#ffffff';
@@ -377,13 +385,12 @@ class WC_Settings_Emails extends WC_Settings_Page {
 
 				array(
 					'title'       => __( 'Footer text', 'woocommerce' ),
-					/* translators: %s: Available placeholders for use */
-					'desc'        => __( 'The text to appear in the footer of all WooCommerce emails.', 'woocommerce' ) . ' ' . sprintf( __( 'Available placeholders: %s', 'woocommerce' ), '{site_title} {site_url}' ),
+					'desc'        => $footer_text_description,
 					'id'          => 'woocommerce_email_footer_text',
 					'css'         => 'width:400px; height: 75px;',
 					'placeholder' => __( 'N/A', 'woocommerce' ),
 					'type'        => 'textarea',
-					'default'     => '{site_title} &mdash; Built with {WooCommerce}',
+					'default'     => $footer_text_default,
 					'autoload'    => false,
 					'desc_tip'    => true,
 				),
