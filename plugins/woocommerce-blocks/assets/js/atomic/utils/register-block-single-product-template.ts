@@ -23,6 +23,9 @@ function parseTemplateId( templateId: string | number | undefined ) {
 	return parsedTemplateId?.split( '//' )[ 1 ];
 }
 
+const isBlockRegistered = ( blockName: string ) =>
+	Boolean( getBlockType( blockName ) );
+
 export const registerBlockSingleProductTemplate = ( {
 	blockName,
 	blockMetadata,
@@ -59,7 +62,7 @@ export const registerBlockSingleProductTemplate = ( {
 			return;
 		}
 
-		let isBlockRegistered = Boolean( getBlockType( blockName ) );
+		let isRegistered = isBlockRegistered( blockName );
 
 		/**
 		 * We need to unregister the block each time the user visits or leaves the Single Product template.
@@ -70,7 +73,7 @@ export const registerBlockSingleProductTemplate = ( {
 		 *
 		 */
 		if (
-			isBlockRegistered &&
+			isRegistered &&
 			( currentTemplateId?.includes( 'single-product' ) ||
 				previousTemplateId?.includes( 'single-product' ) )
 		) {
@@ -79,10 +82,10 @@ export const registerBlockSingleProductTemplate = ( {
 			} else {
 				unregisterBlockType( blockName );
 			}
-			isBlockRegistered = false;
+			isRegistered = false;
 		}
 
-		if ( ! isBlockRegistered ) {
+		if ( ! isRegistered ) {
 			if ( isVariationBlock ) {
 				// @ts-expect-error: `registerBlockType` is not typed in WordPress core
 				registerBlockVariation( blockName, blockSettings );
@@ -102,17 +105,14 @@ export const registerBlockSingleProductTemplate = ( {
 	}, 'core/edit-site' );
 
 	subscribe( () => {
-		const isBlockRegistered = Boolean( variationName )
+		const isRegistered = Boolean( variationName )
 			? blocksRegistered.has( variationName )
-			: blocksRegistered.has( blockName );
+			: blocksRegistered.has( blockName ) ||
+			  isBlockRegistered( blockName );
 		// This subscribe callback could be invoked with the core/blocks store
 		// which would cause infinite registration loops because of the `registerBlockType` call.
 		// This local cache helps prevent that.
-		if (
-			! isBlockRegistered &&
-			isAvailableOnPostEditor &&
-			! editSiteStore
-		) {
+		if ( ! isRegistered && isAvailableOnPostEditor && ! editSiteStore ) {
 			if ( isVariationBlock ) {
 				blocksRegistered.add( variationName );
 				registerBlockVariation(
