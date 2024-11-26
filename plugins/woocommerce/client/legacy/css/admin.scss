@@ -5712,7 +5712,7 @@ img.help_tip {
 			margin: $gap $gap 0;
 		}
 		#post-status-info {
-			margin: 0px $gap $gap;
+			margin: 0 $gap $gap;
 			width: calc(100% - 2 * $gap);
 		}
 	}
@@ -5805,7 +5805,7 @@ img.help_tip {
 		display: none;
 	}
 
-	#postexcerpt >.postbox-header > .hndle >.woocommerce-help-tip,
+	#postexcerpt > .postbox-header > .hndle > .woocommerce-help-tip,
 	#wp-content-media-buttons > .woocommerce-help-tip {
 		margin: 0;
 	}
