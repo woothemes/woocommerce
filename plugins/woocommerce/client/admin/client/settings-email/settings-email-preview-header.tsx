@@ -8,8 +8,17 @@ import { useEffect, useState } from 'react';
  * Internal dependencies
  */
 import avatarIcon from './icon-avatar.svg';
+import { EmailType } from './settings-email-preview-slotfill';
 
-export const EmailPreviewHeader: React.FC = () => {
+type EmailPreviewHeaderProps = {
+	emailTypes: EmailType[];
+	emailType: string;
+};
+
+export const EmailPreviewHeader: React.FC< EmailPreviewHeaderProps > = ( {
+	emailTypes,
+	emailType,
+} ) => {
 	const [ fromName, setFromName ] = useState( '' );
 	const [ fromAddress, setFromAddress ] = useState( '' );
 
@@ -50,10 +59,18 @@ export const EmailPreviewHeader: React.FC = () => {
 		};
 	}, [] );
 
+	const getSubject = () => {
+		const email = emailTypes.find( ( type ) => type.value === emailType );
+		if ( ! email ) {
+			return '';
+		}
+		return email.subject || '';
+	};
+
 	return (
 		<div className="wc-settings-email-preview-header">
 			<h3 className="wc-settings-email-preview-header-subject">
-				Your SampleStore order is now complete
+				{ getSubject() }
 			</h3>
 			<div className="wc-settings-email-preview-header-data">
 				<div className="wc-settings-email-preview-header-icon">
