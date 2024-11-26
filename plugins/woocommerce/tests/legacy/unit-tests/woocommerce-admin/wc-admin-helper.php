@@ -244,16 +244,18 @@ class WC_Admin_Tests_Admin_Helper extends WC_Unit_Test_Case {
 
 		$wp_rewrite->expects( $this->any() )
 			->method( 'generate_rewrite_rule' )
-			->willReturn( array(
-				'shop/.*?$' => 'index.php?product_cat=$matches[1]&year=$matches[2]'
-			) );
+			->willReturn(
+				array(
+					'shop/.*?$' => 'index.php?product_cat=$matches[1]&year=$matches[2]',
+				)
+			);
 
 		$test_data = $this->get_store_page_test_data();
 
 		foreach ( $test_data as $data ) {
 			list( $url, $expected_result ) = $data;
 			$result                        = WCAdminHelper::is_store_page( $url );
-			$this->assertEquals( $expected_result, $result, 'Test failed for '. $url );
+			$this->assertEquals( $expected_result, $result, 'Test failed for ' . $url );
 		}
 
 		$callback = function ( $value ) {
