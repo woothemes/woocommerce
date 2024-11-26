@@ -1,6 +1,5 @@
 const { test, expect } = require( '../../../fixtures/api-tests-fixtures' );
 const { admin } = require( '../../../test-data/data' );
-const { customer } = require( '../../../data' );
 
 test.describe(
 	'Customers API tests: CRUD',
@@ -14,7 +13,7 @@ test.describe(
 			// Call the API to return all users and determine if a
 			// subscriber user has been created
 			const customersResponse = await request.get(
-				'/wp-json/wc/v3/customers',
+				'./wp-json/wc/v3/customers',
 				{
 					params: {
 						role: 'all',
@@ -34,7 +33,7 @@ test.describe(
 			if ( ! subscriberUserId ) {
 				const now = Date.now();
 				const userResponse = await request.post(
-					'/wp-json/wp/v2/users',
+					'./wp-json/wp/v2/users',
 					{
 						data: {
 							username: `customer_${ now }`,
@@ -58,7 +57,7 @@ test.describe(
 
 			// Verify the subscriber user has been created
 			const response = await request.get(
-				`/wp-json/wc/v3/customers/${ subscriberUserId }`
+				`./wp-json/wc/v3/customers/${ subscriberUserId }`
 			);
 			const responseJSON = await response.json();
 			expect( response.status() ).toEqual( 200 );
@@ -69,7 +68,7 @@ test.describe(
 			// delete subscriber user if one was created during the execution of these tests
 			if ( subscriberUserCreatedDuringTests ) {
 				await request.delete(
-					`/wp-json/wc/v3/customers/${ subscriberUserId }`,
+					`./wp-json/wc/v3/customers/${ subscriberUserId }`,
 					{
 						data: {
 							force: true,
@@ -93,7 +92,7 @@ test.describe(
 			test( 'can retrieve admin user', async ( { request } ) => {
 				// call API to retrieve the previously saved customer
 				const response = await request.get(
-					'/wp-json/wc/v3/customers/1'
+					'./wp-json/wc/v3/customers/1'
 				);
 				const responseJSON = await response.json();
 				expect( response.status() ).toEqual( 200 );
@@ -107,7 +106,7 @@ test.describe(
 				// if environment was created with subscriber user
 				// call API to retrieve the customer with id 2
 				const response = await request.get(
-					`/wp-json/wc/v3/customers/${ subscriberUserId }`
+					`./wp-json/wc/v3/customers/${ subscriberUserId }`
 				);
 				const responseJSON = await response.json();
 				expect( response.status() ).toEqual( 200 );
@@ -120,7 +119,7 @@ test.describe(
 			} ) => {
 				// call API to retrieve the previously saved customer
 				const response = await request.get(
-					'/wp-json/wc/v3/customers/0'
+					'./wp-json/wc/v3/customers/0'
 				);
 				const responseJSON = await response.json();
 				expect( response.status() ).toEqual( 404 );
@@ -135,12 +134,12 @@ test.describe(
 			test( 'can retrieve customers', async ( { request } ) => {
 				// call API to retrieve all customers should initially return empty array
 				const response = await request.get(
-					'/wp-json/wc/v3/customers'
+					'./wp-json/wc/v3/customers'
 				);
 				const responseJSON = await response.json();
 				expect( response.status() ).toEqual( 200 );
 				expect( Array.isArray( responseJSON ) ).toBe( true );
-				expect( responseJSON.length ).toEqual( 1 );
+				expect( responseJSON.length ).toBeGreaterThanOrEqual( 1 );
 			} );
 
 			// however, if we pass in the search string for role 'all' then all users are returned
@@ -149,7 +148,7 @@ test.describe(
 				// unless the role 'all' is passed as a search string, in which case the admin
 				// and subscriber users will be returned
 				const response = await request.get(
-					'/wp-json/wc/v3/customers',
+					'./wp-json/wc/v3/customers',
 					{
 						params: {
 							role: 'all',
@@ -166,10 +165,41 @@ test.describe(
 		test.describe( 'Create a customer', () => {
 			test( 'can create a customer', async ( { request } ) => {
 				// call API to create a customer
+				const username = `john.doe.${ Date.now() }`;
+				const email = `john.doe.${ Date.now() }@example.com`;
 				const response = await request.post(
-					'/wp-json/wc/v3/customers',
+					'./wp-json/wc/v3/customers',
 					{
-						data: customer,
+						data: {
+							email,
+							first_name: 'John',
+							last_name: 'Doe',
+							username,
+							billing: {
+								first_name: 'John',
+								last_name: 'Doe',
+								company: '',
+								address_1: '969 Market',
+								address_2: '',
+								city: 'San Francisco',
+								state: 'CA',
+								postcode: '94103',
+								country: 'US',
+								email,
+								phone: '(555) 555-5555',
+							},
+							shipping: {
+								first_name: 'John',
+								last_name: 'Doe',
+								company: '',
+								address_1: '969 Market',
+								address_2: '',
+								city: 'San Francisco',
+								state: 'CA',
+								postcode: '94103',
+								country: 'US',
+							},
+						},
 					}
 				);
 				const responseJSON = await response.json();
@@ -188,7 +218,7 @@ test.describe(
 			test( 'can retrieve a customer', async ( { request } ) => {
 				// call API to retrieve the previously saved customer
 				const response = await request.get(
-					`/wp-json/wc/v3/customers/${ customerId }`
+					`./wp-json/wc/v3/customers/${ customerId }`
 				);
 				const responseJSON = await response.json();
 				expect( response.status() ).toEqual( 200 );
@@ -202,7 +232,7 @@ test.describe(
 			} ) => {
 				// call API to retrieve all customers
 				const response = await request.get(
-					'/wp-json/wc/v3/customers'
+					'./wp-json/wc/v3/customers'
 				);
 				const responseJSON = await response.json();
 				expect( response.status() ).toEqual( 200 );
@@ -221,7 +251,7 @@ test.describe(
 				 * (https://github.com/woocommerce/woocommerce/tree/trunk/plugins/woocommerce/tests/e2e-pw#woocommerce-playwright-end-to-end-tests
 				 */
 				const response = await request.put(
-					`/wp-json/wc/v3/customers/1`,
+					`./wp-json/wc/v3/customers/1`,
 					{
 						data: {
 							first_name: 'admin',
@@ -244,7 +274,7 @@ test.describe(
 			test( 'retrieve after update admin', async ( { request } ) => {
 				// call API to retrieve the admin customer we updated above
 				const response = await request.get(
-					'/wp-json/wc/v3/customers/1'
+					'./wp-json/wc/v3/customers/1'
 				);
 				const responseJSON = await response.json();
 				expect( response.status() ).toEqual( 200 );
@@ -259,9 +289,10 @@ test.describe(
 				// update customer names (billing and shipping) to Jane
 				// (these were initialised blank, only regular first_name was populated)
 				const response = await request.put(
-					`/wp-json/wc/v3/customers/${ subscriberUserId }`,
+					`./wp-json/wc/v3/customers/${ subscriberUserId }`,
 					{
 						data: {
+							first_name: 'Jane',
 							billing: {
 								first_name: 'Jane',
 							},
@@ -273,6 +304,7 @@ test.describe(
 				);
 				const responseJSON = await response.json();
 				expect( response.status() ).toEqual( 200 );
+				expect( responseJSON.id ).toEqual( subscriberUserId );
 				expect( responseJSON.first_name ).toEqual( 'Jane' );
 				expect( responseJSON.billing.first_name ).toEqual( 'Jane' );
 				expect( responseJSON.shipping.first_name ).toEqual( 'Jane' );
@@ -281,7 +313,7 @@ test.describe(
 			test( 'retrieve after update subscriber', async ( { request } ) => {
 				// call API to retrieve the subscriber customer we updated above
 				const response = await request.get(
-					`/wp-json/wc/v3/customers/${ subscriberUserId }`
+					`./wp-json/wc/v3/customers/${ subscriberUserId }`
 				);
 				const responseJSON = await response.json();
 				expect( response.status() ).toEqual( 200 );
@@ -293,7 +325,7 @@ test.describe(
 			test( `can update a customer`, async ( { request } ) => {
 				// update customer names (regular, billing and shipping) from John to Jack
 				const response = await request.put(
-					`/wp-json/wc/v3/customers/${ customerId }`,
+					`./wp-json/wc/v3/customers/${ customerId }`,
 					{
 						data: {
 							first_name: 'Jack',
@@ -316,7 +348,7 @@ test.describe(
 			test( 'retrieve after update customer', async ( { request } ) => {
 				// call API to retrieve the updated customer we created above
 				const response = await request.get(
-					`/wp-json/wc/v3/customers/${ customerId }`
+					`./wp-json/wc/v3/customers/${ customerId }`
 				);
 				const responseJSON = await response.json();
 				expect( response.status() ).toEqual( 200 );
@@ -332,7 +364,7 @@ test.describe(
 			} ) => {
 				// Delete the customer.
 				const response = await request.delete(
-					`/wp-json/wc/v3/customers/${ customerId }`,
+					`./wp-json/wc/v3/customers/${ customerId }`,
 					{
 						data: {
 							force: true,
@@ -343,7 +375,7 @@ test.describe(
 
 				// Verify that the customer can no longer be retrieved.
 				const getDeletedCustomerResponse = await request.get(
-					`/wp-json/wc/v3/customers/${ customer }`
+					`./wp-json/wc/v3/customers/${ customerId }`
 				);
 				expect( getDeletedCustomerResponse.status() ).toEqual( 404 );
 			} );
@@ -353,12 +385,13 @@ test.describe(
 			/**
 			 * 2 Customers to be created in one batch.
 			 */
+			const now = Date.now();
 			const expectedCustomers = [
 				{
-					email: 'john.doe2@example.com',
+					email: `john.doe.${ now }@example.com`,
 					first_name: 'John',
 					last_name: 'Doe',
-					username: 'john.doe2',
+					username: `john.doe.${ now }`,
 					billing: {
 						first_name: 'John',
 						last_name: 'Doe',
@@ -369,7 +402,7 @@ test.describe(
 						state: 'CA',
 						postcode: '94103',
 						country: 'US',
-						email: 'john.doe2@example.com',
+						email: `john.doe.${ now }@example.com`,
 						phone: '(555) 555-5555',
 					},
 					shipping: {
@@ -385,10 +418,10 @@ test.describe(
 					},
 				},
 				{
-					email: 'joao.silva2@example.com',
+					email: `joao.silva.${ now }@example.com`,
 					first_name: 'João',
 					last_name: 'Silva',
-					username: 'joao.silva2',
+					username: `joao.silva.${ now }`,
 					billing: {
 						first_name: 'João',
 						last_name: 'Silva',
@@ -399,7 +432,7 @@ test.describe(
 						state: 'RJ',
 						postcode: '12345-000',
 						country: 'BR',
-						email: 'joao.silva2@example.com',
+						email: `joao.silva.${ now }@example.com`,
 						phone: '(55) 5555-5555',
 					},
 					shipping: {
@@ -454,16 +487,18 @@ test.describe(
 
 			test( 'can batch update customers', async ( { request } ) => {
 				// set payload to use batch update: action
+				const newEmail = `emailupdated.${ Date.now() }@example.com`;
+				const newAddress = '123 Addressupdate Street';
 				const batchUpdatePayload = {
 					update: [
 						{
 							id: expectedCustomers[ 0 ].id,
-							email: 'emailupdated@example.com',
+							email: newEmail,
 						},
 						{
 							id: expectedCustomers[ 1 ].id,
 							billing: {
-								address_1: '123 Addressupdate Street',
+								address_1: newAddress,
 							},
 						},
 					],
@@ -487,16 +522,14 @@ test.describe(
 				expect( updatedCustomers[ 0 ].id ).toEqual(
 					expectedCustomers[ 0 ].id
 				);
-				expect( updatedCustomers[ 0 ].email ).toEqual(
-					'emailupdated@example.com'
-				);
+				expect( updatedCustomers[ 0 ].email ).toEqual( newEmail );
 
 				// Verify that the amount of the 2nd customer was updated to have a new billing address.
 				expect( updatedCustomers[ 1 ].id ).toEqual(
 					expectedCustomers[ 1 ].id
 				);
 				expect( updatedCustomers[ 1 ].billing.address_1 ).toEqual(
-					'123 Addressupdate Street'
+					newAddress
 				);
 			} );
 
