@@ -249,6 +249,12 @@
 
 		}
 
+		.woocommerce-product-gallery__image a {
+			display: block;
+			line-height: 0;
+			outline-offset: -1px;
+		}
+
 		div.summary {
 			font-size: 1rem;
 
