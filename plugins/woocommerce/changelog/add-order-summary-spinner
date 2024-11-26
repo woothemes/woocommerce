@@ -1,0 +1,4 @@
+Significance: minor
+Type: update
+
+Adds a loading style to the order summary when processing server-side data, such as shipping changes, address changes, or changes triggered by an extension.
