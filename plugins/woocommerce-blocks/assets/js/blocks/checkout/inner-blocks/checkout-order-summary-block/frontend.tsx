@@ -3,7 +3,7 @@
  */
 import { TotalsFooterItem } from '@woocommerce/base-components/cart-checkout';
 import { getCurrencyFromPriceResponse } from '@woocommerce/price-format';
-import { useStoreCart } from '@woocommerce/base-context/hooks';
+import { useShippingData, useStoreCart } from '@woocommerce/base-context/hooks';
 import { __ } from '@wordpress/i18n';
 import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import { useId, useState } from '@wordpress/element';
@@ -26,6 +26,7 @@ const FrontendBlock = ( {
 } ): JSX.Element | null => {
 	const { cartTotals, isApplyingExtensionCartUpdate, isLoadingRates } =
 		useStoreCart();
+	const { isSelectingRate } = useShippingData();
 	const { isLarge } = useContainerWidthContext();
 	const [ isOpen, setIsOpen ] = useState( false );
 
@@ -53,7 +54,11 @@ const FrontendBlock = ( {
 	return (
 		<>
 			<LoadingMask
-				isLoading={ isApplyingExtensionCartUpdate || isLoadingRates }
+				isLoading={
+					isApplyingExtensionCartUpdate ||
+					isLoadingRates ||
+					isSelectingRate
+				}
 				screenReaderLabel={ __(
 					'Loading shipping rates…',
 					'woocommerce'
