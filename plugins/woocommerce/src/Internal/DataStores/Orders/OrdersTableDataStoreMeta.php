@@ -1,8 +1,6 @@
 <?php
 /**
  * OrdersTableDataStoreMeta class file.
- *
- * @phpcs:disable Universal.NamingConventions.NoReservedKeywordParameterNames.objectFound
  */
 
 namespace Automattic\WooCommerce\Internal\DataStores\Orders;
@@ -42,6 +40,8 @@ class OrdersTableDataStoreMeta extends CustomMetaDataStore {
 	protected function get_object_id_field() {
 		return 'order_id';
 	}
+
+	// @phpcs:disable Universal.NamingConventions.NoReservedKeywordParameterNames.objectFound
 
 	/**
 	 * Deletes meta based on meta ID.
@@ -93,6 +93,8 @@ class OrdersTableDataStoreMeta extends CustomMetaDataStore {
 
 		return $is_successful;
 	}
+
+	// @phpcs:enable Universal.NamingConventions.NoReservedKeywordParameterNames.objectFound
 
 	/**
 	 * Return order meta data for multiple IDs. Results are cached.
