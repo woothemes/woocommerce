@@ -245,7 +245,7 @@ const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
 						__nextHasNoMarginBottom
 					/>
 					<SelectControl
-						label="Values in conflict with current selection"
+						label={ __( 'Values in conflict with current selection', 'woocommerce' ) }
 						help={ __( 'This controls what to do with attribute values that conflict with the current selection.', 'woocommerce' ) }
 						value={ attributesUnattachedAction }
 						options={ [
