@@ -626,4 +626,70 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 			await expect( pageObject.products ).toHaveCount( 1 );
 		} );
 	} );
+
+	test( 'Display -> Items per page, offset & max page to show', async ( {
+		pageObject,
+		page,
+		editor,
+	} ) => {
+		await pageObject.createNewPostAndInsertBlock();
+
+		// Add all display controls
+		await page.getByRole( 'button', { name: 'Settings options' } ).click();
+		await page.getByRole( 'menuitemcheckbox', { name: 'Offset' } ).click();
+		await page
+			.getByRole( 'menuitemcheckbox', { name: 'Max pages to show' } )
+			.click();
+		await page.getByRole( 'button', { name: 'Settings options' } ).click();
+
+		// Get the products per page input
+		const settingsPanel = page.locator(
+			'.wc-block-editor-product-collection__settings_panel'
+		);
+		const productsPerPageInput = settingsPanel.getByRole( 'spinbutton', {
+			name: 'Products per page',
+		} );
+
+		// Test setting products per page to 2
+		await productsPerPageInput.fill( '2' );
+		await pageObject.refreshLocators( 'editor' );
+		await expect( pageObject.products ).toHaveCount( 2 );
+
+		// Test setting products per page to 3
+		await productsPerPageInput.fill( '3' );
+		await pageObject.refreshLocators( 'editor' );
+		await expect( pageObject.products ).toHaveCount( 3 );
+
+		// Set offset to 1 and verify it skips the first product
+		const offsetInput = settingsPanel.getByRole( 'spinbutton', {
+			name: 'Offset',
+		} );
+		await offsetInput.fill( '1' );
+		const loadingSpinner = editor.canvas.locator(
+			'.wc-block-product-template__spinner'
+		);
+		await expect( loadingSpinner ).toBeHidden();
+		await pageObject.refreshLocators( 'editor' );
+		await expect( pageObject.productTitles.first() ).toHaveText( 'Beanie' );
+
+		// Set max pages to show
+		const maxPagesInput = settingsPanel.getByRole( 'spinbutton', {
+			name: 'Max pages to show',
+		} );
+		await maxPagesInput.fill( '2' );
+
+		await pageObject.publishAndGoToFrontend();
+
+		// Frontend: Verify products are displayed correctly
+		await expect( pageObject.products ).toHaveCount( 3 );
+		await expect( pageObject.productTitles.first() ).toHaveText( 'Beanie' );
+
+		// Frontend: Verify pagination is limited to 2 pages
+		const paginationContainer = page.locator(
+			SELECTORS.pagination.onFrontend
+		);
+		const paginationNumbers =
+			paginationContainer.locator( '.page-numbers' );
+		await expect( paginationNumbers ).toHaveCount( 2 );
+	} );
 } );
