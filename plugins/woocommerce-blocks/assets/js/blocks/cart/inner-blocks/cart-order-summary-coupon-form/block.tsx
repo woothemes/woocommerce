@@ -15,11 +15,7 @@ type BlockProps = BlockAttributes & {
 	heading?: React.ReactNode;
 };
 
-const Block = ( {
-	className,
-	heading,
-	isEditor = false,
-}: BlockProps ): JSX.Element | null => {
+const Block = ( { className, heading, isEditor = false }: BlockProps ) => {
 	const couponsEnabled = getSetting( 'couponsEnabled', true );
 
 	const { applyCoupon, isApplyingCoupon } = useStoreCartCoupons( 'wc/cart' );
