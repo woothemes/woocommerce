@@ -3,7 +3,7 @@ namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 use Automattic\WooCommerce\StoreApi\Utilities\LocalPickupUtils;
 use Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils;
-
+use Automattic\WooCommerce\Blocks\Utils\CartCheckoutSharedSettings;
 /**
  * Checkout class.
  *
@@ -33,6 +33,7 @@ class Checkout extends AbstractBlock {
 	protected function initialize() {
 		parent::initialize();
 		add_action( 'wp_loaded', array( $this, 'register_patterns' ) );
+		add_action( 'wp_loaded', array( CartCheckoutSharedSettings::class, 'register_order_summary_heading_options' ) );
 		// This prevents the page redirecting when the cart is empty. This is so the editor still loads the page preview.
 		add_filter(
 			'woocommerce_checkout_redirect_empty_cart',
@@ -140,6 +141,19 @@ class Checkout extends AbstractBlock {
 		 */
 		do_action( 'woocommerce_blocks_enqueue_checkout_block_scripts_after' );
 	}
+
+	// public function register_settings() {
+	// register_setting(
+	// 'options',
+	// 'woocommerce_order_summary_shipping_heading',
+	// array(
+	// 'type'        => 'string',
+	// 'description' => 'Thing for stuff',
+	// 'label'       => 'Shipping Heading',
+	// 'default'     => null,
+	// )
+	// );
+	// }
 
 	/**
 	 * Append frontend scripts when rendering the block.

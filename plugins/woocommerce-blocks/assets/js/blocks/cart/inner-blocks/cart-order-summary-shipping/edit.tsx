@@ -11,18 +11,22 @@ import { BlockEditProps } from '@wordpress/blocks';
  * Internal dependencies
  */
 import Block, { BlockAttributes } from './block';
+import { createSetOrderSummaryHeadingCallback } from '../../../cart-checkout-shared/entities/order-summary-headings';
 
 export const Edit = ( {
 	attributes,
-	setAttributes,
 }: BlockEditProps< BlockAttributes > ): JSX.Element => {
-	const { className, sectionHeading } = attributes;
+	const { className } = attributes;
 	const shippingEnabled = getSetting( 'shippingEnabled', true );
 	const blockProps = useBlockProps();
 
-	const onChangeHeading = ( heading: string ) => {
-		setAttributes( { sectionHeading: heading } );
-	};
+	// const onChangeHeading = ( heading: string ) => {
+	// 	setAttributes( { sectionHeading: heading } );
+	// };
+
+	const onChangeHeading = createSetOrderSummaryHeadingCallback(
+		'woocommerce_order_summary_shipping_heading'
+	);
 
 	return (
 		<div { ...blockProps }>
@@ -48,7 +52,6 @@ export const Edit = ( {
 
 			<Block
 				onChangeHeading={ onChangeHeading }
-				sectionHeading={ sectionHeading }
 				className={ className }
 			/>
 		</div>

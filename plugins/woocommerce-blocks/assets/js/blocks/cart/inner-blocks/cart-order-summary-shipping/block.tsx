@@ -23,6 +23,7 @@ import { getSetting } from '@woocommerce/settings';
  */
 import { ShippingRateSelector } from './shipping-rate-selector';
 import { EditableText } from '../../../../../../packages/components/editable-text';
+import { useOrderSummaryHeadings } from '../../../cart-checkout-shared/entities/order-summary-headings';
 
 export type BlockAttributes = {
 	sectionHeading: string | null;
@@ -31,15 +32,10 @@ export type BlockAttributes = {
 
 export type BlockProps = {
 	className: string;
-	sectionHeading: string | null;
 	onChangeHeading?: ( heading: string ) => void;
 };
 
-const Block = ( {
-	className,
-	sectionHeading,
-	onChangeHeading,
-}: BlockProps ) => {
+const Block = ( { className, onChangeHeading }: BlockProps ) => {
 	const { isEditor } = useEditorContext();
 	const { cartNeedsShipping, shippingRates } = useStoreCart();
 	const [ isShippingCalculatorOpen, setIsShippingCalculatorOpen ] =
@@ -52,8 +48,11 @@ const Block = ( {
 		? __( 'Collection', 'woocommerce' )
 		: __( 'Delivery', 'woocommerce' );
 
-	const heading =
-		sectionHeading === null ? collectionOrDelivery : sectionHeading;
+	const sectionHeading = useOrderSummaryHeadings(
+		'woocommerce_order_summary_shipping_heading'
+	);
+
+	const heading = sectionHeading ?? collectionOrDelivery;
 
 	const label =
 		isEditor && onChangeHeading ? (

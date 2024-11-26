@@ -9,19 +9,23 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import Block, { BlockAttributes } from './block';
+import {
+	createSetOrderSummaryHeadingCallback,
+	useOrderSummaryHeadings,
+} from '../../../cart-checkout-shared/entities/order-summary-headings';
 
-export const Edit = ( {
-	attributes,
-	setAttributes,
-}: BlockEditProps< BlockAttributes > ) => {
-	const { className, sectionHeading } = attributes;
+export const Edit = ( { attributes }: BlockEditProps< BlockAttributes > ) => {
+	const { className } = attributes;
 	const blockProps = useBlockProps();
+	const onChangeHeading = createSetOrderSummaryHeadingCallback(
+		'woocommerce_order_summary_subtotal_heading'
+	);
+
+	const sectionHeading = useOrderSummaryHeadings(
+		'woocommerce_order_summary_subtotal_heading'
+	);
 
 	const headingText = sectionHeading ?? __( 'Subtotal', 'woocommerce' );
-
-	const onChangeHeading = ( newHeading: string ) => {
-		setAttributes( { sectionHeading: newHeading } );
-	};
 
 	const heading = (
 		<RichText
