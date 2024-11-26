@@ -161,12 +161,12 @@ jobs:
 
       - name: Notify Slack
         uses: archive/github-actions-slack@v2.0.0
-        if: ${{ failure() && steps.extract-release.outputs.SLACK_MESSAGE != '' }}
+        if: ${{ failure() && (steps.verify-pr.outputs.SLACK_MESSAGE != '' || steps.extract-release.outputs.SLACK_MESSAGE != '') }}
         id: notify
         with:
           slack-bot-user-oauth-access-token: ${{ secrets.CODE_FREEZE_BOT_TOKEN }}
           slack-channel: ${{ secrets.WOO_RELEASE_SLACK_CHANNEL }}
-          slack-text: ${{ steps.extract-release.outputs.SLACK_MESSAGE }}
+          slack-text: ${{ steps.verify-pr.outputs.SLACK_MESSAGE || steps.extract-release.outputs.SLACK_MESSAGE }}
           slack-optional-unfurl_links: false
           slack-optional-unfurl_media: false
 
@@ -185,7 +185,7 @@ jobs:
           ISSUE_URL: ${{ github.event.issue.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh issue close "$ISSUE_URL" --comment "${{ steps.extract-release.outputs.GITHUB_COMMENT }}"
+          gh issue close "$ISSUE_URL" --comment "${{ steps.verify-pr.outputs.GITHUB_COMMENT || steps.extract-release.outputs.GITHUB_COMMENT }}"
 
   apply-milestone:
     if: github.event.label.name == 'code freeze exception' || github.event.label.name == 'point release request' || github.event.label.name == 'Approved' || github.event.label.name == 'Rejected'
