@@ -3,7 +3,6 @@ declare( strict_types=1 );
 
 namespace Automattic\WooCommerce\Tests\Internal\Admin\Settings;
 
-use Automattic\Jetpack\IdentityCrisis\Exception;
 use Automattic\WooCommerce\Internal\Admin\Settings\Payments;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentsRestController;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -39,36 +38,6 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	 * @var int
 	 */
 	protected $store_admin_id;
-
-	/**
-	 * The initial country that is set before running tests in this test suite.
-	 *
-	 * @var string $initial_country
-	 */
-	private static string $initial_country = '';
-
-	/**
-	 * The initial currency that is set before running tests in this test suite.
-	 *
-	 * @var string $initial_currency
-	 */
-	private static string $initial_currency = '';
-
-	/**
-	 * Saves values of initial country and currency before running test suite.
-	 */
-	public static function wpSetUpBeforeClass(): void {
-		self::$initial_country  = WC()->countries->get_base_country();
-		self::$initial_currency = get_woocommerce_currency();
-	}
-
-	/**
-	 * Restores initial values of country and currency after running test suite.
-	 */
-	public static function wpTearDownAfterClass(): void {
-		update_option( 'woocommerce_default_country', self::$initial_country );
-		update_option( 'woocommerce_currency', self::$initial_currency );
-	}
 
 	/**
 	 * Set up test.
@@ -378,6 +347,48 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	}
 
 	/**
+	 * Test getting payment providers with no suggestions.
+	 */
+	public function test_get_payment_providers_without_suggestions() {
+		// Arrange.
+		$this->mock_providers( true );
+		$this->mock_extension_suggestions_categories();
+
+		// Act.
+		$request = new WP_REST_Request( 'GET', self::ENDPOINT . '/providers' );
+		$request->set_param( 'location', 'US' );
+		$response = $this->server->dispatch( $request );
+
+		// Assert.
+		$this->assertEquals( 200, $response->get_status() );
+
+		$data = $response->get_data();
+
+		// Assert all the entries are in the response.
+		$this->assertArrayHasKey( 'providers', $data );
+		$this->assertArrayHasKey( 'offline_payment_methods', $data );
+		$this->assertArrayHasKey( 'suggestions', $data );
+		$this->assertArrayHasKey( 'suggestion_categories', $data );
+
+		// We have the core PayPal gateway registered, and the offline PMs group entry.
+		$this->assertCount( 2, $data['providers'] );
+		$this->assertCount( 3, $data['offline_payment_methods'] );
+		// No suggestions.
+		$this->assertCount( 0, $data['suggestions'] );
+		// Assert we get the suggestion categories.
+		$this->assertCount( 3, $data['suggestion_categories'] );
+
+		// Assert that we have the right providers, in the right order.
+		$this->assertSame(
+			array(
+				Payments::OFFLINE_METHODS_ORDERING_GROUP,
+				'paypal',
+			),
+			array_column( $data['providers'], 'id' )
+		);
+	}
+
+	/**
 	 * Test getting payment providers with no registered payment gateways (regular or offline PM).
 	 */
 	public function test_get_payment_providers_without_any_pgs() {
@@ -459,6 +470,9 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$this->assertCount( 2, $data['suggestions'] );
 		// Assert we get the suggestion categories.
 		$this->assertCount( 3, $data['suggestion_categories'] );
+
+		// Clean up.
+		delete_option( 'woocommerce_default_country' );
 	}
 
 	/**
@@ -691,7 +705,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 			->expects( $this->once() )
 			->method( 'hide_payment_extension_suggestion' )
 			->with( 'suggestion_id' )
-			->willThrowException( new Exception() );
+			->willThrowException( new \Exception() );
 
 		// Act.
 		$request  = new WP_REST_Request( 'POST', self::ENDPOINT . '/suggestion/suggestion_id/hide' );
@@ -737,7 +751,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 			$mock_providers[] = array(
 				'id'                => '_wc_pes_woopayments',
 				'_order'            => $order++,
-				'_type'             => 'suggestion',
+				'_type'             => Payments::PROVIDER_TYPE_SUGGESTION,
 				'title'             => 'Accept payments with Woo',
 				'description'       => 'With WooPayments, you can securely accept major cards, Apple Pay, and payments in over 100 currencies. Track cash flow and manage recurring revenue directly from your store’s dashboard - with no setup costs or monthly fees.',
 				'short_description' => 'Credit/debit cards, Apple Pay, Google Pay and more.',
@@ -779,7 +793,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 			$mock_providers[] = array(
 				'id'                => '_wc_pes_paypal_full_stack',
 				'_order'            => $order++,
-				'_type'             => 'suggestion',
+				'_type'             => Payments::PROVIDER_TYPE_SUGGESTION,
 				'title'             => 'PayPal Payments',
 				'description'       => 'Safe and secure payments using credit cards or your customer&#039;s PayPal account.',
 				'short_description' => '',
@@ -815,7 +829,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 			$mock_providers[] = array(
 				'id'          => '_wc_offline_payment_methods_group',
 				'_order'      => $order++,
-				'_type'       => 'offline_pms_group',
+				'_type'       => Payments::PROVIDER_TYPE_OFFLINE_PMS_GROUP,
 				'title'       => 'Offline Payment Methods',
 				'description' => 'Allow shoppers to pay offline.',
 				'icon'        => 'http://localhost:8888/wp-content/plugins/woocommerce/assets/images/payment_methods/cod.svg',
@@ -823,7 +837,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 			$mock_providers[] = array(
 				'id'          => 'bacs',
 				'_order'      => $order++,
-				'_type'       => 'offline_pm',
+				'_type'       => Payments::PROVIDER_TYPE_OFFLINE_PM,
 				'title'       => 'Direct bank transfer',
 				'description' => 'Take payments in person via BACS. More commonly known as direct bank/wire transfer.',
 				'supports'    => array(
@@ -852,7 +866,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 			$mock_providers[] = array(
 				'id'          => 'cheque',
 				'_order'      => $order++,
-				'_type'       => 'offline_pm',
+				'_type'       => Payments::PROVIDER_TYPE_OFFLINE_PM,
 				'title'       => 'Check payments',
 				'description' => 'Take payments in person via checks. This offline gateway can also be useful to test purchases.',
 				'supports'    => array(
@@ -881,7 +895,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 			$mock_providers[] = array(
 				'id'          => 'cod',
 				'_order'      => $order++,
-				'_type'       => 'offline_pm',
+				'_type'       => Payments::PROVIDER_TYPE_OFFLINE_PM,
 				'title'       => 'Cash on delivery',
 				'description' => 'Have your customers pay with cash (or by other means) upon delivery.',
 				'supports'    => array(
@@ -913,6 +927,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 			$mock_providers[] = array(
 				'id'          => 'paypal',
 				'_order'      => $order++,
+				'_type'       => Payments::PROVIDER_TYPE_GATEWAY,
 				'title'       => 'PayPal',
 				'description' => 'PayPal',
 				'supports'    => array( 'products' ),
@@ -959,7 +974,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 			->method( 'get_extension_suggestions' );
 
 		if ( ! is_null( $location ) ) {
-			$mocker->with( $location );
+			$mocker = $mocker->with( $location );
 		}
 
 		$mocker->willReturn(
