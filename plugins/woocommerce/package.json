@@ -457,6 +457,8 @@
 						"src/**/*.php",
 						"templates/**/*.php",
 						"tests/e2e-pw/tests/api-tests/**",
+						"tests/e2e-pw/*.js",
+						"tests/e2e-pw/*.sh",
 						".wp-env.json",
 						"woocommerce.php",
 						"uninstall.php"
