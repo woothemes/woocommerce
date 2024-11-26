@@ -1065,6 +1065,57 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	}
 
 	/**
+	 * Test `virtual` filter returns only virtual products.
+	 */
+	public function test_virtual_filter_returns_only_virtual_products() {
+		WC_Helper_Product::create_simple_product( true, array( 'virtual' => true ) );
+		WC_Helper_Product::create_simple_product();
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_param( 'virtual', true );
+
+		$response = $this->server->dispatch( $request );
+		$products = $response->get_data();
+
+		$this->assertEquals( 200, $response->get_status() );
+		foreach ( $products as $product ) {
+			$this->assertTrue( $product['virtual'] );
+		}
+	}
+
+	/**
+	 * Test `virtual` filter returns only non-virtual products when is false.
+	 */
+	public function test_virtual_filter_returns_only_non_virtual_products() {
+		WC_Helper_Product::create_simple_product( true, array( 'virtual' => true ) );
+		WC_Helper_Product::create_simple_product();
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_param( 'virtual', false );
+
+		$response = $this->server->dispatch( $request );
+		$products = $response->get_data();
+
+		$this->assertEquals( 200, $response->get_status() );
+		foreach ( $products as $product ) {
+			$this->assertFalse( $product['virtual'] );
+		}
+	}
+
+	/**
+	 * Test invalid virtual parameter type returns error.
+	 */
+	public function test_virtual_filter_with_invalid_param() {
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_param( 'virtual', 'invalid' );
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 'rest_invalid_param', $response->get_data()['code'] );
+	}
+
+	/**
 	 * Test the duplicate product endpoint with simple products.
 	 */
 	public function test_duplicate_simple_product() {
