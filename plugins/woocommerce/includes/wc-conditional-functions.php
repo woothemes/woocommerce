@@ -143,7 +143,7 @@ if ( ! function_exists( 'is_cart' ) ) {
 
 		$page_id = wc_get_page_id( 'cart' );
 
-		return ( $page_id && is_page( $page_id ) ) || Constants::is_defined( 'WOOCOMMERCE_CART' ) || wc_post_content_has_shortcode( 'woocommerce_cart' );
+		return ( $page_id && is_page( $page_id ) ) || Constants::is_defined( 'WOOCOMMERCE_CART' ) || wc_post_content_has_shortcode( 'woocommerce_cart', false );
 	}
 }
 
@@ -165,7 +165,7 @@ if ( ! function_exists( 'is_checkout' ) ) {
 
 		$page_id = wc_get_page_id( 'checkout' );
 
-		return ( $page_id && is_page( $page_id ) ) || wc_post_content_has_shortcode( 'woocommerce_checkout' ) || apply_filters( 'woocommerce_is_checkout', false ) || Constants::is_defined( 'WOOCOMMERCE_CHECKOUT' );
+		return ( $page_id && is_page( $page_id ) ) || wc_post_content_has_shortcode( 'woocommerce_checkout', false ) || apply_filters( 'woocommerce_is_checkout', false ) || Constants::is_defined( 'WOOCOMMERCE_CHECKOUT' );
 	}
 }
 
@@ -250,7 +250,7 @@ if ( ! function_exists( 'is_account_page' ) ) {
 
 		$page_id = wc_get_page_id( 'myaccount' );
 
-		return ( $page_id && is_page( $page_id ) ) || wc_post_content_has_shortcode( 'woocommerce_my_account' ) || apply_filters( 'woocommerce_is_account_page', false );
+		return ( $page_id && is_page( $page_id ) ) || wc_post_content_has_shortcode( 'woocommerce_my_account', false ) || apply_filters( 'woocommerce_is_account_page', false );
 	}
 }
 
@@ -533,13 +533,14 @@ function wc_checkout_is_https() {
 /**
  * Checks whether the content passed contains a specific short code.
  *
- * @param  string $tag Shortcode tag to check.
+ * @param  string $tag                             Shortcode tag to check.
+ * @param  bool   $_internal_report_doing_it_wrong internal param to avoid duplicate errors
  * @return bool
  */
-function wc_post_content_has_shortcode( $tag = '' ) {
+function wc_post_content_has_shortcode( $tag = '', $_internal_report_doing_it_wrong = true ) {
 	global $post;
 
-	if ( ! did_action( 'wp' ) ) {
+	if ( ! did_action( 'wp' ) && $_internal_report_doing_it_wrong ) {
 		wc_doing_it_wrong(
 			__FUNCTION__,
 			sprintf( '%s can only be used on or after the "wp" action hook', __FUNCTION__ ),
