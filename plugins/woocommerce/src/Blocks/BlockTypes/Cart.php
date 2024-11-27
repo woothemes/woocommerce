@@ -259,6 +259,8 @@ class Cart extends AbstractBlock {
 			$this->asset_data_registry->hydrate_api_request( '/wc/store/v1/cart' );
 		}
 
+		CartCheckoutSharedSettings::register_data( $this->asset_data_registry );
+
 		/**
 		 * Fires after cart block data is registered.
 		 *

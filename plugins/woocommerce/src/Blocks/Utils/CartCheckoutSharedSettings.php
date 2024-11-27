@@ -6,6 +6,21 @@ namespace Automattic\WooCommerce\Blocks\Utils;
  * Class containing shared settings for Cart and Checkout blocks.
  */
 class CartCheckoutSharedSettings {
+
+	/**
+	 * Registers the order summary heading options shared by cart and checkout.
+	 *
+	 * @param AssetDataRegistry $asset_data_registry Asset data registry.
+	 */
+	public static function register_data( $asset_data_registry ) {
+		$asset_data_registry->add( 'woocommerce_order_summary_heading', get_option( 'woocommerce_order_summary_heading' ) );
+		$asset_data_registry->add( 'woocommerce_order_summary_footer_heading', get_option( 'woocommerce_order_summary_footer_heading' ) );
+		$asset_data_registry->add( 'woocommerce_order_summary_subtotal_heading', get_option( 'woocommerce_order_summary_subtotal_heading' ) );
+		$asset_data_registry->add( 'woocommerce_order_summary_shipping_heading', get_option( 'woocommerce_order_summary_shipping_heading' ) );
+		$asset_data_registry->add( 'woocommerce_order_summary_coupon_heading', get_option( 'woocommerce_order_summary_coupon_heading' ) );
+		$asset_data_registry->add( 'woocommerce_order_summary_fee_heading', get_option( 'woocommerce_order_summary_fee_heading' ) );
+	}
+
 	/**
 	 * Registers the order summary heading options shared by cart and checkout.
 	 */

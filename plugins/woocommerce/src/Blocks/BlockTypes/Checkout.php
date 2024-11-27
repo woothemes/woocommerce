@@ -464,6 +464,8 @@ class Checkout extends AbstractBlock {
 			$this->hydrate_customer_payment_methods();
 		}
 
+		CartCheckoutSharedSettings::register_data( $this->asset_data_registry );
+
 		/**
 		 * Fires after checkout block data is registered.
 		 *

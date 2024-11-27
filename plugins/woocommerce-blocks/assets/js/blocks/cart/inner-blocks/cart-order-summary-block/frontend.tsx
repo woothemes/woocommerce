@@ -5,12 +5,12 @@ import { TotalsFooterItem } from '@woocommerce/base-components/cart-checkout';
 import { getCurrencyFromPriceResponse } from '@woocommerce/price-format';
 import { useStoreCart } from '@woocommerce/base-context/hooks';
 import { __ } from '@wordpress/i18n';
-import { useOrderSummaryHeadings } from '@woocommerce/blocks/cart-checkout-shared';
 
 /**
  * Internal dependencies
  */
 import { OrderMetaSlotFill } from './slotfills';
+import { useOrderSummaryHeadingFromFrontend } from '../../../../entities/frontend';
 
 const FrontendBlock = ( {
 	children,
@@ -22,7 +22,7 @@ const FrontendBlock = ( {
 	const { cartTotals } = useStoreCart();
 	const totalsCurrency = getCurrencyFromPriceResponse( cartTotals );
 
-	const orderSummaryFooterHeading = useOrderSummaryHeadings(
+	const orderSummaryFooterHeading = useOrderSummaryHeadingFromFrontend(
 		'woocommerce_order_summary_footer_heading'
 	);
 

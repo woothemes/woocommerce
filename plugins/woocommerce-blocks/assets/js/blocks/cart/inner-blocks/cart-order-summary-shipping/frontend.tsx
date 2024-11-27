@@ -1,18 +1,14 @@
 /**
- * External dependencies
- */
-import { useOrderSummaryHeadings } from '@woocommerce/blocks/cart-checkout-shared';
-
-/**
  * Internal dependencies
  */
+import { useOrderSummaryHeadingFromFrontend } from '../../../../entities/frontend';
 import Block, { BlockProps } from './block';
 import { useDefaultHeading } from './default-heading';
 
 const Frontend = ( props: BlockProps ) => {
 	const defaultHeading = useDefaultHeading();
 	const heading =
-		useOrderSummaryHeadings(
+		useOrderSummaryHeadingFromFrontend(
 			'woocommerce_order_summary_shipping_heading'
 		) ?? defaultHeading;
 

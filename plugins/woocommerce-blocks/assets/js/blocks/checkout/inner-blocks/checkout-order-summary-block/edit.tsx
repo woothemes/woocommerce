@@ -14,10 +14,6 @@ import { chevronDown, chevronUp } from '@wordpress/icons';
 import clsx from 'clsx';
 import { FormattedMonetaryAmount } from '@woocommerce/blocks-components';
 import { useContainerWidthContext } from '@woocommerce/base-context';
-import {
-	useOrderSummaryHeadings,
-	createSetOrderSummaryHeadingCallback,
-} from '@woocommerce/blocks/cart-checkout-shared';
 
 /**
  * Internal dependencies
@@ -27,6 +23,10 @@ import {
 	getAllowedBlocks,
 } from '../../../cart-checkout-shared';
 import { OrderMetaSlotFill } from './slotfills';
+import {
+	useOrderSummaryHeadingFromEditor,
+	createSetOrderSummaryHeadingCallback,
+} from '../../../../entities/editor';
 
 export const Edit = ( { clientId }: BlockEditProps< object > ) => {
 	const blockProps = useBlockProps();
@@ -40,11 +40,11 @@ export const Edit = ( { clientId }: BlockEditProps< object > ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const ariaControlsId = useId();
 
-	const orderSummaryHeading = useOrderSummaryHeadings(
+	const orderSummaryHeading = useOrderSummaryHeadingFromEditor(
 		'woocommerce_order_summary_heading'
 	);
 
-	const orderSummaryFooterHeading = useOrderSummaryHeadings(
+	const orderSummaryFooterHeading = useOrderSummaryHeadingFromEditor(
 		'woocommerce_order_summary_footer_heading'
 	);
 

@@ -4,21 +4,21 @@
 import { RichText, useBlockProps } from '@wordpress/block-editor';
 import { BlockEditProps } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
-import {
-	createSetOrderSummaryHeadingCallback,
-	useOrderSummaryHeadings,
-} from '@woocommerce/blocks/cart-checkout-shared';
 
 /**
  * Internal dependencies
  */
 import Block, { BlockAttributes } from './block';
+import {
+	createSetOrderSummaryHeadingCallback,
+	useOrderSummaryHeadingFromEditor,
+} from '../../../../entities/editor';
 
 export const Edit = ( { attributes }: BlockEditProps< BlockAttributes > ) => {
 	const { className } = attributes;
 	const blockProps = useBlockProps();
 
-	const shippingHeading = useOrderSummaryHeadings(
+	const shippingHeading = useOrderSummaryHeadingFromEditor(
 		'woocommerce_order_summary_shipping_heading'
 	);
 

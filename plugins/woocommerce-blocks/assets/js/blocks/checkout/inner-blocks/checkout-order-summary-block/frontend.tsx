@@ -8,7 +8,6 @@ import { __ } from '@wordpress/i18n';
 import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import { useId, useState } from '@wordpress/element';
 import clsx from 'clsx';
-import { useOrderSummaryHeadings } from '@woocommerce/blocks/cart-checkout-shared';
 
 /**
  * Internal dependencies
@@ -17,6 +16,7 @@ import { OrderMetaSlotFill, CheckoutOrderSummaryFill } from './slotfills';
 import { useContainerWidthContext } from '../../../../base/context';
 import { FormattedMonetaryAmount } from '../../../../../../packages/components';
 import { FormStepHeading } from '../../form-step';
+import { useOrderSummaryHeadingFromFrontend } from '../../../../entities/frontend';
 
 type FrontendBlockProps = {
 	children: JSX.Element | JSX.Element[];
@@ -28,11 +28,11 @@ const FrontendBlock = ( { children, className = '' }: FrontendBlockProps ) => {
 	const { isLarge } = useContainerWidthContext();
 	const [ isOpen, setIsOpen ] = useState( false );
 
-	const orderSummaryHeading = useOrderSummaryHeadings(
+	const orderSummaryHeading = useOrderSummaryHeadingFromFrontend(
 		'woocommerce_order_summary_heading'
 	);
 
-	const orderSummaryFooterHeading = useOrderSummaryHeadings(
+	const orderSummaryFooterHeading = useOrderSummaryHeadingFromFrontend(
 		'woocommerce_order_summary_footer_heading'
 	);
 

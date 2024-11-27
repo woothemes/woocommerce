@@ -2,15 +2,15 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useOrderSummaryHeadings } from '@woocommerce/blocks/cart-checkout-shared';
 
 /**
  * Internal dependencies
  */
 import Block, { BlockAttributes } from './block';
+import { useOrderSummaryHeadingFromFrontend } from '../../../../entities/frontend';
 
 const Frontend = ( { className = '' }: BlockAttributes ) => {
-	const subtotalHeading = useOrderSummaryHeadings(
+	const subtotalHeading = useOrderSummaryHeadingFromFrontend(
 		'woocommerce_order_summary_subtotal_heading'
 	);
 

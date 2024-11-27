@@ -9,8 +9,6 @@ import { TotalsFooterItem } from '@woocommerce/base-components/cart-checkout';
 import { getCurrencyFromPriceResponse } from '@woocommerce/price-format';
 import { useStoreCart } from '@woocommerce/base-context/hooks';
 import {
-	createSetOrderSummaryHeadingCallback,
-	useOrderSummaryHeadings,
 	useForcedLayout,
 	getAllowedBlocks,
 } from '@woocommerce/blocks/cart-checkout-shared';
@@ -19,6 +17,7 @@ import {
  * Internal dependencies
  */
 import { OrderMetaSlotFill } from './slotfills';
+import { useOrderSummaryHeadingFromEditor } from '../../../../entities/editor';
 
 export const Edit = ( { clientId }: { clientId: string } ) => {
 	const blockProps = useBlockProps();
@@ -28,7 +27,7 @@ export const Edit = ( { clientId }: { clientId: string } ) => {
 		innerBlockAreas.CART_ORDER_SUMMARY
 	);
 
-	const orderSummaryFooterHeading = useOrderSummaryHeadings(
+	const orderSummaryFooterHeading = useOrderSummaryHeadingFromEditor(
 		'woocommerce_order_summary_footer_heading'
 	);
 

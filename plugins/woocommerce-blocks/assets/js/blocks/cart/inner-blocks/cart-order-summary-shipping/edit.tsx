@@ -10,16 +10,16 @@ import {
 import { PanelBody, ExternalLink } from '@wordpress/components';
 import { ADMIN_URL, getSetting } from '@woocommerce/settings';
 import { BlockEditProps } from '@wordpress/blocks';
-import {
-	useOrderSummaryHeadings,
-	createSetOrderSummaryHeadingCallback,
-} from '@woocommerce/blocks/cart-checkout-shared';
 
 /**
  * Internal dependencies
  */
 import Block, { BlockAttributes } from './block';
 import { useDefaultHeading } from './default-heading';
+import {
+	createSetOrderSummaryHeadingCallback,
+	useOrderSummaryHeadingFromEditor,
+} from '../../../../entities/editor';
 
 export const Edit = ( {
 	attributes,
@@ -28,7 +28,7 @@ export const Edit = ( {
 	const shippingEnabled = getSetting( 'shippingEnabled', true );
 	const blockProps = useBlockProps();
 
-	const summaryHeading = useOrderSummaryHeadings(
+	const summaryHeading = useOrderSummaryHeadingFromEditor(
 		'woocommerce_order_summary_shipping_heading'
 	);
 
