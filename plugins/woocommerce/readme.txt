@@ -1,7 +1,7 @@
 === WooCommerce ===
 Contributors: automattic, woocommerce, mikejolley, jameskoster, claudiosanches, rodrigosprimo, peterfabian1000, vedjain, jamosova, obliviousharmony, konamiman, sadowski, wpmuguru, royho, barryhughes-1, claudiulodro, tiagonoronha, ryelle, levinmedia, aljullu, nerrad, joshuawold, assassinateur, haszari, mppfeiffer, nielslange, opr18, ralucastn, tjcafferkey, danielwrobert, patriciahillebrandt, albarin, dinhtungdu, imanish003, karolmanijak, sunyatasattva, alexandrelara, gigitux, danieldudzic, samueljseay, alexflorisca, opr18, tarunvijwani, pauloarromba, saadtarhi, bor0, kloon, coreymckrill, jorgeatorres, leifsinger
 Tags: online store, ecommerce, shop, shopping cart, sell online
-Requires at least: 6.5
+Requires at least: 6.6
 Tested up to: 6.7
 Requires PHP: 7.4
 Stable tag: 9.4.1
@@ -173,6 +173,15 @@ WooCommerce comes with some sample data you can use to see how products look; im
 
 **WooCommerce**
 
+* Fix - Fix "missing 'price' property in 'offers'" error in Google Search Console [#52871](https://github.com/woocommerce/woocommerce/pull/52871)
+* Fix - Fix horizontal scrolling on Analytics pages. [#52971](https://github.com/woocommerce/woocommerce/pull/52971)
+* Fix - Fix mobile styles for delayed account creation. [#52736](https://github.com/woocommerce/woocommerce/pull/52736)
+* Fix - Fix PHP and Core API tests [#52850](https://github.com/woocommerce/woocommerce/pull/52850)
+* Fix - Fix the Payments main menu item linking to a blank page when onboarding tasks are hidden. [#52900](https://github.com/woocommerce/woocommerce/pull/52900)
+* Fix - Fix the registration of routes in controllers inheriting from RestApiControllerBase [#52817](https://github.com/woocommerce/woocommerce/pull/52817)
+* Fix - Fix `woocommerce_reports_charts` filter [#53126](https://github.com/woocommerce/woocommerce/pull/53126)
+* Fix - Product Elements: fix the issue that some product elements like price or rating were not available in Patterns [#53077](https://github.com/woocommerce/woocommerce/pull/53077)
+* Fix - StyleAttributesUtils: escape className attribute [#53026](https://github.com/woocommerce/woocommerce/pull/53026)
 * Fix - Prevented a i10n-related warning when using WordPress 6.7 with Brands [#52912](https://github.com/woocommerce/woocommerce/pull/52912)
 * Fix - Added strict check for PR and release number extracted from Issue body [#52002](https://github.com/woocommerce/woocommerce/pull/52002)
 * Fix - Add focus indicator to image on product card [#52011](https://github.com/woocommerce/woocommerce/pull/52011)
@@ -362,6 +371,7 @@ WooCommerce comes with some sample data you can use to see how products look; im
 * Update - Update the Catalog searching, average rating, and product button blocks to make sure they render with the wp-block-<block-name> class. [#51617](https://github.com/woocommerce/woocommerce/pull/51617)
 * Update - Use Block Hooks to insert Account Creation block into templates automatically. [#51582](https://github.com/woocommerce/woocommerce/pull/51582)
 * Update - [ Experimental ] Moved experimental product dataviews menu to Product top menu. [#51511](https://github.com/woocommerce/woocommerce/pull/51511)
+* Dev - Checkout: Revert #52044 Add loading placeholder and payment method toggle. [#53085](https://github.com/woocommerce/woocommerce/pull/53085)
 * Dev - Add a site reset plugin for e2e testing with externally hosted sites [#51720](https://github.com/woocommerce/woocommerce/pull/51720)
 * Dev - Add new ci jobs for e2e tests with pre-release WP version [#51814](https://github.com/woocommerce/woocommerce/pull/51814)
 * Dev - Adds constants for all legacy order statuses to centralize them, reduce typos, improve code strictness, ease status lookups, and enhance documentation. [#52427](https://github.com/woocommerce/woocommerce/pull/52427)
