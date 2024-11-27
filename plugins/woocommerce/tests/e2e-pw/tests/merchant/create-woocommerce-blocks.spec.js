@@ -191,7 +191,7 @@ test.describe(
 
 					// verify added blocks into page
 					await expect(
-						await canvas
+						canvas
 							.getByRole( 'document', {
 								name: `Block: ${ blocks[ i ] }`,
 								exact: true,
