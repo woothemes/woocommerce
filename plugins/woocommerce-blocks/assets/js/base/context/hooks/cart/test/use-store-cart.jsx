@@ -87,6 +87,7 @@ describe( 'useStoreCart', () => {
 		extensions: {},
 		isLoadingRates: false,
 		cartHasCalculatedShipping: true,
+		isApplyingExtensionCartUpdate: false,
 	};
 
 	const mockCartItems = [ { key: '1', id: 1, name: 'Lorem Ipsum' } ];
@@ -138,6 +139,7 @@ describe( 'useStoreCart', () => {
 		paymentRequirements: [],
 		receiveCart: undefined,
 		receiveCartContents: undefined,
+		isApplyingExtensionCartUpdate: false,
 	};
 
 	const getWrappedComponents = ( Component ) => (
