@@ -20,31 +20,31 @@ defined( 'ABSPATH' ) || exit;
  * @internal This function is intended for internal use only.
  */
 function wc_log_order_step( string $message, array $context = array() ) {
+
+	if ( empty( $message ) ) {
+		return; // Nothing to log.
+	}
+
 	// Generate a place order unique ID for logging purposes. If this is called multiple times,
 	// the same UID will be used, enabling us to track recursion and race-condition issues on order processing methods
 	// or other problems related to third-party plugins.
-	if ( ! defined( 'ORDER_UID' ) ) {
-		define( 'ORDER_UID', wp_generate_uuid4() );
+	if ( ! defined( 'WC_ORDER_STEP_LOGGER_UID' ) ) {
+		define( 'WC_ORDER_STEP_LOGGER_UID', wp_generate_uuid4() );
 	}
 
-	$message = trim( $message );
-
-	if ( empty( $message ) ) {
+	// Without a string place order request's unique ID to add to the log context, bail.
+	if ( ! is_string( WC_ORDER_STEP_LOGGER_UID ) ) {
 		return;
 	}
+
+	$context['order_uid'] = WC_ORDER_STEP_LOGGER_UID;
+	$context['source']    = 'checkout-step-debug';
 
 	global $wc_log_order_logger;
 
 	if ( ! isset( $wc_log_order_logger ) ) {
 		// Instantiate and store the logger instance in a global to avoid creating multiple instances.
 		$wc_log_order_logger = new WC_Logger();
-	}
-
-	$context['source'] = 'checkout-step-debug';
-
-	// Add the place order request's unique ID to the log context if it's defined.
-	if ( defined( 'ORDER_UID' ) && is_string( ORDER_UID ) && '' !== trim( ORDER_UID ) ) {
-		$context['order_uid'] = ORDER_UID;
 	}
 
 	// Logging the place order flow step completed. Logs are grouped per day to make is easier to navigate.
