@@ -62,6 +62,13 @@ const fillPageTitle = async ( page, title ) => {
 };
 
 const insertBlock = async ( page, blockName, wpVersion = null ) => {
+	// Focus on "Empty block" element before inserting a new block.
+	// Otherwise Gutenberg nightly (v19.9-nightly) would display "{Block name} can't be inserted."
+	const emptyBlock = ( await getCanvas( page ) ).getByLabel( 'Empty block' );
+	if ( await emptyBlock.isVisible() ) {
+		await emptyBlock.click();
+	}
+
 	// With Gutenberg active we have Block Inserter name
 	await page
 		.getByRole( 'button', {
@@ -69,17 +76,6 @@ const insertBlock = async ( page, blockName, wpVersion = null ) => {
 			expanded: false,
 		} )
 		.click();
-
-	// Make sure there's an Empty block in the canvas and click on it.
-	// Unlike Gutenberg stable, Gutenberg nightly doesn't automatically add an empty block.
-	// Also, GB nightly gives off an error when you try to insert a block without clicking on the empty block first.
-	const emptyBlock = ( await getCanvas( page ) ).getByLabel( 'Empty block' );
-	if ( ! ( await emptyBlock.isVisible() ) ) {
-		await page
-			.getByRole( 'option', { name: 'Paragraph', exact: true } )
-			.click();
-	}
-	await emptyBlock.click();
 
 	await page.getByPlaceholder( 'Search', { exact: true } ).fill( blockName );
 	await page.getByRole( 'option', { name: blockName, exact: true } ).click();
