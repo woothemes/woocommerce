@@ -234,7 +234,7 @@ class WC_Tests_Template_Functions extends WC_Unit_Test_Case {
 			),
 			'1'
 		);
-		$expected_html = '<p class="form-row validate-required" id="test_radio_field" data-priority=""><span class="woocommerce-input-wrapper"><input type="radio" class="input-radio " value="1" name="test" aria-required="true" id="test_radio_1" checked=\'checked\' /><label for="test_radio_1" class="radio required_field">Option 1<span class="required asterisk"><span class="asterisk-line"></span><span class="asterisk-line"></span><span class="asterisk-line"></span></span></label><input type="radio" class="input-radio " value="2" name="test" aria-required="true" id="test_radio_2" /><label for="test_radio_2" class="radio required_field">Option 2<span class="required asterisk"><span class="asterisk-line"></span><span class="asterisk-line"></span><span class="asterisk-line"></span></span></label></span></p>';
+		$expected_html = '<p class="form-row validate-required" id="test_radio_field" data-priority=""><span class="woocommerce-input-wrapper"><input type="radio" class="input-radio " value="1" name="test" aria-required="true" id="test_radio_1" checked=\'checked\' /><label for="test_radio_1" class="radio required_field">Option 1&nbsp;<span class="required asterisk"><span class="asterisk-line"></span><span class="asterisk-line"></span><span class="asterisk-line"></span></span></label><input type="radio" class="input-radio " value="2" name="test" aria-required="true" id="test_radio_2" /><label for="test_radio_2" class="radio required_field">Option 2&nbsp;<span class="required asterisk"><span class="asterisk-line"></span><span class="asterisk-line"></span><span class="asterisk-line"></span></span></label></span></p>';
 
 		$this->assertEquals( $expected_html, $actual_html );
 	}
