@@ -16,7 +16,6 @@ use Automattic\WooCommerce\Internal\ProductDownloads\ApprovedDirectories\Registe
 use Automattic\WooCommerce\Internal\ProductDownloads\ApprovedDirectories\Synchronize as Download_Directories_Sync;
 use Automattic\WooCommerce\Internal\Utilities\DatabaseUtil;
 use Automattic\WooCommerce\Internal\WCCom\ConnectionHelper as WCConnectionHelper;
-use Automattic\WooCommerce\Internal\Traits\AccessiblePrivateMethods;
 use Automattic\WooCommerce\Utilities\{ OrderUtil, PluginUtil };
 use Automattic\WooCommerce\Internal\Utilities\PluginInstaller;
 
@@ -26,8 +25,6 @@ defined( 'ABSPATH' ) || exit;
  * WC_Install Class.
  */
 class WC_Install {
-	use AccessiblePrivateMethods;
-
 	/**
 	 * DB updates and callbacks that need to be run per version.
 	 *
@@ -315,16 +312,18 @@ class WC_Install {
 		add_filter( 'plugin_row_meta', array( __CLASS__, 'plugin_row_meta' ), 10, 2 );
 		add_filter( 'wpmu_drop_tables', array( __CLASS__, 'wpmu_drop_tables' ) );
 		add_filter( 'cron_schedules', array( __CLASS__, 'cron_schedules' ) );
-		self::add_action( 'admin_init', array( __CLASS__, 'newly_installed' ) );
-		self::add_action( 'woocommerce_activate_legacy_rest_api_plugin', array( __CLASS__, 'maybe_install_legacy_api_plugin' ) );
+		add_action( 'admin_init', array( __CLASS__, 'newly_installed' ) );
+		add_action( 'woocommerce_activate_legacy_rest_api_plugin', array( __CLASS__, 'maybe_install_legacy_api_plugin' ) );
 	}
 
 	/**
 	 * Trigger `woocommerce_newly_installed` action for new installations.
 	 *
 	 * @since 8.0.0
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private static function newly_installed() {
+	public static function newly_installed() {
 		if ( 'yes' === get_option( self::NEWLY_INSTALLED_OPTION, false ) ) {
 			/**
 			 * Run when WooCommerce has been installed for the first time.
@@ -1243,8 +1242,10 @@ class WC_Install {
 	 *
 	 * In multisite setups it could happen that the plugin was installed by an installation process performed in another site.
 	 * In this case we check if the plugin was autoinstalled in such a way, and if so we activate it if the conditions are fulfilled.
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private static function maybe_install_legacy_api_plugin() {
+	public static function maybe_install_legacy_api_plugin() {
 		if ( self::is_new_install() ) {
 			return;
 		}
