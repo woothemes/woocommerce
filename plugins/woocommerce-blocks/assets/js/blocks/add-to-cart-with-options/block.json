@@ -8,11 +8,6 @@
 		"isDescendentOfSingleProductBlock": {
 			"type": "boolean",
 			"default": false
-		},
-		"quantitySelectorStyle": {
-			"type": "string",
-			"enum": [ "input", "stepper" ],
-			"default": "input"
 		}
 	},
 	"usesContext": [ "postId" ],
