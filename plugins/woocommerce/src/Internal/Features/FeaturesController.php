@@ -262,7 +262,7 @@ class FeaturesController {
 					 *
 					 * @see https://github.com/woocommerce/woocommerce/pull/39701#discussion_r1376976959
 					 */
-					'is_legacy'          => false,
+					'is_legacy'          => true,
 					'is_experimental'    => true,
 				),
 				'email_improvements'    => array(
