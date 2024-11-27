@@ -96,6 +96,20 @@ $wc-setting-email-preview-gap: 16px;
 	max-width: 360px;
 }
 
+.wc-settings-email-preview-send-modal {
+	width: 456px;
+}
+
+.wc-settings-email-preview-send-modal-buttons {
+	display: flex;
+	justify-content: flex-end;
+	margin-top: $wc-setting-email-preview-gap * 2;
+
+	button {
+		margin-left: 12px;
+	}
+}
+
 .wc-settings-email-preview-header {
 	border-bottom: 1px solid $gray-200;
 	display: flex;
