@@ -12,7 +12,7 @@ import { getSetting } from '../settings/shared/utils';
 const getOrderSummaryHeading = async (
 	headingName: keyof OrderSummaryHeadings
 ) => {
-	return getSetting( headingName );
+	return getSetting( headingName, null );
 };
 
 export const useOrderSummaryHeadingFromFrontend = (
