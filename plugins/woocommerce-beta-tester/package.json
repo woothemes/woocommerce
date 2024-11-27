@@ -8,7 +8,7 @@
 		"url": "git://github.com/woocommerce/woocommerce-beta-tester.git"
 	},
 	"title": "WooCommerce Beta Tester",
-	"version": "2.5.0",
+	"version": "2.5.1",
 	"homepage": "http://github.com/woocommerce/woocommerce-beta-tester",
 	"devDependencies": {
 		"@types/react": "17.0.x",
@@ -39,7 +39,6 @@
 		"@wordpress/api-fetch": "wp-6.0",
 		"@wordpress/components": "wp-6.0",
 		"@wordpress/compose": "wp-6.0",
-		"@wordpress/data": "wp-6.0",
 		"@wordpress/data-controls": "wp-6.0",
 		"@wordpress/element": "wp-6.0",
 		"@wordpress/hooks": "wp-6.0",
@@ -51,6 +50,7 @@
 	"peerDependencies": {
 		"@types/react": "17.0.x",
 		"@types/react-dom": "17.0.x",
+		"@wordpress/data": "wp-6.0",
 		"react": "17.0.x",
 		"react-dom": "17.0.x"
 	},

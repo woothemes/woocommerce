@@ -532,6 +532,10 @@ p.demo_store,
 
 		a {
 			text-decoration: none;
+
+			&.woocommerce-loop-product__link {
+				display: block;
+			}
 		}
 
 		a img {

@@ -9,6 +9,7 @@
  */
 
 use Automattic\Jetpack\Constants;
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Internal\Utilities\HtmlSanitizer;
 
 defined( 'ABSPATH' ) || exit;
@@ -2885,7 +2886,15 @@ if ( ! function_exists( 'woocommerce_order_again_button' ) ) {
 	 * @param object $order Order.
 	 */
 	function woocommerce_order_again_button( $order ) {
-		if ( ! $order || ! $order->has_status( apply_filters( 'woocommerce_valid_order_statuses_for_order_again', array( 'completed' ) ) ) || ! is_user_logged_in() ) {
+		/**
+		 * Filter the valid order statuses for reordering.
+		 *
+		 * @since 3.5.0
+		 *
+		 * @param array $statuses_for_reordering Array of valid order statuses for reordering.
+		 */
+		$statuses_for_reordering = apply_filters( 'woocommerce_valid_order_statuses_for_order_again', array( OrderStatus::COMPLETED ) );
+		if ( ! $order || ! $order->has_status( $statuses_for_reordering ) || ! is_user_logged_in() ) {
 			return;
 		}
 
