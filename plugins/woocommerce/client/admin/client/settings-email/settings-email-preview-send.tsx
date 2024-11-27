@@ -9,6 +9,14 @@ import { isValidEmail } from '@woocommerce/product-editor';
 export const EmailPreviewSend: React.FC = () => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ email, setEmail ] = useState( '' );
+	const [ isSending, setIsSending ] = useState( false );
+
+	const handleSendEmail = async () => {
+		setIsSending( true );
+		setTimeout( () => {
+			setIsSending( false );
+		}, 2000 );
+	};
 
 	return (
 		<div className="wc-settings-email-preview-send">
@@ -49,9 +57,13 @@ export const EmailPreviewSend: React.FC = () => {
 						</Button>
 						<Button
 							variant="primary"
-							disabled={ ! isValidEmail( email ) }
+							onClick={ handleSendEmail }
+							isBusy={ isSending }
+							disabled={ ! isValidEmail( email ) || isSending }
 						>
-							{ __( 'Send test email', 'woocommerce' ) }
+							{ isSending
+								? __( 'Sending…', 'woocommerce' )
+								: __( 'Send test email', 'woocommerce' ) }
 						</Button>
 					</div>
 				</Modal>
