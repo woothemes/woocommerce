@@ -73,6 +73,21 @@ jQuery( function( $ ) {
 			
 			$tabs.eq( targetIndex ).focus();
 		} )
+		.on( 'focusout', '.wc-tabs li a, ul.tabs li a, #respond p.stars a', function() {
+			setTimeout( function () {
+				var $activeElement = $( document.activeElement );
+				var sliderKeyupBlockers = [ '.stars', '.tabs', '.wc-tabs'];
+				var $closestBlocker = $activeElement.closest( sliderKeyupBlockers.join( ', ' ) );
+		
+				if ( $closestBlocker.length ) {
+					// Prevent keyup events from being triggered on the flexslider when the focus is on the stars or tabs.
+					productGalleryElement.data('flexslider').animating = true;
+					return;
+				}
+		
+				productGalleryElement.data('flexslider').animating = false;
+			}, 0);
+		} )
 		// Review link
 		.on( 'click', 'a.woocommerce-review-link', function() {
 			$( '.reviews_tab a' ).trigger( 'click' );
@@ -115,20 +130,7 @@ jQuery( function( $ ) {
 
 				return false;
 			}
-		} )
-		.on( 'keyup', function() {
-			var $activeElement = $( document.activeElement );
-			var sliderKeyupBlockers = [ '.stars', '.tabs', '.wc-tabs'];
-			var $closestBlocker = $activeElement.closest( sliderKeyupBlockers.join( ', ' ) );
-
-			if ( $closestBlocker.length ) {
-				// Prevent keyup events from being triggered on the flexslider when the focus is on the stars or tabs.
-				productGalleryElement.data('flexslider').animating = true;
-				return;
-			}
-
-			productGalleryElement.data('flexslider').animating = false;
-		});
+		} );
 
 	// Init Tabs and Star Ratings
 	$( '.wc-tabs-wrapper, .woocommerce-tabs, #rating' ).trigger( 'init' );
