@@ -88,6 +88,9 @@ const blocks = {
 	},
 	'single-product': {},
 	'stock-filter': {},
+	'product-add-to-cart-with-options': {
+		isExperimental: true,
+	},
 	'product-filters': {
 		isExperimental: true,
 	},
