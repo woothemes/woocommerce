@@ -27,26 +27,20 @@ function wc_log_order_step( string $message, array $context = array() ) {
 		define( 'ORDER_UID', wp_generate_uuid4() );
 	}
 
+	$message = trim( $message );
+
 	if ( empty( $message ) ) {
 		return;
-	}
-
-	global $wc_log_order_hash;
-
-	if ( ! isset( $wc_log_order_hash ) ) {
-		// Generate a unique but consistent hash for the log name, to make it unguessable since the default log file location is web accessible.
-		// fnv1a32 algorithm is used for performance reasons, while still providing a better distribution of hash values than md5.
-		$wc_log_order_hash = hash( 'fnv1a32', get_site_url() . DB_NAME . DB_USER . DB_HOST . WC()->version );
 	}
 
 	global $wc_log_order_logger;
 
 	if ( ! isset( $wc_log_order_logger ) ) {
-		// Store the logger instance in a global to avoid creating multiple instances.
-		$wc_log_order_logger = wc_get_logger();
+		// Instantiate and store the logger instance in a global to avoid creating multiple instances.
+		$wc_log_order_logger = new WC_Logger();
 	}
 
-	$context['source'] = 'place-order-debug-' . $wc_log_order_hash;
+	$context['source'] = 'checkout-step-debug';
 
 	// Add the place order request's unique ID to the log context if it's defined.
 	if ( defined( 'ORDER_UID' ) && is_string( ORDER_UID ) && '' !== trim( ORDER_UID ) ) {
