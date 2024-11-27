@@ -156,6 +156,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 			'purchase_note',
 			'categories',
 			'tags',
+			'brands',
 			'images',
 			'has_options',
 			'attributes',
@@ -165,7 +166,6 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 			'menu_order',
 			'meta_data',
 			'post_password',
-			'brands',
 		);
 
 		if ( $with_cogs_enabled ) {
@@ -188,7 +188,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 		if ( $with_cogs_enabled ) {
 			$this->enable_cogs_feature();
 		}
-		
+
 		$expected_response_fields = $this->get_expected_response_fields( $with_cogs_enabled );
 
 		$product  = \Automattic\WooCommerce\RestApi\UnitTests\Helpers\ProductHelper::create_simple_product();
