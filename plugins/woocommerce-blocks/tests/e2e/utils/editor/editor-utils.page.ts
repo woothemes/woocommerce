@@ -73,12 +73,28 @@ export class Editor extends CoreEditor {
 
 	async revertTemplate( { templateName }: { templateName: string } ) {
 		await this.page.getByPlaceholder( 'Search' ).fill( templateName );
-		// WP 6.7 issue: https://github.com/WordPress/gutenberg/issues/66585.
-		// Template-parts have aria-label="[object Object]" hence switching
-		// from using label to button.
-		await this.page
-			.getByRole( 'button', { name: templateName, exact: true } )
-			.click();
+
+		// Depending on the context, we need to click either on a link (in the template page)
+		// or a button (in the template-parts/patterns page) to visit the template.
+		const link = this.page.getByRole( 'link', {
+			name: templateName,
+			exact: true,
+		} );
+
+		if ( await link.isVisible() ) {
+			await link.click();
+		}
+
+		const button = this.page
+			.getByRole( 'button', {
+				name: templateName,
+				exact: true,
+			} )
+			.and( this.page.locator( '.is-link' ) );
+
+		if ( await button.isVisible() ) {
+			await button.click();
+		}
 
 		await this.page.getByLabel( 'Actions' ).click();
 		await this.page

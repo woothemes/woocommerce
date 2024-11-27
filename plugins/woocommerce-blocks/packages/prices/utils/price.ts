@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { decodeEntities } from '@wordpress/html-entities';
 import { SITE_CURRENCY } from '@woocommerce/settings';
 import type {
 	Currency,
@@ -146,8 +147,5 @@ export const formatPrice = (
 		minorUnit
 	) }${ suffix }`;
 
-	// This uses a textarea to magically decode HTML currency symbols.
-	const txt = document.createElement( 'textarea' );
-	txt.innerHTML = formattedValue;
-	return txt.value;
+	return decodeEntities( formattedValue );
 };

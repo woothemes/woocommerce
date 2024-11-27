@@ -3,7 +3,7 @@
  */
 import clsx from 'clsx';
 import { __, sprintf } from '@wordpress/i18n';
-import type { RatingValues } from '@woocommerce/blocks/product-collection/types';
+import type { RatingValues } from '@woocommerce/types';
 
 /**
  * Internal dependencies
