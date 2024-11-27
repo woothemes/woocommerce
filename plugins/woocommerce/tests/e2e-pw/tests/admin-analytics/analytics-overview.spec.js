@@ -45,7 +45,7 @@ const hidePerformanceSection = async () => {
 	const response =
 		await test.step( `Send POST request to hide Performance section`, async () => {
 			const request = page.request;
-			const url = `/wp-json/wp/v2/users/${ userId }`;
+			const url = `./wp-json/wp/v2/users/${ userId }`;
 			const params = { _locale: 'user' };
 			const dashboard_sections = JSON.stringify( [
 				{ key: 'store-performance', isVisible: false },
@@ -83,7 +83,7 @@ const resetSections = async () => {
 	const response =
 		await test.step( `Send POST request to reset all sections`, async () => {
 			const request = page.request;
-			const url = `/wp-json/wp/v2/users/${ userId }`;
+			const url = `./wp-json/wp/v2/users/${ userId }`;
 			const params = { _locale: 'user' };
 			const data = {
 				id: userId,
@@ -122,7 +122,7 @@ test.describe( 'Analytics pages', { tag: [ '@payments', '@services' ] }, () => {
 			const data = {
 				_fields: 'id',
 			};
-			const response = await request.get( '/wp-json/wp/v2/users/me', {
+			const response = await request.get( './wp-json/wp/v2/users/me', {
 				data,
 				headers,
 			} );

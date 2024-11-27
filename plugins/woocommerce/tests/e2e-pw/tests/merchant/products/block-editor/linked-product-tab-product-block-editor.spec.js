@@ -90,7 +90,7 @@ test.describe( 'General tab', { tag: '@gutenberg' }, () => {
 					( response ) =>
 						response
 							.url()
-							.includes( '/wp-json/wp/v2/product_cat' ) &&
+							.includes( './wp-json/wp/v2/product_cat' ) &&
 						response.status() === 200
 				);
 				await page.getByLabel( 'Categories' ).click();
@@ -105,7 +105,7 @@ test.describe( 'General tab', { tag: '@gutenberg' }, () => {
 					( response ) =>
 						response
 							.url()
-							.includes( '/wp-json/wc/v3/products?search' ) &&
+							.includes( './wp-json/wc/v3/products?search' ) &&
 						response.status() === 200
 				);
 				await clickOnTab( 'Linked products', page );
@@ -132,7 +132,7 @@ test.describe( 'General tab', { tag: '@gutenberg' }, () => {
 						response
 							.url()
 							.includes(
-								'/wp-json/wc/v3/products/suggested-products'
+								'./wp-json/wc/v3/products/suggested-products'
 							) && response.status() === 200
 				);
 

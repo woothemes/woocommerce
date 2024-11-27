@@ -74,7 +74,7 @@ test.describe( 'General tab', { tag: '@gutenberg' }, () => {
 
 			await page.waitForResponse(
 				( response ) =>
-					response.url().includes( '/wp-json/wc/v3/products/' ) &&
+					response.url().includes( './wp-json/wc/v3/products/' ) &&
 					response.status() === 200
 			);
 
@@ -121,7 +121,7 @@ test.describe( 'General tab', { tag: '@gutenberg' }, () => {
 
 			await page.waitForResponse(
 				( response ) =>
-					response.url().includes( '/wp-json/wc/v3/products/' ) &&
+					response.url().includes( './wp-json/wc/v3/products/' ) &&
 					response.status() === 200
 			);
 

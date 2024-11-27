@@ -35,7 +35,7 @@ class EnvironmentReporter {
 				},
 			} );
 
-			const info = await wpApi.get( `/wp-json/e2e-environment/info` );
+			const info = await wpApi.get( `./wp-json/e2e-environment/info` );
 
 			if ( info.ok() ) {
 				const data = await info.json();

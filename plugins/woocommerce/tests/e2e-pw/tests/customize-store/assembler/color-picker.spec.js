@@ -339,7 +339,7 @@ test.describe( 'Assembler -> Color Pickers', { tag: '@gutenberg' }, () => {
 				},
 			} );
 			const listPluginsResponse = await apiContext.get(
-				`/wp-json/wp/v2/plugins`,
+				`./wp-json/wp/v2/plugins`,
 				{
 					failOnStatusCode: true,
 				}
