@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Fix hovering over core profiler extension to show cursor:pointer

@@ -64,6 +64,10 @@ class ProductGalleryUtils {
 						)
 					);
 
+					if ( wp_is_mobile() ) {
+						$product_image_html_processor->set_attribute( 'loading', 'eager' );
+					}
+
 					$product_gallery_images[] = $product_image_html_processor->get_updated_html();
 				}
 			}
