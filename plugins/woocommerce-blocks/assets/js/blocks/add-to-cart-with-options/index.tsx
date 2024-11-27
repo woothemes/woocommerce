@@ -8,7 +8,7 @@ import { Icon, button } from '@wordpress/icons';
  * Internal dependencies
  */
 import metadata from './block.json';
-import AddToCartFormEdit from './edit';
+import AddToCartOptionsEdit from './edit';
 import './style.scss';
 
 const blockSettings = {
