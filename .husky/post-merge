@@ -3,6 +3,7 @@
 
 # The hook documentation: https://git-scm.com/docs/githooks.html#_post_merge
 
+# Refresh dependencies when pulled changes might change the deps.
 changedManifests=$( ( git diff --name-only HEAD ORIG_HEAD  | grep -E '(package.json|pnpm-lock.yaml|pnpm-workspace.yaml|composer.json|composer.lock)$' ) || echo '' )
 if [ -n "$changedManifests" ]; then
 	printf "It was a change in the following file(s) - refreshing dependencies:\n"
@@ -10,3 +11,8 @@ if [ -n "$changedManifests" ]; then
 
 	pnpm install --frozen-lockfile
 fi
+
+# Cleanup .wireit cache that is older than 4 weeks; otherwise, the repository directory size keeps growing and growing.
+find plugins/*/.wireit/* -maxdepth 0 -type d -ctime +28 -exec rm -rf {} \;
+find packages/js/*/.wireit/* -maxdepth 0 -type d -ctime +28 -exec rm -rf {} \;
+find plugins/woocommerce/client/*/.wireit/* -maxdepth 0 -type d -ctime +28 -exec rm -rf {} \;
