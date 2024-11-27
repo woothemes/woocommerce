@@ -10,13 +10,13 @@ import { Flex, FlexItem, PanelBody, Notice } from '@wordpress/components';
  */
 import type { FeaturesKeys, FeaturesProps } from './edit';
 
-type AddToCartFormSettingsProps = {
+type AddToCartOptionsSettingsProps = {
 	features: FeaturesProps;
 };
 
-export const AddToCartFormSettings = ( {
+export const AddToCartOptionsSettings = ( {
 	features,
-}: AddToCartFormSettingsProps ) => {
+}: AddToCartOptionsSettingsProps ) => {
 	const { isBlockifiedAddToCart } = features;
 
 	if ( ! isBlockifiedAddToCart ) {

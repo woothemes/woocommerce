@@ -11,7 +11,7 @@ import { isBoolean } from '@woocommerce/types';
  * Internal dependencies
  */
 import { useIsDescendentOfSingleProductBlock } from '../../atomic/blocks/product-elements/shared/use-is-descendent-of-single-product-block';
-import { AddToCartFormSettings } from './settings';
+import { AddToCartOptionsSettings } from './settings';
 import { INNER_BLOCKS_TEMPLATE } from './constants';
 export interface Attributes {
 	className?: string;
@@ -33,7 +33,7 @@ const isBlockifiedAddToCart = getSettingWithCoercion(
 	isBoolean
 );
 
-const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
+const AddToCartOptionsEdit = ( props: BlockEditProps< Attributes > ) => {
 	const { setAttributes } = props;
 
 	const blockProps = useBlockProps( {
@@ -52,7 +52,7 @@ const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
 
 	return (
 		<>
-			<AddToCartFormSettings
+			<AddToCartOptionsSettings
 				features={ {
 					isBlockifiedAddToCart,
 				} }
@@ -64,4 +64,4 @@ const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
 	);
 };
 
-export default AddToCartFormEdit;
+export default AddToCartOptionsEdit;

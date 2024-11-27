@@ -12,7 +12,7 @@ import AddToCartOptionsEdit from './edit';
 import './style.scss';
 
 const blockSettings = {
-	edit: AddToCartFormEdit,
+	edit: AddToCartOptionsEdit,
 	icon: {
 		src: (
 			<Icon
