@@ -122,7 +122,21 @@ class Packages {
 
 		foreach ( self::$merged_packages as $merged_package_name => $package_class ) {
 
-			// For gradual rollouts, ensure that a package is enabled for user's remote variant number.
+			$option       = 'wc_feature_' . str_replace( '-', '_', $merged_package_name ) . '_enabled';
+			$option_value = get_option( $option, '' );
+
+			// Opt out from the feature.
+			if ( 'no' === $option_value ) {
+				continue;
+			}
+
+			// Force enable feature -- mainly for testing purpose.
+			if ( 'yes' === $option_value ) {
+				$enabled_packages[ $merged_package_name ] = $package_class;
+				continue;
+			}
+
+			// If an option is not set, ensure that a package is enabled for user's remote variant number. Mainly for gradual releases.
 			$experimental_package_enabled = method_exists( $package_class, 'is_enabled' ) ?
 				call_user_func( array( $package_class, 'is_enabled' ) ) :
 				false;
@@ -131,10 +145,7 @@ class Packages {
 				continue;
 			}
 
-			$option = 'wc_feature_' . str_replace( '-', '_', $merged_package_name ) . '_enabled';
-			if ( 'yes' === get_option( $option, 'no' ) ) {
-				$enabled_packages[ $merged_package_name ] = $package_class;
-			}
+			$enabled_packages[ $merged_package_name ] = $package_class;
 		}
 
 		return array_merge( $enabled_packages, self::$base_packages );
