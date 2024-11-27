@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState, useEffect } from '@wordpress/element';
 import {
@@ -50,7 +50,7 @@ if ( ! String.prototype.replaceAll ) {
  * @param {string} name
  */
 export async function selectBlock( name ) {
-	await userEvent.click( screen.getByLabelText( name ) );
+	await act( () => userEvent.click( screen.getByLabelText( name ) ) );
 }
 
 export function Editor( { testBlocks, settings = {} } ) {
