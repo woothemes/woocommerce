@@ -12,11 +12,6 @@ const Frontend = ( props: BlockProps ) => {
 			'woocommerce_order_summary_shipping_heading'
 		) ?? defaultHeading;
 
-	console.log(
-		'useOrderSummaryHeadingFromFrontend heading',
-		`**** ${ heading } ****`
-	);
-
 	return <Block { ...props } heading={ heading } />;
 };
 
