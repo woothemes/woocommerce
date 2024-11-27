@@ -26660,7 +26660,7 @@ snapshots:
     dependencies:
       '@automattic/load-script': 1.0.0
       cookie: 0.4.2
-      debug: 4.3.6
+      debug: 4.3.7
       hash.js: 1.1.7
       tslib: 2.6.3
       uuid: 9.0.1
@@ -31430,7 +31430,7 @@ snapshots:
       '@babel/helper-split-export-declaration': 7.24.7
       '@babel/parser': 7.25.3
       '@babel/types': 7.25.2
-      debug: 4.3.6
+      debug: 4.3.7
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -48223,7 +48223,7 @@ snapshots:
   buffer@4.9.2:
     dependencies:
       base64-js: 1.5.1
-      ieee754: 1.1.13
+      ieee754: 1.2.1
       isarray: 1.0.0
 
   buffer@5.7.1:
@@ -53803,7 +53803,7 @@ snapshots:
       '@babel/runtime': 7.26.0
       '@tannin/sprintf': 1.2.0
       '@wordpress/compose': 6.34.0(react@17.0.2)
-      debug: 4.3.6
+      debug: 4.3.7
       events: 3.3.0
       hash.js: 1.1.7
       lodash: 4.17.21
