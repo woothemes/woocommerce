@@ -18,8 +18,8 @@ $admin-bar-desktop-height: 32px;
 $admin-bar-mobile-height: 46px;
 
 $full-height-desktop: calc(100vh - (2 * $dialog-header-height) - $dialog-header-padding-top);
-$full-height-desktop-admin-bar: $full-height-desktop - $admin-bar-desktop-height;
-$full-height-mobile-admin-bar: $full-height-desktop - $admin-bar-mobile-height;
+$full-height-desktop-admin-bar: calc( $full-height-desktop - $admin-bar-desktop-height );
+$full-height-mobile-admin-bar: calc( $full-height-desktop - $admin-bar-mobile-height );
 
 @mixin full-height-admin {
 	.admin-bar & {
@@ -42,6 +42,7 @@ $full-height-mobile-admin-bar: $full-height-desktop - $admin-bar-mobile-height;
 		top: 0;
 		z-index: 9999;
 		padding: $dialog-padding;
+		height: 100vh;
 
 		.admin-bar & {
 			margin-top: $admin-bar-desktop-height;
