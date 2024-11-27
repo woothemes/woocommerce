@@ -51,7 +51,7 @@ export const SettingsPaymentsMain = () => {
 			installAndActivatePlugins( [ slug ] )
 				.then( async ( response ) => {
 					createNoticesFromResponse( response );
-					if ( extension.id === 'woopayments' ) {
+					if ( id === 'woopayments' ) {
 						await onWCPayEnable();
 						return;
 					}

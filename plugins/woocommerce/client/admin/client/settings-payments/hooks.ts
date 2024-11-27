@@ -19,15 +19,19 @@ export const onWCPayEnable = async (): Promise< void > => {
 		const jetpackAuthUrlResponse = await resolveSelect(
 			ONBOARDING_STORE_NAME
 		).getJetpackAuthUrl( {
-			redirectUrl: getAdminLink( 'admin.php?page=wc-admin&path=%2Fpayments%2Fconnect&test_drive=true&auto_start_test_drive_onboarding=true' ),
+			redirectUrl: getAdminLink(
+				'admin.php?page=wc-admin&path=%2Fpayments%2Fconnect&test_drive=true&auto_start_test_drive_onboarding=true'
+			),
 			from: 'woocommerce-payments',
 		} );
 		if ( jetpackAuthUrlResponse.url ) {
 			window.location.href = jetpackAuthUrlResponse.url;
 		} else {
-			console.log( 'wrong response' );
+			// TODO error handling
 		}
 	} else {
-		window.location.href = getAdminLink( 'admin.php?page=wc-admin&path=%2Fpayments%2Fconnect&test_drive=true&auto_start_test_drive_onboarding=true' );
+		window.location.href = getAdminLink(
+			'admin.php?page=wc-admin&path=%2Fpayments%2Fconnect&test_drive=true&auto_start_test_drive_onboarding=true'
+		);
 	}
 };
