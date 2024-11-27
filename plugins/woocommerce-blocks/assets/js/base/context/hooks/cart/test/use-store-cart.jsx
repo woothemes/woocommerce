@@ -160,6 +160,8 @@ describe( 'useStoreCart', () => {
 		);
 	};
 
+	const getApplyingExtensionCartUpdatesMock = jest.fn().mockReturnValue( 0 );
+
 	const setUpMocks = () => {
 		const mocks = {
 			selectors: {
@@ -170,6 +172,8 @@ describe( 'useStoreCart', () => {
 					.fn()
 					.mockReturnValue( ! mockCartIsLoading ),
 				isCustomerDataUpdating: jest.fn().mockReturnValue( false ),
+				getApplyingExtensionCartUpdates:
+					getApplyingExtensionCartUpdatesMock,
 			},
 		};
 		const store = createReduxStore( storeKey, {
@@ -186,6 +190,7 @@ describe( 'useStoreCart', () => {
 	} );
 
 	afterEach( () => {
+		getApplyingExtensionCartUpdatesMock.mockReturnValue( 0 );
 		useEditorContext.mockReset();
 	} );
 
@@ -220,6 +225,21 @@ describe( 'useStoreCart', () => {
 			expect( results ).toEqual( remaining );
 			expect( receiveCart ).toEqual( defaultReceiveCart );
 			expect( receiveCartContents ).toEqual( defaultReceiveCartContents );
+		} );
+
+		it( 'returns correct isApplyingExtensionCartUpdate value when applyingExtensionCartUpdates > 0', () => {
+			getApplyingExtensionCartUpdatesMock.mockReturnValue( 1 );
+			const TestComponent = getTestComponent();
+			act( () => {
+				renderer = TestRenderer.create(
+					getWrappedComponents( TestComponent )
+				);
+			} );
+
+			const props = renderer.root.findByType( 'div' ).props; //eslint-disable-line testing-library/await-async-query
+			const results = props[ 'data-results' ];
+
+			expect( results.isApplyingExtensionCartUpdate ).toEqual( true );
 		} );
 
 		it( 'return store data when shouldSelect is true', () => {
