@@ -23,13 +23,3 @@ woocommerce-beta-tester.zip
 node_modules/
 bin/
 
-# testing/dev dependencies
-vendor/phpunit
-vendor/squizlabs/php_codesniffer
-vendor/dealerdirect
-vendor/phpcompatibility
-vendor/phpspec
-vendor/sebastian
-vendor/wp-coding-standards
-vendor/woocommerce/woocommerce-sniffs
-vendor/automattic/jetpack-changelogger
