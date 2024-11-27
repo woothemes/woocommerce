@@ -14,11 +14,7 @@ const Frontend = ( { className = '' }: BlockAttributes ) => {
 		'woocommerce_order_summary_coupon_heading'
 	);
 
-	console.log( 'couponHeading', `**** ${ couponHeading } ****` );
-
 	const headingText = couponHeading ?? __( 'Add a coupon', 'woocommerce' );
-
-	console.log( 'headingText', `**** ${ headingText } ****` );
 
 	return <Block heading={ headingText } className={ className } />;
 };

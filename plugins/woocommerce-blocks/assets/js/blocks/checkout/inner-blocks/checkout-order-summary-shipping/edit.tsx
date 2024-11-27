@@ -13,10 +13,13 @@ import {
 	createSetOrderSummaryHeadingCallback,
 	useOrderSummaryHeadingFromEditor,
 } from '../../../../entities/editor';
+import { useDefaultHeading } from './default-heading';
 
 export const Edit = ( { attributes }: BlockEditProps< BlockAttributes > ) => {
 	const { className } = attributes;
 	const blockProps = useBlockProps();
+
+	const defaultHeading = useDefaultHeading();
 
 	const shippingHeading = useOrderSummaryHeadingFromEditor(
 		'woocommerce_order_summary_shipping_heading'
@@ -26,7 +29,7 @@ export const Edit = ( { attributes }: BlockEditProps< BlockAttributes > ) => {
 		'woocommerce_order_summary_shipping_heading'
 	);
 
-	const headingText = shippingHeading ?? __( 'Shipping', 'woocommerce' );
+	const headingText = shippingHeading ?? defaultHeading;
 
 	const heading = (
 		<RichText value={ headingText } onChange={ onShippingHeadingChange } />

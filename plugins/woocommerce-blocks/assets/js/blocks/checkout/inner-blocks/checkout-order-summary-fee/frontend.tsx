@@ -14,7 +14,7 @@ const Frontend = ( { className }: BlockAttributes ) => {
 		'woocommerce_order_summary_fee_heading'
 	);
 
-	const heading = feeHeading ?? __( 'Fees', 'woocommerce' );
+	const heading = feeHeading ?? __( 'Fee', 'woocommerce' );
 
 	return <Block heading={ heading } className={ className } />;
 };
