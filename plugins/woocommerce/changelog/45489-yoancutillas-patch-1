@@ -1,0 +1,4 @@
+Significance: patch
+Type: add
+
+Filters the quantity validation for a cart item being updated via the Store API.

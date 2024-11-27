@@ -47,6 +47,7 @@
  - [woocommerce_store_api_product_quantity_limit](#woocommerce_store_api_product_quantity_limit)
  - [woocommerce_store_api_product_quantity_{$value_type}](#woocommerce_store_api_product_quantity_value_type)
  - [woocommerce_store_api_rate_limit_options](#woocommerce_store_api_rate_limit_options)
+ - [woocommerce_store_api_validate_cart_item_quantity](#woocommerce_store_api_validate_cart_item_quantity)
 
 ---
 
@@ -1170,7 +1171,33 @@ apply_filters( 'woocommerce_store_api_rate_limit_options', array $rate_limit_opt
  - [StoreApi/Utilities/RateLimits.php](../../../../src/StoreApi/Utilities/RateLimits.php)
 
 ---
-<!-- FEEDBACK -->
+
+## woocommerce_store_api_validate_cart_item_quantity
+
+
+Filters if a cart item's quantity meets validation requirements. You should throw an informative error if the quantity is invalid, to let the user know why.
+
+```php
+apply_filters( 'woocommerce_store_api_validate_cart_item_quantity', boolean $passed_validation, integer $quantity, array|null $cart_item )
+```
+
+### Parameters
+
+| Argument | Type | Description |
+| -------- | ---- | ----------- |
+| $passed_validation | boolean | True if the quantity passes validation, false otherwise. |
+| $quantity | integer | Quantity being validated. |
+| $cart_item | array\|null | Cart item being validated, or null if product is not yet in cart. |
+
+### Returns
+
+
+`boolean` True if the quantity is valid, or throws an error if not.
+
+### Source
+
+
+ - [StoreApi/Utilities/QuantityLimits.php](../../../../src/StoreApi/Utilities/QuantityLimits.php)
 
 ---
 
