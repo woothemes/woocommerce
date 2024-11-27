@@ -48,7 +48,11 @@ describe( 'TotalsFooterItem', () => {
 
 	it( 'Does not show the "including %s of tax" line if tax is 0', () => {
 		const { container } = render(
-			<TotalsFooterItem currency={ currency } values={ values } />
+			<TotalsFooterItem
+				label={ 'Total' }
+				currency={ currency }
+				values={ values }
+			/>
 		);
 		expect( container ).toMatchSnapshot();
 	} );
@@ -62,7 +66,11 @@ describe( 'TotalsFooterItem', () => {
 			total_items_tax: '100',
 		};
 		const { container } = render(
-			<TotalsFooterItem currency={ currency } values={ valuesWithTax } />
+			<TotalsFooterItem
+				label={ 'Total' }
+				currency={ currency }
+				values={ valuesWithTax }
+			/>
 		);
 		expect( container ).toMatchSnapshot();
 	} );
@@ -74,7 +82,11 @@ describe( 'TotalsFooterItem', () => {
 			total_items_tax: '100',
 		};
 		const { container } = render(
-			<TotalsFooterItem currency={ currency } values={ valuesWithTax } />
+			<TotalsFooterItem
+				label={ 'Total' }
+				currency={ currency }
+				values={ valuesWithTax }
+			/>
 		);
 		expect( container ).toMatchSnapshot();
 	} );
@@ -87,7 +99,11 @@ describe( 'TotalsFooterItem', () => {
 			tax_lines: [ { name: '10% VAT', price: '100', rate: '10.000' } ],
 		};
 		const { container } = render(
-			<TotalsFooterItem currency={ currency } values={ valuesWithTax } />
+			<TotalsFooterItem
+				label={ 'Total' }
+				currency={ currency }
+				values={ valuesWithTax }
+			/>
 		);
 		expect( container ).toMatchSnapshot();
 	} );
@@ -103,7 +119,11 @@ describe( 'TotalsFooterItem', () => {
 			],
 		};
 		const { container } = render(
-			<TotalsFooterItem currency={ currency } values={ valuesWithTax } />
+			<TotalsFooterItem
+				label={ 'Total' }
+				currency={ currency }
+				values={ valuesWithTax }
+			/>
 		);
 		expect( container ).toMatchSnapshot();
 	} );

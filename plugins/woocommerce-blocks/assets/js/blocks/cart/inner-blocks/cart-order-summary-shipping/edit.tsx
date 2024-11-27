@@ -21,9 +21,7 @@ import {
 	useOrderSummaryHeadingFromEditor,
 } from '../../../../entities/editor';
 
-export const Edit = ( {
-	attributes,
-}: BlockEditProps< BlockAttributes > ): JSX.Element => {
+export const Edit = ( { attributes }: BlockEditProps< BlockAttributes > ) => {
 	const { className } = attributes;
 	const shippingEnabled = getSetting( 'shippingEnabled', true );
 	const blockProps = useBlockProps();
