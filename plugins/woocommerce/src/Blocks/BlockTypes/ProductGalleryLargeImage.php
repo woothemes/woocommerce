@@ -87,7 +87,7 @@ class ProductGalleryLargeImage extends AbstractBlock {
 
 		return strtr(
 			'<div class="wc-block-product-gallery-large-image wp-block-woocommerce-product-gallery-large-image" {directives}>
-				<ul class="wc-block-product-gallery-large-image__container" tabindex="-1">
+				<ul class="wc-block-product-gallery-large-image__container swiper-wrapper" tabindex="-1">
 					{main_images}
 				</ul>
 					{content}
@@ -119,7 +119,6 @@ class ProductGalleryLargeImage extends AbstractBlock {
 		$attributes = array(
 			'class'                  => 'wc-block-woocommerce-product-gallery-large-image__image',
 			'data-wc-bind--hidden'   => '!state.isSelected',
-			'data-wc-watch'          => 'callbacks.scrollInto',
 			'data-wc-bind--tabindex' => 'state.thumbnailTabIndex',
 			'data-wc-on--keydown'    => 'actions.onSelectedLargeImageKeyDown',
 			'data-wc-class--wc-block-woocommerce-product-gallery-large-image__image--active-image-slide' => 'state.isSelected',
@@ -144,7 +143,7 @@ class ProductGalleryLargeImage extends AbstractBlock {
 
 		$main_image_with_wrapper = array_map(
 			function ( $main_image_element ) {
-				return "<li class='wc-block-product-gallery-large-image__wrapper'>" . $main_image_element . '</li>';
+				return "<li class='wc-block-product-gallery-large-image__wrapper swiper-slide'>" . $main_image_element . '</li>';
 			},
 			$main_images
 		);

@@ -7,6 +7,7 @@ import {
 	getElement,
 } from '@woocommerce/interactivity';
 import { StorePart } from '@woocommerce/utils';
+import Swiper from 'swiper';
 
 export interface ProductGalleryContext {
 	selectedImage: string;
@@ -25,22 +26,6 @@ const getContext = ( ns?: string ) =>
 type Store = typeof productGallery & StorePart< ProductGallery >;
 const { state, actions } = store< Store >( 'woocommerce/product-gallery' );
 
-const selectImage = (
-	context: ProductGalleryContext,
-	select: 'next' | 'previous'
-) => {
-	const imagesIds =
-		context[
-			context.isDialogOpen ? 'dialogVisibleImagesIds' : 'visibleImagesIds'
-		];
-	const selectedImageIdIndex = imagesIds.indexOf( context.selectedImage );
-	const nextImageIndex =
-		select === 'next'
-			? Math.min( selectedImageIdIndex + 1, imagesIds.length - 1 )
-			: Math.max( selectedImageIdIndex - 1, 0 );
-	context.selectedImage = imagesIds[ nextImageIndex ];
-};
-
 const closeDialog = ( context: ProductGalleryContext ) => {
 	context.isDialogOpen = false;
 	// Reset the main image.
@@ -52,6 +37,78 @@ const closeDialog = ( context: ProductGalleryContext ) => {
 		context.elementThatTriggeredDialogOpening = null;
 	}
 };
+
+const swiperContainer = document.querySelector(
+	'.wc-block-product-gallery-large-image'
+);
+
+const getSlideIndexByImageId = ( imageId: string ) => {
+	const slides = swiperContainer?.querySelectorAll( '.swiper-slide' );
+	let slideIndex = 0;
+
+	if ( slides ) {
+		slides.forEach( ( slide ) => {
+			const images = slide.querySelector(
+				'.wc-block-woocommerce-product-gallery-large-image__image'
+			);
+			const slideImageContext = images?.getAttribute( 'data-wc-context' );
+			const slideImageId = slideImageContext
+				? JSON.parse( slideImageContext ).imageId
+				: null;
+
+			if ( slideImageId === imageId ) {
+				const slideIndexAttr = slide.getAttribute(
+					'data-swiper-slide-index'
+				);
+
+				if ( slideIndexAttr !== null ) {
+					slideIndex = parseInt( slideIndexAttr, 10 );
+				}
+			}
+		} );
+	}
+
+	return slideIndex;
+};
+
+const getImageIdFromIndex = ( index: number ) => {
+	const imageIdContext = swiperContainer
+		?.querySelector(
+			`.swiper-slide[data-swiper-slide-index="${ index }"] img`
+		)
+		?.getAttribute( 'data-wc-context' );
+
+	const imageId = imageIdContext
+		? JSON.parse( imageIdContext ).imageId
+		: null;
+
+	return imageId;
+};
+
+const swiper = new Swiper( swiperContainer as HTMLElement, {
+	direction: 'horizontal',
+	loop: true,
+	on: {
+		beforeInit: () => {
+			if ( swiperContainer ) {
+				( swiperContainer as HTMLElement ).style.width =
+					( swiperContainer as HTMLElement ).clientWidth + 'px';
+			}
+		},
+		realIndexChange: ( swiperInstance ) => {
+			// Since we're not using the Swiper's pagination, we need to manually update the selected image for the pager.
+			const imageId = getImageIdFromIndex( swiperInstance.realIndex );
+
+			(
+				document.querySelector(
+					".wc-block-product-gallery-pager__pager-item[data-wc-context='" +
+						JSON.stringify( { imageId } ) +
+						"']"
+				) as HTMLButtonElement
+			 ).click();
+		},
+	},
+} );
 
 const productGallery = {
 	state: {
@@ -103,16 +160,19 @@ const productGallery = {
 		selectImage: () => {
 			const context = getContext();
 			context.selectedImage = context.imageId;
+			swiper.slideToLoop(
+				getSlideIndexByImageId( context.imageId ),
+				0,
+				false
+			);
 		},
 		selectNextImage: ( event: MouseEvent ) => {
 			event.stopPropagation();
-			const context = getContext();
-			selectImage( context, 'next' );
+			swiper.slideNext();
 		},
 		selectPreviousImage: ( event: MouseEvent ) => {
 			event.stopPropagation();
-			const context = getContext();
-			selectImage( context, 'previous' );
+			swiper.slidePrev();
 		},
 		onThumbnailKeyDown: ( event: KeyboardEvent ) => {
 			const context = getContext();
