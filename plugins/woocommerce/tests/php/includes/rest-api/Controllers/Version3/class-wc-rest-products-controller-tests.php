@@ -1014,6 +1014,177 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	}
 
 	/**
+	 * Test that `exclude_types` parameter correctly excludes a single type.
+	 */
+	public function test_products_filter_with_single_exclude_types() {
+		WC_Helper_Product::create_simple_product();
+		WC_Helper_Product::create_variation_product();
+		WC_Helper_Product::create_grouped_product();
+		WC_Helper_Product::create_external_product();
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'exclude_types' => array( 'simple' ),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data();
+
+		$types = array_unique( array_column( $data, 'type' ) );
+
+		$this->assertNotContains( 'simple', $types );
+	}
+
+	/**
+	 * Test that `exclude_types` parameter correctly excludes multiple types.
+	 */
+	public function test_products_filter_with_multiple_exclude_types() {
+		WC_Helper_Product::create_simple_product();
+		WC_Helper_Product::create_variation_product();
+		WC_Helper_Product::create_grouped_product();
+		WC_Helper_Product::create_external_product();
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'exclude_types' => array( 'simple', 'grouped' ),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data();
+
+		$types = array_unique( wp_list_pluck( $data, 'type' ) );
+
+		$this->assertEqualsCanonicalizing(
+			array( 'variable', 'external' ),
+			$types
+		);
+
+		$this->assertNotContains( 'simple', $types );
+		$this->assertNotContains( 'grouped', $types );
+	}
+
+	/**
+	 * Test that empty `exclude_types` parameter returns all products.
+	 */
+	public function test_products_filter_with_empty_exclude_types() {
+		WC_Helper_Product::create_simple_product();
+		WC_Helper_Product::create_variation_product();
+		WC_Helper_Product::create_grouped_product();
+		WC_Helper_Product::create_external_product();
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'exclude_types' => array(),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data();
+
+		$types = array_unique( wp_list_pluck( $data, 'type' ) );
+
+		$this->assertEqualsCanonicalizing(
+			array_keys( wc_get_product_types() ),
+			$types
+		);
+	}
+
+	/**
+	 * Test that `exclude_types` parameter validation handles invalid values.
+	 */
+	public function test_products_filter_with_invalid_exclude_types() {
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'exclude_types' => array( 'simple', 'invalid_type' ),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 400, $response->get_status() );
+	}
+
+	/**
+	 * Test that `exclude_types` with all types returns empty result.
+	 */
+	public function test_products_filter_exclude_types_with_all_types_returns_empty() {
+		WC_Helper_Product::create_simple_product();
+		WC_Helper_Product::create_variation_product();
+		WC_Helper_Product::create_grouped_product();
+		WC_Helper_Product::create_external_product();
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'exclude_types' => array_keys( wc_get_product_types() ),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEmpty( $response->get_data() );
+	}
+
+	/**
+	 * Test that `exclude_types` parameter takes precedence over `include_types`.
+	 */
+	public function test_products_filter_exclude_types_precedence_over_include() {
+		WC_Helper_Product::create_simple_product();
+		WC_Helper_Product::create_variation_product();
+		WC_Helper_Product::create_grouped_product();
+		WC_Helper_Product::create_external_product();
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'include_types' => array( 'simple', 'grouped' ),
+				'exclude_types' => array( 'grouped' ),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+
+		$types = array_unique( wp_list_pluck( $response->get_data(), 'type' ) );
+
+		$this->assertContains( 'simple', $types );
+		$this->assertNotContains( 'grouped', $types );
+		$this->assertEquals( 1, count( $types ) );
+	}
+
+	/**
+	 * Test that `exclude_types` works correctly with the `type` param.
+	 */
+	public function test_products_filter_exclude_types_with_type_param() {
+		WC_Helper_Product::create_simple_product();
+		WC_Helper_Product::create_variation_product();
+		WC_Helper_Product::create_grouped_product();
+		WC_Helper_Product::create_external_product();
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_query_params(
+			array(
+				'type'          => 'simple',
+				'exclude_types' => array( 'simple' ),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+
+		$data = $response->get_data();
+		$this->assertEmpty( $data, 'Should return no products when type is excluded' );
+	}
+
+	/**
 	 * Test `downloadable` filter returns only downloadable products.
 	 */
 	public function test_downloadable_filter_returns_only_downloadable_products() {
@@ -1057,6 +1228,57 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	public function test_downloadable_filter_with_invalid_param() {
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
 		$request->set_param( 'downloadable', 'invalid' );
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 'rest_invalid_param', $response->get_data()['code'] );
+	}
+
+	/**
+	 * Test `virtual` filter returns only virtual products.
+	 */
+	public function test_virtual_filter_returns_only_virtual_products() {
+		WC_Helper_Product::create_simple_product( true, array( 'virtual' => true ) );
+		WC_Helper_Product::create_simple_product();
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_param( 'virtual', true );
+
+		$response = $this->server->dispatch( $request );
+		$products = $response->get_data();
+
+		$this->assertEquals( 200, $response->get_status() );
+		foreach ( $products as $product ) {
+			$this->assertTrue( $product['virtual'] );
+		}
+	}
+
+	/**
+	 * Test `virtual` filter returns only non-virtual products when is false.
+	 */
+	public function test_virtual_filter_returns_only_non_virtual_products() {
+		WC_Helper_Product::create_simple_product( true, array( 'virtual' => true ) );
+		WC_Helper_Product::create_simple_product();
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_param( 'virtual', false );
+
+		$response = $this->server->dispatch( $request );
+		$products = $response->get_data();
+
+		$this->assertEquals( 200, $response->get_status() );
+		foreach ( $products as $product ) {
+			$this->assertFalse( $product['virtual'] );
+		}
+	}
+
+	/**
+	 * Test invalid virtual parameter type returns error.
+	 */
+	public function test_virtual_filter_with_invalid_param() {
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
+		$request->set_param( 'virtual', 'invalid' );
 
 		$response = $this->server->dispatch( $request );
 
