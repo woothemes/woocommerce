@@ -20,7 +20,7 @@ export const onWCPayEnable = async (): Promise< void > => {
 			ONBOARDING_STORE_NAME
 		).getJetpackAuthUrl( {
 			redirectUrl: getAdminLink(
-				'admin.php?page=wc-admin&path=%2Fpayments%2Fconnect&test_drive=true&auto_start_test_drive_onboarding=true'
+				'admin.php?page=wc-admin&path=%2Fpayments%2Fconnect&test_drive=true&auto_start_test_drive_onboarding=true&redirect_to_settings_page=true'
 			),
 			from: 'woocommerce-payments',
 		} );
@@ -31,7 +31,7 @@ export const onWCPayEnable = async (): Promise< void > => {
 		}
 	} else {
 		window.location.href = getAdminLink(
-			'admin.php?page=wc-admin&path=%2Fpayments%2Fconnect&test_drive=true&auto_start_test_drive_onboarding=true'
+			'admin.php?page=wc-admin&path=%2Fpayments%2Fconnect&test_drive=true&auto_start_test_drive_onboarding=true&redirect_to_settings_page=true'
 		);
 	}
 };
