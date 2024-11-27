@@ -18,9 +18,7 @@ export interface Attributes {
 	isDescendentOfSingleProductBlock: boolean;
 }
 
-export type FeaturesKeys =
-	| 'isStepperLayoutFeatureEnabled'
-	| 'isBlockifiedAddToCart';
+export type FeaturesKeys = 'isBlockifiedAddToCart';
 
 export type FeaturesProps = {
 	[ key in FeaturesKeys ]?: boolean;
