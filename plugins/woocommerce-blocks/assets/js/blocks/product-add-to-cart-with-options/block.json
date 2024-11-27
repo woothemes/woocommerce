@@ -1,0 +1,17 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "woocommerce/product-add-to-cart-with-options",
+	"version": "1.0.0",
+	"title": "Add To Cart with Options (Experimental)",
+	"description": "Create an \"Add To Cart\" composition by using blocks",
+	"category": "woocommerce",
+	"keywords": [
+		"WooCommerce"
+	],
+	"textdomain": "woocommerce",
+	"supports": {
+		"interactivity": true
+	},
+	"example": {}
+}
