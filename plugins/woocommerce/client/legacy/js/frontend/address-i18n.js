@@ -13,9 +13,9 @@ jQuery( function( $ ) {
 			field.find( 'label .optional' ).remove();
 			field.addClass( 'validate-required' );
 
-			if ( field.find( 'label .asterisk' ).length === 0 ) {
+			if ( field.find( 'label .required.asterisk' ).length === 0 ) {
 				field.find( 'label' ).append(
-					'<span class="asterisk">' + 
+					'&nbsp;<span class="required asterisk">' + 
 					  '<span class="asterisk-line"></span>' +
 						'<span class="asterisk-line"></span>' +
 						'<span class="asterisk-line"></span>' + 
