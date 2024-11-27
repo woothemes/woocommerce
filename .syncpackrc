@@ -276,6 +276,16 @@
 			"pinVersion": "wp-6.6"
 		},
 		{
+			"label": "Integration tests dependency error",
+			"dependencies": [
+				"@wordpress/keyboard-shortcuts"
+			],
+			"packages": [
+				"**"
+			],
+			"pinVersion": "wp-6.4"
+		},
+		{
 			"dependencies": [
 				"@wordpress/**"
 			],
