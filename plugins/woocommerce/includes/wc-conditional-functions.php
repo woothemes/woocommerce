@@ -179,14 +179,6 @@ if ( ! function_exists( 'is_checkout_pay_page' ) ) {
 	function is_checkout_pay_page() {
 		global $wp;
 
-		if ( ! did_action( 'wp' ) ) {
-			wc_doing_it_wrong(
-				__FUNCTION__,
-				sprintf( 'Conditional tag %s can only be used on or after the "wp" action hook', __FUNCTION__ ),
-				'9.6.0'
-			);
-		}
-
 		return is_checkout() && ! empty( $wp->query_vars['order-pay'] );
 	}
 }
