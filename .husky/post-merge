@@ -12,7 +12,15 @@ if [ -n "$changedManifests" ]; then
 	pnpm install --frozen-lockfile
 fi
 
-# Cleanup .wireit cache that is older than 4 weeks; otherwise, the repository directory size keeps growing and growing.
-find plugins/*/.wireit/* -maxdepth 0 -type d -ctime +28 -exec rm -rf {} \;
-find packages/js/*/.wireit/* -maxdepth 0 -type d -ctime +28 -exec rm -rf {} \;
-find plugins/woocommerce/client/*/.wireit/* -maxdepth 0 -type d -ctime +28 -exec rm -rf {} \;
+# Cleanup .wireit cache that is older than 4 weeks (28 days); otherwise, the repository directory size keeps growing and growing.
+staleWireitDirectories=$(( \
+	$( find plugins/*/.wireit/* -maxdepth 0 -type d -ctime +28 -printf '.' 2>/dev/null | wc -c ) + \
+	$( find packages/js/*/.wireit/* -maxdepth 0 -type d -ctime +28 -printf '.' 2>/dev/null | wc -c ) + \
+	$( find plugins/woocommerce/client/*/.wireit/* -maxdepth 0 -type d -ctime +28 -printf '.' 2>/dev/null | wc -c ) \
+))
+if [[ $staleWireitDirectories -gt 0 ]]; then
+	echo "Cleaning up stale wireit-cache ($staleWireitDirectories directories)"
+	find plugins/*/.wireit/* -maxdepth 0 -type d -ctime +28 -exec rm -rf {} \; 2>/dev/null
+    find packages/js/*/.wireit/* -maxdepth 0 -type d -ctime +28 -exec rm -rf {} \; 2>/dev/null
+    find plugins/woocommerce/client/*/.wireit/* -maxdepth 0 -type d -ctime +28 -exec rm -rf {} \; 2>/dev/null
+fi
