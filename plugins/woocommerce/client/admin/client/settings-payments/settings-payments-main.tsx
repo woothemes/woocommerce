@@ -5,7 +5,6 @@ import { useCallback } from 'react';
 import {
 	PLUGINS_STORE_NAME,
 	PAYMENT_SETTINGS_STORE_NAME,
-	SuggestedPaymentExtension,
 } from '@woocommerce/data';
 import { useState } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -34,31 +33,22 @@ export const SettingsPaymentsMain = () => {
 		PAYMENT_SETTINGS_STORE_NAME
 	);
 
-	const {
-		registeredPaymentGateways,
-		preferredPluginSuggestions,
-		otherPluginSuggestions,
-	} = useSelect( ( select ) => {
+	const { providers, suggestions } = useSelect( ( select ) => {
 		return {
-			registeredPaymentGateways: select(
+			providers: select(
 				PAYMENT_SETTINGS_STORE_NAME
-			).getRegisteredPaymentGateways(),
-			preferredPluginSuggestions: select(
-				PAYMENT_SETTINGS_STORE_NAME
-			).getPreferredExtensionSuggestions(),
-			otherPluginSuggestions: select(
-				PAYMENT_SETTINGS_STORE_NAME
-			).getOtherExtensionSuggestions(),
+			).getPaymentProviders(),
+			suggestions: select( PAYMENT_SETTINGS_STORE_NAME ).getSuggestions(),
 		};
 	} );
 
 	const setupPlugin = useCallback(
-		( extension: SuggestedPaymentExtension ) => {
+		( id, slug ) => {
 			if ( installingPlugin ) {
 				return;
 			}
-			setInstallingPlugin( extension.id );
-			installAndActivatePlugins( [ extension.plugin.slug ] )
+			setInstallingPlugin( id );
+			installAndActivatePlugins( [ slug ] )
 				.then( async ( response ) => {
 					createNoticesFromResponse( response );
 					if ( extension.id === 'woopayments' ) {
@@ -66,7 +56,7 @@ export const SettingsPaymentsMain = () => {
 						return;
 					}
 					invalidateResolutionForStoreSelector(
-						'getRegisteredPaymentGateways'
+						'getPaymentProviders'
 					);
 					setInstallingPlugin( null );
 				} )
@@ -86,14 +76,13 @@ export const SettingsPaymentsMain = () => {
 		<>
 			<div className="settings-payments-main__container">
 				<PaymentGateways
-					registeredPaymentGateways={ registeredPaymentGateways }
+					providers={ providers }
 					installedPluginSlugs={ installedPluginSlugs }
-					preferredPluginSuggestions={ preferredPluginSuggestions }
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
 				/>
 				<OtherPaymentGateways
-					otherPluginSuggestions={ otherPluginSuggestions }
+					suggestions={ suggestions }
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
 				/>

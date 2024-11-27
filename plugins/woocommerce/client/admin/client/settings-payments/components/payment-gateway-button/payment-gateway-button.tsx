@@ -83,7 +83,7 @@ export const PaymentGatewayButton = ( {
 					invalidateResolutionForStoreSelector(
 						isOffline
 							? 'getOfflinePaymentGateways'
-							: 'getRegisteredPaymentGateways'
+							: 'getPaymentProviders'
 					);
 					setIsUpdating( false );
 				} )
