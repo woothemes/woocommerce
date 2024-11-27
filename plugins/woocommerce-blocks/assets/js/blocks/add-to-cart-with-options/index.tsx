@@ -10,8 +10,6 @@ import { Icon, button } from '@wordpress/icons';
 import metadata from './block.json';
 import AddToCartFormEdit from './edit';
 import './style.scss';
-import './editor.scss';
-import '../../../base/components/quantity-selector/style.scss';
 
 const blockSettings = {
 	edit: AddToCartFormEdit,
