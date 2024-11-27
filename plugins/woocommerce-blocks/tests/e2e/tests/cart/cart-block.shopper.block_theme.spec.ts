@@ -137,6 +137,20 @@ test.describe( 'Shopper → Cart block', () => {
 		).toBeVisible();
 	} );
 
+	test( 'Block editor is not loaded for shopper', async ( {
+		page,
+		frontendUtils,
+	} ) => {
+		await frontendUtils.goToCart();
+		await page.waitForLoadState( 'load' );
+
+		const blockEditorLoaded = await page.evaluate( () => {
+			return !! window?.wp?.blockEditor;
+		} );
+
+		expect( blockEditorLoaded ).toBe( false );
+	} );
+
 	test( 'User can remove a product from cart', async ( {
 		frontendUtils,
 		page,

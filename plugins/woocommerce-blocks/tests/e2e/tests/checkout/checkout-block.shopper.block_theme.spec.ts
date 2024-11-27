@@ -112,6 +112,23 @@ test.describe( 'Shopper → Account (guest user)', () => {
 				expect( response[ 0 ].email ).toBe( testEmail );
 			} );
 	} );
+
+	test( 'Block editor is not loaded for shopper', async ( {
+		page,
+		frontendUtils,
+	} ) => {
+		await frontendUtils.goToShop();
+		await frontendUtils.addToCart( SIMPLE_PHYSICAL_PRODUCT_NAME );
+		await frontendUtils.goToCheckout();
+
+		await page.waitForLoadState( 'load' );
+
+		const blockEditorLoaded = await page.evaluate( () => {
+			return !! window?.wp?.blockEditor;
+		} );
+
+		expect( blockEditorLoaded ).toBe( false );
+	} );
 } );
 
 test.describe( 'Shopper → Local pickup', () => {
