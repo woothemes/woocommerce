@@ -158,8 +158,7 @@ If payment fails, you should throw an error and return an array with the failure
 ```php
 wc_add_notice( __('Payment error:', 'woothemes') . $error_message, 'error' );
 return array(
-    'result'   => 'failure',
-    'redirect' => '', // you can redirect to a custom page here
+    'result'   => 'failure'
 );
 ```
 
@@ -210,7 +209,6 @@ If payment fails, you should output an error and return the failure array:
 wc_add_notice( \_\_('Payment error:', 'woothemes') . $error_message, 'error' );
 return array(
     'result'   => 'failure',
-    'redirect' => '', // you can redirect to a custom page here
 );
 ```
 
