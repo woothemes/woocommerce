@@ -2,17 +2,17 @@
  * Internal dependencies
  */
 import {
-	RegisteredPaymentGateway,
+	PaymentProvider,
 	OfflinePaymentGateway,
 	PaymentSettingsState,
 	SuggestedPaymentExtension,
 } from './types';
 import { WPDataSelector, WPDataSelectors } from '../types';
 
-export function getRegisteredPaymentGateways(
+export function getPaymentProviders(
 	state: PaymentSettingsState
-): Array< RegisteredPaymentGateway > {
-	return state.registeredPaymentGateways;
+): Array< PaymentProvider > {
+	return state.providers;
 }
 
 export function getOfflinePaymentGateways(
@@ -21,16 +21,10 @@ export function getOfflinePaymentGateways(
 	return state.offlinePaymentGateways;
 }
 
-export function getPreferredExtensionSuggestions(
+export function getSuggestions(
 	state: PaymentSettingsState
 ): Array< SuggestedPaymentExtension > {
-	return state.preferredExtensionSuggestions;
-}
-
-export function getOtherExtensionSuggestions(
-	state: PaymentSettingsState
-): Array< SuggestedPaymentExtension > {
-	return state.otherExtensionSuggestions;
+	return state.suggestions;
 }
 
 export function isFetching( state: PaymentSettingsState ): boolean {
@@ -38,17 +32,10 @@ export function isFetching( state: PaymentSettingsState ): boolean {
 }
 
 export type PaymentSettingsSelectors = {
-	getRegisteredPaymentGateways: WPDataSelector<
-		typeof getRegisteredPaymentGateways
-	>;
+	getPaymentProviders: WPDataSelector< typeof getPaymentProviders >;
 	getOfflinePaymentGateways: WPDataSelector<
 		typeof getOfflinePaymentGateways
 	>;
-	getPreferredExtensionSuggestions: WPDataSelector<
-		typeof getPreferredExtensionSuggestions
-	>;
-	getOtherExtensionSuggestions: WPDataSelector<
-		typeof getOtherExtensionSuggestions
-	>;
+	getSuggestions: WPDataSelector< typeof getSuggestions >;
 	isFetching: WPDataSelector< typeof isFetching >;
 } & WPDataSelectors;
