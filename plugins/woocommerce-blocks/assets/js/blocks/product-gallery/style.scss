@@ -381,6 +381,7 @@ $admin-bar-mobile-height: 46px;
 	}
 
 	.wc-block-product-gallery-thumbnails__thumbnail {
+		border: 1px solid rgba($color: #000, $alpha: 0.1);
 		height: auto;
 		width: auto;
 		display: flex;
@@ -392,7 +393,6 @@ $admin-bar-mobile-height: 46px;
 		flex-grow: 1;
 
 		img {
-			border: 1px solid rgba($color: #000, $alpha: 0.1);
 			aspect-ratio: 1 / 1;
 			object-fit: contain;
 		}
