@@ -62,3 +62,4 @@ export const SettingsEditor = () => {
 };
 
 export * from './components';
+export * from './legacy';
