@@ -93,9 +93,9 @@ export const OtherPaymentGateways = ( {
 				</div>
 			) )
 		);
-	}, [ suggestions, installingPlugin, isFetching ] );
+	}, [ suggestions, installingPlugin, isFetching, setupPlugin ] );
 
-	if ( isFetching && suggestions.length === 0 ) {
+	if ( ! isFetching && suggestions.length === 0 ) {
 		return null; // Don't render the component if there are no suggestions
 	}
 
