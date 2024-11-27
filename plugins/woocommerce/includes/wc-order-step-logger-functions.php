@@ -50,4 +50,3 @@ function wc_log_order_step( string $message, array $context = array() ) {
 	// Logging the place order flow step completed. Logs are grouped per day to make is easier to navigate.
 	$wc_log_order_logger->info( $message, $context );
 }
-
