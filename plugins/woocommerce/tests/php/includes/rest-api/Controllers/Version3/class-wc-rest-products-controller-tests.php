@@ -188,6 +188,9 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 			$this->enable_cogs_feature();
 		}
 
+		// Temp fix, to be removed by: https://github.com/woocommerce/woocommerce/pull/53176
+		update_option( 'wc_feature_woocommerce_brands_enabled', 'no' );
+		
 		$expected_response_fields = $this->get_expected_response_fields( $with_cogs_enabled );
 
 		$product  = \Automattic\WooCommerce\RestApi\UnitTests\Helpers\ProductHelper::create_simple_product();

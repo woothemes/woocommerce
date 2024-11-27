@@ -130,6 +130,10 @@ class WC_REST_Products_V2_Controller_Test extends WC_REST_Unit_Test_Case {
 	 * Note: This has fields hardcoded intentionally instead of fetching from schema to test for any bugs in schema result. Add new fields manually when added to schema.
 	 */
 	public function test_product_api_get_all_fields_v2() {
+
+		// Temp fix, to be removed by: https://github.com/woocommerce/woocommerce/pull/53176
+		update_option( 'wc_feature_woocommerce_brands_enabled', 'no' );
+
 		$expected_response_fields = $this->get_expected_response_fields();
 
 		$product = \Automattic\WooCommerce\RestApi\UnitTests\Helpers\ProductHelper::create_simple_product();
