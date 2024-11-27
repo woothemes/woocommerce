@@ -541,12 +541,14 @@ jQuery( function( $ ) {
 						$( '.checkout-inline-error-message' ).remove();
 
 						try {
-							if ( 'success' === result.result && 
+							if ( 'success' === result.result &&
 								$form.triggerHandler( 'checkout_place_order_success', [ result, wc_checkout_form ] ) !== false ) {
-								if ( -1 === result.redirect.indexOf( 'https://' ) || -1 === result.redirect.indexOf( 'http://' ) ) {
-									window.location = result.redirect;
-								} else {
-									window.location = decodeURI( result.redirect );
+								if ( result.redirect ) {
+									if ( -1 === result.redirect.indexOf( 'https://' ) || -1 === result.redirect.indexOf( 'http://' ) ) {
+										window.location = result.redirect;
+									} else {
+										window.location = decodeURI( result.redirect );
+									}
 								}
 							} else if ( 'failure' === result.result ) {
 								throw 'Result failure';
@@ -624,7 +626,7 @@ jQuery( function( $ ) {
 			$( 'li[data-id]', $msgs ).each( function() {
 				var $this = $( this );
 
-				$this.wrapInner( '<a href="#' + $this.attr( 'data-id' ) + '"></a>' );				
+				$this.wrapInner( '<a href="#' + $this.attr( 'data-id' ) + '"></a>' );
 			} );
 
 			return $msgs;
@@ -639,7 +641,7 @@ jQuery( function( $ ) {
 					var descriptionId = dataId + '_description';
 					var msg = $this.text().trim();
 					var $formRow = $field.closest( '.form-row' );
-					
+
 					$formRow.append( '<p id="' + descriptionId + '" class="checkout-inline-error-message">' + msg + '</p>' );
 					$field
 						.attr( 'aria-describedby', descriptionId )
@@ -674,13 +676,13 @@ jQuery( function( $ ) {
 			if ( $target.length === 0 ) {
 				return;
 			}
-	
+
 			var msg = $( $.parseHTML( html_element ) ).text().trim();
 
 			if ( msg === '' ) {
 				return;
 			}
-				
+
 			$target.find( '#coupon_code' )
 				.focus()
 				.addClass( 'has-error' )
