@@ -21,6 +21,7 @@ const blocks = {
 	},
 	'add-to-cart-with-options': {
 		customDir: 'add-to-cart-with-options',
+		isExperimental: true,
 	},
 	'all-products': {
 		customDir: 'products/all-products',
