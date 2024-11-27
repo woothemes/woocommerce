@@ -9,12 +9,12 @@ import {
 	EnableGatewayResponse,
 } from '@woocommerce/data';
 import { useState } from '@wordpress/element';
-import { onWCPayEnable } from '~/settings-payments/hooks';
-import { isWooPayments } from '~/settings-payments/utils';
 
 /**
  * Internal dependencies
  */
+import { onWCPayEnable } from '~/settings-payments/hooks';
+import { isWooPayments } from '~/settings-payments/utils';
 
 export const PaymentGatewayButton = ( {
 	id,
@@ -75,10 +75,9 @@ export const PaymentGatewayButton = ( {
 						if ( isWooPayments( id ) ) {
 							await onWCPayEnable();
 							return;
-						} else {
-							window.location.href = settingsUrl;
-							return;
 						}
+						window.location.href = settingsUrl;
+						return;
 					}
 					invalidateResolutionForStoreSelector(
 						isOffline
