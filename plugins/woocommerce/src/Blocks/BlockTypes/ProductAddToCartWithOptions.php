@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
@@ -36,9 +37,9 @@ class ProductAddToCartWithOptions extends AbstractBlock {
 			if ( ! isset( $args['attributes'] ) ) {
 				$args['attributes'] = array();
 			}
-	
+
 			$args['attributes']['withRole'] = array(
-				'type'    => 'string',
+				'type' => 'string',
 			);
 
 			if ( ! isset( $args['variations'] ) ) {
@@ -54,11 +55,11 @@ class ProductAddToCartWithOptions extends AbstractBlock {
 					'withRole'  => 'add-to-cart-with-options-button',
 					'text'      => __( 'Add to Cart', 'woocommerce' ),
 				),
-				'scope'        => array(
+				'scope'       => array(
 					'block',
 				),
-				'isActive'     => [ 'withRole' ],
-				'isDefault'    => false,
+				'isActive'    => [ 'withRole' ],
+				'isDefault'   => false,
 			);
 		}
 
@@ -75,22 +76,27 @@ class ProductAddToCartWithOptions extends AbstractBlock {
 	 * @return string | void Rendered block output.
 	 */
 	protected function render( $attributes, $content, $block ) {
-		// Interactivity API - Namespace and Context
+		// Interactivity API - Namespace and Context.
 		$i_api_namespace     = $this->get_full_block_name();
 		$data_wc_interactive = wp_json_encode( array( 'namespace' => $i_api_namespace ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP );
 
-		// Interactivity API - Add to Cart Button / Actions
+		// Interactivity API - Add to Cart Button / Actions.
 		$data_wc_add_to_cart_action = $i_api_namespace . '::actions.addToCart';
 
 		$processor = new \WP_HTML_Tag_Processor( $content );
 
-		if ( $processor->next_tag( array( 'tag_name' => 'div', 'class_name' => 'wp-block-woocommerce-product-add-to-cart-with-options' ) ) ) {
+		if ( $processor->next_tag(
+			array(
+				'tag_name'   => 'div',
+				'class_name' => 'wp-block-woocommerce-product-add-to-cart-with-options',
+			) )
+		) {
 			$processor->set_attribute( 'data-wc-interactive', $data_wc_interactive );
 
 			if ( $processor->next_tag( array( 'tag_name' => 'a', 'class_name' => 'wp-element-button' ) ) ) {
 				$processor->set_attribute( 'data-wc-on--click', $data_wc_add_to_cart_action );
 			}
-        }
+		}
 
 		return $processor->get_updated_html();
 	}
