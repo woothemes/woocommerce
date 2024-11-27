@@ -17,6 +17,22 @@ $dialog-padding: 16px;
 $admin-bar-desktop-height: 32px;
 $admin-bar-mobile-height: 46px;
 
+$full-height-desktop: calc(100vh - (2 * $dialog-header-height) - $dialog-header-padding-top);
+$full-height-desktop-admin-bar: $full-height-desktop - $admin-bar-desktop-height;
+$full-height-mobile-admin-bar: $full-height-desktop - $admin-bar-mobile-height;
+
+@mixin full-height-admin {
+	.admin-bar & {
+		max-height: $full-height-desktop-admin-bar;
+	}
+
+	@media screen and (max-width: 782px) {
+		.admin-bar & {
+			max-height: $full-height-mobile-admin-bar;
+		}
+	}
+}
+
 // Product Gallery
 #{$gallery} {
 	dialog {
@@ -55,52 +71,28 @@ $admin-bar-mobile-height: 46px;
 
 		#{$large-image} {
 			img {
-				max-height: calc(100vh - (2 * $dialog-header-height) - $dialog-header-padding-top);
+				max-height: $full-height-desktop;
 				width: auto;
+			}
 
-				.admin-bar & {
-					max-height: calc(100vh - $admin-bar-desktop-height - (2 * $dialog-header-height) - $dialog-header-padding-top);
-				}
+			.wc-block-product-gallery-large-image__container {
+				height: $full-height-desktop;
+				overflow: hidden;
+			}
 
-				@media screen and (max-width: 782px) {
-					.admin-bar & {
-						max-height: calc(100vh - $admin-bar-mobile-height - (2 * $dialog-header-height) - $dialog-header-padding-top);
-					}
-				}
+			img,
+			.wc-block-product-gallery-large-image__container {
+				@include full-height-admin();
 			}
 
 			.wc-block-product-gallery-large-image__wrapper {
 				align-items: center;
 			}
-
-			.wc-block-product-gallery-large-image__container {
-				height: calc(100vh - (2 * $dialog-header-height) - $dialog-header-padding-top);
-				overflow: hidden;
-
-				.admin-bar & {
-					height: calc(100vh - $admin-bar-desktop-height - (2 * $dialog-header-height) - $dialog-header-padding-top);
-				}
-
-				@media screen and (max-width: 782px) {
-					.admin-bar & {
-						height: calc(100vh - $admin-bar-mobile-height - (2 * $dialog-header-height) - $dialog-header-padding-top);
-					}
-				}
-			}
 		}
 
 		#{$next-previous} {
-			height: calc(100vh - $dialog-header-height - $dialog-header-padding-top);
-
-			.admin-bar & {
-				height: calc(100vh - $admin-bar-desktop-height - $dialog-header-height - $dialog-header-padding-top);
-			}
-
-			@media screen and (max-width: 782px) {
-				.admin-bar & {
-					height: calc(100vh - $admin-bar-mobile-height - $dialog-header-height - $dialog-header-padding-top);
-				}
-			}
+			height: $full-height-desktop;
+			@include full-height-admin();
 		}
 	}
 }
