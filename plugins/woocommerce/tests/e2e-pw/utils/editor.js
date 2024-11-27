@@ -53,12 +53,12 @@ const fillPageTitle = async ( page, title ) => {
 	// TODO (Gutenberg 19.9): Keep only the "Block: Title" label locator.
 	// Current stable version of Gutenberg (19.7) uses the "Add title" label locator.
 	// Upcoming Gutenberg 19.9 uses the "Block: Title" one. We should use it instead when GB 19.9 comes out.
-	await ( await getCanvas( page ) )
-		.getByLabel( /^(Add title|Block: Title)$/ )
-		.click();
-	await ( await getCanvas( page ) )
-		.getByLabel( /^(Add title|Block: Title)$/ )
-		.fill( title );
+	const canvas = await getCanvas( page );
+	const block_title = canvas
+		.getByLabel( 'Add title' )
+		.or( canvas.getByLabel( 'Block: Title' ) );
+	await block_title.click();
+	await block_title.fill( title );
 };
 
 const insertBlock = async ( page, blockName, wpVersion = null ) => {
