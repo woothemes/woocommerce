@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+report doing_it_wrong error when conditional tags are used too early
