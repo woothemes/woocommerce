@@ -50,8 +50,8 @@ export const useCheckoutSubmit = () => {
 	);
 
 	const { activePaymentMethod, isExpressPaymentMethodActive } = useSelect(
-        ( select ) => {
-		    const store = select( PAYMENT_STORE_KEY );
+		( select ) => {
+			const store = select( PAYMENT_STORE_KEY );
 
 			return {
 				activePaymentMethod: store.getActivePaymentMethod(),
