@@ -1,7 +1,11 @@
 /**
+ * External dependencies
+ */
+import { useOrderSummaryHeadings } from '@woocommerce/blocks/cart-checkout-shared';
+
+/**
  * Internal dependencies
  */
-import { useOrderSummaryHeadings } from '../../../cart-checkout-shared/entities/order-summary-headings';
 import Block, { BlockProps } from './block';
 import { useDefaultHeading } from './default-heading';
 

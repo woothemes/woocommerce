@@ -2,7 +2,6 @@
  * External dependencies
  */
 import clsx from 'clsx';
-import { __ } from '@wordpress/i18n';
 import { getSetting } from '@woocommerce/settings';
 import type { CartFeeItem, Currency } from '@woocommerce/types';
 import type { ReactElement } from 'react';

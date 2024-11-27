@@ -1,6 +1,22 @@
 /**
+ * External dependencies
+ */
+import { __ } from '@wordpress/i18n';
+import { useOrderSummaryHeadings } from '@woocommerce/blocks/cart-checkout-shared';
+
+/**
  * Internal dependencies
  */
-import Block from './block';
+import Block, { BlockAttributes } from './block';
 
-export default Block;
+const Frontend = ( { className }: BlockAttributes ) => {
+	const feeHeading = useOrderSummaryHeadings(
+		'woocommerce_order_summary_fee_heading'
+	);
+
+	const heading = feeHeading ?? __( 'Fees', 'woocommerce' );
+
+	return <Block className={ className } heading={ heading } />;
+};
+
+export default Frontend;

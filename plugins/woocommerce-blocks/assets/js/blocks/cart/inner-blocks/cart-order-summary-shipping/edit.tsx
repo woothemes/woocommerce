@@ -10,18 +10,15 @@ import {
 import { PanelBody, ExternalLink } from '@wordpress/components';
 import { ADMIN_URL, getSetting } from '@woocommerce/settings';
 import { BlockEditProps } from '@wordpress/blocks';
-import { useState } from '@wordpress/element';
+import {
+	useOrderSummaryHeadings,
+	createSetOrderSummaryHeadingCallback,
+} from '@woocommerce/blocks/cart-checkout-shared';
 
 /**
  * Internal dependencies
  */
 import Block, { BlockAttributes } from './block';
-import {
-	createSetOrderSummaryHeadingCallback,
-	useOrderSummaryHeadings,
-} from '../../../cart-checkout-shared/entities/order-summary-headings';
-import { useStoreCart } from '../../../../base/context';
-import { selectedRatesAreCollectable } from '../../../../base/utils';
 import { useDefaultHeading } from './default-heading';
 
 export const Edit = ( {

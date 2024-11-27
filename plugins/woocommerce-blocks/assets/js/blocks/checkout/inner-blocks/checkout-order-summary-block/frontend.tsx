@@ -8,6 +8,8 @@ import { __ } from '@wordpress/i18n';
 import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import { useId, useState } from '@wordpress/element';
 import clsx from 'clsx';
+import { useOrderSummaryHeadings } from '@woocommerce/blocks/cart-checkout-shared';
+
 /**
  * Internal dependencies
  */
@@ -15,7 +17,6 @@ import { OrderMetaSlotFill, CheckoutOrderSummaryFill } from './slotfills';
 import { useContainerWidthContext } from '../../../../base/context';
 import { FormattedMonetaryAmount } from '../../../../../../packages/components';
 import { FormStepHeading } from '../../form-step';
-import { useOrderSummaryHeadings } from '../../../cart-checkout-shared/entities/order-summary-headings';
 
 type FrontendBlockProps = {
 	children: JSX.Element | JSX.Element[];

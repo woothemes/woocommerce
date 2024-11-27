@@ -2,11 +2,11 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { useOrderSummaryHeadings } from '@woocommerce/blocks/cart-checkout-shared';
 
 /**
  * Internal dependencies
  */
-import { useOrderSummaryHeadings } from '../../../cart-checkout-shared/entities/order-summary-headings';
 import Block, { BlockAttributes } from './block';
 
 const Frontend = ( { className }: BlockAttributes ) => {

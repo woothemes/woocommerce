@@ -8,21 +8,19 @@ import { __ } from '@wordpress/i18n';
 import { TotalsFooterItem } from '@woocommerce/base-components/cart-checkout';
 import { getCurrencyFromPriceResponse } from '@woocommerce/price-format';
 import { useStoreCart } from '@woocommerce/base-context/hooks';
+import {
+	createSetOrderSummaryHeadingCallback,
+	useOrderSummaryHeadings,
+	useForcedLayout,
+	getAllowedBlocks,
+} from '@woocommerce/blocks/cart-checkout-shared';
 
 /**
  * Internal dependencies
  */
-import {
-	useForcedLayout,
-	getAllowedBlocks,
-} from '../../../cart-checkout-shared';
 import { OrderMetaSlotFill } from './slotfills';
-import {
-	createSetOrderSummaryHeadingCallback,
-	useOrderSummaryHeadings,
-} from '../../../cart-checkout-shared/entities/order-summary-headings';
 
-export const Edit = ( { clientId }: { clientId: string } ): JSX.Element => {
+export const Edit = ( { clientId }: { clientId: string } ) => {
 	const blockProps = useBlockProps();
 	const { cartTotals } = useStoreCart();
 	const totalsCurrency = getCurrencyFromPriceResponse( cartTotals );
@@ -86,7 +84,7 @@ export const Edit = ( { clientId }: { clientId: string } ): JSX.Element => {
 	);
 };
 
-export const Save = (): JSX.Element => {
+export const Save = () => {
 	return (
 		<div { ...useBlockProps.save() }>
 			<InnerBlocks.Content />
