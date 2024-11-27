@@ -86,26 +86,27 @@ export const OtherPaymentGateways = ( {
 
 	return (
 		<div className="other-payment-gateways">
-			<div className="other-payment-gateways__header">
+			<div
+				className="other-payment-gateways__header"
+				onClick={ () => {
+					setIsExpanded( ! isExpanded );
+				} }
+				onKeyPress={ ( event ) => {
+					if ( event.key === 'Enter' || event.key === ' ' ) {
+						setIsExpanded( ! isExpanded );
+					}
+				} }
+				role="button"
+				tabIndex={ 0 }
+				aria-expanded={ isExpanded }
+			>
 				<div className="other-payment-gateways__header__title">
 					<span>
 						{ __( 'Other payment options', 'woocommerce' ) }
 					</span>
 					{ ! isExpanded && <>{ collapsedImages }</> }
 				</div>
-				<Button
-					variant={ 'link' }
-					onClick={ () => {
-						setIsExpanded( ! isExpanded );
-					} }
-					aria-expanded={ isExpanded }
-				>
-					{ isExpanded ? (
-						<Gridicon icon="chevron-up" />
-					) : (
-						<Gridicon icon="chevron-down" />
-					) }
-				</Button>
+				<Gridicon icon={ isExpanded ? 'chevron-up' : 'chevron-down' } />
 			</div>
 			{ isExpanded && (
 				<div className="other-payment-gateways__content">
