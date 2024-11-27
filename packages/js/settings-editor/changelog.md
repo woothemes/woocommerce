@@ -2,7 +2,7 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0](https://www.npmjs.com/package/@woocommerce/settings-editor/v/1.0.0) - 2024-11-27 
+## [0.1.0](https://www.npmjs.com/package/@woocommerce/settings-editor/v/0.1.0) - 2024-11-27 
 
 -   Patch - Remove exported Gutenberg components from `@woocommerce/product-editor` [#52655]
 -   Minor - Add Settings package, feature flag, and initial page. [#52391]
