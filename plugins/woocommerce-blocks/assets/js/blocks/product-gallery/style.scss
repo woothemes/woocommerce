@@ -112,7 +112,6 @@ $full-height-mobile-admin-bar: calc( $full-height-desktop - $admin-bar-mobile-he
 		margin-right: auto;
 		margin-left: auto;
 		max-width: $outside-image-max-width;
-		padding: 5px;
 	}
 
 	.wc-block-product-gallery-large-image__container {
@@ -143,7 +142,6 @@ $full-height-mobile-admin-bar: calc( $full-height-desktop - $admin-bar-mobile-he
 		overflow: hidden;
 		margin-right: auto;
 		margin-left: auto;
-		padding: 5px;
 	}
 
 
@@ -174,7 +172,6 @@ $full-height-mobile-admin-bar: calc( $full-height-desktop - $admin-bar-mobile-he
 		height: calc(100% - 10px);
 		top: 5px;
 		left: 5px;
-
 
 		// Reset the margin of the inner blocks when the Next/Previous buttons are outside the image.
 		#{$gallery-next-previous-outside-image} & > * {
