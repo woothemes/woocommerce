@@ -14,8 +14,6 @@ const Frontend = ( { className = '' }: BlockAttributes ) => {
 		'woocommerce_order_summary_subtotal_heading'
 	);
 
-	console.log( 'subtotalHeading', `**** ${ subtotalHeading } ****` );
-
 	const heading = subtotalHeading ?? __( 'Subtotal', 'woocommerce' );
 
 	return <Block heading={ heading } className={ className } />;
