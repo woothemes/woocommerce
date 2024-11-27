@@ -110,7 +110,7 @@ jQuery( function( $ ) {
 
 			if ( $closestBlocker.length ) {
 				// Prevent keyup events from being triggered on the flexslider when the focus is on the stars or tabs.
-				productGalleryElement.data('flexslider').animating = true;
+				productGalleryElement.data( 'flexslider' ).animating = true;
 				return;
 			}
 
