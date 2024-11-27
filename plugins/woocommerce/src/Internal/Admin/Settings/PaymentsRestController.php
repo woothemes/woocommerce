@@ -3,7 +3,6 @@ declare( strict_types=1 );
 
 namespace Automattic\WooCommerce\Internal\Admin\Settings;
 
-use Automattic\WooCommerce\Internal\Traits\AccessiblePrivateMethods;
 use Automattic\WooCommerce\Internal\RestApiControllerBase;
 use Exception;
 use WP_Error;
@@ -14,7 +13,6 @@ use WP_REST_Response;
  * Controller for the REST endpoints to service the Payments settings page.
  */
 class PaymentsRestController extends RestApiControllerBase {
-	use AccessiblePrivateMethods;
 
 	/**
 	 * The root namespace for the JSON REST API endpoints.
