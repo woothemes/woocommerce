@@ -2,7 +2,11 @@
  * External dependencies
  */
 import TestRenderer, { act } from 'react-test-renderer';
-import { createRegistry, RegistryProvider } from '@wordpress/data';
+import {
+	createReduxStore,
+	createRegistry,
+	RegistryProvider,
+} from '@wordpress/data';
 import { previewCart } from '@woocommerce/resource-previews';
 import { CART_STORE_KEY as storeKey } from '@woocommerce/block-data';
 
@@ -166,10 +170,11 @@ describe( 'useStoreCart', () => {
 				isCustomerDataUpdating: jest.fn().mockReturnValue( false ),
 			},
 		};
-		registry.registerStore( storeKey, {
+		const store = createReduxStore( storeKey, {
 			reducer: () => ( {} ),
 			selectors: mocks.selectors,
 		} );
+		registry.register( store );
 	};
 
 	beforeEach( () => {
