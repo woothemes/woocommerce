@@ -105,7 +105,7 @@ jQuery( function( $ ) {
 		} )
 		.on( 'keyup', function() {
 			var $activeElement = $( document.activeElement );
-			var sliderKeyupBlockers = [ '.stars', '.tabs', '.wc-tabs'];
+			var sliderKeyupBlockers = [ '.stars', '.tabs', '.wc-tabs' ];
 			var $closestBlocker = $activeElement.closest( sliderKeyupBlockers.join( ', ' ) );
 
 			if ( $closestBlocker.length ) {
