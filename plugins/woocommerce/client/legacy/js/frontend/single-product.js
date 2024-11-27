@@ -114,7 +114,7 @@ jQuery( function( $ ) {
 				return;
 			}
 
-			productGalleryElement.data('flexslider').animating = false;
+			productGalleryElement.data( 'flexslider' ).animating = false;
 		})
 		.on( 'keydown', '#respond p.stars a', function( e ) {
 			var direction = e.key;
