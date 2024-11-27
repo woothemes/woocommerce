@@ -4,6 +4,7 @@
 import { Button, Modal, TextControl } from '@wordpress/components';
 import { useState } from 'react';
 import { __ } from '@wordpress/i18n';
+import { isValidEmail } from '@woocommerce/product-editor';
 
 export const EmailPreviewSend: React.FC = () => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
@@ -46,7 +47,10 @@ export const EmailPreviewSend: React.FC = () => {
 						>
 							{ __( 'Cancel', 'woocommerce' ) }
 						</Button>
-						<Button variant="primary">
+						<Button
+							variant="primary"
+							disabled={ ! isValidEmail( email ) }
+						>
 							{ __( 'Send test email', 'woocommerce' ) }
 						</Button>
 					</div>
