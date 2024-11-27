@@ -1,0 +1,4 @@
+Significance: minor
+Type: fix
+
+Add To Cart Button: fix style when `core/button` block isn't visible in the page.
