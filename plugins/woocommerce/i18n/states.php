@@ -2111,7 +2111,7 @@ return array(
 		'CO' => __( 'Colorado', 'woocommerce' ),
 		'CT' => __( 'Connecticut', 'woocommerce' ),
 		'DE' => __( 'Delaware', 'woocommerce' ),
-		'DC' => __( 'District Of Columbia', 'woocommerce' ),
+		'DC' => __( 'District of Columbia', 'woocommerce' ),
 		'FL' => __( 'Florida', 'woocommerce' ),
 		'GA' => _x( 'Georgia', 'US state of Georgia', 'woocommerce' ),
 		'HI' => __( 'Hawaii', 'woocommerce' ),
