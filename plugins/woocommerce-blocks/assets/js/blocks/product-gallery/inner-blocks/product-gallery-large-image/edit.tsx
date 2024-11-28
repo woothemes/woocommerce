@@ -11,8 +11,8 @@ import clsx from 'clsx';
  */
 import largeImageNextPreviousButtonMetadata from '../product-gallery-large-image-next-previous/block.json';
 import pagerMetadata from '../product-gallery-pager/block.json';
-import './editor.scss';
 import { ProductGalleryContext } from '../../types';
+import './editor.scss';
 
 const getInnerBlocksTemplate = () => [
 	[ largeImageNextPreviousButtonMetadata.name ],

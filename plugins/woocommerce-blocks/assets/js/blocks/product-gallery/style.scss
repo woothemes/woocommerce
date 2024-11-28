@@ -27,7 +27,6 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 	}
 }
 
-// Product Gallery
 .wc-block-product-gallery {
 	dialog {
 		flex-direction: column;
@@ -92,7 +91,6 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 	}
 }
 
-// Large Image
 .wc-block-product-gallery-large-image {
 	width: 100%;
 	height: fit-content;
@@ -181,7 +179,6 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 	}
 }
 
-// Next/Previous Buttons
 .wc-block-product-gallery-large-image-next-previous {
 	display: flex;
 	position: absolute;
@@ -210,17 +207,6 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 	.is-vertically-aligned-bottom {
 		align-items: flex-end;
 	}
-}
-
-// Next/Previous Buttons Settings
-.wc-block-product-gallery-large-image-next-previous-settings {
-	width: 100%;
-}
-
-// Next/Previous Buttons Off Setting
-.wc-block-product-gallery-large-image-next-previous-left--off,
-.wc-block-product-gallery-large-image-next-previous-right--off {
-	display: none;
 }
 
 //  Next/Previous Buttons Inside the Image Settings

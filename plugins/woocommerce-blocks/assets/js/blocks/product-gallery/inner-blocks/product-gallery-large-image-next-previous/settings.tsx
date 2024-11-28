@@ -63,9 +63,6 @@ export const ProductGalleryNextPreviousBlockSettings = ( {
 			label={ __( 'Next/Prev Buttons', 'woocommerce' ) }
 			isBlock
 			className="wc-block-editor-product-gallery-large-image-next-previous-settings"
-			style={ {
-				width: '100%',
-			} }
 			onChange={ ( value: NextPreviousButtonSettingValues ) =>
 				updateBlockAttributes( productGalleryClientId, {
 					nextPreviousButtonsPosition: value,
