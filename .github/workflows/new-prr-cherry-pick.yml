@@ -256,7 +256,7 @@ jobs:
               uses: archive/github-actions-slack@v2.0.0
               with:
                   slack-bot-user-oauth-access-token: ${{ secrets.CODE_FREEZE_BOT_TOKEN }}
-                  slack-channel: ${{ secrets.WOO_CORE_RELESES_DAILY_SLACK_CHANNEL }}
+                  slack-channel: ${{ secrets.WOO_RELEASE_SLACK_NOTIFICATION_CHANNEL }}
                   slack-text: |
                       :warning-8c: Point release request cherry pick failed for `${{ needs.prep.outputs.release }}`
 
@@ -267,7 +267,7 @@ jobs:
               uses: archive/github-actions-slack@v2.0.0
               with:
                   slack-bot-user-oauth-access-token: ${{ secrets.CODE_FREEZE_BOT_TOKEN }}
-                  slack-channel: ${{ secrets.WOO_CORE_RELESES_DAILY_SLACK_CHANNEL }}
+                  slack-channel: ${{ secrets.WOO_RELEASE_SLACK_NOTIFICATION_CHANNEL }}
                   slack-text: |
                       :info: Point release request cherry pick succeeded for `${{ needs.prep.outputs.release }}`
 
@@ -278,7 +278,9 @@ jobs:
             - name: Comment on PR about the failed cherry pick
               if: ${{ failure() }}
               run: |
-                  gh pr comment $HTML_URL --body "Cherry picking failed for the frozen release: $FROZEN_RELEASE_BRANCH. Please do it manually. Or debug, what happened and run the workflow again. Workflow link for debugging:https://github.com/${{ github.repository_owner }}/${{ github.repository }}/actions/workflows/new-prr-cherry-pick.yml"
+                  gh pr comment $HTML_URL --body "IMPORTANT: Merging this PR to the appropriate branches is critical to the release process and ensures that the bug does not cause regressions in the future releases.
+
+                  Cherry picking failed for the frozen release: $FROZEN_RELEASE_BRANCH. Please bring this to release team's attention. Workflow link for debugging:https://github.com/${{ github.repository_owner }}/${{ github.repository }}/actions/workflows/new-prr-cherry-pick.yml"
               env:
                 GH_TOKEN: ${{ github.token }}
                 HTML_URL: ${{ github.event.pull_request.html_url }}
@@ -287,7 +289,9 @@ jobs:
             - name: Comment on PR about the cherry picked PRs to be merged
               if: ${{ success() }}
               run: |
-                gh pr comment $HTML_URL --body "Cherry picking was successful for frozen release: $FROZEN_RELEASE_BRANCH. Please merge the following PR: $CHERRY_PICK_PR"
+                gh pr comment $HTML_URL --body "IMPORTANT: Merging this PR to the appropriate branches is critical to the release process and ensures that the bug does not cause regressions in the future releases.
+
+                Cherry picking was successful for frozen release (\`$FROZEN_RELEASE_BRANCH\`). Please merge the following PR: $CHERRY_PICK_PR"
               env:
                 GH_TOKEN: ${{ github.token }}
                 HTML_URL: ${{ github.event.pull_request.html_url }}
