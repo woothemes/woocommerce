@@ -6353,6 +6353,7 @@ img.help_tip {
 			a {
 				padding: 20px 24px;
 				color: var(--Gray-Gray-60, $studio-gray-60);
+				border-left: 3px solid transparent;
 
 				&::before {
 					margin-right: $gap-smallest;
