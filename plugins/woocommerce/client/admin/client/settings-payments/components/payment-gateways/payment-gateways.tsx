@@ -36,9 +36,12 @@ export const PaymentGateways = ( {
 }: PaymentGatewaysProps ) => {
 	const setupLivePayments = () => {};
 	const [ storeCountry, setStoreCountry ] = useState( 'US' );
-	const countryOptions = Object.entries( window.wcSettings.countries || [] )
-		.map( ( [ key, name ] ) => ( { key, name, types: [] } ) )
-		.sort( ( a, b ) => a.name.localeCompare( b.name ) );
+
+	const countryOptions = useMemo( () => {
+		return Object.entries( window.wcSettings.countries || [] )
+			.map( ( [ key, name ] ) => ( { key, name, types: [] } ) )
+			.sort( ( a, b ) => a.name.localeCompare( b.name ) );
+	}, [] );
 
 	// Transform payment gateways to comply with List component format.
 	const providersList = useMemo(
