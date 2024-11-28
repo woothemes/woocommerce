@@ -2,7 +2,6 @@ const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 const productPrice = '18.16';
-const variableProductName = 'Variable single product';
 const cartDialogMessage =
 	'Please select some product options before adding this product to your cart.';
 const variations1 = [
@@ -130,13 +129,13 @@ const variations2 = [
 	},
 ];
 
-let variableProductId, totalPrice;
-
 test.describe(
 	'Variable Product Page',
 	{ tag: [ '@payments', '@services' ] },
 	() => {
+		const variableProductName = `Variable single product ${ Date.now() }`;
 		const slug = variableProductName.replace( / /gi, '-' ).toLowerCase();
+		let variableProductId, totalPrice;
 
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {
@@ -246,7 +245,10 @@ test.describe(
 	'Shopper > Update variable product',
 	{ tag: [ '@payments', '@services' ] },
 	() => {
+		const variableProductName = `Variable single product ${ Date.now() }`;
 		const slug = variableProductName.replace( / /gi, '-' ).toLowerCase();
+		let variableProductId;
+
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {
 				url: baseURL,
@@ -312,7 +314,7 @@ test.describe(
 			await page.locator( '#colour' ).selectOption( 'Red' );
 
 			// handling assertion this way because taxes may or may not be enabled
-			totalPrice = await page
+			let totalPrice = await page
 				.locator( '.woocommerce-variation-price' )
 				.last()
 				.locator( 'bdi' )
@@ -367,7 +369,7 @@ test.describe(
 
 			await page.locator( '#size' ).selectOption( 'Small' );
 
-			totalPrice = await page
+			let totalPrice = await page
 				.locator( '.woocommerce-variation-price' )
 				.last()
 				.locator( 'bdi' )
@@ -423,7 +425,7 @@ test.describe(
 
 			await page.locator( '#size' ).selectOption( 'Small' );
 
-			totalPrice = await page
+			let totalPrice = await page
 				.locator( '.woocommerce-variation-price' )
 				.last()
 				.locator( 'bdi' )
@@ -489,7 +491,7 @@ test.describe(
 
 			await page.locator( '#size' ).selectOption( 'Small' );
 
-			totalPrice = await page
+			let totalPrice = await page
 				.locator( '.woocommerce-variation-price' )
 				.last()
 				.locator( 'bdi' )
