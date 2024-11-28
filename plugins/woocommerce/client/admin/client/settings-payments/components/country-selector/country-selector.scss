@@ -49,10 +49,6 @@
 			color: initial;
 		}
 
-		&:focus {
-			box-shadow: none;
-		}
-
 		&[aria-expanded="true"] {
 			color: var(--wp-components-color-foreground, #1e1e1e);
 		}
@@ -148,5 +144,11 @@
 			background: transparent;
 			border: none;
 		}
+	}
+}
+
+.components-button.components-country-select-control__button {
+	&:focus {
+		box-shadow: none;
 	}
 }
