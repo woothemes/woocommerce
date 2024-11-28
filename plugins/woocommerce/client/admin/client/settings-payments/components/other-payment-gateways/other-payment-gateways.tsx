@@ -24,11 +24,13 @@ interface OtherPaymentGatewaysProps {
 	setupPlugin: ( id: string, slug: string ) => void;
 }
 
-export const OtherPaymentGateways = ( settings: OtherPaymentGatewaysProps ) => {
+export const OtherPaymentGateways = ( {
+	suggestions,
+	suggestionCategories,
+	installingPlugin,
+	setupPlugin,
+}: OtherPaymentGatewaysProps ) => {
 	const [ isExpanded, setIsExpanded ] = useState( false );
-
-	const { suggestions, suggestionCategories, installingPlugin, setupPlugin } =
-		settings;
 
 	const suggestionsByCategory = useMemo(
 		() =>
