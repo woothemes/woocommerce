@@ -1087,11 +1087,14 @@ class WC_Checkout {
 
 			$result = apply_filters( 'woocommerce_payment_successful_result', $result, $order_id );
 
-			wc_log_order_step( '[Shortcode #6A] Order payment processed successfully', array(
+			wc_log_order_step(
+				'[Shortcode #6A] Order payment processed successfully',
+				array(
 					'order_id'       => $order_id,
 					'payment_method' => $payment_method,
 					'redirected'     => ! wp_doing_ajax() ? 'yes' : 'no',
-				)
+				),
+				true
 			);
 
 			if ( ! wp_doing_ajax() ) {
@@ -1116,10 +1119,13 @@ class WC_Checkout {
 		$order->payment_complete();
 		wc_empty_cart();
 
-		wc_log_order_step( '[Shortcode #6B] Order processed without payment', array(
+		wc_log_order_step(
+			'[Shortcode #6B] Order processed without payment',
+			array(
 				'order_id'       => $order_id,
 				'redirected'     => ! wp_doing_ajax() ? 'yes' : 'no',
-			)
+			),
+			true
 		);
 
 		if ( ! wp_doing_ajax() ) {

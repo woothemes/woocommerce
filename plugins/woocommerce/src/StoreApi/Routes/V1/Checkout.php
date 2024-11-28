@@ -368,11 +368,15 @@ class Checkout extends AbstractCartRoute {
 			$this->process_without_payment( $request, $payment_result );
 		}
 
-		wc_log_order_step( '[Store API #10] Order processed', array(
-			'order_id'               => $this->order->get_id(),
-			'processed_with_payment' => $this->order->needs_payment() ? 'yes' : 'no',
-			'payment_status'         => $payment_result->status,
-		) );
+		wc_log_order_step(
+			'[Store API #10] Order processed',
+			array(
+				'order_id'               => $this->order->get_id(),
+				'processed_with_payment' => $this->order->needs_payment() ? 'yes' : 'no',
+				'payment_status'         => $payment_result->status,
+			),
+			true
+		);
 
 
 		return $this->prepare_item_for_response(
