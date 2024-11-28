@@ -8101,7 +8101,7 @@ table.bar_chart {
 	#woocommerce-product-data,
 	#woocommerce-coupon-data {
 		.options_group,
-		// General coupos data does not have options group wrapper, make it look like it has.
+		// General coupons data does not have options group wrapper, make it look like it has.
 		&#general_coupon_data {
 			padding: $gap calc($gap * 4 / 3);
 		}
