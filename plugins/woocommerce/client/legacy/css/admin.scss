@@ -5630,6 +5630,12 @@ img.help_tip {
 			background: var(--wp-admin-theme-color, $studio-wordpress-blue);
 		}
 	}
+	// Increase specificity to overwrite marketplace styles.
+	.marketplace-suggestions-container.showing-suggestion .marketplace-suggestion-container {
+		.marketplace-suggestion-container-cta a.button {
+			display: inline-flex;
+		}
+	}
 
 	// Screen meta links.
 	#screen-meta-links {
