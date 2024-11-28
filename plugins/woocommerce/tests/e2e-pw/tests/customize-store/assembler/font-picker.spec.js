@@ -250,7 +250,7 @@ test.describe( 'Assembler -> Font Picker', { tag: '@gutenberg' }, () => {
 
 		await page.waitForResponse(
 			( response ) =>
-				response.url().includes( './wp-json/wp/v2/font-families' ) &&
+				response.url().includes( '/wp-json/wp/v2/font-families' ) &&
 				response.status() === 200
 		);
 
