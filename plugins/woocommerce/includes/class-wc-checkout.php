@@ -1366,6 +1366,8 @@ class WC_Checkout {
 				}
 			}
 		} catch ( Exception $e ) {
+			// Step logs the exception. If nothing abnormal occurred during the process_checkout flow the log is removed.
+			wc_log_order_step( '[Shortcode #FAIL] ' . $e->getMessage(), array( 'error_code' => $e->getCode() ), true );
 			wc_add_notice( $e->getMessage(), 'error' );
 		}
 		$this->send_ajax_failure_response();
