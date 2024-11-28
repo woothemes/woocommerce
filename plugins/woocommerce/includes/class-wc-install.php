@@ -268,7 +268,6 @@ class WC_Install {
 			'wc_update_940_remove_help_panel_highlight_shown',
 		),
 		'9.5.0' => array(
-			'wc_update_950_add_brands_enabled_option',
 			'wc_update_950_tracking_option_autoload',
 		),
 	);
