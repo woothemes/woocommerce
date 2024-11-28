@@ -8,7 +8,6 @@ import { useSelect } from '@wordpress/data';
 import { isSiteEditorPage } from '@woocommerce/utils';
 import {
 	Disabled,
-	Tooltip,
 	PanelBody,
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore - Ignoring because `__experimentalToggleGroupControl` is not yet in the type definitions.
@@ -45,9 +44,10 @@ const getHelpText = ( quantitySelectorStyle: QuantitySelectorStyle ) => {
 	}
 };
 
-const AddToCartWithOptionsQuantitySelectorEdit = ( props: BlockEditProps< Attributes > ) => {
+const AddToCartWithOptionsQuantitySelectorEdit = (
+	props: BlockEditProps< Attributes >
+) => {
 	const { setAttributes } = props;
-
 	const { quantitySelectorStyle } = props.attributes;
 
 	const quantitySelectorStyleClass =
@@ -75,8 +75,7 @@ const AddToCartWithOptionsQuantitySelectorEdit = ( props: BlockEditProps< Attrib
 						isBlock
 						onChange={ ( value: QuantitySelectorStyle ) => {
 							setAttributes( {
-								quantitySelectorStyle:
-									value as QuantitySelectorStyle,
+								quantitySelectorStyle: value as QuantitySelectorStyle,
 							} );
 						} }
 						help={ getHelpText( quantitySelectorStyle ) }
@@ -94,7 +93,7 @@ const AddToCartWithOptionsQuantitySelectorEdit = ( props: BlockEditProps< Attrib
 			</InspectorControls>
 			<div { ...blockProps }>
 				<Disabled>
-					{ ( quantitySelectorStyle === QuantitySelectorStyle.Input ) && (
+					{ quantitySelectorStyle === QuantitySelectorStyle.Input && (
 						<div className="quantity">
 							<input
 								style={
@@ -106,7 +105,7 @@ const AddToCartWithOptionsQuantitySelectorEdit = ( props: BlockEditProps< Attrib
 												minHeight: 'unset',
 												boxSizing: 'unset',
 												borderRadius: 'unset',
-											}
+										  }
 										: {}
 								}
 								type="number"
@@ -117,33 +116,33 @@ const AddToCartWithOptionsQuantitySelectorEdit = ( props: BlockEditProps< Attrib
 						</div>
 					) }
 					{ quantitySelectorStyle === QuantitySelectorStyle.Stepper && (
-							<div className="quantity wc-block-components-quantity-selector">
-								<button className="wc-block-components-quantity-selector__button wc-block-components-quantity-selector__button--minus">
-									-
-								</button>
-								<input
-									style={
-										// In the post editor, the editor isn't in an iframe, so WordPress styles are applied. We need to remove them.
-										! isSiteEditor
-											? {
-													backgroundColor: '#ffffff',
-													lineHeight: 'normal',
-													minHeight: 'unset',
-													boxSizing: 'unset',
-													borderRadius: 'unset',
-												}
-											: {}
-									}
-									type="number"
-									value="1"
-									className="input-text qty text"
-									readOnly
-								/>
-								<button className="wc-block-components-quantity-selector__button wc-block-components-quantity-selector__button--plus">
-									+
-								</button>
-							</div>
-						) }
+						<div className="quantity wc-block-components-quantity-selector">
+							<button className="wc-block-components-quantity-selector__button wc-block-components-quantity-selector__button--minus">
+								-
+							</button>
+							<input
+								style={
+									// In the post editor, the editor isn't in an iframe, so WordPress styles are applied. We need to remove them.
+									! isSiteEditor
+										? {
+												backgroundColor: '#ffffff',
+												lineHeight: 'normal',
+												minHeight: 'unset',
+												boxSizing: 'unset',
+												borderRadius: 'unset',
+										  }
+										: {}
+								}
+								type="number"
+								value="1"
+								className="input-text qty text"
+								readOnly
+							/>
+							<button className="wc-block-components-quantity-selector__button wc-block-components-quantity-selector__button--plus">
+								+
+							</button>
+						</div>
+					) }
 				</Disabled>
 			</div>
 		</>
