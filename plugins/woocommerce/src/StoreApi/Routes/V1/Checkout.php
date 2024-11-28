@@ -154,8 +154,11 @@ class Checkout extends AbstractCartRoute {
 			if ( $request->get_method() === \WP_REST_Server::CREATABLE ) {
 				// Step logs the exception. If nothing abnormal occurred during the place order POST request, flow the log is removed.
 				wc_log_order_step(
-					'[Store API #FAIL] Placing Order Failed with ' . $response->get_status(),
-					array( 'errors' => $response->get_data() ),
+					'[Store API #FAIL] Placing Order failed',
+					array(
+						'status' => $response->get_status(),
+						'data'   => $response->get_data(),
+					),
 					true
 				);
 			}
