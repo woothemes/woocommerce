@@ -169,14 +169,6 @@ body:has(.woocommerce-coming-soon-banner) {
 		.wp-block-columns-is-layout-flex {
 			justify-content: center;
 		}
-
-		&-image {
-			// Temporary fix for the issue where the image size doesn't change when the window is resized in the editor.
-			.wp-block-image .components-resizable-box__container {
-				max-width: 100% !important;
-			}
-		}
-
 	}
 }
 
