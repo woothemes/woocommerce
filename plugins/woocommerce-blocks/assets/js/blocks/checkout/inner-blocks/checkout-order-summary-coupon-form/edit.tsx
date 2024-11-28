@@ -9,31 +9,24 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import Block, { BlockAttributes } from './block';
-import {
-	createSetOrderSummaryHeadingCallback,
-	useOrderSummaryHeadingFromEditor,
-} from '../../../../entities/editor';
+import { createSetOrderSummaryHeadingCallback } from '../../../../entities/editor';
 
 export const Edit = ( { attributes }: BlockEditProps< BlockAttributes > ) => {
-	const { className = '' } = attributes;
+	const { className = '', heading } = attributes;
 	const blockProps = useBlockProps();
-
-	const couponHeading = useOrderSummaryHeadingFromEditor(
-		'woocommerce_order_summary_coupon_heading'
-	);
 
 	const onCouponHeadingChange = createSetOrderSummaryHeadingCallback(
 		'woocommerce_order_summary_coupon_heading'
 	);
 
-	const headingText = couponHeading ?? __( 'Add a coupon', 'woocommerce' );
-	const heading = (
+	const headingText = heading ?? __( 'Add a coupon', 'woocommerce' );
+	const headingElement = (
 		<RichText value={ headingText } onChange={ onCouponHeadingChange } />
 	);
 
 	return (
 		<div { ...blockProps }>
-			<Block heading={ heading } className={ className } />
+			<Block headingElement={ headingElement } className={ className } />
 		</div>
 	);
 };

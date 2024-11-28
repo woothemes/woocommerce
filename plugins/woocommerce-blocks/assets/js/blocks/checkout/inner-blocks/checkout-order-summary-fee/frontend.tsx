@@ -10,7 +10,6 @@ import Block, { BlockAttributes } from './block';
 
 const Frontend = ( { className, heading }: BlockAttributes ) => {
 	const headingElement = heading ?? __( 'Fee', 'woocommerce' );
-
 	return <Block headingElement={ headingElement } className={ className } />;
 };
 

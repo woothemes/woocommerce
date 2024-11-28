@@ -28,9 +28,11 @@ class CartOrderSummaryCouponFormBlock extends AbstractInnerBlock {
 	 * @return string Rendered block.
 	 */
 	protected function render( $attributes, $content, $block ) {
+		$extra_attributes = $this->get_heading() ? array( 'data-heading' => $this->get_heading() ) : array();
+
 		return sprintf(
 			'<div %s></div>',
-			get_block_wrapper_attributes( array( 'data-heading' => $this->get_heading() ) ),
+			get_block_wrapper_attributes( $extra_attributes ),
 		);
 	}
 

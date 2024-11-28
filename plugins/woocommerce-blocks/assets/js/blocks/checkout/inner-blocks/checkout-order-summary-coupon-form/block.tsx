@@ -9,15 +9,15 @@ import { useEditorContext } from '@woocommerce/base-context';
 
 export type BlockAttributes = {
 	className?: string;
-	sectionHeading: string | null;
+	heading: string | null;
 };
 
-export type BlockProps = {
+export type BlockProps = Omit< BlockAttributes, 'heading' > & {
 	className?: string;
-	heading: React.ReactNode;
+	headingElement: React.ReactNode;
 };
 
-const Block = ( { className = '', heading }: BlockProps ) => {
+const Block = ( { className = '', headingElement }: BlockProps ) => {
 	const couponsEnabled = getSetting( 'couponsEnabled', true );
 
 	const { isEditor } = useEditorContext();
@@ -36,7 +36,7 @@ const Block = ( { className = '', heading }: BlockProps ) => {
 				onSubmit={ applyCoupon }
 				isLoading={ isApplyingCoupon }
 				instanceId="coupon"
-				heading={ heading }
+				heading={ headingElement }
 			/>
 		</TotalsWrapper>
 	);

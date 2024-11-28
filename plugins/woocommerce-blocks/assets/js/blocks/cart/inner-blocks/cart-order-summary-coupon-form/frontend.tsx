@@ -7,13 +7,9 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import Block, { BlockAttributes } from './block';
-import { useOrderSummaryHeadingFromFrontend } from '../../../../entities/frontend';
 
-const Frontend = ( { className }: BlockAttributes ) => {
-	const couponHeading = useOrderSummaryHeadingFromFrontend(
-		'woocommerce_order_summary_coupon_heading'
-	);
-	const headingElement = couponHeading ?? __( 'Add a coupon', 'woocommerce' );
+const Frontend = ( { className, heading }: BlockAttributes ) => {
+	const headingElement = heading ?? __( 'Add a coupon', 'woocommerce' );
 
 	return (
 		<Block
