@@ -16,6 +16,7 @@ import { useState } from '@wordpress/element';
  * Internal dependencies
  */
 import './ellipsis-menu-content.scss';
+import { getWooPaymentsResetAccountLink } from '~/settings-payments/utils';
 
 interface EllipsisMenuContentProps {
 	pluginId: string;
@@ -44,6 +45,7 @@ export const EllipsisMenuContent = ( {
 	const [ isDeactivating, setIsDeactivating ] = useState( false );
 	const [ isDisabling, setIsDisabling ] = useState( false );
 	const [ isHidingSuggestion, setIsHidingSuggestion ] = useState( false );
+	const [ isResetting, setIsResetting ] = useState( false );
 
 	const {
 		invalidateResolutionForStoreSelector,
@@ -133,8 +135,8 @@ export const EllipsisMenuContent = ( {
 	};
 
 	const resetWooPaymentsAccount = () => {
-		createErrorNotice( __( 'Not implemented yet.', 'woocommerce' ) );
-		onToggle();
+		setIsResetting( true );
+		window.location.href = getWooPaymentsResetAccountLink();
 	};
 
 	return (
@@ -178,8 +180,8 @@ export const EllipsisMenuContent = ( {
 			{ ! isSuggestion && isWooPayments && ! needsSetup && testMode && (
 				<Button
 					onClick={ resetWooPaymentsAccount }
-					isBusy={ false }
-					disabled={ false }
+					isBusy={ isResetting }
+					disabled={ isResetting }
 					className={ 'components-button__danger' }
 				>
 					{ __( 'Reset account', 'woocommerce' ) }
