@@ -85,12 +85,10 @@ class ProductAddToCartWithOptions extends AbstractBlock {
 
 		$processor = new \WP_HTML_Tag_Processor( $content );
 
-		if ( $processor->next_tag(
-			array(
-				'tag_name'   => 'div',
-				'class_name' => 'wp-block-woocommerce-product-add-to-cart-with-options',
-			) )
-		) {
+		if ( $processor->next_tag( array(
+			'tag_name'   => 'div',
+			'class_name' => 'wp-block-woocommerce-product-add-to-cart-with-options',
+		) ) ) {
 			$processor->set_attribute( 'data-wc-interactive', $data_wc_interactive );
 
 			if ( $processor->next_tag( array( 'tag_name' => 'a', 'class_name' => 'wp-element-button' ) ) ) {
