@@ -92,19 +92,8 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 }
 
 .wc-block-product-gallery-large-image {
-	width: 100%;
-	height: fit-content;
 	position: relative;
 	overflow: hidden;
-	flex-grow: 1;
-
-	// Restrict the width of the Large Image when the Next/Previous buttons are outside the image.
-	#{$gallery-next-previous-outside-image} & .wc-block-product-gallery-large-image__image-element {
-		overflow: hidden;
-		margin-right: auto;
-		margin-left: auto;
-		max-width: $outside-image-max-width;
-	}
 
 	.wc-block-product-gallery-large-image__container {
 		display: flex;
@@ -123,10 +112,8 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 		flex-shrink: 0;
 		max-width: 100%;
 		overflow: hidden;
-		width: 100%;
 		display: flex;
 		align-items: center;
-		scroll-snap-align: none center;
 	}
 
 	#{$gallery-next-previous-inside-image} & .wc-block-product-gallery-large-image__image-element {
@@ -136,13 +123,20 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 		margin-left: auto;
 	}
 
+	// Restrict the width of the Large Image when the Next/Previous buttons are outside the image.
+	#{$gallery-next-previous-outside-image} & .wc-block-product-gallery-large-image__image-element {
+		margin-right: auto;
+		margin-left: auto;
+		max-width: $outside-image-max-width;
+	}
+
 
 	img {
 		display: block;
 		position: relative;
 		margin: 0 auto;
 		z-index: 1;
-		transition: all 0.1s linear;
+		transition: scale 0.1s linear;
 		aspect-ratio: 1 / 1;
 		object-fit: contain;
 
@@ -181,31 +175,19 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 
 .wc-block-product-gallery-large-image-next-previous {
 	display: flex;
-	position: absolute;
-	flex-direction: row;
-	justify-content: space-between;
-	width: 100%;
 	height: 100%;
 
-	button {
-		cursor: pointer;
+	&--button {
 		z-index: 3;
-		pointer-events: all;
+		cursor: pointer;
 		padding: 0;
 		border: none;
 		background: none;
 	}
 
-	.is-vertically-aligned-top {
-		align-items: flex-start;
-	}
-
-	.is-vertically-aligned-center {
-		align-items: center;
-	}
-
-	.is-vertically-aligned-bottom {
-		align-items: flex-end;
+	&-left--outside-image,
+	&-right--outside-image {
+		padding: 4px;
 	}
 }
 
@@ -217,7 +199,6 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 
 .wc-block-product-gallery-large-image-next-previous-container {
 	display: flex;
-	flex-direction: row;
 	justify-content: space-between;
 	width: 100%;
 
@@ -226,7 +207,6 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 	}
 }
 
-// Pager
 .wc-block-product-gallery-pager__pager {
 	display: flex;
 	justify-content: center;
@@ -258,7 +238,6 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 	color: $black;
 }
 
-// Thumbnails
 .wc-block-product-gallery-thumbnails {
 	display: flex;
 
