@@ -214,14 +214,8 @@ test.describe(
 					} );
 				}
 
-				// Skip Brands tests while behind a feature flag.
-				const skipBrandsTests = true;
-
 				// set exclude product brands
-				if (
-					couponType === 'excludeProductBrands' &&
-					! skipBrandsTests
-				) {
+				if ( couponType === 'excludeProductBrands' ) {
 					await test.step( 'set exclude product brands coupon', async () => {
 						await page
 							.getByRole( 'link', {
