@@ -31,7 +31,7 @@ export const SettingsPaymentsMain = () => {
 
 	useEffect( () => {
 		const isAccountTestDriveError =
-			'true' === urlParams.get( 'test_drive_error' );
+			urlParams.get( 'test_drive_error' ) === 'true';
 		if ( isAccountTestDriveError ) {
 			setErrorMessage(
 				__(
@@ -42,7 +42,7 @@ export const SettingsPaymentsMain = () => {
 		}
 
 		const isJetpackConnectionError =
-			'1' === urlParams.get( 'wcpay-connect-jetpack-error' );
+			urlParams.get( 'wcpay-connect-jetpack-error' ) === '1';
 
 		if ( isJetpackConnectionError ) {
 			setErrorMessage(
@@ -52,7 +52,7 @@ export const SettingsPaymentsMain = () => {
 				)
 			);
 		}
-	} );
+	}, [] );
 
 	const installedPluginSlugs = useSelect( ( select ) => {
 		return select( PLUGINS_STORE_NAME ).getInstalledPlugins();
