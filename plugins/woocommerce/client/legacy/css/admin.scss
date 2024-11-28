@@ -5650,7 +5650,6 @@ img.help_tip {
 		// Adjust spacing as the element is vertically aligned with flexbox, reset additional padding.
 		.show-settings::after {
 			padding: 0;
-			bottom: none;
 			position: static;
 		}
 
