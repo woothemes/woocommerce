@@ -209,27 +209,6 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 	}
 }
 
-//  Next/Previous Buttons Inside the Image Settings
-.wc-block-product-gallery-large-image-next-previous-left--inside-image {
-	margin-left: 15px;
-}
-
-.wc-block-product-gallery-large-image-next-previous-right--inside-image {
-	margin-right: 15px;
-}
-
-// Next/Previous Buttons Outside the Image Settings
-#{$gallery-next-previous-outside-image} .wc-block-product-gallery-large-image-next-previous-left--outside-image {
-	bottom: 0;
-	left: 0;
-	position: absolute;
-}
-
-#{$gallery-next-previous-outside-image} .wc-block-product-gallery-large-image-next-previous-right--outside-image {
-	bottom: 0;
-	right: 0;
-	position: absolute;
-}
 
 #{$gallery-next-previous-outside-image} .wc-block-product-gallery-large-image .wc-block-product-gallery-large-image-next-previous {
 	margin-right: 0;
@@ -240,12 +219,10 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	position: absolute;
 	width: 100%;
 
 	&.wc-block-product-gallery-large-image-next-previous--inside-image {
-		margin-top: 15px;
-		margin-bottom: 15px;
+		margin: 15px;
 	}
 }
 
@@ -347,7 +324,7 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 		}
 
 		@for $i from 3 through 8 {
-			#{$gallery}[data-thumbnails-number-of-thumbnails='#{$i}'][data-thumbnails-position="bottom"] & {
+			.wc-block-product-gallery[data-thumbnails-number-of-thumbnails='#{$i}'][data-thumbnails-position="bottom"] & {
 				// Calculate the total width occupied by the gaps between thumbnails.
 				$gap-width: $thumbnails-gap * ($i - 1);
 
