@@ -8,7 +8,7 @@ import { __ } from '@wordpress/i18n';
 import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import { useId, useState } from '@wordpress/element';
 import clsx from 'clsx';
-import { LoadingMask } from '@woocommerce/base-components/index';
+import LoadingMask from '@woocommerce/base-components/loading-mask';
 
 /**
  * Internal dependencies
