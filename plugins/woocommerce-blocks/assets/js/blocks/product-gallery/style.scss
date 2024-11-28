@@ -191,7 +191,6 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 	}
 }
 
-
 #{$gallery-next-previous-outside-image} .wc-block-product-gallery-large-image .wc-block-product-gallery-large-image-next-previous {
 	margin-right: 0;
 	margin-left: 0;
@@ -300,20 +299,6 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 			content: "";
 			display: block;
 			padding-top: 100%;
-		}
-
-		@for $i from 3 through 8 {
-			.wc-block-product-gallery[data-thumbnails-number-of-thumbnails='#{$i}'][data-thumbnails-position="bottom"] & {
-				// Calculate the total width occupied by the gaps between thumbnails.
-				$gap-width: $thumbnails-gap * ($i - 1);
-
-				// Calculate the border width, which is multiplied by 2 to account for both sides of each thumbnail.
-				$border-width: $i * 1px * 2;
-
-				$thumbnail-width: calc((100% - #{$gap-width} - #{$border-width}) / $i);
-
-				flex: 0 0 $thumbnail-width;
-			}
 		}
 	}
 
