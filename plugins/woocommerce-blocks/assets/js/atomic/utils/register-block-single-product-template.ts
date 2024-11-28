@@ -15,7 +15,7 @@ import {
 import { subscribe, select } from '@wordpress/data';
 
 // Creating a local cache to prevent multiple registration tries.
-const variationRegistered = new Set();
+const variationsRegistered = new Set();
 
 function parseTemplateId( templateId: string | number | undefined ) {
 	// With GB 16.3.0 the return type can be a number: https://github.com/WordPress/gutenberg/issues/53230
@@ -106,14 +106,14 @@ export const registerBlockSingleProductTemplate = ( {
 
 	subscribe( () => {
 		const isRegistered = Boolean( variationName )
-			? variationRegistered.has( variationName )
+			? variationsRegistered.has( variationName )
 			: isBlockRegistered( blockName );
 		// This subscribe callback could be invoked with the core/blocks store
 		// which would cause infinite registration loops because of the `registerBlockType` call.
 		// This local cache helps prevent that.
 		if ( ! isRegistered && isAvailableOnPostEditor && ! editSiteStore ) {
 			if ( isVariationBlock ) {
-				variationRegistered.add( variationName );
+				variationsRegistered.add( variationName );
 				registerBlockVariation(
 					blockName,
 					blockSettings as BlockVariation< BlockAttributes >
