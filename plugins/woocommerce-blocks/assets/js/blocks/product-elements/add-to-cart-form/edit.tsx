@@ -88,7 +88,7 @@ const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
 			/>
 			<div { ...blockProps }>
 				<Tooltip
-					text="Customer will see product add-to-cart options in this space, dependent on the product type. "
+					text={ __( 'Customer will see product add-to-cart options in this space, dependent on the product type.', 'woocommerce' ) }
 					position="bottom right"
 				>
 					<div className="wc-block-editor-add-to-cart-form-container">
