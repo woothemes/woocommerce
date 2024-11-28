@@ -44,4 +44,30 @@ class CheckoutOrderSummarySubtotalBlock extends AbstractInnerBlock {
 	protected function get_heading() {
 		return get_option( self::HEADING_SETTING, __( 'Subtotal', 'woocommerce' ) );
 	}
+
+	/**
+	 * Initialize the block.
+	 */
+	protected function initialize() {
+		$this->register_settings();
+		parent::initialize();
+	}
+
+	/**
+	 * Register the settings.
+	 */
+	public function register_settings() {
+		register_setting(
+			'woocommerce_order_summary',
+			self::HEADING_SETTING,
+			array(
+				'type'              => 'string',
+				'label'             => __( 'Order summary subtotal heading', 'woocommerce' ),
+				'description'       => __( 'Heading for the order summary subtotal section.', 'woocommerce' ),
+				'sanitize_callback' => 'sanitize_text_field',
+				'default'           => null,
+				'show_in_rest'      => true,
+			)
+		);
+	}
 }

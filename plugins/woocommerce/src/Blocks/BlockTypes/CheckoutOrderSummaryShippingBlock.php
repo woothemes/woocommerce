@@ -32,7 +32,18 @@ class CheckoutOrderSummaryShippingBlock extends AbstractInnerBlock {
 	 * Register the settings.
 	 */
 	public function register_settings() {
-		register_setting( 'woocommerce_order_summary', self::HEADING_SETTING, array( 'type' => 'string' ) );
+		register_setting(
+			'woocommerce_order_summary',
+			self::HEADING_SETTING,
+			array(
+				'type'              => 'string',
+				'label'             => __( 'Order summary shipping heading', 'woocommerce' ),
+				'description'       => __( 'Heading for the order summary shipping section.', 'woocommerce' ),
+				'sanitize_callback' => 'sanitize_text_field',
+				'default'           => null,
+				'show_in_rest'      => true,
+			)
+		);
 	}
 
 	/**
