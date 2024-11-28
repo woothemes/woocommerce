@@ -21,7 +21,6 @@ defined( 'ABSPATH' ) || exit;
 use Automattic\WooCommerce\Admin\Notes\Note;
 use Automattic\WooCommerce\Admin\Notes\Notes;
 use Automattic\WooCommerce\Database\Migrations\MigrationHelper;
-use Automattic\WooCommerce\Enums\OrderInternalStatus;
 use Automattic\WooCommerce\Internal\Admin\Marketing\MarketingSpecs;
 use Automattic\WooCommerce\Internal\Admin\Notes\WooSubscriptionsNotes;
 use Automattic\WooCommerce\Internal\AssignDefaultCategory;
@@ -559,114 +558,88 @@ function wc_update_220_shipping() {
 /**
  * Update order statuses for 2.2
  *
+ * Keeping the internal statuses names as strings to avoid regression issues (not referencing Automattic\WooCommerce\Enums\OrderInternalStatus class).
+ *
  * @return void
  */
 function wc_update_220_order_status() {
 	global $wpdb;
 	$wpdb->query(
-		$wpdb->prepare(
-			"UPDATE {$wpdb->posts} as posts
-			LEFT JOIN {$wpdb->term_relationships} AS rel ON posts.ID = rel.object_id
-			LEFT JOIN {$wpdb->term_taxonomy} AS tax USING( term_taxonomy_id )
-			LEFT JOIN {$wpdb->terms} AS term USING( term_id )
-			SET posts.post_status = %s
-			WHERE posts.post_type = 'shop_order'
-			AND posts.post_status = 'publish'
-			AND tax.taxonomy = 'shop_order_status'
-			AND	term.slug LIKE %s;",
-			OrderInternalStatus::PENDING,
-			'pending%'
-		)
+		"UPDATE {$wpdb->posts} as posts
+		LEFT JOIN {$wpdb->term_relationships} AS rel ON posts.ID = rel.object_id
+		LEFT JOIN {$wpdb->term_taxonomy} AS tax USING( term_taxonomy_id )
+		LEFT JOIN {$wpdb->terms} AS term USING( term_id )
+		SET posts.post_status = 'wc-pending'
+		WHERE posts.post_type = 'shop_order'
+		AND posts.post_status = 'publish'
+		AND tax.taxonomy = 'shop_order_status'
+		AND	term.slug LIKE 'pending%';"
 	);
 	$wpdb->query(
-		$wpdb->prepare(
-			"UPDATE {$wpdb->posts} as posts
-			LEFT JOIN {$wpdb->term_relationships} AS rel ON posts.ID = rel.object_id
-			LEFT JOIN {$wpdb->term_taxonomy} AS tax USING( term_taxonomy_id )
-			LEFT JOIN {$wpdb->terms} AS term USING( term_id )
-			SET posts.post_status = %s
-			WHERE posts.post_type = 'shop_order'
-			AND posts.post_status = 'publish'
-			AND tax.taxonomy = 'shop_order_status'
-			AND	term.slug LIKE %s;",
-			OrderInternalStatus::PROCESSING,
-			'processing%'
-		)
+		"UPDATE {$wpdb->posts} as posts
+		LEFT JOIN {$wpdb->term_relationships} AS rel ON posts.ID = rel.object_id
+		LEFT JOIN {$wpdb->term_taxonomy} AS tax USING( term_taxonomy_id )
+		LEFT JOIN {$wpdb->terms} AS term USING( term_id )
+		SET posts.post_status = 'wc-processing'
+		WHERE posts.post_type = 'shop_order'
+		AND posts.post_status = 'publish'
+		AND tax.taxonomy = 'shop_order_status'
+		AND	term.slug LIKE 'processing%';"
 	);
 	$wpdb->query(
-		$wpdb->prepare(
-			"UPDATE {$wpdb->posts} as posts
-			LEFT JOIN {$wpdb->term_relationships} AS rel ON posts.ID = rel.object_id
-			LEFT JOIN {$wpdb->term_taxonomy} AS tax USING( term_taxonomy_id )
-			LEFT JOIN {$wpdb->terms} AS term USING( term_id )
-			SET posts.post_status = %s
-			WHERE posts.post_type = 'shop_order'
-			AND posts.post_status = 'publish'
-			AND tax.taxonomy = 'shop_order_status'
-			AND	term.slug LIKE %s;",
-			OrderInternalStatus::ON_HOLD,
-			'on-hold%'
-		)
+		"UPDATE {$wpdb->posts} as posts
+		LEFT JOIN {$wpdb->term_relationships} AS rel ON posts.ID = rel.object_id
+		LEFT JOIN {$wpdb->term_taxonomy} AS tax USING( term_taxonomy_id )
+		LEFT JOIN {$wpdb->terms} AS term USING( term_id )
+		SET posts.post_status = 'wc-on-hold'
+		WHERE posts.post_type = 'shop_order'
+		AND posts.post_status = 'publish'
+		AND tax.taxonomy = 'shop_order_status'
+		AND	term.slug LIKE 'on-hold%';"
 	);
 	$wpdb->query(
-		$wpdb->prepare(
-			"UPDATE {$wpdb->posts} as posts
-			LEFT JOIN {$wpdb->term_relationships} AS rel ON posts.ID = rel.object_id
-			LEFT JOIN {$wpdb->term_taxonomy} AS tax USING( term_taxonomy_id )
-			LEFT JOIN {$wpdb->terms} AS term USING( term_id )
-			SET posts.post_status = %s
-			WHERE posts.post_type = 'shop_order'
-			AND posts.post_status = 'publish'
-			AND tax.taxonomy = 'shop_order_status'
-			AND	term.slug LIKE %s;",
-			OrderInternalStatus::COMPLETED,
-			'completed%'
-		)
+		"UPDATE {$wpdb->posts} as posts
+		LEFT JOIN {$wpdb->term_relationships} AS rel ON posts.ID = rel.object_id
+		LEFT JOIN {$wpdb->term_taxonomy} AS tax USING( term_taxonomy_id )
+		LEFT JOIN {$wpdb->terms} AS term USING( term_id )
+		SET posts.post_status = 'wc-completed'
+		WHERE posts.post_type = 'shop_order'
+		AND posts.post_status = 'publish'
+		AND tax.taxonomy = 'shop_order_status'
+		AND	term.slug LIKE 'completed%';"
 	);
 	$wpdb->query(
-		$wpdb->prepare(
-			"UPDATE {$wpdb->posts} as posts
-			LEFT JOIN {$wpdb->term_relationships} AS rel ON posts.ID = rel.object_id
-			LEFT JOIN {$wpdb->term_taxonomy} AS tax USING( term_taxonomy_id )
-			LEFT JOIN {$wpdb->terms} AS term USING( term_id )
-			SET posts.post_status = %s
-			WHERE posts.post_type = 'shop_order'
-			AND posts.post_status = 'publish'
-			AND tax.taxonomy = 'shop_order_status'
-			AND	term.slug LIKE %s;",
-			OrderInternalStatus::CANCELLED,
-			'cancelled%'
-		)
+		"UPDATE {$wpdb->posts} as posts
+		LEFT JOIN {$wpdb->term_relationships} AS rel ON posts.ID = rel.object_id
+		LEFT JOIN {$wpdb->term_taxonomy} AS tax USING( term_taxonomy_id )
+		LEFT JOIN {$wpdb->terms} AS term USING( term_id )
+		SET posts.post_status = 'wc-cancelled'
+		WHERE posts.post_type = 'shop_order'
+		AND posts.post_status = 'publish'
+		AND tax.taxonomy = 'shop_order_status'
+		AND	term.slug LIKE 'cancelled%';"
 	);
 	$wpdb->query(
-		$wpdb->prepare(
-			"UPDATE {$wpdb->posts} as posts
-			LEFT JOIN {$wpdb->term_relationships} AS rel ON posts.ID = rel.object_id
-			LEFT JOIN {$wpdb->term_taxonomy} AS tax USING( term_taxonomy_id )
-			LEFT JOIN {$wpdb->terms} AS term USING( term_id )
-			SET posts.post_status = %s
-			WHERE posts.post_type = 'shop_order'
-			AND posts.post_status = 'publish'
-			AND tax.taxonomy = 'shop_order_status'
-			AND	term.slug LIKE %s;",
-			OrderInternalStatus::REFUNDED,
-			'refunded%'
-		)
+		"UPDATE {$wpdb->posts} as posts
+		LEFT JOIN {$wpdb->term_relationships} AS rel ON posts.ID = rel.object_id
+		LEFT JOIN {$wpdb->term_taxonomy} AS tax USING( term_taxonomy_id )
+		LEFT JOIN {$wpdb->terms} AS term USING( term_id )
+		SET posts.post_status = 'wc-refunded'
+		WHERE posts.post_type = 'shop_order'
+		AND posts.post_status = 'publish'
+		AND tax.taxonomy = 'shop_order_status'
+		AND	term.slug LIKE 'refunded%';"
 	);
 	$wpdb->query(
-		$wpdb->prepare(
-			"UPDATE {$wpdb->posts} as posts
-			LEFT JOIN {$wpdb->term_relationships} AS rel ON posts.ID = rel.object_id
-			LEFT JOIN {$wpdb->term_taxonomy} AS tax USING( term_taxonomy_id )
-			LEFT JOIN {$wpdb->terms} AS term USING( term_id )
-			SET posts.post_status = %s
-			WHERE posts.post_type = 'shop_order'
-			AND posts.post_status = 'publish'
-			AND tax.taxonomy = 'shop_order_status'
-			AND	term.slug LIKE %s;",
-			OrderInternalStatus::REFUNDED,
-			'failed%'
-		)
+		"UPDATE {$wpdb->posts} as posts
+		LEFT JOIN {$wpdb->term_relationships} AS rel ON posts.ID = rel.object_id
+		LEFT JOIN {$wpdb->term_taxonomy} AS tax USING( term_taxonomy_id )
+		LEFT JOIN {$wpdb->terms} AS term USING( term_id )
+		SET posts.post_status = 'wc-failed'
+		WHERE posts.post_type = 'shop_order'
+		AND posts.post_status = 'publish'
+		AND tax.taxonomy = 'shop_order_status'
+		AND	term.slug LIKE 'failed%';"
 	);
 }
 
@@ -952,7 +925,7 @@ function wc_update_240_refunds() {
 		array(
 			'posts_per_page' => -1,
 			'post_type'      => 'shop_order',
-			'post_status'    => array( OrderInternalStatus::REFUNDED ),
+			'post_status'    => array( 'wc-refunded' ),
 		)
 	);
 
