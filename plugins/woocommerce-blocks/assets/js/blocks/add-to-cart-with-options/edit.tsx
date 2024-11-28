@@ -26,19 +26,10 @@ export type FeaturesProps = {
 
 export type UpdateFeaturesType = ( key: FeaturesKeys, value: boolean ) => void;
 
-// Pick the value of the "blockify add to cart flag"
-const isBlockifiedAddToCart = getSettingWithCoercion(
-	'isBlockifiedAddToCart',
-	false,
-	isBoolean
-);
-
 const AddToCartOptionsEdit = ( props: BlockEditProps< Attributes > ) => {
 	const { setAttributes } = props;
 
-	const blockProps = useBlockProps( {
-		className: 'wc-block-add-to-cart-with-options-wrapper',
-	} );
+	const blockProps = useBlockProps();
 	const { isDescendentOfSingleProductBlock } =
 		useIsDescendentOfSingleProductBlock( {
 			blockClientId: blockProps?.id,
@@ -54,7 +45,7 @@ const AddToCartOptionsEdit = ( props: BlockEditProps< Attributes > ) => {
 		<>
 			<AddToCartOptionsSettings
 				features={ {
-					isBlockifiedAddToCart,
+					isBlockifiedAddToCart: true,
 				} }
 			/>
 			<div { ...blockProps }>
