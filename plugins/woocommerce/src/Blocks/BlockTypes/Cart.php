@@ -3,7 +3,6 @@ namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 use Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils;
 use Automattic\WooCommerce\StoreApi\Utilities\LocalPickupUtils;
-use Automattic\WooCommerce\Blocks\Utils\CartCheckoutSharedSettings;
 
 /**
  * Cart class.
@@ -34,7 +33,6 @@ class Cart extends AbstractBlock {
 	protected function initialize() {
 		parent::initialize();
 		add_action( 'wp_loaded', array( $this, 'register_patterns' ) );
-		add_action( 'wp_loaded', array( CartCheckoutSharedSettings::class, 'register_order_summary_heading_options' ) );
 	}
 
 	/**
@@ -258,8 +256,6 @@ class Cart extends AbstractBlock {
 		if ( ! is_admin() && ! WC()->is_rest_api_request() ) {
 			$this->asset_data_registry->hydrate_api_request( '/wc/store/v1/cart' );
 		}
-
-		CartCheckoutSharedSettings::register_data( $this->asset_data_registry );
 
 		/**
 		 * Fires after cart block data is registered.
