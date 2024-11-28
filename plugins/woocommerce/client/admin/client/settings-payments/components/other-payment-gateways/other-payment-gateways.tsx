@@ -2,10 +2,13 @@
  * External dependencies
  */
 import { Gridicon } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import { Button, Tooltip } from '@wordpress/components';
 import React, { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { SuggestedPaymentExtension } from '@woocommerce/data';
+import {
+	SuggestedPaymentExtension,
+	SuggestedPaymentExtensionCategory,
+} from '@woocommerce/data';
 
 /**
  * Internal dependencies
@@ -16,16 +19,36 @@ const assetUrl = getAdminSetting( 'wcAdminAssetUrl' );
 
 interface OtherPaymentGatewaysProps {
 	suggestions: SuggestedPaymentExtension[];
+	suggestionCategories: SuggestedPaymentExtensionCategory[];
 	installingPlugin: string | null;
 	setupPlugin: ( id: string, slug: string ) => void;
 }
 
-export const OtherPaymentGateways = ( {
-	suggestions,
-	installingPlugin,
-	setupPlugin,
-}: OtherPaymentGatewaysProps ) => {
+export const OtherPaymentGateways = ( settings: OtherPaymentGatewaysProps ) => {
 	const [ isExpanded, setIsExpanded ] = useState( false );
+
+	const { suggestions, suggestionCategories, installingPlugin, setupPlugin } =
+		settings;
+
+	const suggestionsByCategory = useMemo(
+		() =>
+			suggestionCategories.map(
+				(
+					category
+				): {
+					category: SuggestedPaymentExtensionCategory;
+					suggestions: SuggestedPaymentExtension[];
+				} => {
+					return {
+						category,
+						suggestions: suggestions.filter(
+							( suggestion ) => suggestion._type === category.id
+						),
+					};
+				}
+			),
+		[ suggestions, suggestionCategories ]
+	);
 
 	// Memoize the collapsed images to avoid re-rendering when not expanded
 	const collapsedImages = useMemo(
@@ -46,38 +69,79 @@ export const OtherPaymentGateways = ( {
 	// Memoize the expanded content to avoid re-rendering when expanded
 	const expandedContent = useMemo(
 		() =>
-			suggestions.map( ( extension ) => (
-				<div
-					className="other-payment-gateways__content__grid-item"
-					key={ extension.id }
-				>
-					<img src={ extension.icon } alt={ extension.title } />
-					<div className="other-payment-gateways__content__grid-item__content">
-						<span className="other-payment-gateways__content__grid-item__content__title">
-							{ extension.title }
-						</span>
-						<span className="other-payment-gateways__content__grid-item__content__description">
-							{ extension.description }
-						</span>
-						<div className="other-payment-gateways__content__grid-item__content__actions">
-							<Button
-								variant="primary"
-								onClick={ () =>
-									setupPlugin(
-										extension.id,
-										extension.plugin.slug
-									)
-								}
-								isBusy={ installingPlugin === extension.id }
-								disabled={ !! installingPlugin }
-							>
-								{ __( 'Install', 'woocommerce' ) }
-							</Button>
+			suggestionsByCategory.map(
+				( { category, suggestions: categorySuggestions } ) => {
+					if ( categorySuggestions.length === 0 ) {
+						return null;
+					}
+
+					return (
+						<div key={ category.id }>
+							<div className="other-payment-gateways__content__title">
+								<h3 className="other-payment-gateways__content__title__h3">
+									{ category.title }
+								</h3>
+								<Tooltip
+									text={ category.description }
+									position="top right"
+								>
+									<Gridicon
+										icon="info-outline"
+										className="other-payment-gateways__content__title__tooltip"
+									/>
+								</Tooltip>
+							</div>
+
+							<div className="other-payment-gateways__content__grid">
+								{ categorySuggestions.map( ( extension ) => (
+									<div
+										className="other-payment-gateways__content__grid-item"
+										key={ extension.id }
+									>
+										<img
+											src={ extension.icon }
+											alt={ extension.title }
+										/>
+										<div className="other-payment-gateways__content__grid-item__content">
+											<span className="other-payment-gateways__content__grid-item__content__title">
+												{ extension.title }
+											</span>
+											<span className="other-payment-gateways__content__grid-item__content__description">
+												{ extension.description }
+											</span>
+											<div className="other-payment-gateways__content__grid-item__content__actions">
+												<Button
+													variant="primary"
+													onClick={ () =>
+														setupPlugin(
+															extension.id,
+															extension.plugin
+																.slug
+														)
+													}
+													isBusy={
+														installingPlugin ===
+														extension.id
+													}
+													disabled={
+														!! installingPlugin
+													}
+												>
+													{ __(
+														'Install',
+														'woocommerce'
+													) }
+												</Button>
+											</div>
+										</div>
+									</div>
+								) ) }
+							</div>
 						</div>
-					</div>
-				</div>
-			) ),
-		[ suggestions, installingPlugin ]
+					);
+				}
+			),
+		[ suggestionsByCategory, installingPlugin, setupPlugin ]
 	);
 
 	if ( suggestions.length === 0 ) {
@@ -110,9 +174,7 @@ export const OtherPaymentGateways = ( {
 			</div>
 			{ isExpanded && (
 				<div className="other-payment-gateways__content">
-					<div className="other-payment-gateways__content__grid">
-						{ expandedContent }
-					</div>
+					{ expandedContent }
 					<div className="other-payment-gateways__content__external-icon">
 						<Button
 							variant={ 'link' }
