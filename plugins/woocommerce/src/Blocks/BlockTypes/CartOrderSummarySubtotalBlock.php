@@ -30,9 +30,8 @@ class CartOrderSummarySubtotalBlock extends AbstractInnerBlock {
 	 */
 	protected function render( $attributes, $content, $block ) {
 		return sprintf(
-			'<div %s>%s</div>',
-			get_block_wrapper_attributes( array( 'data-heading' => $this->get_subtotal_heading() ) ),
-			$content
+			'<div %s></div>',
+			get_block_wrapper_attributes( array( 'data-heading' => $this->get_heading() ) ),
 		);
 	}
 
@@ -68,7 +67,7 @@ class CartOrderSummarySubtotalBlock extends AbstractInnerBlock {
 	 *
 	 * @return string
 	 */
-	protected function get_subtotal_heading() {
+	protected function get_heading() {
 		return get_option( self::SUBTOTAL_HEADING_OPTION, null );
 	}
 }

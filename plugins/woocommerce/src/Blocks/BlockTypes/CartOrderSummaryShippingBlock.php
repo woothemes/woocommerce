@@ -18,7 +18,7 @@ class CartOrderSummaryShippingBlock extends AbstractInnerBlock {
 	 *
 	 * @var string
 	 */
-	const HEADING_SETTING = 'woocommerce_order_summary_shipping_heading';
+	const HEADING_SETTING = 'order_summary_shipping_heading';
 
 	/**
 	 * Initialize the block.
@@ -54,9 +54,8 @@ class CartOrderSummaryShippingBlock extends AbstractInnerBlock {
 	 */
 	protected function render( $attributes, $content, $block ) {
 		return sprintf(
-			'<div %s>%s</div>',
+			'<div %s></div>',
 			get_block_wrapper_attributes( array( 'data-heading' => $this->get_heading() ) ),
-			$content
 		);
 	}
 }

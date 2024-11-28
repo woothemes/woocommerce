@@ -38,8 +38,8 @@ class CheckoutOrderSummaryCouponFormBlock extends AbstractInnerBlock {
 			self::HEADING_SETTING,
 			array(
 				'type'              => 'string',
-				'label'             => __( 'Order summary coupon form heading', 'woocommerce' ),
-				'description'       => __( 'Heading for the order summary coupon form section.', 'woocommerce' ),
+				'label'             => __( 'Order summary shipping heading', 'woocommerce' ),
+				'description'       => __( 'Heading for the order summary shipping section.', 'woocommerce' ),
 				'sanitize_callback' => 'sanitize_text_field',
 				'default'           => null,
 				'show_in_rest'      => true,
@@ -66,9 +66,8 @@ class CheckoutOrderSummaryCouponFormBlock extends AbstractInnerBlock {
 	 */
 	protected function render( $attributes, $content, $block ) {
 		return sprintf(
-			'<div %s>%s</div>',
+			'<div %s></div>',
 			get_block_wrapper_attributes( array( 'data-heading' => $this->get_heading() ) ),
-			$content
 		);
 	}
 }

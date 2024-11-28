@@ -30,9 +30,8 @@ class CheckoutOrderSummarySubtotalBlock extends AbstractInnerBlock {
 	 */
 	protected function render( $attributes, $content, $block ) {
 		return sprintf(
-			'<div %s>%s</div>',
+			'<div %s></div>',
 			get_block_wrapper_attributes( array( 'data-heading' => $this->get_heading() ) ),
-			$content
 		);
 	}
 
@@ -49,8 +48,8 @@ class CheckoutOrderSummarySubtotalBlock extends AbstractInnerBlock {
 	 * Initialize the block.
 	 */
 	protected function initialize() {
-		$this->register_settings();
 		parent::initialize();
+		$this->register_settings();
 	}
 
 	/**
