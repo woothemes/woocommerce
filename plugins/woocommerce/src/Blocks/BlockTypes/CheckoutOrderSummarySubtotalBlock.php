@@ -1,4 +1,5 @@
 <?php
+declare( strict_types=1 );
 namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 /**
@@ -17,21 +18,21 @@ class CheckoutOrderSummarySubtotalBlock extends AbstractInnerBlock {
 	 *
 	 * @var string
 	 */
-	const HEADING_SETTING = 'checkout_order_summary_subtotal_heading';
+	const HEADING_SETTING = 'woocommerce_order_summary_subtotal_heading';
 
 	/**
 	 * Render the block.
 	 *
-	 * @param array $attributes Block attributes.
+	 * @param array  $attributes Block attributes.
+	 * @param string $content    Block content.
+	 * @param object $block      Block object.
 	 * @return string Rendered block.
 	 */
-	protected function render( $attributes ) {
-		$heading = $this->get_heading();
-
+	protected function render( $attributes, $content, $block ) {
 		return sprintf(
-			'<div class="wp-block-checkout-order-summary-subtotal-block" data-heading="%s">%s</div>',
-			esc_attr( $heading ),
-			esc_html( $heading )
+			'<div %s>%s</div>',
+			get_block_wrapper_attributes( array( 'data-heading' => $this->get_heading() ) ),
+			$content
 		);
 	}
 
