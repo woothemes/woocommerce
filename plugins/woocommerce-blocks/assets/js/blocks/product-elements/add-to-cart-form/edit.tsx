@@ -115,9 +115,9 @@ const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
 													  }
 													: {}
 											}
-											type={ 'number' }
-											value={ '1' }
-											className={ 'input-text qty text' }
+											type="number"
+											value="1"
+											className="input-text qty text"
 											readOnly
 										/>
 									</div>
@@ -154,11 +154,9 @@ const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
 														  }
 														: {}
 												}
-												type={ 'number' }
-												value={ '1' }
-												className={
-													'input-text qty text'
-												}
+												type="number"
+												value="1"
+												className="input-text qty text"
 												readOnly
 											/>
 											<button className="wc-block-components-quantity-selector__button wc-block-components-quantity-selector__button--plus">
