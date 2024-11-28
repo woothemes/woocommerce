@@ -88,7 +88,10 @@ const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
 			/>
 			<div { ...blockProps }>
 				<Tooltip
-					text="Customer will see product add-to-cart options in this space, dependent on the product type. "
+					text={ __(
+						'Customer will see product add-to-cart options in this space, dependent on the product type.',
+						'woocommerce'
+					) }
 					position="bottom right"
 				>
 					<div className="wc-block-editor-add-to-cart-form-container">
@@ -115,9 +118,9 @@ const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
 													  }
 													: {}
 											}
-											type={ 'number' }
-											value={ '1' }
-											className={ 'input-text qty text' }
+											type="number"
+											value="1"
+											className="input-text qty text"
 											readOnly
 										/>
 									</div>
@@ -154,11 +157,9 @@ const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
 														  }
 														: {}
 												}
-												type={ 'number' }
-												value={ '1' }
-												className={
-													'input-text qty text'
-												}
+												type="number"
+												value="1"
+												className="input-text qty text"
 												readOnly
 											/>
 											<button className="wc-block-components-quantity-selector__button wc-block-components-quantity-selector__button--plus">
