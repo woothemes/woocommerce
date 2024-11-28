@@ -20,14 +20,15 @@ import { ShippingRateSelector } from './shipping-rate-selector';
 
 export type BlockAttributes = {
 	className: string;
+	heading: string | null;
 };
 
-export type BlockProps = BlockAttributes & {
+export type BlockProps = Omit< BlockAttributes, 'heading' > & {
 	onChangeHeading?: ( heading: string ) => void;
-	heading: React.ReactNode;
+	headingElement: React.ReactNode;
 };
 
-const Block = ( { className, heading }: BlockProps ) => {
+const Block = ( { className, headingElement }: BlockProps ) => {
 	const { isEditor } = useEditorContext();
 	const { cartNeedsShipping, shippingRates } = useStoreCart();
 	const [ isShippingCalculatorOpen, setIsShippingCalculatorOpen ] =
@@ -57,7 +58,7 @@ const Block = ( { className, heading }: BlockProps ) => {
 				} }
 			>
 				<TotalsShipping
-					label={ heading }
+					label={ headingElement }
 					placeholder={
 						! showCalculator ? (
 							<span className="wc-block-components-shipping-placeholder__value">

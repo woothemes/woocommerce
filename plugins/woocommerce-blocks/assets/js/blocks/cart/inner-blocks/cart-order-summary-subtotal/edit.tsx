@@ -17,11 +17,6 @@ export const Edit = ( { attributes }: BlockEditProps< BlockAttributes > ) => {
 	const onChangeHeading = createSetOrderSummaryHeadingCallback(
 		'woocommerce_order_summary_subtotal_heading'
 	);
-
-	// const subtotalHeading = useOrderSummaryHeadingFromEditor(
-	// 	'woocommerce_order_summary_subtotal_heading'
-	// );
-
 	const headingText = heading ?? __( 'Subtotal', 'woocommerce' );
 
 	const headingElement = (

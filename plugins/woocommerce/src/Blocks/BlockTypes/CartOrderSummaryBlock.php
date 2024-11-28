@@ -12,6 +12,8 @@ class CartOrderSummaryBlock extends AbstractInnerBlock {
 	 */
 	protected $block_name = 'cart-order-summary-block';
 
+	const FOOTER_HEADING_OPTION = 'woocommerce_order_summary_footer_heading';
+
 	/**
 	 * Get the contents of the given inner block.
 	 *
@@ -48,9 +50,9 @@ class CartOrderSummaryBlock extends AbstractInnerBlock {
 		// The order-summary-totals block was introduced as a new parent block for the totals
 		// (subtotal, discount, fees, shipping and taxes) blocks.
 		$regex_for_cart_order_summary_totals = '/<div data-block-name="woocommerce\/cart-order-summary-totals-block"(.+?)>/';
-		$order_summary_totals_content        = '<div data-block-name="woocommerce/cart-order-summary-totals-block" class="wp-block-woocommerce-cart-order-summary-totals-block">';
-
-		$totals_inner_blocks = array( 'subtotal', 'discount', 'fee', 'shipping', 'taxes' ); // We want to move these blocks inside a parent 'totals' block.
+		$footer_heading                      = $this->get_footer_heading();
+		$order_summary_totals_content        = '<div data-heading="' . esc_attr( $footer_heading ) . '" data-block-name="woocommerce/cart-order-summary-totals-block" class="wp-block-woocommerce-cart-order-summary-totals-block">';
+		$totals_inner_blocks                 = array( 'subtotal', 'discount', 'fee', 'shipping', 'taxes' ); // We want to move these blocks inside a parent 'totals' block.
 
 		if ( preg_match( $regex_for_cart_order_summary_totals, $content ) ) {
 			return $content;
@@ -74,5 +76,32 @@ class CartOrderSummaryBlock extends AbstractInnerBlock {
 		}
 
 		return preg_replace( '/\n\n( *?)/i', '', $content );
+	}
+
+	/**
+	 * Register the block settings.
+	 */
+	protected function register_settings() {
+		register_setting(
+			'woocommerce_order_summary',
+			self::FOOTER_HEADING_OPTION,
+			array(
+				'type'              => 'string',
+				'label'             => __( 'Order summary footer heading', 'woocommerce' ),
+				'description'       => __( 'Heading for the footer of the order summary.', 'woocommerce' ),
+				'sanitize_callback' => 'sanitize_text_field',
+				'default'           => null,
+				'show_in_rest'      => true,
+			)
+		);
+	}
+
+	/**
+	 * Get the footer heading.
+	 *
+	 * @return string
+	 */
+	public function get_footer_heading() {
+		return get_option( self::FOOTER_HEADING_OPTION );
 	}
 }

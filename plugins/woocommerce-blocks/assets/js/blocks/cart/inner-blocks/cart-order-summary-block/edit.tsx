@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useBlockProps, InnerBlocks, RichText } from '@wordpress/block-editor';
-import type { TemplateArray } from '@wordpress/blocks';
+import type { BlockEditProps, TemplateArray } from '@wordpress/blocks';
 import { innerBlockAreas } from '@woocommerce/blocks-checkout';
 import { __ } from '@wordpress/i18n';
 import { TotalsFooterItem } from '@woocommerce/base-components/cart-checkout';
@@ -17,12 +17,17 @@ import {
  * Internal dependencies
  */
 import { OrderMetaSlotFill } from './slotfills';
-import {
-	createSetOrderSummaryHeadingCallback,
-	useOrderSummaryHeadingFromEditor,
-} from '../../../../entities/editor';
+import { createSetOrderSummaryHeadingCallback } from '../../../../entities/editor';
 
-export const Edit = ( { clientId }: { clientId: string } ) => {
+export type BlockAttributes = {
+	heading: string | null;
+	className: string;
+};
+
+export const Edit = ( {
+	clientId,
+	attributes,
+}: BlockEditProps< BlockAttributes > ) => {
 	const blockProps = useBlockProps();
 	const { cartTotals } = useStoreCart();
 	const totalsCurrency = getCurrencyFromPriceResponse( cartTotals );
@@ -30,12 +35,8 @@ export const Edit = ( { clientId }: { clientId: string } ) => {
 		innerBlockAreas.CART_ORDER_SUMMARY
 	);
 
-	const orderSummaryFooterHeading = useOrderSummaryHeadingFromEditor(
-		'woocommerce_order_summary_footer_heading'
-	);
-
 	const orderSummaryFooterHeadingText =
-		orderSummaryFooterHeading ?? __( 'Total', 'woocommerce' );
+		attributes.heading ?? __( 'Total', 'woocommerce' );
 
 	const onChangeOrderSummaryFooterHeading =
 		createSetOrderSummaryHeadingCallback(

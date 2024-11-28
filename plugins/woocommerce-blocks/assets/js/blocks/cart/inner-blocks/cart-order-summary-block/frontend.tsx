@@ -10,24 +10,20 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { OrderMetaSlotFill } from './slotfills';
-import { useOrderSummaryHeadingFromFrontend } from '../../../../entities/frontend';
+import { BlockAttributes } from './edit';
+
+type FrontendBlockProps = BlockAttributes & {
+	children?: JSX.Element | JSX.Element[];
+};
 
 const FrontendBlock = ( {
 	children,
 	className = '',
-}: {
-	children?: JSX.Element | JSX.Element[];
-	className?: string;
-} ) => {
+	heading,
+}: FrontendBlockProps ) => {
 	const { cartTotals } = useStoreCart();
 	const totalsCurrency = getCurrencyFromPriceResponse( cartTotals );
-
-	const orderSummaryFooterHeading = useOrderSummaryHeadingFromFrontend(
-		'woocommerce_order_summary_footer_heading'
-	);
-
-	const footerHeadingLabel =
-		orderSummaryFooterHeading ?? __( 'Total', 'woocommerce' );
+	const footerHeadingLabel = heading ?? __( 'Total', 'woocommerce' );
 
 	return (
 		<div className={ className }>

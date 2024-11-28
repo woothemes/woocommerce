@@ -16,30 +16,23 @@ import { BlockEditProps } from '@wordpress/blocks';
  */
 import Block, { BlockAttributes } from './block';
 import { useDefaultHeading } from './default-heading';
-import {
-	createSetOrderSummaryHeadingCallback,
-	useOrderSummaryHeadingFromEditor,
-} from '../../../../entities/editor';
+import { createSetOrderSummaryHeadingCallback } from '../../../../entities/editor';
 
 export const Edit = ( { attributes }: BlockEditProps< BlockAttributes > ) => {
-	const { className } = attributes;
+	const { className, heading } = attributes;
 	const shippingEnabled = getSetting( 'shippingEnabled', true );
 	const blockProps = useBlockProps();
 
-	const summaryHeading = useOrderSummaryHeadingFromEditor(
-		'woocommerce_order_summary_shipping_heading'
-	);
-
 	const defaultHeading = useDefaultHeading();
 
-	const heading = summaryHeading ?? defaultHeading;
+	const headingText = heading ?? defaultHeading;
 
 	const onChangeHeading = createSetOrderSummaryHeadingCallback(
 		'woocommerce_order_summary_shipping_heading'
 	);
 
 	const headingLabel = (
-		<RichText value={ heading } onChange={ onChangeHeading } />
+		<RichText value={ headingText } onChange={ onChangeHeading } />
 	);
 
 	return (
@@ -67,7 +60,7 @@ export const Edit = ( { attributes }: BlockEditProps< BlockAttributes > ) => {
 			<Block
 				onChangeHeading={ onChangeHeading }
 				className={ className }
-				heading={ headingLabel }
+				headingElement={ headingLabel }
 			/>
 		</div>
 	);
