@@ -6012,12 +6012,14 @@ img.help_tip {
 		}
 	}
 	// For margins we need id specificity.
-	#poststuff .tagsdiv {
-		.ajaxtag {
-			margin: 0;
-		}
-		.howto {
-			margin: 0;
+	#poststuff {
+		.tagsdiv {
+			.ajaxtag {
+				margin: 0;
+			}
+			.howto {
+				margin: 0;
+			}
 		}
 		.the-tagcloud {
 			margin-bottom: 0;
