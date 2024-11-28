@@ -1,7 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 const { exec } = require( 'child_process' );
 
-test.describe( 'WC Home Task List > ', () => {
+test.describe( 'WC Home Task List >', () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
 	test.beforeAll( async ( {} ) => {
@@ -45,7 +45,7 @@ test.describe( 'WC Home Task List > ', () => {
 	} );
 
 	test(
-		'can hide the task list',
+		' Can hide the task list',
 		{ tag: [ '@skip-on-default-pressable', '@skip-on-default-wpcom' ] },
 		async ( { page } ) => {
 			await test.step( 'Load the WC Admin page', async () => {
