@@ -172,6 +172,12 @@ body:has(.woocommerce-coming-soon-banner) {
 	}
 }
 
+// Modern black template styles
+.woocommerce-coming-soon-modern-black {
+	--wp--preset--color--contrast: #fff;
+	font-family: Inter, sans-serif;
+}
+
 .block-editor-block-preview__content-iframe {
 	body:has(.woocommerce-coming-soon-entire-site),
 	body:has(.woocommerce-coming-soon-banner) {
