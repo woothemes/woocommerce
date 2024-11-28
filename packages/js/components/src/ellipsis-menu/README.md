@@ -45,6 +45,7 @@ Name | Type | Default | Description
 --- | --- | --- | ---
 `label` | String | `null` | (required) The label shown when hovering/focusing on the icon button
 `renderContent` | Function | `null` | A function returning `MenuTitle`/`MenuItem` components as a render prop. Arguments from Dropdown passed as function arguments
+`placement` | String | `bottom-start` | Placement of the dropdown menu. For available values, see `popoverProps.placement` of `Dropdown` from `@wordpress/components`.
 
 
 MenuItem
