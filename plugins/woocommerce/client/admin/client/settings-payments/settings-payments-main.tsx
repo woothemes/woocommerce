@@ -6,8 +6,8 @@ import {
 	PLUGINS_STORE_NAME,
 	PAYMENT_SETTINGS_STORE_NAME,
 } from '@woocommerce/data';
-import { useState } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -27,13 +27,13 @@ export const SettingsPaymentsMain = () => {
 		return select( PLUGINS_STORE_NAME ).getInstalledPlugins();
 	}, [] );
 
-	// Make UI to refresh when plugin is installed.
+	// Make UI refresh when plugin is installed.
 	const { invalidateResolutionForStoreSelector } = useDispatch(
 		PAYMENT_SETTINGS_STORE_NAME
 	);
 
-	const { providers, suggestions, suggestionCategories } = useSelect(
-		( select ) => {
+	const { providers, suggestions, suggestionCategories, isFetching } =
+		useSelect( ( select ) => {
 			return {
 				providers: select(
 					PAYMENT_SETTINGS_STORE_NAME
@@ -44,9 +44,9 @@ export const SettingsPaymentsMain = () => {
 				suggestionCategories: select(
 					PAYMENT_SETTINGS_STORE_NAME
 				).getSuggestionCategories(),
+				isFetching: select( PAYMENT_SETTINGS_STORE_NAME ).isFetching(),
 			};
-		}
-	);
+		} );
 
 	const setupPlugin = useCallback(
 		( id, slug ) => {
@@ -82,12 +82,14 @@ export const SettingsPaymentsMain = () => {
 					installedPluginSlugs={ installedPluginSlugs }
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
+					isFetching={ isFetching }
 				/>
 				<OtherPaymentGateways
 					suggestions={ suggestions }
 					suggestionCategories={ suggestionCategories }
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
+					isFetching={ isFetching }
 				/>
 			</div>
 		</>
