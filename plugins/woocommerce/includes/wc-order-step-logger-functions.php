@@ -36,7 +36,6 @@ function wc_log_order_step( string $message, ?array $context = null ) {
 		$order_uid = wp_generate_uuid4();
 	}
 
-	$context              = $context ?? [];
 	$context['order_uid'] = $order_uid;
 	$context['source']    = 'place-order-debug-' . substr( $order_uid, 0, 8 );
 
