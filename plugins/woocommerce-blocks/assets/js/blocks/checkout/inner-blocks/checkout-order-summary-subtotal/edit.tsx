@@ -9,32 +9,25 @@ import { BlockEditProps } from '@wordpress/blocks';
  * Internal dependencies
  */
 import Block, { BlockAttributes } from './block';
-import {
-	createSetOrderSummaryHeadingCallback,
-	useOrderSummaryHeadingFromEditor,
-} from '../../../../entities/editor';
+import { createSetOrderSummaryHeadingCallback } from '../../../../entities/editor';
 
 export const Edit = ( { attributes }: BlockEditProps< BlockAttributes > ) => {
-	const { className = '' } = attributes;
+	const { className = '', heading } = attributes;
 	const blockProps = useBlockProps();
-
-	const subtotalHeading = useOrderSummaryHeadingFromEditor(
-		'woocommerce_order_summary_subtotal_heading'
-	);
 
 	const onSubtotalHeadingChange = createSetOrderSummaryHeadingCallback(
 		'woocommerce_order_summary_subtotal_heading'
 	);
 
-	const headingText = subtotalHeading ?? __( 'Subtotal', 'woocommerce' );
+	const headingText = heading ?? __( 'Subtotal', 'woocommerce' );
 
-	const label = (
+	const headingElement = (
 		<RichText value={ headingText } onChange={ onSubtotalHeadingChange } />
 	);
 
 	return (
 		<div { ...blockProps }>
-			<Block label={ label } className={ className } />
+			<Block headingElement={ headingElement } className={ className } />
 		</div>
 	);
 };

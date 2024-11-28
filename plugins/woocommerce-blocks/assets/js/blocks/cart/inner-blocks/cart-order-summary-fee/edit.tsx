@@ -3,43 +3,31 @@
  */
 import { RichText, useBlockProps } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
+import { BlockEditProps } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
  */
-import Block from './block';
-import {
-	useOrderSummaryHeadingFromEditor,
-	createSetOrderSummaryHeadingCallback,
-} from '../../../../entities/editor';
+import Block, { BlockAttributes } from './block';
+import { createSetOrderSummaryHeadingCallback } from '../../../../entities/editor';
 
-export const Edit = ( {
-	attributes,
-}: {
-	attributes: {
-		className: string;
-	};
-	setAttributes: ( attributes: Record< string, unknown > ) => void;
-} ) => {
-	const { className } = attributes;
+export const Edit = ( { attributes }: BlockEditProps< BlockAttributes > ) => {
+	const { className, heading } = attributes;
 	const blockProps = useBlockProps();
-	const feeHeading = useOrderSummaryHeadingFromEditor(
-		'woocommerce_order_summary_fee_heading'
-	);
 
 	const onFeeHeadingChange = createSetOrderSummaryHeadingCallback(
 		'woocommerce_order_summary_fee_heading'
 	);
 
-	const headingText = feeHeading ?? __( 'Fees', 'woocommerce' );
+	const headingText = heading ?? __( 'Fees', 'woocommerce' );
 
-	const heading = (
+	const headingElement = (
 		<RichText value={ headingText } onChange={ onFeeHeadingChange } />
 	);
 
 	return (
 		<div { ...blockProps }>
-			<Block heading={ heading } className={ className } />
+			<Block headingElement={ headingElement } className={ className } />
 		</div>
 	);
 };

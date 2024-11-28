@@ -14,10 +14,10 @@ const Frontend = ( { className = '' }: BlockAttributes ) => {
 		'woocommerce_order_summary_subtotal_heading'
 	);
 
-	const headingText =
+	const headingElement =
 		orderSummarySubtotalHeading ?? __( 'Subtotal', 'woocommerce' );
 
-	return <Block label={ headingText } className={ className } />;
+	return <Block headingElement={ headingElement } className={ className } />;
 };
 
 export default Frontend;

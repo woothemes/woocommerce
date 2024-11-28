@@ -7,16 +7,11 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import Block, { BlockAttributes } from './block';
-import { useOrderSummaryHeadingFromFrontend } from '../../../../entities/frontend';
 
-const Frontend = ( { className }: BlockAttributes ) => {
-	const feeHeading = useOrderSummaryHeadingFromFrontend(
-		'woocommerce_order_summary_fee_heading'
-	);
+const Frontend = ( { className, heading }: BlockAttributes ) => {
+	const headingElement = heading ?? __( 'Fee', 'woocommerce' );
 
-	const heading = feeHeading ?? __( 'Fee', 'woocommerce' );
-
-	return <Block heading={ heading } className={ className } />;
+	return <Block headingElement={ headingElement } className={ className } />;
 };
 
 export default Frontend;

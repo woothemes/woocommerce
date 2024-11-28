@@ -9,14 +9,14 @@ import { isAddressComplete } from '@woocommerce/base-utils';
 
 export type BlockAttributes = {
 	className: string;
+	heading: string;
 };
 
-export type BlockProps = {
-	heading: React.ReactNode;
-	className: string;
+export type BlockProps = Omit< BlockAttributes, 'heading' > & {
+	headingElement: React.ReactNode;
 };
 
-const Block = ( { className = '', heading }: BlockProps ) => {
+const Block = ( { className = '', headingElement }: BlockProps ) => {
 	const { cartNeedsShipping, shippingAddress } = useStoreCart();
 
 	if ( ! cartNeedsShipping ) {
@@ -33,7 +33,7 @@ const Block = ( { className = '', heading }: BlockProps ) => {
 	return (
 		<TotalsWrapper className={ className }>
 			<TotalsShipping
-				label={ heading }
+				label={ headingElement }
 				placeholder={
 					<span className="wc-block-components-shipping-placeholder__value">
 						{ hasCompleteAddress

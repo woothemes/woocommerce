@@ -7,20 +7,21 @@ import { useStoreCart } from '@woocommerce/base-context/hooks';
 
 export type BlockAttributes = {
 	className: string;
+	heading: string;
 };
 
-export type BlockProps = BlockAttributes & {
-	heading: React.ReactNode;
+export type BlockProps = Omit< BlockAttributes, 'heading' > & {
+	headingElement: React.ReactNode;
 };
 
-const Block = ( { className, heading }: BlockProps ) => {
+const Block = ( { className, headingElement }: BlockProps ) => {
 	const { cartFees, cartTotals } = useStoreCart();
 	const totalsCurrency = getCurrencyFromPriceResponse( cartTotals );
 
 	return (
 		<TotalsWrapper className={ className }>
 			<TotalsFees
-				heading={ heading }
+				heading={ headingElement }
 				currency={ totalsCurrency }
 				cartFees={ cartFees }
 			/>

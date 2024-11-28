@@ -8,16 +8,20 @@ import { TotalsWrapper } from '@woocommerce/blocks-components';
 
 export type BlockAttributes = {
 	className: string;
+	heading: string | null;
 };
 
-type BlockProps = BlockAttributes & {
+type BlockProps = Omit< BlockAttributes, 'heading' > & {
 	isEditor?: boolean;
-	heading?: React.ReactNode;
+	headingElement?: React.ReactNode;
 };
 
-const Block = ( { className, heading, isEditor = false }: BlockProps ) => {
+const Block = ( {
+	className,
+	headingElement,
+	isEditor = false,
+}: BlockProps ) => {
 	const couponsEnabled = getSetting( 'couponsEnabled', true );
-
 	const { applyCoupon, isApplyingCoupon } = useStoreCartCoupons( 'wc/cart' );
 
 	if ( ! couponsEnabled ) {
@@ -27,7 +31,7 @@ const Block = ( { className, heading, isEditor = false }: BlockProps ) => {
 	return (
 		<TotalsWrapper className={ className }>
 			<TotalsCoupon
-				heading={ heading }
+				heading={ headingElement }
 				onSubmit={ applyCoupon }
 				isLoading={ isApplyingCoupon }
 				instanceId="coupon"

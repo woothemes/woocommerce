@@ -17,7 +17,10 @@ import {
  * Internal dependencies
  */
 import { OrderMetaSlotFill } from './slotfills';
-import { useOrderSummaryHeadingFromEditor } from '../../../../entities/editor';
+import {
+	createSetOrderSummaryHeadingCallback,
+	useOrderSummaryHeadingFromEditor,
+} from '../../../../entities/editor';
 
 export const Edit = ( { clientId }: { clientId: string } ) => {
 	const blockProps = useBlockProps();
