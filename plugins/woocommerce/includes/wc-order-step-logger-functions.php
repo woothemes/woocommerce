@@ -16,11 +16,12 @@ defined( 'ABSPATH' ) || exit;
  *
  * @param string     $message Message to log.
  * @param array|null $context Optional. Additional information for log handlers.
+ * @param bool       $final_step Optional. Whether this is the final step of the order logging, and should clear the log.
  *
  * @internal This function is intended for internal use only.
  * @since 9.6.0
  */
-function wc_log_order_step( string $message, ?array $context = null ) {
+function wc_log_order_step( string $message, ?array $context = null, bool $final_step = false ) {
 
 	if ( '' === $message ) {
 		return; // Nothing to log.
@@ -29,7 +30,7 @@ function wc_log_order_step( string $message, ?array $context = null ) {
 	static $order_uid = null;
 	static $logger = null;
 
-	// Generate a static place order unique ID for logging purposes. When this is called multiple times,
+	// Generate a static place order unique ID for logging purposes. When this is called multiple times in the same request,
 	// the same UID will be used, enabling us to track recursion and race-condition issues on order processing methods
 	// or other problems related to third-party plugins and filters.
 	if ( ! $order_uid ) {
@@ -37,11 +38,18 @@ function wc_log_order_step( string $message, ?array $context = null ) {
 	}
 
 	$context['order_uid'] = $order_uid;
-	$context['source']    = 'place-order-debug-' . substr( $order_uid, 0, 8 );
+	// Source is segmented per order unique id.
+	$context['source'] = 'place-order-debug-' . substr( $order_uid, 0, 8 );
 
 	if ( ! $logger ) {
 		// Use a static logger instance to avoid unnecessary instantiations.
-		$logger = new WC_Logger();
+		$logger = new WC_Logger( null, WC_Log_Levels::DEBUG );
+	}
+
+	if ( $final_step ) {
+		$logger->clear( $context['source'] );
+
+		return;
 	}
 
 	// Logging the place order flow step completed. Log files are grouped per order to make is easier to navigate.
