@@ -20,7 +20,6 @@ const blocks = {
 		customDir: 'product-elements/add-to-cart-form',
 	},
 	'add-to-cart-with-options': {
-		customDir: 'add-to-cart-with-options',
 		isExperimental: true,
 	},
 	'all-products': {
