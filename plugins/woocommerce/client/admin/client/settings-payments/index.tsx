@@ -45,7 +45,7 @@ const onButtonClick = () => {
 	//TODO: Implement in future PR.
 };
 
-export const SettingsPaymentsMainWrapper: React.FC = () => {
+export const SettingsPaymentsMainWrapper = () => {
 	return (
 		<>
 			<Header title={ __( 'WooCommerce Settings', 'woocommerce' ) } />
@@ -145,7 +145,7 @@ export const SettingsPaymentsOfflineWrapper = () => {
 	);
 };
 
-export const SettingsPaymentsMethodsWrapper: React.FC = () => {
+export const SettingsPaymentsMethodsWrapper = () => {
 	return (
 		<>
 			<Header
@@ -170,7 +170,7 @@ export const SettingsPaymentsMethodsWrapper: React.FC = () => {
 	);
 };
 
-export const SettingsPaymentsWooCommercePaymentsWrapper: React.FC = () => {
+export const SettingsPaymentsWooCommercePaymentsWrapper = () => {
 	return (
 		<>
 			<Header title={ __( 'WooCommerce Settings', 'woocommerce' ) } />
