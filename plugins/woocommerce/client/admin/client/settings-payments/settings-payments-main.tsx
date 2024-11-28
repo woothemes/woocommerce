@@ -2,12 +2,13 @@
  * External dependencies
  */
 import { useCallback } from 'react';
+import { __ } from '@wordpress/i18n';
 import {
 	PLUGINS_STORE_NAME,
 	PAYMENT_SETTINGS_STORE_NAME,
 } from '@woocommerce/data';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -23,6 +24,35 @@ export const SettingsPaymentsMain = () => {
 		null
 	);
 	const { installAndActivatePlugins } = useDispatch( PLUGINS_STORE_NAME );
+
+	const [ errorMessage, setErrorMessage ] = useState< string | null >( null );
+
+	const urlParams = new URLSearchParams( window.location.search );
+
+	useEffect( () => {
+		const isAccountTestDriveError =
+			'true' === urlParams.get( 'test_drive_error' );
+		if ( isAccountTestDriveError ) {
+			setErrorMessage(
+				__(
+					'An error occurred while setting up your sandbox account. Please try again.',
+					'woocommerce'
+				)
+			);
+		}
+
+		const isJetpackConnectionError =
+			'1' === urlParams.get( 'wcpay-connect-jetpack-error' );
+
+		if ( isJetpackConnectionError ) {
+			setErrorMessage(
+				__(
+					'There was a problem connecting your WordPress.com account - please try again.',
+					'woocommerce'
+				)
+			);
+		}
+	} );
 
 	const installedPluginSlugs = useSelect( ( select ) => {
 		return select( PLUGINS_STORE_NAME ).getInstalledPlugins();
@@ -76,6 +106,18 @@ export const SettingsPaymentsMain = () => {
 
 	return (
 		<>
+			{ errorMessage && (
+				<div className="notice notice-error is-dismissible wcpay-settings-notice">
+					<p>{ errorMessage }</p>
+					<button
+						type="button"
+						className="notice-dismiss"
+						onClick={ () => {
+							setErrorMessage( null );
+						} }
+					></button>
+				</div>
+			) }
 			<div className="settings-payments-main__container">
 				<PaymentGateways
 					providers={ providers }
