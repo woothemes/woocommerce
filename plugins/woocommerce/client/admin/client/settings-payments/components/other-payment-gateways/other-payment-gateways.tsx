@@ -155,7 +155,7 @@ export const OtherPaymentGateways = ( settings: OtherPaymentGatewaysProps ) => {
 				onClick={ () => {
 					setIsExpanded( ! isExpanded );
 				} }
-				onKeyPress={ ( event ) => {
+				onKeyDown={ ( event ) => {
 					if ( event.key === 'Enter' || event.key === ' ' ) {
 						setIsExpanded( ! isExpanded );
 					}
