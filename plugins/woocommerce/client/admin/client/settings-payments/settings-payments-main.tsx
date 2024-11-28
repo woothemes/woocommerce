@@ -16,7 +16,7 @@ import './settings-payments-main.scss';
 import { createNoticesFromResponse } from '~/lib/notices';
 import { OtherPaymentGateways } from '~/settings-payments/components/other-payment-gateways';
 import { PaymentGateways } from '~/settings-payments/components/payment-gateways';
-import { onWCPayEnable } from '~/settings-payments/hooks';
+import { getWooPaymentsTestDriveAccountLink } from '~/settings-payments/utils';
 
 export const SettingsPaymentsMain = () => {
 	const [ installingPlugin, setInstallingPlugin ] = useState< string | null >(
@@ -50,10 +50,11 @@ export const SettingsPaymentsMain = () => {
 			}
 			setInstallingPlugin( id );
 			installAndActivatePlugins( [ slug ] )
-				.then( async ( response ) => {
+				.then( ( response ) => {
 					createNoticesFromResponse( response );
 					if ( id === 'woopayments' ) {
-						await onWCPayEnable();
+						window.location.href =
+							getWooPaymentsTestDriveAccountLink();
 						return;
 					}
 					invalidateResolutionForStoreSelector(

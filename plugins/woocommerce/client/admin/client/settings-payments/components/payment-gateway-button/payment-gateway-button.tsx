@@ -13,8 +13,10 @@ import { useState } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import { onWCPayEnable } from '~/settings-payments/hooks';
-import { isWooPayments } from '~/settings-payments/utils';
+import {
+	isWooPayments,
+	getWooPaymentsTestDriveAccountLink,
+} from '~/settings-payments/utils';
 
 export const PaymentGatewayButton = ( {
 	id,
@@ -70,10 +72,11 @@ export const PaymentGatewayButton = ( {
 				window.woocommerce_admin.ajax_url,
 				gatewayToggleNonce
 			)
-				.then( async ( response: EnableGatewayResponse ) => {
+				.then( ( response: EnableGatewayResponse ) => {
 					if ( response.data === 'needs_setup' ) {
 						if ( isWooPayments( id ) ) {
-							await onWCPayEnable();
+							window.location.href =
+								getWooPaymentsTestDriveAccountLink();
 							return;
 						}
 						window.location.href = settingsUrl;
