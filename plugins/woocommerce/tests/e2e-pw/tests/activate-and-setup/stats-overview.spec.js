@@ -1,4 +1,4 @@
-const { test, expect, request } = require( '@playwright/test' );
+const { test, expect } = require( '@playwright/test' );
 
 test.describe( 'WooCommerce Home', () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
