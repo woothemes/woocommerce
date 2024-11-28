@@ -57,7 +57,7 @@ test.describe( 'WC Home Task List > ', () => {
 				).toBeVisible();
 				await expect(
 					page.getByText( 'Store management' )
-				).not.toBeVisible();
+				).toBeHidden();
 			} );
 
 			await test.step( 'Hide the task list', async () => {
@@ -72,7 +72,7 @@ test.describe( 'WC Home Task List > ', () => {
 					page.getByRole( 'heading', {
 						name: 'Start customizing your store',
 					} )
-				).not.toBeVisible();
+				).toBeHidden();
 				await expect(
 					page.getByText( 'Store management' )
 				).toBeVisible();
