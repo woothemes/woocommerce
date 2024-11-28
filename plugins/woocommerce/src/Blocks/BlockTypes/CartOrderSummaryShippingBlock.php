@@ -18,7 +18,7 @@ class CartOrderSummaryShippingBlock extends AbstractInnerBlock {
 	 *
 	 * @var string
 	 */
-	const HEADING_SETTING = 'order_summary_shipping_heading';
+	const HEADING_SETTING = 'woocommerce_order_summary_shipping_heading';
 
 	/**
 	 * Initialize the block.
@@ -32,7 +32,18 @@ class CartOrderSummaryShippingBlock extends AbstractInnerBlock {
 	 * Register the settings.
 	 */
 	public function register_settings() {
-		register_setting( 'woocommerce_order_summary', self::HEADING_SETTING, array( 'type' => 'string' ) );
+		register_setting(
+			'woocommerce_order_summary',
+			'woocommerce_order_summary_shipping_heading',
+			array(
+				'type'              => 'string',
+				'label'             => __( 'Order summary shipping heading', 'woocommerce' ),
+				'description'       => __( 'Heading for the order summary shipping section.', 'woocommerce' ),
+				'sanitize_callback' => 'sanitize_text_field',
+				'default'           => null,
+				'show_in_rest'      => true,
+			)
+		);
 	}
 
 	/**

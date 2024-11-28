@@ -61,7 +61,7 @@ class CartOrderSummaryFeeBlock extends AbstractInnerBlock {
 			array(
 				'type'              => 'string',
 				'label'             => __( 'Order summary fee heading', 'woocommerce' ),
-				'description'       => __( 'Heading for the order summary fee.', 'woocommerce' ),
+				'description'       => __( 'Heading for the order summary fee section.', 'woocommerce' ),
 				'sanitize_callback' => 'sanitize_text_field',
 				'default'           => null,
 				'show_in_rest'      => true,

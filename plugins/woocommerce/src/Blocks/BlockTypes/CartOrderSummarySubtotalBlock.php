@@ -50,7 +50,7 @@ class CartOrderSummarySubtotalBlock extends AbstractInnerBlock {
 	public function register_settings() {
 		register_setting(
 			'woocommerce_order_summary',
-			self::SUBTOTAL_HEADING_OPTION,
+			'woocommerce_order_summary_subtotal_heading',
 			array(
 				'type'              => 'string',
 				'label'             => __( 'Order summary subtotal heading', 'woocommerce' ),

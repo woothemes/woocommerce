@@ -35,11 +35,11 @@ class CheckoutOrderSummaryCouponFormBlock extends AbstractInnerBlock {
 	public function register_settings() {
 		register_setting(
 			'woocommerce_order_summary',
-			self::HEADING_SETTING,
+			'woocommerce_order_summary_coupon_heading',
 			array(
 				'type'              => 'string',
-				'label'             => __( 'Order summary shipping heading', 'woocommerce' ),
-				'description'       => __( 'Heading for the order summary shipping section.', 'woocommerce' ),
+				'label'             => __( 'Order summary coupon heading', 'woocommerce' ),
+				'description'       => __( 'Heading for the order summary coupon section.', 'woocommerce' ),
 				'sanitize_callback' => 'sanitize_text_field',
 				'default'           => null,
 				'show_in_rest'      => true,
