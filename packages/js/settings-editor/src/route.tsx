@@ -139,7 +139,9 @@ const getModernPages = () => {
  * @return {Record<string, Route>} The pages.
  */
 export function useModernRoutes(): Record< string, Route > {
-	const [ routes, setRoutes ] = useState< Record< string, Route > >( {} );
+	const [ routes, setRoutes ] = useState< Record< string, Route > >(
+		getModernPages()
+	);
 	const location = useLocation() as Location;
 
 	/*
@@ -167,7 +169,7 @@ export function useModernRoutes(): Record< string, Route > {
 		};
 	}, [] );
 
-	// Update modern when the location changes.
+	// Update modern pages when the location changes.
 	useEffect( () => {
 		setRoutes( getModernPages() );
 	}, [ location.params ] );
