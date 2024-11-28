@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useRef, useState } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import {
 	useSelect,
 	UseSelectState,
@@ -193,7 +193,7 @@ export const CountrySelector = < ItemType extends Item >( {
 
 	return (
 		<div
-			className={ classNames(
+			className={ clsx(
 				'woopayments components-country-select-control',
 				className
 			) }
@@ -203,7 +203,7 @@ export const CountrySelector = < ItemType extends Item >( {
 					'aria-label': label,
 					'aria-labelledby': undefined,
 					'aria-describedby': getDescribedBy(),
-					className: classNames(
+					className: clsx(
 						'components-country-select-control__button',
 						{ placeholder: ! itemString }
 					),
@@ -250,7 +250,7 @@ export const CountrySelector = < ItemType extends Item >( {
 										item,
 										index,
 										key: item.key,
-										className: classNames(
+										className: clsx(
 											item.className,
 											'components-country-select-control__item',
 											{
