@@ -154,6 +154,25 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 			flex-direction: column;
 			gap: 16px;
 
+			&__title {
+				display: flex;
+				gap: 4px;
+				align-items: center;
+
+				&__h3 {
+					text-transform: uppercase;
+					font-size: 12px;
+					font-weight: 300;
+					line-height: 16px;
+				}
+
+				&__tooltip {
+					color: $gray-700;
+					width: 16px;
+					height: 16px;
+				}
+			}
+
 			&__grid {
 				display: grid;
 				grid-template-columns: repeat(3, 1fr); /* 3 columns */
