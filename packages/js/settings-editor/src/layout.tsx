@@ -95,7 +95,10 @@ export function Layout( {
 										ref={ toggleRef }
 										isTransparent={ false }
 									/>
-									<SidebarContent routeKey={ routeKey }>
+									<SidebarContent
+										routeKey={ routeKey }
+										shouldAnimate={ false }
+									>
 										{ areas.sidebar }
 									</SidebarContent>
 								</motion.div>

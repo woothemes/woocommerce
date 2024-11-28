@@ -1,4 +1,4 @@
-# Product Editor
+# Settings Editor
 
 A collection of WooCommerce Admin settings editor components and utilities.
 
