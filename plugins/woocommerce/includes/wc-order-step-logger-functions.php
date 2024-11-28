@@ -14,9 +14,9 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Log an order-related message. This is not public API and should not be used by plugins or themes.
  *
- * @param string     $message Message to log.
+ * @param string $message Message to log.
  * @param array|null $context Optional. Additional information for log handlers.
- * @param bool       $final_step Optional. Whether this is the final step of the order logging, and should clear the log.
+ * @param bool $final_step Optional. Whether this is the final step of the order logging, and should clear the log.
  *
  * @internal This function is intended for internal use only.
  * @since 9.6.0
@@ -27,6 +27,7 @@ function wc_log_order_step( string $message, ?array $context = null, bool $final
 		return; // Nothing to log.
 	}
 
+	static $steps = []; // Static array to store the messages and validate against unique messages before clearing the log.
 	static $order_uid = null;
 	static $logger = null;
 
@@ -46,12 +47,16 @@ function wc_log_order_step( string $message, ?array $context = null, bool $final
 		$logger = new WC_Logger( null, WC_Log_Levels::DEBUG );
 	}
 
-	if ( $final_step ) {
-		$logger->clear( $context['source'] );
+	$steps[] = $message;
+	// Logging the place order flow step. Log files are grouped per order to make is easier to navigate.
+	$logger->log( WC_Log_Levels::DEBUG, $message, $context );
 
+	if ( ! $final_step ) {
 		return;
 	}
 
-	// Logging the place order flow step completed. Log files are grouped per order to make is easier to navigate.
-	$logger->log( WC_Log_Levels::DEBUG, $message, $context );
+	// Clears the log if all steps are unique.
+	if ( count( array_unique( $steps ) ) === count( $steps ) ) {
+		$logger->clear( $context['source'] );
+	}
 }
