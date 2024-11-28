@@ -32,14 +32,21 @@ export const SettingsPaymentsMain = () => {
 		PAYMENT_SETTINGS_STORE_NAME
 	);
 
-	const { providers, suggestions } = useSelect( ( select ) => {
-		return {
-			providers: select(
-				PAYMENT_SETTINGS_STORE_NAME
-			).getPaymentProviders(),
-			suggestions: select( PAYMENT_SETTINGS_STORE_NAME ).getSuggestions(),
-		};
-	} );
+	const { providers, suggestions, suggestionCategories } = useSelect(
+		( select ) => {
+			return {
+				providers: select(
+					PAYMENT_SETTINGS_STORE_NAME
+				).getPaymentProviders(),
+				suggestions: select(
+					PAYMENT_SETTINGS_STORE_NAME
+				).getSuggestions(),
+				suggestionCategories: select(
+					PAYMENT_SETTINGS_STORE_NAME
+				).getSuggestionCategories(),
+			};
+		}
+	);
 
 	const setupPlugin = useCallback(
 		( id, slug ) => {
@@ -78,6 +85,7 @@ export const SettingsPaymentsMain = () => {
 				/>
 				<OtherPaymentGateways
 					suggestions={ suggestions }
+					suggestionCategories={ suggestionCategories }
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
 				/>
