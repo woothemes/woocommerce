@@ -5591,13 +5591,6 @@ img.help_tip {
 .post-new-php.post-type-product,
 .post-php.post-type-shop_coupon,
 .post-new-php.post-type-shop_coupon {
-	// Link color.
-	a,
-	.button-link  {
-		color:  var(--wp-admin-theme-color, $studio-wordpress-blue);
-	}
-
-
 	/* Style all buttons */
 	.button,
 	#screen-meta-links .show-settings {
