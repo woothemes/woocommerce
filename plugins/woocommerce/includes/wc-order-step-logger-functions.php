@@ -46,5 +46,5 @@ function wc_log_order_step( string $message, ?array $context = null ) {
 	}
 
 	// Logging the place order flow step completed. Log files are grouped per order to make is easier to navigate.
-	$logger->log( WC_Log_Levels::INFO, $message, $context );
+	$logger->log( WC_Log_Levels::DEBUG, $message, $context );
 }
