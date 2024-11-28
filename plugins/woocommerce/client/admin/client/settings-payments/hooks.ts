@@ -20,7 +20,7 @@ export const onWCPayEnable = async (): Promise< void > => {
 			ONBOARDING_STORE_NAME
 		).getJetpackAuthUrl( {
 			redirectUrl: getAdminLink(
-				'admin.php?page=wc-admin&path=/payments/connect&test_drive=true&auto_start_test_drive_onboarding=true&redirect_to_settings_page=true&from=WPCOM_CONNECTION'
+				'admin.php?page=wc-admin&path=/payments/connect&test_drive=true&auto_start_test_drive_onboarding=true&redirect_to_settings_page=true&wcpay-connect-jetpack-success=1'
 			),
 			from: 'woocommerce-payments',
 		} );
