@@ -21,8 +21,6 @@ import {
 import { getStoreAgeInWeeks } from '../../utils';
 
 /**
- * @typedef {import('react').ComponentType} ComponentType
- *
  * @typedef {Object} CustomerEffortScoreTracksProps
  * @property {string}   action               - The action name sent to Tracks
  * @property {Object}   [trackProps]         - Additional props sent to Tracks
@@ -180,6 +178,8 @@ function _CustomerEffortScoreTracks( {
 }
 
 /**
+ * @typedef {import('react').ComponentType} ComponentType
+ *
  * @type {ComponentType<CustomerEffortScoreTracksProps>}
  */
 export const CustomerEffortScoreTracks = compose(
