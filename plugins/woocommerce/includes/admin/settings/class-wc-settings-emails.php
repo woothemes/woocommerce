@@ -46,6 +46,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 		add_action( 'woocommerce_admin_field_email_notification', array( $this, 'email_notification_setting' ) );
 		add_action( 'woocommerce_admin_field_email_preview', array( $this, 'email_preview' ) );
 		add_action( 'woocommerce_admin_field_email_image_url', array( $this, 'email_image_url' ) );
+		add_action( 'woocommerce_admin_field_email_font_family', array( $this, 'email_font_family' ) );
 		parent::__construct();
 	}
 
@@ -156,29 +157,11 @@ class WC_Settings_Emails extends WC_Settings_Page {
 				),
 			);
 
-			$additional_fonts = array();
-			if ( wc_current_theme_is_fse_theme() && class_exists( 'WP_Font_Face_Resolver' ) ) {
-				$theme_fonts = WP_Font_Face_Resolver::get_fonts_from_theme_json();
-				if ( count( $theme_fonts ) > 0 ) {
-					foreach ( $theme_fonts as $font ) {
-						if ( ! empty( $font[0]['font-family'] ) ) {
-							$additional_fonts[ $font[0]['font-family'] ] = $font[0]['font-family'];
-						}
-					}
-					ksort( $additional_fonts );
-				}
-			}
 			$font_family = array(
-				'title'    => __( 'Font family', 'woocommerce' ),
-				'id'       => 'woocommerce_email_font_family',
-				'desc_tip' => '',
-				'default'  => 'Arial',
-				'type'     => 'select',
-				'class'    => 'wc-enhanced-select',
-				'options'  => array_merge(
-					array_combine( array_keys( self::$font ), array_keys( self::$font ) ),
-					$additional_fonts
-				),
+				'title'   => __( 'Font family', 'woocommerce' ),
+				'id'      => 'woocommerce_email_font_family',
+				'default' => 'Arial',
+				'type'    => 'email_font_family',
 			);
 
 			/* translators: %s: Available placeholders for use */
@@ -447,6 +430,26 @@ class WC_Settings_Emails extends WC_Settings_Page {
 	}
 
 	/**
+	 * Get custom fonts for emails.
+	 */
+	public function get_custom_fonts() {
+		$custom_fonts = array();
+		if ( wc_current_theme_is_fse_theme() && class_exists( 'WP_Font_Face_Resolver' ) ) {
+			$theme_fonts = WP_Font_Face_Resolver::get_fonts_from_theme_json();
+			if ( count( $theme_fonts ) > 0 ) {
+				foreach ( $theme_fonts as $font ) {
+					if ( ! empty( $font[0]['font-family'] ) ) {
+						$custom_fonts[ $font[0]['font-family'] ] = $font[0]['font-family'];
+					}
+				}
+			}
+		}
+		ksort( $custom_fonts );
+
+		return $custom_fonts;
+	}
+
+	/**
 	 * Output the settings.
 	 */
 	public function output() {
@@ -641,6 +644,76 @@ class WC_Settings_Emails extends WC_Settings_Page {
 					data-id="<?php echo esc_attr( $value['id'] ); ?>"
 					data-image-url="<?php echo esc_attr( $option_value ); ?>"
 				></div>
+			</td>
+		</tr>
+		<?php
+	}
+
+	/**
+	 * Creates the email font family field with custom font family applied to each option.
+	 *
+	 * @param array $value Field value array.
+	 */
+	public function email_font_family( $value ) {
+		$option_value = $value['value'];
+
+		?>
+		<tr class="<?php echo esc_attr( $value['row_class'] ); ?>">
+			<th scope="row" class="titledesc">
+				<label for="<?php echo esc_attr( $value['id'] ); ?>"><?php echo esc_html( $value['title'] ); ?></label>
+			</th>
+			<td class="forminp forminp-<?php echo esc_attr( sanitize_title( $value['type'] ) ); ?>">
+			<script type="text/javascript">
+				function renderWithFont( node ) {
+					if ( ! node.element || ! node.element.value ) return node.text;
+					var $wrapper = jQuery( '<span></span>' );
+					$wrapper.css( {'font-family': node.element.dataset['font-family'] || node.element.value, 'font-size': '1.4em'} );
+					$wrapper.text( node.text );
+					return $wrapper;
+				}
+				function fontsSelect( selector ) {
+					jQuery( selector ).selectWoo( {
+						minimumResultsForSearch: Infinity,
+						templateResult: renderWithFont
+					} );
+				}
+				jQuery( document.body )
+					.on( 'wc-enhanced-select-init', function() {
+						fontsSelect( '#<?php echo esc_js( $value['id'] ); ?>' );
+					} );
+				</script>
+				<select
+					name="<?php echo esc_attr( $value['field_name'] ); ?>"
+					id="<?php echo esc_attr( $value['id'] ); ?>"
+					>
+					<optgroup label="<?php echo esc_attr__( 'Standard fonts', 'woocommerce' ); ?>">
+						<?php
+						foreach ( self::$font as $key => $font_family ) {
+							?>
+							<option
+								value="<?php echo esc_attr( $key ); ?>"
+								data-font-family="<?php echo esc_attr( $font_family ); ?>"
+								<?php selected( $option_value, (string) $key ); ?>
+							><?php echo esc_html( $key ); ?></option>
+							<?php
+						}
+						?>
+					</optgroup>
+			<?php if ( $custom_fonts = $this->get_custom_fonts() ) : ?>
+			<optgroup label="<?php echo esc_attr__( 'Custom fonts', 'woocommerce' ); ?>">
+				<?php
+				foreach ( $custom_fonts as $key => $val ) {
+					?>
+				<option
+					value="<?php echo esc_attr( $key ); ?>"
+					<?php selected( $option_value, (string) $key ); ?>
+				><?php echo esc_html( $val ); ?></option>
+					<?php
+				}
+				?>
+			</optgroup>
+			<?php endif; ?>
+				</select>
 			</td>
 		</tr>
 		<?php
