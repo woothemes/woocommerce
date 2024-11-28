@@ -23,12 +23,18 @@ import {
 	getAllowedBlocks,
 } from '../../../cart-checkout-shared';
 import { OrderMetaSlotFill } from './slotfills';
-import {
-	useOrderSummaryHeadingFromEditor,
-	createSetOrderSummaryHeadingCallback,
-} from '../../../../entities/editor';
+import { createSetOrderSummaryHeadingCallback } from '../../../../entities/editor';
 
-export const Edit = ( { clientId }: BlockEditProps< object > ) => {
+type BlockAttributes = {
+	heading: string | null;
+	footerHeading: string | null;
+	className: string;
+};
+
+export const Edit = ( {
+	clientId,
+	attributes,
+}: BlockEditProps< BlockAttributes > ) => {
 	const blockProps = useBlockProps();
 	const { cartTotals } = useStoreCart();
 	const totalsCurrency = getCurrencyFromPriceResponse( cartTotals );
@@ -40,13 +46,7 @@ export const Edit = ( { clientId }: BlockEditProps< object > ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const ariaControlsId = useId();
 
-	const orderSummaryHeading = useOrderSummaryHeadingFromEditor(
-		'woocommerce_order_summary_heading'
-	);
-
-	const orderSummaryFooterHeading = useOrderSummaryHeadingFromEditor(
-		'woocommerce_order_summary_footer_heading'
-	);
+	const { heading, footerHeading } = attributes;
 
 	const onOrderSummaryHeadingChange = createSetOrderSummaryHeadingCallback(
 		'woocommerce_order_summary_heading'
@@ -57,10 +57,10 @@ export const Edit = ( { clientId }: BlockEditProps< object > ) => {
 			'woocommerce_order_summary_footer_heading'
 		);
 
-	const headingText =
-		orderSummaryHeading ?? __( 'Order summary', 'woocommerce' );
+	const headingText = heading ?? __( 'Order summary', 'woocommerce' );
+	const footerHeadingText = footerHeading ?? __( 'Total', 'woocommerce' );
 
-	const heading = (
+	const headingElement = (
 		<RichText
 			tagName="span"
 			identifier="headingText"
@@ -69,11 +69,11 @@ export const Edit = ( { clientId }: BlockEditProps< object > ) => {
 		/>
 	);
 
-	const footerHeadingLabel = (
+	const footerHeadingElement = (
 		<RichText
 			tagName="span"
 			identifier="footerHeadingText"
-			value={ orderSummaryFooterHeading || __( 'Total', 'woocommerce' ) }
+			value={ footerHeadingText }
 			onChange={ onOrderSummaryFooterHeadingChange }
 		/>
 	);
@@ -115,7 +115,7 @@ export const Edit = ( { clientId }: BlockEditProps< object > ) => {
 					className="wc-block-components-checkout-order-summary__title-text"
 					role="heading"
 				>
-					{ heading }
+					{ headingElement }
 				</p>
 				{ ! isLarge && (
 					<>
@@ -145,7 +145,7 @@ export const Edit = ( { clientId }: BlockEditProps< object > ) => {
 					<TotalsFooterItem
 						currency={ totalsCurrency }
 						values={ cartTotals }
-						label={ footerHeadingLabel }
+						label={ footerHeadingElement }
 					/>
 				</div>
 				<OrderMetaSlotFill />

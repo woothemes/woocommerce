@@ -23,22 +23,18 @@ type FrontendBlockProps = {
 	className?: string;
 };
 
-const FrontendBlock = ( { children, className = '' }: FrontendBlockProps ) => {
+const FrontendBlock = ( {
+	children,
+	className = '',
+	heading,
+	footerHeading,
+}: FrontendBlockProps ) => {
 	const { cartTotals } = useStoreCart();
 	const { isLarge } = useContainerWidthContext();
 	const [ isOpen, setIsOpen ] = useState( false );
 
-	const orderSummaryHeading = useOrderSummaryHeadingFromFrontend(
-		'woocommerce_order_summary_heading'
-	);
-
-	const orderSummaryFooterHeading = useOrderSummaryHeadingFromFrontend(
-		'woocommerce_order_summary_footer_heading'
-	);
-
-	const heading = orderSummaryHeading ?? __( 'Order summary', 'woocommerce' );
-	const footerHeadingLabel =
-		orderSummaryFooterHeading ?? __( 'Total', 'woocommerce' );
+	const headingText = heading ?? __( 'Order summary', 'woocommerce' );
+	const footerHeadingText = footerHeading ?? __( 'Total', 'woocommerce' );
 
 	const totalsCurrency = getCurrencyFromPriceResponse( cartTotals );
 	const totalPrice = parseInt( cartTotals.total_price, 10 );
@@ -77,7 +73,7 @@ const FrontendBlock = ( { children, className = '' }: FrontendBlockProps ) => {
 						className="wc-block-components-checkout-order-summary__title-text"
 						role="heading"
 					>
-						{ heading }
+						{ headingText }
 					</p>
 					{ ! isLarge && (
 						<>
@@ -107,7 +103,7 @@ const FrontendBlock = ( { children, className = '' }: FrontendBlockProps ) => {
 						<TotalsFooterItem
 							currency={ totalsCurrency }
 							values={ cartTotals }
-							label={ footerHeadingLabel }
+							label={ footerHeadingText }
 						/>
 					</div>
 					<OrderMetaSlotFill />

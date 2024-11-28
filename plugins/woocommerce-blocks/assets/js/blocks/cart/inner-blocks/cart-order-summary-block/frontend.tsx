@@ -19,11 +19,11 @@ type FrontendBlockProps = BlockAttributes & {
 const FrontendBlock = ( {
 	children,
 	className = '',
-	heading,
+	footerHeading,
 }: FrontendBlockProps ) => {
 	const { cartTotals } = useStoreCart();
 	const totalsCurrency = getCurrencyFromPriceResponse( cartTotals );
-	const footerHeadingLabel = heading ?? __( 'Total', 'woocommerce' );
+	const footerHeadingLabel = footerHeading ?? __( 'Total', 'woocommerce' );
 
 	return (
 		<div className={ className }>

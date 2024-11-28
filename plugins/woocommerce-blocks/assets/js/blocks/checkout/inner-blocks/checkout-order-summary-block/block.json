@@ -18,11 +18,17 @@
 			"default": {
 				"remove": true
 			}
+		},
+		"heading": {
+			"type": "string",
+			"default": null
+		},
+		"footerHeading": {
+			"type": "string",
+			"default": null
 		}
 	},
-	"parent": [
-		"woocommerce/checkout-totals-block"
-	],
+	"parent": [ "woocommerce/checkout-totals-block" ],
 	"textdomain": "woocommerce",
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3

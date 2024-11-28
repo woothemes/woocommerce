@@ -20,7 +20,7 @@
 				"move": true
 			}
 		},
-		"heading": {
+		"footerHeading": {
 			"type": "string",
 			"default": null
 		}
