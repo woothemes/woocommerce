@@ -5674,6 +5674,8 @@ img.help_tip {
 		}
 		#title-prompt-text {
 			color: var(--Gray-Gray-30, $studio-gray-30);
+			// Offset by the same border as the input.
+			border: 1px solid transparent;
 		}
 		#title {
 			border-radius: $border-radius;
