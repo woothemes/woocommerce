@@ -1566,6 +1566,28 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 	}
 
 	/**
+	 * Test dismissing a payment extension suggestion incentive.
+	 */
+	public function test_dismiss_extension_suggestion_incentive() {
+		// Arrange.
+		$suggestion_id = 'suggestion1';
+		$incentive_id  = 'incentive1';
+		$context       = 'context1';
+
+		$this->mock_extension_suggestions
+			->expects( $this->once() )
+			->method( 'dismiss_incentive' )
+			->with( $incentive_id, $suggestion_id, $context )
+			->willReturn( true );
+
+		// Act.
+		$result = $this->service->dismiss_extension_suggestion_incentive( $suggestion_id, $incentive_id, $context );
+
+		// Assert.
+		$this->assertTrue( $result );
+	}
+
+	/**
 	 * Test updating the payment providers order map.
 	 *
 	 * @dataProvider data_provider_test_update_payment_providers_order_map
