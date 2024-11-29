@@ -5,6 +5,7 @@ import { useCallback } from 'react';
 import {
 	PLUGINS_STORE_NAME,
 	PAYMENT_SETTINGS_STORE_NAME,
+	PaymentProvider,
 } from '@woocommerce/data';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useState } from '@wordpress/element';
@@ -68,6 +69,10 @@ export const SettingsPaymentsMain = () => {
 		]
 	);
 
+	const handleOrderingUpdate = ( gateways: PaymentProvider[] ) => {
+		console.log( 'update ordering!', gateways );
+	};
+
 	return (
 		<>
 			<div className="settings-payments-main__container">
@@ -76,6 +81,7 @@ export const SettingsPaymentsMain = () => {
 					installedPluginSlugs={ installedPluginSlugs }
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
+					updateOrdering={ handleOrderingUpdate }
 					isFetching={ isFetching }
 				/>
 				<OtherPaymentGateways

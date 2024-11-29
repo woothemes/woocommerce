@@ -7,6 +7,7 @@ import { List } from '@woocommerce/components';
  * Internal dependencies
  */
 import './list-placeholder.scss';
+import { DefaultDragHandle } from '~/settings-payments/components/sortable';
 
 interface ListPlaceholderProps {
 	rows: number;
@@ -25,7 +26,12 @@ export const ListPlaceholder = ( { rows }: ListPlaceholderProps ) => {
 				'woocommerce-item__payment-gateway-placeholder transitions-disabled',
 			title: <div className="list-placeholder__title" />,
 			after: <div className="list-placeholder__after" />,
-			before: <div className="list-placeholder__before" />,
+			before: (
+				<>
+					<DefaultDragHandle />
+					<div className="list-placeholder__before" />
+				</>
+			),
 		};
 	} );
 
