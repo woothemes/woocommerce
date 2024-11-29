@@ -12,7 +12,6 @@ use WP_REST_Server;
  * Controller for the REST endpoint to add order statuses to the WooCommerce REST API.
  */
 class OrderStatusController extends RestApiControllerBase {
-	use AccessiblePrivateMethods;
 
 	/**
 	 * Endpoint namespace.
@@ -107,6 +106,6 @@ class OrderStatusController extends RestApiControllerBase {
 			),
 		);
 
-		return $this->add_additional_fields_schema( $schema );
+		return $schema;
 	}
 }
