@@ -1,0 +1,4 @@
+Significance: patch
+Type: tweak
+
+Modifies the remote logging feature to avoid unwanted compatibility checks.

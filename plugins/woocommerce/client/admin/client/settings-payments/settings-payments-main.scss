@@ -114,6 +114,13 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 		}
 	}
 
+	.other-payment-gateways__header__title__image-placeholder {
+		width: 24px;
+		height: 24px;
+		background-color: $gray-100;
+		border-radius: 4px;
+	}
+
 	.other-payment-gateways {
 		border: 1px solid $gray-200;
 		border-radius: 4px;
