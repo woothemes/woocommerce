@@ -36,6 +36,18 @@ class WC_Product_Variable extends WC_Product {
 	 */
 	protected $variation_attributes = null;
 
+	private string $posts_table;
+	private string $postmeta_table;
+
+	public function __construct()
+	{
+		global $wpdb;
+
+		$this->posts_table    = $wpdb->posts . '_variations';
+		$this->postmeta_table = $wpdb->postmeta . '_variations';
+	}
+
+
 	/**
 	 * Get internal type.
 	 *
@@ -303,8 +315,16 @@ class WC_Product_Variable extends WC_Product {
 	 * @return array[]|WC_Product_Variation[]
 	 */
 	public function get_available_variations( $return = 'array' ) {
+		global $wpdb;
+
 		$variation_ids        = $this->get_children();
 		$available_variations = array();
+
+		// Hack: inject PoC tables names
+		$posts_table    = $wpdb->posts;
+		$wpdb->posts    = $this->posts_table;
+		$postmeta_table = $wpdb->postmeta;
+		$wpdb->postmeta = $this->postmeta_table;
 
 		if ( is_callable( '_prime_post_caches' ) ) {
 			_prime_post_caches( $variation_ids );
@@ -334,6 +354,11 @@ class WC_Product_Variable extends WC_Product {
 		if ( 'array' === $return ) {
 			$available_variations = array_values( array_filter( $available_variations ) );
 		}
+
+		// Hack: restore original table names
+		$wpdb->posts    = $posts_table;
+		$wpdb->postmeta = $postmeta_table;
+
 
 		return $available_variations;
 	}

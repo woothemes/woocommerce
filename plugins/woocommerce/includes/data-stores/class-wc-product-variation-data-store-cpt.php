@@ -18,6 +18,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class WC_Product_Variation_Data_Store_CPT extends WC_Product_Data_Store_CPT implements WC_Object_Data_Store_Interface {
 
+	private string $posts_table;
+	private string $postmeta_table;
+
+	public function __construct()
+	{
+		global $wpdb;
+
+		$this->posts_table    = $wpdb->posts . '_variations';
+		$this->postmeta_table = $wpdb->postmeta . '_variations';
+	}
+
 	/**
 	 * Callback to remove unwanted meta data.
 	 *
@@ -45,11 +56,19 @@ class WC_Product_Variation_Data_Store_CPT extends WC_Product_Data_Store_CPT impl
 	 * @throws WC_Data_Exception If WC_Product::set_tax_status() is called with an invalid tax status (via read_product_data), or when passing an invalid ID.
 	 */
 	public function read( &$product ) {
+		global $wpdb;
+
 		$product->set_defaults();
 
 		if ( ! $product->get_id() ) {
 			return;
 		}
+
+		// Hack: inject PoC tables names
+		$posts_table    = $wpdb->posts;
+		$wpdb->posts    = $this->posts_table;
+		$postmeta_table = $wpdb->postmeta;
+		$wpdb->postmeta = $this->postmeta_table;
 
 		$post_object = get_post( $product->get_id() );
 
@@ -109,12 +128,16 @@ class WC_Product_Variation_Data_Store_CPT extends WC_Product_Data_Store_CPT impl
 		}
 
 		if ( ! empty( $updates ) ) {
-			$GLOBALS['wpdb']->update( $GLOBALS['wpdb']->posts, $updates, array( 'ID' => $product->get_id() ) );
+			$GLOBALS['wpdb']->update( $this->posts_table, $updates, array( 'ID' => $product->get_id() ) );
 			clean_post_cache( $product->get_id() );
 		}
 
 		// Set object_read true once all data is read.
 		$product->set_object_read( true );
+
+		// Hack: restore original table names
+		$wpdb->posts    = $posts_table;
+		$wpdb->postmeta = $postmeta_table;
 	}
 
 	/**
@@ -241,7 +264,7 @@ class WC_Product_Variation_Data_Store_CPT extends WC_Product_Data_Store_CPT impl
 			 * or an update purely from CRUD.
 			 */
 			if ( doing_action( 'save_post' ) ) {
-				$GLOBALS['wpdb']->update( $GLOBALS['wpdb']->posts, $post_data, array( 'ID' => $product->get_id() ) );
+				$GLOBALS['wpdb']->update( $this->posts_table, $post_data, array( 'ID' => $product->get_id() ) );
 				clean_post_cache( $product->get_id() );
 			} else {
 				wp_update_post( array_merge( array( 'ID' => $product->get_id() ), $post_data ) );
@@ -250,7 +273,7 @@ class WC_Product_Variation_Data_Store_CPT extends WC_Product_Data_Store_CPT impl
 
 		} else { // Only update post modified time to record this save event.
 			$GLOBALS['wpdb']->update(
-				$GLOBALS['wpdb']->posts,
+				$this->posts_table,
 				array(
 					'post_modified'     => current_time( 'mysql' ),
 					'post_modified_gmt' => current_time( 'mysql', 1 ),
