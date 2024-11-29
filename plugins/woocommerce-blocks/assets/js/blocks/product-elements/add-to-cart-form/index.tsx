@@ -3,7 +3,7 @@
  */
 import { registerBlockSingleProductTemplate } from '@woocommerce/atomic-utils';
 import { Icon, button } from '@wordpress/icons';
-import { isExperimentalBlocksEnabled } from '@woocommerce/experimental-blocks';
+import { isExperimentalBlocksEnabled } from '@woocommerce/block-settings';
 
 /**
  * Internal dependencies

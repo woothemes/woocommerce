@@ -75,7 +75,8 @@ const AddToCartWithOptionsQuantitySelectorEdit = (
 						isBlock
 						onChange={ ( value: QuantitySelectorStyle ) => {
 							setAttributes( {
-								quantitySelectorStyle: value as QuantitySelectorStyle,
+								quantitySelectorStyle:
+									value as QuantitySelectorStyle,
 							} );
 						} }
 						help={ getHelpText( quantitySelectorStyle ) }
@@ -115,7 +116,8 @@ const AddToCartWithOptionsQuantitySelectorEdit = (
 							/>
 						</div>
 					) }
-					{ quantitySelectorStyle === QuantitySelectorStyle.Stepper && (
+					{ quantitySelectorStyle ===
+						QuantitySelectorStyle.Stepper && (
 						<div className="quantity wc-block-components-quantity-selector">
 							<button className="wc-block-components-quantity-selector__button wc-block-components-quantity-selector__button--minus">
 								-
