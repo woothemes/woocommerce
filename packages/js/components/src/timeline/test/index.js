@@ -4,7 +4,7 @@
  */
 import { render } from '@testing-library/react';
 import { createElement } from '@wordpress/element';
-
+import { setSettings, __experimentalGetSettings } from '@wordpress/date'; // eslint-disable-line @wordpress/no-unsafe-wp-apis -- safe to use in tests, not in production
 /**
  * Internal dependencies
  */
@@ -13,6 +13,25 @@ import mockData from '../__mocks__/timeline-mock-data';
 import { groupItemsUsing, sortByDateUsing } from '../util.js';
 
 describe( 'Timeline', () => {
+	const originalWPTimeSettings = __experimentalGetSettings();
+
+	beforeAll( () => {
+		setSettings( {
+			...originalWPTimeSettings,
+
+			timezone: {
+				offset: '+3',
+				offsetFormatted: '+03:00',
+				string: 'Africa/Nairobi',
+				abbr: 'EAT',
+			},
+		} );
+	} );
+
+	afterAll( () => {
+		setSettings( originalWPTimeSettings );
+	} );
+
 	test( 'Empty snapshot', () => {
 		const { container } = render( <Timeline /> );
 		expect( container ).toMatchSnapshot();
@@ -21,6 +40,23 @@ describe( 'Timeline', () => {
 	test( 'With data snapshot', () => {
 		const { container } = render( <Timeline items={ mockData } /> );
 		expect( container ).toMatchSnapshot();
+	} );
+
+	test( 'With browser timezone (default)', () => {
+		const { getByText } = render(
+			// Render with the ISO format to inspect the date and time
+			<Timeline items={ mockData } dateFormat="c" />
+		);
+		// Expected: January 22, 2020 3:13pm
+		expect( getByText( '2020-01-22T15:13:00+10:00' ) ).toBeInTheDocument();
+	} );
+
+	test( 'With store timezone', () => {
+		const { getByText } = render(
+			<Timeline items={ mockData } dateFormat="c" useStoreTimezone />
+		);
+		// Expected: January 22, 2020 8:13am
+		expect( getByText( '2020-01-22T08:13:00+03:00' ) ).toBeInTheDocument();
 	} );
 
 	describe( 'Timeline utilities', () => {
