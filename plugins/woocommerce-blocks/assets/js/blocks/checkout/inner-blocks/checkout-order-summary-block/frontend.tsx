@@ -124,7 +124,7 @@ const FrontendBlock = ( {
 								<TotalsFooterItem
 									currency={ totalsCurrency }
 									values={ cartTotals }
-									label={ footerHeadingLabel }
+									label={ footerHeadingText }
 								/>
 							</div>
 							<OrderMetaSlotFill />
