@@ -5,6 +5,7 @@ namespace Automattic\WooCommerce\Internal\Admin\Suggestions;
 
 defined( 'ABSPATH' ) || exit;
 
+use Automattic\WooCommerce\Internal\Admin\Settings\Payments;
 use Automattic\WooCommerce\Internal\Utilities\ArrayUtil;
 
 /**
@@ -1210,12 +1211,13 @@ class PaymentExtensionSuggestions {
 	 * Get the list of payment extensions details for a specific country.
 	 *
 	 * @param string $country_code The two-letter country code.
+	 * @param string $context      Optional. The context ID of where these extensions are being used.
 	 *
 	 * @return array The list of payment extensions (their full details) for the given country.
 	 *               Empty array if no extensions are available for the country or the country is not supported.
 	 * @throws \Exception If there were malformed or invalid extension details.
 	 */
-	public function get_country_extensions( string $country_code ): array {
+	public function get_country_extensions( string $country_code, string $context = '' ): array {
 		$country_code = strtoupper( $country_code );
 
 		if ( empty( $this->country_extensions[ $country_code ] ) ||
@@ -1242,6 +1244,12 @@ class PaymentExtensionSuggestions {
 
 			$extension_base_details = $this->get_extension_base_details( $extension_id ) ?? array();
 			$extension_details      = $this->with_country_details( $extension_base_details, $extension_country_details );
+
+			// Check if there is an incentive for this extension and attach its details.
+			$incentive = $this->get_extension_incentive( $extension_id, $country_code, $context );
+			if ( is_array( $incentive ) ) {
+				$extension_details['_incentive'] = $incentive;
+			}
 
 			// Include the extension ID.
 			$extension_details['id'] = $extension_id;
@@ -1390,6 +1398,47 @@ class PaymentExtensionSuggestions {
 
 		// Merge any remaining country details so they overwrite the base details.
 		return array_merge( $base_details, $country_details );
+	}
+
+	/**
+	 * Get the incentive details for a given extension and country, if any.
+	 *
+	 * @param string $extension_id The extension ID.
+	 * @param string $country_code The two-letter country code.
+	 * @param string $context      Optional. The context ID of where the extension incentive is being used.
+	 *
+	 * @return array|null The incentive details for the given extension and country. Null if not found.
+	 */
+	private function get_extension_incentive( string $extension_id, string $country_code, string $context = '' ): ?array {
+		// Determine the incentive type from the context.
+		switch ( $context ) {
+			case Payments::SUGGESTIONS_CONTEXT:
+				$incentive_type = 'payments_settings';
+				break;
+			default:
+				$incentive_type = '';
+				break;
+		}
+
+		$incentives = $this->suggestion_incentives->get_incentives( $extension_id, $country_code, $incentive_type );
+		if ( empty( $incentives ) ) {
+			return null;
+		}
+
+		// Remove any incentives that are not visible.
+		$incentives = array_filter(
+			$incentives,
+			fn( $incentive ) => $this->suggestion_incentives->is_incentive_visible( $incentive['id'], $extension_id, $country_code, $incentive_type )
+		);
+
+		// Use the first incentive, in case there are multiple.
+		$incentive = reset( $incentives );
+
+		// Enhance the incentive details.
+		// Add the dismissals.
+		$incentive['_dismissals'] = array_unique( array_values( $this->suggestion_incentives->get_incentive_dismissals( $incentive['id'], $extension_id ) ) );
+
+		return $incentive;
 	}
 
 	/**
@@ -2077,6 +2126,7 @@ class PaymentExtensionSuggestions {
 		$standardized['short_description'] = $extension_details['short_description'] ?? '';
 		$standardized['links']             = $extension_details['links'] ?? array();
 		$standardized['tags']              = $extension_details['tags'] ?? array();
+		$standardized['_incentive']        = $extension_details['_incentive'] ?? null;
 
 		return $standardized;
 	}
