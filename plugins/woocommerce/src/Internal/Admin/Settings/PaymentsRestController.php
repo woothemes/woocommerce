@@ -654,6 +654,62 @@ class PaymentsRestController extends RestApiControllerBase {
 						'readonly'    => true,
 					),
 				),
+				'_incentive'        => array(
+					'type'        => 'object',
+					'description' => esc_html__( 'The active incentive for the provider.', 'woocommerce' ),
+					'context'     => array( 'view', 'edit' ),
+					'readonly'    => true,
+					'properties'  => array(
+						'id'                => array(
+							'type'        => 'string',
+							'description' => esc_html__( 'The incentive ID.', 'woocommerce' ),
+							'context'     => array( 'view', 'edit' ),
+							'readonly'    => true,
+						),
+						'description'       => array(
+							'type'        => 'string',
+							'description' => esc_html__( 'The incentive description. It can contain basic HTML.', 'woocommerce' ),
+							'context'     => array( 'view', 'edit' ),
+							'readonly'    => true,
+						),
+						'short_description' => array(
+							'type'        => 'string',
+							'description' => esc_html__( 'The short description of the incentive. It can contain basic HTML.', 'woocommerce' ),
+							'context'     => array( 'view', 'edit' ),
+							'readonly'    => true,
+						),
+						'cta_label'         => array(
+							'type'        => 'string',
+							'description' => esc_html__( 'The call to action label for the incentive.', 'woocommerce' ),
+							'context'     => array( 'view', 'edit' ),
+							'readonly'    => true,
+						),
+						'tc_url'            => array(
+							'type'        => 'string',
+							'description' => esc_html__( 'The URL to the terms and conditions for the incentive.', 'woocommerce' ),
+							'context'     => array( 'view', 'edit' ),
+							'readonly'    => true,
+						),
+						'badge'             => array(
+							'type'        => 'string',
+							'description' => esc_html__( 'The badge label for the incentive.', 'woocommerce' ),
+							'context'     => array( 'view', 'edit' ),
+							'readonly'    => true,
+						),
+						'_dismissals'       => array(
+							'type'        => 'array',
+							'description' => esc_html__( 'The dismissals list for the incentive. The `all` entry means the incentive was dismissed for all contexts.', 'woocommerce' ),
+							'uniqueItems' => true,
+							'context'     => array( 'view', 'edit' ),
+							'readonly'    => true,
+							'items'       => array(
+								'type'        => 'string',
+								'description' => esc_html__( 'Context ID in which the incentive was dismissed.', 'woocommerce' ),
+								'readonly'    => true,
+							),
+						),
+					),
+				),
 			),
 		);
 	}
