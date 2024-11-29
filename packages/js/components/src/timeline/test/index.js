@@ -5,6 +5,7 @@
 import { render } from '@testing-library/react';
 import { createElement } from '@wordpress/element';
 import { setSettings, __experimentalGetSettings } from '@wordpress/date'; // eslint-disable-line @wordpress/no-unsafe-wp-apis -- safe to use in tests, not in production
+import GridIcon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -30,6 +31,18 @@ describe( 'Timeline', () => {
 		const mockItems = [
 			{
 				date: new Date( Date.UTC( 2020, 0, 20, 1, 30 ) ),
+				body: [
+					<p key={ '1' }>{ 'p element in body' }</p>,
+					'string in body',
+				],
+				headline: <p>{ 'p tag in headline' }</p>,
+				icon: (
+					<GridIcon
+						className={ 'is-success' }
+						icon={ 'checkmark' }
+						size={ 16 }
+					/>
+				),
 			},
 		];
 
