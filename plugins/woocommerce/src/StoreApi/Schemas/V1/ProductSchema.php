@@ -389,6 +389,12 @@ class ProductSchema extends AbstractSchema {
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,
 			],
+			'manage_stock'        => [
+				'description' => __( 'If true, stock management is enabled for the product.', 'woocommerce' ),
+				'type'        => 'boolean',
+				'context'     => [ 'view', 'edit' ],
+				'readonly'    => true,
+			],
 			'sold_individually'   => [
 				'description' => __( 'If true, only one item of this product is allowed for purchase in a single order.', 'woocommerce' ),
 				'type'        => 'boolean',
@@ -477,6 +483,7 @@ class ProductSchema extends AbstractSchema {
 			'is_in_stock'         => $product->is_in_stock(),
 			'is_on_backorder'     => 'onbackorder' === $product->get_stock_status(),
 			'low_stock_remaining' => $this->get_low_stock_remaining( $product ),
+			'manage_stock'        => $product->get_manage_stock(),
 			'sold_individually'   => $product->is_sold_individually(),
 			'add_to_cart'         => (object) array_merge(
 				[

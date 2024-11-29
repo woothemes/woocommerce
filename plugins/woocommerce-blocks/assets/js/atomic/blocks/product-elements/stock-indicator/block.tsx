@@ -10,12 +10,14 @@ import {
 import { useStyleProps } from '@woocommerce/base-hooks';
 import { withProductDataContext } from '@woocommerce/shared-hocs';
 import type { HTMLAttributes } from 'react';
+import { ProductResponseItem } from '@woocommerce/types';
 
 /**
  * Internal dependencies
  */
 import './style.scss';
 import type { BlockAttributes } from './types';
+import { ALLOWED_PRODUCT_TYPES } from './constants';
 
 /**
  * Get stock text based on stock. For example:
@@ -56,6 +58,28 @@ const getTextBasedOnStock = ( {
 	return __( 'Out of stock', 'woocommerce' );
 };
 
+/**
+ * Determines whether the stock indicator should be visible in the editor.
+ * Stock indicator is not visible when:
+ * - Product is variable
+ * - Product is grouped
+ * - Product is sold individually
+ *
+ *
+ * @param {ProductResponseItem} product Product object
+ * @return {boolean} True if stock indicator should be visible
+ */
+const isStockVisible = ( product: ProductResponseItem ): boolean => {
+	if (
+		! ALLOWED_PRODUCT_TYPES.includes( product.type ) ||
+		product.sold_individually ||
+		! product.manage_stock
+	) {
+		return false;
+	}
+	return true;
+};
+
 type Props = BlockAttributes & HTMLAttributes< HTMLDivElement >;
 
 export const Block = ( props: Props ): JSX.Element | null => {
@@ -64,7 +88,7 @@ export const Block = ( props: Props ): JSX.Element | null => {
 	const { parentClassName } = useInnerBlockLayoutContext();
 	const { product } = useProductDataContext();
 
-	if ( ! product.id ) {
+	if ( ! product.id || ! isStockVisible( product ) ) {
 		return null;
 	}
 
