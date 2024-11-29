@@ -15,6 +15,7 @@ export type CheckboxControlProps = {
 	className?: string;
 	label?: string | React.ReactNode;
 	id?: string;
+	ariaDescribedBy?: string | undefined;
 	onChange: ( value: boolean ) => void;
 	children?: ReactNode | null | undefined;
 	feedback?: ReactNode | null;
