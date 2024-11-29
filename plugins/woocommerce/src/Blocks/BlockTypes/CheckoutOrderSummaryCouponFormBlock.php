@@ -35,7 +35,7 @@ class CheckoutOrderSummaryCouponFormBlock extends AbstractInnerBlock {
 	public function register_settings() {
 		register_setting(
 			'woocommerce_order_summary',
-			'woocommerce_order_summary_coupon_heading',
+			self::HEADING_SETTING,
 			array(
 				'type'              => 'string',
 				'label'             => __( 'Order summary coupon heading', 'woocommerce' ),

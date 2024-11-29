@@ -6,7 +6,7 @@ import { dispatch, useSelect } from '@wordpress/data';
 
 export type OrderSummaryHeadings = {
 	woocommerce_order_summary_shipping_heading: string;
-	woocommerce_order_summary_coupon_heading: string;
+	woocommerce_order_summary_coupon_form_heading: string;
 	woocommerce_order_summary_fee_heading: string;
 	woocommerce_order_summary_subtotal_heading: string;
 	woocommerce_order_summary_heading: string;

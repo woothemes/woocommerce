@@ -16,7 +16,7 @@ export const Edit = ( { attributes }: BlockEditProps< BlockAttributes > ) => {
 	const blockProps = useBlockProps();
 
 	const onCouponHeadingChange = createSetOrderSummaryHeadingCallback(
-		'woocommerce_order_summary_coupon_heading'
+		'woocommerce_order_summary_coupon_form_heading'
 	);
 
 	const headingText = heading ?? __( 'Add a coupon', 'woocommerce' );
