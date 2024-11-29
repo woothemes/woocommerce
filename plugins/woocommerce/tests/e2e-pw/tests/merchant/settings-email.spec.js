@@ -175,4 +175,87 @@ test.describe( 'WooCommerce Email Settings', () => {
 		await expect( page.locator( existingImageElement ) ).toBeHidden();
 		await expect( page.locator( newImageElement ) ).toBeVisible();
 	} );
+
+	test( 'See new color settings with a feature flag', async ( {
+		page,
+		baseURL,
+	} ) => {
+		// Disable the email_improvements feature flag
+		await setFeatureFlag( baseURL, 'no' );
+		await page.goto( 'wp-admin/admin.php?page=wc-settings&tab=email' );
+
+		await expect(
+			page.getByText( 'Color palette', { exact: true } )
+		).toHaveCount( 0 );
+		await expect( page.getByText( 'Accent', { exact: true } ) ).toHaveCount(
+			0
+		);
+		await expect(
+			page.getByText( 'Email background', { exact: true } )
+		).toHaveCount( 0 );
+		await expect(
+			page.getByText( 'Content background', { exact: true } )
+		).toHaveCount( 0 );
+		await expect(
+			page.getByText( 'Heading & text', { exact: true } )
+		).toHaveCount( 0 );
+		await expect(
+			page.getByText( 'Secondary text', { exact: true } )
+		).toHaveCount( 0 );
+
+		await expect(
+			page.getByText( 'Base color', { exact: true } )
+		).toBeVisible();
+		await expect(
+			page.getByText( 'Background color', { exact: true } )
+		).toBeVisible();
+		await expect(
+			page.getByText( 'Body background color', { exact: true } )
+		).toBeVisible();
+		await expect(
+			page.getByText( 'Body text color', { exact: true } )
+		).toBeVisible();
+		await expect(
+			page.getByText( 'Footer text color', { exact: true } )
+		).toBeVisible();
+
+		// Enable the email_improvements feature flag
+		await setFeatureFlag( baseURL, 'yes' );
+		await page.reload();
+
+		await expect(
+			page.getByText( 'Color palette', { exact: true } )
+		).toBeVisible();
+		await expect(
+			page.getByText( 'Accent', { exact: true } )
+		).toBeVisible();
+		await expect(
+			page.getByText( 'Email background', { exact: true } )
+		).toBeVisible();
+		await expect(
+			page.getByText( 'Content background', { exact: true } )
+		).toBeVisible();
+		await expect(
+			page.getByText( 'Heading & text', { exact: true } )
+		).toBeVisible();
+		await expect(
+			page.getByText( 'Secondary text', { exact: true } )
+		).toBeVisible();
+
+		await expect(
+			page.getByText( 'Base color', { exact: true } )
+		).toHaveCount( 0 );
+		await expect(
+			page.getByText( 'Background color', { exact: true } )
+		).toHaveCount( 0 );
+		await expect(
+			page.getByText( 'Body background color', { exact: true } )
+		).toHaveCount( 0 );
+		await expect(
+			page.getByText( 'Body text color', { exact: true } )
+		).toHaveCount( 0 );
+		await expect(
+			page.getByText( 'Footer text color', { exact: true } )
+		).toHaveCount( 0 );
+	} );
 } );
