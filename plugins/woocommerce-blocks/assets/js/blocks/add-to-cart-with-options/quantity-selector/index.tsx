@@ -3,6 +3,7 @@
  */
 import { registerBlockSingleProductTemplate } from '@woocommerce/atomic-utils';
 import { Icon, button } from '@wordpress/icons';
+import { isExperimentalBlocksEnabled } from '@woocommerce/block-settings';
 
 /**
  * Internal dependencies
@@ -30,9 +31,11 @@ const blockSettings = {
 	},
 };
 
-registerBlockSingleProductTemplate( {
-	blockName: metadata.name,
-	blockMetadata: metadata,
-	blockSettings,
-	isAvailableOnPostEditor: true,
-} );
+if ( isExperimentalBlocksEnabled() ) {
+	registerBlockSingleProductTemplate( {
+		blockName: metadata.name,
+		blockMetadata: metadata,
+		blockSettings,
+		isAvailableOnPostEditor: true,
+	} );
+}
