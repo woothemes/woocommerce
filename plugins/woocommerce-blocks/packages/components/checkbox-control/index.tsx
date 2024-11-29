@@ -3,6 +3,7 @@
  */
 import clsx from 'clsx';
 import { useInstanceId } from '@wordpress/compose';
+import { forwardRef } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -23,10 +24,15 @@ export type CheckboxControlProps = {
 /**
  * Component used to show a checkbox control with styles.
  */
-export const CheckboxControl = ( {
-	className,
-	label,
-	id,
+export const CheckboxControl = forwardRef<
+	HTMLInputElement,
+	CheckboxControlProps
+>(
+	(
+		{
+			className,
+			label,
+			id,
 	onChange,
 	children,
 	hasError = false,
@@ -35,7 +41,9 @@ export const CheckboxControl = ( {
 	errorId,
 	errorMessage,
 	...rest
-}: CheckboxControlProps & Record< string, unknown > ): JSX.Element => {
+		}: CheckboxControlProps & Record< string, unknown >,
+		forwardedRef
+	): JSX.Element => {
 	const instanceId = useInstanceId( CheckboxControl );
 	const checkboxId = id || `checkbox-control-${ instanceId }`;
 
@@ -51,6 +59,7 @@ export const CheckboxControl = ( {
 		>
 			<label htmlFor={ checkboxId }>
 				<input
+						ref={ forwardedRef }
 					id={ checkboxId }
 					className="wc-block-components-checkbox__input"
 					type="checkbox"
@@ -77,6 +86,7 @@ export const CheckboxControl = ( {
 			</label>
 		</div>
 	);
-};
+	}
+);
 
 export default CheckboxControl;
