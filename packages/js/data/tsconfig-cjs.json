@@ -3,8 +3,6 @@
 	"compilerOptions": {
 		"outDir": "build",
 		"noCheck": true,
-		"noEmit": true,
-		"strict": false
 	},
 	"include": [
 		"typings/**/*",
