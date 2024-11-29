@@ -5,7 +5,7 @@
 
 declare( strict_types=1 );
 
-namespace Automattic\WooCommerce\Internal\Admin;
+namespace Automattic\WooCommerce\Internal\Admin\EmailPreview;
 
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
 use WC_Email;
@@ -110,7 +110,7 @@ class EmailPreview {
 
 		$this->clean_up_filters();
 
-		/** This filter is documented in src/Internal/Admin/EmailPreview.php */
+		/** This filter is documented in src/Internal/Admin/EmailPreview/EmailPreview.php */
 		return apply_filters( 'woocommerce_mail_content', $email->style_inline( $content ) ); // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingSinceComment
 	}
 

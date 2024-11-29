@@ -7,7 +7,7 @@
  * @version  2.6.0
  */
 
-use Automattic\WooCommerce\Internal\Admin\EmailPreview;
+use Automattic\WooCommerce\Internal\Admin\EmailPreview\EmailPreview;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
