@@ -50,12 +50,8 @@ function wc_log_order_step( string $message, ?array $context = null, bool $final
 	// Logging the place order flow step. Log files are grouped per order to make is easier to navigate.
 	$logger->log( WC_Log_Levels::DEBUG, $message, $context );
 
-	if ( ! $final_step ) {
-		return;
-	}
-
-	// Clears the log if all steps are unique.
-	if ( count( array_unique( $steps ) ) === count( $steps ) ) {
+	// Clears the log if instructed and all steps are unique.
+	if ( $final_step && count( array_unique( $steps ) ) === count( $steps ) ) {
 		$logger->clear( $context['source'] );
 	}
 }
