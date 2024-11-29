@@ -1,0 +1,16 @@
+/home/kalessil/wp-env/a515b79e6764bc19c5b2f1692c2b7bf8/wordpress-latest/wp-includes/class-wp-query.php
+
+// If we don't have a join, no group by is needed
+if ( ! empty( $this->tax_query->queries ) || ! empty( $this->meta_query->queries ) || ! empty( $this->allow_query_attachment_by_filename ) ) {
+if ( $join && ( ! empty( $this->tax_query->queries ) || ! empty( $this->meta_query->queries ) || ! empty( $this->allow_query_attachment_by_filename ) ) ) {
+
+/home/kalessil/wp-env/a515b79e6764bc19c5b2f1692c2b7bf8/wordpress-latest/wp-includes/meta.php
+
+// By default, DB will sor by PK
+$meta_list = $wpdb->get_results( "SELECT $column, meta_key, meta_value FROM $table WHERE $column IN ($id_list) ORDER BY $id_column ASC", ARRAY_A );
+$meta_list = $wpdb->get_results( "SELECT $column, meta_key, meta_value FROM $table WHERE $column IN ($id_list)", ARRAY_A );
+
+
+
+wp_posts and wp_postmeta: create copies, cleanup data
+fetching variations: from the copy-tables
