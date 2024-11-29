@@ -17,6 +17,8 @@ export interface ProductGalleryContext {
 	isDialogOpen: boolean;
 	productId: string;
 	elementThatTriggeredDialogOpening: HTMLElement | null;
+	disableleft: boolean;
+	disableright: boolean;
 }
 
 const getContext = ( ns?: string ) =>
@@ -27,24 +29,32 @@ const { state, actions } = store< Store >( 'woocommerce/product-gallery' );
 
 const selectImage = (
 	context: ProductGalleryContext,
-	select: 'next' | 'previous'
+	select: 'next' | 'previous' | 'fromContext'
 ) => {
 	const imagesIds =
 		context[
 			context.isDialogOpen ? 'dialogVisibleImagesIds' : 'visibleImagesIds'
 		];
-	const selectedImageIdIndex = imagesIds.indexOf( context.selectedImage );
-	const nextImageIndex =
-		select === 'next'
-			? Math.min( selectedImageIdIndex + 1, imagesIds.length - 1 )
-			: Math.max( selectedImageIdIndex - 1, 0 );
-	context.selectedImage = imagesIds[ nextImageIndex ];
+	let nextImageIndex;
+
+	if ( select === 'fromContext' ) {
+		nextImageIndex = imagesIds.indexOf( context.imageId );
+		context.selectedImage = context.imageId;
+	} else {
+		const selectedImageIdIndex = imagesIds.indexOf( context.selectedImage );
+		nextImageIndex =
+			select === 'next'
+				? Math.min( selectedImageIdIndex + 1, imagesIds.length - 1 )
+				: Math.max( selectedImageIdIndex - 1, 0 );
+		context.selectedImage = imagesIds[ nextImageIndex ];
+	}
+
+	context.disableleft = nextImageIndex === 0;
+	context.disableright = nextImageIndex === imagesIds.length - 1;
 };
 
 const closeDialog = ( context: ProductGalleryContext ) => {
 	context.isDialogOpen = false;
-	// Reset the main image.
-	context.selectedImage = context.firstMainImageId;
 	document.body.classList.remove( 'wc-block-product-gallery-modal-open' );
 
 	if ( context.elementThatTriggeredDialogOpening ) {
@@ -58,6 +68,12 @@ const productGallery = {
 		get isSelected() {
 			const { selectedImage, imageId } = getContext();
 			return selectedImage === imageId;
+		},
+		get disableleft() {
+			return getContext().disableleft;
+		},
+		get disableright() {
+			return getContext().disableright;
 		},
 		get pagerDotFillOpacity(): number {
 			return state.isSelected ? 1 : 0.2;
@@ -102,7 +118,7 @@ const productGallery = {
 		},
 		selectImage: () => {
 			const context = getContext();
-			context.selectedImage = context.imageId;
+			selectImage( context, 'fromContext' );
 		},
 		selectNextImage: ( event: MouseEvent ) => {
 			event.stopPropagation();
@@ -124,7 +140,7 @@ const productGallery = {
 				if ( event.code === 'Space' ) {
 					event.preventDefault();
 				}
-				context.selectedImage = context.imageId;
+				selectImage( context, 'fromContext' );
 			}
 		},
 		onSelectedLargeImageKeyDown: ( event: KeyboardEvent ) => {
