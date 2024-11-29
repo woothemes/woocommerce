@@ -61,9 +61,9 @@ const getTextBasedOnStock = ( {
 /**
  * Determines whether the stock indicator should be visible in the editor.
  * Stock indicator is not visible when:
- * - Product is variable
- * - Product is grouped
+ * - Product type is not allowed (variable, grouped, external)
  * - Product is sold individually
+ * - Product stock is not managed (except for simple products)
  *
  *
  * @param {ProductResponseItem} product Product object
@@ -73,7 +73,7 @@ const isStockVisible = ( product: ProductResponseItem ): boolean => {
 	if (
 		! ALLOWED_PRODUCT_TYPES.includes( product.type ) ||
 		product.sold_individually ||
-		! product.manage_stock
+		( ! product.manage_stock && product.type !== 'simple' )
 	) {
 		return false;
 	}
