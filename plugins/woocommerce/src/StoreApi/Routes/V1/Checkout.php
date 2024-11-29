@@ -178,6 +178,10 @@ class Checkout extends AbstractCartRoute {
 	 */
 	protected function get_route_response( \WP_REST_Request $request ) {
 		$this->create_or_update_draft_order( $request );
+		print_r( $this->order );
+
+		$additional_fields = $this->additional_fields_controller->get_order_additional_fields_with_values( $this->order, 'contact', 'other', 'view' );
+		// die();
 
 		return $this->prepare_item_for_response(
 			(object) [
@@ -263,16 +267,19 @@ class Checkout extends AbstractCartRoute {
 	 * @return \WP_REST_Response
 	 */
 	protected function get_route_update_response( \WP_REST_Request $request ) {
-
-		$this->order = $this->get_draft_order();
+		$this->create_or_update_draft_order( $request );
 		$this->validate_required_additional_fields_for_order( $request );
 		$this->persist_additional_fields_for_order( $request );
-		
-		return new WP_REST_Response(array('status' => '200'));
 
-		/**
-		 * Validate additional fields on request.
-		 */
+		//$additional_fields = $this->additional_fields_controller->get_order_additional_fields_with_values( $this->order, 'contact', 'other', 'view' );
+
+		return new WP_REST_Response(
+			array(
+				'status' => '200',
+				// 'additional_fields' => $additional_fields,
+				'order'            => $this->order,
+			)
+		);
 	}
 
 	/**
