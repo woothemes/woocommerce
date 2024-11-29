@@ -7,7 +7,7 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
 import { EllipsisMenu } from '@woocommerce/components';
-import { SuggestedPaymentExtension } from '@woocommerce/data';
+import { PaymentProvider } from '@woocommerce/data';
 
 /**
  * Internal dependencies
@@ -17,9 +17,9 @@ import { EllipsisMenuContent } from '~/settings-payments/components/ellipsis-men
 import { isWooPayments } from '~/settings-payments/utils';
 
 type PaymentExtensionSuggestionListItemProps = {
-	extension: SuggestedPaymentExtension;
+	extension: PaymentProvider;
 	installingPlugin: string | null;
-	setupPlugin: ( extension: SuggestedPaymentExtension ) => void;
+	setupPlugin: ( id: string, slug: string ) => void;
 	pluginInstalled: boolean;
 };
 
@@ -53,7 +53,9 @@ export const PaymentExtensionSuggestionListItem = ( {
 				<>
 					<Button
 						variant="primary"
-						onClick={ () => setupPlugin( extension ) }
+						onClick={ () =>
+							setupPlugin( extension.id, extension.plugin.slug )
+						}
 						isBusy={ installingPlugin === extension.id }
 						disabled={ !! installingPlugin }
 					>

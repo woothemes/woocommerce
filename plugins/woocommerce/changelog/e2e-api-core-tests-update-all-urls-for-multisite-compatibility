@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+Api Core tests: update urls across all tests for compatibility with multisite setup

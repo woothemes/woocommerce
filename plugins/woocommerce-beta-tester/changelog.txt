@@ -1,5 +1,12 @@
 *** WooCommerce Beta Tester Changelog ***
 
+2024-11-26 - version 2.5.1
+* Patch - Fix wc plugin file path
+* Patch - Add coming soon newsletter feature flag
+* Patch - Update WC Admin Test Helper's Reset Onboarding Wizard tool
+* Patch - Monorepo: bump and patch wp-env to reduce amount of crashes in CI.
+* Patch - Stabilize JS dependency updates
+
 2024-10-21 - version 2.5.0
 * Patch - Flush cache after deleting option and resetting PHP rate limit
 * Minor - Add a tool to simulate server problems with woocommerce.com
