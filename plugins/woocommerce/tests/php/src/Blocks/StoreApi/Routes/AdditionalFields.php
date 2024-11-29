@@ -44,6 +44,7 @@ class AdditionalFields extends MockeryTestCase {
 	 */
 	protected function setUp(): void {
 		parent::setUp();
+		add_filter( 'doing_it_wrong_trigger_error', '__return_false' );
 
 		global $wp_rest_server;
 		$wp_rest_server = new \Spy_REST_Server();
@@ -99,6 +100,7 @@ class AdditionalFields extends MockeryTestCase {
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
+		remove_filter( 'doing_it_wrong_trigger_error', '__return_false' );
 		unset( WC()->countries->locale );
 		WC()->cart->empty_cart();
 		remove_all_filters( 'woocommerce_get_country_locale' );
