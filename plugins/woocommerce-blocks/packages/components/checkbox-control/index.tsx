@@ -3,6 +3,7 @@
  */
 import clsx from 'clsx';
 import { useInstanceId } from '@wordpress/compose';
+import type { ReactNode } from 'react';
 import { forwardRef } from '@wordpress/element';
 
 /**
@@ -15,7 +16,8 @@ export type CheckboxControlProps = {
 	label?: string | React.ReactNode;
 	id?: string;
 	onChange: ( value: boolean ) => void;
-	children?: React.ReactChildren;
+	children?: ReactNode | null | undefined;
+	feedback?: ReactNode | null;
 	hasError?: boolean;
 	checked?: boolean;
 	disabled?: string | boolean | undefined;
@@ -38,6 +40,7 @@ export const CheckboxControl = forwardRef<
 	hasError = false,
 	checked = false,
 	disabled = false,
+			feedback,
 	errorId,
 	errorMessage,
 	...rest
@@ -84,6 +87,7 @@ export const CheckboxControl = forwardRef<
 				) }
 				{ children }
 			</label>
+				{ feedback }
 		</div>
 	);
 	}
