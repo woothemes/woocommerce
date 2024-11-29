@@ -16,6 +16,14 @@ class CheckoutOrderSummaryBlock extends AbstractInnerBlock {
 	const FOOTER_HEADING_SETTING = 'woocommerce_order_summary_footer_heading';
 
 	/**
+	 * Initialize the block.
+	 */
+	protected function initialize() {
+		$this->register_settings();
+		parent::initialize();
+	}
+
+	/**
 	 * Get the contents of the given inner block.
 	 *
 	 * @param string $block_name Name of the order summary inner block.
@@ -51,23 +59,30 @@ class CheckoutOrderSummaryBlock extends AbstractInnerBlock {
 		// The order-summary-totals block was introduced as a new parent block for the totals
 		// (subtotal, discount, fees, shipping and taxes) blocks.
 
-		$heading        = $this->get_heading_option();
-		$footer_heading = $this->get_footer_heading_option();
-
+		$heading          = $this->get_heading_option();
+		$footer_heading   = $this->get_footer_heading_option();
 		$extra_attributes = array();
 
 		if ( $heading ) {
-			$extra_attributes['heading'] = $heading;
+			$extra_attributes['data-heading'] = $heading;
 		}
 
 		if ( $footer_heading ) {
-			$extra_attributes['footerHeading'] = $footer_heading;
+			$extra_attributes['data-footer-heading'] = $footer_heading;
 		}
 
 		$attributes = get_block_wrapper_attributes( $extra_attributes );
 
+		// We need to attach the extra attributes to the top level block.
+		$content = preg_replace(
+			'/<div class="wp-block-woocommerce-checkout-order-summary-block"/',
+			'<div ' . $attributes . ' class="wp-block-woocommerce-checkout-order-summary-block"',
+			$content,
+			1
+		);
+
 		$regex_for_checkout_order_summary_totals = '/<div data-block-name="woocommerce\/checkout-order-summary-totals-block"(.+?)>/';
-		$order_summary_totals_content            = sprintf( '<div %s>', $attributes );
+		$order_summary_totals_content            = '<div data-block-name="woocommerce/checkout-order-summary-totals-block" class="wp-block-woocommerce-checkout-order-summary-totals-block">';
 
 		// We want to move these blocks inside a parent 'totals' block.
 		$totals_inner_blocks = array( 'subtotal', 'discount', 'fee', 'shipping', 'taxes' );
