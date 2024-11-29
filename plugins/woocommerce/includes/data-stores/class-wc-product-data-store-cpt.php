@@ -298,7 +298,7 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 		 * Fires when a product is read into memory.
 		 *
 		 * @since 3.7.0 Introduced.
-		 * @since 9.5.0 Made $product available.
+		 * @since 9.6.0 Made $product available.
 		 *
 		 * @param int        $product_id The product ID.
 		 * @param WC_Product $product    Product instance.
