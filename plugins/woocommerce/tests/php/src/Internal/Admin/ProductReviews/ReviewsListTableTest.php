@@ -600,7 +600,7 @@ class ReviewsListTableTest extends WC_Unit_Test_Case {
 		$column_content = ob_get_clean();
 
 		$this->assertStringNotContainsString( 'In reply to', $column_content );
-		$this->assertStringContainsString( '<div class="comment-text">Test review</div>', $column_content );
+		$this->assertStringContainsString( '<div class="comment-text"><p>Test review</p></div>', trim( $column_content ) );
 
 		$reply = $this->factory()->comment->create_and_get(
 			[
