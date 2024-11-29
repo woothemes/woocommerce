@@ -103,12 +103,10 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 	width: 100%;
 	height: fit-content;
 	position: relative;
-	overflow: hidden;
 	flex-grow: 1;
 
 	// Restrict the width of the Large Image when the Next/Previous buttons are outside the image.
 	#{$gallery-next-previous-outside-image} & .wc-block-product-gallery-large-image__image-element {
-		overflow: hidden;
 		margin-right: auto;
 		margin-left: auto;
 		max-width: $outside-image-max-width;
@@ -116,7 +114,7 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 
 	.wc-block-product-gallery-large-image__container {
 		display: flex;
-		overflow-x: hidden;
+		overflow: hidden;
 		scroll-snap-type: x mandatory;
 		scroll-behavior: auto;
 		width: fit-content;
