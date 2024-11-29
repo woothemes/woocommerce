@@ -88,7 +88,6 @@ export const AddToCartFormSettings = ( {
 			{ isStepperLayoutFeatureEnabled && (
 				<PanelBody title={ __( 'Quantity Selector', 'woocommerce' ) }>
 					<ToggleGroupControl
-						className="wc-block-editor-quantity-selector-style"
 						__nextHasNoMarginBottom
 						value={ quantitySelectorStyle }
 						isBlock
