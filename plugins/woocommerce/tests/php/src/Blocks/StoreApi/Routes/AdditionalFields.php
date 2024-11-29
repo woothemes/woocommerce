@@ -1045,15 +1045,15 @@ class AdditionalFields extends MockeryTestCase {
 	}
 
 	/**
-	 * Ensure an error is triggered when a checkbox is registered as required.
+	 * Ensure an error is triggered when a checkbox is registered with invalid required property.
 	 */
 	public function test_invalid_required_prop_checkbox() {
-		$id                    = 'plugin-namespace/checkbox-only-optional';
+		$id                    = 'plugin-namespace/checkbox-bad-required-value';
 		$doing_it_wrong_mocker = \Mockery::mock( 'ActionCallback' );
 		$doing_it_wrong_mocker->shouldReceive( 'doing_it_wrong_run' )->withArgs(
 			array(
 				'woocommerce_register_additional_checkout_field',
-				\esc_html( sprintf( 'Registering checkbox fields as required is not supported. "%s" will be registered as optional.', $id ) ),
+				\esc_html( sprintf( 'The required property for field with id: "%s" must be a boolean, you passed string. The field will not be registered.', $id ) ),
 			)
 		)->once();
 
@@ -1070,10 +1070,10 @@ class AdditionalFields extends MockeryTestCase {
 		\woocommerce_register_additional_checkout_field(
 			array(
 				'id'       => $id,
-				'label'    => 'Checkbox Only Optional',
+				'label'    => 'Checkbox Bad Required Value',
 				'location' => 'order',
 				'type'     => 'checkbox',
-				'required' => true,
+				'required' => 'string',
 			)
 		);
 
@@ -1085,16 +1085,15 @@ class AdditionalFields extends MockeryTestCase {
 			)
 		);
 
-		// Fields should still be registered regardless of the error, but with required as optional.
+		// Fields should not be registered.
 		$request  = new \WP_REST_Request( 'OPTIONS', '/wc/store/v1/checkout' );
 		$response = rest_get_server()->dispatch( $request );
 
 		$data = $response->get_data();
 
-		$this->assertEquals(
-			false,
-			$data['schema']['properties']['additional_fields']['properties'][ $id ]['required'],
-			print_r( $data['schema']['properties']['additional_fields']['properties'][ $id ], true )
+		$this->assertArrayNotHasKey(
+			$id,
+			$data['schema']['properties']['additional_fields']['properties']
 		);
 
 		\__internal_woocommerce_blocks_deregister_checkout_field( $id );
