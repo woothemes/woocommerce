@@ -8,6 +8,8 @@
  * @version 9.6.0
  */
 
+declare(strict_types=1);
+
 defined( 'ABSPATH' ) || exit;
 
 /**
