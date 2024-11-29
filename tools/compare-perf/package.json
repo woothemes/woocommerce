@@ -11,7 +11,7 @@
 		"log": "node log-to-codevitals.js"
 	},
 	"dependencies": {
-		"@types/node": "^16.18.68",
+		"@types/node": "20.x.x",
 		"@tsconfig/node16": "^1.0.4",
 		"@wordpress/env": "10.10.x",
 		"commander": "9.5.0",

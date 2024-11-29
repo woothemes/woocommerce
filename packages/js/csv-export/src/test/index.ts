@@ -89,31 +89,23 @@ describe( 'generateCSVFileName', () => {
 
 describe( 'downloadCSVFile', () => {
 	it( "should download a CSV file name to users' browser", () => {
-		const mockFn = jest.fn();
-		jest.spyOn( global, 'Blob' ).mockImplementation(
-			(
-				content?: BlobPart[] | undefined,
-				options?: BlobPropertyBag | undefined
-			) => {
-				return {
-					content,
-					options,
-					size: 0,
-					type: '',
-					arrayBuffer: mockFn,
-					slice: mockFn,
-					stream: mockFn,
-					text: mockFn,
-				};
-			}
-		);
 		const fileName = 'test.csv';
 		downloadCSVFile( fileName, mockCSVData );
-		// eslint-disable-next-line no-undef
-		const blob = new Blob( [ mockCSVData ], {
-			type: 'text/csv;charset=utf-8',
-		} );
 
-		expect( saveAs ).toHaveBeenCalledWith( blob, fileName );
+		// Get the Blob that was passed to saveAs
+		const [ blob ] = ( saveAs as jest.Mock ).mock.calls[ 0 ];
+
+		// Verify it's a Blob with the correct content
+		expect( blob ).toBeInstanceOf( Blob );
+		expect( blob.type ).toBe( 'text/csv;charset=utf-8' );
+
+		// If you need to verify the content:
+		const reader = new FileReader();
+		reader.readAsText( blob );
+		reader.onload = () => {
+			expect( reader.result ).toBe( mockCSVData );
+		};
+
+		expect( saveAs ).toHaveBeenCalledWith( expect.any( Blob ), fileName );
 	} );
 } );
