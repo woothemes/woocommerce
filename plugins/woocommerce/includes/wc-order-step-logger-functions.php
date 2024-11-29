@@ -39,8 +39,7 @@ function wc_log_order_step( string $message, ?array $context = null, bool $final
 
 
 	$context['order_uid'] = $order_uid;
-	// Source is segmented per order unique id.
-	$context['source'] = 'place-order-debug-' . $order_uid_short;
+	$context['source']    = 'place-order-debug-' . $order_uid_short; // Source is segmented per order unique id.
 
 	if ( ! $logger ) {
 		// Use a static logger instance to avoid unnecessary instantiations.
