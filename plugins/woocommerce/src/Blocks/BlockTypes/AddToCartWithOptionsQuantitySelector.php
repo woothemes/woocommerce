@@ -148,9 +148,9 @@ class AddToCartWithOptionsQuantitySelector extends AbstractBlock {
 			' ',
 			array_filter(
 				array(
-					'wp-block-add-to-cart-with-options-quantity-selector wc-block-add-to-cart-with-options-quantity-selector',
+					'wp-block-add-to-cart-with-options-quantity-selector wc-block-add-to-cart-with-options__quantity-selector',
 					esc_attr( $classes_and_styles['classes'] ),
-					$is_stepper_style ? 'wc-block-add-to-cart-with-options-quantity-selector--stepper' : 'wc-block-add-to-cart-with-options-quantity-selector--input',
+					$is_stepper_style ? 'wc-block-add-to-cart-with-options__quantity-selector--stepper' : 'wc-block-add-to-cart-with-options__quantity-selector--input',
 				)
 			)
 		);
