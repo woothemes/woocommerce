@@ -13,25 +13,6 @@ import mockData from '../__mocks__/timeline-mock-data';
 import { groupItemsUsing, sortByDateUsing } from '../util.js';
 
 describe( 'Timeline', () => {
-	const originalWPTimeSettings = __experimentalGetSettings();
-
-	beforeAll( () => {
-		setSettings( {
-			...originalWPTimeSettings,
-
-			timezone: {
-				offset: '+3',
-				offsetFormatted: '+03:00',
-				string: 'Africa/Nairobi',
-				abbr: 'EAT',
-			},
-		} );
-	} );
-
-	afterAll( () => {
-		setSettings( originalWPTimeSettings );
-	} );
-
 	test( 'Empty snapshot', () => {
 		const { container } = render( <Timeline /> );
 		expect( container ).toMatchSnapshot();
@@ -42,21 +23,62 @@ describe( 'Timeline', () => {
 		expect( container ).toMatchSnapshot();
 	} );
 
-	test( 'With browser timezone (default)', () => {
-		const { getByText } = render(
-			// Render with the ISO format to inspect the date and time
-			<Timeline items={ mockData } dateFormat="c" />
-		);
-		// Expected: January 22, 2020 3:13pm
-		expect( getByText( '2020-01-22T15:13:00+10:00' ) ).toBeInTheDocument();
-	} );
+	describe( 'Timezone handling', () => {
+		const originalWPTimeSettings = __experimentalGetSettings();
 
-	test( 'With store timezone', () => {
-		const { getByText } = render(
-			<Timeline items={ mockData } dateFormat="c" useStoreTimezone />
-		);
-		// Expected: January 22, 2020 8:13am
-		expect( getByText( '2020-01-22T08:13:00+03:00' ) ).toBeInTheDocument();
+		const mockItems = [
+			{
+				date: new Date( Date.UTC( 2020, 0, 20, 1, 30 ) ),
+			},
+		];
+
+		beforeAll( () => {
+			setSettings( {
+				...originalWPTimeSettings,
+
+				timezone: {
+					offset: '+3',
+					offsetFormatted: '+03:00',
+					string: 'Africa/Nairobi',
+					abbr: 'EAT',
+				},
+			} );
+		} );
+
+		afterAll( () => {
+			setSettings( originalWPTimeSettings );
+		} );
+
+		test( 'Renders with browser timezone (default)', () => {
+			const { getByText } = render(
+				<Timeline
+					items={ mockItems }
+					dateFormat="c"
+					clockFormat="g:ia"
+				/>
+			);
+			// Expect the UTC time 2020-01-20 01:30 to be displayed as browser local time: January 20, 2020 11:30am
+			expect(
+				getByText( '2020-01-20T11:30:00+10:00' )
+			).toBeInTheDocument();
+			expect( getByText( '11:30am' ) ).toBeInTheDocument();
+		} );
+
+		test( 'Renders with store timezone when useStoreTimezone is true', () => {
+			const { getByText } = render(
+				<Timeline
+					items={ mockItems }
+					dateFormat="c"
+					clockFormat="g:ia"
+					useStoreTimezone
+				/>
+			);
+			// Expect the UTC time 2020-01-20 01:30 to be displayed as the store time: January 20, 2020 4:30am
+			expect(
+				getByText( '2020-01-20T04:30:00+03:00' )
+			).toBeInTheDocument();
+			expect( getByText( '4:30am' ) ).toBeInTheDocument();
+		} );
 	} );
 
 	describe( 'Timeline utilities', () => {
