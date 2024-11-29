@@ -11,6 +11,7 @@
  */
 
 use Automattic\WooCommerce\Caches\OrderCache;
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareTrait;
 use Automattic\WooCommerce\Internal\Orders\PaymentInfo;
 use Automattic\WooCommerce\Proxies\LegacyProxy;
@@ -406,8 +407,14 @@ abstract class WC_Abstract_Order extends WC_Abstract_Legacy_Order {
 		$status = $this->get_prop( 'status', $context );
 
 		if ( empty( $status ) && 'view' === $context ) {
-			// In view context, return the default status if no status has been set.
-			$status = apply_filters( 'woocommerce_default_order_status', 'pending' );
+			/**
+			 * In view context, return the default status if no status has been set.
+			 *
+			 * @since 3.0.0
+			 *
+			 * @param string $status Default status.
+			 */
+			$status = apply_filters( 'woocommerce_default_order_status', OrderStatus::PENDING );
 		}
 		return $status;
 	}
@@ -644,18 +651,18 @@ abstract class WC_Abstract_Order extends WC_Abstract_Legacy_Order {
 		$old_status = $this->get_status();
 		$new_status = OrderUtil::remove_status_prefix( $new_status );
 
-		$status_exceptions = array( 'auto-draft', 'trash' );
+		$status_exceptions = array( OrderStatus::AUTO_DRAFT, OrderStatus::TRASH );
 
 		// If setting the status, ensure it's set to a valid status.
 		if ( true === $this->object_read ) {
 			// Only allow valid new status.
 			if ( ! in_array( 'wc-' . $new_status, $this->get_valid_statuses(), true ) && ! in_array( $new_status, $status_exceptions, true ) ) {
-				$new_status = 'pending';
+				$new_status = OrderStatus::PENDING;
 			}
 
 			// If the old status is set but unknown (e.g. draft) assume its pending for action usage.
-			if ( $old_status && ( 'auto-draft' === $old_status || ( ! in_array( 'wc-' . $old_status, $this->get_valid_statuses(), true ) && ! in_array( $old_status, $status_exceptions, true ) ) ) ) {
-				$old_status = 'pending';
+			if ( $old_status && ( OrderStatus::AUTO_DRAFT === $old_status || ( ! in_array( 'wc-' . $old_status, $this->get_valid_statuses(), true ) && ! in_array( $old_status, $status_exceptions, true ) ) ) ) {
+				$old_status = OrderStatus::PENDING;
 			}
 		}
 

@@ -6,6 +6,8 @@
  * @version 2.1.0
  */
 
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
+
 defined( 'ABSPATH' ) || exit;
 
 if ( class_exists( 'WC_Settings_Emails', false ) ) {
@@ -26,6 +28,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 
 		add_action( 'woocommerce_admin_field_email_notification', array( $this, 'email_notification_setting' ) );
 		add_action( 'woocommerce_admin_field_email_preview', array( $this, 'email_preview' ) );
+		add_action( 'woocommerce_admin_field_email_image_url', array( $this, 'email_image_url' ) );
 		parent::__construct();
 	}
 
@@ -59,6 +62,196 @@ class WC_Settings_Emails extends WC_Settings_Page {
 			'https://wordpress.org/plugins/wp-mail-logging/',
 			'https://woocommerce.com/document/email-faq'
 		);
+
+		/* translators: %s: Nonced email preview link */
+		$email_template_description = sprintf( __( 'This section lets you customize the WooCommerce emails. <a href="%s" target="_blank">Click here to preview your email template</a>.', 'woocommerce' ), wp_nonce_url( admin_url( '?preview_woocommerce_mail=true' ), 'preview-mail' ) );
+		$logo_image                 = array(
+			'title'       => __( 'Header image', 'woocommerce' ),
+			'desc'        => __( 'Paste the URL of an image you want to show in the email header. Upload images using the media uploader (Media > Add New).', 'woocommerce' ),
+			'id'          => 'woocommerce_email_header_image',
+			'type'        => 'text',
+			'css'         => 'min-width:400px;',
+			'placeholder' => __( 'N/A', 'woocommerce' ),
+			'default'     => '',
+			'autoload'    => false,
+			'desc_tip'    => true,
+		);
+		$header_alignment           = null;
+
+		$base_color_default        = '#7f54b3';
+		$bg_color_default          = '#f7f7f7';
+		$body_bg_color_default     = '#ffffff';
+		$body_text_color_default   = '#3c3c3c';
+		$footer_text_color_default = '#3c3c3c';
+
+		$base_color_title = __( 'Base color', 'woocommerce' );
+		/* translators: %s: default color */
+		$base_color_desc = sprintf( __( 'The base color for WooCommerce email templates. Default %s.', 'woocommerce' ), '<code>' . $base_color_default . '</code>' );
+
+		$bg_color_title = __( 'Background color', 'woocommerce' );
+		/* translators: %s: default color */
+		$bg_color_desc = sprintf( __( 'The background color for WooCommerce email templates. Default %s.', 'woocommerce' ), '<code>' . $bg_color_default . '</code>' );
+
+		$body_bg_color_title = __( 'Body background color', 'woocommerce' );
+		/* translators: %s: default color */
+		$body_bg_color_desc = sprintf( __( 'The main body background color. Default %s.', 'woocommerce' ), '<code>' . $body_bg_color_default . '</code>' );
+
+		$body_text_color_title = __( 'Body text color', 'woocommerce' );
+		/* translators: %s: default color */
+		$body_text_color_desc = sprintf( __( 'The main body text color. Default %s.', 'woocommerce' ), '<code>' . $body_text_color_default . '</code>' );
+
+		$footer_text_color_title = __( 'Footer text color', 'woocommerce' );
+		/* translators: %s: footer default color */
+		$footer_text_color_desc = sprintf( __( 'The footer text color. Default %s.', 'woocommerce' ), '<code>' . $footer_text_color_default . '</code>' );
+
+		$color_palette_section_header = null;
+		$color_palette_section_end    = null;
+
+		if ( FeaturesUtil::feature_is_enabled( 'email_improvements' ) ) {
+			$email_template_description = __( 'Customize your WooCommerce email template and preview it below.', 'woocommerce' );
+			$logo_image                 = array(
+				'title'       => __( 'Logo', 'woocommerce' ),
+				'desc'        => __( 'Add your logo to each of your WooCommerce emails. If no logo is uploaded, your site title will be used instead.', 'woocommerce' ),
+				'id'          => 'woocommerce_email_header_image',
+				'type'        => 'email_image_url',
+				'css'         => 'min-width:400px;',
+				'placeholder' => __( 'N/A', 'woocommerce' ),
+				'default'     => '',
+				'autoload'    => false,
+				'desc_tip'    => true,
+			);
+			$header_alignment           = array(
+				'title'    => __( 'Header alignment', 'woocommerce' ),
+				'id'       => 'woocommerce_email_header_alignment',
+				'desc_tip' => '',
+				'default'  => 'left',
+				'type'     => 'select',
+				'class'    => 'wc-enhanced-select',
+				'options'  => array(
+					'left'   => __( 'Left', 'woocommerce' ),
+					'center' => __( 'Center', 'woocommerce' ),
+					'right'  => __( 'Right', 'woocommerce' ),
+				),
+			);
+
+			$base_color_default        = '#8526ff';
+			$bg_color_default          = '#ffffff';
+			$body_bg_color_default     = '#ffffff';
+			$body_text_color_default   = '#1e1e1e';
+			$footer_text_color_default = '#787c82';
+
+			if ( wc_current_theme_is_fse_theme() && function_exists( 'wp_get_global_styles' ) ) {
+				$global_styles             = wp_get_global_styles( array(), array( 'transforms' => array( 'resolve-variables' ) ) );
+				$base_color_default        = $global_styles['elements']['button']['color']['text'] ?? $base_color_default;
+				$bg_color_default          = $global_styles['color']['background'] ?? $bg_color_default;
+				$body_bg_color_default     = $global_styles['color']['background'] ?? $body_bg_color_default;
+				$body_text_color_default   = $global_styles['color']['text'] ?? $body_text_color_default;
+				$footer_text_color_default = $global_styles['elements']['caption']['color']['text'] ?? $footer_text_color_default;
+			}
+
+			$base_color_title = __( 'Accent', 'woocommerce' );
+			/* translators: %s: default color */
+			$base_color_desc = sprintf( __( 'Customize the color of your buttons and links. Default %s.', 'woocommerce' ), '<code>' . $base_color_default . '</code>' );
+
+			$bg_color_title = __( 'Email background', 'woocommerce' );
+			/* translators: %s: default color */
+			$bg_color_desc = sprintf( __( 'Select a color for the background of your emails. Default %s.', 'woocommerce' ), '<code>' . $bg_color_default . '</code>' );
+
+			$body_bg_color_title = __( 'Content background', 'woocommerce' );
+			/* translators: %s: default color */
+			$body_bg_color_desc = sprintf( __( 'Choose a background color for the content area of your emails. Default %s.', 'woocommerce' ), '<code>' . $body_bg_color_default . '</code>' );
+
+			$body_text_color_title = __( 'Heading & text', 'woocommerce' );
+			/* translators: %s: default color */
+			$body_text_color_desc = sprintf( __( 'Set the color of your headings and text. Default %s.', 'woocommerce' ), '<code>' . $body_text_color_default . '</code>' );
+
+			$footer_text_color_title = __( 'Secondary text', 'woocommerce' );
+			/* translators: %s: footer default color */
+			$footer_text_color_desc = sprintf( __( 'Choose a color for your secondary text, such as your footer content. Default %s.', 'woocommerce' ), '<code>' . $footer_text_color_default . '</code>' );
+
+			$color_palette_section_header = array(
+				'title' => __( 'Color palette', 'woocommerce' ),
+				'type'  => 'title',
+				'id'    => 'email_color_palette',
+			);
+
+			$color_palette_section_end = array(
+				'type' => 'sectionend',
+				'id'   => 'email_template_options',
+			);
+		}
+
+		// Reorder email color settings based on the email_improvements feature flag
+
+		$base_color_setting = array(
+			'title'    => $base_color_title,
+			'desc'     => $base_color_desc,
+			'id'       => 'woocommerce_email_base_color',
+			'type'     => 'color',
+			'css'      => 'width:6em;',
+			'default'  => $base_color_default,
+			'autoload' => false,
+			'desc_tip' => true,
+		);
+
+		$bg_color_setting = array(
+			'title'    => $bg_color_title,
+			'desc'     => $bg_color_desc,
+			'id'       => 'woocommerce_email_background_color',
+			'type'     => 'color',
+			'css'      => 'width:6em;',
+			'default'  => $bg_color_default,
+			'autoload' => false,
+			'desc_tip' => true,
+		);
+
+		$body_bg_color_setting = array(
+			'title'    => $body_bg_color_title,
+			'desc'     => $body_bg_color_desc,
+			'id'       => 'woocommerce_email_body_background_color',
+			'type'     => 'color',
+			'css'      => 'width:6em;',
+			'default'  => $body_bg_color_default,
+			'autoload' => false,
+			'desc_tip' => true,
+		);
+
+		$body_text_color_setting = array(
+			'title'    => $body_text_color_title,
+			'desc'     => $body_text_color_desc,
+			'id'       => 'woocommerce_email_text_color',
+			'type'     => 'color',
+			'css'      => 'width:6em;',
+			'default'  => $body_text_color_default,
+			'autoload' => false,
+			'desc_tip' => true,
+		);
+
+		$footer_text_color_setting = array(
+			'title'    => $footer_text_color_title,
+			'desc'     => $footer_text_color_desc,
+			'id'       => 'woocommerce_email_footer_text_color',
+			'type'     => 'color',
+			'css'      => 'width:6em;',
+			'default'  => $footer_text_color_default,
+			'autoload' => false,
+			'desc_tip' => true,
+		);
+
+		$reorder_colors = FeaturesUtil::feature_is_enabled( 'email_improvements' );
+
+		$base_color_setting_in_template_opts        = $reorder_colors ? null : $base_color_setting;
+		$bg_color_setting_in_template_opts          = $reorder_colors ? null : $bg_color_setting;
+		$body_bg_color_setting_in_template_opts     = $reorder_colors ? null : $body_bg_color_setting;
+		$body_text_color_setting_in_template_opts   = $reorder_colors ? null : $body_text_color_setting;
+		$footer_text_color_setting_in_template_opts = $reorder_colors ? null : $footer_text_color_setting;
+
+		$base_color_setting_in_palette        = $reorder_colors ? $base_color_setting : null;
+		$bg_color_setting_in_palette          = $reorder_colors ? $bg_color_setting : null;
+		$body_bg_color_setting_in_palette     = $reorder_colors ? $body_bg_color_setting : null;
+		$body_text_color_setting_in_palette   = $reorder_colors ? $body_text_color_setting : null;
+		$footer_text_color_setting_in_palette = $reorder_colors ? $footer_text_color_setting : null;
+
 		$settings =
 			array(
 				array(
@@ -121,70 +314,21 @@ class WC_Settings_Emails extends WC_Settings_Page {
 				array(
 					'title' => __( 'Email template', 'woocommerce' ),
 					'type'  => 'title',
-					/* translators: %s: Nonced email preview link */
-					'desc'  => sprintf( __( 'This section lets you customize the WooCommerce emails. <a href="%s" target="_blank">Click here to preview your email template</a>.', 'woocommerce' ), wp_nonce_url( admin_url( '?preview_woocommerce_mail=true' ), 'preview-mail' ) ),
+					'desc'  => $email_template_description,
 					'id'    => 'email_template_options',
 				),
 
-				array(
-					'title'       => __( 'Header image', 'woocommerce' ),
-					'desc'        => __( 'Paste the URL of an image you want to show in the email header. Upload images using the media uploader (Media > Add New).', 'woocommerce' ),
-					'id'          => 'woocommerce_email_header_image',
-					'type'        => 'text',
-					'css'         => 'min-width:400px;',
-					'placeholder' => __( 'N/A', 'woocommerce' ),
-					'default'     => '',
-					'autoload'    => false,
-					'desc_tip'    => true,
-				),
+				$logo_image,
 
-				array(
-					'title'    => __( 'Base color', 'woocommerce' ),
-					/* translators: %s: default color */
-					'desc'     => sprintf( __( 'The base color for WooCommerce email templates. Default %s.', 'woocommerce' ), '<code>#7f54b3</code>' ),
-					'id'       => 'woocommerce_email_base_color',
-					'type'     => 'color',
-					'css'      => 'width:6em;',
-					'default'  => '#7f54b3',
-					'autoload' => false,
-					'desc_tip' => true,
-				),
+				$header_alignment,
 
-				array(
-					'title'    => __( 'Background color', 'woocommerce' ),
-					/* translators: %s: default color */
-					'desc'     => sprintf( __( 'The background color for WooCommerce email templates. Default %s.', 'woocommerce' ), '<code>#f7f7f7</code>' ),
-					'id'       => 'woocommerce_email_background_color',
-					'type'     => 'color',
-					'css'      => 'width:6em;',
-					'default'  => '#f7f7f7',
-					'autoload' => false,
-					'desc_tip' => true,
-				),
+				$base_color_setting_in_template_opts,
 
-				array(
-					'title'    => __( 'Body background color', 'woocommerce' ),
-					/* translators: %s: default color */
-					'desc'     => sprintf( __( 'The main body background color. Default %s.', 'woocommerce' ), '<code>#ffffff</code>' ),
-					'id'       => 'woocommerce_email_body_background_color',
-					'type'     => 'color',
-					'css'      => 'width:6em;',
-					'default'  => '#ffffff',
-					'autoload' => false,
-					'desc_tip' => true,
-				),
+				$bg_color_setting_in_template_opts,
 
-				array(
-					'title'    => __( 'Body text color', 'woocommerce' ),
-					/* translators: %s: default color */
-					'desc'     => sprintf( __( 'The main body text color. Default %s.', 'woocommerce' ), '<code>#3c3c3c</code>' ),
-					'id'       => 'woocommerce_email_text_color',
-					'type'     => 'color',
-					'css'      => 'width:6em;',
-					'default'  => '#3c3c3c',
-					'autoload' => false,
-					'desc_tip' => true,
-				),
+				$body_bg_color_setting_in_template_opts,
+
+				$body_text_color_setting_in_template_opts,
 
 				array(
 					'title'       => __( 'Footer text', 'woocommerce' ),
@@ -199,22 +343,26 @@ class WC_Settings_Emails extends WC_Settings_Page {
 					'desc_tip'    => true,
 				),
 
-				array(
-					'title'    => __( 'Footer text color', 'woocommerce' ),
-					/* translators: %s: footer default color */
-					'desc'     => sprintf( __( 'The footer text color. Default %s.', 'woocommerce' ), '<code>#3c3c3c</code>' ),
-					'id'       => 'woocommerce_email_footer_text_color',
-					'type'     => 'color',
-					'css'      => 'width:6em;',
-					'default'  => '#3c3c3c',
-					'autoload' => false,
-					'desc_tip' => true,
-				),
+				$footer_text_color_setting_in_template_opts,
 
 				array(
 					'type' => 'sectionend',
 					'id'   => 'email_template_options',
 				),
+
+				$color_palette_section_header,
+
+				$base_color_setting_in_palette,
+
+				$bg_color_setting_in_palette,
+
+				$body_bg_color_setting_in_palette,
+
+				$body_text_color_setting_in_palette,
+
+				$footer_text_color_setting_in_palette,
+
+				$color_palette_section_end,
 
 				array( 'type' => 'email_preview' ),
 
@@ -239,6 +387,9 @@ class WC_Settings_Emails extends WC_Settings_Page {
 					'id'   => 'email_merchant_notes',
 				),
 			);
+
+		// Remove empty elements that depend on the email_improvements feature flag.
+		$settings = array_filter( $settings );
 
 		return apply_filters( 'woocommerce_email_settings', $settings );
 	}
@@ -393,11 +544,53 @@ class WC_Settings_Emails extends WC_Settings_Page {
 	 * Creates the React mount point for the email preview.
 	 */
 	public function email_preview() {
+		$emails      = WC()->mailer()->get_emails();
+		$email_types = array();
+		foreach ( $emails as $type => $email ) {
+			$email_types[] = array(
+				'label'   => $email->get_title(),
+				'value'   => $type,
+				'subject' => $email->get_default_subject(),
+			);
+		}
 		?>
 		<div
 			id="wc_settings_email_preview_slotfill"
 			data-preview-url="<?php echo esc_url( wp_nonce_url( admin_url( '?preview_woocommerce_mail=true' ), 'preview-mail' ) ); ?>"
+			data-email-types="<?php echo esc_attr( wp_json_encode( $email_types ) ); ?>"
 		></div>
+		<?php
+	}
+
+	/**
+	 * Creates the React mount point for the email image url.
+	 *
+	 * @param array $value Field value array.
+	 */
+	public function email_image_url( $value ) {
+		$option_value = $value['value'];
+		if ( ! isset( $value['field_name'] ) ) {
+			$value['field_name'] = $value['id'];
+		}
+		?>
+		<tr class="<?php echo esc_attr( $value['row_class'] ); ?>">
+			<th scope="row" class="titledesc">
+				<label for="<?php echo esc_attr( $value['id'] ); ?>"><?php echo esc_html( $value['title'] ); ?> <?php echo wc_help_tip( $value['desc'] ); // WPCS: XSS ok. ?></label>
+			</th>
+			<td class="forminp forminp-<?php echo esc_attr( sanitize_title( $value['type'] ) ); ?>">
+				<input
+					name="<?php echo esc_attr( $value['field_name'] ); ?>"
+					id="<?php echo esc_attr( $value['id'] ); ?>"
+					type="hidden"
+					value="<?php echo esc_attr( $option_value ); ?>"
+				/>
+				<div
+					id="wc_settings_email_image_url_slotfill"
+					data-id="<?php echo esc_attr( $value['id'] ); ?>"
+					data-image-url="<?php echo esc_attr( $option_value ); ?>"
+				></div>
+			</td>
+		</tr>
 		<?php
 	}
 }

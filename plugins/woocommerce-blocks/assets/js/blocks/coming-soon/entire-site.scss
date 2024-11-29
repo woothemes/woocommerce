@@ -44,7 +44,6 @@ body:has(.woocommerce-coming-soon-banner) {
 	.is-layout-flex {
 		display: flex;
 		flex-wrap: wrap;
-		align-items: center;
 		margin: 0;
 	}
 
@@ -77,9 +76,7 @@ body:has(.woocommerce-coming-soon-banner) {
 
 		a {
 			box-sizing: border-box;
-			background-color: #000;
 			border-radius: 6px;
-			color: #fff;
 			gap: 10px;
 			font-size: 14px;
 			font-style: normal;
@@ -158,6 +155,27 @@ body:has(.woocommerce-coming-soon-banner) {
 		margin: 0 auto;
 		text-wrap: balance;
 	}
+}
+
+// Minimal left image template styles
+.woocommerce-coming-soon-minimal-left-image {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+
+	.wp-block-site-title {
+		font-family: Inter, sans-serif;
+	}
+
+	&__content {
+		.wp-block-columns-is-layout-flex {
+			justify-content: center;
+		}
+	}
+}
+
+// Modern black template styles
+.woocommerce-coming-soon-modern-black {
+	--wp--preset--color--contrast: #fff;
+	font-family: Inter, sans-serif;
 }
 
 .block-editor-block-preview__content-iframe {
