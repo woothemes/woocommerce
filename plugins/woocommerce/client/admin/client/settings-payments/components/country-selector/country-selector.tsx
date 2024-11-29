@@ -27,13 +27,43 @@ const stateReducer = < ItemType extends Item >(
 	state: UseSelectState< ItemType | null >,
 	actionAndChanges: UseSelectStateChangeOptions< ItemType | null >
 ): Partial< UseSelectState< ItemType > > => {
-	const { changes, type } = actionAndChanges;
+	const { changes, type, props } = actionAndChanges;
+	const { items } = props;
+	const { selectedItem } = state;
+
 	switch ( type ) {
 		case useSelect.stateChangeTypes.ItemClick:
 			return {
 				...changes,
 				isOpen: true, // Keep menu open after selection.
 				highlightedIndex: state.highlightedIndex,
+			};
+		case useSelect.stateChangeTypes.ToggleButtonKeyDownArrowDown:
+			// If we already have a selected item, try to select the next one,
+			// without circular navigation. Otherwise, select the first item.
+			return {
+				selectedItem:
+					items[
+						selectedItem
+							? Math.min(
+									items.indexOf( selectedItem ) + 1,
+									items.length - 1
+								)
+							: 0
+					],
+				isOpen: true, // Keep menu open after selection.
+			};
+		case useSelect.stateChangeTypes.ToggleButtonKeyDownArrowUp:
+			// If we already have a selected item, try to select the previous one,
+			// without circular navigation. Otherwise, select the last item.
+			return {
+				selectedItem:
+					items[
+						selectedItem
+							? Math.max( items.indexOf( selectedItem ) - 1, 0 )
+							: items.length - 1
+					],
+				isOpen: true, // Keep menu open after selection.
 			};
 		default:
 			return changes;
@@ -154,6 +184,16 @@ export const CountrySelector = < ItemType extends Item >( {
 		[ onChange, selectedValue, closeMenu ]
 	);
 
+	const onEnterApply = useCallback(
+		( event ) => {
+			event.stopPropagation();
+			if ( event.key === 'Enter' ) {
+				onChange( selectedValue );
+			}
+		},
+		[ onChange, selectedValue ]
+	);
+
 	const onClearClickedHandler = useCallback(
 		( e: React.MouseEvent< HTMLButtonElement > ) => {
 			e.preventDefault();
@@ -182,6 +222,7 @@ export const CountrySelector = < ItemType extends Item >( {
 						{ placeholder: ! itemString }
 					),
 					name,
+					onKeyDown: onEnterApply
 				} ) }
 			>
 				<span className="components-country-select-control__button-value">
