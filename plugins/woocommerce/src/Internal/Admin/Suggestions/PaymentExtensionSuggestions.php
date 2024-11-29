@@ -1316,6 +1316,22 @@ class PaymentExtensionSuggestions {
 	}
 
 	/**
+	 * Dismiss an incentive for a specific payment extension suggestion.
+	 *
+	 * @param string $incentive_id  The incentive ID.
+	 * @param string $suggestion_id The suggestion ID.
+	 * @param string $context       Optional. The context ID for which the incentive should be dismissed.
+	 *                              If not provided, the incentive will be dismissed for all contexts.
+	 *
+	 * @return bool True if the incentive was not previously dismissed and now it is.
+	 *              False if the incentive was already dismissed or could not be dismissed.
+	 * @throws \Exception If the incentive could not be dismissed due to an error.
+	 */
+	public function dismiss_incentive( string $incentive_id, string $suggestion_id, string $context = 'all' ): bool {
+		return $this->suggestion_incentives->dismiss_incentive( $incentive_id, $suggestion_id, $context );
+	}
+
+	/**
 	 * Merges country-specific details into the base details of a payment extension.
 	 *
 	 * This function processes special `_append` and `_remove` instructions to modify
