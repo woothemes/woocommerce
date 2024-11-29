@@ -65,7 +65,6 @@ const getTextBasedOnStock = ( {
  * - Product is sold individually
  * - Product stock is not managed (except for simple products)
  *
- *
  * @param {ProductResponseItem} product Product object
  * @return {boolean} True if stock indicator should be visible
  */
