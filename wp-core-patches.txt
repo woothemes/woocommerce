@@ -9,8 +9,3 @@ if ( $join && ( ! empty( $this->tax_query->queries ) || ! empty( $this->meta_que
 // By default, DB will sor by PK
 $meta_list = $wpdb->get_results( "SELECT $column, meta_key, meta_value FROM $table WHERE $column IN ($id_list) ORDER BY $id_column ASC", ARRAY_A );
 $meta_list = $wpdb->get_results( "SELECT $column, meta_key, meta_value FROM $table WHERE $column IN ($id_list)", ARRAY_A );
-
-
-
-wp_posts and wp_postmeta: create copies, cleanup data
-fetching variations: from the copy-tables
