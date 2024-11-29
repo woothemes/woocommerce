@@ -39,14 +39,13 @@ class WC_Product_Variable extends WC_Product {
 	private string $posts_table;
 	private string $postmeta_table;
 
-	public function __construct()
-	{
-		global $wpdb;
+	public function __construct( $product = 0 ) {
+		parent::__construct( $product );
 
+		global $wpdb;
 		$this->posts_table    = $wpdb->posts . '_variations';
 		$this->postmeta_table = $wpdb->postmeta . '_variations';
 	}
-
 
 	/**
 	 * Get internal type.
