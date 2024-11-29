@@ -957,12 +957,7 @@ class ReviewsListTable extends WP_List_Table {
 			echo $in_reply_to . '<br><br>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
-		printf(
-			'%1$s%2$s%3$s',
-			'<div class="comment-text">',
-			get_comment_text( $item->comment_ID ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			'</div>'
-		);
+		comment_text( $item->comment_ID );
 
 		if ( $this->current_user_can_edit_review ) {
 			?>
