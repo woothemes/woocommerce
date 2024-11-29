@@ -1104,7 +1104,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 			->willReturn( $suggestion_details );
 
 		// Act.
-		$suggestion = $this->service->get_payment_extension_suggestion_by_id( $suggestion_id );
+		$suggestion = $this->service->get_extension_suggestion_by_id( $suggestion_id );
 
 		// Assert.
 		$this->assertIsArray( $suggestion );
@@ -1170,7 +1170,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 			->willReturn( $suggestion_details );
 
 		// Act.
-		$suggestion = $this->service->get_payment_extension_suggestion_by_plugin_slug( $slug );
+		$suggestion = $this->service->get_extension_suggestion_by_plugin_slug( $slug );
 
 		// Assert.
 		$this->assertIsArray( $suggestion );
