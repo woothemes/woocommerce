@@ -1,0 +1,3 @@
+Significance: patch
+Type: add
+Comment: This change renames and reorders email color setting fields and also adds new default color values for block-based themes which are taken from theme.json.

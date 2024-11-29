@@ -23,7 +23,6 @@ use Automattic\WooCommerce\Internal\ProductImage\MatchImageBySKU;
 use Automattic\WooCommerce\Internal\RegisterHooksInterface;
 use Automattic\WooCommerce\Internal\RestockRefundedItemsAdjuster;
 use Automattic\WooCommerce\Internal\Settings\OptionSanitizer;
-use Automattic\WooCommerce\Internal\Traits\AccessiblePrivateMethods;
 use Automattic\WooCommerce\Internal\Utilities\LegacyRestApiStub;
 use Automattic\WooCommerce\Internal\Utilities\WebhookUtil;
 use Automattic\WooCommerce\Internal\Admin\Marketplace;
@@ -37,8 +36,6 @@ use Automattic\WooCommerce\Internal\Logging\RemoteLogger;
  * @class WooCommerce
  */
 final class WooCommerce {
-
-	use AccessiblePrivateMethods;
 
 	/**
 	 * WooCommerce version.
@@ -304,14 +301,14 @@ final class WooCommerce {
 		add_action( 'deactivated_plugin', array( $this, 'deactivated_plugin' ) );
 		add_action( 'woocommerce_installed', array( $this, 'add_woocommerce_inbox_variant' ) );
 		add_action( 'woocommerce_updated', array( $this, 'add_woocommerce_inbox_variant' ) );
-		self::add_action( 'rest_api_init', array( $this, 'register_wp_admin_settings' ) );
+		add_action( 'rest_api_init', array( $this, 'register_wp_admin_settings' ) );
 		add_action( 'woocommerce_installed', array( $this, 'add_woocommerce_remote_variant' ) );
 		add_action( 'woocommerce_updated', array( $this, 'add_woocommerce_remote_variant' ) );
 		add_action( 'woocommerce_newly_installed', 'wc_set_hooked_blocks_version', 10 );
 
-		self::add_filter( 'robots_txt', array( $this, 'robots_txt' ) );
+		add_filter( 'robots_txt', array( $this, 'robots_txt' ) );
 		add_filter( 'wp_plugin_dependencies_slug', array( $this, 'convert_woocommerce_slug' ) );
-		self::add_filter( 'woocommerce_register_log_handlers', array( $this, 'register_remote_log_handler' ) );
+		add_filter( 'woocommerce_register_log_handlers', array( $this, 'register_remote_log_handler' ) );
 
 		// These classes set up hooks on instantiation.
 		$container = wc_get_container();
@@ -1066,8 +1063,10 @@ final class WooCommerce {
 	 * @param string $output The contents that WordPress will output in a robots.txt file.
 	 *
 	 * @return string
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function robots_txt( $output ) {
+	public function robots_txt( $output ) {
 		$path = ( ! empty( $site_url['path'] ) ) ? $site_url['path'] : '';
 
 		$lines       = preg_split( '/\r\n|\r|\n/', $output );
@@ -1294,8 +1293,10 @@ final class WooCommerce {
 	 * This method used to be part of the now removed Legacy REST API.
 	 *
 	 * @since 9.0.0
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function register_wp_admin_settings() {
+	public function register_wp_admin_settings() {
 		$pages = WC_Admin_Settings::get_settings_pages();
 		foreach ( $pages as $page ) {
 			new WC_Register_WP_Admin_Settings( $page, 'page' );
@@ -1329,8 +1330,10 @@ final class WooCommerce {
 	 * @param \WC_Log_Handler[] $handlers The handlers to register.
 	 *
 	 * @return \WC_Log_Handler[]
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function register_remote_log_handler( $handlers ) {
+	public function register_remote_log_handler( $handlers ) {
 		$handlers[] = wc_get_container()->get( RemoteLogger::class );
 		return $handlers;
 	}

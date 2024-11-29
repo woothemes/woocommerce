@@ -457,6 +457,8 @@
 						"src/**/*.php",
 						"templates/**/*.php",
 						"tests/e2e-pw/tests/api-tests/**",
+						"tests/e2e-pw/*.js",
+						"tests/e2e-pw/*.sh",
 						".wp-env.json",
 						"woocommerce.php",
 						"uninstall.php"
@@ -626,6 +628,39 @@
 					}
 				},
 				{
+					"name": "Blocks e2e tests - WP latest-1",
+					"testType": "e2e",
+					"command": "test:e2e:blocks",
+					"shardingArguments": [
+						"--shard=1/10",
+						"--shard=2/10",
+						"--shard=3/10",
+						"--shard=4/10",
+						"--shard=5/10",
+						"--shard=6/10",
+						"--shard=7/10",
+						"--shard=8/10",
+						"--shard=9/10",
+						"--shard=10/10"
+					],
+					"changes": [],
+					"testEnv": {
+						"start": "env:start:blocks",
+						"config": {
+							"wpVersion": "latest-1"
+						}
+					},
+					"events": [
+						"daily-checks",
+						"release-checks"
+					],
+					"report": {
+						"resultsBlobName": "blocks-e2e-report-wp-latest-1",
+						"resultsPath": "../woocommerce-blocks/tests/e2e/artifacts/test-results",
+						"allure": true
+					}
+				},
+				{
 					"name": "Core e2e tests - default Pressable site",
 					"testType": "e2e",
 					"command": "test:e2e:with-env default-pressable",
@@ -703,7 +738,7 @@
 		"prettier": "npm:wp-prettier@^2.8.5",
 		"rimraf": "5.0.5",
 		"stylelint": "^14.16.1",
-		"typescript": "5.3.x",
+		"typescript": "5.7.x",
 		"uuid": "^9.0.1",
 		"webpack": "5.70.0",
 		"webpack-cli": "3.3.12",
