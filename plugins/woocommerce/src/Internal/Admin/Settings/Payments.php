@@ -643,7 +643,7 @@ class Payments {
 			if ( empty( $gateway_details['plugin'] ) ) {
 				$gateway_details['plugin'] = $suggestion['plugin'];
 			}
-			if ( empty( $gateway_details['_incentive'] ) ) {
+			if ( empty( $gateway_details['_incentive'] ) && ! empty( $suggestion['_incentive'] ) ) {
 				$gateway_details['_incentive'] = $suggestion['_incentive'];
 			}
 		}
