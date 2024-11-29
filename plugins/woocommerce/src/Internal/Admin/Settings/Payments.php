@@ -123,7 +123,7 @@ class Payments {
 				$payment_gateway,
 				$providers_order_map[ $payment_gateway->id ]
 			);
-			$gateway_details = $this->enhance_payment_gateway_details( $gateway_details, $payment_gateway );
+			$gateway_details = $this->enhance_payment_gateway_details( $gateway_details, $payment_gateway, $location );
 
 			$gateway_details['_type'] = $this->is_offline_payment_method( $payment_gateway->id ) ? self::PROVIDER_TYPE_OFFLINE_PM : self::PROVIDER_TYPE_GATEWAY;
 
@@ -351,12 +351,13 @@ class Payments {
 	/**
 	 * Get a payment extension suggestion by plugin slug.
 	 *
-	 * @param string $slug The plugin slug of the payment extension suggestion.
+	 * @param string $slug         The plugin slug of the payment extension suggestion.
+	 * @param string $country_code Optional. The business location country code to get the suggestions for.
 	 *
 	 * @return ?array The payment extension suggestion, or null if not found.
 	 */
-	public function get_extension_suggestion_by_plugin_slug( string $slug ): ?array {
-		$suggestion = $this->extension_suggestions->get_by_plugin_slug( $slug );
+	public function get_extension_suggestion_by_plugin_slug( string $slug, string $country_code = '' ): ?array {
+		$suggestion = $this->extension_suggestions->get_by_plugin_slug( $slug, $country_code );
 		if ( is_null( $suggestion ) ) {
 			return null;
 		}
@@ -600,10 +601,11 @@ class Payments {
 	 *
 	 * @param array              $gateway_details The gateway details to enhance.
 	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
+	 * @param string             $country_code    The country code for which the details are being enhanced.
 	 *
 	 * @return array The enhanced gateway details.
 	 */
-	private function enhance_payment_gateway_details( array $gateway_details, WC_Payment_Gateway $payment_gateway ): array {
+	private function enhance_payment_gateway_details( array $gateway_details, WC_Payment_Gateway $payment_gateway, string $country_code ): array {
 		$plugin_slug = $this->get_payment_gateway_plugin_slug( $payment_gateway );
 
 		// Handle core gateways.
@@ -624,7 +626,7 @@ class Payments {
 		}
 
 		// If we have a matching suggestion, hoist details from there.
-		$suggestion = $this->get_extension_suggestion_by_plugin_slug( $plugin_slug );
+		$suggestion = $this->get_extension_suggestion_by_plugin_slug( $plugin_slug, $country_code );
 		if ( ! is_null( $suggestion ) ) {
 			if ( empty( $gateway_details['image'] ) ) {
 				$gateway_details['image'] = $suggestion['image'];
@@ -640,6 +642,9 @@ class Payments {
 			}
 			if ( empty( $gateway_details['plugin'] ) ) {
 				$gateway_details['plugin'] = $suggestion['plugin'];
+			}
+			if ( empty( $gateway_details['_incentive'] ) ) {
+				$gateway_details['_incentive'] = $suggestion['_incentive'];
 			}
 		}
 
