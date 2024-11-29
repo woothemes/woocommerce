@@ -10,6 +10,7 @@ import { ACTION_TYPES } from './action-types';
 import {
 	PaymentProvider,
 	OfflinePaymentGateway,
+	OrderMap,
 	SuggestedPaymentExtension,
 	SuggestedPaymentExtensionCategory,
 	EnableGatewayResponse,
@@ -134,10 +135,31 @@ export function updateOfflinePaymentGatewayOrdering(
 	};
 }
 
+export function updateProviderOrdering( orderMap: OrderMap ): {
+	type: ACTION_TYPES.UPDATE_PROVIDER_ORDERING;
+} {
+	try {
+		apiFetch( {
+			path: WC_ADMIN_NAMESPACE + '/settings/payments/providers/order',
+			method: 'POST',
+			data: {
+				order_map: orderMap,
+			},
+		} );
+	} catch ( error ) {
+		throw error;
+	}
+
+	return {
+		type: ACTION_TYPES.UPDATE_PROVIDER_ORDERING,
+	};
+}
+
 export type Actions =
 	| ReturnType< typeof getPaymentProvidersRequest >
 	| ReturnType< typeof getPaymentProvidersSuccess >
 	| ReturnType< typeof getPaymentProvidersError >
 	| ReturnType< typeof togglePaymentGateway >
 	| ReturnType< typeof hideGatewaySuggestion >
-	| ReturnType< typeof updateOfflinePaymentGatewayOrdering >;
+	| ReturnType< typeof updateOfflinePaymentGatewayOrdering >
+	| ReturnType< typeof updateProviderOrdering >;

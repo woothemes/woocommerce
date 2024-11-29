@@ -80,6 +80,8 @@ export type PaymentSettingsState = {
 	errors: Record< string, unknown >;
 };
 
+export type OrderMap = Record< string, number >;
+
 export type PaymentProvidersResponse = {
 	providers: PaymentProvider[];
 	offline_payment_methods: OfflinePaymentGateway[];

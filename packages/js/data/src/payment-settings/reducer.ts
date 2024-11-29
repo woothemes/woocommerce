@@ -46,6 +46,10 @@ const reducer = (
 					...state,
 					offlinePaymentGateways: payload.offlinePaymentGateways,
 				};
+			case ACTION_TYPES.UPDATE_PROVIDER_ORDERING:
+				return {
+					...state,
+				};
 		}
 	}
 	return state;

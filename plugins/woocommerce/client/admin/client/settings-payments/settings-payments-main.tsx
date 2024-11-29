@@ -23,7 +23,9 @@ export const SettingsPaymentsMain = () => {
 		null
 	);
 	const { installAndActivatePlugins } = useDispatch( PLUGINS_STORE_NAME );
-
+	const { updateProviderOrdering } = useDispatch(
+		PAYMENT_SETTINGS_STORE_NAME
+	);
 	const installedPluginSlugs = useSelect( ( select ) => {
 		return select( PLUGINS_STORE_NAME ).getInstalledPlugins();
 	}, [] );
@@ -69,9 +71,20 @@ export const SettingsPaymentsMain = () => {
 		]
 	);
 
-	const handleOrderingUpdate = ( gateways: PaymentProvider[] ) => {
-		console.log( 'update ordering!', gateways );
-	};
+	function handleOrderingUpdate( sortedProviders: PaymentProvider[] ) {
+		// Extract the existing _order values in the sorted order
+		const updatedOrderValues = sortedProviders
+			.map( ( provider ) => provider._order )
+			.sort( ( a, b ) => a - b );
+
+		// Build the orderMap by assigning the sorted _order values
+		const orderMap: Record< string, number > = {};
+		sortedProviders.forEach( ( provider, index ) => {
+			orderMap[ provider.id ] = updatedOrderValues[ index ];
+		} );
+
+		updateProviderOrdering( orderMap );
+	}
 
 	return (
 		<>
