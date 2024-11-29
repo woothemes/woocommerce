@@ -5,6 +5,7 @@
 import { render } from '@testing-library/react';
 import { createElement } from '@wordpress/element';
 import { setSettings, __experimentalGetSettings } from '@wordpress/date'; // eslint-disable-line @wordpress/no-unsafe-wp-apis -- safe to use in tests, not in production
+
 /**
  * Internal dependencies
  */
@@ -33,9 +34,9 @@ describe( 'Timeline', () => {
 		];
 
 		beforeAll( () => {
+			// Set custom WP Date settings.
 			setSettings( {
 				...originalWPTimeSettings,
-
 				timezone: {
 					offset: '+3',
 					offsetFormatted: '+03:00',
@@ -57,11 +58,11 @@ describe( 'Timeline', () => {
 					clockFormat="g:ia"
 				/>
 			);
-			// Expect the UTC time 2020-01-20 01:30 to be displayed as browser local time: January 20, 2020 11:30am
+			// Expect the UTC time 2020-01-20 01:30 to be displayed as browser local time: January 20, 2020 5:30am
 			expect(
-				getByText( '2020-01-20T11:30:00+10:00' )
+				getByText( '2020-01-20T05:30:00+04:00' )
 			).toBeInTheDocument();
-			expect( getByText( '11:30am' ) ).toBeInTheDocument();
+			expect( getByText( '5:30am' ) ).toBeInTheDocument();
 		} );
 
 		test( 'Renders with store timezone when useStoreTimezone is true', () => {
