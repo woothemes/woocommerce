@@ -106,6 +106,26 @@ class PaymentsRestController extends RestApiControllerBase {
 			),
 			$override
 		);
+		register_rest_route(
+			$this->route_namespace,
+			'/' . $this->rest_base . '/suggestion/(?P<suggestion_id>[\w\d\-]+)/incentive/(?P<incentive_id>[\w\d\-]+)/dismiss',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::EDITABLE,
+					'callback'            => fn( $request ) => $this->run( $request, 'dismiss_payment_extension_suggestion_incentive' ),
+					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
+					'args'                => array(
+						'context' => array(
+							'description'       => __( 'The context ID for which to dismiss the incentive. If not provided, will dismiss the incentive for all contexts.', 'woocommerce' ),
+							'type'              => 'string',
+							'required'          => false,
+							'sanitize_callback' => 'sanitize_key',
+						),
+					),
+				),
+			),
+			$override
+		);
 	}
 
 	/**
@@ -197,6 +217,27 @@ class PaymentsRestController extends RestApiControllerBase {
 			$result = $this->payments->hide_payment_extension_suggestion( $suggestion_id );
 		} catch ( Exception $e ) {
 			return new WP_Error( 'woocommerce_rest_payment_extension_suggestion_error', $e->getMessage(), array( 'status' => 400 ) );
+		}
+
+		return rest_ensure_response( array( 'success' => $result ) );
+	}
+
+	/**
+	 * Dismiss a payment extension suggestion incentive.
+	 *
+	 * @param WP_REST_Request $request The request object.
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	protected function dismiss_payment_extension_suggestion_incentive( WP_REST_Request $request ) {
+		$suggestion_id = $request->get_param( 'suggestion_id' );
+		$incentive_id  = $request->get_param( 'incentive_id' );
+		$context       = $request->get_param( 'context' ) ?? 'all';
+
+		try {
+			$result = $this->payments->dismiss_extension_suggestion_incentive( $suggestion_id, $incentive_id, $context );
+		} catch ( Exception $e ) {
+			return new WP_Error( 'woocommerce_rest_payment_extension_suggestion_incentive_error', $e->getMessage(), array( 'status' => 400 ) );
 		}
 
 		return rest_ensure_response( array( 'success' => $result ) );

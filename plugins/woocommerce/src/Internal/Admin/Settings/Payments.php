@@ -35,6 +35,8 @@ class Payments {
 	const SUGGESTION_ORDERING_PREFIX     = '_wc_pes_';
 	const OFFLINE_METHODS_ORDERING_GROUP = '_wc_offline_payment_methods_group';
 
+	const SUGGESTIONS_CONTEXT = 'wc_payments_settings';
+
 	/**
 	 * The payment extension suggestions service.
 	 *
@@ -439,6 +441,22 @@ class Payments {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Dismiss a payment extension suggestion incentive.
+	 *
+	 * @param string $suggestion_id The suggestion ID.
+	 * @param string $incentive_id  The incentive ID.
+	 * @param string $context       Optional. The context in which the incentive should be dismissed.
+	 *                              Default is to dismiss the incentive in all contexts.
+	 *
+	 * @return bool True if the incentive was not previously dismissed and now it is.
+	 *              False if the incentive was already dismissed or could not be dismissed.
+	 * @throws Exception If the incentive could not be dismissed due to an error.
+	 */
+	public function dismiss_extension_suggestion_incentive( string $suggestion_id, string $incentive_id, string $context = 'all' ): bool {
+		return $this->extension_suggestions->dismiss_incentive( $incentive_id, $suggestion_id, $context );
 	}
 
 	/**
