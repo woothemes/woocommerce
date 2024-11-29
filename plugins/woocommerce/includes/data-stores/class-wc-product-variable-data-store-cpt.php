@@ -117,11 +117,19 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 	 * @return array
 	 */
 	public function read_children( &$product, $force_read = false ) {
+		global $wpdb;
+
 		$children_transient_name = 'wc_product_children_' . $product->get_id();
 		$children                = get_transient( $children_transient_name );
 		if ( empty( $children ) || ! is_array( $children ) ) {
 			$children = array();
 		}
+
+		// Hack: inject PoC tables names
+		$posts_table = $wpdb->posts;
+		$wpdb->posts .= '_variations';
+		$postmeta_table = $wpdb->postmeta;
+		$wpdb->postmeta .= '_variations';
 
 		if ( ! isset( $children['all'] ) || ! isset( $children['visible'] ) || $force_read ) {
 			$all_args = array(
@@ -155,6 +163,10 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 
 		$children['all']     = wp_parse_id_list( (array) $children['all'] );
 		$children['visible'] = wp_parse_id_list( (array) $children['visible'] );
+
+		// Hack: restore original table names
+		$wpdb->posts    = $posts_table;
+		$wpdb->postmeta = $postmeta_table;
 
 		return $children;
 	}
