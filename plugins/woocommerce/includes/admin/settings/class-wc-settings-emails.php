@@ -6,6 +6,7 @@
  * @version 2.1.0
  */
 
+use Automattic\WooCommerce\Internal\BrandingController;
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
 defined( 'ABSPATH' ) || exit;
@@ -106,7 +107,8 @@ class WC_Settings_Emails extends WC_Settings_Page {
 			);
 		}
 
-		$settings =
+		$default_base_color = BrandingController::get_default_email_base_color();
+		$settings           =
 			array(
 				array(
 					'title' => __( 'Email notifications', 'woocommerce' ),
@@ -179,11 +181,11 @@ class WC_Settings_Emails extends WC_Settings_Page {
 				array(
 					'title'    => __( 'Base color', 'woocommerce' ),
 					/* translators: %s: default color */
-					'desc'     => sprintf( __( 'The base color for WooCommerce email templates. Default %s.', 'woocommerce' ), '<code>#7f54b3</code>' ),
+					'desc'     => sprintf( __( 'The base color for WooCommerce email templates. Default %s.', 'woocommerce' ), "<code>$default_base_color</code>" ),
 					'id'       => 'woocommerce_email_base_color',
 					'type'     => 'color',
 					'css'      => 'width:6em;',
-					'default'  => '#7f54b3',
+					'default'  => $default_base_color,
 					'autoload' => false,
 					'desc_tip' => true,
 				),
