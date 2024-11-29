@@ -4,8 +4,13 @@
 import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
+/**
+ * Internal dependencies
+ */
+import { EmailType } from './settings-email-preview-slotfill';
+
 type EmailPreviewTypeProps = {
-	emailTypes: SelectControl.Option[];
+	emailTypes: EmailType[];
 	emailType: string;
 	setEmailType: ( emailType: string ) => void;
 };
