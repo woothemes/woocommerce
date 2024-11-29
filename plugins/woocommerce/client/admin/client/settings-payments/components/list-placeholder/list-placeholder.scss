@@ -1,0 +1,29 @@
+.list-placeholder {
+	&__title,
+	&__after,
+	&__before,
+	&__content {
+		background-color: $gray-100;
+		border-radius: 4px;
+	}
+
+	&__title {
+		width: 120px;
+		height: 20px;
+	}
+
+	&__after {
+		height: 32px;
+		width: 104px;
+	}
+
+	&__before {
+		width: 40px;
+		height: 40px;
+	}
+
+	&__content {
+		width: 360px;
+		height: 20px;
+	}
+}
