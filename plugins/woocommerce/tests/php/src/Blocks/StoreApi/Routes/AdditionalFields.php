@@ -1103,6 +1103,69 @@ class AdditionalFields extends MockeryTestCase {
 	}
 
 	/**
+	 * Ensure a warning is triggered when a checkbox is registered with an error_message, but it is not required.
+	 */
+	public function test_error_message_non_required_checkbox() {
+		$id                    = 'plugin-namespace/checkbox-non-required-error-message';
+		$doing_it_wrong_mocker = \Mockery::mock( 'ActionCallback' );
+		$doing_it_wrong_mocker->shouldReceive( 'doing_it_wrong_run' )->withArgs(
+			array(
+				'woocommerce_register_additional_checkout_field',
+				\esc_html( sprintf( 'Passing an error message to a non-required checkbox "%s" will have no effect. The error message has been removed from the field.', $id ) ),
+			)
+		)->once();
+
+		add_action(
+			'doing_it_wrong_run',
+			array(
+				$doing_it_wrong_mocker,
+				'doing_it_wrong_run',
+			),
+			10,
+			2
+		);
+
+		\woocommerce_register_additional_checkout_field(
+			array(
+				'id'            => $id,
+				'label'         => 'Checkbox Non Required Error message',
+				'location'      => 'order',
+				'type'          => 'checkbox',
+				'required'      => false,
+				'error_message' => 'This field is required.',
+			)
+		);
+
+		\remove_action(
+			'doing_it_wrong_run',
+			array(
+				$doing_it_wrong_mocker,
+				'doing_it_wrong_run',
+			)
+		);
+
+		// Fields should not be registered.
+		$request  = new \WP_REST_Request( 'OPTIONS', '/wc/store/v1/checkout' );
+		$response = rest_get_server()->dispatch( $request );
+
+		$data = $response->get_data();
+
+		$this->assertArrayNotHasKey(
+			'error_message',
+			$data['schema']['properties']['additional_fields']['properties'][ $id ]
+		);
+		$this->assertEquals(
+			false,
+			$data['schema']['properties']['additional_fields']['properties'][ $id ]['required']
+		);
+
+		\__internal_woocommerce_blocks_deregister_checkout_field( $id );
+
+		// Ensures the field isn't registered.
+		$this->assertFalse( $this->controller->is_field( $id ), \sprintf( '%s is still registered', $id ) );
+	}
+
+	/**
 	 * Ensure an error is triggered when a field is registered with hidden set to true.
 	 */
 	public function test_register_hidden_field_error() {
