@@ -11,26 +11,35 @@ import { SuggestedPaymentExtension } from '@woocommerce/data';
  * Internal dependencies
  */
 import { getAdminSetting } from '~/utils/admin-settings';
+import { GridItemPlaceholder } from '~/settings-payments/components/grid-item-placeholder';
 
 const assetUrl = getAdminSetting( 'wcAdminAssetUrl' );
 
 interface OtherPaymentGatewaysProps {
-	otherPluginSuggestions: SuggestedPaymentExtension[];
+	suggestions: SuggestedPaymentExtension[];
 	installingPlugin: string | null;
-	setupPlugin: ( extension: SuggestedPaymentExtension ) => void;
+	setupPlugin: ( id: string, slug: string ) => void;
+	isFetching: boolean;
 }
 
 export const OtherPaymentGateways = ( {
-	otherPluginSuggestions,
+	suggestions,
 	installingPlugin,
 	setupPlugin,
+	isFetching,
 }: OtherPaymentGatewaysProps ) => {
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
 	// Memoize the collapsed images to avoid re-rendering when not expanded
-	const collapsedImages = useMemo(
-		() =>
-			otherPluginSuggestions.map( ( extension ) => (
+	const collapsedImages = useMemo( () => {
+		return isFetching ? (
+			<>
+				<div className="other-payment-gateways__header__title__image-placeholder" />
+				<div className="other-payment-gateways__header__title__image-placeholder" />
+				<div className="other-payment-gateways__header__title__image-placeholder" />
+			</>
+		) : (
+			suggestions.map( ( extension ) => (
 				<img
 					key={ extension.id }
 					src={ extension.icon }
@@ -39,14 +48,20 @@ export const OtherPaymentGateways = ( {
 					height="24"
 					className="other-payment-gateways__header__title__image"
 				/>
-			) ),
-		[ otherPluginSuggestions ]
-	);
+			) )
+		);
+	}, [ suggestions, isFetching ] );
 
 	// Memoize the expanded content to avoid re-rendering when expanded
-	const expandedContent = useMemo(
-		() =>
-			otherPluginSuggestions.map( ( extension ) => (
+	const expandedContent = useMemo( () => {
+		return isFetching ? (
+			<>
+				<GridItemPlaceholder />
+				<GridItemPlaceholder />
+				<GridItemPlaceholder />
+			</>
+		) : (
+			suggestions.map( ( extension ) => (
 				<div
 					className="other-payment-gateways__content__grid-item"
 					key={ extension.id }
@@ -62,7 +77,12 @@ export const OtherPaymentGateways = ( {
 						<div className="other-payment-gateways__content__grid-item__content__actions">
 							<Button
 								variant="primary"
-								onClick={ () => setupPlugin( extension ) }
+								onClick={ () =>
+									setupPlugin(
+										extension.id,
+										extension.plugin.slug
+									)
+								}
 								isBusy={ installingPlugin === extension.id }
 								disabled={ !! installingPlugin }
 							>
@@ -71,11 +91,11 @@ export const OtherPaymentGateways = ( {
 						</div>
 					</div>
 				</div>
-			) ),
-		[ otherPluginSuggestions, installingPlugin ]
-	);
+			) )
+		);
+	}, [ suggestions, installingPlugin, isFetching, setupPlugin ] );
 
-	if ( otherPluginSuggestions.length === 0 ) {
+	if ( ! isFetching && suggestions.length === 0 ) {
 		return null; // Don't render the component if there are no suggestions
 	}
 
