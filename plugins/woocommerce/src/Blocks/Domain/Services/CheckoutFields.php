@@ -405,7 +405,7 @@ class CheckoutFields {
 	private function process_checkbox_field( $field_data, $options ) {
 		$id = $options['id'];
 
-		if ( isset( $options['required'] ) && ! is_bool( $options['required'] ) ) {
+		if ( isset( $options['required'] ) && null === filter_var( $options['required'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) ) {
 			$message = sprintf( 'The required property for field with id: "%s" must be a boolean, you passed %s. The field will not be registered.', $id, gettype( $options['required'] ) );
 			_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), '9.6.0' );
 			return false;
