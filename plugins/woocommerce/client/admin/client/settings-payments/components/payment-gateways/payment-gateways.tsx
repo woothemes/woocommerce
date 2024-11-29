@@ -39,7 +39,11 @@ export const PaymentGateways = ( {
 
 	const countryOptions = useMemo( () => {
 		return Object.entries( window.wcSettings.countries || [] )
-			.map( ( [ key, name ] ) => ( { key, name, types: [] } ) )
+			.map( ( [ key, name ] ) => ( {
+				key,
+				name: decodeEntities( name ),
+				types: [],
+			} ) )
 			.sort( ( a, b ) => a.name.localeCompare( b.name ) );
 	}, [] );
 

@@ -9,6 +9,7 @@ import {
 	UseSelectStateChangeOptions,
 } from 'downshift';
 import { Button } from '@wordpress/components';
+import { useThrottle } from '@wordpress/compose';
 import { useCallback } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { check, chevronDown, Icon } from '@wordpress/icons';
@@ -39,6 +40,10 @@ const stateReducer = < ItemType extends Item >(
 	}
 };
 
+const removeAccents = ( str: string ) => {
+	return str.normalize( 'NFD' ).replace( /[\u0300-\u036f]/g, '' );
+};
+
 export const CountrySelector = < ItemType extends Item >( {
 	name,
 	className,
@@ -52,13 +57,27 @@ export const CountrySelector = < ItemType extends Item >( {
 }: ControlProps< ItemType > ): JSX.Element => {
 	const [ searchText, setSearchText ] = useState( '' );
 	const [ isSearchFocused, setSearchFocused ] = useState( false );
-	const [ visibleItems, setVisibleItems ] = useState(
-		new Set( [ ...items.map( ( i ) => i.key ) ] )
+
+	// only run filter every 200ms even if the user is typing
+	const throttledApplySearchToItems = useThrottle(
+		useCallback(
+			( searchString: string, itemSet: ItemType[] ) =>
+				new Set(
+					itemSet.filter( ( item: Item ) =>
+						`${ removeAccents( item.name ?? '' ) }`
+							.toLowerCase()
+							.includes( removeAccents( searchString ) )
+					)
+				),
+			[]
+		),
+		200
 	);
 
-	const itemsToRender = items.filter( ( item ) =>
-		visibleItems.has( item.key )
-	);
+	const visibleItems =
+		searchText !== ''
+			? throttledApplySearchToItems( searchText, items ) ?? new Set()
+			: new Set( items );
 
 	const {
 		getToggleButtonProps,
@@ -71,7 +90,7 @@ export const CountrySelector = < ItemType extends Item >( {
 		selectItem,
 	} = useSelect< ItemType >( {
 		initialSelectedItem: value,
-		items: itemsToRender,
+		items: [ ...visibleItems ],
 		stateReducer,
 		onIsOpenChange: () => selectItem( value ),
 	} );
@@ -80,10 +99,6 @@ export const CountrySelector = < ItemType extends Item >( {
 	const selectedValue = selectedItem ? selectedItem.key : '';
 
 	const searchRef = useRef< HTMLInputElement >( null );
-	const previousStateRef = useRef< {
-		visibleItems: Set< string >;
-	} >();
-
 	function getDescribedBy() {
 		if ( describedBy ) {
 			return describedBy;
@@ -139,49 +154,15 @@ export const CountrySelector = < ItemType extends Item >( {
 		[ onChange, selectedValue, closeMenu ]
 	);
 
-	const handleSearch = ( {
-		target,
-	}: React.ChangeEvent< HTMLInputElement > ) => {
-		if ( ! previousStateRef.current ) {
-			previousStateRef.current = {
-				visibleItems,
-			};
-		}
-
-		if ( target.value === '' ) {
-			setVisibleItems( previousStateRef.current.visibleItems );
-			previousStateRef.current = undefined;
-		} else {
-			const filteredItems = items.filter( ( item ) =>
-				`${ item.name }`
-					.toLowerCase()
-					.includes( target.value.toLowerCase() )
-			);
-
-			const filteredVisibleItems = new Set( [
-				...filteredItems.map( ( i ) => i.key ),
-			] );
-
-			setVisibleItems( filteredVisibleItems );
-		}
-
-		setSearchText( target.value );
-	};
-
 	const onClearClickedHandler = useCallback(
 		( e: React.MouseEvent< HTMLButtonElement > ) => {
 			e.preventDefault();
 
 			if ( isSearchClearable ) {
 				setSearchText( '' );
-				const syntheticEvent = {
-					target: { value: '' },
-				} as unknown as React.ChangeEvent< HTMLInputElement >;
-
-				handleSearch( syntheticEvent );
 			}
 		},
-		[ isSearchClearable, handleSearch ]
+		[ isSearchClearable ]
 	);
 
 	return (
@@ -223,7 +204,9 @@ export const CountrySelector = < ItemType extends Item >( {
 								ref={ searchRef }
 								type="text"
 								value={ searchText }
-								onChange={ handleSearch }
+								onChange={ ( { target } ) =>
+									setSearchText( target.value )
+								}
 								onFocus={ () => setSearchFocused( true ) }
 								onBlur={ () => setSearchFocused( false ) }
 								tabIndex={ -1 }
@@ -237,7 +220,7 @@ export const CountrySelector = < ItemType extends Item >( {
 							</button>
 						</div>
 						<div className="components-country-select-control__list">
-							{ itemsToRender.map( ( item, index ) => (
+							{ [ ...visibleItems ].map( ( item, index ) => (
 								<div
 									{ ...getItemProps( {
 										item,
