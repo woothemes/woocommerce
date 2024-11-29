@@ -169,7 +169,8 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 				&__h3 {
 					text-transform: uppercase;
 					font-size: 12px;
-					font-weight: 300;
+					font-weight: 500;
+					color: $gray-900;
 					line-height: 16px;
 				}
 
