@@ -4,8 +4,8 @@
  */
 import { render } from '@testing-library/react';
 import { createElement } from '@wordpress/element';
-import { setSettings, __experimentalGetSettings } from '@wordpress/date'; // eslint-disable-line @wordpress/no-unsafe-wp-apis -- safe to use in tests, not in production
 import GridIcon from 'gridicons';
+import { setSettings, __experimentalGetSettings } from '@wordpress/date'; // eslint-disable-line @wordpress/no-unsafe-wp-apis -- safe to use in tests, not in production
 
 /**
  * Internal dependencies
