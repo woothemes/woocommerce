@@ -135,6 +135,8 @@ class AddToCartWithOptionsQuantitySelector extends AbstractBlock {
 		 * Hook: woocommerce_before_add_to_cart_quantity.
 		 *
 		 * Action that fires before the quantity input field is rendered.
+		 *
+		 * @since 2.7.0
 		 */
 		do_action( 'woocommerce_before_add_to_cart_quantity' );
 
@@ -143,7 +145,7 @@ class AddToCartWithOptionsQuantitySelector extends AbstractBlock {
 				/**
 				 * Filter the minimum quantity value allowed for the product.
 				 *
-				 * @since 3.0.0
+				 * @since 2.0.0
 				 * @param int        $min_value Minimum quantity value.
 				 * @param WC_Product $product   Product object.
 				 */
@@ -151,7 +153,7 @@ class AddToCartWithOptionsQuantitySelector extends AbstractBlock {
 				/**
 				 * Filter the maximum quantity value allowed for the product.
 				 *
-				 * @since 3.0.0
+				 * @since 2.0.0
 				 * @param int        $max_value Maximum quantity value.
 				 * @param WC_Product $product   Product object.
 				 */
@@ -164,6 +166,8 @@ class AddToCartWithOptionsQuantitySelector extends AbstractBlock {
 		 * Hook: woocommerce_after_add_to_cart_quantity.
 		 *
 		 * Action that fires after the quantity input field is rendered.
+		 *
+		 * @since 2.7.0
 		 */
 		do_action( 'woocommerce_after_add_to_cart_quantity' );
 
