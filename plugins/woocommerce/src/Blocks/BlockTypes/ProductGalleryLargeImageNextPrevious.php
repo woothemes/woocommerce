@@ -172,8 +172,8 @@ class ProductGalleryLargeImageNextPrevious extends AbstractBlock {
 		}
 
 		return sprintf(
-			'<button class="wc-block-product-gallery-large-image-next-previous--button wc-block-product-gallery-large-image-next-previous-%1$s--%2$s">
-				<svg  xmlns="http://www.w3.org/2000/svg" width="49" height="48" viewBox="0 0 49 48" fill="none">
+			'<button data-wc-bind--disabled="state.disable%1$s" class="wc-block-product-gallery-large-image-next-previous--button wc-block-product-gallery-large-image-next-previous-%1$s--%2$s">
+				<svg xmlns="http://www.w3.org/2000/svg" width="49" height="48" viewBox="0 0 49 48" fill="none">
 					<g filter="url(#filter0_b_397_11354)">
 						<rect x="0.5" width="48" height="48" rx="5" fill="black" fill-opacity="0.5"/>
 						<path d="%3$s" fill="white"/>
