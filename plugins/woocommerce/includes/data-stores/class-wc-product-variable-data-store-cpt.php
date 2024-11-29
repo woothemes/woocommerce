@@ -273,6 +273,7 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 	 * @since  3.0.0
 	 */
 	public function read_price_data( &$product, $for_display = false ) {
+		global $wpdb;
 
 		/**
 		 * Transient name for storing prices for this product (note: Max transient length is 45)
@@ -313,6 +314,12 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 				);
 
 				$variation_ids = $product->get_visible_children();
+
+				// Hack: inject PoC tables names
+				$posts_table    = $wpdb->posts;
+				$wpdb->posts    = $this->posts_table;
+				$postmeta_table = $wpdb->postmeta;
+				$wpdb->postmeta = $this->postmeta_table;
 
 				if ( is_callable( '_prime_post_caches' ) ) {
 					_prime_post_caches( $variation_ids );
@@ -392,6 +399,10 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 						$prices_array = apply_filters( 'woocommerce_variation_prices_array', $prices_array, $variation, $for_display );
 					}
 				}
+
+				// Hack: restore original table names
+				$wpdb->posts    = $posts_table;
+				$wpdb->postmeta = $postmeta_table;
 
 				// Add all pricing data to the transient array.
 				foreach ( $prices_array as $key => $values ) {
