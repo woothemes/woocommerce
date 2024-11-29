@@ -5,7 +5,7 @@ namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 use Automattic\WooCommerce\Blocks\QueryFilters;
 use Automattic\WooCommerce\Blocks\Package;
-use Automattic\WooCommerce\Blocks\Utils\ProductCollectionUtils;
+use Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection\Utils as ProductCollectionUtils;
 
 /**
  * Product Filter: Attribute Block.
@@ -270,10 +270,12 @@ final class ProductFilterAttribute extends AbstractBlock {
 			unset( $query_vars[ 'filter_' . str_replace( 'pa_', '', $slug ) ] );
 		}
 
-		unset(
-			$query_vars['taxonomy'],
-			$query_vars['term']
-		);
+		if ( isset( $query_vars['taxonomy'] ) && false !== strpos( $query_vars['taxonomy'], 'pa_' ) ) {
+			unset(
+				$query_vars['taxonomy'],
+				$query_vars['term']
+			);
+		}
 
 		if ( ! empty( $query_vars['tax_query'] ) ) {
 			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
