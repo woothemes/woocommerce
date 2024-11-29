@@ -22,6 +22,11 @@ import {
 	useOrderSummaryHeadingFromEditor,
 } from '../../../../entities/editor';
 
+export type BlockAttributes = {
+	footerHeading: string | null;
+	className: string | undefined;
+};
+
 export const Edit = ( { clientId }: { clientId: string } ) => {
 	const blockProps = useBlockProps();
 	const { cartTotals } = useStoreCart();

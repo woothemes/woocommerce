@@ -25,7 +25,7 @@ import {
 import { OrderMetaSlotFill } from './slotfills';
 import { createSetOrderSummaryHeadingCallback } from '../../../../entities/editor';
 
-type BlockAttributes = {
+export type BlockAttributes = {
 	heading: string | null;
 	footerHeading: string | null;
 	className: string;

@@ -16,9 +16,9 @@ import { OrderMetaSlotFill, CheckoutOrderSummaryFill } from './slotfills';
 import { useContainerWidthContext } from '../../../../base/context';
 import { FormattedMonetaryAmount } from '../../../../../../packages/components';
 import { FormStepHeading } from '../../form-step';
-import { useOrderSummaryHeadingFromFrontend } from '../../../../entities/frontend';
+import { BlockAttributes } from './edit';
 
-type FrontendBlockProps = {
+type FrontendBlockProps = BlockAttributes & {
 	children: JSX.Element | JSX.Element[];
 	className?: string;
 };
