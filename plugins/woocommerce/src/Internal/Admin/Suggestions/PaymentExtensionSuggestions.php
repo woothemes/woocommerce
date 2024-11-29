@@ -1189,6 +1189,24 @@ class PaymentExtensionSuggestions {
 	);
 
 	/**
+	 * The suggestion incentives provider.
+	 *
+	 * @var PaymentExtensionSuggestionIncentives
+	 */
+	private PaymentExtensionSuggestionIncentives $suggestion_incentives;
+
+	/**
+	 * Initialize the class instance.
+	 *
+	 * @param PaymentExtensionSuggestionIncentives $suggestion_incentives The suggestion incentives provider.
+	 *
+	 * @internal
+	 */
+	final public function init( PaymentExtensionSuggestionIncentives $suggestion_incentives ) {
+		$this->suggestion_incentives = $suggestion_incentives;
+	}
+
+	/**
 	 * Get the list of payment extensions details for a specific country.
 	 *
 	 * @param string $country_code The two-letter country code.
