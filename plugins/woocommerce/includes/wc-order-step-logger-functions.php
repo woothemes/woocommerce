@@ -34,9 +34,8 @@ function wc_log_order_step( string $message, ?array $context = null, bool $final
 	// Generate a static place order unique ID for logging purposes. When this is called multiple times in the same request,
 	// the same UID will be used, enabling us to track recursion and race-condition issues on order processing methods
 	// or other problems related to third-party plugins and filters.
-	$order_uid       = $order_uid ?: wp_generate_uuid4();
-	$order_uid_short = $order_uid_short ?: substr( $order_uid, 0, 8 );
-
+	$order_uid       = $order_uid ? $order_uid : wp_generate_uuid4();
+	$order_uid_short = $order_uid_short ? $order_uid_short : substr( $order_uid, 0, 8 );
 
 	$context['order_uid'] = $order_uid;
 	$context['source']    = 'place-order-debug-' . $order_uid_short; // Source is segmented per order unique id.
