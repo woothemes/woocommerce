@@ -275,7 +275,6 @@ class Checkout extends AbstractCartRoute {
 		$this->validate_required_additional_fields( $request );
 		wc_log_order_step( '[Store API #3] Validated additional required fields' );
 
-
 		/**
 		 * Persist customer session data from the request first so that OrderController::update_addresses_from_cart
 		 * uses the up to date customer address.
@@ -293,13 +292,11 @@ class Checkout extends AbstractCartRoute {
 		$this->process_customer( $request );
 		wc_log_order_step( '[Store API #7] Created and/or persisted customer data from order', array( 'order_id' => $this->order->get_id() ) );
 
-
 		/**
 		 * Validate updated order before payment is attempted.
 		 */
 		$this->order_controller->validate_order_before_payment( $this->order );
 		wc_log_order_step( '[Store API #8] Validated order data', array( 'order_id' => $this->order->get_id() ) );
-
 
 		/**
 		 * Reserve stock for the order.
@@ -329,7 +326,6 @@ class Checkout extends AbstractCartRoute {
 			);
 		}
 		wc_log_order_step( '[Store API #9] Reserved stock for order', array( 'order_id' => $this->order->get_id() ) );
-
 
 		wc_do_deprecated_action(
 			'__experimental_woocommerce_blocks_checkout_order_processed',
@@ -389,7 +385,6 @@ class Checkout extends AbstractCartRoute {
 			),
 			true
 		);
-
 
 		return $this->prepare_item_for_response(
 			(object) [

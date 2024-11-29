@@ -1122,8 +1122,8 @@ class WC_Checkout {
 		wc_log_order_step(
 			'[Shortcode #6B] Order processed without payment',
 			array(
-				'order_id'       => $order_id,
-				'redirected'     => ! wp_doing_ajax() ? 'yes' : 'no',
+				'order_id'   => $order_id,
+				'redirected' => ! wp_doing_ajax() ? 'yes' : 'no',
 			),
 			true
 		);
@@ -1311,10 +1311,7 @@ class WC_Checkout {
 			$this->validate_checkout( $posted_data, $errors );
 
 			if ( empty( $errors->errors ) ) {
-				wc_log_order_step( '[Shortcode #3] Checkout posted data validated', array(
-						'payment_method' => $posted_data['payment_method'],
-					)
-				);
+				wc_log_order_step( '[Shortcode #3] Checkout posted data validated', array( 'payment_method' => $posted_data['payment_method'] ) );
 			}
 
 			foreach ( $errors->errors as $code => $messages ) {
@@ -1337,16 +1334,16 @@ class WC_Checkout {
 					throw new Exception( __( 'Unable to create order.', 'woocommerce' ) );
 				}
 
-				wc_log_order_step( '[Shortcode #4] Validated/Created customer and created order object', array(
-						'order_id' => $order_id,
-					)
+				wc_log_order_step(
+					'[Shortcode #4] Validated/Created customer and created order object',
+					array( 'order_id' => $order_id )
 				);
 
 				do_action( 'woocommerce_checkout_order_processed', $order_id, $posted_data, $order );
 
-				wc_log_order_step( '[Shortcode #5] woocommerce_checkout_order_processed hook ran successfully', array(
-						'order_id' => $order_id,
-					)
+				wc_log_order_step(
+					'[Shortcode #5] woocommerce_checkout_order_processed hook ran successfully',
+					array( 'order_id' => $order_id )
 				);
 
 				/**
