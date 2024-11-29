@@ -1441,17 +1441,11 @@ class PaymentExtensionSuggestions {
 			return null;
 		}
 
-		// Remove any incentives that are not visible.
-		$incentives = array_filter(
-			$incentives,
-			fn( $incentive ) => $this->suggestion_incentives->is_incentive_visible( $incentive['id'], $extension_id, $country_code, $incentive_type )
-		);
-
 		// Use the first incentive, in case there are multiple.
 		$incentive = reset( $incentives );
 
 		// Enhance the incentive details.
-		// Add the dismissals.
+		// Add the dismissals list.
 		$incentive['_dismissals'] = array_unique( array_values( $this->suggestion_incentives->get_incentive_dismissals( $incentive['id'], $extension_id ) ) );
 
 		return $incentive;
