@@ -48,6 +48,28 @@ class WooPayments extends Incentive {
 	}
 
 	/**
+	 * Check if an incentive should be visible.
+	 *
+	 * @param string $incentive_id                The incentive ID to check for visibility.
+	 * @param string $country_code                The business location country code to get incentives for.
+	 * @param string $incentive_type              Optional. Besides the incentive ID, an incentive with this type must be available.
+	 * @param bool   $skip_extension_active_check Whether to skip the check for the extension plugin being active.
+	 *
+	 * @return boolean Whether the incentive should be visible.
+	 */
+	public function is_visible( string $incentive_id, string $country_code, string $incentive_type = '', bool $skip_extension_active_check = false ): bool {
+		// Always skip the extension active check since we will check bellow.
+		parent::is_visible( $incentive_id, $country_code, $incentive_type, true );
+
+		// Instead of just extension active, we check if WooPayments is active and has an account.
+		if ( ! $skip_extension_active_check && $this->is_extension_active() && $this->has_wcpay_account_data() ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
 	 * Clear the incentives cache.
 	 */
 	public function clear_cache() {
