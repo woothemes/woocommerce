@@ -60,7 +60,6 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 		await expect( pageObject.productTitles ).toHaveText( sortedTitles );
 	} );
 
-	// Products can be filtered based on 'on sale' status.
 	test( 'Products can be filtered based on "on sale" status', async ( {
 		pageObject,
 	} ) => {
@@ -382,14 +381,14 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 		).not.toHaveCount( 0 );
 	} );
 
-	test.describe( '"Use page context" control', () => {
+	test.describe( '"Query Type" control', () => {
 		test( 'should be visible on posts', async ( { pageObject } ) => {
 			await pageObject.createNewPostAndInsertBlock();
 
 			await expect(
 				pageObject
 					.locateSidebarSettings()
-					.locator( SELECTORS.usePageContextControl )
+					.getByLabel( SELECTORS.usePageContextControl )
 			).toBeVisible();
 		} );
 
@@ -413,7 +412,7 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 				await expect(
 					pageObject
 						.locateSidebarSettings()
-						.locator( SELECTORS.usePageContextControl )
+						.getByLabel( SELECTORS.usePageContextControl )
 				).toBeVisible();
 			} );
 		} );
@@ -436,7 +435,7 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 				await expect(
 					pageObject
 						.locateSidebarSettings()
-						.locator( SELECTORS.usePageContextControl )
+						.getByLabel( SELECTORS.usePageContextControl )
 				).toBeVisible();
 			} );
 		} );
@@ -450,16 +449,15 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 			await editor.openDocumentSettingsSidebar();
 
 			const sidebarSettings = pageObject.locateSidebarSettings();
+			const queryTypeLocator = sidebarSettings.getByLabel(
+				SELECTORS.usePageContextControl
+			);
+
+			const defaultQueryType = queryTypeLocator.getByLabel( 'Default' );
+			const customQueryType = queryTypeLocator.getByLabel( 'Custom' );
 
 			// Inherit query from template should be visible & enabled by default
-			await expect(
-				sidebarSettings.locator( SELECTORS.usePageContextControl )
-			).toBeVisible();
-			await expect(
-				sidebarSettings.locator(
-					`${ SELECTORS.usePageContextControl } input`
-				)
-			).toBeChecked();
+			await expect( defaultQueryType ).toBeChecked();
 
 			// "On sale control" should be hidden when inherit query from template is enabled
 			await expect(
@@ -467,7 +465,7 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 			).toBeHidden();
 
 			// "On sale control" should be visible when inherit query from template is disabled
-			await pageObject.setInheritQueryFromTemplate( false );
+			await customQueryType.click();
 			await expect(
 				sidebarSettings.getByLabel( SELECTORS.onSaleControlLabel )
 			).toBeVisible();
@@ -480,11 +478,11 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 			await expect(
 				sidebarSettings.getByLabel( SELECTORS.onSaleControlLabel )
 			).toBeChecked();
-			await pageObject.setInheritQueryFromTemplate( true );
+			await defaultQueryType.click();
 			await expect(
 				sidebarSettings.getByLabel( SELECTORS.onSaleControlLabel )
 			).toBeHidden();
-			await pageObject.setInheritQueryFromTemplate( false );
+			await customQueryType.click();
 			await expect(
 				sidebarSettings.getByLabel( SELECTORS.onSaleControlLabel )
 			).toBeVisible();
@@ -501,10 +499,13 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 				'Block: Product Collection',
 				{ exact: true }
 			);
-			const usePageContextToggle = pageObject
-				.locateSidebarSettings()
-				.locator( SELECTORS.usePageContextControl )
-				.locator( 'input' );
+			const sidebarSettings = pageObject.locateSidebarSettings();
+			const queryTypeLocator = sidebarSettings.getByLabel(
+				SELECTORS.usePageContextControl
+			);
+
+			const defaultQueryType = queryTypeLocator.getByLabel( 'Default' );
+			const customQueryType = queryTypeLocator.getByLabel( 'Custom' );
 
 			// First Product Catalog
 			// Option should be visible & ENABLED by default
@@ -512,7 +513,8 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 			await editor.selectBlocks( productCollection.first() );
 			await editor.openDocumentSettingsSidebar();
 
-			await expect( usePageContextToggle ).toBeChecked();
+			await expect( defaultQueryType ).toBeChecked();
+			await expect( customQueryType ).not.toBeChecked();
 
 			// Second Product Catalog
 			// Option should be visible & DISABLED by default
@@ -520,11 +522,12 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 			await pageObject.chooseCollectionInTemplate( 'productCatalog' );
 			await editor.selectBlocks( productCollection.last() );
 
-			await expect( usePageContextToggle ).not.toBeChecked();
+			await expect( defaultQueryType ).not.toBeChecked();
+			await expect( customQueryType ).toBeChecked();
 
 			// Disable the option in the first Product Catalog
 			await editor.selectBlocks( productCollection.first() );
-			await usePageContextToggle.click();
+			await customQueryType.click();
 
 			// Third Product Catalog
 			// Option should be visible & ENABLED by default
@@ -532,7 +535,8 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 			await pageObject.chooseCollectionInTemplate( 'productCatalog' );
 			await editor.selectBlocks( productCollection.last() );
 
-			await expect( usePageContextToggle ).toBeChecked();
+			await expect( defaultQueryType ).toBeChecked();
+			await expect( customQueryType ).not.toBeChecked();
 		} );
 
 		test( 'allows filtering in non-archive context', async ( {
@@ -621,5 +625,71 @@ test.describe( 'Product Collection: Inspector Controls', () => {
 
 			await expect( pageObject.products ).toHaveCount( 1 );
 		} );
+	} );
+
+	test( 'Display -> Items per page, offset & max page to show', async ( {
+		pageObject,
+		page,
+		editor,
+	} ) => {
+		await pageObject.createNewPostAndInsertBlock();
+
+		// Add all display controls
+		await page.getByRole( 'button', { name: 'Settings options' } ).click();
+		await page.getByRole( 'menuitemcheckbox', { name: 'Offset' } ).click();
+		await page
+			.getByRole( 'menuitemcheckbox', { name: 'Max pages to show' } )
+			.click();
+		await page.getByRole( 'button', { name: 'Settings options' } ).click();
+
+		// Get the products per page input
+		const settingsPanel = page.locator(
+			'.wc-block-editor-product-collection__settings_panel'
+		);
+		const productsPerPageInput = settingsPanel.getByRole( 'spinbutton', {
+			name: 'Products per page',
+		} );
+
+		// Test setting products per page to 2
+		await productsPerPageInput.fill( '2' );
+		await pageObject.refreshLocators( 'editor' );
+		await expect( pageObject.products ).toHaveCount( 2 );
+
+		// Test setting products per page to 3
+		await productsPerPageInput.fill( '3' );
+		await pageObject.refreshLocators( 'editor' );
+		await expect( pageObject.products ).toHaveCount( 3 );
+
+		// Set offset to 1 and verify it skips the first product
+		const offsetInput = settingsPanel.getByRole( 'spinbutton', {
+			name: 'Offset',
+		} );
+		await offsetInput.fill( '1' );
+		const loadingSpinner = editor.canvas.locator(
+			'.wc-block-product-template__spinner'
+		);
+		await expect( loadingSpinner ).toBeHidden();
+		await pageObject.refreshLocators( 'editor' );
+		await expect( pageObject.productTitles.first() ).toHaveText( 'Beanie' );
+
+		// Set max pages to show
+		const maxPagesInput = settingsPanel.getByRole( 'spinbutton', {
+			name: 'Max pages to show',
+		} );
+		await maxPagesInput.fill( '2' );
+
+		await pageObject.publishAndGoToFrontend();
+
+		// Frontend: Verify products are displayed correctly
+		await expect( pageObject.products ).toHaveCount( 3 );
+		await expect( pageObject.productTitles.first() ).toHaveText( 'Beanie' );
+
+		// Frontend: Verify pagination is limited to 2 pages
+		const paginationContainer = page.locator(
+			SELECTORS.pagination.onFrontend
+		);
+		const paginationNumbers =
+			paginationContainer.locator( '.page-numbers' );
+		await expect( paginationNumbers ).toHaveCount( 2 );
 	} );
 } );

@@ -64,6 +64,7 @@ test.describe( 'Product Collection: Register Product Collection', () => {
 		pageObject,
 		editor,
 		admin,
+		page,
 	} ) => {
 		await admin.createNewPost();
 		await editor.insertBlockUsingGlobalInserter( pageObject.BLOCK_NAME );
@@ -73,18 +74,22 @@ test.describe( 'Product Collection: Register Product Collection', () => {
 			} )
 			.click();
 
-		const productCollectionBlock = editor.canvas.getByLabel(
-			'Block: Product Collection'
-		);
+		// This viewport size is required to ensure that the selectors are visible.
+		// For smaller viewports, a different DOM structure is rendered, which may cause the selectors to be hidden or not interactable.
+		await page.setViewportSize( {
+			width: 1920,
+			height: 1080,
+		} );
 
 		for ( const myCollection of Object.values(
 			MY_REGISTERED_COLLECTIONS
 		) ) {
 			await expect(
-				productCollectionBlock.getByRole( 'button', {
-					name: myCollection.name,
-					exact: true,
-				} )
+				editor.canvas
+					.locator(
+						`.wc-blocks-product-collection__collection-button-title`
+					)
+					.getByText( myCollection.name, { exact: true } )
 			).toBeVisible();
 		}
 	} );
@@ -586,6 +591,71 @@ test.describe( 'Product Collection: Register Product Collection', () => {
 
 				await expect( previewButtonLocator ).toBeHidden();
 			} );
+		} );
+	} );
+
+	test.describe( 'with "scope" argument', () => {
+		test( 'Collection with only `inserter` scope should not be displayed in Collection Chooser', async ( {
+			pageObject,
+			editor,
+			admin,
+		} ) => {
+			await admin.createNewPost();
+			await pageObject.insertProductCollection();
+
+			const placeholderSelector = editor.canvas.locator(
+				SELECTORS.collectionPlaceholder
+			);
+
+			const collectionButton = placeholderSelector.getByRole( 'button', {
+				name: 'My Custom Collection - With Inserter Scope',
+				exact: true,
+			} );
+
+			await expect( collectionButton ).toBeHidden();
+		} );
+
+		test( 'Collection with only `block` scope should be displayed in Collection Chooser', async ( {
+			pageObject,
+			editor,
+			admin,
+		} ) => {
+			await admin.createNewPost();
+			await pageObject.insertProductCollection();
+
+			const placeholderSelector = editor.canvas.locator(
+				SELECTORS.collectionPlaceholder
+			);
+
+			const collectionButton = placeholderSelector.getByRole( 'button', {
+				name: 'My Custom Collection - With Block Scope',
+				exact: true,
+			} );
+
+			await expect( collectionButton ).toBeVisible();
+		} );
+
+		test( 'Choose collection button visibility for different scopes', async ( {
+			pageObject,
+			editor,
+			admin,
+		} ) => {
+			await admin.createNewPost();
+			await pageObject.insertProductCollection();
+			await pageObject.chooseCollectionInPost(
+				'myCustomCollectionWithBlockScope'
+			);
+			const chooseCollectionButton = admin.page
+				.getByRole( 'toolbar', { name: 'Block Tools' } )
+				.getByRole( 'button', { name: 'Choose collection' } );
+			await expect( chooseCollectionButton ).toBeVisible();
+
+			// Test inserter scope collection
+			await editor.setContent( '' );
+			await editor.insertBlockUsingGlobalInserter(
+				'My Custom Collection - With Inserter Scope'
+			);
+			await expect( chooseCollectionButton ).toBeHidden();
 		} );
 	} );
 } );

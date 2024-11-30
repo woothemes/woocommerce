@@ -42,38 +42,44 @@ const getCanvas = async ( page ) => {
 };
 
 const goToPageEditor = async ( { page } ) => {
-	const responsePromise = page.waitForResponse(
-		( response ) =>
-			response.url().includes( '//page' ) && response.status() === 200
-	);
 	await page.goto( 'wp-admin/post-new.php?post_type=page' );
 	await disableWelcomeModal( { page } );
 	await closeChoosePatternModal( { page } );
-	await responsePromise;
 };
 
 const goToPostEditor = async ( { page } ) => {
-	const responsePromise = page.waitForResponse(
-		( response ) =>
-			response.url().includes( '//single' ) && response.status() === 200
-	);
 	await page.goto( 'wp-admin/post-new.php' );
 	await disableWelcomeModal( { page } );
-	await responsePromise;
 };
 
 const fillPageTitle = async ( page, title ) => {
-	await ( await getCanvas( page ) ).getByLabel( 'Add title' ).click();
-	await ( await getCanvas( page ) ).getByLabel( 'Add title' ).fill( title );
+	// TODO (Gutenberg 19.9): Keep only the "Block: Title" label locator.
+	// Current stable version of Gutenberg (19.7) uses the "Add title" label locator.
+	// Upcoming Gutenberg 19.9 uses the "Block: Title" one. We should use it instead when GB 19.9 comes out.
+	const canvas = await getCanvas( page );
+	const block_title = canvas
+		.getByLabel( 'Add title' )
+		.or( canvas.getByLabel( 'Block: Title' ) );
+	await block_title.click();
+	await block_title.fill( title );
 };
 
 const insertBlock = async ( page, blockName, wpVersion = null ) => {
+	// Focus on "Empty block" element before inserting a new block.
+	// Otherwise Gutenberg nightly (v19.9-nightly) would display "{Block name} can't be inserted."
+	const emptyBlock = ( await getCanvas( page ) ).getByLabel( 'Empty block' );
+	if ( await emptyBlock.isVisible() ) {
+		await emptyBlock.click();
+	}
+
+	// With Gutenberg active we have Block Inserter name
 	await page
 		.getByRole( 'button', {
-			name: 'Toggle block inserter',
+			name: /Toggle block inserter|Block Inserter/,
 			expanded: false,
 		} )
 		.click();
+
 	await page.getByPlaceholder( 'Search', { exact: true } ).fill( blockName );
 	await page.getByRole( 'option', { name: blockName, exact: true } ).click();
 

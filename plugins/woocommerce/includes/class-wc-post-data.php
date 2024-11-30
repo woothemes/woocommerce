@@ -8,6 +8,7 @@
  * @version 2.2.0
  */
 
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Internal\DataStores\Orders\DataSynchronizer;
 use Automattic\WooCommerce\Internal\ProductAttributesLookup\LookupDataStore as ProductAttributesLookupDataStore;
 use Automattic\WooCommerce\Proxies\LegacyProxy;
@@ -364,7 +365,7 @@ class WC_Post_Data {
 			$refunds = $wpdb->get_results( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type = 'shop_order_refund' AND post_parent = %d", $id ) );
 
 			foreach ( $refunds as $refund ) {
-				$wpdb->update( $wpdb->posts, array( 'post_status' => 'trash' ), array( 'ID' => $refund->ID ) );
+				$wpdb->update( $wpdb->posts, array( 'post_status' => OrderStatus::TRASH ), array( 'ID' => $refund->ID ) );
 			}
 
 			wc_delete_shop_order_transients( $id );

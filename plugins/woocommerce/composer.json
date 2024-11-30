@@ -2,7 +2,7 @@
 	"name": "woocommerce/woocommerce",
 	"description": "An eCommerce toolkit that helps you sell anything. Beautifully.",
 	"homepage": "https://woocommerce.com/",
-	"version": "9.5.0",
+	"version": "9.6.0",
 	"type": "wordpress-plugin",
 	"license": "GPL-3.0-or-later",
 	"prefer-stable": true,
@@ -14,7 +14,10 @@
 		},
 		{
 			"type": "path",
-			"url": "../../packages/php/monorepo-plugin"
+			"url": "../../packages/php/monorepo-plugin",
+			"options": {
+				"symlink": false
+			}
 		},
 		{
 			"type": "path",
@@ -34,7 +37,7 @@
 		"composer/installers": "^1.9",
 		"maxmind-db/reader": "^1.11",
 		"pelago/emogrifier": "^6.0",
-		"woocommerce/action-scheduler": "3.8.2",
+		"woocommerce/action-scheduler": "3.9.0",
 		"woocommerce/blueprint": "*"
 	},
 	"require-dev": {
@@ -82,7 +85,8 @@
 		"files": [
 			"src/StoreApi/deprecated.php",
 			"src/StoreApi/functions.php",
-			"src/Blocks/Domain/Services/functions.php"
+			"src/Blocks/Domain/Services/functions.php",
+			"src/Deprecated.php"
 		]
 	},
 	"autoload-dev": {
@@ -120,7 +124,7 @@
 			"phpcbf -p"
 		],
 		"makepot-audit": [
-			"wp --allow-root i18n make-pot . --include=\"woocommerce.php,client,i18n,includes,lib,packages,patterns,src,templates\" --slug=woocommerce"
+			"wp --allow-root i18n make-pot . --include=\"woocommerce.php,assets,i18n,includes,lib,packages,patterns,src,templates\" --slug=woocommerce"
 		],
 		"makepot": [
 			"@makepot-audit --skip-audit"

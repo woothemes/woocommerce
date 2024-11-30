@@ -73,19 +73,21 @@ test.describe( 'Assembler -> headers', { tag: '@gutenberg' }, () => {
 			'.block-editor-block-patterns-list__list-item'
 		);
 
-		await expect( headers ).toHaveCount( 4 );
+		await expect( headers ).toHaveCount( 5 );
 	} );
 
 	test( 'The selected header should be focused when is clicked', async ( {
 		assemblerPage,
 	} ) => {
 		const assembler = await assemblerPage.getAssembler();
-		const header = assembler
-			.locator( '.block-editor-block-patterns-list__item' )
-			.nth( 2 );
+		const headers = assembler.locator(
+			'.block-editor-block-patterns-list__item'
+		);
 
-		await header.click();
-		await expect( header ).toHaveClass( /is-selected/ );
+		await expect( headers ).toHaveCount( 5 );
+		await expect( headers.nth( 4 ) ).toBeVisible();
+		await headers.nth( 2 ).click();
+		await expect( headers.nth( 2 ) ).toHaveClass( /is-selected/ );
 	} );
 
 	test( 'The selected header should be applied on the frontend', async ( {

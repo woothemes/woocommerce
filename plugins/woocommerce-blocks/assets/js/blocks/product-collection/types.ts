@@ -2,7 +2,7 @@
  * External dependencies
  */
 import type { BlockEditProps } from '@wordpress/blocks';
-import { type AttributeMetadata } from '@woocommerce/types';
+import type { AttributeMetadata } from '@woocommerce/types';
 
 /**
  * Internal dependencies
@@ -117,7 +117,13 @@ export interface ProductCollectionQuery {
 	priceRange: undefined | PriceRange;
 	filterable: boolean;
 	productReference?: number;
+	relatedBy?: RelatedBy | undefined;
 }
+
+export type RelatedBy = {
+	categories: boolean;
+	tags: boolean;
+};
 
 export type ProductCollectionEditComponentProps =
 	BlockEditProps< ProductCollectionAttributes > & {
@@ -130,6 +136,7 @@ export type ProductCollectionEditComponentProps =
 		context: {
 			templateSlug: string;
 		};
+		tracksLocation: string;
 	};
 
 export type ProductCollectionContentProps =
@@ -179,6 +186,7 @@ export enum CoreCollectionNames {
 	HAND_PICKED = 'woocommerce/product-collection/hand-picked',
 	RELATED = 'woocommerce/product-collection/related',
 	UPSELLS = 'woocommerce/product-collection/upsells',
+	CROSS_SELLS = 'woocommerce/product-collection/cross-sells',
 }
 
 export enum CoreFilterNames {
@@ -194,6 +202,10 @@ export enum CoreFilterNames {
 	TAXONOMY = 'taxonomy',
 	PRICE_RANGE = 'price-range',
 	FILTERABLE = 'filterable',
+	PRODUCTS_PER_PAGE = 'products-per-page',
+	MAX_PAGES_TO_SHOW = 'max-pages-to-show',
+	OFFSET = 'offset',
+	RELATED_BY = 'related-by',
 }
 
 export type CollectionName = CoreCollectionNames | string;

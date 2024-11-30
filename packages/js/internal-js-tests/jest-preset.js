@@ -26,7 +26,7 @@ module.exports = {
 		),
 		'~/(.*)': path.resolve(
 			__dirname,
-			'../../../plugins/woocommerce-admin/client/$1'
+			'../../../plugins/woocommerce/client/admin/client/$1'
 		),
 		'\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
 			path.resolve( __dirname, 'build/mocks/static' ),
@@ -56,15 +56,17 @@ module.exports = {
 	],
 	// The keys for the transformed modules contains the name of the packages that should be transformed.
 	transformIgnorePatterns: [
-		'node_modules/(?!(?:\\.pnpm|' + Object.keys( transformModules ).join( '|' ) + ')/)',
-		__dirname
+		'node_modules/(?!(?:\\.pnpm|' +
+			Object.keys( transformModules ).join( '|' ) +
+			')/)',
+		__dirname,
 	],
 	// The values for the transformed modules contain an object with the transforms to apply.
 	transform: Object.entries( transformModules ).reduce(
 		( acc, [ moduleName, transform ] ) => {
 			for ( const key in transform ) {
 				acc[ `node_modules/${ moduleName }/${ key }` ] =
-				transform[ key ];
+					transform[ key ];
 			}
 
 			return acc;

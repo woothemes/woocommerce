@@ -1,0 +1,5 @@
+Significance: patch
+Type: add
+Comment: Allow previewing different email types. Still behind a hidden experimental flag, not ready for public use.
+
+
