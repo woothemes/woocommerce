@@ -1460,11 +1460,39 @@ class PaymentExtensionSuggestions {
 		// Use the first incentive, in case there are multiple.
 		$incentive = reset( $incentives );
 
+		// Sanitize the incentive details.
+		$incentive = $this->sanitize_extension_incentive( $incentive );
+
 		// Enhance the incentive details.
 		// Add the dismissals list.
 		$incentive['_dismissals'] = array_unique( array_values( $this->suggestion_incentives->get_incentive_dismissals( $incentive['id'], $extension_id ) ) );
 
 		return $incentive;
+	}
+
+	/**
+	 * Sanitize the incentive details for a payment extension.
+	 *
+	 * @param array $incentive The incentive details.
+	 *
+	 * @return array The sanitized incentive details.
+	 */
+	private function sanitize_extension_incentive( array $incentive ): array {
+		// Apply a very lose sanitization. Stricter sanitization can be applied downstream, if needed.
+		return array_map( function ( $value ) {
+			// Make sure that if we have HTML tags, we only allow a limited set of tags.
+			if ( is_string( $value ) && preg_match( '/<[^>]+>/', $value ) ) {
+				$value = wp_kses(
+					$value,
+					wp_kses_allowed_html( 'data' ) + array(
+						'p' => array(
+							'align' => true,
+						),
+					) );
+			}
+
+			return $value;
+		}, $incentive );
 	}
 
 	/**
