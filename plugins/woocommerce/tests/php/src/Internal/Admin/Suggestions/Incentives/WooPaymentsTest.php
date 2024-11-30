@@ -65,14 +65,14 @@ class WooPaymentsTest extends WC_REST_Unit_Test_Case {
 								// Invalid incentive.
 							),
 							array(
-								'id'   => 'id', // Invalid incentive that is missing type.
+								'id' => 'id', // Invalid incentive that is missing type.
 							),
 							array(
 								'id'   => 'incentive2',
 								'type' => 'type2',
 							),
 							array(
-								'type'   => 'type', // Invalid incentive that is missing ID.
+								'type' => 'type', // Invalid incentive that is missing ID.
 							),
 						)
 					),
@@ -85,7 +85,7 @@ class WooPaymentsTest extends WC_REST_Unit_Test_Case {
 			return $preempt;
 		};
 
-		$this->error_response_mock_ref = function( $preempt, $parsed_args, $url ) {
+		$this->error_response_mock_ref = function ( $preempt, $parsed_args, $url ) {
 			if ( str_contains( $url, 'https://public-api.wordpress.com/wpcom/v2/wcpay/incentives' ) ) {
 				return new \WP_Error( 'http_request_failed', 'Error.' );
 			}
@@ -103,6 +103,9 @@ class WooPaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->sut->clear_cache();
 	}
 
+	/**
+	 * Test getting all incentives caches remote response.
+	 */
 	public function test_get_all_caches_remote_response() {
 		// Arrange.
 		add_filter( 'pre_http_request', $this->response_mock_ref, 10, 3 );
@@ -141,6 +144,9 @@ class WooPaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertCount( 2, $result );
 	}
 
+	/**
+	 * Test getting all incentives caches remote response error.
+	 */
 	public function test_get_all_caches_error() {
 		// Arrange.
 		remove_filter( 'pre_http_request', $this->response_mock_ref );

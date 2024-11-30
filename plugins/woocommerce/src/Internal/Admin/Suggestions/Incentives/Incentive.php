@@ -10,26 +10,32 @@ abstract class Incentive {
 	const PREFIX = 'woocommerce_admin_pes_incentive_';
 
 	/**
-	 * @var string The user meta name for storing dismissed incentives.
+	 * The user meta name for storing dismissed incentives.
+	 *
+	 * @var string
 	 */
 	protected string $dismissed_meta_name = self::PREFIX . 'dismissed';
 
 	/**
-	 * @var string The suggestion ID.
+	 * The suggestion ID this incentive provider is for.
+	 *
+	 * @var string
 	 */
 	protected string $suggestion_id;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param string $suggestion_id The suggestion ID.
+	 * @param string $suggestion_id The suggestion ID this incentive provider is for.
 	 */
 	public function __construct( string $suggestion_id ) {
 		$this->suggestion_id = $suggestion_id;
 	}
 
 	/**
-	 * Get all the incentives.
+	 * Get the details of all the incentives.
+	 *
+	 * The incentives are filtered based on the country code, incentive type, if provided, and their visibility.
 	 *
 	 * @param string $country_code   The business location country code to get incentives for.
 	 * @param string $incentive_type Optional. The type of incentive to check for.
@@ -56,6 +62,8 @@ abstract class Incentive {
 
 	/**
 	 * Get an incentive by ID.
+	 *
+	 * The incentives are filtered based on the country code, incentive type, if provided, and their visibility.
 	 *
 	 * @param string $incentive_id   The incentive ID.
 	 * @param string $country_code   The business location country code to get incentives for.

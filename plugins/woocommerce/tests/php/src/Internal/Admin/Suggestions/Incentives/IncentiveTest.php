@@ -47,31 +47,36 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		$this->sut = $this->getMockForAbstractClass( Incentive::class, array( $this->suggestion_id ) );
 	}
 
+	/**
+	 * Test getting all incentives.
+	 */
 	public function test_get_all() {
 		// Arrange.
 		$this->sut
 			->expects( $this->once() )
 			->method( 'get_incentives' )
 			->with( 'US' )
-			->willReturn( array(
+			->willReturn(
 				array(
-					'id'   => 'incentive1',
-					'type' => 'type1',
-				),
-				array(
-					// Invalid incentive.
-				),
-				array(
-					'id'   => 'id', // Invalid incentive that is missing type.
-				),
-				array(
-					'type'   => 'type', // Invalid incentive that is missing ID.
-				),
-				array(
-					'id'   => 'incentive2',
-					'type' => 'type2',
-				),
-			) );
+					array(
+						'id'   => 'incentive1',
+						'type' => 'type1',
+					),
+					array(
+						// Invalid incentive.
+					),
+					array(
+						'id' => 'id', // Invalid incentive that is missing type.
+					),
+					array(
+						'type' => 'type', // Invalid incentive that is missing ID.
+					),
+					array(
+						'id'   => 'incentive2',
+						'type' => 'type2',
+					),
+				)
+			);
 
 		// Act.
 		$result = $this->sut->get_all( 'US' );
@@ -82,26 +87,31 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		$this->assertEquals( 'incentive2', $result[1]['id'] );
 	}
 
+	/**
+	 * Test getting all incentives with a specific type.
+	 */
 	public function test_get_all_with_incentive_type() {
 		// Arrange.
 		$this->sut
 			->expects( $this->once() )
 			->method( 'get_incentives' )
 			->with( 'US' )
-			->willReturn( array(
+			->willReturn(
 				array(
-					'id'   => 'incentive1',
-					'type' => 'type1',
-				),
-				array(
-					'id'   => 'incentive2',
-					'type' => 'type2',
-				),
-				array(
-					'id'   => 'incentive3',
-					'type' => 'type1',
-				),
-			) );
+					array(
+						'id'   => 'incentive1',
+						'type' => 'type1',
+					),
+					array(
+						'id'   => 'incentive2',
+						'type' => 'type2',
+					),
+					array(
+						'id'   => 'incentive3',
+						'type' => 'type1',
+					),
+				)
+			);
 
 		// Act.
 		$result = $this->sut->get_all( 'US', 'type1' );
@@ -112,30 +122,35 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		$this->assertEquals( 'incentive3', $result[1]['id'] );
 	}
 
+	/**
+	 * Test getting an incentive by ID.
+	 */
 	public function test_get_by_id() {
 		// Arrange.
 		$this->sut
 			->expects( $this->once() )
 			->method( 'get_incentives' )
 			->with( 'US' )
-			->willReturn( array(
+			->willReturn(
 				array(
-					'id'   => 'incentive1',
-					'type' => 'type1',
-				),
-				array(
-					'id'   => 'incentive2',
-					'type' => 'type2',
-				),
-				array(
-					'id'   => 'incentive3',
-					'type' => 'type1',
-				),
-				array(
-					'id'   => 'incentive4',
-					'type' => 'type2',
-				),
-			) );
+					array(
+						'id'   => 'incentive1',
+						'type' => 'type1',
+					),
+					array(
+						'id'   => 'incentive2',
+						'type' => 'type2',
+					),
+					array(
+						'id'   => 'incentive3',
+						'type' => 'type1',
+					),
+					array(
+						'id'   => 'incentive4',
+						'type' => 'type2',
+					),
+				)
+			);
 
 		// Act.
 		$result = $this->sut->get_by_id( 'incentive2', 'US' );
@@ -145,30 +160,35 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		$this->assertEquals( 'type2', $result['type'] );
 	}
 
+	/**
+	 * Test getting an incentive by ID with a specific type.
+	 */
 	public function test_get_by_id_with_incentive_type() {
 		// Arrange.
 		$this->sut
 			->expects( $this->exactly( 2 ) )
 			->method( 'get_incentives' )
 			->with( 'US' )
-			->willReturn( array(
+			->willReturn(
 				array(
-					'id'   => 'incentive1',
-					'type' => 'type1',
-				),
-				array(
-					'id'   => 'incentive1', // Same ID, different type.
-					'type' => 'type2',
-				),
-				array(
-					'id'   => 'incentive3',
-					'type' => 'type1',
-				),
-				array(
-					'id'   => 'incentive4',
-					'type' => 'type2',
-				),
-			) );
+					array(
+						'id'   => 'incentive1',
+						'type' => 'type1',
+					),
+					array(
+						'id'   => 'incentive1', // Same ID, different type.
+						'type' => 'type2',
+					),
+					array(
+						'id'   => 'incentive3',
+						'type' => 'type1',
+					),
+					array(
+						'id'   => 'incentive4',
+						'type' => 'type2',
+					),
+				)
+			);
 
 		// Act.
 		$result = $this->sut->get_by_id( 'incentive1', 'US', 'type1' );
@@ -185,22 +205,27 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		$this->assertEquals( 'type2', $result['type'] );
 	}
 
+	/**
+	 * Test getting an incentive by ID when the ID is invalid.
+	 */
 	public function test_get_by_id_with_invalid_id() {
 		// Arrange.
 		$this->sut
 			->expects( $this->once() )
 			->method( 'get_incentives' )
 			->with( 'US' )
-			->willReturn( array(
+			->willReturn(
 				array(
-					'id'   => 'incentive1',
-					'type' => 'type1',
-				),
-				array(
-					'id'   => 'incentive2',
-					'type' => 'type2',
-				),
-			) );
+					array(
+						'id'   => 'incentive1',
+						'type' => 'type1',
+					),
+					array(
+						'id'   => 'incentive2',
+						'type' => 'type2',
+					),
+				)
+			);
 
 		// Act.
 		$result = $this->sut->get_by_id( 'bogus_id', 'US' );
@@ -209,18 +234,23 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		$this->assertNull( $result );
 	}
 
+	/**
+	 * Test getting an incentive by ID when the incentive is invalid.
+	 */
 	public function test_get_by_id_with_invalid_incentive() {
 		// Arrange.
 		$this->sut
 			->expects( $this->once() )
 			->method( 'get_incentives' )
 			->with( 'US' )
-			->willReturn( array(
+			->willReturn(
 				array(
-					'id' => 'incentive1',
+					array(
+						'id' => 'incentive1',
 					// No type.
-				),
-			) );
+					),
+				)
+			);
 
 		// Act.
 		$result = $this->sut->get_by_id( 'incentive1', 'US' );
@@ -229,22 +259,27 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		$this->assertNull( $result );
 	}
 
+	/**
+	 * Test getting an incentive by ID when there are multiple incentives with the same ID.
+	 */
 	public function test_get_by_id_returns_first() {
 		// Arrange.
 		$this->sut
 			->expects( $this->once() )
 			->method( 'get_incentives' )
 			->with( 'US' )
-			->willReturn( array(
+			->willReturn(
 				array(
-					'id'   => 'incentive1',
-					'type' => 'type1',
-				),
-				array(
-					'id'   => 'incentive1', // Same ID.
-					'type' => 'type2',
-				),
-			) );
+					array(
+						'id'   => 'incentive1',
+						'type' => 'type1',
+					),
+					array(
+						'id'   => 'incentive1', // Same ID.
+						'type' => 'type2',
+					),
+				)
+			);
 
 		// Act.
 		$result = $this->sut->get_by_id( 'incentive1', 'US' );
@@ -254,6 +289,9 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		$this->assertEquals( 'type1', $result['type'] );
 	}
 
+	/**
+	 * Test is_visible when the extension is active.
+	 */
 	public function test_is_visible_extension_active() {
 		// Arrange.
 		$this->sut
@@ -268,6 +306,9 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		$this->assertFalse( $result );
 	}
 
+	/**
+	 * Test is_visible when instructed to skip the extension active check.
+	 */
 	public function test_is_visible_skips_extension_active_check() {
 		// Arrange.
 		$this->sut
@@ -282,12 +323,14 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 			->expects( $this->any() )
 			->method( 'get_incentives' )
 			->with( 'RO' )
-			->willReturn( array(
+			->willReturn(
 				array(
-					'id'   => 'incentive1',
-					'type' => 'type1',
-				),
-			) );
+					array(
+						'id'   => 'incentive1',
+						'type' => 'type1',
+					),
+				)
+			);
 
 		// Act.
 		$result = $this->sut->is_visible( 'incentive1', 'RO', '', true );
@@ -299,6 +342,9 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		remove_filter( 'user_has_cap', $filter_callback );
 	}
 
+	/**
+	 * Test is_visible when the user does not have the required capabilities.
+	 */
 	public function test_is_visible_user_does_not_have_caps() {
 		// Arrange.
 		$this->sut
@@ -314,12 +360,14 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 			->expects( $this->any() )
 			->method( 'get_incentives' )
 			->with( 'RO' )
-			->willReturn( array(
+			->willReturn(
 				array(
-					'id'   => 'incentive1',
-					'type' => 'type1',
-				),
-			) );
+					array(
+						'id'   => 'incentive1',
+						'type' => 'type1',
+					),
+				)
+			);
 
 		// Act.
 		$result = $this->sut->is_visible( 'incentive1', 'RO' );
@@ -331,6 +379,9 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		remove_filter( 'user_has_cap', $filter_callback );
 	}
 
+	/**
+	 * Test is_visible when there are no incentives with the given ID.
+	 */
 	public function test_is_visible_no_incentive() {
 		// Arrange.
 		$this->sut
@@ -346,12 +397,14 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 			->expects( $this->any() )
 			->method( 'get_incentives' )
 			->with( 'RO' )
-			->willReturn( array(
+			->willReturn(
 				array(
-					'id'   => 'incentive1',
-					'type' => 'type1',
-				),
-			) );
+					array(
+						'id'   => 'incentive1',
+						'type' => 'type1',
+					),
+				)
+			);
 
 		// Act.
 		$result = $this->sut->is_visible( 'bogus_id', 'RO' );
@@ -363,6 +416,9 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		remove_filter( 'user_has_cap', $filter_callback );
 	}
 
+	/**
+	 * Test is_visible when the incentive is dismissed for all contexts.
+	 */
 	public function test_is_visible_dismissed_for_all_contexts() {
 		// Arrange.
 		$this->sut
@@ -378,12 +434,14 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 			->expects( $this->any() )
 			->method( 'get_incentives' )
 			->with( 'RO' )
-			->willReturn( array(
+			->willReturn(
 				array(
-					'id'   => 'incentive1',
-					'type' => 'type1',
-				),
-			) );
+					array(
+						'id'   => 'incentive1',
+						'type' => 'type1',
+					),
+				)
+			);
 
 		update_user_meta(
 			$this->store_admin_id,
@@ -410,6 +468,9 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		delete_user_meta( $this->store_admin_id, Incentive::PREFIX . 'dismissed' );
 	}
 
+	/**
+	 * Test is_visible when the incentive is dismissed for a certain context.
+	 */
 	public function test_is_visible_dismissed_within_context() {
 		// Arrange.
 		$this->sut
@@ -425,12 +486,14 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 			->expects( $this->any() )
 			->method( 'get_incentives' )
 			->with( 'RO' )
-			->willReturn( array(
+			->willReturn(
 				array(
-					'id'   => 'incentive1',
-					'type' => 'type1',
-				),
-			) );
+					array(
+						'id'   => 'incentive1',
+						'type' => 'type1',
+					),
+				)
+			);
 
 		update_user_meta(
 			$this->store_admin_id,
@@ -457,6 +520,9 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		delete_user_meta( $this->store_admin_id, Incentive::PREFIX . 'dismissed' );
 	}
 
+	/**
+	 * Test is_visible.
+	 */
 	public function test_is_visible() {
 		// Arrange.
 		$this->sut
@@ -472,12 +538,14 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 			->expects( $this->any() )
 			->method( 'get_incentives' )
 			->with( 'RO' )
-			->willReturn( array(
+			->willReturn(
 				array(
-					'id'   => 'incentive1',
-					'type' => 'type1',
-				),
-			) );
+					array(
+						'id'   => 'incentive1',
+						'type' => 'type1',
+					),
+				)
+			);
 
 		update_user_meta(
 			$this->store_admin_id,
@@ -490,7 +558,7 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 						'timestamp' => time(),
 					),
 				),
-				'suggestion2' => array(
+				'suggestion2'        => array(
 					array(
 						'id'        => 'incentive1', // Dismissed for another suggestion.
 						'context'   => 'context2',
@@ -511,6 +579,9 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		delete_user_meta( $this->store_admin_id, Incentive::PREFIX . 'dismissed' );
 	}
 
+	/**
+	 * Test is_visible with a specific type.
+	 */
 	public function test_is_visible_with_type() {
 		// Arrange.
 		$this->sut
@@ -526,16 +597,18 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 			->expects( $this->any() )
 			->method( 'get_incentives' )
 			->with( 'RO' )
-			->willReturn( array(
+			->willReturn(
 				array(
-					'id'   => 'incentive1',
-					'type' => 'type1',
-				),
-				array(
-					'id'   => 'incentive2',
-					'type' => 'type1',
-				),
-			) );
+					array(
+						'id'   => 'incentive1',
+						'type' => 'type1',
+					),
+					array(
+						'id'   => 'incentive2',
+						'type' => 'type1',
+					),
+				)
+			);
 
 		// Act.
 		$this->assertTrue( $this->sut->is_visible( 'incentive1', 'RO', 'type1' ) );
@@ -547,6 +620,9 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		delete_user_meta( $this->store_admin_id, Incentive::PREFIX . 'dismissed' );
 	}
 
+	/**
+	 * Test dismiss when there are no dismissals.
+	 */
 	public function test_dismiss_with_no_dismissals() {
 		// Arrange.
 		$incentive_id = 'incentive1';
@@ -581,7 +657,7 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 						'timestamp' => 456,
 					),
 				),
-				'suggestion2' => array(
+				'suggestion2'        => array(
 					array(
 						'id'        => $incentive_id,
 						'context'   => 'context2',
@@ -596,6 +672,9 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		delete_user_meta( $this->store_admin_id, Incentive::PREFIX . 'dismissed' );
 	}
 
+	/**
+	 * Test dismiss when there are dismissals.
+	 */
 	public function test_dismiss_with_other_dismissals() {
 		// Arrange.
 		$incentive_id = 'incentive1';
@@ -612,7 +691,7 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 						'timestamp' => 1234,
 					),
 				),
-				'suggestion2' => array(
+				'suggestion2'        => array(
 					array(
 						'id'        => $incentive_id, // Dismissed for another suggestion.
 						'context'   => 'context2',
@@ -641,7 +720,7 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 						'timestamp' => 456,
 					),
 				),
-				'suggestion2' => array(
+				'suggestion2'        => array(
 					array(
 						'id'        => $incentive_id,
 						'context'   => 'context2',
@@ -656,10 +735,13 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		delete_user_meta( $this->store_admin_id, Incentive::PREFIX . 'dismissed' );
 	}
 
+	/**
+	 * Test dismiss when the incentive is already dismissed.
+	 */
 	public function test_dismiss_already_dismissed() {
 		// Arrange.
 		$incentive_id = 'incentive1';
-		$context	  = 'context1';
+		$context      = 'context1';
 
 		update_user_meta(
 			$this->store_admin_id,
@@ -697,6 +779,9 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		delete_user_meta( $this->store_admin_id, Incentive::PREFIX . 'dismissed' );
 	}
 
+	/**
+	 * Test dismiss when the incentive is already dismissed within the context.
+	 */
 	public function test_dismiss_already_dismissed_within_context() {
 		// Arrange.
 		$incentive_id = 'incentive1';
@@ -763,6 +848,9 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		delete_user_meta( $this->store_admin_id, Incentive::PREFIX . 'dismissed' );
 	}
 
+	/**
+	 * Test dismiss in a certain context when the incentive is already dismissed within the context.
+	 */
 	public function test_dismiss_in_context_already_dismissed_within_context() {
 		// Arrange.
 		$incentive_id = 'incentive1';
@@ -823,6 +911,9 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		delete_user_meta( $this->store_admin_id, Incentive::PREFIX . 'dismissed' );
 	}
 
+	/**
+	 * Test is_dismissed.
+	 */
 	public function test_is_dismissed() {
 		// Arrange.
 		$incentive_id = 'incentive1';
@@ -856,6 +947,9 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		delete_user_meta( $this->store_admin_id, Incentive::PREFIX . 'dismissed' );
 	}
 
+	/**
+	 * Test is_dismissed when the incentive is dismissed within a context.
+	 */
 	public function test_is_dismissed_within_context() {
 		// Arrange.
 		$incentive_id = 'incentive1';
@@ -873,7 +967,7 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 					),
 					array(
 						'id'        => $incentive_id,
-						'context'   => $context, // Only dismissed for this context, not for all
+						'context'   => $context, // Only dismissed for this context, not for all.
 						'timestamp' => 1234,
 					),
 				),
@@ -889,6 +983,9 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		delete_user_meta( $this->store_admin_id, Incentive::PREFIX . 'dismissed' );
 	}
 
+	/**
+	 * Test is_dismissed when the incentive is dismissed for all contexts.
+	 */
 	public function test_is_dismissed_for_all_contexts() {
 		// Arrange.
 		$incentive_id = 'incentive1';
@@ -920,6 +1017,9 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		delete_user_meta( $this->store_admin_id, Incentive::PREFIX . 'dismissed' );
 	}
 
+	/**
+	 * Test is_dismissed when the incentive is dismissed for another suggestion.
+	 */
 	public function test_is_dismissed_for_another_suggestion() {
 		// Arrange.
 		$incentive_id = 'incentive1';
@@ -935,7 +1035,7 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 						'timestamp' => 12345,
 					),
 				),
-				'suggestion2' => array(
+				'suggestion2'        => array(
 					array(
 						'id'        => $incentive_id,
 						'context'   => 'context2',

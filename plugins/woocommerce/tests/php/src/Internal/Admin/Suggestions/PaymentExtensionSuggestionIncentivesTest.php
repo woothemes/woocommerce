@@ -4,7 +4,7 @@ declare( strict_types=1 );
 namespace Automattic\WooCommerce\Tests\Internal\Admin\Suggestions;
 
 use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestionIncentives;
-use Automattic\WooCommerce\Tests\Internal\Admin\Settings\Mocks\FakeIncentive;
+use Automattic\WooCommerce\Tests\Internal\Admin\Suggestions\Mocks\FakeIncentive;
 use PHPUnit\Framework\MockObject\MockObject;
 use WC_REST_Unit_Test_Case;
 
@@ -41,6 +41,9 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 			->getMock();
 	}
 
+	/**
+	 * Test get_incentive with no provider.
+	 */
 	public function test_get_incentive_no_provider() {
 		// Arrange.
 		$this->sut
@@ -56,6 +59,9 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 		$this->assertNull( $incentive );
 	}
 
+	/**
+	 * Test get_incentive when there are no incentives.
+	 */
 	public function test_get_incentive_no_incentive() {
 		// Arrange.
 		$this->sut
@@ -77,6 +83,9 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 		$this->assertNull( $incentive );
 	}
 
+	/**
+	 * Test get_incentive.
+	 */
 	public function test_get_incentive() {
 		// Arrange.
 		$this->sut
@@ -89,12 +98,14 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 			->expects( $this->atLeastOnce() )
 			->method( 'get_all' )
 			->with( 'RO' )
-			->willReturn( array(
+			->willReturn(
 				array(
-					'id'   => 'incentive1',
-					'type' => 'type1',
+					array(
+						'id'   => 'incentive1',
+						'type' => 'type1',
+					),
 				)
-			) );
+			);
 
 		// All are visible.
 		$this->mock_incentive_provider
@@ -109,6 +120,9 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 		$this->assertEquals( 'incentive1', $incentive['id'] );
 	}
 
+	/**
+	 * Test get_incentive with type.
+	 */
 	public function test_get_incentive_with_type() {
 		// Arrange.
 		$this->sut
@@ -121,12 +135,14 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 			->expects( $this->atLeastOnce() )
 			->method( 'get_all' )
 			->with( 'RO', 'type1' )
-			->willReturn( array(
+			->willReturn(
 				array(
-					'id'   => 'incentive1',
-					'type' => 'type1',
+					array(
+						'id'   => 'incentive1',
+						'type' => 'type1',
+					),
 				)
-			) );
+			);
 
 		// All are visible.
 		$this->mock_incentive_provider
@@ -141,6 +157,9 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 		$this->assertEquals( 'incentive1', $incentive['id'] );
 	}
 
+	/**
+	 * Test get_incentive with type when there is no incentive.
+	 */
 	public function test_get_incentive_with_type_no_incentive() {
 		// Arrange.
 		$this->sut
@@ -162,6 +181,9 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 		$this->assertNull( $incentive );
 	}
 
+	/**
+	 * Test get_incentives when there is no incentive provider.
+	 */
 	public function test_get_incentives_no_provider() {
 		// Arrange.
 		$this->sut
@@ -177,6 +199,9 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 		$this->assertSame( array(), $incentives );
 	}
 
+	/**
+	 * Test get_incentives when there are no incentives.
+	 */
 	public function test_get_incentives_no_incentives() {
 		// Arrange.
 		$this->sut
@@ -198,6 +223,9 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 		$this->assertSame( array(), $incentives );
 	}
 
+	/**
+	 * Test get_incentives when there are incentives.
+	 */
 	public function test_get_incentives() {
 		// Arrange.
 		$this->sut
@@ -210,16 +238,18 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 			->expects( $this->atLeastOnce() )
 			->method( 'get_all' )
 			->with( 'RO' )
-			->willReturn( array(
+			->willReturn(
 				array(
-					'id'   => 'incentive1',
-					'type' => 'type1',
-				),
-				array(
-					'id'   => 'incentive2',
-					'type' => 'type2',
-				),
-			) );
+					array(
+						'id'   => 'incentive1',
+						'type' => 'type1',
+					),
+					array(
+						'id'   => 'incentive2',
+						'type' => 'type2',
+					),
+				)
+			);
 
 		// All are visible.
 		$this->mock_incentive_provider
@@ -236,6 +266,9 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 		$this->assertEquals( 'incentive2', $incentives[1]['id'] );
 	}
 
+	/**
+	 * Test get_incentives when there are incentives but none are visible.
+	 */
 	public function test_get_incentives_not_visible() {
 		// Arrange.
 		$this->sut
@@ -248,16 +281,18 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 			->expects( $this->atLeastOnce() )
 			->method( 'get_all' )
 			->with( 'RO' )
-			->willReturn( array(
+			->willReturn(
 				array(
-					'id'   => 'incentive1',
-					'type' => 'type1',
-				),
-				array(
-					'id'   => 'incentive2',
-					'type' => 'type2',
-				),
-			) );
+					array(
+						'id'   => 'incentive1',
+						'type' => 'type1',
+					),
+					array(
+						'id'   => 'incentive2',
+						'type' => 'type2',
+					),
+				)
+			);
 
 		// None are visible.
 		$this->mock_incentive_provider
@@ -272,6 +307,9 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 		$this->assertCount( 0, $incentives );
 	}
 
+	/**
+	 * Test get_incentives with type.
+	 */
 	public function test_get_incentives_with_type() {
 		// Arrange.
 		$this->sut
@@ -284,16 +322,18 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 			->expects( $this->atLeastOnce() )
 			->method( 'get_all' )
 			->with( 'RO', 'type2' )
-			->willReturn( array(
+			->willReturn(
 				array(
-					'id'   => 'incentive2',
-					'type' => 'type2',
-				),
-				array(
-					'id'   => 'incentive3',
-					'type' => 'type2',
-				),
-			) );
+					array(
+						'id'   => 'incentive2',
+						'type' => 'type2',
+					),
+					array(
+						'id'   => 'incentive3',
+						'type' => 'type2',
+					),
+				)
+			);
 
 		// All are visible.
 		$this->mock_incentive_provider
@@ -310,6 +350,9 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 		$this->assertEquals( 'incentive3', $incentives[1]['id'] );
 	}
 
+	/**
+	 * Test get_incentives with type when there are no incentives.
+	 */
 	public function test_get_incentives_with_type_no_incentives() {
 		// Arrange.
 		$this->sut
@@ -331,6 +374,9 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 		$this->assertSame( array(), $incentives );
 	}
 
+	/**
+	 * Test get_incentives when skipping visibility checks.
+	 */
 	public function test_get_incentives_skips_visibility_checks() {
 		// Arrange.
 		$this->sut
@@ -343,16 +389,18 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 			->expects( $this->atLeastOnce() )
 			->method( 'get_all' )
 			->with( 'RO', 'type2' )
-			->willReturn( array(
+			->willReturn(
 				array(
-					'id'   => 'incentive2',
-					'type' => 'type2',
-				),
-				array(
-					'id'   => 'incentive3',
-					'type' => 'type2',
-				),
-			) );
+					array(
+						'id'   => 'incentive2',
+						'type' => 'type2',
+					),
+					array(
+						'id'   => 'incentive3',
+						'type' => 'type2',
+					),
+				)
+			);
 
 		// Assert.
 		$this->mock_incentive_provider
@@ -368,6 +416,9 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 		$this->assertEquals( 'incentive3', $incentives[1]['id'] );
 	}
 
+	/**
+	 * Test is_incentive_visible when there is no incentive provider.
+	 */
 	public function test_is_incentive_visible_no_provider() {
 		// Arrange.
 		$this->sut
@@ -383,6 +434,9 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 		$this->assertFalse( $incentive_visible );
 	}
 
+	/**
+	 * Test is_incentive_visible.
+	 */
 	public function test_is_incentive_visible() {
 		// Arrange.
 		$this->sut
@@ -401,6 +455,9 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 		$this->assertTrue( $this->sut->is_incentive_visible( 'incentive1', 'suggestion1', 'RO', 'type1', true ) );
 	}
 
+	/**
+	 * Test is_incentive_dismissed when there is no incentive provider.
+	 */
 	public function test_is_incentive_dismissed_no_provider() {
 		// Arrange.
 		$this->sut
@@ -416,6 +473,9 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 		$this->assertFalse( $incentive_dismissed );
 	}
 
+	/**
+	 * Test is_incentive_dismissed.
+	 */
 	public function test_is_incentive_dismissed() {
 		// Arrange.
 		$this->sut
@@ -437,6 +497,9 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 		$this->assertTrue( $incentive_dismissed );
 	}
 
+	/**
+	 * Test is_incentive_dismissed when the incentive is not dismissed.
+	 */
 	public function test_is_incentive_dismissed_no() {
 		// Arrange.
 		$this->sut
@@ -458,6 +521,9 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 		$this->assertFalse( $incentive_dismissed );
 	}
 
+	/**
+	 * Test has_incentive_provider when there is no incentive provider.
+	 */
 	public function test_has_incentive_provider_no_provider() {
 		// Arrange.
 		$this->sut
@@ -473,6 +539,9 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 		$this->assertFalse( $incentive_provider );
 	}
 
+	/**
+	 * Test has_incentive_provider.
+	 */
 	public function test_has_incentive_provider() {
 		// Arrange.
 		$this->sut

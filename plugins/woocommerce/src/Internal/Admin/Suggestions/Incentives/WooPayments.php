@@ -13,17 +13,23 @@ use WC_Abstract_Order;
  */
 class WooPayments extends Incentive {
 	/**
-	 * @var string The transient name for incentives cache.
+	 * The transient name for incentives cache.
+	 *
+	 * @var string
 	 */
 	protected string $cache_transient_name;
 
 	/**
-	 * @var string The transient name for store has orders value.
+	 * The transient name used to store the value for if store has orders.
+	 *
+	 * @var string
 	 */
 	protected string $store_has_orders_transient_name;
 
 	/**
-	 * @var string The option name for store had WooPayments in use value.
+	 * The option name used to store the value for if store had WooPayments in use.
+	 *
+	 * @var string
 	 */
 	protected string $store_had_woopayments_option_name;
 
