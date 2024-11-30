@@ -3,10 +3,24 @@
 
 # The hook documentation: https://git-scm.com/docs/githooks.html#_post_merge
 
+# Refresh dependencies when pulled changes might change the deps.
 changedManifests=$( ( git diff --name-only HEAD ORIG_HEAD  | grep -E '(package.json|pnpm-lock.yaml|pnpm-workspace.yaml|composer.json|composer.lock)$' ) || echo '' )
 if [ -n "$changedManifests" ]; then
 	printf "It was a change in the following file(s) - refreshing dependencies:\n"
 	printf "    %s\n" $changedManifests
 
 	pnpm install --frozen-lockfile
+fi
+
+# Cleanup .wireit cache that is older than 4 weeks (28 days); otherwise, the repository directory size keeps growing and growing.
+staleWireitDirectories=$(( \
+	$( find plugins/*/.wireit/* -maxdepth 0 -type d -ctime +28 -print 2>/dev/null | wc -l ) + \
+	$( find packages/js/*/.wireit/* -maxdepth 0 -type d -ctime +28 -print 2>/dev/null | wc -l ) + \
+	$( find plugins/woocommerce/client/*/.wireit/* -maxdepth 0 -type d -ctime +28 -print 2>/dev/null | wc -l ) \
+))
+if [[ $staleWireitDirectories -gt 0 ]]; then
+	echo "Cleaning up stale wireit-cache ($staleWireitDirectories directories)"
+	find plugins/*/.wireit/* -maxdepth 0 -type d -ctime +28 -exec rm -rf {} \; 2>/dev/null
+	find packages/js/*/.wireit/* -maxdepth 0 -type d -ctime +28 -exec rm -rf {} \; 2>/dev/null
+	find plugins/woocommerce/client/*/.wireit/* -maxdepth 0 -type d -ctime +28 -exec rm -rf {} \; 2>/dev/null
 fi

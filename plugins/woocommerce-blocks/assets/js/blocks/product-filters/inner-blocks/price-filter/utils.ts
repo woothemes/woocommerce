@@ -4,9 +4,10 @@
 import { getCurrencyFromPriceResponse } from '@woocommerce/price-format';
 import {
 	objectHasProp,
-	CurrencyResponse,
 	Currency,
 	isString,
+	type CurrencyResponse,
+	type WCStoreV1ProductsCollectionProps,
 } from '@woocommerce/types';
 
 function formatPriceInt( price: string | number, currency: Currency ) {
@@ -14,7 +15,9 @@ function formatPriceInt( price: string | number, currency: Currency ) {
 	return priceInt / 10 ** currency.minorUnit;
 }
 
-export function getPriceFilterData( results: unknown[] ) {
+export function getPriceFilterData(
+	results: WCStoreV1ProductsCollectionProps
+) {
 	if ( ! objectHasProp( results, 'price_range' ) ) {
 		return {
 			minPrice: 0,
