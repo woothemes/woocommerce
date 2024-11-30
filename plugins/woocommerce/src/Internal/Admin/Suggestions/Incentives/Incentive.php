@@ -80,10 +80,11 @@ abstract class Incentive {
 	}
 
 	/**
-	 * Check if the incentive should be visible.
+	 * Check if an incentive should be visible.
 	 *
 	 * @param string $incentive_id                The incentive ID to check for visibility.
 	 * @param string $country_code                The business location country code to get incentives for.
+	 * @param string $incentive_type              Optional. Besides the incentive ID, an incentive with this type must be available.
 	 * @param bool   $skip_extension_active_check Whether to skip the check for the extension plugin being active.
 	 *
 	 * @return boolean Whether the incentive should be visible.
@@ -94,8 +95,8 @@ abstract class Incentive {
 			return false;
 		}
 
-		// The current WP user must have the required capabilities to manage WooCommerce.
-		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+		// The current WP user must have the required capabilities.
+		if ( ! $this->user_has_caps() ) {
 			return false;
 		}
 
@@ -236,6 +237,15 @@ abstract class Incentive {
 	 */
 	protected function save_all_dismissed_incentives( array $dismissed_incentives ): bool {
 		return (bool) update_user_meta( get_current_user_id(), $this->dismissed_meta_name, $dismissed_incentives );
+	}
+
+	/**
+	 * Check if the current user has the required capabilities to view incentives.
+	 *
+	 * @return bool Whether the current user has the required capabilities view incentives.
+	 */
+	protected function user_has_caps(): bool {
+		return current_user_can( 'manage_woocommerce' );
 	}
 
 	/**
