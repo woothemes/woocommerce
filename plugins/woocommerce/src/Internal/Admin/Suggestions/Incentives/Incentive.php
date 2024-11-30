@@ -42,7 +42,7 @@ abstract class Incentive {
 	 *
 	 * @return array The incentives list with details for each incentive.
 	 */
-	public function get_all( string $country_code , string $incentive_type = '' ): array {
+	public function get_all( string $country_code, string $incentive_type = '' ): array {
 		$incentives = array_filter(
 			$this->get_incentives( $country_code ),
 			fn( $incentive ) => $this->validate_incentive( $incentive )
@@ -51,7 +51,7 @@ abstract class Incentive {
 		if ( ! empty( $incentive_type ) ) {
 			$incentives = array_filter(
 				$incentives,
-				function( $incentive ) use ( $incentive_type ) {
+				function ( $incentive ) use ( $incentive_type ) {
 					return $incentive['type'] === $incentive_type;
 				}
 			);
@@ -134,7 +134,7 @@ abstract class Incentive {
 	 *                             Defaults to the current time.
 	 *
 	 * @return bool True if the incentive was not previously dismissed and now it is.
-	 * 				False if the incentive was already dismissed, or we failed to persist the dismissal data.
+	 *              False if the incentive was already dismissed, or we failed to persist the dismissal data.
 	 */
 	public function dismiss( string $incentive_id, string $context = 'all', ?int $timestamp = null ): bool {
 		// If it is already dismissed, don't dismiss it again.
@@ -162,7 +162,7 @@ abstract class Incentive {
 	 *
 	 * @param string $incentive_id The incentive ID to check for dismissal.
 	 * @param string $context      Optional. The context ID in which to check for dismissal.
-	 *						       If no context ID is provided, we check for dismissal in all contexts.
+	 *                             If no context ID is provided, we check for dismissal in all contexts.
 	 *
 	 * @return boolean Whether the incentive has been manually dismissed.
 	 */

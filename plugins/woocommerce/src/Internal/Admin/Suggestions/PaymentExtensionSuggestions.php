@@ -1479,20 +1479,24 @@ class PaymentExtensionSuggestions {
 	 */
 	private function sanitize_extension_incentive( array $incentive ): array {
 		// Apply a very lose sanitization. Stricter sanitization can be applied downstream, if needed.
-		return array_map( function ( $value ) {
-			// Make sure that if we have HTML tags, we only allow a limited set of tags.
-			if ( is_string( $value ) && preg_match( '/<[^>]+>/', $value ) ) {
-				$value = wp_kses(
-					$value,
-					wp_kses_allowed_html( 'data' ) + array(
-						'p' => array(
-							'align' => true,
-						),
-					) );
-			}
+		return array_map(
+			function ( $value ) {
+				// Make sure that if we have HTML tags, we only allow a limited set of tags.
+				if ( is_string( $value ) && preg_match( '/<[^>]+>/', $value ) ) {
+						$value = wp_kses(
+							$value,
+							wp_kses_allowed_html( 'data' ) + array(
+								'p' => array(
+									'align' => true,
+								),
+							)
+						);
+				}
 
-			return $value;
-		}, $incentive );
+				return $value;
+			},
+			$incentive
+		);
 	}
 
 	/**

@@ -144,8 +144,8 @@ class WooPayments extends Incentive {
 		// Use the transient cached incentive if it exists, it is not expired,
 		// and the store context hasn't changed since we last requested from the WooPayments API (based on context hash).
 		if ( false !== $cache
-			 && ! empty( $cache['context_hash'] ) && is_string( $cache['context_hash'] )
-			 && hash_equals( $store_context_hash, $cache['context_hash'] ) ) {
+			&& ! empty( $cache['context_hash'] ) && is_string( $cache['context_hash'] )
+			&& hash_equals( $store_context_hash, $cache['context_hash'] ) ) {
 
 			// We have a store context hash, and it matches with the current context one.
 			// We can use the cached incentive data.
@@ -212,7 +212,7 @@ class WooPayments extends Incentive {
 		set_transient(
 			$this->cache_transient_name,
 			array(
-				'incentives'    => $this->incentives_memo,
+				'incentives'   => $this->incentives_memo,
 				'context_hash' => $store_context_hash,
 				'timestamp'    => time(),
 			),
@@ -235,7 +235,7 @@ class WooPayments extends Incentive {
 		// Since the past can't be changed, neither can this value.
 		$had_wcpay = get_option( $this->store_had_woopayments_option_name );
 		if ( false !== $had_wcpay ) {
-			return $had_wcpay === 'yes';
+			return filter_var( $had_wcpay, FILTER_VALIDATE_BOOLEAN );
 		}
 
 		// We need to determine the value.
@@ -258,7 +258,7 @@ class WooPayments extends Incentive {
 					'limit'          => 1,
 				)
 			)
-			) ) {
+		) ) {
 			$had_wcpay = true;
 		}
 
@@ -318,7 +318,7 @@ class WooPayments extends Incentive {
 			// If the latest order is within the timeframe we look at, we consider the store to have orders.
 			// Otherwise, it clearly doesn't have orders.
 			if ( $latest_order instanceof WC_Abstract_Order
-				 && strtotime( (string) $latest_order->get_date_created() ) >= strtotime( '-90 days' ) ) {
+				&& strtotime( (string) $latest_order->get_date_created() ) >= strtotime( '-90 days' ) ) {
 
 				$has_orders = true;
 

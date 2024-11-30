@@ -163,7 +163,7 @@ class PaymentExtensionSuggestionIncentives {
 	 * @param string $suggestion_id The suggestion ID.
 	 *
 	 * @return ?Incentive The incentives provider instance for the suggestion.
-	 * 					  Returns null if no provider is available for the suggestion.
+	 *                    Returns null if no provider is available for the suggestion.
 	 */
 	public function get_incentive_instance( string $suggestion_id ): ?Incentive {
 		if ( isset( $this->instances[ $suggestion_id ] ) ) {
@@ -178,7 +178,7 @@ class PaymentExtensionSuggestionIncentives {
 		}
 
 		// Create an instance of the incentives provider class.
-		$provider_class = $this->suggestion_incentives_class_map[ $suggestion_id ];
+		$provider_class                    = $this->suggestion_incentives_class_map[ $suggestion_id ];
 		$this->instances[ $suggestion_id ] = new $provider_class( $suggestion_id );
 
 		return $this->instances[ $suggestion_id ];
