@@ -48,14 +48,17 @@ class WooPaymentsTest extends WC_REST_Unit_Test_Case {
 
 		$this->suggestion_id = 'suggestion1';
 
-		$this->sut = new WooPayments( $this->suggestion_id );
+		$this->sut = $this->getMockBuilder( WooPayments::class )
+			->setConstructorArgs( array( $this->suggestion_id ) )
+			->onlyMethods( array( 'is_extension_active' ) )
+			->getMock();
 
 		// Mock the response from the API.
-		$this->response_mock_ref = function( $preempt, $parsed_args, $url ) {
+		$this->response_mock_ref = function ( $preempt, $parsed_args, $url ) {
 			if ( str_contains( $url, 'https://public-api.wordpress.com/wpcom/v2/wcpay/incentives' ) ) {
 				return array(
-					'success' => true,
-					'body'    => wp_json_encode(
+					'success'  => true,
+					'body'     => wp_json_encode(
 						array(
 							array(
 								'id'   => 'incentive1',
@@ -180,5 +183,66 @@ class WooPaymentsTest extends WC_REST_Unit_Test_Case {
 
 		// Assert.
 		$this->assertCount( 0, $result );
+	}
+
+	/**
+	 * Test is_visible skips extension active check.
+	 */
+	public function test_is_visible_skips_extension_active_check() {
+		// Arrange.
+		$this->sut
+			->expects( $this->never() )
+			->method( 'is_extension_active' );
+
+		add_filter( 'pre_http_request', $this->response_mock_ref, 10, 3 );
+
+		// Act.
+		$result = $this->sut->is_visible( 'incentive1', 'US', 'type1', true );
+
+		// Assert.
+		$this->assertTrue( $result );
+	}
+
+	/**
+	 * Test is_visible when WooPayments is active and has no account data.
+	 */
+	public function test_is_visible_with_extension_active_and_no_account_data() {
+		// Arrange.
+		$this->sut
+			->expects( $this->once() )
+			->method( 'is_extension_active' )
+			->willReturn( true );
+
+		add_filter( 'pre_http_request', $this->response_mock_ref, 10, 3 );
+
+		// Act.
+		$result = $this->sut->is_visible( 'incentive1', 'US', 'type1' );
+
+		// Assert.
+		$this->assertTrue( $result );
+	}
+
+	/**
+	 * Test is_visible when WooPayments is active and has account data.
+	 */
+	public function test_is_visible_with_extension_active_and_has_account_data() {
+		// Arrange.
+		$this->sut
+			->expects( $this->once() )
+			->method( 'is_extension_active' )
+			->willReturn( true );
+
+		add_filter( 'pre_http_request', $this->response_mock_ref, 10, 3 );
+
+		update_option( 'wcpay_account_data', array( 'data' => array( 'account_id' => '123' ) ) );
+
+		// Act.
+		$result = $this->sut->is_visible( 'incentive1', 'US', 'type1' );
+
+		// Assert.
+		$this->assertFalse( $result );
+
+		// Clean up.
+		delete_option( 'wcpay_account_data' );
 	}
 }
