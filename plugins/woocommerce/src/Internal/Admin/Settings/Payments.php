@@ -357,7 +357,7 @@ class Payments {
 	 * @return ?array The payment extension suggestion, or null if not found.
 	 */
 	public function get_extension_suggestion_by_plugin_slug( string $slug, string $country_code = '' ): ?array {
-		$suggestion = $this->extension_suggestions->get_by_plugin_slug( $slug, $country_code );
+		$suggestion = $this->extension_suggestions->get_by_plugin_slug( $slug, $country_code, self::SUGGESTIONS_CONTEXT );
 		if ( is_null( $suggestion ) ) {
 			return null;
 		}

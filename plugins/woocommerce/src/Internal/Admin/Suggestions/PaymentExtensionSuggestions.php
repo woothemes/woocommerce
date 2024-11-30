@@ -1294,20 +1294,22 @@ class PaymentExtensionSuggestions {
 	 * If there are multiple extensions with the same plugin slug, the first one found will be returned.
 	 *
 	 * @param string $plugin_slug  The plugin slug.
-	 * @param string $country_code Optional. The two-letter country code for which the extension should be retrieved.
+	 * @param string $country_code Optional. The two-letter country code for which the extension suggestion should be retrieved.
+	 * @param string $context      Optional. The context ID of where this extension suggestion is being used.
 	 *
 	 * @return array|null The extension details for the given plugin slug. Null if not found.
 	 */
-	public function get_by_plugin_slug( string $plugin_slug, string $country_code = '' ): ?array {
+	public function get_by_plugin_slug( string $plugin_slug, string $country_code = '', string $context = '' ): ?array {
 		$plugin_slug = sanitize_title( $plugin_slug );
 
 		// If we have a country code, try to find a fully localized extension suggestion.
 		if ( ! empty( $country_code ) ) {
-			$extensions = $this->get_country_extensions( $country_code );
+			$extensions = $this->get_country_extensions( $country_code, $context );
 			foreach ( $extensions as $extension_details ) {
 				if ( isset( $extension_details['plugin']['slug'] ) &&
 					$plugin_slug === $extension_details['plugin']['slug']
 				) {
+					// The extension details are already standardized.
 					return $extension_details;
 				}
 			}
