@@ -569,6 +569,8 @@ $border-radius: 8px;
 		flex: 1;
 		display: flex;
 		min-height: 586px;
+		margin: 0;
+		padding: 0;
 	}
 	&.closed .inside {
 		display: none;
@@ -748,5 +750,14 @@ $border-radius: 8px;
 				height: 40px;
 			}
 		}
+	}
+}
+
+/**
+ * Optimisation for screens 782px and smaller
+ */
+@media only screen and (max-width: 782px) {
+	#woocommerce-product-data .checkbox {
+		width: 25px;
 	}
 }

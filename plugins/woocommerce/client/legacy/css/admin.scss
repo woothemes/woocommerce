@@ -5732,11 +5732,9 @@ img.help_tip {
 	}
 }
 
-#woocommerce-product-data,
 #woocommerce-product-type-options,
 #woocommerce-order-data,
-#woocommerce-order-downloads,
-#woocommerce-coupon-data {
+#woocommerce-order-downloads {
 	.inside {
 		margin: 0;
 		padding: 0;
@@ -7425,10 +7423,6 @@ table.bar_chart {
 		padding-right: 15px;
 		overflow: hidden;
 		margin-bottom: -1px;
-	}
-
-	#woocommerce-product-data .checkbox {
-		width: 25px;
 	}
 
 	.variations-pagenav {
