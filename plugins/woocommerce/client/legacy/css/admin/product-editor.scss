@@ -624,42 +624,7 @@ $border-radius: 8px;
 	.wc-tabs-back {
 		display: none;
 	}
-}
 
-#woocommerce-coupon-description {
-	padding: $gap-smallest $gap;
-	font-size: 1.7em;
-	line-height: 1.42em;
-	height: auto;
-	width: 100%;
-	outline: 0;
-	margin: $gap-smaller 0;
-	display: block;
-	border-radius: $border-radius;
-
-	&::-webkit-input-placeholder {
-		line-height: 1.42em;
-		color: #bbb;
-	}
-
-	&::-moz-placeholder {
-		line-height: 1.42em;
-		color: #bbb;
-	}
-
-	&:-ms-input-placeholder {
-		line-height: 1.42em;
-		color: #bbb;
-	}
-
-	&:-moz-placeholder {
-		line-height: 1.42em;
-		color: #bbb;
-	}
-}
-
-#woocommerce-product-data,
-#woocommerce-coupon-data {
 	.woocommerce_options_panel,
 	.wc-metaboxes-wrapper {
 		._backorders_field .wc-radios li {
@@ -682,10 +647,7 @@ $border-radius: 8px;
 			}
 		}
 	}
-}
 
-#woocommerce-coupon-data,
-#woocommerce-product-data {
 	ul.wc-tabs {
 		padding: 0;
 		align-self: stretch;
@@ -722,6 +684,37 @@ $border-radius: 8px;
 	}
 }
 
+#woocommerce-coupon-description {
+	padding: $gap-smallest $gap;
+	font-size: 1.7em;
+	line-height: 1.42em;
+	height: auto;
+	width: 100%;
+	outline: 0;
+	margin: $gap-smaller 0;
+	display: block;
+	border-radius: $border-radius;
+
+	&::-webkit-input-placeholder {
+		line-height: 1.42em;
+		color: #bbb;
+	}
+
+	&::-moz-placeholder {
+		line-height: 1.42em;
+		color: #bbb;
+	}
+
+	&:-ms-input-placeholder {
+		line-height: 1.42em;
+		color: #bbb;
+	}
+
+	&:-moz-placeholder {
+		line-height: 1.42em;
+		color: #bbb;
+	}
+}
 
 @media only screen and (max-width: 1280px) {
 	#woocommerce-product-data,
