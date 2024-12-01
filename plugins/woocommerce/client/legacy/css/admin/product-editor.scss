@@ -34,6 +34,7 @@ $border-radius: 8px;
 .post-new-php.post-type-product,
 .post-php.post-type-shop_coupon,
 .post-new-php.post-type-shop_coupon {
+
 	/* Style all buttons */
 	.button,
 	#screen-meta-links .show-settings {
@@ -89,7 +90,11 @@ $border-radius: 8px;
 			// Deduct the inner spacing of the icon.
 			padding-right: calc($gap-small - 5px);
 		}
-		// Adjust spacing as the element is vertically aligned with flexbox, reset additional padding.
+
+		/*
+		 * Adjust spacing as the element is vertically aligned with flexbox,
+		 * reset additional padding.
+		 */
 		.show-settings::after {
 			padding: 0;
 			position: static;
@@ -108,7 +113,7 @@ $border-radius: 8px;
 	// Title input.
 	#titlediv {
 		#title-prompt-text,
-		#title  {
+		#title {
 			padding: $gap-smallest $gap;
 			font-size: 20px;
 			line-height: 46px;
@@ -124,7 +129,10 @@ $border-radius: 8px;
 		}
 	}
 
-	// Gap between Title and Slug edit should be 8px = $gap-smaller, so we need to clear margins.
+	/*
+	 * Gap between Title and Slug edit should be 8px = $gap-smaller,
+	 * so we need to clear margins.
+	 */
 	#poststuff #titlediv .inside {
 		padding: 0;
 		margin-top: $gap-smaller;
@@ -183,7 +191,10 @@ $border-radius: 8px;
 	#postimagediv .inside {
 		padding: 16px;
 
-		// Remove margins of paragraph wrappers that probably should have been divs separated with gap.
+		/*
+		 * Remove margins of paragraph wrappers that probably
+		 * should have been divs separated with gap.
+		 */
 		p:first-child {
 			margin-top: 0;
 		}
@@ -254,7 +265,10 @@ $border-radius: 8px;
 	// Product/coupon data options panel.
 	.woocommerce_options_panel {
 		.options_group:not(.hidden),
-		// General coupos data does not have options group wrapper, make it look like it has.
+		/*
+		 * General coupos data does not have options group wrapper,
+		 * make it look like it has.
+		 */
 		&#general_coupon_data:not(.hidden) {
 			display: flex;
 		}
@@ -266,8 +280,10 @@ $border-radius: 8px;
 			flex-direction: column;
 			gap: $gap-small;
 		}
+
 		/*
-		 * Sold individually option has help tip icon as a direct child, not as a child of form-field paragraph.
+		 * Sold individually option has help tip icon as a direct child,
+		 * not as a child of form-field paragraph.
 		 * Let's make it look as it would be structured as others.
 		 */
 		.options_group.inventory_sold_individually {
@@ -394,7 +410,10 @@ $border-radius: 8px;
 	.categorydiv {
 		margin-bottom: $gap;
 
-		// Cater for other elements injected to this meta box, like AI suggested categories.
+		/*
+		 * Cater for other elements injected to this meta box,
+		 * like AI suggested categories.
+		 */
 		> :not(.category-tabs) {
 			padding: 0 $gap;
 			// Pretend all things below tab panel are in a box with gap.
@@ -549,7 +568,11 @@ $border-radius: 8px;
 			padding-right: $gap;
 			border-right: 1px solid #dfdfdf;
 			gap: $gap-small;
-			// Make it look like product type select pertain to the same group as header and "—".
+
+			/*
+			 * Make it look like product type select pertain
+			 * to the same group as header and "—".
+			 */
 			margin-left: calc(-1 * ($gap - $gap-small));
 			margin-right: 0;
 		}
@@ -704,7 +727,10 @@ $border-radius: 8px;
 	#woocommerce-product-data,
 	#woocommerce-coupon-data {
 		.options_group,
-		// General coupons data does not have options group wrapper, make it look like it has.
+		/*
+		 * General coupos data does not have options group wrapper,
+		 * make it look like it has.
+		 */
 		#general_coupon_data {
 			padding: $gap calc($gap * 4 / 3);
 		}
@@ -722,7 +748,10 @@ $border-radius: 8px;
 		}
 
 		.options_group,
-		// General coupos data does not have options group wrapper, make it look like it has.
+		/*
+		 * General coupos data does not have options group wrapper,
+		 * make it look like it has.
+		 */
 		#general_coupon_data {
 			padding: $gap-small $gap;
 		}
