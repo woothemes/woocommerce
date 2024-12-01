@@ -1,3 +1,5 @@
+# EllipsisMenu
+
 ## EllipsisMenu
 
 This is a dropdown menu hidden behind a vertical ellipsis icon. When clicked, the inner MenuItems are displayed.
