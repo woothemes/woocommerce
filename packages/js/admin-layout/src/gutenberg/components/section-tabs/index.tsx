@@ -32,7 +32,7 @@ export const SectionTabs = ( {
 	if ( tabs.length <= 1 ) {
 		return (
 			<>
-				<div className="woocommerce-settings-section-tabs woocommerce-settings-section-tabs--no-tabs" />
+				<div className="woocommerce-admin-layout-section-tabs woocommerce-admin-layout-section-tabs--no-tabs" />
 				<div>{ children }</div>
 			</>
 		);
@@ -63,7 +63,7 @@ export const SectionTabs = ( {
 
 	return (
 		<TabPanel
-			className="woocommerce-settings-section-tabs"
+			className="woocommerce-admin-layout-section-tabs"
 			tabs={ tabs }
 			onSelect={ onSelect }
 			initialTabName={ activeSection || tabs[ 0 ].name }

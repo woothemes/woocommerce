@@ -1,12 +1,12 @@
-.woocommerce-settings-header {
+.woocommerce-admin-layout-header {
 	&.edit-site-page-header {
 		border-bottom: none;
 	}
 }
 
-.woocommerce-settings-section-tabs {
+.woocommerce-admin-layout-section-tabs {
 	.components-tab-panel__tabs,
-	&.woocommerce-settings-section-tabs--no-tabs {
+	&.woocommerce-admin-layout-section-tabs--no-tabs {
 		border-bottom: 1px solid #f0f0f0;
 	}
 }
