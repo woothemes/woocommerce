@@ -38,6 +38,7 @@
 		"@types/prop-types": "^15.7.11",
 		"@types/wordpress__blocks": "11.0.7",
 		"@woocommerce/settings": "^1.0.0",
+		"@woocommerce/admin-layout": "workspace:^",
 		"@woocommerce/tracks": "workspace:^",
 		"@woocommerce/product-editor": "workspace:^",
 		"@wordpress/api-fetch": "wp-6.0",
@@ -253,6 +254,10 @@
 				"node_modules/@woocommerce/tracks/build",
 				"node_modules/@woocommerce/tracks/build-module",
 				"node_modules/@woocommerce/tracks/build-types",
+				"node_modules/@woocommerce/admin-layout/build",
+				"node_modules/@woocommerce/admin-layout/build-module",
+				"node_modules/@woocommerce/admin-layout/build-style",
+				"node_modules/@woocommerce/admin-layout/build-types",
 				"package.json"
 			]
 		}

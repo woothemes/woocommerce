@@ -19,14 +19,13 @@ import {
 // @ts-ignore No types for this exist yet.
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 // @ts-ignore No types for this exist yet.
-import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
+import { unlock, Route, Location } from '@woocommerce/admin-layout';
 /* eslint-enable @woocommerce/dependency-group */
 
 /**
  * Internal dependencies
  */
 import { Sidebar } from './components';
-import { Route, Location } from './types';
 import { LegacyContent } from './legacy';
 
 const { useLocation } = unlock( routerPrivateApis );

@@ -7,14 +7,13 @@ import { __ } from '@wordpress/i18n';
 // @ts-ignore No types for this exist yet.
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 // @ts-ignore No types for this exist yet.
-import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
+import { AdminLayout, unlock } from '@woocommerce/admin-layout';
 /* eslint-enable @woocommerce/dependency-group */
 
 /**
  * Internal dependencies
  */
 import { isGutenbergVersionAtLeast } from './utils';
-import { Layout } from './layout';
 import { useActiveRoute } from './route';
 
 const { RouterProvider } = unlock( routerPrivateApis );
@@ -23,9 +22,9 @@ const SettingsLayout = () => {
 	const { route, settingsPage, tabs, activeSection } = useActiveRoute();
 
 	return (
-		<Layout
+		<AdminLayout
 			route={ route }
-			settingsPage={ settingsPage }
+			pageTitle={ settingsPage?.label }
 			tabs={ tabs }
 			activeSection={ activeSection }
 		/>
