@@ -30,7 +30,6 @@ jest.mock( '@wordpress/router', () => ( {
 } ) );
 
 jest.mock( '@woocommerce/admin-layout', () => ( {
-	...jest.requireActual( '@woocommerce/admin-layout' ),
 	unlock: jest.fn( ( apis ) => apis ),
 } ) );
 
