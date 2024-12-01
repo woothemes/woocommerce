@@ -212,6 +212,7 @@
 				"@wordpress/icons"
 			],
 			"packages": [
+				"@woocommerce/admin-layout",
 				"@woocommerce/block-templates",
 				"@woocommerce/product-editor",
 				"@woocommerce/settings-editor",
