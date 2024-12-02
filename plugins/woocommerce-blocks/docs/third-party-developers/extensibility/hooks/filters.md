@@ -62,7 +62,7 @@ apply_filters( '__experimental_woocommerce_blocks_add_data_attributes_to_block',
 
 ### Description
 
-<p>This hook defines which block names should have block name and attribute data- attributes appended on render.</p>
+This hook defines which block names should have block name and attribute data- attributes appended on render.
 
 ### Parameters
 
@@ -88,7 +88,7 @@ apply_filters( '__experimental_woocommerce_blocks_add_data_attributes_to_namespa
 
 ### Description
 
-<p>This hook defines which block namespaces should have block name and attribute <code>data-</code> attributes appended on render.</p>
+This hook defines which block namespaces should have block name and attribute <code>data-</code> attributes appended on render.
 
 ### Parameters
 
@@ -345,7 +345,7 @@ apply_filters( 'woocommerce_add_to_cart_validation', boolean $passed_validation,
 
 ### Description
 
-<p>Allow 3rd parties to validate if an item can be added to the cart. This is a legacy hook from Woo core. This filter will be deprecated because it encourages usage of wc_add_notice. For the API we need to capture notices and convert to exceptions instead.</p>
+Allow 3rd parties to validate if an item can be added to the cart. This is a legacy hook from Woo core. This filter will be deprecated because it encourages usage of wc_add_notice. For the API we need to capture notices and convert to exceptions instead.
 
 ### Parameters
 
@@ -383,7 +383,7 @@ apply_filters( 'woocommerce_adjust_non_base_location_prices', boolean $adjust_no
 
 ### Description
 
-<p>The woocommerce_adjust_non_base_location_prices filter can stop base taxes being taken off when dealing with out of base locations. e.g. If a product costs 10 including tax, all users will pay 10 regardless of location and taxes.</p>
+The woocommerce_adjust_non_base_location_prices filter can stop base taxes being taken off when dealing with out of base locations. e.g. If a product costs 10 including tax, all users will pay 10 regardless of location and taxes.
 
 ### Parameters
 
@@ -495,7 +495,7 @@ apply_filters( 'woocommerce_blocks_hook_compatibility_additional_data', array $d
 
 ### Description
 
-<p>Accepts an array of hooked data. The array should be in the following format: [ [ hook =&gt; <hook-name>, function =&gt; <function-name>, priority =&gt; <priority>, ], ... ] Where:</p> <ul> <li>hook-name is the name of the hook that have the functions hooked to.</li> <li>function-name is the hooked function name.</li> <li>priority is the priority of the hooked function.</li> </ul>
+Accepts an array of hooked data. The array should be in the following format: [ [ hook =&gt; <hook-name>, function =&gt; <function-name>, priority =&gt; <priority>, ], ... ] Where: <ul> <li>hook-name is the name of the hook that have the functions hooked to.</li> <li>function-name is the hooked function name.</li> <li>priority is the priority of the hooked function.</li> </ul>
 
 ### Parameters
 
@@ -636,7 +636,7 @@ apply_filters( 'woocommerce_cart_item_permalink', string $product_permalink, arr
 
 ### Description
 
-<p>This is a hook taken from the legacy cart/mini-cart templates that allows the permalink to be changed for a product. This is specific to the cart endpoint.</p>
+This is a hook taken from the legacy cart/mini-cart templates that allows the permalink to be changed for a product. This is specific to the cart endpoint.
 
 ### Parameters
 
@@ -664,7 +664,7 @@ apply_filters( 'woocommerce_disable_compatibility_layer', \Automattic\WooCommerc
 
 ### Description
 
-<p>This hook allows to disable the compatibility layer for the blockified.</p>
+This hook allows to disable the compatibility layer for the blockified.
 
 ### Parameters
 
@@ -719,7 +719,7 @@ apply_filters( 'woocommerce_get_item_data', array $item_data, array $cart_item )
 
 ### Description
 
-<p>Filters the variation option name for custom option slugs.</p>
+Filters the variation option name for custom option slugs.
 
 ### Parameters
 
@@ -789,7 +789,7 @@ apply_filters( 'woocommerce_new_customer_data', array $add_to_cart_data )
 
 ### Description
 
-<p>This hook filters customer data. It allows user data to be changed, for example, username, password, email, first name, last name, and role.</p>
+This hook filters customer data. It allows user data to be changed, for example, username, password, email, first name, last name, and role.
 
 ### Parameters
 
@@ -871,7 +871,7 @@ apply_filters( 'woocommerce_registration_errors', \WP_Error $errors, string $use
 
 ### Description
 
-<p>This hook filters registration errors. This can be used to manipulate the array of errors before they are displayed.</p>
+This hook filters registration errors. This can be used to manipulate the array of errors before they are displayed.
 
 ### Parameters
 
@@ -907,7 +907,7 @@ apply_filters( 'woocommerce_shared_settings', array $data )
 
 ### Description
 
-<p>Low level hook for registration of new data late in the cycle. This is deprecated. Instead, use the data api:</p> <pre><code class="language-php">Automattic\WooCommerce\Blocks\Package::container()-&gt;get( Automattic\WooCommerce\Blocks\Assets\AssetDataRegistry::class )-&gt;add( $key, $value )</code></pre>
+Low level hook for registration of new data late in the cycle. This is deprecated. Instead, use the data api: <pre><code class="language-php">Automattic\WooCommerce\Blocks\Package::container()-&gt;get( Automattic\WooCommerce\Blocks\Assets\AssetDataRegistry::class )-&gt;add( $key, $value )</code></pre>
 
 ### Parameters
 
@@ -986,7 +986,7 @@ apply_filters( 'woocommerce_show_page_title' )
 
 ### Description
 
-<p>Allows controlling the display of the page title.</p>
+Allows controlling the display of the page title.
 
 ### Source
 
@@ -1029,7 +1029,7 @@ apply_filters( 'woocommerce_store_api_add_to_cart_data', array $customer_data )
 
 ### Description
 
-<p>This hook filters cart items. It allows the request data to be changed, for example, quantity, or supplemental cart item data, before it is passed into CartController::add_to_cart and stored to session.</p> <p>CartController::add_to_cart only expects the keys id, quantity, variation, and cart_item_data, so other values may be ignored. CartController::add_to_cart (and core) do already have a filter hook called woocommerce_add_cart_item, but this does not have access to the original Store API request like this hook does.</p>
+This hook filters cart items. It allows the request data to be changed, for example, quantity, or supplemental cart item data, before it is passed into CartController::add_to_cart and stored to session. CartController::add_to_cart only expects the keys id, quantity, variation, and cart_item_data, so other values may be ignored. CartController::add_to_cart (and core) do already have a filter hook called woocommerce_add_cart_item, but this does not have access to the original Store API request like this hook does.
 
 ### Parameters
 
@@ -1060,7 +1060,7 @@ apply_filters( 'woocommerce_store_api_disable_nonce_check', boolean $disable_non
 
 ### Description
 
-<p>This can be used to disable the nonce check when testing API endpoints via a REST API client.</p>
+This can be used to disable the nonce check when testing API endpoints via a REST API client.
 
 ### Parameters
 
@@ -1091,7 +1091,7 @@ apply_filters( 'woocommerce_store_api_cart_item_images', array $product_images, 
 
 ### Description
 
-<p>This hook allows the cart item images to be changed. This is specific to the cart endpoint.</p>
+This hook allows the cart item images to be changed. This is specific to the cart endpoint.
 
 ### Parameters
 
@@ -1124,7 +1124,7 @@ apply_filters( 'woocommerce_store_api_product_quantity_limit', integer $quantity
 
 ### Description
 
-<p>Filters the variation option name for custom option slugs.</p>
+Filters the variation option name for custom option slugs.
 
 ### Parameters
 
@@ -1156,7 +1156,7 @@ apply_filters( 'woocommerce_store_api_product_quantity_{$value_type}', mixed $va
 
 ### Description
 
-<p>The suffix of the hook will vary depending on the value being filtered. For example, minimum, maximum, multiple_of, editable.</p>
+The suffix of the hook will vary depending on the value being filtered. For example, minimum, maximum, multiple_of, editable.
 
 ### Parameters
 
