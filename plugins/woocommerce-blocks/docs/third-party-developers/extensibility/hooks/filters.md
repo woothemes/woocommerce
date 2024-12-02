@@ -517,7 +517,7 @@ Accepts an array of hooked data. The array should be in the following format: [ 
 ## woocommerce_blocks_product_grid_is_cacheable
 
 
-Filters whether or not the product grid is cacheable.
+Filters whether the product grid is cacheable.
 
 ```php
 apply_filters( 'woocommerce_blocks_product_grid_is_cacheable', boolean $is_cacheable, array $query_args )
