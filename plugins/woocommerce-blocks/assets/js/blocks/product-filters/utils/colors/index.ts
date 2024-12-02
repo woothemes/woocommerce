@@ -4,21 +4,21 @@
 import { paramCase as kebabCase } from 'change-case';
 
 /**
- * Get CSS variable value for a given slug or value.
+ * Converts a color slug or custom color value into a CSS variable reference.
  *
- * @param {string} slug  Slug of the color.
- * @param {string} value Value of the color.
+ * @param {string} colorSlug Slug of the color.
+ * @param {string} value     Value of the color.
  * @return {string} CSS variable value.
  */
-function getCSSVar(
-	slug: string | undefined,
+export function getColorCSSVar(
+	colorSlug: string | undefined,
 	value: string | undefined = ''
 ): string {
-	if ( slug?.length ) {
-		return `var(--wp--preset--color--${ slug })`;
+	if ( colorSlug?.length ) {
+		return `var(--wp--preset--color--${ colorSlug })`;
 	}
 
-	return value;
+	return value || '';
 }
 
 /**
@@ -47,10 +47,8 @@ export function getStyleColorVars(
 			( typeof normalColor === 'string' && normalColor.length > 0 ) ||
 			( typeof customColor === 'string' && customColor.length > 0 )
 		) {
-			styleVars[ `--${ prefix }-${ kebabCase( color ) }` ] = getCSSVar(
-				normalColor,
-				customColor as string
-			);
+			styleVars[ `--${ prefix }-${ kebabCase( color ) }` ] =
+				getColorCSSVar( normalColor, customColor as string );
 		}
 	} );
 

@@ -31,21 +31,11 @@ import SiteHub from '@wordpress/edit-site/build-module/components/site-hub';
 import SidebarContent from '@wordpress/edit-site/build-module/components/sidebar';
 /* eslint-enable @woocommerce/dependency-group */
 
-type Route = {
-	key: string;
-	areas: {
-		sidebar: React.JSX.Element | React.FunctionComponent;
-		content?: React.JSX.Element | React.FunctionComponent;
-		edit?: React.JSX.Element | React.FunctionComponent;
-		mobile?: React.JSX.Element | React.FunctionComponent | boolean;
-		preview?: boolean;
-	};
-	widths?: {
-		content?: number;
-		edit?: number;
-		sidebar?: number;
-	};
-};
+/**
+ * Internal dependencies
+ */
+import { Route } from './types';
+import { SectionTabs, Header } from './components';
 
 const { NavigableRegion } = unlock( editorPrivateApis );
 
@@ -53,9 +43,17 @@ const ANIMATION_DURATION = 0.3;
 
 type LayoutProps = {
 	route: Route;
+	settingsPage?: SettingsPage;
+	activeSection?: string;
+	tabs?: Array< { name: string; title: string } >;
 };
 
-export function Layout( { route }: LayoutProps ) {
+export function Layout( {
+	route,
+	settingsPage,
+	tabs,
+	activeSection,
+}: LayoutProps ) {
 	const [ fullResizer ] = useResizeObserver();
 	const toggleRef = useRef< HTMLAnchorElement >( null );
 	const isMobileViewport = useViewportMatch( 'medium', '<' );
@@ -114,7 +112,13 @@ export function Layout( { route }: LayoutProps ) {
 								maxWidth: widths?.content,
 							} }
 						>
-							{ areas.content }
+							<Header pageTitle={ settingsPage?.label } />
+							<SectionTabs
+								tabs={ tabs }
+								activeSection={ activeSection }
+							>
+								{ areas.content }
+							</SectionTabs>
 						</div>
 					) }
 
