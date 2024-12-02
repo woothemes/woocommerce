@@ -22,7 +22,6 @@ const blockSettings = {
 			/>
 		),
 	},
-	ancestor: [ 'woocommerce/single-product' ],
 	save() {
 		return null;
 	},
