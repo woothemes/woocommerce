@@ -135,11 +135,11 @@ export function updateOfflinePaymentGatewayOrdering(
 	};
 }
 
-export async function updateProviderOrdering( orderMap: OrderMap ): {
+export function updateProviderOrdering( orderMap: OrderMap ): {
 	type: ACTION_TYPES.UPDATE_PROVIDER_ORDERING;
 } {
 	try {
-		await apiFetch( {
+		apiFetch( {
 			path: WC_ADMIN_NAMESPACE + '/settings/payments/providers/order',
 			method: 'POST',
 			data: {
