@@ -429,7 +429,7 @@ class PaymentsRestController extends RestApiControllerBase {
 	 *
 	 * @return array The providers list with added links.
 	 */
-	private function add_provider_links( array $providers ) : array {
+	private function add_provider_links( array $providers ): array {
 		foreach ( $providers as $key => $provider ) {
 			// If this is a suggestion, add a link to hide it.
 			if ( ! empty( $provider['_type'] ) &&
@@ -710,7 +710,7 @@ class PaymentsRestController extends RestApiControllerBase {
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
 						),
-						'promo_id'			=> array(
+						'promo_id'          => array(
 							'type'        => 'string',
 							'description' => esc_html__( 'The incentive promo ID. This ID need to be fed into the onboarding flow.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
@@ -758,11 +758,11 @@ class PaymentsRestController extends RestApiControllerBase {
 								'readonly'    => true,
 							),
 						),
-						'_links' => array(
-							'type'        => 'array',
-							'context'     => array( 'view', 'edit' ),
-							'readonly'    => true,
-							'dismiss' => array(
+						'_links'            => array(
+							'type'     => 'array',
+							'context'  => array( 'view', 'edit' ),
+							'readonly' => true,
+							'dismiss'  => array(
 								'type'        => 'string',
 								'description' => esc_html__( 'The URL to dismiss the incentive.', 'woocommerce' ),
 								'context'     => array( 'view', 'edit' ),
@@ -771,15 +771,15 @@ class PaymentsRestController extends RestApiControllerBase {
 						),
 					),
 				),
-				'_links'         => array(
+				'_links'            => array(
 					'type'     => 'array',
 					'context'  => array( 'view', 'edit' ),
 					'readonly' => true,
 					'hide'     => array(
-						'type'     => 'string',
+						'type'        => 'string',
 						'description' => esc_html__( 'The URL to hide the suggestion.', 'woocommerce' ),
-						'context'  => array( 'view', 'edit' ),
-						'readonly' => true,
+						'context'     => array( 'view', 'edit' ),
+						'readonly'    => true,
 					),
 				),
 			),
