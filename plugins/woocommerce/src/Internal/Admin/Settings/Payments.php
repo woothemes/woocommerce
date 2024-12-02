@@ -103,9 +103,10 @@ class Payments {
 				}
 
 				// Change suggestion details to align it with a regular payment gateway.
-				$suggestion['id']     = $suggestion_order_map_id;
-				$suggestion['_type']  = self::PROVIDER_TYPE_SUGGESTION;
-				$suggestion['_order'] = $providers_order_map[ $suggestion_order_map_id ];
+				$suggestion['_suggestion_id'] = $suggestion['id'];
+				$suggestion['id']             = $suggestion_order_map_id;
+				$suggestion['_type']          = self::PROVIDER_TYPE_SUGGESTION;
+				$suggestion['_order']         = $providers_order_map[ $suggestion_order_map_id ];
 				unset( $suggestion['_priority'] );
 
 				$payment_providers[] = $suggestion;
@@ -646,6 +647,7 @@ class Payments {
 			if ( empty( $gateway_details['_incentive'] ) && ! empty( $suggestion['_incentive'] ) ) {
 				$gateway_details['_incentive'] = $suggestion['_incentive'];
 			}
+			$gateway_details['_suggestion_id'] = $suggestion['id'];
 		}
 
 		// Get the gateway's corresponding plugin details.

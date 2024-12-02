@@ -375,7 +375,11 @@ class PaymentsRestController extends RestApiControllerBase {
 	 * @return array The prepared response.
 	 */
 	private function prepare_payment_providers_response( array $response ): array {
-		return $this->prepare_payment_providers_response_recursive( $response, $this->get_schema_for_get_payment_providers() );
+		$response = $this->prepare_payment_providers_response_recursive( $response, $this->get_schema_for_get_payment_providers() );
+
+		$response['providers'] = $this->add_provider_links( $response['providers'] );
+
+		return $response;
 	}
 
 	/**
@@ -414,6 +418,38 @@ class PaymentsRestController extends RestApiControllerBase {
 		$prepared_response = array_filter( $prepared_response, fn( $value ) => ! is_null( $value ) );
 
 		return $prepared_response;
+	}
+
+	/**
+	 * Add links to providers list items.
+	 *
+	 * @param array $providers The providers list.
+	 *
+	 * @return array The providers list with added links.
+	 */
+	private function add_provider_links( array $providers ) : array {
+		foreach ( $providers as $key => $provider ) {
+			// If this is a suggestion, add a link to hide it.
+			if ( ! empty( $provider['_type'] ) &&
+				Payments::PROVIDER_TYPE_SUGGESTION === $provider['_type'] &&
+				! empty( $provider['_suggestion_id'] )
+				) {
+				$providers[ $key ]['_links']['hide'] = array(
+					'href' => rest_url( sprintf( '/%s/%s/suggestion/%s/hide', $this->route_namespace, $this->rest_base, $provider['_suggestion_id'] ) ),
+				);
+			}
+
+			// If we have an incentive, add a link to dismiss it.
+			if ( ! empty( $provider['_incentive'] ) &&
+				! empty( $provider['_suggestion_id'] )
+				) {
+				$providers[ $key ]['_incentive']['_links']['dismiss'] = array(
+					'href' => rest_url( sprintf( '/%s/%s/suggestion/%s/incentive/%s/dismiss', $this->route_namespace, $this->rest_base, $provider['_suggestion_id'], $provider['_incentive']['id'] ) ),
+				);
+			}
+		}
+
+		return $providers;
 	}
 
 	/**
@@ -654,6 +690,12 @@ class PaymentsRestController extends RestApiControllerBase {
 						'readonly'    => true,
 					),
 				),
+				'_suggestion_id'    => array(
+					'type'        => 'string',
+					'description' => esc_html__( 'The suggestion ID matching this provider.', 'woocommerce' ),
+					'context'     => array( 'view', 'edit' ),
+					'readonly'    => true,
+				),
 				'_incentive'        => array(
 					'type'        => 'object',
 					'description' => esc_html__( 'The active incentive for the provider.', 'woocommerce' ),
@@ -708,6 +750,28 @@ class PaymentsRestController extends RestApiControllerBase {
 								'readonly'    => true,
 							),
 						),
+						'_links' => array(
+							'type'        => 'array',
+							'context'     => array( 'view', 'edit' ),
+							'readonly'    => true,
+							'dismiss' => array(
+								'type'        => 'string',
+								'description' => esc_html__( 'The URL to dismiss the incentive.', 'woocommerce' ),
+								'context'     => array( 'view', 'edit' ),
+								'readonly'    => true,
+							),
+						),
+					),
+				),
+				'_links'         => array(
+					'type'     => 'array',
+					'context'  => array( 'view', 'edit' ),
+					'readonly' => true,
+					'hide'     => array(
+						'type'     => 'string',
+						'description' => esc_html__( 'The URL to hide the suggestion.', 'woocommerce' ),
+						'context'  => array( 'view', 'edit' ),
+						'readonly' => true,
 					),
 				),
 			),

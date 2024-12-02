@@ -1469,6 +1469,7 @@ class PaymentExtensionSuggestions {
 		$incentive = $this->sanitize_extension_incentive( $incentive );
 
 		// Enhance the incentive details.
+		$incentive['_suggestion_id'] = $extension_id;
 		// Add the dismissals list.
 		$incentive['_dismissals'] = array_unique( array_values( $this->suggestion_incentives->get_incentive_dismissals( $incentive['id'], $extension_id ) ) );
 
