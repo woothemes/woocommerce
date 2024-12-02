@@ -31,7 +31,7 @@
 	"devDependencies": {
 		"@babel/core": "^7.23.5",
 		"jest": "27.5.x"
-  },
+	},
 	"publishConfig": {
 		"access": "public"
 	}

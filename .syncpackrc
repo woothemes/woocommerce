@@ -183,8 +183,6 @@
 		},
 		{
 			"dependencies": [
-				"@wordpress/babel-plugin-import-jsx-pragma",
-				"@wordpress/babel-preset-default",
 				"@wordpress/stylelint-config",
 				"@wordpress/scripts",
 				"@wordpress/jest-console",
@@ -260,6 +258,16 @@
 		{
 			"dependencies": [
 				"@wordpress/e2e-test-utils-playwright"
+			],
+			"packages": [
+				"**"
+			],
+			"pinVersion": "wp-6.6"
+		},
+		{
+			"dependencies": [
+				"@wordpress/babel-preset-default",
+				"@wordpress/babel-plugin-import-jsx-pragma"
 			],
 			"packages": [
 				"**"
