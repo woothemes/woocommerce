@@ -44,6 +44,7 @@
  - [woocommerce_single_product_image_thumbnail_html](#woocommerce_single_product_image_thumbnail_html)
  - [woocommerce_store_api_add_to_cart_data](#woocommerce_store_api_add_to_cart_data)
  - [woocommerce_store_api_disable_nonce_check](#woocommerce_store_api_disable_nonce_check)
+ - [woocommerce_store_api_cart_item_images](#woocommerce_store_api_cart_item_images)
  - [woocommerce_store_api_product_quantity_limit](#woocommerce_store_api_product_quantity_limit)
  - [woocommerce_store_api_product_quantity_{$value_type}](#woocommerce_store_api_product_quantity_value_type)
  - [woocommerce_store_api_rate_limit_options](#woocommerce_store_api_rate_limit_options)
@@ -1076,6 +1077,39 @@ apply_filters( 'woocommerce_store_api_disable_nonce_check', boolean $disable_non
 
 
  - [StoreApi/Routes/V1/AbstractCartRoute.php](../../../../src/StoreApi/Routes/V1/AbstractCartRoute.php)
+
+---
+
+## woocommerce_store_api_cart_item_images
+
+
+This hook allows the cart item images to be changed. This is specific to the cart endpoint.
+
+```php
+apply_filters( 'woocommerce_store_api_cart_item_images', array $product_images, array $cart_item, string $cart_item_key )
+```
+
+### Description
+
+<p>This hook allows the cart item images to be changed. This is specific to the cart endpoint.</p>
+
+### Parameters
+
+| Argument        | Type   | Description                                       |
+|-----------------|--------|---------------------------------------------------|
+| $product_images | array  | An array of images associated with the cart item. |
+| $cart_item      | array  | The cart item.                                    |
+| $cart_item_key  | string | The cart item key.                                |
+
+### Returns
+
+
+`array`
+
+### Source
+
+
+ - [StoreApi/Schemas/V1/CartItemSchema.php](../../../../src/StoreApi/Schemas/V1/CartItemSchema.php)
 
 ---
 
