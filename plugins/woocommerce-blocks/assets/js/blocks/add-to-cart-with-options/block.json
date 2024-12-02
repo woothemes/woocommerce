@@ -2,7 +2,7 @@
 	"name": "woocommerce/add-to-cart-with-options",
 	"version": "1.0.0",
 	"title": "Add to Cart with Options (Experimental)",
-	"description": "Display a button so the customer can add a product to their cart. Options will also be displayed depending on product type. e.g. quantity, variation.",
+	"description": "Create an \"Add To Cart\" composition by using blocks",
 	"category": "woocommerce-product-elements",
 	"attributes": {
 		"isDescendentOfSingleProductBlock": {
