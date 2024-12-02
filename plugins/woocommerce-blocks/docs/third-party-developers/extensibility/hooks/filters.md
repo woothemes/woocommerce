@@ -1109,7 +1109,7 @@ apply_filters( 'woocommerce_store_api_cart_item_images', array $product_images, 
 ### Source
 
 
- - [StoreApi/Schemas/V1/CartItemSchema.php](../../../../src/StoreApi/Schemas/V1/CartItemSchema.php)
+ - [StoreApi/Schemas/V1/CartItemSchema.php](../../../../../woocommerce/src/StoreApi/Schemas/V1/CartItemSchema.php)
 
 ---
 
