@@ -53,7 +53,7 @@ WooCommerce is natively compatible with WP Super Cache. WooCommerce sends inform
 if (req.url ~ "^/(cart|my-account|checkout|addons)") {
   return (pass);
 }
-if ( req.url ~ "\\?add-to-cart=" ) {
+if ( req.url ~ "\?add-to-cart=" ) {
   return (pass);
 }
 ```
