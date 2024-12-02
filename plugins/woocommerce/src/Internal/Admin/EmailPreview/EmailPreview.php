@@ -22,6 +22,20 @@ class EmailPreview {
 	const DEFAULT_EMAIL_TYPE = 'WC_Email_Customer_Processing_Order';
 
 	/**
+	 * The email type to preview.
+	 *
+	 * @var string
+	 */
+	private string $email_type = self::DEFAULT_EMAIL_TYPE;
+
+	/**
+	 * List of available email types.
+	 *
+	 * @var array
+	 */
+	private array $email_types = array();
+
+	/**
 	 * The single instance of the class.
 	 *
 	 * @var object
@@ -38,6 +52,20 @@ class EmailPreview {
 			static::$instance = new static();
 		}
 		return static::$instance;
+	}
+
+	/**
+	 * Set the email type to preview.
+	 *
+	 * @param string $email_type Email type.
+	 *
+	 * @throws \InvalidArgumentException When the email type is invalid.
+	 */
+	public function set_email_type( string $email_type ) {
+		if ( ! in_array( $email_type, $this->get_email_types(), true ) ) {
+			throw new \InvalidArgumentException( 'Invalid email type' );
+		}
+		$this->email_type = $email_type;
 	}
 
 	/**
@@ -63,6 +91,18 @@ class EmailPreview {
 			return $product;
 		}
 		return $this->get_dummy_product();
+	}
+
+	/**
+	 * Get the list of available email types.
+	 *
+	 * @return array
+	 */
+	private function get_email_types() {
+		if ( empty( $this->email_types ) ) {
+			$this->email_types = array_keys( WC()->mailer()->get_emails() );
+		}
+		return $this->email_types;
 	}
 
 	/**
