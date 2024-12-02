@@ -292,6 +292,7 @@ WooCommerce comes with some sample data you can use to see how products look; im
 * Fix - Set a fixed color to Select2 dropdown options [#52244](https://github.com/woocommerce/woocommerce/pull/52244)
 * Fix - Set server-side render of Mini-Cart icon to correctly show/hide the count based on block setting [#52124](https://github.com/woocommerce/woocommerce/pull/52124)
 * Fix - Store API will ensure the cart response has valid quantities for items if setting limits via filters [#52154](https://github.com/woocommerce/woocommerce/pull/52154)
+* Fix - Correctly respect the generate password option for accounts created post Checkout. [#53277](https://github.com/woocommerce/woocommerce/pull/53277)
 * Add - Adapt receipt to take into account failed orders. [#51853](https://github.com/woocommerce/woocommerce/pull/51853)
 * Add - Add a11y to the color swatches [#51715](https://github.com/woocommerce/woocommerce/pull/51715)
 * Add - Add a method to the order object to get info about the card used for payment [#52173](https://github.com/woocommerce/woocommerce/pull/52173)
@@ -420,6 +421,7 @@ WooCommerce comes with some sample data you can use to see how products look; im
 * Dev - Update the `.distignore` file to exclude the ./client/admin folder from zip [#52052](https://github.com/woocommerce/woocommerce/pull/52052)
 * Dev - Uses the newly introduced order status constants in unit tests. [#51920](https://github.com/woocommerce/woocommerce/pull/51920)
 * Dev - [e2e tests] Remove update-woocommerce spec [#52493](https://github.com/woocommerce/woocommerce/pull/52493)
+* Dev - Update affected tests to be compatible with both Gutenberg stable and nightly. [#53293](https://github.com/woocommerce/woocommerce/pull/53293)
 * Tweak - Add autoloading for woocommerce_allow_tracking option [#52512](https://github.com/woocommerce/woocommerce/pull/52512)
 * Tweak - Adjust copy in the cart sidebar when the shipping calculator is not enabled. [#51760](https://github.com/woocommerce/woocommerce/pull/51760)
 * Tweak - Adjust styles for inputs and selects in cart and checkout to use ems to better support Twenty Twenty-Five theme. [#51725](https://github.com/woocommerce/woocommerce/pull/51725)
@@ -472,6 +474,5 @@ WooCommerce comes with some sample data you can use to see how products look; im
 * Enhancement - Removed CouponPageMoved class. [#52475](https://github.com/woocommerce/woocommerce/pull/52475)
 * Enhancement - Use product name as fallback alt text in product gallery [#51936](https://github.com/woocommerce/woocommerce/pull/51936)
 * Enhancement - [Experimental] Allow disabling product descriptions in the product summary. [#52503](https://github.com/woocommerce/woocommerce/pull/52503)
-
 
 [See changelog for all versions](https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/changelog.txt).
