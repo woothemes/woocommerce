@@ -52,7 +52,6 @@ class ProductGalleryLargeImageNextPrevious extends AbstractBlock {
 			case 'outsideTheImage':
 				return 'outside-image';
 			case 'off':
-				return 'off';
 			default:
 				return 'off';
 		}
@@ -84,7 +83,13 @@ class ProductGalleryLargeImageNextPrevious extends AbstractBlock {
 			return null;
 		}
 
-		$context     = $block->context;
+		$context      = $block->context;
+		$class_suffix = $this->get_class_suffix( $context );
+
+		if ( 'off' === $class_suffix ) {
+			return null;
+		}
+
 		$prev_button = $this->get_button( 'previous', $context );
 		$p           = new \WP_HTML_Tag_Processor( $prev_button );
 
@@ -116,7 +121,7 @@ class ProductGalleryLargeImageNextPrevious extends AbstractBlock {
 		}
 
 		$alignment_class = isset( $attributes['layout']['verticalAlignment'] ) ? 'is-vertically-aligned-' . $attributes['layout']['verticalAlignment'] : '';
-		$position_class  = 'wc-block-product-gallery-large-image-next-previous--' . $this->get_class_suffix( $context );
+		$position_class  = 'wc-block-product-gallery-large-image-next-previous--' . $class_suffix;
 
 		return strtr(
 			'<div
