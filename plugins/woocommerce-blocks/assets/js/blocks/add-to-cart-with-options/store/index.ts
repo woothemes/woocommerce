@@ -1,0 +1,105 @@
+/**
+ * External dependencies
+ */
+import { createReduxStore, register } from '@wordpress/data';
+import { getSetting } from '@woocommerce/settings';
+
+/**
+ * Internal dependencies
+ */
+import {
+	ACTION_SET_PRODUCT_TYPES,
+	ACTION_SWITCH_PRODUCT_TYPE,
+	STORE_NAME,
+} from './constants';
+import type { ProductTypeSlug } from '../types';
+
+const productTypes = getSetting< Record< string, string > >(
+	'productTypes',
+	{}
+);
+
+/**
+ * Build options collection for product types.
+ */
+export const productTypesOptions = Object.keys( productTypes ).map(
+	( key ) => ( {
+		value: key,
+		label: productTypes[ key ],
+	} )
+);
+
+export type ProductTypesOptions = typeof productTypesOptions;
+
+type StoreState = {
+	productTypes: {
+		list: ProductTypesOptions;
+		current: ProductTypeSlug | undefined;
+	};
+};
+
+type Actions = {
+	type: typeof ACTION_SET_PRODUCT_TYPES | typeof ACTION_SWITCH_PRODUCT_TYPE;
+	productTypes?: ProductTypesOptions;
+	current?: ProductTypeSlug;
+};
+
+const DEFAULT_STATE = {
+	productTypes: {
+		list: productTypesOptions,
+		current: undefined,
+	},
+};
+
+const actions = {
+	switchProductType( slug: ProductTypeSlug ) {
+		return {
+			type: ACTION_SWITCH_PRODUCT_TYPE,
+			current: slug,
+		};
+	},
+};
+
+const reducer = ( state: StoreState = DEFAULT_STATE, action: Actions ) => {
+	switch ( action.type ) {
+		case ACTION_SET_PRODUCT_TYPES:
+			return {
+				...state,
+				productTypes: {
+					...state.productTypes,
+					list: action.productTypes || [],
+				},
+			};
+
+		case ACTION_SWITCH_PRODUCT_TYPE:
+			return {
+				...state,
+				productTypes: {
+					...state.productTypes,
+					current: action.current,
+				},
+			};
+
+		default:
+			return state;
+	}
+};
+
+const selectors = {
+	getProductTypes( state: StoreState ) {
+		return state.productTypes.list;
+	},
+	getCurrentProductType( state: StoreState ) {
+		return state.productTypes.current;
+	},
+};
+
+const store = createReduxStore( STORE_NAME, {
+	reducer,
+	actions,
+	selectors,
+} );
+
+export default function registerStore() {
+	register( store );
+}
