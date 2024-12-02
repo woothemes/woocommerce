@@ -15,5 +15,3 @@ export const BLOCK_DESCRIPTION: string = __(
 	'Display product stock status.',
 	'woocommerce'
 );
-
-export const ALLOWED_PRODUCT_TYPES = [ 'simple', 'variation' ];

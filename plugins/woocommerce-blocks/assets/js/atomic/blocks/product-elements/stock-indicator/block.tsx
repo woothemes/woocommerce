@@ -17,8 +17,8 @@ import { ProductResponseItem } from '@woocommerce/types';
  */
 import './style.scss';
 import type { BlockAttributes } from './types';
-import { ALLOWED_PRODUCT_TYPES } from './constants';
 
+const ALLOWED_PRODUCT_TYPES = [ 'simple', 'variation' ];
 /**
  * Get stock text based on stock. For example:
  * - In stock
