@@ -55,8 +55,8 @@ Available READMe files for the WooCommerce plugin:
 - [`src`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/src/README.md)
 - [`src/Admin/RemoteInboxNotifications`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/src/Admin/RemoteInboxNotifications/README.md)
 - [`src/Internal`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/src/Internal/README.md)
-- [`src/Internal/Admin/ProductForm`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/src/Internal/Admin/ProductForm/README.md)
-- [`src/TransientFiles`](https://github.com/woocommerce/woocommerce/tree/trunk/plugins/woocommerce/src/Internal/TransientFiles)
+- [`src/Internal/Admin/ProductForm`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/src/Internal/Admin/ProductForm/README.md)blob
+- [`src/TransientFiles`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/src/Internal/TransientFiles/README.md)
 - [`tests`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/tests/README.md)
 - [`tests/api-core-tests`](https://github.com/woocommerce/woocommerce/blob/trunk/packages/js/api-core-tests/README.md)
 - [`tests/e2e`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/tests/e2e/README.md)
