@@ -146,6 +146,7 @@ const TableCard: React.VFC< TableCardProps > = ( {
 							'Choose which values to display',
 							'woocommerce'
 						) }
+						placement="bottom-end"
 						renderContent={ () => (
 							<Fragment>
 								<MenuTitle>

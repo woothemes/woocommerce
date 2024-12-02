@@ -33,15 +33,33 @@ describe( 'generateCSVDataFromTable', () => {
 	} );
 
 	it( 'should prefix single quote character when the cell value starts with one of =, +, -, @, tab, and carriage return', () => {
-		[
-			'=',
-			'+',
-			'-',
-			'@',
-			String.fromCharCode( 0x09 ), // tab
-			String.fromCharCode( 0x0d ), // carriage return
-		].forEach( ( val ) => {
-			const expected = 'value\n"\'' + val + 'test"';
+		const testValues = [
+			// The values below should be escaped to prevent CSV formula injection.
+			{ input: '=danger', expected: `"'=danger"` },
+			{ input: '+danger', expected: `"'+danger"` },
+			{ input: '-danger', expected: `"'-danger"` },
+			{ input: '@danger', expected: `"'@danger"` },
+			{
+				input: String.fromCharCode( 0x09 ) + 'danger',
+				expected: `"'${ String.fromCharCode( 0x09 ) }danger"`,
+			},
+			{
+				input: String.fromCharCode( 0x0d ) + 'danger',
+				expected: `"'${ String.fromCharCode( 0x0d ) }danger"`,
+			},
+
+			// The values below should not be escaped since they are pure numeric values.
+			{ input: 12, expected: '12' },
+			{ input: 12.34, expected: '12.34' },
+			{ input: -12, expected: '-12' },
+			{ input: -12.34, expected: '-12.34' },
+			{
+				input: Number.MIN_SAFE_INTEGER,
+				expected: '-9007199254740991',
+			},
+		];
+
+		testValues.forEach( ( { input, expected } ) => {
 			const result = generateCSVDataFromTable(
 				[
 					{
@@ -53,12 +71,12 @@ describe( 'generateCSVDataFromTable', () => {
 					[
 						{
 							display: 'value',
-							value: val + 'test',
+							value: input,
 						},
 					],
 				]
 			);
-			expect( result ).toBe( expected );
+			expect( result ).toBe( `value\n${ expected }` );
 		} );
 	} );
 } );
