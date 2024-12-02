@@ -48,7 +48,7 @@ const stateReducer = < ItemType extends Item >(
 							? Math.min(
 									items.indexOf( selectedItem ) + 1,
 									items.length - 1
-								)
+							  )
 							: 0
 					],
 				isOpen: true, // Keep menu open after selection.
@@ -222,7 +222,7 @@ export const CountrySelector = < ItemType extends Item >( {
 						{ placeholder: ! itemString }
 					),
 					name,
-					onKeyDown: onEnterApply
+					onKeyDown: onEnterApply,
 				} ) }
 			>
 				<span className="components-country-select-control__button-value">
