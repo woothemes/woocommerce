@@ -3,6 +3,7 @@ declare( strict_types=1 );
 
 namespace Automattic\WooCommerce\Tests\Internal\Admin\Suggestions\Incentives;
 
+use Automattic\WooCommerce\Internal\Admin\Suggestions\Incentives\Incentive;
 use Automattic\WooCommerce\Internal\Admin\Suggestions\Incentives\WooPayments;
 use WC_REST_Unit_Test_Case;
 
@@ -27,6 +28,13 @@ class WooPaymentsTest extends WC_REST_Unit_Test_Case {
 	protected string $suggestion_id;
 
 	/**
+	 * The ID of the store admin user.
+	 *
+	 * @var int
+	 */
+	protected $store_admin_id;
+
+	/**
 	 * Response mock.
 	 *
 	 * @var callable
@@ -45,6 +53,9 @@ class WooPaymentsTest extends WC_REST_Unit_Test_Case {
 	 */
 	public function setUp(): void {
 		parent::setUp();
+
+		$this->store_admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $this->store_admin_id );
 
 		$this->suggestion_id = 'suggestion1';
 
@@ -101,6 +112,8 @@ class WooPaymentsTest extends WC_REST_Unit_Test_Case {
 
 			return $preempt;
 		};
+
+		delete_user_meta( $this->store_admin_id, Incentive::PREFIX . 'dismissed' );
 	}
 
 	/**
@@ -200,6 +213,10 @@ class WooPaymentsTest extends WC_REST_Unit_Test_Case {
 			->expects( $this->never() )
 			->method( 'is_extension_active' );
 
+		// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+		$filter_callback = fn( $caps ) => array( 'manage_woocommerce' => true );
+		add_filter( 'user_has_cap', $filter_callback );
+
 		add_filter( 'pre_http_request', $this->response_mock_ref, 10, 3 );
 
 		// Act.
@@ -207,6 +224,9 @@ class WooPaymentsTest extends WC_REST_Unit_Test_Case {
 
 		// Assert.
 		$this->assertTrue( $result );
+
+		// Clean up.
+		remove_filter( 'user_has_cap', $filter_callback );
 	}
 
 	/**
