@@ -141,7 +141,8 @@ class EmailPreview {
 	private function render_preview_email() {
 		$this->set_up_filters();
 
-		$email = $this->get_email();
+		$emails = WC()->mailer()->get_emails();
+		$email  = $emails[ $this->email_type ];
 
 		$order = $this->get_dummy_order();
 		$email->set_object( $order );
@@ -207,29 +208,6 @@ class EmailPreview {
 			'country'    => 'US',
 			'state'      => 'CA',
 		);
-	}
-
-	/**
-	 * Get the email class for email preview.
-	 *
-	 * @return WC_Email
-	 */
-	private function get_email() {
-		$emails     = WC()->mailer()->get_emails();
-		$email_type = self::DEFAULT_EMAIL_TYPE;
-
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended
-		// Nonce verification is done in class-wc-admin.php in preview_emails() method.
-		if ( isset( $_GET['type'] ) ) {
-			$type_param = sanitize_text_field( wp_unslash( $_GET['type'] ) );
-			if ( array_key_exists( $type_param, $emails ) ) {
-				$email_type = $type_param;
-			}
-		}
-		// phpcs:enable WordPress.Security.NonceVerification.Recommended
-
-		$email = $emails[ $email_type ];
-		return $email;
 	}
 
 	/**

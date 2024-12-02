@@ -197,7 +197,13 @@ class WC_Admin {
 			}
 
 			$email_preview = wc_get_container()->get( EmailPreview::class );
-			$message       = $email_preview->render();
+
+			if ( isset( $_GET['type'] ) ) {
+				$type_param = sanitize_text_field( wp_unslash( $_GET['type'] ) );
+				$email_preview->set_email_type( $type_param );
+			}
+
+			$message = $email_preview->render();
 
 			// print the preview email.
 			// phpcs:ignore WordPress.Security.EscapeOutput
