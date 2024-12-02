@@ -101,8 +101,9 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 			->willReturn(
 				array(
 					array(
-						'id'   => 'incentive1',
-						'type' => 'type1',
+						'id'       => 'incentive1',
+						'promo_id' => 'promo1',
+						'type'     => 'type1',
 					),
 				)
 			);
@@ -138,8 +139,9 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 			->willReturn(
 				array(
 					array(
-						'id'   => 'incentive1',
-						'type' => 'type1',
+						'id'       => 'incentive1',
+						'promo_id' => 'promo1',
+						'type'     => 'type1',
 					),
 				)
 			);
@@ -241,12 +243,14 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 			->willReturn(
 				array(
 					array(
-						'id'   => 'incentive1',
-						'type' => 'type1',
+						'id'       => 'incentive1',
+						'promo_id' => 'promo1',
+						'type'     => 'type1',
 					),
 					array(
-						'id'   => 'incentive2',
-						'type' => 'type2',
+						'id'       => 'incentive2',
+						'promo_id' => 'promo2',
+						'type'     => 'type2',
 					),
 				)
 			);
@@ -284,12 +288,14 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 			->willReturn(
 				array(
 					array(
-						'id'   => 'incentive1',
-						'type' => 'type1',
+						'id'       => 'incentive1',
+						'promo_id' => 'promo1',
+						'type'     => 'type1',
 					),
 					array(
-						'id'   => 'incentive2',
-						'type' => 'type2',
+						'id'       => 'incentive2',
+						'promo_id' => 'promo2',
+						'type'     => 'type2',
 					),
 				)
 			);
@@ -325,12 +331,14 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 			->willReturn(
 				array(
 					array(
-						'id'   => 'incentive2',
-						'type' => 'type2',
+						'id'       => 'incentive1',
+						'promo_id' => 'promo1',
+						'type'     => 'type2',
 					),
 					array(
-						'id'   => 'incentive3',
-						'type' => 'type2',
+						'id'       => 'incentive2',
+						'promo_id' => 'promo2',
+						'type'     => 'type2',
 					),
 				)
 			);
@@ -346,8 +354,8 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 
 		// Assert.
 		$this->assertCount( 2, $incentives );
-		$this->assertEquals( 'incentive2', $incentives[0]['id'] );
-		$this->assertEquals( 'incentive3', $incentives[1]['id'] );
+		$this->assertEquals( 'incentive1', $incentives[0]['id'] );
+		$this->assertEquals( 'incentive2', $incentives[1]['id'] );
 	}
 
 	/**
@@ -392,12 +400,14 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 			->willReturn(
 				array(
 					array(
-						'id'   => 'incentive2',
-						'type' => 'type2',
+						'id'       => 'incentive1',
+						'promo_id' => 'promo1',
+						'type'     => 'type2',
 					),
 					array(
-						'id'   => 'incentive3',
-						'type' => 'type2',
+						'id'       => 'incentive2',
+						'promo_id' => 'promo2',
+						'type'     => 'type2',
 					),
 				)
 			);
@@ -412,8 +422,8 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 
 		// Assert.
 		$this->assertCount( 2, $incentives );
-		$this->assertEquals( 'incentive2', $incentives[0]['id'] );
-		$this->assertEquals( 'incentive3', $incentives[1]['id'] );
+		$this->assertEquals( 'incentive1', $incentives[0]['id'] );
+		$this->assertEquals( 'incentive2', $incentives[1]['id'] );
 	}
 
 	/**
@@ -448,11 +458,11 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 		$this->mock_incentive_provider
 			->expects( $this->once() )
 			->method( 'is_visible' )
-			->with( 'incentive1', 'RO', 'type1', true )
+			->with( 'incentive1', 'RO', true )
 			->willReturn( true );
 
 		// Act.
-		$this->assertTrue( $this->sut->is_incentive_visible( 'incentive1', 'suggestion1', 'RO', 'type1', true ) );
+		$this->assertTrue( $this->sut->is_incentive_visible( 'incentive1', 'suggestion1', 'RO', true ) );
 	}
 
 	/**

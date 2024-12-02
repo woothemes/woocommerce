@@ -59,21 +59,43 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 			->willReturn(
 				array(
 					array(
-						'id'   => 'incentive1',
-						'type' => 'type1',
+						'id'        => 'incentive1',
+						'promo_id'  => 'promo1',
+						'type'      => 'type1',
+						'something' => 'else', // Extra data that should be ignored.
+					),
+					array(), // Invalid empty incentive.
+					array(
+						'something' => 'else', // Invalid incentive that is missing all required entries.
 					),
 					array(
-						// Invalid incentive.
+						'id' => 'id', // Invalid incentive that is missing promo ID and type.
 					),
 					array(
-						'id' => 'id', // Invalid incentive that is missing type.
+						'type' => 'type', // Invalid incentive that is missing ID and promo ID.
 					),
 					array(
-						'type' => 'type', // Invalid incentive that is missing ID.
+						'promo_id' => 'promo1', // Invalid incentive that is missing ID and type.
 					),
 					array(
-						'id'   => 'incentive2',
-						'type' => 'type2',
+						'id'        => 'incentive2',
+						'promo_id'  => 'promo2',
+						'type'      => 'type2',
+						'something' => 'else', // Extra data that should be ignored.
+					),
+					array(
+						'id'       => 'id', // Invalid incentive that is missing type.
+						'promo_id' => 'promo1',
+					),
+					array(
+						'id'        => 'id2',
+						'type'      => 'type', // Invalid incentive that is missing promo ID.
+						'something' => 'else', // Extra data that should be ignored.
+					),
+					array(
+						'id'        => 'id2',
+						'promo_id'  => 'promo2', // Invalid incentive that is missing type.
+						'something' => 'else', // Extra data that should be ignored.
 					),
 				)
 			);
@@ -99,16 +121,19 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 			->willReturn(
 				array(
 					array(
-						'id'   => 'incentive1',
-						'type' => 'type1',
+						'id'       => 'incentive1',
+						'promo_id' => 'promo1',
+						'type'     => 'type1',
 					),
 					array(
-						'id'   => 'incentive2',
-						'type' => 'type2',
+						'id'       => 'incentive2',
+						'promo_id' => 'promo2',
+						'type'     => 'type2',
 					),
 					array(
-						'id'   => 'incentive3',
-						'type' => 'type1',
+						'id'       => 'incentive3',
+						'promo_id' => 'promo3',
+						'type'     => 'type1',
 					),
 				)
 			);
@@ -123,6 +148,193 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 	}
 
 	/**
+	 * Test getting an incentive by promo ID.
+	 */
+	public function test_get_by_promo_id() {
+		// Arrange.
+		$this->sut
+			->expects( $this->once() )
+			->method( 'get_incentives' )
+			->with( 'US' )
+			->willReturn(
+				array(
+					array(
+						'id'       => 'incentive1',
+						'promo_id' => 'promo1',
+						'type'     => 'type1',
+					),
+					array(
+						'id'       => 'incentive2',
+						'promo_id' => 'promo2',
+						'type'     => 'type2',
+					),
+					array(
+						'id'       => 'incentive3',
+						'promo_id' => 'promo3',
+						'type'     => 'type1',
+					),
+					array(
+						'id'       => 'incentive4',
+						'promo_id' => 'promo4',
+						'type'     => 'type2',
+					),
+				)
+			);
+
+		// Act.
+		$result = $this->sut->get_by_promo_id( 'promo2', 'US' );
+
+		// Assert.
+		$this->assertEquals( 'incentive2', $result['id'] );
+		$this->assertEquals( 'promo2', $result['promo_id'] );
+		$this->assertEquals( 'type2', $result['type'] );
+	}
+
+	/**
+	 * Test getting an incentive by promo ID with a specific type.
+	 */
+	public function test_get_by_promo_id_with_incentive_type() {
+		// Arrange.
+		$this->sut
+			->expects( $this->exactly( 2 ) )
+			->method( 'get_incentives' )
+			->with( 'US' )
+			->willReturn(
+				array(
+					array(
+						'id'       => 'incentive3',
+						'promo_id' => 'promo3', // Not the promo ID we're looking for.
+						'type'     => 'type1',
+					),
+					array(
+						'id'       => 'incentive1',
+						'promo_id' => 'promo1',
+						'type'     => 'type1',
+					),
+					array(
+						'id'       => 'incentive1_1',
+						'promo_id' => 'promo1', // Same promo ID, different type.
+						'type'     => 'type2',
+					),
+					array(
+						'id'       => 'incentive4',
+						'promo_id' => 'promo4',
+						'type'     => 'type2',
+					),
+				)
+			);
+
+		// Act.
+		$result = $this->sut->get_by_promo_id( 'promo1', 'US', 'type1' );
+
+		// Assert.
+		$this->assertEquals( 'incentive1', $result['id'] );
+		$this->assertEquals( 'promo1', $result['promo_id'] );
+		$this->assertEquals( 'type1', $result['type'] );
+
+		// Act.
+		$result = $this->sut->get_by_promo_id( 'promo1', 'US', 'type2' );
+
+		// Assert.
+		$this->assertEquals( 'incentive1_1', $result['id'] );
+		$this->assertEquals( 'promo1', $result['promo_id'] );
+		$this->assertEquals( 'type2', $result['type'] );
+	}
+
+	/**
+	 * Test getting an incentive by promo ID when the ID is invalid.
+	 */
+	public function test_get_by_promo_id_with_invalid_id() {
+		// Arrange.
+		$this->sut
+			->expects( $this->once() )
+			->method( 'get_incentives' )
+			->with( 'US' )
+			->willReturn(
+				array(
+					array(
+						'id'       => 'incentive1',
+						'promo_id' => 'promo1',
+						'type'     => 'type1',
+					),
+					array(
+						'id'       => 'incentive2',
+						'promo_id' => 'promo2',
+						'type'     => 'type2',
+					),
+				)
+			);
+
+		// Act.
+		$result = $this->sut->get_by_promo_id( 'bogus_id', 'US' );
+
+		// Assert.
+		$this->assertNull( $result );
+	}
+
+	/**
+	 * Test getting an incentive by ID when the incentive is invalid.
+	 */
+	public function test_get_by_promo_id_with_invalid_incentive() {
+		// Arrange.
+		$this->sut
+			->expects( $this->once() )
+			->method( 'get_incentives' )
+			->with( 'US' )
+			->willReturn(
+				array(
+					array(
+						'id'       => 'incentive1',
+						'promo_id' => 'promo1', // No type.
+					),
+					array(
+						'promo_id' => 'promo1', // No ID.
+						'type'     => 'type1',
+					),
+				)
+			);
+
+		// Act.
+		$result = $this->sut->get_by_promo_id( 'promo1', 'US' );
+
+		// Assert.
+		$this->assertNull( $result );
+	}
+
+	/**
+	 * Test getting an incentive by promo ID when there are multiple incentives with the same promo ID.
+	 */
+	public function test_get_by_promo_id_returns_first() {
+		// Arrange.
+		$this->sut
+			->expects( $this->once() )
+			->method( 'get_incentives' )
+			->with( 'US' )
+			->willReturn(
+				array(
+					array(
+						'id'       => 'incentive1',
+						'promo_id' => 'promo1',
+						'type'     => 'type1',
+					),
+					array(
+						'id'       => 'incentive2',
+						'promo_id' => 'promo1', // Same promo ID.
+						'type'     => 'type2',
+					),
+				)
+			);
+
+		// Act.
+		$result = $this->sut->get_by_promo_id( 'promo1', 'US' );
+
+		// Assert.
+		$this->assertEquals( 'incentive1', $result['id'] );
+		$this->assertEquals( 'promo1', $result['promo_id'] );
+		$this->assertEquals( 'type1', $result['type'] );
+	}
+
+	/**
 	 * Test getting an incentive by ID.
 	 */
 	public function test_get_by_id() {
@@ -134,20 +346,24 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 			->willReturn(
 				array(
 					array(
-						'id'   => 'incentive1',
-						'type' => 'type1',
+						'id'       => 'incentive1',
+						'promo_id' => 'promo1',
+						'type'     => 'type1',
 					),
 					array(
-						'id'   => 'incentive2',
-						'type' => 'type2',
+						'id'       => 'incentive2',
+						'promo_id' => 'promo2',
+						'type'     => 'type2',
 					),
 					array(
-						'id'   => 'incentive3',
-						'type' => 'type1',
+						'id'       => 'incentive3',
+						'promo_id' => 'promo3',
+						'type'     => 'type1',
 					),
 					array(
-						'id'   => 'incentive4',
-						'type' => 'type2',
+						'id'       => 'incentive4',
+						'promo_id' => 'promo4',
+						'type'     => 'type2',
 					),
 				)
 			);
@@ -157,51 +373,6 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 
 		// Assert.
 		$this->assertEquals( 'incentive2', $result['id'] );
-		$this->assertEquals( 'type2', $result['type'] );
-	}
-
-	/**
-	 * Test getting an incentive by ID with a specific type.
-	 */
-	public function test_get_by_id_with_incentive_type() {
-		// Arrange.
-		$this->sut
-			->expects( $this->exactly( 2 ) )
-			->method( 'get_incentives' )
-			->with( 'US' )
-			->willReturn(
-				array(
-					array(
-						'id'   => 'incentive1',
-						'type' => 'type1',
-					),
-					array(
-						'id'   => 'incentive1', // Same ID, different type.
-						'type' => 'type2',
-					),
-					array(
-						'id'   => 'incentive3',
-						'type' => 'type1',
-					),
-					array(
-						'id'   => 'incentive4',
-						'type' => 'type2',
-					),
-				)
-			);
-
-		// Act.
-		$result = $this->sut->get_by_id( 'incentive1', 'US', 'type1' );
-
-		// Assert.
-		$this->assertEquals( 'incentive1', $result['id'] );
-		$this->assertEquals( 'type1', $result['type'] );
-
-		// Act.
-		$result = $this->sut->get_by_id( 'incentive1', 'US', 'type2' );
-
-		// Assert.
-		$this->assertEquals( 'incentive1', $result['id'] );
 		$this->assertEquals( 'type2', $result['type'] );
 	}
 
@@ -217,12 +388,14 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 			->willReturn(
 				array(
 					array(
-						'id'   => 'incentive1',
-						'type' => 'type1',
+						'id'       => 'incentive1',
+						'promo_id' => 'bogus_id', // This is not the incentive ID.
+						'type'     => 'type1',
 					),
 					array(
-						'id'   => 'incentive2',
-						'type' => 'type2',
+						'id'       => 'incentive2',
+						'promo_id' => 'promo2',
+						'type'     => 'type2',
 					),
 				)
 			);
@@ -246,8 +419,8 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 			->willReturn(
 				array(
 					array(
-						'id' => 'incentive1',
-					// No type.
+						'id'       => 'incentive1',
+						'promo_id' => 'promo1', // No type.
 					),
 				)
 			);
@@ -271,12 +444,14 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 			->willReturn(
 				array(
 					array(
-						'id'   => 'incentive1',
-						'type' => 'type1',
+						'id'       => 'incentive1',
+						'promo_id' => 'promo1',
+						'type'     => 'type1',
 					),
 					array(
-						'id'   => 'incentive1', // Same ID.
-						'type' => 'type2',
+						'id'       => 'incentive1', // Same ID.
+						'promo_id' => 'promo2',
+						'type'     => 'type2',
 					),
 				)
 			);
@@ -286,6 +461,7 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 
 		// Assert.
 		$this->assertEquals( 'incentive1', $result['id'] );
+		$this->assertEquals( 'promo1', $result['promo_id'] );
 		$this->assertEquals( 'type1', $result['type'] );
 	}
 
@@ -326,14 +502,15 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 			->willReturn(
 				array(
 					array(
-						'id'   => 'incentive1',
-						'type' => 'type1',
+						'id'       => 'incentive1',
+						'promo_id' => 'promo1',
+						'type'     => 'type1',
 					),
 				)
 			);
 
 		// Act.
-		$result = $this->sut->is_visible( 'incentive1', 'RO', '', true );
+		$result = $this->sut->is_visible( 'incentive1', 'RO', true );
 
 		// Assert.
 		$this->assertTrue( $result );
@@ -363,8 +540,9 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 			->willReturn(
 				array(
 					array(
-						'id'   => 'incentive1',
-						'type' => 'type1',
+						'id'       => 'incentive1',
+						'promo_id' => 'promo1',
+						'type'     => 'type1',
 					),
 				)
 			);
@@ -400,8 +578,9 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 			->willReturn(
 				array(
 					array(
-						'id'   => 'incentive1',
-						'type' => 'type1',
+						'id'       => 'incentive1',
+						'promo_id' => 'promo1',
+						'type'     => 'type1',
 					),
 				)
 			);
@@ -437,8 +616,9 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 			->willReturn(
 				array(
 					array(
-						'id'   => 'incentive1',
-						'type' => 'type1',
+						'id'       => 'incentive1',
+						'promo_id' => 'promo1',
+						'type'     => 'type1',
 					),
 				)
 			);
@@ -489,8 +669,9 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 			->willReturn(
 				array(
 					array(
-						'id'   => 'incentive1',
-						'type' => 'type1',
+						'id'       => 'incentive1',
+						'promo_id' => 'promo1',
+						'type'     => 'type1',
 					),
 				)
 			);
@@ -541,8 +722,9 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 			->willReturn(
 				array(
 					array(
-						'id'   => 'incentive1',
-						'type' => 'type1',
+						'id'       => 'incentive1',
+						'promo_id' => 'promo1',
+						'type'     => 'type1',
 					),
 				)
 			);
@@ -573,47 +755,6 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 
 		// Assert.
 		$this->assertTrue( $result );
-
-		// Clean up.
-		remove_filter( 'user_has_cap', $filter_callback );
-		delete_user_meta( $this->store_admin_id, Incentive::PREFIX . 'dismissed' );
-	}
-
-	/**
-	 * Test is_visible with a specific type.
-	 */
-	public function test_is_visible_with_type() {
-		// Arrange.
-		$this->sut
-			->expects( $this->any() )
-			->method( 'is_extension_active' )
-			->willReturn( false );
-
-		// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
-		$filter_callback = fn( $caps ) => array( 'manage_woocommerce' => true );
-		add_filter( 'user_has_cap', $filter_callback );
-
-		$this->sut
-			->expects( $this->any() )
-			->method( 'get_incentives' )
-			->with( 'RO' )
-			->willReturn(
-				array(
-					array(
-						'id'   => 'incentive1',
-						'type' => 'type1',
-					),
-					array(
-						'id'   => 'incentive2',
-						'type' => 'type1',
-					),
-				)
-			);
-
-		// Act.
-		$this->assertTrue( $this->sut->is_visible( 'incentive1', 'RO', 'type1' ) );
-		$this->assertTrue( $this->sut->is_visible( 'incentive2', 'RO', 'type1' ) );
-		$this->assertFalse( $this->sut->is_visible( 'incentive2', 'RO', 'wrong_type' ) );
 
 		// Clean up.
 		remove_filter( 'user_has_cap', $filter_callback );

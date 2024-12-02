@@ -61,21 +61,27 @@ class WooPaymentsTest extends WC_REST_Unit_Test_Case {
 					'body'     => wp_json_encode(
 						array(
 							array(
-								'id'   => 'incentive1',
-								'type' => 'type1',
+								'id'        => 'incentive1',
+								'promo_id'  => 'promo_id',
+								'type'      => 'type1',
+								'something' => 'else',
+							),
+							array(), // Invalid empty incentive.
+							array(
+								'id' => 'id', // Invalid incentive that is missing promo ID and type.
 							),
 							array(
-								// Invalid incentive.
+								'id'        => 'incentive2',
+								'promo_id'  => 'promo_id',
+								'type'      => 'type2',
+								'something' => 'else',
 							),
 							array(
-								'id' => 'id', // Invalid incentive that is missing type.
+								'type' => 'type', // Invalid incentive that is missing ID and promo ID.
 							),
 							array(
-								'id'   => 'incentive2',
-								'type' => 'type2',
-							),
-							array(
-								'type' => 'type', // Invalid incentive that is missing ID.
+								'id'       => 'incentive3',
+								'promo_id' => 'promo_id', // Invalid incentive that is missing type.
 							),
 						)
 					),
@@ -197,7 +203,7 @@ class WooPaymentsTest extends WC_REST_Unit_Test_Case {
 		add_filter( 'pre_http_request', $this->response_mock_ref, 10, 3 );
 
 		// Act.
-		$result = $this->sut->is_visible( 'incentive1', 'US', 'type1', true );
+		$result = $this->sut->is_visible( 'incentive1', 'US', true );
 
 		// Assert.
 		$this->assertTrue( $result );
@@ -216,7 +222,7 @@ class WooPaymentsTest extends WC_REST_Unit_Test_Case {
 		add_filter( 'pre_http_request', $this->response_mock_ref, 10, 3 );
 
 		// Act.
-		$result = $this->sut->is_visible( 'incentive1', 'US', 'type1' );
+		$result = $this->sut->is_visible( 'incentive1', 'US' );
 
 		// Assert.
 		$this->assertTrue( $result );
@@ -237,7 +243,7 @@ class WooPaymentsTest extends WC_REST_Unit_Test_Case {
 		update_option( 'wcpay_account_data', array( 'data' => array( 'account_id' => '123' ) ) );
 
 		// Act.
-		$result = $this->sut->is_visible( 'incentive1', 'US', 'type1' );
+		$result = $this->sut->is_visible( 'incentive1', 'US' );
 
 		// Assert.
 		$this->assertFalse( $result );

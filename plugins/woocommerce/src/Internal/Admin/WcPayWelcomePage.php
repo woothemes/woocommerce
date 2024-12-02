@@ -273,7 +273,6 @@ class WcPayWelcomePage {
 			$incentive['id'],
 			PaymentExtensionSuggestions::WOOPAYMENTS,
 			WC()->countries->get_base_country(),
-			self::INCENTIVE_TYPE,
 			$skip_wcpay_active
 		);
 	}

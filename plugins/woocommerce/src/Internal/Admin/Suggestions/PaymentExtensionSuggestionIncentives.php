@@ -82,7 +82,6 @@ class PaymentExtensionSuggestionIncentives {
 	 * @param string $incentive_id                The incentive ID.
 	 * @param string $suggestion_id               The suggestion ID this incentive is for.
 	 * @param string $country_code                The business location country code to get incentives for.
-	 * @param string $incentive_type              Optional. The incentive type to check for.
 	 * @param bool   $skip_extension_active_check Whether to skip the check for the extension plugin being active.
 	 *
 	 * @return bool Whether there is a visible incentive for the suggestion.
@@ -91,7 +90,6 @@ class PaymentExtensionSuggestionIncentives {
 		string $incentive_id,
 		string $suggestion_id,
 		string $country_code,
-		string $incentive_type = '',
 		bool $skip_extension_active_check = false
 	): bool {
 		$provider = $this->get_incentive_instance( $suggestion_id );
@@ -99,7 +97,7 @@ class PaymentExtensionSuggestionIncentives {
 			return false;
 		}
 
-		return $provider->is_visible( $incentive_id, $country_code, $incentive_type, $skip_extension_active_check );
+		return $provider->is_visible( $incentive_id, $country_code, $skip_extension_active_check );
 	}
 
 	/**

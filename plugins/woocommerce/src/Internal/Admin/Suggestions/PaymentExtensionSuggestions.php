@@ -1190,6 +1190,15 @@ class PaymentExtensionSuggestions {
 	);
 
 	/**
+	 * The context to incentive type map.
+	 *
+	 * @var array|string[]
+	 */
+	private array $context_to_incentive_type_map = array(
+		Payments::SUGGESTIONS_CONTEXT => 'wc_settings_payments',
+	);
+
+	/**
 	 * The suggestion incentives provider.
 	 *
 	 * @var PaymentExtensionSuggestionIncentives
@@ -1442,14 +1451,10 @@ class PaymentExtensionSuggestions {
 	 * @return array|null The incentive details for the given extension and country. Null if not found.
 	 */
 	private function get_extension_incentive( string $extension_id, string $country_code, string $context = '' ): ?array {
-		// Determine the incentive type from the context.
-		switch ( $context ) {
-			case Payments::SUGGESTIONS_CONTEXT:
-				$incentive_type = 'payments_settings';
-				break;
-			default:
-				$incentive_type = '';
-				break;
+		// Try to map the context to an incentive type.
+		$incentive_type = '';
+		if ( isset( $this->context_to_incentive_type_map[ $context ] ) ) {
+			$incentive_type = $this->context_to_incentive_type_map[ $context ];
 		}
 
 		$incentives = $this->suggestion_incentives->get_incentives( $extension_id, $country_code, $incentive_type );

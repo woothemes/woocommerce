@@ -61,19 +61,45 @@ abstract class Incentive {
 	}
 
 	/**
-	 * Get an incentive by ID.
+	 * Get an incentive by promo ID.
 	 *
 	 * The incentives are filtered based on the country code, incentive type, if provided, and their visibility.
 	 *
-	 * @param string $incentive_id   The incentive ID.
+	 * @param string $promo_id       The incentive promo ID.
 	 * @param string $country_code   The business location country code to get incentives for.
 	 * @param string $incentive_type Optional. The type of incentive to search for.
 	 *
 	 * @return ?array The incentive details. Returns null if there is no incentive available.
 	 */
-	public function get_by_id( string $incentive_id, string $country_code, string $incentive_type = '' ): ?array {
+	public function get_by_promo_id( string $promo_id, string $country_code, string $incentive_type = '' ): ?array {
 		$incentives = array_filter(
 			$this->get_all( $country_code, $incentive_type ),
+			function ( $incentive ) use ( $promo_id ) {
+				return $incentive['promo_id'] === $promo_id;
+			}
+		);
+
+		if ( empty( $incentives ) ) {
+			return null;
+		}
+
+		// Get the first found incentive, in the unlikely case there are multiple incentives with the same promo ID.
+		return reset( $incentives );
+	}
+
+	/**
+	 * Get an incentive by ID.
+	 *
+	 * The incentives are filtered based on the country code, incentive type, if provided, and their visibility.
+	 *
+	 * @param string $incentive_id The incentive ID.
+	 * @param string $country_code The business location country code to get incentives for.
+	 *
+	 * @return ?array The incentive details. Returns null if there is no incentive available.
+	 */
+	public function get_by_id( string $incentive_id, string $country_code ): ?array {
+		$incentives = array_filter(
+			$this->get_all( $country_code ),
 			function ( $incentive ) use ( $incentive_id ) {
 				return $incentive['id'] === $incentive_id;
 			}
@@ -90,14 +116,13 @@ abstract class Incentive {
 	/**
 	 * Check if an incentive should be visible.
 	 *
-	 * @param string $incentive_id                The incentive ID to check for visibility.
+	 * @param string $id                          The incentive ID to check for visibility.
 	 * @param string $country_code                The business location country code to get incentives for.
-	 * @param string $incentive_type              Optional. Besides the incentive ID, an incentive with this type must be available.
 	 * @param bool   $skip_extension_active_check Whether to skip the check for the extension plugin being active.
 	 *
 	 * @return boolean Whether the incentive should be visible.
 	 */
-	public function is_visible( string $incentive_id, string $country_code, string $incentive_type = '', bool $skip_extension_active_check = false ): bool {
+	public function is_visible( string $id, string $country_code, bool $skip_extension_active_check = false ): bool {
 		// The extension plugin must not be active, unless we are asked to skip the check.
 		if ( ! $skip_extension_active_check && $this->is_extension_active() ) {
 			return false;
@@ -109,13 +134,13 @@ abstract class Incentive {
 		}
 
 		// An incentive must be available.
-		if ( empty( $this->get_by_id( $incentive_id, $country_code, $incentive_type ) ) ) {
+		if ( empty( $this->get_by_id( $id, $country_code ) ) ) {
 			return false;
 		}
 
 		// If the incentive has been dismissed in all contexts, don't show it.
 		// We don't know the full list of contexts, so we can't assume anything beyond `all`.
-		if ( $this->is_dismissed( $incentive_id, 'all' ) ) {
+		if ( $this->is_dismissed( $id, 'all' ) ) {
 			return false;
 		}
 
@@ -125,20 +150,19 @@ abstract class Incentive {
 	/**
 	 * Dismiss an incentive.
 	 *
-	 * @param string $incentive_id The incentive ID to dismiss.
-	 *
-	 * @param string $context      Optional. The context ID in which the incentive is dismissed.
-	 *                             This can be used to dismiss the same incentive in different contexts.
-	 *                             If no context ID is provided, the incentive will be dismissed for all contexts.
-	 * @param ?int   $timestamp    Optional The timestamp when the incentive was dismissed.
-	 *                             Defaults to the current time.
+	 * @param string $id        The incentive ID to dismiss.
+	 * @param string $context   Optional. The context ID in which the incentive is dismissed.
+	 *                          This can be used to dismiss the same incentive in different contexts.
+	 *                          If no context ID is provided, the incentive will be dismissed for all contexts.
+	 * @param ?int   $timestamp Optional The timestamp when the incentive was dismissed.
+	 *                          Defaults to the current time.
 	 *
 	 * @return bool True if the incentive was not previously dismissed and now it is.
 	 *              False if the incentive was already dismissed, or we failed to persist the dismissal data.
 	 */
-	public function dismiss( string $incentive_id, string $context = 'all', ?int $timestamp = null ): bool {
+	public function dismiss( string $id, string $context = 'all', ?int $timestamp = null ): bool {
 		// If it is already dismissed, don't dismiss it again.
-		if ( $this->is_dismissed( $incentive_id, $context ) ) {
+		if ( $this->is_dismissed( $id, $context ) ) {
 			return false;
 		}
 
@@ -149,7 +173,7 @@ abstract class Incentive {
 		}
 
 		$all_dismissed_incentives[ $this->suggestion_id ][] = array(
-			'id'        => $incentive_id,
+			'id'        => $id,
 			'context'   => $context,
 			'timestamp' => $timestamp ?? time(),
 		);
@@ -160,14 +184,14 @@ abstract class Incentive {
 	/**
 	 * Check if an incentive has been manually dismissed.
 	 *
-	 * @param string $incentive_id The incentive ID to check for dismissal.
-	 * @param string $context      Optional. The context ID in which to check for dismissal.
-	 *                             If no context ID is provided, we check for dismissal in all contexts.
+	 * @param string $id      The incentive ID to check for dismissal.
+	 * @param string $context Optional. The context ID in which to check for dismissal.
+	 *                        If no context ID is provided, we check for dismissal in all contexts.
 	 *
 	 * @return boolean Whether the incentive has been manually dismissed.
 	 */
-	public function is_dismissed( string $incentive_id, string $context = '' ): bool {
-		if ( empty( $incentive_id ) ) {
+	public function is_dismissed( string $id, string $context = '' ): bool {
+		if ( empty( $id ) ) {
 			return false;
 		}
 
@@ -181,7 +205,7 @@ abstract class Incentive {
 
 		// Check if the incentive is dismissed in the given context.
 		if ( in_array(
-			$incentive_id,
+			$id,
 			array_column(
 				array_filter(
 					$dismissed_incentives,
@@ -201,11 +225,11 @@ abstract class Incentive {
 	/**
 	 * Get the dismissals (contexts) for an incentive.
 	 *
-	 * @param string $incentive_id The incentive ID.
+	 * @param string $id The incentive ID.
 	 *
 	 * @return array The contexts in which the incentive has been dismissed.
 	 */
-	public function get_dismissals( string $incentive_id ): array {
+	public function get_dismissals( string $id ): array {
 		$all_dismissed_incentives = $this->get_all_dismissed_incentives();
 
 		// If there are no dismissed incentives for the suggestion, return early.
@@ -216,7 +240,7 @@ abstract class Incentive {
 
 		$dismissals = array_filter(
 			$dismissed_incentives,
-			fn( $dismissed_incentive ) => $incentive_id === $dismissed_incentive['id']
+			fn( $dismissed_incentive ) => $id === $dismissed_incentive['id']
 		);
 
 		return array_column( $dismissals, 'context' );
@@ -266,8 +290,8 @@ abstract class Incentive {
 	 * @return bool Whether the incentive data is valid.
 	 */
 	protected function validate_incentive( array $incentive ): bool {
-		// The incentive must have an ID and a type.
-		$required_keys = array( 'id', 'type' );
+		// The incentive must have an ID, a promo ID, and a type.
+		$required_keys = array( 'id', 'promo_id', 'type' );
 		foreach ( $required_keys as $key ) {
 			if ( empty( $incentive[ $key ] ) ) {
 				return false;
