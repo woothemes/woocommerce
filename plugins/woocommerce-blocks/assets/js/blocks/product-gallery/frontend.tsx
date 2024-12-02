@@ -64,12 +64,8 @@ const disableArrows = (
 
 const selectImage = (
 	context: ProductGalleryContext,
-	type: 'prev' | 'next' | 'current',
-	event?: MouseEvent
+	type: 'prev' | 'next' | 'current'
 ) => {
-	if ( event ) {
-		event.stopPropagation();
-	}
 	const selectedImageIdIndex = getImageIndex(
 		context,
 		context.selectedImage
@@ -166,12 +162,18 @@ const productGallery = {
 			disableArrows( context, nextImageIndex );
 		},
 		selectNextImage: ( event?: MouseEvent ) => {
+			if ( event ) {
+				event.stopPropagation();
+			}
 			const context = getContext();
-			selectImage( context, 'next', event );
+			selectImage( context, 'next' );
 		},
 		selectPreviousImage: ( event?: MouseEvent ) => {
+			if ( event ) {
+				event.stopPropagation();
+			}
 			const context = getContext();
-			selectImage( context, 'prev', event );
+			selectImage( context, 'prev' );
 		},
 		onThumbnailKeyDown: ( event: KeyboardEvent ) => {
 			if (
