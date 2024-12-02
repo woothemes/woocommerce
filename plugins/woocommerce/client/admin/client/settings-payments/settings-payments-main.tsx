@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import {
 	PLUGINS_STORE_NAME,
 	PAYMENT_SETTINGS_STORE_NAME,
-	SuggestedPaymentExtension,
 } from '@woocommerce/data';
-import { useState } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -17,13 +16,8 @@ import './settings-payments-main.scss';
 import { createNoticesFromResponse } from '~/lib/notices';
 import { OtherPaymentGateways } from '~/settings-payments/components/other-payment-gateways';
 import { PaymentGateways } from '~/settings-payments/components/payment-gateways';
-import { WooPaymentsGatewayData } from '~/settings-payments/types';
-import { parseScriptTag } from '~/settings-payments/utils';
 
 export const SettingsPaymentsMain = () => {
-	const [ wooPaymentsGatewayData, setWooPaymentsGatewayData ] = useState<
-		WooPaymentsGatewayData | undefined
-	>( undefined );
 	const [ installingPlugin, setInstallingPlugin ] = useState< string | null >(
 		null
 	);
@@ -33,40 +27,32 @@ export const SettingsPaymentsMain = () => {
 		return select( PLUGINS_STORE_NAME ).getInstalledPlugins();
 	}, [] );
 
-	// Make UI to refresh when plugin is installed.
+	// Make UI refresh when plugin is installed.
 	const { invalidateResolutionForStoreSelector } = useDispatch(
 		PAYMENT_SETTINGS_STORE_NAME
 	);
 
-	const {
-		registeredPaymentGateways,
-		preferredPluginSuggestions,
-		otherPluginSuggestions,
-	} = useSelect( ( select ) => {
+	const { providers, suggestions, isFetching } = useSelect( ( select ) => {
 		return {
-			registeredPaymentGateways: select(
+			providers: select(
 				PAYMENT_SETTINGS_STORE_NAME
-			).getRegisteredPaymentGateways(),
-			preferredPluginSuggestions: select(
-				PAYMENT_SETTINGS_STORE_NAME
-			).getPreferredExtensionSuggestions(),
-			otherPluginSuggestions: select(
-				PAYMENT_SETTINGS_STORE_NAME
-			).getOtherExtensionSuggestions(),
+			).getPaymentProviders(),
+			suggestions: select( PAYMENT_SETTINGS_STORE_NAME ).getSuggestions(),
+			isFetching: select( PAYMENT_SETTINGS_STORE_NAME ).isFetching(),
 		};
 	} );
 
 	const setupPlugin = useCallback(
-		( extension: SuggestedPaymentExtension ) => {
+		( id, slug ) => {
 			if ( installingPlugin ) {
 				return;
 			}
-			setInstallingPlugin( extension.id );
-			installAndActivatePlugins( [ extension.plugin.slug ] )
+			setInstallingPlugin( id );
+			installAndActivatePlugins( [ slug ] )
 				.then( ( response ) => {
 					createNoticesFromResponse( response );
 					invalidateResolutionForStoreSelector(
-						'getRegisteredPaymentGateways'
+						'getPaymentProviders'
 					);
 					setInstallingPlugin( null );
 				} )
@@ -82,27 +68,21 @@ export const SettingsPaymentsMain = () => {
 		]
 	);
 
-	useEffect( () => {
-		setWooPaymentsGatewayData(
-			parseScriptTag( 'experimental_wc_settings_payments_woopayments' )
-		);
-	}, [] );
-
 	return (
 		<>
 			<div className="settings-payments-main__container">
 				<PaymentGateways
-					registeredPaymentGateways={ registeredPaymentGateways }
+					providers={ providers }
 					installedPluginSlugs={ installedPluginSlugs }
-					preferredPluginSuggestions={ preferredPluginSuggestions }
-					wooPaymentsGatewayData={ wooPaymentsGatewayData }
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
+					isFetching={ isFetching }
 				/>
 				<OtherPaymentGateways
-					otherPluginSuggestions={ otherPluginSuggestions }
+					suggestions={ suggestions }
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
+					isFetching={ isFetching }
 				/>
 			</div>
 		</>
