@@ -145,7 +145,12 @@ class EmailPreview {
 		$email  = $emails[ $this->email_type ];
 
 		$order = $this->get_dummy_order();
-		$email->set_object( $order );
+		/**
+		 * An object used in email preview. Defaults to a dummy WC_Order.
+		 *
+		 * @since 9.6.0
+		 */
+		$email->set_object( apply_filters( 'woocommerce_email_preview_object', $order ) );
 
 		$content = $email->get_content_html();
 
@@ -174,7 +179,12 @@ class EmailPreview {
 		$order->set_billing_address( $address );
 		$order->set_shipping_address( $address );
 
-		return $order;
+		/**
+		 * A dummy WC_Order used in email preview.
+		 *
+		 * @since 9.6.0
+		 */
+		return apply_filters( 'woocommerce_email_preview_dummy_order', $order );
 	}
 
 	/**
@@ -187,7 +197,13 @@ class EmailPreview {
 		$product = new WC_Product();
 		$product->set_name( 'Dummy Product' );
 		$product->set_price( 25 );
-		return $product;
+
+		/**
+		 * A dummy WC_Product used in email preview.
+		 *
+		 * @since 9.6.0
+		 */
+		return apply_filters( 'woocommerce_email_preview_dummy_product', $product );
 	}
 
 	/**
@@ -196,7 +212,7 @@ class EmailPreview {
 	 * @return array
 	 */
 	private function get_dummy_address() {
-		return array(
+		$address = array(
 			'first_name' => 'John',
 			'last_name'  => 'Doe',
 			'company'    => 'Company',
@@ -208,6 +224,13 @@ class EmailPreview {
 			'country'    => 'US',
 			'state'      => 'CA',
 		);
+
+		/**
+		 * A dummy address used in email preview as billing and shipping one.
+		 *
+		 * @since 9.6.0
+		 */
+		return apply_filters( 'woocommerce_email_preview_dummy_address', $address );
 	}
 
 	/**
