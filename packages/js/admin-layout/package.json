@@ -45,6 +45,7 @@
 		"lint:fix:lang:js": "eslint src --fix",
 		"lint:lang:js": "eslint src",
 		"prepack": "pnpm build",
+		"test:js": "jest --config ./jest.config.json --passWithNoTests",
 		"watch:build": "pnpm --if-present --workspace-concurrency=Infinity --filter=\"$npm_package_name...\" --parallel '/^watch:build:project:.*$/'",
 		"watch:build:project": "pnpm --if-present run '/^watch:build:project:.*$/'",
 		"watch:build:project:bundle": "wireit",
