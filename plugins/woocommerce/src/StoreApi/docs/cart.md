@@ -417,7 +417,7 @@ add_filter( 'woocommerce_store_api_add_to_cart_data', function( $add_to_cart_dat
 		$add_to_cart_data['cart_item_data']['custom-request-data'] = sanitize_text_field( $request['custom-request-param'] );
 	}
 	return $add_to_cart_data;
-} );
+}, 10, 2 );
 ```
 
 **Variation attribute naming:**
