@@ -391,7 +391,9 @@ class PaymentsRestController extends RestApiControllerBase {
 	 * @return mixed The prepared response item.
 	 */
 	private function prepare_payment_providers_response_recursive( $response_item, array $schema ) {
-		if ( ! array_key_exists( 'properties', $schema ) || ! is_array( $schema['properties'] ) ) {
+		if ( is_null( $response_item ) ||
+			! array_key_exists( 'properties', $schema ) ||
+			! is_array( $schema['properties'] ) ) {
 			return $response_item;
 		}
 
@@ -704,7 +706,13 @@ class PaymentsRestController extends RestApiControllerBase {
 					'properties'  => array(
 						'id'                => array(
 							'type'        => 'string',
-							'description' => esc_html__( 'The incentive ID.', 'woocommerce' ),
+							'description' => esc_html__( 'The incentive unique ID. This ID needs to be used for incentive dismissals.', 'woocommerce' ),
+							'context'     => array( 'view', 'edit' ),
+							'readonly'    => true,
+						),
+						'promo_id'			=> array(
+							'type'        => 'string',
+							'description' => esc_html__( 'The incentive promo ID. This ID need to be fed into the onboarding flow.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
 						),

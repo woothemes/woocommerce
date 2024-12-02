@@ -64,7 +64,9 @@ class WooPayments extends Incentive {
 	 */
 	public function is_visible( string $id, string $country_code, bool $skip_extension_active_check = false ): bool {
 		// Always skip the extension active check since we will check bellow.
-		parent::is_visible( $id, $country_code, true );
+		if ( false === parent::is_visible( $id, $country_code, true ) ) {
+			return false;
+		}
 
 		// Instead of just extension active, we check if WooPayments is active and has an account.
 		if ( ! $skip_extension_active_check && $this->is_extension_active() && $this->has_wcpay_account_data() ) {

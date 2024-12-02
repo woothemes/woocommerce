@@ -1256,7 +1256,7 @@ class PaymentExtensionSuggestions {
 
 			// Check if there is an incentive for this extension and attach its details.
 			$incentive = $this->get_extension_incentive( $extension_id, $country_code, $context );
-			if ( is_array( $incentive ) ) {
+			if ( is_array( $incentive ) && ! empty( $incentive ) ) {
 				$extension_details['_incentive'] = $incentive;
 			}
 
