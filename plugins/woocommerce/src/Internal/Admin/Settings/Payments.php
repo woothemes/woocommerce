@@ -35,7 +35,7 @@ class Payments {
 	const SUGGESTION_ORDERING_PREFIX     = '_wc_pes_';
 	const OFFLINE_METHODS_ORDERING_GROUP = '_wc_offline_payment_methods_group';
 
-	const SUGGESTIONS_CONTEXT = 'wc_payments_settings';
+	const SUGGESTIONS_CONTEXT = 'wc_settings_payments';
 
 	/**
 	 * The payment extension suggestions service.
