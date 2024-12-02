@@ -458,7 +458,7 @@ test.describe( 'Merchant → Checkout', () => {
 				);
 
 				const shippingApartmentInput =
-					shippingAddressBlock.getByLabel( 'Apartment' );
+					shippingAddressBlock.getByLabel( 'Address Line 2' );
 
 				const shippingApartmentLink = shippingAddressBlock.getByRole(
 					'button',
@@ -521,7 +521,7 @@ test.describe( 'Merchant → Checkout', () => {
 				);
 
 				const billingApartmentInput =
-					billingAddressBlock.getByLabel( 'Apartment' );
+					billingAddressBlock.getByLabel( 'Address Line 2' );
 
 				const billingApartmentLink = billingAddressBlock.getByRole(
 					'button',

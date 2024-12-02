@@ -102,7 +102,7 @@ class Checkout extends AbstractBlock {
 			array(
 				'type'         => 'object',
 				'description'  => __( 'Controls the display of the apartment (address_2) field in checkout.', 'woocommerce' ),
-				'label'        => __( 'Apartment', 'woocommerce' ),
+				'label'        => __( 'Address Line 2', 'woocommerce' ),
 				'show_in_rest' => array(
 					'name'   => 'woocommerce_checkout_address_2_field',
 					'schema' => array(
