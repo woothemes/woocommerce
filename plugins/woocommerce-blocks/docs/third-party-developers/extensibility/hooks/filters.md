@@ -88,7 +88,7 @@ apply_filters( '__experimental_woocommerce_blocks_add_data_attributes_to_namespa
 
 ### Description
 
-This hook defines which block namespaces should have block name and attribute <code>data-</code> attributes appended on render.
+This hook defines which block namespaces should have block name and attribute `data-` attributes appended on render.
 
 ### Parameters
 
@@ -126,7 +126,7 @@ apply_filters( '__experimental_woocommerce_blocks_payment_gateway_features_list'
 
 ### Example
 
-# Payment Gateway Featured List
+## Payment Gateway Featured List
 
 ```php
 // The action callback function.
@@ -340,7 +340,7 @@ Filters if an item being added to the cart passed validation checks.
 apply_filters( 'woocommerce_add_to_cart_validation', boolean $passed_validation, integer $product_id, integer $quantity, integer $variation_id, array $variation )
 ```
 
-
+<!-- markdownlint-disable-next-line MD036 -->
 **Deprecated: This hook is deprecated and will be removed**
 
 ### Description
@@ -495,7 +495,11 @@ apply_filters( 'woocommerce_blocks_hook_compatibility_additional_data', array $d
 
 ### Description
 
-Accepts an array of hooked data. The array should be in the following format: [ [ hook =&gt; <hook-name>, function =&gt; <function-name>, priority =&gt; <priority>, ], ... ] Where: <ul> <li>hook-name is the name of the hook that have the functions hooked to.</li> <li>function-name is the hooked function name.</li> <li>priority is the priority of the hooked function.</li> </ul>
+Accepts an array of hooked data. The array should be in the following format: [ [ hook =&gt; &lt;hook-name&gt;, function =&gt; &lt;function-name&gt;, priority =&gt; &lt;priority&gt;, ], ... ] Where:
+
+- `hook-name` is the name of the hook that has the functions hooked to.
+- `function-name` is the hooked function name.
+- `priority` is the priority of the hooked function.
 
 ### Parameters
 
@@ -902,12 +906,16 @@ Filters the array of shared settings.
 apply_filters( 'woocommerce_shared_settings', array $data )
 ```
 
-
+<!-- markdownlint-disable-next-line MD036 -->
 **Deprecated: This hook is deprecated and will be removed**
 
 ### Description
 
-Low level hook for registration of new data late in the cycle. This is deprecated. Instead, use the data api: <pre><code class="language-php">Automattic\WooCommerce\Blocks\Package::container()-&gt;get( Automattic\WooCommerce\Blocks\Assets\AssetDataRegistry::class )-&gt;add( $key, $value )</code></pre>
+Low level hook for registration of new data late in the cycle. This is deprecated. Instead, use the data api:
+
+```php
+Automattic\WooCommerce\Blocks\Package::container()->get( Automattic\WooCommerce\Blocks\Assets\AssetDataRegistry::class )->add( $key, $value )
+```
 
 ### Parameters
 
