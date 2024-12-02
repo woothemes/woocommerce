@@ -408,7 +408,7 @@ test.describe( `${ blockData.name } Block`, () => {
 
 			expect( eventFired ).toBeUndefined();
 		} );
-		test( 'should trigger input change event when minus stepper button is cliced', async ( {
+		test( 'should trigger input change event when minus stepper button is clicked', async ( {
 			admin,
 			editor,
 			blockUtils,
