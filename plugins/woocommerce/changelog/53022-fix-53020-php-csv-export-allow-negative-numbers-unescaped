@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Improved Analytics and Product CSV export usability by allowing negative numeric values to be unescaped while continuing to escape potentially risky strings to prevent CSV Injection (async, PHP-based CSV exporting).
