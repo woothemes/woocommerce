@@ -1,4 +1,4 @@
 Significance: patch
 Type: fix
 
-Add checks for the global variable in the template functions
+Add checks to various template functions, guard against fatal errors when the global $product object is unavailable.
