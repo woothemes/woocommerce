@@ -2652,7 +2652,7 @@ export const countryStateOptions = [
 		label: 'India — Nagaland',
 	},
 	{
-		key: 'IN:OR',
+		key: 'IN:OD',
 		label: 'India — Odisha',
 	},
 	{
