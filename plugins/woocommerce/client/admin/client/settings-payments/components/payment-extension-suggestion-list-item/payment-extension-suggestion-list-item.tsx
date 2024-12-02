@@ -15,10 +15,7 @@ import { PaymentProvider } from '@woocommerce/data';
 import sanitizeHTML from '~/lib/sanitize-html';
 import { EllipsisMenuContent } from '~/settings-payments/components/ellipsis-menu-content';
 import { isWooPayments } from '~/settings-payments/utils';
-import {
-	DefaultDragHandle,
-	SortableItem,
-} from '~/settings-payments/components/sortable';
+import { DefaultDragHandle } from '~/settings-payments/components/sortable';
 
 type PaymentExtensionSuggestionListItemProps = {
 	extension: PaymentProvider;
@@ -35,7 +32,7 @@ export const PaymentExtensionSuggestionListItem = ( {
 	...props
 }: PaymentExtensionSuggestionListItemProps ) => {
 	return (
-		<SortableItem
+		<div
 			id={ extension.id }
 			className={ `transitions-disabled woocommerce-list__item woocommerce-list__item-enter-done` }
 			{ ...props }
@@ -97,6 +94,6 @@ export const PaymentExtensionSuggestionListItem = ( {
 					</div>
 				</div>
 			</div>
-		</SortableItem>
+		</div>
 	);
 };

@@ -16,10 +16,7 @@ import { StatusBadge } from '~/settings-payments/components/status-badge';
 import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
 import { EllipsisMenuContent } from '~/settings-payments/components/ellipsis-menu-content';
 import { isWooPayments } from '~/settings-payments/utils';
-import {
-	DefaultDragHandle,
-	SortableItem,
-} from '~/settings-payments/components/sortable';
+import { DefaultDragHandle } from '~/settings-payments/components/sortable';
 
 type PaymentGatewayItemProps = {
 	gateway: PaymentProvider;
@@ -56,7 +53,7 @@ export const PaymentGatewayListItem = ( {
 	};
 
 	return (
-		<SortableItem
+		<div
 			id={ gateway.id }
 			className={ `transitions-disabled woocommerce-list__item woocommerce-list__item-enter-done woocommerce-item__payment-gateway ${
 				isWcPay ?? `woocommerce-item__woocommerce-payment`
@@ -148,6 +145,6 @@ export const PaymentGatewayListItem = ( {
 					</div>
 				</div>
 			</div>
-		</SortableItem>
+		</div>
 	);
 };
