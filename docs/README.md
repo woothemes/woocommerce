@@ -18,7 +18,7 @@ Take a moment to familiarize yourself with our [Developer Resources](https://dev
 
 Once you're ready to move forward, consider one of the following:
 
-- [Tools for development](getting-started/developer-tools.md)
+- [Tools for low-code development](getting-started/developer-tools.md)
 - [Building your first extension](extension-development/building-your-first-extension.md)
 - [How to design a simple extension](extension-development/how-to-design-a-simple-extension.md)
 
