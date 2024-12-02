@@ -2,13 +2,17 @@
  * External dependencies
  */
 import { __, sprintf } from '@wordpress/i18n';
+import { useLocale } from '@automattic/i18n-utils';
 
 const defaultValidityMessage =
 	( label: string | undefined ) =>
 	( validity: ValidityState ): string | undefined => {
-		const fieldLabel = label
-			? label.toLowerCase()
-			: __( 'field', 'woocommerce' );
+		const locale = useLocale();
+		const shouldKeepOriginalCase = locale === 'de';
+
+		const fieldLabel = shouldKeepOriginalCase
+			? label
+			: label?.toLocaleLowerCase() || __( 'field', 'woocommerce' );
 
 		const invalidFieldMessage = sprintf(
 			/* translators: %s field label */
