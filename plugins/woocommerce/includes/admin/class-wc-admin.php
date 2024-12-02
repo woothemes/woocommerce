@@ -200,10 +200,18 @@ class WC_Admin {
 
 			if ( isset( $_GET['type'] ) ) {
 				$type_param = sanitize_text_field( wp_unslash( $_GET['type'] ) );
-				$email_preview->set_email_type( $type_param );
+				try {
+					$email_preview->set_email_type( $type_param );
+				} catch ( InvalidArgumentException $e ) {
+					wp_die( esc_html__( 'Invalid email type.', 'woocommerce' ), 400 );
+				}
 			}
 
-			$message = $email_preview->render();
+			try {
+				$message = $email_preview->render();
+			} catch ( Throwable $e ) {
+				wp_die( esc_html__( 'There was an error rendering an email preview.', 'woocommerce' ), 404 );
+			}
 
 			// print the preview email.
 			// phpcs:ignore WordPress.Security.EscapeOutput
