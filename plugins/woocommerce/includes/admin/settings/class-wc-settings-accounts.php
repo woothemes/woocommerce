@@ -79,17 +79,6 @@ class WC_Settings_Accounts extends WC_Settings_Page {
 				'autoload'      => false,
 			),
 			array(
-				'title'         => __( 'Account creation', 'woocommerce' ),
-				'desc'          => __( 'During checkout', 'woocommerce' ),
-				'desc_tip'      => __( 'Customers can create an account before placing their order.', 'woocommerce' ),
-				'id'            => 'woocommerce_enable_signup_and_login_from_checkout',
-				'default'       => 'no',
-				'type'          => 'checkbox',
-				'checkboxgroup' => 'start',
-				'legend'        => __( 'Allow customers to create an account', 'woocommerce' ),
-				'autoload'      => false,
-			),
-			array(
 				'title'             => __( 'Account creation', 'woocommerce' ),
 				'desc'              => __( 'After checkout (recommended)', 'woocommerce' ),
 				'desc_tip'          => sprintf(
@@ -101,11 +90,22 @@ class WC_Settings_Accounts extends WC_Settings_Page {
 				'id'                => 'woocommerce_enable_delayed_account_creation',
 				'default'           => 'no',
 				'type'              => 'checkbox',
-				'checkboxgroup'     => '',
+				'checkboxgroup'     => 'start',
 				'autoload'          => false,
 				'custom_attributes' => array(
 					'disabled-tooltip' => __( 'Enable guest checkout to use this feature.', 'woocommerce' ),
 				),
+				'legend'            => __( 'Allow customers to create an account', 'woocommerce' ),
+			),
+			array(
+				'title'         => __( 'Account creation', 'woocommerce' ),
+				'desc'          => __( 'During checkout', 'woocommerce' ),
+				'desc_tip'      => __( 'Customers can create an account before placing their order.', 'woocommerce' ),
+				'id'            => 'woocommerce_enable_signup_and_login_from_checkout',
+				'default'       => 'no',
+				'type'          => 'checkbox',
+				'checkboxgroup' => '',
+				'autoload'      => false,
 			),
 			array(
 				'title'         => __( 'Account creation', 'woocommerce' ),
@@ -271,8 +271,18 @@ class WC_Settings_Accounts extends WC_Settings_Page {
 			),
 		);
 
-		// Feature requires a block theme.
+		// Feature requires a block theme. Re-order settings if not using a block theme.
 		if ( ! wc_current_theme_is_fse_theme() ) {
+			$account_settings = array_map(
+				function ( $setting ) {
+					if ( 'woocommerce_enable_signup_and_login_from_checkout' === $setting['id'] ) {
+						$setting['checkboxgroup'] = 'start';
+						$setting['legend']        = __( 'Allow customers to create an account', 'woocommerce' );
+					}
+					return $setting;
+				},
+				$account_settings
+			);
 			$account_settings = array_filter(
 				$account_settings,
 				function ( $setting ) {
@@ -366,7 +376,14 @@ class WC_Settings_Accounts extends WC_Settings_Page {
 					});
 				}));
 				checkboxes[0].dispatchEvent(new Event('change')); // Initial state
+			});
+		</script>
+		<?php
 
+		// If the checkout block is not default, delayed account creation is always disabled. Otherwise its based on other settings.
+		if ( CartCheckoutUtils::is_checkout_block_default() ) {
+			?>
+			<script type="text/javascript">
 				// Guest checkout should toggle off some options.
 				const guestCheckout = document.getElementById("woocommerce_enable_guest_checkout");
 
@@ -381,9 +398,9 @@ class WC_Settings_Accounts extends WC_Settings_Page {
 					});
 					guestCheckout.dispatchEvent(new Event('change')); // Initial state
 				}
-			});
-		</script>
-		<?php
+			</script>
+			<?php
+		}
 	}
 }
 
