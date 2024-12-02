@@ -17,8 +17,8 @@ export interface ProductGalleryContext {
 	isDialogOpen: boolean;
 	productId: string;
 	elementThatTriggeredDialogOpening: HTMLElement | null;
-	disableleft: boolean;
-	disableright: boolean;
+	disableLeft: boolean;
+	disableRight: boolean;
 }
 
 const getContext = ( ns?: string ) =>
@@ -49,8 +49,8 @@ const selectImage = (
 		context.selectedImage = imagesIds[ nextImageIndex ];
 	}
 
-	context.disableleft = nextImageIndex === 0;
-	context.disableright = nextImageIndex === imagesIds.length - 1;
+	context.disableLeft = nextImageIndex === 0;
+	context.disableRight = nextImageIndex === imagesIds.length - 1;
 };
 
 const closeDialog = ( context: ProductGalleryContext ) => {
@@ -69,11 +69,11 @@ const productGallery = {
 			const { selectedImage, imageId } = getContext();
 			return selectedImage === imageId;
 		},
-		get disableleft() {
-			return getContext().disableleft;
+		get disableLeft() {
+			return getContext().disableLeft;
 		},
-		get disableright() {
-			return getContext().disableright;
+		get disableRight() {
+			return getContext().disableRight;
 		},
 		get pagerDotFillOpacity(): number {
 			return state.isSelected ? 1 : 0.2;
