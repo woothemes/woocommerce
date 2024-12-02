@@ -4,9 +4,9 @@ export interface PaymentGatewayLink {
 }
 
 export interface PluginData {
-	_type: string;
+	_type?: string;
 	slug: string;
-	status: 'active' | 'not_installed';
+	status: 'installed' | 'active' | 'not_installed';
 }
 
 export interface StateData {
@@ -19,23 +19,26 @@ export interface ManagementData {
 	settings_url: string;
 }
 
-export type RegisteredPaymentGateway = {
+export type PaymentProvider = {
 	id: string;
 	_order: number;
+	_type: 'offline_pms_group' | 'suggestion' | 'gateway';
 	title: string;
 	description: string;
 	icon: string;
-	image: string;
-	tags: string[];
-	supports: string[];
+	image?: string;
+	tags?: string[];
+	supports?: string[];
 	plugin: PluginData;
-	management: ManagementData;
-	state: StateData;
-	links: PaymentGatewayLink[];
+	short_description?: string;
+	management?: ManagementData;
+	state?: StateData;
+	links?: PaymentGatewayLink[];
 };
 
 export type OfflinePaymentGateway = {
 	id: string;
+	_type: 'offline_pm';
 	_order: number;
 	title: string;
 	description: string;
@@ -43,6 +46,7 @@ export type OfflinePaymentGateway = {
 	supports: string[];
 	management: ManagementData;
 	state: StateData;
+	plugin: PluginData;
 };
 
 export type SuggestedPaymentExtension = {
@@ -54,7 +58,7 @@ export type SuggestedPaymentExtension = {
 	description: string;
 	icon: string;
 	image: string;
-	short_description: string | null;
+	short_description: string;
 	tags: string[];
 	plugin: PluginData;
 	links: PaymentGatewayLink[];
@@ -68,20 +72,18 @@ export type SuggestedPaymentExtensionCategory = {
 };
 
 export type PaymentSettingsState = {
-	registeredPaymentGateways: RegisteredPaymentGateway[];
+	providers: PaymentProvider[];
 	offlinePaymentGateways: OfflinePaymentGateway[];
-	preferredExtensionSuggestions: SuggestedPaymentExtension[];
-	otherExtensionSuggestions: SuggestedPaymentExtension[];
+	suggestions: SuggestedPaymentExtension[];
 	suggestionCategories: SuggestedPaymentExtensionCategory[];
 	isFetching: boolean;
 	errors: Record< string, unknown >;
 };
 
-export type PaymentSuggestionsResponse = {
-	gateways: RegisteredPaymentGateway[];
+export type PaymentProvidersResponse = {
+	providers: PaymentProvider[];
 	offline_payment_methods: OfflinePaymentGateway[];
-	preferred_suggestions: SuggestedPaymentExtension[];
-	other_suggestions: SuggestedPaymentExtension[];
+	suggestions: SuggestedPaymentExtension[];
 	suggestion_categories: SuggestedPaymentExtensionCategory[];
 };
 
