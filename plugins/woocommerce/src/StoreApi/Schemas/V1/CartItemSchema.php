@@ -102,7 +102,7 @@ class CartItemSchema extends ItemSchema {
 		 * @param array  $product_images  Array of image objects, as defined in ImageAttachmentSchema.
 		 * @param array  $cart_item      Cart item array.
 		 * @param string $cart_item_key  Cart item key.
-		 * @since 9.4.0
+		 * @since 9.6.0
 		 */
 		$filtered_images = apply_filters( 'woocommerce_store_api_cart_item_images', $product_images, $cart_item, $cart_item_key );
 
