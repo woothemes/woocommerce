@@ -83,7 +83,9 @@ export const SettingsPaymentsMain = () => {
 			orderMap[ provider.id ] = updatedOrderValues[ index ];
 		} );
 
-		updateProviderOrdering( orderMap );
+		updateProviderOrdering( orderMap ).then( () => {
+			invalidateResolutionForStoreSelector( 'getPaymentProviders' );
+		} );
 	}
 
 	return (
