@@ -17,7 +17,6 @@ use Automattic\WooCommerce\Blocks\QueryFilters;
 use Automattic\WooCommerce\Blocks\Domain\Services\CreateAccount;
 use Automattic\WooCommerce\Blocks\Domain\Services\Notices;
 use Automattic\WooCommerce\Blocks\Domain\Services\DraftOrders;
-use Automattic\WooCommerce\Blocks\Domain\Services\FeatureGating;
 use Automattic\WooCommerce\Blocks\Domain\Services\GoogleAnalytics;
 use Automattic\WooCommerce\Blocks\Domain\Services\Hydration;
 use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields;
@@ -223,12 +222,6 @@ class Bootstrap {
 	 * Register core dependencies with the container.
 	 */
 	protected function register_dependencies() {
-		$this->container->register(
-			FeatureGating::class,
-			function () {
-				return new FeatureGating();
-			}
-		);
 		$this->container->register(
 			AssetApi::class,
 			function ( Container $container ) {
