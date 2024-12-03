@@ -119,7 +119,7 @@ These are [`@wordpress/hooks`](https://developer.wordpress.org/block-editor/refe
 -   `experimental__woocommerce_blocks-` is used for store events.
 -   `experimental__woocommerce_blocks-checkout-` is used for checkout events.
 
-### Current list of events:
+### Current list of events
 
 #### `experimental__woocommerce_blocks-cart-add-item`
 
@@ -318,6 +318,7 @@ wp.hooks.addAction(
 	}
 );
 ```
+
 #### `experimental__woocommerce_blocks-checkout-set-email-address`
 
 Fired when an email address is added during checkout.
