@@ -1,8 +1,5 @@
 const { test: baseTest } = require( '../../fixtures/fixtures' );
-const {
-	fillPageTitle,
-	publishPage,
-} = require( '../../utils/editor' );
+const { fillPageTitle, publishPage } = require( '../../utils/editor' );
 
 /**
  * External dependencies

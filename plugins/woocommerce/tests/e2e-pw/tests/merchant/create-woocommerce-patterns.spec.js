@@ -1,8 +1,5 @@
 const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
-const {
-	fillPageTitle,
-	publishPage,
-} = require( '../../utils/editor' );
+const { fillPageTitle, publishPage } = require( '../../utils/editor' );
 const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
 
 /**
