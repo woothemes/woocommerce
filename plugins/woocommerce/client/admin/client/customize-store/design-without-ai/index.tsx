@@ -78,15 +78,13 @@ export const DesignWithNoAiController = ( {
 	}, [ CurrentComponent, currentNodeMeta?.component ] );
 
 	return (
-		<>
-			<div className={ `woocommerce-design-without-ai__container` }>
-				{ CurrentComponent ? (
-					<CurrentComponent sendEvent={ send } />
-				) : (
-					<div />
-				) }
-			</div>
-		</>
+		<div className={ `woocommerce-design-without-ai__container` }>
+			{ CurrentComponent ? (
+				<CurrentComponent sendEvent={ send } />
+			) : (
+				<div />
+			) }
+		</div>
 	);
 };
 
@@ -96,11 +94,9 @@ export const DesignWithoutAi: CustomizeStoreComponent = ( {
 	context,
 } ) => {
 	return (
-		<>
-			<DesignWithNoAiController
-				parentMachine={ parentMachine }
-				parentContext={ context }
-			/>
-		</>
+		<DesignWithNoAiController
+			parentMachine={ parentMachine }
+			parentContext={ context }
+		/>
 	);
 };

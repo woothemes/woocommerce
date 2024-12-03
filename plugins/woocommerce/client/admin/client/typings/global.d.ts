@@ -63,6 +63,7 @@ declare global {
 			'launch-your-store': boolean;
 			'blueprint': boolean;
 			'reactify-classic-payments-settings': boolean;
+			"add-to-cart-with-options-stepper-layout": boolean
 		};
 		wp: {
 			updates?: {
@@ -79,6 +80,12 @@ declare global {
 					postChanged: () => boolean;
 				};
 			};
+			media: {
+				frames?: {
+					img_select?: wp.media.frame;
+				};
+				(options: wp.media.frameOptions): wp.media.frame;
+			};
 		};
 		tinymce?: {
 			get: ( name: string ) => {
@@ -94,6 +101,21 @@ declare global {
 			nonces: {
 				gateway_toggle?: string;
 			}
+		},
+	}
+	namespace wp.media {
+		interface frame {
+			open(): void;
+			on(event: string, callback: Function): void;
+			state(): {
+				get(state: string): any;
+			};
+		}
+
+		interface frameOptions {
+			library: {
+				type: string;
+			};
 		}
 	}
 }

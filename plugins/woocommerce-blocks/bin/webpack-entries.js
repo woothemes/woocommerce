@@ -19,6 +19,13 @@ const blocks = {
 	'add-to-cart-form': {
 		customDir: 'product-elements/add-to-cart-form',
 	},
+	'add-to-cart-with-options': {
+		isExperimental: true,
+	},
+	'add-to-cart-with-options-quantity-selector': {
+		customDir: 'add-to-cart-with-options/quantity-selector',
+		isExperimental: true,
+	},
 	'all-products': {
 		customDir: 'products/all-products',
 	},
@@ -90,14 +97,6 @@ const blocks = {
 	'stock-filter': {},
 	'product-filters': {
 		isExperimental: true,
-	},
-	'product-filters-overlay': {
-		isExperimental: true,
-		customDir: 'product-filters/inner-blocks/overlay',
-	},
-	'product-filters-overlay-navigation': {
-		isExperimental: true,
-		customDir: 'product-filters/inner-blocks/overlay-navigation',
 	},
 	'product-filter-status': {
 		isExperimental: true,

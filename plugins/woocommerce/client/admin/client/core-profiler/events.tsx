@@ -92,6 +92,10 @@ export type PluginsPageSkippedEvent = {
 	type: 'PLUGINS_PAGE_SKIPPED';
 };
 
+export type PluginsPageCompletedWithoutSelectingPluginsEvent = {
+	type: 'PLUGINS_PAGE_COMPLETED_WITHOUT_SELECTING_PLUGINS';
+};
+
 export type PluginInstalledAndActivatedEvent = {
 	type: 'PLUGIN_INSTALLED_AND_ACTIVATED';
 	payload: {
@@ -134,6 +138,7 @@ export type CoreProfilerEvents =
 	| PluginsInstallationRequestedEvent
 	| PluginsLearnMoreLinkClickedEvent
 	| PluginsPageSkippedEvent
+	| PluginsPageCompletedWithoutSelectingPluginsEvent
 	| PluginInstalledAndActivatedEvent
 	| PluginsInstallationCompletedEvent
 	| PluginsInstallationCompletedWithErrorsEvent

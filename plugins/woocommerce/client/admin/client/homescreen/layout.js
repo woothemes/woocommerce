@@ -128,7 +128,7 @@ export const Layout = ( {
 							className="your-store-today"
 							title={ __( 'Your store today', 'woocommerce' ) }
 							subtitle={ __(
-								'To do’s, tips, and insights for your business',
+								'To-dos, tips, and insights for your business',
 								'woocommerce'
 							) }
 						/>

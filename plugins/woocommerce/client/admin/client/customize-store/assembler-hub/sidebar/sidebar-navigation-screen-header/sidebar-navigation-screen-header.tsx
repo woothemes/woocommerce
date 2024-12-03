@@ -54,16 +54,16 @@ export const SidebarNavigationScreenHeader = ( {
 
 	const { isLoading, patterns } = usePatternsByCategory( 'woo-commerce' );
 
-	const currentTemplate = useSelect(
+	const currentTemplateId: string | undefined = useSelect(
 		( select ) =>
 			// @ts-expect-error No types for this exist yet.
-			select( coreStore ).__experimentalGetTemplateForLink( '/' ),
+			select( coreStore ).getDefaultTemplateId( { slug: 'home' } ),
 		[]
 	);
 
 	const [ mainTemplateBlocks ] = useEditorBlocks(
 		'wp_template',
-		currentTemplate?.id ?? ''
+		currentTemplateId || ''
 	);
 
 	const [ blocks, , onChange ] = useEditorBlocks(

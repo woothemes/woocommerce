@@ -35,6 +35,10 @@
 		"isPreview": {
 			"type": "boolean",
 			"default": false
+		},
+		"clearButton": {
+			"type": "boolean",
+			"default":true
 		}
 	},
 	"textdomain": "woocommerce",

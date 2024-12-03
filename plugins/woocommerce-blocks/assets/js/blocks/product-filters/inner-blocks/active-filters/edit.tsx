@@ -18,7 +18,8 @@ import { EditProps } from './types';
 import { filtersPreview } from './constants';
 
 const Edit = ( props: EditProps ) => {
-	const { clearButton } = props.attributes;
+	const { attributes } = props;
+	const { clearButton } = attributes;
 
 	const { children, ...innerBlocksProps } = useInnerBlocksProps(
 		useBlockProps(),

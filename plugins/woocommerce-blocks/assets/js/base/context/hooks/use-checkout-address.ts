@@ -3,7 +3,7 @@
  */
 import {
 	defaultFields,
-	AddressFields,
+	FormFields,
 	ShippingAddress,
 	BillingAddress,
 	getSetting,
@@ -30,7 +30,7 @@ interface CheckoutAddress {
 	setUseShippingAsBilling: ( useShippingAsBilling: boolean ) => void;
 	setEditingBillingAddress: ( isEditing: boolean ) => void;
 	setEditingShippingAddress: ( isEditing: boolean ) => void;
-	defaultFields: AddressFields;
+	defaultFields: FormFields;
 	showShippingFields: boolean;
 	showBillingFields: boolean;
 	forcedBillingAddress: boolean;

@@ -25,13 +25,13 @@
 	<?php if ( isset( $data['payment_method'] ) ) { ?>
 		<h3 id="payment_method_section_title"><?php echo strtoupper( $data['texts']['payment_method_section_title'] ); ?></h3>
 		<p>
-			<?php if ( $data['payment_info'] ) { ?>
+			<?php if ( $data['show_payment_method_title'] ) { ?>
+				<span><?php echo $data['payment_method']; ?></span>
+			<?php } else { ?>
 				<span class="card-icon"></span>
 				<?php if ( $data['payment_info']['card_last4'] ) { ?>
 					- <?php echo $data['payment_info']['card_last4']; ?>
 				<?php } ?>
-			<?php } else { ?>
-				<span><?php echo $data['payment_method']; ?></span>
 			<?php } ?>
 		</p>
 	<?php } ?>

@@ -14,7 +14,29 @@
 		"woocommerce/product-filters"
 	],
 	"supports": {
-		"interactivity": true
+		"interactivity": true,
+		"__experimentalBorder": {
+			"color": true,
+			"radius": true,
+			"style": true,
+			"width": true,
+			"__experimentalDefaultControls": {
+				"color": false,
+				"radius": false,
+				"style": false,
+				"width": false
+			}
+		},
+		"spacing": {
+			"margin": true,
+			"padding": true,
+			"blockGap": false,
+			"__experimentalDefaultControls": {
+				"margin": false,
+				"padding": false,
+				"blockGap": false
+			}
+		}
 	},
 	"usesContext": [
 		"filterParams"

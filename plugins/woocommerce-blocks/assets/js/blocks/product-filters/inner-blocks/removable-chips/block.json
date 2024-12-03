@@ -13,7 +13,17 @@
 	"ancestor": [
 		"woocommerce/product-filter-active"
 	],
-	"supports": {},
+	"supports": {
+		"layout": {
+			"allowSwitching": false,
+			"allowInheriting": false,
+			"allowJustification": false,
+			"allowVerticalAlignment": false,
+			"default": {
+				"type": "flex"
+			}
+		}
+	},
 	"usesContext": [
 		"queryId",
 		"filterData"

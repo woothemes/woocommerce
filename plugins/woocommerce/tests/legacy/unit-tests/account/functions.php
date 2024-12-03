@@ -175,21 +175,25 @@ class WC_Tests_Account_Functions extends WC_Unit_Test_Case {
 	 * @since 3.3.0
 	 */
 	public function test_wc_get_account_orders_actions() {
-		$order = WC_Helper_Order::create_order();
+		$order    = WC_Helper_Order::create_order();
+		$order_id = $order->get_id();
 
 		$this->assertEquals(
 			array(
 				'view'   => array(
-					'url'  => $order->get_view_order_url(),
-					'name' => 'View',
+					'url'        => $order->get_view_order_url(),
+					'name'       => 'View',
+					'aria-label' => "View order {$order_id}",
 				),
 				'pay'    => array(
-					'url'  => $order->get_checkout_payment_url(),
-					'name' => 'Pay',
+					'url'        => $order->get_checkout_payment_url(),
+					'name'       => 'Pay',
+					'aria-label' => "Pay for order {$order_id}",
 				),
 				'cancel' => array(
-					'url'  => $order->get_cancel_order_url( wc_get_page_permalink( 'myaccount' ) ),
-					'name' => 'Cancel',
+					'url'        => $order->get_cancel_order_url( wc_get_page_permalink( 'myaccount' ) ),
+					'name'       => 'Cancel',
+					'aria-label' => "Cancel order {$order_id}",
 				),
 			),
 			wc_get_account_orders_actions( $order->get_id() )

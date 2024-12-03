@@ -1,4 +1,0 @@
-Significance: minor
-Type: dev
-
-Adds constants for all order statuses to centralize them, reduce typos, improve code strictness, ease status lookups, and enhance documentation.

@@ -15,6 +15,7 @@ import {
 	PluginsLearnMoreLinkClickedEvent,
 	PluginsInstallationRequestedEvent,
 	PluginsPageSkippedEvent,
+	PluginsPageCompletedWithoutSelectingPluginsEvent,
 } from '../../events';
 import { Heading } from '../../components/heading/heading';
 import { Navigation } from '../../components/navigation/navigation';
@@ -83,6 +84,7 @@ export const Plugins = ( {
 		payload:
 			| PluginsInstallationRequestedEvent
 			| PluginsPageSkippedEvent
+			| PluginsPageCompletedWithoutSelectingPluginsEvent
 			| PluginsLearnMoreLinkClickedEvent
 	) => void;
 	navigationProgress: number;
@@ -112,6 +114,12 @@ export const Plugins = ( {
 	const skipPluginsPage = () => {
 		return sendEvent( {
 			type: 'PLUGINS_PAGE_SKIPPED',
+		} );
+	};
+
+	const completedPluginsPageWithoutSelectingPlugins = () => {
+		return sendEvent( {
+			type: 'PLUGINS_PAGE_COMPLETED_WITHOUT_SELECTING_PLUGINS',
 		} );
 	};
 
@@ -217,7 +225,7 @@ export const Plugins = ( {
 							onClick={
 								selectedPlugins.size > 0
 									? submitInstallationRequest
-									: skipPluginsPage
+									: completedPluginsPageWithoutSelectingPlugins
 							}
 						>
 							{ __( 'Continue', 'woocommerce' ) }

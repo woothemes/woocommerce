@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Fix wrong CSS class used by product grids that breaks theme.json styling.

@@ -28,13 +28,13 @@ final class ProductFilterCheckboxList extends AbstractBlock {
 			return '';
 		}
 
-		$context   = $block->context['filterData'];
-		$items     = $context['items'] ?? array();
-		$icontext  = array( 'items' => $items );
-		$action    = $context['actions']['toggleFilter'] ?? '';
-		$namespace = wp_json_encode( array( 'namespace' => 'woocommerce/product-filter-checkbox-list' ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP );
-		$classes   = '';
-		$style     = '';
+		$context               = $block->context['filterData'];
+		$items                 = $context['items'] ?? array();
+		$interactivity_context = array( 'items' => $items );
+		$action                = $context['actions']['toggleFilter'] ?? '';
+		$namespace             = wp_json_encode( array( 'namespace' => 'woocommerce/product-filter-checkbox-list' ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP );
+		$classes               = '';
+		$style                 = '';
 
 		$tags = new \WP_HTML_Tag_Processor( $content );
 		if ( $tags->next_tag( array( 'class_name' => 'wc-block-product-filter-checkbox-list' ) ) ) {
@@ -54,7 +54,7 @@ final class ProductFilterCheckboxList extends AbstractBlock {
 
 		$wrapper_attributes = array(
 			'data-wc-interactive' => esc_attr( $namespace ),
-			'data-wc-context'     => wp_json_encode( $icontext, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
+			'data-wc-context'     => wp_json_encode( $interactivity_context, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
 			'data-wc-key'         => wp_unique_prefixed_id( $this->get_full_block_name() ),
 			'class'               => esc_attr( $classes ),
 			'style'               => esc_attr( $style ),

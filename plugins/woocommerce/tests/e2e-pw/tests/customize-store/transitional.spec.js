@@ -4,7 +4,7 @@ const { activateTheme, DEFAULT_THEME } = require( '../../utils/themes' );
 const { AssemblerPage } = require( './assembler/assembler.page' );
 
 const CUSTOMIZE_STORE_URL =
-	'/wp-admin/admin.php?page=wc-admin&path=%2Fcustomize-store';
+	'wp-admin/admin.php?page=wc-admin&path=%2Fcustomize-store';
 const TRANSITIONAL_URL = `${ CUSTOMIZE_STORE_URL }%2Ftransitional`;
 const INTRO_URL = `${ CUSTOMIZE_STORE_URL }%2Fintro`;
 
@@ -154,7 +154,7 @@ test.describe(
 			} );
 
 			await expect(
-				page.locator( '.edit-site-site-hub__site-title' )
+				page.locator( '.woocommerce-edit-site-site-hub__site-title' )
 			).toBeVisible();
 
 			await shareFeedbackButton.click();

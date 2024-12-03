@@ -187,7 +187,14 @@ test.describe(
 			await page.getByTitle( 'Product Count', { exact: true } ).click();
 			// customize font size and weight
 			await page.getByLabel( 'Large', { exact: true } ).click();
-			await page.getByRole( 'button', { name: 'Font weight' } ).click();
+
+			// This complicated locator is needed to make it work with both WP6.6 and WP6.7
+			// Once support for WP6.6 is dropped, this can be simplified to: `getByRole('combobox', { name: 'Font weight' })`
+			await page
+				.getByText( 'Font weight' )
+				.locator( 'xpath=..' )
+				.locator( 'button' )
+				.click();
 			// choose Light via kb press due to encountered issue with normal click
 			await page.keyboard.press( 'ArrowDown' );
 			await page.keyboard.press( 'ArrowDown' );
@@ -229,7 +236,7 @@ test.describe(
 			);
 			await expect( page.locator( miniCartBlock ) ).toHaveAttribute(
 				'data-style',
-				'{"typography":{"fontWeight":"300"}}'
+				/"typography":{"fontWeight":"300"/
 			);
 			await page.locator( miniCartButton ).click();
 			await expect(

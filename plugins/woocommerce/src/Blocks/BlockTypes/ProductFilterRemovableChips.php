@@ -24,13 +24,13 @@ final class ProductFilterRemovableChips extends AbstractBlock {
 	 * @return string Rendered block type output.
 	 */
 	protected function render( $attributes, $content, $block ) {
-		if ( empty( $block->context['filterData'] ) || empty( $block->context['filterData']['items'] ) ) {
-			return '';
+		$filters = array();
+
+		if ( ! empty( $block->context['filterData'] ) && ! empty( $block->context['filterData']['items'] ) ) {
+			$filters = $block->context['filterData']['items'];
 		}
 
-		$style   = '';
-		$context = $block->context['filterData'];
-		$filters = $context['items'] ?? array();
+		$style = '';
 
 		$tags = new \WP_HTML_Tag_Processor( $content );
 		if ( $tags->next_tag( array( 'class_name' => 'wc-block-product-filter-removable-chips' ) ) ) {
@@ -38,19 +38,21 @@ final class ProductFilterRemovableChips extends AbstractBlock {
 			$style   = $tags->get_attribute( 'style' );
 		}
 
-		$wrapper_attributes = get_block_wrapper_attributes(
-			array(
-				'data-wc-interactive' => wp_json_encode( array( 'namespace' => $this->get_full_block_name() ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
-				'data-wc-key'         => wp_unique_prefixed_id( $this->get_full_block_name() ),
-				'class'               => esc_attr( $classes ),
-				'style'               => esc_attr( $style ),
-			)
+		$wrapper_attributes = array(
+			'data-wc-interactive' => wp_json_encode( array( 'namespace' => $this->get_full_block_name() ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
+			'data-wc-key'         => wp_unique_prefixed_id( $this->get_full_block_name() ),
+			'class'               => esc_attr( $classes ),
+			'style'               => esc_attr( $style ),
 		);
+
+		if ( empty( $filters ) ) {
+			$wrapper_attributes['hidden'] = true;
+		}
 
 		ob_start();
 		?>
 
-		<div <?php echo $wrapper_attributes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+		<div <?php echo get_block_wrapper_attributes( $wrapper_attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php if ( ! empty( $filters ) ) : ?>
 				<ul class="wc-block-product-filter-removable-chips__items">
 					<?php foreach ( $filters as $filter ) : ?>

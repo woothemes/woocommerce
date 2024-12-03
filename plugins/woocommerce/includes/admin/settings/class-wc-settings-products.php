@@ -32,6 +32,13 @@ class WC_Settings_Products extends WC_Settings_Page {
 	}
 
 	/**
+	 * Setting page icon.
+	 *
+	 * @var string
+	 */
+	public $icon = 'box';
+
+	/**
 	 * Get own sections.
 	 *
 	 * @return array

@@ -94,7 +94,7 @@ export const LaunchYourStoreHubSidebar: React.FC< SidebarComponentProps > = (
 			) }
 		>
 			<motion.div
-				className="edit-site-layout__header-container"
+				className="woocommerce-edit-site-layout__header-container"
 				animate={ 'view' }
 			>
 				<SiteHub
@@ -102,19 +102,19 @@ export const LaunchYourStoreHubSidebar: React.FC< SidebarComponentProps > = (
 						view: { x: 0 },
 					} }
 					isTransparent={ false }
-					className="edit-site-layout__hub"
+					className="woocommerce-edit-site-layout__hub"
 				/>
 			</motion.div>
 			<SidebarContainer
 				title={ sidebarTitle }
 				description={ sidebarDescription }
 			>
-				<div className="edit-site-sidebar-navigation-screen-essential-tasks__group-header">
+				<div className="woocommerce-edit-site-sidebar-navigation-screen-essential-tasks__group-header">
 					<Heading level={ 2 }>
 						{ __( 'Essential Tasks', 'woocommerce' ) }
 					</Heading>
 				</div>
-				<ItemGroup className="edit-site-sidebar-navigation-screen-essential-tasks__group">
+				<ItemGroup className="woocommerce-edit-site-sidebar-navigation-screen-essential-tasks__group">
 					{ tasklist &&
 						hasIncompleteTasks &&
 						tasklist.tasks.map( ( task ) =>
@@ -150,12 +150,12 @@ export const LaunchYourStoreHubSidebar: React.FC< SidebarComponentProps > = (
 				</ItemGroup>
 				{ testOrderCount > 0 && (
 					<>
-						<div className="edit-site-sidebar-navigation-screen-test-data__group-header">
+						<div className="woocommerce-edit-site-sidebar-navigation-screen-test-data__group-header">
 							<Heading level={ 2 }>
 								{ __( 'Test data', 'woocommerce' ) }
 							</Heading>
 						</div>
-						<ItemGroup className="edit-site-sidebar-navigation-screen-remove-test-data__group">
+						<ItemGroup className="woocommerce-edit-site-sidebar-navigation-screen-remove-test-data__group">
 							<ToggleControl
 								label={ sprintf(
 									// translators: %d is the number of test orders
@@ -177,7 +177,7 @@ export const LaunchYourStoreHubSidebar: React.FC< SidebarComponentProps > = (
 						</ItemGroup>
 					</>
 				) }
-				<ItemGroup className="edit-site-sidebar-navigation-screen-launch-store-button__group">
+				<ItemGroup className="woocommerce-edit-site-sidebar-navigation-screen-launch-store-button__group">
 					{ launchStoreError?.message && ! errorNoticeDismissed && (
 						<Notice
 							className="launch-store-error-notice"

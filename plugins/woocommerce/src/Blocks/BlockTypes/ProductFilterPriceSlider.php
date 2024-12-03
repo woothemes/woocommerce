@@ -45,6 +45,15 @@ class ProductFilterPriceSlider extends AbstractBlock {
 			return;
 		}
 
+		$classes = '';
+		$style   = '';
+
+		$tags = new \WP_HTML_Tag_Processor( $content );
+		if ( $tags->next_tag( array( 'class_name' => 'wc-block-product-filter-price-slider' ) ) ) {
+			$classes = $tags->get_attribute( 'class' );
+			$style   = $tags->get_attribute( 'style' );
+		}
+
 		$formatted_min_price = wc_price( $min_price, array( 'decimals' => 0 ) );
 		$formatted_max_price = wc_price( $max_price, array( 'decimals' => 0 ) );
 
@@ -53,7 +62,8 @@ class ProductFilterPriceSlider extends AbstractBlock {
 
 		$wrapper_attributes = get_block_wrapper_attributes(
 			array(
-				'class'               => 'wc-block-product-filter-price-slider',
+				'class'               => esc_attr( $classes ),
+				'style'               => esc_attr( $style ),
 				'data-wc-interactive' => wp_json_encode(
 					array(
 						'namespace' => $this->get_full_block_name(),

@@ -10,6 +10,10 @@ export function getRecommendedPlugins( state, category ) {
 	return state.recommendedPlugins[ category ] || [];
 }
 
+export function getMiscRecommendations( state ) {
+	return state.miscRecommendations;
+}
+
 export function getBlogPosts( state, category ) {
 	return state.blogPosts[ category ] || [];
 }

@@ -5,6 +5,7 @@
  * @package WooCommerce\Tests\WC_Tracker.
  */
 
+use Automattic\WooCommerce\Enums\OrderInternalStatus;
 use Automattic\WooCommerce\Internal\Features\FeaturesController;
 use Automattic\WooCommerce\Utilities\PluginUtil;
 
@@ -166,7 +167,7 @@ class WC_Tracker_Test extends \WC_Unit_Test_Case {
 	 */
 	public function test_get_tracking_data_orders() {
 		$dummy_product          = WC_Helper_Product::create_simple_product();
-		$status_entries         = array( 'wc-processing', 'wc-completed', 'wc-refunded', 'wc-pending' );
+		$status_entries         = array( OrderInternalStatus::PROCESSING, OrderInternalStatus::COMPLETED, OrderInternalStatus::REFUNDED, OrderInternalStatus::PENDING );
 		$created_via_entries    = array( 'api', 'checkout', 'admin' );
 		$payment_method_entries = array( 'paypal', 'stripe', 'cod' );
 

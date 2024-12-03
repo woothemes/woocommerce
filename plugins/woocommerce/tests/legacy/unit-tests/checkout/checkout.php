@@ -5,6 +5,8 @@
  * @package WooCommerce\Tests\Checkout
  */
 
+use Automattic\WooCommerce\Enums\OrderStatus;
+
 /**
  * Class WC_Checkout
  */
@@ -218,7 +220,7 @@ class WC_Tests_Checkout extends WC_Unit_Test_Case {
 		list( $product, $order ) = $this->create_order_for_managed_inventory_product();
 
 		$this->assertEquals( 9, $order->get_item_count() );
-		$this->assertEquals( 'pending', $order->get_status() );
+		$this->assertEquals( OrderStatus::PENDING, $order->get_status() );
 		$this->assertEquals( 9, wc_get_held_stock_quantity( $product ) );
 
 		WC()->cart->empty_cart();
@@ -236,7 +238,7 @@ class WC_Tests_Checkout extends WC_Unit_Test_Case {
 		list( $product, $order ) = $this->create_order_for_managed_inventory_product();
 
 		$this->assertEquals( 9, wc_get_held_stock_quantity( $product ) );
-		$order->set_status( 'cancelled' );
+		$order->set_status( OrderStatus::CANCELLED );
 		$order->save();
 
 		$this->assertEquals( 0, wc_get_held_stock_quantity( $product ) );
@@ -253,7 +255,7 @@ class WC_Tests_Checkout extends WC_Unit_Test_Case {
 		list( $product, $order ) = $this->create_order_for_managed_inventory_product();
 
 		$this->assertEquals( 9, wc_get_held_stock_quantity( $product ) );
-		$order->set_status( 'processing' );
+		$order->set_status( OrderStatus::PROCESSING );
 		$order->save();
 
 		$this->assertEquals( 0, wc_get_held_stock_quantity( $product ) );
@@ -295,7 +297,7 @@ class WC_Tests_Checkout extends WC_Unit_Test_Case {
 		$order = wc_get_order( $order_id );
 
 		$this->assertEquals( 9, $order->get_item_count() );
-		$this->assertEquals( 'pending', $order->get_status() );
+		$this->assertEquals( OrderStatus::PENDING, $order->get_status() );
 		$this->assertEquals( 9, wc_get_held_stock_quantity( $variation ) );
 
 		WC()->cart->empty_cart();

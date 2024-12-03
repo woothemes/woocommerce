@@ -3,11 +3,15 @@
  */
 import { __, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { Icon, closeSmall } from '@wordpress/icons';
+import { Icon, closeSmall, arrowRight, arrowDown } from '@wordpress/icons';
 import { Label } from '@woocommerce/blocks-components';
+import { ToolbarGroup, ToolbarButton } from '@wordpress/components';
+import { getBlockSupport } from '@wordpress/blocks';
 import {
 	InspectorControls,
 	useBlockProps,
+	useInnerBlocksProps,
+	BlockControls,
 	withColors,
 	// @ts-expect-error - no types.
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
@@ -26,6 +30,7 @@ import { getColorClasses, getColorVars } from './utils';
 const Edit = ( props: EditProps ): JSX.Element => {
 	const colorGradientSettings = useMultipleOriginColorsAndGradients();
 	const {
+		name,
 		context,
 		clientId,
 		attributes,
@@ -37,10 +42,15 @@ const Edit = ( props: EditProps ): JSX.Element => {
 		chipBorder,
 		setChipBorder,
 	} = props;
-	const { customChipText, customChipBackground, customChipBorder } =
+	const { customChipText, customChipBackground, customChipBorder, layout } =
 		attributes;
 	const { filterData } = context;
 	const { items } = filterData;
+
+	// Extract attributes from block layout
+	const layoutBlockSupport = getBlockSupport( name, 'layout' );
+	const defaultBlockLayout = layoutBlockSupport?.default;
+	const usedLayout = layout || defaultBlockLayout || {};
 
 	const blockProps = useBlockProps( {
 		className: clsx( 'wc-block-product-filter-removable-chips', {
@@ -49,6 +59,7 @@ const Edit = ( props: EditProps ): JSX.Element => {
 		style: getColorVars( attributes ),
 	} );
 
+	const innerBlocksProps = useInnerBlocksProps( blockProps, {} );
 	const removeText = ( label: string ): string => {
 		return sprintf(
 			/* translators: %s attribute value used in the filter. For example: yellow, green, small, large. */
@@ -58,33 +69,64 @@ const Edit = ( props: EditProps ): JSX.Element => {
 	};
 
 	return (
-		<>
-			<div { ...blockProps }>
-				<ul className="wc-block-product-filter-removable-chips__items">
-					{ items?.map( ( item, index ) => (
-						<li
-							key={ index }
-							className="wc-block-product-filter-removable-chips__item"
-						>
-							<span className="wc-block-product-filter-removable-chips__label">
-								{ item.type + ': ' + item.label }
-							</span>
-							<button className="wc-block-product-filter-removable-chips__remove">
-								<Icon
-									className="wc-block-product-filter-removable-chips__remove-icon"
-									icon={ closeSmall }
-									size={ 25 }
-								/>
-								<Label
-									screenReaderLabel={ removeText(
-										item.type + ': ' + item.label
-									) }
-								/>
-							</button>
-						</li>
-					) ) }
-				</ul>
-			</div>
+		<div { ...innerBlocksProps }>
+			<BlockControls>
+				<ToolbarGroup>
+					<ToolbarButton
+						icon={ arrowRight }
+						label={ __( 'Horizontal', 'woocommerce' ) }
+						onClick={ () =>
+							setAttributes( {
+								layout: {
+									...usedLayout,
+									orientation: 'horizontal',
+								},
+							} )
+						}
+						isPressed={
+							usedLayout.orientation === 'horizontal' ||
+							! usedLayout.orientation
+						}
+					/>
+					<ToolbarButton
+						icon={ arrowDown }
+						label={ __( 'Vertical', 'woocommerce' ) }
+						onClick={ () =>
+							setAttributes( {
+								layout: {
+									...usedLayout,
+									orientation: 'vertical',
+								},
+							} )
+						}
+						isPressed={ usedLayout.orientation === 'vertical' }
+					/>
+				</ToolbarGroup>
+			</BlockControls>
+			<ul className="wc-block-product-filter-removable-chips__items">
+				{ items?.map( ( item, index ) => (
+					<li
+						key={ index }
+						className="wc-block-product-filter-removable-chips__item"
+					>
+						<span className="wc-block-product-filter-removable-chips__label">
+							{ item.type + ': ' + item.label }
+						</span>
+						<button className="wc-block-product-filter-removable-chips__remove">
+							<Icon
+								className="wc-block-product-filter-removable-chips__remove-icon"
+								icon={ closeSmall }
+								size={ 25 }
+							/>
+							<Label
+								screenReaderLabel={ removeText(
+									item.type + ': ' + item.label
+								) }
+							/>
+						</button>
+					</li>
+				) ) }
+			</ul>
 			<InspectorControls group="color">
 				{ colorGradientSettings.hasColorsOrGradients && (
 					<ColorGradientSettingsDropdown
@@ -147,7 +189,7 @@ const Edit = ( props: EditProps ): JSX.Element => {
 					/>
 				) }
 			</InspectorControls>
-		</>
+		</div>
 	);
 };
 

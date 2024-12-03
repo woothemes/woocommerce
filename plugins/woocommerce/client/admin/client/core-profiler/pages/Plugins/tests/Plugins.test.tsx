@@ -143,7 +143,7 @@ describe( 'Plugins Component', () => {
 		const continueButton = screen.getByText( 'Continue' );
 		fireEvent.click( continueButton );
 		expect( mockSendEvent ).toHaveBeenCalledWith( {
-			type: 'PLUGINS_PAGE_SKIPPED',
+			type: 'PLUGINS_PAGE_COMPLETED_WITHOUT_SELECTING_PLUGINS',
 		} );
 	} );
 

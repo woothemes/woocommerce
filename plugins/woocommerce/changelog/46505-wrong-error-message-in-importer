@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Fixes wrong error message when importing products with existing SKU.
