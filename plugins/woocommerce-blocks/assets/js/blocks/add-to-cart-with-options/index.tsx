@@ -21,7 +21,10 @@ const isBlockifiedAddToCart = getSettingWithCoercion(
 	isBoolean
 );
 
-if ( isExperimentalBlocksEnabled() && isBlockifiedAddToCart ) {
+export const shouldRegisterBlock =
+	isExperimentalBlocksEnabled() && isBlockifiedAddToCart;
+
+if ( shouldRegisterBlock ) {
 	registerBlockType( metadata, {
 		icon: <Icon icon={ button } />,
 		edit: AddToCartOptionsEdit,
