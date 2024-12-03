@@ -3,8 +3,6 @@
 # Load env vars from the .env file
 source "../.env"
 
-echo $CUSTOMER_PASSWORD
-
 clear
 
 echo "--------------------------------------------------------"
