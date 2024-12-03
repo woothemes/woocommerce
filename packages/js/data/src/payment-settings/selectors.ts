@@ -6,6 +6,7 @@ import {
 	OfflinePaymentGateway,
 	PaymentSettingsState,
 	SuggestedPaymentExtension,
+	SuggestedPaymentExtensionCategory,
 } from './types';
 import { WPDataSelector, WPDataSelectors } from '../types';
 
@@ -25,6 +26,12 @@ export function getSuggestions(
 	state: PaymentSettingsState
 ): Array< SuggestedPaymentExtension > {
 	return state.suggestions;
+}
+
+export function getSuggestionCategories(
+	state: PaymentSettingsState
+): Array< SuggestedPaymentExtensionCategory > {
+	return state.suggestionCategories;
 }
 
 export function isFetching( state: PaymentSettingsState ): boolean {

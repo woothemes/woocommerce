@@ -35,6 +35,8 @@ class Payments {
 	const SUGGESTION_ORDERING_PREFIX     = '_wc_pes_';
 	const OFFLINE_METHODS_ORDERING_GROUP = '_wc_offline_payment_methods_group';
 
+	const SUGGESTIONS_CONTEXT = 'wc_settings_payments';
+
 	/**
 	 * The payment extension suggestions service.
 	 *
@@ -101,9 +103,10 @@ class Payments {
 				}
 
 				// Change suggestion details to align it with a regular payment gateway.
-				$suggestion['id']     = $suggestion_order_map_id;
-				$suggestion['_type']  = self::PROVIDER_TYPE_SUGGESTION;
-				$suggestion['_order'] = $providers_order_map[ $suggestion_order_map_id ];
+				$suggestion['_suggestion_id'] = $suggestion['id'];
+				$suggestion['id']             = $suggestion_order_map_id;
+				$suggestion['_type']          = self::PROVIDER_TYPE_SUGGESTION;
+				$suggestion['_order']         = $providers_order_map[ $suggestion_order_map_id ];
 				unset( $suggestion['_priority'] );
 
 				$payment_providers[] = $suggestion;
@@ -121,7 +124,7 @@ class Payments {
 				$payment_gateway,
 				$providers_order_map[ $payment_gateway->id ]
 			);
-			$gateway_details = $this->enhance_payment_gateway_details( $gateway_details, $payment_gateway );
+			$gateway_details = $this->enhance_payment_gateway_details( $gateway_details, $payment_gateway, $location );
 
 			$gateway_details['_type'] = $this->is_offline_payment_method( $payment_gateway->id ) ? self::PROVIDER_TYPE_OFFLINE_PM : self::PROVIDER_TYPE_GATEWAY;
 
@@ -212,7 +215,7 @@ class Payments {
 		$preferred_apm = null;
 		$other         = array();
 
-		$extensions = $this->extension_suggestions->get_country_extensions( $location );
+		$extensions = $this->extension_suggestions->get_country_extensions( $location, self::SUGGESTIONS_CONTEXT );
 		// Sort them by _priority.
 		usort(
 			$extensions,
@@ -227,7 +230,7 @@ class Payments {
 		$active_extensions = array();
 
 		foreach ( $extensions as $extension ) {
-			$extension = $this->enhance_payment_extension_suggestion( $extension );
+			$extension = $this->enhance_extension_suggestion( $extension );
 
 			if ( self::EXTENSION_ACTIVE === $extension['plugin']['status'] ) {
 				// If the suggested extension is active, we no longer suggest it.
@@ -337,29 +340,30 @@ class Payments {
 	 *
 	 * @return ?array The payment extension suggestion, or null if not found.
 	 */
-	public function get_payment_extension_suggestion_by_id( string $id ): ?array {
+	public function get_extension_suggestion_by_id( string $id ): ?array {
 		$suggestion = $this->extension_suggestions->get_by_id( $id );
 		if ( is_null( $suggestion ) ) {
 			return null;
 		}
 
-		return $this->enhance_payment_extension_suggestion( $suggestion );
+		return $this->enhance_extension_suggestion( $suggestion );
 	}
 
 	/**
 	 * Get a payment extension suggestion by plugin slug.
 	 *
-	 * @param string $slug The plugin slug of the payment extension suggestion.
+	 * @param string $slug         The plugin slug of the payment extension suggestion.
+	 * @param string $country_code Optional. The business location country code to get the suggestions for.
 	 *
 	 * @return ?array The payment extension suggestion, or null if not found.
 	 */
-	public function get_payment_extension_suggestion_by_plugin_slug( string $slug ): ?array {
-		$suggestion = $this->extension_suggestions->get_by_plugin_slug( $slug );
+	public function get_extension_suggestion_by_plugin_slug( string $slug, string $country_code = '' ): ?array {
+		$suggestion = $this->extension_suggestions->get_by_plugin_slug( $slug, $country_code, self::SUGGESTIONS_CONTEXT );
 		if ( is_null( $suggestion ) ) {
 			return null;
 		}
 
-		return $this->enhance_payment_extension_suggestion( $suggestion );
+		return $this->enhance_extension_suggestion( $suggestion );
 	}
 
 	/**
@@ -406,7 +410,7 @@ class Payments {
 			$id = $this->get_suggestion_id_from_order_map_id( $id );
 		}
 
-		$suggestion = $this->get_payment_extension_suggestion_by_id( $id );
+		$suggestion = $this->get_extension_suggestion_by_id( $id );
 		if ( is_null( $suggestion ) ) {
 			throw new Exception( esc_html__( 'Invalid suggestion ID.', 'woocommerce' ) );
 		}
@@ -439,6 +443,22 @@ class Payments {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Dismiss a payment extension suggestion incentive.
+	 *
+	 * @param string $suggestion_id The suggestion ID.
+	 * @param string $incentive_id  The incentive ID.
+	 * @param string $context       Optional. The context in which the incentive should be dismissed.
+	 *                              Default is to dismiss the incentive in all contexts.
+	 *
+	 * @return bool True if the incentive was not previously dismissed and now it is.
+	 *              False if the incentive was already dismissed or could not be dismissed.
+	 * @throws Exception If the incentive could not be dismissed due to an error.
+	 */
+	public function dismiss_extension_suggestion_incentive( string $suggestion_id, string $incentive_id, string $context = 'all' ): bool {
+		return $this->extension_suggestions->dismiss_incentive( $incentive_id, $suggestion_id, $context );
 	}
 
 	/**
@@ -582,10 +602,11 @@ class Payments {
 	 *
 	 * @param array              $gateway_details The gateway details to enhance.
 	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
+	 * @param string             $country_code    The country code for which the details are being enhanced.
 	 *
 	 * @return array The enhanced gateway details.
 	 */
-	private function enhance_payment_gateway_details( array $gateway_details, WC_Payment_Gateway $payment_gateway ): array {
+	private function enhance_payment_gateway_details( array $gateway_details, WC_Payment_Gateway $payment_gateway, string $country_code ): array {
 		$plugin_slug = $this->get_payment_gateway_plugin_slug( $payment_gateway );
 
 		// Handle core gateways.
@@ -606,7 +627,7 @@ class Payments {
 		}
 
 		// If we have a matching suggestion, hoist details from there.
-		$suggestion = $this->get_payment_extension_suggestion_by_plugin_slug( $plugin_slug );
+		$suggestion = $this->get_extension_suggestion_by_plugin_slug( $plugin_slug, $country_code );
 		if ( ! is_null( $suggestion ) ) {
 			if ( empty( $gateway_details['image'] ) ) {
 				$gateway_details['image'] = $suggestion['image'];
@@ -623,6 +644,10 @@ class Payments {
 			if ( empty( $gateway_details['plugin'] ) ) {
 				$gateway_details['plugin'] = $suggestion['plugin'];
 			}
+			if ( empty( $gateway_details['_incentive'] ) && ! empty( $suggestion['_incentive'] ) ) {
+				$gateway_details['_incentive'] = $suggestion['_incentive'];
+			}
+			$gateway_details['_suggestion_id'] = $suggestion['id'];
 		}
 
 		// Get the gateway's corresponding plugin details.
@@ -757,7 +782,7 @@ class Payments {
 	 *
 	 * @return array The enhanced payment extension suggestion.
 	 */
-	private function enhance_payment_extension_suggestion( array $extension ): array {
+	private function enhance_extension_suggestion( array $extension ): array {
 		// Determine the category of the extension.
 		switch ( $extension['_type'] ) {
 			case ExtensionSuggestions::TYPE_PSP:
@@ -885,7 +910,7 @@ class Payments {
 		$payment_gateways_order_map = array_flip( array_keys( $payment_gateways ) );
 		// Get the payment gateways to suggestions map.
 		$payment_gateways_to_suggestions_map = array_map(
-			fn( $gateway ) => $this->get_payment_extension_suggestion_by_plugin_slug( $this->get_payment_gateway_plugin_slug( $gateway ) ),
+			fn( $gateway ) => $this->get_extension_suggestion_by_plugin_slug( $this->get_payment_gateway_plugin_slug( $gateway ) ),
 			$payment_gateways
 		);
 

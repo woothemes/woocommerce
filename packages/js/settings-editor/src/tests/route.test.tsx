@@ -181,7 +181,7 @@ describe( 'route.tsx', () => {
 				.calls[ 0 ][ 2 ];
 			hookAddedCallback( 'unrelated_hook' );
 
-			expect( applyFilters ).toHaveBeenCalledTimes( 2 ); // Only initial call
+			expect( applyFilters ).toHaveBeenCalledTimes( 1 ); // Only initial call
 		} );
 	} );
 } );
