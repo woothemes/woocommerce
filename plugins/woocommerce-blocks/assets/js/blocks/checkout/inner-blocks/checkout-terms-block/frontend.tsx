@@ -100,6 +100,7 @@ const FrontendBlock = ( {
 							disabled={ isDisabled }
 						>
 							<span
+								className="wc-block-components-checkbox__label"
 								dangerouslySetInnerHTML={ {
 									__html: text || termsCheckboxDefaultText,
 								} }
@@ -108,6 +109,7 @@ const FrontendBlock = ( {
 					</>
 				) : (
 					<span
+						className="wc-block-components-checkbox__label"
 						dangerouslySetInnerHTML={ {
 							__html: text || termsConsentDefaultText,
 						} }
