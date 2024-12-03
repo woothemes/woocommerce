@@ -659,7 +659,7 @@ class Checkout extends AbstractCartRoute {
 	 * This validates if the order can be placed regarding settings in WooCommerce > Settings > Accounts & Privacy
 	 * If registration during checkout is disabled, guest checkout is disabled and the user is not logged in, prevent checkout.
 	 *
-	 * @throws RouteException
+	 * @throws RouteException If user cannot place order.
 	 */
 	private function validate_user_can_place_order() {
 		if (
@@ -672,10 +672,16 @@ class Checkout extends AbstractCartRoute {
 			throw new RouteException(
 				'woocommerce_rest_guest_checkout_disabled',
 				esc_html(
+					/**
+					 * Filter to customize the checkout message when a user must be logged in.
+					 *
+					 * @since 9.4.3
+					 *
+					 * @param string $message Message to display when a user must be logged in to check out.
+					 */
 					apply_filters(
 						'woocommerce_checkout_must_be_logged_in_message',
-						__( 'You must be logged in to checkout.', 'woocommerce'
-						)
+						__( 'You must be logged in to checkout.', 'woocommerce' )
 					)
 				),
 				403
