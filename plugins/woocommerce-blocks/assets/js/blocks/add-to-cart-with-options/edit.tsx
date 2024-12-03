@@ -25,7 +25,7 @@ import {
  */
 import { useIsDescendentOfSingleProductBlock } from '../../atomic/blocks/product-elements/shared/use-is-descendent-of-single-product-block';
 import { AddToCartOptionsSettings } from './settings';
-import { STORE_NAME as WC_TEMPLATE_STATE_STORE } from './store/constants';
+import { store as woocommerceTemplateStateStore } from './store';
 import { ProductTypeProps } from './types';
 export interface Attributes {
 	className?: string;
@@ -65,7 +65,7 @@ const AddToCartOptionsEdit = ( props: BlockEditProps< Attributes > ) => {
 		currentProduct: ProductTypeProps;
 	} >( ( select ) => {
 		const { getProductTypes, getCurrentProductType } = select(
-			WC_TEMPLATE_STATE_STORE
+			woocommerceTemplateStateStore
 		);
 
 		return {
@@ -74,7 +74,7 @@ const AddToCartOptionsEdit = ( props: BlockEditProps< Attributes > ) => {
 		};
 	}, [] );
 
-	const { switchProductType } = useDispatch( WC_TEMPLATE_STATE_STORE );
+	const { switchProductType } = useDispatch( woocommerceTemplateStateStore );
 
 	const blockProps = useBlockProps();
 	const { isDescendentOfSingleProductBlock } =
