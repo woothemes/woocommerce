@@ -113,6 +113,42 @@ class EmailPreviewRestControllerTest extends WC_REST_Unit_Test_Case {
 		remove_filter( 'user_has_cap', $filter_callback );
 	}
 
+	/**
+	 * Test sending email preview with a successful sending.
+	 */
+	public function test_send_preview_success_response() {
+		$request  = $this->get_email_preview_request( EmailPreview::DEFAULT_EMAIL_TYPE, self::EMAIL );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEquals( 'Test email sent to ' . self::EMAIL . '.', $response->get_data()['message'] );
+	}
+
+	/**
+	 * Test sending email preview with a failed sending.
+	 */
+	public function test_send_preview_error_response() {
+		add_filter( 'woocommerce_mail_callback', array( $this, 'simulate_failed_sending' ), 10, 0 );
+
+		$request  = $this->get_email_preview_request( EmailPreview::DEFAULT_EMAIL_TYPE, self::EMAIL );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertEquals( 500, $response->get_status() );
+		$this->assertEquals( 'Error sending test email. Please try again.', $response->get_data()['message'] );
+
+		remove_filter( 'woocommerce_mail_callback', array( $this, 'simulate_failed_sending' ), 10 );
+	}
+
+	/**
+	 * Helper method to simulate a failed email sending.
+	 *
+	 * @return callable
+	 */
+	public function simulate_failed_sending() {
+		return function () {
+			return false;
+		};
+	}
 
 	/**
 	 * Helper method to construct a request to send an email preview.
