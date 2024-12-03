@@ -11,9 +11,8 @@ import {
 	ACTION_SWITCH_PRODUCT_TYPE,
 	STORE_NAME,
 } from './constants';
-import getProductTypeOptions, {
-	type ProductTypeProps,
-} from '../utils/get-product-types';
+import getProductTypeOptions from '../utils/get-product-types';
+import type { ProductTypeProps } from '../types';
 
 const productTypesOptions = getProductTypeOptions();
 

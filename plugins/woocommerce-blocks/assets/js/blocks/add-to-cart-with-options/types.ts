@@ -1,4 +1,4 @@
 export type ProductTypeProps = {
 	slug: string;
-	type: string;
+	label: string;
 };
