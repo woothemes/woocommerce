@@ -1407,6 +1407,13 @@ if ( ! function_exists( 'woocommerce_template_loop_add_to_cart' ) ) {
 			$defaults['attributes']['data-success_message'] = $product->add_to_cart_success_message();
 		}
 
+		/**
+		 * Filter to customize the arguments for the add to cart template for the loop.
+		 *
+		 * @param array $args Arguments.
+		 *
+		 * @since 2.4.11
+		 */
 		$args = apply_filters( 'woocommerce_loop_add_to_cart_args', wp_parse_args( $args, $defaults ), $product );
 
 		if ( ! empty( $args['attributes']['aria-describedby'] ) ) {
@@ -1821,6 +1828,11 @@ if ( ! function_exists( 'woocommerce_template_single_add_to_cart' ) ) {
 		global $product;
 
 		if ( $product instanceof WC_Product ) {
+			/**
+			 * Single product add to cart action.
+			 *
+			 * @since 1.0.0
+			 */
 			do_action( 'woocommerce_' . $product->get_type() . '_add_to_cart' );
 		}
 	}
@@ -2029,6 +2041,14 @@ if ( ! function_exists( 'woocommerce_default_product_tabs' ) ) {
 		}
 
 		// Additional information tab - shows attributes.
+
+		/**
+		 * Filter to customize the display of dimensions for a product in its product page.
+		 *
+		 * @param bool $enable_dimensions_display True to enable dimensions display for the product.
+		 *
+		 * @since 2.0.14
+		 */
 		if ( ( $product instanceof WC_Product ) && ( $product->has_attributes() || apply_filters( 'wc_product_enable_dimensions_display', $product->has_weight() || $product->has_dimensions() ) ) ) {
 			$tabs['additional_information'] = array(
 				'title'    => __( 'Additional information', 'woocommerce' ),
