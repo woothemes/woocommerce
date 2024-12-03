@@ -99,6 +99,7 @@ export const PaymentGatewayListItem = ( {
 					/>
 					{ isWCPay &&
 						gateway.state?.enabled &&
+						! gateway.state?.needs_setup &&
 						gateway.state?.test_mode && (
 							<Button
 								variant="primary"

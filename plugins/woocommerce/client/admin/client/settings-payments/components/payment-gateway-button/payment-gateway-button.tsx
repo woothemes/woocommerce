@@ -14,6 +14,10 @@ import { getAdminLink } from '@woocommerce/settings';
 /**
  * Internal dependencies
  */
+import {
+	isWooPayments,
+	getWooPaymentsTestDriveAccountLink,
+} from '~/settings-payments/utils';
 
 export const PaymentGatewayButton = ( {
 	id,
@@ -79,6 +83,11 @@ export const PaymentGatewayButton = ( {
 			)
 				.then( ( response: EnableGatewayResponse ) => {
 					if ( response.data === 'needs_setup' ) {
+						if ( isWooPayments( id ) ) {
+							window.location.href =
+								getWooPaymentsTestDriveAccountLink();
+							return;
+						}
 						window.location.href = settingsUrl;
 						return;
 					}
@@ -98,7 +107,7 @@ export const PaymentGatewayButton = ( {
 	};
 
 	const determineButtonText = () => {
-		if ( needsSetup ) {
+		if ( ! enabled && needsSetup ) {
 			return textNeedsSetup;
 		}
 
@@ -108,7 +117,7 @@ export const PaymentGatewayButton = ( {
 	return (
 		<div className="woocommerce-list__item-after__actions">
 			<Button
-				variant={ enabled ? 'secondary' : 'primary' }
+				variant={ enabled && ! needsSetup ? 'secondary' : 'primary' }
 				isBusy={ isUpdating }
 				disabled={ isUpdating }
 				onClick={ onClick }
