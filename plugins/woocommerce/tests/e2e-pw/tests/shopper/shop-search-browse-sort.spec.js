@@ -4,12 +4,13 @@ const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const singleProductPrice1 = '979.99';
 const singleProductPrice2 = '989.99';
 const singleProductPrice3 = '999.99';
+const now = new Date();
 
-const simpleProductName = 'AAA Search and Browse Product';
+const simpleProductName = `AAA Search and Browse Product ${ now }`;
 
-const categoryA = 'Dogs';
-const categoryB = 'Cats';
-const categoryC = 'Fish';
+const categoryA = `Dogs ${ now }`;
+const categoryB = `Cats ${ now }`;
+const categoryC = `Fish ${ now }`;
 
 let categoryAId, categoryBId, categoryCId, product1Id, product2Id, product3Id;
 
