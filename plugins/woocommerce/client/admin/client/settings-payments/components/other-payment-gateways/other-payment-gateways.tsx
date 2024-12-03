@@ -5,6 +5,7 @@ import { Gridicon } from '@automattic/components';
 import { Button, Tooltip } from '@wordpress/components';
 import React, { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { decodeEntities } from '@wordpress/html-entities';
 import {
 	SuggestedPaymentExtension,
 	SuggestedPaymentExtensionCategory,
@@ -96,10 +97,12 @@ export const OtherPaymentGateways = ( {
 						<div key={ category.id }>
 							<div className="other-payment-gateways__content__title">
 								<h3 className="other-payment-gateways__content__title__h3">
-									{ category.title }
+									{ decodeEntities( category.title ) }
 								</h3>
 								<Tooltip
-									text={ category.description }
+									text={ decodeEntities(
+										category.description
+									) }
 									position="top right"
 								>
 									<Gridicon
@@ -117,14 +120,18 @@ export const OtherPaymentGateways = ( {
 									>
 										<img
 											src={ extension.icon }
-											alt={ extension.title }
+											alt={ decodeEntities(
+												extension.title
+											) }
 										/>
 										<div className="other-payment-gateways__content__grid-item__content">
 											<span className="other-payment-gateways__content__grid-item__content__title">
 												{ extension.title }
 											</span>
 											<span className="other-payment-gateways__content__grid-item__content__description">
-												{ extension.description }
+												{ decodeEntities(
+													extension.description
+												) }
 											</span>
 											<div className="other-payment-gateways__content__grid-item__content__actions">
 												<Button
