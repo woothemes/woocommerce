@@ -1,4 +1,8 @@
 .woocommerce-layout__header {
+	.woocommerce-layout__header-wrapper {
+		flex-wrap: wrap;
+	}
+
 	.woocommerce-layout__header-heading {
 		.woocommerce-settings-payments-header__title {
 			color: $gray-900;
@@ -7,13 +11,14 @@
 			font-weight: 600;
 			line-height: 24px;
 		}
+	}
 
-		.woocommerce-settings-payments-header__description {
-			font-size: 13px;
-			font-weight: 400;
-			line-height: 20px;
-			color: $gray-700;
-		}
+	.woocommerce-settings-payments-header__description {
+		font-size: 13px;
+		font-weight: 400;
+		line-height: 20px;
+		color: $gray-700;
+		flex-basis: 100%;
 	}
 
 	&:has(.woocommerce-settings-payments-header__title) {
@@ -36,6 +41,7 @@
 				font-style: normal;
 				font-weight: 600;
 				line-height: 24px;
+				flex-basis: 50%;
 			}
 		}
 	}

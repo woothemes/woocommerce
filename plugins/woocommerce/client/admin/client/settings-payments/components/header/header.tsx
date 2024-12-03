@@ -89,11 +89,6 @@ export const Header = ( {
 						<span className="woocommerce-settings-payments-header__title">
 							{ title }
 						</span>
-						{ description && (
-							<span className="woocommerce-settings-payments-header__description">
-								{ description }
-							</span>
-						) }
 					</WooHeaderPageTitle>
 					{ hasButton && (
 						<WooHeaderItem>
@@ -105,6 +100,13 @@ export const Header = ( {
 							>
 								{ buttonLabel }
 							</Button>
+						</WooHeaderItem>
+					) }
+					{ description && (
+						<WooHeaderItem>
+							<div className="woocommerce-settings-payments-header__description">
+								{ description }
+							</div>
 						</WooHeaderItem>
 					) }
 				</>
