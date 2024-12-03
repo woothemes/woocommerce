@@ -4,7 +4,7 @@ const {
 	insertBlockByShortcut,
 	publishPage,
 } = require( '../../utils/editor' );
-const { addAProductToCart } = require( '../../utils/cart' );
+import { addAProductToCart } from '@woocommerce/e2e-utils-playwright';
 const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
 const { random } = require( '../../utils/helpers' );
 
