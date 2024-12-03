@@ -22,6 +22,32 @@ class WC_CLI_Update_Command {
 	 */
 	public static function register_commands() {
 		WC()->call_static( WP_CLI::class, 'add_command', 'wc update', array( 'WC_CLI_Update_Command', 'update' ) );
+		WC()->call_static( WP_CLI::class, 'add_command', 'wc patch', array( 'WC_CLI_Update_Command', 'patch' ) );
+	}
+
+	/**
+	 * Patches some core php-files as part of PoC.
+	 */
+	public static function patch() {
+		$query_file = ABSPATH . 'wp-includes/class-wp-query.php';
+		file_put_contents(
+			$query_file,
+			str_replace(
+				'if ( ! empty( $this->tax_query->queries ) || ! empty( $this->meta_query->queries ) || ! empty( $this->allow_query_attachment_by_filename ) )',
+				'if ( $join && ( ! empty( $this->tax_query->queries ) || ! empty( $this->meta_query->queries ) || ! empty( $this->allow_query_attachment_by_filename ) ) )',
+				file_get_contents( $query_file )
+			)
+		);
+
+		$meta_file  = ABSPATH . 'wp-includes/meta.php';
+		file_put_contents(
+			$meta_file,
+			str_replace(
+				'$wpdb->get_results( "SELECT $column, meta_key, meta_value FROM $table WHERE $column IN ($id_list) ORDER BY $id_column ASC", ARRAY_A )',
+				'$wpdb->get_results( "SELECT $column, meta_key, meta_value FROM $table WHERE $column IN ($id_list)", ARRAY_A )',
+				file_get_contents( $meta_file )
+			)
+		);
 	}
 
 	/**
