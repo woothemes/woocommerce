@@ -3,17 +3,22 @@
  */
 import { getSetting } from '@woocommerce/settings';
 
+type ProductTypeProps = {
+	value: string;
+	label: string;
+};
+
 const productTypes = getSetting< Record< string, string > >(
 	'productTypes',
 	{}
 );
 
 /**
- * Build options collection for product types.
+ * Build product types collection for product types.
  *
- * Return a collection of product types with their values and labels.
+ * @return {ProductTypeProps[]} Product types collection.
  */
-export default function getProductTypeOptions() {
+export default function getProductTypeOptions(): ProductTypeProps[] {
 	return Object.keys( productTypes ).map( ( key ) => ( {
 		value: key,
 		label: productTypes[ key ],
