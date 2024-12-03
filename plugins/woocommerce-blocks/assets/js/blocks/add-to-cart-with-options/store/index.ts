@@ -11,7 +11,6 @@ import {
 	ACTION_SWITCH_PRODUCT_TYPE,
 	STORE_NAME,
 } from './constants';
-import type { ProductTypeSlug } from '../types';
 import getProductTypeOptions, {
 	type ProductTypeProps,
 } from '../utils/get-product-types';
@@ -21,14 +20,14 @@ const productTypesOptions = getProductTypeOptions();
 type StoreState = {
 	productTypes: {
 		list: ProductTypeProps[];
-		current: ProductTypeSlug | undefined;
+		current: string | undefined;
 	};
 };
 
 type Actions = {
 	type: typeof ACTION_SET_PRODUCT_TYPES | typeof ACTION_SWITCH_PRODUCT_TYPE;
 	productTypes?: ProductTypeProps[];
-	current?: ProductTypeSlug;
+	current?: string;
 };
 
 const DEFAULT_STATE = {
@@ -39,7 +38,7 @@ const DEFAULT_STATE = {
 };
 
 const actions = {
-	switchProductType( slug: ProductTypeSlug ) {
+	switchProductType( slug: string ) {
 		return {
 			type: ACTION_SWITCH_PRODUCT_TYPE,
 			current: slug,

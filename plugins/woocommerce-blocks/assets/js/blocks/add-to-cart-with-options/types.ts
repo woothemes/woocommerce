@@ -1,6 +1,4 @@
-export type ProductTypeSlug = 'single-product' | string;
-
 export type ProductTypeProps = {
-	slug: ProductTypeSlug;
+	slug: string;
 	type: string;
 };
