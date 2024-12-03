@@ -1497,7 +1497,7 @@ class PaymentExtensionSuggestions {
 			self::PAYFAST           => array(
 				'_type'       => self::TYPE_PSP,
 				'title'       => esc_html__( 'Payfast', 'woocommerce' ),
-				'description' => esc_html__( 'The Payfast extension for WooCommerce enables you to accept payments by Credit Card and EFT via one of South Africa\’s most popular payment gateways. No setup fees or monthly subscription costs. Selecting this extension will configure your store to use South African rands as the selected currency.', 'woocommerce' ),
+				'description' => esc_html__( 'The Payfast extension for WooCommerce enables you to accept payments by Credit Card and EFT via one of South Africa\'s most popular payment gateways. No setup fees or monthly subscription costs. Selecting this extension will configure your store to use South African rands as the selected currency.', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/payfast.png', WC_PLUGIN_FILE ),
 				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/payfast.png', WC_PLUGIN_FILE ),
 				'plugin'      => array(
@@ -1619,7 +1619,7 @@ class PaymentExtensionSuggestions {
 			self::PAYONEER          => array(
 				'_type'       => self::TYPE_PSP,
 				'title'       => esc_html__( 'Payoneer Checkout', 'woocommerce' ),
-				'description' => esc_html__( 'Payoneer Checkout is the next generation of payment processing platforms, giving merchants around the world the solutions and direction they need to succeed in today\’s hyper-competitive global market.', 'woocommerce' ),
+				'description' => esc_html__( 'Payoneer Checkout is the next generation of payment processing platforms, giving merchants around the world the solutions and direction they need to succeed in today\'s hyper-competitive global market.', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/payoneer.png', WC_PLUGIN_FILE ),
 				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/payoneer.png', WC_PLUGIN_FILE ),
 				'plugin'      => array(
@@ -1685,7 +1685,7 @@ class PaymentExtensionSuggestions {
 			self::PAYU_INDIA        => array(
 				'_type'       => self::TYPE_PSP,
 				'title'       => esc_html__( 'PayU India', 'woocommerce' ),
-				'description' => esc_html__( 'Enable PayU\’s exclusive plugin for WooCommerce to start accepting payments in 100+ payment methods available in India including credit cards, debit cards, UPI, & more!', 'woocommerce' ),
+				'description' => esc_html__( 'Enable PayU\'s exclusive plugin for WooCommerce to start accepting payments in 100+ payment methods available in India including credit cards, debit cards, UPI, & more!', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/payu.svg', WC_PLUGIN_FILE ),
 				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/payu.png', WC_PLUGIN_FILE ),
 				'plugin'      => array(
@@ -1913,7 +1913,7 @@ class PaymentExtensionSuggestions {
 			self::AFFIRM            => array(
 				'_type'       => self::TYPE_BNPL,
 				'title'       => esc_html__( 'Affirm', 'woocommerce' ),
-				'description' => esc_html__( 'Affirm\’s tailored Buy Now Pay Later programs remove price as a barrier, turning browsers into buyers, increasing average order value, and expanding your customer base.', 'woocommerce' ),
+				'description' => esc_html__( 'Affirm\'s tailored Buy Now Pay Later programs remove price as a barrier, turning browsers into buyers, increasing average order value, and expanding your customer base.', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/affirm.png', WC_PLUGIN_FILE ),
 				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/affirm.png', WC_PLUGIN_FILE ),
 				'plugin'      => array(
