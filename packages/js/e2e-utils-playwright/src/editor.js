@@ -16,12 +16,16 @@ export const disableWelcomeModal = async ( { page } ) => {
 	await page.waitForLoadState( 'domcontentloaded' );
 
 	const isWelcomeGuideActive = await page.evaluate( () =>
-		window.wp.data.select( 'core/edit-post' ).isFeatureActive( 'welcomeGuide' )
+		window.wp.data
+			.select( 'core/edit-post' )
+			.isFeatureActive( 'welcomeGuide' )
 	);
 
 	if ( isWelcomeGuideActive ) {
 		await page.evaluate( () =>
-			window.wp.data.dispatch( 'core/edit-post' ).toggleFeature( 'welcomeGuide' )
+			window.wp.data
+				.dispatch( 'core/edit-post' )
+				.toggleFeature( 'welcomeGuide' )
 		);
 	}
 };

@@ -40,6 +40,10 @@ class WC_Tests_Product_CSV_Exporter extends WC_Unit_Test_Case {
 
 		$data = "\rcmd|' /C calc'!A0";
 		$this->assertEquals( "'\rcmd|' /C calc'!A0", $exporter->escape_data( $data ) );
+
+		// Ensure negative numbers are left unchanged.
+		$data = -42.123456789;
+		$this->assertEquals( $data, $exporter->escape_data( $data ) );
 	}
 
 	/**

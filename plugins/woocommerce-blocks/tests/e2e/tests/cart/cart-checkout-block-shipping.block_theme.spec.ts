@@ -48,7 +48,9 @@ test.describe( 'Shopper → Shipping', () => {
 		requestUtils,
 		browser,
 	} ) => {
-		const guestContext = await browser.newContext();
+		const guestContext = await browser.newContext( {
+			storageState: { cookies: [], origins: [] },
+		} );
 		const userPage = await guestContext.newPage();
 
 		const userFrontendUtils = new FrontendUtils( userPage, requestUtils );
@@ -57,8 +59,12 @@ test.describe( 'Shopper → Shipping', () => {
 		await userFrontendUtils.addToCart( REGULAR_PRICED_PRODUCT_NAME );
 		await userFrontendUtils.goToCart();
 
+		// Note that the default customer location is set to the shop country/region, which
+		// is why this label is pre-populated with the shop country/region.
 		await expect(
-			userPage.getByLabel( 'Enter address to check delivery options' )
+			userPage.getByText(
+				'No delivery options available for CALIFORNIA, UNITED STATES (US)'
+			)
 		).toBeVisible();
 	} );
 

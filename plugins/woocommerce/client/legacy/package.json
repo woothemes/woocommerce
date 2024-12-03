@@ -17,7 +17,7 @@
 		"watch:build:project:assets": "pnpm build:project --watch"
 	},
 	"devDependencies": {
-		"@types/node": "^16.18.68",
+		"@types/node": "20.x.x",
 		"@wordpress/stylelint-config": "^21.36.0",
 		"autoprefixer": "9.8.6",
 		"browserslist": "4.19.3",

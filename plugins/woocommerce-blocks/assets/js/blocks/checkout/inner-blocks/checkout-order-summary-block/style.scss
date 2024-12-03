@@ -93,11 +93,12 @@
 			display: none;
 
 			&.is-open {
+				border-bottom: 1px solid $universal-border-light;
+				display: block;
+
 				.wc-block-components-totals-wrapper:first-child {
 					border-top: none;
 				}
-
-				display: block;
 			}
 		}
 	}
