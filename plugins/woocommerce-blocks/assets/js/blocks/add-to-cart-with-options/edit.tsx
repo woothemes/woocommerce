@@ -79,7 +79,7 @@ const AddToCartOptionsEdit = ( props: BlockEditProps< Attributes > ) => {
 				<ToolbarGroup>
 					<ToolbarDropdownMenu
 						icon={ <Icon icon={ mediaAndText } /> }
-						label={ __( 'Switch view', 'woocommerce' ) }
+						label={ __( 'Switch product Type', 'woocommerce' ) }
 						controls={ productTypes.map( ( productType ) => ( {
 							title: productType.label,
 							onClick: () => console.log( productType.value ), // eslint-disable-line no-console
