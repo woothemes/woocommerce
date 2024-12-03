@@ -1,11 +1,13 @@
 const { test: baseTest } = require( '../../fixtures/fixtures' );
 const {
-	goToPageEditor,
 	fillPageTitle,
-	getCanvas,
 	publishPage,
-	closeChoosePatternModal,
 } = require( '../../utils/editor' );
+import {
+	closeChoosePatternModal,
+	getCanvas,
+	goToPageEditor,
+} from '@woocommerce/e2e-utils-playwright';
 
 const test = baseTest.extend( {
 	storageState: process.env.ADMINSTATE,

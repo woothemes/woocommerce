@@ -2,9 +2,9 @@ const { test: baseTest } = require( '../../fixtures/fixtures' );
 const {
 	goToPostEditor,
 	fillPageTitle,
-	getCanvas,
 	publishPage,
 } = require( '../../utils/editor' );
+import { getCanvas } from '@woocommerce/e2e-utils-playwright';
 
 const test = baseTest.extend( {
 	storageState: process.env.ADMINSTATE,
