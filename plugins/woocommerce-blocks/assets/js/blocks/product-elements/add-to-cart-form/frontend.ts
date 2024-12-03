@@ -4,12 +4,20 @@
 import { store } from '@woocommerce/interactivity';
 import { HTMLElementEvent } from '@woocommerce/types';
 
-const getInputData = ( event: HTMLElementEvent< HTMLButtonElement > ) => {
+const getInputElementFromEvent = (
+	event: HTMLElementEvent< HTMLButtonElement >
+) => {
 	const target = event.target as HTMLButtonElement;
 
 	const inputElement = target.parentElement?.querySelector(
 		'.input-text.qty.text'
 	) as HTMLInputElement | null | undefined;
+
+	return inputElement;
+};
+
+const getInputData = ( event: HTMLElementEvent< HTMLButtonElement > ) => {
+	const inputElement = getInputElementFromEvent( event );
 
 	if ( ! inputElement ) {
 		return;
@@ -34,6 +42,12 @@ const getInputData = ( event: HTMLElementEvent< HTMLButtonElement > ) => {
 	};
 };
 
+const dispatchChangeEvent = ( inputElement: HTMLInputElement ) => {
+	const event = new Event( 'change' );
+
+	inputElement.dispatchEvent( event );
+};
+
 store( 'woocommerce/add-to-cart-form', {
 	state: {},
 	actions: {
@@ -47,6 +61,7 @@ store( 'woocommerce/add-to-cart-form', {
 
 			if ( maxValue === undefined || newValue <= maxValue ) {
 				inputElement.value = newValue.toString();
+				dispatchChangeEvent( inputElement );
 			}
 		},
 		removeQuantity: ( event: HTMLElementEvent< HTMLButtonElement > ) => {
@@ -59,6 +74,7 @@ store( 'woocommerce/add-to-cart-form', {
 
 			if ( newValue >= minValue ) {
 				inputElement.value = newValue.toString();
+				dispatchChangeEvent( inputElement );
 			}
 		},
 	},
