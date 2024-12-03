@@ -6,7 +6,7 @@ const {
 	insertBlockByShortcut,
 	publishPage,
 } = require( '../../utils/editor' );
-const { addAProductToCart } = require( '../../utils/cart' );
+import { addAProductToCart } from '@woocommerce/e2e-utils-playwright';
 const { random } = require( '../../utils/helpers' );
 
 const productName = 'First Product Cart Block Taxing';

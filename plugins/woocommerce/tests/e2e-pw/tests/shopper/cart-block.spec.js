@@ -5,7 +5,7 @@ const {
 	insertBlockByShortcut,
 	publishPage,
 } = require( '../../utils/editor' );
-const { addAProductToCart } = require( '../../utils/cart' );
+import { addAProductToCart } from '@woocommerce/e2e-utils-playwright';
 
 const simpleProductName = 'Single Simple Product';
 const simpleProductDesc = 'Lorem ipsum dolor sit amet.';

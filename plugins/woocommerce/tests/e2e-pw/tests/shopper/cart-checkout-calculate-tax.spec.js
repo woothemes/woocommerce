@@ -1,7 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const { customer } = require( '../../test-data/data' );
-const { addAProductToCart } = require( '../../utils/cart' );
+import { addAProductToCart } from '@woocommerce/e2e-utils-playwright';
 const { random } = require( '../../utils/helpers' );
 
 const productName = `Taxed products are awesome ${ random() }`;
