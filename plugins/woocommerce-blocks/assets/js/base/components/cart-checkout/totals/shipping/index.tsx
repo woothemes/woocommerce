@@ -40,7 +40,7 @@ export const TotalsShipping = ( {
 				description={
 					<>
 						{ !! hasRates && <ShippingVia /> }
-						{ !! hasRates && <ShippingAddress /> }
+						<ShippingAddress />
 						{ collaterals && (
 							<div className="wc-block-components-totals-shipping__collaterals">
 								{ collaterals }

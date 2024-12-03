@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Product Elements: fix the issue that some product elements like price or rating were not available in Patterns

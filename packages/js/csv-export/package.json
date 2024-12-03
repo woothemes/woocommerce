@@ -48,7 +48,7 @@
 		"watch:build:project:esm": "wireit"
 	},
 	"dependencies": {
-		"@types/node": "^16.18.68",
+		"@types/node": "20.x.x",
 		"browser-filesaver": "^1.1.1"
 	},
 	"devDependencies": {
@@ -62,7 +62,7 @@
 		"jest-cli": "27.5.x",
 		"rimraf": "5.0.5",
 		"ts-jest": "29.1.x",
-		"typescript": "5.3.x",
+		"typescript": "5.7.x",
 		"wireit": "0.14.3"
 	},
 	"lint-staged": {

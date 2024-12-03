@@ -19,6 +19,9 @@ const blocks = {
 	'add-to-cart-form': {
 		customDir: 'product-elements/add-to-cart-form',
 	},
+	'add-to-cart-with-options': {
+		isExperimental: true,
+	},
 	'all-products': {
 		customDir: 'products/all-products',
 	},

@@ -4,7 +4,6 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { isWpVersion } from '@woocommerce/settings';
 import { VARIATION_NAME as PRODUCT_TITLE_VARIATION_NAME } from '@woocommerce/blocks/product-query/variations/elements/product-title';
-import { VARIATION_NAME as PRODUCT_SUMMARY_VARIATION_NAME } from '@woocommerce/blocks/product-query/variations/elements/product-summary';
 import {
 	INNER_BLOCKS_PRODUCT_TEMPLATE as productCollectionInnerBlocksTemplate,
 	DEFAULT_ATTRIBUTES as productCollectionDefaultAttributes,
@@ -50,9 +49,8 @@ const getBlockifiedTemplate = () =>
 					createBlock( 'woocommerce/product-price', {
 						fontSize: 'large',
 					} ),
-					createBlock( 'core/post-excerpt', {
-						__woocommerceNamespace: PRODUCT_SUMMARY_VARIATION_NAME,
-						excerptLength: 100,
+					createBlock( 'woocommerce/product-summary', {
+						isDescendentOfSingleProductTemplate: true,
 					} ),
 					createBlock( 'woocommerce/add-to-cart-form' ),
 					createBlock( 'woocommerce/product-meta' ),

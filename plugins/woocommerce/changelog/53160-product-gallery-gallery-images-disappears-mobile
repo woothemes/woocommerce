@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Product Gallery (Beta) on mobile, the thumbnails were disappearing on page reload.

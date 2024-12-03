@@ -27,6 +27,7 @@ import {
 	possiblyRenderOrderAttributionSlot,
 	registerOrderAttributionSlotFill,
 } from '../order-attribution-install-banner/order-editor/slot';
+import { registerSettingsEmailImageUrlFill } from '../settings-email/settings-email-image-url-slotfill';
 import { registerSettingsEmailPreviewFill } from '../settings-email/settings-email-preview-slotfill';
 
 const debug = debugFactory( 'wc-admin:client' );
@@ -124,6 +125,7 @@ const registerSlotFills = () => {
 	registerOrderAttributionSlotFill();
 
 	if ( isFeatureEnabled( 'email_improvements' ) ) {
+		registerSettingsEmailImageUrlFill();
 		registerSettingsEmailPreviewFill();
 	}
 };
