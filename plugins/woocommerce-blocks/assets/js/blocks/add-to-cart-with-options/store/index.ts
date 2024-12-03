@@ -54,6 +54,15 @@ const actions = {
 	},
 };
 
+const selectors = {
+	getProductTypes( state: StoreState ) {
+		return state.productTypes.list;
+	},
+	getCurrentProductType( state: StoreState ) {
+		return state.productTypes.current;
+	},
+};
+
 const reducer = ( state: StoreState = DEFAULT_STATE, action: Actions ) => {
 	switch ( action.type ) {
 		case ACTION_SET_PRODUCT_TYPES:
@@ -77,15 +86,6 @@ const reducer = ( state: StoreState = DEFAULT_STATE, action: Actions ) => {
 		default:
 			return state;
 	}
-};
-
-const selectors = {
-	getProductTypes( state: StoreState ) {
-		return state.productTypes.list;
-	},
-	getCurrentProductType( state: StoreState ) {
-		return state.productTypes.current;
-	},
 };
 
 const store = createReduxStore( STORE_NAME, {
