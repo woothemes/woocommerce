@@ -83,8 +83,32 @@ class EmailPreviewRestController extends RestApiControllerBase {
 	 * @return array|WP_Error Request response or an error.
 	 */
 	public function send_email_preview( WP_REST_Request $request ) {
-		return array(
-			'message' => __( 'Email preview was sent.', 'woocommerce' ),
+		$email_preview = wc_get_container()->get( EmailPreview::class );
+		$email_type    = $request->get_param( 'type' );
+		try {
+			$email_preview->set_email_type( $email_type );
+		} catch ( \InvalidArgumentException $e ) {
+			return new WP_Error(
+				'woocommerce_rest_invalid_email_type',
+				__( 'Invalid email type.', 'woocommerce' ),
+				array( 'status' => 400 ),
+			);
+		}
+
+		$email_address = $request->get_param( 'email' );
+		$email_content = $email_preview->render();
+		$email = new \WC_Emails();
+		$sent = $email->send( $email_address, 'test', $email_content );
+
+		if ($sent) {
+			return array(
+				'message' => sprintf( __( 'Test email sent to %s.', 'woocommerce' ), $email_address ),
+			);
+		};
+		return new WP_Error(
+			'woocommerce_rest_email_preview_not_sent',
+			__( 'Error sending test email. Please try again.', 'woocommerce' ),
+			array( 'status' => 500 )
 		);
 	}
 }
