@@ -95,7 +95,6 @@ export const PaymentGatewayListItem = ( {
 						enabled={ gateway.state?.enabled || false }
 						needsSetup={ gateway.state?.needs_setup }
 						settingsUrl={ gateway.management?.settings_url || '' }
-						isWCPay={ isWCPay }
 					/>
 					{ isWCPay &&
 						gateway.state?.enabled &&
