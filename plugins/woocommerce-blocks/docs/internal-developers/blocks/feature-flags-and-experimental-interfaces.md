@@ -189,9 +189,43 @@ wp.hooks.addAction(
 );
 ```
 
--   `experimental__woocommerce_blocks-product-view-link` - Fired when a product link is clicked.
--   `experimental__woocommerce_blocks-product-list-render` - Fired when a product list is rendered.
--   `experimental__woocommerce_blocks-product-search` - Fired when a search is submitted.
+#### `experimental__woocommerce_blocks-product-view-link`
+
+Fired when a product link is clicked.
+
+
+
+##### Args
+
+| Argument   | Type     | Description                             |
+|------------|----------|-----------------------------------------|
+| `product`  | `object` | The product that was added to the cart. |
+
+##### Example
+
+```js
+wp.hooks.addAction(
+	'experimental__woocommerce_blocks-product-view-link',
+	'plugin/namespace',
+	( { product } ) => {
+		console.log( `${ product.name } view link clicked.` );
+	}
+);
+```
+
+#### `experimental__woocommerce_blocks-product-list-render`
+
+Fired when a product list is rendered.
+
+This documentation will be amended following a review of this action.
+
+#### `experimental__woocommerce_blocks-product-search`
+
+Fired when a search is submitted.
+
+This documentation will be amended following a review of this action.
+
+-
 -   `experimental__woocommerce_blocks-store-notice-create` - Fired when a store notice is created.
 -   `experimental__woocommerce_blocks-product-render` - Fired when a single product block is rendered.
 -   `experimental__woocommerce_blocks-checkout-submit` - Fired when the checkout form is submitted.
