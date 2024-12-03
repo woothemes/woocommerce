@@ -27,6 +27,12 @@ const getContext = ( ns?: string ) =>
 type Store = typeof productGallery & StorePart< ProductGallery >;
 const { state, actions } = store< Store >( 'woocommerce/product-gallery' );
 
+/**
+ * Product Gallery supports two contexts:
+ * - on-page gallery - may display subset of images.
+ * - dialog gallery - displays all of the images.
+ * Function returns images per current context.
+ */
 const getCurrentImages = ( context: ProductGalleryContext ) => {
 	const { isDialogOpen } = context;
 	return context[
@@ -96,6 +102,8 @@ const closeDialog = ( context: ProductGalleryContext ) => {
 		context.elementThatTriggeredDialogOpening = null;
 	}
 
+	// Recalculate images and arrows. Image in dialog may be last
+	// or not be available in on-page gallery.
 	selectImage( context, 'current' );
 };
 
@@ -148,6 +156,7 @@ const productGallery = {
 				return;
 			}
 
+			// Recalculate images and arrows. Last image now may not be last in the dialog.
 			selectImage( context, 'current' );
 			setTimeout( () => {
 				( dialogPreviousButton as HTMLButtonElement ).focus();
