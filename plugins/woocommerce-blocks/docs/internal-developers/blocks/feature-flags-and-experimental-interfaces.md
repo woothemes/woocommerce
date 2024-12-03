@@ -225,10 +225,39 @@ Fired when a search is submitted.
 
 This documentation will be amended following a review of this action.
 
--
--   `experimental__woocommerce_blocks-store-notice-create` - Fired when a store notice is created.
--   `experimental__woocommerce_blocks-product-render` - Fired when a single product block is rendered.
--   `experimental__woocommerce_blocks-checkout-submit` - Fired when the checkout form is submitted.
+#### `experimental__woocommerce_blocks-store-notice-create`
+
+Fired when a store notice is created.
+
+This documentation will be amended following a review of this action.
+
+#### `experimental__woocommerce_blocks-product-render`
+
+Fired when a single product block is rendered.
+
+This documentation will be amended following a review of this action.
+
+
+#### `experimental__woocommerce_blocks-checkout-submit`
+
+Fired when the checkout form is submitted.
+
+##### Args
+
+This action has no arguments.
+
+##### Example
+
+```js
+wp.hooks.addAction(
+	'experimental__woocommerce_blocks-checkout-submit',
+	'plugin/namespace',
+	() => {
+		console.log( 'The checkout form was submitted.' );
+	}
+);
+```
+
 -   `experimental__woocommerce_blocks-checkout-set-selected-shipping-rate` - Fired when a shipping rate is chosen on checkout.
 -   `experimental__woocommerce_blocks-checkout-set-active-payment-method` - Fired when a payment method is chosen on checkout.
 -   `experimental__woocommerce_blocks-checkout-render-checkout-form` - Fired when the checkout form is rendered.
