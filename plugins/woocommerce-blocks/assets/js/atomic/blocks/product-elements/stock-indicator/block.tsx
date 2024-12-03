@@ -71,7 +71,7 @@ const getTextBasedOnStock = ( {
 const isStockVisible = ( product: ProductResponseItem ): boolean => {
 	const productTypesWithoutStockIndicator = getSetting< string[] >(
 		'productTypesWithoutStockIndicator',
-		[ 'simple', 'variation' ]
+		[ 'external', 'grouped', 'variable' ]
 	);
 
 	if (
