@@ -361,4 +361,22 @@ wp.hooks.addAction(
 );
 ```
 
-- `experimental__woocommerce_blocks-checkout-set-billing-address` - Fired when a billing address is added during checkout.
+#### `experimental__woocommerce_blocks-checkout-set-billing-address`
+
+Fired when a billing address is added during checkout.
+
+##### Args
+
+This action has no arguments.
+
+##### Example
+
+```js
+wp.hooks.addAction(
+	'experimental__woocommerce_blocks-cart-set-billing-address',
+	'plugin/namespace',
+	( { product, quantity } ) => {
+		console.log( 'The billing address was changed.' );
+	}
+);
+```
