@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { createReduxStore, register } from '@wordpress/data';
-import { getSetting } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
@@ -13,34 +12,22 @@ import {
 	STORE_NAME,
 } from './constants';
 import type { ProductTypeSlug } from '../types';
+import getProductTypeOptions, {
+	type ProductTypeProps,
+} from '../utils/get-product-types';
 
-const productTypes = getSetting< Record< string, string > >(
-	'productTypes',
-	{}
-);
-
-/**
- * Build options collection for product types.
- */
-export const productTypesOptions = Object.keys( productTypes ).map(
-	( key ) => ( {
-		value: key,
-		label: productTypes[ key ],
-	} )
-);
-
-export type ProductTypesOptions = typeof productTypesOptions;
+const productTypesOptions = getProductTypeOptions();
 
 type StoreState = {
 	productTypes: {
-		list: ProductTypesOptions;
+		list: ProductTypeProps[];
 		current: ProductTypeSlug | undefined;
 	};
 };
 
 type Actions = {
 	type: typeof ACTION_SET_PRODUCT_TYPES | typeof ACTION_SWITCH_PRODUCT_TYPE;
-	productTypes?: ProductTypesOptions;
+	productTypes?: ProductTypeProps[];
 	current?: ProductTypeSlug;
 };
 

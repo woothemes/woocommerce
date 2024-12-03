@@ -3,7 +3,7 @@
  */
 import { getSetting } from '@woocommerce/settings';
 
-type ProductTypeProps = {
+export type ProductTypeProps = {
 	value: string;
 	label: string;
 };
@@ -24,5 +24,3 @@ export default function getProductTypeOptions(): ProductTypeProps[] {
 		label: productTypes[ key ],
 	} ) );
 }
-
-export type ProductTypesOptions = typeof getProductTypeOptions;
