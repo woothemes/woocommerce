@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
-# Load .env file
-ENV_FILE="../.env"
-export CUSTOMER_PASSWORD=$(grep '^CUSTOMER_PASSWORD=' "$ENV_FILE" | cut -d '=' -f2-)
+# Load env vars from the .env file
+source "../.env"
+
+echo $CUSTOMER_PASSWORD
 
 clear
 
