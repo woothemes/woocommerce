@@ -35,7 +35,7 @@ test.describe( 'WooCommerce Email Settings', () => {
 			return ( await page.locator( emailPreviewElement ).count() ) > 0;
 		};
 		const iframeContains = async ( text ) => {
-			const iframe = await page.frameLocator( emailPreviewElement );
+			const iframe = page.frameLocator( emailPreviewElement );
 			return iframe.getByText( text );
 		};
 		const getSubject = async () => {
@@ -257,5 +257,74 @@ test.describe( 'WooCommerce Email Settings', () => {
 		await expect(
 			page.getByText( 'Footer text color', { exact: true } )
 		).toHaveCount( 0 );
+	} );
+
+	test( 'See font family setting with a feature flag', async ( {
+		page,
+		baseURL,
+	} ) => {
+		// Disable the email_improvements feature flag
+		await setFeatureFlag( baseURL, 'no' );
+		await page.goto( 'wp-admin/admin.php?page=wc-settings&tab=email' );
+
+		await expect( page.getByLabel( 'Font family' ) ).toHaveCount( 0 );
+
+		// Enable the email_improvements feature flag
+		await setFeatureFlag( baseURL, 'yes' );
+		await page.reload();
+
+		const fontFamilyElement = page.getByLabel( 'Font family' );
+		await expect( fontFamilyElement ).toBeVisible();
+
+		// Test standard font selection
+		await fontFamilyElement.selectOption( 'Times New Roman' );
+
+		// Test theme font selection
+		await fontFamilyElement.selectOption( 'Inter' );
+	} );
+
+	test( 'See updated footer text field with a feature flag', async ( {
+		page,
+		baseURL,
+	} ) => {
+		let footerTextLabel;
+
+		// Disable the email_improvements feature flag
+		await setFeatureFlag( baseURL, 'no' );
+		await page.goto( 'wp-admin/admin.php?page=wc-settings&tab=email' );
+
+		footerTextLabel = page.locator(
+			'css=label[for="woocommerce_email_footer_text"]'
+		);
+		await expect( footerTextLabel ).toBeVisible();
+
+		// Old tooltip text
+		const tooltip = footerTextLabel.locator( 'span.woocommerce-help-tip' );
+		await expect( tooltip ).not.toHaveAttribute(
+			'aria-label',
+			'{store_address}'
+		);
+
+		// Enable the email_improvements feature flag
+		await setFeatureFlag( baseURL, 'yes' );
+		await page.reload();
+
+		footerTextLabel = page.locator(
+			'css=label[for="woocommerce_email_footer_text"]'
+		);
+		await expect( footerTextLabel ).toBeVisible();
+
+		// New tooltip text
+		const updatedTooltip = footerTextLabel.locator(
+			'span.woocommerce-help-tip'
+		);
+		await expect( updatedTooltip ).toHaveAttribute(
+			'aria-label',
+			expect.stringContaining( '{store_address}' )
+		);
+		await expect( updatedTooltip ).toHaveAttribute(
+			'aria-label',
+			expect.stringContaining( '{store_email}' )
+		);
 	} );
 } );
