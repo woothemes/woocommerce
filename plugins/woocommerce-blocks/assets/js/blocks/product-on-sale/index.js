@@ -15,6 +15,7 @@ import sharedAttributes, {
 
 registerBlockType( 'woocommerce/product-on-sale', {
 	title: __( 'On Sale Products', 'woocommerce' ),
+	apiVersion: 3,
 	icon: {
 		src: (
 			<Icon
@@ -32,6 +33,7 @@ registerBlockType( 'woocommerce/product-on-sale', {
 	supports: {
 		align: [ 'wide', 'full' ],
 		html: false,
+		inserter: false,
 	},
 	attributes: {
 		...sharedAttributes,

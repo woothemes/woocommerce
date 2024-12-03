@@ -53,6 +53,11 @@ const Editor = ( {
 	const [ isEditing, setIsEditing ] = useState( ! productId );
 	const blockProps = useBlockProps();
 
+	const block = useSelect(
+		( select ) => select( 'core/blocks' ).getBlockType( metadata.name ),
+		[]
+	);
+
 	const productPreview = useSelect( ( select ) => {
 		if ( ! isPreview ) {
 			return null;
@@ -66,7 +71,9 @@ const Editor = ( {
 		const productPreviewId = productPreview
 			? productPreview[ 0 ]?.id
 			: null;
-		if ( ! productPreviewId ) {
+
+		// If the product is set, do not override it with the preview.
+		if ( ! productPreviewId || productId ) {
 			return;
 		}
 
@@ -75,7 +82,7 @@ const Editor = ( {
 			productId: productPreviewId,
 		} );
 		setIsEditing( false );
-	}, [ attributes, productPreview, setAttributes ] );
+	}, [ attributes, productId, productPreview, setAttributes ] );
 
 	if ( error ) {
 		return (
@@ -102,10 +109,10 @@ const Editor = ( {
 				{ isEditing ? (
 					<Placeholder
 						icon={ BLOCK_ICON }
-						label={ metadata.title }
+						label={ block.title }
 						className="wc-block-editor-single-product"
 					>
-						{ metadata.description }
+						{ block.description }
 						<div className="wc-block-editor-single-product__selection">
 							<SharedProductControl
 								attributes={ attributes }

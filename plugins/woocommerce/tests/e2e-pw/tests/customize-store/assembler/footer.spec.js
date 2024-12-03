@@ -51,7 +51,7 @@ test.describe( 'Assembler -> Footers', { tag: '@gutenberg' }, () => {
 				'no'
 			);
 			// Reset theme back to default.
-			await activateTheme( DEFAULT_THEME );
+			await activateTheme( baseURL, DEFAULT_THEME );
 		} catch ( error ) {
 			console.log( 'Store completed option not updated' );
 		}
@@ -80,12 +80,14 @@ test.describe( 'Assembler -> Footers', { tag: '@gutenberg' }, () => {
 		assemblerPage,
 	} ) => {
 		const assembler = await assemblerPage.getAssembler();
-		const footer = assembler
-			.locator( '.block-editor-block-patterns-list__item' )
-			.nth( 2 );
+		const footers = assembler.locator(
+			'.block-editor-block-patterns-list__item'
+		);
 
-		await footer.click();
-		await expect( footer ).toHaveClass( /is-selected/ );
+		await expect( footers ).toHaveCount( 3 );
+		await expect( footers.nth( 2 ) ).toBeVisible();
+		await footers.nth( 2 ).click();
+		await expect( footers.nth( 2 ) ).toHaveClass( /is-selected/ );
 	} );
 
 	test( 'The selected footer should be applied on the frontend', async ( {
@@ -108,7 +110,7 @@ test.describe( 'Assembler -> Footers', { tag: '@gutenberg' }, () => {
 
 		await assembler.locator( '[aria-label="Back"]' ).click();
 
-		const saveButton = assembler.getByText( 'Save' );
+		const saveButton = assembler.getByText( 'Finish customizing' );
 
 		const waitResponse = page.waitForResponse(
 			( response ) =>

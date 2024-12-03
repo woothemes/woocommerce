@@ -4,6 +4,11 @@
 import { __, _x } from '@wordpress/i18n';
 import type { CartResponseShippingRate } from '@woocommerce/types';
 
+/**
+ * Internal dependencies
+ */
+import { API_SITE_CURRENCY, displayForMinorUnit } from './utils';
+
 export const previewShippingRates: CartResponseShippingRate[] = [
 	{
 		destination: {
@@ -38,32 +43,20 @@ export const previewShippingRates: CartResponseShippingRate[] = [
 		],
 		shipping_rates: [
 			{
-				currency_code: 'USD',
-				currency_symbol: '$',
-				currency_minor_unit: 2,
-				currency_decimal_separator: '.',
-				currency_thousand_separator: ',',
-				currency_prefix: '$',
-				currency_suffix: '',
+				...API_SITE_CURRENCY,
 				name: __( 'Flat rate shipping', 'woocommerce' ),
 				description: '',
 				delivery_time: '',
-				price: '500',
+				price: displayForMinorUnit( '500' ),
 				taxes: '0',
 				rate_id: 'flat_rate:0',
 				instance_id: 0,
 				meta_data: [],
 				method_id: 'flat_rate',
-				selected: true,
+				selected: false,
 			},
 			{
-				currency_code: 'USD',
-				currency_symbol: '$',
-				currency_minor_unit: 2,
-				currency_decimal_separator: '.',
-				currency_thousand_separator: ',',
-				currency_prefix: '$',
-				currency_suffix: '',
+				...API_SITE_CURRENCY,
 				name: __( 'Free shipping', 'woocommerce' ),
 				description: '',
 				delivery_time: '',
@@ -73,17 +66,11 @@ export const previewShippingRates: CartResponseShippingRate[] = [
 				instance_id: 0,
 				meta_data: [],
 				method_id: 'flat_rate',
-				selected: false,
+				selected: true,
 			},
 			{
-				currency_code: 'USD',
-				currency_symbol: '$',
-				currency_minor_unit: 2,
-				currency_decimal_separator: '.',
-				currency_thousand_separator: ',',
-				currency_prefix: '$',
-				currency_suffix: '',
-				name: __( 'Local pickup', 'woocommerce' ),
+				...API_SITE_CURRENCY,
+				name: __( 'Local pickup #1', 'woocommerce' ),
 				description: '',
 				delivery_time: '',
 				price: '0',
@@ -104,14 +91,8 @@ export const previewShippingRates: CartResponseShippingRate[] = [
 				selected: false,
 			},
 			{
-				currency_code: 'USD',
-				currency_symbol: '$',
-				currency_minor_unit: 2,
-				currency_decimal_separator: '.',
-				currency_thousand_separator: ',',
-				currency_prefix: '$',
-				currency_suffix: '',
-				name: __( 'Local pickup', 'woocommerce' ),
+				...API_SITE_CURRENCY,
+				name: __( 'Local pickup #2', 'woocommerce' ),
 				description: '',
 				delivery_time: '',
 				price: '0',

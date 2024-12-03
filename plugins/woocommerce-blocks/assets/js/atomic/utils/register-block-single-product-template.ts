@@ -15,13 +15,17 @@ import {
 import { subscribe, select } from '@wordpress/data';
 
 // Creating a local cache to prevent multiple registration tries.
-const blocksRegistered = new Set();
+// This is needed because the `registerBlockType` call can be invoked multiple times.
+const blockRegistrationAttempts = new Set();
 
 function parseTemplateId( templateId: string | number | undefined ) {
 	// With GB 16.3.0 the return type can be a number: https://github.com/WordPress/gutenberg/issues/53230
 	const parsedTemplateId = isNumber( templateId ) ? undefined : templateId;
 	return parsedTemplateId?.split( '//' )[ 1 ];
 }
+
+const isBlockRegistered = ( blockName: string ) =>
+	Boolean( getBlockType( blockName ) );
 
 export const registerBlockSingleProductTemplate = ( {
 	blockName,
@@ -32,7 +36,7 @@ export const registerBlockSingleProductTemplate = ( {
 	isAvailableOnPostEditor,
 }: {
 	blockName: string;
-	blockMetadata: Partial< BlockConfiguration >;
+	blockMetadata?: string | Partial< BlockConfiguration >;
 	blockSettings: Partial< BlockConfiguration >;
 	isAvailableOnPostEditor: boolean;
 	isVariationBlock?: boolean;
@@ -40,22 +44,26 @@ export const registerBlockSingleProductTemplate = ( {
 } ) => {
 	let currentTemplateId: string | undefined = '';
 
+	if ( ! blockMetadata ) {
+		blockMetadata = blockName;
+	}
+
+	const editSiteStore = select( 'core/edit-site' );
+
 	subscribe( () => {
 		const previousTemplateId = currentTemplateId;
-		const store = select( 'core/edit-site' );
 
 		// With GB 16.3.0 the return type can be a number: https://github.com/WordPress/gutenberg/issues/53230
 		currentTemplateId = parseTemplateId(
-			store?.getEditedPostId< string | number | undefined >()
+			editSiteStore?.getEditedPostId< string | number | undefined >()
 		);
 		const hasChangedTemplate = previousTemplateId !== currentTemplateId;
-		const hasTemplateId = Boolean( currentTemplateId );
 
-		if ( ! hasChangedTemplate || ! hasTemplateId || ! blockName ) {
+		if ( ! hasChangedTemplate || ! blockName ) {
 			return;
 		}
 
-		let isBlockRegistered = Boolean( getBlockType( blockName ) );
+		let isRegistered = isBlockRegistered( blockName );
 
 		/**
 		 * We need to unregister the block each time the user visits or leaves the Single Product template.
@@ -66,7 +74,7 @@ export const registerBlockSingleProductTemplate = ( {
 		 *
 		 */
 		if (
-			isBlockRegistered &&
+			isRegistered &&
 			( currentTemplateId?.includes( 'single-product' ) ||
 				previousTemplateId?.includes( 'single-product' ) )
 		) {
@@ -75,10 +83,10 @@ export const registerBlockSingleProductTemplate = ( {
 			} else {
 				unregisterBlockType( blockName );
 			}
-			isBlockRegistered = false;
+			isRegistered = false;
 		}
 
-		if ( ! isBlockRegistered ) {
+		if ( ! isRegistered ) {
 			if ( isVariationBlock ) {
 				// @ts-expect-error: `registerBlockType` is not typed in WordPress core
 				registerBlockVariation( blockName, blockSettings );
@@ -98,21 +106,22 @@ export const registerBlockSingleProductTemplate = ( {
 	}, 'core/edit-site' );
 
 	subscribe( () => {
-		const isBlockRegistered = Boolean( variationName )
-			? blocksRegistered.has( variationName )
-			: blocksRegistered.has( blockName );
+		const isRegistered = Boolean( variationName )
+			? blockRegistrationAttempts.has( variationName )
+			: blockRegistrationAttempts.has( blockName ) ||
+			  isBlockRegistered( blockName );
 		// This subscribe callback could be invoked with the core/blocks store
 		// which would cause infinite registration loops because of the `registerBlockType` call.
 		// This local cache helps prevent that.
-		if ( ! isBlockRegistered && isAvailableOnPostEditor ) {
+		if ( ! isRegistered && isAvailableOnPostEditor && ! editSiteStore ) {
 			if ( isVariationBlock ) {
-				blocksRegistered.add( variationName );
+				blockRegistrationAttempts.add( variationName );
 				registerBlockVariation(
 					blockName,
 					blockSettings as BlockVariation< BlockAttributes >
 				);
 			} else {
-				blocksRegistered.add( blockName );
+				blockRegistrationAttempts.add( blockName );
 				// @ts-expect-error: `registerBlockType` is typed in WordPress core
 				registerBlockType( blockMetadata, blockSettings );
 			}

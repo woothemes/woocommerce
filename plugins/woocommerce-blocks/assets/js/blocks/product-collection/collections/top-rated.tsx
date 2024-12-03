@@ -1,7 +1,10 @@
 /**
  * External dependencies
  */
-import type { InnerBlockTemplate } from '@wordpress/blocks';
+import type {
+	InnerBlockTemplate,
+	BlockVariationScope,
+} from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import { Icon, starEmpty } from '@wordpress/icons';
 
@@ -13,14 +16,14 @@ import { CoreCollectionNames, CoreFilterNames } from '../types';
 
 const collection = {
 	name: CoreCollectionNames.TOP_RATED,
-	title: __( 'Top Rated', 'woocommerce' ),
+	title: __( 'Top Rated Products', 'woocommerce' ),
 	icon: <Icon icon={ starEmpty } />,
 	description: __(
 		'Recommend products with the highest review ratings.',
 		'woocommerce'
 	),
-	keywords: [ 'product collection' ],
-	scope: [],
+	keywords: [],
+	scope: [ 'inserter', 'block' ] as BlockVariationScope[],
 };
 
 const attributes = {
@@ -35,7 +38,7 @@ const attributes = {
 		perPage: 5,
 		pages: 1,
 	},
-	hideControls: [ CoreFilterNames.ORDER ],
+	hideControls: [ CoreFilterNames.ORDER, CoreFilterNames.FILTERABLE ],
 };
 
 const heading: InnerBlockTemplate = [

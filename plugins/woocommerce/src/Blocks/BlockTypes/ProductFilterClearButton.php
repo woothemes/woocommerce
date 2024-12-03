@@ -23,6 +23,17 @@ final class ProductFilterClearButton extends AbstractBlock {
 	}
 
 	/**
+	 * Get the frontend script handle for this block type.
+	 *
+	 * @param string $key Data to get, or default to everything.
+	 *
+	 * @return null
+	 */
+	protected function get_block_type_script( $key = null ) {
+		return null;
+	}
+
+	/**
 	 * Include and render the block.
 	 *
 	 * @param array    $attributes Block attributes. Default empty array.
@@ -38,14 +49,14 @@ final class ProductFilterClearButton extends AbstractBlock {
 
 		$wrapper_attributes = get_block_wrapper_attributes(
 			array(
-				'data-wc-bind--hidden' => '!context.hasSelectedFilter',
+				'data-wc-bind--hidden' => '!context.hasSelectedFilters',
 			)
 		);
 
 		$p = new \WP_HTML_Tag_Processor( $content );
 
 		if ( $p->next_tag( array( 'class_name' => 'wp-block-button__link' ) ) ) {
-			$p->set_attribute( 'data-wc-on--click', 'actions.clear' );
+			$p->set_attribute( 'data-wc-on--click', 'actions.clearFilters' );
 
 			$style = $p->get_attribute( 'style' );
 			$p->set_attribute( 'style', 'outline:none;' . $style );

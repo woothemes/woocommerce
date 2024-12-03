@@ -425,10 +425,7 @@ table.variations {
 }
 
 .woocommerce-product-gallery__trigger {
-	position: absolute;
-	top: 1rem;
-	right: 1rem;
-	z-index: 99;
+	@include woocommerce-product-gallery__trigger
 }
 
 .woocommerce-tabs {
@@ -881,6 +878,10 @@ table.variations {
 		content: "→";
 		margin-left: .5rem;
 	}
+}
+
+.is-large.wc-block-cart .wc-block-cart__totals-title::before {
+	content: none;
 }
 
 /**
@@ -1351,5 +1352,37 @@ table.variations {
 	&:hover {
 		text-decoration: underline;
 		color: #fff;
+	}
+}
+
+/**
+ * Coupon error notice
+ */
+ .woocommerce-cart {
+	td.actions .coupon .coupon-error-notice {
+		@include coupon-error-notice-cart();
+ 	}
+}
+
+form.checkout_coupon {
+	.coupon-error-notice {
+		@include coupon-error-notice-checkout();
+	}
+
+	.input-text.has-error:focus {
+		border-color: var(--wc-red);
+	}
+}
+
+/**
+ * Checkout error message
+ */
+ .woocommerce-checkout {
+	form .form-row.woocommerce-invalid input.input-text {
+		border-color: var(--wc-red);
+	}
+
+	.checkout-inline-error-message {
+		@include checkout-inline-error-message();
 	}
 }

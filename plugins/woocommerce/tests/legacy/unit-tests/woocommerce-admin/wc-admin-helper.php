@@ -44,7 +44,6 @@ class WC_Admin_Tests_Admin_Helper extends WC_Unit_Test_Case {
 		wp_delete_post( get_option( 'woocommerce_cart_page_id' ), true );
 		wp_delete_post( get_option( 'woocommerce_checkout_page_id' ), true );
 		wp_delete_post( get_option( 'woocommerce_myaccount_page_id' ), true );
-		wp_delete_post( wc_privacy_policy_page_id(), true );
 		wp_delete_post( wc_terms_and_conditions_page_id(), true );
 	}
 
@@ -239,12 +238,6 @@ class WC_Admin_Tests_Admin_Helper extends WC_Unit_Test_Case {
 
 		$wp_rewrite = $this->getMockBuilder( 'WP_Rewrite' )->getMock(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
-		$permalink_structure = array(
-			'category_base' => 'product-category',
-			'tag_base'      => 'product-tag',
-			'product_base'  => 'product',
-		);
-
 		$wp_rewrite->expects( $this->any() )
 			->method( 'generate_rewrite_rule' )
 			->willReturn( array( 'shop/(.+?)/?$' => 'index.php?product_cat=$matches[1]&year=$matches[2]' ) );
@@ -256,6 +249,31 @@ class WC_Admin_Tests_Admin_Helper extends WC_Unit_Test_Case {
 			$result                        = WCAdminHelper::is_store_page( $url );
 			$this->assertEquals( $expected_result, $result );
 		}
+
+		$callback = function ( $value ) {
+			$value['product_base'] = 'product/';
+			return $value;
+		};
+
+		add_filter( 'pre_option_woocommerce_permalinks', $callback, 10, 1 );
+
+		// Pages with name "products-demo" shouldn't be considered as a store page when product_base is set to "product/".
+		$this->assertEquals( false, WCAdminHelper::is_store_page( 'https://example.com/products-demo/' ) );
+
+		remove_filter( 'pre_option_woocommerce_permalinks', $callback );
+	}
+
+	/**
+	 * Test is_store_page with the defined post_type param.
+	 */
+	public function test_is_store_page_with_post_type() {
+		// Test with post_type=product.
+		$this->assertTrue( WCAdminHelper::is_store_page( 'https://example.com/?post_type=product' ) );
+		// Test with post_type=product and other params.
+		$this->assertTrue( WCAdminHelper::is_store_page( 'https://example.com/test?param1=value1&post_type=product&param2=value2' ) );
+
+		// should return false if post_type is not product.
+		$this->assertFalse( WCAdminHelper::is_store_page( 'https://example.com/test?param1=value1&param2=value2' ) );
 	}
 
 	/** Test product archive link is store page even if shop page not set. */

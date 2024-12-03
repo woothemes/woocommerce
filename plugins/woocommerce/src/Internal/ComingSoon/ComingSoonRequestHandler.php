@@ -2,10 +2,14 @@
 namespace Automattic\WooCommerce\Internal\ComingSoon;
 
 use Automattic\WooCommerce\Admin\Features\Features;
+use Automattic\WooCommerce\Blocks\BlockTemplatesController;
+use Automattic\WooCommerce\Blocks\BlockTemplatesRegistry;
+use Automattic\WooCommerce\Blocks\Package as BlocksPackage;
+use Automattic\Jetpack\Constants;
 
 /**
  * Handles the template_include hook to determine whether the current page needs
- * to be replaced with a comiing soon screen.
+ * to be replaced with a coming soon screen.
  */
 class ComingSoonRequestHandler {
 
@@ -27,6 +31,7 @@ class ComingSoonRequestHandler {
 		$this->coming_soon_helper = $coming_soon_helper;
 		add_filter( 'template_include', array( $this, 'handle_template_include' ) );
 		add_filter( 'wp_theme_json_data_theme', array( $this, 'experimental_filter_theme_json_theme' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
 	}
 
 
@@ -36,7 +41,7 @@ class ComingSoonRequestHandler {
 	 * @internal
 	 *
 	 * @param string $template The path to the previously determined template.
-	 * @return string|null The path to the 'coming soon' template or null to prevent further template loading in FSE themes.
+	 * @return string The path to the 'coming soon' template or any empty string to prevent further template loading in FSE themes.
 	 */
 	public function handle_template_include( $template ) {
 		global $wp;
@@ -45,15 +50,23 @@ class ComingSoonRequestHandler {
 			return $template;
 		}
 
-		// A coming soon page needs to be displayed. Don't cache this response.
-		nocache_headers();
+		// A coming soon page needs to be displayed. Set a short cache duration to prevents ddos attacks.
+		header( 'Cache-Control: max-age=60' );
+
+		$is_fse_theme         = wc_current_theme_is_fse_theme();
+		$is_store_coming_soon = $this->coming_soon_helper->is_store_coming_soon();
+
+		if ( ! $is_fse_theme && ! current_theme_supports( 'block-template-parts' ) ) {
+			// Initialize block templates for use in classic theme.
+			BlocksPackage::init();
+			$container = BlocksPackage::container();
+			$container->get( BlockTemplatesRegistry::class )->init();
+			$container->get( BlockTemplatesController::class )->init();
+		}
 
 		add_theme_support( 'block-templates' );
 
 		$coming_soon_template = get_query_template( 'coming-soon' );
-
-		$is_fse_theme         = wc_current_theme_is_fse_theme();
-		$is_store_coming_soon = $this->coming_soon_helper->is_store_coming_soon();
 
 		if ( ! $is_fse_theme && $is_store_coming_soon ) {
 			get_header();
@@ -66,15 +79,22 @@ class ComingSoonRequestHandler {
 			}
 		);
 
-		include $coming_soon_template;
+		if ( ! empty( $coming_soon_template ) && file_exists( $coming_soon_template ) ) {
+			if ( ! $is_fse_theme && $is_store_coming_soon && function_exists( 'get_the_block_template_html' ) ) {
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				echo get_the_block_template_html();
+			} else {
+				include $coming_soon_template;
+			}
+		}
 
 		if ( ! $is_fse_theme && $is_store_coming_soon ) {
 			get_footer();
 		}
 
 		if ( $is_fse_theme ) {
-			// Since we've already rendered a template, return null to ensure no other template is rendered.
-			return null;
+			// Since we've already rendered a template, return empty string to ensure no other template is rendered.
+			return '';
 		} else {
 			// In non-FSE themes, other templates will still be rendered.
 			// We need to exit to prevent further processing.
@@ -100,7 +120,7 @@ class ComingSoonRequestHandler {
 			return false;
 		}
 
-		// Do not show coming soon on 404 pages when restrict to store pages only.
+		// Do not show coming soon on 404 pages when applied to store pages only.
 		if ( $this->coming_soon_helper->is_store_coming_soon() && is_404() ) {
 			return false;
 		}
@@ -185,7 +205,7 @@ class ComingSoonRequestHandler {
 		foreach ( $fonts_to_add as $font_to_add ) {
 			$found = false;
 			foreach ( $font_data as $font ) {
-				if ( $font['name'] === $font_to_add['name'] ) {
+				if ( isset( $font['name'] ) && $font['name'] === $font_to_add['name'] ) {
 					$found = true;
 					break;
 				}
@@ -208,5 +228,31 @@ class ComingSoonRequestHandler {
 		);
 		$theme_json->update_with( $new_data );
 		return $theme_json;
+	}
+
+	/**
+	 * Enqueues the coming soon banner styles.
+	 */
+	public function enqueue_styles() {
+		// Early exit if the user is not logged in as administrator / shop manager.
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			return;
+		}
+
+		// Early exit if LYS feature is disabled.
+		if ( ! Features::is_enabled( 'launch-your-store' ) ) {
+			return;
+		}
+
+		if ( $this->coming_soon_helper->is_site_live() ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			'woocommerce-coming-soon',
+			WC()->plugin_url() . '/assets/css/coming-soon' . ( is_rtl() ? '-rtl' : '' ) . '.css',
+			array(),
+			Constants::get_constant( 'WC_VERSION' )
+		);
 	}
 }

@@ -42,6 +42,13 @@ class Api {
 	private $script_data = null;
 
 	/**
+	 * Tracks whether script_data was modified during the current request.
+	 *
+	 * @var boolean
+	 */
+	private $script_data_modified = false;
+
+	/**
 	 * Stores the hash for the script data, made up of the site url, plugin version and package path.
 	 *
 	 * @var string
@@ -71,7 +78,7 @@ class Api {
 		// Use wc- prefix here to prevent collisions when WC Core version catches up to a version previously used by the WC Blocks feature plugin.
 		$this->wc_version    = 'wc-' . Constants::get_constant( 'WC_VERSION' );
 		$this->package       = $package;
-		$this->disable_cache = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) || ! $this->package->feature()->is_production_environment();
+		$this->disable_cache = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) || wp_get_environment_type() !== 'production';
 
 		// If the site is accessed via HTTPS, change the transient key. This is to prevent the script URLs being cached
 		// with the first scheme they are accessed on after cache expiry.
@@ -171,6 +178,9 @@ class Api {
 		if ( is_null( $this->script_data ) || $this->disable_cache ) {
 			return;
 		}
+		if ( ! $this->script_data_modified ) {
+			return;
+		}
 		set_transient(
 			$this->script_data_transient_key,
 			wp_json_encode(
@@ -216,6 +226,7 @@ class Api {
 				'version'      => ! empty( $asset['version'] ) ? $asset['version'] : $this->get_file_version( $relative_src ),
 				'dependencies' => ! empty( $asset['dependencies'] ) ? $asset['dependencies'] : [],
 			);
+			$this->script_data_modified         = true;
 		}
 
 		// Return asset details as well as the requested dependencies array.
@@ -247,7 +258,7 @@ class Api {
 		$script_data = $this->get_script_data( $relative_src, $dependencies );
 
 		if ( in_array( $handle, $script_data['dependencies'], true ) ) {
-			if ( $this->package->feature()->is_development_environment() ) {
+			if ( wp_get_environment_type() === 'development' ) {
 				$dependencies = array_diff( $script_data['dependencies'], [ $handle ] );
 					add_action(
 						'admin_notices',

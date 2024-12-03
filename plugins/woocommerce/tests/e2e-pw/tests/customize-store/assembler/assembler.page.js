@@ -7,7 +7,7 @@ export class AssemblerPage {
 	async setupSite( baseUrl ) {
 		const DESIGN_URL =
 			baseUrl +
-			'/wp-admin/admin.php?page=wc-admin&path=%2Fcustomize-store%2Fdesign';
+			'wp-admin/admin.php?page=wc-admin&path=%2Fcustomize-store%2Fdesign';
 		await this.page.goto( DESIGN_URL );
 	}
 
@@ -17,7 +17,7 @@ export class AssemblerPage {
 		);
 
 		await frame
-			.getByRole( 'button', { name: 'Save' } )
+			.getByRole( 'button', { name: 'Finish customizing' } )
 			.waitFor( { timeout: 25000 } );
 	}
 

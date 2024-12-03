@@ -1,7 +1,10 @@
 /**
  * External dependencies
  */
-import type { InnerBlockTemplate } from '@wordpress/blocks';
+import type {
+	InnerBlockTemplate,
+	BlockVariationScope,
+} from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import { Icon, calendar } from '@wordpress/icons';
 
@@ -20,8 +23,8 @@ const collection = {
 	title: __( 'New Arrivals', 'woocommerce' ),
 	icon: <Icon icon={ calendar } />,
 	description: __( 'Recommend your newest products.', 'woocommerce' ),
-	keywords: [ 'newest products', 'product collection' ],
-	scope: [],
+	keywords: [ 'newest' ],
+	scope: [ 'inserter', 'block' ] as BlockVariationScope[],
 };
 
 const attributes = {
@@ -40,7 +43,7 @@ const attributes = {
 			value: '-7 days',
 		},
 	},
-	hideControls: [ CoreFilterNames.ORDER ],
+	hideControls: [ CoreFilterNames.ORDER, CoreFilterNames.FILTERABLE ],
 };
 
 const heading: InnerBlockTemplate = [

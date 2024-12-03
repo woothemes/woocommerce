@@ -1,7 +1,10 @@
 /**
  * External dependencies
  */
-import type { InnerBlockTemplate } from '@wordpress/blocks';
+import type {
+	InnerBlockTemplate,
+	BlockVariationScope,
+} from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import { Icon, starFilled } from '@wordpress/icons';
 
@@ -13,11 +16,11 @@ import { CoreCollectionNames, CoreFilterNames } from '../types';
 
 const collection = {
 	name: CoreCollectionNames.FEATURED,
-	title: __( 'Featured', 'woocommerce' ),
+	title: __( 'Featured Products', 'woocommerce' ),
 	icon: <Icon icon={ starFilled } />,
 	description: __( 'Showcase your featured products.', 'woocommerce' ),
-	keywords: [ 'product collection' ],
-	scope: [],
+	keywords: [],
+	scope: [ 'inserter', 'block' ] as BlockVariationScope[],
 };
 
 const attributes = {
@@ -31,7 +34,7 @@ const attributes = {
 		perPage: 5,
 		pages: 1,
 	},
-	hideControls: [ CoreFilterNames.FEATURED ],
+	hideControls: [ CoreFilterNames.FEATURED, CoreFilterNames.FILTERABLE ],
 };
 
 const heading: InnerBlockTemplate = [

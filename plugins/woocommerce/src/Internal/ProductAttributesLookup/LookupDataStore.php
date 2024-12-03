@@ -5,7 +5,6 @@
 
 namespace Automattic\WooCommerce\Internal\ProductAttributesLookup;
 
-use Automattic\WooCommerce\Internal\Traits\AccessiblePrivateMethods;
 use Automattic\WooCommerce\Utilities\ArrayUtil;
 use Automattic\WooCommerce\Utilities\StringUtil;
 
@@ -15,8 +14,6 @@ defined( 'ABSPATH' ) || exit;
  * Data store class for the product attributes lookup table.
  */
 class LookupDataStore {
-
-	use AccessiblePrivateMethods;
 
 	/**
 	 * Types of updates to perform depending on the current changest
@@ -66,10 +63,10 @@ class LookupDataStore {
 	 * Initialize the hooks used by the class.
 	 */
 	private function init_hooks() {
-		self::add_action( 'woocommerce_run_product_attribute_lookup_update_callback', array( $this, 'run_update_callback' ), 10, 2 );
-		self::add_filter( 'woocommerce_get_sections_products', array( $this, 'add_advanced_section_to_product_settings' ), 100, 1 );
-		self::add_action( 'woocommerce_rest_insert_product', array( $this, 'on_product_created_or_updated_via_rest_api' ), 100, 2 );
-		self::add_filter( 'woocommerce_get_settings_products', array( $this, 'add_product_attributes_lookup_table_settings' ), 100, 2 );
+		add_action( 'woocommerce_run_product_attribute_lookup_update_callback', array( $this, 'run_update_callback' ), 10, 2 );
+		add_filter( 'woocommerce_get_sections_products', array( $this, 'add_advanced_section_to_product_settings' ), 100, 1 );
+		add_action( 'woocommerce_rest_insert_product', array( $this, 'on_product_created_or_updated_via_rest_api' ), 100, 2 );
+		add_filter( 'woocommerce_get_settings_products', array( $this, 'add_product_attributes_lookup_table_settings' ), 100, 2 );
 	}
 
 	/**
@@ -183,8 +180,10 @@ class LookupDataStore {
 	 *
 	 * @param int $product_id The product id to perform the update for.
 	 * @param int $action The action to perform, one of the ACTION_ constants.
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function run_update_callback( int $product_id, int $action ) {
+	public function run_update_callback( int $product_id, int $action ) {
 		if ( ! $this->check_lookup_table_exists() ) {
 			return;
 		}
@@ -431,9 +430,14 @@ class LookupDataStore {
 	 * Create all the necessary lookup data for a given variation.
 	 *
 	 * @param \WC_Product_Variation $variation The variation to create entries for.
+	 * @throws \Exception Can't retrieve the details of the parent product.
 	 */
 	private function create_data_for_variation( \WC_Product_Variation $variation ) {
 		$main_product = WC()->call_function( 'wc_get_product', $variation->get_parent_id() );
+		if ( false === $main_product ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			throw new \Exception( "The product is a variation, and the retrieval of data for the parent product (id {$variation->get_parent_id()}) failed." );
+		}
 
 		$product_attributes_data   = $this->get_attribute_taxonomies( $main_product );
 		$variation_attributes_data = array_filter(
@@ -634,8 +638,10 @@ class LookupDataStore {
 	 * @param \WP_Post         $product The post representing the created or updated product.
 	 * @param \WP_REST_Request $request The REST request that caused the hook to be fired.
 	 * @return void
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function on_product_created_or_updated_via_rest_api( \WP_Post $product, \WP_REST_Request $request ): void {
+	public function on_product_created_or_updated_via_rest_api( \WP_Post $product, \WP_REST_Request $request ): void {
 		if ( StringUtil::ends_with( $request->get_route(), '/batch' ) ) {
 			$this->on_product_changed( $product->ID );
 		}
@@ -705,8 +711,10 @@ class LookupDataStore {
 	 *
 	 * @param array $products Original array of settings sections.
 	 * @return array New array of settings sections.
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function add_advanced_section_to_product_settings( array $products ): array {
+	public function add_advanced_section_to_product_settings( array $products ): array {
 		if ( $this->check_lookup_table_exists() ) {
 			$products['advanced'] = __( 'Advanced', 'woocommerce' );
 		}
@@ -720,8 +728,10 @@ class LookupDataStore {
 	 * @param array  $settings Original settings configuration array.
 	 * @param string $section_id Settings section identifier.
 	 * @return array New settings configuration array.
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function add_product_attributes_lookup_table_settings( array $settings, string $section_id ): array {
+	public function add_product_attributes_lookup_table_settings( array $settings, string $section_id ): array {
 		if ( 'advanced' === $section_id && $this->check_lookup_table_exists() ) {
 			$title_item = array(
 				'title' => __( 'Product attributes lookup table', 'woocommerce' ),

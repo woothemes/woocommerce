@@ -4,6 +4,10 @@
 	margin: 0 auto $gap;
 	position: relative;
 
+	&:has(> :last-child.wp-block-woocommerce-checkout-fields-block) {
+		flex-direction: row-reverse;
+	}
+
 	.wc-block-must-login-prompt {
 		display: block;
 	}
@@ -54,6 +58,13 @@
 			padding-left: $gap;
 			padding-right: $gap;
 		}
+
+		.wc-block-components-totals-item {
+			.wc-block-components-panel {
+				padding: 0;
+			}
+		}
+
 		.wc-block-components-panel {
 			.wc-block-components-totals-item {
 				padding: 0;
