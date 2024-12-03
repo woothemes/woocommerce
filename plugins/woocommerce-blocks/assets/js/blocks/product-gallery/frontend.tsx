@@ -99,31 +99,6 @@ const closeDialog = ( context: ProductGalleryContext ) => {
 	selectImage( context, 'current' );
 };
 
-const openDialog = ( context: ProductGalleryContext ) => {
-	context.isDialogOpen = true;
-	document.body.classList.add( 'wc-block-product-gallery-modal-open' );
-	const dialogPopUp = document.querySelector(
-		'dialog[aria-label="Product gallery"]'
-	);
-	if ( ! dialogPopUp ) {
-		return;
-	}
-	( dialogPopUp as HTMLElement ).focus();
-
-	const dialogPreviousButton = dialogPopUp.querySelectorAll(
-		'.wc-block-product-gallery-large-image-next-previous--button'
-	)[ 0 ];
-
-	if ( ! dialogPreviousButton ) {
-		return;
-	}
-
-	selectImage( context, 'current' );
-	setTimeout( () => {
-		( dialogPreviousButton as HTMLButtonElement ).focus();
-	}, 100 );
-};
-
 const productGallery = {
 	state: {
 		get isSelected() {
@@ -153,7 +128,30 @@ const productGallery = {
 		},
 		openDialog: () => {
 			const context = getContext();
-			openDialog( context );
+			context.isDialogOpen = true;
+			document.body.classList.add(
+				'wc-block-product-gallery-modal-open'
+			);
+			const dialogPopUp = document.querySelector(
+				'dialog[aria-label="Product gallery"]'
+			);
+			if ( ! dialogPopUp ) {
+				return;
+			}
+			( dialogPopUp as HTMLElement ).focus();
+
+			const dialogPreviousButton = dialogPopUp.querySelectorAll(
+				'.wc-block-product-gallery-large-image-next-previous--button'
+			)[ 0 ];
+
+			if ( ! dialogPreviousButton ) {
+				return;
+			}
+
+			selectImage( context, 'current' );
+			setTimeout( () => {
+				( dialogPreviousButton as HTMLButtonElement ).focus();
+			}, 100 );
 		},
 		selectImage: () => {
 			const context = getContext();
