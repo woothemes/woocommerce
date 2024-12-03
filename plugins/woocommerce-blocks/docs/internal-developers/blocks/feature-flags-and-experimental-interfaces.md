@@ -114,6 +114,8 @@ We also have individual features or code blocks behind a feature flag, this is a
 
 `useStoreEvents` makes use of an `experimental__` prefix for wp-hook actions (since `__experimental` is not a valid prefix in that context).
 
+These are [`@wordpress/hooks`](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-hooks/) actions that are fired at certain times while using WooCommerce Blocks. We separate them into "store" events (events that happen in the store, i.e. while browsing the store or cart) and "checkout events" (events that happen on the checkout page)
+
 -   `experimental__woocommerce_blocks-` is used for store events.
 -   `experimental__woocommerce_blocks-checkout-` is used for checkout events.
 
