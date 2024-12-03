@@ -9,7 +9,7 @@ import {
 } from '@wordpress/block-editor';
 import { BlockEditProps } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
-import { mediaAndText } from '@wordpress/icons';
+import { eye } from '@woocommerce/icons';
 import type { InnerBlockTemplate } from '@wordpress/blocks';
 import {
 	Icon,
@@ -78,7 +78,7 @@ const AddToCartOptionsEdit = ( props: BlockEditProps< Attributes > ) => {
 			<BlockControls>
 				<ToolbarGroup>
 					<ToolbarDropdownMenu
-						icon={ <Icon icon={ mediaAndText } /> }
+						icon={ <Icon icon={ eye } /> }
 						label={ __( 'Switch product Type', 'woocommerce' ) }
 						controls={ productTypes.map( ( productType ) => ( {
 							title: productType.label,
