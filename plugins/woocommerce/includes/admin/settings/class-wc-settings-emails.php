@@ -699,20 +699,20 @@ class WC_Settings_Emails extends WC_Settings_Page {
 						}
 						?>
 					</optgroup>
-			<?php if ( $custom_fonts = $this->get_custom_fonts() ) : ?>
-			<optgroup label="<?php echo esc_attr__( 'Custom fonts', 'woocommerce' ); ?>">
-				<?php
-				foreach ( $custom_fonts as $key => $val ) {
-					?>
-				<option
-					value="<?php echo esc_attr( $key ); ?>"
-					<?php selected( $option_value, (string) $key ); ?>
-				><?php echo esc_html( $val ); ?></option>
-					<?php
-				}
-				?>
-			</optgroup>
-			<?php endif; ?>
+					<?php if ( $custom_fonts = $this->get_custom_fonts() ) : ?>
+						<optgroup label="<?php echo esc_attr__( 'Custom fonts', 'woocommerce' ); ?>">
+							<?php
+							foreach ( $custom_fonts as $key => $val ) {
+								?>
+							<option
+								value="<?php echo esc_attr( $key ); ?>"
+								<?php selected( $option_value, (string) $key ); ?>
+							><?php echo esc_html( $val ); ?></option>
+								<?php
+							}
+							?>
+						</optgroup>
+					<?php endif; ?>
 				</select>
 			</td>
 		</tr>
