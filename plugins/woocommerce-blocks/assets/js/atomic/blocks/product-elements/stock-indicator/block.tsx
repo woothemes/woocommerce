@@ -11,6 +11,7 @@ import { useStyleProps } from '@woocommerce/base-hooks';
 import { withProductDataContext } from '@woocommerce/shared-hocs';
 import type { HTMLAttributes } from 'react';
 import { ProductResponseItem } from '@woocommerce/types';
+import { getSetting } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
@@ -18,7 +19,6 @@ import { ProductResponseItem } from '@woocommerce/types';
 import './style.scss';
 import type { BlockAttributes } from './types';
 
-const ALLOWED_PRODUCT_TYPES = [ 'simple', 'variation' ];
 /**
  * Get stock text based on stock. For example:
  * - In stock
@@ -69,8 +69,13 @@ const getTextBasedOnStock = ( {
  * @return {boolean} True if stock indicator should be visible
  */
 const isStockVisible = ( product: ProductResponseItem ): boolean => {
+	const allowedProductTypesInEditor = getSetting< string[] >(
+		'allowedProductTypesInEditor',
+		[ 'simple', 'variation' ]
+	);
+
 	if (
-		! ALLOWED_PRODUCT_TYPES.includes( product.type ) ||
+		! allowedProductTypesInEditor.includes( product.type ) ||
 		product.sold_individually ||
 		( ! product.manage_stock && product.type !== 'simple' )
 	) {

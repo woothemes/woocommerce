@@ -38,6 +38,29 @@ class ProductStockIndicator extends AbstractBlock {
 		return [ 'query', 'queryId', 'postId' ];
 	}
 
+		/**
+	 * Get the product types that are allowed in the editor.
+	 *
+	 * @return array
+	 */
+	protected function allowed_product_types_in_editor() {
+		return apply_filters( 'woocommerce_blocks_allowed_product_types_in_editor', array( 'simple', 'variation' ) );
+	}
+
+	/**
+	 * Extra data passed through from server to client for block.
+	 *
+	 * @param array $attributes  Any attributes that currently are available from the block.
+	 *                           Note, this will be empty in the editor context when the block is
+	 *                           not in the post content on editor load.
+	 */
+	protected function enqueue_data( array $attributes = [] ) {
+		parent::enqueue_data( $attributes );
+
+		$this->asset_data_registry->add( 'allowedProductTypesInEditor', $this->allowed_product_types_in_editor() );
+	}
+
+
 	/**
 	 * Get product types that should not display stock indicators.
 	 *
