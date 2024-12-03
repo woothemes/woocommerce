@@ -1,7 +1,6 @@
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
-let customerId;
 const customerEmailAddress = `john.doe.${ Date.now() }@example.com`;
 
 test.describe(
@@ -31,8 +30,15 @@ test.describe(
 				version: 'wc/v3',
 			} );
 
-			await api.delete( `customers/${ customerId }`, {
-				force: true,
+			// get a list of all customers and delete the one we created
+			await api.get( 'customers' ).then( ( response ) => {
+				for ( let i = 0; i < response.data.length; i++ ) {
+					if ( response.data[ i ].email === customerEmailAddress ) {
+						api.delete( `customers/${ response.data[ i ].id }`, {
+							force: true,
+						} );
+					}
+				}
 			} );
 
 			await api.put(
