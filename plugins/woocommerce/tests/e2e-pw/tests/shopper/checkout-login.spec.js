@@ -2,25 +2,7 @@ const { test, expect } = require( '@playwright/test' );
 const { getOrderIdFromUrl } = require( '../../utils/order' );
 const { addAProductToCart } = require( '../../utils/cart' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
-
-const customer = {
-	username: 'customercheckoutlogin',
-	password: 'password',
-	email: `customercheckoutlogin${ new Date()
-		.getTime()
-		.toString() }@woocommercecoree2etestsuite.com`,
-	billing: {
-		first_name: 'Jane',
-		last_name: 'Smith',
-		address_1: '123 Anywhere St.',
-		address_2: 'Apartment 42',
-		city: 'New York',
-		state: 'NY',
-		postcode: '10010',
-		country: 'US',
-		phone: '(555) 777-7777',
-	},
-};
+const { customer } = require( '../../test-data/data' );
 
 test.describe(
 	'Shopper Checkout Login Account',
@@ -68,10 +50,6 @@ test.describe(
 			await api.post( `shipping/zones/${ shippingZoneId }/methods`, {
 				method_id: 'free_shipping',
 			} );
-			// create customer and save its id
-			await api
-				.post( 'customers', customer )
-				.then( ( response ) => ( customerId = response.data.id ) );
 			// enable a payment method
 			await api.put( 'payment_gateways/cod', {
 				enabled: true,
@@ -97,10 +75,6 @@ test.describe(
 					value: 'no',
 				}
 			);
-			// delete the customer
-			await api.delete( `customers/${ customerId }`, {
-				force: true,
-			} );
 			// disable payment method
 			await api.put( 'payment_gateways/cod', {
 				enabled: false,
