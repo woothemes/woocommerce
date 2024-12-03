@@ -166,7 +166,29 @@ wp.hooks.addAction(
 );
 ```
 
--   `experimental__woocommerce_blocks-cart-remove-item` - Fired when a cart item is removed from the cart.
+#### `experimental__woocommerce_blocks-cart-remove-item`
+
+Fired when a cart item is removed from the cart. Fires on the Mini-cart block and the Cart block.
+
+##### Args
+
+| Argument   | Type     | Description                                      |
+|------------|----------|--------------------------------------------------|
+| `product`  | `object` | The product that was added to the cart.          |
+| `quantity` | `number` | The quantity of the product when it was removed. |
+
+##### Example
+
+```js
+wp.hooks.addAction(
+	'experimental__woocommerce_blocks-cart-remove-item',
+	'plugin/namespace',
+	( { product, quantity } ) => {
+		console.log( `${ product.name } was removed from the cart. There were ${ quantity } in the cart.` );
+	}
+);
+```
+
 -   `experimental__woocommerce_blocks-product-view-link` - Fired when a product link is clicked.
 -   `experimental__woocommerce_blocks-product-list-render` - Fired when a product list is rendered.
 -   `experimental__woocommerce_blocks-product-search` - Fired when a search is submitted.
