@@ -15,7 +15,7 @@
     -   [Misc](#misc)
 -   [Usages of `experimental` prefix](#usages-of-experimental-prefix)
 
-We also use an `__experimental` prefix for any experimental interfaces. This is a signal to those reading our code that it should not be implemented in for production use. Currently this prefix is used in the following ways:
+We also use an `__experimental` prefix for any experimental interfaces. This is a signal to those reading our code that it should not be implemented in for production use. Currently, this prefix is used in the following ways:
 
 -   Prefixing references that are experimental. An example would be PHP action or filter slugs.
 -   Prefixing functions or methods that are experimental.
@@ -108,7 +108,7 @@ We also have individual features or code blocks behind a feature flag, this is a
 
 ### Misc
 
--   `__experimental_woocommerce_blocks_hidden` property allows overwriting the `hidden` property for cart item data. This is useful to make some cart item data visible/hidden depending if it needs to be displayed in the Cart Block or the Cart Shortcode ([experimental property](https://github.com/woocommerce/woocommerce-gutenberg-products-block/blob/9c4288b0ee46960bdc2bf8ef351d05ac23073b0c/src/StoreApi/Schemas/CartItemSchema.php#L439-L441)). This was added in [this PR](https://github.com/woocommerce/woocommerce-blocks/pull/3732) to resolve [this issue with Subscriptions](https://github.com/woocommerce/woocommerce-blocks/issues/3731). This property will not be needed if the blocks replace the shortcode experience, since in that scenario, the `hidden` property would be sufficient.
+-   `__experimental_woocommerce_blocks_hidden` property allows overwriting the `hidden` property for cart item data. This is useful to make some cart item data visible/hidden depending on whether it needs to be displayed in the Cart Block or the Cart Shortcode ([experimental property](https://github.com/woocommerce/woocommerce-gutenberg-products-block/blob/9c4288b0ee46960bdc2bf8ef351d05ac23073b0c/src/StoreApi/Schemas/CartItemSchema.php#L439-L441)). This was added in [this PR](https://github.com/woocommerce/woocommerce-blocks/pull/3732) to resolve [this issue with Subscriptions](https://github.com/woocommerce/woocommerce-blocks/issues/3731). This property will not be needed if the blocks replace the shortcode experience, since in that scenario, the `hidden` property would be sufficient.
 
 ## Usages of `experimental` prefix
 
