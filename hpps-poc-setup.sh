@@ -4,7 +4,6 @@ docker ps -aq | xargs docker stop
 sudo rm -rf ~/wp-env/
 
 pnpm --filter=@woocommerce/plugin-woocommerce env:dev
-
 pnpm --filter=@woocommerce/plugin-woocommerce wp-env run cli wp wc patch
 
 pnpm --filter=@woocommerce/plugin-woocommerce wp-env run cli wp db query "CREATE TABLE wp_posts_variations LIKE wp_posts;"
