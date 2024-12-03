@@ -30,6 +30,9 @@ wp-env run tests-cli wp wc --user=admin tool run install_pages
 # Importing WooCommerce sample products"
 # wp-env run tests-cli wp import wp-content/plugins/woocommerce/sample-data/sample_products.xml --authors=skip
 
+pnpm --filter=@woocommerce/plugin-woocommerce wp-env run cli wp db query "CREATE TABLE wp_posts_variations LIKE wp_posts;"
+pnpm --filter=@woocommerce/plugin-woocommerce wp-env run cli wp db query "CREATE TABLE wp_postmeta_variations LIKE wp_postmeta;"
+
 # Test on 1K, 10K, 25K, 50k
 # wp-env run tests-cli wp wc generate products 25000 --type=simple &
 # wp-env run tests-cli wp wc generate products 25000 --type=simple &
@@ -47,6 +50,5 @@ pnpm --filter=@woocommerce/plugin-woocommerce wp-env run cli wp wc patch
 pnpm --filter=@woocommerce/plugin-woocommerce wp-env run cli wp db query "CREATE TABLE wp_posts_variations LIKE wp_posts;"
 pnpm --filter=@woocommerce/plugin-woocommerce wp-env run cli wp db query "REPLACE INTO wp_posts_variations SELECT * FROM wp_posts WHERE post_type='product_variation';"
 pnpm --filter=@woocommerce/plugin-woocommerce wp-env run cli wp db query "DELETE FROM wp_posts WHERE post_type='product_variation';"
-pnpm --filter=@woocommerce/plugin-woocommerce wp-env run cli wp db query "CREATE TABLE wp_postmeta_variations LIKE wp_postmeta;"
 pnpm --filter=@woocommerce/plugin-woocommerce wp-env run cli wp db query "REPLACE INTO wp_postmeta_variations SELECT * FROM wp_postmeta WHERE post_id IN ( SELECT ID FROM wp_posts_variations );"
 pnpm --filter=@woocommerce/plugin-woocommerce wp-env run cli wp db query "DELETE FROM wp_postmeta WHERE post_id IN ( SELECT ID FROM wp_posts_variations );"
