@@ -32,15 +32,21 @@ export const SettingsPaymentsMain = () => {
 		PAYMENT_SETTINGS_STORE_NAME
 	);
 
-	const { providers, suggestions, isFetching } = useSelect( ( select ) => {
-		return {
-			providers: select(
-				PAYMENT_SETTINGS_STORE_NAME
-			).getPaymentProviders(),
-			suggestions: select( PAYMENT_SETTINGS_STORE_NAME ).getSuggestions(),
-			isFetching: select( PAYMENT_SETTINGS_STORE_NAME ).isFetching(),
-		};
-	} );
+	const { providers, suggestions, suggestionCategories, isFetching } =
+		useSelect( ( select ) => {
+			return {
+				providers: select(
+					PAYMENT_SETTINGS_STORE_NAME
+				).getPaymentProviders(),
+				suggestions: select(
+					PAYMENT_SETTINGS_STORE_NAME
+				).getSuggestions(),
+				suggestionCategories: select(
+					PAYMENT_SETTINGS_STORE_NAME
+				).getSuggestionCategories(),
+				isFetching: select( PAYMENT_SETTINGS_STORE_NAME ).isFetching(),
+			};
+		} );
 
 	const setupPlugin = useCallback(
 		( id, slug ) => {
@@ -80,6 +86,7 @@ export const SettingsPaymentsMain = () => {
 				/>
 				<OtherPaymentGateways
 					suggestions={ suggestions }
+					suggestionCategories={ suggestionCategories }
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
 					isFetching={ isFetching }
