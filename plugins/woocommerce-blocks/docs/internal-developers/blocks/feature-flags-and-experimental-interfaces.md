@@ -193,8 +193,6 @@ wp.hooks.addAction(
 
 Fired when a product link is clicked.
 
-
-
 ##### Args
 
 | Argument   | Type     | Description                             |
@@ -236,7 +234,6 @@ This documentation will be amended following a review of this action.
 Fired when a single product block is rendered.
 
 This documentation will be amended following a review of this action.
-
 
 #### `experimental__woocommerce_blocks-checkout-submit`
 
