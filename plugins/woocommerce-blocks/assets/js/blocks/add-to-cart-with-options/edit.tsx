@@ -96,7 +96,7 @@ const AddToCartOptionsEdit = ( props: BlockEditProps< Attributes > ) => {
 						icon={ <Icon icon={ eye } /> }
 						text={
 							currentProduct?.label ||
-							__( 'Switch product Type', 'woocommerce' )
+							__( 'Switch product type', 'woocommerce' )
 						}
 						value={ currentProduct?.slug }
 						controls={ productTypes.map( ( productType ) => ( {
