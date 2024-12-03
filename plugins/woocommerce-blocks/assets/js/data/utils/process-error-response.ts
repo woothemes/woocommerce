@@ -182,6 +182,57 @@ const processInvalidParamResponse = (
 	} );
 };
 
+export const getInvalidParamNoticeContext = (
+	errorResponse: ApiErrorResponse,
+	context?: string | undefined
+) => {
+	const errorDetails = getErrorDetails( errorResponse );
+
+	return errorDetails.map( ( { code, id, param, data } ) => {
+		let additionalFieldContext: string | undefined = '';
+
+		// Check if this error response comes from an additional field.
+		if (
+			isObject( data ) &&
+			objectHasProp( data, 'key' ) &&
+			objectHasProp( data, 'location' ) &&
+			isString( data.location )
+		) {
+			additionalFieldContext = getErrorContextFromAdditionalFieldLocation(
+				data.location
+			);
+		}
+
+		return {
+			id,
+			context:
+				context ||
+				additionalFieldContext ||
+				getErrorContextFromParam( param, code ) ||
+				getErrorContextFromCode( code ),
+		};
+	} );
+};
+
+export const getNoticeContextFromErrorResponse = (
+	errorResponse: ApiErrorResponse,
+	context?: string | undefined
+) => {
+	if ( errorResponse.code === 'rest_invalid_param' ) {
+		return getInvalidParamNoticeContext( errorResponse, context );
+	}
+
+	return [
+		{
+			id: errorResponse.code,
+			context:
+				context ||
+				errorResponse?.data?.context ||
+				getErrorContextFromCode( errorResponse.code ),
+		},
+	];
+};
+
 /**
  * Takes an API response object and creates error notices to display to the customer.
  *
