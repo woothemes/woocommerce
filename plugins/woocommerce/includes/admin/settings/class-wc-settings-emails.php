@@ -656,6 +656,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 	 */
 	public function email_font_family( $value ) {
 		$option_value = $value['value'];
+		$custom_fonts = $this->get_custom_fonts();
 
 		?>
 		<tr class="<?php echo esc_attr( $value['row_class'] ); ?>">
@@ -699,7 +700,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 						}
 						?>
 					</optgroup>
-					<?php if ( $custom_fonts = $this->get_custom_fonts() ) : ?>
+					<?php if ( $custom_fonts ) : ?>
 						<optgroup label="<?php echo esc_attr__( 'Custom fonts', 'woocommerce' ); ?>">
 							<?php
 							foreach ( $custom_fonts as $key => $val ) {
