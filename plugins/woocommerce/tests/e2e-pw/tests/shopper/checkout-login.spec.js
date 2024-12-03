@@ -2,13 +2,12 @@ const { test, expect } = require( '@playwright/test' );
 const { getOrderIdFromUrl } = require( '../../utils/order' );
 const { addAProductToCart } = require( '../../utils/cart' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
-const { customer } = require( '../../test-data/data' );
 
 test.describe(
 	'Shopper Checkout Login Account',
 	{ tag: [ '@payments', '@services', '@hpos' ] },
 	() => {
-		let productId, orderId, shippingZoneId;
+		let productId, orderId, shippingZoneId, customerData;
 
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {
@@ -17,6 +16,17 @@ test.describe(
 				consumerSecret: process.env.CONSUMER_SECRET,
 				version: 'wc/v3',
 			} );
+
+			// retrieve customer info
+			const { customer } = require( '../../test-data/data' );
+			await api
+				.get( `customers?search=${ customer.username }` )
+				.then( ( response ) => {
+					customerData = response.data[ 0 ];
+				} );
+
+			await expect( customerData ).toBeDefined();
+
 			// add product
 			await api
 				.post( 'products', {
@@ -100,34 +110,34 @@ test.describe(
 			await page.locator( 'text=Click here to login' ).click();
 
 			// fill in the customer account info
-			await page.locator( '#username' ).fill( customer.username );
-			await page.locator( '#password' ).fill( customer.password );
+			await page.locator( '#username' ).fill( customerData.username );
+			await page.locator( '#password' ).fill( customerData.password );
 			await page.locator( 'button[name="login"]' ).click();
 
 			// billing form should pre-populate
 			await expect( page.locator( '#billing_first_name' ) ).toHaveValue(
-				customer.billing.first_name
+				customerData.billing.first_name
 			);
 			await expect( page.locator( '#billing_last_name' ) ).toHaveValue(
-				customer.billing.last_name
+				customerData.billing.last_name
 			);
 			await expect( page.locator( '#billing_address_1' ) ).toHaveValue(
-				customer.billing.address_1
+				customerData.billing.address_1
 			);
 			await expect( page.locator( '#billing_address_2' ) ).toHaveValue(
-				customer.billing.address_2
+				customerData.billing.address_2
 			);
 			await expect( page.locator( '#billing_city' ) ).toHaveValue(
-				customer.billing.city
+				customerData.billing.city
 			);
 			await expect( page.locator( '#billing_state' ) ).toHaveValue(
-				customer.billing.state
+				customerData.billing.state
 			);
 			await expect( page.locator( '#billing_postcode' ) ).toHaveValue(
-				customer.billing.postcode
+				customerData.billing.postcode
 			);
 			await expect( page.locator( '#billing_phone' ) ).toHaveValue(
-				customer.billing.phone
+				customerData.billing.phone
 			);
 
 			// place an order
@@ -138,7 +148,7 @@ test.describe(
 
 			orderId = getOrderIdFromUrl( page );
 
-			await expect( page.getByText( customer.email ) ).toBeVisible();
+			await expect( page.getByText( customerData.email ) ).toBeVisible();
 
 			// check my account page
 			await page.goto( '/my-account/' );
