@@ -18,7 +18,7 @@ import { check, chevronDown, Icon } from '@wordpress/icons';
  * Internal dependencies
  */
 import { WC_ASSET_URL } from '~/utils/admin-settings';
-import { Item, ControlProps } from './types';
+import { Item, ControlProps, UseSelectStateChangeOptionsProps } from './types';
 import { getOptionLabel } from './utils';
 import './country-selector.scss';
 
@@ -27,7 +27,9 @@ const stateReducer = < ItemType extends Item >(
 	state: UseSelectState< ItemType | null >,
 	actionAndChanges: UseSelectStateChangeOptions< ItemType | null >
 ): Partial< UseSelectState< ItemType > > => {
-	const { changes, type, props } = actionAndChanges;
+	const extendedAction = actionAndChanges as UseSelectStateChangeOptionsProps<ItemType | null>; // Cast to the extended type
+
+	const { changes, type, props } = extendedAction;
 	const { items } = props;
 	const { selectedItem } = state;
 

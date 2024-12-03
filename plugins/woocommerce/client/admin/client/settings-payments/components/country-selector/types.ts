@@ -1,3 +1,7 @@
+import {
+	UseSelectStateChangeOptions,
+} from 'downshift';
+
 export interface Item {
 	key: string;
 	name?: string;
@@ -15,4 +19,10 @@ export interface ControlProps< ItemType > {
 	placeholder?: string;
 	onChange: ( value: string ) => void;
 	children?: ( item: ItemType ) => JSX.Element;
+}
+
+export interface UseSelectStateChangeOptionsProps< Item > extends UseSelectStateChangeOptions< Item > {
+	props: {
+		items: Item[];
+	};
 }
