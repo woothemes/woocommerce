@@ -84,6 +84,21 @@ class Status extends AbstractOrderConfirmationBlock {
 		// Unlike the core handling, this includes some extra messaging for completed orders so the text is appropriate for other order statuses.
 		switch ( $status ) {
 			case 'cancelled':
+				$content .= '<h1>' . wp_kses_post(
+					/**
+					 * Filter the title shown after a checkout is complete.
+					 *
+					 * @since 9.6.0
+					 *
+					 * @param string         $title The title.
+					 * @param WC_Order|false $order The order created during checkout, or false if order data is not available.
+					 */
+					apply_filters(
+						'woocommerce_thankyou_order_received_title',
+						esc_html__( 'Order cancelled', 'woocommerce' ),
+						$order
+					)
+				) . '</h1>';
 				$content .= '<p>' . wp_kses_post(
 						// phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment
 					apply_filters(
@@ -94,6 +109,14 @@ class Status extends AbstractOrderConfirmationBlock {
 				) . '</p>';
 				break;
 			case 'refunded':
+					$content .= '<h1>' . wp_kses_post(
+						// phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment
+						apply_filters(
+							'woocommerce_thankyou_order_received_title',
+							esc_html__( 'Order refunded', 'woocommerce' ),
+							$order
+						)
+					) . '</h1>';
 					$content .= '<p>' . wp_kses_post(
 						sprintf(
 							// phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment
@@ -108,6 +131,14 @@ class Status extends AbstractOrderConfirmationBlock {
 					) . '</p>';
 				break;
 			case 'completed':
+				$content .= '<h1>' . wp_kses_post(
+					// phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment
+					apply_filters(
+						'woocommerce_thankyou_order_received_title',
+						esc_html__( 'Order completed', 'woocommerce' ),
+						$order
+					)
+				) . '</h1>';
 				$content .= '<p>' . wp_kses_post(
 					// phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment
 					apply_filters(
@@ -125,13 +156,28 @@ class Status extends AbstractOrderConfirmationBlock {
 				if ( wc_get_page_permalink( 'myaccount' ) ) {
 					$actions .= '<a href="' . esc_url( wc_get_page_permalink( 'myaccount' ) ) . '" class="button">' . esc_html__( 'My account', 'woocommerce' ) . '</a> ';
 				}
-
+				$content .= '<h1>' . wp_kses_post(
+					// phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment
+					apply_filters(
+						'woocommerce_thankyou_order_received_title',
+						esc_html__( 'Order failed', 'woocommerce' ),
+						$order
+					)
+				) . '</h1>';
 				$content .= '
 				<p>' . $order_received_text . '</p>
 				<p class="wc-block-order-confirmation-status__actions">' . $actions . '</p>
 			';
 				break;
 			default:
+				$content .= '<h1>' . wp_kses_post(
+					// phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment
+					apply_filters(
+						'woocommerce_thankyou_order_received_title',
+						esc_html__( 'Order received', 'woocommerce' ),
+						$order
+					)
+				) . '</h1>';
 				$content .= '<p>' . wp_kses_post(
 					// phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment
 					apply_filters(
