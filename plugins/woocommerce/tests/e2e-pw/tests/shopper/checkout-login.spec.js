@@ -8,7 +8,7 @@ test.describe(
 	'Shopper Checkout Login Account',
 	{ tag: [ '@payments', '@services', '@hpos' ] },
 	() => {
-		let productId, orderId, shippingZoneId, customerId;
+		let productId, orderId, shippingZoneId;
 
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {
