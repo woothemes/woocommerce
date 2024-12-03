@@ -1913,7 +1913,7 @@ class PaymentExtensionSuggestions {
 			self::AFFIRM            => array(
 				'_type'       => self::TYPE_BNPL,
 				'title'       => esc_html__( 'Affirm', 'woocommerce' ),
-				'description' => esc_html__( 'Affirm\’s tailored Buy Now Pay Later programs remove price as a barrier, turning browsers into buyers, increasing average order value, and expanding your customer base.', 'woocommerce' ),
+				'description' => esc_html__( 'Affirm\'s tailored Buy Now Pay Later programs remove price as a barrier, turning browsers into buyers, increasing average order value, and expanding your customer base.', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/affirm.png', WC_PLUGIN_FILE ),
 				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/affirm.png', WC_PLUGIN_FILE ),
 				'plugin'      => array(
