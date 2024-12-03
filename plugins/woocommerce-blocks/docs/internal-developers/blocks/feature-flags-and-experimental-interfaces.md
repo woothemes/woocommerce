@@ -119,9 +119,30 @@ These are [`@wordpress/hooks`](https://developer.wordpress.org/block-editor/refe
 -   `experimental__woocommerce_blocks-` is used for store events.
 -   `experimental__woocommerce_blocks-checkout-` is used for checkout events.
 
-Current list of events:
+### Current list of events:
 
--   `experimental__woocommerce_blocks-cart-add-item` - Fired when an item is added to the cart.
+#### `experimental__woocommerce_blocks-cart-add-item`
+
+Fired when an item is added to the cart.
+
+##### Args
+
+| Argument | Type   | Description |
+|----------|--------|--------|
+| `product` | `object` | The product that was added to the cart. |
+
+##### Example
+
+```js
+wp.hooks.addAction(
+	'experimental__woocommerce_blocks-cart-add-item',
+	'plugin/namespace',
+	( { product } ) => {
+		console.log( `${ product.name } was added to the cart` );
+	}
+);
+```
+
 -   `experimental__woocommerce_blocks-cart-set-item-quantity` - Fired when cart item quantity is changed by the customer.
 -   `experimental__woocommerce_blocks-cart-remove-item` - Fired when a cart item is removed from the cart.
 -   `experimental__woocommerce_blocks-product-view-link` - Fired when a product link is clicked.
