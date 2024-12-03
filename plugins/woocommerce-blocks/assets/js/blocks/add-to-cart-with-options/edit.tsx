@@ -2,16 +2,29 @@
  * External dependencies
  */
 import { useEffect } from '@wordpress/element';
-import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
+import {
+	BlockControls,
+	InnerBlocks,
+	useBlockProps,
+} from '@wordpress/block-editor';
 import { BlockEditProps } from '@wordpress/blocks';
-import type { InnerBlockTemplate } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
+import { eye } from '@woocommerce/icons';
+import type { InnerBlockTemplate } from '@wordpress/blocks';
+import {
+	Icon,
+	ToolbarGroup,
+
+	// @ts-expect-error no exported member.
+	ToolbarDropdownMenu,
+} from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { useIsDescendentOfSingleProductBlock } from '../../atomic/blocks/product-elements/shared/use-is-descendent-of-single-product-block';
 import { AddToCartOptionsSettings } from './settings';
+import getProductTypeOptions from './utils/get-product-types';
 export interface Attributes {
 	className?: string;
 	isDescendentOfSingleProductBlock: boolean;
@@ -42,6 +55,9 @@ const INNER_BLOCKS_TEMPLATE: InnerBlockTemplate[] = [
 	],
 ];
 
+// Get product type options.
+const productTypes = getProductTypeOptions();
+
 const AddToCartOptionsEdit = ( props: BlockEditProps< Attributes > ) => {
 	const { setAttributes } = props;
 
@@ -59,6 +75,19 @@ const AddToCartOptionsEdit = ( props: BlockEditProps< Attributes > ) => {
 
 	return (
 		<>
+			<BlockControls>
+				<ToolbarGroup>
+					<ToolbarDropdownMenu
+						icon={ <Icon icon={ eye } /> }
+						label={ __( 'Switch product Type', 'woocommerce' ) }
+						controls={ productTypes.map( ( productType ) => ( {
+							title: productType.label,
+							onClick: () => console.log( productType.value ), // eslint-disable-line no-console
+						} ) ) }
+					/>
+				</ToolbarGroup>
+			</BlockControls>
+
 			<AddToCartOptionsSettings
 				features={ {
 					isBlockifiedAddToCart: true,
