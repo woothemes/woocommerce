@@ -62,7 +62,7 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 						deviceType={ deviceType }
 						setDeviceType={ setDeviceType }
 					/>
-					<EmailPreviewSend />
+					<EmailPreviewSend type={ emailType } />
 				</div>
 				<div
 					className={ `wc-settings-email-preview wc-settings-email-preview-${ deviceType }` }

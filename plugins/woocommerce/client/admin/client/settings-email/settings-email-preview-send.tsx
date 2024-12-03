@@ -6,7 +6,13 @@ import { useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { isValidEmail } from '@woocommerce/product-editor';
 
-export const EmailPreviewSend: React.FC = () => {
+type EmailPreviewSendProps = {
+	type: string;
+};
+
+export const EmailPreviewSend: React.FC< EmailPreviewSendProps > = ( {
+	type,
+} ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ email, setEmail ] = useState( '' );
 	const [ isSending, setIsSending ] = useState( false );
