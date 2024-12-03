@@ -1,19 +1,18 @@
-const {
-	fillPageTitle,
-} = require( '../../utils/editor' );
+const { fillPageTitle } = require( '../../utils/editor' );
 const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
 
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const { admin, customer } = require( '../../test-data/data' );
 const { logIn } = require( '../../utils/login' );
 const { setFilterValue, clearFilters } = require( '../../utils/filters' );
+
+/**
+ * External dependencies
+ */
 import {
 	insertBlockByShortcut,
 	goToPageEditor,
 	publishPage,
-} from '@woocommerce/e2e-utils-playwright';
-
-import {
 	addAProductToCart,
 	getOrderIdFromUrl,
 	fillShippingCheckoutBlocks,

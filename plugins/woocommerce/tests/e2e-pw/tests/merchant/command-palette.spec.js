@@ -1,4 +1,8 @@
 const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+
+/**
+ * External dependencies
+ */
 import { disableWelcomeModal } from '@woocommerce/e2e-utils-playwright';
 
 // need to figure out whether tests are being run on a mac

@@ -3,6 +3,10 @@ const {
 	fillPageTitle,
 	publishPage,
 } = require( '../../utils/editor' );
+
+/**
+ * External dependencies
+ */
 import {
 	closeChoosePatternModal,
 	getCanvas,

@@ -1,8 +1,10 @@
 const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
-const {
-	fillPageTitle,
-} = require( '../../utils/editor' );
+const { fillPageTitle } = require( '../../utils/editor' );
 const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
+
+/**
+ * External dependencies
+ */
 import {
 	getCanvas,
 	insertBlock,

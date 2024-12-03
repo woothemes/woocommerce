@@ -4,6 +4,10 @@ const {
 	fillPageTitle,
 	publishPage,
 } = require( '../../utils/editor' );
+
+/**
+ * External dependencies
+ */
 import { getCanvas } from '@woocommerce/e2e-utils-playwright';
 
 const test = baseTest.extend( {

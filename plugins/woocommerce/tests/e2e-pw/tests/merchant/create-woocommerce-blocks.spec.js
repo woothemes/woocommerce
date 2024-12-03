@@ -4,6 +4,10 @@ const {
 	publishPage,
 } = require( '../../utils/editor' );
 const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
+
+/**
+ * External dependencies
+ */
 import {
 	closeChoosePatternModal,
 	getCanvas,

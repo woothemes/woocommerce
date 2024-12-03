@@ -1,13 +1,15 @@
-const {
-	fillPageTitle,
-} = require( '../../utils/editor' );
-import { addAProductToCart, insertBlockByShortcut } from '@woocommerce/e2e-utils-playwright';
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
-const { random } = require( '../../utils/helpers' );
+/**
+ * External dependencies
+ */
 import {
+	addAProductToCart,
+	insertBlockByShortcut,
 	publishPage,
 	goToPageEditor,
 } from '@woocommerce/e2e-utils-playwright';
+const { fillPageTitle } = require( '../../utils/editor' );
+const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { random } = require( '../../utils/helpers' );
 
 const simpleProductName = `Checkout Coupons Product ${ random() }`;
 const singleProductFullPrice = '110.00';

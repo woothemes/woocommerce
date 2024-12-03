@@ -1,5 +1,11 @@
+/**
+ * External dependencies
+ */
+import {
+	addAProductToCart,
+	getOrderIdFromUrl,
+} from '@woocommerce/e2e-utils-playwright';
 const { test, expect } = require( '@playwright/test' );
-import { addAProductToCart, getOrderIdFromUrl } from '@woocommerce/e2e-utils-playwright';
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 const customer = {

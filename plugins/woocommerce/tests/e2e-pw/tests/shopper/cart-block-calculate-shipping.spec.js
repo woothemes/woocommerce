@@ -1,7 +1,9 @@
 const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
-const {
-	fillPageTitle,
-} = require( '../../utils/editor' );
+const { fillPageTitle } = require( '../../utils/editor' );
+
+/**
+ * External dependencies
+ */
 import {
 	addAProductToCart,
 	insertBlockByShortcut,

@@ -1,9 +1,11 @@
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
-const {
-	fillPageTitle,
-} = require( '../../utils/editor' );
+const { fillPageTitle } = require( '../../utils/editor' );
 const { random } = require( '../../utils/helpers' );
+
+/**
+ * External dependencies
+ */
 import {
 	addAProductToCart,
 	insertBlockByShortcut,

@@ -2,6 +2,10 @@ const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const { admin, customer } = require( '../../test-data/data' );
 const { setFilterValue, clearFilters } = require( '../../utils/filters' );
+
+/**
+ * External dependencies
+ */
 import {
 	addAProductToCart,
 	addOneOrMoreProductToCart,
