@@ -1,7 +1,10 @@
 const { test, expect, request } = require( '@playwright/test' );
 const { admin } = require( '../../test-data/data' );
 const pageTitle = 'Product Showcase';
-const { goToPageEditor, getCanvas } = require( '../../utils/editor' );
+import {
+	getCanvas,
+	goToPageEditor,
+} from '@woocommerce/e2e-utils-playwright';
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 const singleProductPrice1 = '5.00';
