@@ -667,7 +667,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 				function renderWithFont( node ) {
 					if ( ! node.element || ! node.element.value ) return node.text;
 					var $wrapper = jQuery( '<span></span>' );
-					$wrapper.css( {'font-family': node.element.dataset['font-family'] || node.element.value, 'font-size': '1.4em'} );
+					$wrapper.css( {'font-family': node.element.dataset['font-family'] || node.element.value} );
 					$wrapper.text( node.text );
 					return $wrapper;
 				}
