@@ -36,7 +36,10 @@ export const EmailPreviewSend: React.FC< EmailPreviewSendProps > = ( {
 			{ isModalOpen && (
 				<Modal
 					title={ __( 'Send a test email', 'woocommerce' ) }
-					onRequestClose={ () => setIsModalOpen( false ) }
+					onRequestClose={ () => {
+						setIsModalOpen( false );
+						setIsSending( false );
+					} }
 					className="wc-settings-email-preview-send-modal"
 				>
 					<p>
