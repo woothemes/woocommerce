@@ -59,7 +59,9 @@ const selectors = {
 		return state.productTypes.list;
 	},
 	getCurrentProductType( state: StoreState ) {
-		return state.productTypes.current;
+		return state.productTypes.list.find(
+			( productType ) => productType.slug === state.productTypes.current
+		);
 	},
 };
 
