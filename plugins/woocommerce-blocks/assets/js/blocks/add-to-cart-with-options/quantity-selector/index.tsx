@@ -3,16 +3,16 @@
  */
 import { registerBlockSingleProductTemplate } from '@woocommerce/atomic-utils';
 import { Icon, button } from '@wordpress/icons';
-import { isExperimentalBlocksEnabled } from '@woocommerce/block-settings';
 
 /**
  * Internal dependencies
  */
 import metadata from './block.json';
 import AddToCartWithOptionsQuantitySelectorEdit from './edit';
+import { shouldRegisterBlock } from '..';
+import '../../../base/components/quantity-selector/style.scss';
 import './style.scss';
 import './editor.scss';
-import '../../../base/components/quantity-selector/style.scss';
 
 const blockSettings = {
 	edit: AddToCartWithOptionsQuantitySelectorEdit,
@@ -31,7 +31,7 @@ const blockSettings = {
 	},
 };
 
-if ( isExperimentalBlocksEnabled() ) {
+if ( shouldRegisterBlock ) {
 	registerBlockSingleProductTemplate( {
 		blockName: metadata.name,
 		blockMetadata: metadata,
