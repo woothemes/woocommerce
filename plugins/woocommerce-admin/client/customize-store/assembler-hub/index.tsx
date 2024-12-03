@@ -183,7 +183,7 @@ export const AssemblerHub: CustomizeStoreComponent = ( props ) => {
 				<ShortcutProvider style={ { height: '100%' } }>
 					<OptInContextProvider>
 						<GlobalStylesProvider>
-							<RouterProvider routes={ [] }>
+							<RouterProvider>
 								<Layout />
 							</RouterProvider>
 							<OptInSubscribe />
