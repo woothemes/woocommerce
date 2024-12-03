@@ -1104,7 +1104,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 			->willReturn( $suggestion_details );
 
 		// Act.
-		$suggestion = $this->service->get_payment_extension_suggestion_by_id( $suggestion_id );
+		$suggestion = $this->service->get_extension_suggestion_by_id( $suggestion_id );
 
 		// Assert.
 		$this->assertIsArray( $suggestion );
@@ -1170,7 +1170,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 			->willReturn( $suggestion_details );
 
 		// Act.
-		$suggestion = $this->service->get_payment_extension_suggestion_by_plugin_slug( $slug );
+		$suggestion = $this->service->get_extension_suggestion_by_plugin_slug( $slug );
 
 		// Assert.
 		$this->assertIsArray( $suggestion );
@@ -1563,6 +1563,28 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 
 		// Act.
 		$result = $this->service->hide_payment_extension_suggestion( $suggestion_id );
+	}
+
+	/**
+	 * Test dismissing a payment extension suggestion incentive.
+	 */
+	public function test_dismiss_extension_suggestion_incentive() {
+		// Arrange.
+		$suggestion_id = 'suggestion1';
+		$incentive_id  = 'incentive1';
+		$context       = 'context1';
+
+		$this->mock_extension_suggestions
+			->expects( $this->once() )
+			->method( 'dismiss_incentive' )
+			->with( $incentive_id, $suggestion_id, $context )
+			->willReturn( true );
+
+		// Act.
+		$result = $this->service->dismiss_extension_suggestion_incentive( $suggestion_id, $incentive_id, $context );
+
+		// Assert.
+		$this->assertTrue( $result );
 	}
 
 	/**

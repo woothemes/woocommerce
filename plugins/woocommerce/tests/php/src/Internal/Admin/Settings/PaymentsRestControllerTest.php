@@ -737,6 +737,95 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	}
 
 	/**
+	 * Test dismissing a payment extension suggestion incentive.
+	 */
+	public function test_dismiss_payment_extension_suggestion_incentive() {
+		// Arrange.
+		$incentive_id  = 'incentive_id';
+		$suggestion_id = 'suggestion_id';
+
+		$this->mock_service
+			->expects( $this->once() )
+			->method( 'dismiss_extension_suggestion_incentive' )
+			->with( $suggestion_id, $incentive_id )
+			->willReturn( true );
+
+		// Act.
+		$request  = new WP_REST_Request( 'POST', self::ENDPOINT . '/suggestion/' . $suggestion_id . '/incentive/' . $incentive_id . '/dismiss' );
+		$response = $this->server->dispatch( $request );
+
+		// Assert.
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertTrue( $response->get_data()['success'] );
+	}
+
+	/**
+	 * Test dismissing a payment extension suggestion incentive that fails.
+	 */
+	public function test_dismiss_payment_extension_suggestion_incentive_failure() {
+		// Arrange.
+		$incentive_id  = 'incentive_id';
+		$suggestion_id = 'suggestion_id';
+
+		$this->mock_service
+			->expects( $this->once() )
+			->method( 'dismiss_extension_suggestion_incentive' )
+			->with( $suggestion_id, $incentive_id )
+			->willReturn( false );
+
+		// Act.
+		$request  = new WP_REST_Request( 'POST', self::ENDPOINT . '/suggestion/' . $suggestion_id . '/incentive/' . $incentive_id . '/dismiss' );
+		$response = $this->server->dispatch( $request );
+
+		// Assert.
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertFalse( $response->get_data()['success'] );
+	}
+
+	/**
+	 * Test dismissing a payment extension suggestion incentive that throws an exception.
+	 */
+	public function test_dismiss_payment_extension_suggestion_incentive_exception() {
+		// Arrange.
+		$incentive_id  = 'incentive_id';
+		$suggestion_id = 'suggestion_id';
+
+		$this->mock_service
+			->expects( $this->once() )
+			->method( 'dismiss_extension_suggestion_incentive' )
+			->with( $suggestion_id, $incentive_id )
+			->willThrowException( new \Exception() );
+
+		// Act.
+		$request  = new WP_REST_Request( 'POST', self::ENDPOINT . '/suggestion/' . $suggestion_id . '/incentive/' . $incentive_id . '/dismiss' );
+		$response = $this->server->dispatch( $request );
+
+		// Assert.
+		$this->assertEquals( 400, $response->get_status() );
+	}
+
+	/**
+	 * Test dismissing a payment extension suggestion incentive by a user without the proper capabilities.
+	 */
+	public function test_dismiss_payment_extension_suggestion_incentive_user_without_caps() {
+		// Arrange.
+		$user_id = $this->factory->user->create( array( 'role' => 'editor' ) );
+		wp_set_current_user( $user_id );
+
+		// Assert.
+		$this->mock_service
+			->expects( $this->never() )
+			->method( 'dismiss_extension_suggestion_incentive' );
+
+		// Act.
+		$request  = new WP_REST_Request( 'POST', self::ENDPOINT . '/suggestion/suggestion_id/incentive/incentive_id/dismiss' );
+		$response = $this->server->dispatch( $request );
+
+		// Assert.
+		$this->assertEquals( rest_authorization_required_code(), $response->get_status() );
+	}
+
+	/**
 	 * Mock the providers.
 	 *
 	 * @param bool $skip_suggestions       Whether to not include the suggestions.
