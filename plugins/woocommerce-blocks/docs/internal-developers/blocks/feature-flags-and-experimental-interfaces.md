@@ -143,7 +143,29 @@ wp.hooks.addAction(
 );
 ```
 
--   `experimental__woocommerce_blocks-cart-set-item-quantity` - Fired when cart item quantity is changed by the customer.
+#### `experimental__woocommerce_blocks-cart-set-item-quantity`
+
+Fired when cart item quantity is changed by the customer. Fires on the Mini-cart block and the Cart block.
+
+##### Args
+
+| Argument   | Type     | Description                             |
+|------------|----------|-----------------------------------------|
+| `product`  | `object` | The product that was added to the cart. |
+| `quantity` | `number` | The new quantity of the product.        |
+
+##### Example
+
+```js
+wp.hooks.addAction(
+	'experimental__woocommerce_blocks-cart-set-item-quantity',
+	'plugin/namespace',
+	( { product, quantity } ) => {
+		console.log( `${ product.name }'s quantity was changed to ${ quantity }` );
+	}
+);
+```
+
 -   `experimental__woocommerce_blocks-cart-remove-item` - Fired when a cart item is removed from the cart.
 -   `experimental__woocommerce_blocks-product-view-link` - Fired when a product link is clicked.
 -   `experimental__woocommerce_blocks-product-list-render` - Fired when a product list is rendered.
