@@ -144,6 +144,7 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 
 
 	img {
+		display: block;
 		position: relative;
 		margin: 0 auto;
 		z-index: 1;
