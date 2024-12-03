@@ -2,9 +2,11 @@
  * External dependencies
  */
 import { Button, Modal, TextControl } from '@wordpress/components';
+import apiFetch from '@wordpress/api-fetch';
 import { useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { isValidEmail } from '@woocommerce/product-editor';
+import { WC_ADMIN_NAMESPACE } from '@woocommerce/data';
 
 type EmailPreviewSendProps = {
 	type: string;
@@ -19,9 +21,12 @@ export const EmailPreviewSend: React.FC< EmailPreviewSendProps > = ( {
 
 	const handleSendEmail = async () => {
 		setIsSending( true );
-		setTimeout( () => {
-			setIsSending( false );
-		}, 2000 );
+		await apiFetch( {
+			path: `${ WC_ADMIN_NAMESPACE }/settings/email/send-preview`,
+			method: 'POST',
+			data: { email, type },
+		} );
+		setIsSending( false );
 	};
 
 	return (
