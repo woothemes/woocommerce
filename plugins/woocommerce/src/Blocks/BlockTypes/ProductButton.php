@@ -272,9 +272,9 @@ class ProductButton extends AbstractBlock {
 					%3$s
 				</a>
 			</span>',
-			esc_url(wc_get_cart_url()),
-			esc_attr__('View cart', 'woocommerce'),
-			esc_html__('View cart', 'woocommerce')
+			esc_url( wc_get_cart_url() ),
+			esc_attr__( 'View cart', 'woocommerce' ),
+			esc_html__( 'View cart', 'woocommerce' )
 		);
 	}
 }
