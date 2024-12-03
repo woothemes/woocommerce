@@ -301,7 +301,26 @@ wp.hooks.addAction(
 	}
 );
 ```
--   `experimental__woocommerce_blocks-checkout-render-checkout-form` - Fired when the checkout form is rendered.
+
+#### `experimental__woocommerce_blocks-checkout-render-checkout-form`
+
+Fired when the checkout form is rendered.
+
+##### Args
+
+This action has no arguments.
+
+##### Example
+
+```js
+wp.hooks.addAction(
+	'experimental__woocommerce_blocks-checkout-render-checkout-form',
+	'plugin/namespace',
+	() => {
+		console.log( 'The checkout form was rendered.' );
+	}
+);
+```
 -   `experimental__woocommerce_blocks-checkout-set-email-address` - Fired when an email address is added during checkout.
 -   `experimental__woocommerce_blocks-checkout-set-shipping-address` - Fired when a shipping address is added during checkout.
 -   `experimental__woocommerce_blocks-checkout-set-billing-address` - Fired when a billing address is added during checkout.
