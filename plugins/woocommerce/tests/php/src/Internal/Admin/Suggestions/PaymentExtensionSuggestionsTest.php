@@ -3,19 +3,29 @@ declare( strict_types=1 );
 
 namespace Automattic\WooCommerce\Tests\Internal\Admin\Suggestions;
 
+use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestionIncentives;
 use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestions;
 use WC_REST_Unit_Test_Case;
 
 /**
- * PaymentsRestController API controller test.
+ * PaymentExtensionSuggestions provider test.
  *
- * @class PaymentsRestController
+ * @class PaymentExtensionSuggestions
  */
 class PaymentExtensionSuggestionsTest extends WC_REST_Unit_Test_Case {
 	/**
+	 * System under test.
+	 *
 	 * @var PaymentExtensionSuggestions
 	 */
-	protected $provider;
+	protected PaymentExtensionSuggestions $sut;
+
+	/**
+	 * The suggestion incentives provider mock.
+	 *
+	 * @var PaymentExtensionSuggestionIncentives
+	 */
+	protected $suggestion_incentives;
 
 	/**
 	 * Set up test.
@@ -23,14 +33,18 @@ class PaymentExtensionSuggestionsTest extends WC_REST_Unit_Test_Case {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->provider = new PaymentExtensionSuggestions();
+		// Mock the incentives provider class.
+		$this->suggestion_incentives = $this->getMockBuilder( PaymentExtensionSuggestionIncentives::class )->getMock();
+
+		$this->sut = new PaymentExtensionSuggestions();
+		$this->sut->init( $this->suggestion_incentives );
 	}
 
 	/**
 	 * Test getting payment extension suggestions by invalid country.
 	 */
 	public function test_get_country_extensions_invalid_country() {
-		$extensions = $this->provider->get_country_extensions( 'XX' );
+		$extensions = $this->sut->get_country_extensions( 'XX' );
 		$this->assertEmpty( $extensions );
 	}
 
@@ -38,7 +52,7 @@ class PaymentExtensionSuggestionsTest extends WC_REST_Unit_Test_Case {
 	 * Test getting payment extension suggestions by valid country.
 	 */
 	public function test_get_country_extensions_valid_country() {
-		$extensions = $this->provider->get_country_extensions( 'US' );
+		$extensions = $this->sut->get_country_extensions( 'US' );
 		$this->assertNotEmpty( $extensions );
 	}
 
@@ -52,8 +66,8 @@ class PaymentExtensionSuggestionsTest extends WC_REST_Unit_Test_Case {
 	 * @param string $country        The country code.
 	 * @param int    $expected_count The expected number of suggestions.
 	 */
-	public function test_get_country_extensions_count( $country, $expected_count ) {
-		$extensions = $this->provider->get_country_extensions( $country );
+	public function test_get_country_extensions_count( string $country, int $expected_count ) {
+		$extensions = $this->sut->get_country_extensions( $country );
 		$this->assertCount( $expected_count, $extensions, "Country $country should have $expected_count suggestions." );
 	}
 
@@ -62,7 +76,7 @@ class PaymentExtensionSuggestionsTest extends WC_REST_Unit_Test_Case {
 	 *
 	 * @return array
 	 */
-	public function data_provider_get_country_extensions_count() {
+	public function data_provider_get_country_extensions_count(): array {
 		// The counts are based on the data in PaymentExtensionSuggestions::$country_extensions.
 		$country_suggestions_count = array(
 			'CA' => 8,
@@ -247,7 +261,7 @@ class PaymentExtensionSuggestionsTest extends WC_REST_Unit_Test_Case {
 	 * Test getting payment extension suggestions by ID.
 	 */
 	public function test_get_extension_by_id() {
-		$extension = $this->provider->get_by_id( 'woopayments' );
+		$extension = $this->sut->get_by_id( 'woopayments' );
 		$this->assertNotEmpty( $extension );
 		$this->assertIsArray( $extension );
 		$this->assertArrayHasKey( 'id', $extension );
@@ -258,7 +272,7 @@ class PaymentExtensionSuggestionsTest extends WC_REST_Unit_Test_Case {
 	 * Test getting payment extension suggestions by ID with invalid ID.
 	 */
 	public function test_get_extension_by_id_with_invalid_id() {
-		$extension = $this->provider->get_by_id( 'bogus_id' );
+		$extension = $this->sut->get_by_id( 'bogus_id' );
 		$this->assertNull( $extension );
 	}
 
@@ -266,7 +280,7 @@ class PaymentExtensionSuggestionsTest extends WC_REST_Unit_Test_Case {
 	 * Test getting payment extension suggestions by plugin slug.
 	 */
 	public function test_get_extension_by_plugin_slug() {
-		$extension = $this->provider->get_by_plugin_slug( 'woocommerce-payments' );
+		$extension = $this->sut->get_by_plugin_slug( 'woocommerce-payments' );
 		$this->assertNotEmpty( $extension );
 		$this->assertIsArray( $extension );
 		$this->assertArrayHasKey( 'id', $extension );
@@ -277,7 +291,7 @@ class PaymentExtensionSuggestionsTest extends WC_REST_Unit_Test_Case {
 	 * Test getting payment extension suggestions by plugin slug with invalid slug.
 	 */
 	public function test_get_extension_by_plugin_slug_with_invalid_slug() {
-		$extension = $this->provider->get_by_plugin_slug( 'bogus_slug' );
+		$extension = $this->sut->get_by_plugin_slug( 'bogus_slug' );
 		$this->assertNull( $extension );
 	}
 }
