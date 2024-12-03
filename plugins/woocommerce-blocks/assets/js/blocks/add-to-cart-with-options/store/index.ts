@@ -45,6 +45,13 @@ const actions = {
 			current: slug,
 		};
 	},
+
+	setProductTypes( productTypes: ProductTypeProps[] ) {
+		return {
+			type: ACTION_SET_PRODUCT_TYPES,
+			productTypes,
+		};
+	},
 };
 
 const reducer = ( state: StoreState = DEFAULT_STATE, action: Actions ) => {
