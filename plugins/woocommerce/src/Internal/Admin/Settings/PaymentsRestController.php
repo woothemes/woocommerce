@@ -680,6 +680,62 @@ class PaymentsRestController extends RestApiControllerBase {
 						),
 					),
 				),
+				'onboarding'        => array(
+					'type'        => 'object',
+					'description' => esc_html__( 'Onboarding-related details for the provider.', 'woocommerce' ),
+					'properties'  => array(
+						'recommended_payment_methods' => array(
+							'type'        => 'array',
+							'description' => esc_html__( 'The list of recommended payment methods details for the payment gateway.', 'woocommerce' ),
+							'context'     => array( 'view', 'edit' ),
+							'readonly'    => true,
+							'items'       => array(
+								'type'        => 'object',
+								'description' => esc_html__( 'The details for a recommended payment method.', 'woocommerce' ),
+								'context'     => array( 'view', 'edit' ),
+								'readonly'    => true,
+								'properties'  => array(
+									'id'          => array(
+										'type'        => 'string',
+										'description' => esc_html__( 'The unique identifier for the payment method.', 'woocommerce' ),
+										'context'     => array( 'view', 'edit' ),
+										'readonly'    => true,
+									),
+									'_order'      => array(
+										'type'        => 'integer',
+										'description' => esc_html__( 'The sort order of the payment method.', 'woocommerce' ),
+										'context'     => array( 'view', 'edit' ),
+										'readonly'    => true,
+									),
+									'enabled'     => array(
+										'type'        => 'boolean',
+										'description' => esc_html__( 'Whether the payment method should be recommended as enabled or not.', 'woocommerce' ),
+										'context'     => array( 'view', 'edit' ),
+										'readonly'    => true,
+									),
+									'title'       => array(
+										'type'        => 'string',
+										'description' => esc_html__( 'The title of the payment method. Does not include HTML tags.', 'woocommerce' ),
+										'context'     => array( 'view', 'edit' ),
+										'readonly'    => true,
+									),
+									'description' => array(
+										'type'        => 'string',
+										'description' => esc_html__( 'The description of the payment method. It can contain basic HTML.', 'woocommerce' ),
+										'context'     => array( 'view', 'edit' ),
+										'readonly'    => true,
+									),
+									'icon'        => array(
+										'type'        => 'string',
+										'description' => esc_html__( 'The URL of the payment method icon or a base64-encoded SVG image.', 'woocommerce' ),
+										'context'     => array( 'view', 'edit' ),
+										'readonly'    => true,
+									),
+								),
+							),
+						),
+					),
+				),
 				'tags'              => array(
 					'type'        => 'array',
 					'description' => esc_html__( 'The tags associated with the provider.', 'woocommerce' ),
