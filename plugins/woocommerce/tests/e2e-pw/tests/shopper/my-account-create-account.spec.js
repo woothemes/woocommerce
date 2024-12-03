@@ -1,7 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
-const customerEmailAddress = 'john.doe.test@example.com';
+const customerEmailAddress = `john.doe.${ Date.now() }@example.com`;
 
 test.describe(
 	'Shopper My Account Create Account',
