@@ -9,7 +9,6 @@ import {
 	EnableGatewayResponse,
 } from '@woocommerce/data';
 import { useState } from '@wordpress/element';
-import { getAdminLink } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
@@ -25,7 +24,6 @@ export const PaymentGatewayButton = ( {
 	enabled,
 	needsSetup,
 	settingsUrl,
-	isWCPay,
 	textSettings = __( 'Manage', 'woocommerce' ),
 	textEnable = __( 'Enable', 'woocommerce' ),
 	textNeedsSetup = __( 'Complete setup', 'woocommerce' ),
@@ -35,7 +33,6 @@ export const PaymentGatewayButton = ( {
 	enabled: boolean;
 	needsSetup?: boolean;
 	settingsUrl: string;
-	isWCPay?: boolean;
 	textSettings?: string;
 	textEnable?: string;
 	textNeedsSetup?: string;
@@ -59,12 +56,6 @@ export const PaymentGatewayButton = ( {
 	};
 
 	const onClick = ( e: React.MouseEvent ) => {
-		if ( isWCPay && needsSetup ) {
-			e.preventDefault();
-			window.location.href = getAdminLink(
-				'admin.php?page=wc-settings&tab=checkout&section=recommended'
-			);
-		}
 		if ( ! enabled ) {
 			e.preventDefault();
 			const gatewayToggleNonce =
