@@ -69,13 +69,13 @@ const getTextBasedOnStock = ( {
  * @return {boolean} True if stock indicator should be visible
  */
 const isStockVisible = ( product: ProductResponseItem ): boolean => {
-	const allowedProductTypesInEditor = getSetting< string[] >(
-		'allowedProductTypesInEditor',
+	const productTypesWithoutStockIndicator = getSetting< string[] >(
+		'productTypesWithoutStockIndicator',
 		[ 'simple', 'variation' ]
 	);
 
 	if (
-		! allowedProductTypesInEditor.includes( product.type ) ||
+		productTypesWithoutStockIndicator.includes( product.type ) ||
 		product.sold_individually ||
 		( ! product.manage_stock && product.type !== 'simple' )
 	) {

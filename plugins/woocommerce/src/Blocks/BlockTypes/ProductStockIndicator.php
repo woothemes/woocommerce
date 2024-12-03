@@ -43,8 +43,8 @@ class ProductStockIndicator extends AbstractBlock {
 	 *
 	 * @return array
 	 */
-	protected function allowed_product_types_in_editor() {
-		return apply_filters( 'woocommerce_blocks_allowed_product_types_in_editor', array( 'simple', 'variation' ) );
+	protected function product_types_without_stock_indicator() {
+		return apply_filters( 'woocommerce_blocks_product_types_without_stock_indicator', array( 'external', 'grouped', 'variable' ) );
 	}
 
 	/**
@@ -57,7 +57,7 @@ class ProductStockIndicator extends AbstractBlock {
 	protected function enqueue_data( array $attributes = [] ) {
 		parent::enqueue_data( $attributes );
 
-		$this->asset_data_registry->add( 'allowedProductTypesInEditor', $this->allowed_product_types_in_editor() );
+		$this->asset_data_registry->add( 'productTypesWithoutStockIndicator', $this->product_types_without_stock_indicator() );
 	}
 
 
