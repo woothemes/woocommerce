@@ -100,7 +100,7 @@ class EmailPreviewRestControllerTest extends WC_REST_Unit_Test_Case {
 	 * Test sending email preview by a user without the needed capabilities.
 	 */
 	public function test_send_preview_by_user_without_caps() {
-		$filter_callback = fn( $caps ) => array(
+		$filter_callback = fn() => array(
 			'manage_woocommerce' => false,
 		);
 		add_filter( 'user_has_cap', $filter_callback );
@@ -153,13 +153,13 @@ class EmailPreviewRestControllerTest extends WC_REST_Unit_Test_Case {
 	/**
 	 * Helper method to construct a request to send an email preview.
 	 *
-	 * @param string|null $type
-	 * @param string|null $email
+	 * @param string|null $type Email type to preview.
+	 * @param string|null $email Email address to send the preview to.
 	 * @return WP_REST_Request
 	 */
 	private function get_email_preview_request( ?string $type = null, ?string $email = null ) {
 		$request = new WP_REST_Request( 'POST', self::ENDPOINT . '/send-preview' );
-		$params = array();
+		$params  = array();
 		if ( $type ) {
 			$params['type'] = $type;
 		}

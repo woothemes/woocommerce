@@ -97,14 +97,15 @@ class EmailPreviewRestController extends RestApiControllerBase {
 
 		$email_address = $request->get_param( 'email' );
 		$email_content = $email_preview->render();
-		$email = new \WC_Emails();
-		$sent = $email->send( $email_address, 'test', $email_content );
+		$email         = new \WC_Emails();
+		$sent          = $email->send( $email_address, 'test', $email_content );
 
-		if ($sent) {
+		if ( $sent ) {
 			return array(
+				// translators: %s: Email address.
 				'message' => sprintf( __( 'Test email sent to %s.', 'woocommerce' ), $email_address ),
 			);
-		};
+		}
 		return new WP_Error(
 			'woocommerce_rest_email_preview_not_sent',
 			__( 'Error sending test email. Please try again.', 'woocommerce' ),
