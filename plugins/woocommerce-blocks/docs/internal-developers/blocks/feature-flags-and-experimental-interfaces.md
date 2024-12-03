@@ -321,6 +321,25 @@ wp.hooks.addAction(
 	}
 );
 ```
--   `experimental__woocommerce_blocks-checkout-set-email-address` - Fired when an email address is added during checkout.
+#### `experimental__woocommerce_blocks-checkout-set-email-address`
+
+Fired when an email address is added during checkout.
+
+##### Args
+
+This action has no arguments.
+
+##### Example
+
+```js
+wp.hooks.addAction(
+	'experimental__woocommerce_blocks-checkout-set-email-address',
+	'plugin/namespace',
+	( { product, quantity } ) => {
+		console.log( 'The email address was changed.' );
+	}
+);
+```
+
 -   `experimental__woocommerce_blocks-checkout-set-shipping-address` - Fired when a shipping address is added during checkout.
 -   `experimental__woocommerce_blocks-checkout-set-billing-address` - Fired when a billing address is added during checkout.
