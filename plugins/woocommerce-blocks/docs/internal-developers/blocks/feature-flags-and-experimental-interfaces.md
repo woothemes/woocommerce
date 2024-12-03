@@ -280,7 +280,27 @@ wp.hooks.addAction(
 );
 ```
 
--   `experimental__woocommerce_blocks-checkout-set-active-payment-method` - Fired when a payment method is chosen on checkout.
+#### `experimental__woocommerce_blocks-checkout-set-active-payment-method`
+
+Fired when a payment method is chosen on checkout.
+
+##### Args
+
+| Argument   | Type     | Description                      |
+|------------|----------|----------------------------------|
+| `paymentMethodSlug`  | `string` | The payment method slug.         |
+
+##### Example
+
+```js
+wp.hooks.addAction(
+	'experimental__woocommerce_blocks-checkout-set-active-payment-method',
+	'plugin/namespace',
+	( { paymentMethodSlug } ) => {
+		console.log( `The selected payment method was changed to ${ paymentMethodSlug }` );
+	}
+);
+```
 -   `experimental__woocommerce_blocks-checkout-render-checkout-form` - Fired when the checkout form is rendered.
 -   `experimental__woocommerce_blocks-checkout-set-email-address` - Fired when an email address is added during checkout.
 -   `experimental__woocommerce_blocks-checkout-set-shipping-address` - Fired when a shipping address is added during checkout.
