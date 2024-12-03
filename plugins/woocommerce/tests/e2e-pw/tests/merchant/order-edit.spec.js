@@ -35,12 +35,14 @@ test.describe( 'Edit order', { tag: [ '@services', '@hpos' ] }, () => {
 			.then( ( response ) => {
 				orderToCancel = response.data.id;
 			} );
+
+		const username = `big.archie.${ Date.now() }`;
 		await api
 			.post( 'customers', {
-				email: 'archie123@email.addr',
+				email: `${ username }@email.addr`,
 				first_name: 'Archie',
 				last_name: 'Greenback',
-				username: 'big.archie',
+				username,
 				billing: {
 					first_name: 'Archibald',
 					last_name: 'Greenback',
@@ -52,7 +54,7 @@ test.describe( 'Edit order', { tag: [ '@services', '@hpos' ] }, () => {
 					state: 'CA',
 					postcode: '94107',
 					phone: '123456789',
-					email: 'archie123@email.addr',
+					email: `${ username }@email.addr`,
 				},
 				shipping: {
 					first_name: 'Shipping First',
@@ -532,10 +534,10 @@ test.describe(
 				page.locator( 'button.revoke_access' )
 			).toBeVisible();
 			await expect(
-				page.locator( 'a:has-text("Copy link")' )
+				page.getByRole( 'link', { name: 'Copy link' } )
 			).toBeVisible();
 			await expect(
-				page.locator( 'a:has-text("View report")' )
+				page.getByRole( 'link', { name: 'View report' } )
 			).toBeVisible();
 		} );
 
