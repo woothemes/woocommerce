@@ -84,7 +84,7 @@ class WC_Settings_Accounts extends WC_Settings_Page {
 				'desc_tip'          => sprintf(
 					/* Translators: %1$s and %2$s are opening and closing <a> tags respectively. */
 					__( 'Customers can create an account after their order is placed. Customize messaging %1$shere%2$s.', 'woocommerce' ),
-					'<a href="' . esc_url( admin_url( 'site-editor.php?postId=woocommerce%2Fwoocommerce%2F%2Forder-confirmation&postType=wp_template&canvas=edit' ) ) . '">',
+					'<a target="_blank" class="delayed-account-creation-customize-link" href="' . esc_url( admin_url( 'site-editor.php?postId=woocommerce%2Fwoocommerce%2F%2Forder-confirmation&postType=wp_template&canvas=edit' ) ) . '">',
 					'</a>'
 				),
 				'id'                => 'woocommerce_enable_delayed_account_creation',
@@ -345,50 +345,55 @@ class WC_Settings_Accounts extends WC_Settings_Page {
 		parent::output();
 
 		// The following code toggles disabled state on the account options based on other values.
-		?>
-		<script type="text/javascript">
-			document.addEventListener('DOMContentLoaded', function() {
-				// Move tooltips to label element. This is not possible through the settings field API so this is a workaround
-				// until said API is refactored.
-				document.querySelectorAll('input[disabled-tooltip]').forEach(function(element) {
-					const label = element.closest('label');
-					label.setAttribute('disabled-tooltip', element.getAttribute('disabled-tooltip'));
-				});
-
-				// This handles settings that are enabled/disabled based on other settings.
-				const checkboxes = [
-					document.getElementById("woocommerce_enable_signup_and_login_from_checkout"),
-					document.getElementById("woocommerce_enable_myaccount_registration"),
-					document.getElementById("woocommerce_enable_delayed_account_creation"),
-					document.getElementById("woocommerce_enable_signup_from_checkout_for_subscriptions")
-				];
-				const inputs = [
-					document.getElementById("woocommerce_registration_generate_username"),
-					document.getElementById("woocommerce_registration_generate_password")
-				];
-				checkboxes.forEach(cb => cb && cb.addEventListener('change', function() {
-					const isChecked = checkboxes.some(cb => cb && cb.checked);
-					inputs.forEach(input => {
-						if ( ! input ) {
-							return;
-						}
-						input.disabled = !isChecked;
-					});
-				}));
-				checkboxes[0].dispatchEvent(new Event('change')); // Initial state
+		wc_enqueue_js(
+			'
+			// Move tooltips to label element. This is not possible through the settings field API so this is a workaround
+			// until said API is refactored.
+			document.querySelectorAll("input[disabled-tooltip]").forEach(function(element) {
+				const label = element.closest("label");
+				label.setAttribute("disabled-tooltip", element.getAttribute("disabled-tooltip"));
 			});
-		</script>
-		<?php
+
+			// This handles settings that are enabled/disabled based on other settings.
+			const checkboxes = [
+				document.getElementById("woocommerce_enable_signup_and_login_from_checkout"),
+				document.getElementById("woocommerce_enable_myaccount_registration"),
+				document.getElementById("woocommerce_enable_delayed_account_creation"),
+				document.getElementById("woocommerce_enable_signup_from_checkout_for_subscriptions")
+			];
+			const inputs = [
+				document.getElementById("woocommerce_registration_generate_username"),
+				document.getElementById("woocommerce_registration_generate_password")
+			];
+			checkboxes.forEach(cb => cb && cb.addEventListener("change", function() {
+				const isChecked = checkboxes.some(cb => cb && cb.checked);
+				inputs.forEach(input => {
+					if ( ! input ) {
+						return;
+					}
+					input.disabled = !isChecked;
+				});
+			}));
+			checkboxes[0].dispatchEvent(new Event("change")); // Initial state
+
+			// Tracks for customize link.
+			if ( typeof window?.wcTracks?.recordEvent === "function" ) {
+				document.querySelector("a.delayed-account-creation-customize-link").addEventListener("click", function() {
+					window.wcTracks.recordEvent("delayed_account_creation_customize_link_clicked");
+				});
+			}
+		'
+		);
 
 		// If the checkout block is not default, delayed account creation is always disabled. Otherwise its based on other settings.
 		if ( CartCheckoutUtils::is_checkout_block_default() ) {
-			?>
-			<script type="text/javascript">
+			wc_enqueue_js(
+				'
 				// Guest checkout should toggle off some options.
 				const guestCheckout = document.getElementById("woocommerce_enable_guest_checkout");
 
 				if ( guestCheckout ) {
-					guestCheckout.addEventListener('change', function() {
+					guestCheckout.addEventListener("change", function() {
 						const isChecked = this.checked;
 						const input = document.getElementById("woocommerce_enable_delayed_account_creation");
 						if ( ! input ) {
@@ -396,10 +401,10 @@ class WC_Settings_Accounts extends WC_Settings_Page {
 						}
 						input.disabled = !isChecked;
 					});
-					guestCheckout.dispatchEvent(new Event('change')); // Initial state
+					guestCheckout.dispatchEvent(new Event("change")); // Initial state
 				}
-			</script>
-			<?php
+			'
+			);
 		}
 	}
 }
