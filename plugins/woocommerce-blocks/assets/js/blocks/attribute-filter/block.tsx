@@ -126,7 +126,7 @@ const AttributeFilterBlock = ( {
 		useQueryStateByKey( 'attributes', [] );
 
 	const { results: attributeTerms, isLoading: attributeTermsLoading } =
-		useCollection< AttributeTerm[] >( {
+		useCollection< AttributeTerm >( {
 			namespace: '/wc/store/v1',
 			resourceName: 'products/attributes/terms',
 			resourceValues: [ attributeObject?.id || 0 ],
@@ -139,7 +139,7 @@ const AttributeFilterBlock = ( {
 		{},
 		isObject
 	);
-	const { results: filteredCounts, isLoading: filteredCountsLoading } =
+	const { data: filteredCounts, isLoading: filteredCountsLoading } =
 		useCollectionData( {
 			queryAttribute: {
 				taxonomy: attributeObject?.taxonomy || '',

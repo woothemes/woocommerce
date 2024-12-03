@@ -9,7 +9,7 @@ test.describe( 'System Status API tests', () => {
 		async ( { request } ) => {
 			// call API to view all system status items
 			const response = await request.get(
-				'/wp-json/wc/v3/system_status'
+				'./wp-json/wc/v3/system_status'
 			);
 			const responseJSON = await response.json();
 			expect( response.status() ).toEqual( 200 );
@@ -592,7 +592,7 @@ test.describe( 'System Status API tests', () => {
 	test( 'can view all system status tools', async ( { request } ) => {
 		// call API to view system status tools
 		const response = await request.get(
-			'/wp-json/wc/v3/system_status/tools'
+			'./wp-json/wc/v3/system_status/tools'
 		);
 		const responseJSON = await response.json();
 		expect( response.status() ).toEqual( 200 );
@@ -634,7 +634,7 @@ test.describe( 'System Status API tests', () => {
 	test( 'can retrieve a system status tool', async ( { request } ) => {
 		// call API to retrieve a system status tool
 		const response = await request.get(
-			'/wp-json/wc/v3/system_status/tools/clear_transients'
+			'./wp-json/wc/v3/system_status/tools/clear_transients'
 		);
 		const responseJSON = await response.json();
 		expect( response.status() ).toEqual( 200 );
@@ -653,7 +653,7 @@ test.describe( 'System Status API tests', () => {
 	test( 'can run a tool from system status', async ( { request } ) => {
 		// call API to run a system status tool
 		const response = await request.put(
-			'/wp-json/wc/v3/system_status/tools/clear_transients'
+			'./wp-json/wc/v3/system_status/tools/clear_transients'
 		);
 		const responseJSON = await response.json();
 		expect( response.status() ).toEqual( 200 );

@@ -8,6 +8,7 @@
 
 use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Admin\Features\Features;
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Internal\Admin\Analytics;
 use Automattic\WooCommerce\Internal\Admin\WCAdminAssets;
 
@@ -364,7 +365,7 @@ if ( ! class_exists( 'WC_Admin_Assets', false ) ) :
 					if ( $order_or_post_object ) {
 						$currency = $order_or_post_object->get_currency();
 
-						if ( ! $order_or_post_object->has_status( array( 'pending', 'failed', 'cancelled' ) ) ) {
+						if ( ! $order_or_post_object->has_status( array( OrderStatus::PENDING, OrderStatus::FAILED, OrderStatus::CANCELLED ) ) ) {
 							$remove_item_notice = $remove_item_notice . ' ' . __( "You may need to manually restore the item's stock.", 'woocommerce' );
 						}
 					}

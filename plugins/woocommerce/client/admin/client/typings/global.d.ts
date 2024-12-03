@@ -101,7 +101,7 @@ declare global {
 			nonces: {
 				gateway_toggle?: string;
 			}
-		}
+		},
 	}
 	namespace wp.media {
 		interface frame {

@@ -86,3 +86,25 @@ body:
           required: true
         - label: "I understand that I need to create an issue as a result of the Escape Analysis and reference it in a comment on this post. This can be done at a later time, but it is required for this request to be closed."
           required: true
+        - label: "I understand that I will need to merge the PR to the target `release` branch when my request is approved"
+          required: true
+        - label: "I understand that I will need to merge the followup cherry-picked PR created by the github-actions bot to `trunk` when my request is approved"
+          required: true
+  - type: markdown
+    attributes:
+      value: |
+        ## Closing checklist
+        Please ensure that the following checklist is completed before closing the request:
+  - type: checkboxes
+    id: closing-checklist
+    attributes:
+      label: "Closing checklist for Solaris"
+      options:
+        - label: "Escape analysis completed"
+          required: false
+        - label: "PR merged to target `release` branch"
+          required: false
+        - label: "PR cherry-picked to `trunk` (you can find the links in PR comments to verify)"
+          required: false
+        - label: "Followup issue if any"
+          required: false

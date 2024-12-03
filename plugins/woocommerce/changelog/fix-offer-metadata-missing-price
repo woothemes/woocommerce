@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Fix "missing 'price' property in 'offers'" error in Google Search Console

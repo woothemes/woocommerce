@@ -113,6 +113,7 @@ class ProductGallery extends AbstractBlock {
 	protected function render( $attributes, $content, $block ) {
 		$post_id = $block->context['postId'] ?? '';
 		$product = wc_get_product( $post_id );
+
 		if ( ! $product instanceof \WC_Product ) {
 			return '';
 		}

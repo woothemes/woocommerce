@@ -31,6 +31,10 @@ const test = baseTest.extend( {
 	},
 } );
 
+// Note: Shipping Settings for these tests default to shipping to user's default billing address,
+// when we go to change the country, we click the "Delivers to CALIFORNIA, UNITED STATES (US)" to open the address panel.
+const DEFAULT_BILLING_LABEL = 'CALIFORNIA, UNITED STATES (US)';
+
 test.describe(
 	'Cart Block Calculate Shipping',
 	{ tag: [ '@payments', '@services' ] },
@@ -136,12 +140,20 @@ test.describe(
 			async ( { page, context, cartBlockPage } ) => {
 				await context.clearCookies();
 
+				//  Do we need to clear localStorage and sessionStorage? Something is remembering the address.
+				await page.evaluate( () => {
+					localStorage.clear();
+					sessionStorage.clear();
+				} );
+
 				await addAProductToCart( page, product1Id );
 				await page.goto( cartBlockPage.slug );
 
 				// Set shipping country to Netherlands
 				await page
-					.getByLabel( 'Enter address to check delivery options' )
+					.getByText(
+						`No delivery options available for ${ DEFAULT_BILLING_LABEL }`
+					)
 					.click();
 				await page
 					.getByRole( 'combobox' )
@@ -182,7 +194,9 @@ test.describe(
 
 				// Set shipping country to Portugal
 				await page
-					.getByLabel( 'Enter address to check delivery options' )
+					.getByText(
+						`No delivery options available for ${ DEFAULT_BILLING_LABEL }`
+					)
 					.click();
 				await page
 					.getByRole( 'combobox' )
@@ -235,7 +249,9 @@ test.describe(
 
 				// Set shipping country to Portugal
 				await page
-					.getByLabel( 'Enter address to check delivery options' )
+					.getByText(
+						`No delivery options available for ${ DEFAULT_BILLING_LABEL }`
+					)
 					.click();
 				await page
 					.getByRole( 'combobox' )
@@ -276,7 +292,9 @@ test.describe(
 
 				// Set shipping country to Portugal
 				await page
-					.getByLabel( 'Enter address to check delivery options' )
+					.getByText(
+						`No delivery options available for ${ DEFAULT_BILLING_LABEL }`
+					)
 					.click();
 				await page
 					.getByRole( 'combobox' )
