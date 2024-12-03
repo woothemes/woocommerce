@@ -4,7 +4,7 @@
 import { getSetting } from '@woocommerce/settings';
 
 export type ProductTypeProps = {
-	value: string;
+	slug: string;
 	label: string;
 };
 
@@ -20,7 +20,7 @@ const productTypes = getSetting< Record< string, string > >(
  */
 export default function getProductTypeOptions(): ProductTypeProps[] {
 	return Object.keys( productTypes ).map( ( key ) => ( {
-		value: key,
+		slug: key,
 		label: productTypes[ key ],
 	} ) );
 }
