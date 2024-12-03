@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { Button, Modal, TextControl } from '@wordpress/components';
+import { Icon, check, warning } from '@wordpress/icons';
 import apiFetch from '@wordpress/api-fetch';
 import { useState } from 'react';
 import { __ } from '@wordpress/i18n';
@@ -12,20 +13,43 @@ type EmailPreviewSendProps = {
 	type: string;
 };
 
+type EmailPreviewSendResponse = {
+	message: string;
+};
+
+type WPError = {
+	message: string;
+	code: string;
+	data: {
+		status: number;
+	};
+};
+
 export const EmailPreviewSend: React.FC< EmailPreviewSendProps > = ( {
 	type,
 } ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ email, setEmail ] = useState( '' );
 	const [ isSending, setIsSending ] = useState( false );
+	const [ notice, setNotice ] = useState( '' );
+	const [ noticeType, setNoticeType ] = useState( '' );
 
 	const handleSendEmail = async () => {
 		setIsSending( true );
-		await apiFetch( {
-			path: `${ WC_ADMIN_NAMESPACE }/settings/email/send-preview`,
-			method: 'POST',
-			data: { email, type },
-		} );
+		setNotice( '' );
+		try {
+			const response: EmailPreviewSendResponse = await apiFetch( {
+				path: `${ WC_ADMIN_NAMESPACE }/settings/email/send-preview`,
+				method: 'POST',
+				data: { email, type },
+			} );
+			setNotice( response.message );
+			setNoticeType( 'success' );
+		} catch ( e ) {
+			const wpError = e as WPError;
+			setNotice( wpError.message );
+			setNoticeType( 'error' );
+		}
 		setIsSending( false );
 	};
 
@@ -61,6 +85,18 @@ export const EmailPreviewSend: React.FC< EmailPreviewSendProps > = ( {
 						placeholder={ __( 'Enter an email', 'woocommerce' ) }
 						onChange={ setEmail }
 					/>
+					{ notice && (
+						<div
+							className={ `wc-settings-email-preview-send-modal-notice wc-settings-email-preview-send-modal-notice-${ noticeType }` }
+						>
+							<Icon
+								icon={
+									noticeType === 'success' ? check : warning
+								}
+							/>
+							<span>{ notice }</span>
+						</div>
+					) }
 
 					<div className="wc-settings-email-preview-send-modal-buttons">
 						<Button

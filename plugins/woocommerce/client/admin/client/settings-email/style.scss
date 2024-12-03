@@ -100,6 +100,29 @@ $wc-setting-email-preview-gap: 16px;
 	width: 456px;
 }
 
+.wc-settings-email-preview-send-modal-notice {
+	align-items: center;
+	display: flex;
+
+	svg {
+		margin-right: 4px;
+	}
+}
+
+.wc-settings-email-preview-send-modal-notice-success {
+	svg {
+		fill: $alert-green;
+	}
+}
+
+.wc-settings-email-preview-send-modal-notice-error {
+	color: $alert-red;
+
+	svg {
+		fill: $alert-red;
+	}
+}
+
 .wc-settings-email-preview-send-modal-buttons {
 	display: flex;
 	justify-content: flex-end;
