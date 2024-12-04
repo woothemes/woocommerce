@@ -819,10 +819,18 @@ class PaymentsRestController extends RestApiControllerBase {
 							'context'  => array( 'view', 'edit' ),
 							'readonly' => true,
 							'dismiss'  => array(
-								'type'        => 'string',
-								'description' => esc_html__( 'The URL to dismiss the incentive.', 'woocommerce' ),
+								'type'        => 'object',
+								'description' => esc_html__( 'The link to dismiss the incentive.', 'woocommerce' ),
 								'context'     => array( 'view', 'edit' ),
 								'readonly'    => true,
+								'properties'  => array(
+									'href' => array(
+										'type'        => 'string',
+										'description' => esc_html__( 'The URL to dismiss the incentive.', 'woocommerce' ),
+										'context'     => array( 'view', 'edit' ),
+										'readonly'    => true,
+									),
+								),
 							),
 						),
 					),
@@ -832,10 +840,18 @@ class PaymentsRestController extends RestApiControllerBase {
 					'context'  => array( 'view', 'edit' ),
 					'readonly' => true,
 					'hide'     => array(
-						'type'        => 'string',
-						'description' => esc_html__( 'The URL to hide the suggestion.', 'woocommerce' ),
+						'type'        => 'object',
+						'description' => esc_html__( 'The link to hide the suggestion.', 'woocommerce' ),
 						'context'     => array( 'view', 'edit' ),
 						'readonly'    => true,
+						'properties'  => array(
+							'href' => array(
+								'type'        => 'string',
+								'description' => esc_html__( 'The URL to hide the suggestion.', 'woocommerce' ),
+								'context'     => array( 'view', 'edit' ),
+								'readonly'    => true,
+							),
+						),
 					),
 				),
 			),
