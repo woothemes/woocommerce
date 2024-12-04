@@ -2,12 +2,13 @@
 /**
  * REST API Plugins Controller
  *
- * Handles requests to install and activate depedent plugins.
+ * Handles requests to install and activate dependent plugins.
  */
 
 namespace Automattic\WooCommerce\Admin\API;
 
 use Automattic\WooCommerce\Internal\Admin\Onboarding\OnboardingProfile;
+use Automattic\WooCommerce\Admin\Features\OnboardingTasks\Tasks\WooCommercePayments;
 use Automattic\WooCommerce\Admin\PaymentMethodSuggestionsDataSourcePoller;
 use Automattic\WooCommerce\Admin\PluginsHelper;
 use Automattic\WooCommerce\Internal\Admin\Notes\InstallJPAndWCSPlugins;
@@ -547,7 +548,7 @@ class Plugins extends \WC_REST_Data_Controller {
 		if ( ! class_exists( '\WooCommerce\Square\Handlers\Connection' ) ) {
 			return new \WP_Error( 'woocommerce_rest_helper_connect', __( 'There was an error connecting to Square.', 'woocommerce' ), 500 );
 		}
-
+		$has_cbd_industry = false;
 		if ( 'US' === WC()->countries->get_base_country() ) {
 			$profile = get_option( OnboardingProfile::DATA_OPTION, array() );
 			if ( ! empty( $profile['industry'] ) ) {
@@ -591,26 +592,26 @@ class Plugins extends \WC_REST_Data_Controller {
 	}
 
 	/**
-	 * Returns a URL that can be used to by WCPay to verify business details with Stripe.
+	 * Returns a URL that can be used to point the merchant to the WooPayments onboarding flow.
 	 *
-	 * @return WP_Error|array Connect URL.
+	 * @return \WP_Error|array Connect URL.
 	 */
 	public function connect_wcpay() {
-		if ( ! class_exists( 'WC_Payments_Account' ) ) {
-			return new \WP_Error( 'woocommerce_rest_helper_connect', __( 'There was an error communicating with the WooCommerce Payments plugin.', 'woocommerce' ), 500 );
+		if ( ! class_exists( 'WC_Payments' ) ) {
+			return new \WP_Error( 'woocommerce_rest_helper_connect', __( 'There was an error communicating with the WooPayments plugin.', 'woocommerce' ), 500 );
 		}
 
-		$connect_url = add_query_arg(
-			array(
-				'wcpay-connect' => 'WCADMIN_PAYMENT_TASK',
-				'_wpnonce'      => wp_create_nonce( 'wcpay-connect' ),
+		// Use a WooPayments connect link to let the WooPayments plugin handle the connection flow.
+		return array(
+			'connectUrl' => add_query_arg(
+				array(
+					'wcpay-connect' => '1',
+					'from'          => 'WCADMIN_PAYMENT_TASK',
+					'_wpnonce'      => wp_create_nonce( 'wcpay-connect' ),
+				),
+				admin_url( 'admin.php' )
 			),
-			admin_url()
 		);
-
-		return( array(
-			'connectUrl' => $connect_url,
-		) );
 	}
 
 	/**

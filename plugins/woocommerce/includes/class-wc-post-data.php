@@ -8,6 +8,7 @@
  * @version 2.2.0
  */
 
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Internal\DataStores\Orders\DataSynchronizer;
 use Automattic\WooCommerce\Internal\ProductAttributesLookup\LookupDataStore as ProductAttributesLookupDataStore;
 use Automattic\WooCommerce\Proxies\LegacyProxy;
@@ -58,6 +59,8 @@ class WC_Post_Data {
 
 		// Meta cache flushing.
 		add_action( 'updated_post_meta', array( __CLASS__, 'flush_object_meta_cache' ), 10, 4 );
+		add_action( 'added_post_meta', array( __CLASS__, 'flush_object_meta_cache' ), 10, 4 );
+		add_action( 'deleted_post_meta', array( __CLASS__, 'flush_object_meta_cache' ), 10, 4 );
 		add_action( 'updated_order_item_meta', array( __CLASS__, 'flush_object_meta_cache' ), 10, 4 );
 	}
 
@@ -362,7 +365,7 @@ class WC_Post_Data {
 			$refunds = $wpdb->get_results( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type = 'shop_order_refund' AND post_parent = %d", $id ) );
 
 			foreach ( $refunds as $refund ) {
-				$wpdb->update( $wpdb->posts, array( 'post_status' => 'trash' ), array( 'ID' => $refund->ID ) );
+				$wpdb->update( $wpdb->posts, array( 'post_status' => OrderStatus::TRASH ), array( 'ID' => $refund->ID ) );
 			}
 
 			wc_delete_shop_order_transients( $id );
@@ -405,10 +408,24 @@ class WC_Post_Data {
 			$data_store->untrash_variations( $id );
 
 			wc_product_force_unique_sku( $id );
+			self::clear_global_unique_id_if_necessary( $id );
 
 			wc_get_container()->get( ProductAttributesLookupDataStore::class )->on_product_changed( $id );
 		} elseif ( 'product_variation' === $post_type ) {
 			wc_get_container()->get( ProductAttributesLookupDataStore::class )->on_product_changed( $id );
+		}
+	}
+
+	/**
+	 * Clear global unique id if it's not unique.
+	 *
+	 * @param mixed $id Post ID.
+	 */
+	private static function clear_global_unique_id_if_necessary( $id ) {
+		$product = wc_get_product( $id );
+		if ( $product && ! wc_product_has_global_unique_id( $id, $product->get_global_unique_id() ) ) {
+			$product->set_global_unique_id( '' );
+			$product->save();
 		}
 	}
 

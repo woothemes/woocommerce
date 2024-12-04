@@ -23,6 +23,8 @@ jest.mock( 'react-visibility-sensor', () =>
 	} )
 );
 
+window.open = jest.fn();
+
 describe( 'InboxNoteCard', () => {
 	const note = {
 		id: 1,
@@ -72,15 +74,6 @@ describe( 'InboxNoteCard', () => {
 			<InboxNoteCard key={ note.id } note={ note } />
 		);
 		expect( queryByText( 'Dismiss' ) ).toBeInTheDocument();
-	} );
-
-	it( 'should render a notification type banner', () => {
-		const bannerNote = { ...note, layout: 'banner' };
-		const { container } = render(
-			<InboxNoteCard key={ bannerNote.id } note={ bannerNote } />
-		);
-		const listNoteWithBanner = container.querySelector( '.banner' );
-		expect( listNoteWithBanner ).not.toBeNull();
 	} );
 
 	it( 'should render a notification type thumbnail', () => {
@@ -183,7 +176,7 @@ describe( 'InboxNoteCard', () => {
 			);
 		} );
 
-		it( 'should call onVisible when visiblity sensor calls it', () => {
+		it( 'should call onVisible when visibility sensor calls it', () => {
 			const onVisible = jest.fn();
 			const { getByText } = render(
 				<InboxNoteCard
@@ -197,7 +190,7 @@ describe( 'InboxNoteCard', () => {
 			expect( onVisible ).toHaveBeenCalledWith( note );
 		} );
 
-		it( 'should call onVisible when visiblity sensor calls it, but only once', () => {
+		it( 'should call onVisible when visibility sensor calls it, but only once', () => {
 			const onVisible = jest.fn();
 			const { getByText } = render(
 				<InboxNoteCard

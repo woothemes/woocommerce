@@ -5,6 +5,8 @@
  * Handles requests to /products/*
  */
 
+declare( strict_types = 1 );
+
 namespace Automattic\WooCommerce\Admin\API;
 
 defined( 'ABSPATH' ) || exit;
@@ -142,7 +144,7 @@ class Products extends \WC_REST_Products_Controller {
 	/**
 	 * Check whether the request is for products low in stock.
 	 *
-	 * It matches requests with paramaters:
+	 * It matches requests with parameters:
 	 *
 	 * low_in_stock = true
 	 * page = 1

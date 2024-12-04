@@ -6,6 +6,7 @@
  * @version  2.4.0
  */
 
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Utilities\OrderUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -383,7 +384,7 @@ function wc_save_order_items( $order_id, $items ) {
 
 			$item->save();
 
-			if ( in_array( $order->get_status(), array( 'processing', 'completed', 'on-hold' ), true ) ) {
+			if ( in_array( $order->get_status(), array( OrderStatus::PROCESSING, OrderStatus::COMPLETED, OrderStatus::ON_HOLD ), true ) ) {
 				$changed_stock = wc_maybe_adjust_line_item_product_stock( $item );
 				if ( $changed_stock && ! is_wp_error( $changed_stock ) ) {
 					$qty_change_order_notes[] = $item->get_name() . ' (' . $changed_stock['from'] . '&rarr;' . $changed_stock['to'] . ')';
@@ -508,18 +509,20 @@ function wc_render_invalid_variation_notice( $product_object ) {
 
 	// Check if a variation exists without pricing data.
 	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
-	$invalid_variation_count = $wpdb->get_var(
+	$valid_variation_count = $wpdb->get_var(
 		"
 		SELECT count(post_id) FROM {$wpdb->postmeta}
 		WHERE post_id in (" . implode( ',', array_map( 'absint', $variation_ids ) ) . ")
 		AND ( meta_key='_subscription_sign_up_fee' OR meta_key='_price' )
-		AND meta_value > 0
+		AND meta_value >= 0
 		AND meta_value != ''
 		"
 	);
 	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
 
-	if ( 0 < ( $variation_count - $invalid_variation_count ) ) {
+	$invalid_variation_count = $variation_count - $valid_variation_count;
+
+	if ( 0 < $invalid_variation_count ) {
 		?>
 		<div id="message" class="inline notice notice-warning woocommerce-message woocommerce-notice-invalid-variation">
 			<p>
@@ -527,8 +530,8 @@ function wc_render_invalid_variation_notice( $product_object ) {
 			echo wp_kses_post(
 				sprintf(
 					/* Translators: %d variation count. */
-					_n( '%d variation does not have a price.', '%d variations do not have prices.', ( $variation_count - $invalid_variation_count ), 'woocommerce' ),
-					( $variation_count - $invalid_variation_count )
+					_n( '%d variation does not have a price.', '%d variations do not have prices.', $invalid_variation_count, 'woocommerce' ),
+					$invalid_variation_count
 				) . '&nbsp;' .
 				__( 'Variations (and their attributes) that do not have prices will not be shown in your store.', 'woocommerce' )
 			);
@@ -560,4 +563,30 @@ function wc_get_current_admin_url() {
 	}
 
 	return remove_query_arg( array( '_wpnonce', '_wc_notice_nonce', 'wc_db_update', 'wc_db_update_nonce', 'wc-hide-notice' ), admin_url( $uri ) );
+}
+
+/**
+ * Get default product type options.
+ *
+ * @internal
+ * @since 7.9.0
+ * @return array
+ */
+function wc_get_default_product_type_options() {
+	return array(
+		'virtual'      => array(
+			'id'            => '_virtual',
+			'wrapper_class' => 'show_if_simple',
+			'label'         => __( 'Virtual', 'woocommerce' ),
+			'description'   => __( 'Virtual products are intangible and are not shipped.', 'woocommerce' ),
+			'default'       => 'no',
+		),
+		'downloadable' => array(
+			'id'            => '_downloadable',
+			'wrapper_class' => 'show_if_simple',
+			'label'         => __( 'Downloadable', 'woocommerce' ),
+			'description'   => __( 'Downloadable products give access to a file upon purchase.', 'woocommerce' ),
+			'default'       => 'no',
+		),
+	);
 }

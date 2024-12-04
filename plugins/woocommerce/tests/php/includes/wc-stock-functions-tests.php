@@ -5,6 +5,8 @@
  * @package WooCommerce\Tests\Functions\Stock
  */
 
+use Automattic\WooCommerce\Enums\OrderInternalStatus;
+
 /**
  * Class WC_Stock_Functions_Tests.
  */
@@ -24,7 +26,7 @@ class WC_Stock_Functions_Tests extends \WC_Unit_Test_Case {
 	 */
 	public $order_stock_restore_statuses = array(
 		'wc-cancelled',
-		'wc-pending',
+		OrderInternalStatus::PENDING,
 	);
 
 	/**
@@ -121,7 +123,7 @@ class WC_Stock_Functions_Tests extends \WC_Unit_Test_Case {
 	}
 
 	/**
-	 * Test inventory count after order status transtions which restores stock to another status which reduces stock.
+	 * Test inventory count after order status transitions which restores stock to another status which reduces stock.
 	 * Stock should not have reduced, but will reduce after transition.
 	 */
 	public function test_status_transition_stock_restore_to_stock_reduce() {
@@ -356,5 +358,4 @@ class WC_Stock_Functions_Tests extends \WC_Unit_Test_Case {
 
 		$this->assertIsIntAndEquals( $site_wide_low_stock_amount, wc_get_low_stock_amount( $var1 ) );
 	}
-
 }

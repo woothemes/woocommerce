@@ -33,11 +33,13 @@ export const defaultState: OnboardingState = {
 		store_email: null,
 		is_store_country_set: null,
 	},
+	profileProgress: {},
 	emailPrefill: '',
 	paymentMethods: [],
-	productTypes: [],
+	productTypes: {},
 	requesting: {},
 	taskLists: {},
+	jetpackAuthUrls: {},
 };
 
 const getUpdatedTaskLists = (
@@ -77,6 +79,11 @@ const reducer: Reducer< OnboardingState, Action > = (
 				profileItems: action.replace
 					? action.profileItems
 					: { ...state.profileItems, ...action.profileItems },
+			};
+		case TYPES.SET_PROFILE_PROGRESS:
+			return {
+				...state,
+				profileProgress: action.profileProgress,
 			};
 		case TYPES.SET_EMAIL_PREFILL:
 			return {
@@ -427,6 +434,42 @@ const reducer: Reducer< OnboardingState, Action > = (
 					actionTask: false,
 				},
 				taskLists: getUpdatedTaskLists( state.taskLists, action.task ),
+			};
+		case TYPES.SET_JETPACK_AUTH_URL:
+			return {
+				...state,
+				jetpackAuthUrls: {
+					...state.jetpackAuthUrls,
+					[ action.redirectUrl ]: action.results,
+				},
+			};
+		case TYPES.CORE_PROFILER_COMPLETED_REQUEST:
+			return {
+				...state,
+				requesting: {
+					...state.requesting,
+					coreProfilerCompleted: true,
+				},
+			};
+		case TYPES.CORE_PROFILER_COMPLETED_SUCCESS:
+			return {
+				...state,
+				requesting: {
+					...state.requesting,
+					coreProfilerCompleted: false,
+				},
+			};
+		case TYPES.CORE_PROFILER_COMPLETED_ERROR:
+			return {
+				...state,
+				errors: {
+					...state.errors,
+					coreProfilerCompleted: action.error,
+				},
+				requesting: {
+					...state.requesting,
+					coreProfilerCompleted: false,
+				},
 			};
 		default:
 			return state;

@@ -38,6 +38,7 @@ class WC_Tracks {
 				'url'            => home_url(),
 				'blog_lang'      => get_user_locale( $user_id ),
 				'blog_id'        => class_exists( 'Jetpack_Options' ) ? Jetpack_Options::get_option( 'id' ) : null,
+				'store_id'       => get_option( \WC_Install::STORE_ID_OPTION, null ),
 				'products_count' => self::get_products_count(),
 				'wc_version'     => WC()->version,
 			);
@@ -64,6 +65,21 @@ class WC_Tracks {
 		$data['_dl'] = isset( $_SERVER['REQUEST_SCHEME'] ) ? wc_clean( wp_unslash( $_SERVER['REQUEST_SCHEME'] ) ) . '://' . $host . $uri : '';
 
 		return $data;
+	}
+
+	/**
+	 * Get role-related details.
+	 *
+	 * @param WP_User $user The user object.
+	 * @return array The role details.
+	 */
+	public static function get_role_details( $user ) {
+		return array(
+			'role'                   => ! empty( $user->roles ) ? $user->roles[0] : '',
+			'can_install_plugins'    => $user->has_cap( 'install_plugins' ),
+			'can_activate_plugins'   => $user->has_cap( 'activate_plugins' ),
+			'can_manage_woocommerce' => $user->has_cap( 'manage_woocommerce' ),
+		);
 	}
 
 	/**
@@ -129,7 +145,8 @@ class WC_Tracks {
 
 		$server_details = self::get_server_details();
 		$blog_details   = self::get_blog_details( $user->ID );
+		$role_details   = self::get_role_details( $user );
 
-		return array_merge( $properties, $data, $server_details, $identity, $blog_details );
+		return array_merge( $properties, $data, $server_details, $identity, $blog_details, $role_details );
 	}
 }

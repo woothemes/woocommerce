@@ -6,6 +6,7 @@
  * @since 3.5.0
  */
 
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Internal\Admin\Schedulers\CustomersScheduler;
 use Automattic\WooCommerce\Internal\Admin\Schedulers\OrdersScheduler;
 use Automattic\WooCommerce\Admin\API\Reports\Orders\Stats\DataStore as OrdersStatsDataStore;
@@ -70,14 +71,14 @@ class WC_Admin_Tests_API_Init extends WC_REST_Unit_Test_Case {
 		$product->save();
 
 		$order = WC_Helper_Order::create_order( 1, $product );
-		$order->set_status( 'completed' );
+		$order->set_status( OrderStatus::COMPLETED );
 		$order->set_total( 100 ); // $25 x 4.
 		$order->save();
 
 		// Clear the existing action queue (the above save adds an action).
 		$this->queue->actions = array();
 
-		// Force a failure by sabotaging the query run after retreiving order coupons.
+		// Force a failure by sabotaging the query run after retrieving order coupons.
 		add_filter( 'query', array( $this, 'filter_order_query' ) );
 
 		// Initiate sync.

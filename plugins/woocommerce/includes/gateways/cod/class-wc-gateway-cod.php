@@ -6,6 +6,7 @@
  */
 
 use Automattic\Jetpack\Constants;
+use Automattic\WooCommerce\Enums\OrderStatus;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -22,6 +23,27 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package     WooCommerce\Classes\Payment
  */
 class WC_Gateway_COD extends WC_Payment_Gateway {
+
+	/**
+	 * Gateway instructions that will be added to the thank you page and emails.
+	 *
+	 * @var string
+	 */
+	public $instructions;
+
+	/**
+	 * Enable for shipping methods.
+	 *
+	 * @var array
+	 */
+	public $enable_for_methods;
+
+	/**
+	 * Enable for virtual products.
+	 *
+	 * @var bool
+	 */
+	public $enable_for_virtual;
 
 	/**
 	 * Constructor for the gateway.
@@ -215,6 +237,7 @@ class WC_Gateway_COD extends WC_Payment_Gateway {
 
 		$data_store = WC_Data_Store::load( 'shipping-zone' );
 		$raw_zones  = $data_store->get_zones();
+		$zones      = array();
 
 		foreach ( $raw_zones as $raw_zone ) {
 			$zones[] = new WC_Shipping_Zone( $raw_zone );
@@ -306,7 +329,7 @@ class WC_Gateway_COD extends WC_Payment_Gateway {
 	 * @since  3.4.0
 	 *
 	 * @param array $rate_ids Rate ids to check.
-	 * @return boolean
+	 * @return array
 	 */
 	private function get_matching_rates( $rate_ids ) {
 		// First, match entries in 'method_id:instance_id' format. Then, match entries in 'method_id' format by stripping off the instance ID from the candidates.
@@ -323,8 +346,16 @@ class WC_Gateway_COD extends WC_Payment_Gateway {
 		$order = wc_get_order( $order_id );
 
 		if ( $order->get_total() > 0 ) {
+			/**
+			 * Filter the order status for COD orders.
+			 *
+			 * @since 2.6.0
+			 *
+			 * @param string $order_status Default status for COD orders.
+			 */
+			$process_payment_status = apply_filters( 'woocommerce_cod_process_payment_order_status', $order->has_downloadable_item() ? OrderStatus::ON_HOLD : OrderStatus::PROCESSING, $order );
 			// Mark as processing or on-hold (payment won't be taken until delivery).
-			$order->update_status( apply_filters( 'woocommerce_cod_process_payment_order_status', $order->has_downloadable_item() ? 'on-hold' : 'processing', $order ), __( 'Payment to be made upon delivery.', 'woocommerce' ) );
+			$order->update_status( $process_payment_status, __( 'Payment to be made upon delivery.', 'woocommerce' ) );
 		} else {
 			$order->payment_complete();
 		}
@@ -359,7 +390,7 @@ class WC_Gateway_COD extends WC_Payment_Gateway {
 	 */
 	public function change_payment_complete_order_status( $status, $order_id = 0, $order = false ) {
 		if ( $order && 'cod' === $order->get_payment_method() ) {
-			$status = 'completed';
+			$status = OrderStatus::COMPLETED;
 		}
 		return $status;
 	}

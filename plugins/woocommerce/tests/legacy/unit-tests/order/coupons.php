@@ -5,6 +5,7 @@
  * @package WooCommerce\Tests\Orders
  */
 
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Utilities\NumberUtil;
 
 /**
@@ -47,7 +48,7 @@ class WC_Tests_Order_Coupons extends WC_Unit_Test_Case {
 
 		$order = wc_create_order(
 			array(
-				'status'        => 'pending',
+				'status'        => OrderStatus::PENDING,
 				'customer_id'   => 1,
 				'customer_note' => '',
 				'total'         => '',
@@ -191,7 +192,7 @@ class WC_Tests_Order_Coupons extends WC_Unit_Test_Case {
 		$this->assertEquals( '799.00', $order->get_total(), $order->get_total() );
 
 		/**
-		 * Discount should be based on subtotal unless coupons apply sequencially.
+		 * Discount should be based on subtotal unless coupons apply sequentially.
 		 *
 		 * Coupon will therefore discount 200. Compare the total without tax so we can compare the ex tax price and avoid rounding mishaps.
 		 */
@@ -427,7 +428,7 @@ class WC_Tests_Order_Coupons extends WC_Unit_Test_Case {
 
 		$order = wc_create_order(
 			array(
-				'status'        => 'pending',
+				'status'        => OrderStatus::PENDING,
 				'customer_id'   => 1,
 				'customer_note' => '',
 				'total'         => '',

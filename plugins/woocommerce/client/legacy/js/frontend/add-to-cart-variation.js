@@ -11,6 +11,7 @@
 		self.$singleVariation     = $form.find( '.single_variation' );
 		self.$singleVariationWrap = $form.find( '.single_variation_wrap' );
 		self.$resetVariations     = $form.find( '.reset_variations' );
+		self.$resetAlert          = $form.find( '.reset_variations_alert' );
 		self.$product             = $form.closest( '.product' );
 		self.variationData        = $form.data( 'product_variations' );
 		self.useAjax              = false === self.variationData;
@@ -22,10 +23,11 @@
 		self.$form.off( '.wc-variation-form' );
 
 		// Methods.
-		self.getChosenAttributes    = self.getChosenAttributes.bind( self );
-		self.findMatchingVariations = self.findMatchingVariations.bind( self );
-		self.isMatch                = self.isMatch.bind( self );
-		self.toggleResetLink        = self.toggleResetLink.bind( self );
+		self.getChosenAttributes         = self.getChosenAttributes.bind( self );
+		self.findMatchingVariations      = self.findMatchingVariations.bind( self );
+		self.isMatch                     = self.isMatch.bind( self );
+		self.toggleResetLink             = self.toggleResetLink.bind( self );
+		self.showNoMatchingVariationsMsg = self.showNoMatchingVariationsMsg.bind( self );
 
 		// Events.
 		$form.on( 'click.wc-variation-form', '.reset_variations', { variationForm: self }, self.onReset );
@@ -34,6 +36,9 @@
 		$form.on( 'show_variation', { variationForm: self }, self.onShow );
 		$form.on( 'click', '.single_add_to_cart_button', { variationForm: self }, self.onAddToCart );
 		$form.on( 'reset_data', { variationForm: self }, self.onResetDisplayedVariation );
+		$form.on( 'reset_focus', { variationForm: self }, self.onResetVariationFocus );
+		$form.on( 'announce_reset', { variationForm: self }, self.onAnnounceReset );
+		$form.on( 'clear_reset_announcement', { variationForm: self }, self.onClearResetAnnouncement );
 		$form.on( 'reset_image', { variationForm: self }, self.onResetImage );
 		$form.on( 'change.wc-variation-form', '.variations select', { variationForm: self }, self.onChange );
 		$form.on( 'found_variation.wc-variation-form', { variationForm: self }, self.onFoundVariation );
@@ -54,7 +59,9 @@
 	VariationForm.prototype.onReset = function( event ) {
 		event.preventDefault();
 		event.data.variationForm.$attributeFields.val( '' ).trigger( 'change' );
+		event.data.variationForm.$form.trigger( 'announce_reset' );
 		event.data.variationForm.$form.trigger( 'reset_data' );
+		event.data.variationForm.$form.trigger( 'reset_focus' );
 	};
 
 	/**
@@ -151,6 +158,25 @@
 	};
 
 	/**
+	 * Announce reset to screen readers.
+	 */
+	VariationForm.prototype.onAnnounceReset = function( event ) {
+		event.data.variationForm.$resetAlert.text( wc_add_to_cart_variation_params.i18n_reset_alert_text );
+	}
+
+	/**
+	 * Focus variation reset
+	 */
+	VariationForm.prototype.onResetVariationFocus = function( event ) {
+		event.data.variationForm.$attributeFields[0].focus();
+	}
+
+	/** Clear reset announcement */
+	VariationForm.prototype.onClearResetAnnouncement = function( event ) {
+		event.data.variationForm.$resetAlert.text( '' );
+	}
+
+	/**
 	 * When the product image is reset.
 	 */
 	VariationForm.prototype.onResetImage = function( event ) {
@@ -167,16 +193,16 @@
 
 		if ( attributes.count && attributes.count === attributes.chosenCount ) {
 			if ( form.useAjax ) {
-				if ( form.controller ) {
-					form.controller.abort();
+				if ( form.xhr ) {
+					form.xhr.abort();
 				}
 				form.$form.block( { message: null, overlayCSS: { background: '#fff', opacity: 0.6 } } );
 				currentAttributes.product_id  = parseInt( form.$form.data( 'product_id' ), 10 );
 				currentAttributes.custom_data = form.$form.data( 'custom_data' );
-				const options                 = {
+				form.xhr                      = $.ajax( {
 					url: wc_add_to_cart_variation_params.wc_ajax_url.toString().replace( '%%endpoint%%', 'get_variation' ),
 					type: 'POST',
-					data: $.param( currentAttributes ),
+					data: currentAttributes,
 					success: function( variation ) {
 						if ( variation ) {
 							form.$form.trigger( 'found_variation', [ variation ] );
@@ -185,39 +211,14 @@
 							attributes.chosenCount = 0;
 
 							if ( ! form.loading ) {
-								form.$form
-									.find( '.single_variation' )
-									.after(
-										'<p class="wc-no-matching-variations woocommerce-info">' +
-										wc_add_to_cart_variation_params.i18n_no_matching_variations_text +
-										'</p>'
-									);
-								form.$form.find( '.wc-no-matching-variations' ).slideDown( 200 );
+								form.showNoMatchingVariationsMsg();
 							}
 						}
 					},
 					complete: function() {
 						form.$form.unblock();
 					}
-				};
-
-				const controller = new AbortController();
-				form.controller = controller;
-
-				window.fetch( options.url, {
-					method: options.type,
-					headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
-					body: options.data,
-					signal: controller.signal
-				} )
-					.then( response => {
-						if ( !response.ok ) {
-							throw new Error( response.statusText );
-						}
-						return response.json();
-					})
-					.then( options.success )
-					.finally( () => options.complete() );
+				} );
 			} else {
 				form.$form.trigger( 'update_variation_values' );
 
@@ -231,14 +232,7 @@
 					attributes.chosenCount = 0;
 
 					if ( ! form.loading ) {
-						form.$form
-							.find( '.single_variation' )
-							.after(
-								'<p class="wc-no-matching-variations woocommerce-info">' +
-								wc_add_to_cart_variation_params.i18n_no_matching_variations_text +
-								'</p>'
-							);
-						form.$form.find( '.wc-no-matching-variations' ).slideDown( 200 );
+						form.showNoMatchingVariationsMsg();
 					}
 				}
 			}
@@ -346,7 +340,8 @@
 		var form = event.data.variationForm;
 
 		form.$form.find( 'input[name="variation_id"], input.variation_id' ).val( '' ).trigger( 'change' );
-		form.$form.find( '.wc-no-matching-variations' ).remove();
+		form.$form.trigger( 'clear_reset_announcement' );
+		form.$form.find( '.wc-no-matching-variations' ).parent().remove();
 
 		if ( form.useAjax ) {
 			form.$form.trigger( 'check_variations' );
@@ -575,16 +570,37 @@
 	};
 
 	/**
-	 * Show or hide the reset link.
+	 * Show or hide the reset button.
 	 */
 	VariationForm.prototype.toggleResetLink = function( on ) {
+		this.$resetAlert.text( '' );
 		if ( on ) {
 			if ( this.$resetVariations.css( 'visibility' ) === 'hidden' ) {
 				this.$resetVariations.css( 'visibility', 'visible' ).hide().fadeIn();
+				this.$resetVariations.css( 'display', 'inline-block' );
 			}
 		} else {
 			this.$resetVariations.css( 'visibility', 'hidden' );
+			this.$resetVariations.css( 'display', 'none' );
 		}
+	};
+
+	/**
+	 * Show no matching variation message.
+	 */
+	VariationForm.prototype.showNoMatchingVariationsMsg = function() {
+		this.$form
+			.find( '.single_variation' )
+			.after(
+				'<div role="alert">' +
+					'<p class="wc-no-matching-variations woocommerce-info">' +
+						wc_add_to_cart_variation_params.i18n_no_matching_variations_text +
+					'</p>' +
+				'</div>'
+			)
+			.next( 'div' )
+			.find( '.wc-no-matching-variations' )
+			.slideDown( 200 );
 	};
 
 	/**
@@ -686,7 +702,7 @@
 			var slideToImage = $gallery_nav.find( 'li img[src="' + variation.image.gallery_thumbnail_src + '"]' );
 
 			if ( slideToImage.length > 0 ) {
-				slideToImage.trigger( 'click' );
+				slideToImage.trigger( 'flexslider-click' );
 				$form.attr( 'current-image', variation.image_id );
 				window.setTimeout( function() {
 					$( window ).trigger( 'resize' );

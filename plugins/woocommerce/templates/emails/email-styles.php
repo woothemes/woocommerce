@@ -10,9 +10,9 @@
  * happen. When this occurs the version of the template file will be bumped and
  * the readme will list any important changes.
  *
- * @see     https://docs.woocommerce.com/document/template-structure/
+ * @see     https://woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates\Emails
- * @version 7.4.0
+ * @version 9.6.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,11 +20,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Load colors.
-$bg        = get_option( 'woocommerce_email_background_color' );
-$body      = get_option( 'woocommerce_email_body_background_color' );
-$base      = get_option( 'woocommerce_email_base_color' );
-$base_text = wc_light_or_dark( $base, '#202020', '#ffffff' );
-$text      = get_option( 'woocommerce_email_text_color' );
+$bg               = get_option( 'woocommerce_email_background_color' );
+$body             = get_option( 'woocommerce_email_body_background_color' );
+$base             = get_option( 'woocommerce_email_base_color' );
+$base_text        = wc_light_or_dark( $base, '#202020', '#ffffff' );
+$text             = get_option( 'woocommerce_email_text_color' );
+$footer_text      = get_option( 'woocommerce_email_footer_text_color' );
+$header_alignment = get_option( 'woocommerce_email_header_alignment' );
 
 // Pick a contrasting color for links.
 $link_color = wc_hex_is_light( $base ) ? $base : $base_text;
@@ -85,6 +87,12 @@ body {
 	background-color: inherit;
 }
 
+<?php if ( $header_alignment ) : ?>
+#template_header_image p {
+	text-align: <?php echo esc_attr( $header_alignment ); ?>;
+}
+<?php endif; ?>
+
 #template_header_image img {
 	margin-left: 0;
 	margin-right: 0;
@@ -97,7 +105,7 @@ body {
 
 #template_footer #credit {
 	border: 0;
-	color: <?php echo esc_attr( $text_lighter_40 ); ?>;
+	color: <?php echo esc_attr( $footer_text ); ?>;
 	font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
 	font-size: 12px;
 	line-height: 150%;
@@ -165,6 +173,17 @@ body {
 	border: 1px solid <?php echo esc_attr( $body_darker_10 ); ?>;
 }
 
+.additional-fields {
+	padding: 12px 12px 0;
+	color: <?php echo esc_attr( $text_lighter_20 ); ?>;
+	border: 1px solid <?php echo esc_attr( $body_darker_10 ); ?>;
+	list-style: none outside;
+}
+
+.additional-fields li {
+	margin: 0 0 12px 0;
+}
+
 .text {
 	color: <?php echo esc_attr( $text ); ?>;
 	font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
@@ -177,6 +196,17 @@ body {
 #header_wrapper {
 	padding: 36px 48px;
 	display: block;
+}
+
+<?php if ( $header_alignment ) : ?>
+#header_wrapper h1 {
+	text-align: <?php echo esc_attr( $header_alignment ); ?>;
+}
+<?php endif; ?>
+
+#template_footer #credit,
+#template_footer #credit a {
+	color: <?php echo esc_attr( $footer_text ); ?>;
 }
 
 h1 {

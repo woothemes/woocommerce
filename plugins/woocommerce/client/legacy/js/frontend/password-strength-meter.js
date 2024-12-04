@@ -1,5 +1,5 @@
 /* global wp, pwsL10n, wc_password_strength_meter_params */
-( function( $ ) {
+jQuery( function( $ ) {
     'use strict';
 	/**
 	 * Password Strength Meter class.
@@ -64,8 +64,10 @@
 			if ( '' === field.val() ) {
 				meter.hide();
 				$( document.body ).trigger( 'wc-password-strength-hide' );
+				field.removeAttr( 'aria-describedby' );
 			} else if ( 0 === meter.length ) {
-				field.after( '<div class="woocommerce-password-strength" aria-live="polite"></div>' );
+				field.after( '<div id="password_strength" class="woocommerce-password-strength" role="alert"></div>' );
+				field.attr( 'aria-describedby', 'password_strength' );
 				$( document.body ).trigger( 'wc-password-strength-added' );
 			} else {
 				meter.show();
@@ -129,4 +131,4 @@
 	};
 
 	wc_password_strength_meter.init();
-})( jQuery );
+} );
