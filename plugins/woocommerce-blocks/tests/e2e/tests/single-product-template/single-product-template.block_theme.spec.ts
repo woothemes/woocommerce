@@ -69,6 +69,6 @@ test( 'shows password form in products protected with password', async ( {
 	await page.getByLabel( 'Password:' ).fill( 'password' );
 	await page.getByRole( 'button', { name: 'Enter' } ).click();
 	await expect(
-		page.getByRole( 'link', { name: 'Description' } )
+		page.getByRole( 'tab', { name: 'Description' } )
 	).toBeVisible();
 } );
