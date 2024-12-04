@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-import { __, sprintf } from '@wordpress/i18n';
-import { useLocale } from '@automattic/i18n-utils';
+import { __, sprintf, getLocaleData } from '@wordpress/i18n';
 
 const defaultValidityMessage =
 	( label: string | undefined ) =>
 	( validity: ValidityState ): string | undefined => {
-		const locale = useLocale();
-		const shouldKeepOriginalCase = locale === 'de';
+		const localeData = getLocaleData();
+		const shouldKeepOriginalCase = localeData[ '' ]?.lang === 'de';
 
 		const fieldLabel = shouldKeepOriginalCase
 			? label
