@@ -879,7 +879,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 					'preferred',
 					'recommended',
 				),
-				'_links' 		  => array(
+				'_links'            => array(
 					'hide' => array(
 						'href' => 'http://localhost:8888/wp-json/wc-admin/settings/payments/providers/suggestion/woopayments/hide',
 					),
@@ -917,7 +917,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 					'made_in_woo',
 					'preferred',
 				),
-				'_links' 		  => array(
+				'_links'            => array(
 					'hide' => array(
 						'href' => 'http://localhost:8888/wp-json/wc-admin/settings/payments/providers/suggestion/paypal/hide',
 					),
