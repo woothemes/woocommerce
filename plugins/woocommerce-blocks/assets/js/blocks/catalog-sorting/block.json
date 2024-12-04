@@ -20,6 +20,10 @@
 		"fontSize": {
 			"type": "string",
 			"default": "small"
+		},
+		"useLabel": {
+			"type": "boolean",
+			"default": false
 		}
 	},
 	"textdomain": "woocommerce",
