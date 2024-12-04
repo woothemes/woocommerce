@@ -457,8 +457,9 @@ test.describe( 'Merchant → Checkout', () => {
 					'woocommerce/checkout-shipping-address-block'
 				);
 
-				const shippingApartmentInput =
-					shippingAddressBlock.getByLabel( 'Address Line 2' );
+				const shippingApartmentInput = shippingAddressBlock.getByLabel(
+					'Apartment, suite, etc.'
+				);
 
 				const shippingApartmentLink = shippingAddressBlock.getByRole(
 					'button',
