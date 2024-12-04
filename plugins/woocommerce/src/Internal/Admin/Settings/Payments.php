@@ -673,16 +673,21 @@ class Payments {
 			// If the payment method has a description, sanitize it before use.
 			if ( ! empty( $recommended_pm['description'] ) ) {
 				$standard_details['description'] = $recommended_pm['description'];
-				// Make sure that if we have HTML tags, we only allow a limited set of tags.
+				// Make sure that if we have HTML tags, we only allow stylistic tags.
 				if ( preg_match( '/<[^>]+>/', $standard_details['description'] ) ) {
-					$standard_details['description'] = wp_kses(
-						$standard_details['description'],
-						wp_kses_allowed_html( 'data' ) + array(
-							'p' => array(
-								'align' => true,
+					// Only allow stylistic tags with a few modifications.
+					$allowed_tags = wp_kses_allowed_html( 'data' );
+					$allowed_tags = array_merge(
+						$allowed_tags,
+						array(
+							'a' => array(
+								'href'   => true,
+								'target' => true,
 							),
 						)
 					);
+
+					$standard_details['description'] = wp_kses( $standard_details['description'], $allowed_tags );
 				}
 			}
 
