@@ -17,7 +17,11 @@ import './settings-payments-main.scss';
 import { createNoticesFromResponse } from '~/lib/notices';
 import { OtherPaymentGateways } from '~/settings-payments/components/other-payment-gateways';
 import { PaymentGateways } from '~/settings-payments/components/payment-gateways';
-import { getWooPaymentsTestDriveAccountLink } from '~/settings-payments/utils';
+import {
+	getWooPaymentsTestDriveAccountLink,
+	providersContainWooPaymentsInTestMode,
+} from '~/settings-payments/utils';
+import { WooPaymentsReadyToTestModal } from '~/settings-payments/components/woo-payments-ready-to-test-modal';
 
 export const SettingsPaymentsMain = () => {
 	const [ installingPlugin, setInstallingPlugin ] = useState< string | null >(
@@ -26,6 +30,8 @@ export const SettingsPaymentsMain = () => {
 	const { installAndActivatePlugins } = useDispatch( PLUGINS_STORE_NAME );
 
 	const [ errorMessage, setErrorMessage ] = useState< string | null >( null );
+	const [ livePaymentsModalVisible, setLivePaymentsModalVisible ] =
+		useState( false );
 
 	const urlParams = new URLSearchParams( window.location.search );
 
@@ -51,6 +57,13 @@ export const SettingsPaymentsMain = () => {
 					'woocommerce'
 				)
 			);
+		}
+
+		const isSandboxOnboardedSuccessful =
+			urlParams.get( 'wcpay-sandbox-success' ) === 'true';
+
+		if ( isSandboxOnboardedSuccessful ) {
+			setLivePaymentsModalVisible( true );
 		}
 	}, [] );
 
@@ -140,6 +153,13 @@ export const SettingsPaymentsMain = () => {
 					isFetching={ isFetching }
 				/>
 			</div>
+			<WooPaymentsReadyToTestModal
+				isOpen={
+					livePaymentsModalVisible &&
+					providersContainWooPaymentsInTestMode( providers )
+				}
+				onClose={ () => setLivePaymentsModalVisible( false ) }
+			/>
 		</>
 	);
 };

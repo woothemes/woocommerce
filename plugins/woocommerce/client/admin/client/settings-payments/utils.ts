@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { PaymentProvider } from '@woocommerce/data';
 import { getAdminLink } from '@woocommerce/settings';
 
 /**
@@ -36,5 +37,22 @@ export const getWooPaymentsResetAccountLink = () => {
 		'admin.php?wcpay-connect=1&_wpnonce=' +
 			getAdminSetting( 'wcpay_welcome_page_connect_nonce' ) +
 			'&wcpay-reset-account=true&redirect_to_settings_page=true'
+	);
+};
+
+export const getWooPaymentsSetupLiveAccountLink = () => {
+	return getAdminLink(
+		'admin.php?wcpay-connect=1&_wpnonce=' +
+			getAdminSetting( 'wcpay_welcome_page_connect_nonce' ) +
+			'&wcpay-disable-onboarding-test-mode=true&redirect_to_settings_page=true&source=wcpay-setup-live-payments'
+	);
+};
+
+export const providersContainWooPaymentsInTestMode = (
+	providers: PaymentProvider[]
+): boolean => {
+	const wooPayments = providers.find( ( obj ) => isWooPayments( obj.id ) );
+	return (
+		!! wooPayments?.state?.test_mode && ! wooPayments?.state?.needs_setup
 	);
 };
