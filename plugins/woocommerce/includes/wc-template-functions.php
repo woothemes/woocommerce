@@ -1558,7 +1558,7 @@ if ( ! function_exists( 'woocommerce_catalog_ordering' ) ) {
 
 	/**
 	 * Output the product sorting options.
-	 * 
+	 *
 	 * @param array|null $attributes Block attributes.
 	 */
 	function woocommerce_catalog_ordering( $attributes = null ) {
@@ -1568,6 +1568,12 @@ if ( ! function_exists( 'woocommerce_catalog_ordering' ) ) {
 		$show_default_orderby    = 'menu_order' === apply_filters( 'woocommerce_default_catalog_orderby', get_option( 'woocommerce_default_catalog_orderby', 'menu_order' ) );
 
 		if ( isset( $attributes ) && isset( $attributes['useLabel'] ) && $attributes['useLabel'] ) {
+			/**
+			 * Filters the catalog orderby options.
+			 * 
+			 * @since 9.6.0
+			 * @param array $catalog_orderby_options Array of catalog orderby options.
+			 */
 			$catalog_orderby_options = apply_filters(
 				'woocommerce_catalog_orderby',
 				array(
@@ -1580,6 +1586,7 @@ if ( ! function_exists( 'woocommerce_catalog_ordering' ) ) {
 				)
 			);
 		} else {
+			// phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment
 			$catalog_orderby_options = apply_filters(
 				'woocommerce_catalog_orderby',
 				array(
@@ -1591,7 +1598,6 @@ if ( ! function_exists( 'woocommerce_catalog_ordering' ) ) {
 					'price-desc' => __( 'Sor by Price: high to low', 'woocommerce' ),
 				)
 			);
-			
 		}
 
 		$default_orderby = wc_get_loop_prop( 'is_search' ) ? 'relevance' : apply_filters( 'woocommerce_default_catalog_orderby', get_option( 'woocommerce_default_catalog_orderby', '' ) );
