@@ -30,6 +30,10 @@ class AddToCartWithOptions extends AbstractBlock {
 	 */
 	protected function initialize() {
 		parent::initialize();
+
+		// Register a core/button variation for the Add To Cart Button block.
+		add_filter( 'register_block_type_args', array( $this, 'add_core_button_variation_for_add_to_cart_button' ), 10, 2 );
+
 		add_filter( 'wc_add_to_cart_message_html', array( $this, 'add_to_cart_message_html_filter' ), 10, 2 );
 		add_filter( 'woocommerce_add_to_cart_redirect', array( $this, 'add_to_cart_redirect_filter' ), 10, 1 );
 	}
@@ -207,5 +211,50 @@ class AddToCartWithOptions extends AbstractBlock {
 		}
 
 		return $url;
+	}
+	
+	/**
+	 * Add a core/button variation for the Add To Cart Button block.
+	 * It registers a new block `withRole` attribute
+	 * to identify when it's active.
+	 *
+	 * @param array  $args Block type args.
+	 * @param string $block_name Block name.
+	 * @return array
+	 */
+	public function add_core_button_variation_for_add_to_cart_button( $args, $block_name ) {
+		if ( 'core/button' !== $block_name ) {
+			return $args;
+		}
+
+		/*
+		 * Add withRole attribute to the block.
+		 * This attribute is used to identify when the block is active.
+		 */
+		$args['attributes']['withRole'] = array(
+			'type' => 'string',
+		);
+
+		if ( ! isset( $args['variations'] ) ) {
+			$args['variations'] = array();
+		}
+
+		$args['variations'][] = array(
+			'name'        => 'woocommerce/product-add-to-cart-with-options-button',
+			'title'       => __( 'Add To Cart Button (Experimental)', 'woocommerce' ),
+			'description' => __( 'Add a Button block to add product quantity to cart.', 'woocommerce' ),
+			'attributes'  => array(
+				'className' => 'wc-block-product-add-to-cart-with-options-button',
+				'withRole'  => 'add-to-cart-with-options-button',
+				'text'      => __( 'Add to Cart', 'woocommerce' ),
+			),
+			'scope'       => array(
+				'block',
+			),
+			'isActive'    => [ 'withRole' ],
+			'isDefault'   => false,
+		);
+
+		return $args;
 	}
 }
