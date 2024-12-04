@@ -38,7 +38,7 @@ class ProductStockIndicator extends AbstractBlock {
 		return [ 'query', 'queryId', 'postId' ];
 	}
 
-		/**
+	/**
 	 * Get the product types that are allowed in the editor.
 	 *
 	 * @return array
