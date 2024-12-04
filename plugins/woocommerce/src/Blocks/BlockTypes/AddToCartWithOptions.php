@@ -282,6 +282,21 @@ class AddToCartWithOptions extends AbstractBlock {
 			return $block_content;
 		}
 
+		/*
+		 * Register the frontend script for the block.
+		 * ToDo: Check if this is the correct way to register the script.
+		 */
+		$block_name = $this->block_name . '-button';
+		$path       = $this->asset_api->get_block_asset_build_path( $block_name . '-frontend' );
+
+		$this->asset_api->register_script(
+			$block_name,
+			$path,
+			$this->integration_registry->get_all_registered_script_handles()
+		);
+
+		wp_enqueue_script( $block_name );
+
 		// Interactivity API - Namespace and Context.
 		$i_api_namespace     = $this->get_full_block_name();
 		$data_wc_interactive = wp_json_encode( array( 'namespace' => $i_api_namespace ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP );
