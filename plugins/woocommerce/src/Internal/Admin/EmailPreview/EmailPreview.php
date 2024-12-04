@@ -145,12 +145,16 @@ class EmailPreview {
 		$email  = $emails[ $this->email_type ];
 
 		$order = $this->get_dummy_order();
+		$email->set_object( $order );
+
 		/**
-		 * An object used in email preview. Defaults to a dummy WC_Order.
+		 * Allow to modify the email object before rendering the preview to add additional data.
+		 *
+		 * @param WC_Email $email The email object.
 		 *
 		 * @since 9.6.0
 		 */
-		$email->set_object( apply_filters( 'woocommerce_email_preview_object', $order ) );
+		$email = apply_filters( 'woocommerce_prepare_email_for_preview', $email );
 
 		$content = $email->get_content_html();
 
@@ -182,9 +186,12 @@ class EmailPreview {
 		/**
 		 * A dummy WC_Order used in email preview.
 		 *
+		 * @param WC_Order $order The dummy order object.
+		 * @param string   $email_type The email type to preview.
+		 *
 		 * @since 9.6.0
 		 */
-		return apply_filters( 'woocommerce_email_preview_dummy_order', $order );
+		return apply_filters( 'woocommerce_email_preview_dummy_order', $order, $this->email_type );
 	}
 
 	/**
@@ -201,9 +208,12 @@ class EmailPreview {
 		/**
 		 * A dummy WC_Product used in email preview.
 		 *
+		 * @param WC_Product $product The dummy product object.
+		 * @param string     $email_type The email type to preview.
+		 *
 		 * @since 9.6.0
 		 */
-		return apply_filters( 'woocommerce_email_preview_dummy_product', $product );
+		return apply_filters( 'woocommerce_email_preview_dummy_product', $product, $this->email_type );
 	}
 
 	/**
@@ -228,9 +238,12 @@ class EmailPreview {
 		/**
 		 * A dummy address used in email preview as billing and shipping one.
 		 *
+		 * @param array  $address The dummy address.
+		 * @param string $email_type The email type to preview.
+		 *
 		 * @since 9.6.0
 		 */
-		return apply_filters( 'woocommerce_email_preview_dummy_address', $address );
+		return apply_filters( 'woocommerce_email_preview_dummy_address', $address, $this->email_type );
 	}
 
 	/**
