@@ -39,10 +39,21 @@ const INNER_BLOCKS_TEMPLATE: InnerBlockTemplate[] = [
 		},
 	],
 	[
-		'woocommerce/product-button',
+		'core/button',
 		{
-			textAlign: 'center',
-			fontSize: 'small',
+			className: 'wc-block-product-add-to-cart-with-options-button',
+			text: __( 'Add to Cart', 'woocommerce' ),
+			withRole: 'add-to-cart-with-options-button',
+			metadata: {
+				bindings: {
+					url: {
+						source: 'core/post-meta',
+						args: {
+							key: 'add_to_cart_url',
+						},
+					},
+				},
+			},
 		},
 	],
 ];
