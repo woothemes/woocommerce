@@ -424,7 +424,7 @@ test.describe(
 					0
 				);
 				await page.waitForTimeout( 2000 ); // needs some time before reload for change to take effect.
-				await page.reload( { waitForLoadState: 'networkidle' } );
+				await page.reload();
 				await expect(
 					page.getByText(
 						/confirm the email address linked to the order | verify the email address associated /

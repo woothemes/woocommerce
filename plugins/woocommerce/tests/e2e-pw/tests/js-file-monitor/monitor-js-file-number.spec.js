@@ -50,11 +50,12 @@ test.describe( 'Keeps track of the number of JS files included on key shopper pa
 	for ( const row of shopperPages ) {
 		const url = row.url;
 		const name = row.name;
-		const expectedCount = parseInt( row.expectedCount );
+		const expectedCount = parseInt( row.expectedCount, 10 );
 
 		test( `Check that ${ name } has ${ expectedCount } JS files`, async ( {
 			page,
 		} ) => {
+			// eslint-disable-next-line playwright/no-networkidle
 			await page.goto( url, { waitUntil: 'networkidle' } );
 			const javascriptFiles = await page.$$eval(
 				'script[src]',
@@ -75,11 +76,12 @@ test.describe( 'Keeps track of the number of JS files on key admin pages', () =>
 	for ( const row of merchantPages ) {
 		const url = row.url;
 		const name = row.name;
-		const expectedCount = parseInt( row.expectedCount );
+		const expectedCount = parseInt( row.expectedCount, 10 );
 
 		test( `Check that ${ name } has ${ expectedCount } JS files`, async ( {
 			page,
 		} ) => {
+			// eslint-disable-next-line playwright/no-networkidle
 			await page.goto( url, { waitUntil: 'networkidle' } );
 			const javascriptFiles = await page.$$eval(
 				'script[src]',
