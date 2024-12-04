@@ -34,6 +34,9 @@ class AddToCartWithOptions extends AbstractBlock {
 		// Register a core/button variation for the Add To Cart Button block.
 		add_filter( 'register_block_type_args', array( $this, 'add_core_button_variation_for_add_to_cart_button' ), 10, 2 );
 
+		// Extend core/block rendering.
+		add_filter( 'render_block', array( $this, 'render_product_add_to_cart_with_options_button' ), 10, 3 );
+
 		add_filter( 'wc_add_to_cart_message_html', array( $this, 'add_to_cart_message_html_filter' ), 10, 2 );
 		add_filter( 'woocommerce_add_to_cart_redirect', array( $this, 'add_to_cart_redirect_filter' ), 10, 1 );
 	}
@@ -256,5 +259,49 @@ class AddToCartWithOptions extends AbstractBlock {
 		);
 
 		return $args;
+	}
+
+	/**
+	 * Render the Add To Cart Button block.
+	 *
+	 * @param string $block_content The block content.
+	 * @param array  $block The block.
+	 * @return string
+	 */
+	public function render_product_add_to_cart_with_options_button( $block_content, $block ) {
+		// Only extend the core/button block.
+		if ( $block['blockName'] !== 'core/button' ) {
+			return $block_content;
+		}
+
+		/*
+		 * Only extend the Add To Cart Button variation,
+		 * identified by the `withRole` attribute.
+		 */
+		if ( ! isset( $block['attrs']['withRole'] ) || 'add-to-cart-with-options-button' !== $block['attrs']['withRole'] ) {
+			return $block_content;
+		}
+
+		// Interactivity API - Namespace and Context.
+		$i_api_namespace     = $this->get_full_block_name();
+		$data_wc_interactive = wp_json_encode( array( 'namespace' => $i_api_namespace ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP );
+
+		// Interactivity API - Add to Cart Button / Actions.
+		$data_wc_add_to_cart_action = $i_api_namespace . '::actions.addToCart';
+
+		$processor = new \WP_HTML_Tag_Processor( $block_content );
+
+		if ( $processor->next_tag( array(
+			'tag_name'   => 'div',
+			'class_name' => 'wc-block-product-add-to-cart-with-options-button',
+		) ) ) {
+			$processor->set_attribute( 'data-wc-interactive', $data_wc_interactive );
+
+			if ( $processor->next_tag( array( 'tag_name' => 'a', 'class_name' => 'wp-element-button' ) ) ) {
+				$processor->set_attribute( 'data-wc-on--click', $data_wc_add_to_cart_action );
+			}
+		}
+
+		return $processor->get_updated_html();
 	}
 }
