@@ -72,6 +72,8 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$gateway = $data[4];
 		$this->assertArrayHasKey( 'id', $gateway, 'Gateway `id` entry is missing' );
 		$this->assertArrayHasKey( '_order', $gateway, 'Gateway `_order` entry is missing' );
+		$this->assertArrayHasKey( '_type', $gateway, 'Gateway `_type` entry is missing' );
+		$this->assertEquals( Payments::PROVIDER_TYPE_GATEWAY, $gateway['_type'], 'Gateway `_type` entry is not `' . Payments::PROVIDER_TYPE_GATEWAY . '`' );
 		$this->assertArrayHasKey( 'title', $gateway, 'Gateway `title` entry is missing' );
 		$this->assertArrayHasKey( 'description', $gateway, 'Gateway `description` entry is missing' );
 		$this->assertArrayHasKey( 'supports', $gateway, 'Gateway `supports` entry is missing' );
@@ -221,6 +223,8 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$gateway = $data[6];
 		$this->assertArrayHasKey( 'id', $gateway, 'Gateway `id` entry is missing' );
 		$this->assertArrayHasKey( '_order', $gateway, 'Gateway `_order` entry is missing' );
+		$this->assertArrayHasKey( '_type', $gateway, 'Gateway `_type` entry is missing' );
+		$this->assertEquals( Payments::PROVIDER_TYPE_GATEWAY, $gateway['_type'], 'Gateway `_type` entry is not `' . Payments::PROVIDER_TYPE_GATEWAY . '`' );
 		$this->assertArrayHasKey( 'title', $gateway, 'Gateway `title` entry is missing' );
 		$this->assertArrayHasKey( 'description', $gateway, 'Gateway `description` entry is missing' );
 		$this->assertArrayHasKey( 'supports', $gateway, 'Gateway `supports` entry is missing' );
@@ -236,6 +240,139 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'plugin', $gateway, 'Gateway `plugin` entry is missing' );
 		$this->assertArrayHasKey( 'slug', $gateway['plugin'], 'Gateway `plugin[slug]` entry is missing' );
 		$this->assertArrayHasKey( 'status', $gateway['plugin'], 'Gateway `plugin[status]` entry is missing' );
+
+		// Clean up.
+		delete_option( 'woocommerce_gateway_order' );
+	}
+
+	/**
+	 * Test getting payment providers that have recommended payment methods.
+	 */
+	public function test_get_payment_providers_with_recommended_payment_methods() {
+		// Arrange.
+		$this->mock_payment_gateways(
+			array(
+				'woocommerce_payments' => array(
+					'enabled'                     => false,
+					'plugin_slug'                 => 'woocommerce-payments',
+					'recommended_payment_methods' => array(
+						// Basic PM.
+						array(
+							'id'      => 'basic',
+							// No order, should be last.
+							'enabled' => true,
+							'title'   => 'Title',
+						),
+						// Basic PM with priority instead of order.
+						array(
+							'id'       => 'basic2',
+							'priority' => 30,
+							'enabled'  => false,
+							'title'    => 'Title',
+						),
+						array(
+							'id'          => 'card',
+							'order'       => 20,
+							'enabled'     => true,
+							'title'       => '<b>Credit/debit card (required)</b>', // All tags should be stripped.
+							// Paragraphs and line breaks should be stripped.
+							'description' => '<p><strong>Accepts</strong> <b>all major</b></br><em>credit</em> and <a href="#" target="_blank">debit cards</a>.</p>',
+							'icon'        => 'https://example.com/card-icon.png',
+						),
+						array(
+							'id'          => 'woopay',
+							'order'       => 10,
+							'enabled'     => false,
+							'title'       => 'WooPay',
+							'description' => 'WooPay express checkout',
+							// base64 encoded SVG.
+							'icon'        => 'PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbD0iI0YwRjBGMCIgZD0iTTAgMGg0MHY0MEgweiIvPjxwYXRoIGQ9Ik0yOS41IDE0LjMwOHYxMS4zODRjMCAuNTA1LS4xNzUuOTMzLS41MjUgMS4yODMtLjM1LjM1LS43NzguNTI1LTEuMjgzLjUyNUgxMi4zMDhjLS41MDUgMC0uOTMzLS4xNzUtMS4yODMtLjUyNWExLjc0NSAxLjc0NSAwIDAgMS0uNTI1LTEuMjgzVjE0LjMwOGMwLS41MDUuMTc1LS45MzMuNTI1LTEuMjgzLjM1LS4zNS43NzgtLjUyNSAxLjI4My0uNTI1aDE1LjM4NGMuNTA1IDAgLjkzMy4xNzUgMS4yODMuNTI1LjM1LjM1LjUyNS43NzguNTI1IDEuMjgzWk0xMiAxNi40MDRoMTZ2LTIuMDk2YS4yOTQuMjk0IDAgMCAwLS4wOTYtLjIxMi4yOTQuMjk0IDAgMCAwLS4yMTItLjA5NkgxMi4zMDhhLjI5NC4yOTQgMCAwIDAtLjIxMi4wOTYuMjkzLjI5MyAwIDAgMC0uMDk2LjIxMnYyLjA5NlptMCAzLjE5MnY2LjA5NmMwIC4wNzcuMDMyLjE0OC4wOTYuMjEyYS4yOTQuMjk0IDAgMCAwIC4yMTIuMDk2aDE1LjM4NGEuMjk0LjI5NCAwIDAgMCAuMjEyLS4wOTYuMjk0LjI5NCAwIDAgMCAuMDk2LS4yMTJ2LTYuMDk2SDEyWiIgZmlsbD0iIzJGMkYyRiIvPjwvc3ZnPgo=',
+						),
+						// Invalid PM, should be ignored. No data.
+						array(),
+						// Invalid PM, should be ignored. No ID.
+						array( 'title' => 'Card' ),
+						// Invalid PM, should be ignored. No title.
+						array( 'id' => 'card' ),
+					),
+				),
+			),
+			true
+		);
+		$this->service->reset_memo();
+
+		// Act.
+		$data = $this->service->get_payment_providers( 'US' );
+
+		// We have the core PayPal and fake WooPayments gateway registered, the 3 offline payment methods and their group entry.
+		$this->assertCount( 6, $data );
+		// Because the core registers the PayPal PG after the offline PMs, the order we expect is this.
+		$this->assertSame(
+			array( Payments::OFFLINE_METHODS_ORDERING_GROUP, 'bacs', 'cheque', 'cod', 'paypal', 'woocommerce_payments' ),
+			array_column( $data, 'id' )
+		);
+
+		// Assert that the fake WooPayments gateway has all the details.
+		$gateway = $data[5];
+		$this->assertArrayHasKey( 'id', $gateway, 'Gateway `id` entry is missing' );
+		$this->assertArrayHasKey( '_order', $gateway, 'Gateway `_order` entry is missing' );
+		$this->assertArrayHasKey( '_type', $gateway, 'Gateway `_type` entry is missing' );
+		$this->assertEquals( Payments::PROVIDER_TYPE_GATEWAY, $gateway['_type'], 'Gateway `_type` entry is not `' . Payments::PROVIDER_TYPE_GATEWAY . '`' );
+		$this->assertArrayHasKey( 'title', $gateway, 'Gateway `title` entry is missing' );
+		$this->assertArrayHasKey( 'description', $gateway, 'Gateway `description` entry is missing' );
+		$this->assertArrayHasKey( 'supports', $gateway, 'Gateway `supports` entry is missing' );
+		$this->assertIsList( $gateway['supports'], 'Gateway `supports` entry is not a list' );
+		$this->assertArrayHasKey( 'state', $gateway, 'Gateway `state` entry is missing' );
+		$this->assertArrayHasKey( 'enabled', $gateway['state'], 'Gateway `state[enabled]` entry is missing' );
+		$this->assertArrayHasKey( 'needs_setup', $gateway['state'], 'Gateway `state[needs_setup]` entry is missing' );
+		$this->assertArrayHasKey( 'test_mode', $gateway['state'], 'Gateway `state[test_mode]` entry is missing' );
+		$this->assertArrayHasKey( 'management', $gateway, 'Gateway `management` entry is missing' );
+		$this->assertArrayHasKey( 'settings_url', $gateway['management'], 'Gateway `management[settings_url]` entry is missing' );
+		// There are no `plugin` or `links` entries because this is a fake gateway without a plugin.
+		$this->assertArrayHasKey( 'onboarding', $gateway, 'Gateway `onboarding` entry is missing' );
+		$this->assertArrayHasKey( 'recommended_payment_methods', $gateway['onboarding'], 'Gateway `onboarding[recommended_payment_methods]` entry is missing' );
+		$this->assertCount( 4, $gateway['onboarding']['recommended_payment_methods'] ); // Receives recommended PMs.
+		$this->assertSame(
+			array(
+				array(
+					'id'          => 'woopay',
+					'_order'      => 0,
+					'enabled'     => false,
+					'title'       => 'WooPay',
+					'description' => 'WooPay express checkout',
+					'icon'        => 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbD0iI0YwRjBGMCIgZD0iTTAgMGg0MHY0MEgweiIvPjxwYXRoIGQ9Ik0yOS41IDE0LjMwOHYxMS4zODRjMCAuNTA1LS4xNzUuOTMzLS41MjUgMS4yODMtLjM1LjM1LS43NzguNTI1LTEuMjgzLjUyNUgxMi4zMDhjLS41MDUgMC0uOTMzLS4xNzUtMS4yODMtLjUyNWExLjc0NSAxLjc0NSAwIDAgMS0uNTI1LTEuMjgzVjE0LjMwOGMwLS41MDUuMTc1LS45MzMuNTI1LTEuMjgzLjM1LS4zNS43NzgtLjUyNSAxLjI4My0uNTI1aDE1LjM4NGMuNTA1IDAgLjkzMy4xNzUgMS4yODMuNTI1LjM1LjM1LjUyNS43NzguNTI1IDEuMjgzWk0xMiAxNi40MDRoMTZ2LTIuMDk2YS4yOTQuMjk0IDAgMCAwLS4wOTYtLjIxMi4yOTQuMjk0IDAgMCAwLS4yMTItLjA5NkgxMi4zMDhhLjI5NC4yOTQgMCAwIDAtLjIxMi4wOTYuMjkzLjI5MyAwIDAgMC0uMDk2LjIxMnYyLjA5NlptMCAzLjE5MnY2LjA5NmMwIC4wNzcuMDMyLjE0OC4wOTYuMjEyYS4yOTQuMjk0IDAgMCAwIC4yMTIuMDk2aDE1LjM4NGEuMjk0LjI5NCAwIDAgMCAuMjEyLS4wOTYuMjk0LjI5NCAwIDAgMCAuMDk2LS4yMTJ2LTYuMDk2SDEyWiIgZmlsbD0iIzJGMkYyRiIvPjwvc3ZnPgo=',
+				),
+				array(
+					'id'          => 'card',
+					'_order'      => 1,
+					'enabled'     => true,
+					'title'       => 'Credit/debit card (required)',
+					'description' => '<strong>Accepts</strong> <b>all major</b><em>credit</em> and <a href="#" target="_blank">debit cards</a>.',
+					'icon'        => 'https://example.com/card-icon.png',
+				),
+				array(
+					'id'          => 'basic2',
+					'_order'      => 2,
+					'enabled'     => false,
+					'title'       => 'Title',
+					'description' => '',
+					'icon'        => '',
+				),
+				array(
+					'id'          => 'basic',
+					'_order'      => 3,
+					'enabled'     => true,
+					'title'       => 'Title',
+					'description' => '',
+					'icon'        => '',
+				),
+			),
+			$gateway['onboarding']['recommended_payment_methods']
+		);
+
+		// Clean up.
+		$this->unmock_payment_gateways();
+		delete_option( 'woocommerce_gateway_order' );
 	}
 
 	/**
@@ -596,9 +733,9 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		);
 
 		$this->mock_extension_suggestions->expects( $this->once() )
-										->method( 'get_country_extensions' )
-										->with( $location )
-										->willReturn( $base_suggestions );
+			->method( 'get_country_extensions' )
+			->with( $location )
+			->willReturn( $base_suggestions );
 
 		// Act.
 		$suggestions = $this->service->get_extension_suggestions( $location );
@@ -1600,25 +1737,8 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 	 */
 	public function test_update_payment_providers_order_map( array $start_order, array $new_order_map, array $expected_order, array $gateways, array $suggestions ) {
 		// Arrange.
-		$mocked_service = $this->getMockBuilder( Payments::class )
-								->onlyMethods( array( 'get_payment_gateway_plugin_slug' ) )
-								->getMock();
-		$mocked_service->init( $this->mock_extension_suggestions );
-
-		// Mock the payment gateways.
 		$this->mock_payment_gateways( $gateways );
-		$mocked_service->reset_memo();
-
-		// Mock getting the payment gateway's plugin slug.
-		$mocked_service
-			->expects( $this->any() )
-			->method( 'get_payment_gateway_plugin_slug' )
-			->willReturnCallback(
-				function ( $payment_gateway ) {
-					// The payment gateway is a FakePaymentGateway instance.
-					return $payment_gateway->plugin_slug;
-				}
-			);
+		$this->service->reset_memo();
 
 		// Mock getting suggestions by plugin slug.
 		$this->mock_extension_suggestions
@@ -1654,7 +1774,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		update_option( Payments::PROVIDERS_ORDER_OPTION, $start_order_map );
 
 		// Act.
-		$result = $mocked_service->update_payment_providers_order_map( $new_order_map );
+		$result = $this->service->update_payment_providers_order_map( $new_order_map );
 
 		// Assert.
 		$expected_order_map   = array_flip( $expected_order );
@@ -1674,22 +1794,33 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 	 * Mock a set of payment gateways.
 	 *
 	 * @param array $gateways The list of gateway details keyed by the gateway id.
+	 * @param bool  $append   Whether to append the gateways to the existing ones.
 	 */
-	protected function mock_payment_gateways( array $gateways ) {
+	protected function mock_payment_gateways( array $gateways, bool $append = false ) {
 		add_action(
 			'wc_payment_gateways_initialized',
-			function ( \WC_Payment_Gateways $wc_payment_gateways ) use ( $gateways ) {
+			function ( \WC_Payment_Gateways $wc_payment_gateways ) use ( $gateways, $append ) {
 				$mock_gateways = array();
+				$order         = 99999;
 				foreach ( $gateways as $gateway_id => $gateway_data ) {
-					$mock_gateways[ $gateway_id ]          = new FakePaymentGateway();
-					$mock_gateways[ $gateway_id ]->id      = $gateway_id;
-					$mock_gateways[ $gateway_id ]->enabled = ( $gateway_data['enabled'] ?? false ) ? 'yes' : 'no';
+					$mock_gateways[ $order ]          = new FakePaymentGateway();
+					$mock_gateways[ $order ]->id      = $gateway_id;
+					$mock_gateways[ $order ]->enabled = ( $gateway_data['enabled'] ?? false ) ? 'yes' : 'no';
 					if ( isset( $gateway_data['plugin_slug'] ) ) {
-						$mock_gateways[ $gateway_id ]->plugin_slug = $gateway_data['plugin_slug'];
+						$mock_gateways[ $order ]->plugin_slug = $gateway_data['plugin_slug'];
 					}
+					if ( isset( $gateway_data['recommended_payment_methods'] ) ) {
+						$mock_gateways[ $order ]->recommended_payment_methods = $gateway_data['recommended_payment_methods'];
+					}
+
+					++$order;
 				}
 
-				$wc_payment_gateways->payment_gateways = $mock_gateways;
+				if ( $append ) {
+					$wc_payment_gateways->payment_gateways += $mock_gateways;
+				} else {
+					$wc_payment_gateways->payment_gateways = $mock_gateways;
+				}
 			},
 			100
 		);

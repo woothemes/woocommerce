@@ -84,7 +84,6 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		update_option( 'woocommerce_currency', self::$initial_currency );
 
 		delete_option( 'woocommerce_paypal_settings' );
-		delete_option( 'woocommerce_gateway_order' );
 	}
 
 	/**
@@ -185,7 +184,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 				++$order;
 			}
 
-			$wc_payment_gateways->payment_gateways = $wc_payment_gateways->payment_gateways + $mock_gateways;
+			$wc_payment_gateways->payment_gateways += $mock_gateways;
 		};
 	}
 
@@ -194,6 +193,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 	 */
 	public function tearDown(): void {
 		remove_filter( 'pre_http_request', $this->incentives_response_mock_ref );
+		delete_option( 'woocommerce_gateway_order' );
 	}
 
 	/**
@@ -614,7 +614,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		// Assert that the PayPal gateway has all the details.
 		$this->assertArrayHasKey( 'id', $provider, 'Provider (gateway) `id` entry is missing' );
 		$this->assertArrayHasKey( '_order', $provider, 'Provider (gateway) `_order` entry is missing' );
-		$this->assertArrayHasKey( '_type', $provider, 'Provider (gateway) `_order` entry is missing' );
+		$this->assertArrayHasKey( '_type', $provider, 'Provider (gateway) `_type` entry is missing' );
 		$this->assertEquals( Payments::PROVIDER_TYPE_GATEWAY, $provider['_type'], 'Provider (gateway) `_type` entry is not `' . Payments::PROVIDER_TYPE_GATEWAY . '`' );
 		$this->assertArrayHasKey( 'title', $provider, 'Provider (gateway) `title` entry is missing' );
 		$this->assertArrayHasKey( 'description', $provider, 'Provider (gateway) `description` entry is missing' );

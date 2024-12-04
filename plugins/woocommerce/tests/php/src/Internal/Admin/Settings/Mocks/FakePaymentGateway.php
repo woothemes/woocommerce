@@ -56,8 +56,6 @@ class FakePaymentGateway extends \WC_Payment_Gateway {
 	 */
 	public array $recommended_payment_methods = array();
 
-
-
 	/**
 	 * Get the recommended payment methods list.
 	 *
