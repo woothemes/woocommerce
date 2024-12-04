@@ -24,9 +24,9 @@ export default function ToolbarProductTypeGroup() {
 	 * Get the product types and the current product type
 	 * from the store.
 	 */
-	const { productTypes, currentProduct } = useSelect< {
+	const { productTypes, currentProductType } = useSelect< {
 		productTypes: ProductTypeProps[];
-		currentProduct: ProductTypeProps;
+		currentProductType: ProductTypeProps;
 	} >( ( select ) => {
 		const { getProductTypes, getCurrentProductType } = select(
 			woocommerceTemplateStateStore
@@ -34,7 +34,7 @@ export default function ToolbarProductTypeGroup() {
 
 		return {
 			productTypes: getProductTypes(),
-			currentProduct: getCurrentProductType(),
+			currentProductType: getCurrentProductType(),
 		};
 	}, [] );
 
@@ -55,10 +55,10 @@ export default function ToolbarProductTypeGroup() {
 			<ToolbarDropdownMenu
 				icon={ <Icon icon={ eye } /> }
 				text={
-					currentProduct?.label ||
+					currentProductType?.label ||
 					__( 'Switch product type', 'woocommerce' )
 				}
-				value={ currentProduct?.slug }
+				value={ currentProductType?.slug }
 				controls={ productTypes.map( ( productType ) => ( {
 					title: productType.label,
 					onClick: () => switchProductType( productType.slug ),
