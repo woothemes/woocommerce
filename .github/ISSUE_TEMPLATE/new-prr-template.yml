@@ -13,14 +13,6 @@ body:
         * If rejected, please change the base against `trunk` and merge it.
         
         In either case you are responsible for managing the pull request as usual (provide a description, assign reviewers, ensure that CI jobs pass...)
-  - type: input
-    id: release-number
-    attributes:
-      label: "Which release does this request apply to?"
-      description: "Format: X.Y (Major.Minor)"
-      placeholder: "9.2"
-    validations:
-      required: true
   - type: textarea
     id: pr-urls
     attributes:
@@ -93,7 +85,7 @@ body:
           required: true
         - label: "I understand that I need to create an issue as a result of the Escape Analysis and reference it in a comment on this post. This can be done at a later time, but it is required for this request to be closed."
           required: true
-        - label: "I understand that I will need to merge the PR to the target `release` branch when my request is approved"
+        - label: "I understand that I will need to merge the PR to the target `release` branch for which the fix was intended, when my request is approved"
           required: true
         - label: "I understand that I will need to merge the followup cherry-picked PR created by the github-actions bot to `trunk`"
           required: true
@@ -110,6 +102,8 @@ body:
       label: "Closing checklist for Solaris"
       options:
         - label: "Escape analysis completed"
+          required: false
+        - label: "The fix is raised from intended release branch. For a fix targeting WC X.Y, the base branch should be `release/X.Y`"
           required: false
         - label: "PR merged to target `release` branch"
           required: false

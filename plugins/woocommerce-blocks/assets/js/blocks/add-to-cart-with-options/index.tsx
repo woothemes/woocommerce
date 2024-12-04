@@ -13,6 +13,7 @@ import { isBoolean } from '@woocommerce/types';
 import metadata from './block.json';
 import AddToCartOptionsEdit from './edit';
 import './style.scss';
+import registerStore from './store';
 
 // Pick the value of the "blockify add to cart flag"
 const isBlockifiedAddToCart = getSettingWithCoercion(
@@ -25,6 +26,10 @@ export const shouldRegisterBlock =
 	isExperimentalBlocksEnabled() && isBlockifiedAddToCart;
 
 if ( shouldRegisterBlock ) {
+	// Register the store
+	registerStore();
+
+	// Register the block
 	registerBlockType( metadata, {
 		icon: <Icon icon={ button } />,
 		edit: AddToCartOptionsEdit,

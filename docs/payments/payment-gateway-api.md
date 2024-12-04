@@ -153,11 +153,13 @@ $order->payment_complete();
 
 This ensures stock reductions are made, and the status is changed to the correct value.
 
-If payment fails, you should throw an error and return null:
+If payment fails, you should throw an error and return an array with the failure status:
 
 ```php
-wc_add_notice( \_\_('Payment error:', 'woothemes') . $error_message, 'error' );
-return;
+wc_add_notice( __('Payment error:', 'woothemes') . $error_message, 'error' );
+return array(
+    'result'   => 'failure'
+);
 ```
 
 WooCommerce will catch this error and show it on the checkout page.
@@ -201,11 +203,13 @@ The next but optional method to add is `validate_fields()`. Return true if the f
 
 Finally, you need to add payment code inside your `process_payment( $order_id )` method. This takes the posted form data and attempts payment directly via the payment provider.
 
-If payment fails, you should output an error and return nothing:
+If payment fails, you should output an error and return the failure array:
 
 ```php
 wc_add_notice( \_\_('Payment error:', 'woothemes') . $error_message, 'error' );
-return;
+return array(
+    'result'   => 'failure',
+);
 ```
 
 If payment is successful, you should set the order as paid and return the success array:
