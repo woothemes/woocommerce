@@ -226,7 +226,7 @@ abstract class ObjectCache {
 	 * @return object|array|null Cached object, or null if it's not cached and can't be retrieved from datastore or via callback.
 	 * @throws CacheException Invalid id parameter.
 	 */
-	public function get( $id, int $expiration = self::DEFAULT_EXPIRATION, callable $get_from_datastore_callback = null ) {
+	public function get( $id, int $expiration = self::DEFAULT_EXPIRATION, ?callable $get_from_datastore_callback = null ) {
 		if ( ! is_string( $id ) && ! is_int( $id ) ) {
 			throw new CacheException( "Object id must be an int or a string for 'get'", $this );
 		}
