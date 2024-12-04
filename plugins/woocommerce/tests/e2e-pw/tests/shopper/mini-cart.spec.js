@@ -1,11 +1,15 @@
 const { test, expect } = require( '@playwright/test' );
-const {
+const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
+const { random } = require( '../../utils/helpers' );
+
+/**
+ * External dependencies
+ */
+import {
 	openEditorSettings,
 	getCanvas,
 	goToPageEditor,
-} = require( '../../utils/editor' );
-const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
-const { random } = require( '../../utils/helpers' );
+} from '@woocommerce/e2e-utils-playwright';
 
 const miniCartPageTitle = `Mini Cart ${ random() }`;
 const miniCartPageSlug = miniCartPageTitle.replace( / /gi, '-' ).toLowerCase();

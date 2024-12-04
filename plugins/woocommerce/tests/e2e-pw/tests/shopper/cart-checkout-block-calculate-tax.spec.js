@@ -1,13 +1,17 @@
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
-const {
-	goToPageEditor,
-	fillPageTitle,
-	insertBlockByShortcut,
-	publishPage,
-} = require( '../../utils/editor' );
-const { addAProductToCart } = require( '../../utils/cart' );
+const { fillPageTitle } = require( '../../utils/editor' );
 const { random } = require( '../../utils/helpers' );
+
+/**
+ * External dependencies
+ */
+import {
+	addAProductToCart,
+	insertBlockByShortcut,
+	goToPageEditor,
+	publishPage,
+} from '@woocommerce/e2e-utils-playwright';
 
 const productName = 'First Product Cart Block Taxing';
 const productPrice = '100.00';

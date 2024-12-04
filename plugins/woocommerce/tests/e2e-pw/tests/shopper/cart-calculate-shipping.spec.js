@@ -1,4 +1,7 @@
-const { addAProductToCart } = require( '../../utils/cart' );
+/**
+ * External dependencies
+ */
+import { addAProductToCart } from '@woocommerce/e2e-utils-playwright';
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
