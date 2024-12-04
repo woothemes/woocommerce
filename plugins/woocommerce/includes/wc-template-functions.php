@@ -1570,7 +1570,7 @@ if ( ! function_exists( 'woocommerce_catalog_ordering' ) ) {
 		if ( isset( $attributes ) && isset( $attributes['useLabel'] ) && $attributes['useLabel'] ) {
 			/**
 			 * Filters the catalog orderby options.
-			 * 
+			 *
 			 * @since 9.6.0
 			 * @param array $catalog_orderby_options Array of catalog orderby options.
 			 */
