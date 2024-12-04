@@ -169,12 +169,12 @@ WooCommerce comes with some sample data you can use to see how products look; im
 
 == Changelog ==
 
-= 9.4.2 2024-11-19 =
+= 9.4.3 2024-12-03 =
 
 **WooCommerce**
 
-* Fix - Modify product import file check to use the WP filesystem API [#51540](https://github.com/woocommerce/woocommerce/pull/51540)
-* Fix - Fix the Payments main menu item linking to a blank page when onboarding tasks are hidden [#52917](https://github.com/woocommerce/woocommerce/pull/52917)
-* Fix - Improve CSV import performance by restoring the default value for `woocommerce_product_import_batch_size` [#51666](https://github.com/woocommerce/woocommerce/pull/51666)
+* Fix - Validate and sanitize the event origin and event data when listening to message events from attachParentListeners function to prevent xss attacks during the customize your store flow
+* Fix - Added new validation to Store API checkout endpoint regarding Accounts & Privacy definitions.
+* Fix - Updated wc_get_cart_url() to only return permalinks rather than building the current URL manually.
 
 [See changelog for all versions](https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/changelog.txt).
