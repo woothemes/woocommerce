@@ -1,6 +1,11 @@
+/**
+ * External dependencies
+ */
+import {
+	addAProductToCart,
+	getOrderIdFromUrl,
+} from '@woocommerce/e2e-utils-playwright';
 const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
-const { getOrderIdFromUrl } = require( '../../utils/order' );
-const { addAProductToCart } = require( '../../utils/cart' );
 const { getFakeCustomer, getFakeProduct } = require( '../../utils/data' );
 
 const test = baseTest.extend( {
