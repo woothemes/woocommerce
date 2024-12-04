@@ -612,8 +612,8 @@ class Payments {
 	 * and potentially help them make a decision on which payment methods to enable.
 	 *
 	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
-	 * @param string             $country_code Optional. The country code for which to get recommended payment methods.
-	 *                                         This should be a ISO 3166-1 alpha-2 country code.
+	 * @param string             $country_code    Optional. The country code for which to get recommended payment methods.
+	 *                                            This should be a ISO 3166-1 alpha-2 country code.
 	 *
 	 * @return array The recommended payment methods list for the payment gateway.
 	 *               Empty array if there are none.

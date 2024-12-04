@@ -431,6 +431,10 @@ class PaymentsRestController extends RestApiControllerBase {
 	 */
 	private function add_provider_links( array $providers ): array {
 		foreach ( $providers as $key => $provider ) {
+			if ( empty( $provider['_links'] ) ) {
+				$providers[ $key ]['_links'] = array();
+			}
+
 			// If this is a suggestion, add a link to hide it.
 			if ( ! empty( $provider['_type'] ) &&
 				Payments::PROVIDER_TYPE_SUGGESTION === $provider['_type'] &&
