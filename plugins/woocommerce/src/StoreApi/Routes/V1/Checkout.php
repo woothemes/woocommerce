@@ -178,10 +178,6 @@ class Checkout extends AbstractCartRoute {
 	 */
 	protected function get_route_response( \WP_REST_Request $request ) {
 		$this->create_or_update_draft_order( $request );
-		print_r( $this->order );
-
-		$additional_fields = $this->additional_fields_controller->get_order_additional_fields_with_values( $this->order, 'contact', 'other', 'view' );
-		// die();
 
 		return $this->prepare_item_for_response(
 			(object) [
@@ -211,7 +207,7 @@ class Checkout extends AbstractCartRoute {
 	 */
 	private function validate_required_additional_fields_for_order( \WP_REST_Request $request ) {
 		$contact_fields           = $this->additional_fields_controller->get_fields_for_location( 'contact' );
-		$order_fields            = $this->additional_fields_controller->get_fields_for_location( 'order' );
+		$order_fields             = $this->additional_fields_controller->get_fields_for_location( 'order' );
 		$order_and_contact_fields = array_merge( $contact_fields, $order_fields );
 
 		if ( ! empty( $order_and_contact_fields ) ) {
@@ -271,13 +267,12 @@ class Checkout extends AbstractCartRoute {
 		$this->validate_required_additional_fields_for_order( $request );
 		$this->persist_additional_fields_for_order( $request );
 
-		//$additional_fields = $this->additional_fields_controller->get_order_additional_fields_with_values( $this->order, 'contact', 'other', 'view' );
+		$this->order->save();
 
 		return new WP_REST_Response(
 			array(
 				'status' => '200',
-				// 'additional_fields' => $additional_fields,
-				'order'            => $this->order,
+				'order'  => $this->order,
 			)
 		);
 	}
