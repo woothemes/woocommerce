@@ -169,10 +169,11 @@ WooCommerce comes with some sample data you can use to see how products look; im
 
 == Changelog ==
 
-= 9.3.3 2024-09-25 =
+= 9.3.4 2024-12-03 =
 
-- Fix - An issue where virtual products could not be purchased when using the Additional Fields API [#51630](https://github.com/woocommerce/woocommerce/pull/51630)
-- Fix - Restore the previous default for `woocommerce_product_import_batch_size` (process 30 lines per batch when importing product CSV data) [#51631] (https://github.com/woocommerce/woocommerce/pull/51631)
+**WooCommerce**
+
+* Fix - Updated wc_get_cart_url() to only return permalinks rather than building the current URL manually.
 
 
 [See changelog for all versions](https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/changelog.txt).
