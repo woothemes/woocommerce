@@ -54,6 +54,7 @@
     -   [isShippingRateBeingSelected](#isshippingratebeingselected)
     -   [getItemsPendingQuantityUpdate](#getitemspendingquantityupdate)
     -   [getItemsPendingDelete](#getitemspendingdelete)
+    -   [getApplyingExtensionCartUpdates](#getApplyingExtensionCartUpdates)
 
 ## Overview
 
@@ -551,6 +552,21 @@ const { dispatch } = useDispatch( CART_STORE_KEY );
 dispatch( updateCustomerData( customerData, editing ) );
 ```
 
+### applyingExtensionCartUpdate
+
+Dispatch an action to either increment or decrement the number of `applyingExtensionCartUpdate` in the data store. This is used to track whether an update is being made on the server. Applications for this include blocking certain parts of the UI that may change following an update.
+
+#### _Parameters_ <!-- omit in toc -->
+
+- _isApplyingUpdate_ `boolean`: If true, signal that an update is being applied, if false, signal an update is no longer being applied (i.e. it has finished). Calling this action with `false` will not result in the `getApplyingExtensionCartUpdates` returning 0, it will only decrement the counter.
+-
+#### _Example_ <!-- omit in toc -->
+
+```js
+const { dispatch } = useDispatch( CART_STORE_KEY );
+dispatch( applyingExtensionCartUpdate( true ) );
+```
+
 ## Selectors
 
 ### getCartData
@@ -968,6 +984,20 @@ const store = select( CART_STORE_KEY );
 const itemsPendingDelete = store.getItemsPendingDelete();
 ```
 
+### getApplyingExtensionCartUpdates
+
+Retrieves the number of `extensionCartUpdate` actions currently being processed.
+
+#### _Returns_ <!-- omit in toc -->
+
+-   `number`: The number of `extensionCartUpdate` actions currently being processed.
+
+#### _Example_ <!-- omit in toc -->
+
+```js
+const store = select( CART_STORE_KEY );
+const applyingExtensionCartUpdates = store.getApplyingExtensionCartUpdates();
+```
 <!-- FEEDBACK -->
 
 ---
