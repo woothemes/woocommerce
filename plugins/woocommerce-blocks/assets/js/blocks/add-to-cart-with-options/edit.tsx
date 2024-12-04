@@ -11,6 +11,7 @@ import { BlockEditProps } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import { eye } from '@woocommerce/icons';
 import type { InnerBlockTemplate } from '@wordpress/blocks';
+import { useDispatch, useSelect } from '@wordpress/data';
 import {
 	Icon,
 	ToolbarGroup,
@@ -24,7 +25,8 @@ import {
  */
 import { useIsDescendentOfSingleProductBlock } from '../../atomic/blocks/product-elements/shared/use-is-descendent-of-single-product-block';
 import { AddToCartOptionsSettings } from './settings';
-import getProductTypeOptions from './utils/get-product-types';
+import { store as woocommerceTemplateStateStore } from './store';
+import { ProductTypeProps } from './types';
 export interface Attributes {
 	className?: string;
 	isDescendentOfSingleProductBlock: boolean;
@@ -55,11 +57,24 @@ const INNER_BLOCKS_TEMPLATE: InnerBlockTemplate[] = [
 	],
 ];
 
-// Get product type options.
-const productTypes = getProductTypeOptions();
-
 const AddToCartOptionsEdit = ( props: BlockEditProps< Attributes > ) => {
 	const { setAttributes } = props;
+
+	const { productTypes, currentProduct } = useSelect< {
+		productTypes: ProductTypeProps[];
+		currentProduct: ProductTypeProps;
+	} >( ( select ) => {
+		const { getProductTypes, getCurrentProductType } = select(
+			woocommerceTemplateStateStore
+		);
+
+		return {
+			productTypes: getProductTypes(),
+			currentProduct: getCurrentProductType(),
+		};
+	}, [] );
+
+	const { switchProductType } = useDispatch( woocommerceTemplateStateStore );
 
 	const blockProps = useBlockProps();
 	const { isDescendentOfSingleProductBlock } =
@@ -79,10 +94,15 @@ const AddToCartOptionsEdit = ( props: BlockEditProps< Attributes > ) => {
 				<ToolbarGroup>
 					<ToolbarDropdownMenu
 						icon={ <Icon icon={ eye } /> }
-						label={ __( 'Switch product Type', 'woocommerce' ) }
+						text={
+							currentProduct?.label ||
+							__( 'Switch product type', 'woocommerce' )
+						}
+						value={ currentProduct?.slug }
 						controls={ productTypes.map( ( productType ) => ( {
 							title: productType.label,
-							onClick: () => console.log( productType.value ), // eslint-disable-line no-console
+							onClick: () =>
+								switchProductType( productType.slug ),
 						} ) ) }
 					/>
 				</ToolbarGroup>
