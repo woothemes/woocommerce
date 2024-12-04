@@ -427,7 +427,7 @@ class WC_Checkout {
 			foreach ( $data as $key => $value ) {
 				if ( is_callable( array( $order, "set_{$key}" ) ) ) {
 					$order->{"set_{$key}"}( $value );
-					// Store custom fields prefixed with wither shipping_ or billing_. This is for backwards compatibility with 2.6.x.
+					// Store custom fields prefixed with either shipping_ or billing_. This is for backwards compatibility with 2.6.x.
 				} elseif ( isset( $fields_prefix[ current( explode( '_', $key ) ) ] ) ) {
 					if ( ! isset( $shipping_fields[ $key ] ) ) {
 						$order->update_meta_data( '_' . $key, $value );
@@ -1201,7 +1201,7 @@ class WC_Checkout {
 				if ( is_callable( array( $customer, "set_{$key}" ) ) ) {
 					$customer->{"set_{$key}"}( $value );
 
-					// Store custom fields prefixed with wither shipping_ or billing_.
+					// Store custom fields prefixed with either shipping_ or billing_.
 				} elseif ( 0 === stripos( $key, 'billing_' ) || 0 === stripos( $key, 'shipping_' ) ) {
 					$customer->update_meta_data( $key, $value );
 				}

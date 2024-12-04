@@ -2,13 +2,13 @@
  * External dependencies
  */
 import { useCallback } from 'react';
+import { __ } from '@wordpress/i18n';
 import {
 	PLUGINS_STORE_NAME,
 	PAYMENT_SETTINGS_STORE_NAME,
-	SuggestedPaymentExtension,
 } from '@woocommerce/data';
-import { useState } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { useState, useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -17,6 +17,7 @@ import './settings-payments-main.scss';
 import { createNoticesFromResponse } from '~/lib/notices';
 import { OtherPaymentGateways } from '~/settings-payments/components/other-payment-gateways';
 import { PaymentGateways } from '~/settings-payments/components/payment-gateways';
+import { getWooPaymentsTestDriveAccountLink } from '~/settings-payments/utils';
 
 export const SettingsPaymentsMain = () => {
 	const [ installingPlugin, setInstallingPlugin ] = useState< string | null >(
@@ -24,44 +25,76 @@ export const SettingsPaymentsMain = () => {
 	);
 	const { installAndActivatePlugins } = useDispatch( PLUGINS_STORE_NAME );
 
+	const [ errorMessage, setErrorMessage ] = useState< string | null >( null );
+
+	const urlParams = new URLSearchParams( window.location.search );
+
+	useEffect( () => {
+		const isAccountTestDriveError =
+			urlParams.get( 'test_drive_error' ) === 'true';
+		if ( isAccountTestDriveError ) {
+			setErrorMessage(
+				__(
+					'An error occurred while setting up your sandbox account. Please try again.',
+					'woocommerce'
+				)
+			);
+		}
+
+		const isJetpackConnectionError =
+			urlParams.get( 'wcpay-connect-jetpack-error' ) === '1';
+
+		if ( isJetpackConnectionError ) {
+			setErrorMessage(
+				__(
+					'There was a problem connecting your WordPress.com account - please try again.',
+					'woocommerce'
+				)
+			);
+		}
+	}, [] );
+
 	const installedPluginSlugs = useSelect( ( select ) => {
 		return select( PLUGINS_STORE_NAME ).getInstalledPlugins();
 	}, [] );
 
-	// Make UI to refresh when plugin is installed.
+	// Make UI refresh when plugin is installed.
 	const { invalidateResolutionForStoreSelector } = useDispatch(
 		PAYMENT_SETTINGS_STORE_NAME
 	);
 
-	const {
-		registeredPaymentGateways,
-		preferredPluginSuggestions,
-		otherPluginSuggestions,
-	} = useSelect( ( select ) => {
-		return {
-			registeredPaymentGateways: select(
-				PAYMENT_SETTINGS_STORE_NAME
-			).getRegisteredPaymentGateways(),
-			preferredPluginSuggestions: select(
-				PAYMENT_SETTINGS_STORE_NAME
-			).getPreferredExtensionSuggestions(),
-			otherPluginSuggestions: select(
-				PAYMENT_SETTINGS_STORE_NAME
-			).getOtherExtensionSuggestions(),
-		};
-	} );
+	const { providers, suggestions, suggestionCategories, isFetching } =
+		useSelect( ( select ) => {
+			return {
+				providers: select(
+					PAYMENT_SETTINGS_STORE_NAME
+				).getPaymentProviders(),
+				suggestions: select(
+					PAYMENT_SETTINGS_STORE_NAME
+				).getSuggestions(),
+				suggestionCategories: select(
+					PAYMENT_SETTINGS_STORE_NAME
+				).getSuggestionCategories(),
+				isFetching: select( PAYMENT_SETTINGS_STORE_NAME ).isFetching(),
+			};
+		} );
 
 	const setupPlugin = useCallback(
-		( extension: SuggestedPaymentExtension ) => {
+		( id, slug ) => {
 			if ( installingPlugin ) {
 				return;
 			}
-			setInstallingPlugin( extension.id );
-			installAndActivatePlugins( [ extension.plugin.slug ] )
+			setInstallingPlugin( id );
+			installAndActivatePlugins( [ slug ] )
 				.then( ( response ) => {
 					createNoticesFromResponse( response );
+					if ( id === 'woopayments' ) {
+						window.location.href =
+							getWooPaymentsTestDriveAccountLink();
+						return;
+					}
 					invalidateResolutionForStoreSelector(
-						'getRegisteredPaymentGateways'
+						'getPaymentProviders'
 					);
 					setInstallingPlugin( null );
 				} )
@@ -79,18 +112,32 @@ export const SettingsPaymentsMain = () => {
 
 	return (
 		<>
+			{ errorMessage && (
+				<div className="notice notice-error is-dismissible wcpay-settings-notice">
+					<p>{ errorMessage }</p>
+					<button
+						type="button"
+						className="notice-dismiss"
+						onClick={ () => {
+							setErrorMessage( null );
+						} }
+					></button>
+				</div>
+			) }
 			<div className="settings-payments-main__container">
 				<PaymentGateways
-					registeredPaymentGateways={ registeredPaymentGateways }
+					providers={ providers }
 					installedPluginSlugs={ installedPluginSlugs }
-					preferredPluginSuggestions={ preferredPluginSuggestions }
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
+					isFetching={ isFetching }
 				/>
 				<OtherPaymentGateways
-					otherPluginSuggestions={ otherPluginSuggestions }
+					suggestions={ suggestions }
+					suggestionCategories={ suggestionCategories }
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
+					isFetching={ isFetching }
 				/>
 			</div>
 		</>
