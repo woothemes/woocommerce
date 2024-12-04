@@ -106,6 +106,7 @@
 		"watch:build:project:bundle": "wireit"
 	},
 	"devDependencies": {
+		"@woocommerce/customer-effort-score": "workspace:*",
 		"@automattic/color-studio": "2.5.0",
 		"@babel/cli": "7.23.0",
 		"@babel/core": "7.23.2",
@@ -442,6 +443,10 @@
 				"node_modules/@woocommerce/data/build",
 				"node_modules/@woocommerce/data/build-module",
 				"node_modules/@woocommerce/data/build-types",
+				"node_modules/@woocommerce/customer-effort-score/build",
+				"node_modules/@woocommerce/customer-effort-score/build-module",
+				"node_modules/@woocommerce/customer-effort-score/build-style",
+				"node_modules/@woocommerce/customer-effort-score/build-types",
 				"node_modules/@woocommerce/tracks/build",
 				"node_modules/@woocommerce/tracks/build-module",
 				"node_modules/@woocommerce/tracks/build-types",
