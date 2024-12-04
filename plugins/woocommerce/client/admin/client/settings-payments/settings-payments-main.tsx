@@ -19,6 +19,7 @@ import { OtherPaymentGateways } from '~/settings-payments/components/other-payme
 import { PaymentGateways } from '~/settings-payments/components/payment-gateways';
 import {
 	getWooPaymentsTestDriveAccountLink,
+	isWooPayments,
 	providersContainWooPaymentsInTestMode,
 } from '~/settings-payments/utils';
 import { WooPaymentsReadyToTestModal } from '~/settings-payments/components/woo-payments-ready-to-test-modal';
@@ -101,7 +102,7 @@ export const SettingsPaymentsMain = () => {
 			installAndActivatePlugins( [ slug ] )
 				.then( ( response ) => {
 					createNoticesFromResponse( response );
-					if ( id === 'woopayments' ) {
+					if ( isWooPayments( id ) ) {
 						window.location.href =
 							getWooPaymentsTestDriveAccountLink();
 						return;
