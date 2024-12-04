@@ -282,8 +282,11 @@ jobs:
         env:
           ISSUE_URL: ${{ github.event.issue.html_url }}
           GH_TOKEN: ${{ github.token }}
+          RELEASE_NUMBER: ${{ needs.verify.outputs.release_number }}
         run: |
-          gh issue comment "$ISSUE_URL" --body "This request has been approved. Please merge the PR to release branch when it is approved and ready to be merged."
+          gh issue comment "$ISSUE_URL" --body "This request has been approved. Please merge the PR to release branch when it is approved and ready to be merged.
+
+          You are targeting your fix for WC version: **${RELEASE_NUMBER}**."
 
       - name: Set Slack Message
         id: set-message
