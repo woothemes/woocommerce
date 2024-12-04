@@ -194,10 +194,12 @@ export const removeCoupon =
  *
  * @param {number} productId    Product ID to add to cart.
  * @param {number} [quantity=1] Number of product ID being added to cart.
+ * @param {array}  [variation] Array of variation attributes for the product.
+ * @param {array}  [additionalData] Array of additional fields for the product.
  * @throws           Will throw an error if there is an API problem.
  */
 export const addItemToCart =
-	( productId: number, quantity = 1 ) =>
+	( productId: number, quantity = 1, variation: Array<any> = [], additionalData: Record<string, any> = {} ) =>
 	async ( { dispatch }: { dispatch: CartDispatchFromMap } ) => {
 		try {
 			triggerAddingToCartEvent();
@@ -207,8 +209,12 @@ export const addItemToCart =
 				path: `/wc/store/v1/cart/add-item`,
 				method: 'POST',
 				data: {
-					id: productId,
-					quantity,
+					...additionalData,
+					...{
+						id: productId,
+						quantity,
+						variation
+					},
 				},
 				cache: 'no-store',
 			} );
