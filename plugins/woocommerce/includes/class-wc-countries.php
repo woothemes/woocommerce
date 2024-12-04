@@ -1040,7 +1040,7 @@ class WC_Countries {
 						),
 					),
 					'CY' => array(
-						'state'    => array(
+						'state' => array(
 							'required' => false,
 							'hidden'   => true,
 						),
