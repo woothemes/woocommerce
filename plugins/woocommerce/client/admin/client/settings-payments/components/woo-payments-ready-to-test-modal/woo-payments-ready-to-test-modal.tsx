@@ -78,6 +78,7 @@ export const WooPaymentsReadyToTestModal = ( {
 						<div className="woocommerce-woopayments-ready-to-test-modal__content__item-flex">
 							<img
 								src={ WC_ASSET_URL + 'images/icons/store.svg' }
+								alt='store icon'
 							/>
 							<div className="woocommerce-woopayments-ready-to-test-modal__content__item-flex__description">
 								<h3>
@@ -97,6 +98,7 @@ export const WooPaymentsReadyToTestModal = ( {
 						<div className="woocommerce-woopayments-ready-to-test-modal__content__item-flex">
 							<img
 								src={ WC_ASSET_URL + 'images/icons/dollar.svg' }
+								alt='dollar icon'
 							/>
 							<div className="woocommerce-woopayments-ready-to-test-modal__content__item-flex__description">
 								<h3>
