@@ -44,7 +44,7 @@ class ProductStockIndicator extends AbstractBlock {
 	 * @return array
 	 */
 	protected function product_types_without_stock_indicator() {
-		return apply_filters( 'woocommerce_blocks_product_types_without_stock_indicator', array( 'external', 'grouped', 'variable' ) );
+		return array( 'external', 'grouped', 'variable' );
 	}
 
 	/**
