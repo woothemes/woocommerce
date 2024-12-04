@@ -59,11 +59,11 @@ const getTextBasedOnStock = ( {
 };
 
 /**
- * Determines whether the stock indicator should be visible in the editor.
+ * Determines whether the stock indicator should be visible.
  * Stock indicator is not visible when:
  * - Product type is not allowed (variable, grouped, external)
- * - Product is sold individually
- * - Product stock is not managed (except for simple products)
+ * - Product is in stock, stock is not managed, and not on backorder
+ * - Product is a variation that is on backorder but backorder notification is disabled and stock is managed
  *
  * @param {ProductResponseItem} product Product object
  * @return {boolean} True if stock indicator should be visible
