@@ -23,6 +23,7 @@ test.describe(
 				.get( `customers?search=${ customer.username }` )
 				.then( ( response ) => {
 					customerData = response.data[ 0 ];
+					customerData.password = customer.password;
 				} );
 
 			await expect( customerData ).toBeDefined();
@@ -30,7 +31,7 @@ test.describe(
 			// add product
 			await api
 				.post( 'products', {
-					name: 'Checkout Login Account',
+					name: `Checkout Login Account ${ Date.now() }`,
 					type: 'simple',
 					regular_price: '19.99',
 				} )
