@@ -521,8 +521,9 @@ test.describe( 'Merchant → Checkout', () => {
 					'woocommerce/checkout-billing-address-block'
 				);
 
-				const billingApartmentInput =
-					billingAddressBlock.getByLabel( 'Address Line 2' );
+				const billingApartmentInput = billingAddressBlock.getByLabel(
+					'Apartment, suite, etc.'
+				);
 
 				const billingApartmentLink = billingAddressBlock.getByRole(
 					'button',
