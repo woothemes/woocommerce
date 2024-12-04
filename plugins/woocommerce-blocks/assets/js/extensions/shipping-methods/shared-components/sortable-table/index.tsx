@@ -56,13 +56,13 @@ const TableRow = ( {
 		<tr ref={ setNodeRef } style={ style }>
 			<>
 				<td style={ { width: '1%' } }>
-					<Icon
-						icon={ dragHandle }
-						size={ 14 }
+					<span
 						className={ 'sortable-table__handle' }
 						{ ...attributes }
 						{ ...listeners }
-					/>
+					>
+						<Icon icon={ dragHandle } size={ 14 } />
+					</span>
 				</td>
 				{ children }
 			</>
@@ -92,6 +92,7 @@ const StyledTable = styled.table`
 		text-align: right;
 		.components-flex {
 			justify-content: flex-end;
+			flex-direction: row-reverse;
 			gap: 0;
 		}
 	}

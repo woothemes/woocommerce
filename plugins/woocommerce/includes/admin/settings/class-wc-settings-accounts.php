@@ -29,6 +29,13 @@ class WC_Settings_Accounts extends WC_Settings_Page {
 	}
 
 	/**
+	 * Setting page icon.
+	 *
+	 * @var string
+	 */
+	public $icon = 'people';
+
+	/**
 	 * Get settings array.
 	 *
 	 * @return array
@@ -92,7 +99,7 @@ class WC_Settings_Accounts extends WC_Settings_Page {
 					'</a>'
 				),
 				'id'                => 'woocommerce_enable_delayed_account_creation',
-				'default'           => 'yes',
+				'default'           => 'no',
 				'type'              => 'checkbox',
 				'checkboxgroup'     => '',
 				'autoload'          => false,
@@ -264,7 +271,8 @@ class WC_Settings_Accounts extends WC_Settings_Page {
 			),
 		);
 
-		if ( ! Features::is_enabled( 'experimental-blocks' ) ) {
+		// Feature requires a block theme.
+		if ( ! wc_current_theme_is_fse_theme() ) {
 			$account_settings = array_filter(
 				$account_settings,
 				function ( $setting ) {

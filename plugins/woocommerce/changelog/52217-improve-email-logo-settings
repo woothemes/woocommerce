@@ -1,0 +1,3 @@
+Significance: patch
+Type: add
+Comment: This change replaces the header image text input in email settings with logo and header alignment fields when a feature flag is enabled.

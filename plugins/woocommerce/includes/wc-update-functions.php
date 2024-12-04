@@ -2920,3 +2920,13 @@ function wc_update_940_remove_help_panel_highlight_shown() {
 		);
 	}
 }
+
+/**
+ * Autoloads woocommerce_allow_tracking option.
+ */
+function wc_update_950_tracking_option_autoload() {
+	$options = array(
+		'woocommerce_allow_tracking' => 'yes',
+	);
+	wp_set_option_autoload_values( $options );
+}

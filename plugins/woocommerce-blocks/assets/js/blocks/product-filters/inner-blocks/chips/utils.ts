@@ -1,14 +1,8 @@
 /**
  * Internal dependencies
  */
+import { getColorCSSVar } from '../../utils/colors';
 import { BlockAttributes } from './types';
-
-function getCSSVar( slug: string | undefined, value: string | undefined ) {
-	if ( slug ) {
-		return `var(--wp--preset--color--${ slug })`;
-	}
-	return value || '';
-}
 
 export function getColorVars( attributes: BlockAttributes ) {
 	const {
@@ -27,24 +21,27 @@ export function getColorVars( attributes: BlockAttributes ) {
 	} = attributes;
 
 	const vars: Record< string, string > = {
-		'--wc-product-filter-chips-text': getCSSVar( chipText, customChipText ),
-		'--wc-product-filter-chips-background': getCSSVar(
+		'--wc-product-filter-chips-text': getColorCSSVar(
+			chipText,
+			customChipText
+		),
+		'--wc-product-filter-chips-background': getColorCSSVar(
 			chipBackground,
 			customChipBackground
 		),
-		'--wc-product-filter-chips-border': getCSSVar(
+		'--wc-product-filter-chips-border': getColorCSSVar(
 			chipBorder,
 			customChipBorder
 		),
-		'--wc-product-filter-chips-selected-text': getCSSVar(
+		'--wc-product-filter-chips-selected-text': getColorCSSVar(
 			selectedChipText,
 			customSelectedChipText
 		),
-		'--wc-product-filter-chips-selected-background': getCSSVar(
+		'--wc-product-filter-chips-selected-background': getColorCSSVar(
 			selectedChipBackground,
 			customSelectedChipBackground
 		),
-		'--wc-product-filter-chips-selected-border': getCSSVar(
+		'--wc-product-filter-chips-selected-border': getColorCSSVar(
 			selectedChipBorder,
 			customSelectedChipBorder
 		),

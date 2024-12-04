@@ -1,4 +1,9 @@
 .wc-block-components-order-summary {
+	&.is-large {
+		// Compensate for removing Panel.
+		padding: 0 $gap;
+	}
+
 	.wc-block-components-order-summary__button-text {
 		font-weight: 500;
 	}
@@ -108,16 +113,5 @@
 	.wc-block-components-order-summary-item__individual-prices {
 		display: block;
 		padding-top: $gap-smaller;
-	}
-}
-
-.is-medium,
-.is-small,
-.is-mobile {
-	.wp-block-woocommerce-checkout-order-summary-block {
-		.wc-block-components-totals-wrapper {
-			padding-left: $gap-small;
-			padding-right: $gap-small;
-		}
 	}
 }

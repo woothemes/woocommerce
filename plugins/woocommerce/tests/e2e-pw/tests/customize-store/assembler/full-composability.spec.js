@@ -90,7 +90,7 @@ test.describe( 'Assembler -> Full composability', { tag: '@gutenberg' }, () => {
 				'no'
 			);
 
-			await activateTheme( DEFAULT_THEME );
+			await activateTheme( baseURL, DEFAULT_THEME );
 		} catch ( error ) {
 			console.log( 'Store completed option not updated' );
 		}
@@ -136,7 +136,7 @@ test.describe( 'Assembler -> Full composability', { tag: '@gutenberg' }, () => {
 
 		const categories = await assembler
 			.locator(
-				'.edit-site-sidebar-navigation-screen-patterns__group-homepage-label-container > span:first-child'
+				'.woocommerce-edit-site-sidebar-navigation-screen-patterns__group-homepage-label-container > span:first-child'
 			)
 			.all();
 

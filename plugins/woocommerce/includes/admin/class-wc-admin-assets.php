@@ -8,6 +8,7 @@
 
 use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Admin\Features\Features;
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Internal\Admin\Analytics;
 use Automattic\WooCommerce\Internal\Admin\WCAdminAssets;
 
@@ -364,7 +365,7 @@ if ( ! class_exists( 'WC_Admin_Assets', false ) ) :
 					if ( $order_or_post_object ) {
 						$currency = $order_or_post_object->get_currency();
 
-						if ( ! $order_or_post_object->has_status( array( 'pending', 'failed', 'cancelled' ) ) ) {
+						if ( ! $order_or_post_object->has_status( array( OrderStatus::PENDING, OrderStatus::FAILED, OrderStatus::CANCELLED ) ) ) {
 							$remove_item_notice = $remove_item_notice . ' ' . __( "You may need to manually restore the item's stock.", 'woocommerce' );
 						}
 					}
@@ -499,6 +500,11 @@ if ( ! class_exists( 'WC_Admin_Assets', false ) ) :
 				);
 			}
 
+			// Email settings.
+			if ( $wc_screen_id . '_page_wc-settings' === $screen_id && isset( $_GET['tab'] ) && 'email' === $_GET['tab'] ) {
+				wp_enqueue_media();
+			}
+
 			// System status.
 			if ( $wc_screen_id . '_page_wc-status' === $screen_id ) {
 				wp_register_script( 'wc-admin-system-status', WC()->plugin_url() . '/assets/js/admin/system-status' . $suffix . '.js', array( 'wc-clipboard' ), $version );
@@ -557,7 +563,7 @@ if ( ! class_exists( 'WC_Admin_Assets', false ) ) :
 			}
 
 			// Marketplace promotions.
-			if ( in_array( $screen_id, array( 'woocommerce_page_wc-admin' ), true ) ) {
+			if ( in_array( $screen_id, array( 'edit-shop_coupon', 'woocommerce_page_wc-admin' ), true ) ) {
 
 				$promotions = WC_Admin_Marketplace_Promotions::get_active_promotions();
 

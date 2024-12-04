@@ -370,9 +370,7 @@ test.describe(
 
 			// Create the order
 			await page.getByRole( 'button', { name: 'Create' } ).click();
-			await expect( page.locator( 'div.notice-success' ) ).toContainText(
-				'Order updated.'
-			);
+			await expect( page.getByText( 'Order updated' ) ).toBeVisible();
 
 			// Confirm the details
 			await expect(
@@ -415,9 +413,7 @@ test.describe(
 
 			// Create the order
 			await page.getByRole( 'button', { name: 'Create' } ).click();
-			await expect( page.locator( 'div.notice-success' ) ).toContainText(
-				'Order updated.'
-			);
+			await expect( page.getByText( 'Order updated' ) ).toBeVisible();
 
 			// Confirm the details
 			await expect(
@@ -536,7 +532,9 @@ test.describe(
 
 			// Recalculate taxes
 			page.on( 'dialog', ( dialog ) => dialog.accept() );
-			await page.locator( 'text=Recalculate' ).click();
+			await page
+				.getByRole( 'button', { name: 'Recalculate', exact: true } )
+				.click();
 
 			// verify tax names
 			let i = 0;
