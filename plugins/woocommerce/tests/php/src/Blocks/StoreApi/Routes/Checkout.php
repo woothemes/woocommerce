@@ -1188,4 +1188,68 @@ class Checkout extends MockeryTestCase {
 		$this->assertEquals( 'woocommerce_rest_invalid_shipping_option', $data['code'], print_r( $data, true ) );
 		$this->assertEquals( 'Sorry, this order requires a shipping option.', $data['message'], print_r( $data, true ) );
 	}
+
+	/**
+	 * Test deny guest checkout when registration during checkout is disabled,
+	 * guest checkout is disabled and the user is not logged in.
+	 */
+	public function test_checkout_deny_guest_checkout() {
+		// We need to replace the WC_Session with a mock because this test relies on cookies being set which
+		// is not easy with PHPUnit. This is a simpler approach.
+		$old_session  = WC()->session;
+		WC()->session = new MockSessionHandler();
+		WC()->session->init();
+
+		update_option( 'woocommerce_enable_guest_checkout', 'no' );
+		update_option( 'woocommerce_enable_signup_and_login_from_checkout', 'no' );
+
+		$request = new \WP_REST_Request( 'POST', '/wc/store/v1/checkout' );
+		$request->set_header( 'Nonce', wp_create_nonce( 'wc_store_api' ) );
+		$request->set_body_params(
+			array(
+				'billing_address'  => (object) array(
+					'first_name' => 'guest',
+					'last_name'  => 'guest',
+					'company'    => '',
+					'address_1'  => 'test',
+					'address_2'  => '',
+					'city'       => 'test',
+					'state'      => '',
+					'postcode'   => 'cb241ab',
+					'country'    => 'GB',
+					'phone'      => '',
+					'email'      => 'guest@test.com',
+				),
+				'shipping_address' => (object) array(
+					'first_name' => 'guest',
+					'last_name'  => 'guest',
+					'company'    => '',
+					'address_1'  => 'test',
+					'address_2'  => '',
+					'city'       => 'test',
+					'state'      => '',
+					'postcode'   => 'cb241ab',
+					'country'    => 'GB',
+					'phone'      => '',
+				),
+				'payment_method'   => 'bacs',
+				'extensions'       => array(
+					'extension_namespace' => array(
+						'extension_key' => true,
+					),
+				),
+			)
+		);
+
+		$response = rest_get_server()->dispatch( $request );
+		$status   = $response->get_status();
+		$data     = $response->get_data();
+
+		$this->assertEquals( 403, $status, print_r( $data, true ) );
+		$this->assertEquals( 'woocommerce_rest_guest_checkout_disabled', $data['code'], print_r( $data, true ) );
+		$this->assertEquals( 'You must be logged in to checkout.', $data['message'], print_r( $data, true ) );
+
+		// Return WC_Session to original state.
+		WC()->session = $old_session;
+	}
 }
