@@ -24,6 +24,9 @@ const getFirstParagraph = ( source: string ) => {
 /**
  * Generates the summary text from a string of text.
  *
+ * NOTE: If editing, keep it in sync with generate_summary function from
+ * plugins/woocommerce/src/Blocks/BlockTypes/ProductSummary.php!
+ *
  * @param {string} source    Source text.
  * @param {number} maxLength Limit number of countType returned if text has multiple paragraphs.
  * @param {string} countType What is being counted. One of words, characters_excluding_spaces, or characters_including_spaces.

@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+CI config: include blocks e2e with wp L-1 in the daily checks

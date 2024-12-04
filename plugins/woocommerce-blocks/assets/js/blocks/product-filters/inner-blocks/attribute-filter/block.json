@@ -60,7 +60,7 @@
 	},
 	"usesContext": [
 		"query",
-		"queryId"
+		"filterParams"
 	],
 	"attributes": {
 		"attributeId": {

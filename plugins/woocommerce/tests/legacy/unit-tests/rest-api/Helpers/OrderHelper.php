@@ -10,6 +10,7 @@ namespace Automattic\WooCommerce\RestApi\UnitTests\Helpers;
 
 defined( 'ABSPATH' ) || exit;
 
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 use Automattic\WooCommerce\Internal\DataStores\Orders\DataSynchronizer;
 use Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTableDataStore;
@@ -71,7 +72,7 @@ class OrderHelper {
 		ShippingHelper::create_simple_flat_rate();
 
 		$order_data = array(
-			'status'        => 'pending',
+			'status'        => OrderStatus::PENDING,
 			'customer_id'   => $customer_id,
 			'customer_note' => '',
 			'total'         => '',
@@ -211,7 +212,7 @@ class OrderHelper {
 
 		$order->save();
 
-		$order->set_status( 'completed' );
+		$order->set_status( OrderStatus::COMPLETED );
 		$order->set_currency( 'INR' );
 		$order->set_customer_id( $customer->get_id() );
 		$order->set_billing_email( $customer->get_billing_email() );
@@ -301,7 +302,7 @@ class OrderHelper {
 
 		$product = \Automattic\WooCommerce\RestApi\UnitTests\Helpers\ProductHelper::create_simple_product();
 
-		$order->set_status( 'pending' );
+		$order->set_status( OrderStatus::PENDING );
 		$order->set_created_via( 'unit-tests' );
 		$order->set_currency( 'COP' );
 		$order->set_customer_ip_address( '127.0.0.1' );

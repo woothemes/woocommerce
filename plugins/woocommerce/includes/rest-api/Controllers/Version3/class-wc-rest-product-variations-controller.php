@@ -155,7 +155,7 @@ class WC_REST_Product_Variations_Controller extends WC_REST_Product_Variations_V
 		$data = $this->filter_response_by_context( $data, $context );
 
 		if ( $this->cogs_is_enabled() ) {
-			$this->add_cogs_info_to_returned_data( $data, $object );
+			$this->add_cogs_info_to_returned_product_data( $data, $object );
 		}
 
 		$response = rest_ensure_response( $data );
@@ -873,7 +873,7 @@ class WC_REST_Product_Variations_Controller extends WC_REST_Product_Variations_V
 		);
 
 		if ( $this->cogs_is_enabled() ) {
-			$schema = $this->add_cogs_related_schema( $schema, true );
+			$schema = $this->add_cogs_related_product_schema( $schema, true );
 		}
 
 		return $this->add_additional_fields_schema( $schema );
@@ -956,6 +956,19 @@ class WC_REST_Product_Variations_Controller extends WC_REST_Product_Variations_V
 			);
 		}
 
+		// Filter by global_unique_id.
+		if ( ! empty( $request['global_unique_id'] ) ) {
+			$global_unique_ids  = array_map( 'trim', explode( ',', $request['global_unique_id'] ) );
+			$args['meta_query'] = $this->add_meta_query( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+				$args,
+				array(
+					'key'     => '_global_unique_id',
+					'value'   => $global_unique_ids,
+					'compare' => 'IN',
+				)
+			);
+		}
+
 		// Filter by tax class.
 		if ( ! empty( $request['tax_class'] ) ) {
 			$args['meta_query'] = $this->add_meta_query( // WPCS: slow query ok.
@@ -1032,7 +1045,7 @@ class WC_REST_Product_Variations_Controller extends WC_REST_Product_Variations_V
 		}
 
 		// Force the post_type argument, since it's not a user input variable.
-		if ( ! empty( $request['sku'] ) ) {
+		if ( ! empty( $request['sku'] ) || ! empty( $request['global_unique_id'] ) ) {
 			$args['post_type'] = array( 'product', 'product_variation' );
 		} else {
 			$args['post_type'] = $this->post_type;

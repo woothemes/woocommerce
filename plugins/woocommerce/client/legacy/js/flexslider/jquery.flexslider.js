@@ -256,6 +256,7 @@
                   onload: 'this.width = this.naturalWidth; this.height = this.naturalHeight',
                   src: slide.attr('data-thumb'),
                   srcset: slide.attr('data-thumb-srcset'),
+                  sizes: slide.attr('data-thumb-sizes'),
                   alt: slide.attr('alt')
                 })
               }
@@ -291,7 +292,7 @@
           slider.controlNavScaffold.on(eventType, 'a, img', function(event) {
             event.preventDefault();
 
-            if (watchedEvent === "" || watchedEvent === event.type) {
+            if (watchedEvent === "" || watchedEvent === event.type || event.type === "flexslider-click") {
               var $this = $(this),
                   target = slider.controlNav.index($this);
 
@@ -316,7 +317,7 @@
           slider.controlNav.on(eventType, function(event) {
             event.preventDefault();
 
-            if (watchedEvent === "" || watchedEvent === event.type) {
+            if (watchedEvent === "" || watchedEvent === event.type || event.type === "flexslider-click") {
               var $this = $(this),
                   target = slider.controlNav.index($this);
 
@@ -374,7 +375,7 @@
             event.preventDefault();
             var target;
 
-            if (watchedEvent === "" || watchedEvent === event.type) {
+            if (watchedEvent === "" || watchedEvent === event.type || event.type === "flexslider-click") {
               target = ($(this).hasClass(namespace + 'next')) ? slider.getTarget('next') : slider.getTarget('prev');
               slider.flexAnimate(target, slider.vars.pauseOnAction);
             }
@@ -421,7 +422,7 @@
           slider.pausePlay.on(eventType, function(event) {
             event.preventDefault();
 
-            if (watchedEvent === "" || watchedEvent === event.type) {
+            if (watchedEvent === "" || watchedEvent === event.type || event.type === "flexslider-click") {
               if ($(this).hasClass(namespace + 'pause')) {
                 slider.manualPause = true;
                 slider.manualPlay = false;

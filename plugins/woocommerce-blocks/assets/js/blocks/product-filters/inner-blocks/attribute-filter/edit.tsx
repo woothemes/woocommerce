@@ -19,6 +19,7 @@ import { withSpokenMessages } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { getSetting } from '@woocommerce/settings';
+import type { TemplateArray } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -47,6 +48,7 @@ const Edit = ( props: EditProps ) => {
 		showCounts,
 		sortOrder,
 		hideEmpty,
+		clearButton,
 	} = blockAttributes;
 
 	const attributeObject = getAttributeFromId( attributeId );
@@ -66,7 +68,7 @@ const Edit = ( props: EditProps ) => {
 			query: { orderby: 'menu_order', hide_empty: hideEmpty },
 		} );
 
-	const { results: filteredCounts, isLoading: isFilterCountsLoading } =
+	const { data: filteredCounts, isLoading: isFilterCountsLoading } =
 		useCollectionData( {
 			queryAttribute: {
 				taxonomy: attributeObject?.taxonomy || '',
@@ -155,22 +157,24 @@ const Edit = ( props: EditProps ) => {
 						[
 							'core/heading',
 							{
-								level: 3,
+								level: 4,
 								content:
 									attributeObject?.label ||
 									__( 'Attribute', 'woocommerce' ),
 							},
 						],
-						[
-							'woocommerce/product-filter-clear-button',
-							{
-								lock: {
-									remove: true,
-									move: false,
-								},
-							},
-						],
-					],
+						clearButton
+							? [
+									'woocommerce/product-filter-clear-button',
+									{
+										lock: {
+											remove: true,
+											move: false,
+										},
+									},
+							  ]
+							: null,
+					].filter( Boolean ) as unknown as TemplateArray,
 				],
 				[
 					displayStyle,

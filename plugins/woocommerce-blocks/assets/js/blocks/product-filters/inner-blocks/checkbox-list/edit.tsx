@@ -26,7 +26,7 @@ import './editor.scss';
 import { EditProps } from './types';
 import { getColorClasses, getColorVars } from './utils';
 
-const Edit = ( props: EditProps ): JSX.Element => {
+const CheckboxListEdit = ( props: EditProps ): JSX.Element => {
 	const {
 		clientId,
 		context,
@@ -96,21 +96,17 @@ const Edit = ( props: EditProps ): JSX.Element => {
 									htmlFor={ `interactive-checkbox-${ index }` }
 									className=" wc-block-product-filter-checkbox-list__label"
 								>
-									<span className="wc-block-interactive-components-checkbox-list__input-wrapper">
-										<span className="wc-block-product-filter-checkbox-list__input-wrapper">
-											<input
-												name={ `interactive-checkbox-${ index }` }
-												type="checkbox"
-												className="wc-block-product-filter-checkbox-list__input"
-												defaultChecked={
-													!! item.selected
-												}
-											/>
-											<Icon
-												className="wc-block-product-filter-checkbox-list__mark"
-												icon={ checkMark }
-											/>
-										</span>
+									<span className="wc-block-product-filter-checkbox-list__input-wrapper">
+										<input
+											name={ `interactive-checkbox-${ index }` }
+											type="checkbox"
+											className="wc-block-product-filter-checkbox-list__input"
+											defaultChecked={ !! item.selected }
+										/>
+										<Icon
+											className="wc-block-product-filter-checkbox-list__mark"
+											icon={ checkMark }
+										/>
 									</span>
 									<span className="wc-block-product-filter-checkbox-list__text">
 										{ item.label }
@@ -209,4 +205,4 @@ export default withColors( {
 	optionElementBorder: 'option-element-border',
 	optionElementSelected: 'option-element-border',
 	optionElement: 'option-element',
-} )( Edit );
+} )( CheckboxListEdit );

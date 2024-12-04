@@ -212,6 +212,7 @@ function CustomerFeedbackModal( {
 							setFirstQuestionScore
 						)
 					}
+					className="woocommerce-customer-effort-score__radio-control"
 				/>
 			</div>
 
@@ -238,6 +239,7 @@ function CustomerFeedbackModal( {
 								setSecondQuestionScore
 							)
 						}
+						className="woocommerce-customer-effort-score__radio-control"
 					/>
 				</div>
 			) }
