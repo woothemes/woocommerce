@@ -16,13 +16,15 @@ import { useState } from '@wordpress/element';
 import {
 	isWooPayments,
 	getWooPaymentsTestDriveAccountLink,
+	getWooPaymentsSetupLiveAccountLink,
 } from '~/settings-payments/utils';
 
-export const PaymentGatewayButton = ( {
+export const PaymentGatewayButtons = ( {
 	id,
 	isOffline,
 	enabled,
 	needsSetup,
+	testMode,
 	settingsUrl,
 	textSettings = __( 'Manage', 'woocommerce' ),
 	textEnable = __( 'Enable', 'woocommerce' ),
@@ -32,6 +34,7 @@ export const PaymentGatewayButton = ( {
 	isOffline: boolean;
 	enabled: boolean;
 	needsSetup?: boolean;
+	testMode?: boolean;
 	settingsUrl: string;
 	textSettings?: string;
 	textEnable?: string;
@@ -41,6 +44,7 @@ export const PaymentGatewayButton = ( {
 	const { togglePaymentGateway, invalidateResolutionForStoreSelector } =
 		useDispatch( PAYMENT_SETTINGS_STORE_NAME );
 	const [ isUpdating, setIsUpdating ] = useState( false );
+	const [ isActivatingPayments, setIsActivatingPayments ] = useState( false );
 
 	const createApiErrorNotice = () => {
 		createErrorNotice(
@@ -105,8 +109,19 @@ export const PaymentGatewayButton = ( {
 		return enabled ? textSettings : textEnable;
 	};
 
+	const activatePayments = () => {
+		setIsActivatingPayments( true );
+
+		window.location.href = getWooPaymentsSetupLiveAccountLink();
+	};
+
 	return (
 		<div className="woocommerce-list__item-after__actions">
+			{ ! enabled && ! needsSetup && (
+				<Button variant={ 'secondary' } href={ settingsUrl }>
+					{ textSettings }
+				</Button>
+			) }
 			<Button
 				variant={ enabled && ! needsSetup ? 'secondary' : 'primary' }
 				isBusy={ isUpdating }
@@ -116,6 +131,17 @@ export const PaymentGatewayButton = ( {
 			>
 				{ determineButtonText() }
 			</Button>
+
+			{ isWooPayments( id ) && enabled && ! needsSetup && testMode && (
+				<Button
+					variant="primary"
+					onClick={ activatePayments }
+					isBusy={ isActivatingPayments }
+					disabled={ isActivatingPayments }
+				>
+					{ __( 'Activate payments', 'woocommerce' ) }
+				</Button>
+			) }
 		</div>
 	);
 };
