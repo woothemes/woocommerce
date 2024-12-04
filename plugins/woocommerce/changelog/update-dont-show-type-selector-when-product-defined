@@ -1,0 +1,4 @@
+Significance: patch
+Type: update
+
+Comment: render the product type toolbar button only when the product is not defined

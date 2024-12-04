@@ -1,13 +1,19 @@
 const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
 const {
-	goToPageEditor,
 	fillPageTitle,
-	insertBlock,
 	transformIntoBlocks,
 	publishPage,
-	closeChoosePatternModal,
 } = require( '../../utils/editor' );
 const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
+
+/**
+ * External dependencies
+ */
+import {
+	closeChoosePatternModal,
+	goToPageEditor,
+	insertBlock,
+} from '@woocommerce/e2e-utils-playwright';
 
 const test = baseTest.extend( {
 	storageState: process.env.ADMINSTATE,
