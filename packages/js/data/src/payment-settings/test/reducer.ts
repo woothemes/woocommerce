@@ -9,18 +9,16 @@ import reducer from '../reducer';
 import { PaymentSettingsState } from '../types';
 import { ACTION_TYPES } from '../action-types';
 import {
-	registeredPaymentGatewaysStub,
+	providersStub,
 	offlinePaymentGatewaysStub,
-	preferredExtensionSuggestionsStub,
-	otherExtensionSuggestionsStub,
+	suggestionsStub,
 	suggestionCategoriesStub,
 } from '../test-helpers/stub';
 
 const defaultState: PaymentSettingsState = {
-	registeredPaymentGateways: [],
+	providers: [],
 	offlinePaymentGateways: [],
-	preferredExtensionSuggestions: [],
-	otherExtensionSuggestions: [],
+	suggestions: [],
 	suggestionCategories: [],
 	isFetching: false,
 	errors: {},
@@ -38,17 +36,17 @@ describe( 'payment settings reducer', () => {
 		expect( state ).not.toBe( defaultState );
 	} );
 
-	it( 'should handle GET_PAYMENT_GATEWAY_SUGGESTIONS_REQUEST', () => {
+	it( 'should handle GET_PAYMENT_PROVIDERS_REQUEST', () => {
 		const state = reducer( defaultState, {
-			type: ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_REQUEST,
+			type: ACTION_TYPES.GET_PAYMENT_PROVIDERS_REQUEST,
 		} );
 
 		expect( state.isFetching ).toBe( true );
 	} );
 
-	it( 'should handle GET_PAYMENT_GATEWAY_SUGGESTIONS_ERROR', () => {
+	it( 'should handle GET_PAYMENT_PROVIDERS_ERROR', () => {
 		const state = reducer( defaultState, {
-			type: ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_ERROR,
+			type: ACTION_TYPES.GET_PAYMENT_PROVIDERS_ERROR,
 			error: restApiError,
 		} );
 
@@ -57,35 +55,25 @@ describe( 'payment settings reducer', () => {
 		);
 	} );
 
-	it( 'should handle GET_PAYMENT_GATEWAY_SUGGESTIONS_SUCCESS', () => {
+	it( 'should handle GET_PAYMENT_PROVIDERS_SUCCESS', () => {
 		const state = reducer( defaultState, {
-			type: ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_SUCCESS,
-			registeredPaymentGateways: registeredPaymentGatewaysStub,
+			type: ACTION_TYPES.GET_PAYMENT_PROVIDERS_SUCCESS,
+			providers: providersStub,
 			offlinePaymentGateways: offlinePaymentGatewaysStub,
-			preferredExtensionSuggestions: preferredExtensionSuggestionsStub,
-			otherExtensionSuggestions: otherExtensionSuggestionsStub,
+			suggestions: suggestionsStub,
 			suggestionCategories: suggestionCategoriesStub,
 		} );
 
-		expect( state.registeredPaymentGateways ).toHaveLength( 1 );
-		expect( state.registeredPaymentGateways ).toBe(
-			registeredPaymentGatewaysStub
-		);
+		expect( state.providers ).toHaveLength( 3 );
+		expect( state.providers ).toBe( providersStub );
 
 		expect( state.offlinePaymentGateways ).toHaveLength( 3 );
 		expect( state.offlinePaymentGateways ).toBe(
 			offlinePaymentGatewaysStub
 		);
 
-		expect( state.preferredExtensionSuggestions ).toHaveLength( 1 );
-		expect( state.preferredExtensionSuggestions ).toBe(
-			preferredExtensionSuggestionsStub
-		);
-
-		expect( state.otherExtensionSuggestions ).toHaveLength( 2 );
-		expect( state.otherExtensionSuggestions ).toBe(
-			otherExtensionSuggestionsStub
-		);
+		expect( state.suggestions ).toHaveLength( 2 );
+		expect( state.suggestions ).toBe( suggestionsStub );
 
 		expect( state.suggestionCategories ).toHaveLength( 3 );
 		expect( state.suggestionCategories ).toBe( suggestionCategoriesStub );
