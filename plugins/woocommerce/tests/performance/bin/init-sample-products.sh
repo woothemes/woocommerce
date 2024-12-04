@@ -34,7 +34,10 @@ pnpm --filter=@woocommerce/plugin-woocommerce wp-env run tests-cli wp db query "
 pnpm --filter=@woocommerce/plugin-woocommerce wp-env run tests-cli wp db query "CREATE TABLE wp_postmeta_variations LIKE wp_postmeta;"
 
 # Test on 1K, *10K, 25K, 50k
-wp-env run tests-cli wp wc generate products 1000
+wp-env run tests-cli wp wc generate products 2500 &
+wp-env run tests-cli wp wc generate products 2500 &
+wp-env run tests-cli wp wc generate products 2500 &
+wp-env run tests-cli wp wc generate products 2500
 
 # install Storefront
 wp-env run tests-cli wp theme install storefront --activate
