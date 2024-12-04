@@ -18,10 +18,7 @@ export const parseScriptTag = ( elementId: string ) => {
 };
 
 export const isWooPayments = ( id: string ) => {
-	return [
-		'pre_install_woocommerce_payments_promotion',
-		'woocommerce_payments',
-	].includes( id );
+	return [ '_wc_pes_woopayments', 'woocommerce_payments' ].includes( id );
 };
 
 export const getWooPaymentsTestDriveAccountLink = () => {
