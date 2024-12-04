@@ -48,6 +48,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 		add_action( 'woocommerce_admin_field_email_preview', array( $this, 'email_preview' ) );
 		add_action( 'woocommerce_admin_field_email_image_url', array( $this, 'email_image_url' ) );
 		add_action( 'woocommerce_admin_field_email_font_family', array( $this, 'email_font_family' ) );
+		add_action( 'woocommerce_admin_field_email_color_palette', array( $this, 'email_color_palette' ) );
 		parent::__construct();
 	}
 
@@ -194,7 +195,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 
 			$color_palette_section_header = array(
 				'title' => __( 'Color palette', 'woocommerce' ),
-				'type'  => 'title',
+				'type'  => 'email_color_palette',
 				'id'    => 'email_color_palette',
 			);
 
@@ -742,6 +743,26 @@ class WC_Settings_Emails extends WC_Settings_Page {
 				</select>
 			</td>
 		</tr>
+		<?php
+	}
+
+	/**
+	 * Creates the React mount point for the email color palette title.
+	 *
+	 * @param array $value Field value array.
+	 */
+	public function email_color_palette( $value ) {
+		$default_colors = $this->get_email_default_colors();
+
+		?>
+		<h2 class="wc-settings-email-color-palette-title"><?php echo esc_html( $value['title'] ); ?></h2>
+		<div
+			class="wc-settings-email-color-palette-buttons"
+			id="wc_settings_email_color_palette_slotfill"
+			data-default-colors="<?php echo esc_attr( wp_json_encode( $default_colors ) ); ?>"
+			<?php echo wp_theme_has_theme_json() ? 'data-has-theme-json' : ''; ?>
+		></div>
+		<table class="form-table">
 		<?php
 	}
 }
