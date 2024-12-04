@@ -27,6 +27,7 @@ import { useIsDescendentOfSingleProductBlock } from '../../atomic/blocks/product
 import { AddToCartOptionsSettings } from './settings';
 import { store as woocommerceTemplateStateStore } from './store';
 import { ProductTypeProps } from './types';
+import { useProductDataContext } from '@woocommerce/shared-context';
 export interface Attributes {
 	className?: string;
 	isDescendentOfSingleProductBlock: boolean;
@@ -88,25 +89,29 @@ const AddToCartOptionsEdit = ( props: BlockEditProps< Attributes > ) => {
 		} );
 	}, [ setAttributes, isDescendentOfSingleProductBlock ] );
 
+	const { product } = useProductDataContext();
+
 	return (
 		<>
-			<BlockControls>
-				<ToolbarGroup>
-					<ToolbarDropdownMenu
-						icon={ <Icon icon={ eye } /> }
-						text={
-							currentProduct?.label ||
-							__( 'Switch product type', 'woocommerce' )
-						}
-						value={ currentProduct?.slug }
-						controls={ productTypes.map( ( productType ) => ( {
-							title: productType.label,
-							onClick: () =>
-								switchProductType( productType.slug ),
-						} ) ) }
-					/>
-				</ToolbarGroup>
-			</BlockControls>
+			{ ! product?.id && (
+				<BlockControls>
+					<ToolbarGroup>
+						<ToolbarDropdownMenu
+							icon={ <Icon icon={ eye } /> }
+							text={
+								currentProduct?.label ||
+								__( 'Switch product type', 'woocommerce' )
+							}
+							value={ currentProduct?.slug }
+							controls={ productTypes.map( ( productType ) => ( {
+								title: productType.label,
+								onClick: () =>
+									switchProductType( productType.slug ),
+							} ) ) }
+						/>
+					</ToolbarGroup>
+				</BlockControls>
+			) }
 
 			<AddToCartOptionsSettings
 				features={ {
