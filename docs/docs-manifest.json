@@ -1026,7 +1026,7 @@
           "menu_title": "Payment Gateway API",
           "tags": "reference",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/payments/payment-gateway-api.md",
-          "hash": "f199d04a262bac32d1e22eb3f8410d5c30f10fa86cbb303d4149363a44dc3562",
+          "hash": "7a8441ba0c0aa74aa727209674b5412502232e1bec230c2aee3984f3ff01d610",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/payments/payment-gateway-api.md",
           "id": "b337203996650b567f91c70306e1010d6f1ae552"
         }
@@ -1823,5 +1823,5 @@
       "categories": []
     }
   ],
-  "hash": "44604fac459c7bec6ffca108113bdca23a27befef57bc0426541eb8a24a3bbd7"
+  "hash": "aea8e63e3f7b2b49c8ff1b1242df86636a203d47adaf9c9a9a752bfd58982a44"
 }

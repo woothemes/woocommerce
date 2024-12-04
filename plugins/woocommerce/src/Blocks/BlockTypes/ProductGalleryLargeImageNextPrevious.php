@@ -52,7 +52,6 @@ class ProductGalleryLargeImageNextPrevious extends AbstractBlock {
 			case 'outsideTheImage':
 				return 'outside-image';
 			case 'off':
-				return 'off';
 			default:
 				return 'off';
 		}
@@ -84,7 +83,13 @@ class ProductGalleryLargeImageNextPrevious extends AbstractBlock {
 			return null;
 		}
 
-		$context     = $block->context;
+		$context      = $block->context;
+		$class_suffix = $this->get_class_suffix( $context );
+
+		if ( 'off' === $class_suffix ) {
+			return null;
+		}
+
 		$prev_button = $this->get_button( 'previous', $context );
 		$p           = new \WP_HTML_Tag_Processor( $prev_button );
 
@@ -116,7 +121,7 @@ class ProductGalleryLargeImageNextPrevious extends AbstractBlock {
 		}
 
 		$alignment_class = isset( $attributes['layout']['verticalAlignment'] ) ? 'is-vertically-aligned-' . $attributes['layout']['verticalAlignment'] : '';
-		$position_class  = 'wc-block-product-gallery-large-image-next-previous--' . $this->get_class_suffix( $context );
+		$position_class  = 'wc-block-product-gallery-large-image-next-previous--' . $class_suffix;
 
 		return strtr(
 			'<div
@@ -172,11 +177,14 @@ class ProductGalleryLargeImageNextPrevious extends AbstractBlock {
 		}
 
 		return sprintf(
-			'<button class="wc-block-product-gallery-large-image-next-previous--button wc-block-product-gallery-large-image-next-previous-%1$s--%2$s">
-				<svg  xmlns="http://www.w3.org/2000/svg" width="49" height="48" viewBox="0 0 49 48" fill="none">
+			'<button
+				data-wc-bind--disabled="state.disable%1$s"
+				class="wc-block-product-gallery-large-image-next-previous--button wc-block-product-gallery-large-image-next-previous-%2$s--%3$s"
+			>
+				<svg xmlns="http://www.w3.org/2000/svg" width="49" height="48" viewBox="0 0 49 48" fill="none">
 					<g filter="url(#filter0_b_397_11354)">
 						<rect x="0.5" width="48" height="48" rx="5" fill="black" fill-opacity="0.5"/>
-						<path d="%3$s" fill="white"/>
+						<path d="%4$s" fill="white"/>
 					</g>
 					<defs>
 						<filter id="filter0_b_397_11354" x="-9.5" y="-10" width="68" height="68" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
@@ -188,6 +196,7 @@ class ProductGalleryLargeImageNextPrevious extends AbstractBlock {
 					</defs>
 				</svg>
 			</button>',
+			ucfirst( $button_side_class ),
 			$button_side_class,
 			$this->get_class_suffix( $context ),
 			$icon_path
@@ -213,7 +222,10 @@ class ProductGalleryLargeImageNextPrevious extends AbstractBlock {
 		}
 
 		return sprintf(
-			'<button class="wc-block-product-gallery-large-image-next-previous--button wc-block-product-gallery-large-image-next-previous-%1$s--%2$s">
+			'<button
+				data-wc-bind--disabled="state.disable%1$s"
+				class="wc-block-product-gallery-large-image-next-previous--button wc-block-product-gallery-large-image-next-previous-%2$s--%3$s"
+			>
 				<svg
 					width="10"
 					height="16"
@@ -222,12 +234,13 @@ class ProductGalleryLargeImageNextPrevious extends AbstractBlock {
 					xmlns="http://www.w3.org/2000/svg"
 				>
 					<path
-						d="%3$s"
+						d="%4$s"
 						stroke="black"
 						stroke-width="1.5"
 					/>
 				</svg>
 			</button>',
+			ucfirst( $button_side_class ),
 			$button_side_class,
 			$this->get_class_suffix( $context ),
 			$icon_path
