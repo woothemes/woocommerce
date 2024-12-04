@@ -11,6 +11,8 @@ import clsx from 'clsx';
 import { RadioControlAccordion } from '@woocommerce/blocks-components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { getPaymentMethods } from '@woocommerce/blocks-registry';
+import LoadingMask from '@woocommerce/base-components/loading-mask';
+import { CART_STORE_KEY } from '@woocommerce/block-data';
 
 /**
  * Internal dependencies
@@ -48,6 +50,17 @@ const PaymentMethodOptions = () => {
 	const { removeNotice } = useDispatch( 'core/notices' );
 	const { dispatchCheckoutEvent } = useStoreEvents();
 	const { isEditor } = useEditorContext();
+
+	const { isCustomerDataUpdating, isApplyingExtensionCartUpdate } = useSelect(
+		( select ) => {
+			const store = select( CART_STORE_KEY );
+			return {
+				isCustomerDataUpdating: store.isCustomerDataUpdating(),
+				isApplyingExtensionCartUpdate:
+					store.getApplyingExtensionCartUpdates() > 0,
+			};
+		}
+	);
 
 	const options = Object.keys( availablePaymentMethods ).map( ( name ) => {
 		const { edit, content, label, supports } = paymentMethods[ name ];
@@ -95,14 +108,20 @@ const PaymentMethodOptions = () => {
 		'disable-radio-control': isSinglePaymentMethod,
 	} );
 	return isExpressPaymentMethodActive ? null : (
-		<RadioControlAccordion
-			highlightChecked={ true }
-			id={ 'wc-payment-method-options' }
-			className={ singleOptionClass }
-			selected={ activeSavedToken ? null : activePaymentMethod }
-			onChange={ onChange }
-			options={ options }
-		/>
+		<LoadingMask
+			isLoading={
+				isCustomerDataUpdating || isApplyingExtensionCartUpdate
+			}
+		>
+			<RadioControlAccordion
+				highlightChecked={ true }
+				id={ 'wc-payment-method-options' }
+				className={ singleOptionClass }
+				selected={ activeSavedToken ? null : activePaymentMethod }
+				onChange={ onChange }
+				options={ options }
+			/>
+		</LoadingMask>
 	);
 };
 

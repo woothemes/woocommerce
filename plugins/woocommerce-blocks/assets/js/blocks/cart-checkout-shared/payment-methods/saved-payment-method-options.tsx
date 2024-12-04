@@ -12,10 +12,11 @@ import {
 	usePaymentMethodInterface,
 	useStoreEvents,
 } from '@woocommerce/base-context/hooks';
-import { PAYMENT_STORE_KEY } from '@woocommerce/block-data';
+import { CART_STORE_KEY, PAYMENT_STORE_KEY } from '@woocommerce/block-data';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { getPaymentMethods } from '@woocommerce/blocks-registry';
 import { isNull } from '@woocommerce/types';
+import LoadingMask from '@woocommerce/base-components/loading-mask';
 
 /**
  * Internal dependencies
@@ -166,9 +167,22 @@ const SavedPaymentMethodOptions = () => {
 					{ token: activeSavedToken, ...paymentMethodInterface }
 			  )
 			: null;
-
+	const { isCustomerDataUpdating, isApplyingExtensionCartUpdate } = useSelect(
+		( select ) => {
+			const store = select( CART_STORE_KEY );
+			return {
+				isCustomerDataUpdating: store.isCustomerDataUpdating(),
+				isApplyingExtensionCartUpdate:
+					store.getApplyingExtensionCartUpdates() > 0,
+			};
+		}
+	);
 	return options.length > 0 ? (
-		<>
+		<LoadingMask
+			isLoading={
+				isCustomerDataUpdating || isApplyingExtensionCartUpdate
+			}
+		>
 			<RadioControl
 				highlightChecked={ true }
 				id={ 'wc-payment-method-saved-tokens' }
@@ -177,7 +191,7 @@ const SavedPaymentMethodOptions = () => {
 				onChange={ () => void 0 }
 			/>
 			{ savedPaymentMethodHandler }
-		</>
+		</LoadingMask>
 	) : null;
 };
 
