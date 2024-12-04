@@ -99,7 +99,7 @@ export const CountrySelector = < ItemType extends Item >( {
 					itemSet.filter( ( item: Item ) =>
 						`${ removeAccents( item.name ?? '' ) }`
 							.toLowerCase()
-							.includes( removeAccents( searchString ) )
+							.includes( removeAccents( searchString.toLowerCase() ) )
 					)
 				),
 			[]
