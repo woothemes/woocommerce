@@ -74,14 +74,24 @@ const isStockVisible = ( product: ProductResponseItem ): boolean => {
 		[ 'external', 'grouped', 'variable' ]
 	);
 
-	if (
-		productTypesWithoutStockIndicator.includes( product.type ) ||
-		product.sold_individually ||
-		( ! product.manage_stock && product.type !== 'simple' )
-	) {
-		return false;
-	}
-	return true;
+	const isProductTypeAllowed = ! productTypesWithoutStockIndicator.includes(
+		product.type
+	);
+
+	const isInStockHidden =
+		product.is_in_stock &&
+		product.manage_stock === false &&
+		! product.is_on_backorder;
+
+	const isStockHiddenForVariation =
+		! product.backorder_notification_enabled &&
+		product.is_on_backorder &&
+		product.manage_stock !== false &&
+		product.type === 'variation';
+
+	return (
+		isProductTypeAllowed && ! isInStockHidden && ! isStockHiddenForVariation
+	);
 };
 
 type Props = BlockAttributes & HTMLAttributes< HTMLDivElement >;
