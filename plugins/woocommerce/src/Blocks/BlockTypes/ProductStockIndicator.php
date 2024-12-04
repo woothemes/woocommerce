@@ -67,8 +67,6 @@ class ProductStockIndicator extends AbstractBlock {
 		}
 	}
 
-
-
 	/**
 	 * Include and render the block.
 	 *
@@ -78,12 +76,6 @@ class ProductStockIndicator extends AbstractBlock {
 	 * @return string Rendered block type output.
 	 */
 	protected function render( $attributes, $content, $block ) {
-		if ( ! empty( $content ) ) {
-			parent::register_block_type_assets();
-			$this->register_chunk_translations( [ $this->block_name ] );
-			return $content;
-		}
-
 		$post_id = isset( $block->context['postId'] ) ? $block->context['postId'] : '';
 		$product = wc_get_product( $post_id );
 
@@ -91,29 +83,37 @@ class ProductStockIndicator extends AbstractBlock {
 			return '';
 		}
 
-		$is_in_stock     = $product->is_in_stock();
-		$is_on_backorder = $product->is_on_backorder();
+		$availability = $product->get_availability();
+
+		if ( empty( $availability['availability'] ) ) {
+			return '';
+		}
 
 		$low_stock_amount = $product->get_low_stock_amount();
 		$total_stock      = $product->get_stock_quantity();
-		$is_low_stock     = $low_stock_amount && $total_stock <= $low_stock_amount;
-
+		$is_low_stock       = $low_stock_amount && $total_stock <= $low_stock_amount;
 		$classes_and_styles = StyleAttributesUtils::get_classes_and_styles_by_attributes( $attributes );
 
 		$classnames  = isset( $classes_and_styles['classes'] ) ? ' ' . $classes_and_styles['classes'] . ' ' : '';
-		$classnames .= ! $is_in_stock ? ' wc-block-components-product-stock-indicator--out-of-stock ' : '';
-		$classnames .= $is_in_stock ? ' wc-block-components-product-stock-indicator--in-stock ' : '';
-		$classnames .= $is_low_stock ? ' wc-block-components-product-stock-indicator--low-stock ' : '';
-		$classnames .= $is_on_backorder ? ' wc-block-components-product-stock-indicator--available-on-backorder ' : '';
+		$classnames .= sprintf( ' wc-block-components-product-stock-indicator--%s', $availability['class'] );
+
+		if ( empty( $content ) && $is_low_stock ) {
+			$low_stock_text = sprintf(
+				/* translators: %d is number of items in stock for product */
+				__( '%d left in stock', 'woocommerce' ),
+				$low_stock_amount
+			);
+		}
+
+		$output_text = $low_stock_text ?? $availability['availability'];
 
 		$output  = '';
 		$output .= '<div class="wc-block-components-product-stock-indicator wp-block-woocommerce-product-stock-indicator ' . esc_attr( $classnames ) . '"';
 		$output .= isset( $classes_and_styles['styles'] ) ? ' style="' . esc_attr( $classes_and_styles['styles'] ) . '"' : '';
 		$output .= '>';
-		$output .= wp_kses_post( self::getTextBasedOnStock( $is_in_stock, $is_low_stock, $low_stock_amount, $is_on_backorder ) );
+		$output .= wp_kses_post( $output_text );
 		$output .= '</div>';
 
 		return $output;
-
 	}
 }
