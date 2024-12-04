@@ -4,7 +4,7 @@ const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const singleProductPrice1 = '979.99';
 const singleProductPrice2 = '989.99';
 const singleProductPrice3 = '999.99';
-const now = new Date();
+const now = Date.now();
 
 const simpleProductName = `AAA Search and Browse Product ${ now }`;
 
