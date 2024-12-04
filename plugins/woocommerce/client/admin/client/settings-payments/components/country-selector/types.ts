@@ -1,6 +1,7 @@
-import {
-	UseSelectStateChangeOptions,
-} from 'downshift';
+/**
+ * External dependencies
+ */
+import { UseSelectStateChangeOptions } from 'downshift';
 
 export interface Item {
 	key: string;
@@ -21,8 +22,9 @@ export interface ControlProps< ItemType > {
 	children?: ( item: ItemType ) => JSX.Element;
 }
 
-export interface UseSelectStateChangeOptionsProps< Item > extends UseSelectStateChangeOptions< Item > {
+export interface UseSelectStateChangeOptionsProps< ItemType >
+	extends UseSelectStateChangeOptions< ItemType > {
 	props: {
-		items: Item[];
+		items: ItemType[];
 	};
 }

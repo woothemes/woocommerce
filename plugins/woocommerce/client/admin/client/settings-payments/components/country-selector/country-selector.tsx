@@ -27,7 +27,8 @@ const stateReducer = < ItemType extends Item >(
 	state: UseSelectState< ItemType | null >,
 	actionAndChanges: UseSelectStateChangeOptions< ItemType | null >
 ): Partial< UseSelectState< ItemType > > => {
-	const extendedAction = actionAndChanges as UseSelectStateChangeOptionsProps<ItemType | null>; // Cast to the extended type
+	const extendedAction =
+		actionAndChanges as UseSelectStateChangeOptionsProps< ItemType | null >; // Cast to the extended type
 
 	const { changes, type, props } = extendedAction;
 	const { items } = props;
