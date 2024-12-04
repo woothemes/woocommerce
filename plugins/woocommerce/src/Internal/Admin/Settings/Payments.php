@@ -183,6 +183,12 @@ class Payments {
 	 * @return string The plugin slug of the payment gateway.
 	 */
 	public function get_payment_gateway_plugin_slug( WC_Payment_Gateway $payment_gateway ): string {
+		// If the payment gateway object has a `plugin_slug` property, use it.
+		// This is useful for testing.
+		if ( property_exists( $payment_gateway, 'plugin_slug' ) ) {
+			return $payment_gateway->plugin_slug;
+		}
+
 		try {
 			$reflector = new \ReflectionClass( get_class( $payment_gateway ) );
 		} catch ( \ReflectionException $e ) {

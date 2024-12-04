@@ -139,6 +139,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'plugin', $provider, 'Provider (gateway) `plugin` entry is missing' );
 		$this->assertArrayHasKey( 'slug', $provider['plugin'], 'Provider (gateway) `plugin[slug]` entry is missing' );
 		$this->assertArrayHasKey( 'status', $provider['plugin'], 'Provider (gateway) `plugin[status]` entry is missing' );
+		$this->assertArrayHasKey( '_links', $provider, 'Provider (gateway) `_links` entry is missing' );
 
 		// Assert that the offline payment methods have all the details.
 		$offline_pm = $data['offline_payment_methods'][0];
@@ -878,6 +879,11 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 					'preferred',
 					'recommended',
 				),
+				'_links' 		  => array(
+					'hide' => array(
+						'href' => 'http://localhost:8888/wp-json/wc-admin/settings/payments/providers/suggestion/woopayments/hide',
+					),
+				),
 			);
 			$mock_providers[] = array(
 				'id'                => '_wc_pes_paypal_full_stack',
@@ -910,6 +916,11 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 				'tags'              => array(
 					'made_in_woo',
 					'preferred',
+				),
+				'_links' 		  => array(
+					'hide' => array(
+						'href' => 'http://localhost:8888/wp-json/wc-admin/settings/payments/providers/suggestion/paypal/hide',
+					),
 				),
 			);
 		}
