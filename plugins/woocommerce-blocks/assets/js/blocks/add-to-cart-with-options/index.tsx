@@ -1,9 +1,11 @@
 /**
  * External dependencies
  */
-import { registerBlockSingleProductTemplate } from '@woocommerce/atomic-utils';
+import { registerBlockType } from '@wordpress/blocks';
 import { Icon, button } from '@wordpress/icons';
 import { isExperimentalBlocksEnabled } from '@woocommerce/block-settings';
+import { getSettingWithCoercion } from '@woocommerce/settings';
+import { isBoolean } from '@woocommerce/types';
 
 /**
  * Internal dependencies
@@ -11,28 +13,26 @@ import { isExperimentalBlocksEnabled } from '@woocommerce/block-settings';
 import metadata from './block.json';
 import AddToCartOptionsEdit from './edit';
 import './style.scss';
+import registerStore from './store';
 
-const blockSettings = {
-	edit: AddToCartOptionsEdit,
-	icon: {
-		src: (
-			<Icon
-				icon={ button }
-				className="wc-block-editor-components-block-icon"
-			/>
-		),
-	},
-	ancestor: [ 'woocommerce/single-product' ],
-	save() {
-		return null;
-	},
-};
+// Pick the value of the "blockify add to cart flag"
+const isBlockifiedAddToCart = getSettingWithCoercion(
+	'isBlockifiedAddToCart',
+	false,
+	isBoolean
+);
 
-if ( isExperimentalBlocksEnabled() ) {
-	registerBlockSingleProductTemplate( {
-		blockName: metadata.name,
-		blockMetadata: metadata,
-		blockSettings,
-		isAvailableOnPostEditor: true,
+export const shouldRegisterBlock =
+	isExperimentalBlocksEnabled() && isBlockifiedAddToCart;
+
+if ( shouldRegisterBlock ) {
+	// Register the store
+	registerStore();
+
+	// Register the block
+	registerBlockType( metadata, {
+		icon: <Icon icon={ button } />,
+		edit: AddToCartOptionsEdit,
+		save: () => null,
 	} );
 }

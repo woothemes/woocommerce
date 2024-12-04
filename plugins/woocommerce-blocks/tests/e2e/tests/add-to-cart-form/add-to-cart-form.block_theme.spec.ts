@@ -22,6 +22,12 @@ const blockData = {
 	},
 };
 
+declare global {
+	interface Window {
+		eventFired: boolean;
+	}
+}
+
 class BlockUtils {
 	editor: Editor;
 	page: Page;
@@ -93,6 +99,21 @@ class BlockUtils {
 			},
 			{ min, max, step }
 		);
+	}
+
+	/**
+	 * Adds an event listener to the quantity input field to check if the change event is fired.
+	 */
+	async addChangeEventListenerToQuantityInput() {
+		await this.page.evaluate( () => {
+			const inputEl = window.document.getElementsByClassName(
+				'wc-block-components-quantity-selector__input'
+			);
+
+			inputEl[ 0 ].addEventListener( 'change', () => {
+				window.eventFired = true;
+			} );
+		} );
 	}
 }
 
@@ -323,6 +344,123 @@ test.describe( `${ blockData.name } Block`, () => {
 			await expect( input ).toHaveValue( '10' );
 			await plusButton.click();
 			await expect( input ).toHaveValue( '10' );
+		} );
+
+		test( 'should trigger input change event when plus stepper button is clicked', async ( {
+			admin,
+			editor,
+			blockUtils,
+			page,
+		} ) => {
+			await admin.createNewPost();
+			await editor.insertBlock( { name: 'woocommerce/single-product' } );
+
+			const productName = 'Hoodie with Logo';
+
+			await blockUtils.configureSingleProductBlock( productName );
+
+			await blockUtils.enableStepperMode();
+			await editor.publishAndVisitPost();
+
+			const plusButton = page.getByLabel( `Increase quantity` );
+
+			await blockUtils.addChangeEventListenerToQuantityInput();
+
+			await plusButton.click();
+
+			const eventFired = await page.evaluate( () => window.eventFired );
+
+			expect( eventFired ).toBe( true );
+		} );
+
+		test( 'should not trigger input change event when plus stepper button is clicked and the value exceeds the maximum limit', async ( {
+			admin,
+			editor,
+			blockUtils,
+			page,
+		} ) => {
+			await admin.createNewPost();
+			await editor.insertBlock( { name: 'woocommerce/single-product' } );
+
+			const productName = 'Hoodie with Logo';
+
+			await blockUtils.configureSingleProductBlock( productName );
+
+			await blockUtils.enableStepperMode();
+			await editor.publishAndVisitPost();
+			await blockUtils.setMinMaxAndStep( {
+				min: 1,
+				max: 4,
+				step: 1,
+			} );
+
+			const plusButton = page.getByLabel( `Increase quantity` );
+
+			for ( let i = 0; i < 5; i++ ) {
+				await plusButton.click();
+			}
+
+			await blockUtils.addChangeEventListenerToQuantityInput();
+
+			await plusButton.click();
+
+			const eventFired = await page.evaluate( () => window.eventFired );
+
+			expect( eventFired ).toBeUndefined();
+		} );
+		test( 'should trigger input change event when minus stepper button is clicked', async ( {
+			admin,
+			editor,
+			blockUtils,
+			page,
+		} ) => {
+			await admin.createNewPost();
+			await editor.insertBlock( { name: 'woocommerce/single-product' } );
+
+			const productName = 'Hoodie with Logo';
+
+			await blockUtils.configureSingleProductBlock( productName );
+
+			await blockUtils.enableStepperMode();
+			await editor.publishAndVisitPost();
+
+			const plusButton = page.getByLabel( `Increase quantity` );
+			await plusButton.click();
+			const minusButton = page.getByLabel( `Reduce quantity` );
+
+			await blockUtils.addChangeEventListenerToQuantityInput();
+
+			await minusButton.click();
+
+			const eventFired = await page.evaluate( () => window.eventFired );
+
+			expect( eventFired ).toBe( true );
+		} );
+		test( 'should not trigger input change event when minus stepper button is clicked and the value goes below the minimum limit', async ( {
+			admin,
+			editor,
+			blockUtils,
+			page,
+		} ) => {
+			await admin.createNewPost();
+			await editor.insertBlock( { name: 'woocommerce/single-product' } );
+
+			const productName = 'Hoodie with Logo';
+
+			await blockUtils.configureSingleProductBlock( productName );
+
+			await blockUtils.enableStepperMode();
+			await editor.publishAndVisitPost();
+
+			const minusButton = page.getByLabel( `Reduce quantity` );
+
+			await blockUtils.addChangeEventListenerToQuantityInput();
+
+			await minusButton.click();
+
+			const eventFired = await page.evaluate( () => window.eventFired );
+
+			expect( eventFired ).toBeUndefined();
 		} );
 	} );
 } );
