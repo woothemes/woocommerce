@@ -18,6 +18,7 @@ import { createNoticesFromResponse } from '~/lib/notices';
 import { OtherPaymentGateways } from '~/settings-payments/components/other-payment-gateways';
 import { PaymentGateways } from '~/settings-payments/components/payment-gateways';
 import { getWooPaymentsTestDriveAccountLink } from '~/settings-payments/utils';
+import { IncentiveBanner } from '~/settings-payments/components/incentive-banner';
 
 export const SettingsPaymentsMain = () => {
 	const [ installingPlugin, setInstallingPlugin ] = useState< string | null >(
@@ -110,6 +111,10 @@ export const SettingsPaymentsMain = () => {
 		]
 	);
 
+	const incentive = providers.find(
+		( provider ) => '_incentive' in provider
+	)?._incentive;
+
 	return (
 		<>
 			{ errorMessage && (
@@ -123,6 +128,9 @@ export const SettingsPaymentsMain = () => {
 						} }
 					></button>
 				</div>
+			) }
+			{ incentive && (
+				<IncentiveBanner
 			) }
 			<div className="settings-payments-main__container">
 				<PaymentGateways

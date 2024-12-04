@@ -14,7 +14,26 @@ import { WC_ASSET_URL } from '~/utils/admin-settings';
 import './incentive-banner.scss';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
 
-export const IncentiveBanner = () => {
+interface IncentiveBannerProps {
+	/**
+	 * Callback to handle dismiss action.
+	 */
+	onDismiss: () => void;
+	/**
+	 * Callback to handle setup action.
+	 */
+	onSetup: () => void;
+	/**
+	 * Incentive call to action.
+	 */
+	cta: string;
+	/**
+	 *
+	 */
+}
+export const IncentiveBanner = (
+	{ onDismiss, onSetup, cta }: IncentiveBannerProps
+) => {
 	const [ isSubmitted, setIsSubmitted ] = useState( false );
 	const [ isDismissClicked, setIsDismissClicked ] = useState( false );
 
@@ -41,7 +60,8 @@ export const IncentiveBanner = () => {
 				<CardBody className="woocommerce-incentive-banner__body">
 					<StatusBadge
 						status="has_incentive"
-						message={ __( 'Limited time offer', 'woocommerce' ) }
+						// TODO: Need to make these strings translatable
+						message={ cta }
 					/>
 					<h2>
 						{ __(
