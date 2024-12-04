@@ -370,9 +370,7 @@ test.describe(
 
 			// Create the order
 			await page.getByRole( 'button', { name: 'Create' } ).click();
-			await expect( page.locator( 'div.notice-success' ) ).toContainText(
-				'Order updated.'
-			);
+			await expect( page.getByText( 'Order updated' ) ).toBeVisible();
 
 			// Confirm the details
 			await expect(
@@ -415,9 +413,7 @@ test.describe(
 
 			// Create the order
 			await page.getByRole( 'button', { name: 'Create' } ).click();
-			await expect( page.locator( 'div.notice-success' ) ).toContainText(
-				'Order updated.'
-			);
+			await expect( page.getByText( 'Order updated' ) ).toBeVisible();
 
 			// Confirm the details
 			await expect(

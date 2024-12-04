@@ -11,7 +11,7 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Variable product class.
+ * Variable product class
  */
 class WC_Product_Variable extends WC_Product {
 
