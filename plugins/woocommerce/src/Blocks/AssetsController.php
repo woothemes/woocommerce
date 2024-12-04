@@ -81,19 +81,19 @@ final class AssetsController {
 		$this->register_style( 'wc-interactivity-dropdown', plugins_url( $this->api->get_block_asset_build_path( 'wc-interactivity-dropdown', 'css' ), dirname( __DIR__ ) ), array(), 'all', true );
 
 		// Customer Effort Score.
-		$this->api->register_script(
-			'wc-experimental',
-			'assets/client/admin/experimental/index.min.js'
-		);
-		$this->api->register_script(
-			'wc-customer-effort-score',
-			'assets/client/admin/customer-effort-score/index.js',
-			array( 'wp-data', 'wp-data-controls', 'wc-store-data', 'wc-experimental' )
-		);
-		$this->api->register_style(
-			'wc-customer-effort-score',
-			'assets/client/admin/customer-effort-score/style.css',
-		);
+		// $this->api->register_script(
+		// 'wc-experimental',
+		// 'assets/client/admin/experimental/index.min.js'
+		// );
+		// $this->api->register_script(
+		// 'wc-customer-effort-score',
+		// 'assets/client/admin/customer-effort-score/index.js',
+		// array( 'wp-data', 'wp-data-controls', 'wc-store-data', 'wc-experimental' )
+		// );
+		// $this->api->register_style(
+		// 'wc-customer-effort-score',
+		// 'assets/client/admin/customer-effort-score/style.css',
+		// );
 
 		wp_add_inline_script(
 			'wc-blocks-middleware',
