@@ -55,8 +55,7 @@ test.describe( 'Keeps track of the number of JS files included on key shopper pa
 		test( `Check that ${ name } has ${ expectedCount } JS files`, async ( {
 			page,
 		} ) => {
-			// eslint-disable-next-line playwright/no-networkidle
-			await page.goto( url, { waitUntil: 'networkidle' } );
+			await page.goto( url );
 			const javascriptFiles = await page.$$eval(
 				'script[src]',
 				( scripts ) => scripts.length
@@ -81,8 +80,7 @@ test.describe( 'Keeps track of the number of JS files on key admin pages', () =>
 		test( `Check that ${ name } has ${ expectedCount } JS files`, async ( {
 			page,
 		} ) => {
-			// eslint-disable-next-line playwright/no-networkidle
-			await page.goto( url, { waitUntil: 'networkidle' } );
+			await page.goto( url );
 			const javascriptFiles = await page.$$eval(
 				'script[src]',
 				( scripts ) => scripts.length
