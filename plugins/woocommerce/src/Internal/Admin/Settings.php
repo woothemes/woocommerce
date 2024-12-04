@@ -203,7 +203,7 @@ class Settings {
 
 		// DO NOT use outside of core, these can be removed without deprecation.
 		$settings['__experimentalFlags'] = array(
-			'isBranding2_0' => BrandingController::use_new_branding(),
+			'isNewBranding' => BrandingController::use_new_branding(),
 		);
 
 		// Plugins that depend on changing the translation work on the server but not the client -

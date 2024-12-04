@@ -1,20 +1,18 @@
 /**
  * Internal dependencies
  */
-import { isBranding2Enabled } from '~/utils/admin-settings';
+import { isNewBranding } from '~/utils/admin-settings';
 
 /* eslint-disable max-len */
 const WooLogo = () => {
-	const isBranding2_0 = isBranding2Enabled();
-
-	return isBranding2_0 ? (
+	return isNewBranding() ? (
 		<svg
 			width="91"
 			height="24"
 			viewBox="0 0 91 24"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
-			className="wc-icon wc-icon__woo-logo branding-2-0"
+			className="wc-icon wc-icon__woo-logo new-branding"
 		>
 			<path
 				d="M79.0537 0C72.2755 0 67.0874 5.10851 67.0874 12C67.0874 18.8915 72.2755 24 79.0537 24C85.832 24 91.0002 18.8915 91.0002 12C91.0002 5.10851 85.7923 0 79.0537 0ZM79.0537 16.6277C76.5094 16.6277 74.7602 14.6644 74.7602 12C74.7602 9.33555 76.4895 7.37228 79.0537 7.37228C81.6179 7.37228 83.3473 9.33555 83.3473 12C83.3473 14.6644 81.5981 16.6277 79.0537 16.6277Z"

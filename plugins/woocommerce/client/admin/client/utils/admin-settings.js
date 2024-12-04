@@ -88,11 +88,11 @@ export function setAdminSetting( name, value, filter = ( val ) => val ) {
 }
 
 /**
- * Returns whether the new branding (2.0) should be used
+ * Returns whether the new branding is enabled
  *
- * @return {boolean} Whether branding 2.0 is enabled
+ * @return {boolean} Whether branding is enabled
  */
-export const isBranding2Enabled = () => {
+export const isNewBranding = () => {
 	const experimentalFlags = adminSettings.__experimentalFlags || {};
-	return experimentalFlags.isBranding2_0 ?? false;
+	return experimentalFlags.isNewBranding ?? false;
 };
