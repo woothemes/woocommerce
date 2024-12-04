@@ -293,6 +293,8 @@ WooCommerce comes with some sample data you can use to see how products look; im
 * Fix - Set server-side render of Mini-Cart icon to correctly show/hide the count based on block setting [#52124](https://github.com/woocommerce/woocommerce/pull/52124)
 * Fix - Store API will ensure the cart response has valid quantities for items if setting limits via filters [#52154](https://github.com/woocommerce/woocommerce/pull/52154)
 * Fix - Correctly respect the generate password option for accounts created post Checkout. [#53277](https://github.com/woocommerce/woocommerce/pull/53277)
+* Fix - Add new required props to RouterProvider [#53433](https://github.com/woocommerce/woocommerce/pull/53433)
+* Fix - Fix search in Installed Plugins page [#53438](https://github.com/woocommerce/woocommerce/pull/53438)
 * Add - Adapt receipt to take into account failed orders. [#51853](https://github.com/woocommerce/woocommerce/pull/51853)
 * Add - Add a11y to the color swatches [#51715](https://github.com/woocommerce/woocommerce/pull/51715)
 * Add - Add a method to the order object to get info about the card used for payment [#52173](https://github.com/woocommerce/woocommerce/pull/52173)
