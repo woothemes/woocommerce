@@ -32,7 +32,7 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 		public $icon = 'settings';
 
 		/**
-		 * Settings field types.
+		 * Settings field types which are known.
 		 *
 		 * @var string
 		 */
