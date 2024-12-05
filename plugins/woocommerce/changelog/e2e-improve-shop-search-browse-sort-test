@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+E2E test: improve usage of test data in shop-search-browse-sort test
