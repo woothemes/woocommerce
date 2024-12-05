@@ -140,7 +140,7 @@ export const EllipsisMenuContent = ( {
 	};
 
 	return (
-		<div>
+		<>
 			{ links
 				.filter( ( link: PaymentGatewayLink ) => {
 					switch ( link._type ) {
@@ -162,52 +162,61 @@ export const EllipsisMenuContent = ( {
 				.map( ( link: PaymentGatewayLink ) => {
 					const displayName = typeToDisplayName[ link._type ];
 					return displayName ? (
-						// eslint-disable-next-line react/jsx-key
-						<Button target="_blank" href={ link.url }>
-							{ displayName }
-						</Button>
+						<div className="woocommerce-ellipsis-menu__content__item">
+							<Button target="_blank" href={ link.url }>
+								{ displayName }
+							</Button>
+						</div>
 					) : null;
 				} ) }
 			<CardDivider />
 			{ isSuggestion && (
-				<Button
-					onClick={ hideSuggestion }
-					isBusy={ isHidingSuggestion }
-					disabled={ isHidingSuggestion }
-				>
-					{ __( 'Hide suggestion', 'woocommerce' ) }
-				</Button>
+				<div className="woocommerce-ellipsis-menu__content__item">
+					<Button
+						onClick={ hideSuggestion }
+						isBusy={ isHidingSuggestion }
+						disabled={ isHidingSuggestion }
+					>
+						{ __( 'Hide suggestion', 'woocommerce' ) }
+					</Button>
+				</div>
 			) }
 			{ ! isSuggestion && isWooPayments && ! needsSetup && testMode && (
-				<Button
-					onClick={ resetWooPaymentsAccount }
-					isBusy={ isResetting }
-					disabled={ isResetting }
-					className={ 'components-button__danger' }
-				>
-					{ __( 'Reset account', 'woocommerce' ) }
-				</Button>
+				<div className="woocommerce-ellipsis-menu__content__item">
+					<Button
+						onClick={ resetWooPaymentsAccount }
+						isBusy={ isResetting }
+						disabled={ isResetting }
+						className={ 'components-button__danger' }
+					>
+						{ __( 'Reset account', 'woocommerce' ) }
+					</Button>
+				</div>
 			) }
 			{ ! isSuggestion && ! isEnabled && (
-				<Button
-					className={ 'components-button__danger' }
-					onClick={ deactivateGateway }
-					isBusy={ isDeactivating }
-					disabled={ isDeactivating }
-				>
-					{ __( 'Deactivate', 'woocommerce' ) }
-				</Button>
+				<div className="woocommerce-ellipsis-menu__content__item">
+					<Button
+						className={ 'components-button__danger' }
+						onClick={ deactivateGateway }
+						isBusy={ isDeactivating }
+						disabled={ isDeactivating }
+					>
+						{ __( 'Deactivate', 'woocommerce' ) }
+					</Button>
+				</div>
 			) }
 			{ ! isSuggestion && isEnabled && (
-				<Button
-					className={ 'components-button__danger' }
-					onClick={ disableGateway }
-					isBusy={ isDisabling }
-					disabled={ isDisabling }
-				>
-					{ __( 'Disable', 'woocommerce' ) }
-				</Button>
+				<div className="woocommerce-ellipsis-menu__content__item">
+					<Button
+						className={ 'components-button__danger' }
+						onClick={ disableGateway }
+						isBusy={ isDisabling }
+						disabled={ isDisabling }
+					>
+						{ __( 'Disable', 'woocommerce' ) }
+					</Button>
+				</div>
 			) }
-		</div>
+		</>
 	);
 };
