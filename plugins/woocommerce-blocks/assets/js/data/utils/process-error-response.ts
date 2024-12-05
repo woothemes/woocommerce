@@ -149,71 +149,70 @@ const getErrorContextFromAdditionalFieldLocation = (
 };
 
 /**
- * Processes the response for an invalid param error, with response code rest_invalid_param.
+ * Gets a set of options to generate a notice for an invalid param error.
  */
-const processInvalidParamResponse = (
+const getNoticeOptionsForParamError = (
+	{ code, id, param, data }: ApiParamError,
+	context?: string
+) => {
+	let additionalFieldContext: string | undefined = '';
+	// Check if this error response comes from an additional field.
+	if (
+		isObject( data ) &&
+		objectHasProp( data, 'key' ) &&
+		objectHasProp( data, 'location' ) &&
+		isString( data.location )
+	) {
+		additionalFieldContext = getErrorContextFromAdditionalFieldLocation(
+			data.location
+		);
+	}
+
+	return {
+		id,
+		context:
+			context ||
+			additionalFieldContext ||
+			getErrorContextFromParam( param, code ) ||
+			getErrorContextFromCode( code ),
+	};
+};
+
+/**
+ * For each invalid param in an error response, create an error notice.
+ */
+const createErrorNoticesForInvalidParams = (
 	response: ApiErrorResponse,
 	context: string | undefined
 ) => {
 	const errorDetails = getErrorDetails( response );
 
-	errorDetails.forEach( ( { code, message, id, param, data } ) => {
-		let additionalFieldContext: string | undefined = '';
-		// Check if this error response comes from an additional field.
-		if (
-			isObject( data ) &&
-			objectHasProp( data, 'key' ) &&
-			objectHasProp( data, 'location' ) &&
-			isString( data.location )
-		) {
-			additionalFieldContext = getErrorContextFromAdditionalFieldLocation(
-				data.location
-			);
-		}
-
-		createNotice( 'error', message, {
-			id,
-			context:
-				context ||
-				additionalFieldContext ||
-				getErrorContextFromParam( param, code ) ||
-				getErrorContextFromCode( code ),
-		} );
+	errorDetails.forEach( ( error ) => {
+		createNotice(
+			'error',
+			error.message,
+			getNoticeOptionsForParamError( error, context )
+		);
 	} );
 };
 
+/**
+ * Get the notice options for an error response with param errors.
+ */
 export const getInvalidParamNoticeContext = (
 	errorResponse: ApiErrorResponse,
 	context?: string | undefined
 ) => {
 	const errorDetails = getErrorDetails( errorResponse );
 
-	return errorDetails.map( ( { code, id, param, data } ) => {
-		let additionalFieldContext: string | undefined = '';
-
-		// Check if this error response comes from an additional field.
-		if (
-			isObject( data ) &&
-			objectHasProp( data, 'key' ) &&
-			objectHasProp( data, 'location' ) &&
-			isString( data.location )
-		) {
-			additionalFieldContext = getErrorContextFromAdditionalFieldLocation(
-				data.location
-			);
-		}
-
-		return {
-			id,
-			context:
-				context ||
-				additionalFieldContext ||
-				getErrorContextFromParam( param, code ) ||
-				getErrorContextFromCode( code ),
-		};
+	return errorDetails.map( ( error ) => {
+		return getNoticeOptionsForParamError( error, context );
 	} );
 };
 
+/**
+ * Get the notice options for an error notice.
+ */
 export const getNoticeContextFromErrorResponse = (
 	errorResponse: ApiErrorResponse,
 	context?: string | undefined
@@ -247,7 +246,7 @@ export const processErrorResponse = (
 	}
 
 	if ( response.code === 'rest_invalid_param' ) {
-		return processInvalidParamResponse( response, context );
+		return createErrorNoticesForInvalidParams( response, context );
 	}
 
 	let errorMessage =

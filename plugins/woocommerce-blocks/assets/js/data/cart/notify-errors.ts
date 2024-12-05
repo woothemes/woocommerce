@@ -5,6 +5,10 @@ import { ApiErrorResponse, isApiErrorResponse } from '@woocommerce/types';
 import { createNotice } from '@woocommerce/base-utils';
 import { decodeEntities } from '@wordpress/html-entities';
 import { dispatch } from '@wordpress/data';
+
+/**
+ * Internal dependencies
+ */
 import { getNoticeContextFromErrorResponse } from '../utils/process-error-response';
 
 /**
