@@ -55,7 +55,7 @@
 		"watch:build:project:esm": "wireit"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.23.5",
+		"@babel/core": "7.x.x",
 		"@types/jest": "27.5.x",
 		"@woocommerce/eslint-plugin": "workspace:*",
 		"@woocommerce/internal-js-tests": "workspace:*",

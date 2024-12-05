@@ -183,8 +183,6 @@
 		},
 		{
 			"dependencies": [
-				"@wordpress/babel-plugin-import-jsx-pragma",
-				"@wordpress/babel-preset-default",
 				"@wordpress/stylelint-config",
 				"@wordpress/scripts",
 				"@wordpress/jest-console",
@@ -265,6 +263,25 @@
 				"**"
 			],
 			"pinVersion": "wp-6.6"
+		},
+		{
+			"dependencies": [
+				"@wordpress/babel-preset-default",
+				"@wordpress/babel-plugin-import-jsx-pragma"
+			],
+			"packages": [
+				"**"
+			],
+			"pinVersion": "wp-6.6"
+		},
+		{
+			"dependencies": [
+				"@babel/**"
+			],
+			"packages": [
+				"**"
+			],
+			"pinVersion": "7.x.x"
 		},
 		{
 			"dependencies": [

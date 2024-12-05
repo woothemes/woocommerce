@@ -68,7 +68,7 @@
 	"private": true,
 	"devDependencies": {
 		"@automattic/data-stores": "^2.0.1",
-		"@babel/core": "^7.23.5",
+		"@babel/core": "7.x.x",
 		"@types/lodash": "^4.14.202",
 		"@types/wordpress__data": "6.0.0",
 		"@types/wordpress__notices": "3.5.0",
