@@ -94,7 +94,7 @@ jobs:
           uses: archive/github-actions-slack@v2.0.0
           with:
               slack-bot-user-oauth-access-token: ${{ secrets.CODE_FREEZE_BOT_TOKEN }}
-              slack-channel: ${{ secrets.TEST_WOO_CORE_RELEASE_NOTIFICATIONS_SLACK_CHANNEL }}
+              slack-channel: ${{ secrets.WOO_RELEASE_SLACK_CHANNEL }}
               slack-text: |
                   :x: Oops we may have missed a cherry pick PR left open. WooCommerce release zip build failed.
                   :warning-8c: ${{ steps.verify-prs.outputs.failureMessage }}
