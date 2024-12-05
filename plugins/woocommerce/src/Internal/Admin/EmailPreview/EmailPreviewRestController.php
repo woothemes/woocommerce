@@ -17,7 +17,7 @@ class EmailPreviewRestController extends RestApiControllerBase {
 	 *
 	 * @var string
 	 */
-	protected string $route_namespace = 'wc-admin';
+	protected string $route_namespace = 'wc-admin-email';
 
 	/**
 	 * Route base.
@@ -32,7 +32,7 @@ class EmailPreviewRestController extends RestApiControllerBase {
 	 * @return string
 	 */
 	protected function get_rest_api_namespace(): string {
-		return 'wc-admin';
+		return 'wc-admin-email';
 	}
 
 	/**
