@@ -18,16 +18,6 @@ class AddToCartWithOptionsQuantitySelector extends AbstractBlock {
 	protected $block_name = 'add-to-cart-with-options-quantity-selector';
 
 	/**
-	 * Get the frontend script handle for this block type.
-	 *
-	 * @param string $key Data to get, or default to everything.
-	 * @return null
-	 */
-	protected function get_block_type_script( $key = null ) {
-		return null;
-	}
-
-	/**
 	 * Get the block's attributes.
 	 *
 	 * @param array $attributes Block attributes. Default empty array.
