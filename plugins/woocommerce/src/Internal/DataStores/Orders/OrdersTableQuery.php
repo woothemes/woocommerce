@@ -920,7 +920,12 @@ class OrdersTableQuery {
 			wc_doing_it_wrong( __FUNCTION__, 'Count query can only be build after main query is built.', '7.3.0' );
 		}
 		$orders_table    = $this->tables['orders'];
-		$this->count_sql = "SELECT COUNT(DISTINCT $fields) FROM  $orders_table $join WHERE $where";
+		$count_fields = "COUNT(DISTINCT $fields)";
+		if ( "{$orders_table}.id" === $fields && '' === $join ) {
+			// DISTINCT adds performance overhead, exclude the DISTINCT function when confident it is not needed.
+			$count_fields = "COUNT(*)";
+		}
+		$this->count_sql = "SELECT $count_fields FROM $orders_table $join WHERE $where";
 
 		if ( ! $this->suppress_filters ) {
 			/**
