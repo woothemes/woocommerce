@@ -269,12 +269,7 @@ class AddToCartWithOptions extends AbstractBlock {
 	 * @param array  $block The block.
 	 * @return string
 	 */
-	public function render_product_add_to_cart_with_options_button( $block_content, $block ) {
-		// Only extend the core/button block.
-		if ( 'core/button' !== $block['blockName'] ) {
-			return $block_content;
-		}
-
+	public function render_product_add_to_cart_with_options_button( $block_content, $block, $block_instance ) {
 		/*
 		 * Only extend the Add To Cart Button variation,
 		 * identified by the `withRole` attribute.
