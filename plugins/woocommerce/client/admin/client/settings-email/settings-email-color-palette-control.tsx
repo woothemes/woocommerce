@@ -73,7 +73,7 @@ export const ResetStylesControl: React.FC< ResetStylesControlProps > = ( {
 				</Button>
 			) }
 			{ changed && (
-				<Button variant="secondary" onClick={ handleUndo }>
+				<Button variant="tertiary" onClick={ handleUndo }>
 					{ __( 'Undo changes', 'woocommerce' ) }
 				</Button>
 			) }
