@@ -19,6 +19,7 @@ import { OtherPaymentGateways } from '~/settings-payments/components/other-payme
 import { PaymentGateways } from '~/settings-payments/components/payment-gateways';
 import { getWooPaymentsTestDriveAccountLink } from '~/settings-payments/utils';
 import { IncentiveBanner } from '~/settings-payments/components/incentive-banner';
+import { IncentiveModal } from '~/settings-payments/components/incentive-modal';
 
 export const SettingsPaymentsMain = () => {
 	const [ installingPlugin, setInstallingPlugin ] = useState< string | null >(
@@ -117,6 +118,21 @@ export const SettingsPaymentsMain = () => {
 
 	return (
 		<>
+			{ incentive && (
+				<IncentiveModal
+					incentive={ incentive }
+					onDismiss={ () => {
+						console.log( 'dismissed' );
+					} }
+					isOpen={ true }
+					onClose={ () => {
+						console.log( 'close' );
+					} }
+					onSubmit={ () => {
+						console.log( 'submit' );
+					} }
+				/>
+			) }
 			{ errorMessage && (
 				<div className="notice notice-error is-dismissible wcpay-settings-notice">
 					<p>{ errorMessage }</p>
@@ -129,8 +145,17 @@ export const SettingsPaymentsMain = () => {
 					></button>
 				</div>
 			) }
+			{ /* TODO: Find a better way to determine incentive type (action or switch), this is just for testing.*/ }
 			{ incentive && (
 				<IncentiveBanner
+					incentive={ incentive }
+					onDismiss={ () => {
+						console.log( 'on dismiss' );
+					} }
+					onSetup={ () => {
+						console.log( 'on setup' );
+					} }
+				/>
 			) }
 			<div className="settings-payments-main__container">
 				<PaymentGateways

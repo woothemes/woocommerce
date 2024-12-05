@@ -6,6 +6,7 @@ import { Button, Card, CardBody, CardMedia } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { createInterpolateElement, useState } from '@wordpress/element';
 import { Link } from '@woocommerce/components';
+import { PaymentIncentive } from '@woocommerce/data';
 
 /**
  * Internal dependencies
@@ -16,6 +17,10 @@ import { StatusBadge } from '~/settings-payments/components/status-badge';
 
 interface IncentiveBannerProps {
 	/**
+	 * Incentive data.
+	 */
+	incentive: PaymentIncentive;
+	/**
 	 * Callback to handle dismiss action.
 	 */
 	onDismiss: () => void;
@@ -23,18 +28,11 @@ interface IncentiveBannerProps {
 	 * Callback to handle setup action.
 	 */
 	onSetup: () => void;
-	/**
-	 * Incentive call to action.
-	 */
-	cta: string;
-	/**
-	 *
-	 */
 }
 export const IncentiveBanner = ( {
+	incentive,
 	onDismiss,
 	onSetup,
-	cta,
 }: IncentiveBannerProps ) => {
 	const [ isSubmitted, setIsSubmitted ] = useState( false );
 	const [ isDismissClicked, setIsDismissClicked ] = useState( false );
@@ -56,23 +54,16 @@ export const IncentiveBanner = ( {
 							WC_ASSET_URL +
 							'images/settings-payments/incentives-icon.svg'
 						}
-						alt={ __( 'Incentive hero image', 'woocommerce' ) }
+						alt={ __( 'Incentive icon', 'woocommerce' ) }
 					/>
 				</CardMedia>
 				<CardBody className="woocommerce-incentive-banner__body">
-					<StatusBadge status="has_incentive" message={ cta } />
-					<h2>
-						{ __(
-							'Save 10% on processing fees for your first 3 months when you sign up for WooPayments',
-							'woocommerce'
-						) }
-					</h2>
-					<p>
-						{ __(
-							'Use the native payments solution built and supported by Woo to accept online and in-person payments, track revenue, and handle all payment activity in one place.',
-							'woocommerce'
-						) }
-					</p>
+					<StatusBadge
+						status="has_incentive"
+						message={ __( 'Limited time offer', 'woocommerce' ) }
+					/>
+					<h2>{ incentive.title }</h2>
+					<p>{ incentive.description }</p>
 					<p className={ 'woocommerce-incentive-banner__terms' }>
 						{ createInterpolateElement(
 							__(
@@ -82,7 +73,7 @@ export const IncentiveBanner = ( {
 							{
 								termsLink: (
 									<Link
-										href="https://woocommerce.com/terms-conditions/woopayments-action-promotion-2023/"
+										href={ incentive.tc_url }
 										target="_blank"
 										rel="noreferrer"
 										type="external"
@@ -103,7 +94,7 @@ export const IncentiveBanner = ( {
 						disabled={ isSubmitted }
 						onClick={ handleSetup }
 					>
-						{ __( 'Save 10%', 'woocommerce' ) }
+						{ incentive.cta_label }
 					</Button>
 					<Button
 						variant={ 'tertiary' }

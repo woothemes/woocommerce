@@ -27,9 +27,8 @@ export const PaymentGatewayListItem = ( {
 	setupLivePayments,
 }: PaymentGatewayItemProps ) => {
 	const isWCPay = isWooPayments( gateway.id );
+	const hasIncentive = !! gateway._incentive;
 
-	const hasIncentive =
-		gateway.id === 'pre_install_woocommerce_payments_promotion';
 	const determineGatewayStatus = () => {
 		if ( ! gateway.state?.enabled && gateway.state?.needs_setup ) {
 			return 'needs_setup';
@@ -53,18 +52,15 @@ export const PaymentGatewayListItem = ( {
 	return {
 		key: gateway.id,
 		className: `transitions-disabled woocommerce-item__payment-gateway ${
-			isWCPay ?? `woocommerce-item__woocommerce-payment`
-		} ${ hasIncentive ?? `has-incentive` }`,
+			isWCPay ? `woocommerce-item__woocommerce-payments` : ''
+		} ${ hasIncentive ? `has-incentive` : '' }`,
 		title: (
 			<>
 				{ gateway.title }
-				{ hasIncentive ? (
+				{ hasIncentive && gateway._incentive ? (
 					<StatusBadge
 						status="has_incentive"
-						message={ __(
-							'Save 10% on processing fees',
-							'woocommerce'
-						) }
+						message={ gateway._incentive.badge }
 					/>
 				) : (
 					<StatusBadge status={ determineGatewayStatus() } />

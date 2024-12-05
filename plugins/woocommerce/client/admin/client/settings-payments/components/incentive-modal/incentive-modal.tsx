@@ -12,6 +12,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { createInterpolateElement, useState } from '@wordpress/element';
 import { Link } from '@woocommerce/components';
+import { PaymentIncentive } from '@woocommerce/data';
 
 /**
  * Internal dependencies
@@ -21,12 +22,30 @@ import { StatusBadge } from '~/settings-payments/components/status-badge';
 import { WC_ASSET_URL } from '~/utils/admin-settings';
 
 interface IncentiveModalProps {
+	/**
+	 * Incentive data.
+	 */
+	incentive: PaymentIncentive;
+	/**
+	 * Whether the modal is open.
+	 */
 	isOpen: boolean;
+	/**
+	 * Callback to handle close action.
+	 */
 	onClose: () => void;
+	/**
+	 * Callback to handle submit action.
+	 */
 	onSubmit: () => void;
+	/**
+	 * Callback to handle dismiss action.
+	 */
+	onDismiss: () => void;
 }
 
 export const IncentiveModal = ( {
+	incentive,
 	isOpen,
 	onClose,
 	onSubmit,
@@ -54,7 +73,7 @@ export const IncentiveModal = ( {
 										'images/settings-payments/incentives-icon.svg'
 									}
 									alt={ __(
-										'Incentive hero image',
+										'Incentive icon',
 										'woocommerce'
 									) }
 								/>
@@ -73,18 +92,8 @@ export const IncentiveModal = ( {
 										) }
 									/>
 								</div>
-								<h2>
-									{ __(
-										'Save 10% on processing fees for your first 3 months when you sign up for WooPayments',
-										'woocommerce'
-									) }
-								</h2>
-								<p>
-									{ __(
-										'Use the native payments solution built and supported by Woo to accept online and in-person payments, track revenue, and handle all payment activity in one place.',
-										'woocommerce'
-									) }
-								</p>
+								<h2>{ incentive.title }</h2>
+								<p>{ incentive.description }</p>
 								<p
 									className={
 										'woocommerce-incentive-modal__terms'
@@ -98,7 +107,7 @@ export const IncentiveModal = ( {
 										{
 											termsLink: (
 												<Link
-													href="https://woocommerce.com/terms-conditions/woopayments-action-promotion-2023/"
+													href={ incentive.tc_url }
 													target="_blank"
 													rel="noreferrer"
 													type="external"
@@ -122,7 +131,7 @@ export const IncentiveModal = ( {
 										setIsBusy( false );
 									} }
 								>
-									{ __( 'Save 10%', 'woocommerce' ) }
+									{ incentive.cta_label }
 								</Button>
 							</CardBody>
 						</div>

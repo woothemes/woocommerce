@@ -15,6 +15,7 @@ import { PaymentProvider } from '@woocommerce/data';
 import sanitizeHTML from '~/lib/sanitize-html';
 import { EllipsisMenuContent } from '~/settings-payments/components/ellipsis-menu-content';
 import { isWooPayments } from '~/settings-payments/utils';
+import { StatusBadge } from '~/settings-payments/components/status-badge';
 
 type PaymentExtensionSuggestionListItemProps = {
 	extension: PaymentProvider;
@@ -29,10 +30,24 @@ export const PaymentExtensionSuggestionListItem = ( {
 	setupPlugin,
 	pluginInstalled,
 }: PaymentExtensionSuggestionListItemProps ) => {
+	const hasIncentive = !! extension._incentive;
+
 	return {
 		key: extension.id,
-		title: <>{ extension.title }</>,
-		className: 'transitions-disabled',
+		className: `transitions-disabled woocommerce-item__payment-gateway ${
+			hasIncentive ? `has-incentive` : ''
+		}`,
+		title: (
+			<>
+				{ extension.title }
+				{ hasIncentive && extension._incentive && (
+					<StatusBadge
+						status="has_incentive"
+						message={ extension._incentive.badge }
+					/>
+				) }
+			</>
+		),
 		content: (
 			<>
 				<span
