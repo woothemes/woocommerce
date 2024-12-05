@@ -215,7 +215,7 @@ class AddToCartWithOptions extends AbstractBlock {
 
 		return $url;
 	}
-	
+
 	/**
 	 * Add a core/button variation for the Add To Cart Button block.
 	 * It registers a new block `withRole` attribute
@@ -267,7 +267,7 @@ class AddToCartWithOptions extends AbstractBlock {
 	 */
 	public function render_product_add_to_cart_with_options_button( $block_content, $block ) {
 		// Only extend the core/button block.
-		if ( $block['blockName'] !== 'core/button' ) {
+		if ( 'core/button' !== $block['blockName'] ) {
 			return $block_content;
 		}
 
@@ -281,7 +281,6 @@ class AddToCartWithOptions extends AbstractBlock {
 
 		/*
 		 * Register the frontend script for the block.
-		 * ToDo: Check if this is the correct way to register the script.
 		 */
 		$block_name = $this->block_name . '-button';
 		$path       = $this->asset_api->get_block_asset_build_path( $block_name . '-frontend' );
@@ -303,10 +302,12 @@ class AddToCartWithOptions extends AbstractBlock {
 
 		$processor = new \WP_HTML_Tag_Processor( $block_content );
 
-		if ( $processor->next_tag( array(
-			'tag_name'   => 'div',
-			'class_name' => 'wc-block-product-add-to-cart-with-options-button',
-		) ) ) {
+		if ( $processor->next_tag(
+			array(
+				'tag_name'   => 'div',
+				'class_name' => 'wc-block-product-add-to-cart-with-options-button',
+			)
+		) ) {
 			$processor->set_attribute( 'data-wc-interactive', $data_wc_interactive );
 
 			if ( $processor->next_tag( array( 'tag_name' => 'a', 'class_name' => 'wp-element-button' ) ) ) {
