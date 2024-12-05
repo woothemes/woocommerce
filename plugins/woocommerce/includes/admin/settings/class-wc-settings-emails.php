@@ -6,6 +6,7 @@
  * @version 2.1.0
  */
 
+use Automattic\WooCommerce\Internal\BrandingController;
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
 defined( 'ABSPATH' ) || exit;
@@ -101,7 +102,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 		$footer_text_description = __( 'The text to appear in the footer of all WooCommerce emails.', 'woocommerce' ) . ' ' . sprintf( __( 'Available placeholders: %s', 'woocommerce' ), '{site_title} {site_url}' );
 		$footer_text_default     = '{site_title} &mdash; Built with {WooCommerce}';
 
-		$base_color_default        = '#7f54b3';
+		$base_color_default        = BrandingController::get_default_email_base_color();
 		$bg_color_default          = '#f7f7f7';
 		$body_bg_color_default     = '#ffffff';
 		$body_text_color_default   = '#3c3c3c';
