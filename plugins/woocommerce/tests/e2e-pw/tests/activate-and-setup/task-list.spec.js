@@ -49,7 +49,7 @@ test.describe( 'WC Home Task List >', () => {
 		{ tag: [ '@skip-on-default-pressable', '@skip-on-default-wpcom' ] },
 		async ( { page } ) => {
 			await test.step( 'Load the WC Admin page', async () => {
-				await page.goto( '/wp-admin/admin.php?page=wc-admin' );
+				await page.goto( 'wp-admin/admin.php?page=wc-admin' );
 				await expect(
 					page.getByRole( 'heading', {
 						name: 'Start customizing your store',
