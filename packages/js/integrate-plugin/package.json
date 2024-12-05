@@ -57,8 +57,8 @@
 		"write-pkg": "^4.0.0"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.23.5",
-		"@babel/runtime": "^7.23.5",
+		"@babel/core": "7.x.x",
+		"@babel/runtime": "7.x.x",
 		"@testing-library/jest-dom": "5.16.2",
 		"@testing-library/react-hooks": "8.0.1",
 		"@types/jest": "27.5.x",

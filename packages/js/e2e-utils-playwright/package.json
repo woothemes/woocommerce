@@ -29,7 +29,7 @@
 		}
 	},
 	"devDependencies": {
-		"@babel/core": "^7.23.5",
+		"@babel/core": "7.x.x",
 		"jest": "27.5.x"
 	},
 	"publishConfig": {

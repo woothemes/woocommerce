@@ -276,6 +276,15 @@
 		},
 		{
 			"dependencies": [
+				"@babel/**"
+			],
+			"packages": [
+				"**"
+			],
+			"pinVersion": "7.x.x"
+		},
+		{
+			"dependencies": [
 				"@wordpress/**"
 			],
 			"packages": [

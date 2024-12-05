@@ -31,8 +31,8 @@
 		"utils": "./tools/monorepo-utils/bin/run"
 	},
 	"devDependencies": {
-		"@babel/preset-env": "^7.23.5",
-		"@babel/runtime": "^7.23.5",
+		"@babel/preset-env": "7.x.x",
+		"@babel/runtime": "7.x.x",
 		"@types/node": "20.x.x",
 		"@woocommerce/eslint-plugin": "workspace:*",
 		"@woocommerce/monorepo-utils": "workspace:*",
@@ -64,7 +64,7 @@
 		"webpack": "^5.89.0"
 	},
 	"dependencies": {
-		"@babel/core": "7.12.9",
+		"@babel/core": "7.x.x",
 		"@wordpress/babel-plugin-import-jsx-pragma": "wp-6.6",
 		"@wordpress/babel-preset-default": "wp-6.6",
 		"lodash": "^4.17.21",
