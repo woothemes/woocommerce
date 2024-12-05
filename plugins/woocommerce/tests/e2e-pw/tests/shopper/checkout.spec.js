@@ -135,7 +135,7 @@ test.describe(
 		} ) => {
 			await addAProductToCart( page, productId );
 
-			await page.goto( '/checkout/' );
+			await page.goto( 'checkout/' );
 
 			await expect( page.locator( 'td.product-name' ) ).toContainText(
 				simpleProductName
@@ -160,7 +160,7 @@ test.describe(
 			// this time we're going to add two products to the cart
 			await addOneOrMoreProductToCart( page, simpleProductName, '2' );
 
-			await page.goto( '/checkout/' );
+			await page.goto( 'checkout/' );
 			await expect(
 				page.locator( 'strong.product-quantity' )
 			).toContainText( '2' );
@@ -185,7 +185,7 @@ test.describe(
 			// this time we're going to add three products to the cart
 			await addOneOrMoreProductToCart( page, simpleProductName, '3' );
 
-			await page.goto( '/checkout/' );
+			await page.goto( 'checkout/' );
 			await expect(
 				page.locator( 'strong.product-quantity' )
 			).toContainText( '3' );
@@ -220,7 +220,7 @@ test.describe(
 		} ) => {
 			await addAProductToCart( page, productId );
 
-			await page.goto( '/checkout/' );
+			await page.goto( 'checkout/' );
 
 			// first try submitting the form with no fields complete
 			await page.getByRole( 'button', { name: 'Place order' } ).click();
@@ -310,7 +310,7 @@ test.describe(
 		} ) => {
 			await addOneOrMoreProductToCart( page, simpleProductName, '2' );
 
-			await page.goto( '/checkout/' );
+			await page.goto( 'checkout/' );
 			await expect(
 				page.locator( 'strong.product-quantity' )
 			).toContainText( '2' );
@@ -352,7 +352,7 @@ test.describe(
 			} );
 
 			await test.step( 'Go to checkout and confirm that products and totals are as expected', async () => {
-				await page.goto( '/checkout/' );
+				await page.goto( 'checkout/' );
 				await expect(
 					page.locator( 'strong.product-quantity' )
 				).toContainText( '2' );
@@ -517,7 +517,7 @@ test.describe(
 
 			await addOneOrMoreProductToCart( page, simpleProductName, '2' );
 
-			await page.goto( '/checkout/' );
+			await page.goto( 'checkout/' );
 			await expect(
 				page.locator( 'strong.product-quantity' )
 			).toContainText( '2' );
