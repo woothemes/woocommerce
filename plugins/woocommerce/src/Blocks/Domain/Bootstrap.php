@@ -17,7 +17,6 @@ use Automattic\WooCommerce\Blocks\QueryFilters;
 use Automattic\WooCommerce\Blocks\Domain\Services\CreateAccount;
 use Automattic\WooCommerce\Blocks\Domain\Services\Notices;
 use Automattic\WooCommerce\Blocks\Domain\Services\DraftOrders;
-use Automattic\WooCommerce\Blocks\Domain\Services\FeatureGating;
 use Automattic\WooCommerce\Blocks\Domain\Services\GoogleAnalytics;
 use Automattic\WooCommerce\Blocks\Domain\Services\Hydration;
 use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields;
@@ -169,8 +168,6 @@ class Bootstrap {
 			$this->container->get( BlockPatterns::class );
 			$this->container->get( BlockTypesController::class );
 			$this->container->get( ClassicTemplatesCompatibility::class );
-			$this->container->get( ArchiveProductTemplatesCompatibility::class )->init();
-			$this->container->get( SingleProductTemplateCompatibility::class )->init();
 			$this->container->get( Notices::class )->init();
 			$this->container->get( PTKPatternsStore::class );
 			$this->container->get( TemplateOptions::class )->init();
@@ -226,12 +223,6 @@ class Bootstrap {
 	 */
 	protected function register_dependencies() {
 		$this->container->register(
-			FeatureGating::class,
-			function () {
-				return new FeatureGating();
-			}
-		);
-		$this->container->register(
 			AssetApi::class,
 			function ( Container $container ) {
 				return new AssetApi( $container->get( Package::class ) );
@@ -274,18 +265,6 @@ class Bootstrap {
 			function ( Container $container ) {
 				$asset_data_registry = $container->get( AssetDataRegistry::class );
 				return new ClassicTemplatesCompatibility( $asset_data_registry );
-			}
-		);
-		$this->container->register(
-			ArchiveProductTemplatesCompatibility::class,
-			function () {
-				return new ArchiveProductTemplatesCompatibility();
-			}
-		);
-		$this->container->register(
-			SingleProductTemplateCompatibility::class,
-			function () {
-				return new SingleProductTemplateCompatibility();
 			}
 		);
 		$this->container->register(

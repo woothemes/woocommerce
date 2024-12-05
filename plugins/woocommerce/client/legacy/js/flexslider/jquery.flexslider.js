@@ -256,6 +256,7 @@
                   onload: 'this.width = this.naturalWidth; this.height = this.naturalHeight',
                   src: slide.attr('data-thumb'),
                   srcset: slide.attr('data-thumb-srcset'),
+                  sizes: slide.attr('data-thumb-sizes'),
                   alt: slide.attr('alt')
                 })
               }
@@ -291,7 +292,7 @@
           slider.controlNavScaffold.on(eventType, 'a, img', function(event) {
             event.preventDefault();
 
-            if (watchedEvent === "" || watchedEvent === event.type) {
+            if (watchedEvent === "" || watchedEvent === event.type || event.type === "flexslider-click") {
               var $this = $(this),
                   target = slider.controlNav.index($this);
 
@@ -316,7 +317,7 @@
           slider.controlNav.on(eventType, function(event) {
             event.preventDefault();
 
-            if (watchedEvent === "" || watchedEvent === event.type) {
+            if (watchedEvent === "" || watchedEvent === event.type || event.type === "flexslider-click") {
               var $this = $(this),
                   target = slider.controlNav.index($this);
 
@@ -374,7 +375,7 @@
             event.preventDefault();
             var target;
 
-            if (watchedEvent === "" || watchedEvent === event.type) {
+            if (watchedEvent === "" || watchedEvent === event.type || event.type === "flexslider-click") {
               target = ($(this).hasClass(namespace + 'next')) ? slider.getTarget('next') : slider.getTarget('prev');
               slider.flexAnimate(target, slider.vars.pauseOnAction);
             }
@@ -421,7 +422,7 @@
           slider.pausePlay.on(eventType, function(event) {
             event.preventDefault();
 
-            if (watchedEvent === "" || watchedEvent === event.type) {
+            if (watchedEvent === "" || watchedEvent === event.type || event.type === "flexslider-click") {
               if ($(this).hasClass(namespace + 'pause')) {
                 slider.manualPause = true;
                 slider.manualPlay = false;
@@ -995,7 +996,7 @@
 
       // update slider.slides
       slider.slides = $(slider.vars.selector + ':not(.clone)', slider);
-      // re-setup the slider to accomdate new slide
+      // re-setup the slider to accommodate new slide
       slider.setup();
 
       //FlexSlider: added() Callback
@@ -1021,7 +1022,7 @@
 
       // update slider.slides
       slider.slides = $(slider.vars.selector + ':not(.clone)', slider);
-      // re-setup the slider to accomdate new slide
+      // re-setup the slider to accommodate new slide
       slider.setup();
 
       // FlexSlider: removed() Callback
@@ -1091,7 +1092,7 @@
     itemWidth: 0,                   //{NEW} Integer: Box-model width of individual carousel items, including horizontal borders and padding.
     itemMargin: 0,                  //{NEW} Integer: Margin between carousel items.
     minItems: 1,                    //{NEW} Integer: Minimum number of carousel items that should be visible. Items will resize fluidly when below this.
-    maxItems: 0,                    //{NEW} Integer: Maxmimum number of carousel items that should be visible. Items will resize fluidly when above this limit.
+    maxItems: 0,                    //{NEW} Integer: Maximum number of carousel items that should be visible. Items will resize fluidly when above this limit.
     move: 0,                        //{NEW} Integer: Number of carousel items that should move on animation. If 0, slider will move all visible items.
     allowOneSlide: true,           //{NEW} Boolean: Whether or not to allow a slider comprised of a single slide
 

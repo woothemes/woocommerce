@@ -1,0 +1,4 @@
+Significance: minor
+Type: fix
+
+Post editor: ensure that blocks aren't registered multiple times.

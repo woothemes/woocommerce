@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import { createRoot, useEffect, Suspense } from '@wordpress/element';
+import { createRoot, useEffect, Suspense, render } from '@wordpress/element';
 import BlockErrorBoundary from '@woocommerce/base-components/block-error-boundary';
 import type { Root } from 'react-dom/client';
+import { getSetting } from '@woocommerce/settings';
 
 // Some blocks take care of rendering their inner blocks automatically. For
 // example, the empty cart. In those cases, we don't want to trigger the render
@@ -62,6 +63,8 @@ export const renderBlock = <
 	props = {} as BlockProps< TProps, TAttributes >,
 	errorBoundaryProps = {},
 }: RenderBlockParams< TProps, TAttributes > ): Root => {
+	const useReact18 = getSetting( '__experimentalUseReact18', false ) === true;
+
 	const BlockWrapper = () => {
 		useEffect( () => {
 			if ( container.classList ) {
@@ -84,9 +87,12 @@ export const renderBlock = <
 		);
 	};
 
-	const root = createRoot( container );
-	root.render( <BlockWrapper /> );
-	return root;
+	if ( useReact18 ) {
+		const root = createRoot( container );
+		root.render( <BlockWrapper /> );
+		return root;
+	}
+	render( <BlockWrapper />, container );
 };
 
 interface RenderBlockInContainersParams<

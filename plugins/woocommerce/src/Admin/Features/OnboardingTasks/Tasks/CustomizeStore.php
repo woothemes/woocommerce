@@ -3,11 +3,12 @@
 namespace Automattic\WooCommerce\Admin\Features\OnboardingTasks\Tasks;
 
 use Automattic\WooCommerce\Admin\Features\OnboardingTasks\Task;
-use Jetpack_Gutenberg;
 use WP_Post;
 
 /**
  * Customize Your Store Task
+ *
+ * @internal
  */
 class CustomizeStore extends Task {
 	/**
@@ -223,7 +224,6 @@ class CustomizeStore extends Task {
 		wp_enqueue_script( 'wp-format-library' ); // Not sure if this is needed.
 		wp_enqueue_script( 'wp-router' );
 		wp_enqueue_style( 'wp-editor' );
-		wp_enqueue_style( 'wp-edit-site' );
 		wp_enqueue_style( 'wp-format-library' );
 		wp_enqueue_media();
 
@@ -238,11 +238,6 @@ class CustomizeStore extends Task {
 		 * @since 8.0.3
 		*/
 		do_action( 'enqueue_block_editor_assets' );
-
-		// Load Jetpack's block editor assets because they are not enqueued by default.
-		if ( class_exists( 'Jetpack_Gutenberg' ) ) {
-			Jetpack_Gutenberg::enqueue_block_editor_assets();
-		}
 	}
 
 	/**

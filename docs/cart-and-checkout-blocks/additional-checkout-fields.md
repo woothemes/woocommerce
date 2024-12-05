@@ -339,11 +339,11 @@ This results in the following address form (the billing form will be the same):
 The rendered markup looks like this:
 
 ```html
-<input type="text" id="shipping-namespace-gov-id" autocapitalize="off"
+	&lt;input type="text" id="shipping-namespace-gov-id" autocapitalize="off"
        autocomplete="government-id" aria-label="custom aria label"
        aria-describedby="some-element" required="" aria-invalid="true"
        title="Title to show on hover" pattern="[A-Z0-9]{5}"
-       data-custom="custom data" value="" >
+       data-custom="custom data" value="" &gt;
 ```
 
 ### Rendering a checkbox field
@@ -454,7 +454,7 @@ add_action(
 	'woocommerce_sanitize_additional_field',
 	function ( $field_value, $field_key ) {
 		if ( 'namespace/gov-id' === $field_key ) {
-			$field_value = str_replace( ' ', '', $field_key );
+			$field_value = str_replace( ' ', '', $field_value );
 			$field_value = strtoupper( $field_value );
 		}
 		return $field_value;
@@ -686,7 +686,7 @@ add_action(
 			'woocommerce_sanitize_additional_field',
 			function ( $field_value, $field_key ) {
 				if ( 'namespace/gov-id' === $field_key || 'namespace/confirm-gov-id' === $field_key ) {
-					$field_value = str_replace( ' ', '', $field_key );
+					$field_value = str_replace( ' ', '', $field_value );
 					$field_value = strtoupper( $field_value );
 				}
 				return $field_value;

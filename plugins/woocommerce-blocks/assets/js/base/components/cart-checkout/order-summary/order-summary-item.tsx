@@ -30,9 +30,13 @@ import ProductMetadata from '../product-metadata';
 
 interface OrderSummaryProps {
 	cartItem: CartItem;
+	disableProductDescriptions: boolean;
 }
 
-const OrderSummaryItem = ( { cartItem }: OrderSummaryProps ): JSX.Element => {
+const OrderSummaryItem = ( {
+	cartItem,
+	disableProductDescriptions,
+}: OrderSummaryProps ): JSX.Element => {
 	const {
 		images,
 		low_stock_remaining: lowStockRemaining,
@@ -122,6 +126,18 @@ const OrderSummaryItem = ( { cartItem }: OrderSummaryProps ): JSX.Element => {
 		arg,
 	} );
 
+	const productMetaProps = disableProductDescriptions
+		? {
+				itemData,
+				variation,
+		  }
+		: {
+				itemData,
+				variation,
+				shortDescription,
+				fullDescription,
+		  };
+
 	return (
 		<div
 			className={ clsx(
@@ -155,6 +171,7 @@ const OrderSummaryItem = ( { cartItem }: OrderSummaryProps ): JSX.Element => {
 					disabled={ true }
 					name={ name }
 					permalink={ permalink }
+					disabledTagName="h3"
 				/>
 				<ProductPrice
 					currency={ priceCurrency }
@@ -174,12 +191,7 @@ const OrderSummaryItem = ( { cartItem }: OrderSummaryProps ): JSX.Element => {
 						/>
 					)
 				) }
-				<ProductMetadata
-					shortDescription={ shortDescription }
-					fullDescription={ fullDescription }
-					itemData={ itemData }
-					variation={ variation }
-				/>
+				<ProductMetadata { ...productMetaProps } />
 			</div>
 			<span className="screen-reader-text">
 				{ sprintf(

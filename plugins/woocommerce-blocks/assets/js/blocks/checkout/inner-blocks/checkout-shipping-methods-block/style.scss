@@ -11,4 +11,11 @@
 	.wc-block-components-shipping-rates-control__no-results-notice {
 		margin: em($gap-small) 0;
 	}
+
+	.wc-block-components-shipping-rates-control__no-shipping-address-message {
+		background-color: $gray-200;
+		color: $gray-700;
+		padding: em($gap-large);
+		text-align: center;
+	}
 }

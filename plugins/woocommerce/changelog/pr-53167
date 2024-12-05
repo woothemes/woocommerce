@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Add checks to various template functions, guard against fatal errors when the global $product object is unavailable.

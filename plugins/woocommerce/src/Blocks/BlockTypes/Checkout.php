@@ -287,10 +287,13 @@ class Checkout extends AbstractBlock {
 		$post_blocks = parse_blocks( $post->post_content );
 		$title       = $this->find_local_pickup_text_in_checkout_block( $post_blocks );
 
-		if ( $title ) {
-			$pickup_location_settings['title'] = $title;
-			update_option( 'woocommerce_pickup_location_settings', $pickup_location_settings );
+		// Set the title to be an empty string if it isn't a string. This will make it fall back to the default value of "Pickup".
+		if ( ! is_string( $title ) ) {
+			$title = '';
 		}
+
+		$pickup_location_settings['title'] = $title;
+		update_option( 'woocommerce_pickup_location_settings', $pickup_location_settings );
 	}
 
 	/**
@@ -370,8 +373,11 @@ class Checkout extends AbstractBlock {
 		$this->asset_data_registry->add( 'isBlockTheme', wc_current_theme_is_fse_theme() );
 
 		$pickup_location_settings = LocalPickupUtils::get_local_pickup_settings();
+		$local_pickup_method_ids  = LocalPickupUtils::get_local_pickup_method_ids();
+
 		$this->asset_data_registry->add( 'localPickupEnabled', $pickup_location_settings['enabled'] );
 		$this->asset_data_registry->add( 'localPickupText', $pickup_location_settings['title'] );
+		$this->asset_data_registry->add( 'collectableMethodIds', $local_pickup_method_ids );
 
 		$is_block_editor = $this->is_block_editor();
 
@@ -385,8 +391,8 @@ class Checkout extends AbstractBlock {
 			$shipping_methods           = WC()->shipping()->get_shipping_methods();
 			$formatted_shipping_methods = array_reduce(
 				$shipping_methods,
-				function ( $acc, $method ) {
-					if ( in_array( $method->id, LocalPickupUtils::get_local_pickup_method_ids(), true ) ) {
+				function ( $acc, $method ) use ( $local_pickup_method_ids ) {
+					if ( in_array( $method->id, $local_pickup_method_ids, true ) ) {
 						return $acc;
 					}
 					if ( $method->supports( 'settings' ) ) {
@@ -416,8 +422,8 @@ class Checkout extends AbstractBlock {
 				function ( $acc, $method ) {
 					$acc[] = [
 						'id'          => $method->id,
-						'title'       => $method->method_title,
-						'description' => $method->method_description,
+						'title'       => $method->get_method_title() !== '' ? $method->get_method_title() : $method->get_title(),
+						'description' => $method->get_method_description() !== '' ? $method->get_method_description() : $method->get_description(),
 					];
 					return $acc;
 				},

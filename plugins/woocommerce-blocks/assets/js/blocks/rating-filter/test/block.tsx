@@ -12,6 +12,7 @@ import {
 } from '@testing-library/react';
 import * as hooks from '@woocommerce/base-context/hooks';
 import userEvent from '@testing-library/user-event';
+import type { WCStoreV1ProductsCollectionProps } from '@woocommerce/types';
 
 /**
  * Internal dependencies
@@ -40,7 +41,7 @@ const acceptErrorWithDuplicatedKeys = () => {
 	expect( console ).toHaveErrored();
 };
 
-const stubCollectionData = () => ( {
+const stubCollectionData = (): WCStoreV1ProductsCollectionProps => ( {
 	price_range: null,
 	attribute_counts: null,
 	rating_counts: [
@@ -81,12 +82,18 @@ const setup = ( params: SetupParams ) => {
 	};
 
 	jest.spyOn( hooks, 'useCollectionData' ).mockReturnValue( {
-		results: stubCollectionData(),
+		data: stubCollectionData(),
 		isLoading: false,
 	} );
 
 	const { container, ...utils } = render(
-		<RatingFilterBlock attributes={ attributes } />
+		<RatingFilterBlock attributes={ attributes } />,
+		{ legacyRoot: true }
+	);
+	// We need to switch to React 17 rendering to allow these tests to keep passing, but as a result the React
+	// rendering error will be shown.
+	expect( console ).toHaveErroredWith(
+		`Warning: ReactDOM.render is no longer supported in React 18. Use createRoot instead. Until you switch to the new API, your app will behave as if it's running React 17. Learn more: https://reactjs.org/link/switch-to-createroot`
 	);
 
 	const getList = () => container.querySelector( selectors.list );

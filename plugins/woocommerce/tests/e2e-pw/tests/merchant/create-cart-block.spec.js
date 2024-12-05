@@ -1,12 +1,19 @@
 const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
 const {
-	goToPageEditor,
 	fillPageTitle,
-	insertBlock,
 	transformIntoBlocks,
 	publishPage,
 } = require( '../../utils/editor' );
 const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
+
+/**
+ * External dependencies
+ */
+import {
+	closeChoosePatternModal,
+	goToPageEditor,
+	insertBlock,
+} from '@woocommerce/e2e-utils-playwright';
 
 const test = baseTest.extend( {
 	storageState: process.env.ADMINSTATE,
@@ -15,13 +22,15 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Transform Classic Cart To Cart Block',
-	{ tag: [ '@gutenberg', '@services' ] },
+	{ tag: [ '@gutenberg', '@services', '@skip-on-default-pressable' ] },
 	() => {
 		test( 'can transform classic cart to cart block', async ( {
 			page,
 			testPage,
 		} ) => {
 			await goToPageEditor( { page } );
+
+			await closeChoosePatternModal( { page } );
 
 			await fillPageTitle( page, testPage.title );
 			const wordPressVersion = await getInstalledWordPressVersion();
