@@ -42,7 +42,7 @@ class OrderStatusRestControllerTest extends WC_REST_Unit_Test_Case {
 		$this->assertIsArray( $data );
 		$this->assertNotEmpty( $data );
 
-		// Check first status item structure
+		// Check first status item structure.
 		$first_status = $data[0];
 		$this->assertArrayHasKey( 'slug', $first_status );
 		$this->assertArrayHasKey( 'name', $first_status );
