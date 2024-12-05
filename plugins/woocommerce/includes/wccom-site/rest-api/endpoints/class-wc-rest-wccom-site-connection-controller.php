@@ -64,8 +64,8 @@ class WC_REST_WCCOM_Site_Connection_Controller extends WC_REST_WCCOM_Site_Contro
 	 * @return WP_REST_Response
 	 */
 	public function handle_disconnect_request( $request ) {
-
-		if ( empty( $request->get_param( 'request_hash' ) ) || ! WC_Helper::verify_request_hash( $request->get_param( 'request_hash' ) ) ) {
+		$request_hash = $request['hash'];
+		if ( empty( $request_hash ) || ! WC_Helper::verify_request_hash( $request_hash ) ) {
 			return $this->get_response(
 				array(),
 				403
