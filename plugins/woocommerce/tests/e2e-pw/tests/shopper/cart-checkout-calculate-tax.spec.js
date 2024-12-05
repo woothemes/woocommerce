@@ -1,7 +1,8 @@
-const { test, expect } = require( '@playwright/test' );
+const { test, expect, request } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const { customer } = require( '../../test-data/data' );
 const { random } = require( '../../utils/helpers' );
+const { setOption } = require( '../../utils/options' );
 
 /**
  * External dependencies
@@ -47,6 +48,12 @@ test.describe.serial(
 			await api.put( 'settings/general/woocommerce_calc_taxes', {
 				value: 'yes',
 			} );
+			await setOption(
+				request,
+				baseURL,
+				'woocommerce_checkout_phone_field',
+				'required'
+			);
 		} );
 
 		test.afterAll( async ( { baseURL } ) => {
