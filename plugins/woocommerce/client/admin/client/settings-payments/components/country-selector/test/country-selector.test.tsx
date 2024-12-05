@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { __ } from '@wordpress/i18n';
@@ -57,7 +56,7 @@ describe( 'CountrySelector', () => {
 
 		fireEvent.click( toggleButton );
 
-		const searchInput = screen.getByPlaceholderText( 'Search…' );
+		const searchInput = screen.getByPlaceholderText( 'Search' );
 		fireEvent.change( searchInput, { target: { value: 'Ca' } } );
 
 		expect( screen.getByText( 'Canada' ) ).toBeInTheDocument();
