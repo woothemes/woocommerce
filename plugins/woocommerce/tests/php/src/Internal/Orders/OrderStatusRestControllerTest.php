@@ -70,7 +70,7 @@ class OrderStatusRestControllerTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'slug', $properties );
 		$this->assertArrayHasKey( 'name', $properties );
 
-		// Check slug property
+		// Check slug property.
 		$this->assertEquals( 'string', $properties['slug']['type'] );
 		$this->assertTrue( $properties['slug']['readonly'] );
 
