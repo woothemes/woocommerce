@@ -41,7 +41,7 @@ export const receiveCart =
 	} ) => {
 		const newCart = camelCaseKeys( response ) as unknown as Cart;
 		const oldCart = select.getCartData();
-		const oldCartErrors = select.getCartErrors();
+		const oldCartErrors = [ ...oldCart.errors, ...select.getCartErrors() ];
 
 		updateCartErrorNotices( newCart.errors, oldCartErrors );
 		notifyQuantityChanges( {
