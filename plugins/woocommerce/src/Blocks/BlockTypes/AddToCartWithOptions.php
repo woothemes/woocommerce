@@ -243,7 +243,7 @@ class AddToCartWithOptions extends AbstractBlock {
 		}
 
 		$args['variations'][] = array(
-			'name'        => 'woocommerce/product-add-to-cart-with-options-button',
+			'name'        => 'woocommerce/add-to-cart-with-options-button',
 			'title'       => __( 'Add To Cart Button (Experimental)', 'woocommerce' ),
 			'description' => __( 'Add a Button block to add product quantity to cart.', 'woocommerce' ),
 			'attributes'  => array(
