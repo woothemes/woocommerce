@@ -362,6 +362,6 @@ HTML;
 		$migration_page_data     = $setting_data[ $migration->get_id() ];
 		$migration_sections_data = $migration_page_data['sections'];
 
-		$this->assertEquals( $migration_sections_data['foobar']['settings'][1]['content'], 'Custom Type Field' );
+		$this->assertEquals( $migration_sections_data['foobar']['settings'][1]['content'], '<div>Custom Type Field</div>' );
 	}
 }
