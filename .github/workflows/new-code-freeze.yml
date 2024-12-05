@@ -3,13 +3,6 @@ on:
     release:
         types: [released]
 
-    workflow_dispatch:
-        inputs:
-            skip_verify:
-                description: 'Skip the PR verification step (default: false) pass true to skip'
-                required: false
-                default: 'false'
-
 permissions: {}
 
 env:
@@ -91,7 +84,7 @@ jobs:
                             failureMessage += `Identified \`${prsOpenByGithubActions.length}\` open PR(s) from \`github-actions\` bot which should be merged or closed before proceeding. <https://github.com/${owner}/${repo}/issues?q=is%3Apr+is%3Aopen+author%3Aapp%2Fgithub-actions|Click here to view the PRs>`;
                           }
     
-                          failureMessage += '\n\nThis step maintains the code integrity and is critical to avoid regression in future releases. Please merge them or close them before proceeding or set \`skip_verify\` to \`true\` before running the workflow to skip this step if you are confident that the PRs are irrelevant.';
+                          failureMessage += '\n\nThis step maintains the code integrity and is critical to avoid regression in future releases. Please merge them or close them and re-run the workflow.';
     
                           console.error(failureMessage);
                           core.setOutput('failureMessage', failureMessage);
