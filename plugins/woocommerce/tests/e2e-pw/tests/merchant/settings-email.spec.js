@@ -118,6 +118,39 @@ test.describe( 'WooCommerce Email Settings', () => {
 		expect( sender ).toContain( newFromAddress );
 	} );
 
+	test( 'Send email preview', async ( { page, baseURL } ) => {
+		await setFeatureFlag( baseURL, 'yes' );
+		await page.goto( 'wp-admin/admin.php?page=wc-settings&tab=email' );
+
+		// Click the "Send a test email" button
+		await page.getByRole( 'button', { name: 'Send a test email' } ).click();
+
+		// Verify that the modal window is open
+		const modal = page.getByRole( 'dialog' );
+		await expect( modal ).toBeVisible();
+
+		// Verify that the "Send test email" button is disabled
+		const sendButton = modal.getByRole( 'button', {
+			name: 'Send test email',
+		} );
+		await expect( sendButton ).toBeDisabled();
+
+		// Fill in the email address field
+		const email = 'test@example.com';
+		const emailInput = modal.getByLabel( 'Send to' );
+		await emailInput.fill( email );
+
+		// Verify the "Send test email" button is now enabled
+		await expect( sendButton ).toBeEnabled();
+		await sendButton.click();
+
+		// Wait for the message, because sending will fail in test environment
+		const message = modal.locator(
+			'text=Error sending test email. Please try again.'
+		);
+		await expect( message ).toBeVisible();
+	} );
+
 	test( 'See email image url field with a feature flag', async ( {
 		page,
 		baseURL,
