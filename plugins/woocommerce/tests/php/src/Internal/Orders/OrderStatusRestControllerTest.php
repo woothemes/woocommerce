@@ -35,7 +35,7 @@ class OrderStatusRestControllerTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 		$data     = $response->get_data();
 
-		// Check response status
+		// Check response status.
 		$this->assertEquals( 200, $response->get_status() );
 
 		// Check response structure
