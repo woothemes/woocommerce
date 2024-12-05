@@ -106,7 +106,7 @@ jobs:
                   slack-bot-user-oauth-access-token: ${{ secrets.CODE_FREEZE_BOT_TOKEN }}
                   slack-channel: ${{ secrets.WOO_RELEASE_SLACK_CHANNEL }}
                   slack-text: |
-                      :x: Oops we may have missed a cherry pick PR left open. Code freeze failed.
+                      :x: Oops we may have missed a PR left open by \`github-actions\` bot. Code freeze failed.
                       :warning-8c: ${{ steps.verify-prs.outputs.failureMessage }}
                       <https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow Run>
                   slack-optional-unfurl_links: false
