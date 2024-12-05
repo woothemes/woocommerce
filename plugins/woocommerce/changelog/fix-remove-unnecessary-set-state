@@ -1,0 +1,4 @@
+Significance: patch
+Type: performance
+
+Remove unnecessary setState() from <DesignWithNoAiController>

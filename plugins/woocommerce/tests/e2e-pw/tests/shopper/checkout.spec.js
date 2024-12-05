@@ -2,9 +2,15 @@ const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const { admin, customer } = require( '../../test-data/data' );
 const { setFilterValue, clearFilters } = require( '../../utils/filters' );
-const { addProductsToCart } = require( '../../utils/pdp' );
-const { addAProductToCart } = require( '../../utils/cart' );
-const { getOrderIdFromUrl } = require( '../../utils/order' );
+
+/**
+ * External dependencies
+ */
+import {
+	addAProductToCart,
+	addOneOrMoreProductToCart,
+	getOrderIdFromUrl,
+} from '@woocommerce/e2e-utils-playwright';
 
 const guestEmail = 'checkout-guest@example.com';
 
@@ -152,7 +158,7 @@ test.describe(
 			page,
 		} ) => {
 			// this time we're going to add two products to the cart
-			await addProductsToCart( page, simpleProductName, '2' );
+			await addOneOrMoreProductToCart( page, simpleProductName, '2' );
 
 			await page.goto( '/checkout/' );
 			await expect(
@@ -177,7 +183,7 @@ test.describe(
 
 		test( 'allows customer to fill billing details', async ( { page } ) => {
 			// this time we're going to add three products to the cart
-			await addProductsToCart( page, simpleProductName, '3' );
+			await addOneOrMoreProductToCart( page, simpleProductName, '3' );
 
 			await page.goto( '/checkout/' );
 			await expect(
@@ -302,7 +308,7 @@ test.describe(
 		test( 'allows customer to fill shipping details', async ( {
 			page,
 		} ) => {
-			await addProductsToCart( page, simpleProductName, '2' );
+			await addOneOrMoreProductToCart( page, simpleProductName, '2' );
 
 			await page.goto( '/checkout/' );
 			await expect(
@@ -342,7 +348,7 @@ test.describe(
 
 		test( 'allows guest customer to place an order', async ( { page } ) => {
 			await test.step( 'Add 2 products to the cart', async () => {
-				await addProductsToCart( page, simpleProductName, '2' );
+				await addOneOrMoreProductToCart( page, simpleProductName, '2' );
 			} );
 
 			await test.step( 'Go to checkout and confirm that products and totals are as expected', async () => {
@@ -509,7 +515,7 @@ test.describe(
 				)
 			).toBeVisible();
 
-			await addProductsToCart( page, simpleProductName, '2' );
+			await addOneOrMoreProductToCart( page, simpleProductName, '2' );
 
 			await page.goto( '/checkout/' );
 			await expect(
