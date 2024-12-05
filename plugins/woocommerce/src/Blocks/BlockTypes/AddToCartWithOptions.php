@@ -251,9 +251,6 @@ class AddToCartWithOptions extends AbstractBlock {
 				'withRole'  => 'add-to-cart-with-options-button',
 				'text'      => __( 'Add to Cart', 'woocommerce' ),
 			),
-			'scope'       => array(
-				'block',
-			),
 			'isActive'    => [ 'withRole' ],
 			'isDefault'   => false,
 		);
