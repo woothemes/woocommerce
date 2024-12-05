@@ -206,7 +206,22 @@ export const updateTrunkChangelog = async (
 			'-b': null,
 			[ branch ]: null,
 		} );
-		await git.raw( [ 'cherry-pick', deletionCommitHash ] );
+
+		try {
+			await git.raw( [ 'cherry-pick', deletionCommitHash ] );
+		} catch ( e ) {
+			if (
+				e.message.includes( 'nothing to commit, working tree clean' )
+			) {
+				Logger.notice(
+					'Cherry-pick resulted in no changes, continuing without error.'
+				);
+				// No need to skip, just continue
+			} else {
+				throw e; // Re-throw if it's a different error
+			}
+		}
+
 		await git.push( 'origin', branch, [ '--force' ] );
 		Logger.notice( `Creating PR for ${ branch }` );
 		const pullRequest = await createPullRequest( {
@@ -221,6 +236,12 @@ export const updateTrunkChangelog = async (
 		} );
 		Logger.notice( `Pull request created: ${ pullRequest.html_url }` );
 	} catch ( e ) {
-		Logger.error( e );
+		if ( e.message.includes( 'No commits between trunk' ) ) {
+			Logger.notice(
+				'No commits between trunk and the branch, skipping the PR.'
+			);
+		} else {
+			Logger.error( e );
+		}
 	}
 };
