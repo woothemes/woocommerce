@@ -1,3 +1,11 @@
 module.exports = {
-	extends: '../internal-js-tests/babel.config.js'
+	"presets": [
+		"@wordpress/babel-preset-default",
+		[
+			"@babel/preset-env",
+			{
+				"modules": "commonjs"
+			}
+		]
+	]
 };
