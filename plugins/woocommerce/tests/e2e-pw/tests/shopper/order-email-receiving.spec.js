@@ -1,8 +1,14 @@
 const { test, expect } = require( '@playwright/test' );
 const { customer, storeDetails } = require( '../../test-data/data' );
 const { api } = require( '../../utils' );
-const { getOrderIdFromUrl } = require( '../../utils/order' );
-const { addAProductToCart } = require( '../../utils/cart' );
+
+/**
+ * External dependencies
+ */
+import {
+	addAProductToCart,
+	getOrderIdFromUrl,
+} from '@woocommerce/e2e-utils-playwright';
 
 let productId, orderId, zoneId;
 
