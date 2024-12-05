@@ -34,13 +34,13 @@ export const ResetStylesControl: React.FC< ResetStylesControlProps > = ( {
 
 	const handleInputChange = () => {
 		setIsResetShown( areColorsChanged( defaultColors ) );
-		setChanged( true );
+		setChanged( areColorsChanged( initialValue ) );
 	};
 
 	const handleReset = () => {
 		setColors( defaultColors );
 		setIsResetShown( false );
-		setChanged( true );
+		setChanged( areColorsChanged( initialValue ) );
 	};
 
 	const handleUndo = () => {
