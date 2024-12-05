@@ -65,6 +65,13 @@ class WC_REST_WCCOM_Site_Connection_Controller extends WC_REST_WCCOM_Site_Contro
 	 */
 	public function handle_disconnect_request( $request ) {
 
+		if ( empty( $request->get_param( 'request_hash' ) ) || ! WC_Helper::verify_request_hash( $request->get_param( 'request_hash' ) ) ) {
+			return $this->get_response(
+				array(),
+				403
+			);
+		}
+
 		if ( WC_Helper::is_site_connected() ) {
 			WC_Helper::disconnect();
 		}
