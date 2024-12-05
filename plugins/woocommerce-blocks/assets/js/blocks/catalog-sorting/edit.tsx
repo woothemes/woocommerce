@@ -22,7 +22,7 @@ const CatalogSorting = ( {
 						className="orderby-label"
 						htmlFor="woocommerce-orderby"
 					>
-						Sort by
+						{ __( 'Sort by', 'woocommerce' ) }
 					</label>
 					<select className="orderby" id="woocommerce-orderby">
 						<option>{ __( 'Default', 'woocommerce' ) }</option>
