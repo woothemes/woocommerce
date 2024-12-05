@@ -204,7 +204,7 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 			/**
 			 * Output the custom type field by calling the action.
 			 *
-			 * @since x.x.x
+			 * @since 3.3.0
 			 */
 			do_action( $action, $setting );
 			$html = ob_get_contents();
