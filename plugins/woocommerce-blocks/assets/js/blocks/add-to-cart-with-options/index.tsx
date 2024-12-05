@@ -36,6 +36,9 @@ if ( shouldRegisterBlock ) {
 		getProductTypeOptions()
 	);
 
+	// Select Simple product type
+	dispatch( woocommerceTemplateStateStore ).switchProductType( 'simple' );
+
 	// Register the block
 	registerBlockType( metadata, {
 		icon: <Icon icon={ button } />,
