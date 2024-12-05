@@ -234,6 +234,10 @@ class AddToCartWithOptions extends AbstractBlock {
 		 * Add withRole attribute to the block.
 		 * This attribute is used to identify when the block is active.
 		 */
+		if ( ! isset( $args['attributes'] ) ) {
+			$args['attributes'] = array();
+		}
+
 		$args['attributes']['withRole'] = array(
 			'type' => 'string',
 		);
