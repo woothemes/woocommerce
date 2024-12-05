@@ -79,7 +79,7 @@ jobs:
                       }
 
                       if (prsWithCherryInTitle.length > 0) {
-                        failureMessage += `Identified \`${prsWithCherryInTitle.length}\` open PR(s) with \`cherry\` in the title which maybe opened by a human, please verify if they are relevant. <https://github.com/${owner}/${repo}/issues?q=is%3Apr+is%3Aopen+cherry+in%3Atitle+-author%3Aapp%2Fgithub-actions|Click here to view the PRs>`;
+                        failureMessage += `Identified \`${prsWithCherryInTitle.length}\` open PR(s) with \`cherry\` in the title which maybe opened by a human, please verify if they are relevant. <https://github.com/${owner}/${repo}/issues?q=is%3Apr+is%3Aopen+cherry+in%3Atitle+-author%3Aapp%2Fgithub-actions|Link to PRs>`;
                       }
 
                       failureMessage += '\n\nThis step maintains the code integrity and is critical to avoid regression in future releases. Please merge them or close them before proceeding or set \`skip_verify\` to \`true\` before running the workflow to skip this step if you are confident that the PRs are irrelevant.';
