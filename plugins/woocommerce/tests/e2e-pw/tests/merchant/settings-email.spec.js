@@ -391,7 +391,10 @@ test.describe( 'WooCommerce Email Settings', () => {
 		await page.fill( '#woocommerce_email_footer_text_color', dummyColor );
 
 		// Reset colors to defaults
-		await page.locator( resetButtonElement ).click();
+		await page
+			.locator( resetButtonElement )
+			.getByText( 'Sync with theme', { exact: true } )
+			.click();
 
 		// Verify colors are reset
 		await expect(
