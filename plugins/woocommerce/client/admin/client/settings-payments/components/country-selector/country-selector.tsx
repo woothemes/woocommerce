@@ -173,7 +173,7 @@ export const CountrySelector = < ItemType extends Item >( {
 	};
 
 	// Check if the search input is clearable.
-	const isSearchClearable = isSearchFocused || searchText !== '';
+	const isSearchClearable = isSearchFocused && searchText !== '';
 
 	const menuProps = getMenuProps( {
 		className: 'components-country-select-control__menu',
@@ -203,11 +203,11 @@ export const CountrySelector = < ItemType extends Item >( {
 		( e: React.MouseEvent< HTMLButtonElement > ) => {
 			e.preventDefault();
 
-			if ( isSearchClearable ) {
+			if ( searchText !== '' ) {
 				setSearchText( '' );
 			}
 		},
-		[ isSearchClearable ]
+		[ searchText ]
 	);
 
 	return (
