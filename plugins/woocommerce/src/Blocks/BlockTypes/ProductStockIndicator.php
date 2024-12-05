@@ -69,8 +69,8 @@ class ProductStockIndicator extends AbstractBlock {
 			return '';
 		}
 
-		$low_stock_amount = $product->get_low_stock_amount();
-		$total_stock      = $product->get_stock_quantity();
+		$low_stock_amount   = $product->get_low_stock_amount();
+		$total_stock        = $product->get_stock_quantity();
 		$is_low_stock       = $low_stock_amount && $total_stock <= $low_stock_amount;
 		$classes_and_styles = StyleAttributesUtils::get_classes_and_styles_by_attributes( $attributes );
 
