@@ -14,6 +14,7 @@ import { useState, useEffect } from '@wordpress/element';
  * Internal dependencies
  */
 import './settings-payments-main.scss';
+import './settings-payments-body.scss';
 import { createNoticesFromResponse } from '~/lib/notices';
 import { OtherPaymentGateways } from '~/settings-payments/components/other-payment-gateways';
 import { PaymentGateways } from '~/settings-payments/components/payment-gateways';

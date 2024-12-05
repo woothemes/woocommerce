@@ -1,9 +1,5 @@
 $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 
-#wpcontent {
-	background-color: #fff;
-}
-
 .woocommerce-embed-page {
 	#wpbody .woocommerce-layout,
 	.woocommerce-layout__notice-list-hide + .wrap {
@@ -71,9 +67,17 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 				}
 			}
 
+			&__item.clickable-list-item:hover {
+				background-color: rgba(0, 0, 0, 0.02); /* Light overlay effect */
+			}
+
 			&__item-inner {
 				padding: $gap-large 0;
 				align-items: flex-start;
+			}
+
+			&__item-inner:focus {
+				box-shadow: none;
 			}
 
 			&__item-title {
