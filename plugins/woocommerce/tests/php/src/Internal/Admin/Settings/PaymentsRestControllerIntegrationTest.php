@@ -213,7 +213,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( rest_authorization_required_code(), $response->get_status() );
+		$this->assertSame( rest_authorization_required_code(), $response->get_status() );
 
 		// Clean up.
 		remove_filter( 'user_has_cap', $filter_callback );
@@ -238,7 +238,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertSame( 200, $response->get_status() );
 
 		$data = $response->get_data();
 
@@ -268,7 +268,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'id', $provider, 'Provider (gateway) `id` entry is missing' );
 		$this->assertArrayHasKey( '_order', $provider, 'Provider (gateway) `_order` entry is missing' );
 		$this->assertArrayHasKey( '_type', $provider, 'Provider (gateway) `_order` entry is missing' );
-		$this->assertEquals( Payments::PROVIDER_TYPE_GATEWAY, $provider['_type'], 'Provider (gateway) `_type` entry is not `' . Payments::PROVIDER_TYPE_GATEWAY . '`' );
+		$this->assertSame( Payments::PROVIDER_TYPE_GATEWAY, $provider['_type'], 'Provider (gateway) `_type` entry is not `' . Payments::PROVIDER_TYPE_GATEWAY . '`' );
 		$this->assertArrayHasKey( 'title', $provider, 'Provider (gateway) `title` entry is missing' );
 		$this->assertArrayHasKey( 'description', $provider, 'Provider (gateway) `description` entry is missing' );
 		$this->assertArrayHasKey( 'supports', $provider, 'Provider (gateway) `supports` entry is missing' );
@@ -290,7 +290,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$offline_pms_group = $data['providers'][0];
 		$this->assertArrayHasKey( 'id', $offline_pms_group, 'Provider (offline payment methods group) `id` entry is missing' );
 		$this->assertArrayHasKey( '_type', $offline_pms_group, 'Provider (offline payment methods group) `_type` entry is missing' );
-		$this->assertEquals( Payments::PROVIDER_TYPE_OFFLINE_PMS_GROUP, $offline_pms_group['_type'], 'Provider (offline payment methods group) `_type` entry is not `' . Payments::PROVIDER_TYPE_OFFLINE_PMS_GROUP . '`' );
+		$this->assertSame( Payments::PROVIDER_TYPE_OFFLINE_PMS_GROUP, $offline_pms_group['_type'], 'Provider (offline payment methods group) `_type` entry is not `' . Payments::PROVIDER_TYPE_OFFLINE_PMS_GROUP . '`' );
 		$this->assertArrayHasKey( '_order', $offline_pms_group, 'Provider (offline payment methods group) `_order` entry is missing' );
 		$this->assertArrayHasKey( 'title', $offline_pms_group, 'Provider (offline payment methods group) `title` entry is missing' );
 		$this->assertArrayHasKey( 'description', $offline_pms_group, 'Provider (offline payment methods group) `description` entry is missing' );
@@ -300,7 +300,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'id', $offline_pm, 'Offline payment method `id` entry is missing' );
 		$this->assertArrayHasKey( '_order', $offline_pm, 'Offline payment method `_order` entry is missing' );
 		$this->assertArrayHasKey( '_type', $offline_pm, 'Offline payment method `_type` entry is missing' );
-		$this->assertEquals( Payments::PROVIDER_TYPE_OFFLINE_PM, $offline_pm['_type'], 'Offline payment method `_type` entry is not `' . Payments::PROVIDER_TYPE_OFFLINE_PM . '`' );
+		$this->assertSame( Payments::PROVIDER_TYPE_OFFLINE_PM, $offline_pm['_type'], 'Offline payment method `_type` entry is not `' . Payments::PROVIDER_TYPE_OFFLINE_PM . '`' );
 		$this->assertArrayHasKey( 'title', $offline_pm, 'Offline payment method `title` entry is missing' );
 		$this->assertArrayHasKey( 'description', $offline_pm, 'Offline payment method `description` entry is missing' );
 		$this->assertArrayHasKey( 'state', $offline_pm, 'Offline payment method `state` entry is missing' );
@@ -340,7 +340,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertSame( 200, $response->get_status() );
 
 		$data = $response->get_data();
 
@@ -360,12 +360,12 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$this->assertCount( 3, $data['suggestion_categories'] );
 
 		// Assert that the preferred suggestions are WooPayments and PayPal (full stack), in this order.
-		$this->assertEquals( Payments::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::WOOPAYMENTS, $data['providers'][0]['id'] );
-		$this->assertEquals( Payments::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::PAYPAL_FULL_STACK, $data['providers'][1]['id'] );
+		$this->assertSame( Payments::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::WOOPAYMENTS, $data['providers'][0]['id'] );
+		$this->assertSame( Payments::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::PAYPAL_FULL_STACK, $data['providers'][1]['id'] );
 
 		// Assert that the other suggestions are all PSPs.
 		$other_suggestions = $data['suggestions'];
-		$this->assertEquals( array( PaymentExtensionSuggestions::TYPE_PSP ), array_unique( array_column( $other_suggestions, '_type' ) ) );
+		$this->assertSame( array( PaymentExtensionSuggestions::TYPE_PSP ), array_unique( array_column( $other_suggestions, '_type' ) ) );
 
 		// Clean up.
 		remove_filter( 'user_has_cap', $filter_callback );
@@ -386,7 +386,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertSame( 200, $response->get_status() );
 
 		$data = $response->get_data();
 
@@ -410,8 +410,8 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$this->assertTrue( $gateway['state']['enabled'] );
 
 		// Assert that the preferred suggestions are WooPayments and PayPal (full stack), in this order.
-		$this->assertEquals( Payments::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::WOOPAYMENTS, $data['providers'][0]['id'] );
-		$this->assertEquals( Payments::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::PAYPAL_FULL_STACK, $data['providers'][1]['id'] );
+		$this->assertSame( Payments::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::WOOPAYMENTS, $data['providers'][0]['id'] );
+		$this->assertSame( Payments::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::PAYPAL_FULL_STACK, $data['providers'][1]['id'] );
 
 		// Assert that PayPal Wallet is not in the other suggestions since we have the full stack variant in the preferred suggestions.
 		$other_suggestions = $data['suggestions'];
@@ -434,7 +434,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertSame( 200, $response->get_status() );
 
 		$data = $response->get_data();
 
@@ -454,12 +454,12 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$this->assertCount( 3, $data['suggestion_categories'] );
 
 		// Assert that the preferred suggestions are Stripe and PayPal (full stack), in this order.
-		$this->assertEquals( Payments::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::STRIPE, $data['providers'][0]['id'] );
-		$this->assertEquals( Payments::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::PAYPAL_FULL_STACK, $data['providers'][1]['id'] );
+		$this->assertSame( Payments::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::STRIPE, $data['providers'][0]['id'] );
+		$this->assertSame( Payments::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::PAYPAL_FULL_STACK, $data['providers'][1]['id'] );
 
 		// The other suggestion is Mollie.
 		$other_suggestions = $data['suggestions'];
-		$this->assertEquals( PaymentExtensionSuggestions::MOLLIE, $other_suggestions[0]['id'] );
+		$this->assertSame( PaymentExtensionSuggestions::MOLLIE, $other_suggestions[0]['id'] );
 	}
 
 	/**
@@ -477,7 +477,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertSame( 200, $response->get_status() );
 
 		$data = $response->get_data();
 
@@ -510,7 +510,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 400, $response->get_status() );
+		$this->assertSame( 400, $response->get_status() );
 
 		// Act.
 		$request = new WP_REST_Request( 'GET', self::ENDPOINT . '/providers' );
@@ -518,7 +518,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 400, $response->get_status() );
+		$this->assertSame( 400, $response->get_status() );
 
 		// Act.
 		$request = new WP_REST_Request( 'GET', self::ENDPOINT . '/providers' );
@@ -526,7 +526,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 400, $response->get_status() );
+		$this->assertSame( 400, $response->get_status() );
 	}
 
 	/**
@@ -550,7 +550,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertSame( 200, $response->get_status() );
 
 		$data = $response->get_data();
 		// We have the core PayPal gateway and the fake WooPayments gateway registered, the offline PMs group entry, and 2 suggestions.
@@ -564,28 +564,28 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 
 		// Assert that the preferred suggestions are WooPayments and PayPal (full stack).
 		// The order is different because of the presence of the fake WooPayments gateway.
-		$this->assertEquals( Payments::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::WOOPAYMENTS, $data['providers'][0]['id'] );
-		$this->assertEquals( Payments::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::PAYPAL_FULL_STACK, $data['providers'][2]['id'] );
+		$this->assertSame( Payments::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::WOOPAYMENTS, $data['providers'][0]['id'] );
+		$this->assertSame( Payments::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::PAYPAL_FULL_STACK, $data['providers'][2]['id'] );
 
 		// Assert that the WooPayments suggestion has all the details, including the incentive data.
 		$suggestion = $data['providers'][0];
 		$this->assertArrayHasKey( 'id', $suggestion, 'Provider (suggestion) `id` entry is missing' );
 		$this->assertArrayHasKey( '_order', $suggestion, 'Provider (suggestion) `_order` entry is missing' );
 		$this->assertArrayHasKey( '_type', $suggestion, 'Provider (suggestion) `_type` entry is missing' );
-		$this->assertEquals( Payments::PROVIDER_TYPE_SUGGESTION, $suggestion['_type'], 'Provider (suggestion) `_type` entry is not `' . Payments::PROVIDER_TYPE_SUGGESTION . '`' );
+		$this->assertSame( Payments::PROVIDER_TYPE_SUGGESTION, $suggestion['_type'], 'Provider (suggestion) `_type` entry is not `' . Payments::PROVIDER_TYPE_SUGGESTION . '`' );
 		$this->assertArrayHasKey( 'title', $suggestion, 'Provider (suggestion) `title` entry is missing' );
 		$this->assertArrayHasKey( 'description', $suggestion, 'Provider (suggestion) `description` entry is missing' );
 		$this->assertArrayHasKey( 'links', $suggestion, 'Provider (suggestion) `links` entry is missing' );
 		$this->assertCount( 5, $suggestion['links'] );
 		$this->assertArrayHasKey( 'plugin', $suggestion, 'Provider (suggestion) `plugin` entry is missing' );
 		$this->assertArrayHasKey( 'slug', $suggestion['plugin'], 'Provider (suggestion) `plugin[slug]` entry is missing' );
-		$this->assertEquals( 'woocommerce-payments', $suggestion['plugin']['slug'] );
+		$this->assertSame( 'woocommerce-payments', $suggestion['plugin']['slug'] );
 		$this->assertArrayHasKey( 'status', $suggestion['plugin'], 'Provider (suggestion) `plugin[status]` entry is missing' );
-		$this->assertEquals( Payments::EXTENSION_NOT_INSTALLED, $suggestion['plugin']['status'] );
+		$this->assertSame( Payments::EXTENSION_NOT_INSTALLED, $suggestion['plugin']['status'] );
 		$this->assertArrayHasKey( 'tags', $suggestion, 'Provider (suggestion) `tags` entry is missing' );
 		$this->assertIsList( $suggestion['tags'], 'Provider (suggestion) `tags` entry is not a list' );
 		$this->assertArrayHasKey( '_suggestion_id', $suggestion, 'Provider (suggestion) `_suggestion_id` entry is missing' );
-		$this->assertEquals( PaymentExtensionSuggestions::WOOPAYMENTS, $suggestion['_suggestion_id'] );
+		$this->assertSame( PaymentExtensionSuggestions::WOOPAYMENTS, $suggestion['_suggestion_id'] );
 		$this->assertArrayHasKey( '_incentive', $suggestion, 'Provider (suggestion) `_incentive` entry is missing' );
 		$this->assertSame(
 			array(
@@ -615,7 +615,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'id', $provider, 'Provider (gateway) `id` entry is missing' );
 		$this->assertArrayHasKey( '_order', $provider, 'Provider (gateway) `_order` entry is missing' );
 		$this->assertArrayHasKey( '_type', $provider, 'Provider (gateway) `_type` entry is missing' );
-		$this->assertEquals( Payments::PROVIDER_TYPE_GATEWAY, $provider['_type'], 'Provider (gateway) `_type` entry is not `' . Payments::PROVIDER_TYPE_GATEWAY . '`' );
+		$this->assertSame( Payments::PROVIDER_TYPE_GATEWAY, $provider['_type'], 'Provider (gateway) `_type` entry is not `' . Payments::PROVIDER_TYPE_GATEWAY . '`' );
 		$this->assertArrayHasKey( 'title', $provider, 'Provider (gateway) `title` entry is missing' );
 		$this->assertArrayHasKey( 'description', $provider, 'Provider (gateway) `description` entry is missing' );
 		$this->assertArrayHasKey( 'supports', $provider, 'Provider (gateway) `supports` entry is missing' );
@@ -656,7 +656,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 			$provider['onboarding']['recommended_payment_methods']
 		);
 		$this->assertArrayHasKey( '_suggestion_id', $provider, 'Provider (gateway) `_suggestion_id` entry is missing' );
-		$this->assertEquals( PaymentExtensionSuggestions::WOOPAYMENTS, $provider['_suggestion_id'] );
+		$this->assertSame( PaymentExtensionSuggestions::WOOPAYMENTS, $provider['_suggestion_id'] );
 		$this->assertArrayHasKey( '_incentive', $provider, 'Provider (suggestion) `_incentive` entry is missing' );
 		$this->assertSame(
 			array(
@@ -681,9 +681,9 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		// Assert that the offline payment methods group has all the details.
 		$offline_pms_group = $data['providers'][3];
 		$this->assertArrayHasKey( 'id', $offline_pms_group, 'Provider (offline payment methods group) `id` entry is missing' );
-		$this->assertEquals( Payments::OFFLINE_METHODS_ORDERING_GROUP, $offline_pms_group['id'] );
+		$this->assertSame( Payments::OFFLINE_METHODS_ORDERING_GROUP, $offline_pms_group['id'] );
 		$this->assertArrayHasKey( '_type', $offline_pms_group, 'Provider (offline payment methods group) `_type` entry is missing' );
-		$this->assertEquals( Payments::PROVIDER_TYPE_OFFLINE_PMS_GROUP, $offline_pms_group['_type'], 'Provider (offline payment methods group) `_type` entry is not `' . Payments::PROVIDER_TYPE_OFFLINE_PMS_GROUP . '`' );
+		$this->assertSame( Payments::PROVIDER_TYPE_OFFLINE_PMS_GROUP, $offline_pms_group['_type'], 'Provider (offline payment methods group) `_type` entry is not `' . Payments::PROVIDER_TYPE_OFFLINE_PMS_GROUP . '`' );
 		$this->assertArrayHasKey( '_order', $offline_pms_group, 'Provider (offline payment methods group) `_order` entry is missing' );
 		$this->assertArrayHasKey( 'title', $offline_pms_group, 'Provider (offline payment methods group) `title` entry is missing' );
 		$this->assertArrayHasKey( 'description', $offline_pms_group, 'Provider (offline payment methods group) `description` entry is missing' );
@@ -695,7 +695,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'id', $provider, 'Provider (gateway) `id` entry is missing' );
 		$this->assertArrayHasKey( '_order', $provider, 'Provider (gateway) `_order` entry is missing' );
 		$this->assertArrayHasKey( '_type', $provider, 'Provider (gateway) `_order` entry is missing' );
-		$this->assertEquals( Payments::PROVIDER_TYPE_GATEWAY, $provider['_type'], 'Provider (gateway) `_type` entry is not `' . Payments::PROVIDER_TYPE_GATEWAY . '`' );
+		$this->assertSame( Payments::PROVIDER_TYPE_GATEWAY, $provider['_type'], 'Provider (gateway) `_type` entry is not `' . Payments::PROVIDER_TYPE_GATEWAY . '`' );
 		$this->assertArrayHasKey( 'title', $provider, 'Provider (gateway) `title` entry is missing' );
 		$this->assertArrayHasKey( 'description', $provider, 'Provider (gateway) `description` entry is missing' );
 		$this->assertArrayHasKey( 'supports', $provider, 'Provider (gateway) `supports` entry is missing' );
@@ -720,7 +720,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'id', $offline_pm, 'Offline payment method `id` entry is missing' );
 		$this->assertArrayHasKey( '_order', $offline_pm, 'Offline payment method `_order` entry is missing' );
 		$this->assertArrayHasKey( '_type', $offline_pm, 'Offline payment method `_type` entry is missing' );
-		$this->assertEquals( Payments::PROVIDER_TYPE_OFFLINE_PM, $offline_pm['_type'], 'Offline payment method `_type` entry is not `' . Payments::PROVIDER_TYPE_OFFLINE_PM . '`' );
+		$this->assertSame( Payments::PROVIDER_TYPE_OFFLINE_PM, $offline_pm['_type'], 'Offline payment method `_type` entry is not `' . Payments::PROVIDER_TYPE_OFFLINE_PM . '`' );
 		$this->assertArrayHasKey( 'title', $offline_pm, 'Offline payment method `title` entry is missing' );
 		$this->assertArrayHasKey( 'description', $offline_pm, 'Offline payment method `description` entry is missing' );
 		$this->assertArrayHasKey( 'state', $offline_pm, 'Offline payment method `state` entry is missing' );
@@ -753,7 +753,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertSame( 200, $response->get_status() );
 
 		// Act.
 		$request = new WP_REST_Request( 'GET', self::ENDPOINT . '/providers' );
@@ -761,7 +761,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertSame( 200, $response->get_status() );
 
 		$data = $response->get_data();
 
@@ -780,7 +780,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertSame( 200, $response->get_status() );
 
 		$data = $response->get_data();
 

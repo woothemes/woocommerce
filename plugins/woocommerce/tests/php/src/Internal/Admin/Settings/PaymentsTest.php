@@ -393,7 +393,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 
 		// Assert.
 		// The PayPal gateway is a core gateway, so the slug is 'woocommerce'.
-		$this->assertEquals( 'woocommerce', $slug );
+		$this->assertSame( 'woocommerce', $slug );
 	}
 
 	/**
@@ -549,21 +549,21 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		// There are no BNPLs or Express Checkout suggestions because there is no PSP enabled. Only PSPs are returned.
 		$this->assertCount( 1, $suggestions['other'] );
 		// The first suggestion is the preferred PSP.
-		$this->assertEquals( 'suggestion1', $suggestions['preferred'][0]['id'] );
+		$this->assertSame( 'suggestion1', $suggestions['preferred'][0]['id'] );
 		// The second suggestion is the APM.
-		$this->assertEquals( 'suggestion2', $suggestions['preferred'][1]['id'] );
+		$this->assertSame( 'suggestion2', $suggestions['preferred'][1]['id'] );
 		// The fifth suggestion is in the other list.
-		$this->assertEquals( 'suggestion5', $suggestions['other'][0]['id'] );
+		$this->assertSame( 'suggestion5', $suggestions['other'][0]['id'] );
 
 		// Ensure we have all the details for the preferred suggestions.
 		$pref_suggestion = $suggestions['preferred'][0];
 		$this->assertArrayHasKey( 'id', $pref_suggestion, 'Suggestion `id` entry is missing' );
-		$this->assertEquals( 'suggestion1', $pref_suggestion['id'] );
+		$this->assertSame( 'suggestion1', $pref_suggestion['id'] );
 		$this->assertArrayHasKey( '_priority', $pref_suggestion, 'Suggestion `_priority` entry is missing' );
 		$this->assertIsInteger( $pref_suggestion['_priority'], 'Suggestion `_priority` entry is not an integer' );
-		$this->assertEquals( 1, $pref_suggestion['_priority'] );
+		$this->assertSame( 1, $pref_suggestion['_priority'] );
 		$this->assertArrayHasKey( '_type', $pref_suggestion, 'Suggestion `_type` entry is missing' );
-		$this->assertEquals( ExtensionSuggestions::TYPE_PSP, $pref_suggestion['_type'] );
+		$this->assertSame( ExtensionSuggestions::TYPE_PSP, $pref_suggestion['_type'] );
 		$this->assertArrayHasKey( 'title', $pref_suggestion, 'Suggestion `title` entry is missing' );
 		$this->assertArrayHasKey( 'description', $pref_suggestion, 'Suggestion `description` entry is missing' );
 		$this->assertArrayHasKey( 'plugin', $pref_suggestion, 'Suggestion `plugin` entry is missing' );
@@ -572,7 +572,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'slug', $pref_suggestion['plugin'], 'Suggestion `plugin[slug]` entry is missing' );
 		$this->assertArrayHasKey( 'status', $pref_suggestion['plugin'], 'Suggestion `plugin[status]` entry is missing' );
 		// The plugin should be not installed.
-		$this->assertEquals( Payments::EXTENSION_NOT_INSTALLED, $pref_suggestion['plugin']['status'] );
+		$this->assertSame( Payments::EXTENSION_NOT_INSTALLED, $pref_suggestion['plugin']['status'] );
 		$this->assertArrayHasKey( 'icon', $pref_suggestion, 'Suggestion `icon` entry is missing' );
 		$this->assertArrayHasKey( 'links', $pref_suggestion, 'Suggestion `links` entry is missing' );
 		$this->assertIsArray( $pref_suggestion['links'] );
@@ -584,17 +584,17 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		// It should have the recommended tag.
 		$this->assertContains( ExtensionSuggestions::TAG_PREFERRED, $pref_suggestion['tags'] );
 		// The category should be PSP.
-		$this->assertEquals( Payments::CATEGORY_PSP, $pref_suggestion['category'] );
+		$this->assertSame( Payments::CATEGORY_PSP, $pref_suggestion['category'] );
 
 		// Ensure we have all the details for the other suggestions.
 		$other_suggestion = $suggestions['other'][0];
 		$this->assertArrayHasKey( 'id', $other_suggestion, 'Suggestion `id` entry is missing' );
-		$this->assertEquals( 'suggestion5', $other_suggestion['id'] );
+		$this->assertSame( 'suggestion5', $other_suggestion['id'] );
 		$this->assertArrayHasKey( '_priority', $other_suggestion, 'Suggestion `_priority` entry is missing' );
 		$this->assertIsInteger( $other_suggestion['_priority'], 'Suggestion `_priority` entry is not an integer' );
-		$this->assertEquals( 5, $other_suggestion['_priority'] );
+		$this->assertSame( 5, $other_suggestion['_priority'] );
 		$this->assertArrayHasKey( '_type', $other_suggestion, 'Suggestion `_type` entry is missing' );
-		$this->assertEquals( ExtensionSuggestions::TYPE_PSP, $other_suggestion['_type'] );
+		$this->assertSame( ExtensionSuggestions::TYPE_PSP, $other_suggestion['_type'] );
 		$this->assertArrayHasKey( 'title', $other_suggestion, 'Suggestion `title` entry is missing' );
 		$this->assertArrayHasKey( 'description', $other_suggestion, 'Suggestion `description` entry is missing' );
 		$this->assertArrayHasKey( 'plugin', $other_suggestion, 'Suggestion `plugin` entry is missing' );
@@ -603,7 +603,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'slug', $other_suggestion['plugin'], 'Suggestion `plugin[slug]` entry is missing' );
 		$this->assertArrayHasKey( 'status', $other_suggestion['plugin'], 'Suggestion `plugin[status]` entry is missing' );
 		// The plugin should be not installed.
-		$this->assertEquals( Payments::EXTENSION_NOT_INSTALLED, $other_suggestion['plugin']['status'] );
+		$this->assertSame( Payments::EXTENSION_NOT_INSTALLED, $other_suggestion['plugin']['status'] );
 		$this->assertArrayHasKey( 'icon', $other_suggestion, 'Suggestion `icon` entry is missing' );
 		$this->assertArrayHasKey( 'links', $other_suggestion, 'Suggestion `links` entry is missing' );
 		$this->assertIsArray( $other_suggestion['links'] );
@@ -613,7 +613,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'tags', $other_suggestion, 'Suggestion `tags` entry is missing' );
 		$this->assertIsList( $other_suggestion['tags'] );
 		// The category should be PSP.
-		$this->assertEquals( Payments::CATEGORY_PSP, $other_suggestion['category'] );
+		$this->assertSame( Payments::CATEGORY_PSP, $other_suggestion['category'] );
 	}
 
 	/**
@@ -748,13 +748,13 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		// The BNPLs and Express Checkout suggestions are included because there is a PSP enabled.
 		$this->assertCount( 3, $suggestions['other'] );
 		// The first suggestion is the preferred PSP.
-		$this->assertEquals( 'suggestion1', $suggestions['preferred'][0]['id'] );
+		$this->assertSame( 'suggestion1', $suggestions['preferred'][0]['id'] );
 		// The second suggestion is the preferred APM.
-		$this->assertEquals( 'suggestion2', $suggestions['preferred'][1]['id'] );
+		$this->assertSame( 'suggestion2', $suggestions['preferred'][1]['id'] );
 		// The rest are in the other list, ordered by priority.
-		$this->assertEquals( 'suggestion3', $suggestions['other'][0]['id'] );
-		$this->assertEquals( 'suggestion4', $suggestions['other'][1]['id'] );
-		$this->assertEquals( 'suggestion5', $suggestions['other'][2]['id'] );
+		$this->assertSame( 'suggestion3', $suggestions['other'][0]['id'] );
+		$this->assertSame( 'suggestion4', $suggestions['other'][1]['id'] );
+		$this->assertSame( 'suggestion5', $suggestions['other'][2]['id'] );
 	}
 
 	/**
@@ -885,9 +885,9 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertCount( 2, $suggestions['preferred'] );
 		$this->assertArrayHasKey( 'other', $suggestions );
 		// The fifth suggestion is the preferred PSP.
-		$this->assertEquals( 'suggestion5', $suggestions['preferred'][0]['id'] );
+		$this->assertSame( 'suggestion5', $suggestions['preferred'][0]['id'] );
 		// The third suggestion is the preferred APM.
-		$this->assertEquals( 'suggestion3', $suggestions['preferred'][1]['id'] );
+		$this->assertSame( 'suggestion3', $suggestions['preferred'][1]['id'] );
 	}
 
 	/**
@@ -1036,15 +1036,15 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertCount( 2, $suggestions['preferred'] );
 		$this->assertArrayHasKey( 'other', $suggestions );
 		// The third suggestion is the preferred PSP.
-		$this->assertEquals( 'suggestion3', $suggestions['preferred'][0]['id'] );
+		$this->assertSame( 'suggestion3', $suggestions['preferred'][0]['id'] );
 		// The fifth suggestion is the preferred APM.
-		$this->assertEquals( 'suggestion5', $suggestions['preferred'][1]['id'] );
+		$this->assertSame( 'suggestion5', $suggestions['preferred'][1]['id'] );
 
 		// The rest are in the other list, ordered by priority.
 		$this->assertCount( 3, $suggestions['other'] );
-		$this->assertEquals( 'suggestion1', $suggestions['other'][0]['id'] );
-		$this->assertEquals( 'suggestion2', $suggestions['other'][1]['id'] );
-		$this->assertEquals( 'suggestion4', $suggestions['other'][2]['id'] );
+		$this->assertSame( 'suggestion1', $suggestions['other'][0]['id'] );
+		$this->assertSame( 'suggestion2', $suggestions['other'][1]['id'] );
+		$this->assertSame( 'suggestion4', $suggestions['other'][2]['id'] );
 	}
 
 	/**
@@ -1179,11 +1179,11 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		// The BNPLs and Express Checkout suggestions are included because there is a PSP enabled.
 		$this->assertCount( 1, $suggestions['other'] );
 		// The first suggestion is the preferred PSP.
-		$this->assertEquals( 'suggestion1', $suggestions['preferred'][0]['id'] );
+		$this->assertSame( 'suggestion1', $suggestions['preferred'][0]['id'] );
 		// The second suggestion is the preferred APM.
-		$this->assertEquals( 'suggestion2', $suggestions['preferred'][1]['id'] );
+		$this->assertSame( 'suggestion2', $suggestions['preferred'][1]['id'] );
 		// The rest are in the other list, ordered by priority.
-		$this->assertEquals( 'suggestion3', $suggestions['other'][0]['id'] );
+		$this->assertSame( 'suggestion3', $suggestions['other'][0]['id'] );
 		// Suggestion4 is not present because a suggestion with the same plugin slug is already present (preferred APM).
 		// Suggestion5 is not present because a suggestion with the same plugin slug is already present (preferred PSP).
 	}
@@ -1246,12 +1246,12 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		// Assert.
 		$this->assertIsArray( $suggestion );
 		$this->assertArrayHasKey( 'id', $suggestion, 'Suggestion `id` entry is missing' );
-		$this->assertEquals( 'suggestion1', $suggestion['id'] );
+		$this->assertSame( 'suggestion1', $suggestion['id'] );
 		$this->assertArrayHasKey( '_priority', $suggestion, 'Suggestion `_priority` entry is missing' );
 		$this->assertIsInteger( $suggestion['_priority'], 'Suggestion `_priority` entry is not an integer' );
-		$this->assertEquals( 1, $suggestion['_priority'] );
+		$this->assertSame( 1, $suggestion['_priority'] );
 		$this->assertArrayHasKey( '_type', $suggestion, 'Suggestion `_type` entry is missing' );
-		$this->assertEquals( ExtensionSuggestions::TYPE_PSP, $suggestion['_type'] );
+		$this->assertSame( ExtensionSuggestions::TYPE_PSP, $suggestion['_type'] );
 		$this->assertArrayHasKey( 'title', $suggestion, 'Suggestion `title` entry is missing' );
 		$this->assertArrayHasKey( 'description', $suggestion, 'Suggestion `description` entry is missing' );
 		$this->assertArrayHasKey( 'plugin', $suggestion, 'Suggestion `plugin` entry is missing' );
@@ -1260,7 +1260,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'slug', $suggestion['plugin'], 'Suggestion `plugin[slug]` entry is missing' );
 		$this->assertArrayHasKey( 'status', $suggestion['plugin'], 'Suggestion `plugin[status]` entry is missing' );
 		// The plugin should be not installed.
-		$this->assertEquals( Payments::EXTENSION_NOT_INSTALLED, $suggestion['plugin']['status'] );
+		$this->assertSame( Payments::EXTENSION_NOT_INSTALLED, $suggestion['plugin']['status'] );
 		$this->assertArrayHasKey( 'icon', $suggestion, 'Suggestion `icon` entry is missing' );
 		$this->assertArrayHasKey( 'links', $suggestion, 'Suggestion `links` entry is missing' );
 		$this->assertIsArray( $suggestion['links'] );
@@ -1270,7 +1270,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'tags', $suggestion, 'Suggestion `tags` entry is missing' );
 		$this->assertIsList( $suggestion['tags'] );
 		// The category should be PSP.
-		$this->assertEquals( Payments::CATEGORY_PSP, $suggestion['category'] );
+		$this->assertSame( Payments::CATEGORY_PSP, $suggestion['category'] );
 	}
 
 	/**
@@ -1312,12 +1312,12 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		// Assert.
 		$this->assertIsArray( $suggestion );
 		$this->assertArrayHasKey( 'id', $suggestion, 'Suggestion `id` entry is missing' );
-		$this->assertEquals( 'suggestion1', $suggestion['id'] );
+		$this->assertSame( 'suggestion1', $suggestion['id'] );
 		$this->assertArrayHasKey( '_priority', $suggestion, 'Suggestion `_priority` entry is missing' );
 		$this->assertIsInteger( $suggestion['_priority'], 'Suggestion `_priority` entry is not an integer' );
-		$this->assertEquals( 1, $suggestion['_priority'] );
+		$this->assertSame( 1, $suggestion['_priority'] );
 		$this->assertArrayHasKey( '_type', $suggestion, 'Suggestion `_type` entry is missing' );
-		$this->assertEquals( ExtensionSuggestions::TYPE_PSP, $suggestion['_type'] );
+		$this->assertSame( ExtensionSuggestions::TYPE_PSP, $suggestion['_type'] );
 		$this->assertArrayHasKey( 'title', $suggestion, 'Suggestion `title` entry is missing' );
 		$this->assertArrayHasKey( 'description', $suggestion, 'Suggestion `description` entry is missing' );
 		$this->assertArrayHasKey( 'plugin', $suggestion, 'Suggestion `plugin` entry is missing' );
@@ -1326,7 +1326,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'slug', $suggestion['plugin'], 'Suggestion `plugin[slug]` entry is missing' );
 		$this->assertArrayHasKey( 'status', $suggestion['plugin'], 'Suggestion `plugin[status]` entry is missing' );
 		// The plugin should be not installed.
-		$this->assertEquals( Payments::EXTENSION_NOT_INSTALLED, $suggestion['plugin']['status'] );
+		$this->assertSame( Payments::EXTENSION_NOT_INSTALLED, $suggestion['plugin']['status'] );
 		$this->assertArrayHasKey( 'icon', $suggestion, 'Suggestion `icon` entry is missing' );
 		$this->assertArrayHasKey( 'links', $suggestion, 'Suggestion `links` entry is missing' );
 		$this->assertIsArray( $suggestion['links'] );
@@ -1336,7 +1336,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'tags', $suggestion, 'Suggestion `tags` entry is missing' );
 		$this->assertIsList( $suggestion['tags'] );
 		// The category should be PSP.
-		$this->assertEquals( Payments::CATEGORY_PSP, $suggestion['category'] );
+		$this->assertSame( Payments::CATEGORY_PSP, $suggestion['category'] );
 	}
 
 	/**
@@ -1402,10 +1402,10 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'hidden_suggestions', $user_nox_profile );
 		$this->assertIsList( $user_nox_profile['hidden_suggestions'] );
 		$this->assertCount( 1, $user_nox_profile['hidden_suggestions'] );
-		$this->assertEquals( $suggestion_id, $user_nox_profile['hidden_suggestions'][0]['id'] );
+		$this->assertSame( $suggestion_id, $user_nox_profile['hidden_suggestions'][0]['id'] );
 		$this->assertArrayHasKey( 'timestamp', $user_nox_profile['hidden_suggestions'][0] );
 		// The other profile entries should be kept.
-		$this->assertEquals( 'value', $user_nox_profile['something_other'] );
+		$this->assertSame( 'value', $user_nox_profile['something_other'] );
 
 		// Clean up.
 		delete_user_meta( $this->store_admin_id, Payments::USER_PAYMENTS_NOX_PROFILE_KEY );
@@ -1465,10 +1465,10 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertIsList( $user_nox_profile['hidden_suggestions'] );
 		$this->assertCount( 1, $user_nox_profile['hidden_suggestions'] );
 		// The suggestion ID should be stored, not the order map ID.
-		$this->assertEquals( $suggestion_id, $user_nox_profile['hidden_suggestions'][0]['id'] );
+		$this->assertSame( $suggestion_id, $user_nox_profile['hidden_suggestions'][0]['id'] );
 		$this->assertArrayHasKey( 'timestamp', $user_nox_profile['hidden_suggestions'][0] );
 		// The other profile entries should be kept.
-		$this->assertEquals( 'value', $user_nox_profile['something_other'] );
+		$this->assertSame( 'value', $user_nox_profile['something_other'] );
 
 		// Clean up.
 		delete_user_meta( $this->store_admin_id, Payments::USER_PAYMENTS_NOX_PROFILE_KEY );
@@ -1533,11 +1533,11 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'hidden_suggestions', $user_nox_profile );
 		$this->assertIsList( $user_nox_profile['hidden_suggestions'] );
 		$this->assertCount( 1, $user_nox_profile['hidden_suggestions'] );
-		$this->assertEquals( $suggestion_id, $user_nox_profile['hidden_suggestions'][0]['id'] );
+		$this->assertSame( $suggestion_id, $user_nox_profile['hidden_suggestions'][0]['id'] );
 		$this->assertArrayHasKey( 'timestamp', $user_nox_profile['hidden_suggestions'][0] );
-		$this->assertEquals( $hide_timestamp, $user_nox_profile['hidden_suggestions'][0]['timestamp'] );
+		$this->assertSame( $hide_timestamp, $user_nox_profile['hidden_suggestions'][0]['timestamp'] );
 		// The other profile entries should be kept.
-		$this->assertEquals( 'value', $user_nox_profile['something_other'] );
+		$this->assertSame( 'value', $user_nox_profile['something_other'] );
 
 		// Clean up.
 		delete_user_meta( $this->store_admin_id, Payments::USER_PAYMENTS_NOX_PROFILE_KEY );
@@ -1603,11 +1603,11 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'hidden_suggestions', $user_nox_profile );
 		$this->assertIsList( $user_nox_profile['hidden_suggestions'] );
 		$this->assertCount( 1, $user_nox_profile['hidden_suggestions'] );
-		$this->assertEquals( $suggestion_id, $user_nox_profile['hidden_suggestions'][0]['id'] );
+		$this->assertSame( $suggestion_id, $user_nox_profile['hidden_suggestions'][0]['id'] );
 		$this->assertArrayHasKey( 'timestamp', $user_nox_profile['hidden_suggestions'][0] );
-		$this->assertEquals( $hide_timestamp, $user_nox_profile['hidden_suggestions'][0]['timestamp'] );
+		$this->assertSame( $hide_timestamp, $user_nox_profile['hidden_suggestions'][0]['timestamp'] );
 		// The other profile entries should be kept.
-		$this->assertEquals( 'value', $user_nox_profile['something_other'] );
+		$this->assertSame( 'value', $user_nox_profile['something_other'] );
 
 		// Clean up.
 		delete_user_meta( $this->store_admin_id, Payments::USER_PAYMENTS_NOX_PROFILE_KEY );
@@ -1672,9 +1672,9 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'hidden_suggestions', $user_nox_profile );
 		$this->assertIsList( $user_nox_profile['hidden_suggestions'] );
 		$this->assertCount( 1, $user_nox_profile['hidden_suggestions'] );
-		$this->assertEquals( 'suggestion2', $user_nox_profile['hidden_suggestions'][0]['id'] );
+		$this->assertSame( 'suggestion2', $user_nox_profile['hidden_suggestions'][0]['id'] );
 		// The other profile entries should be kept.
-		$this->assertEquals( 'value', $user_nox_profile['something_other'] );
+		$this->assertSame( 'value', $user_nox_profile['something_other'] );
 
 		// Clean up.
 		remove_filter( 'update_user_metadata', '__return_false' );
