@@ -256,7 +256,7 @@ export const CountrySelector = < ItemType extends Item >( {
 								onFocus={ () => setSearchFocused( true ) }
 								onBlur={ () => setSearchFocused( false ) }
 								tabIndex={ -1 }
-								placeholder={ __( 'Search…', 'woocommerce' ) }
+								placeholder={ __( 'Search', 'woocommerce' ) }
 							/>
 							<button
 								className="components-country-select-control__search--input-suffix"
