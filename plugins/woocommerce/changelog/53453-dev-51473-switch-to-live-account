@@ -1,4 +1,4 @@
 Significance: patch
 Type: dev
 
-Allow to switch from sandbox to live WooPayments account from the Payment settings page.
+Switch from test-drive to live account from the settings page
