@@ -11,10 +11,7 @@ import {
 	ACTION_SWITCH_PRODUCT_TYPE,
 	STORE_NAME,
 } from './constants';
-import getProductTypeOptions from '../utils/get-product-types';
 import type { ProductTypeProps } from '../types';
-
-const productTypesOptions = getProductTypeOptions();
 
 type StoreState = {
 	productTypes: {
@@ -31,7 +28,7 @@ type Actions = {
 
 const DEFAULT_STATE = {
 	productTypes: {
-		list: productTypesOptions,
+		list: [],
 		current: undefined,
 	},
 };
