@@ -106,20 +106,19 @@ const renderTabs = (
 					key={ tabKey }
 				>
 					{ tabs[ tabKey ]?.title }
-					{ tabs[ tabKey ]?.showUpdateCount &&
-						tabs[ tabKey ]?.updateCount > 0 && (
-							<span
-								className={ clsx(
-									'woocommerce-marketplace__update-count',
-									`woocommerce-marketplace__update-count-${ tabKey }`,
-									{
-										'is-active': tabKey === selectedTab,
-									}
-								) }
-							>
-								<span> { tabs[ tabKey ]?.updateCount } </span>
-							</span>
-						) }
+					{ tabs[ tabKey ]?.showUpdateCount && (
+						<span
+							className={ clsx(
+								'woocommerce-marketplace__update-count',
+								`woocommerce-marketplace__update-count-${ tabKey }`,
+								{
+									'is-active': tabKey === selectedTab,
+								}
+							) }
+						>
+							<span> { tabs[ tabKey ]?.updateCount } </span>
+						</span>
+					) }
 				</Button>
 			)
 		);
@@ -165,7 +164,7 @@ const Tabs = ( props: TabsProps ): JSX.Element => {
 			'my-subscriptions': {
 				name: 'my-subscriptions',
 				title: __( 'My subscriptions', 'woocommerce' ),
-				showUpdateCount: true,
+				showUpdateCount: wooUpdateCount > 0,
 				updateCount: wooUpdateCount,
 			},
 		} ),
