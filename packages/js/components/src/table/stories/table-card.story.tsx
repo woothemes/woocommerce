@@ -84,8 +84,41 @@ const TableCardWithActionsExample = () => {
 	);
 };
 
+const TableCardWithHeaderNoticeExample = () => {
+	const [ { query }, setState ] = useState( {
+		query: {
+			paged: 1,
+		},
+	} );
+
+	return (
+		<TableCard
+			title="Revenue last week"
+			rows={ rows }
+			headers={ headers }
+			headerNotice={
+				<div style={{ padding: '8px', backgroundColor: '#f0f4f8' }}>
+					This is an important notice about the table
+				</div>
+			}
+			onQueryChange={ ( param ) => ( value ) =>
+				setState( {
+					// @ts-expect-error: ignore for storybook
+					query: {
+						[ param ]: value,
+					},
+				} ) }
+			query={ query }
+			rowsPerPage={ 7 }
+			totalRows={ 10 }
+			summary={ summary }
+		/>
+	);
+};
+
 export const Basic = () => <TableCardExample />;
 export const Actions = () => <TableCardWithActionsExample />;
+export const HeaderNotice = () => <TableCardWithHeaderNoticeExample />;
 
 export default {
 	title: 'WooCommerce Admin/components/TableCard',

@@ -189,4 +189,8 @@ export type TableCardProps = CommonTableProps & {
 	 * The total number of rows (across all pages).
 	 */
 	totalRows: number;
+	/**
+	 * A notice component to be displayed in the card header.
+	 */
+	headerNotice?: React.ReactNode;
 };

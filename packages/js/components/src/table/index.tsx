@@ -47,6 +47,7 @@ const TableCard: React.VFC< TableCardProps > = ( {
 	actions,
 	className,
 	hasSearch,
+	headerNotice,
 	headers = [],
 	ids,
 	isLoading = false,
@@ -179,6 +180,11 @@ const TableCard: React.VFC< TableCardProps > = ( {
 							</Fragment>
 						) }
 					/>
+				) }
+				{ headerNotice && (
+					<div className="woocommerce-table__header-notice">
+						{ headerNotice }
+					</div>
 				) }
 			</CardHeader>
 			{ /* Ignoring the error to make it backward compatible for now. */ }
