@@ -115,7 +115,7 @@ test.describe(
 
 			await assembler.getByRole( 'link', { name: 'View store' } ).click();
 
-			await expect( page ).toHaveURL( '/' );
+			await expect( page ).toHaveURL( './' );
 		} );
 
 		test( 'Clicking on "Share feedback" should open the survey modal', async ( {

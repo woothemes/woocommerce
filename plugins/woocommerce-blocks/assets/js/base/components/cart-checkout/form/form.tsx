@@ -54,6 +54,7 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 	values,
 	children,
 	isEditing,
+	ariaDescribedBy,
 }: AddressFormProps< T > ): JSX.Element => {
 	const instanceId = useInstanceId( Form );
 	const isFirstRender = useRef( true );
@@ -315,6 +316,7 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 						{ ...fieldProps }
 						type={ field.type }
 						value={ values[ field.key ] }
+						ariaDescribedBy={ ariaDescribedBy }
 						onChange={ ( newValue: string ) =>
 							onChange( {
 								...values,
