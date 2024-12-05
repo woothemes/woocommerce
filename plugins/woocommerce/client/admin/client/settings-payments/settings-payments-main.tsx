@@ -22,7 +22,7 @@ import {
 	isWooPayments,
 	providersContainWooPaymentsInTestMode,
 } from '~/settings-payments/utils';
-import { WooPaymentsReadyToTestModal } from '~/settings-payments/components/woo-payments-ready-to-test-modal';
+import { WooPaymentsPostSandboxAccountSetupModal } from '~/settings-payments/components/woo-payments-post-sandbox-account-setup-modal';
 
 export const SettingsPaymentsMain = () => {
 	const [ installingPlugin, setInstallingPlugin ] = useState< string | null >(
@@ -154,7 +154,7 @@ export const SettingsPaymentsMain = () => {
 					isFetching={ isFetching }
 				/>
 			</div>
-			<WooPaymentsReadyToTestModal
+			<WooPaymentsPostSandboxAccountSetupModal
 				isOpen={
 					livePaymentsModalVisible &&
 					providersContainWooPaymentsInTestMode( providers )

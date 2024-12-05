@@ -10,7 +10,7 @@ import { getAdminLink } from '@woocommerce/settings';
 /**
  * Internal dependencies
  */
-import './woo-payments-ready-to-test-modal.scss';
+import './woo-payments-post-sandbox-account-setup-modal.scss';
 import { getWooPaymentsSetupLiveAccountLink } from '~/settings-payments/utils';
 import { WC_ASSET_URL } from '~/utils/admin-settings';
 
@@ -19,7 +19,7 @@ interface WooPaymentsReadyToTestModalProps {
 	onClose: () => void;
 }
 
-export const WooPaymentsReadyToTestModal = ( {
+export const WooPaymentsPostSandboxAccountSetupModal = ( {
 	isOpen,
 	onClose,
 }: WooPaymentsReadyToTestModalProps ) => {

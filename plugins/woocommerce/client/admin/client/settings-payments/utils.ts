@@ -45,6 +45,11 @@ export const getWooPaymentsSetupLiveAccountLink = () => {
 	);
 };
 
+/**
+ * Checks whether providers contain WooPayments gateway in test mode that is set up.
+ *
+ * @param providers payment providers
+ */
 export const providersContainWooPaymentsInTestMode = (
 	providers: PaymentProvider[]
 ): boolean => {

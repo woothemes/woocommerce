@@ -101,14 +101,6 @@ export const PaymentGatewayButtons = ( {
 		}
 	};
 
-	const determineButtonText = () => {
-		if ( ! enabled && needsSetup ) {
-			return textNeedsSetup;
-		}
-
-		return enabled ? textSettings : textEnable;
-	};
-
 	const activatePayments = () => {
 		setIsActivatingPayments( true );
 
@@ -117,20 +109,33 @@ export const PaymentGatewayButtons = ( {
 
 	return (
 		<div className="woocommerce-list__item-after__actions">
-			{ ! enabled && ! needsSetup && (
+			{ ! needsSetup && (
 				<Button variant={ 'secondary' } href={ settingsUrl }>
 					{ textSettings }
 				</Button>
 			) }
-			<Button
-				variant={ enabled && ! needsSetup ? 'secondary' : 'primary' }
-				isBusy={ isUpdating }
-				disabled={ isUpdating }
-				onClick={ onClick }
-				href={ settingsUrl }
-			>
-				{ determineButtonText() }
-			</Button>
+			{ ! enabled && needsSetup && (
+				<Button
+					variant={ 'primary' }
+					isBusy={ isUpdating }
+					disabled={ isUpdating }
+					onClick={ onClick }
+					href={ settingsUrl }
+				>
+					{ textNeedsSetup }
+				</Button>
+			) }
+			{ ! enabled && ! needsSetup && (
+				<Button
+					variant={ 'primary' }
+					isBusy={ isUpdating }
+					disabled={ isUpdating }
+					onClick={ onClick }
+					href={ settingsUrl }
+				>
+					{ textEnable }
+				</Button>
+			) }
 
 			{ isWooPayments( id ) && enabled && ! needsSetup && testMode && (
 				<Button
