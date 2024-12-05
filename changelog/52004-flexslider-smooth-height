@@ -1,4 +1,4 @@
 Significance: minor
 Type: update
 
-FlexSlider smoothHeight() now uses CSS transitions.
+FlexSlider smoothHeight() now uses CSS transitions
