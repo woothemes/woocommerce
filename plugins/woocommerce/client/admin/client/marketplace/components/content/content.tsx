@@ -235,7 +235,12 @@ export default function Content(): JSX.Element {
 							productList.products,
 							type
 						);
-						if ( category === 'business-services' ) {
+						// Do not update Business Services visibility when search is triggered with a term.
+						// It can hide the Business Services tab when there are no results.
+						if (
+							category === 'business-services' &&
+							! query.term
+						) {
 							setHasBusinessServices( typedProducts.length > 0 );
 						}
 						return {
