@@ -88,7 +88,7 @@ class OrderStatusRestControllerTest extends WC_REST_Unit_Test_Case {
 		$request  = new WP_REST_Request( 'GET', '/wc/v3/orders/statuses' );
 		$response = $this->server->dispatch( $request );
 
-		// Should be accessible without authentication
+		// Should be accessible without authentication.
 		$this->assertEquals( 200, $response->get_status() );
 	}
 }
