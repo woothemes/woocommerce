@@ -227,7 +227,7 @@ class CheckoutSchema extends AbstractSchema {
 				'payment_details' => $this->prepare_payment_details_for_response( $payment_result->payment_details ),
 				'redirect_url'    => $payment_result->redirect_url,
 			],
-			'additional_fields' => $this->get_additional_fields_response( $order ),
+			'additional_fields' => (object) $this->get_additional_fields_response( $order ),
 			self::EXTENDING_KEY => $this->get_extended_data( self::IDENTIFIER ),
 		];
 	}

@@ -210,14 +210,16 @@ class CheckoutFields {
 				'show_in_order_confirmation' => true,
 				'sanitize_callback'          => array( $this, 'default_sanitize_callback' ),
 				'validate_callback'          => array( $this, 'default_validate_callback' ),
+				'rules'                      => [
+					'visibility' => [],
+					'validation' => [],
+				],
 			]
 		);
 
 		$field_data['attributes'] = $this->register_field_attributes( $field_data['id'], $field_data['attributes'] );
 
-		if ( 'checkbox' === $field_data['type'] ) {
-			$field_data = $this->process_checkbox_field( $field_data, $options );
-		} elseif ( 'select' === $field_data['type'] ) {
+		if ( 'select' === $field_data['type'] ) {
 			$field_data = $this->process_select_field( $field_data, $options );
 		}
 
@@ -330,11 +332,22 @@ class CheckoutFields {
 			return false;
 		}
 
-		// Hidden fields are not supported right now. They will be registered with hidden => false.
-		if ( ! empty( $options['hidden'] ) && true === $options['hidden'] ) {
-			$message = sprintf( 'Registering a field with hidden set to true is not supported. The field "%s" will be registered as visible.', $id );
-			_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), '8.6.0' );
-			// Don't return here unlike the other fields because this is not an issue that will prevent registration.
+		if ( ! empty( $options['rules'] ) && ! is_array( $options['rules'] ) ) {
+			$message = sprintf( 'Unable to register field with id: "%s". %s', $id, 'The rules must be an array.' );
+			_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), '9.6.0' );
+			return false;
+		}
+
+		if ( ! empty( $options['rules']['visible'] ) && ! is_array( $options['rules']['visible'] ) ) {
+			$message = sprintf( 'Unable to register field with id: "%s". %s', $id, 'The visibility rules must be an array.' );
+			_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), '9.6.0' );
+			return false;
+		}
+
+		if ( ! empty( $options['rules']['validation'] ) && ! is_array( $options['rules']['validation'] ) ) {
+			$message = sprintf( 'Unable to register field with id: "%s". %s', $id, 'The validation rules must be an array.' );
+			_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), '9.6.0' );
+			return false;
 		}
 
 		return true;
@@ -393,27 +406,6 @@ class CheckoutFields {
 		return $field_data;
 	}
 
-	/**
-	 * Processes the options for a checkbox field and returns the new field_options array.
-	 *
-	 * @param array $field_data  The field data array to be updated.
-	 * @param array $options     The options supplied during field registration.
-	 *
-	 * @return array|false The updated $field_data array or false if an error was encountered.
-	 */
-	private function process_checkbox_field( $field_data, $options ) {
-		$id = $options['id'];
-
-		// Checkbox fields are always optional. Log a warning if it's set explicitly as true.
-		$field_data['required'] = false;
-
-		if ( isset( $options['required'] ) && true === $options['required'] ) {
-			$message = sprintf( 'Registering checkbox fields as required is not supported. "%s" will be registered as optional.', $id );
-			_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), '8.6.0' );
-		}
-
-		return $field_data;
-	}
 
 	/**
 	 * Processes the attributes supplied during field registration.

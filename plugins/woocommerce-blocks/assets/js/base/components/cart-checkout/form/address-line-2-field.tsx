@@ -1,9 +1,17 @@
 /**
  * External dependencies
  */
-import { ValidatedTextInput } from '@woocommerce/blocks-components';
+import {
+	ValidatedTextInput,
+	ValidatedTextInputHandle,
+} from '@woocommerce/blocks-components';
 import { AddressFormValues, ContactFormValues } from '@woocommerce/settings';
-import { useState, Fragment, useCallback } from '@wordpress/element';
+import {
+	useState,
+	Fragment,
+	useCallback,
+	forwardRef,
+} from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Button } from '@ariakit/react';
 
@@ -13,12 +21,10 @@ import { Button } from '@ariakit/react';
 import { AddressLineFieldProps } from './types';
 import './style.scss';
 
-const AddressLine2Field = < T extends AddressFormValues | ContactFormValues >( {
-	field,
-	props,
-	onChange,
-	value,
-}: AddressLineFieldProps< T > ): JSX.Element => {
+const AddressLine2Field = < T extends AddressFormValues | ContactFormValues >(
+	{ field, props, onChange, value }: AddressLineFieldProps< T >,
+	forwardedRef: React.Ref< HTMLInputElement >
+): JSX.Element => {
 	const isFieldRequired = field?.required ?? false;
 
 	// Display the input field if it has a value or if it is required.
@@ -47,6 +53,9 @@ const AddressLine2Field = < T extends AddressFormValues | ContactFormValues >( {
 					value={ value }
 					onChange={ ( newValue: string ) =>
 						onChange( field.key as keyof T, newValue )
+					}
+					ref={
+						forwardedRef as React.Ref< ValidatedTextInputHandle >
 					}
 				/>
 			) : (
@@ -83,4 +92,4 @@ const AddressLine2Field = < T extends AddressFormValues | ContactFormValues >( {
 	);
 };
 
-export default AddressLine2Field;
+export default forwardRef( AddressLine2Field );

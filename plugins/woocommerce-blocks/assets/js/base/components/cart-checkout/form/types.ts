@@ -60,6 +60,8 @@ export interface AddressLineFieldsProps< T >
 	addressType: FormType;
 	// Called with the new address data when the address form changes. This is only called when all required fields are filled and there are no validation errors.
 	onChange: ( key: keyof T, value: string ) => void;
+	// Assign ref to the field.
+	assignRef: ( key: string, ref: HTMLInputElement ) => void;
 }
 
 export interface AddressLineFieldProps< T > {

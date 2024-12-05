@@ -110,3 +110,6 @@ changes.json
 /artifacts
 /plugins/*/artifacts
 /tools/*/artifacts
+
+# Million Lint
+.million

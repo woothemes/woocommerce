@@ -12,7 +12,8 @@ import {
 import { FormFieldsConfig, getSetting } from '@woocommerce/settings';
 import { formatAddress } from '@woocommerce/blocks/checkout/utils';
 import { Button } from '@ariakit/react';
-
+import { useCallback } from '@wordpress/element';
+import { createFieldProps } from '@woocommerce/base-components/cart-checkout/form/utils';
 /**
  * Internal dependencies
  */
@@ -24,12 +25,14 @@ const AddressCard = ( {
 	target,
 	fieldConfig,
 	isExpanded,
+	formRef,
 }: {
 	address: CartShippingAddress | CartBillingAddress;
 	onEdit: () => void;
 	target: string;
 	fieldConfig: FormFieldsConfig;
 	isExpanded: boolean;
+	formRef: React.RefObject< HTMLDivElement >;
 } ): JSX.Element | null => {
 	const countryData = getSetting< Record< string, CountryData > >(
 		'countryData',
@@ -57,6 +60,24 @@ const AddressCard = ( {
 		target === 'shipping'
 			? __( 'Edit shipping address', 'woocommerce' )
 			: __( 'Edit billing address', 'woocommerce' );
+
+	const handleEdit = useCallback(
+		( e: React.MouseEvent< HTMLButtonElement > ) => {
+			e.preventDefault();
+			onEdit();
+
+			const firstFieldEl = formRef.current?.querySelector(
+				'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+			);
+
+			if ( firstFieldEl ) {
+				setTimeout( () => {
+					( firstFieldEl as HTMLElement ).focus();
+				}, 300 );
+			}
+		},
+		[ formRef, onEdit ]
+	);
 
 	return (
 		<div className="wc-block-components-address-card">
@@ -89,10 +110,7 @@ const AddressCard = ( {
 					aria-controls={ target }
 					aria-expanded={ isExpanded }
 					aria-label={ label }
-					onClick={ ( e ) => {
-						e.preventDefault();
-						onEdit();
-					} }
+					onClick={ handleEdit }
 					type="button"
 				>
 					{ __( 'Edit', 'woocommerce' ) }

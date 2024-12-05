@@ -17,6 +17,7 @@ const AddressLineFields = < T extends AddressFormValues | ContactFormValues >( {
 	address2,
 	addressType,
 	onChange,
+	assignRef,
 }: AddressLineFieldsProps< T > ): JSX.Element => {
 	const address1FieldProps = address1
 		? createFieldProps( address1.field, formId, addressType )
@@ -37,6 +38,7 @@ const AddressLineFields = < T extends AddressFormValues | ContactFormValues >( {
 					onChange={ ( newValue: string ) =>
 						onChange( address1.field?.key as keyof T, newValue )
 					}
+					ref={ ( el ) => assignRef( address1.field?.key, el ) }
 				/>
 			) }
 			{ address2?.field && ! address2?.field?.hidden && (
@@ -45,6 +47,7 @@ const AddressLineFields = < T extends AddressFormValues | ContactFormValues >( {
 					props={ address2FieldProps }
 					onChange={ onChange }
 					value={ address2?.value }
+					ref={ ( el ) => assignRef( address2.field?.key, el ) }
 				/>
 			) }
 		</>

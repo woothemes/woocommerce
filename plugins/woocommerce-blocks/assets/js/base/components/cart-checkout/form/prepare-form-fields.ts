@@ -15,6 +15,11 @@ import { isNumber, isString } from '@woocommerce/types';
 import { COUNTRY_LOCALE } from '@woocommerce/block-settings';
 
 /**
+ * Internal dependencies
+ */
+import { schema } from './schema';
+
+/**
  * Gets props from the core locale, then maps them to the shape we require in the client.
  *
  * Ignores "class", "type", "placeholder", and "autocomplete" props from core.
@@ -99,10 +104,12 @@ const countryAddressForm: CountryAddressForm = Object.entries( COUNTRY_LOCALE )
  * @param {string} addressCountry Address country code. If unknown, locale fields will not be merged.
  * @return {CountryAddressForm} Object containing address fields.
  */
+
 const prepareFormFields = (
 	fields: ( keyof FormFields )[],
 	fieldConfigs: FormFieldsConfig,
-	addressCountry = ''
+	addressCountry = '',
+	data: CheckoutData
 ): KeyedFormField[] => {
 	const localeConfigs: FormFields =
 		addressCountry && countryAddressForm[ addressCountry ] !== undefined
@@ -114,6 +121,38 @@ const prepareFormFields = (
 			const defaultConfig = defaultFields[ field ] || {};
 			const localeConfig = localeConfigs[ field ] || {};
 			const fieldConfig = fieldConfigs[ field ] || {};
+			if ( data ) {
+				const rules = defaultConfig.rules;
+				if ( rules ) {
+					if ( rules.visible ) {
+						const visibilityRules = {
+							type: 'object',
+							properties: rules.visible,
+							additionalProperties: true,
+						};
+						const validate = schema.compile( visibilityRules );
+						const valid = validate( data );
+						if ( ! valid ) {
+							fieldConfig.hidden = true;
+						} else {
+							fieldConfig.hidden = false;
+						}
+					} else if ( rules.hidden ) {
+						const visibilityRules = {
+							type: 'object',
+							properties: rules.hidden,
+							additionalProperties: true,
+						};
+						const validate = schema.compile( visibilityRules );
+						const valid = validate( data );
+						if ( ! valid ) {
+							fieldConfig.hidden = true;
+						} else {
+							fieldConfig.hidden = false;
+						}
+					}
+				}
+			}
 
 			return {
 				key: field,

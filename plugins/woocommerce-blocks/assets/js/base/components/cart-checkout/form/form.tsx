@@ -32,7 +32,7 @@ import { objectHasProp } from '@woocommerce/types';
 import { AddressFormProps, AddressFormFields } from './types';
 import prepareFormFields from './prepare-form-fields';
 import validateCountry from './validate-country';
-import customValidationHandler from './custom-validation-handler';
+import useCustomValidationHandler from './custom-validation-handler';
 import AddressLineFields from './address-line-fields';
 import {
 	createFieldProps,
@@ -41,6 +41,7 @@ import {
 } from './utils';
 import { Select } from '../../select';
 import { validateState } from './validate-state';
+import { useValidationContext } from './schema';
 
 /**
  * Checkout form.
@@ -53,10 +54,9 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 	addressType = 'shipping',
 	values,
 	children,
-	isEditing,
+	formRef,
 }: AddressFormProps< T > ): JSX.Element => {
 	const instanceId = useInstanceId( Form );
-	const isFirstRender = useRef( true );
 
 	// Track incoming props.
 	const currentFields = useShallowEqual( fields );
@@ -64,21 +64,29 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 	const currentCountry = useShallowEqual(
 		objectHasProp( values, 'country' ) ? values.country : ''
 	);
-
 	// Memoize the address form fields passed in from the parent component.
+	const data = useValidationContext();
 	const addressFormFields = useMemo( (): AddressFormFields => {
 		const preparedFields = prepareFormFields(
 			currentFields,
 			currentFieldConfig,
-			currentCountry
+			currentCountry,
+			data
 		);
+
 		return {
 			fields: preparedFields,
 			addressType,
 			required: preparedFields.filter( ( field ) => field.required ),
 			hidden: preparedFields.filter( ( field ) => field.hidden ),
 		};
-	}, [ currentFields, currentFieldConfig, currentCountry, addressType ] );
+	}, [
+		currentFields,
+		currentFieldConfig,
+		currentCountry,
+		addressType,
+		data,
+	] );
 
 	// Stores refs for rendered fields so we can access them later.
 	const fieldsRef = useRef<
@@ -120,45 +128,16 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 		fieldsRef.current?.postcode?.revalidate();
 	}, [ currentCountry ] );
 
-	// Focus the first input when opening the form.
-	useEffect( () => {
-		let timeoutId: ReturnType< typeof setTimeout >;
-
-		if ( ! isFirstRender.current && isEditing && fieldsRef.current ) {
-			const firstField = addressFormFields.fields.find(
-				( field ) => field.hidden === false
-			);
-
-			if ( ! firstField ) {
-				return;
-			}
-
-			const { id: firstFieldId } = createFieldProps(
-				firstField,
-				id || `${ instanceId }`,
-				addressType
-			);
-			const firstFieldEl = document.getElementById( firstFieldId );
-
-			if ( firstFieldEl ) {
-				// Focus the first field after a short delay to ensure the form is rendered.
-				timeoutId = setTimeout( () => {
-					firstFieldEl.focus();
-				}, 300 );
-			}
-		}
-
-		isFirstRender.current = false;
-
-		return () => {
-			clearTimeout( timeoutId );
-		};
-	}, [ isEditing, addressFormFields, id, instanceId, addressType ] );
+	const customValidationHandler = useCustomValidationHandler();
 
 	id = id || `${ instanceId }`;
 
 	return (
-		<div id={ id } className="wc-block-components-address-form">
+		<div
+			id={ id }
+			className="wc-block-components-address-form"
+			ref={ formRef }
+		>
 			{ addressFormFields.fields.map( ( field ) => {
 				if ( field.hidden ) {
 					return null;
@@ -177,6 +156,9 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 					return (
 						<CheckboxControl
 							key={ field.key }
+							ref={ ( el ) =>
+								( fieldsRef.current[ field.key ] = el )
+							}
 							checked={ Boolean( values[ field.key ] ) }
 							onChange={ ( checked: boolean ) => {
 								onChange( {
@@ -207,6 +189,9 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 							address1={ address1 }
 							address2={ address2 }
 							addressType={ addressType }
+							assignRef={ ( key, ref ) =>
+								( fieldsRef.current[ key ] = ref )
+							}
 							formId={ id }
 							key={ field.key }
 							onChange={ ( key, value ) => {
@@ -235,6 +220,9 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 					return (
 						<Tag
 							key={ field.key }
+							ref={ ( el ) =>
+								( fieldsRef.current[ field.key ] = el )
+							}
 							{ ...fieldProps }
 							value={ values.country }
 							onChange={ ( newCountry ) => {
@@ -260,6 +248,9 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 					return (
 						<Tag
 							key={ field.key }
+							ref={ ( el ) =>
+								( fieldsRef.current[ field.key ] = el )
+							}
 							{ ...fieldProps }
 							country={ values.country }
 							value={ values.state }
@@ -281,6 +272,9 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 					return (
 						<Select
 							key={ field.key }
+							ref={ ( el ) =>
+								( fieldsRef.current[ field.key ] = el )
+							}
 							{ ...fieldProps }
 							label={ fieldProps.label || '' }
 							className={ clsx(
@@ -330,10 +324,11 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 						customValidation={ ( inputObject: HTMLInputElement ) =>
 							customValidationHandler(
 								inputObject,
-								field.key,
+								field,
 								objectHasProp( values, 'country' )
 									? values.country
-									: ''
+									: '',
+								addressType
 							)
 						}
 					/>

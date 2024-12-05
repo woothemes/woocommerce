@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useCallback, useEffect } from '@wordpress/element';
+import { useCallback, useEffect, useRef } from '@wordpress/element';
 import { Form } from '@woocommerce/base-components/cart-checkout';
 import { useCheckoutAddress, useStoreEvents } from '@woocommerce/base-context';
 import type {
@@ -73,6 +73,7 @@ const CustomerAddress = ( {
 		]
 	);
 
+	const formRef = useRef< HTMLDivElement >( null );
 	const renderAddressCardComponent = useCallback(
 		() => (
 			<AddressCard
@@ -83,6 +84,7 @@ const CustomerAddress = ( {
 				} }
 				fieldConfig={ addressFieldsConfig }
 				isExpanded={ editing }
+				formRef={ formRef }
 			/>
 		),
 		[ billingAddress, addressFieldsConfig, editing, setEditing ]
@@ -99,6 +101,7 @@ const CustomerAddress = ( {
 					fields={ ADDRESS_FORM_KEYS }
 					fieldConfig={ addressFieldsConfig }
 					isEditing={ editing }
+					formRef={ formRef }
 				/>
 			</>
 		),

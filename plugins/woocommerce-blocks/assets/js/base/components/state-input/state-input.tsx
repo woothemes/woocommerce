@@ -2,8 +2,17 @@
  * External dependencies
  */
 import { decodeEntities } from '@wordpress/html-entities';
-import { useCallback, useMemo, useEffect, useRef } from '@wordpress/element';
-import { ValidatedTextInput } from '@woocommerce/blocks-components';
+import {
+	useCallback,
+	useMemo,
+	useEffect,
+	useRef,
+	forwardRef,
+} from '@wordpress/element';
+import {
+	ValidatedTextInput,
+	type ValidatedTextInputHandle,
+} from '@woocommerce/blocks-components';
 import { clsx } from 'clsx';
 
 /**
@@ -25,17 +34,20 @@ const optionMatcher = (
 	return foundOption ? foundOption.value : '';
 };
 
-const StateInput = ( {
-	className,
-	id,
-	states,
-	country,
-	label,
-	onChange,
-	autoComplete = 'off',
-	value = '',
-	required = false,
-}: StateInputWithStatesProps ): JSX.Element => {
+const StateInput = (
+	{
+		className,
+		id,
+		states,
+		country,
+		label,
+		onChange,
+		autoComplete = 'off',
+		value = '',
+		required = false,
+	}: StateInputWithStatesProps,
+	ref: React.Ref< ValidatedTextInputHandle >
+): JSX.Element => {
 	const countryStates = states[ country ];
 	const options = useMemo< SelectOption[] >( () => {
 		if ( countryStates && Object.keys( countryStates ).length > 0 ) {
@@ -100,6 +112,7 @@ const StateInput = ( {
 				value={ value }
 				autoComplete={ autoComplete }
 				required={ required }
+				ref={ ref }
 			/>
 		);
 	}
@@ -113,8 +126,9 @@ const StateInput = ( {
 			autoComplete={ autoComplete }
 			value={ value }
 			required={ required }
+			ref={ ref }
 		/>
 	);
 };
 
-export default StateInput;
+export default forwardRef( StateInput );
