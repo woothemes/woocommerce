@@ -116,9 +116,12 @@ export const SettingsPaymentsMain = () => {
 		( provider ) => '_incentive' in provider
 	)?._incentive;
 
+	const isSwitchIncentive =
+		incentive && incentive.promo_id.includes( '-switch-' );
+
 	return (
 		<>
-			{ incentive && (
+			{ isSwitchIncentive && (
 				<IncentiveModal
 					incentive={ incentive }
 					onDismiss={ () => {
