@@ -3,6 +3,13 @@ on:
     release:
         types: [released]
 
+    workflow_dispatch:
+        inputs:
+            skip_verify:
+                description: 'Skip the PR verification step (default: false) pass true to skip'
+                required: false
+                default: 'false'
+
 permissions: {}
 
 env:
@@ -17,6 +24,7 @@ jobs:
         runs-on: ubuntu-20.04
         outputs:
             run: ${{ steps.verify.outputs.run }}
+            runCodeFreeze: ${{ steps.verify.outputs.runCodeFreeze }}
         steps:
             - name: Verify release
               id: verify
@@ -33,30 +41,81 @@ jobs:
                       }
 
             - name: Verify if any PR is left open by author:app/github-actions
+              if: ${{ needs.verify-release.outputs.run == 'true' }}
               id: verify-prs
               uses: actions/github-script@v6
               with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
                   script: |
-                      const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
-                      const prs = await github.rest.pulls.list({ owner, repo, state: 'open', author: 'app/github-actions' });
-                      if (prs.data.length > 0) {
-                          core.setOutput('prs-left-open-count', prs.data.length);
-                          core.setFailed(`Found ${prs.data.length} open PRs from github-actions bot. Please close them before proceeding.`);
+                      let runCodeFreeze = true;
+                      const event = context.payload;
+
+                      if (event.inputs.skip_verify !== 'false') {
+                        core.setOutput('runCodeFreeze', runCodeFreeze);
+                        console.log('Skipping verification step');
+                        return;
                       }
 
+                      const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
+    
+                      // Helper function to add delay between API calls
+                      const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+    
+                      // Function to handle API call with retry logic
+                      const searchPRs = async (query) => {
+                        let attempts = 0;
+                        while (attempts < 5) {
+                          try {
+                            return await github.rest.search.issuesAndPullRequests({ q: query });
+                          } catch (error) {
+                            if (error.status === 403 && error.message.includes('secondary rate limit')) {
+                              console.log('Rate limit hit, retrying...');
+                              await delay(31000); // 31 second delay before retry
+                              attempts++;
+                            } else {
+                              throw error;
+                            }
+                          }
+                        }
+                        throw new Error('Failed to fetch PRs after multiple attempts');
+                      };
+    
+                      // Search for PRs from github-actions bot
+                      const githubActionsPRsQuery = await searchPRs(`repo:${owner}/${repo} is:pr is:open author:app/github-actions`);
+                      const prsOpenByGithubActions = githubActionsPRsQuery.data.items;
+    
+                      let failureMessage = ``;
+    
+                      if (prsOpenByGithubActions.length > 0) {
+                          runCodeFreeze = false;
+                          if (prsOpenByGithubActions.length > 0) {
+                            failureMessage += `Identified \`${prsOpenByGithubActions.length}\` open PR(s) from \`github-actions\` bot which should be merged or closed before proceeding. `;
+                          }
+    
+                          failureMessage += '\n\nThis step maintains the code integrity and is critical to avoid regression in future releases. Please merge them or close them before proceeding or set \`skip_verify\` to \`true\` before running the workflow to skip this step if you are confident that the PRs are irrelevant.';
+    
+                          console.error(failureMessage);
+                          core.setOutput('failureMessage', failureMessage);
+                      }
+                      core.setOutput('runCodeFreeze', runCodeFreeze);
+            
             - name: Notify Slack on failure
-              if: ${{ failure() }}
+              if: ${{ steps.verify-prs.outputs.failureMessage != '' }}
               uses: archive/github-actions-slack@v2.0.0
               with:
                   slack-bot-user-oauth-access-token: ${{ secrets.CODE_FREEZE_BOT_TOKEN }}
                   slack-channel: ${{ secrets.WOO_RELEASE_SLACK_CHANNEL }}
                   slack-text: |
-                      :ice_cube: Code Freeze workflow failed.
-                      :warning-8c: There are `${{ steps.verify-prs.outputs.prs-left-open-count }}` PRs left open by `app/github-actions` bot. Please merge them and re-run the workflow. Merging them is essential to maintain the integrity of code across all branches. Workflow run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+                      :x: Oops we may have missed a cherry pick PR left open. Code freeze failed.
+                      :warning-8c: ${{ steps.verify-prs.outputs.failureMessage }}
+                      <https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow Run>
+                  slack-optional-unfurl_links: false
+                  slack-optional-unfurl_media: false
+              continue-on-error: true
     
     prep-for-code-freeze:
         name: 'Prepare for code freeze - generate next release branch and milestone'
-        if: needs.verify-release.outputs.run == 'true'
+        if: ${{ needs.verify-release.outputs.runCodeFreeze == 'true' }}
         needs: verify-release
         runs-on: ubuntu-20.04
         outputs:
