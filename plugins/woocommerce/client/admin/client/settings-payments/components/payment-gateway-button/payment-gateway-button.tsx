@@ -13,6 +13,10 @@ import { useState } from '@wordpress/element';
 /**
  * Internal dependencies
  */
+import {
+	isWooPayments,
+	getWooPaymentsTestDriveAccountLink,
+} from '~/settings-payments/utils';
 
 export const PaymentGatewayButton = ( {
 	id,
@@ -34,7 +38,7 @@ export const PaymentGatewayButton = ( {
 	textNeedsSetup?: string;
 } ) => {
 	const { createErrorNotice } = dispatch( 'core/notices' );
-	const { enablePaymentGateway, invalidateResolutionForStoreSelector } =
+	const { togglePaymentGateway, invalidateResolutionForStoreSelector } =
 		useDispatch( PAYMENT_SETTINGS_STORE_NAME );
 	const [ isUpdating, setIsUpdating ] = useState( false );
 
@@ -63,20 +67,25 @@ export const PaymentGatewayButton = ( {
 				return;
 			}
 			setIsUpdating( true );
-			enablePaymentGateway(
+			togglePaymentGateway(
 				id,
 				window.woocommerce_admin.ajax_url,
 				gatewayToggleNonce
 			)
 				.then( ( response: EnableGatewayResponse ) => {
 					if ( response.data === 'needs_setup' ) {
+						if ( isWooPayments( id ) ) {
+							window.location.href =
+								getWooPaymentsTestDriveAccountLink();
+							return;
+						}
 						window.location.href = settingsUrl;
 						return;
 					}
 					invalidateResolutionForStoreSelector(
 						isOffline
 							? 'getOfflinePaymentGateways'
-							: 'getRegisteredPaymentGateways'
+							: 'getPaymentProviders'
 					);
 					setIsUpdating( false );
 				} )
@@ -89,7 +98,7 @@ export const PaymentGatewayButton = ( {
 	};
 
 	const determineButtonText = () => {
-		if ( needsSetup ) {
+		if ( ! enabled && needsSetup ) {
 			return textNeedsSetup;
 		}
 
@@ -99,7 +108,7 @@ export const PaymentGatewayButton = ( {
 	return (
 		<div className="woocommerce-list__item-after__actions">
 			<Button
-				variant={ enabled ? 'secondary' : 'primary' }
+				variant={ enabled && ! needsSetup ? 'secondary' : 'primary' }
 				isBusy={ isUpdating }
 				disabled={ isUpdating }
 				onClick={ onClick }

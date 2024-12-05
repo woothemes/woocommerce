@@ -420,8 +420,7 @@ export const useSetPreviewState = ( {
 		isUsingReferencePreviewMode,
 	] );
 };
-
-export const getDefaultQuery = (
+export const getDefaultQueryForSettingsSection = (
 	currentQuery: ProductCollectionQuery
 ): ProductCollectionQuery => ( {
 	...currentQuery,
@@ -429,6 +428,9 @@ export const getDefaultQuery = (
 	order: DEFAULT_QUERY.order as TProductCollectionOrder,
 	inherit: getDefaultValueOfInherit(),
 	filterable: getDefaultValueOfFilterable(),
+	perPage: DEFAULT_QUERY.perPage,
+	offset: DEFAULT_QUERY.offset,
+	pages: DEFAULT_QUERY.pages,
 } );
 
 export const getDefaultDisplayLayout = () =>
@@ -438,7 +440,8 @@ export const getDefaultSettings = (
 	currentAttributes: ProductCollectionAttributes
 ): Partial< ProductCollectionAttributes > => ( {
 	displayLayout: getDefaultDisplayLayout(),
-	query: getDefaultQuery( currentAttributes.query ),
+	query: getDefaultQueryForSettingsSection( currentAttributes.query ),
+	dimensions: DEFAULT_ATTRIBUTES.dimensions,
 } );
 
 export const getDefaultProductCollection = () =>
