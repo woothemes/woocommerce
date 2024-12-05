@@ -17,7 +17,8 @@
 	"scripts": {
 		"changelog": "XDEBUG_MODE=off composer install --quiet && composer exec -- changelogger",
 		"lint": "eslint --ext=js,ts,tsx src",
-		"lint:fix": "eslint --ext=js,ts,tsx src --fix"
+		"lint:fix": "eslint --ext=js,ts,tsx src --fix",
+		"test": "jest --passWithNoTests"
 	},
 	"config": {
 		"ci": {
@@ -27,6 +28,10 @@
 			}
 		}
 	},
+	"devDependencies": {
+		"@babel/core": "^7.23.5",
+		"jest": "27.5.x"
+  },
 	"publishConfig": {
 		"access": "public"
 	}

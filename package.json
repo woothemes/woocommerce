@@ -33,7 +33,7 @@
 	"devDependencies": {
 		"@babel/preset-env": "^7.23.5",
 		"@babel/runtime": "^7.23.5",
-		"@types/node": "^16.18.68",
+		"@types/node": "20.x.x",
 		"@woocommerce/eslint-plugin": "workspace:*",
 		"@woocommerce/monorepo-utils": "workspace:*",
 		"@wordpress/data": "wp-6.0",
@@ -59,7 +59,7 @@
 		"sass": "^1.69.5",
 		"sass-loader": "^10.5.0",
 		"syncpack": "^10.9.3",
-		"typescript": "5.3.x",
+		"typescript": "5.7.x",
 		"url-loader": "^1.1.2",
 		"webpack": "^5.89.0"
 	},

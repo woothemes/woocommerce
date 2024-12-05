@@ -16,13 +16,14 @@ import { useState } from '@wordpress/element';
  * Internal dependencies
  */
 import './ellipsis-menu-content.scss';
+import { getWooPaymentsResetAccountLink } from '~/settings-payments/utils';
 
 interface EllipsisMenuContentProps {
 	pluginId: string;
 	pluginName: string;
 	isSuggestion: boolean;
-	links: PaymentGatewayLink[];
 	onToggle: () => void;
+	links?: PaymentGatewayLink[];
 	isWooPayments?: boolean;
 	isEnabled?: boolean;
 	needsSetup?: boolean;
@@ -33,8 +34,8 @@ export const EllipsisMenuContent = ( {
 	pluginId,
 	pluginName,
 	isSuggestion,
-	links,
 	onToggle,
+	links = [],
 	isWooPayments = false,
 	isEnabled = false,
 	needsSetup = false,
@@ -44,6 +45,7 @@ export const EllipsisMenuContent = ( {
 	const [ isDeactivating, setIsDeactivating ] = useState( false );
 	const [ isDisabling, setIsDisabling ] = useState( false );
 	const [ isHidingSuggestion, setIsHidingSuggestion ] = useState( false );
+	const [ isResetting, setIsResetting ] = useState( false );
 
 	const {
 		invalidateResolutionForStoreSelector,
@@ -68,9 +70,7 @@ export const EllipsisMenuContent = ( {
 				createSuccessNotice(
 					__( 'Plugin was successfully deactivated.', 'woocommerce' )
 				);
-				invalidateResolutionForStoreSelector(
-					'getRegisteredPaymentGateways'
-				);
+				invalidateResolutionForStoreSelector( 'getPaymentProviders' );
 				setIsDeactivating( false );
 				onToggle();
 			} )
@@ -100,9 +100,7 @@ export const EllipsisMenuContent = ( {
 			gatewayToggleNonce
 		)
 			.then( () => {
-				invalidateResolutionForStoreSelector(
-					'getRegisteredPaymentGateways'
-				);
+				invalidateResolutionForStoreSelector( 'getPaymentProviders' );
 				setIsDisabling( false );
 				onToggle();
 			} )
@@ -120,9 +118,7 @@ export const EllipsisMenuContent = ( {
 
 		hideGatewaySuggestion( pluginId )
 			.then( () => {
-				invalidateResolutionForStoreSelector(
-					'getRegisteredPaymentGateways'
-				);
+				invalidateResolutionForStoreSelector( 'getPaymentProviders' );
 				setIsHidingSuggestion( false );
 				onToggle();
 			} )
@@ -139,8 +135,8 @@ export const EllipsisMenuContent = ( {
 	};
 
 	const resetWooPaymentsAccount = () => {
-		createErrorNotice( __( 'Not implemented yet.', 'woocommerce' ) );
-		onToggle();
+		setIsResetting( true );
+		window.location.href = getWooPaymentsResetAccountLink();
 	};
 
 	return (
@@ -184,8 +180,8 @@ export const EllipsisMenuContent = ( {
 			{ ! isSuggestion && isWooPayments && ! needsSetup && testMode && (
 				<Button
 					onClick={ resetWooPaymentsAccount }
-					isBusy={ false }
-					disabled={ false }
+					isBusy={ isResetting }
+					disabled={ isResetting }
 					className={ 'components-button__danger' }
 				>
 					{ __( 'Reset account', 'woocommerce' ) }

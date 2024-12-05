@@ -1,8 +1,14 @@
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const { admin } = require( '../../test-data/data' );
-const { getOrderIdFromUrl } = require( '../../utils/order' );
-const { addAProductToCart } = require( '../../utils/cart' );
+
+/**
+ * External dependencies
+ */
+import {
+	addAProductToCart,
+	getOrderIdFromUrl,
+} from '@woocommerce/e2e-utils-playwright';
 
 const billingEmail = 'marge-test-account@example.com';
 
@@ -169,7 +175,7 @@ test.describe(
 
 			orderId = getOrderIdFromUrl( page );
 
-			await page.goto( '/my-account/' );
+			await page.goto( 'my-account/' );
 			// confirms that an account was created
 			await expect(
 				page.getByRole( 'heading', { name: 'My account' } )

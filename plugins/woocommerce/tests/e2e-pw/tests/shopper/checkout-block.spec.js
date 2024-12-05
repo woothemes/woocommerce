@@ -1,22 +1,25 @@
-const {
-	goToPageEditor,
-	fillPageTitle,
-	insertBlockByShortcut,
-	publishPage,
-} = require( '../../utils/editor' );
-const { addAProductToCart } = require( '../../utils/cart' );
+const { fillPageTitle } = require( '../../utils/editor' );
+const { request } = require( '@playwright/test' );
 const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
 
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const { admin, customer } = require( '../../test-data/data' );
 const { logIn } = require( '../../utils/login' );
 const { setFilterValue, clearFilters } = require( '../../utils/filters' );
+const { setOption } = require( '../../utils/options' );
 
-const {
+/**
+ * External dependencies
+ */
+import {
+	insertBlockByShortcut,
+	goToPageEditor,
+	publishPage,
+	addAProductToCart,
+	getOrderIdFromUrl,
 	fillShippingCheckoutBlocks,
 	fillBillingCheckoutBlocks,
-} = require( '../../utils/checkout' );
-const { getOrderIdFromUrl } = require( '../../utils/order' );
+} from '@woocommerce/e2e-utils-playwright';
 
 const guestEmail = 'checkout-guest@example.com';
 const newAccountEmail = `marge-${ new Date()
@@ -67,6 +70,25 @@ test.describe(
 				consumerSecret: process.env.CONSUMER_SECRET,
 				version: 'wc/v3',
 			} );
+			// Set field visibility options
+			await setOption(
+				request,
+				baseURL,
+				'woocommerce_checkout_phone_field',
+				'optional'
+			);
+			await setOption(
+				request,
+				baseURL,
+				'woocommerce_checkout_company_field',
+				'optional'
+			);
+			await setOption(
+				request,
+				baseURL,
+				'woocommerce_checkout_address_2_field',
+				'optional'
+			);
 			// make sure the currency is USD
 			await api.put( 'settings/general/woocommerce_currency', {
 				value: 'USD',

@@ -5,6 +5,7 @@
  * @package WooCommerce\Tests\Order.
  */
 
+use Automattic\WooCommerce\Enums\OrderInternalStatus;
 use Automattic\WooCommerce\Enums\OrderStatus;
 
 /**
@@ -33,7 +34,7 @@ class WC_Order_Functions_Test extends \WC_Unit_Test_Case {
 		$checkout = WC_Checkout::instance();
 		$order    = new WC_Order();
 		$checkout->set_data_from_cart( $order );
-		$order->set_status( 'wc-processing' );
+		$order->set_status( OrderInternalStatus::PROCESSING );
 		$order->save();
 
 		// Get the line item.

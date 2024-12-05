@@ -6,6 +6,7 @@ import {
 	useEffect,
 	useMemo,
 	useState,
+	useRef,
 } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
@@ -37,7 +38,7 @@ const NotFound = () => {
 /**
  * Default route when active page is not found.
  *
- * @param {string}       activePage - The active page.
+ * @param {string}       activePage   - The active page.
  * @param {settingsData} settingsData - The settings data.
  *
  */
@@ -86,10 +87,10 @@ const getSettingsPageTabs = (
 /**
  * Creates a route configuration for legacy settings.
  *
- * @param {string}       activePage - The active page.
+ * @param {string}       activePage    - The active page.
  * @param {string}       activeSection - The active section.
- * @param {settingsPage} settingsPage - The settings page.
- * @param {settingsData} settingsData - The settings data.
+ * @param {settingsPage} settingsPage  - The settings page.
+ * @param {settingsData} settingsData  - The settings data.
  */
 const getLegacyRoute = (
 	activePage: string,
@@ -139,8 +140,11 @@ const getModernPages = () => {
  * @return {Record<string, Route>} The pages.
  */
 export function useModernRoutes(): Record< string, Route > {
-	const [ routes, setRoutes ] = useState< Record< string, Route > >( {} );
+	const [ routes, setRoutes ] = useState< Record< string, Route > >(
+		getModernPages()
+	);
 	const location = useLocation() as Location;
+	const isFirstRender = useRef( true );
 
 	/*
 	 * Handler for new pages being added after the initial filter has been run,
@@ -167,8 +171,14 @@ export function useModernRoutes(): Record< string, Route > {
 		};
 	}, [] );
 
-	// Update modern when the location changes.
+	// Update modern pages when the location changes.
 	useEffect( () => {
+		if ( isFirstRender.current ) {
+			// Prevent updating routes again on first render.
+			isFirstRender.current = false;
+			return;
+		}
+
 		setRoutes( getModernPages() );
 	}, [ location.params ] );
 
