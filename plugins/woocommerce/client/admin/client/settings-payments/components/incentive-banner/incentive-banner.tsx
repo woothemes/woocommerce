@@ -31,9 +31,11 @@ interface IncentiveBannerProps {
 	 *
 	 */
 }
-export const IncentiveBanner = (
-	{ onDismiss, onSetup, cta }: IncentiveBannerProps
-) => {
+export const IncentiveBanner = ( {
+	onDismiss,
+	onSetup,
+	cta,
+}: IncentiveBannerProps ) => {
 	const [ isSubmitted, setIsSubmitted ] = useState( false );
 	const [ isDismissClicked, setIsDismissClicked ] = useState( false );
 
@@ -58,11 +60,7 @@ export const IncentiveBanner = (
 					/>
 				</CardMedia>
 				<CardBody className="woocommerce-incentive-banner__body">
-					<StatusBadge
-						status="has_incentive"
-						// TODO: Need to make these strings translatable
-						message={ cta }
-					/>
+					<StatusBadge status="has_incentive" message={ cta } />
 					<h2>
 						{ __(
 							'Save 10% on processing fees for your first 3 months when you sign up for WooPayments',
