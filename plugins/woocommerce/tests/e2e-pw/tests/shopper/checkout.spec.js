@@ -2,9 +2,15 @@ const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const { admin, customer } = require( '../../test-data/data' );
 const { setFilterValue, clearFilters } = require( '../../utils/filters' );
-const { addProductsToCart } = require( '../../utils/pdp' );
-const { addAProductToCart } = require( '../../utils/cart' );
-const { getOrderIdFromUrl } = require( '../../utils/order' );
+
+/**
+ * External dependencies
+ */
+import {
+	addAProductToCart,
+	addOneOrMoreProductToCart,
+	getOrderIdFromUrl,
+} from '@woocommerce/e2e-utils-playwright';
 
 const guestEmail = 'checkout-guest@example.com';
 
@@ -129,7 +135,7 @@ test.describe(
 		} ) => {
 			await addAProductToCart( page, productId );
 
-			await page.goto( '/checkout/' );
+			await page.goto( 'checkout/' );
 
 			await expect( page.locator( 'td.product-name' ) ).toContainText(
 				simpleProductName
@@ -152,9 +158,9 @@ test.describe(
 			page,
 		} ) => {
 			// this time we're going to add two products to the cart
-			await addProductsToCart( page, simpleProductName, '2' );
+			await addOneOrMoreProductToCart( page, simpleProductName, '2' );
 
-			await page.goto( '/checkout/' );
+			await page.goto( 'checkout/' );
 			await expect(
 				page.locator( 'strong.product-quantity' )
 			).toContainText( '2' );
@@ -177,9 +183,9 @@ test.describe(
 
 		test( 'allows customer to fill billing details', async ( { page } ) => {
 			// this time we're going to add three products to the cart
-			await addProductsToCart( page, simpleProductName, '3' );
+			await addOneOrMoreProductToCart( page, simpleProductName, '3' );
 
-			await page.goto( '/checkout/' );
+			await page.goto( 'checkout/' );
 			await expect(
 				page.locator( 'strong.product-quantity' )
 			).toContainText( '3' );
@@ -214,7 +220,7 @@ test.describe(
 		} ) => {
 			await addAProductToCart( page, productId );
 
-			await page.goto( '/checkout/' );
+			await page.goto( 'checkout/' );
 
 			// first try submitting the form with no fields complete
 			await page.getByRole( 'button', { name: 'Place order' } ).click();
@@ -302,9 +308,9 @@ test.describe(
 		test( 'allows customer to fill shipping details', async ( {
 			page,
 		} ) => {
-			await addProductsToCart( page, simpleProductName, '2' );
+			await addOneOrMoreProductToCart( page, simpleProductName, '2' );
 
-			await page.goto( '/checkout/' );
+			await page.goto( 'checkout/' );
 			await expect(
 				page.locator( 'strong.product-quantity' )
 			).toContainText( '2' );
@@ -342,11 +348,11 @@ test.describe(
 
 		test( 'allows guest customer to place an order', async ( { page } ) => {
 			await test.step( 'Add 2 products to the cart', async () => {
-				await addProductsToCart( page, simpleProductName, '2' );
+				await addOneOrMoreProductToCart( page, simpleProductName, '2' );
 			} );
 
 			await test.step( 'Go to checkout and confirm that products and totals are as expected', async () => {
-				await page.goto( '/checkout/' );
+				await page.goto( 'checkout/' );
 				await expect(
 					page.locator( 'strong.product-quantity' )
 				).toContainText( '2' );
@@ -418,7 +424,7 @@ test.describe(
 					0
 				);
 				await page.waitForTimeout( 2000 ); // needs some time before reload for change to take effect.
-				await page.reload( { waitForLoadState: 'networkidle' } );
+				await page.reload();
 				await expect(
 					page.getByText(
 						/confirm the email address linked to the order | verify the email address associated /
@@ -509,9 +515,9 @@ test.describe(
 				)
 			).toBeVisible();
 
-			await addProductsToCart( page, simpleProductName, '2' );
+			await addOneOrMoreProductToCart( page, simpleProductName, '2' );
 
-			await page.goto( '/checkout/' );
+			await page.goto( 'checkout/' );
 			await expect(
 				page.locator( 'strong.product-quantity' )
 			).toContainText( '2' );

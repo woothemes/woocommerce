@@ -2,16 +2,21 @@
  * External dependencies
  */
 import { useEffect } from '@wordpress/element';
-import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
+import {
+	BlockControls,
+	InnerBlocks,
+	useBlockProps,
+} from '@wordpress/block-editor';
 import { BlockEditProps } from '@wordpress/blocks';
-import type { InnerBlockTemplate } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
+import type { InnerBlockTemplate } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
  */
 import { useIsDescendentOfSingleProductBlock } from '../../atomic/blocks/product-elements/shared/use-is-descendent-of-single-product-block';
 import { AddToCartOptionsSettings } from './settings';
+import ToolbarProductTypeGroup from './components/toolbar-type-product-selector-group';
 export interface Attributes {
 	className?: string;
 	isDescendentOfSingleProductBlock: boolean;
@@ -59,11 +64,16 @@ const AddToCartOptionsEdit = ( props: BlockEditProps< Attributes > ) => {
 
 	return (
 		<>
+			<BlockControls>
+				<ToolbarProductTypeGroup />
+			</BlockControls>
+
 			<AddToCartOptionsSettings
 				features={ {
 					isBlockifiedAddToCart: true,
 				} }
 			/>
+
 			<div { ...blockProps }>
 				<InnerBlocks template={ INNER_BLOCKS_TEMPLATE } />
 			</div>
