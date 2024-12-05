@@ -30,8 +30,11 @@ const createNoticesFromErrors = ( errors: ApiErrorResponse[] ) => {
 	} );
 };
 
-const dismissNoticeByContext = ( context: { id: string; context: string } ) => {
-	dispatch( 'core/notices' ).removeNotice( context.id, context.context );
+/**
+ * This function will dismiss a notice, finding it by its id and context.
+ */
+const dismissNoticeByOptions = ( options: { id: string; context: string } ) => {
+	dispatch( 'core/notices' ).removeNotice( options.id, options.context );
 };
 
 /**
@@ -43,13 +46,12 @@ export const updateCartErrorNotices = (
 	oldErrors: ApiErrorResponse[] | null = null
 ) => {
 	if ( oldErrors !== null ) {
-		const oldCartErrorContexts = oldErrors
-			.map( ( e: ApiErrorResponse ) =>
-				getNoticeContextFromErrorResponse( e )
-			)
-			.flat();
+		const oldCartErrorContexts = oldErrors.flatMap(
+			( e: ApiErrorResponse ) => getNoticeContextFromErrorResponse( e )
+		);
+
 		oldCartErrorContexts.forEach( ( e ) => {
-			dismissNoticeByContext( e );
+			dismissNoticeByOptions( e );
 		} );
 	}
 	if ( errors !== null ) {
