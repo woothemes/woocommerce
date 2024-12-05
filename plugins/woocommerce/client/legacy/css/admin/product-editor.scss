@@ -11,6 +11,7 @@
 /**
  * Copy of some internal-style-build CSS variables
  */
+$gap-larger: 36px;
 $gap-large: 24px;
 $gap: 16px;
 $gap-small: 12px;
@@ -145,8 +146,6 @@ $border-radius: 8px;
 	.postbox {
 		border: 0;
 		border-radius: $border-radius;
-		display: flex;
-		flex-direction: column;
 	}
 	// Mimic wider gap between postboxes.
 	.post-body-content,
@@ -185,17 +184,6 @@ $border-radius: 8px;
 	#commentsdiv.postbox .inside,
 	#postimagediv .inside {
 		padding: 16px;
-
-		/*
-		 * Remove margins of paragraph wrappers that probably
-		 * should have been divs separated with gap.
-		 */
-		p:first-child {
-			margin-top: 0;
-		}
-		p:last-child {
-			margin-bottom: 0;
-		}
 	}
 
 	// Separate rule, not to overspecify the above ones with id selector.
@@ -259,21 +247,43 @@ $border-radius: 8px;
 
 	// Product/coupon data options panel.
 	.woocommerce_options_panel {
-		.options_group:not(.hidden),
+		p,
+		fieldset.form-field,
+		.downloadable_files {
+			// Use margin as gap and horizontal padding.
+			// Accomodate for p trick with label that uses padding as margin
+			// that adds 12 to the left and 20 to the right
+			margin: $gap calc(48px - 20px) $gap calc(48px - 12px);
+
+			@media only screen and (max-width: 1280px) {
+				margin: $gap calc($gap-larger - 20px) $gap calc( $gap-larger - 12px);
+			}
+			@media only screen and (max-width: 900px) {
+				margin: $gap-small calc($gap-large - 20px) $gap calc( $gap-large - 12px);
+			}
+			@media only screen and (max-width: 782px) {
+				margin: $gap-small 0;
+			}
+		}
+		.options_group,
 		/*
 		 * General coupos data does not have options group wrapper,
 		 * make it look like it has.
 		 */
-		&#general_coupon_data:not(.hidden) {
-			display: flex;
-		}
-		.options_group,
 		&#general_coupon_data {
 			border-bottom-color: #ededed;
-			padding: 36px 48px;
-			display: flex;
-			flex-direction: column;
-			gap: $gap-small;
+			// Deduct vertival margins of inner paragraphs.
+			padding: calc($gap-larger - $gap) 0;
+
+			@media only screen and (max-width: 1280px) {
+				padding: calc($gap-large - $gap) 0;
+			}
+			@media only screen and (max-width: 900px) {
+				padding: calc($gap - $gap-small) 0;
+			}
+			@media only screen and (max-width: 782px) {
+				padding: 0;
+			}
 		}
 
 		/*
@@ -711,20 +721,6 @@ $border-radius: 8px;
 	}
 }
 
-@media only screen and (max-width: 1280px) {
-	#woocommerce-product-data,
-	#woocommerce-coupon-data {
-		.options_group,
-		/*
-		 * General coupos data does not have options group wrapper,
-		 * make it look like it has.
-		 */
-		#general_coupon_data {
-			padding: $gap calc($gap * 4 / 3);
-		}
-	}
-}
-
 /**
   * Optimisation for screens 900px and smaller
   */
@@ -733,15 +729,6 @@ $border-radius: 8px;
 	#woocommerce-coupon-data {
 		.panel-wrap {
 			grid-template-columns: [nav] 10% [content] 90%;
-		}
-
-		.options_group,
-		/*
-		 * General coupos data does not have options group wrapper,
-		 * make it look like it has.
-		 */
-		#general_coupon_data {
-			padding: $gap-small $gap;
 		}
 	}
 
