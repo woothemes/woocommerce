@@ -464,6 +464,10 @@ final class BlockTypesController {
 			$block_types[] = 'ProductFilterClearButton';
 			$block_types[] = 'ProductFilterCheckboxList';
 			$block_types[] = 'ProductFilterChips';
+			if ( Features::is_enabled( 'blockified-add-to-cart' ) ) {
+				$block_types[] = 'AddToCartWithOptions';
+				$block_types[] = 'AddToCartWithOptionsQuantitySelector';
+			}
 		}
 
 		/**
