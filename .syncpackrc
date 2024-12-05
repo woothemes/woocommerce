@@ -119,6 +119,7 @@
 			"dependencies": [
 				"react",
 				"react-dom",
+				"react-test-renderer",
 				"@types/react-dom",
 				"@types/react"
 			],
@@ -126,6 +127,24 @@
 			"packages": [
 				"**"
 			]
+		},
+		{
+			"dependencies": [
+				"@testing-library/react"
+			],
+			"packages": [
+				"**"
+			],
+			"pinVersion": "^16.x.x"
+		},
+		{
+			"dependencies": [
+				"@testing-library/jest-dom"
+			],
+			"packages": [
+				"**"
+			],
+			"pinVersion": "^6.x.x"
 		},
 		{
 			"dependencies": [
@@ -203,7 +222,6 @@
 		{
 			"dependencies": [
 				"@wordpress/block**",
-				"@wordpress/viewport",
 				"@wordpress/interface",
 				"@wordpress/router",
 				"@wordpress/edit-site",

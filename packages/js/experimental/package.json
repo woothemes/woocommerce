@@ -59,7 +59,7 @@
 		"@storybook/addon-console": "^1.2.3",
 		"@storybook/react": "6.5.17-alpha.0",
 		"@testing-library/dom": "8.11.3",
-		"@testing-library/react": "^14.0.0",
+		"@testing-library/react": "^16.x.x",
 		"@testing-library/user-event": "13.5.0",
 		"@types/dompurify": "^2.4.0",
 		"@types/jest": "27.5.x",
