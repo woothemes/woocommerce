@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { Button } from '@wordpress/components';
+import { Button, CardDivider } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import {
 	PLUGINS_STORE_NAME,
@@ -140,7 +140,7 @@ export const EllipsisMenuContent = ( {
 	};
 
 	return (
-		<div className="woocommerce-list__item-after__ellipsis-menu">
+		<div>
 			{ links
 				.filter( ( link: PaymentGatewayLink ) => {
 					switch ( link._type ) {
@@ -168,6 +168,7 @@ export const EllipsisMenuContent = ( {
 						</Button>
 					) : null;
 				} ) }
+			<CardDivider />
 			{ isSuggestion && (
 				<Button
 					onClick={ hideSuggestion }
