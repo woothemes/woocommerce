@@ -147,7 +147,7 @@ class CustomOrdersTableController {
 		add_filter( 'removable_query_args', array( $this, 'register_removable_query_arg' ) );
 		add_action( 'woocommerce_register_feature_definitions', array( $this, 'add_feature_definition' ) );
 		add_filter( 'get_edit_post_link', array( $this, 'maybe_rewrite_order_edit_link' ), 10, 2 );
-    add_action( 'before_woocommerce_init', array( $this, 'maybe_set_order_cache_group_as_non_persistent' ) );
+        add_action( 'before_woocommerce_init', array( $this, 'maybe_set_order_cache_group_as_non_persistent' ) );
 	}
 
 	/**
@@ -810,7 +810,7 @@ class CustomOrdersTableController {
 	 *
 	 * @return void
 	 */
-	private function maybe_set_order_cache_group_as_non_persistent() {
+	public function maybe_set_order_cache_group_as_non_persistent() {
 		if ( OrderUtil::custom_orders_table_datastore_cache_enabled() ) {
 			// If we're using datastore cache, we don't want to persist the order objects in cache. It should be in-memory only.
 			wp_cache_add_non_persistent_groups( array( $this->order_cache->get_object_type() ) );
