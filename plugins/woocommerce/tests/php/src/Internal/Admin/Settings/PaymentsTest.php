@@ -271,8 +271,8 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 							'enabled'     => false,
 							'title'       => 'WooPay',
 							'description' => 'WooPay express checkout',
-							// base64 encoded SVG.
-							'icon'        => 'PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbD0iI0YwRjBGMCIgZD0iTTAgMGg0MHY0MEgweiIvPjxwYXRoIGQ9Ik0yOS41IDE0LjMwOHYxMS4zODRjMCAuNTA1LS4xNzUuOTMzLS41MjUgMS4yODMtLjM1LjM1LS43NzguNTI1LTEuMjgzLjUyNUgxMi4zMDhjLS41MDUgMC0uOTMzLS4xNzUtMS4yODMtLjUyNWExLjc0NSAxLjc0NSAwIDAgMS0uNTI1LTEuMjgzVjE0LjMwOGMwLS41MDUuMTc1LS45MzMuNTI1LTEuMjgzLjM1LS4zNS43NzgtLjUyNSAxLjI4My0uNTI1aDE1LjM4NGMuNTA1IDAgLjkzMy4xNzUgMS4yODMuNTI1LjM1LjM1LjUyNS43NzguNTI1IDEuMjgzWk0xMiAxNi40MDRoMTZ2LTIuMDk2YS4yOTQuMjk0IDAgMCAwLS4wOTYtLjIxMi4yOTQuMjk0IDAgMCAwLS4yMTItLjA5NkgxMi4zMDhhLjI5NC4yOTQgMCAwIDAtLjIxMi4wOTYuMjkzLjI5MyAwIDAgMC0uMDk2LjIxMnYyLjA5NlptMCAzLjE5MnY2LjA5NmMwIC4wNzcuMDMyLjE0OC4wOTYuMjEyYS4yOTQuMjk0IDAgMCAwIC4yMTIuMDk2aDE1LjM4NGEuMjk0LjI5NCAwIDAgMCAuMjEyLS4wOTYuMjk0LjI5NCAwIDAgMCAuMDk2LS4yMTJ2LTYuMDk2SDEyWiIgZmlsbD0iIzJGMkYyRiIvPjwvc3ZnPgo=',
+							// Not a good URL.
+							'icon'        => 'not_good_url/icon.svg',
 						),
 						// Invalid PM, should be ignored. No data.
 						array(),
@@ -329,7 +329,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 					'enabled'     => false,
 					'title'       => 'WooPay',
 					'description' => 'WooPay express checkout',
-					'icon'        => 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbD0iI0YwRjBGMCIgZD0iTTAgMGg0MHY0MEgweiIvPjxwYXRoIGQ9Ik0yOS41IDE0LjMwOHYxMS4zODRjMCAuNTA1LS4xNzUuOTMzLS41MjUgMS4yODMtLjM1LjM1LS43NzguNTI1LTEuMjgzLjUyNUgxMi4zMDhjLS41MDUgMC0uOTMzLS4xNzUtMS4yODMtLjUyNWExLjc0NSAxLjc0NSAwIDAgMS0uNTI1LTEuMjgzVjE0LjMwOGMwLS41MDUuMTc1LS45MzMuNTI1LTEuMjgzLjM1LS4zNS43NzgtLjUyNSAxLjI4My0uNTI1aDE1LjM4NGMuNTA1IDAgLjkzMy4xNzUgMS4yODMuNTI1LjM1LjM1LjUyNS43NzguNTI1IDEuMjgzWk0xMiAxNi40MDRoMTZ2LTIuMDk2YS4yOTQuMjk0IDAgMCAwLS4wOTYtLjIxMi4yOTQuMjk0IDAgMCAwLS4yMTItLjA5NkgxMi4zMDhhLjI5NC4yOTQgMCAwIDAtLjIxMi4wOTYuMjkzLjI5MyAwIDAgMC0uMDk2LjIxMnYyLjA5NlptMCAzLjE5MnY2LjA5NmMwIC4wNzcuMDMyLjE0OC4wOTYuMjEyYS4yOTQuMjk0IDAgMCAwIC4yMTIuMDk2aDE1LjM4NGEuMjk0LjI5NCAwIDAgMCAuMjEyLS4wOTYuMjk0LjI5NCAwIDAgMCAuMDk2LS4yMTJ2LTYuMDk2SDEyWiIgZmlsbD0iIzJGMkYyRiIvPjwvc3ZnPgo=',
+					'icon'        => '', // The icon with an invalid URL is ignored.
 				),
 				array(
 					'id'          => 'card',
