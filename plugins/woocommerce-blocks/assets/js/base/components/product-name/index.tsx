@@ -10,6 +10,8 @@ import type { AnchorHTMLAttributes, HTMLAttributes } from 'react';
  */
 import './style.scss';
 
+type DisabledTagNameType = 'span' | 'h3';
+
 export interface ProductNameProps
 	extends AnchorHTMLAttributes< HTMLAnchorElement > {
 	/**
@@ -30,6 +32,10 @@ export interface ProductNameProps
 	 * Link for the product
 	 */
 	permalink?: string;
+	/*
+	 * Disabled tag for the product name
+	 */
+	disabledTagName?: DisabledTagNameType;
 }
 
 /**
@@ -46,14 +52,17 @@ export const ProductName = ( {
 	rel,
 	style,
 	onClick,
+	disabledTagName = 'span',
 	...props
 }: ProductNameProps ): JSX.Element => {
 	const classes = clsx( 'wc-block-components-product-name', className );
+	const DisabledTagName = disabledTagName as DisabledTagNameType;
 	if ( disabled ) {
-		// Cast the props as type HTMLSpanElement.
-		const disabledProps = props as HTMLAttributes< HTMLSpanElement >;
+		const disabledProps = props as HTMLAttributes<
+			HTMLHeadingElement | HTMLSpanElement
+		>;
 		return (
-			<span
+			<DisabledTagName
 				className={ classes }
 				{ ...disabledProps }
 				dangerouslySetInnerHTML={ {

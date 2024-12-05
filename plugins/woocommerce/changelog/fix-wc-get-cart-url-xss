@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Updated wc_get_cart_url() to only return permalinks rather than building the current URL manually.

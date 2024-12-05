@@ -3,7 +3,6 @@ declare( strict_types=1 );
 
 namespace Automattic\WooCommerce\Internal\Orders;
 
-use Automattic\WooCommerce\Internal\Traits\AccessiblePrivateMethods;
 use Automattic\WooCommerce\Internal\RestApiControllerBase;
 use WP_Error;
 use WP_REST_Request;
@@ -14,7 +13,6 @@ use WP_REST_Request;
  * This first version only supports sending the order details to the customer (`send_order_details`).
  */
 class OrderActionsRestController extends RestApiControllerBase {
-	use AccessiblePrivateMethods;
 
 	/**
 	 * Get the WooCommerce REST API namespace for the class.

@@ -4,7 +4,7 @@ const { activateTheme, DEFAULT_THEME } = require( '../../utils/themes' );
 const { AssemblerPage } = require( './assembler/assembler.page' );
 
 const CUSTOMIZE_STORE_URL =
-	'/wp-admin/admin.php?page=wc-admin&path=%2Fcustomize-store';
+	'wp-admin/admin.php?page=wc-admin&path=%2Fcustomize-store';
 const TRANSITIONAL_URL = `${ CUSTOMIZE_STORE_URL }%2Ftransitional`;
 const INTRO_URL = `${ CUSTOMIZE_STORE_URL }%2Fintro`;
 
@@ -115,7 +115,7 @@ test.describe(
 
 			await assembler.getByRole( 'link', { name: 'View store' } ).click();
 
-			await expect( page ).toHaveURL( '/' );
+			await expect( page ).toHaveURL( './' );
 		} );
 
 		test( 'Clicking on "Share feedback" should open the survey modal', async ( {
