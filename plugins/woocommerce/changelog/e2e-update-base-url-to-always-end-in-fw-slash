@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+E2E tests: update base URL to always end in a forward slash

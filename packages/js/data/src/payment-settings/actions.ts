@@ -8,7 +8,7 @@ import apiFetch from '@wordpress/api-fetch';
  */
 import { ACTION_TYPES } from './action-types';
 import {
-	RegisteredPaymentGateway,
+	PaymentProvider,
 	OfflinePaymentGateway,
 	SuggestedPaymentExtension,
 	SuggestedPaymentExtensionCategory,
@@ -17,26 +17,24 @@ import {
 import { parseOrdering } from './utils';
 import { WC_ADMIN_NAMESPACE } from '../constants';
 
-export function getPaymentGatewaySuggestionsRequest(): {
-	type: ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_REQUEST;
+export function getPaymentProvidersRequest(): {
+	type: ACTION_TYPES.GET_PAYMENT_PROVIDERS_REQUEST;
 } {
 	return {
-		type: ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_REQUEST,
+		type: ACTION_TYPES.GET_PAYMENT_PROVIDERS_REQUEST,
 	};
 }
 
-export function getPaymentGatewaySuggestionsSuccess(
-	registeredPaymentGateways: RegisteredPaymentGateway[],
+export function getPaymentProvidersSuccess(
+	providers: PaymentProvider[],
 	offlinePaymentGateways: OfflinePaymentGateway[],
-	preferredExtensionSuggestions: SuggestedPaymentExtension[],
-	otherExtensionSuggestions: SuggestedPaymentExtension[],
+	suggestions: SuggestedPaymentExtension[],
 	suggestionCategories: SuggestedPaymentExtensionCategory[]
 ): {
-	type: ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_SUCCESS;
-	registeredPaymentGateways: RegisteredPaymentGateway[];
+	type: ACTION_TYPES.GET_PAYMENT_PROVIDERS_SUCCESS;
+	providers: PaymentProvider[];
 	offlinePaymentGateways: OfflinePaymentGateway[];
-	preferredExtensionSuggestions: SuggestedPaymentExtension[];
-	otherExtensionSuggestions: SuggestedPaymentExtension[];
+	suggestions: SuggestedPaymentExtension[];
 	suggestionCategories: SuggestedPaymentExtensionCategory[];
 } {
 	// In the future, this would not be necessary once backend sorting is implemented.
@@ -56,21 +54,20 @@ export function getPaymentGatewaySuggestionsSuccess(
 	}
 
 	return {
-		type: ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_SUCCESS,
-		registeredPaymentGateways,
+		type: ACTION_TYPES.GET_PAYMENT_PROVIDERS_SUCCESS,
+		providers,
 		offlinePaymentGateways: sortedOfflinePaymentGateways,
-		preferredExtensionSuggestions,
-		otherExtensionSuggestions,
+		suggestions,
 		suggestionCategories,
 	};
 }
 
-export function getPaymentGatewaySuggestionsError( error: unknown ): {
-	type: ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_ERROR;
+export function getPaymentProvidersError( error: unknown ): {
+	type: ACTION_TYPES.GET_PAYMENT_PROVIDERS_ERROR;
 	error: unknown;
 } {
 	return {
-		type: ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_ERROR,
+		type: ACTION_TYPES.GET_PAYMENT_PROVIDERS_ERROR,
 		error,
 	};
 }
@@ -138,9 +135,9 @@ export function updateOfflinePaymentGatewayOrdering(
 }
 
 export type Actions =
-	| ReturnType< typeof getPaymentGatewaySuggestionsRequest >
-	| ReturnType< typeof getPaymentGatewaySuggestionsSuccess >
-	| ReturnType< typeof getPaymentGatewaySuggestionsError >
+	| ReturnType< typeof getPaymentProvidersRequest >
+	| ReturnType< typeof getPaymentProvidersSuccess >
+	| ReturnType< typeof getPaymentProvidersError >
 	| ReturnType< typeof togglePaymentGateway >
 	| ReturnType< typeof hideGatewaySuggestion >
 	| ReturnType< typeof updateOfflinePaymentGatewayOrdering >;
