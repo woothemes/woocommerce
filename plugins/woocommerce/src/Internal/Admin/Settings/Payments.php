@@ -673,7 +673,7 @@ class Payments {
 			// If the payment method has a description, sanitize it before use.
 			if ( ! empty( $recommended_pm['description'] ) ) {
 				$standard_details['description'] = $recommended_pm['description'];
-				// Make sure that if we have HTML tags, we only allow stylistic tags.
+				// Make sure that if we have HTML tags, we only allow stylistic tags and anchors.
 				if ( preg_match( '/<[^>]+>/', $standard_details['description'] ) ) {
 					// Only allow stylistic tags with a few modifications.
 					$allowed_tags = wp_kses_allowed_html( 'data' );
