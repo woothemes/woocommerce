@@ -39,6 +39,15 @@ class ProductStockIndicator extends AbstractBlock {
 	}
 
 	/**
+	 * Get the product types that are allowed in the editor.
+	 *
+	 * @return array
+	 */
+	protected function product_types_without_stock_indicator() {
+		return array( 'external', 'grouped', 'variable' );
+	}
+
+	/**
 	 * Include and render the block.
 	 *
 	 * @param array    $attributes Block attributes. Default empty array.
@@ -50,7 +59,7 @@ class ProductStockIndicator extends AbstractBlock {
 		$post_id = isset( $block->context['postId'] ) ? $block->context['postId'] : '';
 		$product = wc_get_product( $post_id );
 
-		if ( ! $product ) {
+		if ( ! $product || in_array( $product->get_type(), $this->product_types_without_stock_indicator(), true ) ) {
 			return '';
 		}
 
