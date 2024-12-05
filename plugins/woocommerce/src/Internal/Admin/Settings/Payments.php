@@ -692,18 +692,8 @@ class Payments {
 			}
 
 			// If the payment method has an icon, try to use it.
-			if ( ! empty( $recommended_pm['icon'] ) ) {
-				if ( wc_is_valid_url( $recommended_pm['icon'] ) ) {
-					$standard_details['icon'] = sanitize_url( $recommended_pm['icon'] );
-				} else {
-					// See if it is a base64-encoded SVG. Decode it.
-					// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
-					$decoded_icon = base64_decode( $recommended_pm['icon'], true );
-					if ( false !== $decoded_icon ) {
-						// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
-						$standard_details['icon'] = 'data:image/svg+xml;base64,' . base64_encode( $decoded_icon );
-					}
-				}
+			if ( ! empty( $recommended_pm['icon'] ) && wc_is_valid_url( $recommended_pm['icon'] ) ) {
+				$standard_details['icon'] = sanitize_url( $recommended_pm['icon'] );
 			}
 
 			$standardized_pms[] = $standard_details;
