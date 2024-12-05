@@ -47,7 +47,7 @@ class OrderStatusRestControllerTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'slug', $first_status );
 		$this->assertArrayHasKey( 'name', $first_status );
 
-		// Verify default WooCommerce statuses are present
+		// Verify default WooCommerce statuses are present.
 		$status_slugs   = array_column( $data, 'slug' );
 		$expected_slugs = [ 'pending', 'processing', 'on-hold', 'completed', 'cancelled', 'refunded', 'failed' ]; //phpcs:ignore
 
