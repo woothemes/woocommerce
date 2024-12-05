@@ -32,6 +32,42 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 		public $icon = 'settings';
 
 		/**
+		 * Settings field types.
+		 *
+		 * @var string
+		 */
+		protected $types = array(
+			'title',
+			'info',
+			'sectionend',
+			'text',
+			'password',
+			'datetime',
+			'datetime-local',
+			'date',
+			'month',
+			'time',
+			'week',
+			'number',
+			'email',
+			'url',
+			'tel',
+			'color',
+			'textarea',
+			'select',
+			'multiselect',
+			'radio',
+			'checkbox',
+			'image_width',
+			'single_select_page',
+			'single_select_page_with_search',
+			'single_select_country',
+			'multi_select_countries',
+			'relative_date_selector',
+			'slotfill_placeholder',
+		);
+
+		/**
 		 * Setting page label.
 		 *
 		 * @var string
@@ -127,6 +163,12 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 							: get_option( $section_setting['id'] );
 					}
 
+					$type = $section_setting['type'];
+
+					if ( ! in_array( $type, $this->types ) ) { 
+						$section_setting = $this->get_custom_type_field( 'woocommerce_admin_field_' . $type, $section_setting ); 
+					} 
+
 					$section_settings_data[] = $section_setting;
 				}
 
@@ -148,6 +190,25 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 			);
 
 			return $pages;
+		}
+
+		/**
+		 * Get the custom type field by calling the action and returning the setting with the content, id, and type.
+		 * 
+		 * @param string $action The action to call.
+		 * @param array $setting The setting to pass to the action.
+		 * @return array The setting with the content, id, and type.
+		 */
+		public function get_custom_type_field( $action, $setting ) {
+			ob_start(); 
+			do_action( $action, $setting ); 
+			$html = ob_get_contents(); 
+			ob_end_clean();
+			$setting['content'] = trim( $html ); 
+			$setting['id'] = $setting['id'] || $setting['type']; 
+			$setting['type'] = 'custom'; 
+
+			return $setting;
 		}
 
 		/**
