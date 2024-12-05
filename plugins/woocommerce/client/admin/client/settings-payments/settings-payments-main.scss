@@ -22,6 +22,10 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 			justify-content: space-between;
 			padding: $gap-smaller 48px $gap-large;
 			align-items: center;
+
+			@media screen and ( max-width: 782px ) {
+				display: block;
+			}
 		}
 
 		&__header-title {
@@ -43,6 +47,10 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 
 			.components-base-control__field {
 				margin-bottom: 0;
+			}
+
+			@media screen and ( max-width: 782px ) {
+				margin-top: $gap-smaller;
 			}
 		}
 
