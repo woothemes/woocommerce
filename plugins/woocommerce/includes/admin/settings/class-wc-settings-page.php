@@ -208,7 +208,7 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 			$html = ob_get_contents();
 			ob_end_clean();
 			$setting['content'] = trim( $html );
-			$setting['id']      = $setting['id'] || $setting['type'];
+			$setting['id']      = isset( $setting['id'] ) ? $setting['id'] : $setting['type'];
 			$setting['type']    = 'custom';
 
 			return $setting;
