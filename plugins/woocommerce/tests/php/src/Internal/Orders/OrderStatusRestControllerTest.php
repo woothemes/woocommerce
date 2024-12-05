@@ -83,7 +83,7 @@ class OrderStatusRestControllerTest extends WC_REST_Unit_Test_Case {
 	 * Test permission check
 	 */
 	public function test_get_items_permission() {
-		// Test as guest user
+		// Test as guest user.
 		wp_set_current_user( 0 );
 		$request  = new WP_REST_Request( 'GET', '/wc/v3/orders/statuses' );
 		$response = $this->server->dispatch( $request );
