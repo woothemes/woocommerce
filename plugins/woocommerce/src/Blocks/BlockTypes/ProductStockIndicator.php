@@ -70,11 +70,11 @@ class ProductStockIndicator extends AbstractBlock {
 
 		$is_backorder_notification_visible = $product->is_in_stock() && $product->backorders_require_notification();
 
-		if ( empty( $content ) && $is_backorder_notification_visible ) {
+		if ( empty( $content ) && $is_backorder_notification_visible && $total_stock > 0 ) {
 			$low_stock_text = sprintf(
 				/* translators: %d is number of items in stock for product */
 				__( '%d left in stock', 'woocommerce' ),
-				$low_stock_amount
+				$total_stock
 			);
 		}
 
