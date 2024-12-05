@@ -137,7 +137,11 @@ export const updateReleaseBranchChangelogs = async (
 		await git.commit(
 			`Update the readme files for the ${ version } release`
 		);
-		await git.push( 'origin', commitDirectToBase ? releaseBranch : branch );
+		await git.push(
+			'origin',
+			commitDirectToBase ? releaseBranch : branch,
+			commitDirectToBase ? [] : [ '--force' ]
+		);
 		await git.checkout( '.' );
 
 		if ( commitDirectToBase ) {
@@ -203,7 +207,7 @@ export const updateTrunkChangelog = async (
 			[ branch ]: null,
 		} );
 		await git.raw( [ 'cherry-pick', deletionCommitHash ] );
-		await git.push( 'origin', branch );
+		await git.push( 'origin', branch, [ '--force' ] );
 		Logger.notice( `Creating PR for ${ branch }` );
 		const pullRequest = await createPullRequest( {
 			owner,
