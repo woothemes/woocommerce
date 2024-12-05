@@ -127,10 +127,6 @@ export const SettingsPaymentsMain = () => {
 					onDismiss={ () => {
 						console.log( 'dismissed' );
 					} }
-					isOpen={ true }
-					onClose={ () => {
-						console.log( 'close' );
-					} }
 					onSubmit={ () => {
 						console.log( 'submit' );
 					} }

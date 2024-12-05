@@ -27,14 +27,6 @@ interface IncentiveModalProps {
 	 */
 	incentive: PaymentIncentive;
 	/**
-	 * Whether the modal is open.
-	 */
-	isOpen: boolean;
-	/**
-	 * Callback to handle close action.
-	 */
-	onClose: () => void;
-	/**
 	 * Callback to handle submit action.
 	 */
 	onSubmit: () => void;
@@ -46,11 +38,15 @@ interface IncentiveModalProps {
 
 export const IncentiveModal = ( {
 	incentive,
-	isOpen,
-	onClose,
 	onSubmit,
+	onDismiss,
 }: IncentiveModalProps ) => {
 	const [ isBusy, setIsBusy ] = useState( false );
+	const [ isOpen, setIsOpen ] = useState( true );
+
+	const handleClose = () => {
+		setIsOpen( false );
+	};
 
 	return (
 		<>
@@ -58,7 +54,10 @@ export const IncentiveModal = ( {
 				<Modal
 					title=""
 					className="woocommerce-incentive-modal"
-					onRequestClose={ onClose }
+					onRequestClose={ () => {
+						onDismiss();
+						handleClose();
+					} }
 				>
 					<Card className={ 'woocommerce-incentive-modal__card' }>
 						<div className="woocommerce-incentive-modal__content">
@@ -129,6 +128,7 @@ export const IncentiveModal = ( {
 										setIsBusy( true );
 										onSubmit();
 										setIsBusy( false );
+										handleClose();
 									} }
 								>
 									{ incentive.cta_label }
