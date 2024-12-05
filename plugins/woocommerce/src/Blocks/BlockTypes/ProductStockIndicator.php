@@ -39,35 +39,6 @@ class ProductStockIndicator extends AbstractBlock {
 	}
 
 	/**
-	 * Get stock text based on stock. For example:
-	 * - In stock
-	 * - Out of stock
-	 * - Available on backorder
-	 * - 2 left in stock
-	 *
-	 * @param bool     $is_in_stock Whether the product is in stock.
-	 * @param bool     $is_low_stock Whether the product is low in stock.
-	 * @param int|null $low_stock_amount The amount of stock that is considered low.
-	 * @param bool     $is_on_backorder Whether the product is on backorder.
-	 * @return string Stock text.
-	 */
-	protected static function getTextBasedOnStock( $is_in_stock, $is_low_stock, $low_stock_amount, $is_on_backorder ) {
-		if ( $is_low_stock ) {
-			return sprintf(
-				/* translators: %d is number of items in stock for product */
-				__( '%d left in stock', 'woocommerce' ),
-				$low_stock_amount
-			);
-		} elseif ( $is_on_backorder ) {
-			return __( 'Available on backorder', 'woocommerce' );
-		} elseif ( $is_in_stock ) {
-			return __( 'In stock', 'woocommerce' );
-		} else {
-			return __( 'Out of stock', 'woocommerce' );
-		}
-	}
-
-	/**
 	 * Include and render the block.
 	 *
 	 * @param array    $attributes Block attributes. Default empty array.
@@ -97,7 +68,9 @@ class ProductStockIndicator extends AbstractBlock {
 		$classnames  = isset( $classes_and_styles['classes'] ) ? ' ' . $classes_and_styles['classes'] . ' ' : '';
 		$classnames .= sprintf( ' wc-block-components-product-stock-indicator--%s', $availability['class'] );
 
-		if ( empty( $content ) && $is_low_stock ) {
+		$is_backorder_notification_visible = $product->is_in_stock() && $product->backorders_require_notification();
+
+		if ( empty( $content ) && $is_backorder_notification_visible ) {
 			$low_stock_text = sprintf(
 				/* translators: %d is number of items in stock for product */
 				__( '%d left in stock', 'woocommerce' ),
