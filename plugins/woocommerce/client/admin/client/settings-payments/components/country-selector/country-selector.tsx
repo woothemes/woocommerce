@@ -175,7 +175,7 @@ export const CountrySelector = < ItemType extends Item >( {
 			return (
 				<img
 					src={
-						WC_ASSET_URL + 'images/settings-payments/clear-icon.svg'
+						WC_ASSET_URL + 'images/icons/clear.svg'
 					}
 					alt={ __( 'Clear search', 'woocommerce' ) }
 				/>
@@ -185,7 +185,7 @@ export const CountrySelector = < ItemType extends Item >( {
 		return (
 			<img
 				src={
-					WC_ASSET_URL + 'images/settings-payments/search-icon.svg'
+					WC_ASSET_URL + 'images/icons/search.svg'
 				}
 				alt={ __( 'Search', 'woocommerce' ) }
 			/>
