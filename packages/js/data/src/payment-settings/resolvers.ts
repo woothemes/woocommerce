@@ -14,13 +14,21 @@ import {
 import { PaymentProvidersResponse } from './types';
 import { WC_ADMIN_NAMESPACE } from '../constants';
 
-export function* getPaymentProviders() {
+export function* getPaymentProviders( country?: string ) {
 	yield getPaymentProvidersRequest();
+
+	const location =
+		country ||
+		global.window.wcSettings?.admin?.woocommerce_payments_nox_profile
+			?.location;
 
 	try {
 		const paymentProvidersResponse: PaymentProvidersResponse =
 			yield apiFetch( {
-				path: WC_ADMIN_NAMESPACE + '/settings/payments/providers',
+				path:
+					WC_ADMIN_NAMESPACE +
+					'/settings/payments/providers?' +
+					( location ? `location=${ location }` : '' ),
 			} );
 		yield getPaymentProvidersSuccess(
 			paymentProvidersResponse.providers,
@@ -33,6 +41,6 @@ export function* getPaymentProviders() {
 	}
 }
 
-export function* getOfflinePaymentGateways() {
-	yield getPaymentProviders();
+export function* getOfflinePaymentGateways( country?: string ) {
+	yield getPaymentProviders( country );
 }
