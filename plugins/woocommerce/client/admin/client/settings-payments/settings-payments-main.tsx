@@ -27,6 +27,11 @@ export const SettingsPaymentsMain = () => {
 
 	const [ errorMessage, setErrorMessage ] = useState< string | null >( null );
 
+	const [ storeCountry, setStoreCountry ] = useState< string | null >(
+		window.wcSettings?.admin?.woocommerce_payments_nox_profile?.location ||
+			'US'
+	);
+
 	const urlParams = new URLSearchParams( window.location.search );
 
 	useEffect( () => {
@@ -68,13 +73,13 @@ export const SettingsPaymentsMain = () => {
 			return {
 				providers: select(
 					PAYMENT_SETTINGS_STORE_NAME
-				).getPaymentProviders(),
+				).getPaymentProviders( storeCountry ),
 				suggestions: select(
 					PAYMENT_SETTINGS_STORE_NAME
-				).getSuggestions(),
+				).getSuggestions( storeCountry ),
 				suggestionCategories: select(
 					PAYMENT_SETTINGS_STORE_NAME
-				).getSuggestionCategories(),
+				).getSuggestionCategories( storeCountry ),
 				isFetching: select( PAYMENT_SETTINGS_STORE_NAME ).isFetching(),
 			};
 		} );
@@ -131,6 +136,8 @@ export const SettingsPaymentsMain = () => {
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
 					isFetching={ isFetching }
+					storeCountry={ storeCountry }
+					setStoreCountry={ setStoreCountry }
 				/>
 				<OtherPaymentGateways
 					suggestions={ suggestions }
