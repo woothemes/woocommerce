@@ -391,8 +391,17 @@ class OrderController {
 		$address = array_merge( $address, $additional_fields );
 
 		foreach ( $current_locale as $address_field_key => $address_field ) {
-			// If the field is required, but is not set or it's an empty string, we throw an error.
-			if ( $address_field['required'] && ( ! isset( $address[ $address_field_key ] ) || ( is_string( $address[ $address_field_key ] ) && '' === trim( $address[ $address_field_key ] ) ) ) ) {
+			// Skip validation if field is not required.
+			if ( ! $address_field['required'] ) {
+				continue;
+			}
+
+			// Check if field is not set, is an empty string, or is an empty array.
+			$is_empty = ! isset( $address[ $address_field_key ] ) ||
+				( is_string( $address[ $address_field_key ] ) && '' === trim( $address[ $address_field_key ] ) ) ||
+				( is_array( $address[ $address_field_key ] ) && 0 === count( $address[ $address_field_key ] ) );
+
+			if ( $is_empty ) {
 				/* translators: %s Field label. */
 				$errors->add( $address_type, sprintf( __( '%s is required', 'woocommerce' ), $address_field['label'] ), $address_field_key );
 			}
