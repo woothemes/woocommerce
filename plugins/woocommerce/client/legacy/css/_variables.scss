@@ -20,9 +20,6 @@ $highlightext:      desaturate(lighten($highlight, 80%), 18%) !default;  // Text
 $contentbg:         #fff !default;                                     // Content BG - Tabs (active state)
 $subtext:           #767676 !default;                                  // small, breadcrumbs etc
 
-$inputbordercolor: rgba(32, 7, 7, 0.8) !default;    					// $universal-border-strong;
-$inputborderradius: 4px !default;    									 // $universal-border-radius
-
 // export vars as CSS vars
 :root {
 	--woocommerce: #{$woocommerce};
@@ -35,9 +32,11 @@ $inputborderradius: 4px !default;    									 // $universal-border-radius
 	--wc-secondary: #{$secondary};
 	--wc-secondary-text: #{$secondarytext};
 	--wc-highlight: #{$highlight};
-	--wc-highligh-text: #{$highlightext};
+	--wc-highlight-text: #{$highlightext};
 	--wc-content-bg: #{$contentbg};
 	--wc-subtext: #{$subtext};
-	--wc-input-border-color: #{$inputbordercolor};
-	--wc-input-border-radius: #{$inputborderradius};
+	--wc-form-border-color: rgba(32, 7, 7, 0.8);
+	--wc-form-border-radius: 4px;
+	--wc-form-color-text: inherit;
+	--wc-form-border-width: 1px;
 }

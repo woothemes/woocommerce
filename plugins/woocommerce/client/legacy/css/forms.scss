@@ -70,8 +70,9 @@
 				letter-spacing: normal;
 				padding: .5em;
 				display: block;
-				border: 1px solid var(--wc-input-border-color);
-				border-radius: var(--wc-input-border-radius);
+				border: var(--wc-form-border-width) solid var(--wc-form-border-color);
+				border-radius: var(--wc-form-border-radius);
+				color: var(--wc-form-color-text);
 				box-sizing: border-box;
 				width: 100%;
 				margin: 0;
@@ -89,10 +90,10 @@
 				/* We hide the default chevron because it cannot be directly modified. Instead, we add a custom chevron using a background image. */
 				appearance: none;
 				padding-right: 3em;
-				background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJmZWF0aGVyIGZlYXRoZXItY2hldnJvbi1kb3duIj48cG9seWxpbmUgcG9pbnRzPSI2IDkgMTIgMTUgMTggOSI+PC9wb2x5bGluZT48L3N2Zz4=)
-					no-repeat;
+				background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJmZWF0aGVyIGZlYXRoZXItY2hldnJvbi1kb3duIj48cG9seWxpbmUgcG9pbnRzPSI2IDkgMTIgMTUgMTggOSI+PC9wb2x5bGluZT48L3N2Zz4=);
+				background-repeat: no-repeat;
 				background-size: 16px;
-				background-position: calc(100% - 12px) 50%;
+				background-position: calc(100% - 0.5em) 50%;
 			}
 
 			textarea {
@@ -118,18 +119,21 @@
 			label {
 				color: var(--wc-red);
 			}
-
-			.select2-container,
 			input.input-text,
 			select {
+				border-color: var(--wc-red);
+			}
+			.select2-container:not(.select2-container--open) .select2-selection {
 				border-color: var(--wc-red);
 			}
 		}
 
 		&.woocommerce-validated {
-			.select2-container,
 			input.input-text,
 			select {
+				border-color: var(--wc-green);
+			}
+			.select2-container:not(.select2-container--open) .select2-selection {
 				border-color: var(--wc-green);
 			}
 		}

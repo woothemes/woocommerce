@@ -16,6 +16,11 @@ $highlights-color: var(--wc-highlight, #777335);
 @import "fonts";
 
 /**
+ * Forms
+ */
+@import "forms";
+
+/**
  * Global elements
  */
 a.button {
@@ -31,24 +36,14 @@ a.button {
 	}
 }
 
+body {
+	--wc-input-border-color: var(--form--border-color);
+	--wc-input-border-radius: var(--form--border-radius);
+	--wc-form-border-width: var(--form--border-width);
+	--wc-form-color-text: var(--form--color-text);
+}
+
 .woocommerce {
-
-	form .form-row {
-
-		.required {
-			color: #b22222;
-			text-decoration: none;
-			visibility: hidden;
-			// Only show optional by default.
-			&[title] {
-				border: 0 !important;
-			}
-		}
-
-		.optional {
-			visibility: visible;
-		}
-	}
 
 	form.woocommerce-form-login,
 	form.woocommerce-form-register {
@@ -1207,6 +1202,7 @@ button.reset_variations {
 				margin-bottom: 0.1rem;
 			}
 
+			select,
 			input,
 			.selection {
 				font-size: 1.5rem;
@@ -1306,7 +1302,8 @@ button.reset_variations {
 			font-size: 1.5rem;
 		}
 
-		input {
+		input,
+		select {
 			border: var(--form--border-width) solid var(--form--border-color);
 			font-size: 1.5rem;
 		}

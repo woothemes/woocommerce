@@ -37,26 +37,9 @@ a.button {
 	}
 }
 
-.woocommerce {
-	--wc-input-border-color: #ccc;
-	--wc-input-border-radius: 0;
-
-	form .form-row {
-
-		.required {
-			color: firebrick;
-			text-decoration: none;
-			visibility: hidden;
-			// Only show optional by default.
-			&[title] {
-				border: 0 !important;
-			}
-		}
-
-		.optional {
-			visibility: visible;
-		}
-	}
+body {
+	--wc-form-border-color: #ccc;
+	--wc-form-border-radius: 0;
 }
 
 .woocommerce-breadcrumb {

@@ -217,53 +217,14 @@ a.added_to_cart {
 */
 .woocommerce-page {
 	// Ensure text input fields aren't too small.
-	.input-text {
-		font-size: var(--wp--preset--font-size--small);
-		padding: 0.9em 1.1em;
-	}
-
-	select {
+	select,
+	.input-text,
+	.select2-container {
 		font-size: var(--wp--preset--font-size--small);
 	}
 
 	label {
 		margin-bottom: 0.7em;
-	}
-
-	// Ensure dropdowns are visually consistent with other form fields.
-	.select2-container {
-		.select2-selection,
-		.select2-search__field {
-			height: 3em;
-		}
-		.select2-selection,
-		.select2-search__field,
-		.select2-dropdown {
-			font-size: var(--wp--preset--font-size--small);
-			padding: 0.9em 1.1em;
-		}
-
-		.select2-dropdown .select2-search__field {
-			margin-bottom: 1em;
-		}
-
-		.select2-selection__rendered {
-			padding: 0;
-			line-height: 1em;
-			color: var(--wp--preset--color--contrast);
-		}
-
-		.select2-results__option:not(.select2-results__option--highlighted) {
-			color: #444;
-		}
-
-		.select2-selection .select2-selection__arrow {
-			position: absolute;
-			top: 0;
-			right: 0;
-			width: 3em;
-			height: 3em;
-		}
 	}
 }
 
