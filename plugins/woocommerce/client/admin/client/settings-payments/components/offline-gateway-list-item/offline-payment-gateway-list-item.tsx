@@ -8,7 +8,7 @@ import { type OfflinePaymentGateway } from '@woocommerce/data';
  * Internal dependencies
  */
 import sanitizeHTML from '~/lib/sanitize-html';
-import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
+import { PaymentGatewayButtons } from '~/settings-payments/components/payment-gateway-buttons';
 import {
 	DefaultDragHandle,
 	SortableContainer,
@@ -47,7 +47,7 @@ export const OfflinePaymentGatewayListItem = ( {
 				</div>
 				<div className="woocommerce-list__item-after">
 					<div className="woocommerce-list__item-after__actions">
-						<PaymentGatewayButton
+						<PaymentGatewayButtons
 							id={ gateway.id }
 							isOffline={ true }
 							enabled={ gateway.state.enabled }

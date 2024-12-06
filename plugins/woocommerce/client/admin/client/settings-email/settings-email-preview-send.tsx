@@ -7,7 +7,6 @@ import apiFetch from '@wordpress/api-fetch';
 import { useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { isValidEmail } from '@woocommerce/product-editor';
-import { WC_ADMIN_NAMESPACE } from '@woocommerce/data';
 
 type EmailPreviewSendProps = {
 	type: string;
@@ -39,7 +38,7 @@ export const EmailPreviewSend: React.FC< EmailPreviewSendProps > = ( {
 		setNotice( '' );
 		try {
 			const response: EmailPreviewSendResponse = await apiFetch( {
-				path: `${ WC_ADMIN_NAMESPACE }/settings/email/send-preview`,
+				path: 'wc-admin-email/settings/email/send-preview',
 				method: 'POST',
 				data: { email, type },
 			} );

@@ -8,6 +8,7 @@ declare global {
 			adminUrl: string;
 			currentUserId: number;
 			currentThemeIsFSETheme: boolean;
+			countries: Record< string, string >;
 			admin: {
 				wcpay_welcome_page_connect_nonce: string;
 				currentUserData: {

@@ -58,8 +58,7 @@ abstract class ObjectCache {
 
 	/**
 	 * Gets an identifier for the types of objects cached by this class.
-	 * This identifier will be used to compose the keys passed to the cache engine,
-	 * to the name of the option that stores the cache prefix, and the names of the hooks used.
+	 * This identifier will be used to compose the keys passed to the cache engine.
 	 * It must be unique for each class inheriting from ObjectCache.
 	 *
 	 * @return string
