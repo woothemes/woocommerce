@@ -103,13 +103,13 @@ class AdditionalPayments extends Payments {
 		// Always show task if the React-based Payments settings page is enabled and
 		// there are any gateways enabled (i.e. the Payments task is complete).
 		if ( Features::is_enabled( 'reactify-classic-payments-settings' ) &&
-			 self::has_gateways() ) {
+			self::has_gateways() ) {
 			return true;
 		}
 
 		// Show task if WooPayments is connected or if there are any suggested gateways in other category enabled.
 		// Note: For now, we rely on the old Payment Gateways Suggestions lists to determine the visibility of this task.
-		//       This will need to be updated to use the new Payment Extension Suggestions/ Payments Providers system.
+		// This will need to be updated to use the new Payment Extension Suggestions/ Payments Providers system.
 		$this->can_view_result = (
 			WooCommercePayments::is_connected() ||
 			self::has_enabled_other_category_gateways()

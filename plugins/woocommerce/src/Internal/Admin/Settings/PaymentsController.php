@@ -89,8 +89,8 @@ class PaymentsController {
 			foreach ( $menu as $index => $menu_item ) {
 				// Only add the badge markup if not already present and the menu item is the Payments menu item.
 				if ( 0 === strpos( $menu_item[0], $menu_title )
-					 && $menu_path === $menu_item[2]
-					 && false === strpos( $menu_item[0], $badge ) ) {
+					&& $menu_path === $menu_item[2]
+					&& false === strpos( $menu_item[0], $badge ) ) {
 
 					$menu[ $index ][0] .= $badge; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
@@ -155,7 +155,7 @@ class PaymentsController {
 		$gateways         = WC()->payment_gateways->get_available_payment_gateways();
 		$enabled_gateways = array_filter(
 			$gateways,
-			function( $gateway ) {
+			function ( $gateway ) {
 				return 'yes' === $gateway->enabled;
 			}
 		);
