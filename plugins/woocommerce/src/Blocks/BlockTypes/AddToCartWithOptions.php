@@ -35,7 +35,7 @@ class AddToCartWithOptions extends AbstractBlock {
 		add_filter( 'register_block_type_args', array( $this, 'add_core_button_variation_for_add_to_cart_button' ), 10, 2 );
 
 		// Extend core/block rendering.
-		add_filter( 'render_block', array( $this, 'render_product_add_to_cart_with_options_button' ), 10, 3 );
+		add_filter( 'render_block_core/button', array( $this, 'render_product_add_to_cart_with_options_button' ), 10, 3 );
 
 		add_filter( 'wc_add_to_cart_message_html', array( $this, 'add_to_cart_message_html_filter' ), 10, 2 );
 		add_filter( 'woocommerce_add_to_cart_redirect', array( $this, 'add_to_cart_redirect_filter' ), 10, 1 );
@@ -242,6 +242,12 @@ class AddToCartWithOptions extends AbstractBlock {
 			'type' => 'string',
 		);
 
+		if ( ! isset( $args['uses_context'] ) ) {
+			$args['uses_context'] = array();
+		}
+
+		$args['uses_context'][] = 'productId';
+
 		if ( ! isset( $args['variations'] ) ) {
 			$args['variations'] = array();
 		}
@@ -270,6 +276,8 @@ class AddToCartWithOptions extends AbstractBlock {
 	 * @return string
 	 */
 	public function render_product_add_to_cart_with_options_button( $block_content, $block, $block_instance ) {
+		global $product;
+
 		/*
 		 * Only extend the Add To Cart Button variation,
 		 * identified by the `withRole` attribute.
@@ -279,18 +287,20 @@ class AddToCartWithOptions extends AbstractBlock {
 		}
 
 		/*
-		 * Register the frontend script for the block.
+		 * Get the product object, first picking the productId from
+		 * the block context, then falling back to postId.
 		 */
-		$block_name = $this->block_name . '-button';
-		$path       = $this->asset_api->get_block_asset_build_path( $block_name . '-frontend' );
+		$product_id = isset( $block_instance->context['productId'] )
+			? $block_instance->context['productId']
+			: null;
 
-		$this->asset_api->register_script(
-			$block_name,
-			$path,
-			$this->integration_registry->get_all_registered_script_handles()
-		);
+		if ( ! $product_id ) {
+			$product_id = isset( $block_instance->context['postId'] )
+				? $block_instance->context['postId']
+				: null;
+		}
 
-		wp_enqueue_script( $block_name );
+		$product = wc_get_product( $product_id );
 
 		// Interactivity API - Namespace and Context.
 		$i_api_namespace     = $this->get_full_block_name();
@@ -309,10 +319,34 @@ class AddToCartWithOptions extends AbstractBlock {
 		) ) {
 			$processor->set_attribute( 'data-wc-interactive', $data_wc_interactive );
 
+			/*
+			 * Add the data-wc-on--click attribute to the button.
+			 * - Not applied to external products.
+			 */
 			if ( $processor->next_tag( array( 'tag_name' => 'a', 'class_name' => 'wp-element-button' ) ) ) {
-				$processor->set_attribute( 'data-wc-on--click', $data_wc_add_to_cart_action );
+				if ( $product->get_type() !== 'external' ) {
+					$processor->set_attribute( 'data-wc-on--click', $data_wc_add_to_cart_action );
+					
+				} else if ( method_exists( $product, 'add_to_cart_url' ) ) {
+					// set the url
+					$processor->set_attribute( 'href', $product->add_to_cart_url() );
+				}
 			}
 		}
+
+		/*
+		 * Register the frontend script for the block.
+		 */
+		$block_name = $this->block_name . '-button';
+		$path       = $this->asset_api->get_block_asset_build_path( $block_name . '-frontend' );
+
+		$this->asset_api->register_script(
+			$block_name,
+			$path,
+			$this->integration_registry->get_all_registered_script_handles()
+		);
+
+		wp_enqueue_script( $block_name );
 
 		return $processor->get_updated_html();
 	}
