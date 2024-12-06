@@ -1,11 +1,15 @@
 const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
-const {
-	goToPageEditor,
-	fillPageTitle,
+const { fillPageTitle } = require( '../../utils/editor' );
+
+/**
+ * External dependencies
+ */
+import {
+	addAProductToCart,
 	insertBlockByShortcut,
+	goToPageEditor,
 	publishPage,
-} = require( '../../utils/editor' );
-const { addAProductToCart } = require( '../../utils/cart' );
+} from '@woocommerce/e2e-utils-playwright';
 
 const simpleProductName = 'Single Simple Product';
 const simpleProductDesc = 'Lorem ipsum dolor sit amet.';
@@ -75,7 +79,7 @@ test.describe( 'Cart Block page', { tag: [ '@payments', '@services' ] }, () => {
 
 	test(
 		'can see empty cart, add and remove simple & cross sell product, increase to max quantity',
-		{ tag: [ '@could-be-unit-test' ] },
+		{ tag: [ '@could-be-lower-level-test' ] },
 		async ( { page, testPage } ) => {
 			await goToPageEditor( { page } );
 			await fillPageTitle( page, testPage.title );

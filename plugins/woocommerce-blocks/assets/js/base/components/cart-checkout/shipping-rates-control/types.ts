@@ -49,7 +49,7 @@ export interface ShippingRatesControlProps {
 	isLoadingRates: boolean;
 
 	// Rendered when there are no packages
-	noResultsMessage: ReactElement;
+	noResultsMessage?: ReactElement;
 
 	// Function to render a shipping rate
 	renderOption?: PackageRateRenderOption | undefined;

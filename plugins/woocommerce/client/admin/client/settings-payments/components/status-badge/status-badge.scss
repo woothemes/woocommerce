@@ -1,0 +1,20 @@
+.woocommerce-status-badge {
+	background: var(--Alias-bg-bg-surface-secondary, #f5f5f5);
+	border: none;
+	border-radius: var(--radius-primitive, 4px);
+
+	&--success {
+		background: var(--Alias-bg-bg-surface-success, #daffe0);
+		color: var(--Alias-text-text-success, #144722);
+	}
+
+	&--warning {
+		background: var(--Alias-bg-bg-surface-warning, #fff2d7);
+		color: var(--Alias-text-text-warning, #4d3716);
+	}
+
+	&--info {
+		background: var(--Alias-bg-bg-surface-secondary, #f5f5f5);
+		color: var(--Alias-text-text, #070707);
+	}
+}

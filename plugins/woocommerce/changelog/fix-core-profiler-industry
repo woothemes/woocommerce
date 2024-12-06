@@ -1,0 +1,4 @@
+Significance: minor
+Type: fix
+
+Fix incorrect industry type in profiler api

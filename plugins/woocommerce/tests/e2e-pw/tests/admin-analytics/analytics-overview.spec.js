@@ -45,7 +45,7 @@ const hidePerformanceSection = async () => {
 	const response =
 		await test.step( `Send POST request to hide Performance section`, async () => {
 			const request = page.request;
-			const url = `/wp-json/wp/v2/users/${ userId }`;
+			const url = `./wp-json/wp/v2/users/${ userId }`;
 			const params = { _locale: 'user' };
 			const dashboard_sections = JSON.stringify( [
 				{ key: 'store-performance', isVisible: false },
@@ -83,7 +83,7 @@ const resetSections = async () => {
 	const response =
 		await test.step( `Send POST request to reset all sections`, async () => {
 			const request = page.request;
-			const url = `/wp-json/wp/v2/users/${ userId }`;
+			const url = `./wp-json/wp/v2/users/${ userId }`;
 			const params = { _locale: 'user' };
 			const data = {
 				id: userId,
@@ -122,7 +122,7 @@ test.describe( 'Analytics pages', { tag: [ '@payments', '@services' ] }, () => {
 			const data = {
 				_fields: 'id',
 			};
-			const response = await request.get( '/wp-json/wp/v2/users/me', {
+			const response = await request.get( './wp-json/wp/v2/users/me', {
 				data,
 				headers,
 			} );
@@ -184,62 +184,74 @@ test.describe( 'Analytics pages', { tag: [ '@payments', '@services' ] }, () => {
 		}
 	} );
 
-	test.describe( 'moving sections', () => {
-		test( 'should not display move up for the top, or move down for the bottom section', async () => {
-			await test.step( `Check the top section`, async () => {
-				await buttons_ellipsis.first().click();
-				await expect( menuitem_moveUp ).toBeHidden();
-				await expect( menuitem_moveDown ).toBeVisible();
-				await page.keyboard.press( 'Escape' );
+	test.describe(
+		'moving sections',
+		{ tag: [ '@could-be-lower-level-test' ] },
+		() => {
+			test( 'should not display move up for the top, or move down for the bottom section', async () => {
+				await test.step( `Check the top section`, async () => {
+					await buttons_ellipsis.first().click();
+					await expect( menuitem_moveUp ).toBeHidden();
+					await expect( menuitem_moveDown ).toBeVisible();
+					await page.keyboard.press( 'Escape' );
+				} );
+
+				await test.step( `Check the bottom section`, async () => {
+					await buttons_ellipsis.last().click();
+					await expect( menuitem_moveDown ).toBeHidden();
+					await expect( menuitem_moveUp ).toBeVisible();
+					await page.keyboard.press( 'Escape' );
+				} );
 			} );
 
-			await test.step( `Check the bottom section`, async () => {
-				await buttons_ellipsis.last().click();
-				await expect( menuitem_moveDown ).toBeHidden();
-				await expect( menuitem_moveUp ).toBeVisible();
-				await page.keyboard.press( 'Escape' );
-			} );
-		} );
+			test( 'should allow a user to move a section down', async () => {
+				const firstSection = await headings_sections
+					.first()
+					.innerText();
+				const secondSection = await headings_sections
+					.nth( 1 )
+					.innerText();
 
-		test( 'should allow a user to move a section down', async () => {
-			const firstSection = await headings_sections.first().innerText();
-			const secondSection = await headings_sections.nth( 1 ).innerText();
+				await test.step( `Move first section down`, async () => {
+					await buttons_ellipsis.first().click();
+					await menuitem_moveDown.click();
+				} );
 
-			await test.step( `Move first section down`, async () => {
-				await buttons_ellipsis.first().click();
-				await menuitem_moveDown.click();
-			} );
+				await test.step( `Expect the second section to become first, and first becomes second.`, async () => {
+					await expect( headings_sections.first() ).toHaveText(
+						secondSection
+					);
 
-			await test.step( `Expect the second section to become first, and first becomes second.`, async () => {
-				await expect( headings_sections.first() ).toHaveText(
-					secondSection
-				);
-
-				await expect( headings_sections.nth( 1 ) ).toHaveText(
-					firstSection
-				);
-			} );
-		} );
-
-		test( 'should allow a user to move a section up', async () => {
-			const firstSection = await headings_sections.first().innerText();
-			const secondSection = await headings_sections.nth( 1 ).innerText();
-
-			await test.step( `Move second section up`, async () => {
-				await buttons_ellipsis.nth( 1 ).click();
-				await menuitem_moveUp.click();
+					await expect( headings_sections.nth( 1 ) ).toHaveText(
+						firstSection
+					);
+				} );
 			} );
 
-			await test.step( `Expect second section becomes first section, first becomes second`, async () => {
-				await expect( headings_sections.first() ).toHaveText(
-					secondSection
-				);
-				await expect( headings_sections.nth( 1 ) ).toHaveText(
-					firstSection
-				);
+			test( 'should allow a user to move a section up', async () => {
+				const firstSection = await headings_sections
+					.first()
+					.innerText();
+				const secondSection = await headings_sections
+					.nth( 1 )
+					.innerText();
+
+				await test.step( `Move second section up`, async () => {
+					await buttons_ellipsis.nth( 1 ).click();
+					await menuitem_moveUp.click();
+				} );
+
+				await test.step( `Expect second section becomes first section, first becomes second`, async () => {
+					await expect( headings_sections.first() ).toHaveText(
+						secondSection
+					);
+					await expect( headings_sections.nth( 1 ) ).toHaveText(
+						firstSection
+					);
+				} );
 			} );
-		} );
-	} );
+		}
+	);
 
 	test( 'should allow a user to remove a section', async () => {
 		await test.step( `Remove the Performance section`, async () => {

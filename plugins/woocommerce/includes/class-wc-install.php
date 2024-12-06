@@ -16,7 +16,6 @@ use Automattic\WooCommerce\Internal\ProductDownloads\ApprovedDirectories\Registe
 use Automattic\WooCommerce\Internal\ProductDownloads\ApprovedDirectories\Synchronize as Download_Directories_Sync;
 use Automattic\WooCommerce\Internal\Utilities\DatabaseUtil;
 use Automattic\WooCommerce\Internal\WCCom\ConnectionHelper as WCConnectionHelper;
-use Automattic\WooCommerce\Internal\Traits\AccessiblePrivateMethods;
 use Automattic\WooCommerce\Utilities\{ OrderUtil, PluginUtil };
 use Automattic\WooCommerce\Internal\Utilities\PluginInstaller;
 
@@ -26,8 +25,6 @@ defined( 'ABSPATH' ) || exit;
  * WC_Install Class.
  */
 class WC_Install {
-	use AccessiblePrivateMethods;
-
 	/**
 	 * DB updates and callbacks that need to be run per version.
 	 *
@@ -270,6 +267,9 @@ class WC_Install {
 			'wc_update_940_add_phone_to_order_address_fts_index',
 			'wc_update_940_remove_help_panel_highlight_shown',
 		),
+		'9.5.0' => array(
+			'wc_update_950_tracking_option_autoload',
+		),
 	);
 
 	/**
@@ -311,16 +311,18 @@ class WC_Install {
 		add_filter( 'plugin_row_meta', array( __CLASS__, 'plugin_row_meta' ), 10, 2 );
 		add_filter( 'wpmu_drop_tables', array( __CLASS__, 'wpmu_drop_tables' ) );
 		add_filter( 'cron_schedules', array( __CLASS__, 'cron_schedules' ) );
-		self::add_action( 'admin_init', array( __CLASS__, 'newly_installed' ) );
-		self::add_action( 'woocommerce_activate_legacy_rest_api_plugin', array( __CLASS__, 'maybe_install_legacy_api_plugin' ) );
+		add_action( 'admin_init', array( __CLASS__, 'newly_installed' ) );
+		add_action( 'woocommerce_activate_legacy_rest_api_plugin', array( __CLASS__, 'maybe_install_legacy_api_plugin' ) );
 	}
 
 	/**
 	 * Trigger `woocommerce_newly_installed` action for new installations.
 	 *
 	 * @since 8.0.0
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private static function newly_installed() {
+	public static function newly_installed() {
 		if ( 'yes' === get_option( self::NEWLY_INSTALLED_OPTION, false ) ) {
 			/**
 			 * Run when WooCommerce has been installed for the first time.
@@ -1239,8 +1241,10 @@ class WC_Install {
 	 *
 	 * In multisite setups it could happen that the plugin was installed by an installation process performed in another site.
 	 * In this case we check if the plugin was autoinstalled in such a way, and if so we activate it if the conditions are fulfilled.
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private static function maybe_install_legacy_api_plugin() {
+	public static function maybe_install_legacy_api_plugin() {
 		if ( self::is_new_install() ) {
 			return;
 		}
@@ -2570,9 +2574,9 @@ $hpos_table_schema;
 </ul>
 <!-- /wp:list -->
 
-<!-- wp:paragraph -->
-<h2>Refunds</h2>
-<!-- /wp:paragraph -->
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Refunds</h2>
+<!-- /wp:heading -->
 
 <!-- wp:paragraph -->
 <p>Once your return is received and inspected, we will send you an email to notify you that we have received your returned item. We will also notify you of the approval or rejection of your refund.</p>
@@ -2610,17 +2614,17 @@ $hpos_table_schema;
 <p>Only regular priced items may be refunded. Sale items cannot be refunded.</p>
 <!-- /wp:paragraph -->
 
-<!-- wp:paragraph -->
-<h2>Exchanges</h2>
-<!-- /wp:paragraph -->
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Exchanges</h2>
+<!-- /wp:heading -->
 
 <!-- wp:paragraph -->
 <p>We only replace items if they are defective or damaged. If you need to exchange it for the same item, send us an email at {email address} and send your item to: {physical address}.</p>
 <!-- /wp:paragraph -->
 
-<!-- wp:paragraph -->
-<h2>Gifts</h2>
-<!-- /wp:paragraph -->
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Gifts</h2>
+<!-- /wp:heading -->
 
 <!-- wp:paragraph -->
 <p>If the item was marked as a gift when purchased and shipped directly to you, you’ll receive a gift credit for the value of your return. Once the returned item is received, a gift certificate will be mailed to you.</p>
@@ -2630,9 +2634,9 @@ $hpos_table_schema;
 <p>If the item wasn’t marked as a gift when purchased, or the gift giver had the order shipped to themselves to give to you later, we will send a refund to the gift giver and they will find out about your return.</p>
 <!-- /wp:paragraph -->
 
-<!-- wp:paragraph -->
-<h2>Shipping returns</h2>
-<!-- /wp:paragraph -->
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Shipping returns</h2>
+<!-- /wp:heading -->
 
 <!-- wp:paragraph -->
 <p>To return your product, you should mail your product to: {physical address}.</p>
@@ -2650,9 +2654,9 @@ $hpos_table_schema;
 <p>If you are returning more expensive items, you may consider using a trackable shipping service or purchasing shipping insurance. We don’t guarantee that we will receive your returned item.</p>
 <!-- /wp:paragraph -->
 
-<!-- wp:paragraph -->
-<h2>Need help?</h2>
-<!-- /wp:paragraph -->
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Need help?</h2>
+<!-- /wp:heading -->
 
 <!-- wp:paragraph -->
 <p>Contact us at {email} for questions related to refunds and returns.</p>

@@ -16,7 +16,7 @@ import { AddressFormFields } from './types';
 export interface FieldProps {
 	id: string;
 	errorId: string;
-	label: string | undefined;
+	label: string;
 	autoCapitalize: string | undefined;
 	autoComplete: string | undefined;
 	errorMessage: string | undefined;
@@ -32,7 +32,7 @@ export const createFieldProps = (
 ): FieldProps => ( {
 	id: `${ formId }-${ field?.key }`.replaceAll( '/', '-' ), // Replace all slashes with hyphens to avoid invalid HTML ID.
 	errorId: `${ fieldAddressType }_${ field?.key }`,
-	label: field?.required ? field?.label : field?.optionalLabel,
+	label: ( field?.required ? field?.label : field?.optionalLabel ) || '',
 	autoCapitalize: field?.autocapitalize,
 	autoComplete: field?.autocomplete,
 	errorMessage: field?.errorMessage,

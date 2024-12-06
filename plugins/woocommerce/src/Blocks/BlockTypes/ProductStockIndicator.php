@@ -20,7 +20,7 @@ class ProductStockIndicator extends AbstractBlock {
 	 *
 	 * @var string
 	 */
-	protected $api_version = '2';
+	protected $api_version = '3';
 
 	/**
 	 * Register script and style assets for the block type before it is registered.
@@ -101,7 +101,6 @@ class ProductStockIndicator extends AbstractBlock {
 		$classes_and_styles = StyleAttributesUtils::get_classes_and_styles_by_attributes( $attributes );
 
 		$classnames  = isset( $classes_and_styles['classes'] ) ? ' ' . $classes_and_styles['classes'] . ' ' : '';
-		$classnames .= isset( $attributes['className'] ) ? ' ' . $attributes['className'] . ' ' : '';
 		$classnames .= ! $is_in_stock ? ' wc-block-components-product-stock-indicator--out-of-stock ' : '';
 		$classnames .= $is_in_stock ? ' wc-block-components-product-stock-indicator--in-stock ' : '';
 		$classnames .= $is_low_stock ? ' wc-block-components-product-stock-indicator--low-stock ' : '';

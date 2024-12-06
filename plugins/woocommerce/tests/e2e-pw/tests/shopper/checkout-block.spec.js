@@ -1,21 +1,25 @@
-const {
-	goToPageEditor,
-	fillPageTitle,
-	insertBlockByShortcut,
-	publishPage,
-} = require( '../../utils/editor' );
-const { addAProductToCart } = require( '../../utils/cart' );
+const { fillPageTitle } = require( '../../utils/editor' );
+const { request } = require( '@playwright/test' );
 const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
 
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const { admin, customer } = require( '../../test-data/data' );
+const { logIn } = require( '../../utils/login' );
 const { setFilterValue, clearFilters } = require( '../../utils/filters' );
+const { setOption } = require( '../../utils/options' );
 
-const {
+/**
+ * External dependencies
+ */
+import {
+	insertBlockByShortcut,
+	goToPageEditor,
+	publishPage,
+	addAProductToCart,
+	getOrderIdFromUrl,
 	fillShippingCheckoutBlocks,
 	fillBillingCheckoutBlocks,
-} = require( '../../utils/checkout' );
-const { getOrderIdFromUrl } = require( '../../utils/order' );
+} from '@woocommerce/e2e-utils-playwright';
 
 const guestEmail = 'checkout-guest@example.com';
 const newAccountEmail = `marge-${ new Date()
@@ -66,6 +70,25 @@ test.describe(
 				consumerSecret: process.env.CONSUMER_SECRET,
 				version: 'wc/v3',
 			} );
+			// Set field visibility options
+			await setOption(
+				request,
+				baseURL,
+				'woocommerce_checkout_phone_field',
+				'optional'
+			);
+			await setOption(
+				request,
+				baseURL,
+				'woocommerce_checkout_company_field',
+				'optional'
+			);
+			await setOption(
+				request,
+				baseURL,
+				'woocommerce_checkout_address_2_field',
+				'optional'
+			);
 			// make sure the currency is USD
 			await api.put( 'settings/general/woocommerce_currency', {
 				value: 'USD',
@@ -721,9 +744,7 @@ test.describe(
 			).toBeVisible();
 
 			await page.goto( 'wp-login.php' );
-			await page.locator( 'input[name="log"]' ).fill( admin.username );
-			await page.locator( 'input[name="pwd"]' ).fill( admin.password );
-			await page.locator( 'text=Log In' ).click();
+			await logIn( page, admin.username, admin.password, false );
 
 			// load the order placed as a guest
 			await page.goto(
@@ -820,9 +841,7 @@ test.describe(
 
 			// Switch to admin user.
 			await page.goto( 'wp-login.php?loggedout=true' );
-			await page.locator( 'input[name="log"]' ).fill( admin.username );
-			await page.locator( 'input[name="pwd"]' ).fill( admin.password );
-			await page.locator( 'text=Log In' ).click();
+			await logIn( page, admin.username, admin.password, false );
 
 			// load the order placed as a customer
 			await page.goto(
@@ -913,9 +932,7 @@ test.describe(
 
 			// sign in as admin to confirm account creation
 			await page.goto( 'wp-admin/users.php' );
-			await page.locator( 'input[name="log"]' ).fill( admin.username );
-			await page.locator( 'input[name="pwd"]' ).fill( admin.password );
-			await page.locator( 'text=Log in' ).click();
+			await logIn( page, admin.username, admin.password, false );
 			await expect( page.locator( 'tbody#the-list' ) ).toContainText(
 				newAccountEmail
 			);
@@ -1014,11 +1031,12 @@ test.describe(
 
 			// Log in again.
 			await page.goto( '/my-account/' );
-			await page
-				.locator( '#username' )
-				.fill( newAccountEmailWithCustomPassword );
-			await page.locator( '#password' ).fill( newAccountCustomPassword );
-			await page.locator( 'text=Log in' ).click();
+			await logIn(
+				page,
+				newAccountEmailWithCustomPassword,
+				newAccountCustomPassword,
+				false
+			);
 			await expect(
 				page.getByRole( 'heading', { name: 'My account' } )
 			).toBeVisible();

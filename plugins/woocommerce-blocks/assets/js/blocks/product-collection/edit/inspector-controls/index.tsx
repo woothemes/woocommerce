@@ -53,6 +53,11 @@ import FeaturedProductsControl from './featured-products-control';
 import CreatedControl from './created-control';
 import PriceRangeControl from './price-range-control';
 import LinkedProductControl from './linked-product-control';
+import WidthOptionsControl from './width-options-control';
+import RelatedByControl from './related-by-control';
+import ProductsPerPageControl from './products-per-page-control';
+import OffsetControl from './offset-control';
+import MaxPagesToShowControl from './max-pages-to-show-control';
 
 const prepareShouldShowFilter =
 	( hideControls: FilterName[] ) => ( filter: FilterName ) => {
@@ -63,7 +68,7 @@ const ProductCollectionInspectorControls = (
 	props: ProductCollectionContentProps
 ) => {
 	const { attributes, context, setAttributes } = props;
-	const { query, hideControls, displayLayout } = attributes;
+	const { query, hideControls, dimensions, displayLayout } = attributes;
 
 	const tracksLocation = useTracksLocation( context.templateSlug );
 	const trackInteraction = ( filter: FilterName ) =>
@@ -88,6 +93,14 @@ const ProductCollectionInspectorControls = (
 		! isArchiveTemplate && shouldShowFilter( CoreFilterNames.FILTERABLE );
 	const showOrderControl =
 		showQueryControls && shouldShowFilter( CoreFilterNames.ORDER );
+	const showOffsetControl =
+		showQueryControls && shouldShowFilter( CoreFilterNames.OFFSET );
+	const showMaxPagesToShowControl =
+		showQueryControls &&
+		shouldShowFilter( CoreFilterNames.MAX_PAGES_TO_SHOW );
+	const showProductsPerPageControl =
+		showQueryControls &&
+		shouldShowFilter( CoreFilterNames.PRODUCTS_PER_PAGE );
 	const showOnSaleControl = shouldShowFilter( CoreFilterNames.ON_SALE );
 	const showStockStatusControl = shouldShowFilter(
 		CoreFilterNames.STOCK_STATUS
@@ -116,6 +129,11 @@ const ProductCollectionInspectorControls = (
 		displayLayout,
 	};
 
+	const dimensionsControlProps = {
+		setAttributes,
+		dimensions,
+	};
+
 	const queryControlProps = {
 		setQueryAttribute: setQueryAttributeBind,
 		trackInteraction,
@@ -139,6 +157,7 @@ const ProductCollectionInspectorControls = (
 					);
 					props.setAttributes( defaultSettings );
 				} }
+				className="wc-block-editor-product-collection__settings_panel"
 			>
 				{ showInheritQueryControl && (
 					<InheritQueryControl { ...queryControlProps } />
@@ -147,9 +166,19 @@ const ProductCollectionInspectorControls = (
 					<FilterableControl { ...queryControlProps } />
 				) }
 				<LayoutOptionsControl { ...displayControlProps } />
+				<WidthOptionsControl { ...dimensionsControlProps } />
+				{ showProductsPerPageControl && (
+					<ProductsPerPageControl { ...queryControlProps } />
+				) }
 				<ColumnsControl { ...displayControlProps } />
 				{ showOrderControl && (
 					<OrderByControl { ...queryControlProps } />
+				) }
+				{ showOffsetControl && (
+					<OffsetControl { ...queryControlProps } />
+				) }
+				{ showMaxPagesToShowControl && (
+					<MaxPagesToShowControl { ...queryControlProps } />
 				) }
 			</ToolsPanel>
 
@@ -281,19 +310,28 @@ const CollectionSpecificControls = (
 
 	return (
 		<InspectorControls>
-			<PanelBody>
-				{
-					/**
-					 * Hand-Picked collection-specific controls.
-					 */
-					props.attributes.collection ===
-						'woocommerce/product-collection/hand-picked' && (
+			{
+				/**
+				 * Hand-Picked collection-specific controls.
+				 */
+				props.attributes.collection ===
+					'woocommerce/product-collection/hand-picked' && (
+					<PanelBody>
 						<HandPickedProductsControlField
 							{ ...queryControlProps }
 						/>
-					)
-				}
-			</PanelBody>
+					</PanelBody>
+				)
+			}
+			{
+				/**
+				 * "Related Products" collection-specific controls.
+				 */
+				props.attributes.collection ===
+					'woocommerce/product-collection/related' && (
+					<RelatedByControl { ...queryControlProps } />
+				)
+			}
 		</InspectorControls>
 	);
 };

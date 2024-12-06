@@ -71,7 +71,9 @@ const Editor = ( {
 		const productPreviewId = productPreview
 			? productPreview[ 0 ]?.id
 			: null;
-		if ( ! productPreviewId ) {
+
+		// If the product is set, do not override it with the preview.
+		if ( ! productPreviewId || productId ) {
 			return;
 		}
 
@@ -80,7 +82,7 @@ const Editor = ( {
 			productId: productPreviewId,
 		} );
 		setIsEditing( false );
-	}, [ attributes, productPreview, setAttributes ] );
+	}, [ attributes, productId, productPreview, setAttributes ] );
 
 	if ( error ) {
 		return (
