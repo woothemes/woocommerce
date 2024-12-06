@@ -321,7 +321,7 @@ wp.hooks.addAction(
 
 #### `experimental__woocommerce_blocks-checkout-set-email-address`
 
-Fired when an email address is added during checkout.
+Fired when the email address is added or changed on the Checkout block.
 
 ##### Args
 
@@ -333,7 +333,7 @@ This action has no arguments.
 wp.hooks.addAction(
 	'experimental__woocommerce_blocks-checkout-set-email-address',
 	'plugin/namespace',
-	( { product, quantity } ) => {
+	() => {
 		console.log( 'The email address was changed.' );
 	}
 );
@@ -341,7 +341,7 @@ wp.hooks.addAction(
 
 #### `experimental__woocommerce_blocks-checkout-set-shipping-address`
 
-Fired when a shipping address is added during checkout.
+Fired when the shipping address is added or changed on the Checkout block.
 
 ##### Args
 
@@ -353,7 +353,7 @@ This action has no arguments.
 wp.hooks.addAction(
 	'experimental__woocommerce_blocks-cart-set-shipping-address',
 	'plugin/namespace',
-	( { product, quantity } ) => {
+	() => {
 		console.log( 'The shipping address was changed.' );
 	}
 );
@@ -361,7 +361,7 @@ wp.hooks.addAction(
 
 #### `experimental__woocommerce_blocks-checkout-set-billing-address`
 
-Fired when a billing address is added during checkout.
+Fired when the billing address is added or changed on the Checkout block.
 
 ##### Args
 
@@ -373,7 +373,7 @@ This action has no arguments.
 wp.hooks.addAction(
 	'experimental__woocommerce_blocks-cart-set-billing-address',
 	'plugin/namespace',
-	( { product, quantity } ) => {
+	() => {
 		console.log( 'The billing address was changed.' );
 	}
 );
