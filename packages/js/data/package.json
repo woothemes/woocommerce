@@ -82,7 +82,7 @@
 		"@types/jest": "27.5.x",
 		"@types/lodash": "^4.14.202",
 		"@types/md5": "^2.3.5",
-		"@types/node": "^16.18.68",
+		"@types/node": "20.x.x",
 		"@types/qs": "^6.9.10",
 		"@types/react": "17.0.x",
 		"@types/wordpress__compose": "4.0.1",
@@ -98,7 +98,7 @@
 		"redux": "^4.2.1",
 		"rimraf": "5.0.5",
 		"ts-jest": "29.1.x",
-		"typescript": "5.3.x",
+		"typescript": "5.7.x",
 		"wireit": "0.14.3"
 	},
 	"peerDependencies": {

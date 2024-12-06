@@ -2371,7 +2371,7 @@ const stateOptions = {
 	'US:CO': 'United States (US) - Colorado',
 	'US:CT': 'United States (US) - Connecticut',
 	'US:DE': 'United States (US) - Delaware',
-	'US:DC': 'United States (US) - District Of Columbia',
+	'US:DC': 'United States (US) - District of Columbia',
 	'US:FL': 'United States (US) - Florida',
 	'US:GA': 'United States (US) - Georgia',
 	'US:HI': 'United States (US) - Hawaii',

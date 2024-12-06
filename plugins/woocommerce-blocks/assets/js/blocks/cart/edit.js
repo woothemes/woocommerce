@@ -88,7 +88,7 @@ export const Edit = ( { clientId, className, attributes, setAttributes } ) => {
 				<EditorProvider
 					previewData={ { previewCart } }
 					currentView={ currentView }
-					isPreview={ isPreview }
+					isPreview={ !! isPreview }
 				>
 					<CartBlockContext.Provider
 						value={ {

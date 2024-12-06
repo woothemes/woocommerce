@@ -11,11 +11,13 @@ import {
  * Internal dependencies
  */
 import './settings-payments-offline.scss';
+import './settings-payments-body.scss';
 import { OfflinePaymentGateways } from './components/offline-payment-gateways';
 
 export const SettingsPaymentsOffline = () => {
-	const { offlinePaymentGateways } = useSelect( ( select ) => {
+	const { offlinePaymentGateways, isFetching } = useSelect( ( select ) => {
 		return {
+			isFetching: select( PAYMENT_SETTINGS_STORE_NAME ).isFetching(),
 			offlinePaymentGateways: select(
 				PAYMENT_SETTINGS_STORE_NAME
 			).getOfflinePaymentGateways(),
@@ -31,6 +33,7 @@ export const SettingsPaymentsOffline = () => {
 	return (
 		<div className="settings-payments-offline__container">
 			<OfflinePaymentGateways
+				isFetching={ isFetching }
 				updateOrdering={ handleOrderingUpdate }
 				offlinePaymentGateways={ offlinePaymentGateways }
 			/>

@@ -7,12 +7,6 @@ import { createContext, useContext } from '@wordpress/element';
  * Context consumed by inner blocks.
  */
 export type CheckoutBlockContextProps = {
-	showCompanyField: boolean;
-	requireCompanyField: boolean;
-	showApartmentField: boolean;
-	requireApartmentField: boolean;
-	showPhoneField: boolean;
-	requirePhoneField: boolean;
 	showOrderNotes: boolean;
 	showPolicyLinks: boolean;
 	showReturnToCart: boolean;
@@ -21,25 +15,22 @@ export type CheckoutBlockContextProps = {
 	showFormStepNumbers: boolean;
 };
 
+const defaultCheckoutBlockContext = {
+	showOrderNotes: true,
+	showPolicyLinks: true,
+	showReturnToCart: true,
+	cartPageId: 0,
+	showRateAfterTaxName: false,
+	showFormStepNumbers: false,
+};
+
 export type CheckoutBlockControlsContextProps = {
 	addressFieldControls: () => JSX.Element | null;
 };
 
-export const CheckoutBlockContext: React.Context< CheckoutBlockContextProps > =
-	createContext< CheckoutBlockContextProps >( {
-		showCompanyField: false,
-		requireCompanyField: false,
-		showApartmentField: false,
-		requireApartmentField: false,
-		showPhoneField: false,
-		requirePhoneField: false,
-		showOrderNotes: true,
-		showPolicyLinks: true,
-		showReturnToCart: true,
-		cartPageId: 0,
-		showRateAfterTaxName: false,
-		showFormStepNumbers: false,
-	} );
+export const CheckoutBlockContext: React.Context<
+	Partial< CheckoutBlockContextProps >
+> = createContext< CheckoutBlockContextProps >( defaultCheckoutBlockContext );
 
 export const CheckoutBlockControlsContext: React.Context< CheckoutBlockControlsContextProps > =
 	createContext< CheckoutBlockControlsContextProps >( {
@@ -47,7 +38,11 @@ export const CheckoutBlockControlsContext: React.Context< CheckoutBlockControlsC
 	} );
 
 export const useCheckoutBlockContext = (): CheckoutBlockContextProps => {
-	return useContext( CheckoutBlockContext );
+	const context = useContext( CheckoutBlockContext );
+	return {
+		...defaultCheckoutBlockContext,
+		...context,
+	};
 };
 
 export const useCheckoutBlockControlsContext =
