@@ -10,6 +10,7 @@ import { TaskType } from '@woocommerce/data';
 import { ShippingRecommendation as _ShippingRecommendation } from '../shipping-recommendation';
 import { ShippingRecommendationProps, TaskProps } from '../types';
 import { redirectToWCSSettings } from '../utils';
+import userEvent from '@testing-library/user-event';
 
 jest.mock( '../../tax/utils', () => ( {
 	hasCompleteAddress: jest.fn().mockReturnValue( true ),
@@ -126,7 +127,7 @@ describe( 'ShippingRecommendation', () => {
 		expect( redirectToWCSSettings ).toHaveBeenCalled();
 	} );
 
-	test( 'should allow location step to be manually navigated', () => {
+	test( 'should allow location step to be manually navigated', async () => {
 		const { getByText } = render(
 			<ShippingRecommendation
 				isJetpackConnected={ true }
@@ -135,7 +136,7 @@ describe( 'ShippingRecommendation', () => {
 			/>
 		);
 
-		getByText( 'Set store location' ).click();
+		await userEvent.click( getByText( 'Set store location' ) );
 		expect( getByText( 'Address' ) ).toBeInTheDocument();
 	} );
 } );
