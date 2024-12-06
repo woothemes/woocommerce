@@ -3846,6 +3846,9 @@ importers:
       '@types/wordpress__block-editor':
         specifier: 6.0.6
         version: 6.0.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@types/wordpress__block-library':
+        specifier: 2.6.3
+        version: 2.6.3
       '@types/wordpress__blocks':
         specifier: 11.0.9
         version: 11.0.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -3960,6 +3963,12 @@ importers:
       '@wordpress/is-shallow-equal':
         specifier: 4.24.0
         version: 4.24.0
+      '@wordpress/jest-preset-default':
+        specifier: wp-6.0
+        version: 8.1.2(@babel/core@7.23.2)(jest@29.7.0(@types/node@20.17.8)(babel-plugin-macros@3.1.0)(node-notifier@8.0.2)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@wordpress/keyboard-shortcuts':
+        specifier: wp-6.4
+        version: 4.19.13(react@18.3.1)
       '@wordpress/postcss-plugins-preset':
         specifier: 1.6.0
         version: 1.6.0
@@ -10966,6 +10975,9 @@ packages:
   '@types/wordpress__block-library@2.6.1':
     resolution: {integrity: sha512-x+V2iqNZiCbNHwMLxszv0qHZ0ooYXZYisKxUIGTOhlrQDrYIiSIZG2+6UgS65UFnwGQve3EGP/RlMYIpQT6TyQ==}
 
+  '@types/wordpress__block-library@2.6.3':
+    resolution: {integrity: sha512-Rr5iO7k1j6B0d5N6ZSZjspE/Ko9fBrfTsytw8v2VgR4kGs8Z3KM/lg0Nb5UNqTBjbdv7eIvsuNvQcTzlc+IlJA==}
+
   '@types/wordpress__blocks@11.0.7':
     resolution: {integrity: sha512-8BcT3CUxHt73CepaLtQHAhA7uBhDOK9x5HJOAxzV+Bl37W04u4jSNulXxwX/6tI7t7Knux5lnN9bvKf/1sg+Rw==}
 
@@ -12376,12 +12388,16 @@ packages:
     resolution: {integrity: sha512-Z8F+ledkfkcKDuS1c/RkM0dEWdfv2AXs6bCgey89p0atJSscf7qYbMJR9zE5rZ5aqXyFfV0DAFKJEgayNqneNQ==}
     engines: {node: '>=12'}
 
+  '@wordpress/interactivity-router@1.8.0':
+    resolution: {integrity: sha512-i2Lb9008DmPyh/DyCWhvVkwUha2zhLqPfBtMAUQuwes2prDLyl8FnWVS6bwXXYpu6qKkLhFz6hzXt3O988u53Q==}
+    engines: {node: '>=12'}
+
   '@wordpress/interactivity-router@2.11.0':
     resolution: {integrity: sha512-p+PTsIpqiLU0+C8eqJYDBYF3fDBK1Ud8dagoBw/hpYZRFLgipWPeitQ6rGF1p85gJWQGeiZ3ENg5v621kFcNQQ==}
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
-  '@wordpress/interactivity@3.0.1':
-    resolution: {integrity: sha512-UCZvDUJ1AB9IQHjjPHqSDDzj4Y8/BaQruzfJe5II86FruZXBHZXx1DAZb5sAe4GCOAfatbHsIFnoUAEhLDJdjg==}
+  '@wordpress/interactivity@5.7.0':
+    resolution: {integrity: sha512-zB2CZwj4TWpE5OJtFfpma1OYvrsLTMgWpRJ2ojRuNqBruZfQAUqOXsn6JyTTWs6bgyd4dr/WOZay4Wr4isleUw==}
     engines: {node: '>=12'}
 
   '@wordpress/interactivity@6.14.0':
@@ -12445,6 +12461,15 @@ packages:
     engines: {node: '>=12'}
     peerDependencies:
       jest: '>=26'
+
+  '@wordpress/jest-preset-default@8.1.2':
+    resolution: {integrity: sha512-7zoXcBfhX3hS+qY9dZZ+x70uk4AnYMe0+VB28ekMPqZEI2NnIA0u1bsGuHnnf3CfSVBE8hzGIoeDP02QG16XrQ==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      '@babel/core': '>=7'
+      jest: '>=27'
+      react: ^17.0.0
+      react-dom: ^17.0.0
 
   '@wordpress/jest-preset-default@8.5.2':
     resolution: {integrity: sha512-xlo8LNDcjuXbb1OVI9SFDm2u6JeWXu945Jo8LtPtWbRgCfgBZfQh4Y/csMbkiiIRq/Hpi5/VK2WWJJXSe5EsRQ==}
@@ -15574,6 +15599,23 @@ packages:
       '@preact/signals': ^1.1.4
       '@preact/signals-core': ^1.3.1
       '@preact/signals-react': ^1.3.3
+      preact: ^10.16.0
+    peerDependenciesMeta:
+      '@preact/signals':
+        optional: true
+      '@preact/signals-core':
+        optional: true
+      '@preact/signals-react':
+        optional: true
+      preact:
+        optional: true
+
+  deepsignal@1.5.0:
+    resolution: {integrity: sha512-bFywDpBUUWMs576H2dgLFLLFuQ/UWXbzHfKD98MZTfGsl7+twIzvz4ihCNrRrZ/Emz3kqJaNIAp5eBWUEWhnAw==}
+    peerDependencies:
+      '@preact/signals': ^1.1.4
+      '@preact/signals-core': ^1.5.1
+      '@preact/signals-react': ^1.3.8 || ^2.0.0
       preact: ^10.16.0
     peerDependenciesMeta:
       '@preact/signals':
@@ -41785,8 +41827,6 @@ snapshots:
       uuid: 9.0.1
     transitivePeerDependencies:
       - '@emotion/is-prop-valid'
-      - '@preact/signals-core'
-      - '@preact/signals-react'
       - '@types/react'
       - '@types/react-dom'
       - bufferutil
@@ -42203,7 +42243,7 @@ snapshots:
   '@wordpress/components@26.0.6(@babel/helper-module-imports@7.25.9)(@babel/types@7.26.0)(@types/react@18.3.16)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@ariakit/react': 0.3.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@babel/runtime': 7.23.6
+      '@babel/runtime': 7.26.0
       '@emotion/cache': 11.11.0
       '@emotion/css': 11.11.2
       '@emotion/react': 11.11.1(@types/react@18.3.16)(react@18.3.1)
@@ -43452,8 +43492,6 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
     transitivePeerDependencies:
       - '@emotion/is-prop-valid'
-      - '@preact/signals-core'
-      - '@preact/signals-react'
       - '@types/react'
       - '@types/react-dom'
       - bufferutil
@@ -45443,7 +45481,7 @@ snapshots:
 
   '@wordpress/server-side-render@3.10.0(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react-with-direction@1.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@babel/runtime': 7.25.7
+      '@babel/runtime': 7.26.0
       '@wordpress/api-fetch': 6.21.0
       '@wordpress/blocks': 11.21.0(react@18.3.1)
       '@wordpress/components': 19.17.0(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react-with-direction@1.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
@@ -46173,7 +46211,7 @@ snapshots:
 
   array-buffer-byte-length@1.0.0:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.7
       is-array-buffer: 3.0.2
 
   array-differ@3.0.0: {}
@@ -46214,7 +46252,7 @@ snapshots:
 
   array.prototype.filter@1.0.3:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.7
       define-properties: 1.2.1
       es-abstract: 1.22.3
       es-array-method-boxes-properly: 1.0.0
@@ -46259,7 +46297,7 @@ snapshots:
 
   array.prototype.reduce@1.0.6:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.7
       define-properties: 1.2.1
       es-abstract: 1.22.3
       es-array-method-boxes-properly: 1.0.0
@@ -46276,10 +46314,10 @@ snapshots:
   arraybuffer.prototype.slice@1.0.2:
     dependencies:
       array-buffer-byte-length: 1.0.0
-      call-bind: 1.0.5
+      call-bind: 1.0.7
       define-properties: 1.2.1
       es-abstract: 1.22.3
-      get-intrinsic: 1.2.2
+      get-intrinsic: 1.2.4
       is-array-buffer: 3.0.2
       is-shared-array-buffer: 1.0.2
 
@@ -46611,6 +46649,20 @@ snapshots:
       '@types/babel__core': 7.20.5
       babel-plugin-istanbul: 6.1.1
       babel-preset-jest: 26.6.2(@babel/core@7.26.0)
+      chalk: 4.1.2
+      graceful-fs: 4.2.11
+      slash: 3.0.0
+    transitivePeerDependencies:
+      - supports-color
+
+  babel-jest@27.5.1(@babel/core@7.23.2):
+    dependencies:
+      '@babel/core': 7.23.2
+      '@jest/transform': 27.5.1
+      '@jest/types': 27.5.1
+      '@types/babel__core': 7.20.5
+      babel-plugin-istanbul: 6.1.1
+      babel-preset-jest: 27.5.1(@babel/core@7.23.2)
       chalk: 4.1.2
       graceful-fs: 4.2.11
       slash: 3.0.0
@@ -47282,6 +47334,12 @@ snapshots:
       '@babel/core': 7.26.0
       babel-plugin-jest-hoist: 26.6.2
       babel-preset-current-node-syntax: 1.0.1(@babel/core@7.26.0)
+
+  babel-preset-jest@27.5.1(@babel/core@7.23.2):
+    dependencies:
+      '@babel/core': 7.23.2
+      babel-plugin-jest-hoist: 27.5.1
+      babel-preset-current-node-syntax: 1.0.1(@babel/core@7.23.2)
 
   babel-preset-jest@27.5.1(@babel/core@7.23.5):
     dependencies:
@@ -49641,9 +49699,9 @@ snapshots:
 
   define-data-property@1.1.1:
     dependencies:
-      get-intrinsic: 1.2.2
+      get-intrinsic: 1.2.4
       gopd: 1.0.1
-      has-property-descriptors: 1.0.1
+      has-property-descriptors: 1.0.2
 
   define-data-property@1.1.4:
     dependencies:
@@ -50153,7 +50211,7 @@ snapshots:
       object-is: 1.1.5
       object.assign: 4.1.5
       object.entries: 1.1.7
-      object.values: 1.1.7
+      object.values: 1.2.0
       raf: 3.4.1
       rst-selector-parser: 2.2.3
       string.prototype.trim: 1.2.8
@@ -50192,18 +50250,18 @@ snapshots:
       array-buffer-byte-length: 1.0.0
       arraybuffer.prototype.slice: 1.0.2
       available-typed-arrays: 1.0.5
-      call-bind: 1.0.5
+      call-bind: 1.0.7
       es-set-tostringtag: 2.0.2
       es-to-primitive: 1.2.1
       function.prototype.name: 1.1.6
-      get-intrinsic: 1.2.2
+      get-intrinsic: 1.2.4
       get-symbol-description: 1.0.0
       globalthis: 1.0.3
       gopd: 1.0.1
-      has-property-descriptors: 1.0.1
-      has-proto: 1.0.1
+      has-property-descriptors: 1.0.2
+      has-proto: 1.0.3
       has-symbols: 1.0.3
-      hasown: 2.0.0
+      hasown: 2.0.2
       internal-slot: 1.0.6
       is-array-buffer: 3.0.2
       is-callable: 1.2.7
@@ -50239,7 +50297,7 @@ snapshots:
 
   es-get-iterator@1.1.3:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.7
       get-intrinsic: 1.2.2
       has-symbols: 1.0.3
       is-arguments: 1.1.1
@@ -52012,7 +52070,7 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       style-value-types: 5.0.0
-      tslib: 2.8.1
+      tslib: 2.6.3
     optionalDependencies:
       '@emotion/is-prop-valid': 0.8.8
 
@@ -52108,7 +52166,7 @@ snapshots:
 
   function.prototype.name@1.1.6:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.7
       define-properties: 1.2.1
       es-abstract: 1.22.3
       functions-have-names: 1.2.3
@@ -52197,8 +52255,8 @@ snapshots:
 
   get-symbol-description@1.0.0:
     dependencies:
-      call-bind: 1.0.5
-      get-intrinsic: 1.2.2
+      call-bind: 1.0.7
+      get-intrinsic: 1.2.4
 
   get-tsconfig@4.7.2:
     dependencies:
@@ -52496,7 +52554,7 @@ snapshots:
 
   gopd@1.0.1:
     dependencies:
-      get-intrinsic: 1.2.2
+      get-intrinsic: 1.2.4
 
   got@11.8.6:
     dependencies:
@@ -52974,7 +53032,7 @@ snapshots:
   html-element-map@1.3.1:
     dependencies:
       array.prototype.filter: 1.0.3
-      call-bind: 1.0.5
+      call-bind: 1.0.7
 
   html-encoding-sniffer@1.0.2:
     dependencies:
@@ -53501,7 +53559,7 @@ snapshots:
 
   is-array-buffer@3.0.2:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.7
       get-intrinsic: 1.2.2
       is-typed-array: 1.1.12
 
@@ -53528,7 +53586,7 @@ snapshots:
 
   is-boolean-object@1.1.2:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.7
       has-tostringtag: 1.0.0
 
   is-buffer@1.1.6: {}
@@ -53652,7 +53710,7 @@ snapshots:
 
   is-nan@1.3.2:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.7
       define-properties: 1.2.1
 
   is-negative-zero@2.0.2: {}
@@ -53732,7 +53790,7 @@ snapshots:
 
   is-shared-array-buffer@1.0.2:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.7
 
   is-stream@1.1.0: {}
 
@@ -53776,12 +53834,12 @@ snapshots:
 
   is-weakref@1.0.2:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.7
 
   is-weakset@2.0.2:
     dependencies:
-      call-bind: 1.0.5
-      get-intrinsic: 1.2.2
+      call-bind: 1.0.7
+      get-intrinsic: 1.2.4
 
   is-what@4.1.16: {}
 
@@ -56475,7 +56533,7 @@ snapshots:
       array-includes: 3.1.7
       array.prototype.flat: 1.3.2
       object.assign: 4.1.5
-      object.values: 1.1.7
+      object.values: 1.2.0
 
   junk@3.1.0: {}
 
@@ -58386,7 +58444,7 @@ snapshots:
 
   object-is@1.1.5:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.7
       define-properties: 1.2.1
 
   object-keys@1.1.1: {}
@@ -58406,7 +58464,7 @@ snapshots:
 
   object.assign@4.1.5:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.7
       define-properties: 1.2.1
       has-symbols: 1.0.3
       object-keys: 1.1.1
@@ -58420,7 +58478,7 @@ snapshots:
 
   object.entries@1.1.7:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.7
       define-properties: 1.2.1
       es-abstract: 1.22.3
 
@@ -58433,7 +58491,7 @@ snapshots:
   object.getownpropertydescriptors@2.1.7:
     dependencies:
       array.prototype.reduce: 1.0.6
-      call-bind: 1.0.5
+      call-bind: 1.0.7
       define-properties: 1.2.1
       es-abstract: 1.22.3
       safe-array-concat: 1.0.1
@@ -59988,7 +60046,7 @@ snapshots:
       call-bind: 1.0.7
       define-properties: 1.2.1
       es-abstract: 1.22.3
-      get-intrinsic: 1.2.2
+      get-intrinsic: 1.2.4
       iterate-value: 1.0.2
 
   promise.prototype.finally@3.1.7:
@@ -59996,7 +60054,7 @@ snapshots:
       call-bind: 1.0.7
       define-properties: 1.2.1
       es-abstract: 1.22.3
-      get-intrinsic: 1.2.2
+      get-intrinsic: 1.2.4
       set-function-name: 2.0.1
 
   promise@7.3.1:
@@ -60749,7 +60807,7 @@ snapshots:
       airbnb-prop-types: 2.16.0(react@18.3.1)
       consolidated-events: 2.0.2
       document.contains: 1.0.2
-      object.values: 1.1.7
+      object.values: 1.2.0
       prop-types: 15.8.1
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
@@ -61200,7 +61258,7 @@ snapshots:
 
   reflect.getprototypeof@1.0.4:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.7
       define-properties: 1.2.1
       es-abstract: 1.22.3
       get-intrinsic: 1.2.2
@@ -61246,7 +61304,7 @@ snapshots:
 
   regexp.prototype.flags@1.5.1:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.7
       define-properties: 1.2.1
       set-function-name: 2.0.1
 
@@ -61660,7 +61718,7 @@ snapshots:
 
   safe-array-concat@1.0.1:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.7
       get-intrinsic: 1.2.2
       has-symbols: 1.0.3
       isarray: 2.0.5
@@ -61675,8 +61733,8 @@ snapshots:
 
   safe-regex-test@1.0.0:
     dependencies:
-      call-bind: 1.0.5
-      get-intrinsic: 1.2.2
+      call-bind: 1.0.7
+      get-intrinsic: 1.2.4
       is-regex: 1.1.4
 
   safe-regex@1.1.0:
@@ -62575,19 +62633,19 @@ snapshots:
 
   string.prototype.trim@1.2.8:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.7
       define-properties: 1.2.1
       es-abstract: 1.22.3
 
   string.prototype.trimend@1.0.7:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.7
       define-properties: 1.2.1
       es-abstract: 1.22.3
 
   string.prototype.trimstart@1.0.7:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.7
       define-properties: 1.2.1
       es-abstract: 1.22.3
 
@@ -63044,7 +63102,7 @@ snapshots:
       csso: 4.2.0
       js-yaml: 3.14.1
       mkdirp: 0.5.6
-      object.values: 1.1.7
+      object.values: 1.2.0
       sax: 1.2.4
       stable: 0.1.8
       unquote: 1.1.1
@@ -63926,28 +63984,28 @@ snapshots:
 
   typed-array-buffer@1.0.0:
     dependencies:
-      call-bind: 1.0.5
-      get-intrinsic: 1.2.2
+      call-bind: 1.0.7
+      get-intrinsic: 1.2.4
       is-typed-array: 1.1.12
 
   typed-array-byte-length@1.0.0:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.7
       for-each: 0.3.3
-      has-proto: 1.0.1
+      has-proto: 1.0.3
       is-typed-array: 1.1.12
 
   typed-array-byte-offset@1.0.0:
     dependencies:
       available-typed-arrays: 1.0.5
-      call-bind: 1.0.5
+      call-bind: 1.0.7
       for-each: 0.3.3
-      has-proto: 1.0.1
+      has-proto: 1.0.3
       is-typed-array: 1.1.12
 
   typed-array-length@1.0.4:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.7
       for-each: 0.3.3
       is-typed-array: 1.1.12
 
@@ -63974,7 +64032,7 @@ snapshots:
 
   unbox-primitive@1.0.2:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.7
       has-bigints: 1.0.2
       has-symbols: 1.0.3
       which-boxed-primitive: 1.0.2
@@ -64380,7 +64438,7 @@ snapshots:
 
   util.promisify@1.1.2:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.7
       define-properties: 1.2.1
       for-each: 0.3.3
       has-proto: 1.0.1

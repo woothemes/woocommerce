@@ -16,11 +16,11 @@ import { withFakeTimers } from './with-fake-timers';
  * triggered by updates to the React tree, we manually tick fake timers and
  * await the resolution of the current block execution before proceeding.
  *
- * @param {Function} fn Function that to trigger.
+ * @param fn Function that to trigger.
  *
- * @return {*} The result of the function call.
+ * @return The result of the function call.
  */
-export async function waitForStoreResolvers( fn ) {
+export async function waitForStoreResolvers< T >( fn: () => T ) {
 	return withFakeTimers( async () => {
 		const result = fn();
 
@@ -32,7 +32,7 @@ export async function waitForStoreResolvers( fn ) {
 		// resolve before we consider the editor initialized is to flush micro tasks,
 		// similar to the approach found in `@testing-library/react`.
 		// https://github.com/callstack/react-native-testing-library/blob/a010ffdbca906615279ecc3abee423525e528101/src/flushMicroTasks.js#L15-L23.
-		// eslint-disable-next-line testing-library/no-unnecessary-act
+		// eslint-disable-next-line testing-library/no-unnecessary-act, @typescript-eslint/no-empty-function
 		await act( async () => {} );
 
 		return result;

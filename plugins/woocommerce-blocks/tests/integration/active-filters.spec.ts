@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import type { BlockAttributes } from '@wordpress/blocks';
 import { fireEvent, screen, within } from '@testing-library/react';
 
 /**
@@ -9,7 +10,7 @@ import { fireEvent, screen, within } from '@testing-library/react';
 import { initializeEditor, selectBlock } from '../utils/integration/editor';
 import '../../assets/js/blocks/active-filters';
 
-async function setup( attributes ) {
+async function setup( attributes: BlockAttributes ) {
 	const testBlock = [ { name: 'woocommerce/active-filters', attributes } ];
 	return initializeEditor( testBlock );
 }

@@ -1,12 +1,12 @@
 /**
  * Set up fake timers for executing a function and restores them afterwards.
  *
- * @param {Function} fn Function to trigger.
+ * @param fn Function to trigger.
  *
- * @return {*} The result of the function call.
+ * @return The result of the function call.
  */
 
-export async function withFakeTimers( fn ) {
+export async function withFakeTimers< T >( fn: () => T ) {
 	const usingFakeTimers = jest.isMockFunction( setTimeout );
 
 	// Portions of the React Native Animation API rely upon these APIs. However,
