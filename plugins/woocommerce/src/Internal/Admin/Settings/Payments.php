@@ -175,6 +175,22 @@ class Payments {
 	}
 
 	/**
+	 * Set the country for the payment providers.
+	 *
+	 * @param string $location The country code.
+	 */
+	public function set_country( string $location ): void {
+		$user_payments_nox_profile = get_user_meta( get_current_user_id(), self::USER_PAYMENTS_NOX_PROFILE_KEY, true );
+		if ( empty( $user_payments_nox_profile ) ) {
+			$user_payments_nox_profile = array();
+		} else {
+			$user_payments_nox_profile = maybe_unserialize( $user_payments_nox_profile );
+		}
+		$user_payments_nox_profile['location'] = $location;
+		update_user_meta( get_current_user_id(), self::USER_PAYMENTS_NOX_PROFILE_KEY, $user_payments_nox_profile );
+	}
+
+	/**
 	 * Get the source plugin slug of a payment gateway instance.
 	 *
 	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
