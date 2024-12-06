@@ -162,7 +162,10 @@ export const EllipsisMenuContent = ( {
 				.map( ( link: PaymentGatewayLink ) => {
 					const displayName = typeToDisplayName[ link._type ];
 					return displayName ? (
-						<div className="woocommerce-ellipsis-menu__content__item">
+						<div
+							className="woocommerce-ellipsis-menu__content__item"
+							key={ link._type }
+						>
 							<Button target="_blank" href={ link.url }>
 								{ displayName }
 							</Button>
@@ -171,7 +174,10 @@ export const EllipsisMenuContent = ( {
 				} ) }
 			<CardDivider />
 			{ isSuggestion && (
-				<div className="woocommerce-ellipsis-menu__content__item">
+				<div
+					className="woocommerce-ellipsis-menu__content__item"
+					key="hide-suggestion"
+				>
 					<Button
 						onClick={ hideSuggestion }
 						isBusy={ isHidingSuggestion }
@@ -182,7 +188,10 @@ export const EllipsisMenuContent = ( {
 				</div>
 			) }
 			{ ! isSuggestion && isWooPayments && ! needsSetup && testMode && (
-				<div className="woocommerce-ellipsis-menu__content__item">
+				<div
+					className="woocommerce-ellipsis-menu__content__item"
+					key="reset-account"
+				>
 					<Button
 						onClick={ resetWooPaymentsAccount }
 						isBusy={ isResetting }
@@ -194,7 +203,10 @@ export const EllipsisMenuContent = ( {
 				</div>
 			) }
 			{ ! isSuggestion && ! isEnabled && (
-				<div className="woocommerce-ellipsis-menu__content__item">
+				<div
+					className="woocommerce-ellipsis-menu__content__item"
+					key="deactivate"
+				>
 					<Button
 						className={ 'components-button__danger' }
 						onClick={ deactivateGateway }
@@ -206,7 +218,10 @@ export const EllipsisMenuContent = ( {
 				</div>
 			) }
 			{ ! isSuggestion && isEnabled && (
-				<div className="woocommerce-ellipsis-menu__content__item">
+				<div
+					className="woocommerce-ellipsis-menu__content__item"
+					key="disable"
+				>
 					<Button
 						className={ 'components-button__danger' }
 						onClick={ disableGateway }
