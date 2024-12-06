@@ -224,17 +224,19 @@ export const CountrySelector = < ItemType extends Item >( {
 				setSearchText( '' );
 			}
 
-			// Timeout the highlight to ensure the list is updated.
-			setTimeout( () => {
-				highlightSelectedCountry( items.indexOf( selectedItem ) );
-			}, 10 );
+			if ( selectedItem !== null ) {
+				// Timeout the highlight to ensure the list is updated.
+				setTimeout( () => {
+					highlightSelectedCountry( items.indexOf( selectedItem ) );
+				}, 10 );
+			}
 		},
 		[ searchText, selectedItem ]
 	);
 
 	useEffect( () => {
 		// Highlight the selected country when the menu is opened.
-		if ( isOpen ) {
+		if ( isOpen && selectedItem !== null ) {
 			const selectedItemIndex =
 				Array.from( visibleItems ).indexOf( selectedItem );
 			highlightSelectedCountry( selectedItemIndex );
