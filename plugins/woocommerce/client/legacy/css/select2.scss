@@ -11,6 +11,7 @@
 		padding: 0.5em;
 		line-height: normal;
 		box-sizing: border-box;
+		color: var(--wc-form-color-text, #444);
 	}
 
 	.select2-search--dropdown {
@@ -105,9 +106,9 @@
 }
 
 .select2-dropdown {
-	background-color: white;
-	border: var(--wc-form-border-width) solid var(--wc-form-border-color);
-	border-radius: var(--wc-form-border-radius);
+	background-color: var(--wc-form-color-background, #fff);
+	border: var(--wc-form-border-width, 1px) solid var(--wc-form-border-color, #aaa);
+	border-radius: var(--wc-form-border-radius, 4px);
 	box-sizing: border-box;
 	display: block;
 	position: absolute;
@@ -185,9 +186,9 @@
 .select2-container--default {
 
 	.select2-selection {
-		background-color: #fff;
-		border: var(--wc-form-border-width) solid var(--wc-form-border-color);
-		border-radius: var(--wc-form-border-radius);
+		background-color: var(--wc-form-color-background, #fff);
+		border: var(--wc-form-border-width, 1px) solid var(--wc-form-border-color, #aaa);
+		border-radius: var(--wc-form-border-radius, 4px);
 	}
 
 	.select2-selection--single {
@@ -281,8 +282,8 @@
 
 		.select2-selection__choice {
 			background-color: #e4e4e4;
-			border: var(--wc-form-border-width) solid var(--wc-form-border-color);
-			border-radius: var(--wc-form-border-radius);
+			border: var(--wc-form-border-width, 1px) solid var(--wc-form-border-color, #aaa);
+			border-radius: var(--wc-form-border-radius, 4px);
 			cursor: default;
 			float: left;
 			margin-right: 5px;
@@ -366,7 +367,7 @@
 	.select2-search--dropdown {
 
 		.select2-search__field {
-			border: var(--wc-form-border-width) solid var(--wc-form-border-color);
+			border: var(--wc-form-border-width, 1px) solid var(--wc-form-border-color, #aaa);
 		}
 	}
 

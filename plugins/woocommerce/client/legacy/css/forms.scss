@@ -70,6 +70,7 @@
 				letter-spacing: normal;
 				padding: .5em;
 				display: block;
+				background-color: var(--wc-form-color-background, #fff);
 				border: var(--wc-form-border-width) solid var(--wc-form-border-color);
 				border-radius: var(--wc-form-border-radius);
 				color: var(--wc-form-color-text);

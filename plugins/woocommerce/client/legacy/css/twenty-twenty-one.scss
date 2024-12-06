@@ -262,6 +262,7 @@ body {
 .woocommerce-page {
 
 	&.is-dark-theme {
+		--wc-form-color-background: var(--global--color-white-90);
 
 		.select2-dropdown {
 			color: var(--global--color-dark-gray);
