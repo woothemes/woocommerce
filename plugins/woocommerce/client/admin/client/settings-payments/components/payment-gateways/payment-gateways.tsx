@@ -142,12 +142,13 @@ export const PaymentGateways = ( {
 									'/settings/payments/country',
 								method: 'POST',
 								data: { location: value },
-							} );
-							await invalidateResolutionForStoreSelector(
-								'getPaymentProviders'
-							);
+							} ).then( async () => {
+								await invalidateResolutionForStoreSelector(
+									'getPaymentProviders'
+								);
 
-							setStoreCountry( value );
+								setStoreCountry( value );
+							} );
 						} }
 					/>
 				</div>
