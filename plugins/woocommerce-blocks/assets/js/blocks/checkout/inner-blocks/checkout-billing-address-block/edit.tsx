@@ -14,10 +14,7 @@ import {
 	AdditionalFields,
 	AdditionalFieldsContent,
 } from '../../form-step';
-import {
-	useCheckoutBlockContext,
-	useCheckoutBlockControlsContext,
-} from '../../context';
+import { useCheckoutBlockControlsContext } from '../../context';
 import Block from './block';
 import {
 	getBillingAddresssBlockTitle,
@@ -36,14 +33,6 @@ export const Edit = ( {
 	};
 	setAttributes: ( attributes: BlockAttributes ) => void;
 } ): JSX.Element | null => {
-	const {
-		showCompanyField,
-		requireCompanyField,
-		showApartmentField,
-		requireApartmentField,
-		showPhoneField,
-		requirePhoneField,
-	} = useCheckoutBlockContext();
 	const { addressFieldControls: Controls } =
 		useCheckoutBlockControlsContext();
 	const { showBillingFields, forcedBillingAddress, useBillingAsShipping } =
@@ -61,11 +50,6 @@ export const Edit = ( {
 		forcedBillingAddress
 	);
 
-	// This is needed to force the block to re-render when the requireApartmentField changes.
-	const blockKey = `billing-address-${
-		requireApartmentField ? 'visible' : 'hidden'
-	}-address-2`;
-
 	return (
 		<FormStepBlock
 			setAttributes={ setAttributes }
@@ -76,15 +60,7 @@ export const Edit = ( {
 			) }
 		>
 			<Controls />
-			<Block
-				key={ blockKey }
-				showCompanyField={ showCompanyField }
-				requireCompanyField={ requireCompanyField }
-				showApartmentField={ showApartmentField }
-				requireApartmentField={ requireApartmentField }
-				showPhoneField={ showPhoneField }
-				requirePhoneField={ requirePhoneField }
-			/>
+			<Block />
 			<AdditionalFields block={ innerBlockAreas.BILLING_ADDRESS } />
 		</FormStepBlock>
 	);

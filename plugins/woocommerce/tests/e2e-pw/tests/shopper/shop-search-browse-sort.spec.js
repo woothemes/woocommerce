@@ -1,15 +1,16 @@
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
+const { faker } = require( '@faker-js/faker' );
 
 const singleProductPrice1 = '979.99';
 const singleProductPrice2 = '989.99';
 const singleProductPrice3 = '999.99';
 
-const simpleProductName = 'AAA Search and Browse Product';
+const simpleProductName = faker.commerce.productName();
 
-const categoryA = 'Dogs';
-const categoryB = 'Cats';
-const categoryC = 'Fish';
+const categoryA = faker.commerce.department();
+const categoryB = faker.commerce.department();
+const categoryC = faker.commerce.department();
 
 let categoryAId, categoryBId, categoryCId, product1Id, product2Id, product3Id;
 

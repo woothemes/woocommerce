@@ -1,11 +1,15 @@
 const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
-const {
-	goToPageEditor,
-	fillPageTitle,
+const { fillPageTitle } = require( '../../utils/editor' );
+
+/**
+ * External dependencies
+ */
+import {
+	addAProductToCart,
 	insertBlockByShortcut,
+	goToPageEditor,
 	publishPage,
-} = require( '../../utils/editor' );
-const { addAProductToCart } = require( '../../utils/cart' );
+} from '@woocommerce/e2e-utils-playwright';
 
 const firstProductName = 'First Product';
 const firstProductPrice = '10.00';
