@@ -43,9 +43,7 @@ export const PaymentGateways = ( {
 	storeCountry,
 	setStoreCountry,
 }: PaymentGatewaysProps ) => {
-	const { invalidateResolutionForStoreSelector } = useDispatch(
-		PAYMENT_SETTINGS_STORE_NAME
-	);
+	const { invalidateResolution } = useDispatch( PAYMENT_SETTINGS_STORE_NAME );
 
 	const countryOptions = useMemo( () => {
 		return Object.entries( window.wcSettings.countries || [] )
@@ -137,10 +135,10 @@ export const PaymentGateways = ( {
 									'/settings/payments/country',
 								method: 'POST',
 								data: { location: value },
-							} ).then( async () => {
-								await invalidateResolutionForStoreSelector(
-									'getPaymentProviders'
-								);
+							} ).then( () => {
+								invalidateResolution( 'getPaymentProviders', [
+									value,
+								] );
 
 								setStoreCountry( value );
 							} );
