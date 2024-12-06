@@ -1,14 +1,19 @@
 /**
  * External dependencies
  */
-import { useState } from 'react';
 import { Gridicon } from '@automattic/components';
 import { List } from '@woocommerce/components';
 import { getAdminLink } from '@woocommerce/settings';
 import { __ } from '@wordpress/i18n';
-import { PaymentProvider } from '@woocommerce/data';
+import {
+	PAYMENT_SETTINGS_STORE_NAME,
+	PaymentProvider,
+	WC_ADMIN_NAMESPACE,
+} from '@woocommerce/data';
 import { useMemo } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
+import { useDispatch } from '@wordpress/data';
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
@@ -25,6 +30,8 @@ interface PaymentGatewaysProps {
 	installingPlugin: string | null;
 	setupPlugin: ( id: string, slug: string ) => void;
 	isFetching: boolean;
+	storeCountry: string | null;
+	setStoreCountry: ( country: string ) => void;
 }
 
 export const PaymentGateways = ( {
@@ -33,9 +40,14 @@ export const PaymentGateways = ( {
 	installingPlugin,
 	setupPlugin,
 	isFetching,
+	storeCountry,
+	setStoreCountry,
 }: PaymentGatewaysProps ) => {
 	const setupLivePayments = () => {};
-	const [ storeCountry, setStoreCountry ] = useState( 'US' );
+
+	const { invalidateResolutionForStoreSelector } = useDispatch(
+		PAYMENT_SETTINGS_STORE_NAME
+	);
 
 	const countryOptions = useMemo( () => {
 		return Object.entries( window.wcSettings.countries || [] )
@@ -123,7 +135,18 @@ export const PaymentGateways = ( {
 							) ?? { key: 'US', name: 'United States (US)' }
 						}
 						options={ countryOptions }
-						onChange={ ( value: string ) => {
+						onChange={ async ( value: string ) => {
+							await apiFetch( {
+								path:
+									WC_ADMIN_NAMESPACE +
+									'/settings/payments/country',
+								method: 'POST',
+								data: { location: value },
+							} );
+							await invalidateResolutionForStoreSelector(
+								'getPaymentProviders'
+							);
+
 							setStoreCountry( value );
 						} }
 					/>
