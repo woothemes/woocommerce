@@ -128,8 +128,8 @@ export const CountrySelector = < ItemType extends Item >( {
 		initialSelectedItem: value,
 		items: [ ...visibleItems ],
 		stateReducer,
-		onIsOpenChange: ( { isOpen }: { isOpen: boolean } ) => {
-			if ( isOpen ) {
+		onIsOpenChange: ( { open }: { open: boolean } ) => {
+			if ( open ) {
 				selectItem( value );
 				setHighlightedIndex( Array.from( items ).indexOf( value ) );
 			}
@@ -179,7 +179,7 @@ export const CountrySelector = < ItemType extends Item >( {
 	};
 
 	// Check if the search input is clearable.
-	const isSearchClearable = isSearchFocused && searchText !== '';
+	const isSearchClearable = searchText !== '';
 
 	const menuProps = getMenuProps( {
 		className: 'components-country-select-control__menu',
