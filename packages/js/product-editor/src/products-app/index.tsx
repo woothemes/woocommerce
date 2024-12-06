@@ -41,7 +41,7 @@ export function ProductsApp() {
 		<NewNavigationProvider>
 			<GlobalStylesProvider>
 				<UnsavedChangesWarning />
-				<RouterProvider>
+				<RouterProvider routes={ [] }>
 					<ProductsLayout />
 				</RouterProvider>
 			</GlobalStylesProvider>
