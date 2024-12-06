@@ -36,6 +36,7 @@ $actions            = array_filter(
 		return 'View' !== $action['name'];
 	}
 );
+
 // We make sure the order belongs to the user. This will also be true if the user is a guest, and the order belongs to a guest (userID === 0).
 $show_customer_details = $order->get_user_id() === get_current_user_id();
 
@@ -87,21 +88,17 @@ if ( $show_downloads ) {
 			?>
 		</tbody>
 
-		<?php if ( ! empty( $actions ) ) : ?>
+		<?php
+		if ( ! empty( $actions ) ) :
+			?>
 		<tfoot>
 			<tr>
-				<th style="vertical-align:middle">Actions: </th>
+				<th class="order-actions--heading"><?php esc_html_e( 'Actions', 'woocommerce' ); ?>:</th>
 				<td>
 						<?php
-						$actions     = wc_get_account_orders_actions( $order );
-						$actions     = array_filter(
-							$actions,
-							function ( $action ) {
-								return 'View' !== $action['name'];
-							}
-						);
-						$num_actions = count( $actions );
-						$i           = 0;
+						$num_actions     = count( $actions );
+						$wp_button_class = wc_wp_theme_get_element_class_name( 'button' ) ? ' ' . wc_wp_theme_get_element_class_name( 'button' ) : '';
+						$i               = 0;
 						foreach ( $actions as $key => $action ) { // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 							if ( empty( $action['aria-label'] ) ) {
 								// Generate the aria-label based on the action name.
@@ -110,7 +107,7 @@ if ( $show_downloads ) {
 							} else {
 								$action_aria_label = $action['aria-label'];
 							}
-								echo '<a href="' . esc_url( $action['url'] ) . '" class="woocommerce-button' . esc_attr( $wp_button_class ) . ' button ' . sanitize_html_class( $key ) . '" aria-label="' . esc_attr( $action_aria_label ) . '" style="' . ( ++$i === $num_actions ? '' : 'margin-right: 10px;' ) . '">' . esc_html( $action['name'] ) . '</a>';
+								echo '<a href="' . esc_url( $action['url'] ) . '" class="woocommerce-button' . esc_attr( $wp_button_class ) . ' button ' . sanitize_html_class( $key ) . ( ++$i === $num_actions ? '' : ' order-actions--buttons' ) . ' " aria-label="' . esc_attr( $action_aria_label ) . '">' . esc_html( $action['name'] ) . '</a>';
 								unset( $action_aria_label );
 						}
 						?>
@@ -151,5 +148,5 @@ if ( $show_downloads ) {
 do_action( 'woocommerce_after_order_details', $order );
 
 if ( $show_customer_details ) {
-	wc_get_template( 'order/order-details-customer.php', array( 'order' => $order ) );
+	wc_get_template( 'order / order - details - customer . php', array( 'order' => $order ) );
 }
