@@ -28,8 +28,8 @@ export type SelectProps = Omit<
 	label: string;
 	onChange: ( newVal: string ) => void;
 	errorId?: string;
-	required?: boolean;
-	errorMessage?: string;
+	required?: boolean | undefined;
+	errorMessage?: string | undefined;
 };
 
 export const Select = ( props: SelectProps ) => {

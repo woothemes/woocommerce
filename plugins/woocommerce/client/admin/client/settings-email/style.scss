@@ -13,8 +13,13 @@ $wc-setting-email-preview-gap: 16px;
 }
 
 .wc-settings-email-preview-controls {
+	align-items: center;
 	display: flex;
 	justify-content: space-between;
+
+	div {
+		margin-bottom: 0;
+	}
 }
 
 .wc-settings-email-preview-type {
@@ -36,6 +41,7 @@ $wc-setting-email-preview-gap: 16px;
 	display: grid;
 	grid-gap: 8px;
 	grid-template-columns: 32px 32px;
+	padding-right: 8px;
 
 	button {
 		align-items: center;
@@ -88,6 +94,43 @@ $wc-setting-email-preview-gap: 16px;
 
 .wc-settings-email-preview-mobile {
 	max-width: 360px;
+}
+
+.wc-settings-email-preview-send-modal {
+	width: 456px;
+}
+
+.wc-settings-email-preview-send-modal-notice {
+	align-items: center;
+	display: flex;
+
+	svg {
+		margin-right: 4px;
+	}
+}
+
+.wc-settings-email-preview-send-modal-notice-success {
+	svg {
+		fill: $alert-green;
+	}
+}
+
+.wc-settings-email-preview-send-modal-notice-error {
+	color: $alert-red;
+
+	svg {
+		fill: $alert-red;
+	}
+}
+
+.wc-settings-email-preview-send-modal-buttons {
+	display: flex;
+	justify-content: flex-end;
+	margin-top: $wc-setting-email-preview-gap * 2;
+
+	button {
+		margin-left: 12px;
+	}
 }
 
 .wc-settings-email-preview-header {
@@ -186,4 +229,15 @@ $wc-setting-email-preview-gap: 16px;
 			box-shadow: none;
 		}
 	}
+}
+
+.wc-settings-email-color-palette-title {
+	display: inline-block;
+	margin-right: 15px;
+}
+
+.wc-settings-email-color-palette-buttons {
+	align-items: center;
+	display: inline-flex;
+	gap: 12px;
 }
