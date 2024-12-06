@@ -156,7 +156,7 @@
           "menu_title": "Additional Checkout Fields",
           "tags": "reference",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/cart-and-checkout-blocks/additional-checkout-fields.md",
-          "hash": "79d03c2dbe66ff1bea1e40e58b83f304006b1ff52ffc22de6328d136a559cb84",
+          "hash": "aa38325787bc1a130bfa301209fbdd27544d9ed474c85bbbe761bf2106bf9e97",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/additional-checkout-fields.md",
           "id": "cb5dd8d59043a4e53929121b45da7b33b1661ab8"
         }
@@ -1859,5 +1859,5 @@
       "categories": []
     }
   ],
-  "hash": "5b316998f4853d5951eb3976cb3adb809a270afa21e027d7816174cc5cf9756c"
+  "hash": "0bf98586d4a5d056d60876c57d7d840a921ea9ed5e8a66af07076bf0b361e0c1"
 }
