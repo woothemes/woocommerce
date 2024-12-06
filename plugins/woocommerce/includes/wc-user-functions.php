@@ -8,6 +8,7 @@
  * @version 2.2.0
  */
 
+use Automattic\WooCommerce\Enums\OrderInternalStatus;
 use Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTableDataStore;
 use Automattic\WooCommerce\Internal\Utilities\Users;
 use Automattic\WooCommerce\Utilities\OrderUtil;
@@ -354,7 +355,7 @@ function wc_update_new_customer_past_orders( $customer_id ) {
 
 			do_action( 'woocommerce_update_new_customer_past_order', $order_id, $customer );
 
-			if ( $order->get_status() === 'wc-completed' ) {
+			if ( $order->get_status() === OrderInternalStatus::COMPLETED ) {
 				++$complete;
 			}
 
