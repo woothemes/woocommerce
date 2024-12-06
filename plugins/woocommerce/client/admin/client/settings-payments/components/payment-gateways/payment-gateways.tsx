@@ -43,8 +43,6 @@ export const PaymentGateways = ( {
 	storeCountry,
 	setStoreCountry,
 }: PaymentGatewaysProps ) => {
-	const setupLivePayments = () => {};
-
 	const { invalidateResolutionForStoreSelector } = useDispatch(
 		PAYMENT_SETTINGS_STORE_NAME
 	);
