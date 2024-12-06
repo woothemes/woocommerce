@@ -12,6 +12,7 @@ import { getAdminLink } from '@woocommerce/settings';
  */
 import { Header } from './components/header/header';
 import { ListPlaceholder } from '~/settings-payments/components/list-placeholder';
+import './settings-payments-main.scss';
 
 const SettingsPaymentsMainChunk = lazy(
 	() =>

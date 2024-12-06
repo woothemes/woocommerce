@@ -1,7 +1,8 @@
-const { test, expect } = require( '@playwright/test' );
+const { test, expect, request } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const { customer } = require( '../../test-data/data' );
 const { random } = require( '../../utils/helpers' );
+const { setOption } = require( '../../utils/options' );
 
 /**
  * External dependencies
@@ -47,6 +48,12 @@ test.describe.serial(
 			await api.put( 'settings/general/woocommerce_calc_taxes', {
 				value: 'yes',
 			} );
+			await setOption(
+				request,
+				baseURL,
+				'woocommerce_checkout_phone_field',
+				'required'
+			);
 		} );
 
 		test.afterAll( async ( { baseURL } ) => {
@@ -145,7 +152,7 @@ test.describe.serial(
 				} );
 
 				await test.step( 'Load shop page, confirm title and confirm price display', async () => {
-					await page.goto( '/shop/' );
+					await page.goto( 'shop/' );
 					await expect(
 						page.getByRole( 'heading', { name: 'Shop' } )
 					).toBeVisible();
@@ -159,7 +166,7 @@ test.describe.serial(
 				} );
 
 				await test.step( 'Load cart page and confirm price display', async () => {
-					await page.goto( '/cart/' );
+					await page.goto( 'cart/' );
 					await expect(
 						page.getByRole( 'heading', {
 							name: 'Cart',
@@ -184,7 +191,7 @@ test.describe.serial(
 				} );
 
 				await test.step( 'Load checkout page and confirm price display', async () => {
-					await page.goto( '/checkout/' );
+					await page.goto( 'checkout/' );
 					await expect(
 						page.getByRole( 'button', { name: 'Place order' } )
 					).toBeVisible();
@@ -224,7 +231,7 @@ test.describe.serial(
 				} );
 
 				await test.step( 'Load shop page and confirm price display', async () => {
-					await page.goto( '/shop/' );
+					await page.goto( 'shop/' );
 					await expect(
 						page.getByRole( 'heading', { name: 'Shop' } )
 					).toBeVisible();
@@ -232,7 +239,7 @@ test.describe.serial(
 				} );
 
 				await test.step( 'Load cart page and confirm price display', async () => {
-					await page.goto( '/cart/' );
+					await page.goto( 'cart/' );
 					await expect(
 						page.getByRole( 'heading', {
 							name: 'Cart',
@@ -254,7 +261,7 @@ test.describe.serial(
 				} );
 
 				await test.step( 'Load checkout page and confirm price display', async () => {
-					await page.goto( '/checkout/' );
+					await page.goto( 'checkout/' );
 					await expect(
 						page.getByRole( 'button', { name: 'Place order' } )
 					).toBeVisible();
@@ -328,7 +335,7 @@ test.describe.serial(
 				);
 
 				await test.step( 'Load shop page and confirm price suffix display', async () => {
-					await page.goto( '/shop/' );
+					await page.goto( 'shop/' );
 					await expect(
 						page.getByRole( 'heading', { name: 'Shop' } )
 					).toBeVisible();
@@ -455,7 +462,7 @@ test.describe.serial(
 				} );
 
 				await test.step( 'Load shop page and confirm price display', async () => {
-					await page.goto( '/shop/' );
+					await page.goto( 'shop/' );
 					await expect(
 						page.getByRole( 'heading', { name: 'Shop' } )
 					).toBeVisible();
@@ -466,7 +473,7 @@ test.describe.serial(
 				} );
 
 				await test.step( 'Load cart page and confirm price display', async () => {
-					await page.goto( '/cart/' );
+					await page.goto( 'cart/' );
 					await expect(
 						page.getByRole( 'heading', {
 							name: 'Cart',
@@ -515,7 +522,7 @@ test.describe.serial(
 				} );
 
 				await test.step( 'Load shop page and confirm price display', async () => {
-					await page.goto( '/shop/' );
+					await page.goto( 'shop/' );
 					await expect(
 						page.getByRole( 'heading', { name: 'Shop' } )
 					).toBeVisible();
@@ -526,7 +533,7 @@ test.describe.serial(
 				} );
 
 				await test.step( 'Load cart page and confirm price display', async () => {
-					await page.goto( '/cart/' );
+					await page.goto( 'cart/' );
 					await expect(
 						page.getByRole( 'heading', {
 							name: 'Cart',
@@ -682,7 +689,7 @@ test.describe.serial(
 				} );
 
 				await test.step( 'Load cart page and confirm price display', async () => {
-					await page.goto( '/cart/' );
+					await page.goto( 'cart/' );
 					await expect(
 						page.getByRole( 'heading', {
 							name: 'Cart',
@@ -707,7 +714,7 @@ test.describe.serial(
 				} );
 
 				await test.step( 'Load checkout page and confirm taxes displayed', async () => {
-					await page.goto( '/checkout/' );
+					await page.goto( 'checkout/' );
 					await expect(
 						page.getByRole( 'button', { name: 'Place order' } )
 					).toBeVisible();
@@ -777,7 +784,7 @@ test.describe.serial(
 				} );
 
 				await test.step( 'Load cart page and confirm price display', async () => {
-					await page.goto( '/cart/' );
+					await page.goto( 'cart/' );
 					await expect(
 						page.getByRole( 'heading', {
 							name: 'Cart',
@@ -802,7 +809,7 @@ test.describe.serial(
 				} );
 
 				await test.step( 'Load checkout page and confirm taxes displayed', async () => {
-					await page.goto( '/checkout/' );
+					await page.goto( 'checkout/' );
 					await expect(
 						page.getByRole( 'button', { name: 'Place order' } )
 					).toBeVisible();
@@ -956,7 +963,7 @@ test.describe.serial(
 				page,
 			} ) => {
 				await test.step( 'Load cart page and confirm price display', async () => {
-					await page.goto( '/cart/' );
+					await page.goto( 'cart/' );
 					await expect(
 						page.getByRole( 'heading', {
 							name: 'Cart',
@@ -987,7 +994,7 @@ test.describe.serial(
 				} );
 
 				await test.step( 'Load checkout page and confirm price display', async () => {
-					await page.goto( '/checkout/' );
+					await page.goto( 'checkout/' );
 					await expect(
 						page.getByRole( 'button', { name: 'Place order' } )
 					).toBeVisible();
