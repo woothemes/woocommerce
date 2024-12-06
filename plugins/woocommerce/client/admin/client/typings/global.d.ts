@@ -10,6 +10,9 @@ declare global {
 			currentThemeIsFSETheme: boolean;
 			countries: Record< string, string >;
 			admin: {
+				woocommerce_payments_nox_profile?: {
+					location: string;
+				};
 				wcpay_welcome_page_connect_nonce: string;
 				currentUserData: {
 					first_name: string;
