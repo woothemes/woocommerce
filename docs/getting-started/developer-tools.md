@@ -10,6 +10,8 @@ This guide provides an overview of essential tools and libraries for WooCommerce
 
 Use these resources to get a WooCommerce development environment up and running.
 
+### Development
+
 #### [wp-cli](https://wp-cli.org/)
 
 This is the command-line interface for [WordPress](https://wordpress.org/). You can update plugins, configure multisite installations and much more, without using a web browser.
@@ -25,6 +27,8 @@ This is an [ESLint](https://eslint.org/) plugin including configurations and cus
 #### [WordPress Scripts](https://www.npmjs.com/package/@wordpress/scripts)
 
 This is a collection of reusable scripts tailored for WordPress development.
+
+### Testing
 
 #### [Smooth Generator](https://github.com/woocommerce/wc-smooth-generator)
 

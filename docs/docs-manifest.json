@@ -925,7 +925,7 @@
           "menu_title": "Developer tools",
           "tags": "reference",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/getting-started/developer-tools.md",
-          "hash": "ad181d5ee8f4c3ea494a6dfca14dc938e0a4db92c7bf3470d4b858abdfc5d984",
+          "hash": "28233fa43d15cde53cb615459276777989ba25815011081443588f9d09670bc3",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/getting-started/developer-tools.md",
           "id": "2ed3659ae0153c8fb3252c417bb0eb43ea60f862"
         },
@@ -1864,5 +1864,5 @@
       "categories": []
     }
   ],
-  "hash": "924b84b4c94aa3d355483ae930f5b8e0aadaa8625160d15c5df3d36a2dcf6364"
+  "hash": "4117eb79faf84919783092970cb22aa22b9a1d2a38dc33aa0b35e3546c3c3f35"
 }
