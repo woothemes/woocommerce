@@ -33,8 +33,6 @@ export const PaymentGateways = ( {
 	setupPlugin,
 	isFetching,
 }: PaymentGatewaysProps ) => {
-	const setupLivePayments = () => {};
-
 	// Transform payment gateways to comply with List component format.
 	const providersList = useMemo(
 		() =>
@@ -53,7 +51,6 @@ export const PaymentGateways = ( {
 					case 'gateway':
 						return PaymentGatewayListItem( {
 							gateway: provider,
-							setupLivePayments,
 						} );
 					case 'offline_pms_group':
 						return {

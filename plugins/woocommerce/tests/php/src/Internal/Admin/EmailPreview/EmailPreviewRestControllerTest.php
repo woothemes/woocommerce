@@ -20,7 +20,7 @@ class EmailPreviewRestControllerTest extends WC_REST_Unit_Test_Case {
 	 *
 	 * @var string
 	 */
-	const ENDPOINT = '/wc-admin/settings/email';
+	const ENDPOINT = '/wc-admin-email/settings/email';
 
 	/**
 	 * Email address.
