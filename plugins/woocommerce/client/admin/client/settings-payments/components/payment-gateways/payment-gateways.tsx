@@ -4,10 +4,9 @@
 import { Gridicon } from '@automattic/components';
 import { List } from '@woocommerce/components';
 import { getAdminLink } from '@woocommerce/settings';
-import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { PaymentProvider } from '@woocommerce/data';
-import { useMemo } from '@wordpress/element';
+import { useMemo, useState } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 
 /**
@@ -16,6 +15,7 @@ import { decodeEntities } from '@wordpress/html-entities';
 import sanitizeHTML from '~/lib/sanitize-html';
 import { PaymentGatewayListItem } from '~/settings-payments/components/payment-gateway-list-item';
 import { PaymentExtensionSuggestionListItem } from '~/settings-payments/components/payment-extension-suggestion-list-item';
+import { CountrySelector } from '~/settings-payments/components/country-selector';
 import { ListPlaceholder } from '~/settings-payments/components/list-placeholder';
 
 interface PaymentGatewaysProps {
@@ -33,6 +33,18 @@ export const PaymentGateways = ( {
 	setupPlugin,
 	isFetching,
 }: PaymentGatewaysProps ) => {
+	const [ storeCountry, setStoreCountry ] = useState( 'US' );
+
+	const countryOptions = useMemo( () => {
+		return Object.entries( window.wcSettings.countries || [] )
+			.map( ( [ key, name ] ) => ( {
+				key,
+				name: decodeEntities( name ),
+				types: [],
+			} ) )
+			.sort( ( a, b ) => a.name.localeCompare( b.name ) );
+	}, [] );
+
 	// Transform payment gateways to comply with List component format.
 	const providersList = useMemo(
 		() =>
@@ -96,16 +108,19 @@ export const PaymentGateways = ( {
 					{ __( 'Payment providers', 'woocommerce' ) }
 				</div>
 				<div className="settings-payment-gateways__header-select-container">
-					<SelectControl
+					<CountrySelector
 						className="woocommerce-select-control__country"
-						prefix={ __( 'Business location :', 'woocommerce' ) }
+						label={ __( 'Business location :', 'woocommerce' ) }
 						placeholder={ '' }
-						label={ '' }
-						options={ [
-							{ label: 'United States', value: 'US' },
-							{ label: 'Canada', value: 'Canada' },
-						] }
-						onChange={ () => {} }
+						value={
+							countryOptions.find(
+								( country ) => country.key === storeCountry
+							) ?? { key: 'US', name: 'United States (US)' }
+						}
+						options={ countryOptions }
+						onChange={ ( value: string ) => {
+							setStoreCountry( value );
+						} }
 					/>
 				</div>
 			</div>
