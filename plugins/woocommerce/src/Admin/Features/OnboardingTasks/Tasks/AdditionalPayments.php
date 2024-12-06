@@ -119,6 +119,13 @@ class AdditionalPayments extends Payments {
 	 * @return string
 	 */
 	public function get_action_url() {
+		// If the React-based Payments settings page is enabled, link to the new Payments settings page.
+		if ( Features::is_enabled( 'reactify-classic-payments-settings' ) ) {
+			// We auto-expand the "Other" section to show the additional payment methods.
+			return admin_url( 'admin.php?page=wc-settings&tab=checkout&other_pes_section=expanded' );
+		}
+
+		// Otherwise, link to the Payments task page.
 		return admin_url( 'admin.php?page=wc-admin&task=payments' );
 	}
 
