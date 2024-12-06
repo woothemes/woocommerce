@@ -3,7 +3,8 @@
  */
 import clsx from 'clsx';
 import { __, sprintf } from '@wordpress/i18n';
-import { speak } from '@wordpress/a11y';
+import { noticeContexts } from '@woocommerce/base-context';
+import { createNotice } from '@woocommerce/base-utils';
 import QuantitySelector from '@woocommerce/base-components/quantity-selector';
 import ProductPrice from '@woocommerce/base-components/product-price';
 import ProductName from '@woocommerce/base-components/product-name';
@@ -328,7 +329,8 @@ const CartLineItemRow: React.ForwardRefExoticComponent<
 												quantity,
 											}
 										);
-										speak(
+										createNotice(
+											'info',
 											sprintf(
 												/* translators: %s refers to the item name in the cart. */
 												__(
@@ -336,7 +338,12 @@ const CartLineItemRow: React.ForwardRefExoticComponent<
 													'woocommerce'
 												),
 												name
-											)
+											),
+											{
+												context: noticeContexts.CART,
+												id: 'cart-item-removed',
+												type: 'snackbar',
+											}
 										);
 									} }
 									disabled={ isPendingDelete }
