@@ -128,9 +128,11 @@ export const CountrySelector = < ItemType extends Item >( {
 		initialSelectedItem: value,
 		items: [ ...visibleItems ],
 		stateReducer,
-		onIsOpenChange: () => {
-			selectItem( value );
-			setHighlightedIndex( Array.from( visibleItems ).indexOf( value ) );
+		onIsOpenChange: ( { isOpen }: { isOpen: boolean } ) => {
+			if ( isOpen ) {
+				selectItem( value );
+				setHighlightedIndex( Array.from( items ).indexOf( value ) );
+			}
 		},
 	} );
 
