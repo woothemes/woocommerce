@@ -122,18 +122,10 @@ export const CountrySelector = < ItemType extends Item >( {
 		highlightedIndex,
 		selectedItem,
 		closeMenu,
-		selectItem,
-		setHighlightedIndex,
 	} = useSelect< ItemType >( {
 		initialSelectedItem: value,
 		items: [ ...visibleItems ],
 		stateReducer,
-		onIsOpenChange: ( { open }: { open: boolean } ) => {
-			if ( open ) {
-				selectItem( value );
-				setHighlightedIndex( Array.from( items ).indexOf( value ) );
-			}
-		},
 	} );
 
 	const itemString = getOptionLabel( value.key, items );
