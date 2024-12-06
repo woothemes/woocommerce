@@ -360,4 +360,80 @@ test.describe( 'WooCommerce Email Settings', () => {
 			expect.stringContaining( '{store_email}' )
 		);
 	} );
+
+	test( 'Reset color palette with a feature flag', async ( {
+		page,
+		baseURL,
+	} ) => {
+		const resetButtonElement = '.wc-settings-email-color-palette-buttons';
+
+		// Disable the email_improvements feature flag
+		await setFeatureFlag( baseURL, 'no' );
+		await page.goto( 'wp-admin/admin.php?page=wc-settings&tab=email' );
+
+		await expect( page.locator( resetButtonElement ) ).toHaveCount( 0 );
+
+		// Enable the email_improvements feature flag
+		await setFeatureFlag( baseURL, 'yes' );
+		await page.reload();
+
+		await expect( page.locator( resetButtonElement ) ).toBeVisible();
+
+		// Change colors to make sure Reset button is active
+		const dummyColor = '#abcdef';
+		await page.fill( '#woocommerce_email_base_color', dummyColor );
+		await page.fill( '#woocommerce_email_background_color', dummyColor );
+		await page.fill(
+			'#woocommerce_email_body_background_color',
+			dummyColor
+		);
+		await page.fill( '#woocommerce_email_text_color', dummyColor );
+		await page.fill( '#woocommerce_email_footer_text_color', dummyColor );
+
+		// Reset colors to defaults
+		await page
+			.locator( resetButtonElement )
+			.getByText( 'Sync with theme', { exact: true } )
+			.click();
+
+		// Verify colors are reset
+		await expect(
+			page.locator( '#woocommerce_email_base_color' )
+		).not.toHaveValue( dummyColor );
+		await expect(
+			page.locator( '#woocommerce_email_background_color' )
+		).not.toHaveValue( dummyColor );
+		await expect(
+			page.locator( '#woocommerce_email_body_background_color' )
+		).not.toHaveValue( dummyColor );
+		await expect(
+			page.locator( '#woocommerce_email_text_color' )
+		).not.toHaveValue( dummyColor );
+		await expect(
+			page.locator( '#woocommerce_email_footer_text_color' )
+		).not.toHaveValue( dummyColor );
+
+		// Undo resetting
+		await page
+			.locator( resetButtonElement )
+			.getByText( 'Undo changes', { exact: true } )
+			.click();
+
+		// Verify colors are back to the state before resetting
+		await expect(
+			page.locator( '#woocommerce_email_base_color' )
+		).not.toHaveValue( dummyColor );
+		await expect(
+			page.locator( '#woocommerce_email_background_color' )
+		).not.toHaveValue( dummyColor );
+		await expect(
+			page.locator( '#woocommerce_email_body_background_color' )
+		).not.toHaveValue( dummyColor );
+		await expect(
+			page.locator( '#woocommerce_email_text_color' )
+		).not.toHaveValue( dummyColor );
+		await expect(
+			page.locator( '#woocommerce_email_footer_text_color' )
+		).not.toHaveValue( dummyColor );
+	} );
 } );

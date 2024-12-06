@@ -33,8 +33,6 @@ export const PaymentGateways = ( {
 	setupPlugin,
 	isFetching,
 }: PaymentGatewaysProps ) => {
-	const setupLivePayments = () => {};
-
 	// Transform payment gateways to comply with List component format.
 	const providersList = useMemo(
 		() =>
@@ -53,12 +51,12 @@ export const PaymentGateways = ( {
 					case 'gateway':
 						return PaymentGatewayListItem( {
 							gateway: provider,
-							setupLivePayments,
 						} );
 					case 'offline_pms_group':
 						return {
 							key: provider.id,
-							className: 'transitions-disabled',
+							className:
+								'clickable-list-item transitions-disabled',
 							title: <>{ provider.title }</>,
 							content: (
 								<>
@@ -71,21 +69,18 @@ export const PaymentGateways = ( {
 									/>
 								</>
 							),
-							after: (
-								<a
-									href={ getAdminLink(
-										'admin.php?page=wc-settings&tab=checkout&section=offline'
-									) }
-								>
-									<Gridicon icon="chevron-right" />
-								</a>
-							),
+							after: <Gridicon icon="chevron-right" />,
 							before: (
 								<img
 									src={ provider.icon }
 									alt={ provider.title + ' logo' }
 								/>
 							),
+							onClick: () => {
+								window.location.href = getAdminLink(
+									'admin.php?page=wc-settings&tab=checkout&section=offline'
+								);
+							},
 						};
 					default:
 						return null; // if unsupported type found
