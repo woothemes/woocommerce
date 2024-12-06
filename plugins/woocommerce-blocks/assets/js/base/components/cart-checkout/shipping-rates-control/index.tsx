@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useEffect } from '@wordpress/element';
+import { useEffect, useRef } from '@wordpress/element';
 import LoadingMask from '@woocommerce/base-components/loading-mask';
 import { ExperimentalOrderShippingPackages } from '@woocommerce/blocks-checkout';
 import {
@@ -70,14 +70,37 @@ const ShippingRatesControl = ( {
 	renderOption,
 	context,
 }: ShippingRatesControlProps ): JSX.Element => {
+	const shippingRatesRateCount = useRef(
+		getShippingRatesRateCount( shippingRates )
+	);
+	const shippingRatesPackageCount = useRef(
+		getShippingRatesRateCount( shippingRates )
+	);
+
 	useEffect( () => {
 		if ( isLoadingRates ) {
 			return;
 		}
+
+		const newShippingRatesRateCount =
+			getShippingRatesRateCount( shippingRates );
+		const newShippingRatesPackageCount =
+			getShippingRatesPackageCount( shippingRates );
+
+		if (
+			shippingRatesRateCount.current === newShippingRatesRateCount &&
+			shippingRatesPackageCount.current === newShippingRatesPackageCount
+		) {
+			return;
+		}
+
 		speakFoundShippingOptions(
-			getShippingRatesPackageCount( shippingRates ),
-			getShippingRatesRateCount( shippingRates )
+			newShippingRatesPackageCount,
+			newShippingRatesRateCount
 		);
+
+		shippingRatesRateCount.current = newShippingRatesRateCount;
+		shippingRatesPackageCount.current = newShippingRatesPackageCount;
 	}, [ isLoadingRates, shippingRates ] );
 
 	// Prepare props to pass to the ExperimentalOrderShippingPackages slot fill.
