@@ -7,7 +7,9 @@ const defaultValidityMessage =
 	( label: string | undefined ) =>
 	( validity: ValidityState ): string | undefined => {
 		const localeData = getLocaleData();
-		const shouldKeepOriginalCase = localeData?.[ '' ]?.lang === 'de';
+		const shouldKeepOriginalCase = [ 'de', 'de_AT', 'de_CH',  ].includes(
+			localeData?.[ '' ]?.lang
+		);
 
 		const fieldLabel = shouldKeepOriginalCase
 			? label
