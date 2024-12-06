@@ -46,5 +46,6 @@ export type PaymentSettingsSelectors = {
 		typeof getOfflinePaymentGateways
 	>;
 	getSuggestions: WPDataSelector< typeof getSuggestions >;
+	getSuggestionCategories: WPDataSelector< typeof getSuggestionCategories >;
 	isFetching: WPDataSelector< typeof isFetching >;
 } & WPDataSelectors;
