@@ -76,10 +76,10 @@ export const SettingsPaymentsMain = () => {
 				).getPaymentProviders( storeCountry ),
 				suggestions: select(
 					PAYMENT_SETTINGS_STORE_NAME
-				).getSuggestions( storeCountry ),
+				).getSuggestions(),
 				suggestionCategories: select(
 					PAYMENT_SETTINGS_STORE_NAME
-				).getSuggestionCategories( storeCountry ),
+				).getSuggestionCategories(),
 				isFetching: select( PAYMENT_SETTINGS_STORE_NAME ).isFetching(),
 			};
 		} );
