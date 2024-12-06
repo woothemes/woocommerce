@@ -1,0 +1,149 @@
+.woocommerce {
+	/**
+	 * Generic forms styles used in places such as my account and the shortcode based checkout.
+	 */
+	form .form-row {
+		padding: 3px;
+		margin: 0 0 6px;
+
+		[placeholder]:focus::-webkit-input-placeholder {
+			transition: opacity 0.5s 0.5s ease;
+			opacity: 0;
+		}
+
+		label {
+			line-height: 2;
+		}
+
+		label.hidden {
+			visibility: hidden;
+		}
+
+		label.inline {
+			display: inline;
+		}
+
+		.woocommerce-input-wrapper {
+			.description {
+				background: #1e85be;
+				color: #fff;
+				border-radius: 3px;
+				padding: 1em;
+				margin: 0.5em 0 0;
+				clear: both;
+				display: none;
+				position: relative;
+
+				a {
+					color: #fff;
+					text-decoration: underline;
+					border: 0;
+					box-shadow: none;
+				}
+
+				&::before {
+					left: 50%;
+					top: 0%;
+					margin-top: -4px;
+					transform: translateX(-50%) rotate(180deg);
+					content: "";
+					position: absolute;
+					border-width: 4px 6px 0 6px;
+					border-style: solid;
+					border-color: #1e85be transparent transparent transparent;
+					z-index: 100;
+					display: block;
+				}
+			}
+
+			.input-checkbox {
+				display: inline;
+				margin: -2px 8px 0 0;
+				text-align: center;
+				vertical-align: middle;
+			}
+
+			.input-text,
+			select {
+				font-family: inherit;
+				font-weight: normal;
+				letter-spacing: normal;
+				padding: .5em;
+				display: block;
+				border: 1px solid var(--wc-input-border-color);
+				border-radius: var(--wc-input-border-radius);
+				box-sizing: border-box;
+				width: 100%;
+				margin: 0;
+				line-height: normal;
+				height: auto;
+
+				&:focus {
+					border-color: currentColor;
+				}
+			}
+
+			select {
+				cursor: pointer;
+				line-height: normal;
+				/* We hide the default chevron because it cannot be directly modified. Instead, we add a custom chevron using a background image. */
+				appearance: none;
+				padding-right: 3em;
+				background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJmZWF0aGVyIGZlYXRoZXItY2hldnJvbi1kb3duIj48cG9seWxpbmUgcG9pbnRzPSI2IDkgMTIgMTUgMTggOSI+PC9wb2x5bGluZT48L3N2Zz4=)
+					no-repeat;
+				background-size: 16px;
+				background-position: calc(100% - 12px) 50%;
+			}
+
+			textarea {
+				height: 4em;
+				line-height: 1.5;
+				box-shadow: none;
+			}
+		}
+
+		.required {
+			color: var(--wc-red);
+			font-weight: 700;
+			border: 0 !important;
+			text-decoration: none;
+			visibility: hidden; // Only show optional by default.
+		}
+
+		.optional {
+			visibility: visible;
+		}
+
+		&.woocommerce-invalid {
+			label {
+				color: var(--wc-red);
+			}
+
+			.select2-container,
+			input.input-text,
+			select {
+				border-color: var(--wc-red);
+			}
+		}
+
+		&.woocommerce-validated {
+			.select2-container,
+			input.input-text,
+			select {
+				border-color: var(--wc-green);
+			}
+		}
+
+		::-webkit-input-placeholder {
+			line-height: normal;
+		}
+
+		:-moz-placeholder {
+			line-height: normal;
+		}
+
+		:-ms-input-placeholder {
+			line-height: normal;
+		}
+	}
+}
