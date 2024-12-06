@@ -174,9 +174,7 @@ export const CountrySelector = < ItemType extends Item >( {
 		if ( focused ) {
 			return (
 				<img
-					src={
-						WC_ASSET_URL + 'images/icons/clear.svg'
-					}
+					src={ WC_ASSET_URL + 'images/icons/clear.svg' }
 					alt={ __( 'Clear search', 'woocommerce' ) }
 				/>
 			);
@@ -184,9 +182,7 @@ export const CountrySelector = < ItemType extends Item >( {
 
 		return (
 			<img
-				src={
-					WC_ASSET_URL + 'images/icons/search.svg'
-				}
+				src={ WC_ASSET_URL + 'images/icons/search.svg' }
 				alt={ __( 'Search', 'woocommerce' ) }
 			/>
 		);
