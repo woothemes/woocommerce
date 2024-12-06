@@ -29,8 +29,11 @@ SCRIPT_PATH=$(
 echo "Setting up environment: $envName"
 
 if [ -f "$SCRIPT_PATH/envs/$envName/.env.enc" ]; then
-	echo "Found encrypted .env file for environment '$envName'"
+	echo "Found an encrypted .env file for environment '$envName'"
 	"$SCRIPT_PATH/bin/dotenv.sh" -d "$envName"
+elif [ -f "$SCRIPT_PATH/envs/$envName/.env" ]; then
+	echo "Found a non encrypted .env file for environment '$envName'. Will copy and overwrite the main .env (if it exists)"
+	cp "$SCRIPT_PATH/envs/$envName/.env" "$SCRIPT_PATH/.env"
 else
 	echo "No encrypted .env file found for environment '$envName'."
 	echo "Removing .env file if it exists."

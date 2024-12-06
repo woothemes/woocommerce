@@ -3,7 +3,8 @@
  */
 import { ValidatedTextInput } from '@woocommerce/blocks-components';
 import { AddressFormValues, ContactFormValues } from '@woocommerce/settings';
-import { useState, Fragment, useCallback } from '@wordpress/element';
+import { useState, Fragment, useCallback, useEffect } from '@wordpress/element';
+import { usePrevious } from '@woocommerce/base-hooks';
 import { __, sprintf } from '@wordpress/i18n';
 import { Button } from '@ariakit/react';
 
@@ -20,11 +21,19 @@ const AddressLine2Field = < T extends AddressFormValues | ContactFormValues >( {
 	value,
 }: AddressLineFieldProps< T > ): JSX.Element => {
 	const isFieldRequired = field?.required ?? false;
+	const previousIsFieldRequired = usePrevious( isFieldRequired );
 
 	// Display the input field if it has a value or if it is required.
 	const [ isFieldVisible, setIsFieldVisible ] = useState(
 		() => Boolean( value ) || isFieldRequired
 	);
+
+	// Re-render if the isFieldVisible prop changes.
+	useEffect( () => {
+		if ( previousIsFieldRequired !== isFieldRequired ) {
+			setIsFieldVisible( Boolean( value ) || isFieldRequired );
+		}
+	}, [ value, previousIsFieldRequired, isFieldRequired ] );
 
 	const handleHiddenInputChange = useCallback(
 		( newValue: string ) => {

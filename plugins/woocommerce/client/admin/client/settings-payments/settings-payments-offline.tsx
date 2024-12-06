@@ -11,6 +11,7 @@ import {
  * Internal dependencies
  */
 import './settings-payments-offline.scss';
+import './settings-payments-body.scss';
 import { OfflinePaymentGateways } from './components/offline-payment-gateways';
 
 export const SettingsPaymentsOffline = () => {

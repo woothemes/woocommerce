@@ -18,4 +18,4 @@ Plugins which draw on WordPress' core design aesthetic will benefit from future 
 
 - [WordPress Components library](https://wordpress.github.io/gutenberg/?path=/story/docs-introduction--page)
 - [Figma for WordPress](https://make.wordpress.org/design/2018/11/19/figma-for-wordpress/) | ([WordPress Design Library Figma](https://www.figma.com/file/e4tLacmlPuZV47l7901FEs/WordPress-Design-Library))
-- [WooCommerce Component Library](https://woocommerce.github.io/woocommerce-admin/)
+- [WooCommerce Component Library](https://woocommerce.github.io/woocommerce/)
