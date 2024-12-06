@@ -19,8 +19,13 @@ import { check, chevronDown, Icon } from '@wordpress/icons';
  */
 import { WC_ASSET_URL } from '~/utils/admin-settings';
 import { Item, ControlProps, UseSelectStateChangeOptionsProps } from './types';
-import { getOptionLabel } from './utils';
 import './country-selector.scss';
+
+// Retrieves the display label for a given value from a list of options.
+const getOptionLabel = ( value: string, options: Item[] ) => {
+	const item = options.find( ( option ) => option.key === value );
+	return item?.name ? item.name : '';
+};
 
 // State reducer to control selection navigation
 const stateReducer = < ItemType extends Item >(
@@ -89,7 +94,6 @@ export const CountrySelector = < ItemType extends Item >( {
 	children,
 }: ControlProps< ItemType > ): JSX.Element => {
 	const [ searchText, setSearchText ] = useState( '' );
-	const [ isSearchFocused, setSearchFocused ] = useState( false );
 
 	// only run filter every 200ms even if the user is typing
 	const throttledApplySearchToItems = useThrottle(
@@ -251,8 +255,6 @@ export const CountrySelector = < ItemType extends Item >( {
 								onChange={ ( { target } ) =>
 									setSearchText( target.value )
 								}
-								onFocus={ () => setSearchFocused( true ) }
-								onBlur={ () => setSearchFocused( false ) }
 								tabIndex={ -1 }
 								placeholder={ __( 'Search', 'woocommerce' ) }
 							/>
