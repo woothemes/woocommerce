@@ -14,7 +14,7 @@ You may wish to get data from the server into the client, and vice/versa. This d
 
 ### Where is data stored?
 
-All the data relating to a cart, customer, and order is stored on the server, either in the database or in the customer's session. When it is sent to the server, it is stored in [`@wordpress/data`])(https://developer.wordpress.org/block-editor/reference-guides/packages/packages-data/) data stores.
+All the data relating to a cart, customer, and order is stored on the server, either in the database or in the customer's session. When it is sent to the server, it is stored in [`@wordpress/data`](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-data/) data stores.
 
 ### How do I get my Server-side (PHP) data into the client (JavaScript) and vice/versa
 
