@@ -7,12 +7,6 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
 import { ORDER_FORM_KEYS } from '@woocommerce/block-settings';
 import { Form } from '@woocommerce/base-components/cart-checkout';
-import type { FunctionComponent } from 'react';
-
-/**
- * Internal dependencies
- */
-import { apiFetchWithHeaders } from '../../../../data/shared-controls';
 
 const Block: FunctionComponent = () => {
 	const { additionalFields } = useSelect( ( select ) => {
@@ -26,13 +20,6 @@ const Block: FunctionComponent = () => {
 
 	const onChangeForm = ( additionalValues ) => {
 		setAdditionalFields( additionalValues );
-		apiFetchWithHeaders( {
-			path: '/wc/store/v1/checkout',
-			method: 'PUT',
-			data: {
-				additional_fields: additionalValues,
-			},
-		} );
 	};
 
 	const additionalFieldValues = {

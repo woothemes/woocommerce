@@ -16,7 +16,6 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
 import { CONTACT_FORM_KEYS } from '@woocommerce/block-settings';
 import { Form } from '@woocommerce/base-components/cart-checkout';
-import triggerFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
@@ -101,16 +100,6 @@ const Block = (): JSX.Element => {
 		const { email, ...additionalValues } = newAddress;
 		onChangeEmail( email );
 		setAdditionalFields( additionalValues );
-
-		if ( billingAddress.email === newAddress.email ) {
-			triggerFetch( {
-				path: '/wc/store/v1/checkout',
-				method: 'PUT',
-				data: {
-					additional_fields: additionalValues,
-				},
-			} );
-		}
 	};
 	const contactFormValues = {
 		email: billingAddress.email,

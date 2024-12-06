@@ -266,13 +266,14 @@ class Checkout extends AbstractCartRoute {
 		$this->create_or_update_draft_order( $request );
 		$this->validate_required_additional_fields_for_order( $request );
 		$this->persist_additional_fields_for_order( $request );
-
+		$this->persist_order_notes_for_order( $request );
 		$this->order->save();
 
 		return new WP_REST_Response(
 			array(
-				'status' => '200',
-				'order'  => $this->order,
+				'status'      => '200',
+				'order'       => $this->order,
+				'order_notes' => $this->order->get_customer_note(),
 			)
 		);
 	}
@@ -707,5 +708,16 @@ class Checkout extends AbstractCartRoute {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Persists order notes from the request to the order.
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 */
+	private function persist_order_notes_for_order( \WP_REST_Request $request ) {
+		if ( isset( $request['order_notes'] ) ) {
+			$this->order->set_customer_note( sanitize_text_field( wp_unslash( $request['order_notes'] ) ) );
+		}
 	}
 }

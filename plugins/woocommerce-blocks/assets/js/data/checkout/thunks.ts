@@ -26,6 +26,8 @@ import type {
 } from './types';
 import type { DispatchFromMap } from '../mapped-types';
 import * as actions from './actions';
+import { apiFetchWithHeaders } from '../shared-controls';
+import { processErrorResponse } from '../utils';
 
 /**
  * Based on the result of the payment, update the redirect url,
@@ -135,3 +137,21 @@ export const __internalEmitAfterProcessingEvents: emitAfterProcessingEventsType 
 			}
 		};
 	};
+
+export const updateDraftOrder = ( { orderNotes, additionalFields } ) => {
+	return async ( { dispatch } ) => {
+		try {
+			const response = await apiFetchWithHeaders( {
+				path: '/wc/store/v1/checkout',
+				method: 'PUT',
+				data: {
+					additional_fields: { ...additionalFields },
+					order_notes: orderNotes,
+				},
+			} );
+			return response;
+		} catch ( error ) {
+			processErrorResponse( error );
+		}
+	};
+};
