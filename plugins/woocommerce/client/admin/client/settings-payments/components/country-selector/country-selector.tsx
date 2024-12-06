@@ -10,7 +10,7 @@ import {
 } from 'downshift';
 import { Button } from '@wordpress/components';
 import { useThrottle } from '@wordpress/compose';
-import { useCallback } from '@wordpress/element';
+import { useCallback, useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { check, chevronDown, Icon } from '@wordpress/icons';
 
@@ -135,6 +135,7 @@ export const CountrySelector = < ItemType extends Item >( {
 	const itemString = getOptionLabel( value.key, items );
 	const selectedValue = selectedItem ? selectedItem.key : '';
 
+	const menuRef = useRef< HTMLInputElement >( null );
 	const searchRef = useRef< HTMLInputElement >( null );
 	function getDescribedBy() {
 		if ( describedBy ) {
@@ -151,6 +152,23 @@ export const CountrySelector = < ItemType extends Item >( {
 			itemString
 		);
 	}
+
+	const highlightSelectedCountry = useCallback(
+		( itemIndex: number ) => {
+			const menuElement = menuRef.current;
+
+			const highlightedItem = menuElement?.querySelector(
+				`[data-index="${ itemIndex }"]`
+			);
+
+			if ( highlightedItem ) {
+				highlightedItem.scrollIntoView( {
+					block: 'nearest',
+				} );
+			}
+		},
+		[ menuRef ]
+	);
 
 	const getSearchSuffix = ( focused: boolean ) => {
 		if ( focused ) {
@@ -180,6 +198,7 @@ export const CountrySelector = < ItemType extends Item >( {
 	const menuProps = getMenuProps( {
 		className: 'components-country-select-control__menu',
 		'aria-hidden': ! isOpen,
+		ref: menuRef, // Ref to the menu element.
 	} );
 
 	const onApplyHandler = useCallback(
@@ -208,9 +227,23 @@ export const CountrySelector = < ItemType extends Item >( {
 			if ( searchText !== '' ) {
 				setSearchText( '' );
 			}
+
+			// Timeout the highlight to ensure the list is updated.
+			setTimeout( () => {
+				highlightSelectedCountry( items.indexOf( selectedItem ) );
+			}, 10 );
 		},
-		[ searchText ]
+		[ searchText, selectedItem ]
 	);
+
+	useEffect( () => {
+		// Highlight the selected country when the menu is opened.
+		if ( isOpen ) {
+			const selectedItemIndex =
+				Array.from( visibleItems ).indexOf( selectedItem );
+			highlightSelectedCountry( selectedItemIndex );
+		}
+	}, [ isOpen ] );
 
 	return (
 		<div
@@ -280,6 +313,7 @@ export const CountrySelector = < ItemType extends Item >( {
 													index === highlightedIndex,
 											}
 										),
+										'data-index': index,
 										style: item.style,
 									} ) }
 									key={ item.key }
