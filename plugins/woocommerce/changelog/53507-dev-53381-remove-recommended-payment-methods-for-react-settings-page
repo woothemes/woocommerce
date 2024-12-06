@@ -1,4 +1,4 @@
 Significance: patch
 Type: dev
 
-Remove Payment recommendations block from the settings page if reactify-classic-payments-settings feature flag is on.
+Remove the "recommended payment providers" block from the new Payment settings page (but retain it on the classic settings page).
