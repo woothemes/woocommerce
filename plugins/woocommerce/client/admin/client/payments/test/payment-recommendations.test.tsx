@@ -9,6 +9,7 @@ import { recordEvent } from '@woocommerce/tracks';
  * Internal dependencies
  */
 import PaymentRecommendations from '../payment-recommendations';
+import { PaymentRecommendations as PaymentRecommendationsWrapper } from '../payment-recommendations-wrapper';
 import { isWCPaySupported } from '../../task-lists/fills/PaymentGatewaySuggestions/components/WCPay';
 import { createNoticesFromResponse } from '../../lib/notices';
 
@@ -70,7 +71,9 @@ describe( 'Payment recommendations', () => {
 	it( 'should not render paymentGatewaySuggestions if reactify-classic-payments-settings feature flag is on', () => {
 		window.wcAdminFeatures[ 'reactify-classic-payments-settings' ] = true;
 
-		const { container } = render( <PaymentRecommendations /> );
+		const { container } = render(
+			<PaymentRecommendationsWrapper page="wc-settings" tab="checkout" />
+		);
 
 		expect( container.firstChild ).toBeNull();
 	} );
