@@ -1,5 +1,5 @@
 <?php
-declare( strict_types = 1);
+declare( strict_types = 1 );
 
 // @codingStandardsIgnoreLine.
 /**
@@ -7,8 +7,6 @@ declare( strict_types = 1);
  *
  * @package WooCommerce\Admin
  */
-
-use Automattic\WooCommerce\Admin\Features\OnboardingTasks\Tasks\WooCommercePayments;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -48,7 +46,7 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 	 */
 	public function __construct() {
 		$this->id    = 'checkout';
-		$this->label = _x( 'Payments', 'Settings tab label', 'woocommerce' );
+		$this->label = esc_html_x( 'Payments', 'Settings tab label', 'woocommerce' );
 
 		// Add filters and actions.
 		add_filter( 'woocommerce_admin_shared_settings', array( $this, 'preload_settings' ) );
@@ -90,12 +88,11 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 		do_action( 'woocommerce_admin_field_payment_gateways' );
 		ob_end_clean();
 
-		// Load gateways so we can show any global options they may have.
-		$payment_gateways = WC()->payment_gateways->payment_gateways();
-
 		if ( $this->should_render_react_section( $current_section ) ) {
 			$this->render_react_section( $current_section );
 		} elseif ( $current_section ) {
+			// Load gateways so we can show any global options they may have.
+			$payment_gateways = WC()->payment_gateways()->payment_gateways;
 			$this->render_classic_gateway_settings_page( $payment_gateways, $current_section );
 		} else {
 			$this->render_react_section( 'main' );
@@ -150,7 +147,7 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 
 	/**
 	 * Run the 'admin_options' method on a given gateway.
-	 * This method exists to easy unit testing.
+	 * This method exists to help with unit testing.
 	 *
 	 * @param object $gateway The gateway object to run the method on.
 	 */
