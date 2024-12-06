@@ -17,18 +17,13 @@ import { WC_ADMIN_NAMESPACE } from '../constants';
 export function* getPaymentProviders( country?: string ) {
 	yield getPaymentProvidersRequest();
 
-	const location =
-		country ||
-		global.window.wcSettings?.admin?.woocommerce_payments_nox_profile
-			?.location;
-
 	try {
 		const paymentProvidersResponse: PaymentProvidersResponse =
 			yield apiFetch( {
 				path:
 					WC_ADMIN_NAMESPACE +
 					'/settings/payments/providers?' +
-					( location ? `location=${ location }` : '' ),
+					( country ? `location=${ country }` : '' ),
 			} );
 		yield getPaymentProvidersSuccess(
 			paymentProvidersResponse.providers,
