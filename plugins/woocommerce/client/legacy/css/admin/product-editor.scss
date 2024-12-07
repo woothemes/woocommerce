@@ -379,13 +379,6 @@ $postbox-padding-small: 12px;
 		background: none;
 	}
 
-	// Categories metabox.
-	#product_catdiv.postbox {
-		.inside {
-			padding: 0;
-			margin-top: 0;
-		}
-	}
 	.category-tabs {
 		margin: 0;
 		display: flex;
@@ -420,7 +413,8 @@ $postbox-padding-small: 12px;
 
 	}
 	.categorydiv {
-		margin-bottom: $gap;
+		// This is a bit convoluted way to set categorydiv parent's (.inside) padding to 0.
+		margin: 0 (-$postbox-padding) $gap (-$postbox-padding);
 
 		/*
 		 * Cater for other elements injected to this meta box,
@@ -449,7 +443,10 @@ $postbox-padding-small: 12px;
 			}
 		}
 	}
-	#product_cat-add-toggle {
+	.categorydiv:first-child{
+		margin-top: -$postbox-padding;
+	}
+	.taxonomy-add-new {
 		display: flex;
 		justify-content: center;
 		padding: $gap-smallest;
