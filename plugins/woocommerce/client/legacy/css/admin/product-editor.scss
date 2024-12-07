@@ -144,16 +144,20 @@ $border-radius: 8px;
 
 	// Postbox cards.
 	.postbox {
-		border: 0;
+		// Enclose margins from collapsing between boxes.
+		// We avoid setting flex container, as the specificity of this selector will make the box hard to "hide".
+		border: 1px solid transparent;
 		border-radius: $border-radius;
 	}
 	// Mimic wider gap between postboxes.
 	.post-body-content,
 	.postbox {
-		margin-bottom: 28px;
+		// 28px - 2 * invisible border.
+		margin-bottom: calc( 28px - 2 * 1px);
 	}
 	#postdivrich {
-		margin-top: 28px;
+		margin-top: calc( 28px - 2 * 1px);
+
 		.wp-editor-wrap {
 			margin: $gap $gap 0;
 		}
@@ -166,8 +170,8 @@ $border-radius: 8px;
 	// Post/meta boxes.
 	.postbox-header {
 		padding: 12px 12px 12px 16px;
-		flex-shrink: 0;
-		align-self: stretch;
+		// Offset for the invisible postbox border.
+		margin: -1px -1px 0;
 		border-color: $separator-color;
 		min-height: 30px;
 
@@ -182,8 +186,9 @@ $border-radius: 8px;
 
 	.inside,
 	#commentsdiv.postbox .inside,
-	#postimagediv .inside {
-		padding: 16px;
+	#postimagediv .inside,
+	#woocommerce-product-images .inside {
+		padding: 0 16px;
 	}
 
 	// Separate rule, not to overspecify the above ones with id selector.
@@ -196,7 +201,11 @@ $border-radius: 8px;
 		}
 
 		.inside {
-			margin: 0;
+			margin: 16px 0;
+		}
+		.postbox .inside {
+			// Offset for the invisible postbox border.
+			margin: 16px -1px calc(16px - 1px) -1px;
 		}
 	}
 
@@ -301,14 +310,9 @@ $border-radius: 8px;
 		}
 	}
 
-	#commentsdiv .inside {
-		display: flex;
-		flex-direction: column;
-		gap: $gap-smaller;
-
-		p {
-			padding: 0;
-		}
+	#commentsdiv p {
+		padding: 0;
+		margin: $gap-smaller 0;
 	}
 
 	// Custom Fields.
@@ -373,11 +377,11 @@ $border-radius: 8px;
 	}
 
 	// Categories metabox.
-	#product_catdiv {
+	#product_catdiv.postbox {
 		.inside {
 			padding: 0;
+			margin-top: 0;
 		}
-
 	}
 	.category-tabs {
 		margin: 0;
@@ -488,22 +492,13 @@ $border-radius: 8px;
 	}
 
 	// Product image.
-	#postimagediv .inside {
-		display: flex;
-		flex-direction: column;
-		gap: $gap-smaller;
-		p {
-			padding: 0;
-		}
+	#postimagediv p {
+		padding: 0;
+		margin-top: $gap-smaller;
 	}
 
 	// Product gallery.
-	#woocommerce-product-images .inside {
-		padding: $gap;
-		display: flex;
-		flex-direction: column;
-		gap: $gap-smaller;
-
+	#woocommerce-product-images {
 		#product_images_container {
 			padding: 0;
 			margin: -$gap-smallest calc($gap-smallest * -2);
@@ -513,7 +508,7 @@ $border-radius: 8px;
 		}
 		.add_product_images {
 			padding: 0;
-			margin: 0;
+			margin: $gap-smaller 0 0;
 		}
 	}
 }
@@ -594,18 +589,17 @@ $border-radius: 8px;
 	}
 
 	.inside {
-		flex: 1;
 		display: flex;
 		min-height: 586px;
-		margin: 0;
 		padding: 0;
+	}
+	// `[class]` is a trick to overcome too high specificity of `.post-php.post-type-product #poststuff .postbox .inside` selector.
+	&.postbox[class] .inside[class] {
+		margin-top: 0;
+		margin-bottom: -1px;
 	}
 	&.closed .inside {
 		display: none;
-	}
-
-	.wrap {
-		margin: 0;
 	}
 
 	.panel-wrap {
