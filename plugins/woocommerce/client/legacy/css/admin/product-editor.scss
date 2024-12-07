@@ -25,6 +25,8 @@ $alias-text: #070707;
 $alias-text-tertiary: #505050;
 $separator-color: #bbbcbf;
 $border-radius: 8px;
+$postbox-padding: 16px;
+$postbox-padding-small: 12px;
 
 /*
  * Match product & coupon editor page
@@ -159,17 +161,17 @@ $border-radius: 8px;
 		margin-top: calc( 28px - 2 * 1px);
 
 		.wp-editor-wrap {
-			margin: $gap $gap 0;
+			margin: $postbox-padding $postbox-padding 0;
 		}
 		#post-status-info {
-			margin: 0 $gap $gap;
-			width: calc(100% - 2 * $gap);
+			margin: 0 $postbox-padding $postbox-padding;
+			width: calc(100% - 2 * $postbox-padding);
 		}
 	}
 
 	// Post/meta boxes.
 	.postbox-header {
-		padding: 12px 12px 12px 16px;
+		padding: $postbox-padding-small $postbox-padding-small $postbox-padding-small $postbox-padding;
 		// Offset for the invisible postbox border.
 		margin: -1px -1px 0;
 		border-color: $separator-color;
@@ -188,24 +190,24 @@ $border-radius: 8px;
 	#commentsdiv.postbox .inside,
 	#postimagediv .inside,
 	#woocommerce-product-images .inside {
-		padding: 0 16px;
+		padding: 0 $postbox-padding;
 	}
 
 	// Separate rule, not to overspecify the above ones with id selector.
 	#poststuff {
 		h2.postbox-header {
-			padding: 12px 16px;
+			padding: $postbox-padding-small $postbox-padding;
 		}
 		.hndle {
 			padding: 0;
 		}
 
 		.inside {
-			margin: 16px 0;
+			margin: $postbox-padding 0;
 		}
 		.postbox .inside {
 			// Offset for the invisible postbox border.
-			margin: 16px -1px calc(16px - 1px) -1px;
+			margin: $postbox-padding -1px calc($postbox-padding - 1px) -1px;
 		}
 	}
 
@@ -341,7 +343,7 @@ $border-radius: 8px;
 	#minor-publishing-actions {
 		display: flex;
 		justify-content: space-between;
-		padding: 16px 16px 0 16px;
+		padding: $postbox-padding $postbox-padding 0 $postbox-padding;
 
 		.clear {
 			display: none;
@@ -352,7 +354,8 @@ $border-radius: 8px;
 		display: flex;
 		flex-direction: column;
 		gap: $gap-small;
-		padding: 12px 16px 16px 16px;
+		margin-top: $gap-small;
+		padding: 0 $postbox-padding $postbox-padding $postbox-padding;
 	}
 	// Hide all icons.
 	#post-body {
@@ -371,7 +374,7 @@ $border-radius: 8px;
 		padding: 0;
 	}
 	#major-publishing-actions {
-		padding: $gap;
+		padding: $postbox-padding;
 		border-top: 1px solid $separator-color;
 		background: none;
 	}
@@ -424,12 +427,12 @@ $border-radius: 8px;
 		 * like AI suggested categories.
 		 */
 		> :not(.category-tabs) {
-			padding: 0 $gap;
+			padding: 0 $postbox-padding;
 			// Pretend all things below tab panel are in a box with gap.
 			margin: $gap-small 0;
 		}
 		.tabs-panel {
-			padding: $gap;
+			padding: $postbox-padding;
 			margin: 0;
 			border: 0;
 			border-bottom: 1px solid $separator-color;
