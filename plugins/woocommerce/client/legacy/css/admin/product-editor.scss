@@ -44,11 +44,6 @@ $postbox-padding-small: 12px;
 		background: none;
 		padding: 0 $gap-smaller;
 		margin: 0;
-		display: inline-flex;
-		justify-content: center;
-		align-items: center;
-		line-height: inherit;
-		gap: $gap-smallest;
 
 		border-radius: 2px;
 		border: 1px solid var(--wp-admin-theme-color, $studio-wordpress-blue);
@@ -59,7 +54,8 @@ $postbox-padding-small: 12px;
 			height: 16px;
 			width: 16px;
 			font-size: 16px;
-			margin: 0;
+			margin: 0 $gap-smallest 0 0;
+			vertical-align: text-top;
 
 			&::before {
 				font-size: inherit;
@@ -68,12 +64,6 @@ $postbox-padding-small: 12px;
 		&.button-primary {
 			color: var(--Gutenberg-White, $studio-white);
 			background: var(--wp-admin-theme-color, $studio-wordpress-blue);
-		}
-	}
-	// Increase specificity to overwrite marketplace styles.
-	.marketplace-suggestions-container.showing-suggestion .marketplace-suggestion-container {
-		.marketplace-suggestion-container-cta a.button {
-			display: inline-flex;
 		}
 	}
 
@@ -94,13 +84,10 @@ $postbox-padding-small: 12px;
 			padding-right: calc($gap-small - 5px);
 		}
 
-		/*
-		 * Adjust spacing as the element is vertically aligned with flexbox,
-		 * reset additional padding.
-		 */
 		.show-settings::after {
 			padding: 0;
-			position: static;
+			margin-left: $gap-smallest;
+			bottom: 1px;
 		}
 
 	}
