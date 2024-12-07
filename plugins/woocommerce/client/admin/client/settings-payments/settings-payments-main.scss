@@ -15,6 +15,10 @@
 			justify-content: space-between;
 			padding: $gap-smaller 48px $gap-large;
 			align-items: center;
+
+			@media screen and ( max-width: 782px ) {
+				display: block;
+			}
 		}
 
 		&__header-title {
@@ -36,6 +40,10 @@
 
 			.components-base-control__field {
 				margin-bottom: 0;
+			}
+
+			@media screen and ( max-width: 782px ) {
+				margin-top: $gap-smaller;
 			}
 		}
 
