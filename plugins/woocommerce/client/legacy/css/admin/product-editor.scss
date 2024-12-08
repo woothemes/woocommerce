@@ -262,11 +262,13 @@ $postbox-padding-small: 12px;
 			margin: $gap calc(48px - 20px) $gap calc(48px - 12px);
 
 			@media only screen and (max-width: 1280px) {
-				margin: $gap calc($gap-larger - 20px) $gap calc( $gap-larger - 12px);
+				margin: $gap calc(gap-larger - 20px) $gap calc($gap-larger - 12px);
 			}
+
 			@media only screen and (max-width: 900px) {
-				margin: $gap-small calc($gap-large - 20px) $gap calc( $gap-large - 12px);
+				margin: $gap-small calc($gap-large - 20px) $gap calc($gap-large - 12px);
 			}
+
 			@media only screen and (max-width: 782px) {
 				margin: $gap-small 0;
 			}
@@ -284,9 +286,11 @@ $postbox-padding-small: 12px;
 			@media only screen and (max-width: 1280px) {
 				padding: calc($gap-large - $gap) 0;
 			}
+
 			@media only screen and (max-width: 900px) {
 				padding: calc($gap - $gap-small) 0;
 			}
+
 			@media only screen and (max-width: 782px) {
 				padding: 0;
 			}
@@ -441,7 +445,7 @@ $postbox-padding-small: 12px;
 			}
 		}
 	}
-	.categorydiv:first-child{
+	.categorydiv:first-child {
 		margin-top: -$postbox-padding;
 	}
 	.taxonomy-add-new {
@@ -684,7 +688,6 @@ $postbox-padding-small: 12px;
 #woocommerce-coupon-description {
 	padding: $gap-smallest $gap;
 	font-size: 1.7em;
-	line-height: 1.42em;
 	height: auto;
 	width: 100%;
 	outline: 0;
@@ -693,7 +696,6 @@ $postbox-padding-small: 12px;
 	border-radius: $border-radius;
 
 	&::placeholder {
-		line-height: 1.42em;
 		color: #bbb;
 	}
 }
