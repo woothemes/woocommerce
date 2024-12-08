@@ -18,6 +18,10 @@ $gap-small: 12px;
 $gap-smaller: 8px;
 $gap-smallest: 4px;
 
+$break-wide: 1280px;
+$break-medium: 782px;	// adminbar goes big
+
+
 /**
  * Stylesheet specific variables.
  */
@@ -27,6 +31,7 @@ $separator-color: #bbbcbf;
 $border-radius: 8px;
 $postbox-padding: 16px;
 $postbox-padding-small: 12px;
+$break-largeish: 900px; // It's almost $break-large, but kept consistent with the legacy CSS.
 
 /*
  * Match product & coupon editor page
@@ -261,15 +266,15 @@ $postbox-padding-small: 12px;
 			// that adds 12 to the left and 20 to the right
 			margin: $gap calc(48px - 20px) $gap calc(48px - 12px);
 
-			@media only screen and (max-width: 1280px) {
+			@media only screen and (max-width: $break-wide) {
 				margin: $gap calc(gap-larger - 20px) $gap calc($gap-larger - 12px);
 			}
 
-			@media only screen and (max-width: 900px) {
+			@media only screen and (max-width: $break-largeish) {
 				margin: $gap-small calc($gap-large - 20px) $gap calc($gap-large - 12px);
 			}
 
-			@media only screen and (max-width: 782px) {
+			@media only screen and (max-width: $break-medium) {
 				margin: $gap-small 0;
 			}
 		}
@@ -283,15 +288,15 @@ $postbox-padding-small: 12px;
 			// Deduct vertival margins of inner paragraphs.
 			padding: calc($gap-larger - $gap) 0;
 
-			@media only screen and (max-width: 1280px) {
+			@media only screen and (max-width: $break-wide) {
 				padding: calc($gap-large - $gap) 0;
 			}
 
-			@media only screen and (max-width: 900px) {
+			@media only screen and (max-width: $break-largeish) {
 				padding: calc($gap - $gap-small) 0;
 			}
 
-			@media only screen and (max-width: 782px) {
+			@media only screen and (max-width: $break-medium) {
 				padding: 0;
 			}
 		}
@@ -440,7 +445,7 @@ $postbox-padding-small: 12px;
 		ul.categorychecklist ul {
 			margin-left: 15px;
 
-			@media screen and (max-width: 782px) {
+			@media screen and (max-width: $break-medium) {
 				margin-top: 15px;
 			}
 		}
@@ -473,7 +478,7 @@ $postbox-padding-small: 12px;
 		.newtag {
 			flex: 1;
 
-			@media screen and (max-width: 782px) {
+			@media screen and (max-width: $break-medium) {
 				margin-bottom: 0;
 			}
 		}
@@ -610,6 +615,10 @@ $postbox-padding-small: 12px;
 		display: grid;
 		grid-template-columns: [nav] 20% [content] 80%;
 
+		@media only screen and (max-width: $break-largeish) {
+			grid-template-columns: [nav] 10% [content] 90%;
+		}
+
 		> * {
 			grid-column: content;
 			align-self: stretch;
@@ -703,14 +712,7 @@ $postbox-padding-small: 12px;
 /**
   * Optimisation for screens 900px and smaller
   */
-@media only screen and (max-width: 900px) {
-	#woocommerce-product-data,
-	#woocommerce-coupon-data {
-		.panel-wrap {
-			grid-template-columns: [nav] 10% [content] 90%;
-		}
-	}
-
+@media only screen and (max-width: $break-largeish) {
 	#woocommerce-coupon-data ul.coupon_data_tabs li,
 	#woocommerce-product-data ul.product_data_tabs li {
 		min-height: calc(var(--grid-unit-50, 40px) / 2);
@@ -739,7 +741,7 @@ $postbox-padding-small: 12px;
 /**
  * Optimisation for screens 782px and smaller
  */
-@media only screen and (max-width: 782px) {
+@media only screen and (max-width: $break-medium) {
 	#woocommerce-product-data .checkbox {
 		width: 25px;
 	}
