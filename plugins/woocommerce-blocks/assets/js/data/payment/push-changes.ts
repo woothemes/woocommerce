@@ -65,7 +65,6 @@ const updatePaymentData = (): void => {
  */
 const debouncedUpdatePaymentData = debounce( () => {
 	if ( localState.doingPush ) {
-		debouncedUpdatePaymentData();
 		return;
 	}
 	updatePaymentData();

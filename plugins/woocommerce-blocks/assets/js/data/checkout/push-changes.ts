@@ -82,7 +82,6 @@ const updateCheckoutData = (): void => {
  */
 const debouncedUpdateCheckoutData = debounce( () => {
 	if ( localState.doingPush ) {
-		debouncedUpdateCheckoutData();
 		return;
 	}
 	updateCheckoutData();
