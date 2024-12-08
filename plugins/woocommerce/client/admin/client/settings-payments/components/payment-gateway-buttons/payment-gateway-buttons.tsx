@@ -13,12 +13,18 @@ import { useState } from '@wordpress/element';
 /**
  * Internal dependencies
  */
+import {
+	isWooPayments,
+	getWooPaymentsTestDriveAccountLink,
+	getWooPaymentsSetupLiveAccountLink,
+} from '~/settings-payments/utils';
 
-export const PaymentGatewayButton = ( {
+export const PaymentGatewayButtons = ( {
 	id,
 	isOffline,
 	enabled,
 	needsSetup,
+	testMode,
 	settingsUrl,
 	textSettings = __( 'Manage', 'woocommerce' ),
 	textEnable = __( 'Enable', 'woocommerce' ),
@@ -28,6 +34,7 @@ export const PaymentGatewayButton = ( {
 	isOffline: boolean;
 	enabled: boolean;
 	needsSetup?: boolean;
+	testMode?: boolean;
 	settingsUrl: string;
 	textSettings?: string;
 	textEnable?: string;
@@ -37,6 +44,7 @@ export const PaymentGatewayButton = ( {
 	const { togglePaymentGateway, invalidateResolutionForStoreSelector } =
 		useDispatch( PAYMENT_SETTINGS_STORE_NAME );
 	const [ isUpdating, setIsUpdating ] = useState( false );
+	const [ isActivatingPayments, setIsActivatingPayments ] = useState( false );
 
 	const createApiErrorNotice = () => {
 		createErrorNotice(
@@ -70,6 +78,11 @@ export const PaymentGatewayButton = ( {
 			)
 				.then( ( response: EnableGatewayResponse ) => {
 					if ( response.data === 'needs_setup' ) {
+						if ( isWooPayments( id ) ) {
+							window.location.href =
+								getWooPaymentsTestDriveAccountLink();
+							return;
+						}
 						window.location.href = settingsUrl;
 						return;
 					}
@@ -88,25 +101,52 @@ export const PaymentGatewayButton = ( {
 		}
 	};
 
-	const determineButtonText = () => {
-		if ( needsSetup ) {
-			return textNeedsSetup;
-		}
+	const activatePayments = () => {
+		setIsActivatingPayments( true );
 
-		return enabled ? textSettings : textEnable;
+		window.location.href = getWooPaymentsSetupLiveAccountLink();
 	};
 
 	return (
 		<div className="woocommerce-list__item-after__actions">
-			<Button
-				variant={ enabled ? 'secondary' : 'primary' }
-				isBusy={ isUpdating }
-				disabled={ isUpdating }
-				onClick={ onClick }
-				href={ settingsUrl }
-			>
-				{ determineButtonText() }
-			</Button>
+			{ ! needsSetup && (
+				<Button variant={ 'secondary' } href={ settingsUrl }>
+					{ textSettings }
+				</Button>
+			) }
+			{ ! enabled && needsSetup && (
+				<Button
+					variant={ 'primary' }
+					isBusy={ isUpdating }
+					disabled={ isUpdating }
+					onClick={ onClick }
+					href={ settingsUrl }
+				>
+					{ textNeedsSetup }
+				</Button>
+			) }
+			{ ! enabled && ! needsSetup && (
+				<Button
+					variant={ 'primary' }
+					isBusy={ isUpdating }
+					disabled={ isUpdating }
+					onClick={ onClick }
+					href={ settingsUrl }
+				>
+					{ textEnable }
+				</Button>
+			) }
+
+			{ isWooPayments( id ) && enabled && ! needsSetup && testMode && (
+				<Button
+					variant="primary"
+					onClick={ activatePayments }
+					isBusy={ isActivatingPayments }
+					disabled={ isActivatingPayments }
+				>
+					{ __( 'Activate payments', 'woocommerce' ) }
+				</Button>
+			) }
 		</div>
 	);
 };

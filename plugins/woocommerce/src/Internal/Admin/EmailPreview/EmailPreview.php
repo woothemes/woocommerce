@@ -5,7 +5,7 @@
 
 declare( strict_types=1 );
 
-namespace Automattic\WooCommerce\Internal\Admin;
+namespace Automattic\WooCommerce\Internal\Admin\EmailPreview;
 
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
 use WC_Email;
@@ -20,6 +20,20 @@ defined( 'ABSPATH' ) || exit;
  */
 class EmailPreview {
 	const DEFAULT_EMAIL_TYPE = 'WC_Email_Customer_Processing_Order';
+
+	/**
+	 * The email type to preview.
+	 *
+	 * @var string
+	 */
+	private string $email_type = self::DEFAULT_EMAIL_TYPE;
+
+	/**
+	 * List of available email types.
+	 *
+	 * @var array
+	 */
+	private array $email_types = array();
 
 	/**
 	 * The single instance of the class.
@@ -38,6 +52,20 @@ class EmailPreview {
 			static::$instance = new static();
 		}
 		return static::$instance;
+	}
+
+	/**
+	 * Set the email type to preview.
+	 *
+	 * @param string $email_type Email type.
+	 *
+	 * @throws \InvalidArgumentException When the email type is invalid.
+	 */
+	public function set_email_type( string $email_type ) {
+		if ( ! in_array( $email_type, $this->get_email_types(), true ) ) {
+			throw new \InvalidArgumentException( 'Invalid email type' );
+		}
+		$this->email_type = $email_type;
 	}
 
 	/**
@@ -63,6 +91,18 @@ class EmailPreview {
 			return $product;
 		}
 		return $this->get_dummy_product();
+	}
+
+	/**
+	 * Get the list of available email types.
+	 *
+	 * @return array
+	 */
+	private function get_email_types() {
+		if ( empty( $this->email_types ) ) {
+			$this->email_types = array_keys( WC()->mailer()->get_emails() );
+		}
+		return $this->email_types;
 	}
 
 	/**
@@ -101,16 +141,26 @@ class EmailPreview {
 	private function render_preview_email() {
 		$this->set_up_filters();
 
-		$email = $this->get_email();
+		$emails = WC()->mailer()->get_emails();
+		$email  = $emails[ $this->email_type ];
 
 		$order = $this->get_dummy_order();
 		$email->set_object( $order );
+
+		/**
+		 * Allow to modify the email object before rendering the preview to add additional data.
+		 *
+		 * @param WC_Email $email The email object.
+		 *
+		 * @since 9.6.0
+		 */
+		$email = apply_filters( 'woocommerce_prepare_email_for_preview', $email );
 
 		$content = $email->get_content_html();
 
 		$this->clean_up_filters();
 
-		/** This filter is documented in src/Internal/Admin/EmailPreview.php */
+		/** This filter is documented in src/Internal/Admin/EmailPreview/EmailPreview.php */
 		return apply_filters( 'woocommerce_mail_content', $email->style_inline( $content ) ); // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingSinceComment
 	}
 
@@ -133,7 +183,15 @@ class EmailPreview {
 		$order->set_billing_address( $address );
 		$order->set_shipping_address( $address );
 
-		return $order;
+		/**
+		 * A dummy WC_Order used in email preview.
+		 *
+		 * @param WC_Order $order The dummy order object.
+		 * @param string   $email_type The email type to preview.
+		 *
+		 * @since 9.6.0
+		 */
+		return apply_filters( 'woocommerce_email_preview_dummy_order', $order, $this->email_type );
 	}
 
 	/**
@@ -146,7 +204,16 @@ class EmailPreview {
 		$product = new WC_Product();
 		$product->set_name( 'Dummy Product' );
 		$product->set_price( 25 );
-		return $product;
+
+		/**
+		 * A dummy WC_Product used in email preview.
+		 *
+		 * @param WC_Product $product The dummy product object.
+		 * @param string     $email_type The email type to preview.
+		 *
+		 * @since 9.6.0
+		 */
+		return apply_filters( 'woocommerce_email_preview_dummy_product', $product, $this->email_type );
 	}
 
 	/**
@@ -155,7 +222,7 @@ class EmailPreview {
 	 * @return array
 	 */
 	private function get_dummy_address() {
-		return array(
+		$address = array(
 			'first_name' => 'John',
 			'last_name'  => 'Doe',
 			'company'    => 'Company',
@@ -167,29 +234,16 @@ class EmailPreview {
 			'country'    => 'US',
 			'state'      => 'CA',
 		);
-	}
 
-	/**
-	 * Get the email class for email preview.
-	 *
-	 * @return WC_Email
-	 */
-	private function get_email() {
-		$emails     = WC()->mailer()->get_emails();
-		$email_type = self::DEFAULT_EMAIL_TYPE;
-
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended
-		// Nonce verification is done in class-wc-admin.php in preview_emails() method.
-		if ( isset( $_GET['type'] ) ) {
-			$type_param = sanitize_text_field( wp_unslash( $_GET['type'] ) );
-			if ( array_key_exists( $type_param, $emails ) ) {
-				$email_type = $type_param;
-			}
-		}
-		// phpcs:enable WordPress.Security.NonceVerification.Recommended
-
-		$email = $emails[ $email_type ];
-		return $email;
+		/**
+		 * A dummy address used in email preview as billing and shipping one.
+		 *
+		 * @param array  $address The dummy address.
+		 * @param string $email_type The email type to preview.
+		 *
+		 * @since 9.6.0
+		 */
+		return apply_filters( 'woocommerce_email_preview_dummy_address', $address, $this->email_type );
 	}
 
 	/**
