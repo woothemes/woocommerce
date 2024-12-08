@@ -29,8 +29,8 @@ const AddressLine2Field = < T extends AddressFormValues | ContactFormValues >( {
 	);
 
 	const localeData = getLocaleData();
-	const shouldKeepOriginalCase = [ 'de', 'de_AT', 'de_CH',  ].includes(
-			localeData?.[ '' ]?.lang ?? 'en'
+	const shouldKeepOriginalCase = [ 'de', 'de_AT', 'de_CH' ].includes(
+		localeData?.[ '' ]?.lang ?? 'en'
 	);
 	// Re-render if the isFieldVisible prop changes.
 	useEffect( () => {
@@ -74,7 +74,9 @@ const AddressLine2Field = < T extends AddressFormValues | ContactFormValues >( {
 						{ sprintf(
 							// translators: %s: address 2 field label.
 							__( '+ Add %s', 'woocommerce' ),
-							shouldKeepOriginalCase ? field.label : field.label.toLowerCase()
+							shouldKeepOriginalCase
+								? field.label
+								: field.label.toLowerCase()
 						) }
 					</Button>
 					<input
