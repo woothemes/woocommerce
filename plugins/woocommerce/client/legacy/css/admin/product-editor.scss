@@ -47,21 +47,21 @@ $postbox-padding-small: 12px;
 		border: 1px solid var(--wp-admin-theme-color, $studio-wordpress-blue);
 		color: var(--wp-admin-theme-color, $studio-wordpress-blue);
 
-		.jetpack-contact-form-icon,
-		.wp-media-buttons-icon {
-			height: 16px;
-			width: 16px;
-			font-size: 16px;
-			margin: 0 $gap-smallest 0 0;
-			vertical-align: text-top;
-
-			&::before {
-				font-size: inherit;
-			}
-		}
 		&.button-primary {
 			color: var(--Gutenberg-White, $studio-white);
 			background: var(--wp-admin-theme-color, $studio-wordpress-blue);
+		}
+	}
+	.jetpack-contact-form-icon,
+	.add_media .wp-media-buttons-icon {
+		height: 16px;
+		width: 16px;
+		font-size: 16px;
+		margin: 0 $gap-smallest 0 0;
+		vertical-align: text-top;
+
+		&::before {
+			font-size: inherit;
 		}
 	}
 
@@ -71,9 +71,7 @@ $postbox-padding-small: 12px;
 		display: flex;
 		gap: $gap-smaller;
 
-		.screen-meta-toggle,
-		#screen-options-link-wrap,
-		#contextual-help-link-wrap {
+		.screen-meta-toggle {
 			margin: 0;
 		}
 		.show-settings {
@@ -107,18 +105,16 @@ $postbox-padding-small: 12px;
 			font-size: 20px;
 			line-height: 46px;
 			height: auto;
+			border-radius: $border-radius;
 		}
 		#title-prompt-text {
 			color: var(--Gray-Gray-30, $studio-gray-30);
 			// Offset by the same border as the input.
 			border: 1px solid transparent;
 		}
-		#title {
-			border-radius: $border-radius;
-		}
 	}
 
-	#poststuff #titlediv .inside {
+	#titlediv div.inside {
 		padding: 0;
 		// Gap between title and slug.
 		margin-top: $gap-smaller;
@@ -142,6 +138,8 @@ $postbox-padding-small: 12px;
 	.postbox {
 		margin-bottom: 28px;
 	}
+
+	// Description editor.
 	#postdivrich {
 		margin-top: 28px;
 		// Make it look like postbox, w/o class in no-js env.
@@ -214,23 +212,22 @@ $postbox-padding-small: 12px;
 	.wp-editor-tabs {
 		display: flex;
 		align-self: flex-end;
+	}
 
-		.wp-switch-editor {
-			float: none;
-			background: none;
-			margin: 0;
-			padding: 10px $gap;
-			color: var(--Alias-text-text-tertiary, $alias-text-tertiary);
-			border-width: 0 0 2px 0;
-			border-bottom-color: transparent;
-		}
+	.wp-switch-editor {
+		float: none;
+		background: none;
+		margin: 0;
+		padding: 10px $gap;
+		color: var(--Alias-text-text-tertiary, $alias-text-tertiary);
+		border-width: 0 0 2px 0;
+		border-bottom-color: transparent;
 	}
 	.html-active .switch-html,
 	.tmce-active .switch-tmce {
 		border-bottom-color: var(--wp-admin-theme-color, $studio-wordpress-blue);
 		color: var(--Alias-text-text, $alias-text);
 	}
-
 
 	.wp-media-buttons {
 		display: flex;
