@@ -130,7 +130,8 @@ $postbox-padding-small: 12px;
 	}
 
 	// Postbox cards.
-	.postbox {
+	.postbox,
+	#postdivrich {
 		// Enclose margins from collapsing between boxes.
 		// We avoid setting flex container, as the specificity of this selector will make the box hard to "hide".
 		border: 1px solid transparent;
@@ -143,6 +144,8 @@ $postbox-padding-small: 12px;
 	}
 	#postdivrich {
 		margin-top: 28px;
+		// Make it look like postbox, w/o class in no-js env.
+		background: $studio-white;
 
 		.wp-editor-wrap {
 			margin: $postbox-padding $postbox-padding 0;
