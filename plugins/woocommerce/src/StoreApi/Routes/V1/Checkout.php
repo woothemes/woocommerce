@@ -119,6 +119,12 @@ class Checkout extends AbstractCartRoute {
 						'additional_fields' => [
 							'type' => 'object',
 						],
+						'payment_method'    => [
+							'type' => 'string',
+						],
+						'order_notes'       => [
+							'type' => 'string',
+						],
 					],
 					$this->schema->get_endpoint_args_for_item_schema( \WP_REST_Server::EDITABLE )
 				),
@@ -267,6 +273,7 @@ class Checkout extends AbstractCartRoute {
 		$this->validate_required_additional_fields_for_order( $request );
 		$this->persist_additional_fields_for_order( $request );
 		$this->persist_order_notes_for_order( $request );
+		$this->persist_payment_method_for_order( $request );
 		$this->order->save();
 
 		return new WP_REST_Response(
@@ -718,6 +725,17 @@ class Checkout extends AbstractCartRoute {
 	private function persist_order_notes_for_order( \WP_REST_Request $request ) {
 		if ( isset( $request['order_notes'] ) ) {
 			$this->order->set_customer_note( sanitize_text_field( wp_unslash( $request['order_notes'] ) ) );
+		}
+	}
+
+	/**
+	 * Persists the chosen payment method to the order.
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 */
+	private function persist_payment_method_for_order( \WP_REST_Request $request ) {
+		if ( isset( $request['payment_method'] ) ) {
+			$this->order->set_payment_method( sanitize_text_field( wp_unslash( $request['payment_method'] ) ) );
 		}
 	}
 }

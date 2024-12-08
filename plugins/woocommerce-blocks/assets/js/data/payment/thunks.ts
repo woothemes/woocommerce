@@ -4,7 +4,12 @@
 import { store as noticesStore } from '@wordpress/notices';
 import deprecated from '@wordpress/deprecated';
 import type { BillingAddress, ShippingAddress } from '@woocommerce/settings';
-import { isObject, isString, objectHasProp } from '@woocommerce/types';
+import {
+	ApiErrorResponse,
+	isObject,
+	isString,
+	objectHasProp,
+} from '@woocommerce/types';
 
 /**
  * Internal dependencies
@@ -26,6 +31,8 @@ import {
 } from '../../types/type-guards/address';
 import { isObserverResponse } from '../../types/type-guards/observers';
 import { isValidValidationErrorsObject } from '../../types/type-guards/validation';
+import { processErrorResponse } from '../utils';
+import { apiFetchWithHeaders } from '../shared-controls';
 
 export const __internalSetExpressPaymentError = ( message?: string ) => {
 	return ( { registry } ) => {
@@ -211,5 +218,27 @@ export const __internalEmitPaymentProcessingEvent: emitProcessingEventType = (
 				dispatch.__internalSetPaymentReady();
 			}
 		} );
+	};
+};
+
+/**
+ * Updates the payment method data on the server
+ *
+ * @param {Object} paymentMethodData The payment method data to update
+ */
+export const updatePaymentMethodData = ( paymentMethodData: string ) => {
+	return async ( { dispatch } ) => {
+		try {
+			const response = await apiFetchWithHeaders( {
+				path: '/wc/store/v1/checkout',
+				method: 'PUT',
+				data: {
+					payment_method: paymentMethodData,
+				},
+			} );
+			return response;
+		} catch ( error ) {
+			processErrorResponse( error as ApiErrorResponse );
+		}
 	};
 };
