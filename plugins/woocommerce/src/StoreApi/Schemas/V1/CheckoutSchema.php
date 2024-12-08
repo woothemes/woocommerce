@@ -7,6 +7,7 @@ use Automattic\WooCommerce\StoreApi\Schemas\ExtendSchema;
 use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields;
 use Automattic\WooCommerce\Blocks\Package;
 use Automattic\WooCommerce\StoreApi\Utilities\SanitizationUtils;
+use Automattic\WooCommerce\StoreApi\Schemas\V1\CartSchema;
 
 /**
  * CheckoutSchema class.
@@ -48,6 +49,13 @@ class CheckoutSchema extends AbstractSchema {
 	protected $image_attachment_schema;
 
 	/**
+	 * Cart schema instance.
+	 *
+	 * @var CartSchema
+	 */
+	protected $cart_schema;
+
+	/**
 	 * Additional fields controller.
 	 *
 	 * @var CheckoutFields
@@ -65,6 +73,7 @@ class CheckoutSchema extends AbstractSchema {
 		$this->billing_address_schema       = $this->controller->get( BillingAddressSchema::IDENTIFIER );
 		$this->shipping_address_schema      = $this->controller->get( ShippingAddressSchema::IDENTIFIER );
 		$this->image_attachment_schema      = $this->controller->get( ImageAttachmentSchema::IDENTIFIER );
+		$this->cart_schema                  = $this->controller->get( CartSchema::IDENTIFIER );
 		$this->additional_fields_controller = Package::container()->get( CheckoutFields::class );
 	}
 
@@ -201,7 +210,7 @@ class CheckoutSchema extends AbstractSchema {
 	 * @return array
 	 */
 	public function get_item_response( $item ) {
-		return $this->get_checkout_response( $item->order, $item->payment_result );
+		return $this->get_checkout_response( $item->order, $item->payment_result, $item->cart );
 	}
 
 	/**
@@ -211,7 +220,13 @@ class CheckoutSchema extends AbstractSchema {
 	 * @param PaymentResult $payment_result Payment result object.
 	 * @return array
 	 */
-	protected function get_checkout_response( \WC_Order $order, PaymentResult $payment_result = null ) {
+	protected function get_checkout_response( \WC_Order $order, PaymentResult $payment_result = null, \WC_Cart $cart = null ) {
+		$payment_result = $payment_result ? [
+			'payment_status'  => $payment_result->status,
+			'payment_details' => $this->prepare_payment_details_for_response( $payment_result->payment_details ),
+			'redirect_url'    => $payment_result->redirect_url,
+		] : null;
+
 		return [
 			'order_id'          => $order->get_id(),
 			'status'            => $order->get_status(),
@@ -222,12 +237,9 @@ class CheckoutSchema extends AbstractSchema {
 			'billing_address'   => (object) $this->billing_address_schema->get_item_response( $order ),
 			'shipping_address'  => (object) $this->shipping_address_schema->get_item_response( $order ),
 			'payment_method'    => $order->get_payment_method(),
-			'payment_result'    => [
-				'payment_status'  => $payment_result->status,
-				'payment_details' => $this->prepare_payment_details_for_response( $payment_result->payment_details ),
-				'redirect_url'    => $payment_result->redirect_url,
-			],
+			'payment_result'    => $payment_result,
 			'additional_fields' => $this->get_additional_fields_response( $order ),
+			'cart'              => $cart ? $this->cart_schema->get_item_response( $cart ) : null,
 			self::EXTENDING_KEY => $this->get_extended_data( self::IDENTIFIER ),
 		];
 	}

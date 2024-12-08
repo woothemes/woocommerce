@@ -269,19 +269,47 @@ class Checkout extends AbstractCartRoute {
 	 * @return \WP_REST_Response
 	 */
 	protected function get_route_update_response( \WP_REST_Request $request ) {
-		$this->create_or_update_draft_order( $request );
 		$this->validate_required_additional_fields_for_order( $request );
+
+		/**
+		 * Create (or update) Draft Order and process request data.
+		 */
+		$this->create_or_update_draft_order( $request );
+
+		/**
+		 * Persist additional fields, order notes and payment method for order.
+		 */
 		$this->persist_additional_fields_for_order( $request );
 		$this->persist_order_notes_for_order( $request );
 		$this->persist_payment_method_for_order( $request );
+
+		/**
+		 * Before triggering validation, ensure totals are current and in turn, things such as shipping costs are present.
+		 * This is so plugins that validate other cart data (e.g. conditional shipping and payments) can access this data.
+		 */
+		$this->cart_controller->calculate_totals();
+
+		/**
+		 * Validate that the cart is not empty.
+		 */
+		$this->cart_controller->validate_cart_not_empty();
+
+		/**
+		 * Validate items and fix violations before the order is processed.
+		 */
+		$this->cart_controller->validate_cart();
+		/**
+		 * Validate additional fields on request.
+		 */
+
 		$this->order->save();
 
-		return new WP_REST_Response(
-			array(
-				'status'      => '200',
-				'order'       => $this->order,
-				'order_notes' => $this->order->get_customer_note(),
-			)
+		return $this->prepare_item_for_response(
+			(object) [
+				'order' => wc_get_order( $this->order ),
+				'cart'  => $this->cart_controller->get_cart_instance(),
+			],
+			$request
 		);
 	}
 

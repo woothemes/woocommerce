@@ -227,7 +227,8 @@ export const __internalEmitPaymentProcessingEvent: emitProcessingEventType = (
  * @param {Object} paymentMethodData The payment method data to update
  */
 export const updatePaymentMethodData = ( paymentMethodData: string ) => {
-	return async ( { dispatch } ) => {
+	return async ( { registry } ) => {
+		const { receiveCart } = registry.dispatch( CART_STORE_KEY );
 		try {
 			const response = await apiFetchWithHeaders( {
 				path: '/wc/store/v1/checkout',
@@ -236,7 +237,10 @@ export const updatePaymentMethodData = ( paymentMethodData: string ) => {
 					payment_method: paymentMethodData,
 				},
 			} );
-			return response;
+
+			if ( response?.response?.cart ) {
+				receiveCart( response.response.cart );
+			}
 		} catch ( error ) {
 			processErrorResponse( error as ApiErrorResponse );
 		}
