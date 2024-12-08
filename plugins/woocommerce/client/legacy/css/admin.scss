@@ -10,7 +10,6 @@
 @import "variables";
 @import "animation";
 @import "fonts";
-@import "admin/product-editor";
 
 /**
   * Styling begins
@@ -8619,3 +8618,6 @@ html:has(#status-table-templates){
 .woocommerce-admin-page #postbox-container-2 {
 	clear: left;
 }
+
+// Import refubrished product editor styles.
+@import "admin/product-editor";
