@@ -530,14 +530,14 @@ It is important to note that any fields rendered in other locations will not be 
 |----------|-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `$errors`  | `WP_Error`                  | An error object containing errors that were already encountered while processing the request. If no errors were added yet, it will still be a `WP_Error` object but it will be empty. |
 | `$fields`  | `array`                     | The fields rendered in this locations.                                                                                                                                                |
-| `$group`   | `'billing'\|'shipping'\|'other'` | If the action is for the address location, the type of address will be set here. If it is for contact or order, this will be 'other'.                                   |
+| `$group`   | `'billing'\|'shipping'\|'order'` | If the action is for the address location, the type of address will be set here. If it is for contact or order, this will be 'other'.                                   |
 
 There are several places where these hooks are fired.
 
 - When checking out using the Checkout block or Store API.
     - `woocommerce_blocks_validate_location_address_fields` (x2)
     - `woocommerce_blocks_validate_location_contact_fields`
-    - `woocommerce_blocks_validate_location_other_fields`
+    - `woocommerce_blocks_validate_location_order_fields`
 - When updating addresses in the "My account" area
     - `woocommerce_blocks_validate_location_address_fields` (**x1** - only the address being edited)
 - When updating the "Account details" section in the "My account" area
