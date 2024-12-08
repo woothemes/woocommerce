@@ -692,22 +692,7 @@ $postbox-padding-small: 12px;
 	display: block;
 	border-radius: $border-radius;
 
-	&::-webkit-input-placeholder {
-		line-height: 1.42em;
-		color: #bbb;
-	}
-
-	&::-moz-placeholder {
-		line-height: 1.42em;
-		color: #bbb;
-	}
-
-	&:-ms-input-placeholder {
-		line-height: 1.42em;
-		color: #bbb;
-	}
-
-	&:-moz-placeholder {
+	&::placeholder {
 		line-height: 1.42em;
 		color: #bbb;
 	}
