@@ -204,6 +204,12 @@ $postbox-padding-small: 12px;
 		justify-content: space-between;
 	}
 
+	#wp-content-editor-tools {
+		// Reduce FOUC before `woocommerce-product-description` class is attached.
+		background: none;
+		padding-top: 0;
+	}
+
 	// Rich editor tabs.
 	.wp-editor-tabs {
 		display: flex;
