@@ -137,13 +137,12 @@ $postbox-padding-small: 12px;
 		border-radius: $border-radius;
 	}
 	// Mimic wider gap between postboxes.
-	.post-body-content,
+	#post-body-content,
 	.postbox {
-		// 28px - 2 * invisible border.
-		margin-bottom: calc( 28px - 2 * 1px);
+		margin-bottom: 28px;
 	}
 	#postdivrich {
-		margin-top: calc( 28px - 2 * 1px);
+		margin-top: 28px;
 
 		.wp-editor-wrap {
 			margin: $postbox-padding $postbox-padding 0;
