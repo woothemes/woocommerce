@@ -7,6 +7,8 @@
  * @version  2.6.0
  */
 
+use Automattic\WooCommerce\Internal\Admin\EmailPreview\EmailPreview;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -194,22 +196,22 @@ class WC_Admin {
 				die( 'Security check' );
 			}
 
-			// load the mailer class.
-			$mailer = WC()->mailer();
+			$email_preview = wc_get_container()->get( EmailPreview::class );
 
-			// get the preview email subject.
-			$email_heading = __( 'HTML email template', 'woocommerce' );
+			if ( isset( $_GET['type'] ) ) {
+				$type_param = sanitize_text_field( wp_unslash( $_GET['type'] ) );
+				try {
+					$email_preview->set_email_type( $type_param );
+				} catch ( InvalidArgumentException $e ) {
+					wp_die( esc_html__( 'Invalid email type.', 'woocommerce' ), 400 );
+				}
+			}
 
-			// get the preview email content.
-			ob_start();
-			include __DIR__ . '/views/html-email-template-preview.php';
-			$message = ob_get_clean();
-
-			// create a new email.
-			$email = new WC_Email();
-
-			// wrap the content with the email template and then add styles.
-			$message = apply_filters( 'woocommerce_mail_content', $email->style_inline( $mailer->wrap_message( $email_heading, $message ) ) );
+			try {
+				$message = $email_preview->render();
+			} catch ( Throwable $e ) {
+				wp_die( esc_html__( 'There was an error rendering an email preview.', 'woocommerce' ), 404 );
+			}
 
 			// print the preview email.
 			// phpcs:ignore WordPress.Security.EscapeOutput

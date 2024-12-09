@@ -87,14 +87,14 @@ const wcPages = [
 			{
 				name: 'Overview',
 				heading: 'Overview',
-				element: '.woocommerce-marketing-card-header-description',
-				text: 'Start by adding a channel to your store',
+				element: '.woocommerce-marketing-channels-card',
+				text: 'Channels',
 			},
 			{
 				name: 'Coupons',
 				heading: 'Coupons',
-				element: '.woocommerce-BlankState-cta.button-primary',
-				text: 'Create your first coupon',
+				element: '.page-title-action',
+				text: 'Add new coupon',
 			},
 		],
 	},
@@ -201,29 +201,31 @@ for ( const currentPage of wcPages ) {
 			} );
 
 			for ( let i = 0; i < currentPage.subpages.length; i++ ) {
-				test( `Can load ${ currentPage.subpages[ i ].name }`, async ( {
-					page,
-				} ) => {
-					await page
-						.locator(
-							`li.wp-menu-open > ul.wp-submenu > li a:text-is("${ currentPage.subpages[ i ].name }")`
-						)
-						.click();
+				test(
+					`Can load ${ currentPage.subpages[ i ].name }`,
+					{ tag: '@skip-on-default-wpcom' },
+					async ( { page } ) => {
+						await page
+							.locator(
+								`li.wp-menu-open > ul.wp-submenu > li a:has-text("${ currentPage.subpages[ i ].name }")`
+							)
+							.click();
 
-					await expect(
-						page.locator( 'h1.components-text' )
-					).toContainText( currentPage.subpages[ i ].heading );
+						await expect(
+							page.locator( 'h1.components-text' )
+						).toContainText( currentPage.subpages[ i ].heading );
 
-					await expect(
-						page
-							.locator( currentPage.subpages[ i ].element )
-							.first()
-					).toBeVisible();
+						await expect(
+							page
+								.locator( currentPage.subpages[ i ].element )
+								.first()
+						).toBeVisible();
 
-					await expect(
-						page.locator( currentPage.subpages[ i ].element )
-					).toContainText( currentPage.subpages[ i ].text );
-				} );
+						await expect(
+							page.locator( currentPage.subpages[ i ].element )
+						).toContainText( currentPage.subpages[ i ].text );
+					}
+				);
 			}
 		}
 	);

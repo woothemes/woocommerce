@@ -1,10 +1,13 @@
-const {
-	goToPageEditor,
-	fillPageTitle,
+/**
+ * External dependencies
+ */
+import {
+	addAProductToCart,
 	insertBlockByShortcut,
 	publishPage,
-} = require( '../../utils/editor' );
-const { addAProductToCart } = require( '../../utils/cart' );
+	goToPageEditor,
+} from '@woocommerce/e2e-utils-playwright';
+const { fillPageTitle } = require( '../../utils/editor' );
 const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
 const { random } = require( '../../utils/helpers' );
 
@@ -139,7 +142,9 @@ test.describe(
 					.getByRole( 'button', { name: 'Add a coupon' } )
 					.click();
 				await page
-					.locator( '#wc-block-components-totals-coupon__input-0' )
+					.locator(
+						'#wc-block-components-totals-coupon__input-coupon'
+					)
 					.fill( coupons[ i ].code );
 				await page.getByText( 'Apply', { exact: true } ).click();
 				await expect(
@@ -184,7 +189,9 @@ test.describe(
 					.getByRole( 'button', { name: 'Add a coupon' } )
 					.click();
 				await page
-					.locator( '#wc-block-components-totals-coupon__input-0' )
+					.locator(
+						'#wc-block-components-totals-coupon__input-coupon'
+					)
 					.fill( coupons[ i ].code );
 				await page.getByText( 'Apply', { exact: true } ).click();
 				await expect(
@@ -226,7 +233,7 @@ test.describe(
 			// try to add two same coupons and verify the error message
 			await page.getByRole( 'button', { name: 'Add a coupon' } ).click();
 			await page
-				.locator( '#wc-block-components-totals-coupon__input-0' )
+				.locator( '#wc-block-components-totals-coupon__input-coupon' )
 				.fill( coupons[ 0 ].code );
 			await page.getByText( 'Apply', { exact: true } ).click();
 			await expect(
@@ -238,7 +245,7 @@ test.describe(
 			).toBeVisible();
 			await page.getByRole( 'button', { name: 'Add a coupon' } ).click();
 			await page
-				.locator( '#wc-block-components-totals-coupon__input-0' )
+				.locator( '#wc-block-components-totals-coupon__input-coupon' )
 				.fill( coupons[ 0 ].code );
 			await page.getByText( 'Apply', { exact: true } ).click();
 			await expect(
@@ -256,7 +263,7 @@ test.describe(
 			// add coupon with usage limit
 			await page.getByRole( 'button', { name: 'Add a coupon' } ).click();
 			await page
-				.locator( '#wc-block-components-totals-coupon__input-0' )
+				.locator( '#wc-block-components-totals-coupon__input-coupon' )
 				.fill( couponLimitedCode );
 			await page.getByText( 'Apply', { exact: true } ).click();
 			await expect(

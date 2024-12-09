@@ -25,11 +25,6 @@ class Brands {
 			return;
 		}
 
-		// If the WooCommerce Brands plugin is activated via the WP CLI using the '--skip-plugins' flag, deactivate it here.
-		if ( function_exists( 'wc_brands_init' ) ) {
-			remove_action( 'plugins_loaded', 'wc_brands_init', 1 );
-		}
-
 		include_once WC_ABSPATH . 'includes/class-wc-brands.php';
 		include_once WC_ABSPATH . 'includes/class-wc-brands-coupons.php';
 		include_once WC_ABSPATH . 'includes/class-wc-brands-brand-settings-manager.php';
@@ -46,16 +41,26 @@ class Brands {
 	}
 
 	/**
-	 * Ensures that the Brands feature is released initially only to 5% of users.
+	 * As of WooCommerce 9.6, Brands is enabled for all users.
 	 *
 	 * @return bool
 	 */
 	public static function is_enabled() {
-		$assignment = get_option( 'woocommerce_remote_variant_assignment', false );
+		return true;
+	}
 
-		if ( false === $assignment ) {
-			return false;
+	/**
+	 * If WooCommerce Brands gets activated forcibly, without WooCommerce active (e.g. via '--skip-plugins'),
+	 * remove WooCommerce Brands initialization functions early on in the 'plugins_loaded' timeline.
+	 */
+	public static function prepare() {
+
+		if ( ! self::is_enabled() ) {
+			return;
 		}
-		return ( $assignment <= 6 ); // Considering 5% of the 0-120 range.
+
+		if ( function_exists( 'wc_brands_init' ) ) {
+			remove_action( 'plugins_loaded', 'wc_brands_init', 1 );
+		}
 	}
 }

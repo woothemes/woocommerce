@@ -4,9 +4,9 @@ const { activateTheme } = require( '../../utils/themes' );
 const { setOption } = require( '../../utils/options' );
 
 const ASSEMBLER_HUB_URL =
-	'/wp-admin/admin.php?page=wc-admin&path=%2Fcustomize-store%2Fassembler-hub';
+	'wp-admin/admin.php?page=wc-admin&path=%2Fcustomize-store%2Fassembler-hub';
 const CUSTOMIZE_STORE_URL =
-	'/wp-admin/admin.php?page=wc-admin&path=%2Fcustomize-store';
+	'wp-admin/admin.php?page=wc-admin&path=%2Fcustomize-store';
 
 const test = base.extend( {
 	assemblerPageObject: async ( { page }, use ) => {
@@ -30,7 +30,7 @@ test.describe(
 					'woocommerce_customize_store_onboarding_tour_hidden',
 					'yes'
 				);
-				await activateTheme( 'twentytwentyfour' );
+				await activateTheme( baseURL, 'twentytwentyfour' );
 			} catch ( error ) {
 				console.log( 'Store completed option not updated' );
 			}

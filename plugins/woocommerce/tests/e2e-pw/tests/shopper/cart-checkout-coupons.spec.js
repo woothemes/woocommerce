@@ -1,4 +1,7 @@
-const { addAProductToCart } = require( '../../utils/cart' );
+/**
+ * External dependencies
+ */
+import { addAProductToCart } from '@woocommerce/e2e-utils-playwright';
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
@@ -97,7 +100,7 @@ test.describe(
 				await test.step( 'Load cart page and apply coupons', async () => {
 					await addAProductToCart( page, firstProductId );
 
-					await page.goto( '/cart/' );
+					await page.goto( 'cart/' );
 					await page
 						.locator( '#coupon_code' )
 						.fill( coupons[ i ].code );
@@ -127,7 +130,7 @@ test.describe(
 				await test.step( 'Load checkout page and apply coupons', async () => {
 					await addAProductToCart( page, firstProductId );
 
-					await page.goto( '/checkout' );
+					await page.goto( 'checkout' );
 					await page
 						.locator( 'text=Click here to enter your code' )
 						.click();
@@ -160,7 +163,7 @@ test.describe(
 			await test.step( 'Load cart page and try applying same coupon twice', async () => {
 				await addAProductToCart( page, firstProductId );
 
-				await page.goto( '/cart/' );
+				await page.goto( 'cart/' );
 				await page.locator( '#coupon_code' ).fill( coupons[ 0 ].code );
 				await page
 					.getByRole( 'button', { name: 'Apply coupon' } )
@@ -171,7 +174,7 @@ test.describe(
 				).toBeVisible();
 
 				// try to apply the same coupon
-				await page.goto( '/cart/' );
+				await page.goto( 'cart/' );
 				await page.locator( '#coupon_code' ).fill( coupons[ 0 ].code );
 				await page
 					.getByRole( 'button', { name: 'Apply coupon' } )
@@ -195,7 +198,7 @@ test.describe(
 			await test.step( 'Load checkout page and try applying same coupon twice', async () => {
 				await addAProductToCart( page, firstProductId );
 
-				await page.goto( '/checkout/' );
+				await page.goto( 'checkout/' );
 				await page
 					.locator( 'text=Click here to enter your code' )
 					.click();
@@ -232,7 +235,7 @@ test.describe(
 			await test.step( 'Load cart page and try applying multiple coupons', async () => {
 				await addAProductToCart( page, firstProductId );
 
-				await page.goto( '/cart/' );
+				await page.goto( 'cart/' );
 				await page.locator( '#coupon_code' ).fill( coupons[ 0 ].code );
 				await page
 					.getByRole( 'button', { name: 'Apply coupon' } )
@@ -270,7 +273,7 @@ test.describe(
 			await test.step( 'Load checkout page and try applying multiple coupons', async () => {
 				await addAProductToCart( page, firstProductId );
 
-				await page.goto( '/checkout/' );
+				await page.goto( 'checkout/' );
 				await page
 					.locator( 'text=Click here to enter your code' )
 					.click();
@@ -308,12 +311,12 @@ test.describe(
 
 		test(
 			'restores total when coupons are removed',
-			{ tag: [ '@could-be-unit-test' ] },
+			{ tag: [ '@could-be-lower-level-test' ] },
 			async ( { page, context } ) => {
 				await test.step( 'Load cart page and try restoring total when removed coupons', async () => {
 					await addAProductToCart( page, firstProductId );
 
-					await page.goto( '/cart/' );
+					await page.goto( 'cart/' );
 					await page
 						.locator( '#coupon_code' )
 						.fill( coupons[ 0 ].code );
@@ -341,7 +344,7 @@ test.describe(
 				await test.step( 'Load checkout page and try restoring total when removed coupons', async () => {
 					await addAProductToCart( page, firstProductId );
 
-					await page.goto( '/checkout/' );
+					await page.goto( 'checkout/' );
 					await page
 						.locator( 'text=Click here to enter your code' )
 						.click();

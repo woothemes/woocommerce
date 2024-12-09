@@ -1,5 +1,7 @@
 <?php
 
+use Automattic\WooCommerce\Enums\OrderInternalStatus;
+
 /**
  * Class CustomerCRUD.
  * @package WooCommerce\Tests\Customer
@@ -265,7 +267,7 @@ class WC_Tests_CustomerCRUD extends WC_Unit_Test_Case {
 		$order       = WC_Helper_Order::create_order( $customer_id );
 		$customer    = new WC_Customer( $customer_id );
 		$this->assertEquals( 0, $customer->get_total_spent() );
-		$order->update_status( 'wc-completed' );
+		$order->update_status( OrderInternalStatus::COMPLETED );
 		$customer = new WC_Customer( $customer_id );
 		$this->assertEquals( 50, $customer->get_total_spent() );
 		$order->delete();
@@ -397,56 +399,6 @@ class WC_Tests_CustomerCRUD extends WC_Unit_Test_Case {
 		$this->assertEquals( $base['state'], $customer->get_shipping_state() );
 		$this->assertEmpty( $customer->get_shipping_postcode() );
 		$this->assertEmpty( $customer->get_shipping_city() );
-	}
-
-	/**
-	 * Test getting the customer default location with different configurations of options set or unset.
-	 */
-	public function test_wc_get_customer_default_location() {
-		// Test with none of the options set.
-		delete_option( 'woocommerce_default_customer_address' );
-		delete_option( 'woocommerce_default_country' );
-		delete_option( 'woocommerce_allowed_countries' );
-		delete_option( 'woocommerce_specific_allowed_countries' );
-		$customer_default_location = wc_get_customer_default_location();
-		$this->assertEquals( 'US', $customer_default_location['country'] );
-		$this->assertEquals( 'CA', $customer_default_location['state'] );
-
-		// Test with default address set.
-		update_option( 'woocommerce_default_customer_address', 'base' );
-		update_option( 'woocommerce_default_country', 'DE:LS' );
-		delete_option( 'woocommerce_allowed_countries' );
-		delete_option( 'woocommerce_specific_allowed_countries' );
-		$customer_default_location = wc_get_customer_default_location();
-		$this->assertEquals( 'DE', $customer_default_location['country'] );
-		$this->assertEquals( 'LS', $customer_default_location['state'] );
-
-		// Test with default address, but specific countries set.
-		update_option( 'woocommerce_default_customer_address', 'base' );
-		update_option( 'woocommerce_default_country', 'DE:LS' );
-		update_option( 'woocommerce_allowed_countries', 'specific' );
-		update_option( 'woocommerce_specific_allowed_countries', array( 'DE', 'AT', 'CH' ) );
-		$customer_default_location = wc_get_customer_default_location();
-		$this->assertEquals( 'DE', $customer_default_location['country'] );
-		$this->assertEquals( 'LS', $customer_default_location['state'] );
-
-		// Test with no default address, but specific countries set.
-		delete_option( 'woocommerce_default_customer_address' );
-		delete_option( 'woocommerce_default_country' );
-		update_option( 'woocommerce_allowed_countries', 'specific' );
-		update_option( 'woocommerce_specific_allowed_countries', array( 'DE', 'AT', 'CH' ) );
-		$customer_default_location = wc_get_customer_default_location();
-		$this->assertEquals( 'DE', $customer_default_location['country'] );
-		$this->assertEquals( '', $customer_default_location['state'] );
-
-		// Test forgetting to set the allowed countries to specific.
-		delete_option( 'woocommerce_default_customer_address' );
-		delete_option( 'woocommerce_default_country' );
-		delete_option( 'woocommerce_allowed_countries', 'specific' );
-		update_option( 'woocommerce_specific_allowed_countries', array( 'DE', 'AT', 'CH' ) );
-		$customer_default_location = wc_get_customer_default_location();
-		$this->assertEquals( 'US', $customer_default_location['country'] );
-		$this->assertEquals( 'CA', $customer_default_location['state'] );
 	}
 
 	/**

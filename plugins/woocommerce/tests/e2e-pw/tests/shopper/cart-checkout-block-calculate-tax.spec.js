@@ -1,13 +1,17 @@
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
-const {
-	goToPageEditor,
-	fillPageTitle,
-	insertBlockByShortcut,
-	publishPage,
-} = require( '../../utils/editor' );
-const { addAProductToCart } = require( '../../utils/cart' );
+const { fillPageTitle } = require( '../../utils/editor' );
 const { random } = require( '../../utils/helpers' );
+
+/**
+ * External dependencies
+ */
+import {
+	addAProductToCart,
+	insertBlockByShortcut,
+	goToPageEditor,
+	publishPage,
+} from '@woocommerce/e2e-utils-playwright';
 
 const productName = 'First Product Cart Block Taxing';
 const productPrice = '100.00';
@@ -38,7 +42,14 @@ let productId,
 
 test.describe(
 	'Shopper Cart & Checkout Block Tax Display',
-	{ tag: [ '@payments', '@services', '@hpos', '@could-be-unit-test' ] },
+	{
+		tag: [
+			'@payments',
+			'@services',
+			'@hpos',
+			'@could-be-lower-level-test',
+		],
+	},
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 		test.beforeAll( async ( { baseURL } ) => {
@@ -240,7 +251,7 @@ test.describe(
 
 test.describe(
 	'Shopper Cart & Checkout Block Tax Rounding',
-	{ tag: [ '@payments', '@services', '@could-be-unit-test' ] },
+	{ tag: [ '@payments', '@services', '@could-be-lower-level-test' ] },
 	() => {
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {
@@ -484,7 +495,7 @@ test.describe(
 
 test.describe(
 	'Shopper Cart & Checkout Block Tax Levels',
-	{ tag: [ '@payments', '@services', '@could-be-unit-test' ] },
+	{ tag: [ '@payments', '@services', '@could-be-lower-level-test' ] },
 	() => {
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {
@@ -654,7 +665,7 @@ test.describe(
 			} );
 			// workaround to fill shipping details since there is an issue with showing
 			// shipping calculator on the cart block-based experience for logged out user
-			await page.goto( '/cart/' ); // we will use the old cart for this purpose
+			await page.goto( 'cart/' ); // we will use the old cart for this purpose
 			await page.locator( '.shipping-calculator-button' ).click();
 			await page.getByLabel( 'Town / City' ).fill( 'Sacramento' );
 			await page.getByLabel( 'ZIP Code' ).fill( '55555' );
@@ -809,7 +820,7 @@ test.describe(
 
 test.describe(
 	'Shipping Cart & Checkout Block Tax',
-	{ tag: [ '@payments', '@services', '@could-be-unit-test' ] },
+	{ tag: [ '@payments', '@services', '@could-be-lower-level-test' ] },
 	() => {
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {

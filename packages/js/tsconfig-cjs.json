@@ -6,6 +6,7 @@
 		"declaration": false,
 		"declarationMap": false,
 		"declarationDir": null,
-		"outDir": "build"
+		"outDir": "build",
+		"typeRoots": [ "./typings" ]
 	}
 }

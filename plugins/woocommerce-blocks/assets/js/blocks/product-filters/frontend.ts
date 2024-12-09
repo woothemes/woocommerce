@@ -68,34 +68,37 @@ export function navigate( href: string, options = {} ) {
 }
 
 export interface ProductFiltersContext {
-	isDialogOpen: boolean;
-	hasPageWithWordPressAdminBar: boolean;
+	isOverlayOpened: boolean;
 	params: Record< string, string >;
 	originalParams: Record< string, string >;
 }
 
-store( 'woocommerce/product-filters', {
-	state: {
-		isDialogOpen: () => {
-			const context = getContext< ProductFiltersContext >();
-			return context.isDialogOpen;
-		},
-	},
+const { actions } = store( 'woocommerce/product-filters', {
 	actions: {
-		openDialog: () => {
+		openOverlay: () => {
 			const context = getContext< ProductFiltersContext >();
-			document.body.classList.add( 'wc-modal--open' );
-			context.hasPageWithWordPressAdminBar = Boolean(
-				document.getElementById( 'wpadminbar' )
-			);
-
-			context.isDialogOpen = true;
+			context.isOverlayOpened = true;
+			if ( document.getElementById( 'wpadminbar' ) ) {
+				const scrollTop = (
+					document.documentElement ||
+					document.body.parentNode ||
+					document.body
+				).scrollTop;
+				document.body.style.setProperty(
+					'--adminbar-mobile-padding',
+					`max(calc(var(--wp-admin--admin-bar--height) - ${ scrollTop }px), 0px)`
+				);
+			}
 		},
-		closeDialog: () => {
+		closeOverlay: () => {
 			const context = getContext< ProductFiltersContext >();
-			document.body.classList.remove( 'wc-modal--open' );
-
-			context.isDialogOpen = false;
+			context.isOverlayOpened = false;
+		},
+		closeOverlayOnEscape: ( event: KeyboardEvent ) => {
+			const context = getContext< ProductFiltersContext >();
+			if ( context.isOverlayOpened && event.key === 'Escape' ) {
+				actions.closeOverlay();
+			}
 		},
 	},
 	callbacks: {
@@ -118,6 +121,14 @@ store( 'woocommerce/product-filters', {
 				searchParams.set( key, params[ key ] );
 			}
 			navigate( url.href );
+		},
+		scrollLimit: () => {
+			const { isOverlayOpened } = getContext< ProductFiltersContext >();
+			if ( isOverlayOpened ) {
+				document.body.style.overflow = 'hidden';
+			} else {
+				document.body.style.overflow = 'auto';
+			}
 		},
 	},
 } );
