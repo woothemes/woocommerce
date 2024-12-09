@@ -19,9 +19,10 @@ export interface ManagementData {
 	settings_url: string;
 }
 
-export interface PaymentIncentive {
+export type PaymentIncentive = {
 	id: string;
 	promo_id: string;
+	title: string;
 	description: string;
 	short_description: string;
 	cta_label: string;
@@ -31,7 +32,7 @@ export interface PaymentIncentive {
 	_links: {
 		dismiss: string;
 	};
-}
+};
 
 export type PaymentProvider = {
 	id: string;
