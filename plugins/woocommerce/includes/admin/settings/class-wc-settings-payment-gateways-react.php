@@ -322,8 +322,8 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 				$class_or_object = $callback['function'][0] ?? null;
 				// We need to allow Automattic\WooCommerce\Internal\Admin\Loader methods callbacks
 				// because they are used to wrap notices.
-				// @see Automattic\WooCommerce\Internal\Admin\Loader::inject_before_notices()
-				// @see Automattic\WooCommerce\Internal\Admin\Loader::inject_after_notices()
+				// @see Automattic\WooCommerce\Internal\Admin\Loader::inject_before_notices().
+				// @see Automattic\WooCommerce\Internal\Admin\Loader::inject_after_notices().
 				if (
 					(
 						// We have a class name.
