@@ -187,4 +187,30 @@ class Utils {
 
 		return $updated_map;
 	}
+
+	/**
+	 * Normalize a plugin slug.
+	 *
+	 * It will remove beta testing suffixes and lowercase the slug.
+	 * It will NOT convert plugin titles to slugs or sanitize the slug like sanitize_title() does.
+	 *
+	 * @param string $slug The plugin slug.
+	 *
+	 * @return string The normalized plugin slug.
+	 */
+	public static function normalize_plugin_slug( string $slug ): string {
+		// If the slug is empty or contains anything other than alphanumeric and dash characters, it will be left as is.
+		if ( empty( $slug ) || ! preg_match( '/^[a-zA-Z0-9-]+$/', $slug, $matches ) ) {
+			return $slug;
+		}
+
+		// Lowercase the slug.
+		$slug = strtolower( $slug );
+		// Remove beta testing suffix.
+		$slug = str_ends_with( $slug, '-beta' ) ? substr( $slug, 0, -5 ) : $slug;
+		// Jetpack Beta Tester (used on Jurassic Ninja sites) uses the `-dev` suffix for live branches.
+		$slug = str_ends_with( $slug, '-dev' ) ? substr( $slug, 0, -4 ) : $slug;
+
+		return $slug;
+	}
 }
