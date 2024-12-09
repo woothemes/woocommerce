@@ -1669,7 +1669,7 @@ p.demo_store,
  */
 .woocommerce:where(body:not(.woocommerce-block-theme-has-button-styles)),
 :where(body:not(.woocommerce-block-theme-has-button-styles)):where(
-		:not(.edit-post-visual-editor *)
+		:not(.edit-post-visual-editor)
 	)
 	.woocommerce {
 	a.button,

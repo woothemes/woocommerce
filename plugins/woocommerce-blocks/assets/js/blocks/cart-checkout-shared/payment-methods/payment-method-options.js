@@ -77,7 +77,7 @@ const PaymentMethodOptions = () => {
 			__internalSetActivePaymentMethod( value );
 			removeNotice( 'wc-payment-error', noticeContexts.PAYMENTS );
 			dispatchCheckoutEvent( 'set-active-payment-method', {
-				value,
+				paymentMethodSlug: value,
 			} );
 		},
 		[
