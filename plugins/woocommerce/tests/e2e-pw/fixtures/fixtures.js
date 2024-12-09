@@ -107,6 +107,10 @@ exports.test = base.test.extend( {
 exports.expect = base.expect;
 exports.request = base.request;
 exports.tags = {
+	GUTENBERG: '@gutenberg',
+	SERVICES: '@services',
+	PAYMENTS: '@payments',
+	HPOS: '@hpos',
 	SKIP_ON_EXTERNAL_ENV: '@skip-on-external-env',
 	SKIP_ON_WPCOM: '@skip-on-wpcom',
 	SKIP_ON_PRESSABLE: '@skip-on-pressable',
