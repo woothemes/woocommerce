@@ -87,7 +87,7 @@ class PaymentsRestController extends RestApiControllerBase {
 							'description'       => __( 'ISO3166 alpha-2 country code. Defaults to WooCommerce\'s base location country.', 'woocommerce' ),
 							'type'              => 'string',
 							'pattern'           => '[a-zA-Z]{2}', // Two alpha characters.
-							'required'          => false,
+							'required'          => true,
 							'validate_callback' => fn( $value, $request ) => $this->check_location_arg( $value, $request ),
 						),
 					),
