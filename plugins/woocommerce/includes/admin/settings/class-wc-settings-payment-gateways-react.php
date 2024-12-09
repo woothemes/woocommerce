@@ -7,7 +7,6 @@ declare( strict_types = 1 );
  *
  * @package WooCommerce\Admin
  */
-use Automattic\WooCommerce\Internal\Admin\Settings\Payments;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -68,12 +67,6 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 	public function preload_settings( $settings ) {
 		if ( ! is_admin() ) {
 			return $settings;
-		}
-
-		$user_nox_meta = get_user_meta( get_current_user_id(), Payments::USER_PAYMENTS_NOX_PROFILE_KEY, true );
-		// Add the location to the settings.
-		if ( isset( $user_nox_meta['location'] ) ) {
-			$settings[ Payments::USER_PAYMENTS_NOX_PROFILE_KEY ]['location'] = $user_nox_meta['location'];
 		}
 
 		return $settings;
