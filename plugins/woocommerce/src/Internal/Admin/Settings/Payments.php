@@ -714,12 +714,10 @@ class Payments {
 	 */
 	private function enhance_payment_gateway_details( array $gateway_details, WC_Payment_Gateway $payment_gateway, string $country_code ): array {
 		$plugin_slug = $this->get_payment_gateway_plugin_slug( $payment_gateway );
-		// The payment gateway plugin might use non-standard directory name.
-		// Try to normalize it to the common slug to avoid false negatives when matching.
-		$normalized_plugin_slug = Utils::normalize_plugin_slug( $plugin_slug );
 
 		// Handle core gateways.
-		if ( 'woocommerce' === $normalized_plugin_slug ) {
+		// We check for multiple slugs to account for beta testing setups.
+		if ( in_array( $plugin_slug, array( 'woocommerce', 'woocommerce-dev' ), true ) ) {
 			if ( $this->is_offline_payment_method( $gateway_details['id'] ) ) {
 				switch ( $gateway_details['id'] ) {
 					case 'bacs':
@@ -736,7 +734,7 @@ class Payments {
 		}
 
 		// If we have a matching suggestion, hoist details from there.
-		$suggestion = $this->get_extension_suggestion_by_plugin_slug( $normalized_plugin_slug, $country_code );
+		$suggestion = $this->get_extension_suggestion_by_plugin_slug( $plugin_slug, $country_code );
 		if ( ! is_null( $suggestion ) ) {
 			if ( empty( $gateway_details['image'] ) ) {
 				$gateway_details['image'] = $suggestion['image'];
@@ -774,11 +772,11 @@ class Payments {
 				} elseif ( ! empty( $gateway_details['plugin']['_type'] ) &&
 					ExtensionSuggestions::PLUGIN_TYPE_WPORG === $gateway_details['plugin']['_type'] ) {
 
-					// Fallback to constructing the WPORG plugin URI from the normalized plugin slug.
+					// Fallback to constructing the WPORG plugin URI from the plugin slug.
 					$gateway_details['links'] = array(
 						array(
 							'_type' => ExtensionSuggestions::LINK_TYPE_ABOUT,
-							'url'   => 'https://wordpress.org/plugins/' . $normalized_plugin_slug,
+							'url'   => 'https://wordpress.org/plugins/' . $plugin_slug,
 						),
 					);
 				}
@@ -1019,7 +1017,7 @@ class Payments {
 		$payment_gateways_order_map = array_flip( array_keys( $payment_gateways ) );
 		// Get the payment gateways to suggestions map.
 		$payment_gateways_to_suggestions_map = array_map(
-			fn( $gateway ) => $this->get_extension_suggestion_by_plugin_slug( Utils::normalize_plugin_slug( $this->get_payment_gateway_plugin_slug( $gateway ) ) ),
+			fn( $gateway ) => $this->get_extension_suggestion_by_plugin_slug( $this->get_payment_gateway_plugin_slug( $gateway ) ),
 			$payment_gateways
 		);
 
