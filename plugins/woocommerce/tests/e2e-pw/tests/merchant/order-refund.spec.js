@@ -1,4 +1,5 @@
 const { test, expect } = require( '@playwright/test' );
+const { tags } = require( '../../fixtures/fixtures' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 test.describe.serial(
@@ -143,7 +144,7 @@ test.describe.serial(
 
 test.describe(
 	'WooCommerce Orders > Refund and restock an order item',
-	{ tag: [ '@payments', '@services', '@hpos' ] },
+	{ tag: [ '@payments', tags.SERVICES, '@hpos' ] },
 	() => {
 		let productWithStockId, productWithNoStockId, orderId;
 

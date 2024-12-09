@@ -1,3 +1,7 @@
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
@@ -6,7 +10,7 @@ const productPrice = '13.99';
 const twoProductPrice = +productPrice * 2;
 const fourProductPrice = +productPrice * 4;
 
-test.describe( 'Cart page', { tag: [ '@payments', '@services' ] }, () => {
+test.describe( 'Cart page', { tag: [ '@payments', tags.SERVICES ] }, () => {
 	let productId, product2Id, product3Id;
 
 	test.beforeAll( async ( { baseURL } ) => {

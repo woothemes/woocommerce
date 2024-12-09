@@ -1,13 +1,17 @@
+/**
+ * External dependencies
+ */
+import { addAProductToCart } from '@woocommerce/e2e-utils-playwright';
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
+
 const { test, expect, request } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const { customer } = require( '../../test-data/data' );
 const { random } = require( '../../utils/helpers' );
 const { setOption } = require( '../../utils/options' );
-
-/**
- * External dependencies
- */
-import { addAProductToCart } from '@woocommerce/e2e-utils-playwright';
 
 const productName = `Taxed products are awesome ${ random() }`;
 const productPrice = '200.00';
@@ -32,7 +36,7 @@ test.describe.serial(
 	{
 		tag: [
 			'@payments',
-			'@services',
+			tags.SERVICES,
 			'@hpos',
 			'@could-be-lower-level-test',
 		],

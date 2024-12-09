@@ -57,7 +57,7 @@ test.describe(
 	{
 		tag: [
 			'@gutenberg',
-			'@services',
+			tags.SERVICES,
 			tags.SKIP_ON_PRESSABLE,
 			tags.SKIP_ON_WPCOM,
 		],

@@ -5,6 +5,10 @@ import {
 	addAProductToCart,
 	getOrderIdFromUrl,
 } from '@woocommerce/e2e-utils-playwright';
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
@@ -42,7 +46,7 @@ test.describe(
 	{
 		tag: [
 			'@payments',
-			'@services',
+			tags.SERVICES,
 			'@hpos',
 			'@could-be-lower-level-test',
 		],

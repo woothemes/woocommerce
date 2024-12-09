@@ -61,7 +61,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Checkout Block page',
-	{ tag: [ '@payments', '@services', '@hpos', tags.SKIP_ON_WPCOM ] },
+	{ tag: [ '@payments', tags.SERVICES, '@hpos', tags.SKIP_ON_WPCOM ] },
 	() => {
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {

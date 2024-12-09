@@ -11,7 +11,7 @@ const discountedPrice = ( productPrice - couponAmount ).toString();
 
 test.describe(
 	'WooCommerce Orders > Apply Coupon',
-	{ tag: [ '@services', '@hpos' ] },
+	{ tag: [ tags.SERVICES, '@hpos' ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 

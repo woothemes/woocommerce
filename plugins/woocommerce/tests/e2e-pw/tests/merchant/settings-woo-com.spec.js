@@ -5,7 +5,7 @@ const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 test.describe(
 	'WooCommerce woo.com Settings',
 	{
-		tag: [ '@services', tags.SKIP_ON_PRESSABLE, tags.SKIP_ON_WPCOM ],
+		tag: [ tags.SERVICES, tags.SKIP_ON_PRESSABLE, tags.SKIP_ON_WPCOM ],
 	},
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );

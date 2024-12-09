@@ -41,7 +41,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Coupon management',
-	{ tag: [ '@services', tags.SKIP_ON_WPCOM ] },
+	{ tag: [ tags.SERVICES, tags.SKIP_ON_WPCOM ] },
 	() => {
 		for ( const couponType of Object.keys( couponData ) ) {
 			test( `can create new ${ couponType } coupon`, async ( {

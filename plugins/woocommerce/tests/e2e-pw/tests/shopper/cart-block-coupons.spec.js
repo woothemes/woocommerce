@@ -1,4 +1,4 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 const { fillPageTitle } = require( '../../utils/editor' );
 
 /**
@@ -61,7 +61,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Cart Block Applying Coupons',
-	{ tag: [ '@payments', '@services' ] },
+	{ tag: [ '@payments', tags.SERVICES ] },
 	() => {
 		const couponBatchId = [];
 

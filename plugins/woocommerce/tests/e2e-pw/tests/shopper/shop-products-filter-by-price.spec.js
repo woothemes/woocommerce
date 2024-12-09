@@ -32,7 +32,7 @@ test.describe(
 	{
 		tag: [
 			'@payments',
-			'@services',
+			tags.SERVICES,
 			tags.SKIP_ON_WPCOM,
 			tags.SKIP_ON_PRESSABLE,
 		],
