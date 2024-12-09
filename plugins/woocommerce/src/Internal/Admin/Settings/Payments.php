@@ -716,7 +716,8 @@ class Payments {
 		$plugin_slug = $this->get_payment_gateway_plugin_slug( $payment_gateway );
 
 		// Handle core gateways.
-		if ( 'woocommerce' === $plugin_slug ) {
+		// We check for multiple slugs to account for beta testing setups.
+		if ( in_array( $plugin_slug, array( 'woocommerce', 'woocommerce-dev' ), true ) ) {
 			if ( $this->is_offline_payment_method( $gateway_details['id'] ) ) {
 				switch ( $gateway_details['id'] ) {
 					case 'bacs':
