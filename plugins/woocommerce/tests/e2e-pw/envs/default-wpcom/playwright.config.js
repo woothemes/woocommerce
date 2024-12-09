@@ -12,7 +12,11 @@ config = {
 		{
 			name: 'ui',
 			use: { ...devices[ 'Desktop Chrome' ] },
-			testIgnore: [ '**/api-tests/**' ],
+			testIgnore: [
+				'**/api-tests/**',
+				'**/customize-store/**',
+				'**/js-file-monitor/**',
+			],
 			grepInvert,
 		},
 		{
