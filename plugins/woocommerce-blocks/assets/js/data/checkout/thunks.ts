@@ -163,7 +163,6 @@ export const updateDraftOrder = ( {
 			}
 			return response;
 		} catch ( error ) {
-			processErrorResponse( error as ApiErrorResponse );
 			return Promise.reject( error );
 		}
 	};

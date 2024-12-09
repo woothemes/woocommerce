@@ -242,7 +242,6 @@ export const updatePaymentMethodData = ( paymentMethodData: string ) => {
 				receiveCart( response.response.cart );
 			}
 		} catch ( error ) {
-			processErrorResponse( error as ApiErrorResponse );
 			return Promise.reject( error );
 		}
 	};
