@@ -84,10 +84,10 @@ export const IncentiveModal = ( {
 										WC_ASSET_URL +
 										'images/settings-payments/incentives-icon.svg'
 									}
-									alt={__(
+									alt={ __(
 										'Incentive icon',
 										'woocommerce'
-									)}
+									) }
 								/>
 							</CardMedia>
 							<CardBody
@@ -97,21 +97,21 @@ export const IncentiveModal = ( {
 							>
 								<div>
 									<StatusBadge
-										status={'has_incentive'}
-										message={__(
+										status={ 'has_incentive' }
+										message={ __(
 											'Limited time offer',
 											'woocommerce'
-										)}
+										) }
 									/>
 								</div>
-								<h2>{incentive.title}</h2>
-								<p>{incentive.description}</p>
+								<h2>{ incentive.title }</h2>
+								<p>{ incentive.description }</p>
 								<p
 									className={
 										'woocommerce-incentive-modal__terms'
 									}
 								>
-									{createInterpolateElement(
+									{ createInterpolateElement(
 										__(
 											'See <termsLink /> for details.',
 											'woocommerce'
@@ -119,42 +119,42 @@ export const IncentiveModal = ( {
 										{
 											termsLink: (
 												<Link
-													href={incentive.tc_url}
+													href={ incentive.tc_url }
 													target="_blank"
 													rel="noreferrer"
 													type="external"
 												>
-													{__(
+													{ __(
 														'Terms and Conditions',
 														'woocommerce'
-													)}
+													) }
 												</Link>
 											),
 										}
-									)}
+									) }
 								</p>
 								<Button
-									variant={'primary'}
-									isBusy={isBusy}
-									disabled={isBusy}
-									onClick={() => {
-										setIsBusy(true);
+									variant={ 'primary' }
+									isBusy={ isBusy }
+									disabled={ isBusy }
+									onClick={ () => {
+										setIsBusy( true );
 										// TODO: Temporary for testing, update to use plugin ID and slug.
 										setupPlugin(
 											'woopayments',
 											'woocommerce-payments'
 										);
-										setIsBusy(false);
+										setIsBusy( false );
 										handleClose();
-									}}
+									} }
 								>
-									{incentive.cta_label}
+									{ incentive.cta_label }
 								</Button>
 							</CardBody>
 						</div>
 					</Card>
 				</Modal>
-			)}
+			) }
 		</>
 	);
 };
