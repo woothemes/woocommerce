@@ -1,21 +1,18 @@
 /**
  * Util helper made for filling shipping details in the block-based checkout
  *
- * @param {Object} page
- * @param {Object} [shippingDetails={}] - The shipping details object.
- * @param {string} [shippingDetails.country='US'] - The first name.
- * @param {string} [shippingDetails.firstName='Homer'] - The first name.
- * @param {string} [shippingDetails.lastName='Simpson'] - The last name.
- * @param {string} [shippingDetails.address='123 Evergreen Terrace'] - The address.
- * @param {string} [shippingDetails.zip='97403'] - The ZIP code.
- * @param {string} [shippingDetails.city='Springfield'] - The city.
- * @param {string} [shippingDetails.state='OR'] - The State.
- * @param {boolean} [shippingDetails.isPostalCode=false] - If true, search by 'Postal code' instead of 'Zip Code'.
+ * @param {Object}  page
+ * @param {Object}  [shippingDetails={}]                              - The shipping details object.
+ * @param {string}  [shippingDetails.country='US']                    - The first name.
+ * @param {string}  [shippingDetails.firstName='Homer']               - The first name.
+ * @param {string}  [shippingDetails.lastName='Simpson']              - The last name.
+ * @param {string}  [shippingDetails.address='123 Evergreen Terrace'] - The address.
+ * @param {string}  [shippingDetails.zip='97403']                     - The ZIP code.
+ * @param {string}  [shippingDetails.city='Springfield']              - The city.
+ * @param {string}  [shippingDetails.state='OR']                      - The State.
+ * @param {boolean} [shippingDetails.isPostalCode=false]              - If true, search by 'Postal code' instead of 'Zip Code'.
  */
-export async function fillShippingCheckoutBlocks(
-	page,
-	shippingDetails = {}
-) {
+export async function fillShippingCheckoutBlocks( page, shippingDetails = {} ) {
 	const {
 		country = 'US',
 		firstName = 'Homer',
@@ -64,20 +61,18 @@ export async function fillShippingCheckoutBlocks(
 /**
  * Util helper made for filling billing details in the block-based checkout
  *
- * @param {Object} [billingDetails={}] - The shipping details object.
- * @param {string} [billingDetails.country='US'] - The first name.
- * @param {string} [billingDetails.firstName='Homer'] - The first name.
- * @param {string} [billingDetails.lastName='Simpson'] - The last name.
- * @param {string} [billingDetails.address='123 Evergreen Terrace'] - The address.
- * @param {string} [billingDetails.zip='97403'] - The ZIP code.
- * @param {string} [billingDetails.city='Springfield'] - The city.
- * @param {string} [billingDetails.state='OR'] - The State.
- * @param {boolean} [billingDetails.isPostalCode=false] - If true, search by 'Postal code' instead of 'Zip Code'.
+ * @param {Object}  page
+ * @param {Object}  [billingDetails={}]                              - The shipping details object.
+ * @param {string}  [billingDetails.country='US']                    - The first name.
+ * @param {string}  [billingDetails.firstName='Homer']               - The first name.
+ * @param {string}  [billingDetails.lastName='Simpson']              - The last name.
+ * @param {string}  [billingDetails.address='123 Evergreen Terrace'] - The address.
+ * @param {string}  [billingDetails.zip='97403']                     - The ZIP code.
+ * @param {string}  [billingDetails.city='Springfield']              - The city.
+ * @param {string}  [billingDetails.state='OR']                      - The State.
+ * @param {boolean} [billingDetails.isPostalCode=false]              - If true, search by 'Postal code' instead of 'Zip Code'.
  */
-export async function fillBillingCheckoutBlocks(
-	page,
-	billingDetails = {}
-) {
+export async function fillBillingCheckoutBlocks( page, billingDetails = {} ) {
 	const {
 		country = 'US',
 		firstName = 'Mister',
