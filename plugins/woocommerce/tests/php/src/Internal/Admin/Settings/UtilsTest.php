@@ -1468,8 +1468,11 @@ class UtilsTest extends WC_Unit_Test_Case {
 	 * Test normalizing a plugin slug.
 	 *
 	 * @dataProvider data_provider_normalize_plugin_slug
+	 *
+	 * @param string $slug     The plugin slug.
+	 * @param string $expected The expected normalized plugin slug.
 	 */
-	public function test_normalize_plugin_slug( $slug, $expected ) {
+	public function test_normalize_plugin_slug( string $slug, string $expected ) {
 		// Act.
 		$slug = Utils::normalize_plugin_slug( $slug );
 
