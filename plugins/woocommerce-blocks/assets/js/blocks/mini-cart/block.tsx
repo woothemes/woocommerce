@@ -264,14 +264,6 @@ const MiniCartBlock = ( attributes: Props ): JSX.Element => {
 						) }
 					</span>
 				) }
-				{ taxLabel !== '' && subTotal !== 0 && ! hasHiddenPrice && (
-					<small
-						className="wc-block-mini-cart__tax-label"
-						style={ { color: priceColor.color } }
-					>
-						{ taxLabel }
-					</small>
-				) }
 				<QuantityBadge
 					count={ cartItemsCount }
 					icon={ miniCartIcon }
