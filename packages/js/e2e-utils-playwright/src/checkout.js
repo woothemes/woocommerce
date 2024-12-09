@@ -24,6 +24,10 @@ export async function fillShippingCheckoutBlocks( page, shippingDetails = {} ) {
 		isPostalCode = false,
 	} = shippingDetails;
 
+	console.log( '>>>>>>>>>' );
+	console.log(country, isPostalCode);
+	console.log( '>>>>>>>>>' );
+
 	await page
 		.getByRole( 'group', { name: 'Shipping address' } )
 		.getByLabel( 'Country' )
@@ -104,10 +108,6 @@ export async function fillBillingCheckoutBlocks( page, billingDetails = {} ) {
 		.getByRole( 'group', { name: 'Billing address' } )
 		.getByLabel( 'City' )
 		.fill( city );
-	await page
-		.getByRole( 'group', { name: 'Billing address' } )
-		.getByLabel( 'ZIP Code' )
-		.fill( zip );
 
 	// Not every country has a state.
 	if ( state ) {
