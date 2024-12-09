@@ -243,6 +243,7 @@ export const updatePaymentMethodData = ( paymentMethodData: string ) => {
 			}
 		} catch ( error ) {
 			processErrorResponse( error as ApiErrorResponse );
+			return Promise.reject( error );
 		}
 	};
 };

@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import type { CheckoutResponse } from '@woocommerce/types';
+import type { ApiErrorResponse, CheckoutResponse } from '@woocommerce/types';
 import { store as noticesStore } from '@wordpress/notices';
 import { dispatch as wpDispatch, select as wpSelect } from '@wordpress/data';
+import { AdditionalValues } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
@@ -28,6 +29,7 @@ import type { DispatchFromMap } from '../mapped-types';
 import * as actions from './actions';
 import { apiFetchWithHeaders } from '../shared-controls';
 import { processErrorResponse } from '../utils';
+import { CART_STORE_KEY } from '../cart';
 
 /**
  * Based on the result of the payment, update the redirect url,
@@ -138,8 +140,15 @@ export const __internalEmitAfterProcessingEvents: emitAfterProcessingEventsType 
 		};
 	};
 
-export const updateDraftOrder = ( { orderNotes, additionalFields } ) => {
-	return async ( { dispatch } ) => {
+export const updateDraftOrder = ( {
+	orderNotes,
+	additionalFields,
+}: {
+	orderNotes: string;
+	additionalFields: AdditionalValues;
+} ) => {
+	return async ( { registry } ) => {
+		const { receiveCart } = registry.dispatch( CART_STORE_KEY );
 		try {
 			const response = await apiFetchWithHeaders( {
 				path: '/wc/store/v1/checkout',
@@ -149,9 +158,13 @@ export const updateDraftOrder = ( { orderNotes, additionalFields } ) => {
 					order_notes: orderNotes,
 				},
 			} );
+			if ( response?.response?.cart ) {
+				receiveCart( response.response.cart );
+			}
 			return response;
 		} catch ( error ) {
-			processErrorResponse( error );
+			processErrorResponse( error as ApiErrorResponse );
+			return Promise.reject( error );
 		}
 	};
 };

@@ -763,6 +763,7 @@ class Checkout extends AbstractCartRoute {
 	 */
 	private function persist_payment_method_for_order( \WP_REST_Request $request ) {
 		if ( isset( $request['payment_method'] ) ) {
+			WC()->session->set( 'chosen_payment_method', sanitize_text_field( wp_unslash( $request['payment_method'] ) ) );
 			$this->order->set_payment_method( sanitize_text_field( wp_unslash( $request['payment_method'] ) ) );
 		}
 	}
