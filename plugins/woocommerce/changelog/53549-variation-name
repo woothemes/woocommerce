@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Display variation name in add to cart message instead of parent product for variations
