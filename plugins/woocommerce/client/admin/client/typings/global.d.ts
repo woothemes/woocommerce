@@ -11,7 +11,7 @@ declare global {
 			countries: Record< string, string >;
 			admin: {
 				woocommerce_payments_nox_profile?: {
-					location: string;
+					business_country_code: string;
 				};
 				wcpay_welcome_page_connect_nonce: string;
 				currentUserData: {

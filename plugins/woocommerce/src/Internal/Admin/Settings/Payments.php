@@ -183,8 +183,8 @@ class Payments {
 	 */
 	public function get_country(): string {
 		$user_nox_meta = get_user_meta( get_current_user_id(), self::USER_PAYMENTS_NOX_PROFILE_KEY, true );
-		if ( ! empty( $user_nox_meta['location'] ) ) {
-			return $user_nox_meta['location'];
+		if ( ! empty( $user_nox_meta['business_country_code'] ) ) {
+			return $user_nox_meta['business_country_code'];
 		}
 
 		return WC()->countries->get_base_country();

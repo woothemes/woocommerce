@@ -36,8 +36,8 @@ export const SettingsPaymentsMain = () => {
 		useState( false );
 
 	const [ storeCountry, setStoreCountry ] = useState< string | null >(
-		window.wcSettings?.admin?.woocommerce_payments_nox_profile?.location ||
-			null
+		window.wcSettings?.admin?.woocommerce_payments_nox_profile
+			?.business_country_code || null
 	);
 
 	const urlParams = new URLSearchParams( window.location.search );
