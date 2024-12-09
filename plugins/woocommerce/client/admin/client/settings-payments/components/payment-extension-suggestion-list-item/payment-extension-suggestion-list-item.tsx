@@ -80,7 +80,7 @@ export const PaymentExtensionSuggestionListItem = ( {
 						renderContent={ ( { onToggle } ) => (
 							<EllipsisMenuContent
 								pluginId={ extension.id }
-								pluginName={ extension.plugin.slug }
+								pluginFile={ extension.plugin.file }
 								isSuggestion={ true }
 								links={ extension.links }
 								onToggle={ onToggle }
