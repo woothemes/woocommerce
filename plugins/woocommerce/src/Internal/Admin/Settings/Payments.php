@@ -615,7 +615,7 @@ class Payments {
 			'onboarding'  => array(
 				'recommended_payment_methods' => $this->get_payment_gateway_recommended_payment_methods( $payment_gateway, $country_code ),
 			),
-			'plugin' 	=> array(
+			'plugin'      => array(
 				'_type'  => 'wporg',
 				'slug'   => $plugin_slug,
 				'file'   => $plugin_file,

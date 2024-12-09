@@ -615,7 +615,7 @@ class PaymentsRestController extends RestApiControllerBase {
 						),
 						'status' => array(
 							'type'        => 'string',
-							'enum'		  => array( Payments::EXTENSION_NOT_INSTALLED, Payments::EXTENSION_INSTALLED, Payments::EXTENSION_ACTIVE ),
+							'enum'        => array( Payments::EXTENSION_NOT_INSTALLED, Payments::EXTENSION_INSTALLED, Payments::EXTENSION_ACTIVE ),
 							'description' => esc_html__( 'The status of the plugin.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
@@ -935,7 +935,7 @@ class PaymentsRestController extends RestApiControllerBase {
 						),
 						'status' => array(
 							'type'        => 'string',
-							'enum'		  => array( Payments::EXTENSION_NOT_INSTALLED, Payments::EXTENSION_INSTALLED, Payments::EXTENSION_ACTIVE ),
+							'enum'        => array( Payments::EXTENSION_NOT_INSTALLED, Payments::EXTENSION_INSTALLED, Payments::EXTENSION_ACTIVE ),
 							'description' => esc_html__( 'The status of the plugin.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
