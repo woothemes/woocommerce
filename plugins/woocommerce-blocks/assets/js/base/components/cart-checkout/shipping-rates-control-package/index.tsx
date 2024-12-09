@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { _n, sprintf } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
 import { Label, Panel } from '@woocommerce/blocks-components';
-import { useCallback, useMemo } from '@wordpress/element';
+import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import { useShippingData } from '@woocommerce/base-context/hooks';
 import { sanitizeHTML } from '@woocommerce/utils';
 import type { ReactElement } from 'react';
@@ -36,12 +36,29 @@ export const ShippingRatesControlPackage = ( {
 			select( CART_STORE_KEY )?.getCartData()?.shippingRates?.length
 	);
 
+	const packageClass = 'wc-block-components-shipping-rates-control__package';
+	const [ instanceCount, setInstanceCount ] = useState( 0 );
+
 	// We have no built-in way of checking if other extensions have added packages e.g. if subscriptions has added them.
-	const multiplePackages =
-		internalPackageCount > 1 ||
-		document.querySelectorAll(
-			'.wc-block-components-shipping-rates-control__package'
-		).length > 1;
+	const multiplePackages = internalPackageCount > 1 || instanceCount > 1;
+
+	useEffect( () => {
+		const updateCount = () => {
+			setInstanceCount(
+				document.querySelectorAll( `.${ packageClass }` ).length
+			);
+		};
+
+		updateCount();
+
+		const observer = new MutationObserver( updateCount );
+		observer.observe( document.body, { childList: true, subtree: true } );
+
+		return () => {
+			updateCount();
+			observer.disconnect();
+		};
+	}, [] );
 
 	// If showItems is not set, we check if we have multiple packages.
 	// We sometimes don't want to show items even if we have multiple packages.
