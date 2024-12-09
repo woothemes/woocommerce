@@ -10,7 +10,7 @@ import {
 } from 'downshift';
 import { Button } from '@wordpress/components';
 import { useThrottle } from '@wordpress/compose';
-import { useCallback } from '@wordpress/element';
+import { useCallback, useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { check, chevronDown, Icon } from '@wordpress/icons';
 
@@ -19,8 +19,13 @@ import { check, chevronDown, Icon } from '@wordpress/icons';
  */
 import { WC_ASSET_URL } from '~/utils/admin-settings';
 import { Item, ControlProps, UseSelectStateChangeOptionsProps } from './types';
-import { getOptionLabel } from './utils';
 import './country-selector.scss';
+
+// Retrieves the display label for a given value from a list of options.
+const getOptionLabel = ( value: string, options: Item[] ) => {
+	const item = options.find( ( option ) => option.key === value );
+	return item?.name ? item.name : '';
+};
 
 // State reducer to control selection navigation
 const stateReducer = < ItemType extends Item >(
@@ -89,7 +94,6 @@ export const CountrySelector = < ItemType extends Item >( {
 	children,
 }: ControlProps< ItemType > ): JSX.Element => {
 	const [ searchText, setSearchText ] = useState( '' );
-	const [ isSearchFocused, setSearchFocused ] = useState( false );
 
 	// only run filter every 200ms even if the user is typing
 	const throttledApplySearchToItems = useThrottle(
@@ -122,21 +126,16 @@ export const CountrySelector = < ItemType extends Item >( {
 		highlightedIndex,
 		selectedItem,
 		closeMenu,
-		selectItem,
-		setHighlightedIndex,
 	} = useSelect< ItemType >( {
 		initialSelectedItem: value,
 		items: [ ...visibleItems ],
 		stateReducer,
-		onIsOpenChange: () => {
-			selectItem( value );
-			setHighlightedIndex( Array.from( visibleItems ).indexOf( value ) );
-		},
 	} );
 
 	const itemString = getOptionLabel( value.key, items );
 	const selectedValue = selectedItem ? selectedItem.key : '';
 
+	const menuRef = useRef< HTMLInputElement >( null );
 	const searchRef = useRef< HTMLInputElement >( null );
 	function getDescribedBy() {
 		if ( describedBy ) {
@@ -154,13 +153,28 @@ export const CountrySelector = < ItemType extends Item >( {
 		);
 	}
 
+	const highlightSelectedCountry = useCallback(
+		( itemIndex: number ) => {
+			const menuElement = menuRef.current;
+
+			const highlightedItem = menuElement?.querySelector(
+				`[data-index="${ itemIndex }"]`
+			);
+
+			if ( highlightedItem ) {
+				highlightedItem.scrollIntoView( {
+					block: 'nearest',
+				} );
+			}
+		},
+		[ menuRef ]
+	);
+
 	const getSearchSuffix = ( focused: boolean ) => {
 		if ( focused ) {
 			return (
 				<img
-					src={
-						WC_ASSET_URL + 'images/settings-payments/clear-icon.svg'
-					}
+					src={ WC_ASSET_URL + 'images/icons/clear.svg' }
 					alt={ __( 'Clear search', 'woocommerce' ) }
 				/>
 			);
@@ -168,20 +182,19 @@ export const CountrySelector = < ItemType extends Item >( {
 
 		return (
 			<img
-				src={
-					WC_ASSET_URL + 'images/settings-payments/search-icon.svg'
-				}
+				src={ WC_ASSET_URL + 'images/icons/search.svg' }
 				alt={ __( 'Search', 'woocommerce' ) }
 			/>
 		);
 	};
 
 	// Check if the search input is clearable.
-	const isSearchClearable = isSearchFocused && searchText !== '';
+	const isSearchClearable = searchText !== '';
 
 	const menuProps = getMenuProps( {
 		className: 'components-country-select-control__menu',
 		'aria-hidden': ! isOpen,
+		ref: menuRef, // Ref to the menu element.
 	} );
 
 	const onApplyHandler = useCallback(
@@ -210,9 +223,25 @@ export const CountrySelector = < ItemType extends Item >( {
 			if ( searchText !== '' ) {
 				setSearchText( '' );
 			}
+
+			if ( selectedItem !== null ) {
+				// Timeout the highlight to ensure the list is updated.
+				setTimeout( () => {
+					highlightSelectedCountry( items.indexOf( selectedItem ) );
+				}, 10 );
+			}
 		},
-		[ searchText ]
+		[ searchText, selectedItem ]
 	);
+
+	useEffect( () => {
+		// Highlight the selected country when the menu is opened.
+		if ( isOpen && selectedItem !== null ) {
+			const selectedItemIndex =
+				Array.from( visibleItems ).indexOf( selectedItem );
+			highlightSelectedCountry( selectedItemIndex );
+		}
+	}, [ isOpen ] );
 
 	return (
 		<div
@@ -257,8 +286,6 @@ export const CountrySelector = < ItemType extends Item >( {
 								onChange={ ( { target } ) =>
 									setSearchText( target.value )
 								}
-								onFocus={ () => setSearchFocused( true ) }
-								onBlur={ () => setSearchFocused( false ) }
 								tabIndex={ -1 }
 								placeholder={ __( 'Search', 'woocommerce' ) }
 							/>
@@ -284,6 +311,7 @@ export const CountrySelector = < ItemType extends Item >( {
 													index === highlightedIndex,
 											}
 										),
+										'data-index': index,
 										style: item.style,
 									} ) }
 									key={ item.key }

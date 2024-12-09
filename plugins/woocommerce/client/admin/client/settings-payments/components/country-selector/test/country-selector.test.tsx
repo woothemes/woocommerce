@@ -18,6 +18,11 @@ describe( 'CountrySelector', () => {
 		{ key: 'FR', name: 'France' },
 	];
 
+	const scrollIntoViewMock = jest.fn();
+	Object.defineProperty( HTMLElement.prototype, 'scrollIntoView', {
+		value: scrollIntoViewMock,
+		writable: true,
+	} );
 	const mockOnChange = jest.fn();
 
 	const defaultProps = {
