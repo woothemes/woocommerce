@@ -31,19 +31,13 @@ export const SettingsPaymentsMain = () => {
 	);
 	const { installAndActivatePlugins } = useDispatch( PLUGINS_STORE_NAME );
 
-	// Get WooCommerce store country, split by colon to avoid the state.
-	const storeDefaultCountry =
-		window.wcSettings?.admin?.preloadSettings?.general?.woocommerce_default_country?.split(
-			':'
-		)[ 0 ];
-
 	const [ errorMessage, setErrorMessage ] = useState< string | null >( null );
 	const [ livePaymentsModalVisible, setLivePaymentsModalVisible ] =
 		useState( false );
 
 	const [ storeCountry, setStoreCountry ] = useState< string | null >(
 		window.wcSettings?.admin?.woocommerce_payments_nox_profile?.location ||
-			storeDefaultCountry
+			null
 	);
 
 	const urlParams = new URLSearchParams( window.location.search );
