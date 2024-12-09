@@ -120,7 +120,7 @@ class PaymentsController {
 		if ( ! isset( $settings[ Payments::USER_PAYMENTS_NOX_PROFILE_KEY ] ) ) {
 			$settings[ Payments::USER_PAYMENTS_NOX_PROFILE_KEY ] = array();
 		}
-		$settings[ Payments::USER_PAYMENTS_NOX_PROFILE_KEY ]['location'] = $this->payments->get_country();
+		$settings[ Payments::USER_PAYMENTS_NOX_PROFILE_KEY ]['business_country_code'] = $this->payments->get_country();
 
 		return $settings;
 	}
