@@ -52,29 +52,12 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 		$this->label = esc_html_x( 'Payments', 'Settings tab label', 'woocommerce' );
 
 		// Add filters and actions.
-		add_filter( 'woocommerce_admin_shared_settings', array( $this, 'preload_settings' ) );
 		add_action( 'admin_head', array( $this, 'hide_help_tabs' ) );
 		// Hook in as late as possible - `in_admin_header` is the last action before the `admin_notices` action is fired.
 		// It is too risky to hook into `admin_notices` with a low priority because the callbacks might be cached.
 		add_action( 'in_admin_header', array( $this, 'suppress_admin_notices' ), PHP_INT_MAX );
 
 		parent::__construct();
-	}
-
-	/**
-	 * This function can be used to preload settings related to payment gateways.
-	 * Registered keys will be available in the window.wcSettings.admin object.
-	 *
-	 * @param array $settings Settings array.
-	 *
-	 * @return array Settings array with additional settings added.
-	 */
-	public function preload_settings( $settings ) {
-		if ( ! is_admin() ) {
-			return $settings;
-		}
-
-		return $settings;
 	}
 
 	/**
