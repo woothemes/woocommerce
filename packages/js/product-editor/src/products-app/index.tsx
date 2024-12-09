@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-import { createElement } from '@wordpress/element';
+import { createElement, useEffect } from '@wordpress/element';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
-import { SlotFillProvider } from '@wordpress/components';
 import {
 	UnsavedChangesWarning,
 	// @ts-expect-error No types for this exist yet.
@@ -14,12 +13,15 @@ import {
  * Internal dependencies
  */
 import { unlock } from '../lock-unlock';
-import useLayoutAreas from './router';
 import { Layout } from './layout';
 import {
 	NewNavigationProvider,
 	useNewNavigation,
 } from './utilites/new-navigation';
+import SidebarNavigationScreen from './sidebar-navigation-screen';
+import DataViewsSidebarContent from './sidebar-dataviews';
+import ProductList from './product-list';
+import ProductEdit from './product-edit';
 
 const { RouterProvider } = unlock( routerPrivateApis );
 const { GlobalStylesProvider } = unlock( editorPrivateApis );
@@ -32,16 +34,58 @@ function ProductsLayout() {
 	} else {
 		document.body.classList.remove( 'is-fullscreen-mode' );
 	}
-	const route = useLayoutAreas();
-	return <Layout route={ route } showNewNavigation={ showNewNavigation } />;
+
+	return <Layout showNewNavigation={ showNewNavigation } />;
 }
 
 export function ProductsApp() {
+	const routes = [
+		{
+			name: 'product-list',
+			path: '/woocommerce-products-dashboard',
+			key: 'products-list',
+			areas: {
+				sidebar: (
+					<SidebarNavigationScreen
+						title={ 'Products' }
+						isRoot
+						content={ <DataViewsSidebarContent /> }
+					/>
+				),
+				content: <ProductList />,
+				preview: false,
+				mobile: <ProductList postType={ 'product' } />,
+			},
+			widths: {
+				edit: 300,
+			},
+		},
+		{
+			name: 'product-edit',
+			path: '/woocommerce-products-dashboard/:productId',
+			key: 'products-edit',
+			areas: {
+				sidebar: (
+					<SidebarNavigationScreen
+						title={ 'Products' }
+						isRoot
+						content={ <DataViewsSidebarContent /> }
+					/>
+				),
+				content: <ProductEdit />,
+				preview: false,
+				mobile: null,
+			},
+			widths: {
+				edit: 300,
+			},
+		},
+	];
 	return (
 		<NewNavigationProvider>
 			<GlobalStylesProvider>
 				<UnsavedChangesWarning />
-				<RouterProvider routes={ [] }>
+				<RouterProvider routes={ routes } pathArg={ 'page' }>
 					<ProductsLayout />
 				</RouterProvider>
 			</GlobalStylesProvider>

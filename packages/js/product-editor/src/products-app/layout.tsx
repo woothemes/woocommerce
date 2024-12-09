@@ -8,6 +8,7 @@ import {
 	useReducedMotion,
 } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
+import { privateApis as routerPrivateApis } from '@wordpress/router';
 import {
 	// @ts-expect-error missing type.
 	EditorSnackbars,
@@ -27,25 +28,23 @@ import {
  */
 import SidebarContent from './sidebar';
 import SiteHub from './site-hub';
-import { Route } from './router';
 import { unlock } from '../lock-unlock';
 
 const { NavigableRegion } = unlock( editorPrivateApis );
+const { useLocation } = unlock( routerPrivateApis );
 
 const ANIMATION_DURATION = 0.3;
 
 type LayoutProps = {
-	route: Route;
 	showNewNavigation: boolean;
 };
 
-export function Layout( { route, showNewNavigation = false }: LayoutProps ) {
+export function Layout( { showNewNavigation = false }: LayoutProps ) {
+	const { areas, widths, name } = useLocation();
 	const [ fullResizer ] = useResizeObserver();
 	const toggleRef = useRef< HTMLAnchorElement >( null );
 	const isMobileViewport = useViewportMatch( 'medium', '<' );
 	const disableMotion = useReducedMotion();
-
-	const { key: routeKey, areas, widths } = route;
 
 	return (
 		<>
@@ -83,7 +82,7 @@ export function Layout( { route, showNewNavigation = false }: LayoutProps ) {
 											ref={ toggleRef }
 											isTransparent={ false }
 										/>
-										<SidebarContent routeKey={ routeKey }>
+										<SidebarContent routeKey={ name }>
 											{ areas.sidebar }
 										</SidebarContent>
 									</motion.div>

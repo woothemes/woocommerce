@@ -6,6 +6,7 @@ import { edit } from '@wordpress/icons';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 import { __ } from '@wordpress/i18n';
 import { Product } from '@woocommerce/data';
+import { addQueryArgs } from '@wordpress/url';
 
 /**
  * Internal dependencies
@@ -14,9 +15,10 @@ import { unlock } from '../../lock-unlock';
 
 const { useHistory, useLocation } = unlock( routerPrivateApis );
 
-export const useEditProductAction = ( { postType }: { postType: string } ) => {
+export const useEditProductAction = () => {
 	const history = useHistory();
-	const location = useLocation();
+	const { path } = useLocation();
+
 	return useMemo(
 		() => ( {
 			id: 'edit-product',
@@ -32,14 +34,12 @@ export const useEditProductAction = ( { postType }: { postType: string } ) => {
 			},
 			callback( items: Product[] ) {
 				const product = items[ 0 ];
-				history.push( {
-					...location.params,
-					postId: product.id,
-					postType,
-					quickEdit: true,
-				} );
+
+				history.navigate(
+					`woocommerce-products-dashboard/${ product.id }`
+				);
 			},
 		} ),
-		[ history, location.params ]
+		[ history, path ]
 	);
 };

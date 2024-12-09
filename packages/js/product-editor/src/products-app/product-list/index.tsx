@@ -7,9 +7,9 @@ import {
 	useState,
 	useMemo,
 	useCallback,
-	useEffect,
 	Fragment,
 } from '@wordpress/element';
+import { addQueryArgs } from '@wordpress/url';
 import { Product, ProductQuery } from '@woocommerce/data';
 import { drawerRight, seen, unseen } from '@wordpress/icons';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
@@ -59,86 +59,39 @@ export type ProductListProps = {
 const PAGE_SIZE = 25;
 const EMPTY_ARRAY: Product[] = [];
 
-const getDefaultView = (
-	defaultViews: Array< { slug: string; view: View } >,
-	activeView: string
-) => {
-	return defaultViews.find( ( { slug } ) => slug === activeView )?.view;
-};
+function useView( {
+	layout,
+	history,
+	path,
+}: {
+	layout: string;
+	// We need to improve this type
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	history: any;
+	// We need to improve this type
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	path: any;
+} ): [ View, ( newView: View ) => void ] {
+	const layoutViews = useDefaultViews( { postType: 'product' } );
+	const selectedView =
+		layoutViews.find( ( { view } ) => view.type === layout )?.view ??
+		layoutViews[ 0 ].view;
 
-/**
- * This function abstracts working with default & custom views by
- * providing a [ state, setState ] tuple based on the URL parameters.
- *
- * Consumers use the provided tuple to work with state
- * and don't have to deal with the specifics of default & custom views.
- *
- * @param {string} postType Post type to retrieve default views for.
- * @return {Array} The [ state, setState ] tuple.
- */
-function useView(
-	postType: string
-): [ View, ( view: View ) => void, ( view: View ) => void ] {
-	const {
-		params: { activeView = 'all', isCustom = 'false', layout },
-	} = useLocation();
-	const history = useHistory();
+	const [ view, setSelectedView ] = useState< View >( selectedView );
 
-	const defaultViews = useDefaultViews( { postType } );
-	const [ view, setView ] = useState< View >( () => {
-		const initialView = getDefaultView( defaultViews, activeView ) ?? {
-			type: layout ?? LAYOUT_TABLE,
-		};
-
-		const type = layout ?? initialView.type;
-		return {
-			...initialView,
-			type,
-		};
-	} );
-
-	const setViewWithUrlUpdate = useCallback(
+	const setView = useCallback(
 		( newView: View ) => {
-			const { params } = history.getLocationWithParams();
-
-			if ( newView.type === LAYOUT_TABLE && ! params?.layout ) {
-				// Skip updating the layout URL param if
-				// it is not present and the newView.type is LAYOUT_LIST.
-			} else if ( newView.type !== params?.layout ) {
-				history.push( {
-					...params,
+			history.navigate(
+				addQueryArgs( path, {
 					layout: newView.type,
-				} );
-			}
-
-			setView( newView );
+				} )
+			);
+			setSelectedView( newView );
 		},
-		[ history, isCustom ]
+		[ history, path ]
 	);
 
-	// When layout URL param changes, update the view type
-	// without affecting any other config.
-	useEffect( () => {
-		setView( ( prevView ) => ( {
-			...prevView,
-			type: layout ?? LAYOUT_TABLE,
-		} ) );
-	}, [ layout ] );
-
-	// When activeView or isCustom URL parameters change, reset the view.
-	useEffect( () => {
-		const newView = getDefaultView( defaultViews, activeView );
-
-		if ( newView ) {
-			const type = layout ?? newView.type;
-			setView( {
-				...newView,
-				type,
-			} );
-		}
-	}, [ activeView, isCustom, layout, defaultViews ] );
-
-	return [ view, setViewWithUrlUpdate, setViewWithUrlUpdate ];
+	return [ view, setView ];
 }
 
 function getItemId( item: Product ) {
@@ -152,16 +105,17 @@ export default function ProductList( {
 }: ProductListProps ) {
 	const [ showNewNavigation, setNewNavigation ] = useNewNavigation();
 	const history = useHistory();
-	const location = useLocation();
-	const {
-		postId,
-		quickEdit = false,
-		postType = 'product',
-		isCustom,
-		activeView = 'all',
-	} = location.params;
-	const [ selection, setSelection ] = useState( [ postId ] );
-	const [ view, setView ] = useView( postType );
+	const { path, query } = useLocation();
+	const postType = 'product';
+	const layout = query.layout ?? LAYOUT_TABLE;
+	const isQuickEdit = query.quickEdit === 'true';
+
+	const [ selection, setSelection ] = useState( [] );
+	const [ view, setView ] = useView( {
+		layout,
+		history,
+		path,
+	} );
 
 	const queryParams = useMemo( () => {
 		const filters: Partial< ProductQuery > = {};
@@ -183,17 +137,18 @@ export default function ProductList( {
 			search: view.search,
 			...filters,
 		};
-	}, [ location.params, view ] );
+	}, [ view ] );
 
 	const onChangeSelection = useCallback(
 		( items ) => {
 			setSelection( items );
-			history.push( {
-				...location.params,
-				postId: items.join( ',' ),
-			} );
+			history.navigate(
+				addQueryArgs( path, {
+					ids: items.join( ',' ),
+				} )
+			);
 		},
-		[ history, location.params, view?.type ]
+		[ history, path ]
 	);
 
 	// TODO: Use the Woo data store to get all the products, as this doesn't contain all the product data.
@@ -239,7 +194,7 @@ export default function ProductList( {
 		postType,
 		context: 'list',
 	} );
-	const editAction = useEditProductAction( { postType } );
+	const editAction = useEditProductAction();
 	const actions = useMemo(
 		() => [ editAction, ...postTypeActions ],
 		[ postTypeActions, editAction ]
@@ -296,14 +251,15 @@ export default function ProductList( {
 					</VStack>
 				) }
 				<DataViews
-					key={ activeView + isCustom }
 					paginationInfo={ paginationInfo }
 					fields={ productFields }
 					data={ records || EMPTY_ARRAY }
 					isLoading={ isLoading }
 					view={ view }
 					actions={ actions }
-					onChangeView={ setView }
+					onChangeView={ ( selectedView ) => {
+						setView( selectedView );
+					} }
 					onChangeSelection={ onChangeSelection }
 					getItemId={ getItemId }
 					selection={ selection }
@@ -325,17 +281,20 @@ export default function ProductList( {
 							<Button
 								// @ts-expect-error outdated type.
 								size="compact"
-								isPressed={ quickEdit }
+								isPressed={ isQuickEdit }
 								icon={ drawerRight }
 								label={ __(
 									'Toggle details panel',
 									'woocommerce'
 								) }
 								onClick={ () => {
-									history.push( {
-										...location.params,
-										quickEdit: quickEdit ? undefined : true,
-									} );
+									history.navigate(
+										addQueryArgs( path, {
+											quickEdit: isQuickEdit
+												? undefined
+												: 'true',
+										} )
+									);
 								} }
 							/>
 						</>
