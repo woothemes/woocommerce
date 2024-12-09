@@ -24,9 +24,9 @@ class EmailPreview {
 	/**
 	 * The email type to preview.
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	private string $email_type = self::DEFAULT_EMAIL_TYPE;
+	private ?string $email_type = null;
 
 	/**
 	 * The email object.
@@ -142,6 +142,10 @@ class EmailPreview {
 	 */
 	private function render_preview_email() {
 		$this->set_up_filters();
+
+		if ( ! $this->email_type ) {
+			$this->set_email_type( self::DEFAULT_EMAIL_TYPE );
+		}
 
 		$content = $this->email->get_content_html();
 
