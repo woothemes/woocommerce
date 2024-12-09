@@ -29809,12 +29809,12 @@ snapshots:
   '@babel/plugin-transform-classes@7.23.5(@babel/core@7.23.5)':
     dependencies:
       '@babel/core': 7.23.5
-      '@babel/helper-annotate-as-pure': 7.25.9
-      '@babel/helper-compilation-targets': 7.25.9
+      '@babel/helper-annotate-as-pure': 7.24.7
+      '@babel/helper-compilation-targets': 7.25.2
       '@babel/helper-environment-visitor': 7.24.7
       '@babel/helper-function-name': 7.24.7
       '@babel/helper-optimise-call-expression': 7.22.5
-      '@babel/helper-plugin-utils': 7.25.9
+      '@babel/helper-plugin-utils': 7.24.8
       '@babel/helper-replace-supers': 7.22.20(@babel/core@7.23.5)
       '@babel/helper-split-export-declaration': 7.24.7
       globals: 11.12.0
@@ -29822,12 +29822,12 @@ snapshots:
   '@babel/plugin-transform-classes@7.23.5(@babel/core@7.26.0)':
     dependencies:
       '@babel/core': 7.26.0
-      '@babel/helper-annotate-as-pure': 7.25.9
-      '@babel/helper-compilation-targets': 7.25.9
+      '@babel/helper-annotate-as-pure': 7.24.7
+      '@babel/helper-compilation-targets': 7.25.2
       '@babel/helper-environment-visitor': 7.24.7
       '@babel/helper-function-name': 7.24.7
       '@babel/helper-optimise-call-expression': 7.22.5
-      '@babel/helper-plugin-utils': 7.25.9
+      '@babel/helper-plugin-utils': 7.24.8
       '@babel/helper-replace-supers': 7.22.20(@babel/core@7.26.0)
       '@babel/helper-split-export-declaration': 7.24.7
       globals: 11.12.0
