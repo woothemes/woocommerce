@@ -73,7 +73,7 @@ Getting data from the client to the server can be done in a couple of different 
 
 ##### Piggybacking on a Store API request
 
-This is useful for things that don't require an immediate response from the server, for example if you've added a new block to the Checkout and it contains a form field that should be saved along with the order. If this form field just needs to be saved and doesn't need to update any other values in the cart, then sending it with the checkout request is a good idea. The [Add a new inner block containing a custom field to the WooCommerce Checkout Block](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-blocks/docs/third-party-developers/extensibility/rest-api/extend-rest-api-add-custom-fields.md) documentation provides a worked example of using `setExtensionData` along with extending the Store API to receive your data in an existing request.
+This is useful for things that don't require an immediate response from the server, for example if you've added a new block to the Checkout and it contains a form field that should be saved along with the order. If this form field just needs to be saved and doesn't need to update any other values in the cart, then the data should be sent with the checkout request. The [Add a new inner block containing a custom field to the WooCommerce Checkout Block](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-blocks/docs/third-party-developers/extensibility/rest-api/extend-rest-api-add-custom-fields.md) documentation provides a worked example of using `setExtensionData` along with extending the Store API to receive your data in an existing request.
 
 ##### Sending data on-demand using `extensionCartUpdate`
 
@@ -97,9 +97,7 @@ This is important to note, because if any code is running on the server that mod
 
 For example, if a plugin modifies the address data to ensure all city names are capitalised, and the shopper enters "london" into the city, when the data is returned to the client, the text would change to "London" and the input field would update.
 
-Modifying form fields while the shopper is interacting with them _could_ be a jarring experience.
-
-Instead of making these changes while the user is interacting with the form, consider making them while processing the checkout action on the server.
+Modifying form fields while the shopper is interacting with them is a jarring experience, so instead of making these changes while the user is interacting with the form, consider making them while processing the checkout action on the server.
 
 #### Adding coupons
 
