@@ -27,6 +27,7 @@ import {
 	isWooPayments,
 	providersContainWooPaymentsInTestMode,
 } from '~/settings-payments/utils';
+import apiFetch from '@wordpress/api-fetch';
 
 export const SettingsPaymentsMain = () => {
 	const [ installingPlugin, setInstallingPlugin ] = useState< string | null >(
@@ -77,19 +78,13 @@ export const SettingsPaymentsMain = () => {
 	}, [] );
 
 	const dismissIncentive = useCallback( ( dismissHref: string ) => {
-		fetch( dismissHref, {
+		apiFetch( {
+			path: dismissHref,
 			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
+			data: {
+				context: 'wc_settings_payments',
 			},
-		} )
-			.then( ( response ) => response.json() )
-			.then( ( data ) => {
-				console.log( 'Incentive dismissed:', data );
-			} )
-			.catch( ( error ) => {
-				console.error( 'Error dismissing incentive:', error );
-			} );
+		} );
 	}, [] );
 
 	// Make UI refresh when plugin is installed.
