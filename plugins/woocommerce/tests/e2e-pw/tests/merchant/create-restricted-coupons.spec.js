@@ -116,7 +116,7 @@ const test = baseTest.extend( {
 
 		// Brand cleanup
 		await api.delete( `products/brands/${ brand.id }`, { force: true } );
-	}
+	},
 } );
 
 test.describe(
