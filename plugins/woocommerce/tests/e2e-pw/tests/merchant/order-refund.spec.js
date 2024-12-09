@@ -91,11 +91,7 @@ test.describe.serial(
 
 			// Do the refund
 			page.on( 'dialog', ( dialog ) => dialog.accept() );
-			await page
-				.locator( '.do-manual-refund', {
-					waitForLoadState: 'networkidle',
-				} )
-				.click();
+			await page.locator( '.do-manual-refund' ).click();
 
 			// Verify the product line item shows the refunded quantity and amount
 			await expect(
@@ -247,11 +243,7 @@ test.describe(
 			await page.locator( '.refund_order_item_qty >> nth=1' ).fill( '2' );
 			await page.locator( '#refund_reason' ).fill( 'No longer wanted' );
 			page.on( 'dialog', ( dialog ) => dialog.accept() );
-			await page
-				.locator( '.do-manual-refund', {
-					waitForLoadState: 'networkidle',
-				} )
-				.click();
+			await page.locator( '.do-manual-refund' ).click();
 
 			// Verify restock system note was added
 			await expect(

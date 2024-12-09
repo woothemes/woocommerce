@@ -5,6 +5,7 @@ namespace Automattic\WooCommerce\Internal\Admin\Suggestions;
 
 defined( 'ABSPATH' ) || exit;
 
+use Automattic\WooCommerce\Internal\Admin\Settings\Payments;
 use Automattic\WooCommerce\Internal\Utilities\ArrayUtil;
 
 /**
@@ -1189,15 +1190,43 @@ class PaymentExtensionSuggestions {
 	);
 
 	/**
+	 * The context to incentive type map.
+	 *
+	 * @var array|string[]
+	 */
+	private array $context_to_incentive_type_map = array(
+		Payments::SUGGESTIONS_CONTEXT => 'wc_settings_payments',
+	);
+
+	/**
+	 * The suggestion incentives provider.
+	 *
+	 * @var PaymentExtensionSuggestionIncentives
+	 */
+	private PaymentExtensionSuggestionIncentives $suggestion_incentives;
+
+	/**
+	 * Initialize the class instance.
+	 *
+	 * @param PaymentExtensionSuggestionIncentives $suggestion_incentives The suggestion incentives provider.
+	 *
+	 * @internal
+	 */
+	final public function init( PaymentExtensionSuggestionIncentives $suggestion_incentives ) {
+		$this->suggestion_incentives = $suggestion_incentives;
+	}
+
+	/**
 	 * Get the list of payment extensions details for a specific country.
 	 *
 	 * @param string $country_code The two-letter country code.
+	 * @param string $context      Optional. The context ID of where these extensions are being used.
 	 *
 	 * @return array The list of payment extensions (their full details) for the given country.
 	 *               Empty array if no extensions are available for the country or the country is not supported.
 	 * @throws \Exception If there were malformed or invalid extension details.
 	 */
-	public function get_country_extensions( string $country_code ): array {
+	public function get_country_extensions( string $country_code, string $context = '' ): array {
 		$country_code = strtoupper( $country_code );
 
 		if ( empty( $this->country_extensions[ $country_code ] ) ||
@@ -1224,6 +1253,12 @@ class PaymentExtensionSuggestions {
 
 			$extension_base_details = $this->get_extension_base_details( $extension_id ) ?? array();
 			$extension_details      = $this->with_country_details( $extension_base_details, $extension_country_details );
+
+			// Check if there is an incentive for this extension and attach its details.
+			$incentive = $this->get_extension_incentive( $extension_id, $country_code, $context );
+			if ( is_array( $incentive ) && ! empty( $incentive ) ) {
+				$extension_details['_incentive'] = $incentive;
+			}
 
 			// Include the extension ID.
 			$extension_details['id'] = $extension_id;
@@ -1267,13 +1302,29 @@ class PaymentExtensionSuggestions {
 	 *
 	 * If there are multiple extensions with the same plugin slug, the first one found will be returned.
 	 *
-	 * @param string $plugin_slug The plugin slug.
+	 * @param string $plugin_slug  The plugin slug.
+	 * @param string $country_code Optional. The two-letter country code for which the extension suggestion should be retrieved.
+	 * @param string $context      Optional. The context ID of where this extension suggestion is being used.
 	 *
 	 * @return array|null The extension details for the given plugin slug. Null if not found.
 	 */
-	public function get_by_plugin_slug( string $plugin_slug ): ?array {
+	public function get_by_plugin_slug( string $plugin_slug, string $country_code = '', string $context = '' ): ?array {
 		$plugin_slug = sanitize_title( $plugin_slug );
 
+		// If we have a country code, try to find a fully localized extension suggestion.
+		if ( ! empty( $country_code ) ) {
+			$extensions = $this->get_country_extensions( $country_code, $context );
+			foreach ( $extensions as $extension_details ) {
+				if ( isset( $extension_details['plugin']['slug'] ) &&
+					$plugin_slug === $extension_details['plugin']['slug']
+				) {
+					// The extension details are already standardized.
+					return $extension_details;
+				}
+			}
+		}
+
+		// Fallback to the base details.
 		$extensions = $this->get_all_extensions_base_details();
 		foreach ( $extensions as $extension_id => $extension_details ) {
 			if ( isset( $extension_details['plugin']['slug'] ) &&
@@ -1287,6 +1338,22 @@ class PaymentExtensionSuggestions {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Dismiss an incentive for a specific payment extension suggestion.
+	 *
+	 * @param string $incentive_id  The incentive ID.
+	 * @param string $suggestion_id The suggestion ID.
+	 * @param string $context       Optional. The context ID for which the incentive should be dismissed.
+	 *                              If not provided, the incentive will be dismissed for all contexts.
+	 *
+	 * @return bool True if the incentive was not previously dismissed and now it is.
+	 *              False if the incentive was already dismissed or could not be dismissed.
+	 * @throws \Exception If the incentive could not be dismissed due to an error.
+	 */
+	public function dismiss_incentive( string $incentive_id, string $suggestion_id, string $context = 'all' ): bool {
+		return $this->suggestion_incentives->dismiss_incentive( $incentive_id, $suggestion_id, $context );
 	}
 
 	/**
@@ -1372,6 +1439,70 @@ class PaymentExtensionSuggestions {
 
 		// Merge any remaining country details so they overwrite the base details.
 		return array_merge( $base_details, $country_details );
+	}
+
+	/**
+	 * Get the incentive details for a given extension and country, if any.
+	 *
+	 * @param string $extension_id The extension ID.
+	 * @param string $country_code The two-letter country code.
+	 * @param string $context      Optional. The context ID of where the extension incentive is being used.
+	 *
+	 * @return array|null The incentive details for the given extension and country. Null if not found.
+	 */
+	private function get_extension_incentive( string $extension_id, string $country_code, string $context = '' ): ?array {
+		// Try to map the context to an incentive type.
+		$incentive_type = '';
+		if ( isset( $this->context_to_incentive_type_map[ $context ] ) ) {
+			$incentive_type = $this->context_to_incentive_type_map[ $context ];
+		}
+
+		$incentives = $this->suggestion_incentives->get_incentives( $extension_id, $country_code, $incentive_type );
+		if ( empty( $incentives ) ) {
+			return null;
+		}
+
+		// Use the first incentive, in case there are multiple.
+		$incentive = reset( $incentives );
+
+		// Sanitize the incentive details.
+		$incentive = $this->sanitize_extension_incentive( $incentive );
+
+		// Enhance the incentive details.
+		$incentive['_suggestion_id'] = $extension_id;
+		// Add the dismissals list.
+		$incentive['_dismissals'] = array_unique( array_values( $this->suggestion_incentives->get_incentive_dismissals( $incentive['id'], $extension_id ) ) );
+
+		return $incentive;
+	}
+
+	/**
+	 * Sanitize the incentive details for a payment extension.
+	 *
+	 * @param array $incentive The incentive details.
+	 *
+	 * @return array The sanitized incentive details.
+	 */
+	private function sanitize_extension_incentive( array $incentive ): array {
+		// Apply a very lose sanitization. Stricter sanitization can be applied downstream, if needed.
+		return array_map(
+			function ( $value ) {
+				// Make sure that if we have HTML tags, we only allow a limited set of tags.
+				if ( is_string( $value ) && preg_match( '/<[^>]+>/', $value ) ) {
+						$value = wp_kses(
+							$value,
+							wp_kses_allowed_html( 'data' ) + array(
+								'p' => array(
+									'align' => true,
+								),
+							)
+						);
+				}
+
+				return $value;
+			},
+			$incentive
+		);
 	}
 
 	/**
@@ -1497,7 +1628,7 @@ class PaymentExtensionSuggestions {
 			self::PAYFAST           => array(
 				'_type'       => self::TYPE_PSP,
 				'title'       => esc_html__( 'Payfast', 'woocommerce' ),
-				'description' => esc_html__( 'The Payfast extension for WooCommerce enables you to accept payments by Credit Card and EFT via one of South Africa\’s most popular payment gateways. No setup fees or monthly subscription costs. Selecting this extension will configure your store to use South African rands as the selected currency.', 'woocommerce' ),
+				'description' => esc_html__( 'The Payfast extension for WooCommerce enables you to accept payments by Credit Card and EFT via one of South Africa\'s most popular payment gateways. No setup fees or monthly subscription costs. Selecting this extension will configure your store to use South African rands as the selected currency.', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/payfast.png', WC_PLUGIN_FILE ),
 				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/payfast.png', WC_PLUGIN_FILE ),
 				'plugin'      => array(
@@ -1619,7 +1750,7 @@ class PaymentExtensionSuggestions {
 			self::PAYONEER          => array(
 				'_type'       => self::TYPE_PSP,
 				'title'       => esc_html__( 'Payoneer Checkout', 'woocommerce' ),
-				'description' => esc_html__( 'Payoneer Checkout is the next generation of payment processing platforms, giving merchants around the world the solutions and direction they need to succeed in today\’s hyper-competitive global market.', 'woocommerce' ),
+				'description' => esc_html__( 'Payoneer Checkout is the next generation of payment processing platforms, giving merchants around the world the solutions and direction they need to succeed in today\'s hyper-competitive global market.', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/payoneer.png', WC_PLUGIN_FILE ),
 				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/payoneer.png', WC_PLUGIN_FILE ),
 				'plugin'      => array(
@@ -1685,7 +1816,7 @@ class PaymentExtensionSuggestions {
 			self::PAYU_INDIA        => array(
 				'_type'       => self::TYPE_PSP,
 				'title'       => esc_html__( 'PayU India', 'woocommerce' ),
-				'description' => esc_html__( 'Enable PayU\’s exclusive plugin for WooCommerce to start accepting payments in 100+ payment methods available in India including credit cards, debit cards, UPI, & more!', 'woocommerce' ),
+				'description' => esc_html__( 'Enable PayU\'s exclusive plugin for WooCommerce to start accepting payments in 100+ payment methods available in India including credit cards, debit cards, UPI, & more!', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/payu.svg', WC_PLUGIN_FILE ),
 				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/payu.png', WC_PLUGIN_FILE ),
 				'plugin'      => array(
@@ -1913,7 +2044,7 @@ class PaymentExtensionSuggestions {
 			self::AFFIRM            => array(
 				'_type'       => self::TYPE_BNPL,
 				'title'       => esc_html__( 'Affirm', 'woocommerce' ),
-				'description' => esc_html__( 'Affirm\’s tailored Buy Now Pay Later programs remove price as a barrier, turning browsers into buyers, increasing average order value, and expanding your customer base.', 'woocommerce' ),
+				'description' => esc_html__( 'Affirm\'s tailored Buy Now Pay Later programs remove price as a barrier, turning browsers into buyers, increasing average order value, and expanding your customer base.', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/affirm.png', WC_PLUGIN_FILE ),
 				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/affirm.png', WC_PLUGIN_FILE ),
 				'plugin'      => array(
@@ -2059,6 +2190,7 @@ class PaymentExtensionSuggestions {
 		$standardized['short_description'] = $extension_details['short_description'] ?? '';
 		$standardized['links']             = $extension_details['links'] ?? array();
 		$standardized['tags']              = $extension_details['tags'] ?? array();
+		$standardized['_incentive']        = $extension_details['_incentive'] ?? null;
 
 		return $standardized;
 	}

@@ -107,9 +107,7 @@ export type KeyedFormField = FormField & {
 	errorMessage?: string;
 };
 
-export type CountryAddressForm = Record< string, FormFields >;
-
-export type FormFieldsConfig = Record< keyof FormFields, Partial< FormField > >;
+export type CountryAddressFields = Record< string, FormFields >;
 
 /**
  * Default field properties.

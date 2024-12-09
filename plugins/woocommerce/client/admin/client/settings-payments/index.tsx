@@ -12,11 +12,19 @@ import { getAdminLink } from '@woocommerce/settings';
  */
 import { Header } from './components/header/header';
 import { ListPlaceholder } from '~/settings-payments/components/list-placeholder';
+import './settings-payments-main.scss';
 
 const SettingsPaymentsMainChunk = lazy(
 	() =>
 		import(
 			/* webpackChunkName: "settings-payments-main" */ './settings-payments-main'
+		)
+);
+
+const SettingsPaymentsMethodsChunk = lazy(
+	() =>
+		import(
+			/* webpackChunkName: "settings-payments-methods" */ './settings-payments-methods'
 		)
 );
 
@@ -33,6 +41,10 @@ const SettingsPaymentsWooCommercePaymentsChunk = lazy(
 			/* webpackChunkName: "settings-payments-woocommerce-payments" */ './settings-payments-woocommerce-payments'
 		)
 );
+
+const onButtonClick = () => {
+	//TODO: Implement in future PR.
+};
 
 export const SettingsPaymentsMainWrapper = () => {
 	return (
@@ -129,6 +141,31 @@ export const SettingsPaymentsOfflineWrapper = () => {
 				}
 			>
 				<SettingsPaymentsOfflineChunk />
+			</Suspense>
+		</>
+	);
+};
+
+export const SettingsPaymentsMethodsWrapper = () => {
+	return (
+		<>
+			<Header
+				title={ __( 'Choose your payment methods', 'woocommerce' ) }
+				description={ __(
+					"Select which payment methods you'd like to offer to your shoppers. You can update these here at any time.",
+					'woocommerce'
+				) }
+				backLink={ getAdminLink(
+					'admin.php?page=wc-settings&tab=checkout'
+				) }
+				hasButton={ true }
+				buttonLabel={ __( 'Continue', 'woocommerce' ) }
+				onButtonClick={ onButtonClick }
+			/>
+			<Suspense
+				fallback={ <div>Loading payment methods settings...</div> }
+			>
+				<SettingsPaymentsMethodsChunk />
 			</Suspense>
 		</>
 	);
