@@ -9,7 +9,7 @@ const customerEmailAddress = `john.doe.${ Date.now() }@example.com`;
 
 test.describe(
 	'Shopper My Account Create Account',
-	{ tag: [ '@payments', tags.SERVICES ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {

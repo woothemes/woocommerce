@@ -14,7 +14,7 @@ let simpleProductId, productCategory1Id, productCategory2Id;
 
 test.describe(
 	'Single Product Page',
-	{ tag: [ '@payments', tags.SERVICES ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		const productCategoryName1 = 'Hoodies';
 		const productCategoryName2 = 'Jumpers';

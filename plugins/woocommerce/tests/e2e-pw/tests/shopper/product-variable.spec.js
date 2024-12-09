@@ -135,7 +135,7 @@ const variations2 = [
 
 test.describe(
 	'Variable Product Page',
-	{ tag: [ '@payments', tags.SERVICES ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		const variableProductName = `Variable single product ${ Date.now() }`;
 		const slug = variableProductName.replace( / /gi, '-' ).toLowerCase();
@@ -247,7 +247,7 @@ test.describe(
 
 test.describe(
 	'Shopper > Update variable product',
-	{ tag: [ '@payments', tags.SERVICES ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		const variableProductName = `Variable single product ${ Date.now() }`;
 		const slug = variableProductName.replace( / /gi, '-' ).toLowerCase();

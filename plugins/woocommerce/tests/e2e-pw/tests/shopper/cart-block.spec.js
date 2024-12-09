@@ -32,7 +32,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Cart Block page',
-	{ tag: [ '@payments', tags.SERVICES ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		test.beforeAll( async ( { api } ) => {
 			// make sure the currency is USD

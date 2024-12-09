@@ -61,7 +61,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Checkout Block Applying Coupons',
-	{ tag: [ '@payments', tags.SERVICES ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		const couponBatchId = [];
 

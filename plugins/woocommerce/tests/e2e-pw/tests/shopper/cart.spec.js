@@ -10,7 +10,7 @@ const productPrice = '13.99';
 const twoProductPrice = +productPrice * 2;
 const fourProductPrice = +productPrice * 4;
 
-test.describe( 'Cart page', { tag: [ '@payments', tags.SERVICES ] }, () => {
+test.describe( 'Cart page', { tag: [ tags.PAYMENTS, tags.SERVICES ] }, () => {
 	let productId, product2Id, product3Id;
 
 	test.beforeAll( async ( { baseURL } ) => {

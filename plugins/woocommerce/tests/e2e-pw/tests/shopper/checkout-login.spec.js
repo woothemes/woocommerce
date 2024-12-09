@@ -109,7 +109,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Shopper Checkout Login Account',
-	{ tag: [ '@payments', tags.SERVICES, '@hpos' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS ] },
 	() => {
 		test( 'can login to an existing account during checkout', async ( {
 			page,

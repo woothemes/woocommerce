@@ -14,7 +14,7 @@ const customer = {
 
 test.describe(
 	'Customer can manage addresses in My Account > Addresses page',
-	{ tag: [ '@payments', tags.SERVICES ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {

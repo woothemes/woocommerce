@@ -26,7 +26,7 @@ const test = baseTest.extend( {
 test.describe(
 	'Analytics-related tests',
 	{
-		tag: [ '@payments', tags.SERVICES ],
+		tag: [ tags.PAYMENTS, tags.SERVICES ],
 	},
 	() => {
 		let categoryIds, productIds, orderIds, setupPage;

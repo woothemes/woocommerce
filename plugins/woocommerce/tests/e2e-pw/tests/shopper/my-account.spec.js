@@ -9,7 +9,7 @@ const pages = [ 'Orders', 'Downloads', 'Addresses', 'Account details' ];
 
 test.describe(
 	'My account page',
-	{ tag: [ '@payments', tags.SERVICES ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		test.use( { storageState: process.env.CUSTOMERSTATE } );
 

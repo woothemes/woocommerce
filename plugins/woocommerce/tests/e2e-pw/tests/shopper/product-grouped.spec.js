@@ -13,7 +13,7 @@ let simpleProductId, simpleProduct2Id, groupedProductId;
 
 test.describe(
 	'Grouped Product Page',
-	{ tag: [ '@payments', tags.SERVICES ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		const slug = groupedProductName.replace( / /gi, '-' ).toLowerCase();
 		const simpleProduct1 = simpleProductName + ' 1';

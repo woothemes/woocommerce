@@ -4,7 +4,7 @@ const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 test.describe.serial(
 	'WooCommerce Orders > Refund an order',
-	{ tag: [ '@payments', '@hpos' ] },
+	{ tag: [ tags.PAYMENTS, tags.HPOS ] },
 	() => {
 		let productId, orderId, currencySymbol;
 
@@ -144,7 +144,7 @@ test.describe.serial(
 
 test.describe(
 	'WooCommerce Orders > Refund and restock an order item',
-	{ tag: [ '@payments', tags.SERVICES, '@hpos' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, '@hpos' ] },
 	() => {
 		let productWithStockId, productWithNoStockId, orderId;
 

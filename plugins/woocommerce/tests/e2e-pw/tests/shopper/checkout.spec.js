@@ -21,7 +21,7 @@ const guestEmail = 'checkout-guest@example.com';
 
 test.describe(
 	'Checkout page',
-	{ tag: [ '@payments', tags.SERVICES, '@hpos' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS ] },
 	() => {
 		const singleProductPrice = '9.99';
 		const simpleProductName = 'Checkout Page Product';

@@ -31,7 +31,7 @@ test.describe(
 	'Filter items in the shop by product price',
 	{
 		tag: [
-			'@payments',
+			tags.PAYMENTS,
 			tags.SERVICES,
 			tags.SKIP_ON_WPCOM,
 			tags.SKIP_ON_PRESSABLE,

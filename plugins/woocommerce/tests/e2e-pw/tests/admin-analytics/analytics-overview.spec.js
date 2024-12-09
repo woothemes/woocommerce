@@ -114,7 +114,7 @@ const resetSections = async () => {
 
 test.describe(
 	'Analytics pages',
-	{ tag: [ '@payments', tags.SERVICES ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 

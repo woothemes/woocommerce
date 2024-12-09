@@ -29,7 +29,7 @@ let productId, countryTaxId, stateTaxId, shippingZoneId;
 
 test.describe(
 	'Mini Cart block page',
-	{ tag: [ '@payments', tags.SERVICES ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 

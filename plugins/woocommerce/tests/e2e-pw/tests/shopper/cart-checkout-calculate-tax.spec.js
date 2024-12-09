@@ -35,10 +35,10 @@ test.describe.serial(
 	'Tax rates in the cart and checkout',
 	{
 		tag: [
-			'@payments',
+			tags.PAYMENTS,
 			tags.SERVICES,
-			'@hpos',
-			'@could-be-lower-level-test',
+			tags.HPOS,
+			tags.COULD_BE_LOWER_LEVEL_TEST,
 		],
 	},
 	() => {
