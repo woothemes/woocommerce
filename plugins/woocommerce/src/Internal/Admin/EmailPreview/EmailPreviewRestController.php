@@ -79,6 +79,25 @@ class EmailPreviewRestController extends RestApiControllerBase {
 				),
 			)
 		);
+
+		register_rest_route(
+			$this->route_namespace,
+			'/' . $this->rest_base . '/preview-subject',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => fn( $request ) => $this->get_preview_subject( $request ),
+					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
+					'args'                => array(
+						'type' => array(
+							'description' => __( 'The email type to get subject for.', 'woocommerce' ),
+							'type'        => 'string',
+							'required'    => true,
+						),
+					),
+				),
+			)
+		);
 	}
 
 	/**
@@ -125,6 +144,29 @@ class EmailPreviewRestController extends RestApiControllerBase {
 			'woocommerce_rest_email_preview_not_sent',
 			__( 'Error sending test email. Please try again.', 'woocommerce' ),
 			array( 'status' => 500 )
+		);
+	}
+
+	/**
+	 * Handle the GET /settings/email/preview-subject.
+	 *
+	 * @param WP_REST_Request $request The received request.
+	 * @return array|WP_Error Request response or an error.
+	 */
+	public function get_preview_subject( WP_REST_Request $request ) {
+		$email_type = $request->get_param( 'type' );
+		try {
+			$this->email_preview->set_email_type( $email_type );
+		} catch ( \InvalidArgumentException $e ) {
+			return new WP_Error(
+				'woocommerce_rest_invalid_email_type',
+				__( 'Invalid email type.', 'woocommerce' ),
+				array( 'status' => 400 ),
+			);
+		}
+
+		return array(
+			'subject' => $this->email_preview->get_subject(),
 		);
 	}
 }
