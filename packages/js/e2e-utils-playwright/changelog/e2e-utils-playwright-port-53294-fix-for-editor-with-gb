@@ -1,4 +1,0 @@
-Significance: minor
-Type: fix
-
-Port a fix for editor util with Gutenberg installed (original fix in PR 53294)
