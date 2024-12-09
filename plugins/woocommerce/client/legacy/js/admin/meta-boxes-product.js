@@ -34,11 +34,7 @@ jQuery( function ( $ ) {
 	} );
 
 	// Type box.
-	if ( $( 'body' ).hasClass( 'wc-wp-version-gte-55' ) ) {
-		$( '.type_box' ).appendTo( '#woocommerce-product-data .hndle' );
-	} else {
-		$( '.type_box' ).appendTo( '#woocommerce-product-data .hndle span' );
-	}
+	$( '.type_box' ).appendTo( '#woocommerce-product-data .hndle' );
 
 	$( function () {
 		var woocommerce_product_data = $( '#woocommerce-product-data' );
