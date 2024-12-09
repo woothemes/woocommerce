@@ -8,13 +8,22 @@ tags: reference
 
 ## Overview
 
-In the WooCommerce Cart and Checkout blocks, the server is the source of truth, and data should be persisted server side. Things like component state (e.g. the checkout order notes, or coupon form input data) should not be persisted on the server, unless it's important that this state is persisted across page loads.
+In the WooCommerce Cart and Checkout blocks, the server is the source of truth for critical transactional and persistent data. This includes:
+
+- Cart item details (items, quantities, and prices)
+- Cart totals (e.g. taxes, fees, subtotals)
+- Customer information (shipping and billing addresses, other customer data)
+- Shipping methods and rates
+- Other cart details, such as applied coupons
+
+Such data must be persisted server-side to ensure accuracy, consistency, and reliability across different user sessions and devices.
+Ephemeral UI state—such as temporary validation states, or UI-specific interactions like expanded/collapsed sections—should remain client-side and not be automatically persisted on the server, unless the specific state needs to be maintained across page loads or is critical to the user's checkout process.
 
 You may wish to get data from the server into the client, and vice/versa. This document will outline the general concepts and data flow in the Cart/Checkout blocks, and provide links, or guidance on some common use cases.
 
 ### Where is data stored?
 
-All the data relating to a cart, customer, and order is stored on the server, either in the database or in the customer's session. When it is sent to the server, it is stored in [`@wordpress/data`](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-data/) data stores.
+All the data relating to a cart, customer, and order is stored on the server, either in the database or in the customer's session. When it is sent to the client, it is stored in [`@wordpress/data`](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-data/) data stores.
 
 ### How do I get my Server-side (PHP) data into the client (JavaScript) and vice/versa
 
@@ -24,11 +33,11 @@ There is also the case that your client needs data that can only be derived serv
 
 #### Server (PHP) → Client (JavaScript)
 
-There are different ways to get your data from the server to the client on whether your it is static (e.g. an option from the WooCommerce settings dashboard) or if it is dynamic/might change during the course of a shopper's session (e.g. tax rates or fees based on the shipping address).
+There are two ways to get your data from the server to the client, depending on whether it is static or dynamic.
 
 ##### Static data
 
-If the data is static, i.e. it is not likely to change based on actions the shopper takes then a good way of getting this data to the client might be through the `AssetDataRegistry`.
+Static data is not likely to change based on actions the shopper takes, for example, an option from the WooCommerce settings dashboard. The recommended way of getting this data to the client is using the `AssetDataRegistry`.
 
 When data is added here, it is serialized and sent to the client on page load. It will not change based on actions the shopper takes, e.g. adding items to the cart or changing their address.
 
@@ -44,7 +53,7 @@ add_action(
 );
 ```
 
-If a duplicate key exists, it will not be overwritten. Using a unique identifier is important.
+If a duplicate key exists, it will not be overwritten. Using a unique identifier is important, the recommendation is `namespace/value` to help ensure the key is unique.
 
 To get this data on the client, use `wc.wcSettings.getSetting` like so:
 
@@ -54,10 +63,9 @@ const myCustomValue = wc.wcSettings.getSetting( 'namespace/value', 'Fallback val
 
 #### Dynamic data
 
-If data might change, e.g. based on a shopper's location or items in the cart, it is a good idea to add this to the cart API response. The cart response is sent on many routes during the shopper's journey, and on almost every API response triggered by the Cart/Checkout blocks.
+Dynamic data is data that is likely to change in response to the shopper's actions, for example, changing location, or items in the cart. In this case, you need to add this to the cart API response. The cart response is sent on many routes during the shopper's journey, and on almost every API response triggered by the Cart/Checkout blocks.
 
-To add data here, you'll need to extend the API response. The [Exposing your data in the Store API](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-blocks/docs/third-party-developers/extensibility/rest-api/extend-rest-api-add-data.md)
-document outlines how to do this.
+To add data here, you'll need to extend the API response. See [Exposing your data in the Store API](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-blocks/docs/third-party-developers/extensibility/rest-api/extend-rest-api-add-data.md).
 
 #### Client (JavaScript) → Server (PHP)
 
@@ -90,6 +98,8 @@ This is important to note, because if any code is running on the server that mod
 For example, if a plugin modifies the address data to ensure all city names are capitalised, and the shopper enters "london" into the city, when the data is returned to the client, the text would change to "London" and the input field would update.
 
 Modifying form fields while the shopper is interacting with them _could_ be a jarring experience.
+
+Instead of making these changes while the user is interacting with the form, consider making them while processing the checkout action on the server.
 
 #### Adding coupons
 
