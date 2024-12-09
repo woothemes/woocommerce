@@ -13,6 +13,14 @@ use WP_REST_Request;
 class EmailPreviewRestController extends RestApiControllerBase {
 
 	/**
+	 * Holds the EmailPreview instance for rendering email previews.
+	 *
+	 * @var EmailPreview
+	 */
+	private EmailPreview $email_preview;
+
+
+	/**
 	 * The root namespace for the JSON REST API endpoints.
 	 *
 	 * @var string
@@ -33,6 +41,13 @@ class EmailPreviewRestController extends RestApiControllerBase {
 	 */
 	protected function get_rest_api_namespace(): string {
 		return 'wc-admin-email';
+	}
+
+	/**
+	 * The constructor.
+	 */
+	public function __construct() {
+		$this->email_preview = wc_get_container()->get( EmailPreview::class );
 	}
 
 	/**
@@ -83,10 +98,9 @@ class EmailPreviewRestController extends RestApiControllerBase {
 	 * @return array|WP_Error Request response or an error.
 	 */
 	public function send_email_preview( WP_REST_Request $request ) {
-		$email_preview = wc_get_container()->get( EmailPreview::class );
-		$email_type    = $request->get_param( 'type' );
+		$email_type = $request->get_param( 'type' );
 		try {
-			$email_preview->set_email_type( $email_type );
+			$this->email_preview->set_email_type( $email_type );
 		} catch ( \InvalidArgumentException $e ) {
 			return new WP_Error(
 				'woocommerce_rest_invalid_email_type',
@@ -96,8 +110,8 @@ class EmailPreviewRestController extends RestApiControllerBase {
 		}
 
 		$email_address = $request->get_param( 'email' );
-		$email_content = $email_preview->render();
-		$email_subject = $email_preview->get_subject();
+		$email_content = $this->email_preview->render();
+		$email_subject = $this->email_preview->get_subject();
 		$email         = new \WC_Emails();
 		$sent          = $email->send( $email_address, $email_subject, $email_content );
 
