@@ -71,6 +71,10 @@ class EmailPreview {
 
 		$order = $this->get_dummy_order();
 		$this->email->set_object( $order );
+		$this->email->placeholders = array_merge(
+			$this->email->placeholders,
+			$this->get_placeholders( $order )
+		);
 
 		/**
 		 * Allow to modify the email object before rendering the preview to add additional data.
@@ -235,6 +239,24 @@ class EmailPreview {
 		 * @since 9.6.0
 		 */
 		return apply_filters( 'woocommerce_email_preview_dummy_address', $address, $this->email_type );
+	}
+
+	/**
+	 * Get the placeholders for the email preview.
+	 *
+	 * @param WC_Order $order The order object.
+	 * @return array
+	 */
+	private function get_placeholders( $order ) {
+		$placeholders = array();
+
+		if ( is_a( $order, 'WC_Order' ) ) {
+			$placeholders['{order_date}']              = wc_format_datetime( $order->get_date_created() );
+			$placeholders['{order_number}']            = $order->get_order_number();
+			$placeholders['{order_billing_full_name}'] = $order->get_formatted_billing_full_name();
+		}
+
+		return $placeholders;
 	}
 
 	/**
