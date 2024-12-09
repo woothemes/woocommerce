@@ -6,18 +6,16 @@ import { edit } from '@wordpress/icons';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 import { __ } from '@wordpress/i18n';
 import { Product } from '@woocommerce/data';
-import { addQueryArgs } from '@wordpress/url';
 
 /**
  * Internal dependencies
  */
 import { unlock } from '../../lock-unlock';
 
-const { useHistory, useLocation } = unlock( routerPrivateApis );
+const { useHistory } = unlock( routerPrivateApis );
 
 export const useEditProductAction = () => {
 	const history = useHistory();
-	const { path } = useLocation();
 
 	return useMemo(
 		() => ( {
@@ -40,6 +38,6 @@ export const useEditProductAction = () => {
 				);
 			},
 		} ),
-		[ history, path ]
+		[ history ]
 	);
 };

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { createElement, useEffect } from '@wordpress/element';
+import { createElement } from '@wordpress/element';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 import {
 	UnsavedChangesWarning,
