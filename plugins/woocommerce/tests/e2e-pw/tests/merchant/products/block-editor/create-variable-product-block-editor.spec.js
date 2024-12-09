@@ -13,6 +13,7 @@ const tabs = require( './data/tabs' );
 const {
 	waitForGlobalAttributesLoaded,
 } = require( './helpers/wait-for-global-attributes-loaded' );
+const { tags } = require( '../../../../fixtures/fixtures' );
 
 const {
 	createVariableProduct,
