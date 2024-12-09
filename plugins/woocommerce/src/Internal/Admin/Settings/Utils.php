@@ -194,7 +194,7 @@ class Utils {
 	 * @return string[] The list of plugin slug suffixes used for handling non-standard testing slugs.
 	 */
 	public static function get_testing_plugin_slug_suffixes(): array {
-		return array( '-beta', '-rc', '-test', '-dev' );
+		return array( '-dev', '-rc', '-test', '-beta' );
 	}
 
 	/**
