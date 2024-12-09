@@ -189,8 +189,40 @@ class Utils {
 	}
 
 	/**
-	 * Normalize a plugin slug.
+	 * Get the list of plugin slug suffixes used for handling non-standard testing slugs.
 	 *
+	 * @return string[] The list of plugin slug suffixes used for handling non-standard testing slugs.
+	 */
+	public static function get_testing_plugin_slug_suffixes(): array {
+		return array( '-beta', '-rc', '-test', '-dev' );
+	}
+
+	/**
+	 * Generate a list of testing plugin slugs from a standard/official plugin slug.
+	 *
+	 * @param string $slug             The standard/official plugin slug. Most likely the WPORG slug.
+	 * @param bool   $include_original Optional. Whether to include the original slug in the list.
+	 *                                 If true, the original slug will be the first item in the list.
+	 *
+	 * @return string[] The list of testing plugin slugs generated from the standard/official plugin slug.
+	 */
+	public static function generate_testing_plugin_slugs( string $slug, bool $include_original = false ): array {
+		$slugs = array();
+		if ( $include_original ) {
+			$slugs[] = $slug;
+		}
+
+		foreach ( self::get_testing_plugin_slug_suffixes() as $suffix ) {
+			$slugs[] = $slug . $suffix;
+		}
+
+		return $slugs;
+	}
+
+	/**
+	 * Normalize a plugin slug to a standard/official slug.
+	 *
+	 * This is a best-effort approach.
 	 * It will remove beta testing suffixes and lowercase the slug.
 	 * It will NOT convert plugin titles to slugs or sanitize the slug like sanitize_title() does.
 	 *
@@ -200,16 +232,16 @@ class Utils {
 	 */
 	public static function normalize_plugin_slug( string $slug ): string {
 		// If the slug is empty or contains anything other than alphanumeric and dash characters, it will be left as is.
-		if ( empty( $slug ) || ! preg_match( '/^[a-zA-Z0-9-]+$/', $slug, $matches ) ) {
+		if ( empty( $slug ) || ! preg_match( '/^[\w-]+$/', $slug, $matches ) ) {
 			return $slug;
 		}
 
 		// Lowercase the slug.
 		$slug = strtolower( $slug );
-		// Remove beta testing suffix.
-		$slug = str_ends_with( $slug, '-beta' ) ? substr( $slug, 0, -5 ) : $slug;
-		// Jetpack Beta Tester (used on Jurassic Ninja sites) uses the `-dev` suffix for live branches.
-		$slug = str_ends_with( $slug, '-dev' ) ? substr( $slug, 0, -4 ) : $slug;
+		// Remove testing suffixes.
+		foreach ( self::get_testing_plugin_slug_suffixes() as $suffix ) {
+			$slug = str_ends_with( $slug, $suffix ) ? substr( $slug, 0, -strlen( $suffix ) ) : $slug;
+		}
 
 		return $slug;
 	}

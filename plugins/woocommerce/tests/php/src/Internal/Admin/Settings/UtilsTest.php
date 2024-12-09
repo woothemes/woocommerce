@@ -1465,11 +1465,61 @@ class UtilsTest extends WC_Unit_Test_Case {
 	}
 
 	/**
+	 * Test getting testing plugin slug suffixes list
+	 */
+	public function test_get_testing_plugin_slug_suffixes() {
+		// Act.
+		$suffixes = Utils::get_testing_plugin_slug_suffixes();
+
+		// Assert.
+		$this->assertIsArray( $suffixes );
+		$this->assertNotEmpty( $suffixes );
+		$this->assertContainsOnly( 'string', $suffixes );
+		$this->assertContains( '-beta', $suffixes );
+		$this->assertContains( '-rc', $suffixes );
+		$this->assertContains( '-test', $suffixes );
+		$this->assertContains( '-dev', $suffixes );
+	}
+
+	/**
+	 * Test generating testing plugin slugs.
+	 */
+	public function test_generate_testing_plugin_slugs() {
+		// Act.
+		$slugs = Utils::generate_testing_plugin_slugs( 'plugin-slug', false );
+
+		// Assert.
+		$this->assertIsArray( $slugs );
+		$this->assertNotEmpty( $slugs );
+		$this->assertContainsOnly( 'string', $slugs );
+		$this->assertNotContains( 'plugin-slug', $slugs );
+		$this->assertContains( 'plugin-slug-dev', $slugs );
+	}
+
+	/**
+	 * Test generating testing plugin slugs with the original slug included.
+	 */
+	public function test_generate_testing_plugin_slugs_with_original() {
+		// Act.
+		$slugs = Utils::generate_testing_plugin_slugs( 'plugin-slug', true );
+
+		// Assert.
+		$this->assertIsArray( $slugs );
+		$this->assertNotEmpty( $slugs );
+		$this->assertContainsOnly( 'string', $slugs );
+		$this->assertSame( 'plugin-slug', $slugs[0] );
+		$this->assertContains( 'plugin-slug-dev', $slugs );
+	}
+
+	/**
 	 * Test normalizing a plugin slug.
 	 *
 	 * @dataProvider data_provider_normalize_plugin_slug
+	 *
+	 * @param string $slug     The plugin slug to normalize.
+	 * @param string $expected The expected normalized plugin slug.
 	 */
-	public function test_normalize_plugin_slug( $slug, $expected ) {
+	public function test_normalize_plugin_slug( string $slug, string $expected ) {
 		// Act.
 		$slug = Utils::normalize_plugin_slug( $slug );
 
@@ -1489,23 +1539,31 @@ class UtilsTest extends WC_Unit_Test_Case {
 				'',
 			),
 			'already-normalized'   => array(
-				'plugin-slug',
-				'plugin-slug',
+				'plugin-slug_01',
+				'plugin-slug_01',
 			),
 			'does-not-transform'   => array(
 				'Plugin Title',
 				'Plugin Title',
 			),
 			'does-not-transform-2' => array(
-				'Plugin_Title',
-				'Plugin_Title',
+				'Plugin*%$Title@#',
+				'Plugin*%$Title@#',
 			),
 			'lowercases'           => array(
-				'PLugin-sLug',
-				'plugin-slug',
+				'PLugin-sLug_01',
+				'plugin-slug_01',
 			),
 			'beta-slug'            => array(
 				'plugin-slug-beta',
+				'plugin-slug',
+			),
+			'rc-slug'              => array(
+				'plugin-slug-rc',
+				'plugin-slug',
+			),
+			'test-slug'            => array(
+				'plugin-slug-test',
 				'plugin-slug',
 			),
 			'dev-slug'             => array(
