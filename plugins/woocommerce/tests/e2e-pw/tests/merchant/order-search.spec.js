@@ -72,7 +72,7 @@ const deleteCustomer = async ( api ) => {
 
 test.describe(
 	'WooCommerce Orders > Search orders',
-	{ tag: [ tags.SERVICES, '@hpos' ] },
+	{ tag: [ tags.SERVICES, tags.HPOS ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 

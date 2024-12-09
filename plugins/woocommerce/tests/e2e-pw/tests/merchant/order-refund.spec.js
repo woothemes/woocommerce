@@ -144,7 +144,7 @@ test.describe.serial(
 
 test.describe(
 	'WooCommerce Orders > Refund and restock an order item',
-	{ tag: [ tags.PAYMENTS, tags.SERVICES, '@hpos' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS ] },
 	() => {
 		let productWithStockId, productWithNoStockId, orderId;
 

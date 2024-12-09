@@ -254,7 +254,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'WooCommerce Orders > Add new order',
-	{ tag: [ tags.SERVICES, '@hpos' ] },
+	{ tag: [ tags.SERVICES, tags.HPOS ] },
 	() => {
 		test.beforeAll( async ( { api } ) => {
 			// enable taxes on the account
