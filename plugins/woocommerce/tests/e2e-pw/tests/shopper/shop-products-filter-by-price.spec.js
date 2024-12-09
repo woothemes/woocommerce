@@ -1,13 +1,17 @@
 const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
-const {
-	goToPageEditor,
-	fillPageTitle,
+const { fillPageTitle } = require( '../../utils/editor' );
+const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
+
+/**
+ * External dependencies
+ */
+import {
+	getCanvas,
 	insertBlock,
 	insertBlockByShortcut,
+	goToPageEditor,
 	publishPage,
-	getCanvas,
-} = require( '../../utils/editor' );
-const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
+} from '@woocommerce/e2e-utils-playwright';
 
 const singleProductPrice1 = '10';
 const singleProductPrice2 = '50';

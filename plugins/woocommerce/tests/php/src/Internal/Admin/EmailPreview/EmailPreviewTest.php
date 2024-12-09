@@ -1,16 +1,16 @@
 <?php
 declare( strict_types = 1 );
 
-namespace Automattic\WooCommerce\Tests\Internal\Admin;
+namespace Automattic\WooCommerce\Tests\Internal\Admin\EmailPreview;
 
-use Automattic\WooCommerce\Internal\Admin\EmailPreview;
+use Automattic\WooCommerce\Internal\Admin\EmailPreview\EmailPreview;
 use WC_Emails;
 use WC_Unit_Test_Case;
 
 /**
  * EmailPreviewTest test.
  *
- * @covers \Automattic\WooCommerce\Internal\Admin\EmailPreview
+ * @covers \Automattic\WooCommerce\Internal\Admin\EmailPreview\EmailPreview
  */
 class EmailPreviewTest extends WC_Unit_Test_Case {
 	/**

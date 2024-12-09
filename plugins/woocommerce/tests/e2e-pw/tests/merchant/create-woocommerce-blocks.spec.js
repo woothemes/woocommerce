@@ -1,13 +1,16 @@
 const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
-const {
-	goToPageEditor,
-	fillPageTitle,
-	insertBlock,
-	getCanvas,
-	publishPage,
-	closeChoosePatternModal,
-} = require( '../../utils/editor' );
+const { fillPageTitle, publishPage } = require( '../../utils/editor' );
 const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
+
+/**
+ * External dependencies
+ */
+import {
+	closeChoosePatternModal,
+	getCanvas,
+	goToPageEditor,
+	insertBlock,
+} from '@woocommerce/e2e-utils-playwright';
 
 const simpleProductName = 'Simplest Product';
 const singleProductPrice = '555.00';

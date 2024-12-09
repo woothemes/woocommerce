@@ -1,0 +1,3 @@
+Significance: patch
+Type: add
+Comment: This change adds controls to email color settings which allow to reset colors to defaults or resync them with theme.json. The color changes can be undone with the Undo button.

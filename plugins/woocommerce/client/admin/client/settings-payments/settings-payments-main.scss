@@ -1,9 +1,3 @@
-$font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-
-#wpcontent {
-	background-color: #fff;
-}
-
 .woocommerce-embed-page {
 	#wpbody .woocommerce-layout,
 	.woocommerce-layout__notice-list-hide + .wrap {
@@ -14,7 +8,6 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 .settings-payments-main__container {
 	margin: 0 -20px;
 	padding-bottom: 32px;
-	font-family: $font-sf-pro-display;
 
 	.settings-payment-gateways {
 		&__header {
@@ -22,6 +15,10 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 			justify-content: space-between;
 			padding: $gap-smaller 48px $gap-large;
 			align-items: center;
+
+			@media screen and ( max-width: 782px ) {
+				display: block;
+			}
 		}
 
 		&__header-title {
@@ -43,6 +40,10 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 
 			.components-base-control__field {
 				margin-bottom: 0;
+			}
+
+			@media screen and ( max-width: 782px ) {
+				margin-top: $gap-smaller;
 			}
 		}
 
@@ -67,9 +68,17 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 				}
 			}
 
+			&__item.clickable-list-item:hover {
+				background-color: rgba(0, 0, 0, 0.02); /* Light overlay effect */
+			}
+
 			&__item-inner {
 				padding: $gap-large 0;
 				align-items: flex-start;
+			}
+
+			&__item-inner:focus {
+				box-shadow: none;
 			}
 
 			&__item-title {
@@ -132,6 +141,10 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 			display: flex;
 			justify-content: space-between;
 
+			&:hover {
+				cursor: pointer;
+			}
+
 			&__title {
 				display: flex;
 				gap: 10px;
@@ -156,6 +169,26 @@ $font-sf-pro-display: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe U
 			display: flex;
 			flex-direction: column;
 			gap: 16px;
+
+			&__title {
+				display: flex;
+				gap: 4px;
+				align-items: center;
+
+				&__h3 {
+					text-transform: uppercase;
+					font-size: 12px;
+					font-weight: 500;
+					color: $gray-900;
+					line-height: 16px;
+				}
+
+				&__tooltip {
+					color: $gray-700;
+					width: 16px;
+					height: 16px;
+				}
+			}
 
 			&__grid {
 				display: grid;
