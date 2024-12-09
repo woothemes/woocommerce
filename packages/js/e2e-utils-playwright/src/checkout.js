@@ -24,10 +24,6 @@ export async function fillShippingCheckoutBlocks( page, shippingDetails = {} ) {
 		isPostalCode = false,
 	} = shippingDetails;
 
-	console.log( '>>>>>>>>>' );
-	console.log(country, isPostalCode);
-	console.log( '>>>>>>>>>' );
-
 	await page
 		.getByRole( 'group', { name: 'Shipping address' } )
 		.getByLabel( 'Country' )
