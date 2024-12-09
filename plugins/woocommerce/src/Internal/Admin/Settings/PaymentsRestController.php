@@ -84,7 +84,7 @@ class PaymentsRestController extends RestApiControllerBase {
 					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
 					'args'                => array(
 						'location' => array(
-							'description'       => __( 'ISO3166 alpha-2 country code. Defaults to WooCommerce\'s base location country.', 'woocommerce' ),
+							'description'       => esc_html__( 'The ISO3166 alpha-2 country code to save for the current user.', 'woocommerce' ),
 							'type'              => 'string',
 							'pattern'           => '[a-zA-Z]{2}', // Two alpha characters.
 							'required'          => true,
@@ -219,8 +219,10 @@ class PaymentsRestController extends RestApiControllerBase {
 	 */
 	protected function set_country( WP_REST_Request $request ) {
 		$location = $request->get_param( 'location' );
-		$this->payments->set_country( $location );
-		return rest_ensure_response( array( 'success' => true ) );
+		
+		$result = $this->payments->set_country( $location );
+		
+		return rest_ensure_response( array( 'success' => $result ) );
 	}
 
 	/**
