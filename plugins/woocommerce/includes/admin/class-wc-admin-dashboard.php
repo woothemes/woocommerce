@@ -9,6 +9,7 @@
 use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Admin\Features\Features;
 use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Enums\OrderInternalStatus;
 use Automattic\WooCommerce\Utilities\OrderUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -254,8 +255,8 @@ if ( ! class_exists( 'WC_Admin_Dashboard', false ) ) :
 
 			foreach ( wc_get_order_types( 'order-count' ) as $type ) {
 				$counts            = OrderUtil::get_count_for_type( $type );
-				$on_hold_count    += $counts['wc-on-hold'];
-				$processing_count += $counts['wc-processing'];
+				$on_hold_count    += $counts[ OrderInternalStatus::ON_HOLD ];
+				$processing_count += $counts[ OrderInternalStatus::PROCESSING ];
 			}
 			?>
 			<li class="processing-orders">

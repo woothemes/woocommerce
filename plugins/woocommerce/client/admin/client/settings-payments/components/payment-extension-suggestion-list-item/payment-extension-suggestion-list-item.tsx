@@ -39,7 +39,10 @@ export const PaymentExtensionSuggestionListItem = ( {
 		}`,
 		title: (
 			<>
-				{ extension.title }
+				{ extension.title }{ ' ' }
+				{ ! hasIncentive && isWooPayments( extension.id ) && (
+					<StatusBadge status="recommended" />
+				) }
 				{ hasIncentive && extension._incentive && (
 					<StatusBadge
 						status="has_incentive"
