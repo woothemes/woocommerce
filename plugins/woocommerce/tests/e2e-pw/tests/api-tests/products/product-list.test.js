@@ -1,7 +1,7 @@
 const {
 	test,
 	expect,
-	tags,
+	tags: pwTags,
 } = require( '../../../fixtures/api-tests-fixtures' );
 
 test.describe( 'Products API tests: List All Products', () => {
@@ -202,7 +202,7 @@ test.describe( 'Products API tests: List All Products', () => {
 		const createSampleSimpleProducts = async (
 			categories,
 			attributes,
-			productTags
+			tags
 		) => {
 			const description =
 				'<p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. ' +
@@ -777,7 +777,7 @@ test.describe( 'Products API tests: List All Products', () => {
 								],
 								tags: [
 									{
-										id: productTags.coolJSON.id,
+										id: tags.coolJSON.id,
 									},
 								],
 								attributes: [
@@ -854,7 +854,7 @@ test.describe( 'Products API tests: List All Products', () => {
 								],
 								tags: [
 									{
-										id: productTags.coolJSON.id,
+										id: tags.coolJSON.id,
 									},
 								],
 								attributes: [],
@@ -1061,7 +1061,7 @@ test.describe( 'Products API tests: List All Products', () => {
 								],
 								tags: [
 									{
-										id: productTags.coolJSON.id,
+										id: tags.coolJSON.id,
 									},
 								],
 								attributes: [
@@ -2074,7 +2074,7 @@ test.describe( 'Products API tests: List All Products', () => {
 
 			const attributes = await createSampleAttributes();
 
-			const productTags = await createSampleTags();
+			const tags = await createSampleTags();
 
 			const shippingClasses = await createSampleShippingClasses();
 
@@ -2083,7 +2083,7 @@ test.describe( 'Products API tests: List All Products', () => {
 			const simpleProducts = await createSampleSimpleProducts(
 				categories,
 				attributes,
-				productTags
+				tags
 			);
 			const externalProducts = await createSampleExternalProducts(
 				categories
@@ -2127,7 +2127,7 @@ test.describe( 'Products API tests: List All Products', () => {
 			const {
 				categories,
 				attributes,
-				productTags,
+				tags,
 				shippingClasses,
 				taxClasses,
 				simpleProducts,
@@ -2200,7 +2200,7 @@ test.describe( 'Products API tests: List All Products', () => {
 				);
 			}
 
-			for ( const tag of Object.values( productTags ) ) {
+			for ( const tag of Object.values( tags ) ) {
 				await request.delete(
 					`./wp-json/wc/v3/products/tags/${ tag.id }`,
 					{
@@ -2239,7 +2239,7 @@ test.describe( 'Products API tests: List All Products', () => {
 
 	test.describe(
 		'List all products',
-		{ tag: [ tags.SKIP_ON_PRESSABLE, tags.SKIP_ON_WPCOM ] },
+		{ tag: [ pwTags.SKIP_ON_PRESSABLE, pwTags.SKIP_ON_WPCOM ] },
 		() => {
 			test( 'defaults', async ( { request } ) => {
 				const result = await request.get( 'wp-json/wc/v3/products', {
@@ -2579,7 +2579,7 @@ test.describe( 'Products API tests: List All Products', () => {
 
 			test(
 				'categories',
-				{ tag: tags.SKIP_ON_WPCOM },
+				{ tag: pwTags.SKIP_ON_WPCOM },
 				async ( { request } ) => {
 					const accessory = [
 						expect.objectContaining( {
