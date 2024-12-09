@@ -1,4 +1,5 @@
 const { test, expect } = require( '@playwright/test' );
+const { tags } = require( '../../../../fixtures/fixtures' );
 const { variableProducts: utils } = require( '../../../../utils' );
 const {
 	createVariableProduct,
@@ -86,7 +87,7 @@ test.describe( 'Add variations', { tag: '@gutenberg' }, () => {
 
 	test(
 		'can manually add a variation',
-		{ tag: '@skip-on-default-wpcom' },
+		{ tag: tags.SKIP_ON_WPCOM },
 		async ( { page } ) => {
 			await test.step( `Open "Edit product" page of product id ${ productId_addManually }`, async () => {
 				await page.goto(

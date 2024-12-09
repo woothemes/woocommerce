@@ -1,4 +1,5 @@
 const { test, expect } = require( '@playwright/test' );
+const { tags } = require( '../../fixtures/fixtures' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 // a representation of the menu structure for WC
@@ -203,7 +204,7 @@ for ( const currentPage of wcPages ) {
 			for ( let i = 0; i < currentPage.subpages.length; i++ ) {
 				test(
 					`Can load ${ currentPage.subpages[ i ].name }`,
-					{ tag: '@skip-on-default-wpcom' },
+					{ tag: tags.SKIP_ON_WPCOM },
 					async ( { page } ) => {
 						await page
 							.locator(

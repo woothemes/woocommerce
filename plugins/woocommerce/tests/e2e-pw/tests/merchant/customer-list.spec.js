@@ -1,4 +1,4 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 
 const test = baseTest.extend( {
 	storageState: process.env.ADMINSTATE,
@@ -86,7 +86,7 @@ test.describe( 'Merchant > Customer List', { tag: '@services' }, () => {
 
 	test(
 		'Merchant can view a list of all customers, filter and download',
-		{ tag: [ '@skip-on-default-pressable', '@skip-on-default-wpcom' ] },
+		{ tag: [ tags.SKIP_ON_PRESSABLE, tags.SKIP_ON_WPCOM ] },
 		async ( { page, customers } ) => {
 			await test.step( 'Go to the customers reports page', async () => {
 				const responsePromise = page.waitForResponse(

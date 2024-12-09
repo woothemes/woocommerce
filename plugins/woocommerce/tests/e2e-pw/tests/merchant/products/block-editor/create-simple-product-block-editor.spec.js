@@ -6,6 +6,7 @@ const {
 	getInstalledWordPressVersion,
 } = require( '../../../../utils/wordpress' );
 const { insertBlock } = require( '../../../../utils/editor' );
+const { tags } = require( '../../../../fixtures/fixtures' );
 
 const NEW_EDITOR_ADD_PRODUCT_URL =
 	'wp-admin/admin.php?page=wc-admin&path=%2Fadd-product';
@@ -61,7 +62,7 @@ test.describe( 'General tab', { tag: '@gutenberg' }, () => {
 
 		test(
 			'can create a simple product',
-			{ tag: '@skip-on-default-pressable' },
+			{ tag: tags.SKIP_ON_PRESSABLE },
 			async ( { page } ) => {
 				await test.step( 'add new product', async () => {
 					await page.goto( NEW_EDITOR_ADD_PRODUCT_URL );

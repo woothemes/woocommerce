@@ -3,6 +3,7 @@ const { AssemblerPage } = require( './assembler.page' );
 const { activateTheme, DEFAULT_THEME } = require( '../../../utils/themes' );
 const { setOption } = require( '../../../utils/options' );
 const { getInstalledWordPressVersion } = require( '../../../utils/wordpress' );
+const { tags } = require( '../../../fixtures/fixtures' );
 
 const test = base.extend( {
 	pageObject: async ( { page }, use ) => {
@@ -98,7 +99,7 @@ test.describe( 'Assembler -> Full composability', { tag: '@gutenberg' }, () => {
 
 	test(
 		'The list of categories should be displayed',
-		{ tag: '@skip-on-default-pressable' },
+		{ tag: tags.SKIP_ON_PRESSABLE },
 		async ( { pageObject, baseURL } ) => {
 			await prepareAssembler( pageObject, baseURL );
 			const assembler = await pageObject.getAssembler();
@@ -346,7 +347,7 @@ test.describe( 'Assembler -> Full composability', { tag: '@gutenberg' }, () => {
 
 	test(
 		'Clicking opt-in new patterns should be available',
-		{ tag: '@skip-on-default-pressable' },
+		{ tag: tags.SKIP_ON_PRESSABLE },
 		async ( { pageObject, baseURL } ) => {
 			await prepareAssembler( pageObject, baseURL );
 			const assembler = await pageObject.getAssembler();
