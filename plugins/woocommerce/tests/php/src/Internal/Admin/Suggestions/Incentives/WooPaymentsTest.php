@@ -137,8 +137,8 @@ class WooPaymentsTest extends WC_REST_Unit_Test_Case {
 
 		// Assert.
 		$this->assertCount( 2, $result );
-		$this->assertEquals( 'incentive1', $result[0]['id'] );
-		$this->assertEquals( 'incentive2', $result[1]['id'] );
+		$this->assertSame( 'incentive1', $result[0]['id'] );
+		$this->assertSame( 'incentive2', $result[1]['id'] );
 
 		// Test that the memo is used.
 		// Arrange.
@@ -150,8 +150,8 @@ class WooPaymentsTest extends WC_REST_Unit_Test_Case {
 
 		// Assert.
 		$this->assertCount( 2, $result );
-		$this->assertEquals( 'incentive1', $result[0]['id'] );
-		$this->assertEquals( 'incentive2', $result[1]['id'] );
+		$this->assertSame( 'incentive1', $result[0]['id'] );
+		$this->assertSame( 'incentive2', $result[1]['id'] );
 
 		// Test that the DB cache is used.
 		// Arrange.
