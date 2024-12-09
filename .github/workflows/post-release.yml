@@ -1,4 +1,4 @@
-name: Run post release processes
+name: Run post release processes - deprecated
 on:
     release:
         types: [released]
@@ -20,6 +20,8 @@ jobs:
           pull-requests: write
         steps:
             - uses: actions/checkout@v3
+              with:
+                ref: trunk
 
             - name: Git fetch trunk branch
               run: git fetch origin trunk
