@@ -72,9 +72,10 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 			return $settings;
 		}
 
+		$user_nox_meta = get_user_meta( get_current_user_id(), Payments::USER_PAYMENTS_NOX_PROFILE_KEY, true );
 		// Add the location to the settings.
-		if ( isset( $settings[ Payments::USER_PAYMENTS_NOX_PROFILE_KEY ]['location'] ) ) {
-			$settings[ Payments::USER_PAYMENTS_NOX_PROFILE_KEY ]['location'] = get_user_meta( get_current_user_id(), Payments::USER_PAYMENTS_NOX_PROFILE_KEY, true )['location'];
+		if ( isset( $user_nox_meta['location'] ) ) {
+			$settings[ Payments::USER_PAYMENTS_NOX_PROFILE_KEY ]['location'] = $user_nox_meta['location'];
 		}
 
 		return $settings;
