@@ -370,6 +370,22 @@ These hooks run on every Woo page load, some affect the blocks, some don't, some
 | `woocommerce_order_button_html`                 | ❌                | Modifying the order button html using this hook is not supported in the Cart/Checkout blocks - edit it using the editor.                                                                                                                     |
 | `woocommerce_update_order_review_fragments`     | ❌                | Fragments are not used on the Cart/Checkout blocks.                                                                                                                                                                                          |
 
+### Place order _actions_
+
+This section is a work in progress.
+
+### Place order _filters_
+
+This section is a work in progress.
+
+### Order summary _actions_
+
+This section is a work in progress.
+
+### Order summary _filters_
+
+This section is a work in progress.
+
 ## Common extensibility paths
 
 ### Cart and Checkout blocks
