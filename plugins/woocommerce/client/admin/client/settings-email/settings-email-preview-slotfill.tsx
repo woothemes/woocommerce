@@ -67,10 +67,7 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 				<div
 					className={ `wc-settings-email-preview wc-settings-email-preview-${ deviceType }` }
 				>
-					<EmailPreviewHeader
-						emailTypes={ emailTypes }
-						emailType={ emailType }
-					/>
+					<EmailPreviewHeader emailType={ emailType } />
 					<iframe
 						src={ finalPreviewUrl }
 						title={ __( 'Email preview frame', 'woocommerce' ) }
