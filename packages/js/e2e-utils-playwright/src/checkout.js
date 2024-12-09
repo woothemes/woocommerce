@@ -23,14 +23,14 @@ export async function fillShippingCheckoutBlocks(
 		address = '123 Evergreen Terrace',
 		zip = '97403',
 		city = 'Springfield',
-		state = null,
+		state = 'OR',
 		isPostalCode = false,
 	} = shippingDetails;
 
 	await page
 		.getByRole( 'group', { name: 'Shipping address' } )
 		.getByLabel( 'Country' )
-		.fill( country );
+		.selectOption( country );
 	await page
 		.getByRole( 'group', { name: 'Shipping address' } )
 		.getByLabel( 'First name' )
@@ -53,7 +53,7 @@ export async function fillShippingCheckoutBlocks(
 		await page
 			.getByRole( 'group', { name: 'Shipping address' } )
 			.getByLabel( 'State' )
-			.fill( state );
+			.selectOption( state );
 	}
 	await page
 		.getByRole( 'group', { name: 'Shipping address' } )
@@ -85,14 +85,14 @@ export async function fillBillingCheckoutBlocks(
 		address = '156th Street',
 		city = 'Springfield',
 		zip = '98500',
-		state = null,
+		state = 'WA',
 		isPostalCode = false,
 	} = billingDetails;
 
 	await page
 		.getByRole( 'group', { name: 'Billing address' } )
 		.getByLabel( 'Country' )
-		.fill( country );
+		.selectOption( country );
 	await page
 		.getByRole( 'group', { name: 'Billing address' } )
 		.getByLabel( 'First name' )
@@ -119,7 +119,7 @@ export async function fillBillingCheckoutBlocks(
 		await page
 			.getByRole( 'group', { name: 'Billing address' } )
 			.getByLabel( 'State' )
-			.fill( state );
+			.selectOption( state );
 	}
 
 	await page
