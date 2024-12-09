@@ -51,6 +51,11 @@ test.describe( 'General tab', { tag: '@gutenberg' }, () => {
 		test( 'can create a grouped product', async ( { page } ) => {
 			await page.goto( NEW_EDITOR_ADD_PRODUCT_URL );
 			await clickOnTab( 'General', page );
+			const waitForProductResponse = page.waitForResponse(
+				( response ) =>
+					response.url().includes( '/wp-json/wc/v3/products/' ) &&
+					response.status() === 200
+			);
 			await page
 				.getByPlaceholder( 'e.g. 12 oz Coffee Mug' )
 				.fill( productData.name );
@@ -72,11 +77,11 @@ test.describe( 'General tab', { tag: '@gutenberg' }, () => {
 				.getByText( 'Grouped product' )
 				.click();
 
-			await page.waitForResponse(
-				( response ) =>
-					response.url().includes( '/wp-json/wc/v3/products/' ) &&
-					response.status() === 200
-			);
+			await expect(
+				page.getByLabel( 'Dismiss this notice' )
+			).toContainText( 'Product type changed.' );
+
+			await waitForProductResponse;
 
 			await page
 				.locator( '[data-title="Product section"]' )
@@ -136,7 +141,7 @@ test.describe( 'General tab', { tag: '@gutenberg' }, () => {
 			await expect( productId ).toBeDefined();
 			await expect( title ).toHaveText( productData.name );
 
-			await page.goto( `/?post_type=product&p=${ productId }` );
+			await page.goto( `?post_type=product&p=${ productId }` );
 
 			await expect(
 				page.getByRole( 'heading', { name: productData.name } )

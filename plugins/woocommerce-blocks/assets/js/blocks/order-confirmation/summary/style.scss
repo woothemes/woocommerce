@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .editor-styles-wrapper .wc-block-order-confirmation-summary,
 .wc-block-order-confirmation-summary {
 	margin-top: $gap-largest;
@@ -25,7 +27,7 @@
 			}
 		}
 
-		@media only screen and (max-width: 480px) {
+		@media (max-width: #{$break-small}) {
 			li {
 				width: 100%;
 

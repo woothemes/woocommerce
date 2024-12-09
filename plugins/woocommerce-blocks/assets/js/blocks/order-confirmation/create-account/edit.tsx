@@ -85,6 +85,8 @@ export const Edit = ( {
 		return null;
 	}
 
+	const generatePassword = getSetting( 'registrationGeneratePassword', true );
+
 	return (
 		<div { ...blockProps }>
 			<InnerBlocks
@@ -101,23 +103,26 @@ export const Edit = ( {
 			<Disabled>
 				<Form isEditor={ true } />
 			</Disabled>
-			<InspectorControls>
-				<PanelBody title={ __( 'Style', 'woocommerce' ) }>
-					<ToggleControl
-						label={ __( 'Dark mode inputs', 'woocommerce' ) }
-						help={ __(
-							'Inputs styled specifically for use on dark background colors.',
-							'woocommerce'
-						) }
-						checked={ attributes.hasDarkControls }
-						onChange={ () =>
-							setAttributes( {
-								hasDarkControls: ! attributes.hasDarkControls,
-							} )
-						}
-					/>
-				</PanelBody>
-			</InspectorControls>
+			{ ! generatePassword && (
+				<InspectorControls>
+					<PanelBody title={ __( 'Style', 'woocommerce' ) }>
+						<ToggleControl
+							label={ __( 'Dark mode inputs', 'woocommerce' ) }
+							help={ __(
+								'Inputs styled specifically for use on dark background colors.',
+								'woocommerce'
+							) }
+							checked={ attributes.hasDarkControls }
+							onChange={ () =>
+								setAttributes( {
+									hasDarkControls:
+										! attributes.hasDarkControls,
+								} )
+							}
+						/>
+					</PanelBody>
+				</InspectorControls>
+			) }
 		</div>
 	);
 };

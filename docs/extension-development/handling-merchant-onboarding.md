@@ -4,6 +4,8 @@ menu_title: Implement merchant onboarding
 tags: how-to
 ---
 
+# How to implement merchant onboarding
+
 ## Introduction
 
 Onboarding is a critical part of the merchant's user experience. It helps set them up for success and ensures they're not only using your extension correctly but also getting the most out of it. There are a few especially useful features that you can take advantage of as a developer to help onboard merchants who are using your extension:
@@ -285,9 +287,9 @@ add_action( 'admin_enqueue_scripts', 'add_task_register_script' );
 
 By following these steps, your custom task should appear in the WooCommerce onboarding tasklist.
 
-For a complete example of adding a custom task as a WordPress plugin, you can check out the [add-task examples directory](https://github.com/woocommerce/woocommerce/tree/trunk/plugins/woocommerce-admin/docs/examples/extensions/add-task).
+For a complete example of adding a custom task as a WordPress plugin, you can check out the [add-task examples directory](https://github.com/woocommerce/woocommerce/tree/trunk/plugins/woocommerce/client/admin/docs/examples/extensions/add-task).
 
-To learn more about the tasklist, you can refer to the [tasklist documentation](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-admin/docs/features/onboarding-tasks.md).
+To learn more about the tasklist, you can refer to the [tasklist documentation](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/client/admin/docs/features/onboarding-tasks.md).
 
 
 ---

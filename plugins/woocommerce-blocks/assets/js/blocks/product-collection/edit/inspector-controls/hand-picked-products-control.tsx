@@ -166,6 +166,10 @@ export const HandPickedProductsControlField = ( {
 			}
 			__experimentalExpandOnFocus={ true }
 			__experimentalShowHowTo={ false }
+			placeholder={ __(
+				'Search for products to display…',
+				'woocommerce'
+			) }
 		/>
 	);
 };

@@ -24,9 +24,7 @@ const test = base.extend< { templateCompiler: TemplateCompiler } >( {
 test.describe( 'woocommerce/product-filter-attribute - Frontend', () => {
 	test.describe( 'With default display style', () => {
 		test.beforeEach( async ( { requestUtils, templateCompiler } ) => {
-			await requestUtils.activatePlugin(
-				'woocommerce-blocks-test-enable-experimental-features'
-			);
+			await requestUtils.setFeatureFlag( 'experimental-blocks', true );
 			await templateCompiler.compile( {
 				attributes: {
 					attributeId: 1,
@@ -139,9 +137,7 @@ test.describe( 'woocommerce/product-filter-attribute - Frontend', () => {
 
 	test.describe( 'With show counts enabled', () => {
 		test.beforeEach( async ( { requestUtils, templateCompiler } ) => {
-			await requestUtils.activatePlugin(
-				'woocommerce-blocks-test-enable-experimental-features'
-			);
+			await requestUtils.setFeatureFlag( 'experimental-blocks', true );
 			await templateCompiler.compile( {
 				attributes: {
 					attributeId: 1,

@@ -80,12 +80,14 @@ test.describe( 'Assembler -> Footers', { tag: '@gutenberg' }, () => {
 		assemblerPage,
 	} ) => {
 		const assembler = await assemblerPage.getAssembler();
-		const footer = assembler
-			.locator( '.block-editor-block-patterns-list__item' )
-			.nth( 2 );
+		const footers = assembler.locator(
+			'.block-editor-block-patterns-list__item'
+		);
 
-		await footer.click();
-		await expect( footer ).toHaveClass( /is-selected/ );
+		await expect( footers ).toHaveCount( 3 );
+		await expect( footers.nth( 2 ) ).toBeVisible();
+		await footers.nth( 2 ).click();
+		await expect( footers.nth( 2 ) ).toHaveClass( /is-selected/ );
 	} );
 
 	test( 'The selected footer should be applied on the frontend', async ( {
