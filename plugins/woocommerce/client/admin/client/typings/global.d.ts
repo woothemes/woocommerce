@@ -30,8 +30,8 @@ declare global {
 				currency?: {
 					symbol: string;
 				};
-				preloadSettings: {
-					general: {
+				preloadSettings?: {
+					general?: {
 						woocommerce_default_country: string;
 					};
 				};
