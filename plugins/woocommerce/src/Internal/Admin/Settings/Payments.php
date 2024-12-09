@@ -149,7 +149,9 @@ class Payments {
 				'icon'        => plugins_url( 'assets/images/payment_methods/cod.svg', WC_PLUGIN_FILE ),
 				// The offline PMs (and their group) are obviously from WooCommerce, and WC is always active.
 				'plugin'      => array(
+					'_type'  => 'wporg',
 					'slug'   => 'woocommerce',
+					'file'   => '', // This pseudo-provider should have no use for the plugin file.
 					'status' => self::EXTENSION_ACTIVE,
 				),
 			);
@@ -587,6 +589,13 @@ class Payments {
 	 * @return array The response data.
 	 */
 	private function get_payment_gateway_base_details( WC_Payment_Gateway $payment_gateway, int $payment_gateway_order, string $country_code = '' ): array {
+		$plugin_slug = $this->get_payment_gateway_plugin_slug( $payment_gateway );
+		$plugin_file = PluginsHelper::get_plugin_path_from_slug( $plugin_slug );
+		// Remove the .php extension from the file path. The WP API expects it without it.
+		if ( ! empty( $plugin_file ) && str_ends_with( $plugin_file, '.php' ) ) {
+			$plugin_file = substr( $plugin_file, 0, -4 );
+		}
+
 		return array(
 			'id'          => $payment_gateway->id,
 			'_order'      => $payment_gateway_order,
@@ -605,6 +614,12 @@ class Payments {
 			),
 			'onboarding'  => array(
 				'recommended_payment_methods' => $this->get_payment_gateway_recommended_payment_methods( $payment_gateway, $country_code ),
+			),
+			'plugin' 	=> array(
+				'_type'  => 'wporg',
+				'slug'   => $plugin_slug,
+				'file'   => $plugin_file,
+				'status' => self::EXTENSION_ACTIVE,
 			),
 		);
 	}
@@ -713,7 +728,7 @@ class Payments {
 	 * @return array The enhanced gateway details.
 	 */
 	private function enhance_payment_gateway_details( array $gateway_details, WC_Payment_Gateway $payment_gateway, string $country_code ): array {
-		$plugin_slug = $this->get_payment_gateway_plugin_slug( $payment_gateway );
+		$plugin_slug = $gateway_details['plugin']['slug'];
 		// The payment gateway plugin might use a non-standard directory name.
 		// Try to normalize it to the common slug to avoid false negatives when matching.
 		$normalized_plugin_slug = Utils::normalize_plugin_slug( $plugin_slug );
@@ -784,9 +799,6 @@ class Payments {
 					);
 				}
 			}
-
-			$gateway_details['plugin']['slug']   = $plugin_slug;
-			$gateway_details['plugin']['status'] = self::EXTENSION_ACTIVE;
 		}
 
 		return $gateway_details;
@@ -912,16 +924,28 @@ class Payments {
 		// Determine the PES's plugin status.
 		// Default to not installed.
 		$extension['plugin']['status'] = self::EXTENSION_NOT_INSTALLED;
-		// This is best-effort approach, as the plugin might be sitting under directory (slug) that we can't handle.
-		// Always try the official plugin slug first, then the testing variations.
-		$plugin_slug_variations = Utils::generate_testing_plugin_slugs( $extension['plugin']['slug'], true );
-		foreach ( $plugin_slug_variations as $plugin_slug ) {
-			if ( PluginsHelper::is_plugin_installed( $plugin_slug ) ) {
-				$extension['plugin']['status'] = self::EXTENSION_INSTALLED;
-				if ( PluginsHelper::is_plugin_active( $plugin_slug ) ) {
-					$extension['plugin']['status'] = self::EXTENSION_ACTIVE;
+		// Put in the default plugin file.
+		$extension['plugin']['file'] = '';
+		if ( ! empty( $extension['plugin']['slug'] ) ) {
+			// This is best-effort approach, as the plugin might be sitting under directory (slug) that we can't handle.
+			// Always try the official plugin slug first, then the testing variations.
+			$plugin_slug_variations = Utils::generate_testing_plugin_slugs( $extension['plugin']['slug'], true );
+			foreach ( $plugin_slug_variations as $plugin_slug ) {
+				if ( PluginsHelper::is_plugin_installed( $plugin_slug ) ) {
+					// Make sure we put in the actual slug and file path that we found.
+					$extension['plugin']['slug'] = $plugin_slug;
+					$extension['plugin']['file'] = PluginsHelper::get_plugin_path_from_slug( $plugin_slug );
+					// Remove the .php extension from the file path. The WP API expects it without it.
+					if ( ! empty( $extension['plugin']['file'] ) && str_ends_with( $extension['plugin']['file'], '.php' ) ) {
+						$extension['plugin']['file'] = substr( $extension['plugin']['file'], 0, -4 );
+					}
+
+					$extension['plugin']['status'] = self::EXTENSION_INSTALLED;
+					if ( PluginsHelper::is_plugin_active( $plugin_slug ) ) {
+						$extension['plugin']['status'] = self::EXTENSION_ACTIVE;
+					}
+					break;
 				}
-				break;
 			}
 		}
 
