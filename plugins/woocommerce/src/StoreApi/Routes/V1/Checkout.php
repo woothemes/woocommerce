@@ -8,7 +8,6 @@ use Automattic\WooCommerce\StoreApi\Utilities\DraftOrderTrait;
 use Automattic\WooCommerce\Checkout\Helpers\ReserveStockException;
 use Automattic\WooCommerce\StoreApi\Utilities\CheckoutTrait;
 use Automattic\WooCommerce\Utilities\RestApiUtil;
-use WP_REST_Response;
 
 /**
  * Checkout class.
@@ -117,13 +116,16 @@ class Checkout extends AbstractCartRoute {
 				'args'                => array_merge(
 					[
 						'additional_fields' => [
-							'type' => 'object',
+							'description' => __( 'Additional fields related to the order.', 'woocommerce' ),
+							'type'        => 'object',
 						],
 						'payment_method'    => [
-							'type' => 'string',
+							'description' => __( 'Seleted payment method for the order.', 'woocommerce' ),
+							'type'        => 'string',
 						],
 						'order_notes'       => [
-							'type' => 'string',
+							'description' => __( 'Order notes.', 'woocommerce' ),
+							'type'        => 'string',
 						],
 					],
 					$this->schema->get_endpoint_args_for_item_schema( \WP_REST_Server::EDITABLE )
