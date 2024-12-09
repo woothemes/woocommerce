@@ -183,7 +183,6 @@ class PaymentsController {
 			// Handle payment gateways and offline payment methods that need setup.
 			if (
 				in_array( $provider['_type'], array( Payments::PROVIDER_TYPE_GATEWAY, Payments::PROVIDER_TYPE_OFFLINE_PM ), true ) &&
-				! empty( $provider['state']['enabled'] ) &&
 				! empty( $provider['state']['needs_setup'] )
 			) {
 				return true;
