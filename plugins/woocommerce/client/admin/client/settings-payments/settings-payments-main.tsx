@@ -151,8 +151,8 @@ export const SettingsPaymentsMain = () => {
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
 					isFetching={ isFetching }
-					storeCountry={ storeCountry }
-					setStoreCountry={ setStoreCountry }
+					businessRegistrationCountry={ storeCountry }
+					setBusinessRegistrationCountry={ setStoreCountry }
 				/>
 				<OtherPaymentGateways
 					suggestions={ suggestions }

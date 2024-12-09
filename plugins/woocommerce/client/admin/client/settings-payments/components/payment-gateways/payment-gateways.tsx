@@ -30,8 +30,8 @@ interface PaymentGatewaysProps {
 	installingPlugin: string | null;
 	setupPlugin: ( id: string, slug: string ) => void;
 	isFetching: boolean;
-	storeCountry: string | null;
-	setStoreCountry: ( country: string ) => void;
+	businessRegistrationCountry: string | null;
+	setBusinessRegistrationCountry: ( country: string ) => void;
 }
 
 export const PaymentGateways = ( {
@@ -40,8 +40,8 @@ export const PaymentGateways = ( {
 	installingPlugin,
 	setupPlugin,
 	isFetching,
-	storeCountry,
-	setStoreCountry,
+	businessRegistrationCountry,
+	setBusinessRegistrationCountry,
 }: PaymentGatewaysProps ) => {
 	const { invalidateResolution } = useDispatch( PAYMENT_SETTINGS_STORE_NAME );
 
@@ -124,12 +124,13 @@ export const PaymentGateways = ( {
 						placeholder={ '' }
 						value={
 							countryOptions.find(
-								( country ) => country.key === storeCountry
+								( country ) =>
+									country.key === businessRegistrationCountry
 							) ?? { key: 'US', name: 'United States (US)' }
 						}
 						options={ countryOptions }
 						onChange={ ( value: string ) => {
-							setStoreCountry( value );
+							setBusinessRegistrationCountry( value );
 							invalidateResolution( 'getPaymentProviders', [
 								value,
 							] );
