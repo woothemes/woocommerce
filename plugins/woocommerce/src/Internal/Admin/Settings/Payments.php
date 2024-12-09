@@ -205,7 +205,7 @@ class Payments {
 		}
 		$user_payments_nox_profile['location'] = $location;
 
-		update_user_meta( get_current_user_id(), self::USER_PAYMENTS_NOX_PROFILE_KEY, $user_payments_nox_profile );
+		return update_user_meta( get_current_user_id(), self::USER_PAYMENTS_NOX_PROFILE_KEY, $user_payments_nox_profile );
 	}
 
 	/**
