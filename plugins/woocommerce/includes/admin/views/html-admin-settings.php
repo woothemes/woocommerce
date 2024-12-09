@@ -14,13 +14,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * The current WC Payments settings tab ID.
+ * The current WC admin settings tab ID.
  *
  * @var string $current_tab
  */
 
 /**
- * The current WC Payments settings section ID.
+ * The current WC admin settings section ID.
  *
  * @var string $current_section
  */
