@@ -113,6 +113,7 @@ class ProductGallery extends AbstractBlock {
 	protected function render( $attributes, $content, $block ) {
 		$post_id = $block->context['postId'] ?? '';
 		$product = wc_get_product( $post_id );
+
 		if ( ! $product instanceof \WC_Product ) {
 			return '';
 		}
@@ -149,6 +150,8 @@ class ProductGallery extends AbstractBlock {
 						'mouseIsOverPreviousOrNextButton' => false,
 						'productId'                       => $product_id,
 						'elementThatTriggeredDialogOpening' => null,
+						'disableLeft'                     => true,
+						'disableRight'                    => false,
 					),
 					JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
 				)

@@ -232,7 +232,7 @@ class WC_Tracker_Test extends \WC_Unit_Test_Case {
 		foreach ( array_merge( $first_20, $last_20 ) as $order_date ) {
 			$order = wc_create_order(
 				array(
-					'status' => 'wc-completed',
+					'status' => OrderInternalStatus::COMPLETED,
 				)
 			);
 			$order->add_product( $dummy_product );

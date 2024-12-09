@@ -78,7 +78,7 @@ class Api {
 		// Use wc- prefix here to prevent collisions when WC Core version catches up to a version previously used by the WC Blocks feature plugin.
 		$this->wc_version    = 'wc-' . Constants::get_constant( 'WC_VERSION' );
 		$this->package       = $package;
-		$this->disable_cache = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) || ! $this->package->feature()->is_production_environment();
+		$this->disable_cache = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) || wp_get_environment_type() !== 'production';
 
 		// If the site is accessed via HTTPS, change the transient key. This is to prevent the script URLs being cached
 		// with the first scheme they are accessed on after cache expiry.
@@ -258,7 +258,7 @@ class Api {
 		$script_data = $this->get_script_data( $relative_src, $dependencies );
 
 		if ( in_array( $handle, $script_data['dependencies'], true ) ) {
-			if ( $this->package->feature()->is_development_environment() ) {
+			if ( wp_get_environment_type() === 'development' ) {
 				$dependencies = array_diff( $script_data['dependencies'], [ $handle ] );
 					add_action(
 						'admin_notices',

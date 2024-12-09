@@ -7,17 +7,20 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
 import { EllipsisMenu } from '@woocommerce/components';
-import { SuggestedPaymentExtension } from '@woocommerce/data';
+import { PaymentProvider } from '@woocommerce/data';
 
 /**
  * Internal dependencies
  */
 import sanitizeHTML from '~/lib/sanitize-html';
+import { EllipsisMenuContent } from '~/settings-payments/components/ellipsis-menu-content';
+import { isWooPayments } from '~/settings-payments/utils';
+import { StatusBadge } from '~/settings-payments/components/status-badge';
 
 type PaymentExtensionSuggestionListItemProps = {
-	extension: SuggestedPaymentExtension;
+	extension: PaymentProvider;
 	installingPlugin: string | null;
-	setupPlugin: ( extension: SuggestedPaymentExtension ) => void;
+	setupPlugin: ( id: string, slug: string ) => void;
 	pluginInstalled: boolean;
 };
 
@@ -29,7 +32,14 @@ export const PaymentExtensionSuggestionListItem = ( {
 }: PaymentExtensionSuggestionListItemProps ) => {
 	return {
 		key: extension.id,
-		title: <>{ extension.title }</>,
+		title: (
+			<>
+				{ extension.title }{ ' ' }
+				{ isWooPayments( extension.id ) && (
+					<StatusBadge status="recommended" />
+				) }
+			</>
+		),
 		className: 'transitions-disabled',
 		content: (
 			<>
@@ -38,7 +48,7 @@ export const PaymentExtensionSuggestionListItem = ( {
 						decodeEntities( extension.description )
 					) }
 				/>
-				{ extension.id === 'woocommerce_payments' && (
+				{ isWooPayments( extension.id ) && (
 					<WooPaymentMethodsLogos
 						maxElements={ 10 }
 						isWooPayEligible={ true }
@@ -51,7 +61,9 @@ export const PaymentExtensionSuggestionListItem = ( {
 				<>
 					<Button
 						variant="primary"
-						onClick={ () => setupPlugin( extension ) }
+						onClick={ () =>
+							setupPlugin( extension.id, extension.plugin.slug )
+						}
 						isBusy={ installingPlugin === extension.id }
 						disabled={ !! installingPlugin }
 					>
@@ -62,21 +74,14 @@ export const PaymentExtensionSuggestionListItem = ( {
 
 					<EllipsisMenu
 						label={ __( 'Task List Options', 'woocommerce' ) }
-						renderContent={ () => (
-							<div>
-								<Button>
-									{ __( 'Learn more', 'woocommerce' ) }
-								</Button>
-								<Button>
-									{ __(
-										'See Terms of Service',
-										'woocommerce'
-									) }
-								</Button>
-								<Button>
-									{ __( 'Hide suggestion', 'woocommerce' ) }
-								</Button>
-							</div>
+						renderContent={ ( { onToggle } ) => (
+							<EllipsisMenuContent
+								pluginId={ extension.id }
+								pluginName={ extension.plugin.slug }
+								isSuggestion={ true }
+								links={ extension.links }
+								onToggle={ onToggle }
+							/>
 						) }
 					/>
 				</>
