@@ -317,7 +317,7 @@ test.describe(
 
 		test(
 			'restores total when coupons are removed',
-			{ tag: [ '@could-be-lower-level-test' ] },
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 			async ( { page, context } ) => {
 				await test.step( 'Load cart page and try restoring total when removed coupons', async () => {
 					await addAProductToCart( page, firstProductId );

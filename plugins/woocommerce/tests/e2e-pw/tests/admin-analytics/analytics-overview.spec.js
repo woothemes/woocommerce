@@ -195,7 +195,7 @@ test.describe(
 
 		test.describe(
 			'moving sections',
-			{ tag: [ '@could-be-lower-level-test' ] },
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 			() => {
 				test( 'should not display move up for the top, or move down for the bottom section', async () => {
 					await test.step( `Check the top section`, async () => {

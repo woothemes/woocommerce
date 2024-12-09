@@ -87,7 +87,7 @@ test.describe( 'Cart page', { tag: [ tags.PAYMENTS, tags.SERVICES ] }, () => {
 
 	test(
 		'should display no item in the cart',
-		{ tag: [ '@could-be-lower-level-test' ] },
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 		async ( { page } ) => {
 			await page.goto( 'cart/' );
 			await expect(
@@ -98,7 +98,7 @@ test.describe( 'Cart page', { tag: [ tags.PAYMENTS, tags.SERVICES ] }, () => {
 
 	test(
 		'should add the product to the cart from the shop page',
-		{ tag: [ '@could-be-lower-level-test' ] },
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 		async ( { page } ) => {
 			await goToShopPageAndAddProductToCart( page, productName );
 
@@ -111,7 +111,7 @@ test.describe( 'Cart page', { tag: [ tags.PAYMENTS, tags.SERVICES ] }, () => {
 
 	test(
 		'should increase item quantity when "Add to cart" of the same product is clicked',
-		{ tag: [ '@could-be-lower-level-test' ] },
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 		async ( { page } ) => {
 			let qty = 2;
 			while ( qty-- ) {
@@ -125,7 +125,7 @@ test.describe( 'Cart page', { tag: [ tags.PAYMENTS, tags.SERVICES ] }, () => {
 
 	test(
 		'should update quantity when updated via quantity input',
-		{ tag: [ '@could-be-lower-level-test' ] },
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 		async ( { page } ) => {
 			await goToShopPageAndAddProductToCart( page, productName );
 
@@ -141,7 +141,7 @@ test.describe( 'Cart page', { tag: [ tags.PAYMENTS, tags.SERVICES ] }, () => {
 
 	test(
 		'should remove the item from the cart when remove is clicked',
-		{ tag: [ '@could-be-lower-level-test' ] },
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 		async ( { page } ) => {
 			await goToShopPageAndAddProductToCart( page, productName );
 			await page.goto( 'cart/' );
@@ -164,7 +164,7 @@ test.describe( 'Cart page', { tag: [ tags.PAYMENTS, tags.SERVICES ] }, () => {
 
 	test(
 		'should update subtotal in cart totals when adding product to the cart',
-		{ tag: [ '@could-be-lower-level-test' ] },
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 		async ( { page } ) => {
 			await goToShopPageAndAddProductToCart( page, productName );
 
@@ -184,7 +184,7 @@ test.describe( 'Cart page', { tag: [ tags.PAYMENTS, tags.SERVICES ] }, () => {
 
 	test(
 		'should go to the checkout page when "Proceed to Checkout" is clicked',
-		{ tag: [ '@could-be-lower-level-test' ] },
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 		async ( { page } ) => {
 			await goToShopPageAndAddProductToCart( page, productName );
 

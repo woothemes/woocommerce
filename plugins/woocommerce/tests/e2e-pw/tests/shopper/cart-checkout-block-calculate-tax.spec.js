@@ -256,7 +256,7 @@ test.describe(
 
 test.describe(
 	'Shopper Cart & Checkout Block Tax Rounding',
-	{ tag: [ tags.PAYMENTS, tags.SERVICES, '@could-be-lower-level-test' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.COULD_BE_LOWER_LEVEL_TEST ] },
 	() => {
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {
@@ -500,7 +500,7 @@ test.describe(
 
 test.describe(
 	'Shopper Cart & Checkout Block Tax Levels',
-	{ tag: [ tags.PAYMENTS, tags.SERVICES, '@could-be-lower-level-test' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.COULD_BE_LOWER_LEVEL_TEST ] },
 	() => {
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {
@@ -825,7 +825,7 @@ test.describe(
 
 test.describe(
 	'Shipping Cart & Checkout Block Tax',
-	{ tag: [ tags.PAYMENTS, tags.SERVICES, '@could-be-lower-level-test' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.COULD_BE_LOWER_LEVEL_TEST ] },
 	() => {
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {

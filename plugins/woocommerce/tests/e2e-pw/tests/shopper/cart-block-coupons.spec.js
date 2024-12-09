@@ -133,7 +133,7 @@ test.describe(
 
 		test(
 			'allows cart block to apply coupon of any type',
-			{ tag: [ '@could-be-lower-level-test' ] },
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 			async ( { page } ) => {
 				const totals = [ '$50.00', '$27.50', '$45.00' ];
 
@@ -178,7 +178,7 @@ test.describe(
 
 		test(
 			'allows cart block to apply multiple coupons',
-			{ tag: [ '@could-be-lower-level-test' ] },
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 			async ( { page } ) => {
 				const totals = [ '$50.00', '$22.50', '$12.50' ];
 				const totalsReverse = [ '$17.50', '$45.00', '$55.00' ];
@@ -229,7 +229,7 @@ test.describe(
 
 		test(
 			'prevents cart block applying same coupon twice',
-			{ tag: [ '@could-be-lower-level-test' ] },
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 			async ( { page } ) => {
 				// try to add two same coupons and verify the error message
 				await page
@@ -263,7 +263,7 @@ test.describe(
 
 		test(
 			'prevents cart block applying coupon with usage limit',
-			{ tag: [ '@could-be-lower-level-test' ] },
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 			async ( { page } ) => {
 				// add coupon with usage limit
 				await page

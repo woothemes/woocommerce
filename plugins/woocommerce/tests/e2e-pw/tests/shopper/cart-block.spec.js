@@ -82,7 +82,7 @@ test.describe(
 
 		test(
 			'can see empty cart, add and remove simple & cross sell product, increase to max quantity',
-			{ tag: [ '@could-be-lower-level-test' ] },
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 			async ( { page, testPage } ) => {
 				await goToPageEditor( { page } );
 				await fillPageTitle( page, testPage.title );
