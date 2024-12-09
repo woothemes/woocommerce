@@ -1,0 +1,4 @@
+Significance: minor
+Type: add
+
+Additional checkout fields, order notes and chosen payment method are now persisted.
