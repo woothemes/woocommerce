@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import { useBlockProps, InnerBlocks } from '@wordpress/block-editor';
-import type { TemplateArray } from '@wordpress/blocks';
+import { useBlockProps, InnerBlocks, RichText } from '@wordpress/block-editor';
+import { useCallback } from '@wordpress/element';
+import type { BlockEditProps, TemplateArray } from '@wordpress/blocks';
 import { innerBlockAreas } from '@woocommerce/blocks-checkout';
 import { __ } from '@wordpress/i18n';
 import { TotalsFooterItem } from '@woocommerce/base-components/cart-checkout';
@@ -17,8 +18,19 @@ import {
 	getAllowedBlocks,
 } from '../../../cart-checkout-shared';
 import { OrderMetaSlotFill } from './slotfills';
+import { DEFAULT_TOTAL_HEADING } from './constants';
 
-export const Edit = ( { clientId }: { clientId: string } ): JSX.Element => {
+export type BlockAttributes = {
+	totalHeading: string;
+	className?: string;
+};
+
+export const Edit = ( {
+	clientId,
+	attributes,
+	setAttributes,
+}: BlockEditProps< BlockAttributes > ) => {
+	const { totalHeading } = attributes;
 	const blockProps = useBlockProps();
 	const { cartTotals } = useStoreCart();
 	const totalsCurrency = getCurrencyFromPriceResponse( cartTotals );
@@ -43,6 +55,23 @@ export const Edit = ( { clientId }: { clientId: string } ): JSX.Element => {
 		defaultTemplate,
 	} );
 
+	const onTotalHeadingChange = useCallback(
+		( value: string ) => {
+			setAttributes( { totalHeading: value } );
+		},
+		[ setAttributes ]
+	);
+
+	const totalHeadingText = totalHeading ?? DEFAULT_TOTAL_HEADING;
+
+	const totalHeadingLabel = (
+		<RichText
+			value={ totalHeadingText }
+			onChange={ onTotalHeadingChange }
+			placeholder={ DEFAULT_TOTAL_HEADING }
+		/>
+	);
+
 	return (
 		<div { ...blockProps }>
 			<InnerBlocks
@@ -51,6 +80,7 @@ export const Edit = ( { clientId }: { clientId: string } ): JSX.Element => {
 			/>
 			<div className="wc-block-components-totals-wrapper">
 				<TotalsFooterItem
+					label={ totalHeadingLabel }
 					currency={ totalsCurrency }
 					values={ cartTotals }
 				/>

@@ -3,6 +3,10 @@ export default {
 		type: 'string',
 		default: '',
 	},
+	totalHeading: {
+		type: 'string',
+		default: null,
+	},
 	lock: {
 		type: 'object',
 		default: {
