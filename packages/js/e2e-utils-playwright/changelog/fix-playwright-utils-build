@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+change entry point to build/index.js
