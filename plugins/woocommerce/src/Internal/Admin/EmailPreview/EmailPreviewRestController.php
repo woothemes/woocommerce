@@ -97,8 +97,9 @@ class EmailPreviewRestController extends RestApiControllerBase {
 
 		$email_address = $request->get_param( 'email' );
 		$email_content = $email_preview->render();
+		$email_subject = $email_preview->get_subject();
 		$email         = new \WC_Emails();
-		$sent          = $email->send( $email_address, 'test', $email_content );
+		$sent          = $email->send( $email_address, $email_subject, $email_content );
 
 		if ( $sent ) {
 			return array(

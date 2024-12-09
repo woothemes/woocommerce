@@ -99,6 +99,18 @@ class EmailPreview {
 	}
 
 	/**
+	 * Get the preview email content.
+	 *
+	 * @return string
+	 */
+	public function get_subject() {
+		if ( ! $this->email ) {
+			return '';
+		}
+		return $this->email->get_subject();
+	}
+
+	/**
 	 * Return a dummy product when the product is not set in email classes.
 	 *
 	 * @param WC_Product $product Order item product.
