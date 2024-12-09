@@ -128,19 +128,17 @@ export const PaymentGateways = ( {
 							) ?? { key: 'US', name: 'United States (US)' }
 						}
 						options={ countryOptions }
-						onChange={ async ( value: string ) => {
-							await apiFetch( {
+						onChange={ ( value: string ) => {
+							setStoreCountry( value );
+							invalidateResolution( 'getPaymentProviders', [
+								value,
+							] );
+							apiFetch( {
 								path:
 									WC_ADMIN_NAMESPACE +
 									'/settings/payments/country',
 								method: 'POST',
 								data: { location: value },
-							} ).then( () => {
-								invalidateResolution( 'getPaymentProviders', [
-									value,
-								] );
-
-								setStoreCountry( value );
 							} );
 						} }
 					/>
