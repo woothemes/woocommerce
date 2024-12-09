@@ -714,7 +714,7 @@ class Payments {
 	 */
 	private function enhance_payment_gateway_details( array $gateway_details, WC_Payment_Gateway $payment_gateway, string $country_code ): array {
 		$plugin_slug = $this->get_payment_gateway_plugin_slug( $payment_gateway );
-		// The payment gateway plugin might use non-standard directory name.
+		// The payment gateway plugin might use a non-standard directory name.
 		// Try to normalize it to the common slug to avoid false negatives when matching.
 		$normalized_plugin_slug = Utils::normalize_plugin_slug( $plugin_slug );
 
