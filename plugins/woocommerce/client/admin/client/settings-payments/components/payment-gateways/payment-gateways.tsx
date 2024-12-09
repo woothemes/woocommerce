@@ -4,109 +4,102 @@
 import { Gridicon } from '@automattic/components';
 import { List } from '@woocommerce/components';
 import { getAdminLink } from '@woocommerce/settings';
-import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import {
-	RegisteredPaymentGateway,
-	SuggestedPaymentExtension,
-} from '@woocommerce/data';
-import { useMemo } from '@wordpress/element';
+import { PaymentProvider } from '@woocommerce/data';
+import { useMemo, useState } from '@wordpress/element';
+import { decodeEntities } from '@wordpress/html-entities';
 
 /**
  * Internal dependencies
  */
+import sanitizeHTML from '~/lib/sanitize-html';
 import { PaymentGatewayListItem } from '~/settings-payments/components/payment-gateway-list-item';
 import { PaymentExtensionSuggestionListItem } from '~/settings-payments/components/payment-extension-suggestion-list-item';
-import { WooPaymentsGatewayData } from '~/settings-payments/types';
-import { WC_ASSET_URL } from '~/utils/admin-settings';
+import { CountrySelector } from '~/settings-payments/components/country-selector';
+import { ListPlaceholder } from '~/settings-payments/components/list-placeholder';
 
 interface PaymentGatewaysProps {
-	registeredPaymentGateways: RegisteredPaymentGateway[];
+	providers: PaymentProvider[];
 	installedPluginSlugs: string[];
-	preferredPluginSuggestions: SuggestedPaymentExtension[];
-	wooPaymentsGatewayData?: WooPaymentsGatewayData;
 	installingPlugin: string | null;
-	setupPlugin: ( extension: SuggestedPaymentExtension ) => void;
+	setupPlugin: ( id: string, slug: string ) => void;
+	isFetching: boolean;
 }
 
 export const PaymentGateways = ( {
-	registeredPaymentGateways,
+	providers,
 	installedPluginSlugs,
-	preferredPluginSuggestions,
-	wooPaymentsGatewayData,
 	installingPlugin,
 	setupPlugin,
+	isFetching,
 }: PaymentGatewaysProps ) => {
-	const setupLivePayments = () => {};
+	const [ storeCountry, setStoreCountry ] = useState( 'US' );
 
-	// Transform suggested preferred plugins comply with List component format.
-	const preferredPluginSuggestionsList = useMemo(
-		() =>
-			preferredPluginSuggestions.map(
-				( extension: SuggestedPaymentExtension ) => {
-					const pluginInstalled = installedPluginSlugs.includes(
-						extension.plugin.slug
-					);
-					return PaymentExtensionSuggestionListItem( {
-						extension,
-						installingPlugin,
-						setupPlugin,
-						pluginInstalled,
-					} );
-				}
-			),
-		[
-			preferredPluginSuggestions,
-			installedPluginSlugs,
-			installingPlugin,
-			setupPlugin,
-		]
-	);
+	const countryOptions = useMemo( () => {
+		return Object.entries( window.wcSettings.countries || [] )
+			.map( ( [ key, name ] ) => ( {
+				key,
+				name: decodeEntities( name ),
+				types: [],
+			} ) )
+			.sort( ( a, b ) => a.name.localeCompare( b.name ) );
+	}, [] );
 
 	// Transform payment gateways to comply with List component format.
-	const paymentGatewaysList = useMemo(
+	const providersList = useMemo(
 		() =>
-			registeredPaymentGateways.map(
-				( gateway: RegisteredPaymentGateway ) => {
-					return PaymentGatewayListItem( {
-						gateway,
-						wooPaymentsGatewayData,
-						setupLivePayments,
-					} );
+			providers.map( ( provider: PaymentProvider ) => {
+				switch ( provider._type ) {
+					case 'suggestion':
+						const pluginInstalled = installedPluginSlugs.includes(
+							provider.plugin.slug
+						);
+						return PaymentExtensionSuggestionListItem( {
+							extension: provider,
+							installingPlugin,
+							setupPlugin,
+							pluginInstalled,
+						} );
+					case 'gateway':
+						return PaymentGatewayListItem( {
+							gateway: provider,
+						} );
+					case 'offline_pms_group':
+						return {
+							key: provider.id,
+							className:
+								'clickable-list-item transitions-disabled',
+							title: <>{ provider.title }</>,
+							content: (
+								<>
+									<span
+										dangerouslySetInnerHTML={ sanitizeHTML(
+											decodeEntities(
+												provider.description
+											)
+										) }
+									/>
+								</>
+							),
+							after: <Gridicon icon="chevron-right" />,
+							before: (
+								<img
+									src={ provider.icon }
+									alt={ provider.title + ' logo' }
+								/>
+							),
+							onClick: () => {
+								window.location.href = getAdminLink(
+									'admin.php?page=wc-settings&tab=checkout&section=offline'
+								);
+							},
+						};
+					default:
+						return null; // if unsupported type found
 				}
-			),
-		[ registeredPaymentGateways, wooPaymentsGatewayData ]
+			} ),
+		[ providers, installedPluginSlugs, installingPlugin, setupPlugin ]
 	);
-
-	// Add offline payment provider.
-	paymentGatewaysList.push( {
-		key: 'offline',
-		className: 'woocommerce-item__payment-gateway transitions-disabled',
-		title: <>{ __( 'Take offline payments', 'woocommerce' ) }</>,
-		content: (
-			<>
-				{ __(
-					'Accept payments offline using multiple different methods. These can also be used to test purchases.',
-					'woocommerce'
-				) }
-			</>
-		),
-		after: (
-			<a
-				href={ getAdminLink(
-					'admin.php?page=wc-settings&tab=checkout&section=offline'
-				) }
-			>
-				<Gridicon icon="chevron-right" />
-			</a>
-		),
-		before: (
-			<img
-				src={ WC_ASSET_URL + 'images/payment_methods/cod.svg' }
-				alt="offline payment methods"
-			/>
-		),
-	} );
 
 	return (
 		<div className="settings-payment-gateways">
@@ -115,25 +108,27 @@ export const PaymentGateways = ( {
 					{ __( 'Payment providers', 'woocommerce' ) }
 				</div>
 				<div className="settings-payment-gateways__header-select-container">
-					<SelectControl
+					<CountrySelector
 						className="woocommerce-select-control__country"
-						prefix={ __( 'Business location :', 'woocommerce' ) }
+						label={ __( 'Business location :', 'woocommerce' ) }
 						placeholder={ '' }
-						label={ '' }
-						options={ [
-							{ label: 'United States', value: 'US' },
-							{ label: 'Canada', value: 'Canada' },
-						] }
-						onChange={ () => {} }
+						value={
+							countryOptions.find(
+								( country ) => country.key === storeCountry
+							) ?? { key: 'US', name: 'United States (US)' }
+						}
+						options={ countryOptions }
+						onChange={ ( value: string ) => {
+							setStoreCountry( value );
+						} }
 					/>
 				</div>
 			</div>
-			<List
-				items={ [
-					...preferredPluginSuggestionsList,
-					...paymentGatewaysList,
-				] }
-			/>
+			{ isFetching ? (
+				<ListPlaceholder rows={ 5 } />
+			) : (
+				<List items={ providersList } />
+			) }
 		</div>
 	);
 };

@@ -8,6 +8,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+use Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils;
+
 /**
  * The WooCommerce countries class stores country/state data.
  */
@@ -730,7 +732,7 @@ class WC_Countries {
 
 		// If necessary, append '(optional)' to the placeholder: we don't need to worry about the
 		// label, though, as woocommerce_form_field() takes care of that.
-		if ( 'optional' === get_option( 'woocommerce_checkout_address_2_field', 'optional' ) ) {
+		if ( 'optional' === CartCheckoutUtils::get_address_2_field_visibility() ) {
 			$address_2_placeholder = __( 'Apartment, suite, unit, etc. (optional)', 'woocommerce' );
 		} else {
 			$address_2_placeholder = $address_2_label;
@@ -756,7 +758,7 @@ class WC_Countries {
 				'class'        => array( 'form-row-wide' ),
 				'autocomplete' => 'organization',
 				'priority'     => 30,
-				'required'     => 'required' === get_option( 'woocommerce_checkout_company_field', 'optional' ),
+				'required'     => 'required' === CartCheckoutUtils::get_company_field_visibility(),
 			),
 			'country'    => array(
 				'type'         => 'country',
@@ -782,7 +784,7 @@ class WC_Countries {
 				'class'        => array( 'form-row-wide', 'address-field' ),
 				'autocomplete' => 'address-line2',
 				'priority'     => 60,
-				'required'     => 'required' === get_option( 'woocommerce_checkout_address_2_field', 'optional' ),
+				'required'     => 'required' === CartCheckoutUtils::get_address_2_field_visibility(),
 			),
 			'city'       => array(
 				'label'        => __( 'Town / City', 'woocommerce' ),
@@ -810,11 +812,11 @@ class WC_Countries {
 			),
 		);
 
-		if ( 'hidden' === get_option( 'woocommerce_checkout_company_field', 'optional' ) ) {
+		if ( 'hidden' === CartCheckoutUtils::get_company_field_visibility() ) {
 			unset( $fields['company'] );
 		}
 
-		if ( 'hidden' === get_option( 'woocommerce_checkout_address_2_field', 'optional' ) ) {
+		if ( 'hidden' === CartCheckoutUtils::get_address_2_field_visibility() ) {
 			unset( $fields['address_2'] );
 		}
 
@@ -1037,6 +1039,12 @@ class WC_Countries {
 						),
 						'state'    => array(
 							'required' => false,
+						),
+					),
+					'CY' => array(
+						'state' => array(
+							'required' => false,
+							'hidden'   => true,
 						),
 					),
 					'CZ' => array(
@@ -1696,10 +1704,10 @@ class WC_Countries {
 
 		// Add email and phone fields.
 		if ( 'billing_' === $type ) {
-			if ( 'hidden' !== get_option( 'woocommerce_checkout_phone_field', 'required' ) ) {
+			if ( 'hidden' !== CartCheckoutUtils::get_phone_field_visibility() ) {
 				$address_fields['billing_phone'] = array(
 					'label'        => __( 'Phone', 'woocommerce' ),
-					'required'     => 'required' === get_option( 'woocommerce_checkout_phone_field', 'required' ),
+					'required'     => 'required' === CartCheckoutUtils::get_phone_field_visibility(),
 					'type'         => 'tel',
 					'class'        => array( 'form-row-wide' ),
 					'validate'     => array( 'phone' ),
@@ -1713,7 +1721,7 @@ class WC_Countries {
 				'type'         => 'email',
 				'class'        => array( 'form-row-wide' ),
 				'validate'     => array( 'email' ),
-				'autocomplete' => 'no' === get_option( 'woocommerce_registration_generate_username' ) ? 'email' : 'email username',
+				'autocomplete' => 'email',
 				'priority'     => 110,
 			);
 		}

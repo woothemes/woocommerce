@@ -103,7 +103,7 @@ const StockStatusFilterBlock = ( {
 	const [ productStockStatusQuery, setProductStockStatusQuery ] =
 		useQueryStateByKey( 'stock_status', initialFilters );
 
-	const { results: filteredCounts, isLoading: filteredCountsLoading } =
+	const { data: filteredCounts, isLoading: filteredCountsLoading } =
 		useCollectionData( {
 			queryStock: true,
 			queryState,

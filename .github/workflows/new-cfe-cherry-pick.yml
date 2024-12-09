@@ -62,7 +62,7 @@ jobs:
                       console.log("isBot:", isBot);
                       console.log("baseRef.startsWith('release/'):", baseRef.startsWith('release/'));
 
-                      if ( !isBot && baseRef.startsWith( 'release/' ) ) {
+                      if ( baseRef.startsWith( 'release/' ) ) {
                         core.setOutput( 'run', 'true' );
                       } else {
                         core.setOutput( 'run', 'false' );
@@ -216,7 +216,7 @@ jobs:
               uses: archive/github-actions-slack@v2.0.0
               with:
                   slack-bot-user-oauth-access-token: ${{ secrets.CODE_FREEZE_BOT_TOKEN }}
-                  slack-channel: ${{ secrets.WOO_CORE_RELESES_DAILY_SLACK_CHANNEL }}
+                  slack-channel: ${{ secrets.WOO_RELEASE_SLACK_NOTIFICATION_CHANNEL }}
                   slack-text: |
                       :warning-8c: CFE cherry pick failed for '${{ needs.prep.outputs.release }}'
 
@@ -227,7 +227,7 @@ jobs:
               uses: archive/github-actions-slack@v2.0.0
               with:
                   slack-bot-user-oauth-access-token: ${{ secrets.CODE_FREEZE_BOT_TOKEN }}
-                  slack-channel: ${{ secrets.WOO_CORE_RELESES_DAILY_SLACK_CHANNEL }}
+                  slack-channel: ${{ secrets.WOO_RELEASE_SLACK_NOTIFICATION_CHANNEL }}
                   slack-text: |
                       :info: CFE cherry pick succeeded for `${{ needs.prep.outputs.release }}`
 
@@ -238,7 +238,9 @@ jobs:
             - name: Comment on PR about the failed cherry pick
               if: ${{ failure() }}
               run: |
-                  gh pr comment $HTML_URL --body "Cherry picking failed for the trunk. Please do it manually. Or debug, what happened and run the workflow again. Workflow link for debugging: https://github.com/${{ github.repository_owner }}/${{ github.repository }}/actions/workflows/new-cfe-cherry-pick.yml"
+                  gh pr comment $HTML_URL --body "IMPORTANT: Merging this PR to the appropriate branches is critical to the release process and ensures that the bug does not cause regressions in the future releases.
+
+                  Cherry picking failed for the trunk. Please bring this to release team's attention. Workflow link for debugging: https://github.com/${{ github.repository_owner }}/${{ github.repository }}/actions/workflows/new-cfe-cherry-pick.yml"
               env:
                 GH_TOKEN: ${{ github.token }}
                 HTML_URL: ${{ github.event.pull_request.html_url }}
@@ -246,7 +248,9 @@ jobs:
             - name: Comment on PR about the cherry picked PRs to be merged
               if: ${{ success() }}
               run: |
-                gh pr comment $HTML_URL --body "Cherry picking was successful for trunk. Please merge the following PR: $CHERRY_PICK_PR"
+                gh pr comment $HTML_URL --body "IMPORTANT: Merging this PR to the appropriate branches is critical to the release process and ensures that the bug does not cause regressions in the future releases.
+
+                Cherry picking was successful for \`trunk\`. Please merge the following PR: $CHERRY_PICK_PR"
               env:
                 GH_TOKEN: ${{ github.token }}
                 HTML_URL: ${{ github.event.pull_request.html_url }}

@@ -25,14 +25,6 @@ when:
         - flux
   - author:
       teamIs:
-        - proton
-      ignore:
-        nameIs:
-    assign:
-      teams:
-        - proton
-  - author:
-      teamIs:
         - mailpoet
       ignore:
         nameIs:
