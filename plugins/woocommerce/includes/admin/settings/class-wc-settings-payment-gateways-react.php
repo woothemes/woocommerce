@@ -1,5 +1,5 @@
 <?php
-declare( strict_types = 1);
+declare( strict_types = 1 );
 
 // @codingStandardsIgnoreLine.
 /**
@@ -7,8 +7,6 @@ declare( strict_types = 1);
  *
  * @package WooCommerce\Admin
  */
-
-use Automattic\WooCommerce\Admin\Features\OnboardingTasks\Tasks\WooCommercePayments;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -49,7 +47,7 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 	 */
 	public function __construct() {
 		$this->id    = 'checkout';
-		$this->label = _x( 'Payments', 'Settings tab label', 'woocommerce' );
+		$this->label = esc_html_x( 'Payments', 'Settings tab label', 'woocommerce' );
 
 		// Add filters and actions.
 		add_filter( 'woocommerce_admin_shared_settings', array( $this, 'preload_settings' ) );
@@ -91,12 +89,11 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 		do_action( 'woocommerce_admin_field_payment_gateways' );
 		ob_end_clean();
 
-		// Load gateways so we can show any global options they may have.
-		$payment_gateways = WC()->payment_gateways->payment_gateways();
-
 		if ( $this->should_render_react_section( $current_section ) ) {
 			$this->render_react_section( $current_section );
 		} elseif ( $current_section ) {
+			// Load gateways so we can show any global options they may have.
+			$payment_gateways = WC()->payment_gateways()->payment_gateways;
 			$this->render_classic_gateway_settings_page( $payment_gateways, $current_section );
 		} else {
 			$this->render_react_section( 'main' );
@@ -125,46 +122,6 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 		global $hide_save_button;
 		$hide_save_button = true;
 		echo '<div id="experimental_wc_settings_payments_' . esc_attr( $section ) . '"></div>';
-
-		// Add WooPayments data to the page.
-		$is_woopayments_onboarded    = WooCommercePayments::is_connected() && ! WooCommercePayments::is_account_partially_onboarded();
-		$is_woopayments_in_test_mode = $is_woopayments_onboarded &&
-			method_exists( WC_Payments::class, 'mode' ) &&
-			method_exists( WC_Payments::mode(), 'is_test_mode_onboarding' ) &&
-			WC_Payments::mode()->is_test_mode_onboarding();
-
-		echo '<script type="application/json" id="experimental_wc_settings_payments_woopayments">' . wp_json_encode(
-			array(
-				'isSupported'        => WooCommercePayments::is_supported(),
-				'isAccountOnboarded' => $is_woopayments_onboarded,
-				'isInTestMode'       => $is_woopayments_in_test_mode,
-			)
-		) . '</script>';
-	}
-
-	/**
-	 * Handle some additional formatting and processing that is necessary to display gateways on the React settings page.
-	 *
-	 * @param array $payment_gateways The payment gateways.
-	 *
-	 * @return array
-	 */
-	private function format_payment_gateways_for_output( array $payment_gateways ): array {
-		$offline_methods          = array( 'bacs', 'cheque', 'cod' );
-		$display_payment_gateways = array();
-
-		// Remove offline methods from the list of gateways (these are handled differently). Also remove the pre_install_woocommerce_payments_promotion gateway.
-		foreach ( $payment_gateways as $gateway ) {
-			if ( ! in_array( $gateway['id'], $offline_methods, true ) ) {
-				// Temporary condition: so we don't show two gateways - one suggested, one installed.
-				if ( 'pre_install_woocommerce_payments_promotion' === $gateway['id'] ) {
-					continue;
-				}
-				$display_payment_gateways[] = $gateway;
-			}
-		}
-
-		return $display_payment_gateways;
 	}
 
 	/**
@@ -191,7 +148,7 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 
 	/**
 	 * Run the 'admin_options' method on a given gateway.
-	 * This method exists to easy unit testing.
+	 * This method exists to help with unit testing.
 	 *
 	 * @param object $gateway The gateway object to run the method on.
 	 */
