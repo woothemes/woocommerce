@@ -24,7 +24,7 @@ async function prepareAssembler( pageObject, baseURL ) {
 		.waitFor( { state: 'hidden' } );
 }
 
-test.describe( 'Assembler -> Homepage', { tag: '@gutenberg' }, () => {
+test.describe( 'Assembler -> Homepage', { tag: tags.GUTENBERG }, () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
 	test.beforeAll( async ( { baseURL } ) => {

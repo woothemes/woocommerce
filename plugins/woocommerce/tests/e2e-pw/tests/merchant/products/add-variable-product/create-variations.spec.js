@@ -14,7 +14,7 @@ let expectedGeneratedVariations,
 	productId_generateVariations,
 	variationsToManuallyCreate;
 
-test.describe( 'Add variations', { tag: '@gutenberg' }, () => {
+test.describe( 'Add variations', { tag: tags.GUTENBERG }, () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
 	test.beforeAll( async ( { browser } ) => {

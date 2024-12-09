@@ -3,7 +3,7 @@ const { tags } = require( '../../fixtures/fixtures' );
 
 test.describe(
 	'WooCommerce Products > Downloadable Product Settings',
-	{ tag: [ '@gutenberg', tags.SERVICES ] },
+	{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 

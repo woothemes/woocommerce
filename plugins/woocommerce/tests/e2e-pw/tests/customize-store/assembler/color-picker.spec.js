@@ -34,7 +34,7 @@ const colorPalette = {
 	},
 };
 
-test.describe( 'Assembler -> Color Pickers', { tag: '@gutenberg' }, () => {
+test.describe( 'Assembler -> Color Pickers', { tag: tags.GUTENBERG }, () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
 	test.beforeAll( async ( { baseURL } ) => {

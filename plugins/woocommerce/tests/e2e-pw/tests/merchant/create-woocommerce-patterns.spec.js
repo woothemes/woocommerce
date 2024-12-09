@@ -33,7 +33,7 @@ test.describe(
 	'Add WooCommerce Patterns Into Page',
 	{
 		tag: [
-			'@gutenberg',
+			tags.GUTENBERG,
 			tags.SERVICES,
 			tags.SKIP_ON_PRESSABLE,
 			tags.SKIP_ON_WPCOM,

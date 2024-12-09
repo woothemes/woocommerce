@@ -51,7 +51,7 @@ const slugFontMap = {
 	'Raleway, sans-serif': 'Raleway',
 };
 
-test.describe( 'Assembler -> Font Picker', { tag: '@gutenberg' }, () => {
+test.describe( 'Assembler -> Font Picker', { tag: tags.GUTENBERG }, () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
 	test.beforeAll( async ( { baseURL } ) => {

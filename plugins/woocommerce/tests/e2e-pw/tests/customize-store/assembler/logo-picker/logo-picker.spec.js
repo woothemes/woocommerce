@@ -24,7 +24,7 @@ const test = base.extend( {
 	},
 } );
 
-test.describe( 'Assembler -> Logo Picker', { tag: '@gutenberg' }, () => {
+test.describe( 'Assembler -> Logo Picker', { tag: tags.GUTENBERG }, () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
 	test.beforeAll( async ( { baseURL } ) => {

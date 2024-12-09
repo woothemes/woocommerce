@@ -16,7 +16,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Can create a new post',
-	{ tag: [ '@gutenberg', tags.SERVICES ] },
+	{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
 	() => {
 		test( 'can create new post', async ( { page, testPost } ) => {
 			await goToPostEditor( { page } );

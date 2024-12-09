@@ -23,7 +23,7 @@ const linkedProductsData = [],
 	productIds = [];
 let productId = 0;
 
-test.describe( 'General tab', { tag: '@gutenberg' }, () => {
+test.describe( 'General tab', { tag: tags.GUTENBERG }, () => {
 	test.describe( 'Linked product', () => {
 		test.beforeAll( async ( { api } ) => {
 			await api

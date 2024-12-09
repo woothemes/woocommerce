@@ -114,7 +114,7 @@ for ( const currentPage of wcPages ) {
 	};
 	test.describe(
 		`WooCommerce Page Load > Load ${ currentPage.name } sub pages`,
-		{ tag: [ '@gutenberg', tags.SERVICES ] },
+		{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
 		() => {
 			test.use( { storageState: process.env.ADMINSTATE } );
 

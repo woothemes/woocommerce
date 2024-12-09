@@ -94,7 +94,7 @@ const errorMessage = 'File is empty. Please upload something more substantial.';
 
 test.describe.serial(
 	'Import Products from a CSV file',
-	{ tag: [ '@gutenberg', tags.SERVICES ] },
+	{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 

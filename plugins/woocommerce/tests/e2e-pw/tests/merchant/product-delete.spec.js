@@ -36,7 +36,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Products > Delete Product',
-	{ tag: [ '@gutenberg', tags.SERVICES ] },
+	{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
 	() => {
 		test( 'can delete a product from edit view', async ( {
 			page,
