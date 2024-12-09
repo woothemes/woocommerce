@@ -131,12 +131,19 @@ export const SettingsPaymentsMain = () => {
 		( provider ) => '_incentive' in provider
 	)?._incentive;
 
+	console.log( incentive );
+
 	const isSwitchIncentive =
 		incentive && incentive.promo_id.includes( '-switch-' );
 
+	const isIncentiveDismissedInContext =
+		( incentive?._dismissals.includes( 'all' ) ||
+			incentive?._dismissals.includes( 'wc_settings_payments' ) ) ??
+		false;
+
 	return (
 		<>
-			{ isSwitchIncentive && (
+			{ isSwitchIncentive && ! isIncentiveDismissedInContext && (
 				<IncentiveModal
 					incentive={ incentive }
 					onDismiss={ () => {
@@ -159,7 +166,7 @@ export const SettingsPaymentsMain = () => {
 					></button>
 				</div>
 			) }
-			{ incentive && (
+			{ incentive && ! isIncentiveDismissedInContext && (
 				<IncentiveBanner
 					incentive={ incentive }
 					onDismiss={ () => {

@@ -48,6 +48,14 @@ export const IncentiveModal = ( {
 		setIsOpen( false );
 	};
 
+	const isDismissedInContext =
+		incentive._dismissals.includes( 'all' ) ||
+		incentive._dismissals.includes( 'wc_settings_payments' );
+
+	if ( isDismissedInContext ) {
+		return null;
+	}
+
 	return (
 		<>
 			{ isOpen && (
