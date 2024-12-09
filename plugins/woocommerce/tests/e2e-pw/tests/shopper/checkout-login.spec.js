@@ -118,7 +118,7 @@ test.describe(
 			order,
 		} ) => {
 			await addAProductToCart( page, product.id );
-			await page.goto( '/checkout/' );
+			await page.goto( 'checkout/' );
 			await page.locator( 'text=Click here to login' ).click();
 
 			// fill in the customer account info
@@ -163,7 +163,7 @@ test.describe(
 			await expect( page.getByText( customer.email ) ).toBeVisible();
 
 			// check my account page
-			await page.goto( '/my-account/' );
+			await page.goto( 'my-account/' );
 			await expect( page.url() ).toContain( 'my-account/' );
 			await expect(
 				page.getByRole( 'heading', { name: 'My account' } )

@@ -26,7 +26,7 @@ async function runComingSoonTests( themeContext = '' ) {
 			console.log( error );
 		}
 
-		await page.goto( baseURL );
+		await page.goto( './' );
 
 		await page
 			.locator( '.woocommerce-coming-soon-banner' )
@@ -59,7 +59,7 @@ async function runComingSoonTests( themeContext = '' ) {
 		} catch ( error ) {
 			console.log( error );
 		}
-		await page.goto( baseURL + '/shop/' );
+		await page.goto( 'shop/' );
 
 		await expect(
 			page.getByText( 'Great things are on the horizon' )
