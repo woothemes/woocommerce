@@ -176,18 +176,35 @@ class Payments {
 	}
 
 	/**
-	 * Set the country for the payment providers.
+	 * Get the business location country code for the Payments settings.
 	 *
-	 * @param string $location The country code.
+	 * @return string The ISO 3166-1 alpha-2 country code to use for the overall business location.
+	 *                If the user didn't set a location, the WC base location country code is used.
+	 */
+	public function get_country(): string {
+		$user_nox_meta = get_user_meta( get_current_user_id(), Payments::USER_PAYMENTS_NOX_PROFILE_KEY, true );
+		if ( ! empty( $user_nox_meta['location'] ) ) {
+			return $user_nox_meta['location'];
+		}
+
+		return WC()->countries->get_base_country();
+	}
+
+	/**
+	 * Set the business location country for the Payments settings.
+	 *
+	 * @param string $location The country code. This should be a ISO 3166-1 alpha-2 country code.
 	 */
 	public function set_country( string $location ): void {
 		$user_payments_nox_profile = get_user_meta( get_current_user_id(), self::USER_PAYMENTS_NOX_PROFILE_KEY, true );
+
 		if ( empty( $user_payments_nox_profile ) ) {
 			$user_payments_nox_profile = array();
 		} else {
 			$user_payments_nox_profile = maybe_unserialize( $user_payments_nox_profile );
 		}
 		$user_payments_nox_profile['location'] = $location;
+
 		update_user_meta( get_current_user_id(), self::USER_PAYMENTS_NOX_PROFILE_KEY, $user_payments_nox_profile );
 	}
 
