@@ -195,7 +195,7 @@ class Payments {
 	 *
 	 * @param string $location The country code. This should be a ISO 3166-1 alpha-2 country code.
 	 */
-	public function set_country( string $location ): void {
+	public function set_country( string $location ): bool {
 		$user_payments_nox_profile = get_user_meta( get_current_user_id(), self::USER_PAYMENTS_NOX_PROFILE_KEY, true );
 
 		if ( empty( $user_payments_nox_profile ) ) {
