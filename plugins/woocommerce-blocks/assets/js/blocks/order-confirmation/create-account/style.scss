@@ -74,6 +74,10 @@
 					white-space: nowrap;
 				}
 			}
+
+			p + p {
+				margin-top: $gap-small;
+			}
 		}
 
 		.wc-block-components-password-strength.hidden {

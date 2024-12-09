@@ -164,9 +164,14 @@ const Form = ( {
 			<div className="wc-block-order-confirmation-create-account-description">
 				{ registrationGeneratePassword && (
 					<p>
-						{ __(
-							"We'll email you a link to set up an account password.",
-							'woocommerce'
+						{ createInterpolateElement(
+							__(
+								"We'll email <email/> a link to set up your account password.",
+								'woocommerce'
+							),
+							{
+								email: <strong>{ customerEmail }</strong>,
+							}
 						) }
 					</p>
 				) }
