@@ -1,26 +1,44 @@
 /**
  * External dependencies
  */
-import { useBlockProps } from '@wordpress/block-editor';
+import { RichText, useBlockProps } from '@wordpress/block-editor';
+import { BlockEditProps } from '@wordpress/blocks';
+import { useCallback } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-import Block from './block';
+import Block, { BlockAttributes } from './block';
+import { DEFAULT_HEADING } from './constants';
 
 export const Edit = ( {
 	attributes,
-}: {
-	attributes: {
-		className: string;
-	};
-	setAttributes: ( attributes: Record< string, unknown > ) => void;
-} ): JSX.Element => {
-	const { className } = attributes;
+	setAttributes,
+}: BlockEditProps< BlockAttributes > ) => {
+	const { className, heading } = attributes;
 	const blockProps = useBlockProps();
+
+	const headingText = heading ?? DEFAULT_HEADING;
+
+	const onChangeCallback = useCallback(
+		( value: string ) => {
+			setAttributes( { heading: value } );
+		},
+		[ setAttributes ]
+	);
+
+	const headingElement = (
+		<RichText
+			value={ headingText }
+			className={ '' }
+			onChange={ onChangeCallback }
+			placeholder={ DEFAULT_HEADING }
+		/>
+	);
+
 	return (
 		<div { ...blockProps }>
-			<Block className={ className } />
+			<Block className={ className } headingElement={ headingElement } />
 		</div>
 	);
 };
