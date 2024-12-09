@@ -143,7 +143,7 @@
 			"packages": [
 				"**"
 			],
-			"pinVersion": "5.3.x"
+			"pinVersion": "5.7.x"
 		},
 		{
 			"dependencies": [
@@ -372,7 +372,7 @@
 			"packages": [
 				"**"
 			],
-			"pinVersion": "^16.18.68"
+			"pinVersion": "20.x.x"
 		},
 		{
 			"label": "Testing related dependencies: React 18",
