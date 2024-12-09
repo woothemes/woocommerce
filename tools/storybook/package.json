@@ -2,7 +2,7 @@
 	"name": "@woocommerce/storybook",
 	"title": "WooCommerce Storybook",
 	"description": "Storybook implementation for WooCommerce",
-	"homepage": "https://woocommerce.github.io/woocommerce-admin/#/components/",
+	"homepage": "https://woocommerce.github.io/woocommerce/",
 	"private": true,
 	"repository": {
 		"type": "git",

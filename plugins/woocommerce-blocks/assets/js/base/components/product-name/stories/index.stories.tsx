@@ -15,6 +15,7 @@ export default {
 		name: 'Test product',
 		permalink: '#',
 	},
+	disabledTagName: 'span',
 } as Meta< ProductNameProps >;
 
 const Template: Story< ProductNameProps > = ( args ) => (
