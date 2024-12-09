@@ -113,7 +113,7 @@ class EmailPreview {
 	/**
 	 * Return a dummy product when the product is not set in email classes.
 	 *
-	 * @param WC_Product $product Order item product.
+	 * @param WC_Product|null $product Order item product.
 	 * @return WC_Product
 	 */
 	public function get_dummy_product_when_not_set( $product ) {
