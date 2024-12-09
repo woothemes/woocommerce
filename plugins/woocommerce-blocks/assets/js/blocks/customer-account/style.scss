@@ -16,35 +16,26 @@
 }
 
 .wp-block-woocommerce-customer-account {
-	display: flex;
-	align-items: center;
-	white-space: nowrap;
-	overflow: hidden;
+	font-size: var(--wp--preset--font-size--medium);
 
 	a {
-		flex: 1;
 		overflow: hidden;
 		text-decoration: none !important;
 		align-items: center;
 		display: flex;
 		color: currentColor !important;
+		gap: em($gap-smaller);
+		white-space: nowrap;
+		line-height: 1;
+		padding: em($gap-smaller);
 
 		&:hover {
 			text-decoration: underline !important;
 		}
 
-		.icon {
-			height: em(16px);
-			width: em(16px);
-		}
-
 		.wc-block-customer-account__account-icon {
-			box-sizing: content-box !important;
-			min-height: em(23px);
-			min-width: em(23px);
-			height: em(23px);
-			width: em(23px);
-			padding: em($gap-smaller);
+			width: em($grid-unit-30);
+			height: em($grid-unit-30);
 		}
 	}
 }
