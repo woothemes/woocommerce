@@ -56,15 +56,17 @@ module.exports = {
 	],
 	// The keys for the transformed modules contains the name of the packages that should be transformed.
 	transformIgnorePatterns: [
-		'node_modules/(?!(?:\\.pnpm|' + Object.keys( transformModules ).join( '|' ) + ')/)',
-		__dirname
+		'node_modules/(?!(?:\\.pnpm|' +
+			Object.keys( transformModules ).join( '|' ) +
+			')/)',
+		__dirname,
 	],
 	// The values for the transformed modules contain an object with the transforms to apply.
 	transform: Object.entries( transformModules ).reduce(
 		( acc, [ moduleName, transform ] ) => {
 			for ( const key in transform ) {
 				acc[ `node_modules/${ moduleName }/${ key }` ] =
-				transform[ key ];
+					transform[ key ];
 			}
 
 			return acc;

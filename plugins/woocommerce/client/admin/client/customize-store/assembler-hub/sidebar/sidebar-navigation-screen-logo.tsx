@@ -469,7 +469,7 @@ export const SidebarNavigationScreenLogo = ( {
 				<div className="woocommerce-customize-store__sidebar-logo-content">
 					<div className="woocommerce-customize-store__sidebar-group-header woocommerce-customize-store__logo-header-container">
 						<span>{ __( 'Logo', 'woocommerce' ) }</span>
-						{ siteLogoId && (
+						{ Boolean( siteLogoId ) && (
 							<DropdownMenu
 								icon={ moreVertical }
 								label={ __( 'Options', 'woocommerce' ) }

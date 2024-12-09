@@ -66,16 +66,16 @@ export const SidebarNavigationScreenHomepagePTK = ( {
 	const isNetworkOffline = useNetworkStatus();
 	const isPTKPatternsAPIAvailable = context.isPTKPatternsAPIAvailable;
 
-	const currentTemplate = useSelect(
+	const currentTemplateId: string | undefined = useSelect(
 		( sel ) =>
 			// @ts-expect-error No types for this exist yet.
-			sel( coreStore ).__experimentalGetTemplateForLink( '/' ),
+			sel( coreStore ).getDefaultTemplateId( { slug: 'home' } ),
 		[]
 	);
 
 	const [ blocks ] = useEditorBlocks(
 		'wp_template',
-		currentTemplate?.id ?? ''
+		currentTemplateId || ''
 	);
 
 	const numberOfPatternsAdded = useMemo( () => {
@@ -193,13 +193,13 @@ export const SidebarNavigationScreenHomepagePTK = ( {
 			description={ sidebarMessage }
 			content={
 				<div className="woocommerce-customize-store__sidebar-homepage-content">
-					<div className="edit-site-sidebar-navigation-screen-patterns__group-homepage">
+					<div className="woocommerce-edit-site-sidebar-navigation-screen-patterns__group-homepage">
 						{ Object.entries( PATTERN_CATEGORIES ).map(
 							( [ categoryKey, { label } ], index ) => (
 								<ItemGroup key={ index }>
 									<NavigatorButton
 										className={ clsx( {
-											'edit-site-sidebar-navigation-screen-patterns__group-homepage-item--active':
+											'woocommerce-edit-site-sidebar-navigation-screen-patterns__group-homepage-item--active':
 												isActiveElement(
 													path,
 													categoryKey
@@ -223,13 +223,13 @@ export const SidebarNavigationScreenHomepagePTK = ( {
 										as={ SidebarNavigationItem }
 										withChevron
 									>
-										<div className="edit-site-sidebar-navigation-screen-patterns__group-homepage-label-container">
+										<div className="woocommerce-edit-site-sidebar-navigation-screen-patterns__group-homepage-label-container">
 											<span>{ capitalize( label ) }</span>
 											{ blocks.length > 0 &&
 												numberOfPatternsAdded[
 													categoryKey
 												] > 0 && (
-													<span className="edit-site-sidebar-navigation-screen-patterns__group-homepage-number-pattern">
+													<span className="woocommerce-edit-site-sidebar-navigation-screen-patterns__group-homepage-number-pattern">
 														{
 															numberOfPatternsAdded[
 																categoryKey

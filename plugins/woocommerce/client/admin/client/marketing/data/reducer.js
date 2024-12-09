@@ -15,6 +15,7 @@ const DEFAULT_STATE = {
 	installedPlugins: installedExtensions,
 	activatingPlugins: [],
 	recommendedPlugins: {},
+	miscRecommendations: [],
 	blogPosts: {},
 	errors: {},
 };
@@ -71,6 +72,11 @@ const reducer = ( state = DEFAULT_STATE, action ) => {
 					...state.blogPosts,
 					[ action.data.category ]: action.data.posts,
 				},
+			};
+		case TYPES.SET_MISC_RECOMMENDATIONS:
+			return {
+				...state,
+				miscRecommendations: action.data.miscRecommendations,
 			};
 		case TYPES.SET_ERROR:
 			return {

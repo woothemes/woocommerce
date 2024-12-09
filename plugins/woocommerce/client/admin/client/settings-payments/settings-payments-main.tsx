@@ -1,109 +1,168 @@
 /**
  * External dependencies
  */
-import { useMemo } from '@wordpress/element';
+import { useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
-import { PaymentGateway } from '@woocommerce/data';
+import {
+	PLUGINS_STORE_NAME,
+	PAYMENT_SETTINGS_STORE_NAME,
+} from '@woocommerce/data';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { useState, useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import './settings-payments-main.scss';
-import { PaymentMethod } from './components/payment-method';
-import { OtherPaymentMethods } from './components/other-payment-methods';
-import { PaymentsBannerWrapper } from '~/payments/payment-settings-banner';
+import './settings-payments-body.scss';
+import { createNoticesFromResponse } from '~/lib/notices';
+import { OtherPaymentGateways } from '~/settings-payments/components/other-payment-gateways';
+import { PaymentGateways } from '~/settings-payments/components/payment-gateways';
+import {
+	getWooPaymentsTestDriveAccountLink,
+	isWooPayments,
+	providersContainWooPaymentsInTestMode,
+} from '~/settings-payments/utils';
+import { WooPaymentsPostSandboxAccountSetupModal } from '~/settings-payments/components/woo-payments-post-sandbox-account-setup-modal';
 
-export const SettingsPaymentsMain: React.FC = () => {
-	const [ paymentGateways, error ] = useMemo( () => {
-		const script = document.getElementById(
-			'experimental_wc_settings_payments_gateways'
-		);
+export const SettingsPaymentsMain = () => {
+	const [ installingPlugin, setInstallingPlugin ] = useState< string | null >(
+		null
+	);
+	const { installAndActivatePlugins } = useDispatch( PLUGINS_STORE_NAME );
 
-		try {
-			if ( script && script.textContent ) {
-				return [
-					JSON.parse( script.textContent ) as PaymentGateway[],
-					null,
-				];
-			}
-			throw new Error( 'Could not find payment gateways data' );
-		} catch ( e ) {
-			return [ [], e as Error ];
+	const [ errorMessage, setErrorMessage ] = useState< string | null >( null );
+	const [ livePaymentsModalVisible, setLivePaymentsModalVisible ] =
+		useState( false );
+
+	const urlParams = new URLSearchParams( window.location.search );
+
+	useEffect( () => {
+		const isAccountTestDriveError =
+			urlParams.get( 'test_drive_error' ) === 'true';
+		if ( isAccountTestDriveError ) {
+			setErrorMessage(
+				__(
+					'An error occurred while setting up your sandbox account. Please try again.',
+					'woocommerce'
+				)
+			);
+		}
+
+		const isJetpackConnectionError =
+			urlParams.get( 'wcpay-connect-jetpack-error' ) === '1';
+
+		if ( isJetpackConnectionError ) {
+			setErrorMessage(
+				__(
+					'There was a problem connecting your WordPress.com account - please try again.',
+					'woocommerce'
+				)
+			);
+		}
+
+		const isSandboxOnboardedSuccessful =
+			urlParams.get( 'wcpay-sandbox-success' ) === 'true';
+
+		if ( isSandboxOnboardedSuccessful ) {
+			setLivePaymentsModalVisible( true );
 		}
 	}, [] );
 
-	if ( error ) {
-		// This is a temporary error message to be replaced by error boundary.
-		return (
-			<div>
-				<h1>
-					{ __( 'Error loading payment gateways', 'woocommerce' ) }
-				</h1>
-				<p>{ error.message }</p>
-			</div>
-		);
-	}
+	const installedPluginSlugs = useSelect( ( select ) => {
+		return select( PLUGINS_STORE_NAME ).getInstalledPlugins();
+	}, [] );
+
+	// Make UI refresh when plugin is installed.
+	const { invalidateResolutionForStoreSelector } = useDispatch(
+		PAYMENT_SETTINGS_STORE_NAME
+	);
+
+	const { providers, suggestions, suggestionCategories, isFetching } =
+		useSelect( ( select ) => {
+			return {
+				providers: select(
+					PAYMENT_SETTINGS_STORE_NAME
+				).getPaymentProviders(),
+				suggestions: select(
+					PAYMENT_SETTINGS_STORE_NAME
+				).getSuggestions(),
+				suggestionCategories: select(
+					PAYMENT_SETTINGS_STORE_NAME
+				).getSuggestionCategories(),
+				isFetching: select( PAYMENT_SETTINGS_STORE_NAME ).isFetching(),
+			};
+		} );
+
+	const setupPlugin = useCallback(
+		( id, slug ) => {
+			if ( installingPlugin ) {
+				return;
+			}
+			setInstallingPlugin( id );
+			installAndActivatePlugins( [ slug ] )
+				.then( ( response ) => {
+					createNoticesFromResponse( response );
+					if ( isWooPayments( id ) ) {
+						window.location.href =
+							getWooPaymentsTestDriveAccountLink();
+						return;
+					}
+					invalidateResolutionForStoreSelector(
+						'getPaymentProviders'
+					);
+					setInstallingPlugin( null );
+				} )
+				.catch( ( response: { errors: Record< string, string > } ) => {
+					createNoticesFromResponse( response );
+					setInstallingPlugin( null );
+				} );
+		},
+		[
+			installingPlugin,
+			installAndActivatePlugins,
+			invalidateResolutionForStoreSelector,
+		]
+	);
 
 	return (
-		<div className="settings-payments-main__container">
-			<div id="wc_payments_settings_slotfill">
-				<PaymentsBannerWrapper />
+		<>
+			{ errorMessage && (
+				<div className="notice notice-error is-dismissible wcpay-settings-notice">
+					<p>{ errorMessage }</p>
+					<button
+						type="button"
+						className="notice-dismiss"
+						onClick={ () => {
+							setErrorMessage( null );
+						} }
+					></button>
+				</div>
+			) }
+			<div className="settings-payments-main__container">
+				<PaymentGateways
+					providers={ providers }
+					installedPluginSlugs={ installedPluginSlugs }
+					installingPlugin={ installingPlugin }
+					setupPlugin={ setupPlugin }
+					isFetching={ isFetching }
+				/>
+				<OtherPaymentGateways
+					suggestions={ suggestions }
+					suggestionCategories={ suggestionCategories }
+					installingPlugin={ installingPlugin }
+					setupPlugin={ setupPlugin }
+					isFetching={ isFetching }
+				/>
 			</div>
-			<table className="form-table">
-				<tbody>
-					<tr>
-						<td
-							className="wc_payment_gateways_wrapper"
-							colSpan={ 2 }
-						>
-							<table
-								className="wc_gateways widefat"
-								cellSpacing="0"
-								aria-describedby="payment_gateways_options-description"
-							>
-								<thead>
-									<tr>
-										<th className="sort"></th>
-										<th className="name">
-											{ __( 'Method', 'woocommerce' ) }
-										</th>
-										<th className="status">
-											{ __( 'Enabled', 'woocommerce' ) }
-										</th>
-										<th className="description">
-											{ __(
-												'Description',
-												'woocommerce'
-											) }
-										</th>
-										<th className="action"></th>
-									</tr>
-								</thead>
-								<tbody className="ui-sortable">
-									{ paymentGateways.map(
-										( gateway: PaymentGateway ) => (
-											<PaymentMethod
-												key={ gateway.id }
-												{ ...gateway }
-											/>
-										)
-									) }
-
-									<tr>
-										<td
-											className="other-payment-methods-row"
-											colSpan={ 5 }
-										>
-											<OtherPaymentMethods />
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+			<WooPaymentsPostSandboxAccountSetupModal
+				isOpen={
+					livePaymentsModalVisible &&
+					providersContainWooPaymentsInTestMode( providers )
+				}
+				onClose={ () => setLivePaymentsModalVisible( false ) }
+			/>
+		</>
 	);
 };
 

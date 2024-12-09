@@ -30,7 +30,7 @@ class ComingSoonTemplate extends AbstractPageTemplate {
 	 * @return string
 	 */
 	public function get_template_description() {
-		return __( 'Page template for Coming soon page.', 'woocommerce' );
+		return __( 'Let your shoppers know your site or part of your site is under construction.', 'woocommerce' );
 	}
 
 	/**

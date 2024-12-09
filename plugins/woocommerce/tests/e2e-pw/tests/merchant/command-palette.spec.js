@@ -1,5 +1,9 @@
 const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
-const { disableWelcomeModal } = require( '../../utils/editor' );
+
+/**
+ * External dependencies
+ */
+import { disableWelcomeModal } from '@woocommerce/e2e-utils-playwright';
 
 // need to figure out whether tests are being run on a mac
 const macOS = process.platform === 'darwin';

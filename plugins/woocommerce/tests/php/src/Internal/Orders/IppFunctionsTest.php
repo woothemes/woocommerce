@@ -3,6 +3,7 @@ declare( strict_types = 1 );
 
 namespace Automattic\WooCommerce\Tests\Internal\Orders;
 
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Internal\Orders\IppFunctions;
 
 /**
@@ -25,7 +26,7 @@ class IppFunctionsTest extends \WC_Unit_Test_Case {
 	 * Tests that order is not eligible for IPP when it has one of not supported core statuses
 	 */
 	public function test_returns_false_if_order_has_NOT_required_status() {
-		$invalid_statuses = array( 'completed', 'cancelled', 'refunded', 'failed', 'trash' );
+		$invalid_statuses = array( OrderStatus::COMPLETED, OrderStatus::CANCELLED, OrderStatus::REFUNDED, OrderStatus::FAILED, OrderStatus::TRASH );
 
 		foreach ( $invalid_statuses as $invalid_status ) {
 			$order = MobileMessagingHandlerTest::generate_ipp_eligible_order();
@@ -41,7 +42,7 @@ class IppFunctionsTest extends \WC_Unit_Test_Case {
 	 * Tests that order is eligible for IPP when it has one of supported core statuses
 	 */
 	public function test_returns_true_if_order_has_required_status() {
-		$valid_statuses = array( 'pending', 'on-hold', 'processing' );
+		$valid_statuses = array( OrderStatus::PENDING, OrderStatus::ON_HOLD, OrderStatus::PROCESSING );
 
 		foreach ( $valid_statuses as $valid_status ) {
 			$order = MobileMessagingHandlerTest::generate_ipp_eligible_order();

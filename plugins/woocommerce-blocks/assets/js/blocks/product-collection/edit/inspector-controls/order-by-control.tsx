@@ -18,7 +18,7 @@ import {
 	QueryControlProps,
 	CoreFilterNames,
 } from '../../types';
-import { getDefaultQuery } from '../../utils';
+import { DEFAULT_QUERY } from '../../constants';
 
 const orderOptions = [
 	{
@@ -55,21 +55,34 @@ const orderOptions = [
 	},
 	{
 		value: 'rating/desc',
-		label: __( 'Top Rated', 'woocommerce' ),
+		label: __( 'Rating, high to low', 'woocommerce' ),
+	},
+	{
+		value: 'rating/asc',
+		label: __( 'Rating, low to high', 'woocommerce' ),
+	},
+	{
+		// In WooCommerce, "Manual (menu order)" refers to a custom ordering set by the store owner.
+		// Products can be manually arranged in the desired order in the WooCommerce admin panel.
+		value: 'menu_order/asc',
+		label: __( 'Manual (menu order)', 'woocommerce' ),
+	},
+	{
+		value: 'random',
+		label: __( 'Random', 'woocommerce' ),
 	},
 ];
 
 const OrderByControl = ( props: QueryControlProps ) => {
 	const { query, trackInteraction, setQueryAttribute } = props;
 	const { order, orderBy } = query;
-	const defaultQuery = getDefaultQuery( query );
 
 	const deselectCallback = () => {
-		setQueryAttribute( { orderBy: defaultQuery.orderBy } );
+		setQueryAttribute( { orderBy: DEFAULT_QUERY.orderBy } );
 		trackInteraction( CoreFilterNames.ORDER );
 	};
 
-	let orderValue = `${ orderBy }/${ order }`;
+	let orderValue = order ? `${ orderBy }/${ order }` : orderBy;
 
 	// This is to provide backward compatibility as we removed the 'popularity' (Best Selling) option from the order options.
 	if ( orderBy === 'popularity' ) {
@@ -80,8 +93,8 @@ const OrderByControl = ( props: QueryControlProps ) => {
 		<ToolsPanelItem
 			label={ __( 'Order by', 'woocommerce' ) }
 			hasValue={ () =>
-				order !== defaultQuery?.order ||
-				orderBy !== defaultQuery?.orderBy
+				order !== DEFAULT_QUERY.order ||
+				orderBy !== DEFAULT_QUERY.orderBy
 			}
 			isShownByDefault
 			onDeselect={ deselectCallback }
@@ -94,8 +107,10 @@ const OrderByControl = ( props: QueryControlProps ) => {
 				onChange={ ( value ) => {
 					const [ newOrderBy, newOrder ] = value.split( '/' );
 					setQueryAttribute( {
-						order: newOrder as TProductCollectionOrder,
 						orderBy: newOrderBy as TProductCollectionOrderBy,
+						order:
+							( newOrder as TProductCollectionOrder ) ||
+							undefined,
 					} );
 					trackInteraction( CoreFilterNames.ORDER );
 				} }

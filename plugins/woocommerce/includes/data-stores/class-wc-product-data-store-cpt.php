@@ -294,7 +294,16 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 		$this->read_extra_data( $product );
 		$product->set_object_read( true );
 
-		do_action( 'woocommerce_product_read', $product->get_id() );
+		/**
+		 * Fires when a product is read into memory.
+		 *
+		 * @since 3.7.0 Introduced.
+		 * @since 9.6.0 Made $product available.
+		 *
+		 * @param int        $product_id The product ID.
+		 * @param WC_Product $product    Product instance.
+		 */
+		do_action( 'woocommerce_product_read', $product->get_id(), $product );
 	}
 
 	/**
@@ -499,7 +508,7 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 		 * @param float $cogs_value The value as read from the database.
 		 * @param WC_Product $product The product for which the value is being loaded.
 		 */
-		$cogs_value = apply_filters( 'woocommerce_load_cogs_value', $cogs_value, $product );
+		$cogs_value = apply_filters( 'woocommerce_load_product_cogs_value', $cogs_value, $product );
 
 		$product->set_props( array( 'cogs_value' => $cogs_value ) );
 	}
@@ -749,7 +758,7 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 			 * @param float|null $cogs_value The value to be written to the database. If returned as null, nothing will be written.
 			 * @param WC_Product $product The product for which the value is being saved.
 			 */
-			$cogs_value = apply_filters( 'woocommerce_save_cogs_value', $cogs_value, $product );
+			$cogs_value = apply_filters( 'woocommerce_save_product_cogs_value', $cogs_value, $product );
 
 			if ( ! is_null( $cogs_value ) ) {
 				$updated = $this->update_or_delete_post_meta( $product, '_cogs_total_value', 0.0 === $cogs_value ? '' : $cogs_value );

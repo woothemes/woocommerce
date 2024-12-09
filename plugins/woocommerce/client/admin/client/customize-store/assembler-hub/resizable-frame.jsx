@@ -15,6 +15,11 @@ import {
 import { useInstanceId } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 
+/**
+ * Internal dependencies
+ */
+import './gutenberg-styles/resizable-frame.scss';
+
 // Removes the inline styles in the drag handles.
 const HANDLE_STYLES_OVERRIDE = {
 	position: undefined,
@@ -90,7 +95,7 @@ function ResizableFrame( {
 	const frameRef = useRef( null );
 	const resizableHandleHelpId = useInstanceId(
 		ResizableFrame,
-		'edit-site-resizable-frame-handle-help'
+		'woocommerce-edit-site-resizable-frame-handle-help'
 	);
 	const defaultAspectRatio = defaultSize.width / defaultSize.height;
 
@@ -204,7 +209,7 @@ function ResizableFrame( {
 			key="handle"
 			role="separator"
 			aria-orientation="vertical"
-			className={ clsx( 'edit-site-resizable-frame__handle', {
+			className={ clsx( 'woocommerce-edit-site-resizable-frame__handle', {
 				'is-resizing': isResizing,
 			} ) }
 			variants={ resizeHandleVariants }
@@ -297,7 +302,7 @@ function ResizableFrame( {
 			onResizeStart={ handleResizeStart }
 			onResize={ handleResize }
 			onResizeStop={ handleResizeStop }
-			className={ clsx( 'edit-site-resizable-frame__inner', {
+			className={ clsx( 'woocommerce-edit-site-resizable-frame__inner', {
 				'is-resizing': isResizing,
 			} ) }
 		>

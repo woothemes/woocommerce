@@ -1,5 +1,5 @@
 <?php
-declare( strict_types = 1);
+declare( strict_types = 1 );
 
 // @codingStandardsIgnoreLine.
 /**
@@ -25,10 +25,11 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 	 * @return array List of section identifiers.
 	 */
 	private function get_reactify_render_sections() {
+		// Add 'woocommerce_payments' when WooPayments reactified settings page is done.
 		$sections = array(
 			'offline',
-			'woocommerce_payments',
 			'main',
+			'recommended',
 		);
 
 		/**
@@ -46,8 +47,29 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 	 */
 	public function __construct() {
 		$this->id    = 'checkout';
-		$this->label = _x( 'Payments', 'Settings tab label', 'woocommerce' );
+		$this->label = esc_html_x( 'Payments', 'Settings tab label', 'woocommerce' );
+
+		// Add filters and actions.
+		add_filter( 'woocommerce_admin_shared_settings', array( $this, 'preload_settings' ) );
+		add_action( 'admin_head', array( $this, 'hide_help_tabs' ) );
+
 		parent::__construct();
+	}
+
+	/**
+	 * This function can be used to preload settings related to payment gateways.
+	 * Registered keys will be available in the window.wcSettings.admin object.
+	 *
+	 * @param array $settings Settings array.
+	 *
+	 * @return array Settings array with additional settings added.
+	 */
+	public function preload_settings( $settings ) {
+		if ( ! is_admin() ) {
+			return $settings;
+		}
+
+		return $settings;
 	}
 
 	/**
@@ -67,12 +89,11 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 		do_action( 'woocommerce_admin_field_payment_gateways' );
 		ob_end_clean();
 
-		// Load gateways so we can show any global options they may have.
-		$payment_gateways = WC()->payment_gateways->payment_gateways();
-
 		if ( $this->should_render_react_section( $current_section ) ) {
 			$this->render_react_section( $current_section );
 		} elseif ( $current_section ) {
+			// Load gateways so we can show any global options they may have.
+			$payment_gateways = WC()->payment_gateways()->payment_gateways;
 			$this->render_classic_gateway_settings_page( $payment_gateways, $current_section );
 		} else {
 			$this->render_react_section( 'main' );
@@ -97,15 +118,10 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 	 *
 	 * @param string $section The section to render.
 	 */
-	private function render_react_section( $section ) {
+	private function render_react_section( string $section ) {
 		global $hide_save_button;
 		$hide_save_button = true;
 		echo '<div id="experimental_wc_settings_payments_' . esc_attr( $section ) . '"></div>';
-
-		// Output the gateways data to the page so the React app can use it.
-		$controller = new WC_REST_Payment_Gateways_Controller();
-		$response   = $controller->get_items( new WP_REST_Request( 'GET', '/wc/v3/payment_gateways' ) );
-		echo '<script type="application/json" id="experimental_wc_settings_payments_gateways">' . wp_json_encode( $response->data ) . '</script>';
 	}
 
 	/**
@@ -132,7 +148,7 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 
 	/**
 	 * Run the 'admin_options' method on a given gateway.
-	 * This method exists to easy unit testing.
+	 * This method exists to help with unit testing.
 	 *
 	 * @param object $gateway The gateway object to run the method on.
 	 */
@@ -181,6 +197,24 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 
 			$this->do_update_options_action();
 		}
+	}
+
+	/**
+	 * Hide the help tabs.
+	 */
+	public function hide_help_tabs() {
+		$screen = get_current_screen();
+
+		if ( ! $screen instanceof WP_Screen || 'woocommerce_page_wc-settings' !== $screen->id ) {
+			return;
+		}
+
+		global $current_tab;
+		if ( 'checkout' !== $current_tab ) {
+			return;
+		}
+
+		$screen->remove_help_tabs();
 	}
 }
 

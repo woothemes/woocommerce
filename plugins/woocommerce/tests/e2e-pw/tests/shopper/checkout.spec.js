@@ -1,10 +1,17 @@
-const { test, expect } = require( '@playwright/test' );
+const { test, expect, request } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const { admin, customer } = require( '../../test-data/data' );
 const { setFilterValue, clearFilters } = require( '../../utils/filters' );
-const { addProductsToCart } = require( '../../utils/pdp' );
-const { addAProductToCart } = require( '../../utils/cart' );
-const { getOrderIdFromUrl } = require( '../../utils/order' );
+const { setOption } = require( '../../utils/options' );
+
+/**
+ * External dependencies
+ */
+import {
+	addAProductToCart,
+	addOneOrMoreProductToCart,
+	getOrderIdFromUrl,
+} from '@woocommerce/e2e-utils-playwright';
 
 const guestEmail = 'checkout-guest@example.com';
 
@@ -26,6 +33,25 @@ test.describe(
 				consumerSecret: process.env.CONSUMER_SECRET,
 				version: 'wc/v3',
 			} );
+			// Set field visibility options
+			await setOption(
+				request,
+				baseURL,
+				'woocommerce_checkout_phone_field',
+				'required'
+			);
+			await setOption(
+				request,
+				baseURL,
+				'woocommerce_checkout_company_field',
+				'optional'
+			);
+			await setOption(
+				request,
+				baseURL,
+				'woocommerce_checkout_address_2_field',
+				'optional'
+			);
 			// ensure store address is US
 			await api.post( 'settings/general/batch', {
 				update: [
@@ -129,7 +155,7 @@ test.describe(
 		} ) => {
 			await addAProductToCart( page, productId );
 
-			await page.goto( '/checkout/' );
+			await page.goto( 'checkout/' );
 
 			await expect( page.locator( 'td.product-name' ) ).toContainText(
 				simpleProductName
@@ -152,9 +178,9 @@ test.describe(
 			page,
 		} ) => {
 			// this time we're going to add two products to the cart
-			await addProductsToCart( page, simpleProductName, '2' );
+			await addOneOrMoreProductToCart( page, simpleProductName, '2' );
 
-			await page.goto( '/checkout/' );
+			await page.goto( 'checkout/' );
 			await expect(
 				page.locator( 'strong.product-quantity' )
 			).toContainText( '2' );
@@ -177,9 +203,9 @@ test.describe(
 
 		test( 'allows customer to fill billing details', async ( { page } ) => {
 			// this time we're going to add three products to the cart
-			await addProductsToCart( page, simpleProductName, '3' );
+			await addOneOrMoreProductToCart( page, simpleProductName, '3' );
 
-			await page.goto( '/checkout/' );
+			await page.goto( 'checkout/' );
 			await expect(
 				page.locator( 'strong.product-quantity' )
 			).toContainText( '3' );
@@ -214,7 +240,7 @@ test.describe(
 		} ) => {
 			await addAProductToCart( page, productId );
 
-			await page.goto( '/checkout/' );
+			await page.goto( 'checkout/' );
 
 			// first try submitting the form with no fields complete
 			await page.getByRole( 'button', { name: 'Place order' } ).click();
@@ -222,25 +248,39 @@ test.describe(
 				page.locator( 'form[name="checkout"]' ).getByRole( 'alert' )
 			).toBeVisible();
 			await expect(
-				page.getByText( 'Billing First name is a required field.' )
+				page.getByRole( 'link', {
+					name: 'Billing First name is a required field.',
+				} )
 			).toBeVisible();
 			await expect(
-				page.getByText( 'Billing Last name is a required field.' )
+				page.getByRole( 'link', {
+					name: 'Billing Last name is a required field.',
+				} )
 			).toBeVisible();
 			await expect(
-				page.getByText( 'Billing Street address is a required field.' )
+				page.getByRole( 'link', {
+					name: 'Billing Street address is a required field.',
+				} )
 			).toBeVisible();
 			await expect(
-				page.getByText( 'Billing Town / City is a required field.' )
+				page.getByRole( 'link', {
+					name: 'Billing Town / City is a required field.',
+				} )
 			).toBeVisible();
 			await expect(
-				page.getByText( 'Billing ZIP Code is a required field.' )
+				page.getByRole( 'link', {
+					name: 'Billing ZIP Code is a required field.',
+				} )
 			).toBeVisible();
 			await expect(
-				page.getByText( 'Billing Phone is a required field.' )
+				page.getByRole( 'link', {
+					name: 'Billing Phone is a required field.',
+				} )
 			).toBeVisible();
 			await expect(
-				page.getByText( 'Billing Email address is a required field.' )
+				page.getByRole( 'link', {
+					name: 'Billing Email address is a required field.',
+				} )
 			).toBeVisible();
 
 			// toggle ship to different address, fill out billing info and confirm error shown
@@ -259,28 +299,38 @@ test.describe(
 			await page.getByRole( 'button', { name: 'Place order' } ).click();
 
 			await expect(
-				page.getByText( 'Shipping First name is a required field.' )
+				page.getByRole( 'link', {
+					name: 'Shipping First name is a required field.',
+				} )
 			).toBeVisible();
 			await expect(
-				page.getByText( 'Shipping Last name is a required field.' )
+				page.getByRole( 'link', {
+					name: 'Shipping Last name is a required field.',
+				} )
 			).toBeVisible();
 			await expect(
-				page.getByText( 'Shipping Street address is a required field.' )
+				page.getByRole( 'link', {
+					name: 'Shipping Street address is a required field.',
+				} )
 			).toBeVisible();
 			await expect(
-				page.getByText( 'Shipping Town / City is a required field.' )
+				page.getByRole( 'link', {
+					name: 'Shipping Town / City is a required field.',
+				} )
 			).toBeVisible();
 			await expect(
-				page.getByText( 'Shipping ZIP Code is a required field.' )
+				page.getByRole( 'link', {
+					name: 'Shipping ZIP Code is a required field.',
+				} )
 			).toBeVisible();
 		} );
 
 		test( 'allows customer to fill shipping details', async ( {
 			page,
 		} ) => {
-			await addProductsToCart( page, simpleProductName, '2' );
+			await addOneOrMoreProductToCart( page, simpleProductName, '2' );
 
-			await page.goto( '/checkout/' );
+			await page.goto( 'checkout/' );
 			await expect(
 				page.locator( 'strong.product-quantity' )
 			).toContainText( '2' );
@@ -318,11 +368,11 @@ test.describe(
 
 		test( 'allows guest customer to place an order', async ( { page } ) => {
 			await test.step( 'Add 2 products to the cart', async () => {
-				await addProductsToCart( page, simpleProductName, '2' );
+				await addOneOrMoreProductToCart( page, simpleProductName, '2' );
 			} );
 
 			await test.step( 'Go to checkout and confirm that products and totals are as expected', async () => {
-				await page.goto( '/checkout/' );
+				await page.goto( 'checkout/' );
 				await expect(
 					page.locator( 'strong.product-quantity' )
 				).toContainText( '2' );
@@ -394,7 +444,7 @@ test.describe(
 					0
 				);
 				await page.waitForTimeout( 2000 ); // needs some time before reload for change to take effect.
-				await page.reload( { waitForLoadState: 'networkidle' } );
+				await page.reload();
 				await expect(
 					page.getByText(
 						/confirm the email address linked to the order | verify the email address associated /
@@ -437,12 +487,12 @@ test.describe(
 			await test.step( 'Confirm order details on the backend (as a merchant)', async () => {
 				await page.goto( 'wp-login.php' );
 				await page
-					.locator( 'input[name="log"]' )
+					.getByLabel( 'Username or Email Address' )
 					.fill( admin.username );
 				await page
-					.locator( 'input[name="pwd"]' )
+					.getByRole( 'textbox', { name: 'Password' } )
 					.fill( admin.password );
-				await page.locator( 'text=Log In' ).click();
+				await page.getByRole( 'button', { name: 'Log In' } ).click();
 
 				// load the order placed as a guest
 				await page.goto(
@@ -473,21 +523,21 @@ test.describe(
 		test( 'allows existing customer to place order', async ( { page } ) => {
 			await page.goto( 'my-account/' );
 			await page
-				.locator( 'input[name="username"]' )
+				.getByLabel( 'Username or Email Address' )
 				.fill( customer.username );
 			await page
-				.locator( 'input[name="password"]' )
+				.getByRole( 'textbox', { name: 'Password' } )
 				.fill( customer.password );
-			await page.locator( 'text=Log In' ).click();
+			await page.getByRole( 'button', { name: 'Log In' } ).click();
 			await expect(
 				page.getByText(
 					`Hello ${ customer.first_name } ${ customer.last_name }`
 				)
 			).toBeVisible();
 
-			await addProductsToCart( page, simpleProductName, '2' );
+			await addOneOrMoreProductToCart( page, simpleProductName, '2' );
 
-			await page.goto( '/checkout/' );
+			await page.goto( 'checkout/' );
 			await expect(
 				page.locator( 'strong.product-quantity' )
 			).toContainText( '2' );
@@ -539,9 +589,13 @@ test.describe(
 
 			// Switch to admin user.
 			await page.goto( 'wp-login.php?loggedout=true' );
-			await page.locator( 'input[name="log"]' ).fill( admin.username );
-			await page.locator( 'input[name="pwd"]' ).fill( admin.password );
-			await page.locator( 'text=Log In' ).click();
+			await page
+				.getByLabel( 'Username or Email Address' )
+				.fill( admin.username );
+			await page
+				.getByRole( 'textbox', { name: 'Password' } )
+				.fill( admin.password );
+			await page.getByRole( 'button', { name: 'Log In' } ).click();
 
 			// load the order placed as a customer
 			await page.goto(
