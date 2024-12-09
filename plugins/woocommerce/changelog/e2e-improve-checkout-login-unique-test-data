@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+E2E tests: update checkout-login test to use the existing customer instead of creating a new one

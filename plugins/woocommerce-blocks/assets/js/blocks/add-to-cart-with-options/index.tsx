@@ -3,6 +3,7 @@
  */
 import { registerBlockType } from '@wordpress/blocks';
 import { Icon, button } from '@wordpress/icons';
+import { dispatch } from '@wordpress/data';
 import { isExperimentalBlocksEnabled } from '@woocommerce/block-settings';
 import { getSettingWithCoercion } from '@woocommerce/settings';
 import { isBoolean } from '@woocommerce/types';
@@ -13,7 +14,8 @@ import { isBoolean } from '@woocommerce/types';
 import metadata from './block.json';
 import AddToCartOptionsEdit from './edit';
 import './style.scss';
-import registerStore from './store';
+import registerStore, { store as woocommerceTemplateStateStore } from './store';
+import getProductTypeOptions from './utils/get-product-types';
 
 // Pick the value of the "blockify add to cart flag"
 const isBlockifiedAddToCart = getSettingWithCoercion(
@@ -28,6 +30,14 @@ export const shouldRegisterBlock =
 if ( shouldRegisterBlock ) {
 	// Register the store
 	registerStore();
+
+	// loads the product types
+	dispatch( woocommerceTemplateStateStore ).setProductTypes(
+		getProductTypeOptions()
+	);
+
+	// Select Simple product type
+	dispatch( woocommerceTemplateStateStore ).switchProductType( 'simple' );
 
 	// Register the block
 	registerBlockType( metadata, {
