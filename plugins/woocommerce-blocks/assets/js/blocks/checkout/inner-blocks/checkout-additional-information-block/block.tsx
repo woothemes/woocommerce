@@ -7,6 +7,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
 import { ORDER_FORM_KEYS } from '@woocommerce/block-settings';
 import { Form } from '@woocommerce/base-components/cart-checkout';
+import { FunctionComponent } from 'react';
 
 const Block: FunctionComponent = () => {
 	const { additionalFields } = useSelect( ( select ) => {
