@@ -21,29 +21,49 @@ interface IncentiveBannerProps {
 	 */
 	incentive: PaymentIncentive;
 	/**
-	 * Callback to handle dismiss action.
+	 * Callback used when an incentive is accepted.
+	 *
+	 * @param id   Plugin ID.
+	 * @param slug Plugin slug.
 	 */
-	onDismiss: () => void;
+	setupPlugin: ( id: string, slug: string ) => void;
 	/**
-	 * Callback to handle setup action.
+	 * Callback to handle dismiss action.
+	 *
+	 * @param dismissHref Dismiss URL.
 	 */
-	onSetup: () => void;
+	onDismiss: ( dismissHref: string ) => void;
 }
 export const IncentiveBanner = ( {
 	incentive,
 	onDismiss,
-	onSetup,
+	setupPlugin,
 }: IncentiveBannerProps ) => {
 	const [ isSubmitted, setIsSubmitted ] = useState( false );
-	const [ isDismissClicked, setIsDismissClicked ] = useState( false );
+	const [ isDismissed, setIsDismissed ] = useState( false );
+	const [ isBusy, setIsBusy ] = useState( false );
 
 	const handleSetup = () => {
+		setIsBusy( true );
+		setupPlugin( 'woopayments', 'woocommerce-payments' );
+		setIsBusy( false );
 		setIsSubmitted( true );
 	};
 
 	const handleDismiss = () => {
-		setIsDismissClicked( true );
+		setIsBusy( true );
+		onDismiss( incentive._links.dismiss.href );
+		setIsBusy( false );
+		setIsDismissed( true );
 	};
+
+	const isDismissedInContext =
+		incentive._dismissals.includes( 'all' ) ||
+		incentive._dismissals.includes( 'wc_settings_payments' );
+
+	if ( isDismissedInContext || isSubmitted || isDismissed ) {
+		return null;
+	}
 
 	return (
 		<Card className="woocommerce-incentive-banner" isRounded={ true }>
@@ -98,8 +118,8 @@ export const IncentiveBanner = ( {
 					</Button>
 					<Button
 						variant={ 'tertiary' }
-						isBusy={ isDismissClicked }
-						disabled={ isDismissClicked }
+						isBusy={ isBusy }
+						disabled={ isBusy }
 						onClick={ handleDismiss }
 					>
 						{ __( 'No thanks', 'woocommerce' ) }

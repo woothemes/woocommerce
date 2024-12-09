@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import {
 	PLUGINS_STORE_NAME,
 	PAYMENT_SETTINGS_STORE_NAME,
+	PaymentIncentive,
 } from '@woocommerce/data';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
@@ -75,6 +76,22 @@ export const SettingsPaymentsMain = () => {
 		return select( PLUGINS_STORE_NAME ).getInstalledPlugins();
 	}, [] );
 
+	const dismissIncentive = useCallback( ( dismissHref: string ) => {
+		fetch( dismissHref, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		} )
+			.then( ( response ) => response.json() )
+			.then( ( data ) => {
+				console.log( 'Incentive dismissed:', data );
+			} )
+			.catch( ( error ) => {
+				console.error( 'Error dismissing incentive:', error );
+			} );
+	}, [] );
+
 	// Make UI refresh when plugin is installed.
 	const { invalidateResolutionForStoreSelector } = useDispatch(
 		PAYMENT_SETTINGS_STORE_NAME
@@ -131,8 +148,6 @@ export const SettingsPaymentsMain = () => {
 		( provider ) => '_incentive' in provider
 	)?._incentive;
 
-	console.log( incentive );
-
 	const isSwitchIncentive =
 		incentive && incentive.promo_id.includes( '-switch-' );
 
@@ -143,17 +158,15 @@ export const SettingsPaymentsMain = () => {
 
 	return (
 		<>
-			{ isSwitchIncentive && ! isIncentiveDismissedInContext && (
-				<IncentiveModal
-					incentive={ incentive }
-					onDismiss={ () => {
-						console.log( 'dismissed' );
-					} }
-					onSubmit={ () => {
-						console.log( 'submit' );
-					} }
-				/>
-			) }
+			{ incentive &&
+				isSwitchIncentive &&
+				! isIncentiveDismissedInContext && (
+					<IncentiveModal
+						incentive={ incentive }
+						onDismiss={ dismissIncentive }
+						setupPlugin={ setupPlugin }
+					/>
+				) }
 			{ errorMessage && (
 				<div className="notice notice-error is-dismissible wcpay-settings-notice">
 					<p>{ errorMessage }</p>
@@ -169,12 +182,8 @@ export const SettingsPaymentsMain = () => {
 			{ incentive && ! isIncentiveDismissedInContext && (
 				<IncentiveBanner
 					incentive={ incentive }
-					onDismiss={ () => {
-						console.log( 'on dismiss' );
-					} }
-					onSetup={ () => {
-						console.log( 'on setup' );
-					} }
+					onDismiss={ dismissIncentive }
+					setupPlugin={ setupPlugin }
 				/>
 			) }
 			<div className="settings-payments-main__container">
