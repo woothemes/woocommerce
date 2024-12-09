@@ -49,7 +49,7 @@ class WC_Helper_Admin {
 	 * @return mixed $settings
 	 */
 	public static function add_marketplace_settings( $settings ) {
-		if ( ! WC_Helper::is_site_connected() && isset( $_GET['connect'] ) ) {
+		if ( ! WC_Helper::is_site_connected() && isset( $_GET['connect'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			wp_safe_redirect( self::get_connection_url() );
 			exit;
 		}

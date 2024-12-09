@@ -200,7 +200,7 @@ class WC_Admin_Addons {
 		if ( 'helper' === $section ) {
 			$url = admin_url( 'admin.php?page=wc-admin&tab=my-subscriptions&path=%2Fextensions' );
 
-			if ( isset( $_GET['connect'] ) ) {
+			if ( isset( $_GET['connect'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				$url .= '&connect';
 			}
 
