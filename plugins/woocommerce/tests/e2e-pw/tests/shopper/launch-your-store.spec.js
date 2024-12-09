@@ -1,6 +1,7 @@
-const { test, expect, request, tags } = require( '@playwright/test' );
+const { test, expect, request } = require( '@playwright/test' );
 const { setOption } = require( '../../utils/options' );
 const { activateTheme, DEFAULT_THEME } = require( '../../utils/themes' );
+const { tags } = require( '../../fixtures/fixtures' );
 
 async function runComingSoonTests( themeContext = '' ) {
 	const testSuffix = themeContext ? ` (${ themeContext })` : '';
