@@ -8,7 +8,7 @@ const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 test.describe(
 	'Cart > Redirect to cart from shop',
-	{ tag: [ tags.PAYMENTS, tags.SERVICES, '@not-e2e' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.NOT_E2E ] },
 	() => {
 		let productId;
 		const productName = 'A redirect product test';
