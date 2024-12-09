@@ -116,11 +116,8 @@ class PaymentsController {
 			return $settings;
 		}
 
-		$user_nox_meta = get_user_meta( get_current_user_id(), Payments::USER_PAYMENTS_NOX_PROFILE_KEY, true );
-		// Add the location to the settings.
-		if ( isset( $user_nox_meta['location'] ) ) {
-			$settings[ Payments::USER_PAYMENTS_NOX_PROFILE_KEY ]['location'] = $user_nox_meta['location'];
-		}
+		// Add the business location country to the settings.
+		$settings[ Payments::USER_PAYMENTS_NOX_PROFILE_KEY ]['location'] = $this->payments->get_country();
 
 		return $settings;
 	}
