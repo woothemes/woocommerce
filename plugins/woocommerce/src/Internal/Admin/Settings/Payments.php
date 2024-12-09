@@ -736,6 +736,7 @@ class Payments {
 		}
 
 		// If we have a matching suggestion, hoist details from there.
+		// The suggestions only know about the normalized (aka official) plugin slug.
 		$suggestion = $this->get_extension_suggestion_by_plugin_slug( $normalized_plugin_slug, $country_code );
 		if ( ! is_null( $suggestion ) ) {
 			if ( empty( $gateway_details['image'] ) ) {
@@ -908,12 +909,19 @@ class Payments {
 				break;
 		}
 
-		// Determine the plugin status.
+		// Determine the PES's plugin status.
+		// Default to not installed.
 		$extension['plugin']['status'] = self::EXTENSION_NOT_INSTALLED;
-		if ( PluginsHelper::is_plugin_installed( $extension['plugin']['slug'] ) ) {
-			$extension['plugin']['status'] = self::EXTENSION_INSTALLED;
-			if ( PluginsHelper::is_plugin_active( $extension['plugin']['slug'] ) ) {
-				$extension['plugin']['status'] = self::EXTENSION_ACTIVE;
+		// This is best-effort approach, as the plugin might be sitting under directory (slug) that we can't handle.
+		// Always try the official plugin slug first, then the testing variations.
+		$plugin_slug_variations = Utils::generate_testing_plugin_slugs( $extension['plugin']['slug'], true );
+		foreach ( $plugin_slug_variations as $plugin_slug ) {
+			if ( PluginsHelper::is_plugin_installed( $plugin_slug ) ) {
+				$extension['plugin']['status'] = self::EXTENSION_INSTALLED;
+				if ( PluginsHelper::is_plugin_active( $plugin_slug ) ) {
+					$extension['plugin']['status'] = self::EXTENSION_ACTIVE;
+				}
+				break;
 			}
 		}
 
