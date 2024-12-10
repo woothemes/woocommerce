@@ -1,8 +1,15 @@
 .woocommerce-item__payment-gateway-placeholder {
+	border-top: 1px solid $gray-200;
+	border-bottom: 1px solid $gray-200;
 	padding: 0 48px;
 
 	&:hover {
 		background-color: $white;
+	}
+
+	.woocommerce-list__item-inner {
+		padding: $gap-large 0;
+		align-items: flex-start;
 	}
 
 	.drag-handle-wrapper {
