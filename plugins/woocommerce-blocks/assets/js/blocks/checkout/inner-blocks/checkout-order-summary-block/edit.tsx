@@ -79,6 +79,9 @@ export const Edit = ( {
 		( value: string ) => {
 			setTotalHeadingText( value );
 
+			// If the user sets the text of the heading back to the default heading, we clear the block attribute,
+			// this ensures that when returning to the default text they will get the translated heading, not a fixed
+			// string saved in the block attribute.
 			if ( value === DEFAULT_TOTAL_HEADING ) {
 				setAttributes( { totalHeading: '' } );
 			} else {
