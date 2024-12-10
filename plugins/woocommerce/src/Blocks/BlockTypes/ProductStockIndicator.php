@@ -39,7 +39,7 @@ class ProductStockIndicator extends AbstractBlock {
 	}
 
 	/**
-	 * Get the product types that are allowed in the editor.
+	 * Get product types that should not display stock indicators.
 	 *
 	 * @return array
 	 */
