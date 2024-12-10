@@ -77,9 +77,9 @@ class Payments extends Task {
 	 */
 	public function can_view() {
 		// If the React-based Payments settings page is enabled, the task is visible
-		// if just the payment-gateway-suggestions feature is also, without checking if WooPayments is supported.
+		// if just the payment-gateway-suggestions feature is also enabled, without checking if WooPayments is supported.
 		if ( Features::is_enabled( 'reactify-classic-payments-settings' ) &&
-			Features::is_enabled( 'payment-gateway-suggestions' )) {
+			Features::is_enabled( 'payment-gateway-suggestions' ) ) {
 			return true;
 		}
 
