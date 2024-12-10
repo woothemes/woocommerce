@@ -57,6 +57,10 @@
 		}
 
 		&-after {
+			&.centered {
+				align-self: center;
+			}
+
 			&__actions {
 				display: flex;
 				gap: $gap;
