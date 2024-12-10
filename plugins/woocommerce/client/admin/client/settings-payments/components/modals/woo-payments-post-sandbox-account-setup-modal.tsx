@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { Button, Modal } from '@wordpress/components';
 import { Link } from '@woocommerce/components';
 import { getAdminLink } from '@woocommerce/settings';
+import interpolateComponents from '@automattic/interpolate-components';
 
 /**
  * Internal dependencies
@@ -53,23 +54,22 @@ export const WooPaymentsPostSandboxAccountSetupModal = ( {
 					<div className="woocommerce-woopayments-modal__content">
 						<div className="woocommerce-woopayments-modal__content__item">
 							<div className="woocommerce-woopayments-modal__content__item__description">
-								<span>
-									{ __(
-										"We've created a test account for you so that you can begin testing payments on your store. Not sure what to test? Take a look at ",
+								{ interpolateComponents( {
+									mixedString: __(
+										"We've created a test account for you so that you can begin testing payments on your store. Not sure what to test? Take a look at {{link}}how to test payments{{/link}}.",
 										'woocommerce'
-									) }
-								</span>
-								<Link
-									href={
-										'https://woocommerce.com/document/woopayments/testing-and-troubleshooting/sandbox-mode/'
-									}
-									target="_blank"
-									rel="noreferrer"
-									type="external"
-								>
-									how to test payments
-								</Link>
-								<span>.</span>
+									),
+									components: {
+										link: (
+											<Link
+												href="https://woocommerce.com/document/woopayments/testing-and-troubleshooting/sandbox-mode/"
+												target="_blank"
+												rel="noreferrer"
+												type="external"
+											/>
+										),
+									},
+								} ) }
 							</div>
 						</div>
 						<div className="woocommerce-woopayments-modal__content__item">
