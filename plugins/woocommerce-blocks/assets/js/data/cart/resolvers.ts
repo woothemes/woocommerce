@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import apiFetch from '@wordpress/api-fetch';
 import { CartResponse } from '@woocommerce/types';
 
 /**
  * Internal dependencies
  */
+import { apiFetchWithHeaders } from '../shared-controls';
 import { CART_API_ERROR } from './constants';
 import type { CartDispatchFromMap, CartResolveSelectFromMap } from './index';
+import { setCartHash } from './persistence-layer';
 
 /**
  * Resolver for retrieving all cart data.
@@ -16,7 +17,10 @@ import type { CartDispatchFromMap, CartResolveSelectFromMap } from './index';
 export const getCartData =
 	() =>
 	async ( { dispatch }: { dispatch: CartDispatchFromMap } ) => {
-		const cartData = await apiFetch< CartResponse >( {
+		const { response: cartData, headers } = await apiFetchWithHeaders< {
+			response: CartResponse;
+			headers: Record< string, string >;
+		} >( {
 			path: '/wc/store/v1/cart',
 			method: 'GET',
 			cache: 'no-store',
@@ -28,6 +32,7 @@ export const getCartData =
 			return;
 		}
 		receiveCart( cartData );
+		setCartHash( headers?.get( 'Cart-Hash' ) || '' );
 	};
 
 /**
