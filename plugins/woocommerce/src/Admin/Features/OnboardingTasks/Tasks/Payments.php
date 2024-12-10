@@ -104,4 +104,21 @@ class Payments extends Task {
 
 		return ! empty( $enabled_gateways );
 	}
+
+	/**
+	 * The task action URL.
+	 *
+	 * @return string
+	 */
+	public function get_action_url() {
+		// If the React-based Payments settings page is enabled and the task is complete
+		// we want the task to link to the Payments Settings page.
+		if ( Features::is_enabled( 'reactify-classic-payments-settings' ) &&
+			self::is_complete() ) {
+			return admin_url( 'admin.php?page=wc-settings&tab=checkout' );
+		}
+
+		// Otherwise, we want the task behavior to remain unchanged (link to the Payments task page).
+		return '';
+	}
 }
