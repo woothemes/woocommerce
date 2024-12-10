@@ -1,7 +1,8 @@
 const { test, expect } = require( '@playwright/test' );
+const { tags } = require( '../../fixtures/fixtures' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
-test.describe( 'WooCommerce General Settings', { tag: '@services' }, () => {
+test.describe( 'WooCommerce General Settings', { tag: tags.SERVICES }, () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
 	test.afterAll( async ( { baseURL } ) => {

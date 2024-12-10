@@ -1,4 +1,4 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 const { random } = require( '../../utils/helpers' );
 
 const taxClasses = [
@@ -254,7 +254,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'WooCommerce Orders > Add new order',
-	{ tag: [ '@services', '@hpos' ] },
+	{ tag: [ tags.SERVICES, tags.HPOS ] },
 	() => {
 		test.beforeAll( async ( { api } ) => {
 			// enable taxes on the account

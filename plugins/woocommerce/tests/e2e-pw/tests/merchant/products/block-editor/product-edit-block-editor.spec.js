@@ -1,7 +1,7 @@
 const {
 	test: baseTest,
 } = require( '../../../../fixtures/block-editor-fixtures' );
-const { expect } = require( '../../../../fixtures/fixtures' );
+const { expect, tags } = require( '../../../../fixtures/fixtures' );
 
 const test = baseTest.extend( {
 	product: async ( { api }, use ) => {
@@ -29,7 +29,7 @@ const test = baseTest.extend( {
 
 test(
 	'can update the general information of a product',
-	{ tag: '@gutenberg' },
+	{ tag: tags.GUTENBERG },
 	async ( { page, product } ) => {
 		await page.goto( `wp-admin/post.php?post=${ product.id }&action=edit` );
 
@@ -82,7 +82,7 @@ test(
 	}
 );
 
-test.describe( 'Publish dropdown options', { tag: '@gutenberg' }, () => {
+test.describe( 'Publish dropdown options', { tag: tags.GUTENBERG }, () => {
 	test( 'can schedule a product publication', async ( { page, product } ) => {
 		await page.goto( `wp-admin/post.php?post=${ product.id }&action=edit` );
 

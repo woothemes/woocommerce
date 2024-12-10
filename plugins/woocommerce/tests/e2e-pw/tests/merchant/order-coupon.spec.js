@@ -1,4 +1,4 @@
-const { test, expect } = require( '@playwright/test' );
+const { test, expect, tags } = require( '../../fixtures/fixtures' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 let productId, couponId, orderId;
@@ -11,7 +11,7 @@ const discountedPrice = ( productPrice - couponAmount ).toString();
 
 test.describe(
 	'WooCommerce Orders > Apply Coupon',
-	{ tag: [ '@services', '@hpos' ] },
+	{ tag: [ tags.SERVICES, tags.HPOS ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 
@@ -121,7 +121,7 @@ test.describe(
 
 		test(
 			'can remove a coupon',
-			{ tag: [ '@skip-on-default-wpcom' ] },
+			{ tag: [ tags.SKIP_ON_WPCOM ] },
 			async ( { page } ) => {
 				await page.goto(
 					`wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`

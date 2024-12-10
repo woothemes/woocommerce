@@ -1,4 +1,5 @@
 const { test, expect } = require( '@playwright/test' );
+const { tags } = require( '../../fixtures/fixtures' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 const orderBatchId = [];
@@ -18,7 +19,7 @@ const orderStatus = [
 
 test.describe(
 	'WooCommerce Orders > Filter Order by Status',
-	{ tag: [ '@services', '@hpos' ] },
+	{ tag: [ tags.SERVICES, tags.HPOS ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 
