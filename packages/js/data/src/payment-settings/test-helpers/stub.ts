@@ -37,6 +37,7 @@ export const providersStub: PaymentProvider[] = [
 		plugin: {
 			_type: 'wporg',
 			slug: 'woocommerce-paypal-payments',
+			file: 'woocommerce-paypal-payments/woocommerce-paypal-payments',
 			status: 'installed',
 		},
 	},
@@ -90,6 +91,7 @@ export const providersStub: PaymentProvider[] = [
 		plugin: {
 			_type: 'wporg',
 			slug: 'woocommerce-payments',
+			file: 'woocommerce-payments/woocommerce-payments',
 			status: 'active',
 		},
 	},
@@ -101,6 +103,7 @@ export const providersStub: PaymentProvider[] = [
 		description: 'Allow shoppers to pay offline.',
 		plugin: {
 			slug: 'woocommerce',
+			file: 'woocommerce/woocommerce',
 			status: 'active',
 		},
 		icon: 'http://localhost:8082/wp-content/plugins/woocommerce/assets/images/payment_methods/cod.svg',
@@ -128,6 +131,7 @@ export const offlinePaymentGatewaysStub: OfflinePaymentGateway[] = [
 		icon: 'http://localhost:8082/wp-content/plugins/woocommerce/assets/images/payment_methods/bacs.svg',
 		plugin: {
 			slug: 'woocommerce',
+			file: 'woocommerce/woocommerce',
 			status: 'active',
 		},
 	},
@@ -151,6 +155,7 @@ export const offlinePaymentGatewaysStub: OfflinePaymentGateway[] = [
 		icon: 'http://localhost:8082/wp-content/plugins/woocommerce/assets/images/payment_methods/cheque.svg',
 		plugin: {
 			slug: 'woocommerce',
+			file: 'woocommerce/woocommerce',
 			status: 'active',
 		},
 	},
@@ -174,6 +179,7 @@ export const offlinePaymentGatewaysStub: OfflinePaymentGateway[] = [
 		icon: 'http://localhost:8082/wp-content/plugins/woocommerce/assets/images/payment_methods/cod.svg',
 		plugin: {
 			slug: 'woocommerce',
+			file: 'woocommerce/woocommerce',
 			status: 'active',
 		},
 	},
@@ -190,6 +196,7 @@ export const suggestionsStub: SuggestedPaymentExtension[] = [
 		plugin: {
 			_type: 'wporg',
 			slug: 'airwallex-online-payments-gateway',
+			file: 'airwallex-online-payments-gateway/airwallex-online-payments-gateway',
 			status: 'not_installed',
 		},
 		image: 'http://localhost:8082/wp-content/plugins/woocommerce/assets/images/onboarding/airwallex.png',
@@ -230,6 +237,7 @@ export const suggestionsStub: SuggestedPaymentExtension[] = [
 		plugin: {
 			_type: 'wporg',
 			slug: 'woocommerce-square',
+			file: 'woocommerce-square/woocommerce-square',
 			status: 'not_installed',
 		},
 		image: 'http://localhost:8082/wp-content/plugins/woocommerce/assets/images/onboarding/square-black.png',

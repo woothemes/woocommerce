@@ -29,6 +29,8 @@ class Payments {
 	const EXTENSION_INSTALLED     = 'installed';
 	const EXTENSION_ACTIVE        = 'active';
 
+	const EXTENSION_TYPE_WPORG = 'wporg';
+
 	const USER_PAYMENTS_NOX_PROFILE_KEY = 'woocommerce_payments_nox_profile';
 
 	const PROVIDERS_ORDER_OPTION         = 'woocommerce_gateway_order';
@@ -149,7 +151,9 @@ class Payments {
 				'icon'        => plugins_url( 'assets/images/payment_methods/cod.svg', WC_PLUGIN_FILE ),
 				// The offline PMs (and their group) are obviously from WooCommerce, and WC is always active.
 				'plugin'      => array(
+					'_type'  => 'wporg',
 					'slug'   => 'woocommerce',
+					'file'   => '', // This pseudo-provider should have no use for the plugin file.
 					'status' => self::EXTENSION_ACTIVE,
 				),
 			);
@@ -620,6 +624,13 @@ class Payments {
 	 * @return array The response data.
 	 */
 	private function get_payment_gateway_base_details( WC_Payment_Gateway $payment_gateway, int $payment_gateway_order, string $country_code = '' ): array {
+		$plugin_slug = $this->get_payment_gateway_plugin_slug( $payment_gateway );
+		$plugin_file = PluginsHelper::get_plugin_path_from_slug( $plugin_slug );
+		// Remove the .php extension from the file path. The WP API expects it without it.
+		if ( ! empty( $plugin_file ) && str_ends_with( $plugin_file, '.php' ) ) {
+			$plugin_file = substr( $plugin_file, 0, -4 );
+		}
+
 		return array(
 			'id'          => $payment_gateway->id,
 			'_order'      => $payment_gateway_order,
@@ -638,6 +649,12 @@ class Payments {
 			),
 			'onboarding'  => array(
 				'recommended_payment_methods' => $this->get_payment_gateway_recommended_payment_methods( $payment_gateway, $country_code ),
+			),
+			'plugin'      => array(
+				'_type'  => 'wporg',
+				'slug'   => $plugin_slug,
+				'file'   => $plugin_file,
+				'status' => self::EXTENSION_ACTIVE,
 			),
 		);
 	}
@@ -746,11 +763,13 @@ class Payments {
 	 * @return array The enhanced gateway details.
 	 */
 	private function enhance_payment_gateway_details( array $gateway_details, WC_Payment_Gateway $payment_gateway, string $country_code ): array {
-		$plugin_slug = $this->get_payment_gateway_plugin_slug( $payment_gateway );
+		$plugin_slug = $gateway_details['plugin']['slug'];
+		// The payment gateway plugin might use a non-standard directory name.
+		// Try to normalize it to the common slug to avoid false negatives when matching.
+		$normalized_plugin_slug = Utils::normalize_plugin_slug( $plugin_slug );
 
 		// Handle core gateways.
-		// We check for multiple slugs to account for beta testing setups.
-		if ( in_array( $plugin_slug, array( 'woocommerce', 'woocommerce-dev' ), true ) ) {
+		if ( 'woocommerce' === $normalized_plugin_slug ) {
 			if ( $this->is_offline_payment_method( $gateway_details['id'] ) ) {
 				switch ( $gateway_details['id'] ) {
 					case 'bacs':
@@ -767,7 +786,8 @@ class Payments {
 		}
 
 		// If we have a matching suggestion, hoist details from there.
-		$suggestion = $this->get_extension_suggestion_by_plugin_slug( $plugin_slug, $country_code );
+		// The suggestions only know about the normalized (aka official) plugin slug.
+		$suggestion = $this->get_extension_suggestion_by_plugin_slug( $normalized_plugin_slug, $country_code );
 		if ( ! is_null( $suggestion ) ) {
 			if ( empty( $gateway_details['image'] ) ) {
 				$gateway_details['image'] = $suggestion['image'];
@@ -805,18 +825,15 @@ class Payments {
 				} elseif ( ! empty( $gateway_details['plugin']['_type'] ) &&
 					ExtensionSuggestions::PLUGIN_TYPE_WPORG === $gateway_details['plugin']['_type'] ) {
 
-					// Fallback to constructing the WPORG plugin URI from the plugin slug.
+					// Fallback to constructing the WPORG plugin URI from the normalized plugin slug.
 					$gateway_details['links'] = array(
 						array(
 							'_type' => ExtensionSuggestions::LINK_TYPE_ABOUT,
-							'url'   => 'https://wordpress.org/plugins/' . $plugin_slug,
+							'url'   => 'https://wordpress.org/plugins/' . $normalized_plugin_slug,
 						),
 					);
 				}
 			}
-
-			$gateway_details['plugin']['slug']   = $plugin_slug;
-			$gateway_details['plugin']['status'] = self::EXTENSION_ACTIVE;
 		}
 
 		return $gateway_details;
@@ -939,12 +956,31 @@ class Payments {
 				break;
 		}
 
-		// Determine the plugin status.
+		// Determine the PES's plugin status.
+		// Default to not installed.
 		$extension['plugin']['status'] = self::EXTENSION_NOT_INSTALLED;
-		if ( PluginsHelper::is_plugin_installed( $extension['plugin']['slug'] ) ) {
-			$extension['plugin']['status'] = self::EXTENSION_INSTALLED;
-			if ( PluginsHelper::is_plugin_active( $extension['plugin']['slug'] ) ) {
-				$extension['plugin']['status'] = self::EXTENSION_ACTIVE;
+		// Put in the default plugin file.
+		$extension['plugin']['file'] = '';
+		if ( ! empty( $extension['plugin']['slug'] ) ) {
+			// This is a best-effort approach, as the plugin might be sitting under a directory (slug) that we can't handle.
+			// Always try the official plugin slug first, then the testing variations.
+			$plugin_slug_variations = Utils::generate_testing_plugin_slugs( $extension['plugin']['slug'], true );
+			foreach ( $plugin_slug_variations as $plugin_slug ) {
+				if ( PluginsHelper::is_plugin_installed( $plugin_slug ) ) {
+					// Make sure we put in the actual slug and file path that we found.
+					$extension['plugin']['slug'] = $plugin_slug;
+					$extension['plugin']['file'] = PluginsHelper::get_plugin_path_from_slug( $plugin_slug );
+					// Remove the .php extension from the file path. The WP API expects it without it.
+					if ( ! empty( $extension['plugin']['file'] ) && str_ends_with( $extension['plugin']['file'], '.php' ) ) {
+						$extension['plugin']['file'] = substr( $extension['plugin']['file'], 0, -4 );
+					}
+
+					$extension['plugin']['status'] = self::EXTENSION_INSTALLED;
+					if ( PluginsHelper::is_plugin_active( $plugin_slug ) ) {
+						$extension['plugin']['status'] = self::EXTENSION_ACTIVE;
+					}
+					break;
+				}
 			}
 		}
 
@@ -1050,7 +1086,7 @@ class Payments {
 		$payment_gateways_order_map = array_flip( array_keys( $payment_gateways ) );
 		// Get the payment gateways to suggestions map.
 		$payment_gateways_to_suggestions_map = array_map(
-			fn( $gateway ) => $this->get_extension_suggestion_by_plugin_slug( $this->get_payment_gateway_plugin_slug( $gateway ) ),
+			fn( $gateway ) => $this->get_extension_suggestion_by_plugin_slug( Utils::normalize_plugin_slug( $this->get_payment_gateway_plugin_slug( $gateway ) ) ),
 			$payment_gateways
 		);
 
