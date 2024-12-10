@@ -1068,7 +1068,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	 *
 	 * @param string|null $location The location to return the suggestions for.
 	 */
-	private function mock_extension_suggestions( string $location = null ) {
+	private function mock_extension_suggestions( ?string $location = null ) {
 		$mocker = $this->mock_service
 			->expects( $this->any() )
 			->method( 'get_extension_suggestions' );
