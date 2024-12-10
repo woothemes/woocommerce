@@ -999,7 +999,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 				'_order'      => $order++,
 				'_type'       => Payments::PROVIDER_TYPE_OFFLINE_PM,
 				'title'       => 'Cash on delivery',
-				'description' => 'Have your customers pay with cash (or by other means) upon delivery.',
+				'description' => 'Let your shoppers pay upon delivery — by cash or other methods of payment.',
 				'supports'    => array(
 					'products',
 				),
