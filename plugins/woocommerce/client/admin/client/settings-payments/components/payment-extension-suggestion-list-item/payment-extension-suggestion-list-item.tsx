@@ -72,7 +72,10 @@ export const PaymentExtensionSuggestionListItem = ( {
 					</Button>
 
 					<EllipsisMenu
-						label={ __( 'Payment Provider Options', 'woocommerce' ) }
+						label={ __(
+							'Payment Provider Options',
+							'woocommerce'
+						) }
 						provider={ extension }
 					/>
 				</>

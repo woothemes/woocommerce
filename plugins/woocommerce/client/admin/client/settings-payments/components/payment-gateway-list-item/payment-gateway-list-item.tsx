@@ -90,7 +90,10 @@ export const PaymentGatewayListItem = ( {
 						settingsUrl={ gateway.management?.settings_url || '' }
 					/>
 					<EllipsisMenu
-						label={ __( 'Payment Provider Options', 'woocommerce' ) }
+						label={ __(
+							'Payment Provider Options',
+							'woocommerce'
+						) }
 						provider={ gateway }
 					/>
 				</>

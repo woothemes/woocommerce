@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React from 'react';
 import { __, sprintf } from '@wordpress/i18n';
 import { Button, Modal } from '@wordpress/components';
+import { useState } from '@wordpress/element';
 
 /**
  * Internal dependencies

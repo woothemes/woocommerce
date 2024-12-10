@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { Button, Modal } from '@wordpress/components';
 import { Link } from '@woocommerce/components';
 import { getAdminLink } from '@woocommerce/settings';
 import interpolateComponents from '@automattic/interpolate-components';
+import { useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
