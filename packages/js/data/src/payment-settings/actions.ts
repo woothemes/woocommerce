@@ -15,7 +15,6 @@ import {
 	SuggestedPaymentExtensionCategory,
 	EnableGatewayResponse,
 } from './types';
-import { parseOrdering } from './utils';
 import { WC_ADMIN_NAMESPACE } from '../constants';
 
 export function getPaymentProvidersRequest(): {
