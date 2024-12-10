@@ -116,7 +116,11 @@ class PaymentsController {
 			return $settings;
 		}
 
-		// No preloaded settings for now.
+		// Add the business location country to the settings.
+		if ( ! isset( $settings[ Payments::USER_PAYMENTS_NOX_PROFILE_KEY ] ) ) {
+			$settings[ Payments::USER_PAYMENTS_NOX_PROFILE_KEY ] = array();
+		}
+		$settings[ Payments::USER_PAYMENTS_NOX_PROFILE_KEY ]['business_country_code'] = $this->payments->get_country();
 
 		return $settings;
 	}
