@@ -16,7 +16,7 @@ import type { CartDispatchFromMap, CartResolveSelectFromMap } from './index';
 export const getCartData =
 	() =>
 	async ( { dispatch }: { dispatch: CartDispatchFromMap } ) => {
-		const { response: cartData, headers } = await apiFetchWithHeaders< {
+		const { response: cartData } = await apiFetchWithHeaders< {
 			response: CartResponse;
 			headers: Record< string, string >;
 		} >( {
