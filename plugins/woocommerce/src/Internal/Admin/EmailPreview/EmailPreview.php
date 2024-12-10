@@ -256,7 +256,15 @@ class EmailPreview {
 			$placeholders['{order_billing_full_name}'] = $order->get_formatted_billing_full_name();
 		}
 
-		return $placeholders;
+		/**
+		 * Placeholders for email preview.
+		 *
+		 * @param WC_Order $placeholders Placeholders for email subject.
+		 * @param string   $email_type The email type to preview.
+		 *
+		 * @since 9.6.0
+		 */
+		return apply_filters( 'woocommerce_email_preview_placeholders', $placeholders, $this->email_type );
 	}
 
 	/**
