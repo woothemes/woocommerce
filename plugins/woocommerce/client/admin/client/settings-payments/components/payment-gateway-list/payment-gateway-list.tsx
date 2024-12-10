@@ -65,7 +65,6 @@ export const PaymentGatewayList = ( {
 							>
 								{ PaymentGatewayListItem( {
 									gateway: provider,
-									setupLivePayments: () => {},
 								} ) }
 							</SortableItem>
 						);

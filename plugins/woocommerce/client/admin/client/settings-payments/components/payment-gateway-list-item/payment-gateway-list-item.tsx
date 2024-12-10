@@ -99,10 +99,15 @@ export const PaymentGatewayListItem = ( {
 								enabled={ gateway.state?.enabled || false }
 								needsSetup={ gateway.state?.needs_setup }
 								testMode={ gateway.state?.test_mode }
-								settingsUrl={ gateway.management?.settings_url || '' }
+								settingsUrl={
+									gateway.management?.settings_url || ''
+								}
 							/>
 							<EllipsisMenu
-								label={ __( 'Task List Options', 'woocommerce' ) }
+								label={ __(
+									'Task List Options',
+									'woocommerce'
+								) }
 								renderContent={ ( { onToggle } ) => (
 									<EllipsisMenuContent
 										pluginId={ gateway.id }
@@ -112,7 +117,9 @@ export const PaymentGatewayListItem = ( {
 										onToggle={ onToggle }
 										isWooPayments={ isWcPay }
 										isEnabled={ gateway.state?.enabled }
-										needsSetup={ gateway.state?.needs_setup }
+										needsSetup={
+											gateway.state?.needs_setup
+										}
 										testMode={ gateway.state?.test_mode }
 									/>
 								) }
