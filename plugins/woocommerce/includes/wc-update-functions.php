@@ -558,6 +558,8 @@ function wc_update_220_shipping() {
 /**
  * Update order statuses for 2.2
  *
+ * Keeping the internal statuses names as strings to avoid regression issues (not referencing Automattic\WooCommerce\Enums\OrderInternalStatus class).
+ *
  * @return void
  */
 function wc_update_220_order_status() {

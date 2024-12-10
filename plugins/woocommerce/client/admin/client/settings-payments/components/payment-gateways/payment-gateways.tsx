@@ -4,11 +4,16 @@
 import { Gridicon } from '@automattic/components';
 import { List } from '@woocommerce/components';
 import { getAdminLink } from '@woocommerce/settings';
-import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { PaymentProvider } from '@woocommerce/data';
+import {
+	PAYMENT_SETTINGS_STORE_NAME,
+	PaymentProvider,
+	WC_ADMIN_NAMESPACE,
+} from '@woocommerce/data';
 import { useMemo } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
+import { useDispatch } from '@wordpress/data';
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
@@ -16,6 +21,7 @@ import { decodeEntities } from '@wordpress/html-entities';
 import sanitizeHTML from '~/lib/sanitize-html';
 import { PaymentGatewayListItem } from '~/settings-payments/components/payment-gateway-list-item';
 import { PaymentExtensionSuggestionListItem } from '~/settings-payments/components/payment-extension-suggestion-list-item';
+import { CountrySelector } from '~/settings-payments/components/country-selector';
 import { ListPlaceholder } from '~/settings-payments/components/list-placeholder';
 
 interface PaymentGatewaysProps {
@@ -24,6 +30,8 @@ interface PaymentGatewaysProps {
 	installingPlugin: string | null;
 	setupPlugin: ( id: string, slug: string ) => void;
 	isFetching: boolean;
+	businessRegistrationCountry: string | null;
+	setBusinessRegistrationCountry: ( country: string ) => void;
 }
 
 export const PaymentGateways = ( {
@@ -32,8 +40,20 @@ export const PaymentGateways = ( {
 	installingPlugin,
 	setupPlugin,
 	isFetching,
+	businessRegistrationCountry,
+	setBusinessRegistrationCountry,
 }: PaymentGatewaysProps ) => {
-	const setupLivePayments = () => {};
+	const { invalidateResolution } = useDispatch( PAYMENT_SETTINGS_STORE_NAME );
+
+	const countryOptions = useMemo( () => {
+		return Object.entries( window.wcSettings.countries || [] )
+			.map( ( [ key, name ] ) => ( {
+				key,
+				name: decodeEntities( name ),
+				types: [],
+			} ) )
+			.sort( ( a, b ) => a.name.localeCompare( b.name ) );
+	}, [] );
 
 	// Transform payment gateways to comply with List component format.
 	const providersList = useMemo(
@@ -53,12 +73,12 @@ export const PaymentGateways = ( {
 					case 'gateway':
 						return PaymentGatewayListItem( {
 							gateway: provider,
-							setupLivePayments,
 						} );
 					case 'offline_pms_group':
 						return {
 							key: provider.id,
-							className: 'transitions-disabled',
+							className:
+								'clickable-list-item transitions-disabled',
 							title: <>{ provider.title }</>,
 							content: (
 								<>
@@ -71,21 +91,18 @@ export const PaymentGateways = ( {
 									/>
 								</>
 							),
-							after: (
-								<a
-									href={ getAdminLink(
-										'admin.php?page=wc-settings&tab=checkout&section=offline'
-									) }
-								>
-									<Gridicon icon="chevron-right" />
-								</a>
-							),
+							after: <Gridicon icon="chevron-right" />,
 							before: (
 								<img
 									src={ provider.icon }
 									alt={ provider.title + ' logo' }
 								/>
 							),
+							onClick: () => {
+								window.location.href = getAdminLink(
+									'admin.php?page=wc-settings&tab=checkout&section=offline'
+								);
+							},
 						};
 					default:
 						return null; // if unsupported type found
@@ -101,16 +118,30 @@ export const PaymentGateways = ( {
 					{ __( 'Payment providers', 'woocommerce' ) }
 				</div>
 				<div className="settings-payment-gateways__header-select-container">
-					<SelectControl
+					<CountrySelector
 						className="woocommerce-select-control__country"
-						prefix={ __( 'Business location :', 'woocommerce' ) }
+						label={ __( 'Business location :', 'woocommerce' ) }
 						placeholder={ '' }
-						label={ '' }
-						options={ [
-							{ label: 'United States', value: 'US' },
-							{ label: 'Canada', value: 'Canada' },
-						] }
-						onChange={ () => {} }
+						value={
+							countryOptions.find(
+								( country ) =>
+									country.key === businessRegistrationCountry
+							) ?? { key: 'US', name: 'United States (US)' }
+						}
+						options={ countryOptions }
+						onChange={ ( value: string ) => {
+							setBusinessRegistrationCountry( value );
+							invalidateResolution( 'getPaymentProviders', [
+								value,
+							] );
+							apiFetch( {
+								path:
+									WC_ADMIN_NAMESPACE +
+									'/settings/payments/country',
+								method: 'POST',
+								data: { location: value },
+							} );
+						} }
 					/>
 				</div>
 			</div>

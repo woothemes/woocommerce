@@ -464,6 +464,8 @@ class WC_Tracker {
 	/**
 	 * Get order totals.
 	 *
+	 * Keeping the internal statuses names as strings to avoid regression issues (not referencing Automattic\WooCommerce\Enums\OrderInternalStatus class).
+	 *
 	 * @since 5.4.0
 	 * @return array
 	 */
