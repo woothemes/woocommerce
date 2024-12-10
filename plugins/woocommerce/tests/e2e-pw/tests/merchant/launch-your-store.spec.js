@@ -1,10 +1,11 @@
-const { test, expect, request } = require( '@playwright/test' );
+const { request } = require( '@playwright/test' );
+const { test, expect, tags } = require( '../../fixtures/fixtures' );
 const { setOption } = require( '../../utils/options' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 test.describe(
 	'Launch Your Store - logged in',
-	{ tag: [ '@gutenberg', '@services', '@skip-on-default-wpcom' ] },
+	{ tag: [ tags.GUTENBERG, tags.SERVICES, tags.SKIP_ON_WPCOM ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 

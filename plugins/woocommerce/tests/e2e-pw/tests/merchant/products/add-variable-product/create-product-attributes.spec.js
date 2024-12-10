@@ -1,5 +1,6 @@
 const { test, expect } = require( '@playwright/test' );
 const { variableProducts: utils } = require( '../../../../utils' );
+const { tags } = require( '../../../../fixtures/fixtures' );
 const {
 	createVariableProduct,
 	showVariableProductTour,
@@ -25,7 +26,7 @@ const step_goToAttributesTab = async ( page ) => {
 
 test.describe.configure( { mode: 'serial' } );
 
-test.describe( 'Add product attributes', { tag: '@gutenberg' }, () => {
+test.describe( 'Add product attributes', { tag: tags.GUTENBERG }, () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
 	test.beforeAll( async ( { browser } ) => {
