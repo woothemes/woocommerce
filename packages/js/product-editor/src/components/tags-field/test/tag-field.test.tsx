@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Form, FormContextType } from '@woocommerce/components';
 import { Product } from '@woocommerce/data';
 import { createElement } from '@wordpress/element';
@@ -45,7 +46,8 @@ describe( 'TagField', () => {
 				) }
 			</Form>
 		);
-		queryByPlaceholderText( 'Search or create tag…' )?.focus();
+		const searchInput = queryByPlaceholderText( 'Search or create tag…' );
+		userEvent.click(searchInput!);
 		expect( queryByText( 'Create new' ) ).toBeInTheDocument();
 	} );
 
