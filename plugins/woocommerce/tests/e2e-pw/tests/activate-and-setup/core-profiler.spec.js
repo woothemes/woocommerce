@@ -1,4 +1,5 @@
 const { test, expect, request } = require( '@playwright/test' );
+const { tags } = require( '../../fixtures/fixtures' );
 const { setOption } = require( '../../utils/options' );
 
 const getPluginLocator = ( page, slug ) => {
@@ -9,7 +10,7 @@ const getPluginLocator = ( page, slug ) => {
 
 test.describe(
 	'Store owner can complete the core profiler',
-	{ tag: [ '@skip-on-default-pressable', '@skip-on-default-wpcom' ] },
+	{ tag: [ tags.SKIP_ON_PRESSABLE, tags.SKIP_ON_WPCOM ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 
@@ -470,7 +471,7 @@ test.describe(
 
 test.describe(
 	'Store owner can skip the core profiler',
-	{ tag: [ '@skip-on-default-pressable', '@skip-on-default-wpcom' ] },
+	{ tag: [ tags.SKIP_ON_PRESSABLE, tags.SKIP_ON_WPCOM ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 

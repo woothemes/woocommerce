@@ -13,6 +13,7 @@ const tabs = require( './data/tabs' );
 const {
 	waitForGlobalAttributesLoaded,
 } = require( './helpers/wait-for-global-attributes-loaded' );
+const { tags } = require( '../../../../fixtures/fixtures' );
 
 const {
 	createVariableProduct,
@@ -41,7 +42,7 @@ let productId_editVariations,
 	productId_deleteVariations,
 	productId_singleVariation;
 
-test.describe( 'Variations tab', { tag: '@gutenberg' }, () => {
+test.describe( 'Variations tab', { tag: tags.GUTENBERG }, () => {
 	test.describe( 'Create variable products', () => {
 		test.beforeAll( async ( { browser } ) => {
 			productId_editVariations = await createVariableProduct(

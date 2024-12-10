@@ -1,5 +1,8 @@
-const { test, expect } = require( '../../../fixtures/api-tests-fixtures' );
-
+const {
+	test,
+	expect,
+	tags,
+} = require( '../../../fixtures/api-tests-fixtures' );
 const {
 	getOrderExample,
 	getTaxRateExamples,
@@ -210,7 +213,7 @@ test.describe( 'Orders API test', () => {
 
 	test(
 		'can add complex order',
-		{ tag: [ '@skip-on-default-pressable', '@skip-on-default-wpcom' ] },
+		{ tag: [ tags.SKIP_ON_PRESSABLE, tags.SKIP_ON_WPCOM ] },
 		async ( { request } ) => {
 			//ensure tax calculations are enabled
 			await request.put(

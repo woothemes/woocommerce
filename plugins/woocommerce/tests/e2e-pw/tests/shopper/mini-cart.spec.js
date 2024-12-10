@@ -1,7 +1,3 @@
-const { test, expect } = require( '@playwright/test' );
-const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
-const { random } = require( '../../utils/helpers' );
-
 /**
  * External dependencies
  */
@@ -10,6 +6,13 @@ import {
 	getCanvas,
 	goToPageEditor,
 } from '@woocommerce/e2e-utils-playwright';
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
+const { test, expect } = require( '@playwright/test' );
+const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
+const { random } = require( '../../utils/helpers' );
 
 const miniCartPageTitle = `Mini Cart ${ random() }`;
 const miniCartPageSlug = miniCartPageTitle.replace( / /gi, '-' ).toLowerCase();
@@ -26,7 +29,7 @@ let productId, countryTaxId, stateTaxId, shippingZoneId;
 
 test.describe(
 	'Mini Cart block page',
-	{ tag: [ '@payments', '@services' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 

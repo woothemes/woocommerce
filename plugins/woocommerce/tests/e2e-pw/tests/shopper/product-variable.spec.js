@@ -1,3 +1,7 @@
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
@@ -131,7 +135,7 @@ const variations2 = [
 
 test.describe(
 	'Variable Product Page',
-	{ tag: [ '@payments', '@services' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		const variableProductName = `Variable single product ${ Date.now() }`;
 		const slug = variableProductName.replace( / /gi, '-' ).toLowerCase();
@@ -243,7 +247,7 @@ test.describe(
 
 test.describe(
 	'Shopper > Update variable product',
-	{ tag: [ '@payments', '@services' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		const variableProductName = `Variable single product ${ Date.now() }`;
 		const slug = variableProductName.replace( / /gi, '-' ).toLowerCase();
