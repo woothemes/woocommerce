@@ -93,8 +93,8 @@ const wcPages = [
 			{
 				name: 'Coupons',
 				heading: 'Coupons',
-				element: '.woocommerce-BlankState-cta.button-primary',
-				text: 'Create your first coupon',
+				element: '.page-title-action',
+				text: 'Add new coupon',
 			},
 		],
 	},

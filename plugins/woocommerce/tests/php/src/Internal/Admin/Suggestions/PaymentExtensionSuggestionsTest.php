@@ -265,7 +265,7 @@ class PaymentExtensionSuggestionsTest extends WC_REST_Unit_Test_Case {
 		$this->assertNotEmpty( $extension );
 		$this->assertIsArray( $extension );
 		$this->assertArrayHasKey( 'id', $extension );
-		$this->assertEquals( 'woopayments', $extension['id'] );
+		$this->assertSame( 'woopayments', $extension['id'] );
 	}
 
 	/**
@@ -284,7 +284,7 @@ class PaymentExtensionSuggestionsTest extends WC_REST_Unit_Test_Case {
 		$this->assertNotEmpty( $extension );
 		$this->assertIsArray( $extension );
 		$this->assertArrayHasKey( 'id', $extension );
-		$this->assertEquals( 'woopayments', $extension['id'] );
+		$this->assertSame( 'woopayments', $extension['id'] );
 	}
 
 	/**

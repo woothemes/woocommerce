@@ -1,0 +1,4 @@
+Significance: minor
+Type: dev
+
+Uses the newly introduced order internal status constants in the main WooCommerce plugin codebase.
