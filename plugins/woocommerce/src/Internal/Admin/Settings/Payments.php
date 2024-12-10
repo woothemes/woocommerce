@@ -927,7 +927,7 @@ class Payments {
 		// Put in the default plugin file.
 		$extension['plugin']['file'] = '';
 		if ( ! empty( $extension['plugin']['slug'] ) ) {
-			// This is best-effort approach, as the plugin might be sitting under directory (slug) that we can't handle.
+			// This is a best-effort approach, as the plugin might be sitting under a directory (slug) that we can't handle.
 			// Always try the official plugin slug first, then the testing variations.
 			$plugin_slug_variations = Utils::generate_testing_plugin_slugs( $extension['plugin']['slug'], true );
 			foreach ( $plugin_slug_variations as $plugin_slug ) {
