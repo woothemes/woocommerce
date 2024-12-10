@@ -52,7 +52,7 @@ export const WooPaymentsPostSandboxAccountSetupModal = ( {
 				>
 					<div className="woocommerce-woopayments-modal__content">
 						<div className="woocommerce-woopayments-modal__content__item">
-							<div>
+							<div className="woocommerce-woopayments-modal__content__item__description">
 								<span>
 									{ __(
 										"We've created a test account for you so that you can begin testing payments on your store. Not sure what to test? Take a look at ",
