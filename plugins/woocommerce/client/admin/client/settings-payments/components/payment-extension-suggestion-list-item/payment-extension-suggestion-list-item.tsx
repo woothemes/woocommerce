@@ -72,7 +72,7 @@ export const PaymentExtensionSuggestionListItem = ( {
 					</Button>
 
 					<EllipsisMenu
-						label={ __( 'Task List Options', 'woocommerce' ) }
+						label={ __( 'Payment Provider Options', 'woocommerce' ) }
 						provider={ extension }
 					/>
 				</>

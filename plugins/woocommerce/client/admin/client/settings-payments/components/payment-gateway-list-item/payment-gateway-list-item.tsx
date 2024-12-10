@@ -90,7 +90,7 @@ export const PaymentGatewayListItem = ( {
 						settingsUrl={ gateway.management?.settings_url || '' }
 					/>
 					<EllipsisMenu
-						label={ __( 'Task List Options', 'woocommerce' ) }
+						label={ __( 'Payment Provider Options', 'woocommerce' ) }
 						provider={ gateway }
 					/>
 				</>
