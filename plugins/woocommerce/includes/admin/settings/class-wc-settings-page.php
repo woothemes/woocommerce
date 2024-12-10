@@ -70,7 +70,7 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 		/**
 		 * Settings field types which are known.
 		 *
-		 * @var string
+		 * @var string[]
 		 */
 		protected $types = array(
 			self::TYPE_TITLE,
