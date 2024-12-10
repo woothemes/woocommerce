@@ -3,9 +3,13 @@
 .wc-blocks-components-form-token-field-wrapper {
 	border-color: $gray-600;
 
-	.components-visually-hidden,
-	.components-form-token-field__label {
+	.components-visually-hidden {
 		@include visually-hidden();
+	}
+
+	.components-form-token-field__label {
+		font-size: .875em;
+		line-height: 1.5em;
 	}
 
 	.components-form-token-field,
