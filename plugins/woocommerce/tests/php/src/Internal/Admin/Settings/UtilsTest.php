@@ -1475,10 +1475,11 @@ class UtilsTest extends WC_Unit_Test_Case {
 		$this->assertIsArray( $suffixes );
 		$this->assertNotEmpty( $suffixes );
 		$this->assertContainsOnly( 'string', $suffixes );
+		$this->assertContains( '-dev', $suffixes );
 		$this->assertContains( '-beta', $suffixes );
+		$this->assertContains( '-alpha', $suffixes );
 		$this->assertContains( '-rc', $suffixes );
 		$this->assertContains( '-test', $suffixes );
-		$this->assertContains( '-dev', $suffixes );
 	}
 
 	/**
@@ -1534,39 +1535,43 @@ class UtilsTest extends WC_Unit_Test_Case {
 	 */
 	public function data_provider_normalize_plugin_slug(): array {
 		return array(
-			'empty-slug'           => array(
+			'empty-slug'            => array(
 				'',
 				'',
 			),
-			'already-normalized'   => array(
+			'already-normalized'    => array(
 				'plugin-slug_01',
 				'plugin-slug_01',
 			),
-			'does-not-transform'   => array(
+			'does-not-transform'    => array(
 				'Plugin Title',
 				'Plugin Title',
 			),
-			'does-not-transform-2' => array(
+			'does-not-transform-2'  => array(
 				'Plugin*%$Title@#',
 				'Plugin*%$Title@#',
 			),
-			'lowercases'           => array(
+			'lowercases'            => array(
 				'PLugin-sLug_01',
 				'plugin-slug_01',
 			),
-			'beta-slug'            => array(
-				'plugin-slug-beta',
+			'suffix-not-at-the-end' => array(
+				'plugin-beta-slug',
+				'plugin-beta-slug',
+			),
+			'alpha-slug'            => array(
+				'plugin-slug-alpha',
 				'plugin-slug',
 			),
-			'rc-slug'              => array(
+			'rc-slug'               => array(
 				'plugin-slug-rc',
 				'plugin-slug',
 			),
-			'test-slug'            => array(
+			'test-slug'             => array(
 				'plugin-slug-test',
 				'plugin-slug',
 			),
-			'dev-slug'             => array(
+			'dev-slug'              => array(
 				'plugin-slug-dev',
 				'plugin-slug',
 			),
