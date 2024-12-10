@@ -17,6 +17,7 @@ jobs:
         runs-on: ubuntu-20.04
         outputs:
             runCodeFreeze: ${{ steps.verify-prs.outputs.runCodeFreeze }}
+            verificationFailed: ${{ steps.verify-prs.outputs.verificationFailed || 'false' }}
         steps:
             - name: Verify release
               id: verify
@@ -77,23 +78,27 @@ jobs:
                       const prsOpenByGithubActions = githubActionsPRsQuery.data.items;
     
                       let failureMessage = ``;
+                      let verificationFailed = false;
     
                       if (prsOpenByGithubActions.length > 0) {
-                          runCodeFreeze = false;
-                          if (prsOpenByGithubActions.length > 0) {
-                            failureMessage += `Identified \`${prsOpenByGithubActions.length}\` open PR(s) from \`github-actions\` bot which should be merged or closed before proceeding. <https://github.com/${owner}/${repo}/issues?q=is%3Apr+is%3Aopen+author%3Aapp%2Fgithub-actions|Click here to view the PRs>`;
-                          }
+                        runCodeFreeze = false;
+                        verificationFailed = true;
+
+                        failureMessage += `Identified \`${prsOpenByGithubActions.length}\` open PR(s) from \`github-actions\` bot which should be merged or closed before proceeding. <https://github.com/${owner}/${repo}/issues?q=is%3Apr+is%3Aopen+author%3Aapp%2Fgithub-actions|Click here to view the PRs>`;
     
-                          failureMessage += '\n\nThis step maintains the code integrity and is critical to avoid regression in future releases. Please merge them or close them and re-run the workflow.';
-    
-                          console.error(failureMessage);
-                          core.setOutput('failureMessage', failureMessage);
+                        failureMessage += '\n\nThis step maintains the code integrity and is critical to avoid regression in future releases. Please merge them or close them and re-run the workflow.';
                       }
-                      core.setOutput('runCodeFreeze', runCodeFreeze);
+
+                      console.error(failureMessage);
+                      console.log(`verificationFailed: ${verificationFailed}`);
                       console.log(`runCodeFreeze: ${runCodeFreeze}`);
+                      core.setOutput('verificationFailed', verificationFailed);
+                      core.setOutput('failureMessage', failureMessage);
+                      core.setOutput('runCodeFreeze', runCodeFreeze);
+                      
             
             - name: Notify Slack on failure
-              if: ${{ steps.verify-prs.outputs.failureMessage != '' }}
+              if: ${{ steps.verify-prs.outputs.verificationFailed == 'true' }}
               uses: archive/github-actions-slack@v2.0.0
               with:
                   slack-bot-user-oauth-access-token: ${{ secrets.CODE_FREEZE_BOT_TOKEN }}
@@ -242,6 +247,7 @@ jobs:
         name: Update changelog and version for trunk
         runs-on: ubuntu-20.04
         needs: verify-release
+        if: ${{ needs.verify-release.outputs.verificationFailed != 'true' }}
         permissions:
           contents: write
           pull-requests: write
