@@ -31,7 +31,11 @@ class Register {
 	 */
 	private $mode_option = 'wc_downloads_approved_directories_mode';
 
-	/** @var array<string, bool> cached valid paths */
+	/**
+	 * Cache for valid paths, to avoid making duplicate queries.
+	 *
+	 * @var bool[]
+	 */
 	private array $valid_paths = array();
 
 	/**
