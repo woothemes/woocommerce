@@ -5,7 +5,8 @@ export interface PaymentGatewayLink {
 
 export interface PluginData {
 	_type?: string;
-	slug: string;
+	slug: string; // The plugin slug (e.g. 'woocommerce'). This is also the directory name of the plugin.
+	file: string; // Relative path to the main file of the plugin.
 	status: 'installed' | 'active' | 'not_installed';
 }
 
@@ -16,7 +17,7 @@ export interface StateData {
 }
 
 export interface ManagementData {
-	settings_url: string;
+	settings_url: string; // URL to the settings page for the payment gateway.
 }
 
 export type PaymentProvider = {

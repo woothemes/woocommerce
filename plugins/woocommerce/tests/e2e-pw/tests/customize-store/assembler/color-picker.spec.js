@@ -7,6 +7,7 @@ const { activateTheme, DEFAULT_THEME } = require( '../../../utils/themes' );
 const { getInstalledWordPressVersion } = require( '../../../utils/wordpress' );
 const { setOption } = require( '../../../utils/options' );
 const { admin } = require( '../../../test-data/data' );
+const { tags } = require( '../../../fixtures/fixtures' );
 
 const test = base.extend( {
 	assemblerPageObject: async ( { page }, use ) => {
@@ -33,7 +34,7 @@ const colorPalette = {
 	},
 };
 
-test.describe( 'Assembler -> Color Pickers', { tag: '@gutenberg' }, () => {
+test.describe( 'Assembler -> Color Pickers', { tag: tags.GUTENBERG }, () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
 	test.beforeAll( async ( { baseURL } ) => {
@@ -217,7 +218,7 @@ test.describe( 'Assembler -> Color Pickers', { tag: '@gutenberg' }, () => {
 
 	test(
 		'Selected color palette should be applied on the frontend',
-		{ tag: '@skip-on-default-pressable' },
+		{ tag: tags.SKIP_ON_PRESSABLE },
 		async ( { assemblerPageObject, page, baseURL } ) => {
 			const assembler = await assemblerPageObject.getAssembler();
 			const colorPicker = assembler
@@ -317,7 +318,7 @@ test.describe( 'Assembler -> Color Pickers', { tag: '@gutenberg' }, () => {
 
 	test(
 		'Create "your own" pickers should be visible',
-		{ tag: '@skip-on-default-pressable' },
+		{ tag: tags.SKIP_ON_PRESSABLE },
 		async ( { assemblerPageObject, baseURL }, testInfo ) => {
 			testInfo.snapshotSuffix = '';
 			const wordPressVersion = await getInstalledWordPressVersion();

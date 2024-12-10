@@ -1,3 +1,7 @@
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
@@ -9,7 +13,7 @@ let simpleProductId, simpleProduct2Id, groupedProductId;
 
 test.describe(
 	'Grouped Product Page',
-	{ tag: [ '@payments', '@services' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		const slug = groupedProductName.replace( / /gi, '-' ).toLowerCase();
 		const simpleProduct1 = simpleProductName + ' 1';

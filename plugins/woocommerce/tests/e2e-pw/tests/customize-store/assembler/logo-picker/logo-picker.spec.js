@@ -4,6 +4,7 @@ const { LogoPickerPage } = require( './logo-picker.page' );
 const { activateTheme, DEFAULT_THEME } = require( '../../../../utils/themes' );
 const { CustomizeStorePage } = require( '../../customize-store.page' );
 const { setOption } = require( '../../../../utils/options' );
+const { tags } = require( '../../../../fixtures/fixtures' );
 
 const test = base.extend( {
 	assemblerPageObject: async ( { page }, use ) => {
@@ -23,7 +24,7 @@ const test = base.extend( {
 	},
 } );
 
-test.describe( 'Assembler -> Logo Picker', { tag: '@gutenberg' }, () => {
+test.describe( 'Assembler -> Logo Picker', { tag: tags.GUTENBERG }, () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
 	test.beforeAll( async ( { baseURL } ) => {
@@ -221,7 +222,7 @@ test.describe( 'Assembler -> Logo Picker', { tag: '@gutenberg' }, () => {
 
 	test(
 		'Enabling the "use as site icon" option should set the image as the site icon',
-		{ tag: '@skip-on-default-pressable' },
+		{ tag: tags.SKIP_ON_PRESSABLE },
 		async ( { page, assemblerPageObject, logoPickerPageObject } ) => {
 			const assembler = await assemblerPageObject.getAssembler();
 			const emptyLogoPicker =

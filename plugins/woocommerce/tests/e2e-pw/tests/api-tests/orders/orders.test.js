@@ -1,4 +1,8 @@
-const { test, expect } = require( '../../../fixtures/api-tests-fixtures' );
+const {
+	test,
+	expect,
+	tags,
+} = require( '../../../fixtures/api-tests-fixtures' );
 const { order } = require( '../../../data' );
 
 /**
@@ -36,7 +40,7 @@ const updatedCustomerShipping = {
 
 test.describe.serial(
 	'Orders API tests',
-	{ tag: [ '@skip-on-default-pressable', '@skip-on-default-wpcom' ] },
+	{ tag: [ tags.SKIP_ON_PRESSABLE, tags.SKIP_ON_WPCOM ] },
 	() => {
 		let orderId, sampleData;
 
@@ -239,7 +243,7 @@ test.describe.serial(
 			const createSampleSimpleProducts = async (
 				categories,
 				attributes,
-				tags
+				productTags
 			) => {
 				const description =
 					'<p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. ' +
@@ -813,7 +817,7 @@ test.describe.serial(
 									],
 									tags: [
 										{
-											id: tags.coolJSON.id,
+											id: productTags.coolJSON.id,
 										},
 									],
 									attributes: [
@@ -890,7 +894,7 @@ test.describe.serial(
 									],
 									tags: [
 										{
-											id: tags.coolJSON.id,
+											id: productTags.coolJSON.id,
 										},
 									],
 									attributes: [],
@@ -1097,7 +1101,7 @@ test.describe.serial(
 									],
 									tags: [
 										{
-											id: tags.coolJSON.id,
+											id: productTags.coolJSON.id,
 										},
 									],
 									attributes: [
@@ -2120,7 +2124,7 @@ test.describe.serial(
 
 				const attributes = await createSampleAttributes();
 
-				const tags = await createSampleTags();
+				const productTags = await createSampleTags();
 
 				const shippingClasses = await createSampleShippingClasses();
 
@@ -2129,7 +2133,7 @@ test.describe.serial(
 				const simpleProducts = await createSampleSimpleProducts(
 					categories,
 					attributes,
-					tags
+					productTags
 				);
 
 				const externalProducts = await createSampleExternalProducts(
@@ -2159,7 +2163,7 @@ test.describe.serial(
 				return {
 					categories,
 					attributes,
-					tags,
+					productTags,
 					shippingClasses,
 					taxClasses,
 					simpleProducts,
@@ -2503,7 +2507,7 @@ test.describe.serial(
 				const {
 					categories,
 					attributes,
-					tags,
+					productTags,
 					shippingClasses,
 					taxClasses,
 					simpleProducts,
@@ -2578,7 +2582,7 @@ test.describe.serial(
 					);
 				}
 
-				for ( const tag of Object.values( tags ) ) {
+				for ( const tag of Object.values( productTags ) ) {
 					await request.delete(
 						`./wp-json/wc/v3/products/tags/${ tag.id }`,
 						{
