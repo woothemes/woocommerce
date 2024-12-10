@@ -29,7 +29,7 @@ export const Edit = ( {
 			if ( value === DEFAULT_HEADING ) {
 				// If the user sets the text of the heading back to the default heading, we clear the block attribute,
 				// this ensures that when returning to the default text they will get the translated heading, not a fixed
-				// string saved in block attribute
+				// string saved in the block attribute.
 				setAttributes( { heading: '' } );
 			} else {
 				setAttributes( { heading: value } );
