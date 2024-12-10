@@ -30,7 +30,9 @@ export type PaymentIncentive = {
 	badge: string;
 	_dismissals: string[];
 	_links: {
-		dismiss: string;
+		dismiss: {
+			href: string;
+		};
 	};
 };
 
