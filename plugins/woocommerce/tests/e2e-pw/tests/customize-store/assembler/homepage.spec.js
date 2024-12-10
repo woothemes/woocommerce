@@ -5,6 +5,7 @@ const { getInstalledWordPressVersion } = require( '../../../utils/wordpress' );
 const { setOption } = require( '../../../utils/options' );
 const { encodeCredentials } = require( '../../../utils/plugin-utils' );
 const { admin } = require( '../../../test-data/data' );
+const { tags } = require( '../../../fixtures/fixtures' );
 
 const test = base.extend( {
 	pageObject: async ( { page }, use ) => {
@@ -23,7 +24,7 @@ async function prepareAssembler( pageObject, baseURL ) {
 		.waitFor( { state: 'hidden' } );
 }
 
-test.describe( 'Assembler -> Homepage', { tag: '@gutenberg' }, () => {
+test.describe( 'Assembler -> Homepage', { tag: tags.GUTENBERG }, () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
 	test.beforeAll( async ( { baseURL } ) => {
@@ -72,7 +73,7 @@ test.describe( 'Assembler -> Homepage', { tag: '@gutenberg' }, () => {
 
 	test(
 		'Available homepage should be displayed',
-		{ tag: '@skip-on-default-pressable' },
+		{ tag: tags.SKIP_ON_PRESSABLE },
 		async ( { pageObject, baseURL } ) => {
 			await prepareAssembler( pageObject, baseURL );
 
@@ -250,7 +251,7 @@ test.describe( 'Homepage tracking banner', () => {
 
 	test(
 		'Should show the "Want more patterns?" banner with the PTK API unavailable message',
-		{ tag: '@skip-on-default-pressable' },
+		{ tag: tags.SKIP_ON_PRESSABLE },
 		async ( { baseURL, pageObject, page } ) => {
 			await setOption(
 				request,
@@ -322,7 +323,7 @@ test.describe( 'Homepage tracking banner', () => {
 
 	test(
 		'Should not show the "Want more patterns?" banner when tracking is allowed',
-		{ tag: '@skip-on-default-pressable' },
+		{ tag: tags.SKIP_ON_PRESSABLE },
 		async ( { baseURL, pageObject } ) => {
 			await setOption(
 				request,

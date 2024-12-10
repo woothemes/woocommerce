@@ -1,11 +1,16 @@
-const { test, expect } = require( '../../../fixtures/api-tests-fixtures' );
+const {
+	test,
+	expect,
+	tags,
+} = require( '../../../fixtures/api-tests-fixtures' );
+
 const { BASE_URL } = process.env;
 const shouldSkip = BASE_URL !== undefined && ! BASE_URL.includes( 'localhost' );
 
 test.describe( 'System Status API tests', () => {
 	test(
 		'can view all system status items',
-		{ tag: '@skip-on-default-wpcom' },
+		{ tag: tags.SKIP_ON_WPCOM },
 		async ( { request } ) => {
 			// call API to view all system status items
 			const response = await request.get(

@@ -277,7 +277,7 @@ export const CountrySelector = < ItemType extends Item >( {
 			<div { ...menuProps }>
 				{ isOpen && (
 					<>
-						<div className="components-country-select-control__search">
+						<div className="components-country-select-control__search wc-settings-prevent-change-event">
 							<input
 								className="components-country-select-control__search--input"
 								ref={ searchRef }

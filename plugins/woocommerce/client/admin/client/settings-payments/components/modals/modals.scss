@@ -1,10 +1,20 @@
-.woocommerce-woopayments-ready-to-test-modal {
+.components-modal__frame {
+	@media screen and (max-width: 782px) {
+		margin: auto;
+	}
+}
+
+.woocommerce-woopayments-modal {
 	max-width: 512px;
+	@media screen and (max-width: 782px) {
+		max-width: 343px;
+	}
 
 	.components-modal__header-heading {
 		font-size: 20px;
 		line-height: 28px;
-		font-weight: 400;
+		font-weight: 300;
+		text-wrap: auto;
 		color: $gray-900;
 	}
 
@@ -12,11 +22,16 @@
 		display: flex;
 		gap: $gap-large;
 		flex-direction: column;
-		color: $gray-700;
 		padding: $gap-small 0 $gap 0;
 
 		&__item {
 			line-height: 20px;
+			font-weight: 400;
+			color: $gray-900;
+
+			&__description {
+				color: $gray-700;
+			}
 
 			h2 {
 				margin: 0;
@@ -25,8 +40,20 @@
 				color: $gray-900;
 			}
 
+			h3 {
+				margin: 0;
+				font-size: 13px;
+				line-height: 20px;
+				color: $gray-900;
+				font-weight: 600;
+			}
+
 			a {
 				font-weight: 500;
+			}
+
+			p {
+				margin: 0;
 			}
 		}
 
@@ -44,6 +71,7 @@
 				gap: 6px;
 				flex-direction: column;
 				line-height: 20px;
+				color: $gray-700;
 
 				h3 {
 					margin: 0;
@@ -55,6 +83,10 @@
 				a {
 					font-weight: 500;
 				}
+
+				p {
+					margin: 0;
+				}
 			}
 		}
 	}
@@ -64,5 +96,15 @@
 		padding: $gap-large 0 0 0;
 		display: flex;
 		gap: $gap-small;
+
+		.components-button.is-secondary.danger:not(:disabled) {
+			background-color: $studio-red-50;
+			color: #fff;
+			box-shadow: none;
+		}
+
+		.components-button.is-secondary.danger:hover:not(:disabled) {
+			background-color: $studio-red-70;
+		}
 	}
 }

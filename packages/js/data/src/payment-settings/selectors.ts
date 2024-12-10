@@ -11,7 +11,9 @@ import {
 import { WPDataSelector, WPDataSelectors } from '../types';
 
 export function getPaymentProviders(
-	state: PaymentSettingsState
+	state: PaymentSettingsState,
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	location?: string | null
 ): Array< PaymentProvider > {
 	return state.providers;
 }
@@ -44,5 +46,6 @@ export type PaymentSettingsSelectors = {
 		typeof getOfflinePaymentGateways
 	>;
 	getSuggestions: WPDataSelector< typeof getSuggestions >;
+	getSuggestionCategories: WPDataSelector< typeof getSuggestionCategories >;
 	isFetching: WPDataSelector< typeof isFetching >;
 } & WPDataSelectors;

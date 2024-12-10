@@ -1,0 +1,5 @@
+Significance: patch
+Type: enhancement
+Comment: Take a best-effort approach when matching payment gateway installed or active plugins with payment extension suggestions and reduce false-negatives.
+
+
