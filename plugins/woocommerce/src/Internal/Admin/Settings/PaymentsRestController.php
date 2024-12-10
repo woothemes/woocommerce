@@ -597,6 +597,7 @@ class PaymentsRestController extends RestApiControllerBase {
 					'properties'  => array(
 						'_type'  => array(
 							'type'        => 'string',
+							'enum'        => array( Payments::EXTENSION_TYPE_WPORG ),
 							'description' => esc_html__( 'The type of the plugin.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
@@ -923,6 +924,7 @@ class PaymentsRestController extends RestApiControllerBase {
 					'properties' => array(
 						'_type'  => array(
 							'type'        => 'string',
+							'enum'        => array( Payments::EXTENSION_TYPE_WPORG ),
 							'description' => esc_html__( 'The type of the plugin.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,

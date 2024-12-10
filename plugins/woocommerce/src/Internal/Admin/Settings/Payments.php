@@ -29,6 +29,8 @@ class Payments {
 	const EXTENSION_INSTALLED     = 'installed';
 	const EXTENSION_ACTIVE        = 'active';
 
+	const EXTENSION_TYPE_WPORG = 'wporg';
+
 	const USER_PAYMENTS_NOX_PROFILE_KEY = 'woocommerce_payments_nox_profile';
 
 	const PROVIDERS_ORDER_OPTION         = 'woocommerce_gateway_order';
