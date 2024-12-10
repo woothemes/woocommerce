@@ -1,23 +1,23 @@
 <?php
-declare( strict_types=1 );
-namespace Automattic\WooCommerce\StoreApi\Routes\V1;
+	declare( strict_types=1 );
+	namespace Automattic\WooCommerce\StoreApi\Routes\V1;
 
-use Automattic\WooCommerce\Blocks\Package;
-use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields;
-use Automattic\WooCommerce\StoreApi\Exceptions\RouteException;
-use Automattic\WooCommerce\StoreApi\SchemaController;
-use Automattic\WooCommerce\StoreApi\Schemas\V1\AbstractSchema;
-use Automattic\WooCommerce\StoreApi\Schemas\V1\CartItemSchema;
-use Automattic\WooCommerce\StoreApi\Schemas\V1\CartSchema;
-use Automattic\WooCommerce\StoreApi\SessionHandler;
-use Automattic\WooCommerce\StoreApi\Utilities\CartController;
-use Automattic\WooCommerce\StoreApi\Utilities\DraftOrderTrait;
-use Automattic\WooCommerce\StoreApi\Utilities\JsonWebToken;
-use Automattic\WooCommerce\StoreApi\Utilities\OrderController;
+	use Automattic\WooCommerce\Blocks\Package;
+	use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields;
+	use Automattic\WooCommerce\StoreApi\Exceptions\RouteException;
+	use Automattic\WooCommerce\StoreApi\SchemaController;
+	use Automattic\WooCommerce\StoreApi\Schemas\V1\AbstractSchema;
+	use Automattic\WooCommerce\StoreApi\Schemas\V1\CartItemSchema;
+	use Automattic\WooCommerce\StoreApi\Schemas\V1\CartSchema;
+	use Automattic\WooCommerce\StoreApi\SessionHandler;
+	use Automattic\WooCommerce\StoreApi\Utilities\CartController;
+	use Automattic\WooCommerce\StoreApi\Utilities\DraftOrderTrait;
+	use Automattic\WooCommerce\StoreApi\Utilities\JsonWebToken;
+	use Automattic\WooCommerce\StoreApi\Utilities\OrderController;
 
-/**
- * Abstract Cart Route
- */
+	/**
+	 * Abstract Cart Route
+	 */
 abstract class AbstractCartRoute extends AbstractRoute {
 	use DraftOrderTrait;
 
@@ -111,39 +111,35 @@ abstract class AbstractCartRoute extends AbstractRoute {
 	 * @return \WP_REST_Response
 	 */
 	public function get_response( \WP_REST_Request $request ) {
+		$response = null;
 		try {
 			$this->load_cart_session( $request );
+
+			$nonce_check = $this->requires_nonce( $request ) ? $this->check_nonce( $request ) : null;
+
+			if ( is_wp_error( $nonce_check ) ) {
+				throw new RouteException(
+					$nonce_check->get_error_message(),
+					$nonce_check->get_error_code(),
+					$nonce_check->get_error_data()['status'],
+					$nonce_check->get_error_data()
+				);
+			}
+
+			$response = $this->get_response_by_request_method( $request );
+
+			// For update requests, this will recalculate cart totals and sync draft orders with the current cart.
+			if ( $this->is_update_request( $request ) ) {
+				$this->cart_updated( $request );
+			}
 		} catch ( RouteException $error ) {
 			$response = $this->get_route_error_response( $error->getErrorCode(), $error->getMessage(), $error->getCode(), $error->getAdditionalData() );
 		} catch ( \Exception $error ) {
 			$response = $this->get_route_error_response( 'woocommerce_rest_unknown_server_error', $error->getMessage(), 500 );
-		}
-
-		$response    = null;
-		$nonce_check = $this->requires_nonce( $request ) ? $this->check_nonce( $request ) : null;
-
-		if ( is_wp_error( $nonce_check ) ) {
-			$response = $nonce_check;
-		}
-
-		if ( ! $response ) {
-			try {
-				$response = $this->get_response_by_request_method( $request );
-			} catch ( RouteException $error ) {
-				$response = $this->get_route_error_response( $error->getErrorCode(), $error->getMessage(), $error->getCode(), $error->getAdditionalData() );
-			} catch ( \Exception $error ) {
-				$response = $this->get_route_error_response( 'woocommerce_rest_unknown_server_error', $error->getMessage(), 500 );
+		} finally {
+			if ( is_wp_error( $response ) ) {
+				$response = $this->error_to_response( $response );
 			}
-		}
-
-		// For update requests, this will recalculate cart totals and sync draft orders with the current cart.
-		if ( $this->is_update_request( $request ) ) {
-			$this->cart_updated( $request );
-		}
-
-		// Format error responses.
-		if ( is_wp_error( $response ) ) {
-			$response = $this->error_to_response( $response );
 		}
 
 		return $this->add_response_headers( rest_ensure_response( $response ) );

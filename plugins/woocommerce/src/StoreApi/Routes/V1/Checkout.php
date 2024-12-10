@@ -122,8 +122,25 @@ class Checkout extends AbstractCartRoute {
 	 * @return \WP_REST_Response
 	 */
 	public function get_response( \WP_REST_Request $request ) {
+		$response = null;
 		try {
 			$this->load_cart_session( $request );
+
+			$nonce_check = $this->requires_nonce( $request ) ? $this->check_nonce( $request ) : null;
+
+			if ( is_wp_error( $nonce_check ) ) {
+				throw new RouteException(
+					$nonce_check->get_error_message(),
+					$nonce_check->get_error_code(),
+					$nonce_check->get_error_data()['status'],
+					$nonce_check->get_error_data()
+				);
+			}
+
+			$response = $this->get_response_by_request_method( $request );
+
+		} catch ( InvalidCartException $error ) {
+			$response = $this->get_route_error_response_from_object( $error->getError(), $error->getCode(), $error->getAdditionalData() );
 		} catch ( RouteException $error ) {
 			$response = $this->get_route_error_response( $error->getErrorCode(), $error->getMessage(), $error->getCode(), $error->getAdditionalData() );
 		} catch ( \Exception $error ) {
@@ -366,7 +383,6 @@ class Checkout extends AbstractCartRoute {
 		 *
 		 * @see https://github.com/woocommerce/woocommerce-gutenberg-products-block/pull/3238
 		 * @example See docs/examples/checkout-order-processed.md
-
 		 * @param \WC_Order $order Order object.
 		 */
 		do_action( 'woocommerce_store_api_checkout_order_processed', $this->order );
@@ -598,7 +614,7 @@ class Checkout extends AbstractCartRoute {
 			throw new RouteException(
 				'woocommerce_rest_checkout_payment_method_disabled',
 				sprintf(
-					// Translators: %s Payment method ID.
+				// Translators: %s Payment method ID.
 					__( '%s is not available for this order—please choose a different payment method', 'woocommerce' ),
 					esc_html( $gateway_title )
 				),
@@ -690,22 +706,22 @@ class Checkout extends AbstractCartRoute {
 	 */
 	private function validate_user_can_place_order() {
 		if (
-			// "woocommerce_enable_signup_and_login_from_checkout" === no.
-			false === filter_var( wc()->checkout()->is_registration_enabled(), FILTER_VALIDATE_BOOLEAN ) &&
-			// "woocommerce_enable_guest_checkout" === no.
-			true === filter_var( wc()->checkout()->is_registration_required(), FILTER_VALIDATE_BOOLEAN ) &&
-			! is_user_logged_in()
+		// "woocommerce_enable_signup_and_login_from_checkout" === no.
+		false === filter_var( wc()->checkout()->is_registration_enabled(), FILTER_VALIDATE_BOOLEAN ) &&
+		// "woocommerce_enable_guest_checkout" === no.
+		true === filter_var( wc()->checkout()->is_registration_required(), FILTER_VALIDATE_BOOLEAN ) &&
+		! is_user_logged_in()
 		) {
 			throw new RouteException(
 				'woocommerce_rest_guest_checkout_disabled',
 				esc_html(
-					/**
-					 * Filter to customize the checkout message when a user must be logged in.
-					 *
-					 * @since 9.4.3
-					 *
-					 * @param string $message Message to display when a user must be logged in to check out.
-					 */
+				/**
+				 * Filter to customize the checkout message when a user must be logged in.
+				 *
+				 * @since 9.4.3
+				 *
+				 * @param string $message Message to display when a user must be logged in to check out.
+				 */
 					apply_filters(
 						'woocommerce_checkout_must_be_logged_in_message',
 						__( 'You must be logged in to checkout.', 'woocommerce' )
