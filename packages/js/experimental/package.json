@@ -40,7 +40,7 @@
 		"@wordpress/components": "^19.17.0",
 		"@wordpress/element": "^4.20.0",
 		"@wordpress/i18n": "^4.47.0",
-		"@wordpress/icons": "^8.4.0",
+		"@wordpress/icons": "10.13.0",
 		"@wordpress/keycodes": "^3.47.0",
 		"classnames": "^2.3.2",
 		"dompurify": "^2.5.7",

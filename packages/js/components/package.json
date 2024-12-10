@@ -90,7 +90,7 @@
 		"@wordpress/hooks": "wp-6.0",
 		"@wordpress/html-entities": "wp-6.0",
 		"@wordpress/i18n": "wp-6.0",
-		"@wordpress/icons": "wp-6.0",
+		"@wordpress/icons": "10.13.0",
 		"@wordpress/keyboard-shortcuts": "wp-6.0",
 		"@wordpress/keycodes": "wp-6.0",
 		"@wordpress/media-utils": "wp-6.0",
