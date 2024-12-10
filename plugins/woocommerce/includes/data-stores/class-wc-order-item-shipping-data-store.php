@@ -21,7 +21,7 @@ class WC_Order_Item_Shipping_Data_Store extends Abstract_WC_Order_Item_Type_Data
 	 * @since 3.0.0
 	 * @var array
 	 */
-	protected $internal_meta_keys = array( 'method_id', 'instance_id', 'cost', 'total_tax', 'taxes', 'tax_status' );
+	protected $internal_meta_keys = array( 'method_id', 'instance_id', 'cost', 'total_tax', 'taxes' );
 
 	/**
 	 * Read/populate data properties specific to this order item.
@@ -40,16 +40,17 @@ class WC_Order_Item_Shipping_Data_Store extends Abstract_WC_Order_Item_Type_Data
 				'total'       => get_metadata( 'order_item', $id, 'cost', true ),
 				'taxes'       => get_metadata( 'order_item', $id, 'taxes', true ),
 				'tax_status'  => get_metadata( 'order_item', $id, 'tax_status', true ),
-			);
+			)
+		);
 
-			// BW compat.
-			if ( '' === $item->get_instance_id() && strstr( $item->get_method_id(), ':' ) ) {
-				$legacy_method_id = explode( ':', $item->get_method_id() );
-				$item->set_method_id( $legacy_method_id[0] );
-				$item->set_instance_id( $legacy_method_id[1] );
-			}
+		// BW compat.
+		if ( '' === $item->get_instance_id() && strstr( $item->get_method_id(), ':' ) ) {
+			$legacy_method_id = explode( ':', $item->get_method_id() );
+			$item->set_method_id( $legacy_method_id[0] );
+			$item->set_instance_id( $legacy_method_id[1] );
+		}
 
-			$item->set_object_read( true );
+		$item->set_object_read( true );
 	}
 
 	/**
@@ -68,7 +69,6 @@ class WC_Order_Item_Shipping_Data_Store extends Abstract_WC_Order_Item_Type_Data
 			'cost'        => 'total',
 			'total_tax'   => 'total_tax',
 			'taxes'       => 'taxes',
-			'tax_status'  => 'tax_status',
 		);
 		$props_to_update   = $this->get_props_to_update( $item, $meta_key_to_props, 'order_item' );
 
