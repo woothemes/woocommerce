@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
  */
 import { OfflinePaymentGatewayList } from '../offline-gateway-list-item/offline-payment-gateway-list-item';
 import { ListPlaceholder } from '~/settings-payments/components/list-placeholder';
+import './offline-payment-gateways.scss';
 
 interface OfflinePaymentGatewaysProps {
 	isFetching: boolean;
