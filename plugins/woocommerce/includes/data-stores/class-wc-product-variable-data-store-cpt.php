@@ -123,6 +123,14 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 			$children = array();
 		}
 
+		if ( ! $force_read && $children ) {
+			// Validate the children data.
+			if ( ! $this->validate_variation_transients( $product ) ) {
+				$children   = array();
+				$force_read = true;
+			}
+		}
+
 		if ( ! isset( $children['all'] ) || ! isset( $children['visible'] ) || $force_read ) {
 			$all_args = array(
 				'post_parent' => $product->get_id(),
@@ -149,6 +157,7 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 			}
 			$children['all']     = get_posts( apply_filters( 'woocommerce_variable_children_args', $all_args, $product, false ) );
 			$children['visible'] = get_posts( apply_filters( 'woocommerce_variable_children_args', $visible_only_args, $product, true ) );
+			$children['version'] = WC_Cache_Helper::get_transient_version( 'product' );
 
 			set_transient( $children_transient_name, $children, DAY_IN_SECONDS * 30 );
 		}
@@ -709,5 +718,122 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 		}
 
 		delete_transient( 'wc_product_children_' . $product_id );
+	}
+
+	/**
+	 * Validate the variation transients by checking the structure and type of the data.
+	 *
+	 * @param WC_Product $product The product object.
+	 * @return bool True if valid, false otherwise.
+	 */
+	public function validate_variation_transients( &$product ) {
+		$children_transient_name = 'wc_product_children_' . $product->get_id();
+		$prices_transient_name   = 'wc_var_prices_' . $product->get_id();
+
+		$current_version = WC_Cache_Helper::get_transient_version( 'product' );
+
+		$children = get_transient( $children_transient_name );
+		$prices   = json_decode( strval( get_transient( $prices_transient_name ) ), true );
+
+		$children_valid = $this->validate_children_data( $children, $current_version );
+
+		$prices_valid = $this->validate_prices_data( $prices, $current_version );
+
+		if ( ! $children_valid || ! $prices_valid ) {
+			delete_transient( $children_transient_name );
+			delete_transient( $prices_transient_name );
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Validate the children data by checking the structure and type of the data.
+	 *
+	 * @param array  $children The children data.
+	 * @param string $current_version The current transient version.
+	 * @return bool True if valid, false otherwise.
+	 */
+	protected function validate_children_data( $children, $current_version ) {
+		if ( ! is_array( $children ) ) {
+			return false;
+		}
+
+		// Basic structure checks.
+		if ( ! isset( $children['all'] ) || ! isset( $children['visible'] ) ) {
+			return false;
+		}
+
+		// Version check - only if version is set.
+		if ( isset( $children['version'] ) && $children['version'] !== $current_version ) {
+			return false;
+		}
+
+		if ( ! is_array( $children['all'] ) || ! is_array( $children['visible'] ) ) {
+			return false;
+		}
+
+		foreach ( $children['all'] as $id ) {
+			if ( ! is_numeric( $id ) ) {
+				return false;
+			}
+		}
+
+		foreach ( $children['visible'] as $id ) {
+			if ( ! is_numeric( $id ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Validate the prices data by checking the structure and type of the data.
+	 *
+	 * @param  array  $prices_array The prices data.
+	 * @param  string $current_version The current version of the data.
+	 * @return bool True if valid, false otherwise.
+	 */
+	protected function validate_prices_data( $prices_array, $current_version ) {
+		if ( ! is_array( $prices_array ) ) {
+			return false;
+		}
+
+		// Version check - only if version is set.
+		if ( isset( $prices_array['version'] ) && $prices_array['version'] !== $current_version ) {
+			return false;
+		}
+
+		$required_types = array( 'price', 'regular_price', 'sale_price' );
+		foreach ( $required_types as $type ) {
+			if ( ! isset( $prices_array[ $type ] ) || ! is_array( $prices_array[ $type ] ) ) {
+				return false;
+			}
+		}
+
+		foreach ( $prices_array['price'] as $variation_id => $price ) {
+			if ( ! is_numeric( $variation_id ) ) {
+				return false;
+			}
+
+			if ( ! is_numeric( $price ) && '' !== $price ) {
+				return false;
+			}
+
+			foreach ( $required_types as $type ) {
+				if ( ! array_key_exists( $variation_id, $prices_array[ $type ] ) ) {
+					return false;
+				}
+
+				$type_price = $prices_array[ $type ][ $variation_id ];
+				if ( ! is_numeric( $type_price ) && '' !== $type_price ) {
+					return false;
+				}
+			}
+		}
+
+		return true;
 	}
 }
