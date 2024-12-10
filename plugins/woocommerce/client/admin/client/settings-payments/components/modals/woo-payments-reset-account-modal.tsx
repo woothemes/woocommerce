@@ -60,7 +60,7 @@ export const WooPaymentsResetAccountModal = ( {
 					<div className="woocommerce-woopayments-modal__actions">
 						<Button
 							className="danger"
-							variant="primary"
+							variant="secondary"
 							isBusy={ isResettingAccount }
 							disabled={ isResettingAccount }
 							onClick={ handleResetAccount }

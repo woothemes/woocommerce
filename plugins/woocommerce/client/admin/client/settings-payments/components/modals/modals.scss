@@ -88,12 +88,13 @@
 		display: flex;
 		gap: $gap-small;
 
-		.components-button.is-primary.danger {
+		.components-button.is-secondary.danger:not(:disabled) {
 			background-color: $studio-red-50;
 			color: #fff;
+			box-shadow: none;
 		}
 
-		.components-button.is-primary.danger:hover:not(:disabled) {
+		.components-button.is-secondary.danger:hover:not(:disabled) {
 			background-color: $studio-red-70;
 		}
 	}
