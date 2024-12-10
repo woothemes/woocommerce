@@ -1,23 +1,23 @@
 <?php
-	declare( strict_types=1 );
-	namespace Automattic\WooCommerce\StoreApi\Routes\V1;
+declare( strict_types=1 );
+namespace Automattic\WooCommerce\StoreApi\Routes\V1;
 
-	use Automattic\WooCommerce\Blocks\Package;
-	use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields;
-	use Automattic\WooCommerce\StoreApi\Exceptions\RouteException;
-	use Automattic\WooCommerce\StoreApi\SchemaController;
-	use Automattic\WooCommerce\StoreApi\Schemas\V1\AbstractSchema;
-	use Automattic\WooCommerce\StoreApi\Schemas\V1\CartItemSchema;
-	use Automattic\WooCommerce\StoreApi\Schemas\V1\CartSchema;
-	use Automattic\WooCommerce\StoreApi\SessionHandler;
-	use Automattic\WooCommerce\StoreApi\Utilities\CartController;
-	use Automattic\WooCommerce\StoreApi\Utilities\DraftOrderTrait;
-	use Automattic\WooCommerce\StoreApi\Utilities\JsonWebToken;
-	use Automattic\WooCommerce\StoreApi\Utilities\OrderController;
+use Automattic\WooCommerce\Blocks\Package;
+use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields;
+use Automattic\WooCommerce\StoreApi\Exceptions\RouteException;
+use Automattic\WooCommerce\StoreApi\SchemaController;
+use Automattic\WooCommerce\StoreApi\Schemas\V1\AbstractSchema;
+use Automattic\WooCommerce\StoreApi\Schemas\V1\CartItemSchema;
+use Automattic\WooCommerce\StoreApi\Schemas\V1\CartSchema;
+use Automattic\WooCommerce\StoreApi\SessionHandler;
+use Automattic\WooCommerce\StoreApi\Utilities\CartController;
+use Automattic\WooCommerce\StoreApi\Utilities\DraftOrderTrait;
+use Automattic\WooCommerce\StoreApi\Utilities\JsonWebToken;
+use Automattic\WooCommerce\StoreApi\Utilities\OrderController;
 
-	/**
-	 * Abstract Cart Route
-	 */
+/**
+ * Abstract Cart Route
+ */
 abstract class AbstractCartRoute extends AbstractRoute {
 	use DraftOrderTrait;
 

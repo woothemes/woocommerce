@@ -706,22 +706,22 @@ class Checkout extends AbstractCartRoute {
 	 */
 	private function validate_user_can_place_order() {
 		if (
-		// "woocommerce_enable_signup_and_login_from_checkout" === no.
-		false === filter_var( wc()->checkout()->is_registration_enabled(), FILTER_VALIDATE_BOOLEAN ) &&
-		// "woocommerce_enable_guest_checkout" === no.
-		true === filter_var( wc()->checkout()->is_registration_required(), FILTER_VALIDATE_BOOLEAN ) &&
-		! is_user_logged_in()
+			// "woocommerce_enable_signup_and_login_from_checkout" === no.
+			false === filter_var( wc()->checkout()->is_registration_enabled(), FILTER_VALIDATE_BOOLEAN ) &&
+			// "woocommerce_enable_guest_checkout" === no.
+			true === filter_var( wc()->checkout()->is_registration_required(), FILTER_VALIDATE_BOOLEAN ) &&
+			! is_user_logged_in()
 		) {
 			throw new RouteException(
 				'woocommerce_rest_guest_checkout_disabled',
 				esc_html(
-				/**
-				 * Filter to customize the checkout message when a user must be logged in.
-				 *
-				 * @since 9.4.3
-				 *
-				 * @param string $message Message to display when a user must be logged in to check out.
-				 */
+					/**
+					 * Filter to customize the checkout message when a user must be logged in.
+					 *
+					 * @since 9.4.3
+					 *
+					 * @param string $message Message to display when a user must be logged in to check out.
+					 */
 					apply_filters(
 						'woocommerce_checkout_must_be_logged_in_message',
 						__( 'You must be logged in to checkout.', 'woocommerce' )
