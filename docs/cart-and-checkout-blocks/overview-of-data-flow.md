@@ -18,7 +18,7 @@ In the WooCommerce Cart and Checkout blocks, the server is the source of truth f
 - Other cart details, such as applied coupons
 
 Such data must be persisted server-side to ensure accuracy, consistency, and reliability across different user sessions and devices.
-Ephemeral UI state—such as temporary validation states, or UI-specific interactions like expanded/collapsed sections—should remain client-side and not be automatically persisted on the server, unless the specific state needs to be maintained across page loads or is critical to the user's checkout process.
+Ephemeral UI state—such as temporary validation states, or UI-specific interactions like expanded/collapsed sections should remain client-side and not be automatically persisted on the server, unless the specific state needs to be maintained across page loads or is critical to the user's checkout process.
 
 You may wish to get data from the server into the client, and vice/versa. This document will outline the general concepts and data flow in the Cart/Checkout blocks, and provide links, or guidance on some common use cases.
 
