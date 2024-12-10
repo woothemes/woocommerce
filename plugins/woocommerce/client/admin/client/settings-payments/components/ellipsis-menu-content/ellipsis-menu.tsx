@@ -30,7 +30,7 @@ export const EllipsisMenuWrapper = ( {
 				renderContent={ ( { onToggle } ) => (
 					<EllipsisMenuContent
 						pluginId={ provider.id }
-						pluginName={ provider.plugin.slug }
+						pluginFile={ provider.plugin.file }
 						isSuggestion={ provider._type === 'suggestion' }
 						links={ provider.links }
 						onToggle={ onToggle }
