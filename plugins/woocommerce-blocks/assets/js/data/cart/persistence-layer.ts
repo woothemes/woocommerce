@@ -27,15 +27,14 @@ export const isAddingToCart = () => {
 };
 
 export const getCartHash = () => {
-	return window.localStorage.getItem( 'CART_DATA_HASH' );
-};
-
-export const setCartHash = ( hash: string ) => {
-	window.localStorage.setItem( 'CART_DATA_HASH', hash );
+	return window.localStorage.getItem( 'storeApiCartHash' );
 };
 
 export const cartDataHashMatchesSession = () => {
-	return getCartHash() === getCookie( 'woocommerce_cart_hash' );
+	return (
+		hasCartSession() &&
+		getCartHash() === getCookie( 'woocommerce_cart_hash' )
+	);
 };
 
 export const persistenceLayer = {
@@ -44,7 +43,7 @@ export const persistenceLayer = {
 			return {};
 		}
 
-		const cached = window.localStorage?.getItem( 'CART_DATA' );
+		const cached = window.localStorage?.getItem( 'storeApiCartData' );
 
 		if ( ! cached ) {
 			return {};
@@ -59,6 +58,9 @@ export const persistenceLayer = {
 		return parsed;
 	},
 	set: ( cartData: Cart ) => {
-		window.localStorage.setItem( 'CART_DATA', JSON.stringify( cartData ) );
+		window.localStorage.setItem(
+			'storeApiCartData',
+			JSON.stringify( cartData )
+		);
 	},
 };

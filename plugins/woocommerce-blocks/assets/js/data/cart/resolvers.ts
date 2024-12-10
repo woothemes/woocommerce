@@ -9,7 +9,6 @@ import { CartResponse } from '@woocommerce/types';
 import { apiFetchWithHeaders } from '../shared-controls';
 import { CART_API_ERROR } from './constants';
 import type { CartDispatchFromMap, CartResolveSelectFromMap } from './index';
-import { setCartHash } from './persistence-layer';
 
 /**
  * Resolver for retrieving all cart data.
@@ -32,7 +31,6 @@ export const getCartData =
 			return;
 		}
 		receiveCart( cartData );
-		setCartHash( headers?.get( 'Cart-Hash' ) || '' );
 	};
 
 /**

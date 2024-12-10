@@ -38,20 +38,29 @@ export const processCheckoutResponseHeaders = (
 		return;
 	}
 	const { __internalSetCustomerId } = dispatch( CHECKOUT_STORE_KEY );
+
 	if (
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore -- this does exist because it's monkey patched in
 		// middleware/store-api-nonce.
-		triggerFetch.setNonce &&
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore -- this does exist because it's monkey patched in
-		// middleware/store-api-nonce.
-		typeof triggerFetch.setNonce === 'function'
+		typeof triggerFetch?.setNonce === 'function'
 	) {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore -- this does exist because it's monkey patched in
 		// middleware/store-api-nonce.
 		triggerFetch.setNonce( headers );
+	}
+
+	if (
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore -- this does exist because it's monkey patched in
+		// middleware/store-api-cart-hash.
+		typeof triggerFetch?.setCartHash === 'function'
+	) {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore -- this does exist because it's monkey patched in
+		// middleware/store-api-cart-hash.
+		triggerFetch.setCartHash( headers );
 	}
 
 	// Update user using headers.

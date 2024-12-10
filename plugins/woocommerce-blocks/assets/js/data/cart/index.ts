@@ -52,7 +52,10 @@ register( store );
 // The resolver for getCartData fires off an API request. But if we know the cart is empty, we can skip the request.
 // The only reliable way to check if the cart is empty is to check the cookies.
 window.addEventListener( 'load', () => {
-	if ( ! hasCartSession() || cartDataHashMatchesSession() ) {
+	if (
+		! hasCartSession() ||
+		( cartDataHashMatchesSession() && persistenceLayer.get() )
+	) {
 		wpDispatch( STORE_KEY ).finishResolution( 'getCartData' );
 	}
 } );
