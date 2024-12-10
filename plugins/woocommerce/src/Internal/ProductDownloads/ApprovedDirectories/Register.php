@@ -32,7 +32,7 @@ class Register {
 	private $mode_option = 'wc_downloads_approved_directories_mode';
 
 	/** @var array<string, bool> cached valid paths */
-	private array $valid_paths = [];
+	private array $valid_paths = array();
 
 	/**
 	 * Sets up the approved directories sub-system.
