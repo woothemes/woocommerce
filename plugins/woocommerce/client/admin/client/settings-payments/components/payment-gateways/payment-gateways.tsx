@@ -1,34 +1,30 @@
 /**
  * External dependencies
  */
-import { Gridicon } from '@automattic/components';
-import { List } from '@woocommerce/components';
-import { getAdminLink } from '@woocommerce/settings';
 import { __ } from '@wordpress/i18n';
+import { apiFetch } from '@wordpress/data-controls';
 import {
-	PAYMENT_SETTINGS_STORE_NAME,
 	PaymentProvider,
+	PAYMENT_SETTINGS_STORE_NAME,
 	WC_ADMIN_NAMESPACE,
 } from '@woocommerce/data';
+import { useDispatch } from '@wordpress/data';
 import { useMemo } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
-import { useDispatch } from '@wordpress/data';
-import apiFetch from '@wordpress/api-fetch';
-
 /**
  * Internal dependencies
  */
-import sanitizeHTML from '~/lib/sanitize-html';
-import { PaymentGatewayListItem } from '~/settings-payments/components/payment-gateway-list-item';
-import { PaymentExtensionSuggestionListItem } from '~/settings-payments/components/payment-extension-suggestion-list-item';
 import { CountrySelector } from '~/settings-payments/components/country-selector';
 import { ListPlaceholder } from '~/settings-payments/components/list-placeholder';
+import { PaymentGatewayList } from '~/settings-payments/components/payment-gateway-list';
+import './payment-gateways.scss';
 
 interface PaymentGatewaysProps {
 	providers: PaymentProvider[];
 	installedPluginSlugs: string[];
 	installingPlugin: string | null;
 	setupPlugin: ( id: string, slug: string ) => void;
+	updateOrdering: ( providers: PaymentProvider[] ) => void;
 	isFetching: boolean;
 	businessRegistrationCountry: string | null;
 	setBusinessRegistrationCountry: ( country: string ) => void;
@@ -39,6 +35,7 @@ export const PaymentGateways = ( {
 	installedPluginSlugs,
 	installingPlugin,
 	setupPlugin,
+	updateOrdering,
 	isFetching,
 	businessRegistrationCountry,
 	setBusinessRegistrationCountry,
@@ -54,62 +51,6 @@ export const PaymentGateways = ( {
 			} ) )
 			.sort( ( a, b ) => a.name.localeCompare( b.name ) );
 	}, [] );
-
-	// Transform payment gateways to comply with List component format.
-	const providersList = useMemo(
-		() =>
-			providers.map( ( provider: PaymentProvider ) => {
-				switch ( provider._type ) {
-					case 'suggestion':
-						const pluginInstalled = installedPluginSlugs.includes(
-							provider.plugin.slug
-						);
-						return PaymentExtensionSuggestionListItem( {
-							extension: provider,
-							installingPlugin,
-							setupPlugin,
-							pluginInstalled,
-						} );
-					case 'gateway':
-						return PaymentGatewayListItem( {
-							gateway: provider,
-						} );
-					case 'offline_pms_group':
-						return {
-							key: provider.id,
-							className:
-								'clickable-list-item transitions-disabled',
-							title: <>{ provider.title }</>,
-							content: (
-								<>
-									<span
-										dangerouslySetInnerHTML={ sanitizeHTML(
-											decodeEntities(
-												provider.description
-											)
-										) }
-									/>
-								</>
-							),
-							after: <Gridicon icon="chevron-right" />,
-							before: (
-								<img
-									src={ provider.icon }
-									alt={ provider.title + ' logo' }
-								/>
-							),
-							onClick: () => {
-								window.location.href = getAdminLink(
-									'admin.php?page=wc-settings&tab=checkout&section=offline'
-								);
-							},
-						};
-					default:
-						return null; // if unsupported type found
-				}
-			} ),
-		[ providers, installedPluginSlugs, installingPlugin, setupPlugin ]
-	);
 
 	return (
 		<div className="settings-payment-gateways">
@@ -148,7 +89,13 @@ export const PaymentGateways = ( {
 			{ isFetching ? (
 				<ListPlaceholder rows={ 5 } />
 			) : (
-				<List items={ providersList } />
+				<PaymentGatewayList
+					providers={ providers }
+					installedPluginSlugs={ installedPluginSlugs }
+					installingPlugin={ installingPlugin }
+					setupPlugin={ setupPlugin }
+					updateOrdering={ updateOrdering }
+				/>
 			) }
 		</div>
 	);

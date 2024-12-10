@@ -109,7 +109,7 @@ test.describe( 'Payment Gateways API tests', () => {
 						enabled: false,
 						method_title: 'Cash on delivery',
 						method_description:
-							'Have your customers pay with cash (or by other means) upon delivery.',
+							'Let your shoppers pay upon delivery — by cash or other methods of payment.',
 						method_supports: [ 'products' ],
 						settings: {
 							title: {

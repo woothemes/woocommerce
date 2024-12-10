@@ -20,10 +20,16 @@ export interface ManagementData {
 	settings_url: string; // URL to the settings page for the payment gateway.
 }
 
+export enum PaymentProviderType {
+	OfflinePmsGroup = 'offline_pms_group',
+	Suggestion = 'suggestion',
+	Gateway = 'gateway',
+}
+
 export type PaymentProvider = {
 	id: string;
 	_order: number;
-	_type: 'offline_pms_group' | 'suggestion' | 'gateway';
+	_type: PaymentProviderType;
 	title: string;
 	description: string;
 	icon: string;
@@ -80,6 +86,8 @@ export type PaymentSettingsState = {
 	isFetching: boolean;
 	errors: Record< string, unknown >;
 };
+
+export type OrderMap = Record< string, number >;
 
 export type PaymentProvidersResponse = {
 	providers: PaymentProvider[];
