@@ -111,6 +111,40 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 	 */
 	public static function init() {
 		add_action( 'woocommerce_analytics_delete_order_stats', array( __CLASS__, 'sync_on_order_delete' ), 10 );
+		add_action( 'woocommerce_order_partially_refunded', array( __CLASS__, 'add_partial_refund_type_meta' ), 10, 2 );
+		add_action( 'woocommerce_order_fully_refunded', array( __CLASS__, 'add_full_refund_type_meta' ), 10, 2 );
+	}
+
+	/**
+	 * Add a partial refund type meta to the order.
+	 *
+	 * @param int $order_id  Order ID.
+	 * @param int $refund_id Refund ID.
+	 */
+	public static function add_partial_refund_type_meta( $order_id, $refund_id ) {
+		self::add_refund_type_meta( $refund_id, 'partial' );
+	}
+
+	/**
+	 * Add a full refund type meta to the order.
+	 *
+	 * @param int $order_id  Order ID.
+	 * @param int $refund_id Refund ID.
+	 */
+	public static function add_full_refund_type_meta( $order_id, $refund_id ) {
+		self::add_refund_type_meta( $refund_id, 'full' );
+	}
+
+	/**
+	 * Add a refund type meta to the order.
+	 *
+	 * @param int    $refund_id Refund ID.
+	 * @param string $type      Refund type.
+	 */
+	public static function add_refund_type_meta( $refund_id, $type ) {
+		$order = wc_get_order( $refund_id );
+		$order->update_meta_data( '_refund_type', $type );
+		$order->save_meta_data();
 	}
 
 	/**
