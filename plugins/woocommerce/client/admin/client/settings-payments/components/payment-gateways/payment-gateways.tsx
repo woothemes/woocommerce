@@ -5,9 +5,15 @@ import { Gridicon } from '@automattic/components';
 import { List } from '@woocommerce/components';
 import { getAdminLink } from '@woocommerce/settings';
 import { __ } from '@wordpress/i18n';
-import { PaymentProvider } from '@woocommerce/data';
-import { useMemo, useState } from '@wordpress/element';
+import {
+	PAYMENT_SETTINGS_STORE_NAME,
+	PaymentProvider,
+	WC_ADMIN_NAMESPACE,
+} from '@woocommerce/data';
+import { useMemo } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
+import { useDispatch } from '@wordpress/data';
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
@@ -24,6 +30,8 @@ interface PaymentGatewaysProps {
 	installingPlugin: string | null;
 	setupPlugin: ( id: string, slug: string ) => void;
 	isFetching: boolean;
+	businessRegistrationCountry: string | null;
+	setBusinessRegistrationCountry: ( country: string ) => void;
 }
 
 export const PaymentGateways = ( {
@@ -32,8 +40,10 @@ export const PaymentGateways = ( {
 	installingPlugin,
 	setupPlugin,
 	isFetching,
+	businessRegistrationCountry,
+	setBusinessRegistrationCountry,
 }: PaymentGatewaysProps ) => {
-	const [ storeCountry, setStoreCountry ] = useState( 'US' );
+	const { invalidateResolution } = useDispatch( PAYMENT_SETTINGS_STORE_NAME );
 
 	const countryOptions = useMemo( () => {
 		return Object.entries( window.wcSettings.countries || [] )
@@ -114,12 +124,23 @@ export const PaymentGateways = ( {
 						placeholder={ '' }
 						value={
 							countryOptions.find(
-								( country ) => country.key === storeCountry
+								( country ) =>
+									country.key === businessRegistrationCountry
 							) ?? { key: 'US', name: 'United States (US)' }
 						}
 						options={ countryOptions }
 						onChange={ ( value: string ) => {
-							setStoreCountry( value );
+							setBusinessRegistrationCountry( value );
+							invalidateResolution( 'getPaymentProviders', [
+								value,
+							] );
+							apiFetch( {
+								path:
+									WC_ADMIN_NAMESPACE +
+									'/settings/payments/country',
+								method: 'POST',
+								data: { location: value },
+							} );
 						} }
 					/>
 				</div>
