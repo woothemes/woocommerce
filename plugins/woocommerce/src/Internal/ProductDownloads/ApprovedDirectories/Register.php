@@ -254,7 +254,6 @@ class Register {
 		}
 
 		if ( empty( $parent_directories ) ) {
-
 			$this->valid_paths[ $download_url ] = false;
 
 			return false;
