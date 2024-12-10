@@ -2,6 +2,8 @@
 /**
  * Admin View: Settings
  *
+ * This file is included in WC_Admin_Settings::output().
+ *
  * @package WooCommerce
  */
 
@@ -10,6 +12,18 @@ use Automattic\WooCommerce\Admin\Features\Features;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+/**
+ * The current WC admin settings tab ID.
+ *
+ * @var string $current_tab
+ */
+
+/**
+ * The current WC admin settings section ID.
+ *
+ * @var string $current_section
+ */
 
 $tab_exists        = isset( $tabs[ $current_tab ] ) || has_action( 'woocommerce_sections_' . $current_tab ) || has_action( 'woocommerce_settings_' . $current_tab ) || has_action( 'woocommerce_settings_tabs_' . $current_tab );
 $current_tab_label = isset( $tabs[ $current_tab ] ) ? $tabs[ $current_tab ] : '';
@@ -20,7 +34,7 @@ if ( ! $tab_exists ) {
 }
 
 $hide_nav = Features::is_enabled( 'reactify-classic-payments-settings' ) &&
-	'checkout' === $current_tab && 'offline' === $current_section;
+	( 'checkout' === $current_tab && ( 'offline' === $current_section || 'recommended' === $current_section ) );
 ?>
 
 <div class="wrap woocommerce">
@@ -48,7 +62,7 @@ $hide_nav = Features::is_enabled( 'reactify-classic-payments-settings' ) &&
 		<?php
 			do_action( 'woocommerce_sections_' . $current_tab );
 
-			self::show_messages();
+			WC_Admin_Settings::show_messages();
 
 			do_action( 'woocommerce_settings_' . $current_tab );
 			do_action( 'woocommerce_settings_tabs_' . $current_tab ); // @deprecated 3.4.0 hook.

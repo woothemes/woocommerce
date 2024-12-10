@@ -740,6 +740,10 @@ button.reset_variations {
 					color: var(--button--color-text);
 					background-color: var(--button--color-background);
 					border: var(--button--border-width) solid var(--button--color-background);
+
+					&:focus {
+						color: $body-color;
+					}
 				}
 			}
 		}

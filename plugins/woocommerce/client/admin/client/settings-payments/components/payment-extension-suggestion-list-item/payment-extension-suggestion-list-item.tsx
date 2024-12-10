@@ -16,6 +16,7 @@ import sanitizeHTML from '~/lib/sanitize-html';
 import { EllipsisMenuContent } from '~/settings-payments/components/ellipsis-menu-content';
 import { isWooPayments } from '~/settings-payments/utils';
 import { DefaultDragHandle } from '~/settings-payments/components/sortable';
+import { StatusBadge } from '~/settings-payments/components/status-badge';
 
 type PaymentExtensionSuggestionListItemProps = {
 	extension: PaymentProvider;
@@ -47,7 +48,10 @@ export const PaymentExtensionSuggestionListItem = ( {
 				</div>
 				<div className="woocommerce-list__item-text">
 					<span className="woocommerce-list__item-title">
-						{ extension.title }
+						{ extension.title }{ ' ' }
+						{ isWooPayments( extension.id ) && (
+							<StatusBadge status="recommended" />
+						) }
 					</span>
 					<span
 						className="woocommerce-list__item-content"

@@ -6,6 +6,7 @@
  * @version 2.1.0
  */
 
+use Automattic\WooCommerce\Internal\BrandingController;
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
 defined( 'ABSPATH' ) || exit;
@@ -20,6 +21,23 @@ if ( class_exists( 'WC_Settings_Emails', false ) ) {
 class WC_Settings_Emails extends WC_Settings_Page {
 
 	/**
+	 * Array of font families supported in email templates
+	 *
+	 * @var string[]
+	 */
+	public static $font = array(
+		'Arial'           => "Arial, 'Helvetica Neue', Helvetica, sans-serif",
+		'Comic Sans MS'   => "'Comic Sans MS', 'Marker Felt-Thin', Arial, sans-serif",
+		'Courier New'     => "'Courier New', Courier, 'Lucida Sans Typewriter', 'Lucida Typewriter', monospace",
+		'Georgia'         => "Georgia, Times, 'Times New Roman', serif",
+		'Lucida'          => "'Lucida Sans Unicode', 'Lucida Grande', sans-serif",
+		'Tahoma'          => 'Tahoma, Verdana, Segoe, sans-serif',
+		'Times New Roman' => "'Times New Roman', Times, Baskerville, Georgia, serif",
+		'Trebuchet MS'    => "'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif",
+		'Verdana'         => 'Verdana, Geneva, sans-serif',
+	);
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
@@ -29,6 +47,8 @@ class WC_Settings_Emails extends WC_Settings_Page {
 		add_action( 'woocommerce_admin_field_email_notification', array( $this, 'email_notification_setting' ) );
 		add_action( 'woocommerce_admin_field_email_preview', array( $this, 'email_preview' ) );
 		add_action( 'woocommerce_admin_field_email_image_url', array( $this, 'email_image_url' ) );
+		add_action( 'woocommerce_admin_field_email_font_family', array( $this, 'email_font_family' ) );
+		add_action( 'woocommerce_admin_field_email_color_palette', array( $this, 'email_color_palette' ) );
 		parent::__construct();
 	}
 
@@ -77,12 +97,20 @@ class WC_Settings_Emails extends WC_Settings_Page {
 			'desc_tip'    => true,
 		);
 		$header_alignment           = null;
+		$font_family                = null;
 
-		$base_color_default        = '#7f54b3';
-		$bg_color_default          = '#f7f7f7';
-		$body_bg_color_default     = '#ffffff';
-		$body_text_color_default   = '#3c3c3c';
-		$footer_text_color_default = '#3c3c3c';
+		/* translators: %s: Available placeholders for use */
+		$footer_text_description = __( 'The text to appear in the footer of all WooCommerce emails.', 'woocommerce' ) . ' ' . sprintf( __( 'Available placeholders: %s', 'woocommerce' ), '{site_title} {site_url}' );
+		$footer_text_default     = '{site_title} &mdash; Built with {WooCommerce}';
+
+		// These defaults should be chosen by the same logic as the other color option properties.
+		list(
+			'base_color_default' => $base_color_default,
+			'bg_color_default' => $bg_color_default,
+			'body_bg_color_default' => $body_bg_color_default,
+			'body_text_color_default' => $body_text_color_default,
+			'footer_text_color_default' => $footer_text_color_default,
+		) = $this->get_email_default_colors();
 
 		$base_color_title = __( 'Base color', 'woocommerce' );
 		/* translators: %s: default color */
@@ -134,20 +162,16 @@ class WC_Settings_Emails extends WC_Settings_Page {
 				),
 			);
 
-			$base_color_default        = '#8526ff';
-			$bg_color_default          = '#ffffff';
-			$body_bg_color_default     = '#ffffff';
-			$body_text_color_default   = '#1e1e1e';
-			$footer_text_color_default = '#787c82';
+			$font_family = array(
+				'title'   => __( 'Font family', 'woocommerce' ),
+				'id'      => 'woocommerce_email_font_family',
+				'default' => 'Arial',
+				'type'    => 'email_font_family',
+			);
 
-			if ( wc_current_theme_is_fse_theme() && function_exists( 'wp_get_global_styles' ) ) {
-				$global_styles             = wp_get_global_styles( array(), array( 'transforms' => array( 'resolve-variables' ) ) );
-				$base_color_default        = $global_styles['elements']['button']['color']['text'] ?? $base_color_default;
-				$bg_color_default          = $global_styles['color']['background'] ?? $bg_color_default;
-				$body_bg_color_default     = $global_styles['color']['background'] ?? $body_bg_color_default;
-				$body_text_color_default   = $global_styles['color']['text'] ?? $body_text_color_default;
-				$footer_text_color_default = $global_styles['elements']['caption']['color']['text'] ?? $footer_text_color_default;
-			}
+			/* translators: %s: Available placeholders for use */
+			$footer_text_description = __( 'This text will appear in the footer of all of your WooCommerce emails.', 'woocommerce' ) . ' ' . sprintf( __( 'Available placeholders: %s', 'woocommerce' ), '{site_title} {site_url} {store_address} {store_email}' );
+			$footer_text_default     = '{site_title}<br />{store_address}';
 
 			$base_color_title = __( 'Accent', 'woocommerce' );
 			/* translators: %s: default color */
@@ -171,7 +195,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 
 			$color_palette_section_header = array(
 				'title' => __( 'Color palette', 'woocommerce' ),
-				'type'  => 'title',
+				'type'  => 'email_color_palette',
 				'id'    => 'email_color_palette',
 			);
 
@@ -181,7 +205,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 			);
 		}
 
-		// Reorder email color settings based on the email_improvements feature flag
+		// Reorder email color settings based on the email_improvements feature flag.
 
 		$base_color_setting = array(
 			'title'    => $base_color_title,
@@ -322,6 +346,8 @@ class WC_Settings_Emails extends WC_Settings_Page {
 
 				$header_alignment,
 
+				$font_family,
+
 				$base_color_setting_in_template_opts,
 
 				$bg_color_setting_in_template_opts,
@@ -332,13 +358,12 @@ class WC_Settings_Emails extends WC_Settings_Page {
 
 				array(
 					'title'       => __( 'Footer text', 'woocommerce' ),
-					/* translators: %s: Available placeholders for use */
-					'desc'        => __( 'The text to appear in the footer of all WooCommerce emails.', 'woocommerce' ) . ' ' . sprintf( __( 'Available placeholders: %s', 'woocommerce' ), '{site_title} {site_url}' ),
+					'desc'        => $footer_text_description,
 					'id'          => 'woocommerce_email_footer_text',
 					'css'         => 'width:400px; height: 75px;',
 					'placeholder' => __( 'N/A', 'woocommerce' ),
 					'type'        => 'textarea',
-					'default'     => '{site_title} &mdash; Built with {WooCommerce}',
+					'default'     => $footer_text_default,
 					'autoload'    => false,
 					'desc_tip'    => true,
 				),
@@ -392,6 +417,62 @@ class WC_Settings_Emails extends WC_Settings_Page {
 		$settings = array_filter( $settings );
 
 		return apply_filters( 'woocommerce_email_settings', $settings );
+	}
+
+	/**
+	 * Get default colors for emails.
+	 */
+	private function get_email_default_colors() {
+		$base_color_default        = BrandingController::get_default_email_base_color();
+		$bg_color_default          = '#f7f7f7';
+		$body_bg_color_default     = '#ffffff';
+		$body_text_color_default   = '#3c3c3c';
+		$footer_text_color_default = '#3c3c3c';
+
+		if ( FeaturesUtil::feature_is_enabled( 'email_improvements' ) ) {
+			$base_color_default        = '#8526ff';
+			$bg_color_default          = '#ffffff';
+			$body_bg_color_default     = '#ffffff';
+			$body_text_color_default   = '#1e1e1e';
+			$footer_text_color_default = '#787c82';
+
+			if ( wc_current_theme_is_fse_theme() && function_exists( 'wp_get_global_styles' ) ) {
+				$global_styles             = wp_get_global_styles( array(), array( 'transforms' => array( 'resolve-variables' ) ) );
+				$base_color_default        = $global_styles['elements']['button']['color']['text'] ?? $base_color_default;
+				$bg_color_default          = $global_styles['color']['background'] ?? $bg_color_default;
+				$body_bg_color_default     = $global_styles['color']['background'] ?? $body_bg_color_default;
+				$body_text_color_default   = $global_styles['color']['text'] ?? $body_text_color_default;
+				$footer_text_color_default = $global_styles['elements']['caption']['color']['text'] ?? $footer_text_color_default;
+			}
+		}
+
+		return compact(
+			'base_color_default',
+			'bg_color_default',
+			'body_bg_color_default',
+			'body_text_color_default',
+			'footer_text_color_default',
+		);
+	}
+
+	/**
+	 * Get custom fonts for emails.
+	 */
+	public function get_custom_fonts() {
+		$custom_fonts = array();
+		if ( wc_current_theme_is_fse_theme() && class_exists( 'WP_Font_Face_Resolver' ) ) {
+			$theme_fonts = WP_Font_Face_Resolver::get_fonts_from_theme_json();
+			if ( count( $theme_fonts ) > 0 ) {
+				foreach ( $theme_fonts as $font ) {
+					if ( ! empty( $font[0]['font-family'] ) ) {
+						$custom_fonts[ $font[0]['font-family'] ] = $font[0]['font-family'];
+					}
+				}
+			}
+		}
+		ksort( $custom_fonts );
+
+		return $custom_fonts;
 	}
 
 	/**
@@ -591,6 +672,97 @@ class WC_Settings_Emails extends WC_Settings_Page {
 				></div>
 			</td>
 		</tr>
+		<?php
+	}
+
+	/**
+	 * Creates the email font family field with custom font family applied to each option.
+	 *
+	 * @param array $value Field value array.
+	 */
+	public function email_font_family( $value ) {
+		$option_value = $value['value'];
+		$custom_fonts = $this->get_custom_fonts();
+
+		?>
+		<tr class="<?php echo esc_attr( $value['row_class'] ); ?>">
+			<th scope="row" class="titledesc">
+				<label for="<?php echo esc_attr( $value['id'] ); ?>"><?php echo esc_html( $value['title'] ); ?></label>
+			</th>
+			<td class="forminp forminp-<?php echo esc_attr( sanitize_title( $value['type'] ) ); ?>">
+			<script type="text/javascript">
+				function renderWithFont( node ) {
+					if ( ! node.element || ! node.element.value ) return node.text;
+					var $wrapper = jQuery( '<span></span>' );
+					$wrapper.css( {'font-family': node.element.dataset['font-family'] || node.element.value} );
+					$wrapper.text( node.text );
+					return $wrapper;
+				}
+				function fontsSelect( selector ) {
+					jQuery( selector ).selectWoo( {
+						minimumResultsForSearch: Infinity,
+						templateResult: renderWithFont
+					} );
+				}
+				jQuery( document.body )
+					.on( 'wc-enhanced-select-init', function() {
+						fontsSelect( '#<?php echo esc_js( $value['id'] ); ?>' );
+					} );
+				</script>
+				<select
+					name="<?php echo esc_attr( $value['field_name'] ); ?>"
+					id="<?php echo esc_attr( $value['id'] ); ?>"
+					>
+					<optgroup label="<?php echo esc_attr__( 'Standard fonts', 'woocommerce' ); ?>">
+						<?php
+						foreach ( self::$font as $key => $font_family ) {
+							?>
+							<option
+								value="<?php echo esc_attr( $key ); ?>"
+								data-font-family="<?php echo esc_attr( $font_family ); ?>"
+								<?php selected( $option_value, (string) $key ); ?>
+							><?php echo esc_html( $key ); ?></option>
+							<?php
+						}
+						?>
+					</optgroup>
+					<?php if ( $custom_fonts ) : ?>
+						<optgroup label="<?php echo esc_attr__( 'Custom fonts', 'woocommerce' ); ?>">
+							<?php
+							foreach ( $custom_fonts as $key => $val ) {
+								?>
+							<option
+								value="<?php echo esc_attr( $key ); ?>"
+								<?php selected( $option_value, (string) $key ); ?>
+							><?php echo esc_html( $val ); ?></option>
+								<?php
+							}
+							?>
+						</optgroup>
+					<?php endif; ?>
+				</select>
+			</td>
+		</tr>
+		<?php
+	}
+
+	/**
+	 * Creates the React mount point for the email color palette title.
+	 *
+	 * @param array $value Field value array.
+	 */
+	public function email_color_palette( $value ) {
+		$default_colors = $this->get_email_default_colors();
+
+		?>
+		<h2 class="wc-settings-email-color-palette-title"><?php echo esc_html( $value['title'] ); ?></h2>
+		<div
+			class="wc-settings-email-color-palette-buttons"
+			id="wc_settings_email_color_palette_slotfill"
+			data-default-colors="<?php echo esc_attr( wp_json_encode( $default_colors ) ); ?>"
+			<?php echo wp_theme_has_theme_json() ? 'data-has-theme-json' : ''; ?>
+		></div>
+		<table class="form-table">
 		<?php
 	}
 }

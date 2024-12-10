@@ -1,0 +1,4 @@
+Significance: minor
+Type: dev
+
+Update existing tests with the Playwright utils from the @woocommerce/e2e-utils-playwright package

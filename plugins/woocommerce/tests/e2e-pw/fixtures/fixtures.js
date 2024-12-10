@@ -55,7 +55,7 @@ exports.test = base.test.extend( {
 
 		// Cleanup
 		const pages = await wpApi.get(
-			`/wp-json/wp/v2/pages?slug=${ pageSlug }`,
+			`./wp-json/wp/v2/pages?slug=${ pageSlug }`,
 			{
 				data: {
 					_fields: [ 'id' ],
@@ -66,7 +66,7 @@ exports.test = base.test.extend( {
 
 		for ( const page of await pages.json() ) {
 			console.log( `Deleting page ${ page.id }` );
-			await wpApi.delete( `/wp-json/wp/v2/pages/${ page.id }`, {
+			await wpApi.delete( `./wp-json/wp/v2/pages/${ page.id }`, {
 				data: {
 					force: true,
 				},
@@ -84,7 +84,7 @@ exports.test = base.test.extend( {
 
 		// Cleanup
 		const posts = await wpApi.get(
-			`/wp-json/wp/v2/posts?slug=${ postSlug }`,
+			`./wp-json/wp/v2/posts?slug=${ postSlug }`,
 			{
 				data: {
 					_fields: [ 'id' ],
@@ -95,7 +95,7 @@ exports.test = base.test.extend( {
 
 		for ( const post of await posts.json() ) {
 			console.log( `Deleting post ${ post.id }` );
-			await wpApi.delete( `/wp-json/wp/v2/posts/${ post.id }`, {
+			await wpApi.delete( `./wp-json/wp/v2/posts/${ post.id }`, {
 				data: {
 					force: true,
 				},

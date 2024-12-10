@@ -1,0 +1,4 @@
+Significance: minor
+Type: dev
+
+E2E tests: remove wait for networkidle

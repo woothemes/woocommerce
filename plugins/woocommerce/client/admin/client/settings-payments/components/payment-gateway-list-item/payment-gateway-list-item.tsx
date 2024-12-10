@@ -3,7 +3,6 @@
  */
 import { EllipsisMenu } from '@woocommerce/components';
 import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
-import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
 import { PaymentProvider } from '@woocommerce/data';
@@ -13,19 +12,17 @@ import { PaymentProvider } from '@woocommerce/data';
  */
 import sanitizeHTML from '~/lib/sanitize-html';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
-import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
+import { PaymentGatewayButtons } from '~/settings-payments/components/payment-gateway-buttons';
 import { EllipsisMenuContent } from '~/settings-payments/components/ellipsis-menu-content';
 import { isWooPayments } from '~/settings-payments/utils';
 import { DefaultDragHandle } from '~/settings-payments/components/sortable';
 
 type PaymentGatewayItemProps = {
 	gateway: PaymentProvider;
-	setupLivePayments: () => void;
 };
 
 export const PaymentGatewayListItem = ( {
 	gateway,
-	setupLivePayments,
 	...props
 }: PaymentGatewayItemProps ) => {
 	const isWcPay = isWooPayments( gateway.id );
@@ -96,35 +93,16 @@ export const PaymentGatewayListItem = ( {
 				<div className="woocommerce-list__item-after">
 					<div className="woocommerce-list__item-after__actions">
 						<>
-							<PaymentGatewayButton
+							<PaymentGatewayButtons
 								id={ gateway.id }
 								isOffline={ false }
 								enabled={ gateway.state?.enabled || false }
 								needsSetup={ gateway.state?.needs_setup }
-								settingsUrl={
-									gateway.management?.settings_url || ''
-								}
+								testMode={ gateway.state?.test_mode }
+								settingsUrl={ gateway.management?.settings_url || '' }
 							/>
-							{ isWcPay &&
-								gateway.state?.enabled &&
-								gateway.state?.test_mode && (
-									<Button
-										variant="primary"
-										onClick={ setupLivePayments }
-										isBusy={ false }
-										disabled={ false }
-									>
-										{ __(
-											'Activate payments',
-											'woocommerce'
-										) }
-									</Button>
-								) }
 							<EllipsisMenu
-								label={ __(
-									'Task List Options',
-									'woocommerce'
-								) }
+								label={ __( 'Task List Options', 'woocommerce' ) }
 								renderContent={ ( { onToggle } ) => (
 									<EllipsisMenuContent
 										pluginId={ gateway.id }
@@ -134,9 +112,7 @@ export const PaymentGatewayListItem = ( {
 										onToggle={ onToggle }
 										isWooPayments={ isWcPay }
 										isEnabled={ gateway.state?.enabled }
-										needsSetup={
-											gateway.state?.needs_setup
-										}
+										needsSetup={ gateway.state?.needs_setup }
 										testMode={ gateway.state?.test_mode }
 									/>
 								) }

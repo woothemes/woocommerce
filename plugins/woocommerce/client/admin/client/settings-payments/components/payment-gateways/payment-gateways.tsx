@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { PaymentProvider } from '@woocommerce/data';
 
 /**
  * Internal dependencies
  */
+import { CountrySelector } from '~/settings-payments/components/country-selector';
 import { ListPlaceholder } from '~/settings-payments/components/list-placeholder';
 import { PaymentGatewayList } from '~/settings-payments/components/payment-gateway-list';
 import './payment-gateways.scss';
@@ -19,6 +19,8 @@ interface PaymentGatewaysProps {
 	setupPlugin: ( id: string, slug: string ) => void;
 	updateOrdering: ( providers: PaymentProvider[] ) => void;
 	isFetching: boolean;
+	businessRegistrationCountry: string | null;
+	setBusinessRegistrationCountry: ( country: string ) => void;
 }
 
 export const PaymentGateways = ( {
@@ -28,7 +30,21 @@ export const PaymentGateways = ( {
 	setupPlugin,
 	updateOrdering,
 	isFetching,
+	businessRegistrationCountry,
+	setBusinessRegistrationCountry,
 }: PaymentGatewaysProps ) => {
+	const { invalidateResolution } = useDispatch( PAYMENT_SETTINGS_STORE_NAME );
+
+	const countryOptions = useMemo( () => {
+		return Object.entries( window.wcSettings.countries || [] )
+			.map( ( [ key, name ] ) => ( {
+				key,
+				name: decodeEntities( name ),
+				types: [],
+			} ) )
+			.sort( ( a, b ) => a.name.localeCompare( b.name ) );
+	}, [] );
+
 	return (
 		<div className="settings-payment-gateways">
 			<div className="settings-payment-gateways__header">
@@ -36,16 +52,30 @@ export const PaymentGateways = ( {
 					{ __( 'Payment providers', 'woocommerce' ) }
 				</div>
 				<div className="settings-payment-gateways__header-select-container">
-					<SelectControl
+					<CountrySelector
 						className="woocommerce-select-control__country"
-						prefix={ __( 'Business location :', 'woocommerce' ) }
+						label={ __( 'Business location :', 'woocommerce' ) }
 						placeholder={ '' }
-						label={ '' }
-						options={ [
-							{ label: 'United States', value: 'US' },
-							{ label: 'Canada', value: 'Canada' },
-						] }
-						onChange={ () => {} }
+						value={
+							countryOptions.find(
+								( country ) =>
+									country.key === businessRegistrationCountry
+							) ?? { key: 'US', name: 'United States (US)' }
+						}
+						options={ countryOptions }
+						onChange={ ( value: string ) => {
+							setBusinessRegistrationCountry( value );
+							invalidateResolution( 'getPaymentProviders', [
+								value,
+							] );
+							apiFetch( {
+								path:
+									WC_ADMIN_NAMESPACE +
+									'/settings/payments/country',
+								method: 'POST',
+								data: { location: value },
+							} );
+						} }
 					/>
 				</div>
 			</div>
