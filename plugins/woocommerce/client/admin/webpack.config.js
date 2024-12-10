@@ -21,6 +21,7 @@ const {
 	TypeScriptWarnOnlyWebpackPlugin,
 } = require( '@woocommerce/internal-style-build' );
 const WooCommerceDependencyExtractionWebpackPlugin = require( '@woocommerce/dependency-extraction-webpack-plugin/src/index' );
+const { cache } = require( 'react' );
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const WC_ADMIN_PHASE = process.env.WC_ADMIN_PHASE || 'development';
@@ -266,6 +267,36 @@ const webpackConfig = {
 			// Not to generate chunk names because it caused a stressful workflow when deploying the plugin to WP.org
 			// See https://github.com/woocommerce/woocommerce-admin/pull/5229
 			name: false,
+			cacheGroups: {
+				dataViews: {
+					test: ( module ) => {
+						return (
+							module.resource &&
+							module.resource.includes( '@wordpress+dataviews' )
+						);
+					},
+					name: 'data-views',
+					chunks: ( chunk ) => {
+						return chunk.name === 'product-editor';
+					},
+				},
+				wordpressIcons: {
+					test: ( module ) => {
+						return (
+							module.resource &&
+							module.resource.includes(
+								'@wordpress+icons@10.13.0'
+							)
+						);
+						// Only include the wordpress-icons package in the product-editor chunk.
+					},
+					name: 'wordpress-icons',
+					chunks: ( chunk ) => {
+						return chunk.name === 'product-editor';
+					},
+					priority: 1000, // Ensure this cache group has a higher priority
+				},
+			},
 		},
 	},
 };
