@@ -6,7 +6,6 @@ import { __ } from '@wordpress/i18n';
 import {
 	PLUGINS_STORE_NAME,
 	PAYMENT_SETTINGS_STORE_NAME,
-	PaymentIncentive,
 } from '@woocommerce/data';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
@@ -82,15 +81,19 @@ export const SettingsPaymentsMain = () => {
 		return select( PLUGINS_STORE_NAME ).getInstalledPlugins();
 	}, [] );
 
-	const dismissIncentive = useCallback( ( dismissHref: string ) => {
-		apiFetch( {
-			path: dismissHref,
-			method: 'POST',
-			data: {
-				context: 'wc_settings_payments',
-			},
-		} );
-	}, [] );
+	const dismissIncentive = useCallback(
+		( dismissHref: string, context: string ) => {
+			// The dismissHref is the full URL to dismiss the incentive.
+			apiFetch( {
+				url: dismissHref,
+				method: 'POST',
+				data: {
+					context,
+				},
+			} );
+		},
+		[]
+	);
 
 	// Make UI refresh when plugin is installed.
 	const { invalidateResolutionForStoreSelector } = useDispatch(
@@ -151,16 +154,24 @@ export const SettingsPaymentsMain = () => {
 	const isSwitchIncentive =
 		incentive && incentive.promo_id.includes( '-switch-' );
 
-	const isIncentiveDismissedInContext =
+	const incentiveBannerContext = 'wc_settings_payments__banner';
+	const incentiveModalContext = 'wc_settings_payments__modal';
+
+	const isIncentiveDismissedInBannerContext =
 		( incentive?._dismissals.includes( 'all' ) ||
-			incentive?._dismissals.includes( 'wc_settings_payments' ) ) ??
+			incentive?._dismissals.includes( incentiveBannerContext ) ) ??
+		false;
+
+	const isIncentiveDismissedInModalContext =
+		( incentive?._dismissals.includes( 'all' ) ||
+			incentive?._dismissals.includes( incentiveModalContext ) ) ??
 		false;
 
 	return (
 		<>
 			{ incentive &&
 				isSwitchIncentive &&
-				! isIncentiveDismissedInContext && (
+				! isIncentiveDismissedInModalContext && (
 					<IncentiveModal
 						incentive={ incentive }
 						onDismiss={ dismissIncentive }
@@ -179,7 +190,7 @@ export const SettingsPaymentsMain = () => {
 					></button>
 				</div>
 			) }
-			{ incentive && ! isIncentiveDismissedInContext && (
+			{ incentive && ! isIncentiveDismissedInBannerContext && (
 				<IncentiveBanner
 					incentive={ incentive }
 					onDismiss={ dismissIncentive }

@@ -19,6 +19,10 @@ export interface ManagementData {
 	settings_url: string;
 }
 
+export interface LinkData {
+	href: string;
+}
+
 export type PaymentIncentive = {
 	id: string;
 	promo_id: string;
@@ -30,9 +34,7 @@ export type PaymentIncentive = {
 	badge: string;
 	_dismissals: string[];
 	_links: {
-		dismiss: {
-			href: string;
-		};
+		dismiss: LinkData;
 	};
 };
 

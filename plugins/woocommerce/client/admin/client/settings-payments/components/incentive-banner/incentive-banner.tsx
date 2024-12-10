@@ -31,8 +31,9 @@ interface IncentiveBannerProps {
 	 * Callback to handle dismiss action.
 	 *
 	 * @param dismissHref Dismiss URL.
+	 * @param context     The context in which the incentive is dismissed.
 	 */
-	onDismiss: ( dismissHref: string ) => void;
+	onDismiss: ( dismissHref: string, context: string ) => void;
 }
 export const IncentiveBanner = ( {
 	incentive,
@@ -43,6 +44,8 @@ export const IncentiveBanner = ( {
 	const [ isDismissed, setIsDismissed ] = useState( false );
 	const [ isBusy, setIsBusy ] = useState( false );
 
+	const incentiveContext = 'wc_settings_payments__banner';
+
 	const handleSetup = () => {
 		setIsBusy( true );
 		setupPlugin( 'woopayments', 'woocommerce-payments' );
@@ -52,14 +55,14 @@ export const IncentiveBanner = ( {
 
 	const handleDismiss = () => {
 		setIsBusy( true );
-		onDismiss( incentive._links.dismiss.href );
+		onDismiss( incentive._links.dismiss.href, incentiveContext );
 		setIsBusy( false );
 		setIsDismissed( true );
 	};
 
 	const isDismissedInContext =
 		incentive._dismissals.includes( 'all' ) ||
-		incentive._dismissals.includes( 'wc_settings_payments' );
+		incentive._dismissals.includes( incentiveContext );
 
 	if ( isDismissedInContext || isSubmitted || isDismissed ) {
 		return null;

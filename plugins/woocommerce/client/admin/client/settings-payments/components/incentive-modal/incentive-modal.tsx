@@ -37,8 +37,9 @@ interface IncentiveModalProps {
 	 * Callback to handle dismiss action.
 	 *
 	 * @param dismissHref Dismiss URL.
+	 * @param context     The context in which the incentive is dismissed.
 	 */
-	onDismiss: ( dismissHref: string ) => void;
+	onDismiss: ( dismissHref: string, context: string ) => void;
 }
 
 export const IncentiveModal = ( {
@@ -49,13 +50,15 @@ export const IncentiveModal = ( {
 	const [ isBusy, setIsBusy ] = useState( false );
 	const [ isOpen, setIsOpen ] = useState( true );
 
+	const incentiveContext = 'wc_settings_payments__modal';
+
 	const handleClose = () => {
 		setIsOpen( false );
 	};
 
 	const isDismissedInContext =
 		incentive._dismissals.includes( 'all' ) ||
-		incentive._dismissals.includes( 'wc_settings_payments' );
+		incentive._dismissals.includes( incentiveContext );
 
 	if ( isDismissedInContext ) {
 		return null;
@@ -68,7 +71,10 @@ export const IncentiveModal = ( {
 					title=""
 					className="woocommerce-incentive-modal"
 					onRequestClose={ () => {
-						onDismiss( incentive._links.dismiss.href );
+						onDismiss(
+							incentive._links.dismiss.href,
+							incentiveContext
+						);
 						handleClose();
 					} }
 				>
