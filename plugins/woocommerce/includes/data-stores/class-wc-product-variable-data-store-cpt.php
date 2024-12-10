@@ -123,9 +123,10 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 			$children = array();
 		}
 
+		$transient_version = WC_Cache_Helper::get_transient_version( 'product' );
 		if ( ! $force_read && $children ) {
 			// Validate the children data.
-			if ( ! $this->validate_variation_transients( $product ) ) {
+			if ( ! $this->validate_children_data( $children, $transient_version ) ) {
 				$children   = array();
 				$force_read = true;
 			}
@@ -282,6 +283,13 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 		 */
 		if ( empty( $this->prices_array[ $price_hash ] ) ) {
 			$transient_cached_prices_array = array_filter( (array) json_decode( strval( get_transient( $transient_name ) ), true ) );
+
+			// If the prices are not valid, reset the transient cache.
+			if ( ! $this->validate_prices_data( $transient_cached_prices_array, $transient_version ) ) {
+				$transient_cached_prices_array = array(
+					'version' => $transient_version,
+				);
+			}
 
 			// If the product version has changed since the transient was last saved, reset the transient cache.
 			if ( ! isset( $transient_cached_prices_array['version'] ) || $transient_version !== $transient_cached_prices_array['version'] ) {
@@ -718,34 +726,6 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 		}
 
 		delete_transient( 'wc_product_children_' . $product_id );
-	}
-
-	/**
-	 * Validate the variation transients by checking the structure and type of the data.
-	 *
-	 * @param WC_Product $product The product object.
-	 * @return bool True if valid, false otherwise.
-	 */
-	public function validate_variation_transients( &$product ) {
-		$children_transient_name = 'wc_product_children_' . $product->get_id();
-		$prices_transient_name   = 'wc_var_prices_' . $product->get_id();
-
-		$current_version = WC_Cache_Helper::get_transient_version( 'product' );
-
-		$children = get_transient( $children_transient_name );
-		$prices   = json_decode( strval( get_transient( $prices_transient_name ) ), true );
-
-		$children_valid = $this->validate_children_data( $children, $current_version );
-
-		$prices_valid = $this->validate_prices_data( $prices, $current_version );
-
-		if ( ! $children_valid || ! $prices_valid ) {
-			delete_transient( $children_transient_name );
-			delete_transient( $prices_transient_name );
-			return false;
-		}
-
-		return true;
 	}
 
 	/**
