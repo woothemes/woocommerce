@@ -16,15 +16,15 @@ import { useState } from '@wordpress/element';
  * Internal dependencies
  */
 import './ellipsis-menu-content.scss';
-import { getWooPaymentsResetAccountLink } from '~/settings-payments/utils';
 
 interface EllipsisMenuContentProps {
 	pluginId: string;
-	pluginName: string;
+	pluginFile: string;
 	isSuggestion: boolean;
 	onToggle: () => void;
 	links?: PaymentGatewayLink[];
 	isWooPayments?: boolean;
+	setResetAccountModalVisible?: ( isVisible: boolean ) => void;
 	isEnabled?: boolean;
 	needsSetup?: boolean;
 	testMode?: boolean;
@@ -32,11 +32,12 @@ interface EllipsisMenuContentProps {
 
 export const EllipsisMenuContent = ( {
 	pluginId,
-	pluginName,
+	pluginFile,
 	isSuggestion,
 	onToggle,
 	links = [],
 	isWooPayments = false,
+	setResetAccountModalVisible = () => {},
 	isEnabled = false,
 	needsSetup = false,
 	testMode = false,
@@ -45,7 +46,6 @@ export const EllipsisMenuContent = ( {
 	const [ isDeactivating, setIsDeactivating ] = useState( false );
 	const [ isDisabling, setIsDisabling ] = useState( false );
 	const [ isHidingSuggestion, setIsHidingSuggestion ] = useState( false );
-	const [ isResetting, setIsResetting ] = useState( false );
 
 	const {
 		invalidateResolutionForStoreSelector,
@@ -65,7 +65,7 @@ export const EllipsisMenuContent = ( {
 
 	const deactivateGateway = () => {
 		setIsDeactivating( true );
-		deactivatePlugin( pluginName )
+		deactivatePlugin( pluginFile )
 			.then( () => {
 				createSuccessNotice(
 					__( 'Plugin was successfully deactivated.', 'woocommerce' )
@@ -134,11 +134,6 @@ export const EllipsisMenuContent = ( {
 			} );
 	};
 
-	const resetWooPaymentsAccount = () => {
-		setIsResetting( true );
-		window.location.href = getWooPaymentsResetAccountLink();
-	};
-
 	return (
 		<>
 			{ links
@@ -193,9 +188,10 @@ export const EllipsisMenuContent = ( {
 					key="reset-account"
 				>
 					<Button
-						onClick={ resetWooPaymentsAccount }
-						isBusy={ isResetting }
-						disabled={ isResetting }
+						onClick={ () => {
+							setResetAccountModalVisible( true );
+							onToggle();
+						} }
 						className={ 'components-button__danger' }
 					>
 						{ __( 'Reset account', 'woocommerce' ) }
