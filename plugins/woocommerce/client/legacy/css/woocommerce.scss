@@ -1370,8 +1370,12 @@ p.demo_store,
 			vertical-align: middle;
 		}
 
-		.order-actions--buttons {
+		.order-actions-button {
 			margin-right: 10px;
+
+			&:last-child {
+				margin-right: 0;
+			}
 		}
 
 		*:last-child {
