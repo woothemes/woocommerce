@@ -35,6 +35,11 @@ export const SettingsPaymentsMain = () => {
 	const [ livePaymentsModalVisible, setLivePaymentsModalVisible ] =
 		useState( false );
 
+	const [ storeCountry, setStoreCountry ] = useState< string | null >(
+		window.wcSettings?.admin?.woocommerce_payments_nox_profile
+			?.business_country_code || null
+	);
+
 	const urlParams = new URLSearchParams( window.location.search );
 
 	useEffect( () => {
@@ -83,7 +88,7 @@ export const SettingsPaymentsMain = () => {
 			return {
 				providers: select(
 					PAYMENT_SETTINGS_STORE_NAME
-				).getPaymentProviders(),
+				).getPaymentProviders( storeCountry ),
 				suggestions: select(
 					PAYMENT_SETTINGS_STORE_NAME
 				).getSuggestions(),
@@ -146,6 +151,8 @@ export const SettingsPaymentsMain = () => {
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
 					isFetching={ isFetching }
+					businessRegistrationCountry={ storeCountry }
+					setBusinessRegistrationCountry={ setStoreCountry }
 				/>
 				<OtherPaymentGateways
 					suggestions={ suggestions }

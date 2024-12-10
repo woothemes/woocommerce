@@ -1,7 +1,3 @@
-const { test, expect } = require( '@playwright/test' );
-const { customer, storeDetails } = require( '../../test-data/data' );
-const { api } = require( '../../utils' );
-
 /**
  * External dependencies
  */
@@ -9,6 +5,13 @@ import {
 	addAProductToCart,
 	getOrderIdFromUrl,
 } from '@woocommerce/e2e-utils-playwright';
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
+const { test, expect } = require( '@playwright/test' );
+const { customer, storeDetails } = require( '../../test-data/data' );
+const { api } = require( '../../utils' );
 
 let productId, orderId, zoneId;
 
@@ -28,7 +31,7 @@ const storeName = 'WooCommerce Core E2E Test Suite';
 
 test.describe(
 	'Shopper Order Email Receiving',
-	{ tag: [ '@payments', '@services', '@hpos' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 
