@@ -235,6 +235,9 @@ export const CountrySelector = < ItemType extends Item >( {
 	);
 
 	useEffect( () => {
+		// Remove the onbeforeunload event listener to fix the "Are you sure you want to leave this page?" dialog
+		window.onbeforeunload = null;
+
 		// Highlight the selected country when the menu is opened.
 		if ( isOpen && selectedItem !== null ) {
 			const selectedItemIndex =
