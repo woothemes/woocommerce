@@ -230,3 +230,14 @@ $wc-setting-email-preview-gap: 16px;
 		}
 	}
 }
+
+.wc-settings-email-color-palette-title {
+	display: inline-block;
+	margin-right: 15px;
+}
+
+.wc-settings-email-color-palette-buttons {
+	align-items: center;
+	display: inline-flex;
+	gap: 12px;
+}

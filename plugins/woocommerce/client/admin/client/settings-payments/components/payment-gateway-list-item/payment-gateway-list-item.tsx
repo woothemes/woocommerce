@@ -3,7 +3,6 @@
  */
 import { EllipsisMenu } from '@woocommerce/components';
 import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
-import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
 import { PaymentProvider } from '@woocommerce/data';
@@ -13,18 +12,16 @@ import { PaymentProvider } from '@woocommerce/data';
  */
 import sanitizeHTML from '~/lib/sanitize-html';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
-import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
+import { PaymentGatewayButtons } from '~/settings-payments/components/payment-gateway-buttons';
 import { EllipsisMenuContent } from '~/settings-payments/components/ellipsis-menu-content';
 import { isWooPayments } from '~/settings-payments/utils';
 
 type PaymentGatewayItemProps = {
 	gateway: PaymentProvider;
-	setupLivePayments: () => void;
 };
 
 export const PaymentGatewayListItem = ( {
 	gateway,
-	setupLivePayments,
 }: PaymentGatewayItemProps ) => {
 	const isWCPay = isWooPayments( gateway.id );
 
@@ -41,10 +38,6 @@ export const PaymentGatewayListItem = ( {
 				}
 			}
 			return 'active';
-		}
-
-		if ( isWCPay ) {
-			return 'recommended';
 		}
 
 		return 'inactive';
@@ -89,26 +82,14 @@ export const PaymentGatewayListItem = ( {
 		after: (
 			<div className="woocommerce-list__item-after__actions">
 				<>
-					<PaymentGatewayButton
+					<PaymentGatewayButtons
 						id={ gateway.id }
 						isOffline={ false }
 						enabled={ gateway.state?.enabled || false }
 						needsSetup={ gateway.state?.needs_setup }
+						testMode={ gateway.state?.test_mode }
 						settingsUrl={ gateway.management?.settings_url || '' }
 					/>
-					{ isWCPay &&
-						gateway.state?.enabled &&
-						! gateway.state?.needs_setup &&
-						gateway.state?.test_mode && (
-							<Button
-								variant="primary"
-								onClick={ setupLivePayments }
-								isBusy={ false }
-								disabled={ false }
-							>
-								{ __( 'Activate payments', 'woocommerce' ) }
-							</Button>
-						) }
 					<EllipsisMenu
 						label={ __( 'Task List Options', 'woocommerce' ) }
 						renderContent={ ( { onToggle } ) => (

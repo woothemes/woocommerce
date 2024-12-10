@@ -12,7 +12,7 @@
  *
  * @see     https://woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates
- * @version 3.0.0
+ * @version 9.6.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 
-<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="pswp" tabindex="-1" role="dialog" aria-modal="true" aria-hidden="true">
 	<div class="pswp__bg"></div>
 	<div class="pswp__scroll-wrap">
 		<div class="pswp__container">
