@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useState } from 'react';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Button, Modal } from '@wordpress/components';
 
 /**
@@ -41,9 +41,13 @@ export const WooPaymentsResetAccountModal = ( {
 						<div className="woocommerce-woopayments-modal__content__item">
 							<div>
 								<span>
-									{ __(
-										'When you reset your test account, all data — including your WooPayments account details, test transactions, and payouts history — will be lost. This action cannot be undone, but you can create a new test account at any time.',
-										'woocommerce'
+									{ sprintf(
+										/* translators: %s: plugin name */
+										__(
+											'When you reset your test account, all data — including your %s account details, test transactions, and payouts history — will be lost. This action cannot be undone, but you can create a new test account at any time.',
+											'woocommerce'
+										),
+										'WooPayments'
 									) }
 								</span>
 							</div>
