@@ -31,9 +31,6 @@ declare global {
 }
 
 window.addEventListener( 'load', () => {
-	// Update the totals immediately on load.
-	updateTotals( select( CART_STORE_KEY ).getCartData() );
-
 	// Triggers JS event whenever the cart store is updated.
 	subscribe( () => {
 		updateTotals( select( CART_STORE_KEY ).getCartData() );
