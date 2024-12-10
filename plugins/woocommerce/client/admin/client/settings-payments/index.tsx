@@ -3,7 +3,7 @@
  */
 import { Gridicon } from '@automattic/components';
 import { Button, SelectControl } from '@wordpress/components';
-import React, { lazy, Suspense } from '@wordpress/element';
+import React, { useState, lazy, Suspense, useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { getAdminLink } from '@woocommerce/settings';
 
@@ -41,10 +41,6 @@ const SettingsPaymentsWooCommercePaymentsChunk = lazy(
 			/* webpackChunkName: "settings-payments-woocommerce-payments" */ './settings-payments-woocommerce-payments'
 		)
 );
-
-const onButtonClick = () => {
-	//TODO: Implement in future PR.
-};
 
 export const SettingsPaymentsMainWrapper = () => {
 	return (
@@ -147,6 +143,11 @@ export const SettingsPaymentsOfflineWrapper = () => {
 };
 
 export const SettingsPaymentsMethodsWrapper = () => {
+	const [ paymentMethodsState, setPaymentMethodsState ] = useState( [] );
+	const onClick = useCallback( () => {
+		//TODO: Implement in future PR.
+	}, [ paymentMethodsState ] );
+
 	return (
 		<>
 			<Header
@@ -160,12 +161,15 @@ export const SettingsPaymentsMethodsWrapper = () => {
 				) }
 				hasButton={ true }
 				buttonLabel={ __( 'Continue', 'woocommerce' ) }
-				onButtonClick={ onButtonClick }
+				onButtonClick={ onClick }
 			/>
 			<Suspense
 				fallback={ <div>Loading payment methods settings...</div> }
 			>
-				<SettingsPaymentsMethodsChunk />
+				<SettingsPaymentsMethodsChunk
+					paymentMethodsState={ paymentMethodsState }
+					setPaymentMethodsState={ setPaymentMethodsState }
+				/>
 			</Suspense>
 		</>
 	);
