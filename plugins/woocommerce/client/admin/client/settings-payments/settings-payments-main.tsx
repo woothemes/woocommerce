@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useCallback } from 'react';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import {
 	PLUGINS_STORE_NAME,
 	PAYMENT_SETTINGS_STORE_NAME,
@@ -47,9 +47,13 @@ export const SettingsPaymentsMain = () => {
 			urlParams.get( 'test_drive_error' ) === 'true';
 		if ( isAccountTestDriveError ) {
 			setErrorMessage(
-				__(
-					'An error occurred while setting up your sandbox account. Please try again.',
-					'woocommerce'
+				sprintf(
+					/* translators: %s: plugin name */
+					__(
+						'%s: An error occurred while setting up your sandbox account — please try again.',
+						'woocommerce'
+					),
+					'WooPayments'
 				)
 			);
 		}
@@ -59,9 +63,13 @@ export const SettingsPaymentsMain = () => {
 
 		if ( isJetpackConnectionError ) {
 			setErrorMessage(
-				__(
-					'There was a problem connecting your WordPress.com account - please try again.',
-					'woocommerce'
+				sprintf(
+					/* translators: %s: plugin name */
+					__(
+						'%s: There was a problem connecting your WordPress.com account — please try again.',
+						'woocommerce'
+					),
+					'WooPayments'
 				)
 			);
 		}
