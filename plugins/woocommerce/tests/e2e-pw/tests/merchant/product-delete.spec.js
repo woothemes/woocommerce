@@ -1,4 +1,4 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 
 const test = baseTest.extend( {
 	storageState: process.env.ADMINSTATE,
@@ -36,7 +36,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Products > Delete Product',
-	{ tag: [ '@gutenberg', '@services' ] },
+	{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
 	() => {
 		test( 'can delete a product from edit view', async ( {
 			page,
