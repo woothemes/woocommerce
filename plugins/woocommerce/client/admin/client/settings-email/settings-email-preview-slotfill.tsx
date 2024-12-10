@@ -21,9 +21,7 @@ import { EmailPreviewType } from './settings-email-preview-type';
 
 const { Fill } = createSlotFill( SETTINGS_SLOT_FILL_CONSTANT );
 
-export type EmailType = SelectControl.Option & {
-	subject: string;
-};
+export type EmailType = SelectControl.Option;
 
 type EmailPreviewFillProps = {
 	emailTypes: EmailType[];
