@@ -20,7 +20,7 @@ import { getWooPaymentsResetAccountLink } from '~/settings-payments/utils';
 
 interface EllipsisMenuContentProps {
 	pluginId: string;
-	pluginName: string;
+	pluginFile: string;
 	isSuggestion: boolean;
 	onToggle: () => void;
 	links?: PaymentGatewayLink[];
@@ -32,7 +32,7 @@ interface EllipsisMenuContentProps {
 
 export const EllipsisMenuContent = ( {
 	pluginId,
-	pluginName,
+	pluginFile,
 	isSuggestion,
 	onToggle,
 	links = [],
@@ -65,7 +65,7 @@ export const EllipsisMenuContent = ( {
 
 	const deactivateGateway = () => {
 		setIsDeactivating( true );
-		deactivatePlugin( pluginName )
+		deactivatePlugin( pluginFile )
 			.then( () => {
 				createSuccessNotice(
 					__( 'Plugin was successfully deactivated.', 'woocommerce' )
