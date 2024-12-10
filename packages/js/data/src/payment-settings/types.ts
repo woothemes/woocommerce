@@ -49,6 +49,15 @@ export type OfflinePaymentGateway = {
 	plugin: PluginData;
 };
 
+export type RecommendedPaymentMethod = {
+	id: string;
+	_order: number;
+	title: string;
+	description: string;
+	icon: string;
+	enabled: boolean;
+};
+
 export type SuggestedPaymentExtension = {
 	id: string;
 	_type: string;
