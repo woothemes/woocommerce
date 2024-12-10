@@ -3,7 +3,7 @@
  */
 import { RichText, useBlockProps } from '@wordpress/block-editor';
 import { BlockEditProps } from '@wordpress/blocks';
-import { useCallback } from '@wordpress/element';
+import { useCallback, useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -18,11 +18,22 @@ export const Edit = ( {
 	const { className, heading } = attributes;
 	const blockProps = useBlockProps();
 
-	const headingText = heading ?? DEFAULT_HEADING;
+	const [ headingText, setHeadingText ] = useState(
+		heading || DEFAULT_HEADING
+	);
 
 	const onChangeCallback = useCallback(
 		( value: string ) => {
-			setAttributes( { heading: value } );
+			setHeadingText( value );
+
+			if ( value === DEFAULT_HEADING ) {
+				// If the user sets the text of the heading back to the default heading, we clear the block attribute,
+				// this ensures that when returning to the default text they will get the translated heading, not a fixed
+				// string saved in block attribute
+				setAttributes( { heading: '' } );
+			} else {
+				setAttributes( { heading: value } );
+			}
 		},
 		[ setAttributes ]
 	);
@@ -30,7 +41,6 @@ export const Edit = ( {
 	const headingElement = (
 		<RichText
 			value={ headingText }
-			className={ '' }
 			onChange={ onChangeCallback }
 			placeholder={ DEFAULT_HEADING }
 		/>

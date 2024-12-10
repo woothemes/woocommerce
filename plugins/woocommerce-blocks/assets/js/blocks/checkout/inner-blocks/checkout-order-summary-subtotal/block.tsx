@@ -6,8 +6,8 @@ import { getCurrencyFromPriceResponse } from '@woocommerce/price-format';
 import { useStoreCart } from '@woocommerce/base-context/hooks';
 
 export type BlockAttributes = {
-	className?: string;
-	heading?: string;
+	className: string;
+	heading: string;
 };
 
 export type BlockProps = Omit< BlockAttributes, 'heading' > & {
