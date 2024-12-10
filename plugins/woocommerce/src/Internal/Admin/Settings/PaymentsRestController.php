@@ -219,9 +219,9 @@ class PaymentsRestController extends RestApiControllerBase {
 	 */
 	protected function set_country( WP_REST_Request $request ) {
 		$location = $request->get_param( 'location' );
-		
+
 		$result = $this->payments->set_country( $location );
-		
+
 		return rest_ensure_response( array( 'success' => $result ) );
 	}
 
