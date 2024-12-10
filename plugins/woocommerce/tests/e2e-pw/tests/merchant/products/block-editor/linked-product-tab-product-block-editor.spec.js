@@ -3,6 +3,7 @@ const { expect } = require( '@playwright/test' );
 
 const { clickOnTab } = require( '../../../../utils/simple-products' );
 const { helpers } = require( '../../../../utils' );
+const { tags } = require( '../../../../fixtures/fixtures' );
 
 const NEW_EDITOR_ADD_PRODUCT_URL =
 	'wp-admin/admin.php?page=wc-admin&path=%2Fadd-product';
@@ -22,7 +23,7 @@ const linkedProductsData = [],
 	productIds = [];
 let productId = 0;
 
-test.describe( 'General tab', { tag: '@gutenberg' }, () => {
+test.describe( 'General tab', { tag: tags.GUTENBERG }, () => {
 	test.describe( 'Linked product', () => {
 		test.beforeAll( async ( { api } ) => {
 			await api
@@ -70,7 +71,7 @@ test.describe( 'General tab', { tag: '@gutenberg' }, () => {
 
 		test(
 			'can create a product with linked products',
-			{ tag: '@skip-on-default-pressable' },
+			{ tag: tags.SKIP_ON_PRESSABLE },
 			async ( { page } ) => {
 				await page.goto( NEW_EDITOR_ADD_PRODUCT_URL );
 				await clickOnTab( 'General', page );

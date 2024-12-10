@@ -1,8 +1,3 @@
-const { test, expect } = require( '@playwright/test' );
-const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
-const { fillPageTitle } = require( '../../utils/editor' );
-const { random } = require( '../../utils/helpers' );
-
 /**
  * External dependencies
  */
@@ -12,6 +7,16 @@ import {
 	goToPageEditor,
 	publishPage,
 } from '@woocommerce/e2e-utils-playwright';
+
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
+
+const { test, expect } = require( '@playwright/test' );
+const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
+const { fillPageTitle } = require( '../../utils/editor' );
+const { random } = require( '../../utils/helpers' );
 
 const productName = 'First Product Cart Block Taxing';
 const productPrice = '100.00';
@@ -44,10 +49,10 @@ test.describe(
 	'Shopper Cart & Checkout Block Tax Display',
 	{
 		tag: [
-			'@payments',
-			'@services',
-			'@hpos',
-			'@could-be-lower-level-test',
+			tags.PAYMENTS,
+			tags.SERVICES,
+			tags.HPOS,
+			tags.COULD_BE_LOWER_LEVEL_TEST,
 		],
 	},
 	() => {
@@ -251,7 +256,7 @@ test.describe(
 
 test.describe(
 	'Shopper Cart & Checkout Block Tax Rounding',
-	{ tag: [ '@payments', '@services', '@could-be-lower-level-test' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.COULD_BE_LOWER_LEVEL_TEST ] },
 	() => {
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {
@@ -495,7 +500,7 @@ test.describe(
 
 test.describe(
 	'Shopper Cart & Checkout Block Tax Levels',
-	{ tag: [ '@payments', '@services', '@could-be-lower-level-test' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.COULD_BE_LOWER_LEVEL_TEST ] },
 	() => {
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {
@@ -820,7 +825,7 @@ test.describe(
 
 test.describe(
 	'Shipping Cart & Checkout Block Tax',
-	{ tag: [ '@payments', '@services', '@could-be-lower-level-test' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.COULD_BE_LOWER_LEVEL_TEST ] },
 	() => {
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {
