@@ -15,13 +15,17 @@ test.describe(
 			await api
 				.post( 'products/categories/batch', {
 					create: [
-						getFakeCategory(),
-						getFakeCategory(),
-						getFakeCategory(),
+						getFakeCategory( { extraRandomTerm: true } ),
+						getFakeCategory( { extraRandomTerm: true } ),
+						getFakeCategory( { extraRandomTerm: true } ),
 					],
 				} )
 				.then( ( response ) => {
 					categories = response.data.create;
+
+					if ( categories.map( ( c ) => c.id ).includes( 0 ) ) {
+						console.log( JSON.stringify( response.data ) );
+					}
 				} )
 				.catch( ( error ) => {
 					console.error( error.response );

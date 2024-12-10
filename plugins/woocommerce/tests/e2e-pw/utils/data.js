@@ -56,9 +56,11 @@ function getFakeProduct( options = {} ) {
 	};
 }
 
-function getFakeCategory() {
+function getFakeCategory( options = { extraRandomTerm: false } ) {
 	return {
-		name: `${ faker.commerce.productMaterial() } ${ faker.commerce.department() } `,
+		name: `${ faker.commerce.productMaterial() } ${ faker.commerce.department() } ${
+			options.extraRandomTerm ? faker.string.alphanumeric( 5 ) : ''
+		}`.trim(),
 	};
 }
 
