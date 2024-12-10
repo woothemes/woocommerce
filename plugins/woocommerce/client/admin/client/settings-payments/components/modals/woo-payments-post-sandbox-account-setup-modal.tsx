@@ -54,22 +54,24 @@ export const WooPaymentsPostSandboxAccountSetupModal = ( {
 					<div className="woocommerce-woopayments-modal__content">
 						<div className="woocommerce-woopayments-modal__content__item">
 							<div className="woocommerce-woopayments-modal__content__item__description">
-								{ interpolateComponents( {
-									mixedString: __(
-										"We've created a test account for you so that you can begin testing payments on your store. Not sure what to test? Take a look at {{link}}how to test payments{{/link}}.",
-										'woocommerce'
-									),
-									components: {
-										link: (
-											<Link
-												href="https://woocommerce.com/document/woopayments/testing-and-troubleshooting/sandbox-mode/"
-												target="_blank"
-												rel="noreferrer"
-												type="external"
-											/>
+								<p>
+									{ interpolateComponents( {
+										mixedString: __(
+											"We've created a test account for you so that you can begin testing payments on your store. Not sure what to test? Take a look at {{link}}how to test payments{{/link}}.",
+											'woocommerce'
 										),
-									},
-								} ) }
+										components: {
+											link: (
+												<Link
+													href="https://woocommerce.com/document/woopayments/testing-and-troubleshooting/sandbox-mode/"
+													target="_blank"
+													rel="noreferrer"
+													type="external"
+												/>
+											),
+										},
+									} ) }
+								</p>
 							</div>
 						</div>
 						<div className="woocommerce-woopayments-modal__content__item">
@@ -105,22 +107,24 @@ export const WooPaymentsPostSandboxAccountSetupModal = ( {
 									{ __( 'Activate payments', 'woocommerce' ) }
 								</h3>
 								<div>
-									<span>
-										{ __(
-											'Provide some additional details about your business so you can being accepting real payments. ',
-											'woocommerce'
-										) }
-									</span>
-									<Link
-										href={
-											'https://woocommerce.com/document/woopayments/startup-guide/#sign-up-process'
-										}
-										target="_blank"
-										rel="noreferrer"
-										type="external"
-									>
-										Learn more
-									</Link>
+									<p>
+										{ interpolateComponents( {
+											mixedString: __(
+												'Provide some additional details about your business so you can being accepting real payments. {{link}}Learn more{{/link}}',
+												'woocommerce'
+											),
+											components: {
+												link: (
+													<Link
+														href="https://woocommerce.com/document/woopayments/startup-guide/#sign-up-process"
+														target="_blank"
+														rel="noreferrer"
+														type="external"
+													/>
+												),
+											},
+										} ) }
+									</p>
 								</div>
 							</div>
 						</div>
