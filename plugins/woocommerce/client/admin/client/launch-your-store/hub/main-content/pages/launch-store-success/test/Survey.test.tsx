@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { act, fireEvent, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 /**
  * Internal dependencies

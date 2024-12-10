@@ -47,7 +47,7 @@ describe( 'TagField', () => {
 			</Form>
 		);
 		const searchInput = queryByPlaceholderText( 'Search or create tag…' );
-		userEvent.click(searchInput!);
+		userEvent.click( searchInput! );
 		expect( queryByText( 'Create new' ) ).toBeInTheDocument();
 	} );
 

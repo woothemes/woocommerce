@@ -86,6 +86,7 @@
 		"@testing-library/jest-dom": "^6.x.x",
 		"@testing-library/dom": "^10.4.x",
 		"@testing-library/react": "^16.x.x",
+		"@testing-library/react-hooks": "8.0.1",
 		"@testing-library/user-event": "13.5.0",
 		"@types/dompurify": "^2.4.0",
 		"@types/jest": "27.5.x",

@@ -3,6 +3,7 @@
  */
 import { render } from '@testing-library/react';
 import { TaskType } from '@woocommerce/data';
+import userEvent from '@testing-library/user-event';
 
 /**
  * Internal dependencies
@@ -10,7 +11,6 @@ import { TaskType } from '@woocommerce/data';
 import { ShippingRecommendation as _ShippingRecommendation } from '../shipping-recommendation';
 import { ShippingRecommendationProps, TaskProps } from '../types';
 import { redirectToWCSSettings } from '../utils';
-import userEvent from '@testing-library/user-event';
 
 jest.mock( '../../tax/utils', () => ( {
 	hasCompleteAddress: jest.fn().mockReturnValue( true ),
