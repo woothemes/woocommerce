@@ -6,6 +6,7 @@ const {
 	getInstalledWordPressVersion,
 } = require( '../../../../utils/wordpress' );
 const { insertBlock } = require( '../../../../utils/editor' );
+const { tags } = require( '../../../../fixtures/fixtures' );
 
 const NEW_EDITOR_ADD_PRODUCT_URL =
 	'wp-admin/admin.php?page=wc-admin&path=%2Fadd-product';
@@ -36,7 +37,7 @@ const productData = {
 
 test.describe.configure( { mode: 'serial' } );
 
-test.describe( 'General tab', { tag: '@gutenberg' }, () => {
+test.describe( 'General tab', { tag: tags.GUTENBERG }, () => {
 	test.describe( 'Simple product form', () => {
 		test( 'renders each block without error', async ( { page } ) => {
 			await page.goto( NEW_EDITOR_ADD_PRODUCT_URL );
@@ -61,7 +62,7 @@ test.describe( 'General tab', { tag: '@gutenberg' }, () => {
 
 		test(
 			'can create a simple product',
-			{ tag: '@skip-on-default-pressable' },
+			{ tag: tags.SKIP_ON_PRESSABLE },
 			async ( { page } ) => {
 				await test.step( 'add new product', async () => {
 					await page.goto( NEW_EDITOR_ADD_PRODUCT_URL );
@@ -487,7 +488,7 @@ test.describe( 'General tab', { tag: '@gutenberg' }, () => {
 		test( 'can a shopper add the simple product to the cart', async ( {
 			page,
 		} ) => {
-			await page.goto( `/?post_type=product&p=${ productId }` );
+			await page.goto( `?post_type=product&p=${ productId }` );
 
 			await page.locator( 'button[name="add-to-cart"]' ).click();
 			await page.getByRole( 'link', { name: 'View cart' } ).click();

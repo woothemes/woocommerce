@@ -8,7 +8,7 @@ import {
 	goToPageEditor,
 } from '@woocommerce/e2e-utils-playwright';
 const { fillPageTitle } = require( '../../utils/editor' );
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 const { random } = require( '../../utils/helpers' );
 
 const simpleProductName = `Checkout Coupons Product ${ random() }`;
@@ -61,7 +61,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Checkout Block Applying Coupons',
-	{ tag: [ '@payments', '@services' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		const couponBatchId = [];
 

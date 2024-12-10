@@ -2,6 +2,12 @@
  * External dependencies
  */
 import { addAProductToCart } from '@woocommerce/e2e-utils-playwright';
+
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
+
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
@@ -22,7 +28,7 @@ const shippingCountryFR = 'FR';
 
 test.describe(
 	'Cart Calculate Shipping',
-	{ tag: [ '@payments', '@services' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		let firstProductId, secondProductId, shippingZoneDEId, shippingZoneFRId;
 
@@ -130,9 +136,9 @@ test.describe(
 
 		test(
 			'allows customer to calculate Free Shipping if in Germany',
-			{ tag: [ '@could-be-lower-level-test' ] },
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 			async ( { page } ) => {
-				await page.goto( '/cart/' );
+				await page.goto( 'cart/' );
 				// Set shipping country to Germany
 				await page.locator( 'a.shipping-calculator-button' ).click();
 				await page
@@ -152,9 +158,9 @@ test.describe(
 
 		test(
 			'allows customer to calculate Flat rate and Local pickup if in France',
-			{ tag: [ '@could-be-lower-level-test' ] },
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 			async ( { page } ) => {
-				await page.goto( '/cart/' );
+				await page.goto( 'cart/' );
 				// Set shipping country to France
 				await page.locator( 'a.shipping-calculator-button' ).click();
 				await page
@@ -182,9 +188,9 @@ test.describe(
 
 		test(
 			'should show correct total cart price after updating quantity',
-			{ tag: [ '@could-be-lower-level-test' ] },
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 			async ( { page } ) => {
-				await page.goto( '/cart/' );
+				await page.goto( 'cart/' );
 				await page.locator( 'input.qty' ).fill( '4' );
 				await page.locator( 'text=Update cart' ).click();
 
@@ -203,11 +209,11 @@ test.describe(
 
 		test(
 			'should show correct total cart price with 2 products and flat rate',
-			{ tag: [ '@could-be-lower-level-test' ] },
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 			async ( { page } ) => {
 				await addAProductToCart( page, secondProductId );
 
-				await page.goto( '/cart/' );
+				await page.goto( 'cart/' );
 				await page.locator( 'a.shipping-calculator-button' ).click();
 				await page
 					.locator( '#calc_shipping_country' )
@@ -225,12 +231,12 @@ test.describe(
 
 		test(
 			'should show correct total cart price with 2 products without flat rate',
-			{ tag: [ '@could-be-lower-level-test' ] },
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 			async ( { page } ) => {
 				await addAProductToCart( page, secondProductId );
 
 				// Set shipping country to Spain
-				await page.goto( '/cart/' );
+				await page.goto( 'cart/' );
 				await page.locator( 'a.shipping-calculator-button' ).click();
 				await page
 					.locator( '#calc_shipping_country' )

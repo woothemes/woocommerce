@@ -29,6 +29,8 @@ class Payments {
 	const EXTENSION_INSTALLED     = 'installed';
 	const EXTENSION_ACTIVE        = 'active';
 
+	const EXTENSION_TYPE_WPORG = 'wporg';
+
 	const USER_PAYMENTS_NOX_PROFILE_KEY = 'woocommerce_payments_nox_profile';
 
 	const PROVIDERS_ORDER_OPTION         = 'woocommerce_gateway_order';
@@ -122,7 +124,8 @@ class Payments {
 
 			$gateway_details = $this->get_payment_gateway_base_details(
 				$payment_gateway,
-				$providers_order_map[ $payment_gateway->id ]
+				$providers_order_map[ $payment_gateway->id ],
+				$location
 			);
 			$gateway_details = $this->enhance_payment_gateway_details( $gateway_details, $payment_gateway, $location );
 
@@ -148,7 +151,9 @@ class Payments {
 				'icon'        => plugins_url( 'assets/images/payment_methods/cod.svg', WC_PLUGIN_FILE ),
 				// The offline PMs (and their group) are obviously from WooCommerce, and WC is always active.
 				'plugin'      => array(
+					'_type'  => 'wporg',
 					'slug'   => 'woocommerce',
+					'file'   => '', // This pseudo-provider should have no use for the plugin file.
 					'status' => self::EXTENSION_ACTIVE,
 				),
 			);
@@ -175,6 +180,39 @@ class Payments {
 	}
 
 	/**
+	 * Get the business location country code for the Payments settings.
+	 *
+	 * @return string The ISO 3166-1 alpha-2 country code to use for the overall business location.
+	 *                If the user didn't set a location, the WC base location country code is used.
+	 */
+	public function get_country(): string {
+		$user_nox_meta = get_user_meta( get_current_user_id(), self::USER_PAYMENTS_NOX_PROFILE_KEY, true );
+		if ( ! empty( $user_nox_meta['business_country_code'] ) ) {
+			return $user_nox_meta['business_country_code'];
+		}
+
+		return WC()->countries->get_base_country();
+	}
+
+	/**
+	 * Set the business location country for the Payments settings.
+	 *
+	 * @param string $location The country code. This should be a ISO 3166-1 alpha-2 country code.
+	 */
+	public function set_country( string $location ): bool {
+		$user_payments_nox_profile = get_user_meta( get_current_user_id(), self::USER_PAYMENTS_NOX_PROFILE_KEY, true );
+
+		if ( empty( $user_payments_nox_profile ) ) {
+			$user_payments_nox_profile = array();
+		} else {
+			$user_payments_nox_profile = maybe_unserialize( $user_payments_nox_profile );
+		}
+		$user_payments_nox_profile['business_country_code'] = $location;
+
+		return false !== update_user_meta( get_current_user_id(), self::USER_PAYMENTS_NOX_PROFILE_KEY, $user_payments_nox_profile );
+	}
+
+	/**
 	 * Get the source plugin slug of a payment gateway instance.
 	 *
 	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
@@ -182,6 +220,12 @@ class Payments {
 	 * @return string The plugin slug of the payment gateway.
 	 */
 	public function get_payment_gateway_plugin_slug( WC_Payment_Gateway $payment_gateway ): string {
+		// If the payment gateway object has a `plugin_slug` property, use it.
+		// This is useful for testing.
+		if ( property_exists( $payment_gateway, 'plugin_slug' ) ) {
+			return $payment_gateway->plugin_slug;
+		}
+
 		try {
 			$reflector = new \ReflectionClass( get_class( $payment_gateway ) );
 		} catch ( \ReflectionException $e ) {
@@ -574,10 +618,19 @@ class Payments {
 	 *
 	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
 	 * @param int                $payment_gateway_order The order of the payment gateway.
+	 * @param string             $country_code Optional. The country code for which the details are being gathered.
+	 *                                         This should be a ISO 3166-1 alpha-2 country code.
 	 *
 	 * @return array The response data.
 	 */
-	private function get_payment_gateway_base_details( WC_Payment_Gateway $payment_gateway, int $payment_gateway_order ): array {
+	private function get_payment_gateway_base_details( WC_Payment_Gateway $payment_gateway, int $payment_gateway_order, string $country_code = '' ): array {
+		$plugin_slug = $this->get_payment_gateway_plugin_slug( $payment_gateway );
+		$plugin_file = PluginsHelper::get_plugin_path_from_slug( $plugin_slug );
+		// Remove the .php extension from the file path. The WP API expects it without it.
+		if ( ! empty( $plugin_file ) && str_ends_with( $plugin_file, '.php' ) ) {
+			$plugin_file = substr( $plugin_file, 0, -4 );
+		}
+
 		return array(
 			'id'          => $payment_gateway->id,
 			'_order'      => $payment_gateway_order,
@@ -588,13 +641,116 @@ class Payments {
 				'enabled'     => filter_var( $payment_gateway->enabled, FILTER_VALIDATE_BOOLEAN ),
 				'needs_setup' => filter_var( $payment_gateway->needs_setup(), FILTER_VALIDATE_BOOLEAN ),
 				'test_mode'   => $this->is_payment_gateway_in_test_mode( $payment_gateway ),
+				'dev_mode'    => $this->is_payment_gateway_in_dev_mode( $payment_gateway ),
 			),
 			'management'  => array(
 				'settings_url' => method_exists( $payment_gateway, 'get_settings_url' )
 					? sanitize_url( $payment_gateway->get_settings_url() )
 					: admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . strtolower( $payment_gateway->id ) ),
 			),
+			'onboarding'  => array(
+				'recommended_payment_methods' => $this->get_payment_gateway_recommended_payment_methods( $payment_gateway, $country_code ),
+			),
+			'plugin'      => array(
+				'_type'  => 'wporg',
+				'slug'   => $plugin_slug,
+				'file'   => $plugin_file,
+				'status' => self::EXTENSION_ACTIVE,
+			),
 		);
+	}
+
+	/**
+	 * Try and determine a list of recommended payment methods for a payment gateway.
+	 *
+	 * This data is not always available, and it is up to the payment gateway to provide it.
+	 * This is not a definitive list of payment methods that the gateway supports.
+	 * The data is aimed at helping the user understand what payment methods are recommended for the gateway
+	 * and potentially help them make a decision on which payment methods to enable.
+	 *
+	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
+	 * @param string             $country_code    Optional. The country code for which to get recommended payment methods.
+	 *                                            This should be a ISO 3166-1 alpha-2 country code.
+	 *
+	 * @return array The recommended payment methods list for the payment gateway.
+	 *               Empty array if there are none.
+	 */
+	private function get_payment_gateway_recommended_payment_methods( WC_Payment_Gateway $payment_gateway, string $country_code = '' ): array {
+		// Bail if the payment gateway does not implement the method.
+		if ( ! method_exists( $payment_gateway, 'get_recommended_payment_methods' ) ) {
+			return array();
+		}
+
+		// Get the "raw" recommended payment methods from the payment gateway.
+		$recommended_pms = call_user_func_array(
+			array( $payment_gateway, 'get_recommended_payment_methods' ),
+			array( 'country_code' => $country_code ),
+		);
+
+		// Validate the received list items.
+		// We require at least `id` and `title`.
+		$recommended_pms = array_filter(
+			$recommended_pms,
+			function ( $recommended_pm ) {
+				return is_array( $recommended_pm ) &&
+						! empty( $recommended_pm['id'] ) &&
+						! empty( $recommended_pm['title'] );
+			}
+		);
+
+		// Sort the recommended payment methods by order/priority, if available.
+		usort(
+			$recommended_pms,
+			function ( $a, $b ) {
+				// `order` takes precedence over `priority`.
+				// Entries that don't have the order/priority are placed at the end.
+				return array( ( $a['order'] ?? PHP_INT_MAX ), ( $a['priority'] ?? PHP_INT_MAX ) ) <=> array( ( $b['order'] ?? PHP_INT_MAX ), ( $b['priority'] ?? PHP_INT_MAX ) );
+			}
+		);
+		$recommended_pms = array_values( $recommended_pms );
+
+		// Extract, standardize, and sanitize the details for each recommended payment method.
+		$standardized_pms = array();
+		foreach ( $recommended_pms as $index => $recommended_pm ) {
+			$standard_details = array(
+				'id'          => sanitize_key( $recommended_pm['id'] ),
+				'_order'      => $index, // Normalize the order to the zero-based index.
+				'enabled'     => (bool) $recommended_pm['enabled'] ?? true, // Default to enabled if not explicit.
+				'title'       => sanitize_text_field( $recommended_pm['title'] ),
+				'description' => '',
+				'icon'        => '',
+			);
+
+			// If the payment method has a description, sanitize it before use.
+			if ( ! empty( $recommended_pm['description'] ) ) {
+				$standard_details['description'] = $recommended_pm['description'];
+				// Make sure that if we have HTML tags, we only allow stylistic tags and anchors.
+				if ( preg_match( '/<[^>]+>/', $standard_details['description'] ) ) {
+					// Only allow stylistic tags with a few modifications.
+					$allowed_tags = wp_kses_allowed_html( 'data' );
+					$allowed_tags = array_merge(
+						$allowed_tags,
+						array(
+							'a' => array(
+								'href'   => true,
+								'target' => true,
+							),
+						)
+					);
+
+					$standard_details['description'] = wp_kses( $standard_details['description'], $allowed_tags );
+				}
+			}
+
+			// If the payment method has an icon, try to use it.
+			if ( ! empty( $recommended_pm['icon'] ) && wc_is_valid_url( $recommended_pm['icon'] ) ) {
+				$standard_details['icon'] = sanitize_url( $recommended_pm['icon'] );
+			}
+
+			$standardized_pms[] = $standard_details;
+		}
+
+		return $standardized_pms;
 	}
 
 	/**
@@ -603,14 +759,18 @@ class Payments {
 	 * @param array              $gateway_details The gateway details to enhance.
 	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
 	 * @param string             $country_code    The country code for which the details are being enhanced.
+	 *                                            This should be a ISO 3166-1 alpha-2 country code.
 	 *
 	 * @return array The enhanced gateway details.
 	 */
 	private function enhance_payment_gateway_details( array $gateway_details, WC_Payment_Gateway $payment_gateway, string $country_code ): array {
-		$plugin_slug = $this->get_payment_gateway_plugin_slug( $payment_gateway );
+		$plugin_slug = $gateway_details['plugin']['slug'];
+		// The payment gateway plugin might use a non-standard directory name.
+		// Try to normalize it to the common slug to avoid false negatives when matching.
+		$normalized_plugin_slug = Utils::normalize_plugin_slug( $plugin_slug );
 
 		// Handle core gateways.
-		if ( 'woocommerce' === $plugin_slug ) {
+		if ( 'woocommerce' === $normalized_plugin_slug ) {
 			if ( $this->is_offline_payment_method( $gateway_details['id'] ) ) {
 				switch ( $gateway_details['id'] ) {
 					case 'bacs':
@@ -627,7 +787,8 @@ class Payments {
 		}
 
 		// If we have a matching suggestion, hoist details from there.
-		$suggestion = $this->get_extension_suggestion_by_plugin_slug( $plugin_slug, $country_code );
+		// The suggestions only know about the normalized (aka official) plugin slug.
+		$suggestion = $this->get_extension_suggestion_by_plugin_slug( $normalized_plugin_slug, $country_code );
 		if ( ! is_null( $suggestion ) ) {
 			if ( empty( $gateway_details['image'] ) ) {
 				$gateway_details['image'] = $suggestion['image'];
@@ -665,18 +826,15 @@ class Payments {
 				} elseif ( ! empty( $gateway_details['plugin']['_type'] ) &&
 					ExtensionSuggestions::PLUGIN_TYPE_WPORG === $gateway_details['plugin']['_type'] ) {
 
-					// Fallback to constructing the WPORG plugin URI from the plugin slug.
+					// Fallback to constructing the WPORG plugin URI from the normalized plugin slug.
 					$gateway_details['links'] = array(
 						array(
 							'_type' => ExtensionSuggestions::LINK_TYPE_ABOUT,
-							'url'   => 'https://wordpress.org/plugins/' . $plugin_slug,
+							'url'   => 'https://wordpress.org/plugins/' . $normalized_plugin_slug,
 						),
 					);
 				}
 			}
-
-			$gateway_details['plugin']['slug']   = $plugin_slug;
-			$gateway_details['plugin']['status'] = self::EXTENSION_ACTIVE;
 		}
 
 		return $gateway_details;
@@ -776,6 +934,39 @@ class Payments {
 	}
 
 	/**
+	 * Try to determine if the payment gateway is in dev mode.
+	 *
+	 * This is a best-effort attempt, as there is no standard way to determine this.
+	 * Trust the true value, but don't consider a false value as definitive.
+	 *
+	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
+	 *
+	 * @return bool True if the payment gateway is in dev mode, false otherwise.
+	 */
+	private function is_payment_gateway_in_dev_mode( WC_Payment_Gateway $payment_gateway ): bool {
+		// If it is WooPayments, we need to check the dev mode.
+		if ( 'woocommerce_payments' === $payment_gateway->id &&
+			class_exists( '\WC_Payments' ) &&
+			method_exists( '\WC_Payments', 'mode' ) ) {
+
+			$woopayments_mode = \WC_Payments::mode();
+			if ( method_exists( $woopayments_mode, 'is_dev' ) ) {
+				return $woopayments_mode->is_dev();
+			}
+		}
+
+		// Try various gateway methods to check if the payment gateway is in dev mode.
+		if ( method_exists( $payment_gateway, 'is_dev_mode' ) ) {
+			return filter_var( $payment_gateway->is_dev_mode(), FILTER_VALIDATE_BOOLEAN );
+		}
+		if ( method_exists( $payment_gateway, 'is_in_dev_mode' ) ) {
+			return filter_var( $payment_gateway->is_in_dev_mode(), FILTER_VALIDATE_BOOLEAN );
+		}
+
+		return false;
+	}
+
+	/**
 	 * Enhance a payment extension suggestion with additional information.
 	 *
 	 * @param array $extension The extension suggestion.
@@ -799,12 +990,31 @@ class Payments {
 				break;
 		}
 
-		// Determine the plugin status.
+		// Determine the PES's plugin status.
+		// Default to not installed.
 		$extension['plugin']['status'] = self::EXTENSION_NOT_INSTALLED;
-		if ( PluginsHelper::is_plugin_installed( $extension['plugin']['slug'] ) ) {
-			$extension['plugin']['status'] = self::EXTENSION_INSTALLED;
-			if ( PluginsHelper::is_plugin_active( $extension['plugin']['slug'] ) ) {
-				$extension['plugin']['status'] = self::EXTENSION_ACTIVE;
+		// Put in the default plugin file.
+		$extension['plugin']['file'] = '';
+		if ( ! empty( $extension['plugin']['slug'] ) ) {
+			// This is a best-effort approach, as the plugin might be sitting under a directory (slug) that we can't handle.
+			// Always try the official plugin slug first, then the testing variations.
+			$plugin_slug_variations = Utils::generate_testing_plugin_slugs( $extension['plugin']['slug'], true );
+			foreach ( $plugin_slug_variations as $plugin_slug ) {
+				if ( PluginsHelper::is_plugin_installed( $plugin_slug ) ) {
+					// Make sure we put in the actual slug and file path that we found.
+					$extension['plugin']['slug'] = $plugin_slug;
+					$extension['plugin']['file'] = PluginsHelper::get_plugin_path_from_slug( $plugin_slug );
+					// Remove the .php extension from the file path. The WP API expects it without it.
+					if ( ! empty( $extension['plugin']['file'] ) && str_ends_with( $extension['plugin']['file'], '.php' ) ) {
+						$extension['plugin']['file'] = substr( $extension['plugin']['file'], 0, -4 );
+					}
+
+					$extension['plugin']['status'] = self::EXTENSION_INSTALLED;
+					if ( PluginsHelper::is_plugin_active( $plugin_slug ) ) {
+						$extension['plugin']['status'] = self::EXTENSION_ACTIVE;
+					}
+					break;
+				}
 			}
 		}
 
@@ -910,7 +1120,7 @@ class Payments {
 		$payment_gateways_order_map = array_flip( array_keys( $payment_gateways ) );
 		// Get the payment gateways to suggestions map.
 		$payment_gateways_to_suggestions_map = array_map(
-			fn( $gateway ) => $this->get_extension_suggestion_by_plugin_slug( $this->get_payment_gateway_plugin_slug( $gateway ) ),
+			fn( $gateway ) => $this->get_extension_suggestion_by_plugin_slug( Utils::normalize_plugin_slug( $this->get_payment_gateway_plugin_slug( $gateway ) ) ),
 			$payment_gateways
 		);
 

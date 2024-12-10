@@ -49,14 +49,23 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 
 		$this->service = new Payments();
 		$this->service->init( $this->mock_extension_suggestions );
-
-		$this->load_core_paypal_pg();
 	}
 
 	/**
 	 * Test getting payment providers.
 	 */
 	public function test_get_payment_providers_basic_core() {
+		// Arrange.
+		$location         = 'US';
+		$base_suggestions = array();
+		$this->mock_extension_suggestions
+			->expects( $this->once() )
+			->method( 'get_country_extensions' )
+			->with( $location )
+			->willReturn( $base_suggestions );
+
+		$this->load_core_paypal_pg();
+
 		// Act.
 		$data = $this->service->get_payment_providers( 'US' );
 
@@ -72,6 +81,8 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$gateway = $data[4];
 		$this->assertArrayHasKey( 'id', $gateway, 'Gateway `id` entry is missing' );
 		$this->assertArrayHasKey( '_order', $gateway, 'Gateway `_order` entry is missing' );
+		$this->assertArrayHasKey( '_type', $gateway, 'Gateway `_type` entry is missing' );
+		$this->assertEquals( Payments::PROVIDER_TYPE_GATEWAY, $gateway['_type'], 'Gateway `_type` entry is not `' . Payments::PROVIDER_TYPE_GATEWAY . '`' );
 		$this->assertArrayHasKey( 'title', $gateway, 'Gateway `title` entry is missing' );
 		$this->assertArrayHasKey( 'description', $gateway, 'Gateway `description` entry is missing' );
 		$this->assertArrayHasKey( 'supports', $gateway, 'Gateway `supports` entry is missing' );
@@ -80,6 +91,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'enabled', $gateway['state'], 'Gateway `state[enabled]` entry is missing' );
 		$this->assertArrayHasKey( 'needs_setup', $gateway['state'], 'Gateway `state[needs_setup]` entry is missing' );
 		$this->assertArrayHasKey( 'test_mode', $gateway['state'], 'Gateway `state[test_mode]` entry is missing' );
+		$this->assertArrayHasKey( 'dev_mode', $gateway['state'], 'Gateway `state[dev_mode]` entry is missing' );
 		$this->assertArrayHasKey( 'management', $gateway, 'Gateway `management` entry is missing' );
 		$this->assertArrayHasKey( 'settings_url', $gateway['management'], 'Gateway `management[settings_url]` entry is missing' );
 		$this->assertArrayHasKey( 'links', $gateway, 'Gateway `links` entry is missing' );
@@ -167,6 +179,8 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 			->with( $location )
 			->willReturn( $base_suggestions );
 
+		$this->load_core_paypal_pg();
+
 		// Act.
 		$data = $this->service->get_payment_providers( $location );
 
@@ -216,11 +230,84 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertContains( ExtensionSuggestions::TAG_PREFERRED, $suggestion1['tags'] );
 		// The category should be PSP.
 		$this->assertEquals( Payments::CATEGORY_PSP, $suggestion1['category'] );
+	}
 
-		// Assert that the PayPal gateway has all the details.
-		$gateway = $data[6];
+	/**
+	 * Test getting payment providers that have recommended payment methods.
+	 */
+	public function test_get_payment_providers_with_recommended_payment_methods() {
+		// Arrange.
+		$this->mock_payment_gateways(
+			array(
+				'woocommerce_payments' => array(
+					'enabled'                     => false,
+					'plugin_slug'                 => 'woocommerce-payments',
+					'recommended_payment_methods' => array(
+						// Basic PM.
+						array(
+							'id'      => 'basic',
+							// No order, should be last.
+							'enabled' => true,
+							'title'   => 'Title',
+						),
+						// Basic PM with priority instead of order.
+						array(
+							'id'       => 'basic2',
+							'priority' => 30,
+							'enabled'  => false,
+							'title'    => 'Title',
+						),
+						array(
+							'id'          => 'card',
+							'order'       => 20,
+							'enabled'     => true,
+							'title'       => '<b>Credit/debit card (required)</b>', // All tags should be stripped.
+							// Paragraphs and line breaks should be stripped.
+							'description' => '<p><strong>Accepts</strong> <b>all major</b></br><em>credit</em> and <a href="#" target="_blank">debit cards</a>.</p>',
+							'icon'        => 'https://example.com/card-icon.png',
+						),
+						array(
+							'id'          => 'woopay',
+							'order'       => 10,
+							'enabled'     => false,
+							'title'       => 'WooPay',
+							'description' => 'WooPay express checkout',
+							// Not a good URL.
+							'icon'        => 'not_good_url/icon.svg',
+						),
+						// Invalid PM, should be ignored. No data.
+						array(),
+						// Invalid PM, should be ignored. No ID.
+						array( 'title' => 'Card' ),
+						// Invalid PM, should be ignored. No title.
+						array( 'id' => 'card' ),
+					),
+				),
+			),
+			true
+		);
+
+		$this->load_core_paypal_pg();
+
+		$this->service->reset_memo();
+
+		// Act.
+		$data = $this->service->get_payment_providers( 'US' );
+
+		// We have the core PayPal and fake WooPayments gateway registered, the 3 offline payment methods and their group entry.
+		$this->assertCount( 6, $data );
+		// Because the core registers the PayPal PG after the offline PMs, the order we expect is this.
+		$this->assertSame(
+			array( Payments::OFFLINE_METHODS_ORDERING_GROUP, 'bacs', 'cheque', 'cod', 'paypal', 'woocommerce_payments' ),
+			array_column( $data, 'id' )
+		);
+
+		// Assert that the fake WooPayments gateway has all the details.
+		$gateway = $data[5];
 		$this->assertArrayHasKey( 'id', $gateway, 'Gateway `id` entry is missing' );
 		$this->assertArrayHasKey( '_order', $gateway, 'Gateway `_order` entry is missing' );
+		$this->assertArrayHasKey( '_type', $gateway, 'Gateway `_type` entry is missing' );
+		$this->assertEquals( Payments::PROVIDER_TYPE_GATEWAY, $gateway['_type'], 'Gateway `_type` entry is not `' . Payments::PROVIDER_TYPE_GATEWAY . '`' );
 		$this->assertArrayHasKey( 'title', $gateway, 'Gateway `title` entry is missing' );
 		$this->assertArrayHasKey( 'description', $gateway, 'Gateway `description` entry is missing' );
 		$this->assertArrayHasKey( 'supports', $gateway, 'Gateway `supports` entry is missing' );
@@ -229,13 +316,54 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'enabled', $gateway['state'], 'Gateway `state[enabled]` entry is missing' );
 		$this->assertArrayHasKey( 'needs_setup', $gateway['state'], 'Gateway `state[needs_setup]` entry is missing' );
 		$this->assertArrayHasKey( 'test_mode', $gateway['state'], 'Gateway `state[test_mode]` entry is missing' );
+		$this->assertArrayHasKey( 'dev_mode', $gateway['state'], 'Gateway `state[dev_mode]` entry is missing' );
 		$this->assertArrayHasKey( 'management', $gateway, 'Gateway `management` entry is missing' );
 		$this->assertArrayHasKey( 'settings_url', $gateway['management'], 'Gateway `management[settings_url]` entry is missing' );
-		$this->assertArrayHasKey( 'links', $gateway, 'Gateway `links` entry is missing' );
-		$this->assertCount( 1, $gateway['links'] );
-		$this->assertArrayHasKey( 'plugin', $gateway, 'Gateway `plugin` entry is missing' );
-		$this->assertArrayHasKey( 'slug', $gateway['plugin'], 'Gateway `plugin[slug]` entry is missing' );
-		$this->assertArrayHasKey( 'status', $gateway['plugin'], 'Gateway `plugin[status]` entry is missing' );
+		// There are no `plugin` or `links` entries because this is a fake gateway without a plugin.
+		$this->assertArrayHasKey( 'onboarding', $gateway, 'Gateway `onboarding` entry is missing' );
+		$this->assertArrayHasKey( 'recommended_payment_methods', $gateway['onboarding'], 'Gateway `onboarding[recommended_payment_methods]` entry is missing' );
+		$this->assertCount( 4, $gateway['onboarding']['recommended_payment_methods'] ); // Receives recommended PMs.
+		$this->assertSame(
+			array(
+				array(
+					'id'          => 'woopay',
+					'_order'      => 0,
+					'enabled'     => false,
+					'title'       => 'WooPay',
+					'description' => 'WooPay express checkout',
+					'icon'        => '', // The icon with an invalid URL is ignored.
+				),
+				array(
+					'id'          => 'card',
+					'_order'      => 1,
+					'enabled'     => true,
+					'title'       => 'Credit/debit card (required)',
+					'description' => '<strong>Accepts</strong> <b>all major</b><em>credit</em> and <a href="#" target="_blank">debit cards</a>.',
+					'icon'        => 'https://example.com/card-icon.png',
+				),
+				array(
+					'id'          => 'basic2',
+					'_order'      => 2,
+					'enabled'     => false,
+					'title'       => 'Title',
+					'description' => '',
+					'icon'        => '',
+				),
+				array(
+					'id'          => 'basic',
+					'_order'      => 3,
+					'enabled'     => true,
+					'title'       => 'Title',
+					'description' => '',
+					'icon'        => '',
+				),
+			),
+			$gateway['onboarding']['recommended_payment_methods']
+		);
+
+		// Clean up.
+		$this->unmock_payment_gateways();
+		delete_option( 'woocommerce_gateway_order' );
 	}
 
 	/**
@@ -243,6 +371,9 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 	 */
 	public function test_get_payment_gateway_plugin_slug() {
 		// Arrange.
+		$this->load_core_paypal_pg();
+
+		// Act.
 		$paypal_gateway = array_filter(
 			WC()->payment_gateways()->payment_gateways,
 			function ( $gateway ) {
@@ -250,13 +381,11 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 			}
 		);
 		$paypal_gateway = reset( $paypal_gateway );
-
-		// Act.
-		$slug = $this->service->get_payment_gateway_plugin_slug( $paypal_gateway );
+		$slug           = $this->service->get_payment_gateway_plugin_slug( $paypal_gateway );
 
 		// Assert.
 		// The PayPal gateway is a core gateway, so the slug is 'woocommerce'.
-		$this->assertEquals( 'woocommerce', $slug );
+		$this->assertSame( 'woocommerce', $slug );
 	}
 
 	/**
@@ -412,21 +541,21 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		// There are no BNPLs or Express Checkout suggestions because there is no PSP enabled. Only PSPs are returned.
 		$this->assertCount( 1, $suggestions['other'] );
 		// The first suggestion is the preferred PSP.
-		$this->assertEquals( 'suggestion1', $suggestions['preferred'][0]['id'] );
+		$this->assertSame( 'suggestion1', $suggestions['preferred'][0]['id'] );
 		// The second suggestion is the APM.
-		$this->assertEquals( 'suggestion2', $suggestions['preferred'][1]['id'] );
+		$this->assertSame( 'suggestion2', $suggestions['preferred'][1]['id'] );
 		// The fifth suggestion is in the other list.
-		$this->assertEquals( 'suggestion5', $suggestions['other'][0]['id'] );
+		$this->assertSame( 'suggestion5', $suggestions['other'][0]['id'] );
 
 		// Ensure we have all the details for the preferred suggestions.
 		$pref_suggestion = $suggestions['preferred'][0];
 		$this->assertArrayHasKey( 'id', $pref_suggestion, 'Suggestion `id` entry is missing' );
-		$this->assertEquals( 'suggestion1', $pref_suggestion['id'] );
+		$this->assertSame( 'suggestion1', $pref_suggestion['id'] );
 		$this->assertArrayHasKey( '_priority', $pref_suggestion, 'Suggestion `_priority` entry is missing' );
 		$this->assertIsInteger( $pref_suggestion['_priority'], 'Suggestion `_priority` entry is not an integer' );
-		$this->assertEquals( 1, $pref_suggestion['_priority'] );
+		$this->assertSame( 1, $pref_suggestion['_priority'] );
 		$this->assertArrayHasKey( '_type', $pref_suggestion, 'Suggestion `_type` entry is missing' );
-		$this->assertEquals( ExtensionSuggestions::TYPE_PSP, $pref_suggestion['_type'] );
+		$this->assertSame( ExtensionSuggestions::TYPE_PSP, $pref_suggestion['_type'] );
 		$this->assertArrayHasKey( 'title', $pref_suggestion, 'Suggestion `title` entry is missing' );
 		$this->assertArrayHasKey( 'description', $pref_suggestion, 'Suggestion `description` entry is missing' );
 		$this->assertArrayHasKey( 'plugin', $pref_suggestion, 'Suggestion `plugin` entry is missing' );
@@ -435,7 +564,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'slug', $pref_suggestion['plugin'], 'Suggestion `plugin[slug]` entry is missing' );
 		$this->assertArrayHasKey( 'status', $pref_suggestion['plugin'], 'Suggestion `plugin[status]` entry is missing' );
 		// The plugin should be not installed.
-		$this->assertEquals( Payments::EXTENSION_NOT_INSTALLED, $pref_suggestion['plugin']['status'] );
+		$this->assertSame( Payments::EXTENSION_NOT_INSTALLED, $pref_suggestion['plugin']['status'] );
 		$this->assertArrayHasKey( 'icon', $pref_suggestion, 'Suggestion `icon` entry is missing' );
 		$this->assertArrayHasKey( 'links', $pref_suggestion, 'Suggestion `links` entry is missing' );
 		$this->assertIsArray( $pref_suggestion['links'] );
@@ -447,17 +576,17 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		// It should have the recommended tag.
 		$this->assertContains( ExtensionSuggestions::TAG_PREFERRED, $pref_suggestion['tags'] );
 		// The category should be PSP.
-		$this->assertEquals( Payments::CATEGORY_PSP, $pref_suggestion['category'] );
+		$this->assertSame( Payments::CATEGORY_PSP, $pref_suggestion['category'] );
 
 		// Ensure we have all the details for the other suggestions.
 		$other_suggestion = $suggestions['other'][0];
 		$this->assertArrayHasKey( 'id', $other_suggestion, 'Suggestion `id` entry is missing' );
-		$this->assertEquals( 'suggestion5', $other_suggestion['id'] );
+		$this->assertSame( 'suggestion5', $other_suggestion['id'] );
 		$this->assertArrayHasKey( '_priority', $other_suggestion, 'Suggestion `_priority` entry is missing' );
 		$this->assertIsInteger( $other_suggestion['_priority'], 'Suggestion `_priority` entry is not an integer' );
-		$this->assertEquals( 5, $other_suggestion['_priority'] );
+		$this->assertSame( 5, $other_suggestion['_priority'] );
 		$this->assertArrayHasKey( '_type', $other_suggestion, 'Suggestion `_type` entry is missing' );
-		$this->assertEquals( ExtensionSuggestions::TYPE_PSP, $other_suggestion['_type'] );
+		$this->assertSame( ExtensionSuggestions::TYPE_PSP, $other_suggestion['_type'] );
 		$this->assertArrayHasKey( 'title', $other_suggestion, 'Suggestion `title` entry is missing' );
 		$this->assertArrayHasKey( 'description', $other_suggestion, 'Suggestion `description` entry is missing' );
 		$this->assertArrayHasKey( 'plugin', $other_suggestion, 'Suggestion `plugin` entry is missing' );
@@ -466,7 +595,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'slug', $other_suggestion['plugin'], 'Suggestion `plugin[slug]` entry is missing' );
 		$this->assertArrayHasKey( 'status', $other_suggestion['plugin'], 'Suggestion `plugin[status]` entry is missing' );
 		// The plugin should be not installed.
-		$this->assertEquals( Payments::EXTENSION_NOT_INSTALLED, $other_suggestion['plugin']['status'] );
+		$this->assertSame( Payments::EXTENSION_NOT_INSTALLED, $other_suggestion['plugin']['status'] );
 		$this->assertArrayHasKey( 'icon', $other_suggestion, 'Suggestion `icon` entry is missing' );
 		$this->assertArrayHasKey( 'links', $other_suggestion, 'Suggestion `links` entry is missing' );
 		$this->assertIsArray( $other_suggestion['links'] );
@@ -476,7 +605,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'tags', $other_suggestion, 'Suggestion `tags` entry is missing' );
 		$this->assertIsList( $other_suggestion['tags'] );
 		// The category should be PSP.
-		$this->assertEquals( Payments::CATEGORY_PSP, $other_suggestion['category'] );
+		$this->assertSame( Payments::CATEGORY_PSP, $other_suggestion['category'] );
 	}
 
 	/**
@@ -596,9 +725,9 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		);
 
 		$this->mock_extension_suggestions->expects( $this->once() )
-										->method( 'get_country_extensions' )
-										->with( $location )
-										->willReturn( $base_suggestions );
+			->method( 'get_country_extensions' )
+			->with( $location )
+			->willReturn( $base_suggestions );
 
 		// Act.
 		$suggestions = $this->service->get_extension_suggestions( $location );
@@ -611,13 +740,11 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		// The BNPLs and Express Checkout suggestions are included because there is a PSP enabled.
 		$this->assertCount( 3, $suggestions['other'] );
 		// The first suggestion is the preferred PSP.
-		$this->assertEquals( 'suggestion1', $suggestions['preferred'][0]['id'] );
+		$this->assertSame( 'suggestion1', $suggestions['preferred'][0]['id'] );
 		// The second suggestion is the preferred APM.
-		$this->assertEquals( 'suggestion2', $suggestions['preferred'][1]['id'] );
+		$this->assertSame( 'suggestion2', $suggestions['preferred'][1]['id'] );
 		// The rest are in the other list, ordered by priority.
-		$this->assertEquals( 'suggestion3', $suggestions['other'][0]['id'] );
-		$this->assertEquals( 'suggestion4', $suggestions['other'][1]['id'] );
-		$this->assertEquals( 'suggestion5', $suggestions['other'][2]['id'] );
+		$this->assertSame( array( 'suggestion3', 'suggestion4', 'suggestion5' ), array_column( $suggestions['other'], 'id' ) );
 	}
 
 	/**
@@ -748,9 +875,9 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertCount( 2, $suggestions['preferred'] );
 		$this->assertArrayHasKey( 'other', $suggestions );
 		// The fifth suggestion is the preferred PSP.
-		$this->assertEquals( 'suggestion5', $suggestions['preferred'][0]['id'] );
+		$this->assertSame( 'suggestion5', $suggestions['preferred'][0]['id'] );
 		// The third suggestion is the preferred APM.
-		$this->assertEquals( 'suggestion3', $suggestions['preferred'][1]['id'] );
+		$this->assertSame( 'suggestion3', $suggestions['preferred'][1]['id'] );
 	}
 
 	/**
@@ -899,15 +1026,13 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertCount( 2, $suggestions['preferred'] );
 		$this->assertArrayHasKey( 'other', $suggestions );
 		// The third suggestion is the preferred PSP.
-		$this->assertEquals( 'suggestion3', $suggestions['preferred'][0]['id'] );
+		$this->assertSame( 'suggestion3', $suggestions['preferred'][0]['id'] );
 		// The fifth suggestion is the preferred APM.
-		$this->assertEquals( 'suggestion5', $suggestions['preferred'][1]['id'] );
+		$this->assertSame( 'suggestion5', $suggestions['preferred'][1]['id'] );
 
 		// The rest are in the other list, ordered by priority.
 		$this->assertCount( 3, $suggestions['other'] );
-		$this->assertEquals( 'suggestion1', $suggestions['other'][0]['id'] );
-		$this->assertEquals( 'suggestion2', $suggestions['other'][1]['id'] );
-		$this->assertEquals( 'suggestion4', $suggestions['other'][2]['id'] );
+		$this->assertSame( array( 'suggestion1', 'suggestion2', 'suggestion4' ), array_column( $suggestions['other'], 'id' ) );
 	}
 
 	/**
@@ -1038,15 +1163,15 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertIsArray( $suggestions );
 		$this->assertArrayHasKey( 'preferred', $suggestions );
 		$this->assertCount( 2, $suggestions['preferred'] );
+		// The first suggestion is the preferred PSP.
+		$this->assertSame( 'suggestion1', $suggestions['preferred'][0]['id'] );
+		// The second suggestion is the preferred APM.
+		$this->assertSame( 'suggestion2', $suggestions['preferred'][1]['id'] );
+
 		$this->assertArrayHasKey( 'other', $suggestions );
 		// The BNPLs and Express Checkout suggestions are included because there is a PSP enabled.
 		$this->assertCount( 1, $suggestions['other'] );
-		// The first suggestion is the preferred PSP.
-		$this->assertEquals( 'suggestion1', $suggestions['preferred'][0]['id'] );
-		// The second suggestion is the preferred APM.
-		$this->assertEquals( 'suggestion2', $suggestions['preferred'][1]['id'] );
-		// The rest are in the other list, ordered by priority.
-		$this->assertEquals( 'suggestion3', $suggestions['other'][0]['id'] );
+		$this->assertSame( 'suggestion3', $suggestions['other'][0]['id'] );
 		// Suggestion4 is not present because a suggestion with the same plugin slug is already present (preferred APM).
 		// Suggestion5 is not present because a suggestion with the same plugin slug is already present (preferred PSP).
 	}
@@ -1084,7 +1209,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 			'description'       => 'Description 1',
 			'plugin'            => array(
 				'_type' => ExtensionSuggestions::PLUGIN_TYPE_WPORG,
-				'slug'  => 'slug1',
+				'slug'  => 'woocommerce', // Use WooCommerce because it is an installed plugin, obviously.
 			),
 			'image'             => 'http://example.com/image1.png',
 			'icon'              => 'http://example.com/icon1.png',
@@ -1107,33 +1232,27 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$suggestion = $this->service->get_extension_suggestion_by_id( $suggestion_id );
 
 		// Assert.
-		$this->assertIsArray( $suggestion );
-		$this->assertArrayHasKey( 'id', $suggestion, 'Suggestion `id` entry is missing' );
-		$this->assertEquals( 'suggestion1', $suggestion['id'] );
-		$this->assertArrayHasKey( '_priority', $suggestion, 'Suggestion `_priority` entry is missing' );
-		$this->assertIsInteger( $suggestion['_priority'], 'Suggestion `_priority` entry is not an integer' );
-		$this->assertEquals( 1, $suggestion['_priority'] );
-		$this->assertArrayHasKey( '_type', $suggestion, 'Suggestion `_type` entry is missing' );
-		$this->assertEquals( ExtensionSuggestions::TYPE_PSP, $suggestion['_type'] );
-		$this->assertArrayHasKey( 'title', $suggestion, 'Suggestion `title` entry is missing' );
-		$this->assertArrayHasKey( 'description', $suggestion, 'Suggestion `description` entry is missing' );
-		$this->assertArrayHasKey( 'plugin', $suggestion, 'Suggestion `plugin` entry is missing' );
-		$this->assertIsArray( $suggestion['plugin'] );
-		$this->assertArrayHasKey( '_type', $suggestion['plugin'], 'Suggestion `plugin[_type]` entry is missing' );
-		$this->assertArrayHasKey( 'slug', $suggestion['plugin'], 'Suggestion `plugin[slug]` entry is missing' );
-		$this->assertArrayHasKey( 'status', $suggestion['plugin'], 'Suggestion `plugin[status]` entry is missing' );
-		// The plugin should be not installed.
-		$this->assertEquals( Payments::EXTENSION_NOT_INSTALLED, $suggestion['plugin']['status'] );
-		$this->assertArrayHasKey( 'icon', $suggestion, 'Suggestion `icon` entry is missing' );
-		$this->assertArrayHasKey( 'links', $suggestion, 'Suggestion `links` entry is missing' );
-		$this->assertIsArray( $suggestion['links'] );
-		$this->assertNotEmpty( $suggestion['links'] );
-		$this->assertArrayHasKey( '_type', $suggestion['links'][0], 'Suggestion `link[_type]` entry is missing' );
-		$this->assertArrayHasKey( 'url', $suggestion['links'][0], 'Suggestion `link[url]` entry is missing' );
-		$this->assertArrayHasKey( 'tags', $suggestion, 'Suggestion `tags` entry is missing' );
-		$this->assertIsList( $suggestion['tags'] );
+		$this->assertSame( $suggestion_details['id'], $suggestion['id'] );
+		$this->assertSame( $suggestion_details['_priority'], $suggestion['_priority'] );
+		$this->assertSame( $suggestion_details['_type'], $suggestion['_type'] );
+		$this->assertSame( $suggestion_details['title'], $suggestion['title'] );
+		$this->assertSame( $suggestion_details['description'], $suggestion['description'] );
+		$this->assertEquals(
+			array(
+				'_type'  => ExtensionSuggestions::PLUGIN_TYPE_WPORG,
+				'slug'   => 'woocommerce',
+				'file'   => 'woocommerce/woocommerce',
+				'status' => Payments::EXTENSION_INSTALLED, // WooCommerce is installed.
+			),
+			$suggestion['plugin']
+		);
+		$this->assertSame( $suggestion_details['image'], $suggestion['image'] );
+		$this->assertSame( $suggestion_details['icon'], $suggestion['icon'] );
+		$this->assertSame( $suggestion_details['short_description'], $suggestion['short_description'] );
+		$this->assertSame( $suggestion_details['links'], $suggestion['links'] );
+		$this->assertSame( $suggestion_details['tags'], $suggestion['tags'] );
 		// The category should be PSP.
-		$this->assertEquals( Payments::CATEGORY_PSP, $suggestion['category'] );
+		$this->assertSame( Payments::CATEGORY_PSP, $suggestion['category'] );
 	}
 
 	/**
@@ -1141,7 +1260,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 	 */
 	public function test_get_extension_suggestion_by_plugin_slug() {
 		// Arrange.
-		$slug               = 'slug1';
+		$slug               = 'woocommerce'; // Use WooCommerce because it is an active plugin.
 		$suggestion_details = array(
 			'id'                => 'suggestion1',
 			'_priority'         => 1,
@@ -1173,33 +1292,27 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$suggestion = $this->service->get_extension_suggestion_by_plugin_slug( $slug );
 
 		// Assert.
-		$this->assertIsArray( $suggestion );
-		$this->assertArrayHasKey( 'id', $suggestion, 'Suggestion `id` entry is missing' );
-		$this->assertEquals( 'suggestion1', $suggestion['id'] );
-		$this->assertArrayHasKey( '_priority', $suggestion, 'Suggestion `_priority` entry is missing' );
-		$this->assertIsInteger( $suggestion['_priority'], 'Suggestion `_priority` entry is not an integer' );
-		$this->assertEquals( 1, $suggestion['_priority'] );
-		$this->assertArrayHasKey( '_type', $suggestion, 'Suggestion `_type` entry is missing' );
-		$this->assertEquals( ExtensionSuggestions::TYPE_PSP, $suggestion['_type'] );
-		$this->assertArrayHasKey( 'title', $suggestion, 'Suggestion `title` entry is missing' );
-		$this->assertArrayHasKey( 'description', $suggestion, 'Suggestion `description` entry is missing' );
-		$this->assertArrayHasKey( 'plugin', $suggestion, 'Suggestion `plugin` entry is missing' );
-		$this->assertIsArray( $suggestion['plugin'] );
-		$this->assertArrayHasKey( '_type', $suggestion['plugin'], 'Suggestion `plugin[_type]` entry is missing' );
-		$this->assertArrayHasKey( 'slug', $suggestion['plugin'], 'Suggestion `plugin[slug]` entry is missing' );
-		$this->assertArrayHasKey( 'status', $suggestion['plugin'], 'Suggestion `plugin[status]` entry is missing' );
-		// The plugin should be not installed.
-		$this->assertEquals( Payments::EXTENSION_NOT_INSTALLED, $suggestion['plugin']['status'] );
-		$this->assertArrayHasKey( 'icon', $suggestion, 'Suggestion `icon` entry is missing' );
-		$this->assertArrayHasKey( 'links', $suggestion, 'Suggestion `links` entry is missing' );
-		$this->assertIsArray( $suggestion['links'] );
-		$this->assertNotEmpty( $suggestion['links'] );
-		$this->assertArrayHasKey( '_type', $suggestion['links'][0], 'Suggestion `link[_type]` entry is missing' );
-		$this->assertArrayHasKey( 'url', $suggestion['links'][0], 'Suggestion `link[url]` entry is missing' );
-		$this->assertArrayHasKey( 'tags', $suggestion, 'Suggestion `tags` entry is missing' );
-		$this->assertIsList( $suggestion['tags'] );
+		$this->assertSame( $suggestion_details['id'], $suggestion['id'] );
+		$this->assertSame( $suggestion_details['_priority'], $suggestion['_priority'] );
+		$this->assertSame( $suggestion_details['_type'], $suggestion['_type'] );
+		$this->assertSame( $suggestion_details['title'], $suggestion['title'] );
+		$this->assertSame( $suggestion_details['description'], $suggestion['description'] );
+		$this->assertEquals(
+			array(
+				'_type'  => ExtensionSuggestions::PLUGIN_TYPE_WPORG,
+				'slug'   => $slug,
+				'file'   => 'woocommerce/woocommerce',
+				'status' => Payments::EXTENSION_INSTALLED, // WooCommerce is installed.
+			),
+			$suggestion['plugin']
+		);
+		$this->assertSame( $suggestion_details['image'], $suggestion['image'] );
+		$this->assertSame( $suggestion_details['icon'], $suggestion['icon'] );
+		$this->assertSame( $suggestion_details['short_description'], $suggestion['short_description'] );
+		$this->assertSame( $suggestion_details['links'], $suggestion['links'] );
+		$this->assertSame( $suggestion_details['tags'], $suggestion['tags'] );
 		// The category should be PSP.
-		$this->assertEquals( Payments::CATEGORY_PSP, $suggestion['category'] );
+		$this->assertSame( Payments::CATEGORY_PSP, $suggestion['category'] );
 	}
 
 	/**
@@ -1265,10 +1378,10 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'hidden_suggestions', $user_nox_profile );
 		$this->assertIsList( $user_nox_profile['hidden_suggestions'] );
 		$this->assertCount( 1, $user_nox_profile['hidden_suggestions'] );
-		$this->assertEquals( $suggestion_id, $user_nox_profile['hidden_suggestions'][0]['id'] );
+		$this->assertSame( $suggestion_id, $user_nox_profile['hidden_suggestions'][0]['id'] );
 		$this->assertArrayHasKey( 'timestamp', $user_nox_profile['hidden_suggestions'][0] );
 		// The other profile entries should be kept.
-		$this->assertEquals( 'value', $user_nox_profile['something_other'] );
+		$this->assertSame( 'value', $user_nox_profile['something_other'] );
 
 		// Clean up.
 		delete_user_meta( $this->store_admin_id, Payments::USER_PAYMENTS_NOX_PROFILE_KEY );
@@ -1328,10 +1441,10 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertIsList( $user_nox_profile['hidden_suggestions'] );
 		$this->assertCount( 1, $user_nox_profile['hidden_suggestions'] );
 		// The suggestion ID should be stored, not the order map ID.
-		$this->assertEquals( $suggestion_id, $user_nox_profile['hidden_suggestions'][0]['id'] );
+		$this->assertSame( $suggestion_id, $user_nox_profile['hidden_suggestions'][0]['id'] );
 		$this->assertArrayHasKey( 'timestamp', $user_nox_profile['hidden_suggestions'][0] );
 		// The other profile entries should be kept.
-		$this->assertEquals( 'value', $user_nox_profile['something_other'] );
+		$this->assertSame( 'value', $user_nox_profile['something_other'] );
 
 		// Clean up.
 		delete_user_meta( $this->store_admin_id, Payments::USER_PAYMENTS_NOX_PROFILE_KEY );
@@ -1396,11 +1509,11 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'hidden_suggestions', $user_nox_profile );
 		$this->assertIsList( $user_nox_profile['hidden_suggestions'] );
 		$this->assertCount( 1, $user_nox_profile['hidden_suggestions'] );
-		$this->assertEquals( $suggestion_id, $user_nox_profile['hidden_suggestions'][0]['id'] );
+		$this->assertSame( $suggestion_id, $user_nox_profile['hidden_suggestions'][0]['id'] );
 		$this->assertArrayHasKey( 'timestamp', $user_nox_profile['hidden_suggestions'][0] );
-		$this->assertEquals( $hide_timestamp, $user_nox_profile['hidden_suggestions'][0]['timestamp'] );
+		$this->assertSame( $hide_timestamp, $user_nox_profile['hidden_suggestions'][0]['timestamp'] );
 		// The other profile entries should be kept.
-		$this->assertEquals( 'value', $user_nox_profile['something_other'] );
+		$this->assertSame( 'value', $user_nox_profile['something_other'] );
 
 		// Clean up.
 		delete_user_meta( $this->store_admin_id, Payments::USER_PAYMENTS_NOX_PROFILE_KEY );
@@ -1466,11 +1579,11 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'hidden_suggestions', $user_nox_profile );
 		$this->assertIsList( $user_nox_profile['hidden_suggestions'] );
 		$this->assertCount( 1, $user_nox_profile['hidden_suggestions'] );
-		$this->assertEquals( $suggestion_id, $user_nox_profile['hidden_suggestions'][0]['id'] );
+		$this->assertSame( $suggestion_id, $user_nox_profile['hidden_suggestions'][0]['id'] );
 		$this->assertArrayHasKey( 'timestamp', $user_nox_profile['hidden_suggestions'][0] );
-		$this->assertEquals( $hide_timestamp, $user_nox_profile['hidden_suggestions'][0]['timestamp'] );
+		$this->assertSame( $hide_timestamp, $user_nox_profile['hidden_suggestions'][0]['timestamp'] );
 		// The other profile entries should be kept.
-		$this->assertEquals( 'value', $user_nox_profile['something_other'] );
+		$this->assertSame( 'value', $user_nox_profile['something_other'] );
 
 		// Clean up.
 		delete_user_meta( $this->store_admin_id, Payments::USER_PAYMENTS_NOX_PROFILE_KEY );
@@ -1535,9 +1648,9 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'hidden_suggestions', $user_nox_profile );
 		$this->assertIsList( $user_nox_profile['hidden_suggestions'] );
 		$this->assertCount( 1, $user_nox_profile['hidden_suggestions'] );
-		$this->assertEquals( 'suggestion2', $user_nox_profile['hidden_suggestions'][0]['id'] );
+		$this->assertSame( 'suggestion2', $user_nox_profile['hidden_suggestions'][0]['id'] );
 		// The other profile entries should be kept.
-		$this->assertEquals( 'value', $user_nox_profile['something_other'] );
+		$this->assertSame( 'value', $user_nox_profile['something_other'] );
 
 		// Clean up.
 		remove_filter( 'update_user_metadata', '__return_false' );
@@ -1600,25 +1713,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 	 */
 	public function test_update_payment_providers_order_map( array $start_order, array $new_order_map, array $expected_order, array $gateways, array $suggestions ) {
 		// Arrange.
-		$mocked_service = $this->getMockBuilder( Payments::class )
-								->onlyMethods( array( 'get_payment_gateway_plugin_slug' ) )
-								->getMock();
-		$mocked_service->init( $this->mock_extension_suggestions );
-
-		// Mock the payment gateways.
 		$this->mock_payment_gateways( $gateways );
-		$mocked_service->reset_memo();
-
-		// Mock getting the payment gateway's plugin slug.
-		$mocked_service
-			->expects( $this->any() )
-			->method( 'get_payment_gateway_plugin_slug' )
-			->willReturnCallback(
-				function ( $payment_gateway ) {
-					// The payment gateway is a FakePaymentGateway instance.
-					return $payment_gateway->plugin_slug;
-				}
-			);
 
 		// Mock getting suggestions by plugin slug.
 		$this->mock_extension_suggestions
@@ -1654,7 +1749,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		update_option( Payments::PROVIDERS_ORDER_OPTION, $start_order_map );
 
 		// Act.
-		$result = $mocked_service->update_payment_providers_order_map( $new_order_map );
+		$result = $this->service->update_payment_providers_order_map( $new_order_map );
 
 		// Assert.
 		$expected_order_map   = array_flip( $expected_order );
@@ -1662,7 +1757,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertSame(
 			$expect_option_update,
 			$result,
-			$expect_option_update ? 'Expected order map option to be updated but it was not.' : 'Expected order map option to NOT be updated but it was.'
+			$expect_option_update ? 'Expected order map option to BE updated but it was not.' : 'Expected order map option to NOT BE updated but it was.'
 		);
 		$this->assertSame( $expected_order_map, get_option( Payments::PROVIDERS_ORDER_OPTION ) );
 
@@ -1674,26 +1769,49 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 	 * Mock a set of payment gateways.
 	 *
 	 * @param array $gateways The list of gateway details keyed by the gateway id.
+	 * @param bool  $append   Whether to append the gateways to the existing ones.
+	 *                        Defaults to false, which means the existing gateways will be removed.
 	 */
-	protected function mock_payment_gateways( array $gateways ) {
-		add_action(
-			'wc_payment_gateways_initialized',
-			function ( \WC_Payment_Gateways $wc_payment_gateways ) use ( $gateways ) {
-				$mock_gateways = array();
-				foreach ( $gateways as $gateway_id => $gateway_data ) {
-					$mock_gateways[ $gateway_id ]          = new FakePaymentGateway();
-					$mock_gateways[ $gateway_id ]->id      = $gateway_id;
-					$mock_gateways[ $gateway_id ]->enabled = ( $gateway_data['enabled'] ?? false ) ? 'yes' : 'no';
-					if ( isset( $gateway_data['plugin_slug'] ) ) {
-						$mock_gateways[ $gateway_id ]->plugin_slug = $gateway_data['plugin_slug'];
+	protected function mock_payment_gateways( array $gateways, bool $append = false ) {
+		if ( ! empty( $gateways ) ) {
+			add_action(
+				'wc_payment_gateways_initialized',
+				function ( \WC_Payment_Gateways $wc_payment_gateways ) use ( $gateways, $append ) {
+					if ( ! $append ) {
+						$wc_payment_gateways->payment_gateways = array();
 					}
-				}
 
-				$wc_payment_gateways->payment_gateways = $mock_gateways;
-			},
-			100
-		);
+					$order = 99999;
+					foreach ( $gateways as $gateway_id => $gateway_data ) {
+						$fake_gateway          = new FakePaymentGateway();
+						$fake_gateway->id      = $gateway_id;
+						$fake_gateway->enabled = ( $gateway_data['enabled'] ?? false ) ? 'yes' : 'no';
+						if ( isset( $gateway_data['plugin_slug'] ) ) {
+							$fake_gateway->plugin_slug = $gateway_data['plugin_slug'];
+						}
+						if ( isset( $gateway_data['recommended_payment_methods'] ) ) {
+							$fake_gateway->recommended_payment_methods = $gateway_data['recommended_payment_methods'];
+						}
+
+						$wc_payment_gateways->payment_gateways[ $order++ ] = $fake_gateway;
+					}
+				},
+				100
+			);
+		} else {
+			// If there are no gateways, just reset the gateways.
+			add_action(
+				'wc_payment_gateways_initialized',
+				function ( \WC_Payment_Gateways $wc_payment_gateways ) {
+					$wc_payment_gateways->payment_gateways = array();
+				},
+				100
+			);
+		}
+
 		WC()->payment_gateways()->init();
+
+		$this->service->reset_memo();
 	}
 
 	/**
@@ -1701,7 +1819,10 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 	 */
 	protected function unmock_payment_gateways() {
 		remove_all_actions( 'wc_payment_gateways_initialized' );
+		WC()->payment_gateways()->payment_gateways = array();
 		WC()->payment_gateways()->init();
+
+		$this->service->reset_memo();
 	}
 
 	/**
@@ -4603,6 +4724,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		);
 		// Make sure the store currency is supported by the gateway.
 		update_option( 'woocommerce_currency', 'USD' );
+		WC()->payment_gateways()->payment_gateways = array();
 		WC()->payment_gateways()->init();
 
 		// Reset the controller memo to pick up the new gateway details.
@@ -4625,6 +4747,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		);
 		// Make sure the store currency is supported by the gateway.
 		update_option( 'woocommerce_currency', 'USD' );
+		WC()->payment_gateways()->payment_gateways = array();
 		WC()->payment_gateways()->init();
 
 		// Reset the controller memo to pick up the new gateway details.

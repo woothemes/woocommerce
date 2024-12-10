@@ -1,0 +1,5 @@
+Significance: patch
+Type: dev
+Comment: Expose the recommended payment methods for payment gateways (currently only WooPayments) through the Providers API.
+
+

@@ -1,7 +1,7 @@
 const {
 	test: baseTest,
 } = require( '../../../../fixtures/block-editor-fixtures' );
-const { expect } = require( '../../../../fixtures/fixtures' );
+const { expect, tags } = require( '../../../../fixtures/fixtures' );
 
 const test = baseTest.extend( {
 	product: async ( { api }, use ) => {
@@ -45,39 +45,45 @@ const test = baseTest.extend( {
 	},
 } );
 
-test( 'can update sku', { tag: '@gutenberg' }, async ( { page, product } ) => {
-	const sku = `SKU_${ Date.now() }`;
+test(
+	'can update sku',
+	{ tag: tags.GUTENBERG },
+	async ( { page, product } ) => {
+		const sku = `SKU_${ Date.now() }`;
 
-	await test.step( 'update the sku value', async () => {
-		await page.locator( '[name="woocommerce-product-sku"]' ).click();
-		await page.locator( '[name="woocommerce-product-sku"]' ).fill( sku );
-	} );
+		await test.step( 'update the sku value', async () => {
+			await page.locator( '[name="woocommerce-product-sku"]' ).click();
+			await page
+				.locator( '[name="woocommerce-product-sku"]' )
+				.fill( sku );
+		} );
 
-	await test.step( 'update the product', async () => {
-		await page.getByRole( 'button', { name: 'Update' } ).click();
-		// Verify product was updated
-		await expect( page.getByLabel( 'Dismiss this notice' ) ).toContainText(
-			'Product updated'
-		);
-	} );
+		await test.step( 'update the product', async () => {
+			await page.getByRole( 'button', { name: 'Update' } ).click();
+			// Verify product was updated
+			await expect(
+				page.getByLabel( 'Dismiss this notice' )
+			).toContainText( 'Product updated' );
+		} );
 
-	await test.step( 'verify the change in product editor', async () => {
-		await expect(
-			page.locator( '[name="woocommerce-product-sku"]' )
-		).toHaveValue( sku );
-	} );
+		await test.step( 'verify the change in product editor', async () => {
+			await expect(
+				page.locator( '[name="woocommerce-product-sku"]' )
+			).toHaveValue( sku );
+		} );
 
-	await test.step( 'verify the changes in the store frontend', async () => {
-		// Verify image in store frontend
-		await page.goto( product.permalink );
+		await test.step( 'verify the changes in the store frontend', async () => {
+			// Verify image in store frontend
+			await page.goto( product.permalink );
 
-		await expect( page.getByText( `SKU: ${ sku }` ) ).toBeVisible();
-	} );
-} );
+			await expect( page.getByText( `SKU: ${ sku }` ) ).toBeVisible();
+		} );
+	}
+);
 
 test(
 	'can update stock status',
-	{ tag: '@gutenberg' },
+	{ tag: tags.GUTENBERG },
 	async ( { page, product } ) => {
 		await test.step( 'update the sku value', async () => {
 			await page.getByLabel( 'Out of stock' ).check();
@@ -106,7 +112,7 @@ test(
 
 test(
 	'can track stock quantity',
-	{ tag: '@gutenberg' },
+	{ tag: tags.GUTENBERG },
 	async ( { page, product } ) => {
 		await test.step( 'enable track stock quantity', async () => {
 			await page.getByLabel( 'Track inventory' ).check();
@@ -184,7 +190,7 @@ test(
 
 test(
 	'can limit purchases',
-	{ tag: '@gutenberg' },
+	{ tag: tags.GUTENBERG },
 	async ( { page, product } ) => {
 		await test.step( 'ensure limit purchases is disabled', async () => {
 			// await closeTourModal( { page, timeout: 2000 } );

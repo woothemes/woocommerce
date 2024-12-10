@@ -75,6 +75,28 @@ class PaymentsRestController extends RestApiControllerBase {
 		);
 		register_rest_route(
 			$this->route_namespace,
+			'/' . $this->rest_base . '/country',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::EDITABLE,
+					'callback'            => fn( $request ) => $this->run( $request, 'set_country' ),
+					'validation_callback' => 'rest_validate_request_arg',
+					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
+					'args'                => array(
+						'location' => array(
+							'description'       => esc_html__( 'The ISO3166 alpha-2 country code to save for the current user.', 'woocommerce' ),
+							'type'              => 'string',
+							'pattern'           => '[a-zA-Z]{2}', // Two alpha characters.
+							'required'          => true,
+							'validate_callback' => fn( $value, $request ) => $this->check_location_arg( $value, $request ),
+						),
+					),
+				),
+			),
+			$override
+		);
+		register_rest_route(
+			$this->route_namespace,
 			'/' . $this->rest_base . '/providers/order',
 			array(
 				array(
@@ -186,6 +208,21 @@ class PaymentsRestController extends RestApiControllerBase {
 		);
 
 		return rest_ensure_response( $this->prepare_payment_providers_response( $response ) );
+	}
+
+	/**
+	 * Set the country for the payment providers.
+	 *
+	 * @param WP_REST_Request $request The request object.
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	protected function set_country( WP_REST_Request $request ) {
+		$location = $request->get_param( 'location' );
+
+		$result = $this->payments->set_country( $location );
+
+		return rest_ensure_response( array( 'success' => $result ) );
 	}
 
 	/**
@@ -431,6 +468,10 @@ class PaymentsRestController extends RestApiControllerBase {
 	 */
 	private function add_provider_links( array $providers ): array {
 		foreach ( $providers as $key => $provider ) {
+			if ( empty( $provider['_links'] ) ) {
+				$providers[ $key ]['_links'] = array();
+			}
+
 			// If this is a suggestion, add a link to hide it.
 			if ( ! empty( $provider['_type'] ) &&
 				Payments::PROVIDER_TYPE_SUGGESTION === $provider['_type'] &&
@@ -593,6 +634,7 @@ class PaymentsRestController extends RestApiControllerBase {
 					'properties'  => array(
 						'_type'  => array(
 							'type'        => 'string',
+							'enum'        => array( Payments::EXTENSION_TYPE_WPORG ),
 							'description' => esc_html__( 'The type of the plugin.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
@@ -603,8 +645,15 @@ class PaymentsRestController extends RestApiControllerBase {
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
 						),
+						'file'   => array(
+							'type'        => 'string',
+							'description' => esc_html__( 'The plugin main file. This is a relative path to the plugins directory.', 'woocommerce' ),
+							'context'     => array( 'view', 'edit' ),
+							'readonly'    => true,
+						),
 						'status' => array(
 							'type'        => 'string',
+							'enum'        => array( Payments::EXTENSION_NOT_INSTALLED, Payments::EXTENSION_INSTALLED, Payments::EXTENSION_ACTIVE ),
 							'description' => esc_html__( 'The status of the plugin.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
@@ -666,6 +715,12 @@ class PaymentsRestController extends RestApiControllerBase {
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
 						),
+						'dev_mode'    => array(
+							'type'        => 'boolean',
+							'description' => esc_html__( 'Whether the provider is in dev mode.', 'woocommerce' ),
+							'context'     => array( 'view', 'edit' ),
+							'readonly'    => true,
+						),
 					),
 				),
 				'management'        => array(
@@ -677,6 +732,62 @@ class PaymentsRestController extends RestApiControllerBase {
 							'description' => esc_html__( 'The URL to the settings page for the payment gateway.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
+						),
+					),
+				),
+				'onboarding'        => array(
+					'type'        => 'object',
+					'description' => esc_html__( 'Onboarding-related details for the provider.', 'woocommerce' ),
+					'properties'  => array(
+						'recommended_payment_methods' => array(
+							'type'        => 'array',
+							'description' => esc_html__( 'The list of recommended payment methods details for the payment gateway.', 'woocommerce' ),
+							'context'     => array( 'view', 'edit' ),
+							'readonly'    => true,
+							'items'       => array(
+								'type'        => 'object',
+								'description' => esc_html__( 'The details for a recommended payment method.', 'woocommerce' ),
+								'context'     => array( 'view', 'edit' ),
+								'readonly'    => true,
+								'properties'  => array(
+									'id'          => array(
+										'type'        => 'string',
+										'description' => esc_html__( 'The unique identifier for the payment method.', 'woocommerce' ),
+										'context'     => array( 'view', 'edit' ),
+										'readonly'    => true,
+									),
+									'_order'      => array(
+										'type'        => 'integer',
+										'description' => esc_html__( 'The sort order of the payment method.', 'woocommerce' ),
+										'context'     => array( 'view', 'edit' ),
+										'readonly'    => true,
+									),
+									'enabled'     => array(
+										'type'        => 'boolean',
+										'description' => esc_html__( 'Whether the payment method should be recommended as enabled or not.', 'woocommerce' ),
+										'context'     => array( 'view', 'edit' ),
+										'readonly'    => true,
+									),
+									'title'       => array(
+										'type'        => 'string',
+										'description' => esc_html__( 'The title of the payment method. Does not include HTML tags.', 'woocommerce' ),
+										'context'     => array( 'view', 'edit' ),
+										'readonly'    => true,
+									),
+									'description' => array(
+										'type'        => 'string',
+										'description' => esc_html__( 'The description of the payment method. It can contain basic HTML.', 'woocommerce' ),
+										'context'     => array( 'view', 'edit' ),
+										'readonly'    => true,
+									),
+									'icon'        => array(
+										'type'        => 'string',
+										'description' => esc_html__( 'The URL of the payment method icon or a base64-encoded SVG image.', 'woocommerce' ),
+										'context'     => array( 'view', 'edit' ),
+										'readonly'    => true,
+									),
+								),
+							),
 						),
 					),
 				),
@@ -763,10 +874,18 @@ class PaymentsRestController extends RestApiControllerBase {
 							'context'  => array( 'view', 'edit' ),
 							'readonly' => true,
 							'dismiss'  => array(
-								'type'        => 'string',
-								'description' => esc_html__( 'The URL to dismiss the incentive.', 'woocommerce' ),
+								'type'        => 'object',
+								'description' => esc_html__( 'The link to dismiss the incentive.', 'woocommerce' ),
 								'context'     => array( 'view', 'edit' ),
 								'readonly'    => true,
+								'properties'  => array(
+									'href' => array(
+										'type'        => 'string',
+										'description' => esc_html__( 'The URL to dismiss the incentive.', 'woocommerce' ),
+										'context'     => array( 'view', 'edit' ),
+										'readonly'    => true,
+									),
+								),
 							),
 						),
 					),
@@ -776,10 +895,18 @@ class PaymentsRestController extends RestApiControllerBase {
 					'context'  => array( 'view', 'edit' ),
 					'readonly' => true,
 					'hide'     => array(
-						'type'        => 'string',
-						'description' => esc_html__( 'The URL to hide the suggestion.', 'woocommerce' ),
+						'type'        => 'object',
+						'description' => esc_html__( 'The link to hide the suggestion.', 'woocommerce' ),
 						'context'     => array( 'view', 'edit' ),
 						'readonly'    => true,
+						'properties'  => array(
+							'href' => array(
+								'type'        => 'string',
+								'description' => esc_html__( 'The URL to hide the suggestion.', 'woocommerce' ),
+								'context'     => array( 'view', 'edit' ),
+								'readonly'    => true,
+							),
+						),
 					),
 				),
 			),
@@ -840,6 +967,7 @@ class PaymentsRestController extends RestApiControllerBase {
 					'properties' => array(
 						'_type'  => array(
 							'type'        => 'string',
+							'enum'        => array( Payments::EXTENSION_TYPE_WPORG ),
 							'description' => esc_html__( 'The type of the plugin.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
@@ -852,6 +980,7 @@ class PaymentsRestController extends RestApiControllerBase {
 						),
 						'status' => array(
 							'type'        => 'string',
+							'enum'        => array( Payments::EXTENSION_NOT_INSTALLED, Payments::EXTENSION_INSTALLED, Payments::EXTENSION_ACTIVE ),
 							'description' => esc_html__( 'The status of the plugin.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
