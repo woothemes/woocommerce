@@ -1,4 +1,9 @@
-const { test, expect } = require( '../../../fixtures/api-tests-fixtures' );
+const {
+	test,
+	expect,
+	tags,
+} = require( '../../../fixtures/api-tests-fixtures' );
+
 const { BASE_URL } = process.env;
 const shouldSkip = ! BASE_URL.includes( 'localhost' );
 
@@ -1021,7 +1026,7 @@ test.describe( 'Settings API tests: CRUD', () => {
 	test.describe( 'List all Tax settings options', () => {
 		test(
 			'can retrieve all tax settings',
-			{ tag: [ '@skip-on-default-pressable', '@skip-on-default-wpcom' ] },
+			{ tag: [ tags.SKIP_ON_PRESSABLE, tags.SKIP_ON_WPCOM ] },
 			async ( { request } ) => {
 				// call API to retrieve all settings options
 				const response = await request.get(
@@ -1620,7 +1625,7 @@ test.describe( 'Settings API tests: CRUD', () => {
 
 	test.describe(
 		'List all Advanced settings options',
-		{ tag: '@skip-on-default-wpcom' },
+		{ tag: tags.SKIP_ON_WPCOM },
 		() => {
 			test( 'can retrieve all advanced settings', async ( {
 				request,
@@ -2013,7 +2018,7 @@ test.describe( 'Settings API tests: CRUD', () => {
 	test.describe( 'List all Email Failed Order settings', () => {
 		test(
 			'can retrieve all email failed order settings',
-			{ tag: '@skip-on-default-pressable' },
+			{ tag: tags.SKIP_ON_PRESSABLE },
 			async ( { request } ) => {
 				// call API to retrieve all settings options
 				const response = await request.get(

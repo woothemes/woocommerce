@@ -12,12 +12,16 @@ import {
 	addOneOrMoreProductToCart,
 	getOrderIdFromUrl,
 } from '@woocommerce/e2e-utils-playwright';
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
 
 const guestEmail = 'checkout-guest@example.com';
 
 test.describe(
 	'Checkout page',
-	{ tag: [ '@payments', '@services', '@hpos' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS ] },
 	() => {
 		const singleProductPrice = '9.99';
 		const simpleProductName = 'Checkout Page Product';

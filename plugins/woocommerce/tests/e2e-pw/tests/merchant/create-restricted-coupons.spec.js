@@ -1,4 +1,4 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 
 const couponData = {
 	minimumSpend: {
@@ -105,7 +105,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Restricted coupon management',
-	{ tag: [ '@services', '@skip-on-default-wpcom' ] },
+	{ tag: [ tags.SERVICES, tags.SKIP_ON_WPCOM ] },
 	() => {
 		for ( const couponType of Object.keys( couponData ) ) {
 			test( `can create new ${ couponType } coupon`, async ( {

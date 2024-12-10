@@ -1,4 +1,4 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 
 /**
  * External dependencies
@@ -56,7 +56,7 @@ const test = baseTest.extend( {
 
 test(
 	'can use the "Add new product" command',
-	{ tag: '@services' },
+	{ tag: tags.SERVICES },
 	async ( { page } ) => {
 		await clickOnCommandPaletteOption( {
 			page,
@@ -72,7 +72,7 @@ test(
 
 test(
 	'can use the "Add new order" command',
-	{ tag: '@services' },
+	{ tag: tags.SERVICES },
 	async ( { page } ) => {
 		await clickOnCommandPaletteOption( {
 			page,
@@ -88,7 +88,7 @@ test(
 
 test(
 	'can use the "Products" command',
-	{ tag: '@services' },
+	{ tag: tags.SERVICES },
 	async ( { page } ) => {
 		await clickOnCommandPaletteOption( {
 			page,
@@ -104,7 +104,7 @@ test(
 
 test(
 	'can use the "Orders" command',
-	{ tag: '@services' },
+	{ tag: tags.SERVICES },
 	async ( { page } ) => {
 		await clickOnCommandPaletteOption( {
 			page,
@@ -120,7 +120,7 @@ test(
 
 test(
 	'can use the product search command',
-	{ tag: '@services' },
+	{ tag: tags.SERVICES },
 	async ( { page, product } ) => {
 		await clickOnCommandPaletteOption( {
 			page,
@@ -136,7 +136,7 @@ test(
 
 test(
 	'can use a settings command',
-	{ tag: '@services' },
+	{ tag: tags.SERVICES },
 	async ( { page } ) => {
 		await clickOnCommandPaletteOption( {
 			page,
@@ -150,7 +150,7 @@ test(
 
 test(
 	'can use an analytics command',
-	{ tag: '@services' },
+	{ tag: tags.SERVICES },
 	async ( { page } ) => {
 		await clickOnCommandPaletteOption( {
 			page,
