@@ -43,7 +43,7 @@ class ProductStockIndicator extends AbstractBlock {
 	 *
 	 * @return array
 	 */
-	protected function product_types_without_stock_indicator() {
+	protected function get_product_types_without_stock_indicator() {
 		return array( 'external', 'grouped', 'variable' );
 	}
 
@@ -59,7 +59,7 @@ class ProductStockIndicator extends AbstractBlock {
 		$post_id = isset( $block->context['postId'] ) ? $block->context['postId'] : '';
 		$product = wc_get_product( $post_id );
 
-		if ( ! $product || in_array( $product->get_type(), $this->product_types_without_stock_indicator(), true ) ) {
+		if ( ! $product || in_array( $product->get_type(), $this->get_product_types_without_stock_indicator(), true ) ) {
 			return '';
 		}
 
