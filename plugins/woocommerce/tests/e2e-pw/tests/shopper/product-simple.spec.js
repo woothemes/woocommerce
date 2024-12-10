@@ -1,3 +1,7 @@
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const { admin } = require( '../../test-data/data' );
@@ -10,7 +14,7 @@ let simpleProductId, productCategory1Id, productCategory2Id;
 
 test.describe(
 	'Single Product Page',
-	{ tag: [ '@payments', '@services' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		const productCategoryName1 = 'Hoodies';
 		const productCategoryName2 = 'Jumpers';
