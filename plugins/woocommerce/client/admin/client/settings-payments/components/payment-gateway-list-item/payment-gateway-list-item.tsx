@@ -41,10 +41,6 @@ export const PaymentGatewayListItem = ( {
 			return 'active';
 		}
 
-		if ( isWcPay ) {
-			return 'recommended';
-		}
-
 		return 'inactive';
 	};
 
