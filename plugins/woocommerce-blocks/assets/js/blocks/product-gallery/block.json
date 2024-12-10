@@ -9,7 +9,6 @@
 	"keywords": [ "WooCommerce" ],
 	"supports": {
 		"align": true,
-		"multiple": false,
 		"interactivity": true
 	},
 	"textdomain": "woocommerce",
