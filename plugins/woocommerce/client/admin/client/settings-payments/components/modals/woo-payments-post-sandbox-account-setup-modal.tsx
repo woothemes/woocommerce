@@ -10,7 +10,7 @@ import { getAdminLink } from '@woocommerce/settings';
 /**
  * Internal dependencies
  */
-import './woo-payments-post-sandbox-account-setup-modal.scss';
+import './modals.scss';
 import { getWooPaymentsSetupLiveAccountLink } from '~/settings-payments/utils';
 import { WC_ASSET_URL } from '~/utils/admin-settings';
 
@@ -46,12 +46,12 @@ export const WooPaymentsPostSandboxAccountSetupModal = ( {
 						"You're ready to test payments!",
 						'woocommerce'
 					) }
-					className="woocommerce-woopayments-ready-to-test-modal"
+					className="woocommerce-woopayments-modal"
 					isDismissible={ true }
 					onRequestClose={ onClose }
 				>
-					<div className="woocommerce-woopayments-ready-to-test-modal__content">
-						<div className="woocommerce-woopayments-ready-to-test-modal__content__item">
+					<div className="woocommerce-woopayments-modal__content">
+						<div className="woocommerce-woopayments-modal__content__item">
 							<div>
 								<span>
 									{ __(
@@ -72,15 +72,15 @@ export const WooPaymentsPostSandboxAccountSetupModal = ( {
 								<span>.</span>
 							</div>
 						</div>
-						<div className="woocommerce-woopayments-ready-to-test-modal__content__item">
+						<div className="woocommerce-woopayments-modal__content__item">
 							<h2>{ __( "What's next:", 'woocommerce' ) }</h2>
 						</div>
-						<div className="woocommerce-woopayments-ready-to-test-modal__content__item-flex">
+						<div className="woocommerce-woopayments-modal__content__item-flex">
 							<img
 								src={ WC_ASSET_URL + 'images/icons/store.svg' }
 								alt="store icon"
 							/>
-							<div className="woocommerce-woopayments-ready-to-test-modal__content__item-flex__description">
+							<div className="woocommerce-woopayments-modal__content__item-flex__description">
 								<h3>
 									{ __(
 										'Continue your store setup',
@@ -95,12 +95,12 @@ export const WooPaymentsPostSandboxAccountSetupModal = ( {
 								</div>
 							</div>
 						</div>
-						<div className="woocommerce-woopayments-ready-to-test-modal__content__item-flex">
+						<div className="woocommerce-woopayments-modal__content__item-flex">
 							<img
 								src={ WC_ASSET_URL + 'images/icons/dollar.svg' }
 								alt="dollar icon"
 							/>
-							<div className="woocommerce-woopayments-ready-to-test-modal__content__item-flex__description">
+							<div className="woocommerce-woopayments-modal__content__item-flex__description">
 								<h3>
 									{ __( 'Activate payments', 'woocommerce' ) }
 								</h3>
@@ -125,7 +125,7 @@ export const WooPaymentsPostSandboxAccountSetupModal = ( {
 							</div>
 						</div>
 					</div>
-					<div className="woocommerce-woopayments-ready-to-test-modal__actions">
+					<div className="woocommerce-woopayments-modal__actions">
 						<Button
 							variant="primary"
 							isBusy={ isContinuingStoreSetup }

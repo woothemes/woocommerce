@@ -1,4 +1,4 @@
-.woocommerce-woopayments-ready-to-test-modal {
+.woocommerce-woopayments-modal {
 	max-width: 512px;
 
 	.components-modal__header-heading {
@@ -17,12 +17,22 @@
 
 		&__item {
 			line-height: 20px;
+			font-weight: 400;
+			color: $gray-900;
 
 			h2 {
 				margin: 0;
 				font-size: 16px;
 				line-height: 24px;
 				color: $gray-900;
+			}
+
+			h3 {
+				margin: 0;
+				font-size: 13px;
+				line-height: 20px;
+				color: $gray-900;
+				font-weight: 600;
 			}
 
 			a {
@@ -64,5 +74,14 @@
 		padding: $gap-large 0 0 0;
 		display: flex;
 		gap: $gap-small;
+
+		.components-button.is-primary.danger {
+			background-color: $studio-red-50;
+			color: #fff;
+		}
+
+		.components-button.is-primary.danger:hover:not(:disabled) {
+			background-color: $studio-red-70;
+		}
 	}
 }
