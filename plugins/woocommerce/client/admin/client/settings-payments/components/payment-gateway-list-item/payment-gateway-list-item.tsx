@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { EllipsisMenu } from '@woocommerce/components';
 import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
 import { __ } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -13,7 +12,7 @@ import { PaymentProvider } from '@woocommerce/data';
 import sanitizeHTML from '~/lib/sanitize-html';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
 import { PaymentGatewayButtons } from '~/settings-payments/components/payment-gateway-buttons';
-import { EllipsisMenuContent } from '~/settings-payments/components/ellipsis-menu-content';
+import { EllipsisMenuWrapper as EllipsisMenu } from '~/settings-payments/components/ellipsis-menu-content';
 import { isWooPayments } from '~/settings-payments/utils';
 import { DefaultDragHandle } from '~/settings-payments/components/sortable';
 
@@ -105,24 +104,10 @@ export const PaymentGatewayListItem = ( {
 							/>
 							<EllipsisMenu
 								label={ __(
-									'Task List Options',
+									'Payment Provider Options',
 									'woocommerce'
 								) }
-								renderContent={ ( { onToggle } ) => (
-									<EllipsisMenuContent
-										pluginId={ gateway.id }
-										pluginName={ gateway.plugin.slug }
-										isSuggestion={ false }
-										links={ gateway.links }
-										onToggle={ onToggle }
-										isWooPayments={ isWcPay }
-										isEnabled={ gateway.state?.enabled }
-										needsSetup={
-											gateway.state?.needs_setup
-										}
-										testMode={ gateway.state?.test_mode }
-									/>
-								) }
+								provider={ gateway }
 							/>
 						</>
 					</div>

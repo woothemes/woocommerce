@@ -67,7 +67,7 @@ class WcPayWelcomePage {
 	 * Delayed hook registration.
 	 */
 	public function delayed_register() {
-		// Don't do anything if the feature is not enabled.
+		// Don't do anything if the feature is enabled.
 		if ( Features::is_enabled( 'reactify-classic-payments-settings' ) ) {
 			return;
 		}

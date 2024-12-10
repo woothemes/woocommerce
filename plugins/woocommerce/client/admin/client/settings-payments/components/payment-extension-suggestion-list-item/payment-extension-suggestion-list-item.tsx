@@ -6,14 +6,13 @@ import { decodeEntities } from '@wordpress/html-entities';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
-import { EllipsisMenu } from '@woocommerce/components';
 import { PaymentProvider } from '@woocommerce/data';
 
 /**
  * Internal dependencies
  */
 import sanitizeHTML from '~/lib/sanitize-html';
-import { EllipsisMenuContent } from '~/settings-payments/components/ellipsis-menu-content';
+import { EllipsisMenuWrapper as EllipsisMenu } from '~/settings-payments/components/ellipsis-menu-content';
 import { isWooPayments } from '~/settings-payments/utils';
 import { DefaultDragHandle } from '~/settings-payments/components/sortable';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
@@ -83,17 +82,13 @@ export const PaymentExtensionSuggestionListItem = ( {
 								? __( 'Enable', 'woocommerce' )
 								: __( 'Install', 'woocommerce' ) }
 						</Button>
+
 						<EllipsisMenu
-							label={ __( 'Task List Options', 'woocommerce' ) }
-							renderContent={ ( { onToggle } ) => (
-								<EllipsisMenuContent
-									pluginId={ extension.id }
-									pluginName={ extension.plugin.slug }
-									isSuggestion={ true }
-									links={ extension.links }
-									onToggle={ onToggle }
-								/>
+							label={ __(
+								'Payment Provider Options',
+								'woocommerce'
 							) }
+							provider={ extension }
 						/>
 					</div>
 				</div>

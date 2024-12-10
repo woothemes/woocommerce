@@ -958,6 +958,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 					'enabled'     => false,
 					'needs_setup' => false,
 					'test_mode'   => false,
+					'dev_mode'    => false,
 				),
 				'management'  => array(
 					'settings_url' => 'http://localhost:8888/wp-admin/admin.php?page=wc-settings&tab=checkout&section=bacs',
@@ -987,6 +988,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 					'enabled'     => false,
 					'needs_setup' => false,
 					'test_mode'   => false,
+					'dev_mode'    => false,
 				),
 				'management'  => array(
 					'settings_url' => 'http://localhost:8888/wp-admin/admin.php?page=wc-settings&tab=checkout&section=cheque',
@@ -1016,6 +1018,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 					'enabled'     => false,
 					'needs_setup' => false,
 					'test_mode'   => false,
+					'dev_mode'    => false,
 				),
 				'management'  => array(
 					'settings_url' => 'http://localhost:8888/wp-admin/admin.php?page=wc-settings&tab=checkout&section=cod',
@@ -1035,6 +1038,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 					'enabled'     => $enabled_core_paypal_pg,
 					'needs_setup' => false,
 					'test_mode'   => false,
+					'dev_mode'    => false,
 				),
 				'management'  => array(
 					'settings_url' => 'admin.php?page=wc-settings&tab=checkout&section=paypal',

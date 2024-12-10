@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useCallback } from 'react';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import {
 	PLUGINS_STORE_NAME,
 	PAYMENT_SETTINGS_STORE_NAME,
@@ -24,7 +24,7 @@ import {
 	isWooPayments,
 	providersContainWooPaymentsInTestMode,
 } from '~/settings-payments/utils';
-import { WooPaymentsPostSandboxAccountSetupModal } from '~/settings-payments/components/woo-payments-post-sandbox-account-setup-modal';
+import { WooPaymentsPostSandboxAccountSetupModal } from '~/settings-payments/components/modals';
 
 export const SettingsPaymentsMain = () => {
 	const [ installingPlugin, setInstallingPlugin ] = useState< string | null >(
@@ -54,9 +54,13 @@ export const SettingsPaymentsMain = () => {
 			urlParams.get( 'test_drive_error' ) === 'true';
 		if ( isAccountTestDriveError ) {
 			setErrorMessage(
-				__(
-					'An error occurred while setting up your sandbox account. Please try again.',
-					'woocommerce'
+				sprintf(
+					/* translators: %s: plugin name */
+					__(
+						'%s: An error occurred while setting up your sandbox account — please try again.',
+						'woocommerce'
+					),
+					'WooPayments'
 				)
 			);
 		}
@@ -66,9 +70,13 @@ export const SettingsPaymentsMain = () => {
 
 		if ( isJetpackConnectionError ) {
 			setErrorMessage(
-				__(
-					'There was a problem connecting your WordPress.com account - please try again.',
-					'woocommerce'
+				sprintf(
+					/* translators: %s: plugin name */
+					__(
+						'%s: There was a problem connecting your WordPress.com account — please try again.',
+						'woocommerce'
+					),
+					'WooPayments'
 				)
 			);
 		}
