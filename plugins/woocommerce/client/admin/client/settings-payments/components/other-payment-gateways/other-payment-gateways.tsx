@@ -34,7 +34,10 @@ export const OtherPaymentGateways = ( {
 	setupPlugin,
 	isFetching,
 }: OtherPaymentGatewaysProps ) => {
-	const [ isExpanded, setIsExpanded ] = useState( false );
+	const urlParams = new URLSearchParams( window.location.search );
+	// Determine the initial expanded state based on URL params.
+	const initialExpanded = urlParams.get( 'other_pes_section' ) === 'expanded';
+	const [ isExpanded, setIsExpanded ] = useState( initialExpanded );
 
 	const suggestionsByCategory = useMemo(
 		() =>
