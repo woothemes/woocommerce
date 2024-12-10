@@ -14,13 +14,16 @@ import {
 import { PaymentProvidersResponse } from './types';
 import { WC_ADMIN_NAMESPACE } from '../constants';
 
-export function* getPaymentProviders() {
+export function* getPaymentProviders( country?: string ) {
 	yield getPaymentProvidersRequest();
 
 	try {
 		const paymentProvidersResponse: PaymentProvidersResponse =
 			yield apiFetch( {
-				path: WC_ADMIN_NAMESPACE + '/settings/payments/providers',
+				path:
+					WC_ADMIN_NAMESPACE +
+					'/settings/payments/providers?' +
+					( country ? `location=${ country }` : '' ),
 			} );
 		yield getPaymentProvidersSuccess(
 			paymentProvidersResponse.providers,
@@ -33,6 +36,6 @@ export function* getPaymentProviders() {
 	}
 }
 
-export function* getOfflinePaymentGateways() {
-	yield getPaymentProviders();
+export function* getOfflinePaymentGateways( country?: string ) {
+	yield getPaymentProviders( country );
 }

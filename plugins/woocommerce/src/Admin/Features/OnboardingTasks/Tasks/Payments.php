@@ -76,6 +76,13 @@ class Payments extends Task {
 	 * @return bool
 	 */
 	public function can_view() {
+		// If the React-based Payments settings page is enabled, the task is visible
+		// if just the payment-gateway-suggestions feature is also enabled, without checking if WooPayments is supported.
+		if ( Features::is_enabled( 'reactify-classic-payments-settings' ) &&
+			Features::is_enabled( 'payment-gateway-suggestions' ) ) {
+			return true;
+		}
+
 		// The task is visible if WooPayments is not supported in the current store location country.
 		// Otherwise, the WooPayments task will be shown.
 		return Features::is_enabled( 'payment-gateway-suggestions' ) && ! WooCommercePayments::is_supported();
@@ -96,5 +103,22 @@ class Payments extends Task {
 		);
 
 		return ! empty( $enabled_gateways );
+	}
+
+	/**
+	 * The task action URL.
+	 *
+	 * @return string
+	 */
+	public function get_action_url() {
+		// If the React-based Payments settings page is enabled and the task is complete
+		// we want the task to link to the Payments Settings page.
+		if ( Features::is_enabled( 'reactify-classic-payments-settings' ) &&
+			self::is_complete() ) {
+			return admin_url( 'admin.php?page=wc-settings&tab=checkout' );
+		}
+
+		// Otherwise, we want the task behavior to remain unchanged (link to the Payments task page).
+		return '';
 	}
 }
