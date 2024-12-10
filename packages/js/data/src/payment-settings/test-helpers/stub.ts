@@ -165,7 +165,7 @@ export const offlinePaymentGatewaysStub: OfflinePaymentGateway[] = [
 		_order: 1001,
 		title: 'Cash on delivery',
 		description:
-			'Have your customers pay with cash (or by other means) upon delivery.',
+			'Let your shoppers pay upon delivery — by cash or other methods of payment.',
 		supports: [ 'products' ],
 		state: {
 			enabled: true,
