@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { test, expect } from '../../fixtures/fixtures';
+import { test, expect, tags } from '../../fixtures/fixtures';
 import { getFakeCustomer, getFakeProduct } from '../../utils/data';
 
 // a representation of the menu structure for WC
@@ -163,7 +163,7 @@ for ( const currentPage of wcPages ) {
 			for ( let i = 0; i < currentPage.subpages.length; i++ ) {
 				test(
 					`Can load ${ currentPage.subpages[ i ].name }`,
-					{ tag: '@skip-on-default-wpcom' },
+					{ tag: tags.SKIP_ON_WPCOM },
 					async ( { page } ) => {
 						await page.goto( currentPage.url );
 						await page
