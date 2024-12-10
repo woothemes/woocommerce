@@ -16,7 +16,6 @@ import { useState } from '@wordpress/element';
  * Internal dependencies
  */
 import './ellipsis-menu-content.scss';
-import { WooPaymentsResetAccountModal } from '~/settings-payments/components/modals';
 
 interface EllipsisMenuContentProps {
 	pluginId: string;
@@ -25,6 +24,7 @@ interface EllipsisMenuContentProps {
 	onToggle: () => void;
 	links?: PaymentGatewayLink[];
 	isWooPayments?: boolean;
+	setResetAccountModalVisible?: ( isVisible: boolean ) => void;
 	isEnabled?: boolean;
 	needsSetup?: boolean;
 	testMode?: boolean;
@@ -37,6 +37,7 @@ export const EllipsisMenuContent = ( {
 	onToggle,
 	links = [],
 	isWooPayments = false,
+	setResetAccountModalVisible = () => {},
 	isEnabled = false,
 	needsSetup = false,
 	testMode = false,
@@ -45,8 +46,6 @@ export const EllipsisMenuContent = ( {
 	const [ isDeactivating, setIsDeactivating ] = useState( false );
 	const [ isDisabling, setIsDisabling ] = useState( false );
 	const [ isHidingSuggestion, setIsHidingSuggestion ] = useState( false );
-	const [ resetAccountModalVisible, setResetAccountModalVisible ] =
-		useState( false );
 
 	const {
 		invalidateResolutionForStoreSelector,
@@ -137,6 +136,7 @@ export const EllipsisMenuContent = ( {
 
 	const resetWooPaymentsAccount = () => {
 		setResetAccountModalVisible( true );
+		onToggle();
 	};
 
 	return (
@@ -230,10 +230,6 @@ export const EllipsisMenuContent = ( {
 					</Button>
 				</div>
 			) }
-			<WooPaymentsResetAccountModal
-				isOpen={ resetAccountModalVisible }
-				onClose={ () => setResetAccountModalVisible( false ) }
-			/>
 		</>
 	);
 };
