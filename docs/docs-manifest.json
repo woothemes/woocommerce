@@ -113,6 +113,15 @@
           }
         },
         {
+          "post_title": "Cart and Checkout - Overview of data flow between client and server",
+          "menu_title": "Data flow",
+          "tags": "reference",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/cart-and-checkout-blocks/overview-of-data-flow.md",
+          "hash": "ce9b67884f37af97d1f96a47d6bbc65e24ee49f97ec3444d3deba23bb6568d48",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/overview-of-data-flow.md",
+          "id": "d2d8cf26967438f16815b129da855324be7a7ef8"
+        },
+        {
           "post_title": "Cart and Checkout - Handling scripts, styles, and data",
           "menu_title": "Script, Styles, and Data Handling",
           "tags": "how-to",
