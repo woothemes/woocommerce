@@ -466,17 +466,21 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 		$decimals       = wc_get_price_decimals();
 		$round_tax      = 'no' === get_option( 'woocommerce_tax_round_at_subtotal' );
 
-		$is_full_refund = false;
-		// Order fully refunded won't have the order line items.
-		if ( 'shop_order_refund' === $order->get_type() && empty( $order_items ) ) {
-			$is_full_refund  = true;
-			$parent_order_id = $order->get_parent_id();
-			$parent_order    = wc_get_order( $parent_order_id );
-			$order_items     = $parent_order->get_items();
+		$parent_order_id = $order->get_parent_id();
 
-			// Remove the partial refunded order item if exists.
-			$delete_query = "
-				DELETE product_lookup
+		$is_full_refund = false;
+		$refund_type    = $order->get_meta( '_refund_type' );
+		// When the order is a full refund, there is no order items.
+		// We need to get the parent order items, and exclude the items that is already being patially refunded.
+		if ( 'shop_order_refund' === $order->get_type() && 'full' === $refund_type ) {
+			$is_full_refund     = true;
+			$parent_order_id    = $order->get_parent_id();
+			$parent_order       = wc_get_order( $parent_order_id );
+			$parent_order_items = $parent_order->get_items();
+
+			// Get the partially refunded product ids.
+			$query = "
+				SELECT product_lookup.product_id
 				FROM {$table_name} AS product_lookup
 				INNER JOIN {$wpdb->prefix}wc_order_stats AS order_stats
 					ON order_stats.order_id = product_lookup.order_id
@@ -484,11 +488,32 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 					AND order_stats.parent_id = %d
 					AND order_stats.total_sales < 0
 			";
-			$wpdb->query(
+
+			$refunded_product_ids = $wpdb->get_results(
 				$wpdb->prepare(
 					// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-					$delete_query,
+					$query,
 					$parent_order_id
+				),
+				ARRAY_A
+			);
+
+			$refunded_product_ids = array_map(
+				function ( $refunded_product_id ) {
+					return $refunded_product_id['product_id'];
+				},
+				$refunded_product_ids
+			);
+
+			// Exclude the refunded product ids from the parent order items.
+			$order_items = array_values(
+				array_filter(
+					$parent_order_items,
+					function ( $order_item ) use ( $refunded_product_ids ) {
+						$order_item_id = $order_item->get_id();
+						$product_id    = wc_get_order_item_meta( $order_item_id, '_product_id' );
+						return ! in_array( $product_id, $refunded_product_ids, true );
+					}
 				)
 			);
 		}
@@ -496,14 +521,17 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 		foreach ( $order_items as $order_item ) {
 			$order_item_id = $order_item->get_id();
 			unset( $existing_items[ $order_item_id ] );
-			$product_qty         = $is_full_refund ? 0 : $order_item->get_quantity( 'edit' );
+			$product_qty         = $order_item->get_quantity( 'edit' );
 			$shipping_amount     = $order->get_item_shipping_amount( $order_item );
 			$shipping_tax_amount = $order->get_item_shipping_tax_amount( $order_item );
 			$coupon_amount       = $order->get_item_coupon_amount( $order_item );
 			$net_revenue         = round( $order_item->get_total( 'edit' ), $decimals );
 
+			// If the order is a full refund, there is no order items. We use the parent order items instead.
+			// So the net revenue and product quantity should be negative.
 			if ( $is_full_refund ) {
 				$net_revenue = -abs( $net_revenue );
+				$product_qty = -abs( $product_qty );
 			}
 
 			$is_refund = $net_revenue < 0;
@@ -530,7 +558,8 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 			$result = $wpdb->replace(
 				self::get_db_table_name(),
 				array(
-					'order_item_id'         => $order_item_id,
+					// When the order is full refund, there is no order items, so the order_item_id should be 0.
+					'order_item_id'         => $is_full_refund ? 0 : $order_item_id,
 					'order_id'              => $order->get_id(),
 					'product_id'            => wc_get_order_item_meta( $order_item_id, '_product_id' ),
 					'variation_id'          => wc_get_order_item_meta( $order_item_id, '_variation_id' ),
