@@ -210,7 +210,8 @@ class CheckoutSchema extends AbstractSchema {
 	 * @return array
 	 */
 	public function get_item_response( $item ) {
-		return $this->get_checkout_response( $item->order, $item->payment_result, $item->cart );
+		$cart = property_exists( $item, 'cart' ) ? $item->cart : null;
+		return $this->get_checkout_response( $item->order, $item->payment_result, $cart );
 	}
 
 	/**
@@ -218,6 +219,7 @@ class CheckoutSchema extends AbstractSchema {
 	 *
 	 * @param \WC_Order     $order Order object.
 	 * @param PaymentResult $payment_result Payment result object.
+	 * @param \WC_Cart      $cart Cart object.
 	 * @return array
 	 */
 	protected function get_checkout_response( \WC_Order $order, PaymentResult $payment_result = null, \WC_Cart $cart = null ) {
