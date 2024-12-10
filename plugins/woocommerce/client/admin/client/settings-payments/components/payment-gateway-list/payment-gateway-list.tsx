@@ -76,7 +76,12 @@ export const PaymentGatewayList = ( {
 							>
 								<div
 									id={ provider.id }
-									className="transitions-disabled woocommerce-list__item woocommerce-list__item enter-done"
+									className="transitions-disabled woocommerce-list__item clickable-list-item enter-done"
+									onClick={ () => {
+										window.location.href = getAdminLink(
+											'admin.php?page=wc-settings&tab=checkout&section=offline'
+										);
+									} }
 								>
 									<div className="woocommerce-list__item-inner">
 										<div className="woocommerce-list__item-before">
