@@ -73,11 +73,14 @@ export const PaymentExtensionSuggestionListItem = ( {
 					</Button>
 
 					<EllipsisMenu
-						label={ __( 'Task List Options', 'woocommerce' ) }
+						label={ __(
+							'Payment Provider Options',
+							'woocommerce'
+						) }
 						renderContent={ ( { onToggle } ) => (
 							<EllipsisMenuContent
 								pluginId={ extension.id }
-								pluginName={ extension.plugin.slug }
+								pluginFile={ extension.plugin.file }
 								isSuggestion={ true }
 								links={ extension.links }
 								onToggle={ onToggle }

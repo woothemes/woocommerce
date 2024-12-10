@@ -95,7 +95,7 @@ export const PaymentGatewayListItem = ( {
 						renderContent={ ( { onToggle } ) => (
 							<EllipsisMenuContent
 								pluginId={ gateway.id }
-								pluginName={ gateway.plugin.slug }
+								pluginFile={ gateway.plugin.file }
 								isSuggestion={ false }
 								links={ gateway.links }
 								onToggle={ onToggle }
