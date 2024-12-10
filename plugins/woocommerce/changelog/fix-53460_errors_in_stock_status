@@ -1,4 +1,4 @@
 Significance: minor
 Type: fix
 
-Fix Stock status behavior #53462
+Make Stock Indicator block behavior consistent between the Product Collection block and the Single Product template
