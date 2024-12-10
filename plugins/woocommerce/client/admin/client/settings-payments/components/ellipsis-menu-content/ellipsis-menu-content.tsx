@@ -134,11 +134,6 @@ export const EllipsisMenuContent = ( {
 			} );
 	};
 
-	const resetWooPaymentsAccount = () => {
-		setResetAccountModalVisible( true );
-		onToggle();
-	};
-
 	return (
 		<>
 			{ links
@@ -193,7 +188,10 @@ export const EllipsisMenuContent = ( {
 					key="reset-account"
 				>
 					<Button
-						onClick={ resetWooPaymentsAccount }
+						onClick={ () => {
+							setResetAccountModalVisible( true );
+							onToggle();
+						} }
 						className={ 'components-button__danger' }
 					>
 						{ __( 'Reset account', 'woocommerce' ) }
