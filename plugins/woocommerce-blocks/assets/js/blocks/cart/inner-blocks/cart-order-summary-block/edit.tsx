@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useBlockProps, InnerBlocks, RichText } from '@wordpress/block-editor';
-import { useCallback } from '@wordpress/element';
+import { useCallback, useState } from '@wordpress/element';
 import type { BlockEditProps, TemplateArray } from '@wordpress/blocks';
 import { innerBlockAreas } from '@woocommerce/blocks-checkout';
 import { __ } from '@wordpress/i18n';
@@ -49,6 +49,10 @@ export const Edit = ( {
 		[ 'woocommerce/cart-order-summary-totals-block', {}, [] ],
 	] as TemplateArray;
 
+	const [ totalHeadingText, setTotalHeadingText ] = useState(
+		totalHeading || DEFAULT_TOTAL_HEADING
+	);
+
 	useForcedLayout( {
 		clientId,
 		registeredBlocks: allowedBlocks,
@@ -57,12 +61,16 @@ export const Edit = ( {
 
 	const onTotalHeadingChange = useCallback(
 		( value: string ) => {
-			setAttributes( { totalHeading: value } );
+			setTotalHeadingText( value );
+
+			if ( value === DEFAULT_TOTAL_HEADING ) {
+				setAttributes( { totalHeading: '' } );
+			} else {
+				setAttributes( { totalHeading: value } );
+			}
 		},
 		[ setAttributes ]
 	);
-
-	const totalHeadingText = totalHeading ?? DEFAULT_TOTAL_HEADING;
 
 	const totalHeadingLabel = (
 		<RichText

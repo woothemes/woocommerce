@@ -15,7 +15,7 @@
 	"attributes": {
 		"totalHeading": {
 			"type": "string",
-			"default": null
+			"default": ""
 		},
 		"lock": {
 			"type": "object",

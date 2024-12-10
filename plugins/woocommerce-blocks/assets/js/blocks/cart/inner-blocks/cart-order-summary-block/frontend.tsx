@@ -19,7 +19,7 @@ const FrontendBlock = ( {
 }: BlockAttributes & { children?: JSX.Element | JSX.Element[] } ) => {
 	const { cartTotals } = useStoreCart();
 	const totalsCurrency = getCurrencyFromPriceResponse( cartTotals );
-	const headingLabel = totalHeading ?? DEFAULT_TOTAL_HEADING;
+	const headingLabel = totalHeading || DEFAULT_TOTAL_HEADING;
 
 	return (
 		<div className={ className }>

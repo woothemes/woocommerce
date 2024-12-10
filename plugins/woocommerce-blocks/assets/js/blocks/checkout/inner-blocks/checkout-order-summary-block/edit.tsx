@@ -44,6 +44,9 @@ export const Edit = ( {
 	const { isLarge } = useContainerWidthContext();
 	const [ isOpen, setIsOpen ] = useState( false );
 	const ariaControlsId = useId();
+	const [ totalHeadingText, setTotalHeadingText ] = useState(
+		attributes.totalHeading || DEFAULT_TOTAL_HEADING
+	);
 
 	const orderSummaryProps = ! isLarge
 		? {
@@ -74,12 +77,17 @@ export const Edit = ( {
 
 	const onChangeTotalHeading = useCallback(
 		( value: string ) => {
-			setAttributes( { totalHeading: value } );
+			setTotalHeadingText( value );
+
+			if ( value === DEFAULT_TOTAL_HEADING ) {
+				setAttributes( { totalHeading: '' } );
+			} else {
+				setAttributes( { totalHeading: value } );
+			}
 		},
 		[ setAttributes ]
 	);
 
-	const totalHeadingText = attributes.totalHeading ?? DEFAULT_TOTAL_HEADING;
 	const totalHeadingLabel = (
 		<RichText
 			value={ totalHeadingText }
