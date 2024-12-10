@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { PaymentProvider } from '@woocommerce/data';
+import { PaymentProvider, PaymentProviderType } from '@woocommerce/data';
 import { getAdminLink } from '@woocommerce/settings';
 import { Gridicon } from '@automattic/components';
 
@@ -40,7 +40,7 @@ export const PaymentGatewayList = ( {
 		>
 			{ providers.map( ( provider: PaymentProvider ) => {
 				switch ( provider._type ) {
-					case 'suggestion':
+					case PaymentProviderType.Suggestion:
 						const pluginInstalled = installedPluginSlugs.includes(
 							provider.plugin.slug
 						);
@@ -57,7 +57,7 @@ export const PaymentGatewayList = ( {
 								} ) }
 							</SortableItem>
 						);
-					case 'gateway':
+					case PaymentProviderType.Gateway:
 						return (
 							<SortableItem
 								key={ provider.id }
@@ -68,7 +68,7 @@ export const PaymentGatewayList = ( {
 								} ) }
 							</SortableItem>
 						);
-					case 'offline_pms_group':
+					case PaymentProviderType.OfflinePmsGroup:
 						return (
 							<SortableItem
 								key={ provider.id }

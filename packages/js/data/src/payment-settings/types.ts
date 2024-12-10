@@ -19,10 +19,16 @@ export interface ManagementData {
 	settings_url: string;
 }
 
+export enum PaymentProviderType {
+	OfflinePmsGroup = 'offline_pms_group',
+	Suggestion = 'suggestion',
+	Gateway = 'gateway',
+}
+
 export type PaymentProvider = {
 	id: string;
 	_order: number;
-	_type: 'offline_pms_group' | 'suggestion' | 'gateway';
+	_type: PaymentProviderType;
 	title: string;
 	description: string;
 	icon: string;
