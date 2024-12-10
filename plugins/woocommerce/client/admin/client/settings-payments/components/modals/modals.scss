@@ -4,10 +4,6 @@
 	}
 }
 
-.components-modal__screen-overlay {
-	z-index: 1000001; // we have some items with 1000000 z-index, we want to make sure modal is the top one
-}
-
 .woocommerce-woopayments-modal {
 	max-width: 512px;
 	@media screen and (max-width: 782px) {
