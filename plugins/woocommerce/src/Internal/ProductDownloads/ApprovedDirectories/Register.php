@@ -34,7 +34,7 @@ class Register {
 	/**
 	 * Cache for valid paths, to avoid making duplicate queries.
 	 *
-	 * @var bool[]
+	 * @var array<string, bool>
 	 */
 	private array $valid_paths = array();
 
