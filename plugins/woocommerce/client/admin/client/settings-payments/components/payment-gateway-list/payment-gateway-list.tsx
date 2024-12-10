@@ -74,6 +74,7 @@ export const PaymentGatewayList = ( {
 								key={ provider.id }
 								id={ provider.id }
 							>
+								{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */ }
 								<div
 									id={ provider.id }
 									className="transitions-disabled woocommerce-list__item clickable-list-item enter-done"
