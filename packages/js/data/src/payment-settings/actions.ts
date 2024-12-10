@@ -38,26 +38,10 @@ export function getPaymentProvidersSuccess(
 	suggestions: SuggestedPaymentExtension[];
 	suggestionCategories: SuggestedPaymentExtensionCategory[];
 } {
-	// In the future, this would not be necessary once backend sorting is implemented.
-	let sortedOfflinePaymentGateways = offlinePaymentGateways;
-	const offlinePaymentGatewaysOrdering = localStorage.getItem(
-		'wc_payment_ordering_offline'
-	);
-
-	if ( offlinePaymentGatewaysOrdering ) {
-		try {
-			const ordering = JSON.parse( offlinePaymentGatewaysOrdering );
-			const sorted = [ ...sortedOfflinePaymentGateways ].sort(
-				( a, b ) => ordering[ a.id ] - ordering[ b.id ]
-			);
-			sortedOfflinePaymentGateways = sorted;
-		} catch ( error ) {}
-	}
-
 	return {
 		type: ACTION_TYPES.GET_PAYMENT_PROVIDERS_SUCCESS,
 		providers,
-		offlinePaymentGateways: sortedOfflinePaymentGateways,
+		offlinePaymentGateways,
 		suggestions,
 		suggestionCategories,
 	};
@@ -117,24 +101,6 @@ export function* hideGatewaySuggestion( gatewayId: string ) {
 	}
 }
 
-export function updateOfflinePaymentGatewayOrdering(
-	offlinePaymentGateways: OfflinePaymentGateway[]
-): {
-	type: ACTION_TYPES.UPDATE_OFFLINE_PAYMENT_GATEWAY_ORDERING;
-	offlinePaymentGateways: OfflinePaymentGateway[];
-} {
-	// Temporary until backend is ready.
-	localStorage.setItem(
-		'wc_payment_ordering_offline',
-		JSON.stringify( parseOrdering( offlinePaymentGateways ) )
-	);
-
-	return {
-		type: ACTION_TYPES.UPDATE_OFFLINE_PAYMENT_GATEWAY_ORDERING,
-		offlinePaymentGateways,
-	};
-}
-
 export function updateProviderOrdering( orderMap: OrderMap ): {
 	type: ACTION_TYPES.UPDATE_PROVIDER_ORDERING;
 } {
@@ -161,5 +127,4 @@ export type Actions =
 	| ReturnType< typeof getPaymentProvidersError >
 	| ReturnType< typeof togglePaymentGateway >
 	| ReturnType< typeof hideGatewaySuggestion >
-	| ReturnType< typeof updateOfflinePaymentGatewayOrdering >
 	| ReturnType< typeof updateProviderOrdering >;
