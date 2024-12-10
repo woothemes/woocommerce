@@ -9,12 +9,7 @@ import apiFetch from '@wordpress/api-fetch';
 /**
  * Internal dependencies
  */
-import {
-	getMiniCartTotalsFromLocalStorage,
-	getMiniCartTotalsFromServer,
-	updateTotals,
-	migrateAttributesToColorPanel,
-} from '../data';
+import { updateTotals, migrateAttributesToColorPanel } from '../data';
 
 // This is a simplified version of the response of the Cart API endpoint.
 const responseMock = {
@@ -93,8 +88,6 @@ describe( 'Mini-Cart frontend script when "the display prices during cart and ch
 		const container = getMiniCartDOM();
 		document.body.appendChild( container );
 
-		updateTotals( getMiniCartTotalsFromLocalStorage() );
-
 		// Assert that we are rendering the amount.
 		await waitFor( () =>
 			expect( getByTestId( container, 'amount' ).textContent ).toBe(
@@ -113,8 +106,6 @@ describe( 'Mini-Cart frontend script when "the display prices during cart and ch
 		apiFetch.mockResolvedValue( responseMock );
 		const container = getMiniCartDOM();
 		document.body.appendChild( container );
-
-		getMiniCartTotalsFromServer().then( updateTotals );
 
 		// Assert we called the correct endpoint.
 		await waitFor( () =>
@@ -154,8 +145,6 @@ describe( 'Mini-Cart frontend script when "the display prices during cart and ch
 		initializeLocalStorage();
 		const container = getMiniCartDOM();
 		document.body.appendChild( container );
-
-		updateTotals( getMiniCartTotalsFromLocalStorage() );
 
 		// Assert that we are rendering the amount.
 		await waitFor( () =>
