@@ -78,7 +78,9 @@ export const PaymentGatewayList = ( {
 									id={ provider.id }
 									className="transitions-disabled woocommerce-list__item clickable-list-item enter-done"
 									onClick={ () => {
-										window.location.href = provider.management._links.settings.href;
+										window.location.href =
+											provider.management?._links.settings
+												.href || '';
 									} }
 								>
 									<div className="woocommerce-list__item-inner">
@@ -102,7 +104,13 @@ export const PaymentGatewayList = ( {
 										</div>
 										<div className="woocommerce-list__item-after centered">
 											<div className="woocommerce-list__item-after__actions">
-												<a href={ provider.management._links.settings.href } >
+												<a
+													href={
+														provider.management
+															?._links.settings
+															.href || ''
+													}
+												>
 													<Gridicon icon="chevron-right" />
 												</a>
 											</div>

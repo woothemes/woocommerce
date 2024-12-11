@@ -94,7 +94,10 @@ export const PaymentGatewayListItem = ( {
 								enabled={ gateway.state?.enabled || false }
 								needsSetup={ gateway.state?.needs_setup }
 								testMode={ gateway.state?.test_mode }
-								settingsUrl={ gateway.management._links.settings.href }
+								settingsUrl={
+									gateway.management?._links.settings.href ||
+									''
+								}
 							/>
 							<EllipsisMenu
 								label={ __(
