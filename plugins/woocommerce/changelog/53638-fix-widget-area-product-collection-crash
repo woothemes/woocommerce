@@ -1,0 +1,4 @@
+Significance: minor
+Type: fix
+
+Avoid crash widget area when Product Collection is rendered
