@@ -41,7 +41,9 @@ const couponData = {
 		code: `excludeProductBrands-${ new Date().getTime().toString() }`,
 		description: 'Exclude product brands coupon',
 		amount: '65',
-		excludeProductBrands: [ `WooCommerce Apparels ${ new Date().getTime().toString() }` ],
+		excludeProductBrands: [
+			`WooCommerce Apparels ${ new Date().getTime().toString() }`
+		],
 	},
 	products: {
 		code: `products-${ new Date().getTime().toString() }`,
@@ -107,7 +109,7 @@ const test = baseTest.extend( {
 
 		await api
 			.post( 'products/brands', {
-				name: couponData.excludeProductBrands.excludeProductBrands[0],
+				name: couponData.excludeProductBrands.excludeProductBrands[ 0 ],
 			} )
 			.then( ( response ) => {
 				brand = response.data;
@@ -117,7 +119,7 @@ const test = baseTest.extend( {
 
 		// Brand cleanup
 		await api.delete( `products/brands/${ brand.id }`, { force: true } );
-	}
+	},
 } );
 
 test.describe(
