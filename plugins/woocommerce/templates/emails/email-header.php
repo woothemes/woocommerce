@@ -46,7 +46,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 										 */
 										if ( apply_filters( 'woocommerce_is_email_preview', false ) ) {
 											$img_transient = get_transient( 'woocommerce_email_header_image' );
-											$img           = $img_transient ? $img_transient : $img;
+											$img           = false !== $img_transient ? $img_transient : $img;
 										}
 
 										if ( $img ) {

@@ -49,7 +49,7 @@ defined( 'ABSPATH' ) || exit;
 															 */
 															if ( apply_filters( 'woocommerce_is_email_preview', false ) ) {
 																$text_transient    = get_transient( 'woocommerce_email_footer_text' );
-																$email_footer_text = $text_transient ? $text_transient : $email_footer_text;
+																$email_footer_text = false !== $text_transient ? $text_transient : $email_footer_text;
 															}
 															echo wp_kses_post(
 																wpautop(
