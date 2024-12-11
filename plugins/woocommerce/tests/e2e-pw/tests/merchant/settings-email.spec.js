@@ -458,13 +458,23 @@ test.describe( 'WooCommerce Email Settings', () => {
 			page.locator( '#woocommerce_email_footer_text_color' )
 		).not.toHaveValue( dummyColor );
 
-		// Undo resetting
+		// Change colors to make sure Undo button is active
+		await page.fill( '#woocommerce_email_base_color', dummyColor );
+		await page.fill( '#woocommerce_email_background_color', dummyColor );
+		await page.fill(
+			'#woocommerce_email_body_background_color',
+			dummyColor
+		);
+		await page.fill( '#woocommerce_email_text_color', dummyColor );
+		await page.fill( '#woocommerce_email_footer_text_color', dummyColor );
+
+		// Undo changes
 		await page
 			.locator( resetButtonElement )
 			.getByText( 'Undo changes', { exact: true } )
 			.click();
 
-		// Verify colors are back to the state before resetting
+		// Verify changes are undone
 		await expect(
 			page.locator( '#woocommerce_email_base_color' )
 		).not.toHaveValue( dummyColor );
