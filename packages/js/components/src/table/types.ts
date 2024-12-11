@@ -190,7 +190,7 @@ export type TableCardProps = CommonTableProps & {
 	 */
 	totalRows: number;
 	/**
-	 * A notice component to be displayed in the card header.
+	 * A component to be displayed before the table.
 	 */
-	headerNotice?: React.ReactNode;
+	tablePreface?: React.ReactNode;
 };

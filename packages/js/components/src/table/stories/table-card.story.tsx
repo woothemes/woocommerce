@@ -84,7 +84,7 @@ const TableCardWithActionsExample = () => {
 	);
 };
 
-const TableCardWithHeaderNoticeExample = () => {
+const TableCardWithTablePrefaceExample = () => {
 	const [ { query }, setState ] = useState( {
 		query: {
 			paged: 1,
@@ -96,7 +96,7 @@ const TableCardWithHeaderNoticeExample = () => {
 			title="Revenue last week"
 			rows={ rows }
 			headers={ headers }
-			headerNotice={
+			tablePreface={
 				<div style={{ padding: '8px', backgroundColor: '#f0f4f8' }}>
 					This is an important notice about the table
 				</div>
@@ -118,7 +118,7 @@ const TableCardWithHeaderNoticeExample = () => {
 
 export const Basic = () => <TableCardExample />;
 export const Actions = () => <TableCardWithActionsExample />;
-export const HeaderNotice = () => <TableCardWithHeaderNoticeExample />;
+export const TablePreface = () => <TableCardWithTablePrefaceExample />;
 
 export default {
 	title: 'WooCommerce Admin/components/TableCard',

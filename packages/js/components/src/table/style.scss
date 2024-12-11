@@ -313,10 +313,7 @@ th.woocommerce-table__item {
 		font-weight: 600;
 	}
 }
-
-.woocommerce-table__header-notice {
-    grid-column: 1 / -1;  /* This makes it span all columns */
-    margin: $gap 0 0;     /* Add some top margin to separate it from the header content */
-    width: 100%;
-	margin-left: calc(4px * -2); /* Counter the generated margin */
+.woocommerce-table__table-preface {
+	margin-bottom: $gap;
 }
+
