@@ -588,7 +588,7 @@ class FeaturesController {
 	 *
 	 * @return bool True if 'woocommerce_init' has run or is running, false otherwise.
 	 */
-	private function verify_did_woocommerce_init( string $function_name = null ): bool {
+	private function verify_did_woocommerce_init( ?string $function_name = null ): bool {
 		if ( ! $this->proxy->call_function( 'did_action', 'woocommerce_init' ) &&
 			! $this->proxy->call_function( 'doing_action', 'woocommerce_init' ) ) {
 			if ( ! is_null( $function_name ) ) {

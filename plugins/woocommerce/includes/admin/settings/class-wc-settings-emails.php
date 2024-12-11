@@ -631,7 +631,6 @@ class WC_Settings_Emails extends WC_Settings_Page {
 			$email_types[] = array(
 				'label'   => $email->get_title(),
 				'value'   => $type,
-				'subject' => $email->get_default_subject(),
 			);
 		}
 		?>
