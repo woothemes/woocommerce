@@ -647,6 +647,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 			id="wc_settings_email_preview_slotfill"
 			data-preview-url="<?php echo esc_url( wp_nonce_url( admin_url( '?preview_woocommerce_mail=true' ), 'preview-mail' ) ); ?>"
 			data-email-types="<?php echo esc_attr( wp_json_encode( $email_types ) ); ?>"
+			data-email-settings-ids="<?php echo esc_attr( wp_json_encode( EmailPreview::EMAIL_SETTINGS_IDS ) ); ?>"
 		></div>
 		<?php
 	}

@@ -26,11 +26,13 @@ export type EmailType = SelectControl.Option;
 type EmailPreviewFillProps = {
 	emailTypes: EmailType[];
 	previewUrl: string;
+	settingsIds: string[];
 };
 
 const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 	emailTypes,
 	previewUrl,
+	settingsIds,
 } ) => {
 	const [ deviceType, setDeviceType ] =
 		useState< string >( DEVICE_TYPE_DESKTOP );
@@ -74,6 +76,7 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 					<EmailPreviewIframe
 						src={ finalPreviewUrl }
 						setIsLoading={ setIsLoading }
+						settingsIds={ settingsIds }
 					/>
 				</div>
 			</div>
@@ -96,12 +99,20 @@ export const registerSettingsEmailPreviewFill = () => {
 	try {
 		emailTypes = JSON.parse( emailTypesData || '' );
 	} catch ( e ) {}
+	const settingsIdsData = slotElement.getAttribute(
+		'data-email-settings-ids'
+	);
+	let settingsIds: string[] = [];
+	try {
+		settingsIds = JSON.parse( settingsIdsData || '' );
+	} catch ( e ) {}
 
 	registerPlugin( 'woocommerce-admin-settings-email-preview', {
 		// @ts-expect-error 'scope' does exist. @types/wordpress__plugins is outdated.
 		scope: 'woocommerce-email-preview-settings',
 		render: () => (
 			<EmailPreviewFill
+				settingsIds={ settingsIds }
 				emailTypes={ emailTypes }
 				previewUrl={ previewUrl }
 			/>
