@@ -26,7 +26,7 @@ import { OrderMetaSlotFill } from './slotfills';
 import { DEFAULT_TOTAL_HEADING } from './constants';
 export type BlockAttributes = {
 	totalHeading: string;
-	className?: string;
+	className: string;
 };
 
 export const Edit = ( {

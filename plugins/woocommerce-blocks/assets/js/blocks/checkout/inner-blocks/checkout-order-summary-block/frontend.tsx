@@ -92,7 +92,7 @@ const FrontendBlock = ( {
 					{ children }
 					<div className="wc-block-components-totals-wrapper">
 						<TotalsFooterItem
-							label={ totalHeading ?? DEFAULT_TOTAL_HEADING }
+							label={ totalHeading || DEFAULT_TOTAL_HEADING }
 							currency={ totalsCurrency }
 							values={ cartTotals }
 						/>
@@ -114,7 +114,7 @@ const FrontendBlock = ( {
 							<div className="wc-block-components-totals-wrapper">
 								<TotalsFooterItem
 									label={
-										totalHeading ?? DEFAULT_TOTAL_HEADING
+										totalHeading || DEFAULT_TOTAL_HEADING
 									}
 									currency={ totalsCurrency }
 									values={ cartTotals }
