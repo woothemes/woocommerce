@@ -1,6 +1,6 @@
 /**
  * product-editor.scss
- * Styles for refubrished product and coupon editor.
+ * Styles for refurbished product and coupon editor.
  */
 
 /**
@@ -262,12 +262,12 @@ $break-largeish: 900px; // It's almost $break-large, but kept consistent with th
 		fieldset.form-field,
 		.downloadable_files {
 			// Use margin as gap and horizontal padding.
-			// Accomodate for p trick with label that uses padding as margin
+			// Accommodate for p trick with label that uses padding as margin
 			// that adds 12 to the left and 20 to the right
 			margin: $gap calc(48px - 20px) $gap calc(48px - 12px);
 
 			@media only screen and (max-width: $break-wide) {
-				margin: $gap calc(gap-larger - 20px) $gap calc($gap-larger - 12px);
+				margin: $gap calc($gap-larger - 20px) $gap calc($gap-larger - 12px);
 			}
 
 			@media only screen and (max-width: $break-largeish) {
@@ -285,7 +285,7 @@ $break-largeish: 900px; // It's almost $break-large, but kept consistent with th
 		 */
 		&#general_coupon_data {
 			border-bottom-color: #ededed;
-			// Deduct vertival margins of inner paragraphs.
+			// Deduct vertical margins of inner paragraphs.
 			padding: calc($gap-larger - $gap) 0;
 
 			@media only screen and (max-width: $break-wide) {
