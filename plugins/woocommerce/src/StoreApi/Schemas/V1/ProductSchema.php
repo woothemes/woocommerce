@@ -383,21 +383,15 @@ class ProductSchema extends AbstractSchema {
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,
 			],
-			'backorder_notification_enabled' => [
-				'description' => __( 'Is the product backorder notification enabled?', 'woocommerce' ),
-				'type'        => 'boolean',
+			'stock_indicator_text' => [
+				'description' => __( 'Stock indicator text. e.g. "In stock", "Out of stock", "Available on backorder", etc.', 'woocommerce' ),
+				'type'        => 'string',
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,
 			],
 			'low_stock_remaining' => [
 				'description' => __( 'Quantity left in stock if stock is low, or null if not applicable.', 'woocommerce' ),
 				'type'        => [ 'integer', 'null' ],
-				'context'     => [ 'view', 'edit' ],
-				'readonly'    => true,
-			],
-			'manage_stock'        => [
-				'description' => __( 'If true, stock management is enabled for the product.', 'woocommerce' ),
-				'type'        => [ 'boolean', 'string' ],
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,
 			],
@@ -488,9 +482,8 @@ class ProductSchema extends AbstractSchema {
 			'is_purchasable'                  => $product->is_purchasable(),
 			'is_in_stock'                     => $product->is_in_stock(),
 			'is_on_backorder'                 => 'onbackorder' === $product->get_stock_status(),
-			'backorder_notification_enabled'   => 'notify' === $product->get_backorders(),
 			'low_stock_remaining'             => $this->get_low_stock_remaining( $product ),
-			'manage_stock'                    => $product->get_manage_stock(),
+			'stock_indicator_text' => $this->get_stock_indicator_text( $product ),
 			'sold_individually'               => $product->is_sold_individually(),
 			'add_to_cart'                     => (object) array_merge(
 				[
@@ -551,6 +544,17 @@ class ProductSchema extends AbstractSchema {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Get stock availability text.
+	 *
+	 * @param \WC_Product $product Product instance.
+	 * @return string
+	 */
+	protected function get_stock_indicator_text( \WC_Product $product ) {
+		$availability = $product->get_availability();
+		return $availability['availability'];
 	}
 
 	/**

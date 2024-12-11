@@ -43,9 +43,8 @@ const defaultProductData: ProductResponseItem = {
 	is_purchasable: false,
 	is_in_stock: false,
 	is_on_backorder: false,
-	backorder_notification_enabled: false,
 	low_stock_remaining: null,
-	manage_stock: false,
+	stock_indicator_text: '',
 	sold_individually: false,
 	add_to_cart: {
 		text: 'Add to cart',

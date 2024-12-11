@@ -80,9 +80,8 @@ export interface ProductResponseItem {
 	is_purchasable: boolean;
 	is_in_stock: boolean;
 	is_on_backorder: boolean;
-	backorder_notification_enabled: boolean;
 	low_stock_remaining: null | number;
-	manage_stock: string | boolean;
+	stock_indicator_text: string;
 	sold_individually: boolean;
 	add_to_cart: {
 		text: string;
