@@ -223,13 +223,15 @@ export const SettingsPaymentsMain = () => {
 					></button>
 				</div>
 			) }
-			{ incentive && ! isIncentiveDismissedInBannerContext && (
-				<IncentiveBanner
-					incentive={ incentive }
-					onDismiss={ dismissIncentive }
-					onAccept={ setupPlugin }
-				/>
-			) }
+			{ incentive &&
+				! isSwitchIncentive &&
+				! isIncentiveDismissedInBannerContext && (
+					<IncentiveBanner
+						incentive={ incentive }
+						onDismiss={ dismissIncentive }
+						onAccept={ setupPlugin }
+					/>
+				) }
 			<div className="settings-payments-main__container">
 				<PaymentGateways
 					providers={ sortedProviders || providers }
