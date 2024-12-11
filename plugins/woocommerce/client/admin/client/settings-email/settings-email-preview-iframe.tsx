@@ -4,6 +4,7 @@
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import { useEffect } from 'react';
+import { debounce } from 'lodash';
 
 type EmailPreviewIframeProps = {
 	src: string;
@@ -17,7 +18,7 @@ export const EmailPreviewIframe: React.FC< EmailPreviewIframeProps > = ( {
 	settingsIds,
 } ) => {
 	useEffect( () => {
-		const handleFieldChange = async ( event: Event ) => {
+		const handleFieldChange = debounce( async ( event: Event ) => {
 			const target = event.target as HTMLInputElement;
 			const key = target.id;
 			const value = target.value;
@@ -33,7 +34,7 @@ export const EmailPreviewIframe: React.FC< EmailPreviewIframeProps > = ( {
 			} finally {
 				setIsLoading( false );
 			}
-		};
+		}, 400 );
 
 		// Set up listeners
 		settingsIds.forEach( ( id ) => {
