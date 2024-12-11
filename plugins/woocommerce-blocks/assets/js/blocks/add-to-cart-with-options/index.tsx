@@ -12,10 +12,10 @@ import { isBoolean } from '@woocommerce/types';
  * Internal dependencies
  */
 import metadata from './block.json';
-import AddToCartOptionsEdit from './edit';
-import './style.scss';
 import registerStore, { store as woocommerceTemplateStateStore } from './store';
 import getProductTypeOptions from './utils/get-product-types';
+import AddToCartOptionsEdit from './edit';
+import './style.scss';
 
 // Pick the value of the "blockify add to cart flag"
 const isBlockifiedAddToCart = getSettingWithCoercion(
