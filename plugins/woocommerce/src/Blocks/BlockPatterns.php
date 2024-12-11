@@ -205,16 +205,24 @@ class BlockPatterns {
 			return;
 		}
 
-		// The most efficient way to check for an existing action is to use `as_has_scheduled_action`, but in unusual
-		// cases where another plugin has loaded a very old version of Action Scheduler, it may not be available to us.
-		$has_scheduled_action = function_exists( 'as_has_scheduled_action' ) ? 'as_has_scheduled_action' : 'as_next_scheduled_action';
-
 		$patterns = $this->ptk_patterns_store->get_patterns();
-		if ( empty( $patterns ) ) {
-			// By only logging when patterns are empty and no fetch is scheduled,
-			// we ensure that warnings are only generated in genuinely problematic situations,
-			// such as when the pattern fetching mechanism has failed entirely.
-			if ( ! call_user_func( $has_scheduled_action, 'fetch_patterns' ) ) {
+		if ( empty( $patterns ) && function_exists( 'as_get_scheduled_actions' ) ) {
+			$action_statuses = array_column(
+				as_get_scheduled_actions(
+					array(
+						'hook'     => 'fetch_patterns',
+						'status'   => array( 'complete', 'failed', 'pending', 'in-progress' ),
+						'per_page' => -1,
+					)
+				),
+				'status'
+			);
+
+			// Only log if we have completed/failed actions but no pending/in-progress ones.
+			$has_completed_or_failed = in_array( 'complete', $action_statuses, true ) || in_array( 'failed', $action_statuses, true );
+			$has_pending_or_running  = in_array( 'pending', $action_statuses, true ) || in_array( 'in-progress', $action_statuses, true );
+
+			if ( $has_completed_or_failed && ! $has_pending_or_running ) {
 				wc_get_logger()->warning(
 					__( 'Empty patterns received from the PTK Pattern Store', 'woocommerce' ),
 				);
