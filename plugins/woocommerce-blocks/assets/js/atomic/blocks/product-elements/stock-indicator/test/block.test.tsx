@@ -4,7 +4,6 @@
 import { render } from '@testing-library/react';
 import { ProductDataContextProvider } from '@woocommerce/shared-context';
 import { ProductResponseItem } from '@woocommerce/types';
-import { getSetting } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
@@ -107,9 +106,8 @@ const defaultProduct: ProductResponseItem = {
 	id: 1,
 	type: 'simple',
 	is_in_stock: true,
-	manage_stock: true,
 	is_on_backorder: false,
-	backorder_notification_enabled: false,
+	stock_indicator_text: '',
 	parent: 0,
 	permalink: '',
 	images: [],
@@ -154,154 +152,67 @@ const defaultProduct: ProductResponseItem = {
 };
 
 describe( 'Stock Indicator Block', () => {
-	beforeEach( () => {
-		( getSetting as jest.Mock ).mockImplementation( ( setting ) => {
-			if ( setting === 'productTypesWithoutStockIndicator' ) {
-				return [ 'external', 'grouped', 'variable' ];
-			}
-			return undefined;
-		} );
+	it( 'should not show stock indicator when stock_indicator_text is empty', () => {
+		const product = {
+			...defaultProduct,
+			stock_indicator_text: '',
+		};
+
+		const { container } = render(
+			<ProductDataContextProvider product={ product } isLoading={ false }>
+				<Block
+					productId={ 1 }
+					isDescendentOfQueryLoop={ false }
+					isDescendantOfAllProducts={ false }
+				/>
+			</ProductDataContextProvider>
+		);
+
+		expect( container.firstChild ).toBeNull();
 	} );
 
-	describe( 'isStockVisible', () => {
-		it( 'should not show stock indicator for grouped products', () => {
-			const product = {
-				...defaultProduct,
-				type: 'grouped',
-			};
+	it( 'should show stock indicator for out of stock products', () => {
+		const product = {
+			...defaultProduct,
+			is_in_stock: false,
+			stock_indicator_text: 'Out of stock',
+		};
 
-			const { container } = render(
-				<ProductDataContextProvider
-					product={ product }
-					isLoading={ false }
-				>
-					<Block
-						productId={ 1 }
-						isDescendentOfQueryLoop={ false }
-						isDescendantOfAllProducts={ false }
-					/>
-				</ProductDataContextProvider>
-			);
+		const { container } = render(
+			<ProductDataContextProvider product={ product } isLoading={ false }>
+				<Block
+					productId={ 1 }
+					isDescendentOfQueryLoop={ false }
+					isDescendantOfAllProducts={ false }
+				/>
+			</ProductDataContextProvider>
+		);
 
-			expect( container.firstChild ).toBeNull();
-		} );
+		expect( container.firstChild ).not.toBeNull();
+		expect( container.firstChild ).toHaveClass(
+			'wc-block-components-product-stock-indicator--out-of-stock'
+		);
+	} );
 
-		it( 'should not show stock indicator when product is in stock and stock is not managed', () => {
-			const product = {
-				...defaultProduct,
-				is_in_stock: true,
-				manage_stock: false,
-				is_on_backorder: false,
-			};
+	it( 'should show stock indicator for in stock products', () => {
+		const product = {
+			...defaultProduct,
+			stock_indicator_text: 'In stock',
+		};
 
-			const { container } = render(
-				<ProductDataContextProvider
-					product={ product }
-					isLoading={ false }
-				>
-					<Block
-						productId={ 1 }
-						isDescendentOfQueryLoop={ false }
-						isDescendantOfAllProducts={ false }
-					/>
-				</ProductDataContextProvider>
-			);
+		const { container } = render(
+			<ProductDataContextProvider product={ product } isLoading={ false }>
+				<Block
+					productId={ 1 }
+					isDescendentOfQueryLoop={ false }
+					isDescendantOfAllProducts={ false }
+				/>
+			</ProductDataContextProvider>
+		);
 
-			expect( container.firstChild ).toBeNull();
-		} );
-
-		it( 'should not show stock indicator for variations with specific conditions', () => {
-			const product = {
-				...defaultProduct,
-				type: 'variation',
-				backorder_notification_enabled: false,
-				is_on_backorder: true,
-				manage_stock: true,
-			};
-
-			const { container } = render(
-				<ProductDataContextProvider
-					product={ product }
-					isLoading={ false }
-				>
-					<Block
-						productId={ 1 }
-						isDescendentOfQueryLoop={ false }
-						isDescendantOfAllProducts={ false }
-					/>
-				</ProductDataContextProvider>
-			);
-
-			expect( container.firstChild ).toBeNull();
-		} );
-
-		it( 'should show stock indicator for simple products with managed stock', () => {
-			const product = {
-				...defaultProduct,
-				type: 'simple',
-				manage_stock: true,
-			};
-
-			const { container } = render(
-				<ProductDataContextProvider
-					product={ product }
-					isLoading={ false }
-				>
-					<Block
-						productId={ 1 }
-						isDescendentOfQueryLoop={ false }
-						isDescendantOfAllProducts={ false }
-					/>
-				</ProductDataContextProvider>
-			);
-
-			expect( container.firstChild ).not.toBeNull();
-		} );
-
-		it( 'should show stock indicator for variations with backorder enabled', () => {
-			const product = {
-				...defaultProduct,
-				type: 'variation',
-				backorder_notification_enabled: true,
-			};
-			const { container } = render(
-				<ProductDataContextProvider
-					product={ product }
-					isLoading={ false }
-				>
-					<Block
-						productId={ 1 }
-						isDescendentOfQueryLoop={ false }
-						isDescendantOfAllProducts={ false }
-					/>
-				</ProductDataContextProvider>
-			);
-
-			expect( container.firstChild ).not.toBeNull();
-		} );
-
-		it( 'should show stock indicator for out of stock variations with manage stock false', () => {
-			const product = {
-				...defaultProduct,
-				type: 'variation',
-				manage_stock: false,
-				is_in_stock: false,
-			};
-
-			const { container } = render(
-				<ProductDataContextProvider
-					product={ product }
-					isLoading={ false }
-				>
-					<Block
-						productId={ 1 }
-						isDescendentOfQueryLoop={ false }
-						isDescendantOfAllProducts={ false }
-					/>
-				</ProductDataContextProvider>
-			);
-
-			expect( container.firstChild ).not.toBeNull();
-		} );
+		expect( container.firstChild ).not.toBeNull();
+		expect( container.firstChild ).toHaveClass(
+			'wc-block-components-product-stock-indicator--in-stock'
+		);
 	} );
 } );
