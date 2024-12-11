@@ -3,6 +3,7 @@ declare( strict_types=1 );
 
 namespace Automattic\WooCommerce\Tests\Internal\Admin\Settings;
 
+use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders;
 use Automattic\WooCommerce\Internal\Admin\Settings\Payments;
 use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestions;
 use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestions as ExtensionSuggestions;
@@ -21,6 +22,11 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 	 * @var Payments
 	 */
 	protected $service;
+
+	/**
+	 * @var PaymentProviders|MockObject
+	 */
+	protected $mock_providers;
 
 	/**
 	 * @var PaymentExtensionSuggestions|MockObject
@@ -43,20 +49,33 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->store_admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $this->store_admin_id );
 
+		$this->mock_providers = $this->getMockBuilder( PaymentProviders::class )
+			->disableOriginalConstructor()
+			->onlyMethods(
+				array( 'get_payment_gateways', 'get_payment_gateway_base_details', 'get_order_map', 'save_order_map', 'update_payment_providers_order_map', 'enhance_order_map' )
+			)
+			->getMock();
+
 		$this->mock_extension_suggestions = $this->getMockBuilder( PaymentExtensionSuggestions::class )
 			->disableOriginalConstructor()
 			->getMock();
 
 		$this->service = new Payments();
-		$this->service->init( $this->mock_extension_suggestions );
+		$this->service->init( $this->mock_providers, $this->mock_extension_suggestions );
 	}
 
 	/**
-	 * Test getting payment providers.
+	 * Test getting payment providers with no gateways or suggestions.
 	 */
-	public function test_get_payment_providers_basic_core() {
+	public function test_get_payment_providers_no_gateways_no_suggestions() {
 		// Arrange.
-		$location         = 'US';
+		$location = 'US';
+
+		$this->mock_providers
+			->expects( $this->atLeastOnce() )
+			->method( 'get_payment_gateways' )
+			->willReturn( array() );
+
 		$base_suggestions = array();
 		$this->mock_extension_suggestions
 			->expects( $this->once() )
@@ -64,49 +83,198 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 			->with( $location )
 			->willReturn( $base_suggestions );
 
-		$this->load_core_paypal_pg();
+		// Act.
+		$data = $this->service->get_payment_providers( 'US' );
+
+		// Assert.
+		$this->assertCount( 0, $data );
+	}
+
+	/**
+	 * Test getting payment providers with gateways but no suggestions.
+	 */
+	public function test_get_payment_providers_only_gateways_no_suggestions() {
+		// Arrange.
+		$location = 'US';
+
+		// All are WooCommerce core gateways.
+		$gateways = array(
+			new FakePaymentGateway( 'paypal', array( 'plugin_slug' => 'woocommerce' ) ),
+			// The offline PMs.
+			new FakePaymentGateway( 'bacs', array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( 'cheque', array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( 'cod', array( 'plugin_slug' => 'woocommerce' ) ),
+		);
+		$this->mock_providers
+			->expects( $this->atLeastOnce() )
+			->method( 'get_payment_gateways' )
+			->willReturn( $gateways );
+
+		$this->mock_providers
+			->expects( $this->atLeast( count( $gateways ) ) )
+			->method( 'get_payment_gateway_base_details' )
+			->willReturnCallback(
+				function ( $payment_gateway, $payment_gateway_order ) {
+					return $this->extract_payment_gateway_base_details( $payment_gateway, $payment_gateway_order );
+				}
+			);
+
+		$this->mock_providers
+			->expects( $this->any() )
+			->method( 'get_order_map' )
+			->willReturn( array() ); // No preexisting order map.
+		$this->mock_providers
+			->expects( $this->any() )
+			->method( 'enhance_order_map' )
+			->willReturn(
+				array_flip(
+					array(
+						'paypal',
+						PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
+						'bacs',
+						'cheque',
+						'cod',
+					)
+				)
+			);
+
+		$base_suggestions = array();
+		$this->mock_extension_suggestions
+			->expects( $this->once() )
+			->method( 'get_country_extensions' )
+			->with( $location )
+			->willReturn( $base_suggestions );
 
 		// Act.
 		$data = $this->service->get_payment_providers( 'US' );
 
-		// We have the core PayPal gateway registered, the 3 offline payment methods and their group entry.
+		// We have the PayPal gateway, the 3 offline payment methods and their group entry.
 		$this->assertCount( 5, $data );
 		// Because the core registers the PayPal PG after the offline PMs, the order we expect is this.
 		$this->assertSame(
-			array( Payments::OFFLINE_METHODS_ORDERING_GROUP, 'bacs', 'cheque', 'cod', 'paypal' ),
+			array( 'paypal', PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP, 'bacs', 'cheque', 'cod' ),
 			array_column( $data, 'id' )
 		);
 
 		// Assert that the PayPal gateway has all the details.
-		$gateway = $data[4];
+		$gateway = $data[0];
 		$this->assertArrayHasKey( 'id', $gateway, 'Gateway `id` entry is missing' );
 		$this->assertArrayHasKey( '_order', $gateway, 'Gateway `_order` entry is missing' );
 		$this->assertArrayHasKey( '_type', $gateway, 'Gateway `_type` entry is missing' );
-		$this->assertEquals( Payments::PROVIDER_TYPE_GATEWAY, $gateway['_type'], 'Gateway `_type` entry is not `' . Payments::PROVIDER_TYPE_GATEWAY . '`' );
+		$this->assertEquals( PaymentProviders::TYPE_GATEWAY, $gateway['_type'], 'Gateway `_type` entry is not `' . PaymentProviders::TYPE_GATEWAY . '`' );
 		$this->assertArrayHasKey( 'title', $gateway, 'Gateway `title` entry is missing' );
 		$this->assertArrayHasKey( 'description', $gateway, 'Gateway `description` entry is missing' );
 		$this->assertArrayHasKey( 'supports', $gateway, 'Gateway `supports` entry is missing' );
 		$this->assertIsList( $gateway['supports'], 'Gateway `supports` entry is not a list' );
 		$this->assertArrayHasKey( 'state', $gateway, 'Gateway `state` entry is missing' );
 		$this->assertArrayHasKey( 'enabled', $gateway['state'], 'Gateway `state[enabled]` entry is missing' );
+		$this->assertTrue( $gateway['state']['enabled'], 'Gateway `state[enabled]` entry is not `true`' );
 		$this->assertArrayHasKey( 'needs_setup', $gateway['state'], 'Gateway `state[needs_setup]` entry is missing' );
 		$this->assertArrayHasKey( 'test_mode', $gateway['state'], 'Gateway `state[test_mode]` entry is missing' );
 		$this->assertArrayHasKey( 'dev_mode', $gateway['state'], 'Gateway `state[dev_mode]` entry is missing' );
 		$this->assertArrayHasKey( 'management', $gateway, 'Gateway `management` entry is missing' );
-		$this->assertArrayHasKey( 'settings_url', $gateway['management'], 'Gateway `management[settings_url]` entry is missing' );
+		$this->assertArrayHasKey( '_links', $gateway['management'], 'Gateway `management[_links]` entry is missing' );
+		$this->assertArrayHasKey( 'settings', $gateway['management']['_links'], 'Gateway `management[_links][settings]` entry is missing' );
 		$this->assertArrayHasKey( 'links', $gateway, 'Gateway `links` entry is missing' );
 		$this->assertCount( 1, $gateway['links'] );
 		$this->assertArrayHasKey( 'plugin', $gateway, 'Gateway `plugin` entry is missing' );
 		$this->assertArrayHasKey( 'slug', $gateway['plugin'], 'Gateway `plugin[slug]` entry is missing' );
+		$this->assertSame( 'woocommerce', $gateway['plugin']['slug'] );
+		$this->assertArrayHasKey( 'file', $gateway['plugin'], 'Gateway `plugin[file]` entry is missing' );
 		$this->assertArrayHasKey( 'status', $gateway['plugin'], 'Gateway `plugin[status]` entry is missing' );
+		$this->assertSame( PaymentProviders::EXTENSION_ACTIVE, $gateway['plugin']['status'] );
+
+		// Assert that the offline payment methods group has all the details.
+		$group = $data[1];
+		$this->assertArrayHasKey( 'id', $group, 'Group `id` entry is missing' );
+		$this->assertEquals( PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP, $group['id'] );
+		$this->assertArrayHasKey( '_order', $group, 'Group `_order` entry is missing' );
+		$this->assertIsInteger( $group['_order'], 'Group `_order` entry is not an integer' );
+		$this->assertArrayHasKey( '_type', $group, 'Group `_type` entry is missing' );
+		$this->assertEquals( PaymentProviders::TYPE_OFFLINE_PMS_GROUP, $group['_type'], 'Group `_type` entry is not `' . PaymentProviders::TYPE_OFFLINE_PMS_GROUP . '`' );
+		$this->assertArrayHasKey( 'title', $group, 'Group `title` entry is missing' );
+		$this->assertArrayHasKey( 'description', $group, 'Group `description` entry is missing' );
+		$this->assertArrayHasKey( 'icon', $group, 'Group `icon` entry is missing' );
+		$this->assertArrayHasKey( 'management', $group, 'Gateway `management` entry is missing' );
+		$this->assertArrayHasKey( '_links', $group['management'], 'Gateway `management[_links]` entry is missing' );
+		$this->assertArrayHasKey( 'settings', $group['management']['_links'], 'Gateway `management[_links][settings]` entry is missing' );
+		$this->assertArrayHasKey( 'href', $group['management']['_links']['settings'], 'Gateway `management[_links][settings][href]` entry is missing' );
+		$this->assertArrayHasKey( 'plugin', $group, 'Group `plugin` entry is missing' );
+		$this->assertArrayHasKey( 'slug', $group['plugin'], 'Group `plugin[slug]` entry is missing' );
+		$this->assertSame( 'woocommerce', $group['plugin']['slug'] );
+		$this->assertArrayHasKey( 'status', $group['plugin'], 'Group `plugin[status]` entry is missing' );
+		$this->assertSame( PaymentProviders::EXTENSION_ACTIVE, $group['plugin']['status'] );
+
+		// Assert that the offline payment methods have all the details.
+		$offline_pm = $data[2];
+		$this->assertArrayHasKey( 'id', $offline_pm, 'Offline PM `id` entry is missing' );
+		$this->assertArrayHasKey( '_order', $offline_pm, 'Offline PM `_order` entry is missing' );
+		$this->assertArrayHasKey( '_type', $offline_pm, 'Offline PM `_type` entry is missing' );
+		$this->assertEquals( PaymentProviders::TYPE_OFFLINE_PM, $offline_pm['_type'], 'Offline PM `_type` entry is not `' . PaymentProviders::TYPE_OFFLINE_PM . '`' );
+		$this->assertArrayHasKey( 'title', $offline_pm, 'Offline PM `title` entry is missing' );
+		$this->assertArrayHasKey( 'description', $offline_pm, 'Offline PM `description` entry is missing' );
+		$this->assertArrayHasKey( 'icon', $offline_pm, 'Offline PM `icon` entry is missing' );
+		$this->assertArrayHasKey( 'management', $offline_pm, 'Offline PM `management` entry is missing' );
+		$this->assertArrayHasKey( '_links', $offline_pm['management'], 'Offline PM `management[_links]` entry is missing' );
+		$this->assertArrayHasKey( 'settings', $offline_pm['management']['_links'], 'Offline PM `management[_links][settings]` entry is missing' );
+		$this->assertArrayHasKey( 'href', $offline_pm['management']['_links']['settings'], 'Offline PM `management[_links][settings][href]` entry is missing' );
+		$this->assertArrayHasKey( 'plugin', $offline_pm, 'Offline PM `plugin` entry is missing' );
+		$this->assertArrayHasKey( 'slug', $offline_pm['plugin'], 'Offline PM `plugin[slug]` entry is missing' );
+		$this->assertSame( 'woocommerce', $offline_pm['plugin']['slug'] );
+		$this->assertArrayHasKey( 'status', $offline_pm['plugin'], 'Offline PM `plugin[status]` entry is missing' );
+		$this->assertSame( PaymentProviders::EXTENSION_ACTIVE, $offline_pm['plugin']['status'] );
 	}
 
 	/**
-	 * Test getting payment providers.
+	 * Test getting payment providers with gateways and suggestions.
 	 */
-	public function test_get_payment_providers_basic_core_with_suggestions() {
+	public function test_get_payment_providers_gateways_and_suggestions() {
 		// Arrange.
-		$location         = 'US';
+		$location = 'US';
+
+		// All are WooCommerce core gateways.
+		$gateways = array(
+			new FakePaymentGateway( 'paypal', array( 'plugin_slug' => 'woocommerce' ) ),
+			// The offline PMs.
+			new FakePaymentGateway( 'bacs', array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( 'cheque', array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( 'cod', array( 'plugin_slug' => 'woocommerce' ) ),
+		);
+		$this->mock_providers
+			->expects( $this->atLeastOnce() )
+			->method( 'get_payment_gateways' )
+			->willReturn( $gateways );
+
+		$this->mock_providers
+			->expects( $this->atLeast( count( $gateways ) ) )
+			->method( 'get_payment_gateway_base_details' )
+			->willReturnCallback(
+				function ( $payment_gateway, $payment_gateway_order ) {
+					return $this->extract_payment_gateway_base_details( $payment_gateway, $payment_gateway_order );
+				}
+			);
+
+		$this->mock_providers
+			->expects( $this->any() )
+			->method( 'get_order_map' )
+			->willReturn( array() ); // No preexisting order map.
+		$this->mock_providers
+			->expects( $this->any() )
+			->method( 'enhance_order_map' )
+			->willReturn(
+				array_flip(
+					array(
+						PaymentProviders::SUGGESTION_ORDERING_PREFIX . 'suggestion1',
+						PaymentProviders::SUGGESTION_ORDERING_PREFIX . 'suggestion2',
+						'paypal',
+						PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
+						'bacs',
+						'cheque',
+						'cod',
+					)
+				)
+			);
+
 		$base_suggestions = array(
 			array(
 				'id'                => 'suggestion1',
@@ -179,23 +347,21 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 			->with( $location )
 			->willReturn( $base_suggestions );
 
-		$this->load_core_paypal_pg();
-
 		// Act.
 		$data = $this->service->get_payment_providers( $location );
 
-		// We have the core PayPal gateway registered, the 3 offline payment methods and their group entry, plus 2 suggestions.
+		// We have the PayPal gateway, the 3 offline payment methods and their group entry, plus 2 suggestions.
 		$this->assertCount( 7, $data );
 		// Because the core registers the PayPal PG after the offline PMs, the order we expect is this.
 		$this->assertSame(
 			array(
-				Payments::SUGGESTION_ORDERING_PREFIX . 'suggestion1',
-				Payments::SUGGESTION_ORDERING_PREFIX . 'suggestion2',
-				Payments::OFFLINE_METHODS_ORDERING_GROUP,
+				PaymentProviders::SUGGESTION_ORDERING_PREFIX . 'suggestion1',
+				PaymentProviders::SUGGESTION_ORDERING_PREFIX . 'suggestion2',
+				'paypal',
+				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
 				'bacs',
 				'cheque',
 				'cod',
-				'paypal',
 			),
 			array_column( $data, 'id' )
 		);
@@ -203,12 +369,12 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		// Assert that the suggestions have all the details.
 		$suggestion1 = $data[0];
 		$this->assertArrayHasKey( 'id', $suggestion1, 'Provider `id` entry is missing' );
-		$this->assertEquals( Payments::SUGGESTION_ORDERING_PREFIX . 'suggestion1', $suggestion1['id'] );
+		$this->assertEquals( PaymentProviders::SUGGESTION_ORDERING_PREFIX . 'suggestion1', $suggestion1['id'] );
 		$this->assertArrayHasKey( '_order', $suggestion1, 'Provider `_order` entry is missing' );
 		$this->assertIsInteger( $suggestion1['_order'], 'Provider `_order` entry is not an integer' );
 		$this->assertEquals( 0, $suggestion1['_order'] );
 		$this->assertArrayHasKey( '_type', $suggestion1, 'Provider `_type` entry is missing' );
-		$this->assertEquals( Payments::PROVIDER_TYPE_SUGGESTION, $suggestion1['_type'] );
+		$this->assertEquals( PaymentProviders::TYPE_SUGGESTION, $suggestion1['_type'] );
 		$this->assertArrayHasKey( 'title', $suggestion1, 'Provider `title` entry is missing' );
 		$this->assertArrayHasKey( 'description', $suggestion1, 'Provider `description` entry is missing' );
 		$this->assertArrayHasKey( 'plugin', $suggestion1, 'Provider `plugin` entry is missing' );
@@ -217,7 +383,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'slug', $suggestion1['plugin'], 'Provider `plugin[slug]` entry is missing' );
 		$this->assertArrayHasKey( 'status', $suggestion1['plugin'], 'Provider `plugin[status]` entry is missing' );
 		// The plugin should be not installed.
-		$this->assertEquals( Payments::EXTENSION_NOT_INSTALLED, $suggestion1['plugin']['status'] );
+		$this->assertEquals( PaymentProviders::EXTENSION_NOT_INSTALLED, $suggestion1['plugin']['status'] );
 		$this->assertArrayHasKey( 'icon', $suggestion1, 'Provider `icon` entry is missing' );
 		$this->assertArrayHasKey( 'links', $suggestion1, 'Provider `links` entry is missing' );
 		$this->assertIsArray( $suggestion1['links'] );
@@ -233,159 +399,48 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 	}
 
 	/**
-	 * Test getting payment providers that have recommended payment methods.
+	 * Extract the gateway details from an instance.
+	 *
+	 * @param \WC_Payment_Gateway $payment_gateway The payment gateway.
+	 * @param int                 $payment_gateway_order The order of the payment gateway.
+	 *
+	 * @return array The extracted details.
 	 */
-	public function test_get_payment_providers_with_recommended_payment_methods() {
-		// Arrange.
-		$this->mock_payment_gateways(
-			array(
-				'woocommerce_payments' => array(
-					'enabled'                     => false,
-					'plugin_slug'                 => 'woocommerce-payments',
-					'recommended_payment_methods' => array(
-						// Basic PM.
-						array(
-							'id'      => 'basic',
-							// No order, should be last.
-							'enabled' => true,
-							'title'   => 'Title',
-						),
-						// Basic PM with priority instead of order.
-						array(
-							'id'       => 'basic2',
-							'priority' => 30,
-							'enabled'  => false,
-							'title'    => 'Title',
-						),
-						array(
-							'id'          => 'card',
-							'order'       => 20,
-							'enabled'     => true,
-							'title'       => '<b>Credit/debit card (required)</b>', // All tags should be stripped.
-							// Paragraphs and line breaks should be stripped.
-							'description' => '<p><strong>Accepts</strong> <b>all major</b></br><em>credit</em> and <a href="#" target="_blank">debit cards</a>.</p>',
-							'icon'        => 'https://example.com/card-icon.png',
-						),
-						array(
-							'id'          => 'woopay',
-							'order'       => 10,
-							'enabled'     => false,
-							'title'       => 'WooPay',
-							'description' => 'WooPay express checkout',
-							// Not a good URL.
-							'icon'        => 'not_good_url/icon.svg',
-						),
-						// Invalid PM, should be ignored. No data.
-						array(),
-						// Invalid PM, should be ignored. No ID.
-						array( 'title' => 'Card' ),
-						// Invalid PM, should be ignored. No title.
-						array( 'id' => 'card' ),
+	private function extract_payment_gateway_base_details( \WC_Payment_Gateway $payment_gateway, int $payment_gateway_order ): array {
+		return array(
+			'id'          => $payment_gateway->id,
+			'_order'      => $payment_gateway_order,
+			'title'       => $payment_gateway->get_method_title(),
+			'description' => $payment_gateway->get_method_description(),
+			'supports'    => $payment_gateway->supports ?? array(),
+			'state'       => array(
+				'enabled'     => true,
+				'needs_setup' => false,
+				'test_mode'   => false,
+				'dev_mode'    => false,
+			),
+			'management'  => array(
+				'_links' => array(
+					'settings' => array(
+						'href' => $payment_gateway->get_settings_url(),
 					),
 				),
 			),
-			true
-		);
-
-		$this->load_core_paypal_pg();
-
-		$this->service->reset_memo();
-
-		// Act.
-		$data = $this->service->get_payment_providers( 'US' );
-
-		// We have the core PayPal and fake WooPayments gateway registered, the 3 offline payment methods and their group entry.
-		$this->assertCount( 6, $data );
-		// Because the core registers the PayPal PG after the offline PMs, the order we expect is this.
-		$this->assertSame(
-			array( Payments::OFFLINE_METHODS_ORDERING_GROUP, 'bacs', 'cheque', 'cod', 'paypal', 'woocommerce_payments' ),
-			array_column( $data, 'id' )
-		);
-
-		// Assert that the fake WooPayments gateway has all the details.
-		$gateway = $data[5];
-		$this->assertArrayHasKey( 'id', $gateway, 'Gateway `id` entry is missing' );
-		$this->assertArrayHasKey( '_order', $gateway, 'Gateway `_order` entry is missing' );
-		$this->assertArrayHasKey( '_type', $gateway, 'Gateway `_type` entry is missing' );
-		$this->assertEquals( Payments::PROVIDER_TYPE_GATEWAY, $gateway['_type'], 'Gateway `_type` entry is not `' . Payments::PROVIDER_TYPE_GATEWAY . '`' );
-		$this->assertArrayHasKey( 'title', $gateway, 'Gateway `title` entry is missing' );
-		$this->assertArrayHasKey( 'description', $gateway, 'Gateway `description` entry is missing' );
-		$this->assertArrayHasKey( 'supports', $gateway, 'Gateway `supports` entry is missing' );
-		$this->assertIsList( $gateway['supports'], 'Gateway `supports` entry is not a list' );
-		$this->assertArrayHasKey( 'state', $gateway, 'Gateway `state` entry is missing' );
-		$this->assertArrayHasKey( 'enabled', $gateway['state'], 'Gateway `state[enabled]` entry is missing' );
-		$this->assertArrayHasKey( 'needs_setup', $gateway['state'], 'Gateway `state[needs_setup]` entry is missing' );
-		$this->assertArrayHasKey( 'test_mode', $gateway['state'], 'Gateway `state[test_mode]` entry is missing' );
-		$this->assertArrayHasKey( 'dev_mode', $gateway['state'], 'Gateway `state[dev_mode]` entry is missing' );
-		$this->assertArrayHasKey( 'management', $gateway, 'Gateway `management` entry is missing' );
-		$this->assertArrayHasKey( 'settings_url', $gateway['management'], 'Gateway `management[settings_url]` entry is missing' );
-		// There are no `plugin` or `links` entries because this is a fake gateway without a plugin.
-		$this->assertArrayHasKey( 'onboarding', $gateway, 'Gateway `onboarding` entry is missing' );
-		$this->assertArrayHasKey( 'recommended_payment_methods', $gateway['onboarding'], 'Gateway `onboarding[recommended_payment_methods]` entry is missing' );
-		$this->assertCount( 4, $gateway['onboarding']['recommended_payment_methods'] ); // Receives recommended PMs.
-		$this->assertSame(
-			array(
-				array(
-					'id'          => 'woopay',
-					'_order'      => 0,
-					'enabled'     => false,
-					'title'       => 'WooPay',
-					'description' => 'WooPay express checkout',
-					'icon'        => '', // The icon with an invalid URL is ignored.
+			'onboarding'  => array(
+				'_links'                      => array(
+					'onboard' => array(
+						'href' => $payment_gateway->get_connection_url(),
+					),
 				),
-				array(
-					'id'          => 'card',
-					'_order'      => 1,
-					'enabled'     => true,
-					'title'       => 'Credit/debit card (required)',
-					'description' => '<strong>Accepts</strong> <b>all major</b><em>credit</em> and <a href="#" target="_blank">debit cards</a>.',
-					'icon'        => 'https://example.com/card-icon.png',
-				),
-				array(
-					'id'          => 'basic2',
-					'_order'      => 2,
-					'enabled'     => false,
-					'title'       => 'Title',
-					'description' => '',
-					'icon'        => '',
-				),
-				array(
-					'id'          => 'basic',
-					'_order'      => 3,
-					'enabled'     => true,
-					'title'       => 'Title',
-					'description' => '',
-					'icon'        => '',
-				),
+				'recommended_payment_methods' => $payment_gateway->recommended_payment_methods ?? array(),
 			),
-			$gateway['onboarding']['recommended_payment_methods']
+			'plugin'      => array(
+				'_type'  => PaymentProviders::EXTENSION_TYPE_WPORG,
+				'slug'   => $payment_gateway->plugin_slug,
+				'file'   => $payment_gateway->plugin_file,
+				'status' => PaymentProviders::EXTENSION_ACTIVE,
+			),
 		);
-
-		// Clean up.
-		$this->unmock_payment_gateways();
-		delete_option( 'woocommerce_gateway_order' );
-	}
-
-	/**
-	 * Test getting the plugin slug of a payment gateway instance.
-	 */
-	public function test_get_payment_gateway_plugin_slug() {
-		// Arrange.
-		$this->load_core_paypal_pg();
-
-		// Act.
-		$paypal_gateway = array_filter(
-			WC()->payment_gateways()->payment_gateways,
-			function ( $gateway ) {
-				return 'paypal' === $gateway->id;
-			}
-		);
-		$paypal_gateway = reset( $paypal_gateway );
-		$slug           = $this->service->get_payment_gateway_plugin_slug( $paypal_gateway );
-
-		// Assert.
-		// The PayPal gateway is a core gateway, so the slug is 'woocommerce'.
-		$this->assertSame( 'woocommerce', $slug );
 	}
 
 	/**
@@ -564,7 +619,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'slug', $pref_suggestion['plugin'], 'Suggestion `plugin[slug]` entry is missing' );
 		$this->assertArrayHasKey( 'status', $pref_suggestion['plugin'], 'Suggestion `plugin[status]` entry is missing' );
 		// The plugin should be not installed.
-		$this->assertSame( Payments::EXTENSION_NOT_INSTALLED, $pref_suggestion['plugin']['status'] );
+		$this->assertSame( PaymentProviders::EXTENSION_NOT_INSTALLED, $pref_suggestion['plugin']['status'] );
 		$this->assertArrayHasKey( 'icon', $pref_suggestion, 'Suggestion `icon` entry is missing' );
 		$this->assertArrayHasKey( 'links', $pref_suggestion, 'Suggestion `links` entry is missing' );
 		$this->assertIsArray( $pref_suggestion['links'] );
@@ -595,7 +650,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'slug', $other_suggestion['plugin'], 'Suggestion `plugin[slug]` entry is missing' );
 		$this->assertArrayHasKey( 'status', $other_suggestion['plugin'], 'Suggestion `plugin[status]` entry is missing' );
 		// The plugin should be not installed.
-		$this->assertSame( Payments::EXTENSION_NOT_INSTALLED, $other_suggestion['plugin']['status'] );
+		$this->assertSame( PaymentProviders::EXTENSION_NOT_INSTALLED, $other_suggestion['plugin']['status'] );
 		$this->assertArrayHasKey( 'icon', $other_suggestion, 'Suggestion `icon` entry is missing' );
 		$this->assertArrayHasKey( 'links', $other_suggestion, 'Suggestion `links` entry is missing' );
 		$this->assertIsArray( $other_suggestion['links'] );
@@ -1208,8 +1263,10 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 			'title'             => 'Suggestion 1',
 			'description'       => 'Description 1',
 			'plugin'            => array(
-				'_type' => ExtensionSuggestions::PLUGIN_TYPE_WPORG,
-				'slug'  => 'woocommerce', // Use WooCommerce because it is an installed plugin, obviously.
+				'_type'  => ExtensionSuggestions::PLUGIN_TYPE_WPORG,
+				'slug'   => 'woocommerce', // Use WooCommerce because it is an installed plugin, obviously.
+				'file'   => 'woocommerce/woocommerce',
+				'status' => PaymentProviders::EXTENSION_INSTALLED,
 			),
 			'image'             => 'http://example.com/image1.png',
 			'icon'              => 'http://example.com/icon1.png',
@@ -1232,27 +1289,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$suggestion = $this->service->get_extension_suggestion_by_id( $suggestion_id );
 
 		// Assert.
-		$this->assertSame( $suggestion_details['id'], $suggestion['id'] );
-		$this->assertSame( $suggestion_details['_priority'], $suggestion['_priority'] );
-		$this->assertSame( $suggestion_details['_type'], $suggestion['_type'] );
-		$this->assertSame( $suggestion_details['title'], $suggestion['title'] );
-		$this->assertSame( $suggestion_details['description'], $suggestion['description'] );
-		$this->assertEquals(
-			array(
-				'_type'  => ExtensionSuggestions::PLUGIN_TYPE_WPORG,
-				'slug'   => 'woocommerce',
-				'file'   => 'woocommerce/woocommerce',
-				'status' => Payments::EXTENSION_INSTALLED, // WooCommerce is installed.
-			),
-			$suggestion['plugin']
-		);
-		$this->assertSame( $suggestion_details['image'], $suggestion['image'] );
-		$this->assertSame( $suggestion_details['icon'], $suggestion['icon'] );
-		$this->assertSame( $suggestion_details['short_description'], $suggestion['short_description'] );
-		$this->assertSame( $suggestion_details['links'], $suggestion['links'] );
-		$this->assertSame( $suggestion_details['tags'], $suggestion['tags'] );
-		// The category should be PSP.
-		$this->assertSame( Payments::CATEGORY_PSP, $suggestion['category'] );
+		$this->assertSame( $suggestion_details, $suggestion );
 	}
 
 	/**
@@ -1268,8 +1305,10 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 			'title'             => 'Suggestion 1',
 			'description'       => 'Description 1',
 			'plugin'            => array(
-				'_type' => ExtensionSuggestions::PLUGIN_TYPE_WPORG,
-				'slug'  => $slug,
+				'_type'  => ExtensionSuggestions::PLUGIN_TYPE_WPORG,
+				'slug'   => $slug,
+				'file'   => 'woocommerce/woocommerce',
+				'status' => PaymentProviders::EXTENSION_INSTALLED,
 			),
 			'image'             => 'http://example.com/image1.png',
 			'icon'              => 'http://example.com/icon1.png',
@@ -1292,27 +1331,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$suggestion = $this->service->get_extension_suggestion_by_plugin_slug( $slug );
 
 		// Assert.
-		$this->assertSame( $suggestion_details['id'], $suggestion['id'] );
-		$this->assertSame( $suggestion_details['_priority'], $suggestion['_priority'] );
-		$this->assertSame( $suggestion_details['_type'], $suggestion['_type'] );
-		$this->assertSame( $suggestion_details['title'], $suggestion['title'] );
-		$this->assertSame( $suggestion_details['description'], $suggestion['description'] );
-		$this->assertEquals(
-			array(
-				'_type'  => ExtensionSuggestions::PLUGIN_TYPE_WPORG,
-				'slug'   => $slug,
-				'file'   => 'woocommerce/woocommerce',
-				'status' => Payments::EXTENSION_INSTALLED, // WooCommerce is installed.
-			),
-			$suggestion['plugin']
-		);
-		$this->assertSame( $suggestion_details['image'], $suggestion['image'] );
-		$this->assertSame( $suggestion_details['icon'], $suggestion['icon'] );
-		$this->assertSame( $suggestion_details['short_description'], $suggestion['short_description'] );
-		$this->assertSame( $suggestion_details['links'], $suggestion['links'] );
-		$this->assertSame( $suggestion_details['tags'], $suggestion['tags'] );
-		// The category should be PSP.
-		$this->assertSame( Payments::CATEGORY_PSP, $suggestion['category'] );
+		$this->assertSame( $suggestion_details, $suggestion );
 	}
 
 	/**
@@ -1420,7 +1439,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 			->with( $suggestion_id )
 			->willReturn( $suggestion_details );
 
-		$order_map_id = Payments::SUGGESTION_ORDERING_PREFIX . $suggestion_id;
+		$order_map_id = PaymentProviders::SUGGESTION_ORDERING_PREFIX . $suggestion_id;
 
 		update_user_meta(
 			$this->store_admin_id,
@@ -1525,7 +1544,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 	public function test_hide_extension_suggestion_already_hidden_with_order_map_id() {
 		// Arrange.
 		$suggestion_id  = 'suggestion1';
-		$order_map_id   = Payments::SUGGESTION_ORDERING_PREFIX . $suggestion_id;
+		$order_map_id   = PaymentProviders::SUGGESTION_ORDERING_PREFIX . $suggestion_id;
 		$hide_timestamp = 123;
 
 		$suggestion_details = array(
@@ -1702,3033 +1721,25 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 
 	/**
 	 * Test updating the payment providers order map.
-	 *
-	 * @dataProvider data_provider_test_update_payment_providers_order_map
-	 *
-	 * @param array $start_order    The starting order map.
-	 * @param array $new_order_map  The new order map.
-	 * @param array $expected_order The expected order map.
-	 * @param array $gateways       The payment gateways to mock.
-	 * @param array $suggestions    The extension suggestions to mock.
 	 */
-	public function test_update_payment_providers_order_map( array $start_order, array $new_order_map, array $expected_order, array $gateways, array $suggestions ) {
+	public function test_update_payment_providers_order_map() {
 		// Arrange.
-		$this->mock_payment_gateways( $gateways );
-
-		// Mock getting suggestions by plugin slug.
-		$this->mock_extension_suggestions
-			->expects( $this->any() )
-			->method( 'get_by_plugin_slug' )
-			->willReturnCallback(
-				function ( $plugin_slug ) use ( $suggestions ) {
-					foreach ( $suggestions as $suggestion ) {
-						if ( $suggestion['plugin']['slug'] === $plugin_slug ) {
-							return $suggestion;
-						}
-					}
-					return null;
-				}
-			);
-		// Mock getting suggestions by id.
-		$this->mock_extension_suggestions
-			->expects( $this->any() )
-			->method( 'get_by_id' )
-			->willReturnCallback(
-				function ( $id ) use ( $suggestions ) {
-					foreach ( $suggestions as $suggestion ) {
-						if ( $suggestion['id'] === $id ) {
-							return $suggestion;
-						}
-					}
-					return null;
-				}
-			);
-
-		// Set the starting order map.
-		$start_order_map = array_flip( $start_order );
-		update_option( Payments::PROVIDERS_ORDER_OPTION, $start_order_map );
+		$order_map = array(
+			'gateway1'   => 1,
+			'gateway2'   => 2,
+			'gateway3_0' => 3,
+			'gateway3_1' => 4,
+		);
+		$this->mock_providers
+			->expects( $this->once() )
+			->method( 'update_payment_providers_order_map' )
+			->willReturn( true );
 
 		// Act.
-		$result = $this->service->update_payment_providers_order_map( $new_order_map );
+		$result = $this->service->update_payment_providers_order_map( $order_map );
 
 		// Assert.
-		$expected_order_map   = array_flip( $expected_order );
-		$expect_option_update = $start_order_map !== $expected_order_map;
-		$this->assertSame(
-			$expect_option_update,
-			$result,
-			$expect_option_update ? 'Expected order map option to BE updated but it was not.' : 'Expected order map option to NOT BE updated but it was.'
-		);
-		$this->assertSame( $expected_order_map, get_option( Payments::PROVIDERS_ORDER_OPTION ) );
-
-		// Clean up.
-		$this->unmock_payment_gateways();
-	}
-
-	/**
-	 * Mock a set of payment gateways.
-	 *
-	 * @param array $gateways The list of gateway details keyed by the gateway id.
-	 * @param bool  $append   Whether to append the gateways to the existing ones.
-	 *                        Defaults to false, which means the existing gateways will be removed.
-	 */
-	protected function mock_payment_gateways( array $gateways, bool $append = false ) {
-		if ( ! empty( $gateways ) ) {
-			add_action(
-				'wc_payment_gateways_initialized',
-				function ( \WC_Payment_Gateways $wc_payment_gateways ) use ( $gateways, $append ) {
-					if ( ! $append ) {
-						$wc_payment_gateways->payment_gateways = array();
-					}
-
-					$order = 99999;
-					foreach ( $gateways as $gateway_id => $gateway_data ) {
-						$fake_gateway          = new FakePaymentGateway();
-						$fake_gateway->id      = $gateway_id;
-						$fake_gateway->enabled = ( $gateway_data['enabled'] ?? false ) ? 'yes' : 'no';
-						if ( isset( $gateway_data['plugin_slug'] ) ) {
-							$fake_gateway->plugin_slug = $gateway_data['plugin_slug'];
-						}
-						if ( isset( $gateway_data['recommended_payment_methods'] ) ) {
-							$fake_gateway->recommended_payment_methods = $gateway_data['recommended_payment_methods'];
-						}
-
-						$wc_payment_gateways->payment_gateways[ $order++ ] = $fake_gateway;
-					}
-				},
-				100
-			);
-		} else {
-			// If there are no gateways, just reset the gateways.
-			add_action(
-				'wc_payment_gateways_initialized',
-				function ( \WC_Payment_Gateways $wc_payment_gateways ) {
-					$wc_payment_gateways->payment_gateways = array();
-				},
-				100
-			);
-		}
-
-		WC()->payment_gateways()->init();
-
-		$this->service->reset_memo();
-	}
-
-	/**
-	 * Unmock the payment gateways.
-	 */
-	protected function unmock_payment_gateways() {
-		remove_all_actions( 'wc_payment_gateways_initialized' );
-		WC()->payment_gateways()->payment_gateways = array();
-		WC()->payment_gateways()->init();
-
-		$this->service->reset_memo();
-	}
-
-	/**
-	 * Data provider for the test_update_payment_providers_order_map.
-	 *
-	 * @return array
-	 */
-	public function data_provider_test_update_payment_providers_order_map(): array {
-		$gateways = array(
-			'gateway1'   => array(
-				'enabled'     => false,
-				'plugin_slug' => 'plugin1',
-			),
-			'gateway2'   => array(
-				'enabled'     => false,
-				'plugin_slug' => 'plugin2',
-			),
-			'gateway3_0' => array(
-				'enabled'     => false,
-				'plugin_slug' => 'plugin3',
-			), // Same plugin slug.
-			'gateway3_1' => array(
-				'enabled'     => false,
-				'plugin_slug' => 'plugin3',
-			), // Same plugin slug.
-		);
-
-		$offline_payment_methods_gateways = array(
-			'bacs'   => array(
-				'enabled'     => false,
-				'plugin_slug' => 'woocommerce',
-			),
-			'cheque' => array(
-				'enabled'     => false,
-				'plugin_slug' => 'woocommerce',
-			),
-			'cod'    => array(
-				'enabled'     => false,
-				'plugin_slug' => 'woocommerce',
-			),
-		);
-
-		$suggestions = array(
-			array(
-				'id'        => 'suggestion1',
-				'_type'     => ExtensionSuggestions::TYPE_PSP,
-				'_priority' => 0,
-				'plugin'    => array( 'slug' => 'plugin1' ),
-			),
-			array(
-				'id'        => 'suggestion3',
-				'_type'     => ExtensionSuggestions::TYPE_PSP,
-				'_priority' => 1,
-				'plugin'    => array( 'slug' => 'plugin3' ),
-			),
-			array(
-				'id'        => 'suggestion-other',
-				'_type'     => ExtensionSuggestions::TYPE_PSP,
-				'_priority' => 2,
-				'plugin'    => array( 'slug' => 'plugin-other' ),
-			),
-		);
-
-		return array(
-			'empty start, no ordering - no gateways | no offline PMs | no suggestions' => array(
-				array(),
-				array(),
-				array(),
-				array(),
-				array(),
-			),
-			'empty start, no ordering - gateways | no offline PMs | no suggestions' => array(
-				array(),
-				array(),
-				array(
-					'gateway1',
-					'gateway2',
-					'gateway3_0',
-					'gateway3_1',
-				),
-				$gateways,
-				array(),
-			),
-			'empty start, no ordering #2 - gateways | no offline PMs | no suggestions' => array(
-				array(),
-				array(
-					'gateway1'       => null, // These should all be ignored.
-					'gateway2'       => 1.2,
-					'gateway3_0'     => 'bogus',
-					'gateway3_1'     => false,
-					'something'      => array( '0' ),
-					'something_else' => new \stdClass(),
-				),
-				array(
-					'gateway1',
-					'gateway2',
-					'gateway3_0',
-					'gateway3_1',
-				),
-				$gateways,
-				array(),
-			),
-			'empty start, no ordering - no gateways | offline PMs | no suggestions' => array(
-				array(),
-				array(),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cheque',
-					'cod',
-				),
-				$offline_payment_methods_gateways,
-				array(),
-			),
-			'empty start, no ordering - gateways | offline PMs | no suggestions' => array(
-				array(),
-				array(),
-				array(
-					'gateway1',
-					'gateway2',
-					'gateway3_0',
-					'gateway3_1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cheque',
-					'cod',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				array(),
-			),
-			'empty start, no ordering - offline PMs | gateways | no suggestions' => array(
-				array(),
-				array(),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cheque',
-					'cod',
-					'gateway1',
-					'gateway2',
-					'gateway3_0',
-					'gateway3_1',
-				),
-				$offline_payment_methods_gateways + $gateways,
-				array(),
-			),
-			'empty start, no ordering - gateways | no offline PMs | suggestions' => array(
-				array(),
-				array(),
-				array(
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'gateway2',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway3_1',
-				),
-				$gateways,
-				$suggestions,
-			),
-			'empty start, no ordering - gateways | offline PMs | suggestions'    => array(
-				array(),
-				array(),
-				array(
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'gateway2',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway3_1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cheque',
-					'cod',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'empty start, no ordering - offline PMs | gateways | suggestions'    => array(
-				array(),
-				array(),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cheque',
-					'cod',
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'gateway2',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway3_1',
-				),
-				$offline_payment_methods_gateways + $gateways,
-				$suggestions,
-			),
-			'empty start, move offline PMs - gateways | offline PMs | suggestions'    => array(
-				array(),
-				array(
-					'cheque' => 1,
-					'bacs'   => 2,
-				),
-				array(
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'gateway2',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway3_1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'cheque',
-					'bacs',
-					'cod',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'empty start, move all offline PMs - gateways | offline PMs | suggestions'    => array(
-				array(),
-				array(
-					'cod'    => 0,
-					'cheque' => 1,
-					'bacs'   => 2,
-				),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'cod',
-					'cheque',
-					'bacs',
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'gateway2',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway3_1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'empty start, move offline PMs group - gateways | offline PMs | no suggestions'    => array(
-				array(),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP => 0,
-				),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cheque',
-					'cod',
-					'gateway1',
-					'gateway2',
-					'gateway3_0',
-					'gateway3_1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				array(),
-			),
-			'empty start, move offline PMs group - gateways | offline PMs | suggestions'    => array(
-				array(),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP => 0,
-				),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cheque',
-					'cod',
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'gateway2',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway3_1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'empty start, move offline PMs group - no gateways | offline PMs | no suggestions'    => array(
-				array(),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP => 10,
-				),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cheque',
-					'cod',
-				),
-				$offline_payment_methods_gateways,
-				array(),
-			),
-			'empty start, move offline PMs group - no gateways | offline PMs | suggestions'    => array(
-				array(),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP => 10,
-				),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cheque',
-					'cod',
-				),
-				$offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'empty start, move offline PM - no gateways | offline PMs | suggestions'    => array(
-				array(),
-				array(
-					'cod' => 0,
-				),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'cod',
-					'bacs',
-					'cheque',
-				),
-				$offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'empty start, move all offline PMs - no gateways | offline PMs | suggestions'    => array(
-				array(),
-				array(
-					'cod'    => 0,
-					'cheque' => 1,
-					'bacs'   => 2,
-				),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'cod',
-					'cheque',
-					'bacs',
-				),
-				$offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'empty start, move gateway - gateways | offline PMs | suggestions'    => array(
-				array(),
-				array(
-					'gateway3_0' => 3,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'gateway2',
-					'gateway3_1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cheque',
-					'cod',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'empty start, move gateways - gateways | offline PMs | suggestions'    => array(
-				array(),
-				array(
-					'gateway1'   => 2,
-					'gateway3_0' => 3,
-				),
-				array(
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway2',
-					'gateway3_1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cheque',
-					'cod',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'empty start, move gateways #2 - gateways | offline PMs | suggestions'    => array(
-				array(),
-				array(
-					'gateway1' => 2,
-					'gateway2' => 3,
-				),
-				array(
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'gateway2',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway3_1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cheque',
-					'cod',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'empty start, move gateways #3 - gateways | offline PMs | suggestions'    => array(
-				array(),
-				array(
-					'gateway1'   => 2,
-					'gateway3_1' => 3,
-				),
-				array(
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'_wc_pes_suggestion3',
-					'gateway3_1',
-					'gateway2',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cheque',
-					'cod',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'empty start, move gateways and offline PMs group - gateways | offline PMs | suggestions'    => array(
-				array(),
-				array(
-					'gateway1'   => 2,
-					Payments::OFFLINE_METHODS_ORDERING_GROUP => 3,
-					'gateway3_1' => 4,
-				),
-				array(
-					'_wc_pes_suggestion1',
-					'gateway1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cheque',
-					'cod',
-					'_wc_pes_suggestion3',
-					'gateway3_1',
-					'gateway2',
-					'gateway3_0',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'empty start, move gateway - offline PMs | gateways | suggestions'    => array(
-				array(),
-				array(
-					'gateway3_0' => 3,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cheque',
-					'cod',
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'gateway2',
-					'gateway3_1',
-				),
-				$offline_payment_methods_gateways + $gateways,
-				$suggestions,
-			),
-			'empty start, move gateways - offline PMs | gateways | suggestions'    => array(
-				array(),
-				array(
-					'gateway3_0' => 3,
-					'gateway1'   => 4,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'_wc_pes_suggestion1',
-					'gateway1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cheque',
-					'cod',
-					'gateway2',
-					'gateway3_1',
-				),
-				$offline_payment_methods_gateways + $gateways,
-				$suggestions,
-			),
-			'empty start, move gateways #2 - offline PMs | gateways | suggestions'    => array(
-				array(),
-				array(
-					'gateway3_0' => 3,
-					'gateway2'   => 4,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway2',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cheque',
-					'cod',
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'gateway3_1',
-				),
-				$offline_payment_methods_gateways + $gateways,
-				$suggestions,
-			),
-			'empty start, move gateways #3 - offline PMs | gateways | suggestions'    => array(
-				array(),
-				array(
-					'gateway3_0' => 3,
-					'gateway3_1' => 4,
-					'gateway2'   => 5,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway3_1',
-					'gateway2',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cheque',
-					'cod',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$offline_payment_methods_gateways + $gateways,
-				$suggestions,
-			),
-			'empty start, move gateways and offline PMs group - offline PMs | gateways | suggestions'    => array(
-				array(),
-				array(
-					'gateway3_0' => 3,
-					'gateway3_1' => 4,
-					Payments::OFFLINE_METHODS_ORDERING_GROUP => 5,
-					'gateway2'   => 6,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway3_1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cheque',
-					'cod',
-					'gateway2',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$offline_payment_methods_gateways + $gateways,
-				$suggestions,
-			),
-			'legacy order, no ordering - no gateways | offline PMs | no suggestions'    => array(
-				array(
-					'bacs',
-					'cheque',
-					'cod',
-				),
-				array(),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cheque',
-					'cod',
-				),
-				$offline_payment_methods_gateways,
-				array(),
-			),
-			'legacy order with non-existent gateways, no ordering - no gateways | offline PMs | no suggestions'    => array(
-				array(
-					'non_existent_gateway1',
-					'non_existent_gateway2',
-					'bacs',
-					'cheque',
-					'cod',
-				),
-				array(),
-				array(
-					'non_existent_gateway1',
-					'non_existent_gateway2',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cheque',
-					'cod',
-				),
-				$offline_payment_methods_gateways,
-				array(),
-			),
-			'legacy order, no ordering - gateways | offline PMs | no suggestions'    => array(
-				array(
-					'bacs',
-					'cod',
-					'cheque',
-				),
-				array(),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway1',
-					'gateway2',
-					'gateway3_0',
-					'gateway3_1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				array(),
-			),
-			'legacy order, no ordering #2 - gateways | offline PMs | no suggestions'    => array(
-				array(
-					'gateway1',
-					'gateway2',
-					'bacs',
-					'cod',
-					'cheque',
-				),
-				array(),
-				array(
-					'gateway1',
-					'gateway2',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway3_0',
-					'gateway3_1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				array(),
-			),
-			'legacy order, no ordering #3 - gateways | offline PMs | no suggestions'    => array(
-				array(
-					'gateway1',
-					'bacs',
-					'gateway2',
-					'cod',
-					'cheque',
-				),
-				array(),
-				array(
-					'gateway1',
-					'gateway2',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway3_0',
-					'gateway3_1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				array(),
-			),
-			'legacy order, no ordering #4 - gateways | offline PMs | no suggestions'    => array(
-				array(
-					'gateway1',
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-				),
-				array(),
-				array(
-					'gateway1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_0',
-					'gateway3_1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				array(),
-			),
-			'legacy order, no ordering #5 - gateways | offline PMs | no suggestions'    => array(
-				array(
-					'gateway1',
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_0',
-					'gateway3_1',
-				),
-				array(),
-				array(
-					'gateway1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_0',
-					'gateway3_1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				array(),
-			),
-			'legacy order, no ordering #6 - gateways | offline PMs | no suggestions'    => array(
-				array(
-					'gateway1',
-					'bacs',
-					'cod',
-					'gateway2',
-					'gateway3_0',
-					'cheque',
-					'gateway3_1',
-				),
-				array(),
-				array(
-					'gateway1',
-					'gateway2',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway3_1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				array(),
-			),
-			'legacy order, no ordering #7 - gateways | offline PMs | no suggestions'    => array(
-				array(
-					'gateway1',
-					'gateway2',
-					'gateway3_0',
-					'gateway3_1',
-					'cheque',
-					'bacs',
-					'cod',
-				),
-				array(),
-				array(
-					'gateway1',
-					'gateway2',
-					'gateway3_0',
-					'gateway3_1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'cheque',
-					'bacs',
-					'cod',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				array(),
-			),
-			'legacy order, no ordering #8 - gateways | offline PMs | no suggestions'    => array(
-				array(
-					'gateway2',
-					'gateway3_0',
-					'gateway1',
-					'gateway3_1',
-					'cheque',
-					'bacs',
-					'cod',
-				),
-				array(),
-				array(
-					'gateway2',
-					'gateway3_0',
-					'gateway1',
-					'gateway3_1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'cheque',
-					'bacs',
-					'cod',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				array(),
-			),
-			'legacy order, no ordering - gateways | offline PMs | suggestions'    => array(
-				array(
-					'bacs',
-					'cod',
-					'cheque',
-				),
-				array(),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'gateway2',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway3_1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'legacy order, no ordering #2 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'gateway1',
-					'gateway2',
-					'bacs',
-					'cod',
-					'cheque',
-				),
-				array(),
-				array(
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'gateway2',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway3_1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'legacy order, no ordering #3 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'gateway1',
-					'gateway2',
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway3_0',
-				),
-				array(),
-				array(
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'gateway2',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway3_1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'legacy order, no ordering #4 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'gateway1',
-					'gateway2',
-					'gateway3_0',
-					'gateway3_1',
-					'bacs',
-					'cod',
-					'cheque',
-				),
-				array(),
-				array(
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'gateway2',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway3_1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'legacy order, no ordering #5 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'gateway2',
-					'gateway3_0',
-					'gateway3_1',
-					'gateway1',
-					'bacs',
-					'cheque',
-					'cod',
-				),
-				array(),
-				array(
-					'gateway2',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cheque',
-					'cod',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'legacy order, no ordering #6 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'gateway3_0',
-					'gateway2',
-					'gateway3_1',
-					'gateway1',
-					'bacs',
-					'cheque',
-					'cod',
-				),
-				array(),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cheque',
-					'cod',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'legacy order with non-existent, no ordering - gateways | offline PMs | no suggestions'    => array(
-				array(
-					'non_existent_gateway1',
-					'non_existent_gateway2',
-					'cheque',
-					'bacs',
-					'cod',
-				),
-				array(),
-				array(
-					'non_existent_gateway1',
-					'non_existent_gateway2',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'cheque',
-					'bacs',
-					'cod',
-					'gateway1',
-					'gateway2',
-					'gateway3_0',
-					'gateway3_1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				array(),
-			),
-			'legacy order with both existent and non-existent, no ordering - gateways | offline PMs | no suggestions'    => array(
-				array(
-					'non_existent_gateway1',
-					'non_existent_gateway2',
-					'gateway1',
-					'gateway2',
-					'cod',
-					'cheque',
-					'bacs',
-				),
-				array(),
-				array(
-					'non_existent_gateway1',
-					'non_existent_gateway2',
-					'gateway1',
-					'gateway2',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'cod',
-					'cheque',
-					'bacs',
-					'gateway3_0',
-					'gateway3_1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				array(),
-			),
-			'legacy order with non-existent, no ordering - gateways | offline PMs | suggestions'    => array(
-				array(
-					'non_existent_gateway1',
-					'non_existent_gateway2',
-					'cheque',
-					'bacs',
-					'cod',
-				),
-				array(),
-				array(
-					'non_existent_gateway1',
-					'non_existent_gateway2',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'cheque',
-					'bacs',
-					'cod',
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'gateway2',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway3_1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'legacy order with both existent and non-existent, no ordering - gateways | offline PMs | suggestions'    => array(
-				array(
-					'non_existent_gateway1',
-					'non_existent_gateway2',
-					'gateway1',
-					'gateway2',
-					'cod',
-					'cheque',
-					'bacs',
-				),
-				array(),
-				array(
-					'non_existent_gateway1',
-					'non_existent_gateway2',
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'gateway2',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'cod',
-					'cheque',
-					'bacs',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway3_1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'legacy order with both existent and non-existent, no ordering #2 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'non_existent_gateway1',
-					'non_existent_gateway2',
-					'gateway1',
-					'gateway3_0',
-					'gateway2',
-					'gateway3_1',
-					'cod',
-					'cheque',
-					'bacs',
-				),
-				array(),
-				array(
-					'non_existent_gateway1',
-					'non_existent_gateway2',
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway2',
-					'gateway3_1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'cod',
-					'cheque',
-					'bacs',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'legacy order with both existent and non-existent, no ordering #3 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'gateway1',
-					'gateway3_0',
-					'gateway2',
-					'gateway3_1',
-					'cod',
-					'cheque',
-					'bacs',
-					'non_existent_gateway1',
-					'non_existent_gateway2',
-				),
-				array(),
-				array(
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway2',
-					'gateway3_1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'cod',
-					'cheque',
-					'bacs',
-					'non_existent_gateway1',
-					'non_existent_gateway2',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'legacy order with both existent and non-existent, no ordering #4 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'gateway1',
-					'gateway3_0',
-					'gateway2',
-					'gateway3_1',
-					'non_existent_gateway1',
-					'cod',
-					'cheque',
-					'non_existent_gateway2',
-					'bacs',
-				),
-				array(),
-				array(
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway2',
-					'gateway3_1',
-					'non_existent_gateway1',
-					'non_existent_gateway2',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'cod',
-					'cheque',
-					'bacs',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'legacy order, move gateways - gateways | offline PMs | suggestions'    => array(
-				array(
-					'gateway3_0',
-					'gateway2',
-					'gateway3_1',
-					'gateway1',
-					'bacs',
-					'cheque',
-					'cod',
-				),
-				array(
-					'gateway1'   => 2,
-					'gateway3_0' => 3,
-				),
-				array(
-					'gateway2',
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'_wc_pes_suggestion3',
-					'gateway3_1',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cheque',
-					'cod',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'legacy order, move gateway - gateways | offline PMs | suggestions'    => array(
-				array(
-					'gateway3_0',
-					'gateway2',
-					'gateway3_1',
-					'gateway1',
-					'bacs',
-					'cheque',
-					'cod',
-				),
-				array(
-					'gateway1' => 1,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'gateway2',
-					'gateway3_1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cheque',
-					'cod',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'legacy order, move gateway #2 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'gateway3_0',
-					'gateway2',
-					'gateway3_1',
-					'gateway1',
-					'bacs',
-					'cheque',
-					'cod',
-				),
-				array(
-					'gateway3_1' => 0,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_1',
-					'gateway3_0',
-					'gateway2',
-					'_wc_pes_suggestion1',
-					'gateway1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cheque',
-					'cod',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'legacy order, move offline PM - gateways | offline PMs | suggestions'    => array(
-				array(
-					'gateway3_0',
-					'gateway2',
-					'gateway3_1',
-					'gateway1',
-					'bacs',
-					'cod',
-					'cheque',
-				),
-				array(
-					'bacs' => 0,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'legacy order, move offline PM #2 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'gateway3_0',
-					'gateway2',
-					'gateway3_1',
-					'gateway1',
-					'bacs',
-					'cod',
-					'cheque',
-				),
-				array(
-					'cod' => 0,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'cod',
-					'bacs',
-					'cheque',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'legacy order, move offline PM #3 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'gateway3_0',
-					'gateway2',
-					'gateway3_1',
-					'gateway1',
-					'bacs',
-					'cod',
-					'cheque',
-				),
-				array(
-					'cheque' => 1,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'cheque',
-					'bacs',
-					'cod',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'legacy order, move all offline PMs - gateways | offline PMs | suggestions'    => array(
-				array(
-					'gateway3_0',
-					'gateway2',
-					'gateway3_1',
-					'gateway1',
-					'bacs',
-					'cod',
-					'cheque',
-				),
-				array(
-					'cod'    => 0,
-					'cheque' => 1,
-					'bacs'   => 2,
-				),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'cod',
-					'cheque',
-					'bacs',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'legacy order, move offline PMs group - gateways | offline PMs | suggestions'    => array(
-				array(
-					'gateway3_0',
-					'gateway2',
-					'gateway3_1',
-					'gateway1',
-					'bacs',
-					'cod',
-					'cheque',
-				),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP => 0,
-				),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'legacy order, move offline PMs group #2 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'gateway3_0',
-					'gateway2',
-					'gateway3_1',
-					'gateway1',
-					'bacs',
-					'cod',
-					'cheque',
-				),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP => 1,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, no ordering - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order with non-existent payment gateways, no ordering - gateways | offline PMs | suggestions'    => array(
-				array(
-					'non_existent_gateway1',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'non_existent_gateway2',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(),
-				array(
-					'non_existent_gateway1',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'non_existent_gateway2',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order with non-existent payment gateways #2, no ordering - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_non_existent_gateway1',
-					'non_existent_gateway1',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_non_existent_gateway2',
-					'non_existent_gateway2',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(),
-				array(
-					'_wc_pes_non_existent_gateway1',
-					'non_existent_gateway1',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_non_existent_gateway2',
-					'non_existent_gateway2',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order with suggestions but no matching gateways, no ordering - gateways | offline PMs | suggestions'       => array(
-				array(
-					'_wc_pes_suggestion3',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion1',
-					'gateway2',
-				),
-				array(),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0', // Suggestion matching gateways (via the plugin slug) are added after their suggestion, in order.
-					'gateway3_1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion1',
-					'gateway1', // Gateway added after its suggestion.
-					'gateway2',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order with suggestions but no matching gateways, ordering #1 - gateways | offline PMs | suggestions'       => array(
-				array(
-					'_wc_pes_suggestion3',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion1',
-					'gateway2',
-				),
-				array(
-					'gateway2' => 0,
-				),
-				array(
-					'gateway2',
-					'_wc_pes_suggestion3',
-					'gateway3_0', // Suggestion matching gateways (via the plugin slug) are added after their suggestion, in order.
-					'gateway3_1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion1',
-					'gateway1', // Gateway added after its suggestion.
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order with suggestions but no matching gateways, ordering #2 - gateways | offline PMs | suggestions'       => array(
-				array(
-					'_wc_pes_suggestion3',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion1',
-					'gateway2',
-				),
-				array(
-					'gateway2' => 0,
-					Payments::OFFLINE_METHODS_ORDERING_GROUP => 1,
-				),
-				array(
-					'gateway2',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion3',
-					'gateway3_0', // Suggestion matching gateways (via the plugin slug) are added after their suggestion, in order.
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1', // Gateway added after its suggestion.
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order with suggestions but no matching gateways, ordering #3 - gateways | offline PMs | suggestions'       => array(
-				array(
-					'_wc_pes_suggestion3',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion1',
-					'gateway2',
-				),
-				array(
-					'bacs'   => 0, // Special offline PMs normalized order map - no-op.
-					'cod'    => 1,
-					'cheque' => 2,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0', // Suggestion matching gateways (via the plugin slug) are added after their suggestion, in order.
-					'gateway3_1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs', // no-op.
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion1',
-					'gateway1', // Gateway added after its suggestion.
-					'gateway2',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order with suggestions but no matching gateways, ordering #4 - gateways | offline PMs | suggestions'       => array(
-				array(
-					'_wc_pes_suggestion3',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion1',
-					'gateway2',
-				),
-				array(
-					'cod'    => 0, // Special offline PMs normalized order map.
-					'bacs'   => 1,
-					'cheque' => 2,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0', // Suggestion matching gateways (via the plugin slug) are added after their suggestion, in order.
-					'gateway3_1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'cod',
-					'bacs',
-					'cheque',
-					'_wc_pes_suggestion1',
-					'gateway1', // Gateway added after its suggestion.
-					'gateway2',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order with suggestions but no matching gateways, ordering #5 - gateways | offline PMs | suggestions'       => array(
-				array(
-					'_wc_pes_suggestion3',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs', // This has order 2.
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion1',
-					'gateway2',
-				),
-				array(
-					'cod'    => 2, // Special offline PMs non-normalized order map.
-					'bacs'   => 3,
-					'cheque' => 4,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0', // Suggestion matching gateways (via the plugin slug) are added after their suggestion, in order.
-					'gateway3_1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'cod',
-					'bacs',
-					'cheque',
-					'_wc_pes_suggestion1',
-					'gateway1', // Gateway added after its suggestion.
-					'gateway2',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order with non-existent payment gateways, move payment gateways - gateways | offline PMs | suggestions'    => array(
-				array(
-					'non_existent_gateway1',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_non_existent_gateway2',
-					'non_existent_gateway2',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					'gateway3_0' => 0,
-					'gateway1'   => 1,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'non_existent_gateway1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_non_existent_gateway2',
-					'non_existent_gateway2',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order with non-existent payment gateways, move payment gateway - gateways | offline PMs | suggestions'    => array(
-				array(
-					'non_existent_gateway1',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_non_existent_gateway2',
-					'non_existent_gateway2',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					'gateway1' => 1,
-				),
-				array(
-					'non_existent_gateway1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_non_existent_gateway2',
-					'non_existent_gateway2',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move payment gateway - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					'gateway1' => 1,
-				),
-				array(
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move payment gateway #2 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					'gateway2' => 2,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway2',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move payment gateway #3 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs', // This has order 3.
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					'gateway2' => 3,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2', // Because the offline PMs group was present, the offline PMs stuck with it.
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move payment gateway lower #1 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1', // This has order 7.
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					'gateway2' => 7,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway3_1',
-					'gateway2',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move payment gateway lower #2 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1', // This has order 8.
-					'gateway1',
-				),
-				array(
-					'gateway2' => 8,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway3_1',
-					'gateway2',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move payment gateway lower #3 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1', // This has order 9.
-				),
-				array(
-					'gateway2' => 9,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'gateway2',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move offline PMs group on itself - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs', // This has order 3.
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP => 3,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move offline PMs group on itself #2 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque', // This has order 5.
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP => 5,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move offline PMs group on next - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2', // This has order 6.
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP => 6,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway2',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move offline PMs group - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1', // This has order 7.
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP => 7,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway2',
-					'gateway3_1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move offline PMs group #2 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1', // This has order 8.
-					'gateway1', // This should remain in place because registered PGs have more power than suggestions.
-				),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP => 8,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway2',
-					'gateway3_1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion1', // Because the corresponding PG remained in place, this stuck with it.
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move offline PMs group #3 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1', // This has order 9.
-				),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP => 9,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move offline PMs group #4 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP => 10,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move offline PM - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs', // This had order 3.
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					'bacs' => 3,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move offline PM #2 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod', // This had order 4.
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					'bacs' => 4,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'cod',
-					'bacs', // Because the offline PG was present, the reordering took place only inside the offline PMs group.
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move offline PM #3 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque', // This had order 5.
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					'bacs' => 5,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'cod',
-					'cheque',
-					'bacs', // Because the offline PG was present, the reordering took place only inside the offline PMs group.
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move offline PM #4 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2', // This has order 6.
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					'bacs' => 6,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'cod',
-					'cheque',
-					'bacs', // Because the offline PG was present, the reordering took place only inside the offline PMs group.
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move only offline PMs #1 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs', // This has order 3.
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					'bacs'   => 4,
-					'cod'    => 5,
-					'cheque' => 6,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs', // No change here because the ordering was done inside the offline PMs group.
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move only offline PMs #2 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					'bacs'   => 4, // Sorting doesn't matter.
-					'cod'    => 3,
-					'cheque' => 5,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'cod',
-					'bacs',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move only offline PMs #3 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					'bacs'   => 5,
-					'cod'    => 3,
-					'cheque' => 4,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'cod',
-					'cheque',
-					'bacs',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move only offline PMs normalized #1 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs', // This has order 3.
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					'bacs'   => 0,
-					'cod'    => 1,
-					'cheque' => 2,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move only offline PMs normalized #2 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs', // This has order 3.
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					'cod'    => 0,
-					'bacs'   => 1,
-					'cheque' => 2,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'cod',
-					'bacs',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move only offline PMs normalized #3 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs', // This has order 3.
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					'cheque' => 0,
-					'bacs'   => 1,
-					'cod'    => 2,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'cheque',
-					'bacs',
-					'cod',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move suggestion #1 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion-other', // This has order 8.
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					'_wc_pes_suggestion-other' => 7,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'_wc_pes_suggestion-other',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move suggestion #2 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion-other', // This has order 8.
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					'_wc_pes_suggestion-other' => 6,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion-other',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move suggestion #3 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion-other', // This has order 8.
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					'_wc_pes_suggestion-other' => 5,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion-other', // Because we have an offline PMs group, the PMs stuck with it.
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move suggestion #4 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion-other', // This has order 8.
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					'_wc_pes_suggestion-other' => 2,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					'_wc_pes_suggestion-other',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move suggestion #5 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion-other', // This has order 8.
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					'_wc_pes_suggestion-other' => 1,
-				),
-				array(
-					'_wc_pes_suggestion-other',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move suggestion #6 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion-other', // This has order 8.
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					'_wc_pes_suggestion-other' => 0,
-				),
-				array(
-					'_wc_pes_suggestion-other',
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move suggestion lower #1 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion-other', // This has order 8.
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					'_wc_pes_suggestion-other' => 9,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion-other',
-					'_wc_pes_suggestion1', // This has a matching PG, so it stuck with it.
-					'gateway1',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move suggestion lower #2 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion-other', // This has order 8.
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					'_wc_pes_suggestion-other' => 10,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'_wc_pes_suggestion-other',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move suggestion lower #3 - gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion-other', // This has order 8.
-					'_wc_pes_suggestion1',
-					'gateway1',
-				),
-				array(
-					'_wc_pes_suggestion-other' => 11,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'gateway3_0',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'gateway2',
-					'gateway3_1',
-					'_wc_pes_suggestion1',
-					'gateway1',
-					'_wc_pes_suggestion-other',
-				),
-				$gateways + $offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move suggestion #1 - no gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion-other',
-					'_wc_pes_suggestion1',
-				),
-				array(
-					'_wc_pes_suggestion-other' => 1,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'_wc_pes_suggestion-other',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion1',
-				),
-				$offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move suggestion #2 - no gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion-other',
-					'_wc_pes_suggestion1',
-				),
-				array(
-					'_wc_pes_suggestion-other' => 1,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					'_wc_pes_suggestion-other',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion1',
-				),
-				$offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move suggestion #3 - no gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs', // This has order 2.
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion-other',
-					'_wc_pes_suggestion1',
-				),
-				array(
-					'_wc_pes_suggestion-other' => 2,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion-other',
-					'_wc_pes_suggestion1',
-				),
-				$offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move suggestion lower #1 - no gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion-other',
-					'_wc_pes_suggestion1',
-				),
-				array(
-					'_wc_pes_suggestion3' => 1,
-				),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion3',
-					'_wc_pes_suggestion-other',
-					'_wc_pes_suggestion1',
-				),
-				$offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move suggestion lower #2 - no gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion-other',
-					'_wc_pes_suggestion1', // This has order 6.
-				),
-				array(
-					'_wc_pes_suggestion-other' => 6,
-				),
-				array(
-					'_wc_pes_suggestion3',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion1',
-					'_wc_pes_suggestion-other',
-				),
-				$offline_payment_methods_gateways,
-				$suggestions,
-			),
-			'new order, move suggestion lower #3 - no gateways | offline PMs | suggestions'    => array(
-				array(
-					'_wc_pes_suggestion3',
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod', // This has order 3.
-					'cheque',
-					'_wc_pes_suggestion-other',
-					'_wc_pes_suggestion1',
-				),
-				array(
-					'_wc_pes_suggestion3' => 3,
-				),
-				array(
-					Payments::OFFLINE_METHODS_ORDERING_GROUP,
-					'bacs',
-					'cod',
-					'cheque',
-					'_wc_pes_suggestion3', // Because the suggestion, jumped the offline PMs group, all the offline PMs jumped it also.
-					'_wc_pes_suggestion-other',
-					'_wc_pes_suggestion1',
-				),
-				$offline_payment_methods_gateways,
-				$suggestions,
-			),
-		);
-	}
-
-	/**
-	 * Load the WC core PayPal gateway but not enable it.
-	 *
-	 * @return void
-	 */
-	private function load_core_paypal_pg() {
-		// Make sure the WC core PayPal gateway is loaded.
-		update_option(
-			'woocommerce_paypal_settings',
-			array(
-				'_should_load' => 'yes',
-				'enabled'      => 'no',
-			)
-		);
-		// Make sure the store currency is supported by the gateway.
-		update_option( 'woocommerce_currency', 'USD' );
-		WC()->payment_gateways()->payment_gateways = array();
-		WC()->payment_gateways()->init();
-
-		// Reset the controller memo to pick up the new gateway details.
-		$this->service->reset_memo();
+		$this->assertTrue( $result );
 	}
 
 	/**
@@ -4749,8 +1760,5 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		update_option( 'woocommerce_currency', 'USD' );
 		WC()->payment_gateways()->payment_gateways = array();
 		WC()->payment_gateways()->init();
-
-		// Reset the controller memo to pick up the new gateway details.
-		$this->service->reset_memo();
 	}
 }
