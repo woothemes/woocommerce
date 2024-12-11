@@ -256,13 +256,15 @@ class RestApi {
 	 * Convert step list from the frontend to the backend format.
 	 *
 	 * From:
-	 * "settings": ["setWCSettings", "setWCShippingZones", "setWCShippingMethods", "setWCShippingRates"],
-	 * "plugins": ["akismet/akismet.php],
-	 * "themes": ["approach],
+	 * {
+	 *  "settings": ["setWCSettings", "setWCShippingZones", "setWCShippingMethods", "setWCShippingRates"],
+	 *  "plugins": ["akismet/akismet.php],
+	 *  "themes": ["approach],
+	 * }
 	 *
 	 * To:
 	 *
-	 * "setWCSettings", "setWCShippingZones", "setWCShippingMethods", "setWCShippingRates", "installPlugin", "installTheme"
+	 * ["setWCSettings", "setWCShippingZones", "setWCShippingMethods", "setWCShippingRates", "installPlugin", "installTheme"]
 	 *
 	 * @param $steps
 	 *
