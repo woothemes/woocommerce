@@ -292,13 +292,6 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 				);
 			}
 
-			// If the product version has changed since the transient was last saved, reset the transient cache.
-			if ( ! isset( $transient_cached_prices_array['version'] ) || $transient_version !== $transient_cached_prices_array['version'] ) {
-				$transient_cached_prices_array = array(
-					'version' => $transient_version,
-				);
-			}
-
 			// If the prices are not stored for this hash, generate them and add to the transient.
 			if ( empty( $transient_cached_prices_array[ $price_hash ] ) ) {
 				$prices_array = array(
