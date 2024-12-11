@@ -146,6 +146,11 @@ $wc-setting-email-preview-gap: 16px;
 	font-weight: normal;
 	line-height: 21px;
 	margin: 0 0 $wc-setting-email-preview-gap;
+
+	&::before {
+		// Zero-width space to prevent jumping when subject is async loaded
+		content: "\200b";
+	}
 }
 
 .wc-settings-email-preview-header-data {
