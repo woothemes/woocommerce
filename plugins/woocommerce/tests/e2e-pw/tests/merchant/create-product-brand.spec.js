@@ -158,24 +158,6 @@ test( 'Merchant can add brands', async ( { page } ) => {
 		'image-02'
 	);
 
-	// Create a dummy child brand called "WooCommerce Dummy" under the "WooCommerce" parent brand.
-	await createBrandIfNotExist(
-		'WooCommerce Dummy',
-		'woocommerce-dummy',
-		'WooCommerce',
-		'Dummy WooCommerce brand!',
-		'image-02'
-	);
-
-	// Edit the dummy child brand from "WooCommerce Dummy" to "WooCommerce Dummy Edited".
-	await editBrand( 'WooCommerce Dummy', {
-		name: 'WooCommerce Dummy Edited',
-		slug: 'woocommerce-dummy-edited',
-		parentBrand: 'WooCommerce',
-		description: 'Dummy WooCommerce brand edited!',
-		thumbnailFileName: 'image-03',
-	} );
-
-	// Delete the dummy child brand "WooCommerce Dummy Edited".
-	await deleteBrand( 'WooCommerce Dummy Edited' );
+	await deleteBrand( 'WooCommerce Apparels' );
+	await deleteBrand( 'WooCommerce' );
 } );
