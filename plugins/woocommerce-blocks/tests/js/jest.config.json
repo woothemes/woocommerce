@@ -52,7 +52,6 @@
 		"<rootDir>/vendor/",
 		"<rootDir>/tests/"
 	],
-	"transformIgnorePatterns": [ "/node_modules/(?!client-zip)" ],
 	"resolver": "<rootDir>/tests/js/jest-resolver.js",
 	"testEnvironment": "jsdom",
 	"preset": "@wordpress/jest-preset-default",
