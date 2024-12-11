@@ -1,4 +1,5 @@
 const { test, expect } = require( '@playwright/test' );
+const { tags } = require( '../../fixtures/fixtures' );
 const { exec } = require( 'child_process' );
 
 test.describe( 'WC Home Task List >', () => {
@@ -45,8 +46,8 @@ test.describe( 'WC Home Task List >', () => {
 	} );
 
 	test(
-		' Can hide the task list',
-		{ tag: [ '@skip-on-default-pressable', '@skip-on-default-wpcom' ] },
+		'Can hide the task list',
+		{ tag: [ tags.SKIP_ON_PRESSABLE, tags.SKIP_ON_WPCOM ] },
 		async ( { page } ) => {
 			await test.step( 'Load the WC Admin page', async () => {
 				await page.goto( 'wp-admin/admin.php?page=wc-admin' );

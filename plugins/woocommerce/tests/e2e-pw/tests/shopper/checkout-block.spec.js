@@ -1,6 +1,6 @@
 const { fillPageTitle } = require( '../../utils/editor' );
 const { request } = require( '@playwright/test' );
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const { admin, customer } = require( '../../test-data/data' );
@@ -61,7 +61,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Checkout Block page',
-	{ tag: [ '@payments', '@services', '@hpos', '@skip-on-default-wpcom' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS, tags.SKIP_ON_WPCOM ] },
 	() => {
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {
@@ -899,7 +899,7 @@ test.describe(
 			);
 
 			// fill shipping address and check cash on delivery method
-			await fillShippingCheckoutBlocks( page, 'Marge' );
+			await fillShippingCheckoutBlocks( page, { firstName: 'Marge' } );
 			await page.getByLabel( 'Cash on delivery' ).check();
 			await expect( page.getByLabel( 'Cash on delivery' ) ).toBeChecked();
 
@@ -998,7 +998,7 @@ test.describe(
 			);
 
 			// fill shipping address and check cash on delivery method
-			await fillShippingCheckoutBlocks( page, 'Marge' );
+			await fillShippingCheckoutBlocks( page, { firstName: 'Marge' } );
 			await page.getByLabel( 'Cash on delivery' ).check();
 			await expect( page.getByLabel( 'Cash on delivery' ) ).toBeChecked();
 

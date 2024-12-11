@@ -1,7 +1,3 @@
-const { test, expect } = require( '@playwright/test' );
-const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
-const { admin } = require( '../../test-data/data' );
-
 /**
  * External dependencies
  */
@@ -9,12 +5,19 @@ import {
 	addAProductToCart,
 	getOrderIdFromUrl,
 } from '@woocommerce/e2e-utils-playwright';
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
+const { test, expect } = require( '@playwright/test' );
+const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
+const { admin } = require( '../../test-data/data' );
 
 const billingEmail = 'marge-test-account@example.com';
 
 test.describe(
 	'Shopper Checkout Create Account',
-	{ tag: [ '@payments', '@services' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		let productId, orderId, shippingZoneId;
 
