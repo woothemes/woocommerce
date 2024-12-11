@@ -208,7 +208,7 @@ export const SettingsPaymentsMain = () => {
 					<IncentiveModal
 						incentive={ incentive }
 						onDismiss={ dismissIncentive }
-						setupPlugin={ setupPlugin }
+						onAccept={ setupPlugin }
 					/>
 				) }
 			{ errorMessage && (
@@ -227,7 +227,7 @@ export const SettingsPaymentsMain = () => {
 				<IncentiveBanner
 					incentive={ incentive }
 					onDismiss={ dismissIncentive }
-					setupPlugin={ setupPlugin }
+					onAccept={ setupPlugin }
 				/>
 			) }
 			<div className="settings-payments-main__container">

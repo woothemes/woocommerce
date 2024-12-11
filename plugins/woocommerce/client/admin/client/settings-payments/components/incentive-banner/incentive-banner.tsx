@@ -71,15 +71,13 @@ export const IncentiveBanner = ( {
 	return (
 		<Card className="woocommerce-incentive-banner" isRounded={ true }>
 			<div className="woocommerce-incentive-banner__content">
-				<CardMedia>
-					<img
-						src={
-							WC_ASSET_URL +
-							'images/settings-payments/incentives-icon.svg'
-						}
-						alt={ __( 'Incentive icon', 'woocommerce' ) }
-					/>
-				</CardMedia>
+				<img
+					src={
+						WC_ASSET_URL +
+						'images/settings-payments/incentives-icon.svg'
+					}
+					alt={ __( 'Incentive icon', 'woocommerce' ) }
+				/>
 				<CardBody className="woocommerce-incentive-banner__body">
 					<StatusBadge
 						status="has_incentive"
@@ -125,7 +123,7 @@ export const IncentiveBanner = ( {
 						disabled={ isBusy }
 						onClick={ handleDismiss }
 					>
-						{ __( 'No thanks', 'woocommerce' ) }
+						{ __( 'Dismiss', 'woocommerce' ) }
 					</Button>
 				</CardBody>
 			</div>

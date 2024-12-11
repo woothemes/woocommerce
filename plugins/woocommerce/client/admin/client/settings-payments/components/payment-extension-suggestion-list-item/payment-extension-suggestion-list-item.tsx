@@ -32,13 +32,15 @@ export const PaymentExtensionSuggestionListItem = ( {
 	...props
 }: PaymentExtensionSuggestionListItemProps ) => {
 	const hasIncentive = !! extension._incentive;
+	const shouldHighlightIncentive =
+		hasIncentive && ! extension._incentive?.promo_id.includes( '-action-' );
 
 	return (
 		<div
 			id={ extension.id }
 			className={ `transitions-disabled woocommerce-list__item woocommerce-list__item-enter-done ${
-				hasIncentive ? `has-incentive` : ''
-			}`}
+				shouldHighlightIncentive ? `has-incentive` : ''
+			}` }
 			{ ...props }
 		>
 			<div className="woocommerce-list__item-inner">

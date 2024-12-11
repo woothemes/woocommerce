@@ -26,6 +26,9 @@ export const PaymentGatewayListItem = ( {
 }: PaymentGatewayItemProps ) => {
 	const isWcPay = isWooPayments( gateway.id );
 	const hasIncentive = !! gateway._incentive;
+	const shouldHighlightIncentive =
+		hasIncentive && ! gateway._incentive?.promo_id.includes( '-action-' );
+
 	const determineGatewayStatus = () => {
 		if ( ! gateway.state?.enabled && gateway.state?.needs_setup ) {
 			return 'needs_setup';
@@ -47,7 +50,7 @@ export const PaymentGatewayListItem = ( {
 			id={ gateway.id }
 			className={ `transitions-disabled woocommerce-list__item woocommerce-list__item-enter-done woocommerce-item__payment-gateway ${
 				isWcPay ? `woocommerce-item__woocommerce-payments` : ''
-			} ${ hasIncentive ? `has-incentive` : '' }` }
+			} ${ shouldHighlightIncentive ? `has-incentive` : '' }` }
 			{ ...props }
 		>
 			<div className="woocommerce-list__item-inner">
