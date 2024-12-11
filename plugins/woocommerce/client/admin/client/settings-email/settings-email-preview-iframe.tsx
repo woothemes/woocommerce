@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
+import apiFetch from '@wordpress/api-fetch';
 import { useEffect } from 'react';
 
 type EmailPreviewIframeProps = {
@@ -16,12 +17,22 @@ export const EmailPreviewIframe: React.FC< EmailPreviewIframeProps > = ( {
 	settingsIds,
 } ) => {
 	useEffect( () => {
-		const handleFieldChange = async () => {
+		const handleFieldChange = async ( event: Event ) => {
+			const target = event.target as HTMLInputElement;
+			const key = target.id;
+			const value = target.value;
+
 			setIsLoading( true );
 
-			setTimeout( () => {
+			try {
+				await apiFetch( {
+					path: 'wc-admin-email/settings/email/save-transient',
+					method: 'POST',
+					data: { key, value },
+				} );
+			} finally {
 				setIsLoading( false );
-			}, 1000 );
+			}
 		};
 
 		// Set up listeners
