@@ -164,11 +164,12 @@ class EmailPreview {
 		}
 
 		$content = $this->email->get_content_html();
+		$inlined = $this->email->style_inline( $content );
 
 		$this->clean_up_filters();
 
 		/** This filter is documented in src/Internal/Admin/EmailPreview/EmailPreview.php */
-		return apply_filters( 'woocommerce_mail_content', $this->email->style_inline( $content ) ); // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingSinceComment
+		return apply_filters( 'woocommerce_mail_content', $inlined ); // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingSinceComment
 	}
 
 	/**
@@ -288,6 +289,8 @@ class EmailPreview {
 		// Email templates fetch product from the database to show additional information, which are not
 		// saved in WC_Order_Item_Product. This filter enables fetching that data also in email preview.
 		add_filter( 'woocommerce_order_item_product', array( $this, 'get_dummy_product_when_not_set' ), 10, 1 );
+		// Enable email preview mode - this way transient values are fetched for live preview.
+		add_filter( 'woocommerce_is_email_preview', array( $this, 'enable_preview_mode' ) );
 	}
 
 	/**
@@ -296,6 +299,7 @@ class EmailPreview {
 	private function clean_up_filters() {
 		remove_filter( 'woocommerce_order_needs_shipping_address', array( $this, 'enable_shipping_address' ) );
 		remove_filter( 'woocommerce_order_item_product', array( $this, 'get_dummy_product_when_not_set' ), 10 );
+		remove_filter( 'woocommerce_is_email_preview', array( $this, 'enable_preview_mode' ) );
 	}
 
 	/**
@@ -305,6 +309,16 @@ class EmailPreview {
 	 * @return true
 	 */
 	public function enable_shipping_address() {
+		return true;
+	}
+
+	/**
+	 * Enable preview mode to use transient values in email-styles.php. Not using __return_true
+	 * so we don't accidentally remove the same filter used by other plugin or theme.
+	 *
+	 * @return true
+	 */
+	public function enable_preview_mode() {
 		return true;
 	}
 }
