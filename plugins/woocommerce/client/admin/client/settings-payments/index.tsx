@@ -143,7 +143,7 @@ export const SettingsPaymentsOfflineWrapper = () => {
 };
 
 export const SettingsPaymentsMethodsWrapper = () => {
-	const [ paymentMethodsState, setPaymentMethodsState ] = useState( [] );
+	const [ paymentMethodsState, setPaymentMethodsState ] = useState( {} );
 	const onClick = useCallback( () => {
 		//TODO: Implement in future PR.
 	}, [ paymentMethodsState ] );
@@ -164,7 +164,18 @@ export const SettingsPaymentsMethodsWrapper = () => {
 				onButtonClick={ onClick }
 			/>
 			<Suspense
-				fallback={ <div>Loading payment methods settings...</div> }
+				fallback={
+					<>
+						<div className="settings-payments-recommended__container">
+							<div className="settings-payment-gateways">
+								<ListPlaceholder
+									rows={ 3 }
+									hasDragIcon={ false }
+								/>
+							</div>
+						</div>
+					</>
+				}
 			>
 				<SettingsPaymentsMethodsChunk
 					paymentMethodsState={ paymentMethodsState }

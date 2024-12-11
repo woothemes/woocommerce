@@ -7,7 +7,6 @@ import {
 	type PaymentProvider,
 	PAYMENT_SETTINGS_STORE_NAME,
 } from '@woocommerce/data';
-import { List } from '@woocommerce/components';
 import { useEffect, useState } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
@@ -93,7 +92,10 @@ export const SettingsPaymentsMethods: React.FC< SettingsPaymentsMethodsProps > =
 	return (
 		<div className="settings-payments-methods__container">
 			{ isFetching ? (
-				<ListPlaceholder rows={ 3 } />
+				<ListPlaceholder
+					rows={ 3 }
+					hasDragIcon={ false }
+				/>
 			) : (
 				<>
 					<div
