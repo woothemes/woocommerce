@@ -128,7 +128,13 @@ class EmailPreviewRestController extends RestApiControllerBase {
 							'type'              => 'string',
 							'description'       => 'The value to be saved for the transient.',
 							'validate_callback' => 'rest_validate_request_arg',
-							'sanitize_callback' => 'sanitize_text_field',
+							'sanitize_callback' => function ( $value, $request ) {
+								$key = $request->get_param( 'key' );
+								if ( 'woocommerce_email_footer_text' === $key ) {
+									return sanitize_textarea_field( $value );
+								}
+								return sanitize_text_field( $value );
+							},
 						),
 					),
 				),
