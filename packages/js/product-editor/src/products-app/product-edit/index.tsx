@@ -7,6 +7,7 @@ import { createElement, useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import classNames from 'classnames';
+import { privateApis as routerPrivateApis } from '@wordpress/router';
 import {
 	// @ts-expect-error missing types.
 	__experimentalHeading as Heading,
@@ -32,7 +33,7 @@ import { productFields } from '../product-list/fields';
 const { NavigableRegion } = unlock( editorPrivateApis );
 
 const form: Form = {
-	type: 'panel',
+	type: 'regular',
 	fields: [ 'name', 'status' ],
 };
 
@@ -41,18 +42,20 @@ type ProductEditProps = {
 	className?: string;
 	hideTitleFromUI?: boolean;
 	actions?: React.JSX.Element;
-	postType: string;
-	postId: string;
 };
+
+const { useLocation } = unlock( routerPrivateApis );
 
 export default function ProductEdit( {
 	subTitle,
 	actions,
 	className,
 	hideTitleFromUI = true,
-	postType,
-	postId = '',
 }: ProductEditProps ) {
+	const { params } = useLocation();
+
+	const postId = params.productId;
+
 	const classes = classNames( 'edit-product-page', className, {
 		'is-empty': ! postId,
 	} );
@@ -66,7 +69,7 @@ export default function ProductEdit( {
 						: null,
 			};
 		},
-		[ postType, ids ]
+		[ ids ]
 	);
 	const [ edits, setEdits ] = useState( {} );
 	const itemWithEdits = useMemo( () => {
