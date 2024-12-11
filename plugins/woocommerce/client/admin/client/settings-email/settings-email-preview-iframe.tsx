@@ -3,7 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { debounce } from 'lodash';
 
 type EmailPreviewIframeProps = {
@@ -17,6 +17,8 @@ export const EmailPreviewIframe: React.FC< EmailPreviewIframeProps > = ( {
 	setIsLoading,
 	settingsIds,
 } ) => {
+	const [ counter, setCounter ] = useState( 0 );
+
 	useEffect( () => {
 		const handleFieldChange = debounce( async ( event: Event ) => {
 			const target = event.target as HTMLInputElement;
@@ -33,6 +35,7 @@ export const EmailPreviewIframe: React.FC< EmailPreviewIframeProps > = ( {
 				} );
 			} finally {
 				setIsLoading( false );
+				setCounter( ( prevCounter ) => prevCounter + 1 );
 			}
 		}, 400 );
 
@@ -54,11 +57,11 @@ export const EmailPreviewIframe: React.FC< EmailPreviewIframeProps > = ( {
 				}
 			} );
 		};
-	}, [ setIsLoading, settingsIds ] );
+	}, [ setIsLoading, settingsIds, setCounter ] );
 
 	return (
 		<iframe
-			src={ src }
+			src={ `${ src }&hash=${ counter }` }
 			title={ __( 'Email preview frame', 'woocommerce' ) }
 			onLoad={ () => setIsLoading( false ) }
 		/>
