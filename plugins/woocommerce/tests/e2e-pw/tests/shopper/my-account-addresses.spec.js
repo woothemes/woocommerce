@@ -1,3 +1,7 @@
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
@@ -10,7 +14,7 @@ const customer = {
 
 test.describe(
 	'Customer can manage addresses in My Account > Addresses page',
-	{ tag: [ '@payments', '@services' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {

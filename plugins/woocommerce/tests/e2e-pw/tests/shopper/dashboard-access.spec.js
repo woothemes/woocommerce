@@ -1,8 +1,12 @@
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
 const { test, expect } = require( '@playwright/test' );
 
 test.describe(
 	'Customer-role users are blocked from accessing the WP Dashboard.',
-	{ tag: [ '@payments', '@services' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		test.use( { storageState: process.env.CUSTOMERSTATE } );
 

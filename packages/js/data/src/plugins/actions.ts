@@ -412,10 +412,10 @@ export function* dismissRecommendedPlugins( type: RecommendedTypes ) {
 	return success;
 }
 
-export function* deactivatePlugin( pluginName: string ) {
+export function* deactivatePlugin( pluginFile: string ) {
 	try {
 		yield apiFetch( {
-			path: 'wp/v2/plugins/' + pluginName + '/' + pluginName, // WP API specifics
+			path: `/wp/v2/plugins/${ pluginFile }`,
 			method: 'POST',
 			data: { status: 'inactive' },
 		} );

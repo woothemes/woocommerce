@@ -1,4 +1,4 @@
-const { test: baseTest } = require( '../../fixtures/fixtures' );
+const { test: baseTest, tags } = require( '../../fixtures/fixtures' );
 const {
 	goToPostEditor,
 	fillPageTitle,
@@ -16,7 +16,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Can create a new post',
-	{ tag: [ '@gutenberg', '@services' ] },
+	{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
 	() => {
 		test( 'can create new post', async ( { page, testPost } ) => {
 			await goToPostEditor( { page } );

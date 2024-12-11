@@ -2,6 +2,12 @@
  * External dependencies
  */
 import { addAProductToCart } from '@woocommerce/e2e-utils-playwright';
+
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
+
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
@@ -29,7 +35,7 @@ const totals = [ '$15.00', '$10.00', '$13.00' ];
 
 test.describe(
 	'Cart & Checkout applying coupons',
-	{ tag: [ '@payments', '@services', '@hpos' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS ] },
 	() => {
 		let firstProductId;
 		const couponBatchId = [];
@@ -311,7 +317,7 @@ test.describe(
 
 		test(
 			'restores total when coupons are removed',
-			{ tag: [ '@could-be-lower-level-test' ] },
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 			async ( { page, context } ) => {
 				await test.step( 'Load cart page and try restoring total when removed coupons', async () => {
 					await addAProductToCart( page, firstProductId );

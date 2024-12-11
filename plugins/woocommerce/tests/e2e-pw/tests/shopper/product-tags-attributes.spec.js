@@ -2,6 +2,10 @@
  * External dependencies
  */
 import { getCanvas, goToPageEditor } from '@woocommerce/e2e-utils-playwright';
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
 const { test, expect, request } = require( '@playwright/test' );
 const { admin } = require( '../../test-data/data' );
 const pageTitle = 'Product Showcase';
@@ -30,7 +34,7 @@ let product1Id,
 
 test.describe(
 	'Browse product tags and attributes from the product page',
-	{ tag: [ '@payments', '@services' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 
