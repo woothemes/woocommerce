@@ -159,7 +159,7 @@ const Blueprint = () => {
 				<code>wp wc blueprint import path-to-woo-blueprint.json</code>.
 			</p>
 			<p></p>
-			<h3>Export Blueprint</h3>
+			<h3>{ __( 'Export Blueprint', 'woocommerce' ) }</h3>
 			<p className="export-intro">
 				{ createInterpolateElement(
 					__(
