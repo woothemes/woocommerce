@@ -1,3 +1,5 @@
+//todo audit follow-up: revisit this entire spec and move these checks to be part of the end-to-end user creation and password reset tests
+
 const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 const { admin, customer } = require( '../../test-data/data' );
 
