@@ -91,6 +91,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'enabled', $gateway['state'], 'Gateway `state[enabled]` entry is missing' );
 		$this->assertArrayHasKey( 'needs_setup', $gateway['state'], 'Gateway `state[needs_setup]` entry is missing' );
 		$this->assertArrayHasKey( 'test_mode', $gateway['state'], 'Gateway `state[test_mode]` entry is missing' );
+		$this->assertArrayHasKey( 'dev_mode', $gateway['state'], 'Gateway `state[dev_mode]` entry is missing' );
 		$this->assertArrayHasKey( 'management', $gateway, 'Gateway `management` entry is missing' );
 		$this->assertArrayHasKey( 'settings_url', $gateway['management'], 'Gateway `management[settings_url]` entry is missing' );
 		$this->assertArrayHasKey( 'links', $gateway, 'Gateway `links` entry is missing' );
@@ -315,6 +316,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'enabled', $gateway['state'], 'Gateway `state[enabled]` entry is missing' );
 		$this->assertArrayHasKey( 'needs_setup', $gateway['state'], 'Gateway `state[needs_setup]` entry is missing' );
 		$this->assertArrayHasKey( 'test_mode', $gateway['state'], 'Gateway `state[test_mode]` entry is missing' );
+		$this->assertArrayHasKey( 'dev_mode', $gateway['state'], 'Gateway `state[dev_mode]` entry is missing' );
 		$this->assertArrayHasKey( 'management', $gateway, 'Gateway `management` entry is missing' );
 		$this->assertArrayHasKey( 'settings_url', $gateway['management'], 'Gateway `management[settings_url]` entry is missing' );
 		// There are no `plugin` or `links` entries because this is a fake gateway without a plugin.
@@ -1207,7 +1209,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 			'description'       => 'Description 1',
 			'plugin'            => array(
 				'_type' => ExtensionSuggestions::PLUGIN_TYPE_WPORG,
-				'slug'  => 'slug1',
+				'slug'  => 'woocommerce', // Use WooCommerce because it is an installed plugin, obviously.
 			),
 			'image'             => 'http://example.com/image1.png',
 			'icon'              => 'http://example.com/icon1.png',
@@ -1235,11 +1237,12 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertSame( $suggestion_details['_type'], $suggestion['_type'] );
 		$this->assertSame( $suggestion_details['title'], $suggestion['title'] );
 		$this->assertSame( $suggestion_details['description'], $suggestion['description'] );
-		$this->assertSame(
+		$this->assertEquals(
 			array(
 				'_type'  => ExtensionSuggestions::PLUGIN_TYPE_WPORG,
-				'slug'   => 'slug1',
-				'status' => Payments::EXTENSION_NOT_INSTALLED, // The plugin should be not installed.
+				'slug'   => 'woocommerce',
+				'file'   => 'woocommerce/woocommerce',
+				'status' => Payments::EXTENSION_INSTALLED, // WooCommerce is installed.
 			),
 			$suggestion['plugin']
 		);
@@ -1257,7 +1260,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 	 */
 	public function test_get_extension_suggestion_by_plugin_slug() {
 		// Arrange.
-		$slug               = 'slug1';
+		$slug               = 'woocommerce'; // Use WooCommerce because it is an active plugin.
 		$suggestion_details = array(
 			'id'                => 'suggestion1',
 			'_priority'         => 1,
@@ -1294,11 +1297,12 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertSame( $suggestion_details['_type'], $suggestion['_type'] );
 		$this->assertSame( $suggestion_details['title'], $suggestion['title'] );
 		$this->assertSame( $suggestion_details['description'], $suggestion['description'] );
-		$this->assertSame(
+		$this->assertEquals(
 			array(
 				'_type'  => ExtensionSuggestions::PLUGIN_TYPE_WPORG,
-				'slug'   => 'slug1',
-				'status' => Payments::EXTENSION_NOT_INSTALLED, // The plugin should be not installed.
+				'slug'   => $slug,
+				'file'   => 'woocommerce/woocommerce',
+				'status' => Payments::EXTENSION_INSTALLED, // WooCommerce is installed.
 			),
 			$suggestion['plugin']
 		);

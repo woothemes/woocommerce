@@ -2,10 +2,11 @@
  * External dependencies
  */
 import { useCallback } from 'react';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import {
 	PLUGINS_STORE_NAME,
 	PAYMENT_SETTINGS_STORE_NAME,
+	PaymentProvider,
 } from '@woocommerce/data';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
@@ -23,17 +24,28 @@ import {
 	isWooPayments,
 	providersContainWooPaymentsInTestMode,
 } from '~/settings-payments/utils';
-import { WooPaymentsPostSandboxAccountSetupModal } from '~/settings-payments/components/woo-payments-post-sandbox-account-setup-modal';
+import { WooPaymentsPostSandboxAccountSetupModal } from '~/settings-payments/components/modals';
 
 export const SettingsPaymentsMain = () => {
 	const [ installingPlugin, setInstallingPlugin ] = useState< string | null >(
 		null
 	);
+	// State to hold the sorted providers in case of changing the order, otherwise it will be null
+	const [ sortedProviders, setSortedProviders ] = useState<
+		PaymentProvider[] | null
+	>( null );
 	const { installAndActivatePlugins } = useDispatch( PLUGINS_STORE_NAME );
-
+	const { updateProviderOrdering } = useDispatch(
+		PAYMENT_SETTINGS_STORE_NAME
+	);
 	const [ errorMessage, setErrorMessage ] = useState< string | null >( null );
 	const [ livePaymentsModalVisible, setLivePaymentsModalVisible ] =
 		useState( false );
+
+	const [ storeCountry, setStoreCountry ] = useState< string | null >(
+		window.wcSettings?.admin?.woocommerce_payments_nox_profile
+			?.business_country_code || null
+	);
 
 	const urlParams = new URLSearchParams( window.location.search );
 
@@ -42,9 +54,13 @@ export const SettingsPaymentsMain = () => {
 			urlParams.get( 'test_drive_error' ) === 'true';
 		if ( isAccountTestDriveError ) {
 			setErrorMessage(
-				__(
-					'An error occurred while setting up your sandbox account. Please try again.',
-					'woocommerce'
+				sprintf(
+					/* translators: %s: plugin name */
+					__(
+						'%s: An error occurred while setting up your sandbox account — please try again.',
+						'woocommerce'
+					),
+					'WooPayments'
 				)
 			);
 		}
@@ -54,9 +70,13 @@ export const SettingsPaymentsMain = () => {
 
 		if ( isJetpackConnectionError ) {
 			setErrorMessage(
-				__(
-					'There was a problem connecting your WordPress.com account - please try again.',
-					'woocommerce'
+				sprintf(
+					/* translators: %s: plugin name */
+					__(
+						'%s: There was a problem connecting your WordPress.com account — please try again.',
+						'woocommerce'
+					),
+					'WooPayments'
 				)
 			);
 		}
@@ -83,7 +103,7 @@ export const SettingsPaymentsMain = () => {
 			return {
 				providers: select(
 					PAYMENT_SETTINGS_STORE_NAME
-				).getPaymentProviders(),
+				).getPaymentProviders( storeCountry ),
 				suggestions: select(
 					PAYMENT_SETTINGS_STORE_NAME
 				).getSuggestions(),
@@ -125,6 +145,24 @@ export const SettingsPaymentsMain = () => {
 		]
 	);
 
+	function handleOrderingUpdate( sorted: PaymentProvider[] ) {
+		// Extract the existing _order values in the sorted order
+		const updatedOrderValues = sorted
+			.map( ( provider ) => provider._order )
+			.sort( ( a, b ) => a - b );
+
+		// Build the orderMap by assigning the sorted _order values
+		const orderMap: Record< string, number > = {};
+		sorted.forEach( ( provider, index ) => {
+			orderMap[ provider.id ] = updatedOrderValues[ index ];
+		} );
+
+		updateProviderOrdering( orderMap );
+
+		// Set the sorted providers to the state to give a real-time update
+		setSortedProviders( sorted );
+	}
+
 	return (
 		<>
 			{ errorMessage && (
@@ -141,11 +179,14 @@ export const SettingsPaymentsMain = () => {
 			) }
 			<div className="settings-payments-main__container">
 				<PaymentGateways
-					providers={ providers }
+					providers={ sortedProviders || providers }
 					installedPluginSlugs={ installedPluginSlugs }
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
+					updateOrdering={ handleOrderingUpdate }
 					isFetching={ isFetching }
+					businessRegistrationCountry={ storeCountry }
+					setBusinessRegistrationCountry={ setStoreCountry }
 				/>
 				<OtherPaymentGateways
 					suggestions={ suggestions }
