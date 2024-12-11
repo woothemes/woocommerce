@@ -110,7 +110,7 @@ const wcPages = [
 for ( const currentPage of wcPages ) {
 	test.describe(
 		`WooCommerce Page Load > Load ${ currentPage.name } sub pages`,
-		{ tag: [ '@gutenberg', '@services' ] },
+		{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
 		() => {
 			const product = getFakeProduct();
 			const customer = getFakeCustomer();
