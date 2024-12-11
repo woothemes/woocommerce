@@ -9,6 +9,8 @@ import {
 	getLineCommitHash,
 } from '@woocommerce/monorepo-utils/src/core/git';
 import { Logger } from '@woocommerce/monorepo-utils/src/core/logger';
+import { readFile } from 'fs/promises';
+import { join } from 'path';
 
 export type TemplateChangeDescription = {
 	filePath: string;
@@ -16,6 +18,32 @@ export type TemplateChangeDescription = {
 	// We could probably move message out into linter later
 	message: string;
 	pullRequests: number[];
+};
+
+const getFileVersion = async (
+	repositoryPath: string | undefined,
+	filePath: string
+): Promise< string > => {
+	if ( ! repositoryPath ) {
+		return '';
+	}
+	let currentFileContent;
+	try {
+		const fullPath = join( repositoryPath, filePath );
+		currentFileContent = await readFile( fullPath, 'utf-8' );
+	} catch ( e: unknown ) {
+		Logger.notice( `Unable to read file: ${ filePath }` );
+		return '';
+	}
+	if ( currentFileContent ) {
+		const versionMatch = currentFileContent.match(
+			/@version\s+(\d+\.\d+\.\d+)/
+		);
+		if ( versionMatch ) {
+			return versionMatch[ 1 ];
+		}
+	}
+	return '';
 };
 
 export const scanForTemplateChanges = async (
@@ -43,12 +71,20 @@ export const scanForTemplateChanges = async (
 		const patch = patches[ p ];
 		const lines = patch.split( '\n' );
 		const filePath = getFilename( lines[ 0 ] );
-		const pullRequests = [];
+		const pullRequests: number[] = [];
 
 		let lineNumber = 1;
 		let code = 'warning';
 		let message = `This template may require a version bump! Expected ${ version }`;
 
+		// Check if the @version has already the expected version
+		const fileVersion = await getFileVersion( repositoryPath, filePath );
+		if ( fileVersion === version ) {
+			code = 'notice';
+			message = 'Version matches the expected version';
+			changes.set( filePath, { code, message, filePath, pullRequests } );
+			continue;
+		}
 		for ( const l in lines ) {
 			const line = lines[ l ];
 
