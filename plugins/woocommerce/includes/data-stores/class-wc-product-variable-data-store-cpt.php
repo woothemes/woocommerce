@@ -159,7 +159,7 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 			}
 			$children['all']     = get_posts( apply_filters( 'woocommerce_variable_children_args', $all_args, $product, false ) );
 			$children['visible'] = get_posts( apply_filters( 'woocommerce_variable_children_args', $visible_only_args, $product, true ) );
-			$children['version'] = WC_Cache_Helper::get_transient_version( 'product' );
+			$children['version'] = $transient_version;
 
 			set_transient( $children_transient_name, $children, DAY_IN_SECONDS * 30 );
 		}
