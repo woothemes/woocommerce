@@ -48,68 +48,68 @@ class ProductSchema extends AbstractSchema {
 	 */
 	public function get_properties() {
 		return [
-			'id'                  => [
+			'id'                   => [
 				'description' => __( 'Unique identifier for the resource.', 'woocommerce' ),
 				'type'        => 'integer',
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,
 			],
-			'name'                => [
+			'name'                 => [
 				'description' => __( 'Product name.', 'woocommerce' ),
 				'type'        => 'string',
 				'context'     => [ 'view', 'edit' ],
 			],
-			'slug'                => [
+			'slug'                 => [
 				'description' => __( 'Product slug.', 'woocommerce' ),
 				'type'        => 'string',
 				'context'     => [ 'view', 'edit' ],
 			],
-			'parent'              => [
+			'parent'               => [
 				'description' => __( 'ID of the parent product, if applicable.', 'woocommerce' ),
 				'type'        => 'integer',
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,
 			],
-			'type'                => [
+			'type'                 => [
 				'description' => __( 'Product type.', 'woocommerce' ),
 				'type'        => 'string',
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,
 			],
-			'variation'           => [
+			'variation'            => [
 				'description' => __( 'Product variation attributes, if applicable.', 'woocommerce' ),
 				'type'        => 'string',
 				'context'     => [ 'view', 'edit' ],
 			],
-			'permalink'           => [
+			'permalink'            => [
 				'description' => __( 'Product URL.', 'woocommerce' ),
 				'type'        => 'string',
 				'format'      => 'uri',
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,
 			],
-			'short_description'   => [
+			'short_description'    => [
 				'description' => __( 'Product short description in HTML format.', 'woocommerce' ),
 				'type'        => 'string',
 				'context'     => [ 'view', 'edit' ],
 			],
-			'description'         => [
+			'description'          => [
 				'description' => __( 'Product full description in HTML format.', 'woocommerce' ),
 				'type'        => 'string',
 				'context'     => [ 'view', 'edit' ],
 			],
-			'on_sale'             => [
+			'on_sale'              => [
 				'description' => __( 'Is the product on sale?', 'woocommerce' ),
 				'type'        => 'boolean',
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,
 			],
-			'sku'                 => [
+			'sku'                  => [
 				'description' => __( 'Unique identifier.', 'woocommerce' ),
 				'type'        => 'string',
 				'context'     => [ 'view', 'edit' ],
 			],
-			'prices'              => [
+			'prices'               => [
 				'description' => __( 'Price data provided using the smallest unit of the currency.', 'woocommerce' ),
 				'type'        => 'object',
 				'context'     => [ 'view', 'edit' ],
@@ -158,25 +158,25 @@ class ProductSchema extends AbstractSchema {
 					]
 				),
 			],
-			'price_html'          => array(
+			'price_html'           => array(
 				'description' => __( 'Price string formatted as HTML.', 'woocommerce' ),
 				'type'        => 'string',
 				'context'     => array( 'view', 'edit' ),
 				'readonly'    => true,
 			),
-			'average_rating'      => [
+			'average_rating'       => [
 				'description' => __( 'Reviews average rating.', 'woocommerce' ),
 				'type'        => 'string',
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,
 			],
-			'review_count'        => [
+			'review_count'         => [
 				'description' => __( 'Amount of reviews that the product has.', 'woocommerce' ),
 				'type'        => 'integer',
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,
 			],
-			'images'              => [
+			'images'               => [
 				'description' => __( 'List of images.', 'woocommerce' ),
 				'type'        => 'array',
 				'context'     => [ 'view', 'edit' ],
@@ -185,7 +185,7 @@ class ProductSchema extends AbstractSchema {
 					'properties' => $this->image_attachment_schema->get_properties(),
 				],
 			],
-			'categories'          => [
+			'categories'           => [
 				'description' => __( 'List of categories, if applicable.', 'woocommerce' ),
 				'type'        => 'array',
 				'context'     => [ 'view', 'edit' ],
@@ -219,7 +219,7 @@ class ProductSchema extends AbstractSchema {
 					],
 				],
 			],
-			'tags'                => [
+			'tags'                 => [
 				'description' => __( 'List of tags, if applicable.', 'woocommerce' ),
 				'type'        => 'array',
 				'context'     => [ 'view', 'edit' ],
@@ -253,7 +253,7 @@ class ProductSchema extends AbstractSchema {
 					],
 				],
 			],
-			'attributes'          => [
+			'attributes'           => [
 				'description' => __( 'List of attributes (taxonomy terms) assigned to the product. For variable products, these are mapped to variations (see the `variations` field).', 'woocommerce' ),
 				'type'        => 'array',
 				'context'     => [ 'view', 'edit' ],
@@ -321,7 +321,7 @@ class ProductSchema extends AbstractSchema {
 					],
 				],
 			],
-			'variations'          => [
+			'variations'           => [
 				'description' => __( 'List of variation IDs, if applicable.', 'woocommerce' ),
 				'type'        => 'array',
 				'context'     => [ 'view', 'edit' ],
@@ -359,25 +359,25 @@ class ProductSchema extends AbstractSchema {
 					],
 				],
 			],
-			'has_options'         => [
+			'has_options'          => [
 				'description' => __( 'Does the product have additional options before it can be added to the cart?', 'woocommerce' ),
 				'type'        => 'boolean',
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,
 			],
-			'is_purchasable'      => [
+			'is_purchasable'       => [
 				'description' => __( 'Is the product purchasable?', 'woocommerce' ),
 				'type'        => 'boolean',
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,
 			],
-			'is_in_stock'         => [
+			'is_in_stock'          => [
 				'description' => __( 'Is the product in stock?', 'woocommerce' ),
 				'type'        => 'boolean',
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,
 			],
-			'is_on_backorder'     => [
+			'is_on_backorder'      => [
 				'description' => __( 'Is the product stock backordered? This will also return false if backorder notifications are turned off.', 'woocommerce' ),
 				'type'        => 'boolean',
 				'context'     => [ 'view', 'edit' ],
@@ -389,19 +389,19 @@ class ProductSchema extends AbstractSchema {
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,
 			],
-			'low_stock_remaining' => [
+			'low_stock_remaining'  => [
 				'description' => __( 'Quantity left in stock if stock is low, or null if not applicable.', 'woocommerce' ),
 				'type'        => [ 'integer', 'null' ],
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,
 			],
-			'sold_individually'   => [
+			'sold_individually'    => [
 				'description' => __( 'If true, only one item of this product is allowed for purchase in a single order.', 'woocommerce' ),
 				'type'        => 'boolean',
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,
 			],
-			'add_to_cart'         => [
+			'add_to_cart'          => [
 				'description' => __( 'Add to cart button parameters.', 'woocommerce' ),
 				'type'        => 'object',
 				'context'     => [ 'view', 'edit' ],
@@ -446,7 +446,7 @@ class ProductSchema extends AbstractSchema {
 					],
 				],
 			],
-			self::EXTENDING_KEY   => $this->get_extended_schema( self::IDENTIFIER ),
+			self::EXTENDING_KEY    => $this->get_extended_schema( self::IDENTIFIER ),
 		];
 	}
 
@@ -458,34 +458,34 @@ class ProductSchema extends AbstractSchema {
 	 */
 	public function get_item_response( $product ) {
 		return [
-			'id'                              => $product->get_id(),
-			'name'                            => $this->prepare_html_response( $product->get_title() ),
-			'slug'                            => $product->get_slug(),
-			'parent'                          => $product->get_parent_id(),
-			'type'                            => $product->get_type(),
-			'variation'                       => $this->prepare_html_response( $product->is_type( 'variation' ) ? wc_get_formatted_variation( $product, true, true, false ) : '' ),
-			'permalink'                       => $product->get_permalink(),
-			'sku'                             => $this->prepare_html_response( $product->get_sku() ),
-			'short_description'               => $this->prepare_html_response( wc_format_content( wp_kses_post( $product->get_short_description() ) ) ),
-			'description'                     => $this->prepare_html_response( wc_format_content( wp_kses_post( $product->get_description() ) ) ),
-			'on_sale'                         => $product->is_on_sale(),
-			'prices'                          => (object) $this->prepare_product_price_response( $product ),
-			'price_html'                      => $this->prepare_html_response( $product->get_price_html() ),
-			'average_rating'                  => (string) $product->get_average_rating(),
-			'review_count'                    => $product->get_review_count(),
-			'images'                          => $this->get_images( $product ),
-			'categories'                      => $this->get_term_list( $product, 'product_cat' ),
-			'tags'                            => $this->get_term_list( $product, 'product_tag' ),
-			'attributes'                      => $this->get_attributes( $product ),
-			'variations'                      => $this->get_variations( $product ),
-			'has_options'                     => $product->has_options(),
-			'is_purchasable'                  => $product->is_purchasable(),
-			'is_in_stock'                     => $product->is_in_stock(),
-			'is_on_backorder'                 => 'onbackorder' === $product->get_stock_status(),
-			'low_stock_remaining'             => $this->get_low_stock_remaining( $product ),
+			'id'                   => $product->get_id(),
+			'name'                 => $this->prepare_html_response( $product->get_title() ),
+			'slug'                 => $product->get_slug(),
+			'parent'               => $product->get_parent_id(),
+			'type'                 => $product->get_type(),
+			'variation'            => $this->prepare_html_response( $product->is_type( 'variation' ) ? wc_get_formatted_variation( $product, true, true, false ) : '' ),
+			'permalink'            => $product->get_permalink(),
+			'sku'                  => $this->prepare_html_response( $product->get_sku() ),
+			'short_description'    => $this->prepare_html_response( wc_format_content( wp_kses_post( $product->get_short_description() ) ) ),
+			'description'          => $this->prepare_html_response( wc_format_content( wp_kses_post( $product->get_description() ) ) ),
+			'on_sale'              => $product->is_on_sale(),
+			'prices'               => (object) $this->prepare_product_price_response( $product ),
+			'price_html'           => $this->prepare_html_response( $product->get_price_html() ),
+			'average_rating'       => (string) $product->get_average_rating(),
+			'review_count'         => $product->get_review_count(),
+			'images'               => $this->get_images( $product ),
+			'categories'           => $this->get_term_list( $product, 'product_cat' ),
+			'tags'                 => $this->get_term_list( $product, 'product_tag' ),
+			'attributes'           => $this->get_attributes( $product ),
+			'variations'           => $this->get_variations( $product ),
+			'has_options'          => $product->has_options(),
+			'is_purchasable'       => $product->is_purchasable(),
+			'is_in_stock'          => $product->is_in_stock(),
+			'is_on_backorder'      => 'onbackorder' === $product->get_stock_status(),
+			'low_stock_remaining'  => $this->get_low_stock_remaining( $product ),
 			'stock_indicator_text' => $this->get_stock_indicator_text( $product ),
-			'sold_individually'               => $product->is_sold_individually(),
-			'add_to_cart'                     => (object) array_merge(
+			'sold_individually'    => $product->is_sold_individually(),
+			'add_to_cart'          => (object) array_merge(
 				[
 					'text'        => $this->prepare_html_response( $product->add_to_cart_text() ),
 					'description' => $this->prepare_html_response( $product->add_to_cart_description() ),
@@ -493,7 +493,7 @@ class ProductSchema extends AbstractSchema {
 				],
 				( new QuantityLimits() )->get_add_to_cart_limits( $product )
 			),
-			self::EXTENDING_KEY   => $this->get_extended_data( self::IDENTIFIER, $product ),
+			self::EXTENDING_KEY    => $this->get_extended_data( self::IDENTIFIER, $product ),
 
 		];
 	}
