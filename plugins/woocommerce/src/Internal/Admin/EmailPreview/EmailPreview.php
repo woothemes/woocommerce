@@ -21,6 +21,18 @@ defined( 'ABSPATH' ) || exit;
 class EmailPreview {
 	const DEFAULT_EMAIL_TYPE = 'WC_Email_Customer_Processing_Order';
 
+	const EMAIL_SETTINGS_IDS = array(
+		'woocommerce_email_background_color',
+		'woocommerce_email_base_color',
+		'woocommerce_email_body_background_color',
+		'woocommerce_email_font_family',
+		'woocommerce_email_footer_text',
+		'woocommerce_email_footer_text_color',
+		'woocommerce_email_header_alignment',
+		'woocommerce_email_header_image',
+		'woocommerce_email_text_color',
+	);
+
 	/**
 	 * The email type to preview.
 	 *
