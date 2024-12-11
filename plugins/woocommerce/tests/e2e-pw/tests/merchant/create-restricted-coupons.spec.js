@@ -42,7 +42,7 @@ const couponData = {
 		description: 'Exclude product brands coupon',
 		amount: '65',
 		excludeProductBrands: [
-			`WooCommerce Apparels ${ new Date().getTime().toString() }`
+			`WooCommerce Apparels ${ new Date().getTime().toString() }`,
 		],
 	},
 	products: {
