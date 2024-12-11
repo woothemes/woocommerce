@@ -23,17 +23,6 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 	 */
 	protected $prices_array = array();
 
-	private string $posts_table;
-	private string $postmeta_table;
-
-	public function __construct()
-	{
-		global $wpdb;
-
-		$this->posts_table    = $wpdb->posts . '_variations';
-		$this->postmeta_table = $wpdb->postmeta . '_variations';
-	}
-
 	/**
 	 * Read attributes from post meta.
 	 *
@@ -64,7 +53,7 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 
 					$old_slug      = 'attribute_' . $meta_attribute_key;
 					$new_slug      = 'attribute_' . sanitize_title( $meta_value['name'] );
-					$old_meta_rows = $wpdb->get_results( $wpdb->prepare( "SELECT post_id, meta_value FROM {$this->postmeta_table} WHERE meta_key = %s;", $old_slug ) ); // WPCS: db call ok, cache ok.
+					$old_meta_rows = $wpdb->get_results( $wpdb->prepare( "SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = %s;", $old_slug ) ); // WPCS: db call ok, cache ok.
 
 					if ( $old_meta_rows ) {
 						foreach ( $old_meta_rows as $old_meta_row ) {
@@ -128,19 +117,11 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 	 * @return array
 	 */
 	public function read_children( &$product, $force_read = false ) {
-		global $wpdb;
-
 		$children_transient_name = 'wc_product_children_' . $product->get_id();
 		$children                = get_transient( $children_transient_name );
 		if ( empty( $children ) || ! is_array( $children ) ) {
 			$children = array();
 		}
-
-		// Hack: inject PoC tables names
-		$posts_table    = $wpdb->posts;
-		$wpdb->posts    = $this->posts_table;
-		$postmeta_table = $wpdb->postmeta;
-		$wpdb->postmeta = $this->postmeta_table;
 
 		if ( ! isset( $children['all'] ) || ! isset( $children['visible'] ) || $force_read ) {
 			$all_args = array(
@@ -174,10 +155,6 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 
 		$children['all']     = wp_parse_id_list( (array) $children['all'] );
 		$children['visible'] = wp_parse_id_list( (array) $children['visible'] );
-
-		// Hack: restore original table names
-		$wpdb->posts    = $posts_table;
-		$wpdb->postmeta = $postmeta_table;
 
 		return $children;
 	}
@@ -217,7 +194,7 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 					$values     = array_unique(
 						$wpdb->get_col(
 							$wpdb->prepare(
-								"SELECT meta_value FROM {$this->postmeta_table} WHERE meta_key = %s AND post_id IN {$query_in}", // @codingStandardsIgnoreLine.
+								"SELECT meta_value FROM {$wpdb->postmeta} WHERE meta_key = %s AND post_id IN {$query_in}", // @codingStandardsIgnoreLine.
 								$query_args
 							)
 						)
@@ -273,7 +250,6 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 	 * @since  3.0.0
 	 */
 	public function read_price_data( &$product, $for_display = false ) {
-		global $wpdb;
 
 		/**
 		 * Transient name for storing prices for this product (note: Max transient length is 45)
@@ -314,12 +290,6 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 				);
 
 				$variation_ids = $product->get_visible_children();
-
-				// Hack: inject PoC tables names
-				$posts_table    = $wpdb->posts;
-				$wpdb->posts    = $this->posts_table;
-				$postmeta_table = $wpdb->postmeta;
-				$wpdb->postmeta = $this->postmeta_table;
 
 				if ( is_callable( '_prime_post_caches' ) ) {
 					_prime_post_caches( $variation_ids );
@@ -400,10 +370,6 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 					}
 				}
 
-				// Hack: restore original table names
-				$wpdb->posts    = $posts_table;
-				$wpdb->postmeta = $postmeta_table;
-
 				// Add all pricing data to the transient array.
 				foreach ( $prices_array as $key => $values ) {
 					$transient_cached_prices_array[ $price_hash ][ $key ] = $values;
@@ -477,7 +443,7 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 		$format   = array_fill( 0, count( $children ), '%d' );
 		$query_in = '(' . implode( ',', $format ) . ')';
 
-		return null !== $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM $this->postmeta_table WHERE meta_key = '_weight' AND meta_value > 0 AND post_id IN {$query_in}", $children ) ); // @codingStandardsIgnoreLine.
+		return null !== $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_weight' AND meta_value > 0 AND post_id IN {$query_in}", $children ) ); // @codingStandardsIgnoreLine.
 	}
 
 	/**
@@ -498,7 +464,7 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 		$format   = array_fill( 0, count( $children ), '%d' );
 		$query_in = '(' . implode( ',', $format ) . ')';
 
-		return null !== $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM $this->postmeta_table WHERE meta_key IN ( '_length', '_width', '_height' ) AND meta_value > 0 AND post_id IN {$query_in}", $children ) ); // @codingStandardsIgnoreLine.
+		return null !== $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key IN ( '_length', '_width', '_height' ) AND meta_value > 0 AND post_id IN {$query_in}", $children ) ); // @codingStandardsIgnoreLine.
 	}
 
 	/**
@@ -533,7 +499,7 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 			$query_args = array( 'stock_status' => $status ) + $children;
 			// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
 			if ( get_option( 'woocommerce_product_lookup_table_is_generating' ) ) {
-				$query = "SELECT COUNT( post_id ) FROM {$this->postmeta_table} WHERE meta_key = '_stock_status' AND meta_value = %s AND post_id IN {$query_in}";
+				$query = "SELECT COUNT( post_id ) FROM {$wpdb->postmeta} WHERE meta_key = '_stock_status' AND meta_value = %s AND post_id IN {$query_in}";
 			} else {
 				$query = "SELECT COUNT( product_id ) FROM {$wpdb->wc_product_meta_lookup} WHERE stock_status = %s AND product_id IN {$query_in}";
 			}
@@ -566,7 +532,7 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 
 			$wpdb->query(
 				$wpdb->prepare(
-					"UPDATE {$this->posts_table}
+					"UPDATE {$wpdb->posts}
 					SET post_title = REPLACE( post_title, %s, %s )
 					WHERE post_type = 'product_variation'
 					AND post_parent = %d",
@@ -597,7 +563,7 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 				$status           = $product->get_stock_status();
 				$format           = array_fill( 0, count( $children ), '%d' );
 				$query_in         = '(' . implode( ',', $format ) . ')';
-				$managed_children = array_unique( $wpdb->get_col( $wpdb->prepare( "SELECT post_id FROM $this->postmeta_table WHERE meta_key = '_manage_stock' AND meta_value != 'yes' AND post_id IN {$query_in}", $children ) ) ); // @codingStandardsIgnoreLine.
+				$managed_children = array_unique( $wpdb->get_col( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_manage_stock' AND meta_value != 'yes' AND post_id IN {$query_in}", $children ) ) ); // @codingStandardsIgnoreLine.
 				foreach ( $managed_children as $managed_child ) {
 					if ( update_post_meta( $managed_child, '_stock_status', $status ) ) {
 						$this->update_lookup_table( $managed_child, 'wc_product_meta_lookup' );
@@ -628,7 +594,7 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 		if ( $children ) {
 			$format   = array_fill( 0, count( $children ), '%d' );
 			$query_in = '(' . implode( ',', $format ) . ')';
-			$prices   = array_unique( $wpdb->get_col( $wpdb->prepare( "SELECT meta_value FROM $this->postmeta_table WHERE meta_key = '_price' AND post_id IN {$query_in}", $children ) ) ); // @codingStandardsIgnoreLine.
+			$prices   = array_unique( $wpdb->get_col( $wpdb->prepare( "SELECT meta_value FROM $wpdb->postmeta WHERE meta_key = '_price' AND post_id IN {$query_in}", $children ) ) ); // @codingStandardsIgnoreLine.
 		} else {
 			$prices = array();
 		}
