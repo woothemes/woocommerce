@@ -91,6 +91,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'enabled', $gateway['state'], 'Gateway `state[enabled]` entry is missing' );
 		$this->assertArrayHasKey( 'needs_setup', $gateway['state'], 'Gateway `state[needs_setup]` entry is missing' );
 		$this->assertArrayHasKey( 'test_mode', $gateway['state'], 'Gateway `state[test_mode]` entry is missing' );
+		$this->assertArrayHasKey( 'dev_mode', $gateway['state'], 'Gateway `state[dev_mode]` entry is missing' );
 		$this->assertArrayHasKey( 'management', $gateway, 'Gateway `management` entry is missing' );
 		$this->assertArrayHasKey( 'settings_url', $gateway['management'], 'Gateway `management[settings_url]` entry is missing' );
 		$this->assertArrayHasKey( 'links', $gateway, 'Gateway `links` entry is missing' );
@@ -315,6 +316,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'enabled', $gateway['state'], 'Gateway `state[enabled]` entry is missing' );
 		$this->assertArrayHasKey( 'needs_setup', $gateway['state'], 'Gateway `state[needs_setup]` entry is missing' );
 		$this->assertArrayHasKey( 'test_mode', $gateway['state'], 'Gateway `state[test_mode]` entry is missing' );
+		$this->assertArrayHasKey( 'dev_mode', $gateway['state'], 'Gateway `state[dev_mode]` entry is missing' );
 		$this->assertArrayHasKey( 'management', $gateway, 'Gateway `management` entry is missing' );
 		$this->assertArrayHasKey( 'settings_url', $gateway['management'], 'Gateway `management[settings_url]` entry is missing' );
 		// There are no `plugin` or `links` entries because this is a fake gateway without a plugin.

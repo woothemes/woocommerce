@@ -715,6 +715,12 @@ class PaymentsRestController extends RestApiControllerBase {
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
 						),
+						'dev_mode'    => array(
+							'type'        => 'boolean',
+							'description' => esc_html__( 'Whether the provider is in dev mode.', 'woocommerce' ),
+							'context'     => array( 'view', 'edit' ),
+							'readonly'    => true,
+						),
 					),
 				),
 				'management'        => array(

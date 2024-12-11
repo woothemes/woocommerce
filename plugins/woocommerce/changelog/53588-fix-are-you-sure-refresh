@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Fix the "Are you sure you want to leave this page?" bug when interacting with the countries' search input.
