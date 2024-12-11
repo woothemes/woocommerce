@@ -3,7 +3,6 @@
  */
 import { createSlotFill, SelectControl, Spinner } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
-import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 
 /**
@@ -16,6 +15,7 @@ import {
 	DEVICE_TYPE_DESKTOP,
 } from './settings-email-preview-device-type';
 import { EmailPreviewHeader } from './settings-email-preview-header';
+import { EmailPreviewIframe } from './settings-email-preview-iframe';
 import { EmailPreviewSend } from './settings-email-preview-send';
 import { EmailPreviewType } from './settings-email-preview-type';
 
@@ -71,10 +71,9 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 					className={ `wc-settings-email-preview wc-settings-email-preview-${ deviceType }` }
 				>
 					<EmailPreviewHeader emailType={ emailType } />
-					<iframe
+					<EmailPreviewIframe
 						src={ finalPreviewUrl }
-						title={ __( 'Email preview frame', 'woocommerce' ) }
-						onLoad={ () => setIsLoading( false ) }
+						setIsLoading={ setIsLoading }
 					/>
 				</div>
 			</div>
