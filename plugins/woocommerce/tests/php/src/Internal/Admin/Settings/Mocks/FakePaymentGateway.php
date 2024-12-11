@@ -89,7 +89,8 @@ class FakePaymentGateway extends \WC_Payment_Gateway {
 	/**
 	 * Constructor.
 	 *
-	 * @param string $id Optional. The gateway ID.
+	 * @param string $id    Optional. The gateway ID.
+	 * @param array  $props Optional. The gateway properties to apply.
 	 */
 	public function __construct( string $id = '', array $props = array() ) {
 		if ( ! empty( $id ) ) {

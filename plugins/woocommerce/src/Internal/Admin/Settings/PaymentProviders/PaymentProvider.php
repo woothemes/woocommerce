@@ -10,6 +10,8 @@ abstract class PaymentProvider {
 
 	/**
 	 * The single instance of the payment provider class.
+	 *
+	 * @var static
 	 */
 	protected static PaymentProvider $instance;
 
