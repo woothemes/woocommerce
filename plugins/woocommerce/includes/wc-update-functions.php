@@ -2939,19 +2939,24 @@ function wc_update_950_tracking_option_autoload() {
 function wc_update_960_add_old_refunded_order_items_to_product_lookup_table() {
 	global $wpdb;
 
-	// Get every order ID where the total sales is less than 0 and is not present in the table wc_order_product_lookup.
-	$select_query = "
-	SELECT order_stats.order_id FROM {$wpdb->prefix}wc_order_stats AS order_stats
-	WHERE order_stats.total_sales < 0
-    AND (
-        SELECT COUNT(*)
-        FROM {$wpdb->prefix}wc_order_product_lookup AS product_lookup
-        WHERE product_lookup.order_id = order_stats.parent_id
-          AND product_lookup.product_net_revenue = order_stats.total_sales
-    ) = 0";
-
-	// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- No user input in the query, everything is hardcoded.
-	$orders = $wpdb->get_results( $select_query );
+	// Get every order ID where:
+	// 1. the total sales is less than 0, and
+	// 2. is not refunded shipping fee, and
+	// 3. is not refunded tax fee, and
+	// 4. is not present in the table wc_order_product_lookup.
+	$orders = $wpdb->get_results(
+		"SELECT order_stats.order_id
+		FROM {$wpdb->prefix}wc_order_stats AS order_stats
+		WHERE order_stats.total_sales < 0 # Refunded orders
+			AND order_stats.total_sales != order_stats.shipping_total # Exclude refunded shipping
+			AND order_stats.total_sales != order_stats.tax_total # Exclude refunded tax
+			AND (
+				SELECT COUNT(*)
+				FROM wp_wc_order_product_lookup AS product_lookup
+				WHERE product_lookup.order_id = order_stats.order_id
+					AND product_lookup.product_net_revenue = order_stats.total_sales
+			) = 0 # Exclude orders where the refunded line item is already in the product lookup table"
+	);
 
 	if ( $orders ) {
 		foreach ( $orders as $order ) {
