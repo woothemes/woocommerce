@@ -775,34 +775,29 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 			return false;
 		}
 
-		// Version check - only if version is set.
 		if ( isset( $prices_array['version'] ) && $prices_array['version'] !== $current_version ) {
 			return false;
 		}
 
-		// Remove version key for iteration.
 		$data_without_version = array_diff_key( $prices_array, array( 'version' => '' ) );
 
-		// Iterate through each price hash entry.
 		foreach ( $data_without_version as $price_data ) {
 			if ( ! is_array( $price_data ) ) {
 				return false;
 			}
 
 			$required_types = array( 'price', 'regular_price', 'sale_price' );
+
 			foreach ( $required_types as $type ) {
 				if ( ! isset( $price_data[ $type ] ) || ! is_array( $price_data[ $type ] ) ) {
 					return false;
 				}
 			}
 
-			// Validate individual prices.
-			foreach ( $price_data['price'] as $variation_id => $price ) {
-				if ( ! is_numeric( $variation_id ) ) {
-					return false;
-				}
+			$variation_ids = array_keys( $price_data['price'] );
 
-				if ( ! is_numeric( $price ) && '' !== $price ) {
+			foreach ( $variation_ids as $variation_id ) {
+				if ( ! is_numeric( $variation_id ) ) {
 					return false;
 				}
 
