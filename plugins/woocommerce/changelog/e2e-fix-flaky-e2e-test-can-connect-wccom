@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+E2E tests: stabilized e2e test core profiler can connect to woo com to fix flakiness

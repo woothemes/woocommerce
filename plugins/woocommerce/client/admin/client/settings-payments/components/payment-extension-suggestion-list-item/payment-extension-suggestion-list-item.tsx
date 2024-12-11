@@ -14,6 +14,7 @@ import { PaymentProvider } from '@woocommerce/data';
 import sanitizeHTML from '~/lib/sanitize-html';
 import { EllipsisMenuWrapper as EllipsisMenu } from '~/settings-payments/components/ellipsis-menu-content';
 import { isWooPayments } from '~/settings-payments/utils';
+import { DefaultDragHandle } from '~/settings-payments/components/sortable';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
 
 type PaymentExtensionSuggestionListItemProps = {
@@ -28,61 +29,70 @@ export const PaymentExtensionSuggestionListItem = ( {
 	installingPlugin,
 	setupPlugin,
 	pluginInstalled,
+	...props
 }: PaymentExtensionSuggestionListItemProps ) => {
-	return {
-		key: extension.id,
-		title: (
-			<>
-				{ extension.title }{ ' ' }
-				{ isWooPayments( extension.id ) && (
-					<StatusBadge status="recommended" />
-				) }
-			</>
-		),
-		className: 'transitions-disabled',
-		content: (
-			<>
-				<span
-					dangerouslySetInnerHTML={ sanitizeHTML(
-						decodeEntities( extension.description )
-					) }
-				/>
-				{ isWooPayments( extension.id ) && (
-					<WooPaymentMethodsLogos
-						maxElements={ 10 }
-						isWooPayEligible={ true }
+	return (
+		<div
+			id={ extension.id }
+			className={ `transitions-disabled woocommerce-list__item woocommerce-list__item-enter-done` }
+			{ ...props }
+		>
+			<div className="woocommerce-list__item-inner">
+				<div className="woocommerce-list__item-before">
+					<DefaultDragHandle />
+					<img
+						src={ extension.icon }
+						alt={ extension.title + ' logo' }
 					/>
-				) }
-			</>
-		),
-		after: (
-			<div className="woocommerce-list__item-after__actions">
-				<>
-					<Button
-						variant="primary"
-						onClick={ () =>
-							setupPlugin( extension.id, extension.plugin.slug )
-						}
-						isBusy={ installingPlugin === extension.id }
-						disabled={ !! installingPlugin }
-					>
-						{ pluginInstalled
-							? __( 'Enable', 'woocommerce' )
-							: __( 'Install', 'woocommerce' ) }
-					</Button>
-
-					<EllipsisMenu
-						label={ __(
-							'Payment Provider Options',
-							'woocommerce'
+				</div>
+				<div className="woocommerce-list__item-text">
+					<span className="woocommerce-list__item-title">
+						{ extension.title }{ ' ' }
+						{ isWooPayments( extension.id ) && (
+							<StatusBadge status="recommended" />
 						) }
-						provider={ extension }
+					</span>
+					<span
+						className="woocommerce-list__item-content"
+						dangerouslySetInnerHTML={ sanitizeHTML(
+							decodeEntities( extension.description )
+						) }
 					/>
-				</>
+					{ isWooPayments( extension.id ) && (
+						<WooPaymentMethodsLogos
+							maxElements={ 10 }
+							isWooPayEligible={ true }
+						/>
+					) }
+				</div>
+				<div className="woocommerce-list__item-after">
+					<div className="woocommerce-list__item-after__actions">
+						<Button
+							variant="primary"
+							onClick={ () =>
+								setupPlugin(
+									extension.id,
+									extension.plugin.slug
+								)
+							}
+							isBusy={ installingPlugin === extension.id }
+							disabled={ !! installingPlugin }
+						>
+							{ pluginInstalled
+								? __( 'Enable', 'woocommerce' )
+								: __( 'Install', 'woocommerce' ) }
+						</Button>
+
+						<EllipsisMenu
+							label={ __(
+								'Payment Provider Options',
+								'woocommerce'
+							) }
+							provider={ extension }
+						/>
+					</div>
+				</div>
 			</div>
-		),
-		before: (
-			<img src={ extension.icon } alt={ extension.title + ' logo' } />
-		),
-	};
+		</div>
+	);
 };

@@ -2,8 +2,9 @@
  * Internal dependencies
  */
 import {
-	PaymentProvider,
 	OfflinePaymentGateway,
+	PaymentProvider,
+	PaymentProviderType,
 	SuggestedPaymentExtension,
 	SuggestedPaymentExtensionCategory,
 } from '../types';
@@ -12,7 +13,7 @@ export const providersStub: PaymentProvider[] = [
 	{
 		id: '_wc_pes_paypal_full_stack',
 		_order: 2,
-		_type: 'suggestion',
+		_type: PaymentProviderType.Suggestion,
 		title: 'PayPal Payments',
 		description:
 			'Safe and secure payments using credit cards or your customer&#039;s PayPal account.',
@@ -44,7 +45,7 @@ export const providersStub: PaymentProvider[] = [
 	{
 		id: 'woocommerce_payments',
 		_order: 2,
-		_type: 'gateway',
+		_type: PaymentProviderType.Gateway,
 		title: 'WooPayments',
 		description:
 			'WooPayments gives your store flexibility to accept credit cards, debit cards, and Apple Pay. Enable popular local payment methods and other digital wallets like Google Pay to give customers even more choice.',
@@ -98,7 +99,7 @@ export const providersStub: PaymentProvider[] = [
 	{
 		id: '_wc_offline_payment_methods_group',
 		_order: 3,
-		_type: 'offline_pms_group',
+		_type: PaymentProviderType.OfflinePmsGroup,
 		title: 'Offline Payment Methods',
 		description: 'Allow shoppers to pay offline.',
 		plugin: {
@@ -165,7 +166,7 @@ export const offlinePaymentGatewaysStub: OfflinePaymentGateway[] = [
 		_order: 1001,
 		title: 'Cash on delivery',
 		description:
-			'Have your customers pay with cash (or by other means) upon delivery.',
+			'Let your shoppers pay upon delivery — by cash or other methods of payment.',
 		supports: [ 'products' ],
 		state: {
 			enabled: true,
