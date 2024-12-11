@@ -1,4 +1,8 @@
-const { test, expect } = require( '../../../fixtures/api-tests-fixtures' );
+const {
+	test,
+	expect,
+	tags: pwTags,
+} = require( '../../../fixtures/api-tests-fixtures' );
 
 test.describe( 'Products API tests: List All Products', () => {
 	const PRODUCTS_COUNT = 20;
@@ -2235,7 +2239,7 @@ test.describe( 'Products API tests: List All Products', () => {
 
 	test.describe(
 		'List all products',
-		{ tag: [ '@skip-on-default-pressable', '@skip-on-default-wpcom' ] },
+		{ tag: [ pwTags.SKIP_ON_PRESSABLE, pwTags.SKIP_ON_WPCOM ] },
 		() => {
 			test( 'defaults', async ( { request } ) => {
 				const result = await request.get( 'wp-json/wc/v3/products', {
@@ -2575,7 +2579,7 @@ test.describe( 'Products API tests: List All Products', () => {
 
 			test(
 				'categories',
-				{ tag: '@skip-on-default-wpcom' },
+				{ tag: pwTags.SKIP_ON_WPCOM },
 				async ( { request } ) => {
 					const accessory = [
 						expect.objectContaining( {

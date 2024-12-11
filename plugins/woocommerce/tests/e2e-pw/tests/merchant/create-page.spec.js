@@ -1,4 +1,4 @@
-const { test: baseTest } = require( '../../fixtures/fixtures' );
+const { test: baseTest, tags } = require( '../../fixtures/fixtures' );
 const { fillPageTitle, publishPage } = require( '../../utils/editor' );
 
 /**
@@ -16,7 +16,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Can create a new page',
-	{ tag: [ '@gutenberg', '@services' ] },
+	{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
 	() => {
 		// eslint-disable-next-line playwright/expect-expect
 		test( 'can create new page', async ( { page, testPage } ) => {
