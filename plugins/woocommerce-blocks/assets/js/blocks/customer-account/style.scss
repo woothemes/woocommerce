@@ -19,7 +19,6 @@
 	font-size: var(--wp--preset--font-size--medium);
 
 	a {
-		overflow: hidden;
 		text-decoration: none !important;
 		align-items: center;
 		display: flex;
@@ -27,7 +26,7 @@
 		gap: em($gap-smaller);
 		white-space: nowrap;
 		line-height: 1;
-		padding: em($gap-smaller);
+		padding: 0;
 
 		&:hover {
 			text-decoration: underline !important;

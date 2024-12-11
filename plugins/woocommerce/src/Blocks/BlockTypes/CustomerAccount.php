@@ -69,12 +69,6 @@ class CustomerAccount extends AbstractBlock {
 		$parsed_hooked_block['attrs']['displayStyle'] = 'icon_only';
 		$parsed_hooked_block['attrs']['iconStyle']    = 'line';
 		$parsed_hooked_block['attrs']['iconClass']    = 'wc-block-customer-account__account-icon';
-
-		/*
-		* The Mini Cart block (which is hooked into the header) has a margin of 0.5em on the left side.
-		* We want to match that margin for the Customer Account block so it looks consistent.
-		*/
-		$parsed_hooked_block['attrs']['style']['spacing']['margin']['left'] = '0.5em';
 		return $parsed_hooked_block;
 	}
 
@@ -187,7 +181,7 @@ class CustomerAccount extends AbstractBlock {
 		}
 
 		if ( self::DISPLAY_ALT === $attributes['iconStyle'] ) {
-			return '<svg class="' . $attributes['iconClass'] . '" xmlns="http://www.w3.org/2000/svg" viewBox="-3.5 -3.5 24 24">
+			return '<svg class="' . $attributes['iconClass'] . '" xmlns="http://www.w3.org/2000/svg" viewBox="-4 -4 25 25">
 				<path
 					d="M9 0C4.03579 0 0 4.03579 0 9C0 13.9642 4.03579 18 9 18C13.9642 18 18 13.9642 18 9C18 4.03579 13.9642 0 9 0ZM9 4.32C10.5347 4.32 11.7664 5.57056 11.7664 7.08638C11.7664 8.62109 10.5158 9.85277 9 9.85277C7.4653 9.85277 6.23362 8.60221 6.23362 7.08638C6.23362 5.57056 7.46526 4.32 9 4.32ZM9 10.7242C11.1221 10.7242 12.96 12.2021 13.7937 14.4189C12.5242 15.5559 10.8379 16.238 9 16.238C7.16207 16.238 5.49474 15.5369 4.20632 14.4189C5.05891 12.2021 6.87793 10.7242 9 10.7242Z"
 					fill="currentColor"
@@ -195,7 +189,7 @@ class CustomerAccount extends AbstractBlock {
 			</svg>';
 		}
 
-		return '<svg class="' . $attributes['iconClass'] . '" xmlns="http://www.w3.org/2000/svg" viewBox="-4 -4 23 23">
+		return '<svg class="' . $attributes['iconClass'] . '" xmlns="http://www.w3.org/2000/svg" viewBox="-5 -5 25 25">
 			<path
 				fill-rule="evenodd"
 				clip-rule="evenodd"

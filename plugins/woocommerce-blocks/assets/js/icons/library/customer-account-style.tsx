@@ -4,7 +4,7 @@
 import { SVG } from '@wordpress/primitives';
 
 const customerAccountStyle = (
-	<SVG xmlns="http://www.w3.org/2000/svg" viewBox="-4 -4 23 23">
+	<SVG xmlns="http://www.w3.org/2000/svg" viewBox="-5 -5 25 25">
 		<path
 			fillRule="evenodd"
 			clipRule="evenodd"
