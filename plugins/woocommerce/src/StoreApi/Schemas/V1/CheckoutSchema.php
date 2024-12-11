@@ -230,19 +230,19 @@ class CheckoutSchema extends AbstractSchema {
 		] : null;
 
 		return [
-			'order_id'          => $order->get_id(),
-			'status'            => $order->get_status(),
-			'order_key'         => $order->get_order_key(),
-			'order_number'      => $order->get_order_number(),
-			'customer_note'     => $order->get_customer_note(),
-			'customer_id'       => $order->get_customer_id(),
-			'billing_address'   => (object) $this->billing_address_schema->get_item_response( $order ),
-			'shipping_address'  => (object) $this->shipping_address_schema->get_item_response( $order ),
-			'payment_method'    => $order->get_payment_method(),
-			'payment_result'    => $payment_result,
-			'additional_fields' => $this->get_additional_fields_response( $order ),
-			'cart'              => $cart ? $this->cart_schema->get_item_response( $cart ) : null,
-			self::EXTENDING_KEY => $this->get_extended_data( self::IDENTIFIER ),
+			'order_id'           => $order->get_id(),
+			'status'             => $order->get_status(),
+			'order_key'          => $order->get_order_key(),
+			'order_number'       => $order->get_order_number(),
+			'customer_note'      => $order->get_customer_note(),
+			'customer_id'        => $order->get_customer_id(),
+			'billing_address'    => (object) $this->billing_address_schema->get_item_response( $order ),
+			'shipping_address'   => (object) $this->shipping_address_schema->get_item_response( $order ),
+			'payment_method'     => $order->get_payment_method(),
+			'payment_result'     => $payment_result,
+			'additional_fields'  => $this->get_additional_fields_response( $order ),
+			'__experimentalCart' => $cart ? $this->cart_schema->get_item_response( $cart ) : null,
+			self::EXTENDING_KEY  => $this->get_extended_data( self::IDENTIFIER ),
 		];
 	}
 
