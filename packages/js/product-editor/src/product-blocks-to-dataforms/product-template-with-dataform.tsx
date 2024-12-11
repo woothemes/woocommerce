@@ -13,6 +13,7 @@ import { __ } from '@wordpress/i18n';
 import { Product } from '@woocommerce/data';
 import { useSelect } from '@wordpress/data';
 import { useLayoutTemplate } from '@woocommerce/block-templates';
+import { privateApis as routerPrivateApis } from '@wordpress/router';
 import classNames from 'classnames';
 import {
 	// @ts-expect-error missing types.
@@ -74,21 +75,25 @@ type ProductEditProps = {
 	className?: string;
 	hideTitleFromUI?: boolean;
 	actions?: React.JSX.Element;
-	postType: string;
-	postId: string;
 };
+
+const { useLocation } = unlock( routerPrivateApis );
 
 export default function ProductEditWithOldForm( {
 	subTitle,
 	actions,
 	className,
 	hideTitleFromUI = true,
-	postType,
-	postId = '',
 }: ProductEditProps ) {
 	useEffect( () => {
 		initBlocks();
 	}, [] );
+
+	const { params } = useLocation();
+
+	const postId = params.productId;
+	const postType = 'product';
+
 	const classes = classNames( 'edit-product-page', className, {
 		'is-empty': ! postId,
 	} );

@@ -21,7 +21,7 @@ import {
 import SidebarNavigationScreen from './sidebar-navigation-screen';
 import DataViewsSidebarContent from './sidebar-dataviews';
 import ProductList from './product-list';
-import ProductEdit from './product-edit';
+import ProductEditWithOldForm from '../product-blocks-to-dataforms/product-template-with-dataform';
 
 const { RouterProvider } = unlock( routerPrivateApis );
 const { GlobalStylesProvider } = unlock( editorPrivateApis );
@@ -72,7 +72,7 @@ export function ProductsApp() {
 						content={ <DataViewsSidebarContent /> }
 					/>
 				),
-				content: <ProductEdit />,
+				content: <ProductEditWithOldForm />,
 				preview: false,
 				mobile: null,
 			},
