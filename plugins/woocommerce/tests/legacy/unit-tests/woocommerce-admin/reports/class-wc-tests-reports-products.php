@@ -346,9 +346,9 @@ class WC_Admin_Tests_Reports_Products extends WC_Unit_Test_Case {
 	}
 
 	/**
-	 * Tests that line item refunds are reflected in product stats.
+	 * Tests that line item (partial) refunds are reflected in product stats.
 	 */
-	public function test_populate_and_refund() {
+	public function test_populate_and_partial_refund() {
 		WC_Helper_Reports::reset_stats_dbs();
 
 		// Populate all of the data.
@@ -367,6 +367,7 @@ class WC_Admin_Tests_Reports_Products extends WC_Unit_Test_Case {
 		$order->set_total( 97 ); // $25x4 products + $10 shipping - $20 discount + $7 tax.
 		$order->save();
 
+		// Add a partial refund to the order.
 		foreach ( $order->get_items() as  $item_key => $item_values ) {
 			$item_data = $item_values->get_data();
 			$refund    = wc_create_refund(
@@ -405,6 +406,130 @@ class WC_Admin_Tests_Reports_Products extends WC_Unit_Test_Case {
 					'product_id'    => $product->get_id(),
 					'items_sold'    => 3,
 					'net_revenue'   => 90.0, // $25 * 4 - $10 refund.
+					'orders_count'  => 1,
+					'extended_info' => new ArrayObject(),
+				),
+			),
+		);
+		$this->assertEquals( $expected_data, $data );
+
+		// Test retrieving the stats through the generic query class.
+		$query = new GenericQuery( $args, 'products' );
+		$this->assertEquals( $expected_data, $query->get_data() );
+	}
+
+	/**
+	 * Tests that full refunds are reflected in product stats.
+	 */
+	public function test_populate_and_full_refund() {
+		WC_Helper_Reports::reset_stats_dbs();
+
+		// Populate all of the data.
+		$product = new WC_Product_Simple();
+		$product->set_name( 'Test Product' );
+		$product->set_regular_price( 25 );
+		$product->save();
+
+		$order = WC_Helper_Order::create_order( 1, $product );
+		$order->set_status( OrderStatus::REFUNDED );
+		$order->set_shipping_total( 10 );
+		$order->set_discount_total( 20 );
+		$order->set_discount_tax( 0 );
+		$order->set_cart_tax( 5 );
+		$order->set_shipping_tax( 2 );
+		$order->set_total( 97 ); // $25x4 products + $10 shipping - $20 discount + $7 tax.
+		$order->save();
+
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
+
+		$data_store = new ProductsDataStore();
+		$start_time = gmdate( 'Y-m-d H:00:00', $order->get_date_created()->getOffsetTimestamp() );
+		$end_time   = gmdate( 'Y-m-d H:00:00', $order->get_date_created()->getOffsetTimestamp() + HOUR_IN_SECONDS );
+		$args       = array(
+			'after'  => $start_time,
+			'before' => $end_time,
+		);
+
+		// Test retrieving the stats through the data store.
+		$data          = $data_store->get_data( $args );
+		$expected_data = (object) array(
+			'total'   => 1,
+			'pages'   => 1,
+			'page_no' => 1,
+			'data'    => array(
+				0 => array(
+					'product_id'    => $product->get_id(),
+					'items_sold'    => 0,
+					'net_revenue'   => 0.0,
+					'orders_count'  => 1,
+					'extended_info' => new ArrayObject(),
+				),
+			),
+		);
+		$this->assertEquals( $expected_data, $data );
+
+		// Test retrieving the stats through the generic query class.
+		$query = new GenericQuery( $args, 'products' );
+		$this->assertEquals( $expected_data, $query->get_data() );
+	}
+
+	/**
+	 * Tests that shipping fee refunds are reflected in product stats.
+	 * Shipping fee refund is a partial refund without line items.
+	 */
+	public function test_populate_and_shipping_fee_refund() {
+		WC_Helper_Reports::reset_stats_dbs();
+
+		// Populate all of the data.
+		$product = new WC_Product_Simple();
+		$product->set_name( 'Test Product' );
+		$product->set_regular_price( 25 );
+		$product->save();
+
+		$order = WC_Helper_Order::create_order( 1, $product );
+		$order->set_status( OrderStatus::COMPLETED );
+		$order->set_shipping_total( 10 );
+		$order->set_discount_total( 20 );
+		$order->set_discount_tax( 0 );
+		$order->set_cart_tax( 5 );
+		$order->set_shipping_tax( 2 );
+		$order->set_total( 97 ); // $25x4 products + $10 shipping - $20 discount + $7 tax.
+		$order->save();
+
+		// Add a partial refund without line items to the order.
+		// Shipping fee refund is a partial refund without line items.
+		foreach ( $order->get_items() as  $item_key => $item_values ) {
+			$item_data = $item_values->get_data();
+			$refund    = wc_create_refund(
+				array(
+					'amount'   => 10,
+					'order_id' => $order->get_id(),
+				)
+			);
+			break;
+		}
+
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
+
+		$data_store = new ProductsDataStore();
+		$start_time = gmdate( 'Y-m-d H:00:00', $order->get_date_created()->getOffsetTimestamp() );
+		$end_time   = gmdate( 'Y-m-d H:00:00', $order->get_date_created()->getOffsetTimestamp() + HOUR_IN_SECONDS );
+		$args       = array(
+			'after'  => $start_time,
+			'before' => $end_time,
+		);
+
+		// Test retrieving the stats through the data store.
+		$data          = $data_store->get_data( $args );
+		$expected_data = (object) array(
+			'total'   => 1,
+			'pages'   => 1,
+			'page_no' => 1,
+			'data'    => array(
+				0 => array(
+					'product_id'    => $product->get_id(),
+					'items_sold'    => 4,
+					'net_revenue'   => 100.0,
 					'orders_count'  => 1,
 					'extended_info' => new ArrayObject(),
 				),
