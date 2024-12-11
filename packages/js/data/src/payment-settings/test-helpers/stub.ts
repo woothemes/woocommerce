@@ -59,10 +59,14 @@ export const providersStub: PaymentProvider[] = [
 			enabled: false,
 			needs_setup: false,
 			test_mode: true,
+			dev_mode: false,
 		},
 		management: {
-			settings_url:
-				'http://localhost:8082/wp-admin/admin.php?page=wc-settings&tab=checkout&section=woocommerce_payments',
+			_links: {
+				settings: {
+					href: 'http://localhost:8082/wp-admin/admin.php?page=wc-settings&tab=checkout&section=woocommerce_payments',
+				},
+			},
 		},
 		image: 'http://localhost:8082/wp-content/plugins/woocommerce/assets/images/onboarding/woopayments.svg',
 		icon: 'http://localhost:8082/wp-content/plugins/woocommerce/assets/images/onboarding/woopayments.svg',
@@ -124,13 +128,18 @@ export const offlinePaymentGatewaysStub: OfflinePaymentGateway[] = [
 			enabled: true,
 			needs_setup: false,
 			test_mode: false,
+			dev_mode: false,
 		},
 		management: {
-			settings_url:
-				'http://localhost:8082/wp-admin/admin.php?page=wc-settings&tab=checkout&section=bacs',
+			_links: {
+				settings: {
+					href: 'http://localhost:8082/wp-admin/admin.php?page=wc-settings&tab=checkout&section=bacs',
+				},
+			},
 		},
 		icon: 'http://localhost:8082/wp-content/plugins/woocommerce/assets/images/payment_methods/bacs.svg',
 		plugin: {
+			_type: 'wporg',
 			slug: 'woocommerce',
 			file: 'woocommerce/woocommerce',
 			status: 'active',
@@ -148,13 +157,18 @@ export const offlinePaymentGatewaysStub: OfflinePaymentGateway[] = [
 			enabled: true,
 			needs_setup: false,
 			test_mode: false,
+			dev_mode: false,
 		},
 		management: {
-			settings_url:
-				'http://localhost:8082/wp-admin/admin.php?page=wc-settings&tab=checkout&section=cheque',
+			_links: {
+				settings: {
+					href: 'http://localhost:8082/wp-admin/admin.php?page=wc-settings&tab=checkout&section=cheque',
+				},
+			},
 		},
 		icon: 'http://localhost:8082/wp-content/plugins/woocommerce/assets/images/payment_methods/cheque.svg',
 		plugin: {
+			_type: 'wporg',
 			slug: 'woocommerce',
 			file: 'woocommerce/woocommerce',
 			status: 'active',
@@ -172,13 +186,18 @@ export const offlinePaymentGatewaysStub: OfflinePaymentGateway[] = [
 			enabled: true,
 			needs_setup: false,
 			test_mode: false,
+			dev_mode: false,
 		},
 		management: {
-			settings_url:
-				'http://localhost:8082/wp-admin/admin.php?page=wc-settings&tab=checkout&section=cod',
+			_links: {
+				settings: {
+					href: 'http://localhost:8082/wp-admin/admin.php?page=wc-settings&tab=checkout&section=cod',
+				},
+			},
 		},
 		icon: 'http://localhost:8082/wp-content/plugins/woocommerce/assets/images/payment_methods/cod.svg',
 		plugin: {
+			_type: 'wporg',
 			slug: 'woocommerce',
 			file: 'woocommerce/woocommerce',
 			status: 'active',

@@ -14,6 +14,7 @@ export interface StateData {
 	enabled: boolean;
 	needs_setup: boolean;
 	test_mode: boolean;
+	dev_mode: boolean;
 }
 
 export interface LinkData {
