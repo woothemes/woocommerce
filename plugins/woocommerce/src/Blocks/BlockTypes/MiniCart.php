@@ -428,7 +428,7 @@ class MiniCart extends AbstractBlock {
 		$button_html = $this->get_cart_price_markup( $attributes ) . '
 		<span class="wc-block-mini-cart__quantity-badge">
 			' . $icon . '
-			<span class="wc-block-mini-cart__badge" style="' . esc_attr( $styles ) . '"></span>
+			' . ( 'never' !== $product_count_visibility ? '<span class="wc-block-mini-cart__badge" style="' . esc_attr( $styles ) . '"></span>' : '' ) . '
 		</span>';
 
 		if ( is_cart() || is_checkout() ) {
