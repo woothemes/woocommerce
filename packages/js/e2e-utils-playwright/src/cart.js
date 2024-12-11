@@ -26,11 +26,13 @@ export const addAProductToCart = async ( page, productId, quantity = 1 ) => {
 export async function addOneOrMoreProductToCart(
 	page,
 	productName,
-	quantityCount
+	quantityCount = 1
 ) {
 	await page.goto(
 		`product/${ productName.replace( / /gi, '-' ).toLowerCase() }`
 	);
-	await page.getByLabel( 'Product quantity' ).fill( quantityCount );
+	await page
+		.getByLabel( 'Product quantity' )
+		.fill( quantityCount.toString() );
 	await page.locator( 'button[name="add-to-cart"]' ).click();
 }

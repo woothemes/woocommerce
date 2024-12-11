@@ -45,16 +45,27 @@ function getFakeCustomer() {
 	return getFakeUser( 'customer' );
 }
 
-function getFakeProduct() {
+function getFakeProduct( options = {} ) {
 	return {
 		name: `${ faker.commerce.productName() }`,
 		description: faker.commerce.productDescription(),
-		regular_price: faker.commerce.price(),
+		regular_price: options.regular_price
+			? options.regular_price
+			: faker.commerce.price(),
 		type: 'simple',
+	};
+}
+
+function getFakeCategory( options = { extraRandomTerm: false } ) {
+	return {
+		name: `${ faker.commerce.productMaterial() } ${ faker.commerce.department() } ${
+			options.extraRandomTerm ? faker.string.alphanumeric( 5 ) : ''
+		}`.trim(),
 	};
 }
 
 module.exports = {
 	getFakeCustomer,
 	getFakeProduct,
+	getFakeCategory,
 };
