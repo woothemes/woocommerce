@@ -1,8 +1,9 @@
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const uuid = require( 'uuid' );
+const { tags } = require( '../../fixtures/fixtures' );
 
-test.describe( 'Edit order', { tag: [ '@services', '@hpos' ] }, () => {
+test.describe( 'Edit order', { tag: [ tags.SERVICES, tags.HPOS ] }, () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
 	let orderId, secondOrderId, orderToCancel, customerId;
@@ -369,7 +370,7 @@ test.describe( 'Edit order', { tag: [ '@services', '@hpos' ] }, () => {
 
 test.describe(
 	'Edit order > Downloadable product permissions',
-	{ tag: [ '@services', '@hpos' ] },
+	{ tag: [ tags.SERVICES, tags.HPOS ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 

@@ -2,27 +2,28 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { date } from '@wordpress/date';
-import { getSetting } from '@woocommerce/settings';
+import apiFetch from '@wordpress/api-fetch';
 import { useEffect, useState } from 'react';
 
 /**
  * Internal dependencies
  */
 import avatarIcon from './icon-avatar.svg';
-import { EmailType } from './settings-email-preview-slotfill';
 
 type EmailPreviewHeaderProps = {
-	emailTypes: EmailType[];
 	emailType: string;
 };
 
+type EmailPreviewSubjectResponse = {
+	subject: string;
+};
+
 export const EmailPreviewHeader: React.FC< EmailPreviewHeaderProps > = ( {
-	emailTypes,
 	emailType,
 } ) => {
 	const [ fromName, setFromName ] = useState( '' );
 	const [ fromAddress, setFromAddress ] = useState( '' );
+	const [ subject, setSubject ] = useState( '' );
 
 	useEffect( () => {
 		const fromNameEl = document.getElementById(
@@ -61,28 +62,24 @@ export const EmailPreviewHeader: React.FC< EmailPreviewHeaderProps > = ( {
 		};
 	}, [] );
 
-	const getSubject = () => {
-		const email = emailTypes.find( ( type ) => type.value === emailType );
-		if ( ! email ) {
-			return '';
-		}
-		const subject = email.subject || '';
-		const today = date( getSetting( 'dateFormat' ), new Date(), undefined );
-		const placeholders: Record< string, string > = {
-			'{site_title}': getSetting( 'siteTitle' ),
-			'{order_number}': '12345',
-			'{order_date}': today,
+	useEffect( () => {
+		const fetchSubject = async () => {
+			try {
+				const response: EmailPreviewSubjectResponse = await apiFetch( {
+					path: `wc-admin-email/settings/email/preview-subject?type=${ emailType }`,
+				} );
+				setSubject( response.subject );
+			} catch ( e ) {
+				setSubject( '' );
+			}
 		};
-		return subject.replace(
-			/{\w+}/g,
-			( match ) => placeholders[ match ] ?? match
-		);
-	};
+		fetchSubject();
+	}, [ emailType ] );
 
 	return (
 		<div className="wc-settings-email-preview-header">
 			<h3 className="wc-settings-email-preview-header-subject">
-				{ getSubject() }
+				{ subject }
 			</h3>
 			<div className="wc-settings-email-preview-header-data">
 				<div className="wc-settings-email-preview-header-icon">
