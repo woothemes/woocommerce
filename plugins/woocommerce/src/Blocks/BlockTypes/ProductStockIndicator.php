@@ -39,29 +39,6 @@ class ProductStockIndicator extends AbstractBlock {
 	}
 
 	/**
-	 * Get the product types that are allowed in the editor.
-	 *
-	 * @return array
-	 */
-	protected function product_types_without_stock_indicator() {
-		return array( 'external', 'grouped', 'variable' );
-	}
-
-	/**
-	 * Extra data passed through from server to client for block.
-	 *
-	 * @param array $attributes  Any attributes that currently are available from the block.
-	 *                           Note, this will be empty in the editor context when the block is
-	 *                           not in the post content on editor load.
-	 */
-	protected function enqueue_data( array $attributes = [] ) {
-		parent::enqueue_data( $attributes );
-
-		$this->asset_data_registry->add( 'productTypesWithoutStockIndicator', $this->product_types_without_stock_indicator() );
-	}
-
-
-	/**
 	 * Get product types that should not display stock indicators.
 	 *
 	 * @return array
