@@ -32,19 +32,19 @@ interface IncentiveModalProps {
 	 * @param id   Plugin ID.
 	 * @param slug Plugin slug.
 	 */
-	setupPlugin: ( id: string, slug: string ) => void;
+	onAccept: ( id: string, slug: string ) => void;
 	/**
 	 * Callback to handle dismiss action.
 	 *
 	 * @param dismissHref Dismiss URL.
 	 * @param context     The context in which the incentive is dismissed.
 	 */
-	onDismiss: ( dismissHref: string, context: string ) => void;
+	onDismiss: ( dismissUrl: string, context: string ) => void;
 }
 
 export const IncentiveModal = ( {
 	incentive,
-	setupPlugin,
+	onAccept,
 	onDismiss,
 }: IncentiveModalProps ) => {
 	const [ isBusy, setIsBusy ] = useState( false );
@@ -146,7 +146,7 @@ export const IncentiveModal = ( {
 									onClick={ () => {
 										setIsBusy( true );
 										// TODO: Temporary for testing, update to use plugin ID and slug.
-										setupPlugin(
+										onAccept(
 											'woopayments',
 											'woocommerce-payments'
 										);

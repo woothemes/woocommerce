@@ -26,19 +26,19 @@ interface IncentiveBannerProps {
 	 * @param id   Plugin ID.
 	 * @param slug Plugin slug.
 	 */
-	setupPlugin: ( id: string, slug: string ) => void;
+	onAccept: ( id: string, slug: string ) => void;
 	/**
 	 * Callback to handle dismiss action.
 	 *
-	 * @param dismissHref Dismiss URL.
-	 * @param context     The context in which the incentive is dismissed.
+	 * @param dismissUrl Dismiss URL.
+	 * @param context    The context in which the incentive is dismissed.
 	 */
-	onDismiss: ( dismissHref: string, context: string ) => void;
+	onDismiss: ( dismissUrl: string, context: string ) => void;
 }
 export const IncentiveBanner = ( {
 	incentive,
 	onDismiss,
-	setupPlugin,
+	onAccept,
 }: IncentiveBannerProps ) => {
 	const [ isSubmitted, setIsSubmitted ] = useState( false );
 	const [ isDismissed, setIsDismissed ] = useState( false );
@@ -46,9 +46,9 @@ export const IncentiveBanner = ( {
 
 	const incentiveContext = 'wc_settings_payments__banner';
 
-	const handleSetup = () => {
+	const handleAccept = () => {
 		setIsBusy( true );
-		setupPlugin( 'woopayments', 'woocommerce-payments' );
+		onAccept( 'woopayments', 'woocommerce-payments' );
 		setIsBusy( false );
 		setIsSubmitted( true );
 	};
@@ -115,7 +115,7 @@ export const IncentiveBanner = ( {
 						variant={ 'primary' }
 						isBusy={ isSubmitted }
 						disabled={ isSubmitted }
-						onClick={ handleSetup }
+						onClick={ handleAccept }
 					>
 						{ incentive.cta_label }
 					</Button>
