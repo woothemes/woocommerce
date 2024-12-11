@@ -70,13 +70,16 @@ export const SettingsPaymentsMethods: React.FC< SettingsPaymentsMethodsProps > =
 
 		return {
 			isFetching: select( PAYMENT_SETTINGS_STORE_NAME ).isFetching(),
-			paymentMethods: combineRequestMethods( wooPaymentsProvider?.onboarding?.recommended_payment_methods ?? [] ),
+			paymentMethods: combineRequestMethods( wooPaymentsProvider?.onboarding?.recommended_payment_methods ?? [] ) as RecommendedPaymentMethod,
 		};
 	} );
 
 	
 	const initialPaymentMethodsState = paymentMethods.reduce< Record< string, boolean > >(
-		( acc, { id, enabled } ) => {
+		( 
+			acc: Record<string, boolean>,
+			{ id, enabled }: { id: string; enabled: boolean }
+		) => {
 			acc[ id ] = enabled;
 			return acc;
 		},

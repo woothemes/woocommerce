@@ -94,12 +94,10 @@ export const PaymentMethodListItem = ( {
 					<ToggleControl
 						checked={ paymentMethodsState[ method.id ] ?? false }
 						onChange={ ( isChecked: boolean ) =>
-							setPaymentMethodsState( ( paymentMethodsState: Record<string, boolean> ) => {
-								return {
-									...paymentMethodsState,
-									[ method.id ]: isChecked,
-								};
-							})
+							setPaymentMethodsState( {
+								...paymentMethodsState,
+								[ method.id ]: isChecked,
+							} )
 						}
 						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 						// @ts-ignore disabled prop exists
