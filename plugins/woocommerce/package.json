@@ -386,6 +386,87 @@
 					}
 				},
 				{
+					"name": "Core e2e tests - PHP 8.0",
+					"testType": "e2e",
+					"command": "test:e2e",
+					"shardingArguments": [
+						"--shard=1/5",
+						"--shard=2/5",
+						"--shard=3/5",
+						"--shard=4/5",
+						"--shard=5/5"
+					],
+					"changes": [],
+					"testEnv": {
+						"start": "env:test",
+						"config": {
+							"phpVersion": "8.0"
+						}
+					},
+					"events": [
+						"php-checks"
+					],
+					"report": {
+						"resultsBlobName": "core-e2e-report-php-8.0",
+						"resultsPath": "tests/e2e-pw/test-results",
+						"allure": true
+					}
+				},
+				{
+					"name": "Core e2e tests - PHP 8.2",
+					"testType": "e2e",
+					"command": "test:e2e",
+					"shardingArguments": [
+						"--shard=1/5",
+						"--shard=2/5",
+						"--shard=3/5",
+						"--shard=4/5",
+						"--shard=5/5"
+					],
+					"changes": [],
+					"testEnv": {
+						"start": "env:test",
+						"config": {
+							"phpVersion": "8.2"
+						}
+					},
+					"events": [
+						"php-checks"
+					],
+					"report": {
+						"resultsBlobName": "core-e2e-report-php-8.2",
+						"resultsPath": "tests/e2e-pw/test-results",
+						"allure": true
+					}
+				},
+				{
+					"name": "Core e2e tests - PHP 8.3",
+					"testType": "e2e",
+					"command": "test:e2e",
+					"shardingArguments": [
+						"--shard=1/5",
+						"--shard=2/5",
+						"--shard=3/5",
+						"--shard=4/5",
+						"--shard=5/5"
+					],
+					"changes": [],
+					"testEnv": {
+						"start": "env:test",
+						"config": {
+							"phpVersion": "8.3"
+						}
+					},
+					"events": [
+						"php-checks"
+					],
+					"report": {
+						"resultsBlobName": "core-e2e-report-php-8.3",
+						"resultsPath": "tests/e2e-pw/test-results",
+						"allure": true
+					}
+				},
+				{
 					"name": "Core e2e tests - WP latest-1",
 					"testType": "e2e",
 					"command": "test:e2e",
@@ -786,10 +867,8 @@
 				"node_modules/@woocommerce/e2e-core-tests/CHANGELOG.md",
 				"node_modules/@woocommerce/api/dist/",
 				"node_modules/@woocommerce/admin-e2e-tests/build",
-				"node_modules/@woocommerce/classic-assets/build",
 				"node_modules/@woocommerce/block-library/build",
 				"node_modules/@woocommerce/block-library/blocks.ini",
-				"node_modules/@woocommerce/admin-library/build",
 				"package.json",
 				"!node_modules/@woocommerce/admin-e2e-tests/*.ts.map",
 				"!node_modules/@woocommerce/admin-e2e-tests/*.tsbuildinfo",
