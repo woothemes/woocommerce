@@ -151,6 +151,51 @@ test.describe( 'WooCommerce Email Settings', () => {
 		await expect( message ).toBeVisible();
 	} );
 
+	test( 'See specific email preview with a feature flag', async ( {
+		page,
+		baseURL,
+	} ) => {
+		const emailPreviewElement =
+			'#wc_settings_email_preview_slotfill iframe';
+		const emailSubjectElement = '.wc-settings-email-preview-header-subject';
+		const hasIframe = async () => {
+			return ( await page.locator( emailPreviewElement ).count() ) > 0;
+		};
+		const iframeContains = async ( text ) => {
+			const iframe = page.frameLocator( emailPreviewElement );
+			return iframe.getByText( text );
+		};
+		const getSubject = async () => {
+			return await page.locator( emailSubjectElement ).textContent();
+		};
+
+		// Disable the email_improvements feature flag
+		await setFeatureFlag( baseURL, 'no' );
+		await page.goto(
+			'wp-admin/admin.php?page=wc-settings&tab=email&section=wc_email_customer_processing_order'
+		);
+		expect( await hasIframe() ).toBeFalsy();
+
+		// Enable the email_improvements feature flag
+		await setFeatureFlag( baseURL, 'yes' );
+		await page.reload();
+		expect( await hasIframe() ).toBeTruthy();
+
+		// Email content
+		await expect(
+			await iframeContains( 'Thank you for your order' )
+		).toBeVisible();
+		// Email subject
+		await expect( await getSubject() ).toContain(
+			`Your ${ storeName } order has been received!`
+		);
+
+		// Email type selector should not be visible
+		await expect( page.getByLabel( 'Email preview type' ) ).toHaveCount(
+			0
+		);
+	} );
+
 	test( 'See email image url field with a feature flag', async ( {
 		page,
 		baseURL,
