@@ -31,14 +31,22 @@ export const getCartData =
 			apiFetch.setCartHash( response?.headers?.get( 'Cart-Hash' ) || '' );
 		}
 
-		response.json().then( function ( cartData: CartResponse ) {
-			const { receiveCart, receiveError } = dispatch;
-			if ( ! cartData ) {
+		response
+			.json()
+			.then( function ( cartData: CartResponse ) {
+				const { receiveCart, receiveError } = dispatch;
+
+				if ( ! cartData ) {
+					receiveError( CART_API_ERROR );
+					return;
+				}
+
+				receiveCart( cartData );
+			} )
+			.catch( () => {
+				const { receiveError } = dispatch;
 				receiveError( CART_API_ERROR );
-				return;
-			}
-			receiveCart( cartData );
-		} );
+			} );
 	};
 
 /**
