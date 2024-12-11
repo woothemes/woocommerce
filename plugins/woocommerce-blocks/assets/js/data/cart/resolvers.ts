@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
+import apiFetch from '@wordpress/api-fetch';
 import { CartResponse } from '@woocommerce/types';
 
 /**
  * Internal dependencies
  */
-import { apiFetchWithHeaders } from '../shared-controls';
 import { CART_API_ERROR } from './constants';
 import type { CartDispatchFromMap, CartResolveSelectFromMap } from './index';
 
@@ -16,21 +16,29 @@ import type { CartDispatchFromMap, CartResolveSelectFromMap } from './index';
 export const getCartData =
 	() =>
 	async ( { dispatch }: { dispatch: CartDispatchFromMap } ) => {
-		const { response: cartData } = await apiFetchWithHeaders< {
-			response: CartResponse;
-			headers: Record< string, string >;
-		} >( {
+		const response = await apiFetch< Response >( {
 			path: '/wc/store/v1/cart',
 			method: 'GET',
 			cache: 'no-store',
+			parse: false,
 		} );
 
-		const { receiveCart, receiveError } = dispatch;
-		if ( ! cartData ) {
-			receiveError( CART_API_ERROR );
-			return;
+		if (
+			// @ts-expect-error setCartHash exists but is not typed
+			typeof apiFetch.setCartHash === 'function'
+		) {
+			// @ts-expect-error setCartHash exists but is not typed
+			apiFetch.setCartHash( response?.headers?.get( 'Cart-Hash' ) || '' );
 		}
-		receiveCart( cartData );
+
+		response.json().then( function ( cartData: CartResponse ) {
+			const { receiveCart, receiveError } = dispatch;
+			if ( ! cartData ) {
+				receiveError( CART_API_ERROR );
+				return;
+			}
+			receiveCart( cartData );
+		} );
 	};
 
 /**
