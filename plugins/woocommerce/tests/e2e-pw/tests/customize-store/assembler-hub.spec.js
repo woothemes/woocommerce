@@ -2,6 +2,7 @@ const { test: base, expect, request } = require( '@playwright/test' );
 const { AssemblerPage } = require( './assembler/assembler.page' );
 const { activateTheme } = require( '../../utils/themes' );
 const { setOption } = require( '../../utils/options' );
+const { tags } = require( '../../fixtures/fixtures' );
 
 const ASSEMBLER_HUB_URL =
 	'wp-admin/admin.php?page=wc-admin&path=%2Fcustomize-store%2Fassembler-hub';
@@ -17,7 +18,7 @@ const test = base.extend( {
 
 test.describe(
 	'Store owner can view Assembler Hub for store customization',
-	{ tag: '@gutenberg' },
+	{ tag: tags.GUTENBERG },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 

@@ -113,6 +113,15 @@
           }
         },
         {
+          "post_title": "Cart and Checkout - Overview of data flow between client and server",
+          "menu_title": "Data flow",
+          "tags": "reference",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/cart-and-checkout-blocks/overview-of-data-flow.md",
+          "hash": "ce9b67884f37af97d1f96a47d6bbc65e24ee49f97ec3444d3deba23bb6568d48",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/overview-of-data-flow.md",
+          "id": "d2d8cf26967438f16815b129da855324be7a7ef8"
+        },
+        {
           "post_title": "Cart and Checkout - Handling scripts, styles, and data",
           "menu_title": "Script, Styles, and Data Handling",
           "tags": "how-to",
@@ -355,6 +364,14 @@
           "hash": "80086f76587535c16e79d987ba00544766b167fe33fd435544c8b80683c5f946",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/rename-a-country.md",
           "id": "67a49394f2e8ad0f8f81333207679be770bc8038"
+        },
+        {
+          "post_title": "Override loop template and show quantities next to add to cart buttons",
+          "tags": "code-snippet",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/override-loop-template-show-quantities-next-add-cart.md",
+          "hash": "74e65b25a438b44a6707e0b86dc569d63006535b917ca54a8a3955f82cb5eb52",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/override-loop-template-show-quantities-next-add-cart.md",
+          "id": "db325d34a3bd0be528afbd5ad5f3ebd7de8e1168"
         },
         {
           "post_title": "Change number of related products displayed",
@@ -1561,11 +1578,6 @@
       "categories": []
     },
     {
-      "category_slug": "utilities",
-      "category_title": "Utilities",
-      "categories": []
-    },
-    {
       "content": "\nThis section covers general guidelines, and best practices to follow in order to ensure your product experience aligns with WooCommerce for ease of use, seamless integration, and strong adoption.\n\nWe strongly recommend you review the current [WooCommerce setup experience](https://woocommerce.com/documentation/plugins/woocommerce/getting-started/) to get familiar with the user experience and taxonomy.\n\nWe also recommend you review the [WordPress core guidelines](https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/) to ensure your product isn't breaking any rules, and review [this helpful resource](https://woocommerce.com/document/grammar-punctuation-style-guide/) on content style.\n\n## General\n\nUse existing WordPress/WooCommerce UI, built in components (text fields, checkboxes, etc) and existing menu structures.\n\nPlugins which draw on WordPress' core design aesthetic will benefit from future updates to this design as WordPress continues to evolve. If you need to make an exception for your product, be prepared to provide a valid use case.\n\n- [WordPress Components library](https://wordpress.github.io/gutenberg/?path=/story/docs-introduction--page)\n- [Figma for WordPress](https://make.wordpress.org/design/2018/11/19/figma-for-wordpress/) | ([WordPress Design Library Figma](https://www.figma.com/file/e4tLacmlPuZV47l7901FEs/WordPress-Design-Library))\n- [WooCommerce Component Library](https://woocommerce.github.io/woocommerce/)\n",
       "category_slug": "user-experience-extensions",
       "category_title": "Extension Guidelines",
@@ -1864,5 +1876,5 @@
       "categories": []
     }
   ],
-  "hash": "4117eb79faf84919783092970cb22aa22b9a1d2a38dc33aa0b35e3546c3c3f35"
+  "hash": "6c73c24006f96bfa0d372514e0da1728669a115a44b04f3f546a1900a152b36f"
 }

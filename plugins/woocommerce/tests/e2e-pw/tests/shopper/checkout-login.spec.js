@@ -5,7 +5,7 @@ import {
 	addAProductToCart,
 	getOrderIdFromUrl,
 } from '@woocommerce/e2e-utils-playwright';
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 const { getFakeCustomer, getFakeProduct } = require( '../../utils/data' );
 
 const test = baseTest.extend( {
@@ -109,7 +109,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Shopper Checkout Login Account',
-	{ tag: [ '@payments', '@services', '@hpos' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS ] },
 	() => {
 		test( 'can login to an existing account during checkout', async ( {
 			page,
