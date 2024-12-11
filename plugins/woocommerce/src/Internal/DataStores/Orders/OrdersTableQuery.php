@@ -836,7 +836,7 @@ class OrdersTableQuery {
 		// WHERE.
 		$where = '1=1';
 		foreach ( $this->where as $_where ) {
-			if ( $_where ) {
+			if ( strlen( $_where ) > 0 ) {
 				$where .= " AND ({$_where})";
 			}
 		}
