@@ -31,7 +31,7 @@ interface IncentiveBannerProps {
 	 * Callback to handle dismiss action.
 	 *
 	 * @param dismissUrl Dismiss URL.
-	 * @param context    The context in which the incentive is dismissed.
+	 * @param context    The context in which the incentive is dismissed. (e.g. whether it was in a modal or banner).
 	 */
 	onDismiss: ( dismissUrl: string, context: string ) => void;
 }
