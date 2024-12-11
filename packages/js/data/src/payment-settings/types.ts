@@ -16,8 +16,14 @@ export interface StateData {
 	test_mode: boolean;
 }
 
+export interface LinkData {
+	href: string;
+}
+
 export interface ManagementData {
-	settings_url: string; // URL to the settings page for the payment gateway.
+	_links: {
+		settings: LinkData; // URL to the payment gateway management page.
+	};
 }
 
 export enum PaymentProviderType {

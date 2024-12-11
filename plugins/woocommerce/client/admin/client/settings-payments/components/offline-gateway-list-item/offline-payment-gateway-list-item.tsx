@@ -52,7 +52,9 @@ export const OfflinePaymentGatewayListItem = ( {
 							id={ gateway.id }
 							isOffline={ true }
 							enabled={ gateway.state.enabled }
-							settingsUrl={ gateway.management.settings_url }
+							settingsUrl={
+								gateway.management._links.settings.href
+							}
 						/>
 					</div>
 				</div>

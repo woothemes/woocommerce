@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { PaymentProvider, PaymentProviderType } from '@woocommerce/data';
-import { getAdminLink } from '@woocommerce/settings';
 import { Gridicon } from '@automattic/components';
 
 /**
@@ -79,9 +78,7 @@ export const PaymentGatewayList = ( {
 									id={ provider.id }
 									className="transitions-disabled woocommerce-list__item clickable-list-item enter-done"
 									onClick={ () => {
-										window.location.href = getAdminLink(
-											'admin.php?page=wc-settings&tab=checkout&section=offline'
-										);
+										window.location.href = provider.management._links.settings.href;
 									} }
 								>
 									<div className="woocommerce-list__item-inner">
@@ -105,11 +102,7 @@ export const PaymentGatewayList = ( {
 										</div>
 										<div className="woocommerce-list__item-after centered">
 											<div className="woocommerce-list__item-after__actions">
-												<a
-													href={ getAdminLink(
-														'admin.php?page=wc-settings&tab=checkout&section=offline'
-													) }
-												>
+												<a href={ provider.management._links.settings.href } >
 													<Gridicon icon="chevron-right" />
 												</a>
 											</div>
