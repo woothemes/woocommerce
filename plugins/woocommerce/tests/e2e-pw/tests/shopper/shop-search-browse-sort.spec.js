@@ -1,3 +1,7 @@
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const { faker } = require( '@faker-js/faker' );
@@ -16,7 +20,7 @@ let categoryAId, categoryBId, categoryCId, product1Id, product2Id, product3Id;
 
 test.describe(
 	'Search, browse by categories and sort items in the shop',
-	{ tag: [ '@payments', '@services' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {
