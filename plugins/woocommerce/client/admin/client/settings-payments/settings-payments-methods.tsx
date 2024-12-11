@@ -18,6 +18,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import './settings-payments-methods.scss';
 import {
 	isWooPayments,
+	getPaymentMethodById,
 } from '~/settings-payments/utils';
 import { ListPlaceholder } from './components/list-placeholder';
 import { PaymentMethodListItem } from './components/payment-method-list-item';
@@ -27,6 +28,35 @@ type PaymentMethodsState = Record< string, boolean >;
 interface SettingsPaymentsMethodsProps {
 	paymentMethodsState: PaymentMethodsState;
 	setPaymentMethodsState: React.Dispatch<React.SetStateAction< PaymentMethodsState >>;
+}
+
+const combineRequestMethods = ( paymentMethods: PaymentProvider[] ) => {
+	const applePay = getPaymentMethodById( 'apple_pay' )( paymentMethods );
+	const googlePay = getPaymentMethodById( 'google_pay' )( paymentMethods );
+
+	if ( ! applePay || ! googlePay ) {
+        return paymentMethods; // If either applePay or googlePay is not found, return the original paymentMethods
+    }
+
+	return paymentMethods.map( ( method ) => {
+        if ( method.id === 'apple_pay' ) {
+            // Combine apple_pay and google_pay data into a new payment method
+			return {
+				...method,
+				id: 'payment_request',
+				extraTitle: googlePay.title,
+				extraDescription: googlePay.description,
+				extraIcon: googlePay.icon,
+			};
+		}
+
+        // Exclude GooglePay from the list
+		if ( method.id === 'google_pay' ) {
+            return null; 
+        }
+
+		return method; // Keep the rest of the payment methods
+	} ).filter( Boolean ); // Remove `null` entries
 }
 
 export const SettingsPaymentsMethods: React.FC< SettingsPaymentsMethodsProps > = ( {
@@ -41,14 +71,18 @@ export const SettingsPaymentsMethods: React.FC< SettingsPaymentsMethodsProps > =
 
 		return {
 			isFetching: select( PAYMENT_SETTINGS_STORE_NAME ).isFetching(),
-			paymentMethods: wooPaymentsProvider?.onboarding?.recommended_payment_methods ?? [],
+			paymentMethods: combineRequestMethods( wooPaymentsProvider?.onboarding?.recommended_payment_methods ?? [] ),
 		};
 	} );
 
-	const initialPaymentMethodsState = paymentMethods.reduce( ( acc, item: PaymentProvider) => {
-		acc[ item.id ] = item.enabled;
-		return acc;
-	}, {} );
+	
+	const initialPaymentMethodsState = paymentMethods.reduce< Record< string, boolean > >(
+		( acc, { id, enabled } ) => {
+			acc[ id ] = enabled;
+			return acc;
+		},
+		{}
+	);
 
 	useEffect( () => {
 		if ( initialPaymentMethodsState !== null && ! isFetching ) {
@@ -56,25 +90,25 @@ export const SettingsPaymentsMethods: React.FC< SettingsPaymentsMethodsProps > =
 		}
 	}, [ isFetching ] );
 
-	// Transform plugins comply with List component format.
-	const paymentMethodsList = paymentMethods.map(
-		( paymentMethod: RecommendedPaymentMethod ) => {
-			return PaymentMethodListItem( {	
-				paymentMethod,
-				paymentMethodsState,
-				setPaymentMethodsState,
-				isExpanded,
-			} );
-		}
-	).filter( ( item : JSX.Element | null ) => item !== null ) ?? [];
-
 	return (
 		<div className="settings-payments-methods__container">
 			{ isFetching ? (
 				<ListPlaceholder rows={ 3 } />
 			) : (
 				<>
-					<List items={ paymentMethodsList } />
+					<div
+						className="woocommerce-list"
+					>
+						{ paymentMethods.map( ( method: RecommendedPaymentMethod ) => (
+							<PaymentMethodListItem
+								method={ method }
+								paymentMethodsState= { paymentMethodsState }
+								setPaymentMethodsState={ setPaymentMethodsState }
+								isExpanded={ isExpanded }
+								key={ method.id }
+							/>
+						) ) }
+					</div>
 					<a
 						className='settings-payments-methods__show-more'
 						onClick={ () => {

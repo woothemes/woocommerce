@@ -85,6 +85,14 @@
                 border-radius: 4px;
             }
         }
+
+        &__item-multi-row {
+            display: flex;
+
+            &.multi-row-space {
+                margin-bottom: $gap-large;
+            }
+        }
     }
 }
 

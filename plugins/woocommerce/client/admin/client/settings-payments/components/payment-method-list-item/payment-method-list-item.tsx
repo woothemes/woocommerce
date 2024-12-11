@@ -11,50 +11,103 @@ import { ToggleControl } from '@wordpress/components';
 import sanitizeHTML from '~/lib/sanitize-html';
 
 type PaymentMethodListItemProps = {
-	paymentMethod: RecommendedPaymentMethod;
+	method: RecommendedPaymentMethod;
 	paymentMethodsState: Record< string, boolean >;
 	setPaymentMethodsState: ( state: Record< string, boolean > ) => void;
 	isExpanded: boolean;
 };
 
 export const PaymentMethodListItem = ( {
-	paymentMethod,
+	method,
 	paymentMethodsState,
 	setPaymentMethodsState,
 	isExpanded,
 	...props
 }: PaymentMethodListItemProps ) => {
-	if ( ! paymentMethod.enabled && ! isExpanded ) {
+	if ( ! method.enabled && ! isExpanded ) {
 		return null;
 	}
 
-	return {
-		key: paymentMethod.id,
-		title: <>{ paymentMethod.title }</>,
-		className: paymentMethod.enabled ? 'enabled' : 'disabled',
-		content: (
-			<span
-				dangerouslySetInnerHTML={ sanitizeHTML(
-					decodeEntities( paymentMethod.description )
+	return (
+		<div
+			id={ method.id }
+			className="woocommerce-list__item woocommerce-list__item-enter-done"
+			{ ...props }
+		>
+			<div className="woocommerce-list__item-inner">
+				{ method.id !== 'payment_request' && (
+					<>
+						<div className="woocommerce-list__item-before">
+							<img src={ method.icon } alt={ method.title + ' logo' } />
+						</div>
+						<div className="woocommerce-list__item-text">
+							<span className="woocommerce-list__item-title">
+								{ method.title }
+							</span>
+							<span
+								className="woocommerce-list__item-content"
+								dangerouslySetInnerHTML={ sanitizeHTML(
+									decodeEntities( method.description )
+								) }
+							/>
+						</div>
+					</>
 				) }
-			/>
-		),
-		after: (
-			<ToggleControl
-				checked={ paymentMethodsState[ paymentMethod.id ] }
-				onChange={ ( isChecked: boolean ) =>
-					setPaymentMethodsState( ( paymentMethodsState ) => {
-						return {
-							...paymentMethodsState,
-							[ paymentMethod.id ]: isChecked,
-						};
-					})
-				}
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-ignore disabled prop exists
-				disabled={ false }
-			/>
-		),
-		before: <img src={ paymentMethod.icon } alt={ paymentMethod.title + ' logo' } />,
-	};
+				{ method.id === 'payment_request' && (
+					<div className="woocommerce-list__item-multi">
+						<div className="woocommerce-list__item-multi-row multi-row-space">
+							<div className="woocommerce-list__item-before">
+								<img src={ method.icon } alt={ method.title + ' logo' } />
+							</div>
+							<div className="woocommerce-list__item-text">
+								<span className="woocommerce-list__item-title">
+									{ method.title }
+								</span>
+								<span
+									className="woocommerce-list__item-content"
+									dangerouslySetInnerHTML={ sanitizeHTML(
+										decodeEntities( method.description )
+									) }
+								/>
+							</div>
+						</div>
+						<div className="woocommerce-list__item-multi-row">
+							<div className="woocommerce-list__item-before">
+								<img src={ method.extraIcon } alt={ method.extraTitle + ' logo' } />
+							</div>
+							<div className="woocommerce-list__item-text">
+								<span className="woocommerce-list__item-title">
+									{ method.extraTitle }
+								</span>
+								<span
+									className="woocommerce-list__item-content"
+									dangerouslySetInnerHTML={ sanitizeHTML(
+										decodeEntities( method.extraDescription )
+									) }
+								/>
+							</div>
+						</div>
+					</div>
+				) }
+				<div className="woocommerce-list__item-after">
+					<div className="woocommerce-list__item-after__actions">
+					<ToggleControl
+						checked={ paymentMethodsState[ method.id ] ?? false }
+						onChange={ ( isChecked: boolean ) =>
+							setPaymentMethodsState( ( paymentMethodsState: Record<string, boolean> ) => {
+								return {
+									...paymentMethodsState,
+									[ method.id ]: isChecked,
+								};
+							})
+						}
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						// @ts-ignore disabled prop exists
+						disabled={ method.id === 'card' }
+					/>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
 };
