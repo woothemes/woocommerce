@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Update logging conditions for when the PTK fetch fails
