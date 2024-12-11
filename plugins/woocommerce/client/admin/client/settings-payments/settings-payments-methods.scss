@@ -39,7 +39,7 @@
 
         &__item-inner {
             padding: $gap-small 0;
-            align-items: flex-start;
+            align-items: stretch;
         }
 
         &__item-inner:focus {
@@ -71,6 +71,10 @@
             &__actions {
                 display: flex;
                 gap: $gap;
+
+                .components-base-control {
+                    margin-bottom: 0;
+                }
 
                 .components-button {
                     height: 32px;
