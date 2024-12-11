@@ -79,7 +79,7 @@ class WC_Gateway_COD extends WC_Payment_Gateway {
 		$this->id                 = 'cod';
 		$this->icon               = apply_filters( 'woocommerce_cod_icon', '' );
 		$this->method_title       = __( 'Cash on delivery', 'woocommerce' );
-		$this->method_description = __( 'Have your customers pay with cash (or by other means) upon delivery.', 'woocommerce' );
+		$this->method_description = __( 'Let your shoppers pay upon delivery — by cash or other methods of payment.', 'woocommerce' );
 		$this->has_fields         = false;
 	}
 

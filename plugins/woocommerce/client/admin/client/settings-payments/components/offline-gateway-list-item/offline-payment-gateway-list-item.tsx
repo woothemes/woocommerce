@@ -25,6 +25,7 @@ export const OfflinePaymentGatewayListItem = ( {
 }: OfflinePaymentGatewayListItemProps ) => {
 	return (
 		<SortableItem
+			key={ gateway.id }
 			id={ gateway.id }
 			className="woocommerce-list__item woocommerce-list__item-enter-done"
 			{ ...props }

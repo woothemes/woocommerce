@@ -2,6 +2,7 @@ const { test: base, expect, request } = require( '@playwright/test' );
 const { AssemblerPage } = require( './assembler.page' );
 const { activateTheme, DEFAULT_THEME } = require( '../../../utils/themes' );
 const { setOption } = require( '../../../utils/options' );
+const { tags } = require( '../../../fixtures/fixtures' );
 
 const test = base.extend( {
 	pageObject: async ( { page }, use ) => {
@@ -51,7 +52,7 @@ const slugFontMap = {
 	'Raleway, sans-serif': 'Raleway',
 };
 
-test.describe( 'Assembler -> Font Picker', { tag: '@gutenberg' }, () => {
+test.describe( 'Assembler -> Font Picker', { tag: tags.GUTENBERG }, () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
 	test.beforeAll( async ( { baseURL } ) => {

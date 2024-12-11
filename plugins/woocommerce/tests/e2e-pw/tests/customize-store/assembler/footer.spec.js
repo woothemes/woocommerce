@@ -2,6 +2,7 @@ const { test: base, expect, request } = require( '@playwright/test' );
 const { AssemblerPage } = require( './assembler.page' );
 const { activateTheme, DEFAULT_THEME } = require( '../../../utils/themes' );
 const { setOption } = require( '../../../utils/options' );
+const { tags } = require( '../../../fixtures/fixtures' );
 
 const extractFooterClass = ( footerPickerClass ) => {
 	const regex = /\bwc-blocks-pattern-footer\S*/;
@@ -18,7 +19,7 @@ const test = base.extend( {
 	},
 } );
 
-test.describe( 'Assembler -> Footers', { tag: '@gutenberg' }, () => {
+test.describe( 'Assembler -> Footers', { tag: tags.GUTENBERG }, () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
 	test.beforeAll( async ( { baseURL } ) => {

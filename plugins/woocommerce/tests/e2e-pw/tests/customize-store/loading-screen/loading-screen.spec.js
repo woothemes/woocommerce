@@ -7,6 +7,7 @@ const {
 	createRequestsToSetupStoreDictionary,
 	setupRequestInterceptor,
 } = require( './loading-screen.utils' );
+const { tags } = require( '../../../fixtures/fixtures' );
 
 const test = base.extend( {
 	pageObject: async ( { page }, use ) => {
@@ -21,7 +22,7 @@ const steps = [
 	'Opening the doors',
 ];
 
-test.describe( 'Assembler - Loading Page', { tag: '@gutenberg' }, () => {
+test.describe( 'Assembler - Loading Page', { tag: tags.GUTENBERG }, () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
 	test.beforeAll( async ( { baseURL } ) => {
