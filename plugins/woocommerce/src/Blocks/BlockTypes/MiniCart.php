@@ -425,11 +425,11 @@ class MiniCart extends AbstractBlock {
 
 		$product_count_visibility = isset( $attributes['productCountVisibility'] ) ? $attributes['productCountVisibility'] : 'greater_than_zero';
 
-		$button_html = $this->get_cart_price_markup( $attributes ) . '
-		<span class="wc-block-mini-cart__quantity-badge">
+		$button_html = '<span class="wc-block-mini-cart__quantity-badge">
 			' . $icon . '
 			' . ( 'never' !== $product_count_visibility ? '<span class="wc-block-mini-cart__badge" style="' . esc_attr( $styles ) . '"></span>' : '' ) . '
-		</span>';
+		</span>
+		' . $this->get_cart_price_markup( $attributes );
 
 		if ( is_cart() || is_checkout() ) {
 			if ( $this->should_not_render_mini_cart( $attributes ) ) {
