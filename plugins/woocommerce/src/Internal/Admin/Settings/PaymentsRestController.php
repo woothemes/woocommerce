@@ -75,6 +75,28 @@ class PaymentsRestController extends RestApiControllerBase {
 		);
 		register_rest_route(
 			$this->route_namespace,
+			'/' . $this->rest_base . '/country',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::EDITABLE,
+					'callback'            => fn( $request ) => $this->run( $request, 'set_country' ),
+					'validation_callback' => 'rest_validate_request_arg',
+					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
+					'args'                => array(
+						'location' => array(
+							'description'       => esc_html__( 'The ISO3166 alpha-2 country code to save for the current user.', 'woocommerce' ),
+							'type'              => 'string',
+							'pattern'           => '[a-zA-Z]{2}', // Two alpha characters.
+							'required'          => true,
+							'validate_callback' => fn( $value, $request ) => $this->check_location_arg( $value, $request ),
+						),
+					),
+				),
+			),
+			$override
+		);
+		register_rest_route(
+			$this->route_namespace,
 			'/' . $this->rest_base . '/providers/order',
 			array(
 				array(
@@ -186,6 +208,21 @@ class PaymentsRestController extends RestApiControllerBase {
 		);
 
 		return rest_ensure_response( $this->prepare_payment_providers_response( $response ) );
+	}
+
+	/**
+	 * Set the country for the payment providers.
+	 *
+	 * @param WP_REST_Request $request The request object.
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	protected function set_country( WP_REST_Request $request ) {
+		$location = $request->get_param( 'location' );
+
+		$result = $this->payments->set_country( $location );
+
+		return rest_ensure_response( array( 'success' => $result ) );
 	}
 
 	/**
@@ -597,6 +634,7 @@ class PaymentsRestController extends RestApiControllerBase {
 					'properties'  => array(
 						'_type'  => array(
 							'type'        => 'string',
+							'enum'        => array( Payments::EXTENSION_TYPE_WPORG ),
 							'description' => esc_html__( 'The type of the plugin.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
@@ -607,8 +645,15 @@ class PaymentsRestController extends RestApiControllerBase {
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
 						),
+						'file'   => array(
+							'type'        => 'string',
+							'description' => esc_html__( 'The plugin main file. This is a relative path to the plugins directory.', 'woocommerce' ),
+							'context'     => array( 'view', 'edit' ),
+							'readonly'    => true,
+						),
 						'status' => array(
 							'type'        => 'string',
+							'enum'        => array( Payments::EXTENSION_NOT_INSTALLED, Payments::EXTENSION_INSTALLED, Payments::EXTENSION_ACTIVE ),
 							'description' => esc_html__( 'The status of the plugin.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
@@ -667,6 +712,12 @@ class PaymentsRestController extends RestApiControllerBase {
 						'test_mode'   => array(
 							'type'        => 'boolean',
 							'description' => esc_html__( 'Whether the provider is in test mode.', 'woocommerce' ),
+							'context'     => array( 'view', 'edit' ),
+							'readonly'    => true,
+						),
+						'dev_mode'    => array(
+							'type'        => 'boolean',
+							'description' => esc_html__( 'Whether the provider is in dev mode.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
 						),
@@ -916,6 +967,7 @@ class PaymentsRestController extends RestApiControllerBase {
 					'properties' => array(
 						'_type'  => array(
 							'type'        => 'string',
+							'enum'        => array( Payments::EXTENSION_TYPE_WPORG ),
 							'description' => esc_html__( 'The type of the plugin.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
@@ -928,6 +980,7 @@ class PaymentsRestController extends RestApiControllerBase {
 						),
 						'status' => array(
 							'type'        => 'string',
+							'enum'        => array( Payments::EXTENSION_NOT_INSTALLED, Payments::EXTENSION_INSTALLED, Payments::EXTENSION_ACTIVE ),
 							'description' => esc_html__( 'The status of the plugin.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
