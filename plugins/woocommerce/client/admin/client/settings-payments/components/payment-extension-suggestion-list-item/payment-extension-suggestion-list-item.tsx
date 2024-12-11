@@ -38,7 +38,7 @@ export const PaymentExtensionSuggestionListItem = ( {
 			id={ extension.id }
 			className={ `transitions-disabled woocommerce-list__item woocommerce-list__item-enter-done ${
 				hasIncentive ? `has-incentive` : ''
-			}` }
+			}`}
 			{ ...props }
 		>
 			<div className="woocommerce-list__item-inner">

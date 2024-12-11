@@ -22,7 +22,6 @@ import { OtherPaymentGateways } from '~/settings-payments/components/other-payme
 import { PaymentGateways } from '~/settings-payments/components/payment-gateways';
 import { IncentiveBanner } from '~/settings-payments/components/incentive-banner';
 import { IncentiveModal } from '~/settings-payments/components/incentive-modal';
-import { WooPaymentsPostSandboxAccountSetupModal } from '~/settings-payments/components/woo-payments-post-sandbox-account-setup-modal';
 import {
 	getWooPaymentsTestDriveAccountLink,
 	isWooPayments,

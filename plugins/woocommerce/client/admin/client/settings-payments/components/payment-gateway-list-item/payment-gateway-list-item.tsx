@@ -46,7 +46,7 @@ export const PaymentGatewayListItem = ( {
 		<div
 			id={ gateway.id }
 			className={ `transitions-disabled woocommerce-list__item woocommerce-list__item-enter-done woocommerce-item__payment-gateway ${
-				isWCPay ? `woocommerce-item__woocommerce-payments` : ''
+				isWcPay ? `woocommerce-item__woocommerce-payments` : ''
 			} ${ hasIncentive ? `has-incentive` : '' }` }
 			{ ...props }
 		>
