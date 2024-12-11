@@ -124,6 +124,7 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 		}
 
 		$transient_version = WC_Cache_Helper::get_transient_version( 'product' );
+
 		if ( ! $force_read && $children ) {
 			// Validate the children data.
 			if ( ! $this->validate_children_data( $children, $transient_version ) ) {
@@ -786,30 +787,41 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 			return false;
 		}
 
-		$required_types = array( 'price', 'regular_price', 'sale_price' );
-		foreach ( $required_types as $type ) {
-			if ( ! isset( $prices_array[ $type ] ) || ! is_array( $prices_array[ $type ] ) ) {
-				return false;
-			}
-		}
+		// Remove version key for iteration.
+		$data_without_version = array_diff_key( $prices_array, array( 'version' => '' ) );
 
-		foreach ( $prices_array['price'] as $variation_id => $price ) {
-			if ( ! is_numeric( $variation_id ) ) {
+		// Iterate through each price hash entry.
+		foreach ( $data_without_version as $price_data ) {
+			if ( ! is_array( $price_data ) ) {
 				return false;
 			}
 
-			if ( ! is_numeric( $price ) && '' !== $price ) {
-				return false;
-			}
-
+			$required_types = array( 'price', 'regular_price', 'sale_price' );
 			foreach ( $required_types as $type ) {
-				if ( ! array_key_exists( $variation_id, $prices_array[ $type ] ) ) {
+				if ( ! isset( $price_data[ $type ] ) || ! is_array( $price_data[ $type ] ) ) {
+					return false;
+				}
+			}
+
+			// Validate individual prices.
+			foreach ( $price_data['price'] as $variation_id => $price ) {
+				if ( ! is_numeric( $variation_id ) ) {
 					return false;
 				}
 
-				$type_price = $prices_array[ $type ][ $variation_id ];
-				if ( ! is_numeric( $type_price ) && '' !== $type_price ) {
+				if ( ! is_numeric( $price ) && '' !== $price ) {
 					return false;
+				}
+
+				foreach ( $required_types as $type ) {
+					if ( ! array_key_exists( $variation_id, $price_data[ $type ] ) ) {
+						return false;
+					}
+
+					$type_price = $price_data[ $type ][ $variation_id ];
+					if ( ! is_numeric( $type_price ) && '' !== $type_price ) {
+						return false;
+					}
 				}
 			}
 		}

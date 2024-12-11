@@ -18,27 +18,69 @@ class WC_Product_Variable_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 	public function test_validate_prices_data() {
 		$data_store      = new WC_Product_Variable_Data_Store_CPT();
 		$current_version = '1234';
+		$price_hash1     = 'f9e544f77b7eac7add281ef28ca5559f';
+		$price_hash2     = 'a7c539f88b7eac7add281ef28ca5559f';
 
-		// Test valid prices data.
+		// Test valid prices data with single hash structure.
 		$valid_prices = array(
-			'version'       => $current_version,
-			'price'         => array(
-				123 => '10.00',
-				456 => '20.00',
-			),
-			'regular_price' => array(
-				123 => '15.00',
-				456 => '25.00',
-			),
-			'sale_price'    => array(
-				123 => '10.00',
-				456 => '20.00',
+			'version'    => $current_version,
+			$price_hash1 => array(
+				'price'         => array(
+					123 => '10.00',
+					456 => '20.00',
+				),
+				'regular_price' => array(
+					123 => '15.00',
+					456 => '25.00',
+				),
+				'sale_price'    => array(
+					123 => '10.00',
+					456 => '20.00',
+				),
 			),
 		);
 
 		$this->assertTrue(
 			$this->invokeMethod( $data_store, 'validate_prices_data', array( $valid_prices, $current_version ) ),
-			'Valid prices data should pass validation'
+			'Valid prices data with single hash should pass validation'
+		);
+
+		// Test valid prices data with multiple hash structure.
+		$valid_prices_multiple = array(
+			'version'    => $current_version,
+			$price_hash1 => array(
+				'price'         => array(
+					123 => '10.00',
+					456 => '20.00',
+				),
+				'regular_price' => array(
+					123 => '15.00',
+					456 => '25.00',
+				),
+				'sale_price'    => array(
+					123 => '10.00',
+					456 => '20.00',
+				),
+			),
+			$price_hash2 => array(
+				'price'         => array(
+					789 => '30.00',
+					101 => '40.00',
+				),
+				'regular_price' => array(
+					789 => '35.00',
+					101 => '45.00',
+				),
+				'sale_price'    => array(
+					789 => '30.00',
+					101 => '40.00',
+				),
+			),
+		);
+
+		$this->assertTrue(
+			$this->invokeMethod( $data_store, 'validate_prices_data', array( $valid_prices_multiple, $current_version ) ),
+			'Valid prices data with multiple hashes should pass validation'
 		);
 
 		// Test invalid data type.
@@ -49,18 +91,20 @@ class WC_Product_Variable_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 
 		// Test valid prices data with empty sale prices.
 		$valid_prices_empty_sale = array(
-			'version'       => $current_version,
-			'price'         => array(
-				123 => '15.00',
-				456 => '25.00',
-			),
-			'regular_price' => array(
-				123 => '15.00',
-				456 => '25.00',
-			),
-			'sale_price'    => array(
-				123 => '',
-				456 => '',
+			'version'    => $current_version,
+			$price_hash1 => array(
+				'price'         => array(
+					123 => '15.00',
+					456 => '25.00',
+				),
+				'regular_price' => array(
+					123 => '15.00',
+					456 => '25.00',
+				),
+				'sale_price'    => array(
+					123 => '',
+					456 => '',
+				),
 			),
 		);
 
@@ -71,18 +115,20 @@ class WC_Product_Variable_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 
 		// Test valid prices data with mixed empty and set prices.
 		$valid_prices_mixed = array(
-			'version'       => $current_version,
-			'price'         => array(
-				123 => '10.00',
-				456 => '25.00',
-			),
-			'regular_price' => array(
-				123 => '15.00',
-				456 => '25.00',
-			),
-			'sale_price'    => array(
-				123 => '10.00',
-				456 => '',  // No sale price for this variation.
+			'version'    => $current_version,
+			$price_hash1 => array(
+				'price'         => array(
+					123 => '10.00',
+					456 => '25.00',
+				),
+				'regular_price' => array(
+					123 => '15.00',
+					456 => '25.00',
+				),
+				'sale_price'    => array(
+					123 => '10.00',
+					456 => '',  // No sale price for this variation.
+				),
 			),
 		);
 
@@ -91,29 +137,24 @@ class WC_Product_Variable_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 			'Valid prices data with mixed empty and set sale prices should pass validation'
 		);
 
-		// Test invalid data type.
+		// Test invalid hash value type.
+		$invalid_hash_value = array(
+			'version'    => $current_version,
+			$price_hash1 => 'not an array',
+		);
+
 		$this->assertFalse(
-			$this->invokeMethod( $data_store, 'validate_prices_data', array( 'not an array', $current_version ) ),
-			'Non-array data should fail validation'
+			$this->invokeMethod( $data_store, 'validate_prices_data', array( $invalid_hash_value, $current_version ) ),
+			'Non-array hash value should fail validation'
 		);
 
 		// Test missing required price types.
 		$missing_price_types = array(
-			'version' => $current_version,
-			'price'   => array( 123 => '10.00' ),
-			// missing regular_price and sale_price.
-		);
-
-		$this->assertFalse(
-			$this->invokeMethod( $data_store, 'validate_prices_data', array( $missing_price_types, $current_version ) ),
-			'Data missing required price types should fail validation'
-		);
-
-		// Test missing required price types.
-		$missing_price_types = array(
-			'version' => $current_version,
-			'price'   => array( 123 => '10.00' ),
-			// missing regular_price and sale_price.
+			'version'    => $current_version,
+			$price_hash1 => array(
+				'price' => array( 123 => '10.00' ),
+				// missing regular_price and sale_price.
+			),
 		);
 
 		$this->assertFalse(
@@ -123,10 +164,12 @@ class WC_Product_Variable_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 
 		// Test invalid variation ID type.
 		$invalid_variation_id = array(
-			'version'       => $current_version,
-			'price'         => array( 'not_numeric' => '10.00' ),
-			'regular_price' => array( 'not_numeric' => '15.00' ),
-			'sale_price'    => array( 'not_numeric' => '10.00' ),
+			'version'    => $current_version,
+			$price_hash1 => array(
+				'price'         => array( 'not_numeric' => '10.00' ),
+				'regular_price' => array( 'not_numeric' => '15.00' ),
+				'sale_price'    => array( 'not_numeric' => '10.00' ),
+			),
 		);
 
 		$this->assertFalse(
@@ -136,10 +179,12 @@ class WC_Product_Variable_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 
 		// Test invalid price value type.
 		$invalid_price_value = array(
-			'version'       => $current_version,
-			'price'         => array( 123 => 'not_numeric' ),
-			'regular_price' => array( 123 => 'not_numeric' ),
-			'sale_price'    => array( 123 => 'not_numeric' ),
+			'version'    => $current_version,
+			$price_hash1 => array(
+				'price'         => array( 123 => 'not_numeric' ),
+				'regular_price' => array( 123 => 'not_numeric' ),
+				'sale_price'    => array( 123 => 'not_numeric' ),
+			),
 		);
 
 		$this->assertFalse(
@@ -149,15 +194,37 @@ class WC_Product_Variable_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 
 		// Test mismatched version.
 		$wrong_version = array(
-			'version'       => 'wrong_version',
-			'price'         => array( 123 => '10.00' ),
-			'regular_price' => array( 123 => '15.00' ),
-			'sale_price'    => array( 123 => '10.00' ),
+			'version'    => 'wrong_version',
+			$price_hash1 => array(
+				'price'         => array( 123 => '10.00' ),
+				'regular_price' => array( 123 => '15.00' ),
+				'sale_price'    => array( 123 => '10.00' ),
+			),
 		);
 
 		$this->assertFalse(
 			$this->invokeMethod( $data_store, 'validate_prices_data', array( $wrong_version, $current_version ) ),
 			'Data with wrong version should fail validation'
+		);
+
+		// Test one valid hash and one invalid hash.
+		$mixed_valid_invalid = array(
+			'version'    => $current_version,
+			$price_hash1 => array(
+				'price'         => array( 123 => '10.00' ),
+				'regular_price' => array( 123 => '15.00' ),
+				'sale_price'    => array( 123 => '10.00' ),
+			),
+			$price_hash2 => array(
+				'price'         => array( 'invalid' => 'not_numeric' ),
+				'regular_price' => array( 'invalid' => 'not_numeric' ),
+				'sale_price'    => array( 'invalid' => 'not_numeric' ),
+			),
+		);
+
+		$this->assertFalse(
+			$this->invokeMethod( $data_store, 'validate_prices_data', array( $mixed_valid_invalid, $current_version ) ),
+			'Data with mix of valid and invalid hashes should fail validation'
 		);
 	}
 
