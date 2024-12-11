@@ -21,9 +21,15 @@ import {
 } from '~/settings-payments/utils';
 import { ListPlaceholder } from './components/list-placeholder';
 import { PaymentMethodListItem } from './components/payment-method-list-item';
-import { Button } from '@wordpress/components';
 
-export const SettingsPaymentsMethods = ( {
+type PaymentMethodsState = Record< string, boolean >;
+
+interface SettingsPaymentsMethodsProps {
+	paymentMethodsState: PaymentMethodsState;
+	setPaymentMethodsState: React.Dispatch<React.SetStateAction< PaymentMethodsState >>;
+}
+
+export const SettingsPaymentsMethods: React.FC< SettingsPaymentsMethodsProps > = ( {
 	paymentMethodsState,
 	setPaymentMethodsState,
 } ) => {
