@@ -33,7 +33,7 @@ There is also the case that your client needs data that can only be derived serv
 
 There are two ways to get your data from the server to the client, depending on whether it is static or dynamic.
 
-### Static data
+#### Static data
 
 Static data is not likely to change based on actions the shopper takes, for example, an option from the WooCommerce settings dashboard. The recommended way of getting this data to the client is using the `AssetDataRegistry`.
 
@@ -59,7 +59,7 @@ To get this data on the client, use `wc.wcSettings.getSetting` like so:
 const myCustomValue = wc.wcSettings.getSetting( 'namespace/value', 'Fallback value.' );
 ```
 
-### Dynamic data
+#### Dynamic data
 
 Dynamic data is data that is likely to change in response to the shopper's actions, for example, changing location, or items in the cart. In this case, you need to add this to the cart API response. The cart response is sent on many routes during the shopper's journey, and on almost every API response triggered by the Cart/Checkout blocks.
 
@@ -69,11 +69,11 @@ To add data here, you'll need to extend the API response. See [Exposing your dat
 
 Getting data from the client to the server can be done in a couple of different ways too. The options are: piggyback on a Store API request when one is made, or send the data on demand.
 
-### Piggybacking on a Store API request
+#### Piggybacking on a Store API request
 
 This is useful for things that don't require an immediate response from the server, for example if you've added a new block to the Checkout and it contains a form field that should be saved along with the order. If this form field just needs to be saved and doesn't need to update any other values in the cart, then the data should be sent with the checkout request. The [Add a new inner block containing a custom field to the WooCommerce Checkout Block](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-blocks/docs/third-party-developers/extensibility/rest-api/extend-rest-api-add-custom-fields.md) documentation provides a worked example of using `setExtensionData` along with extending the Store API to receive your data in an existing request.
 
-### Sending data on-demand using `extensionCartUpdate`
+#### Sending data on-demand using `extensionCartUpdate`
 
 You may wish to send your data to the server immediately, rather than waiting for a Store API request to be made. This may be desired if the data may update the cart, for example adding fees, changing which shipping methods are available, or changing the tax rates.
 
