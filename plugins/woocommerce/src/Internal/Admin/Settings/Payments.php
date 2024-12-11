@@ -641,6 +641,7 @@ class Payments {
 				'enabled'     => filter_var( $payment_gateway->enabled, FILTER_VALIDATE_BOOLEAN ),
 				'needs_setup' => filter_var( $payment_gateway->needs_setup(), FILTER_VALIDATE_BOOLEAN ),
 				'test_mode'   => $this->is_payment_gateway_in_test_mode( $payment_gateway ),
+				'dev_mode'    => $this->is_payment_gateway_in_dev_mode( $payment_gateway ),
 			),
 			'management'  => array(
 				'settings_url' => method_exists( $payment_gateway, 'get_settings_url' )
@@ -927,6 +928,39 @@ class Payments {
 			if ( ! is_null( $test_mode ) ) {
 				return $test_mode;
 			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Try to determine if the payment gateway is in dev mode.
+	 *
+	 * This is a best-effort attempt, as there is no standard way to determine this.
+	 * Trust the true value, but don't consider a false value as definitive.
+	 *
+	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
+	 *
+	 * @return bool True if the payment gateway is in dev mode, false otherwise.
+	 */
+	private function is_payment_gateway_in_dev_mode( WC_Payment_Gateway $payment_gateway ): bool {
+		// If it is WooPayments, we need to check the dev mode.
+		if ( 'woocommerce_payments' === $payment_gateway->id &&
+			class_exists( '\WC_Payments' ) &&
+			method_exists( '\WC_Payments', 'mode' ) ) {
+
+			$woopayments_mode = \WC_Payments::mode();
+			if ( method_exists( $woopayments_mode, 'is_dev' ) ) {
+				return $woopayments_mode->is_dev();
+			}
+		}
+
+		// Try various gateway methods to check if the payment gateway is in dev mode.
+		if ( method_exists( $payment_gateway, 'is_dev_mode' ) ) {
+			return filter_var( $payment_gateway->is_dev_mode(), FILTER_VALIDATE_BOOLEAN );
+		}
+		if ( method_exists( $payment_gateway, 'is_in_dev_mode' ) ) {
+			return filter_var( $payment_gateway->is_in_dev_mode(), FILTER_VALIDATE_BOOLEAN );
 		}
 
 		return false;

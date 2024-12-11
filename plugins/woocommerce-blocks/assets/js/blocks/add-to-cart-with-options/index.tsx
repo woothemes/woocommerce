@@ -16,6 +16,7 @@ import AddToCartOptionsEdit from './edit';
 import './style.scss';
 import registerStore, { store as woocommerceTemplateStateStore } from './store';
 import getProductTypeOptions from './utils/get-product-types';
+import save from './save';
 
 // Pick the value of the "blockify add to cart flag"
 const isBlockifiedAddToCart = getSettingWithCoercion(
@@ -43,6 +44,6 @@ if ( shouldRegisterBlock ) {
 	registerBlockType( metadata, {
 		icon: <Icon icon={ button } />,
 		edit: AddToCartOptionsEdit,
-		save: () => null,
+		save,
 	} );
 }

@@ -14,6 +14,7 @@ import { StatusBadge } from '~/settings-payments/components/status-badge';
 import { PaymentGatewayButtons } from '~/settings-payments/components/payment-gateway-buttons';
 import { EllipsisMenuWrapper as EllipsisMenu } from '~/settings-payments/components/ellipsis-menu-content';
 import { isWooPayments } from '~/settings-payments/utils';
+import { DefaultDragHandle } from '~/settings-payments/components/sortable';
 
 type PaymentGatewayItemProps = {
 	gateway: PaymentProvider;
@@ -21,8 +22,9 @@ type PaymentGatewayItemProps = {
 
 export const PaymentGatewayListItem = ( {
 	gateway,
+	...props
 }: PaymentGatewayItemProps ) => {
-	const isWCPay = isWooPayments( gateway.id );
+	const isWcPay = isWooPayments( gateway.id );
 
 	const hasIncentive =
 		gateway.id === 'pre_install_woocommerce_payments_promotion';
@@ -31,7 +33,7 @@ export const PaymentGatewayListItem = ( {
 			return 'needs_setup';
 		}
 		if ( gateway.state?.enabled ) {
-			if ( isWCPay ) {
+			if ( isWcPay ) {
 				if ( gateway.state?.test_mode ) {
 					return 'test_mode';
 				}
@@ -42,63 +44,71 @@ export const PaymentGatewayListItem = ( {
 		return 'inactive';
 	};
 
-	return {
-		key: gateway.id,
-		className: `transitions-disabled woocommerce-item__payment-gateway ${
-			isWCPay ?? `woocommerce-item__woocommerce-payment`
-		} ${ hasIncentive ?? `has-incentive` }`,
-		title: (
-			<>
-				{ gateway.title }
-				{ hasIncentive ? (
-					<StatusBadge
-						status="has_incentive"
-						message={ __(
-							'Save 10% on processing fees',
-							'woocommerce'
+	return (
+		<div
+			id={ gateway.id }
+			className={ `transitions-disabled woocommerce-list__item woocommerce-list__item-enter-done woocommerce-item__payment-gateway ${
+				isWcPay ?? `woocommerce-item__woocommerce-payment`
+			} ${ hasIncentive ?? `has-incentive` }` }
+			{ ...props }
+		>
+			<div className="woocommerce-list__item-inner">
+				<div className="woocommerce-list__item-before">
+					<DefaultDragHandle />
+					<img src={ gateway.icon } alt={ gateway.title + ' logo' } />
+				</div>
+				<div className="woocommerce-list__item-text">
+					<span className="woocommerce-list__item-title">
+						{ gateway.title }
+						{ hasIncentive ? (
+							<StatusBadge
+								status="has_incentive"
+								message={ __(
+									'Save 10% on processing fees',
+									'woocommerce'
+								) }
+							/>
+						) : (
+							<StatusBadge status={ determineGatewayStatus() } />
+						) }
+					</span>
+					<span
+						className="woocommerce-list__item-content"
+						dangerouslySetInnerHTML={ sanitizeHTML(
+							decodeEntities( gateway.description )
 						) }
 					/>
-				) : (
-					<StatusBadge status={ determineGatewayStatus() } />
-				) }
-			</>
-		),
-		content: (
-			<>
-				<span
-					dangerouslySetInnerHTML={ sanitizeHTML(
-						decodeEntities( gateway.description )
+					{ isWcPay && (
+						<WooPaymentMethodsLogos
+							maxElements={ 10 }
+							isWooPayEligible={ true }
+						/>
 					) }
-				/>
-				{ isWCPay && (
-					<WooPaymentMethodsLogos
-						maxElements={ 10 }
-						isWooPayEligible={ true }
-					/>
-				) }
-			</>
-		),
-		after: (
-			<div className="woocommerce-list__item-after__actions">
-				<>
-					<PaymentGatewayButtons
-						id={ gateway.id }
-						isOffline={ false }
-						enabled={ gateway.state?.enabled || false }
-						needsSetup={ gateway.state?.needs_setup }
-						testMode={ gateway.state?.test_mode }
-						settingsUrl={ gateway.management?.settings_url || '' }
-					/>
-					<EllipsisMenu
-						label={ __(
-							'Payment Provider Options',
-							'woocommerce'
-						) }
-						provider={ gateway }
-					/>
-				</>
+				</div>
+				<div className="woocommerce-list__item-after">
+					<div className="woocommerce-list__item-after__actions">
+						<>
+							<PaymentGatewayButtons
+								id={ gateway.id }
+								isOffline={ false }
+								enabled={ gateway.state?.enabled || false }
+								needsSetup={ gateway.state?.needs_setup }
+								testMode={ gateway.state?.test_mode }
+								settingsUrl={
+									gateway.management?.settings_url || ''
+								}
+							/>
+							<EllipsisMenu
+								label={ __(
+									'Payment Provider Options',
+									'woocommerce'
+								) }
+								provider={ gateway }
+							/>
+						</>
+					</div>
+				</div>
 			</div>
-		),
-		before: <img src={ gateway.icon } alt={ gateway.title + ' logo' } />,
-	};
+		</div>
+	);
 };
