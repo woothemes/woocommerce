@@ -61,7 +61,6 @@ test.describe( 'Feature: Signing up', () => {
 					stock_status: 'outofstock',
 				} )
 				.then( ( response ) => {
-					console.log( response );
 					productData = response.data;
 				} );
 			page.goto( productData.permalink );
@@ -108,7 +107,6 @@ test.describe( 'Feature: Signing up', () => {
 					],
 				} )
 				.then( ( response ) => {
-					console.log( response );
 					productData = response.data;
 				} );
 			await api.post( 'products/' + productData.id + '/variations', {
@@ -184,7 +182,6 @@ test.describe( 'Feature: Signing up', () => {
 					],
 				} )
 				.then( ( response ) => {
-					console.log( response );
 					productData = response.data;
 				} );
 			await api.post( 'products/' + productData.id + '/variations', {
@@ -227,7 +224,6 @@ test.describe( 'Feature: Signing up', () => {
 					stock_status: 'outofstock',
 				} )
 				.then( ( response ) => {
-					console.log( response );
 					productData = response.data;
 				} );
 			await setOption(
@@ -271,7 +267,6 @@ test.describe( 'Feature: Signing up', () => {
 					stock_status: 'outofstock',
 				} )
 				.then( ( response ) => {
-					console.log( response );
 					productData = response.data;
 				} );
 			await setOption(
@@ -307,7 +302,6 @@ test.describe( 'Feature: Signing up', () => {
 					stock_status: 'outofstock',
 				} )
 				.then( ( response ) => {
-					console.log( response );
 					productData = response.data;
 				} );
 			await setOption(
@@ -350,7 +344,6 @@ test.describe( 'Feature: Signing up', () => {
 					stock_status: 'outofstock',
 				} )
 				.then( ( response ) => {
-					console.log( response );
 					productData = response.data;
 				} );
 			await setOption(
@@ -404,7 +397,6 @@ test.describe( 'Feature: Signing up', () => {
 					stock_status: 'outofstock',
 				} )
 				.then( ( response ) => {
-					console.log( response );
 					productData = response.data;
 				} );
 			page.goto( productData.permalink );
@@ -450,7 +442,6 @@ test.describe( 'Feature: Signing up', () => {
 					stock_status: 'outofstock',
 				} )
 				.then( ( response ) => {
-					console.log( response );
 					productData = response.data;
 				} );
 			page.goto( productData.permalink );
