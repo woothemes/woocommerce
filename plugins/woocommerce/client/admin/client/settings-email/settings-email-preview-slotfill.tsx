@@ -34,8 +34,11 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 } ) => {
 	const [ deviceType, setDeviceType ] =
 		useState< string >( DEVICE_TYPE_DESKTOP );
+	const isSingleEmail = emailTypes.length === 1;
 	const [ emailType, setEmailType ] = useState< string >(
-		'WC_Email_Customer_Processing_Order'
+		isSingleEmail
+			? emailTypes[ 0 ].value
+			: 'WC_Email_Customer_Processing_Order'
 	);
 	const [ isLoading, setIsLoading ] = useState< boolean >( false );
 	const finalPreviewUrl = `${ previewUrl }&type=${ emailType }`;
@@ -44,14 +47,16 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 		<Fill>
 			<div className="wc-settings-email-preview-container">
 				<div className="wc-settings-email-preview-controls">
-					<EmailPreviewType
-						emailTypes={ emailTypes }
-						emailType={ emailType }
-						setEmailType={ ( newEmailType: string ) => {
-							setIsLoading( true );
-							setEmailType( newEmailType );
-						} }
-					/>
+					{ ! isSingleEmail && (
+						<EmailPreviewType
+							emailTypes={ emailTypes }
+							emailType={ emailType }
+							setEmailType={ ( newEmailType: string ) => {
+								setIsLoading( true );
+								setEmailType( newEmailType );
+							} }
+						/>
+					) }
 					<div className="wc-settings-email-preview-spinner">
 						{ isLoading && <Spinner /> }
 					</div>
