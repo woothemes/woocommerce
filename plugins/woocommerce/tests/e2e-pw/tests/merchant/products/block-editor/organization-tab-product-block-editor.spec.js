@@ -2,6 +2,7 @@ const { test } = require( '../../../../fixtures/block-editor-fixtures' );
 const { expect } = require( '@playwright/test' );
 
 const { clickOnTab } = require( '../../../../utils/simple-products' );
+const { tags } = require( '../../../../fixtures/fixtures' );
 
 const NEW_EDITOR_ADD_PRODUCT_URL =
 	'wp-admin/admin.php?page=wc-admin&path=%2Fadd-product';
@@ -21,7 +22,7 @@ const tagName = `my-tag-${ new Date().getTime().toString() }`;
 
 test.describe.configure( { mode: 'serial' } );
 
-test.describe( 'General tab', { tag: '@gutenberg' }, () => {
+test.describe( 'General tab', { tag: tags.GUTENBERG }, () => {
 	test.describe( 'Create product - Organization tab', () => {
 		let productId;
 

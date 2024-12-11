@@ -1,4 +1,4 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 const { fillPageTitle } = require( '../../utils/editor' );
 const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
 
@@ -31,10 +31,10 @@ test.describe(
 	'Filter items in the shop by product price',
 	{
 		tag: [
-			'@payments',
-			'@services',
-			'@skip-on-default-wpcom',
-			'@skip-on-default-pressable',
+			tags.PAYMENTS,
+			tags.SERVICES,
+			tags.SKIP_ON_WPCOM,
+			tags.SKIP_ON_PRESSABLE,
 		],
 	},
 	() => {

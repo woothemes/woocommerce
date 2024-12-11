@@ -7,6 +7,7 @@ const {
 	toggleBlockProductEditor,
 } = require( '../../../../utils/simple-products' );
 const { toggleBlockProductTour } = require( '../../../../utils/tours' );
+const { tags } = require( '../../../../fixtures/fixtures' );
 
 let isNewProductEditorEnabled = false;
 
@@ -22,7 +23,7 @@ async function dismissFeedbackModalIfShown( page ) {
 
 test.describe.serial(
 	'Disable block product editor',
-	{ tag: '@gutenberg' },
+	{ tag: tags.GUTENBERG },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 
