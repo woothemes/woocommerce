@@ -1,8 +1,9 @@
 const { test, expect } = require( '@playwright/test' );
+const { tags } = require( '../../fixtures/fixtures' );
 
 test.describe(
 	'WooCommerce Products > Downloadable Product Settings',
-	{ tag: [ '@gutenberg', '@services' ] },
+	{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 

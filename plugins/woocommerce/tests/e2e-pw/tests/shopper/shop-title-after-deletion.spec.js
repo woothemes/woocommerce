@@ -1,4 +1,4 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 
 // test case for bug https://github.com/woocommerce/woocommerce/pull/46429
 const test = baseTest.extend( {
@@ -31,7 +31,7 @@ const test = baseTest.extend( {
 
 test(
 	'Check the title of the shop page after the page has been deleted',
-	{ tag: [ '@payments', '@services', '@could-be-lower-level-test' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.COULD_BE_LOWER_LEVEL_TEST ] },
 	async ( { page } ) => {
 		await page.goto( 'shop/' );
 		expect( await page.title() ).toBe(

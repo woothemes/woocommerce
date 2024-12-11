@@ -1,4 +1,5 @@
 const { test, expect, request } = require( '@playwright/test' );
+const { tags } = require( '../../fixtures/fixtures' );
 const { setOption } = require( '../../utils/options' );
 
 const getPluginLocator = ( page, slug ) => {
@@ -9,7 +10,7 @@ const getPluginLocator = ( page, slug ) => {
 
 test.describe(
 	'Store owner can complete the core profiler',
-	{ tag: [ '@skip-on-default-pressable', '@skip-on-default-wpcom' ] },
+	{ tag: [ tags.SKIP_ON_PRESSABLE, tags.SKIP_ON_WPCOM ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 
@@ -470,7 +471,7 @@ test.describe(
 
 test.describe(
 	'Store owner can skip the core profiler',
-	{ tag: [ '@skip-on-default-pressable', '@skip-on-default-wpcom' ] },
+	{ tag: [ tags.SKIP_ON_PRESSABLE, tags.SKIP_ON_WPCOM ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 
@@ -540,8 +541,19 @@ test.describe(
 			} );
 
 			await test.step( 'Go to the extensions tab and connect store', async () => {
+				const connectButton = page.getByRole( 'link', {
+					name: 'Connect your store',
+				} );
 				await page.goto(
 					'wp-admin/admin.php?page=wc-admin&tab=my-subscriptions&path=%2Fextensions'
+				);
+				const waitForSubscriptionsResponse = page.waitForResponse(
+					( response ) =>
+						response
+							.url()
+							.includes(
+								'/wp-json/wc/v3/marketplace/subscriptions'
+							) && response.status() === 200
 				);
 				await expect(
 					page.getByText(
@@ -551,12 +563,13 @@ test.describe(
 				await expect(
 					page.getByRole( 'button', { name: 'My Subscriptions' } )
 				).toBeVisible();
-				await expect(
-					page.getByRole( 'link', { name: 'Connect your store' } )
-				).toBeVisible();
-				await page
-					.getByRole( 'link', { name: 'Connect your store' } )
-					.click();
+				await expect( connectButton ).toBeVisible();
+				await waitForSubscriptionsResponse;
+				await expect( connectButton ).toHaveAttribute(
+					'href',
+					/my-subscriptions/
+				);
+				await connectButton.click();
 			} );
 
 			await test.step( 'Check that we are sent to wp.com', async () => {
