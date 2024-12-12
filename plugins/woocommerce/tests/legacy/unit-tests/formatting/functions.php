@@ -950,7 +950,7 @@ class WC_Tests_Formatting_Functions extends WC_Unit_Test_Case {
 	 * @since 3.3.0
 	 */
 	public function test_wc_format_weight() {
-		$this->assertEquals( '10 kg', wc_format_weight( '10' ) );
+		$this->assertEquals( '10 lbs', wc_format_weight( '10' ) );
 	}
 
 	/**
@@ -959,7 +959,7 @@ class WC_Tests_Formatting_Functions extends WC_Unit_Test_Case {
 	 * @since 3.3.0
 	 */
 	public function test_wc_format_dimensions() {
-		$this->assertEquals( '10 &times; 10 &times; 10 cm', wc_format_dimensions( array( 10, 10, 10 ) ) );
+		$this->assertEquals( '10 &times; 10 &times; 10 in', wc_format_dimensions( array( 10, 10, 10 ) ) );
 	}
 
 	/**
