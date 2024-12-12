@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { decodeEntities } from '@wordpress/html-entities';
-import { type OfflinePaymentGateway } from '@woocommerce/data';
+import { type OfflinePaymentMethodProvider } from '@woocommerce/data';
 
 /**
  * Internal dependencies
@@ -16,7 +16,7 @@ import {
 } from '../sortable';
 
 type OfflinePaymentGatewayListItemProps = {
-	gateway: OfflinePaymentGateway;
+	gateway: OfflinePaymentMethodProvider;
 };
 
 export const OfflinePaymentGatewayListItem = ( {
@@ -67,11 +67,11 @@ export const OfflinePaymentGatewayList = ( {
 	gateways,
 	setGateways,
 }: {
-	gateways: OfflinePaymentGateway[];
-	setGateways: ( gateways: OfflinePaymentGateway[] ) => void;
+	gateways: OfflinePaymentMethodProvider[];
+	setGateways: ( gateways: OfflinePaymentMethodProvider[] ) => void;
 } ) => {
 	return (
-		<SortableContainer< OfflinePaymentGateway >
+		<SortableContainer< OfflinePaymentMethodProvider >
 			className="woocommerce-list"
 			items={ gateways }
 			setItems={ setGateways }

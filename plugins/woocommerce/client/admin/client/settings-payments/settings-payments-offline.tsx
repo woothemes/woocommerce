@@ -4,7 +4,7 @@
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import {
-	type OfflinePaymentGateway,
+	type OfflinePaymentMethodProvider,
 	PAYMENT_SETTINGS_STORE_NAME,
 } from '@woocommerce/data';
 
@@ -29,9 +29,9 @@ export const SettingsPaymentsOffline = () => {
 	);
 	// State to hold the sorted gateways in case of changing the order, otherwise it will be null
 	const [ sortedOfflinePaymentGateways, setSortedOfflinePaymentGateways ] =
-		useState< OfflinePaymentGateway[] | null >( null );
+		useState< OfflinePaymentMethodProvider[] | null >( null );
 
-	function handleOrderingUpdate( sorted: OfflinePaymentGateway[] ) {
+	function handleOrderingUpdate( sorted: OfflinePaymentMethodProvider[] ) {
 		// Extract the existing _order values in the sorted order
 		const updatedOrderValues = sorted
 			.map( ( gateway ) => gateway._order )

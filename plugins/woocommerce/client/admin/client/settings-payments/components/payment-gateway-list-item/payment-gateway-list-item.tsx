@@ -4,7 +4,7 @@
 import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
 import { __ } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
-import { PaymentProvider } from '@woocommerce/data';
+import { PaymentGatewayProvider } from '@woocommerce/data';
 
 /**
  * Internal dependencies
@@ -17,7 +17,7 @@ import { isWooPayments } from '~/settings-payments/utils';
 import { DefaultDragHandle } from '~/settings-payments/components/sortable';
 
 type PaymentGatewayItemProps = {
-	gateway: PaymentProvider;
+	gateway: PaymentGatewayProvider;
 };
 
 export const PaymentGatewayListItem = ( {
@@ -29,12 +29,12 @@ export const PaymentGatewayListItem = ( {
 	const hasIncentive =
 		gateway.id === 'pre_install_woocommerce_payments_promotion';
 	const determineGatewayStatus = () => {
-		if ( ! gateway.state?.enabled && gateway.state?.needs_setup ) {
+		if ( ! gateway.state.enabled && gateway.state.needs_setup ) {
 			return 'needs_setup';
 		}
-		if ( gateway.state?.enabled ) {
+		if ( gateway.state.enabled ) {
 			if ( isWcPay ) {
-				if ( gateway.state?.test_mode ) {
+				if ( gateway.state.test_mode ) {
 					return 'test_mode';
 				}
 			}
@@ -91,12 +91,11 @@ export const PaymentGatewayListItem = ( {
 							<PaymentGatewayButtons
 								id={ gateway.id }
 								isOffline={ false }
-								enabled={ gateway.state?.enabled || false }
-								needsSetup={ gateway.state?.needs_setup }
-								testMode={ gateway.state?.test_mode }
+								enabled={ gateway.state.enabled }
+								needsSetup={ gateway.state.needs_setup }
+								testMode={ gateway.state.test_mode }
 								settingsUrl={
-									gateway.management?._links.settings.href ||
-									''
+									gateway.management._links.settings.href
 								}
 							/>
 							<EllipsisMenu
