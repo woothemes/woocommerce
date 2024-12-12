@@ -66,6 +66,9 @@ export type RecommendedPaymentMethod = {
 	description: string;
 	icon: string;
 	enabled: boolean;
+	extraTitle: string;
+	extraDescription: string;
+	extraIcon: string;
 };
 
 export type SuggestedPaymentExtension = {
