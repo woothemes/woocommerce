@@ -186,7 +186,10 @@ class Init {
 			$settings['blueprint_upload_nonce'] = wp_create_nonce( 'blueprint_upload_nonce' );
 		}
 
-		if ( 'woocommerce_page_wc-settings-advanced-blueprint' === $screen_id ) {
+		wplog( 'screen_id: ' . $screen_id);
+
+
+		if ( strpos( $screen_id, 'woocommerce_page_wc-settings-advanced' ) !== false ) {
 			// Used on the settings page.
 			// wcSettings.admin.blueprint_step_groups.
 			$settings['blueprint_step_groups'] = $this->get_step_groups_for_js();
