@@ -35,7 +35,7 @@ test.describe( 'WooCommerce Email Settings', () => {
 			return ( await page.locator( emailPreviewElement ).count() ) > 0;
 		};
 		const iframeContains = async ( text ) => {
-			const iframe = await page.frameLocator( emailPreviewElement );
+			const iframe = page.frameLocator( emailPreviewElement );
 			return iframe.getByText( text );
 		};
 		const getSubject = async () => {
@@ -116,6 +116,84 @@ test.describe( 'WooCommerce Email Settings', () => {
 		sender = await getSender();
 		expect( sender ).toContain( newFromName );
 		expect( sender ).toContain( newFromAddress );
+	} );
+
+	test( 'Send email preview', async ( { page, baseURL } ) => {
+		await setFeatureFlag( baseURL, 'yes' );
+		await page.goto( 'wp-admin/admin.php?page=wc-settings&tab=email' );
+
+		// Click the "Send a test email" button
+		await page.getByRole( 'button', { name: 'Send a test email' } ).click();
+
+		// Verify that the modal window is open
+		const modal = page.getByRole( 'dialog' );
+		await expect( modal ).toBeVisible();
+
+		// Verify that the "Send test email" button is disabled
+		const sendButton = modal.getByRole( 'button', {
+			name: 'Send test email',
+		} );
+		await expect( sendButton ).toBeDisabled();
+
+		// Fill in the email address field
+		const email = 'test@example.com';
+		const emailInput = modal.getByLabel( 'Send to' );
+		await emailInput.fill( email );
+
+		// Verify the "Send test email" button is now enabled
+		await expect( sendButton ).toBeEnabled();
+		await sendButton.click();
+
+		// Wait for the message, because sending will fail in test environment
+		const message = modal.locator(
+			'text=Error sending test email. Please try again.'
+		);
+		await expect( message ).toBeVisible();
+	} );
+
+	test( 'See specific email preview with a feature flag', async ( {
+		page,
+		baseURL,
+	} ) => {
+		const emailPreviewElement =
+			'#wc_settings_email_preview_slotfill iframe';
+		const emailSubjectElement = '.wc-settings-email-preview-header-subject';
+		const hasIframe = async () => {
+			return ( await page.locator( emailPreviewElement ).count() ) > 0;
+		};
+		const iframeContains = async ( text ) => {
+			const iframe = page.frameLocator( emailPreviewElement );
+			return iframe.getByText( text );
+		};
+		const getSubject = async () => {
+			return await page.locator( emailSubjectElement ).textContent();
+		};
+
+		// Disable the email_improvements feature flag
+		await setFeatureFlag( baseURL, 'no' );
+		await page.goto(
+			'wp-admin/admin.php?page=wc-settings&tab=email&section=wc_email_customer_processing_order'
+		);
+		expect( await hasIframe() ).toBeFalsy();
+
+		// Enable the email_improvements feature flag
+		await setFeatureFlag( baseURL, 'yes' );
+		await page.reload();
+		expect( await hasIframe() ).toBeTruthy();
+
+		// Email content
+		await expect(
+			await iframeContains( 'Thank you for your order' )
+		).toBeVisible();
+		// Email subject
+		await expect( await getSubject() ).toContain(
+			`Your ${ storeName } order has been received!`
+		);
+
+		// Email type selector should not be visible
+		await expect( page.getByLabel( 'Email preview type' ) ).toHaveCount(
+			0
+		);
 	} );
 
 	test( 'See email image url field with a feature flag', async ( {
@@ -257,5 +335,160 @@ test.describe( 'WooCommerce Email Settings', () => {
 		await expect(
 			page.getByText( 'Footer text color', { exact: true } )
 		).toHaveCount( 0 );
+	} );
+
+	test( 'See font family setting with a feature flag', async ( {
+		page,
+		baseURL,
+	} ) => {
+		// Disable the email_improvements feature flag
+		await setFeatureFlag( baseURL, 'no' );
+		await page.goto( 'wp-admin/admin.php?page=wc-settings&tab=email' );
+
+		await expect( page.getByLabel( 'Font family' ) ).toHaveCount( 0 );
+
+		// Enable the email_improvements feature flag
+		await setFeatureFlag( baseURL, 'yes' );
+		await page.reload();
+
+		const fontFamilyElement = page.getByLabel( 'Font family' );
+		await expect( fontFamilyElement ).toBeVisible();
+
+		// Test standard font selection
+		await fontFamilyElement.selectOption( 'Times New Roman' );
+
+		// Test theme font selection
+		await fontFamilyElement.selectOption( 'Inter' );
+	} );
+
+	test( 'See updated footer text field with a feature flag', async ( {
+		page,
+		baseURL,
+	} ) => {
+		let footerTextLabel;
+
+		// Disable the email_improvements feature flag
+		await setFeatureFlag( baseURL, 'no' );
+		await page.goto( 'wp-admin/admin.php?page=wc-settings&tab=email' );
+
+		footerTextLabel = page.locator(
+			'css=label[for="woocommerce_email_footer_text"]'
+		);
+		await expect( footerTextLabel ).toBeVisible();
+
+		// Old tooltip text
+		const tooltip = footerTextLabel.locator( 'span.woocommerce-help-tip' );
+		await expect( tooltip ).not.toHaveAttribute(
+			'aria-label',
+			'{store_address}'
+		);
+
+		// Enable the email_improvements feature flag
+		await setFeatureFlag( baseURL, 'yes' );
+		await page.reload();
+
+		footerTextLabel = page.locator(
+			'css=label[for="woocommerce_email_footer_text"]'
+		);
+		await expect( footerTextLabel ).toBeVisible();
+
+		// New tooltip text
+		const updatedTooltip = footerTextLabel.locator(
+			'span.woocommerce-help-tip'
+		);
+		await expect( updatedTooltip ).toHaveAttribute(
+			'aria-label',
+			expect.stringContaining( '{store_address}' )
+		);
+		await expect( updatedTooltip ).toHaveAttribute(
+			'aria-label',
+			expect.stringContaining( '{store_email}' )
+		);
+	} );
+
+	test( 'Reset color palette with a feature flag', async ( {
+		page,
+		baseURL,
+	} ) => {
+		const resetButtonElement = '.wc-settings-email-color-palette-buttons';
+
+		// Disable the email_improvements feature flag
+		await setFeatureFlag( baseURL, 'no' );
+		await page.goto( 'wp-admin/admin.php?page=wc-settings&tab=email' );
+
+		await expect( page.locator( resetButtonElement ) ).toHaveCount( 0 );
+
+		// Enable the email_improvements feature flag
+		await setFeatureFlag( baseURL, 'yes' );
+		await page.reload();
+
+		await expect( page.locator( resetButtonElement ) ).toBeVisible();
+
+		// Change colors to make sure Reset button is active
+		const dummyColor = '#abcdef';
+		await page.fill( '#woocommerce_email_base_color', dummyColor );
+		await page.fill( '#woocommerce_email_background_color', dummyColor );
+		await page.fill(
+			'#woocommerce_email_body_background_color',
+			dummyColor
+		);
+		await page.fill( '#woocommerce_email_text_color', dummyColor );
+		await page.fill( '#woocommerce_email_footer_text_color', dummyColor );
+
+		// Reset colors to defaults
+		await page
+			.locator( resetButtonElement )
+			.getByText( 'Sync with theme', { exact: true } )
+			.click();
+
+		// Verify colors are reset
+		await expect(
+			page.locator( '#woocommerce_email_base_color' )
+		).not.toHaveValue( dummyColor );
+		await expect(
+			page.locator( '#woocommerce_email_background_color' )
+		).not.toHaveValue( dummyColor );
+		await expect(
+			page.locator( '#woocommerce_email_body_background_color' )
+		).not.toHaveValue( dummyColor );
+		await expect(
+			page.locator( '#woocommerce_email_text_color' )
+		).not.toHaveValue( dummyColor );
+		await expect(
+			page.locator( '#woocommerce_email_footer_text_color' )
+		).not.toHaveValue( dummyColor );
+
+		// Change colors to make sure Undo button is active
+		await page.fill( '#woocommerce_email_base_color', dummyColor );
+		await page.fill( '#woocommerce_email_background_color', dummyColor );
+		await page.fill(
+			'#woocommerce_email_body_background_color',
+			dummyColor
+		);
+		await page.fill( '#woocommerce_email_text_color', dummyColor );
+		await page.fill( '#woocommerce_email_footer_text_color', dummyColor );
+
+		// Undo changes
+		await page
+			.locator( resetButtonElement )
+			.getByText( 'Undo changes', { exact: true } )
+			.click();
+
+		// Verify changes are undone
+		await expect(
+			page.locator( '#woocommerce_email_base_color' )
+		).not.toHaveValue( dummyColor );
+		await expect(
+			page.locator( '#woocommerce_email_background_color' )
+		).not.toHaveValue( dummyColor );
+		await expect(
+			page.locator( '#woocommerce_email_body_background_color' )
+		).not.toHaveValue( dummyColor );
+		await expect(
+			page.locator( '#woocommerce_email_text_color' )
+		).not.toHaveValue( dummyColor );
+		await expect(
+			page.locator( '#woocommerce_email_footer_text_color' )
+		).not.toHaveValue( dummyColor );
 	} );
 } );

@@ -1,128 +1,124 @@
-const { test, expect } = require( '@playwright/test' );
-const { getOrderIdFromUrl } = require( '../../utils/order' );
-const { addAProductToCart } = require( '../../utils/cart' );
-const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
+/**
+ * External dependencies
+ */
+import {
+	addAProductToCart,
+	getOrderIdFromUrl,
+} from '@woocommerce/e2e-utils-playwright';
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
+const { getFakeCustomer, getFakeProduct } = require( '../../utils/data' );
 
-const customer = {
-	username: 'customercheckoutlogin',
-	password: 'password',
-	email: `customercheckoutlogin${ new Date()
-		.getTime()
-		.toString() }@woocommercecoree2etestsuite.com`,
-	billing: {
-		first_name: 'Jane',
-		last_name: 'Smith',
-		address_1: '123 Anywhere St.',
-		address_2: 'Apartment 42',
-		city: 'New York',
-		state: 'NY',
-		postcode: '10010',
-		country: 'US',
-		phone: '(555) 777-7777',
-	},
-};
+const test = baseTest.extend( {
+	page: async ( { page, api }, use ) => {
+		// get the current value of woocommerce_enable_checkout_login_reminder
+		const response = await api.get(
+			'settings/account/woocommerce_enable_checkout_login_reminder'
+		);
 
-test.describe(
-	'Shopper Checkout Login Account',
-	{ tag: [ '@payments', '@services', '@hpos' ] },
-	() => {
-		let productId, orderId, shippingZoneId, customerId;
-
-		test.beforeAll( async ( { baseURL } ) => {
-			const api = new wcApi( {
-				url: baseURL,
-				consumerKey: process.env.CONSUMER_KEY,
-				consumerSecret: process.env.CONSUMER_SECRET,
-				version: 'wc/v3',
-			} );
-			// add product
-			await api
-				.post( 'products', {
-					name: 'Checkout Login Account',
-					type: 'simple',
-					regular_price: '19.99',
-				} )
-				.then( ( response ) => {
-					productId = response.data.id;
-				} );
+		// enable the setting if it is not already enabled
+		const initialValue = response.data.value;
+		if ( initialValue !== 'yes' ) {
 			await api.put(
 				'settings/account/woocommerce_enable_checkout_login_reminder',
 				{
 					value: 'yes',
 				}
 			);
-			// add a shipping zone and method
-			await api
-				.post( 'shipping/zones', {
-					name: 'Free Shipping New York',
-				} )
-				.then( ( response ) => {
-					shippingZoneId = response.data.id;
-				} );
-			await api.put( `shipping/zones/${ shippingZoneId }/locations`, [
-				{
-					code: 'US:NY',
-					type: 'state',
-				},
-			] );
-			await api.post( `shipping/zones/${ shippingZoneId }/methods`, {
-				method_id: 'free_shipping',
-			} );
-			// create customer and save its id
-			await api
-				.post( 'customers', customer )
-				.then( ( response ) => ( customerId = response.data.id ) );
-			// enable a payment method
+		}
+
+		// Check id COD payment is enabled and enable it if it is not
+		const codResponse = await api.get( 'payment_gateways/cod' );
+		const codEnabled = codResponse.enabled;
+
+		if ( ! codEnabled ) {
 			await api.put( 'payment_gateways/cod', {
 				enabled: true,
 			} );
-		} );
+		}
 
-		test.afterAll( async ( { baseURL } ) => {
-			const api = new wcApi( {
-				url: baseURL,
-				consumerKey: process.env.CONSUMER_KEY,
-				consumerSecret: process.env.CONSUMER_SECRET,
-				version: 'wc/v3',
-			} );
-			await api.delete( `products/${ productId }`, {
-				force: true,
-			} );
-			if ( orderId ) {
-				await api.delete( `orders/${ orderId }`, { force: true } );
-			}
+		await use( page );
+
+		// revert the setting to its original value
+		if ( initialValue !== 'yes' ) {
 			await api.put(
 				'settings/account/woocommerce_enable_checkout_login_reminder',
 				{
-					value: 'no',
+					value: initialValue,
 				}
 			);
-			// delete the customer
-			await api.delete( `customers/${ customerId }`, {
-				force: true,
-			} );
-			// disable payment method
+		}
+
+		if ( ! codEnabled ) {
 			await api.put( 'payment_gateways/cod', {
-				enabled: false,
+				enabled: codEnabled,
 			} );
-			// delete shipping
-			await api.delete( `shipping/zones/${ shippingZoneId }`, {
-				force: true,
-			} );
+		}
+	},
+	product: async ( { api }, use ) => {
+		let product;
+
+		await api.post( 'products', getFakeProduct() ).then( ( response ) => {
+			product = response.data;
 		} );
 
-		test.beforeEach( async ( { page, context } ) => {
-			// Shopping cart is very sensitive to cookies, so be explicit
-			await context.clearCookies();
+		await use( product );
 
-			// all tests use the first product
-			await addAProductToCart( page, productId );
+		await api.delete( `products/${ product.id }`, { force: true } );
+	},
+	customer: async ( { api }, use ) => {
+		const customerData = getFakeCustomer();
+		let customer;
+
+		await api.post( 'customers', customerData ).then( ( response ) => {
+			customer = response.data;
+			customer.password = customerData.password;
 		} );
 
+		// add a shipping zone and method for the customer
+		let shippingZoneId;
+		await api
+			.post( 'shipping/zones', {
+				name: `Free Shipping ${ customerData.shipping.city }`,
+			} )
+			.then( ( response ) => {
+				shippingZoneId = response.data.id;
+			} );
+		await api.put( `shipping/zones/${ shippingZoneId }/locations`, [
+			{
+				code: `${ customerData.shipping.country }:${ customerData.shipping.state }`,
+				type: 'state',
+			},
+		] );
+		await api.post( `shipping/zones/${ shippingZoneId }/methods`, {
+			method_id: 'free_shipping',
+		} );
+
+		await use( customer );
+
+		await api.delete( `customers/${ customer.id }`, { force: true } );
+		await api.delete( `shipping/zones/${ shippingZoneId }`, {
+			force: true,
+		} );
+	},
+	order: async ( { api }, use ) => {
+		const order = {};
+		await use( order );
+		await api.delete( `orders/${ order.id }`, { force: true } );
+	},
+} );
+
+test.describe(
+	'Shopper Checkout Login Account',
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS ] },
+	() => {
 		test( 'can login to an existing account during checkout', async ( {
 			page,
+			product,
+			customer,
+			order,
 		} ) => {
-			await page.goto( '/checkout/' );
+			await addAProductToCart( page, product.id );
+			await page.goto( 'checkout/' );
 			await page.locator( 'text=Click here to login' ).click();
 
 			// fill in the customer account info
@@ -162,12 +158,12 @@ test.describe(
 				page.getByText( 'Your order has been received' )
 			).toBeVisible();
 
-			orderId = getOrderIdFromUrl( page );
+			order.id = getOrderIdFromUrl( page );
 
 			await expect( page.getByText( customer.email ) ).toBeVisible();
 
 			// check my account page
-			await page.goto( '/my-account/' );
+			await page.goto( 'my-account/' );
 			await expect( page.url() ).toContain( 'my-account/' );
 			await expect(
 				page.getByRole( 'heading', { name: 'My account' } )

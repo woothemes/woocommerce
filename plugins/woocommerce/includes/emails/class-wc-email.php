@@ -210,7 +210,7 @@ class WC_Email extends WC_Settings_API {
 	 *
 	 * @var array
 	 */
-	protected $placeholders = array();
+	public $placeholders = array();
 
 	/**
 	 * Strings to find in subjects/headings.

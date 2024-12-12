@@ -1,5 +1,5 @@
 <?php
-declare( strict_types = 1);
+declare( strict_types = 1 );
 
 // @codingStandardsIgnoreLine.
 /**
@@ -8,7 +8,7 @@ declare( strict_types = 1);
  * @package WooCommerce\Admin
  */
 
-use Automattic\WooCommerce\Admin\Features\OnboardingTasks\Tasks\WooCommercePayments;
+use Automattic\WooCommerce\Internal\Admin\Loader;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -31,6 +31,7 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 		$sections = array(
 			'offline',
 			'main',
+			'recommended',
 		);
 
 		/**
@@ -48,29 +49,15 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 	 */
 	public function __construct() {
 		$this->id    = 'checkout';
-		$this->label = _x( 'Payments', 'Settings tab label', 'woocommerce' );
+		$this->label = esc_html_x( 'Payments', 'Settings tab label', 'woocommerce' );
 
 		// Add filters and actions.
-		add_filter( 'woocommerce_admin_shared_settings', array( $this, 'preload_settings' ) );
 		add_action( 'admin_head', array( $this, 'hide_help_tabs' ) );
+		// Hook in as late as possible - `in_admin_header` is the last action before the `admin_notices` action is fired.
+		// It is too risky to hook into `admin_notices` with a low priority because the callbacks might be cached.
+		add_action( 'in_admin_header', array( $this, 'suppress_admin_notices' ), PHP_INT_MAX );
 
 		parent::__construct();
-	}
-
-	/**
-	 * This function can be used to preload settings related to payment gateways.
-	 * Registered keys will be available in the window.wcSettings.admin object.
-	 *
-	 * @param array $settings Settings array.
-	 *
-	 * @return array Settings array with additional settings added.
-	 */
-	public function preload_settings( $settings ) {
-		if ( ! is_admin() ) {
-			return $settings;
-		}
-
-		return $settings;
 	}
 
 	/**
@@ -90,12 +77,11 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 		do_action( 'woocommerce_admin_field_payment_gateways' );
 		ob_end_clean();
 
-		// Load gateways so we can show any global options they may have.
-		$payment_gateways = WC()->payment_gateways->payment_gateways();
-
 		if ( $this->should_render_react_section( $current_section ) ) {
 			$this->render_react_section( $current_section );
 		} elseif ( $current_section ) {
+			// Load gateways so we can show any global options they may have.
+			$payment_gateways = WC()->payment_gateways()->payment_gateways;
 			$this->render_classic_gateway_settings_page( $payment_gateways, $current_section );
 		} else {
 			$this->render_react_section( 'main' );
@@ -124,46 +110,6 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 		global $hide_save_button;
 		$hide_save_button = true;
 		echo '<div id="experimental_wc_settings_payments_' . esc_attr( $section ) . '"></div>';
-
-		// Add WooPayments data to the page.
-		$is_woopayments_onboarded    = WooCommercePayments::is_connected() && ! WooCommercePayments::is_account_partially_onboarded();
-		$is_woopayments_in_test_mode = $is_woopayments_onboarded &&
-			method_exists( WC_Payments::class, 'mode' ) &&
-			method_exists( WC_Payments::mode(), 'is_test_mode_onboarding' ) &&
-			WC_Payments::mode()->is_test_mode_onboarding();
-
-		echo '<script type="application/json" id="experimental_wc_settings_payments_woopayments">' . wp_json_encode(
-			array(
-				'isSupported'        => WooCommercePayments::is_supported(),
-				'isAccountOnboarded' => $is_woopayments_onboarded,
-				'isInTestMode'       => $is_woopayments_in_test_mode,
-			)
-		) . '</script>';
-	}
-
-	/**
-	 * Handle some additional formatting and processing that is necessary to display gateways on the React settings page.
-	 *
-	 * @param array $payment_gateways The payment gateways.
-	 *
-	 * @return array
-	 */
-	private function format_payment_gateways_for_output( array $payment_gateways ): array {
-		$offline_methods          = array( 'bacs', 'cheque', 'cod' );
-		$display_payment_gateways = array();
-
-		// Remove offline methods from the list of gateways (these are handled differently). Also remove the pre_install_woocommerce_payments_promotion gateway.
-		foreach ( $payment_gateways as $gateway ) {
-			if ( ! in_array( $gateway['id'], $offline_methods, true ) ) {
-				// Temporary condition: so we don't show two gateways - one suggested, one installed.
-				if ( 'pre_install_woocommerce_payments_promotion' === $gateway['id'] ) {
-					continue;
-				}
-				$display_payment_gateways[] = $gateway;
-			}
-		}
-
-		return $display_payment_gateways;
 	}
 
 	/**
@@ -190,7 +136,7 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 
 	/**
 	 * Run the 'admin_options' method on a given gateway.
-	 * This method exists to easy unit testing.
+	 * This method exists to help with unit testing.
 	 *
 	 * @param object $gateway The gateway object to run the method on.
 	 */
@@ -257,6 +203,84 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 		}
 
 		$screen->remove_help_tabs();
+	}
+
+	/**
+	 * Suppress WP admin notices on the WooCommerce Payments settings page.
+	 */
+	public function suppress_admin_notices() {
+		global $wp_filter;
+
+		$screen = get_current_screen();
+
+		if ( ! $screen instanceof WP_Screen || 'woocommerce_page_wc-settings' !== $screen->id ) {
+			return;
+		}
+
+		global $current_tab;
+		if ( 'checkout' !== $current_tab ) {
+			return;
+		}
+
+		// Generic admin notices are definitely not needed.
+		remove_all_actions( 'all_admin_notices' );
+
+		// WooCommerce uses the 'admin_notices' hook for its own notices.
+		// We will only allow WooCommerce core notices to be displayed.
+		$wp_admin_notices_hook = $wp_filter['admin_notices'] ?? null;
+		if ( ! $wp_admin_notices_hook || ! $wp_admin_notices_hook->has_filters() ) {
+			// Nothing to do if there are no actions hooked into `admin_notices`.
+			return;
+		}
+
+		$wc_admin_notices = WC_Admin_Notices::get_notices();
+		if ( empty( $wc_admin_notices ) ) {
+			// If there are no WooCommerce core notices, we can remove all actions hooked into `admin_notices`.
+			remove_all_actions( 'admin_notices' );
+			return;
+		}
+
+		// Go through the callbacks hooked into `admin_notices` and
+		// remove any that are NOT from the WooCommerce core (i.e. from the `WC_Admin_Notices` class).
+		foreach ( $wp_admin_notices_hook->callbacks as $priority => $callbacks ) {
+			if ( ! is_array( $callbacks ) ) {
+				continue;
+			}
+
+			foreach ( $callbacks as $callback ) {
+				// Ignore malformed callbacks.
+				if ( ! is_array( $callback ) ) {
+					continue;
+				}
+				// WooCommerce doesn't use closures to handle notices.
+				// WooCommerce core notices are handled by `WC_Admin_Notices` class methods.
+				// Remove plain functions or closures.
+				if ( ! is_array( $callback['function'] ) ) {
+					remove_action( 'admin_notices', $callback['function'], $priority );
+					continue;
+				}
+
+				$class_or_object = $callback['function'][0] ?? null;
+				// We need to allow Automattic\WooCommerce\Internal\Admin\Loader methods callbacks
+				// because they are used to wrap notices.
+				// @see Automattic\WooCommerce\Internal\Admin\Loader::inject_before_notices().
+				// @see Automattic\WooCommerce\Internal\Admin\Loader::inject_after_notices().
+				if (
+					(
+						// We have a class name.
+						is_string( $class_or_object ) &&
+						! ( WC_Admin_Notices::class === $class_or_object || Loader::class === $class_or_object )
+					) ||
+					(
+						// We have a class instance.
+						is_object( $class_or_object ) &&
+						! ( $class_or_object instanceof WC_Admin_Notices || $class_or_object instanceof Loader )
+					)
+				) {
+					remove_action( 'admin_notices', $callback['function'], $priority );
+				}
+			}
+		}
 	}
 }
 

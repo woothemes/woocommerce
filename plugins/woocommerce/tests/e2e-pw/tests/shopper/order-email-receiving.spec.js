@@ -1,8 +1,17 @@
+/**
+ * External dependencies
+ */
+import {
+	addAProductToCart,
+	getOrderIdFromUrl,
+} from '@woocommerce/e2e-utils-playwright';
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
 const { test, expect } = require( '@playwright/test' );
 const { customer, storeDetails } = require( '../../test-data/data' );
 const { api } = require( '../../utils' );
-const { getOrderIdFromUrl } = require( '../../utils/order' );
-const { addAProductToCart } = require( '../../utils/cart' );
 
 let productId, orderId, zoneId;
 
@@ -22,7 +31,7 @@ const storeName = 'WooCommerce Core E2E Test Suite';
 
 test.describe(
 	'Shopper Order Email Receiving',
-	{ tag: [ '@payments', '@services', '@hpos' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 
@@ -74,7 +83,7 @@ test.describe(
 
 			await addAProductToCart( page, productId );
 
-			await page.goto( '/checkout/' );
+			await page.goto( 'checkout/' );
 
 			await page
 				.locator( '#billing_first_name' )

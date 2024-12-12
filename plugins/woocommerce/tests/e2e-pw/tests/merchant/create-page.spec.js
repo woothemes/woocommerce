@@ -1,11 +1,14 @@
-const { test: baseTest } = require( '../../fixtures/fixtures' );
-const {
-	goToPageEditor,
-	fillPageTitle,
-	getCanvas,
-	publishPage,
+const { test: baseTest, tags } = require( '../../fixtures/fixtures' );
+const { fillPageTitle, publishPage } = require( '../../utils/editor' );
+
+/**
+ * External dependencies
+ */
+import {
 	closeChoosePatternModal,
-} = require( '../../utils/editor' );
+	getCanvas,
+	goToPageEditor,
+} from '@woocommerce/e2e-utils-playwright';
 
 const test = baseTest.extend( {
 	storageState: process.env.ADMINSTATE,
@@ -13,7 +16,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Can create a new page',
-	{ tag: [ '@gutenberg', '@services' ] },
+	{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
 	() => {
 		// eslint-disable-next-line playwright/expect-expect
 		test( 'can create new page', async ( { page, testPage } ) => {

@@ -1,9 +1,14 @@
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
+
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 test.describe(
 	'Cart > Redirect to cart from shop',
-	{ tag: [ '@payments', '@services', '@not-e2e' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.NOT_E2E ] },
 	() => {
 		let productId;
 		const productName = 'A redirect product test';
@@ -59,7 +64,7 @@ test.describe(
 		test( 'can redirect user to cart from shop page', async ( {
 			page,
 		} ) => {
-			await page.goto( '/shop/' );
+			await page.goto( 'shop/' );
 			await page
 				.locator(
 					`a[data-product_id='${ productId }'][href*=add-to-cart]`
@@ -75,7 +80,7 @@ test.describe(
 		test( 'can redirect user to cart from detail page', async ( {
 			page,
 		} ) => {
-			await page.goto( '/shop/' );
+			await page.goto( 'shop/' );
 			await page.locator( `text=${ productName }` ).click();
 
 			await page.getByRole( 'button', { name: 'Add to cart' } ).click();

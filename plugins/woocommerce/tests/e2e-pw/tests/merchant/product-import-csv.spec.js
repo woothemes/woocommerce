@@ -1,6 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const path = require( 'path' );
+const { tags } = require( '../../fixtures/fixtures' );
 const filePath = path.resolve( 'tests/e2e-pw/test-data/sample_products.csv' );
 const filePathOverride = path.resolve(
 	'tests/e2e-pw/test-data/sample_products_override.csv'
@@ -93,7 +94,7 @@ const errorMessage = 'File is empty. Please upload something more substantial.';
 
 test.describe.serial(
 	'Import Products from a CSV file',
-	{ tag: [ '@gutenberg', '@services' ] },
+	{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 

@@ -1,6 +1,15 @@
+/**
+ * External dependencies
+ */
+import {
+	addAProductToCart,
+	getOrderIdFromUrl,
+} from '@woocommerce/e2e-utils-playwright';
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
 const { test, expect } = require( '@playwright/test' );
-const { getOrderIdFromUrl } = require( '../../utils/order' );
-const { addAProductToCart } = require( '../../utils/cart' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 const includedProductName = 'Included test product';
@@ -36,10 +45,10 @@ test.describe(
 	'Cart & Checkout Restricted Coupons',
 	{
 		tag: [
-			'@payments',
-			'@services',
-			'@hpos',
-			'@could-be-lower-level-test',
+			tags.PAYMENTS,
+			tags.SERVICES,
+			tags.HPOS,
+			tags.COULD_BE_LOWER_LEVEL_TEST,
 		],
 	},
 	() => {
@@ -242,7 +251,7 @@ test.describe(
 		test( 'expired coupon cannot be used', async ( { page, context } ) => {
 			await test.step( 'Load cart page and try expired coupon usage', async () => {
 				await addAProductToCart( page, firstProductId );
-				await page.goto( '/cart/' );
+				await page.goto( 'cart/' );
 				await applyCoupon( page, 'expired-coupon' );
 				await expect(
 					page.getByText( 'This coupon has expired.' )
@@ -253,7 +262,7 @@ test.describe(
 
 			await test.step( 'Load checkout page and try expired coupon usage', async () => {
 				await addAProductToCart( page, firstProductId );
-				await page.goto( '/checkout/' );
+				await page.goto( 'checkout/' );
 				await expandCouponForm( page );
 				await applyCoupon( page, 'expired-coupon' );
 				await expect(
@@ -268,7 +277,7 @@ test.describe(
 		} ) => {
 			await test.step( 'Load cart page and try limited coupon usage', async () => {
 				await addAProductToCart( page, firstProductId );
-				await page.goto( '/cart/' );
+				await page.goto( 'cart/' );
 				await applyCoupon( page, 'min-max-spend-individual' );
 				// failed because we need to have at least $50 in cart (single product is only $20)
 				await expect(
@@ -283,14 +292,14 @@ test.describe(
 				await addAProductToCart( page, firstProductId, 2 );
 
 				// passed because we're between 50 and 200 dollars
-				await page.goto( '/cart/' );
+				await page.goto( 'cart/' );
 				await applyCoupon( page, 'min-max-spend-individual' );
 				await expect(
 					page.getByText( 'Coupon code applied successfully.' )
 				).toBeVisible();
 
 				// fail because the min-max coupon can only be used by itself
-				await page.goto( '/cart/' );
+				await page.goto( 'cart/' );
 				await applyCoupon( page, 'no-sale-use-limit' );
 				await expect(
 					page.getByText(
@@ -304,7 +313,7 @@ test.describe(
 			await test.step( 'Load checkout page and try limited coupon usage', async () => {
 				await addAProductToCart( page, firstProductId );
 
-				await page.goto( '/checkout/' );
+				await page.goto( 'checkout/' );
 				await expandCouponForm( page );
 				await applyCoupon( page, 'min-max-spend-individual' );
 				// failed because we need to have at least $50 in cart (single product is only $20)
@@ -318,7 +327,7 @@ test.describe(
 				await addAProductToCart( page, firstProductId, 2 );
 
 				// passed because we're between 50 and 200 dollars
-				await page.goto( '/checkout/' );
+				await page.goto( 'checkout/' );
 				await expandCouponForm( page );
 				await applyCoupon( page, 'min-max-spend-individual' );
 				await expect(
@@ -326,7 +335,7 @@ test.describe(
 				).toBeVisible();
 
 				// fail because the min-max coupon can only be used by itself
-				await page.goto( '/checkout/' );
+				await page.goto( 'checkout/' );
 				await expandCouponForm( page );
 				await applyCoupon( page, 'no-sale-use-limit' );
 				await expect(
@@ -343,7 +352,7 @@ test.describe(
 		} ) => {
 			await test.step( 'Load cart page and try coupon usage on sale item', async () => {
 				await addAProductToCart( page, secondProductId );
-				await page.goto( '/cart/' );
+				await page.goto( 'cart/' );
 				await applyCoupon( page, 'no-sale-use-limit' );
 				// failed because this product is on sale.
 				await expect(
@@ -357,7 +366,7 @@ test.describe(
 
 			await test.step( 'Load checkout page and try coupon usage on sale item', async () => {
 				await addAProductToCart( page, secondProductId );
-				await page.goto( '/checkout/' );
+				await page.goto( 'checkout/' );
 				await expandCouponForm( page );
 				await applyCoupon( page, 'no-sale-use-limit' );
 				// failed because this product is on sale
@@ -411,7 +420,7 @@ test.describe(
 
 			await test.step( 'Load cart page and try over limit coupon usage', async () => {
 				await addAProductToCart( page, firstProductId );
-				await page.goto( '/cart/' );
+				await page.goto( 'cart/' );
 				await applyCoupon( page, 'no-sale-use-limit' );
 				// failed because this coupon code has been used too much
 				await expect(
@@ -425,7 +434,7 @@ test.describe(
 
 			await test.step( 'Load checkout page and try over limit coupon usage', async () => {
 				await addAProductToCart( page, firstProductId );
-				await page.goto( '/checkout/' );
+				await page.goto( 'checkout/' );
 				await expandCouponForm( page );
 				await applyCoupon( page, 'no-sale-use-limit' );
 				// failed because this coupon code has been used too much
@@ -447,7 +456,7 @@ test.describe(
 		} ) => {
 			await test.step( 'Load cart page and try included certain items coupon usage', async () => {
 				await addAProductToCart( page, secondProductId );
-				await page.goto( '/cart/' );
+				await page.goto( 'cart/' );
 				await applyCoupon( page, 'product-and-category-included' );
 				// failed because this product is not included for coupon
 				await expect(
@@ -461,7 +470,7 @@ test.describe(
 
 			await test.step( 'Load checkout page and try included certain items coupon usage', async () => {
 				await addAProductToCart( page, secondProductId );
-				await page.goto( '/checkout/' );
+				await page.goto( 'checkout/' );
 				await expandCouponForm( page );
 				await applyCoupon( page, 'product-and-category-included' );
 				// failed because this product is not included for coupon
@@ -479,7 +488,7 @@ test.describe(
 		} ) => {
 			await test.step( 'Load cart page and try on certain products coupon usage', async () => {
 				await addAProductToCart( page, firstProductId );
-				await page.goto( '/cart/' );
+				await page.goto( 'cart/' );
 				await applyCoupon( page, 'product-and-category-included' );
 				// succeeded
 				await expect(
@@ -492,7 +501,7 @@ test.describe(
 			await test.step( 'Load checkout page and try on certain products coupon usage', async () => {
 				await addAProductToCart( page, firstProductId );
 
-				await page.goto( '/checkout/' );
+				await page.goto( 'checkout/' );
 				await expandCouponForm( page );
 				await applyCoupon( page, 'product-and-category-included' );
 				// succeeded
@@ -508,7 +517,7 @@ test.describe(
 		} ) => {
 			await test.step( 'Load cart page and try excluded items coupon usage', async () => {
 				await addAProductToCart( page, secondProductId );
-				await page.goto( '/cart/' );
+				await page.goto( 'cart/' );
 				await applyCoupon( page, 'product-and-category-included' );
 				// failed because this product is excluded from coupon
 				await expect(
@@ -522,7 +531,7 @@ test.describe(
 
 			await test.step( 'Load checkout page and try excluded items coupon usage', async () => {
 				await addAProductToCart( page, secondProductId );
-				await page.goto( '/checkout/' );
+				await page.goto( 'checkout/' );
 				await expandCouponForm( page );
 				await applyCoupon( page, 'product-and-category-included' );
 				// failed because this product is excluded from coupon
@@ -540,7 +549,7 @@ test.describe(
 		} ) => {
 			await test.step( 'Load cart page and try coupon usage on other items', async () => {
 				await addAProductToCart( page, firstProductId );
-				await page.goto( '/cart/' );
+				await page.goto( 'cart/' );
 				await applyCoupon( page, 'product-and-category-included' );
 				// succeeded
 				await expect(
@@ -553,7 +562,7 @@ test.describe(
 			await test.step( 'Load checkout page and try coupon usage on other items', async () => {
 				await addAProductToCart( page, firstProductId );
 
-				await page.goto( '/checkout/' );
+				await page.goto( 'checkout/' );
 				await expandCouponForm( page );
 				await applyCoupon( page, 'product-and-category-included' );
 				// succeeded
@@ -567,7 +576,7 @@ test.describe(
 			page,
 		} ) => {
 			await addAProductToCart( page, firstProductId );
-			await page.goto( '/cart/' );
+			await page.goto( 'cart/' );
 			await applyCoupon( page, 'email-restricted' );
 			await expect(
 				page.getByText(
@@ -581,7 +590,7 @@ test.describe(
 		} ) => {
 			await addAProductToCart( page, firstProductId );
 
-			await page.goto( '/checkout/' );
+			await page.goto( 'checkout/' );
 
 			await page.getByLabel( 'First name' ).first().fill( 'Marge' );
 			await page.getByLabel( 'Last name' ).first().fill( 'Simpson' );
@@ -622,7 +631,7 @@ test.describe(
 
 			await addAProductToCart( page, firstProductId );
 
-			await page.goto( '/checkout/' );
+			await page.goto( 'checkout/' );
 
 			await page.getByLabel( 'First name' ).first().fill( 'Homer' );
 			await page.getByLabel( 'Last name' ).first().fill( 'Simpson' );
@@ -657,7 +666,7 @@ test.describe(
 			// try to order a second time, but should get an error
 			await addAProductToCart( page, firstProductId );
 
-			await page.goto( '/checkout/' );
+			await page.goto( 'checkout/' );
 
 			await page.getByLabel( 'First name' ).first().fill( 'Homer' );
 			await page.getByLabel( 'Last name' ).first().fill( 'Simpson' );

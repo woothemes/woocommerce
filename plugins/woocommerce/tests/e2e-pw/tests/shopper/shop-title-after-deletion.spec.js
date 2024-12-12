@@ -1,10 +1,10 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 
 // test case for bug https://github.com/woocommerce/woocommerce/pull/46429
 const test = baseTest.extend( {
 	storageState: process.env.ADMINSTATE,
 	page: async ( { page, wpApi }, use ) => {
-		const response = await wpApi.get( `/wp-json/wp/v2/pages?slug=shop`, {
+		const response = await wpApi.get( `./wp-json/wp/v2/pages?slug=shop`, {
 			data: {
 				_fields: [ 'id' ],
 			},
@@ -13,7 +13,7 @@ const test = baseTest.extend( {
 		const pages = await response.json();
 		const pageId = pages[ 0 ].id;
 
-		await wpApi.delete( `/wp-json/wp/v2/pages/${ pageId }`, {
+		await wpApi.delete( `./wp-json/wp/v2/pages/${ pageId }`, {
 			data: {
 				force: false,
 			},
@@ -21,7 +21,7 @@ const test = baseTest.extend( {
 
 		await use( page );
 
-		await wpApi.post( `/wp-json/wp/v2/pages/${ pageId }`, {
+		await wpApi.post( `./wp-json/wp/v2/pages/${ pageId }`, {
 			data: {
 				status: 'publish',
 			},
@@ -31,9 +31,9 @@ const test = baseTest.extend( {
 
 test(
 	'Check the title of the shop page after the page has been deleted',
-	{ tag: [ '@payments', '@services', '@could-be-lower-level-test' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.COULD_BE_LOWER_LEVEL_TEST ] },
 	async ( { page } ) => {
-		await page.goto( '/shop/' );
+		await page.goto( 'shop/' );
 		expect( await page.title() ).toBe(
 			'Shop – WooCommerce Core E2E Test Suite'
 		);

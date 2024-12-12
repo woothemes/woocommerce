@@ -84,6 +84,7 @@
 		"clsx": "^2.1.1",
 		"core-js": "^3.34.0",
 		"debug": "^4.3.4",
+		"downshift": "^9.0.8",
 		"dompurify": "^2.5.7",
 		"github-label-sync": "^2.3.1",
 		"grapheme-splitter": "^1.0.4",
