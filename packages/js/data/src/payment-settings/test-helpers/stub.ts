@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import {
-	OfflinePaymentGateway,
+	OfflinePaymentMethodProvider,
 	PaymentProvider,
 	PaymentProviderType,
 	SuggestedPaymentExtension,
@@ -115,10 +115,10 @@ export const providersStub: PaymentProvider[] = [
 	},
 ];
 
-export const offlinePaymentGatewaysStub: OfflinePaymentGateway[] = [
+export const offlinePaymentGatewaysStub: OfflinePaymentMethodProvider[] = [
 	{
 		id: 'bacs',
-		_type: 'offline_pm',
+		_type: PaymentProviderType.OfflinePm,
 		_order: 999,
 		title: 'Direct bank transfer',
 		description:
@@ -147,7 +147,7 @@ export const offlinePaymentGatewaysStub: OfflinePaymentGateway[] = [
 	},
 	{
 		id: 'cheque',
-		_type: 'offline_pm',
+		_type: PaymentProviderType.OfflinePm,
 		_order: 1000,
 		title: 'Cheque payments',
 		description:
@@ -176,7 +176,7 @@ export const offlinePaymentGatewaysStub: OfflinePaymentGateway[] = [
 	},
 	{
 		id: 'cod',
-		_type: 'offline_pm',
+		_type: PaymentProviderType.OfflinePm,
 		_order: 1001,
 		title: 'Cash on delivery',
 		description:

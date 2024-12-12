@@ -29,10 +29,12 @@ export interface ManagementData {
 
 export enum PaymentProviderType {
 	OfflinePmsGroup = 'offline_pms_group',
+	OfflinePm = 'offline_pm',
 	Suggestion = 'suggestion',
 	Gateway = 'gateway',
 }
 
+// General payment provider type.
 export type PaymentProvider = {
 	id: string;
 	_order: number;
@@ -41,28 +43,44 @@ export type PaymentProvider = {
 	description: string;
 	icon: string;
 	image?: string;
-	tags?: string[];
 	supports?: string[];
 	plugin: PluginData;
 	short_description?: string;
 	management?: ManagementData;
 	state?: StateData;
 	links?: PaymentGatewayLink[];
+	tags?: string[];
+	_suggestion_id?: string;
+	_links?: object;
 };
 
-export type OfflinePaymentGateway = {
-	id: string;
-	_type: 'offline_pm';
-	_order: number;
-	title: string;
-	description: string;
-	icon: string;
+// Payment gateway provider type.
+export type PaymentGatewayProvider = PaymentProvider & {
 	supports: string[];
 	management: ManagementData;
 	state: StateData;
-	plugin: PluginData;
 };
 
+// Offline payment method provider type.
+export type OfflinePaymentMethodProvider = PaymentProvider & {
+	supports: string[];
+	management: ManagementData;
+	state: StateData;
+};
+
+// Offline payment methods group provider type.
+export type OfflinePmsGroupProvider = PaymentProvider & {
+	management: ManagementData;
+	state: StateData;
+};
+
+export type PaymentExtensionSuggestionProvider = PaymentProvider & {
+	management: ManagementData;
+	state: StateData;
+	_suggestion_id: string;
+};
+
+// Payment extension suggestion outside providers.
 export type SuggestedPaymentExtension = {
 	id: string;
 	_type: string;
@@ -87,7 +105,7 @@ export type SuggestedPaymentExtensionCategory = {
 
 export type PaymentSettingsState = {
 	providers: PaymentProvider[];
-	offlinePaymentGateways: OfflinePaymentGateway[];
+	offlinePaymentGateways: OfflinePaymentMethodProvider[];
 	suggestions: SuggestedPaymentExtension[];
 	suggestionCategories: SuggestedPaymentExtensionCategory[];
 	isFetching: boolean;
@@ -98,7 +116,7 @@ export type OrderMap = Record< string, number >;
 
 export type PaymentProvidersResponse = {
 	providers: PaymentProvider[];
-	offline_payment_methods: OfflinePaymentGateway[];
+	offline_payment_methods: OfflinePaymentMethodProvider[];
 	suggestions: SuggestedPaymentExtension[];
 	suggestion_categories: SuggestedPaymentExtensionCategory[];
 };
