@@ -827,15 +827,21 @@ class PaymentsRestController extends RestApiControllerBase {
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
 						),
+						'title'             => array(
+							'type'        => 'string',
+							'description' => esc_html__( 'The incentive title. It can contain stylistic HTML.', 'woocommerce' ),
+							'context'     => array( 'view', 'edit' ),
+							'readonly'    => true,
+						),
 						'description'       => array(
 							'type'        => 'string',
-							'description' => esc_html__( 'The incentive description. It can contain basic HTML.', 'woocommerce' ),
+							'description' => esc_html__( 'The incentive description. It can contain stylistic HTML.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
 						),
 						'short_description' => array(
 							'type'        => 'string',
-							'description' => esc_html__( 'The short description of the incentive. It can contain basic HTML.', 'woocommerce' ),
+							'description' => esc_html__( 'The short description of the incentive. It can contain stylistic HTML.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
 						),

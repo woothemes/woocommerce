@@ -549,6 +549,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 			array(
 				'id'                => 'promo-discount__wc_settings_payments',
 				'promo_id'          => 'promo-discount',
+				'title'             => 'Save X% on processing fees.',
 				'description'       => 'Use the native payments solution built and supported by Woo.',
 				'short_description' => 'Save X% on processing fees.',
 				'cta_label'         => 'Save X%',
@@ -621,6 +622,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 			array(
 				'id'                => 'promo-discount__wc_settings_payments',
 				'promo_id'          => 'promo-discount',
+				'title'             => 'Save X% on processing fees.',
 				'description'       => 'Use the native payments solution built and supported by Woo.',
 				'short_description' => 'Save X% on processing fees.',
 				'cta_label'         => 'Save X%',
