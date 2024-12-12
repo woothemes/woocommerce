@@ -1,4 +1,0 @@
-Significance: patch
-Type: dev
-
-Fix @version bump requirement when it's already set to the expected value
