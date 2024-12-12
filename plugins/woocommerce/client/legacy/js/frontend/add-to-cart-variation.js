@@ -880,8 +880,10 @@
 				const $validOptions = $selectElement.children( 'option:not([value=""], [disabled], [class*="disabled"])' );
 				if ( $validOptions.length === 1 ) {
 					// Only 1 option (+ the "Choose an option" choice)
-					$selectElement.val( $validOptions.val() );
-					$selectElement.trigger( 'change' ).trigger( 'click' );
+					if ( $selectElement.val() !== $validOptions.val() ) {
+						$selectElement.val( $validOptions.val() );
+						$selectElement.trigger( 'change' ).trigger( 'click' );
+					}
 				}
 			} );
 
