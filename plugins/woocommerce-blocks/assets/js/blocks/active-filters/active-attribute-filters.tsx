@@ -48,7 +48,7 @@ const ActiveAttributeFilters = ( {
 	displayStyle,
 	isLoadingCallback,
 }: ActiveAttributeFiltersProps ) => {
-	const { results, isLoading } = useCollection< AttributeTerm[] >( {
+	const { results, isLoading } = useCollection< AttributeTerm >( {
 		namespace: '/wc/store/v1',
 		resourceName: 'products/attributes/terms',
 		resourceValues: [ attributeObject.id ],

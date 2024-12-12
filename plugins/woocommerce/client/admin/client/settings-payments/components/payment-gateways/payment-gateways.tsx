@@ -1,97 +1,55 @@
 /**
  * External dependencies
  */
-import { Gridicon } from '@automattic/components';
-import { List } from '@woocommerce/components';
-import { Plugin, PaymentGateway } from '@woocommerce/data';
-import { getAdminLink } from '@woocommerce/settings';
-import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-
+import { apiFetch } from '@wordpress/data-controls';
+import {
+	PaymentProvider,
+	PAYMENT_SETTINGS_STORE_NAME,
+	WC_ADMIN_NAMESPACE,
+} from '@woocommerce/data';
+import { useDispatch } from '@wordpress/data';
+import { useMemo } from '@wordpress/element';
+import { decodeEntities } from '@wordpress/html-entities';
 /**
  * Internal dependencies
  */
-import { PaymentGatewayListItem } from '~/settings-payments/components/payment-gateway-list-item';
-import { PaymentExtensionSuggestionListItem } from '~/settings-payments/components/payment-extension-suggestion-list-item';
-import { WooPaymentsGatewayData } from '~/settings-payments/types';
+import { CountrySelector } from '~/settings-payments/components/country-selector';
+import { ListPlaceholder } from '~/settings-payments/components/list-placeholder';
+import { PaymentGatewayList } from '~/settings-payments/components/payment-gateway-list';
 
 interface PaymentGatewaysProps {
-	registeredPaymentGateways: PaymentGateway[];
+	providers: PaymentProvider[];
 	installedPluginSlugs: string[];
-	preferredPluginSuggestions: Plugin[];
-	wooPaymentsGatewayData?: WooPaymentsGatewayData;
 	installingPlugin: string | null;
-	setupPlugin: ( plugin: Plugin ) => void;
+	setupPlugin: ( id: string, slug: string ) => void;
+	updateOrdering: ( providers: PaymentProvider[] ) => void;
+	isFetching: boolean;
+	businessRegistrationCountry: string | null;
+	setBusinessRegistrationCountry: ( country: string ) => void;
 }
 
 export const PaymentGateways = ( {
-	registeredPaymentGateways,
+	providers,
 	installedPluginSlugs,
-	preferredPluginSuggestions,
-	wooPaymentsGatewayData,
 	installingPlugin,
 	setupPlugin,
+	updateOrdering,
+	isFetching,
+	businessRegistrationCountry,
+	setBusinessRegistrationCountry,
 }: PaymentGatewaysProps ) => {
-	const setupLivePayments = () => {};
+	const { invalidateResolution } = useDispatch( PAYMENT_SETTINGS_STORE_NAME );
 
-	// Transform suggested preferred plugins comply with List component format.
-	const preferredPluginSuggestionsList = preferredPluginSuggestions.map(
-		( plugin: Plugin ) => {
-			const pluginInstalled = installedPluginSlugs.includes(
-				plugin.plugins[ 0 ]
-			);
-			return PaymentExtensionSuggestionListItem( {
-				plugin,
-				installingPlugin,
-				setupPlugin,
-				pluginInstalled,
-			} );
-		}
-	);
-
-	// Transform payment gateways to comply with List component format.
-	const paymentGatewaysList = registeredPaymentGateways.map(
-		( gateway: PaymentGateway ) => {
-			return PaymentGatewayListItem( {
-				gateway,
-				wooPaymentsGatewayData,
-				setupLivePayments,
-			} );
-		}
-	);
-
-	// Add offline payment provider.
-	paymentGatewaysList.push( {
-		key: 'offline',
-		className: 'woocommerce-item__payment-gateway transitions-disabled',
-		title: <>{ __( 'Offline payment methods', 'woocommerce' ) }</>,
-		content: (
-			<>
-				{ __(
-					'Take payments via multiple offline methods. These can also be useful to test purchases.',
-					'woocommerce'
-				) }
-			</>
-		),
-		after: (
-			<a
-				href={ getAdminLink(
-					'admin.php?page=wc-settings&tab=checkout&section=offline'
-				) }
-			>
-				<Gridicon icon="chevron-right" />
-			</a>
-		),
-		// todo change logo to appropriate one.
-		before: (
-			<img
-				src={
-					'https://woocommerce.com/wp-content/plugins/wccom-plugins/payment-gateway-suggestions/images/paypal.svg'
-				}
-				alt="offline payment methods"
-			/>
-		),
-	} );
+	const countryOptions = useMemo( () => {
+		return Object.entries( window.wcSettings.countries || [] )
+			.map( ( [ key, name ] ) => ( {
+				key,
+				name: decodeEntities( name ),
+				types: [],
+			} ) )
+			.sort( ( a, b ) => a.name.localeCompare( b.name ) );
+	}, [] );
 
 	return (
 		<div className="settings-payment-gateways">
@@ -100,25 +58,44 @@ export const PaymentGateways = ( {
 					{ __( 'Payment providers', 'woocommerce' ) }
 				</div>
 				<div className="settings-payment-gateways__header-select-container">
-					<SelectControl
+					<CountrySelector
 						className="woocommerce-select-control__country"
-						prefix={ __( 'Business location :', 'woocommerce' ) }
+						label={ __( 'Business location :', 'woocommerce' ) }
 						placeholder={ '' }
-						label={ '' }
-						options={ [
-							{ label: 'United States', value: 'US' },
-							{ label: 'Canada', value: 'Canada' },
-						] }
-						onChange={ () => {} }
+						value={
+							countryOptions.find(
+								( country ) =>
+									country.key === businessRegistrationCountry
+							) ?? { key: 'US', name: 'United States (US)' }
+						}
+						options={ countryOptions }
+						onChange={ ( value: string ) => {
+							setBusinessRegistrationCountry( value );
+							invalidateResolution( 'getPaymentProviders', [
+								value,
+							] );
+							apiFetch( {
+								path:
+									WC_ADMIN_NAMESPACE +
+									'/settings/payments/country',
+								method: 'POST',
+								data: { location: value },
+							} );
+						} }
 					/>
 				</div>
 			</div>
-			<List
-				items={ [
-					...preferredPluginSuggestionsList,
-					...paymentGatewaysList,
-				] }
-			/>
+			{ isFetching ? (
+				<ListPlaceholder rows={ 5 } />
+			) : (
+				<PaymentGatewayList
+					providers={ providers }
+					installedPluginSlugs={ installedPluginSlugs }
+					installingPlugin={ installingPlugin }
+					setupPlugin={ setupPlugin }
+					updateOrdering={ updateOrdering }
+				/>
+			) }
 		</div>
 	);
 };

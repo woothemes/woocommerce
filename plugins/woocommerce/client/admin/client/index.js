@@ -29,6 +29,7 @@ import { deriveWpAdminBackgroundColours } from './utils/derive-wp-admin-backgrou
 import {
 	SettingsPaymentsMainWrapper,
 	SettingsPaymentsOfflineWrapper,
+	SettingsPaymentsMethodsWrapper,
 	SettingsPaymentsWooCommercePaymentsWrapper,
 } from './settings-payments';
 import { ErrorBoundary } from './error-boundary';
@@ -103,6 +104,9 @@ if (
 		const paymentsOfflineRoot = document.getElementById(
 			'experimental_wc_settings_payments_offline'
 		);
+		const paymentsMethodsRoot = document.getElementById(
+			'experimental_wc_settings_payments_recommended'
+		);
 		const paymentsWooCommercePaymentsRoot = document.getElementById(
 			'experimental_wc_settings_payments_woocommerce_payments'
 		);
@@ -123,6 +127,15 @@ if (
 					null
 				)
 			).render( <SettingsPaymentsOfflineWrapper /> );
+		}
+
+		if ( paymentsMethodsRoot ) {
+			createRoot(
+				paymentsMethodsRoot.insertBefore(
+					document.createElement( 'div' ),
+					null
+				)
+			).render( <SettingsPaymentsMethodsWrapper /> );
 		}
 
 		if ( paymentsWooCommercePaymentsRoot ) {

@@ -1,13 +1,17 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
-const {
-	goToPageEditor,
-	fillPageTitle,
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
+const { fillPageTitle } = require( '../../utils/editor' );
+const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
+
+/**
+ * External dependencies
+ */
+import {
+	getCanvas,
 	insertBlock,
 	insertBlockByShortcut,
+	goToPageEditor,
 	publishPage,
-	getCanvas,
-} = require( '../../utils/editor' );
-const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
+} from '@woocommerce/e2e-utils-playwright';
 
 const singleProductPrice1 = '10';
 const singleProductPrice2 = '50';
@@ -23,14 +27,16 @@ const test = baseTest.extend( {
 	testPageTitlePrefix: 'Products filter',
 } );
 
+//todo audit follow-up: see plugins/woocommerce-blocks/tests/e2e/tests/product-filters/price-filter-frontend.block_theme.spec.ts
 test.describe(
 	'Filter items in the shop by product price',
 	{
 		tag: [
-			'@payments',
-			'@services',
-			'@skip-on-default-wpcom',
-			'@skip-on-default-pressable',
+			tags.PAYMENTS,
+			tags.SERVICES,
+			tags.SKIP_ON_WPCOM,
+			tags.SKIP_ON_PRESSABLE,
+			tags.COULD_BE_LOWER_LEVEL_TEST,
 		],
 	},
 	() => {

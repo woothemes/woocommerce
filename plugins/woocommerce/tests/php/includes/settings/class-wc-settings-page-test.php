@@ -349,7 +349,7 @@ HTML;
 
 		$this->assertTrue( isset( $migration_page_data ) );
 		$this->assertEquals( count( $migration->get_sections() ), count( $migration_sections_data ) );
-		$this->assertEquals( $migration_sections_data['']['settings'][0]['title'], 'Default Section' );
+		$this->assertEquals( $migration_sections_data['default']['settings'][0]['title'], 'Default Section' );
 		$this->assertEquals( $migration_sections_data['foobar']['settings'][0]['title'], 'Foobar Section' );
 	}
 }

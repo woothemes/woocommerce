@@ -26,47 +26,38 @@ test.describe( 'Manage webhooks', () => {
 	test( 'Webhook cannot be bulk deleted without nonce', async ( {
 		page,
 	} ) => {
-		await page.goto( WEBHOOKS_SCREEN_URI, { waitUntil: 'networkidle' } );
+		await page.goto( WEBHOOKS_SCREEN_URI );
 
 		await page.getByRole( 'link', { name: 'Add webhook' } ).click();
-
-		await page.waitForLoadState( 'networkidle' );
-
 		await page.getByRole( 'textbox', { name: 'Name' } ).fill( 'Webhook 1' );
-
 		await page.getByRole( 'button', { name: 'Save webhook' } ).click();
-
-		await page.waitForLoadState( 'networkidle' );
 
 		await expect(
 			page.getByText( 'Webhook updated successfully.' )
-		).toBeVisible( { timeout: 1 } );
+		).toBeVisible();
 
-		await page.goto( WEBHOOKS_SCREEN_URI, { waitUntil: 'networkidle' } );
+		await page.goto( WEBHOOKS_SCREEN_URI );
 
 		await expect(
 			page.getByRole( 'row', { name: 'Webhook 1' } )
-		).toBeVisible( { timeout: 1 } );
+		).toBeVisible();
 
 		let editURL = await page
 			.getByRole( 'link', { name: 'Webhook 1', exact: true } )
 			.getAttribute( 'href' );
 		editURL = new URL( editURL );
-		const origin = editURL.origin;
 		const webhookID = editURL.searchParams.get( 'edit-webhook' );
 
-		const actionURI = new URL( origin + '/' + WEBHOOKS_SCREEN_URI );
-		actionURI.searchParams.set( 'action', 'delete' );
-		actionURI.searchParams.set( 'webhook[]', webhookID );
+		await page.goto(
+			`${ WEBHOOKS_SCREEN_URI }&action=delete&webhook[]=${ webhookID }`
+		);
 
-		await page.goto( actionURI.toString(), { waitUntil: 'networkidle' } );
+		await expect(
+			page.getByText( 'The link you followed has expired.' )
+		).toBeVisible();
 
 		await expect(
 			page.getByText( 'webhook permanently deleted' )
 		).toBeHidden( { timeout: 1 } );
-
-		await expect(
-			page.getByText( 'The link you followed has expired.' )
-		).toBeVisible( { timeout: 1 } );
 	} );
 } );

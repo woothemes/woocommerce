@@ -6,6 +6,7 @@
  */
 
 use Automattic\Jetpack\Constants;
+use Automattic\WooCommerce\Enums\OrderStatus;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -78,7 +79,7 @@ class WC_Gateway_COD extends WC_Payment_Gateway {
 		$this->id                 = 'cod';
 		$this->icon               = apply_filters( 'woocommerce_cod_icon', '' );
 		$this->method_title       = __( 'Cash on delivery', 'woocommerce' );
-		$this->method_description = __( 'Have your customers pay with cash (or by other means) upon delivery.', 'woocommerce' );
+		$this->method_description = __( 'Let your shoppers pay upon delivery — by cash or other methods of payment.', 'woocommerce' );
 		$this->has_fields         = false;
 	}
 
@@ -345,8 +346,16 @@ class WC_Gateway_COD extends WC_Payment_Gateway {
 		$order = wc_get_order( $order_id );
 
 		if ( $order->get_total() > 0 ) {
+			/**
+			 * Filter the order status for COD orders.
+			 *
+			 * @since 2.6.0
+			 *
+			 * @param string $order_status Default status for COD orders.
+			 */
+			$process_payment_status = apply_filters( 'woocommerce_cod_process_payment_order_status', $order->has_downloadable_item() ? OrderStatus::ON_HOLD : OrderStatus::PROCESSING, $order );
 			// Mark as processing or on-hold (payment won't be taken until delivery).
-			$order->update_status( apply_filters( 'woocommerce_cod_process_payment_order_status', $order->has_downloadable_item() ? 'on-hold' : 'processing', $order ), __( 'Payment to be made upon delivery.', 'woocommerce' ) );
+			$order->update_status( $process_payment_status, __( 'Payment to be made upon delivery.', 'woocommerce' ) );
 		} else {
 			$order->payment_complete();
 		}
@@ -381,7 +390,7 @@ class WC_Gateway_COD extends WC_Payment_Gateway {
 	 */
 	public function change_payment_complete_order_status( $status, $order_id = 0, $order = false ) {
 		if ( $order && 'cod' === $order->get_payment_method() ) {
-			$status = 'completed';
+			$status = OrderStatus::COMPLETED;
 		}
 		return $status;
 	}
