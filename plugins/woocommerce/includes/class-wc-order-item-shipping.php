@@ -31,6 +31,7 @@ class WC_Order_Item_Shipping extends WC_Order_Item {
 		'taxes'        => array(
 			'total' => array(),
 		),
+		'tax_status'   => 'taxable',
 	);
 
 	/**
@@ -44,7 +45,7 @@ class WC_Order_Item_Shipping extends WC_Order_Item {
 		if ( ! isset( $calculate_tax_for['country'], $calculate_tax_for['state'], $calculate_tax_for['postcode'], $calculate_tax_for['city'], $calculate_tax_for['tax_class'] ) ) {
 			return false;
 		}
-		if ( wc_tax_enabled() ) {
+		if ( wc_tax_enabled() && 'taxable' === $this->get_tax_status() ) {
 			$tax_rates = WC_Tax::find_shipping_rates( $calculate_tax_for );
 			$taxes     = WC_Tax::calc_tax( $this->get_total(), $tax_rates, false );
 			$this->set_taxes( array( 'total' => $taxes ) );
@@ -153,6 +154,17 @@ class WC_Order_Item_Shipping extends WC_Order_Item {
 	}
 
 	/**
+	 * Set tax_status.
+	 *
+	 * @param string $value Tax status.
+	 */
+	public function set_tax_status( $value ) {
+		if ( in_array( $value, array( 'taxable', 'none' ), true ) ) {
+			$this->set_prop( 'tax_status', $value );
+		}
+	}
+
+	/**
 	 * Set properties based on passed in shipping rate object.
 	 *
 	 * @param WC_Shipping_Rate $shipping_rate Shipping rate to set.
@@ -164,6 +176,7 @@ class WC_Order_Item_Shipping extends WC_Order_Item {
 		$this->set_total( $shipping_rate->get_cost() );
 		$this->set_taxes( $shipping_rate->get_taxes() );
 		$this->set_meta_data( $shipping_rate->get_meta_data() );
+		$this->set_tax_status( $shipping_rate->get_tax_status() );
 	}
 
 	/*
@@ -264,6 +277,16 @@ class WC_Order_Item_Shipping extends WC_Order_Item {
 	 */
 	public function get_tax_class( $context = 'view' ) {
 		return get_option( 'woocommerce_shipping_tax_class' );
+	}
+
+	/**
+	 * Get tax status.
+	 *
+	 * @param  string $context What the value is for. Valid values are 'view' and 'edit'.
+	 * @return string
+	 */
+	public function get_tax_status( $context = 'view' ) {
+		return $this->get_prop( 'tax_status', $context );
 	}
 
 	/*

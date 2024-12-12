@@ -27,6 +27,7 @@ const test = baseTest.extend( {
 	testPageTitlePrefix: 'Products filter',
 } );
 
+//todo audit follow-up: see plugins/woocommerce-blocks/tests/e2e/tests/product-filters/price-filter-frontend.block_theme.spec.ts
 test.describe(
 	'Filter items in the shop by product price',
 	{
@@ -35,6 +36,7 @@ test.describe(
 			tags.SERVICES,
 			tags.SKIP_ON_WPCOM,
 			tags.SKIP_ON_PRESSABLE,
+			tags.COULD_BE_LOWER_LEVEL_TEST,
 		],
 	},
 	() => {
