@@ -67,6 +67,7 @@ export type PaymentProvider = {
 	tags?: string[];
 	_suggestion_id?: string;
 	_links?: object;
+	_incentive?: PaymentIncentive;
 };
 
 // Payment gateway provider type.
@@ -74,7 +75,6 @@ export type PaymentGatewayProvider = PaymentProvider & {
 	supports: string[];
 	management: ManagementData;
 	state: StateData;
-	_incentive?: PaymentIncentive;
 };
 
 // Offline payment method provider type.
@@ -94,7 +94,6 @@ export type PaymentExtensionSuggestionProvider = PaymentProvider & {
 	management: ManagementData;
 	state: StateData;
 	_suggestion_id: string;
-	_incentive?: PaymentIncentive;
 };
 
 // Payment extension suggestion outside providers.
