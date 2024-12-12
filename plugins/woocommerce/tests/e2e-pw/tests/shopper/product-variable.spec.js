@@ -388,12 +388,12 @@ test.describe(
 
 			await expect(
 				page.locator( '.woocommerce-product-attributes-item--weight' )
-			).toContainText( '100 kg' );
+			).toContainText( '100 lbs' );
 			await expect(
 				page.locator(
 					'.woocommerce-product-attributes-item--dimensions'
 				)
-			).toContainText( '5 × 10 × 10 cm' );
+			).toContainText( '5 × 10 × 10 in' );
 
 			await page.locator( '#size' ).selectOption( 'XLarge' );
 
