@@ -150,8 +150,7 @@ describe( 'CreateAccountFrontendBlock - Automatic password generation on', () =>
 				await queryByText(
 					textContentMatcher(
 						'Check your email at test@test.com for the link to set up an account password.'
-					),
-					{ exact: false }
+					)
 				)
 			).toBeInTheDocument();
 		} );
