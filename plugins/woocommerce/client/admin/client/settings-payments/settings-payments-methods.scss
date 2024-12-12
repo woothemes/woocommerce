@@ -4,6 +4,9 @@
 	// Temporarily copy styles while things are under construction.
 	@extend .settings-payments-main__container;
 
+	margin-top: 24px;
+	width: calc( 100% + 40px);
+
 	.settings-payments-methods__show-more {
 		display: block;
 		cursor: pointer;
@@ -99,6 +102,10 @@
 			}
 		}
 	}
+}
+
+.woocommerce-recommended-payment-methods {
+	margin-left: -20px;
 }
 
 #wpbody:has(.settings-payments-methods__container) {

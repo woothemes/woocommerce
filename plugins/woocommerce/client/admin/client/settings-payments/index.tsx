@@ -8,7 +8,18 @@ import React, {
 	lazy,
 	Suspense,
 	useCallback,
+	useEffect,
 } from '@wordpress/element';
+import {
+	unstable_HistoryRouter as HistoryRouter,
+	Route,
+	Routes,
+	useLocation,
+} from 'react-router-dom';
+import {
+	getHistory,
+	getNewPath,
+} from '@woocommerce/navigation';
 import { __ } from '@wordpress/i18n';
 import { getAdminLink } from '@woocommerce/settings';
 
@@ -16,6 +27,7 @@ import { getAdminLink } from '@woocommerce/settings';
  * Internal dependencies
  */
 import { Header } from './components/header/header';
+import { BackButton } from './components/back-button/back-button';
 import { ListPlaceholder } from '~/settings-payments/components/list-placeholder';
 import './settings-payments-main.scss';
 
@@ -47,10 +59,26 @@ const SettingsPaymentsWooCommercePaymentsChunk = lazy(
 		)
 );
 
-export const SettingsPaymentsMainWrapper = () => {
+const hideWooCommerceNavTab = ( display: string ) => {
+	const externalElement = document.querySelector<HTMLElement>('.woo-nav-tab-wrapper');
+
+	// Add the 'hidden' class to hide the element
+	if ( externalElement ) {
+		externalElement.style.display = display;
+	}
+}
+
+const SettingsPaymentsMain = () => {
+	const history = getHistory();
+	const location = useLocation();
+
+	useEffect( () => {
+		if ( location.pathname === '' ) {
+			hideWooCommerceNavTab( 'block' );
+		}
+    }, [ location ] );
 	return (
 		<>
-			<Header title={ __( 'WooCommerce Settings', 'woocommerce' ) } />
 			<Suspense
 				fallback={
 					<>
@@ -111,6 +139,83 @@ export const SettingsPaymentsMainWrapper = () => {
 			</Suspense>
 		</>
 	);
+}
+
+const SettingsPaymentsMethods = () => {
+	const location = useLocation();
+	const [ paymentMethodsState, setPaymentMethodsState ] = useState( {} );
+	const onClick = useCallback( () => {
+		// ToDo: Implement in future PR.
+	}, [ paymentMethodsState ] );
+	
+	useEffect( () => {
+		window.scrollTo( 0, 0 ); // Scrolls to the top-left corner of the page
+
+		if ( location.pathname === '/payment-methods' ) {
+			hideWooCommerceNavTab( 'none' );
+		}
+    }, [ location ] );
+
+	return (
+		<>
+			<div className="woocommerce-layout__header woocommerce-recommended-payment-methods">
+				<div className="woocommerce-layout__header-wrapper">
+					<BackButton
+						href={ getNewPath( {}, '' ) }
+						title={ __( 'Return to gateways', 'woocommerce' ) }
+						isRoute={ true }
+					/>
+					<h1 className="components-truncate components-text woocommerce-layout__header-heading woocommerce-layout__header-left-align">
+						<span className="woocommerce-settings-payments-header__title">
+							{ __( 'Choose your payment methods', 'woocommerce' ) }
+						</span>
+					</h1>
+					<Button
+						className="components-button is-primary"
+						onClick={ onClick }
+					>
+						{ __( 'Continue', 'woocommerce' ) }
+					</Button>
+					<div className="woocommerce-settings-payments-header__description">
+						{ __( "Select which payment methods you'd like to offer to your shoppers. You can update these here at any time.", 'woocommerce' ) }
+					</div>
+				</div>
+			</div>
+			<Suspense
+				fallback={
+					<>
+						<div className="settings-payments-recommended__container">
+							<div className="settings-payment-gateways">
+								<ListPlaceholder
+									rows={ 3 }
+									hasDragIcon={ false }
+								/>
+							</div>
+						</div>
+					</>
+				}
+			>
+				<SettingsPaymentsMethodsChunk
+					paymentMethodsState={ paymentMethodsState }
+					setPaymentMethodsState={ setPaymentMethodsState }
+				/>
+			</Suspense>
+		</>
+	);
+}
+
+export const SettingsPaymentsMainWrapper = () => {
+	return (
+		<>
+			<Header title={ __( 'WooCommerce Settings', 'woocommerce' ) } />
+			<HistoryRouter history={ getHistory() }>
+				<Routes>
+					<Route path="/" element={<SettingsPaymentsMain />} />
+					<Route path="/payment-methods" element={<SettingsPaymentsMethods />} />
+				</Routes>
+			</HistoryRouter>
+		</>
+	);
 };
 
 export const SettingsPaymentsOfflineWrapper = () => {
@@ -142,50 +247,6 @@ export const SettingsPaymentsOfflineWrapper = () => {
 				}
 			>
 				<SettingsPaymentsOfflineChunk />
-			</Suspense>
-		</>
-	);
-};
-
-export const SettingsPaymentsMethodsWrapper = () => {
-	const [ paymentMethodsState, setPaymentMethodsState ] = useState( {} );
-	const onClick = useCallback( () => {
-		//TODO: Implement in future PR.
-	}, [ paymentMethodsState ] );
-
-	return (
-		<>
-			<Header
-				title={ __( 'Choose your payment methods', 'woocommerce' ) }
-				description={ __(
-					"Select which payment methods you'd like to offer to your shoppers. You can update these here at any time.",
-					'woocommerce'
-				) }
-				backLink={ getAdminLink(
-					'admin.php?page=wc-settings&tab=checkout'
-				) }
-				hasButton={ true }
-				buttonLabel={ __( 'Continue', 'woocommerce' ) }
-				onButtonClick={ onClick }
-			/>
-			<Suspense
-				fallback={
-					<>
-						<div className="settings-payments-recommended__container">
-							<div className="settings-payment-gateways">
-								<ListPlaceholder
-									rows={ 3 }
-									hasDragIcon={ false }
-								/>
-							</div>
-						</div>
-					</>
-				}
-			>
-				<SettingsPaymentsMethodsChunk
-					paymentMethodsState={ paymentMethodsState }
-					setPaymentMethodsState={ setPaymentMethodsState }
-				/>
 			</Suspense>
 		</>
 	);
