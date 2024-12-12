@@ -21,6 +21,8 @@ $gap-smallest: 4px;
 $break-wide: 1280px;
 $break-medium: 782px;	// adminbar goes big
 
+$grid-unit-50: 40px;
+
 
 /**
  * Stylesheet specific variables.
@@ -53,7 +55,7 @@ $break-largeish: 900px; // It's almost $break-large, but kept consistent with th
 		color: var(--wp-admin-theme-color, $studio-wordpress-blue);
 
 		&.button-primary {
-			color: var(--Gutenberg-White, $studio-white);
+			color: $studio-white;
 			background: var(--wp-admin-theme-color, $studio-wordpress-blue);
 		}
 	}
@@ -113,7 +115,7 @@ $break-largeish: 900px; // It's almost $break-large, but kept consistent with th
 			border-radius: $border-radius;
 		}
 		#title-prompt-text {
-			color: var(--Gray-Gray-30, $studio-gray-30);
+			color: $studio-gray-30;
 			// Offset by the same border as the input.
 			border: 1px solid transparent;
 		}
@@ -224,14 +226,14 @@ $break-largeish: 900px; // It's almost $break-large, but kept consistent with th
 		background: none;
 		margin: 0;
 		padding: 10px $gap;
-		color: var(--Alias-text-text-tertiary, $alias-text-tertiary);
+		color: $alias-text-tertiary;
 		border-width: 0 0 2px 0;
 		border-bottom-color: transparent;
 	}
 	.html-active .switch-html,
 	.tmce-active .switch-tmce {
 		border-bottom-color: var(--wp-admin-theme-color, $studio-wordpress-blue);
-		color: var(--Alias-text-text, $alias-text);
+		color: $alias-text;
 	}
 
 	.wp-media-buttons {
@@ -403,7 +405,7 @@ $break-largeish: 900px; // It's almost $break-large, but kept consistent with th
 			border-bottom: 2px solid transparent;
 
 			> a {
-				color: var(--Alias-text-text-tertiary, $alias-text-tertiary);
+				color: $alias-text-tertiary;
 				padding: 10px 16px;
 				line-height: 1.5385;
 
@@ -663,11 +665,11 @@ $break-largeish: 900px; // It's almost $break-large, but kept consistent with th
 		align-self: stretch;
 
 		li {
-			min-height: var(--grid-unit-50, 40px);
+			min-height: $grid-unit-50;
 
 			a {
 				padding: 20px 24px;
-				color: var(--Gray-Gray-60, $studio-gray-60);
+				color: $studio-gray-60;
 				border-left: 3px solid transparent;
 
 				&::before {
@@ -682,7 +684,7 @@ $break-largeish: 900px; // It's almost $break-large, but kept consistent with th
 			}
 
 			&.active a {
-				color: var(--Alias-text-text, $alias-text);
+				color: $alias-text;
 				font-weight: 700;
 				border-left: 3px solid var(--wp-admin-theme-color, $studio-wordpress-blue);
 			}
@@ -715,7 +717,7 @@ $break-largeish: 900px; // It's almost $break-large, but kept consistent with th
 @media only screen and (max-width: $break-largeish) {
 	#woocommerce-coupon-data ul.coupon_data_tabs li,
 	#woocommerce-product-data ul.product_data_tabs li {
-		min-height: calc(var(--grid-unit-50, 40px) / 2);
+		min-height: calc($grid-unit-50 / 2);
 
 		a {
 			position: relative;
