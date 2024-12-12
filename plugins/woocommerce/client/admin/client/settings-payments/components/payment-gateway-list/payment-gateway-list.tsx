@@ -7,6 +7,7 @@ import {
 	PaymentGatewayProvider,
 	OfflinePmsGroupProvider,
 	PaymentExtensionSuggestionProvider,
+	RecommendedPaymentMethod,
 } from '@woocommerce/data';
 import { Gridicon } from '@automattic/components';
 
@@ -28,6 +29,7 @@ interface PaymentGatewayListProps {
 	installingPlugin: string | null;
 	setupPlugin: ( id: string, slug: string ) => void;
 	updateOrdering: ( providers: PaymentProvider[] ) => void;
+	recommendedPaymentMethods: RecommendedPaymentMethod[];
 }
 
 export const PaymentGatewayList = ( {
@@ -36,6 +38,7 @@ export const PaymentGatewayList = ( {
 	installingPlugin,
 	setupPlugin,
 	updateOrdering,
+	recommendedPaymentMethods,
 }: PaymentGatewayListProps ) => {
 	return (
 		<SortableContainer< PaymentProvider >
@@ -73,6 +76,7 @@ export const PaymentGatewayList = ( {
 							>
 								{ PaymentGatewayListItem( {
 									gateway,
+									recommendedPaymentMethods,
 								} ) }
 							</SortableItem>
 						);

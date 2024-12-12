@@ -7,6 +7,7 @@ import { dispatch, useDispatch } from '@wordpress/data';
 import {
 	PAYMENT_SETTINGS_STORE_NAME,
 	EnableGatewayResponse,
+	RecommendedPaymentMethod,
 } from '@woocommerce/data';
 import { useState } from '@wordpress/element';
 import {
@@ -33,6 +34,7 @@ export const PaymentGatewayButtons = ( {
 	textSettings = __( 'Manage', 'woocommerce' ),
 	textEnable = __( 'Enable', 'woocommerce' ),
 	textNeedsSetup = __( 'Complete setup', 'woocommerce' ),
+	recommendedPaymentMethods,
 }: {
 	id: string;
 	isOffline: boolean;
@@ -43,6 +45,7 @@ export const PaymentGatewayButtons = ( {
 	textSettings?: string;
 	textEnable?: string;
 	textNeedsSetup?: string;
+	recommendedPaymentMethods?: RecommendedPaymentMethod[];
 } ) => {
 	const { createErrorNotice } = dispatch( 'core/notices' );
 	const { togglePaymentGateway, invalidateResolutionForStoreSelector } =
@@ -83,8 +86,13 @@ export const PaymentGatewayButtons = ( {
 				.then( ( response: EnableGatewayResponse ) => {
 					if ( response.data === 'needs_setup' ) {
 						if ( isWooPayments( id ) ) {
-							const history = getHistory();
-							history.push( getNewPath( {}, '/payment-methods' ) );
+							if ( ( recommendedPaymentMethods ?? [] ).length > 0 ) {
+								const history = getHistory();
+								history.push( getNewPath( {}, '/payment-methods' ) );
+							} else {
+								window.location.href =
+									getWooPaymentsTestDriveAccountLink();
+							}
 							return;
 						}
 						window.location.href = settingsUrl;

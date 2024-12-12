@@ -7,10 +7,15 @@ import {
 	PLUGINS_STORE_NAME,
 	PAYMENT_SETTINGS_STORE_NAME,
 	PaymentProvider,
+	RecommendedPaymentMethod,
 } from '@woocommerce/data';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import {
+	getHistory,
+	getNewPath,
+} from '@woocommerce/navigation';
 
 /**
  * Internal dependencies
@@ -131,37 +136,6 @@ export const SettingsPaymentsMain = () => {
 			};
 		} );
 
-	const setupPlugin = useCallback(
-		( id, slug ) => {
-			if ( installingPlugin ) {
-				return;
-			}
-			setInstallingPlugin( id );
-			installAndActivatePlugins( [ slug ] )
-				.then( ( response ) => {
-					createNoticesFromResponse( response );
-					if ( isWooPayments( id ) ) {
-						window.location.href =
-							getWooPaymentsTestDriveAccountLink();
-						return;
-					}
-					invalidateResolutionForStoreSelector(
-						'getPaymentProviders'
-					);
-					setInstallingPlugin( null );
-				} )
-				.catch( ( response: { errors: Record< string, string > } ) => {
-					createNoticesFromResponse( response );
-					setInstallingPlugin( null );
-				} );
-		},
-		[
-			installingPlugin,
-			installAndActivatePlugins,
-			invalidateResolutionForStoreSelector,
-		]
-	);
-
 	function handleOrderingUpdate( sorted: PaymentProvider[] ) {
 		// Extract the existing _order values in the sorted order
 		const updatedOrderValues = sorted
@@ -199,6 +173,55 @@ export const SettingsPaymentsMain = () => {
 		( incentive?._dismissals.includes( 'all' ) ||
 			incentive?._dismissals.includes( incentiveModalContext ) ) ??
 		false;
+
+	const finalProviders = sortedProviders || providers;
+	const wooPaymentsProvider = finalProviders.find(
+		( provider: PaymentProvider ) => isWooPayments( provider.id )
+	);
+
+	const recommendedPaymentMethods = ( wooPaymentsProvider?.onboarding
+		?.recommended_payment_methods ?? [] ) as RecommendedPaymentMethod[];
+
+	console.log( recommendedPaymentMethods );
+
+	const setupPlugin = useCallback(
+		( id, slug ) => {
+			if ( installingPlugin ) {
+				return;
+			}
+			setInstallingPlugin( id );
+			installAndActivatePlugins( [ slug ] )
+				.then( ( response ) => {
+					createNoticesFromResponse( response );
+					if ( isWooPayments( id ) ) {
+						if ( recommendedPaymentMethods.length > 0 ) {
+							const history = getHistory();
+							history.push( getNewPath( {}, '/payment-methods' ) );
+						} else {
+							console.log( recommendedPaymentMethods );
+							//window.location.href =
+							//	getWooPaymentsTestDriveAccountLink();
+						}
+
+						return;
+					}
+					invalidateResolutionForStoreSelector(
+						'getPaymentProviders'
+					);
+					setInstallingPlugin( null );
+				} )
+				.catch( ( response: { errors: Record< string, string > } ) => {
+					createNoticesFromResponse( response );
+					setInstallingPlugin( null );
+				} );
+		},
+		[
+			installingPlugin,
+			installAndActivatePlugins,
+			invalidateResolutionForStoreSelector,
+			recommendedPaymentMethods,
+		]
+	);
 
 	return (
 		<>
@@ -242,6 +265,7 @@ export const SettingsPaymentsMain = () => {
 					isFetching={ isFetching }
 					businessRegistrationCountry={ storeCountry }
 					setBusinessRegistrationCountry={ setStoreCountry }
+					recommendedPaymentMethods={ recommendedPaymentMethods }
 				/>
 				<OtherPaymentGateways
 					suggestions={ suggestions }

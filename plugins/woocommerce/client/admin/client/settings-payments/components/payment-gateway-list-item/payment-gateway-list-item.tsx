@@ -4,7 +4,7 @@
 import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
 import { __ } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
-import { PaymentGatewayProvider } from '@woocommerce/data';
+import { PaymentGatewayProvider, RecommendedPaymentMethod } from '@woocommerce/data';
 
 /**
  * Internal dependencies
@@ -18,10 +18,12 @@ import { DefaultDragHandle } from '~/settings-payments/components/sortable';
 
 type PaymentGatewayItemProps = {
 	gateway: PaymentGatewayProvider;
+	recommendedPaymentMethods: RecommendedPaymentMethod[];
 };
 
 export const PaymentGatewayListItem = ( {
 	gateway,
+	recommendedPaymentMethods,
 	...props
 }: PaymentGatewayItemProps ) => {
 	const isWcPay = isWooPayments( gateway.id );
@@ -95,6 +97,7 @@ export const PaymentGatewayListItem = ( {
 								settingsUrl={
 									gateway.management._links.settings.href
 								}
+								recommendedPaymentMethods={ recommendedPaymentMethods }
 							/>
 							<EllipsisMenu
 								label={ __(
