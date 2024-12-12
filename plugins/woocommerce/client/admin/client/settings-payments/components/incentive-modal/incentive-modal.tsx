@@ -12,7 +12,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { createInterpolateElement, useState } from '@wordpress/element';
 import { Link } from '@woocommerce/components';
-import { PaymentIncentive } from '@woocommerce/data';
+import { PaymentIncentive, PaymentProvider } from '@woocommerce/data';
 
 /**
  * Internal dependencies
@@ -20,6 +20,7 @@ import { PaymentIncentive } from '@woocommerce/data';
 import './incentive-modal.scss';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
 import { WC_ASSET_URL } from '~/utils/admin-settings';
+import { isIncentiveDismissedInContext } from '~/settings-payments/utils';
 
 interface IncentiveModalProps {
 	/**
@@ -27,12 +28,15 @@ interface IncentiveModalProps {
 	 */
 	incentive: PaymentIncentive;
 	/**
+	 * Payment provider.
+	 */
+	provider: PaymentProvider;
+	/**
 	 * Callback used when an incentive is accepted.
 	 *
-	 * @param id   Plugin ID.
-	 * @param slug Plugin slug.
+	 * @param id Incentive ID.
 	 */
-	onAccept: ( id: string, slug: string ) => void;
+	onAccept: ( id: string ) => void;
 	/**
 	 * Callback to handle dismiss action.
 	 *
@@ -40,27 +44,35 @@ interface IncentiveModalProps {
 	 * @param context     The context in which the incentive is dismissed. (e.g. whether it was in a modal or banner).
 	 */
 	onDismiss: ( dismissUrl: string, context: string ) => void;
+	/**
+	 * Callback to setup the plugin.
+	 *
+	 * @param id   Extension ID.
+	 * @param slug Extension slug.
+	 */
+	setupPlugin: ( id: string, slug: string ) => void;
 }
 
 export const IncentiveModal = ( {
 	incentive,
+	provider,
 	onAccept,
 	onDismiss,
+	setupPlugin,
 }: IncentiveModalProps ) => {
 	const [ isBusy, setIsBusy ] = useState( false );
 	const [ isOpen, setIsOpen ] = useState( true );
 
-	const incentiveContext = 'wc_settings_payments__modal';
+	const isDismissed = isIncentiveDismissedInContext(
+		incentive,
+		'wc_settings_payments__modal'
+	);
 
 	const handleClose = () => {
 		setIsOpen( false );
 	};
 
-	const isDismissedInContext =
-		incentive._dismissals.includes( 'all' ) ||
-		incentive._dismissals.includes( incentiveContext );
-
-	if ( isDismissedInContext ) {
+	if ( isDismissed ) {
 		return null;
 	}
 
@@ -73,7 +85,7 @@ export const IncentiveModal = ( {
 					onRequestClose={ () => {
 						onDismiss(
 							incentive._links.dismiss.href,
-							incentiveContext
+							'wc_settings_payments__modal'
 						);
 						handleClose();
 					} }
@@ -146,10 +158,10 @@ export const IncentiveModal = ( {
 										disabled={ isBusy }
 										onClick={ () => {
 											setIsBusy( true );
-											// TODO: Temporary for testing, update to use plugin ID and slug.
-											onAccept(
-												'woopayments',
-												'woocommerce-payments'
+											onAccept( incentive.id );
+											setupPlugin(
+												provider.id,
+												provider.plugin.slug
 											);
 											setIsBusy( false );
 											handleClose();

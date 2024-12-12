@@ -18,10 +18,12 @@ import { DefaultDragHandle } from '~/settings-payments/components/sortable';
 
 type PaymentGatewayItemProps = {
 	gateway: PaymentProvider;
+	acceptIncentive: ( id: string ) => void;
 };
 
 export const PaymentGatewayListItem = ( {
 	gateway,
+	acceptIncentive,
 	...props
 }: PaymentGatewayItemProps ) => {
 	const isWcPay = isWooPayments( gateway.id );
@@ -87,7 +89,7 @@ export const PaymentGatewayListItem = ( {
 					<div className="woocommerce-list__item-after__actions">
 						<>
 							<PaymentGatewayButtons
-								id={ gateway.id }
+								gateway={ gateway }
 								isOffline={ false }
 								enabled={ gateway.state?.enabled || false }
 								needsSetup={ gateway.state?.needs_setup }
@@ -95,6 +97,7 @@ export const PaymentGatewayListItem = ( {
 								settingsUrl={
 									gateway.management?.settings_url || ''
 								}
+								acceptIncentive={ acceptIncentive }
 							/>
 							<EllipsisMenu
 								label={ __(

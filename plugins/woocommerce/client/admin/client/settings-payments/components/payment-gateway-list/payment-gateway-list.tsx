@@ -22,6 +22,7 @@ interface PaymentGatewayListProps {
 	installedPluginSlugs: string[];
 	installingPlugin: string | null;
 	setupPlugin: ( id: string, slug: string ) => void;
+	acceptIncentive: ( id: string ) => void;
 	updateOrdering: ( providers: PaymentProvider[] ) => void;
 }
 
@@ -30,6 +31,7 @@ export const PaymentGatewayList = ( {
 	installedPluginSlugs,
 	installingPlugin,
 	setupPlugin,
+	acceptIncentive,
 	updateOrdering,
 }: PaymentGatewayListProps ) => {
 	return (
@@ -54,6 +56,7 @@ export const PaymentGatewayList = ( {
 									installingPlugin,
 									setupPlugin,
 									pluginInstalled,
+									acceptIncentive,
 								} ) }
 							</SortableItem>
 						);
@@ -65,6 +68,7 @@ export const PaymentGatewayList = ( {
 							>
 								{ PaymentGatewayListItem( {
 									gateway: provider,
+									acceptIncentive,
 								} ) }
 							</SortableItem>
 						);

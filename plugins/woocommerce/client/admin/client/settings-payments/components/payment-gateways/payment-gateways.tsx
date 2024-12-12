@@ -23,6 +23,7 @@ interface PaymentGatewaysProps {
 	installedPluginSlugs: string[];
 	installingPlugin: string | null;
 	setupPlugin: ( id: string, slug: string ) => void;
+	acceptIncentive: ( id: string ) => void;
 	updateOrdering: ( providers: PaymentProvider[] ) => void;
 	isFetching: boolean;
 	businessRegistrationCountry: string | null;
@@ -34,6 +35,7 @@ export const PaymentGateways = ( {
 	installedPluginSlugs,
 	installingPlugin,
 	setupPlugin,
+	acceptIncentive,
 	updateOrdering,
 	isFetching,
 	businessRegistrationCountry,
@@ -93,6 +95,7 @@ export const PaymentGateways = ( {
 					installedPluginSlugs={ installedPluginSlugs }
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
+					acceptIncentive={ acceptIncentive }
 					updateOrdering={ updateOrdering }
 				/>
 			) }

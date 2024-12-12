@@ -27,6 +27,7 @@ type PaymentExtensionSuggestionListItemProps = {
 	installingPlugin: string | null;
 	setupPlugin: ( id: string, slug: string ) => void;
 	pluginInstalled: boolean;
+	acceptIncentive: ( id: string ) => void;
 };
 
 export const PaymentExtensionSuggestionListItem = ( {
@@ -34,6 +35,7 @@ export const PaymentExtensionSuggestionListItem = ( {
 	installingPlugin,
 	setupPlugin,
 	pluginInstalled,
+	acceptIncentive,
 	...props
 }: PaymentExtensionSuggestionListItemProps ) => {
 	return (
@@ -89,12 +91,16 @@ export const PaymentExtensionSuggestionListItem = ( {
 					<div className="woocommerce-list__item-after__actions">
 						<Button
 							variant="primary"
-							onClick={ () =>
+							onClick={ () => {
+								if ( !! extension._incentive ) {
+									acceptIncentive( extension._incentive.id );
+								}
+
 								setupPlugin(
 									extension.id,
 									extension.plugin.slug
-								)
-							}
+								);
+							} }
 							isBusy={ installingPlugin === extension.id }
 							disabled={ !! installingPlugin }
 						>

@@ -98,20 +98,6 @@ export const SettingsPaymentsMain = () => {
 		return select( PLUGINS_STORE_NAME ).getInstalledPlugins();
 	}, [] );
 
-	const dismissIncentive = useCallback(
-		( dismissHref: string, context: string ) => {
-			// The dismissHref is the full URL to dismiss the incentive.
-			apiFetch( {
-				url: dismissHref,
-				method: 'POST',
-				data: {
-					context,
-				},
-			} );
-		},
-		[]
-	);
-
 	// Make UI refresh when plugin is installed.
 	const { invalidateResolutionForStoreSelector } = useDispatch(
 		PAYMENT_SETTINGS_STORE_NAME
@@ -164,6 +150,27 @@ export const SettingsPaymentsMain = () => {
 		]
 	);
 
+	const dismissIncentive = useCallback(
+		( dismissHref: string, context: string ) => {
+			// The dismissHref is the full URL to dismiss the incentive.
+			apiFetch( {
+				url: dismissHref,
+				method: 'POST',
+				data: {
+					context,
+				},
+			} );
+		},
+		[]
+	);
+
+	const acceptIncentive = useCallback( ( id: string ) => {
+		apiFetch( {
+			path: `/wc-analytics/admin/notes/experimental-activate-promo/${ id }`,
+			method: 'POST',
+		} );
+	}, [] );
+
 	function handleOrderingUpdate( sorted: PaymentProvider[] ) {
 		// Extract the existing _order values in the sorted order
 		const updatedOrderValues = sorted
@@ -182,13 +189,15 @@ export const SettingsPaymentsMain = () => {
 		setSortedProviders( sorted );
 	}
 
-	const incentive = providers.find(
+	const incentiveProvider = providers.find(
 		( provider ) => '_incentive' in provider
-	)?._incentive;
+	);
+	const incentive = incentiveProvider ? incentiveProvider._incentive : null;
 
 	return (
 		<>
-			{ incentive &&
+			{ incentiveProvider &&
+				incentive &&
 				isSwitchIncentive( incentive ) &&
 				! isIncentiveDismissedInContext(
 					incentive,
@@ -196,8 +205,10 @@ export const SettingsPaymentsMain = () => {
 				) && (
 					<IncentiveModal
 						incentive={ incentive }
+						provider={ incentiveProvider }
 						onDismiss={ dismissIncentive }
-						onAccept={ setupPlugin }
+						onAccept={ acceptIncentive }
+						setupPlugin={ setupPlugin }
 					/>
 				) }
 			{ errorMessage && (
@@ -212,7 +223,8 @@ export const SettingsPaymentsMain = () => {
 					></button>
 				</div>
 			) }
-			{ incentive &&
+			{ incentiveProvider &&
+				incentive &&
 				! isSwitchIncentive( incentive ) &&
 				! isIncentiveDismissedInContext(
 					incentive,
@@ -220,8 +232,10 @@ export const SettingsPaymentsMain = () => {
 				) && (
 					<IncentiveBanner
 						incentive={ incentive }
+						provider={ incentiveProvider }
 						onDismiss={ dismissIncentive }
-						onAccept={ setupPlugin }
+						onAccept={ acceptIncentive }
+						setupPlugin={ setupPlugin }
 					/>
 				) }
 			<div className="settings-payments-main__container">
@@ -230,6 +244,7 @@ export const SettingsPaymentsMain = () => {
 					installedPluginSlugs={ installedPluginSlugs }
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
+					acceptIncentive={ acceptIncentive }
 					updateOrdering={ handleOrderingUpdate }
 					isFetching={ isFetching }
 					businessRegistrationCountry={ storeCountry }
