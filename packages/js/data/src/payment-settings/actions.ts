@@ -82,15 +82,11 @@ export function* togglePaymentGateway(
 	}
 }
 
-export function* hideGatewaySuggestion( gatewayId: string ) {
+export function* hidePaymentExtensionSuggestion( url: string ) {
 	try {
 		// Use apiFetch for the AJAX request
 		const result: { success: boolean } = yield apiFetch( {
-			path:
-				WC_ADMIN_NAMESPACE +
-				'/settings/payments/suggestion/' +
-				gatewayId +
-				'/hide',
+			url,
 			method: 'POST',
 		} );
 
@@ -125,5 +121,5 @@ export type Actions =
 	| ReturnType< typeof getPaymentProvidersSuccess >
 	| ReturnType< typeof getPaymentProvidersError >
 	| ReturnType< typeof togglePaymentGateway >
-	| ReturnType< typeof hideGatewaySuggestion >
+	| ReturnType< typeof hidePaymentExtensionSuggestion >
 	| ReturnType< typeof updateProviderOrdering >;
