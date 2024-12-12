@@ -2,8 +2,9 @@
  * Internal dependencies
  */
 import {
+	OfflinePaymentMethodProvider,
 	PaymentProvider,
-	OfflinePaymentGateway,
+	PaymentProviderType,
 	SuggestedPaymentExtension,
 	SuggestedPaymentExtensionCategory,
 } from '../types';
@@ -12,7 +13,7 @@ export const providersStub: PaymentProvider[] = [
 	{
 		id: '_wc_pes_paypal_full_stack',
 		_order: 2,
-		_type: 'suggestion',
+		_type: PaymentProviderType.Suggestion,
 		title: 'PayPal Payments',
 		description:
 			'Safe and secure payments using credit cards or your customer&#039;s PayPal account.',
@@ -37,13 +38,19 @@ export const providersStub: PaymentProvider[] = [
 		plugin: {
 			_type: 'wporg',
 			slug: 'woocommerce-paypal-payments',
+			file: 'woocommerce-paypal-payments/woocommerce-paypal-payments',
 			status: 'installed',
+		},
+		_links: {
+			hide: {
+				href: 'http://localhost:8082/wp-json/wc-admin/settings/payments/suggestion/paypal_full_stack/hide',
+			},
 		},
 	},
 	{
 		id: 'woocommerce_payments',
 		_order: 2,
-		_type: 'gateway',
+		_type: PaymentProviderType.Gateway,
 		title: 'WooPayments',
 		description:
 			'WooPayments gives your store flexibility to accept credit cards, debit cards, and Apple Pay. Enable popular local payment methods and other digital wallets like Google Pay to give customers even more choice.',
@@ -57,10 +64,14 @@ export const providersStub: PaymentProvider[] = [
 			enabled: false,
 			needs_setup: false,
 			test_mode: true,
+			dev_mode: false,
 		},
 		management: {
-			settings_url:
-				'http://localhost:8082/wp-admin/admin.php?page=wc-settings&tab=checkout&section=woocommerce_payments',
+			_links: {
+				settings: {
+					href: 'http://localhost:8082/wp-admin/admin.php?page=wc-settings&tab=checkout&section=woocommerce_payments',
+				},
+			},
 		},
 		image: 'http://localhost:8082/wp-content/plugins/woocommerce/assets/images/onboarding/woopayments.svg',
 		icon: 'http://localhost:8082/wp-content/plugins/woocommerce/assets/images/onboarding/woopayments.svg',
@@ -90,27 +101,29 @@ export const providersStub: PaymentProvider[] = [
 		plugin: {
 			_type: 'wporg',
 			slug: 'woocommerce-payments',
+			file: 'woocommerce-payments/woocommerce-payments',
 			status: 'active',
 		},
 	},
 	{
 		id: '_wc_offline_payment_methods_group',
 		_order: 3,
-		_type: 'offline_pms_group',
+		_type: PaymentProviderType.OfflinePmsGroup,
 		title: 'Offline Payment Methods',
 		description: 'Allow shoppers to pay offline.',
 		plugin: {
 			slug: 'woocommerce',
+			file: 'woocommerce/woocommerce',
 			status: 'active',
 		},
 		icon: 'http://localhost:8082/wp-content/plugins/woocommerce/assets/images/payment_methods/cod.svg',
 	},
 ];
 
-export const offlinePaymentGatewaysStub: OfflinePaymentGateway[] = [
+export const offlinePaymentGatewaysStub: OfflinePaymentMethodProvider[] = [
 	{
 		id: 'bacs',
-		_type: 'offline_pm',
+		_type: PaymentProviderType.OfflinePm,
 		_order: 999,
 		title: 'Direct bank transfer',
 		description:
@@ -120,20 +133,26 @@ export const offlinePaymentGatewaysStub: OfflinePaymentGateway[] = [
 			enabled: true,
 			needs_setup: false,
 			test_mode: false,
+			dev_mode: false,
 		},
 		management: {
-			settings_url:
-				'http://localhost:8082/wp-admin/admin.php?page=wc-settings&tab=checkout&section=bacs',
+			_links: {
+				settings: {
+					href: 'http://localhost:8082/wp-admin/admin.php?page=wc-settings&tab=checkout&section=bacs',
+				},
+			},
 		},
 		icon: 'http://localhost:8082/wp-content/plugins/woocommerce/assets/images/payment_methods/bacs.svg',
 		plugin: {
+			_type: 'wporg',
 			slug: 'woocommerce',
+			file: 'woocommerce/woocommerce',
 			status: 'active',
 		},
 	},
 	{
 		id: 'cheque',
-		_type: 'offline_pm',
+		_type: PaymentProviderType.OfflinePm,
 		_order: 1000,
 		title: 'Cheque payments',
 		description:
@@ -143,37 +162,49 @@ export const offlinePaymentGatewaysStub: OfflinePaymentGateway[] = [
 			enabled: true,
 			needs_setup: false,
 			test_mode: false,
+			dev_mode: false,
 		},
 		management: {
-			settings_url:
-				'http://localhost:8082/wp-admin/admin.php?page=wc-settings&tab=checkout&section=cheque',
+			_links: {
+				settings: {
+					href: 'http://localhost:8082/wp-admin/admin.php?page=wc-settings&tab=checkout&section=cheque',
+				},
+			},
 		},
 		icon: 'http://localhost:8082/wp-content/plugins/woocommerce/assets/images/payment_methods/cheque.svg',
 		plugin: {
+			_type: 'wporg',
 			slug: 'woocommerce',
+			file: 'woocommerce/woocommerce',
 			status: 'active',
 		},
 	},
 	{
 		id: 'cod',
-		_type: 'offline_pm',
+		_type: PaymentProviderType.OfflinePm,
 		_order: 1001,
 		title: 'Cash on delivery',
 		description:
-			'Have your customers pay with cash (or by other means) upon delivery.',
+			'Let your shoppers pay upon delivery — by cash or other methods of payment.',
 		supports: [ 'products' ],
 		state: {
 			enabled: true,
 			needs_setup: false,
 			test_mode: false,
+			dev_mode: false,
 		},
 		management: {
-			settings_url:
-				'http://localhost:8082/wp-admin/admin.php?page=wc-settings&tab=checkout&section=cod',
+			_links: {
+				settings: {
+					href: 'http://localhost:8082/wp-admin/admin.php?page=wc-settings&tab=checkout&section=cod',
+				},
+			},
 		},
 		icon: 'http://localhost:8082/wp-content/plugins/woocommerce/assets/images/payment_methods/cod.svg',
 		plugin: {
+			_type: 'wporg',
 			slug: 'woocommerce',
+			file: 'woocommerce/woocommerce',
 			status: 'active',
 		},
 	},
@@ -190,6 +221,7 @@ export const suggestionsStub: SuggestedPaymentExtension[] = [
 		plugin: {
 			_type: 'wporg',
 			slug: 'airwallex-online-payments-gateway',
+			file: 'airwallex-online-payments-gateway/airwallex-online-payments-gateway',
 			status: 'not_installed',
 		},
 		image: 'http://localhost:8082/wp-content/plugins/woocommerce/assets/images/onboarding/airwallex.png',
@@ -230,6 +262,7 @@ export const suggestionsStub: SuggestedPaymentExtension[] = [
 		plugin: {
 			_type: 'wporg',
 			slug: 'woocommerce-square',
+			file: 'woocommerce-square/woocommerce-square',
 			status: 'not_installed',
 		},
 		image: 'http://localhost:8082/wp-content/plugins/woocommerce/assets/images/onboarding/square-black.png',

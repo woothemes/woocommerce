@@ -1,4 +1,4 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 const { fillPageTitle, publishPage } = require( '../../utils/editor' );
 const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
 
@@ -33,10 +33,10 @@ test.describe(
 	'Add WooCommerce Patterns Into Page',
 	{
 		tag: [
-			'@gutenberg',
-			'@services',
-			'@skip-on-default-pressable',
-			'@skip-on-default-wpcom',
+			tags.GUTENBERG,
+			tags.SERVICES,
+			tags.SKIP_ON_PRESSABLE,
+			tags.SKIP_ON_WPCOM,
 		],
 	},
 	() => {

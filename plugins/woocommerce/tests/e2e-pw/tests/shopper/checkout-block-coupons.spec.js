@@ -8,7 +8,7 @@ import {
 	goToPageEditor,
 } from '@woocommerce/e2e-utils-playwright';
 const { fillPageTitle } = require( '../../utils/editor' );
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 const { random } = require( '../../utils/helpers' );
 
 const simpleProductName = `Checkout Coupons Product ${ random() }`;
@@ -61,7 +61,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Checkout Block Applying Coupons',
-	{ tag: [ '@payments', '@services' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		const couponBatchId = [];
 
@@ -131,13 +131,111 @@ test.describe(
 			} );
 		} );
 
-		test( 'allows checkout block to apply coupon of any type', async ( {
-			page,
-		} ) => {
-			const totals = [ '$50.00', '$27.50', '$45.00' ];
+		test(
+			'allows checkout block to apply coupon of any type',
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+			async ( { page } ) => {
+				const totals = [ '$50.00', '$27.50', '$45.00' ];
 
-			// apply all coupon types
-			for ( let i = 0; i < coupons.length; i++ ) {
+				// apply all coupon types
+				for ( let i = 0; i < coupons.length; i++ ) {
+					await page
+						.getByRole( 'button', { name: 'Add a coupon' } )
+						.click();
+					await page
+						.locator(
+							'#wc-block-components-totals-coupon__input-coupon'
+						)
+						.fill( coupons[ i ].code );
+					await page.getByText( 'Apply', { exact: true } ).click();
+					await expect(
+						page
+							.locator(
+								'.wc-block-components-notice-banner__content'
+							)
+							.getByText(
+								`Coupon code "${ coupons[ i ].code }" has been applied to your cart.`
+							)
+					).toBeVisible();
+					await expect(
+						page.locator(
+							'.wc-block-components-totals-footer-item > .wc-block-components-totals-item__value'
+						)
+					).toHaveText( totals[ i ] );
+					await page
+						.getByLabel( `Remove coupon "${ coupons[ i ].code }"` )
+						.click();
+					await expect(
+						page
+							.locator(
+								'.wc-block-components-notice-banner__content'
+							)
+							.getByText(
+								`Coupon code "${ coupons[ i ].code }" has been removed from your cart.`
+							)
+					).toBeVisible();
+				}
+			}
+		);
+
+		test(
+			'allows checkout block to apply multiple coupons',
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+			async ( { page } ) => {
+				const totals = [ '$50.00', '$22.50', '$12.50' ];
+				const totalsReverse = [ '$17.50', '$45.00', '$55.00' ];
+				const discounts = [ '-$5.00', '-$32.50', '-$42.50' ];
+
+				// add all coupons and verify prices
+				for ( let i = 0; i < coupons.length; i++ ) {
+					await page
+						.getByRole( 'button', { name: 'Add a coupon' } )
+						.click();
+					await page
+						.locator(
+							'#wc-block-components-totals-coupon__input-coupon'
+						)
+						.fill( coupons[ i ].code );
+					await page.getByText( 'Apply', { exact: true } ).click();
+					await expect(
+						page
+							.locator(
+								'.wc-block-components-notice-banner__content'
+							)
+							.getByText(
+								`Coupon code "${ coupons[ i ].code }" has been applied to your cart.`
+							)
+					).toBeVisible();
+					await expect(
+						page.locator(
+							'.wc-block-components-totals-discount > .wc-block-components-totals-item__value'
+						)
+					).toHaveText( discounts[ i ] );
+					await expect(
+						page.locator(
+							'.wc-block-components-totals-footer-item > .wc-block-components-totals-item__value'
+						)
+					).toHaveText( totals[ i ] );
+				}
+
+				for ( let i = 0; i < coupons.length; i++ ) {
+					await page
+						.getByLabel( `Remove coupon "${ coupons[ i ].code }"` )
+						.click();
+					await expect(
+						page.locator(
+							'.wc-block-components-totals-footer-item > .wc-block-components-totals-item__value'
+						)
+					).toHaveText( totalsReverse[ i ] );
+				}
+			}
+		);
+
+		test(
+			'prevents checkout block applying same coupon twice',
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+			async ( { page } ) => {
+				// try to add two same coupons and verify the error message
 				await page
 					.getByRole( 'button', { name: 'Add a coupon' } )
 					.click();
@@ -145,7 +243,7 @@ test.describe(
 					.locator(
 						'#wc-block-components-totals-coupon__input-coupon'
 					)
-					.fill( coupons[ i ].code );
+					.fill( coupons[ 0 ].code );
 				await page.getByText( 'Apply', { exact: true } ).click();
 				await expect(
 					page
@@ -153,38 +251,9 @@ test.describe(
 							'.wc-block-components-notice-banner__content'
 						)
 						.getByText(
-							`Coupon code "${ coupons[ i ].code }" has been applied to your cart.`
+							`Coupon code "${ coupons[ 0 ].code }" has been applied to your cart.`
 						)
 				).toBeVisible();
-				await expect(
-					page.locator(
-						'.wc-block-components-totals-footer-item > .wc-block-components-totals-item__value'
-					)
-				).toHaveText( totals[ i ] );
-				await page
-					.getByLabel( `Remove coupon "${ coupons[ i ].code }"` )
-					.click();
-				await expect(
-					page
-						.locator(
-							'.wc-block-components-notice-banner__content'
-						)
-						.getByText(
-							`Coupon code "${ coupons[ i ].code }" has been removed from your cart.`
-						)
-				).toBeVisible();
-			}
-		} );
-
-		test( 'allows checkout block to apply multiple coupons', async ( {
-			page,
-		} ) => {
-			const totals = [ '$50.00', '$22.50', '$12.50' ];
-			const totalsReverse = [ '$17.50', '$45.00', '$55.00' ];
-			const discounts = [ '-$5.00', '-$32.50', '-$42.50' ];
-
-			// add all coupons and verify prices
-			for ( let i = 0; i < coupons.length; i++ ) {
 				await page
 					.getByRole( 'button', { name: 'Add a coupon' } )
 					.click();
@@ -192,85 +261,38 @@ test.describe(
 					.locator(
 						'#wc-block-components-totals-coupon__input-coupon'
 					)
-					.fill( coupons[ i ].code );
+					.fill( coupons[ 0 ].code );
 				await page.getByText( 'Apply', { exact: true } ).click();
 				await expect(
 					page
-						.locator(
-							'.wc-block-components-notice-banner__content'
-						)
+						.getByRole( 'alert' )
 						.getByText(
-							`Coupon code "${ coupons[ i ].code }" has been applied to your cart.`
+							`Coupon code "${ coupons[ 0 ].code }" has already been applied.`
 						)
 				).toBeVisible();
-				await expect(
-					page.locator(
-						'.wc-block-components-totals-discount > .wc-block-components-totals-item__value'
-					)
-				).toHaveText( discounts[ i ] );
-				await expect(
-					page.locator(
-						'.wc-block-components-totals-footer-item > .wc-block-components-totals-item__value'
-					)
-				).toHaveText( totals[ i ] );
 			}
+		);
 
-			for ( let i = 0; i < coupons.length; i++ ) {
+		test(
+			'prevents checkout block applying coupon with usage limit',
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+			async ( { page } ) => {
+				// add coupon with usage limit
 				await page
-					.getByLabel( `Remove coupon "${ coupons[ i ].code }"` )
+					.getByRole( 'button', { name: 'Add a coupon' } )
 					.click();
+				await page
+					.locator(
+						'#wc-block-components-totals-coupon__input-coupon'
+					)
+					.fill( couponLimitedCode );
+				await page.getByText( 'Apply', { exact: true } ).click();
 				await expect(
-					page.locator(
-						'.wc-block-components-totals-footer-item > .wc-block-components-totals-item__value'
-					)
-				).toHaveText( totalsReverse[ i ] );
+					page
+						.getByRole( 'alert' )
+						.getByText( 'Coupon usage limit has been reached.' )
+				).toBeVisible();
 			}
-		} );
-
-		test( 'prevents checkout block applying same coupon twice', async ( {
-			page,
-		} ) => {
-			// try to add two same coupons and verify the error message
-			await page.getByRole( 'button', { name: 'Add a coupon' } ).click();
-			await page
-				.locator( '#wc-block-components-totals-coupon__input-coupon' )
-				.fill( coupons[ 0 ].code );
-			await page.getByText( 'Apply', { exact: true } ).click();
-			await expect(
-				page
-					.locator( '.wc-block-components-notice-banner__content' )
-					.getByText(
-						`Coupon code "${ coupons[ 0 ].code }" has been applied to your cart.`
-					)
-			).toBeVisible();
-			await page.getByRole( 'button', { name: 'Add a coupon' } ).click();
-			await page
-				.locator( '#wc-block-components-totals-coupon__input-coupon' )
-				.fill( coupons[ 0 ].code );
-			await page.getByText( 'Apply', { exact: true } ).click();
-			await expect(
-				page
-					.getByRole( 'alert' )
-					.getByText(
-						`Coupon code "${ coupons[ 0 ].code }" has already been applied.`
-					)
-			).toBeVisible();
-		} );
-
-		test( 'prevents checkout block applying coupon with usage limit', async ( {
-			page,
-		} ) => {
-			// add coupon with usage limit
-			await page.getByRole( 'button', { name: 'Add a coupon' } ).click();
-			await page
-				.locator( '#wc-block-components-totals-coupon__input-coupon' )
-				.fill( couponLimitedCode );
-			await page.getByText( 'Apply', { exact: true } ).click();
-			await expect(
-				page
-					.getByRole( 'alert' )
-					.getByText( 'Coupon usage limit has been reached.' )
-			).toBeVisible();
-		} );
+		);
 	}
 );
