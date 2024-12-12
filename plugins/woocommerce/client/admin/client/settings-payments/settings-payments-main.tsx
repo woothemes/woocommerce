@@ -182,8 +182,6 @@ export const SettingsPaymentsMain = () => {
 	const recommendedPaymentMethods = ( wooPaymentsProvider?.onboarding
 		?.recommended_payment_methods ?? [] ) as RecommendedPaymentMethod[];
 
-	console.log( recommendedPaymentMethods );
-
 	const setupPlugin = useCallback(
 		( id, slug ) => {
 			if ( installingPlugin ) {
