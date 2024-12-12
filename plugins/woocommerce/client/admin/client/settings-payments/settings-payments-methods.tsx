@@ -28,7 +28,9 @@ interface SettingsPaymentsMethodsProps {
 	>;
 }
 
-const combineRequestMethods = ( paymentMethods: PaymentProvider[] ) => {
+const combineRequestMethods = (
+	paymentMethods: RecommendedPaymentMethod[]
+) => {
 	const applePay = getPaymentMethodById( 'apple_pay' )( paymentMethods );
 	const googlePay = getPaymentMethodById( 'google_pay' )( paymentMethods );
 
@@ -56,7 +58,9 @@ const combineRequestMethods = ( paymentMethods: PaymentProvider[] ) => {
 
 			return method; // Keep the rest of the payment methods
 		} )
-		.filter( Boolean ); // Remove `null` entries
+		.filter(
+			( method ): method is RecommendedPaymentMethod => method !== null
+		); // Filter null values
 };
 
 export const SettingsPaymentsMethods: React.FC<
@@ -71,12 +75,12 @@ export const SettingsPaymentsMethods: React.FC<
 			( provider: PaymentProvider ) => isWooPayments( provider.id )
 		);
 
+		const recommendedPaymentMethods = ( wooPaymentsProvider?.onboarding
+			?.recommended_payment_methods ?? [] ) as RecommendedPaymentMethod[]; // Explicit cast or transformation.
+
 		return {
 			isFetching: select( PAYMENT_SETTINGS_STORE_NAME ).isFetching(),
-			paymentMethods: combineRequestMethods(
-				wooPaymentsProvider?.onboarding?.recommended_payment_methods ??
-					[]
-			),
+			paymentMethods: combineRequestMethods( recommendedPaymentMethods ),
 		};
 	} );
 

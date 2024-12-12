@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { PaymentProvider } from '@woocommerce/data';
+import { PaymentProvider, RecommendedPaymentMethod } from '@woocommerce/data';
 import { getAdminLink } from '@woocommerce/settings';
 
 /**
@@ -46,7 +46,7 @@ export const getWooPaymentsSetupLiveAccountLink = () => {
 };
 
 export const getPaymentMethodById =
-	( id: string ) => ( providers: PaymentProvider[] ) => {
+	( id: string ) => ( providers: RecommendedPaymentMethod[] ) => {
 		return providers.find( ( provider ) => provider.id === id ) || null;
 	};
 
