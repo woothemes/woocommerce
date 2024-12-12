@@ -15,6 +15,7 @@ import { PaymentProvider } from '@woocommerce/data';
 import sanitizeHTML from '~/lib/sanitize-html';
 import { EllipsisMenuContent } from '~/settings-payments/components/ellipsis-menu-content';
 import { isWooPayments } from '~/settings-payments/utils';
+import { StatusBadge } from '~/settings-payments/components/status-badge';
 
 type PaymentExtensionSuggestionListItemProps = {
 	extension: PaymentProvider;
@@ -31,7 +32,14 @@ export const PaymentExtensionSuggestionListItem = ( {
 }: PaymentExtensionSuggestionListItemProps ) => {
 	return {
 		key: extension.id,
-		title: <>{ extension.title }</>,
+		title: (
+			<>
+				{ extension.title }{ ' ' }
+				{ isWooPayments( extension.id ) && (
+					<StatusBadge status="recommended" />
+				) }
+			</>
+		),
 		className: 'transitions-disabled',
 		content: (
 			<>

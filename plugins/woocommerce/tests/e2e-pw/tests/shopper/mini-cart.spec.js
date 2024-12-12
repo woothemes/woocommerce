@@ -1,11 +1,15 @@
 const { test, expect } = require( '@playwright/test' );
-const {
+const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
+const { random } = require( '../../utils/helpers' );
+
+/**
+ * External dependencies
+ */
+import {
 	openEditorSettings,
 	getCanvas,
 	goToPageEditor,
-} = require( '../../utils/editor' );
-const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
-const { random } = require( '../../utils/helpers' );
+} from '@woocommerce/e2e-utils-playwright';
 
 const miniCartPageTitle = `Mini Cart ${ random() }`;
 const miniCartPageSlug = miniCartPageTitle.replace( / /gi, '-' ).toLowerCase();
@@ -248,7 +252,7 @@ test.describe(
 			).toBeVisible();
 
 			// add product to cart
-			await page.goto( `/shop/?add-to-cart=${ productId }` );
+			await page.goto( `shop/?add-to-cart=${ productId }` );
 
 			// go to page with mini cart block and test with the product added
 			await page.goto( miniCartPageSlug );
@@ -290,7 +294,7 @@ test.describe(
 			).toBeVisible();
 
 			// add product to cart and redirect from mini to regular cart
-			await page.goto( `/shop/?add-to-cart=${ productId }` );
+			await page.goto( `shop/?add-to-cart=${ productId }` );
 			await page.goto( miniCartPageSlug );
 			await page.locator( miniCartButton ).click();
 			await page.getByRole( 'link', { name: 'View my cart' } ).click();
@@ -322,10 +326,10 @@ test.describe(
 			} );
 
 			// add product to cart
-			await page.goto( `/shop/?add-to-cart=${ productId }` );
+			await page.goto( `shop/?add-to-cart=${ productId }` );
 
 			// go to cart and add shipping details to calculate tax
-			await page.goto( '/cart/' ); // we will use the old cart for this purpose
+			await page.goto( 'cart/' ); // we will use the old cart for this purpose
 			await page.locator( '.shipping-calculator-button' ).click();
 			await page.getByLabel( 'Town / City' ).fill( 'Sacramento' );
 			await page.getByLabel( 'ZIP Code' ).fill( '96000' );

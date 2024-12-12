@@ -37,11 +37,6 @@ The following table shows where the hooks are injected into the page.
 | woocommerce_no_products_found           | No Results       | before   |
 | woocommerce_archive_description         | Term Description | before   |
 
-
-
-
-
-
 ## Single Product Templates - [SingleProductTemplateCompatibility](https://github.com/woocommerce/woocommerce-blocks/blob/c8d82b20f4e4b8a424f1f0ebff80aca6f62588e5/src/Templates/SingleProductTemplateCompatibility.php)
 
 The compatibility is built around the entire page. The classic Single Product Page has a main div with the class `product` that wraps all the elements, which has multiple classes: the style of the elements inside the wrapper is applied via CSS with the selector `.product`. For this reason, the Compatibility Layer wraps inside a div with the class `product` all the blocks related to the Single Product Template that aren’t interrupted by a template part.
