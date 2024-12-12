@@ -186,6 +186,11 @@ export const removeCoupon =
 		}
 	};
 
+type Variation = {
+	attribute: string;
+	value: string;
+}
+
 /**
  * Adds an item to the cart:
  * - Calls API to add item.
@@ -199,7 +204,7 @@ export const removeCoupon =
  * @throws           Will throw an error if there is an API problem.
  */
 export const addItemToCart =
-	( productId: number, quantity = 1, variation: Array<any> = [], additionalData: Record<string, any> = {} ) =>
+	( productId: number, quantity = 1, variation: Variation[], unknown: additionalData: Record<string, unknown> = {} ) =>
 	async ( { dispatch }: { dispatch: CartDispatchFromMap } ) => {
 		try {
 			triggerAddingToCartEvent();
