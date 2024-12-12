@@ -14,6 +14,7 @@ import { Button } from '@wordpress/components';
 /**
  * Internal dependencies
  */
+import './settings-payments-body.scss';
 import './settings-payments-methods.scss';
 import { isWooPayments, getPaymentMethodById } from '~/settings-payments/utils';
 import { ListPlaceholder } from './components/list-placeholder';
@@ -44,7 +45,7 @@ const combineRequestMethods = (
 				// Combine apple_pay and google_pay data into a new payment method
 				return {
 					...method,
-					id: 'payment_request',
+					id: 'card_payments',
 					extraTitle: googlePay.title,
 					extraDescription: googlePay.description,
 					extraIcon: googlePay.icon,
