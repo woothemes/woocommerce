@@ -54,10 +54,23 @@ class WC_Tests_Order_Functions extends WC_Unit_Test_Case {
 	 * Test wc_get_order_status_name().
 	 *
 	 * @since 2.3.0
+	 * @expectedIncorrectUsage wc_get_order_status_name
 	 */
 	public function test_wc_get_order_status_name() {
 		$this->assertEquals( _x( 'Pending payment', 'Order status', 'woocommerce' ), wc_get_order_status_name( OrderInternalStatus::PENDING ) );
 		$this->assertEquals( _x( 'Pending payment', 'Order status', 'woocommerce' ), wc_get_order_status_name( OrderStatus::PENDING ) );
+
+		$this->assertEquals(
+			'Unexpected and unknown',
+			wc_get_order_status_name( 'Unexpected and unknown' ),
+			'Strings that do not map to a known status will be returned unmodified.'
+		);
+
+		$this->assertEquals(
+			'3',
+			wc_get_order_status_name( 3 ),
+			'Non-strings will be coerced into strings when reasonable.'
+		);
 	}
 
 	/**
