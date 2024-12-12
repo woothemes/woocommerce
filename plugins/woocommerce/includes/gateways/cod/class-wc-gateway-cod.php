@@ -343,11 +343,6 @@ class WC_Gateway_COD extends WC_Payment_Gateway {
 	 * @return array
 	 */
 	public function process_payment( $order_id ) {
-		wc_add_notice( __( 'Cash on delivery is not available for this order, but a notice.', 'woocommerce' ), 'error' );
-		return array(
-			'result'  => 'failure',
-			'message' => __( 'Cash on delivery is not available for this order.', 'woocommerce' ),
-		);
 		$order = wc_get_order( $order_id );
 
 		if ( $order->get_total() > 0 ) {
