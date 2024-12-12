@@ -106,9 +106,10 @@ export type OfflinePmsGroupProvider = PaymentProvider & {
 };
 
 export type PaymentExtensionSuggestionProvider = PaymentProvider & {
-	management: ManagementData;
-	state: StateData;
 	_suggestion_id: string;
+	_links: {
+		hide: LinkData;
+	};
 };
 
 // Payment extension suggestion outside providers.
