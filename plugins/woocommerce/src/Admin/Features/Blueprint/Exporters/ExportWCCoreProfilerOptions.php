@@ -63,7 +63,7 @@ class ExportWCCoreProfilerOptions implements StepExporter, HasAlias {
 	 * @return string
 	 */
 	public function get_label() {
-		return __("Onboarding Configuration", 'woocommerce');
+		return __( 'Onboarding Configuration', 'woocommerce' );
 	}
 
 	/**
@@ -72,6 +72,6 @@ class ExportWCCoreProfilerOptions implements StepExporter, HasAlias {
 	 * @return string
 	 */
 	public function get_description() {
-		return __("It includes onboarding configuration options", 'woocommerce');
+		return __( 'It includes onboarding configuration options', 'woocommerce' );
 	}
 }
