@@ -26,6 +26,25 @@ export enum PaymentProviderType {
 	Gateway = 'gateway',
 }
 
+export interface LinkData {
+	href: string;
+}
+
+export type PaymentIncentive = {
+	id: string;
+	promo_id: string;
+	title: string;
+	description: string;
+	short_description: string;
+	cta_label: string;
+	tc_url: string;
+	badge: string;
+	_dismissals: string[];
+	_links: {
+		dismiss: LinkData;
+	};
+};
+
 export type PaymentProvider = {
 	id: string;
 	_order: number;
@@ -41,6 +60,7 @@ export type PaymentProvider = {
 	management?: ManagementData;
 	state?: StateData;
 	links?: PaymentGatewayLink[];
+	_incentive?: PaymentIncentive;
 };
 
 export type OfflinePaymentGateway = {

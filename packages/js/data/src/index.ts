@@ -34,6 +34,7 @@ export {
 	OfflinePaymentGateway,
 	PaymentProvider,
 	PaymentProviderType,
+	PaymentIncentive,
 	SuggestedPaymentExtension,
 	SuggestedPaymentExtensionCategory,
 	EnableGatewayResponse,
