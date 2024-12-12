@@ -174,7 +174,13 @@ class Init {
 			);
 	}
 
-	// add_upload_nonce_to_settings
+	/**
+	 * Add shared JS vars.
+	 *
+	 * @param array $settings shared settings.
+	 *
+	 * @return mixed
+	 */
 	public function add_js_vars( $settings ) {
 		if ( ! is_admin() ) {
 			return $settings;
@@ -182,12 +188,11 @@ class Init {
 
 		$screen_id = PageController::get_instance()->get_current_screen_id();
 		if ( 'woocommerce_page_wc-admin' === $screen_id ) {
-			// Add upload nonce to global JS settings. The value can be accessed at wcSettings.admin.blueprint_upload_nonce
+			// Add upload nonce to global JS settings. The value can be accessed at wcSettings.admin.blueprint_upload_nonce.
 			$settings['blueprint_upload_nonce'] = wp_create_nonce( 'blueprint_upload_nonce' );
 		}
 
-		wplog( 'screen_id: ' . $screen_id);
-
+		wplog( 'screen_id: ' . $screen_id );
 
 		if ( strpos( $screen_id, 'woocommerce_page_wc-settings-advanced' ) !== false ) {
 			// Used on the settings page.
