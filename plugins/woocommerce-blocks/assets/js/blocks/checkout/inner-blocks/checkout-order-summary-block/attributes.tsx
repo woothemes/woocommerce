@@ -5,7 +5,7 @@ export default {
 	},
 	totalHeading: {
 		type: 'string',
-		default: null,
+		default: '',
 	},
 	lock: {
 		type: 'object',
