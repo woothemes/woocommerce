@@ -38,7 +38,10 @@ export const PaymentMethodListItem = ( {
 				{ method.id !== 'payment_request' && (
 					<>
 						<div className="woocommerce-list__item-before">
-							<img src={ method.icon } alt={ method.title + ' logo' } />
+							<img
+								src={ method.icon }
+								alt={ method.title + ' logo' }
+							/>
 						</div>
 						<div className="woocommerce-list__item-text">
 							<span className="woocommerce-list__item-title">
@@ -57,7 +60,10 @@ export const PaymentMethodListItem = ( {
 					<div className="woocommerce-list__item-multi">
 						<div className="woocommerce-list__item-multi-row multi-row-space">
 							<div className="woocommerce-list__item-before">
-								<img src={ method.icon } alt={ method.title + ' logo' } />
+								<img
+									src={ method.icon }
+									alt={ method.title + ' logo' }
+								/>
 							</div>
 							<div className="woocommerce-list__item-text">
 								<span className="woocommerce-list__item-title">
@@ -73,7 +79,10 @@ export const PaymentMethodListItem = ( {
 						</div>
 						<div className="woocommerce-list__item-multi-row">
 							<div className="woocommerce-list__item-before">
-								<img src={ method.extraIcon } alt={ method.extraTitle + ' logo' } />
+								<img
+									src={ method.extraIcon }
+									alt={ method.extraTitle + ' logo' }
+								/>
 							</div>
 							<div className="woocommerce-list__item-text">
 								<span className="woocommerce-list__item-title">
@@ -82,7 +91,9 @@ export const PaymentMethodListItem = ( {
 								<span
 									className="woocommerce-list__item-content"
 									dangerouslySetInnerHTML={ sanitizeHTML(
-										decodeEntities( method.extraDescription )
+										decodeEntities(
+											method.extraDescription
+										)
 									) }
 								/>
 							</div>
@@ -91,18 +102,20 @@ export const PaymentMethodListItem = ( {
 				) }
 				<div className="woocommerce-list__item-after">
 					<div className="woocommerce-list__item-after__actions">
-					<ToggleControl
-						checked={ paymentMethodsState[ method.id ] ?? false }
-						onChange={ ( isChecked: boolean ) =>
-							setPaymentMethodsState( {
-								...paymentMethodsState,
-								[ method.id ]: isChecked,
-							} )
-						}
-						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-						// @ts-ignore disabled prop exists
-						disabled={ method.id === 'card' }
-					/>
+						<ToggleControl
+							checked={
+								paymentMethodsState[ method.id ] ?? false
+							}
+							onChange={ ( isChecked: boolean ) =>
+								setPaymentMethodsState( {
+									...paymentMethodsState,
+									[ method.id ]: isChecked,
+								} )
+							}
+							// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+							// @ts-ignore disabled prop exists
+							disabled={ method.id === 'card' }
+						/>
 					</div>
 				</div>
 			</div>

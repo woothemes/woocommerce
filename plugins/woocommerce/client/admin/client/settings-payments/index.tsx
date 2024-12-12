@@ -3,7 +3,12 @@
  */
 import { Gridicon } from '@automattic/components';
 import { Button, SelectControl } from '@wordpress/components';
-import React, { useState, lazy, Suspense, useCallback } from '@wordpress/element';
+import React, {
+	useState,
+	lazy,
+	Suspense,
+	useCallback,
+} from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { getAdminLink } from '@woocommerce/settings';
 

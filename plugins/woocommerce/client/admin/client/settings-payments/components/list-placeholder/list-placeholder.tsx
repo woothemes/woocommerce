@@ -19,7 +19,10 @@ interface ListPlaceholderProps {
  *
  * @param {number} rows Number of rows to display.
  */
-export const ListPlaceholder = ( { rows, hasDragIcon = true }: ListPlaceholderProps ) => {
+export const ListPlaceholder = ( {
+	rows,
+	hasDragIcon = true,
+}: ListPlaceholderProps ) => {
 	const items = Array.from( { length: rows } ).map( () => {
 		return {
 			content: <div className="list-placeholder__content" />,
@@ -29,9 +32,7 @@ export const ListPlaceholder = ( { rows, hasDragIcon = true }: ListPlaceholderPr
 			after: <div className="list-placeholder__after" />,
 			before: (
 				<>
-					{ hasDragIcon && (
-						<DefaultDragHandle />
-					) }
+					{ hasDragIcon && <DefaultDragHandle /> }
 					<div className="list-placeholder__before" />
 				</>
 			),

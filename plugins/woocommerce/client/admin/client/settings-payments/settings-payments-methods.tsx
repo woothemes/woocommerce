@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import '@wordpress/element';
 import {
 	type RecommendedPaymentMethod,
 	type PaymentProvider,
@@ -10,15 +9,13 @@ import {
 import { useEffect, useState } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
+import { Button } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import './settings-payments-methods.scss';
-import {
-	isWooPayments,
-	getPaymentMethodById,
-} from '~/settings-payments/utils';
+import { isWooPayments, getPaymentMethodById } from '~/settings-payments/utils';
 import { ListPlaceholder } from './components/list-placeholder';
 import { PaymentMethodListItem } from './components/payment-method-list-item';
 
@@ -26,7 +23,9 @@ type PaymentMethodsState = Record< string, boolean >;
 
 interface SettingsPaymentsMethodsProps {
 	paymentMethodsState: PaymentMethodsState;
-	setPaymentMethodsState: React.Dispatch<React.SetStateAction< PaymentMethodsState >>;
+	setPaymentMethodsState: React.Dispatch<
+		React.SetStateAction< PaymentMethodsState >
+	>;
 }
 
 const combineRequestMethods = ( paymentMethods: PaymentProvider[] ) => {
@@ -34,50 +33,58 @@ const combineRequestMethods = ( paymentMethods: PaymentProvider[] ) => {
 	const googlePay = getPaymentMethodById( 'google_pay' )( paymentMethods );
 
 	if ( ! applePay || ! googlePay ) {
-        return paymentMethods; // If either applePay or googlePay is not found, return the original paymentMethods
-    }
+		return paymentMethods; // If either applePay or googlePay is not found, return the original paymentMethods
+	}
 
-	return paymentMethods.map( ( method ) => {
-        if ( method.id === 'apple_pay' ) {
-            // Combine apple_pay and google_pay data into a new payment method
-			return {
-				...method,
-				id: 'payment_request',
-				extraTitle: googlePay.title,
-				extraDescription: googlePay.description,
-				extraIcon: googlePay.icon,
-			};
-		}
+	return paymentMethods
+		.map( ( method ) => {
+			if ( method.id === 'apple_pay' ) {
+				// Combine apple_pay and google_pay data into a new payment method
+				return {
+					...method,
+					id: 'payment_request',
+					extraTitle: googlePay.title,
+					extraDescription: googlePay.description,
+					extraIcon: googlePay.icon,
+				};
+			}
 
-        // Exclude GooglePay from the list
-		if ( method.id === 'google_pay' ) {
-            return null; 
-        }
+			// Exclude GooglePay from the list
+			if ( method.id === 'google_pay' ) {
+				return null;
+			}
 
-		return method; // Keep the rest of the payment methods
-	} ).filter( Boolean ); // Remove `null` entries
-}
+			return method; // Keep the rest of the payment methods
+		} )
+		.filter( Boolean ); // Remove `null` entries
+};
 
-export const SettingsPaymentsMethods: React.FC< SettingsPaymentsMethodsProps > = ( {
-	paymentMethodsState,
-	setPaymentMethodsState,
-} ) => {
+export const SettingsPaymentsMethods: React.FC<
+	SettingsPaymentsMethodsProps
+> = ( { paymentMethodsState, setPaymentMethodsState } ) => {
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
 	const { paymentMethods, isFetching } = useSelect( ( select ) => {
-		const paymentProviders = select( PAYMENT_SETTINGS_STORE_NAME ).getPaymentProviders() || [];
-  		const wooPaymentsProvider = paymentProviders.find( ( provider: PaymentProvider ) => isWooPayments( provider.id ) );
+		const paymentProviders =
+			select( PAYMENT_SETTINGS_STORE_NAME ).getPaymentProviders() || [];
+		const wooPaymentsProvider = paymentProviders.find(
+			( provider: PaymentProvider ) => isWooPayments( provider.id )
+		);
 
 		return {
 			isFetching: select( PAYMENT_SETTINGS_STORE_NAME ).isFetching(),
-			paymentMethods: combineRequestMethods( wooPaymentsProvider?.onboarding?.recommended_payment_methods ?? [] ) as RecommendedPaymentMethod,
+			paymentMethods: combineRequestMethods(
+				wooPaymentsProvider?.onboarding?.recommended_payment_methods ??
+					[]
+			),
 		};
 	} );
 
-	
-	const initialPaymentMethodsState = paymentMethods.reduce< Record< string, boolean > >(
-		( 
-			acc: Record<string, boolean>,
+	const initialPaymentMethodsState = paymentMethods.reduce<
+		Record< string, boolean >
+	>(
+		(
+			acc: Record< string, boolean >,
 			{ id, enabled }: { id: string; enabled: boolean }
 		) => {
 			acc[ id ] = enabled;
@@ -95,31 +102,32 @@ export const SettingsPaymentsMethods: React.FC< SettingsPaymentsMethodsProps > =
 	return (
 		<div className="settings-payments-methods__container">
 			{ isFetching ? (
-				<ListPlaceholder
-					rows={ 3 }
-					hasDragIcon={ false }
-				/>
+				<ListPlaceholder rows={ 3 } hasDragIcon={ false } />
 			) : (
 				<>
-					<div
-						className="woocommerce-list"
-					>
-						{ paymentMethods.map( ( method: RecommendedPaymentMethod ) => (
-							<PaymentMethodListItem
-								method={ method }
-								paymentMethodsState= { paymentMethodsState }
-								setPaymentMethodsState={ setPaymentMethodsState }
-								isExpanded={ isExpanded }
-								key={ method.id }
-							/>
-						) ) }
+					<div className="woocommerce-list">
+						{ paymentMethods.map(
+							( method: RecommendedPaymentMethod ) => (
+								<PaymentMethodListItem
+									method={ method }
+									paymentMethodsState={ paymentMethodsState }
+									setPaymentMethodsState={
+										setPaymentMethodsState
+									}
+									isExpanded={ isExpanded }
+									key={ method.id }
+								/>
+							)
+						) }
 					</div>
-					<a
-						className='settings-payments-methods__show-more'
+					<Button
+						className="settings-payments-methods__show-more"
 						onClick={ () => {
 							setIsExpanded( ! isExpanded );
 						} }
-						onKeyDown={ ( event: React.KeyboardEvent<HTMLAnchorElement> ) => {
+						onKeyDown={ (
+							event: React.KeyboardEvent< HTMLAnchorElement >
+						) => {
 							if ( event.key === 'Enter' || event.key === ' ' ) {
 								setIsExpanded( ! isExpanded );
 							}
@@ -127,16 +135,17 @@ export const SettingsPaymentsMethods: React.FC< SettingsPaymentsMethodsProps > =
 						tabIndex={ 0 }
 						aria-expanded={ isExpanded }
 					>
-						{ ! isExpanded && sprintf(
-							/* translators: %s: number of disabled payment methods */
-							__(
-								'Show more (%s)',
-								'woocommerce'
-							),
-							paymentMethods.filter( ( pm: RecommendedPaymentMethod ) => pm.enabled === false ).length ?? 0
-						) }
+						{ ! isExpanded &&
+							sprintf(
+								/* translators: %s: number of disabled payment methods */
+								__( 'Show more (%s)', 'woocommerce' ),
+								paymentMethods.filter(
+									( pm: RecommendedPaymentMethod ) =>
+										pm.enabled === false
+								).length ?? 0
+							) }
 						{ isExpanded && __( 'Show less', 'woocommerce' ) }
-					</a>
+					</Button>
 				</>
 			) }
 		</div>

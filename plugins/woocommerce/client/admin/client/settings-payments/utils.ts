@@ -45,9 +45,10 @@ export const getWooPaymentsSetupLiveAccountLink = () => {
 	);
 };
 
-export const getPaymentMethodById = ( id: string ) => ( providers: PaymentProvider[] ) => {
-    return providers.find((provider) => provider.id === id) || null;
-};
+export const getPaymentMethodById =
+	( id: string ) => ( providers: PaymentProvider[] ) => {
+		return providers.find( ( provider ) => provider.id === id ) || null;
+	};
 
 /**
  * Checks whether providers contain WooPayments gateway in test mode that is set up.
