@@ -81,7 +81,7 @@ export type PaymentProvider = {
 	};
 	tags?: string[];
 	_suggestion_id?: string;
-	_links?: object;
+	_links?: Record< string, LinkData >;
 	_incentive?: PaymentIncentive;
 };
 
