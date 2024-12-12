@@ -266,7 +266,7 @@ class RestApi {
 	 *
 	 * ["setWCSettings", "setWCShippingZones", "setWCShippingMethods", "setWCShippingRates", "installPlugin", "installTheme"]
 	 *
-	 * @param $steps
+	 * @param array $steps steps payload from the frontend.
 	 *
 	 * @return array
 	 */
