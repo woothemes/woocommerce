@@ -945,7 +945,8 @@ class WC_Form_Handler {
 		}
 
 		if ( false !== WC()->cart->add_to_cart( $product_id, $quantity, $variation_id, $variations ) ) {
-			wc_add_to_cart_message( array( $product_id => $quantity ), true, false, $variation_id );
+			$product_or_variation_id = ! empty( $variation_id ) ? $variation_id : $product_id;
+			wc_add_to_cart_message( array( $product_or_variation_id => $quantity ), true );
 			return true;
 		}
 

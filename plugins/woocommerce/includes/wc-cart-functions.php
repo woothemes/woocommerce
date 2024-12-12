@@ -90,29 +90,30 @@ function wc_get_raw_referer() {
 /**
  * Add to cart messages.
  *
- * @param int|array $products Product ID list or single product ID.
+ * @param int|array $products_or_variations Product or Variation ID list \
+ * or single product or variation ID.
  * @param bool      $show_qty Should quantities be shown? Added in 2.6.0.
  * @param bool      $return   Return message rather than add it.
  *
  * @return mixed
  */
-function wc_add_to_cart_message( $products, $show_qty = false, $return = false, $variation_id = false ) {
+function wc_add_to_cart_message( $products_or_variations, $show_qty = false, $return = false ) {
 	$titles = array();
 	$count  = 0;
 
-	if ( ! is_array( $products ) ) {
-		$products = array( $products => 1 );
+	if ( ! is_array( $products_or_variations ) ) {
+		$products_or_variations = array( $products_or_variations => 1 );
 		$show_qty = false;
 	}
 
 	if ( ! $show_qty ) {
-		$products = array_fill_keys( array_keys( $products ), 1 );
+		$products_or_variations = array_fill_keys( array_keys( $products_or_variations ), 1 );
 	}
 
-	$product_id = null;
-	foreach ( $products as $product_id => $qty ) {
+	$product_or_variation_id = null;
+	foreach ( $products_or_variations as $product_or_variation_id => $qty ) {
 		/* translators: %s: product name */
-		$titles[] = apply_filters( 'woocommerce_add_to_cart_qty_html', ( $qty > 1 ? absint( $qty ) . ' &times; ' : '' ), $product_id ) . apply_filters( 'woocommerce_add_to_cart_item_name_in_quotes', sprintf( _x( '&ldquo;%s&rdquo;', 'Item name in quotes', 'woocommerce' ), strip_tags( get_the_title( $product_id ) ) ), $product_id );
+		$titles[] = apply_filters( 'woocommerce_add_to_cart_qty_html', ( $qty > 1 ? absint( $qty ) . ' &times; ' : '' ), $product_or_variation_id ) . apply_filters( 'woocommerce_add_to_cart_item_name_in_quotes', sprintf( _x( '&ldquo;%s&rdquo;', 'Item name in quotes', 'woocommerce' ), strip_tags( get_the_title( $product_or_variation_id ) ) ), $product_or_variation_id );
 		$count   += $qty;
 	}
 
@@ -132,10 +133,10 @@ function wc_add_to_cart_message( $products, $show_qty = false, $return = false, 
 
 	if ( has_filter( 'wc_add_to_cart_message' ) ) {
 		wc_deprecated_function( 'The wc_add_to_cart_message filter', '3.0', 'wc_add_to_cart_message_html' );
-		$message = apply_filters( 'wc_add_to_cart_message', $message, $product_id );
+		$message = apply_filters( 'wc_add_to_cart_message', $message, $product_or_variation_id );
 	}
 
-	$message = apply_filters( 'wc_add_to_cart_message_html', $message, $products, $show_qty );
+	$message = apply_filters( 'wc_add_to_cart_message_html', $message, $products_or_variations, $show_qty );
 
 	if ( $return ) {
 		return $message;
