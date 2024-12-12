@@ -149,7 +149,7 @@ describe( 'CreateAccountFrontendBlock - Automatic password generation on', () =>
 			expect(
 				await queryByText(
 					textContentMatcher(
-						"We'll email test@test.com a link to set up your account password."
+						'Check your email at test@test.com for the link to set up an account password.'
 					)
 				)
 			).toBeInTheDocument();
