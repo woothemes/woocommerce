@@ -29,7 +29,7 @@ wp-env run tests-cli wp wc --user=admin tool run install_pages
 
 # Importing WooCommerce sample products"
 # wp-env run tests-cli wp import wp-content/plugins/woocommerce/sample-data/sample_products.xml --authors=skip
-wp-env run tests-cli wp wc generate products 1000
+wp-env run tests-cli wp wc generate products 5000
 
 # install Storefront
 wp-env run tests-cli wp theme install storefront --activate
