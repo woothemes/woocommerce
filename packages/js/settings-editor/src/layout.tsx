@@ -60,7 +60,6 @@ export function Layout( {
 	const disableMotion = useReducedMotion();
 
 	const { key: routeKey, areas, widths } = route;
-	console.log( 'tabs', tabs );
 
 	return (
 		<>

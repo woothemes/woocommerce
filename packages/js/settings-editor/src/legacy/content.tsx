@@ -20,9 +20,13 @@ export const LegacyContent = ( {
 
 	return (
 		<div className="woocommerce-settings-content">
-			{ section.settings.map( ( group ) => (
-				<SettingsGroup key={ group.id } group={ group } />
-			) ) }
+			{ section.settings.map( ( group ) => {
+				if ( group.type === 'group' ) {
+					return <SettingsGroup key={ group.id } group={ group } />;
+				}
+				// Handle settings not in a group here.
+				return null;
+			} ) }
 		</div>
 	);
 };
