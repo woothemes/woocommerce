@@ -34,6 +34,21 @@ export enum PaymentProviderType {
 	Gateway = 'gateway',
 }
 
+export type PaymentIncentive = {
+	id: string;
+	promo_id: string;
+	title: string;
+	description: string;
+	short_description: string;
+	cta_label: string;
+	tc_url: string;
+	badge: string;
+	_dismissals: string[];
+	_links: {
+		dismiss: LinkData;
+	};
+};
+
 // General payment provider type.
 export type PaymentProvider = {
 	id: string;
@@ -59,6 +74,7 @@ export type PaymentGatewayProvider = PaymentProvider & {
 	supports: string[];
 	management: ManagementData;
 	state: StateData;
+	_incentive?: PaymentIncentive;
 };
 
 // Offline payment method provider type.
@@ -78,6 +94,7 @@ export type PaymentExtensionSuggestionProvider = PaymentProvider & {
 	management: ManagementData;
 	state: StateData;
 	_suggestion_id: string;
+	_incentive?: PaymentIncentive;
 };
 
 // Payment extension suggestion outside providers.

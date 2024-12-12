@@ -39,6 +39,7 @@ export {
 	OfflinePmsGroupProvider,
 	SuggestedPaymentExtension,
 	SuggestedPaymentExtensionCategory,
+	PaymentIncentive,
 	EnableGatewayResponse,
 	PaymentGatewayLink,
 } from './payment-settings/types';
