@@ -296,6 +296,7 @@ WooCommerce comes with some sample data you can use to see how products look; im
 * Fix - Add new required props to RouterProvider [#53433](https://github.com/woocommerce/woocommerce/pull/53433)
 * Fix - Fix search in Installed Plugins page [#53438](https://github.com/woocommerce/woocommerce/pull/53438)
 * Fix - Fix: Button styles are missing on Add to cart button on non-WooCommerce pages [#53482](https://github.com/woocommerce/woocommerce/pull/53482)
+* Fix - Avoid crash widget area when Product Collection is rendered [#53638](https://github.com/woocommerce/woocommerce/pull/53638)
 * Add - Adapt receipt to take into account failed orders. [#51853](https://github.com/woocommerce/woocommerce/pull/51853)
 * Add - Add a11y to the color swatches [#51715](https://github.com/woocommerce/woocommerce/pull/51715)
 * Add - Add a method to the order object to get info about the card used for payment [#52173](https://github.com/woocommerce/woocommerce/pull/52173)
