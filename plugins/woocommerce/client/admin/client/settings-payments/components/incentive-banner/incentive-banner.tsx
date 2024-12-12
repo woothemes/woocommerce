@@ -75,7 +75,7 @@ export const IncentiveBanner = ( {
 				<img
 					src={
 						WC_ASSET_URL +
-						'images/settings-payments/incentives-icon.svg'
+						'images/settings-payments/incentives-illustration.svg'
 					}
 					alt={ __( 'Incentive icon', 'woocommerce' ) }
 				/>
