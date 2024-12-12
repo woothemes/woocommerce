@@ -110,9 +110,9 @@ class WC_Tests_Formatting_Functions extends WC_Unit_Test_Case {
 		// Save default.
 		$default_unit = get_option( 'woocommerce_dimension_unit' );
 
-		// cm (default unit).
+		// in (default unit).
 		$this->assertEquals(
-			array( 10, 3.937, 0.10936133, 100, 0.1 ),
+			array( 25.4, 10, 0.2777777782, 254, 0.254 ),
 			array(
 				wc_get_dimension( 10, 'cm' ),
 				wc_get_dimension( 10, 'in' ),
@@ -122,10 +122,10 @@ class WC_Tests_Formatting_Functions extends WC_Unit_Test_Case {
 			)
 		);
 
-		// in.
-		update_option( 'woocommerce_dimension_unit', 'in' );
+		// cm.
+		update_option( 'woocommerce_dimension_unit', 'cm' );
 		$this->assertEquals(
-			array( 25.4, 10, 0.2777777782, 254, 0.254 ),
+			array( 10, 3.937, 0.10936133, 100, 0.1 ),
 			array(
 				wc_get_dimension( 10, 'cm' ),
 				wc_get_dimension( 10, 'in' ),
