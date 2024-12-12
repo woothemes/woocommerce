@@ -204,7 +204,7 @@ class PaymentsRestController extends RestApiControllerBase {
 			'providers'               => $providers,
 			'offline_payment_methods' => $offline_payment_providers,
 			'suggestions'             => $suggestions,
-			'suggestion_categories'   => $this->payments->get_extension_suggestion_categories(),
+			'suggestion_categories'   => $this->payments->get_payment_extension_suggestion_categories(),
 		);
 
 		return rest_ensure_response( $this->prepare_payment_providers_response( $response ) );
@@ -295,7 +295,7 @@ class PaymentsRestController extends RestApiControllerBase {
 			return array();
 		}
 
-		$suggestions = $this->payments->get_extension_suggestions( $location );
+		$suggestions = $this->payments->get_payment_extension_suggestions( $location );
 
 		return $suggestions['other'] ?? array();
 	}

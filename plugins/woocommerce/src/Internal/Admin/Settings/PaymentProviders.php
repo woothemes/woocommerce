@@ -35,10 +35,14 @@ class PaymentProviders {
 	public const SUGGESTION_ORDERING_PREFIX     = '_wc_pes_';
 	public const OFFLINE_METHODS_ORDERING_GROUP = '_wc_offline_payment_methods_group';
 
+	public const CATEGORY_EXPRESS_CHECKOUT = 'express_checkout';
+	public const CATEGORY_BNPL             = 'bnpl';
+	public const CATEGORY_PSP              = 'psp';
+
 	/**
 	 * The map of suggestion or gateway IDs to their respective Payment Provider classes.
 	 *
-	 * @var array|\class-string[]
+	 * @var \class-string[]
 	 */
 	private array $payment_providers_class_map = array(
 		'woocommerce_payments'                   => WooPayments::class,
@@ -127,24 +131,32 @@ class PaymentProviders {
 	}
 
 	/**
-	 * Reset the memoized data. Useful for testing purposes.
+	 * Get the payment gateways details.
 	 *
-	 * @internal
-	 * @return void
+	 * @param WC_Payment_Gateway $payment_gateway       The payment gateway object.
+	 * @param int                $payment_gateway_order The order of the payment gateway.
+	 * @param string             $country_code          Optional. The country code for which the details are being gathered.
+	 *                                                  This should be a ISO 3166-1 alpha-2 country code.
+	 *
+	 * @return array The payment gateway details.
 	 */
-	public function reset_memo(): void {
-		$this->payment_gateways_memo = null;
+	public function get_payment_gateway_details( WC_Payment_Gateway $payment_gateway, int $payment_gateway_order, string $country_code = '' ): array {
+		return $this->enhance_payment_gateway_details(
+			$this->get_payment_gateway_base_details( $payment_gateway, $payment_gateway_order, $country_code ),
+			$payment_gateway,
+			$country_code
+		);
 	}
 
 	/**
 	 * Get the payment gateways details from the object.
 	 *
-	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
+	 * @param WC_Payment_Gateway $payment_gateway       The payment gateway object.
 	 * @param int                $payment_gateway_order The order of the payment gateway.
-	 * @param string             $country_code Optional. The country code for which the details are being gathered.
-	 *                                         This should be a ISO 3166-1 alpha-2 country code.
+	 * @param string             $country_code          Optional. The country code for which the details are being gathered.
+	 *                                                  This should be a ISO 3166-1 alpha-2 country code.
 	 *
-	 * @return array The response data.
+	 * @return array The payment gateway base details.
 	 */
 	public function get_payment_gateway_base_details( WC_Payment_Gateway $payment_gateway, int $payment_gateway_order, string $country_code = '' ): array {
 		$plugin_slug = $this->get_payment_gateway_plugin_slug( $payment_gateway );
@@ -288,6 +300,240 @@ class PaymentProviders {
 	 */
 	public function is_offline_payment_method( string $id ): bool {
 		return in_array( $id, self::OFFLINE_METHODS, true );
+	}
+
+	/**
+	 * Get the payment extension suggestions for the given location.
+	 *
+	 * @param string $location The location for which the suggestions are being fetched.
+	 * @param string $context  Optional. The context ID of where these extensions are being used.
+	 *
+	 * @return array[] The payment extension suggestions for the given location, split into preferred and other.
+	 * @throws Exception If there are malformed or invalid suggestions.
+	 */
+	public function get_extension_suggestions( string $location, string $context = '' ): array {
+		$preferred_psp = null;
+		$preferred_apm = null;
+		$other         = array();
+
+		$extensions = $this->extension_suggestions->get_country_extensions( $location, $context );
+		// Sort them by _priority.
+		usort(
+			$extensions,
+			function ( $a, $b ) {
+				return $a['_priority'] <=> $b['_priority'];
+			}
+		);
+
+		$has_enabled_ecommerce_gateways = $this->has_enabled_ecommerce_gateways();
+
+		// Keep track of the active extensions.
+		$active_extensions = array();
+
+		foreach ( $extensions as $extension ) {
+			$extension = $this->enhance_extension_suggestion( $extension );
+
+			if ( self::EXTENSION_ACTIVE === $extension['plugin']['status'] ) {
+				// If the suggested extension is active, we no longer suggest it.
+				// But remember it for later.
+				$active_extensions[] = $extension['id'];
+				continue;
+			}
+
+			// Determine if the suggestion is preferred or not by looking at its tags.
+			$is_preferred = in_array( ExtensionSuggestions::TAG_PREFERRED, $extension['tags'], true );
+			// Determine if the suggestion is hidden (from the preferred locations).
+			$is_hidden = $this->is_payment_extension_suggestion_hidden( $extension );
+
+			if ( ! $is_hidden && $is_preferred ) {
+				// If the suggestion is preferred, add it to the preferred list.
+				if ( empty( $preferred_psp ) && ExtensionSuggestions::TYPE_PSP === $extension['_type'] ) {
+					$preferred_psp = $extension;
+					continue;
+				}
+
+				if ( empty( $preferred_apm ) && ExtensionSuggestions::TYPE_APM === $extension['_type'] ) {
+					$preferred_apm = $extension;
+					continue;
+				}
+			}
+
+			if ( $is_hidden &&
+				ExtensionSuggestions::TYPE_APM === $extension['_type'] &&
+				ExtensionSuggestions::PAYPAL_FULL_STACK === $extension['id'] ) {
+				// If the PayPal Full Stack suggestion is hidden, we no longer suggest it,
+				// because we have the PayPal Express Checkout (Wallet) suggestion.
+				continue;
+			}
+
+			// If there are no enabled ecommerce gateways (no PSP selected),
+			// we don't suggest express checkout or BNPL extensions.
+			if ( (
+					ExtensionSuggestions::TYPE_EXPRESS_CHECKOUT === $extension['_type'] ||
+					ExtensionSuggestions::TYPE_BNPL === $extension['_type']
+				) && ! $has_enabled_ecommerce_gateways ) {
+				continue;
+			}
+
+			// If WooPayments or Stripe is active, we don't suggest other BNPLs.
+			if ( ExtensionSuggestions::TYPE_BNPL === $extension['_type'] &&
+				(
+					in_array( ExtensionSuggestions::STRIPE, $active_extensions, true ) ||
+					in_array( ExtensionSuggestions::WOOPAYMENTS, $active_extensions, true )
+				)
+			) {
+				continue;
+			}
+
+			// If we made it to this point, the suggestion goes into the other list.
+			// But first, make sure there isn't already an extension added to the other list with the same plugin slug.
+			// This can happen if the same extension is suggested as both a PSP and an APM.
+			// The first entry that we encounter is the one that we keep.
+			$extension_slug   = $extension['plugin']['slug'];
+			$extension_exists = array_filter(
+				$other,
+				function ( $suggestion ) use ( $extension_slug ) {
+					return $suggestion['plugin']['slug'] === $extension_slug;
+				}
+			);
+			if ( ! empty( $extension_exists ) ) {
+				continue;
+			}
+
+			$other[] = $extension;
+		}
+
+		// Make sure that the preferred suggestions are not among the other list by removing any entries with their plugin slug.
+		$other = array_values(
+			array_filter(
+				$other,
+				function ( $suggestion ) use ( $preferred_psp, $preferred_apm ) {
+					return ( empty( $preferred_psp ) || $suggestion['plugin']['slug'] !== $preferred_psp['plugin']['slug'] ) &&
+							( empty( $preferred_apm ) || $suggestion['plugin']['slug'] !== $preferred_apm['plugin']['slug'] );
+				}
+			)
+		);
+
+		// The preferred PSP gets a recommended tag that instructs the UI to highlight it further.
+		if ( ! empty( $preferred_psp ) ) {
+			$preferred_psp['tags'][] = ExtensionSuggestions::TAG_RECOMMENDED;
+		}
+
+		return array(
+			'preferred' => array_values(
+				array_filter(
+					array(
+						// The PSP should naturally have a higher priority than the APM.
+						// No need to impose a specific order here.
+						$preferred_psp,
+						$preferred_apm,
+					)
+				)
+			),
+			'other'     => $other,
+		);
+	}
+
+	/**
+	 * Get a payment extension suggestion by ID.
+	 *
+	 * @param string $id The ID of the payment extension suggestion.
+	 *
+	 * @return ?array The payment extension suggestion details, or null if not found.
+	 */
+	public function get_extension_suggestion_by_id( string $id ): ?array {
+		return $this->extension_suggestions->get_by_id( $id );
+	}
+
+	/**
+	 * Get a payment extension suggestion by plugin slug.
+	 *
+	 * @param string $slug         The plugin slug of the payment extension suggestion.
+	 * @param string $country_code Optional. The business location country code to get the suggestions for.
+	 *
+	 * @return ?array The payment extension suggestion details, or null if not found.
+	 */
+	public function get_extension_suggestion_by_plugin_slug( string $slug, string $country_code = '' ): ?array {
+		return $this->extension_suggestions->get_by_plugin_slug( $slug, $country_code, Payments::SUGGESTIONS_CONTEXT );
+	}
+
+	/**
+	 * Hide a payment extension suggestion.
+	 *
+	 * @param string $id The ID of the payment extension suggestion to hide.
+	 *
+	 * @return bool True if the suggestion was successfully hidden, false otherwise.
+	 * @throws Exception If the suggestion ID is invalid.
+	 */
+	public function hide_extension_suggestion( string $id ): bool {
+		// We may receive a suggestion ID that is actually an order map ID used in the settings page providers list.
+		// Extract the suggestion ID from the order map ID.
+		if ( $this->is_suggestion_order_map_id( $id ) ) {
+			$id = $this->get_suggestion_id_from_order_map_id( $id );
+		}
+
+		$suggestion = $this->get_extension_suggestion_by_id( $id );
+		if ( is_null( $suggestion ) ) {
+			throw new Exception( esc_html__( 'Invalid suggestion ID.', 'woocommerce' ) );
+		}
+
+		$user_payments_nox_profile = get_user_meta( get_current_user_id(), Payments::USER_PAYMENTS_NOX_PROFILE_KEY, true );
+		if ( empty( $user_payments_nox_profile ) ) {
+			$user_payments_nox_profile = array();
+		} else {
+			$user_payments_nox_profile = maybe_unserialize( $user_payments_nox_profile );
+		}
+
+		// Mark the suggestion as hidden.
+		if ( empty( $user_payments_nox_profile['hidden_suggestions'] ) ) {
+			$user_payments_nox_profile['hidden_suggestions'] = array();
+		}
+		// Check if it is already hidden.
+		if ( in_array( $id, array_column( $user_payments_nox_profile['hidden_suggestions'], 'id' ), true ) ) {
+			return true;
+		}
+		$user_payments_nox_profile['hidden_suggestions'][] = array(
+			'id'        => $id,
+			'timestamp' => time(),
+		);
+
+		$result = update_user_meta( get_current_user_id(), Payments::USER_PAYMENTS_NOX_PROFILE_KEY, $user_payments_nox_profile );
+		// Since we already check if the suggestion is already hidden, we should not get a false result
+		// for trying to update with the same value. False means the update failed and the suggestion is not hidden.
+		if ( false === $result ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Get the payment extension suggestions categories details.
+	 *
+	 * @return array The payment extension suggestions categories.
+	 */
+	public function get_extension_suggestion_categories(): array {
+		$categories   = array();
+		$categories[] = array(
+			'id'          => self::CATEGORY_EXPRESS_CHECKOUT,
+			'_priority'   => 10,
+			'title'       => esc_html__( 'Express Checkouts', 'woocommerce' ),
+			'description' => esc_html__( 'Allow shoppers to fast-track the checkout process with express options like Apple Pay and Google Pay.', 'woocommerce' ),
+		);
+		$categories[] = array(
+			'id'          => self::CATEGORY_BNPL,
+			'_priority'   => 20,
+			'title'       => esc_html__( 'Buy Now, Pay Later', 'woocommerce' ),
+			'description' => esc_html__( 'Offer flexible payment options to your shoppers.', 'woocommerce' ),
+		);
+		$categories[] = array(
+			'id'          => self::CATEGORY_PSP,
+			'_priority'   => 30,
+			'title'       => esc_html__( 'Payment Providers', 'woocommerce' ),
+			'description' => esc_html__( 'Give your shoppers additional ways to pay.', 'woocommerce' ),
+		);
+
+		return $categories;
 	}
 
 	/**
@@ -522,6 +768,128 @@ class PaymentProviders {
 	}
 
 	/**
+	 * Reset the memoized data. Useful for testing purposes.
+	 *
+	 * @internal
+	 * @return void
+	 */
+	public function reset_memo(): void {
+		$this->payment_gateways_memo = null;
+	}
+
+	/**
+	 * Enhance the payment gateway details with additional information from other sources.
+	 *
+	 * @param array              $gateway_details The gateway details to enhance.
+	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
+	 * @param string             $country_code    The country code for which the details are being enhanced.
+	 *                                            This should be a ISO 3166-1 alpha-2 country code.
+	 *
+	 * @return array The enhanced gateway details.
+	 */
+	private function enhance_payment_gateway_details( array $gateway_details, WC_Payment_Gateway $payment_gateway, string $country_code ): array {
+		$gateway_details['_type'] = $this->is_offline_payment_method( $payment_gateway->id ) ? self::TYPE_OFFLINE_PM : self::TYPE_GATEWAY;
+
+		$plugin_slug = $gateway_details['plugin']['slug'];
+		// The payment gateway plugin might use a non-standard directory name.
+		// Try to normalize it to the common slug to avoid false negatives when matching.
+		$normalized_plugin_slug = Utils::normalize_plugin_slug( $plugin_slug );
+
+		// Handle core gateways.
+		if ( 'woocommerce' === $normalized_plugin_slug ) {
+			if ( $this->is_offline_payment_method( $gateway_details['id'] ) ) {
+				switch ( $gateway_details['id'] ) {
+					case 'bacs':
+						$gateway_details['icon'] = plugins_url( 'assets/images/payment_methods/bacs.svg', WC_PLUGIN_FILE );
+						break;
+					case 'cheque':
+						$gateway_details['icon'] = plugins_url( 'assets/images/payment_methods/cheque.svg', WC_PLUGIN_FILE );
+						break;
+					case 'cod':
+						$gateway_details['icon'] = plugins_url( 'assets/images/payment_methods/cod.svg', WC_PLUGIN_FILE );
+						break;
+				}
+			}
+		}
+
+		// If we have a matching suggestion, hoist details from there.
+		// The suggestions only know about the normalized (aka official) plugin slug.
+		$suggestion = $this->get_extension_suggestion_by_plugin_slug( $normalized_plugin_slug, $country_code );
+		if ( ! is_null( $suggestion ) ) {
+			// Enhance the suggestion details.
+			$suggestion = $this->enhance_extension_suggestion( $suggestion );
+
+			if ( empty( $gateway_details['image'] ) ) {
+				$gateway_details['image'] = $suggestion['image'];
+			}
+			if ( empty( $gateway_details['icon'] ) ) {
+				$gateway_details['icon'] = $suggestion['icon'];
+			}
+			if ( empty( $gateway_details['links'] ) ) {
+				$gateway_details['links'] = $suggestion['links'];
+			}
+			if ( empty( $gateway_details['tags'] ) ) {
+				$gateway_details['tags'] = $suggestion['tags'];
+			}
+			if ( empty( $gateway_details['plugin'] ) ) {
+				$gateway_details['plugin'] = $suggestion['plugin'];
+			}
+			if ( empty( $gateway_details['_incentive'] ) && ! empty( $suggestion['_incentive'] ) ) {
+				$gateway_details['_incentive'] = $suggestion['_incentive'];
+			}
+			$gateway_details['_suggestion_id'] = $suggestion['id'];
+		}
+
+		// Get the gateway's corresponding plugin details.
+		$plugin_data = PluginsHelper::get_plugin_data( $plugin_slug );
+		if ( ! empty( $plugin_data ) ) {
+			// If there are no links, try to get them from the plugin data.
+			if ( empty( $gateway_details['links'] ) ) {
+				if ( is_array( $plugin_data ) && ! empty( $plugin_data['PluginURI'] ) ) {
+					$gateway_details['links'] = array(
+						array(
+							'_type' => ExtensionSuggestions::LINK_TYPE_ABOUT,
+							'url'   => esc_url( $plugin_data['PluginURI'] ),
+						),
+					);
+				} elseif ( ! empty( $gateway_details['plugin']['_type'] ) &&
+							ExtensionSuggestions::PLUGIN_TYPE_WPORG === $gateway_details['plugin']['_type'] ) {
+
+					// Fallback to constructing the WPORG plugin URI from the normalized plugin slug.
+					$gateway_details['links'] = array(
+						array(
+							'_type' => ExtensionSuggestions::LINK_TYPE_ABOUT,
+							'url'   => 'https://wordpress.org/plugins/' . $normalized_plugin_slug,
+						),
+					);
+				}
+			}
+		}
+
+		return $gateway_details;
+	}
+
+	/**
+	 * Check if the store has any enabled ecommerce gateways.
+	 *
+	 * We exclude offline payment methods from this check.
+	 *
+	 * @return bool True if the store has any enabled ecommerce gateways, false otherwise.
+	 */
+	private function has_enabled_ecommerce_gateways(): bool {
+		$gateways         = $this->get_payment_gateways();
+		$enabled_gateways = array_filter(
+			$gateways,
+			function ( $gateway ) {
+				// Filter out offline gateways.
+				return 'yes' === $gateway->enabled && ! $this->is_offline_payment_method( $gateway->id );
+			}
+		);
+
+		return ! empty( $enabled_gateways );
+	}
+
+	/**
 	 * Try to determine if the payment gateway is in test mode.
 	 *
 	 * This is a best-effort attempt, as there is no standard way to determine this.
@@ -707,6 +1075,82 @@ class PaymentProviders {
 		}
 
 		return $standardized_pms;
+	}
+
+	/**
+	 * Enhance a payment extension suggestion with additional information.
+	 *
+	 * @param array $extension The extension suggestion.
+	 *
+	 * @return array The enhanced payment extension suggestion.
+	 */
+	private function enhance_extension_suggestion( array $extension ): array {
+		// Determine the category of the extension.
+		switch ( $extension['_type'] ) {
+			case ExtensionSuggestions::TYPE_PSP:
+				$extension['category'] = self::CATEGORY_PSP;
+				break;
+			case ExtensionSuggestions::TYPE_EXPRESS_CHECKOUT:
+				$extension['category'] = self::CATEGORY_EXPRESS_CHECKOUT;
+				break;
+			case ExtensionSuggestions::TYPE_BNPL:
+				$extension['category'] = self::CATEGORY_BNPL;
+				break;
+			default:
+				$extension['category'] = '';
+				break;
+		}
+
+		// Determine the PES's plugin status.
+		// Default to not installed.
+		$extension['plugin']['status'] = self::EXTENSION_NOT_INSTALLED;
+		// Put in the default plugin file.
+		$extension['plugin']['file'] = '';
+		if ( ! empty( $extension['plugin']['slug'] ) ) {
+			// This is a best-effort approach, as the plugin might be sitting under a directory (slug) that we can't handle.
+			// Always try the official plugin slug first, then the testing variations.
+			$plugin_slug_variations = Utils::generate_testing_plugin_slugs( $extension['plugin']['slug'], true );
+			foreach ( $plugin_slug_variations as $plugin_slug ) {
+				if ( PluginsHelper::is_plugin_installed( $plugin_slug ) ) {
+					// Make sure we put in the actual slug and file path that we found.
+					$extension['plugin']['slug'] = $plugin_slug;
+					$extension['plugin']['file'] = PluginsHelper::get_plugin_path_from_slug( $plugin_slug );
+					// Remove the .php extension from the file path. The WP API expects it without it.
+					if ( ! empty( $extension['plugin']['file'] ) && str_ends_with( $extension['plugin']['file'], '.php' ) ) {
+						$extension['plugin']['file'] = substr( $extension['plugin']['file'], 0, -4 );
+					}
+
+					$extension['plugin']['status'] = self::EXTENSION_INSTALLED;
+					if ( PluginsHelper::is_plugin_active( $plugin_slug ) ) {
+						$extension['plugin']['status'] = self::EXTENSION_ACTIVE;
+					}
+					break;
+				}
+			}
+		}
+
+		return $extension;
+	}
+
+	/**
+	 * Check if a payment extension suggestion has been hidden by the user.
+	 *
+	 * @param array $extension The extension suggestion.
+	 *
+	 * @return bool True if the extension suggestion is hidden, false otherwise.
+	 */
+	private function is_payment_extension_suggestion_hidden( array $extension ): bool {
+		$user_payments_nox_profile = get_user_meta( get_current_user_id(), Payments::USER_PAYMENTS_NOX_PROFILE_KEY, true );
+		if ( empty( $user_payments_nox_profile ) ) {
+			return false;
+		}
+		$user_payments_nox_profile = maybe_unserialize( $user_payments_nox_profile );
+
+		if ( empty( $user_payments_nox_profile['hidden_suggestions'] ) ) {
+			return false;
+		}
+
+		return in_array( $extension['id'], array_column( $user_payments_nox_profile['hidden_suggestions'], 'id' ), true );
 	}
 
 	/**
