@@ -49,6 +49,18 @@ export type PaymentIncentive = {
 	};
 };
 
+export type RecommendedPaymentMethod = {
+	id: string;
+	_order: number;
+	title: string;
+	description: string;
+	icon: string;
+	enabled: boolean;
+	extraTitle: string;
+	extraDescription: string;
+	extraIcon: string;
+};
+
 // General payment provider type.
 export type PaymentProvider = {
 	id: string;
@@ -64,6 +76,9 @@ export type PaymentProvider = {
 	management?: ManagementData;
 	state?: StateData;
 	links?: PaymentGatewayLink[];
+	onboarding?: {
+		recommended_payment_methods: RecommendedPaymentMethod[];
+	};
 	tags?: string[];
 	_suggestion_id?: string;
 	_links?: object;
