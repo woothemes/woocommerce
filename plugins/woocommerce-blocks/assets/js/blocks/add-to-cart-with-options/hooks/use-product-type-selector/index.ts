@@ -23,7 +23,7 @@ type ProductTypeSelector = {
  */
 export default function useProductTypeSelector(): ProductTypeSelector {
 	/*
-	 * Get the product types and the current product type
+	 * Get the available product types and the current product type
 	 * from the store.
 	 */
 	const { productTypes, current } = useSelect< {
