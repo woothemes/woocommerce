@@ -22,9 +22,6 @@ wp-env run tests-cli wp plugin activate process-waiting-actions
 echo -e 'Activate Test Helper APIs utility plugin \n'
 wp-env run tests-cli wp plugin activate test-helper-apis
 
-echo -e 'Activate BIS Acceptance Test Helper utility plugin \n'
-wp-env run tests-cli wp plugin activate bis-acceptance-test-helper
-
 echo -e 'Add Customer user \n'
 wp-env run tests-cli wp user create customer customer@woocommercecoree2etestsuite.com \
 	--user_pass=password \
@@ -48,3 +45,9 @@ fi
 
 echo -e 'Upload test images \n'
 wp-env run tests-cli wp media import './test-data/images/image-01.png' './test-data/images/image-02.png' './test-data/images/image-03.png'
+
+echo -e 'Running Provision for BIS\n'
+wp-env run tests-cli wp wc docker-e2e provision
+
+echo -e "Running AS...\n"
+wp-env run tests-cli wp action-scheduler run
