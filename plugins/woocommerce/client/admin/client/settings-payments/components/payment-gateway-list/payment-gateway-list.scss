@@ -10,6 +10,18 @@
 			cursor: pointer;
 		}
 
+		&.has-incentive {
+			background-color: $studio-woocommerce-purple-0;
+
+			&:hover {
+				background-color: $studio-woocommerce-purple-0 !important;
+			}
+
+			.woocommerce-list__item-inner {
+				padding: $gap-largest 0;
+			}
+		}
+
 		&:hover {
 			background-color: $white;
 
