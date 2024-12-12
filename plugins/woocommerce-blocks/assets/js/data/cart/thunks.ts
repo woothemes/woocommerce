@@ -210,11 +210,9 @@ export const addItemToCart =
 				method: 'POST',
 				data: {
 					...additionalData,
-					...{
-						id: productId,
-						quantity,
-						variation
-					},
+				    id: productId,
+					quantity,
+					variation,
 				},
 				cache: 'no-store',
 			} );
