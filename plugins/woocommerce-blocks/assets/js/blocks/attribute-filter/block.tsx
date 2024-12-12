@@ -639,6 +639,7 @@ const AttributeFilterBlock = ( {
 					</>
 				) : (
 					<CheckboxFilter
+						attributeLabel={ attributeObject.label }
 						options={ displayedOptions }
 						checked={ checked }
 						onChange={ onChange }

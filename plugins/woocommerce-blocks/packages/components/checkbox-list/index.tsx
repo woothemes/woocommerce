@@ -13,6 +13,7 @@ import type { CheckboxListOptions } from './types';
 import './style.scss';
 
 export interface CheckboxListProps {
+	attributeLabel: string | undefined;
 	className?: string | undefined;
 	isLoading?: boolean | undefined;
 	isDisabled?: boolean | undefined;
@@ -35,6 +36,7 @@ export interface CheckboxListProps {
  * @param {number}               props.limit      Whether to limit the number of inputs showing.
  */
 const CheckboxList = ( {
+	attributeLabel,
 	className,
 	onChange,
 	options = [],
@@ -160,7 +162,18 @@ const CheckboxList = ( {
 	);
 
 	return (
-		<ul className={ classes }>
+		<ul
+			className={ classes }
+			aria-labelledby="checkbox-list-legend"
+			role="group"
+		>
+			<legend className="screen-reader-text" id="checkbox-list-legend">
+				{ sprintf(
+					/* translators: %s text of the chip to remove. */
+					__( 'Filter by "%s"', 'woocommerce' ),
+					attributeLabel
+				) }
+			</legend>
 			{ isLoading ? placeholder : renderedOptions }
 		</ul>
 	);
