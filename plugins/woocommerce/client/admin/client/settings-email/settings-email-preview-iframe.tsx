@@ -20,7 +20,7 @@ export const EmailPreviewIframe: React.FC< EmailPreviewIframeProps > = ( {
 	const [ counter, setCounter ] = useState( 0 );
 
 	useEffect( () => {
-		const handleFieldChange = debounce( async ( event: Event ) => {
+		const handleFieldChange = async ( event: Event ) => {
 			const target = event.target as HTMLInputElement;
 			const key = target.id;
 			const value = target.value;
@@ -37,14 +37,14 @@ export const EmailPreviewIframe: React.FC< EmailPreviewIframeProps > = ( {
 				setIsLoading( false );
 				setCounter( ( prevCounter ) => prevCounter + 1 );
 			}
-		}, 400 );
+		};
 
 		// Set up listeners
 		settingsIds.forEach( ( id ) => {
 			const field = jQuery( `#${ id }` );
 			if ( field.length ) {
 				// Using jQuery events due to select2 and iris (color picker) usage
-				field.on( 'change', handleFieldChange );
+				field.on( 'change', debounce( handleFieldChange, 400 ) );
 			}
 		} );
 
