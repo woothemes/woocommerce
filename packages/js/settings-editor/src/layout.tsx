@@ -51,7 +51,7 @@ type LayoutProps = {
 export function Layout( {
 	route,
 	settingsPage,
-	tabs,
+	tabs = [],
 	activeSection,
 }: LayoutProps ) {
 	const [ fullResizer ] = useResizeObserver();
@@ -60,6 +60,7 @@ export function Layout( {
 	const disableMotion = useReducedMotion();
 
 	const { key: routeKey, areas, widths } = route;
+	console.log( 'tabs', tabs );
 
 	return (
 		<>
@@ -112,7 +113,10 @@ export function Layout( {
 								maxWidth: widths?.content,
 							} }
 						>
-							<Header pageTitle={ settingsPage?.label } />
+							<Header
+								hasTabs={ tabs.length > 1 }
+								pageTitle={ settingsPage?.label }
+							/>
 							<SectionTabs
 								tabs={ tabs }
 								activeSection={ activeSection }

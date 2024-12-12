@@ -32,7 +32,6 @@ export const SectionTabs = ( {
 	if ( tabs.length <= 1 ) {
 		return (
 			<>
-				<div className="woocommerce-settings-section-tabs woocommerce-settings-section-tabs--no-tabs" />
 				<div>{ children }</div>
 			</>
 		);

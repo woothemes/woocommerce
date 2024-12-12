@@ -1,18 +1,23 @@
-// .woocommerce-settings-header {
-// 	&.edit-site-page-header {
-// 		border-bottom: none;
-// 	}
-// }
+.woocommerce-settings-header {
+	&.edit-site-page-header.woocommerce-settings-header--has-tabs {
+		border-bottom: none;
+	}
+}
 
-// .woocommerce-settings-section-tabs {
-// 	.components-tab-panel__tabs,
-// 	&.woocommerce-settings-section-tabs--no-tabs {
-// 		border-bottom: 1px solid #f0f0f0;
-// 	}
-// }
+.woocommerce-settings-section-tabs {
+	.components-tab-panel__tabs {
+		border-bottom: 1px solid #f0f0f0;
+	}
+}
 
 #wc-settings-page .edit-site-layout__area {
 	overflow: scroll;
+}
+
+.components-tab-panel__tabs {
+	position: sticky;
+	top: 72px; // For now
+	background-color: #fff;
 }
 
 .woocommerce-settings-content {
