@@ -13,8 +13,6 @@ import {
  */
 import useProductTypeSelector from '../hooks/use-product-type-selector';
 
-export const productTypeSelectorTitle = __( 'Product Type', 'woocommerce' );
-
 function ProductTypeSwitcher() {
 	const { productTypes, current, set } = useProductTypeSelector();
 
@@ -49,7 +47,7 @@ export default function PluginDocumentSettingTemplateSelectorPanel() {
 	return (
 		<PluginDocumentSettingPanel
 			name="woocommerce/product-type-selector"
-			title={ productTypeSelectorTitle }
+			title={ __( 'Product Type', 'woocommerce' ) }
 		>
 			<ProductTypeSwitcher />
 		</PluginDocumentSettingPanel>
