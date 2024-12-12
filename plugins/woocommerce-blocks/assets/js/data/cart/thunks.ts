@@ -195,7 +195,7 @@ export const removeCoupon =
  * @param {number} productId    Product ID to add to cart.
  * @param {number} [quantity=1] Number of product ID being added to cart.
  * @param {array}  [variation] Array of variation attributes for the product.
- * @param {array}  [additionalData] Array of additional fields for the product.
+ * @param {Object}  [additionalData] Array of additional fields for the product.
  * @throws           Will throw an error if there is an API problem.
  */
 export const addItemToCart =
