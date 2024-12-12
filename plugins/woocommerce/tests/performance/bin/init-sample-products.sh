@@ -10,6 +10,7 @@ wp-env run tests-cli wp user create customer customer@woocommercecoree2etestsuit
 # wp-env run tests-cli wp plugin install wordpress-importer --activate
 
 wp-env run tests-cli wp plugin install https://github.com/woocommerce/wc-smooth-generator/releases/download/1.2.0/wc-smooth-generator.zip --activate
+wp-env run tests-cli wp plugin install https://downloads.wordpress.org/plugin/index-wp-mysql-for-speed.1.5.2.zip --activate
 
 # Adding basic WooCommerce settings"
 wp-env run tests-cli wp option set woocommerce_store_address 'Example Address Line 1'
@@ -38,4 +39,4 @@ echo "Success! Your E2E Test Environment is now ready."
 
 # Performance optimization related
 pnpm --filter=@woocommerce/plugin-woocommerce wp-env run tests-cli wp wc patch
-#pnpm --filter=@woocommerce/plugin-woocommerce wp-env run tests-cli wp db query "QUERY HERE;"
+pnpm --filter=@woocommerce/plugin-woocommerce wp-env run tests-cli wp index-mysql enable --all
