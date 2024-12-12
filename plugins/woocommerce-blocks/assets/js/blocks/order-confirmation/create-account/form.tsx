@@ -162,27 +162,29 @@ const Form = ( {
 			<input type="hidden" name="create-account" value="1" />
 			<input type="hidden" name="_wpnonce" value={ nonceToken } />
 			<div className="wc-block-order-confirmation-create-account-description">
-				{ registrationGeneratePassword && (
-					<p>
-						{ createInterpolateElement(
-							__(
-								"We'll email <email/> a link to set up your account password.",
-								'woocommerce'
-							),
-							{
-								email: <strong>{ customerEmail }</strong>,
-							}
-						) }
-					</p>
-				) }
 				<p>
+					{ registrationGeneratePassword && (
+						<>
+							{ createInterpolateElement(
+								__(
+									'Check your email at <email/> for the link to set up an account password.',
+									'woocommerce'
+								),
+								{
+									email: <>{ customerEmail }</>,
+								}
+							) }{ ' ' }
+						</>
+					) }
 					{ createInterpolateElement(
-						/* translators: %1$s terms page link, %2$s privacy page link. */
 						__(
 							'By creating an account you agree to our <terms/> and <privacy/>.',
 							'woocommerce'
 						),
-						{ terms: termsPageLink, privacy: privacyPageLink }
+						{
+							terms: termsPageLink,
+							privacy: privacyPageLink,
+						}
 					) }
 				</p>
 			</div>
