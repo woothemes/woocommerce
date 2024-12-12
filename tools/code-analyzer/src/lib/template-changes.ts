@@ -21,20 +21,13 @@ export type TemplateChangeDescription = {
 };
 
 const getFileVersion = async (
-	repositoryPath: string | undefined,
+	repositoryPath: string,
 	filePath: string
 ): Promise< string > => {
-	if ( ! repositoryPath ) {
-		return '';
-	}
-	let currentFileContent;
-	try {
-		const fullPath = join( repositoryPath, filePath );
-		currentFileContent = await readFile( fullPath, 'utf-8' );
-	} catch ( e: unknown ) {
-		Logger.notice( `Unable to read file: ${ filePath }` );
-		return '';
-	}
+	const currentFileContent = await readFile(
+		join( repositoryPath, filePath ),
+		{ encoding: 'utf8' }
+	);
 	if ( currentFileContent ) {
 		const versionMatch = currentFileContent.match(
 			/@version\s+(\d+\.\d+\.\d+)/
@@ -74,29 +67,24 @@ export const scanForTemplateChanges = async (
 		const pullRequests: number[] = [];
 
 		let lineNumber = 1;
+		let passVersionBumpCheck = false;
 		let code = 'warning';
 		let message = `This template may require a version bump! Expected ${ version }`;
 
-		// Check if the @version has already the expected version
-		const fileVersion = await getFileVersion( repositoryPath, filePath );
-		if ( fileVersion === version ) {
-			code = 'notice';
-			message = 'Version matches the expected version';
-			changes.set( filePath, { code, message, filePath, pullRequests } );
-			continue;
-		}
 		for ( const l in lines ) {
 			const line = lines[ l ];
 
 			if ( line.match( deletedRegex ) ) {
+				passVersionBumpCheck = true;
 				code = 'notice';
 				message = 'Template deleted';
 				break;
 			}
 
 			if ( line.match( versionRegex ) ) {
+				passVersionBumpCheck = true;
 				code = 'notice';
-				message = 'Version bump found';
+				message = 'Version bump found (diff)';
 				break;
 			}
 
@@ -137,6 +125,18 @@ export const scanForTemplateChanges = async (
 				if ( ! line.match( /^-/ ) ) {
 					lineNumber++;
 				}
+			}
+		}
+
+		if ( ! passVersionBumpCheck && repositoryPath ) {
+			// The version can be already bumped in the file, but not part of this specific diff.
+			const fileVersion = await getFileVersion(
+				repositoryPath,
+				filePath
+			);
+			if ( fileVersion === version ) {
+				code = 'notice';
+				message = 'Version bump found (file)';
 			}
 		}
 
