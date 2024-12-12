@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { Button, Card, CardBody, CardMedia } from '@wordpress/components';
+import { Button, Card, CardBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { createInterpolateElement, useState } from '@wordpress/element';
 import { Link } from '@woocommerce/components';
@@ -35,6 +35,7 @@ interface IncentiveBannerProps {
 	 */
 	onDismiss: ( dismissUrl: string, context: string ) => void;
 }
+
 export const IncentiveBanner = ( {
 	incentive,
 	onDismiss,
