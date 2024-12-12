@@ -77,7 +77,7 @@ export const IncentiveBanner = ( {
 						WC_ASSET_URL +
 						'images/settings-payments/incentives-illustration.svg'
 					}
-					alt={ __( 'Incentive icon', 'woocommerce' ) }
+					alt={ __( 'Incentive illustration', 'woocommerce' ) }
 				/>
 				<CardBody className="woocommerce-incentive-banner__body">
 					<StatusBadge

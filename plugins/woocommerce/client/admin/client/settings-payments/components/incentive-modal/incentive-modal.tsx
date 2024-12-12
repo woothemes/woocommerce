@@ -91,7 +91,7 @@ export const IncentiveModal = ( {
 										'images/settings-payments/incentives-illustration.svg'
 									}
 									alt={ __(
-										'Incentive icon',
+										'Incentive illustration',
 										'woocommerce'
 									) }
 								/>
@@ -139,23 +139,25 @@ export const IncentiveModal = ( {
 										}
 									) }
 								</p>
-								<Button
-									variant={ 'primary' }
-									isBusy={ isBusy }
-									disabled={ isBusy }
-									onClick={ () => {
-										setIsBusy( true );
-										// TODO: Temporary for testing, update to use plugin ID and slug.
-										onAccept(
-											'woopayments',
-											'woocommerce-payments'
-										);
-										setIsBusy( false );
-										handleClose();
-									} }
-								>
-									{ incentive.cta_label }
-								</Button>
+								<div className="woocommerce-incentive-model__actions">
+									<Button
+										variant={ 'primary' }
+										isBusy={ isBusy }
+										disabled={ isBusy }
+										onClick={ () => {
+											setIsBusy( true );
+											// TODO: Temporary for testing, update to use plugin ID and slug.
+											onAccept(
+												'woopayments',
+												'woocommerce-payments'
+											);
+											setIsBusy( false );
+											handleClose();
+										} }
+									>
+										{ incentive.cta_label }
+									</Button>
+								</div>
 							</CardBody>
 						</div>
 					</Card>
