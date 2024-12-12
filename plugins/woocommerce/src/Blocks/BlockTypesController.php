@@ -481,8 +481,8 @@ final class BlockTypesController {
 					'Cart',
 					'Checkout',
 					'ProductGallery',
-					'ProductCollection',
-					'ProductCollectionNoResults',
+					'ProductCollection\Controller',
+					'ProductCollection\NoResults',
 				)
 			);
 		}
