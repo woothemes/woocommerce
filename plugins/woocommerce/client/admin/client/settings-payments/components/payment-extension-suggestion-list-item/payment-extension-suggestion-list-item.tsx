@@ -13,7 +13,12 @@ import { PaymentProvider } from '@woocommerce/data';
  */
 import sanitizeHTML from '~/lib/sanitize-html';
 import { EllipsisMenuWrapper as EllipsisMenu } from '~/settings-payments/components/ellipsis-menu-content';
-import { isWooPayments } from '~/settings-payments/utils';
+import {
+	isWooPayments,
+	hasIncentive,
+	isActionIncentive,
+	isIncentiveDismissedInContext,
+} from '~/settings-payments/utils';
 import { DefaultDragHandle } from '~/settings-payments/components/sortable';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
 
@@ -31,15 +36,18 @@ export const PaymentExtensionSuggestionListItem = ( {
 	pluginInstalled,
 	...props
 }: PaymentExtensionSuggestionListItemProps ) => {
-	const hasIncentive = !! extension._incentive;
-	const shouldHighlightIncentive =
-		hasIncentive && ! extension._incentive?.promo_id.includes( '-action-' );
-
 	return (
 		<div
 			id={ extension.id }
 			className={ `transitions-disabled woocommerce-list__item woocommerce-list__item-enter-done ${
-				shouldHighlightIncentive ? `has-incentive` : ''
+				hasIncentive( extension ) &&
+				( ! isActionIncentive( extension._incentive ) ||
+					isIncentiveDismissedInContext(
+						extension._incentive,
+						'wc_settings_payments__banner'
+					) )
+					? `has-incentive`
+					: ''
 			}` }
 			{ ...props }
 		>
@@ -57,7 +65,7 @@ export const PaymentExtensionSuggestionListItem = ( {
 						{ ! hasIncentive && isWooPayments( extension.id ) && (
 							<StatusBadge status="recommended" />
 						) }
-						{ hasIncentive && extension._incentive && (
+						{ hasIncentive( extension ) && extension._incentive && (
 							<StatusBadge
 								status="has_incentive"
 								message={ extension._incentive.badge }

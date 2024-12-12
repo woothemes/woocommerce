@@ -26,6 +26,8 @@ import {
 	getWooPaymentsTestDriveAccountLink,
 	isWooPayments,
 	providersContainWooPaymentsInTestMode,
+	isIncentiveDismissedInContext,
+	isSwitchIncentive,
 } from '~/settings-payments/utils';
 import { WooPaymentsPostSandboxAccountSetupModal } from '~/settings-payments/components/modals';
 
@@ -184,27 +186,14 @@ export const SettingsPaymentsMain = () => {
 		( provider ) => '_incentive' in provider
 	)?._incentive;
 
-	const isSwitchIncentive =
-		incentive && incentive.promo_id.includes( '-switch-' );
-
-	const incentiveBannerContext = 'wc_settings_payments__banner';
-	const incentiveModalContext = 'wc_settings_payments__modal';
-
-	const isIncentiveDismissedInBannerContext =
-		( incentive?._dismissals.includes( 'all' ) ||
-			incentive?._dismissals.includes( incentiveBannerContext ) ) ??
-		false;
-
-	const isIncentiveDismissedInModalContext =
-		( incentive?._dismissals.includes( 'all' ) ||
-			incentive?._dismissals.includes( incentiveModalContext ) ) ??
-		false;
-
 	return (
 		<>
 			{ incentive &&
-				isSwitchIncentive &&
-				! isIncentiveDismissedInModalContext && (
+				isSwitchIncentive( incentive ) &&
+				! isIncentiveDismissedInContext(
+					incentive,
+					'wc_settings_payments__modal'
+				) && (
 					<IncentiveModal
 						incentive={ incentive }
 						onDismiss={ dismissIncentive }
@@ -224,8 +213,11 @@ export const SettingsPaymentsMain = () => {
 				</div>
 			) }
 			{ incentive &&
-				! isSwitchIncentive &&
-				! isIncentiveDismissedInBannerContext && (
+				! isSwitchIncentive( incentive ) &&
+				! isIncentiveDismissedInContext(
+					incentive,
+					'wc_settings_payments__banner'
+				) && (
 					<IncentiveBanner
 						incentive={ incentive }
 						onDismiss={ dismissIncentive }
