@@ -1893,10 +1893,10 @@ test.describe( 'Data API tests', () => {
 							currency_code: 'GBP',
 							currency_pos: 'left',
 							decimal_sep: '.',
-							dimension_unit: 'foot',
+							dimension_unit: 'cm',
 							num_decimals: 2,
 							thousand_sep: ',',
-							weight_unit: 'oz',
+							weight_unit: 'kg',
 							states: [],
 						},
 						{

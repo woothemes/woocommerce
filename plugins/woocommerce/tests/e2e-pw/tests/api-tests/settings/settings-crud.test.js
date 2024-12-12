@@ -782,7 +782,7 @@ test.describe( 'Settings API tests: CRUD', () => {
 						description:
 							'This controls what unit you will define weights in.',
 						type: 'select',
-						default: 'kg',
+						default: 'lbs',
 						options: {
 							kg: 'kg',
 							g: 'g',
@@ -802,7 +802,7 @@ test.describe( 'Settings API tests: CRUD', () => {
 						description:
 							'This controls what unit you will define lengths in.',
 						type: 'select',
-						default: 'cm',
+						default: 'in',
 						options: {
 							m: 'm',
 							cm: 'cm',
