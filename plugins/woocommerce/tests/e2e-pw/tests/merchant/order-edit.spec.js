@@ -1,8 +1,9 @@
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const uuid = require( 'uuid' );
+const { tags } = require( '../../fixtures/fixtures' );
 
-test.describe( 'Edit order', { tag: [ '@services', '@hpos' ] }, () => {
+test.describe( 'Edit order', { tag: [ tags.SERVICES, tags.HPOS ] }, () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
 	let orderId, secondOrderId, orderToCancel, customerId;
@@ -35,12 +36,14 @@ test.describe( 'Edit order', { tag: [ '@services', '@hpos' ] }, () => {
 			.then( ( response ) => {
 				orderToCancel = response.data.id;
 			} );
+
+		const username = `big.archie.${ Date.now() }`;
 		await api
 			.post( 'customers', {
-				email: 'archie123@email.addr',
+				email: `${ username }@email.addr`,
 				first_name: 'Archie',
 				last_name: 'Greenback',
-				username: 'big.archie',
+				username,
 				billing: {
 					first_name: 'Archibald',
 					last_name: 'Greenback',
@@ -52,7 +55,7 @@ test.describe( 'Edit order', { tag: [ '@services', '@hpos' ] }, () => {
 					state: 'CA',
 					postcode: '94107',
 					phone: '123456789',
-					email: 'archie123@email.addr',
+					email: `${ username }@email.addr`,
 				},
 				shipping: {
 					first_name: 'Shipping First',
@@ -88,7 +91,7 @@ test.describe( 'Edit order', { tag: [ '@services', '@hpos' ] }, () => {
 		if ( process.env.DISABLE_HPOS === '1' ) {
 			await page.goto( 'wp-admin/edit.php?post_type=shop_order' );
 		} else {
-			await page.goto( '/wp-admin/admin.php?page=wc-orders' );
+			await page.goto( 'wp-admin/admin.php?page=wc-orders' );
 		}
 
 		// confirm we're on the orders page
@@ -97,7 +100,7 @@ test.describe( 'Edit order', { tag: [ '@services', '@hpos' ] }, () => {
 		);
 		// open order we created
 		await page.goto(
-			`/wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
+			`wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
 		);
 
 		// make sure we're on the order details page
@@ -109,7 +112,7 @@ test.describe( 'Edit order', { tag: [ '@services', '@hpos' ] }, () => {
 	test( 'can update order status', async ( { page } ) => {
 		// open order we created
 		await page.goto(
-			`/wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
+			`wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
 		);
 
 		// update order status to Completed
@@ -125,7 +128,7 @@ test.describe( 'Edit order', { tag: [ '@services', '@hpos' ] }, () => {
 		).toContainText( 'Order status changed from Processing to Completed.' );
 
 		// load the orders listing and confirm order is completed
-		await page.goto( '/wp-admin/admin.php?page=wc-orders' );
+		await page.goto( 'wp-admin/admin.php?page=wc-orders' );
 
 		await expect(
 			page
@@ -137,7 +140,7 @@ test.describe( 'Edit order', { tag: [ '@services', '@hpos' ] }, () => {
 	test( 'can update order status to cancelled', async ( { page } ) => {
 		// open order we created
 		await page.goto(
-			`/wp-admin/post.php?post=${ orderToCancel }&action=edit`
+			`wp-admin/post.php?post=${ orderToCancel }&action=edit`
 		);
 
 		// update order status to Completed
@@ -155,7 +158,7 @@ test.describe( 'Edit order', { tag: [ '@services', '@hpos' ] }, () => {
 		).toBeVisible();
 
 		// load the orders listing and confirm order is cancelled
-		await page.goto( '/wp-admin/admin.php?page=wc-orders' );
+		await page.goto( 'wp-admin/admin.php?page=wc-orders' );
 
 		await expect(
 			page
@@ -169,7 +172,7 @@ test.describe( 'Edit order', { tag: [ '@services', '@hpos' ] }, () => {
 	test( 'can update order details', async ( { page } ) => {
 		// open order we created
 		await page.goto(
-			`/wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
+			`wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
 		);
 
 		// update order date
@@ -190,7 +193,7 @@ test.describe( 'Edit order', { tag: [ '@services', '@hpos' ] }, () => {
 	test( 'can add and delete order notes', async ( { page } ) => {
 		// open order we created
 		await page.goto(
-			`/wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
+			`wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
 		);
 		page.on( 'dialog', ( dialog ) => dialog.accept() );
 
@@ -257,7 +260,7 @@ test.describe( 'Edit order', { tag: [ '@services', '@hpos' ] }, () => {
 		// Open our test order and select the customer we just created.
 		await test.step( 'Open our test order and select the customer we just created.', async () => {
 			await page.goto(
-				`/wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
+				`wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
 			);
 
 			// Assign customer
@@ -315,7 +318,7 @@ test.describe( 'Edit order', { tag: [ '@services', '@hpos' ] }, () => {
 		await test.step( 'Open our second test order and select the customer we just created.', async () => {
 			// Open our second test order
 			await page.goto(
-				`/wp-admin/admin.php?page=wc-orders&action=edit&id=${ secondOrderId }`
+				`wp-admin/admin.php?page=wc-orders&action=edit&id=${ secondOrderId }`
 			);
 
 			// Assign customer
@@ -367,7 +370,7 @@ test.describe( 'Edit order', { tag: [ '@services', '@hpos' ] }, () => {
 
 test.describe(
 	'Edit order > Downloadable product permissions',
-	{ tag: [ '@services', '@hpos' ] },
+	{ tag: [ tags.SERVICES, tags.HPOS ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 
@@ -498,7 +501,7 @@ test.describe(
 		} ) => {
 			// go to the order with no products
 			await page.goto(
-				`/wp-admin/admin.php?page=wc-orders&action=edit&id=${ noProductOrderId }`
+				`wp-admin/admin.php?page=wc-orders&action=edit&id=${ noProductOrderId }`
 			);
 
 			// add downloadable product permissions
@@ -532,10 +535,10 @@ test.describe(
 				page.locator( 'button.revoke_access' )
 			).toBeVisible();
 			await expect(
-				page.locator( 'a:has-text("Copy link")' )
+				page.getByRole( 'link', { name: 'Copy link' } )
 			).toBeVisible();
 			await expect(
-				page.locator( 'a:has-text("View report")' )
+				page.getByRole( 'link', { name: 'View report' } )
 			).toBeVisible();
 		} );
 
@@ -544,7 +547,7 @@ test.describe(
 		} ) => {
 			// open the order that already has a product assigned
 			await page.goto(
-				`/wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
+				`wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
 			);
 
 			// add downloadable product permissions
@@ -586,7 +589,7 @@ test.describe(
 
 			// open the order that already has a product assigned
 			await page.goto(
-				`/wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
+				`wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
 			);
 
 			// expand product download permissions
@@ -632,7 +635,7 @@ test.describe(
 		} ) => {
 			// open the order that already has a product assigned
 			await page.goto(
-				`/wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
+				`wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
 			);
 
 			// expand product download permissions
@@ -669,7 +672,7 @@ test.describe(
 
 			// open the order that already has a product assigned
 			await page.goto(
-				`/wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
+				`wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
 			);
 
 			// set the download limit to 0
@@ -712,7 +715,7 @@ test.describe(
 
 			// open the order that already has a product assigned
 			await page.goto(
-				`/wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
+				`wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
 			);
 
 			// set the download limit to 0

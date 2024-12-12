@@ -72,7 +72,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( rest_authorization_required_code(), $response->get_status() );
+		$this->assertSame( rest_authorization_required_code(), $response->get_status() );
 
 		// Clean up.
 		remove_filter( 'user_has_cap', $filter_callback );
@@ -101,7 +101,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertSame( 200, $response->get_status() );
 
 		$data = $response->get_data();
 
@@ -139,6 +139,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'plugin', $provider, 'Provider (gateway) `plugin` entry is missing' );
 		$this->assertArrayHasKey( 'slug', $provider['plugin'], 'Provider (gateway) `plugin[slug]` entry is missing' );
 		$this->assertArrayHasKey( 'status', $provider['plugin'], 'Provider (gateway) `plugin[status]` entry is missing' );
+		$this->assertArrayHasKey( '_links', $provider, 'Provider (gateway) `_links` entry is missing' );
 
 		// Assert that the offline payment methods have all the details.
 		$offline_pm = $data['offline_payment_methods'][0];
@@ -187,7 +188,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertSame( 200, $response->get_status() );
 
 		$data = $response->get_data();
 
@@ -261,7 +262,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertSame( 200, $response->get_status() );
 
 		$data = $response->get_data();
 
@@ -311,7 +312,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertSame( 200, $response->get_status() );
 
 		$data = $response->get_data();
 
@@ -360,7 +361,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertSame( 200, $response->get_status() );
 
 		$data = $response->get_data();
 
@@ -403,7 +404,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertSame( 200, $response->get_status() );
 
 		$data = $response->get_data();
 
@@ -451,7 +452,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertSame( 200, $response->get_status() );
 
 		$data = $response->get_data();
 
@@ -485,7 +486,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 400, $response->get_status() );
+		$this->assertSame( 400, $response->get_status() );
 
 		// Act.
 		$request = new WP_REST_Request( 'GET', self::ENDPOINT . '/providers' );
@@ -493,7 +494,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 400, $response->get_status() );
+		$this->assertSame( 400, $response->get_status() );
 
 		// Act.
 		$request = new WP_REST_Request( 'GET', self::ENDPOINT . '/providers' );
@@ -501,7 +502,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 400, $response->get_status() );
+		$this->assertSame( 400, $response->get_status() );
 	}
 
 	/**
@@ -527,8 +528,8 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 400, $response->get_status() );
-		$this->assertEquals( 'rest_invalid_param', $response->get_data()['code'] );
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertSame( 'rest_invalid_param', $response->get_data()['code'] );
 	}
 
 	/**
@@ -579,7 +580,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 400, $response->get_status() );
+		$this->assertSame( 400, $response->get_status() );
 	}
 
 	/**
@@ -604,7 +605,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertSame( 200, $response->get_status() );
 		$this->assertFalse( $response->get_data()['success'] );
 	}
 
@@ -630,7 +631,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertSame( 200, $response->get_status() );
 		$this->assertTrue( $response->get_data()['success'] );
 	}
 
@@ -653,7 +654,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( rest_authorization_required_code(), $response->get_status() );
+		$this->assertSame( rest_authorization_required_code(), $response->get_status() );
 	}
 
 	/**
@@ -672,7 +673,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertSame( 200, $response->get_status() );
 		$this->assertTrue( $response->get_data()['success'] );
 	}
 
@@ -692,7 +693,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertSame( 200, $response->get_status() );
 		$this->assertFalse( $response->get_data()['success'] );
 	}
 
@@ -712,7 +713,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( 400, $response->get_status() );
+		$this->assertSame( 400, $response->get_status() );
 	}
 
 	/**
@@ -733,7 +734,96 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( $request );
 
 		// Assert.
-		$this->assertEquals( rest_authorization_required_code(), $response->get_status() );
+		$this->assertSame( rest_authorization_required_code(), $response->get_status() );
+	}
+
+	/**
+	 * Test dismissing a payment extension suggestion incentive.
+	 */
+	public function test_dismiss_payment_extension_suggestion_incentive() {
+		// Arrange.
+		$incentive_id  = 'incentive_id';
+		$suggestion_id = 'suggestion_id';
+
+		$this->mock_service
+			->expects( $this->once() )
+			->method( 'dismiss_extension_suggestion_incentive' )
+			->with( $suggestion_id, $incentive_id )
+			->willReturn( true );
+
+		// Act.
+		$request  = new WP_REST_Request( 'POST', self::ENDPOINT . '/suggestion/' . $suggestion_id . '/incentive/' . $incentive_id . '/dismiss' );
+		$response = $this->server->dispatch( $request );
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertTrue( $response->get_data()['success'] );
+	}
+
+	/**
+	 * Test dismissing a payment extension suggestion incentive that fails.
+	 */
+	public function test_dismiss_payment_extension_suggestion_incentive_failure() {
+		// Arrange.
+		$incentive_id  = 'incentive_id';
+		$suggestion_id = 'suggestion_id';
+
+		$this->mock_service
+			->expects( $this->once() )
+			->method( 'dismiss_extension_suggestion_incentive' )
+			->with( $suggestion_id, $incentive_id )
+			->willReturn( false );
+
+		// Act.
+		$request  = new WP_REST_Request( 'POST', self::ENDPOINT . '/suggestion/' . $suggestion_id . '/incentive/' . $incentive_id . '/dismiss' );
+		$response = $this->server->dispatch( $request );
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertFalse( $response->get_data()['success'] );
+	}
+
+	/**
+	 * Test dismissing a payment extension suggestion incentive that throws an exception.
+	 */
+	public function test_dismiss_payment_extension_suggestion_incentive_exception() {
+		// Arrange.
+		$incentive_id  = 'incentive_id';
+		$suggestion_id = 'suggestion_id';
+
+		$this->mock_service
+			->expects( $this->once() )
+			->method( 'dismiss_extension_suggestion_incentive' )
+			->with( $suggestion_id, $incentive_id )
+			->willThrowException( new \Exception() );
+
+		// Act.
+		$request  = new WP_REST_Request( 'POST', self::ENDPOINT . '/suggestion/' . $suggestion_id . '/incentive/' . $incentive_id . '/dismiss' );
+		$response = $this->server->dispatch( $request );
+
+		// Assert.
+		$this->assertSame( 400, $response->get_status() );
+	}
+
+	/**
+	 * Test dismissing a payment extension suggestion incentive by a user without the proper capabilities.
+	 */
+	public function test_dismiss_payment_extension_suggestion_incentive_user_without_caps() {
+		// Arrange.
+		$user_id = $this->factory->user->create( array( 'role' => 'editor' ) );
+		wp_set_current_user( $user_id );
+
+		// Assert.
+		$this->mock_service
+			->expects( $this->never() )
+			->method( 'dismiss_extension_suggestion_incentive' );
+
+		// Act.
+		$request  = new WP_REST_Request( 'POST', self::ENDPOINT . '/suggestion/suggestion_id/incentive/incentive_id/dismiss' );
+		$response = $this->server->dispatch( $request );
+
+		// Assert.
+		$this->assertSame( rest_authorization_required_code(), $response->get_status() );
 	}
 
 	/**
@@ -789,6 +879,11 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 					'preferred',
 					'recommended',
 				),
+				'_links'            => array(
+					'hide' => array(
+						'href' => 'http://localhost:8888/wp-json/wc-admin/settings/payments/providers/suggestion/woopayments/hide',
+					),
+				),
 			);
 			$mock_providers[] = array(
 				'id'                => '_wc_pes_paypal_full_stack',
@@ -821,6 +916,11 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 				'tags'              => array(
 					'made_in_woo',
 					'preferred',
+				),
+				'_links'            => array(
+					'hide' => array(
+						'href' => 'http://localhost:8888/wp-json/wc-admin/settings/payments/providers/suggestion/paypal/hide',
+					),
 				),
 			);
 		}
@@ -858,6 +958,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 					'enabled'     => false,
 					'needs_setup' => false,
 					'test_mode'   => false,
+					'dev_mode'    => false,
 				),
 				'management'  => array(
 					'settings_url' => 'http://localhost:8888/wp-admin/admin.php?page=wc-settings&tab=checkout&section=bacs',
@@ -887,6 +988,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 					'enabled'     => false,
 					'needs_setup' => false,
 					'test_mode'   => false,
+					'dev_mode'    => false,
 				),
 				'management'  => array(
 					'settings_url' => 'http://localhost:8888/wp-admin/admin.php?page=wc-settings&tab=checkout&section=cheque',
@@ -897,7 +999,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 				'_order'      => $order++,
 				'_type'       => Payments::PROVIDER_TYPE_OFFLINE_PM,
 				'title'       => 'Cash on delivery',
-				'description' => 'Have your customers pay with cash (or by other means) upon delivery.',
+				'description' => 'Let your shoppers pay upon delivery — by cash or other methods of payment.',
 				'supports'    => array(
 					'products',
 				),
@@ -916,6 +1018,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 					'enabled'     => false,
 					'needs_setup' => false,
 					'test_mode'   => false,
+					'dev_mode'    => false,
 				),
 				'management'  => array(
 					'settings_url' => 'http://localhost:8888/wp-admin/admin.php?page=wc-settings&tab=checkout&section=cod',
@@ -935,6 +1038,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 					'enabled'     => $enabled_core_paypal_pg,
 					'needs_setup' => false,
 					'test_mode'   => false,
+					'dev_mode'    => false,
 				),
 				'management'  => array(
 					'settings_url' => 'admin.php?page=wc-settings&tab=checkout&section=paypal',
@@ -968,7 +1072,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	 *
 	 * @param string|null $location The location to return the suggestions for.
 	 */
-	private function mock_extension_suggestions( string $location = null ) {
+	private function mock_extension_suggestions( ?string $location = null ) {
 		$mocker = $this->mock_service
 			->expects( $this->any() )
 			->method( 'get_extension_suggestions' );

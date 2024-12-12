@@ -1,4 +1,5 @@
 const { test, expect } = require( '@playwright/test' );
+const { tags } = require( '../../fixtures/fixtures' );
 
 test.describe( 'Marketing page', () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
@@ -17,7 +18,7 @@ test.describe( 'Marketing page', () => {
 
 	test(
 		'Marketing Overview page have relevant content',
-		{ tag: '@skip-on-default-wpcom' },
+		{ tag: tags.SKIP_ON_WPCOM },
 		async ( { page } ) => {
 			// Go to the Marketing page.
 			await page.goto(
@@ -56,7 +57,7 @@ test.describe( 'Marketing page', () => {
 
 	test(
 		'Introduction can be dismissed',
-		{ tag: '@skip-on-default-pressable' },
+		{ tag: tags.SKIP_ON_PRESSABLE },
 		async ( { page } ) => {
 			// Go to the Marketing page.
 			await page.goto(

@@ -1,13 +1,18 @@
 const { test, expect } = require( '@playwright/test' );
+const { tags } = require( '../../fixtures/fixtures' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
-const { addAProductToCart } = require( '../../utils/cart' );
+
+/**
+ * External dependencies
+ */
+import { addAProductToCart } from '@woocommerce/e2e-utils-playwright';
 
 const productName = `Cart product test ${ Date.now() }`;
 const productPrice = '13.99';
 
 test.describe(
 	'Add to Cart behavior',
-	{ tag: [ '@payments', '@services' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		let productId;
 
@@ -71,7 +76,7 @@ test.describe(
 				}
 			);
 			await addAProductToCart( page, productId );
-			await page.goto( '/cart/' );
+			await page.goto( 'cart/' );
 			await expect( page.locator( 'td.product-name' ) ).toContainText(
 				productName
 			);

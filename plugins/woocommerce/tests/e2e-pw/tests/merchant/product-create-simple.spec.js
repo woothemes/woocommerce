@@ -1,4 +1,4 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 
 const productData = {
 	virtual: {
@@ -66,7 +66,7 @@ const test = baseTest.extend( {
 for ( const productType of Object.keys( productData ) ) {
 	test(
 		`can create a simple ${ productType } product`,
-		{ tag: [ '@gutenberg', '@services' ] },
+		{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
 		async ( { page, category, product } ) => {
 			await test.step( 'add new product', async () => {
 				await page.goto( 'wp-admin/post-new.php?post_type=product' );

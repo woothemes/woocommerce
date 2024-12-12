@@ -1,3 +1,7 @@
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
@@ -6,7 +10,7 @@ const productPrice = '13.99';
 const twoProductPrice = +productPrice * 2;
 const fourProductPrice = +productPrice * 4;
 
-test.describe( 'Cart page', { tag: [ '@payments', '@services' ] }, () => {
+test.describe( 'Cart page', { tag: [ tags.PAYMENTS, tags.SERVICES ] }, () => {
 	let productId, product2Id, product3Id;
 
 	test.beforeAll( async ( { baseURL } ) => {
@@ -71,7 +75,7 @@ test.describe( 'Cart page', { tag: [ '@payments', '@services' ] }, () => {
 	} );
 
 	async function goToShopPageAndAddProductToCart( page, prodName ) {
-		await page.goto( '/shop/?orderby=date' );
+		await page.goto( 'shop/?orderby=date' );
 		const responsePromise = page.waitForResponse(
 			'**/wp-json/wc/store/v1/batch?**'
 		);
@@ -83,9 +87,9 @@ test.describe( 'Cart page', { tag: [ '@payments', '@services' ] }, () => {
 
 	test(
 		'should display no item in the cart',
-		{ tag: [ '@could-be-lower-level-test' ] },
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 		async ( { page } ) => {
-			await page.goto( '/cart/' );
+			await page.goto( 'cart/' );
 			await expect(
 				page.getByText( 'Your cart is currently empty.' )
 			).toBeVisible();
@@ -94,11 +98,11 @@ test.describe( 'Cart page', { tag: [ '@payments', '@services' ] }, () => {
 
 	test(
 		'should add the product to the cart from the shop page',
-		{ tag: [ '@could-be-lower-level-test' ] },
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 		async ( { page } ) => {
 			await goToShopPageAndAddProductToCart( page, productName );
 
-			await page.goto( '/cart/' );
+			await page.goto( 'cart/' );
 			await expect( page.locator( 'td.product-name' ) ).toContainText(
 				productName
 			);
@@ -107,25 +111,25 @@ test.describe( 'Cart page', { tag: [ '@payments', '@services' ] }, () => {
 
 	test(
 		'should increase item quantity when "Add to cart" of the same product is clicked',
-		{ tag: [ '@could-be-lower-level-test' ] },
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 		async ( { page } ) => {
 			let qty = 2;
 			while ( qty-- ) {
 				await goToShopPageAndAddProductToCart( page, productName );
 			}
 
-			await page.goto( '/cart/' );
+			await page.goto( 'cart/' );
 			await expect( page.locator( 'input.qty' ) ).toHaveValue( '2' );
 		}
 	);
 
 	test(
 		'should update quantity when updated via quantity input',
-		{ tag: [ '@could-be-lower-level-test' ] },
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 		async ( { page } ) => {
 			await goToShopPageAndAddProductToCart( page, productName );
 
-			await page.goto( '/cart/' );
+			await page.goto( 'cart/' );
 			await page.locator( 'input.qty' ).fill( '2' );
 			await page.locator( 'text=Update cart' ).click();
 
@@ -137,10 +141,10 @@ test.describe( 'Cart page', { tag: [ '@payments', '@services' ] }, () => {
 
 	test(
 		'should remove the item from the cart when remove is clicked',
-		{ tag: [ '@could-be-lower-level-test' ] },
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 		async ( { page } ) => {
 			await goToShopPageAndAddProductToCart( page, productName );
-			await page.goto( '/cart/' );
+			await page.goto( 'cart/' );
 
 			// make sure that the product is in the cart
 			await expect(
@@ -160,11 +164,11 @@ test.describe( 'Cart page', { tag: [ '@payments', '@services' ] }, () => {
 
 	test(
 		'should update subtotal in cart totals when adding product to the cart',
-		{ tag: [ '@could-be-lower-level-test' ] },
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 		async ( { page } ) => {
 			await goToShopPageAndAddProductToCart( page, productName );
 
-			await page.goto( '/cart/' );
+			await page.goto( 'cart/' );
 			await expect(
 				page.locator( '.cart-subtotal .amount' )
 			).toContainText( `$${ productPrice }` );
@@ -180,11 +184,11 @@ test.describe( 'Cart page', { tag: [ '@payments', '@services' ] }, () => {
 
 	test(
 		'should go to the checkout page when "Proceed to Checkout" is clicked',
-		{ tag: [ '@could-be-lower-level-test' ] },
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 		async ( { page } ) => {
 			await goToShopPageAndAddProductToCart( page, productName );
 
-			await page.goto( '/cart/' );
+			await page.goto( 'cart/' );
 
 			await page.locator( '.checkout-button' ).click();
 
@@ -197,7 +201,7 @@ test.describe( 'Cart page', { tag: [ '@payments', '@services' ] }, () => {
 	} ) => {
 		// add same product to cart twice time
 		for ( let i = 1; i < 3; i++ ) {
-			await page.goto( `/shop/?add-to-cart=${ productId }` );
+			await page.goto( `shop/?add-to-cart=${ productId }` );
 			await expect(
 				page.getByText(
 					`“${ productName }” has been added to your cart.`
@@ -206,13 +210,13 @@ test.describe( 'Cart page', { tag: [ '@payments', '@services' ] }, () => {
 		}
 
 		// add the same product the third time
-		await page.goto( `/shop/?add-to-cart=${ productId }` );
+		await page.goto( `shop/?add-to-cart=${ productId }` );
 		await expect(
 			page.getByText(
 				'You cannot add that amount to the cart — we have 2 in stock and you already have 2 in your cart.'
 			)
 		).toBeVisible();
-		await page.goto( '/cart/' );
+		await page.goto( 'cart/' );
 
 		// attempt to increase quantity over quantity limit
 		await page.getByLabel( 'Product quantity' ).fill( '3' );

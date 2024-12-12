@@ -1,0 +1,5 @@
+Significance: patch
+Type: enhancement
+Comment: Allow only WC core notices on the new Payments settings page to avoid a cluttered UI.
+
+

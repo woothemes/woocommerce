@@ -1,0 +1,4 @@
+Significance: minor
+Type: add
+
+REST API: add orders/statuses endpoint

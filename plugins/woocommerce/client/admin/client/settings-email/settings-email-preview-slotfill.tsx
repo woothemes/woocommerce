@@ -16,13 +16,12 @@ import {
 	DEVICE_TYPE_DESKTOP,
 } from './settings-email-preview-device-type';
 import { EmailPreviewHeader } from './settings-email-preview-header';
+import { EmailPreviewSend } from './settings-email-preview-send';
 import { EmailPreviewType } from './settings-email-preview-type';
 
 const { Fill } = createSlotFill( SETTINGS_SLOT_FILL_CONSTANT );
 
-export type EmailType = SelectControl.Option & {
-	subject: string;
-};
+export type EmailType = SelectControl.Option;
 
 type EmailPreviewFillProps = {
 	emailTypes: EmailType[];
@@ -61,14 +60,12 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 						deviceType={ deviceType }
 						setDeviceType={ setDeviceType }
 					/>
+					<EmailPreviewSend type={ emailType } />
 				</div>
 				<div
 					className={ `wc-settings-email-preview wc-settings-email-preview-${ deviceType }` }
 				>
-					<EmailPreviewHeader
-						emailTypes={ emailTypes }
-						emailType={ emailType }
-					/>
+					<EmailPreviewHeader emailType={ emailType } />
 					<iframe
 						src={ finalPreviewUrl }
 						title={ __( 'Email preview frame', 'woocommerce' ) }

@@ -267,13 +267,14 @@ class Packages {
 	public static function display_notice_for_merged_plugins( $plugin_file ) {
 		global $wp_list_table;
 
-		$plugin_dir    = basename( dirname( $plugin_file ) );
+		$plugin_dir = basename( dirname( $plugin_file ) );
+		if ( ! self::is_package_enabled( $plugin_dir ) || is_null( $wp_list_table ) ) {
+			return;
+		}
+
 		$columns_count = $wp_list_table->get_column_count();
 		$notice        = __( 'This plugin can no longer be activated because its functionality is now included in <strong>WooCommerce</strong>. It is recommended to <strong>delete</strong> it.', 'woocommerce' );
-
-		if ( self::is_package_enabled( $plugin_dir ) ) {
-			echo '<tr class="plugin-update-tr"><td colspan="' . esc_attr( $columns_count ) . '" class="plugin-update"><div class="update-message notice inline notice-error notice-alt"><p>' . wp_kses_post( $notice ) . '</p></div></td></tr>';
-		}
+		echo '<tr class="plugin-update-tr"><td colspan="' . esc_attr( $columns_count ) . '" class="plugin-update"><div class="update-message notice inline notice-error notice-alt"><p>' . wp_kses_post( $notice ) . '</p></div></td></tr>';
 	}
 
 	/**
