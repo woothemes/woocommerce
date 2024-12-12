@@ -25,7 +25,11 @@ const processHeadersOnFetch = ( headers: Headers ): void => {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore -- this does exist because it's monkey patched in
 		// middleware/store-api-nonce.
-		typeof triggerFetch?.setNonce === 'function'
+		triggerFetch.setNonce &&
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore -- this does exist because it's monkey patched in
+		// middleware/store-api-nonce.
+		typeof triggerFetch.setNonce === 'function'
 	) {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore -- this does exist because it's monkey patched in
@@ -38,6 +42,10 @@ const processHeadersOnFetch = ( headers: Headers ): void => {
 		);
 	}
 	if (
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore -- this does exist because it's monkey patched in
+		// middleware/store-api-cart-hash.
+		triggerFetch.setCartHash &&
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore -- this does exist because it's monkey patched in
 		// middleware/store-api-cart-hash.
