@@ -6,7 +6,9 @@ namespace Automattic\WooCommerce\Tests\Internal\Admin\Settings;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders;
 use Automattic\WooCommerce\Internal\Admin\Settings\Payments;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentsRestController;
+use Automattic\WooCommerce\Internal\Admin\Suggestions\Incentives\Incentive;
 use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestions;
+use Automattic\WooCommerce\StoreApi\Exceptions\InvalidCartException;
 use Automattic\WooCommerce\Tests\Internal\Admin\Settings\Mocks\FakePaymentGateway;
 use WC_REST_Unit_Test_Case;
 use WP_REST_Request;
@@ -28,6 +30,11 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 	 * @var PaymentsRestController
 	 */
 	protected PaymentsRestController $controller;
+
+	/**
+	 * @var Payments
+	 */
+	protected Payments $service;
 
 	/**
 	 * @var PaymentProviders
@@ -100,6 +107,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$this->controller->register_routes();
 
 		$this->providers_service = wc_get_container()->get( PaymentProviders::class );
+		$this->service           = wc_get_container()->get( Payments::class );
 
 		$this->load_core_paypal_pg();
 
@@ -510,7 +518,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
 				'paypal',
 				PaymentProviders::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::WOOPAYMENTS, // The WooPayments suggestion.
-				'woocommerce_payments',                                                                 // The fake WooPayments gateway.
+				'woocommerce_payments', // The fake WooPayments gateway.
 			),
 			array_column( $data['providers'], 'id' )
 		);
@@ -738,6 +746,134 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 	}
 
 	/**
+	 * Test setting the country.
+	 */
+	public function test_set_country() {
+		// Arrange.
+		$country = 'RO';
+		$this->service->set_country( 'US' );
+
+		// Act.
+		$request = new WP_REST_Request( 'POST', self::ENDPOINT . '/country' );
+		$request->set_param( 'location', $country );
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertTrue( $data['success'] );
+
+		$this->assertSame( $country, $this->service->get_country() );
+
+		// Clean up.
+		$this->service->set_country( 'US' );
+	}
+
+	/**
+	 * Test setting the country to the same value.
+	 */
+	public function test_set_country_no_success() {
+		// Arrange.
+		$country = 'RO';
+		$this->service->set_country( $country );
+
+		// Act.
+		$request = new WP_REST_Request( 'POST', self::ENDPOINT . '/country' );
+		$request->set_param( 'location', $country );
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertFalse( $data['success'] );
+
+		$this->assertSame( $country, $this->service->get_country() );
+
+		// Clean up.
+		$this->service->set_country( 'US' );
+	}
+
+	/**
+	 * Test updating providers order.
+	 */
+	public function test_update_providers_order() {
+		// Arrange.
+		$order_map = array_flip(
+			array(
+				'paypal', // We move PayPal at the top.
+				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
+			)
+		);
+		update_option(
+			PaymentProviders::PROVIDERS_ORDER_OPTION,
+			array_flip(
+				array(
+					PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
+					...PaymentProviders::OFFLINE_METHODS,
+					'paypal',
+				)
+			)
+		);
+
+		// Act.
+		$request = new WP_REST_Request( 'POST', self::ENDPOINT . '/providers/order' );
+		$request->set_param( 'order_map', $order_map );
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertTrue( $data['success'] );
+
+		$this->assertSame(
+			array_flip(
+				array(
+					'paypal',
+					PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
+					...PaymentProviders::OFFLINE_METHODS,
+				)
+			),
+			get_option( PaymentProviders::PROVIDERS_ORDER_OPTION )
+		);
+
+		// Clean up.
+		delete_option( PaymentProviders::PROVIDERS_ORDER_OPTION );
+	}
+
+	/**
+	 * Test updating providers order with just offline PMs.
+	 */
+	public function test_update_providers_order_offline_pms() {
+		// Arrange.
+		$order_map = array_flip( PaymentProviders::OFFLINE_METHODS );
+		delete_option( PaymentProviders::PROVIDERS_ORDER_OPTION );
+
+		// Act.
+		$request = new WP_REST_Request( 'POST', self::ENDPOINT . '/providers/order' );
+		$request->set_param( 'order_map', $order_map );
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertTrue( $data['success'] );
+
+		$this->assertSame(
+			array_flip(
+				array(
+					PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
+					...PaymentProviders::OFFLINE_METHODS,
+					'paypal',
+				)
+			),
+			get_option( PaymentProviders::PROVIDERS_ORDER_OPTION )
+		);
+
+		// Clean up.
+		delete_option( PaymentProviders::PROVIDERS_ORDER_OPTION );
+	}
+
+	/**
 	 * Test hiding a payment extension suggestion.
 	 */
 	public function test_hide_payment_extension_suggestion() {
@@ -782,6 +918,156 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 
 		// Assert that the suggestion is in the providers list again.
 		$this->assertContains( $suggestion_order_map_id, array_column( $data['providers'], 'id' ) );
+	}
+
+	/**
+	 * Test dismissing a PES incentive for all contexts.
+	 */
+	public function test_dismiss_payment_extension_suggestion_incentive_all_contexts() {
+		// Arrange.
+		$incentive_id = 'promo-discount__wc_settings_payments';
+
+		delete_user_meta( get_current_user_id(), Incentive::PREFIX . 'dismissed' );
+		// Reset the WooCommerce gateway order.
+		delete_option( 'woocommerce_gateway_order' );
+		// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+		$filter_callback = fn( $caps ) => array(
+			'manage_woocommerce' => true,
+			'install_plugins'    => true,
+		);
+		add_filter( 'user_has_cap', $filter_callback );
+
+		$this->enable_core_paypal_pg();
+		$this->mock_payment_gateways();
+
+		// Act.
+		// Dismiss it for all contexts - no context param.
+		$request  = new WP_REST_Request( 'POST', self::ENDPOINT . '/suggestion/' . PaymentExtensionSuggestions::WOOPAYMENTS . '/incentive/' . $incentive_id . '/dismiss' );
+		$response = $this->server->dispatch( $request );
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+
+		// Act.
+		$request = new WP_REST_Request( 'GET', self::ENDPOINT . '/providers' );
+		$request->set_param( 'location', 'US' );
+		$response = $this->server->dispatch( $request );
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+
+		$data = $response->get_data();
+
+		$this->assertSame(
+			array(
+				PaymentProviders::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::PAYPAL_FULL_STACK, // Preferred suggestion.
+				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
+				'paypal',
+				PaymentProviders::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::WOOPAYMENTS, // The WooPayments suggestion.
+				'woocommerce_payments', // The fake WooPayments gateway.
+			),
+			array_column( $data['providers'], 'id' )
+		);
+
+		// Assert that the incentive is not in the WooPayments suggestion anymore.
+		$suggestion = $data['providers'][3];
+		$this->assertArrayNotHasKey( '_incentive', $suggestion );
+		// Assert that the incentive is not in the WooPayments gateway anymore.
+		$gateway = $data['providers'][4];
+		$this->assertArrayNotHasKey( '_incentive', $gateway );
+
+		// Delete the user meta.
+		delete_user_meta( get_current_user_id(), Incentive::PREFIX . 'dismissed' );
+
+		// Act.
+		$request = new WP_REST_Request( 'GET', self::ENDPOINT . '/providers' );
+		$request->set_param( 'location', 'US' );
+		$response = $this->server->dispatch( $request );
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+
+		$data = $response->get_data();
+
+		// Assert that the incentive is in the WooPayments suggestion again.
+		$suggestion = $data['providers'][3];
+		$this->assertArrayHasKey( '_incentive', $suggestion );
+		// Assert that the incentive is in the WooPayments gateway again.
+		$gateway = $data['providers'][4];
+		$this->assertArrayHasKey( '_incentive', $gateway );
+
+		// Clean up.
+		remove_filter( 'user_has_cap', $filter_callback );
+		$this->unmock_payment_gateways();
+		delete_option( 'woocommerce_gateway_order' );
+		delete_user_meta( get_current_user_id(), Incentive::PREFIX . 'dismissed' );
+	}
+
+	/**
+	 * Test dismissing a PES incentive for a certain context.
+	 */
+	public function test_dismiss_payment_extension_suggestion_incentive_in_context() {
+		// Arrange.
+		$incentive_id = 'promo-discount__wc_settings_payments';
+		$context      = 'wc_settings_payments__modal';
+
+		delete_user_meta( get_current_user_id(), Incentive::PREFIX . 'dismissed' );
+		// Reset the WooCommerce gateway order.
+		delete_option( 'woocommerce_gateway_order' );
+		// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+		$filter_callback = fn( $caps ) => array(
+			'manage_woocommerce' => true,
+			'install_plugins'    => true,
+		);
+		add_filter( 'user_has_cap', $filter_callback );
+
+		$this->enable_core_paypal_pg();
+		$this->mock_payment_gateways();
+
+		// Act.
+		// Dismiss it for all contexts - no context param.
+		$request = new WP_REST_Request( 'POST', self::ENDPOINT . '/suggestion/' . PaymentExtensionSuggestions::WOOPAYMENTS . '/incentive/' . $incentive_id . '/dismiss' );
+		$request->set_param( 'context', $context );
+		$response = $this->server->dispatch( $request );
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+
+		// Act.
+		$request = new WP_REST_Request( 'GET', self::ENDPOINT . '/providers' );
+		$request->set_param( 'location', 'US' );
+		$response = $this->server->dispatch( $request );
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+
+		$data = $response->get_data();
+
+		$this->assertSame(
+			array(
+				PaymentProviders::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::PAYPAL_FULL_STACK, // Preferred suggestion.
+				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
+				'paypal',
+				PaymentProviders::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::WOOPAYMENTS, // The WooPayments suggestion.
+				'woocommerce_payments', // The fake WooPayments gateway.
+			),
+			array_column( $data['providers'], 'id' )
+		);
+
+		// Assert that the incentive is in the WooPayments suggestion with the right dismissals list.
+		$suggestion = $data['providers'][3];
+		$this->assertArrayHasKey( '_incentive', $suggestion );
+		$this->assertContains( $context, $suggestion['_incentive']['_dismissals'] );
+		// Assert that the incentive is in the WooPayments gateway with the right dismissals list.
+		$gateway = $data['providers'][4];
+		$this->assertArrayHasKey( '_incentive', $gateway );
+		$this->assertContains( $context, $gateway['_incentive']['_dismissals'] );
+
+		// Clean up.
+		remove_filter( 'user_has_cap', $filter_callback );
+		$this->unmock_payment_gateways();
+		delete_option( 'woocommerce_gateway_order' );
+		delete_user_meta( get_current_user_id(), Incentive::PREFIX . 'dismissed' );
 	}
 
 	/**

@@ -26,7 +26,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	/**
 	 * @var PaymentsRestController
 	 */
-	protected PaymentsRestController $controller;
+	protected PaymentsRestController $sut;
 
 	/**
 	 * @var MockObject|Payments
@@ -51,9 +51,9 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 
 		$this->mock_service = $this->getMockBuilder( Payments::class )->getMock();
 
-		$this->controller = new PaymentsRestController();
-		$this->controller->init( $this->mock_service );
-		$this->controller->register_routes( true );
+		$this->sut = new PaymentsRestController();
+		$this->sut->init( $this->mock_service );
+		$this->sut->register_routes( true );
 	}
 
 	/**
@@ -1101,7 +1101,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	private function mock_extension_suggestions( ?string $location = null ) {
 		$mocker = $this->mock_service
 			->expects( $this->any() )
-			->method( 'get_extension_suggestions' );
+			->method( 'get_payment_extension_suggestions' );
 
 		if ( ! is_null( $location ) ) {
 			$mocker = $mocker->with( $location );
@@ -1211,7 +1211,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	private function mock_extension_suggestions_categories() {
 		$this->mock_service
 			->expects( $this->any() )
-			->method( 'get_extension_suggestion_categories' )
+			->method( 'get_payment_extension_suggestion_categories' )
 			->willReturn(
 				array(
 					array(
