@@ -130,13 +130,6 @@ export const SettingsPaymentsMethods: React.FC<
 						onClick={ () => {
 							setIsExpanded( ! isExpanded );
 						} }
-						onKeyDown={ (
-							event: React.KeyboardEvent< HTMLAnchorElement >
-						) => {
-							if ( event.key === 'Enter' ) {
-								setIsExpanded( ! isExpanded );
-							}
-						} }
 						tabIndex={ 0 }
 						aria-expanded={ isExpanded }
 					>
