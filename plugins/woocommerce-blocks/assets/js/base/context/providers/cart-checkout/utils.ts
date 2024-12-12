@@ -43,7 +43,11 @@ export const processCheckoutResponseHeaders = (
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore -- this does exist because it's monkey patched in
 		// middleware/store-api-nonce.
-		typeof triggerFetch?.setNonce === 'function'
+		triggerFetch.setNonce &&
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore -- this does exist because it's monkey patched in
+		// middleware/store-api-nonce.
+		typeof triggerFetch.setNonce === 'function'
 	) {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore -- this does exist because it's monkey patched in
@@ -55,7 +59,11 @@ export const processCheckoutResponseHeaders = (
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore -- this does exist because it's monkey patched in
 		// middleware/store-api-cart-hash.
-		typeof triggerFetch?.setCartHash === 'function'
+		triggerFetch.setCartHash &&
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore -- this does exist because it's monkey patched in
+		// middleware/store-api-cart-hash.
+		typeof triggerFetch.setCartHash === 'function'
 	) {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore -- this does exist because it's monkey patched in
