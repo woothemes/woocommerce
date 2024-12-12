@@ -29,28 +29,8 @@ class SW_BIS_Acceptance_Test_Helper {
 		// Register shortcodes for viewing confirmation emails.
 		add_action( 'plugins_loaded', array( __CLASS__, 'register_shortcodes' ) );
 
-		// Update the password of users that are automatically generated.
-		add_filter( 'woocommerce_new_customer_data', array( __CLASS__, 'force_change_password' ) );
-
 		// Creates some notifications that are required for tests.
 		add_action( 'wc_e2e_provision', array( __CLASS__, 'create_notifications' ) );
-
-		// Fix nightly tests.
-		add_action( 'wp_plugin_dependencies_slug', array( __CLASS__, 'fix_nightly_slugs' ) );
-	}
-
-	/**
-	 * Fix nightly tests.
-	 *
-	 * @param  string $slug
-	 * @return string
-	 */
-	public static function fix_nightly_slugs( $slug ) {
-		if ( 'woocommerce' === $slug ) {
-			$slug = '';
-		}
-
-		return $slug;
 	}
 
 	/*
@@ -90,19 +70,6 @@ class SW_BIS_Acceptance_Test_Helper {
 
 		if ( ! self::is_request( 'frontend' ) ) {
 			return;
-		}
-
-		if ( isset( $_GET[ 'apply_settings' ], $_GET[ 'reset_all' ] ) ) {
-			// Update all settings to default.
-			foreach ( self::$default_settings as $key => $value ) {
-				update_option( $key, $value );
-			}
-		} elseif ( isset( $_GET[ 'apply_settings' ] ) ) {
-			foreach ( self::$default_settings as $key => $value ) {
-				if ( isset( $_GET[ $key ] ) ) {
-					update_option( $key, $_GET[ $key ] );
-				}
-			}
 		}
 
 		if ( ! empty( $_GET[ 'process_notifications' ] ) ) {
@@ -259,18 +226,6 @@ class SW_BIS_Acceptance_Test_Helper {
 		$content = ob_get_clean();
 
 		return '<div class="bis-verify-email-content">' . $content . '</div>';
-	}
-
-	/**
-	 * Forces the user password to be the same as the user login.
-	 *
-	 * @param  array $args
-	 * @return array
-	 */
-	public static function force_change_password( $args ) {
-		$args[ 'user_pass' ] = $args[ 'user_login' ];
-
-		return $args;
 	}
 
 	/**
