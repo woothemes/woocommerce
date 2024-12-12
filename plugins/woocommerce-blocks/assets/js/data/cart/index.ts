@@ -24,11 +24,7 @@ import {
 	debouncedUpdatePaymentMethods,
 } from './update-payment-methods';
 import { ResolveSelectFromMap } from '../mapped-types';
-import {
-	hasCartSession,
-	persistenceLayer,
-	cartDataHashMatchesSession,
-} from './persistence-layer';
+import { hasCartSession, persistenceLayer } from './persistence-layer';
 import { defaultCartState } from './default-state';
 
 const store = createReduxStore( STORE_KEY, {
@@ -52,10 +48,7 @@ register( store );
 // The resolver for getCartData fires off an API request. But if we know the cart is empty, we can skip the request.
 // The only reliable way to check if the cart is empty is to check the cookies.
 window.addEventListener( 'load', () => {
-	if (
-		! hasCartSession() ||
-		( cartDataHashMatchesSession() && persistenceLayer.get() )
-	) {
+	if ( ! hasCartSession() || persistenceLayer.get() ) {
 		wpDispatch( STORE_KEY ).finishResolution( 'getCartData' );
 	}
 } );

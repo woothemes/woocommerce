@@ -26,20 +26,15 @@ export const isAddingToCart = () => {
 	return !! window.location.search.match( /add-to-cart/ );
 };
 
-export const getCartHash = () => {
-	return window.localStorage.getItem( 'storeApiCartHash' );
-};
-
-export const cartDataHashMatchesSession = () => {
-	return (
-		hasCartSession() &&
-		getCartHash() === getCookie( 'woocommerce_cart_hash' )
-	);
+export const hasValidHash = () => {
+	const hash = window.localStorage?.getItem( 'storeApiCartHash' ) || '';
+	const sessionHash = getCookie( 'woocommerce_cart_hash' );
+	return hash === sessionHash;
 };
 
 export const persistenceLayer = {
 	get: () => {
-		if ( ! hasCartSession() || isAddingToCart() ) {
+		if ( ! hasCartSession() || isAddingToCart() || ! hasValidHash() ) {
 			return {};
 		}
 
