@@ -5,6 +5,7 @@ import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
 import { __ } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
 import { PaymentProvider } from '@woocommerce/data';
+import { Tooltip } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -15,6 +16,7 @@ import { PaymentGatewayButtons } from '~/settings-payments/components/payment-ga
 import { EllipsisMenuWrapper as EllipsisMenu } from '~/settings-payments/components/ellipsis-menu-content';
 import { isWooPayments } from '~/settings-payments/utils';
 import { DefaultDragHandle } from '~/settings-payments/components/sortable';
+import { WC_ASSET_URL } from '~/utils/admin-settings';
 
 type PaymentGatewayItemProps = {
 	gateway: PaymentProvider;
@@ -68,6 +70,26 @@ export const PaymentGatewayListItem = ( {
 							/>
 						) : (
 							<StatusBadge status={ determineGatewayStatus() } />
+						) }
+						{ gateway.supports?.includes( 'subscriptions' ) && (
+							<Tooltip
+								text={ __(
+									'Supports recurring payments',
+									'woocommerce'
+								) }
+								children={
+									<img
+										src={
+											WC_ASSET_URL +
+											'images/icons/recurring-payments.svg'
+										}
+										alt={ __(
+											'Recurring payments',
+											'woocommerce'
+										) }
+									/>
+								}
+							/>
 						) }
 					</span>
 					<span
