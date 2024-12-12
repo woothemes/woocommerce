@@ -38,7 +38,7 @@ const store = createReduxStore( STORE_KEY, {
 		...defaultCartState,
 		cartData: {
 			...defaultCartState.cartData,
-			...persistenceLayer.get(),
+			...( persistenceLayer.get() || {} ),
 		},
 	},
 } );
@@ -46,6 +46,7 @@ const store = createReduxStore( STORE_KEY, {
 register( store );
 
 // The resolver for getCartData fires off an API request. But if we know the cart is empty, we can skip the request.
+// Likewise, if we have a valid persistent cart, we can skip the request.
 // The only reliable way to check if the cart is empty is to check the cookies.
 window.addEventListener( 'load', () => {
 	if ( ! hasCartSession() || persistenceLayer.get() ) {

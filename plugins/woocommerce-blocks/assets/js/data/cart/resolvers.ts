@@ -28,7 +28,7 @@ export const getCartData =
 			typeof apiFetch.setCartHash === 'function'
 		) {
 			// @ts-expect-error setCartHash exists but is not typed
-			apiFetch.setCartHash( response?.headers?.get( 'Cart-Hash' ) || '' );
+			apiFetch.setCartHash( response?.headers );
 		}
 
 		response
