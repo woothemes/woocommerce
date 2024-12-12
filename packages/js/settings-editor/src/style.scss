@@ -10,3 +10,38 @@
 		border-bottom: 1px solid #f0f0f0;
 	}
 }
+
+// #wc-settings-page .edit-site-layout__area {
+// 	overflow: scroll;
+// }
+
+.woocommerce-settings-content {
+	padding: 48px;
+	display: flex;
+	flex-direction: column;
+	gap: 48px;
+	overflow-y: auto;
+	height: 100%;
+	position: relative;
+}
+
+.woocommerce-settings-group {
+	display: flex;
+	gap: 48px;
+	padding-bottom: 48px;
+
+	&:not(:last-child) {
+		border-bottom: 1px solid #f0f0f0;
+	}
+}
+
+.woocommerce-settings-group-title {
+	flex: 1;
+}
+
+.woocommerce-settings-group-content {
+	flex: 2;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
