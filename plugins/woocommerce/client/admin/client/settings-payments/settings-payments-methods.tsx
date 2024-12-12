@@ -132,7 +132,7 @@ export const SettingsPaymentsMethods: React.FC<
 						onKeyDown={ (
 							event: React.KeyboardEvent< HTMLAnchorElement >
 						) => {
-							if ( event.key === 'Enter' || event.key === ' ' ) {
+							if ( event.key === 'Enter' ) {
 								setIsExpanded( ! isExpanded );
 							}
 						} }
