@@ -42,8 +42,8 @@ export type PaymentProvider = {
 	state?: StateData;
 	links?: PaymentGatewayLink[];
 	onboarding?: {
-		recommended_payment_methods: Record<string, boolean>;
-	}
+		recommended_payment_methods: Record< string, boolean >;
+	};
 };
 
 export type OfflinePaymentGateway = {
