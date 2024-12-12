@@ -45,6 +45,18 @@ export type PaymentIncentive = {
 	};
 };
 
+export type RecommendedPaymentMethod = {
+	id: string;
+	_order: number;
+	title: string;
+	description: string;
+	icon: string;
+	enabled: boolean;
+	extraTitle: string;
+	extraDescription: string;
+	extraIcon: string;
+};
+
 export type PaymentProvider = {
 	id: string;
 	_order: number;
@@ -61,7 +73,7 @@ export type PaymentProvider = {
 	state?: StateData;
 	links?: PaymentGatewayLink[];
 	onboarding?: {
-		recommended_payment_methods: Record< string, boolean >;
+		recommended_payment_methods: RecommendedPaymentMethod[];
 	};
 	_incentive?: PaymentIncentive;
 };
@@ -77,18 +89,6 @@ export type OfflinePaymentGateway = {
 	management: ManagementData;
 	state: StateData;
 	plugin: PluginData;
-};
-
-export type RecommendedPaymentMethod = {
-	id: string;
-	_order: number;
-	title: string;
-	description: string;
-	icon: string;
-	enabled: boolean;
-	extraTitle: string;
-	extraDescription: string;
-	extraIcon: string;
 };
 
 export type SuggestedPaymentExtension = {

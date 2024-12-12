@@ -92,7 +92,7 @@ export const PaymentMethodListItem = ( {
 									className="woocommerce-list__item-content"
 									dangerouslySetInnerHTML={ sanitizeHTML(
 										decodeEntities(
-											method.extraDescription
+											method.extraDescription ?? ''
 										)
 									) }
 								/>
