@@ -4,7 +4,7 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { Icon, button } from '@wordpress/icons';
 import { dispatch } from '@wordpress/data';
-import { registerPlugin } from '@wordpress/plugins';
+import { getPlugin, registerPlugin } from '@wordpress/plugins';
 import { isExperimentalBlocksEnabled } from '@woocommerce/block-settings';
 import { getSettingWithCoercion } from '@woocommerce/settings';
 import { isBoolean } from '@woocommerce/types';
@@ -43,9 +43,12 @@ if ( shouldRegisterBlock ) {
 	dispatch( woocommerceTemplateStateStore ).switchProductType( 'simple' );
 
 	// Extend editor, blocks, etc
-	registerPlugin( 'document-settings-template-selector-panel', {
-		render: PluginDocumentSettingTemplateSelectorPanel,
-	} );
+	const PLUGIN_NAME = 'document-settings-template-selector-pane';
+	if ( ! getPlugin( PLUGIN_NAME ) ) {
+		registerPlugin( PLUGIN_NAME, {
+			render: PluginDocumentSettingTemplateSelectorPanel,
+		} );
+	}
 
 	// Register the block
 	registerBlockType( metadata, {
