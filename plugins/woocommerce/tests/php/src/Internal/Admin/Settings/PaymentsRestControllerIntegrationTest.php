@@ -550,6 +550,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 				'id'                => 'promo-discount__wc_settings_payments',
 				'promo_id'          => 'promo-discount',
 				'description'       => 'Use the native payments solution built and supported by Woo.',
+				'title'             => 'Save X% on processing fees.',
 				'short_description' => 'Save X% on processing fees.',
 				'cta_label'         => 'Save X%',
 				'tc_url'            => 'https://woocommerce.com/terms-conditions',
