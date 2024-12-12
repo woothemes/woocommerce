@@ -198,9 +198,8 @@ export const SettingsPaymentsMain = () => {
 							const history = getHistory();
 							history.push( getNewPath( {}, '/payment-methods' ) );
 						} else {
-							console.log( recommendedPaymentMethods );
-							//window.location.href =
-							//	getWooPaymentsTestDriveAccountLink();
+							window.location.href =
+								getWooPaymentsTestDriveAccountLink();
 						}
 
 						return;
