@@ -37,8 +37,6 @@ class WC_Meta_Box_Coupon_Data {
 		</style>
 		<div id="coupon_options" class="panel-wrap coupon_data">
 
-			<div class="wc-tabs-back"></div>
-
 			<ul class="coupon_data_tabs wc-tabs" style="display:none;">
 				<?php
 				$coupon_data_tabs = apply_filters(

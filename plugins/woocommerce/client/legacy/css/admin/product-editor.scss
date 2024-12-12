@@ -632,10 +632,6 @@ $break-largeish: 900px; // It's almost $break-large, but kept consistent with th
 			border-left: none;
 		}
 	}
-	// Hide element that was used for CSS hack, that's no longer needed.
-	.wc-tabs-back {
-		display: none;
-	}
 
 	.woocommerce_options_panel,
 	.wc-metaboxes-wrapper {
