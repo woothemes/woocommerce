@@ -38,5 +38,5 @@ wp-env run tests-cli wp theme install storefront --activate
 echo "Success! Your E2E Test Environment is now ready."
 
 # Performance optimization related
-pnpm --filter=@woocommerce/plugin-woocommerce wp-env run tests-cli wp wc patch
+# pnpm --filter=@woocommerce/plugin-woocommerce wp-env run tests-cli wp wc patch
 pnpm --filter=@woocommerce/plugin-woocommerce wp-env run tests-cli wp index-mysql enable --all
