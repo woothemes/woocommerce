@@ -1,7 +1,11 @@
 /**
  * External dependencies
  */
-import { PaymentProvider, PaymentIncentive } from '@woocommerce/data';
+import {
+	PaymentProvider,
+	PaymentIncentive,
+	RecommendedPaymentMethod,
+} from '@woocommerce/data';
 import { getAdminLink } from '@woocommerce/settings';
 
 /**
@@ -94,6 +98,11 @@ export const getWooPaymentsSetupLiveAccountLink = () => {
 			'&wcpay-disable-onboarding-test-mode=true&redirect_to_settings_page=true&source=wcpay-setup-live-payments'
 	);
 };
+
+export const getPaymentMethodById =
+	( id: string ) => ( providers: RecommendedPaymentMethod[] ) => {
+		return providers.find( ( provider ) => provider.id === id ) || null;
+	};
 
 /**
  * Checks whether providers contain WooPayments gateway in test mode that is set up.

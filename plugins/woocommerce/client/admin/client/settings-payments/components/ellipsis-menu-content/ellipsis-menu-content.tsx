@@ -18,9 +18,10 @@ import { useState } from '@wordpress/element';
 import './ellipsis-menu-content.scss';
 
 interface EllipsisMenuContentProps {
-	pluginId: string;
+	providerId: string;
 	pluginFile: string;
 	isSuggestion: boolean;
+	suggestionHideUrl?: string;
 	onToggle: () => void;
 	links?: PaymentGatewayLink[];
 	isWooPayments?: boolean;
@@ -31,9 +32,10 @@ interface EllipsisMenuContentProps {
 }
 
 export const EllipsisMenuContent = ( {
-	pluginId,
+	providerId,
 	pluginFile,
 	isSuggestion,
+	suggestionHideUrl = '',
 	onToggle,
 	links = [],
 	isWooPayments = false,
@@ -50,7 +52,7 @@ export const EllipsisMenuContent = ( {
 	const {
 		invalidateResolutionForStoreSelector,
 		togglePaymentGateway,
-		hideGatewaySuggestion,
+		hidePaymentExtensionSuggestion,
 	} = useDispatch( PAYMENT_SETTINGS_STORE_NAME );
 	const { createErrorNotice, createSuccessNotice } =
 		useDispatch( 'core/notices' );
@@ -95,7 +97,7 @@ export const EllipsisMenuContent = ( {
 		}
 		setIsDisabling( true );
 		togglePaymentGateway(
-			pluginId,
+			providerId,
 			window.woocommerce_admin.ajax_url,
 			gatewayToggleNonce
 		)
@@ -116,7 +118,7 @@ export const EllipsisMenuContent = ( {
 	const hideSuggestion = () => {
 		setIsHidingSuggestion( true );
 
-		hideGatewaySuggestion( pluginId )
+		hidePaymentExtensionSuggestion( suggestionHideUrl )
 			.then( () => {
 				invalidateResolutionForStoreSelector( 'getPaymentProviders' );
 				setIsHidingSuggestion( false );
@@ -125,7 +127,7 @@ export const EllipsisMenuContent = ( {
 			.catch( () => {
 				createErrorNotice(
 					__(
-						'Failed to hide the payment gateway suggestion.',
+						'Failed to hide the payment extension suggestion.',
 						'woocommerce'
 					)
 				);
