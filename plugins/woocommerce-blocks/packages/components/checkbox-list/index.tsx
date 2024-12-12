@@ -13,7 +13,7 @@ import type { CheckboxListOptions } from './types';
 import './style.scss';
 
 export interface CheckboxListProps {
-	title: string | undefined;
+	title?: string | undefined;
 	className?: string | undefined;
 	isLoading?: boolean | undefined;
 	isDisabled?: boolean | undefined;
@@ -165,12 +165,17 @@ const CheckboxList = ( {
 	return (
 		<ul
 			className={ classes }
-			aria-labelledby="checkbox-list-legend"
-			role="group"
+			aria-labelledby={ title ? 'checkbox-list-legend' : undefined }
+			role={ title ? 'group' : undefined }
 		>
-			<legend className="screen-reader-text" id="checkbox-list-legend">
-				{ title }
-			</legend>
+			{ title && (
+				<legend
+					className="screen-reader-text"
+					id="checkbox-list-legend"
+				>
+					{ title }
+				</legend>
+			) }
 			{ isLoading ? placeholder : renderedOptions }
 		</ul>
 	);
