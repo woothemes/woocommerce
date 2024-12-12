@@ -639,7 +639,11 @@ const AttributeFilterBlock = ( {
 					</>
 				) : (
 					<CheckboxFilter
-						attributeLabel={ attributeObject.label }
+						title={ sprintf(
+							/* translators: %s text of the chip to remove. */
+							__( 'Filter by "%s"', 'woocommerce' ),
+							attributeObject.label
+						) }
 						options={ displayedOptions }
 						checked={ checked }
 						onChange={ onChange }

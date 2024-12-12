@@ -13,7 +13,7 @@ import type { CheckboxListOptions } from './types';
 import './style.scss';
 
 export interface CheckboxListProps {
-	attributeLabel: string | undefined;
+	title: string | undefined;
 	className?: string | undefined;
 	isLoading?: boolean | undefined;
 	isDisabled?: boolean | undefined;
@@ -34,9 +34,9 @@ export interface CheckboxListProps {
  * @param {boolean}              props.isLoading  If loading or not.
  * @param {boolean}              props.isDisabled If inputs are disabled or not.
  * @param {number}               props.limit      Whether to limit the number of inputs showing.
+ * @param {string}               props.title      Checkbox list title.
  */
 const CheckboxList = ( {
-	attributeLabel,
 	className,
 	onChange,
 	options = [],
@@ -44,6 +44,7 @@ const CheckboxList = ( {
 	isLoading = false,
 	isDisabled = false,
 	limit = 10,
+	title,
 }: CheckboxListProps ): JSX.Element => {
 	const [ showExpanded, setShowExpanded ] = useState( false );
 
@@ -168,11 +169,7 @@ const CheckboxList = ( {
 			role="group"
 		>
 			<legend className="screen-reader-text" id="checkbox-list-legend">
-				{ sprintf(
-					/* translators: %s text of the chip to remove. */
-					__( 'Filter by "%s"', 'woocommerce' ),
-					attributeLabel
-				) }
+				{ title }
 			</legend>
 			{ isLoading ? placeholder : renderedOptions }
 		</ul>
