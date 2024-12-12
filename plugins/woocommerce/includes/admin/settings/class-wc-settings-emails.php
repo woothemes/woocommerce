@@ -629,7 +629,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 	 * Creates the React mount point for the email preview.
 	 */
 	public function email_preview() {
-		//Deletes transient with email settings used for live preview. This is to
+		// Deletes transient with email settings used for live preview. This is to
 		// prevent conflicts where the preview would show values from previous session.
 		foreach ( EmailPreview::EMAIL_SETTINGS_IDS as $id ) {
 			delete_transient( $id );
