@@ -3,11 +3,14 @@ declare( strict_types=1 );
 
 namespace Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders;
 
-/**
- * Abstract class for payment provider classes.
- */
-abstract class PaymentProvider {
+defined( 'ABSPATH' ) || exit;
 
+/**
+ * The payment provider class to handle all payment providers that don't have a dedicated class.
+ *
+ * Extend this class for introducing provider-specific behavior.
+ */
+class PaymentProvider {
 	/**
 	 * The single instance of the payment provider class.
 	 *

@@ -4,11 +4,11 @@ declare( strict_types=1 );
 namespace Automattic\WooCommerce\Internal\Admin\Settings;
 
 use Automattic\WooCommerce\Admin\PluginsHelper;
-use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\General;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\PaymentProvider;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\WooPayments;
 use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestions;
 use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestions as ExtensionSuggestions;
+use Exception;
 use WC_Payment_Gateway;
 
 defined( 'ABSPATH' ) || exit;
@@ -774,13 +774,13 @@ class PaymentProviders {
 			return $this->instances[ $id ];
 		}
 
-		// If the ID is not mapped to a provider class, return the general provider.
+		// If the ID is not mapped to a provider class, return the generic provider.
 		if ( ! isset( $this->payment_providers_class_map[ $id ] ) ) {
-			if ( ! isset( $this->instances['general'] ) ) {
-				$this->instances['general'] = General::get_instance();
+			if ( ! isset( $this->instances['generic'] ) ) {
+				$this->instances['generic'] = PaymentProvider::get_instance();
 			}
 
-			return $this->instances['general'];
+			return $this->instances['generic'];
 		}
 
 		// Create an instance of the provider class.
