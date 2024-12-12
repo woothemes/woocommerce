@@ -17,3 +17,5 @@ pnpm --filter=@woocommerce/plugin-woocommerce wp-env run cli wp plugin install q
 # pnpm --filter=@woocommerce/plugin-woocommerce wp-env run cli wp db query "ALTER TABLE wp_usermeta ADD UNIQUE KEY umeta_id (umeta_id), DROP PRIMARY KEY, ADD PRIMARY KEY (user_id, meta_key, umeta_id), DROP KEY user_id;"
 # pnpm --filter=@woocommerce/plugin-woocommerce wp-env run cli wp db query "ALTER TABLE wp_options ADD UNIQUE KEY option_id (option_id), DROP PRIMARY KEY, ADD PRIMARY KEY (option_name), DROP KEY option_name;"
 
+# ALTER TABLE wp_posts MODIFY post_title varchar(255) NOT NULL;
+# CREATE INDEX type_status_title ON wp_posts (post_type, post_status, menu_order, post_title, ID);
