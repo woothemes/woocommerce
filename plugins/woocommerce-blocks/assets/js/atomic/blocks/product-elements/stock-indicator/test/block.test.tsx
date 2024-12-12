@@ -107,7 +107,10 @@ const defaultProduct: ProductResponseItem = {
 	type: 'simple',
 	is_in_stock: true,
 	is_on_backorder: false,
-	stock_indicator_text: '',
+	stock_availability: {
+		availability: '',
+		class: '',
+	},
 	parent: 0,
 	permalink: '',
 	images: [],
@@ -152,10 +155,9 @@ const defaultProduct: ProductResponseItem = {
 };
 
 describe( 'Stock Indicator Block', () => {
-	it( 'should not show stock indicator when stock_indicator_text is empty', () => {
+	it( 'should not show stock indicator when stock_availability is empty', () => {
 		const product = {
 			...defaultProduct,
-			stock_indicator_text: '',
 		};
 
 		const { container } = render(
@@ -175,7 +177,10 @@ describe( 'Stock Indicator Block', () => {
 		const product = {
 			...defaultProduct,
 			is_in_stock: false,
-			stock_indicator_text: 'Out of stock',
+			stock_availability: {
+				availability: 'Out of stock',
+				class: 'out-of-stock',
+			},
 		};
 
 		const { container } = render(
@@ -197,7 +202,10 @@ describe( 'Stock Indicator Block', () => {
 	it( 'should show stock indicator for in stock products', () => {
 		const product = {
 			...defaultProduct,
-			stock_indicator_text: 'In stock',
+			stock_availability: {
+				availability: 'In stock',
+				class: 'in-stock',
+			},
 		};
 
 		const { container } = render(

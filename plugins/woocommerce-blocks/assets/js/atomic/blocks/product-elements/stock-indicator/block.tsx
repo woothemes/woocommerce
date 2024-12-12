@@ -23,27 +23,23 @@ export const Block = ( props: Props ): JSX.Element | null => {
 	const styleProps = useStyleProps( props );
 	const { parentClassName } = useInnerBlockLayoutContext();
 	const { product } = useProductDataContext();
+	const { availability: availabilityText, class: availabilityClass } =
+		product.stock_availability;
 
-	if ( ! product.id || product.stock_indicator_text === '' ) {
+	if ( ! product.id || availabilityText === '' ) {
 		return null;
 	}
 
-	const inStock = !! product.is_in_stock;
 	const lowStock = product.low_stock_remaining;
-	const isBackordered = product.is_on_backorder;
 
 	return (
 		<div
 			className={ clsx( className, {
 				[ `${ parentClassName }__stock-indicator` ]: parentClassName,
-				'wc-block-components-product-stock-indicator--in-stock':
-					inStock,
-				'wc-block-components-product-stock-indicator--out-of-stock':
-					! inStock,
+				[ `wc-block-components-product-stock-indicator--${ availabilityClass }` ]:
+					availabilityClass,
 				'wc-block-components-product-stock-indicator--low-stock':
 					!! lowStock,
-				'wc-block-components-product-stock-indicator--available-on-backorder':
-					!! isBackordered,
 				// When inside All products block
 				...( props.isDescendantOfAllProducts && {
 					[ styleProps.className ]: styleProps.className,
@@ -56,7 +52,7 @@ export const Block = ( props: Props ): JSX.Element | null => {
 				style: styleProps.style,
 			} ) }
 		>
-			{ product.stock_indicator_text }
+			{ availabilityText }
 		</div>
 	);
 };

@@ -383,11 +383,25 @@ class ProductSchema extends AbstractSchema {
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,
 			],
-			'stock_indicator_text' => [
-				'description' => __( 'Stock indicator text. e.g. "In stock", "Out of stock", "Available on backorder", etc.', 'woocommerce' ),
-				'type'        => 'string',
+			'stock_availability' => [
+				'description' => __( 'Information about the product\'s availability.', 'woocommerce' ),
+				'type'        => 'object',
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,
+				'properties'  => [
+					'availability' => [
+						'description' => __( 'Stock availability text.', 'woocommerce' ),
+						'type'        => 'string',
+						'context'     => [ 'view', 'edit' ],
+						'readonly'    => true,
+					],
+					'class'        => [
+						'description' => __( 'Stock availability class.', 'woocommerce' ),
+						'type'        => 'string',
+						'context'     => [ 'view', 'edit' ],
+						'readonly'    => true,
+					],
+				],
 			],
 			'low_stock_remaining'  => [
 				'description' => __( 'Quantity left in stock if stock is low, or null if not applicable.', 'woocommerce' ),
@@ -458,34 +472,34 @@ class ProductSchema extends AbstractSchema {
 	 */
 	public function get_item_response( $product ) {
 		return [
-			'id'                   => $product->get_id(),
-			'name'                 => $this->prepare_html_response( $product->get_title() ),
-			'slug'                 => $product->get_slug(),
-			'parent'               => $product->get_parent_id(),
-			'type'                 => $product->get_type(),
-			'variation'            => $this->prepare_html_response( $product->is_type( 'variation' ) ? wc_get_formatted_variation( $product, true, true, false ) : '' ),
-			'permalink'            => $product->get_permalink(),
-			'sku'                  => $this->prepare_html_response( $product->get_sku() ),
-			'short_description'    => $this->prepare_html_response( wc_format_content( wp_kses_post( $product->get_short_description() ) ) ),
-			'description'          => $this->prepare_html_response( wc_format_content( wp_kses_post( $product->get_description() ) ) ),
-			'on_sale'              => $product->is_on_sale(),
-			'prices'               => (object) $this->prepare_product_price_response( $product ),
-			'price_html'           => $this->prepare_html_response( $product->get_price_html() ),
-			'average_rating'       => (string) $product->get_average_rating(),
-			'review_count'         => $product->get_review_count(),
-			'images'               => $this->get_images( $product ),
-			'categories'           => $this->get_term_list( $product, 'product_cat' ),
-			'tags'                 => $this->get_term_list( $product, 'product_tag' ),
-			'attributes'           => $this->get_attributes( $product ),
-			'variations'           => $this->get_variations( $product ),
-			'has_options'          => $product->has_options(),
-			'is_purchasable'       => $product->is_purchasable(),
-			'is_in_stock'          => $product->is_in_stock(),
-			'is_on_backorder'      => 'onbackorder' === $product->get_stock_status(),
-			'low_stock_remaining'  => $this->get_low_stock_remaining( $product ),
-			'stock_indicator_text' => $this->get_stock_indicator_text( $product ),
-			'sold_individually'    => $product->is_sold_individually(),
-			'add_to_cart'          => (object) array_merge(
+			'id'                  => $product->get_id(),
+			'name'                => $this->prepare_html_response( $product->get_title() ),
+			'slug'                => $product->get_slug(),
+			'parent'              => $product->get_parent_id(),
+			'type'                => $product->get_type(),
+			'variation'           => $this->prepare_html_response( $product->is_type( 'variation' ) ? wc_get_formatted_variation( $product, true, true, false ) : '' ),
+			'permalink'           => $product->get_permalink(),
+			'sku'                 => $this->prepare_html_response( $product->get_sku() ),
+			'short_description'   => $this->prepare_html_response( wc_format_content( wp_kses_post( $product->get_short_description() ) ) ),
+			'description'         => $this->prepare_html_response( wc_format_content( wp_kses_post( $product->get_description() ) ) ),
+			'on_sale'             => $product->is_on_sale(),
+			'prices'              => (object) $this->prepare_product_price_response( $product ),
+			'price_html'          => $this->prepare_html_response( $product->get_price_html() ),
+			'average_rating'      => (string) $product->get_average_rating(),
+			'review_count'        => $product->get_review_count(),
+			'images'              => $this->get_images( $product ),
+			'categories'          => $this->get_term_list( $product, 'product_cat' ),
+			'tags'                => $this->get_term_list( $product, 'product_tag' ),
+			'attributes'          => $this->get_attributes( $product ),
+			'variations'          => $this->get_variations( $product ),
+			'has_options'         => $product->has_options(),
+			'is_purchasable'      => $product->is_purchasable(),
+			'is_in_stock'         => $product->is_in_stock(),
+			'is_on_backorder'     => 'onbackorder' === $product->get_stock_status(),
+			'low_stock_remaining' => $this->get_low_stock_remaining( $product ),
+			'stock_availability'  => $product->get_availability(),
+			'sold_individually'   => $product->is_sold_individually(),
+			'add_to_cart'         => (object) array_merge(
 				[
 					'text'        => $this->prepare_html_response( $product->add_to_cart_text() ),
 					'description' => $this->prepare_html_response( $product->add_to_cart_description() ),
@@ -493,7 +507,7 @@ class ProductSchema extends AbstractSchema {
 				],
 				( new QuantityLimits() )->get_add_to_cart_limits( $product )
 			),
-			self::EXTENDING_KEY    => $this->get_extended_data( self::IDENTIFIER, $product ),
+			self::EXTENDING_KEY   => $this->get_extended_data( self::IDENTIFIER, $product ),
 
 		];
 	}
@@ -544,17 +558,6 @@ class ProductSchema extends AbstractSchema {
 		}
 
 		return null;
-	}
-
-	/**
-	 * Get stock availability text.
-	 *
-	 * @param \WC_Product $product Product instance.
-	 * @return string
-	 */
-	protected function get_stock_indicator_text( \WC_Product $product ) {
-		$availability = $product->get_availability();
-		return $availability['availability'];
 	}
 
 	/**
