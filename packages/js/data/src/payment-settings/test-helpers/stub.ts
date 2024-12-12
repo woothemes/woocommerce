@@ -41,6 +41,11 @@ export const providersStub: PaymentProvider[] = [
 			file: 'woocommerce-paypal-payments/woocommerce-paypal-payments',
 			status: 'installed',
 		},
+		_links: {
+			hide: {
+				href: 'http://localhost:8082/wp-json/wc-admin/settings/payments/suggestion/paypal_full_stack/hide',
+			},
+		},
 	},
 	{
 		id: 'woocommerce_payments',
