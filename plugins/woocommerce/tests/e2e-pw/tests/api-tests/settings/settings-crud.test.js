@@ -790,7 +790,7 @@ test.describe( 'Settings API tests: CRUD', () => {
 							oz: 'oz',
 						},
 						tip: 'This controls what unit you will define weights in.',
-						value: 'kg',
+						value: 'lbs',
 					} ),
 				] )
 			);
@@ -811,7 +811,7 @@ test.describe( 'Settings API tests: CRUD', () => {
 							yd: 'yd',
 						},
 						tip: 'This controls what unit you will define lengths in.',
-						value: 'cm',
+						value: 'in',
 					} ),
 				] )
 			);
