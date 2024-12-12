@@ -7,8 +7,8 @@ import { dispatch, useDispatch } from '@wordpress/data';
 import {
 	PAYMENT_SETTINGS_STORE_NAME,
 	EnableGatewayResponse,
-	PaymentProvider,
-	OfflinePaymentGateway,
+	PaymentGatewayProvider,
+	OfflinePaymentMethodProvider,
 } from '@woocommerce/data';
 import { useState } from '@wordpress/element';
 
@@ -33,7 +33,7 @@ export const PaymentGatewayButtons = ( {
 	textEnable = __( 'Enable', 'woocommerce' ),
 	textNeedsSetup = __( 'Complete setup', 'woocommerce' ),
 }: {
-	gateway: PaymentProvider | OfflinePaymentGateway;
+	gateway: PaymentGatewayProvider | OfflinePaymentMethodProvider;
 	isOffline: boolean;
 	enabled: boolean;
 	needsSetup?: boolean;
