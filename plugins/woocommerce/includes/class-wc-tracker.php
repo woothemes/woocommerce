@@ -59,16 +59,16 @@ class WC_Tracker {
 		 *
 		 * @since 2.3.0
 		 */
-		if ( ! $force && ! apply_filters( 'woocommerce_tracker_send_override', $override ) ) {
+		if ( ! apply_filters( 'woocommerce_tracker_send_override', $override ) ) {
 			// Send a maximum of once per week by default.
 			$last_send = self::get_last_send_time();
-			if ( $last_send && $last_send > apply_filters( 'woocommerce_tracker_last_send_interval', strtotime( '-1 week' ) ) ) { // phpcs:ignore
+			if ( ! $force && $last_send && $last_send > apply_filters( 'woocommerce_tracker_last_send_interval', strtotime( '-1 week' ) ) ) { // phpcs:ignore
 				return;
 			}
-		} else if ( ! $force ) {
+		} else {
 			// Make sure there is at least a 1 hour delay between override sends, we don't want duplicate calls due to double clicking links.
 			$last_send = self::get_last_send_time();
-			if ( $last_send && $last_send > strtotime( '-1 hours' ) ) {
+			if ( ! $force && $last_send && $last_send > strtotime( '-1 hours' ) ) {
 				return;
 			}
 		}
@@ -225,8 +225,8 @@ class WC_Tracker {
 
 		// WC Tracker data
 		$data['woocommerce_allow_tracking'] = get_option( 'woocommerce_allow_tracking', 'no' );
-		$data['woocommerce_allow_tracking_last_modified'] = get_option( 'woocommerce_allow_tracking_last_modified', null );
-		$data['woocommerce_allow_tracking_first_optin'] = get_option( 'woocommerce_allow_tracking_first_optin', null );
+		$data['woocommerce_allow_tracking_last_modified'] = get_option( 'woocommerce_allow_tracking_last_modified', 'unknown' );
+		$data['woocommerce_allow_tracking_first_optin'] = get_option( 'woocommerce_allow_tracking_first_optin', 'unknown' );
 
 
 		/**
