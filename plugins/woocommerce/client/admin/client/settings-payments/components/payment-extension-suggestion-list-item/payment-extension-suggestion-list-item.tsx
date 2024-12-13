@@ -38,18 +38,20 @@ export const PaymentExtensionSuggestionListItem = ( {
 	acceptIncentive,
 	...props
 }: PaymentExtensionSuggestionListItemProps ) => {
+	const incentive = hasIncentive( extension ) ? extension._incentive : null;
+	const shouldHighlightIncentive =
+		hasIncentive( extension ) &&
+		( ! isActionIncentive( extension._incentive ) ||
+			isIncentiveDismissedInContext(
+				extension._incentive,
+				'wc_settings_payments__banner'
+			) );
+
 	return (
 		<div
 			id={ extension.id }
 			className={ `transitions-disabled woocommerce-list__item woocommerce-list__item-enter-done ${
-				hasIncentive( extension ) &&
-				( ! isActionIncentive( extension._incentive ) ||
-					isIncentiveDismissedInContext(
-						extension._incentive,
-						'wc_settings_payments__banner'
-					) )
-					? `has-incentive`
-					: ''
+				shouldHighlightIncentive ? `has-incentive` : ''
 			}` }
 			{ ...props }
 		>
@@ -67,10 +69,10 @@ export const PaymentExtensionSuggestionListItem = ( {
 						{ ! hasIncentive && isWooPayments( extension.id ) && (
 							<StatusBadge status="recommended" />
 						) }
-						{ hasIncentive( extension ) && extension._incentive && (
+						{ incentive && (
 							<StatusBadge
 								status="has_incentive"
-								message={ extension._incentive.badge }
+								message={ incentive.badge }
 							/>
 						) }
 					</span>
@@ -92,8 +94,8 @@ export const PaymentExtensionSuggestionListItem = ( {
 						<Button
 							variant="primary"
 							onClick={ () => {
-								if ( !! extension._incentive ) {
-									acceptIncentive( extension._incentive.id );
+								if ( incentive ) {
+									acceptIncentive( incentive.id );
 								}
 
 								setupPlugin(

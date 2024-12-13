@@ -13,7 +13,7 @@ import sanitizeHTML from '~/lib/sanitize-html';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
 import { PaymentGatewayButtons } from '~/settings-payments/components/payment-gateway-buttons';
 import { EllipsisMenuWrapper as EllipsisMenu } from '~/settings-payments/components/ellipsis-menu-content';
-import { isWooPayments } from '~/settings-payments/utils';
+import { hasIncentive, isWooPayments } from '~/settings-payments/utils';
 import { DefaultDragHandle } from '~/settings-payments/components/sortable';
 
 type PaymentGatewayItemProps = {
@@ -27,9 +27,9 @@ export const PaymentGatewayListItem = ( {
 	...props
 }: PaymentGatewayItemProps ) => {
 	const isWcPay = isWooPayments( gateway.id );
-	const hasIncentive = !! gateway._incentive;
+	const incentive = hasIncentive( gateway ) ? gateway._incentive : null;
 	const shouldHighlightIncentive =
-		hasIncentive && ! gateway._incentive?.promo_id.includes( '-action-' );
+		incentive && ! incentive?.promo_id.includes( '-action-' );
 
 	const determineGatewayStatus = () => {
 		if ( ! gateway.state.enabled && gateway.state.needs_setup ) {
@@ -63,10 +63,10 @@ export const PaymentGatewayListItem = ( {
 				<div className="woocommerce-list__item-text">
 					<span className="woocommerce-list__item-title">
 						{ gateway.title }
-						{ hasIncentive && gateway._incentive ? (
+						{ incentive ? (
 							<StatusBadge
 								status="has_incentive"
-								message={ gateway._incentive.badge }
+								message={ incentive.badge }
 							/>
 						) : (
 							<StatusBadge status={ determineGatewayStatus() } />
