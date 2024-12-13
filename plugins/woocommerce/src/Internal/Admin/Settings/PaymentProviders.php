@@ -4,9 +4,10 @@ declare( strict_types=1 );
 namespace Automattic\WooCommerce\Internal\Admin\Settings;
 
 use Automattic\WooCommerce\Admin\PluginsHelper;
-use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\PaymentProvider;
+use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\PaymentGateway;
+use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\PayPal;
+use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\WCCore;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\WooPayments;
-use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestions;
 use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestions as ExtensionSuggestions;
 use Exception;
 use WC_Payment_Gateway;
@@ -40,19 +41,23 @@ class PaymentProviders {
 	public const CATEGORY_PSP              = 'psp';
 
 	/**
-	 * The map of suggestion or gateway IDs to their respective Payment Provider classes.
+	 * The map of gateway IDs to their respective provider classes.
 	 *
 	 * @var \class-string[]
 	 */
-	private array $payment_providers_class_map = array(
-		'woocommerce_payments'                   => WooPayments::class,
-		PaymentExtensionSuggestions::WOOPAYMENTS => WooPayments::class,
+	private array $payment_gateways_providers_class_map = array(
+		'bacs'                 => WCCore::class,
+		'cheque'               => WCCore::class,
+		'cod'                  => WCCore::class,
+		'paypal'               => WCCore::class,
+		'woocommerce_payments' => WooPayments::class,
+		'ppcp-gateway'         => PayPal::class,
 	);
 
 	/**
 	 * The instances of the payment providers.
 	 *
-	 * @var PaymentProvider[]
+	 * @var PaymentGateway[]
 	 */
 	private array $instances = array();
 
