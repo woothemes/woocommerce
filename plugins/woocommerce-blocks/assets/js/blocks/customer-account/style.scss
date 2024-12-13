@@ -24,7 +24,7 @@
 		gap: em($gap-smaller);
 		white-space: nowrap;
 		line-height: 1;
-		padding: 0;
+		padding: em($gap-smaller);
 
 		&:hover {
 			text-decoration: underline !important;

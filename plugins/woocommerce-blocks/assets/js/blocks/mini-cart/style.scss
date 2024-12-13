@@ -30,7 +30,7 @@
 	font-size: inherit;
 	font-family: inherit;
 	font-weight: inherit;
-	padding: 0;
+	padding: em($gap-smaller);
 	gap: em($gap-smaller);
 	white-space: nowrap;
 	line-height: 1;
