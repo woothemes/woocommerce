@@ -45,10 +45,8 @@ class WC_Tracker {
 	 * Decide whether to send tracking data or not.
 	 *
 	 * @param boolean $override Should override?.
-	 * @param boolean $force If you want to send the tracking data without boundaries
-	 * (Set is as true only if it's necessary to avoid the tracker to prevent sending multiple times per hour).
 	 */
-	public static function send_tracking_data( $override = false, $force = false ) {
+	public static function send_tracking_data( $override = false ) {
 		// Don't trigger this on AJAX Requests.
 		if ( Constants::is_true( 'DOING_AJAX' ) ) {
 			return;
@@ -62,13 +60,13 @@ class WC_Tracker {
 		if ( ! apply_filters( 'woocommerce_tracker_send_override', $override ) ) {
 			// Send a maximum of once per week by default.
 			$last_send = self::get_last_send_time();
-			if ( ! $force && $last_send && $last_send > apply_filters( 'woocommerce_tracker_last_send_interval', strtotime( '-1 week' ) ) ) { // phpcs:ignore
+			if ( $last_send && $last_send > apply_filters( 'woocommerce_tracker_last_send_interval', strtotime( '-1 week' ) ) ) { // phpcs:ignore
 				return;
 			}
 		} else {
 			// Make sure there is at least a 1 hour delay between override sends, we don't want duplicate calls due to double clicking links.
 			$last_send = self::get_last_send_time();
-			if ( ! $force && $last_send && $last_send > strtotime( '-1 hours' ) ) {
+			if ( $last_send && $last_send > strtotime( '-1 hours' ) ) {
 				return;
 			}
 		}
@@ -223,11 +221,10 @@ class WC_Tracker {
 		// Mobile info.
 		$data['wc_mobile_usage'] = self::get_woocommerce_mobile_usage();
 
-		// WC Tracker data
-		$data['woocommerce_allow_tracking'] = get_option( 'woocommerce_allow_tracking', 'no' );
+		// WC Tracker data.
+		$data['woocommerce_allow_tracking']               = get_option( 'woocommerce_allow_tracking', 'no' );
 		$data['woocommerce_allow_tracking_last_modified'] = get_option( 'woocommerce_allow_tracking_last_modified', 'unknown' );
-		$data['woocommerce_allow_tracking_first_optin'] = get_option( 'woocommerce_allow_tracking_first_optin', 'unknown' );
-
+		$data['woocommerce_allow_tracking_first_optin']   = get_option( 'woocommerce_allow_tracking_first_optin', 'unknown' );
 
 		/**
 		 * Filter the data that's sent with the tracker.

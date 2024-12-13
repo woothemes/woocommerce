@@ -1348,21 +1348,19 @@ final class WooCommerce {
 	 * - When the field was first set to allow tracking
 	 * - Last time the option was changed
 	 *
+	 * @param string $old_value The old value for the woocommerce_allow_tracking option.
+	 * @param string $value The current value for the woocommerce_allow_tracking option.
 	 * @since x.x.x
 	 *
 	 * @return void
 	 */
 	public function get_tracking_history( $old_value, $value ) {
 		// If woocommerce_allow_tracking_first_optin is not set. It means is the first time it gets set.
-		if ( ! get_option( 'woocommerce_allow_tracking_first_optin' ) && $value === 'yes' ) {
+		if ( ! get_option( 'woocommerce_allow_tracking_first_optin' ) && 'yes' === $value ) {
 			update_option( 'woocommerce_allow_tracking_first_optin', time() );
 		}
 
 		// Always update the last change.
 		update_option( 'woocommerce_allow_tracking_last_modified', time() );
-
-		// Send a Tracker snapshot with the updates.
-		include_once WC_ABSPATH . 'includes/class-wc-tracker.php';
-		WC_Tracker::send_tracking_data( true, true );
 	}
 }
