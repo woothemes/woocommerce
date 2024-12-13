@@ -8,10 +8,9 @@ import {
 } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import {
-	// @ts-expect-error missing type.
 	EditorSnackbars,
-	// @ts-expect-error missing type.
 	privateApis as editorPrivateApis,
+	// @ts-expect-error missing type.
 } from '@wordpress/editor';
 // eslint-disable-next-line @woocommerce/dependency-group
 import {
@@ -41,19 +40,19 @@ const { NavigableRegion } = unlock( editorPrivateApis );
 
 const ANIMATION_DURATION = 0.3;
 
-type LayoutProps = {
+type AdminLayoutProps = {
 	route: Route;
-	settingsPage?: SettingsPage;
+	pageTitle?: string;
 	activeSection?: string;
 	tabs?: Array< { name: string; title: string } >;
 };
 
-export function Layout( {
+export function AdminLayout( {
 	route,
-	settingsPage,
+	pageTitle,
 	tabs,
 	activeSection,
-}: LayoutProps ) {
+}: AdminLayoutProps ) {
 	const [ fullResizer ] = useResizeObserver();
 	const toggleRef = useRef< HTMLAnchorElement >( null );
 	const isMobileViewport = useViewportMatch( 'medium', '<' );
@@ -112,7 +111,7 @@ export function Layout( {
 								maxWidth: widths?.content,
 							} }
 						>
-							<Header pageTitle={ settingsPage?.label } />
+							<Header pageTitle={ pageTitle } />
 							<SectionTabs
 								tabs={ tabs }
 								activeSection={ activeSection }

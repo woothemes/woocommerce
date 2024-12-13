@@ -29,7 +29,7 @@ jest.mock( '@wordpress/router', () => ( {
 	},
 } ) );
 
-jest.mock( '@wordpress/edit-site/build-module/lock-unlock', () => ( {
+jest.mock( '@woocommerce/admin-layout', () => ( {
 	unlock: jest.fn( ( apis ) => apis ),
 } ) );
 

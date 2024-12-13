@@ -14,7 +14,7 @@ import {
 export const Header = ( { pageTitle = '' }: { pageTitle?: string } ) => {
 	return (
 		<VStack
-			className="woocommerce-settings-header edit-site-page-header"
+			className="woocommerce-admin-layout-header edit-site-page-header"
 			as="header"
 			spacing={ 0 }
 		>
