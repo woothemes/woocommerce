@@ -793,6 +793,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 		$default_colors = $this->get_email_default_colors();
 
 		?>
+		<hr class="wc-settings-email-color-palette-separator" />
 		<h2 class="wc-settings-email-color-palette-title"><?php echo esc_html( $value['title'] ); ?></h2>
 		<div
 			class="wc-settings-email-color-palette-buttons"

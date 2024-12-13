@@ -3,7 +3,8 @@
  */
 import { createSlotFill, SelectControl, Spinner } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { debounce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,6 +35,7 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 	previewUrl,
 	settingsIds,
 } ) => {
+	const FLOATING_PREVIEW_WIDTH_LIMIT = 1550;
 	const [ deviceType, setDeviceType ] =
 		useState< string >( DEVICE_TYPE_DESKTOP );
 	const isSingleEmail = emailTypes.length === 1;
@@ -43,11 +45,28 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 			: 'WC_Email_Customer_Processing_Order'
 	);
 	const [ isLoading, setIsLoading ] = useState< boolean >( false );
+	const [ isWide, setIsWide ] = useState< boolean >(
+		window.innerWidth > FLOATING_PREVIEW_WIDTH_LIMIT
+	);
 	const finalPreviewUrl = `${ previewUrl }&type=${ emailType }`;
+
+	useEffect( () => {
+		const handleResize = debounce( () => {
+			setIsWide( window.innerWidth > FLOATING_PREVIEW_WIDTH_LIMIT );
+		}, 400 );
+		window.addEventListener( 'resize', handleResize );
+		return () => {
+			window.removeEventListener( 'resize', handleResize );
+		};
+	}, [] );
 
 	return (
 		<Fill>
-			<div className="wc-settings-email-preview-container">
+			<div
+				className={ `wc-settings-email-preview-container ${
+					isWide ? 'wc-settings-email-preview-container-floating' : ''
+				}` }
+			>
 				<div className="wc-settings-email-preview-controls">
 					{ ! isSingleEmail && (
 						<EmailPreviewType
