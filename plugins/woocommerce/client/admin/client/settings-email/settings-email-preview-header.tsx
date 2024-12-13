@@ -24,6 +24,7 @@ export const EmailPreviewHeader: React.FC< EmailPreviewHeaderProps > = ( {
 	const [ fromName, setFromName ] = useState( '' );
 	const [ fromAddress, setFromAddress ] = useState( '' );
 	const [ subject, setSubject ] = useState( '' );
+	let subjectEl: Element | null = null;
 
 	const fetchSubject = useCallback( async () => {
 		try {
@@ -31,6 +32,9 @@ export const EmailPreviewHeader: React.FC< EmailPreviewHeaderProps > = ( {
 				path: `wc-admin-email/settings/email/preview-subject?type=${ emailType }`,
 			} );
 			setSubject( response.subject );
+			if ( subjectEl ) {
+				subjectEl.dispatchEvent( new Event( 'subject-updated' ) );
+			}
 		} catch ( e ) {
 			setSubject( '' );
 		}
@@ -78,7 +82,7 @@ export const EmailPreviewHeader: React.FC< EmailPreviewHeaderProps > = ( {
 	}, [ emailType, fetchSubject ] );
 
 	useEffect( () => {
-		const subjectEl = document.querySelector(
+		subjectEl = document.querySelector(
 			'[id^="woocommerce_"][id$="_subject"]'
 		);
 
