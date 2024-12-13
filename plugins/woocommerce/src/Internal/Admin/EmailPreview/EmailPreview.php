@@ -79,6 +79,19 @@ class EmailPreview {
 	}
 
 	/**
+	 * Get email content settings IDs for specific email.
+	 *
+	 * @param string $email_id Email ID.
+	 */
+	public static function get_email_content_settings_ids( string $email_id ) {
+		return array(
+			"woocommerce_${email_id}_subject",
+			"woocommerce_${email_id}_heading",
+			"woocommerce_${email_id}_additional_content",
+		);
+	}
+
+	/**
 	 * Set the email type to preview.
 	 *
 	 * @param string $email_type Email type.
