@@ -1,5 +1,13 @@
 == Changelog ==
 
+= 9.4.3 2024-12-03 =
+
+**WooCommerce**
+
+* Fix - Validate and sanitize the event origin and event data when listening to message events from attachParentListeners function to prevent xss attacks during the customize your store flow
+* Fix - Added new validation to Store API checkout endpoint regarding Accounts & Privacy definitions.
+* Fix - Updated wc_get_cart_url() to only return permalinks rather than building the current URL manually.
+
 = 9.4.2 2024-11-19 =
 
 **WooCommerce**

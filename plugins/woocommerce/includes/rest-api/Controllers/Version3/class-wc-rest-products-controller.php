@@ -251,6 +251,16 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			);
 		}
 
+		// Add exclude types filter.
+		if ( ! empty( $request['exclude_types'] ) ) {
+			$tax_query[] = array(
+				'taxonomy' => 'product_type',
+				'field'    => 'slug',
+				'terms'    => $request['exclude_types'],
+				'operator' => 'NOT IN',
+			);
+		}
+
 		// Filter by attribute and term.
 		if ( ! empty( $request['attribute'] ) && ! empty( $request['attribute_term'] ) ) {
 			if ( in_array( $request['attribute'], wc_get_attribute_taxonomy_names(), true ) ) {
@@ -1709,6 +1719,17 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 
 		$params['include_types'] = array(
 			'description'       => __( 'Limit result set to products with any of the types.', 'woocommerce' ),
+			'type'              => 'array',
+			'items'             => array(
+				'type' => 'string',
+				'enum' => array_keys( wc_get_product_types() ),
+			),
+			'sanitize_callback' => 'wp_parse_list',
+			'validate_callback' => 'rest_validate_request_arg',
+		);
+
+		$params['exclude_types'] = array(
+			'description'       => __( 'Exclude products with any of the types from result set.', 'woocommerce' ),
 			'type'              => 'array',
 			'items'             => array(
 				'type' => 'string',

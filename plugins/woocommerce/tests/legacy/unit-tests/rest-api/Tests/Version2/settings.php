@@ -58,7 +58,7 @@ class Settings_V2 extends WC_REST_Unit_Test_Case {
 		$matching_settings_data = current(
 			array_filter(
 				$data,
-				function( $settings ) {
+				function ( $settings ) {
 					return 'test' === $settings['id'];
 				}
 			)
@@ -86,7 +86,7 @@ class Settings_V2 extends WC_REST_Unit_Test_Case {
 		$matching_settings_data = current(
 			array_filter(
 				$data,
-				function( $settings ) {
+				function ( $settings ) {
 					return 'sub-test' === $settings['id'];
 				}
 			)
@@ -522,7 +522,7 @@ class Settings_V2 extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( new WP_REST_Request( 'GET', '/wc/v2/settings/products/woocommerce_dimension_unit' ) );
 		$data     = $response->get_data();
 
-		$this->assertEquals( 'cm', $data['default'] );
+		$this->assertEquals( 'in', $data['default'] );
 
 		// test update.
 		$request = new WP_REST_Request( 'PUT', sprintf( '/wc/v2/settings/%s/%s', 'products', 'woocommerce_dimension_unit' ) );
@@ -755,7 +755,7 @@ class Settings_V2 extends WC_REST_Unit_Test_Case {
 
 		$response = $this->server->dispatch( new WP_REST_Request( 'GET', sprintf( '/wc/v2/settings/%s/%s', 'products', 'woocommerce_weight_unit' ) ) );
 		$setting  = $response->get_data();
-		$this->assertEquals( 'kg', $setting['value'] );
+		$this->assertEquals( 'lbs', $setting['value'] );
 
 		// invalid.
 		$request = new WP_REST_Request( 'PUT', sprintf( '/wc/v2/settings/%s/%s', 'products', 'woocommerce_weight_unit' ) );
@@ -771,12 +771,12 @@ class Settings_V2 extends WC_REST_Unit_Test_Case {
 		$request = new WP_REST_Request( 'PUT', sprintf( '/wc/v2/settings/%s/%s', 'products', 'woocommerce_weight_unit' ) );
 		$request->set_body_params(
 			array(
-				'value' => 'lbs', // invalid, should be lbs.
+				'value' => 'kg', // valid.
 			)
 		);
 		$response = $this->server->dispatch( $request );
 		$setting  = $response->get_data();
-		$this->assertEquals( 'lbs', $setting['value'] );
+		$this->assertEquals( 'kg', $setting['value'] );
 	}
 
 	/**

@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+Update affected tests to be compatible with both Gutenberg stable and nightly.

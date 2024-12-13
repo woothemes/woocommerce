@@ -10,18 +10,18 @@ Often, when writing new code or revising existing code, there is a desire to add
 
 Practices we generally allow, support and encourage include:
 
-* [Using existing hooks (or other alternatives) in preference to adding new hooks](#prefer-existing-hooks-or-other-alternatives)
-* [Adding lifecycle hooks](#adding-lifecycle-hooks)
-* [Optional escape hooks](#escape-hooks)
-* [Modifying the inputs and outputs of global rendering functions](#modifying-function-input-and-output-global-rendering-functions)
-* [Preferring the passing of objects over IDs](#prefer-passing-objects-over-ids)
+* [Using existing hooks (or other alternatives) in preference to adding new hooks](#0-prefer-existing-hooks-or-other-alternatives)
+* [Adding lifecycle hooks](#1-adding-lifecycle-hooks)
+* [Optional escape hooks](#2-escape-hooks)
+* [Modifying the inputs and outputs of global rendering functions](#3-modifying-function-input-and-output-global-rendering-functions)
+* [Preferring the passing of objects over IDs](#4-prefer-passing-objects-over-ids)
 
 On the flip side, there are several practices we discourage:
 
-* [Tying lifecycle hooks to methods of execution](#tying-lifecycle-hooks-to-methods-of-execution)
-* [Using filters as feature flags](#using-filters-as-feature-flags)
-* [Placing filter hooks inside templates and data stores](#placement-of-filter-hooks)
-* [Enumeration values within hook names](#enumeration-values-inside-hook-names)
+* [Tying lifecycle hooks to methods of execution](#5-tying-lifecycle-hooks-to-methods-of-execution)
+* [Using filters as feature flags](#6-using-filters-as-feature-flags)
+* [Placing filter hooks inside templates and data stores](#7-placement-of-filter-hooks)
+* [Enumeration values within hook names](#8-enumeration-values-inside-hook-names)
 
 Beyond those items, we generally otherwise adhere to WordPress coding standards. In regards to hooks, that specifically means following the:
 

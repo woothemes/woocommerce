@@ -1,66 +1,67 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
-
-const customerData = {
-	walterWhite: {
-		first_name: 'Walter',
-		last_name: 'White',
-		username: 'heisenberg',
-		email: 'heisenberg@example.com',
-		billing: {
-			first_name: 'Walter',
-			last_name: 'White',
-			company: 'Los Pollos Hermanos',
-			country: 'US',
-			address_1: '308 Negra Arroyo Lane',
-			address_2: 'Suite 6',
-			city: 'Albuquerque',
-			state: 'NM',
-			postcode: '87104',
-			phone: '505-842-5662',
-			email: 'heisenberg@example.com',
-		},
-	},
-	jessePinkman: {
-		first_name: 'Jesse',
-		last_name: 'Pinkman',
-		username: 'jesse',
-		email: 'jesse@example.com',
-		billing: {
-			first_name: 'Jesse',
-			last_name: 'Pinkman',
-			company: 'Los Pollos Hermanos',
-			country: 'US',
-			address_1: '9809 Margo St',
-			city: 'Albuquerque',
-			state: 'NM',
-			postcode: '87104',
-			phone: '505-842-5663',
-			email: 'jesse@example.com',
-		},
-	},
-	saulGoodman: {
-		first_name: 'Saul',
-		last_name: 'Goodman',
-		username: 'saul',
-		email: 'saul@example.com',
-		billing: {
-			first_name: 'Saul',
-			last_name: 'Goodman',
-			company: 'Goodman & McGill',
-			country: 'US',
-			address_1: '160 Juan Tabo Blvd NE',
-			city: 'Albuquerque',
-			state: 'NM',
-			postcode: '87123',
-			phone: '505-842-5664',
-			email: 'saul@example.com',
-		},
-	},
-};
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 
 const test = baseTest.extend( {
 	storageState: process.env.ADMINSTATE,
 	customers: async ( { api }, use ) => {
+		const now = Date.now();
+		const customerData = {
+			walterWhite: {
+				first_name: 'Walter',
+				last_name: 'White',
+				username: `heisenberg.${ now }`,
+				email: `heisenberg.${ now }@example.com`,
+				billing: {
+					first_name: 'Walter',
+					last_name: 'White',
+					company: 'Los Pollos Hermanos',
+					country: 'US',
+					address_1: '308 Negra Arroyo Lane',
+					address_2: 'Suite 6',
+					city: 'Albuquerque',
+					state: 'NM',
+					postcode: '87104',
+					phone: '505-842-5662',
+					email: `heisenberg.${ now }@example.com`,
+				},
+			},
+			jessePinkman: {
+				first_name: 'Jesse',
+				last_name: 'Pinkman',
+				username: `jesse.${ now }`,
+				email: `jesse.${ now }@example.com`,
+				billing: {
+					first_name: 'Jesse',
+					last_name: 'Pinkman',
+					company: 'Los Pollos Hermanos',
+					country: 'US',
+					address_1: '9809 Margo St',
+					city: 'Albuquerque',
+					state: 'NM',
+					postcode: '87104',
+					phone: '505-842-5663',
+					email: `jesse.${ now }@example.com`,
+				},
+			},
+			saulGoodman: {
+				first_name: 'Saul',
+				last_name: 'Goodman',
+				username: `saul.${ now }`,
+				email: `saul.${ now }@example.com`,
+				billing: {
+					first_name: 'Saul',
+					last_name: 'Goodman',
+					company: 'Goodman & McGill',
+					country: 'US',
+					address_1: '160 Juan Tabo Blvd NE',
+					city: 'Albuquerque',
+					state: 'NM',
+					postcode: '87123',
+					phone: '505-842-5664',
+					email: `saul.${ now }@example.com`,
+				},
+			},
+		};
+
 		const customers = [];
 
 		for ( const customer of Object.values( customerData ) ) {
@@ -77,7 +78,7 @@ const test = baseTest.extend( {
 	},
 } );
 
-test.describe( 'Merchant > Customer List', { tag: '@services' }, () => {
+test.describe( 'Merchant > Customer List', { tag: tags.SERVICES }, () => {
 	test.beforeEach( async ( { context } ) => {
 		// prevents the column picker from saving state between tests
 		await context.route( '**/users/**', ( route ) => route.abort() );
@@ -85,14 +86,14 @@ test.describe( 'Merchant > Customer List', { tag: '@services' }, () => {
 
 	test(
 		'Merchant can view a list of all customers, filter and download',
-		{ tag: [ '@skip-on-default-pressable', '@skip-on-default-wpcom' ] },
+		{ tag: [ tags.SKIP_ON_PRESSABLE, tags.SKIP_ON_WPCOM ] },
 		async ( { page, customers } ) => {
 			await test.step( 'Go to the customers reports page', async () => {
 				const responsePromise = page.waitForResponse(
 					'**/wp-json/wc-analytics/reports/customers?orderby**'
 				);
 				await page.goto(
-					'/wp-admin/admin.php?page=wc-admin&path=%2Fcustomers'
+					'wp-admin/admin.php?page=wc-admin&path=%2Fcustomers'
 				);
 				await responsePromise;
 			} );
@@ -239,9 +240,7 @@ test.describe( 'Merchant > Customer List', { tag: '@services' }, () => {
 		page,
 		customers,
 	} ) => {
-		await page.goto(
-			'/wp-admin/admin.php?page=wc-admin&path=%2Fcustomers'
-		);
+		await page.goto( 'wp-admin/admin.php?page=wc-admin&path=%2Fcustomers' );
 
 		await test.step( 'Switch to single customer view', async () => {
 			await page.getByRole( 'button', { name: 'All Customers' } ).click();
@@ -280,9 +279,7 @@ test.describe( 'Merchant > Customer List', { tag: '@services' }, () => {
 		page,
 		customers,
 	} ) => {
-		await page.goto(
-			'/wp-admin/admin.php?page=wc-admin&path=%2Fcustomers'
-		);
+		await page.goto( 'wp-admin/admin.php?page=wc-admin&path=%2Fcustomers' );
 
 		await test.step( 'Switch to advanced filters', async () => {
 			await page.getByRole( 'button', { name: 'All Customers' } ).click();

@@ -1,0 +1,4 @@
+Significance: minor
+Type: dev
+
+Update the `@wordpress/scripts` dependency used in the `@woocommerce/block-library` package to 30.6.0

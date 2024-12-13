@@ -1,4 +1,4 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 
 const test = baseTest.extend( {
 	storageState: process.env.ADMINSTATE,
@@ -20,7 +20,7 @@ const test = baseTest.extend( {
 		// Use wp api instead, because the wc api incorrectly returns 400 instead of 404 if the user is already deleted.
 		// To avoid test failure in case of 400, an exception is required in the validateStatus api definition,
 		// which is not ideal because we want 400 errors to be thrown
-		await wpApi.delete( `/wp-json/wp/v2/users/${ user.id }`, {
+		await wpApi.delete( `./wp-json/wp/v2/users/${ user.id }`, {
 			data: {
 				force: true,
 				reassign: 1,
@@ -36,14 +36,14 @@ const test = baseTest.extend( {
 			roles: [ 'shop_manager' ],
 		};
 
-		const response = await wpApi.post( '/wp-json/wp/v2/users', {
+		const response = await wpApi.post( './wp-json/wp/v2/users', {
 			data: user,
 		} );
 		user = await response.json();
 
 		await use( user );
 
-		await wpApi.delete( `/wp-json/wp/v2/users/${ user.id }`, {
+		await wpApi.delete( `./wp-json/wp/v2/users/${ user.id }`, {
 			data: {
 				force: true,
 				reassign: 1,
@@ -85,7 +85,7 @@ async function userDeletionTest( page, username ) {
 
 test(
 	`can update customer data`,
-	{ tag: '@services' },
+	{ tag: tags.SERVICES },
 	async ( { page, customer } ) => {
 		await page.goto( `wp-admin/user-edit.php?user_id=${ customer.id }` );
 		await expect( page ).toHaveTitle( /Edit User/ );
@@ -300,7 +300,7 @@ test(
 
 test(
 	`can update shop manager data`,
-	{ tag: '@services' },
+	{ tag: tags.SERVICES },
 	async ( { page, manager } ) => {
 		await page.goto( `wp-admin/user-edit.php?user_id=${ manager.id }` );
 		await expect( page ).toHaveTitle( /Edit User/ );
@@ -333,7 +333,7 @@ test(
 
 test(
 	`can delete a customer`,
-	{ tag: '@services' },
+	{ tag: tags.SERVICES },
 	async ( { page, customer } ) => {
 		expect(
 			await userDeletionTest( page, customer.username )
@@ -343,7 +343,7 @@ test(
 
 test(
 	`can delete a shop manager`,
-	{ tag: '@services' },
+	{ tag: tags.SERVICES },
 	async ( { page, manager } ) => {
 		expect( await userDeletionTest( page, manager.username ) ).toBeTruthy();
 	}

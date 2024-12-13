@@ -2,6 +2,7 @@ const { test: base, expect, request } = require( '@playwright/test' );
 const { AssemblerPage } = require( './assembler.page' );
 const { activateTheme, DEFAULT_THEME } = require( '../../../utils/themes' );
 const { setOption } = require( '../../../utils/options' );
+const { tags } = require( '../../../fixtures/fixtures' );
 
 const extractHeaderClass = ( headerPickerClass ) => {
 	const regex = /\bwc-blocks-pattern-header\S*/;
@@ -18,7 +19,7 @@ const test = base.extend( {
 	},
 } );
 
-test.describe( 'Assembler -> headers', { tag: '@gutenberg' }, () => {
+test.describe( 'Assembler -> headers', { tag: tags.GUTENBERG }, () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
 	test.beforeAll( async ( { baseURL } ) => {
@@ -80,12 +81,14 @@ test.describe( 'Assembler -> headers', { tag: '@gutenberg' }, () => {
 		assemblerPage,
 	} ) => {
 		const assembler = await assemblerPage.getAssembler();
-		const header = assembler
-			.locator( '.block-editor-block-patterns-list__item' )
-			.nth( 2 );
+		const headers = assembler.locator(
+			'.block-editor-block-patterns-list__item'
+		);
 
-		await header.click();
-		await expect( header ).toHaveClass( /is-selected/ );
+		await expect( headers ).toHaveCount( 5 );
+		await expect( headers.nth( 4 ) ).toBeVisible();
+		await headers.nth( 2 ).click();
+		await expect( headers.nth( 2 ) ).toHaveClass( /is-selected/ );
 	} );
 
 	test( 'The selected header should be applied on the frontend', async ( {
