@@ -92,8 +92,7 @@ export const PaymentGatewayButtons = ( {
 									getNewPath( {}, '/payment-methods' )
 								);
 							} else {
-								window.location.href =
-									window.location.href = onboardUrl;
+								window.location.href = onboardUrl;
 							}
 							return;
 						}

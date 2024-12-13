@@ -124,7 +124,7 @@ export const PaymentGatewayListItem = ( {
 								}
 								recommendedPaymentMethods={
 									recommendedPaymentMethods
-                }
+								}
 								onboardUrl={
 									gateway.onboarding._links.onboard.href
 								}
