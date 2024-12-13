@@ -3,6 +3,7 @@ namespace Automattic\WooCommerce\StoreApi;
 
 use Automattic\WooCommerce\StoreApi\Utilities\RateLimits;
 use Automattic\WooCommerce\StoreApi\Utilities\JsonWebToken;
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
 /**
  * Authentication class.
@@ -148,7 +149,8 @@ class Authentication {
 	 */
 	public function opt_in_checkout_endpoint( $result ) {
 		if (
-			$this->is_request_to_store_api()
+			FeaturesUtil::feature_is_enabled( 'rate_limit_checkout' )
+			&& $this->is_request_to_store_api()
 			&& preg_match( '#/wc/store(?:/v\d+)?/checkout#', $GLOBALS['wp']->query_vars['rest_route'] )
 			&& isset( $_SERVER['REQUEST_METHOD'] )
 			&& 'POST' === $_SERVER['REQUEST_METHOD']
