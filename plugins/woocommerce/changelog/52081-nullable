@@ -1,4 +1,0 @@
-Significance: patch
-Type: tweak
-
-Fix implicit nullable deprecation warning when running on PHP 8.4.

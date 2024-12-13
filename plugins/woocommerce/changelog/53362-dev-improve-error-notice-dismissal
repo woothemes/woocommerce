@@ -1,0 +1,4 @@
+Significance: minor
+Type: fix
+
+Fix a bug where server validation errors were not dismissed after validation passes.
