@@ -272,6 +272,33 @@ class EmailPreviewRestControllerTest extends WC_REST_Unit_Test_Case {
 	}
 
 	/**
+	 * Test saving transient for an unregistered email fails
+	 */
+	public function test_save_transient_with_unregistered_email() {
+		$keys = EmailPreview::get_email_content_settings_ids( 'unregistered_email_id' );
+		foreach ( $keys as $key ) {
+			$request  = $this->get_save_transient_request( $key, 'value' );
+			$response = $this->server->dispatch( $request );
+			$this->assertEquals( 400, $response->get_status() );
+			$this->assertEquals( 'Invalid parameter(s): key', $response->get_data()['message'] );
+		}
+	}
+
+	/**
+	 * Test saving transient for registered email
+	 */
+	public function test_save_transient_with_registered_email() {
+		$keys = EmailPreview::get_email_content_settings_ids( EmailPreview::DEFAULT_EMAIL_ID );
+		foreach ( $keys as $key ) {
+			$request  = $this->get_save_transient_request( $key, 'value' );
+			$response = $this->server->dispatch( $request );
+			$this->assertEquals( 200, $response->get_status() );
+			$this->assertEquals( 'Transient saved for key ' . $key . '.', $response->get_data()['message'] );
+			$this->assertEquals( 'value', get_transient( $key ) );
+		}
+	}
+
+	/**
 	 * Test saving transient by a user without the needed capabilities.
 	 */
 	public function test_save_transient_by_user_without_caps() {
