@@ -95,6 +95,9 @@ export const PaymentGatewayListItem = ( {
 								settingsUrl={
 									gateway.management._links.settings.href
 								}
+								onboardUrl={
+									gateway.onboarding._links.onboard.href
+								}
 							/>
 							<EllipsisMenu
 								label={ __(
