@@ -3,7 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 /**
  * Internal dependencies
@@ -24,6 +24,17 @@ export const EmailPreviewHeader: React.FC< EmailPreviewHeaderProps > = ( {
 	const [ fromName, setFromName ] = useState( '' );
 	const [ fromAddress, setFromAddress ] = useState( '' );
 	const [ subject, setSubject ] = useState( '' );
+
+	const fetchSubject = useCallback( async () => {
+		try {
+			const response: EmailPreviewSubjectResponse = await apiFetch( {
+				path: `wc-admin-email/settings/email/preview-subject?type=${ emailType }`,
+			} );
+			setSubject( response.subject );
+		} catch ( e ) {
+			setSubject( '' );
+		}
+	}, [ emailType ] );
 
 	useEffect( () => {
 		const fromNameEl = document.getElementById(
@@ -63,18 +74,24 @@ export const EmailPreviewHeader: React.FC< EmailPreviewHeaderProps > = ( {
 	}, [] );
 
 	useEffect( () => {
-		const fetchSubject = async () => {
-			try {
-				const response: EmailPreviewSubjectResponse = await apiFetch( {
-					path: `wc-admin-email/settings/email/preview-subject?type=${ emailType }`,
-				} );
-				setSubject( response.subject );
-			} catch ( e ) {
-				setSubject( '' );
-			}
-		};
 		fetchSubject();
-	}, [ emailType ] );
+	}, [ emailType, fetchSubject ] );
+
+	useEffect( () => {
+		const subjectEl = document.querySelector(
+			'[id^="woocommerce_"][id$="_subject"]'
+		);
+
+		if ( ! subjectEl ) {
+			return;
+		}
+
+		subjectEl.addEventListener( 'transient-saved', fetchSubject );
+
+		return () => {
+			subjectEl.removeEventListener( 'transient-saved', fetchSubject );
+		};
+	}, [ fetchSubject ] );
 
 	return (
 		<div className="wc-settings-email-preview-header">

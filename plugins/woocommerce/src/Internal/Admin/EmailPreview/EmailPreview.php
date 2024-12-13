@@ -183,7 +183,10 @@ class EmailPreview {
 		if ( ! $this->email ) {
 			return '';
 		}
-		return $this->email->get_subject();
+		$this->set_up_filters();
+		$subject = $this->email->get_subject();
+		$this->clean_up_filters();
+		return $subject;
 	}
 
 	/**

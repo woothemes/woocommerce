@@ -34,6 +34,7 @@ export const EmailPreviewIframe: React.FC< EmailPreviewIframeProps > = ( {
 					data: { key, value },
 				} );
 			} finally {
+				target.dispatchEvent( new Event( 'transient-saved' ) );
 				setCounter( ( prevCounter ) => prevCounter + 1 );
 			}
 		};
