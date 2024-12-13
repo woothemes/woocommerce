@@ -58,6 +58,8 @@ export const IncentiveBanner = ( {
 	const [ isDismissed, setIsDismissed ] = useState( false );
 	const [ isBusy, setIsBusy ] = useState( false );
 
+	const context = 'wc_settings_payments__banner';
+
 	const handleAccept = () => {
 		setIsBusy( true );
 		onAccept( incentive.id );
@@ -68,19 +70,13 @@ export const IncentiveBanner = ( {
 
 	const handleDismiss = () => {
 		setIsBusy( true );
-		onDismiss(
-			incentive._links.dismiss.href,
-			'wc_settings_payments__banner'
-		);
+		onDismiss( incentive._links.dismiss.href, context );
 		setIsBusy( false );
 		setIsDismissed( true );
 	};
 
 	if (
-		isIncentiveDismissedInContext(
-			incentive,
-			'wc_settings_payments__banner'
-		) ||
+		isIncentiveDismissedInContext( incentive, context ) ||
 		isSubmitted ||
 		isDismissed
 	) {

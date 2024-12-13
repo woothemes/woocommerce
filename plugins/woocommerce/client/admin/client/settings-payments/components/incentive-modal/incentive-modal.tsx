@@ -63,10 +63,8 @@ export const IncentiveModal = ( {
 	const [ isBusy, setIsBusy ] = useState( false );
 	const [ isOpen, setIsOpen ] = useState( true );
 
-	const isDismissed = isIncentiveDismissedInContext(
-		incentive,
-		'wc_settings_payments__modal'
-	);
+	const context = 'wc_settings_payments__modal';
+	const isDismissed = isIncentiveDismissedInContext( incentive, context );
 
 	const handleClose = () => {
 		setIsOpen( false );
@@ -83,10 +81,7 @@ export const IncentiveModal = ( {
 					title=""
 					className="woocommerce-incentive-modal"
 					onRequestClose={ () => {
-						onDismiss(
-							incentive._links.dismiss.href,
-							'wc_settings_payments__modal'
-						);
+						onDismiss( incentive._links.dismiss.href, context );
 						handleClose();
 					} }
 				>
