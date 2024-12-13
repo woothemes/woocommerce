@@ -69,7 +69,6 @@ const hideWooCommerceNavTab = ( display: string ) => {
 }
 
 const SettingsPaymentsMain = () => {
-	const history = getHistory();
 	const location = useLocation();
 
 	useEffect( () => {
