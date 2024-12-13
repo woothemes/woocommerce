@@ -35,7 +35,7 @@ export const PaymentMethodListItem = ( {
 			{ ...props }
 		>
 			<div className="woocommerce-list__item-inner">
-				{ method.id !== 'card_payments' && (
+				{ method.id !== 'apple_google' && (
 					<>
 						<div className="woocommerce-list__item-before">
 							<img
@@ -56,7 +56,7 @@ export const PaymentMethodListItem = ( {
 						</div>
 					</>
 				) }
-				{ method.id === 'card_payments' && (
+				{ method.id === 'apple_google' && (
 					<div className="woocommerce-list__item-multi">
 						<div className="woocommerce-list__item-multi-row multi-row-space">
 							<div className="woocommerce-list__item-before">
@@ -114,7 +114,7 @@ export const PaymentMethodListItem = ( {
 							}
 							// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 							// @ts-ignore disabled prop exists
-							disabled={ method.id === 'card' }
+							disabled={ method.required ?? false }
 						/>
 					</div>
 				</div>

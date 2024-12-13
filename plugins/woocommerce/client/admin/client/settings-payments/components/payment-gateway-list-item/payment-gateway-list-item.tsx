@@ -4,7 +4,10 @@
 import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
 import { __ } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
-import { PaymentGatewayProvider } from '@woocommerce/data';
+import {
+	PaymentGatewayProvider,
+	RecommendedPaymentMethod,
+} from '@woocommerce/data';
 import { Tooltip } from '@wordpress/components';
 
 /**
@@ -21,11 +24,13 @@ import { WC_ASSET_URL } from '~/utils/admin-settings';
 type PaymentGatewayItemProps = {
 	gateway: PaymentGatewayProvider;
 	acceptIncentive: ( id: string ) => void;
+	recommendedPaymentMethods: RecommendedPaymentMethod[];
 };
 
 export const PaymentGatewayListItem = ( {
 	gateway,
 	acceptIncentive,
+	recommendedPaymentMethods,
 	...props
 }: PaymentGatewayItemProps ) => {
 	const isWcPay = isWooPayments( gateway.id );
@@ -122,6 +127,9 @@ export const PaymentGatewayListItem = ( {
 								}
 								acceptIncentive={ acceptIncentive }
 								incentive={ gateway._incentive ?? null }
+								recommendedPaymentMethods={
+									recommendedPaymentMethods
+								}
 								onboardUrl={
 									gateway.onboarding._links.onboard.href
 								}

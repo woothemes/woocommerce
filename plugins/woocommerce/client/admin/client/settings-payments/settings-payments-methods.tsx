@@ -3,7 +3,6 @@
  */
 import {
 	type RecommendedPaymentMethod,
-	type PaymentProvider,
 	PAYMENT_SETTINGS_STORE_NAME,
 } from '@woocommerce/data';
 import { useEffect, useState } from '@wordpress/element';
@@ -16,7 +15,10 @@ import { Button } from '@wordpress/components';
  */
 import './settings-payments-body.scss';
 import './settings-payments-methods.scss';
-import { isWooPayments, getPaymentMethodById } from '~/settings-payments/utils';
+import {
+	getPaymentMethodById,
+	getRecommendedPaymentMethods,
+} from '~/settings-payments/utils';
 import { ListPlaceholder } from './components/list-placeholder';
 import { PaymentMethodListItem } from './components/payment-method-list-item';
 
@@ -45,7 +47,7 @@ const combineRequestMethods = (
 				// Combine apple_pay and google_pay data into a new payment method
 				return {
 					...method,
-					id: 'card_payments',
+					id: 'apple_google',
 					extraTitle: googlePay.title,
 					extraDescription: googlePay.description,
 					extraIcon: googlePay.icon,
@@ -72,12 +74,8 @@ export const SettingsPaymentsMethods: React.FC<
 	const { paymentMethods, isFetching } = useSelect( ( select ) => {
 		const paymentProviders =
 			select( PAYMENT_SETTINGS_STORE_NAME ).getPaymentProviders() || [];
-		const wooPaymentsProvider = paymentProviders.find(
-			( provider: PaymentProvider ) => isWooPayments( provider.id )
-		);
-
-		const recommendedPaymentMethods = ( wooPaymentsProvider?.onboarding
-			?.recommended_payment_methods ?? [] ) as RecommendedPaymentMethod[]; // Explicit cast or transformation.
+		const recommendedPaymentMethods =
+			getRecommendedPaymentMethods( paymentProviders );
 
 		return {
 			isFetching: select( PAYMENT_SETTINGS_STORE_NAME ).isFetching(),

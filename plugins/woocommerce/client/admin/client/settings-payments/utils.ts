@@ -119,6 +119,36 @@ export const providersContainWooPaymentsInTestMode = (
 };
 
 /**
+ * Return the WooPayments gateway if it exists in the providers list.
+ *
+ * @param providers payment providers
+ */
+export const getWooPaymentsFromProviders = (
+	providers: PaymentProvider[]
+): PaymentProvider | null => {
+	return providers.find( ( obj ) => isWooPayments( obj.id ) ) ?? null;
+};
+
+/**
+ * Retrieves updated recommended payment methods for WooPayments.
+ *
+ * @param {PaymentProvider[]} providers Array of updated payment providers.
+ * @return {RecommendedPaymentMethod[]} List of recommended payment methods.
+ */
+export const getRecommendedPaymentMethods = (
+	providers: PaymentProvider[]
+): RecommendedPaymentMethod[] => {
+	const updatedWooPaymentsProvider = providers.find(
+		( provider: PaymentProvider ) => isWooPayments( provider.id )
+	);
+
+	return (
+		updatedWooPaymentsProvider?.onboarding?.recommended_payment_methods ??
+		( [] as RecommendedPaymentMethod[] )
+	);
+};
+
+/**
  * Checks whether providers contain WooPayments gateway in dev mode that is set up.
  *
  * @param providers payment providers

@@ -8,9 +8,10 @@ import {
 	PAYMENT_SETTINGS_STORE_NAME,
 	PaymentProvider,
 } from '@woocommerce/data';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { getHistory, getNewPath } from '@woocommerce/navigation';
 
 /**
  * Internal dependencies
@@ -24,6 +25,7 @@ import { IncentiveBanner } from '~/settings-payments/components/incentive-banner
 import { IncentiveModal } from '~/settings-payments/components/incentive-modal';
 import {
 	providersContainWooPaymentsInTestMode,
+	getRecommendedPaymentMethods,
 	providersContainWooPaymentsInDevMode,
 	isIncentiveDismissedInContext,
 	isSwitchIncentive,
@@ -122,44 +124,6 @@ export const SettingsPaymentsMain = () => {
 			};
 		} );
 
-	const setupPlugin = useCallback(
-		( id, slug, onboardingUrl: string | null ) => {
-			if ( installingPlugin ) {
-				return;
-			}
-			setInstallingPlugin( id );
-			installAndActivatePlugins( [ slug ] )
-				.then( ( response ) => {
-					createNoticesFromResponse( response );
-					// If we have a valid onboarding URL, redirect to it.
-					// Note that all gateways (not suggestions or offline gateways) have an onboarding URL.
-					// If no onboarding specific URL is present, it will redirect to gateway settings.
-					if ( onboardingUrl ) {
-						window.location.href = onboardingUrl;
-						return;
-					} else if ( isWooPayments( id ) ) {
-						window.location.href =
-							getWooPaymentsTestDriveAccountLink();
-						return;
-					}
-
-					invalidateResolutionForStoreSelector(
-						'getPaymentProviders'
-					);
-					setInstallingPlugin( null );
-				} )
-				.catch( ( response: { errors: Record< string, string > } ) => {
-					createNoticesFromResponse( response );
-					setInstallingPlugin( null );
-				} );
-		},
-		[
-			installingPlugin,
-			installAndActivatePlugins,
-			invalidateResolutionForStoreSelector,
-		]
-	);
-
 	const dismissIncentive = useCallback(
 		( dismissHref: string, context: string ) => {
 			// The dismissHref is the full URL to dismiss the incentive.
@@ -203,6 +167,64 @@ export const SettingsPaymentsMain = () => {
 		( provider ) => '_incentive' in provider
 	);
 	const incentive = incentiveProvider ? incentiveProvider._incentive : null;
+
+	const recommendedPaymentMethods = getRecommendedPaymentMethods(
+		sortedProviders || providers
+	);
+  
+  const setupPlugin = useCallback(
+		( id, slug, onboardingUrl: string | null ) => {
+			if ( installingPlugin ) {
+				return;
+			}
+			setInstallingPlugin( id );
+			installAndActivatePlugins( [ slug ] )
+				.then( ( response ) => {
+					createNoticesFromResponse( response );
+          invalidateResolutionForStoreSelector(
+						'getPaymentProviders'
+					);
+					if ( isWooPayments( id ) ) {
+						// Wait for the state update and fetch the latest providers
+						const updatedProviders = await resolveSelect(
+							PAYMENT_SETTINGS_STORE_NAME
+						).getPaymentProviders( storeCountry );
+						const updatedRecommendedPaymentMethods =
+							getRecommendedPaymentMethods( updatedProviders );
+
+						if ( updatedRecommendedPaymentMethods.length > 0 ) {
+							const history = getHistory();
+							history.push(
+								getNewPath( {}, '/payment-methods' )
+							);
+						} else {
+							window.location.href =
+								onboardingUrl;
+						}
+
+						return;
+					} else {
+						window.location.href = onboardingUrl;
+						return;
+          }
+
+					invalidateResolutionForStoreSelector(
+						'getPaymentProviders'
+					);
+					setInstallingPlugin( null );
+				} )
+				.catch( ( response: { errors: Record< string, string > } ) => {
+					createNoticesFromResponse( response );
+					setInstallingPlugin( null );
+				} );
+		},
+		[
+			installingPlugin,
+			installAndActivatePlugins,
+			invalidateResolutionForStoreSelector,
+      recommendedPaymentMethods,
+		]
+	);
 
 	return (
 		<>
@@ -267,6 +289,7 @@ export const SettingsPaymentsMain = () => {
 					isFetching={ isFetching }
 					businessRegistrationCountry={ storeCountry }
 					setBusinessRegistrationCountry={ setStoreCountry }
+					recommendedPaymentMethods={ recommendedPaymentMethods }
 				/>
 				<OtherPaymentGateways
 					suggestions={ suggestions }
