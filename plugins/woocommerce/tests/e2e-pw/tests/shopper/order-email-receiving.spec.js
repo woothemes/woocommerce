@@ -29,9 +29,10 @@ const methodInfo = {
 
 const storeName = 'WooCommerce Core E2E Test Suite';
 
+//todo audit follow-up: these checks should be part of the end-to-end flow of placing an order
 test.describe(
 	'Shopper Order Email Receiving',
-	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS, tags.NOT_E2E ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 
