@@ -25,7 +25,7 @@ class ProductGallery extends AbstractBlock {
 
 	protected function initialize() {
 		parent::initialize();
-		// add_filter( 'render_block_context', [ $this, 'inject_dialog_context' ], 10, 3 );
+		add_filter( 'render_block_context', [ $this, 'inject_dialog_context' ], 10, 3 );
 	}
 
 	/**
