@@ -110,4 +110,16 @@ export const convertToQueryString = (
 	}, {} as FlattenedObject );
 
 	return new URLSearchParams( flattenedData ).toString();
+}
+
+/** 
+ * Checks whether providers contain WooPayments gateway in dev mode that is set up.
+ *
+ * @param providers payment providers
+ */
+export const providersContainWooPaymentsInDevMode = (
+	providers: PaymentProvider[]
+): boolean => {
+	const wooPayments = providers.find( ( obj ) => isWooPayments( obj.id ) );
+	return !! wooPayments?.state?.dev_mode;
 };

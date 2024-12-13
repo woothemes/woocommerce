@@ -28,6 +28,7 @@ import {
 	isWooPayments,
 	providersContainWooPaymentsInTestMode,
 	getRecommendedPaymentMethods,
+	providersContainWooPaymentsInDevMode,
 } from '~/settings-payments/utils';
 import { WooPaymentsPostSandboxAccountSetupModal } from '~/settings-payments/components/modals';
 
@@ -44,8 +45,10 @@ export const SettingsPaymentsMain = () => {
 		PAYMENT_SETTINGS_STORE_NAME
 	);
 	const [ errorMessage, setErrorMessage ] = useState< string | null >( null );
-	const [ livePaymentsModalVisible, setLivePaymentsModalVisible ] =
-		useState( false );
+	const [
+		postSandboxAccountSetupModalVisible,
+		setPostSandboxAccountSetupModalVisible,
+	] = useState( false );
 
 	const [ storeCountry, setStoreCountry ] = useState< string | null >(
 		window.wcSettings?.admin?.woocommerce_payments_nox_profile
@@ -90,7 +93,7 @@ export const SettingsPaymentsMain = () => {
 			urlParams.get( 'wcpay-sandbox-success' ) === 'true';
 
 		if ( isSandboxOnboardedSuccessful ) {
-			setLivePaymentsModalVisible( true );
+			setPostSandboxAccountSetupModalVisible( true );
 		}
 	}, [] );
 
@@ -277,10 +280,13 @@ export const SettingsPaymentsMain = () => {
 			</div>
 			<WooPaymentsPostSandboxAccountSetupModal
 				isOpen={
-					livePaymentsModalVisible &&
+					postSandboxAccountSetupModalVisible &&
 					providersContainWooPaymentsInTestMode( providers )
 				}
-				onClose={ () => setLivePaymentsModalVisible( false ) }
+				devMode={ providersContainWooPaymentsInDevMode( providers ) }
+				onClose={ () =>
+					setPostSandboxAccountSetupModalVisible( false )
+				}
 			/>
 		</>
 	);
