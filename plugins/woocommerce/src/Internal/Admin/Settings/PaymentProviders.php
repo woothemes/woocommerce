@@ -725,7 +725,7 @@ class PaymentProviders {
 			$suggestion = $this->enhance_extension_suggestion( $suggestion );
 
 			// The icon and image from the suggestion take precedence over the ones from the gateway.
-			$gateway_details['icon'] = $suggestion['icon'];
+			$gateway_details['icon']  = $suggestion['icon'];
 			$gateway_details['image'] = $suggestion['image'];
 
 			if ( empty( $gateway_details['links'] ) ) {
