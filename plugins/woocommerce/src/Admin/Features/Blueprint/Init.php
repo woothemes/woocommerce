@@ -192,7 +192,6 @@ class Init {
 			$settings['blueprint_upload_nonce'] = wp_create_nonce( 'blueprint_upload_nonce' );
 		}
 
-		wplog( 'screen_id: ' . $screen_id );
 
 		if ( strpos( $screen_id, 'woocommerce_page_wc-settings-advanced' ) !== false ) {
 			// Used on the settings page.
