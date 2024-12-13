@@ -73,6 +73,39 @@ export const providersStub: PaymentProvider[] = [
 				},
 			},
 		},
+		onboarding: {
+			_links: {
+				onboard: {
+					href: 'http://localhost:8082/wp-admin/admin.php?page=wc-admin&path=/payments/onboarding',
+				},
+			},
+			recommended_payment_methods: [
+				{
+					id: 'card',
+					_order: 1,
+					title: 'Card',
+					description: 'Card payments.',
+					icon: 'http://localhost:8082/wp-content/plugins/woocommerce/assets/images/onboarding/woopayments.svg',
+					enabled: true,
+					extraTitle: 'Extra title',
+					extraDescription: 'Extra description.',
+					extraIcon:
+						'http://localhost:8082/wp-content/plugins/woocommerce/assets/images/onboarding/extra-icon.svg',
+				},
+				{
+					id: 'woopay',
+					_order: 2,
+					title: 'WooPay',
+					description: 'WooPay checkout.',
+					icon: 'http://localhost:8082/wp-content/plugins/woocommerce/assets/images/onboarding/woopayments.svg',
+					enabled: true,
+					extraTitle: 'Extra title',
+					extraDescription: 'Extra description.',
+					extraIcon:
+						'http://localhost:8082/wp-content/plugins/woocommerce/assets/images/onboarding/extra-icon.svg',
+				},
+			],
+		},
 		image: 'http://localhost:8082/wp-content/plugins/woocommerce/assets/images/onboarding/woopayments.svg',
 		icon: 'http://localhost:8082/wp-content/plugins/woocommerce/assets/images/onboarding/woopayments.svg',
 		links: [
@@ -112,8 +145,9 @@ export const providersStub: PaymentProvider[] = [
 		title: 'Offline Payment Methods',
 		description: 'Allow shoppers to pay offline.',
 		plugin: {
-			slug: 'woocommerce',
-			file: 'woocommerce/woocommerce',
+			_type: 'wporg',
+			slug: 'woocommerce', // This is always WooCommerce for offline payment methods group.
+			file: '', // This is always empty for offline payment methods group.
 			status: 'active',
 		},
 		icon: 'http://localhost:8082/wp-content/plugins/woocommerce/assets/images/payment_methods/cod.svg',
@@ -138,6 +172,13 @@ export const offlinePaymentGatewaysStub: OfflinePaymentMethodProvider[] = [
 		management: {
 			_links: {
 				settings: {
+					href: 'http://localhost:8082/wp-admin/admin.php?page=wc-settings&tab=checkout&section=bacs',
+				},
+			},
+		},
+		onboarding: {
+			_links: {
+				onboard: {
 					href: 'http://localhost:8082/wp-admin/admin.php?page=wc-settings&tab=checkout&section=bacs',
 				},
 			},
@@ -171,6 +212,13 @@ export const offlinePaymentGatewaysStub: OfflinePaymentMethodProvider[] = [
 				},
 			},
 		},
+		onboarding: {
+			_links: {
+				onboard: {
+					href: 'http://localhost:8082/wp-admin/admin.php?page=wc-settings&tab=checkout&section=cheque',
+				},
+			},
+		},
 		icon: 'http://localhost:8082/wp-content/plugins/woocommerce/assets/images/payment_methods/cheque.svg',
 		plugin: {
 			_type: 'wporg',
@@ -196,6 +244,13 @@ export const offlinePaymentGatewaysStub: OfflinePaymentMethodProvider[] = [
 		management: {
 			_links: {
 				settings: {
+					href: 'http://localhost:8082/wp-admin/admin.php?page=wc-settings&tab=checkout&section=cod',
+				},
+			},
+		},
+		onboarding: {
+			_links: {
+				onboard: {
 					href: 'http://localhost:8082/wp-admin/admin.php?page=wc-settings&tab=checkout&section=cod',
 				},
 			},

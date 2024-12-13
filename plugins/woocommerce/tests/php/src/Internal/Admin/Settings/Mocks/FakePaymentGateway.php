@@ -118,6 +118,10 @@ class FakePaymentGateway extends \WC_Payment_Gateway {
 	 * @return string The gateway settings page URL.
 	 */
 	public function get_settings_url(): string {
+		if ( isset( $this->settings_url ) ) {
+			return $this->settings_url;
+		}
+
 		return 'https://example.com/wp-admin/admin.php?page=wc-settings&tab=checkout&section=bogus_settings';
 	}
 
@@ -127,6 +131,10 @@ class FakePaymentGateway extends \WC_Payment_Gateway {
 	 * @return string The gateway onboarding start/continue URL.
 	 */
 	public function get_connection_url(): string {
+		if ( isset( $this->connection_url ) ) {
+			return $this->connection_url;
+		}
+
 		return 'https://example.com/connection-url';
 	}
 
