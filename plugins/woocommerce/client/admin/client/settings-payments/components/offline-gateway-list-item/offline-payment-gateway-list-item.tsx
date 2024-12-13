@@ -55,6 +55,7 @@ export const OfflinePaymentGatewayListItem = ( {
 							settingsUrl={
 								gateway.management._links.settings.href
 							}
+							incentive={ null }
 							acceptIncentive={ () => {} }
 							onboardUrl={
 								gateway.onboarding._links.onboard.href

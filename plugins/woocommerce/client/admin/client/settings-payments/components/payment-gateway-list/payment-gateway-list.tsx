@@ -26,7 +26,11 @@ interface PaymentGatewayListProps {
 	providers: PaymentProvider[];
 	installedPluginSlugs: string[];
 	installingPlugin: string | null;
-	setupPlugin: ( id: string, slug: string ) => void;
+	setupPlugin: (
+		id: string,
+		slug: string,
+		onboardingUrl: string | null
+	) => void;
 	acceptIncentive: ( id: string ) => void;
 	updateOrdering: ( providers: PaymentProvider[] ) => void;
 }

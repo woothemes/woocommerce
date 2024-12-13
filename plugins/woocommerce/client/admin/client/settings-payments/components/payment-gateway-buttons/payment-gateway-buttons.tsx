@@ -7,6 +7,7 @@ import { dispatch, useDispatch } from '@wordpress/data';
 import {
 	PAYMENT_SETTINGS_STORE_NAME,
 	EnableGatewayResponse,
+	PaymentIncentive,
 } from '@woocommerce/data';
 import { useState } from '@wordpress/element';
 
@@ -16,7 +17,6 @@ import { useState } from '@wordpress/element';
 import {
 	isWooPayments,
 	getWooPaymentsSetupLiveAccountLink,
-	hasIncentive,
 } from '~/settings-payments/utils';
 
 export const PaymentGatewayButtons = ( {
@@ -28,6 +28,7 @@ export const PaymentGatewayButtons = ( {
 	settingsUrl,
 	onboardUrl,
 	acceptIncentive,
+	incentive,
 	textSettings = __( 'Manage', 'woocommerce' ),
 	textEnable = __( 'Enable', 'woocommerce' ),
 	textNeedsSetup = __( 'Complete setup', 'woocommerce' ),
@@ -40,6 +41,7 @@ export const PaymentGatewayButtons = ( {
 	settingsUrl: string;
 	onboardUrl: string;
 	acceptIncentive: ( id: string ) => void;
+	incentive: PaymentIncentive | null;
 	textSettings?: string;
 	textEnable?: string;
 	textNeedsSetup?: string;
@@ -49,7 +51,6 @@ export const PaymentGatewayButtons = ( {
 		useDispatch( PAYMENT_SETTINGS_STORE_NAME );
 	const [ isUpdating, setIsUpdating ] = useState( false );
 	const [ isActivatingPayments, setIsActivatingPayments ] = useState( false );
-	const incentive = hasIncentive( gateway ) ? gateway._incentive : null;
 
 	const createApiErrorNotice = () => {
 		createErrorNotice(

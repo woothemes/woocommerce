@@ -23,7 +23,11 @@ interface OtherPaymentGatewaysProps {
 	suggestions: SuggestedPaymentExtension[];
 	suggestionCategories: SuggestedPaymentExtensionCategory[];
 	installingPlugin: string | null;
-	setupPlugin: ( id: string, slug: string ) => void;
+	setupPlugin: (
+		id: string,
+		slug: string,
+		onboardingUrl: string | null
+	) => void;
 	isFetching: boolean;
 }
 
@@ -143,7 +147,8 @@ export const OtherPaymentGateways = ( {
 														setupPlugin(
 															extension.id,
 															extension.plugin
-																.slug
+																.slug,
+															null // Suggested gateways won't have an onboarding URL.
 														)
 													}
 													isBusy={

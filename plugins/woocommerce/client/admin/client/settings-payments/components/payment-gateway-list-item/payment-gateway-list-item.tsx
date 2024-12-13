@@ -120,6 +120,7 @@ export const PaymentGatewayListItem = ( {
 									gateway.management._links.settings.href
 								}
 								acceptIncentive={ acceptIncentive }
+								incentive={ gateway._incentive ?? null }
 								onboardUrl={
 									gateway.onboarding._links.onboard.href
 								}

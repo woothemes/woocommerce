@@ -23,8 +23,6 @@ import { PaymentGateways } from '~/settings-payments/components/payment-gateways
 import { IncentiveBanner } from '~/settings-payments/components/incentive-banner';
 import { IncentiveModal } from '~/settings-payments/components/incentive-modal';
 import {
-	getWooPaymentsTestDriveAccountLink,
-	isWooPayments,
 	providersContainWooPaymentsInTestMode,
 	isIncentiveDismissedInContext,
 	isSwitchIncentive,
@@ -120,7 +118,7 @@ export const SettingsPaymentsMain = () => {
 		} );
 
 	const setupPlugin = useCallback(
-		( id, slug ) => {
+		( id, slug, onboardingUrl: string | null ) => {
 			if ( installingPlugin ) {
 				return;
 			}
@@ -128,11 +126,13 @@ export const SettingsPaymentsMain = () => {
 			installAndActivatePlugins( [ slug ] )
 				.then( ( response ) => {
 					createNoticesFromResponse( response );
-					if ( isWooPayments( id ) ) {
-						window.location.href =
-							getWooPaymentsTestDriveAccountLink();
-						return;
+					// If we have a valid onboarding URL, redirect to it.
+					// Note that all gateways (not suggestions or offline gateways) have an onboarding URL.
+					// If no onboarding specific URL is present, it will redirect to gateway settings.
+					if ( onboardingUrl ) {
+						window.location.href = onboardingUrl;
 					}
+
 					invalidateResolutionForStoreSelector(
 						'getPaymentProviders'
 					);
@@ -206,6 +206,10 @@ export const SettingsPaymentsMain = () => {
 					<IncentiveModal
 						incentive={ incentive }
 						provider={ incentiveProvider }
+						onboardingUrl={
+							incentiveProvider.onboarding?._links.onboard.href ??
+							null
+						}
 						onDismiss={ dismissIncentive }
 						onAccept={ acceptIncentive }
 						setupPlugin={ setupPlugin }
@@ -233,6 +237,10 @@ export const SettingsPaymentsMain = () => {
 					<IncentiveBanner
 						incentive={ incentive }
 						provider={ incentiveProvider }
+						onboardingUrl={
+							incentiveProvider.onboarding?._links.onboard.href ??
+							null
+						}
 						onDismiss={ dismissIncentive }
 						onAccept={ acceptIncentive }
 						setupPlugin={ setupPlugin }

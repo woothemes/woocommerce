@@ -32,6 +32,10 @@ interface IncentiveModalProps {
 	 */
 	provider: PaymentProvider;
 	/**
+	 * Onboarding URL (if available).
+	 */
+	onboardingUrl: string | null;
+	/**
 	 * Callback used when an incentive is accepted.
 	 *
 	 * @param id Incentive ID.
@@ -47,15 +51,21 @@ interface IncentiveModalProps {
 	/**
 	 * Callback to setup the plugin.
 	 *
-	 * @param id   Extension ID.
-	 * @param slug Extension slug.
+	 * @param id            Extension ID.
+	 * @param slug          Extension slug.
+	 * @param onboardingUrl Onboarding URL (if available).
 	 */
-	setupPlugin: ( id: string, slug: string ) => void;
+	setupPlugin: (
+		id: string,
+		slug: string,
+		onboardingUrl: string | null
+	) => void;
 }
 
 export const IncentiveModal = ( {
 	incentive,
 	provider,
+	onboardingUrl,
 	onAccept,
 	onDismiss,
 	setupPlugin,
@@ -73,7 +83,7 @@ export const IncentiveModal = ( {
 	const handleAccept = () => {
 		setIsBusy( true );
 		onAccept( incentive.id );
-		setupPlugin( provider.id, provider.plugin.slug );
+		setupPlugin( provider.id, provider.plugin.slug, onboardingUrl );
 		setIsBusy( false );
 		handleClose();
 	};
