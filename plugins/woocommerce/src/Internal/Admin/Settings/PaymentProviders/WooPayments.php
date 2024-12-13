@@ -33,7 +33,7 @@ class WooPayments extends PaymentGateway {
 	 */
 	public function is_in_test_mode( WC_Payment_Gateway $payment_gateway ): bool {
 		if ( class_exists( '\WC_Payments' ) &&
-			 method_exists( '\WC_Payments', 'mode' ) ) {
+			method_exists( '\WC_Payments', 'mode' ) ) {
 
 			$woopayments_mode = \WC_Payments::mode();
 			if ( method_exists( $woopayments_mode, 'is_test' ) ) {
@@ -56,7 +56,7 @@ class WooPayments extends PaymentGateway {
 	 */
 	public function is_in_dev_mode( WC_Payment_Gateway $payment_gateway ): bool {
 		if ( class_exists( '\WC_Payments' ) &&
-			 method_exists( '\WC_Payments', 'mode' ) ) {
+			method_exists( '\WC_Payments', 'mode' ) ) {
 
 			$woopayments_mode = \WC_Payments::mode();
 			if ( method_exists( $woopayments_mode, 'is_dev' ) ) {
@@ -73,6 +73,8 @@ class WooPayments extends PaymentGateway {
 	 * This URL should start or continue the onboarding process.
 	 *
 	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
+	 * @param string             $return_url      Optional. The URL to return to after onboarding.
+	 *                                            This will likely get attached to the onboarding URL.
 	 *
 	 * @return string The onboarding URL for the payment gateway.
 	 */
@@ -96,6 +98,7 @@ class WooPayments extends PaymentGateway {
 		$live_onboarding = false;
 
 		$onboarding_profile = get_option( OnboardingProfile::DATA_OPTION, array() );
+
 		/*
 		 * For answers provided in the onboarding profile, we will only consider live onboarding if:
 		 * Merchant selected “I’m already selling” and answered either:
@@ -115,7 +118,7 @@ class WooPayments extends PaymentGateway {
 			)
 		) {
 			$live_onboarding = true;
-		} else if ( WCAdminHelper::is_wc_admin_active_for( 90 * DAY_IN_SECONDS ) &&
+		} elseif ( WCAdminHelper::is_wc_admin_active_for( 90 * DAY_IN_SECONDS ) &&
 			$this->has_enabled_other_ecommerce_gateways() &&
 			$this->has_orders() ) {
 
@@ -125,7 +128,7 @@ class WooPayments extends PaymentGateway {
 		// If we are doing live onboarding, we don't need to add more to the URL.
 		// But for test-drive/sandbox mode, we have work to do.
 		if ( ! $live_onboarding ) {
-			$params['test_drive'] = 'true';
+			$params['test_drive']                       = 'true';
 			$params['auto_start_test_drive_onboarding'] = 'true';
 		}
 
@@ -170,7 +173,7 @@ class WooPayments extends PaymentGateway {
 			// If the latest order is within the timeframe we look at, we consider the store to have orders.
 			// Otherwise, it clearly doesn't have orders.
 			if ( $latest_order instanceof WC_Abstract_Order
-				 && strtotime( (string) $latest_order->get_date_created() ) >= strtotime( '-90 days' ) ) {
+				&& strtotime( (string) $latest_order->get_date_created() ) >= strtotime( '-90 days' ) ) {
 
 				$has_orders = true;
 
@@ -194,17 +197,17 @@ class WooPayments extends PaymentGateway {
 	 * @return bool True if the store has any enabled ecommerce gateways, false otherwise.
 	 */
 	private function has_enabled_other_ecommerce_gateways(): bool {
-		$gateways         = WC()->payment_gateways()->payment_gateways;
+		$gateways                 = WC()->payment_gateways()->payment_gateways;
 		$other_ecommerce_gateways = array_filter(
 			$gateways,
 			function ( $gateway ) {
 				// Filter out offline gateways and WooPayments.
 				return 'yes' === $gateway->enabled &&
-					   ! in_array(
-						   $gateway->id,
-						   array( 'woocommerce_payments', ...PaymentProviders::OFFLINE_METHODS ),
-						   true
-					   );
+						! in_array(
+							$gateway->id,
+							array( 'woocommerce_payments', ...PaymentProviders::OFFLINE_METHODS ),
+							true
+						);
 			}
 		);
 

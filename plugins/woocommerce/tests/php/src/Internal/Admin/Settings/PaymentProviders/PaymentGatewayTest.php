@@ -202,19 +202,25 @@ class PaymentGatewayTest extends WC_REST_Unit_Test_Case {
 	 * Test get_supports.
 	 */
 	public function test_get_supports() {
-		$fake_gateway = new FakePaymentGateway( 'gateway1', array(
-			'supports' => array(
-				'key' => 'products',
-				2     => 'something',
-				3     => 'bogus',
+		$fake_gateway = new FakePaymentGateway(
+			'gateway1',
+			array(
+				'supports' => array(
+					'key' => 'products',
+					2     => 'something',
+					3     => 'bogus',
+					'bogus',
+				),
+			)
+		);
+		$this->assertEquals(
+			array(
+				'products',
+				'something',
 				'bogus',
 			),
-		) );
-		$this->assertEquals( array(
-			'products',
-			'something',
-			'bogus',
-		), $this->sut->get_supports_list( $fake_gateway ) );
+			$this->sut->get_supports_list( $fake_gateway )
+		);
 	}
 
 	/**
@@ -303,8 +309,31 @@ class PaymentGatewayTest extends WC_REST_Unit_Test_Case {
 	 * Test get_recommended_payment_methods.
 	 */
 	public function test_get_recommended_payment_methods() {
-		$fake_gateway = new FakePaymentGateway( 'gateway1', array(
-			'recommended_payment_methods' => array(
+		$fake_gateway = new FakePaymentGateway(
+			'gateway1',
+			array(
+				'recommended_payment_methods' => array(
+					array(
+						'id'          => 'woopay',
+						'_order'      => 0,
+						'enabled'     => false,
+						'title'       => 'WooPay',
+						'description' => 'WooPay express checkout',
+						'icon'        => 'https://example.com/icon.png',
+					),
+					array(
+						'id'          => 'card',
+						'_order'      => 1,
+						'enabled'     => true,
+						'title'       => 'Credit/debit card (required)',
+						'description' => 'Accepts all major credit and debit cards.',
+						'icon'        => 'https://example.com/card-icon.png',
+					),
+				),
+			)
+		);
+		$this->assertEquals(
+			array(
 				array(
 					'id'          => 'woopay',
 					'_order'      => 0,
@@ -322,24 +351,7 @@ class PaymentGatewayTest extends WC_REST_Unit_Test_Case {
 					'icon'        => 'https://example.com/card-icon.png',
 				),
 			),
-		) );
-		$this->assertEquals( array(
-			array(
-				'id'          => 'woopay',
-				'_order'      => 0,
-				'enabled'     => false,
-				'title'       => 'WooPay',
-				'description' => 'WooPay express checkout',
-				'icon'        => 'https://example.com/icon.png',
-			),
-			array(
-				'id'          => 'card',
-				'_order'      => 1,
-				'enabled'     => true,
-				'title'       => 'Credit/debit card (required)',
-				'description' => 'Accepts all major credit and debit cards.',
-				'icon'        => 'https://example.com/card-icon.png',
-			),
-		), $this->sut->get_recommended_payment_methods( $fake_gateway ) );
+			$this->sut->get_recommended_payment_methods( $fake_gateway )
+		);
 	}
 }

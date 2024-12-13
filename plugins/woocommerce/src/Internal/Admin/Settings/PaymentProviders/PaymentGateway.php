@@ -230,6 +230,8 @@ class PaymentGateway {
 	 * This URL should start or continue the onboarding process.
 	 *
 	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
+	 * @param string             $return_url      Optional. The URL to return to after onboarding.
+	 *                                            This will likely get attached to the onboarding URL.
 	 *
 	 * @return string The onboarding URL for the payment gateway.
 	 */
@@ -376,8 +378,8 @@ class PaymentGateway {
 	protected function validate_recommended_payment_method( $recommended_pm ): bool {
 		// We require at least `id` and `title`.
 		return is_array( $recommended_pm ) &&
-			   ! empty( $recommended_pm['id'] ) &&
-			   ! empty( $recommended_pm['title'] );
+				! empty( $recommended_pm['id'] ) &&
+				! empty( $recommended_pm['title'] );
 	}
 
 	/**

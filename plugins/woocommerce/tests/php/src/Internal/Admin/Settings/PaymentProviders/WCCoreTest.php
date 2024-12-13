@@ -37,13 +37,13 @@ class WCCoreTest extends WC_REST_Unit_Test_Case {
 		$fake_gateway = new FakePaymentGateway(
 			'bacs',
 			array(
-				'enabled'                     => true,
-				'plugin_slug'                 => 'woocommerce',
-				'plugin_file'                 => 'woocommerce/woocommerce.php',
-				'method_title'                => 'BACS',
-				'method_description'          => 'Bacs is good.',
-				'supports'                    => array( 'products', 'something', 'bogus' ),
-				'icon'                        => 'https://example.com/icon.png',
+				'enabled'            => true,
+				'plugin_slug'        => 'woocommerce',
+				'plugin_file'        => 'woocommerce/woocommerce.php',
+				'method_title'       => 'BACS',
+				'method_description' => 'Bacs is good.',
+				'supports'           => array( 'products', 'something', 'bogus' ),
+				'icon'               => 'https://example.com/icon.png',
 			),
 		);
 
@@ -57,13 +57,13 @@ class WCCoreTest extends WC_REST_Unit_Test_Case {
 		$fake_gateway = new FakePaymentGateway(
 			'cheque',
 			array(
-				'enabled'                     => true,
-				'plugin_slug'                 => 'woocommerce',
-				'plugin_file'                 => 'woocommerce/woocommerce.php',
-				'method_title'                => 'Cheque',
-				'method_description'          => 'Cheque is good.',
-				'supports'                    => array( 'products', 'something', 'bogus' ),
-				'icon'                        => 'https://example.com/icon.png',
+				'enabled'            => true,
+				'plugin_slug'        => 'woocommerce',
+				'plugin_file'        => 'woocommerce/woocommerce.php',
+				'method_title'       => 'Cheque',
+				'method_description' => 'Cheque is good.',
+				'supports'           => array( 'products', 'something', 'bogus' ),
+				'icon'               => 'https://example.com/icon.png',
 			),
 		);
 
@@ -77,13 +77,13 @@ class WCCoreTest extends WC_REST_Unit_Test_Case {
 		$fake_gateway = new FakePaymentGateway(
 			'cod',
 			array(
-				'enabled'                     => true,
-				'plugin_slug'                 => 'woocommerce',
-				'plugin_file'                 => 'woocommerce/woocommerce.php',
-				'method_title'                => 'COD',
-				'method_description'          => 'COD is good.',
-				'supports'                    => array( 'products', 'something', 'bogus' ),
-				'icon'                        => 'https://example.com/icon.png',
+				'enabled'            => true,
+				'plugin_slug'        => 'woocommerce',
+				'plugin_file'        => 'woocommerce/woocommerce.php',
+				'method_title'       => 'COD',
+				'method_description' => 'COD is good.',
+				'supports'           => array( 'products', 'something', 'bogus' ),
+				'icon'               => 'https://example.com/icon.png',
 			),
 		);
 
@@ -97,13 +97,13 @@ class WCCoreTest extends WC_REST_Unit_Test_Case {
 		$fake_gateway = new FakePaymentGateway(
 			'paypal',
 			array(
-				'enabled'                     => true,
-				'plugin_slug'                 => 'woocommerce',
-				'plugin_file'                 => 'woocommerce/woocommerce.php',
-				'method_title'                => 'Paypal',
-				'method_description'          => 'Paypal is good.',
-				'supports'                    => array( 'products', 'something', 'bogus' ),
-				'icon'                        => 'https://example.com/icon.png',
+				'enabled'            => true,
+				'plugin_slug'        => 'woocommerce',
+				'plugin_file'        => 'woocommerce/woocommerce.php',
+				'method_title'       => 'Paypal',
+				'method_description' => 'Paypal is good.',
+				'supports'           => array( 'products', 'something', 'bogus' ),
+				'icon'               => 'https://example.com/icon.png',
 			),
 		);
 
