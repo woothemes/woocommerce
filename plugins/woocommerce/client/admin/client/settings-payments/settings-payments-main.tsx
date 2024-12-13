@@ -26,7 +26,7 @@ import {
 	providersContainWooPaymentsInTestMode,
 	providersContainWooPaymentsInDevMode,
 	isIncentiveDismissedInContext,
-	isSwitchIncentive,
+	isSwitchIncentive, isWooPayments, getWooPaymentsTestDriveAccountLink,
 } from '~/settings-payments/utils';
 import { WooPaymentsPostSandboxAccountSetupModal } from '~/settings-payments/components/modals';
 
@@ -134,6 +134,11 @@ export const SettingsPaymentsMain = () => {
 					// If no onboarding specific URL is present, it will redirect to gateway settings.
 					if ( onboardingUrl ) {
 						window.location.href = onboardingUrl;
+						return;
+					} else if ( isWooPayments( id ) ) {
+						window.location.href =
+							getWooPaymentsTestDriveAccountLink();
+						return;
 					}
 
 					invalidateResolutionForStoreSelector(
