@@ -22,6 +22,34 @@ class WooPayments extends PaymentGateway {
 	const PREFIX = 'woocommerce_admin_settings_payments__woopayments__';
 
 	/**
+	 * Check if the payment gateway needs setup.
+	 *
+	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
+	 *
+	 * @return bool True if the payment gateway needs setup, false otherwise.
+	 */
+	public function needs_setup( WC_Payment_Gateway $payment_gateway ): bool {
+		// No account means we need setup.
+		if ( method_exists( $payment_gateway, 'is_connected' ) &&
+			! $payment_gateway->is_connected() ) {
+			return true;
+		}
+
+		if ( property_exists( $payment_gateway, 'account' ) &&
+			$payment_gateway->account instanceof ( '\WC_Payments_Account' ) &&
+			property_exists( $payment_gateway->account, 'get_account_status_data' ) ) {
+
+			// Test-drive accounts don't need setup.
+			$account_status = $payment_gateway->account->get_account_status_data();
+			if ( ! empty( $account_status['testDrive'] ) ) {
+				return false;
+			}
+		}
+
+		return parent::needs_setup( $payment_gateway );
+	}
+
+	/**
 	 * Try to determine if the payment gateway is in test mode.
 	 *
 	 * This is a best-effort attempt, as there is no standard way to determine this.
