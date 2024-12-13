@@ -15,7 +15,6 @@ import { useState } from '@wordpress/element';
  */
 import {
 	isWooPayments,
-	getWooPaymentsTestDriveAccountLink,
 	getWooPaymentsSetupLiveAccountLink,
 } from '~/settings-payments/utils';
 
@@ -25,7 +24,9 @@ export const PaymentGatewayButtons = ( {
 	enabled,
 	needsSetup,
 	testMode,
+	devMode,
 	settingsUrl,
+	onboardUrl,
 	textSettings = __( 'Manage', 'woocommerce' ),
 	textEnable = __( 'Enable', 'woocommerce' ),
 	textNeedsSetup = __( 'Complete setup', 'woocommerce' ),
@@ -35,7 +36,9 @@ export const PaymentGatewayButtons = ( {
 	enabled: boolean;
 	needsSetup?: boolean;
 	testMode?: boolean;
+	devMode?: boolean;
 	settingsUrl: string;
+	onboardUrl: string;
 	textSettings?: string;
 	textEnable?: string;
 	textNeedsSetup?: string;
@@ -49,7 +52,7 @@ export const PaymentGatewayButtons = ( {
 	const createApiErrorNotice = () => {
 		createErrorNotice(
 			__(
-				'An API error occurred. You will be redirected to the settings page, try enabling the gateway there.',
+				'An API error occurred. You will be redirected to the settings page, try enabling the payment gateway there.',
 				'woocommerce'
 			),
 			{
@@ -78,12 +81,8 @@ export const PaymentGatewayButtons = ( {
 			)
 				.then( ( response: EnableGatewayResponse ) => {
 					if ( response.data === 'needs_setup' ) {
-						if ( isWooPayments( id ) ) {
-							window.location.href =
-								getWooPaymentsTestDriveAccountLink();
-							return;
-						}
-						window.location.href = settingsUrl;
+						// Redirect to the gateway's onboarding URL if it needs setup.
+						window.location.href = onboardUrl;
 						return;
 					}
 					invalidateResolutionForStoreSelector(
@@ -94,6 +93,7 @@ export const PaymentGatewayButtons = ( {
 					setIsUpdating( false );
 				} )
 				.catch( () => {
+					// In case of errors, redirect to the gateway settings page.
 					setIsUpdating( false );
 					createApiErrorNotice();
 					window.location.href = settingsUrl;
@@ -137,16 +137,20 @@ export const PaymentGatewayButtons = ( {
 				</Button>
 			) }
 
-			{ isWooPayments( id ) && enabled && ! needsSetup && testMode && (
-				<Button
-					variant="primary"
-					onClick={ activatePayments }
-					isBusy={ isActivatingPayments }
-					disabled={ isActivatingPayments }
-				>
-					{ __( 'Activate payments', 'woocommerce' ) }
-				</Button>
-			) }
+			{ isWooPayments( id ) &&
+				enabled &&
+				! needsSetup &&
+				testMode &&
+				! devMode && (
+					<Button
+						variant="primary"
+						onClick={ activatePayments }
+						isBusy={ isActivatingPayments }
+						disabled={ isActivatingPayments }
+					>
+						{ __( 'Activate payments', 'woocommerce' ) }
+					</Button>
+				) }
 		</div>
 	);
 };

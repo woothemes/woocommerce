@@ -55,6 +55,9 @@ export const OfflinePaymentGatewayListItem = ( {
 							settingsUrl={
 								gateway.management._links.settings.href
 							}
+							onboardUrl={
+								gateway.onboarding._links.onboard.href
+							}
 						/>
 					</div>
 				</div>
