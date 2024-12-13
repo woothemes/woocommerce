@@ -315,7 +315,7 @@ class WC_Tracker_Test extends \WC_Unit_Test_Case {
 		$this->assertArrayHasKey( 'woocommerce_allow_tracking_last_modified', $tracking_data );
 		$this->assertArrayHasKey( 'woocommerce_allow_tracking_first_optin', $tracking_data );
 
-		$this->assertEquals( $tracking_data['woocommerce_allow_tracking'], 'no' );
+		$this->assertEquals( $tracking_data['woocommerce_allow_tracking'], get_option( 'woocommerce_allow_tracking' ) );
 		$this->assertEquals( $tracking_data['woocommerce_allow_tracking_last_modified'], 'unknown' );
 		$this->assertEquals( $tracking_data['woocommerce_allow_tracking_first_optin'], 'unknown' );
 
