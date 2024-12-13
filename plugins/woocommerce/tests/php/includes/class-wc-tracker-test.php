@@ -305,4 +305,39 @@ class WC_Tracker_Test extends \WC_Unit_Test_Case {
 	public function test_get_tracking_data_snapshot_generation_time() {
 		$this->assertGreaterThan( 0, WC_Tracker::get_tracking_data()['snapshot_generation_time'] );
 	}
+
+	/**
+	 * @testDox Test woocommerce_install_admin_timestamp is included in tracking data.
+	 */
+	public function test_tracking_data_woocommerce_allow_tracking() {
+		$tracking_data = WC_Tracker::get_tracking_data();
+		$this->assertArrayHasKey( 'woocommerce_allow_tracking', $tracking_data );
+		$this->assertArrayHasKey( 'woocommerce_allow_tracking_last_modified', $tracking_data );
+		$this->assertArrayHasKey( 'woocommerce_allow_tracking_first_optin', $tracking_data );
+
+		$this->assertEquals( $tracking_data['woocommerce_allow_tracking'], 'no' );
+		$this->assertEquals( $tracking_data['woocommerce_allow_tracking_last_modified'], 'unknown' );
+		$this->assertEquals( $tracking_data['woocommerce_allow_tracking_first_optin'], 'unknown' );
+
+		$timeOne = time();
+		update_option( 'woocommerce_allow_tracking', 'yes' );
+		$tracking_data = WC_Tracker::get_tracking_data();
+		$this->assertEquals( $tracking_data['woocommerce_allow_tracking'], 'yes' );
+		$this->assertTrue( $tracking_data['woocommerce_allow_tracking_last_modified'] >= $timeOne );
+		$this->assertTrue( $tracking_data['woocommerce_allow_tracking_first_optin']  >= $timeOne );
+
+		$timeTwo = time();
+		update_option( 'woocommerce_allow_tracking', 'no' );
+		$tracking_data = WC_Tracker::get_tracking_data();
+		$this->assertEquals( $tracking_data['woocommerce_allow_tracking'], 'no' );
+		$this->assertTrue( $tracking_data['woocommerce_allow_tracking_last_modified'] >= $timeTwo );
+		$this->assertTrue( $tracking_data['woocommerce_allow_tracking_first_optin'] >= $timeOne && $tracking_data['woocommerce_allow_tracking_first_optin'] < $timeTwo );
+
+		$timeThree = time();
+		update_option( 'woocommerce_allow_tracking', 'yes' );
+		$tracking_data = WC_Tracker::get_tracking_data();
+		$this->assertEquals( $tracking_data['woocommerce_allow_tracking'], 'yes' );
+		$this->assertTrue( $tracking_data['woocommerce_allow_tracking_last_modified'] >= $timeThree );
+		$this->assertTrue( $tracking_data['woocommerce_allow_tracking_first_optin'] >= $timeOne && $tracking_data['woocommerce_allow_tracking_first_optin'] < $timeTwo );
+	}
 }
