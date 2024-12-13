@@ -131,7 +131,7 @@ class EmailPreviewRestController extends RestApiControllerBase {
 							'sanitize_callback' => function ( $value, $request ) {
 								$key = $request->get_param( 'key' );
 								if ( 'woocommerce_email_footer_text' === $key ) {
-									return sanitize_textarea_field( $value );
+									return wp_kses_post( trim( $value ) );
 								}
 								return sanitize_text_field( $value );
 							},
