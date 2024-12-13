@@ -471,6 +471,7 @@ class ProductSchema extends AbstractSchema {
 	 * @return array
 	 */
 	public function get_item_response( $product ) {
+		$availability = $product->get_availability();
 		return [
 			'id'                  => $product->get_id(),
 			'name'                => $this->prepare_html_response( $product->get_title() ),
@@ -497,7 +498,10 @@ class ProductSchema extends AbstractSchema {
 			'is_in_stock'         => $product->is_in_stock(),
 			'is_on_backorder'     => 'onbackorder' === $product->get_stock_status(),
 			'low_stock_remaining' => $this->get_low_stock_remaining( $product ),
-			'stock_availability'  => $product->get_availability(),
+			'stock_availability'  => (object) [
+				'text'   => $availability['availability'] ?? '',
+				'class'  => $availability['class'] ?? '',
+			],
 			'sold_individually'   => $product->is_sold_individually(),
 			'add_to_cart'         => (object) array_merge(
 				[

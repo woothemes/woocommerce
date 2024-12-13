@@ -45,7 +45,7 @@ const defaultProductData: ProductResponseItem = {
 	is_on_backorder: false,
 	low_stock_remaining: null,
 	stock_availability: {
-		availability: '',
+		text: '',
 		class: '',
 	},
 	sold_individually: false,

@@ -108,7 +108,7 @@ const defaultProduct: ProductResponseItem = {
 	is_in_stock: true,
 	is_on_backorder: false,
 	stock_availability: {
-		availability: '',
+		text: '',
 		class: '',
 	},
 	parent: 0,
@@ -178,7 +178,7 @@ describe( 'Stock Indicator Block', () => {
 			...defaultProduct,
 			is_in_stock: false,
 			stock_availability: {
-				availability: 'Out of stock',
+				text: 'Out of stock',
 				class: 'out-of-stock',
 			},
 		};
@@ -203,7 +203,7 @@ describe( 'Stock Indicator Block', () => {
 		const product = {
 			...defaultProduct,
 			stock_availability: {
-				availability: 'In stock',
+				text: 'In stock',
 				class: 'in-stock',
 			},
 		};

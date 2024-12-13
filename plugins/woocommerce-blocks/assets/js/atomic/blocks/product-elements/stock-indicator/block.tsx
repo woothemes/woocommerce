@@ -23,7 +23,7 @@ export const Block = ( props: Props ): JSX.Element | null => {
 	const styleProps = useStyleProps( props );
 	const { parentClassName } = useInnerBlockLayoutContext();
 	const { product } = useProductDataContext();
-	const { availability: availabilityText, class: availabilityClass } =
+	const { text: availabilityText, class: availabilityClass } =
 		product.stock_availability;
 
 	if ( ! product.id || availabilityText === '' ) {
