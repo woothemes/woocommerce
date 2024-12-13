@@ -35,7 +35,7 @@ class WooPayments extends PaymentGateway {
 			return true;
 		}
 
-		if ( function_exists('\wcpay_get_container' ) && class_exists( '\WC_Payments_Account' ) ) {
+		if ( function_exists( '\wcpay_get_container' ) && class_exists( '\WC_Payments_Account' ) ) {
 			$account = \wcpay_get_container()->get( \WC_Payments_Account::class );
 			if ( method_exists( $account, 'get_account_status_data' ) ) {
 				// Test-drive accounts don't need setup.
