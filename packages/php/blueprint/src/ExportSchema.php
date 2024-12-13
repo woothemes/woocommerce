@@ -15,7 +15,7 @@ use Automattic\WooCommerce\Blueprint\Exporters\HasAlias;
  * @package Automattic\WooCommerce\Blueprint
  */
 class ExportSchema {
-	use UseWPFunctions, usePubSub;
+	use UseWPFunctions, UsePubSub;
 
 	/**
 	 * Step exporters.
