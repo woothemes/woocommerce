@@ -310,6 +310,9 @@ class WC_Tracker_Test extends \WC_Unit_Test_Case {
 	 * @testDox Test woocommerce_install_admin_timestamp is included in tracking data.
 	 */
 	public function test_tracking_data_woocommerce_allow_tracking() {
+		delete_option('woocommerce_allow_tracking_last_modified');
+		delete_option('woocommerce_allow_tracking_first_optin');
+
 		$tracking_data = WC_Tracker::get_tracking_data();
 		$this->assertArrayHasKey( 'woocommerce_allow_tracking', $tracking_data );
 		$this->assertArrayHasKey( 'woocommerce_allow_tracking_last_modified', $tracking_data );
@@ -339,5 +342,8 @@ class WC_Tracker_Test extends \WC_Unit_Test_Case {
 		$this->assertEquals( $tracking_data['woocommerce_allow_tracking'], 'yes' );
 		$this->assertTrue( $tracking_data['woocommerce_allow_tracking_last_modified'] >= $time_three );
 		$this->assertTrue( $tracking_data['woocommerce_allow_tracking_first_optin'] >= $time_one && $tracking_data['woocommerce_allow_tracking_first_optin'] < $time_two );
+
+		delete_option('woocommerce_allow_tracking_last_modified');
+		delete_option('woocommerce_allow_tracking_first_optin');
 	}
 }
