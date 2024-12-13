@@ -61,20 +61,7 @@ class EmailPreviewRestController extends RestApiControllerBase {
 					'methods'             => \WP_REST_Server::CREATABLE,
 					'callback'            => fn( $request ) => $this->send_email_preview( $request ),
 					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
-					'args'                => array(
-						'type'  => array(
-							'description' => __( 'The email type to preview.', 'woocommerce' ),
-							'type'        => 'string',
-							'required'    => true,
-						),
-						'email' => array(
-							'description'       => __( 'Email address to send the email preview to.', 'woocommerce' ),
-							'type'              => 'string',
-							'format'            => 'email',
-							'required'          => true,
-							'validate_callback' => 'rest_validate_request_arg',
-						),
-					),
+					'args'                => $this->get_args_for_send_preview(),
 				),
 			)
 		);
@@ -87,13 +74,7 @@ class EmailPreviewRestController extends RestApiControllerBase {
 					'methods'             => \WP_REST_Server::READABLE,
 					'callback'            => fn( $request ) => $this->get_preview_subject( $request ),
 					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
-					'args'                => array(
-						'type' => array(
-							'description' => __( 'The email type to get subject for.', 'woocommerce' ),
-							'type'        => 'string',
-							'required'    => true,
-						),
-					),
+					'args'                => $this->get_args_for_preview_subject(),
 				),
 			)
 		);
@@ -106,42 +87,88 @@ class EmailPreviewRestController extends RestApiControllerBase {
 					'methods'             => \WP_REST_Server::CREATABLE,
 					'callback'            => fn( $request ) => $this->save_transient( $request ),
 					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
-					'args'                => array(
-						'key'   => array(
-							'required'          => true,
-							'type'              => 'string',
-							'description'       => 'The key for the transient. Must be one of the allowed options.',
-							'validate_callback' => function ( $key ) {
-								if ( ! in_array( $key, EmailPreview::get_all_email_settings_ids(), true ) ) {
-									return new \WP_Error(
-										'woocommerce_rest_not_allowed_key',
-										sprintf( 'The provided key "%s" is not allowed.', $key ),
-										array( 'status' => 400 ),
-									);
-								}
-								return true;
-							},
-							'sanitize_callback' => 'sanitize_text_field',
-						),
-						'value' => array(
-							'required'          => true,
-							'type'              => 'string',
-							'description'       => 'The value to be saved for the transient.',
-							'validate_callback' => 'rest_validate_request_arg',
-							'sanitize_callback' => function ( $value, $request ) {
-								$key = $request->get_param( 'key' );
-								if (
-									'woocommerce_email_footer_text' === $key
-									|| preg_match( '/_additional_content$/', $key )
-								) {
-									return wp_kses_post( trim( $value ) );
-								}
-								return sanitize_text_field( $value );
-							},
-						),
-					),
+					'args'                => $this->get_args_for_save_transient(),
 				),
 			)
+		);
+	}
+
+	/**
+	 * Get the accepted arguments for the POST send-preview request.
+	 *
+	 * @return array[]
+	 */
+	private function get_args_for_send_preview() {
+		return array(
+			'type'  => array(
+				'description' => __( 'The email type to preview.', 'woocommerce' ),
+				'type'        => 'string',
+				'required'    => true,
+			),
+			'email' => array(
+				'description'       => __( 'Email address to send the email preview to.', 'woocommerce' ),
+				'type'              => 'string',
+				'format'            => 'email',
+				'required'          => true,
+				'validate_callback' => 'rest_validate_request_arg',
+			),
+		);
+	}
+
+	/**
+	 * Get the accepted arguments for the GET preview-subject request.
+	 *
+	 * @return array[]
+	 */
+	private function get_args_for_preview_subject() {
+		return array(
+			'type' => array(
+				'description' => __( 'The email type to get subject for.', 'woocommerce' ),
+				'type'        => 'string',
+				'required'    => true,
+			),
+		);
+	}
+
+	/**
+	 * Get the accepted arguments for the POST save-transient request.
+	 *
+	 * @return array[]
+	 */
+	private function get_args_for_save_transient() {
+		return array(
+			'key'   => array(
+				'required'          => true,
+				'type'              => 'string',
+				'description'       => 'The key for the transient. Must be one of the allowed options.',
+				'validate_callback' => function ( $key ) {
+					if ( ! in_array( $key, EmailPreview::get_all_email_settings_ids(), true ) ) {
+						return new \WP_Error(
+							'woocommerce_rest_not_allowed_key',
+							sprintf( 'The provided key "%s" is not allowed.', $key ),
+							array( 'status' => 400 ),
+						);
+					}
+					return true;
+				},
+				'sanitize_callback' => 'sanitize_text_field',
+			),
+			'value' => array(
+				'required'          => true,
+				'type'              => 'string',
+				'description'       => 'The value to be saved for the transient.',
+				'validate_callback' => 'rest_validate_request_arg',
+				'sanitize_callback' => function ( $value, $request ) {
+					$key = $request->get_param( 'key' );
+					if (
+						'woocommerce_email_footer_text' === $key
+						|| preg_match( '/_additional_content$/', $key )
+					) {
+						return wp_kses_post( trim( $value ) );
+					}
+					return sanitize_text_field( $value );
+				},
+			),
 		);
 	}
 
