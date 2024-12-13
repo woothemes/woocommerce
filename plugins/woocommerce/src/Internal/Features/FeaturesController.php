@@ -280,7 +280,7 @@ class FeaturesController {
 						'woocommerce'
 					),
 					'enabled_by_default' => true,
-					'disable_ui'         => true,
+					'disable_ui'         => false,
 
 					/*
 					 * This is not truly a legacy feature (it is not a feature that pre-dates the FeaturesController),
@@ -291,7 +291,7 @@ class FeaturesController {
 					 * @see https://github.com/woocommerce/woocommerce/pull/39701#discussion_r1376976959
 					 */
 					'is_legacy'          => true,
-					'is_experimental'    => true,
+					'is_experimental'    => false,
 				),
 				'email_improvements'     => array(
 					'name'        => __( 'Email improvements', 'woocommerce' ),
