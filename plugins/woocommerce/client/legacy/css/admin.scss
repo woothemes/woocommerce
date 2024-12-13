@@ -3653,6 +3653,10 @@ table.wp-list-table {
 	.column-product_type {
 		width: 48px;
 		text-align: left !important;
+
+		a:focus {
+			box-shadow: none;
+		}
 	}
 
 	.column-customer_message,
