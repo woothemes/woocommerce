@@ -26,7 +26,9 @@ import {
 	providersContainWooPaymentsInTestMode,
 	providersContainWooPaymentsInDevMode,
 	isIncentiveDismissedInContext,
-	isSwitchIncentive, isWooPayments, getWooPaymentsTestDriveAccountLink,
+	isSwitchIncentive,
+	isWooPayments,
+	getWooPaymentsTestDriveAccountLink,
 } from '~/settings-payments/utils';
 import { WooPaymentsPostSandboxAccountSetupModal } from '~/settings-payments/components/modals';
 
