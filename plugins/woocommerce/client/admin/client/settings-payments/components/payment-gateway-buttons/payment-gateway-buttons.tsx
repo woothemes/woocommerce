@@ -67,48 +67,45 @@ export const PaymentGatewayButtons = ( {
 		);
 	};
 
-	const onClick = ( e: React.MouseEvent ) => {
-		if ( ! enabled ) {
-			e.preventDefault();
-			const gatewayToggleNonce =
-				window.woocommerce_admin.nonces?.gateway_toggle || '';
+	const enableGateway = () => {
+		const gatewayToggleNonce =
+			window.woocommerce_admin.nonces?.gateway_toggle || '';
 
-			if ( ! gatewayToggleNonce ) {
+		if ( ! gatewayToggleNonce ) {
+			createApiErrorNotice();
+			window.location.href = settingsUrl;
+			return;
+		}
+		setIsUpdating( true );
+
+		if ( incentive ) {
+			acceptIncentive( incentive.promo_id );
+		}
+
+		togglePaymentGateway(
+			id,
+			window.woocommerce_admin.ajax_url,
+			gatewayToggleNonce
+		)
+			.then( ( response: EnableGatewayResponse ) => {
+				if ( response.data === 'needs_setup' ) {
+					// Redirect to the gateway's onboarding URL if it needs setup.
+					window.location.href = onboardUrl;
+					return;
+				}
+				invalidateResolutionForStoreSelector(
+					isOffline
+						? 'getOfflinePaymentGateways'
+						: 'getPaymentProviders'
+				);
+				setIsUpdating( false );
+			} )
+			.catch( () => {
+				// In case of errors, redirect to the gateway settings page.
+				setIsUpdating( false );
 				createApiErrorNotice();
 				window.location.href = settingsUrl;
-				return;
-			}
-			setIsUpdating( true );
-
-			if ( incentive ) {
-				acceptIncentive( incentive.promo_id );
-			}
-
-			togglePaymentGateway(
-				id,
-				window.woocommerce_admin.ajax_url,
-				gatewayToggleNonce
-			)
-				.then( ( response: EnableGatewayResponse ) => {
-					if ( response.data === 'needs_setup' ) {
-						// Redirect to the gateway's onboarding URL if it needs setup.
-						window.location.href = onboardUrl;
-						return;
-					}
-					invalidateResolutionForStoreSelector(
-						isOffline
-							? 'getOfflinePaymentGateways'
-							: 'getPaymentProviders'
-					);
-					setIsUpdating( false );
-				} )
-				.catch( () => {
-					// In case of errors, redirect to the gateway settings page.
-					setIsUpdating( false );
-					createApiErrorNotice();
-					window.location.href = settingsUrl;
-				} );
-		}
+			} );
 	};
 
 	const activatePayments = () => {
@@ -123,31 +120,32 @@ export const PaymentGatewayButtons = ( {
 
 	return (
 		<div className="woocommerce-list__item-after__actions">
-			{ ! needsSetup && (
-				<Button variant={ 'secondary' } href={ settingsUrl }>
-					{ textSettings }
-				</Button>
-			) }
-			{ ! enabled && needsSetup && (
+			{ ! enabled && (
 				<Button
 					variant={ 'primary' }
 					isBusy={ isUpdating }
 					disabled={ isUpdating }
-					onClick={ onClick }
+					onClick={ enableGateway }
+					href={ settingsUrl }
+				>
+					{ textEnable }
+				</Button>
+			) }
+
+			{ enabled && needsSetup && (
+				<Button
+					variant={ 'primary' }
+					isBusy={ isUpdating }
+					disabled={ isUpdating }
 					href={ settingsUrl }
 				>
 					{ textNeedsSetup }
 				</Button>
 			) }
-			{ ! enabled && ! needsSetup && (
-				<Button
-					variant={ 'primary' }
-					isBusy={ isUpdating }
-					disabled={ isUpdating }
-					onClick={ onClick }
-					href={ settingsUrl }
-				>
-					{ textEnable }
+
+			{ enabled && ! needsSetup && (
+				<Button variant={ 'secondary' } href={ settingsUrl }>
+					{ textSettings }
 				</Button>
 			) }
 
