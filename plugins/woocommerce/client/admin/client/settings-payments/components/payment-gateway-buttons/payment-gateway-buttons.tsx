@@ -19,6 +19,7 @@ import {
 	isWooPayments,
 	getWooPaymentsTestDriveAccountLink,
 	getWooPaymentsSetupLiveAccountLink,
+	hasIncentive,
 } from '~/settings-payments/utils';
 
 export const PaymentGatewayButtons = ( {
@@ -49,6 +50,7 @@ export const PaymentGatewayButtons = ( {
 		useDispatch( PAYMENT_SETTINGS_STORE_NAME );
 	const [ isUpdating, setIsUpdating ] = useState( false );
 	const [ isActivatingPayments, setIsActivatingPayments ] = useState( false );
+	const incentive = hasIncentive( gateway ) ? gateway._incentive : null;
 
 	const createApiErrorNotice = () => {
 		createErrorNotice(
@@ -76,8 +78,8 @@ export const PaymentGatewayButtons = ( {
 			}
 			setIsUpdating( true );
 
-			if ( '_incentive' in gateway && !! gateway._incentive ) {
-				acceptIncentive( gateway._incentive.id );
+			if ( incentive ) {
+				acceptIncentive( incentive.id );
 			}
 
 			togglePaymentGateway(
@@ -113,8 +115,8 @@ export const PaymentGatewayButtons = ( {
 	const activatePayments = () => {
 		setIsActivatingPayments( true );
 
-		if ( '_incentive' in gateway && !! gateway._incentive ) {
-			acceptIncentive( gateway._incentive.id );
+		if ( incentive ) {
+			acceptIncentive( incentive.id );
 		}
 
 		window.location.href = getWooPaymentsSetupLiveAccountLink();
