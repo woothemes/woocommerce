@@ -13,6 +13,10 @@
 		"lock": false
 	},
 	"attributes": {
+		"totalHeading": {
+			"type": "string",
+			"default": ""
+		},
 		"lock": {
 			"type": "object",
 			"default": {
@@ -20,9 +24,7 @@
 			}
 		}
 	},
-	"parent": [
-		"woocommerce/checkout-totals-block"
-	],
+	"parent": [ "woocommerce/checkout-totals-block" ],
 	"textdomain": "woocommerce",
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3
