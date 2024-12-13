@@ -307,7 +307,7 @@ class WC_Tracker_Test extends \WC_Unit_Test_Case {
 	}
 
 	/**
-	 * @testDox Test woocommerce_install_admin_timestamp is included in tracking data.
+	 * @testDox Test woocommerce_allow_tracking related data is included in tracking snapshot.
 	 */
 	public function test_tracking_data_woocommerce_allow_tracking() {
 		$current_woocommerce_allow_tracking = get_option( 'woocommerce_allow_tracking', 'no' );
