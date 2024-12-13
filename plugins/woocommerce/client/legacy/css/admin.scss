@@ -5888,6 +5888,17 @@ img.help_tip {
 	}
 }
 
+.woocommerce_variation .woocommerce_variable_attributes .dimensions_field.form-row {
+	.wrap {
+		display: flex;
+		gap: 12px;
+
+		input {
+			width: 33.33%;
+		}
+	}
+}
+
 .woocommerce_attribute,
 .woocommerce_variation {
 	h3 .sort {
