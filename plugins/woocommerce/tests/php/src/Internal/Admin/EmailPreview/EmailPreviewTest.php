@@ -226,9 +226,9 @@ class EmailPreviewTest extends WC_Unit_Test_Case {
 	 * Test that transient values are applied in email preview
 	 */
 	public function test_transient_values_in_preview() {
-		$original_value = get_option( EmailPreview::EMAIL_SETTINGS_IDS[0] );
-		update_option( EmailPreview::EMAIL_SETTINGS_IDS[0], 'option_value' );
-		set_transient( EmailPreview::EMAIL_SETTINGS_IDS[0], 'transient_value', HOUR_IN_SECONDS );
+		$original_value = get_option( EmailPreview::get_email_style_settings_ids()[0] );
+		update_option( EmailPreview::get_email_style_settings_ids()[0], 'option_value' );
+		set_transient( EmailPreview::get_email_style_settings_ids()[0], 'transient_value', HOUR_IN_SECONDS );
 
 		$this->sut->set_email_type( EmailPreview::DEFAULT_EMAIL_TYPE );
 		$content = $this->sut->render();
@@ -236,6 +236,6 @@ class EmailPreviewTest extends WC_Unit_Test_Case {
 		$this->assertStringNotContainsString( 'option_value', $content );
 		$this->assertStringContainsString( 'transient_value', $content );
 
-		update_option( EmailPreview::EMAIL_SETTINGS_IDS[0], $original_value );
+		update_option( EmailPreview::get_email_style_settings_ids()[0], $original_value );
 	}
 }

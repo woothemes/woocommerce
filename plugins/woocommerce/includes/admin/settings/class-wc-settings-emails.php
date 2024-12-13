@@ -631,7 +631,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 	public function email_preview() {
 		// Deletes transient with email settings used for live preview. This is to
 		// prevent conflicts where the preview would show values from previous session.
-		foreach ( EmailPreview::EMAIL_SETTINGS_IDS as $id ) {
+		foreach ( EmailPreview::get_email_style_settings_ids() as $id ) {
 			delete_transient( $id );
 		}
 		$emails      = WC()->mailer()->get_emails();
@@ -647,7 +647,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 			id="wc_settings_email_preview_slotfill"
 			data-preview-url="<?php echo esc_url( wp_nonce_url( admin_url( '?preview_woocommerce_mail=true' ), 'preview-mail' ) ); ?>"
 			data-email-types="<?php echo esc_attr( wp_json_encode( $email_types ) ); ?>"
-			data-email-settings-ids="<?php echo esc_attr( wp_json_encode( EmailPreview::EMAIL_SETTINGS_IDS ) ); ?>"
+			data-email-settings-ids="<?php echo esc_attr( wp_json_encode( EmailPreview::get_email_style_settings_ids() ) ); ?>"
 		></div>
 		<?php
 	}

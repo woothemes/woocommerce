@@ -21,7 +21,12 @@ defined( 'ABSPATH' ) || exit;
 class EmailPreview {
 	const DEFAULT_EMAIL_TYPE = 'WC_Email_Customer_Processing_Order';
 
-	const EMAIL_SETTINGS_IDS = array(
+	/**
+	 * All fields IDs that can customize email styles in Settings.
+	 *
+	 * @var array
+	 */
+	private static array $email_style_settings_ids = array(
 		'woocommerce_email_background_color',
 		'woocommerce_email_base_color',
 		'woocommerce_email_body_background_color',
@@ -64,6 +69,13 @@ class EmailPreview {
 			static::$instance = new static();
 		}
 		return static::$instance;
+	}
+
+	/**
+	 * Get all email settings IDs.
+	 */
+	public static function get_email_style_settings_ids() {
+		return self::$email_style_settings_ids;
 	}
 
 	/**
