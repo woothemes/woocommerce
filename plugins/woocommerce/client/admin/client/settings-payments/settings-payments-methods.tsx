@@ -47,7 +47,7 @@ const combineRequestMethods = (
 				// Combine apple_pay and google_pay data into a new payment method
 				return {
 					...method,
-					id: 'card_payments',
+					id: 'apple_google',
 					extraTitle: googlePay.title,
 					extraDescription: googlePay.description,
 					extraIcon: googlePay.icon,
