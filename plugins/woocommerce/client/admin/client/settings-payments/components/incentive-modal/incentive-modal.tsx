@@ -70,6 +70,14 @@ export const IncentiveModal = ( {
 		setIsOpen( false );
 	};
 
+	const handleAccept = () => {
+		setIsBusy( true );
+		onAccept( incentive.id );
+		setupPlugin( provider.id, provider.plugin.slug );
+		setIsBusy( false );
+		handleClose();
+	};
+
 	if ( isDismissed ) {
 		return null;
 	}
@@ -151,16 +159,7 @@ export const IncentiveModal = ( {
 										variant={ 'primary' }
 										isBusy={ isBusy }
 										disabled={ isBusy }
-										onClick={ () => {
-											setIsBusy( true );
-											onAccept( incentive.id );
-											setupPlugin(
-												provider.id,
-												provider.plugin.slug
-											);
-											setIsBusy( false );
-											handleClose();
-										} }
+										onClick={ handleAccept }
 									>
 										{ incentive.cta_label }
 									</Button>
