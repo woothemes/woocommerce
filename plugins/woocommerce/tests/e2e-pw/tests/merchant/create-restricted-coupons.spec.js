@@ -41,7 +41,9 @@ const couponData = {
 		code: `excludeProductBrands-${ new Date().getTime().toString() }`,
 		description: 'Exclude product brands coupon',
 		amount: '65',
-		excludeProductBrands: [ 'WooCommerce Apparels' ],
+		excludeProductBrands: [
+			`WooCommerce Apparels ${ new Date().getTime().toString() }`,
+		],
 	},
 	products: {
 		code: `products-${ new Date().getTime().toString() }`,
@@ -101,6 +103,23 @@ const test = baseTest.extend( {
 		// Product cleanup
 		await api.delete( `products/${ product.id }`, { force: true } );
 	},
+
+	brand: async ( { api }, use ) => {
+		let brand = {};
+
+		await api
+			.post( 'products/brands', {
+				name: couponData.excludeProductBrands.excludeProductBrands[ 0 ],
+			} )
+			.then( ( response ) => {
+				brand = response.data;
+			} );
+
+		await use( brand );
+
+		// Brand cleanup
+		await api.delete( `products/brands/${ brand.id }`, { force: true } );
+	},
 } );
 
 test.describe(
@@ -112,6 +131,7 @@ test.describe(
 				page,
 				coupon,
 				product,
+				brand,
 			} ) => {
 				// create basics for the coupon
 				await test.step( 'add new coupon', async () => {
@@ -224,10 +244,10 @@ test.describe(
 							.click();
 						await page
 							.getByPlaceholder( 'No brands' )
-							.pressSequentially( 'WooCommerce Apparels' );
+							.pressSequentially( brand.name );
 						await page
 							.getByRole( 'option', {
-								name: 'WooCommerce Apparels',
+								name: brand.name,
 							} )
 							.click();
 					} );
