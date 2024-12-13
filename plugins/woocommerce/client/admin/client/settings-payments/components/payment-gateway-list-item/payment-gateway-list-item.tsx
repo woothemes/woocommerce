@@ -84,7 +84,7 @@ export const PaymentGatewayListItem = ( {
 											'images/icons/recurring-payments.svg'
 										}
 										alt={ __(
-											'Recurring payments',
+											'Icon to indicate support for recurring payments',
 											'woocommerce'
 										) }
 									/>
