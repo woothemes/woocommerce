@@ -3,7 +3,6 @@
  */
 import { createSlotFill, SelectControl, Spinner } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
-import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 
 /**
@@ -16,6 +15,7 @@ import {
 	DEVICE_TYPE_DESKTOP,
 } from './settings-email-preview-device-type';
 import { EmailPreviewHeader } from './settings-email-preview-header';
+import { EmailPreviewIframe } from './settings-email-preview-iframe';
 import { EmailPreviewSend } from './settings-email-preview-send';
 import { EmailPreviewType } from './settings-email-preview-type';
 
@@ -26,11 +26,13 @@ export type EmailType = SelectControl.Option;
 type EmailPreviewFillProps = {
 	emailTypes: EmailType[];
 	previewUrl: string;
+	settingsIds: string[];
 };
 
 const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 	emailTypes,
 	previewUrl,
+	settingsIds,
 } ) => {
 	const [ deviceType, setDeviceType ] =
 		useState< string >( DEVICE_TYPE_DESKTOP );
@@ -71,10 +73,10 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 					className={ `wc-settings-email-preview wc-settings-email-preview-${ deviceType }` }
 				>
 					<EmailPreviewHeader emailType={ emailType } />
-					<iframe
+					<EmailPreviewIframe
 						src={ finalPreviewUrl }
-						title={ __( 'Email preview frame', 'woocommerce' ) }
-						onLoad={ () => setIsLoading( false ) }
+						setIsLoading={ setIsLoading }
+						settingsIds={ settingsIds }
 					/>
 				</div>
 			</div>
@@ -97,12 +99,20 @@ export const registerSettingsEmailPreviewFill = () => {
 	try {
 		emailTypes = JSON.parse( emailTypesData || '' );
 	} catch ( e ) {}
+	const settingsIdsData = slotElement.getAttribute(
+		'data-email-settings-ids'
+	);
+	let settingsIds: string[] = [];
+	try {
+		settingsIds = JSON.parse( settingsIdsData || '' );
+	} catch ( e ) {}
 
 	registerPlugin( 'woocommerce-admin-settings-email-preview', {
 		// @ts-expect-error 'scope' does exist. @types/wordpress__plugins is outdated.
 		scope: 'woocommerce-email-preview-settings',
 		render: () => (
 			<EmailPreviewFill
+				settingsIds={ settingsIds }
 				emailTypes={ emailTypes }
 				previewUrl={ previewUrl }
 			/>

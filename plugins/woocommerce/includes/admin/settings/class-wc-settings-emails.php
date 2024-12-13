@@ -6,6 +6,7 @@
  * @version 2.1.0
  */
 
+use Automattic\WooCommerce\Internal\Admin\EmailPreview\EmailPreview;
 use Automattic\WooCommerce\Internal\BrandingController;
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
@@ -628,6 +629,11 @@ class WC_Settings_Emails extends WC_Settings_Page {
 	 * Creates the React mount point for the email preview.
 	 */
 	public function email_preview() {
+		// Deletes transient with email settings used for live preview. This is to
+		// prevent conflicts where the preview would show values from previous session.
+		foreach ( EmailPreview::EMAIL_SETTINGS_IDS as $id ) {
+			delete_transient( $id );
+		}
 		$emails      = WC()->mailer()->get_emails();
 		$email_types = array();
 		foreach ( $emails as $type => $email ) {
@@ -641,6 +647,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 			id="wc_settings_email_preview_slotfill"
 			data-preview-url="<?php echo esc_url( wp_nonce_url( admin_url( '?preview_woocommerce_mail=true' ), 'preview-mail' ) ); ?>"
 			data-email-types="<?php echo esc_attr( wp_json_encode( $email_types ) ); ?>"
+			data-email-settings-ids="<?php echo esc_attr( wp_json_encode( EmailPreview::EMAIL_SETTINGS_IDS ) ); ?>"
 		></div>
 		<?php
 	}
