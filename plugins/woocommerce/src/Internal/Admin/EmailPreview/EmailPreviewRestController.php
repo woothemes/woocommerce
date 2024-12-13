@@ -72,7 +72,9 @@ class EmailPreviewRestController extends RestApiControllerBase {
 			array(
 				array(
 					'methods'             => \WP_REST_Server::READABLE,
-					'callback'            => fn( $request ) => $this->get_preview_subject( $request ),
+					'callback'            => fn() => array(
+						'subject' => $this->email_preview->get_subject(),
+					),
 					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
 					'args'                => $this->get_args_for_preview_subject(),
 				),
@@ -226,18 +228,6 @@ class EmailPreviewRestController extends RestApiControllerBase {
 			'woocommerce_rest_email_preview_not_sent',
 			__( 'Error sending test email. Please try again.', 'woocommerce' ),
 			array( 'status' => 500 )
-		);
-	}
-
-	/**
-	 * Handle the GET /settings/email/preview-subject.
-	 *
-	 * @param WP_REST_Request $request The received request.
-	 * @return array|WP_Error Request response or an error.
-	 */
-	public function get_preview_subject( WP_REST_Request $request ) {
-		return array(
-			'subject' => $this->email_preview->get_subject(),
 		);
 	}
 
