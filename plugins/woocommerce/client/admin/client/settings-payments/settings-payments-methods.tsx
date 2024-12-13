@@ -16,7 +16,10 @@ import { Button } from '@wordpress/components';
  */
 import './settings-payments-body.scss';
 import './settings-payments-methods.scss';
-import { isWooPayments, getPaymentMethodById } from '~/settings-payments/utils';
+import {
+	getPaymentMethodById,
+	getRecommendedPaymentMethods,
+} from '~/settings-payments/utils';
 import { ListPlaceholder } from './components/list-placeholder';
 import { PaymentMethodListItem } from './components/payment-method-list-item';
 
@@ -72,12 +75,7 @@ export const SettingsPaymentsMethods: React.FC<
 	const { paymentMethods, isFetching } = useSelect( ( select ) => {
 		const paymentProviders =
 			select( PAYMENT_SETTINGS_STORE_NAME ).getPaymentProviders() || [];
-		const wooPaymentsProvider = paymentProviders.find(
-			( provider: PaymentProvider ) => isWooPayments( provider.id )
-		);
-
-		const recommendedPaymentMethods = ( wooPaymentsProvider?.onboarding
-			?.recommended_payment_methods ?? [] ) as RecommendedPaymentMethod[]; // Explicit cast or transformation.
+		const recommendedPaymentMethods = getRecommendedPaymentMethods( paymentProviders );
 
 		return {
 			isFetching: select( PAYMENT_SETTINGS_STORE_NAME ).isFetching(),

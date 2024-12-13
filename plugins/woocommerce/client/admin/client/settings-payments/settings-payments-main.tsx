@@ -28,6 +28,7 @@ import {
 	getWooPaymentsTestDriveAccountLink,
 	isWooPayments,
 	providersContainWooPaymentsInTestMode,
+	getRecommendedPaymentMethods,
 } from '~/settings-payments/utils';
 import { WooPaymentsPostSandboxAccountSetupModal } from '~/settings-payments/components/modals';
 
@@ -171,13 +172,9 @@ export const SettingsPaymentsMain = () => {
 			incentive?._dismissals.includes( incentiveModalContext ) ) ??
 		false;
 
-	const finalProviders = sortedProviders || providers;
-	const wooPaymentsProvider = finalProviders.find(
-		( provider: PaymentProvider ) => isWooPayments( provider.id )
-	);
-
-	const recommendedPaymentMethods = ( wooPaymentsProvider?.onboarding
-		?.recommended_payment_methods ?? [] ) as RecommendedPaymentMethod[];
+	
+	const recommendedPaymentMethods	=
+		getRecommendedPaymentMethods( sortedProviders || providers );
 
 	const setupPlugin = useCallback(
 		( id, slug ) => {
@@ -196,15 +193,8 @@ export const SettingsPaymentsMain = () => {
 						const updatedProviders = await resolveSelect(
 							PAYMENT_SETTINGS_STORE_NAME
 						).getPaymentProviders( storeCountry );
-						const updatedWooPaymentsProvider =
-							updatedProviders.find(
-								( provider: PaymentProvider ) =>
-									isWooPayments( provider.id )
-							);
 						const updatedRecommendedPaymentMethods =
-							( updatedWooPaymentsProvider?.onboarding
-								?.recommended_payment_methods ??
-								[] ) as RecommendedPaymentMethod[];
+							getRecommendedPaymentMethods( updatedProviders );
 
 						if ( updatedRecommendedPaymentMethods.length > 0 ) {
 							const history = getHistory();

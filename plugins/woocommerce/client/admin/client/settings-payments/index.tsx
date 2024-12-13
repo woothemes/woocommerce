@@ -29,6 +29,10 @@ import { getAdminLink } from '@woocommerce/settings';
 import { Header } from './components/header/header';
 import { BackButton } from './components/back-button/back-button';
 import { ListPlaceholder } from '~/settings-payments/components/list-placeholder';
+import {
+	convertToQueryString,
+	getWooPaymentsTestDriveAccountLink,
+} from '~/settings-payments/utils';
 import './settings-payments-main.scss';
 
 const SettingsPaymentsMainChunk = lazy(
@@ -144,7 +148,11 @@ const SettingsPaymentsMethods = () => {
 	const location = useLocation();
 	const [ paymentMethodsState, setPaymentMethodsState ] = useState( {} );
 	const onClick = useCallback( () => {
-		// ToDo: Implement in future PR.
+		// Wrap the object under the 'capabilities' key
+		const wrappedData = { capabilities: paymentMethodsState };
+		const queryString = convertToQueryString( wrappedData );
+		window.location.href =
+			getWooPaymentsTestDriveAccountLink( queryString );
 	}, [ paymentMethodsState ] );
 	
 	useEffect( () => {
