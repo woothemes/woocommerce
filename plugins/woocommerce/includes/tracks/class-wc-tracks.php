@@ -122,16 +122,15 @@ class WC_Tracks {
 	 * @param string $prev_value The previous value for the setting. 'yes' or 'no'.
 	 * @param string $new_value The new value for the setting. 'yes' or 'no'.
 	 * @param string $context Which avenue the user utilized to toggle.
-	 *
 	 */
 	public static function track_woocommerce_allow_tracking_toggled( $prev_value, $new_value, $context = 'settings' ) {
 		if ( $new_value !== $prev_value ) {
-			WC_Tracks::record_event(
+			self::record_event(
 				'woocommerce_allow_tracking_toggled',
 				array(
 					'previous_value' => $prev_value,
 					'new_value'      => $new_value,
-					'context'        => $context
+					'context'        => $context,
 				)
 			);
 		}
