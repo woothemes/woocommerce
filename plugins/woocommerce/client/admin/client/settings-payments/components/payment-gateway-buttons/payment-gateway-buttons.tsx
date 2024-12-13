@@ -24,6 +24,7 @@ export const PaymentGatewayButtons = ( {
 	enabled,
 	needsSetup,
 	testMode,
+	devMode,
 	settingsUrl,
 	onboardUrl,
 	textSettings = __( 'Manage', 'woocommerce' ),
@@ -35,6 +36,7 @@ export const PaymentGatewayButtons = ( {
 	enabled: boolean;
 	needsSetup?: boolean;
 	testMode?: boolean;
+	devMode?: boolean;
 	settingsUrl: string;
 	onboardUrl: string;
 	textSettings?: string;
@@ -135,16 +137,20 @@ export const PaymentGatewayButtons = ( {
 				</Button>
 			) }
 
-			{ isWooPayments( id ) && enabled && ! needsSetup && testMode && (
-				<Button
-					variant="primary"
-					onClick={ activatePayments }
-					isBusy={ isActivatingPayments }
-					disabled={ isActivatingPayments }
-				>
-					{ __( 'Activate payments', 'woocommerce' ) }
-				</Button>
-			) }
+			{ isWooPayments( id ) &&
+				enabled &&
+				! needsSetup &&
+				testMode &&
+				! devMode && (
+					<Button
+						variant="primary"
+						onClick={ activatePayments }
+						isBusy={ isActivatingPayments }
+						disabled={ isActivatingPayments }
+					>
+						{ __( 'Activate payments', 'woocommerce' ) }
+					</Button>
+				) }
 		</div>
 	);
 };

@@ -63,3 +63,15 @@ export const providersContainWooPaymentsInTestMode = (
 		!! wooPayments?.state?.test_mode && ! wooPayments?.state?.needs_setup
 	);
 };
+
+/**
+ * Checks whether providers contain WooPayments gateway in dev mode that is set up.
+ *
+ * @param providers payment providers
+ */
+export const providersContainWooPaymentsInDevMode = (
+	providers: PaymentProvider[]
+): boolean => {
+	const wooPayments = providers.find( ( obj ) => isWooPayments( obj.id ) );
+	return !! wooPayments?.state?.dev_mode;
+};

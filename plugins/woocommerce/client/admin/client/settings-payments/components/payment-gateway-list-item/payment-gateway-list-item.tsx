@@ -114,6 +114,7 @@ export const PaymentGatewayListItem = ( {
 								enabled={ gateway.state.enabled }
 								needsSetup={ gateway.state.needs_setup }
 								testMode={ gateway.state.test_mode }
+								devMode={ gateway.state.dev_mode }
 								settingsUrl={
 									gateway.management._links.settings.href
 								}
