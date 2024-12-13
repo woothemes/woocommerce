@@ -181,7 +181,7 @@ export const SettingsPaymentsMain = () => {
 			installAndActivatePlugins( [ slug ] )
 				.then( ( response ) => {
 					createNoticesFromResponse( response );
-          invalidateResolutionForStoreSelector(
+          			invalidateResolutionForStoreSelector(
 						'getPaymentProviders'
 					);
 					if ( isWooPayments( id ) ) {
@@ -199,18 +199,13 @@ export const SettingsPaymentsMain = () => {
 							);
 						} else {
 							window.location.href =
-								onboardingUrl;
+								onboardingUrl ?? getWooPaymentsTestDriveAccountLink();
 						}
 
 						return;
 					} else {
-						window.location.href = onboardingUrl;
-						return;
-          }
-
-					invalidateResolutionForStoreSelector(
-						'getPaymentProviders'
-					);
+						window.location.href = onboardingUrl ?? getWooPaymentsTestDriveAccountLink();
+         			}
 					setInstallingPlugin( null );
 				} )
 				.catch( ( response: { errors: Record< string, string > } ) => {
