@@ -1005,7 +1005,7 @@ class WC_Install {
 	 * @since 9.3.0
 	 */
 	public static function add_coming_soon_option() {
-		add_option( 'woocommerce_coming_soon', 'no' );
+		add_option( 'woocommerce_coming_soon', 'yes' );
 	}
 
 	/**
