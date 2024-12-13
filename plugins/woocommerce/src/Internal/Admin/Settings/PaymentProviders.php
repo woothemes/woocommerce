@@ -4,9 +4,10 @@ declare( strict_types=1 );
 namespace Automattic\WooCommerce\Internal\Admin\Settings;
 
 use Automattic\WooCommerce\Admin\PluginsHelper;
-use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\PaymentProvider;
+use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\PaymentGateway;
+use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\PayPal;
+use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\WCCore;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\WooPayments;
-use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestions;
 use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestions as ExtensionSuggestions;
 use Exception;
 use WC_Payment_Gateway;
@@ -40,19 +41,23 @@ class PaymentProviders {
 	public const CATEGORY_PSP              = 'psp';
 
 	/**
-	 * The map of suggestion or gateway IDs to their respective Payment Provider classes.
+	 * The map of gateway IDs to their respective provider classes.
 	 *
 	 * @var \class-string[]
 	 */
-	private array $payment_providers_class_map = array(
-		'woocommerce_payments'                   => WooPayments::class,
-		PaymentExtensionSuggestions::WOOPAYMENTS => WooPayments::class,
+	private array $payment_gateways_providers_class_map = array(
+		'bacs'                 => WCCore::class,
+		'cheque'               => WCCore::class,
+		'cod'                  => WCCore::class,
+		'paypal'               => WCCore::class,
+		'woocommerce_payments' => WooPayments::class,
+		'ppcp-gateway'         => PayPal::class,
 	);
 
 	/**
 	 * The instances of the payment providers.
 	 *
-	 * @var PaymentProvider[]
+	 * @var PaymentGateway[]
 	 */
 	private array $instances = array();
 
@@ -159,47 +164,9 @@ class PaymentProviders {
 	 * @return array The payment gateway base details.
 	 */
 	public function get_payment_gateway_base_details( WC_Payment_Gateway $payment_gateway, int $payment_gateway_order, string $country_code = '' ): array {
-		$plugin_slug = $this->get_payment_gateway_plugin_slug( $payment_gateway );
-		$plugin_file = $this->get_payment_gateway_plugin_file( $payment_gateway, $plugin_slug );
+		$provider = $this->get_gateway_provider_instance( $payment_gateway->id );
 
-		return array(
-			'id'          => $payment_gateway->id,
-			'_order'      => $payment_gateway_order,
-			'title'       => $payment_gateway->get_method_title(),       // This is the WC admin title.
-			'description' => $payment_gateway->get_method_description(), // This is the WC admin description.
-			'supports'    => $payment_gateway->supports ?? array(),
-			'state'       => array(
-				'enabled'     => filter_var( $payment_gateway->enabled, FILTER_VALIDATE_BOOLEAN ),
-				'needs_setup' => filter_var( $payment_gateway->needs_setup(), FILTER_VALIDATE_BOOLEAN ),
-				'test_mode'   => $this->is_payment_gateway_in_test_mode( $payment_gateway ),
-				'dev_mode'    => $this->is_payment_gateway_in_dev_mode( $payment_gateway ),
-			),
-			'management'  => array(
-				'_links' => array(
-					'settings' => array(
-						'href' => method_exists( $payment_gateway, 'get_settings_url' )
-							? sanitize_url( $payment_gateway->get_settings_url() )
-							: admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . strtolower( $payment_gateway->id ) ),
-					),
-				),
-			),
-			'onboarding'  => array(
-				'_links'                      => array(
-					'onboard' => array(
-						'href' => method_exists( $payment_gateway, 'get_connection_url' )
-							? $payment_gateway->get_connection_url( admin_url( 'admin.php?page=wc-settings&tab=checkout' ) )
-							: '',
-					),
-				),
-				'recommended_payment_methods' => $this->get_payment_gateway_recommended_payment_methods( $payment_gateway, $country_code ),
-			),
-			'plugin'      => array(
-				'_type'  => 'wporg',
-				'slug'   => $plugin_slug,
-				'file'   => $plugin_file,
-				'status' => self::EXTENSION_ACTIVE,
-			),
-		);
+		return $provider->get_details( $payment_gateway, $payment_gateway_order, $country_code );
 	}
 
 	/**
@@ -210,30 +177,9 @@ class PaymentProviders {
 	 * @return string The plugin slug of the payment gateway.
 	 */
 	public function get_payment_gateway_plugin_slug( WC_Payment_Gateway $payment_gateway ): string {
-		// If the payment gateway object has a `plugin_slug` property, use it.
-		// This is useful for testing.
-		if ( property_exists( $payment_gateway, 'plugin_slug' ) ) {
-			return $payment_gateway->plugin_slug;
-		}
+		$provider = $this->get_gateway_provider_instance( $payment_gateway->id );
 
-		try {
-			$reflector = new \ReflectionClass( get_class( $payment_gateway ) );
-		} catch ( \ReflectionException $e ) {
-			// Bail if we can't get the class details.
-			return '';
-		}
-
-		$gateway_class_filename = $reflector->getFileName();
-		// Determine the gateway's plugin directory from the class path.
-		$gateway_class_path = trim( dirname( plugin_basename( $gateway_class_filename ) ), DIRECTORY_SEPARATOR );
-		if ( false === strpos( $gateway_class_path, DIRECTORY_SEPARATOR ) ) {
-			// The gateway class file is in the root of the plugin's directory.
-			$plugin_slug = $gateway_class_path;
-		} else {
-			$plugin_slug = explode( DIRECTORY_SEPARATOR, $gateway_class_path )[0];
-		}
-
-		return $plugin_slug;
+		return $provider->get_plugin_slug( $payment_gateway );
 	}
 
 	/**
@@ -247,34 +193,9 @@ class PaymentProviders {
 	 * @return string The plugin file corresponding to the payment gateway plugin. Does not include the .php extension.
 	 */
 	public function get_payment_gateway_plugin_file( WC_Payment_Gateway $payment_gateway, string $plugin_slug = '' ): string {
-		// If the payment gateway object has a `plugin_file` property, use it.
-		// This is useful for testing.
-		if ( property_exists( $payment_gateway, 'plugin_file' ) ) {
-			$plugin_file = $payment_gateway->plugin_file;
-			// Remove the .php extension from the file path. The WP API expects it without it.
-			if ( ! empty( $plugin_file ) && str_ends_with( $plugin_file, '.php' ) ) {
-				$plugin_file = substr( $plugin_file, 0, - 4 );
-			}
+		$provider = $this->get_gateway_provider_instance( $payment_gateway->id );
 
-			return $plugin_file;
-		}
-
-		if ( empty( $plugin_slug ) ) {
-			$plugin_slug = $this->get_payment_gateway_plugin_slug( $payment_gateway );
-		}
-
-		// Bail if we couldn't determine the plugin slug.
-		if ( empty( $plugin_slug ) ) {
-			return '';
-		}
-
-		$plugin_file = PluginsHelper::get_plugin_path_from_slug( $plugin_slug );
-		// Remove the .php extension from the file path. The WP API expects it without it.
-		if ( ! empty( $plugin_file ) && str_ends_with( $plugin_file, '.php' ) ) {
-			$plugin_file = substr( $plugin_file, 0, - 4 );
-		}
-
-		return $plugin_file;
+		return $provider->get_plugin_slug( $payment_gateway, $plugin_slug );
 	}
 
 	/**
@@ -788,29 +709,13 @@ class PaymentProviders {
 	 * @return array The enhanced gateway details.
 	 */
 	private function enhance_payment_gateway_details( array $gateway_details, WC_Payment_Gateway $payment_gateway, string $country_code ): array {
+		// We discriminate between offline payment methods and gateways.
 		$gateway_details['_type'] = $this->is_offline_payment_method( $payment_gateway->id ) ? self::TYPE_OFFLINE_PM : self::TYPE_GATEWAY;
 
 		$plugin_slug = $gateway_details['plugin']['slug'];
 		// The payment gateway plugin might use a non-standard directory name.
 		// Try to normalize it to the common slug to avoid false negatives when matching.
 		$normalized_plugin_slug = Utils::normalize_plugin_slug( $plugin_slug );
-
-		// Handle core gateways.
-		if ( 'woocommerce' === $normalized_plugin_slug ) {
-			if ( $this->is_offline_payment_method( $gateway_details['id'] ) ) {
-				switch ( $gateway_details['id'] ) {
-					case 'bacs':
-						$gateway_details['icon'] = plugins_url( 'assets/images/payment_methods/bacs.svg', WC_PLUGIN_FILE );
-						break;
-					case 'cheque':
-						$gateway_details['icon'] = plugins_url( 'assets/images/payment_methods/cheque.svg', WC_PLUGIN_FILE );
-						break;
-					case 'cod':
-						$gateway_details['icon'] = plugins_url( 'assets/images/payment_methods/cod.svg', WC_PLUGIN_FILE );
-						break;
-				}
-			}
-		}
 
 		// If we have a matching suggestion, hoist details from there.
 		// The suggestions only know about the normalized (aka official) plugin slug.
@@ -819,12 +724,10 @@ class PaymentProviders {
 			// Enhance the suggestion details.
 			$suggestion = $this->enhance_extension_suggestion( $suggestion );
 
-			if ( empty( $gateway_details['image'] ) ) {
-				$gateway_details['image'] = $suggestion['image'];
-			}
-			if ( empty( $gateway_details['icon'] ) ) {
-				$gateway_details['icon'] = $suggestion['icon'];
-			}
+			// The icon and image from the suggestion take precedence over the ones from the gateway.
+			$gateway_details['icon']  = $suggestion['icon'];
+			$gateway_details['image'] = $suggestion['image'];
+
 			if ( empty( $gateway_details['links'] ) ) {
 				$gateway_details['links'] = $suggestion['links'];
 			}
@@ -887,194 +790,6 @@ class PaymentProviders {
 		);
 
 		return ! empty( $enabled_gateways );
-	}
-
-	/**
-	 * Try to determine if the payment gateway is in test mode.
-	 *
-	 * This is a best-effort attempt, as there is no standard way to determine this.
-	 * Trust the true value, but don't consider a false value as definitive.
-	 *
-	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
-	 *
-	 * @return bool True if the payment gateway is in test mode, false otherwise.
-	 */
-	private function is_payment_gateway_in_test_mode( WC_Payment_Gateway $payment_gateway ): bool {
-		// If it is WooPayments, we need to check the test mode.
-		if ( 'woocommerce_payments' === $payment_gateway->id &&
-			class_exists( '\WC_Payments' ) &&
-			method_exists( '\WC_Payments', 'mode' ) ) {
-
-			$woopayments_mode = \WC_Payments::mode();
-			if ( method_exists( $woopayments_mode, 'is_test' ) ) {
-				return $woopayments_mode->is_test();
-			}
-		}
-
-		// If it is PayPal, we need to check the sandbox mode.
-		if ( 'ppcp-gateway' === $payment_gateway->id &&
-			class_exists( '\WooCommerce\PayPalCommerce\PPCP' ) &&
-			method_exists( '\WooCommerce\PayPalCommerce\PPCP', 'container' ) ) {
-
-			try {
-				$sandbox_on_option = \WooCommerce\PayPalCommerce\PPCP::container()->get( 'wcgateway.settings' )->get( 'sandbox_on' );
-				$sandbox_on_option = filter_var( $sandbox_on_option, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE );
-				if ( ! is_null( $sandbox_on_option ) ) {
-					return $sandbox_on_option;
-				}
-			} catch ( \Exception $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
-				// Ignore any exceptions.
-			}
-		}
-
-		// Try various gateway methods to check if the payment gateway is in test mode.
-		if ( method_exists( $payment_gateway, 'is_test_mode' ) ) {
-			return filter_var( $payment_gateway->is_test_mode(), FILTER_VALIDATE_BOOLEAN );
-		}
-		if ( method_exists( $payment_gateway, 'is_in_test_mode' ) ) {
-			return filter_var( $payment_gateway->is_in_test_mode(), FILTER_VALIDATE_BOOLEAN );
-		}
-
-		// Try various gateway option entries to check if the payment gateway is in test mode.
-		if ( method_exists( $payment_gateway, 'get_option' ) ) {
-			$test_mode = filter_var( $payment_gateway->get_option( 'test_mode', 'not_found' ), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE );
-			if ( ! is_null( $test_mode ) ) {
-				return $test_mode;
-			}
-
-			$test_mode = filter_var( $payment_gateway->get_option( 'testmode', 'not_found' ), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE );
-			if ( ! is_null( $test_mode ) ) {
-				return $test_mode;
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * Try to determine if the payment gateway is in dev mode.
-	 *
-	 * This is a best-effort attempt, as there is no standard way to determine this.
-	 * Trust the true value, but don't consider a false value as definitive.
-	 *
-	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
-	 *
-	 * @return bool True if the payment gateway is in dev mode, false otherwise.
-	 */
-	private function is_payment_gateway_in_dev_mode( WC_Payment_Gateway $payment_gateway ): bool {
-		// If it is WooPayments, we need to check the dev mode.
-		if ( 'woocommerce_payments' === $payment_gateway->id &&
-			class_exists( '\WC_Payments' ) &&
-			method_exists( '\WC_Payments', 'mode' ) ) {
-
-			$woopayments_mode = \WC_Payments::mode();
-			if ( method_exists( $woopayments_mode, 'is_dev' ) ) {
-				return $woopayments_mode->is_dev();
-			}
-		}
-
-		// Try various gateway methods to check if the payment gateway is in dev mode.
-		if ( method_exists( $payment_gateway, 'is_dev_mode' ) ) {
-			return filter_var( $payment_gateway->is_dev_mode(), FILTER_VALIDATE_BOOLEAN );
-		}
-		if ( method_exists( $payment_gateway, 'is_in_dev_mode' ) ) {
-			return filter_var( $payment_gateway->is_in_dev_mode(), FILTER_VALIDATE_BOOLEAN );
-		}
-
-		return false;
-	}
-
-	/**
-	 * Try and determine a list of recommended payment methods for a payment gateway.
-	 *
-	 * This data is not always available, and it is up to the payment gateway to provide it.
-	 * This is not a definitive list of payment methods that the gateway supports.
-	 * The data is aimed at helping the user understand what payment methods are recommended for the gateway
-	 * and potentially help them make a decision on which payment methods to enable.
-	 *
-	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
-	 * @param string             $country_code    Optional. The country code for which to get recommended payment methods.
-	 *                                            This should be a ISO 3166-1 alpha-2 country code.
-	 *
-	 * @return array The recommended payment methods list for the payment gateway.
-	 *               Empty array if there are none.
-	 */
-	private function get_payment_gateway_recommended_payment_methods( WC_Payment_Gateway $payment_gateway, string $country_code = '' ): array {
-		// Bail if the payment gateway does not implement the method.
-		if ( ! method_exists( $payment_gateway, 'get_recommended_payment_methods' ) ) {
-			return array();
-		}
-
-		// Get the "raw" recommended payment methods from the payment gateway.
-		$recommended_pms = call_user_func_array(
-			array( $payment_gateway, 'get_recommended_payment_methods' ),
-			array( 'country_code' => $country_code ),
-		);
-
-		// Validate the received list items.
-		// We require at least `id` and `title`.
-		$recommended_pms = array_filter(
-			$recommended_pms,
-			function ( $recommended_pm ) {
-				return is_array( $recommended_pm ) &&
-						! empty( $recommended_pm['id'] ) &&
-						! empty( $recommended_pm['title'] );
-			}
-		);
-
-		// Sort the recommended payment methods by order/priority, if available.
-		usort(
-			$recommended_pms,
-			function ( $a, $b ) {
-				// `order` takes precedence over `priority`.
-				// Entries that don't have the order/priority are placed at the end.
-				return array( ( $a['order'] ?? PHP_INT_MAX ), ( $a['priority'] ?? PHP_INT_MAX ) ) <=> array( ( $b['order'] ?? PHP_INT_MAX ), ( $b['priority'] ?? PHP_INT_MAX ) );
-			}
-		);
-		$recommended_pms = array_values( $recommended_pms );
-
-		// Extract, standardize, and sanitize the details for each recommended payment method.
-		$standardized_pms = array();
-		foreach ( $recommended_pms as $index => $recommended_pm ) {
-			$standard_details = array(
-				'id'          => sanitize_key( $recommended_pm['id'] ),
-				'_order'      => $index, // Normalize the order to the zero-based index.
-				'enabled'     => (bool) $recommended_pm['enabled'] ?? true, // Default to enabled if not explicit.
-				'title'       => sanitize_text_field( $recommended_pm['title'] ),
-				'description' => '',
-				'icon'        => '',
-			);
-
-			// If the payment method has a description, sanitize it before use.
-			if ( ! empty( $recommended_pm['description'] ) ) {
-				$standard_details['description'] = $recommended_pm['description'];
-				// Make sure that if we have HTML tags, we only allow stylistic tags and anchors.
-				if ( preg_match( '/<[^>]+>/', $standard_details['description'] ) ) {
-					// Only allow stylistic tags with a few modifications.
-					$allowed_tags = wp_kses_allowed_html( 'data' );
-					$allowed_tags = array_merge(
-						$allowed_tags,
-						array(
-							'a' => array(
-								'href'   => true,
-								'target' => true,
-							),
-						)
-					);
-
-					$standard_details['description'] = wp_kses( $standard_details['description'], $allowed_tags );
-				}
-			}
-
-			// If the payment method has an icon, try to use it.
-			if ( ! empty( $recommended_pm['icon'] ) && wc_is_valid_url( $recommended_pm['icon'] ) ) {
-				$standard_details['icon'] = sanitize_url( $recommended_pm['icon'] );
-			}
-
-			$standardized_pms[] = $standard_details;
-		}
-
-		return $standardized_pms;
 	}
 
 	/**
@@ -1206,31 +921,35 @@ class PaymentProviders {
 	}
 
 	/**
-	 * Get the payment provider instance.
+	 * Get the payment gateway provider instance.
 	 *
-	 * @param string $id The suggestion or gateway ID.
+	 * @param string $gateway_id The gateway ID.
 	 *
-	 * @return PaymentProvider The payment provider instance.
-	 *                         Will return the general provider of no specific provider is found.
+	 * @return PaymentGateway The payment gateway provider instance.
+	 *                        Will return the general provider of no specific provider is found.
 	 */
-	private function get_provider_instance( string $id ): PaymentProvider {
-		if ( isset( $this->instances[ $id ] ) ) {
-			return $this->instances[ $id ];
+	private function get_gateway_provider_instance( string $gateway_id ): PaymentGateway {
+		if ( isset( $this->instances[ $gateway_id ] ) ) {
+			return $this->instances[ $gateway_id ];
 		}
 
 		// If the ID is not mapped to a provider class, return the generic provider.
-		if ( ! isset( $this->payment_providers_class_map[ $id ] ) ) {
+		if ( ! isset( $this->payment_gateways_providers_class_map[ $gateway_id ] ) ) {
 			if ( ! isset( $this->instances['generic'] ) ) {
-				$this->instances['generic'] = PaymentProvider::get_instance();
+				$this->instances['generic'] = new PaymentGateway();
 			}
 
 			return $this->instances['generic'];
 		}
 
-		// Create an instance of the provider class.
-		$provider_class         = $this->payment_providers_class_map[ $id ];
-		$this->instances[ $id ] = $provider_class::get_instance();
+		/**
+		 * The provider class for the gateway.
+		 *
+		 * @var PaymentGateway $provider_class
+		 */
+		$provider_class                 = $this->payment_gateways_providers_class_map[ $gateway_id ];
+		$this->instances[ $gateway_id ] = new $provider_class();
 
-		return $this->instances[ $id ];
+		return $this->instances[ $gateway_id ];
 	}
 }

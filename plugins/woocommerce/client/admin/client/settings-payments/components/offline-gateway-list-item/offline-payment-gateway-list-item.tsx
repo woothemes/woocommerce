@@ -49,13 +49,16 @@ export const OfflinePaymentGatewayListItem = ( {
 				<div className="woocommerce-list__item-after">
 					<div className="woocommerce-list__item-after__actions">
 						<PaymentGatewayButtons
-							gateway={ gateway }
+							id={ gateway.id }
 							isOffline={ true }
 							enabled={ gateway.state.enabled }
 							settingsUrl={
 								gateway.management._links.settings.href
 							}
 							acceptIncentive={ () => {} }
+							onboardUrl={
+								gateway.onboarding._links.onboard.href
+							}
 						/>
 					</div>
 				</div>

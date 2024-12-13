@@ -111,7 +111,7 @@ export const PaymentGatewayListItem = ( {
 					<div className="woocommerce-list__item-after__actions">
 						<>
 							<PaymentGatewayButtons
-								gateway={ gateway }
+								id={ gateway.id }
 								isOffline={ false }
 								enabled={ gateway.state.enabled }
 								needsSetup={ gateway.state.needs_setup }
@@ -120,6 +120,9 @@ export const PaymentGatewayListItem = ( {
 									gateway.management._links.settings.href
 								}
 								acceptIncentive={ acceptIncentive }
+								onboardUrl={
+									gateway.onboarding._links.onboard.href
+								}
 							/>
 							<EllipsisMenu
 								label={ __(

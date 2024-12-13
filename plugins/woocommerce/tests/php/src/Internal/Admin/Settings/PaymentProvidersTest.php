@@ -114,6 +114,7 @@ class PaymentProvidersTest extends WC_REST_Unit_Test_Case {
 						'id'          => 'card',
 						'order'       => 20,
 						'enabled'     => true,
+						'required'    => true,
 						'title'       => '<b>Credit/debit card (required)</b>', // All tags should be stripped.
 						// Paragraphs and line breaks should be stripped.
 						'description' => '<p><strong>Accepts</strong> <b>all major</b></br><em>credit</em> and <a href="#" target="_blank">debit cards</a>.</p>',
@@ -178,6 +179,7 @@ class PaymentProvidersTest extends WC_REST_Unit_Test_Case {
 					'id'          => 'woopay',
 					'_order'      => 0,
 					'enabled'     => false,
+					'required'    => false,
 					'title'       => 'WooPay',
 					'description' => 'WooPay express checkout',
 					'icon'        => '', // The icon with an invalid URL is ignored.
@@ -186,6 +188,7 @@ class PaymentProvidersTest extends WC_REST_Unit_Test_Case {
 					'id'          => 'card',
 					'_order'      => 1,
 					'enabled'     => true,
+					'required'    => true,
 					'title'       => 'Credit/debit card (required)',
 					'description' => '<strong>Accepts</strong> <b>all major</b><em>credit</em> and <a href="#" target="_blank">debit cards</a>.',
 					'icon'        => 'https://example.com/card-icon.png',
@@ -194,6 +197,7 @@ class PaymentProvidersTest extends WC_REST_Unit_Test_Case {
 					'id'          => 'basic2',
 					'_order'      => 2,
 					'enabled'     => false,
+					'required'    => false,
 					'title'       => 'Title',
 					'description' => '',
 					'icon'        => '',
@@ -202,6 +206,7 @@ class PaymentProvidersTest extends WC_REST_Unit_Test_Case {
 					'id'          => 'basic',
 					'_order'      => 3,
 					'enabled'     => true,
+					'required'    => false,
 					'title'       => 'Title',
 					'description' => '',
 					'icon'        => '',
