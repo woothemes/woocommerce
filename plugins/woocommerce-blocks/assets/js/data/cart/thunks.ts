@@ -21,7 +21,7 @@ import {
  * Internal dependencies
  */
 import { notifyQuantityChanges } from './notify-quantity-changes';
-import { notifyCartErrors } from './notify-errors';
+import { updateCartErrorNotices } from './notify-errors';
 import { CartDispatchFromMap, CartSelectFromMap } from './index';
 import { apiFetchWithHeaders } from '../shared-controls';
 import { getIsCustomerDataDirty, setIsCustomerDataDirty } from './utils';
@@ -41,7 +41,9 @@ export const receiveCart =
 	} ) => {
 		const newCart = camelCaseKeys( response ) as unknown as Cart;
 		const oldCart = select.getCartData();
-		notifyCartErrors( newCart.errors, oldCart.errors );
+		const oldCartErrors = [ ...oldCart.errors, ...select.getCartErrors() ];
+
+		updateCartErrorNotices( newCart.errors, oldCartErrors );
 		notifyQuantityChanges( {
 			oldCart,
 			newCart,
@@ -80,6 +82,7 @@ export const receiveError =
 		if ( response.data?.cart ) {
 			dispatch.receiveCart( response?.data?.cart );
 		}
+
 		dispatch.setErrorData( response );
 	};
 

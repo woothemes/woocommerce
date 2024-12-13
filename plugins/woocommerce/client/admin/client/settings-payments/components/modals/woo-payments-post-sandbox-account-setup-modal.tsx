@@ -18,11 +18,13 @@ import { WC_ASSET_URL } from '~/utils/admin-settings';
 
 interface WooPaymentsReadyToTestModalProps {
 	isOpen: boolean;
+	devMode: boolean;
 	onClose: () => void;
 }
 
 export const WooPaymentsPostSandboxAccountSetupModal = ( {
 	isOpen,
+	devMode,
 	onClose,
 }: WooPaymentsReadyToTestModalProps ) => {
 	const [ isActivatingPayments, setIsActivatingPayments ] = useState( false );
@@ -98,37 +100,44 @@ export const WooPaymentsPostSandboxAccountSetupModal = ( {
 								</div>
 							</div>
 						</div>
-						<div className="woocommerce-woopayments-modal__content__item-flex">
-							<img
-								src={ WC_ASSET_URL + 'images/icons/dollar.svg' }
-								alt="dollar icon"
-							/>
-							<div className="woocommerce-woopayments-modal__content__item-flex__description">
-								<h3>
-									{ __( 'Activate payments', 'woocommerce' ) }
-								</h3>
-								<div>
-									<p>
-										{ interpolateComponents( {
-											mixedString: __(
-												'Provide some additional details about your business so you can being accepting real payments. {{link}}Learn more{{/link}}',
-												'woocommerce'
-											),
-											components: {
-												link: (
-													<Link
-														href="https://woocommerce.com/document/woopayments/startup-guide/#sign-up-process"
-														target="_blank"
-														rel="noreferrer"
-														type="external"
-													/>
+						{ ! devMode && (
+							<div className="woocommerce-woopayments-modal__content__item-flex">
+								<img
+									src={
+										WC_ASSET_URL + 'images/icons/dollar.svg'
+									}
+									alt="dollar icon"
+								/>
+								<div className="woocommerce-woopayments-modal__content__item-flex__description">
+									<h3>
+										{ __(
+											'Activate payments',
+											'woocommerce'
+										) }
+									</h3>
+									<div>
+										<p>
+											{ interpolateComponents( {
+												mixedString: __(
+													'Provide some additional details about your business so you can being accepting real payments. {{link}}Learn more{{/link}}',
+													'woocommerce'
 												),
-											},
-										} ) }
-									</p>
+												components: {
+													link: (
+														<Link
+															href="https://woocommerce.com/document/woopayments/startup-guide/#sign-up-process"
+															target="_blank"
+															rel="noreferrer"
+															type="external"
+														/>
+													),
+												},
+											} ) }
+										</p>
+									</div>
 								</div>
 							</div>
-						</div>
+						) }
 					</div>
 					<div className="woocommerce-woopayments-modal__actions">
 						<Button
@@ -139,14 +148,16 @@ export const WooPaymentsPostSandboxAccountSetupModal = ( {
 						>
 							{ __( 'Continue store setup', 'woocommerce' ) }
 						</Button>
-						<Button
-							variant="secondary"
-							isBusy={ isActivatingPayments }
-							disabled={ isActivatingPayments }
-							onClick={ handleActivatePayments }
-						>
-							{ __( 'Activate payments', 'woocommerce' ) }
-						</Button>
+						{ ! devMode && (
+							<Button
+								variant="secondary"
+								isBusy={ isActivatingPayments }
+								disabled={ isActivatingPayments }
+								onClick={ handleActivatePayments }
+							>
+								{ __( 'Activate payments', 'woocommerce' ) }
+							</Button>
+						) }
 					</div>
 				</Modal>
 			) }

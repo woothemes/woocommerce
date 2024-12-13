@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { apiFetch } from '@wordpress/data-controls';
+import apiFetch from '@wordpress/api-fetch';
 import {
 	PaymentProvider,
 	PAYMENT_SETTINGS_STORE_NAME,
@@ -70,16 +70,17 @@ export const PaymentGateways = ( {
 						}
 						options={ countryOptions }
 						onChange={ ( value: string ) => {
-							setBusinessRegistrationCountry( value );
-							invalidateResolution( 'getPaymentProviders', [
-								value,
-							] );
 							apiFetch( {
 								path:
 									WC_ADMIN_NAMESPACE +
 									'/settings/payments/country',
 								method: 'POST',
 								data: { location: value },
+							} ).then( () => {
+								setBusinessRegistrationCountry( value );
+								invalidateResolution( 'getPaymentProviders', [
+									value,
+								] );
 							} );
 						} }
 					/>

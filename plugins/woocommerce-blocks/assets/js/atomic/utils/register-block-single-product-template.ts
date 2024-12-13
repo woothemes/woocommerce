@@ -50,81 +50,91 @@ export const registerBlockSingleProductTemplate = ( {
 
 	const editSiteStore = select( 'core/edit-site' );
 
-	subscribe( () => {
-		const previousTemplateId = currentTemplateId;
+	if ( editSiteStore ) {
+		subscribe( () => {
+			const previousTemplateId = currentTemplateId;
 
-		// With GB 16.3.0 the return type can be a number: https://github.com/WordPress/gutenberg/issues/53230
-		currentTemplateId = parseTemplateId(
-			editSiteStore?.getEditedPostId< string | number | undefined >()
-		);
-		const hasChangedTemplate = previousTemplateId !== currentTemplateId;
+			// With GB 16.3.0 the return type can be a number: https://github.com/WordPress/gutenberg/issues/53230
+			currentTemplateId = parseTemplateId(
+				editSiteStore?.getEditedPostId< string | number | undefined >()
+			);
+			const hasChangedTemplate = previousTemplateId !== currentTemplateId;
 
-		if ( ! hasChangedTemplate || ! blockName ) {
-			return;
-		}
-
-		let isRegistered = isBlockRegistered( blockName );
-
-		/**
-		 * We need to unregister the block each time the user visits or leaves the Single Product template.
-		 *
-		 * The Single Product template is the only template where the `ancestor` property is not needed because it provides the context
-		 * for the product blocks. We need to unregister and re-register the block to remove or add the `ancestor` property depending on which
-		 * location (template, post, page, etc.) the user is in.
-		 *
-		 */
-		if (
-			isRegistered &&
-			( currentTemplateId?.includes( 'single-product' ) ||
-				previousTemplateId?.includes( 'single-product' ) )
-		) {
-			if ( isVariationBlock && variationName ) {
-				unregisterBlockVariation( blockName, variationName );
-			} else {
-				unregisterBlockType( blockName );
+			if ( ! hasChangedTemplate || ! blockName ) {
+				return;
 			}
-			isRegistered = false;
-		}
 
-		if ( ! isRegistered ) {
-			if ( isVariationBlock ) {
-				// @ts-expect-error: `registerBlockType` is not typed in WordPress core
-				registerBlockVariation( blockName, blockSettings );
-			} else {
-				const ancestor = isEmpty( blockSettings?.ancestor )
-					? [ 'woocommerce/single-product' ]
-					: blockSettings?.ancestor;
-				// @ts-expect-error: `registerBlockType` is not typed in WordPress core
-				registerBlockType( blockMetadata, {
-					...blockSettings,
-					ancestor: ! currentTemplateId?.includes( 'single-product' )
-						? ancestor
-						: undefined,
-				} );
-			}
-		}
-	}, 'core/edit-site' );
+			let isRegistered = isBlockRegistered( blockName );
 
-	subscribe( () => {
-		const isRegistered = Boolean( variationName )
-			? blockRegistrationAttempts.has( variationName )
-			: blockRegistrationAttempts.has( blockName ) ||
-			  isBlockRegistered( blockName );
-		// This subscribe callback could be invoked with the core/blocks store
-		// which would cause infinite registration loops because of the `registerBlockType` call.
-		// This local cache helps prevent that.
-		if ( ! isRegistered && isAvailableOnPostEditor && ! editSiteStore ) {
-			if ( isVariationBlock ) {
-				blockRegistrationAttempts.add( variationName );
-				registerBlockVariation(
-					blockName,
-					blockSettings as BlockVariation< BlockAttributes >
-				);
-			} else {
-				blockRegistrationAttempts.add( blockName );
-				// @ts-expect-error: `registerBlockType` is typed in WordPress core
-				registerBlockType( blockMetadata, blockSettings );
+			/**
+			 * We need to unregister the block each time the user visits or leaves the Single Product template.
+			 *
+			 * The Single Product template is the only template where the `ancestor` property is not needed because it provides the context
+			 * for the product blocks. We need to unregister and re-register the block to remove or add the `ancestor` property depending on which
+			 * location (template, post, page, etc.) the user is in.
+			 *
+			 */
+			if (
+				isRegistered &&
+				( currentTemplateId?.includes( 'single-product' ) ||
+					previousTemplateId?.includes( 'single-product' ) )
+			) {
+				if ( isVariationBlock && variationName ) {
+					unregisterBlockVariation( blockName, variationName );
+				} else {
+					unregisterBlockType( blockName );
+				}
+				isRegistered = false;
 			}
-		}
-	}, 'core/edit-post' );
+
+			if ( ! isRegistered ) {
+				if ( isVariationBlock ) {
+					// @ts-expect-error: `registerBlockType` is not typed in WordPress core
+					registerBlockVariation( blockName, blockSettings );
+				} else {
+					const ancestor = isEmpty( blockSettings?.ancestor )
+						? [ 'woocommerce/single-product' ]
+						: blockSettings?.ancestor;
+					// @ts-expect-error: `registerBlockType` is not typed in WordPress core
+					registerBlockType( blockMetadata, {
+						...blockSettings,
+						ancestor: ! currentTemplateId?.includes(
+							'single-product'
+						)
+							? ancestor
+							: undefined,
+					} );
+				}
+			}
+		}, 'core/edit-site' );
+	}
+
+	if ( isAvailableOnPostEditor ) {
+		subscribe( () => {
+			const isRegistered = Boolean( variationName )
+				? blockRegistrationAttempts.has( variationName )
+				: blockRegistrationAttempts.has( blockName ) ||
+				  isBlockRegistered( blockName );
+			// This subscribe callback could be invoked with the core/blocks store
+			// which would cause infinite registration loops because of the `registerBlockType` call.
+			// This local cache helps prevent that.
+			if (
+				! isRegistered &&
+				isAvailableOnPostEditor &&
+				! editSiteStore
+			) {
+				if ( isVariationBlock ) {
+					blockRegistrationAttempts.add( variationName );
+					registerBlockVariation(
+						blockName,
+						blockSettings as BlockVariation< BlockAttributes >
+					);
+				} else {
+					blockRegistrationAttempts.add( blockName );
+					// @ts-expect-error: `registerBlockType` is typed in WordPress core
+					registerBlockType( blockMetadata, blockSettings );
+				}
+			}
+		}, 'core/edit-post' );
+	}
 };
