@@ -3,6 +3,7 @@
  */
 import { createElement } from '@wordpress/element';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
+import { SlotFillProvider } from '@wordpress/components';
 import {
 	UnsavedChangesWarning,
 	// @ts-expect-error No types for this exist yet.

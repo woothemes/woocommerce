@@ -41,7 +41,7 @@ import {
 	useDefaultViews,
 	defaultLayouts,
 } from '../sidebar-dataviews/default-views';
-import { LAYOUT_LIST } from '../constants';
+import { LAYOUT_TABLE } from '../constants';
 import { productFields } from './fields';
 import { useEditProductAction } from '../dataviews-actions';
 import { useNewNavigation } from '../utilites/new-navigation';
@@ -87,7 +87,7 @@ function useView(
 	const defaultViews = useDefaultViews( { postType } );
 	const [ view, setView ] = useState< View >( () => {
 		const initialView = getDefaultView( defaultViews, activeView ) ?? {
-			type: layout ?? LAYOUT_LIST,
+			type: layout ?? LAYOUT_TABLE,
 		};
 
 		const type = layout ?? initialView.type;
@@ -101,7 +101,7 @@ function useView(
 		( newView: View ) => {
 			const { params } = history.getLocationWithParams();
 
-			if ( newView.type === LAYOUT_LIST && ! params?.layout ) {
+			if ( newView.type === LAYOUT_TABLE && ! params?.layout ) {
 				// Skip updating the layout URL param if
 				// it is not present and the newView.type is LAYOUT_LIST.
 			} else if ( newView.type !== params?.layout ) {
@@ -121,7 +121,7 @@ function useView(
 	useEffect( () => {
 		setView( ( prevView ) => ( {
 			...prevView,
-			type: layout ?? LAYOUT_LIST,
+			type: layout ?? LAYOUT_TABLE,
 		} ) );
 	}, [ layout ] );
 
