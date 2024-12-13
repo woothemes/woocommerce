@@ -17,6 +17,13 @@ class ProductGallery extends AbstractBlock {
 	protected $block_name = 'product-gallery';
 
 	/**
+	 * "Main" block instance. Used to preserve the context for dialog rendering.
+	 *
+	 * @var WP_Block
+	 */
+	protected $block_instance;
+
+	/**
 	 *  Register the context
 	 *
 	 * @return string[]
@@ -53,6 +60,18 @@ class ProductGallery extends AbstractBlock {
 	 */
 	protected function render_dialog() {
 		$template_part = BlockTemplateUtils::get_template_part( 'product-gallery' );
+		$is_single_product = $this->block_instance->context['singleProduct'] ?? false;
+		$post_id           = $this->block_instance->context['postId'] ?? null;
+		$original_post     = null;
+
+		// Temporarily override the global post to ensure the product gallery
+		// dialog gets the same context when in single product block.
+		if ( $is_single_product && $post_id) {
+			$original_post = $GLOBALS['post'] ?? null;
+			$GLOBALS['post'] = get_post( $post_id);
+			setup_postdata( $GLOBALS['post'] );
+		}
+
 
 		$parsed_template = parse_blocks(
 			$template_part
@@ -65,6 +84,11 @@ class ProductGallery extends AbstractBlock {
 			},
 			''
 		);
+
+		if ( $post_id && $original_post ) {
+			$GLOBALS['post'] = $original_post;
+			setup_postdata( $original_post );
+		}
 
 		$html_processor = new \WP_HTML_Tag_Processor( $html );
 
@@ -111,8 +135,9 @@ class ProductGallery extends AbstractBlock {
 	 * @return string Rendered block type output.
 	 */
 	protected function render( $attributes, $content, $block ) {
-		$post_id = $block->context['postId'] ?? '';
-		$product = wc_get_product( $post_id );
+		$this->block_instance = $block;
+		$post_id              = $block->context['postId'] ?? '';
+		$product              = wc_get_product( $post_id );
 
 		if ( ! $product instanceof \WC_Product ) {
 			return '';
