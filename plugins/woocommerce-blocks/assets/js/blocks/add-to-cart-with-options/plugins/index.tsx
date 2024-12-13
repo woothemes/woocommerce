@@ -33,7 +33,7 @@ function ProductTypeSwitcher() {
 	);
 }
 
-export default function PluginDocumentSettingTemplateSelectorPanel() {
+export default function ProductTypeSelectorPlugin() {
 	const { slug, type } = useSelect(
 		( select ) => select( 'core/editor' ).getCurrentPost(),
 		[]

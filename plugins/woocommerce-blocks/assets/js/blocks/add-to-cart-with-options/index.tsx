@@ -13,7 +13,7 @@ import { isBoolean } from '@woocommerce/types';
  * Internal dependencies
  */
 import registerStore, { store as woocommerceTemplateStateStore } from './store';
-import PluginDocumentSettingTemplateSelectorPanel from './plugins';
+import ProductTypeSelectorPlugin from './plugins';
 import getProductTypeOptions from './utils/get-product-types';
 import metadata from './block.json';
 import AddToCartOptionsEdit from './edit';
@@ -46,7 +46,7 @@ if ( shouldRegisterBlock ) {
 	const PLUGIN_NAME = 'document-settings-template-selector-pane';
 	if ( ! getPlugin( PLUGIN_NAME ) ) {
 		registerPlugin( PLUGIN_NAME, {
-			render: PluginDocumentSettingTemplateSelectorPanel,
+			render: ProductTypeSelectorPlugin,
 		} );
 	}
 
