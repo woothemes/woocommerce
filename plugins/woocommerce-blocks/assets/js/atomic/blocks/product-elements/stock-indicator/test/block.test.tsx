@@ -4,6 +4,7 @@
 import { render } from '@testing-library/react';
 import { ProductDataContextProvider } from '@woocommerce/shared-context';
 import { ProductResponseItem } from '@woocommerce/types';
+import { getSetting } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
@@ -155,6 +156,14 @@ const defaultProduct: ProductResponseItem = {
 };
 
 describe( 'Stock Indicator Block', () => {
+	beforeEach( () => {
+		( getSetting as jest.Mock ).mockImplementation( ( setting ) => {
+			if ( setting === 'productTypesWithoutStockIndicator' ) {
+				return [ 'external', 'grouped', 'variable' ];
+			}
+			return undefined;
+		} );
+	} );
 	it( 'should not show stock indicator when stock_availability is empty', () => {
 		const product = {
 			...defaultProduct,
@@ -166,6 +175,7 @@ describe( 'Stock Indicator Block', () => {
 					productId={ 1 }
 					isDescendentOfQueryLoop={ false }
 					isDescendantOfAllProducts={ false }
+					isDescendentOfSingleProductTemplate={ false }
 				/>
 			</ProductDataContextProvider>
 		);
@@ -189,14 +199,13 @@ describe( 'Stock Indicator Block', () => {
 					productId={ 1 }
 					isDescendentOfQueryLoop={ false }
 					isDescendantOfAllProducts={ false }
+					isDescendentOfSingleProductTemplate={ false }
 				/>
 			</ProductDataContextProvider>
 		);
 
 		expect( container.firstChild ).not.toBeNull();
-		expect( container.firstChild ).toHaveClass(
-			'wc-block-components-product-stock-indicator--out-of-stock'
-		);
+		expect( container.firstChild ).toHaveTextContent( 'Out of stock' );
 	} );
 
 	it( 'should show stock indicator for in stock products', () => {
@@ -214,13 +223,33 @@ describe( 'Stock Indicator Block', () => {
 					productId={ 1 }
 					isDescendentOfQueryLoop={ false }
 					isDescendantOfAllProducts={ false }
+					isDescendentOfSingleProductTemplate={ false }
 				/>
 			</ProductDataContextProvider>
 		);
 
 		expect( container.firstChild ).not.toBeNull();
-		expect( container.firstChild ).toHaveClass(
-			'wc-block-components-product-stock-indicator--in-stock'
+		expect( container.firstChild ).toHaveTextContent( 'In stock' );
+	} );
+
+	it( 'should show stock indicator when is descendent of single product template', () => {
+		const product = {
+			...defaultProduct,
+			type: 'simple',
+		};
+
+		const { container } = render(
+			<ProductDataContextProvider product={ product } isLoading={ false }>
+				<Block
+					productId={ 1 }
+					isDescendentOfQueryLoop={ false }
+					isDescendantOfAllProducts={ false }
+					isDescendentOfSingleProductTemplate={ true }
+				/>
+			</ProductDataContextProvider>
 		);
+
+		expect( container.firstChild ).not.toBeNull();
+		expect( container.firstChild ).toHaveTextContent( 'In stock' );
 	} );
 } );
