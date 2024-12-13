@@ -101,9 +101,10 @@ class EmailPreviewRestController extends RestApiControllerBase {
 	private function get_args_for_send_preview() {
 		return array(
 			'type'  => array(
-				'description' => __( 'The email type to preview.', 'woocommerce' ),
-				'type'        => 'string',
-				'required'    => true,
+				'description'       => __( 'The email type to preview.', 'woocommerce' ),
+				'type'              => 'string',
+				'required'          => true,
+				'validate_callback' => fn( $key ) => $this->validate_email_type( $key ),
 			),
 			'email' => array(
 				'description'       => __( 'Email address to send the email preview to.', 'woocommerce' ),
@@ -123,9 +124,10 @@ class EmailPreviewRestController extends RestApiControllerBase {
 	private function get_args_for_preview_subject() {
 		return array(
 			'type' => array(
-				'description' => __( 'The email type to get subject for.', 'woocommerce' ),
-				'type'        => 'string',
-				'required'    => true,
+				'description'       => __( 'The email type to get subject for.', 'woocommerce' ),
+				'type'              => 'string',
+				'required'          => true,
+				'validate_callback' => fn( $key ) => $this->validate_email_type( $key ),
 			),
 		);
 	}
@@ -173,6 +175,25 @@ class EmailPreviewRestController extends RestApiControllerBase {
 	}
 
 	/**
+	 * Validate the email type.
+	 *
+	 * @param string $email_type The email type to validate.
+	 * @return bool|WP_Error True if the email type is valid, otherwise a WP_Error object.
+	 */
+	private function validate_email_type( string $email_type ) {
+		try {
+			$this->email_preview->set_email_type( $email_type );
+		} catch ( \InvalidArgumentException $e ) {
+			return new WP_Error(
+				'woocommerce_rest_invalid_email_type',
+				__( 'Invalid email type.', 'woocommerce' ),
+				array( 'status' => 400 ),
+			);
+		}
+		return true;
+	}
+
+	/**
 	 * Permission check for REST API endpoint.
 	 *
 	 * @param WP_REST_Request $request The request for which the permission is checked.
@@ -189,17 +210,6 @@ class EmailPreviewRestController extends RestApiControllerBase {
 	 * @return array|WP_Error Request response or an error.
 	 */
 	public function send_email_preview( WP_REST_Request $request ) {
-		$email_type = $request->get_param( 'type' );
-		try {
-			$this->email_preview->set_email_type( $email_type );
-		} catch ( \InvalidArgumentException $e ) {
-			return new WP_Error(
-				'woocommerce_rest_invalid_email_type',
-				__( 'Invalid email type.', 'woocommerce' ),
-				array( 'status' => 400 ),
-			);
-		}
-
 		$email_address = $request->get_param( 'email' );
 		$email_content = $this->email_preview->render();
 		$email_subject = $this->email_preview->get_subject();
@@ -226,17 +236,6 @@ class EmailPreviewRestController extends RestApiControllerBase {
 	 * @return array|WP_Error Request response or an error.
 	 */
 	public function get_preview_subject( WP_REST_Request $request ) {
-		$email_type = $request->get_param( 'type' );
-		try {
-			$this->email_preview->set_email_type( $email_type );
-		} catch ( \InvalidArgumentException $e ) {
-			return new WP_Error(
-				'woocommerce_rest_invalid_email_type',
-				__( 'Invalid email type.', 'woocommerce' ),
-				array( 'status' => 400 ),
-			);
-		}
-
 		return array(
 			'subject' => $this->email_preview->get_subject(),
 		);

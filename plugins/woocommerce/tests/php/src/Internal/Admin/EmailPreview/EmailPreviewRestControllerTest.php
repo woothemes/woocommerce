@@ -95,7 +95,7 @@ class EmailPreviewRestControllerTest extends WC_REST_Unit_Test_Case {
 		$request  = $this->get_email_preview_request( 'non-existent-type', self::EMAIL );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 400, $response->get_status() );
-		$this->assertEquals( 'Invalid email type.', $response->get_data()['message'] );
+		$this->assertEquals( 'Invalid parameter(s): type', $response->get_data()['message'] );
 
 		$request  = $this->get_email_preview_request( EmailPreview::DEFAULT_EMAIL_TYPE, 'invalid-email' );
 		$response = $this->server->dispatch( $request );
@@ -194,7 +194,7 @@ class EmailPreviewRestControllerTest extends WC_REST_Unit_Test_Case {
 		$request  = $this->get_preview_subject_request( 'non-existent-type' );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 400, $response->get_status() );
-		$this->assertEquals( 'Invalid email type.', $response->get_data()['message'] );
+		$this->assertEquals( 'Invalid parameter(s): type', $response->get_data()['message'] );
 	}
 
 	/**
