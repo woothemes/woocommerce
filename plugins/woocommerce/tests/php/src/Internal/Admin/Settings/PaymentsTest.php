@@ -54,7 +54,6 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 									->onlyMethods(
 										array(
 											'get_payment_gateways',
-											'get_payment_gateway_base_details',
 											'get_extension_suggestions',
 											'get_extension_suggestion_categories',
 											'hide_extension_suggestion',
@@ -120,15 +119,6 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 			->expects( $this->atLeastOnce() )
 			->method( 'get_payment_gateways' )
 			->willReturn( $gateways );
-
-		$this->mock_providers
-			->expects( $this->atLeast( count( $gateways ) ) )
-			->method( 'get_payment_gateway_base_details' )
-			->willReturnCallback(
-				function ( $payment_gateway, $payment_gateway_order ) {
-					return $this->extract_payment_gateway_base_details( $payment_gateway, $payment_gateway_order );
-				}
-			);
 
 		$this->mock_providers
 			->expects( $this->any() )
@@ -255,15 +245,6 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 			->expects( $this->atLeastOnce() )
 			->method( 'get_payment_gateways' )
 			->willReturn( $gateways );
-
-		$this->mock_providers
-			->expects( $this->atLeast( count( $gateways ) ) )
-			->method( 'get_payment_gateway_base_details' )
-			->willReturnCallback(
-				function ( $payment_gateway, $payment_gateway_order ) {
-					return $this->extract_payment_gateway_base_details( $payment_gateway, $payment_gateway_order );
-				}
-			);
 
 		$this->mock_providers
 			->expects( $this->any() )
@@ -405,51 +386,6 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'url', $suggestion1['links'][0], 'Provider `link[url]` entry is missing' );
 		$this->assertArrayHasKey( 'tags', $suggestion1, 'Provider `tags` entry is missing' );
 		$this->assertIsList( $suggestion1['tags'] );
-	}
-
-	/**
-	 * Extract the gateway details from an instance.
-	 *
-	 * @param \WC_Payment_Gateway $payment_gateway The payment gateway.
-	 * @param int                 $payment_gateway_order The order of the payment gateway.
-	 *
-	 * @return array The extracted details.
-	 */
-	private function extract_payment_gateway_base_details( \WC_Payment_Gateway $payment_gateway, int $payment_gateway_order ): array {
-		return array(
-			'id'          => $payment_gateway->id,
-			'_order'      => $payment_gateway_order,
-			'title'       => $payment_gateway->get_method_title(),
-			'description' => $payment_gateway->get_method_description(),
-			'supports'    => $payment_gateway->supports ?? array(),
-			'state'       => array(
-				'enabled'     => true,
-				'needs_setup' => false,
-				'test_mode'   => false,
-				'dev_mode'    => false,
-			),
-			'management'  => array(
-				'_links' => array(
-					'settings' => array(
-						'href' => $payment_gateway->get_settings_url(),
-					),
-				),
-			),
-			'onboarding'  => array(
-				'_links'                      => array(
-					'onboard' => array(
-						'href' => $payment_gateway->get_connection_url(),
-					),
-				),
-				'recommended_payment_methods' => $payment_gateway->recommended_payment_methods ?? array(),
-			),
-			'plugin'      => array(
-				'_type'  => PaymentProviders::EXTENSION_TYPE_WPORG,
-				'slug'   => $payment_gateway->plugin_slug,
-				'file'   => $payment_gateway->plugin_file,
-				'status' => PaymentProviders::EXTENSION_ACTIVE,
-			),
-		);
 	}
 
 	/**

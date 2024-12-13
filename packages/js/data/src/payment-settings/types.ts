@@ -77,7 +77,10 @@ export type PaymentProvider = {
 	state?: StateData;
 	links?: PaymentGatewayLink[];
 	onboarding?: {
-		recommended_payment_methods: RecommendedPaymentMethod[];
+		_links: {
+			onboard: LinkData;
+		};
+		recommended_payment_methods?: RecommendedPaymentMethod[];
 	};
 	tags?: string[];
 	_suggestion_id?: string;
@@ -90,6 +93,12 @@ export type PaymentGatewayProvider = PaymentProvider & {
 	supports: string[];
 	management: ManagementData;
 	state: StateData;
+	onboarding: {
+		_links: {
+			onboard: LinkData;
+		};
+		recommended_payment_methods: RecommendedPaymentMethod[];
+	};
 };
 
 // Offline payment method provider type.
@@ -97,6 +106,11 @@ export type OfflinePaymentMethodProvider = PaymentProvider & {
 	supports: string[];
 	management: ManagementData;
 	state: StateData;
+	onboarding: {
+		_links: {
+			onboard: LinkData;
+		};
+	};
 };
 
 // Offline payment methods group provider type.
