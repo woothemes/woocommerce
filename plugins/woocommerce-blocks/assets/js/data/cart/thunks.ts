@@ -204,7 +204,7 @@ type Variation = {
  * @throws           Will throw an error if there is an API problem.
  */
 export const addItemToCart =
-	( productId: number, quantity = 1, variation: Variation[], unknown: additionalData: Record<string, unknown> = {} ) =>
+	( productId: number, quantity = 1, variation: Variation[], additionalData: Record<string, unknown> = {} ) =>
 	async ( { dispatch }: { dispatch: CartDispatchFromMap } ) => {
 		try {
 			triggerAddingToCartEvent();
