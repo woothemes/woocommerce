@@ -90,7 +90,34 @@ class MiniCart extends AbstractBlock {
 		parent::initialize();
 		add_action( 'wp_loaded', array( $this, 'register_empty_cart_message_block_pattern' ) );
 		add_action( 'wp_print_footer_scripts', array( $this, 'print_lazy_load_scripts' ), 2 );
-		add_filter( 'hooked_block_types', array( $this, 'register_hooked_block' ), 10, 4 );
+		/**
+		 * The hooked_block_{$hooked_block_type} filter was added in WordPress 6.5.
+		 * We are the only code adding the filter 'hooked_block_woocommerce/mini-cart'.
+		 * Using has_filter() for a compatibility check won't work because add_filter() is used in the same file.
+		 */
+		if ( version_compare( get_bloginfo( 'version' ), '6.5', '>=' ) ) {
+			add_filter( 'hooked_block_woocommerce/mini-cart', array( $this, 'modify_hooked_block_attributes' ), 10, 5 );
+		}
+		add_filter( 'hooked_block_types', array( $this, 'register_hooked_block' ), 9, 4 );
+	}
+
+	/**
+	 * Callback for the Block Hooks API to modify the attributes of the hooked block.
+	 *
+	 * @param array|null                      $parsed_hooked_block The parsed block array for the given hooked block type, or null to suppress the block.
+	 * @param string                          $hooked_block_type   The hooked block type name.
+	 * @param string                          $relative_position   The relative position of the hooked block.
+	 * @param array                           $parsed_anchor_block The anchor block, in parsed block array format.
+	 * @param WP_Block_Template|WP_Post|array $context             The block template, template part, `wp_navigation` post type,
+	 *                                                             or pattern that the anchor block belongs to.
+	 * @return array|null
+	 */
+	public function modify_hooked_block_attributes( $parsed_hooked_block, $hooked_block_type, $relative_position, $parsed_anchor_block, $context ) {
+		$block_styles = wp_get_global_styles( array( 'blocks', 'core/navigation', 'typography', 'fontSize' ), $context );
+		
+		$parsed_hooked_block['attrs']['style']['typography']['fontSize'] = $block_styles;
+		
+		return $parsed_hooked_block;
 	}
 
 	/**
