@@ -81,7 +81,7 @@ export const PaymentGatewayButtons = ( {
 			setIsUpdating( true );
 
 			if ( incentive ) {
-				acceptIncentive( incentive.id );
+				acceptIncentive( incentive.promo_id );
 			}
 
 			togglePaymentGateway(
@@ -115,7 +115,7 @@ export const PaymentGatewayButtons = ( {
 		setIsActivatingPayments( true );
 
 		if ( incentive ) {
-			acceptIncentive( incentive.id );
+			acceptIncentive( incentive.promo_id );
 		}
 
 		window.location.href = getWooPaymentsSetupLiveAccountLink();

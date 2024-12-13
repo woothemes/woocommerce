@@ -82,7 +82,7 @@ export const IncentiveModal = ( {
 
 	const handleAccept = () => {
 		setIsBusy( true );
-		onAccept( incentive.id );
+		onAccept( incentive.promo_id );
 		setupPlugin( provider.id, provider.plugin.slug, onboardingUrl );
 		setIsBusy( false );
 		handleClose();

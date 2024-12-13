@@ -72,7 +72,7 @@ export const IncentiveBanner = ( {
 
 	const handleAccept = () => {
 		setIsBusy( true );
-		onAccept( incentive.id );
+		onAccept( incentive.promo_id );
 		setupPlugin( provider.id, provider.plugin.slug, onboardingUrl );
 		setIsBusy( false );
 		setIsSubmitted( true );
@@ -85,11 +85,7 @@ export const IncentiveBanner = ( {
 		setIsDismissed( true );
 	};
 
-	if (
-		isIncentiveDismissedInContext( incentive, context ) ||
-		isSubmitted ||
-		isDismissed
-	) {
+	if ( isIncentiveDismissedInContext( incentive, context ) || isDismissed ) {
 		return null;
 	}
 

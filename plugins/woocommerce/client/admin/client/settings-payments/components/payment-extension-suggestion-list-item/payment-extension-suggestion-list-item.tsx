@@ -99,7 +99,7 @@ export const PaymentExtensionSuggestionListItem = ( {
 							variant="primary"
 							onClick={ () => {
 								if ( incentive ) {
-									acceptIncentive( incentive.id );
+									acceptIncentive( incentive.promo_id );
 								}
 
 								setupPlugin(
