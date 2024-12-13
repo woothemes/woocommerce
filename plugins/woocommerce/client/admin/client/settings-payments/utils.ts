@@ -95,33 +95,6 @@ export const getRecommendedPaymentMethods = (
 };
 
 /**
- * Convert a nested object into a URL-encoded string.
- *
- * @param {Record<string, any>} data The nested object to encode.
- * @return {string} The URL-encoded query string.
- */
-export const convertToQueryString = (
-	data: Record< string, string | boolean | object >
-): string => {
-	type FlattenedObject = Record< string, string >;
-
-	const flattenedData: FlattenedObject = Object.entries(
-		data
-	).reduce< FlattenedObject >( ( acc, [ key, value ] ) => {
-		if ( typeof value === 'object' && value !== null ) {
-			Object.entries( value ).forEach( ( [ subKey, subValue ] ) => {
-				acc[ `${ key }[${ subKey }]` ] = String( subValue ); // Convert value to string
-			} );
-		} else {
-			acc[ key ] = String( value ); // Convert value to string
-		}
-		return acc;
-	}, {} as FlattenedObject );
-
-	return new URLSearchParams( flattenedData ).toString();
-};
-
-/**
  * Checks whether providers contain WooPayments gateway in dev mode that is set up.
  *
  * @param providers payment providers

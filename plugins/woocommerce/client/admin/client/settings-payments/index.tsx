@@ -29,7 +29,6 @@ import { Header } from './components/header/header';
 import { BackButton } from './components/back-button/back-button';
 import { ListPlaceholder } from '~/settings-payments/components/list-placeholder';
 import {
-	convertToQueryString,
 	getWooPaymentsTestDriveAccountLink,
 	getWooPaymentsFromProviders,
 } from '~/settings-payments/utils';
@@ -162,18 +161,18 @@ const SettingsPaymentsMethods = () => {
 	const wooPayments = getWooPaymentsFromProviders( providers );
 
 	const onClick = useCallback( () => {
-		const wrappedData = {
-			capabilities: paymentMethodsState,
-		};
-		// Convert the wrapped data to a query string
-		const queryString = convertToQueryString( wrappedData );
 		// Get the onboarding URL or fallback to the test drive account link
 		const onboardUrl =
 			wooPayments?.onboarding?._links.onboard.href ||
 			getWooPaymentsTestDriveAccountLink();
 
 		// Combine the onboard URL with the query string
-		const fullOnboardUrl = `${ onboardUrl }&${ queryString }`;
+		const fullOnboardUrl =
+			onboardUrl +
+			'&capabilities=' +
+			encodeURIComponent( JSON.stringify( paymentMethodsState ) );
+
+		// Redirect to the onboard URL
 		window.location.href = fullOnboardUrl;
 	}, [ paymentMethodsState, wooPayments ] );
 
