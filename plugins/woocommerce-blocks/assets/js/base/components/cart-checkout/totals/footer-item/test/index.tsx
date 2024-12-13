@@ -15,6 +15,7 @@ describe( 'TotalsFooterItem', () => {
 		allSettings.taxesEnabled = true;
 		allSettings.displayCartPricesIncludingTax = true;
 	} );
+	const defaultLabel = 'Total';
 	const currency: Currency = {
 		code: 'GBP',
 		decimalSeparator: '.',
@@ -48,7 +49,11 @@ describe( 'TotalsFooterItem', () => {
 
 	it( 'Does not show the "including %s of tax" line if tax is 0', () => {
 		const { container } = render(
-			<TotalsFooterItem currency={ currency } values={ values } />
+			<TotalsFooterItem
+				currency={ currency }
+				values={ values }
+				label={ defaultLabel }
+			/>
 		);
 		expect( container ).toMatchSnapshot();
 	} );
@@ -62,7 +67,11 @@ describe( 'TotalsFooterItem', () => {
 			total_items_tax: '100',
 		};
 		const { container } = render(
-			<TotalsFooterItem currency={ currency } values={ valuesWithTax } />
+			<TotalsFooterItem
+				currency={ currency }
+				values={ valuesWithTax }
+				label={ defaultLabel }
+			/>
 		);
 		expect( container ).toMatchSnapshot();
 	} );
@@ -74,7 +83,11 @@ describe( 'TotalsFooterItem', () => {
 			total_items_tax: '100',
 		};
 		const { container } = render(
-			<TotalsFooterItem currency={ currency } values={ valuesWithTax } />
+			<TotalsFooterItem
+				currency={ currency }
+				values={ valuesWithTax }
+				label={ defaultLabel }
+			/>
 		);
 		expect( container ).toMatchSnapshot();
 	} );
@@ -87,7 +100,11 @@ describe( 'TotalsFooterItem', () => {
 			tax_lines: [ { name: '10% VAT', price: '100', rate: '10.000' } ],
 		};
 		const { container } = render(
-			<TotalsFooterItem currency={ currency } values={ valuesWithTax } />
+			<TotalsFooterItem
+				currency={ currency }
+				values={ valuesWithTax }
+				label={ defaultLabel }
+			/>
 		);
 		expect( container ).toMatchSnapshot();
 	} );
@@ -103,7 +120,11 @@ describe( 'TotalsFooterItem', () => {
 			],
 		};
 		const { container } = render(
-			<TotalsFooterItem currency={ currency } values={ valuesWithTax } />
+			<TotalsFooterItem
+				currency={ currency }
+				values={ valuesWithTax }
+				label={ defaultLabel }
+			/>
 		);
 		expect( container ).toMatchSnapshot();
 	} );
