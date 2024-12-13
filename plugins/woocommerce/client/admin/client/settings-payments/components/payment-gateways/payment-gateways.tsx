@@ -17,7 +17,6 @@ import { decodeEntities } from '@wordpress/html-entities';
 import { CountrySelector } from '~/settings-payments/components/country-selector';
 import { ListPlaceholder } from '~/settings-payments/components/list-placeholder';
 import { PaymentGatewayList } from '~/settings-payments/components/payment-gateway-list';
-import './payment-gateways.scss';
 
 interface PaymentGatewaysProps {
 	providers: PaymentProvider[];

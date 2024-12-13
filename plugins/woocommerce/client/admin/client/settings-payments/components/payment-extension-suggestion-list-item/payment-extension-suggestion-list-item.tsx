@@ -6,7 +6,7 @@ import { decodeEntities } from '@wordpress/html-entities';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
-import { PaymentProvider } from '@woocommerce/data';
+import { PaymentExtensionSuggestionProvider } from '@woocommerce/data';
 
 /**
  * Internal dependencies
@@ -18,7 +18,7 @@ import { DefaultDragHandle } from '~/settings-payments/components/sortable';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
 
 type PaymentExtensionSuggestionListItemProps = {
-	extension: PaymentProvider;
+	extension: PaymentExtensionSuggestionProvider;
 	installingPlugin: string | null;
 	setupPlugin: ( id: string, slug: string ) => void;
 	pluginInstalled: boolean;
@@ -31,10 +31,16 @@ export const PaymentExtensionSuggestionListItem = ( {
 	pluginInstalled,
 	...props
 }: PaymentExtensionSuggestionListItemProps ) => {
+	const hasIncentive = !! extension._incentive;
+	const shouldHighlightIncentive =
+		hasIncentive && ! extension._incentive?.promo_id.includes( '-action-' );
+
 	return (
 		<div
 			id={ extension.id }
-			className={ `transitions-disabled woocommerce-list__item woocommerce-list__item-enter-done` }
+			className={ `transitions-disabled woocommerce-list__item woocommerce-list__item-enter-done ${
+				shouldHighlightIncentive ? `has-incentive` : ''
+			}` }
 			{ ...props }
 		>
 			<div className="woocommerce-list__item-inner">
@@ -48,8 +54,14 @@ export const PaymentExtensionSuggestionListItem = ( {
 				<div className="woocommerce-list__item-text">
 					<span className="woocommerce-list__item-title">
 						{ extension.title }{ ' ' }
-						{ isWooPayments( extension.id ) && (
+						{ ! hasIncentive && isWooPayments( extension.id ) && (
 							<StatusBadge status="recommended" />
+						) }
+						{ hasIncentive && extension._incentive && (
+							<StatusBadge
+								status="has_incentive"
+								message={ extension._incentive.badge }
+							/>
 						) }
 					</span>
 					<span
