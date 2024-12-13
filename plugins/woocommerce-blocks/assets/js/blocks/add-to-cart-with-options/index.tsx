@@ -42,7 +42,7 @@ if ( shouldRegisterBlock ) {
 	// Select Simple product type
 	dispatch( woocommerceTemplateStateStore ).switchProductType( 'simple' );
 
-	// Extend editor, blocks, etc
+	// Register a plugin that adds a product type selector to the template sidebar.
 	const PLUGIN_NAME = 'document-settings-template-selector-pane';
 	if ( ! getPlugin( PLUGIN_NAME ) ) {
 		registerPlugin( PLUGIN_NAME, {
