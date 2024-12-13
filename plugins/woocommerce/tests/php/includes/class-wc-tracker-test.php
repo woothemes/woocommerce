@@ -310,15 +310,19 @@ class WC_Tracker_Test extends \WC_Unit_Test_Case {
 	 * @testDox Test woocommerce_install_admin_timestamp is included in tracking data.
 	 */
 	public function test_tracking_data_woocommerce_allow_tracking() {
-		delete_option('woocommerce_allow_tracking_last_modified');
-		delete_option('woocommerce_allow_tracking_first_optin');
+		$current_woocommerce_allow_tracking = get_option( 'woocommerce_allow_tracking', 'no' );
+
+		// Clear everything.
+		update_option( 'woocommerce_allow_tracking', 'no' );
+		delete_option( 'woocommerce_allow_tracking_last_modified' );
+		delete_option( 'woocommerce_allow_tracking_first_optin' );
 
 		$tracking_data = WC_Tracker::get_tracking_data();
 		$this->assertArrayHasKey( 'woocommerce_allow_tracking', $tracking_data );
 		$this->assertArrayHasKey( 'woocommerce_allow_tracking_last_modified', $tracking_data );
 		$this->assertArrayHasKey( 'woocommerce_allow_tracking_first_optin', $tracking_data );
 
-		$this->assertEquals( $tracking_data['woocommerce_allow_tracking'], get_option( 'woocommerce_allow_tracking' ) );
+		$this->assertEquals( $tracking_data['woocommerce_allow_tracking'], 'no' );
 		$this->assertEquals( $tracking_data['woocommerce_allow_tracking_last_modified'], 'unknown' );
 		$this->assertEquals( $tracking_data['woocommerce_allow_tracking_first_optin'], 'unknown' );
 
@@ -329,13 +333,16 @@ class WC_Tracker_Test extends \WC_Unit_Test_Case {
 		$this->assertTrue( $tracking_data['woocommerce_allow_tracking_last_modified'] >= $time_one );
 		$this->assertTrue( $tracking_data['woocommerce_allow_tracking_first_optin'] >= $time_one );
 
+		sleep( 1 ); // be sure $time_two is at least one second after $time_one.
 		$time_two = time();
 		update_option( 'woocommerce_allow_tracking', 'no' );
 		$tracking_data = WC_Tracker::get_tracking_data();
+
 		$this->assertEquals( $tracking_data['woocommerce_allow_tracking'], 'no' );
 		$this->assertTrue( $tracking_data['woocommerce_allow_tracking_last_modified'] >= $time_two );
 		$this->assertTrue( $tracking_data['woocommerce_allow_tracking_first_optin'] >= $time_one && $tracking_data['woocommerce_allow_tracking_first_optin'] < $time_two );
 
+		sleep( 1 ); // be sure $time_three is at least one second after $time_two.
 		$time_three = time();
 		update_option( 'woocommerce_allow_tracking', 'yes' );
 		$tracking_data = WC_Tracker::get_tracking_data();
@@ -343,7 +350,9 @@ class WC_Tracker_Test extends \WC_Unit_Test_Case {
 		$this->assertTrue( $tracking_data['woocommerce_allow_tracking_last_modified'] >= $time_three );
 		$this->assertTrue( $tracking_data['woocommerce_allow_tracking_first_optin'] >= $time_one && $tracking_data['woocommerce_allow_tracking_first_optin'] < $time_two );
 
-		delete_option('woocommerce_allow_tracking_last_modified');
-		delete_option('woocommerce_allow_tracking_first_optin');
+		// Restore everything as it was.
+		update_option( 'woocommerce_allow_tracking', $current_woocommerce_allow_tracking );
+		delete_option( 'woocommerce_allow_tracking_last_modified' );
+		delete_option( 'woocommerce_allow_tracking_first_optin' );
 	}
 }
