@@ -9,13 +9,10 @@ import {
 	PaymentProvider,
 	RecommendedPaymentMethod,
 } from '@woocommerce/data';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
-import {
-	getHistory,
-	getNewPath,
-} from '@woocommerce/navigation';
+import { getHistory, getNewPath } from '@woocommerce/navigation';
 
 /**
  * Internal dependencies
@@ -189,12 +186,27 @@ export const SettingsPaymentsMain = () => {
 			}
 			setInstallingPlugin( id );
 			installAndActivatePlugins( [ slug ] )
-				.then( ( response ) => {
+				.then( async ( response ) => {
 					createNoticesFromResponse( response );
 					if ( isWooPayments( id ) ) {
-						if ( recommendedPaymentMethods.length > 0 ) {
+						// Wait for the state update and fetch the latest providers
+						const updatedProviders = await resolveSelect(
+							PAYMENT_SETTINGS_STORE_NAME
+						).getPaymentProviders( storeCountry );
+						const updatedWooPaymentsProvider =
+							updatedProviders.find(
+								( provider: PaymentProvider ) =>
+									isWooPayments( provider.id )
+							);
+						const updatedRecommendedPaymentMethods =
+							( updatedWooPaymentsProvider?.onboarding
+								?.recommended_payment_methods ??
+								[] ) as RecommendedPaymentMethod[];
+						if ( updatedRecommendedPaymentMethods.length > 0 ) {
 							const history = getHistory();
-							history.push( getNewPath( {}, '/payment-methods' ) );
+							history.push(
+								getNewPath( {}, '/payment-methods' )
+							);
 						} else {
 							window.location.href =
 								getWooPaymentsTestDriveAccountLink();
