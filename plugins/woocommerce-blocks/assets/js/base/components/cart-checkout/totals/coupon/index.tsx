@@ -10,6 +10,7 @@ import {
 	ValidationInputError,
 	ValidatedTextInputHandle,
 	Panel,
+	NonInteractivePanel,
 } from '@woocommerce/blocks-components';
 import { useSelect } from '@wordpress/data';
 import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
@@ -37,6 +38,14 @@ export interface TotalsCouponProps {
 	 * Submit handler
 	 */
 	onSubmit?: ( couponValue: string ) => Promise< boolean > | undefined;
+	/**
+	 * Heading
+	 */
+	heading: React.ReactNode;
+	/**
+	 * Whether the component is in the editor
+	 */
+	isEditor: boolean;
 }
 
 export const TotalsCoupon = ( {
@@ -44,6 +53,8 @@ export const TotalsCoupon = ( {
 	isLoading = false,
 	onSubmit,
 	displayCouponForm = false,
+	heading,
+	isEditor = false,
 }: TotalsCouponProps ): JSX.Element => {
 	const [ couponValue, setCouponValue ] = useState( '' );
 	const [ isCouponFormVisible, setIsCouponFormVisible ] =
@@ -56,6 +67,8 @@ export const TotalsCoupon = ( {
 		};
 	} );
 	const inputRef = useRef< ValidatedTextInputHandle >( null );
+
+	const PanelComponent = isEditor ? NonInteractivePanel : Panel;
 
 	const handleCouponSubmit: MouseEventHandler< HTMLButtonElement > = (
 		e: MouseEvent< HTMLButtonElement >
@@ -77,12 +90,12 @@ export const TotalsCoupon = ( {
 	};
 
 	return (
-		<Panel
+		<PanelComponent
 			className="wc-block-components-totals-coupon"
 			initialOpen={ isCouponFormVisible }
 			hasBorder={ false }
 			headingLevel={ 2 }
-			title={ __( 'Add a coupon', 'woocommerce' ) }
+			title={ heading }
 			state={ [ isCouponFormVisible, setIsCouponFormVisible ] }
 		>
 			<LoadingMask
@@ -126,7 +139,7 @@ export const TotalsCoupon = ( {
 					/>
 				</div>
 			</LoadingMask>
-		</Panel>
+		</PanelComponent>
 	);
 };
 

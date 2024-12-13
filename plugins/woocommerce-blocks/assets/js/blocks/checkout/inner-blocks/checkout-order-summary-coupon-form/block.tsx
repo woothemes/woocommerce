@@ -6,11 +6,21 @@ import { useStoreCartCoupons } from '@woocommerce/base-context/hooks';
 import { getSetting } from '@woocommerce/settings';
 import { TotalsWrapper } from '@woocommerce/blocks-components';
 
+export type BlockAttributes = {
+	className: string;
+	heading: string | null;
+};
+
+type BlockProps = Omit< BlockAttributes, 'heading' > & {
+	isEditor?: boolean;
+	headingElement: React.ReactNode;
+};
+
 const Block = ( {
 	className = '',
-}: {
-	className?: string;
-} ): JSX.Element | null => {
+	headingElement,
+	isEditor = false,
+}: BlockProps ): JSX.Element | null => {
 	const couponsEnabled = getSetting( 'couponsEnabled', true );
 
 	const { applyCoupon, isApplyingCoupon } =
@@ -23,9 +33,11 @@ const Block = ( {
 	return (
 		<TotalsWrapper className={ className }>
 			<TotalsCoupon
+				heading={ headingElement }
 				onSubmit={ applyCoupon }
 				isLoading={ isApplyingCoupon }
 				instanceId="coupon"
+				isEditor={ isEditor }
 			/>
 		</TotalsWrapper>
 	);
