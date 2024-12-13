@@ -21,13 +21,11 @@ export const isWooPayments = ( id: string ) => {
 	return [ '_wc_pes_woopayments', 'woocommerce_payments' ].includes( id );
 };
 
-export const getWooPaymentsTestDriveAccountLink = ( params?: string ) => {
-	const additionalParams = params ? `&${ params }` : '';
+export const getWooPaymentsTestDriveAccountLink = () => {
 	return getAdminLink(
 		'admin.php?wcpay-connect=1&_wpnonce=' +
 			getAdminSetting( 'wcpay_welcome_page_connect_nonce' ) +
-			'&test_drive=true&auto_start_test_drive_onboarding=true&redirect_to_settings_page=true' +
-			additionalParams
+			'&test_drive=true&auto_start_test_drive_onboarding=true&redirect_to_settings_page=true'
 	);
 };
 
@@ -64,6 +62,17 @@ export const providersContainWooPaymentsInTestMode = (
 	return (
 		!! wooPayments?.state?.test_mode && ! wooPayments?.state?.needs_setup
 	);
+};
+
+/**
+ * Return the WooPayments gateway if it exists in the providers list.
+ *
+ * @param providers payment providers
+ */
+export const getWooPaymentsFromProviders = (
+	providers: PaymentProvider[]
+): PaymentProvider | null => {
+	return providers.find( ( obj ) => isWooPayments( obj.id ) ) ?? null;
 };
 
 /**
@@ -110,9 +119,9 @@ export const convertToQueryString = (
 	}, {} as FlattenedObject );
 
 	return new URLSearchParams( flattenedData ).toString();
-}
+};
 
-/** 
+/**
  * Checks whether providers contain WooPayments gateway in dev mode that is set up.
  *
  * @param providers payment providers

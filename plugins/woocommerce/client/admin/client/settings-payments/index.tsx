@@ -3,6 +3,8 @@
  */
 import { Gridicon } from '@automattic/components';
 import { Button, SelectControl } from '@wordpress/components';
+import { PAYMENT_SETTINGS_STORE_NAME } from '@woocommerce/data';
+import { useSelect } from '@wordpress/data';
 import React, {
 	useState,
 	lazy,
@@ -29,6 +31,7 @@ import { ListPlaceholder } from '~/settings-payments/components/list-placeholder
 import {
 	convertToQueryString,
 	getWooPaymentsTestDriveAccountLink,
+	getWooPaymentsFromProviders,
 } from '~/settings-payments/utils';
 import './settings-payments-main.scss';
 
@@ -146,13 +149,33 @@ const SettingsPaymentsMain = () => {
 const SettingsPaymentsMethods = () => {
 	const location = useLocation();
 	const [ paymentMethodsState, setPaymentMethodsState ] = useState( {} );
+	const { providers } = useSelect( ( select ) => {
+		return {
+			isFetching: select( PAYMENT_SETTINGS_STORE_NAME ).isFetching(),
+			providers:
+				select( PAYMENT_SETTINGS_STORE_NAME ).getPaymentProviders() ||
+				[],
+		};
+	} );
+
+	// Retrieve wooPayments gateway
+	const wooPayments = getWooPaymentsFromProviders( providers );
+
 	const onClick = useCallback( () => {
-		// Wrap the object under the 'capabilities' key
-		const wrappedData = { capabilities: paymentMethodsState };
+		const wrappedData = {
+			capabilities: paymentMethodsState,
+		};
+		// Convert the wrapped data to a query string
 		const queryString = convertToQueryString( wrappedData );
-		window.location.href =
-			getWooPaymentsTestDriveAccountLink( queryString );
-	}, [ paymentMethodsState ] );
+		// Get the onboarding URL or fallback to the test drive account link
+		const onboardUrl =
+			wooPayments?.onboarding?._links.onboard.href ||
+			getWooPaymentsTestDriveAccountLink();
+
+		// Combine the onboard URL with the query string
+		const fullOnboardUrl = `${ onboardUrl }&${ queryString }`;
+		window.location.href = fullOnboardUrl;
+	}, [ paymentMethodsState, wooPayments ] );
 
 	useEffect( () => {
 		window.scrollTo( 0, 0 ); // Scrolls to the top-left corner of the page
