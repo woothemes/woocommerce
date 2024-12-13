@@ -69,6 +69,9 @@ export const EmailPreviewHeader: React.FC< EmailPreviewHeaderProps > = ( {
 		fromAddressEl.addEventListener( 'change', handleFromAddressChange );
 
 		return () => {
+			if ( ! fromNameEl || ! fromAddressEl ) {
+				return;
+			}
 			fromNameEl.removeEventListener( 'change', handleFromNameChange );
 			fromAddressEl.removeEventListener(
 				'change',
@@ -93,6 +96,9 @@ export const EmailPreviewHeader: React.FC< EmailPreviewHeaderProps > = ( {
 		subjectEl.addEventListener( 'transient-saved', fetchSubject );
 
 		return () => {
+			if ( ! subjectEl ) {
+				return;
+			}
 			subjectEl.removeEventListener( 'transient-saved', fetchSubject );
 		};
 	}, [ fetchSubject ] );
