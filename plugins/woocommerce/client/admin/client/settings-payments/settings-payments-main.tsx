@@ -7,7 +7,6 @@ import {
 	PLUGINS_STORE_NAME,
 	PAYMENT_SETTINGS_STORE_NAME,
 	PaymentProvider,
-	RecommendedPaymentMethod,
 } from '@woocommerce/data';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
@@ -172,9 +171,9 @@ export const SettingsPaymentsMain = () => {
 			incentive?._dismissals.includes( incentiveModalContext ) ) ??
 		false;
 
-	
-	const recommendedPaymentMethods	=
-		getRecommendedPaymentMethods( sortedProviders || providers );
+	const recommendedPaymentMethods = getRecommendedPaymentMethods(
+		sortedProviders || providers
+	);
 
 	const setupPlugin = useCallback(
 		( id, slug ) => {
@@ -208,7 +207,7 @@ export const SettingsPaymentsMain = () => {
 
 						return;
 					}
-					
+
 					setInstallingPlugin( null );
 				} )
 				.catch( ( response: { errors: Record< string, string > } ) => {

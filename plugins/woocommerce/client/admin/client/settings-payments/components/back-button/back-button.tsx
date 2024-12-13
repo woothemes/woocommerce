@@ -4,9 +4,7 @@
 import { __ } from '@wordpress/i18n';
 import { Button, Tooltip } from '@wordpress/components';
 import { chevronLeft } from '@wordpress/icons';
-import {
-	getHistory,
-} from '@woocommerce/navigation';
+import { getHistory } from '@woocommerce/navigation';
 /**
  * Internal dependencies
  */

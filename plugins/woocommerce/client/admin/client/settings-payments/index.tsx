@@ -16,10 +16,7 @@ import {
 	Routes,
 	useLocation,
 } from 'react-router-dom';
-import {
-	getHistory,
-	getNewPath,
-} from '@woocommerce/navigation';
+import { getHistory, getNewPath } from '@woocommerce/navigation';
 import { __ } from '@wordpress/i18n';
 import { getAdminLink } from '@woocommerce/settings';
 
@@ -64,13 +61,15 @@ const SettingsPaymentsWooCommercePaymentsChunk = lazy(
 );
 
 const hideWooCommerceNavTab = ( display: string ) => {
-	const externalElement = document.querySelector<HTMLElement>('.woo-nav-tab-wrapper');
+	const externalElement = document.querySelector< HTMLElement >(
+		'.woo-nav-tab-wrapper'
+	);
 
 	// Add the 'hidden' class to hide the element
 	if ( externalElement ) {
 		externalElement.style.display = display;
 	}
-}
+};
 
 const SettingsPaymentsMain = () => {
 	const location = useLocation();
@@ -79,7 +78,7 @@ const SettingsPaymentsMain = () => {
 		if ( location.pathname === '' ) {
 			hideWooCommerceNavTab( 'block' );
 		}
-    }, [ location ] );
+	}, [ location ] );
 	return (
 		<>
 			<Suspense
@@ -142,7 +141,7 @@ const SettingsPaymentsMain = () => {
 			</Suspense>
 		</>
 	);
-}
+};
 
 const SettingsPaymentsMethods = () => {
 	const location = useLocation();
@@ -154,14 +153,14 @@ const SettingsPaymentsMethods = () => {
 		window.location.href =
 			getWooPaymentsTestDriveAccountLink( queryString );
 	}, [ paymentMethodsState ] );
-	
+
 	useEffect( () => {
 		window.scrollTo( 0, 0 ); // Scrolls to the top-left corner of the page
 
 		if ( location.pathname === '/payment-methods' ) {
 			hideWooCommerceNavTab( 'none' );
 		}
-    }, [ location ] );
+	}, [ location ] );
 
 	return (
 		<>
@@ -174,7 +173,10 @@ const SettingsPaymentsMethods = () => {
 					/>
 					<h1 className="components-truncate components-text woocommerce-layout__header-heading woocommerce-layout__header-left-align">
 						<span className="woocommerce-settings-payments-header__title">
-							{ __( 'Choose your payment methods', 'woocommerce' ) }
+							{ __(
+								'Choose your payment methods',
+								'woocommerce'
+							) }
 						</span>
 					</h1>
 					<Button
@@ -184,7 +186,10 @@ const SettingsPaymentsMethods = () => {
 						{ __( 'Continue', 'woocommerce' ) }
 					</Button>
 					<div className="woocommerce-settings-payments-header__description">
-						{ __( "Select which payment methods you'd like to offer to your shoppers. You can update these here at any time.", 'woocommerce' ) }
+						{ __(
+							"Select which payment methods you'd like to offer to your shoppers. You can update these here at any time.",
+							'woocommerce'
+						) }
 					</div>
 				</div>
 			</div>
@@ -209,7 +214,7 @@ const SettingsPaymentsMethods = () => {
 			</Suspense>
 		</>
 	);
-}
+};
 
 export const SettingsPaymentsMainWrapper = () => {
 	return (
@@ -217,8 +222,11 @@ export const SettingsPaymentsMainWrapper = () => {
 			<Header title={ __( 'WooCommerce Settings', 'woocommerce' ) } />
 			<HistoryRouter history={ getHistory() }>
 				<Routes>
-					<Route path="/" element={<SettingsPaymentsMain />} />
-					<Route path="/payment-methods" element={<SettingsPaymentsMethods />} />
+					<Route path="/" element={ <SettingsPaymentsMain /> } />
+					<Route
+						path="/payment-methods"
+						element={ <SettingsPaymentsMethods /> }
+					/>
 				</Routes>
 			</HistoryRouter>
 		</>

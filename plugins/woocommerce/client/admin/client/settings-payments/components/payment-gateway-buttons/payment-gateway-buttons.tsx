@@ -10,10 +10,7 @@ import {
 	RecommendedPaymentMethod,
 } from '@woocommerce/data';
 import { useState } from '@wordpress/element';
-import {
-	getHistory,
-	getNewPath,
-} from '@woocommerce/navigation';
+import { getHistory, getNewPath } from '@woocommerce/navigation';
 
 /**
  * Internal dependencies
@@ -86,9 +83,13 @@ export const PaymentGatewayButtons = ( {
 				.then( ( response: EnableGatewayResponse ) => {
 					if ( response.data === 'needs_setup' ) {
 						if ( isWooPayments( id ) ) {
-							if ( ( recommendedPaymentMethods ?? [] ).length > 0 ) {
+							if (
+								( recommendedPaymentMethods ?? [] ).length > 0
+							) {
 								const history = getHistory();
-								history.push( getNewPath( {}, '/payment-methods' ) );
+								history.push(
+									getNewPath( {}, '/payment-methods' )
+								);
 							} else {
 								window.location.href =
 									getWooPaymentsTestDriveAccountLink();

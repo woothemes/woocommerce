@@ -73,16 +73,16 @@ export const providersContainWooPaymentsInTestMode = (
  * @return {RecommendedPaymentMethod[]} List of recommended payment methods.
  */
 export const getRecommendedPaymentMethods = (
-    providers: PaymentProvider[]
+	providers: PaymentProvider[]
 ): RecommendedPaymentMethod[] => {
-    const updatedWooPaymentsProvider = providers.find(
-        ( provider: PaymentProvider ) => isWooPayments( provider.id )
-    );
+	const updatedWooPaymentsProvider = providers.find(
+		( provider: PaymentProvider ) => isWooPayments( provider.id )
+	);
 
-    return (
-        ( updatedWooPaymentsProvider?.onboarding?.recommended_payment_methods ??
-            [] ) as RecommendedPaymentMethod[]
-    );
+	return (
+		updatedWooPaymentsProvider?.onboarding?.recommended_payment_methods ??
+		( [] as RecommendedPaymentMethod[] )
+	);
 };
 
 /**
@@ -91,22 +91,23 @@ export const getRecommendedPaymentMethods = (
  * @param {Record<string, any>} data The nested object to encode.
  * @return {string} The URL-encoded query string.
  */
-export const convertToQueryString = ( data: Record<string, any> ): string => {
-	type FlattenedObject = Record<string, string>;
+export const convertToQueryString = (
+	data: Record< string, string | boolean | object >
+): string => {
+	type FlattenedObject = Record< string, string >;
 
-	const flattenedData: FlattenedObject = Object.entries( data ).reduce<FlattenedObject>(
-		( acc, [ key, value ] ) => {
-			if ( typeof value === 'object' && value !== null ) {
-				Object.entries( value ).forEach( ( [ subKey, subValue ] ) => {
-					acc[ `${ key }[${ subKey }]` ] = String( subValue ); // Convert value to string
-				} );
-			} else {
-				acc[ key ] = String( value ); // Convert value to string
-			}
-			return acc;
-		},
-		{} as FlattenedObject
-	);
+	const flattenedData: FlattenedObject = Object.entries(
+		data
+	).reduce< FlattenedObject >( ( acc, [ key, value ] ) => {
+		if ( typeof value === 'object' && value !== null ) {
+			Object.entries( value ).forEach( ( [ subKey, subValue ] ) => {
+				acc[ `${ key }[${ subKey }]` ] = String( subValue ); // Convert value to string
+			} );
+		} else {
+			acc[ key ] = String( value ); // Convert value to string
+		}
+		return acc;
+	}, {} as FlattenedObject );
 
 	return new URLSearchParams( flattenedData ).toString();
 };

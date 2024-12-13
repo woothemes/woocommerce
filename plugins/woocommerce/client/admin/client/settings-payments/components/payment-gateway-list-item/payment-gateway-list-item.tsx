@@ -4,7 +4,10 @@
 import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
 import { __ } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
-import { PaymentGatewayProvider, RecommendedPaymentMethod } from '@woocommerce/data';
+import {
+	PaymentGatewayProvider,
+	RecommendedPaymentMethod,
+} from '@woocommerce/data';
 
 /**
  * Internal dependencies
@@ -97,7 +100,9 @@ export const PaymentGatewayListItem = ( {
 								settingsUrl={
 									gateway.management._links.settings.href
 								}
-								recommendedPaymentMethods={ recommendedPaymentMethods }
+								recommendedPaymentMethods={
+									recommendedPaymentMethods
+								}
 							/>
 							<EllipsisMenu
 								label={ __(
