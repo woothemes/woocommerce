@@ -425,6 +425,15 @@ class WC_Email extends WC_Settings_API {
 	 * @return string
 	 */
 	public function get_subject() {
+		/**
+		 * Provides an opportunity to inspect and modify subject for the email.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param string      $subject Subject of the email.
+		 * @param object|bool $object  The object (ie, product or order) this email relates to, if any.
+		 * @param WC_Email    $email   WC_Email instance managing the email.
+		 */
 		return apply_filters( 'woocommerce_email_subject_' . $this->id, $this->format_string( $this->get_option_or_transient( 'subject', $this->get_default_subject() ) ), $this->object, $this );
 	}
 
@@ -434,6 +443,15 @@ class WC_Email extends WC_Settings_API {
 	 * @return string
 	 */
 	public function get_heading() {
+		/**
+		 * Provides an opportunity to inspect and modify heading for the email.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param string      $heading Heading to be added to the email.
+		 * @param object|bool $object  The object (ie, product or order) this email relates to, if any.
+		 * @param WC_Email    $email   WC_Email instance managing the email.
+		 */
 		return apply_filters( 'woocommerce_email_heading_' . $this->id, $this->format_string( $this->get_option_or_transient( 'heading', $this->get_default_heading() ) ), $this->object, $this );
 	}
 
