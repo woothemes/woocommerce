@@ -149,7 +149,7 @@ class Authentication {
 	public function opt_in_checkout_endpoint( $result ) {
 		if (
 			$this->is_request_to_store_api()
-			&& strpos( $GLOBALS['wp']->query_vars['rest_route'], '/wc/store/checkout' ) !== false
+			&& preg_match( '#/wc/store(?:/v\d+)?/checkout#', $GLOBALS['wp']->query_vars['rest_route'] )
 			&& isset( $_SERVER['REQUEST_METHOD'] )
 			&& 'POST' === $_SERVER['REQUEST_METHOD']
 		) {
