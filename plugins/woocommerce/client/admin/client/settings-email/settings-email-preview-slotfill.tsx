@@ -46,11 +46,14 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 	);
 	const [ isLoading, setIsLoading ] = useState< boolean >( false );
 	const [ isWide, setIsWide ] = useState< boolean >(
-		window.innerWidth > FLOATING_PREVIEW_WIDTH_LIMIT
+		! isSingleEmail && window.innerWidth > FLOATING_PREVIEW_WIDTH_LIMIT
 	);
 	const finalPreviewUrl = `${ previewUrl }&type=${ emailType }`;
 
 	useEffect( () => {
+		if ( isSingleEmail ) {
+			return;
+		}
 		const handleResize = debounce( () => {
 			setIsWide( window.innerWidth > FLOATING_PREVIEW_WIDTH_LIMIT );
 		}, 400 );
