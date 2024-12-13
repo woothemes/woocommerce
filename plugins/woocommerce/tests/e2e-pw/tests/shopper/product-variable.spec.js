@@ -388,12 +388,12 @@ test.describe(
 
 			await expect(
 				page.locator( '.woocommerce-product-attributes-item--weight' )
-			).toContainText( '100 kg' );
+			).toContainText( '100 lbs' );
 			await expect(
 				page.locator(
 					'.woocommerce-product-attributes-item--dimensions'
 				)
-			).toContainText( '5 × 10 × 10 cm' );
+			).toContainText( '5 × 10 × 10 in' );
 
 			await page.locator( '#size' ).selectOption( 'XLarge' );
 
@@ -412,12 +412,12 @@ test.describe(
 
 			await expect(
 				page.locator( '.woocommerce-product-attributes-item--weight' )
-			).toContainText( '400 kg' );
+			).toContainText( '400 lbs' );
 			await expect(
 				page.locator(
 					'.woocommerce-product-attributes-item--dimensions'
 				)
-			).toContainText( '20 × 40 × 30 cm' );
+			).toContainText( '20 × 40 × 30 in' );
 		} );
 
 		test( 'Shopper can change variable product attributes to variation with a different price', async ( {

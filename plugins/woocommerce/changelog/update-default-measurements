@@ -1,0 +1,4 @@
+Significance: minor
+Type: update
+
+Updated product settings to use locale-specific weight and dimension units based on the store’s country.
