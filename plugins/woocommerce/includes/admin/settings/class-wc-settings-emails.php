@@ -49,6 +49,9 @@ class WC_Settings_Emails extends WC_Settings_Page {
 		add_action( 'woocommerce_admin_field_email_image_url', array( $this, 'email_image_url' ) );
 		add_action( 'woocommerce_admin_field_email_font_family', array( $this, 'email_font_family' ) );
 		add_action( 'woocommerce_admin_field_email_color_palette', array( $this, 'email_color_palette' ) );
+		if ( FeaturesUtil::feature_is_enabled( 'email_improvements' ) ) {
+			add_action( 'woocommerce_email_settings_after', array( $this, 'email_preview_single' ) );
+		}
 		parent::__construct();
 	}
 
@@ -629,9 +632,8 @@ class WC_Settings_Emails extends WC_Settings_Page {
 		$email_types = array();
 		foreach ( $emails as $type => $email ) {
 			$email_types[] = array(
-				'label'   => $email->get_title(),
-				'value'   => $type,
-				'subject' => $email->get_default_subject(),
+				'label' => $email->get_title(),
+				'value' => $type,
 			);
 		}
 		?>
@@ -640,6 +642,35 @@ class WC_Settings_Emails extends WC_Settings_Page {
 			data-preview-url="<?php echo esc_url( wp_nonce_url( admin_url( '?preview_woocommerce_mail=true' ), 'preview-mail' ) ); ?>"
 			data-email-types="<?php echo esc_attr( wp_json_encode( $email_types ) ); ?>"
 		></div>
+		<?php
+	}
+
+	/**
+	 * Creates the React mount point for the single email preview.
+	 *
+	 * @param object $email The email object to run the method on.
+	 */
+	public function email_preview_single( $email ) {
+		// Email types array should have a single entry for current email.
+		$email_types = array(
+			array(
+				'label' => $email->get_title(),
+				'value' => get_class( $email ),
+			),
+		);
+		?>
+		<h2><?php echo esc_html( __( 'Email preview', 'woocommerce' ) ); ?></h2>
+
+		<p><?php echo esc_html( __( 'Preview your email template. You can also test on different devices and send yourself a test email.', 'woocommerce' ) ); ?></p>
+		<div>
+			<div
+				id="wc_settings_email_preview_slotfill"
+				data-preview-url="<?php echo esc_url( wp_nonce_url( admin_url( '?preview_woocommerce_mail=true' ), 'preview-mail' ) ); ?>"
+				data-email-types="<?php echo esc_attr( wp_json_encode( $email_types ) ); ?>"
+			></div>
+			<input type="hidden" id="woocommerce_email_from_name" value="<?php echo esc_attr( get_option( 'woocommerce_email_from_name' ) ); ?>" />
+			<input type="hidden" id="woocommerce_email_from_address" value="<?php echo esc_attr( get_option( 'woocommerce_email_from_address' ) ); ?>" />
+		</div>
 		<?php
 	}
 

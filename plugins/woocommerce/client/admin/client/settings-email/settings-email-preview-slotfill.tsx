@@ -21,9 +21,7 @@ import { EmailPreviewType } from './settings-email-preview-type';
 
 const { Fill } = createSlotFill( SETTINGS_SLOT_FILL_CONSTANT );
 
-export type EmailType = SelectControl.Option & {
-	subject: string;
-};
+export type EmailType = SelectControl.Option;
 
 type EmailPreviewFillProps = {
 	emailTypes: EmailType[];
@@ -36,8 +34,11 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 } ) => {
 	const [ deviceType, setDeviceType ] =
 		useState< string >( DEVICE_TYPE_DESKTOP );
+	const isSingleEmail = emailTypes.length === 1;
 	const [ emailType, setEmailType ] = useState< string >(
-		'WC_Email_Customer_Processing_Order'
+		isSingleEmail
+			? emailTypes[ 0 ].value
+			: 'WC_Email_Customer_Processing_Order'
 	);
 	const [ isLoading, setIsLoading ] = useState< boolean >( false );
 	const finalPreviewUrl = `${ previewUrl }&type=${ emailType }`;
@@ -46,14 +47,16 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 		<Fill>
 			<div className="wc-settings-email-preview-container">
 				<div className="wc-settings-email-preview-controls">
-					<EmailPreviewType
-						emailTypes={ emailTypes }
-						emailType={ emailType }
-						setEmailType={ ( newEmailType: string ) => {
-							setIsLoading( true );
-							setEmailType( newEmailType );
-						} }
-					/>
+					{ ! isSingleEmail && (
+						<EmailPreviewType
+							emailTypes={ emailTypes }
+							emailType={ emailType }
+							setEmailType={ ( newEmailType: string ) => {
+								setIsLoading( true );
+								setEmailType( newEmailType );
+							} }
+						/>
+					) }
 					<div className="wc-settings-email-preview-spinner">
 						{ isLoading && <Spinner /> }
 					</div>
@@ -67,10 +70,7 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 				<div
 					className={ `wc-settings-email-preview wc-settings-email-preview-${ deviceType }` }
 				>
-					<EmailPreviewHeader
-						emailTypes={ emailTypes }
-						emailType={ emailType }
-					/>
+					<EmailPreviewHeader emailType={ emailType } />
 					<iframe
 						src={ finalPreviewUrl }
 						title={ __( 'Email preview frame', 'woocommerce' ) }

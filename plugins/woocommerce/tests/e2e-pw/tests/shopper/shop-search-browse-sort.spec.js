@@ -1,113 +1,90 @@
-const { test, expect } = require( '@playwright/test' );
-const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
-const { faker } = require( '@faker-js/faker' );
-
-const singleProductPrice1 = '979.99';
-const singleProductPrice2 = '989.99';
-const singleProductPrice3 = '999.99';
-
-const simpleProductName = faker.commerce.productName();
-
-const categoryA = faker.commerce.department();
-const categoryB = faker.commerce.department();
-const categoryC = faker.commerce.department();
-
-let categoryAId, categoryBId, categoryCId, product1Id, product2Id, product3Id;
+/**
+ * Internal dependencies
+ */
+import { test, expect, tags } from '../../fixtures/fixtures';
+import { getFakeCategory, getFakeProduct } from '../../utils/data';
 
 test.describe(
 	'Search, browse by categories and sort items in the shop',
-	{ tag: [ '@payments', '@services' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
-		test.beforeAll( async ( { baseURL } ) => {
-			const api = new wcApi( {
-				url: baseURL,
-				consumerKey: process.env.CONSUMER_KEY,
-				consumerSecret: process.env.CONSUMER_SECRET,
-				version: 'wc/v3',
-			} );
-			// add product categories
+		let categories = [];
+		let products = [];
+
+		test.beforeAll( async ( { api } ) => {
 			await api
-				.post( 'products/categories', {
-					name: categoryA,
+				.post( 'products/categories/batch', {
+					create: [
+						getFakeCategory( { extraRandomTerm: true } ),
+						getFakeCategory( { extraRandomTerm: true } ),
+						getFakeCategory( { extraRandomTerm: true } ),
+					],
 				} )
 				.then( ( response ) => {
-					categoryAId = response.data.id;
-				} );
-			await api
-				.post( 'products/categories', {
-					name: categoryB,
+					categories = response.data.create;
+
+					if ( categories.map( ( c ) => c.id ).includes( 0 ) ) {
+						console.log( JSON.stringify( response.data ) );
+					}
 				} )
-				.then( ( response ) => {
-					categoryBId = response.data.id;
-				} );
-			await api
-				.post( 'products/categories', {
-					name: categoryC,
-				} )
-				.then( ( response ) => {
-					categoryCId = response.data.id;
+				.catch( ( error ) => {
+					console.error( error.response );
 				} );
 
-			// add products
 			await api
-				.post( 'products', {
-					name: simpleProductName + ' 1',
-					type: 'simple',
-					regular_price: singleProductPrice1,
-					categories: [ { id: categoryAId } ],
+				.post( 'products/batch', {
+					create: [
+						{
+							...getFakeProduct( { regular_price: '979.99' } ),
+							categories: [ { id: categories[ 0 ].id } ],
+						},
+						{
+							...getFakeProduct( { regular_price: '989.99' } ),
+							categories: [ { id: categories[ 1 ].id } ],
+						},
+						{
+							...getFakeProduct( { regular_price: '999.99' } ),
+							categories: [ { id: categories[ 2 ].id } ],
+						},
+					],
 				} )
 				.then( ( response ) => {
-					product1Id = response.data.id;
-				} );
-			await api
-				.post( 'products', {
-					name: simpleProductName + ' 2',
-					type: 'simple',
-					regular_price: singleProductPrice2,
-					categories: [ { id: categoryBId } ],
+					products = response.data.create;
 				} )
-				.then( ( response ) => {
-					product2Id = response.data.id;
-				} );
-			await api
-				.post( 'products', {
-					name: simpleProductName + ' 3',
-					type: 'simple',
-					regular_price: singleProductPrice3,
-					categories: [ { id: categoryCId } ],
-				} )
-				.then( ( response ) => {
-					product3Id = response.data.id;
+				.catch( ( error ) => {
+					console.error( error.response );
 				} );
 		} );
 
-		test.afterAll( async ( { baseURL } ) => {
-			const api = new wcApi( {
-				url: baseURL,
-				consumerKey: process.env.CONSUMER_KEY,
-				consumerSecret: process.env.CONSUMER_SECRET,
-				version: 'wc/v3',
-			} );
+		test.afterAll( async ( { api } ) => {
 			await api.post( 'products/batch', {
-				delete: [ product1Id, product2Id, product3Id ],
+				delete: [
+					products[ 0 ].id,
+					products[ 1 ].id,
+					products[ 2 ].id,
+				],
 			} );
 			await api.post( 'products/categories/batch', {
-				delete: [ categoryAId, categoryBId, categoryCId ],
+				delete: [
+					categories[ 0 ].id,
+					categories[ 1 ].id,
+					categories[ 2 ].id,
+				],
 			} );
 		} );
 
 		// default theme doesn't have a search box, but can simulate a search by visiting the search URL
 		test( 'should let user search the store', async ( { page } ) => {
 			await test.step( 'Go to the shop and perform the search', async () => {
-				await page.goto( `shop/?s=${ simpleProductName }%201` );
+				await page.goto( `shop/?s=${ products[ 0 ].name }%201` );
 
 				await expect(
 					page.getByRole( 'heading', {
-						name: `${ simpleProductName } 1`,
+						name: `${ products[ 0 ].name }`,
 					} )
 				).toBeVisible();
 				await expect( page.getByLabel( 'Breadcrumb' ) ).toContainText(
-					`${ simpleProductName } 1`
+					`${ products[ 0 ].name }`
 				);
 			} );
 		} );
@@ -115,28 +92,31 @@ test.describe(
 		test( 'should let user browse products by categories', async ( {
 			page,
 		} ) => {
-			await test.step( 'Go to the shop and browse by the Audio category', async () => {
+			await test.step( 'Go to the shop and browse by the category', async () => {
 				await page.goto( 'shop/' );
-				await page.locator( `text=${ simpleProductName } 2` ).click();
+				await page.locator( `text=${ products[ 1 ].name }` ).click();
 				await page
 					.getByLabel( 'Breadcrumb' )
-					.getByRole( 'link', { name: categoryB } )
+					.getByRole( 'link', {
+						name: categories[ 1 ].name,
+						exact: true,
+					} )
 					.click();
 			} );
 
-			await test.step( 'Ensure the Audio category page contains all the relevant products', async () => {
+			await test.step( 'Ensure the category page contains all the relevant products', async () => {
 				await expect(
-					page.getByRole( 'heading', { name: categoryB } )
+					page.getByRole( 'heading', { name: categories[ 1 ].name } )
 				).toBeVisible();
 				await expect(
 					page.getByRole( 'heading', {
-						name: simpleProductName + ' 2',
+						name: products[ 1 ].name,
 					} )
 				).toBeVisible();
-				await page.locator( `text=${ simpleProductName } 2` ).click();
+				await page.locator( `text=${ products[ 1 ].name }` ).click();
 				await expect(
 					page.getByRole( 'heading', {
-						name: simpleProductName + ' 2',
+						name: products[ 1 ].name,
 					} )
 				).toBeVisible();
 			} );
@@ -148,7 +128,7 @@ test.describe(
 			await test.step( 'Go to the shop and sort by price high to low', async () => {
 				await page.goto( 'shop/' );
 				await expect(
-					page.getByLabel( `Add to cart: “${ simpleProductName } 1”` )
+					page.getByLabel( `Add to cart: “${ products[ 0 ].name }”` )
 				).toBeVisible();
 
 				// sort by price high to low
@@ -167,10 +147,10 @@ test.describe(
 					.getByRole( 'heading' )
 					.allInnerTexts();
 				const highToLow_index_priciest = highToLowList.indexOf(
-					`${ simpleProductName } 3`
+					`${ products[ 2 ].name }`
 				);
 				const highToLow_index_cheapest = highToLowList.indexOf(
-					`${ simpleProductName } 1`
+					`${ products[ 0 ].name }`
 				);
 				expect( highToLow_index_priciest ).toBeLessThan(
 					highToLow_index_cheapest
@@ -180,7 +160,7 @@ test.describe(
 			await test.step( 'Go to the shop and sort by price low to high', async () => {
 				await page.goto( 'shop/' );
 				await expect(
-					page.getByLabel( `Add to cart: “${ simpleProductName } 1”` )
+					page.getByLabel( `Add to cart: “${ products[ 0 ].name }”` )
 				).toBeVisible();
 
 				// sort by price low to high
@@ -197,10 +177,10 @@ test.describe(
 					.getByRole( 'heading' )
 					.allInnerTexts();
 				const lowToHigh_index_priciest = lowToHighList.indexOf(
-					`${ simpleProductName } 3`
+					`${ products[ 2 ].name }`
 				);
 				const lowToHigh_index_cheapest = lowToHighList.indexOf(
-					`${ simpleProductName } 1`
+					`${ products[ 0 ].name }`
 				);
 				expect( lowToHigh_index_cheapest ).toBeLessThan(
 					lowToHigh_index_priciest
