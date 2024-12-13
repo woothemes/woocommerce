@@ -418,6 +418,7 @@ class PaymentGateway {
 			'id'          => sanitize_key( $recommended_pm['id'] ),
 			'_order'      => $order,
 			'enabled'     => (bool) $recommended_pm['enabled'] ?? true, // Default to enabled if not explicit.
+			'required'    => (bool) $recommended_pm['required'] ?? false, // Default to not required if not explicit.
 			'title'       => sanitize_text_field( $recommended_pm['title'] ),
 			'description' => '',
 			'icon'        => '',

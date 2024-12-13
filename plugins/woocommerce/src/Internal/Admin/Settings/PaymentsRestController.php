@@ -810,6 +810,12 @@ class PaymentsRestController extends RestApiControllerBase {
 										'context'     => array( 'view', 'edit' ),
 										'readonly'    => true,
 									),
+									'required'    => array(
+										'type'        => 'boolean',
+										'description' => esc_html__( 'Whether the payment method should be required (and force-enabled) or not.', 'woocommerce' ),
+										'context'     => array( 'view', 'edit' ),
+										'readonly'    => true,
+									),
 									'title'       => array(
 										'type'        => 'string',
 										'description' => esc_html__( 'The title of the payment method. Does not include HTML tags.', 'woocommerce' ),
