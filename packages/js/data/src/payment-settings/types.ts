@@ -80,7 +80,7 @@ export type PaymentProvider = {
 		_links: {
 			onboard: LinkData;
 		};
-		recommended_payment_methods: RecommendedPaymentMethod[];
+		recommended_payment_methods?: RecommendedPaymentMethod[];
 	};
 	tags?: string[];
 	_suggestion_id?: string;
