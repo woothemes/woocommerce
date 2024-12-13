@@ -389,13 +389,13 @@ class ProductSchema extends AbstractSchema {
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,
 				'properties'  => [
-					'availability' => [
+					'text'  => [
 						'description' => __( 'Stock availability text.', 'woocommerce' ),
 						'type'        => 'string',
 						'context'     => [ 'view', 'edit' ],
 						'readonly'    => true,
 					],
-					'class'        => [
+					'class' => [
 						'description' => __( 'Stock availability class.', 'woocommerce' ),
 						'type'        => 'string',
 						'context'     => [ 'view', 'edit' ],
