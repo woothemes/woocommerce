@@ -17,11 +17,16 @@ class ProductGallery extends AbstractBlock {
 	protected $block_name = 'product-gallery';
 
 	/**
-	 * "Main" block instance. Used to preserve the context for dialog rendering.
+	 * Used to preserve the context for dialog rendering.
 	 *
-	 * @var WP_Block
+	 * @var array
 	 */
-	protected $block_instance;
+	protected $dialog_context;
+
+	protected function initialize() {
+		parent::initialize();
+		// add_filter( 'render_block_context', [ $this, 'inject_dialog_context' ], 10, 3 );
+	}
 
 	/**
 	 *  Register the context
@@ -30,6 +35,28 @@ class ProductGallery extends AbstractBlock {
 	 */
 	protected function get_block_type_uses_context() {
 		return [ 'postId' ];
+	}
+
+	public function inject_dialog_context( $context, $block, $parent_block ) {
+		$expected_inner_blocks = [
+			'woocommerce/product-gallery',
+			'woocommerce/product-gallery-large-image',
+			'woocommerce/product-gallery-large-image-next-previous',
+			'woocommerce/product-gallery-pager',
+			'woocommerce/product-gallery-thumbnails'
+		];
+		$is_single_product = $this->dialog_context['singleProduct'] ?? false;
+
+		if ( $is_single_product && in_array( $block['blockName'], $expected_inner_blocks ) ) {
+			do_action( 'qm/debug', array_merge( $context, $this->dialog_context ));
+			return array_merge( $context, $this->dialog_context );
+		}
+
+		if ( $block['blockName'] === 'core/post-title' ) {
+			do_action( 'qm/debug', $context );
+		}
+
+		return $context;
 	}
 
 	/**
@@ -60,18 +87,6 @@ class ProductGallery extends AbstractBlock {
 	 */
 	protected function render_dialog() {
 		$template_part = BlockTemplateUtils::get_template_part( 'product-gallery' );
-		$is_single_product = $this->block_instance->context['singleProduct'] ?? false;
-		$post_id           = $this->block_instance->context['postId'] ?? null;
-		$original_post     = null;
-
-		// Temporarily override the global post to ensure the product gallery
-		// dialog gets the same context when in single product block.
-		if ( $is_single_product && $post_id) {
-			$original_post = $GLOBALS['post'] ?? null;
-			$GLOBALS['post'] = get_post( $post_id);
-			setup_postdata( $GLOBALS['post'] );
-		}
-
 
 		$parsed_template = parse_blocks(
 			$template_part
@@ -84,11 +99,6 @@ class ProductGallery extends AbstractBlock {
 			},
 			''
 		);
-
-		if ( $post_id && $original_post ) {
-			$GLOBALS['post'] = $original_post;
-			setup_postdata( $original_post );
-		}
 
 		$html_processor = new \WP_HTML_Tag_Processor( $html );
 
@@ -123,6 +133,7 @@ class ProductGallery extends AbstractBlock {
 				'{{close_dialog_aria_label}}' => __( 'Close Product Gallery dialog', 'woocommerce' ),
 			)
 		);
+		remove_filter( 'render_block_context', [ $this, 'inject_dialog_context' ], 10 );
 		return $gallery_dialog;
 	}
 
@@ -135,7 +146,7 @@ class ProductGallery extends AbstractBlock {
 	 * @return string Rendered block type output.
 	 */
 	protected function render( $attributes, $content, $block ) {
-		$this->block_instance = $block;
+		$this->dialog_context = $block->context;
 		$post_id              = $block->context['postId'] ?? '';
 		$product              = wc_get_product( $post_id );
 
