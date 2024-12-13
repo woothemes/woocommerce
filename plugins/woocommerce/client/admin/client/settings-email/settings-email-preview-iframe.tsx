@@ -3,7 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from '@wordpress/element';
 import { debounce } from 'lodash';
 
 type EmailPreviewIframeProps = {
