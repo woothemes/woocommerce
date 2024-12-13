@@ -188,6 +188,9 @@ export const SettingsPaymentsMain = () => {
 			installAndActivatePlugins( [ slug ] )
 				.then( async ( response ) => {
 					createNoticesFromResponse( response );
+					invalidateResolutionForStoreSelector(
+						'getPaymentProviders'
+					);
 					if ( isWooPayments( id ) ) {
 						// Wait for the state update and fetch the latest providers
 						const updatedProviders = await resolveSelect(
@@ -202,6 +205,7 @@ export const SettingsPaymentsMain = () => {
 							( updatedWooPaymentsProvider?.onboarding
 								?.recommended_payment_methods ??
 								[] ) as RecommendedPaymentMethod[];
+
 						if ( updatedRecommendedPaymentMethods.length > 0 ) {
 							const history = getHistory();
 							history.push(
@@ -214,9 +218,7 @@ export const SettingsPaymentsMain = () => {
 
 						return;
 					}
-					invalidateResolutionForStoreSelector(
-						'getPaymentProviders'
-					);
+					
 					setInstallingPlugin( null );
 				} )
 				.catch( ( response: { errors: Record< string, string > } ) => {
