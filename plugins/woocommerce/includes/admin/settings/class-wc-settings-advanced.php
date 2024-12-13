@@ -503,44 +503,13 @@ class WC_Settings_Advanced extends WC_Settings_Page {
 	}
 
 	/**
-	 * Track when the user attempts to toggle off the checkbox for
-	 * woocommerce_allow_tracking setting.
-	 *
-	 * We do this right before the option is changed to off to
-	 * avoid the tracker to stop working before sending this last track event.
-	 */
-	public function maybe_track_woocommerce_tracking_option_off() {
-		if ( ! class_exists( 'WC_Tracks' ) ) {
-			return;
-		}
-
-		$new_value  = isset( $_POST['woocommerce_allow_tracking'] ) ? 'yes' : 'no';
-		$prev_value = get_option( 'woocommerce_allow_tracking', 'no' );
-
-		if ( 'no' === $new_value && 'yes' === $prev_value && class_exists( 'WC_Tracks' ) ) {
-			WC_Tracks::track_woocommerce_allow_tracking_toggled( $prev_value, $new_value, 'settings' );
-		}
-	}
-
-	/**
-	 * Track when the user toggled on the checkbox for
-	 * woocommerce_allow_tracking setting.
-	 *
-	 * @param string $prev_value The previous value for the setting. 'yes' or 'no'.
-	 */
-	public function maybe_track_woocommerce_tracking_option_on( $prev_value ) {
-		if ( class_exists( 'WC_Tracks' ) && isset( $_POST['woocommerce_allow_tracking'] ) ) {
-			WC_Tracks::track_woocommerce_allow_tracking_toggled( $prev_value, 'yes', 'settings' );
-		}
-	}
-
-	/**
 	 * Save settings.
 	 */
 	public function save() {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		global $current_section;
-		$woocommerce_allow_tracking = get_option( 'woocommerce_allow_tracking', 'no' );
+		$prev_value = get_option( 'woocommerce_allow_tracking', 'no' );
+		$new_value  = isset( $_POST['woocommerce_allow_tracking'] ) ? 'yes' : 'no';
 
 		if ( apply_filters( 'woocommerce_rest_api_valid_to_save', ! in_array( $current_section, array( 'keys', 'webhooks' ), true ) ) ) {
 			// Prevent the T&Cs and checkout page from being set to the same page.
@@ -561,11 +530,16 @@ class WC_Settings_Advanced extends WC_Settings_Page {
 				}
 			}
 
-			$this->maybe_track_woocommerce_tracking_option_off();
+			if ( ! class_exists( 'WC_Tracks' ) && 'no' === $new_value && 'yes' === $prev_value ) {
+				WC_Tracks::track_woocommerce_allow_tracking_toggled( $prev_value, $new_value, 'settings' );
+			}
+
 			$this->save_settings_for_current_section();
 			$this->do_update_options_action();
-			$this->maybe_track_woocommerce_tracking_option_on( $woocommerce_allow_tracking );
 
+			if ( ! class_exists( 'WC_Tracks' ) && 'yes' === $new_value && 'no' === $prev_value ) {
+				WC_Tracks::track_woocommerce_allow_tracking_toggled( $prev_value, $new_value, 'settings' );
+			}
 		}
 		// phpcs:enable
 	}
