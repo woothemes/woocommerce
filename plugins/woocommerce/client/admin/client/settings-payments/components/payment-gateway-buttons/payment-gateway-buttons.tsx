@@ -137,7 +137,7 @@ export const PaymentGatewayButtons = ( {
 					variant={ 'primary' }
 					isBusy={ isUpdating }
 					disabled={ isUpdating }
-					href={ settingsUrl }
+					href={ onboardUrl }
 				>
 					{ textNeedsSetup }
 				</Button>
