@@ -29,15 +29,7 @@ const FrontendBlock = ( {
 		select( CHECKOUT_STORE_KEY ).isProcessing()
 	);
 	const { showShippingFields } = useCheckoutAddress();
-	const {
-		showCompanyField,
-		requireCompanyField,
-		showApartmentField,
-		requireApartmentField,
-		showPhoneField,
-		requirePhoneField,
-		showFormStepNumbers,
-	} = useCheckoutBlockContext();
+	const { showFormStepNumbers } = useCheckoutBlockContext();
 
 	if ( ! showShippingFields ) {
 		return null;
@@ -55,14 +47,7 @@ const FrontendBlock = ( {
 			description={ description }
 			showStepNumber={ showFormStepNumbers }
 		>
-			<Block
-				showCompanyField={ showCompanyField }
-				requireCompanyField={ requireCompanyField }
-				showApartmentField={ showApartmentField }
-				requireApartmentField={ requireApartmentField }
-				showPhoneField={ showPhoneField }
-				requirePhoneField={ requirePhoneField }
-			/>
+			<Block />
 			{ children }
 		</FormStep>
 	);

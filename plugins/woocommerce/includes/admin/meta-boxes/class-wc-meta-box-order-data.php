@@ -8,6 +8,7 @@
  * @version     2.2.0
  */
 
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Utilities\OrderUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -753,7 +754,7 @@ class WC_Meta_Box_Order_Data {
 		$props['date_created'] = $date;
 
 		// Set created via prop if new post.
-		if ( isset( $_POST['original_post_status'] ) && 'auto-draft' === $_POST['original_post_status'] ) {
+		if ( isset( $_POST['original_post_status'] ) && OrderStatus::AUTO_DRAFT === $_POST['original_post_status'] ) {
 			$props['created_via'] = 'admin';
 		}
 

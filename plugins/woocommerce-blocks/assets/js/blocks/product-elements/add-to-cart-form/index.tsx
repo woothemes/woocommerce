@@ -8,13 +8,13 @@ import { Icon, button } from '@wordpress/icons';
  * Internal dependencies
  */
 import metadata from './block.json';
-import edit from './edit';
+import AddToCartFormEdit from './edit';
 import './style.scss';
 import './editor.scss';
 import '../../../base/components/quantity-selector/style.scss';
 
 const blockSettings = {
-	edit,
+	edit: AddToCartFormEdit,
 	icon: {
 		src: (
 			<Icon

@@ -2,13 +2,13 @@
  * External dependencies
  */
 import { decodeEntities } from '@wordpress/html-entities';
-import { type OfflinePaymentGateway } from '@woocommerce/data';
+import { type OfflinePaymentMethodProvider } from '@woocommerce/data';
 
 /**
  * Internal dependencies
  */
 import sanitizeHTML from '~/lib/sanitize-html';
-import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
+import { PaymentGatewayButtons } from '~/settings-payments/components/payment-gateway-buttons';
 import {
 	DefaultDragHandle,
 	SortableContainer,
@@ -16,7 +16,7 @@ import {
 } from '../sortable';
 
 type OfflinePaymentGatewayListItemProps = {
-	gateway: OfflinePaymentGateway;
+	gateway: OfflinePaymentMethodProvider;
 };
 
 export const OfflinePaymentGatewayListItem = ( {
@@ -25,6 +25,7 @@ export const OfflinePaymentGatewayListItem = ( {
 }: OfflinePaymentGatewayListItemProps ) => {
 	return (
 		<SortableItem
+			key={ gateway.id }
 			id={ gateway.id }
 			className="woocommerce-list__item woocommerce-list__item-enter-done"
 			{ ...props }
@@ -47,11 +48,13 @@ export const OfflinePaymentGatewayListItem = ( {
 				</div>
 				<div className="woocommerce-list__item-after">
 					<div className="woocommerce-list__item-after__actions">
-						<PaymentGatewayButton
+						<PaymentGatewayButtons
 							id={ gateway.id }
 							isOffline={ true }
 							enabled={ gateway.state.enabled }
-							settingsUrl={ gateway.management.settings_url }
+							settingsUrl={
+								gateway.management._links.settings.href
+							}
 						/>
 					</div>
 				</div>
@@ -64,11 +67,11 @@ export const OfflinePaymentGatewayList = ( {
 	gateways,
 	setGateways,
 }: {
-	gateways: OfflinePaymentGateway[];
-	setGateways: ( gateways: OfflinePaymentGateway[] ) => void;
+	gateways: OfflinePaymentMethodProvider[];
+	setGateways: ( gateways: OfflinePaymentMethodProvider[] ) => void;
 } ) => {
 	return (
-		<SortableContainer< OfflinePaymentGateway >
+		<SortableContainer< OfflinePaymentMethodProvider >
 			className="woocommerce-list"
 			items={ gateways }
 			setItems={ setGateways }

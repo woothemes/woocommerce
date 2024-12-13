@@ -1,0 +1,4 @@
+Significance: patch
+Type: tweak
+Comment: No changelog required, since this PR enables E2E tests.
+

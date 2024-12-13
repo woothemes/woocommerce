@@ -1,5 +1,9 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
-const { disableWelcomeModal } = require( '../../utils/editor' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
+
+/**
+ * External dependencies
+ */
+import { disableWelcomeModal } from '@woocommerce/e2e-utils-playwright';
 
 // need to figure out whether tests are being run on a mac
 const macOS = process.platform === 'darwin';
@@ -52,7 +56,7 @@ const test = baseTest.extend( {
 
 test(
 	'can use the "Add new product" command',
-	{ tag: '@services' },
+	{ tag: tags.SERVICES },
 	async ( { page } ) => {
 		await clickOnCommandPaletteOption( {
 			page,
@@ -68,7 +72,7 @@ test(
 
 test(
 	'can use the "Add new order" command',
-	{ tag: '@services' },
+	{ tag: tags.SERVICES },
 	async ( { page } ) => {
 		await clickOnCommandPaletteOption( {
 			page,
@@ -84,7 +88,7 @@ test(
 
 test(
 	'can use the "Products" command',
-	{ tag: '@services' },
+	{ tag: tags.SERVICES },
 	async ( { page } ) => {
 		await clickOnCommandPaletteOption( {
 			page,
@@ -100,7 +104,7 @@ test(
 
 test(
 	'can use the "Orders" command',
-	{ tag: '@services' },
+	{ tag: tags.SERVICES },
 	async ( { page } ) => {
 		await clickOnCommandPaletteOption( {
 			page,
@@ -116,7 +120,7 @@ test(
 
 test(
 	'can use the product search command',
-	{ tag: '@services' },
+	{ tag: tags.SERVICES },
 	async ( { page, product } ) => {
 		await clickOnCommandPaletteOption( {
 			page,
@@ -132,7 +136,7 @@ test(
 
 test(
 	'can use a settings command',
-	{ tag: '@services' },
+	{ tag: tags.SERVICES },
 	async ( { page } ) => {
 		await clickOnCommandPaletteOption( {
 			page,
@@ -146,7 +150,7 @@ test(
 
 test(
 	'can use an analytics command',
-	{ tag: '@services' },
+	{ tag: tags.SERVICES },
 	async ( { page } ) => {
 		await clickOnCommandPaletteOption( {
 			page,

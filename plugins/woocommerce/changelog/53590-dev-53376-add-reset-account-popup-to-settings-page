@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+Introduce reset WooPayments account modal on the Payments Settings page with React feature flag on.

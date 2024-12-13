@@ -7,10 +7,9 @@ import { Actions } from './actions';
 
 const reducer = (
 	state: PaymentSettingsState = {
-		registeredPaymentGateways: [],
+		providers: [],
 		offlinePaymentGateways: [],
-		preferredExtensionSuggestions: [],
-		otherExtensionSuggestions: [],
+		suggestions: [],
 		suggestionCategories: [],
 		isFetching: false,
 		errors: {},
@@ -19,25 +18,21 @@ const reducer = (
 ): PaymentSettingsState => {
 	if ( payload && 'type' in payload ) {
 		switch ( payload.type ) {
-			case ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_REQUEST:
+			case ACTION_TYPES.GET_PAYMENT_PROVIDERS_REQUEST:
 				return {
 					...state,
 					isFetching: true,
 				};
-			case ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_SUCCESS:
+			case ACTION_TYPES.GET_PAYMENT_PROVIDERS_SUCCESS:
 				return {
 					...state,
 					isFetching: false,
-					registeredPaymentGateways:
-						payload.registeredPaymentGateways,
+					providers: payload.providers,
 					offlinePaymentGateways: payload.offlinePaymentGateways,
-					preferredExtensionSuggestions:
-						payload.preferredExtensionSuggestions,
-					otherExtensionSuggestions:
-						payload.otherExtensionSuggestions,
+					suggestions: payload.suggestions,
 					suggestionCategories: payload.suggestionCategories,
 				};
-			case ACTION_TYPES.GET_PAYMENT_GATEWAY_SUGGESTIONS_ERROR:
+			case ACTION_TYPES.GET_PAYMENT_PROVIDERS_ERROR:
 				return {
 					...state,
 					isFetching: false,
@@ -46,10 +41,9 @@ const reducer = (
 						getPaymentGatewaySuggestions: payload.error,
 					},
 				};
-			case ACTION_TYPES.UPDATE_OFFLINE_PAYMENT_GATEWAY_ORDERING:
+			case ACTION_TYPES.UPDATE_PROVIDER_ORDERING:
 				return {
 					...state,
-					offlinePaymentGateways: payload.offlinePaymentGateways,
 				};
 		}
 	}

@@ -16,12 +16,15 @@ import {
 	DEVICE_TYPE_DESKTOP,
 } from './settings-email-preview-device-type';
 import { EmailPreviewHeader } from './settings-email-preview-header';
+import { EmailPreviewSend } from './settings-email-preview-send';
 import { EmailPreviewType } from './settings-email-preview-type';
 
 const { Fill } = createSlotFill( SETTINGS_SLOT_FILL_CONSTANT );
 
+export type EmailType = SelectControl.Option;
+
 type EmailPreviewFillProps = {
-	emailTypes: SelectControl.Option[];
+	emailTypes: EmailType[];
 	previewUrl: string;
 };
 
@@ -31,8 +34,11 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 } ) => {
 	const [ deviceType, setDeviceType ] =
 		useState< string >( DEVICE_TYPE_DESKTOP );
+	const isSingleEmail = emailTypes.length === 1;
 	const [ emailType, setEmailType ] = useState< string >(
-		'WC_Email_Customer_Processing_Order'
+		isSingleEmail
+			? emailTypes[ 0 ].value
+			: 'WC_Email_Customer_Processing_Order'
 	);
 	const [ isLoading, setIsLoading ] = useState< boolean >( false );
 	const finalPreviewUrl = `${ previewUrl }&type=${ emailType }`;
@@ -41,14 +47,16 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 		<Fill>
 			<div className="wc-settings-email-preview-container">
 				<div className="wc-settings-email-preview-controls">
-					<EmailPreviewType
-						emailTypes={ emailTypes }
-						emailType={ emailType }
-						setEmailType={ ( newEmailType: string ) => {
-							setIsLoading( true );
-							setEmailType( newEmailType );
-						} }
-					/>
+					{ ! isSingleEmail && (
+						<EmailPreviewType
+							emailTypes={ emailTypes }
+							emailType={ emailType }
+							setEmailType={ ( newEmailType: string ) => {
+								setIsLoading( true );
+								setEmailType( newEmailType );
+							} }
+						/>
+					) }
 					<div className="wc-settings-email-preview-spinner">
 						{ isLoading && <Spinner /> }
 					</div>
@@ -57,11 +65,12 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 						deviceType={ deviceType }
 						setDeviceType={ setDeviceType }
 					/>
+					<EmailPreviewSend type={ emailType } />
 				</div>
 				<div
 					className={ `wc-settings-email-preview wc-settings-email-preview-${ deviceType }` }
 				>
-					<EmailPreviewHeader />
+					<EmailPreviewHeader emailType={ emailType } />
 					<iframe
 						src={ finalPreviewUrl }
 						title={ __( 'Email preview frame', 'woocommerce' ) }
@@ -84,7 +93,7 @@ export const registerSettingsEmailPreviewFill = () => {
 		return null;
 	}
 	const emailTypesData = slotElement.getAttribute( 'data-email-types' );
-	let emailTypes: SelectControl.Option[] = [];
+	let emailTypes: EmailType[] = [];
 	try {
 		emailTypes = JSON.parse( emailTypesData || '' );
 	} catch ( e ) {}
