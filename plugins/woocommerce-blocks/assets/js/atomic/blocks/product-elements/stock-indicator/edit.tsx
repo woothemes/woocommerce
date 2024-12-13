@@ -55,4 +55,12 @@ const Edit = ( {
 	);
 };
 
-export default withProductSelector( { icon, label, description } )( Edit );
+export default (
+	props: BlockEditProps< BlockAttributes > & { context: Context }
+) => {
+	const { isDescendentOfSingleProductTemplate } = props.attributes;
+	if ( isDescendentOfSingleProductTemplate ) {
+		return <Edit { ...props } />;
+	}
+	return withProductSelector( { icon, label, description } )( Edit )( props );
+};
