@@ -20,6 +20,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class EmailPreview {
 	const DEFAULT_EMAIL_TYPE = 'WC_Email_Customer_Processing_Order';
+	const DEFAULT_EMAIL_ID   = 'customer_processing_order';
 
 	/**
 	 * All fields IDs that can customize email styles in Settings.
