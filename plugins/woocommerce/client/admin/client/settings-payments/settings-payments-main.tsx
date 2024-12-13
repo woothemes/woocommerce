@@ -10,6 +10,7 @@ import {
 } from '@woocommerce/data';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
@@ -19,10 +20,13 @@ import './settings-payments-body.scss';
 import { createNoticesFromResponse } from '~/lib/notices';
 import { OtherPaymentGateways } from '~/settings-payments/components/other-payment-gateways';
 import { PaymentGateways } from '~/settings-payments/components/payment-gateways';
+import { IncentiveBanner } from '~/settings-payments/components/incentive-banner';
+import { IncentiveModal } from '~/settings-payments/components/incentive-modal';
 import {
 	getWooPaymentsTestDriveAccountLink,
 	isWooPayments,
 	providersContainWooPaymentsInTestMode,
+	providersContainWooPaymentsInDevMode,
 } from '~/settings-payments/utils';
 import { WooPaymentsPostSandboxAccountSetupModal } from '~/settings-payments/components/modals';
 
@@ -39,8 +43,10 @@ export const SettingsPaymentsMain = () => {
 		PAYMENT_SETTINGS_STORE_NAME
 	);
 	const [ errorMessage, setErrorMessage ] = useState< string | null >( null );
-	const [ livePaymentsModalVisible, setLivePaymentsModalVisible ] =
-		useState( false );
+	const [
+		postSandboxAccountSetupModalVisible,
+		setPostSandboxAccountSetupModalVisible,
+	] = useState( false );
 
 	const [ storeCountry, setStoreCountry ] = useState< string | null >(
 		window.wcSettings?.admin?.woocommerce_payments_nox_profile
@@ -85,13 +91,27 @@ export const SettingsPaymentsMain = () => {
 			urlParams.get( 'wcpay-sandbox-success' ) === 'true';
 
 		if ( isSandboxOnboardedSuccessful ) {
-			setLivePaymentsModalVisible( true );
+			setPostSandboxAccountSetupModalVisible( true );
 		}
 	}, [] );
 
 	const installedPluginSlugs = useSelect( ( select ) => {
 		return select( PLUGINS_STORE_NAME ).getInstalledPlugins();
 	}, [] );
+
+	const dismissIncentive = useCallback(
+		( dismissHref: string, context: string ) => {
+			// The dismissHref is the full URL to dismiss the incentive.
+			apiFetch( {
+				url: dismissHref,
+				method: 'POST',
+				data: {
+					context,
+				},
+			} );
+		},
+		[]
+	);
 
 	// Make UI refresh when plugin is installed.
 	const { invalidateResolutionForStoreSelector } = useDispatch(
@@ -163,8 +183,37 @@ export const SettingsPaymentsMain = () => {
 		setSortedProviders( sorted );
 	}
 
+	const incentive = providers.find(
+		( provider ) => '_incentive' in provider
+	)?._incentive;
+
+	const isSwitchIncentive =
+		incentive && incentive.promo_id.includes( '-switch-' );
+
+	const incentiveBannerContext = 'wc_settings_payments__banner';
+	const incentiveModalContext = 'wc_settings_payments__modal';
+
+	const isIncentiveDismissedInBannerContext =
+		( incentive?._dismissals.includes( 'all' ) ||
+			incentive?._dismissals.includes( incentiveBannerContext ) ) ??
+		false;
+
+	const isIncentiveDismissedInModalContext =
+		( incentive?._dismissals.includes( 'all' ) ||
+			incentive?._dismissals.includes( incentiveModalContext ) ) ??
+		false;
+
 	return (
 		<>
+			{ incentive &&
+				isSwitchIncentive &&
+				! isIncentiveDismissedInModalContext && (
+					<IncentiveModal
+						incentive={ incentive }
+						onDismiss={ dismissIncentive }
+						onAccept={ setupPlugin }
+					/>
+				) }
 			{ errorMessage && (
 				<div className="notice notice-error is-dismissible wcpay-settings-notice">
 					<p>{ errorMessage }</p>
@@ -177,6 +226,15 @@ export const SettingsPaymentsMain = () => {
 					></button>
 				</div>
 			) }
+			{ incentive &&
+				! isSwitchIncentive &&
+				! isIncentiveDismissedInBannerContext && (
+					<IncentiveBanner
+						incentive={ incentive }
+						onDismiss={ dismissIncentive }
+						onAccept={ setupPlugin }
+					/>
+				) }
 			<div className="settings-payments-main__container">
 				<PaymentGateways
 					providers={ sortedProviders || providers }
@@ -198,10 +256,13 @@ export const SettingsPaymentsMain = () => {
 			</div>
 			<WooPaymentsPostSandboxAccountSetupModal
 				isOpen={
-					livePaymentsModalVisible &&
+					postSandboxAccountSetupModalVisible &&
 					providersContainWooPaymentsInTestMode( providers )
 				}
-				onClose={ () => setLivePaymentsModalVisible( false ) }
+				devMode={ providersContainWooPaymentsInDevMode( providers ) }
+				onClose={ () =>
+					setPostSandboxAccountSetupModalVisible( false )
+				}
 			/>
 		</>
 	);

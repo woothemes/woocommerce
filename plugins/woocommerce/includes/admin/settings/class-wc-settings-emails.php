@@ -6,6 +6,7 @@
  * @version 2.1.0
  */
 
+use Automattic\WooCommerce\Internal\Admin\EmailPreview\EmailPreview;
 use Automattic\WooCommerce\Internal\BrandingController;
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
@@ -49,6 +50,9 @@ class WC_Settings_Emails extends WC_Settings_Page {
 		add_action( 'woocommerce_admin_field_email_image_url', array( $this, 'email_image_url' ) );
 		add_action( 'woocommerce_admin_field_email_font_family', array( $this, 'email_font_family' ) );
 		add_action( 'woocommerce_admin_field_email_color_palette', array( $this, 'email_color_palette' ) );
+		if ( FeaturesUtil::feature_is_enabled( 'email_improvements' ) ) {
+			add_action( 'woocommerce_email_settings_after', array( $this, 'email_preview_single' ) );
+		}
 		parent::__construct();
 	}
 
@@ -625,12 +629,17 @@ class WC_Settings_Emails extends WC_Settings_Page {
 	 * Creates the React mount point for the email preview.
 	 */
 	public function email_preview() {
+		// Deletes transient with email settings used for live preview. This is to
+		// prevent conflicts where the preview would show values from previous session.
+		foreach ( EmailPreview::EMAIL_SETTINGS_IDS as $id ) {
+			delete_transient( $id );
+		}
 		$emails      = WC()->mailer()->get_emails();
 		$email_types = array();
 		foreach ( $emails as $type => $email ) {
 			$email_types[] = array(
-				'label'   => $email->get_title(),
-				'value'   => $type,
+				'label' => $email->get_title(),
+				'value' => $type,
 			);
 		}
 		?>
@@ -638,7 +647,37 @@ class WC_Settings_Emails extends WC_Settings_Page {
 			id="wc_settings_email_preview_slotfill"
 			data-preview-url="<?php echo esc_url( wp_nonce_url( admin_url( '?preview_woocommerce_mail=true' ), 'preview-mail' ) ); ?>"
 			data-email-types="<?php echo esc_attr( wp_json_encode( $email_types ) ); ?>"
+			data-email-settings-ids="<?php echo esc_attr( wp_json_encode( EmailPreview::EMAIL_SETTINGS_IDS ) ); ?>"
 		></div>
+		<?php
+	}
+
+	/**
+	 * Creates the React mount point for the single email preview.
+	 *
+	 * @param object $email The email object to run the method on.
+	 */
+	public function email_preview_single( $email ) {
+		// Email types array should have a single entry for current email.
+		$email_types = array(
+			array(
+				'label' => $email->get_title(),
+				'value' => get_class( $email ),
+			),
+		);
+		?>
+		<h2><?php echo esc_html( __( 'Email preview', 'woocommerce' ) ); ?></h2>
+
+		<p><?php echo esc_html( __( 'Preview your email template. You can also test on different devices and send yourself a test email.', 'woocommerce' ) ); ?></p>
+		<div>
+			<div
+				id="wc_settings_email_preview_slotfill"
+				data-preview-url="<?php echo esc_url( wp_nonce_url( admin_url( '?preview_woocommerce_mail=true' ), 'preview-mail' ) ); ?>"
+				data-email-types="<?php echo esc_attr( wp_json_encode( $email_types ) ); ?>"
+			></div>
+			<input type="hidden" id="woocommerce_email_from_name" value="<?php echo esc_attr( get_option( 'woocommerce_email_from_name' ) ); ?>" />
+			<input type="hidden" id="woocommerce_email_from_address" value="<?php echo esc_attr( get_option( 'woocommerce_email_from_address' ) ); ?>" />
+		</div>
 		<?php
 	}
 
@@ -754,6 +793,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 		$default_colors = $this->get_email_default_colors();
 
 		?>
+		<hr class="wc-settings-email-color-palette-separator" />
 		<h2 class="wc-settings-email-color-palette-title"><?php echo esc_html( $value['title'] ); ?></h2>
 		<div
 			class="wc-settings-email-color-palette-buttons"
