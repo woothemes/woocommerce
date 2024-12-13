@@ -425,7 +425,7 @@ const PriceSlider = ( {
 								className="wc-block-components-price-slider__label"
 								htmlFor="minPriceInput"
 							>
-								{ __('Min. Price', 'woocommerce') }
+								{ __( 'Min. Price', 'woocommerce' ) }
 							</label>
 							<FormattedMonetaryAmount
 								{ ...commonFormattedMonetaryAmountInputProps }
@@ -464,7 +464,7 @@ const PriceSlider = ( {
 								className="wc-block-components-price-slider__label"
 								htmlFor="maxPriceInput"
 							>
-								{ __('Max. Price', 'woocommerce') }
+								{ __( 'Max. Price', 'woocommerce' ) }
 							</label>
 							<FormattedMonetaryAmount
 								{ ...commonFormattedMonetaryAmountInputProps }
