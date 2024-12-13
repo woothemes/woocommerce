@@ -34,7 +34,6 @@ export const EmailPreviewIframe: React.FC< EmailPreviewIframeProps > = ( {
 					data: { key, value },
 				} );
 			} finally {
-				setIsLoading( false );
 				setCounter( ( prevCounter ) => prevCounter + 1 );
 			}
 		};
