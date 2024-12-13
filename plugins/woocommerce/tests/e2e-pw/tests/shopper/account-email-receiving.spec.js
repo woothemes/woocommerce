@@ -1,4 +1,6 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+//todo audit follow-up: revisit this entire spec and move these checks to be part of the end-to-end user creation and password reset tests
+
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 const { admin, customer } = require( '../../test-data/data' );
 
 const emailContent = '#wp-mail-logging-modal-content-body-content';
@@ -23,7 +25,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Shopper Account Email Receiving',
-	{ tag: [ '@payments', '@services' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		test.beforeEach( async ( { page, user } ) => {
 			await page.goto(
@@ -197,7 +199,7 @@ test.describe(
 
 test.describe(
 	'Shopper Password Reset Email Receiving',
-	{ tag: [ '@payments', '@services' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		test.beforeEach( async ( { page } ) => {
 			await page.goto(

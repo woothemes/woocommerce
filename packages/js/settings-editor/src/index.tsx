@@ -8,10 +8,6 @@ import { __ } from '@wordpress/i18n';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 // @ts-ignore No types for this exist yet.
 import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
-import {
-	// @ts-expect-error No types for this exist yet.
-	privateApis as editorPrivateApis,
-} from '@wordpress/editor';
 /* eslint-enable @woocommerce/dependency-group */
 
 /**
@@ -22,12 +18,18 @@ import { Layout } from './layout';
 import { useActiveRoute } from './route';
 
 const { RouterProvider } = unlock( routerPrivateApis );
-const { GlobalStylesProvider } = unlock( editorPrivateApis );
 
 const SettingsLayout = () => {
-	const activeRoute = useActiveRoute();
+	const { route, settingsPage, tabs, activeSection } = useActiveRoute();
 
-	return <Layout route={ activeRoute } />;
+	return (
+		<Layout
+			route={ route }
+			settingsPage={ settingsPage }
+			tabs={ tabs }
+			activeSection={ activeSection }
+		/>
+	);
 };
 
 export const SettingsEditor = () => {
@@ -46,10 +48,11 @@ export const SettingsEditor = () => {
 	}
 
 	return (
-		<GlobalStylesProvider>
-			<RouterProvider>
-				<SettingsLayout />
-			</RouterProvider>
-		</GlobalStylesProvider>
+		<RouterProvider>
+			<SettingsLayout />
+		</RouterProvider>
 	);
 };
+
+export * from './components';
+export * from './legacy';

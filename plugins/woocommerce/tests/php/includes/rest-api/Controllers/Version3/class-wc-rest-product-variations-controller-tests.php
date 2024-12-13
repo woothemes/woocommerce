@@ -165,4 +165,30 @@ class WC_REST_Product_Variations_Controller_Tests extends WC_REST_Unit_Test_Case
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 200, $response->get_status() );
 	}
+
+	/**
+	 * Test that the products endpoint can filter by global_unique_id and also return matched variations.
+	 *
+	 * @return void
+	 */
+	public function test_products_variations_query_by_global_unique_id() {
+		$parent_product = WC_Helper_Product::create_variation_product();
+		$variation      = $parent_product->get_available_variations()[0];
+		$variation      = wc_get_product( $variation['variation_id'] );
+		$unique_id		= $parent_product->get_id() . '-1';
+		$variation->set_global_unique_id( $unique_id );
+		$variation->save();
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products/' . $parent_product->get_id() . '/variations' );
+		$request->set_query_params(
+			array(
+				'global_unique_id' => $unique_id
+			)
+		);
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+		$response_products = $response->get_data();
+
+		$this->assertEquals( 1, count( $response_products ) );
+		$this->assertEquals( $response_products[0]['id'], $variation->get_id() );
+	}
 }

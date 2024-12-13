@@ -135,9 +135,19 @@ export const Header = ( { sections, isEmbedded = false, query } ) => {
 	const isAnalyticsOverviewScreen =
 		isWCAdmin() && getPath() === '/analytics/overview';
 
+	const isReactifyPaymentsSettingsScreen = Boolean(
+		window.wcAdminFeatures?.[ 'reactify-classic-payments-settings' ] &&
+			query?.page === 'wc-settings' &&
+			query?.tab === 'checkout'
+	);
+
+	const showReminderBar = Boolean(
+		activeSetupList && ! isReactifyPaymentsSettingsScreen
+	);
+
 	return (
 		<div className={ className } ref={ headerElement }>
-			{ activeSetupList && (
+			{ showReminderBar && (
 				<TasksReminderBar
 					updateBodyMargin={ updateBodyMargin }
 					taskListId={ activeSetupList }

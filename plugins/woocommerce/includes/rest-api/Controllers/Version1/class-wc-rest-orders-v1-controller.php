@@ -11,6 +11,7 @@
  */
 
 use Automattic\WooCommerce\Utilities\{ ArrayUtil, NumberUtil, StringUtil };
+use Automattic\WooCommerce\Enums\OrderStatus;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -984,7 +985,7 @@ class WC_REST_Orders_V1_Controller extends WC_REST_Posts_Controller {
 				'status' => array(
 					'description' => __( 'Order status.', 'woocommerce' ),
 					'type'        => 'string',
-					'default'     => 'pending',
+					'default'     => OrderStatus::PENDING,
 					'enum'        => $this->get_order_statuses(),
 					'context'     => array( 'view', 'edit' ),
 				),

@@ -6,6 +6,7 @@
 namespace Automattic\WooCommerce\Internal\Admin\RemoteFreeExtensions;
 
 use Automattic\WooCommerce\Admin\Features\PaymentGatewaySuggestions\DefaultPaymentGateways;
+use Automattic\WooCommerce\Internal\BrandingController;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -14,6 +15,17 @@ defined( 'ABSPATH' ) || exit;
  * Default Free Extensions
  */
 class DefaultFreeExtensions {
+
+	/**
+	 * Get Woo logo path.
+	 *
+	 * @return string
+	 */
+	private static function get_woo_logo() {
+		return BrandingController::use_new_branding() ?
+			plugins_url( '/assets/images/core-profiler/woo-rebrand-2.svg', WC_PLUGIN_FILE ) :
+			plugins_url( '/assets/images/onboarding/woo.svg', WC_PLUGIN_FILE );
+	}
 
 	/**
 	 * Get default specs.
@@ -262,7 +274,7 @@ class DefaultFreeExtensions {
 			),
 			'woocommerce-services:shipping' => array(
 				'name'           => __( 'WooCommerce Shipping', 'woocommerce' ),
-				'image_url'      => plugins_url( '/assets/images/onboarding/woo.svg', WC_PLUGIN_FILE ),
+				'image_url'      => self::get_woo_logo(),
 				'description'    => sprintf(
 				/* translators: 1: opening product link tag. 2: closing link tag */
 					__( 'Print shipping labels with %1$sWooCommerce Shipping%2$s', 'woocommerce' ),
@@ -349,7 +361,7 @@ class DefaultFreeExtensions {
 			),
 			'woocommerce-services:tax'      => array(
 				'name'           => __( 'WooCommerce Tax', 'woocommerce' ),
-				'image_url'      => plugins_url( '/assets/images/onboarding/woo.svg', WC_PLUGIN_FILE ),
+				'image_url'      => self::get_woo_logo(),
 				'description'    => sprintf(
 					/* translators: 1: opening product link tag. 2: closing link tag */
 					__( 'Get automated sales tax with %1$sWooCommerce Tax%2$s', 'woocommerce' ),
@@ -533,14 +545,15 @@ class DefaultFreeExtensions {
 		$_plugins = array(
 			'woocommerce-payments'          => array(
 				'label'            => __( 'Get paid with WooPayments', 'woocommerce' ),
-				'image_url'        => plugins_url( '/assets/images/core-profiler/logo-woo.svg', WC_PLUGIN_FILE ),
+				'image_url'        => self::get_woo_logo(),
 				'description'      => __( "Securely accept payments and manage payment activity straight from your store's dashboard", 'woocommerce' ),
 				'learn_more_link'  => 'https://woocommerce.com/products/woocommerce-payments?utm_source=storeprofiler&utm_medium=product&utm_campaign=freefeatures',
 				'install_priority' => 5,
+				'requires_jpc'     => true,
 			),
 			'woocommerce-services:shipping' => array(
 				'label'            => __( 'Print shipping labels with WooCommerce Shipping', 'woocommerce' ),
-				'image_url'        => plugins_url( '/assets/images/core-profiler/logo-woo.svg', WC_PLUGIN_FILE ),
+				'image_url'        => self::get_woo_logo(),
 				'description'      => __( 'Print USPS and DHL labels directly from your dashboard and save on shipping.', 'woocommerce' ),
 				'learn_more_link'  => 'https://woocommerce.com/woocommerce-shipping?utm_source=storeprofiler&utm_medium=product&utm_campaign=freefeatures',
 				'install_priority' => 3,
@@ -551,6 +564,7 @@ class DefaultFreeExtensions {
 				'description'      => __( 'Save time on content creation — unlock high-quality blog posts and pages using AI.', 'woocommerce' ),
 				'learn_more_link'  => 'https://woocommerce.com/products/jetpack?utm_source=storeprofiler&utm_medium=product&utm_campaign=freefeatures',
 				'install_priority' => 8,
+				'requires_jpc'     => true,
 			),
 			'pinterest-for-woocommerce'     => array(
 				'label'            => __( 'Showcase your products with Pinterest', 'woocommerce' ),
@@ -589,7 +603,7 @@ class DefaultFreeExtensions {
 			),
 			'woocommerce-services:tax'      => array(
 				'label'            => __( 'Get automated tax rates with WooCommerce Tax', 'woocommerce' ),
-				'image_url'        => plugins_url( '/assets/images/core-profiler/logo-woo.svg', WC_PLUGIN_FILE ),
+				'image_url'        => self::get_woo_logo(),
 				'description'      => __( 'Automatically calculate how much sales tax should be collected – by city, country, or state.', 'woocommerce' ),
 				'learn_more_link'  => 'https://woocommerce.com/products/tax?utm_source=storeprofiler&utm_medium=product&utm_campaign=freefeatures',
 				'install_priority' => 4,

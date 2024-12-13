@@ -12,7 +12,7 @@
  *
  * @see     https://woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates\Emails
- * @version 9.3.0
+ * @version 9.6.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,12 +20,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Load colors.
-$bg          = get_option( 'woocommerce_email_background_color' );
-$body        = get_option( 'woocommerce_email_body_background_color' );
-$base        = get_option( 'woocommerce_email_base_color' );
-$base_text   = wc_light_or_dark( $base, '#202020', '#ffffff' );
-$text        = get_option( 'woocommerce_email_text_color' );
-$footer_text = get_option( 'woocommerce_email_footer_text_color' );
+$bg               = get_option( 'woocommerce_email_background_color' );
+$body             = get_option( 'woocommerce_email_body_background_color' );
+$base             = get_option( 'woocommerce_email_base_color' );
+$base_text        = wc_light_or_dark( $base, '#202020', '#ffffff' );
+$text             = get_option( 'woocommerce_email_text_color' );
+$footer_text      = get_option( 'woocommerce_email_footer_text_color' );
+$header_alignment = get_option( 'woocommerce_email_header_alignment' );
 
 // Pick a contrasting color for links.
 $link_color = wc_hex_is_light( $base ) ? $base : $base_text;
@@ -85,6 +86,12 @@ body {
 	color: <?php echo esc_attr( $base_text ); ?>;
 	background-color: inherit;
 }
+
+<?php if ( $header_alignment ) : ?>
+#template_header_image p {
+	text-align: <?php echo esc_attr( $header_alignment ); ?>;
+}
+<?php endif; ?>
 
 #template_header_image img {
 	margin-left: 0;
@@ -190,6 +197,12 @@ body {
 	padding: 36px 48px;
 	display: block;
 }
+
+<?php if ( $header_alignment ) : ?>
+#header_wrapper h1 {
+	text-align: <?php echo esc_attr( $header_alignment ); ?>;
+}
+<?php endif; ?>
 
 #template_footer #credit,
 #template_footer #credit a {

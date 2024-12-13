@@ -15,6 +15,7 @@ import {
 	PluginsLearnMoreLinkClickedEvent,
 	PluginsInstallationRequestedEvent,
 	PluginsPageSkippedEvent,
+	PluginsPageCompletedWithoutSelectingPluginsEvent,
 } from '../../events';
 import { Heading } from '../../components/heading/heading';
 import { Navigation } from '../../components/navigation/navigation';
@@ -23,15 +24,26 @@ import { getAdminSetting } from '~/utils/admin-settings';
 import { PluginErrorBanner } from './components/plugin-error-banner/PluginErrorBanner';
 import { PluginsTermsOfService } from './components/plugin-terms-of-service/PluginsTermsOfService';
 
-const locale = ( getAdminSetting( 'locale' )?.siteLocale || 'en_US' ).replace(
-	'_',
-	'-'
-);
-export const joinWithAnd = ( items: string[] ) => {
-	return new Intl.ListFormat( locale, {
-		style: 'long',
-		type: 'conjunction',
-	} ).formatToParts( items );
+const currentLocale = (
+	getAdminSetting( 'locale' )?.siteLocale || 'en_US'
+).replaceAll( '_', '-' );
+
+export const joinWithAnd = (
+	items: string[],
+	locale: string = currentLocale
+) => {
+	try {
+		return new Intl.ListFormat( locale, {
+			style: 'long',
+			type: 'conjunction',
+		} ).formatToParts( items );
+	} catch ( error ) {
+		// Fallback to English
+		return new Intl.ListFormat( 'en-US', {
+			style: 'long',
+			type: 'conjunction',
+		} ).formatToParts( items );
+	}
 };
 
 export const composeListFormatParts = ( part: {
@@ -83,6 +95,7 @@ export const Plugins = ( {
 		payload:
 			| PluginsInstallationRequestedEvent
 			| PluginsPageSkippedEvent
+			| PluginsPageCompletedWithoutSelectingPluginsEvent
 			| PluginsLearnMoreLinkClickedEvent
 	) => void;
 	navigationProgress: number;
@@ -112,6 +125,12 @@ export const Plugins = ( {
 	const skipPluginsPage = () => {
 		return sendEvent( {
 			type: 'PLUGINS_PAGE_SKIPPED',
+		} );
+	};
+
+	const completedPluginsPageWithoutSelectingPlugins = () => {
+		return sendEvent( {
+			type: 'PLUGINS_PAGE_COMPLETED_WITHOUT_SELECTING_PLUGINS',
 		} );
 	};
 
@@ -217,7 +236,7 @@ export const Plugins = ( {
 							onClick={
 								selectedPlugins.size > 0
 									? submitInstallationRequest
-									: skipPluginsPage
+									: completedPluginsPageWithoutSelectingPlugins
 							}
 						>
 							{ __( 'Continue', 'woocommerce' ) }

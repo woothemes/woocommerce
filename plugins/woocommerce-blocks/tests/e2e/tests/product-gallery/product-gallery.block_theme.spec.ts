@@ -374,7 +374,7 @@ test.describe( `${ blockData.name }`, () => {
 			expect( popUpSelectedImageId ).toBe( nextImageId );
 		} );
 
-		test( 'should reset to the first thumbnail when the pop-up is closed', async ( {
+		test( 'if available, should display the same image when pop-up is closed', async ( {
 			page,
 			editor,
 			pageObject,
@@ -467,7 +467,7 @@ test.describe( `${ blockData.name }`, () => {
 				largeImageBlock
 			);
 
-			expect( singleProductImageId ).toBe( initialVisibleLargeImageId );
+			expect( singleProductImageId ).toBe( popUpNextImageId );
 		} );
 	} );
 
