@@ -48,12 +48,7 @@ class ProductGallery extends AbstractBlock {
 		$is_single_product = $this->dialog_context['singleProduct'] ?? false;
 
 		if ( $is_single_product && in_array( $block['blockName'], $expected_inner_blocks ) ) {
-			do_action( 'qm/debug', array_merge( $context, $this->dialog_context ));
 			return array_merge( $context, $this->dialog_context );
-		}
-
-		if ( $block['blockName'] === 'core/post-title' ) {
-			do_action( 'qm/debug', $context );
 		}
 
 		return $context;
