@@ -143,7 +143,7 @@ export const PaymentGatewayButtons = ( {
 				</Button>
 			) }
 
-			{ enabled && ! needsSetup && (
+			{ enabled && ( ! needsSetup || settingsUrl !== onboardUrl ) && (
 				<Button variant={ 'secondary' } href={ settingsUrl }>
 					{ textSettings }
 				</Button>
