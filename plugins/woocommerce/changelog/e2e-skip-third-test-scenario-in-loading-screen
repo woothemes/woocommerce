@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+E2E tests: skip the third test scenario in existing e2e test loading-screen as it is not a valid

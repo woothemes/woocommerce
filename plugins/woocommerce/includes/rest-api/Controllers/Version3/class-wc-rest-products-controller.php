@@ -1700,7 +1700,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			'type'              => 'array',
 			'items'             => array(
 				'type' => 'string',
-				'enum' => array_merge( array( 'any', 'trash' ), array_keys( get_post_statuses() ) ),
+				'enum' => array_merge( array( 'any', 'future', 'trash' ), array_keys( get_post_statuses() ) ),
 			),
 			'sanitize_callback' => 'wp_parse_list',
 			'validate_callback' => 'rest_validate_request_arg',
@@ -1711,7 +1711,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			'type'              => 'array',
 			'items'             => array(
 				'type' => 'string',
-				'enum' => array_merge( array( 'trash' ), array_keys( get_post_statuses() ) ),
+				'enum' => array_merge( array( 'future', 'trash' ), array_keys( get_post_statuses() ) ),
 			),
 			'sanitize_callback' => 'wp_parse_list',
 			'validate_callback' => 'rest_validate_request_arg',
