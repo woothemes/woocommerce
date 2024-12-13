@@ -62,6 +62,7 @@ class EmailPreviewRestController extends RestApiControllerBase {
 					'callback'            => fn( $request ) => $this->send_email_preview( $request ),
 					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
 					'args'                => $this->get_args_for_send_preview(),
+					'schema'              => $this->get_schema_with_message(),
 				),
 			)
 		);
@@ -77,6 +78,7 @@ class EmailPreviewRestController extends RestApiControllerBase {
 					),
 					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
 					'args'                => $this->get_args_for_preview_subject(),
+					'schema'              => $this->get_schema_for_preview_subject(),
 				),
 			)
 		);
@@ -90,6 +92,7 @@ class EmailPreviewRestController extends RestApiControllerBase {
 					'callback'            => fn( $request ) => $this->save_transient( $request ),
 					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
 					'args'                => $this->get_args_for_save_transient(),
+					'schema'              => $this->get_schema_with_message(),
 				),
 			)
 		);
@@ -172,6 +175,48 @@ class EmailPreviewRestController extends RestApiControllerBase {
 					}
 					return sanitize_text_field( $value );
 				},
+			),
+		);
+	}
+
+	/**
+	 * Get the schema for the POST send-preview and save-transient requests.
+	 *
+	 * @return array[]
+	 */
+	private function get_schema_with_message() {
+		return array(
+			'$schema'    => 'http://json-schema.org/draft-04/schema#',
+			'title'      => 'email-preview-with-message',
+			'type'       => 'object',
+			'properties' => array(
+				'message' => array(
+					'description' => __( 'A message indicating that the action completed successfully.', 'woocommerce' ),
+					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+					'readonly'    => true,
+				),
+			),
+		);
+	}
+
+	/**
+	 * Get the schema for the GET preview_subject request.
+	 *
+	 * @return array[]
+	 */
+	private function get_schema_for_preview_subject() {
+		return array(
+			'$schema'    => 'http://json-schema.org/draft-04/schema#',
+			'title'      => 'email-preview-subject',
+			'type'       => 'object',
+			'properties' => array(
+				'subject' => array(
+					'description' => __( 'A subject for provided email type after filters are applied and placeholders replaced.', 'woocommerce' ),
+					'type'        => 'string',
+					'context'     => array( 'view' ),
+					'readonly'    => true,
+				),
 			),
 		);
 	}
