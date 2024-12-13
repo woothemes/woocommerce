@@ -7,15 +7,16 @@ import { dispatch, useDispatch } from '@wordpress/data';
 import {
 	PAYMENT_SETTINGS_STORE_NAME,
 	EnableGatewayResponse,
+	RecommendedPaymentMethod,
 } from '@woocommerce/data';
 import { useState } from '@wordpress/element';
+import { getHistory, getNewPath } from '@woocommerce/navigation';
 
 /**
  * Internal dependencies
  */
 import {
 	isWooPayments,
-	getWooPaymentsTestDriveAccountLink,
 	getWooPaymentsSetupLiveAccountLink,
 } from '~/settings-payments/utils';
 
@@ -25,20 +26,26 @@ export const PaymentGatewayButtons = ( {
 	enabled,
 	needsSetup,
 	testMode,
+	devMode,
 	settingsUrl,
+	onboardUrl,
 	textSettings = __( 'Manage', 'woocommerce' ),
 	textEnable = __( 'Enable', 'woocommerce' ),
 	textNeedsSetup = __( 'Complete setup', 'woocommerce' ),
+	recommendedPaymentMethods,
 }: {
 	id: string;
 	isOffline: boolean;
 	enabled: boolean;
 	needsSetup?: boolean;
 	testMode?: boolean;
+	devMode?: boolean;
 	settingsUrl: string;
+	onboardUrl: string;
 	textSettings?: string;
 	textEnable?: string;
 	textNeedsSetup?: string;
+	recommendedPaymentMethods?: RecommendedPaymentMethod[];
 } ) => {
 	const { createErrorNotice } = dispatch( 'core/notices' );
 	const { togglePaymentGateway, invalidateResolutionForStoreSelector } =
@@ -49,7 +56,7 @@ export const PaymentGatewayButtons = ( {
 	const createApiErrorNotice = () => {
 		createErrorNotice(
 			__(
-				'An API error occurred. You will be redirected to the settings page, try enabling the gateway there.',
+				'An API error occurred. You will be redirected to the settings page, try enabling the payment gateway there.',
 				'woocommerce'
 			),
 			{
@@ -79,11 +86,20 @@ export const PaymentGatewayButtons = ( {
 				.then( ( response: EnableGatewayResponse ) => {
 					if ( response.data === 'needs_setup' ) {
 						if ( isWooPayments( id ) ) {
-							window.location.href =
-								getWooPaymentsTestDriveAccountLink();
+							if (
+								( recommendedPaymentMethods ?? [] ).length > 0
+							) {
+								const history = getHistory();
+								history.push(
+									getNewPath( {}, '/payment-methods' )
+								);
+							} else {
+								window.location.href = onboardUrl;
+							}
 							return;
 						}
-						window.location.href = settingsUrl;
+						// Redirect to the gateway's onboarding URL if it needs setup.
+						window.location.href = onboardUrl;
 						return;
 					}
 					invalidateResolutionForStoreSelector(
@@ -94,6 +110,7 @@ export const PaymentGatewayButtons = ( {
 					setIsUpdating( false );
 				} )
 				.catch( () => {
+					// In case of errors, redirect to the gateway settings page.
 					setIsUpdating( false );
 					createApiErrorNotice();
 					window.location.href = settingsUrl;
@@ -137,16 +154,20 @@ export const PaymentGatewayButtons = ( {
 				</Button>
 			) }
 
-			{ isWooPayments( id ) && enabled && ! needsSetup && testMode && (
-				<Button
-					variant="primary"
-					onClick={ activatePayments }
-					isBusy={ isActivatingPayments }
-					disabled={ isActivatingPayments }
-				>
-					{ __( 'Activate payments', 'woocommerce' ) }
-				</Button>
-			) }
+			{ isWooPayments( id ) &&
+				enabled &&
+				! needsSetup &&
+				testMode &&
+				! devMode && (
+					<Button
+						variant="primary"
+						onClick={ activatePayments }
+						isBusy={ isActivatingPayments }
+						disabled={ isActivatingPayments }
+					>
+						{ __( 'Activate payments', 'woocommerce' ) }
+					</Button>
+				) }
 		</div>
 	);
 };

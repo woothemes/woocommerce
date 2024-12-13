@@ -2,9 +2,10 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { apiFetch } from '@wordpress/data-controls';
+import apiFetch from '@wordpress/api-fetch';
 import {
 	PaymentProvider,
+	RecommendedPaymentMethod,
 	PAYMENT_SETTINGS_STORE_NAME,
 	WC_ADMIN_NAMESPACE,
 } from '@woocommerce/data';
@@ -17,7 +18,6 @@ import { decodeEntities } from '@wordpress/html-entities';
 import { CountrySelector } from '~/settings-payments/components/country-selector';
 import { ListPlaceholder } from '~/settings-payments/components/list-placeholder';
 import { PaymentGatewayList } from '~/settings-payments/components/payment-gateway-list';
-import './payment-gateways.scss';
 
 interface PaymentGatewaysProps {
 	providers: PaymentProvider[];
@@ -28,6 +28,7 @@ interface PaymentGatewaysProps {
 	isFetching: boolean;
 	businessRegistrationCountry: string | null;
 	setBusinessRegistrationCountry: ( country: string ) => void;
+	recommendedPaymentMethods: RecommendedPaymentMethod[];
 }
 
 export const PaymentGateways = ( {
@@ -39,6 +40,7 @@ export const PaymentGateways = ( {
 	isFetching,
 	businessRegistrationCountry,
 	setBusinessRegistrationCountry,
+	recommendedPaymentMethods,
 }: PaymentGatewaysProps ) => {
 	const { invalidateResolution } = useDispatch( PAYMENT_SETTINGS_STORE_NAME );
 
@@ -71,16 +73,17 @@ export const PaymentGateways = ( {
 						}
 						options={ countryOptions }
 						onChange={ ( value: string ) => {
-							setBusinessRegistrationCountry( value );
-							invalidateResolution( 'getPaymentProviders', [
-								value,
-							] );
 							apiFetch( {
 								path:
 									WC_ADMIN_NAMESPACE +
 									'/settings/payments/country',
 								method: 'POST',
 								data: { location: value },
+							} ).then( () => {
+								setBusinessRegistrationCountry( value );
+								invalidateResolution( 'getPaymentProviders', [
+									value,
+								] );
 							} );
 						} }
 					/>
@@ -95,6 +98,7 @@ export const PaymentGateways = ( {
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
 					updateOrdering={ updateOrdering }
+					recommendedPaymentMethods={ recommendedPaymentMethods }
 				/>
 			) }
 		</div>
