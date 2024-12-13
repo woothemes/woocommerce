@@ -35,15 +35,14 @@ class WooPayments extends PaymentGateway {
 			return true;
 		}
 
-		$account_class = '\WC_Payments_Account';
-		if ( property_exists( $payment_gateway, 'account' ) &&
-			$payment_gateway->account instanceof $account_class &&
-			property_exists( $payment_gateway->account, 'get_account_status_data' ) ) {
-
-			// Test-drive accounts don't need setup.
-			$account_status = $payment_gateway->account->get_account_status_data();
-			if ( ! empty( $account_status['testDrive'] ) ) {
-				return false;
+		if ( function_exists('\wcpay_get_container' ) && class_exists( '\WC_Payments_Account' ) ) {
+			$account = \wcpay_get_container()->get( \WC_Payments_Account::class );
+			if ( method_exists( $account, 'get_account_status_data' ) ) {
+				// Test-drive accounts don't need setup.
+				$account_status = $account->get_account_status_data();
+				if ( ! empty( $account_status['testDrive'] ) ) {
+					return false;
+				}
 			}
 		}
 
@@ -108,7 +107,11 @@ class WooPayments extends PaymentGateway {
 	 * @return string The onboarding URL for the payment gateway.
 	 */
 	public function get_onboarding_url( WC_Payment_Gateway $payment_gateway, string $return_url = '' ): string {
-		$connect_url = parent::get_onboarding_url( $payment_gateway, $return_url );
+		if ( class_exists( '\WC_Payments_Account' ) && method_exists( '\WC_Payments_Account', 'get_connect_url' ) ) {
+			$connect_url = \WC_Payments_Account::get_connect_url();
+		} else {
+			$connect_url = parent::get_onboarding_url( $payment_gateway, $return_url );
+		}
 
 		$query = wp_parse_url( $connect_url, PHP_URL_QUERY );
 		// We expect the URL to have a query string. Bail if it doesn't.
