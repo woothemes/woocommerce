@@ -94,21 +94,19 @@ export const PaymentGatewayButtons = ( {
 			.then( ( response: EnableGatewayResponse ) => {
 				if ( response.data === 'needs_setup' ) {
 					if ( isWooPayments( id ) ) {
-							if (
-								( recommendedPaymentMethods ?? [] ).length > 0
-							) {
-								const history = getHistory();
-								history.push(
-									getNewPath( {}, '/payment-methods' )
-								);
-							} else {
-								window.location.href = onboardUrl;
-							}
-							return;
+						if ( ( recommendedPaymentMethods ?? [] ).length > 0 ) {
+							const history = getHistory();
+							history.push(
+								getNewPath( {}, '/payment-methods' )
+							);
+						} else {
+							window.location.href = onboardUrl;
 						}
-						// Redirect to the gateway's onboarding URL if it needs setup.
-						window.location.href = onboardUrl;
 						return;
+					}
+					// Redirect to the gateway's onboarding URL if it needs setup.
+					window.location.href = onboardUrl;
+					return;
 				}
 				invalidateResolutionForStoreSelector(
 					isOffline

@@ -171,17 +171,17 @@ export const SettingsPaymentsMain = () => {
 	const recommendedPaymentMethods = getRecommendedPaymentMethods(
 		sortedProviders || providers
 	);
-  
-  const setupPlugin = useCallback(
+
+	const setupPlugin = useCallback(
 		( id, slug, onboardingUrl: string | null ) => {
 			if ( installingPlugin ) {
 				return;
 			}
 			setInstallingPlugin( id );
 			installAndActivatePlugins( [ slug ] )
-				.then( ( response ) => {
+				.then( async ( response ) => {
 					createNoticesFromResponse( response );
-          			invalidateResolutionForStoreSelector(
+					invalidateResolutionForStoreSelector(
 						'getPaymentProviders'
 					);
 					if ( isWooPayments( id ) ) {
@@ -199,13 +199,16 @@ export const SettingsPaymentsMain = () => {
 							);
 						} else {
 							window.location.href =
-								onboardingUrl ?? getWooPaymentsTestDriveAccountLink();
+								onboardingUrl ??
+								getWooPaymentsTestDriveAccountLink();
 						}
-
 						return;
-					} else {
-						window.location.href = onboardingUrl ?? getWooPaymentsTestDriveAccountLink();
-         			}
+					}
+
+					if ( onboardingUrl ) {
+						window.location.href = onboardingUrl;
+					}
+
 					setInstallingPlugin( null );
 				} )
 				.catch( ( response: { errors: Record< string, string > } ) => {
@@ -217,7 +220,6 @@ export const SettingsPaymentsMain = () => {
 			installingPlugin,
 			installAndActivatePlugins,
 			invalidateResolutionForStoreSelector,
-      recommendedPaymentMethods,
 		]
 	);
 
