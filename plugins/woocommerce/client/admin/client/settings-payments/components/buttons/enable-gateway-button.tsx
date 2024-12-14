@@ -91,7 +91,7 @@ export const EnableGatewayButton = ( {
 
 	const enableGateway = () => {
 		// Since this logic can toggle the gateway state on and off, we make sure we don't accidentally disable the gateway.
-		if ( ! gatewayState.enabled ) {
+		if ( gatewayState.enabled ) {
 			return;
 		}
 
