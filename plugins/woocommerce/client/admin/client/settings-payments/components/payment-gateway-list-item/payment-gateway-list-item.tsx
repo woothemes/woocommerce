@@ -147,6 +147,7 @@ export const PaymentGatewayListItem = ( {
 							gateway.state.needs_setup && (
 								<CompleteSetupButton
 									gatewayId={ gateway.id }
+									gatewayState={ gateway.state }
 									settingsHref={
 										gateway.management._links.settings.href
 									}
