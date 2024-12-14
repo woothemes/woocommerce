@@ -6,7 +6,6 @@ import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { RecommendedPaymentMethod } from '@woocommerce/data';
 import { getHistory, getNewPath } from '@woocommerce/navigation';
-import { dispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
