@@ -58,6 +58,7 @@ class PaymentGateway {
 				'state'                       => array(
 					'started'   => $this->is_onboarding_started( $gateway ),
 					'completed' => $this->is_onboarding_completed( $gateway ),
+					'test_mode' => $this->is_in_test_mode_onboarding( $gateway ),
 				),
 				'_links'                      => array(
 					'onboard' => array(
@@ -274,6 +275,28 @@ class PaymentGateway {
 
 		// Fall back to inferring this from having a connected account.
 		return $this->is_account_connected( $payment_gateway );
+	}
+
+	/**
+	 * Try to determine if the payment gateway is in test mode onboarding (aka sandbox or test-drive).
+	 *
+	 * This is a best-effort attempt, as there is no standard way to determine this.
+	 * Trust the true value, but don't consider a false value as definitive.
+	 *
+	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
+	 *
+	 * @return bool True if the payment gateway is in test mode onboarding, false otherwise.
+	 */
+	public function is_in_test_mode_onboarding( WC_Payment_Gateway $payment_gateway ): bool {
+		// Try various gateway methods to check if the payment gateway is in test mode onboarding.
+		if ( is_callable( array( $payment_gateway, 'is_test_mode_onboarding' ) ) ) {
+			return filter_var( $payment_gateway->is_test_mode_onboarding(), FILTER_VALIDATE_BOOLEAN );
+		}
+		if ( is_callable( array( $payment_gateway, 'is_in_test_mode_onboarding' ) ) ) {
+			return filter_var( $payment_gateway->is_in_test_mode_onboarding(), FILTER_VALIDATE_BOOLEAN );
+		}
+
+		return false;
 	}
 
 	/**

@@ -51,6 +51,7 @@ class PaymentGatewayTest extends WC_REST_Unit_Test_Case {
 				'dev_mode'                    => true,
 				'onboarding_started' 		  => true,
 				'onboarding_completed' 		  => true,
+				'test_mode_onboarding' 		  => true,
 				'plugin_slug'                 => 'woocommerce-payments',
 				'plugin_file'                 => 'woocommerce-payments/woocommerce-payments.php',
 				'method_title'                => 'WooPayments',
@@ -137,6 +138,7 @@ class PaymentGatewayTest extends WC_REST_Unit_Test_Case {
 					'state'                       => array(
 						'started'   => true,
 						'completed' => true,
+						'test_mode' => true,
 					),
 					'_links'                      => array(
 						'onboard' => array(
