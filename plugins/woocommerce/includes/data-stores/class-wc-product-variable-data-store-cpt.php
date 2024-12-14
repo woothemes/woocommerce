@@ -734,6 +734,11 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 			return false;
 		}
 
+		// If we have a version set but no children at all, data is likely corrupt
+		if ( isset( $children['version'] ) && empty( $children['all'] ) ) {
+			return false;
+		}
+
 		// Basic structure checks.
 		if ( ! isset( $children['all'] ) || ! isset( $children['visible'] ) ) {
 			return false;
@@ -780,6 +785,16 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 		}
 
 		$data_without_version = array_diff_key( $prices_array, array( 'version' => '' ) );
+
+		// If we have price hashes but they're all empty, data is likely corrupt.
+		if ( ! empty( $data_without_version ) && ! array_filter(
+			$data_without_version,
+			function ( $price_data ) {
+				return ! empty( $price_data['price'] );
+			}
+		) ) {
+			return false;
+		}
 
 		foreach ( $data_without_version as $price_data ) {
 			if ( ! is_array( $price_data ) ) {
