@@ -71,56 +71,60 @@ export const PaymentGatewayButtons = ( {
 		);
 	};
 
-	const enableGateway = () => {
-		const gatewayToggleNonce =
-			window.woocommerce_admin.nonces?.gateway_toggle || '';
+	const onClick = ( e: React.MouseEvent ) => {
+		if ( ! enabled ) {
+			e.preventDefault();
+			const gatewayToggleNonce =
+				window.woocommerce_admin.nonces?.gateway_toggle || '';
 
-		if ( ! gatewayToggleNonce ) {
-			createApiErrorNotice();
-			window.location.href = settingsUrl;
-			return;
-		}
-		setIsUpdating( true );
-
-		if ( incentive ) {
-			acceptIncentive( incentive.promo_id );
-		}
-
-		togglePaymentGateway(
-			id,
-			window.woocommerce_admin.ajax_url,
-			gatewayToggleNonce
-		)
-			.then( ( response: EnableGatewayResponse ) => {
-				if ( response.data === 'needs_setup' ) {
-					if ( isWooPayments( id ) ) {
-						if ( ( recommendedPaymentMethods ?? [] ).length > 0 ) {
-							const history = getHistory();
-							history.push(
-								getNewPath( {}, '/payment-methods' )
-							);
-						} else {
-							window.location.href = onboardUrl;
-						}
-						return;
-					}
-					// Redirect to the gateway's onboarding URL if it needs setup.
-					window.location.href = onboardUrl;
-					return;
-				}
-				invalidateResolutionForStoreSelector(
-					isOffline
-						? 'getOfflinePaymentGateways'
-						: 'getPaymentProviders'
-				);
-				setIsUpdating( false );
-			} )
-			.catch( () => {
-				// In case of errors, redirect to the gateway settings page.
-				setIsUpdating( false );
+			if ( ! gatewayToggleNonce ) {
 				createApiErrorNotice();
 				window.location.href = settingsUrl;
-			} );
+				return;
+			}
+			setIsUpdating( true );
+
+			if ( incentive ) {
+				acceptIncentive( incentive.promo_id );
+			}
+			togglePaymentGateway(
+				id,
+				window.woocommerce_admin.ajax_url,
+				gatewayToggleNonce
+			)
+				.then( ( response: EnableGatewayResponse ) => {
+					if ( response.data === 'needs_setup' ) {
+						if ( isWooPayments( id ) ) {
+							if (
+								( recommendedPaymentMethods ?? [] ).length > 0
+							) {
+								const history = getHistory();
+								history.push(
+									getNewPath( {}, '/payment-methods' )
+								);
+							} else {
+								window.location.href = onboardUrl;
+							}
+							return;
+						}
+						// Redirect to the gateway's onboarding URL if it needs setup.
+						window.location.href = onboardUrl;
+						return;
+					}
+					invalidateResolutionForStoreSelector(
+						isOffline
+							? 'getOfflinePaymentGateways'
+							: 'getPaymentProviders'
+					);
+					setIsUpdating( false );
+				} )
+				.catch( () => {
+					// In case of errors, redirect to the gateway settings page.
+					setIsUpdating( false );
+					createApiErrorNotice();
+					window.location.href = settingsUrl;
+				} );
+		}
 	};
 
 	const activatePayments = () => {
@@ -140,7 +144,7 @@ export const PaymentGatewayButtons = ( {
 					variant={ 'primary' }
 					isBusy={ isUpdating }
 					disabled={ isUpdating }
-					onClick={ enableGateway }
+					onClick={ onClick }
 					href={ settingsUrl }
 				>
 					{ textEnable }
@@ -152,6 +156,7 @@ export const PaymentGatewayButtons = ( {
 					variant={ 'primary' }
 					isBusy={ isUpdating }
 					disabled={ isUpdating }
+					onClick={ onClick }
 					href={ onboardUrl }
 				>
 					{ textNeedsSetup }
