@@ -170,8 +170,8 @@ class PaymentsRestController extends RestApiControllerBase {
 	protected function get_providers( WP_REST_Request $request ) {
 		$location = $request->get_param( 'location' );
 		if ( empty( $location ) ) {
-			// Fall back to the base country if no location is provided.
-			$location = WC()->countries->get_base_country();
+			// Fall back to the providers country if no location is provided.
+			$location = $this->payments->get_country();
 		}
 
 		try {
