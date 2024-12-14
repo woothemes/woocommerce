@@ -20,6 +20,7 @@ import { hasIncentive, isWooPayments } from '~/settings-payments/utils';
 import { DefaultDragHandle } from '~/settings-payments/components/sortable';
 import { WC_ASSET_URL } from '~/utils/admin-settings';
 import {
+	ActivatePaymentsButton,
 	CompleteSetupButton,
 	EnableGatewayButton,
 	SettingsButton,
@@ -128,6 +129,8 @@ export const PaymentGatewayListItem = ( {
 									gateway.onboarding._links.onboard.href
 								}
 								isOffline={ true }
+								incentive={ incentive }
+								acceptIncentive={ acceptIncentive }
 							/>
 						) }
 
@@ -149,6 +152,17 @@ export const PaymentGatewayListItem = ( {
 									onboardingHref={
 										gateway.onboarding._links.onboard.href
 									}
+								/>
+							) }
+
+						{ isWooPayments( gateway.id ) &&
+							gateway.state.enabled &&
+							! gateway.state.needs_setup &&
+							gateway.state.test_mode &&
+							! gateway.state.dev_mode && (
+								<ActivatePaymentsButton
+									acceptIncentive={ acceptIncentive }
+									incentive={ incentive }
 								/>
 							) }
 

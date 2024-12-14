@@ -13,31 +13,11 @@ import { getWooPaymentsSetupLiveAccountLink } from '~/settings-payments/utils';
 
 interface ActivatePaymentsButtonProps {
 	/**
-	 * The ID of the gateway to activate payments for.
-	 */
-	gatewayId: string;
-	/**
-	 * The settings URL to navigate to when the enable gateway button is clicked.
-	 */
-	settingsHref: string;
-	/**
-	 * The onboarding URL to navigate to when the gateway needs setup.
-	 */
-	onboardingHref: string;
-	/**
 	 * Callback used when an incentive is accepted.
 	 *
 	 * @param id Incentive ID.
 	 */
 	acceptIncentive: ( id: string ) => void;
-	/**
-	 * Whether this is an offline payment gateway.
-	 */
-	isOffline: boolean;
-	/**
-	 * Recommended payment methods for this gateway (if available).
-	 */
-	recommendedPaymentMethods?: RecommendedPaymentMethod[];
 	/**
 	 * The text of the button.
 	 */
