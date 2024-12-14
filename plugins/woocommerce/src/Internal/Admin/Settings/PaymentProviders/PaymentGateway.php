@@ -41,10 +41,11 @@ class PaymentGateway {
 			'icon'        => $this->get_icon( $gateway ),
 			'supports'    => $this->get_supports_list( $gateway ),
 			'state'       => array(
-				'enabled'     => $this->is_enabled( $gateway ),
-				'needs_setup' => $this->needs_setup( $gateway ),
-				'test_mode'   => $this->is_in_test_mode( $gateway ),
-				'dev_mode'    => $this->is_in_dev_mode( $gateway ),
+				'enabled'           => $this->is_enabled( $gateway ),
+				'account_connected' => $this->is_account_connected( $gateway ),
+				'needs_setup'       => $this->needs_setup( $gateway ),
+				'test_mode'         => $this->is_in_test_mode( $gateway ),
+				'dev_mode'          => $this->is_in_dev_mode( $gateway ),
 			),
 			'management'  => array(
 				'_links' => array(
@@ -54,6 +55,10 @@ class PaymentGateway {
 				),
 			),
 			'onboarding'  => array(
+				'state'                       => array(
+					'started'   => $this->is_onboarding_started( $gateway ),
+					'completed' => $this->is_onboarding_completed( $gateway ),
+				),
 				'_links'                      => array(
 					'onboard' => array(
 						'href' => $this->get_onboarding_url( $gateway ),
@@ -207,6 +212,68 @@ class PaymentGateway {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Check if the payment gateway has a payments processor account connected.
+	 *
+	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
+	 *
+	 * @return bool True if the payment gateway account is connected, false otherwise.
+	 *              If the payment gateway does not provide the information, it will return true.
+	 */
+	public function is_account_connected( WC_Payment_Gateway $payment_gateway ): bool {
+		if ( is_callable( array( $payment_gateway, 'is_account_connected' ) ) ) {
+			return filter_var( $payment_gateway->is_account_connected(), FILTER_VALIDATE_BOOLEAN );
+		}
+
+		if ( is_callable( array( $payment_gateway, 'is_connected' ) ) ) {
+			return filter_var( $payment_gateway->is_connected(), FILTER_VALIDATE_BOOLEAN );
+		}
+
+		// Fall back to assuming that it is connected. This is the safest option.
+		return true;
+	}
+
+	/**
+	 * Check if the payment gateway has started the onboarding process.
+	 *
+	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
+	 *
+	 * @return bool True if the payment gateway has started the onboarding process, false otherwise.
+	 *              If the payment gateway does not provide the information,
+	 *              it will infer it from having a connected account.
+	 */
+	public function is_onboarding_started( WC_Payment_Gateway $payment_gateway ): bool {
+		if ( is_callable( array( $payment_gateway, 'is_onboarding_started' ) ) ) {
+			return filter_var( $payment_gateway->is_onboarding_started(), FILTER_VALIDATE_BOOLEAN );
+		}
+
+		// Fall back to inferring this from having a connected account.
+		return $this->is_account_connected( $payment_gateway );
+	}
+
+	/**
+	 * Check if the payment gateway has completed the onboarding process.
+	 *
+	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
+	 *
+	 * @return bool True if the payment gateway has completed the onboarding process, false otherwise.
+	 *              If the payment gateway does not provide the information,
+	 *              it will infer it from having a connected account.
+	 */
+	public function is_onboarding_completed( WC_Payment_Gateway $payment_gateway ): bool {
+		if ( is_callable( array( $payment_gateway, 'is_onboarding_completed' ) ) ) {
+			return filter_var( $payment_gateway->is_onboarding_completed(), FILTER_VALIDATE_BOOLEAN );
+		}
+
+		// Note: This is what WooPayments provides, but it should become standard.
+		if ( is_callable( array( $payment_gateway, 'is_account_partially_onboarded' ) ) ) {
+			return filter_var( $payment_gateway->is_account_partially_onboarded(), FILTER_VALIDATE_BOOLEAN );
+		}
+
+		// Fall back to inferring this from having a connected account.
+		return $this->is_account_connected( $payment_gateway );
 	}
 
 	/**
