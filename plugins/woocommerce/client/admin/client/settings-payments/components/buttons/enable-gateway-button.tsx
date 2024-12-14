@@ -9,6 +9,7 @@ import {
 	EnableGatewayResponse,
 	PAYMENT_SETTINGS_STORE_NAME,
 	PaymentIncentive,
+	PaymentProviderState,
 	RecommendedPaymentMethod,
 } from '@woocommerce/data';
 import { getHistory, getNewPath } from '@woocommerce/navigation';
@@ -23,6 +24,10 @@ interface EnableGatewayButtonProps {
 	 * The ID of the gateway to enable.
 	 */
 	gatewayId: string;
+	/**
+	 * The state of the gateway.
+	 */
+	gatewayState: PaymentProviderState;
 	/**
 	 * The settings URL to navigate to when the enable gateway button is clicked.
 	 */
@@ -57,6 +62,7 @@ interface EnableGatewayButtonProps {
 
 export const EnableGatewayButton = ( {
 	gatewayId,
+	gatewayState,
 	settingsHref,
 	onboardingHref,
 	isOffline,
@@ -84,6 +90,11 @@ export const EnableGatewayButton = ( {
 	};
 
 	const enableGateway = () => {
+		// Since this logic can toggle the gateway state on and off, we make sure we don't accidentally disable the gateway.
+		if ( ! gatewayState.enabled ) {
+			return;
+		}
+
 		const gatewayToggleNonce =
 			window.woocommerce_admin.nonces?.gateway_toggle || '';
 

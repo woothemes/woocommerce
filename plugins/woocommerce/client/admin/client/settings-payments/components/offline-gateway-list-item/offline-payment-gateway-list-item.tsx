@@ -54,6 +54,7 @@ export const OfflinePaymentGatewayListItem = ( {
 						{ ! gateway.state.enabled ? (
 							<EnableGatewayButton
 								gatewayId={ gateway.id }
+								gatewayState={ gateway.state }
 								settingsHref={
 									gateway.management._links.settings.href
 								}

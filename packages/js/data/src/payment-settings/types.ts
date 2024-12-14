@@ -10,7 +10,7 @@ export interface PluginData {
 	status: 'installed' | 'active' | 'not_installed';
 }
 
-export interface StateData {
+export interface PaymentProviderState {
 	enabled: boolean;
 	needs_setup: boolean;
 	test_mode: boolean;
@@ -74,7 +74,7 @@ export type PaymentProvider = {
 	plugin: PluginData;
 	short_description?: string;
 	management?: ManagementData;
-	state?: StateData;
+	state?: PaymentProviderState;
 	links?: PaymentGatewayLink[];
 	onboarding?: {
 		_links: {
@@ -92,7 +92,7 @@ export type PaymentProvider = {
 export type PaymentGatewayProvider = PaymentProvider & {
 	supports: string[];
 	management: ManagementData;
-	state: StateData;
+	state: PaymentProviderState;
 	onboarding: {
 		_links: {
 			onboard: LinkData;
@@ -105,7 +105,7 @@ export type PaymentGatewayProvider = PaymentProvider & {
 export type OfflinePaymentMethodProvider = PaymentProvider & {
 	supports: string[];
 	management: ManagementData;
-	state: StateData;
+	state: PaymentProviderState;
 	onboarding: {
 		_links: {
 			onboard: LinkData;
@@ -116,7 +116,7 @@ export type OfflinePaymentMethodProvider = PaymentProvider & {
 // Offline payment methods group provider type.
 export type OfflinePmsGroupProvider = PaymentProvider & {
 	management: ManagementData;
-	state: StateData;
+	state: PaymentProviderState;
 };
 
 export type PaymentExtensionSuggestionProvider = PaymentProvider & {

@@ -33,6 +33,7 @@ export { PaymentGateway } from './payment-gateways/types';
 export {
 	PaymentProvider,
 	PaymentProviderType,
+	PaymentProviderState,
 	PaymentGatewayProvider,
 	OfflinePaymentMethodProvider,
 	PaymentExtensionSuggestionProvider,

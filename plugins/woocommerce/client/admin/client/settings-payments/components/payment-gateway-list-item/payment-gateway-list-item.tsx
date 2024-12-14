@@ -122,13 +122,14 @@ export const PaymentGatewayListItem = ( {
 						{ ! gateway.state.enabled && (
 							<EnableGatewayButton
 								gatewayId={ gateway.id }
+								gatewayState={ gateway.state }
 								settingsHref={
 									gateway.management._links.settings.href
 								}
 								onboardingHref={
 									gateway.onboarding._links.onboard.href
 								}
-								isOffline={ true }
+								isOffline={ false }
 								incentive={ incentive }
 								acceptIncentive={ acceptIncentive }
 							/>
