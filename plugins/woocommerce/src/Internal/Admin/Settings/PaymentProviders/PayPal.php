@@ -26,7 +26,7 @@ class PayPal extends PaymentGateway {
 	 */
 	public function is_in_test_mode( WC_Payment_Gateway $payment_gateway ): bool {
 		if ( class_exists( '\WooCommerce\PayPalCommerce\PPCP' ) &&
-			method_exists( '\WooCommerce\PayPalCommerce\PPCP', 'container' ) ) {
+			is_callable( '\WooCommerce\PayPalCommerce\PPCP::container' ) ) {
 
 			try {
 				$sandbox_on_option = \WooCommerce\PayPalCommerce\PPCP::container()->get( 'wcgateway.settings' )->get( 'sandbox_on' );
