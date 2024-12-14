@@ -9,7 +9,7 @@ import { CheckboxList } from '@woocommerce/blocks-components';
 import { DisplayOption } from './types';
 
 interface CheckboxFilterProps {
-	title?: string | undefined;
+	titleId?: string | undefined;
 	className?: string;
 	isLoading?: boolean;
 	isDisabled?: boolean;
@@ -20,7 +20,7 @@ interface CheckboxFilterProps {
 }
 
 const CheckboxFilter = ( {
-	title,
+	titleId,
 	isLoading = false,
 	options,
 	checked,
@@ -37,7 +37,7 @@ const CheckboxFilter = ( {
 
 	return (
 		<CheckboxList
-			title={ title }
+			titleId={ titleId }
 			className="wc-block-attribute-filter-list"
 			options={ options }
 			checked={ checked }

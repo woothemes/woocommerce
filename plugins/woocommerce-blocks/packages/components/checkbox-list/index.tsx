@@ -13,7 +13,7 @@ import type { CheckboxListOptions } from './types';
 import './style.scss';
 
 export interface CheckboxListProps {
-	title?: string | undefined;
+	titleId?: string | undefined;
 	className?: string | undefined;
 	isLoading?: boolean | undefined;
 	isDisabled?: boolean | undefined;
@@ -34,7 +34,7 @@ export interface CheckboxListProps {
  * @param {boolean}              props.isLoading  If loading or not.
  * @param {boolean}              props.isDisabled If inputs are disabled or not.
  * @param {number}               props.limit      Whether to limit the number of inputs showing.
- * @param {string}               props.title      Checkbox list title.
+ * @param {string}               props.titleId    Checkbox list title ID.
  */
 const CheckboxList = ( {
 	className,
@@ -44,7 +44,7 @@ const CheckboxList = ( {
 	isLoading = false,
 	isDisabled = false,
 	limit = 10,
-	title,
+	titleId,
 }: CheckboxListProps ): JSX.Element => {
 	const [ showExpanded, setShowExpanded ] = useState( false );
 
@@ -165,17 +165,9 @@ const CheckboxList = ( {
 	return (
 		<ul
 			className={ classes }
-			aria-labelledby={ title ? 'checkbox-list-legend' : undefined }
-			role={ title ? 'group' : undefined }
+			aria-labelledby={ titleId || undefined }
+			role={ titleId ? 'group' : undefined }
 		>
-			{ title && (
-				<legend
-					className="screen-reader-text"
-					id="checkbox-list-legend"
-				>
-					{ title }
-				</legend>
-			) }
 			{ isLoading ? placeholder : renderedOptions }
 		</ul>
 	);
