@@ -15,11 +15,15 @@ import { Tooltip } from '@wordpress/components';
  */
 import sanitizeHTML from '~/lib/sanitize-html';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
-import { PaymentGatewayButtons } from '~/settings-payments/components/payment-gateway-buttons';
 import { EllipsisMenuWrapper as EllipsisMenu } from '~/settings-payments/components/ellipsis-menu-content';
 import { hasIncentive, isWooPayments } from '~/settings-payments/utils';
 import { DefaultDragHandle } from '~/settings-payments/components/sortable';
 import { WC_ASSET_URL } from '~/utils/admin-settings';
+import {
+	CompleteSetupButton,
+	EnableGatewayButton,
+	SettingsButton,
+} from '~/settings-payments/components/buttons';
 
 type PaymentGatewayItemProps = {
 	gateway: PaymentGatewayProvider;
@@ -114,34 +118,47 @@ export const PaymentGatewayListItem = ( {
 				</div>
 				<div className="woocommerce-list__item-after">
 					<div className="woocommerce-list__item-after__actions">
-						<>
-							<PaymentGatewayButtons
-								id={ gateway.id }
-								isOffline={ false }
-								enabled={ gateway.state.enabled }
-								needsSetup={ gateway.state.needs_setup }
-								testMode={ gateway.state.test_mode }
-								devMode={ gateway.state.dev_mode }
-								settingsUrl={
+						{ ! gateway.state.enabled && (
+							<EnableGatewayButton
+								gatewayId={ gateway.id }
+								settingsHref={
 									gateway.management._links.settings.href
 								}
-								acceptIncentive={ acceptIncentive }
-								incentive={ gateway._incentive ?? null }
-								recommendedPaymentMethods={
-									recommendedPaymentMethods
-								}
-								onboardUrl={
+								onboardingHref={
 									gateway.onboarding._links.onboard.href
 								}
+								isOffline={ true }
 							/>
-							<EllipsisMenu
-								label={ __(
-									'Payment Provider Options',
-									'woocommerce'
-								) }
-								provider={ gateway }
+						) }
+
+						{ gateway.state.enabled && (
+							<SettingsButton
+								settingsHref={
+									gateway.management._links.settings.href
+								}
 							/>
-						</>
+						) }
+
+						{ gateway.state.enabled &&
+							gateway.state.needs_setup && (
+								<CompleteSetupButton
+									gatewayId={ gateway.id }
+									settingsHref={
+										gateway.management._links.settings.href
+									}
+									onboardingHref={
+										gateway.onboarding._links.onboard.href
+									}
+								/>
+							) }
+
+						<EllipsisMenu
+							label={ __(
+								'Payment Provider Options',
+								'woocommerce'
+							) }
+							provider={ gateway }
+						/>
 					</div>
 				</div>
 			</div>

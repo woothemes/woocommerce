@@ -26,7 +26,7 @@ import { getAdminLink } from '@woocommerce/settings';
  * Internal dependencies
  */
 import { Header } from './components/header/header';
-import { BackButton } from './components/back-button/back-button';
+import { BackButton } from './components/buttons/back-button';
 import { ListPlaceholder } from '~/settings-payments/components/list-placeholder';
 import {
 	getWooPaymentsTestDriveAccountLink,
