@@ -12,6 +12,7 @@ export interface PluginData {
 
 export interface PaymentProviderState {
 	enabled: boolean;
+	account_connected: boolean;
 	needs_setup: boolean;
 	test_mode: boolean;
 	dev_mode: boolean;
@@ -77,6 +78,10 @@ export type PaymentProvider = {
 	state?: PaymentProviderState;
 	links?: PaymentGatewayLink[];
 	onboarding?: {
+		state: {
+			started: boolean;
+			completed: boolean;
+		};
 		_links: {
 			onboard: LinkData;
 		};
@@ -94,6 +99,10 @@ export type PaymentGatewayProvider = PaymentProvider & {
 	management: ManagementData;
 	state: PaymentProviderState;
 	onboarding: {
+		state: {
+			started: boolean;
+			completed: boolean;
+		};
 		_links: {
 			onboard: LinkData;
 		};
@@ -107,6 +116,10 @@ export type OfflinePaymentMethodProvider = PaymentProvider & {
 	management: ManagementData;
 	state: PaymentProviderState;
 	onboarding: {
+		state: {
+			started: boolean;
+			completed: boolean;
+		};
 		_links: {
 			onboard: LinkData;
 		};
