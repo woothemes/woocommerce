@@ -130,6 +130,9 @@ export const PaymentGatewayListItem = ( {
 									gateway.onboarding._links.onboard.href
 								}
 								isOffline={ false }
+								recommendedPaymentMethods={
+									recommendedPaymentMethods
+								}
 								incentive={ incentive }
 								acceptIncentive={ acceptIncentive }
 							/>
@@ -153,6 +156,9 @@ export const PaymentGatewayListItem = ( {
 									}
 									onboardingHref={
 										gateway.onboarding._links.onboard.href
+									}
+									recommendedPaymentMethods={
+										recommendedPaymentMethods
 									}
 								/>
 							) }
