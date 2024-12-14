@@ -95,6 +95,29 @@ class WooPayments extends PaymentGateway {
 	}
 
 	/**
+	 * Try to determine if the payment gateway is in test mode onboarding (aka sandbox or test-drive).
+	 *
+	 * This is a best-effort attempt, as there is no standard way to determine this.
+	 * Trust the true value, but don't consider a false value as definitive.
+	 *
+	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
+	 *
+	 * @return bool True if the payment gateway is in test mode onboarding, false otherwise.
+	 */
+	public function is_in_test_mode_onboarding( WC_Payment_Gateway $payment_gateway ): bool {
+		if ( class_exists( '\WC_Payments' ) &&
+			 is_callable( '\WC_Payments::mode' ) ) {
+
+			$woopayments_mode = \WC_Payments::mode();
+			if ( is_callable( array( $woopayments_mode, 'is_test_mode_onboarding' ) ) ) {
+				return $woopayments_mode->is_test_mode_onboarding();
+			}
+		}
+
+		return parent::is_in_test_mode_onboarding( $payment_gateway );
+	}
+
+	/**
 	 * Get the onboarding URL for the payment gateway.
 	 *
 	 * This URL should start or continue the onboarding process.

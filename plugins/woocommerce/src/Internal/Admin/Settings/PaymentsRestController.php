@@ -783,6 +783,12 @@ class PaymentsRestController extends RestApiControllerBase {
 									'context'     => array( 'view', 'edit' ),
 									'readonly'    => true,
 								),
+								'test_mode' => array(
+									'type'        => 'boolean',
+									'description' => esc_html__( 'Whether the onboarding process happens in test mode (aka sandbox or test-drive).', 'woocommerce' ),
+									'context'     => array( 'view', 'edit' ),
+									'readonly'    => true,
+								),
 							),
 						),
 						'_links'                      => array(

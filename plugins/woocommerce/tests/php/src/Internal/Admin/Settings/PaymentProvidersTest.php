@@ -96,6 +96,7 @@ class PaymentProvidersTest extends WC_REST_Unit_Test_Case {
 				'dev_mode'                    => true,
 				'onboarding_started'          => true,
 				'onboarding_completed'        => true,
+				'test_mode_onboarding'        => true,
 				'plugin_slug'                 => 'woocommerce-payments',
 				'plugin_file'                 => 'woocommerce-payments/woocommerce-payments.php',
 				'recommended_payment_methods' => array(
@@ -179,6 +180,8 @@ class PaymentProvidersTest extends WC_REST_Unit_Test_Case {
 		$this->assertTrue( $gateway_details['onboarding']['state']['started'], 'Gateway `onboarding[state][started]` entry is not false' );
 		$this->assertArrayHasKey( 'completed', $gateway_details['onboarding']['state'], 'Gateway `onboarding[state][completed]` entry is missing' );
 		$this->assertTrue( $gateway_details['onboarding']['state']['completed'], 'Gateway `onboarding[state][completed]` entry is not false' );
+		$this->assertArrayHasKey( 'test_mode', $gateway_details['onboarding']['state'], 'Gateway `onboarding[state][test_mode]` entry is missing' );
+		$this->assertTrue( $gateway_details['onboarding']['state']['test_mode'], 'Gateway `onboarding[state][test_mode]` entry is not false' );
 		$this->assertArrayHasKey( '_links', $gateway_details['onboarding'], 'Gateway `onboarding[_links]` entry is missing' );
 		$this->assertArrayHasKey( 'onboard', $gateway_details['onboarding']['_links'], 'Gateway `onboarding[_links][onboard]` entry is missing' );
 		$this->assertArrayHasKey( 'recommended_payment_methods', $gateway_details['onboarding'], 'Gateway `onboarding[recommended_payment_methods]` entry is missing' );
