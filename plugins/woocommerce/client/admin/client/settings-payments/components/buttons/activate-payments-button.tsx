@@ -4,7 +4,7 @@
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
-import { PaymentIncentive, RecommendedPaymentMethod } from '@woocommerce/data';
+import { PaymentIncentive } from '@woocommerce/data';
 
 /**
  * Internal dependencies
