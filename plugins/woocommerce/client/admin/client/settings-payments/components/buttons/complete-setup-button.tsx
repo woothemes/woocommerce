@@ -62,11 +62,6 @@ export const CompleteSetupButton = ( {
 	const onboardingCompleted = onboardingState.completed;
 
 	const completeSetup = () => {
-		// Double check that the gateway actually needs setup.
-		if ( ! gatewayState.needs_setup ) {
-			return;
-		}
-
 		setIsUpdating( true );
 
 		if ( ! accountConnected || ! onboardingStarted ) {

@@ -43,6 +43,15 @@ export const PaymentGatewayListItem = ( {
 	const shouldHighlightIncentive =
 		incentive && ! incentive?.promo_id.includes( '-action-' );
 
+	// If the account is not connected or the onboarding is not started, or not completed then the gateway needs setup.
+	const gatewayNeedsSetup =
+		! gateway.state.account_connected ||
+		( gateway.state.account_connected &&
+			! gateway.onboarding.state.started ) ||
+		( gateway.state.account_connected &&
+			gateway.onboarding.state.started &&
+			! gateway.onboarding.state.completed );
+
 	const determineGatewayStatus = () => {
 		if ( ! gateway.state.enabled && gateway.state.needs_setup ) {
 			return 'needs_setup';
@@ -148,7 +157,7 @@ export const PaymentGatewayListItem = ( {
 								/>
 							) }
 
-						{ gateway.state.needs_setup && (
+						{ gatewayNeedsSetup && (
 							<CompleteSetupButton
 								gatewayId={ gateway.id }
 								gatewayState={ gateway.state }
