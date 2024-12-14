@@ -25,10 +25,6 @@ export const PaymentMethodListItem = ( {
 	isExpanded,
 	...props
 }: PaymentMethodListItemProps ) => {
-	if ( ! method.enabled && ! isExpanded ) {
-		return null;
-	}
-
 	const [ isDirty, setIsDirty ] = useState( false );
 
 	useEffect( () => {
@@ -38,6 +34,10 @@ export const PaymentMethodListItem = ( {
 			};
 		}
     }, [ isDirty ] );
+
+	if ( ! method.enabled && ! isExpanded ) {
+		return null;
+	}
 
 	return (
 		<div
