@@ -23,6 +23,10 @@ class ProductGallery extends AbstractBlock {
 	 */
 	protected $dialog_context;
 
+	/**
+	 * Initialize the block and Hook into the `render_block_context` filter
+	 * to update the context for dialog rendering.
+	 */
 	protected function initialize() {
 		parent::initialize();
 		add_filter( 'render_block_context', [ $this, 'inject_dialog_context' ], 10, 3 );
@@ -37,17 +41,25 @@ class ProductGallery extends AbstractBlock {
 		return [ 'postId' ];
 	}
 
+	/**
+	 * Inject the single productcontext into the dialog blocks.
+	 *
+	 * @param array $context The block context.
+	 * @param array $block The block.
+	 * @param array $parent_block The parent block.
+	 * @return array The updated block context.
+	 */
 	public function inject_dialog_context( $context, $block, $parent_block ) {
 		$expected_inner_blocks = [
 			'woocommerce/product-gallery',
 			'woocommerce/product-gallery-large-image',
 			'woocommerce/product-gallery-large-image-next-previous',
 			'woocommerce/product-gallery-pager',
-			'woocommerce/product-gallery-thumbnails'
+			'woocommerce/product-gallery-thumbnails',
 		];
-		$is_single_product = $this->dialog_context['singleProduct'] ?? false;
+		$is_single_product     = $this->dialog_context['singleProduct'] ?? false;
 
-		if ( $is_single_product && in_array( $block['blockName'], $expected_inner_blocks ) ) {
+		if ( $is_single_product && in_array( $block['blockName'], $expected_inner_blocks, true ) ) {
 			return array_merge( $context, $this->dialog_context );
 		}
 
