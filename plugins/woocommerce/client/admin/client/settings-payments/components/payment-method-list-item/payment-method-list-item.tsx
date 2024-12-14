@@ -4,6 +4,7 @@
 import { decodeEntities } from '@wordpress/html-entities';
 import { type RecommendedPaymentMethod } from '@woocommerce/data';
 import { ToggleControl } from '@wordpress/components';
+import { useEffect, useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -27,6 +28,16 @@ export const PaymentMethodListItem = ( {
 	if ( ! method.enabled && ! isExpanded ) {
 		return null;
 	}
+
+	const [ isDirty, setIsDirty ] = useState( false );
+
+	useEffect( () => {
+		if ( isDirty ) {
+			window.onbeforeunload = function () {
+				return null;
+			};
+		}
+    }, [ isDirty ] );
 
 	return (
 		<div
@@ -106,11 +117,13 @@ export const PaymentMethodListItem = ( {
 							checked={
 								paymentMethodsState[ method.id ] ?? false
 							}
-							onChange={ ( isChecked: boolean ) =>
-								setPaymentMethodsState( {
-									...paymentMethodsState,
-									[ method.id ]: isChecked,
-								} )
+							onChange={ ( isChecked: boolean ) => {
+									setIsDirty( true );
+									setPaymentMethodsState( {
+										...paymentMethodsState,
+										[ method.id ]: isChecked,
+									} )
+								}
 							}
 							// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 							// @ts-ignore disabled prop exists

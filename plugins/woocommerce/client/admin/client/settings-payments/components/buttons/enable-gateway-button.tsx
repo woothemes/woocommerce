@@ -89,7 +89,8 @@ export const EnableGatewayButton = ( {
 		);
 	};
 
-	const enableGateway = () => {
+	const enableGateway = ( e: React.MouseEvent ) => {
+		e.preventDefault();
 		// Since this logic can toggle the gateway state on and off, we make sure we don't accidentally disable the gateway.
 		if ( gatewayState.enabled ) {
 			return;
