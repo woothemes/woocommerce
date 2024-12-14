@@ -45,6 +45,7 @@ class PaymentGatewayTest extends WC_REST_Unit_Test_Case {
 			'woocommerce_payments',
 			array(
 				'enabled'                     => true,
+				'account_connected'           => true,
 				'needs_setup'                 => true,
 				'test_mode'                   => true,
 				'dev_mode'                    => true,
@@ -111,10 +112,11 @@ class PaymentGatewayTest extends WC_REST_Unit_Test_Case {
 				'icon'        => 'https://example.com/icon.png',
 				'supports'    => array( 'products', 'something', 'bogus' ),
 				'state'       => array(
-					'enabled'     => true,
-					'needs_setup' => true,
-					'test_mode'   => true,
-					'dev_mode'    => true,
+					'enabled'           => true,
+					'account_connected' => true,
+					'needs_setup'       => true,
+					'test_mode'         => true,
+					'dev_mode'          => true,
 				),
 				'management'  => array(
 					'_links' => array(
@@ -130,6 +132,10 @@ class PaymentGatewayTest extends WC_REST_Unit_Test_Case {
 					'status' => PaymentProviders::EXTENSION_ACTIVE,
 				),
 				'onboarding'  => array(
+					'state'                       => array(
+						'started'   => true, // Because the account is connected.
+						'completed' => true, // Because the account is connected.
+					),
 					'_links'                      => array(
 						'onboard' => array(
 							'href' => 'https://example.com/connection-url',
