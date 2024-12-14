@@ -30,14 +30,13 @@ class WooPayments extends PaymentGateway {
 	 */
 	public function needs_setup( WC_Payment_Gateway $payment_gateway ): bool {
 		// No account means we need setup.
-		if ( method_exists( $payment_gateway, 'is_connected' ) &&
-			! $payment_gateway->is_connected() ) {
+		if ( ! $this->is_account_connected( $payment_gateway ) ) {
 			return true;
 		}
 
 		if ( function_exists( '\wcpay_get_container' ) && class_exists( '\WC_Payments_Account' ) ) {
 			$account = \wcpay_get_container()->get( \WC_Payments_Account::class );
-			if ( method_exists( $account, 'get_account_status_data' ) ) {
+			if ( is_callable( array( $account, 'get_account_status_data' ) ) ) {
 				// Test-drive accounts don't need setup.
 				$account_status = $account->get_account_status_data();
 				if ( ! empty( $account_status['testDrive'] ) ) {
@@ -61,10 +60,10 @@ class WooPayments extends PaymentGateway {
 	 */
 	public function is_in_test_mode( WC_Payment_Gateway $payment_gateway ): bool {
 		if ( class_exists( '\WC_Payments' ) &&
-			method_exists( '\WC_Payments', 'mode' ) ) {
+			is_callable( '\WC_Payments::mode' ) ) {
 
 			$woopayments_mode = \WC_Payments::mode();
-			if ( method_exists( $woopayments_mode, 'is_test' ) ) {
+			if ( is_callable( array( $woopayments_mode, 'is_test' ) ) ) {
 				return $woopayments_mode->is_test();
 			}
 		}
@@ -84,10 +83,10 @@ class WooPayments extends PaymentGateway {
 	 */
 	public function is_in_dev_mode( WC_Payment_Gateway $payment_gateway ): bool {
 		if ( class_exists( '\WC_Payments' ) &&
-			method_exists( '\WC_Payments', 'mode' ) ) {
+			is_callable( '\WC_Payments::mode' ) ) {
 
 			$woopayments_mode = \WC_Payments::mode();
-			if ( method_exists( $woopayments_mode, 'is_dev' ) ) {
+			if ( is_callable( array( $woopayments_mode, 'is_dev' ) ) ) {
 				return $woopayments_mode->is_dev();
 			}
 		}
@@ -107,7 +106,7 @@ class WooPayments extends PaymentGateway {
 	 * @return string The onboarding URL for the payment gateway.
 	 */
 	public function get_onboarding_url( WC_Payment_Gateway $payment_gateway, string $return_url = '' ): string {
-		if ( class_exists( '\WC_Payments_Account' ) && method_exists( '\WC_Payments_Account', 'get_connect_url' ) ) {
+		if ( class_exists( '\WC_Payments_Account' ) && is_callable( '\WC_Payments_Account::get_connect_url' ) ) {
 			$connect_url = \WC_Payments_Account::get_connect_url();
 		} else {
 			$connect_url = parent::get_onboarding_url( $payment_gateway, $return_url );
