@@ -7,6 +7,7 @@ import { useState } from '@wordpress/element';
 import {
 	RecommendedPaymentMethod,
 	PaymentProviderState,
+	PaymentProviderOnboardingState,
 } from '@woocommerce/data';
 import { getHistory, getNewPath } from '@woocommerce/navigation';
 
@@ -23,6 +24,10 @@ interface CompleteSetupButtonProps {
 	 * The state of the gateway.
 	 */
 	gatewayState: PaymentProviderState;
+	/**
+	 * The onboarding state for this gateway.
+	 */
+	onboardingState: PaymentProviderOnboardingState;
 	/**
 	 * The settings URL to navigate to, if we don't have an onboarding URL.
 	 */
@@ -44,12 +49,17 @@ interface CompleteSetupButtonProps {
 export const CompleteSetupButton = ( {
 	gatewayId,
 	gatewayState,
+	onboardingState,
 	settingsHref,
 	onboardingHref,
 	recommendedPaymentMethods = [],
 	buttonText = __( 'Complete setup', 'woocommerce' ),
 }: CompleteSetupButtonProps ) => {
 	const [ isUpdating, setIsUpdating ] = useState( false );
+
+	const accountConnected = gatewayState.account_connected;
+	const onboardingStarted = onboardingState.started;
+	const onboardingCompleted = onboardingState.completed;
 
 	const completeSetup = () => {
 		// Double check that the gateway actually needs setup.
@@ -59,7 +69,7 @@ export const CompleteSetupButton = ( {
 
 		setIsUpdating( true );
 
-		if ( ! gatewayState.account_connected ) {
+		if ( ! accountConnected || ! onboardingStarted ) {
 			if ( ( recommendedPaymentMethods ?? [] ).length > 0 ) {
 				const history = getHistory();
 				history.push( getNewPath( {}, '/payment-methods' ) );
@@ -68,6 +78,14 @@ export const CompleteSetupButton = ( {
 				window.location.href = onboardingHref;
 				return;
 			}
+		} else if (
+			accountConnected &&
+			onboardingStarted &&
+			! onboardingCompleted
+		) {
+			// Redirect to the gateway's onboarding URL if it needs setup.
+			window.location.href = onboardingHref;
+			return;
 		} else {
 			// Redirect to the gateway's settings URL if the account is already connected.
 			window.location.href = settingsHref;

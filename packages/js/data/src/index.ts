@@ -34,6 +34,7 @@ export {
 	PaymentProvider,
 	PaymentProviderType,
 	PaymentProviderState,
+	PaymentProviderOnboardingState,
 	PaymentGatewayProvider,
 	OfflinePaymentMethodProvider,
 	PaymentExtensionSuggestionProvider,

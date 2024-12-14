@@ -62,6 +62,11 @@ export type RecommendedPaymentMethod = {
 	extraIcon: string;
 };
 
+export type PaymentProviderOnboardingState = {
+	started: boolean;
+	completed: boolean;
+};
+
 // General payment provider type.
 export type PaymentProvider = {
 	id: string;
@@ -78,10 +83,7 @@ export type PaymentProvider = {
 	state?: PaymentProviderState;
 	links?: PaymentGatewayLink[];
 	onboarding?: {
-		state: {
-			started: boolean;
-			completed: boolean;
-		};
+		state: PaymentProviderOnboardingState;
 		_links: {
 			onboard: LinkData;
 		};
@@ -99,10 +101,7 @@ export type PaymentGatewayProvider = PaymentProvider & {
 	management: ManagementData;
 	state: PaymentProviderState;
 	onboarding: {
-		state: {
-			started: boolean;
-			completed: boolean;
-		};
+		state: PaymentProviderOnboardingState;
 		_links: {
 			onboard: LinkData;
 		};
@@ -116,10 +115,7 @@ export type OfflinePaymentMethodProvider = PaymentProvider & {
 	management: ManagementData;
 	state: PaymentProviderState;
 	onboarding: {
-		state: {
-			started: boolean;
-			completed: boolean;
-		};
+		state: PaymentProviderOnboardingState;
 		_links: {
 			onboard: LinkData;
 		};

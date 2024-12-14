@@ -119,36 +119,9 @@ export const PaymentGatewayListItem = ( {
 				</div>
 				<div className="woocommerce-list__item-after">
 					<div className="woocommerce-list__item-after__actions">
-						{ ! gateway.state.enabled && (
-							<EnableGatewayButton
-								gatewayId={ gateway.id }
-								gatewayState={ gateway.state }
-								settingsHref={
-									gateway.management._links.settings.href
-								}
-								onboardingHref={
-									gateway.onboarding._links.onboard.href
-								}
-								isOffline={ false }
-								recommendedPaymentMethods={
-									recommendedPaymentMethods
-								}
-								incentive={ incentive }
-								acceptIncentive={ acceptIncentive }
-							/>
-						) }
-
-						{ gateway.state.enabled && (
-							<SettingsButton
-								settingsHref={
-									gateway.management._links.settings.href
-								}
-							/>
-						) }
-
-						{ gateway.state.enabled &&
-							gateway.state.needs_setup && (
-								<CompleteSetupButton
+						{ ! gateway.state.enabled &&
+							gateway.state.account_connected && (
+								<EnableGatewayButton
 									gatewayId={ gateway.id }
 									gatewayState={ gateway.state }
 									settingsHref={
@@ -157,17 +130,45 @@ export const PaymentGatewayListItem = ( {
 									onboardingHref={
 										gateway.onboarding._links.onboard.href
 									}
+									isOffline={ false }
 									recommendedPaymentMethods={
 										recommendedPaymentMethods
+									}
+									incentive={ incentive }
+									acceptIncentive={ acceptIncentive }
+								/>
+							) }
+
+						{ gateway.state.account_connected &&
+							gateway.onboarding.state.completed && (
+								<SettingsButton
+									settingsHref={
+										gateway.management._links.settings.href
 									}
 								/>
 							) }
 
+						{ gateway.state.needs_setup && (
+							<CompleteSetupButton
+								gatewayId={ gateway.id }
+								gatewayState={ gateway.state }
+								onboardingState={ gateway.onboarding.state }
+								settingsHref={
+									gateway.management._links.settings.href
+								}
+								onboardingHref={
+									gateway.onboarding._links.onboard.href
+								}
+								recommendedPaymentMethods={
+									recommendedPaymentMethods
+								}
+							/>
+						) }
+
 						{ isWooPayments( gateway.id ) &&
-							gateway.state.enabled &&
-							! gateway.state.needs_setup &&
-							gateway.state.test_mode &&
-							! gateway.state.dev_mode && (
+							gateway.state.account_connected &&
+							gateway.onboarding.state.completed &&
+							gateway.state.test_mode && (
 								<ActivatePaymentsButton
 									acceptIncentive={ acceptIncentive }
 									incentive={ incentive }
