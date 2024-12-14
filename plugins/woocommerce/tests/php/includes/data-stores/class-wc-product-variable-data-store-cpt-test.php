@@ -227,7 +227,7 @@ class WC_Product_Variable_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 			'Data with mix of valid and invalid hashes should fail validation'
 		);
 
-		// Test empty prices data with version (likely corrupt)
+		// Test empty prices data with version (likely corrupt).
 		$empty_prices_with_version = array(
 			'version'    => $current_version,
 			$price_hash1 => array(
@@ -347,7 +347,7 @@ class WC_Product_Variable_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 			'Empty children data without version should pass validation as could be new product'
 		);
 
-		// Test uninitialized children data
+		// Test uninitialized children data.
 		$uninitialized_children = array();
 
 		$this->assertFalse(
