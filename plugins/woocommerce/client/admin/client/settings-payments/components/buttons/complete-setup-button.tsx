@@ -6,17 +6,21 @@ import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { RecommendedPaymentMethod } from '@woocommerce/data';
 import { getHistory, getNewPath } from '@woocommerce/navigation';
+import { PaymentProviderState } from '@woocommerce/data/build-module';
 
 /**
  * Internal dependencies
  */
-import { isWooPayments } from '~/settings-payments/utils';
 
 interface CompleteSetupButtonProps {
 	/**
 	 * The ID of the gateway to activate payments for.
 	 */
 	gatewayId: string;
+	/**
+	 * The state of the gateway.
+	 */
+	gatewayState: PaymentProviderState;
 	/**
 	 * The settings URL to navigate to, if we don't have an onboarding URL.
 	 */
@@ -37,6 +41,7 @@ interface CompleteSetupButtonProps {
 
 export const CompleteSetupButton = ( {
 	gatewayId,
+	gatewayState,
 	onboardingHref,
 	recommendedPaymentMethods = [],
 	buttonText = __( 'Complete setup', 'woocommerce' ),
@@ -45,22 +50,22 @@ export const CompleteSetupButton = ( {
 
 	const completeSetup = () => {
 		setIsUpdating( true );
-		if ( isWooPayments( gatewayId ) ) {
-			if ( ( recommendedPaymentMethods ?? [] ).length > 0 ) {
-				const history = getHistory();
-				history.push( getNewPath( {}, '/payment-methods' ) );
-			} else {
-				window.location.href = onboardingHref;
-			}
-			setIsUpdating( false );
-			return;
+		if (
+			! gatewayState.account_connected &&
+			( recommendedPaymentMethods ?? [] ).length > 0
+		) {
+			const history = getHistory();
+			history.push( getNewPath( {}, '/payment-methods' ) );
+		} else {
+			// Redirect to the gateway's onboarding URL if it needs setup.
+			window.location.href = onboardingHref;
 		}
-		// Redirect to the gateway's onboarding URL if it needs setup.
-		window.location.href = onboardingHref;
+		setIsUpdating( false );
 	};
 
 	return (
 		<Button
+			key={ gatewayId }
 			variant={ 'primary' }
 			isBusy={ isUpdating }
 			disabled={ isUpdating }
