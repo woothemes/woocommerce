@@ -21,7 +21,7 @@ interface SettingsButtonProps {
 
 export const SettingsButton = ( {
 	settingsHref,
-	buttonText = __( 'Settings', 'woocommerce' ),
+	buttonText = __( 'Manage', 'woocommerce' ),
 }: SettingsButtonProps ) => {
 	return (
 		<Button variant={ 'secondary' } href={ settingsHref }>
