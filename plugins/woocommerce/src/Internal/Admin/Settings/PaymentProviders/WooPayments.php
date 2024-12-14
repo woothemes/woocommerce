@@ -106,7 +106,7 @@ class WooPayments extends PaymentGateway {
 	 */
 	public function is_in_test_mode_onboarding( WC_Payment_Gateway $payment_gateway ): bool {
 		if ( class_exists( '\WC_Payments' ) &&
-			 is_callable( '\WC_Payments::mode' ) ) {
+			is_callable( '\WC_Payments::mode' ) ) {
 
 			$woopayments_mode = \WC_Payments::mode();
 			if ( is_callable( array( $woopayments_mode, 'is_test_mode_onboarding' ) ) ) {
@@ -257,11 +257,11 @@ class WooPayments extends PaymentGateway {
 			function ( $gateway ) {
 				// Filter out offline gateways and WooPayments.
 				return 'yes' === $gateway->enabled &&
-						! in_array(
-							$gateway->id,
-							array( 'woocommerce_payments', ...PaymentProviders::OFFLINE_METHODS ),
-							true
-						);
+					! in_array(
+						$gateway->id,
+						array( 'woocommerce_payments', ...PaymentProviders::OFFLINE_METHODS ),
+						true
+					);
 			}
 		);
 
