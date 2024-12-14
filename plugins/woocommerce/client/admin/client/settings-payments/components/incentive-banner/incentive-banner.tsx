@@ -73,6 +73,7 @@ export const IncentiveBanner = ( {
 	const handleAccept = () => {
 		setIsBusy( true );
 		onAccept( incentive.promo_id );
+		onDismiss( incentive._links.dismiss.href, context ); // We also dismiss the incentive when it is accepted.
 		setupPlugin( provider.id, provider.plugin.slug, onboardingUrl );
 		setIsBusy( false );
 		setIsSubmitted( true );
