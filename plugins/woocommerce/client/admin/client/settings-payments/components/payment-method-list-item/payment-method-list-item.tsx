@@ -33,7 +33,7 @@ export const PaymentMethodListItem = ( {
 				return null;
 			};
 		}
-    }, [ isDirty ] );
+	}, [ isDirty ] );
 
 	if ( ! method.enabled && ! isExpanded ) {
 		return null;
@@ -118,13 +118,12 @@ export const PaymentMethodListItem = ( {
 								paymentMethodsState[ method.id ] ?? false
 							}
 							onChange={ ( isChecked: boolean ) => {
-									setIsDirty( true );
-									setPaymentMethodsState( {
-										...paymentMethodsState,
-										[ method.id ]: isChecked,
-									} )
-								}
-							}
+								setIsDirty( true );
+								setPaymentMethodsState( {
+									...paymentMethodsState,
+									[ method.id ]: isChecked,
+								} );
+							} }
 							// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 							// @ts-ignore disabled prop exists
 							disabled={ method.required ?? false }

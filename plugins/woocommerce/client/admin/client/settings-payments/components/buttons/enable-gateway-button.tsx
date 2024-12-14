@@ -14,11 +14,6 @@ import {
 } from '@woocommerce/data';
 import { getHistory, getNewPath } from '@woocommerce/navigation';
 
-/**
- * Internal dependencies
- */
-import { isWooPayments } from '~/settings-payments/utils';
-
 interface EnableGatewayButtonProps {
 	/**
 	 * The ID of the gateway to enable.
