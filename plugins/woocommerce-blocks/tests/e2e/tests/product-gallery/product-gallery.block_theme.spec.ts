@@ -565,7 +565,7 @@ test.describe( `${ blockData.name }`, () => {
 			await expect( productGalleryBlockOption ).toBeVisible();
 		} );
 
-		test( 'should be hidden on the post editor', async ( {
+		test( 'should be hidden on the post editor globally', async ( {
 			admin,
 			page,
 			editor,
@@ -577,6 +577,31 @@ test.describe( `${ blockData.name }`, () => {
 				.getByRole( 'option', { name: blockData.title } );
 
 			await expect( productGalleryBlockOption ).toBeHidden();
+		} );
+
+		test( 'should be visible on the post editor in Single Product block', async ( {
+			admin,
+			editor,
+			page,
+		} ) => {
+			await admin.createNewPost();
+			await editor.insertBlockUsingGlobalInserter( 'Single Product' );
+			await editor.canvas.getByText( 'Album' ).click();
+			await editor.canvas.getByText( 'Done' ).click();
+			const singleProductBlock = await editor.getBlockByName(
+				'woocommerce/single-product'
+			);
+			const singleProductClientId =
+				( await singleProductBlock.getAttribute( 'data-block' ) ) ?? '';
+			await editor.insertBlock(
+				{ name: blockData.name },
+				{ clientId: singleProductClientId }
+			);
+			const productGalleryBlockOption = page
+				.getByRole( 'listbox', { name: 'WooCommerce' } )
+				.getByRole( 'option', { name: blockData.title } );
+
+			await expect( productGalleryBlockOption ).toBeVisible();
 		} );
 	} );
 
