@@ -734,7 +734,7 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 			return false;
 		}
 
-		// If we have a version set but no children at all, data is likely corrupt
+		// If we have a version set but no children at all, data is likely corrupt.
 		if ( isset( $children['version'] ) && empty( $children['all'] ) ) {
 			return false;
 		}
