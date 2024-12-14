@@ -84,9 +84,9 @@ export const IncentiveModal = ( {
 		setIsBusy( true );
 		onAccept( incentive.promo_id );
 		onDismiss( incentive._links.dismiss.href, context ); // We also dismiss the incentive when it is accepted.
+		handleClose(); // Close the modal.
 		setupPlugin( provider.id, provider.plugin.slug, onboardingUrl );
 		setIsBusy( false );
-		handleClose();
 	};
 
 	if ( isDismissed ) {

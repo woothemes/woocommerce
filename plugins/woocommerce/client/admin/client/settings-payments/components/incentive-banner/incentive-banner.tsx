@@ -74,9 +74,9 @@ export const IncentiveBanner = ( {
 		setIsBusy( true );
 		onAccept( incentive.promo_id );
 		onDismiss( incentive._links.dismiss.href, context ); // We also dismiss the incentive when it is accepted.
+		setIsSubmitted( true );
 		setupPlugin( provider.id, provider.plugin.slug, onboardingUrl );
 		setIsBusy( false );
-		setIsSubmitted( true );
 	};
 
 	const handleDismiss = () => {
@@ -86,7 +86,11 @@ export const IncentiveBanner = ( {
 		setIsDismissed( true );
 	};
 
-	if ( isIncentiveDismissedInContext( incentive, context ) || isDismissed ) {
+	if (
+		isSubmitted ||
+		isIncentiveDismissedInContext( incentive, context ) ||
+		isDismissed
+	) {
 		return null;
 	}
 
