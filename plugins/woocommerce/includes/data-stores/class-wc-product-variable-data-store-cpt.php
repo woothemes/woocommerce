@@ -780,6 +780,11 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 			return false;
 		}
 
+		// Fail if array is empty - we want to rebuild in this case.
+		if ( empty( $prices_array ) ) {
+			return false;
+		}
+
 		if ( isset( $prices_array['version'] ) && $prices_array['version'] !== $current_version ) {
 			return false;
 		}
