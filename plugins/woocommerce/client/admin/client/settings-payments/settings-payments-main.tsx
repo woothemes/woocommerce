@@ -220,6 +220,7 @@ export const SettingsPaymentsMain = () => {
 			installingPlugin,
 			installAndActivatePlugins,
 			invalidateResolutionForStoreSelector,
+			storeCountry,
 		]
 	);
 
