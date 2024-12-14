@@ -70,7 +70,7 @@ export const PaymentExtensionSuggestionListItem = ( {
 				<div className="woocommerce-list__item-text">
 					<span className="woocommerce-list__item-title">
 						{ extension.title }{ ' ' }
-						{ ! hasIncentive && isWooPayments( extension.id ) && (
+						{ ! hasIncentive( extension ) && isWooPayments( extension.id ) && (
 							<StatusBadge status="recommended" />
 						) }
 						{ incentive && (
