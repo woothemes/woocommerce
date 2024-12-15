@@ -5,7 +5,6 @@ import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import {
 	PaymentProvider,
-	RecommendedPaymentMethod,
 	PAYMENT_SETTINGS_STORE_NAME,
 	WC_ADMIN_NAMESPACE,
 } from '@woocommerce/data';

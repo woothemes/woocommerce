@@ -7,7 +7,6 @@ import {
 	PaymentGatewayProvider,
 	OfflinePmsGroupProvider,
 	PaymentExtensionSuggestionProvider,
-	RecommendedPaymentMethod,
 } from '@woocommerce/data';
 import { Gridicon } from '@automattic/components';
 
