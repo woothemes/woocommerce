@@ -210,13 +210,16 @@ export const SettingsPaymentsMain = () => {
 					) {
 						const history = getHistory();
 						history.push( getNewPath( {}, '/payment-methods' ) );
+
+						setInstallingPlugin( null );
+						return;
 					}
+
+					setInstallingPlugin( null );
 
 					if ( onboardingUrl ) {
 						window.location.href = onboardingUrl;
 					}
-
-					setInstallingPlugin( null );
 				} )
 				.catch( ( response: { errors: Record< string, string > } ) => {
 					createNoticesFromResponse( response );
