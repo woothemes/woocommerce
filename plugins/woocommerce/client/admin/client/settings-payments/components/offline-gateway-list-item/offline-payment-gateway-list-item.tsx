@@ -62,6 +62,7 @@ export const OfflinePaymentGatewayListItem = ( {
 									gateway.onboarding._links.onboard.href
 								}
 								isOffline={ true }
+								gatewayHasRecommendedPaymentMethods={ false }
 							/>
 						) : (
 							<SettingsButton
