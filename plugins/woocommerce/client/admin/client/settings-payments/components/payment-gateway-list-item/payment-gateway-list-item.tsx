@@ -177,7 +177,7 @@ export const PaymentGatewayListItem = ( {
 						{ isWooPayments( gateway.id ) &&
 							gateway.state.account_connected &&
 							gateway.onboarding.state.completed &&
-							gateway.state.test_mode && (
+							gateway.onboarding.state.test_mode && (
 								<ActivatePaymentsButton
 									acceptIncentive={ acceptIncentive }
 									incentive={ incentive }

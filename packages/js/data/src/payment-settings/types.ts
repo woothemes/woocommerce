@@ -65,6 +65,7 @@ export type RecommendedPaymentMethod = {
 export type PaymentProviderOnboardingState = {
 	started: boolean;
 	completed: boolean;
+	test_mode: boolean;
 };
 
 // General payment provider type.
