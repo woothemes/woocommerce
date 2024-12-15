@@ -148,7 +148,16 @@ class WooPayments extends PaymentGateway {
 			'redirect_to_settings_page' => 'true',
 		);
 
-		// Apply our routing logic to determine if we should do a live onboarding.
+		// First, sanity check to handle existing accounts.
+		// Such accounts should keep their current onboarding mode.
+		// Do not force things either way.
+		if ( $this->is_account_connected( $payment_gateway ) ) {
+			return add_query_arg( $params, $connect_url );
+		}
+
+		// We don't have an account yet, so the onboarding link is to kickstart the process.
+
+		// Apply our routing logic to determine if we should do a live onboarding/account.
 		$live_onboarding = false;
 
 		$onboarding_profile = get_option( OnboardingProfile::DATA_OPTION, array() );
