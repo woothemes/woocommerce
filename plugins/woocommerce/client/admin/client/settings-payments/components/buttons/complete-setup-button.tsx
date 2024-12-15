@@ -5,7 +5,6 @@ import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import {
-	RecommendedPaymentMethod,
 	PaymentProviderState,
 	PaymentProviderOnboardingState,
 } from '@woocommerce/data';
