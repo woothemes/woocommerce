@@ -44,7 +44,7 @@ export const PaymentGatewayListItem = ( {
 		incentive && ! incentive?.promo_id.includes( '-action-' );
 
 	// If the account is not connected or the onboarding is not started, or not completed then the gateway needs setup.
-	const gatewayNeedsSetup =
+	const gatewayNeedsOnboarding =
 		! gateway.state.account_connected ||
 		( gateway.state.account_connected &&
 			! gateway.onboarding.state.started ) ||
@@ -129,7 +129,7 @@ export const PaymentGatewayListItem = ( {
 				<div className="woocommerce-list__item-after">
 					<div className="woocommerce-list__item-after__actions">
 						{ ! gateway.state.enabled &&
-							gateway.state.account_connected && (
+							! gatewayNeedsOnboarding && (
 								<EnableGatewayButton
 									gatewayId={ gateway.id }
 									gatewayState={ gateway.state }
@@ -148,16 +148,15 @@ export const PaymentGatewayListItem = ( {
 								/>
 							) }
 
-						{ gateway.state.account_connected &&
-							gateway.onboarding.state.completed && (
-								<SettingsButton
-									settingsHref={
-										gateway.management._links.settings.href
-									}
-								/>
-							) }
+						{ ! gatewayNeedsOnboarding && (
+							<SettingsButton
+								settingsHref={
+									gateway.management._links.settings.href
+								}
+							/>
+						) }
 
-						{ gatewayNeedsSetup && (
+						{ gatewayNeedsOnboarding && (
 							<CompleteSetupButton
 								gatewayId={ gateway.id }
 								gatewayState={ gateway.state }
