@@ -175,6 +175,8 @@ export const PaymentGatewayListItem = ( {
 						) }
 
 						{ isWooPayments( gateway.id ) &&
+							// There is no actual switch-to-live in dev mode.
+							! gateway.state.dev_mode &&
 							gateway.state.account_connected &&
 							gateway.onboarding.state.completed &&
 							gateway.onboarding.state.test_mode && (
