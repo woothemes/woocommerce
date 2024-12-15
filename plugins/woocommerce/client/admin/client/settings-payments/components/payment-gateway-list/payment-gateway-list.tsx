@@ -34,7 +34,6 @@ interface PaymentGatewayListProps {
 	) => void;
 	acceptIncentive: ( id: string ) => void;
 	updateOrdering: ( providers: PaymentProvider[] ) => void;
-	recommendedPaymentMethods: RecommendedPaymentMethod[];
 }
 
 export const PaymentGatewayList = ( {
@@ -44,7 +43,6 @@ export const PaymentGatewayList = ( {
 	setupPlugin,
 	acceptIncentive,
 	updateOrdering,
-	recommendedPaymentMethods,
 }: PaymentGatewayListProps ) => {
 	return (
 		<SortableContainer< PaymentProvider >
@@ -84,7 +82,6 @@ export const PaymentGatewayList = ( {
 								{ PaymentGatewayListItem( {
 									gateway,
 									acceptIncentive,
-									recommendedPaymentMethods,
 								} ) }
 							</SortableItem>
 						);

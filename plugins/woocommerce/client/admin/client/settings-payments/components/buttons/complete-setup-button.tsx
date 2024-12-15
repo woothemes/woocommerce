@@ -37,9 +37,9 @@ interface CompleteSetupButtonProps {
 	 */
 	onboardingHref: string;
 	/**
-	 * Recommended payment methods for this gateway (if available).
+	 * Whether the gateway has a list of recommended payment methods to use during the native onboarding flow.
 	 */
-	recommendedPaymentMethods?: RecommendedPaymentMethod[];
+	gatewayHasRecommendedPaymentMethods: boolean;
 	/**
 	 * The text of the button.
 	 */
@@ -52,7 +52,7 @@ export const CompleteSetupButton = ( {
 	onboardingState,
 	settingsHref,
 	onboardingHref,
-	recommendedPaymentMethods = [],
+	gatewayHasRecommendedPaymentMethods,
 	buttonText = __( 'Complete setup', 'woocommerce' ),
 }: CompleteSetupButtonProps ) => {
 	const [ isUpdating, setIsUpdating ] = useState( false );
@@ -65,7 +65,7 @@ export const CompleteSetupButton = ( {
 		setIsUpdating( true );
 
 		if ( ! accountConnected || ! onboardingStarted ) {
-			if ( ( recommendedPaymentMethods ?? [] ).length > 0 ) {
+			if ( gatewayHasRecommendedPaymentMethods ) {
 				const history = getHistory();
 				history.push( getNewPath( {}, '/payment-methods' ) );
 			} else {

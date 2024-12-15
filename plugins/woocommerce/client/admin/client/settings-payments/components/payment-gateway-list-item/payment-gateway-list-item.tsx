@@ -4,10 +4,7 @@
 import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
 import { __ } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
-import {
-	PaymentGatewayProvider,
-	RecommendedPaymentMethod,
-} from '@woocommerce/data';
+import { PaymentGatewayProvider } from '@woocommerce/data';
 import { Tooltip } from '@wordpress/components';
 
 /**
@@ -29,19 +26,20 @@ import {
 type PaymentGatewayItemProps = {
 	gateway: PaymentGatewayProvider;
 	acceptIncentive: ( id: string ) => void;
-	recommendedPaymentMethods: RecommendedPaymentMethod[];
 };
 
 export const PaymentGatewayListItem = ( {
 	gateway,
 	acceptIncentive,
-	recommendedPaymentMethods,
 	...props
 }: PaymentGatewayItemProps ) => {
 	const isWcPay = isWooPayments( gateway.id );
 	const incentive = hasIncentive( gateway ) ? gateway._incentive : null;
 	const shouldHighlightIncentive =
 		incentive && ! incentive?.promo_id.includes( '-action-' );
+
+	const gatewayHasRecommendedPaymentMethods =
+		( gateway.onboarding.recommended_payment_methods ?? [] ).length > 0;
 
 	// If the account is not connected or the onboarding is not started, or not completed then the gateway needs setup.
 	const gatewayNeedsOnboarding =
@@ -140,8 +138,8 @@ export const PaymentGatewayListItem = ( {
 										gateway.onboarding._links.onboard.href
 									}
 									isOffline={ false }
-									recommendedPaymentMethods={
-										recommendedPaymentMethods
+									gatewayHasRecommendedPaymentMethods={
+										gatewayHasRecommendedPaymentMethods
 									}
 									incentive={ incentive }
 									acceptIncentive={ acceptIncentive }
@@ -167,8 +165,8 @@ export const PaymentGatewayListItem = ( {
 								onboardingHref={
 									gateway.onboarding._links.onboard.href
 								}
-								recommendedPaymentMethods={
-									recommendedPaymentMethods
+								gatewayHasRecommendedPaymentMethods={
+									gatewayHasRecommendedPaymentMethods
 								}
 							/>
 						) }

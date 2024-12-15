@@ -42,9 +42,9 @@ interface EnableGatewayButtonProps {
 	 */
 	acceptIncentive?: ( id: string ) => void;
 	/**
-	 * Recommended payment methods for this gateway (if available).
+	 * Whether the gateway has a list of recommended payment methods to use during the native onboarding flow.
 	 */
-	recommendedPaymentMethods?: RecommendedPaymentMethod[];
+	gatewayHasRecommendedPaymentMethods: boolean;
 	/**
 	 * The text of the button.
 	 */
@@ -62,7 +62,7 @@ export const EnableGatewayButton = ( {
 	onboardingHref,
 	isOffline,
 	acceptIncentive = () => {},
-	recommendedPaymentMethods = [],
+	gatewayHasRecommendedPaymentMethods,
 	buttonText = __( 'Enable', 'woocommerce' ),
 	incentive = null,
 }: EnableGatewayButtonProps ) => {
@@ -115,7 +115,7 @@ export const EnableGatewayButton = ( {
 				if ( response.data === 'needs_setup' ) {
 					// We only need to perform additional logic/redirects if no account connected.
 					if ( ! gatewayState.account_connected ) {
-						if ( ( recommendedPaymentMethods ?? [] ).length > 0 ) {
+						if ( gatewayHasRecommendedPaymentMethods ) {
 							const history = getHistory();
 							history.push(
 								getNewPath( {}, '/payment-methods' )

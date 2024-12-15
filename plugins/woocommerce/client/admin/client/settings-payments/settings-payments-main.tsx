@@ -25,7 +25,6 @@ import { IncentiveBanner } from '~/settings-payments/components/incentive-banner
 import { IncentiveModal } from '~/settings-payments/components/incentive-modal';
 import {
 	providersContainWooPaymentsInTestMode,
-	getRecommendedPaymentMethods,
 	providersContainWooPaymentsInDevMode,
 	isIncentiveDismissedInContext,
 	isSwitchIncentive,
@@ -168,15 +167,18 @@ export const SettingsPaymentsMain = () => {
 	);
 	const incentive = incentiveProvider ? incentiveProvider._incentive : null;
 
-	const recommendedPaymentMethods = getRecommendedPaymentMethods(
-		sortedProviders || providers
-	);
-
 	const setupPlugin = useCallback(
 		( id, slug, onboardingUrl: string | null ) => {
 			if ( installingPlugin ) {
 				return;
 			}
+
+			// A fail-safe to ensure that the onboarding URL is set for Woo Payments.
+			// Note: We should get rid this sooner rather than later!
+			if ( ! onboardingUrl && isWooPayments( id ) ) {
+				onboardingUrl = getWooPaymentsTestDriveAccountLink();
+			}
+
 			setInstallingPlugin( id );
 			installAndActivatePlugins( [ slug ] )
 				.then( async ( response ) => {
@@ -184,25 +186,30 @@ export const SettingsPaymentsMain = () => {
 					invalidateResolutionForStoreSelector(
 						'getPaymentProviders'
 					);
-					if ( isWooPayments( id ) ) {
-						// Wait for the state update and fetch the latest providers
-						const updatedProviders = await resolveSelect(
-							PAYMENT_SETTINGS_STORE_NAME
-						).getPaymentProviders( storeCountry );
-						const updatedRecommendedPaymentMethods =
-							getRecommendedPaymentMethods( updatedProviders );
 
-						if ( updatedRecommendedPaymentMethods.length > 0 ) {
-							const history = getHistory();
-							history.push(
-								getNewPath( {}, '/payment-methods' )
-							);
-						} else {
-							window.location.href =
-								onboardingUrl ??
-								getWooPaymentsTestDriveAccountLink();
-						}
-						return;
+					// Wait for the state update and fetch the latest providers.
+					const updatedProviders = await resolveSelect(
+						PAYMENT_SETTINGS_STORE_NAME
+					).getPaymentProviders( storeCountry );
+
+					// Find the matching provider the updated list.
+					const updatedProvider = updatedProviders.find(
+						( provider ) =>
+							provider.id === id ||
+							provider?._suggestion_id === id || // For suggestions that were replaced by a gateway.
+							provider.plugin.slug === slug // Last resort to find the provider.
+					);
+
+					// If the installed and/or activated extension has recommended payment methods,
+					// redirect to the payment methods page.
+					if (
+						(
+							updatedProvider?.onboarding
+								?.recommended_payment_methods ?? []
+						).length > 0
+					) {
+						const history = getHistory();
+						history.push( getNewPath( {}, '/payment-methods' ) );
 					}
 
 					if ( onboardingUrl ) {
@@ -287,7 +294,6 @@ export const SettingsPaymentsMain = () => {
 					isFetching={ isFetching }
 					businessRegistrationCountry={ storeCountry }
 					setBusinessRegistrationCountry={ setStoreCountry }
-					recommendedPaymentMethods={ recommendedPaymentMethods }
 				/>
 				<OtherPaymentGateways
 					suggestions={ suggestions }
