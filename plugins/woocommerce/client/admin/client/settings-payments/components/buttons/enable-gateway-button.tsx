@@ -10,7 +10,6 @@ import {
 	PAYMENT_SETTINGS_STORE_NAME,
 	PaymentIncentive,
 	PaymentProviderState,
-	RecommendedPaymentMethod,
 } from '@woocommerce/data';
 import { getHistory, getNewPath } from '@woocommerce/navigation';
 
