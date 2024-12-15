@@ -4,7 +4,6 @@
 import { decodeEntities } from '@wordpress/html-entities';
 import { type RecommendedPaymentMethod } from '@woocommerce/data';
 import { ToggleControl } from '@wordpress/components';
-import { useEffect, useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -25,16 +24,6 @@ export const PaymentMethodListItem = ( {
 	isExpanded,
 	...props
 }: PaymentMethodListItemProps ) => {
-	const [ isDirty, setIsDirty ] = useState( false );
-
-	useEffect( () => {
-		if ( isDirty ) {
-			window.onbeforeunload = function () {
-				return null;
-			};
-		}
-	}, [ isDirty ] );
-
 	if ( ! method.enabled && ! isExpanded ) {
 		return null;
 	}
@@ -112,13 +101,12 @@ export const PaymentMethodListItem = ( {
 					</div>
 				) }
 				<div className="woocommerce-list__item-after">
-					<div className="woocommerce-list__item-after__actions">
+					<div className="woocommerce-list__item-after__actions wc-settings-prevent-change-event">
 						<ToggleControl
 							checked={
 								paymentMethodsState[ method.id ] ?? false
 							}
 							onChange={ ( isChecked: boolean ) => {
-								setIsDirty( true );
 								setPaymentMethodsState( {
 									...paymentMethodsState,
 									[ method.id ]: isChecked,
