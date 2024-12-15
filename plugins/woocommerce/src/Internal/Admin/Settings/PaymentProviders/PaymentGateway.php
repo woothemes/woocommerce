@@ -264,6 +264,11 @@ class PaymentGateway {
 	 *              it will infer it from having a connected account.
 	 */
 	public function is_onboarding_completed( WC_Payment_Gateway $payment_gateway ): bool {
+		// Sanity check: If the onboarding has not started, it cannot be completed.
+		if ( ! $this->is_onboarding_started( $payment_gateway ) ) {
+			return false;
+		}
+
 		if ( is_callable( array( $payment_gateway, 'is_onboarding_completed' ) ) ) {
 			return filter_var( $payment_gateway->is_onboarding_completed(), FILTER_VALIDATE_BOOLEAN );
 		}
