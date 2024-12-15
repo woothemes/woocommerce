@@ -270,7 +270,7 @@ class PaymentGateway {
 
 		// Note: This is what WooPayments provides, but it should become standard.
 		if ( is_callable( array( $payment_gateway, 'is_account_partially_onboarded' ) ) ) {
-			return filter_var( $payment_gateway->is_account_partially_onboarded(), FILTER_VALIDATE_BOOLEAN );
+			return ! filter_var( $payment_gateway->is_account_partially_onboarded(), FILTER_VALIDATE_BOOLEAN );
 		}
 
 		// Fall back to inferring this from having a connected account.
