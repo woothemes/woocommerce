@@ -67,11 +67,6 @@ class WcPayWelcomePage {
 	 * Delayed hook registration.
 	 */
 	public function delayed_register() {
-		// Don't do anything if the feature is enabled.
-		if ( Features::is_enabled( 'reactify-classic-payments-settings' ) ) {
-			return;
-		}
-
 		add_action( 'admin_menu', array( $this, 'register_menu_and_page' ) );
 		add_filter( 'woocommerce_admin_shared_settings', array( $this, 'shared_settings' ) );
 		add_filter( 'woocommerce_admin_allowed_promo_notes', array( $this, 'allowed_promo_notes' ) );
