@@ -45,7 +45,7 @@ const includesAddToCartWithOptions = ( blocks: BlockInstance[] ) => {
 };
 
 export default function ProductTypeSelectorPlugin() {
-	const { slug, type, hasAddToCartWithOptions } = useSelect( ( select ) => {
+	const { slug, type, hasAddToCartBlock } = useSelect( ( select ) => {
 		const { slug: currentPostSlug, type: currentPostType } = select(
 			'core/editor'
 		).getCurrentPost< {
@@ -56,15 +56,15 @@ export default function ProductTypeSelectorPlugin() {
 		return {
 			slug: currentPostSlug,
 			type: currentPostType,
-			hasAddToCartWithOptions: includesAddToCartWithOptions( blocks ),
+			hasAddToCartBlock: includesAddToCartWithOptions( blocks ),
 		};
 	}, [] );
 
-	// Only add the panel if the current post is a template and the block is present.
+	// Only add the panel if the current post is a template and has the Add To Cart block.
 	const isPanelVisible =
 		type === 'wp_template' &&
 		slug === 'single-product' &&
-		hasAddToCartWithOptions;
+		hasAddToCartBlock;
 
 	if ( ! isPanelVisible ) {
 		return null;
