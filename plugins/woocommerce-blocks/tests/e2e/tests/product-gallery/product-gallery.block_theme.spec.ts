@@ -597,11 +597,10 @@ test.describe( `${ blockData.name }`, () => {
 				{ name: blockData.name },
 				{ clientId: singleProductClientId }
 			);
-			const productGalleryBlockOption = page
-				.getByRole( 'listbox', { name: 'WooCommerce' } )
-				.getByRole( 'option', { name: blockData.title } );
 
-			await expect( productGalleryBlockOption ).toBeVisible();
+			await expect(
+				await editor.getBlockByName( blockData.name )
+			).toHaveCount( 1 );
 		} );
 	} );
 
