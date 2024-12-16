@@ -11,7 +11,7 @@ import { ProductGalleryPage } from './product-gallery.page';
 
 const blockData = {
 	name: 'woocommerce/product-gallery',
-	title: 'Product Gallery',
+	title: 'Product Gallery (Beta)',
 	selectors: {
 		frontend: {},
 		editor: {
@@ -582,7 +582,6 @@ test.describe( `${ blockData.name }`, () => {
 		test( 'should be visible on the post editor in Single Product block', async ( {
 			admin,
 			editor,
-			page,
 		} ) => {
 			await admin.createNewPost();
 			await editor.insertBlockUsingGlobalInserter( 'Single Product' );
