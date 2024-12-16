@@ -56,29 +56,33 @@ test.describe( 'WooCommerce General Settings', { tag: tags.SERVICES }, () => {
 		} );
 	} );
 
-	test( 'Save Changes button is disabled by default and enabled only after changes.', async ( {
-		page,
-	} ) => {
-		await page.goto( 'wp-admin/admin.php?page=wc-settings' );
+	test(
+		'Save Changes button is disabled by default and enabled only after changes.',
+		{
+			tag: [ tags.NON_CRITICAL, tags.NOT_E2E ],
+		},
+		async ( { page } ) => {
+			await page.goto( 'wp-admin/admin.php?page=wc-settings' );
 
-		// make sure the general tab is active
-		await expect( page.locator( 'a.nav-tab-active' ) ).toContainText(
-			'General'
-		);
+			// make sure the general tab is active
+			await expect( page.locator( 'a.nav-tab-active' ) ).toContainText(
+				'General'
+			);
 
-		// See the Save changes button is disabled.
-		await expect(
-			page.getByRole( 'button', { name: 'Save changes' } )
-		).toBeDisabled();
+			// See the Save changes button is disabled.
+			await expect(
+				page.getByRole( 'button', { name: 'Save changes' } )
+			).toBeDisabled();
 
-		// Change the base location
-		await page
-			.locator( 'select[name="woocommerce_default_country"]' )
-			.selectOption( 'US:NC' );
+			// Change the base location
+			await page
+				.locator( 'select[name="woocommerce_default_country"]' )
+				.selectOption( 'US:NC' );
 
-		// See the Save changes button is now enabled.
-		await expect( page.locator( 'text=Save changes' ) ).toBeEnabled();
-	} );
+			// See the Save changes button is now enabled.
+			await expect( page.locator( 'text=Save changes' ) ).toBeEnabled();
+		}
+	);
 
 	test( 'can update settings', async ( { page } ) => {
 		await page.goto( 'wp-admin/admin.php?page=wc-settings' );

@@ -11,6 +11,7 @@ import { DefaultDragHandle } from '~/settings-payments/components/sortable';
 
 interface ListPlaceholderProps {
 	rows: number;
+	hasDragIcon?: boolean;
 }
 
 /**
@@ -18,7 +19,10 @@ interface ListPlaceholderProps {
  *
  * @param {number} rows Number of rows to display.
  */
-export const ListPlaceholder = ( { rows }: ListPlaceholderProps ) => {
+export const ListPlaceholder = ( {
+	rows,
+	hasDragIcon = true,
+}: ListPlaceholderProps ) => {
 	const items = Array.from( { length: rows } ).map( () => {
 		return {
 			content: <div className="list-placeholder__content" />,
@@ -28,7 +32,7 @@ export const ListPlaceholder = ( { rows }: ListPlaceholderProps ) => {
 			after: <div className="list-placeholder__after" />,
 			before: (
 				<>
-					<DefaultDragHandle />
+					{ hasDragIcon && <DefaultDragHandle /> }
 					<div className="list-placeholder__before" />
 				</>
 			),
