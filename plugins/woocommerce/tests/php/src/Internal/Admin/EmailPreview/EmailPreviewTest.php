@@ -238,6 +238,7 @@ class EmailPreviewTest extends WC_Unit_Test_Case {
 		$this->assertStringContainsString( 'transient_value', $content );
 
 		update_option( EmailPreview::get_email_style_settings_ids()[0], $original_value );
+		delete_transient( EmailPreview::get_email_style_settings_ids()[0] );
 	}
 
 	/**
@@ -252,6 +253,7 @@ class EmailPreviewTest extends WC_Unit_Test_Case {
 
 		set_transient( $key, 'transient_subject', HOUR_IN_SECONDS );
 		$this->assertEquals( $this->sut->get_subject(), 'transient_subject' );
+		delete_transient( $key );
 	}
 
 	/**
@@ -279,5 +281,7 @@ class EmailPreviewTest extends WC_Unit_Test_Case {
 
 		update_option( $heading_key, $heading_value );
 		update_option( $additional_key, $additional_value );
+		delete_transient( $heading_key );
+		delete_transient( $additional_key );
 	}
 }
