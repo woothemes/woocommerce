@@ -7,20 +7,19 @@ import {
 	useReducedMotion,
 } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
+/* eslint-disable @woocommerce/dependency-group */
 import {
 	// @ts-expect-error missing type.
 	EditorSnackbars,
 	// @ts-expect-error missing type.
 	privateApis as editorPrivateApis,
 } from '@wordpress/editor';
-// eslint-disable-next-line @woocommerce/dependency-group
 import {
 	// @ts-expect-error missing type.
 	__unstableMotion as motion,
 	// @ts-expect-error missing type.
 	__unstableAnimatePresence as AnimatePresence,
 } from '@wordpress/components';
-// eslint-disable-next-line @woocommerce/dependency-group
 import { createElement, Fragment, useRef } from '@wordpress/element';
 /* eslint-disable @woocommerce/dependency-group */
 // @ts-ignore No types for this exist yet.

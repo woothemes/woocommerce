@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { createElement } from '@wordpress/element';
+import classnames from 'classnames';
 import {
 	// @ts-expect-error missing types.
 	__experimentalHeading as Heading,
@@ -10,7 +11,6 @@ import {
 	// @ts-expect-error missing types.
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import classnames from 'classnames';
 
 export const Header = ( {
 	pageTitle = '',
