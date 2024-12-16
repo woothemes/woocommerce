@@ -196,6 +196,8 @@ test.describe( 'Cart page', { tag: [ tags.PAYMENTS, tags.SERVICES ] }, () => {
 		}
 	);
 
+	//todo audit follow-up: revisit this test and check parts of it make more sens in a cross-sell products test.
+	// It's not clear what this test does and the name is not very descriptive.
 	test( 'can manage cross-sell products and maximum item quantity', async ( {
 		page,
 	} ) => {

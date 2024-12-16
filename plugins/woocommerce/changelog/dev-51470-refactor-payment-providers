@@ -1,0 +1,5 @@
+Significance: patch
+Type: dev
+Comment: Refactor the new payments settings page payment providers logic into separate service for easier iteration.
+
+

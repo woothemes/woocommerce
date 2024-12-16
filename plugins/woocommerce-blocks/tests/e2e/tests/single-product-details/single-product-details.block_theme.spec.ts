@@ -18,10 +18,11 @@ test.describe( `${ blockData.slug } Block`, () => {
 		admin,
 	} ) => {
 		await admin.createNewPost();
-		await editor.insertBlock( { name: blockData.slug } );
 		await expect(
-			await editor.getBlockByName( blockData.slug )
-		).toBeHidden();
+			editor.insertBlock( { name: blockData.slug } )
+		).rejects.toThrow(
+			new RegExp( `Block type '${ blockData.slug }' is not registered.` )
+		);
 	} );
 
 	test( 'block can be inserted in the Site Editor', async ( {

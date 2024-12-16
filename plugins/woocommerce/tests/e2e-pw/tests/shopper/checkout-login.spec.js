@@ -111,6 +111,8 @@ test.describe(
 	'Shopper Checkout Login Account',
 	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS ] },
 	() => {
+		//todo audit follow-up: this is a variation of a checkout/placing an order flow,
+		// should be part of another spec maybe. See checkout.spec.js
 		test( 'can login to an existing account during checkout', async ( {
 			page,
 			product,

@@ -50,7 +50,7 @@ test.describe(
 				// extra click somewhere in the page as a workaround for update button click not always working
 				await page
 					.getByRole( 'heading', {
-						name: 'Edit product',
+						name: 'Edit Product',
 						exact: true,
 					} )
 					.click();

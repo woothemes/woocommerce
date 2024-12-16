@@ -39,15 +39,21 @@ test.describe.configure( { mode: 'serial' } );
 
 test.describe( 'General tab', { tag: tags.GUTENBERG }, () => {
 	test.describe( 'Simple product form', () => {
-		test( 'renders each block without error', async ( { page } ) => {
-			await page.goto( NEW_EDITOR_ADD_PRODUCT_URL );
-			await clickOnTab( 'General', page );
-			await page.getByPlaceholder( 'e.g. 12 oz Coffee Mug' ).isVisible();
+		test(
+			'renders each block without error',
+			{ tag: tags.COULD_BE_LOWER_LEVEL_TEST },
+			async ( { page } ) => {
+				await page.goto( NEW_EDITOR_ADD_PRODUCT_URL );
+				await clickOnTab( 'General', page );
+				await page
+					.getByPlaceholder( 'e.g. 12 oz Coffee Mug' )
+					.isVisible();
 
-			await expect( page.locator( '.block-editor-warning' ) ).toHaveCount(
-				0
-			);
-		} );
+				await expect(
+					page.locator( '.block-editor-warning' )
+				).toHaveCount( 0 );
+			}
+		);
 	} );
 
 	test.describe( 'Create product', () => {
