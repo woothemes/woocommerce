@@ -54,7 +54,7 @@ const slugFontMap = {
 
 test.describe(
 	'Assembler -> Font Picker',
-	{ tag: [ tags.GUTENBERG, tags.NOT_E2E, tags.NON_CRITICAL ] },
+	{ tag: [ tags.GUTENBERG, tags.NOT_E2E ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 

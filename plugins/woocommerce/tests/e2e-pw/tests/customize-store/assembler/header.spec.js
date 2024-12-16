@@ -21,7 +21,7 @@ const test = base.extend( {
 
 test.describe(
 	'Assembler -> headers',
-	{ tag: [ tags.GUTENBERG, tags.NOT_E2E, tags.NON_CRITICAL ] },
+	{ tag: [ tags.GUTENBERG, tags.NOT_E2E ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 
