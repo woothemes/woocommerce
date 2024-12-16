@@ -55,7 +55,6 @@ export const ShippingRatesControlPackage = ( {
 		observer.observe( document.body, { childList: true, subtree: true } );
 
 		return () => {
-			updateCount();
 			observer.disconnect();
 		};
 	}, [] );
