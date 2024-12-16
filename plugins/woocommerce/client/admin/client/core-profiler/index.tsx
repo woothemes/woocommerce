@@ -602,14 +602,11 @@ const getPlugins = fromPromise( async () => {
 	const extensionsBundles = await resolveSelect(
 		ONBOARDING_STORE_NAME
 	).getFreeExtensions();
-	const coreProfilerPlugins =
+	return (
 		extensionsBundles.find(
 			( bundle ) => bundle.key === 'obw/core-profiler'
-		)?.plugins || [];
-	// We can only show 8 plugins.
-	return Array.isArray( coreProfilerPlugins )
-		? coreProfilerPlugins.slice( 0, 8 )
-		: [];
+		)?.plugins || []
+	);
 } );
 
 /** Special callback that is used to trigger a navigation event if the user uses the browser's back or forward buttons */
