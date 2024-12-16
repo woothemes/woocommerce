@@ -22,12 +22,17 @@ export const SettingsGroup = ( { group }: { group: SettingsGroup } ) => {
 				<p dangerouslySetInnerHTML={ sanitizeHTML( group.desc ) } />
 			</div>
 			<div className="woocommerce-settings-group-content">
-				{ group.settings.map( ( setting ) => (
-					<div key={ setting.id }>
-						<Heading level={ 5 }>{ setting.title }</Heading>
-						<p>{ setting.type }</p>
-					</div>
-				) ) }
+				{ group.settings.map( ( setting ) => {
+					const key =
+						setting.id ||
+						setting.type + '-' + setting.title?.replace( '', '-' );
+					return (
+						<div key={ key }>
+							<Heading level={ 5 }>{ setting.title }</Heading>
+							<p>{ setting.type }</p>
+						</div>
+					);
+				} ) }
 			</div>
 		</div>
 	);

@@ -35,6 +35,10 @@
 	&:not(:last-child) {
 		border-bottom: 1px solid #f0f0f0;
 	}
+
+	@media (max-width: 960px) {
+		flex-direction: column;
+	}
 }
 
 .woocommerce-settings-group-title {
