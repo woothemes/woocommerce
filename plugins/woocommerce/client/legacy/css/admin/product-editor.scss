@@ -72,9 +72,32 @@ $break-largeish: 900px; // It's almost $break-large, but kept consistent with th
 		}
 	}
 
+	// Hide duplicated h1 and Add new button.
+	.wrap {
+		h1.wp-heading-inline,
+		.page-title-action {
+			display: none;
+		}
+
+		/*
+		 * Make space for screen meta links.
+		 * We could have clear the floats on .wrap container, which would make margin collapsing easier.
+		 * But, we clear it on hr to still allow extensions to inject something next to the header, or displaying it back again.
+		 */
+		.wp-header-end {
+			padding: 0;
+			margin: 0;
+			border: 0;
+			clear: both;
+		}
+	}
+
 	// Screen meta links.
 	#screen-meta-links {
-		padding: $gap-small 0;
+		padding: 0;
+		margin-top: $gap-small;
+		// There is an invisible, but displayed <hr> below, for float clearance before notices, which prevents margin collapsing.
+		margin-bottom: 0;
 		display: flex;
 		gap: $gap-smaller;
 
@@ -93,6 +116,12 @@ $break-largeish: 900px; // It's almost $break-large, but kept consistent with th
 			bottom: 1px;
 		}
 
+	}
+
+	#poststuff {
+		// Add collapsible gap between post form and notices.
+		margin-top: $gap-small;
+		padding-top: 0;
 	}
 
 	// Gap between title input and generate coupon code.

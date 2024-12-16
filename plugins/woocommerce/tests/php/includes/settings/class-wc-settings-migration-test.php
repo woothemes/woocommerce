@@ -17,6 +17,8 @@ class WC_Settings_Migration_Test extends WC_Settings_Page {
 		$this->id    = 'migration';
 		$this->label = 'Migration Test';
 		parent::__construct();
+
+		add_action( 'woocommerce_admin_field_foobar_section_custom_type_field', array( $this, 'foobar_section_custom_type_field' ) );
 	}
 
 	protected function get_settings_for_default_section() {
@@ -34,6 +36,10 @@ class WC_Settings_Migration_Test extends WC_Settings_Page {
 				'title' => 'Foobar Section',
 				'type'  => 'text',
 			),
+			array(
+				'title' => 'Custom Type Field',
+				'type'  => 'foobar_section_custom_type_field',
+			),
 		);
 	}
 
@@ -42,6 +48,12 @@ class WC_Settings_Migration_Test extends WC_Settings_Page {
 			''       => __( 'Default', 'woocommerce' ),
 			'foobar' => __( 'Foobar', 'woocommerce' ),
 		);
+	}
+
+	public function foobar_section_custom_type_field( $setting ) {
+		?>
+		<div><?php echo esc_html( $setting['title'] ); ?></div>
+		<?php
 	}
 
 	// phpcs:enable Squiz.Commenting.FunctionComment.Missing
