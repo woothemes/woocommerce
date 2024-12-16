@@ -26,6 +26,10 @@ const blocks = {
 		customDir: 'add-to-cart-with-options/quantity-selector',
 		isExperimental: true,
 	},
+	'add-to-cart-with-options-button-behavior': {
+		customDir: 'add-to-cart-with-options/button-behavior',
+		isExperimental: true,
+	},
 	'all-products': {
 		customDir: 'products/all-products',
 	},

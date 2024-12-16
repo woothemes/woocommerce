@@ -1,0 +1,16 @@
+{
+	"name": "woocommerce/add-to-cart-with-options-button-behavior",
+	"version": "1.0.0",
+	"title": "Add to Cart with Options Button Behavior (Experimental)",
+	"description": "Adds the Interactivity Context to the Add to Cart button block.",
+	"example": {},
+	"supports": {
+		"interactivity": true
+	},
+	"category": "woocommerce-product-elements",
+	"keywords": [ "WooCommerce" ],
+	"ancestor": [ "woocommerce/add-to-cart-with-options" ],
+	"textdomain": "woocommerce",
+	"apiVersion": 3,
+	"$schema": "https://schemas.wp.org/trunk/block.json"
+}

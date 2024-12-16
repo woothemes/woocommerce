@@ -93,7 +93,6 @@ class AddToCartWithOptionsQuantitySelector extends AbstractBlock {
 		return $html->get_updated_html();
 	}
 
-
 	/**
 	 * Render the block.
 	 *

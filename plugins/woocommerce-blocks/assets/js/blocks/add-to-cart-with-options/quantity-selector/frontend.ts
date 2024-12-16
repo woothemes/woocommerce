@@ -48,8 +48,14 @@ const dispatchChangeEvent = ( inputElement: HTMLInputElement ) => {
 	inputElement.dispatchEvent( event );
 };
 
+let quantityToAdd = 1;
+
 store( 'woocommerce/add-to-cart-with-options', {
-	state: {},
+	state: {
+		get quantityToAdd() {
+			return quantityToAdd;
+		},
+	},
 	actions: {
 		addQuantity: ( event: HTMLElementEvent< HTMLButtonElement > ) => {
 			const inputData = getInputData( event );
@@ -62,6 +68,7 @@ store( 'woocommerce/add-to-cart-with-options', {
 			if ( maxValue === undefined || newValue <= maxValue ) {
 				inputElement.value = newValue.toString();
 				dispatchChangeEvent( inputElement );
+				quantityToAdd = newValue;
 			}
 		},
 		removeQuantity: ( event: HTMLElementEvent< HTMLButtonElement > ) => {

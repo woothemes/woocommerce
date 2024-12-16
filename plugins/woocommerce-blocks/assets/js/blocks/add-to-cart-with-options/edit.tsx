@@ -41,6 +41,22 @@ const INNER_BLOCKS_TEMPLATE: InnerBlockTemplate[] = [
 	[ 'woocommerce/product-stock-indicator' ],
 	[ 'woocommerce/add-to-cart-with-options-quantity-selector' ],
 	[
+		'woocommerce/add-to-cart-with-options-button-behavior',
+		{},
+		[
+			[
+				'core/buttons',
+				{},
+				[
+					[
+						'core/button',
+						{ tagName: 'button', text: 'Lorem ipsum' },
+					],
+				],
+			],
+		],
+	],
+	[
 		'woocommerce/product-button',
 		{
 			textAlign: 'center',
