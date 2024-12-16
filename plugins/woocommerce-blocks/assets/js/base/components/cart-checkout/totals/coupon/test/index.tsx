@@ -12,23 +12,26 @@ import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
 import { TotalsCoupon } from '..';
 
 describe( 'TotalsCoupon', () => {
+	const couponLabel = 'Add a coupon';
+	const invalidCouponMessage = 'Invalid coupon code';
+
 	it( "Shows a validation error when one is in the wc/store/validation data store and doesn't show one when there isn't", async () => {
 		const user = userEvent.setup();
 		const { rerender } = render(
 			<TotalsCoupon
 				instanceId={ 'coupon' }
-				heading={ 'Add a coupon' }
+				heading={ couponLabel }
 				isEditor={ false }
 			/>
 		);
 
-		const openCouponFormButton = screen.getByText( 'Add a coupon' );
+		const openCouponFormButton = screen.getByText( couponLabel );
 		expect( openCouponFormButton ).toBeInTheDocument();
 		await act( async () => {
 			await user.click( openCouponFormButton );
 		} );
 		expect(
-			screen.queryByText( 'Invalid coupon code' )
+			screen.queryByText( invalidCouponMessage )
 		).not.toBeInTheDocument();
 
 		const { setValidationErrors } = dispatch( VALIDATION_STORE_KEY );
@@ -36,20 +39,20 @@ describe( 'TotalsCoupon', () => {
 			setValidationErrors( {
 				coupon: {
 					hidden: false,
-					message: 'Invalid coupon code',
+					message: invalidCouponMessage,
 				},
 			} );
 		} );
 		rerender(
 			<TotalsCoupon
 				instanceId={ 'coupon' }
-				heading={ 'Add a coupon' }
+				heading={ couponLabel }
 				isEditor={ false }
 			/>
 		);
 
 		// TODO: Fix a recent deprecation of showSpinner prop of Button called in this component.
 		expect( console ).toHaveWarned();
-		expect( screen.getByText( 'Invalid coupon code' ) ).toBeInTheDocument();
+		expect( screen.getByText( invalidCouponMessage ) ).toBeInTheDocument();
 	} );
 } );
