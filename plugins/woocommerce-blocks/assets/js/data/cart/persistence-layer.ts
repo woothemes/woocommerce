@@ -28,6 +28,10 @@ export const hasCartSession = () => {
 	return !! getCookie( 'woocommerce_items_in_cart' );
 };
 
+export const isAddingToCart = () => {
+	return !! window.location.search.match( /add-to-cart/ );
+};
+
 export const persistenceLayer = {
 	get: () => {
 		if ( ! hasCartSession() || ! hasValidHash() ) {

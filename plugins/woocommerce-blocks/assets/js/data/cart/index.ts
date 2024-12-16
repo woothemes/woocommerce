@@ -24,7 +24,11 @@ import {
 	debouncedUpdatePaymentMethods,
 } from './update-payment-methods';
 import { ResolveSelectFromMap } from '../mapped-types';
-import { hasCartSession, persistenceLayer } from './persistence-layer';
+import {
+	hasCartSession,
+	persistenceLayer,
+	isAddingToCart,
+} from './persistence-layer';
 import { defaultCartState } from './default-state';
 
 const store = createReduxStore( STORE_KEY, {
@@ -49,7 +53,10 @@ register( store );
 // Likewise, if we have a valid persistent cart, we can skip the request.
 // The only reliable way to check if the cart is empty is to check the cookies.
 window.addEventListener( 'load', () => {
-	if ( ! hasCartSession() || persistenceLayer.get() ) {
+	if (
+		( ! hasCartSession() || persistenceLayer.get() ) &&
+		! isAddingToCart
+	) {
 		wpDispatch( STORE_KEY ).finishResolution( 'getCartData' );
 	}
 } );
