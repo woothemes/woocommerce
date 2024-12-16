@@ -647,7 +647,7 @@ class OrdersTableQuery {
 
 		array_walk_recursive(
 			$this->args['date_query'],
-			function( &$value, $key ) use ( $legacy_columns, $table_mapping, $wpdb ) {
+			function ( &$value, $key ) use ( $legacy_columns, $table_mapping, $wpdb ) {
 				if ( 'column' !== $key ) {
 					return;
 				}
@@ -836,7 +836,9 @@ class OrdersTableQuery {
 		// WHERE.
 		$where = '1=1';
 		foreach ( $this->where as $_where ) {
-			$where .= " AND ({$_where})";
+			if ( strlen( $_where ) > 0 ) {
+				$where .= " AND ({$_where})";
+			}
 		}
 
 		// ORDER BY.
@@ -1478,5 +1480,4 @@ class OrdersTableQuery {
 
 		return $result;
 	}
-
 }

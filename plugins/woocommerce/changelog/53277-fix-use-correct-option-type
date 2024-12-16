@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Correctly respect the generate password option for accounts created post Checkout.

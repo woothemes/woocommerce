@@ -73,7 +73,7 @@ This hook defines which block names should have block name and attribute data- a
 ### Source
 
 
-- [BlockTypesController.php](../../../../src/BlockTypesController.php)
+- [BlockTypesController.php](../../../../../woocommerce/src/Blocks/BlockTypesController.php)
 
 ---
 
@@ -99,7 +99,7 @@ This hook defines which block namespaces should have block name and attribute `d
 ### Source
 
 
-- [BlockTypesController.php](../../../../src/BlockTypesController.php)
+- [BlockTypesController.php](../../../../../woocommerce/src/Blocks/BlockTypesController.php)
 
 ---
 
@@ -145,7 +145,7 @@ add_filter( '__experimental_woocommerce_blocks_payment_gateway_features_list', '
 ### Source
 
 
-- [Payments/Integrations/PayPal.php](../../../../src/Payments/Integrations/PayPal.php)
+- [Payments/Integrations/PayPal.php](../../../../../woocommerce/src/Blocks/Payments/Integrations/PayPal.php)
 
 ---
 
@@ -167,7 +167,7 @@ apply_filters( 'deprecated_function_trigger_error', bool $trigger )
 ### Source
 
 
-- [Domain/Bootstrap.php](../../../../src/Domain/Bootstrap.php)
+- [Domain/Bootstrap.php](../../../../../woocommerce/src/Blocks/Domain/Bootstrap.php)
 
 ---
 
@@ -183,8 +183,8 @@ apply_filters( 'loop_shop_per_page' )
 ### Source
 
 
-- [BlockTypes/ProductQuery.php](../../../../src/BlockTypes/ProductQuery.php)
-- [BlockTypes/ProductCollection.php](../../../../src/BlockTypes/ProductCollection.php)
+- [BlockTypes/ProductQuery.php](../../../../../woocommerce/src/Blocks/BlockTypes/ProductQuery.php)
+- [BlockTypes/ProductCollection.php](../../../../../woocommerce/src/Blocks/BlockTypes/ProductCollection/Controller.php)
 
 ---
 
@@ -206,7 +206,7 @@ apply_filters( 'wc_session_expiration', int $expiration )
 ### Source
 
 
-- [StoreApi/Routes/V1/AbstractCartRoute.php](../../../../src/StoreApi/Routes/V1/AbstractCartRoute.php)
+- [StoreApi/Routes/V1/AbstractCartRoute.php](../../../../../woocommerce/src/StoreApi/Routes/V1/AbstractCartRoute.php)
 
 ---
 
@@ -237,7 +237,7 @@ apply_filters( 'woocommerce_add_cart_item', array $cart_item_data, string $cart_
 ### Source
 
 
-- [StoreApi/Utilities/CartController.php](../../../../src/StoreApi/Utilities/CartController.php)
+- [StoreApi/Utilities/CartController.php](../../../../../woocommerce/src/StoreApi/Utilities/CartController.php)
 
 ---
 
@@ -270,7 +270,7 @@ apply_filters( 'woocommerce_add_cart_item_data', array $cart_item_data, integer 
 ### Source
 
 
-- [StoreApi/Utilities/CartController.php](../../../../src/StoreApi/Utilities/CartController.php)
+- [StoreApi/Utilities/CartController.php](../../../../../woocommerce/src/StoreApi/Utilities/CartController.php)
 
 ---
 
@@ -293,7 +293,7 @@ apply_filters( 'woocommerce_add_to_cart_quantity', \Automattic\WooCommerce\Block
 ### Source
 
 
-- [BlockTypes/ProductButton.php](../../../../src/BlockTypes/ProductButton.php)
+- [BlockTypes/ProductButton.php](../../../../../woocommerce/src/Blocks/BlockTypes/ProductButton.php)
 
 ---
 
@@ -327,7 +327,7 @@ apply_filters( 'woocommerce_add_to_cart_sold_individually_quantity', integer $so
 ### Source
 
 
-- [StoreApi/Utilities/CartController.php](../../../../src/StoreApi/Utilities/CartController.php)
+- [StoreApi/Utilities/CartController.php](../../../../../woocommerce/src/StoreApi/Utilities/CartController.php)
 
 ---
 
@@ -365,7 +365,7 @@ Allow 3rd parties to validate if an item can be added to the cart. This is a leg
 ### Source
 
 
-- [StoreApi/Utilities/CartController.php](../../../../src/StoreApi/Utilities/CartController.php)
+- [StoreApi/Utilities/CartController.php](../../../../../woocommerce/src/StoreApi/Utilities/CartController.php)
 
 ---
 
@@ -399,7 +399,7 @@ The woocommerce_adjust_non_base_location_prices filter can stop base taxes being
 ### Source
 
 
-- [StoreApi/Utilities/ProductQuery.php](../../../../src/StoreApi/Utilities/ProductQuery.php)
+- [StoreApi/Utilities/ProductQuery.php](../../../../../woocommerce/src/StoreApi/Utilities/ProductQuery.php)
 
 ---
 
@@ -415,7 +415,7 @@ apply_filters( 'woocommerce_apply_base_tax_for_local_pickup' )
 ### Source
 
 
-- [Shipping/ShippingController.php](../../../../src/Shipping/ShippingController.php)
+- [Shipping/ShippingController.php](../../../../../woocommerce/src/Blocks/Shipping/ShippingController.php)
 
 ---
 
@@ -447,7 +447,7 @@ apply_filters( 'woocommerce_apply_individual_use_coupon', array $coupons, \WC_Co
 ### Source
 
 
-- [StoreApi/Utilities/CartController.php](../../../../src/StoreApi/Utilities/CartController.php)
+- [StoreApi/Utilities/CartController.php](../../../../../woocommerce/src/StoreApi/Utilities/CartController.php)
 
 ---
 
@@ -480,7 +480,7 @@ apply_filters( 'woocommerce_apply_with_individual_use_coupon', boolean $apply_wi
 ### Source
 
 
-- [StoreApi/Utilities/CartController.php](../../../../src/StoreApi/Utilities/CartController.php)
+- [StoreApi/Utilities/CartController.php](../../../../../woocommerce/src/StoreApi/Utilities/CartController.php)
 
 ---
 
@@ -510,14 +510,14 @@ Accepts an array of hooked data. The array should be in the following format: [ 
 ### Source
 
 
-- [Templates/AbstractTemplateCompatibility.php](../../../../src/Templates/AbstractTemplateCompatibility.php)
+- [Templates/AbstractTemplateCompatibility.php](../../../../../woocommerce/src/Blocks/Templates/AbstractTemplateCompatibility.php)
 
 ---
 
 ## woocommerce_blocks_product_grid_is_cacheable
 
 
-Filters whether or not the product grid is cacheable.
+Filters whether the product grid is cacheable.
 
 ```php
 apply_filters( 'woocommerce_blocks_product_grid_is_cacheable', boolean $is_cacheable, array $query_args )
@@ -538,7 +538,7 @@ apply_filters( 'woocommerce_blocks_product_grid_is_cacheable', boolean $is_cache
 ### Source
 
 
-- [BlockTypes/AbstractProductGrid.php](../../../../src/BlockTypes/AbstractProductGrid.php)
+- [BlockTypes/AbstractProductGrid.php](../../../../../woocommerce/src/Blocks/BlockTypes/AbstractProductGrid.php)
 
 ---
 
@@ -567,7 +567,7 @@ apply_filters( 'woocommerce_blocks_product_grid_item_html', string $html, array 
 ### Source
 
 
-- [BlockTypes/AbstractProductGrid.php](../../../../src/BlockTypes/AbstractProductGrid.php)
+- [BlockTypes/AbstractProductGrid.php](../../../../../woocommerce/src/Blocks/BlockTypes/AbstractProductGrid.php)
 
 ---
 
@@ -595,7 +595,7 @@ apply_filters( 'woocommerce_blocks_register_script_dependencies', array $depende
 ### Source
 
 
-- [Assets/Api.php](../../../../src/Assets/Api.php)
+- [Assets/Api.php](../../../../../woocommerce/src/Blocks/Assets/Api.php)
 
 ---
 
@@ -625,7 +625,7 @@ apply_filters( 'woocommerce_cart_contents_changed', array $cart_contents )
 ### Source
 
 
-- [StoreApi/Utilities/CartController.php](../../../../src/StoreApi/Utilities/CartController.php)
+- [StoreApi/Utilities/CartController.php](../../../../../woocommerce/src/StoreApi/Utilities/CartController.php)
 
 ---
 
@@ -653,7 +653,7 @@ This is a hook taken from the legacy cart/mini-cart templates that allows the pe
 ### Source
 
 
-- [StoreApi/Schemas/V1/CartItemSchema.php](../../../../src/StoreApi/Schemas/V1/CartItemSchema.php)
+- [StoreApi/Schemas/V1/CartItemSchema.php](../../../../../woocommerce/src/StoreApi/Schemas/V1/CartItemSchema.php)
 
 ---
 
@@ -679,8 +679,8 @@ This hook allows to disable the compatibility layer for the blockified.
 ### Source
 
 
-- [Templates/AbstractTemplateCompatibility.php](../../../../src/Templates/AbstractTemplateCompatibility.php)
-- [Templates/AbstractTemplateCompatibility.php](../../../../src/Templates/AbstractTemplateCompatibility.php)
+- [Templates/AbstractTemplateCompatibility.php](../../../../../woocommerce/src/Blocks/Templates/AbstractTemplateCompatibility.php)
+- [Templates/AbstractTemplateCompatibility.php](../../../../../woocommerce/src/Blocks/Templates/AbstractTemplateCompatibility.php)
 
 ---
 
@@ -705,7 +705,7 @@ apply_filters( 'woocommerce_ga_disable_tracking', boolean $disable_tracking )
 ### Source
 
 
-- [Domain/Services/GoogleAnalytics.php](../../../../src/Domain/Services/GoogleAnalytics.php)
+- [Domain/Services/GoogleAnalytics.php](../../../../../woocommerce/src/Blocks/Domain/Services/GoogleAnalytics.php)
 
 ---
 
@@ -740,7 +740,7 @@ Filters the variation option name for custom option slugs.
 ### Source
 
 
-- [StoreApi/Schemas/V1/CartItemSchema.php](../../../../src/StoreApi/Schemas/V1/CartItemSchema.php)
+- [StoreApi/Schemas/V1/CartItemSchema.php](../../../../../woocommerce/src/StoreApi/Schemas/V1/CartItemSchema.php)
 
 ---
 
@@ -756,7 +756,7 @@ apply_filters( 'woocommerce_loop_add_to_cart_args' )
 ### Source
 
 
-- [BlockTypes/ProductButton.php](../../../../src/BlockTypes/ProductButton.php)
+- [BlockTypes/ProductButton.php](../../../../../woocommerce/src/Blocks/BlockTypes/ProductButton.php)
 
 ---
 
@@ -778,7 +778,7 @@ apply_filters( 'woocommerce_loop_add_to_cart_link', string $class )
 ### Source
 
 
-- [BlockTypes/ProductButton.php](../../../../src/BlockTypes/ProductButton.php)
+- [BlockTypes/ProductButton.php](../../../../../woocommerce/src/Blocks/BlockTypes/ProductButton.php)
 
 ---
 
@@ -809,7 +809,7 @@ This hook filters customer data. It allows user data to be changed, for example,
 ### Source
 
 
-- [StoreApi/Routes/V1/Checkout.php](../../../../src/StoreApi/Routes/V1/Checkout.php)
+- [StoreApi/Routes/V1/Checkout.php](../../../../../woocommerce/src/StoreApi/Routes/V1/Checkout.php)
 
 ---
 
@@ -833,7 +833,7 @@ apply_filters( 'woocommerce_pay_order_product_has_enough_stock', boolean $argume
 ### Source
 
 
-- [StoreApi/Utilities/OrderController.php](../../../../src/StoreApi/Utilities/OrderController.php)
+- [StoreApi/Utilities/OrderController.php](../../../../../woocommerce/src/StoreApi/Utilities/OrderController.php)
 
 ---
 
@@ -857,7 +857,7 @@ apply_filters( 'woocommerce_pay_order_product_in_stock', boolean $argument0, \WC
 ### Source
 
 
-- [StoreApi/Utilities/OrderController.php](../../../../src/StoreApi/Utilities/OrderController.php)
+- [StoreApi/Utilities/OrderController.php](../../../../../woocommerce/src/StoreApi/Utilities/OrderController.php)
 
 ---
 
@@ -893,7 +893,7 @@ This hook filters registration errors. This can be used to manipulate the array 
 ### Source
 
 
-- [StoreApi/Routes/V1/Checkout.php](../../../../src/StoreApi/Routes/V1/Checkout.php)
+- [StoreApi/Routes/V1/Checkout.php](../../../../../woocommerce/src/StoreApi/Routes/V1/Checkout.php)
 
 ---
 
@@ -931,7 +931,7 @@ Automattic\WooCommerce\Blocks\Package::container()->get( Automattic\WooCommerce\
 ### Source
 
 
-- [Assets/AssetDataRegistry.php](../../../../src/Assets/AssetDataRegistry.php)
+- [Assets/AssetDataRegistry.php](../../../../../woocommerce/src/Blocks/Assets/AssetDataRegistry.php)
 
 ---
 
@@ -963,7 +963,7 @@ apply_filters( 'woocommerce_shipping_package_name', string $shipping_package_nam
 ### Source
 
 
-- [StoreApi/Utilities/CartController.php](../../../../src/StoreApi/Utilities/CartController.php)
+- [StoreApi/Utilities/CartController.php](../../../../../woocommerce/src/StoreApi/Utilities/CartController.php)
 
 ---
 
@@ -979,7 +979,7 @@ apply_filters( 'woocommerce_shipping_{$this->id}_is_available' )
 ### Source
 
 
-- [Shipping/PickupLocation.php](../../../../src/Shipping/PickupLocation.php)
+- [Shipping/PickupLocation.php](../../../../../woocommerce/src/Blocks/Shipping/PickupLocation.php)
 
 ---
 
@@ -999,7 +999,7 @@ Allows controlling the display of the page title.
 ### Source
 
 
-- [BlockTypes/ClassicTemplate.php](../../../../src/BlockTypes/ClassicTemplate.php)
+- [BlockTypes/ClassicTemplate.php](../../../../../woocommerce/src/Blocks/BlockTypes/ClassicTemplate.php)
 
 ---
 
@@ -1022,7 +1022,7 @@ apply_filters( 'woocommerce_single_product_image_thumbnail_html', string $thumbn
 ### Source
 
 
-- [BlockTypes/ProductGalleryThumbnails.php](../../../../src/BlockTypes/ProductGalleryThumbnails.php)
+- [BlockTypes/ProductGalleryThumbnails.php](../../../../../woocommerce/src/Blocks/BlockTypes/ProductGalleryThumbnails.php)
 
 ---
 
@@ -1053,7 +1053,7 @@ This hook filters cart items. It allows the request data to be changed, for exam
 ### Source
 
 
-- [StoreApi/Routes/V1/CartAddItem.php](../../../../src/StoreApi/Routes/V1/CartAddItem.php)
+- [StoreApi/Routes/V1/CartAddItem.php](../../../../../woocommerce/src/StoreApi/Routes/V1/CartAddItem.php)
 
 ---
 
@@ -1084,7 +1084,7 @@ This can be used to disable the nonce check when testing API endpoints via a RES
 ### Source
 
 
-- [StoreApi/Routes/V1/AbstractCartRoute.php](../../../../src/StoreApi/Routes/V1/AbstractCartRoute.php)
+- [StoreApi/Routes/V1/AbstractCartRoute.php](../../../../../woocommerce/src/StoreApi/Routes/V1/AbstractCartRoute.php)
 
 ---
 
@@ -1149,7 +1149,7 @@ Filters the variation option name for custom option slugs.
 ### Source
 
 
-- [StoreApi/Utilities/QuantityLimits.php](../../../../src/StoreApi/Utilities/QuantityLimits.php)
+- [StoreApi/Utilities/QuantityLimits.php](../../../../../woocommerce/src/StoreApi/Utilities/QuantityLimits.php)
 
 ---
 
@@ -1182,7 +1182,7 @@ The suffix of the hook will vary depending on the value being filtered. For exam
 ### Source
 
 
-- [StoreApi/Utilities/QuantityLimits.php](../../../../src/StoreApi/Utilities/QuantityLimits.php)
+- [StoreApi/Utilities/QuantityLimits.php](../../../../../woocommerce/src/StoreApi/Utilities/QuantityLimits.php)
 
 ---
 
@@ -1209,7 +1209,7 @@ apply_filters( 'woocommerce_store_api_rate_limit_options', array $rate_limit_opt
 ### Source
 
 
-- [StoreApi/Utilities/RateLimits.php](../../../../src/StoreApi/Utilities/RateLimits.php)
+- [StoreApi/Utilities/RateLimits.php](../../../../../woocommerce/src/StoreApi/Utilities/RateLimits.php)
 
 ---
 <!-- FEEDBACK -->
