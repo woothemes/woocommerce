@@ -4,10 +4,13 @@
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import { SelectControl } from '@wordpress/components';
+import { findBlock } from '@woocommerce/utils';
+import { BlockInstance } from '@wordpress/blocks';
 import {
 	// @ts-expect-error no exported member.
 	PluginDocumentSettingPanel,
 } from '@wordpress/editor';
+
 /**
  * Internal dependencies
  */
@@ -33,14 +36,37 @@ function ProductTypeSwitcher() {
 	);
 }
 
-export default function ProductTypeSelectorPlugin() {
-	const { slug, type } = useSelect(
-		( select ) => select( 'core/editor' ).getCurrentPost(),
-		[]
-	);
+const includesAddToCartWithOptions = ( blocks: BlockInstance[] ) => {
+	return !! findBlock( {
+		blocks,
+		findCondition: ( block ) =>
+			block.name === 'woocommerce/add-to-cart-with-options',
+	} );
+};
 
-	// Only add the panel if the current post is a template.
-	if ( type !== 'wp_template' || slug !== 'single-product' ) {
+export default function ProductTypeSelectorPlugin() {
+	const { slug, type, hasAddToCartWithOptions } = useSelect( ( select ) => {
+		const { slug: currentPostSlug, type: currentPostType } = select(
+			'core/editor'
+		).getCurrentPost< {
+			slug: string;
+			type: string;
+		} >();
+		const blocks = select( 'core/block-editor' ).getBlocks();
+		return {
+			slug: currentPostSlug,
+			type: currentPostType,
+			hasAddToCartWithOptions: includesAddToCartWithOptions( blocks ),
+		};
+	}, [] );
+
+	// Only add the panel if the current post is a template and the block is present.
+	const isPanelVisible =
+		type === 'wp_template' &&
+		slug === 'single-product' &&
+		hasAddToCartWithOptions;
+
+	if ( ! isPanelVisible ) {
 		return null;
 	}
 
