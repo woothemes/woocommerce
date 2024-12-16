@@ -6,6 +6,7 @@ import { Button, CheckboxControl } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import interpolateComponents from '@automattic/interpolate-components';
 import { Link } from '@woocommerce/components';
+import { recordEvent } from '@woocommerce/tracks';
 
 /**
  * Internal dependencies
@@ -126,7 +127,14 @@ export const IntroOptIn = ( {
 							},
 						} ) }
 						checked={ iOptInDataSharing }
-						onChange={ setIsOptInDataSharing }
+						onChange={ ( value ) => {
+							recordEvent( 'woocommerce_allow_tracking_toggled', {
+								previous_value: ! value,
+								new_value: value,
+								context: 'core-profiler',
+							} );
+							setIsOptInDataSharing( value );
+						} }
 					/>
 				</div>
 			</div>
