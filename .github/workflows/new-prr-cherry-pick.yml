@@ -262,6 +262,15 @@ jobs:
 
                       An attempt to cherry pick PR(s) into outgoing `${{ needs.prep.outputs.frozenRelease }}` for  `${{ needs.prep.outputs.release }}` has failed. This could be due to a merge conflict or something else that requires manual attention. Please check: https://github.com/woocommerce/woocommerce/pull/${{ needs.prep.outputs.pr }}
 
+            - name: Apply label "cherry pick failed" using the newly created PR url
+              if: ${{ failure() }}
+              run: |
+                gh pr edit $PR_URL --add-label "cherry pick failed" --repo "$OWNER/$REPO"
+              env:
+                PR_URL: ${{ steps.cherry-pick-pr.outputs.cherry-pick-pr }}
+                OWNER: ${{ github.repository_owner }}
+                REPO: ${{ github.repository }}
+
             - name: Notify Slack on success
               if: ${{ success() && inputs.skipSlackPing != true }}
               uses: archive/github-actions-slack@v2.0.0
