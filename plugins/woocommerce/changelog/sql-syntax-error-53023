@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Reduce the risk of (empty where clause) database errors when performing an order search.

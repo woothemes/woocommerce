@@ -1,8 +1,12 @@
 .wc-block-checkout__sidebar {
 	.wc-block-components-product-name {
-		display: block;
 		color: inherit;
+		display: block;
 		flex-grow: 1;
+		font-family: inherit;
+		font-weight: inherit;
+		line-height: inherit;
+		margin: 0;
 	}
 	.wc-block-components-totals-footer-item {
 		margin: 0;

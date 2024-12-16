@@ -1,13 +1,16 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
-const {
-	goToPageEditor,
-	fillPageTitle,
-	insertBlock,
-	getCanvas,
-	publishPage,
-	closeChoosePatternModal,
-} = require( '../../utils/editor' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
+const { fillPageTitle, publishPage } = require( '../../utils/editor' );
 const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
+
+/**
+ * External dependencies
+ */
+import {
+	closeChoosePatternModal,
+	getCanvas,
+	goToPageEditor,
+	insertBlock,
+} from '@woocommerce/e2e-utils-playwright';
 
 const simpleProductName = 'Simplest Product';
 const singleProductPrice = '555.00';
@@ -53,10 +56,10 @@ test.describe(
 	'Add WooCommerce Blocks Into Page',
 	{
 		tag: [
-			'@gutenberg',
-			'@services',
-			'@skip-on-default-pressable',
-			'@skip-on-default-wpcom',
+			tags.GUTENBERG,
+			tags.SERVICES,
+			tags.SKIP_ON_PRESSABLE,
+			tags.SKIP_ON_WPCOM,
 		],
 	},
 	() => {

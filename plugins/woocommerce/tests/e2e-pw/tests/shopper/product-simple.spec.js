@@ -1,3 +1,7 @@
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const { admin } = require( '../../test-data/data' );
@@ -10,7 +14,7 @@ let simpleProductId, productCategory1Id, productCategory2Id;
 
 test.describe(
 	'Single Product Page',
-	{ tag: [ '@payments', '@services' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		const productCategoryName1 = 'Hoodies';
 		const productCategoryName2 = 'Jumpers';
@@ -97,6 +101,7 @@ test.describe(
 			} );
 		} );
 
+		//todo audit follow-up: this probably fits better in a product reviews test file
 		test( 'should be able to post a review and see it after', async ( {
 			page,
 		} ) => {
@@ -122,52 +127,56 @@ test.describe(
 			);
 		} );
 
-		test( 'should be able to see product description', async ( {
-			page,
-		} ) => {
-			await page.goto( `product/${ simpleProductSlug }` );
+		//todo audit follow-up: this probably fits better in a product creation complete flow
+		// see merchant/product-create-simple.spec.js
+		test(
+			'should be able to see product description',
+			{ tag: [ tags.NOT_E2E ] },
+			async ( { page } ) => {
+				await page.goto( `product/${ simpleProductSlug }` );
 
-			expect( await page.title() ).toBe(
-				simpleProductName + ' – WooCommerce Core E2E Test Suite'
-			);
+				expect( await page.title() ).toBe(
+					simpleProductName + ' – WooCommerce Core E2E Test Suite'
+				);
 
-			await page.getByRole( 'tab', { name: 'Description' } ).click();
+				await page.getByRole( 'tab', { name: 'Description' } ).click();
 
-			await expect(
-				page
-					.getByRole( 'tabpanel' )
-					.filter( 'heading', { name: 'Custom Heading' } )
-			).toBeVisible();
-			await expect(
-				page
-					.getByRole( 'tabpanel' )
-					.filter( 'paragraph', { name: 'This is sample text.' } )
-			).toBeVisible();
-			await expect(
-				page
-					.getByRole( 'tabpanel' )
-					.filter( 'strong', { name: 'This should be bolded' } )
-			).toBeVisible();
-			await expect(
-				page
-					.getByRole( 'tabpanel' )
-					.filter( 'emphasis', { name: 'This should be italic' } )
-			).toBeVisible();
-			await expect(
-				page
-					.getByRole( 'tabpanel' )
-					.filter( 'blockquote', { name: 'This should be quoted' } )
-			).toBeVisible();
-			await expect(
-				page
-					.getByRole( 'tabpanel' )
-					.filter( 'listitem', { name: 'Test bulletted item' } )
-			).toBeVisible();
-			await expect(
-				page
-					.getByRole( 'tabpanel' )
-					.filter( 'listitem', { name: 'Test numbered item' } )
-			).toBeVisible();
-		} );
+				await expect(
+					page
+						.getByRole( 'tabpanel' )
+						.filter( 'heading', { name: 'Custom Heading' } )
+				).toBeVisible();
+				await expect(
+					page
+						.getByRole( 'tabpanel' )
+						.filter( 'paragraph', { name: 'This is sample text.' } )
+				).toBeVisible();
+				await expect(
+					page
+						.getByRole( 'tabpanel' )
+						.filter( 'strong', { name: 'This should be bolded' } )
+				).toBeVisible();
+				await expect(
+					page
+						.getByRole( 'tabpanel' )
+						.filter( 'emphasis', { name: 'This should be italic' } )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'tabpanel' ).filter( 'blockquote', {
+						name: 'This should be quoted',
+					} )
+				).toBeVisible();
+				await expect(
+					page
+						.getByRole( 'tabpanel' )
+						.filter( 'listitem', { name: 'Test bulletted item' } )
+				).toBeVisible();
+				await expect(
+					page
+						.getByRole( 'tabpanel' )
+						.filter( 'listitem', { name: 'Test numbered item' } )
+				).toBeVisible();
+			}
+		);
 	}
 );

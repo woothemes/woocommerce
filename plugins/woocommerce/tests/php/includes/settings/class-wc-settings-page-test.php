@@ -352,4 +352,16 @@ HTML;
 		$this->assertEquals( $migration_sections_data['default']['settings'][0]['title'], 'Default Section' );
 		$this->assertEquals( $migration_sections_data['foobar']['settings'][0]['title'], 'Foobar Section' );
 	}
+
+	/**
+	 * Test for add_settings_page_data.
+	 */
+	public function test_add_settings_page_custom_type_field() {
+		$migration               = new WC_Settings_Migration_Test();
+		$setting_data            = $migration->add_settings_page_data( array() );
+		$migration_page_data     = $setting_data[ $migration->get_id() ];
+		$migration_sections_data = $migration_page_data['sections'];
+
+		$this->assertEquals( $migration_sections_data['foobar']['settings'][1]['content'], '<div>Custom Type Field</div>' );
+	}
 }

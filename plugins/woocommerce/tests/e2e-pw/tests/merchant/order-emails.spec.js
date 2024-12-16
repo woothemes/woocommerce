@@ -1,11 +1,12 @@
 /* eslint-disable no-console */
 const { test, expect } = require( '@playwright/test' );
+const { tags } = require( '../../fixtures/fixtures' );
 const { admin } = require( '../../test-data/data' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 test.describe(
 	'Merchant > Order Action emails received',
-	{ tag: [ '@services', '@hpos' ] },
+	{ tag: [ tags.SERVICES, tags.HPOS ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 
@@ -90,7 +91,7 @@ test.describe(
 				} );
 			// search to narrow it down to just the messages we want
 			await page.goto(
-				`/wp-admin/tools.php?page=wpml_plugin_log&s=${ encodeURIComponent(
+				`wp-admin/tools.php?page=wpml_plugin_log&s=${ encodeURIComponent(
 					customerBilling.email
 				) }`
 			);
@@ -121,7 +122,7 @@ test.describe(
 
 		test(
 			'can receive completed email',
-			{ tag: '@skip-on-default-wpcom' },
+			{ tag: tags.SKIP_ON_WPCOM },
 			async ( { page, baseURL } ) => {
 				// Completed order emails are sent automatically when an order's payment is completed.
 				// Verify that the email is sent, and that the content is the expected one
@@ -235,7 +236,7 @@ test.describe(
 
 			// search to narrow it down to just the messages we want
 			await page.goto(
-				`/wp-admin/tools.php?page=wpml_plugin_log&s=${ encodeURIComponent(
+				`wp-admin/tools.php?page=wpml_plugin_log&s=${ encodeURIComponent(
 					customerBilling.email
 				) }`
 			);

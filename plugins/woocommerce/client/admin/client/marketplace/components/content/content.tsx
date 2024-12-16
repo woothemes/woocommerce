@@ -50,13 +50,8 @@ export default function Content(): JSX.Element {
 	const [ firstNewProductId, setFirstNewProductId ] = useState< number >( 0 );
 	const [ isLoadingMore, setIsLoadingMore ] = useState( false );
 
-	const {
-		isLoading,
-		setIsLoading,
-		selectedTab,
-		setHasBusinessServices,
-		setSearchResultsCount,
-	} = marketplaceContextValue;
+	const { isLoading, setIsLoading, selectedTab, setSearchResultsCount } =
+		marketplaceContextValue;
 	const query = useQuery();
 
 	const searchCompleteAnnouncement = ( count: number ): void => {
@@ -235,9 +230,6 @@ export default function Content(): JSX.Element {
 							productList.products,
 							type
 						);
-						if ( category === 'business-services' ) {
-							setHasBusinessServices( typedProducts.length > 0 );
-						}
 						return {
 							products: typedProducts,
 							totalPages: productList.totalPages,
@@ -304,7 +296,6 @@ export default function Content(): JSX.Element {
 		query.tab,
 		query.term,
 		query.category,
-		setHasBusinessServices,
 		setIsLoading,
 		setSearchResultsCount,
 		currentPage,
