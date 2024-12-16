@@ -70,10 +70,10 @@ class CustomerAccount extends AbstractBlock {
 		$parsed_hooked_block['attrs']['iconStyle']    = 'line';
 		$parsed_hooked_block['attrs']['iconClass']    = 'wc-block-customer-account__account-icon';
 
-		$block_styles = wp_get_global_styles( array( 'blocks', 'core/navigation', 'typography', 'fontSize' ), $context );
-		
+		$block_styles = wp_get_global_styles( array( 'blocks', 'core/navigation', 'typography', 'fontSize' ) );
+
 		$parsed_hooked_block['attrs']['style']['typography']['fontSize'] = $block_styles;
-		
+
 		return $parsed_hooked_block;
 	}
 

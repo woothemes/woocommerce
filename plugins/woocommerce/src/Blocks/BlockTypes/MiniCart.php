@@ -113,10 +113,10 @@ class MiniCart extends AbstractBlock {
 	 * @return array|null
 	 */
 	public function modify_hooked_block_attributes( $parsed_hooked_block, $hooked_block_type, $relative_position, $parsed_anchor_block, $context ) {
-		$block_styles = wp_get_global_styles( array( 'blocks', 'core/navigation', 'typography', 'fontSize' ), $context );
-		
+		$block_styles = wp_get_global_styles( array( 'blocks', 'core/navigation', 'typography', 'fontSize' ) );
+
 		$parsed_hooked_block['attrs']['style']['typography']['fontSize'] = $block_styles;
-		
+
 		return $parsed_hooked_block;
 	}
 
