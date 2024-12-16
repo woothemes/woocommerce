@@ -627,7 +627,7 @@ const handlePlugins = assign( {
 	}: {
 		event: DoneActorEvent< Extension[] >;
 	} ) => {
-		return event.output.slice( 0, 8 );
+		return event.output.slice( 0, 8 ); // in lieu of a plugin display priority system, we're only showing the first 8 plugins in the recommendations list
 	},
 	pluginsTruncated: ( {
 		event,
