@@ -113,6 +113,7 @@ export type CoreProfilerStateMachineContext = {
 		sellingPlatforms?: SellingPlatform[] | null;
 	} & Partial< ProfileItems >;
 	pluginsAvailable: ExtensionList[ 'plugins' ] | [];
+	pluginsTruncated: string[];
 	pluginsSelected: string[]; // extension slugs
 	pluginsInstallationErrors: PluginInstallError[];
 	geolocatedLocation: GeolocationResponse | undefined;
@@ -626,7 +627,16 @@ const handlePlugins = assign( {
 	}: {
 		event: DoneActorEvent< Extension[] >;
 	} ) => {
-		return event.output;
+		return event.output.slice( 0, 8 ); // in lieu of a plugin display priority system, we're only showing the first 8 plugins in the recommendations list
+	},
+	pluginsTruncated: ( {
+		event,
+	}: {
+		event: DoneActorEvent< Extension[] >;
+	} ) => {
+		return event.output
+			.slice( 8 )
+			.map( ( plugin ) => plugin.key.replace( ':alt', '' ) );
 	},
 } );
 
@@ -798,6 +808,7 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 		countries: [] as CountryStateOption[],
 		pluginsAvailable: [],
 		pluginsInstallationErrors: [],
+		pluginsTruncated: [],
 		pluginsSelected: [],
 		loader: {},
 		onboardingProfile: {} as OnboardingProfile,
@@ -1650,6 +1661,7 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 										target: '#isJetpackConnected',
 										guard: or( [
 											'hasJpcRequiredPluginSelected',
+											'hasJpcRequiredPluginActivated',
 										] ),
 									},
 									{ actions: 'redirectToWooHome' },
@@ -1676,7 +1688,7 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 								onDone: [
 									{
 										target: '#isJetpackConnected',
-										guard: 'hasJetpackActivated',
+										guard: 'hasJpcRequiredPluginActivated',
 									},
 									{ actions: 'redirectToWooHome' },
 								],
@@ -1794,7 +1806,7 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 									{
 										type: 'hasJpcRequiredPluginSelected',
 									},
-									{ type: 'hasJetpackActivated' },
+									{ type: 'hasJpcRequiredPluginActivated' },
 								] )
 							)
 						) {
@@ -1872,11 +1884,11 @@ export const CoreProfilerController = ( {
 						return pluginDetails?.requires_jpc === true;
 					} );
 				},
-				hasJetpackActivated: ( { context } ) => {
+				hasJpcRequiredPluginActivated: ( { context } ) => {
 					return (
 						context.pluginsAvailable.find(
 							( plugin: Extension ) =>
-								plugin.key === 'jetpack' && plugin.is_activated
+								plugin.requires_jpc && plugin.is_activated
 						) !== undefined
 					);
 				},

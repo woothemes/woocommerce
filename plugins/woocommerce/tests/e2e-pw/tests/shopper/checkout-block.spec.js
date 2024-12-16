@@ -7,6 +7,7 @@ const { admin, customer } = require( '../../test-data/data' );
 const { logIn } = require( '../../utils/login' );
 const { setFilterValue, clearFilters } = require( '../../utils/filters' );
 const { setOption } = require( '../../utils/options' );
+const { setComingSoon } = require( '../../utils/coming-soon' );
 
 /**
  * External dependencies
@@ -64,6 +65,8 @@ test.describe(
 	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS, tags.SKIP_ON_WPCOM ] },
 	() => {
 		test.beforeAll( async ( { baseURL } ) => {
+			await setComingSoon( { baseURL, enabled: 'no' } );
+
 			const api = new wcApi( {
 				url: baseURL,
 				consumerKey: process.env.CONSUMER_KEY,

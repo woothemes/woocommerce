@@ -7,6 +7,7 @@ import { addAProductToCart } from '@woocommerce/e2e-utils-playwright';
  * Internal dependencies
  */
 import { tags } from '../../fixtures/fixtures';
+const { setComingSoon } = require( '../../utils/coming-soon' );
 
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
@@ -33,6 +34,7 @@ test.describe(
 		let firstProductId, secondProductId, shippingZoneDEId, shippingZoneFRId;
 
 		test.beforeAll( async ( { baseURL } ) => {
+			await setComingSoon( { baseURL, enabled: 'no' } );
 			const api = new wcApi( {
 				url: baseURL,
 				consumerKey: process.env.CONSUMER_KEY,

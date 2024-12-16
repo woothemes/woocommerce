@@ -1,4 +1,5 @@
 const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
+const { setComingSoon } = require( '../../utils/coming-soon' );
 const { fillPageTitle } = require( '../../utils/editor' );
 const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
 
@@ -40,7 +41,8 @@ test.describe(
 		],
 	},
 	() => {
-		test.beforeAll( async ( { api } ) => {
+		test.beforeAll( async ( { baseURL, api } ) => {
+			await setComingSoon( { baseURL, enabled: 'no' } );
 			// add products
 			await api
 				.post( 'products', {
