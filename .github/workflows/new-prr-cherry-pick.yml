@@ -268,8 +268,9 @@ jobs:
                 gh pr edit $PR_NUMBER --add-label "cherry pick failed" --repo "$OWNER/$REPO"
               env:
                 PR_NUMBER: ${{ needs.prep.outputs.pr }}
-                OWNER: ${{ github.repository_owner }}
-                REPO: ${{ github.repository }}
+                OWNER: ${{ github.event.repository.owner.login }}
+                REPO: ${{ github.event.repository.name }}
+                GH_TOKEN: ${{ github.token }}
 
             - name: Notify Slack on success
               if: ${{ success() && inputs.skipSlackPing != true }}
