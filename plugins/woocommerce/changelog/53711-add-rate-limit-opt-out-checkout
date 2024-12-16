@@ -1,4 +1,4 @@
 Significance: minor
 Type: update
 
-Add feature to enable tate limits for Store API's Checkout endpoint and Checkout block.
+Add experimental feature to enable rate limits for Store API's Checkout endpoint and Checkout block.
