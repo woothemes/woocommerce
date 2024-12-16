@@ -1665,7 +1665,7 @@ function wc_get_gallery_image_html( $attachment_id, $main_image = false, $image_
 	$thumbnail_sizes   = wp_get_attachment_image_sizes( $attachment_id, $thumbnail_size );
 	$full_src          = wp_get_attachment_image_src( $attachment_id, $full_size );
 	$alt_text          = trim( wp_strip_all_tags( get_post_meta( $attachment_id, '_wp_attachment_image_alt', true ) ) );
-	$alt_text          = empty( $alt_text ) ? woocommerce_get_alt_from_product_title_and_position( $product->get_title(), $main_image, $image_index ) : $alt_text;
+	$alt_text          = empty( $alt_text ) && is_a( $product, 'WC_Product' ) ? woocommerce_get_alt_from_product_title_and_position( $product->get_title(), $main_image, $image_index ) : $alt_text;
 
 	/**
 	 * Filters the attributes for the image markup.
