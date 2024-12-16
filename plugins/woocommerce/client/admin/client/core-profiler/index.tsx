@@ -1650,6 +1650,7 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 										target: '#isJetpackConnected',
 										guard: or( [
 											'hasJpcRequiredPluginSelected',
+											'hasJpcRequiredPluginActivated',
 										] ),
 									},
 									{ actions: 'redirectToWooHome' },
@@ -1676,7 +1677,7 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 								onDone: [
 									{
 										target: '#isJetpackConnected',
-										guard: 'hasJetpackActivated',
+										guard: 'hasJpcRequiredPluginActivated',
 									},
 									{ actions: 'redirectToWooHome' },
 								],
@@ -1794,7 +1795,7 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 									{
 										type: 'hasJpcRequiredPluginSelected',
 									},
-									{ type: 'hasJetpackActivated' },
+									{ type: 'hasJpcRequiredPluginActivated' },
 								] )
 							)
 						) {
@@ -1872,11 +1873,11 @@ export const CoreProfilerController = ( {
 						return pluginDetails?.requires_jpc === true;
 					} );
 				},
-				hasJetpackActivated: ( { context } ) => {
+				hasJpcRequiredPluginActivated: ( { context } ) => {
 					return (
 						context.pluginsAvailable.find(
 							( plugin: Extension ) =>
-								plugin.key === 'jetpack' && plugin.is_activated
+								plugin.requires_jpc && plugin.is_activated
 						) !== undefined
 					);
 				},
