@@ -81,7 +81,7 @@ class TrackingOptIn {
 	 */
 	public function opt_in_to_tracking( $note ) {
 		if ( self::NOTE_NAME === $note->get_name() ) {
-			// Get the previous value of the tracking
+			// Get the previous value of the tracking.
 			$prev_value = get_option( 'woocommerce_allow_tracking', 'no' );
 
 			// Opt in to tracking and schedule the first data update.
