@@ -719,7 +719,7 @@ class WC_Tests_API_Product extends WC_REST_Unit_Test_Case {
 		);
 
 		foreach ( $grouped->get_children() as $additional_product ) {
-			$product_ids_for_type[ProductType::SIMPLE][] = $additional_product;
+			$product_ids_for_type[ ProductType::SIMPLE ][] = $additional_product;
 		}
 
 		foreach ( $product_ids_for_type as $product_type => $product_ids ) {

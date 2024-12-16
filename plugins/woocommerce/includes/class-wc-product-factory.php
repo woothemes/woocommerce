@@ -60,6 +60,16 @@ class WC_Product_Factory {
 	 * @return string
 	 */
 	public static function get_product_classname( $product_id, $product_type ) {
+		/**
+		 * Filter the product class name.
+		 *
+		 * @param string $classname   Classname.
+		 * @param string $product_type Product type.
+		 * @param string $context     Context.
+		 * @param int    $product_id  Product ID.
+		 *
+		 * @since 3.0.0
+		 */
 		$classname = apply_filters( 'woocommerce_product_class', self::get_classname_from_product_type( $product_type ), $product_type, ProductType::VARIATION === $product_type ? 'product_variation' : 'product', $product_id );
 
 		if ( ! $classname || ! class_exists( $classname ) ) {

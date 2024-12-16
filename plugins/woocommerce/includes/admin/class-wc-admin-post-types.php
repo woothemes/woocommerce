@@ -578,7 +578,13 @@ class WC_Admin_Post_Types {
 			}
 		}
 
-		// Handle price - remove dates and set to lowest.
+		/**
+		 * Handle price - remove dates and set to lowest.
+		 *
+		 * @param array $product_types Array of product types that can change price.
+		 *
+		 * @since 3.0.0
+		 */
 		$change_price_product_types    = apply_filters( 'woocommerce_bulk_edit_save_price_product_types', array( ProductType::SIMPLE, ProductType::EXTERNAL ) );
 		$can_product_type_change_price = false;
 		foreach ( $change_price_product_types as $product_type ) {
