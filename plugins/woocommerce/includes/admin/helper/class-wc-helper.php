@@ -1609,9 +1609,9 @@ class WC_Helper {
 	}
 
 	/**
-	 * Verify request hash created by WCCOM.
+	 * Verify request hash created by WooCommerce.com.
 	 *
-	 * @param string $request_hash
+	 * @param string $request_hash request hash to be verified.
 	 * @return bool
 	 */
 	public static function verify_request_hash( string $request_hash ): bool {
@@ -1629,7 +1629,7 @@ class WC_Helper {
 
 		$data = json_decode( wp_remote_retrieve_body( $request ), true );
 
-		return isset( $data['success'] ) && $data['success'] === true;
+		return isset( $data['success'] ) && true === $data['success'];
 	}
 
 
