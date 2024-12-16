@@ -4,6 +4,7 @@
 import { debounce } from '@woocommerce/base-utils';
 import { select, dispatch } from '@wordpress/data';
 import isShallowEqual from '@wordpress/is-shallow-equal';
+import type { AdditionalValues } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
@@ -20,7 +21,7 @@ const localState = {
 	// Local cache of the last pushed checkoutData used for comparisons.
 	checkoutData: {
 		orderNotes: '',
-		additionalFields: {},
+		additionalFields: {} as AdditionalValues,
 	},
 };
 
@@ -60,13 +61,31 @@ const updateCheckoutData = (): void => {
 		return;
 	}
 
+	// Figure out which fields have changed and only send those to the server
+	const changedFields = Object.keys( newCheckoutData.additionalFields )
+		.filter( ( key ) => {
+			return (
+				localState.checkoutData.additionalFields[ key ] !==
+				newCheckoutData.additionalFields[ key ]
+			);
+		} )
+		.reduce( ( acc: AdditionalValues, key ) => {
+			acc[ key ] = newCheckoutData.additionalFields[ key ];
+			return acc;
+		}, {} );
+
+	if ( Object.keys( changedFields ).length === 0 ) {
+		localState.doingPush = false;
+		return;
+	}
+
 	// Update local cache
 	localState.checkoutData = newCheckoutData;
 
 	dispatch( STORE_KEY )
 		.updateDraftOrder( {
 			orderNotes: newCheckoutData.orderNotes,
-			additionalFields: newCheckoutData.additionalFields,
+			additionalFields: changedFields,
 		} )
 		.then( () => {
 			localState.doingPush = false;
