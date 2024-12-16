@@ -1629,7 +1629,7 @@ class WC_Helper {
 
 		$data = json_decode( wp_remote_retrieve_body( $request ), true );
 
-		return $data['success'] === true;
+		return isset( $data['success'] ) && $data['success'] === true;
 	}
 
 
