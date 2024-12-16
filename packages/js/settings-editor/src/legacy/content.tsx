@@ -16,7 +16,10 @@ export const LegacyContent = ( {
 	activeSection: string;
 } ) => {
 	const section = settingsPage.sections[ activeSection ];
-	console.log( section );
+
+	if ( ! section ) {
+		return null;
+	}
 
 	return (
 		<div className="woocommerce-settings-content">
