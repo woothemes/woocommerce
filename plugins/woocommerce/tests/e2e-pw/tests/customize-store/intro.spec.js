@@ -2,6 +2,7 @@ const { test: base, expect, request } = require( '@playwright/test' );
 const { activateTheme, DEFAULT_THEME } = require( '../../utils/themes' );
 const { setOption } = require( '../../utils/options' );
 const { AssemblerPage } = require( './assembler/assembler.page' );
+const { tags } = require( '../../fixtures/fixtures' );
 
 const CUSTOMIZE_STORE_URL =
 	'wp-admin/admin.php?page=wc-admin&path=%2Fcustomize-store';
@@ -15,7 +16,7 @@ const test = base.extend( {
 
 test.describe(
 	'Store owner can view the Intro page',
-	{ tag: '@gutenberg' },
+	{ tag: tags.GUTENBERG },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 

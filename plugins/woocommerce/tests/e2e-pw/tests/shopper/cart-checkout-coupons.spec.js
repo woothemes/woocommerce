@@ -2,6 +2,12 @@
  * External dependencies
  */
 import { addAProductToCart } from '@woocommerce/e2e-utils-playwright';
+
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
+
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
@@ -29,7 +35,7 @@ const totals = [ '$15.00', '$10.00', '$13.00' ];
 
 test.describe(
 	'Cart & Checkout applying coupons',
-	{ tag: [ '@payments', '@services', '@hpos' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS ] },
 	() => {
 		let firstProductId;
 		const couponBatchId = [];
@@ -93,225 +99,248 @@ test.describe(
 		} );
 
 		for ( let i = 0; i < coupons.length; i++ ) {
-			test( `allows applying coupon of type ${ coupons[ i ].discount_type }`, async ( {
-				page,
-				context,
-			} ) => {
-				await test.step( 'Load cart page and apply coupons', async () => {
+			test(
+				`allows applying coupon of type ${ coupons[ i ].discount_type }`,
+				{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+				async ( { page, context } ) => {
+					await test.step( 'Load cart page and apply coupons', async () => {
+						await addAProductToCart( page, firstProductId );
+
+						await page.goto( 'cart/' );
+						await page
+							.locator( '#coupon_code' )
+							.fill( coupons[ i ].code );
+						await page
+							.locator( '.blockOverlay' )
+							.first()
+							.waitFor( { state: 'hidden' } );
+						await page
+							.getByRole( 'button', { name: 'Apply coupon' } )
+							.click();
+
+						await expect(
+							page.getByText(
+								'Coupon code applied successfully.'
+							)
+						).toBeVisible();
+						// Checks the coupon amount is credited properly
+						await expect(
+							page.locator( '.cart-discount .amount' )
+						).toContainText( discounts[ i ] );
+						// Checks that the cart total is updated
+						await expect(
+							page.locator( '.order-total .amount' )
+						).toContainText( totals[ i ] );
+					} );
+
+					await context.clearCookies();
+
+					await test.step( 'Load checkout page and apply coupons', async () => {
+						await addAProductToCart( page, firstProductId );
+
+						await page.goto( 'checkout' );
+						await page
+							.locator( 'text=Click here to enter your code' )
+							.click();
+						await page
+							.locator( '#coupon_code' )
+							.fill( coupons[ i ].code );
+						await page
+							.locator( '.blockOverlay' )
+							.first()
+							.waitFor( { state: 'hidden' } );
+						await page.locator( 'text=Apply coupon' ).click();
+
+						await expect(
+							page.getByText(
+								'Coupon code applied successfully.'
+							)
+						).toBeVisible();
+						await expect(
+							page.locator( '.cart-discount .amount' )
+						).toContainText( discounts[ i ] );
+						await expect(
+							page.locator( '.order-total .amount' )
+						).toContainText( totals[ i ] );
+					} );
+				}
+			);
+		}
+
+		test(
+			'prevents applying same coupon twice',
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+			async ( { page, context } ) => {
+				await test.step( 'Load cart page and try applying same coupon twice', async () => {
 					await addAProductToCart( page, firstProductId );
 
 					await page.goto( 'cart/' );
 					await page
 						.locator( '#coupon_code' )
-						.fill( coupons[ i ].code );
+						.fill( coupons[ 0 ].code );
 					await page
-						.locator( '.blockOverlay' )
-						.first()
-						.waitFor( { state: 'hidden' } );
+						.getByRole( 'button', { name: 'Apply coupon' } )
+						.click();
+					// successful first time
+					await expect(
+						page.getByText( 'Coupon code applied successfully.' )
+					).toBeVisible();
+
+					// try to apply the same coupon
+					await page.goto( 'cart/' );
+					await page
+						.locator( '#coupon_code' )
+						.fill( coupons[ 0 ].code );
 					await page
 						.getByRole( 'button', { name: 'Apply coupon' } )
 						.click();
 
+					// error received
 					await expect(
-						page.getByText( 'Coupon code applied successfully.' )
+						page.getByText( 'Coupon code already applied!' )
 					).toBeVisible();
-					// Checks the coupon amount is credited properly
+					// check cart total
 					await expect(
 						page.locator( '.cart-discount .amount' )
-					).toContainText( discounts[ i ] );
-					// Checks that the cart total is updated
+					).toContainText( discounts[ 0 ] );
 					await expect(
 						page.locator( '.order-total .amount' )
-					).toContainText( totals[ i ] );
+					).toContainText( totals[ 0 ] );
 				} );
 
 				await context.clearCookies();
 
-				await test.step( 'Load checkout page and apply coupons', async () => {
+				await test.step( 'Load checkout page and try applying same coupon twice', async () => {
 					await addAProductToCart( page, firstProductId );
 
-					await page.goto( 'checkout' );
+					await page.goto( 'checkout/' );
 					await page
 						.locator( 'text=Click here to enter your code' )
 						.click();
 					await page
 						.locator( '#coupon_code' )
-						.fill( coupons[ i ].code );
-					await page
-						.locator( '.blockOverlay' )
-						.first()
-						.waitFor( { state: 'hidden' } );
+						.fill( coupons[ 0 ].code );
 					await page.locator( 'text=Apply coupon' ).click();
-
+					// successful first time
 					await expect(
 						page.getByText( 'Coupon code applied successfully.' )
 					).toBeVisible();
+					// try to apply the same coupon
+					await page
+						.locator( 'text=Click here to enter your code' )
+						.click();
+					await page
+						.locator( '#coupon_code' )
+						.fill( coupons[ 0 ].code );
+					await page.locator( 'text=Apply coupon' ).click();
+					// error received
+					await expect(
+						page.getByText( 'Coupon code already applied!' )
+					).toBeVisible();
+					// check cart total
 					await expect(
 						page.locator( '.cart-discount .amount' )
-					).toContainText( discounts[ i ] );
+					).toContainText( discounts[ 0 ] );
 					await expect(
 						page.locator( '.order-total .amount' )
-					).toContainText( totals[ i ] );
+					).toContainText( totals[ 0 ] );
 				} );
-			} );
-		}
+			}
+		);
 
-		test( 'prevents applying same coupon twice', async ( {
-			page,
-			context,
-		} ) => {
-			await test.step( 'Load cart page and try applying same coupon twice', async () => {
-				await addAProductToCart( page, firstProductId );
+		test(
+			'allows applying multiple coupons',
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+			async ( { page, context } ) => {
+				await test.step( 'Load cart page and try applying multiple coupons', async () => {
+					await addAProductToCart( page, firstProductId );
 
-				await page.goto( 'cart/' );
-				await page.locator( '#coupon_code' ).fill( coupons[ 0 ].code );
-				await page
-					.getByRole( 'button', { name: 'Apply coupon' } )
-					.click();
-				// successful first time
-				await expect(
-					page.getByText( 'Coupon code applied successfully.' )
-				).toBeVisible();
+					await page.goto( 'cart/' );
+					await page
+						.locator( '#coupon_code' )
+						.fill( coupons[ 0 ].code );
+					await page
+						.getByRole( 'button', { name: 'Apply coupon' } )
+						.click();
+					// successful
+					await expect(
+						page.getByText( 'Coupon code applied successfully.' )
+					).toBeVisible();
 
-				// try to apply the same coupon
-				await page.goto( 'cart/' );
-				await page.locator( '#coupon_code' ).fill( coupons[ 0 ].code );
-				await page
-					.getByRole( 'button', { name: 'Apply coupon' } )
-					.click();
+					// If not waiting the next coupon is not applied correctly. This should be temporary, we need a better way to handle this.
+					await page.waitForTimeout( 2000 );
 
-				// error received
-				await expect(
-					page.getByText( 'Coupon code already applied!' )
-				).toBeVisible();
-				// check cart total
-				await expect(
-					page.locator( '.cart-discount .amount' )
-				).toContainText( discounts[ 0 ] );
-				await expect(
-					page.locator( '.order-total .amount' )
-				).toContainText( totals[ 0 ] );
-			} );
+					await page
+						.locator( '#coupon_code' )
+						.fill( coupons[ 2 ].code );
+					await page
+						.getByRole( 'button', { name: 'Apply coupon' } )
+						.click();
+					// successful
+					await expect(
+						page.getByText( 'Coupon code applied successfully.' )
+					).toBeVisible();
+					// check cart total
+					await expect(
+						page.locator( '.cart-discount .amount >> nth=0' )
+					).toContainText( discounts[ 0 ] );
+					await expect(
+						page.locator( '.cart-discount .amount >> nth=1' )
+					).toContainText( discounts[ 2 ] );
+					await expect(
+						page.locator( '.order-total .amount' )
+					).toContainText( '$8.00' );
+				} );
 
-			await context.clearCookies();
+				await context.clearCookies();
 
-			await test.step( 'Load checkout page and try applying same coupon twice', async () => {
-				await addAProductToCart( page, firstProductId );
+				await test.step( 'Load checkout page and try applying multiple coupons', async () => {
+					await addAProductToCart( page, firstProductId );
 
-				await page.goto( 'checkout/' );
-				await page
-					.locator( 'text=Click here to enter your code' )
-					.click();
-				await page.locator( '#coupon_code' ).fill( coupons[ 0 ].code );
-				await page.locator( 'text=Apply coupon' ).click();
-				// successful first time
-				await expect(
-					page.getByText( 'Coupon code applied successfully.' )
-				).toBeVisible();
-				// try to apply the same coupon
-				await page
-					.locator( 'text=Click here to enter your code' )
-					.click();
-				await page.locator( '#coupon_code' ).fill( coupons[ 0 ].code );
-				await page.locator( 'text=Apply coupon' ).click();
-				// error received
-				await expect(
-					page.getByText( 'Coupon code already applied!' )
-				).toBeVisible();
-				// check cart total
-				await expect(
-					page.locator( '.cart-discount .amount' )
-				).toContainText( discounts[ 0 ] );
-				await expect(
-					page.locator( '.order-total .amount' )
-				).toContainText( totals[ 0 ] );
-			} );
-		} );
+					await page.goto( 'checkout/' );
+					await page
+						.locator( 'text=Click here to enter your code' )
+						.click();
+					await page
+						.locator( '#coupon_code' )
+						.fill( coupons[ 0 ].code );
+					await page.locator( 'text=Apply coupon' ).click();
+					// successful
+					await expect(
+						page.getByText( 'Coupon code applied successfully.' )
+					).toBeVisible();
 
-		test( 'allows applying multiple coupons', async ( {
-			page,
-			context,
-		} ) => {
-			await test.step( 'Load cart page and try applying multiple coupons', async () => {
-				await addAProductToCart( page, firstProductId );
+					// If not waiting the next coupon is not applied correctly. This should be temporary, we need a better way to handle this.
+					await page.waitForTimeout( 2000 );
 
-				await page.goto( 'cart/' );
-				await page.locator( '#coupon_code' ).fill( coupons[ 0 ].code );
-				await page
-					.getByRole( 'button', { name: 'Apply coupon' } )
-					.click();
-				// successful
-				await expect(
-					page.getByText( 'Coupon code applied successfully.' )
-				).toBeVisible();
-
-				// If not waiting the next coupon is not applied correctly. This should be temporary, we need a better way to handle this.
-				await page.waitForTimeout( 2000 );
-
-				await page.locator( '#coupon_code' ).fill( coupons[ 2 ].code );
-				await page
-					.getByRole( 'button', { name: 'Apply coupon' } )
-					.click();
-				// successful
-				await expect(
-					page.getByText( 'Coupon code applied successfully.' )
-				).toBeVisible();
-				// check cart total
-				await expect(
-					page.locator( '.cart-discount .amount >> nth=0' )
-				).toContainText( discounts[ 0 ] );
-				await expect(
-					page.locator( '.cart-discount .amount >> nth=1' )
-				).toContainText( discounts[ 2 ] );
-				await expect(
-					page.locator( '.order-total .amount' )
-				).toContainText( '$8.00' );
-			} );
-
-			await context.clearCookies();
-
-			await test.step( 'Load checkout page and try applying multiple coupons', async () => {
-				await addAProductToCart( page, firstProductId );
-
-				await page.goto( 'checkout/' );
-				await page
-					.locator( 'text=Click here to enter your code' )
-					.click();
-				await page.locator( '#coupon_code' ).fill( coupons[ 0 ].code );
-				await page.locator( 'text=Apply coupon' ).click();
-				// successful
-				await expect(
-					page.getByText( 'Coupon code applied successfully.' )
-				).toBeVisible();
-
-				// If not waiting the next coupon is not applied correctly. This should be temporary, we need a better way to handle this.
-				await page.waitForTimeout( 2000 );
-
-				await page
-					.locator( 'text=Click here to enter your code' )
-					.click();
-				await page.locator( '#coupon_code' ).fill( coupons[ 2 ].code );
-				await page.locator( 'text=Apply coupon' ).click();
-				// successful
-				await expect(
-					page.getByText( 'Coupon code applied successfully.' )
-				).toBeVisible();
-				// check cart total
-				await expect(
-					page.locator( '.cart-discount .amount >> nth=0' )
-				).toContainText( discounts[ 0 ] );
-				await expect(
-					page.locator( '.cart-discount .amount >> nth=1' )
-				).toContainText( discounts[ 2 ] );
-				await expect(
-					page.locator( '.order-total .amount' )
-				).toContainText( '$8.00' );
-			} );
-		} );
+					await page
+						.locator( 'text=Click here to enter your code' )
+						.click();
+					await page
+						.locator( '#coupon_code' )
+						.fill( coupons[ 2 ].code );
+					await page.locator( 'text=Apply coupon' ).click();
+					// successful
+					await expect(
+						page.getByText( 'Coupon code applied successfully.' )
+					).toBeVisible();
+					// check cart total
+					await expect(
+						page.locator( '.cart-discount .amount >> nth=0' )
+					).toContainText( discounts[ 0 ] );
+					await expect(
+						page.locator( '.cart-discount .amount >> nth=1' )
+					).toContainText( discounts[ 2 ] );
+					await expect(
+						page.locator( '.order-total .amount' )
+					).toContainText( '$8.00' );
+				} );
+			}
+		);
 
 		test(
 			'restores total when coupons are removed',
-			{ tag: [ '@could-be-lower-level-test' ] },
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 			async ( { page, context } ) => {
 				await test.step( 'Load cart page and try restoring total when removed coupons', async () => {
 					await addAProductToCart( page, firstProductId );

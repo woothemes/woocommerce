@@ -38,6 +38,8 @@ const INNER_BLOCKS_TEMPLATE: InnerBlockTemplate[] = [
 			content: __( 'Add to Cart', 'woocommerce' ),
 		},
 	],
+	[ 'woocommerce/product-stock-indicator' ],
+	[ 'woocommerce/add-to-cart-with-options-quantity-selector' ],
 	[
 		'woocommerce/product-button',
 		{

@@ -1,6 +1,6 @@
 const { fillPageTitle } = require( '../../utils/editor' );
 const { request } = require( '@playwright/test' );
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const { admin, customer } = require( '../../test-data/data' );
@@ -61,7 +61,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Checkout Block page',
-	{ tag: [ '@payments', '@services', '@hpos', '@skip-on-default-wpcom' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS, tags.SKIP_ON_WPCOM ] },
 	() => {
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {
@@ -298,350 +298,372 @@ test.describe(
 			} );
 		} );
 
-		test( 'can see empty checkout block page', async ( {
-			page,
-			testPage,
-		} ) => {
-			// go to the page to test empty cart block
-			await page.goto( testPage.slug );
-			await expect(
-				page.getByRole( 'heading', { name: testPage.title } )
-			).toBeVisible();
-			await expect(
-				page.locator( '.wc-block-checkout-empty', {
-					hasText: 'Your cart is currently empty',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'link', { name: 'Browse store' } )
-			).toBeVisible();
-			await page.getByRole( 'link', { name: 'Browse store' } ).click();
-			await expect(
-				page.getByRole( 'heading', { name: 'Shop' } )
-			).toBeVisible();
-		} );
+		test(
+			'can see empty checkout block page',
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+			async ( { page, testPage } ) => {
+				// go to the page to test empty cart block
+				await page.goto( testPage.slug );
+				await expect(
+					page.getByRole( 'heading', { name: testPage.title } )
+				).toBeVisible();
+				await expect(
+					page.locator( '.wc-block-checkout-empty', {
+						hasText: 'Your cart is currently empty',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'link', { name: 'Browse store' } )
+				).toBeVisible();
+				await page
+					.getByRole( 'link', { name: 'Browse store' } )
+					.click();
+				await expect(
+					page.getByRole( 'heading', { name: 'Shop' } )
+				).toBeVisible();
+			}
+		);
 
-		test( 'allows customer to choose available payment methods', async ( {
-			page,
-			testPage,
-		} ) => {
-			// this time we're going to add two products to the cart
-			await addAProductToCart( page, productId, 2 );
-			await page.goto( testPage.slug );
+		test(
+			'allows customer to choose available payment methods',
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+			async ( { page, testPage } ) => {
+				// this time we're going to add two products to the cart
+				await addAProductToCart( page, productId, 2 );
+				await page.goto( testPage.slug );
 
-			await expect(
-				page.getByRole( 'heading', { name: testPage.title } )
-			).toBeVisible();
+				await expect(
+					page.getByRole( 'heading', { name: testPage.title } )
+				).toBeVisible();
 
-			// check the order summary
-			await expect(
-				page.locator(
-					'.wc-block-components-order-summary-item__quantity'
-				)
-			).toContainText( '2' );
-			await expect(
-				page.locator(
-					'.wc-block-components-order-summary-item__individual-price'
-				)
-			).toContainText( `$${ singleProductSalePrice }` );
-			await expect(
-				page.locator(
-					'.wc-block-components-product-metadata__description'
-				)
-			).toContainText( simpleProductDesc );
-			await expect(
-				page.locator(
-					'.wc-block-components-totals-footer-item > .wc-block-components-totals-item__value'
-				)
-			).toContainText( twoProductPrice );
+				// check the order summary
+				await expect(
+					page.locator(
+						'.wc-block-components-order-summary-item__quantity'
+					)
+				).toContainText( '2' );
+				await expect(
+					page.locator(
+						'.wc-block-components-order-summary-item__individual-price'
+					)
+				).toContainText( `$${ singleProductSalePrice }` );
+				await expect(
+					page.locator(
+						'.wc-block-components-product-metadata__description'
+					)
+				).toContainText( simpleProductDesc );
+				await expect(
+					page.locator(
+						'.wc-block-components-totals-footer-item > .wc-block-components-totals-item__value'
+					)
+				).toContainText( twoProductPrice );
 
-			// check the payment methods
-			await expect(
-				page.getByLabel( 'Direct bank transfer' )
-			).toBeVisible();
-			await expect( page.getByLabel( 'Cash on delivery' ) ).toBeVisible();
-			await page.getByLabel( 'Cash on delivery' ).check();
-			await expect( page.getByLabel( 'Cash on delivery' ) ).toBeChecked();
-		} );
+				// check the payment methods
+				await expect(
+					page.getByLabel( 'Direct bank transfer' )
+				).toBeVisible();
+				await expect(
+					page.getByLabel( 'Cash on delivery' )
+				).toBeVisible();
+				await page.getByLabel( 'Cash on delivery' ).check();
+				await expect(
+					page.getByLabel( 'Cash on delivery' )
+				).toBeChecked();
+			}
+		);
 
-		test( 'allows customer to fill shipping details', async ( {
-			page,
-			testPage,
-		} ) => {
-			// this time we're going to add three products to the cart
-			await addAProductToCart( page, productId, 3 );
-			await page.goto( testPage.slug );
+		test(
+			'allows customer to fill shipping details',
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+			async ( { page, testPage } ) => {
+				// this time we're going to add three products to the cart
+				await addAProductToCart( page, productId, 3 );
+				await page.goto( testPage.slug );
 
-			await expect(
-				page.getByRole( 'heading', { name: testPage.title } )
-			).toBeVisible();
+				await expect(
+					page.getByRole( 'heading', { name: testPage.title } )
+				).toBeVisible();
 
-			// check the order summary
-			await expect(
-				page.locator(
-					'.wc-block-components-order-summary-item__quantity'
-				)
-			).toContainText( '3' );
-			await expect(
-				page.locator(
-					'.wc-block-components-totals-footer-item > .wc-block-components-totals-item__value'
-				)
-			).toContainText( threeProductPrice );
+				// check the order summary
+				await expect(
+					page.locator(
+						'.wc-block-components-order-summary-item__quantity'
+					)
+				).toContainText( '3' );
+				await expect(
+					page.locator(
+						'.wc-block-components-totals-footer-item > .wc-block-components-totals-item__value'
+					)
+				).toContainText( threeProductPrice );
 
-			// asserting that you can fill in the shipping details
-			await expect( page.getByLabel( 'Email address' ) ).toBeEditable();
-			await expect( page.getByLabel( 'First name' ) ).toBeEditable();
-			await expect( page.getByLabel( 'Last name' ) ).toBeEditable();
-			await expect(
-				page.getByLabel( 'Address', { exact: true } )
-			).toBeEditable();
-			await expect(
-				page.getByText( '+ Add apartment, suite, etc.' )
-			).toBeEnabled();
-			await expect( page.getByLabel( 'Country/Region' ) ).toBeEnabled();
-			await expect( page.getByLabel( 'State' ) ).toBeEnabled();
-			await expect( page.getByLabel( 'City' ) ).toBeEditable();
-			await expect( page.getByLabel( 'ZIP Code' ) ).toBeEnabled();
-			await expect(
-				page.getByLabel( 'Phone (optional)' )
-			).toBeEditable();
-		} );
+				// asserting that you can fill in the shipping details
+				await expect(
+					page.getByLabel( 'Email address' )
+				).toBeEditable();
+				await expect( page.getByLabel( 'First name' ) ).toBeEditable();
+				await expect( page.getByLabel( 'Last name' ) ).toBeEditable();
+				await expect(
+					page.getByLabel( 'Address', { exact: true } )
+				).toBeEditable();
+				await expect(
+					page.getByText( '+ Add apartment, suite, etc.' )
+				).toBeEnabled();
+				await expect(
+					page.getByLabel( 'Country/Region' )
+				).toBeEnabled();
+				await expect( page.getByLabel( 'State' ) ).toBeEnabled();
+				await expect( page.getByLabel( 'City' ) ).toBeEditable();
+				await expect( page.getByLabel( 'ZIP Code' ) ).toBeEnabled();
+				await expect(
+					page.getByLabel( 'Phone (optional)' )
+				).toBeEditable();
+			}
+		);
 
-		test( 'allows customer to fill different shipping and billing details', async ( {
-			page,
-			testPage,
-		} ) => {
-			await addAProductToCart( page, productId );
-			await page.goto( testPage.slug );
+		test(
+			'allows customer to fill different shipping and billing details',
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+			async ( { page, testPage } ) => {
+				await addAProductToCart( page, productId );
+				await page.goto( testPage.slug );
 
-			await expect(
-				page.getByRole( 'heading', { name: testPage.title } )
-			).toBeVisible();
+				await expect(
+					page.getByRole( 'heading', { name: testPage.title } )
+				).toBeVisible();
 
-			// to avoid flakiness, sometimes the email address is not filled
-			await page
-				.locator(
-					'.wc-block-components-order-summary-item__individual-prices'
-				)
-				.waitFor( { state: 'visible' } );
-			await page.getByLabel( 'Email address' ).click();
-			await page.getByLabel( 'Email address' ).fill( guestEmail );
-			await expect( page.getByLabel( 'Email address' ) ).toHaveValue(
-				guestEmail
-			);
+				// to avoid flakiness, sometimes the email address is not filled
+				await page
+					.locator(
+						'.wc-block-components-order-summary-item__individual-prices'
+					)
+					.waitFor( { state: 'visible' } );
+				await page.getByLabel( 'Email address' ).click();
+				await page.getByLabel( 'Email address' ).fill( guestEmail );
+				await expect( page.getByLabel( 'Email address' ) ).toHaveValue(
+					guestEmail
+				);
 
-			// fill shipping address
-			await fillShippingCheckoutBlocks( page );
+				// fill shipping address
+				await fillShippingCheckoutBlocks( page );
 
-			await page.getByLabel( 'Use same address for billing' ).click();
+				await page.getByLabel( 'Use same address for billing' ).click();
 
-			// fill billing details
-			await fillBillingCheckoutBlocks( page );
+				// fill billing details
+				await fillBillingCheckoutBlocks( page );
 
-			// add note to the order
-			await page.getByLabel( 'Add a note to your order' ).check();
-			await page
-				.getByPlaceholder(
-					'Notes about your order, e.g. special notes for delivery.'
-				)
-				.fill( 'This is to avoid flakiness' );
+				// add note to the order
+				await page.getByLabel( 'Add a note to your order' ).check();
+				await page
+					.getByPlaceholder(
+						'Notes about your order, e.g. special notes for delivery.'
+					)
+					.fill( 'This is to avoid flakiness' );
 
-			// place an order
-			await page.getByRole( 'button', { name: 'Place order' } ).click();
-			await expect(
-				page.getByText( 'Your order has been received' )
-			).toBeVisible();
+				// place an order
+				await page
+					.getByRole( 'button', { name: 'Place order' } )
+					.click();
+				await expect(
+					page.getByText( 'Your order has been received' )
+				).toBeVisible();
 
-			// get order ID from the page
-			guestOrderId2 = getOrderIdFromUrl( page );
+				// get order ID from the page
+				guestOrderId2 = getOrderIdFromUrl( page );
 
-			await addAProductToCart( page, productId );
-			await page.goto( testPage.slug );
-			await expect(
-				page.getByRole( 'heading', { name: testPage.title } )
-			).toBeVisible();
+				await addAProductToCart( page, productId );
+				await page.goto( testPage.slug );
+				await expect(
+					page.getByRole( 'heading', { name: testPage.title } )
+				).toBeVisible();
 
-			// verify shipping details
-			await page
-				.getByLabel( 'Edit shipping address', { exact: true } )
-				.first()
-				.click();
-			await expect(
-				page
-					.getByRole( 'group', { name: 'Shipping address' } )
-					.getByLabel( 'First name' )
-			).toHaveValue( 'Homer' );
-			await expect(
-				page
-					.getByRole( 'group', { name: 'Shipping address' } )
-					.getByLabel( 'Last name' )
-			).toHaveValue( 'Simpson' );
-			await expect(
-				page
-					.getByRole( 'group', { name: 'Shipping address' } )
-					.getByLabel( 'Address', { exact: true } )
-			).toHaveValue( '123 Evergreen Terrace' );
-			await expect(
-				page
-					.getByRole( 'group', { name: 'Shipping address' } )
-					.getByLabel( 'City' )
-			).toHaveValue( 'Springfield' );
-			await expect(
-				page
-					.getByRole( 'group', { name: 'Shipping address' } )
-					.getByLabel( 'ZIP Code' )
-			).toHaveValue( '97403' );
+				// verify shipping details
+				await page
+					.getByLabel( 'Edit shipping address', { exact: true } )
+					.first()
+					.click();
+				await expect(
+					page
+						.getByRole( 'group', { name: 'Shipping address' } )
+						.getByLabel( 'First name' )
+				).toHaveValue( 'Homer' );
+				await expect(
+					page
+						.getByRole( 'group', { name: 'Shipping address' } )
+						.getByLabel( 'Last name' )
+				).toHaveValue( 'Simpson' );
+				await expect(
+					page
+						.getByRole( 'group', { name: 'Shipping address' } )
+						.getByLabel( 'Address', { exact: true } )
+				).toHaveValue( '123 Evergreen Terrace' );
+				await expect(
+					page
+						.getByRole( 'group', { name: 'Shipping address' } )
+						.getByLabel( 'City' )
+				).toHaveValue( 'Springfield' );
+				await expect(
+					page
+						.getByRole( 'group', { name: 'Shipping address' } )
+						.getByLabel( 'ZIP Code' )
+				).toHaveValue( '97403' );
 
-			// verify billing details
-			await page
-				.getByLabel( 'Edit billing address', { exact: true } )
-				.last()
-				.click();
-			await expect(
-				page
-					.getByRole( 'group', { name: 'Billing address' } )
-					.getByLabel( 'First name' )
-			).toHaveValue( 'Mister' );
-			await expect(
-				page
-					.getByRole( 'group', { name: 'Billing address' } )
-					.getByLabel( 'Last name' )
-			).toHaveValue( 'Burns' );
-			await expect(
-				page
-					.getByRole( 'group', { name: 'Billing address' } )
-					.getByLabel( 'Address', { exact: true } )
-			).toHaveValue( '156th Street' );
-			await expect(
-				page
-					.getByRole( 'group', { name: 'Billing address' } )
-					.getByLabel( 'City' )
-			).toHaveValue( 'Springfield' );
-			await expect(
-				page
-					.getByRole( 'group', { name: 'Billing address' } )
-					.getByLabel( 'ZIP Code' )
-			).toHaveValue( '98500' );
-		} );
+				// verify billing details
+				await page
+					.getByLabel( 'Edit billing address', { exact: true } )
+					.last()
+					.click();
+				await expect(
+					page
+						.getByRole( 'group', { name: 'Billing address' } )
+						.getByLabel( 'First name' )
+				).toHaveValue( 'Mister' );
+				await expect(
+					page
+						.getByRole( 'group', { name: 'Billing address' } )
+						.getByLabel( 'Last name' )
+				).toHaveValue( 'Burns' );
+				await expect(
+					page
+						.getByRole( 'group', { name: 'Billing address' } )
+						.getByLabel( 'Address', { exact: true } )
+				).toHaveValue( '156th Street' );
+				await expect(
+					page
+						.getByRole( 'group', { name: 'Billing address' } )
+						.getByLabel( 'City' )
+				).toHaveValue( 'Springfield' );
+				await expect(
+					page
+						.getByRole( 'group', { name: 'Billing address' } )
+						.getByLabel( 'ZIP Code' )
+				).toHaveValue( '98500' );
+			}
+		);
 
-		test( 'allows customer to fill shipping details and toggle different billing', async ( {
-			page,
-			testPage,
-		} ) => {
-			await addAProductToCart( page, productId );
-			await page.goto( testPage.slug );
+		test(
+			'allows customer to fill shipping details and toggle different billing',
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+			async ( { page, testPage } ) => {
+				await addAProductToCart( page, productId );
+				await page.goto( testPage.slug );
 
-			await expect(
-				page.getByRole( 'heading', { name: testPage.title } )
-			).toBeVisible();
+				await expect(
+					page.getByRole( 'heading', { name: testPage.title } )
+				).toBeVisible();
 
-			// to avoid flakiness, sometimes the email address is not filled
-			await page
-				.locator(
-					'.wc-block-components-order-summary-item__individual-prices'
-				)
-				.waitFor( { state: 'visible' } );
-			await page.getByLabel( 'Email address' ).click();
-			await page.getByLabel( 'Email address' ).fill( customer.email );
-			await expect( page.getByLabel( 'Email address' ) ).toHaveValue(
-				customer.email
-			);
+				// to avoid flakiness, sometimes the email address is not filled
+				await page
+					.locator(
+						'.wc-block-components-order-summary-item__individual-prices'
+					)
+					.waitFor( { state: 'visible' } );
+				await page.getByLabel( 'Email address' ).click();
+				await page.getByLabel( 'Email address' ).fill( customer.email );
+				await expect( page.getByLabel( 'Email address' ) ).toHaveValue(
+					customer.email
+				);
 
-			// fill shipping address and check the toggle to use a different address for billing
-			await fillShippingCheckoutBlocks( page );
+				// fill shipping address and check the toggle to use a different address for billing
+				await fillShippingCheckoutBlocks( page );
 
-			await expect(
-				page.getByLabel( 'Use same address for billing' )
-			).toBeVisible();
-			await page.getByLabel( 'Use same address for billing' ).click();
-			await expect(
-				page
-					.getByRole( 'group', { name: 'Billing address' } )
-					.locator( 'h2' )
-			).toBeVisible();
-		} );
+				await expect(
+					page.getByLabel( 'Use same address for billing' )
+				).toBeVisible();
+				await page.getByLabel( 'Use same address for billing' ).click();
+				await expect(
+					page
+						.getByRole( 'group', { name: 'Billing address' } )
+						.locator( 'h2' )
+				).toBeVisible();
+			}
+		);
 
-		test( 'can choose different shipping types in the checkout', async ( {
-			page,
-			testPage,
-		} ) => {
-			await addAProductToCart( page, productId );
-			await page.goto( testPage.slug );
+		test(
+			'can choose different shipping types in the checkout',
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+			async ( { page, testPage } ) => {
+				await addAProductToCart( page, productId );
+				await page.goto( testPage.slug );
 
-			await expect(
-				page.getByRole( 'heading', { name: testPage.title } )
-			).toBeVisible();
+				await expect(
+					page.getByRole( 'heading', { name: testPage.title } )
+				).toBeVisible();
 
-			// to avoid flakiness, sometimes the email address is not filled
-			await page
-				.locator(
-					'.wc-block-components-order-summary-item__individual-prices'
-				)
-				.waitFor( { state: 'visible' } );
-			await page.getByLabel( 'Email address' ).click();
-			await page.getByLabel( 'Email address' ).fill( customer.email );
-			await expect( page.getByLabel( 'Email address' ) ).toHaveValue(
-				customer.email
-			);
+				// to avoid flakiness, sometimes the email address is not filled
+				await page
+					.locator(
+						'.wc-block-components-order-summary-item__individual-prices'
+					)
+					.waitFor( { state: 'visible' } );
+				await page.getByLabel( 'Email address' ).click();
+				await page.getByLabel( 'Email address' ).fill( customer.email );
+				await expect( page.getByLabel( 'Email address' ) ).toHaveValue(
+					customer.email
+				);
 
-			// fill shipping address
-			await fillShippingCheckoutBlocks( page );
+				// fill shipping address
+				await fillShippingCheckoutBlocks( page );
 
-			await page
-				.locator( '.wc-block-components-totals-shipping__via' )
-				.getByText( 'Free shipping' )
-				.waitFor( { state: 'visible' } );
+				await page
+					.locator( '.wc-block-components-totals-shipping__via' )
+					.getByText( 'Free shipping' )
+					.waitFor( { state: 'visible' } );
 
-			// check if you see all three shipping options
-			await expect( page.getByLabel( 'Free shipping' ) ).toBeVisible();
-			await expect( page.getByLabel( 'Local pickup' ) ).toBeVisible();
-			await expect( page.getByLabel( 'Flat rate' ) ).toBeVisible();
+				// check if you see all three shipping options
+				await expect(
+					page.getByLabel( 'Free shipping' )
+				).toBeVisible();
+				await expect( page.getByLabel( 'Local pickup' ) ).toBeVisible();
+				await expect( page.getByLabel( 'Flat rate' ) ).toBeVisible();
 
-			// check free shipping option
-			await page.getByLabel( 'Free shipping' ).click();
-			await expect( page.getByLabel( 'Free shipping' ) ).toBeChecked();
-			await page
-				.locator( '.wc-block-components-totals-shipping__via' )
-				.getByText( 'Free shipping' )
-				.waitFor( { state: 'visible' } );
-			await expect(
-				page.locator(
-					'.wc-block-components-totals-footer-item > .wc-block-components-totals-item__value'
-				)
-			).toContainText( singleProductSalePrice );
+				// check free shipping option
+				await page.getByLabel( 'Free shipping' ).click();
+				await expect(
+					page.getByLabel( 'Free shipping' )
+				).toBeChecked();
+				await page
+					.locator( '.wc-block-components-totals-shipping__via' )
+					.getByText( 'Free shipping' )
+					.waitFor( { state: 'visible' } );
+				await expect(
+					page.locator(
+						'.wc-block-components-totals-footer-item > .wc-block-components-totals-item__value'
+					)
+				).toContainText( singleProductSalePrice );
 
-			// check local pickup option
-			await page
-				.locator( '.wc-block-components-loading-mask' )
-				.waitFor( { state: 'hidden' } );
-			await page.getByLabel( 'Local pickup' ).click();
-			await expect( page.getByLabel( 'Local pickup' ) ).toBeChecked();
-			await page
-				.locator( '.wc-block-components-totals-shipping__via' )
-				.getByText( 'Local pickup' )
-				.waitFor( { state: 'visible' } );
-			await expect(
-				page.locator(
-					'.wc-block-components-totals-footer-item > .wc-block-components-totals-item__value'
-				)
-			).toContainText( singleProductSalePrice );
+				// check local pickup option
+				await page
+					.locator( '.wc-block-components-loading-mask' )
+					.waitFor( { state: 'hidden' } );
+				await page.getByLabel( 'Local pickup' ).click();
+				await expect( page.getByLabel( 'Local pickup' ) ).toBeChecked();
+				await page
+					.locator( '.wc-block-components-totals-shipping__via' )
+					.getByText( 'Local pickup' )
+					.waitFor( { state: 'visible' } );
+				await expect(
+					page.locator(
+						'.wc-block-components-totals-footer-item > .wc-block-components-totals-item__value'
+					)
+				).toContainText( singleProductSalePrice );
 
-			// check flat rate option
-			await page
-				.locator( '.wc-block-components-loading-mask' )
-				.waitFor( { state: 'hidden' } );
-			await page.getByLabel( 'Flat rate' ).click();
-			await expect( page.getByLabel( 'Flat rate' ) ).toBeChecked();
-			await page
-				.locator( '.wc-block-components-totals-shipping__via' )
-				.getByText( 'Flat rate' )
-				.waitFor( { state: 'visible' } );
-			await expect(
-				page.locator(
-					'.wc-block-components-totals-footer-item > .wc-block-components-totals-item__value'
-				)
-			).toContainText( twoProductPrice );
-		} );
+				// check flat rate option
+				await page
+					.locator( '.wc-block-components-loading-mask' )
+					.waitFor( { state: 'hidden' } );
+				await page.getByLabel( 'Flat rate' ).click();
+				await expect( page.getByLabel( 'Flat rate' ) ).toBeChecked();
+				await page
+					.locator( '.wc-block-components-totals-shipping__via' )
+					.getByText( 'Flat rate' )
+					.waitFor( { state: 'visible' } );
+				await expect(
+					page.locator(
+						'.wc-block-components-totals-footer-item > .wc-block-components-totals-item__value'
+					)
+				).toContainText( twoProductPrice );
+			}
+		);
 
 		test( 'allows guest customer to place an order', async ( {
 			page,
@@ -864,6 +886,8 @@ test.describe(
 			).toContainText( twoProductPrice );
 		} );
 
+		//todo audit follow-up: do we want both variation of the password generation? See next test
+		// also covered in checkout-create-account.spec.js?
 		test( 'can create an account during checkout', async ( {
 			page,
 			testPage,
@@ -899,7 +923,7 @@ test.describe(
 			);
 
 			// fill shipping address and check cash on delivery method
-			await fillShippingCheckoutBlocks( page, 'Marge' );
+			await fillShippingCheckoutBlocks( page, { firstName: 'Marge' } );
 			await page.getByLabel( 'Cash on delivery' ).check();
 			await expect( page.getByLabel( 'Cash on delivery' ) ).toBeChecked();
 
@@ -938,6 +962,8 @@ test.describe(
 			);
 		} );
 
+		//todo audit follow-up: do we want both variation of the password generation? See previous test
+		// also covered in checkout-create-account.spec.js?
 		test( 'can create an account during checkout with custom password', async ( {
 			page,
 			testPage,
@@ -998,7 +1024,9 @@ test.describe(
 			);
 
 			// fill shipping address and check cash on delivery method
-			await fillShippingCheckoutBlocks( page, 'Marge' );
+			await fillShippingCheckoutBlocks( page, {
+				firstName: 'Marge',
+			} );
 			await page.getByLabel( 'Cash on delivery' ).check();
 			await expect( page.getByLabel( 'Cash on delivery' ) ).toBeChecked();
 

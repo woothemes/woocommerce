@@ -21,19 +21,31 @@ defined( 'ABSPATH' ) || exit;
 class EmailPreview {
 	const DEFAULT_EMAIL_TYPE = 'WC_Email_Customer_Processing_Order';
 
+	const EMAIL_SETTINGS_IDS = array(
+		'woocommerce_email_background_color',
+		'woocommerce_email_base_color',
+		'woocommerce_email_body_background_color',
+		'woocommerce_email_font_family',
+		'woocommerce_email_footer_text',
+		'woocommerce_email_footer_text_color',
+		'woocommerce_email_header_alignment',
+		'woocommerce_email_header_image',
+		'woocommerce_email_text_color',
+	);
+
 	/**
 	 * The email type to preview.
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	private string $email_type = self::DEFAULT_EMAIL_TYPE;
+	private ?string $email_type = null;
 
 	/**
-	 * List of available email types.
+	 * The email object.
 	 *
-	 * @var array
+	 * @var WC_Email|null
 	 */
-	private array $email_types = array();
+	private ?WC_Email $email = null;
 
 	/**
 	 * The single instance of the class.
@@ -62,10 +74,28 @@ class EmailPreview {
 	 * @throws \InvalidArgumentException When the email type is invalid.
 	 */
 	public function set_email_type( string $email_type ) {
-		if ( ! in_array( $email_type, $this->get_email_types(), true ) ) {
+		$emails = WC()->mailer()->get_emails();
+		if ( ! in_array( $email_type, array_keys( $emails ), true ) ) {
 			throw new \InvalidArgumentException( 'Invalid email type' );
 		}
 		$this->email_type = $email_type;
+		$this->email      = $emails[ $email_type ];
+
+		$order = $this->get_dummy_order();
+		$this->email->set_object( $order );
+		$this->email->placeholders = array_merge(
+			$this->email->placeholders,
+			$this->get_placeholders( $order )
+		);
+
+		/**
+		 * Allow to modify the email object before rendering the preview to add additional data.
+		 *
+		 * @param WC_Email $email The email object.
+		 *
+		 * @since 9.6.0
+		 */
+		$this->email = apply_filters( 'woocommerce_prepare_email_for_preview', $this->email );
 	}
 
 	/**
@@ -81,9 +111,21 @@ class EmailPreview {
 	}
 
 	/**
+	 * Get the preview email content.
+	 *
+	 * @return string
+	 */
+	public function get_subject() {
+		if ( ! $this->email ) {
+			return '';
+		}
+		return $this->email->get_subject();
+	}
+
+	/**
 	 * Return a dummy product when the product is not set in email classes.
 	 *
-	 * @param WC_Product $product Order item product.
+	 * @param WC_Product|null $product Order item product.
 	 * @return WC_Product
 	 */
 	public function get_dummy_product_when_not_set( $product ) {
@@ -91,18 +133,6 @@ class EmailPreview {
 			return $product;
 		}
 		return $this->get_dummy_product();
-	}
-
-	/**
-	 * Get the list of available email types.
-	 *
-	 * @return array
-	 */
-	private function get_email_types() {
-		if ( empty( $this->email_types ) ) {
-			$this->email_types = array_keys( WC()->mailer()->get_emails() );
-		}
-		return $this->email_types;
 	}
 
 	/**
@@ -141,27 +171,17 @@ class EmailPreview {
 	private function render_preview_email() {
 		$this->set_up_filters();
 
-		$emails = WC()->mailer()->get_emails();
-		$email  = $emails[ $this->email_type ];
+		if ( ! $this->email_type ) {
+			$this->set_email_type( self::DEFAULT_EMAIL_TYPE );
+		}
 
-		$order = $this->get_dummy_order();
-		$email->set_object( $order );
-
-		/**
-		 * Allow to modify the email object before rendering the preview to add additional data.
-		 *
-		 * @param WC_Email $email The email object.
-		 *
-		 * @since 9.6.0
-		 */
-		$email = apply_filters( 'woocommerce_prepare_email_for_preview', $email );
-
-		$content = $email->get_content_html();
+		$content = $this->email->get_content_html();
+		$inlined = $this->email->style_inline( $content );
 
 		$this->clean_up_filters();
 
 		/** This filter is documented in src/Internal/Admin/EmailPreview/EmailPreview.php */
-		return apply_filters( 'woocommerce_mail_content', $email->style_inline( $content ) ); // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingSinceComment
+		return apply_filters( 'woocommerce_mail_content', $inlined ); // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingSinceComment
 	}
 
 	/**
@@ -247,6 +267,32 @@ class EmailPreview {
 	}
 
 	/**
+	 * Get the placeholders for the email preview.
+	 *
+	 * @param WC_Order $order The order object.
+	 * @return array
+	 */
+	private function get_placeholders( $order ) {
+		$placeholders = array();
+
+		if ( is_a( $order, 'WC_Order' ) ) {
+			$placeholders['{order_date}']              = wc_format_datetime( $order->get_date_created() );
+			$placeholders['{order_number}']            = $order->get_order_number();
+			$placeholders['{order_billing_full_name}'] = $order->get_formatted_billing_full_name();
+		}
+
+		/**
+		 * Placeholders for email preview.
+		 *
+		 * @param WC_Order $placeholders Placeholders for email subject.
+		 * @param string   $email_type The email type to preview.
+		 *
+		 * @since 9.6.0
+		 */
+		return apply_filters( 'woocommerce_email_preview_placeholders', $placeholders, $this->email_type );
+	}
+
+	/**
 	 * Set up filters for email preview.
 	 */
 	private function set_up_filters() {
@@ -255,6 +301,8 @@ class EmailPreview {
 		// Email templates fetch product from the database to show additional information, which are not
 		// saved in WC_Order_Item_Product. This filter enables fetching that data also in email preview.
 		add_filter( 'woocommerce_order_item_product', array( $this, 'get_dummy_product_when_not_set' ), 10, 1 );
+		// Enable email preview mode - this way transient values are fetched for live preview.
+		add_filter( 'woocommerce_is_email_preview', array( $this, 'enable_preview_mode' ) );
 	}
 
 	/**
@@ -263,6 +311,7 @@ class EmailPreview {
 	private function clean_up_filters() {
 		remove_filter( 'woocommerce_order_needs_shipping_address', array( $this, 'enable_shipping_address' ) );
 		remove_filter( 'woocommerce_order_item_product', array( $this, 'get_dummy_product_when_not_set' ), 10 );
+		remove_filter( 'woocommerce_is_email_preview', array( $this, 'enable_preview_mode' ) );
 	}
 
 	/**
@@ -272,6 +321,16 @@ class EmailPreview {
 	 * @return true
 	 */
 	public function enable_shipping_address() {
+		return true;
+	}
+
+	/**
+	 * Enable preview mode to use transient values in email-styles.php. Not using __return_true
+	 * so we don't accidentally remove the same filter used by other plugin or theme.
+	 *
+	 * @return true
+	 */
+	public function enable_preview_mode() {
 		return true;
 	}
 }

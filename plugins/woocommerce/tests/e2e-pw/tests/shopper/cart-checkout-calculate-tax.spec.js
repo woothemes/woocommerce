@@ -1,13 +1,17 @@
+/**
+ * External dependencies
+ */
+import { addAProductToCart } from '@woocommerce/e2e-utils-playwright';
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
+
 const { test, expect, request } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const { customer } = require( '../../test-data/data' );
 const { random } = require( '../../utils/helpers' );
 const { setOption } = require( '../../utils/options' );
-
-/**
- * External dependencies
- */
-import { addAProductToCart } from '@woocommerce/e2e-utils-playwright';
 
 const productName = `Taxed products are awesome ${ random() }`;
 const productPrice = '200.00';
@@ -31,10 +35,10 @@ test.describe.serial(
 	'Tax rates in the cart and checkout',
 	{
 		tag: [
-			'@payments',
-			'@services',
-			'@hpos',
-			'@could-be-lower-level-test',
+			tags.PAYMENTS,
+			tags.SERVICES,
+			tags.HPOS,
+			tags.COULD_BE_LOWER_LEVEL_TEST,
 		],
 	},
 	() => {
@@ -134,217 +138,250 @@ test.describe.serial(
 				} );
 			} );
 
-			test( 'checks that taxes are calculated properly on totals, inclusive tax displayed properly', async ( {
-				page,
-				baseURL,
-			} ) => {
-				const api = new wcApi( {
-					url: baseURL,
-					consumerKey: process.env.CONSUMER_KEY,
-					consumerSecret: process.env.CONSUMER_SECRET,
-					version: 'wc/v3',
-				} );
-				await api.put( 'settings/tax/woocommerce_tax_display_cart', {
-					value: 'incl',
-				} );
-				await api.put( 'settings/tax/woocommerce_tax_display_shop', {
-					value: 'incl',
-				} );
-
-				await test.step( 'Load shop page, confirm title and confirm price display', async () => {
-					await page.goto( 'shop/' );
-					await expect(
-						page.getByRole( 'heading', { name: 'Shop' } )
-					).toBeVisible();
-					await expect( page.getByText( productName ) ).toBeVisible();
-					await expect(
-						page.getByText( '$250.00', { exact: true } )
-					).toBeVisible();
-					expect( await page.title() ).toBe(
-						'Shop – WooCommerce Core E2E Test Suite'
+			test(
+				'checks that taxes are calculated properly on totals, inclusive tax displayed properly',
+				{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+				async ( { page, baseURL } ) => {
+					const api = new wcApi( {
+						url: baseURL,
+						consumerKey: process.env.CONSUMER_KEY,
+						consumerSecret: process.env.CONSUMER_SECRET,
+						version: 'wc/v3',
+					} );
+					await api.put(
+						'settings/tax/woocommerce_tax_display_cart',
+						{
+							value: 'incl',
+						}
 					);
-				} );
+					await api.put(
+						'settings/tax/woocommerce_tax_display_shop',
+						{
+							value: 'incl',
+						}
+					);
 
-				await test.step( 'Load cart page and confirm price display', async () => {
-					await page.goto( 'cart/' );
-					await expect(
-						page.getByRole( 'heading', {
-							name: 'Cart',
-							exact: true,
-						} )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'cell', {
-							name: '$250.00 (incl. tax)',
-						} )
-					).toHaveCount( 2 );
-					await expect(
-						page.getByRole( 'row', {
-							name: 'Subtotal $250.00 (incl. tax)',
-						} )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'cell', {
-							name: '$250.00 (includes $50.00 Tax)',
-						} )
-					).toBeVisible();
-				} );
+					await test.step( 'Load shop page, confirm title and confirm price display', async () => {
+						await page.goto( 'shop/' );
+						await expect(
+							page.getByRole( 'heading', { name: 'Shop' } )
+						).toBeVisible();
+						await expect(
+							page.getByText( productName )
+						).toBeVisible();
+						await expect(
+							page.getByText( '$250.00', { exact: true } )
+						).toBeVisible();
+						expect( await page.title() ).toBe(
+							'Shop – WooCommerce Core E2E Test Suite'
+						);
+					} );
 
-				await test.step( 'Load checkout page and confirm price display', async () => {
-					await page.goto( 'checkout/' );
-					await expect(
-						page.getByRole( 'button', { name: 'Place order' } )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', {
-							name: `${ productName } × 1 $250.00 (incl. tax)`,
-						} )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', {
-							name: 'Subtotal $250.00 (incl. tax)',
-						} )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'cell', {
-							name: '$250.00 (includes $50.00 Tax)',
-						} )
-					).toBeVisible();
-				} );
-			} );
+					await test.step( 'Load cart page and confirm price display', async () => {
+						await page.goto( 'cart/' );
+						await expect(
+							page.getByRole( 'heading', {
+								name: 'Cart',
+								exact: true,
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'cell', {
+								name: '$250.00 (incl. tax)',
+							} )
+						).toHaveCount( 2 );
+						await expect(
+							page.getByRole( 'row', {
+								name: 'Subtotal $250.00 (incl. tax)',
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'cell', {
+								name: '$250.00 (includes $50.00 Tax)',
+							} )
+						).toBeVisible();
+					} );
 
-			test( 'checks that taxes are calculated and displayed correctly exclusive on shop, cart and checkout', async ( {
-				page,
-				baseURL,
-			} ) => {
-				const api = new wcApi( {
-					url: baseURL,
-					consumerKey: process.env.CONSUMER_KEY,
-					consumerSecret: process.env.CONSUMER_SECRET,
-					version: 'wc/v3',
-				} );
-				await api.put( 'settings/tax/woocommerce_tax_display_cart', {
-					value: 'excl',
-				} );
-				await api.put( 'settings/tax/woocommerce_tax_display_shop', {
-					value: 'excl',
-				} );
+					await test.step( 'Load checkout page and confirm price display', async () => {
+						await page.goto( 'checkout/' );
+						await expect(
+							page.getByRole( 'button', { name: 'Place order' } )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', {
+								name: `${ productName } × 1 $250.00 (incl. tax)`,
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', {
+								name: 'Subtotal $250.00 (incl. tax)',
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'cell', {
+								name: '$250.00 (includes $50.00 Tax)',
+							} )
+						).toBeVisible();
+					} );
+				}
+			);
 
-				await test.step( 'Load shop page and confirm price display', async () => {
-					await page.goto( 'shop/' );
-					await expect(
-						page.getByRole( 'heading', { name: 'Shop' } )
-					).toBeVisible();
-					await expect( page.getByText( productName ) ).toBeVisible();
-				} );
+			test(
+				'checks that taxes are calculated and displayed correctly exclusive on shop, cart and checkout',
+				{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+				async ( { page, baseURL } ) => {
+					const api = new wcApi( {
+						url: baseURL,
+						consumerKey: process.env.CONSUMER_KEY,
+						consumerSecret: process.env.CONSUMER_SECRET,
+						version: 'wc/v3',
+					} );
+					await api.put(
+						'settings/tax/woocommerce_tax_display_cart',
+						{
+							value: 'excl',
+						}
+					);
+					await api.put(
+						'settings/tax/woocommerce_tax_display_shop',
+						{
+							value: 'excl',
+						}
+					);
 
-				await test.step( 'Load cart page and confirm price display', async () => {
-					await page.goto( 'cart/' );
-					await expect(
-						page.getByRole( 'heading', {
-							name: 'Cart',
-							exact: true,
-						} )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'cell', { name: '$200.00' } )
-					).toHaveCount( 3 );
-					await expect(
-						page.getByRole( 'row', { name: 'Subtotal $200.00' } )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', { name: 'Tax $50.00' } )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', { name: 'Total $250.00' } )
-					).toBeVisible();
-				} );
+					await test.step( 'Load shop page and confirm price display', async () => {
+						await page.goto( 'shop/' );
+						await expect(
+							page.getByRole( 'heading', { name: 'Shop' } )
+						).toBeVisible();
+						await expect(
+							page.getByText( productName )
+						).toBeVisible();
+					} );
 
-				await test.step( 'Load checkout page and confirm price display', async () => {
-					await page.goto( 'checkout/' );
-					await expect(
-						page.getByRole( 'button', { name: 'Place order' } )
-					).toBeVisible();
+					await test.step( 'Load cart page and confirm price display', async () => {
+						await page.goto( 'cart/' );
+						await expect(
+							page.getByRole( 'heading', {
+								name: 'Cart',
+								exact: true,
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'cell', { name: '$200.00' } )
+						).toHaveCount( 3 );
+						await expect(
+							page.getByRole( 'row', {
+								name: 'Subtotal $200.00',
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', { name: 'Tax $50.00' } )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', { name: 'Total $250.00' } )
+						).toBeVisible();
+					} );
 
-					await page
-						.getByRole( 'textbox', { name: 'First name *' } )
-						.fill( customer.billing.us.first_name );
-					await page
-						.getByRole( 'textbox', { name: 'Last name *' } )
-						.fill( customer.billing.us.last_name );
-					await page
-						.getByRole( 'textbox', { name: 'Street address *' } )
-						.fill( customer.billing.us.address );
-					await page
-						.getByRole( 'textbox', { name: 'Town / City *' } )
-						.type( customer.billing.us.city );
-					await page
-						.locator( '#billing_country' )
-						.selectOption( customer.billing.us.country );
-					await page
-						.locator( '#billing_state' )
-						.selectOption( customer.billing.us.state );
-					await page
-						.getByRole( 'textbox', { name: 'ZIP Code *' } )
-						.type( customer.billing.us.zip );
-					await page
-						.getByLabel( 'Phone *' )
-						.fill( customer.billing.us.phone );
-					await page
-						.getByLabel( 'Email address *' )
-						.fill( customer.billing.us.email );
+					await test.step( 'Load checkout page and confirm price display', async () => {
+						await page.goto( 'checkout/' );
+						await expect(
+							page.getByRole( 'button', { name: 'Place order' } )
+						).toBeVisible();
 
-					await expect(
-						page.getByRole( 'row', {
-							name: `${ productName } × 1 $200.00`,
-						} )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', { name: 'Subtotal $200.00' } )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', { name: 'Tax $50.00' } )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', { name: 'Total $250.00' } )
-					).toBeVisible();
-				} );
-			} );
+						await page
+							.getByRole( 'textbox', { name: 'First name *' } )
+							.fill( customer.billing.us.first_name );
+						await page
+							.getByRole( 'textbox', { name: 'Last name *' } )
+							.fill( customer.billing.us.last_name );
+						await page
+							.getByRole( 'textbox', {
+								name: 'Street address *',
+							} )
+							.fill( customer.billing.us.address );
+						await page
+							.getByRole( 'textbox', { name: 'Town / City *' } )
+							.type( customer.billing.us.city );
+						await page
+							.locator( '#billing_country' )
+							.selectOption( customer.billing.us.country );
+						await page
+							.locator( '#billing_state' )
+							.selectOption( customer.billing.us.state );
+						await page
+							.getByRole( 'textbox', { name: 'ZIP Code *' } )
+							.type( customer.billing.us.zip );
+						await page
+							.getByLabel( 'Phone *' )
+							.fill( customer.billing.us.phone );
+						await page
+							.getByLabel( 'Email address *' )
+							.fill( customer.billing.us.email );
 
-			test( 'checks that display suffix is shown', async ( {
-				page,
-				baseURL,
-			} ) => {
-				const api = new wcApi( {
-					url: baseURL,
-					consumerKey: process.env.CONSUMER_KEY,
-					consumerSecret: process.env.CONSUMER_SECRET,
-					version: 'wc/v3',
-				} );
-				await api.put( 'settings/tax/woocommerce_tax_display_cart', {
-					value: 'excl',
-				} );
-				await api.put( 'settings/tax/woocommerce_tax_display_shop', {
-					value: 'excl',
-				} );
-				await api.put(
-					'settings/tax/woocommerce_price_display_suffix',
-					{
-						value: 'excluding VAT',
-					}
-				);
+						await expect(
+							page.getByRole( 'row', {
+								name: `${ productName } × 1 $200.00`,
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', {
+								name: 'Subtotal $200.00',
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', { name: 'Tax $50.00' } )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', { name: 'Total $250.00' } )
+						).toBeVisible();
+					} );
+				}
+			);
 
-				await test.step( 'Load shop page and confirm price suffix display', async () => {
-					await page.goto( 'shop/' );
-					await expect(
-						page.getByRole( 'heading', { name: 'Shop' } )
-					).toBeVisible();
-					await expect( page.getByText( productName ) ).toBeVisible();
-					await expect(
-						page.getByText( '$200.00 excluding VAT' )
-					).toBeVisible();
-				} );
-			} );
+			test(
+				'checks that display suffix is shown',
+				{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+				async ( { page, baseURL } ) => {
+					const api = new wcApi( {
+						url: baseURL,
+						consumerKey: process.env.CONSUMER_KEY,
+						consumerSecret: process.env.CONSUMER_SECRET,
+						version: 'wc/v3',
+					} );
+					await api.put(
+						'settings/tax/woocommerce_tax_display_cart',
+						{
+							value: 'excl',
+						}
+					);
+					await api.put(
+						'settings/tax/woocommerce_tax_display_shop',
+						{
+							value: 'excl',
+						}
+					);
+					await api.put(
+						'settings/tax/woocommerce_price_display_suffix',
+						{
+							value: 'excluding VAT',
+						}
+					);
+
+					await test.step( 'Load shop page and confirm price suffix display', async () => {
+						await page.goto( 'shop/' );
+						await expect(
+							page.getByRole( 'heading', { name: 'Shop' } )
+						).toBeVisible();
+						await expect(
+							page.getByText( productName )
+						).toBeVisible();
+						await expect(
+							page.getByText( '$200.00 excluding VAT' )
+						).toBeVisible();
+					} );
+				}
+			);
 		} );
 
 		test.describe( 'Shopper Tax Rounding', () => {
@@ -435,130 +472,154 @@ test.describe.serial(
 				} );
 			} );
 
-			test( 'checks rounding at subtotal level', async ( {
-				page,
-				baseURL,
-			} ) => {
-				const api = new wcApi( {
-					url: baseURL,
-					consumerKey: process.env.CONSUMER_KEY,
-					consumerSecret: process.env.CONSUMER_SECRET,
-					version: 'wc/v3',
-				} );
-				await api.put( 'settings/tax/woocommerce_tax_display_cart', {
-					value: 'excl',
-				} );
-				await api.put( 'settings/tax/woocommerce_tax_display_shop', {
-					value: 'excl',
-				} );
-				await api.put(
-					'settings/tax/woocommerce_tax_round_at_subtotal',
-					{
-						value: 'yes',
-					}
-				);
-				await api.put( 'settings/tax/woocommerce_tax_total_display', {
-					value: 'single',
-				} );
+			test(
+				'checks rounding at subtotal level',
+				{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+				async ( { page, baseURL } ) => {
+					const api = new wcApi( {
+						url: baseURL,
+						consumerKey: process.env.CONSUMER_KEY,
+						consumerSecret: process.env.CONSUMER_SECRET,
+						version: 'wc/v3',
+					} );
+					await api.put(
+						'settings/tax/woocommerce_tax_display_cart',
+						{
+							value: 'excl',
+						}
+					);
+					await api.put(
+						'settings/tax/woocommerce_tax_display_shop',
+						{
+							value: 'excl',
+						}
+					);
+					await api.put(
+						'settings/tax/woocommerce_tax_round_at_subtotal',
+						{
+							value: 'yes',
+						}
+					);
+					await api.put(
+						'settings/tax/woocommerce_tax_total_display',
+						{
+							value: 'single',
+						}
+					);
 
-				await test.step( 'Load shop page and confirm price display', async () => {
-					await page.goto( 'shop/' );
-					await expect(
-						page.getByRole( 'heading', { name: 'Shop' } )
-					).toBeVisible();
-					await expect( page.getByText( productName ) ).toBeVisible();
-					await expect(
-						await page.getByText( '$13.47' ).count()
-					).toBeGreaterThan( 0 );
-				} );
+					await test.step( 'Load shop page and confirm price display', async () => {
+						await page.goto( 'shop/' );
+						await expect(
+							page.getByRole( 'heading', { name: 'Shop' } )
+						).toBeVisible();
+						await expect(
+							page.getByText( productName )
+						).toBeVisible();
+						await expect(
+							await page.getByText( '$13.47' ).count()
+						).toBeGreaterThan( 0 );
+					} );
 
-				await test.step( 'Load cart page and confirm price display', async () => {
-					await page.goto( 'cart/' );
-					await expect(
-						page.getByRole( 'heading', {
-							name: 'Cart',
-							exact: true,
-						} )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'cell', { name: '$13.47' } )
-					).toHaveCount( 3 );
-					await expect(
-						page.getByRole( 'row', { name: 'Subtotal $40.41' } )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', { name: 'Tax $9.71 ' } )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', { name: 'Total $50.12 ' } )
-					).toBeVisible();
-				} );
-			} );
+					await test.step( 'Load cart page and confirm price display', async () => {
+						await page.goto( 'cart/' );
+						await expect(
+							page.getByRole( 'heading', {
+								name: 'Cart',
+								exact: true,
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'cell', { name: '$13.47' } )
+						).toHaveCount( 3 );
+						await expect(
+							page.getByRole( 'row', { name: 'Subtotal $40.41' } )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', { name: 'Tax $9.71 ' } )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', { name: 'Total $50.12 ' } )
+						).toBeVisible();
+					} );
+				}
+			);
 
-			test( 'checks rounding off at subtotal level', async ( {
-				page,
-				baseURL,
-			} ) => {
-				const api = new wcApi( {
-					url: baseURL,
-					consumerKey: process.env.CONSUMER_KEY,
-					consumerSecret: process.env.CONSUMER_SECRET,
-					version: 'wc/v3',
-				} );
-				await api.put( 'settings/tax/woocommerce_tax_display_cart', {
-					value: 'excl',
-				} );
-				await api.put( 'settings/tax/woocommerce_tax_display_shop', {
-					value: 'excl',
-				} );
-				await api.put(
-					'settings/tax/woocommerce_tax_round_at_subtotal',
-					{
-						value: 'no',
-					}
-				);
-				await api.put( 'settings/tax/woocommerce_tax_total_display', {
-					value: 'itemized',
-				} );
+			test(
+				'checks rounding off at subtotal level',
+				{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+				async ( { page, baseURL } ) => {
+					const api = new wcApi( {
+						url: baseURL,
+						consumerKey: process.env.CONSUMER_KEY,
+						consumerSecret: process.env.CONSUMER_SECRET,
+						version: 'wc/v3',
+					} );
+					await api.put(
+						'settings/tax/woocommerce_tax_display_cart',
+						{
+							value: 'excl',
+						}
+					);
+					await api.put(
+						'settings/tax/woocommerce_tax_display_shop',
+						{
+							value: 'excl',
+						}
+					);
+					await api.put(
+						'settings/tax/woocommerce_tax_round_at_subtotal',
+						{
+							value: 'no',
+						}
+					);
+					await api.put(
+						'settings/tax/woocommerce_tax_total_display',
+						{
+							value: 'itemized',
+						}
+					);
 
-				await test.step( 'Load shop page and confirm price display', async () => {
-					await page.goto( 'shop/' );
-					await expect(
-						page.getByRole( 'heading', { name: 'Shop' } )
-					).toBeVisible();
-					await expect( page.getByText( productName ) ).toBeVisible();
-					await expect(
-						await page.getByText( '$13.47' ).count()
-					).toBeGreaterThan( 0 );
-				} );
+					await test.step( 'Load shop page and confirm price display', async () => {
+						await page.goto( 'shop/' );
+						await expect(
+							page.getByRole( 'heading', { name: 'Shop' } )
+						).toBeVisible();
+						await expect(
+							page.getByText( productName )
+						).toBeVisible();
+						await expect(
+							await page.getByText( '$13.47' ).count()
+						).toBeGreaterThan( 0 );
+					} );
 
-				await test.step( 'Load cart page and confirm price display', async () => {
-					await page.goto( 'cart/' );
-					await expect(
-						page.getByRole( 'heading', {
-							name: 'Cart',
-							exact: true,
-						} )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'cell', { name: '$13.47' } )
-					).toHaveCount( 3 );
-					await expect(
-						page.getByRole( 'row', { name: 'Subtotal $40.41' } )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', {
-							name: 'Seventeen Tax $6.87 ',
-						} )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', { name: 'Six Tax $2.84 ' } )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', { name: 'Total $50.12 ' } )
-					).toBeVisible();
-				} );
-			} );
+					await test.step( 'Load cart page and confirm price display', async () => {
+						await page.goto( 'cart/' );
+						await expect(
+							page.getByRole( 'heading', {
+								name: 'Cart',
+								exact: true,
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'cell', { name: '$13.47' } )
+						).toHaveCount( 3 );
+						await expect(
+							page.getByRole( 'row', { name: 'Subtotal $40.41' } )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', {
+								name: 'Seventeen Tax $6.87 ',
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', { name: 'Six Tax $2.84 ' } )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', { name: 'Total $50.12 ' } )
+						).toBeVisible();
+					} );
+				}
+			);
 		} );
 
 		test.describe( 'Shopper Tax Levels', () => {
@@ -674,195 +735,227 @@ test.describe.serial(
 				} );
 			} );
 
-			test( 'checks applying taxes of 4 different levels', async ( {
-				page,
-				baseURL,
-			} ) => {
-				const api = new wcApi( {
-					url: baseURL,
-					consumerKey: process.env.CONSUMER_KEY,
-					consumerSecret: process.env.CONSUMER_SECRET,
-					version: 'wc/v3',
-				} );
-				await api.put( 'settings/tax/woocommerce_tax_total_display', {
-					value: 'itemized',
-				} );
+			test(
+				'checks applying taxes of 4 different levels',
+				{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+				async ( { page, baseURL } ) => {
+					const api = new wcApi( {
+						url: baseURL,
+						consumerKey: process.env.CONSUMER_KEY,
+						consumerSecret: process.env.CONSUMER_SECRET,
+						version: 'wc/v3',
+					} );
+					await api.put(
+						'settings/tax/woocommerce_tax_total_display',
+						{
+							value: 'itemized',
+						}
+					);
 
-				await test.step( 'Load cart page and confirm price display', async () => {
-					await page.goto( 'cart/' );
-					await expect(
-						page.getByRole( 'heading', {
-							name: 'Cart',
-							exact: true,
-						} )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'cell', { name: '$200.00' } )
-					).toHaveCount( 3 );
-					await expect(
-						page.getByRole( 'row', { name: 'Subtotal $200.00' } )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', { name: 'Country Tax $20.00 ' } )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', { name: 'State Tax $10.00 ' } )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', { name: 'Total $230.00 ' } )
-					).toBeVisible();
-				} );
+					await test.step( 'Load cart page and confirm price display', async () => {
+						await page.goto( 'cart/' );
+						await expect(
+							page.getByRole( 'heading', {
+								name: 'Cart',
+								exact: true,
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'cell', { name: '$200.00' } )
+						).toHaveCount( 3 );
+						await expect(
+							page.getByRole( 'row', {
+								name: 'Subtotal $200.00',
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', {
+								name: 'Country Tax $20.00 ',
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', {
+								name: 'State Tax $10.00 ',
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', { name: 'Total $230.00 ' } )
+						).toBeVisible();
+					} );
 
-				await test.step( 'Load checkout page and confirm taxes displayed', async () => {
-					await page.goto( 'checkout/' );
-					await expect(
-						page.getByRole( 'button', { name: 'Place order' } )
-					).toBeVisible();
+					await test.step( 'Load checkout page and confirm taxes displayed', async () => {
+						await page.goto( 'checkout/' );
+						await expect(
+							page.getByRole( 'button', { name: 'Place order' } )
+						).toBeVisible();
 
-					await page
-						.getByLabel( 'First name *' )
-						.first()
-						.fill( customer.billing.us.first_name );
-					await page
-						.getByLabel( 'Last name *' )
-						.first()
-						.fill( customer.billing.us.last_name );
-					await page
-						.getByPlaceholder( 'House number and street name' )
-						.first()
-						.fill( customer.billing.us.address );
-					await page
-						.getByLabel( 'Town / City *' )
-						.first()
-						.pressSequentially( 'Sacramento' );
-					await page
-						.getByLabel( 'ZIP Code *' )
-						.first()
-						.pressSequentially( '55555' );
-					await page
-						.getByLabel( 'Phone *' )
-						.first()
-						.fill( customer.billing.us.phone );
-					await page
-						.getByLabel( 'Email address *' )
-						.first()
-						.fill( customer.billing.us.email );
+						await page
+							.getByLabel( 'First name *' )
+							.first()
+							.fill( customer.billing.us.first_name );
+						await page
+							.getByLabel( 'Last name *' )
+							.first()
+							.fill( customer.billing.us.last_name );
+						await page
+							.getByPlaceholder( 'House number and street name' )
+							.first()
+							.fill( customer.billing.us.address );
+						await page
+							.getByLabel( 'Town / City *' )
+							.first()
+							.pressSequentially( 'Sacramento' );
+						await page
+							.getByLabel( 'ZIP Code *' )
+							.first()
+							.pressSequentially( '55555' );
+						await page
+							.getByLabel( 'Phone *' )
+							.first()
+							.fill( customer.billing.us.phone );
+						await page
+							.getByLabel( 'Email address *' )
+							.first()
+							.fill( customer.billing.us.email );
 
-					await expect(
-						page.getByRole( 'row', { name: 'Subtotal $200.00' } )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', { name: 'Country Tax $20.00' } )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', { name: 'State Tax $10.00' } )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', { name: 'City Tax $5.00' } )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', { name: 'Zip Tax $2.50' } )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', { name: 'Total $237.50 ' } )
-					).toBeVisible();
-				} );
-			} );
+						await expect(
+							page.getByRole( 'row', {
+								name: 'Subtotal $200.00',
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', {
+								name: 'Country Tax $20.00',
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', {
+								name: 'State Tax $10.00',
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', { name: 'City Tax $5.00' } )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', { name: 'Zip Tax $2.50' } )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', { name: 'Total $237.50 ' } )
+						).toBeVisible();
+					} );
+				}
+			);
 
-			test( 'checks applying taxes of 2 different levels (2 excluded)', async ( {
-				page,
-				baseURL,
-			} ) => {
-				const api = new wcApi( {
-					url: baseURL,
-					consumerKey: process.env.CONSUMER_KEY,
-					consumerSecret: process.env.CONSUMER_SECRET,
-					version: 'wc/v3',
-				} );
-				await api.put( 'settings/tax/woocommerce_tax_total_display', {
-					value: 'itemized',
-				} );
+			test(
+				'checks applying taxes of 2 different levels (2 excluded)',
+				{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+				async ( { page, baseURL } ) => {
+					const api = new wcApi( {
+						url: baseURL,
+						consumerKey: process.env.CONSUMER_KEY,
+						consumerSecret: process.env.CONSUMER_SECRET,
+						version: 'wc/v3',
+					} );
+					await api.put(
+						'settings/tax/woocommerce_tax_total_display',
+						{
+							value: 'itemized',
+						}
+					);
 
-				await test.step( 'Load cart page and confirm price display', async () => {
-					await page.goto( 'cart/' );
-					await expect(
-						page.getByRole( 'heading', {
-							name: 'Cart',
-							exact: true,
-						} )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'cell', { name: '$200.00' } )
-					).toHaveCount( 3 );
-					await expect(
-						page.getByRole( 'row', { name: 'Subtotal $200.00' } )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', { name: 'Country Tax $20.00 ' } )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', { name: 'State Tax $10.00 ' } )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', { name: 'Total $230.00 ' } )
-					).toBeVisible();
-				} );
+					await test.step( 'Load cart page and confirm price display', async () => {
+						await page.goto( 'cart/' );
+						await expect(
+							page.getByRole( 'heading', {
+								name: 'Cart',
+								exact: true,
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'cell', { name: '$200.00' } )
+						).toHaveCount( 3 );
+						await expect(
+							page.getByRole( 'row', {
+								name: 'Subtotal $200.00',
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', {
+								name: 'Country Tax $20.00 ',
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', {
+								name: 'State Tax $10.00 ',
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', { name: 'Total $230.00 ' } )
+						).toBeVisible();
+					} );
 
-				await test.step( 'Load checkout page and confirm taxes displayed', async () => {
-					await page.goto( 'checkout/' );
-					await expect(
-						page.getByRole( 'button', { name: 'Place order' } )
-					).toBeVisible();
+					await test.step( 'Load checkout page and confirm taxes displayed', async () => {
+						await page.goto( 'checkout/' );
+						await expect(
+							page.getByRole( 'button', { name: 'Place order' } )
+						).toBeVisible();
 
-					await page
-						.getByLabel( 'First name *' )
-						.first()
-						.fill( customer.billing.us.first_name );
-					await page
-						.getByLabel( 'Last name *' )
-						.first()
-						.fill( customer.billing.us.last_name );
-					await page
-						.getByPlaceholder( 'House number and street name' )
-						.first()
-						.fill( customer.billing.us.address );
-					await page
-						.getByLabel( 'Town / City *' )
-						.first()
-						.pressSequentially( customer.billing.us.city );
-					await page
-						.getByLabel( 'ZIP Code *' )
-						.first()
-						.pressSequentially( customer.billing.us.zip );
-					await page
-						.getByLabel( 'Phone *' )
-						.first()
-						.fill( customer.billing.us.phone );
-					await page
-						.getByLabel( 'Email address *' )
-						.first()
-						.fill( customer.billing.us.email );
+						await page
+							.getByLabel( 'First name *' )
+							.first()
+							.fill( customer.billing.us.first_name );
+						await page
+							.getByLabel( 'Last name *' )
+							.first()
+							.fill( customer.billing.us.last_name );
+						await page
+							.getByPlaceholder( 'House number and street name' )
+							.first()
+							.fill( customer.billing.us.address );
+						await page
+							.getByLabel( 'Town / City *' )
+							.first()
+							.pressSequentially( customer.billing.us.city );
+						await page
+							.getByLabel( 'ZIP Code *' )
+							.first()
+							.pressSequentially( customer.billing.us.zip );
+						await page
+							.getByLabel( 'Phone *' )
+							.first()
+							.fill( customer.billing.us.phone );
+						await page
+							.getByLabel( 'Email address *' )
+							.first()
+							.fill( customer.billing.us.email );
 
-					await expect(
-						page.getByRole( 'row', { name: 'Subtotal $200.00' } )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', { name: 'Country Tax $20.00' } )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', { name: 'State Tax $10.00' } )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', { name: 'City Tax $5.00' } )
-					).toBeHidden();
-					await expect(
-						page.getByRole( 'row', { name: 'Zip Tax $2.50' } )
-					).toBeHidden();
-					await expect(
-						page.getByRole( 'row', { name: 'Total $230.00 ' } )
-					).toBeVisible();
-				} );
-			} );
+						await expect(
+							page.getByRole( 'row', {
+								name: 'Subtotal $200.00',
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', {
+								name: 'Country Tax $20.00',
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', {
+								name: 'State Tax $10.00',
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', { name: 'City Tax $5.00' } )
+						).toBeHidden();
+						await expect(
+							page.getByRole( 'row', { name: 'Zip Tax $2.50' } )
+						).toBeHidden();
+						await expect(
+							page.getByRole( 'row', { name: 'Total $230.00 ' } )
+						).toBeVisible();
+					} );
+				}
+			);
 		} );
 
 		test.describe( 'Shipping Tax', () => {
@@ -959,90 +1052,94 @@ test.describe.serial(
 				} );
 			} );
 
-			test( 'checks that tax is applied to shipping as well as order', async ( {
-				page,
-			} ) => {
-				await test.step( 'Load cart page and confirm price display', async () => {
-					await page.goto( 'cart/' );
-					await expect(
-						page.getByRole( 'heading', {
-							name: 'Cart',
-							exact: true,
-						} )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'cell', {
-							name: '$230.00 (incl. tax)',
-						} )
-					).toHaveCount( 2 );
-					await expect(
-						page.getByRole( 'row', {
-							name: 'Subtotal $230.00 (incl. tax)',
-						} )
-					).toBeVisible();
+			test(
+				'checks that tax is applied to shipping as well as order',
+				{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+				async ( { page } ) => {
+					await test.step( 'Load cart page and confirm price display', async () => {
+						await page.goto( 'cart/' );
+						await expect(
+							page.getByRole( 'heading', {
+								name: 'Cart',
+								exact: true,
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'cell', {
+								name: '$230.00 (incl. tax)',
+							} )
+						).toHaveCount( 2 );
+						await expect(
+							page.getByRole( 'row', {
+								name: 'Subtotal $230.00 (incl. tax)',
+							} )
+						).toBeVisible();
 
-					await expect(
-						page.getByRole( 'cell', {
-							name: 'Flat rate: $23.00 (incl. tax',
-						} )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', {
-							name: 'Total $253.00 (includes $33.00 Shipping Tax)',
-						} )
-					).toBeVisible();
-				} );
+						await expect(
+							page.getByRole( 'cell', {
+								name: 'Flat rate: $23.00 (incl. tax',
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', {
+								name: 'Total $253.00 (includes $33.00 Shipping Tax)',
+							} )
+						).toBeVisible();
+					} );
 
-				await test.step( 'Load checkout page and confirm price display', async () => {
-					await page.goto( 'checkout/' );
-					await expect(
-						page.getByRole( 'button', { name: 'Place order' } )
-					).toBeVisible();
+					await test.step( 'Load checkout page and confirm price display', async () => {
+						await page.goto( 'checkout/' );
+						await expect(
+							page.getByRole( 'button', { name: 'Place order' } )
+						).toBeVisible();
 
-					await page
-						.getByRole( 'textbox', { name: 'First name *' } )
-						.fill( customer.billing.us.first_name );
-					await page
-						.getByRole( 'textbox', { name: 'Last name *' } )
-						.fill( customer.billing.us.last_name );
-					await page
-						.getByRole( 'textbox', { name: 'Street address *' } )
-						.fill( customer.billing.us.address );
-					await page
-						.getByRole( 'textbox', { name: 'Town / City *' } )
-						.type( customer.billing.us.city );
-					await page
-						.getByRole( 'textbox', { name: 'ZIP Code *' } )
-						.type( customer.billing.us.zip );
-					await page
-						.getByLabel( 'Phone *' )
-						.fill( customer.billing.us.phone );
-					await page
-						.getByLabel( 'Email address *' )
-						.fill( customer.billing.us.email );
+						await page
+							.getByRole( 'textbox', { name: 'First name *' } )
+							.fill( customer.billing.us.first_name );
+						await page
+							.getByRole( 'textbox', { name: 'Last name *' } )
+							.fill( customer.billing.us.last_name );
+						await page
+							.getByRole( 'textbox', {
+								name: 'Street address *',
+							} )
+							.fill( customer.billing.us.address );
+						await page
+							.getByRole( 'textbox', { name: 'Town / City *' } )
+							.type( customer.billing.us.city );
+						await page
+							.getByRole( 'textbox', { name: 'ZIP Code *' } )
+							.type( customer.billing.us.zip );
+						await page
+							.getByLabel( 'Phone *' )
+							.fill( customer.billing.us.phone );
+						await page
+							.getByLabel( 'Email address *' )
+							.fill( customer.billing.us.email );
 
-					await expect(
-						page.getByRole( 'row', {
-							name: `${ productName } × 1 $230.00 (incl. tax)`,
-						} )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', {
-							name: 'Subtotal $230.00 (incl. tax)',
-						} )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', {
-							name: 'Shipping Flat rate: $23.00 (incl. tax)',
-						} )
-					).toBeVisible();
-					await expect(
-						page.getByRole( 'row', {
-							name: 'Total $253.00 (includes $33.00 Shipping Tax)',
-						} )
-					).toBeVisible();
-				} );
-			} );
+						await expect(
+							page.getByRole( 'row', {
+								name: `${ productName } × 1 $230.00 (incl. tax)`,
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', {
+								name: 'Subtotal $230.00 (incl. tax)',
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', {
+								name: 'Shipping Flat rate: $23.00 (incl. tax)',
+							} )
+						).toBeVisible();
+						await expect(
+							page.getByRole( 'row', {
+								name: 'Total $253.00 (includes $33.00 Shipping Tax)',
+							} )
+						).toBeVisible();
+					} );
+				}
+			);
 		} );
 	}
 );
