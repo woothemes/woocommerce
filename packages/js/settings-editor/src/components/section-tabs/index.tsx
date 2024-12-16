@@ -30,11 +30,7 @@ export const SectionTabs = ( {
 	} = useLocation();
 
 	if ( tabs.length <= 1 ) {
-		return (
-			<>
-				<div>{ children }</div>
-			</>
-		);
+		return <div>{ children }</div>;
 	}
 
 	const onSelect = ( tabName: string ) => {
