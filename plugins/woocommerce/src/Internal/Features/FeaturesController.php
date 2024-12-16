@@ -299,7 +299,6 @@ class FeaturesController {
 						'Enable modern email design and live preview for transactional emails',
 						'woocommerce'
 					),
-					'disable_ui'  => true,
 				),
 			);
 

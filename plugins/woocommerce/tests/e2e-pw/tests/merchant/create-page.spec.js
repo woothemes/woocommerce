@@ -16,7 +16,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Can create a new page',
-	{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
+	{ tag: [ tags.GUTENBERG, tags.WP_CORE ] },
 	() => {
 		// eslint-disable-next-line playwright/expect-expect
 		test( 'can create new page', async ( { page, testPage } ) => {
