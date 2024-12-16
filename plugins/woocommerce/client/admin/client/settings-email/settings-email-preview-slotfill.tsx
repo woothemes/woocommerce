@@ -3,7 +3,7 @@
  */
 import { createSlotFill, SelectControl, Spinner } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from '@wordpress/element';
 import { debounce } from 'lodash';
 
 /**
