@@ -62,6 +62,7 @@ export const providersStub: PaymentProvider[] = [
 		],
 		state: {
 			enabled: false,
+			account_connected: false,
 			needs_setup: false,
 			test_mode: true,
 			dev_mode: false,
@@ -74,6 +75,11 @@ export const providersStub: PaymentProvider[] = [
 			},
 		},
 		onboarding: {
+			state: {
+				started: false,
+				completed: false,
+				test_mode: true,
+			},
 			_links: {
 				onboard: {
 					href: 'http://localhost:8082/wp-admin/admin.php?page=wc-admin&path=/payments/onboarding',
@@ -165,6 +171,7 @@ export const offlinePaymentGatewaysStub: OfflinePaymentMethodProvider[] = [
 		supports: [ 'products' ],
 		state: {
 			enabled: true,
+			account_connected: true,
 			needs_setup: false,
 			test_mode: false,
 			dev_mode: false,
@@ -177,6 +184,11 @@ export const offlinePaymentGatewaysStub: OfflinePaymentMethodProvider[] = [
 			},
 		},
 		onboarding: {
+			state: {
+				started: true,
+				completed: true,
+				test_mode: false,
+			},
 			_links: {
 				onboard: {
 					href: 'http://localhost:8082/wp-admin/admin.php?page=wc-settings&tab=checkout&section=bacs',
@@ -201,6 +213,7 @@ export const offlinePaymentGatewaysStub: OfflinePaymentMethodProvider[] = [
 		supports: [ 'products' ],
 		state: {
 			enabled: true,
+			account_connected: true,
 			needs_setup: false,
 			test_mode: false,
 			dev_mode: false,
@@ -213,6 +226,11 @@ export const offlinePaymentGatewaysStub: OfflinePaymentMethodProvider[] = [
 			},
 		},
 		onboarding: {
+			state: {
+				started: true,
+				completed: true,
+				test_mode: false,
+			},
 			_links: {
 				onboard: {
 					href: 'http://localhost:8082/wp-admin/admin.php?page=wc-settings&tab=checkout&section=cheque',
@@ -237,6 +255,7 @@ export const offlinePaymentGatewaysStub: OfflinePaymentMethodProvider[] = [
 		supports: [ 'products' ],
 		state: {
 			enabled: true,
+			account_connected: true,
 			needs_setup: false,
 			test_mode: false,
 			dev_mode: false,
@@ -249,6 +268,11 @@ export const offlinePaymentGatewaysStub: OfflinePaymentMethodProvider[] = [
 			},
 		},
 		onboarding: {
+			state: {
+				started: true,
+				completed: true,
+				test_mode: false,
+			},
 			_links: {
 				onboard: {
 					href: 'http://localhost:8082/wp-admin/admin.php?page=wc-settings&tab=checkout&section=cod',

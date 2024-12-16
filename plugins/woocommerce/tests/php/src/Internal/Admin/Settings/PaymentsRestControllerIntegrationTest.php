@@ -156,9 +156,13 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 			$mock_gateways = array(
 				'woocommerce_payments' => array(
 					'enabled'                     => false,
+					'account_connected'           => false,
 					'needs_setup'                 => true,
 					'test_mode'                   => true,
 					'dev_mode'                    => true,
+					'onboarding_started'          => false,
+					'onboarding_completed'        => false,
+					'onboarding_test_mode'        => false,
 					'plugin_slug'                 => 'woocommerce-payments',
 					'plugin_file'                 => 'woocommerce-payments/woocommerce-payments.php',
 					'recommended_payment_methods' => array(
@@ -197,6 +201,9 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 	 */
 	public function tearDown(): void {
 		remove_filter( 'pre_http_request', $this->incentives_response_mock_ref );
+
+		$this->unmock_payment_gateways();
+		delete_option( 'woocommerce_gateway_order' );
 	}
 
 	/**
@@ -598,6 +605,8 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'state', $provider, 'Provider (gateway) `state` entry is missing' );
 		$this->assertArrayHasKey( 'enabled', $provider['state'], 'Provider (gateway) `state[enabled]` entry is missing' );
 		$this->assertFalse( $provider['state']['enabled'] );
+		$this->assertArrayHasKey( 'account_connected', $provider['state'], 'Provider (gateway) `state[account_connected]` entry is missing' );
+		$this->assertFalse( $provider['state']['account_connected'] );
 		$this->assertArrayHasKey( 'needs_setup', $provider['state'], 'Provider (gateway) `state[needs_setup]` entry is missing' );
 		$this->assertTrue( $provider['state']['needs_setup'] );
 		$this->assertArrayHasKey( 'test_mode', $provider['state'], 'Provider (gateway) `state[test_mode]` entry is missing' );
@@ -608,6 +617,13 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( '_links', $provider['management'], 'Provider (gateway) `management[_links]` entry is missing' );
 		$this->assertArrayHasKey( 'settings', $provider['management']['_links'], 'Provider (gateway) `management[_links][settings]` entry is missing' );
 		$this->assertArrayHasKey( 'onboarding', $provider, 'Provider (gateway) `onboarding` entry is missing' );
+		$this->assertArrayHasKey( 'state', $provider['onboarding'], 'Provider (gateway) `onboarding[state]` entry is missing' );
+		$this->assertArrayHasKey( 'started', $provider['onboarding']['state'], 'Provider (gateway) `onboarding[state][started]` entry is missing' );
+		$this->assertFalse( $provider['onboarding']['state']['started'] );
+		$this->assertArrayHasKey( 'completed', $provider['onboarding']['state'], 'Provider (gateway) `onboarding[state][completed]` entry is missing' );
+		$this->assertFalse( $provider['onboarding']['state']['completed'] );
+		$this->assertArrayHasKey( 'test_mode', $provider['onboarding']['state'], 'Provider (gateway) `onboarding[state][test_mode]` entry is missing' );
+		$this->assertFalse( $provider['onboarding']['state']['test_mode'] );
 		$this->assertArrayHasKey( '_links', $provider['onboarding'], 'Provider (gateway) `onboarding[_links]` entry is missing' );
 		$this->assertArrayHasKey( 'onboard', $provider['onboarding']['_links'], 'Provider (gateway) `onboarding[_links][onboard]` entry is missing' );
 		$this->assertArrayHasKey( 'recommended_payment_methods', $provider['onboarding'], 'Provider (gateway) `onboarding[recommended_payment_methods]` entry is missing' );
@@ -702,6 +718,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$this->assertCount( 1, $provider['links'] );
 		$this->assertArrayHasKey( 'state', $provider, 'Provider (gateway) `state` entry is missing' );
 		$this->assertArrayHasKey( 'enabled', $provider['state'], 'Provider (gateway) `state[enabled]` entry is missing' );
+		$this->assertArrayHasKey( 'account_connected', $provider['state'], 'Provider (gateway) `state[account_connected]` entry is missing' );
 		$this->assertArrayHasKey( 'needs_setup', $provider['state'], 'Provider (gateway) `state[needs_setup]` entry is missing' );
 		$this->assertArrayHasKey( 'test_mode', $provider['state'], 'Provider (gateway) `state[test_mode]` entry is missing' );
 		$this->assertArrayHasKey( 'dev_mode', $provider['state'], 'Provider (gateway) `state[dev_mode]` entry is missing' );
@@ -709,6 +726,10 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( '_links', $provider['management'], 'Provider (gateway) `management[_links]` entry is missing' );
 		$this->assertArrayHasKey( 'settings', $provider['management']['_links'], 'Provider (gateway) `management[_links][settings]` entry is missing' );
 		$this->assertArrayHasKey( 'onboarding', $provider, 'Provider (gateway) `onboarding` entry is missing' );
+		$this->assertArrayHasKey( 'state', $provider['onboarding'], 'Provider (gateway) `onboarding[state]` entry is missing' );
+		$this->assertArrayHasKey( 'started', $provider['onboarding']['state'], 'Provider (gateway) `onboarding[state][started]` entry is missing' );
+		$this->assertArrayHasKey( 'completed', $provider['onboarding']['state'], 'Provider (gateway) `onboarding[state][completed]` entry is missing' );
+		$this->assertArrayHasKey( 'test_mode', $provider['onboarding']['state'], 'Provider (gateway) `onboarding[state][test_mode]` entry is missing' );
 		$this->assertArrayHasKey( '_links', $provider['onboarding'], 'Provider (gateway) `onboarding[_links]` entry is missing' );
 		$this->assertArrayHasKey( 'onboard', $provider['onboarding']['_links'], 'Provider (gateway) `onboarding[_links][onboard]` entry is missing' );
 		$this->assertArrayHasKey( 'recommended_payment_methods', $provider['onboarding'], 'Provider (gateway) `onboarding[recommended_payment_methods]` entry is missing' );
@@ -724,8 +745,8 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'description', $offline_pm, 'Offline payment method `description` entry is missing' );
 		$this->assertArrayHasKey( 'state', $offline_pm, 'Offline payment method `state` entry is missing' );
 		$this->assertArrayHasKey( 'enabled', $offline_pm['state'], 'Offline payment method `state[enabled]` entry is missing' );
+		$this->assertArrayHasKey( 'account_connected', $offline_pm['state'], 'Offline payment method `state[account_connected]` entry is missing' );
 		$this->assertArrayHasKey( 'needs_setup', $offline_pm['state'], 'Offline payment method `state[needs_setup]` entry is missing' );
-		$this->assertArrayHasKey( 'management', $offline_pm, 'Offline payment method `management` entry is missing' );
 		$this->assertArrayHasKey( 'icon', $offline_pm, 'Offline payment method `icon` entry is missing' );
 		$this->assertArrayHasKey( 'plugin', $offline_pm, 'Offline payment method `plugin` entry is missing' );
 		$this->assertArrayHasKey( '_type', $offline_pm['plugin'], 'Offline payment method `plugin[_type]` entry is missing' );
@@ -736,6 +757,15 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$this->assertSame( 'woocommerce/woocommerce', $offline_pm['plugin']['file'] ); // Skips the .php extension.
 		$this->assertArrayHasKey( 'status', $offline_pm['plugin'], 'Offline payment method `plugin[status]` entry is missing' );
 		$this->assertSame( PaymentProviders::EXTENSION_ACTIVE, $offline_pm['plugin']['status'] );
+		$this->assertArrayHasKey( 'management', $offline_pm, 'Offline payment method `management` entry is missing' );
+		$this->assertArrayHasKey( '_links', $offline_pm['management'], 'Offline payment method `management[_links]` entry is missing' );
+		$this->assertArrayHasKey( 'settings', $offline_pm['management']['_links'], 'Offline payment method `management[_links][settings]` entry is missing' );
+		$this->assertArrayHasKey( 'onboarding', $offline_pm, 'Offline payment method `onboarding` entry is missing' );
+		$this->assertArrayHasKey( 'state', $offline_pm['onboarding'], 'Offline payment method `onboarding[state]` entry is missing' );
+		$this->assertArrayHasKey( 'started', $offline_pm['onboarding']['state'], 'Offline payment method `onboarding[state][started]` entry is missing' );
+		$this->assertArrayHasKey( 'test_mode', $offline_pm['onboarding']['state'], 'Offline payment method `onboarding[state][test_mode]` entry is missing' );
+		$this->assertArrayHasKey( '_links', $offline_pm['onboarding'], 'Offline payment method `onboarding[_links]` entry is missing' );
+		$this->assertArrayHasKey( 'onboard', $offline_pm['onboarding']['_links'], 'Offline payment method `onboarding[_links][onboard]` entry is missing' );
 
 		// Assert that the suggestion categories have all the details.
 		$suggestion_category = $data['suggestion_categories'][0];
@@ -746,8 +776,6 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 
 		// Clean up.
 		remove_filter( 'user_has_cap', $filter_callback );
-		$this->unmock_payment_gateways();
-		delete_option( 'woocommerce_gateway_order' );
 	}
 
 	/**
@@ -1003,8 +1031,6 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 
 		// Clean up.
 		remove_filter( 'user_has_cap', $filter_callback );
-		$this->unmock_payment_gateways();
-		delete_option( 'woocommerce_gateway_order' );
 		delete_user_meta( get_current_user_id(), Incentive::PREFIX . 'dismissed' );
 	}
 
@@ -1070,8 +1096,6 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 
 		// Clean up.
 		remove_filter( 'user_has_cap', $filter_callback );
-		$this->unmock_payment_gateways();
-		delete_option( 'woocommerce_gateway_order' );
 		delete_user_meta( get_current_user_id(), Incentive::PREFIX . 'dismissed' );
 	}
 
