@@ -273,8 +273,8 @@ a.added_to_cart {
 	* Cart specific
 	*/
 	.woocommerce-cart-form {
-		.product-emove {
-			// Decrease width of the product emove column.
+		.product-remove {
+			// Decrease width of the product remove column.
 			width: 1em;
 		}
 
@@ -303,7 +303,7 @@ a.added_to_cart {
 		}
 
 		@media only screen and ( max-width: 768px ) {
-			.product-emove {
+			.product-remove {
 				width: auto;
 			}
 
@@ -383,7 +383,7 @@ a.added_to_cart {
 		}
 
 		li {
-			// emove default list styling.
+			// Remove default list styling.
 			list-style: none;
 			padding: 1em 0;
 
