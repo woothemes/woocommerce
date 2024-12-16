@@ -234,11 +234,10 @@
 					"testType": "e2e",
 					"command": "test:e2e:with-env gutenberg-stable",
 					"shardingArguments": [
-						"--shard=1/5",
-						"--shard=2/5",
-						"--shard=3/5",
-						"--shard=4/5",
-						"--shard=5/5"
+						"--shard=1/4",
+						"--shard=2/4",
+						"--shard=3/4",
+						"--shard=4/4"
 					],
 					"changes": [ 
 						"tests/e2e-pw/**"
@@ -262,11 +261,10 @@
 					"testType": "e2e",
 					"command": "test:e2e:with-env gutenberg-nightly",
 					"shardingArguments": [
-						"--shard=1/5",
-						"--shard=2/5",
-						"--shard=3/5",
-						"--shard=4/5",
-						"--shard=5/5"
+						"--shard=1/4",
+						"--shard=2/4",
+						"--shard=3/4",
+						"--shard=4/4"
 					],
 					"changes": [
 						"tests/e2e-pw/**"
@@ -333,7 +331,10 @@
 					"name": "Core e2e tests - WooCommerce Shipping & Tax",
 					"testType": "e2e",
 					"command": "test:e2e:with-env woocommerce-services",
-					"shardingArguments": [],
+					"shardingArguments": [
+						"--shard=1/2",
+						"--shard=2/2"
+					],
 					"changes": [
 						"tests/e2e-pw/**"
 					],
