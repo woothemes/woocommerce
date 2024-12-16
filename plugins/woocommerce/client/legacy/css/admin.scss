@@ -3653,6 +3653,10 @@ table.wp-list-table {
 	.column-product_type {
 		width: 48px;
 		text-align: left !important;
+
+		a:focus {
+			box-shadow: none;
+		}
 	}
 
 	.column-customer_message,
@@ -5880,6 +5884,17 @@ img.help_tip {
 		/* Warning asterisk (indicates if there is a problem with a downloadable file). */
 		span.disabled {
 			color: var(--wc-red);
+		}
+	}
+}
+
+.woocommerce_variation .woocommerce_variable_attributes .dimensions_field.form-row {
+	.wrap {
+		display: flex;
+		gap: 12px;
+
+		input {
+			width: 33.33%;
 		}
 	}
 }

@@ -1,6 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
+//todo audit follow-up: possible duplication with create-shipping-classes.spec.js and create-shipping-zones.spec.js
 test.describe( 'WooCommerce Shipping Settings', () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
