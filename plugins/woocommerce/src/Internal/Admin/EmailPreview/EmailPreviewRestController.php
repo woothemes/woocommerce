@@ -61,20 +61,8 @@ class EmailPreviewRestController extends RestApiControllerBase {
 					'methods'             => \WP_REST_Server::CREATABLE,
 					'callback'            => fn( $request ) => $this->send_email_preview( $request ),
 					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
-					'args'                => array(
-						'type'  => array(
-							'description' => __( 'The email type to preview.', 'woocommerce' ),
-							'type'        => 'string',
-							'required'    => true,
-						),
-						'email' => array(
-							'description'       => __( 'Email address to send the email preview to.', 'woocommerce' ),
-							'type'              => 'string',
-							'format'            => 'email',
-							'required'          => true,
-							'validate_callback' => 'rest_validate_request_arg',
-						),
-					),
+					'args'                => $this->get_args_for_send_preview(),
+					'schema'              => $this->get_schema_with_message(),
 				),
 			)
 		);
@@ -85,15 +73,12 @@ class EmailPreviewRestController extends RestApiControllerBase {
 			array(
 				array(
 					'methods'             => \WP_REST_Server::READABLE,
-					'callback'            => fn( $request ) => $this->get_preview_subject( $request ),
-					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
-					'args'                => array(
-						'type' => array(
-							'description' => __( 'The email type to get subject for.', 'woocommerce' ),
-							'type'        => 'string',
-							'required'    => true,
-						),
+					'callback'            => fn() => array(
+						'subject' => $this->email_preview->get_subject(),
 					),
+					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
+					'args'                => $this->get_args_for_preview_subject(),
+					'schema'              => $this->get_schema_for_preview_subject(),
 				),
 			)
 		);
@@ -106,43 +91,153 @@ class EmailPreviewRestController extends RestApiControllerBase {
 					'methods'             => \WP_REST_Server::CREATABLE,
 					'callback'            => fn( $request ) => $this->save_transient( $request ),
 					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
-					'args'                => array(
-						'key'   => array(
-							'required'          => true,
-							'type'              => 'string',
-							'description'       => 'The key for the transient. Must be one of the allowed options.',
-							'validate_callback' => function ( $key ) {
-								if ( ! in_array( $key, EmailPreview::get_all_email_settings_ids(), true ) ) {
-									return new \WP_Error(
-										'woocommerce_rest_not_allowed_key',
-										sprintf( 'The provided key "%s" is not allowed.', $key ),
-										array( 'status' => 400 ),
-									);
-								}
-								return true;
-							},
-							'sanitize_callback' => 'sanitize_text_field',
-						),
-						'value' => array(
-							'required'          => true,
-							'type'              => 'string',
-							'description'       => 'The value to be saved for the transient.',
-							'validate_callback' => 'rest_validate_request_arg',
-							'sanitize_callback' => function ( $value, $request ) {
-								$key = $request->get_param( 'key' );
-								if (
-									'woocommerce_email_footer_text' === $key
-									|| preg_match( '/_additional_content$/', $key )
-								) {
-									return wp_kses_post( trim( $value ) );
-								}
-								return sanitize_text_field( $value );
-							},
-						),
-					),
+					'args'                => $this->get_args_for_save_transient(),
+					'schema'              => $this->get_schema_with_message(),
 				),
 			)
 		);
+	}
+
+	/**
+	 * Get the accepted arguments for the POST send-preview request.
+	 *
+	 * @return array[]
+	 */
+	private function get_args_for_send_preview() {
+		return array(
+			'type'  => array(
+				'description'       => __( 'The email type to preview.', 'woocommerce' ),
+				'type'              => 'string',
+				'required'          => true,
+				'validate_callback' => fn( $key ) => $this->validate_email_type( $key ),
+			),
+			'email' => array(
+				'description'       => __( 'Email address to send the email preview to.', 'woocommerce' ),
+				'type'              => 'string',
+				'format'            => 'email',
+				'required'          => true,
+				'validate_callback' => 'rest_validate_request_arg',
+			),
+		);
+	}
+
+	/**
+	 * Get the accepted arguments for the GET preview-subject request.
+	 *
+	 * @return array[]
+	 */
+	private function get_args_for_preview_subject() {
+		return array(
+			'type' => array(
+				'description'       => __( 'The email type to get subject for.', 'woocommerce' ),
+				'type'              => 'string',
+				'required'          => true,
+				'validate_callback' => fn( $key ) => $this->validate_email_type( $key ),
+			),
+		);
+	}
+
+	/**
+	 * Get the accepted arguments for the POST save-transient request.
+	 *
+	 * @return array[]
+	 */
+	private function get_args_for_save_transient() {
+		return array(
+			'key'   => array(
+				'required'          => true,
+				'type'              => 'string',
+				'description'       => 'The key for the transient. Must be one of the allowed options.',
+				'validate_callback' => function ( $key ) {
+					if ( ! in_array( $key, EmailPreview::get_all_email_settings_ids(), true ) ) {
+						return new \WP_Error(
+							'woocommerce_rest_not_allowed_key',
+							sprintf( 'The provided key "%s" is not allowed.', $key ),
+							array( 'status' => 400 ),
+						);
+					}
+					return true;
+				},
+				'sanitize_callback' => 'sanitize_text_field',
+			),
+			'value' => array(
+				'required'          => true,
+				'type'              => 'string',
+				'description'       => 'The value to be saved for the transient.',
+				'validate_callback' => 'rest_validate_request_arg',
+				'sanitize_callback' => function ( $value, $request ) {
+					$key = $request->get_param( 'key' );
+					if (
+						'woocommerce_email_footer_text' === $key
+						|| preg_match( '/_additional_content$/', $key )
+					) {
+						return wp_kses_post( trim( $value ) );
+					}
+					return sanitize_text_field( $value );
+				},
+			),
+		);
+	}
+
+	/**
+	 * Get the schema for the POST send-preview and save-transient requests.
+	 *
+	 * @return array[]
+	 */
+	private function get_schema_with_message() {
+		return array(
+			'$schema'    => 'http://json-schema.org/draft-04/schema#',
+			'title'      => 'email-preview-with-message',
+			'type'       => 'object',
+			'properties' => array(
+				'message' => array(
+					'description' => __( 'A message indicating that the action completed successfully.', 'woocommerce' ),
+					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+					'readonly'    => true,
+				),
+			),
+		);
+	}
+
+	/**
+	 * Get the schema for the GET preview_subject request.
+	 *
+	 * @return array[]
+	 */
+	private function get_schema_for_preview_subject() {
+		return array(
+			'$schema'    => 'http://json-schema.org/draft-04/schema#',
+			'title'      => 'email-preview-subject',
+			'type'       => 'object',
+			'properties' => array(
+				'subject' => array(
+					'description' => __( 'A subject for provided email type after filters are applied and placeholders replaced.', 'woocommerce' ),
+					'type'        => 'string',
+					'context'     => array( 'view' ),
+					'readonly'    => true,
+				),
+			),
+		);
+	}
+
+	/**
+	 * Validate the email type.
+	 *
+	 * @param string $email_type The email type to validate.
+	 * @return bool|WP_Error True if the email type is valid, otherwise a WP_Error object.
+	 */
+	private function validate_email_type( string $email_type ) {
+		try {
+			$this->email_preview->set_email_type( $email_type );
+		} catch ( \InvalidArgumentException $e ) {
+			return new WP_Error(
+				'woocommerce_rest_invalid_email_type',
+				__( 'Invalid email type.', 'woocommerce' ),
+				array( 'status' => 400 ),
+			);
+		}
+		return true;
 	}
 
 	/**
@@ -162,17 +257,6 @@ class EmailPreviewRestController extends RestApiControllerBase {
 	 * @return array|WP_Error Request response or an error.
 	 */
 	public function send_email_preview( WP_REST_Request $request ) {
-		$email_type = $request->get_param( 'type' );
-		try {
-			$this->email_preview->set_email_type( $email_type );
-		} catch ( \InvalidArgumentException $e ) {
-			return new WP_Error(
-				'woocommerce_rest_invalid_email_type',
-				__( 'Invalid email type.', 'woocommerce' ),
-				array( 'status' => 400 ),
-			);
-		}
-
 		$email_address = $request->get_param( 'email' );
 		$email_content = $this->email_preview->render();
 		$email_subject = $this->email_preview->get_subject();
@@ -189,29 +273,6 @@ class EmailPreviewRestController extends RestApiControllerBase {
 			'woocommerce_rest_email_preview_not_sent',
 			__( 'Error sending test email. Please try again.', 'woocommerce' ),
 			array( 'status' => 500 )
-		);
-	}
-
-	/**
-	 * Handle the GET /settings/email/preview-subject.
-	 *
-	 * @param WP_REST_Request $request The received request.
-	 * @return array|WP_Error Request response or an error.
-	 */
-	public function get_preview_subject( WP_REST_Request $request ) {
-		$email_type = $request->get_param( 'type' );
-		try {
-			$this->email_preview->set_email_type( $email_type );
-		} catch ( \InvalidArgumentException $e ) {
-			return new WP_Error(
-				'woocommerce_rest_invalid_email_type',
-				__( 'Invalid email type.', 'woocommerce' ),
-				array( 'status' => 400 ),
-			);
-		}
-
-		return array(
-			'subject' => $this->email_preview->get_subject(),
 		);
 	}
 

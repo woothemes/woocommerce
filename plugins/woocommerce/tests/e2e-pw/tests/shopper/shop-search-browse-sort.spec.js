@@ -3,6 +3,7 @@
  */
 import { test, expect, tags } from '../../fixtures/fixtures';
 import { getFakeCategory, getFakeProduct } from '../../utils/data';
+const { setComingSoon } = require( '../../utils/coming-soon' );
 
 test.describe(
 	'Search, browse by categories and sort items in the shop',
@@ -11,7 +12,8 @@ test.describe(
 		let categories = [];
 		let products = [];
 
-		test.beforeAll( async ( { api } ) => {
+		test.beforeAll( async ( { baseURL, api } ) => {
+			await setComingSoon( { baseURL, enabled: 'no' } );
 			await api
 				.post( 'products/categories/batch', {
 					create: [
