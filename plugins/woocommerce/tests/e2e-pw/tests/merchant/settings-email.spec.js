@@ -264,7 +264,7 @@ test.describe( 'WooCommerce Email Settings', () => {
 				0
 			);
 
-			// Change subject and observed it's changed in the preview
+			// Change subject and observe it's changed in the preview
 			const newSubject = 'New subject';
 			const subjectId = 'woocommerce_customer_processing_order_subject';
 
