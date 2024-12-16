@@ -103,7 +103,7 @@
 		form.cart {
 			div.quantity {
 				display: inline-block;
-				float: none; // emove float set by WC core.
+				float: none; // Remove float set by WC core.
 				vertical-align: middle;
 
 				// Adjust positioning of quantity selector and button.
@@ -115,7 +115,7 @@
 			button[name="add-to-cart"],
 			button.single_add_to_cart_button {
 				display: inline-block;
-				float: none; // emove float set by WC core.
+				float: none; // Remove float set by WC core.
 				margin-top: 0;
 				margin-bottom: 0;
 				vertical-align: middle;
