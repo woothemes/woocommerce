@@ -114,6 +114,12 @@ jQuery( function ( $ ) {
 				describedBy +
 				'"></button>'
 		);
+
+		$( this ).on( 'keydown', function ( event ) {
+			if ( 'Enter' === event.key ) {
+				event.preventDefault();
+			}
+		} );
 	} );
 
 	$( '.show-password-input' ).on( 'click', function ( event ) {
@@ -143,6 +149,15 @@ jQuery( function ( $ ) {
 		}
 
 		$( this ).siblings( 'input' ).focus();
+	} );
+
+	$( '#customer_login .password-input' ).on( 'keydown', function ( event ) {
+		if ( 'Enter' === event.key ) {
+			$( this )
+				.closest( 'form' )
+				.find( '[type=submit]' )
+				.click();
+		}
 	} );
 
 	$( 'a.coming-soon-footer-banner-dismiss' ).on( 'click', function ( e ) {
