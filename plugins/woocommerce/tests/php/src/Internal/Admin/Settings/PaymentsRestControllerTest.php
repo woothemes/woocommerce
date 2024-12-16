@@ -1105,6 +1105,11 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 
 		if ( ! is_null( $location ) ) {
 			$mocker = $mocker->with( $location );
+
+			$this->mock_service
+				->expects( $this->any() )
+				->method( 'get_country' )
+				->willReturn( $location );
 		}
 
 		$mocker->willReturn(

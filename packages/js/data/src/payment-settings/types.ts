@@ -10,8 +10,9 @@ export interface PluginData {
 	status: 'installed' | 'active' | 'not_installed';
 }
 
-export interface StateData {
+export interface PaymentProviderState {
 	enabled: boolean;
+	account_connected: boolean;
 	needs_setup: boolean;
 	test_mode: boolean;
 	dev_mode: boolean;
@@ -61,6 +62,12 @@ export type RecommendedPaymentMethod = {
 	extraIcon: string;
 };
 
+export type PaymentProviderOnboardingState = {
+	started: boolean;
+	completed: boolean;
+	test_mode: boolean;
+};
+
 // General payment provider type.
 export type PaymentProvider = {
 	id: string;
@@ -74,10 +81,14 @@ export type PaymentProvider = {
 	plugin: PluginData;
 	short_description?: string;
 	management?: ManagementData;
-	state?: StateData;
+	state?: PaymentProviderState;
 	links?: PaymentGatewayLink[];
 	onboarding?: {
-		recommended_payment_methods: RecommendedPaymentMethod[];
+		state: PaymentProviderOnboardingState;
+		_links: {
+			onboard: LinkData;
+		};
+		recommended_payment_methods?: RecommendedPaymentMethod[];
 	};
 	tags?: string[];
 	_suggestion_id?: string;
@@ -89,20 +100,33 @@ export type PaymentProvider = {
 export type PaymentGatewayProvider = PaymentProvider & {
 	supports: string[];
 	management: ManagementData;
-	state: StateData;
+	state: PaymentProviderState;
+	onboarding: {
+		state: PaymentProviderOnboardingState;
+		_links: {
+			onboard: LinkData;
+		};
+		recommended_payment_methods: RecommendedPaymentMethod[];
+	};
 };
 
 // Offline payment method provider type.
 export type OfflinePaymentMethodProvider = PaymentProvider & {
 	supports: string[];
 	management: ManagementData;
-	state: StateData;
+	state: PaymentProviderState;
+	onboarding: {
+		state: PaymentProviderOnboardingState;
+		_links: {
+			onboard: LinkData;
+		};
+	};
 };
 
 // Offline payment methods group provider type.
 export type OfflinePmsGroupProvider = PaymentProvider & {
 	management: ManagementData;
-	state: StateData;
+	state: PaymentProviderState;
 };
 
 export type PaymentExtensionSuggestionProvider = PaymentProvider & {
