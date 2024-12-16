@@ -64,6 +64,7 @@ describe( 'Plugins Component', () => {
 		],
 		pluginsSelected: [],
 		pluginsInstallationErrors: [],
+		pluginsTruncated: [],
 	};
 	const navigationProgress = 80;
 
