@@ -342,9 +342,9 @@ class WC_Product_Variable_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 			'visible' => array(),
 		);
 
-		$this->assertTrue(
+		$this->assertFalse(
 			$this->invokeMethod( $data_store, 'validate_children_data', array( $empty_children_no_version, $current_version ) ),
-			'Empty children data without version should pass validation as could be new product'
+			'Empty children data without version should fail validation as likely corrupt'
 		);
 
 		// Test uninitialized children data.
