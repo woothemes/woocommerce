@@ -8,8 +8,10 @@ import {
 	PAYMENT_SETTINGS_STORE_NAME,
 	PaymentProvider,
 } from '@woocommerce/data';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
+import apiFetch from '@wordpress/api-fetch';
+import { getHistory, getNewPath } from '@woocommerce/navigation';
 
 /**
  * Internal dependencies
@@ -19,10 +21,15 @@ import './settings-payments-body.scss';
 import { createNoticesFromResponse } from '~/lib/notices';
 import { OtherPaymentGateways } from '~/settings-payments/components/other-payment-gateways';
 import { PaymentGateways } from '~/settings-payments/components/payment-gateways';
+import { IncentiveBanner } from '~/settings-payments/components/incentive-banner';
+import { IncentiveModal } from '~/settings-payments/components/incentive-modal';
 import {
-	getWooPaymentsTestDriveAccountLink,
-	isWooPayments,
 	providersContainWooPaymentsInTestMode,
+	providersContainWooPaymentsInDevMode,
+	isIncentiveDismissedInContext,
+	isSwitchIncentive,
+	isWooPayments,
+	getWooPaymentsTestDriveAccountLink,
 } from '~/settings-payments/utils';
 import { WooPaymentsPostSandboxAccountSetupModal } from '~/settings-payments/components/modals';
 
@@ -39,8 +46,10 @@ export const SettingsPaymentsMain = () => {
 		PAYMENT_SETTINGS_STORE_NAME
 	);
 	const [ errorMessage, setErrorMessage ] = useState< string | null >( null );
-	const [ livePaymentsModalVisible, setLivePaymentsModalVisible ] =
-		useState( false );
+	const [
+		postSandboxAccountSetupModalVisible,
+		setPostSandboxAccountSetupModalVisible,
+	] = useState( false );
 
 	const [ storeCountry, setStoreCountry ] = useState< string | null >(
 		window.wcSettings?.admin?.woocommerce_payments_nox_profile
@@ -85,7 +94,7 @@ export const SettingsPaymentsMain = () => {
 			urlParams.get( 'wcpay-sandbox-success' ) === 'true';
 
 		if ( isSandboxOnboardedSuccessful ) {
-			setLivePaymentsModalVisible( true );
+			setPostSandboxAccountSetupModalVisible( true );
 		}
 	}, [] );
 
@@ -114,36 +123,26 @@ export const SettingsPaymentsMain = () => {
 			};
 		} );
 
-	const setupPlugin = useCallback(
-		( id, slug ) => {
-			if ( installingPlugin ) {
-				return;
-			}
-			setInstallingPlugin( id );
-			installAndActivatePlugins( [ slug ] )
-				.then( ( response ) => {
-					createNoticesFromResponse( response );
-					if ( isWooPayments( id ) ) {
-						window.location.href =
-							getWooPaymentsTestDriveAccountLink();
-						return;
-					}
-					invalidateResolutionForStoreSelector(
-						'getPaymentProviders'
-					);
-					setInstallingPlugin( null );
-				} )
-				.catch( ( response: { errors: Record< string, string > } ) => {
-					createNoticesFromResponse( response );
-					setInstallingPlugin( null );
-				} );
+	const dismissIncentive = useCallback(
+		( dismissHref: string, context: string ) => {
+			// The dismissHref is the full URL to dismiss the incentive.
+			apiFetch( {
+				url: dismissHref,
+				method: 'POST',
+				data: {
+					context,
+				},
+			} );
 		},
-		[
-			installingPlugin,
-			installAndActivatePlugins,
-			invalidateResolutionForStoreSelector,
-		]
+		[]
 	);
+
+	const acceptIncentive = useCallback( ( id: string ) => {
+		apiFetch( {
+			path: `/wc-analytics/admin/notes/experimental-activate-promo/${ id }`,
+			method: 'POST',
+		} );
+	}, [] );
 
 	function handleOrderingUpdate( sorted: PaymentProvider[] ) {
 		// Extract the existing _order values in the sorted order
@@ -163,8 +162,99 @@ export const SettingsPaymentsMain = () => {
 		setSortedProviders( sorted );
 	}
 
+	const incentiveProvider = providers.find(
+		( provider ) => '_incentive' in provider
+	);
+	const incentive = incentiveProvider ? incentiveProvider._incentive : null;
+
+	const setupPlugin = useCallback(
+		( id, slug, onboardingUrl: string | null ) => {
+			if ( installingPlugin ) {
+				return;
+			}
+
+			// A fail-safe to ensure that the onboarding URL is set for Woo Payments.
+			// Note: We should get rid this sooner rather than later!
+			if ( ! onboardingUrl && isWooPayments( id ) ) {
+				onboardingUrl = getWooPaymentsTestDriveAccountLink();
+			}
+
+			setInstallingPlugin( id );
+			installAndActivatePlugins( [ slug ] )
+				.then( async ( response ) => {
+					createNoticesFromResponse( response );
+					invalidateResolutionForStoreSelector(
+						'getPaymentProviders'
+					);
+
+					// Wait for the state update and fetch the latest providers.
+					const updatedProviders = await resolveSelect(
+						PAYMENT_SETTINGS_STORE_NAME
+					).getPaymentProviders( storeCountry );
+
+					// Find the matching provider the updated list.
+					const updatedProvider = updatedProviders.find(
+						( provider ) =>
+							provider.id === id ||
+							provider?._suggestion_id === id || // For suggestions that were replaced by a gateway.
+							provider.plugin.slug === slug // Last resort to find the provider.
+					);
+
+					// If the installed and/or activated extension has recommended payment methods,
+					// redirect to the payment methods page.
+					if (
+						(
+							updatedProvider?.onboarding
+								?.recommended_payment_methods ?? []
+						).length > 0
+					) {
+						const history = getHistory();
+						history.push( getNewPath( {}, '/payment-methods' ) );
+
+						setInstallingPlugin( null );
+						return;
+					}
+
+					setInstallingPlugin( null );
+
+					if ( onboardingUrl ) {
+						window.location.href = onboardingUrl;
+					}
+				} )
+				.catch( ( response: { errors: Record< string, string > } ) => {
+					createNoticesFromResponse( response );
+					setInstallingPlugin( null );
+				} );
+		},
+		[
+			installingPlugin,
+			installAndActivatePlugins,
+			invalidateResolutionForStoreSelector,
+			storeCountry,
+		]
+	);
+
 	return (
 		<>
+			{ incentiveProvider &&
+				incentive &&
+				isSwitchIncentive( incentive ) &&
+				! isIncentiveDismissedInContext(
+					incentive,
+					'wc_settings_payments__modal'
+				) && (
+					<IncentiveModal
+						incentive={ incentive }
+						provider={ incentiveProvider }
+						onboardingUrl={
+							incentiveProvider.onboarding?._links.onboard.href ??
+							null
+						}
+						onDismiss={ dismissIncentive }
+						onAccept={ acceptIncentive }
+						setupPlugin={ setupPlugin }
+					/>
+				) }
 			{ errorMessage && (
 				<div className="notice notice-error is-dismissible wcpay-settings-notice">
 					<p>{ errorMessage }</p>
@@ -177,12 +267,32 @@ export const SettingsPaymentsMain = () => {
 					></button>
 				</div>
 			) }
+			{ incentiveProvider &&
+				incentive &&
+				! isSwitchIncentive( incentive ) &&
+				! isIncentiveDismissedInContext(
+					incentive,
+					'wc_settings_payments__banner'
+				) && (
+					<IncentiveBanner
+						incentive={ incentive }
+						provider={ incentiveProvider }
+						onboardingUrl={
+							incentiveProvider.onboarding?._links.onboard.href ??
+							null
+						}
+						onDismiss={ dismissIncentive }
+						onAccept={ acceptIncentive }
+						setupPlugin={ setupPlugin }
+					/>
+				) }
 			<div className="settings-payments-main__container">
 				<PaymentGateways
 					providers={ sortedProviders || providers }
 					installedPluginSlugs={ installedPluginSlugs }
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
+					acceptIncentive={ acceptIncentive }
 					updateOrdering={ handleOrderingUpdate }
 					isFetching={ isFetching }
 					businessRegistrationCountry={ storeCountry }
@@ -198,10 +308,13 @@ export const SettingsPaymentsMain = () => {
 			</div>
 			<WooPaymentsPostSandboxAccountSetupModal
 				isOpen={
-					livePaymentsModalVisible &&
+					postSandboxAccountSetupModalVisible &&
 					providersContainWooPaymentsInTestMode( providers )
 				}
-				onClose={ () => setLivePaymentsModalVisible( false ) }
+				devMode={ providersContainWooPaymentsInDevMode( providers ) }
+				onClose={ () =>
+					setPostSandboxAccountSetupModalVisible( false )
+				}
 			/>
 		</>
 	);
