@@ -115,7 +115,9 @@ test.describe( 'Assembler - Loading Page', { tag: tags.GUTENBERG }, () => {
 		).toBeVisible();
 	} );
 
-	test( 'should hide loading screen and steps on subsequent runs', async ( {
+	// Skipped due to unconfirmed expected result and paused CYS
+	// This test could also be a good candidate for integration test once confirmed, ref #53663
+	test.skip( 'should hide loading screen and steps on subsequent runs', async ( {
 		pageObject,
 		baseURL,
 		page,

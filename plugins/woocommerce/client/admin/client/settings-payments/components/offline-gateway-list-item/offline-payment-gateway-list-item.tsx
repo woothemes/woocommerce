@@ -8,12 +8,15 @@ import { type OfflinePaymentMethodProvider } from '@woocommerce/data';
  * Internal dependencies
  */
 import sanitizeHTML from '~/lib/sanitize-html';
-import { PaymentGatewayButtons } from '~/settings-payments/components/payment-gateway-buttons';
 import {
 	DefaultDragHandle,
 	SortableContainer,
 	SortableItem,
 } from '../sortable';
+import {
+	EnableGatewayButton,
+	SettingsButton,
+} from '~/settings-payments/components/buttons';
 
 type OfflinePaymentGatewayListItemProps = {
 	gateway: OfflinePaymentMethodProvider;
@@ -48,17 +51,26 @@ export const OfflinePaymentGatewayListItem = ( {
 				</div>
 				<div className="woocommerce-list__item-after">
 					<div className="woocommerce-list__item-after__actions">
-						<PaymentGatewayButtons
-							id={ gateway.id }
-							isOffline={ true }
-							enabled={ gateway.state.enabled }
-							settingsUrl={
-								gateway.management._links.settings.href
-							}
-							onboardUrl={
-								gateway.onboarding._links.onboard.href
-							}
-						/>
+						{ ! gateway.state.enabled ? (
+							<EnableGatewayButton
+								gatewayId={ gateway.id }
+								gatewayState={ gateway.state }
+								settingsHref={
+									gateway.management._links.settings.href
+								}
+								onboardingHref={
+									gateway.onboarding._links.onboard.href
+								}
+								isOffline={ true }
+								gatewayHasRecommendedPaymentMethods={ false }
+							/>
+						) : (
+							<SettingsButton
+								settingsHref={
+									gateway.management._links.settings.href
+								}
+							/>
+						) }
 					</div>
 				</div>
 			</div>
