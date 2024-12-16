@@ -44,10 +44,9 @@ export const MobileAppModal = () => {
 	);
 
 	if ( isNewBranding() ) {
-		import('./style-new.scss');
-	}
-	else {
-		import('./style-old.scss');
+		import( './style-new.scss' );
+	} else {
+		import( './style-old.scss' );
 	}
 
 	useEffect( () => {
