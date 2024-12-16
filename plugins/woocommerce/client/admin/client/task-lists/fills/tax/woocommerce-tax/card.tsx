@@ -11,7 +11,7 @@ import { updateQueryString } from '@woocommerce/navigation';
  */
 import { PartnerCard } from '../components/partner-card';
 import logo from './logo.png';
-import new_logo from './logo_new.png';
+import newLogo from './logo_new.png';
 import { TaxChildProps } from '../utils';
 import { TermsOfService } from '~/task-lists/components/terms-of-service';
 import { isNewBranding } from '~/utils/admin-settings';
@@ -20,7 +20,7 @@ export const Card: React.FC< TaxChildProps > = () => {
 	return (
 		<PartnerCard
 			name={ __( 'WooCommerce Tax', 'woocommerce' ) }
-			logo={ isNewBranding() ? new_logo : logo }
+			logo={ isNewBranding() ? newLogo : logo }
 			description={
 				isNewBranding()
 					? __(
