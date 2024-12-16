@@ -26,7 +26,7 @@ import { getAdminLink } from '@woocommerce/settings';
  * Internal dependencies
  */
 import { Header } from './components/header/header';
-import { BackButton } from './components/back-button/back-button';
+import { BackButton } from './components/buttons/back-button';
 import { ListPlaceholder } from '~/settings-payments/components/list-placeholder';
 import {
 	getWooPaymentsTestDriveAccountLink,
@@ -148,6 +148,7 @@ const SettingsPaymentsMain = () => {
 const SettingsPaymentsMethods = () => {
 	const location = useLocation();
 	const [ paymentMethodsState, setPaymentMethodsState ] = useState( {} );
+	const [ isCompleted, setIsCompleted ] = useState( false );
 	const { providers } = useSelect( ( select ) => {
 		return {
 			isFetching: select( PAYMENT_SETTINGS_STORE_NAME ).isFetching(),
@@ -161,6 +162,7 @@ const SettingsPaymentsMethods = () => {
 	const wooPayments = getWooPaymentsFromProviders( providers );
 
 	const onClick = useCallback( () => {
+		setIsCompleted( true );
 		// Get the onboarding URL or fallback to the test drive account link
 		const onboardUrl =
 			wooPayments?.onboarding?._links.onboard.href ||
@@ -204,6 +206,8 @@ const SettingsPaymentsMethods = () => {
 					<Button
 						className="components-button is-primary"
 						onClick={ onClick }
+						isBusy={ isCompleted }
+						disabled={ isCompleted }
 					>
 						{ __( 'Continue', 'woocommerce' ) }
 					</Button>

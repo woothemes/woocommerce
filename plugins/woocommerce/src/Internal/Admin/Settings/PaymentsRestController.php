@@ -170,8 +170,8 @@ class PaymentsRestController extends RestApiControllerBase {
 	protected function get_providers( WP_REST_Request $request ) {
 		$location = $request->get_param( 'location' );
 		if ( empty( $location ) ) {
-			// Fall back to the base country if no location is provided.
-			$location = WC()->countries->get_base_country();
+			// Fall back to the providers country if no location is provided.
+			$location = $this->payments->get_country();
 		}
 
 		try {
@@ -701,29 +701,35 @@ class PaymentsRestController extends RestApiControllerBase {
 				),
 				'state'             => array(
 					'type'        => 'object',
-					'description' => esc_html__( 'The state of the provider.', 'woocommerce' ),
+					'description' => esc_html__( 'The general state of the provider with regards to it\'s payments processing.', 'woocommerce' ),
 					'properties'  => array(
-						'enabled'     => array(
+						'enabled'           => array(
 							'type'        => 'boolean',
-							'description' => esc_html__( 'Whether the provider is enabled for use.', 'woocommerce' ),
+							'description' => esc_html__( 'Whether the provider is enabled for use on checkout.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
 						),
-						'needs_setup' => array(
+						'account_connected' => array(
+							'type'        => 'boolean',
+							'description' => esc_html__( 'Whether the provider has a payments processing account connected.', 'woocommerce' ),
+							'context'     => array( 'view', 'edit' ),
+							'readonly'    => true,
+						),
+						'needs_setup'       => array(
 							'type'        => 'boolean',
 							'description' => esc_html__( 'Whether the provider needs setup.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
 						),
-						'test_mode'   => array(
+						'test_mode'         => array(
 							'type'        => 'boolean',
-							'description' => esc_html__( 'Whether the provider is in test mode.', 'woocommerce' ),
+							'description' => esc_html__( 'Whether the provider is in test mode for payments processing.', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
 						),
-						'dev_mode'    => array(
+						'dev_mode'          => array(
 							'type'        => 'boolean',
-							'description' => esc_html__( 'Whether the provider is in dev mode.', 'woocommerce' ),
+							'description' => esc_html__( 'Whether the provider is in dev mode. Having this true usually leads to forcing test payments. ', 'woocommerce' ),
 							'context'     => array( 'view', 'edit' ),
 							'readonly'    => true,
 						),
@@ -760,6 +766,31 @@ class PaymentsRestController extends RestApiControllerBase {
 					'type'        => 'object',
 					'description' => esc_html__( 'Onboarding-related details for the provider.', 'woocommerce' ),
 					'properties'  => array(
+						'state'                       => array(
+							'type'        => 'object',
+							'description' => esc_html__( 'The state of the onboarding process.', 'woocommerce' ),
+							'context'     => array( 'view', 'edit' ),
+							'properties'  => array(
+								'started'   => array(
+									'type'        => 'boolean',
+									'description' => esc_html__( 'Whether the onboarding process has been started.', 'woocommerce' ),
+									'context'     => array( 'view', 'edit' ),
+									'readonly'    => true,
+								),
+								'completed' => array(
+									'type'        => 'boolean',
+									'description' => esc_html__( 'Whether the onboarding process has been completed.', 'woocommerce' ),
+									'context'     => array( 'view', 'edit' ),
+									'readonly'    => true,
+								),
+								'test_mode' => array(
+									'type'        => 'boolean',
+									'description' => esc_html__( 'Whether the onboarding process happens in test mode (aka sandbox or test-drive).', 'woocommerce' ),
+									'context'     => array( 'view', 'edit' ),
+									'readonly'    => true,
+								),
+							),
+						),
 						'_links'                      => array(
 							'type'       => 'object',
 							'context'    => array( 'view', 'edit' ),

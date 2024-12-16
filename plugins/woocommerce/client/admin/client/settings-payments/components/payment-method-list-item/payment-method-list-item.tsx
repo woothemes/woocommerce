@@ -101,17 +101,17 @@ export const PaymentMethodListItem = ( {
 					</div>
 				) }
 				<div className="woocommerce-list__item-after">
-					<div className="woocommerce-list__item-after__actions">
+					<div className="woocommerce-list__item-after__actions wc-settings-prevent-change-event">
 						<ToggleControl
 							checked={
 								paymentMethodsState[ method.id ] ?? false
 							}
-							onChange={ ( isChecked: boolean ) =>
+							onChange={ ( isChecked: boolean ) => {
 								setPaymentMethodsState( {
 									...paymentMethodsState,
 									[ method.id ]: isChecked,
-								} )
-							}
+								} );
+							} }
 							// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 							// @ts-ignore disabled prop exists
 							disabled={ method.required ?? false }

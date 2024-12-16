@@ -1,13 +1,67 @@
 /**
  * External dependencies
  */
-import { PaymentProvider, RecommendedPaymentMethod } from '@woocommerce/data';
+import {
+	PaymentProvider,
+	PaymentIncentive,
+	RecommendedPaymentMethod,
+} from '@woocommerce/data';
 import { getAdminLink } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
  */
 import { getAdminSetting } from '~/utils/admin-settings';
+
+/**
+ * Checks whether a payment provider has an incentive.
+ */
+export const hasIncentive = ( extension: PaymentProvider ) => {
+	return !! extension._incentive;
+};
+
+/**
+ * Checks whether an incentive is an action incentive.
+ */
+export const isActionIncentive = (
+	incentive: PaymentIncentive | undefined
+) => {
+	if ( ! incentive ) {
+		return false;
+	}
+
+	return incentive.promo_id.includes( '-action-' );
+};
+
+/**
+ * Checks whether an incentive is a switch incentive.
+ */
+export const isSwitchIncentive = (
+	incentive: PaymentIncentive | undefined
+) => {
+	if ( ! incentive ) {
+		return false;
+	}
+
+	return incentive.promo_id.includes( '-switch-' );
+};
+
+/**
+ * Checks whether an incentive is dismissed in a given context.
+ */
+export const isIncentiveDismissedInContext = (
+	incentive: PaymentIncentive | undefined,
+	context: string
+) => {
+	if ( ! incentive ) {
+		return false;
+	}
+
+	return (
+		incentive._dismissals.includes( 'all' ) ||
+		incentive._dismissals.includes( context )
+	);
+};
 
 /**
  * Handles enabling WooCommerce Payments and redirection based on Jetpack connection status.

@@ -5,7 +5,6 @@ import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import {
 	PaymentProvider,
-	RecommendedPaymentMethod,
 	PAYMENT_SETTINGS_STORE_NAME,
 	WC_ADMIN_NAMESPACE,
 } from '@woocommerce/data';
@@ -23,12 +22,16 @@ interface PaymentGatewaysProps {
 	providers: PaymentProvider[];
 	installedPluginSlugs: string[];
 	installingPlugin: string | null;
-	setupPlugin: ( id: string, slug: string ) => void;
+	setupPlugin: (
+		id: string,
+		slug: string,
+		onboardingUrl: string | null
+	) => void;
+	acceptIncentive: ( id: string ) => void;
 	updateOrdering: ( providers: PaymentProvider[] ) => void;
 	isFetching: boolean;
 	businessRegistrationCountry: string | null;
 	setBusinessRegistrationCountry: ( country: string ) => void;
-	recommendedPaymentMethods: RecommendedPaymentMethod[];
 }
 
 export const PaymentGateways = ( {
@@ -36,11 +39,11 @@ export const PaymentGateways = ( {
 	installedPluginSlugs,
 	installingPlugin,
 	setupPlugin,
+	acceptIncentive,
 	updateOrdering,
 	isFetching,
 	businessRegistrationCountry,
 	setBusinessRegistrationCountry,
-	recommendedPaymentMethods,
 }: PaymentGatewaysProps ) => {
 	const { invalidateResolution } = useDispatch( PAYMENT_SETTINGS_STORE_NAME );
 
@@ -97,8 +100,8 @@ export const PaymentGateways = ( {
 					installedPluginSlugs={ installedPluginSlugs }
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
+					acceptIncentive={ acceptIncentive }
 					updateOrdering={ updateOrdering }
-					recommendedPaymentMethods={ recommendedPaymentMethods }
 				/>
 			) }
 		</div>

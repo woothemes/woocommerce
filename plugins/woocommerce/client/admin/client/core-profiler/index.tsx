@@ -113,6 +113,7 @@ export type CoreProfilerStateMachineContext = {
 		sellingPlatforms?: SellingPlatform[] | null;
 	} & Partial< ProfileItems >;
 	pluginsAvailable: ExtensionList[ 'plugins' ] | [];
+	pluginsTruncated: string[];
 	pluginsSelected: string[]; // extension slugs
 	pluginsInstallationErrors: PluginInstallError[];
 	geolocatedLocation: GeolocationResponse | undefined;
@@ -626,7 +627,16 @@ const handlePlugins = assign( {
 	}: {
 		event: DoneActorEvent< Extension[] >;
 	} ) => {
-		return event.output;
+		return event.output.slice( 0, 8 ); // in lieu of a plugin display priority system, we're only showing the first 8 plugins in the recommendations list
+	},
+	pluginsTruncated: ( {
+		event,
+	}: {
+		event: DoneActorEvent< Extension[] >;
+	} ) => {
+		return event.output
+			.slice( 8 )
+			.map( ( plugin ) => plugin.key.replace( ':alt', '' ) );
 	},
 } );
 
@@ -798,6 +808,7 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 		countries: [] as CountryStateOption[],
 		pluginsAvailable: [],
 		pluginsInstallationErrors: [],
+		pluginsTruncated: [],
 		pluginsSelected: [],
 		loader: {},
 		onboardingProfile: {} as OnboardingProfile,

@@ -38,7 +38,7 @@ const combineRequestMethods = (
 	const googlePay = getPaymentMethodById( 'google_pay' )( paymentMethods );
 
 	if ( ! applePay || ! googlePay ) {
-		return paymentMethods; // If either applePay or googlePay is not found, return the original paymentMethods
+		return paymentMethods; // If either Apple Pay or Google Pay is not found, return the original paymentMethods
 	}
 
 	return paymentMethods
