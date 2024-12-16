@@ -546,23 +546,19 @@ test.describe( `${ blockData.name }`, () => {
 			await expect( productGalleryBlockOption ).toBeVisible();
 		} );
 
-		test( 'should be available on the Product Gallery template part', async ( {
+		test( 'should be inserted on the Product Gallery template part by default', async ( {
 			admin,
 			editor,
-			page,
 		} ) => {
 			await admin.visitSiteEditor( {
 				postId: `woocommerce/woocommerce//product-gallery`,
 				postType: 'wp_template_part',
 				canvas: 'edit',
 			} );
-			await editor.openGlobalBlockInserter();
-			await page.getByRole( 'tab', { name: 'Blocks' } ).click();
-			const productGalleryBlockOption = page
-				.getByRole( 'listbox', { name: 'WooCommerce' } )
-				.getByRole( 'option', { name: blockData.title } );
 
-			await expect( productGalleryBlockOption ).toBeVisible();
+			await expect(
+				await editor.getBlockByName( blockData.name )
+			).toHaveCount( 1 );
 		} );
 
 		test( 'should be hidden on the post editor globally', async ( {
