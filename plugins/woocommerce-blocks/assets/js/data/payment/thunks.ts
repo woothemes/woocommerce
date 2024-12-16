@@ -4,12 +4,7 @@
 import { store as noticesStore } from '@wordpress/notices';
 import deprecated from '@wordpress/deprecated';
 import type { BillingAddress, ShippingAddress } from '@woocommerce/settings';
-import {
-	ApiErrorResponse,
-	isObject,
-	isString,
-	objectHasProp,
-} from '@woocommerce/types';
+import { isObject, isString, objectHasProp } from '@woocommerce/types';
 
 /**
  * Internal dependencies
@@ -231,7 +226,7 @@ export const updatePaymentMethodData = ( paymentMethodData: string ) => {
 		const { receiveCart } = registry.dispatch( CART_STORE_KEY );
 		try {
 			const response = await apiFetchWithHeaders( {
-				path: '/wc/store/v1/checkout',
+				path: '/wc/store/v1/checkout?calc_totals=true',
 				method: 'PUT',
 				data: {
 					payment_method: paymentMethodData,

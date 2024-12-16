@@ -285,21 +285,23 @@ class Checkout extends AbstractCartRoute {
 		$this->persist_order_notes_for_order( $request );
 		$this->persist_payment_method_for_order( $request );
 
-		/**
-		 * Before triggering validation, ensure totals are current and in turn, things such as shipping costs are present.
-		 * This is so plugins that validate other cart data (e.g. conditional shipping and payments) can access this data.
-		 */
-		$this->cart_controller->calculate_totals();
+		if ( $request->get_param( 'calc_totals' ) ) {
+			/**
+			 * Before triggering validation, ensure totals are current and in turn, things such as shipping costs are present.
+			 * This is so plugins that validate other cart data (e.g. conditional shipping and payments) can access this data.
+			 */
+			$this->cart_controller->calculate_totals();
+			/**
+			 * Validate that the cart is not empty.
+			 */
+			$this->cart_controller->validate_cart_not_empty();
 
-		/**
-		 * Validate that the cart is not empty.
-		 */
-		$this->cart_controller->validate_cart_not_empty();
+			/**
+			 * Validate items and fix violations before the order is processed.
+			 */
+			$this->cart_controller->validate_cart();
+		}
 
-		/**
-		 * Validate items and fix violations before the order is processed.
-		 */
-		$this->cart_controller->validate_cart();
 		/**
 		 * Validate additional fields on request.
 		 */

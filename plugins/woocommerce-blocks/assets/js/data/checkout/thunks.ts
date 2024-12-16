@@ -151,7 +151,7 @@ export const updateDraftOrder = ( {
 		const { receiveCart } = registry.dispatch( CART_STORE_KEY );
 		try {
 			const response = await apiFetchWithHeaders( {
-				path: '/wc/store/v1/checkout',
+				path: '/wc/store/v1/checkout?calc_totals=true',
 				method: 'PUT',
 				data: {
 					additional_fields: { ...additionalFields },
