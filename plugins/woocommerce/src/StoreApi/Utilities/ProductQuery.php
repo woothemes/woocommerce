@@ -1,6 +1,7 @@
 <?php
 namespace Automattic\WooCommerce\StoreApi\Utilities;
 
+use Automattic\WooCommerce\Enums\ProductType;
 use WC_Tax;
 
 /**
@@ -45,7 +46,7 @@ class ProductQuery {
 
 		// Filter product type by slug.
 		if ( ! empty( $request['type'] ) ) {
-			if ( 'variation' === $request['type'] ) {
+			if ( ProductType::VARIATION === $request['type'] ) {
 				$args['post_type'] = 'product_variation';
 			} else {
 				$args['post_type'] = 'product';

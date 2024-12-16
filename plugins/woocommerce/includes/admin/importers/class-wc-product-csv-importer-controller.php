@@ -5,6 +5,7 @@
  * @package WooCommerce\Admin\Importers
  */
 
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\Utilities\FilesystemUtil;
 use Automattic\WooCommerce\Internal\Utilities\URL;
 use Automattic\WooCommerce\Utilities\I18nUtil;
@@ -853,7 +854,7 @@ class WC_Product_CSV_Importer_Controller {
 			'upsell_ids'         => __( 'Upsells', 'woocommerce' ),
 			'cross_sell_ids'     => __( 'Cross-sells', 'woocommerce' ),
 			'grouped_products'   => __( 'Grouped products', 'woocommerce' ),
-			'external'           => array(
+			ProductType::EXTERNAL => array(
 				'name'    => __( 'External product', 'woocommerce' ),
 				'options' => array(
 					'product_url' => __( 'External URL', 'woocommerce' ),

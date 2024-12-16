@@ -10,6 +10,7 @@
 
 use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\Utilities\HtmlSanitizer;
 
 defined( 'ABSPATH' ) || exit;
@@ -567,7 +568,7 @@ function wc_product_post_class( $classes, $class = '', $post_id = 0 ) {
 	if ( $product->get_type() ) {
 		$classes[] = 'product-type-' . $product->get_type();
 	}
-	if ( $product->is_type( 'variable' ) && $product->get_default_attributes() ) {
+	if ( $product->is_type( ProductType::VARIABLE ) && $product->get_default_attributes() ) {
 		$classes[] = 'has-default-attributes';
 	}
 
@@ -711,14 +712,14 @@ function wc_get_product_class( $class = '', $product = null ) {
 	if ( $product->get_type() ) {
 		$classes[] = 'product-type-' . $product->get_type();
 	}
-	if ( $product->is_type( 'variable' ) && $product->get_default_attributes() ) {
+	if ( $product->is_type( ProductType::VARIABLE ) && $product->get_default_attributes() ) {
 		$classes[] = 'has-default-attributes';
 	}
 
 	// Include attributes and any extra taxonomies only if enabled via the hook - this is a performance issue.
 	if ( apply_filters( 'woocommerce_get_product_class_include_taxonomies', false ) ) {
 		$taxonomies = get_taxonomies( array( 'public' => true ) );
-		$type       = 'variation' === $product->get_type() ? 'product_variation' : 'product';
+		$type       = ProductType::VARIATION === $product->get_type() ? 'product_variation' : 'product';
 		foreach ( (array) $taxonomies as $taxonomy ) {
 			if ( is_object_in_taxonomy( $type, $taxonomy ) && ! in_array( $taxonomy, array( 'product_cat', 'product_tag' ), true ) ) {
 				$classes = array_merge( $classes, wc_get_product_taxonomy_class( (array) get_the_terms( $product->get_id(), $taxonomy ), $taxonomy ) );
@@ -3995,7 +3996,7 @@ function wc_get_formatted_cart_item_data( $cart_item, $flat = false ) {
 
 	// Variation values are shown only if they are not found in the title as of 3.0.
 	// This is because variation titles display the attributes.
-	if ( $cart_item['data']->is_type( 'variation' ) && is_array( $cart_item['variation'] ) ) {
+	if ( $cart_item['data']->is_type( ProductType::VARIATION ) && is_array( $cart_item['variation'] ) ) {
 		foreach ( $cart_item['variation'] as $name => $value ) {
 			$taxonomy = wc_attribute_taxonomy_name( str_replace( 'attribute_pa_', '', urldecode( $name ) ) );
 

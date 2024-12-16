@@ -5,6 +5,8 @@
  * @since 2.3
  */
 
+use Automattic\WooCommerce\Enums\ProductType;
+
 /**
  * WC_Tests_Product_Functions class.
  */
@@ -67,7 +69,7 @@ class WC_Tests_Product_Functions extends WC_Unit_Test_Case {
 		$products = wc_get_products(
 			array(
 				'return' => 'ids',
-				'type'   => 'variation',
+				'type'   => ProductType::VARIATION,
 			)
 		);
 		$this->assertCount( 6, $products );
@@ -76,7 +78,7 @@ class WC_Tests_Product_Functions extends WC_Unit_Test_Case {
 		$products = wc_get_products(
 			array(
 				'return' => 'ids',
-				'type'   => 'variation',
+				'type'   => ProductType::VARIATION,
 				'parent' => $variation->get_id(),
 			)
 		);
@@ -86,7 +88,7 @@ class WC_Tests_Product_Functions extends WC_Unit_Test_Case {
 		$products = wc_get_products(
 			array(
 				'return'         => 'ids',
-				'type'           => 'variation',
+				'type'           => ProductType::VARIATION,
 				'parent_exclude' => array( $variation->get_id() ),
 			)
 		);
@@ -848,11 +850,11 @@ class WC_Tests_Product_Functions extends WC_Unit_Test_Case {
 	 * @since 3.9.0
 	 */
 	public function test_wc_get_product_object() {
-		$this->assertInstanceOf( 'WC_Product_Simple', wc_get_product_object( 'simple' ) );
-		$this->assertInstanceOf( 'WC_Product_Grouped', wc_get_product_object( 'grouped' ) );
-		$this->assertInstanceOf( 'WC_Product_External', wc_get_product_object( 'external' ) );
-		$this->assertInstanceOf( 'WC_Product_Variable', wc_get_product_object( 'variable' ) );
-		$this->assertInstanceOf( 'WC_Product_Variation', wc_get_product_object( 'variation' ) );
+		$this->assertInstanceOf( 'WC_Product_Simple', wc_get_product_object( ProductType::SIMPLE ) );
+		$this->assertInstanceOf( 'WC_Product_Grouped', wc_get_product_object( ProductType::GROUPED ) );
+		$this->assertInstanceOf( 'WC_Product_External', wc_get_product_object( ProductType::EXTERNAL ) );
+		$this->assertInstanceOf( 'WC_Product_Variable', wc_get_product_object( ProductType::VARIABLE ) );
+		$this->assertInstanceOf( 'WC_Product_Variation', wc_get_product_object( ProductType::VARIATION ) );
 
 		// Test incorrect type.
 		$this->assertInstanceOf( 'WC_Product_Simple', wc_get_product_object( 'foo+bar' ) );
@@ -1018,10 +1020,10 @@ class WC_Tests_Product_Functions extends WC_Unit_Test_Case {
 		$product_types = (array) apply_filters(
 			'product_type_selector',
 			array(
-				'simple'   => 'Simple product',
-				'grouped'  => 'Grouped product',
-				'external' => 'External/Affiliate product',
-				'variable' => 'Variable product',
+				ProductType::SIMPLE   => 'Simple product',
+				ProductType::GROUPED  => 'Grouped product',
+				ProductType::EXTERNAL => 'External/Affiliate product',
+				ProductType::VARIABLE => 'Variable product',
 			)
 		);
 
