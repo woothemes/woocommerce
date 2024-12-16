@@ -265,9 +265,9 @@ jobs:
             - name: Apply label "cherry pick failed" using the newly created PR url
               if: ${{ failure() }}
               run: |
-                gh pr edit $PR_URL --add-label "cherry pick failed" --repo "$OWNER/$REPO"
+                gh pr edit $PR_NUMBER --add-label "cherry pick failed" --repo "$OWNER/$REPO"
               env:
-                PR_URL: ${{ steps.cherry-pick-pr.outputs.cherry-pick-pr }}
+                PR_NUMBER: ${{ needs.prep.outputs.pr }}
                 OWNER: ${{ github.repository_owner }}
                 REPO: ${{ github.repository }}
 
