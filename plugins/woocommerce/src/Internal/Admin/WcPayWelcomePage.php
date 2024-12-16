@@ -101,6 +101,11 @@ class WcPayWelcomePage {
 				'icon'       => $menu_icon,
 			);
 
+			// Put the page under WooCommerce menu item because we have settings payments left nav item if this feature flag is enabled.
+			if ( Features::is_enabled( 'reactify-classic-payments-settings' ) ) {
+				$page_options['parent'] = 'woocommerce';
+			}
+
 			wc_admin_register_page( $page_options );
 
 			$menu_path = PageController::get_instance()->get_path_from_id( $page_id );
