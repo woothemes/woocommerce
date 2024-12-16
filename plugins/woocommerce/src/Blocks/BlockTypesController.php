@@ -179,8 +179,6 @@ final class BlockTypesController {
 	 * this method allows registration to proceed by temporarily disabling
 	 * the relevant notice.
 	 *
-	 * @since 14.2
-	 *
 	 * @param bool   $trigger       Whether to trigger the error.
 	 * @param string $function      The function that was called.
 	 * @param string $message       A message explaining what was done incorrectly.
