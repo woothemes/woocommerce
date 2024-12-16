@@ -4,7 +4,7 @@ const { tags } = require( '../../fixtures/fixtures' );
 test.describe( 'WooCommerce Home', () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
-	// TODO (E2E Audit): Combine this test with one of the analytics tests in the admin-analytics folder, probably in /admin-analytics/analytics.spec.js.
+	// TODO (E2E Audit): This test should be combined with other WC Homepage setup tests like the tests in activate-and-setup/task-list.spec.js into a single spec.
 	test(
 		'Can access Analytics Reports from Stats Overview',
 		{ tag: [ tags.NOT_E2E ] },
