@@ -134,7 +134,7 @@ class PaymentsController {
 	 */
 	public function add_allowed_promo_notes( array $promo_notes = array() ): array {
 		try {
-			$providers = $this->payments->get_payment_providers( WC()->countries->get_base_country() );
+			$providers = $this->payments->get_payment_providers( $this->payments->get_country() );
 		} catch ( Exception $e ) {
 			// In case of an error, bail.
 			return $promo_notes;
@@ -176,7 +176,7 @@ class PaymentsController {
 	 */
 	private function store_has_providers_with_action(): bool {
 		try {
-			$providers = $this->payments->get_payment_providers( WC()->countries->get_base_country() );
+			$providers = $this->payments->get_payment_providers( $this->payments->get_country() );
 		} catch ( Exception $e ) {
 			// In case of an error, just return false.
 			return false;

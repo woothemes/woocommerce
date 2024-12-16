@@ -19,6 +19,16 @@ Rate limit tracking is controlled by either `USER ID` (logged in) or `IP ADDRESS
 
 It also offers standard support for running behind a proxy, load balancer, etc. This also optional and disabled by default.
 
+## UI Control
+
+Currently, this feature is only controlled via the `woocommerce_store_api_rate_limit_options` filter. To control it via a UI, you can use the following community plugin: [Rate Limiting UI for WooCommerce](https://wordpress.org/plugins/rate-limiting-ui-for-woocommerce/).
+
+## Checkout rate limiting
+
+You can enable rate limiting for Checkout place order and `POST /checkout` endpoint only via the UI by going to WooCommerce -> Settings -> Advanced -> Features and enabling "Rate limiting Checkout block and Store API".
+
+When enabled, the rate limiting will be applied to the `POST /checkout` and Place Order flow for Checkout block. The limit will be a maximum of 3 requests per 60 seconds.
+
 ## Limit information
 
 A default maximum of 25 requests can be made within a 10-second time frame. These can be changed through an [options filter](#rate-limiting-options-filter).

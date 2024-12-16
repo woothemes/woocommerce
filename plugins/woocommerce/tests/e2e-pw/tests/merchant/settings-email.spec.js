@@ -263,6 +263,33 @@ test.describe( 'WooCommerce Email Settings', () => {
 			await expect( page.getByLabel( 'Email preview type' ) ).toHaveCount(
 				0
 			);
+
+			// Change subject and observe it's changed in the preview
+			const newSubject = 'New subject';
+			const subjectId = 'woocommerce_customer_processing_order_subject';
+
+			await page.fill( `#${ subjectId }`, newSubject );
+			await page.evaluate( async ( inputId ) => {
+				const input = document.getElementById( inputId );
+				input.blur();
+
+				await new Promise( ( resolve ) => {
+					input.addEventListener(
+						'transient-saved',
+						() => resolve(),
+						{ once: true }
+					);
+				} );
+
+				return new Promise( ( resolve ) => {
+					input.addEventListener(
+						'subject-updated',
+						() => resolve(),
+						{ once: true }
+					);
+				} );
+			}, subjectId );
+			await expect( await getSubject() ).toContain( 'New subject' );
 		}
 	);
 
