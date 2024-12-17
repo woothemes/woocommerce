@@ -775,6 +775,17 @@ class WC_Email extends WC_Settings_API {
 		// Clear the AltBody (if set) so that it does not leak across to different emails.
 		$this->clear_alt_body_field();
 
+		if ( is_a( $this->object, 'WC_Order' )) {
+			$this->object->add_order_note(
+				sprintf(
+					__( 'Email "%1$s" sent to "%2$s" with subject "%3$s".', 'woocommerce' ),
+					$this->get_title(),
+					$to,
+					$subject,
+				)
+			);
+		}
+
 		/**
 		 * Action hook fired when an email is sent.
 		 *
