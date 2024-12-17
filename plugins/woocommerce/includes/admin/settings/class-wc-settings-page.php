@@ -121,6 +121,13 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 		protected $is_modern = false;
 
 		/**
+		 * Whether the output method has been called.
+		 *
+		 * @var bool
+		 */
+		private $output_called = false;
+
+		/**
 		 * Constructor.
 		 */
 		public function __construct() {
@@ -220,7 +227,7 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 
 			$custom_view = $this->get_custom_view( $section_id );
 			// We only want to loop through the settings object if the parent class's output method is being rendered.
-			if ( $custom_view['has_parent_output'] ) {
+			if ( $custom_view['parent_output_called'] ) {
 				$section_settings = count( $sections ) > 1
 					? $this->get_settings_for_section( $section_id )
 					: $this->get_settings();
@@ -286,14 +293,13 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 			ob_end_clean();
 
 			$result = array(
-				'output'            => trim( $html ),
-				'has_parent_output' => true === $wc_settings_page_output,
+				'output'               => trim( $html ),
+				'parent_output_called' => $this->output_called,
 			);
 
-			// Reset the global variables.
-			$current_section         = $saved_current_section;
-			$wc_settings_page_output = false;
-
+			// Reset the global variable and the output_called property.
+			$current_section     = $saved_current_section;
+			$this->output_called = false;
 			return $result;
 		}
 
@@ -457,8 +463,9 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 		 * Output the HTML for the settings.
 		 */
 		public function output() {
+			$this->output_called = true;
+
 			if ( Features::is_enabled( 'settings' ) ) {
-				$GLOBALS['wc_settings_page_output'] = true;
 				return;
 			}
 
