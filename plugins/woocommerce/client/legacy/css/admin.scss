@@ -5062,6 +5062,11 @@ img.help_tip {
 		position: relative;
 		table-layout: fixed;
 
+		.forminp {
+			display: block;
+			position: relative;
+		}
+
 		.forminp-radio ul {
 			margin: 0;
 

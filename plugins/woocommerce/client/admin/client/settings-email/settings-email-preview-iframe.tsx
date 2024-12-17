@@ -3,7 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from '@wordpress/element';
 import { debounce } from 'lodash';
 
 type EmailPreviewIframeProps = {
@@ -20,8 +20,11 @@ export const EmailPreviewIframe: React.FC< EmailPreviewIframeProps > = ( {
 	const [ counter, setCounter ] = useState( 0 );
 
 	useEffect( () => {
-		const handleFieldChange = async ( event: Event ) => {
-			const target = event.target as HTMLInputElement;
+		const handleFieldChange = async ( jqEvent: JQuery.Event ) => {
+			const event = jqEvent as JQuery.Event & {
+				target: HTMLInputElement;
+			};
+			const target = event.target;
 			const key = target.id;
 			const value = target.value;
 
@@ -39,12 +42,15 @@ export const EmailPreviewIframe: React.FC< EmailPreviewIframeProps > = ( {
 			}
 		};
 
+		const handlers: Record< string, ( event: JQuery.Event ) => void > = {};
+
 		// Set up listeners
 		settingsIds.forEach( ( id ) => {
+			handlers[ id ] = debounce( handleFieldChange, 400 );
 			const field = jQuery( `#${ id }` );
 			if ( field.length ) {
 				// Using jQuery events due to select2 and iris (color picker) usage
-				field.on( 'change', debounce( handleFieldChange, 400 ) );
+				field.on( 'change', handlers[ id ] );
 			}
 		} );
 
@@ -53,7 +59,7 @@ export const EmailPreviewIframe: React.FC< EmailPreviewIframeProps > = ( {
 			settingsIds.forEach( ( id ) => {
 				const field = jQuery( `#${ id }` );
 				if ( field.length ) {
-					field.off( 'change' );
+					field.off( 'change', handlers[ id ] );
 				}
 			} );
 		};
