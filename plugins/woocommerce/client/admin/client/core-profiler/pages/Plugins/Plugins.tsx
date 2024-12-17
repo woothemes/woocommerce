@@ -89,7 +89,10 @@ export const Plugins = ( {
 }: {
 	context: Pick<
 		CoreProfilerStateMachineContext,
-		'pluginsAvailable' | 'pluginsInstallationErrors' | 'pluginsSelected'
+		| 'pluginsAvailable'
+		| 'pluginsInstallationErrors'
+		| 'pluginsSelected'
+		| 'pluginsTruncated'
 	>;
 	sendEvent: (
 		payload:
@@ -147,6 +150,7 @@ export const Plugins = ( {
 				pluginsShown,
 				pluginsSelected: selectedPluginSlugs,
 				pluginsUnselected,
+				pluginsTruncated: context.pluginsTruncated,
 			},
 		} );
 	};

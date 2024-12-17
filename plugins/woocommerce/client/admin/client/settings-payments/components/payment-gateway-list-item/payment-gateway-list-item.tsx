@@ -12,24 +12,43 @@ import { Tooltip } from '@wordpress/components';
  */
 import sanitizeHTML from '~/lib/sanitize-html';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
-import { PaymentGatewayButtons } from '~/settings-payments/components/payment-gateway-buttons';
 import { EllipsisMenuWrapper as EllipsisMenu } from '~/settings-payments/components/ellipsis-menu-content';
-import { isWooPayments } from '~/settings-payments/utils';
+import { hasIncentive, isWooPayments } from '~/settings-payments/utils';
 import { DefaultDragHandle } from '~/settings-payments/components/sortable';
 import { WC_ASSET_URL } from '~/utils/admin-settings';
+import {
+	ActivatePaymentsButton,
+	CompleteSetupButton,
+	EnableGatewayButton,
+	SettingsButton,
+} from '~/settings-payments/components/buttons';
 
 type PaymentGatewayItemProps = {
 	gateway: PaymentGatewayProvider;
+	acceptIncentive: ( id: string ) => void;
 };
 
 export const PaymentGatewayListItem = ( {
 	gateway,
+	acceptIncentive,
 	...props
 }: PaymentGatewayItemProps ) => {
 	const isWcPay = isWooPayments( gateway.id );
-	const hasIncentive = !! gateway._incentive;
+	const incentive = hasIncentive( gateway ) ? gateway._incentive : null;
 	const shouldHighlightIncentive =
-		hasIncentive && ! gateway._incentive?.promo_id.includes( '-action-' );
+		incentive && ! incentive?.promo_id.includes( '-action-' );
+
+	const gatewayHasRecommendedPaymentMethods =
+		( gateway.onboarding.recommended_payment_methods ?? [] ).length > 0;
+
+	// If the account is not connected or the onboarding is not started, or not completed then the gateway needs setup.
+	const gatewayNeedsOnboarding =
+		! gateway.state.account_connected ||
+		( gateway.state.account_connected &&
+			! gateway.onboarding.state.started ) ||
+		( gateway.state.account_connected &&
+			gateway.onboarding.state.started &&
+			! gateway.onboarding.state.completed );
 
 	const determineGatewayStatus = () => {
 		if ( ! gateway.state.enabled && gateway.state.needs_setup ) {
@@ -63,10 +82,10 @@ export const PaymentGatewayListItem = ( {
 				<div className="woocommerce-list__item-text">
 					<span className="woocommerce-list__item-title">
 						{ gateway.title }
-						{ hasIncentive && gateway._incentive ? (
+						{ incentive ? (
 							<StatusBadge
 								status="has_incentive"
-								message={ gateway._incentive.badge }
+								message={ incentive.badge }
 							/>
 						) : (
 							<StatusBadge status={ determineGatewayStatus() } />
@@ -107,28 +126,70 @@ export const PaymentGatewayListItem = ( {
 				</div>
 				<div className="woocommerce-list__item-after">
 					<div className="woocommerce-list__item-after__actions">
-						<>
-							<PaymentGatewayButtons
-								id={ gateway.id }
-								isOffline={ false }
-								enabled={ gateway.state.enabled }
-								needsSetup={ gateway.state.needs_setup }
-								testMode={ gateway.state.test_mode }
-								settingsUrl={
+						{ ! gateway.state.enabled &&
+							! gatewayNeedsOnboarding && (
+								<EnableGatewayButton
+									gatewayId={ gateway.id }
+									gatewayState={ gateway.state }
+									settingsHref={
+										gateway.management._links.settings.href
+									}
+									onboardingHref={
+										gateway.onboarding._links.onboard.href
+									}
+									isOffline={ false }
+									gatewayHasRecommendedPaymentMethods={
+										gatewayHasRecommendedPaymentMethods
+									}
+									incentive={ incentive }
+									acceptIncentive={ acceptIncentive }
+								/>
+							) }
+
+						{ ! gatewayNeedsOnboarding && (
+							<SettingsButton
+								settingsHref={
 									gateway.management._links.settings.href
 								}
-								onboardUrl={
+							/>
+						) }
+
+						{ gatewayNeedsOnboarding && (
+							<CompleteSetupButton
+								gatewayId={ gateway.id }
+								gatewayState={ gateway.state }
+								onboardingState={ gateway.onboarding.state }
+								settingsHref={
+									gateway.management._links.settings.href
+								}
+								onboardingHref={
 									gateway.onboarding._links.onboard.href
 								}
+								gatewayHasRecommendedPaymentMethods={
+									gatewayHasRecommendedPaymentMethods
+								}
 							/>
-							<EllipsisMenu
-								label={ __(
-									'Payment Provider Options',
-									'woocommerce'
-								) }
-								provider={ gateway }
-							/>
-						</>
+						) }
+
+						{ isWooPayments( gateway.id ) &&
+							// There is no actual switch-to-live in dev mode.
+							! gateway.state.dev_mode &&
+							gateway.state.account_connected &&
+							gateway.onboarding.state.completed &&
+							gateway.onboarding.state.test_mode && (
+								<ActivatePaymentsButton
+									acceptIncentive={ acceptIncentive }
+									incentive={ incentive }
+								/>
+							) }
+
+						<EllipsisMenu
+							label={ __(
+								'Payment Provider Options',
+								'woocommerce'
+							) }
+							provider={ gateway }
+						/>
 					</div>
 				</div>
 			</div>

@@ -87,6 +87,34 @@ class FakePaymentGateway extends \WC_Payment_Gateway {
 	public bool $dev_mode = false;
 
 	/**
+	 * The account connected flag.
+	 *
+	 * @var bool
+	 */
+	public bool $account_connected = false;
+
+	/**
+	 * The onboarding started flag.
+	 *
+	 * @var bool
+	 */
+	public bool $onboarding_started = false;
+
+	/**
+	 * The onboarding completed flag.
+	 *
+	 * @var bool
+	 */
+	public bool $onboarding_completed = false;
+
+	/**
+	 * The test mode onboarding flag.
+	 *
+	 * @var bool
+	 */
+	public bool $test_mode_onboarding = false;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param string $id    Optional. The gateway ID.
@@ -165,5 +193,41 @@ class FakePaymentGateway extends \WC_Payment_Gateway {
 	 */
 	public function is_dev_mode(): bool {
 		return $this->dev_mode;
+	}
+
+	/**
+	 * Check if the gateway has an account connected.
+	 *
+	 * @return bool True if the gateway has an account connected, false otherwise.
+	 */
+	public function is_account_connected(): bool {
+		return $this->account_connected;
+	}
+
+	/**
+	 * Check if the gateway has started onboarding.
+	 *
+	 * @return bool True if the gateway has started onboarding, false otherwise.
+	 */
+	public function is_onboarding_started(): bool {
+		return $this->onboarding_started;
+	}
+
+	/**
+	 * Check if the gateway has completed onboarding.
+	 *
+	 * @return bool True if the gateway has completed onboarding, false otherwise.
+	 */
+	public function is_onboarding_completed(): bool {
+		return $this->onboarding_completed;
+	}
+
+	/**
+	 * Check if the gateway is in test mode onboarding.
+	 *
+	 * @return bool True if the gateway is in test mode onboarding, false otherwise.
+	 */
+	public function is_test_mode_onboarding(): bool {
+		return $this->test_mode_onboarding;
 	}
 }
