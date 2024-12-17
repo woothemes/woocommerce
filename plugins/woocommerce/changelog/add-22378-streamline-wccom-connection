@@ -1,0 +1,4 @@
+Significance: patch
+Type: enhancement
+
+Redirect to the connection approval screen when the connection is initiated from WooCommerce.com.

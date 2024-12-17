@@ -1,0 +1,4 @@
+Significance: minor
+Type: update
+
+Add support for the status "future" in the "include_status" and "exclude_status" params of the Product List endpoint.

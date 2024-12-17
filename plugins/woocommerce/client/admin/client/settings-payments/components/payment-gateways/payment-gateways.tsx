@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { apiFetch } from '@wordpress/data-controls';
+import apiFetch from '@wordpress/api-fetch';
 import {
 	PaymentProvider,
 	PAYMENT_SETTINGS_STORE_NAME,
@@ -22,7 +22,12 @@ interface PaymentGatewaysProps {
 	providers: PaymentProvider[];
 	installedPluginSlugs: string[];
 	installingPlugin: string | null;
-	setupPlugin: ( id: string, slug: string ) => void;
+	setupPlugin: (
+		id: string,
+		slug: string,
+		onboardingUrl: string | null
+	) => void;
+	acceptIncentive: ( id: string ) => void;
 	updateOrdering: ( providers: PaymentProvider[] ) => void;
 	isFetching: boolean;
 	businessRegistrationCountry: string | null;
@@ -34,6 +39,7 @@ export const PaymentGateways = ( {
 	installedPluginSlugs,
 	installingPlugin,
 	setupPlugin,
+	acceptIncentive,
 	updateOrdering,
 	isFetching,
 	businessRegistrationCountry,
@@ -70,16 +76,17 @@ export const PaymentGateways = ( {
 						}
 						options={ countryOptions }
 						onChange={ ( value: string ) => {
-							setBusinessRegistrationCountry( value );
-							invalidateResolution( 'getPaymentProviders', [
-								value,
-							] );
 							apiFetch( {
 								path:
 									WC_ADMIN_NAMESPACE +
 									'/settings/payments/country',
 								method: 'POST',
 								data: { location: value },
+							} ).then( () => {
+								setBusinessRegistrationCountry( value );
+								invalidateResolution( 'getPaymentProviders', [
+									value,
+								] );
 							} );
 						} }
 					/>
@@ -93,6 +100,7 @@ export const PaymentGateways = ( {
 					installedPluginSlugs={ installedPluginSlugs }
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
+					acceptIncentive={ acceptIncentive }
 					updateOrdering={ updateOrdering }
 				/>
 			) }
