@@ -15,32 +15,12 @@ require_once __DIR__ . '/class-wc-settings-migration-test.php';
  * Unit tests for the base functionality of WC_Settings_Page.
  */
 class WC_Settings_Page_Test extends WC_Unit_Test_Case {
-
-	/**
-	 * Setup test environment.
-	 */
-	public function setUp(): void {
-		parent::setUp();
-		add_filter( 'woocommerce_admin_features', array( $this, 'enable_feature_flag' ) );
-	}
-
 	/**
 	 * Tear down test environment.
 	 */
 	public function tearDown(): void {
-		remove_filter( 'woocommerce_admin_features', array( $this, 'enable_feature_flag' ) );
+		remove_filter( 'woocommerce_admin_features', array( $this, 'enable_modern_settings' ) );
 		parent::tearDown();
-	}
-
-	/**
-	 * Enable settings feature flag.
-	 *
-	 * @param array $features Array of feature flags.
-	 * @return array
-	 */
-	public function enable_feature_flag( $features ) {
-		$features[] = 'settings';
-		return $features;
 	}
 
 	/**
@@ -369,6 +349,8 @@ HTML;
 	 * Test for add_settings_page_data.
 	 */
 	public function test_add_settings_page_data() {
+		add_filter( 'woocommerce_admin_features', array( $this, 'enable_modern_settings' ) );
+
 		$migration               = new WC_Settings_Migration_Test();
 		$setting_data            = $migration->add_settings_page_data( array() );
 		$migration_page_data     = $setting_data[ $migration->get_id() ];
@@ -384,6 +366,8 @@ HTML;
 	 * Test for add_settings_page_data (custom type field).
 	 */
 	public function test_add_settings_page_custom_type_field() {
+		add_filter( 'woocommerce_admin_features', array( $this, 'enable_modern_settings' ) );
+
 		$migration               = new WC_Settings_Migration_Test();
 		$setting_data            = $migration->add_settings_page_data( array() );
 		$migration_page_data     = $setting_data[ $migration->get_id() ];
@@ -396,6 +380,8 @@ HTML;
 	 * Test for add_settings_page_data (custom view).
 	 */
 	public function test_add_settings_page_data__custom_view() {
+		add_filter( 'woocommerce_admin_features', array( $this, 'enable_modern_settings' ) );
+
 		$migration               = new WC_Settings_Migration_Test();
 		$setting_data            = $migration->add_settings_page_data( array() );
 		$migration_page_data     = $setting_data[ $migration->get_id() ];
@@ -404,5 +390,16 @@ HTML;
 		$this->assertEquals( $migration_sections_data['custom_view_with_parent_output']['settings'][1]['content'], '<div>Custom View With Parent Output</div>' );
 
 		$this->assertEquals( $migration_sections_data['custom_view_without_parent_output']['settings'][0]['content'], '<div>Custom View Without Parent Output</div>' );
+	}
+
+	/**
+	 * Enable settings feature flag.
+	 *
+	 * @param array $features Array of feature flags.
+	 * @return array
+	 */
+	public function enable_modern_settings( $features ) {
+		$features[] = 'settings';
+		return $features;
 	}
 }

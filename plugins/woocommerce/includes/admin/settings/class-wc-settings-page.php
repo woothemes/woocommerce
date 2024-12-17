@@ -186,46 +186,12 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 
 			// Loop through each section and get the settings for that section.
 			foreach ( $sections as $section_id => $section_label ) {
-				$section_settings_data = array();
-				$section_settings      = count( $sections ) > 1
-					? $this->get_settings_for_section( $section_id )
-					: $this->get_settings();
-
-				$custom_view                       = $this->get_custom_view( $section_id );
-				$should_render_section_from_config = $custom_view['has_parent_output'];
-
-				if ( $should_render_section_from_config ) {
-					// Loop through each setting in the section and add the value to the settings data.
-					foreach ( $section_settings as $section_setting ) {
-						if ( isset( $section_setting['id'] ) ) {
-							$section_setting['value'] = isset( $section_setting['default'] )
-							// Fallback to the default value if it exists.
-							? get_option( $section_setting['id'], $section_setting['default'] )
-							// Otherwise, fallback to false.
-							: get_option( $section_setting['id'] );
-						}
-
-						$type = $section_setting['type'];
-
-						if ( ! in_array( $type, $this->types, true ) ) {
-							$section_setting = $this->get_custom_type_field( 'woocommerce_admin_field_' . $type, $section_setting );
-						}
-						$section_settings_data[] = $section_setting;
-					}
-				}
-
-				$custom_view_output = $custom_view['output'];
-				if ( $custom_view_output ) {
-					$section_settings_data[] = array(
-						'type'    => 'custom',
-						'content' => trim( $custom_view_output ),
-					);
-				}
+				$section_settings_data = $this->get_section_settings_data( $section_id, $sections );
 
 				// Replace empty string section ids with 'default'.
-				$section_id = '' === $section_id ? 'default' : $section_id;
+				$normalized_section_id = '' === $section_id ? 'default' : $section_id;
 
-				$sections_data[ $section_id ] = array(
+				$sections_data[ $normalized_section_id ] = array(
 					'label'    => html_entity_decode( $section_label ),
 					'settings' => $section_settings_data,
 				);
@@ -240,6 +206,60 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 			);
 
 			return $pages;
+		}
+
+		/**
+		 * Get settings data for a specific section.
+		 *
+		 * @param string $section_id The ID of the section.
+		 * @param array  $sections   All sections available.
+		 * @return array Settings data for the section.
+		 */
+		protected function get_section_settings_data( $section_id, $sections ) {
+			$section_settings_data = array();
+
+			$custom_view = $this->get_custom_view( $section_id );
+			// We only want to loop through the settings object if the parent class's output method is being rendered.
+			if ( $custom_view['has_parent_output'] ) {
+				$section_settings = count( $sections ) > 1
+					? $this->get_settings_for_section( $section_id )
+					: $this->get_settings();
+
+				foreach ( $section_settings as $section_setting ) {
+					$section_settings_data[] = $this->populate_setting_value( $section_setting );
+				}
+			}
+
+			// If the custom view has output, add it to the settings data.
+			if ( $custom_view['output'] ) {
+				$section_settings_data[] = array(
+					'type'    => 'custom',
+					'content' => trim( $custom_view['output'] ),
+				);
+			}
+
+			return $section_settings_data;
+		}
+
+		/**
+		 * Populate the value for a given section setting.
+		 *
+		 * @param array $section_setting The setting array to populate.
+		 * @return array The setting array with populated value.
+		 */
+		protected function populate_setting_value( $section_setting ) {
+			if ( isset( $section_setting['id'] ) ) {
+				$section_setting['value'] = isset( $section_setting['default'] )
+					? get_option( $section_setting['id'], $section_setting['default'] )
+					: get_option( $section_setting['id'] );
+			}
+
+			$type = $section_setting['type'];
+			if ( ! in_array( $type, $this->types, true ) ) {
+				$section_setting = $this->get_custom_type_field( 'woocommerce_admin_field_' . $type, $section_setting );
+			}
+
+			return $section_setting;
 		}
 
 		/**
@@ -488,4 +508,5 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 			}
 		}
 	}
+
 endif;
