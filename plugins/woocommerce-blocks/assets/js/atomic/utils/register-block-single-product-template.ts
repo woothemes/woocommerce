@@ -250,16 +250,15 @@ export class BlockRegistrationManager {
 					? [ 'woocommerce/single-product' ]
 					: blockSettings?.ancestor;
 
-				// Only include ancestor if we're not in single-product template
-				// and we're in the site editor
-				const shouldIncludeAncestor =
+				// Only remove ancestor if we're in site editor AND in single-product template
+				const shouldRemoveAncestor =
 					editSiteStore &&
-					! this.currentTemplateId?.includes( 'single-product' );
+					this.currentTemplateId?.includes( 'single-product' );
 
 				// @ts-expect-error - blockMetadata can be either string or object
 				registerBlockType( blockMetadata, {
 					...blockSettings,
-					ancestor: shouldIncludeAncestor ? ancestor : undefined,
+					ancestor: shouldRemoveAncestor ? undefined : ancestor,
 				} );
 			}
 
