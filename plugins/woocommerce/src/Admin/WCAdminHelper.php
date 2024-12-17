@@ -214,12 +214,11 @@ class WCAdminHelper {
 			// Otherwise, compare the normalized permalink path with the URL path.
 			if ( null === $url_path && $normalized_permalink === $normalized_path ) {
 				return true;
-			} else if ( $normalized_permalink === $url_path ) {
+			} elseif ( $normalized_permalink === $url_path ) {
 				return true;
 			}
 		}
-
-
+		
 		// Check if the URL matches any of the WooCommerce permalink structures.
 		if ( $url_path ) {
 			$permalink_structure = wc_get_permalink_structure();
