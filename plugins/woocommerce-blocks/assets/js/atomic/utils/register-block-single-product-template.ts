@@ -141,7 +141,7 @@ class BlockRegistrationManager {
 		if ( ! isTransitioningToOrFromSingleProduct ) return;
 
 		// Re-register all blocks with updated context
-		this.blocks.forEach( ( config, key ) => {
+		this.blocks.forEach( ( config ) => {
 			this.unregisterBlock( config );
 			this.registerBlock( config );
 		} );
