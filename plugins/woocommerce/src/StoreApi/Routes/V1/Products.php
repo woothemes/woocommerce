@@ -291,6 +291,13 @@ class Products extends AbstractRoute {
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 
+		$params['category_slug'] = array(
+			'description'       => __( 'Limit result set to products assigned a specific category slug.', 'woocommerce' ),
+			'type'              => 'string',
+			'sanitize_callback' => 'sanitize_text_field',
+			'validate_callback' => 'rest_validate_request_arg',
+		);
+
 		$params['category_operator'] = array(
 			'description'       => __( 'Operator to compare product category terms.', 'woocommerce' ),
 			'type'              => 'string',
