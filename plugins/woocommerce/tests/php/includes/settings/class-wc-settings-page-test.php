@@ -17,6 +17,33 @@ require_once __DIR__ . '/class-wc-settings-migration-test.php';
 class WC_Settings_Page_Test extends WC_Unit_Test_Case {
 
 	/**
+	 * Setup test environment.
+	 */
+	public function setUp(): void {
+		parent::setUp();
+		add_filter( 'woocommerce_admin_features', array( $this, 'enable_feature_flag' ) );
+	}
+
+	/**
+	 * Tear down test environment.
+	 */
+	public function tearDown(): void {
+		remove_filter( 'woocommerce_admin_features', array( $this, 'enable_feature_flag' ) );
+		parent::tearDown();
+	}
+
+	/**
+	 * Enable settings feature flag.
+	 *
+	 * @param array $features Array of feature flags.
+	 * @return array
+	 */
+	public function enable_feature_flag( $features ) {
+		$features[] = 'settings';
+		return $features;
+	}
+
+	/**
 	 * Test for constructor.
 	 */
 	public function test_constructor() {
@@ -118,7 +145,7 @@ class WC_Settings_Page_Test extends WC_Unit_Test_Case {
 
 		add_filter(
 			'woocommerce_get_settings_example',
-			function( $settings, $section ) use ( &$actual_settings, &$actual_section ) {
+			function ( $settings, $section ) use ( &$actual_settings, &$actual_section ) {
 				$actual_settings = $settings;
 				$actual_section  = $section;
 			},
@@ -159,7 +186,7 @@ class WC_Settings_Page_Test extends WC_Unit_Test_Case {
 
 		add_filter(
 			'woocommerce_get_sections_example',
-			function( $sections ) use ( &$actual_sections ) {
+			function ( $sections ) use ( &$actual_sections ) {
 				$actual_sections = $sections;
 			},
 			10,
@@ -211,7 +238,7 @@ HTML;
 		StaticMockerHack::add_method_mocks(
 			array(
 				'WC_Admin_Settings' => array(
-					'output_fields' => function( $settings ) use ( &$actual ) {
+					'output_fields' => function ( $settings ) use ( &$actual ) {
 						$actual = $settings;
 					},
 				),
@@ -238,7 +265,7 @@ HTML;
 		StaticMockerHack::add_method_mocks(
 			array(
 				'WC_Admin_Settings' => array(
-					'output_fields' => function( $settings ) use ( &$actual ) {
+					'output_fields' => function ( $settings ) use ( &$actual ) {
 						$actual = $settings;
 					},
 				),
@@ -265,7 +292,7 @@ HTML;
 		StaticMockerHack::add_method_mocks(
 			array(
 				'WC_Admin_Settings' => array(
-					'save_fields' => function( $settings ) use ( &$actual ) {
+					'save_fields' => function ( $settings ) use ( &$actual ) {
 						$actual = $settings;
 					},
 				),
@@ -292,7 +319,7 @@ HTML;
 		StaticMockerHack::add_method_mocks(
 			array(
 				'WC_Admin_Settings' => array(
-					'save_fields' => function( $settings ) use ( &$actual ) {
+					'save_fields' => function ( $settings ) use ( &$actual ) {
 						$actual = $settings;
 					},
 				),
@@ -354,7 +381,7 @@ HTML;
 	}
 
 	/**
-	 * Test for add_settings_page_data.
+	 * Test for add_settings_page_data (custom type field).
 	 */
 	public function test_add_settings_page_custom_type_field() {
 		$migration               = new WC_Settings_Migration_Test();
@@ -363,5 +390,19 @@ HTML;
 		$migration_sections_data = $migration_page_data['sections'];
 
 		$this->assertEquals( $migration_sections_data['foobar']['settings'][1]['content'], '<div>Custom Type Field</div>' );
+	}
+
+	/**
+	 * Test for add_settings_page_data (custom view).
+	 */
+	public function test_add_settings_page_data__custom_view() {
+		$migration               = new WC_Settings_Migration_Test();
+		$setting_data            = $migration->add_settings_page_data( array() );
+		$migration_page_data     = $setting_data[ $migration->get_id() ];
+		$migration_sections_data = $migration_page_data['sections'];
+
+		$this->assertEquals( $migration_sections_data['custom_view_with_parent_output']['settings'][1]['content'], '<div>Custom View With Parent Output</div>' );
+
+		$this->assertEquals( $migration_sections_data['custom_view_without_parent_output']['settings'][0]['content'], '<div>Custom View Without Parent Output</div>' );
 	}
 }
