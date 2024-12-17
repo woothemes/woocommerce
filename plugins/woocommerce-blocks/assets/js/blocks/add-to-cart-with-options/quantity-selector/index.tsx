@@ -9,12 +9,12 @@ import { Icon, button } from '@wordpress/icons';
  */
 import metadata from './block.json';
 import AddToCartWithOptionsQuantitySelectorEdit from './edit';
-import { shouldRegisterBlock } from '..';
+import { shouldBlockifiedAddtoCartWithOptionsBeRegistered } from '..';
 import '../../../base/components/quantity-selector/style.scss';
 import './style.scss';
 import './editor.scss';
 
-if ( shouldRegisterBlock ) {
+if ( shouldBlockifiedAddtoCartWithOptionsBeRegistered ) {
 	registerBlockType( metadata, {
 		edit: AddToCartWithOptionsQuantitySelectorEdit,
 		attributes: metadata.attributes,
