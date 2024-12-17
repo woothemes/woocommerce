@@ -90,14 +90,7 @@ class MiniCart extends AbstractBlock {
 		parent::initialize();
 		add_action( 'wp_loaded', array( $this, 'register_empty_cart_message_block_pattern' ) );
 		add_action( 'wp_print_footer_scripts', array( $this, 'print_lazy_load_scripts' ), 2 );
-		/**
-		 * The hooked_block_{$hooked_block_type} filter was added in WordPress 6.5.
-		 * We are the only code adding the filter 'hooked_block_woocommerce/mini-cart'.
-		 * Using has_filter() for a compatibility check won't work because add_filter() is used in the same file.
-		 */
-		if ( version_compare( get_bloginfo( 'version' ), '6.5', '>=' ) ) {
-			add_filter( 'hooked_block_woocommerce/mini-cart', array( $this, 'modify_hooked_block_attributes' ), 10, 5 );
-		}
+		add_filter( 'hooked_block_woocommerce/mini-cart', array( $this, 'modify_hooked_block_attributes' ), 10, 5 );
 		add_filter( 'hooked_block_types', array( $this, 'register_hooked_block' ), 9, 4 );
 	}
 
