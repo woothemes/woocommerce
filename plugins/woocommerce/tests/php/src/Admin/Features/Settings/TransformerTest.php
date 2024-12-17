@@ -807,7 +807,7 @@ class TransformerTest extends WC_Unit_Test_Case {
 									array(
 										'type' => 'checkbox',
 										'id'   => 'check2',
-										'checkboxgroup' => 'end',
+										'checkboxgroup' => 'start',
 									),
 								),
 							),
