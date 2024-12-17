@@ -6,14 +6,14 @@ namespace Automattic\WooCommerce\Tests\Internal\Admin\Settings\PaymentProviders;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\PaymentGateway;
 use Automattic\WooCommerce\Tests\Internal\Admin\Settings\Mocks\FakePaymentGateway;
-use WC_REST_Unit_Test_Case;
+use WC_Unit_Test_Case;
 
 /**
  * Payment gateway provider service test.
  *
  * @class PaymentGateway
  */
-class PaymentGatewayTest extends WC_REST_Unit_Test_Case {
+class PaymentGatewayTest extends WC_Unit_Test_Case {
 
 	/**
 	 * @var PaymentGateway
