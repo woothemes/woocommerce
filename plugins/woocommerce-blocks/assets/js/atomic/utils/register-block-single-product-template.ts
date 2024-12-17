@@ -8,7 +8,6 @@ import {
 	registerBlockVariation,
 	unregisterBlockType,
 	unregisterBlockVariation,
-	getBlockType,
 	BlockConfiguration,
 } from '@wordpress/blocks';
 import { subscribe, select } from '@wordpress/data';
@@ -218,6 +217,7 @@ export class BlockRegistrationManager {
 			blockSettings,
 			isVariationBlock,
 			variationName,
+			isAvailableOnPostEditor,
 		} = config;
 
 		if ( this.isRegistering ) {
@@ -233,13 +233,19 @@ export class BlockRegistrationManager {
 				return;
 			}
 
+			const editSiteStore = select( 'core/edit-site' );
+
+			// Don't register if we're in post editor context and block isn't available there
+			if ( ! editSiteStore && ! isAvailableOnPostEditor ) {
+				return;
+			}
+
 			if ( isVariationBlock ) {
 				registerBlockVariation(
 					blockName,
 					blockSettings as BlockVariation< BlockAttributes >
 				);
 			} else {
-				const editSiteStore = select( 'core/edit-site' );
 				const ancestor = isEmpty( blockSettings?.ancestor )
 					? [ 'woocommerce/single-product' ]
 					: blockSettings?.ancestor;
