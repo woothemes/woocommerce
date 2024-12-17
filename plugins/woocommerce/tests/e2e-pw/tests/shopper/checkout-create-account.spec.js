@@ -5,14 +5,15 @@ import {
 	addAProductToCart,
 	getOrderIdFromUrl,
 } from '@woocommerce/e2e-utils-playwright';
+const { test, expect } = require( '@playwright/test' );
+const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
+
 /**
  * Internal dependencies
  */
 import { tags } from '../../fixtures/fixtures';
-const { test, expect } = require( '@playwright/test' );
-const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const { admin } = require( '../../test-data/data' );
-
+const { setComingSoon } = require( '../../utils/coming-soon' );
 const billingEmail = 'marge-test-account@example.com';
 
 test.describe(
@@ -22,6 +23,7 @@ test.describe(
 		let productId, orderId, shippingZoneId;
 
 		test.beforeAll( async ( { baseURL } ) => {
+			await setComingSoon( { baseURL, enabled: 'no' } );
 			const api = new wcApi( {
 				url: baseURL,
 				consumerKey: process.env.CONSUMER_KEY,

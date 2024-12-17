@@ -1,14 +1,10 @@
-const { test, expect, request } = require( '@playwright/test' );
+const { test, expect } = require( '@playwright/test' );
 const { logIn } = require( '../utils/login' );
 const { admin, customer } = require( '../test-data/data' );
-const { setOption } = require( '../utils/options' );
+const { setComingSoon } = require( '../utils/coming-soon' );
 
 test.beforeAll( async ( { baseURL } ) => {
-	try {
-		await setOption( request, baseURL, 'woocommerce_coming_soon', 'no' );
-	} catch ( error ) {
-		console.log( error );
-	}
+	await setComingSoon( { baseURL, enabled: 'no' } );
 } );
 
 test( 'Load the home page', async ( { page } ) => {

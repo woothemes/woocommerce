@@ -54,6 +54,7 @@ export const Basic = () => (
 			pluginsAvailable: plugins,
 			pluginsSelected: [],
 			pluginsInstallationErrors: [],
+			pluginsTruncated: [],
 		} }
 	/>
 );
@@ -79,6 +80,7 @@ export const InstallationError = () => (
 					error: 'Installation failed',
 				},
 			],
+			pluginsTruncated: [],
 		} }
 	/>
 );

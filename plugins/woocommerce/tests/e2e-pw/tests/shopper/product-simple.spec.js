@@ -5,7 +5,7 @@ import { tags } from '../../fixtures/fixtures';
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const { admin } = require( '../../test-data/data' );
-
+const { setComingSoon } = require( '../../utils/coming-soon' );
 const productPrice = '18.16';
 const simpleProductName = 'Simple single product';
 const simpleProductSlug = simpleProductName.replace( / /gi, '-' ).toLowerCase();
@@ -28,6 +28,7 @@ test.describe(
 			'<ol><li>Test numbered item</li></ol>';
 
 		test.beforeAll( async ( { baseURL } ) => {
+			await setComingSoon( { baseURL, enabled: 'no' } );
 			const api = new wcApi( {
 				url: baseURL,
 				consumerKey: process.env.CONSUMER_KEY,
