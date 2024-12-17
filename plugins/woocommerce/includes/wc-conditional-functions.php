@@ -23,7 +23,7 @@ function is_woocommerce() {
 	if ( ! did_action( 'parse_query' ) && ! did_action( 'wp' ) ) {
 		wc_doing_it_wrong(
 			__FUNCTION__,
-			sprintf( 'Conditional tag %s can only be used on or after the "wp" action hook', __FUNCTION__ ),
+			sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 			'9.6.0'
 		);
 
@@ -44,7 +44,7 @@ if ( ! function_exists( 'is_shop' ) ) {
 		if ( ! did_action( 'parse_query' ) && ! did_action( 'wp' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
-				sprintf( 'Conditional tag %s can only be used on or after the "wp" action hook', __FUNCTION__ ),
+				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
 
@@ -67,7 +67,7 @@ if ( ! function_exists( 'is_product_taxonomy' ) ) {
 		if ( ( ! did_action( 'parse_tax_query' ) || doing_action( 'parse_tax_query' ) ) && ! did_action( 'parse_query' ) && ! did_action( 'wp' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
-				sprintf( 'Conditional tag %s can only be used on or after the "wp" action hook', __FUNCTION__ ),
+				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
 
@@ -90,7 +90,7 @@ if ( ! function_exists( 'is_product_category' ) ) {
 		if ( ( ! did_action( 'parse_tax_query' ) || doing_action( 'parse_tax_query' ) ) && ! did_action( 'parse_query' ) && ! did_action( 'wp' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
-				sprintf( 'Conditional tag %s can only be used on or after the "wp" action hook', __FUNCTION__ ),
+				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
 
@@ -113,7 +113,7 @@ if ( ! function_exists( 'is_product_tag' ) ) {
 		if ( ( ! did_action( 'parse_tax_query' ) || doing_action( 'parse_tax_query' ) ) && ! did_action( 'parse_query' ) && ! did_action( 'wp' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
-				sprintf( 'Conditional tag %s can only be used on or after the "wp" action hook', __FUNCTION__ ),
+				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
 
@@ -135,7 +135,7 @@ if ( ! function_exists( 'is_product' ) ) {
 		if ( ! did_action( 'parse_query' ) && ! did_action( 'wp' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
-				sprintf( 'Conditional tag %s can only be used on or after the "wp" action hook', __FUNCTION__ ),
+				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
 
@@ -158,7 +158,7 @@ if ( ! function_exists( 'is_cart' ) ) {
 		if ( ! did_filter( 'wp_headers' ) && ! did_action( 'wp' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
-				sprintf( 'Conditional tag %s can only be used on or after the "wp" action hook', __FUNCTION__ ),
+				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
 
@@ -183,7 +183,7 @@ if ( ! function_exists( 'is_checkout' ) ) {
 		if ( ! did_filter( 'wp_headers' ) && ! did_action( 'wp' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
-				sprintf( 'Conditional tag %s can only be used on or after the "wp" action hook', __FUNCTION__ ),
+				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
 
@@ -210,7 +210,7 @@ if ( ! function_exists( 'is_checkout_pay_page' ) ) {
 		if ( ! did_filter( 'wp_headers' ) && ! did_action( 'wp' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
-				sprintf( 'Conditional tag %s can only be used on or after the "wp" action hook', __FUNCTION__ ),
+				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
 
@@ -235,7 +235,7 @@ if ( ! function_exists( 'is_wc_endpoint_url' ) ) {
 		if ( ! did_action( 'parse_query' ) && ! did_action( 'wp' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
-				sprintf( 'Conditional tag %s can only be used on or after the "wp" action hook', __FUNCTION__ ),
+				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
 
@@ -276,7 +276,7 @@ if ( ! function_exists( 'is_account_page' ) ) {
 		if ( ! did_filter( 'wp_headers' ) && ! did_action( 'wp' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
-				sprintf( 'Conditional tag %s can only be used on or after the "wp" action hook', __FUNCTION__ ),
+				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
 
@@ -302,7 +302,7 @@ if ( ! function_exists( 'is_view_order_page' ) ) {
 		if ( ! did_action( 'parse_query' ) && ! did_action( 'wp' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
-				sprintf( 'Conditional tag %s can only be used on or after the "wp" action hook', __FUNCTION__ ),
+				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
 
@@ -330,7 +330,7 @@ if ( ! function_exists( 'is_edit_account_page' ) ) {
 		if ( ! did_action( 'parse_query' ) && ! did_action( 'wp' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
-				sprintf( 'Conditional tag %s can only be used on or after the "wp" action hook', __FUNCTION__ ),
+				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
 
@@ -356,7 +356,7 @@ if ( ! function_exists( 'is_order_received_page' ) ) {
 		if ( ! did_action( 'parse_query' ) && ! did_action( 'wp' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
-				sprintf( 'Conditional tag %s can only be used on or after the "wp" action hook', __FUNCTION__ ),
+				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
 
@@ -382,7 +382,7 @@ if ( ! function_exists( 'is_add_payment_method_page' ) ) {
 		if ( ! did_action( 'parse_query' ) && ! did_action( 'wp' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
-				sprintf( 'Conditional tag %s can only be used on or after the "wp" action hook', __FUNCTION__ ),
+				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
 
@@ -408,7 +408,7 @@ if ( ! function_exists( 'is_lost_password_page' ) ) {
 		if ( ! did_action( 'parse_query' ) && ! did_action( 'wp' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
-				sprintf( 'Conditional tag %s can only be used on or after the "wp" action hook', __FUNCTION__ ),
+				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
 
@@ -588,7 +588,7 @@ function wc_post_content_has_shortcode( $tag = '' ) {
 	if ( ! did_filter( 'wp_headers' ) && ! did_action( 'wp' ) ) {
 		wc_doing_it_wrong(
 			__FUNCTION__,
-			sprintf( '%s can only be used on or after the "wp" action hook', __FUNCTION__ ),
+			sprintf( __( '%s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 			'9.6.0'
 		);
 
