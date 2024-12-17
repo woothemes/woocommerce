@@ -95,32 +95,28 @@ jQuery( function( $ ) {
 		} )
 		// Star ratings for comments
 		.on( 'init', '#rating', function() {
-			$( 'label[for="rating"]' ).hide();
 			$( '#rating' )
 				.hide()
 				.before(
-					'<fieldset>\
-						<legend>' + wc_single_product_params.i18n_rating_legend + '&nbsp;<span class="required">*</span></legend>\
-						<p class="stars">\
-							<span>\
-								<a role="radio" tabindex="0" aria-checked="false" class="star-1" href="#">' +
-									wc_single_product_params.i18n_rating_options[0] + 
-								'</a>\
-								<a role="radio" tabindex="-1" aria-checked="false" class="star-2" href="#">' + 
-									wc_single_product_params.i18n_rating_options[1] + 
-								'</a>\
-								<a role="radio" tabindex="-1" aria-checked="false" class="star-3" href="#">' + 
-									wc_single_product_params.i18n_rating_options[2] + 
-								'</a>\
-								<a role="radio" tabindex="-1" aria-checked="false" class="star-4" href="#">' + 
-									wc_single_product_params.i18n_rating_options[3] + 
-								'</a>\
-								<a role="radio" tabindex="-1" aria-checked="false" class="star-5" href="#">' + 
-									wc_single_product_params.i18n_rating_options[4] + 
-								'</a>\
-							</span>\
-						</p>\
-					</fieldset>'
+					'<p class="stars">\
+						<span role="group" aria-labeledby="comment-form-rating-label">\
+							<a role="radio" tabindex="0" aria-checked="false" class="star-1" href="#">' +
+								wc_single_product_params.i18n_rating_options[0] + 
+							'</a>\
+							<a role="radio" tabindex="-1" aria-checked="false" class="star-2" href="#">' + 
+								wc_single_product_params.i18n_rating_options[1] + 
+							'</a>\
+							<a role="radio" tabindex="-1" aria-checked="false" class="star-3" href="#">' + 
+								wc_single_product_params.i18n_rating_options[2] + 
+							'</a>\
+							<a role="radio" tabindex="-1" aria-checked="false" class="star-4" href="#">' + 
+								wc_single_product_params.i18n_rating_options[3] + 
+							'</a>\
+							<a role="radio" tabindex="-1" aria-checked="false" class="star-5" href="#">' + 
+								wc_single_product_params.i18n_rating_options[4] + 
+							'</a>\
+						</span>\
+					</p>'
 				);
 		} )
 		.on( 'click', '#respond p.stars a', function() {
