@@ -26,8 +26,6 @@ function is_woocommerce() {
 			sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 			'9.6.0'
 		);
-
-		return false;
 	}
 
 	return apply_filters( 'is_woocommerce', is_shop() || is_product_taxonomy() || is_product() );
@@ -47,8 +45,6 @@ if ( ! function_exists( 'is_shop' ) ) {
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
-
-			return false;
 		}
 
 		return ( is_post_type_archive( 'product' ) || is_page( wc_get_page_id( 'shop' ) ) );
@@ -70,8 +66,6 @@ if ( ! function_exists( 'is_product_taxonomy' ) ) {
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
-
-			return false;
 		}
 
 		return is_tax( get_object_taxonomies( 'product' ) );
@@ -93,8 +87,6 @@ if ( ! function_exists( 'is_product_category' ) ) {
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
-
-			return false;
 		}
 
 		return is_tax( 'product_cat', $term );
@@ -116,8 +108,6 @@ if ( ! function_exists( 'is_product_tag' ) ) {
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
-
-			return false;
 		}
 
 		return is_tax( 'product_tag', $term );
@@ -138,8 +128,6 @@ if ( ! function_exists( 'is_product' ) ) {
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
-
-			return false;
 		}
 
 		return is_singular( array( 'product' ) );
@@ -161,8 +149,6 @@ if ( ! function_exists( 'is_cart' ) ) {
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
-
-			return false;
 		}
 
 		$page_id = wc_get_page_id( 'cart' );
@@ -186,8 +172,6 @@ if ( ! function_exists( 'is_checkout' ) ) {
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
-
-			return false;
 		}
 
 		$page_id = wc_get_page_id( 'checkout' );
@@ -213,8 +197,6 @@ if ( ! function_exists( 'is_checkout_pay_page' ) ) {
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
-
-			return false;
 		}
 
 		return is_checkout() && ! empty( $wp->query_vars['order-pay'] );
@@ -238,8 +220,6 @@ if ( ! function_exists( 'is_wc_endpoint_url' ) ) {
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
-
-			return false;
 		}
 
 		$wc_endpoints = WC()->query->get_query_vars();
@@ -279,8 +259,6 @@ if ( ! function_exists( 'is_account_page' ) ) {
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
-
-			return false;
 		}
 
 		$page_id = wc_get_page_id( 'myaccount' );
@@ -305,8 +283,6 @@ if ( ! function_exists( 'is_view_order_page' ) ) {
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
-
-			return false;
 		}
 
 		$page_id = wc_get_page_id( 'myaccount' );
@@ -333,8 +309,6 @@ if ( ! function_exists( 'is_edit_account_page' ) ) {
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
-
-			return false;
 		}
 
 		$page_id = wc_get_page_id( 'myaccount' );
@@ -359,8 +333,6 @@ if ( ! function_exists( 'is_order_received_page' ) ) {
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
-
-			return false;
 		}
 
 		$page_id = wc_get_page_id( 'checkout' );
@@ -385,8 +357,6 @@ if ( ! function_exists( 'is_add_payment_method_page' ) ) {
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
-
-			return false;
 		}
 
 		$page_id = wc_get_page_id( 'myaccount' );
@@ -411,8 +381,6 @@ if ( ! function_exists( 'is_lost_password_page' ) ) {
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 				'9.6.0'
 			);
-
-			return false;
 		}
 
 		$page_id = wc_get_page_id( 'myaccount' );
@@ -591,8 +559,6 @@ function wc_post_content_has_shortcode( $tag = '' ) {
 			sprintf( __( '%s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
 			'9.6.0'
 		);
-
-		return false;
 	}
 
 	return is_singular() && is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, $tag );
