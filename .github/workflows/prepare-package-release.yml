@@ -27,16 +27,19 @@ jobs:
           install: true
           build: './tools/package-release'
           pull-package-deps: 'tools/package-release'
+          
+      - name: Determine release branch
+        id: branch
+        run: | 
+          BRANCH="release/packages-$(date +'%Y-%m-%d-%H-%M')"
+          git checkout -b $BRANCH
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
 
       - name: Execute script
         run: ./tools/package-release/bin/dev prepare ${{ github.event.inputs.packages }}
 
       - name: Print git status
         run: git status
-
-      - name: Get current date
-        id: date
-        run: echo "date=$(date +'%Y-%m-%d-%H-%M')" >> $GITHUB_OUTPUT
 
       - name: Set all package string
         id: all_description
@@ -53,7 +56,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'Automated change: Prep ${{ steps.all_description.outputs.str || steps.specific_description.outputs.str }} for release.'
-          branch: release/packages-${{ steps.date.outputs.date }}
+          branch: ${{ steps.branch.outputs.branch }}
           delete-branch: true
           title: Prepare Packages for Release
           reviewers: ${{ github.actor }}
