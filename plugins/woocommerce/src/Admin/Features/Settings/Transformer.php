@@ -200,7 +200,7 @@ class Transformer {
 
 		switch ( $checkboxgroup ) {
 			case 'start':
-				$this->start_checkbox_group( $setting, $transformed_settings );
+				$this->start_checkbox_group( $setting );
 				break;
 
 			case 'end':
@@ -217,9 +217,8 @@ class Transformer {
 	 * Start a new checkbox group.
 	 *
 	 * @param array $setting Setting to add.
-	 * @param array $transformed_settings Transformed settings array.
 	 */
-	private function start_checkbox_group( array $setting, array &$transformed_settings ): void {
+	private function start_checkbox_group( array $setting ): void {
 		// If we already have an open checkbox group, flush it to settings before starting a new one.
 		if ( is_array( $this->current_checkbox_group ) ) {
 			$this->flush_current_checkbox_group();
