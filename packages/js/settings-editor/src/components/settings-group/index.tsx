@@ -8,6 +8,11 @@ import { __experimentalHeading as Heading } from '@wordpress/components';
 import { sanitize } from 'dompurify';
 /* eslint-enable @woocommerce/dependency-group */
 
+/**
+ * Internal dependencies
+ */
+import { SettingsItem } from '../settings-item';
+
 const ALLOWED_TAGS = [ 'a', 'b', 'em', 'i', 'strong', 'p', 'br' ];
 const ALLOWED_ATTR = [ 'target', 'href', 'rel', 'name', 'download' ];
 
@@ -28,12 +33,7 @@ export const SettingsGroup = ( { group }: { group: SettingsGroup } ) => {
 					const key =
 						setting.id ||
 						setting.type + '-' + setting.title?.replace( '', '-' );
-					return (
-						<div key={ key }>
-							<Heading level={ 5 }>{ setting.title }</Heading>
-							<p>{ setting.type }</p>
-						</div>
-					);
+					return <SettingsItem key={ key } setting={ setting } />;
 				} ) }
 			</div>
 		</div>
