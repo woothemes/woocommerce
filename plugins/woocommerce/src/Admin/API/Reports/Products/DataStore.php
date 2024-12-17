@@ -469,6 +469,7 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 		$parent_order_id = $order->get_parent_id();
 
 		$is_full_refund_without_line_items = false;
+		$partial_refund_product_revenue    = array();
 		$refund_type                       = $order->get_meta( '_refund_type' );
 
 		// When changing the order status to "Refunded", the refund order's type will be full refund, and the order items will be empty.
@@ -479,47 +480,55 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 			empty( $order_items )
 		) {
 			$is_full_refund_without_line_items = true;
-			$parent_order_id                   = $order->get_parent_id();
-			$parent_order                      = wc_get_order( $parent_order_id );
-			$parent_order_items                = $parent_order->get_items();
 
-			// Get the partially refunded product ids.
-			$query = "
-				SELECT product_lookup.product_id
-				FROM {$table_name} AS product_lookup
-				INNER JOIN {$wpdb->prefix}wc_order_stats AS order_stats
-					ON order_stats.order_id = product_lookup.order_id
-				WHERE 1 = 1
-					AND order_stats.parent_id = %d
-					AND order_stats.total_sales < 0
-			";
+			$parent_order_id    = $order->get_parent_id();
+			$parent_order       = wc_get_order( $parent_order_id );
+			$parent_order_items = $parent_order->get_items();
 
-			$refunded_product_ids = $wpdb->get_results(
+			// Get the partially refunded products ID and revenue from the parent order.
+			$partial_refund_products = $wpdb->get_results(
 				$wpdb->prepare(
-					// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-					$query,
+					"
+						SELECT
+							product_lookup.product_id,
+							product_lookup.product_net_revenue
+						FROM {$table_name} AS product_lookup
+						INNER JOIN {$wpdb->prefix}wc_order_stats AS order_stats
+							ON order_stats.order_id = product_lookup.order_id
+						WHERE 1 = 1
+							AND order_stats.parent_id = %d
+							AND product_lookup.product_net_revenue < 0
+					",
 					$parent_order_id
-				),
-				ARRAY_A
-			);
-
-			$refunded_product_ids = array_map(
-				function ( $refunded_product_id ) {
-					return $refunded_product_id['product_id'];
-				},
-				$refunded_product_ids
-			);
-
-			// Exclude the refunded product ids from the parent order items.
-			$order_items = array_values(
-				array_filter(
-					$parent_order_items,
-					function ( $order_item ) use ( $refunded_product_ids ) {
-						$order_item_id = $order_item->get_id();
-						$product_id    = wc_get_order_item_meta( $order_item_id, '_product_id' );
-						return ! in_array( $product_id, $refunded_product_ids, true );
-					}
 				)
+			);
+
+			// Create a lookup table for partially refunded products.
+			// Key is the product_id, value is the product_net_revenue.
+			// E.g. [ '1' => '-60', '2' => '-30' ].
+			$partial_refund_product_revenue = wp_list_pluck( $partial_refund_products, 'product_net_revenue', 'product_id' );
+
+			// Filter the items that is already being patially refunded from the parent order item.
+			$order_items = array_filter(
+				$parent_order_items,
+				function ( $order_item ) use ( $partial_refund_product_revenue ) {
+					$product_id = $order_item->get_product_id();
+
+					// If the product is not partially refunded, include it.
+					if ( ! isset( $partial_refund_product_revenue[ $product_id ] ) ) {
+						return true;
+					}
+
+					$net_revenue = round( $order_item->get_total( 'edit' ), $decimals );
+
+					// If the product is not 100% partially refunded, include it.
+					// So we can store the difference in the product lookup table later.
+					if ( abs( (float) $partial_refund_product_revenue[ $product_id ] ) !== abs( $net_revenue ) ) {
+						return true;
+					}
+
+					return false;
+				}
 			);
 		}
 
@@ -527,15 +536,23 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 			$order_item_id = $order_item->get_id();
 			unset( $existing_items[ $order_item_id ] );
 			$product_qty         = $order_item->get_quantity( 'edit' );
+			$product_id          = $order_item->get_product_id( 'edit' );
 			$shipping_amount     = $order->get_item_shipping_amount( $order_item );
 			$shipping_tax_amount = $order->get_item_shipping_tax_amount( $order_item );
 			$coupon_amount       = $order->get_item_coupon_amount( $order_item );
 			$net_revenue         = round( $order_item->get_total( 'edit' ), $decimals );
 
-			// If the order is a full refund and there is no order items. We use the parent order items instead.
-			// So the net revenue and product quantity should be negative.
+			// If the order is a full refund and there is no order items. The order item here is the parent order item.
 			if ( $is_full_refund_without_line_items ) {
-				$net_revenue = -abs( $net_revenue );
+				if ( isset( $partial_refund_product_revenue[ $product_id ] ) ) {
+					// If a single line item was refunded 60% then fully refunded after, we need store the difference in the product lookup table.
+					// E.g. A product costs $100, it was previously partially refunded $60, then fully refunded $40.
+					// So it will be -abs( 100 + (-60) ) = -40.;
+					$net_revenue = -abs( $net_revenue + (float) $partial_refund_product_revenue[ $product_id ] );
+				} else {
+					$net_revenue = -abs( $net_revenue );
+				}
+
 				$product_qty = -abs( $product_qty );
 			}
 
@@ -565,7 +582,7 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 				array(
 					'order_item_id'         => $order_item_id,
 					'order_id'              => $order->get_id(),
-					'product_id'            => wc_get_order_item_meta( $order_item_id, '_product_id' ),
+					'product_id'            => $product_id,
 					'variation_id'          => wc_get_order_item_meta( $order_item_id, '_variation_id' ),
 					'customer_id'           => $order->get_report_customer_id(),
 					'product_qty'           => $product_qty,
