@@ -104,7 +104,7 @@ class Transformer {
 		if ( $this->current_checkbox_group && 'checkbox' !== $type ) {
 			// It's expected that a checkbox group will always be closed before a non-checkbox setting.
 			// If not, it's likely a checkbox group was not closed properly so we flush the current checkbox group and add the setting as-is.
-			$this->flush_current_checkbox_group( $transformed_settings );
+			$this->flush_current_checkbox_group();
 		}
 
 		switch ( $type ) {
@@ -222,7 +222,7 @@ class Transformer {
 	private function start_checkbox_group( array $setting, array &$transformed_settings ): void {
 		// If we already have an open checkbox group, flush it to settings before starting a new one.
 		if ( is_array( $this->current_checkbox_group ) ) {
-			$this->flush_current_checkbox_group( $transformed_settings );
+			$this->flush_current_checkbox_group();
 		}
 
 		$this->current_checkbox_group = array( $setting );
@@ -272,10 +272,8 @@ class Transformer {
 
 	/**
 	 * Flush current checkbox group to transformed settings.
-	 *
-	 * @param array $transformed_settings Transformed settings array.
 	 */
-	private function flush_current_checkbox_group( array &$transformed_settings ): void {
+	private function flush_current_checkbox_group(): void {
 		if ( is_array( $this->current_checkbox_group ) ) {
 			if ( is_array( $this->current_group ) ) {
 				$this->current_group = array_merge( $this->current_group, $this->current_checkbox_group );
@@ -308,7 +306,7 @@ class Transformer {
 	 * @param array &$transformed_settings Transformed settings array.
 	 */
 	private function finalize_transformation( array &$transformed_settings ): void {
-		$this->flush_current_checkbox_group( $transformed_settings );
+		$this->flush_current_checkbox_group();
 		$this->flush_current_group( $transformed_settings );
 	}
 

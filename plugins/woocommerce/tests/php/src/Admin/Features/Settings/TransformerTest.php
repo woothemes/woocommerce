@@ -799,14 +799,14 @@ class TransformerTest extends WC_Unit_Test_Case {
 								'title'    => 'group 1',
 								'settings' => array(
 									array(
-										'type'  => 'checkbox',
-										'id'    => 'check1',
-										'title' => 'Checkbox Group',
+										'type'          => 'checkbox',
+										'id'            => 'check1',
+										'title'         => 'Checkbox Group',
 										'checkboxgroup' => 'start',
 									),
 									array(
-										'type' => 'checkbox',
-										'id'   => 'check2',
+										'type'          => 'checkbox',
+										'id'            => 'check2',
 										'checkboxgroup' => 'start',
 									),
 								),
