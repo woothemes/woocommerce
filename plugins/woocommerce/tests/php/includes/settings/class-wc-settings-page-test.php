@@ -387,9 +387,17 @@ HTML;
 		$migration_page_data     = $setting_data[ $migration->get_id() ];
 		$migration_sections_data = $migration_page_data['sections'];
 
-		$this->assertEquals( $migration_sections_data['custom_view_with_parent_output']['settings'][1]['content'], '<div>Custom View With Parent Output</div>' );
+		$this->assertEquals(
+			$migration_sections_data['custom_view_with_parent_output']['settings'][1]['content'],
+			'<div>Custom View With Parent Output</div>',
+			'Custom view should be rendered with other settings'
+		);
 
-		$this->assertEquals( $migration_sections_data['custom_view_without_parent_output']['settings'][0]['content'], '<div>Custom View Without Parent Output</div>' );
+		$this->assertEquals(
+			$migration_sections_data['custom_view_without_parent_output']['settings'][0]['content'],
+			'<div>Custom View Without Parent Output</div>',
+			'Custom view should be rendered with no other settings when parent::output is not called'
+		);
 	}
 
 	/**
