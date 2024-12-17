@@ -563,8 +563,7 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 			$result = $wpdb->replace(
 				self::get_db_table_name(),
 				array(
-					// When the order is full refund, there is no order items, so the order_item_id should be 0.
-					'order_item_id'         => $is_full_refund_without_line_items ? 0 : $order_item_id,
+					'order_item_id'         => $order_item_id,
 					'order_id'              => $order->get_id(),
 					'product_id'            => wc_get_order_item_meta( $order_item_id, '_product_id' ),
 					'variation_id'          => wc_get_order_item_meta( $order_item_id, '_variation_id' ),

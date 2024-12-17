@@ -1769,7 +1769,7 @@ CREATE TABLE {$wpdb->prefix}wc_order_product_lookup (
 	tax_amount double DEFAULT 0 NOT NULL,
 	shipping_amount double DEFAULT 0 NOT NULL,
 	shipping_tax_amount double DEFAULT 0 NOT NULL,
-	PRIMARY KEY  (order_item_id, order_id, product_id),
+	PRIMARY KEY  (order_item_id, order_id),
 	KEY order_id (order_id),
 	KEY product_id (product_id),
 	KEY customer_id (customer_id),
