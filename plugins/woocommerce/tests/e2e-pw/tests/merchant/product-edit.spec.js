@@ -32,7 +32,7 @@ const test = baseTest.extend( {
 
 test(
 	'can edit a product and save the changes',
-	{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
+	{ tag: [ tags.SERVICES ] },
 	async ( { page, products } ) => {
 		await page.goto(
 			`wp-admin/post.php?post=${ products[ 0 ].id }&action=edit`
@@ -92,7 +92,7 @@ test(
 
 test(
 	'can bulk edit products',
-	{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
+	{ tag: [ tags.SERVICES ] },
 	async ( { page, products } ) => {
 		await page.goto( `wp-admin/edit.php?post_type=product` );
 
@@ -191,7 +191,7 @@ test(
 
 test(
 	'can restore regular price when bulk editing products',
-	{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
+	{ tag: [ tags.SERVICES ] },
 	async ( { page, products } ) => {
 		await page.goto( `wp-admin/edit.php?post_type=product` );
 
@@ -288,7 +288,7 @@ test(
 
 test(
 	'can decrease the sale price if the product was not previously in sale when bulk editing products',
-	{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
+	{ tag: [ tags.SERVICES ] },
 	async ( { page, products } ) => {
 		await page.goto( `wp-admin/edit.php?post_type=product` );
 
@@ -342,7 +342,7 @@ test(
 
 test(
 	'increasing the sale price from 0 does not change the sale price when bulk editing products',
-	{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
+	{ tag: [ tags.SERVICES ] },
 	async ( { page, api, products } ) => {
 		let product;
 		await api

@@ -340,7 +340,7 @@ class WC_Form_Handler {
 
 			if ( $customer ) {
 				// Keep billing data in sync if data changed.
-				if ( is_email( $user->user_email ) && $current_email !== $user->user_email ) {
+				if ( isset( $user->user_email ) && is_email( $user->user_email ) && $current_email !== $user->user_email ) {
 					$customer->set_billing_email( $user->user_email );
 				}
 

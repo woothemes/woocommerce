@@ -16,7 +16,7 @@ import { Button } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import { BackButton } from '../back-button/back-button';
+import { BackButton } from '../buttons/back-button';
 import './header.scss';
 
 interface HeaderProps {

@@ -4,7 +4,7 @@
 import { __ } from '@wordpress/i18n';
 import { Button, Tooltip } from '@wordpress/components';
 import { chevronLeft } from '@wordpress/icons';
-
+import { getHistory } from '@woocommerce/navigation';
 /**
  * Internal dependencies
  */
@@ -23,14 +23,24 @@ interface BackButtonProps {
 	 * The tooltip text of the back button.
 	 */
 	tooltipText?: string;
+	/**
+	 * If true, we will push into browser history instead of window.location.
+	 */
+	isRoute?: boolean;
 }
 
 export const BackButton = ( {
 	href,
 	tooltipText = __( 'WooCommerce Settings', 'woocommerce' ),
+	isRoute = false,
 }: BackButtonProps ) => {
 	const onGoBack = () => {
-		window.location.href = href;
+		if ( isRoute ) {
+			const history = getHistory();
+			history.push( href );
+		} else {
+			window.location.href = href;
+		}
 	};
 
 	return (
