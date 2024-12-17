@@ -505,8 +505,19 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 
 			// Create a lookup table for partially refunded products.
 			// Key is the product_id, value is the product_net_revenue.
-			// E.g. [ '1' => '-60', '2' => '-30' ].
-			$partial_refund_product_revenue = wp_list_pluck( $partial_refund_products, 'product_net_revenue', 'product_id' );
+			// E.g. [ '1' => -60, '2' => -30 ].
+			$partial_refund_product_revenue = array_reduce(
+				$partial_refund_products,
+				function ( $carry, $product ) {
+					if ( ! isset( $carry[ $product->product_id ] ) ) {
+						$carry[ $product->product_id ] = (float) $product->product_net_revenue;
+					} else {
+						$carry[ $product->product_id ] += (float) $product->product_net_revenue;
+					}
+					return $carry;
+				},
+				array()
+			);
 
 			// Filter the items that is already being patially refunded from the parent order item.
 			$order_items = array_filter(
@@ -523,7 +534,7 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 
 					// If the product is not 100% partially refunded, include it.
 					// So we can store the difference in the product lookup table later.
-					if ( abs( (float) $partial_refund_product_revenue[ $product_id ] ) !== abs( $net_revenue ) ) {
+					if ( abs( $partial_refund_product_revenue[ $product_id ] ) !== abs( $net_revenue ) ) {
 						return true;
 					}
 
@@ -548,7 +559,7 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 					// If a single line item was refunded 60% then fully refunded after, we need store the difference in the product lookup table.
 					// E.g. A product costs $100, it was previously partially refunded $60, then fully refunded $40.
 					// So it will be -abs( 100 + (-60) ) = -40.;
-					$net_revenue = -abs( $net_revenue + (float) $partial_refund_product_revenue[ $product_id ] );
+					$net_revenue = -abs( $net_revenue + $partial_refund_product_revenue[ $product_id ] );
 				} else {
 					$net_revenue = -abs( $net_revenue );
 				}
