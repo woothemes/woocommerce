@@ -186,7 +186,7 @@ class Checkout extends AbstractCartRoute {
 	 */
 	protected function get_route_response( \WP_REST_Request $request ) {
 		$this->create_or_update_draft_order( $request );
-
+		$this->set_default_payment_method();
 		return $this->prepare_item_for_response(
 			(object) [
 				'order'          => $this->order,
@@ -271,8 +271,6 @@ class Checkout extends AbstractCartRoute {
 	 * @return \WP_REST_Response
 	 */
 	protected function get_route_update_response( \WP_REST_Request $request ) {
-		$this->validate_required_additional_fields_for_order( $request );
-
 		/**
 		 * Create (or update) Draft Order and process request data.
 		 */
@@ -771,9 +769,12 @@ class Checkout extends AbstractCartRoute {
 	 * @param \WP_REST_Request $request Request object.
 	 */
 	private function persist_payment_method_for_order( \WP_REST_Request $request ) {
-		if ( isset( $request['payment_method'] ) ) {
+		$available_gateways = WC()->payment_gateways()->get_available_payment_gateways();
+		if ( isset( $request['payment_method'] ) && in_array( $request['payment_method'], $available_gateways, true ) ) {
 			WC()->session->set( 'chosen_payment_method', sanitize_text_field( wp_unslash( $request['payment_method'] ) ) );
 			$this->order->set_payment_method( sanitize_text_field( wp_unslash( $request['payment_method'] ) ) );
+		} else {
+			$this->set_default_payment_method();
 		}
 	}
 

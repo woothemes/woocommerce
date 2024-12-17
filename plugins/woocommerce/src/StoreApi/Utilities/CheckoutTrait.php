@@ -221,4 +221,20 @@ trait CheckoutTrait {
 			throw new RouteException( 'woocommerce_rest_checkout_invalid_additional_fields', $errors->get_error_messages(), 400 );
 		}
 	}
+
+	/**
+	 * Get the selected payment method ID.
+	 */
+	private function set_default_payment_method() {
+		$payment_method     = WC()->session->get( 'chosen_payment_method' );
+		$available_gateways = WC()->payment_gateways()->get_available_payment_gateways();
+
+		if ( empty( $payment_method ) || ! in_array( $payment_method, $available_gateways, true ) ) {
+			$payment_method = ! empty( $available_gateways ) ? (string) array_key_first( $available_gateways ) : null;
+		}
+
+		WC()->session->set( 'chosen_payment_method', $payment_method );
+		$this->order->set_payment_method( $payment_method );
+		$this->order->save();
+	}
 }
