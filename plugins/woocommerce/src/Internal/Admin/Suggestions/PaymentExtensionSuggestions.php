@@ -5,6 +5,7 @@ namespace Automattic\WooCommerce\Internal\Admin\Suggestions;
 
 defined( 'ABSPATH' ) || exit;
 
+use Automattic\WooCommerce\Internal\Admin\Onboarding\OnboardingProfile;
 use Automattic\WooCommerce\Internal\Admin\Settings\Payments;
 use Automattic\WooCommerce\Internal\Utilities\ArrayUtil;
 
@@ -1251,6 +1252,11 @@ class PaymentExtensionSuggestions {
 				continue;
 			}
 
+			// Determine if the extension should be included based on the store's state, the provided country and context.
+			if ( ! $this->is_extension_allowed( $extension_id, $country_code, $context ) ) {
+				continue;
+			}
+
 			$extension_base_details = $this->get_extension_base_details( $extension_id ) ?? array();
 			$extension_details      = $this->with_country_details( $extension_base_details, $extension_country_details );
 
@@ -1354,6 +1360,113 @@ class PaymentExtensionSuggestions {
 	 */
 	public function dismiss_incentive( string $incentive_id, string $suggestion_id, string $context = 'all' ): bool {
 		return $this->suggestion_incentives->dismiss_incentive( $incentive_id, $suggestion_id, $context );
+	}
+
+
+	/**
+	 * Determine if a payment extension is allowed to be suggested.
+	 *
+	 * @param string $extension_id The extension ID.
+	 * @param string $country_code The two-letter country code.
+	 * @param string $context      Optional. The context ID of where the extension is being used.
+	 *
+	 * @return bool True if the extension is allowed, false otherwise.
+	 *              Defaults to true if there is no specific logic for the extension.
+	 */
+	private function is_extension_allowed( string $extension_id, string $country_code, string $context = '' ): bool {
+		/*
+		 * For now, we only need to run logic for the Square In-Person extension.
+		 * If more extensions need to be filtered out, we can add more logic here until we decide to abstract it.
+		 */
+
+		if ( self::SQUARE_IN_PERSON === $extension_id ) {
+			// Square (In-Person) is only allowed if the merchant is selling offline.
+			return $this->is_merchant_selling_offline();
+		}
+
+		return true;
+	}
+
+	/**
+	 * Based on the WC onboarding profile, determine if the merchant is selling online.
+	 *
+	 * If the user skipped the profiler (no data points provided), we assume they are selling online.
+	 *
+	 * @return bool True if the merchant is selling online, false otherwise.
+	 */
+	private function is_merchant_selling_online(): bool {
+		/*
+		 * We consider a merchant to be selling online if:
+		 * - The profiler was skipped (no data points provided).
+		 *   OR
+		 * - The merchant answered 'Which one of these best describes you?' with 'I’m already selling' AND:
+		 *   - Didn't answer to the 'Are you selling online?' question.
+		 *      OR
+		 *   - Answered the 'Are you selling online?' question with either:
+		 *     - 'Yes, I’m selling online'.
+		 * 		  OR
+		 *     - 'I’m selling both online and offline'.
+		 *
+		 * @see plugins/woocommerce/client/admin/client/core-profiler/pages/UserProfile.tsx for the values.
+		 */
+		$onboarding_profile = get_option( OnboardingProfile::DATA_OPTION, array() );
+		if (
+			! isset( $onboarding_profile['business_choice'] ) ||
+			(
+				'im_already_selling' === $onboarding_profile['business_choice'] &&
+				(
+					! isset( $onboarding_profile['selling_online_answer'] ) ||
+					(
+						'yes_im_selling_online' === $onboarding_profile['selling_online_answer'] ||
+						'im_selling_both_online_and_offline' === $onboarding_profile['selling_online_answer']
+					)
+				)
+			)
+		) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Based on the WC onboarding profile, determine if the merchant is selling offline.
+	 *
+	 * If the user skipped the profiler (no data points provided), we assume they are NOT selling offline.
+	 *
+	 * @return bool True if the merchant is selling offline, false otherwise.
+	 */
+	private function is_merchant_selling_offline(): bool {
+		/*
+		 * We consider a merchant to be selling offline if:
+		 * - The profiler was NOT skipped (data points provided).
+		 *   AND
+		 * - The merchant answered 'Which one of these best describes you?' with 'I’m already selling' AND:
+		 *   - Answered the 'Are you selling online?' question with either:
+		 *     - 'No, I’m selling offline'.
+		 * 		  OR
+		 *     - 'I’m selling both online and offline'.
+		 *
+		 * @see plugins/woocommerce/client/admin/client/core-profiler/pages/UserProfile.tsx for the values.
+		 */
+		$onboarding_profile = get_option( OnboardingProfile::DATA_OPTION, array() );
+		if (
+			isset( $onboarding_profile['business_choice'] ) &&
+			(
+				'im_already_selling' === $onboarding_profile['business_choice'] &&
+				(
+					isset( $onboarding_profile['selling_online_answer'] ) &&
+					(
+						'no_im_selling_offline' === $onboarding_profile['selling_online_answer'] ||
+						'im_selling_both_online_and_offline' === $onboarding_profile['selling_online_answer']
+					)
+				)
+			)
+		) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -1859,7 +1972,7 @@ class PaymentExtensionSuggestions {
 			self::SQUARE_IN_PERSON  => array(
 				'_type'       => self::TYPE_PSP,
 				'title'       => esc_html__( 'Square', 'woocommerce' ),
-				'description' => esc_html__( 'Securely accept credit and debit cards with one low rate, no surprise fees (custom rates available). Sell online and in store and track sales and inventory in one place.', 'woocommerce' ),
+				'description' => esc_html__( 'Securely accept credit and debit cards with one low rate, no surprise fees (custom rates available). Sell in store and track sales and inventory in one place.', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/square-black.png', WC_PLUGIN_FILE ),
 				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/square.png', WC_PLUGIN_FILE ),
 				'plugin'      => array(
