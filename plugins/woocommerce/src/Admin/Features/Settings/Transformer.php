@@ -133,12 +133,6 @@ class Transformer {
 	 * @param array $transformed_settings Transformed settings array.
 	 */
 	private function handle_group_start( array $setting, array &$transformed_settings ): void {
-		// If setting doesn't have an ID, add it as-is since we will be unable to match it with a sectionend.
-		if ( ! isset( $setting['id'] ) ) {
-			$this->add_setting( $setting, $transformed_settings );
-			return;
-		}
-
 		// If we already have a group, flush it to settings before starting a new one.
 		if ( $this->current_group ) {
 			$this->flush_current_group( $transformed_settings );
@@ -159,8 +153,12 @@ class Transformer {
 			isset( $setting['id'] ) &&
 			$this->current_group[0]['id'] === $setting['id'];
 
+		$ids_match_undefined = $this->current_group &&
+			! isset( $this->current_group[0]['id'] ) &&
+			! isset( $setting['id'] );
+
 		// If IDs match, add the group and close it.
-		if ( $ids_match ) {
+		if ( $ids_match || $ids_match_undefined ) {
 			// Compose the group setting.
 			$title_setting          = array_shift( $this->current_group );
 			$transformed_settings[] = array_merge(
@@ -279,7 +277,12 @@ class Transformer {
 	 */
 	private function flush_current_checkbox_group( array &$transformed_settings ): void {
 		if ( is_array( $this->current_checkbox_group ) ) {
-			$transformed_settings         = array_merge( $transformed_settings, $this->current_checkbox_group );
+			if ( is_array( $this->current_group ) ) {
+				$this->current_group = array_merge( $this->current_group, $this->current_checkbox_group );
+			} else {
+				$this->current_group = $this->current_checkbox_group;
+			}
+
 			$this->current_checkbox_group = null;
 		}
 	}
