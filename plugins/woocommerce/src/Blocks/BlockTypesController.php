@@ -156,6 +156,16 @@ final class BlockTypesController {
 		}
 	}
 
+	/**
+	 * Register block metadata collections for WooCommerce blocks.
+	 *
+	 * This method handles the registration of block metadata by using WordPress's block metadata
+	 * collection registration system. It includes a temporary workaround for WordPress 6.7's
+	 * strict path validation that might fail for sites using symlinked plugins.
+	 *
+	 * If the registration fails due to path validation, blocks will fall back to regular
+	 * registration without affecting functionality.
+	 */
 	public function register_block_metadata() {
 		$meta_file_path = WC_ABSPATH . 'assets/client/blocks/blocks-json.php';
 		if ( function_exists( 'wp_register_block_metadata_collection' ) && file_exists( $meta_file_path ) ) {
