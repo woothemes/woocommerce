@@ -226,8 +226,8 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 			$section_settings_data = array();
 
 			$custom_view = $this->get_custom_view( $section_id );
-			// We only want to loop through the settings object if the parent class's output method is being rendered.
-			if ( $custom_view['parent_output_called'] ) {
+			// We only want to loop through the settings object if the parent class's output method is being rendered during the get_custom_view call.
+			if ( $this->output_called ) {
 				$section_settings = count( $sections ) > 1
 					? $this->get_settings_for_section( $section_id )
 					: $this->get_settings();
@@ -238,12 +238,15 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 			}
 
 			// If the custom view has output, add it to the settings data.
-			if ( $custom_view['output'] ) {
+			if ( $custom_view ) {
 				$section_settings_data[] = array(
 					'type'    => 'custom',
-					'content' => trim( $custom_view['output'] ),
+					'content' => trim( $custom_view ),
 				);
 			}
+
+			// Reset the output_called property.
+			$this->output_called = false;
 
 			return $section_settings_data;
 		}
@@ -273,10 +276,10 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 		 * Get the custom view given the current tab and section.
 		 *
 		 * @param string $section_id The section id.
-		 * @return array
+		 * @return string The custom view. HTML output.
 		 */
 		public function get_custom_view( $section_id ) {
-			global $current_section, $wc_settings_page_output;
+			global $current_section;
 			// Make sure the current section is set to the sectionid here. Reset it at the end of the function.
 			$saved_current_section = $current_section;
 			// set global current_section to the section_id.
@@ -292,15 +295,9 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 			$html = ob_get_contents();
 			ob_end_clean();
 
-			$result = array(
-				'output'               => trim( $html ),
-				'parent_output_called' => $this->output_called,
-			);
-
-			// Reset the global variable and the output_called property.
-			$current_section     = $saved_current_section;
-			$this->output_called = false;
-			return $result;
+			// Reset the global variable.
+			$current_section = $saved_current_section;
+			return $html;
 		}
 
 		/**
