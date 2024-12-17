@@ -141,7 +141,7 @@ exports[`RemovableChip should render default aria label if text is a node 1`] = 
     Test 2
   </span>
   <button
-    aria-label="Remove \\"Test 2\\""
+    aria-label="Remove "Test 2""
     className="wc-block-components-chip__remove"
     disabled={false}
     onClick={[Function]}
@@ -181,7 +181,7 @@ exports[`RemovableChip should render screen reader text aria label 1`] = `
     Test 2
   </span>
   <button
-    aria-label="Remove \\"Test 2\\""
+    aria-label="Remove "Test 2""
     className="wc-block-components-chip__remove"
     disabled={false}
     onClick={[Function]}
@@ -216,7 +216,7 @@ exports[`RemovableChip should render text and the remove button 1`] = `
     Test
   </span>
   <button
-    aria-label="Remove \\"Test\\""
+    aria-label="Remove "Test""
     className="wc-block-components-chip__remove"
     disabled={false}
     onClick={[Function]}
@@ -251,7 +251,7 @@ exports[`RemovableChip should render with disabled remove button 1`] = `
     Test
   </span>
   <button
-    aria-label="Remove \\"Test\\""
+    aria-label="Remove "Test""
     className="wc-block-components-chip__remove"
     disabled={true}
     onClick={[Function]}
@@ -277,7 +277,7 @@ exports[`RemovableChip should render with disabled remove button 1`] = `
 
 exports[`RemovableChip with removeOnAnyClick should be a button when removeOnAnyClick is set to true 1`] = `
 <button
-  aria-label="Remove \\"Test\\""
+  aria-label="Remove "Test""
   className="is-removable wc-block-components-chip wc-block-components-chip--radius-small"
   disabled={false}
   onClick={[Function]}
