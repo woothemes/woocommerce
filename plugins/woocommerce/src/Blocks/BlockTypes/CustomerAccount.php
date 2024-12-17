@@ -70,9 +70,15 @@ class CustomerAccount extends AbstractBlock {
 		$parsed_hooked_block['attrs']['iconStyle']    = 'line';
 		$parsed_hooked_block['attrs']['iconClass']    = 'wc-block-customer-account__account-icon';
 
-		$block_styles = wp_get_global_styles( array( 'blocks', 'core/navigation', 'typography', 'fontSize' ) );
+		$customer_account_block_font_size = wp_get_global_styles( array( 'blocks', 'woocommerce/customer-account', 'typography', 'fontSize' ) );
 
-		$parsed_hooked_block['attrs']['style']['typography']['fontSize'] = $block_styles;
+		if ( ! is_string( $customer_account_block_font_size ) ) {
+			$navigation_block_font_size = wp_get_global_styles( array( 'blocks', 'core/navigation', 'typography', 'fontSize' ) );
+
+			if ( is_string( $navigation_block_font_size ) ) {
+				$parsed_hooked_block['attrs']['style']['typography']['fontSize'] = $navigation_block_font_size;
+			}
+		}
 
 		return $parsed_hooked_block;
 	}
