@@ -196,8 +196,7 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 				$section_settings_data = $this->get_section_settings_data( $section_id, $sections );
 
 				// Replace empty string section ids with 'default'.
-				$normalized_section_id = '' === $section_id ? 'default' : $section_id;
-
+				$normalized_section_id                   = '' === $section_id ? 'default' : $section_id;
 				$sections_data[ $normalized_section_id ] = array(
 					'label'    => html_entity_decode( $section_label ),
 					'settings' => $section_settings_data,
@@ -232,6 +231,7 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 					? $this->get_settings_for_section( $section_id )
 					: $this->get_settings();
 
+				// Loop through each setting in the section and add the value to the settings data.
 				foreach ( $section_settings as $section_setting ) {
 					$section_settings_data[] = $this->populate_setting_value( $section_setting );
 				}
@@ -260,7 +260,9 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 		protected function populate_setting_value( $section_setting ) {
 			if ( isset( $section_setting['id'] ) ) {
 				$section_setting['value'] = isset( $section_setting['default'] )
+					// Fallback to the default value if it exists.
 					? get_option( $section_setting['id'], $section_setting['default'] )
+					// Otherwise, fallback to false.
 					: get_option( $section_setting['id'] );
 			}
 
