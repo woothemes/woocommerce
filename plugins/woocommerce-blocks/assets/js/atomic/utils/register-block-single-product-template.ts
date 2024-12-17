@@ -49,6 +49,8 @@ export class BlockRegistrationManager {
 	private initialized = false;
 	/** Flag to prevent recursive registration attempts */
 	private isRegistering = false;
+	/** Set to track registered blocks and prevent duplicates */
+	private registeredBlocks: Set< string > = new Set();
 
 	/**
 	 * Private constructor to enforce singleton pattern.
@@ -89,21 +91,22 @@ export class BlockRegistrationManager {
 
 	/**
 	 * Initializes subscriptions for template changes and block registration.
-	 * Sets up listeners for the site editor and handles initial block registration.
+	 * Sets up listeners for both the site editor and post editor contexts.
 	 */
 	private initializeSubscriptions(): void {
 		if ( this.initialized ) {
 			return;
 		}
 
-		const unsubscribe = subscribe( () => {
+		// Site Editor Subscription
+		const siteEditorUnsubscribe = subscribe( () => {
 			const editSiteStore = select( 'core/edit-site' );
 			if ( ! editSiteStore ) {
 				return;
 			}
 
-			// Only run this once
-			unsubscribe();
+			// Only run this once for site editor
+			siteEditorUnsubscribe();
 
 			// Set up the template change listener
 			subscribe( () => {
@@ -117,15 +120,37 @@ export class BlockRegistrationManager {
 				if ( previousTemplateId !== this.currentTemplateId ) {
 					this.handleTemplateChange( previousTemplateId );
 				}
-			} );
+			}, 'core/edit-site' );
 
-			// Initial registration of blocks
+			// Initial registration of blocks for site editor
 			this.blocks.forEach( ( config ) => {
 				this.registerBlock( config );
 			} );
+		}, 'core/edit-site' );
 
-			this.initialized = true;
-		} );
+		// Post Editor Subscription
+		const postEditorUnsubscribe = subscribe( () => {
+			const editPostStore = select( 'core/edit-post' );
+			if ( ! editPostStore ) {
+				return;
+			}
+
+			// Only run this once for post editor
+			postEditorUnsubscribe();
+
+			// Register blocks that are available in post editor
+			this.blocks.forEach( ( config ) => {
+				if ( config.isAvailableOnPostEditor ) {
+					const key = config.variationName || config.blockName;
+					if ( ! this.registeredBlocks.has( key ) ) {
+						this.registerBlock( config );
+						this.registeredBlocks.add( key );
+					}
+				}
+			} );
+		}, 'core/edit-post' );
+
+		this.initialized = true;
 	}
 
 	/**
@@ -165,8 +190,10 @@ export class BlockRegistrationManager {
 		try {
 			if ( isVariationBlock && variationName ) {
 				unregisterBlockVariation( blockName, variationName );
+				this.registeredBlocks.delete( variationName );
 			} else {
 				unregisterBlockType( blockName );
+				this.registeredBlocks.delete( blockName );
 			}
 		} catch ( error ) {
 			// eslint-disable-next-line no-console
@@ -190,9 +217,9 @@ export class BlockRegistrationManager {
 			blockMetadata = blockName,
 			blockSettings,
 			isVariationBlock,
+			variationName,
 		} = config;
 
-		// Prevent recursive registration
 		if ( this.isRegistering ) {
 			return;
 		}
@@ -201,9 +228,8 @@ export class BlockRegistrationManager {
 			this.isRegistering = true;
 
 			// Check if block is already registered
-			if ( getBlockType( blockName ) && ! isVariationBlock ) {
-				// eslint-disable-next-line no-console
-				console.debug( `Block ${ blockName } is already registered.` );
+			const key = variationName || blockName;
+			if ( this.registeredBlocks.has( key ) ) {
 				return;
 			}
 
@@ -213,20 +239,25 @@ export class BlockRegistrationManager {
 					blockSettings as BlockVariation< BlockAttributes >
 				);
 			} else {
+				const editSiteStore = select( 'core/edit-site' );
 				const ancestor = isEmpty( blockSettings?.ancestor )
 					? [ 'woocommerce/single-product' ]
 					: blockSettings?.ancestor;
 
-				// @ts-expect-error - This can be either a string or an object.
+				// Only include ancestor if we're not in single-product template
+				// and we're in the site editor
+				const shouldIncludeAncestor =
+					editSiteStore &&
+					! this.currentTemplateId?.includes( 'single-product' );
+
+				// @ts-expect-error - blockMetadata can be either string or object
 				registerBlockType( blockMetadata, {
 					...blockSettings,
-					ancestor: ! this.currentTemplateId?.includes(
-						'single-product'
-					)
-						? ancestor
-						: undefined,
+					ancestor: shouldIncludeAncestor ? ancestor : undefined,
 				} );
 			}
+
+			this.registeredBlocks.add( key );
 		} catch ( error ) {
 			// eslint-disable-next-line no-console
 			console.error( `Failed to register block ${ blockName }:`, error );
