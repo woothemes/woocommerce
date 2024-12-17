@@ -2,6 +2,12 @@
 	margin: 0 $gap-large;
 }
 
+.woocommerce-homepage-notes-wrapper {
+	.components-card {
+		overflow: hidden;
+	}
+}
+
 .woocommerce-layout__inbox-panel-header {
 	padding: $gap-large;
 

@@ -1,5 +1,6 @@
 <?php
 
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Internal\Admin\Orders\PageController;
 use Automattic\WooCommerce\RestApi\UnitTests\HPOSToggleTrait;
 use Automattic\WooCommerce\Utilities\OrderUtil;
@@ -68,7 +69,7 @@ class WC_Orders_Tracking_Test extends \WC_Unit_Test_Case {
 		$order->save();
 
 		/* phpcs:disable WooCommerce.Commenting.CommentHooks.MissingHookComment */
-		do_action( 'woocommerce_order_status_changed', $order->get_id(), 'pending', 'finished' );
+		do_action( 'woocommerce_order_status_changed', $order->get_id(), OrderStatus::PENDING, 'finished' );
 		$this->assertRecordedTracksEvent( 'wcadmin_orders_edit_status_change' );
 	}
 

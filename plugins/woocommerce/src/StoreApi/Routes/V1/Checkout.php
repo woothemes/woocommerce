@@ -240,10 +240,20 @@ class Checkout extends AbstractCartRoute {
 	 */
 	protected function get_route_post_response( \WP_REST_Request $request ) {
 		/**
+		 * Ensure required permissions based on store settings are valid to place the order.
+		 */
+		$this->validate_user_can_place_order();
+
+		/**
 		 * Before triggering validation, ensure totals are current and in turn, things such as shipping costs are present.
 		 * This is so plugins that validate other cart data (e.g. conditional shipping and payments) can access this data.
 		 */
 		$this->cart_controller->calculate_totals();
+
+		/**
+		 * Validate that the cart is not empty.
+		 */
+		$this->cart_controller->validate_cart_not_empty();
 
 		/**
 		 * Validate items and fix violations before the order is processed.
@@ -648,5 +658,39 @@ class Checkout extends AbstractCartRoute {
 		}
 
 		return false;
+	}
+
+	/**
+	 * This validates if the order can be placed regarding settings in WooCommerce > Settings > Accounts & Privacy
+	 * If registration during checkout is disabled, guest checkout is disabled and the user is not logged in, prevent checkout.
+	 *
+	 * @throws RouteException If user cannot place order.
+	 */
+	private function validate_user_can_place_order() {
+		if (
+			// "woocommerce_enable_signup_and_login_from_checkout" === no.
+			false === filter_var( wc()->checkout()->is_registration_enabled(), FILTER_VALIDATE_BOOLEAN ) &&
+			// "woocommerce_enable_guest_checkout" === no.
+			true === filter_var( wc()->checkout()->is_registration_required(), FILTER_VALIDATE_BOOLEAN ) &&
+			! is_user_logged_in()
+		) {
+			throw new RouteException(
+				'woocommerce_rest_guest_checkout_disabled',
+				esc_html(
+					/**
+					 * Filter to customize the checkout message when a user must be logged in.
+					 *
+					 * @since 9.4.3
+					 *
+					 * @param string $message Message to display when a user must be logged in to check out.
+					 */
+					apply_filters(
+						'woocommerce_checkout_must_be_logged_in_message',
+						__( 'You must be logged in to checkout.', 'woocommerce' )
+					)
+				),
+				403
+			);
+		}
 	}
 }

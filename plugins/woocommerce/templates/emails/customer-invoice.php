@@ -12,8 +12,10 @@
  *
  * @see https://woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates\Emails
- * @version 3.7.0
+ * @version 9.6.0
  */
+
+use Automattic\WooCommerce\Enums\OrderStatus;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -32,19 +34,35 @@ do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 <?php if ( $order->needs_payment() ) { ?>
 	<p>
 	<?php
-	printf(
-		wp_kses(
+	if ( $order->has_status( OrderStatus::FAILED ) ) {
+		printf(
+			wp_kses(
 			/* translators: %1$s Site title, %2$s Order pay link */
-			__( 'An order has been created for you on %1$s. Your invoice is below, with a link to make payment when you’re ready: %2$s', 'woocommerce' ),
-			array(
-				'a' => array(
-					'href' => array(),
-				),
-			)
-		),
-		esc_html( get_bloginfo( 'name', 'display' ) ),
-		'<a href="' . esc_url( $order->get_checkout_payment_url() ) . '">' . esc_html__( 'Pay for this order', 'woocommerce' ) . '</a>'
-	);
+				__( 'Sorry, your order on %1$s was unsuccessful. Your order details are below, with a link to try your payment again: %2$s', 'woocommerce' ),
+				array(
+					'a' => array(
+						'href' => array(),
+					),
+				)
+			),
+			esc_html( get_bloginfo( 'name', 'display' ) ),
+			'<a href="' . esc_url( $order->get_checkout_payment_url() ) . '">' . esc_html__( 'Pay for this order', 'woocommerce' ) . '</a>'
+		);
+	} else {
+		printf(
+			wp_kses(
+			/* translators: %1$s Site title, %2$s Order pay link */
+				__( 'An order has been created for you on %1$s. Your invoice is below, with a link to make payment when you’re ready: %2$s', 'woocommerce' ),
+				array(
+					'a' => array(
+						'href' => array(),
+					),
+				)
+			),
+			esc_html( get_bloginfo( 'name', 'display' ) ),
+			'<a href="' . esc_url( $order->get_checkout_payment_url() ) . '">' . esc_html__( 'Pay for this order', 'woocommerce' ) . '</a>'
+		);
+	}
 	?>
 	</p>
 

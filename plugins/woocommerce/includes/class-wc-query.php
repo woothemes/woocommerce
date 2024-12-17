@@ -7,7 +7,6 @@
  */
 
 use Automattic\WooCommerce\Internal\ProductAttributesLookup\Filterer;
-use Automattic\WooCommerce\Internal\Traits\AccessiblePrivateMethods;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -15,8 +14,6 @@ defined( 'ABSPATH' ) || exit;
  * WC_Query Class.
  */
 class WC_Query {
-
-	use AccessiblePrivateMethods;
 
 	/**
 	 * Query vars to add to wp.
@@ -539,7 +536,7 @@ class WC_Query {
 		self::$product_query = $q;
 
 		// Additional hooks to change WP Query.
-		self::add_filter( 'posts_clauses', array( $this, 'product_query_post_clauses' ), 10, 2 );
+		add_filter( 'posts_clauses', array( $this, 'product_query_post_clauses' ), 10, 2 );
 		add_filter( 'the_posts', array( $this, 'handle_get_posts' ), 10, 2 );
 
 		do_action( 'woocommerce_product_query', $q, $this );
@@ -551,8 +548,10 @@ class WC_Query {
 	 * @param array    $args Product query clauses.
 	 * @param WP_Query $wp_query The current product query.
 	 * @return array The updated product query clauses array.
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function product_query_post_clauses( $args, $wp_query ) {
+	public function product_query_post_clauses( $args, $wp_query ) {
 		$args = $this->price_filter_post_clauses( $args, $wp_query );
 		$args = $this->filterer->filter_by_attribute_post_clauses( $args, $wp_query, self::get_layered_nav_chosen_attributes() );
 

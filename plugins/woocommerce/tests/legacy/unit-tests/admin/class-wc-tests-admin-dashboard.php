@@ -5,6 +5,8 @@
  * @package WooCommerce\Tests\Admin
  */
 
+use Automattic\WooCommerce\Enums\OrderStatus;
+
 /**
  * Tests for the WC_Admin_Report class.
  */
@@ -42,7 +44,7 @@ class WC_Tests_Admin_Dashboard extends WC_Unit_Test_Case {
 		$this->skip_if_hpos_enabled( 'We don\'t support legacy reports on HPOS' );
 		wp_set_current_user( $this->user );
 		$order = WC_Helper_Order::create_order();
-		$order->set_status( 'completed' );
+		$order->set_status( OrderStatus::COMPLETED );
 		$order->save();
 
 		$this->expectOutputRegex( '/98,765\.00/' );
@@ -64,7 +66,7 @@ class WC_Tests_Admin_Dashboard extends WC_Unit_Test_Case {
 		$this->skip_if_hpos_enabled( 'We don\'t support legacy reports on HPOS' );
 		wp_set_current_user( $this->user );
 		$order = WC_Helper_Order::create_order();
-		$order->set_status( 'completed' );
+		$order->set_status( OrderStatus::COMPLETED );
 		$order->save();
 
 		add_filter( 'woocommerce_admin_disabled', '__return_true' );

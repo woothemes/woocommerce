@@ -103,7 +103,11 @@ export const PrintfulAdvertProductPlacement = {
 	),
 	onClick: () => {
 		recordEvent( 'tasklist_product_printful_advert_click' );
-		window.open( 'https://woocommerce.com/products/printful', '_blank' );
+		window.open(
+			'https://woocommerce.com/products/printful',
+			'_blank',
+			'noopener,noreferrer'
+		);
 	},
 };
 

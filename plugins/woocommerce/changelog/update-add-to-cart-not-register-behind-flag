@@ -1,0 +1,4 @@
+Significance: patch
+Type: update
+
+Comment: do not register Add To Cart with Option when the feature flag is False

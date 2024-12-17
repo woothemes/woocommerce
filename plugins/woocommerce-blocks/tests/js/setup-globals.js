@@ -1,3 +1,10 @@
+const { webcrypto } = require( 'node:crypto' );
+
+global.crypto = webcrypto;
+
+global.TextEncoder = require( 'util' ).TextEncoder;
+global.TextDecoder = require( 'util' ).TextDecoder;
+
 // Set up `wp.*` aliases.  Doing this because any tests importing wp stuff will likely run into this.
 global.wp = {};
 require( '@wordpress/data' );
@@ -263,5 +270,19 @@ global.IntersectionObserver = function () {
 		takeRecords: () => [],
 	};
 };
+
+Object.defineProperty( window, 'matchMedia', {
+	writable: true,
+	value: jest.fn().mockImplementation( ( query ) => ( {
+		matches: false,
+		media: query,
+		onchange: null,
+		addListener: jest.fn(), // Deprecated
+		removeListener: jest.fn(), // Deprecated
+		addEventListener: jest.fn(),
+		removeEventListener: jest.fn(),
+		dispatchEvent: jest.fn(),
+	} ) ),
+} );
 
 global.__webpack_public_path__ = '';

@@ -8,6 +8,7 @@
  * @version     2.2.0
  */
 
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Utilities\OrderUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -431,7 +432,7 @@ class WC_Meta_Box_Order_Data {
 									$field_value = make_clickable( esc_html( $field_value ) );
 								}
 
-								if ( $field_value ) {
+								if ( $field_value || '0' === $field_value ) {
 									echo '<p><strong>' . esc_html( $field['label'] ) . ':</strong> ' . wp_kses_post( $field_value ) . '</p>';
 								}
 							}
@@ -553,11 +554,9 @@ class WC_Meta_Box_Order_Data {
 										$field_value = wc_make_phone_clickable( $field_value );
 									}
 
-									if ( ! $field_value ) {
-										continue;
+									if ( $field_value || '0' === $field_value ) {
+										echo '<p><strong>' . esc_html( $field['label'] ) . ':</strong> ' . wp_kses_post( $field_value ) . '</p>';
 									}
-
-									echo '<p><strong>' . esc_html( $field['label'] ) . ':</strong> ' . wp_kses_post( $field_value ) . '</p>';
 								}
 							}
 
@@ -753,7 +752,7 @@ class WC_Meta_Box_Order_Data {
 		$props['date_created'] = $date;
 
 		// Set created via prop if new post.
-		if ( isset( $_POST['original_post_status'] ) && 'auto-draft' === $_POST['original_post_status'] ) {
+		if ( isset( $_POST['original_post_status'] ) && OrderStatus::AUTO_DRAFT === $_POST['original_post_status'] ) {
 			$props['created_via'] = 'admin';
 		}
 

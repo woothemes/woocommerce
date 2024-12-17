@@ -27,16 +27,16 @@ import { trackEvent } from '../../tracking';
 export const useInsertPattern = () => {
 	const isActiveNewNeutralVariation = useIsActiveNewNeutralVariation();
 
-	const currentTemplate = useSelect(
+	const currentTemplateId: string | undefined = useSelect(
 		( sel ) =>
 			// @ts-expect-error No types for this exist yet.
-			sel( coreStore ).__experimentalGetTemplateForLink( '/' ),
+			sel( coreStore ).getDefaultTemplateId( { slug: 'home' } ),
 		[]
 	);
 
 	const [ blocks ] = useEditorBlocks(
 		'wp_template',
-		currentTemplate?.id ?? ''
+		currentTemplateId || ''
 	);
 
 	const insertedPatternRef = useRef< string | null >( null );

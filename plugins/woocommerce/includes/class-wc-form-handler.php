@@ -5,6 +5,8 @@
  * @package WooCommerce\Classes\
  */
 
+use Automattic\WooCommerce\Enums\OrderStatus;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -338,7 +340,7 @@ class WC_Form_Handler {
 
 			if ( $customer ) {
 				// Keep billing data in sync if data changed.
-				if ( is_email( $user->user_email ) && $current_email !== $user->user_email ) {
+				if ( isset( $user->user_email ) && is_email( $user->user_email ) && $current_email !== $user->user_email ) {
 					$customer->set_billing_email( $user->user_email );
 				}
 
@@ -750,18 +752,27 @@ class WC_Form_Handler {
 		) {
 			wc_nocache_headers();
 
-			$order_key        = wp_unslash( $_GET['order'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			$order_id         = absint( $_GET['order_id'] );
-			$order            = wc_get_order( $order_id );
+			$order_key = wp_unslash( $_GET['order'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$order_id  = absint( $_GET['order_id'] );
+			$order     = wc_get_order( $order_id );
+			/**
+			 * Filter valid order statuses for cancel.
+			 *
+			 * @since 3.5.0
+			 *
+			 * @param array    $valid_statuses Array of valid order statuses for cancel.
+			 * @param WC_Order $order          Order object.
+			 */
+			$valid_statuses   = apply_filters( 'woocommerce_valid_order_statuses_for_cancel', array( OrderStatus::PENDING, OrderStatus::FAILED ), $order );
 			$user_can_cancel  = current_user_can( 'cancel_order', $order_id );
-			$order_can_cancel = $order->has_status( apply_filters( 'woocommerce_valid_order_statuses_for_cancel', array( 'pending', 'failed' ), $order ) );
+			$order_can_cancel = $order->has_status( $valid_statuses );
 			$redirect         = isset( $_GET['redirect'] ) ? wp_unslash( $_GET['redirect'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 			if ( $user_can_cancel && $order_can_cancel && $order->get_id() === $order_id && hash_equals( $order->get_order_key(), $order_key ) ) {
 
 				// Cancel the order + restore stock.
 				WC()->session->set( 'order_awaiting_payment', false );
-				$order->update_status( 'cancelled', __( 'Order cancelled by customer.', 'woocommerce' ) );
+				$order->update_status( OrderStatus::CANCELLED, __( 'Order cancelled by customer.', 'woocommerce' ) );
 
 				wc_add_notice( apply_filters( 'woocommerce_order_cancelled_notice', __( 'Your order was cancelled.', 'woocommerce' ) ), apply_filters( 'woocommerce_order_cancelled_notice_type', 'notice' ) );
 
