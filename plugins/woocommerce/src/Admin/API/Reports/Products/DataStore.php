@@ -468,15 +468,20 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 
 		$parent_order_id = $order->get_parent_id();
 
-		$is_full_refund = false;
-		$refund_type    = $order->get_meta( '_refund_type' );
-		// When the order is a full refund, there is no order items.
+		$is_full_refund_without_line_items = false;
+		$refund_type                       = $order->get_meta( '_refund_type' );
+
+		// When changing the order status to "Refunded", the refund order's type will be full refund, and the order items will be empty.
 		// We need to get the parent order items, and exclude the items that is already being patially refunded.
-		if ( 'shop_order_refund' === $order->get_type() && 'full' === $refund_type ) {
-			$is_full_refund     = true;
-			$parent_order_id    = $order->get_parent_id();
-			$parent_order       = wc_get_order( $parent_order_id );
-			$parent_order_items = $parent_order->get_items();
+		if (
+			'shop_order_refund' === $order->get_type() &&
+			'full' === $refund_type &&
+			empty( $order_items )
+		) {
+			$is_full_refund_without_line_items = true;
+			$parent_order_id                   = $order->get_parent_id();
+			$parent_order                      = wc_get_order( $parent_order_id );
+			$parent_order_items                = $parent_order->get_items();
 
 			// Get the partially refunded product ids.
 			$query = "
@@ -527,9 +532,9 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 			$coupon_amount       = $order->get_item_coupon_amount( $order_item );
 			$net_revenue         = round( $order_item->get_total( 'edit' ), $decimals );
 
-			// If the order is a full refund, there is no order items. We use the parent order items instead.
+			// If the order is a full refund and there is no order items. We use the parent order items instead.
 			// So the net revenue and product quantity should be negative.
-			if ( $is_full_refund ) {
+			if ( $is_full_refund_without_line_items ) {
 				$net_revenue = -abs( $net_revenue );
 				$product_qty = -abs( $product_qty );
 			}
@@ -559,7 +564,7 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 				self::get_db_table_name(),
 				array(
 					// When the order is full refund, there is no order items, so the order_item_id should be 0.
-					'order_item_id'         => $is_full_refund ? 0 : $order_item_id,
+					'order_item_id'         => $is_full_refund_without_line_items ? 0 : $order_item_id,
 					'order_id'              => $order->get_id(),
 					'product_id'            => wc_get_order_item_meta( $order_item_id, '_product_id' ),
 					'variation_id'          => wc_get_order_item_meta( $order_item_id, '_variation_id' ),
