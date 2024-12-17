@@ -12,10 +12,13 @@ type ProductTypeSelector = {
 	productTypes: ProductTypeProps[];
 	current: ProductTypeProps;
 	set: ( productType: string ) => void;
+	registeredListeners: string[];
+	registerListener: ( listener: string ) => void;
+	unregisterListener: ( listener: string ) => void;
 };
 
 /**
- * Hook to get data from the store to manage the product type selector.
+ * Hook to get data from the store to manage the product type selector and listeners.
  * Also, it provides a function to switch the current product type.
  * It's a layer of abstraction to the store.
  *
@@ -23,22 +26,30 @@ type ProductTypeSelector = {
  */
 export default function useProductTypeSelector(): ProductTypeSelector {
 	/*
-	 * Get the available product types and the current product type
+	 * Get the registered listeners, available product types and the current product type
 	 * from the store.
 	 */
-	const { productTypes, current } = useSelect< {
+	const { productTypes, current, registeredListeners } = useSelect< {
 		productTypes: ProductTypeProps[];
 		current: ProductTypeProps;
+		registeredListeners: string[];
 	} >( ( select ) => {
-		const { getProductTypes, getCurrentProductType } = select(
-			woocommerceTemplateStateStore
-		);
+		const {
+			getProductTypes,
+			getCurrentProductType,
+			getRegisteredListeners,
+		} = select( woocommerceTemplateStateStore );
 
 		return {
 			productTypes: getProductTypes(),
 			current: getCurrentProductType(),
+			registeredListeners: getRegisteredListeners(),
 		};
 	}, [] );
+
+	const { registerListener, unregisterListener } = useDispatch(
+		woocommerceTemplateStateStore
+	);
 
 	const { switchProductType } = useDispatch( woocommerceTemplateStateStore );
 
@@ -46,5 +57,8 @@ export default function useProductTypeSelector(): ProductTypeSelector {
 		productTypes,
 		current,
 		set: switchProductType,
+		registeredListeners,
+		registerListener,
+		unregisterListener,
 	};
 }

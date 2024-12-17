@@ -4,8 +4,6 @@
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import { SelectControl } from '@wordpress/components';
-import { findBlock } from '@woocommerce/utils';
-import { BlockInstance } from '@wordpress/blocks';
 import {
 	// @ts-expect-error no exported member.
 	PluginDocumentSettingPanel,
@@ -36,35 +34,28 @@ function ProductTypeSwitcher() {
 	);
 }
 
-const includesAddToCartWithOptions = ( blocks: BlockInstance[] ) => {
-	return !! findBlock( {
-		blocks,
-		findCondition: ( block ) =>
-			block.name === 'woocommerce/add-to-cart-with-options',
-	} );
-};
-
 export default function ProductTypeSelectorPlugin() {
-	const { slug, type, hasAddToCartBlock } = useSelect( ( select ) => {
+	const { slug, type } = useSelect( ( select ) => {
 		const { slug: currentPostSlug, type: currentPostType } = select(
 			'core/editor'
 		).getCurrentPost< {
 			slug: string;
 			type: string;
 		} >();
-		const blocks = select( 'core/block-editor' ).getBlocks();
+
 		return {
 			slug: currentPostSlug,
 			type: currentPostType,
-			hasAddToCartBlock: includesAddToCartWithOptions( blocks ),
 		};
 	}, [] );
+
+	const { registeredListeners } = useProductTypeSelector();
 
 	// Only add the panel if the current post is a template and has the Add To Cart block.
 	const isPanelVisible =
 		type === 'wp_template' &&
 		slug === 'single-product' &&
-		hasAddToCartBlock;
+		registeredListeners.length > 0;
 
 	if ( ! isPanelVisible ) {
 		return null;
