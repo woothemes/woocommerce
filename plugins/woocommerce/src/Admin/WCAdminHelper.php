@@ -218,7 +218,7 @@ class WCAdminHelper {
 				return true;
 			}
 		}
-		
+
 		// Check if the URL matches any of the WooCommerce permalink structures.
 		if ( $url_path ) {
 			$permalink_structure = wc_get_permalink_structure();
