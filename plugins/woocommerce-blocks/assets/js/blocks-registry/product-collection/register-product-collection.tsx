@@ -375,6 +375,7 @@ export const __experimentalRegisterProductCollection = (
 		example: config.example,
 		scope: config.scope,
 		attributes: {
+			...config.attributes, // Allow users to pass extra attributes.
 			query: {
 				...DEFAULT_QUERY,
 				...( query.offset !== undefined && { offset: query.offset } ),
