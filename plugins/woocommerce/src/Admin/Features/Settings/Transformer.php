@@ -308,8 +308,8 @@ class Transformer {
 	 * @param array &$transformed_settings Transformed settings array.
 	 */
 	private function finalize_transformation( array &$transformed_settings ): void {
-		$this->flush_current_group( $transformed_settings );
 		$this->flush_current_checkbox_group( $transformed_settings );
+		$this->flush_current_group( $transformed_settings );
 	}
 
 	/**
