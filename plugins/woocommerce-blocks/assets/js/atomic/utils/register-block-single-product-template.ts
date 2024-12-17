@@ -169,6 +169,7 @@ export class BlockRegistrationManager {
 				unregisterBlockType( blockName );
 			}
 		} catch ( error ) {
+			// eslint-disable-next-line no-console
 			console.debug(
 				`Failed to unregister block ${ blockName }:`,
 				error
@@ -199,6 +200,7 @@ export class BlockRegistrationManager {
 
 			// Check if block is already registered
 			if ( getBlockType( blockName ) ) {
+				// eslint-disable-next-line no-console
 				console.debug( `Block ${ blockName } is already registered.` );
 				return;
 			}
@@ -213,6 +215,7 @@ export class BlockRegistrationManager {
 					? [ 'woocommerce/single-product' ]
 					: blockSettings?.ancestor;
 
+				// @ts-expect-error - This can be either a string or an object.
 				registerBlockType( blockMetadata, {
 					...blockSettings,
 					ancestor: ! this.currentTemplateId?.includes(
@@ -223,6 +226,7 @@ export class BlockRegistrationManager {
 				} );
 			}
 		} catch ( error ) {
+			// eslint-disable-next-line no-console
 			console.error( `Failed to register block ${ blockName }:`, error );
 		} finally {
 			this.isRegistering = false;
@@ -268,6 +272,7 @@ export const registerBlockSingleProductTemplate = (
 	config: BlockConfig
 ): void => {
 	if ( ! config.blockName ) {
+		// eslint-disable-next-line no-console
 		console.error( 'Block name is required for registration' );
 		return;
 	}
