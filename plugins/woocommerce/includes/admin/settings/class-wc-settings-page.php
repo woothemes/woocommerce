@@ -8,6 +8,9 @@
 
 declare( strict_types = 1);
 
+use Automattic\WooCommerce\Admin\Features\Features;
+
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -187,8 +190,6 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 					? $this->get_settings_for_section( $section_id )
 					: $this->get_settings();
 
-				$section_settings_data = array();
-
 				// Loop through each setting in the section and add the value to the settings data.
 				foreach ( $section_settings as $section_setting ) {
 					if ( isset( $section_setting['id'] ) ) {
@@ -204,8 +205,15 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 					if ( ! in_array( $type, $this->types, true ) ) {
 						$section_setting = $this->get_custom_type_field( 'woocommerce_admin_field_' . $type, $section_setting );
 					}
-
 					$section_settings_data[] = $section_setting;
+				}
+
+				$custom_view = $this->get_custom_view();
+				if ( $custom_view ) {
+					$section_settings_data[] = array(
+						'type'    => 'custom',
+						'content' => trim( $custom_view ),
+					);
 				}
 
 				// Replace empty string section ids with 'default'.
@@ -226,6 +234,30 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 			);
 
 			return $pages;
+		}
+
+		/**
+		 * Get the custom view given the current tab and section.
+		 *
+		 * @return string The custom view. HTML output.
+		 */
+		public function get_custom_view() {
+			global $current_section;
+			// Make sure the current section is set to the sectionid here. Reset it at the end of the function.
+			$saved_current_section = $current_section;
+			$current_section       = $section_id;
+			ob_start();
+			/**
+			 * Output the custom view given the current tab and section by calling the action.
+			 *
+			 * @since 2.1.0
+			 */
+			do_action( 'woocommerce_settings_' . $this->id );
+			$html = ob_get_contents();
+			ob_end_clean();
+			$current_section = $saved_current_section;
+
+			return $html;
 		}
 
 		/**
@@ -388,6 +420,10 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 		 * Output the HTML for the settings.
 		 */
 		public function output() {
+			if ( Features::is_enabled( 'settings' ) ) {
+				return;
+			}
+
 			global $current_section;
 
 			// We can't use "get_settings_for_section" here
@@ -434,5 +470,4 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 			}
 		}
 	}
-
 endif;
