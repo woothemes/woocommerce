@@ -193,13 +193,15 @@ export class BlockRegistrationManager {
 		} = config;
 
 		// Prevent recursive registration
-		if ( this.isRegistering ) return;
+		if ( this.isRegistering ) {
+			return;
+		}
 
 		try {
 			this.isRegistering = true;
 
 			// Check if block is already registered
-			if ( getBlockType( blockName ) ) {
+			if ( getBlockType( blockName ) && ! isVariationBlock ) {
 				// eslint-disable-next-line no-console
 				console.debug( `Block ${ blockName } is already registered.` );
 				return;
