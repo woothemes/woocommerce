@@ -334,15 +334,12 @@ class WC_Query {
 			return true;
 		}
 
-		$initial_installed_version = get_option( 'woocommerce_initial_installed_version' );
-		if (
-			! empty( $initial_installed_version ) &&
-			version_compare( $initial_installed_version, '9.5', '>=' )
-		) {
-			$installed_in_95_or_after = true;
-		} else {
-			$installed_in_95_or_after = false;
+		if ( ! wc_current_theme_is_fse_theme() ) {
+			return false;
 		}
+
+		$initial_version          = get_option( 'woocommerce_initial_installed_version' );
+		$installed_in_95_or_after = ! empty( $initial_version ) && version_compare( $initial_version, '9.5', '>=' );
 
 		if (
 			! $installed_in_95_or_after &&
@@ -353,7 +350,7 @@ class WC_Query {
 			return false;
 		}
 
-		return wc_current_theme_supports_woocommerce_or_fse();
+		return true;
 	}
 
 	/**
