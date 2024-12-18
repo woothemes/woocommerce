@@ -24,7 +24,7 @@ function is_woocommerce() {
 		wc_doing_it_wrong(
 			__FUNCTION__,
 			sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
-			'9.6.0'
+			'9.7.0'
 		);
 	}
 
@@ -43,7 +43,7 @@ if ( ! function_exists( 'is_shop' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
-				'9.6.0'
+				'9.7.0'
 			);
 		}
 
@@ -59,12 +59,12 @@ if ( ! function_exists( 'is_product_taxonomy' ) ) {
 	 * @return bool
 	 */
 	function is_product_taxonomy() {
-		// parse_tax_query is too early, but it can be used on any hook after it
+		// parse_tax_query is too early, but it can be used on any hook after it.
 		if ( ( ! did_action( 'parse_tax_query' ) || doing_action( 'parse_tax_query' ) ) && ! did_action( 'parse_query' ) && ! did_action( 'wp' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
-				'9.6.0'
+				'9.7.0'
 			);
 		}
 
@@ -85,7 +85,7 @@ if ( ! function_exists( 'is_product_category' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
-				'9.6.0'
+				'9.7.0'
 			);
 		}
 
@@ -106,7 +106,7 @@ if ( ! function_exists( 'is_product_tag' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
-				'9.6.0'
+				'9.7.0'
 			);
 		}
 
@@ -126,7 +126,7 @@ if ( ! function_exists( 'is_product' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
-				'9.6.0'
+				'9.7.0'
 			);
 		}
 
@@ -142,12 +142,12 @@ if ( ! function_exists( 'is_cart' ) ) {
 	 * @return bool
 	 */
 	function is_cart() {
-		// the global $post, used in "wc_post_content_has_shortcode" is only set up right before send_headers()
+		// the global $post, used in "wc_post_content_has_shortcode" is only set up right before send_headers().
 		if ( ! did_filter( 'wp_headers' ) && ! did_action( 'wp' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
-				'9.6.0'
+				'9.7.0'
 			);
 		}
 
@@ -165,12 +165,12 @@ if ( ! function_exists( 'is_checkout' ) ) {
 	 * @return bool
 	 */
 	function is_checkout() {
-		// the global $post, used in "wc_post_content_has_shortcode" is only set up right before send_headers()
+		// the global $post, used in "wc_post_content_has_shortcode" is only set up right before send_headers().
 		if ( ! did_filter( 'wp_headers' ) && ! did_action( 'wp' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
-				'9.6.0'
+				'9.7.0'
 			);
 		}
 
@@ -190,12 +190,12 @@ if ( ! function_exists( 'is_checkout_pay_page' ) ) {
 	function is_checkout_pay_page() {
 		global $wp;
 
-		// same as is_checkout()
+		// same as is_checkout().
 		if ( ! did_filter( 'wp_headers' ) && ! did_action( 'wp' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
-				'9.6.0'
+				'9.7.0'
 			);
 		}
 
@@ -218,7 +218,7 @@ if ( ! function_exists( 'is_wc_endpoint_url' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
-				'9.6.0'
+				'9.7.0'
 			);
 		}
 
@@ -252,12 +252,12 @@ if ( ! function_exists( 'is_account_page' ) ) {
 	 * @return bool
 	 */
 	function is_account_page() {
-		// the global $post, used in "wc_post_content_has_shortcode" is only set up right before send_headers()
+		// the global $post, used in "wc_post_content_has_shortcode" is only set up right before send_headers().
 		if ( ! did_filter( 'wp_headers' ) && ! did_action( 'wp' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
-				'9.6.0'
+				'9.7.0'
 			);
 		}
 
@@ -281,7 +281,7 @@ if ( ! function_exists( 'is_view_order_page' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
-				'9.6.0'
+				'9.7.0'
 			);
 		}
 
@@ -307,7 +307,7 @@ if ( ! function_exists( 'is_edit_account_page' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
-				'9.6.0'
+				'9.7.0'
 			);
 		}
 
@@ -331,7 +331,7 @@ if ( ! function_exists( 'is_order_received_page' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
-				'9.6.0'
+				'9.7.0'
 			);
 		}
 
@@ -355,7 +355,7 @@ if ( ! function_exists( 'is_add_payment_method_page' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
-				'9.6.0'
+				'9.7.0'
 			);
 		}
 
@@ -379,7 +379,7 @@ if ( ! function_exists( 'is_lost_password_page' ) ) {
 			wc_doing_it_wrong(
 				__FUNCTION__,
 				sprintf( __( 'Conditional tag %s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
-				'9.6.0'
+				'9.7.0'
 			);
 		}
 
@@ -552,12 +552,12 @@ function wc_checkout_is_https() {
 function wc_post_content_has_shortcode( $tag = '' ) {
 	global $post;
 
-	// the global $post, used in "wc_post_content_has_shortcode" is only set up right before send_headers()
+	// the global $post, used in "wc_post_content_has_shortcode" is only set up right before send_headers().
 	if ( ! did_filter( 'wp_headers' ) && ! did_action( 'wp' ) ) {
 		wc_doing_it_wrong(
 			__FUNCTION__,
 			sprintf( __( '%s can only be used on or after the "wp" action hook', 'woocommerce' ), __FUNCTION__ ),
-			'9.6.0'
+			'9.7.0'
 		);
 	}
 
