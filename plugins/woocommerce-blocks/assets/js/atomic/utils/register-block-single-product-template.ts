@@ -95,11 +95,17 @@ export class BlockRegistrationManager {
 			return;
 		}
 
-		const editSiteStore = select( 'core/edit-site' );
-		const editPostStore = select( 'core/edit-post' );
+		// Site Editor Subscription
+		const siteEditorUnsubscribe = subscribe( () => {
+			const editSiteStore = select( 'core/edit-site' );
+			if ( ! editSiteStore ) {
+				return;
+			}
 
-		if ( editSiteStore ) {
-			// Set up site editor subscription directly
+			// Only run this once for site editor
+			siteEditorUnsubscribe();
+
+			// Set up the template change listener
 			subscribe( () => {
 				const previousTemplateId = this.currentTemplateId;
 				this.currentTemplateId = this.parseTemplateId(
@@ -113,20 +119,33 @@ export class BlockRegistrationManager {
 				}
 			}, 'core/edit-site' );
 
-			// Initial registration for site editor
+			// Initial registration of blocks for site editor
 			this.blocks.forEach( ( config ) => {
 				this.registerBlock( config );
 			} );
-		}
+		}, 'core/edit-site' );
 
-		if ( editPostStore ) {
-			// Post editor registration
+		// Post Editor Subscription
+		const postEditorUnsubscribe = subscribe( () => {
+			const editPostStore = select( 'core/edit-post' );
+			if ( ! editPostStore ) {
+				return;
+			}
+
+			// Only run this once for post editor
+			postEditorUnsubscribe();
+
+			// Register blocks that are available in post editor
 			this.blocks.forEach( ( config ) => {
 				if ( config.isAvailableOnPostEditor ) {
-					this.registerBlock( config );
+					const key = config.variationName || config.blockName;
+					if ( ! this.registeredBlocks.has( key ) ) {
+						this.registerBlock( config );
+						this.registeredBlocks.add( key );
+					}
 				}
 			} );
-		}
+		}, 'core/edit-post' );
 
 		this.initialized = true;
 	}
