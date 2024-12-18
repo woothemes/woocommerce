@@ -48,8 +48,8 @@ export class BlockRegistrationManager {
 	private initialized = false;
 	/** Flag to prevent recursive registration attempts */
 	private isRegistering = false;
-	/** Set to track registered blocks and prevent duplicates */
-	private registeredBlocks: Set< string > = new Set();
+	/** Set to track block registration attempts to prevent duplicate registration attempts */
+	private attemptedRegisteredBlocks: Set< string > = new Set();
 
 	/**
 	 * Private constructor to enforce singleton pattern.
@@ -174,10 +174,10 @@ export class BlockRegistrationManager {
 		try {
 			if ( isVariationBlock && variationName ) {
 				unregisterBlockVariation( blockName, variationName );
-				this.registeredBlocks.delete( variationName );
+				this.attemptedRegisteredBlocks.delete( variationName );
 			} else {
 				unregisterBlockType( blockName );
-				this.registeredBlocks.delete( blockName );
+				this.attemptedRegisteredBlocks.delete( blockName );
 			}
 		} catch ( error ) {
 			// eslint-disable-next-line no-console
@@ -214,7 +214,7 @@ export class BlockRegistrationManager {
 
 			// Check if block is already registered
 			const key = variationName || blockName;
-			if ( this.registeredBlocks.has( key ) ) {
+			if ( this.attemptedRegisteredBlocks.has( key ) ) {
 				return;
 			}
 
@@ -247,7 +247,7 @@ export class BlockRegistrationManager {
 				} );
 			}
 
-			this.registeredBlocks.add( key );
+			this.attemptedRegisteredBlocks.add( key );
 		} catch ( error ) {
 			// eslint-disable-next-line no-console
 			console.error( `Failed to register block ${ blockName }:`, error );
