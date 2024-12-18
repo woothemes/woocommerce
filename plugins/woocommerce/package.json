@@ -234,14 +234,16 @@
 					"testType": "e2e",
 					"command": "test:e2e:with-env gutenberg-stable",
 					"shardingArguments": [
-						"--shard=1/5",
-						"--shard=2/5",
-						"--shard=3/5",
-						"--shard=4/5",
-						"--shard=5/5"
+						"--shard=1/4",
+						"--shard=2/4",
+						"--shard=3/4",
+						"--shard=4/4"
 					],
-					"changes": [],
+					"changes": [ 
+						"tests/e2e-pw/**"
+					],
 					"events": [
+						"pull_request",
 						"daily-checks",
 						"release-checks"
 					],
@@ -259,14 +261,16 @@
 					"testType": "e2e",
 					"command": "test:e2e:with-env gutenberg-nightly",
 					"shardingArguments": [
-						"--shard=1/5",
-						"--shard=2/5",
-						"--shard=3/5",
-						"--shard=4/5",
-						"--shard=5/5"
+						"--shard=1/4",
+						"--shard=2/4",
+						"--shard=3/4",
+						"--shard=4/4"
 					],
-					"changes": [],
+					"changes": [
+						"tests/e2e-pw/**"
+					],
 					"events": [
+						"pull_request",
 						"daily-checks",
 						"release-checks"
 					],
@@ -284,8 +288,11 @@
 					"testType": "e2e",
 					"command": "test:e2e:with-env woocommerce-payments",
 					"shardingArguments": [],
-					"changes": [],
+					"changes": [
+						"tests/e2e-pw/**"
+					],
 					"events": [
+						"pull_request",
 						"daily-checks",
 						"release-checks"
 					],
@@ -303,8 +310,11 @@
 					"testType": "e2e",
 					"command": "test:e2e:with-env woocommerce-paypal-payments",
 					"shardingArguments": [],
-					"changes": [],
+					"changes": [
+						"tests/e2e-pw/**"
+					],
 					"events": [
+						"pull_request",
 						"daily-checks",
 						"release-checks"
 					],
@@ -321,9 +331,15 @@
 					"name": "Core e2e tests - WooCommerce Shipping & Tax",
 					"testType": "e2e",
 					"command": "test:e2e:with-env woocommerce-services",
-					"shardingArguments": [],
-					"changes": [],
+					"shardingArguments": [
+						"--shard=1/2",
+						"--shard=2/2"
+					],
+					"changes": [
+						"tests/e2e-pw/**"
+					],
 					"events": [
+						"pull_request",
 						"daily-checks",
 						"release-checks"
 					],
@@ -340,8 +356,11 @@
 					"name": "Core e2e tests - HPOS disabled",
 					"testType": "e2e",
 					"command": "test:e2e:with-env default-hpos-disabled --project=ui",
-					"shardingArguments": [],
+					"shardingArguments": [
+						"tests/e2e-pw/**"
+					],
 					"events": [
+						"pull_request",
 						"daily-checks",
 						"release-checks"
 					],
@@ -369,7 +388,9 @@
 						"--shard=4/5",
 						"--shard=5/5"
 					],
-					"changes": [],
+					"changes": [
+						"tests/e2e-pw/**"
+					],
 					"testEnv": {
 						"start": "env:test",
 						"config": {
@@ -377,6 +398,7 @@
 						}
 					},
 					"events": [
+						"pull_request",
 						"daily-checks",
 						"release-checks"
 					],
@@ -397,7 +419,9 @@
 						"--shard=4/5",
 						"--shard=5/5"
 					],
-					"changes": [],
+					"changes": [
+						"tests/e2e-pw/**"
+					],
 					"testEnv": {
 						"start": "env:test",
 						"config": {
@@ -405,6 +429,7 @@
 						}
 					},
 					"events": [
+						"pull_request",
 						"daily-checks",
 						"release-checks"
 					],
@@ -425,7 +450,9 @@
 						"--shard=4/5",
 						"--shard=5/5"
 					],
-					"changes": [],
+					"changes": [
+						"tests/e2e-pw/**"
+					],
 					"testEnv": {
 						"start": "env:test",
 						"config": {
@@ -433,6 +460,7 @@
 						}
 					},
 					"events": [
+						"pull_request",
 						"daily-checks",
 						"release-checks"
 					],

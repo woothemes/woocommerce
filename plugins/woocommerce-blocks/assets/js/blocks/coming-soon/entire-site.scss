@@ -178,6 +178,23 @@ body:has(.woocommerce-coming-soon-banner) {
 	font-family: Inter, sans-serif;
 }
 
+// Split right image template styles
+.woocommerce-coming-soon-split-right-image {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+
+	.woocommerce-split-right-image-content {
+		width: 100%;
+	}
+
+	.woocommerce-split-right-image-cover {
+		align-items: start;
+	}
+
+	.is-size-fit-content {
+		width: fit-content;
+	}
+}
+
 .block-editor-block-preview__content-iframe {
 	body:has(.woocommerce-coming-soon-entire-site),
 	body:has(.woocommerce-coming-soon-banner) {
