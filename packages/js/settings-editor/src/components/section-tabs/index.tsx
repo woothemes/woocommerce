@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { createElement, Fragment } from '@wordpress/element';
 import { TabPanel } from '@wordpress/components';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 /* eslint-disable @woocommerce/dependency-group */
