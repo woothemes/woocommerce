@@ -51,11 +51,17 @@
 	flex: 2;
 	display: flex;
 	flex-direction: column;
-	gap: 24px;
+	gap: 48px;
 }
 
 .woocommerce-settings-content-footer {
 	display: flex;
 	justify-content: flex-end;
 	padding: 48px;
+}
+
+#wc-settings-page {
+	.components-input-control__label {
+		white-space: normal;
+	}
 }

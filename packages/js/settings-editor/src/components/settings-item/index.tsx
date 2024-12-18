@@ -34,9 +34,14 @@ const getComponent = ( setting: SettingsField ) => {
 			return <SettingsCheckbox setting={ setting } />;
 		case 'checkboxgroup':
 			return (
-				<VStack>
+				<VStack spacing={ 4 }>
 					{ setting.settings.map( ( setting: SettingsField ) => {
-						return <SettingsCheckbox setting={ setting } />;
+						return (
+							<SettingsCheckbox
+								key={ setting.id }
+								setting={ setting }
+							/>
+						);
 					} ) }
 				</VStack>
 			);
@@ -47,7 +52,7 @@ const getComponent = ( setting: SettingsField ) => {
 
 export const SettingsItem = ( { setting }: { setting: SettingsField } ) => {
 	return (
-		<VStack>
+		<VStack spacing={ 4 } className="woocommerce-settings-item">
 			{ setting.title && (
 				<Heading level={ 5 }>{ setting.title }</Heading>
 			) }
