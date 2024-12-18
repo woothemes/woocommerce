@@ -102,7 +102,21 @@ class PaymentExtensionSuggestions {
 	 *   // This is useful when you want to remove tags from a suggestion's default list of tags.
 	 *   '_remove' => array(
 	 *       'tags' => array( self::TAG_PREFERRED ),
-	 *   )
+	 *   ),
+	 *   // Special entry that instructs the system to merge a list of items based on their _type key value,
+	 *   // overriding the original entry with the provided one.
+	 *   // If the original entry is not a list of arrays each with a _type entry, we will throw an exception.
+	 *   // If the provided entry is not a list of arrays each with a _type entry, we will throw an exception.
+	 *   // If the original entry does not exist, we will create it.
+	 *   // This is useful when you want to override certain default details for a particular country.
+	 *   '_merge_on_type' => array(
+	 *       'links' => array(
+	 *           array(
+	 *               _type' => self::LINK_TYPE_PRICING,
+	 *               'url'  => 'https://www.example.com/pricing',
+	 *           ),
+	 *       ),
+	 *   ),
 	 * )
 	 * Use the extended format when you need to override the extension's default details for a particular country.
 	 *
@@ -121,28 +135,16 @@ class PaymentExtensionSuggestions {
 			self::AFFIRM,
 			self::AFTERPAY,
 			self::KLARNA => array(
-				'links' => array(
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.klarna.com/ca/business/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/klarna-payments/',
-					),
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.klarna.com/ca/legal/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/klarna-payments/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=klarna-payments',
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.klarna.com/ca/business/',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.klarna.com/ca/legal/',
+						),
 					),
 				),
 			),
@@ -173,28 +175,16 @@ class PaymentExtensionSuggestions {
 			self::AMAZON_PAY,
 			self::CLEARPAY,
 			self::KLARNA => array(
-				'links' => array(
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.klarna.com/uk/business/payment-methods/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/klarna-payments/',
-					),
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.klarna.com/uk/terms-and-conditions/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/klarna-payments/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=klarna-payments',
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.klarna.com/uk/business/payment-methods/',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.klarna.com/uk/terms-and-conditions/',
+						),
 					),
 				),
 			),
@@ -209,28 +199,16 @@ class PaymentExtensionSuggestions {
 			self::PAYPAL_WALLET,
 			self::AMAZON_PAY,
 			self::KLARNA => array(
-				'links' => array(
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.klarna.com/at/verkaeufer/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/klarna-payments/',
-					),
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.klarna.com/at/agb/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/klarna-payments/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=klarna-payments',
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.klarna.com/at/verkaeufer/',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.klarna.com/at/agb/',
+						),
 					),
 				),
 			),
@@ -245,28 +223,16 @@ class PaymentExtensionSuggestions {
 			self::PAYPAL_WALLET,
 			self::AMAZON_PAY,
 			self::KLARNA => array(
-				'links' => array(
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.klarna.com/be/fr/entreprise/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/klarna-payments/',
-					),
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.klarna.com/be/fr/conditions-generales/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/klarna-payments/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=klarna-payments',
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.klarna.com/be/fr/entreprise/',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.klarna.com/be/fr/conditions-generales/',
+						),
 					),
 				),
 			),
@@ -304,28 +270,16 @@ class PaymentExtensionSuggestions {
 			self::VIVA_WALLET,
 			self::PAYPAL_WALLET,
 			self::KLARNA => array(
-				'links' => array(
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.klarna.com/cz/firmy/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/klarna-payments/',
-					),
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.klarna.com/cz/obchodni-podminky/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/klarna-payments/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=klarna-payments',
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.klarna.com/cz/firmy/',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.klarna.com/cz/obchodni-podminky/',
+						),
 					),
 				),
 			),
@@ -339,28 +293,16 @@ class PaymentExtensionSuggestions {
 			self::PAYPAL_WALLET,
 			self::AMAZON_PAY,
 			self::KLARNA => array(
-				'links' => array(
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.klarna.com/dk/erhverv/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/klarna-payments/',
-					),
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.klarna.com/dk/vilkar/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/klarna-payments/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=klarna-payments',
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.klarna.com/dk/erhverv/',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.klarna.com/dk/vilkar/',
+						),
 					),
 				),
 			),
@@ -380,28 +322,16 @@ class PaymentExtensionSuggestions {
 			self::VIVA_WALLET,
 			self::PAYPAL_WALLET,
 			self::KLARNA => array(
-				'links' => array(
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.klarna.com/fi/yritys/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/klarna-payments/',
-					),
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.klarna.com/fi/ehdot/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/klarna-payments/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=klarna-payments',
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.klarna.com/fi/yritys/',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.klarna.com/fi/ehdot/',
+						),
 					),
 				),
 			),
@@ -421,28 +351,16 @@ class PaymentExtensionSuggestions {
 			self::PAYPAL_WALLET,
 			self::AMAZON_PAY,
 			self::KLARNA => array(
-				'links' => array(
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.klarna.com/fr/entreprise/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/klarna-payments/',
-					),
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.klarna.com/fr/legal/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/klarna-payments/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=klarna-payments',
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.klarna.com/fr/entreprise/',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.klarna.com/fr/legal/',
+						),
 					),
 				),
 			),
@@ -466,28 +384,16 @@ class PaymentExtensionSuggestions {
 			self::PAYPAL_WALLET,
 			self::AMAZON_PAY,
 			self::KLARNA => array(
-				'links' => array(
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.klarna.com/de/verkaeufer/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/klarna-payments/',
-					),
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.klarna.com/de/agb/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/klarna-payments/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=klarna-payments',
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.klarna.com/de/verkaeufer/',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.klarna.com/de/agb/',
+						),
 					),
 				),
 			),
@@ -500,28 +406,16 @@ class PaymentExtensionSuggestions {
 			self::VIVA_WALLET,
 			self::PAYPAL_WALLET,
 			self::KLARNA => array(
-				'links' => array(
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.klarna.com/gr/business/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/klarna-payments/',
-					),
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.klarna.com/gr/oroi-kai-proypotheseis/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/klarna-payments/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=klarna-payments',
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.klarna.com/gr/business/',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.klarna.com/gr/oroi-kai-proypotheseis/',
+						),
 					),
 				),
 			),
@@ -539,28 +433,16 @@ class PaymentExtensionSuggestions {
 			self::PAYPAL_WALLET,
 			self::AMAZON_PAY,
 			self::KLARNA => array(
-				'links' => array(
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.klarna.com/hu/uzlet/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/klarna-payments/',
-					),
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.klarna.com/hu/jogi-informaciok/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/klarna-payments/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=klarna-payments',
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.klarna.com/hu/uzlet/',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.klarna.com/hu/jogi-informaciok/',
+						),
 					),
 				),
 			),
@@ -576,28 +458,16 @@ class PaymentExtensionSuggestions {
 			self::PAYPAL_WALLET,
 			self::AMAZON_PAY,
 			self::KLARNA => array(
-				'links' => array(
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.klarna.com/ie/business/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/klarna-payments/',
-					),
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.klarna.com/ie/terms-and-conditions/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/klarna-payments/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=klarna-payments',
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.klarna.com/ie/business/',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.klarna.com/ie/terms-and-conditions/',
+						),
 					),
 				),
 			),
@@ -612,28 +482,16 @@ class PaymentExtensionSuggestions {
 			self::PAYPAL_WALLET,
 			self::AMAZON_PAY,
 			self::KLARNA => array(
-				'links' => array(
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.klarna.com/it/aziende/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/klarna-payments/',
-					),
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.klarna.com/it/legal/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/klarna-payments/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=klarna-payments',
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.klarna.com/it/aziende/',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.klarna.com/it/legal/',
+						),
 					),
 				),
 			),
@@ -693,28 +551,16 @@ class PaymentExtensionSuggestions {
 			self::PAYPAL_WALLET,
 			self::AMAZON_PAY,
 			self::KLARNA => array(
-				'links' => array(
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.klarna.com/nl/zakelijk/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/klarna-payments/',
-					),
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.klarna.com/nl/voorwaarden/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/klarna-payments/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=klarna-payments',
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.klarna.com/nl/zakelijk/',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.klarna.com/nl/voorwaarden/',
+						),
 					),
 				),
 			),
@@ -726,28 +572,16 @@ class PaymentExtensionSuggestions {
 			self::MOLLIE,
 			self::PAYPAL_WALLET,
 			self::KLARNA => array(
-				'links' => array(
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.klarna.com/no/bedrift/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/klarna-payments/',
-					),
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.klarna.com/no/vilkar/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/klarna-payments/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=klarna-payments',
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.klarna.com/no/bedrift/',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.klarna.com/no/vilkar/',
+						),
 					),
 				),
 			),
@@ -761,28 +595,16 @@ class PaymentExtensionSuggestions {
 			self::VIVA_WALLET,
 			self::PAYPAL_WALLET,
 			self::KLARNA => array(
-				'links' => array(
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.klarna.com/pl/biznes/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/klarna-payments/',
-					),
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.klarna.com/pl/zasady-i-warunki/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/klarna-payments/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=klarna-payments',
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.klarna.com/pl/biznes/',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.klarna.com/pl/zasady-i-warunki/',
+						),
 					),
 				),
 			),
@@ -797,28 +619,16 @@ class PaymentExtensionSuggestions {
 			self::PAYPAL_WALLET,
 			self::AMAZON_PAY,
 			self::KLARNA => array(
-				'links' => array(
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.klarna.com/pt/empresa/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/klarna-payments/',
-					),
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.klarna.com/pt/termos-e-condicoes/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/klarna-payments/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=klarna-payments',
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.klarna.com/pt/empresa/',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.klarna.com/pt/termos-e-condicoes/',
+						),
 					),
 				),
 			),
@@ -831,28 +641,16 @@ class PaymentExtensionSuggestions {
 			self::VIVA_WALLET,
 			self::PAYPAL_WALLET,
 			self::KLARNA => array(
-				'links' => array(
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.klarna.com/ro/companii/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/klarna-payments/',
-					),
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.klarna.com/ro/aspecte-juridice/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/klarna-payments/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=klarna-payments',
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.klarna.com/ro/companii/',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.klarna.com/ro/aspecte-juridice/',
+						),
 					),
 				),
 			),
@@ -868,28 +666,16 @@ class PaymentExtensionSuggestions {
 			self::MOLLIE,
 			self::PAYPAL_WALLET,
 			self::KLARNA => array(
-				'links' => array(
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.klarna.com/sk/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/klarna-payments/',
-					),
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.klarna.com/sk/zmluvne-podmienky/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/klarna-payments/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=klarna-payments',
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.klarna.com/sk/',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.klarna.com/sk/zmluvne-podmienky/',
+						),
 					),
 				),
 			),
@@ -905,28 +691,16 @@ class PaymentExtensionSuggestions {
 			self::PAYPAL_WALLET,
 			self::AMAZON_PAY,
 			self::KLARNA => array(
-				'links' => array(
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.klarna.com/es/empresa/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/klarna-payments/',
-					),
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.klarna.com/es/legal/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/klarna-payments/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=klarna-payments',
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.klarna.com/es/empresa/',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.klarna.com/es/legal/',
+						),
 					),
 				),
 			),
@@ -948,28 +722,16 @@ class PaymentExtensionSuggestions {
 			self::PAYPAL_WALLET,
 			self::AMAZON_PAY,
 			self::KLARNA => array(
-				'links' => array(
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.klarna.com/ch/fr/entreprise/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/klarna-payments/',
-					),
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.klarna.com/ch/fr/conditions-generales-de-vente/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/klarna-payments/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=klarna-payments',
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.klarna.com/ch/fr/entreprise/',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.klarna.com/ch/fr/conditions-generales-de-vente/',
+						),
 					),
 				),
 			),
@@ -986,30 +748,18 @@ class PaymentExtensionSuggestions {
 		),
 		'AR' => array(
 			self::MERCADO_PAGO => array(
-				'links' => array(
-					// This is country specific.
-					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.mercadopago.com.ar/costs-section',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/mercado-pago-checkout/',
-					),
-					// This is country specific.
-					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.mercadopago.com.ar/ayuda/terminos-y-politicas_194',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/mercado-pago/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=mercado-pago-checkout',
+				'_merge_on_type' => array(
+					'links' => array(
+						// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.mercadopago.com.ar/costs-section',
+						),
+						// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.mercadopago.com.ar/ayuda/terminos-y-politicas_194',
+						),
 					),
 				),
 			),
@@ -1051,33 +801,21 @@ class PaymentExtensionSuggestions {
 			),
 			self::PAYPAL_FULL_STACK,
 			self::MERCADO_PAGO => array(
-				'links'   => array(
-					// This is country specific.
-					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.mercadopago.com.br/costs-section',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/mercado-pago-checkout/',
-					),
-					// This is country specific.
-					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.mercadopago.com.br/ajuda/termos-e-politicas_194',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/mercado-pago/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=mercado-pago-checkout',
+				'_merge_on_type' => array(
+					'links' => array(
+						// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.mercadopago.com.br/costs-section',
+						),
+						// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.mercadopago.com.br/ajuda/termos-e-politicas_194',
+						),
 					),
 				),
-				'_remove' => array(
+				'_remove'        => array(
 					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
@@ -1093,30 +831,18 @@ class PaymentExtensionSuggestions {
 		),
 		'CL' => array(
 			self::MERCADO_PAGO => array(
-				'links' => array(
-					// This is country specific.
-					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.mercadopago.cl/costs-section',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/mercado-pago-checkout/',
-					),
-					// This is country specific.
-					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.mercadopago.cl/ayuda/terminos-y-politicas_194',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/mercado-pago/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=mercado-pago-checkout',
+				'_merge_on_type' => array(
+					'links' => array(
+						// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.mercadopago.cl/costs-section',
+						),
+						// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.mercadopago.cl/ayuda/terminos-y-politicas_194',
+						),
 					),
 				),
 			),
@@ -1125,30 +851,18 @@ class PaymentExtensionSuggestions {
 		),
 		'CO' => array(
 			self::MERCADO_PAGO => array(
-				'links' => array(
-					// This is country specific.
-					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.mercadopago.com.co/costs-section',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/mercado-pago-checkout/',
-					),
-					// This is country specific.
-					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.mercadopago.com.co/ayuda/terminos-y-politicas_194',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/mercado-pago/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=mercado-pago-checkout',
+				'_merge_on_type' => array(
+					'links' => array(
+						// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.mercadopago.com.co/costs-section',
+						),
+						// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.mercadopago.com.co/ayuda/terminos-y-politicas_194',
+						),
 					),
 				),
 			),
@@ -1226,60 +940,36 @@ class PaymentExtensionSuggestions {
 			),
 			self::PAYPAL_FULL_STACK,
 			self::MERCADO_PAGO => array(
-				'links'   => array(
-					// This is country specific.
-					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.mercadopago.com.mx/costs-section',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/mercado-pago-checkout/',
-					),
-					// This is country specific.
-					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.mercadopago.com.mx/ayuda/terminos-y-politicas_194',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/mercado-pago/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=mercado-pago-checkout',
+				'_merge_on_type' => array(
+					'links' => array(
+						// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.mercadopago.com.mx/costs-section',
+						),
+						// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.mercadopago.com.mx/ayuda/terminos-y-politicas_194',
+						),
 					),
 				),
-				'_remove' => array(
+				'_remove'        => array(
 					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
 			self::PAYPAL_WALLET,
-			self::KLARNA => array(
-				'links' => array(
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.klarna.com/mx/negocios/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/klarna-payments/',
-					),
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.klarna.com/mx/terminos-y-condiciones/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/klarna-payments/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=klarna-payments',
+			self::KLARNA       => array(
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.klarna.com/mx/negocios/',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.klarna.com/mx/terminos-y-condiciones/',
+						),
 					),
 				),
 			),
@@ -1297,30 +987,18 @@ class PaymentExtensionSuggestions {
 		'PY' => array(),
 		'PE' => array(
 			self::MERCADO_PAGO => array(
-				'links' => array(
-					// This is country specific.
-					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.mercadopago.com.pe/costs-section',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/mercado-pago-checkout/',
-					),
-					// This is country specific.
-					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.mercadopago.com.pe/ayuda/terminos-y-politicas_194',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/mercado-pago/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=mercado-pago-checkout',
+				'_merge_on_type' => array(
+					'links' => array(
+						// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.mercadopago.com.pe/costs-section',
+						),
+						// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.mercadopago.com.pe/ayuda/terminos-y-politicas_194',
+						),
 					),
 				),
 			),
@@ -1358,30 +1036,18 @@ class PaymentExtensionSuggestions {
 		),
 		'UY' => array(
 			self::MERCADO_PAGO => array(
-				'links' => array(
-					// This is country specific.
-					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.mercadopago.com.uy/costs-section',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/mercado-pago-checkout/',
-					),
-					// This is country specific.
-					// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.mercadopago.com.uy/ayuda/terminos-y-politicas_194',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/mercado-pago/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=mercado-pago-checkout',
+				'_merge_on_type' => array(
+					'links' => array(
+						// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.mercadopago.com.uy/costs-section',
+						),
+						// See the extension code -> \MercadoPago\Woocommerce\Helpers\Links class.
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.mercadopago.com.uy/ayuda/terminos-y-politicas_194',
+						),
 					),
 				),
 			),
@@ -1407,28 +1073,16 @@ class PaymentExtensionSuggestions {
 			self::PAYPAL_WALLET,
 			self::AFTERPAY,
 			self::KLARNA => array(
-				'links' => array(
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.klarna.com/au/business/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/klarna-payments/',
-					),
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.klarna.com/au/legal/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/klarna-payments/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=klarna-payments',
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.klarna.com/au/business/',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.klarna.com/au/legal/',
+						),
 					),
 				),
 			),
@@ -1519,28 +1173,16 @@ class PaymentExtensionSuggestions {
 			self::PAYPAL_WALLET,
 			self::AFTERPAY,
 			self::KLARNA => array(
-				'links' => array(
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_PRICING,
-						'url'   => 'https://www.klarna.com/nz/business/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_ABOUT,
-						'url'   => 'https://woocommerce.com/products/klarna-payments/',
-					),
-					// This is country specific.
-					array(
-						'_type' => self::LINK_TYPE_TERMS,
-						'url'   => 'https://www.klarna.com/nz/legal/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_DOCS,
-						'url'   => 'https://woocommerce.com/document/klarna-payments/',
-					),
-					array(
-						'_type' => self::LINK_TYPE_SUPPORT,
-						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=klarna-payments',
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://www.klarna.com/nz/business/',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://www.klarna.com/nz/legal/',
+						),
 					),
 				),
 			),
@@ -1973,7 +1615,8 @@ class PaymentExtensionSuggestions {
 	 * @return bool True if the extension is allowed, false otherwise.
 	 *              Defaults to true if there is no specific logic for the extension.
 	 */
-	private function is_extension_allowed( string $extension_id, string $country_code, string $context = '' ): bool {
+	private function is_extension_allowed( string $extension_id, string $country_code, string $context = '' ): bool { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+
 		/*
 		 * For now, we only need to run logic for the Square In-Person extension.
 		 * If more extensions need to be filtered out, we can add more logic here until we decide to abstract it.
@@ -2004,7 +1647,7 @@ class PaymentExtensionSuggestions {
 		 *      OR
 		 *   - Answered the 'Are you selling online?' question with either:
 		 *     - 'Yes, I’m selling online'.
-		 * 		  OR
+		 *        OR
 		 *     - 'I’m selling both online and offline'.
 		 *
 		 * @see plugins/woocommerce/client/admin/client/core-profiler/pages/UserProfile.tsx for the values.
@@ -2044,7 +1687,7 @@ class PaymentExtensionSuggestions {
 		 * - The merchant answered 'Which one of these best describes you?' with 'I’m already selling' AND:
 		 *   - Answered the 'Are you selling online?' question with either:
 		 *     - 'No, I’m selling offline'.
-		 * 		  OR
+		 *        OR
 		 *     - 'I’m selling both online and offline'.
 		 *
 		 * @see plugins/woocommerce/client/admin/client/core-profiler/pages/UserProfile.tsx for the values.
@@ -2072,10 +1715,10 @@ class PaymentExtensionSuggestions {
 	/**
 	 * Merges country-specific details into the base details of a payment extension.
 	 *
-	 * This function processes special `_append` and `_remove` instructions to modify
+	 * This function processes special `_append`, `_remove`, and `_merge_on_type` instructions to modify
 	 * list-type entries within the base details.
 	 *
-	 * @param array $base_details The base details of the payment extension.
+	 * @param array $base_details    The base details of the payment extension.
 	 * @param array $country_details The country-specific details, which may include
 	 *                               special `_append` and `_remove` instructions.
 	 *
@@ -2148,6 +1791,42 @@ class PaymentExtensionSuggestions {
 
 			// Remove the special entry because we don't need it anymore.
 			unset( $country_details['_remove'] );
+		}
+
+		// Process any merge on type instructions.
+		if ( isset( $country_details['_merge_on_type'] ) ) {
+			if ( ! is_array( $country_details['_merge_on_type'] ) ) {
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+				throw new \Exception( 'Malformed country extension details _merge_on_type entry.' );
+			}
+			foreach ( $country_details['_merge_on_type'] as $merge_key => $merge_list ) {
+				// Sanity checks.
+				if ( ! is_string( $merge_key ) ||
+					! is_array( $merge_list ) ||
+					! ArrayUtil::array_is_list( $merge_list ) ||
+					count( array_column( $merge_list, '_type' ) ) !== count( $merge_list )
+				) {
+					// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+					throw new \Exception( 'Malformed country extension details _merge_on_type details.' );
+				}
+				if ( ! isset( $base_details[ $merge_key ] ) ) {
+					// If the target entry doesn't exist, create it.
+					$base_details[ $merge_key ] = array();
+				}
+				if ( ! is_array( $base_details[ $merge_key ] ) ||
+					! ArrayUtil::array_is_list( $base_details[ $merge_key ] ) ||
+					count( array_column( $base_details[ $merge_key ], '_type' ) ) !== count( $base_details[ $merge_key ] )
+				) {
+					// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+					throw new \Exception( 'Invalid country extension details _merge_on_type target.' );
+				}
+
+				// Merge the lists based on the '_type' values.
+				$base_details[ $merge_key ] = ArrayUtil::merge_by_key( $base_details[ $merge_key ], $merge_list, '_type' );
+			}
+
+			// Remove the special entry because we don't need it anymore.
+			unset( $country_details['_merge_on_type'] );
 		}
 
 		// Merge any remaining country details so they overwrite the base details.
@@ -2252,15 +1931,15 @@ class PaymentExtensionSuggestions {
 				),
 			),
 			self::ANTOM             => array(
-				'_type'             => self::TYPE_PSP,
-				'title'             => esc_html__( 'Antom', 'woocommerce' ),
-				'description'       => esc_html__( 'Your trusted payments partner in Asia and around the world.', 'woocommerce' ),
-				'icon'              => plugins_url( 'assets/images/payment_methods/72x72/antom.png', WC_PLUGIN_FILE ),
-				'plugin'            => array(
+				'_type'       => self::TYPE_PSP,
+				'title'       => esc_html__( 'Antom', 'woocommerce' ),
+				'description' => esc_html__( 'Your trusted payments partner in Asia and around the world.', 'woocommerce' ),
+				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/antom.png', WC_PLUGIN_FILE ),
+				'plugin'      => array(
 					'_type' => self::PLUGIN_TYPE_WPORG,
 					'slug'  => 'antom-payments',
 				),
-				'links'             => array(
+				'links'       => array(
 					array(
 						'_type' => self::LINK_TYPE_ABOUT,
 						'url'   => 'https://woocommerce.com/products/antom-payments/',
@@ -2738,16 +2417,16 @@ class PaymentExtensionSuggestions {
 				),
 			),
 			self::WOOPAYMENTS       => array(
-				'_type'             => self::TYPE_PSP,
-				'title'             => esc_html__( 'Accept payments with Woo', 'woocommerce' ),
-				'description'       => esc_html__( 'Credit/debit cards, Apple Pay, Google Pay and more.', 'woocommerce' ),
-				'image'             => plugins_url( 'assets/images/onboarding/woopayments.svg', WC_PLUGIN_FILE ),
-				'icon'              => plugins_url( 'assets/images/onboarding/woopayments.svg', WC_PLUGIN_FILE ),
-				'plugin'            => array(
+				'_type'       => self::TYPE_PSP,
+				'title'       => esc_html__( 'Accept payments with Woo', 'woocommerce' ),
+				'description' => esc_html__( 'Credit/debit cards, Apple Pay, Google Pay and more.', 'woocommerce' ),
+				'image'       => plugins_url( 'assets/images/onboarding/woopayments.svg', WC_PLUGIN_FILE ),
+				'icon'        => plugins_url( 'assets/images/onboarding/woopayments.svg', WC_PLUGIN_FILE ),
+				'plugin'      => array(
 					'_type' => self::PLUGIN_TYPE_WPORG,
 					'slug'  => 'woocommerce-payments',
 				),
-				'links'             => array(
+				'links'       => array(
 					array(
 						'_type' => self::LINK_TYPE_PRICING,
 						'url'   => 'https://woocommerce.com/document/woopayments/fees-and-debits/',
@@ -2769,7 +2448,7 @@ class PaymentExtensionSuggestions {
 						'url'   => 'https://woocommerce.com/my-account/contact-support/?select=woopayments',
 					),
 				),
-				'tags'              => array( self::TAG_MADE_IN_WOO, self::TAG_PREFERRED ),
+				'tags'        => array( self::TAG_MADE_IN_WOO, self::TAG_PREFERRED ),
 			),
 			self::AMAZON_PAY        => array(
 				'_type'       => self::TYPE_EXPRESS_CHECKOUT,
@@ -2981,11 +2660,11 @@ class PaymentExtensionSuggestions {
 		$standardized['plugin']      = $extension_details['plugin'];
 
 		// Optional fields.
-		$standardized['image']             = $extension_details['image'] ?? '';
-		$standardized['icon']              = $extension_details['icon'] ?? '';
-		$standardized['links']             = $extension_details['links'] ?? array();
-		$standardized['tags']              = $extension_details['tags'] ?? array();
-		$standardized['_incentive']        = $extension_details['_incentive'] ?? null;
+		$standardized['image']      = $extension_details['image'] ?? '';
+		$standardized['icon']       = $extension_details['icon'] ?? '';
+		$standardized['links']      = $extension_details['links'] ?? array();
+		$standardized['tags']       = $extension_details['tags'] ?? array();
+		$standardized['_incentive'] = $extension_details['_incentive'] ?? null;
 
 		return $standardized;
 	}
