@@ -130,7 +130,20 @@ class PaymentExtensionSuggestions {
 			self::WOOPAYMENTS,
 			self::PAYPAL_FULL_STACK,
 			self::STRIPE,
-			self::SQUARE_IN_PERSON,
+			self::SQUARE_IN_PERSON => array(
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://squareup.com/ca/en/pricing',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://squareup.com/ca/en/legal/general/ua',
+						),
+					),
+				),
+			),
 			self::PAYPAL_WALLET,
 			self::AFFIRM,
 			self::AFTERPAY,
@@ -154,7 +167,7 @@ class PaymentExtensionSuggestions {
 			self::PAYPAL_FULL_STACK,
 			self::STRIPE,
 			self::AIRWALLEX,
-			self::SQUARE_IN_PERSON,
+			self::SQUARE_IN_PERSON, // Use the default details.
 			self::PAYPAL_WALLET,
 			self::AMAZON_PAY,
 			self::AFFIRM,
@@ -170,7 +183,20 @@ class PaymentExtensionSuggestions {
 			self::MOLLIE,
 			self::AIRWALLEX,
 			self::VIVA_WALLET,
-			self::SQUARE_IN_PERSON,
+			self::SQUARE_IN_PERSON => array(
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://squareup.com/gb/en/pricing',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://squareup.com/gb/en/legal/general/ua',
+						),
+					),
+				),
+			),
 			self::PAYPAL_WALLET,
 			self::AMAZON_PAY,
 			self::CLEARPAY,
@@ -347,7 +373,20 @@ class PaymentExtensionSuggestions {
 			self::MOLLIE,
 			self::AIRWALLEX,
 			self::VIVA_WALLET,
-			self::SQUARE_IN_PERSON,
+			self::SQUARE_IN_PERSON => array(
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://squareup.com/fr/fr/pricing',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://squareup.com/fr/fr/legal/general/ua',
+						),
+					),
+				),
+			),
 			self::PAYPAL_WALLET,
 			self::AMAZON_PAY,
 			self::KLARNA => array(
@@ -454,7 +493,20 @@ class PaymentExtensionSuggestions {
 			self::MOLLIE,
 			self::AIRWALLEX,
 			self::VIVA_WALLET,
-			self::SQUARE_IN_PERSON,
+			self::SQUARE_IN_PERSON => array(
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://squareup.com/ie/en/pricing',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://squareup.com/ie/en/legal/general/ua',
+						),
+					),
+				),
+			),
 			self::PAYPAL_WALLET,
 			self::AMAZON_PAY,
 			self::KLARNA => array(
@@ -687,7 +739,20 @@ class PaymentExtensionSuggestions {
 			self::MOLLIE,
 			self::AIRWALLEX,
 			self::VIVA_WALLET,
-			self::SQUARE_IN_PERSON,
+			self::SQUARE_IN_PERSON => array(
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://squareup.com/es/es/pricing',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://squareup.com/es/es/legal/general/ua',
+						),
+					),
+				),
+			),
 			self::PAYPAL_WALLET,
 			self::AMAZON_PAY,
 			self::KLARNA => array(
@@ -1069,7 +1134,20 @@ class PaymentExtensionSuggestions {
 			self::STRIPE,
 			self::AIRWALLEX,
 			self::ANTOM,
-			self::SQUARE_IN_PERSON,
+			self::SQUARE_IN_PERSON => array(
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://squareup.com/au/en/pricing',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://squareup.com/au/en/legal/general/ua',
+						),
+					),
+				),
+			),
 			self::PAYPAL_WALLET,
 			self::AFTERPAY,
 			self::KLARNA => array(
@@ -1146,7 +1224,20 @@ class PaymentExtensionSuggestions {
 			self::PAYPAL_FULL_STACK,
 			self::STRIPE,
 			self::ANTOM,
-			self::SQUARE_IN_PERSON,
+			self::SQUARE_IN_PERSON => array(
+				'_merge_on_type' => array(
+					'links' => array(
+						array(
+							'_type' => self::LINK_TYPE_PRICING,
+							'url'   => 'https://squareup.com/jp/ja/pricing',
+						),
+						array(
+							'_type' => self::LINK_TYPE_TERMS,
+							'url'   => 'https://squareup.com/jp/ja/legal/general/ua',
+						),
+					),
+				),
+			),
 			self::PAYPAL_WALLET,
 			self::AMAZON_PAY,
 		),
