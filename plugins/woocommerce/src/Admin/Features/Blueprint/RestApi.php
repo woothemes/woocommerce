@@ -377,11 +377,11 @@ class RestApi {
 		// phpcs:ignore
 		$response['reference']  = basename( $_FILES['file']['tmp_name'].'.'.$extension );
 		$response['process_nonce']       = wp_create_nonce( $response['reference'] );
-		$conflicts = $this->check_conflicts( $import_schema->get_schema()->get_steps() );
-		if ($conflicts) {
-			$response['error_type'] = 'conflict';
-			$response['errors'] = $conflicts;
-		}
+//		$conflicts = $this->check_conflicts( $import_schema->get_schema()->get_steps() );
+//		if ($conflicts) {
+//			$response['error_type'] = 'conflict';
+//			$response['errors'] = $conflicts;
+//		}
 
 		return $response;
 	}
