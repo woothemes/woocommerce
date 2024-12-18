@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+E2E tests: Audit /admin-tasks folder and add tags

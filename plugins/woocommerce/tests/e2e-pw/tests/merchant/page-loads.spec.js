@@ -1,10 +1,14 @@
-const { test, expect } = require( '@playwright/test' );
-const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
+/**
+ * Internal dependencies
+ */
+import { test, expect, tags } from '../../fixtures/fixtures';
+import { getFakeCustomer, getFakeProduct } from '../../utils/data';
 
 // a representation of the menu structure for WC
 const wcPages = [
 	{
 		name: 'WooCommerce',
+		url: 'wp-admin/admin.php?page=wc-admin',
 		subpages: [
 			{
 				name: 'Home',
@@ -47,6 +51,7 @@ const wcPages = [
 	},
 	{
 		name: 'Products',
+		url: 'wp-admin/edit.php?post_type=product',
 		subpages: [
 			{
 				name: 'All Products',
@@ -83,6 +88,7 @@ const wcPages = [
 	// analytics is handled through a separate test
 	{
 		name: 'Marketing',
+		url: 'wp-admin/admin.php?page=wc-admin&path=%2Fmarketing',
 		subpages: [
 			{
 				name: 'Overview',
@@ -93,118 +99,73 @@ const wcPages = [
 			{
 				name: 'Coupons',
 				heading: 'Coupons',
-				element: '.woocommerce-BlankState-cta.button-primary',
-				text: 'Create your first coupon',
+				element: '.page-title-action',
+				// WP6.6: "Add coupon", WP6.7: "Add new coupon"
+				text: /Add coupon|Add new coupon/,
 			},
 		],
 	},
 ];
 
-let productId, orderId;
-const productName = 'Simple Product Name';
-const productPrice = '15.99';
-
 for ( const currentPage of wcPages ) {
-	const randomNum = new Date().getTime().toString();
-	const customer = {
-		username: `customer${ randomNum }`,
-		password: 'password',
-		email: `customer${ randomNum }@woocommercecoree2etestsuite.com`,
-	};
 	test.describe(
 		`WooCommerce Page Load > Load ${ currentPage.name } sub pages`,
-		{ tag: [ '@gutenberg', '@services' ] },
+		{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
 		() => {
+			const product = getFakeProduct();
+			const customer = getFakeCustomer();
+			let orderId;
+
 			test.use( { storageState: process.env.ADMINSTATE } );
 
-			test.beforeAll( async ( { baseURL } ) => {
-				const response = await new wcApi( {
-					url: baseURL,
-					consumerKey: process.env.CONSUMER_KEY,
-					consumerSecret: process.env.CONSUMER_SECRET,
-					version: 'wc-admin',
-				} ).post( 'onboarding/profile', {
+			test.beforeAll( async ( { api, wcAdminApi } ) => {
+				// skip onboarding
+				const response = await wcAdminApi.post( 'onboarding/profile', {
 					skipped: true,
 				} );
+				expect( response.status ).toEqual( 200 );
 
-				const httpStatus = response.status;
-				const { status, message } = response.data;
-
-				test.expect( httpStatus ).toEqual( 200 );
-				test.expect( status ).toEqual( 'success' );
-				test.expect( message ).toEqual(
-					'Onboarding profile data has been updated.'
-				);
-				const api = new wcApi( {
-					url: baseURL,
-					consumerKey: process.env.CONSUMER_KEY,
-					consumerSecret: process.env.CONSUMER_SECRET,
-					version: 'wc/v3',
-				} );
 				// create a simple product
-				await api
-					.post( 'products', {
-						name: productName,
-						type: 'simple',
-						regular_price: productPrice,
-					} )
-					.then( ( _response ) => {
-						productId = _response.data.id;
-					} );
+				await api.post( 'products', product ).then( ( r ) => {
+					product.id = r.data.id;
+				} );
+
 				// create an order
 				await api
 					.post( 'orders', {
 						line_items: [
 							{
-								product_id: productId,
+								product_id: product.id,
 								quantity: 1,
 							},
 						],
 					} )
-					.then( ( _response ) => {
-						orderId = _response.data.id;
+					.then( ( r ) => {
+						orderId = r.data.id;
 					} );
+
 				// create customer
 				await api
 					.post( 'customers', customer )
-					.then(
-						( _response ) => ( customer.id = _response.data.id )
-					);
+					.then( ( r ) => ( customer.id = r.data.id ) );
 			} );
 
-			test.afterAll( async ( { baseURL } ) => {
-				const api = new wcApi( {
-					url: baseURL,
-					consumerKey: process.env.CONSUMER_KEY,
-					consumerSecret: process.env.CONSUMER_SECRET,
-					version: 'wc/v3',
-				} );
-				await api.delete( `products/${ productId }`, {
+			test.afterAll( async ( { api } ) => {
+				await api.delete( `orders/${ orderId }`, { force: true } );
+				await api.delete( `products/${ product.id }`, {
 					force: true,
 				} );
-				await api.delete( `orders/${ orderId }`, { force: true } );
 				await api.delete( `customers/${ customer.id }`, {
 					force: true,
 				} );
 			} );
 
-			test.beforeEach( async ( { page } ) => {
-				if ( currentPage.name === 'WooCommerce' ) {
-					await page.goto( 'wp-admin/admin.php?page=wc-admin' );
-				} else if ( currentPage.name === 'Products' ) {
-					await page.goto( 'wp-admin/edit.php?post_type=product' );
-				} else if ( currentPage.name === 'Marketing' ) {
-					await page.goto(
-						'wp-admin/admin.php?page=wc-admin&path=%2Fmarketing'
-					);
-				}
-			} );
-
 			for ( let i = 0; i < currentPage.subpages.length; i++ ) {
 				test(
 					`Can load ${ currentPage.subpages[ i ].name }`,
-					{ tag: '@skip-on-default-wpcom' },
+					{ tag: tags.SKIP_ON_WPCOM },
 					async ( { page } ) => {
+						await page.goto( currentPage.url );
 						await page
 							.locator(
 								`li.wp-menu-open > ul.wp-submenu > li a:has-text("${ currentPage.subpages[ i ].name }")`
@@ -212,8 +173,12 @@ for ( const currentPage of wcPages ) {
 							.click();
 
 						await expect(
-							page.locator( 'h1.components-text' )
-						).toContainText( currentPage.subpages[ i ].heading );
+							page
+								.getByRole( 'heading', {
+									name: currentPage.subpages[ i ].heading,
+								} )
+								.first()
+						).toBeVisible();
 
 						await expect(
 							page

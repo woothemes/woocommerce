@@ -2,35 +2,38 @@
  * Internal dependencies
  */
 import {
-	RegisteredPaymentGateway,
-	OfflinePaymentGateway,
+	PaymentProvider,
+	OfflinePaymentMethodProvider,
 	PaymentSettingsState,
 	SuggestedPaymentExtension,
+	SuggestedPaymentExtensionCategory,
 } from './types';
 import { WPDataSelector, WPDataSelectors } from '../types';
 
-export function getRegisteredPaymentGateways(
-	state: PaymentSettingsState
-): Array< RegisteredPaymentGateway > {
-	return state.registeredPaymentGateways;
+export function getPaymentProviders(
+	state: PaymentSettingsState,
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	location?: string | null
+): Array< PaymentProvider > {
+	return state.providers;
 }
 
 export function getOfflinePaymentGateways(
 	state: PaymentSettingsState
-): Array< OfflinePaymentGateway > {
+): Array< OfflinePaymentMethodProvider > {
 	return state.offlinePaymentGateways;
 }
 
-export function getPreferredExtensionSuggestions(
+export function getSuggestions(
 	state: PaymentSettingsState
 ): Array< SuggestedPaymentExtension > {
-	return state.preferredExtensionSuggestions;
+	return state.suggestions;
 }
 
-export function getOtherExtensionSuggestions(
+export function getSuggestionCategories(
 	state: PaymentSettingsState
-): Array< SuggestedPaymentExtension > {
-	return state.otherExtensionSuggestions;
+): Array< SuggestedPaymentExtensionCategory > {
+	return state.suggestionCategories;
 }
 
 export function isFetching( state: PaymentSettingsState ): boolean {
@@ -38,17 +41,11 @@ export function isFetching( state: PaymentSettingsState ): boolean {
 }
 
 export type PaymentSettingsSelectors = {
-	getRegisteredPaymentGateways: WPDataSelector<
-		typeof getRegisteredPaymentGateways
-	>;
+	getPaymentProviders: WPDataSelector< typeof getPaymentProviders >;
 	getOfflinePaymentGateways: WPDataSelector<
 		typeof getOfflinePaymentGateways
 	>;
-	getPreferredExtensionSuggestions: WPDataSelector<
-		typeof getPreferredExtensionSuggestions
-	>;
-	getOtherExtensionSuggestions: WPDataSelector<
-		typeof getOtherExtensionSuggestions
-	>;
+	getSuggestions: WPDataSelector< typeof getSuggestions >;
+	getSuggestionCategories: WPDataSelector< typeof getSuggestionCategories >;
 	isFetching: WPDataSelector< typeof isFetching >;
 } & WPDataSelectors;

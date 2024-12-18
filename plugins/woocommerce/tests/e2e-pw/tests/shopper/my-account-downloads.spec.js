@@ -1,6 +1,10 @@
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
-
+const { setComingSoon } = require( '../../utils/coming-soon' );
 const randomNum = new Date().getTime().toString();
 const customer = {
 	username: `customer${ randomNum }`,
@@ -14,11 +18,12 @@ const product = {
 
 test.describe(
 	'Customer can manage downloadable file in My Account > Downloads page',
-	{ tag: [ '@payments', '@services' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		let productId, orderId;
 
 		test.beforeAll( async ( { baseURL } ) => {
+			await setComingSoon( { baseURL, enabled: 'no' } );
 			const api = new wcApi( {
 				url: baseURL,
 				consumerKey: process.env.CONSUMER_KEY,

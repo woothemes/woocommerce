@@ -1,112 +1,61 @@
 /**
  * External dependencies
  */
-import { Gridicon } from '@automattic/components';
-import { List } from '@woocommerce/components';
-import { getAdminLink } from '@woocommerce/settings';
-import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import apiFetch from '@wordpress/api-fetch';
 import {
-	RegisteredPaymentGateway,
-	SuggestedPaymentExtension,
+	PaymentProvider,
+	PAYMENT_SETTINGS_STORE_NAME,
+	WC_ADMIN_NAMESPACE,
 } from '@woocommerce/data';
+import { useDispatch } from '@wordpress/data';
 import { useMemo } from '@wordpress/element';
-
+import { decodeEntities } from '@wordpress/html-entities';
 /**
  * Internal dependencies
  */
-import { PaymentGatewayListItem } from '~/settings-payments/components/payment-gateway-list-item';
-import { PaymentExtensionSuggestionListItem } from '~/settings-payments/components/payment-extension-suggestion-list-item';
-import { WooPaymentsGatewayData } from '~/settings-payments/types';
-import { WC_ASSET_URL } from '~/utils/admin-settings';
+import { CountrySelector } from '~/settings-payments/components/country-selector';
+import { ListPlaceholder } from '~/settings-payments/components/list-placeholder';
+import { PaymentGatewayList } from '~/settings-payments/components/payment-gateway-list';
 
 interface PaymentGatewaysProps {
-	registeredPaymentGateways: RegisteredPaymentGateway[];
+	providers: PaymentProvider[];
 	installedPluginSlugs: string[];
-	preferredPluginSuggestions: SuggestedPaymentExtension[];
-	wooPaymentsGatewayData?: WooPaymentsGatewayData;
 	installingPlugin: string | null;
-	setupPlugin: ( extension: SuggestedPaymentExtension ) => void;
+	setupPlugin: (
+		id: string,
+		slug: string,
+		onboardingUrl: string | null
+	) => void;
+	acceptIncentive: ( id: string ) => void;
+	updateOrdering: ( providers: PaymentProvider[] ) => void;
+	isFetching: boolean;
+	businessRegistrationCountry: string | null;
+	setBusinessRegistrationCountry: ( country: string ) => void;
 }
 
 export const PaymentGateways = ( {
-	registeredPaymentGateways,
+	providers,
 	installedPluginSlugs,
-	preferredPluginSuggestions,
-	wooPaymentsGatewayData,
 	installingPlugin,
 	setupPlugin,
+	acceptIncentive,
+	updateOrdering,
+	isFetching,
+	businessRegistrationCountry,
+	setBusinessRegistrationCountry,
 }: PaymentGatewaysProps ) => {
-	const setupLivePayments = () => {};
+	const { invalidateResolution } = useDispatch( PAYMENT_SETTINGS_STORE_NAME );
 
-	// Transform suggested preferred plugins comply with List component format.
-	const preferredPluginSuggestionsList = useMemo(
-		() =>
-			preferredPluginSuggestions.map(
-				( extension: SuggestedPaymentExtension ) => {
-					const pluginInstalled = installedPluginSlugs.includes(
-						extension.plugin.slug
-					);
-					return PaymentExtensionSuggestionListItem( {
-						extension,
-						installingPlugin,
-						setupPlugin,
-						pluginInstalled,
-					} );
-				}
-			),
-		[
-			preferredPluginSuggestions,
-			installedPluginSlugs,
-			installingPlugin,
-			setupPlugin,
-		]
-	);
-
-	// Transform payment gateways to comply with List component format.
-	const paymentGatewaysList = useMemo(
-		() =>
-			registeredPaymentGateways.map(
-				( gateway: RegisteredPaymentGateway ) => {
-					return PaymentGatewayListItem( {
-						gateway,
-						wooPaymentsGatewayData,
-						setupLivePayments,
-					} );
-				}
-			),
-		[ registeredPaymentGateways, wooPaymentsGatewayData ]
-	);
-
-	// Add offline payment provider.
-	paymentGatewaysList.push( {
-		key: 'offline',
-		className: 'woocommerce-item__payment-gateway transitions-disabled',
-		title: <>{ __( 'Take offline payments', 'woocommerce' ) }</>,
-		content: (
-			<>
-				{ __(
-					'Accept payments offline using multiple different methods. These can also be used to test purchases.',
-					'woocommerce'
-				) }
-			</>
-		),
-		after: (
-			<a
-				href={ getAdminLink(
-					'admin.php?page=wc-settings&tab=checkout&section=offline'
-				) }
-			>
-				<Gridicon icon="chevron-right" />
-			</a>
-		),
-		before: (
-			<img
-				src={ WC_ASSET_URL + 'images/payment_methods/cod.svg' }
-				alt="offline payment methods"
-			/>
-		),
-	} );
+	const countryOptions = useMemo( () => {
+		return Object.entries( window.wcSettings.countries || [] )
+			.map( ( [ key, name ] ) => ( {
+				key,
+				name: decodeEntities( name ),
+				types: [],
+			} ) )
+			.sort( ( a, b ) => a.name.localeCompare( b.name ) );
+	}, [] );
 
 	return (
 		<div className="settings-payment-gateways">
@@ -115,25 +64,46 @@ export const PaymentGateways = ( {
 					{ __( 'Payment providers', 'woocommerce' ) }
 				</div>
 				<div className="settings-payment-gateways__header-select-container">
-					<SelectControl
+					<CountrySelector
 						className="woocommerce-select-control__country"
-						prefix={ __( 'Business location :', 'woocommerce' ) }
+						label={ __( 'Business location :', 'woocommerce' ) }
 						placeholder={ '' }
-						label={ '' }
-						options={ [
-							{ label: 'United States', value: 'US' },
-							{ label: 'Canada', value: 'Canada' },
-						] }
-						onChange={ () => {} }
+						value={
+							countryOptions.find(
+								( country ) =>
+									country.key === businessRegistrationCountry
+							) ?? { key: 'US', name: 'United States (US)' }
+						}
+						options={ countryOptions }
+						onChange={ ( value: string ) => {
+							apiFetch( {
+								path:
+									WC_ADMIN_NAMESPACE +
+									'/settings/payments/country',
+								method: 'POST',
+								data: { location: value },
+							} ).then( () => {
+								setBusinessRegistrationCountry( value );
+								invalidateResolution( 'getPaymentProviders', [
+									value,
+								] );
+							} );
+						} }
 					/>
 				</div>
 			</div>
-			<List
-				items={ [
-					...preferredPluginSuggestionsList,
-					...paymentGatewaysList,
-				] }
-			/>
+			{ isFetching ? (
+				<ListPlaceholder rows={ 5 } />
+			) : (
+				<PaymentGatewayList
+					providers={ providers }
+					installedPluginSlugs={ installedPluginSlugs }
+					installingPlugin={ installingPlugin }
+					setupPlugin={ setupPlugin }
+					acceptIncentive={ acceptIncentive }
+					updateOrdering={ updateOrdering }
+				/>
+			) }
 		</div>
 	);
 };

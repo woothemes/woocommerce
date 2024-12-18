@@ -6,6 +6,8 @@
  * @version     2.1.0
  */
 
+declare( strict_types = 1);
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -30,6 +32,76 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 		 * @var string
 		 */
 		public $icon = 'settings';
+
+		/**
+		 * Setting field types.
+		 *
+		 * @var string
+		 */
+		const TYPE_TITLE                          = 'title';
+		const TYPE_INFO                           = 'info';
+		const TYPE_SECTIONEND                     = 'sectionend';
+		const TYPE_TEXT                           = 'text';
+		const TYPE_PASSWORD                       = 'password';
+		const TYPE_DATETIME                       = 'datetime';
+		const TYPE_DATETIME_LOCAL                 = 'datetime-local';
+		const TYPE_DATE                           = 'date';
+		const TYPE_MONTH                          = 'month';
+		const TYPE_TIME                           = 'time';
+		const TYPE_WEEK                           = 'week';
+		const TYPE_NUMBER                         = 'number';
+		const TYPE_EMAIL                          = 'email';
+		const TYPE_URL                            = 'url';
+		const TYPE_TEL                            = 'tel';
+		const TYPE_COLOR                          = 'color';
+		const TYPE_TEXTAREA                       = 'textarea';
+		const TYPE_SELECT                         = 'select';
+		const TYPE_MULTISELECT                    = 'multiselect';
+		const TYPE_RADIO                          = 'radio';
+		const TYPE_CHECKBOX                       = 'checkbox';
+		const TYPE_IMAGE_WIDTH                    = 'image_width';
+		const TYPE_SINGLE_SELECT_PAGE             = 'single_select_page';
+		const TYPE_SINGLE_SELECT_PAGE_WITH_SEARCH = 'single_select_page_with_search';
+		const TYPE_SINGLE_SELECT_COUNTRY          = 'single_select_country';
+		const TYPE_MULTI_SELECT_COUNTRIES         = 'multi_select_countries';
+		const TYPE_RELATIVE_DATE_SELECTOR         = 'relative_date_selector';
+		const TYPE_SLOTFILL_PLACEHOLDER           = 'slotfill_placeholder';
+
+		/**
+		 * Settings field types which are known.
+		 *
+		 * @var string[]
+		 */
+		protected $types = array(
+			self::TYPE_TITLE,
+			self::TYPE_INFO,
+			self::TYPE_SECTIONEND,
+			self::TYPE_TEXT,
+			self::TYPE_PASSWORD,
+			self::TYPE_DATETIME,
+			self::TYPE_DATETIME_LOCAL,
+			self::TYPE_DATE,
+			self::TYPE_MONTH,
+			self::TYPE_TIME,
+			self::TYPE_WEEK,
+			self::TYPE_NUMBER,
+			self::TYPE_EMAIL,
+			self::TYPE_URL,
+			self::TYPE_TEL,
+			self::TYPE_COLOR,
+			self::TYPE_TEXTAREA,
+			self::TYPE_SELECT,
+			self::TYPE_MULTISELECT,
+			self::TYPE_RADIO,
+			self::TYPE_CHECKBOX,
+			self::TYPE_IMAGE_WIDTH,
+			self::TYPE_SINGLE_SELECT_PAGE,
+			self::TYPE_SINGLE_SELECT_PAGE_WITH_SEARCH,
+			self::TYPE_SINGLE_SELECT_COUNTRY,
+			self::TYPE_MULTI_SELECT_COUNTRIES,
+			self::TYPE_RELATIVE_DATE_SELECTOR,
+			self::TYPE_SLOTFILL_PLACEHOLDER,
+		);
 
 		/**
 		 * Setting page label.
@@ -127,6 +199,12 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 							: get_option( $section_setting['id'] );
 					}
 
+					$type = $section_setting['type'];
+
+					if ( ! in_array( $type, $this->types, true ) ) {
+						$section_setting = $this->get_custom_type_field( 'woocommerce_admin_field_' . $type, $section_setting );
+					}
+
 					$section_settings_data[] = $section_setting;
 				}
 
@@ -148,6 +226,30 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 			);
 
 			return $pages;
+		}
+
+		/**
+		 * Get the custom type field by calling the action and returning the setting with the content, id, and type.
+		 *
+		 * @param string $action  The action to call.
+		 * @param array  $setting The setting to pass to the action.
+		 * @return array The setting with the content, id, and type.
+		 */
+		public function get_custom_type_field( $action, $setting ) {
+			ob_start();
+			/**
+			 * Output the custom type field by calling the action.
+			 *
+			 * @since 3.3.0
+			 */
+			do_action( $action, $setting );
+			$html = ob_get_contents();
+			ob_end_clean();
+			$setting['content'] = trim( $html );
+			$setting['id']      = isset( $setting['id'] ) ? $setting['id'] : $setting['type'];
+			$setting['type']    = 'custom';
+
+			return $setting;
 		}
 
 		/**

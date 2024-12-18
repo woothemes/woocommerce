@@ -51,10 +51,14 @@
 		$( '.colorpick' )
 			.iris( {
 				change: function ( event, ui ) {
-					$( this )
+					const $this = $( this );
+					$this
 						.parent()
 						.find( '.colorpickpreview' )
 						.css( { backgroundColor: ui.color.toString() } );
+					setTimeout( function () {
+						$this.trigger( 'change' );
+					} );
 				},
 				hide: true,
 				border: true,

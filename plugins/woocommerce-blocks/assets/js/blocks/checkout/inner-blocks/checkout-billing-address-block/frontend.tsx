@@ -34,14 +34,6 @@ const FrontendBlock = ( {
 	const checkoutIsProcessing = useSelect( ( select ) =>
 		select( CHECKOUT_STORE_KEY ).isProcessing()
 	);
-	const {
-		showCompanyField,
-		requireCompanyField,
-		showApartmentField,
-		requireApartmentField,
-		showPhoneField,
-		requirePhoneField,
-	} = useCheckoutBlockContext();
 	const { showBillingFields, forcedBillingAddress, useBillingAsShipping } =
 		useCheckoutAddress();
 
@@ -63,14 +55,7 @@ const FrontendBlock = ( {
 			description={ description }
 			showStepNumber={ showFormStepNumbers }
 		>
-			<Block
-				showCompanyField={ showCompanyField }
-				requireCompanyField={ requireCompanyField }
-				showApartmentField={ showApartmentField }
-				requireApartmentField={ requireApartmentField }
-				showPhoneField={ showPhoneField }
-				requirePhoneField={ requirePhoneField }
-			/>
+			<Block />
 			{ children }
 		</FormStep>
 	);

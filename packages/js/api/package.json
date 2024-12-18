@@ -56,7 +56,7 @@
 	"devDependencies": {
 		"@types/create-hmac": "1.1.0",
 		"@types/jest": "27.5.x",
-		"@types/node": "^16.18.68",
+		"@types/node": "20.x.x",
 		"@typescript-eslint/eslint-plugin": "^5.62.0",
 		"@typescript-eslint/parser": "^5.62.0",
 		"@woocommerce/eslint-plugin": "workspace:*",
@@ -64,7 +64,7 @@
 		"eslint": "^8.55.0",
 		"jest": "27.5.x",
 		"ts-jest": "29.1.x",
-		"typescript": "5.3.x",
+		"typescript": "5.7.x",
 		"wireit": "0.14.3"
 	},
 	"publishConfig": {
