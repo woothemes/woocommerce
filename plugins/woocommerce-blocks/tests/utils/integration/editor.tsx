@@ -35,27 +35,6 @@ import {
  */
 import { waitForStoreResolvers } from './wait-for-store-resolvers';
 
-// Polyfill for String.prototype.replaceAll until CI is running Node 15 or higher.
-if ( ! String.prototype.replaceAll ) {
-	String.prototype.replaceAll = function (
-		searchValue: string | RegExp,
-		replacer:
-			| string
-			| ( ( substring: string, ...args: unknown[] ) => string )
-	): string {
-		// If a regex pattern
-		if (
-			Object.prototype.toString.call( searchValue ).toLowerCase() ===
-			'[object regexp]'
-		) {
-			return this.replace( searchValue, replacer );
-		}
-
-		// If a string
-		return this.replace( new RegExp( searchValue, 'g' ), replacer );
-	};
-}
-
 /**
  * Selects the block to be tested by the aria-label on the block wrapper, eg. "Block: Cover".
  *
