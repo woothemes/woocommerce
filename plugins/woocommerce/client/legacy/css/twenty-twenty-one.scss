@@ -80,6 +80,13 @@ a.button {
 	.woocommerce-form-login__rememberme {
 		margin: 1rem 0 3rem 0;
 	}
+
+	.show-password-input {
+		background-color: transparent !important;
+		color: var(--global--color-primary) !important;
+		display: inherit;
+		outline-offset: 0;
+	}
 }
 
 .woocommerce-notices-wrapper:empty {
@@ -754,6 +761,10 @@ button.reset_variations {
 					color: var(--button--color-text);
 					background-color: var(--button--color-background);
 					border: var(--button--border-width) solid var(--button--color-background);
+
+					&:focus {
+						color: $body-color;
+					}
 				}
 			}
 		}
@@ -1332,10 +1343,6 @@ button.reset_variations {
 			p {
 				margin-top: 20px;
 				margin-bottom: 0 !important;
-			}
-
-			.show-password-input {
-				display: inherit;
 			}
 		}
 

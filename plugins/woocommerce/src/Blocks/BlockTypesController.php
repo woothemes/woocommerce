@@ -466,6 +466,7 @@ final class BlockTypesController {
 			$block_types[] = 'ProductFilterChips';
 			if ( Features::is_enabled( 'blockified-add-to-cart' ) ) {
 				$block_types[] = 'AddToCartWithOptions';
+				$block_types[] = 'AddToCartWithOptionsQuantitySelector';
 			}
 		}
 
@@ -480,6 +481,8 @@ final class BlockTypesController {
 					'Cart',
 					'Checkout',
 					'ProductGallery',
+					'ProductCollection\Controller',
+					'ProductCollection\NoResults',
 				)
 			);
 		}
@@ -509,7 +512,6 @@ final class BlockTypesController {
 					'OrderConfirmation\AdditionalInformation',
 					'OrderConfirmation\AdditionalFieldsWrapper',
 					'OrderConfirmation\AdditionalFields',
-					'ProductGallery',
 				)
 			);
 		}

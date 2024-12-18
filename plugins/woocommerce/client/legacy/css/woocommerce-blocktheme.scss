@@ -164,10 +164,14 @@
 	* Product variations
 	*/
 	table.variations {
+		display: block;
+
 		tr {
-			// Limit variation dropdown width and add block gap.
-			display: block;
-			margin-bottom: var(--wp--style--block-gap);
+			th,
+			td {
+				padding-bottom: var(--wp--style--block-gap);
+				text-align: left;
+			}
 
 			th {
 				// Ensure variation label doesn't stick to dropdown.
