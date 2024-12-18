@@ -171,7 +171,7 @@ class Status extends AbstractOrderConfirmationBlock {
 				return wc_print_notice(
 					sprintf(
 						// translators: %s: site name.
-						__( 'Your account with %s has been successfully created. We emailed you a link to set your account password.', 'woocommerce' ),
+						__( 'Your account with %s was created but needs to be confirmed. We emailed you a link to set your account password.', 'woocommerce' ),
 						esc_html( wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES ) )
 					),
 					'notice',
