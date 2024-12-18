@@ -466,8 +466,6 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 		$decimals       = wc_get_price_decimals();
 		$round_tax      = 'no' === get_option( 'woocommerce_tax_round_at_subtotal' );
 
-		$parent_order_id = $order->get_parent_id();
-
 		$is_full_refund_without_line_items = false;
 		$partial_refund_product_revenue    = array();
 		$refund_type                       = $order->get_meta( '_refund_type' );
@@ -491,6 +489,7 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 					"
 						SELECT
 							product_lookup.product_id,
+							product_lookup.variation_id,
 							product_lookup.product_net_revenue
 						FROM {$table_name} AS product_lookup
 						INNER JOIN {$wpdb->prefix}wc_order_stats AS order_stats
@@ -504,41 +503,67 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 			);
 
 			// Create a lookup table for partially refunded products.
-			// Key is the product_id, value is the product_net_revenue.
-			// E.g. [ '1' => -60, '2' => -30 ].
+			// E.g. [
+			//   'variation_ids' => [
+			//     '51' => -10,
+			//     '52' => -30,
+			//   ],
+			//   'product_ids' => [
+			//     '1' => -20,
+			//     '2' => -40,
+			//   ],
+			// ]
 			$partial_refund_product_revenue = array_reduce(
 				$partial_refund_products,
 				function ( $carry, $product ) {
-					if ( ! isset( $carry[ $product->product_id ] ) ) {
-						$carry[ $product->product_id ] = (float) $product->product_net_revenue;
+					if ( $product->variation_id ) {
+						if ( ! isset( $carry['variation_ids'][ $product->variation_id ] ) ) {
+							$carry['variation_ids'][ $product->variation_id ] = (float) $product->product_net_revenue;
+						} else {
+							$carry['variation_ids'][ $product->variation_id ] += (float) $product->product_net_revenue;
+						}
 					} else {
-						$carry[ $product->product_id ] += (float) $product->product_net_revenue;
+						if ( ! isset( $carry['product_ids'][ $product->product_id ] ) ) {
+							$carry['product_ids'][ $product->product_id ] = (float) $product->product_net_revenue;
+						} else {
+							$carry['product_ids'][ $product->product_id ] += (float) $product->product_net_revenue;
+						}
 					}
 					return $carry;
 				},
-				array()
+				array( 'variation_ids' => array(), 'product_ids' => array() )
 			);
+
+			// A helper function to determine if the order item should be included in the report.
+			// It's only used in the below array_filter function.
+			$should_include_order_items = function ( $partial_refund_product_revenue, $order_item, $id, $id_key = 'product_ids' ) {
+				// If the product is not partially refunded, include it.
+				if ( ! isset( $partial_refund_product_revenue[ $id_key ][ $id ] ) ) {
+					return true;
+				}
+
+				$net_revenue = round( $order_item->get_total( 'edit' ), $decimals );
+
+				// If the product is not 100% partially refunded, include it.
+				// So we can store the difference in the product lookup table later.
+				if ( abs( $partial_refund_product_revenue[ $id_key ][ $id ] ) !== abs( $net_revenue ) ) {
+					return true;
+				}
+
+				return false;
+			};
 
 			// Filter the items that is already being patially refunded from the parent order item.
 			$order_items = array_filter(
 				$parent_order_items,
-				function ( $order_item ) use ( $partial_refund_product_revenue ) {
-					$product_id = $order_item->get_product_id();
+				function ( $order_item ) use ( $partial_refund_product_revenue, $should_include_order_items ) {
+					$variation_id = $order_item->get_variation_id();
 
-					// If the product is not partially refunded, include it.
-					if ( ! isset( $partial_refund_product_revenue[ $product_id ] ) ) {
-						return true;
+					if ( $variation_id ) {
+						return $should_include_order_items( $partial_refund_product_revenue, $order_item, $variation_id, 'variation_ids' );
 					}
 
-					$net_revenue = round( $order_item->get_total( 'edit' ), $decimals );
-
-					// If the product is not 100% partially refunded, include it.
-					// So we can store the difference in the product lookup table later.
-					if ( abs( $partial_refund_product_revenue[ $product_id ] ) !== abs( $net_revenue ) ) {
-						return true;
-					}
-
-					return false;
+					return $should_include_order_items( $partial_refund_product_revenue, $order_item, $order_item->get_product_id() );
 				}
 			);
 		}
@@ -548,6 +573,7 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 			unset( $existing_items[ $order_item_id ] );
 			$product_qty         = $order_item->get_quantity( 'edit' );
 			$product_id          = $order_item->get_product_id( 'edit' );
+			$variation_id        = $order_item->get_variation_id( 'edit' );
 			$shipping_amount     = $order->get_item_shipping_amount( $order_item );
 			$shipping_tax_amount = $order->get_item_shipping_tax_amount( $order_item );
 			$coupon_amount       = $order->get_item_coupon_amount( $order_item );
@@ -555,11 +581,13 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 
 			// If the order is a full refund and there is no order items. The order item here is the parent order item.
 			if ( $is_full_refund_without_line_items ) {
-				if ( isset( $partial_refund_product_revenue[ $product_id ] ) ) {
+				$key = $variation_id ? 'variation_ids' : 'product_ids';
+				$id = $variation_id ? $variation_id : $product_id;
+				if ( isset( $partial_refund_product_revenue[ $key ][ $id ] ) ) {
 					// If a single line item was refunded 60% then fully refunded after, we need store the difference in the product lookup table.
 					// E.g. A product costs $100, it was previously partially refunded $60, then fully refunded $40.
 					// So it will be -abs( 100 + (-60) ) = -40.;
-					$net_revenue = -abs( $net_revenue + $partial_refund_product_revenue[ $product_id ] );
+					$net_revenue = -abs( $net_revenue + $partial_refund_product_revenue[ $key ][ $id ] );
 				} else {
 					$net_revenue = -abs( $net_revenue );
 				}
@@ -594,7 +622,7 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 					'order_item_id'         => $order_item_id,
 					'order_id'              => $order->get_id(),
 					'product_id'            => $product_id,
-					'variation_id'          => wc_get_order_item_meta( $order_item_id, '_variation_id' ),
+					'variation_id'          => $variation_id,
 					'customer_id'           => $order->get_report_customer_id(),
 					'product_qty'           => $product_qty,
 					'product_net_revenue'   => $net_revenue,
