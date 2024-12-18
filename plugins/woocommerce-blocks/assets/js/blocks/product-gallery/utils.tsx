@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { BlockAttributes, BlockInstance } from '@wordpress/blocks';
+import { BlockAttributes } from '@wordpress/blocks';
 import { select, dispatch } from '@wordpress/data';
 import { findBlock } from '@woocommerce/utils';
 
