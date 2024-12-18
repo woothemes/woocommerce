@@ -1,3 +1,0 @@
-Significance: patch
-Type: fix
-Comment: Fix malformed HTML in search filter dropdown on /Internal/Admin/Orders/ListTable.php (closes #52846)

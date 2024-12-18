@@ -200,6 +200,18 @@ class FeaturesController {
 					'is_experimental' => false,
 					'disable_ui'      => true,
 				),
+				'rate_limit_checkout'    => array(
+					'name'               => __( 'Rate limit Checkout', 'woocommerce' ),
+					'description'        => sprintf(
+						// translators: %s is the URL to the rate limiting documentation.
+						__( 'Enables rate limiting for Checkout place order and Store API /checkout endpoint. To further control this, refer to <a href="%s" target="_blank">rate limiting documentation</a>.', 'woocommerce' ),
+						'https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/src/StoreApi/docs/rate-limiting.md'
+					),
+					'is_experimental'    => false,
+					'disable_ui'         => false,
+					'enabled_by_default' => false,
+					'is_legacy'          => true,
+				),
 				'marketplace'            => array(
 					'name'               => __( 'Marketplace', 'woocommerce' ),
 					'description'        => __(

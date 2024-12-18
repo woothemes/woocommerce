@@ -1,12 +1,61 @@
 .woocommerce-settings-header {
-	&.edit-site-page-header {
+	&.edit-site-page-header.woocommerce-settings-header--has-tabs {
 		border-bottom: none;
 	}
 }
 
 .woocommerce-settings-section-tabs {
-	.components-tab-panel__tabs,
-	&.woocommerce-settings-section-tabs--no-tabs {
+	.components-tab-panel__tabs {
+		border-bottom: 1px solid #f0f0f0;
+		padding: 0 32px;
+	}
+}
+
+#wc-settings-page .edit-site-layout__area {
+	overflow: scroll;
+}
+
+.components-tab-panel__tabs {
+	position: sticky;
+	top: 72px; // For now
+	background-color: #fff;
+}
+
+.woocommerce-settings-content {
+	padding: 48px;
+	display: flex;
+	flex-direction: column;
+	gap: 48px;
+}
+
+.woocommerce-settings-group {
+	display: flex;
+	gap: 48px;
+	padding-bottom: 48px;
+
+	&:not(:last-child) {
 		border-bottom: 1px solid #f0f0f0;
 	}
+
+	@media (max-width: 960px) {
+		flex-direction: column;
+	}
+}
+
+.woocommerce-settings-group-title {
+	flex: 1;
+	max-width: 400px;
+}
+
+.woocommerce-settings-group-content {
+	flex: 2;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.woocommerce-settings-content-footer {
+	display: flex;
+	justify-content: flex-end;
+	padding: 48px;
 }
