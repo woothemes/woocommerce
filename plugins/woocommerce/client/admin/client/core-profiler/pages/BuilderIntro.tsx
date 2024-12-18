@@ -57,7 +57,7 @@ export const BuilderIntro = ( {
 		} )
 			.then( ( data ) => {
 				// @ts-expect-error tmp
-				if ( data.has_errors === false ) {
+				if ( data.errors.length === 0 ) {
 					apiFetch( {
 						path: '/wc-admin/blueprint/process',
 						method: 'POST',
@@ -76,10 +76,10 @@ export const BuilderIntro = ( {
 
 						setImporting( false );
 
-						window.setTimeout( () => {
-							// @ts-expect-error tmp
-							window.location.href = response.data.redirect;
-						}, 2000 );
+						// window.setTimeout( () => {
+						// 	// @ts-expect-error tmp
+						// 	window.location.href = response.data.redirect;
+						// }, 2000 );
 					} );
 				} else {
 					setImporting( false );
@@ -87,30 +87,14 @@ export const BuilderIntro = ( {
 						`Error: There was an error importing the blueprint.`
 					);
 
-					if (
-						// @ts-expect-error tmp
-						data?.errors?.upload ||
-						// @ts-expect-error tmp
-						data?.errors?.schema_validation ||
-						// @ts-expect-error tmp
-						data?.errors?.conflicts
-					) {
-						const errors = [
-							// @ts-expect-error tmp
-							data?.errors?.upload,
-							// @ts-expect-error tmp
-							data?.errors?.schema_validation,
-							// @ts-expect-error tmp
-							data?.errors?.conflicts,
-						];
-
-						setMessage( JSON.stringify( errors, null, 2 ) );
-					}
+					// @ts-expect-error tmp
+					setMessage( JSON.stringify( data.errors, null, 2 ) );
 				}
 			} )
-			.catch( ( error ) => {
+			.catch( () => {
 				setImporting( false );
-				setMessage( `Error: ${ error.message }` );
+				// @ts-expect-error tmp
+				setMessage( JSON.stringify( data.errors, null, 2 ) );
 			} );
 	};
 	return (
