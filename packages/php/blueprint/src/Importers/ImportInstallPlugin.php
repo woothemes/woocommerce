@@ -54,6 +54,8 @@ class ImportInstallPlugin implements StepProcessor {
 		// phpcs:ignore
 		$plugin = $schema->pluginZipFile;
 
+		$result->set_paylaod( array( 'slug' => $plugin->slug ) );
+
 		if ( isset( $installed_plugins[ $plugin->slug ] ) ) {
 			$result->add_info( "Skipped installing {$plugin->slug}. It is already installed." );
 			return $result;
