@@ -2254,8 +2254,7 @@ class PaymentExtensionSuggestions {
 			self::ANTOM             => array(
 				'_type'             => self::TYPE_PSP,
 				'title'             => esc_html__( 'Antom', 'woocommerce' ),
-				'short_description' => esc_html__( 'Your trusted payments partner in Asia and around the world.', 'woocommerce' ),
-				'description'       => esc_html__( 'Start accepting debit/credit card, bank transfers, wallet payments, mobile payments and local payment methods your customers use in Asia Pacific and beyond.', 'woocommerce' ),
+				'description'       => esc_html__( 'Your trusted payments partner in Asia and around the world.', 'woocommerce' ),
 				'icon'              => plugins_url( 'assets/images/payment_methods/72x72/antom.png', WC_PLUGIN_FILE ),
 				'plugin'            => array(
 					'_type' => self::PLUGIN_TYPE_WPORG,
@@ -2984,7 +2983,6 @@ class PaymentExtensionSuggestions {
 		// Optional fields.
 		$standardized['image']             = $extension_details['image'] ?? '';
 		$standardized['icon']              = $extension_details['icon'] ?? '';
-		$standardized['short_description'] = $extension_details['short_description'] ?? '';
 		$standardized['links']             = $extension_details['links'] ?? array();
 		$standardized['tags']              = $extension_details['tags'] ?? array();
 		$standardized['_incentive']        = $extension_details['_incentive'] ?? null;

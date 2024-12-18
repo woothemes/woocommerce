@@ -614,11 +614,6 @@ class PaymentsRestController extends RestApiControllerBase {
 					'context'     => array( 'view', 'edit' ),
 					'readonly'    => true,
 				),
-				'short_description' => array(
-					'type'        => 'string',
-					'description' => esc_html__( 'The short description of the provider.', 'woocommerce' ),
-					'readonly'    => true,
-				),
 				'supports'          => array(
 					'description' => __( 'Supported features for this provider.', 'woocommerce' ),
 					'type'        => 'array',
@@ -1056,11 +1051,6 @@ class PaymentsRestController extends RestApiControllerBase {
 					'type'        => 'string',
 					'description' => esc_html__( 'The description of the suggestion.', 'woocommerce' ),
 					'context'     => array( 'view', 'edit' ),
-					'readonly'    => true,
-				),
-				'short_description' => array(
-					'type'        => 'string',
-					'description' => esc_html__( 'The short description of the suggestion.', 'woocommerce' ),
 					'readonly'    => true,
 				),
 				'plugin'            => array(
