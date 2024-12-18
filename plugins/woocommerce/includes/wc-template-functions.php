@@ -2997,7 +2997,7 @@ if ( ! function_exists( 'woocommerce_form_field' ) ) {
 		$is_required = (bool) $args['required'];
 
 		if ( $is_required ) {
-			$required_indicator = '&nbsp;<span class="required asterisk"><span class="asterisk-line"></span><span class="asterisk-line"></span><span class="asterisk-line"></span></span>';
+			$required_indicator = '&nbsp;<span class="required" aria-hidden="true">*</span>';
 		} else {
 			$required_indicator = '&nbsp;<span class="optional">(' . esc_html__( 'optional', 'woocommerce' ) . ')</span>';
 		}
