@@ -32,6 +32,14 @@ const getComponent = ( setting: SettingsField ) => {
 			return <SettingsInput setting={ setting } />;
 		case 'checkbox':
 			return <SettingsCheckbox setting={ setting } />;
+		case 'checkboxgroup':
+			return (
+				<VStack>
+					{ setting.settings.map( ( setting: SettingsField ) => {
+						return <SettingsCheckbox setting={ setting } />;
+					} ) }
+				</VStack>
+			);
 		default:
 			return <div>{ setting.type }</div>;
 	}
