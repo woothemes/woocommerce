@@ -33,6 +33,17 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 	}
 }
 
+.swiper-wrapper {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	z-index: 1;
+	display: flex;
+	transition-property: transform;
+	transition-timing-function: var(--swiper-wrapper-transition-timing-function, initial);
+	box-sizing: content-box;
+}
+
 // Product Gallery
 #{$gallery} {
 	dialog {
@@ -103,6 +114,7 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 	width: 100%;
 	height: fit-content;
 	position: relative;
+	overflow-x: hidden;
 	flex-grow: 1;
 
 	// Restrict the width of the Large Image when the Next/Previous buttons are outside the image.
