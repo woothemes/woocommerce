@@ -43,7 +43,7 @@ export class BlockRegistrationManager {
 	/** Map storing block configurations keyed by block name or variation name */
 	private blocks: Map< string, BlockConfig > = new Map();
 	/** Current template ID being edited */
-	private currentTemplateId: string | undefined = '';
+	private currentTemplateId: string | undefined;
 	/** Flag indicating if the manager has been initialized */
 	private initialized = false;
 	/** Flag to prevent recursive registration attempts */
