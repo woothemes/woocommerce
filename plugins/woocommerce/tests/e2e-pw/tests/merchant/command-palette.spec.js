@@ -1,4 +1,4 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 
 /**
  * External dependencies
@@ -56,23 +56,28 @@ const test = baseTest.extend( {
 
 test(
 	'can use the "Add new product" command',
-	{ tag: '@services' },
+	{ tag: tags.SERVICES },
 	async ( { page } ) => {
 		await clickOnCommandPaletteOption( {
 			page,
 			optionName: 'Add new product',
 		} );
 
-		// Verify that the page has loaded.
+		/*
+		 * Verify that the page has loaded.
+		 * Unfortunatelly, the top heading for product and coupon does not specify what new thing is being added.
+		 * We need to check the input label to make sure.
+		 */
 		await expect(
-			page.getByRole( 'heading', { name: 'Add new product' } )
+			page.getByRole( 'heading', { name: 'Add new' } )
 		).toBeVisible();
+		await expect( page.getByLabel( 'Product name' ) ).toBeVisible();
 	}
 );
 
 test(
 	'can use the "Add new order" command',
-	{ tag: '@services' },
+	{ tag: tags.SERVICES },
 	async ( { page } ) => {
 		await clickOnCommandPaletteOption( {
 			page,
@@ -88,7 +93,7 @@ test(
 
 test(
 	'can use the "Products" command',
-	{ tag: '@services' },
+	{ tag: tags.SERVICES },
 	async ( { page } ) => {
 		await clickOnCommandPaletteOption( {
 			page,
@@ -104,7 +109,7 @@ test(
 
 test(
 	'can use the "Orders" command',
-	{ tag: '@services' },
+	{ tag: tags.SERVICES },
 	async ( { page } ) => {
 		await clickOnCommandPaletteOption( {
 			page,
@@ -120,7 +125,7 @@ test(
 
 test(
 	'can use the product search command',
-	{ tag: '@services' },
+	{ tag: tags.SERVICES },
 	async ( { page, product } ) => {
 		await clickOnCommandPaletteOption( {
 			page,
@@ -136,7 +141,7 @@ test(
 
 test(
 	'can use a settings command',
-	{ tag: '@services' },
+	{ tag: tags.SERVICES },
 	async ( { page } ) => {
 		await clickOnCommandPaletteOption( {
 			page,
@@ -150,7 +155,7 @@ test(
 
 test(
 	'can use an analytics command',
-	{ tag: '@services' },
+	{ tag: tags.SERVICES },
 	async ( { page } ) => {
 		await clickOnCommandPaletteOption( {
 			page,

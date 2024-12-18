@@ -221,4 +221,22 @@ class ExportWCSettings implements StepExporter, HasAlias {
 	public function get_alias() {
 		return 'setWCSettings';
 	}
+
+	/**
+	 * Return label used in the frontend.
+	 *
+	 * @return string
+	 */
+	public function get_label() {
+		return __( 'General', 'woocommerce' );
+	}
+
+	/**
+	 * Return description used in the frontend.
+	 *
+	 * @return string
+	 */
+	public function get_description() {
+		return __( 'It includes general store options.', 'woocommerce' );
+	}
 }

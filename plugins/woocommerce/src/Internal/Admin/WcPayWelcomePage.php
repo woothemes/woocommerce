@@ -3,6 +3,7 @@ declare( strict_types=1 );
 
 namespace Automattic\WooCommerce\Internal\Admin;
 
+use Automattic\WooCommerce\Admin\Features\Features;
 use Automattic\WooCommerce\Admin\Features\OnboardingTasks\Task;
 use Automattic\WooCommerce\Admin\Features\OnboardingTasks\TaskLists;
 use Automattic\WooCommerce\Admin\PageController;
@@ -49,13 +50,33 @@ class WcPayWelcomePage {
 	 * WCPayWelcomePage constructor.
 	 */
 	public function __construct() {
+		$this->suggestion_incentives = wc_get_container()->get( PaymentExtensionSuggestionIncentives::class );
+	}
+
+	/**
+	 * Register hooks.
+	 */
+	public function register() {
+		// Because we gate the hooking based on a feature flag,
+		// we need to delay the registration until the 'woocommerce_init' hook.
+		// Otherwise, we end up in an infinite loop.
+		add_action( 'woocommerce_init', array( $this, 'delayed_register' ) );
+	}
+
+	/**
+	 * Delayed hook registration.
+	 */
+	public function delayed_register() {
+		// Don't do anything if the feature is enabled.
+		if ( Features::is_enabled( 'reactify-classic-payments-settings' ) ) {
+			return;
+		}
+
 		add_action( 'admin_menu', array( $this, 'register_menu_and_page' ) );
 		add_filter( 'woocommerce_admin_shared_settings', array( $this, 'shared_settings' ) );
 		add_filter( 'woocommerce_admin_allowed_promo_notes', array( $this, 'allowed_promo_notes' ) );
 		add_filter( 'woocommerce_admin_woopayments_onboarding_task_badge', array( $this, 'onboarding_task_badge' ) );
 		add_filter( 'woocommerce_admin_woopayments_onboarding_task_additional_data', array( $this, 'onboarding_task_additional_data' ) );
-
-		$this->suggestion_incentives = wc_get_container()->get( PaymentExtensionSuggestionIncentives::class );
 	}
 
 	/**

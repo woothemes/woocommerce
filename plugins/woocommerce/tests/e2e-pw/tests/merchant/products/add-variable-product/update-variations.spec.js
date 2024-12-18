@@ -1,5 +1,6 @@
 const { test, expect } = require( '@playwright/test' );
 const { variableProducts: utils } = require( '../../../../utils' );
+const { tags } = require( '../../../../fixtures/fixtures' );
 const {
 	createVariableProduct,
 	showVariableProductTour,
@@ -27,7 +28,7 @@ let productId_indivEdit,
 	defaultVariation,
 	variationIds_indivEdit;
 
-test.describe( 'Update variations', { tag: '@gutenberg' }, () => {
+test.describe( 'Update variations', { tag: tags.GUTENBERG }, () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
 	test.beforeAll( async ( { browser } ) => {
@@ -356,7 +357,7 @@ test.describe( 'Update variations', { tag: '@gutenberg' }, () => {
 		} );
 
 		await test.step( 'Click on the "Variations" tab.', async () => {
-			await page.getByRole( 'link', { name: 'Variations' } ).click();
+			await page.getByRole( 'link', { name: ' Variations' } ).click();
 		} );
 
 		await test.step( 'Expand all variations', async () => {

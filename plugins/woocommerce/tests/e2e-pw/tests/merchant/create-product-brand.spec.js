@@ -176,6 +176,8 @@ test( 'Merchant can add brands', async ( { page } ) => {
 		thumbnailFileName: 'image-03',
 	} );
 
-	// Delete the dummy child brand "WooCommerce Dummy Edited".
+	// Delete brands.
 	await deleteBrand( 'WooCommerce Dummy Edited' );
+	await deleteBrand( 'WooCommerce Apparels' );
+	await deleteBrand( 'WooCommerce' );
 } );

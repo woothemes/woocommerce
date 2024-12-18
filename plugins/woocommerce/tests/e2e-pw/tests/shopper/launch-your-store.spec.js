@@ -1,6 +1,7 @@
 const { test, expect, request } = require( '@playwright/test' );
 const { setOption } = require( '../../utils/options' );
 const { activateTheme, DEFAULT_THEME } = require( '../../utils/themes' );
+const { tags } = require( '../../fixtures/fixtures' );
 
 async function runComingSoonTests( themeContext = '' ) {
 	const testSuffix = themeContext ? ` (${ themeContext })` : '';
@@ -74,7 +75,7 @@ async function runComingSoonTests( themeContext = '' ) {
 
 test.describe(
 	'Launch Your Store front end - logged out',
-	{ tag: '@skip-on-default-wpcom' },
+	{ tag: tags.SKIP_ON_WPCOM },
 	() => {
 		test.afterAll( async ( { baseURL } ) => {
 			try {
