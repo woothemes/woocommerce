@@ -142,8 +142,6 @@ export class BlockRegistrationManager {
 			// Only run this once for post editor
 			postEditorUnsubscribe();
 
-			this.initialized = true;
-
 			// Register blocks that are available in post editor
 			this.blocks.forEach( ( config ) => {
 				if ( config.isAvailableOnPostEditor ) {
@@ -153,6 +151,8 @@ export class BlockRegistrationManager {
 					}
 				}
 			} );
+
+			this.initialized = true;
 		}, 'core/edit-post' );
 	}
 
