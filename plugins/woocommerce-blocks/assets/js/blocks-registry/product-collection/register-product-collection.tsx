@@ -414,9 +414,7 @@ export const __experimentalRegisterProductCollection = (
 					priceRange: query.priceRange,
 				} ),
 			},
-			displayLayout: config.attributes?.displayLayout,
 			hideControls,
-			queryContextIncludes: config.attributes?.queryContextIncludes,
 			// collection should be set to the name of the collection i.e. config.name
 			collection: config.name,
 			// Collections should always have inherit set to false.
