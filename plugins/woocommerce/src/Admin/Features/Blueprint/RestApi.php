@@ -4,10 +4,15 @@ declare( strict_types = 1 );
 
 namespace Automattic\WooCommerce\Admin\Features\Blueprint;
 
+use Automattic\WooCommerce\Blueprint\Exporters\ExportInstallPluginSteps;
+use Automattic\WooCommerce\Blueprint\Exporters\ExportInstallThemeSteps;
 use Automattic\WooCommerce\Blueprint\ExportSchema;
 use Automattic\WooCommerce\Blueprint\ImportSchema;
 use Automattic\WooCommerce\Blueprint\JsonResultFormatter;
+use Automattic\WooCommerce\Blueprint\StepProcessorResult;
 use Automattic\WooCommerce\Blueprint\ZipExportedSchema;
+use RecursiveArrayIterator;
+use RecursiveIteratorIterator;
 
 /**
  * Class RestApi
@@ -39,6 +44,7 @@ class RestApi {
 					'callback'            => array( $this, 'queue' ),
 					'permission_callback' => array( $this, 'check_permission' ),
 				),
+				'schema' => array( $this, 'get_queue_response_schema' ),
 			)
 		);
 
@@ -63,12 +69,13 @@ class RestApi {
 						),
 					),
 				),
+				'schema' => array( $this, 'get_process_response_schema' ),
 			)
 		);
 
 		register_rest_route(
 			$this->namespace,
-			'/import',
+			'/blueprint/import',
 			array(
 				array(
 					'methods'             => \WP_REST_Server::CREATABLE,
@@ -80,7 +87,7 @@ class RestApi {
 
 		register_rest_route(
 			$this->namespace,
-			'/export',
+			'/blueprint/export',
 			array(
 				array(
 					'methods'             => \WP_REST_Server::CREATABLE,
@@ -88,19 +95,30 @@ class RestApi {
 					'permission_callback' => array( $this, 'check_permission' ),
 					'args'                => array(
 						'steps'         => array(
-							'description'       => __( 'A list of plugins to install', 'woocommerce' ),
-							'type'              => 'array',
-							'items'             => 'string',
-							'default'           => array(),
-							'sanitize_callback' => function ( $value ) {
-								return array_map(
-									function ( $value ) {
-										return sanitize_text_field( $value );
-									},
-									$value
-								);
-							},
-							'required'          => false,
+							'description' => __( 'A list of plugins to install', 'woocommerce' ),
+							'type'        => 'object',
+							'properties'  => array(
+								'settings' => array(
+									'type'  => 'array',
+									'items' => array(
+										'type' => 'string',
+									),
+								),
+								'plugins'  => array(
+									'type'  => 'array',
+									'items' => array(
+										'type' => 'string',
+									),
+								),
+								'themes'   => array(
+									'type'  => 'array',
+									'items' => array(
+										'type' => 'string',
+									),
+								),
+							),
+							'default'     => array(),
+							'required'    => true,
 						),
 						'export_as_zip' => array(
 							'description' => __( 'Export as a zip file', 'woocommerce' ),
@@ -133,9 +151,37 @@ class RestApi {
 	 * @return \WP_HTTP_Response The response object.
 	 */
 	public function export( $request ) {
-		$steps         = $request->get_param( 'steps' );
+		$payload = $request->get_param( 'steps' );
+		$steps   = $this->steps_payload_to_blueprint_steps( $payload );
+
 		$export_as_zip = $request->get_param( 'export_as_zip' );
 		$exporter      = new ExportSchema();
+
+		if ( isset( $payload['plugins'] ) ) {
+			$exporter->onBeforeExport(
+				'installPlugin',
+				function ( ExportInstallPluginSteps $exporter ) use ( $payload ) {
+					$exporter->filter(
+						function ( array $plugins ) use ( $payload ) {
+							return array_intersect_key( $plugins, array_flip( $payload['plugins'] ) );
+						}
+					);
+				}
+			);
+		}
+
+		if ( isset( $payload['themes'] ) ) {
+			$exporter->onBeforeExport(
+				'installTheme',
+				function ( ExportInstallThemeSteps $exporter ) use ( $payload ) {
+					$exporter->filter(
+						function ( array $plugins ) use ( $payload ) {
+							return array_intersect_key( $plugins, array_flip( $payload['themes'] ) );
+						}
+					);
+				}
+			);
+		}
 
 		$data = $exporter->export( $steps, $export_as_zip );
 
@@ -250,8 +296,8 @@ class RestApi {
 	/**
 	 * Handle the upload request.
 	 *
-	 * We're not caling to run the import process in this file.
-	 * We'll upload the file to the temporary dir, validate the file, and return a reference to the file.
+	 * We're not caling to run the import process in this function.
+	 * We'll upload the file to a temporary dir, validate the file, and return a reference to the file.
 	 * The uploaded file will be processed once user hits the import button and calls the process endpoint with a nonce.
 	 *
 	 * @return array
@@ -259,31 +305,30 @@ class RestApi {
 	public function queue() {
 		// Initialize response structure.
 		$response = array(
-			'reference'  => null,
-			'has_errors' => true,
-			'errors'     => array(
-				'upload'            => array(),
-				'schema_validation' => array(),
-				'conflicts'         => array(),
-			),
+			'reference' => null,
+			'error_type' => null,
+			'errors' => array()
 		);
 
 		// Check for nonce to prevent CSRF.
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 		if ( ! isset( $_POST['blueprint_upload_nonce'] ) || ! \wp_verify_nonce( $_POST['blueprint_upload_nonce'], 'blueprint_upload_nonce' ) ) {
-			$response['errors']['upload'][] = __( 'Invalid nonce', 'woocommerce' );
+			$response['error_type'] = 'upload';
+			$response['errors'][] = __( 'Invalid nonce', 'woocommerce' );
 			return $response;
 		}
 
 		// Validate file upload.
 		if ( empty( $_FILES['file'] ) || ! isset( $_FILES['file']['error'], $_FILES['file']['tmp_name'], $_FILES['file']['type'] ) ) {
-			$response['errors']['upload'][] = __( 'No file uploaded', 'woocommerce' );
+			$response['error_type'] = 'upload';
+			$response['errors'][] = __( 'No file uploaded', 'woocommerce' );
 			return $response;
 		}
 
 		// phpcs:ignore
 		if ( UPLOAD_ERR_OK !== $_FILES['file']['error'] || ! is_uploaded_file( $_FILES['file']['tmp_name'] ) ) {
-			$response['errors']['upload'][] = __( 'File upload error', 'woocommerce' );
+			$response['error_type'] = 'upload';
+			$response['errors'][] = __( 'File upload error', 'woocommerce' );
 			return $response;
 		}
 
@@ -291,7 +336,8 @@ class RestApi {
 
 		// Check for valid file types.
 		if ( 'application/json' !== $mime_type && 'application/zip' !== $mime_type ) {
-			$response['errors']['upload'][] = __( 'Invalid file type', 'woocommerce' );
+			$response['error_type'] = 'upload';
+			$response['errors'][] = __( 'Invalid file type', 'woocommerce' );
 			return $response;
 		}
 
@@ -304,29 +350,39 @@ class RestApi {
 
 		// phpcs:ignore
 		if ( ! move_uploaded_file( $_FILES['file']['tmp_name'], $tmp_filepath ) ) {
-			$response['errors']['upload'][] = __( 'Error moving file to tmp directory', 'woocommerce' );
+			$response['error_type'] = 'upload';
+			$response['errors'][] = __( 'Error moving file to tmp directory', 'woocommerce' );
 			return $response;
 		}
 
 		// Process the uploaded file.
 		// We'll not call import function.
 		// Just validate the file by calling create_from_json or create_from_zip.
+		// Please note that we're not performing a full validation here as we can't know
+		// the full list of available steps without starting the import process due to filters being used for extensibility.
+		// For now, we'll just check the provided schema is a valid JSON and has 'steps' key.
+		// Full validation is performed in the process function.
 		try {
 			if ( 'application/zip' === $mime_type ) {
-				ImportSchema::create_from_zip( $tmp_filepath );
+				$import_schema = ImportSchema::create_from_zip( $tmp_filepath );
 			} else {
-				ImportSchema::create_from_json( $tmp_filepath );
+				$import_schema = ImportSchema::create_from_json( $tmp_filepath );
 			}
 		} catch ( \Exception $e ) {
-			$response['errors']['schema_validation'][] = $e->getMessage();
+			$response['error_type'] = 'schema_validation';
+			$response['errors'][] = $e->getMessage();
 			return $response;
 		}
 
-		// Successfully processed the file.
-		$response['has_errors'] = false;
 		// phpcs:ignore
 		$response['reference']  = basename( $_FILES['file']['tmp_name'].'.'.$extension );
-		$response['process_nonce'] = wp_create_nonce( $response['reference'] );
+		$response['process_nonce']       = wp_create_nonce( $response['reference'] );
+		$conflicts = $this->check_conflicts( $import_schema->get_schema()->get_steps() );
+		if ($conflicts) {
+			$response['error_type'] = 'conflict';
+			$response['errors'] = $conflicts;
+		}
+
 		return $response;
 	}
 
@@ -386,6 +442,178 @@ class RestApi {
 			'result'   => $result_formatter->format(),
 		);
 
+		$this->record_import( $ref, $results );
+
 		return $response;
+	}
+
+	/**
+	 * Convert step list from the frontend to the backend format.
+	 *
+	 * From:
+	 * {
+	 *  "settings": ["setWCSettings", "setWCShippingZones", "setWCShippingMethods", "setWCShippingRates"],
+	 *  "plugins": ["akismet/akismet.php],
+	 *  "themes": ["approach],
+	 * }
+	 *
+	 * To:
+	 *
+	 * ["setWCSettings", "setWCShippingZones", "setWCShippingMethods", "setWCShippingRates", "installPlugin", "installTheme"]
+	 *
+	 * @param array $steps steps payload from the frontend.
+	 *
+	 * @return array
+	 */
+	private function steps_payload_to_blueprint_steps( $steps ) {
+		$blueprint_steps = array();
+
+		if ( isset( $steps['settings'] ) ) {
+			$blueprint_steps = array_merge( $blueprint_steps, $steps['settings'] );
+		}
+
+		if ( isset( $steps['plugins'] ) ) {
+			$blueprint_steps[] = 'installPlugin';
+		}
+
+		if ( isset( $steps['themes'] ) ) {
+			$blueprint_steps[] = 'installTheme';
+		}
+
+		return $blueprint_steps;
+	}
+
+	/**
+	 * Record an import so that it can be used for conflict checking later.
+	 *
+	 * @param StepProcessorResult[] $results result of step processors.
+	 * @return void
+	 */
+	private function record_import( $ref, array $results ) {
+		// Remove the first element as it is from the ImportSchema itself.
+		$results                  = array_slice( $results, 1 );
+		$blueprint_import_history = get_option( 'blueprint_import_histories', array() );
+		$history                  = new ImportHistory( $ref );
+		foreach ( $results as $result ) {
+			$history->add_result( $result );
+		}
+
+		$blueprint_import_history[] = $history->to_array();
+		update_option( 'blueprint_import_histories', $blueprint_import_history );
+	}
+
+	private function check_conflicts( array $requested_steps, array $histories = array() ) {
+		$conflicts = array(
+			'settings' => array(),
+			'plugins'  => array(),
+			'themes'   => array(),
+		);
+
+		if ( empty( $histories ) ) {
+			$histories = get_option( 'blueprint_import_histories', array() );
+			if ( empty( $histories ) ) {
+				return $conflicts;
+			}
+		}
+
+		$history = ImportHistory::from_array( end( $histories ) );
+
+		// @todo -- these should be dynamic.
+		$settings_steps = array(
+			'setWCSettings'            => 'Settings',
+			'setWCCoreProfilerOptions' => 'Core Profiler Options',
+			'setWCPaymentGateways'     => 'Payment Gateways',
+			'setWCShipping'            => 'Shipping',
+			'setWCTaskOptions'         => 'Task Options',
+			'setWCTaxRates'            => 'Tax Rates',
+		);
+
+		$settings_steps_keys = array_keys( $settings_steps );
+
+		foreach ( $requested_steps as $requested_step ) {
+			if ( $requested_step->step === 'installPlugin' || $requested_step->step === 'installTheme' ) {
+				$payload = array(
+					'slug' => $requested_step->step === 'installPlugin' ? $requested_step->pluginZipFile->slug : $requested_step->themeZipFile->slug,
+				);
+
+				if ( $history->has_step_with_payload( $requested_step->step, $payload ) ) {
+					$conflicts[ $requested_step->step === 'installPlugin' ? 'plugins' : 'themes' ][] = $payload['slug'];
+				}
+			} elseif ( in_array( $requested_step->step, $settings_steps_keys ) ) {
+				$step = $settings_steps[ $requested_step->step ];
+				if ( count( $history->get_steps_by_name( $requested_step->step ) ) > 0 ) {
+					$conflicts['settings'][] = $step;
+				}
+			}
+		}
+
+		return $conflicts;
+	}
+
+	/**
+	 * Get the schema for the queue endpoint.
+	 *
+	 * @return array
+	 */
+	public function get_queue_response_schema() {
+		$schema = array(
+			'$schema'    => 'http://json-schema.org/draft-04/schema#',
+			'title'      => 'queue',
+			'type'       => 'object',
+			'properties' => array(
+				'reference'     => array(
+					'type'     => 'string',
+				),
+				'process_nonce' => array(
+					'type'     => 'string',
+				),
+				'error_type'    => array(
+					'type'     => 'string',
+					'default' => null,
+					'enum'   => array( 'upload', 'schema_validation', 'conflict' ),
+				),
+				'errors'        => array(
+					'type'     => 'array',
+					'items'    => array(
+						'type' => 'string',
+					),
+				),
+			),
+		);
+
+		return $schema;
+	}
+
+	/**
+	 * Get the schema for the process endpoint.
+	 *
+	 * @return array
+	 */
+	public function get_process_response_schema() {
+		$schema = array(
+			'$schema'    => 'http://json-schema.org/draft-04/schema#',
+			'title'      => 'process',
+			'type'       => 'object',
+			'properties' => array(
+				'processed' => array(
+					'type'     => 'boolean',
+				),
+				'message'   => array(
+					'type'     => 'string',
+				),
+				'data'      => array(
+					'type'     => 'object',
+					'properties' => array(
+						'redirect' => array(
+							'type'     => 'string',
+						),
+						'result'   => array(
+							'type'     => 'array',
+						),
+					),
+				),
+			),
+		);
+		return $schema;
 	}
 }
