@@ -35,8 +35,12 @@ export const SettingsGroup = ( { group }: { group: SettingsGroup } ) => {
 			<div className="woocommerce-settings-group-content">
 				{ group.settings.map( ( setting ) => {
 					const key =
-						setting.id ||
-						setting.type + '-' + setting.title?.replace( '', '-' );
+						setting.id +
+						'-' +
+						( setting.title ?? '' ).replace( ' ', '-' ) +
+						'-' +
+						setting.type +
+						'-group';
 					return <SettingsItem key={ key } setting={ setting } />;
 				} ) }
 			</div>
