@@ -52,7 +52,8 @@
 		"<rootDir>/tests/e2e/"
 	],
 	"transformIgnorePatterns": [
-		"node_modules/?!(simple-html-tokenizer|is-plain-obj|is-plain-object|memize)"
+		"node_modules/?!(simple-html-tokenizer|is-plain-obj|is-plain-object|memize)",
+		"jest-runner"
 	],
 	"testEnvironment": "jsdom",
 	"preset": "@wordpress/jest-preset-default",
