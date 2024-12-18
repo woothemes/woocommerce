@@ -4,10 +4,10 @@ const { tags } = require( '../../fixtures/fixtures' );
 test.describe( 'Coupons page', () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
-	// TODO (E2E Audit): This test can be combined with the other tests in the overview.spec.js to be more efficient. Test title should clarify that the page being tested here is the
+	// TODO (E2E Audit): This test is for the WooCommerce > Coupons menu item. Move this test to page-loads.spec.js.
 	test(
 		'A user can view the coupons overview without it crashing',
-		{ tag: [ tags.NOT_E2E ] },
+		{ tag: [ tags.NOT_E2E, tags.SKIP_ON_WPCOM ] },
 		async ( { page } ) => {
 			await page.goto(
 				'wp-admin/edit.php?post_type=shop_coupon&legacy_coupon_menu=1'
