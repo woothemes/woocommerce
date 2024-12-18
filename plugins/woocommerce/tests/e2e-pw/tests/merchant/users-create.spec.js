@@ -1,4 +1,4 @@
-const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
 const { logIn } = require( '../../utils/login' );
 
 const now = Date.now();
