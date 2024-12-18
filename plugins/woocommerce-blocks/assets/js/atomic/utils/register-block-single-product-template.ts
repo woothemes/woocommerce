@@ -46,8 +46,6 @@ export class BlockRegistrationManager {
 	private currentTemplateId: string | undefined;
 	/** Flag indicating if the manager has been initialized */
 	private initialized = false;
-	/** Flag to prevent recursive registration attempts */
-	private isRegistering = false;
 	/** Set to track block registration attempts to prevent duplicate registration attempts */
 	private attemptedRegisteredBlocks: Set< string > = new Set();
 
@@ -155,11 +153,21 @@ export class BlockRegistrationManager {
 		}
 
 		this.blocks.forEach( ( config ) => {
-			if ( ! this.isRegistering ) {
+			if ( ! this.hasAttemptedRegistration( config.blockName ) ) {
 				this.unregisterBlock( config );
 				this.registerBlock( config );
 			}
 		} );
+	}
+
+	/**
+	 * Checks if a block has already been attempted to be registered.
+	 *
+	 * @param {string} blockKey - The key of the block to check
+	 * @return {boolean} Whether the block has already been attempted to be registered
+	 */
+	private hasAttemptedRegistration( blockKey: string ): boolean {
+		return this.attemptedRegisteredBlocks.has( blockKey );
 	}
 
 	/**
@@ -205,13 +213,11 @@ export class BlockRegistrationManager {
 			isAvailableOnPostEditor,
 		} = config;
 
-		if ( this.isRegistering ) {
+		if ( this.hasAttemptedRegistration( blockName ) ) {
 			return;
 		}
 
 		try {
-			this.isRegistering = true;
-
 			// Check if block is already registered
 			const key = variationName || blockName;
 			if ( this.attemptedRegisteredBlocks.has( key ) ) {
@@ -251,8 +257,6 @@ export class BlockRegistrationManager {
 		} catch ( error ) {
 			// eslint-disable-next-line no-console
 			console.error( `Failed to register block ${ blockName }:`, error );
-		} finally {
-			this.isRegistering = false;
 		}
 	}
 
@@ -267,7 +271,7 @@ export class BlockRegistrationManager {
 		this.blocks.set( key, config );
 
 		// Only attempt registration if we're initialized
-		if ( this.initialized && ! this.isRegistering ) {
+		if ( this.initialized && ! this.hasAttemptedRegistration( key ) ) {
 			this.registerBlock( config );
 		}
 	}
