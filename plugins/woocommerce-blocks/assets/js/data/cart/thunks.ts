@@ -39,18 +39,24 @@ export const receiveCart =
 		dispatch: CartDispatchFromMap;
 		select: CartSelectFromMap;
 	} ) => {
-		const newCart = camelCaseKeys( response ) as unknown as Cart;
+		const cartResponse = camelCaseKeys( response ) as unknown as Cart;
 		const oldCart = select.getCartData();
 		const oldCartErrors = [ ...oldCart.errors, ...select.getCartErrors() ];
 
-		updateCartErrorNotices( newCart.errors, oldCartErrors );
+		// Set data from the response.
+		dispatch.setCartData( cartResponse );
+
+		// Get the new cart data before showing updates.
+		const newCart = select.getCartData();
+
 		notifyQuantityChanges( {
 			oldCart,
 			newCart,
 			cartItemsPendingQuantity: select.getItemsPendingQuantityUpdate(),
 			cartItemsPendingDelete: select.getItemsPendingDelete(),
 		} );
-		dispatch.setCartData( newCart );
+
+		updateCartErrorNotices( newCart.errors, oldCartErrors );
 		dispatch.setErrorData( null );
 	};
 

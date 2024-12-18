@@ -12,6 +12,7 @@ import { CART_STORE_KEY } from '..';
 
 jest.mock( '@wordpress/data-controls' );
 jest.mock( '@wordpress/api-fetch' );
+
 describe( 'getCartData', () => {
 	it( 'when apiFetch returns a valid response, receives the cart correctly', async () => {
 		const mockDispatch = {
@@ -19,15 +20,21 @@ describe( 'getCartData', () => {
 			receiveCart: jest.fn(),
 			receiveError: jest.fn(),
 		};
-		apiFetch.mockReturnValue( {
-			coupons: [],
-			items: [],
-			fees: [],
-			itemsCount: 0,
-			itemsWeight: 0,
-			needsShipping: true,
-			totals: {},
-		} );
+		apiFetch.mockReturnValue(
+			Promise.resolve( {
+				status: 200,
+				json: () =>
+					Promise.resolve( {
+						coupons: [],
+						items: [],
+						fees: [],
+						itemsCount: 0,
+						itemsWeight: 0,
+						needsShipping: true,
+						totals: {},
+					} ),
+			} )
+		);
 		await getCartData()( { dispatch: mockDispatch } );
 		expect( mockDispatch.receiveCart ).toHaveBeenCalledWith( {
 			coupons: [],
@@ -46,7 +53,12 @@ describe( 'getCartData', () => {
 			receiveCart: jest.fn(),
 			receiveError: jest.fn(),
 		};
-		apiFetch.mockReturnValue( undefined );
+		apiFetch.mockReturnValue(
+			Promise.resolve( {
+				status: 200,
+				json: () => Promise.resolve( undefined ),
+			} )
+		);
 		await getCartData()( { dispatch: mockDispatch } );
 		expect( mockDispatch.receiveCart ).not.toHaveBeenCalled();
 		expect( mockDispatch.receiveError ).toHaveBeenCalled();
