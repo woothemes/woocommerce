@@ -129,11 +129,11 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 		aspect-ratio: 1 / 1;
 		flex-shrink: 0;
 		max-width: 100%;
+		overflow: hidden;
 		width: 100%;
 		display: flex;
 		align-items: center;
 		scroll-snap-align: none center;
-		overflow: hidden;
 	}
 
 	#{$gallery-next-previous-inside-image} & .wc-block-product-gallery-large-image__image-element {
