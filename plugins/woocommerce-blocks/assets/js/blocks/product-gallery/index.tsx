@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { registerBlockType } from '@wordpress/blocks';
+import { registerBlockSingleProductTemplate } from '@woocommerce/atomic-utils';
 
 /**
  * Internal dependencies
@@ -13,5 +13,9 @@ import './inner-blocks/product-gallery-large-image-next-previous';
 import './inner-blocks/product-gallery-pager';
 import './inner-blocks/product-gallery-thumbnails';
 
-// @ts-expect-error: `metadata` currently does not have a type definition in WordPress core.
-registerBlockType( metadata, ProductGalleryBlockSettings );
+registerBlockSingleProductTemplate( {
+	blockName: metadata.name,
+	blockMetadata: metadata,
+	blockSettings: ProductGalleryBlockSettings,
+	isAvailableOnPostEditor: true,
+} );
