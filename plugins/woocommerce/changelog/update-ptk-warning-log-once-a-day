@@ -1,4 +1,0 @@
-Significance: patch
-Type: enhancement
-
-Ensure PTK error log only happens once per day using a transient to track the last log
