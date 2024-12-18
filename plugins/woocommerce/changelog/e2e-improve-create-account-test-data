@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+E2E test: improve my account - create account test by using unique test user

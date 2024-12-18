@@ -946,11 +946,6 @@ class WC_REST_Orders_V2_Controller extends WC_REST_CRUD_Controller {
 		$this->maybe_set_item_props( $item, array( 'name', 'quantity', 'total', 'subtotal', 'tax_class' ), $posted );
 		$this->maybe_set_item_meta_data( $item, $posted );
 
-		if ( 'update' === $action ) {
-			require_once WC_ABSPATH . 'includes/admin/wc-admin-functions.php';
-			wc_maybe_adjust_line_item_product_stock( $item );
-		}
-
 		return $item;
 	}
 
@@ -1062,7 +1057,7 @@ class WC_REST_Orders_V2_Controller extends WC_REST_CRUD_Controller {
 		$item = $this->$method( $posted, $action, $item );
 
 		/**
-		 * Allow extensions be notified before the item before is saved.
+		 * Allow extensions be notified before the item is saved.
 		 *
 		 * @param WC_Order_Item $item The item object.
 		 * @param array         $posted The item data.
@@ -1076,6 +1071,31 @@ class WC_REST_Orders_V2_Controller extends WC_REST_CRUD_Controller {
 			$order->add_item( $item );
 		} else {
 			$item->save();
+		}
+
+		// Maybe update product stock quantity.
+		if (
+			'line_items' === $item_type
+			&& in_array( $order->get_status(), array( OrderStatus::PROCESSING, OrderStatus::COMPLETED, OrderStatus::ON_HOLD ), true )
+		) {
+			require_once WC_ABSPATH . 'includes/admin/wc-admin-functions.php';
+			$changed_stock = wc_maybe_adjust_line_item_product_stock( $item );
+			if ( $changed_stock && ! is_wp_error( $changed_stock ) ) {
+				$order->add_order_note(
+					sprintf(
+						// translators: %s item name.
+						__( 'Adjusted stock: %s', 'woocommerce' ),
+						sprintf(
+							'%1$s (%2$s&rarr;%3$s)',
+							$item->get_name(),
+							$changed_stock['from'],
+							$changed_stock['to']
+						)
+					),
+					false,
+					true
+				);
+			}
 		}
 	}
 

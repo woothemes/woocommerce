@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Fixed core profiler not showing jetpack auth step when pre-installed

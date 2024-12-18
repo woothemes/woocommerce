@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+E2E tests: updated tags used in page-loads spec

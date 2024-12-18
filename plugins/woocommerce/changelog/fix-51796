@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Turn coupon accordion title into a heading level 2 element on the block-based Checkout page

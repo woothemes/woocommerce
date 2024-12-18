@@ -1,0 +1,4 @@
+Significance: minor
+Type: add
+
+Add an API endpoint to disconnect a site from WooCommerce.com

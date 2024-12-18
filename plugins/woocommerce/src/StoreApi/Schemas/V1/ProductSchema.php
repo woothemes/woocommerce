@@ -383,6 +383,26 @@ class ProductSchema extends AbstractSchema {
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,
 			],
+			'stock_availability'  => [
+				'description' => __( 'Information about the product\'s availability.', 'woocommerce' ),
+				'type'        => 'object',
+				'context'     => [ 'view', 'edit' ],
+				'readonly'    => true,
+				'properties'  => [
+					'text'  => [
+						'description' => __( 'Stock availability text.', 'woocommerce' ),
+						'type'        => 'string',
+						'context'     => [ 'view', 'edit' ],
+						'readonly'    => true,
+					],
+					'class' => [
+						'description' => __( 'Stock availability class.', 'woocommerce' ),
+						'type'        => 'string',
+						'context'     => [ 'view', 'edit' ],
+						'readonly'    => true,
+					],
+				],
+			],
 			'low_stock_remaining' => [
 				'description' => __( 'Quantity left in stock if stock is low, or null if not applicable.', 'woocommerce' ),
 				'type'        => [ 'integer', 'null' ],
@@ -451,6 +471,7 @@ class ProductSchema extends AbstractSchema {
 	 * @return array
 	 */
 	public function get_item_response( $product ) {
+		$availability = $product->get_availability();
 		return [
 			'id'                  => $product->get_id(),
 			'name'                => $this->prepare_html_response( $product->get_title() ),
@@ -477,6 +498,10 @@ class ProductSchema extends AbstractSchema {
 			'is_in_stock'         => $product->is_in_stock(),
 			'is_on_backorder'     => 'onbackorder' === $product->get_stock_status(),
 			'low_stock_remaining' => $this->get_low_stock_remaining( $product ),
+			'stock_availability'  => (object) array(
+				'text'  => $availability['availability'] ?? '',
+				'class' => $availability['class'] ?? '',
+			),
 			'sold_individually'   => $product->is_sold_individually(),
 			'add_to_cart'         => (object) array_merge(
 				[

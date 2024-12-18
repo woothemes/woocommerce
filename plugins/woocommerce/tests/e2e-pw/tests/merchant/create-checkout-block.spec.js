@@ -1,15 +1,21 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 const {
-	goToPageEditor,
-	getCanvas,
 	fillPageTitle,
-	insertBlock,
 	transformIntoBlocks,
 	publishPage,
-	openEditorSettings,
-	closeChoosePatternModal,
 } = require( '../../utils/editor' );
 const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
+
+/**
+ * External dependencies
+ */
+import {
+	closeChoosePatternModal,
+	openEditorSettings,
+	getCanvas,
+	insertBlock,
+	goToPageEditor,
+} from '@woocommerce/e2e-utils-playwright';
 
 const simpleProductName = 'Very Simple Product';
 const singleProductPrice = '999.00';
@@ -23,7 +29,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Transform Classic Checkout To Checkout Block',
-	{ tag: [ '@gutenberg', '@services' ] },
+	{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
 	() => {
 		test.beforeAll( async ( { api } ) => {
 			// enable COD
@@ -70,7 +76,7 @@ test.describe(
 
 		test(
 			'can transform classic checkout to checkout block',
-			{ tag: '@skip-on-default-pressable' },
+			{ tag: tags.SKIP_ON_PRESSABLE },
 			async ( { page, api, testPage } ) => {
 				await goToPageEditor( { page } );
 
@@ -138,7 +144,7 @@ test.describe(
 
 				// go to frontend to verify transformed checkout block
 				// before that add product to cart to be able to visit checkout page
-				await page.goto( `/cart/?add-to-cart=${ productId }` );
+				await page.goto( `cart/?add-to-cart=${ productId }` );
 				await page.goto( testPage.slug );
 				await expect(
 					page.getByRole( 'heading', { name: testPage.title } )

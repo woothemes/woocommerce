@@ -105,8 +105,8 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 
 		// Assert.
 		$this->assertCount( 2, $result );
-		$this->assertEquals( 'incentive1', $result[0]['id'] );
-		$this->assertEquals( 'incentive2', $result[1]['id'] );
+		$this->assertSame( 'incentive1', $result[0]['id'] );
+		$this->assertSame( 'incentive2', $result[1]['id'] );
 	}
 
 	/**
@@ -143,8 +143,8 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 
 		// Assert.
 		$this->assertCount( 2, $result );
-		$this->assertEquals( 'incentive1', $result[0]['id'] );
-		$this->assertEquals( 'incentive3', $result[1]['id'] );
+		$this->assertSame( 'incentive1', $result[0]['id'] );
+		$this->assertSame( 'incentive3', $result[1]['id'] );
 	}
 
 	/**
@@ -185,9 +185,9 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		$result = $this->sut->get_by_promo_id( 'promo2', 'US' );
 
 		// Assert.
-		$this->assertEquals( 'incentive2', $result['id'] );
-		$this->assertEquals( 'promo2', $result['promo_id'] );
-		$this->assertEquals( 'type2', $result['type'] );
+		$this->assertSame( 'incentive2', $result['id'] );
+		$this->assertSame( 'promo2', $result['promo_id'] );
+		$this->assertSame( 'type2', $result['type'] );
 	}
 
 	/**
@@ -228,17 +228,17 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		$result = $this->sut->get_by_promo_id( 'promo1', 'US', 'type1' );
 
 		// Assert.
-		$this->assertEquals( 'incentive1', $result['id'] );
-		$this->assertEquals( 'promo1', $result['promo_id'] );
-		$this->assertEquals( 'type1', $result['type'] );
+		$this->assertSame( 'incentive1', $result['id'] );
+		$this->assertSame( 'promo1', $result['promo_id'] );
+		$this->assertSame( 'type1', $result['type'] );
 
 		// Act.
 		$result = $this->sut->get_by_promo_id( 'promo1', 'US', 'type2' );
 
 		// Assert.
-		$this->assertEquals( 'incentive1_1', $result['id'] );
-		$this->assertEquals( 'promo1', $result['promo_id'] );
-		$this->assertEquals( 'type2', $result['type'] );
+		$this->assertSame( 'incentive1_1', $result['id'] );
+		$this->assertSame( 'promo1', $result['promo_id'] );
+		$this->assertSame( 'type2', $result['type'] );
 	}
 
 	/**
@@ -329,9 +329,9 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		$result = $this->sut->get_by_promo_id( 'promo1', 'US' );
 
 		// Assert.
-		$this->assertEquals( 'incentive1', $result['id'] );
-		$this->assertEquals( 'promo1', $result['promo_id'] );
-		$this->assertEquals( 'type1', $result['type'] );
+		$this->assertSame( 'incentive1', $result['id'] );
+		$this->assertSame( 'promo1', $result['promo_id'] );
+		$this->assertSame( 'type1', $result['type'] );
 	}
 
 	/**
@@ -372,8 +372,8 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		$result = $this->sut->get_by_id( 'incentive2', 'US' );
 
 		// Assert.
-		$this->assertEquals( 'incentive2', $result['id'] );
-		$this->assertEquals( 'type2', $result['type'] );
+		$this->assertSame( 'incentive2', $result['id'] );
+		$this->assertSame( 'type2', $result['type'] );
 	}
 
 	/**
@@ -460,9 +460,9 @@ class IncentiveTest extends WC_REST_Unit_Test_Case {
 		$result = $this->sut->get_by_id( 'incentive1', 'US' );
 
 		// Assert.
-		$this->assertEquals( 'incentive1', $result['id'] );
-		$this->assertEquals( 'promo1', $result['promo_id'] );
-		$this->assertEquals( 'type1', $result['type'] );
+		$this->assertSame( 'incentive1', $result['id'] );
+		$this->assertSame( 'promo1', $result['promo_id'] );
+		$this->assertSame( 'type1', $result['type'] );
 	}
 
 	/**
