@@ -51,7 +51,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
         env:
-          HUSKY: '0' # pre-push hook will fail because it thinks we're trying to push to trunk
+          HUSKY: '0' # pre-push hook incorrectly considers the working branch as the push-to branch and the push will fail if the working branch is trunk
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'Automated change: Prep ${{ steps.all_description.outputs.str || steps.specific_description.outputs.str }} for release.'
