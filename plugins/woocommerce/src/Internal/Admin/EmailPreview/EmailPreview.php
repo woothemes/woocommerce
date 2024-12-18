@@ -20,8 +20,14 @@ defined( 'ABSPATH' ) || exit;
  */
 class EmailPreview {
 	const DEFAULT_EMAIL_TYPE = 'WC_Email_Customer_Processing_Order';
+	const DEFAULT_EMAIL_ID   = 'customer_processing_order';
 
-	const EMAIL_SETTINGS_IDS = array(
+	/**
+	 * All fields IDs that can customize email styles in Settings.
+	 *
+	 * @var array
+	 */
+	private static array $email_style_settings_ids = array(
 		'woocommerce_email_background_color',
 		'woocommerce_email_base_color',
 		'woocommerce_email_body_background_color',
@@ -32,6 +38,20 @@ class EmailPreview {
 		'woocommerce_email_header_image',
 		'woocommerce_email_text_color',
 	);
+
+	/**
+	 * All fields IDs that can customize specific email content in Settings.
+	 *
+	 * @var array
+	 */
+	private static array $email_content_settings_ids = array();
+
+	/**
+	 * Whether the email settings IDs are initialized.
+	 *
+	 * @var bool
+	 */
+	private static bool $email_settings_ids_initialized = false;
 
 	/**
 	 * The email type to preview.
@@ -64,6 +84,51 @@ class EmailPreview {
 			static::$instance = new static();
 		}
 		return static::$instance;
+	}
+
+	/**
+	 * Get all email settings IDs.
+	 */
+	public static function get_all_email_settings_ids() {
+		if ( ! self::$email_settings_ids_initialized ) {
+			self::$email_settings_ids_initialized = true;
+
+			$emails = WC()->mailer()->get_emails();
+			foreach ( $emails as $email ) {
+				self::$email_content_settings_ids = array_merge(
+					self::$email_content_settings_ids,
+					self::get_email_content_settings_ids( $email->id )
+				);
+			}
+			self::$email_content_settings_ids = array_unique( self::$email_content_settings_ids );
+		}
+		return array_merge(
+			self::$email_style_settings_ids,
+			self::$email_content_settings_ids,
+		);
+	}
+
+	/**
+	 * Get email style settings IDs.
+	 */
+	public static function get_email_style_settings_ids() {
+		return self::$email_style_settings_ids;
+	}
+
+	/**
+	 * Get email content settings IDs for specific email.
+	 *
+	 * @param string|null $email_id Email ID.
+	 */
+	public static function get_email_content_settings_ids( ?string $email_id ) {
+		if ( ! $email_id ) {
+			return array();
+		}
+		return array(
+			"woocommerce_${email_id}_subject",
+			"woocommerce_${email_id}_heading",
+			"woocommerce_${email_id}_additional_content",
+		);
 	}
 
 	/**
@@ -119,7 +184,10 @@ class EmailPreview {
 		if ( ! $this->email ) {
 			return '';
 		}
-		return $this->email->get_subject();
+		$this->set_up_filters();
+		$subject = $this->email->get_subject();
+		$this->clean_up_filters();
+		return $subject;
 	}
 
 	/**

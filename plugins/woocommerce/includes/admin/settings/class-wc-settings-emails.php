@@ -629,11 +629,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 	 * Creates the React mount point for the email preview.
 	 */
 	public function email_preview() {
-		// Deletes transient with email settings used for live preview. This is to
-		// prevent conflicts where the preview would show values from previous session.
-		foreach ( EmailPreview::EMAIL_SETTINGS_IDS as $id ) {
-			delete_transient( $id );
-		}
+		$this->delete_transient_email_settings( null );
 		$emails      = WC()->mailer()->get_emails();
 		$email_types = array();
 		foreach ( $emails as $type => $email ) {
@@ -647,7 +643,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 			id="wc_settings_email_preview_slotfill"
 			data-preview-url="<?php echo esc_url( wp_nonce_url( admin_url( '?preview_woocommerce_mail=true' ), 'preview-mail' ) ); ?>"
 			data-email-types="<?php echo esc_attr( wp_json_encode( $email_types ) ); ?>"
-			data-email-settings-ids="<?php echo esc_attr( wp_json_encode( EmailPreview::EMAIL_SETTINGS_IDS ) ); ?>"
+			data-email-settings-ids="<?php echo esc_attr( wp_json_encode( EmailPreview::get_email_style_settings_ids() ) ); ?>"
 		></div>
 		<?php
 	}
@@ -658,6 +654,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 	 * @param object $email The email object to run the method on.
 	 */
 	public function email_preview_single( $email ) {
+		$this->delete_transient_email_settings( $email->id );
 		// Email types array should have a single entry for current email.
 		$email_types = array(
 			array(
@@ -674,11 +671,28 @@ class WC_Settings_Emails extends WC_Settings_Page {
 				id="wc_settings_email_preview_slotfill"
 				data-preview-url="<?php echo esc_url( wp_nonce_url( admin_url( '?preview_woocommerce_mail=true' ), 'preview-mail' ) ); ?>"
 				data-email-types="<?php echo esc_attr( wp_json_encode( $email_types ) ); ?>"
+				data-email-settings-ids="<?php echo esc_attr( wp_json_encode( EmailPreview::get_email_content_settings_ids( $email->id ) ) ); ?>"
 			></div>
 			<input type="hidden" id="woocommerce_email_from_name" value="<?php echo esc_attr( get_option( 'woocommerce_email_from_name' ) ); ?>" />
 			<input type="hidden" id="woocommerce_email_from_address" value="<?php echo esc_attr( get_option( 'woocommerce_email_from_address' ) ); ?>" />
 		</div>
 		<?php
+	}
+
+	/**
+	 * Deletes transient with email settings used for live preview. This is to
+	 * prevent conflicts where the preview would show values from previous session.
+	 *
+	 * @param string|null $email_id Email ID.
+	 */
+	private function delete_transient_email_settings( ?string $email_id ) {
+		$setting_ids = array_merge(
+			EmailPreview::get_email_style_settings_ids(),
+			EmailPreview::get_email_content_settings_ids( $email_id ),
+		);
+		foreach ( $setting_ids as $id ) {
+			delete_transient( $id );
+		}
 	}
 
 	/**
