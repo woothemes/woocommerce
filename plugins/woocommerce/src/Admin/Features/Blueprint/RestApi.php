@@ -4,8 +4,6 @@ declare( strict_types = 1 );
 
 namespace Automattic\WooCommerce\Admin\Features\Blueprint;
 
-use Automattic\WooCommerce\Blueprint\Exporters\ExportInstallPluginSteps;
-use Automattic\WooCommerce\Blueprint\Exporters\ExportInstallThemeSteps;
 use Automattic\WooCommerce\Blueprint\ExportSchema;
 use Automattic\WooCommerce\Blueprint\ImportSchema;
 use Automattic\WooCommerce\Blueprint\JsonResultFormatter;
@@ -34,6 +32,18 @@ class RestApi {
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
+			'/queue',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'queue' ),
+					'permission_callback' => array( $this, 'check_permission' ),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
 			'/import',
 			array(
 				array(
@@ -54,30 +64,19 @@ class RestApi {
 					'permission_callback' => array( $this, 'check_permission' ),
 					'args'                => array(
 						'steps'         => array(
-							'description' => __( 'A list of plugins to install', 'woocommerce' ),
-							'type'        => 'object',
-							'properties'  => array(
-								'settings' => array(
-									'type'  => 'array',
-									'items' => array(
-										'type' => 'string',
-									),
-								),
-								'plugins'  => array(
-									'type'  => 'array',
-									'items' => array(
-										'type' => 'string',
-									),
-								),
-								'themes'   => array(
-									'type'  => 'array',
-									'items' => array(
-										'type' => 'string',
-									),
-								),
-							),
-							'default'     => array(),
-							'required'    => true,
+							'description'       => __( 'A list of plugins to install', 'woocommerce' ),
+							'type'              => 'array',
+							'items'             => 'string',
+							'default'           => array(),
+							'sanitize_callback' => function ( $value ) {
+								return array_map(
+									function ( $value ) {
+										return sanitize_text_field( $value );
+									},
+									$value
+								);
+							},
+							'required'          => false,
 						),
 						'export_as_zip' => array(
 							'description' => __( 'Export as a zip file', 'woocommerce' ),
@@ -110,37 +109,9 @@ class RestApi {
 	 * @return \WP_HTTP_Response The response object.
 	 */
 	public function export( $request ) {
-		$payload = $request->get_param( 'steps' );
-		$steps   = $this->steps_payload_to_blueprint_steps( $payload );
-
+		$steps         = $request->get_param( 'steps' );
 		$export_as_zip = $request->get_param( 'export_as_zip' );
 		$exporter      = new ExportSchema();
-
-		if ( isset( $payload['plugins'] ) ) {
-			$exporter->onBeforeExport(
-				'installPlugin',
-				function ( ExportInstallPluginSteps $exporter ) use ( $payload ) {
-					$exporter->filter(
-						function ( array $plugins ) use ( $payload ) {
-							return array_intersect_key( $plugins, array_flip( $payload['plugins'] ) );
-						}
-					);
-				}
-			);
-		}
-
-		if ( isset( $payload['themes'] ) ) {
-			$exporter->onBeforeExport(
-				'installTheme',
-				function ( ExportInstallThemeSteps $exporter ) use ( $payload ) {
-					$exporter->filter(
-						function ( array $plugins ) use ( $payload ) {
-							return array_intersect_key( $plugins, array_flip( $payload['themes'] ) );
-						}
-					);
-				}
-			);
-		}
 
 		$data = $exporter->export( $steps, $export_as_zip );
 
@@ -252,39 +223,75 @@ class RestApi {
 		);
 	}
 
-	/**
-	 * Convert step list from the frontend to the backend format.
-	 *
-	 * From:
-	 * {
-	 *  "settings": ["setWCSettings", "setWCShippingZones", "setWCShippingMethods", "setWCShippingRates"],
-	 *  "plugins": ["akismet/akismet.php],
-	 *  "themes": ["approach],
-	 * }
-	 *
-	 * To:
-	 *
-	 * ["setWCSettings", "setWCShippingZones", "setWCShippingMethods", "setWCShippingRates", "installPlugin", "installTheme"]
-	 *
-	 * @param array $steps steps payload from the frontend.
-	 *
-	 * @return array
-	 */
-	private function steps_payload_to_blueprint_steps( $steps ) {
-		$blueprint_steps = array();
+	public function queue() {
+		// Initialize response structure.
+		$response = array(
+			'reference'  => null,
+			'has_errors' => true,
+			'errors'     => array(
+				'upload'            => array(),
+				'schema_validation' => array(),
+				'conflicts'         => array(),
+			),
+		);
 
-		if ( isset( $steps['settings'] ) ) {
-			$blueprint_steps = array_merge( $blueprint_steps, $steps['settings'] );
+		// Check for nonce to prevent CSRF.
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		if ( ! isset( $_POST['blueprint_upload_nonce'] ) || ! \wp_verify_nonce( $_POST['blueprint_upload_nonce'], 'blueprint_upload_nonce' ) ) {
+			$response['errors']['upload'][] = __( 'Invalid nonce', 'woocommerce' );
+			return $response;
 		}
 
-		if ( isset( $steps['plugins'] ) ) {
-			$blueprint_steps[] = 'installPlugin';
+		// Validate file upload.
+		if ( empty( $_FILES['file'] ) || ! isset( $_FILES['file']['error'], $_FILES['file']['tmp_name'], $_FILES['file']['type'] ) ) {
+			$response['errors']['upload'][] = __( 'No file uploaded', 'woocommerce' );
+			return $response;
 		}
 
-		if ( isset( $steps['themes'] ) ) {
-			$blueprint_steps[] = 'installTheme';
+		// phpcs:ignore
+		if ( UPLOAD_ERR_OK !== $_FILES['file']['error'] || ! is_uploaded_file( $_FILES['file']['tmp_name'] ) ) {
+			$response['errors']['upload'][] = __( 'File upload error', 'woocommerce' );
+			return $response;
 		}
 
-		return $blueprint_steps;
+		$mime_type = sanitize_text_field( $_FILES['file']['type'] );
+
+		// Check for valid file types.
+		if ( 'application/json' !== $mime_type && 'application/zip' !== $mime_type ) {
+			$response['errors']['upload'][] = __( 'Invalid file type', 'woocommerce' );
+			return $response;
+		}
+
+		$extension = pathinfo( $_FILES['file']['name'] , PATHINFO_EXTENSION );
+
+		// Move file to temporary directory.
+		// phpcs:ignore
+		$tmp_filepath = get_temp_dir() . basename( $_FILES['file']['tmp_name'] ).'.'.$extension;
+
+		// phpcs:ignore
+		if ( ! move_uploaded_file( $_FILES['file']['tmp_name'], $tmp_filepath ) ) {
+			$response['errors']['upload'][] = __( 'Error moving file to tmp directory', 'woocommerce' );
+			return $response;
+		}
+
+		// Process the uploaded file.
+		// We'll not call import function.
+		// Just validate the file by calling create_from_json or create_from_zip.
+		try {
+			if ( 'application/zip' === $mime_type ) {
+				ImportSchema::create_from_zip( $tmp_filepath );
+			} else {
+				ImportSchema::create_from_json( $tmp_filepath );
+			}
+		} catch ( \Exception $e ) {
+			$response['errors']['schema_validation'][] = $e->getMessage();
+			return $response;
+		}
+
+		// Successfully processed the file.
+		$response['has_errors'] = false;
+		// phpcs:ignore
+		$response['reference']  = basename( $_FILES['file']['tmp_name'] );
+		return $response;
 	}
 }
