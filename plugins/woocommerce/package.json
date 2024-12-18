@@ -2,7 +2,7 @@
 	"name": "@woocommerce/plugin-woocommerce",
 	"private": true,
 	"title": "WooCommerce",
-	"version": "9.6.0",
+	"version": "9.7.0",
 	"homepage": "https://woocommerce.com/",
 	"repository": {
 		"type": "git",
@@ -238,14 +238,16 @@
 					"testType": "e2e",
 					"command": "test:e2e:with-env gutenberg-stable",
 					"shardingArguments": [
-						"--shard=1/5",
-						"--shard=2/5",
-						"--shard=3/5",
-						"--shard=4/5",
-						"--shard=5/5"
+						"--shard=1/4",
+						"--shard=2/4",
+						"--shard=3/4",
+						"--shard=4/4"
 					],
-					"changes": [],
+					"changes": [ 
+						"tests/e2e-pw/**"
+					],
 					"events": [
+						"pull_request",
 						"daily-checks",
 						"release-checks",
 						"core-e2e-gutenberg"
@@ -264,14 +266,16 @@
 					"testType": "e2e",
 					"command": "test:e2e:with-env gutenberg-nightly",
 					"shardingArguments": [
-						"--shard=1/5",
-						"--shard=2/5",
-						"--shard=3/5",
-						"--shard=4/5",
-						"--shard=5/5"
+						"--shard=1/4",
+						"--shard=2/4",
+						"--shard=3/4",
+						"--shard=4/4"
 					],
-					"changes": [],
+					"changes": [
+						"tests/e2e-pw/**"
+					],
 					"events": [
+						"pull_request",
 						"daily-checks",
 						"release-checks",
 						"core-e2e-gutenberg"
@@ -290,8 +294,11 @@
 					"testType": "e2e",
 					"command": "test:e2e:with-env woocommerce-payments",
 					"shardingArguments": [],
-					"changes": [],
+					"changes": [
+						"tests/e2e-pw/**"
+					],
 					"events": [
+						"pull_request",
 						"daily-checks",
 						"release-checks",
 						"core-e2e-woocommerce-payments"
@@ -310,8 +317,11 @@
 					"testType": "e2e",
 					"command": "test:e2e:with-env woocommerce-paypal-payments",
 					"shardingArguments": [],
-					"changes": [],
+					"changes": [
+						"tests/e2e-pw/**"
+					],
 					"events": [
+						"pull_request",
 						"daily-checks",
 						"release-checks",
 						"core-e2e-woocommerce-paypal-payments"
@@ -329,9 +339,15 @@
 					"name": "Core e2e tests - WooCommerce Shipping & Tax",
 					"testType": "e2e",
 					"command": "test:e2e:with-env woocommerce-services",
-					"shardingArguments": [],
-					"changes": [],
+					"shardingArguments": [
+						"--shard=1/2",
+						"--shard=2/2"
+					],
+					"changes": [
+						"tests/e2e-pw/**"
+					],
 					"events": [
+						"pull_request",
 						"daily-checks",
 						"release-checks",
 						"core-e2e-woocommerce-services"
@@ -349,8 +365,11 @@
 					"name": "Core e2e tests - HPOS disabled",
 					"testType": "e2e",
 					"command": "test:e2e:with-env default-hpos-disabled --project=ui",
-					"shardingArguments": [],
+					"shardingArguments": [
+						"tests/e2e-pw/**"
+					],
 					"events": [
+						"pull_request",
 						"daily-checks",
 						"release-checks",
 						"core-e2e-hpos-disabled"
@@ -379,7 +398,9 @@
 						"--shard=4/5",
 						"--shard=5/5"
 					],
-					"changes": [],
+					"changes": [
+						"tests/e2e-pw/**"
+					],
 					"testEnv": {
 						"start": "env:test",
 						"config": {
@@ -387,6 +408,7 @@
 						}
 					},
 					"events": [
+						"pull_request",
 						"daily-checks",
 						"release-checks",
 						"core-e2e-php-8.1"
@@ -408,7 +430,9 @@
 						"--shard=4/5",
 						"--shard=5/5"
 					],
-					"changes": [],
+					"changes": [
+						"tests/e2e-pw/**"
+					],
 					"testEnv": {
 						"start": "env:test",
 						"config": {
@@ -416,6 +440,7 @@
 						}
 					},
 					"events": [
+						"pull_request",
 						"daily-checks",
 						"release-checks",
 						"core-e2e-wp-latest-1"
@@ -437,7 +462,9 @@
 						"--shard=4/5",
 						"--shard=5/5"
 					],
-					"changes": [],
+					"changes": [
+						"tests/e2e-pw/**"
+					],
 					"testEnv": {
 						"start": "env:test",
 						"config": {
@@ -445,6 +472,7 @@
 						}
 					},
 					"events": [
+						"pull_request",
 						"daily-checks",
 						"release-checks",
 						"core-e2e-wp-pre-release"
