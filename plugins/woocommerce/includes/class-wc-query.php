@@ -341,11 +341,20 @@ class WC_Query {
 		$initial_version          = get_option( 'woocommerce_initial_installed_version' );
 		$installed_in_95_or_after = ! empty( $initial_version ) && version_compare( $initial_version, '9.5', '>=' );
 
+		if ( $installed_in_95_or_after ) {
+			return true;
+		}
+
+		$shop_page_id          = wc_get_page_id( 'shop' );
+		$current_page_id       = absint( $q->get( 'page_id' ) );
+		$is_shop_page          = $current_page_id === $shop_page_id;
+		$is_shop_front_page    = $this->page_on_front_is( $shop_page_id );
+		$shop_page_has_content = ! empty( get_post_field( 'post_content', $shop_page_id ) );
+
 		if (
-			! $installed_in_95_or_after &&
-			absint( $q->get( 'page_id' ) ) === wc_get_page_id( 'shop' ) &&
-			$this->page_on_front_is( wc_get_page_id( 'shop' ) ) &&
-			! empty( get_post_field( 'post_content', wc_get_page_id( 'shop' ) ) )
+			$is_shop_page &&
+			$is_shop_front_page &&
+			$shop_page_has_content
 		) {
 			return false;
 		}
