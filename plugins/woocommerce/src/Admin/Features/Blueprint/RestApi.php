@@ -22,7 +22,7 @@ class RestApi {
 	 *
 	 * @var string
 	 */
-	protected $namespace = 'blueprint';
+	protected $namespace = 'wc-admin';
 
 	/**
 	 * Register routes.
@@ -32,12 +32,36 @@ class RestApi {
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
-			'/queue',
+			'/blueprint/queue',
 			array(
 				array(
 					'methods'             => \WP_REST_Server::CREATABLE,
 					'callback'            => array( $this, 'queue' ),
 					'permission_callback' => array( $this, 'check_permission' ),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/blueprint/process',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'process' ),
+					'permission_callback' => array( $this, 'check_permission' ),
+					'args'                => array(
+						'reference'     => array(
+							'description' => __( 'The reference of the uploaded file', 'woocommerce' ),
+							'type'        => 'string',
+							'required'    => true,
+						),
+						'process_nonce' => array(
+							'description' => __( 'The nonce for processing the uploaded file', 'woocommerce' ),
+							'type'        => 'string',
+							'required'    => true,
+						),
+					),
 				),
 			)
 		);
@@ -223,6 +247,15 @@ class RestApi {
 		);
 	}
 
+	/**
+	 * Handle the upload request.
+	 *
+	 * We're not caling to run the import process in this file.
+	 * We'll upload the file to the temporary dir, validate the file, and return a reference to the file.
+	 * The uploaded file will be processed once user hits the import button and calls the process endpoint with a nonce.
+	 *
+	 * @return array
+	 */
 	public function queue() {
 		// Initialize response structure.
 		$response = array(
@@ -262,7 +295,8 @@ class RestApi {
 			return $response;
 		}
 
-		$extension = pathinfo( $_FILES['file']['name'] , PATHINFO_EXTENSION );
+		// phpcs:ignore
+		$extension = pathinfo( $_FILES['file']['name'], PATHINFO_EXTENSION );
 
 		// Move file to temporary directory.
 		// phpcs:ignore
@@ -291,7 +325,67 @@ class RestApi {
 		// Successfully processed the file.
 		$response['has_errors'] = false;
 		// phpcs:ignore
-		$response['reference']  = basename( $_FILES['file']['tmp_name'] );
+		$response['reference']  = basename( $_FILES['file']['tmp_name'].'.'.$extension );
+		$response['process_nonce'] = wp_create_nonce( $response['reference'] );
+		return $response;
+	}
+
+	/**
+	 * Process the uploaded file.
+	 *
+	 * @param \WP_REST_Request $request request object.
+	 *
+	 * @return array
+	 */
+	public function process( \WP_REST_Request $request ) {
+		$response = array(
+			'processed' => false,
+			'message'   => '',
+			'data'      => array(
+				'redirect' => '',
+				'result'   => array(),
+			),
+		);
+
+		$ref   = $request->get_param( 'reference' );
+		$nonce = $request->get_param( 'process_nonce' );
+
+		if ( ! \wp_verify_nonce( $nonce, $ref ) ) {
+			$response['message'] = __( 'Invalid nonce', 'woocommerce' );
+			return $response;
+		}
+
+		$fullpath  = get_temp_dir() . $ref;
+		$extension = pathinfo( $fullpath, PATHINFO_EXTENSION );
+
+		// Process the uploaded file.
+		// We'll not call import function.
+		// Just validate the file by calling create_from_json or create_from_zip.
+		try {
+			if ( 'zip' === $extension ) {
+				$blueprint = ImportSchema::create_from_zip( $fullpath );
+			} else {
+				$blueprint = ImportSchema::create_from_json( $fullpath );
+			}
+		} catch ( \Exception $e ) {
+			$response['message'] = $e->getMessage();
+			return $response;
+		}
+
+		$results          = $blueprint->import();
+		$result_formatter = new JsonResultFormatter( $results );
+		$redirect         = $blueprint->get_schema()->landingPage ?? null;
+		$redirect_url     = $redirect->url ?? 'admin.php?page=wc-admin';
+
+		$is_success = $result_formatter->is_success();
+
+		$response['processed'] = $is_success;
+		$response['message']   = false === $is_success ? __( 'There was an error while processing your schema', 'woocommerce' ) : 'success';
+		$response['data']      = array(
+			'redirect' => admin_url( $redirect_url ),
+			'result'   => $result_formatter->format(),
+		);
+
 		return $response;
 	}
 }

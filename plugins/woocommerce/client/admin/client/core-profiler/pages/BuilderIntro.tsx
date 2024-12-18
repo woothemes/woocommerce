@@ -51,35 +51,60 @@ export const BuilderIntro = ( {
 		}
 
 		apiFetch( {
-			path: '/blueprint/import',
+			path: '/wc-admin/blueprint/queue',
 			method: 'POST',
 			body: formData,
 		} )
 			.then( ( data ) => {
 				// @ts-expect-error tmp
-				if ( data.status === 'success' ) {
-					setMessage(
-						'Schema imported successfully. Redirecting to ' +
+				if ( data.has_errors === false ) {
+					apiFetch( {
+						path: '/wc-admin/blueprint/process',
+						method: 'POST',
+						data: {
 							// @ts-expect-error tmp
-							data.data.redirect
-					);
+							reference: data.reference,
+							// @ts-expect-error tmp
+							process_nonce: data.process_nonce,
+						},
+					} ).then( ( response ) => {
+						setMessage(
+							'Schema imported successfully. Redirecting to ' +
+								// @ts-expect-error tmp
+								response.data.redirect
+						);
 
-					setImporting( false );
+						setImporting( false );
 
-					window.setTimeout( () => {
-						// @ts-expect-error tmp
-						window.location.href = data.data.redirect;
-					}, 2000 );
+						window.setTimeout( () => {
+							// @ts-expect-error tmp
+							window.location.href = response.data.redirect;
+						}, 2000 );
+					} );
 				} else {
 					setImporting( false );
-					// @ts-expect-error tmp
-					setMessage( `Error: ${ data.message }` );
-					// @ts-expect-error tmp
-					if ( data?.data?.result ) {
-						setMessage(
+					setMessage(
+						`Error: There was an error importing the blueprint.`
+					);
+
+					if (
+						// @ts-expect-error tmp
+						data?.errors?.upload ||
+						// @ts-expect-error tmp
+						data?.errors?.schema_validation ||
+						// @ts-expect-error tmp
+						data?.errors?.conflicts
+					) {
+						const errors = [
 							// @ts-expect-error tmp
-							JSON.stringify( data.data.result, null, 2 )
-						);
+							data?.errors?.upload,
+							// @ts-expect-error tmp
+							data?.errors?.schema_validation,
+							// @ts-expect-error tmp
+							data?.errors?.conflicts,
+						];
+
+						setMessage( JSON.stringify( errors, null, 2 ) );
 					}
 				}
 			} )
