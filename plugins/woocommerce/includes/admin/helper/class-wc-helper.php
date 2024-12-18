@@ -1003,7 +1003,6 @@ class WC_Helper {
 		 * @since 8.3.0
 		 */
 		do_action( 'woocommerce_helper_subscriptions_refresh' );
-
 		self::_flush_authentication_cache();
 		self::_flush_subscriptions_cache();
 		self::_flush_updates_cache();
@@ -1607,6 +1606,30 @@ class WC_Helper {
 
 		set_transient( $cache_key, $data, 1 * HOUR_IN_SECONDS );
 		return $data;
+	}
+
+	/**
+	 * Verify request hash created by WooCommerce.com.
+	 *
+	 * @param string $request_hash request hash to be verified.
+	 * @return bool
+	 */
+	public static function verify_request_hash( string $request_hash ): bool {
+		$request = WC_Helper_API::get(
+			'verify-request-hash',
+			array(
+				'authenticated' => true,
+				'query_string'  => '?request_hash=' . $request_hash,
+			)
+		);
+
+		if ( wp_remote_retrieve_response_code( $request ) !== 200 ) {
+			return false;
+		}
+
+		$data = json_decode( wp_remote_retrieve_body( $request ), true );
+
+		return isset( $data['success'] ) && true === $data['success'];
 	}
 
 

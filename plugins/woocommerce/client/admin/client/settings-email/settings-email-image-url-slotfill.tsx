@@ -3,7 +3,7 @@
  */
 import { createSlotFill } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
-import { useState } from 'react';
+import { useState } from '@wordpress/element';
 
 /**
  * Internal dependencies

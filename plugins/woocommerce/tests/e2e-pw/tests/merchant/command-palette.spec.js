@@ -63,10 +63,15 @@ test(
 			optionName: 'Add new product',
 		} );
 
-		// Verify that the page has loaded.
+		/*
+		 * Verify that the page has loaded.
+		 * Unfortunatelly, the top heading for product and coupon does not specify what new thing is being added.
+		 * We need to check the input label to make sure.
+		 */
 		await expect(
-			page.getByRole( 'heading', { name: 'Add new product' } )
+			page.getByRole( 'heading', { name: 'Add new' } )
 		).toBeVisible();
+		await expect( page.getByLabel( 'Product name' ) ).toBeVisible();
 	}
 );
 

@@ -9,28 +9,40 @@ import { createReduxStore, register } from '@wordpress/data';
 import {
 	ACTION_SET_PRODUCT_TYPES,
 	ACTION_SWITCH_PRODUCT_TYPE,
+	ACTION_REGISTER_LISTENER,
+	ACTION_UNREGISTER_LISTENER,
 	STORE_NAME,
 } from './constants';
 import type { ProductTypeProps } from '../types';
+import getProductTypeOptions from '../utils/get-product-types';
 
 type StoreState = {
 	productTypes: {
 		list: ProductTypeProps[];
 		current: string | undefined;
 	};
+	listeners: string[];
 };
 
 type Actions = {
-	type: typeof ACTION_SET_PRODUCT_TYPES | typeof ACTION_SWITCH_PRODUCT_TYPE;
+	type:
+		| typeof ACTION_SET_PRODUCT_TYPES
+		| typeof ACTION_SWITCH_PRODUCT_TYPE
+		| typeof ACTION_REGISTER_LISTENER
+		| typeof ACTION_UNREGISTER_LISTENER;
 	productTypes?: ProductTypeProps[];
 	current?: string;
+	listener?: string;
 };
+
+const productTypeOptions = getProductTypeOptions();
 
 const DEFAULT_STATE = {
 	productTypes: {
-		list: [],
-		current: undefined,
+		list: productTypeOptions,
+		current: productTypeOptions[ 0 ]?.slug,
 	},
+	listeners: [],
 };
 
 const actions = {
@@ -47,6 +59,20 @@ const actions = {
 			productTypes,
 		};
 	},
+
+	registerListener( listener: string ) {
+		return {
+			type: ACTION_REGISTER_LISTENER,
+			listener,
+		};
+	},
+
+	unregisterListener( listener: string ) {
+		return {
+			type: ACTION_UNREGISTER_LISTENER,
+			listener,
+		};
+	},
 };
 
 const selectors = {
@@ -57,6 +83,9 @@ const selectors = {
 		return state.productTypes.list.find(
 			( productType ) => productType.slug === state.productTypes.current
 		);
+	},
+	getRegisteredListeners( state: StoreState ) {
+		return state.listeners;
 	},
 };
 
@@ -78,6 +107,20 @@ const reducer = ( state: StoreState = DEFAULT_STATE, action: Actions ) => {
 					...state.productTypes,
 					current: action.current,
 				},
+			};
+
+		case ACTION_REGISTER_LISTENER:
+			return {
+				...state,
+				listeners: [ ...state.listeners, action.listener || '' ],
+			};
+
+		case ACTION_UNREGISTER_LISTENER:
+			return {
+				...state,
+				listeners: state.listeners.filter(
+					( listener ) => listener !== action.listener
+				),
 			};
 
 		default:
