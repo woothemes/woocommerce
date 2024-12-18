@@ -13,8 +13,8 @@ import {
 	ACTION_UNREGISTER_LISTENER,
 	STORE_NAME,
 } from './constants';
-import type { ProductTypeProps } from '../types';
-import getProductTypeOptions from '../utils/get-product-types';
+import getProductTypeOptions from '../../utils/get-product-type-options';
+import type { ProductTypeProps } from '../../utils/get-product-type-options';
 
 type StoreState = {
 	productTypes: {
