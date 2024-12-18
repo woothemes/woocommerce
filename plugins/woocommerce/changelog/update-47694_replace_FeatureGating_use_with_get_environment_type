@@ -1,4 +1,0 @@
-Significance: minor
-Type: update
-
-Removed final use of the FeatureGating class and deprecated it.
