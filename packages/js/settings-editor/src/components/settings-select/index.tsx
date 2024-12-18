@@ -1,15 +1,14 @@
 /**
  * External dependencies
  */
-import { createElement } from '@wordpress/element';
+import { createElement, useState } from '@wordpress/element';
 import { SelectControl } from '@wordpress/components';
-import { useState } from '@wordpress/element';
 
 export const SettingsSelect = ( { setting }: { setting: SettingsField } ) => {
 	const { id, desc } = setting;
 	const [ value, setValue ] = useState( String( setting.value ) );
-	const onChange = ( value: string ) => {
-		setValue( value );
+	const onChange = ( newValue: string ) => {
+		setValue( newValue );
 	};
 	const options = setting.options
 		? Object.keys( setting.options ).map( ( key ) => {

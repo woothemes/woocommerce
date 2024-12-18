@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-import { createElement } from '@wordpress/element';
+import { createElement, useState } from '@wordpress/element';
+/* eslint-disable @woocommerce/dependency-group */
 // @ts-expect-error missing types.
 import { __experimentalInputControl as InputControl } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+/* eslint-enable @woocommerce/dependency-group */
 
 export const SettingsInput = ( { setting }: { setting: SettingsField } ) => {
 	const { id, desc } = setting;
 	const [ value, setValue ] = useState( setting.value );
-	const onChange = ( value: string ) => {
-		setValue( value );
+	const onChange = ( newValue: string ) => {
+		setValue( newValue );
 	};
 	return (
 		<InputControl

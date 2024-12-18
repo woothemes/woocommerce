@@ -1,13 +1,12 @@
 /**
  * External dependencies
  */
-import { createElement } from '@wordpress/element';
+import { createElement, useState } from '@wordpress/element';
 import { CheckboxControl } from '@wordpress/components';
-import { useState } from '@wordpress/element';
 
 export const SettingsCheckbox = ( { setting }: { setting: SettingsField } ) => {
 	const { id, desc } = setting;
-	const [ checked, setChecked ] = useState( 'yes' === setting.value );
+	const [ checked, setChecked ] = useState( setting.value === 'yes' );
 	const onChange = ( value: boolean ) => {
 		setChecked( value );
 	};
