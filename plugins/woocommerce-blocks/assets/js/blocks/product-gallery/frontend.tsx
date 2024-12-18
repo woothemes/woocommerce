@@ -105,7 +105,7 @@ const swiper = new Swiper( swiperContainer as HTMLElement, {
 						JSON.stringify( { imageId } ) +
 						"']"
 				) as HTMLButtonElement
-			 ).click();
+			 )?.click();
 		},
 	},
 } );
