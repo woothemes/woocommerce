@@ -33,7 +33,6 @@ const order = {
  * ```
  */
 const searchParams = [
-	[ 'orderId', 'orderId' ],
 	[ 'billing first name', order.billing.first_name ],
 	[ 'billing company name', order.billing.company ],
 	[ 'billing address 2', order.billing.address_2 ],
@@ -47,6 +46,7 @@ const searchParams = [
 	[ 'shipping city', order.shipping.city ],
 	[ 'shipping post code', order.shipping.postcode ],
 	[ 'shipping state', order.shipping.state ],
+	[ 'orderId', 'orderId' ],
 ];
 
 test.describe( 'Order Search API tests', () => {
