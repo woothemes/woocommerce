@@ -321,6 +321,42 @@ class WC_Query {
 	}
 
 	/**
+	 * There is a special case: for stores installed in WC 9.4 or before,
+	 * we want to render the Shop page in the front page if it's not empty
+	 * to avoid breaking the existing behavior. See:
+	 * https://github.com/woocommerce/woocommerce/issues/53805
+	 *
+	 * @param WP_Query $q Query instance.
+	 * @return bool
+	 */
+	private function should_render_shop_page_loop_in_front_page( $q ) {
+		if ( current_theme_supports( 'woocommerce' ) ) {
+			return true;
+		}
+
+		$initial_installed_version = get_option( 'woocommerce_initial_installed_version' );
+		if (
+			! empty( $initial_installed_version ) &&
+			version_compare( $initial_installed_version, '9.5', '>=' )
+		) {
+			$installed_in_95_or_after = true;
+		} else {
+			$installed_in_95_or_after = false;
+		}
+
+		if (
+			! $installed_in_95_or_after &&
+			absint( $q->get( 'page_id' ) ) === wc_get_page_id( 'shop' ) &&
+			$this->page_on_front_is( wc_get_page_id( 'shop' ) ) &&
+			! empty( get_post_field( 'post_content', wc_get_page_id( 'shop' ) ) )
+		) {
+			return false;
+		}
+
+		return wc_current_theme_supports_woocommerce_or_fse();
+	}
+
+	/**
 	 * Hook into pre_get_posts to do the main product query.
 	 *
 	 * @param WP_Query $q Query instance.
@@ -356,7 +392,7 @@ class WC_Query {
 					$q->is_home = false;
 
 					// WP supporting themes show post type archive.
-					if ( wc_current_theme_supports_woocommerce_or_fse() ) {
+					if ( $this->should_render_shop_page_loop_in_front_page( $q ) ) {
 						$q->set( 'post_type', 'product' );
 					} else {
 						$q->is_singular = true;
@@ -376,7 +412,7 @@ class WC_Query {
 		}
 
 		// Special check for shops with the PRODUCT POST TYPE ARCHIVE on front.
-		if ( wc_current_theme_supports_woocommerce_or_fse() && $q->is_page() && 'page' === get_option( 'show_on_front' ) && absint( $q->get( 'page_id' ) ) === wc_get_page_id( 'shop' ) ) {
+		if ( $this->should_render_shop_page_loop_in_front_page( $q ) && $q->is_page() && 'page' === get_option( 'show_on_front' ) && absint( $q->get( 'page_id' ) ) === wc_get_page_id( 'shop' ) ) {
 			// This is a front-page shop.
 			$q->set( 'post_type', 'product' );
 			$q->set( 'page_id', '' );
