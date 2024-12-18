@@ -14,6 +14,7 @@ import {
 	STORE_NAME,
 } from './constants';
 import type { ProductTypeProps } from '../types';
+import getProductTypeOptions from '../utils/get-product-types';
 
 type StoreState = {
 	productTypes: {
@@ -34,10 +35,12 @@ type Actions = {
 	listener?: string;
 };
 
+const productTypeOptions = getProductTypeOptions();
+
 const DEFAULT_STATE = {
 	productTypes: {
-		list: [],
-		current: undefined,
+		list: productTypeOptions,
+		current: productTypeOptions[ 0 ]?.slug,
 	},
 	listeners: [],
 };
