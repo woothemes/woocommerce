@@ -292,18 +292,18 @@ test.describe.serial(
 						).toBeVisible();
 
 						await page
-							.getByRole( 'textbox', { name: 'First name *' } )
+							.getByRole( 'textbox', { name: 'First name' } )
 							.fill( customer.billing.us.first_name );
 						await page
-							.getByRole( 'textbox', { name: 'Last name *' } )
+							.getByRole( 'textbox', { name: 'Last name' } )
 							.fill( customer.billing.us.last_name );
 						await page
 							.getByRole( 'textbox', {
-								name: 'Street address *',
+								name: 'Street address',
 							} )
 							.fill( customer.billing.us.address );
 						await page
-							.getByRole( 'textbox', { name: 'Town / City *' } )
+							.getByRole( 'textbox', { name: 'Town / City' } )
 							.type( customer.billing.us.city );
 						await page
 							.locator( '#billing_country' )
@@ -312,13 +312,13 @@ test.describe.serial(
 							.locator( '#billing_state' )
 							.selectOption( customer.billing.us.state );
 						await page
-							.getByRole( 'textbox', { name: 'ZIP Code *' } )
+							.getByRole( 'textbox', { name: 'ZIP Code' } )
 							.type( customer.billing.us.zip );
 						await page
-							.getByLabel( 'Phone *' )
+							.getByLabel( 'Phone' )
 							.fill( customer.billing.us.phone );
 						await page
-							.getByLabel( 'Email address *' )
+							.getByLabel( 'Email address' )
 							.fill( customer.billing.us.email );
 
 						await expect(
@@ -792,11 +792,11 @@ test.describe.serial(
 						).toBeVisible();
 
 						await page
-							.getByLabel( 'First name *' )
+							.getByLabel( 'First name' )
 							.first()
 							.fill( customer.billing.us.first_name );
 						await page
-							.getByLabel( 'Last name *' )
+							.getByLabel( 'Last name' )
 							.first()
 							.fill( customer.billing.us.last_name );
 						await page
@@ -804,19 +804,19 @@ test.describe.serial(
 							.first()
 							.fill( customer.billing.us.address );
 						await page
-							.getByLabel( 'Town / City *' )
+							.getByLabel( 'Town / City' )
 							.first()
 							.pressSequentially( 'Sacramento' );
 						await page
-							.getByLabel( 'ZIP Code *' )
+							.getByLabel( 'ZIP Code' )
 							.first()
 							.pressSequentially( '55555' );
 						await page
-							.getByLabel( 'Phone *' )
+							.getByLabel( 'Phone' )
 							.first()
 							.fill( customer.billing.us.phone );
 						await page
-							.getByLabel( 'Email address *' )
+							.getByLabel( 'Email address' )
 							.first()
 							.fill( customer.billing.us.email );
 
@@ -903,11 +903,11 @@ test.describe.serial(
 						).toBeVisible();
 
 						await page
-							.getByLabel( 'First name *' )
+							.getByLabel( 'First name' )
 							.first()
 							.fill( customer.billing.us.first_name );
 						await page
-							.getByLabel( 'Last name *' )
+							.getByLabel( 'Last name' )
 							.first()
 							.fill( customer.billing.us.last_name );
 						await page
@@ -915,19 +915,19 @@ test.describe.serial(
 							.first()
 							.fill( customer.billing.us.address );
 						await page
-							.getByLabel( 'Town / City *' )
+							.getByLabel( 'Town / City' )
 							.first()
 							.pressSequentially( customer.billing.us.city );
 						await page
-							.getByLabel( 'ZIP Code *' )
+							.getByLabel( 'ZIP Code' )
 							.first()
 							.pressSequentially( customer.billing.us.zip );
 						await page
-							.getByLabel( 'Phone *' )
+							.getByLabel( 'Phone' )
 							.first()
 							.fill( customer.billing.us.phone );
 						await page
-							.getByLabel( 'Email address *' )
+							.getByLabel( 'Email address' )
 							.first()
 							.fill( customer.billing.us.email );
 
@@ -1096,27 +1096,27 @@ test.describe.serial(
 						).toBeVisible();
 
 						await page
-							.getByRole( 'textbox', { name: 'First name *' } )
+							.getByRole( 'textbox', { name: 'First name' } )
 							.fill( customer.billing.us.first_name );
 						await page
-							.getByRole( 'textbox', { name: 'Last name *' } )
+							.getByRole( 'textbox', { name: 'Last name' } )
 							.fill( customer.billing.us.last_name );
 						await page
 							.getByRole( 'textbox', {
-								name: 'Street address *',
+								name: 'Street address',
 							} )
 							.fill( customer.billing.us.address );
 						await page
-							.getByRole( 'textbox', { name: 'Town / City *' } )
+							.getByRole( 'textbox', { name: 'Town / City' } )
 							.type( customer.billing.us.city );
 						await page
-							.getByRole( 'textbox', { name: 'ZIP Code *' } )
+							.getByRole( 'textbox', { name: 'ZIP Code' } )
 							.type( customer.billing.us.zip );
 						await page
-							.getByLabel( 'Phone *' )
+							.getByLabel( 'Phone' )
 							.fill( customer.billing.us.phone );
 						await page
-							.getByLabel( 'Email address *' )
+							.getByLabel( 'Email address' )
 							.fill( customer.billing.us.email );
 
 						await expect(
