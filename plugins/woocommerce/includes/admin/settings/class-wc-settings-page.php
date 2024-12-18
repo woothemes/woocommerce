@@ -238,10 +238,10 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 			}
 
 			// If the custom view has output, add it to the settings data.
-			if ( $custom_view ) {
+			if ( ! empty( $custom_view ) ) {
 				$section_settings_data[] = array(
 					'type'    => 'custom',
-					'content' => trim( $custom_view ),
+					'content' => $custom_view,
 				);
 			}
 
@@ -299,7 +299,7 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 
 			// Reset the global variable.
 			$current_section = $saved_current_section;
-			return $html;
+			return trim( $html );
 		}
 
 		/**
