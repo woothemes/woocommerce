@@ -135,7 +135,11 @@ export class BlockRegistrationManager {
 
 	/**
 	 * Handles block registration/unregistration when template context changes.
-	 * Specifically manages transitions to and from single product templates.
+	 *
+	 * Note: This implementation is currently coupled to the 'single-product' template,
+	 * as it's our only use case where blocks need different ancestor constraints.
+	 * If we need to handle more templates in the future, this should be refactored
+	 * to be more generic.
 	 *
 	 * @param {string | undefined} previousTemplateId - The previous template ID
 	 */
