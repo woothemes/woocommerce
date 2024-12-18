@@ -78,10 +78,6 @@
 		}
 	}
 
-	.asterisk {
-		@include asterisk();
-	}
-
 	button.show-password-input:focus {
 		background-color: transparent !important;
 		outline: 1px solid #333;

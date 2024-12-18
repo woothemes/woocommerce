@@ -67,10 +67,6 @@ a.button {
 		margin: 1rem 0 3rem 0;
 	}
 
-	.asterisk {
-		@include asterisk();
-	}
-
 	.show-password-input {
 		background-color: transparent !important;
 		color: var(--global--color-primary) !important;
