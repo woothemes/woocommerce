@@ -539,6 +539,93 @@ class PaymentExtensionSuggestionsTest extends WC_Unit_Test_Case {
 	}
 
 	/**
+	 * Test getting payment extension suggestions by country with per-country config that uses merges.
+	 */
+	public function test_get_country_extensions_with_per_country_merges() {
+		// Act.
+		$extensions = $this->sut->get_country_extensions( 'MX' );
+
+		// Assert.
+		$this->assertCount( 5, $extensions );
+		$this->assertSame(
+			array(
+				PaymentExtensionSuggestions::STRIPE,
+				PaymentExtensionSuggestions::PAYPAL_FULL_STACK,
+				PaymentExtensionSuggestions::MERCADO_PAGO,
+				PaymentExtensionSuggestions::PAYPAL_WALLET,
+				PaymentExtensionSuggestions::KLARNA,
+			),
+			array_column( $extensions, 'id' )
+		);
+
+		$stripe = $extensions[0];
+		// It should have the preferred tag.
+		$this->assertContains( PaymentExtensionSuggestions::TAG_PREFERRED, $stripe['tags'] );
+
+		$mercado_pago = $extensions[2];
+		// The links should be the expected ones.
+		$this->assertEqualsCanonicalizing(
+			array(
+				// These are coming from the per-country details.
+				array(
+					'_type' => PaymentExtensionSuggestions::LINK_TYPE_PRICING,
+					'url'   => 'https://www.mercadopago.com.mx/costs-section',
+				),
+				array(
+					'_type' => PaymentExtensionSuggestions::LINK_TYPE_TERMS,
+					'url'   => 'https://www.mercadopago.com.mx/ayuda/terminos-y-politicas_194',
+				),
+				// These are base details for the suggestion.
+				array(
+					'_type' => PaymentExtensionSuggestions::LINK_TYPE_ABOUT,
+					'url'   => 'https://woocommerce.com/products/mercado-pago-checkout/',
+				),
+				array(
+					'_type' => PaymentExtensionSuggestions::LINK_TYPE_DOCS,
+					'url'   => 'https://woocommerce.com/document/mercado-pago/',
+				),
+				array(
+					'_type' => PaymentExtensionSuggestions::LINK_TYPE_SUPPORT,
+					'url'   => 'https://woocommerce.com/my-account/contact-support/?select=mercado-pago-checkout',
+				),
+			),
+			$mercado_pago['links']
+		);
+		// It should not have the preferred tag.
+		$this->assertNotContains( PaymentExtensionSuggestions::TAG_PREFERRED, $mercado_pago['tags'] );
+
+		$klarna = $extensions[4];
+		// The links should be the expected ones.
+		$this->assertEqualsCanonicalizing(
+			array(
+				// These are coming from the per-country details.
+				array(
+					'_type' => PaymentExtensionSuggestions::LINK_TYPE_PRICING,
+					'url'   => 'https://www.klarna.com/mx/negocios/',
+				),
+				array(
+					'_type' => PaymentExtensionSuggestions::LINK_TYPE_TERMS,
+					'url'   => 'https://www.klarna.com/mx/terminos-y-condiciones/',
+				),
+				// These are base details for the suggestion.
+				array(
+					'_type' => PaymentExtensionSuggestions::LINK_TYPE_ABOUT,
+					'url'   => 'https://woocommerce.com/products/klarna-payments/',
+				),
+				array(
+					'_type' => PaymentExtensionSuggestions::LINK_TYPE_DOCS,
+					'url'   => 'https://woocommerce.com/document/klarna-payments/',
+				),
+				array(
+					'_type' => PaymentExtensionSuggestions::LINK_TYPE_SUPPORT,
+					'url'   => 'https://woocommerce.com/my-account/contact-support/?select=klarna-payments',
+				),
+			),
+			$klarna['links']
+		);
+	}
+
+	/**
 	 * Test getting payment extension suggestions by ID.
 	 */
 	public function test_get_extension_by_id() {
