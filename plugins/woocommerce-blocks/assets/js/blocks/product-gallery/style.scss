@@ -109,6 +109,7 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 	#{$gallery-next-previous-outside-image} & .wc-block-product-gallery-large-image__image-element {
 		margin-right: auto;
 		margin-left: auto;
+		width: 100%;
 		max-width: $outside-image-max-width;
 	}
 
@@ -132,6 +133,7 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 		display: flex;
 		align-items: center;
 		scroll-snap-align: none center;
+		overflow: hidden;
 	}
 
 	#{$gallery-next-previous-inside-image} & .wc-block-product-gallery-large-image__image-element {
