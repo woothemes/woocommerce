@@ -25,13 +25,13 @@ const getComponent = ( setting: SettingsField ) => {
 		case 'checkbox':
 			return <SettingsCheckbox setting={ setting } />;
 		default:
-			return <p>{ setting.type }</p>;
+			return <div>{ setting.type }</div>;
 	}
 };
 
 export const SettingsItem = ( { setting }: { setting: SettingsField } ) => {
 	return (
-		<div>
+		<div className="woocommerce-settings-item">
 			{ setting.title && (
 				<Heading level={ 5 }>{ setting.title }</Heading>
 			) }
