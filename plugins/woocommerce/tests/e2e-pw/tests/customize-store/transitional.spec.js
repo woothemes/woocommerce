@@ -2,9 +2,10 @@ const { test: base, expect, request } = require( '@playwright/test' );
 const { setOption } = require( '../../utils/options' );
 const { activateTheme, DEFAULT_THEME } = require( '../../utils/themes' );
 const { AssemblerPage } = require( './assembler/assembler.page' );
+const { tags } = require( '../../fixtures/fixtures' );
 
 const CUSTOMIZE_STORE_URL =
-	'/wp-admin/admin.php?page=wc-admin&path=%2Fcustomize-store';
+	'wp-admin/admin.php?page=wc-admin&path=%2Fcustomize-store';
 const TRANSITIONAL_URL = `${ CUSTOMIZE_STORE_URL }%2Ftransitional`;
 const INTRO_URL = `${ CUSTOMIZE_STORE_URL }%2Fintro`;
 
@@ -17,7 +18,7 @@ const test = base.extend( {
 
 test.describe(
 	'Store owner can view the Transitional page',
-	{ tag: '@gutenberg' },
+	{ tag: tags.GUTENBERG },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 
@@ -115,7 +116,7 @@ test.describe(
 
 			await assembler.getByRole( 'link', { name: 'View store' } ).click();
 
-			await expect( page ).toHaveURL( '/' );
+			await expect( page ).toHaveURL( './' );
 		} );
 
 		test( 'Clicking on "Share feedback" should open the survey modal', async ( {

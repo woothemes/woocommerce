@@ -1,0 +1,5 @@
+Significance: patch
+Type: enhancement
+Comment: Tweak CSS to allow wc_input_price class to work in the WooCommerce > Settings context
+
+

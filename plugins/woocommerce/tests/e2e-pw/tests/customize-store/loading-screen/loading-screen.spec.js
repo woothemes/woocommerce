@@ -7,6 +7,7 @@ const {
 	createRequestsToSetupStoreDictionary,
 	setupRequestInterceptor,
 } = require( './loading-screen.utils' );
+const { tags } = require( '../../../fixtures/fixtures' );
 
 const test = base.extend( {
 	pageObject: async ( { page }, use ) => {
@@ -21,7 +22,7 @@ const steps = [
 	'Opening the doors',
 ];
 
-test.describe( 'Assembler - Loading Page', { tag: '@gutenberg' }, () => {
+test.describe( 'Assembler - Loading Page', { tag: tags.GUTENBERG }, () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
 	test.beforeAll( async ( { baseURL } ) => {
@@ -114,7 +115,9 @@ test.describe( 'Assembler - Loading Page', { tag: '@gutenberg' }, () => {
 		).toBeVisible();
 	} );
 
-	test( 'should hide loading screen and steps on subsequent runs', async ( {
+	// Skipped due to unconfirmed expected result and paused CYS
+	// This test could also be a good candidate for integration test once confirmed, ref #53663
+	test.skip( 'should hide loading screen and steps on subsequent runs', async ( {
 		pageObject,
 		baseURL,
 		page,

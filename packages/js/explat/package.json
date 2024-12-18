@@ -65,7 +65,7 @@
 		"@babel/core": "^7.23.5",
 		"@types/cookie": "^0.4.1",
 		"@types/jest": "27.5.x",
-		"@types/node": "^16.18.68",
+		"@types/node": "20.x.x",
 		"@types/qs": "^6.9.10",
 		"@types/react": "17.0.x",
 		"@woocommerce/eslint-plugin": "workspace:*",
@@ -76,7 +76,7 @@
 		"jest-cli": "27.5.x",
 		"rimraf": "5.0.5",
 		"ts-jest": "29.1.x",
-		"typescript": "5.3.x",
+		"typescript": "5.7.x",
 		"wireit": "0.14.3"
 	},
 	"publishConfig": {

@@ -169,14 +169,29 @@ body:has(.woocommerce-coming-soon-banner) {
 		.wp-block-columns-is-layout-flex {
 			justify-content: center;
 		}
+	}
+}
 
-		&-image {
-			// Temporary fix for the issue where the image size doesn't change when the window is resized in the editor.
-			.wp-block-image .components-resizable-box__container {
-				max-width: 100% !important;
-			}
-		}
+// Modern black template styles
+.woocommerce-coming-soon-modern-black {
+	--wp--preset--color--contrast: #fff;
+	font-family: Inter, sans-serif;
+}
 
+// Split right image template styles
+.woocommerce-coming-soon-split-right-image {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+
+	.woocommerce-split-right-image-content {
+		width: 100%;
+	}
+
+	.woocommerce-split-right-image-cover {
+		align-items: start;
+	}
+
+	.is-size-fit-content {
+		width: fit-content;
 	}
 }
 
