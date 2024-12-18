@@ -3,7 +3,6 @@
  */
 import { registerBlockType } from '@wordpress/blocks';
 import { Icon, button } from '@wordpress/icons';
-import { dispatch } from '@wordpress/data';
 import { getPlugin, registerPlugin } from '@wordpress/plugins';
 import { isExperimentalBlocksEnabled } from '@woocommerce/block-settings';
 import { getSettingWithCoercion } from '@woocommerce/settings';
@@ -12,9 +11,8 @@ import { isBoolean } from '@woocommerce/types';
 /**
  * Internal dependencies
  */
-import registerStore, { store as woocommerceTemplateStateStore } from './store';
+import registerStore from './store';
 import ProductTypeSelectorPlugin from './plugins';
-import getProductTypeOptions from './utils/get-product-types';
 import metadata from './block.json';
 import AddToCartOptionsEdit from './edit';
 import save from './save';
@@ -31,16 +29,7 @@ export const shouldRegisterBlock =
 	isExperimentalBlocksEnabled() && isBlockifiedAddToCart;
 
 if ( shouldRegisterBlock ) {
-	// Register the store
 	registerStore();
-
-	// loads the product types
-	dispatch( woocommerceTemplateStateStore ).setProductTypes(
-		getProductTypeOptions()
-	);
-
-	// Select Simple product type
-	dispatch( woocommerceTemplateStateStore ).switchProductType( 'simple' );
 
 	// Register a plugin that adds a product type selector to the template sidebar.
 	const PLUGIN_NAME = 'document-settings-template-selector-pane';
