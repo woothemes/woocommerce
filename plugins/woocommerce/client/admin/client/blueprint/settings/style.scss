@@ -1,6 +1,17 @@
 .blueprint-settings-slotfill {
+	max-width: 598px;
+
 	label {
 		cursor: pointer;
+	}
+
+	h3 {
+		margin-bottom: 0;
+		font-size: 18px;
+	}
+
+	p {
+		line-height: 20px;
 	}
 
 	button.is-primary {
@@ -12,6 +23,13 @@
 		&:focus {
 			outline: none;
 			box-shadow: none;
+		}
+	}
+
+	p.export-intro {
+		margin: 6px 0 16px 0;
+		a {
+			text-decoration: none;
 		}
 	}
 
@@ -28,11 +46,60 @@
 		color: #828282;
 	}
 
-	h3 {
-		margin-top: 1.5em;
+	.woocommerce-collapsible-content {
+		color: #1e1e1e;
+		margin-bottom: 16px;
+		button.woocommerce-collapsible-content__toggle {
+			width: 100%;
+			span {
+				font-size: 14px;
+				font-weight: 600;
+				color: #1e1e1e;
+			}
+			svg {
+				margin-left: auto;
+				width: 24px;
+				height: 24px;
+				fill: inherit;
+			}
+		}
+
+		span.components-toggle-control__help {
+			margin-inline-start: 49px;
+			line-height: 16px;
+		}
+
+		.components-base-control__field {
+			.components-h-stack {
+				gap: calc(16px);
+			}
+		}
+
+		p.woocommerce-collapsible-content-hint {
+			color: #757575;
+			margin: 6px 0 16px 0;
+		}
+
+		.woocommerce-collapsible-content__content {
+			margin-top: 6px;
+			p {
+				margin: 0 0 12px 0;
+				color: #757575;
+			}
+
+			p.components-base-control__help {
+				margin-top: 4px;
+			}
+
+			.components-base-control {
+				margin-bottom: 16px;
+			}
+		}
+
+
 	}
 
-	p {
-		max-width: 550px;
+	h3 {
+		margin-top: 1.5em;
 	}
 }
