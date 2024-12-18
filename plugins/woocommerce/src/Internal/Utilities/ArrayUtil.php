@@ -49,7 +49,7 @@ class ArrayUtil {
 	 * @return array The merged list sorted by the key values.
 	 */
 	public static function merge_by_key( array $arr1, array $arr2, string $key ): array {
-		$merged = [];
+		$merged = array();
 		// Overwrite items in $arr1 with items in $arr2 if they have the same key entry value.
 		// The rest of items in $arr1 will be appended.
 		foreach ( $arr1 as $item1 ) {
@@ -57,7 +57,7 @@ class ArrayUtil {
 			foreach ( $arr2 as $item2 ) {
 				if ( $item1[ $key ] === $item2[ $key ] ) {
 					$merged[] = array_merge( $item1, $item2 );
-					$found = true;
+					$found    = true;
 					break;
 				}
 			}
@@ -81,9 +81,12 @@ class ArrayUtil {
 		}
 
 		// Sort the merged list by the key values.
-		usort( $merged, function( $a, $b ) use ( $key ) {
-			return $a[ $key ] <=> $b[ $key ];
-		} );
+		usort(
+			$merged,
+			function ( $a, $b ) use ( $key ) {
+				return $a[ $key ] <=> $b[ $key ];
+			}
+		);
 
 		return array_values( $merged );
 	}
