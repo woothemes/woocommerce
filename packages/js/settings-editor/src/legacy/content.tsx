@@ -40,10 +40,12 @@ export const LegacyContent = ( {
 					}
 					// Handle settings not in a group here.
 					return (
+						<fieldset>
 						<SettingsItem
 							key={ data.id || data.title + data.type }
 							setting={ data }
 						/>
+						</fieldset>
 					);
 				} ) }
 			</div>

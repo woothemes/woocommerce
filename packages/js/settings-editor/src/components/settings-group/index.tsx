@@ -23,10 +23,12 @@ export const SettingsGroup = ( { group }: { group: SettingsGroup } ) => {
 		};
 	};
 	return (
-		<div className="woocommerce-settings-group">
+		<fieldset className="woocommerce-settings-group">
 			<div className="woocommerce-settings-group-title">
 				<Heading level={ 4 }>{ group.title }</Heading>
-				<p dangerouslySetInnerHTML={ sanitizeHTML( group.desc ) } />
+				<legend
+					dangerouslySetInnerHTML={ sanitizeHTML( group.desc ) }
+				/>
 			</div>
 			<div className="woocommerce-settings-group-content">
 				{ group.settings.map( ( setting ) => {
@@ -36,6 +38,6 @@ export const SettingsGroup = ( { group }: { group: SettingsGroup } ) => {
 					return <SettingsItem key={ key } setting={ setting } />;
 				} ) }
 			</div>
-		</div>
+		</fieldset>
 	);
 };
