@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Fix blocks registration through registerBlockSingleProductTemplate

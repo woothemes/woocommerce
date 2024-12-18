@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Fix PHP warnings when user_email is not populated on my-account page.
