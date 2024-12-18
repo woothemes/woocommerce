@@ -128,6 +128,8 @@ export class BlockRegistrationManager {
 			this.blocks.forEach( ( config ) => {
 				this.registerBlock( config );
 			} );
+
+			this.initialized = true;
 		}, 'core/edit-site' );
 
 		// Post Editor Subscription
@@ -140,6 +142,8 @@ export class BlockRegistrationManager {
 			// Only run this once for post editor
 			postEditorUnsubscribe();
 
+			this.initialized = true;
+
 			// Register blocks that are available in post editor
 			this.blocks.forEach( ( config ) => {
 				if ( config.isAvailableOnPostEditor ) {
@@ -150,8 +154,6 @@ export class BlockRegistrationManager {
 				}
 			} );
 		}, 'core/edit-post' );
-
-		this.initialized = true;
 	}
 
 	/**
@@ -288,6 +290,20 @@ export class BlockRegistrationManager {
 	public registerBlockConfig( config: BlockConfig ): void {
 		const key = config.variationName || config.blockName;
 		this.blocks.set( key, config );
+
+		// If we have executed `siteEditorUnsubscribe` and `postEditorUnsubscribe` and initialized already, we can register the block immediately
+		if ( this.initialized ) {
+			const editSiteStore = select( 'core/edit-site' );
+			const editPostStore = select( 'core/edit-post' );
+
+			if ( editSiteStore ) {
+				// Register in site editor context
+				this.registerBlock( config );
+			} else if ( editPostStore && config.isAvailableOnPostEditor ) {
+				// Register in post editor context if available
+				this.registerBlock( config );
+			}
+		}
 	}
 }
 
