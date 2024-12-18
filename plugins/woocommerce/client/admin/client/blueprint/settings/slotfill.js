@@ -1,15 +1,23 @@
 /**
  * External dependencies
  */
-import { createSlotFill, Button, Notice } from '@wordpress/components';
+import {
+	createSlotFill,
+	Button,
+	Notice,
+	ToggleControl,
+} from '@wordpress/components';
 import { getAdminLink } from '@woocommerce/settings';
-
 import apiFetch from '@wordpress/api-fetch';
-
-import { useState, createElement, useEffect } from '@wordpress/element';
+import {
+	useState,
+	createElement,
+	useEffect,
+	createInterpolateElement,
+} from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
 import { __ } from '@wordpress/i18n';
-
+import { CollapsibleContent } from '@woocommerce/components';
 /**
  * Internal dependencies
  */
@@ -23,35 +31,15 @@ const Blueprint = () => {
 	const [ exportAsZip, setExportAsZip ] = useState( false );
 	const [ error, setError ] = useState( null );
 
-	const steps = {
-		Settings: 'setWCSettings',
-		'Core Profiler Options': 'setWCCoreProfilerOptions',
-		'Payment Gateways': 'setWCPaymentGateways',
-		Shipping: 'setWCShipping',
-		'Tax rates': 'setWCTaxRates',
-		Plugins: 'installPlugin',
-		Themes: 'installTheme',
-		'Task Options': 'setWCTaskOptions',
-	};
+	const blueprintStepGroups =
+		window.wcSettings?.admin?.blueprint_step_groups || [];
 
-	const instructions = {
-		Settings:
-			'It includes all the settings in General, Accounts & Privacy, Emails, Integration, Site Visibility, Advanced.',
-		'Core Profiler Options': 'It in includes the setup wizard options.',
-		'Payment Gateways':
-			'It includes all the settings in WooCommerce | Settings | Payments.',
-		Shipping:
-			'It includes all the settings in WooCommerce | Settings | Shipping.',
-		'Tax rates':
-			'It includes all the settings in WooCommerce | Settings | Tax.',
-		Plugins: 'It includes the active plugins on the site.',
-		Themes: 'It includes the active theme on the site.',
-		'Task Options': 'It includes the state of the setup task list.',
-	};
-	// Initialize state to keep track of checkbox values
 	const [ checkedState, setCheckedState ] = useState(
-		Object.keys( steps ).reduce( ( acc, key ) => {
-			acc[ key ] = true;
+		blueprintStepGroups.reduce( ( acc, group ) => {
+			acc[ group.id ] = group.items.reduce( ( groupAcc, item ) => {
+				groupAcc[ item.id ] = true; // Default all to true
+				return groupAcc;
+			}, {} );
 			return acc;
 		}, {} )
 	);
@@ -105,10 +93,13 @@ const Blueprint = () => {
 	};
 
 	// Handle checkbox change
-	const handleOnChange = ( key ) => {
+	const handleOnChange = ( groupId, itemId ) => {
 		setCheckedState( ( prevState ) => ( {
 			...prevState,
-			[ key ]: ! prevState[ key ],
+			[ groupId ]: {
+				...prevState[ groupId ],
+				[ itemId ]: ! prevState[ groupId ][ itemId ], // Toggle the checkbox state
+			},
 		} ) );
 	};
 
@@ -120,6 +111,7 @@ const Blueprint = () => {
 			saveButton.style.display = 'none';
 		}
 	} );
+
 	return (
 		<div className="blueprint-settings-slotfill">
 			{ error && (
@@ -167,46 +159,48 @@ const Blueprint = () => {
 				<code>wp wc blueprint import path-to-woo-blueprint.json</code>.
 			</p>
 			<p></p>
-			<h3>Export</h3>
-			<p>
-				Choose the items to include in your blueprint file, or use the
-				export WP CLI command <br />
-				<code>wp wc blueprint export save-to-path.json</code>{ ' ' }
+			<h3>{ __( 'Export Blueprint', 'woocommerce' ) }</h3>
+			<p className="export-intro">
+				{ createInterpolateElement(
+					__(
+						'Export your blueprint schema. Select the options you want to export, then click on "Export". Want to know more? <docLink/> ',
+						'woocommerce'
+					),
+					{
+						docLink: (
+							<a href="#tba">
+								{ __(
+									'Check our documentation',
+									'woocommerce'
+								) }
+							</a>
+						),
+					}
+				) }
 			</p>
-			{ Object.entries( steps ).map( ( [ key, value ] ) => (
-				<div key={ key } className="woo-blueprint-export-step">
-					<input
-						type="checkbox"
-						id={ key }
-						name={ key }
-						value={ value }
-						checked={ checkedState[ key ] }
-						onChange={ () => handleOnChange( key ) }
-					/>
-					<label htmlFor={ key }>{ key }</label>
-					<p className="woo-blueprint-export-step-desc">
-						{ instructions[ key ] }
-					</p>
-				</div>
+			{ blueprintStepGroups.map( ( group, index ) => (
+				<CollapsibleContent
+					key={ index }
+					toggleText={ group.label }
+					initialCollapsed={ index > 0 }
+					hintText={ group.description }
+				>
+					{ group.items.map( ( step ) => (
+						<ToggleControl
+							key={ step.id }
+							label={ step.label }
+							checked={ checkedState[ group.id ][ step.id ] }
+							onChange={ () => {
+								handleOnChange( group.id, step.id );
+							} }
+							help={ step.description }
+						/>
+					) ) }
+				</CollapsibleContent>
 			) ) }
-			<Button
-				isLink
-				onClick={ () => {
-					setCheckedState( ( prevState ) => {
-						const newState = {};
-						Object.entries( prevState ).forEach(
-							( [ key, value ] ) => {
-								newState[ key ] = ! value;
-							}
-						);
-						return newState;
-					} );
-				} }
-			>
-				<p>Toggle selections</p>
-			</Button>
+
 			<div id="download-link-container"></div>
-			<h4>Options</h4>
+			<h4>{ __( 'Options', 'woocommerce' ) }</h4>
 			<div>
 				<input
 					type="checkbox"
@@ -219,20 +213,21 @@ const Blueprint = () => {
 					} }
 				/>
 				<label htmlFor="export-as-zip">
-					Export as a zip (Experimental)
+					{ __( 'Export as a zip (Experimental)', 'woocommerce' ) }
 				</label>
 			</div>
 			<br></br>
 			<Button
 				isPrimary
 				onClick={ () => {
-					const selectedSteps = [];
-					Object.entries( checkedState ).forEach(
-						( [ key, value ] ) => {
-							if ( value ) {
-								selectedSteps.push( steps[ key ] );
-							}
-						}
+					const selectedSteps = Object.entries( checkedState ).reduce(
+						( acc, [ groupId, groupState ] ) => {
+							acc[ groupId ] = Object.keys( groupState ).filter(
+								( itemId ) => groupState[ itemId ]
+							);
+							return acc;
+						},
+						{}
 					);
 					exportBlueprint( selectedSteps );
 				} }
@@ -241,7 +236,6 @@ const Blueprint = () => {
 			>
 				{ __( 'Export', 'woocommerce' ) }
 			</Button>
-			<p>Export may take some time depending on your network speed.</p>
 		</div>
 	);
 };
