@@ -138,6 +138,8 @@ export class BlockRegistrationManager {
 				this.blocks.forEach( ( config ) => {
 					this.registerBlock( config );
 				} );
+
+				this.initialized = true;
 			}
 			// Post Editor Context
 			else if ( editPostStore ) {
@@ -153,9 +155,9 @@ export class BlockRegistrationManager {
 						}
 					}
 				} );
-			}
 
-			this.initialized = true;
+				this.initialized = true;
+			}
 		} );
 	}
 
