@@ -8,7 +8,6 @@ import { fireEvent, screen, within } from '@testing-library/react';
  * Internal dependencies
  */
 import { initializeEditor, selectBlock } from '../utils/integration/editor';
-import { createBlockCategory } from '../utils/integration/create-block-category';
 
 async function setup( attributes: BlockAttributes ) {
 	const testBlock = [ { name: 'woocommerce/active-filters', attributes } ];
@@ -17,18 +16,7 @@ async function setup( attributes: BlockAttributes ) {
 
 describe( 'active filters', () => {
 	beforeAll( async () => {
-		global.ResizeObserver = jest.fn().mockImplementation( () => ( {
-			observe: jest.fn(),
-			unobserve: jest.fn(),
-			disconnect: jest.fn(),
-		} ) );
-
-		await createBlockCategory();
 		await import( '../../assets/js/blocks/active-filters' );
-	} );
-
-	afterAll( () => {
-		jest.resetAllMocks();
 	} );
 
 	test( 'should change the display style', async () => {

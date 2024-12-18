@@ -42,7 +42,9 @@
 		"<rootDir>/tests/js/setup-globals.js",
 		"<rootDir>/tests/js/setup-fetch.js"
 	],
-	"setupFilesAfterEnv": [ "<rootDir>/tests/js/setup-after-env.ts" ],
+	"setupFilesAfterEnv": [
+		"<rootDir>/tests/utils/integration/setup-after-env.ts"
+	],
 	"testPathIgnorePatterns": [
 		"<rootDir>/bin/",
 		"<rootDir>/build/",
