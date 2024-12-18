@@ -10,7 +10,8 @@
 		"typeRoots": [
 			"./typings",
 			"./node_modules/@types"
-		]
+		],
+		"jsx": "react-jsx",
 	},
 	"include": [
 		"typings/**/*",
