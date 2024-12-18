@@ -32,7 +32,7 @@ trait CogsAwareRestControllerTrait {
 		);
 
 		if ( $product instanceof \WC_Product_Variation ) {
-			$data['cost_of_goods_sold']['defined_value_overrides_parent'] = $product->get_cogs_value_overrides_parent();
+			$data['cost_of_goods_sold']['defined_value_is_additive'] = $product->get_cogs_value_is_additive();
 		}
 	}
 
@@ -54,9 +54,9 @@ trait CogsAwareRestControllerTrait {
 		}
 
 		if ( $product instanceof \WC_Product_Variation ) {
-			$overrides = $request['cost_of_goods_sold']['defined_value_overrides_parent'] ?? null;
-			if ( ! is_null( $overrides ) ) {
-				$product->set_cogs_value_overrides_parent( $overrides );
+			$is_additive = $request['cost_of_goods_sold']['defined_value_is_additive'] ?? null;
+			if ( ! is_null( $is_additive ) ) {
+				$product->set_cogs_value_is_additive( $is_additive );
 			}
 		}
 	}
@@ -96,8 +96,8 @@ trait CogsAwareRestControllerTrait {
 					),
 
 				),
-				'defined_value_overrides_parent' => array(
-					'description' => __( 'Applies to variations only. If true, the defined value is the final effective value; if false, the effective value is the base value from the parent product plus the defined value.', 'woocommerce' ),
+				'defined_value_is_additive' => array(
+					'description' => __( 'Applies to variations only. If true, the effective value is the base value from the parent product plus the defined value; if false, the defined value is the final effective value.', 'woocommerce' ),
 					'type'        => 'boolean',
 					'default'     => false,
 					'context'     => array( 'view', 'edit' ),
@@ -112,8 +112,8 @@ trait CogsAwareRestControllerTrait {
 		);
 
 		if ( $for_variations_controller ) {
-			$schema['properties']['cost_of_goods_sold']['properties']['defined_value_overrides_parent']['description'] =
-				__( 'If true, the defined value is the final effective value; if false, the effective value is the base value from the parent product plus the defined value.', 'woocommerce' );
+			$schema['properties']['cost_of_goods_sold']['properties']['defined_value_is_additive']['description'] =
+				__( 'If true, the effective value is the base value from the parent product plus the defined value; if false, the defined value is the final effective value.', 'woocommerce' );
 		}
 
 		return $schema;
