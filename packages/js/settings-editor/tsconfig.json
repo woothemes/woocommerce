@@ -11,10 +11,12 @@
 			"./typings",
 			"./node_modules/@types"
 		],
-		"jsx": "react-jsx",
+	"jsx": "react-jsx",
+	"jsxFactory": null,
+	"jsxFragmentFactory": null
 	},
 	"include": [
 		"typings/**/*",
-		"src/**/*",
-	],
+		"src/**/*"
+	]
 }
