@@ -14,6 +14,7 @@ import {
  */
 import { SettingsInput } from '../settings-input';
 import { SettingsCheckbox } from '../settings-checkbox';
+import { SettingsSelect } from '../settings-select';
 
 const getComponent = ( setting: SettingsField ) => {
 	switch ( setting.type ) {
@@ -45,6 +46,8 @@ const getComponent = ( setting: SettingsField ) => {
 					} ) }
 				</VStack>
 			);
+		case 'select':
+			return <SettingsSelect setting={ setting } />;
 		default:
 			return <div>{ setting.type }</div>;
 	}
