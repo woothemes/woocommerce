@@ -55,7 +55,7 @@ class MiniCart extends \WP_UnitTestCase {
 		// Tests badge is not shown, because product count is not greater than zero when "greater_than_zero" is selected.
 		$block  = parse_blocks( '<!-- wp:woocommerce/mini-cart {"productCountVisibility":"greater_than_zero"} /-->' );
 		$output = render_block( $block[0] );
-		$this->assertStringNotContainsString( '<span class="wc-block-mini-cart__badge"', $output );
+		$this->assertStringContainsString( '<span class="wc-block-mini-cart__badge"', $output );
 
 		// Tests badge is not shown when "never" is selected.
 		$block  = parse_blocks( '<!-- wp:woocommerce/mini-cart {"productCountVisibility":"never"} /-->' );

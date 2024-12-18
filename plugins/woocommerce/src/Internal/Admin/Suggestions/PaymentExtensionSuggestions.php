@@ -1487,16 +1487,9 @@ class PaymentExtensionSuggestions {
 		// Apply a very lose sanitization. Stricter sanitization can be applied downstream, if needed.
 		return array_map(
 			function ( $value ) {
-				// Make sure that if we have HTML tags, we only allow a limited set of tags.
+				// Make sure that if we have HTML tags, we only allow a limited set of tags (only stylistic ones).
 				if ( is_string( $value ) && preg_match( '/<[^>]+>/', $value ) ) {
-						$value = wp_kses(
-							$value,
-							wp_kses_allowed_html( 'data' ) + array(
-								'p' => array(
-									'align' => true,
-								),
-							)
-						);
+						$value = wp_kses( $value, wp_kses_allowed_html( 'data' ) );
 				}
 
 				return $value;

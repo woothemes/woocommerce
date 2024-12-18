@@ -998,14 +998,15 @@ class WC_Install {
 	}
 
 	/**
-	 * Add the woocommerce_coming_soon option for new shops.
+	 * Add the coming soon options for new shops.
 	 *
-	 * Ensure that the option is set for all shops, even if core profiler is disabled on the host.
+	 * Ensure that the options are set for all shops for performance even if core profiler is disabled on the host.
 	 *
 	 * @since 9.3.0
 	 */
 	public static function add_coming_soon_option() {
-		add_option( 'woocommerce_coming_soon', 'no' );
+		add_option( 'woocommerce_coming_soon', 'yes' );
+		add_option( 'woocommerce_store_pages_only', 'yes' );
 	}
 
 	/**

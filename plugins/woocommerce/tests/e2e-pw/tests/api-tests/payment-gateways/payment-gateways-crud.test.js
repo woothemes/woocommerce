@@ -1,9 +1,13 @@
-const { test, expect } = require( '../../../fixtures/api-tests-fixtures' );
+const {
+	test,
+	expect,
+	tags,
+} = require( '../../../fixtures/api-tests-fixtures' );
 
 test.describe( 'Payment Gateways API tests', () => {
 	test(
 		'can view all payment gateways',
-		{ tag: [ '@skip-on-default-pressable', '@skip-on-default-wpcom' ] },
+		{ tag: [ tags.SKIP_ON_PRESSABLE, tags.SKIP_ON_WPCOM ] },
 		async ( { request } ) => {
 			// call API to retrieve the payment gateways
 			const response = await request.get(
@@ -105,7 +109,7 @@ test.describe( 'Payment Gateways API tests', () => {
 						enabled: false,
 						method_title: 'Cash on delivery',
 						method_description:
-							'Have your customers pay with cash (or by other means) upon delivery.',
+							'Let your shoppers pay upon delivery — by cash or other methods of payment.',
 						method_supports: [ 'products' ],
 						settings: {
 							title: {

@@ -1,4 +1,4 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 const {
 	fillPageTitle,
 	transformIntoBlocks,
@@ -29,7 +29,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Transform Classic Checkout To Checkout Block',
-	{ tag: [ '@gutenberg', '@services' ] },
+	{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
 	() => {
 		test.beforeAll( async ( { api } ) => {
 			// enable COD
@@ -76,7 +76,7 @@ test.describe(
 
 		test(
 			'can transform classic checkout to checkout block',
-			{ tag: '@skip-on-default-pressable' },
+			{ tag: tags.SKIP_ON_PRESSABLE },
 			async ( { page, api, testPage } ) => {
 				await goToPageEditor( { page } );
 
