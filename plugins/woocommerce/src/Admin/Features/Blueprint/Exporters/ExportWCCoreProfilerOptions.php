@@ -56,4 +56,22 @@ class ExportWCCoreProfilerOptions implements StepExporter, HasAlias {
 	public function get_alias() {
 		return 'setWCCoreProfilerOptions';
 	}
+
+	/**
+	 * Return label used in the frontend.
+	 *
+	 * @return string
+	 */
+	public function get_label() {
+		return __( 'Onboarding Configuration', 'woocommerce' );
+	}
+
+	/**
+	 * Return description used in the frontend.
+	 *
+	 * @return string
+	 */
+	public function get_description() {
+		return __( 'It includes onboarding configuration options', 'woocommerce' );
+	}
 }
