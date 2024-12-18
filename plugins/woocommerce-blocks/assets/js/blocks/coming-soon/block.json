@@ -6,9 +6,9 @@
 		"color": {
 			"type": "string"
 		},
-		"storeOnly": {
-			"type": "boolean",
-			"default": false
+		"comingSoonPatternId": {
+			"type": "string",
+			"default": ""
 		}
 	},
 	"supports": {
