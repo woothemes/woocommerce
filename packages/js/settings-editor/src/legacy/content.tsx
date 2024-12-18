@@ -9,10 +9,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { SettingsGroup } from '../components/settings-group';
-<<<<<<< HEAD
 import { SettingsItem } from '../components/settings-item';
-=======
->>>>>>> trunk
 
 export const LegacyContent = ( {
 	settingsPage,
@@ -41,10 +38,10 @@ export const LegacyContent = ( {
 					// Handle settings not in a group here.
 					return (
 						<fieldset>
-						<SettingsItem
-							key={ data.id || data.title + data.type }
-							setting={ data }
-						/>
+							<SettingsItem
+								key={ data.id || data.title + data.type }
+								setting={ data }
+							/>
 						</fieldset>
 					);
 				} ) }

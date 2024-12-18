@@ -2,8 +2,16 @@
  * External dependencies
  */
 import { createElement } from '@wordpress/element';
-// @ts-expect-error missing types.
-import { __experimentalHeading as Heading } from '@wordpress/components';
+import {
+	// @ts-expect-error missing types.
+	__experimentalVStack as VStack,
+	// @ts-expect-error missing types.
+	__experimentalHeading as Heading,
+} from '@wordpress/components';
+
+/**
+ * Internal dependencies
+ */
 import { SettingsInput } from '../settings-input';
 import { SettingsCheckbox } from '../settings-checkbox';
 
@@ -31,11 +39,11 @@ const getComponent = ( setting: SettingsField ) => {
 
 export const SettingsItem = ( { setting }: { setting: SettingsField } ) => {
 	return (
-		<div className="woocommerce-settings-item">
+		<VStack>
 			{ setting.title && (
 				<Heading level={ 5 }>{ setting.title }</Heading>
 			) }
 			{ getComponent( setting ) }
-		</div>
+		</VStack>
 	);
 };
