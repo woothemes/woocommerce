@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Add check for comingSoonNewsletter object before adding in newsletter panel
