@@ -27,7 +27,7 @@ export const LegacyContent = ( {
 	return (
 		<form>
 			<div className="woocommerce-settings-content">
-				{ section.settings.map( ( data ) => {
+				{ section.settings.map( ( data, idx ) => {
 					const key =
 						data.id +
 						'-' +
@@ -45,8 +45,8 @@ export const LegacyContent = ( {
 
 					// Handle settings not in a group here.
 					return (
-						<fieldset>
-							<SettingsItem key={ key } setting={ data } />
+						<fieldset key={ key }>
+							<SettingsItem setting={ data } />
 						</fieldset>
 					);
 				} ) }
