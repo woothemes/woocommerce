@@ -73,7 +73,7 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 		#{$large-image} {
 			img {
 				max-height: $full-height-desktop;
-				width: auto;
+				width: 100%;
 			}
 
 			.wc-block-product-gallery-large-image__container {
@@ -135,7 +135,7 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 	}
 
 	#{$gallery-next-previous-inside-image} & .wc-block-product-gallery-large-image__image-element {
-		width: fit-content;
+		width: 100%;
 		overflow: hidden;
 		margin-right: auto;
 		margin-left: auto;
