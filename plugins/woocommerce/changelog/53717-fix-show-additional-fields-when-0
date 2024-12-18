@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Fixes a bug when additional fields with a value of 0 would not display on the order confirmation or edit order screen

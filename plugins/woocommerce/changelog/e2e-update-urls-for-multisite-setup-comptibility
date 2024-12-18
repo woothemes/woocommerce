@@ -1,4 +1,0 @@
-Significance: patch
-Type: dev
-
-E2E tests: update URLs across e2e tests for multisite setup compatibility
