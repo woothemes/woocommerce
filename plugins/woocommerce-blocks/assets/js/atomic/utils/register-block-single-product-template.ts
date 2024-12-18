@@ -213,14 +213,10 @@ export class BlockRegistrationManager {
 			isAvailableOnPostEditor,
 		} = config;
 
-		if ( this.hasAttemptedRegistration( blockName ) ) {
-			return;
-		}
-
 		try {
 			// Check if block is already registered
 			const key = variationName || blockName;
-			if ( this.attemptedRegisteredBlocks.has( key ) ) {
+			if ( this.hasAttemptedRegistration( key ) ) {
 				return;
 			}
 
