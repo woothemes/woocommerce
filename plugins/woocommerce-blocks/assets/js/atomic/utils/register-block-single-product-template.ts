@@ -98,12 +98,17 @@ export class BlockRegistrationManager {
 		// Site Editor Subscription
 		const siteEditorUnsubscribe = subscribe( () => {
 			const editSiteStore = select( 'core/edit-site' );
-			if ( ! editSiteStore ) {
+			const postId = editSiteStore?.getEditedPostId();
+
+			if ( ! editSiteStore || postId === undefined ) {
 				return;
 			}
 
 			// Only run this once for site editor
 			siteEditorUnsubscribe();
+
+			// Set initial template ID
+			this.currentTemplateId = this.parseTemplateId( postId as string );
 
 			// Set up the template change listener
 			subscribe( () => {
@@ -139,9 +144,8 @@ export class BlockRegistrationManager {
 			this.blocks.forEach( ( config ) => {
 				if ( config.isAvailableOnPostEditor ) {
 					const key = config.variationName || config.blockName;
-					if ( ! this.registeredBlocks.has( key ) ) {
+					if ( ! this.hasAttemptedRegistration( key ) ) {
 						this.registerBlock( config );
-						this.registeredBlocks.add( key );
 					}
 				}
 			} );
@@ -284,11 +288,6 @@ export class BlockRegistrationManager {
 	public registerBlockConfig( config: BlockConfig ): void {
 		const key = config.variationName || config.blockName;
 		this.blocks.set( key, config );
-
-		// Only attempt registration if we're initialized
-		if ( this.initialized && ! this.hasAttemptedRegistration( key ) ) {
-			this.registerBlock( config );
-		}
 	}
 }
 
