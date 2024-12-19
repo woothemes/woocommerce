@@ -53,6 +53,7 @@ function SnackbarList( {
 		// To be removed when we're no longer using core/notices2.
 		onRemove2( notice.id );
 	};
+
 	return (
 		<div className={ className }>
 			{ children }
