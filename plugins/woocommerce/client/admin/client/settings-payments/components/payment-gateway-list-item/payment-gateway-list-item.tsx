@@ -13,7 +13,11 @@ import { Tooltip } from '@wordpress/components';
 import sanitizeHTML from '~/lib/sanitize-html';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
 import { EllipsisMenuWrapper as EllipsisMenu } from '~/settings-payments/components/ellipsis-menu-content';
-import { hasIncentive, isWooPayments } from '~/settings-payments/utils';
+import {
+	hasIncentive,
+	isWooPayEligible,
+	isWooPayments,
+} from '~/settings-payments/utils';
 import { DefaultDragHandle } from '~/settings-payments/components/sortable';
 import { WC_ASSET_URL } from '~/utils/admin-settings';
 import {
@@ -121,7 +125,9 @@ export const PaymentGatewayListItem = ( {
 					{ itemIsWooPayments && (
 						<WooPaymentsMethodsLogos
 							maxElements={ 10 }
-							isWooPayEligible={ true }
+							tabletWidthBreakpoint={ 1080 } // Reduce the number of logos earlier.
+							mobileWidthBreakpoint={ 768 } // Reduce the number of logos earlier.
+							isWooPayEligible={ isWooPayEligible( gateway ) }
 						/>
 					) }
 				</div>

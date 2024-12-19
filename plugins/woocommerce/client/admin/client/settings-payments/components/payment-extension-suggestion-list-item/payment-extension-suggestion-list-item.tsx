@@ -18,6 +18,7 @@ import {
 	hasIncentive,
 	isActionIncentive,
 	isIncentiveDismissedInContext,
+	isWooPayEligible,
 } from '~/settings-payments/utils';
 import { DefaultDragHandle } from '~/settings-payments/components/sortable';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
@@ -90,7 +91,9 @@ export const PaymentExtensionSuggestionListItem = ( {
 					{ isWooPayments( extension.id ) && (
 						<WooPaymentsMethodsLogos
 							maxElements={ 10 }
-							isWooPayEligible={ true }
+							tabletWidthBreakpoint={ 1080 } // Reduce the number of logos earlier.
+							mobileWidthBreakpoint={ 768 } // Reduce the number of logos earlier.
+							isWooPayEligible={ isWooPayEligible( extension ) }
 						/>
 					) }
 				</div>
