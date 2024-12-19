@@ -510,6 +510,11 @@ button.reset_variations {
 		display: inline-block;
 	}
 
+	.woocommerce-product-gallery__image a {
+		display: block;
+		outline-offset: -2px;
+	}
+
 	.flex-control-thumbs {
 		li {
 			list-style: none;

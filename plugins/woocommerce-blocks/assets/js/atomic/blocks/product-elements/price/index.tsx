@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { registerBlockSingleProductTemplate } from '@woocommerce/atomic-utils';
+import { registerProductBlockType } from '@woocommerce/atomic-utils';
 import { currencyDollar, Icon } from '@wordpress/icons';
 
 /**
@@ -12,7 +12,7 @@ import edit from './edit';
 import { supports } from './supports';
 import metadata from './block.json';
 
-registerBlockSingleProductTemplate( {
+registerProductBlockType( {
 	blockName: metadata.name,
 	blockMetadata: metadata,
 	blockSettings: {
