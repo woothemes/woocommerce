@@ -70,7 +70,7 @@ class TrackingOptIn {
 		$note->set_type( Note::E_WC_ADMIN_NOTE_INFORMATIONAL );
 		$note->set_name( self::NOTE_NAME );
 		$note->set_source( 'woocommerce-admin' );
-		$note->add_action( 'tracking-opt-in', __( 'Activate usage tracking', 'woocommerce' ), false, Note::E_WC_ADMIN_NOTE_ACTIONED, true );
+		$note->add_action( 'tracking-opt-in', __( 'Activate usage tracking', 'woocommerce' ), false, Note::E_WC_ADMIN_NOTE_ACTIONED, true, __( 'Usage tracking activated', 'woocommerce' ) );
 		return $note;
 	}
 
