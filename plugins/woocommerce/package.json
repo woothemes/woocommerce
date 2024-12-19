@@ -239,7 +239,7 @@
 						"--shard=3/4",
 						"--shard=4/4"
 					],
-					"changes": [ 
+					"changes": [
 						"tests/e2e-pw/**"
 					],
 					"events": [

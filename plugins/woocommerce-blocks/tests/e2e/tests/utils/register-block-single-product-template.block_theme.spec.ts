@@ -32,7 +32,7 @@ const insertInSingleProductTemplate = async (
 	await editor.insertBlock( { name: blockName } );
 };
 
-test.describe( 'registerBlockSingleProductTemplate registers', () => {
+test.describe( 'registerProductBlockType registers', () => {
 	test( 'block available on posts, e.g. Product Price', async ( {
 		admin,
 		editor,

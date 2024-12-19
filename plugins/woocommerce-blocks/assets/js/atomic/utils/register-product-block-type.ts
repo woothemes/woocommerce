@@ -318,7 +318,7 @@ export class BlockRegistrationManager {
  *
  * @example
  * ```typescript
- * registerBlockSingleProductTemplate({
+ * registerProductBlockType({
  *     blockName: 'woocommerce/product-price',
  *     blockSettings: {
  *         title: 'Product Price',
@@ -330,9 +330,7 @@ export class BlockRegistrationManager {
  *
  * @param {BlockConfig} config - Configuration object for the block
  */
-export const registerBlockSingleProductTemplate = (
-	config: BlockConfig
-): void => {
+export const registerProductBlockType = ( config: BlockConfig ): void => {
 	if ( ! config.blockName ) {
 		// eslint-disable-next-line no-console
 		console.error( 'Block name is required for registration' );
