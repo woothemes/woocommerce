@@ -3006,7 +3006,7 @@ if ( ! function_exists( 'woocommerce_form_field' ) ) {
 				$args['label_class'][]                      = 'required_field';
 			}
 
-			$args['class'][] = 'validate-required';
+			$args['class'][]    = 'validate-required';
 			$required_indicator = '&nbsp;<span class="required" aria-hidden="true">*</span>';
 		} else {
 			$required_indicator = '&nbsp;<span class="optional">(' . esc_html__( 'optional', 'woocommerce' ) . ')</span>';
