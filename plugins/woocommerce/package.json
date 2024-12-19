@@ -131,7 +131,8 @@
 					},
 					"events": [
 						"pull_request",
-						"push"
+						"push",
+						"php-unit-php-8.8-wp-latest"
 					]
 				},
 				{
@@ -158,7 +159,8 @@
 					},
 					"events": [
 						"pull_request",
-						"push"
+						"push",
+						"php-unit-wp-latest-1"
 					]
 				},
 				{
@@ -186,7 +188,8 @@
 					},
 					"events": [
 						"pull_request",
-						"push"
+						"push",
+						"php-unit-wp-nightly"
 					]
 				},
 				{
@@ -221,7 +224,8 @@
 					"events": [
 						"pull_request",
 						"push",
-						"release-checks"
+						"release-checks",
+						"core-e2e"
 					],
 					"report": {
 						"resultsBlobName": "core-e2e-report",
@@ -242,7 +246,8 @@
 					"changes": [],
 					"events": [
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"core-e2e-gutenberg"
 					],
 					"testEnv": {
 						"start": "env:test"
@@ -266,7 +271,8 @@
 					"changes": [],
 					"events": [
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"core-e2e-gutenberg"
 					],
 					"testEnv": {
 						"start": "env:test"
@@ -285,7 +291,8 @@
 					"changes": [],
 					"events": [
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"core-e2e-woocommerce-payments"
 					],
 					"testEnv": {
 						"start": "env:test"
@@ -304,7 +311,8 @@
 					"changes": [],
 					"events": [
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"core-e2e-woocommerce-paypal-payments"
 					],
 					"testEnv": {
 						"start": "env:test"
@@ -326,7 +334,8 @@
 					"changes": [],
 					"events": [
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"core-e2e-woocommerce-services"
 					],
 					"testEnv": {
 						"start": "env:test"
@@ -347,7 +356,8 @@
 					"events": [
 						"pull_request",
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"core-e2e-hpos-disabled"
 					],
 					"changes": [],
 					"testEnv": {
@@ -382,7 +392,8 @@
 					},
 					"events": [
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"core-e2e-php-8.1"
 					],
 					"report": {
 						"resultsBlobName": "core-e2e-report-php-8.1",
@@ -410,7 +421,8 @@
 					},
 					"events": [
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"core-e2e-wp-latest-1"
 					],
 					"report": {
 						"resultsBlobName": "core-e2e-report-wp-latest-1",
@@ -438,7 +450,8 @@
 					},
 					"events": [
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"core-e2e-wp-pre-release"
 					],
 					"report": {
 						"resultsBlobName": "core-e2e-report-wp-pre-release",
@@ -472,7 +485,8 @@
 					},
 					"events": [
 						"pull_request",
-						"push"
+						"push",
+						"core-api"
 					],
 					"report": {
 						"resultsBlobName": "core-api-report",
@@ -500,7 +514,8 @@
 						"uninstall.php"
 					],
 					"events": [
-						"push"
+						"push",
+						"core-api-hpos-disabled"
 					],
 					"testEnv": {
 						"start": "env:test",
@@ -526,7 +541,8 @@
 						"start": "test:perf:ci-setup"
 					},
 					"events": [
-						"push"
+						"push",
+						"core-k6"
 					]
 				},
 				{
@@ -551,7 +567,8 @@
 					},
 					"events": [
 						"push",
-						"pull_request"
+						"pull_request",
+						"perf-metrics"
 					],
 					"report": {
 						"resultsBlobName": "core-metrics-report",
@@ -586,7 +603,8 @@
 						"pull_request",
 						"push",
 						"release-checks",
-						"nightly-checks"
+						"nightly-checks",
+						"blocks-e2e"
 					],
 					"report": {
 						"resultsBlobName": "blocks-e2e-report",
@@ -623,7 +641,8 @@
 					},
 					"events": [
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"blocks-e2e-wp-pre-release"
 					],
 					"report": {
 						"resultsBlobName": "blocks-e2e-report-wp-pre-release",
@@ -656,7 +675,8 @@
 					},
 					"events": [
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"blocks-e2e-wp-latest-1"
 					],
 					"report": {
 						"resultsBlobName": "blocks-e2e-report-wp-latest-1",
@@ -671,7 +691,8 @@
 					"shardingArguments": [],
 					"changes": [],
 					"events": [
-						"on-demand"
+						"on-demand",
+						"core-e2e-pressable"
 					],
 					"report": {
 						"resultsBlobName": "default-pressable-core-e2e-and-api",
@@ -686,7 +707,8 @@
 					"shardingArguments": [],
 					"changes": [],
 					"events": [
-						"on-demand"
+						"on-demand",
+						"core-e2e-wpcom"
 					],
 					"report": {
 						"resultsBlobName": "default-wpcom-core-e2e-and-api",
