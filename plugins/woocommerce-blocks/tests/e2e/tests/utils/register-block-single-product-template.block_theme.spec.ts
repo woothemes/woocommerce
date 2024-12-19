@@ -76,7 +76,7 @@ test.describe( 'registerBlockSingleProductTemplate registers', () => {
 		page,
 	} ) => {
 		const blockName = 'woocommerce/product-price';
-
+		const blockTitle = 'Product Price';
 		await test.step( 'Blocks not available in non-product template', async () => {
 			// Visit site editor with a non-product template
 			await admin.visitSiteEditor( {
@@ -96,13 +96,11 @@ test.describe( 'registerBlockSingleProductTemplate registers', () => {
 			// Open command palette
 			await page.keyboard.press( 'Meta+K' );
 
-			// Wait for command palette to be visible
 			const searchInput = page.getByRole( 'combobox', {
 				name: 'Search',
 			} );
 			await expect( searchInput ).toBeVisible();
 
-			// Search for and select Single Product template
 			await searchInput.fill( 'Single Product' );
 			const templateOption = page.getByRole( 'option', {
 				name: /Single Product/i,
@@ -116,10 +114,11 @@ test.describe( 'registerBlockSingleProductTemplate registers', () => {
 		} );
 
 		await test.step( 'Blocks available after switching to Single Product template', async () => {
-			// Try to insert the block
-			await editor.insertBlock( { name: blockName } );
+			await editor.setContent( '' );
 
-			// Verify block is now available
+			// Product Price is available in the global inserter. For some reason, using await editor.insertBlock( { name: blockName } ); does not work here.
+			await editor.insertBlockUsingGlobalInserter( blockTitle );
+
 			await expect(
 				await editor.getBlockByName( blockName )
 			).toHaveCount( 1 );
