@@ -280,7 +280,7 @@ class WC_Tests_CustomerCRUD extends WC_Unit_Test_Case {
 	public function test_customer_get_avatar_url() {
 		$customer = WC_Helper_Customer::create_customer();
 		$this->assertStringContainsString( 'gravatar.com/avatar', $customer->get_avatar_url() );
-		$this->assertStringContainsString( md5( 'test@woo.local' ), $customer->get_avatar_url() );
+		$this->assertStringContainsString( hash( 'sha256', 'test@woo.local' ), $customer->get_avatar_url() );
 	}
 
 	/**
