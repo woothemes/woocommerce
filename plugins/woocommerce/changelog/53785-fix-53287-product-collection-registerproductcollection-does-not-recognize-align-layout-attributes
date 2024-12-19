@@ -1,0 +1,4 @@
+Significance: minor
+Type: enhancement
+
+Product Collection: Add support for passing extra attributes like align while registering a custom collection.
