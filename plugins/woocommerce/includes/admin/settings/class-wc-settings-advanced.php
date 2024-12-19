@@ -508,8 +508,9 @@ class WC_Settings_Advanced extends WC_Settings_Page {
 	public function save() {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		global $current_section;
+
 		$prev_value = get_option( 'woocommerce_allow_tracking', 'no' );
-		$new_value  = isset( $_POST['woocommerce_allow_tracking'] ) ? 'yes' : 'no';
+		$new_value  = isset( $_POST['woocommerce_allow_tracking'] ) && ( 'yes' === $_POST['woocommerce_allow_tracking'] || '1' === $_POST['woocommerce_allow_tracking'] ) ? 'yes' : 'no';
 
 		if ( apply_filters( 'woocommerce_rest_api_valid_to_save', ! in_array( $current_section, array( 'keys', 'webhooks' ), true ) ) ) {
 			// Prevent the T&Cs and checkout page from being set to the same page.
