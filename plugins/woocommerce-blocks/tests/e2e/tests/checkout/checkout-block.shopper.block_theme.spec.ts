@@ -272,7 +272,9 @@ test.describe( 'Shopper → Shipping and Billing Addresses', () => {
 			name: 'Company',
 			exact: true,
 		} );
-		await checkbox.check();
+		// When checkboxes are toggled the inspector gets rerendered, so we need to force the check. The inspector toggles themselves need refactoring to avoid this.
+		// eslint-disable-next-line playwright/no-force-option
+		await checkbox.check( { force: true } );
 		await expect( checkbox ).toBeChecked();
 		await expect(
 			editor.canvas.locator(
