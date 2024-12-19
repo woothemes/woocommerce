@@ -5,7 +5,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { store as woocommerceTemplateStateStore } from '../../store';
+import { store as woocommerceTemplateStateStore } from '../../../../shared/store';
 import type { ProductTypeProps } from '../../types';
 
 type ProductTypeSelector = {
