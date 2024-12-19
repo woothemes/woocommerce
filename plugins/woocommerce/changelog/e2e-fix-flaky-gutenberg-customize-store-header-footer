@@ -1,4 +1,0 @@
-Significance: patch
-Type: dev
-
-E2E tests: fixed flakiness in the customize store header and footer tests

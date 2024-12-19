@@ -13,15 +13,25 @@ import { PaymentExtensionSuggestionProvider } from '@woocommerce/data';
  */
 import sanitizeHTML from '~/lib/sanitize-html';
 import { EllipsisMenuWrapper as EllipsisMenu } from '~/settings-payments/components/ellipsis-menu-content';
-import { isWooPayments } from '~/settings-payments/utils';
+import {
+	isWooPayments,
+	hasIncentive,
+	isActionIncentive,
+	isIncentiveDismissedInContext,
+} from '~/settings-payments/utils';
 import { DefaultDragHandle } from '~/settings-payments/components/sortable';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
 
 type PaymentExtensionSuggestionListItemProps = {
 	extension: PaymentExtensionSuggestionProvider;
 	installingPlugin: string | null;
-	setupPlugin: ( id: string, slug: string ) => void;
+	setupPlugin: (
+		id: string,
+		slug: string,
+		onboardingUrl: string | null
+	) => void;
 	pluginInstalled: boolean;
+	acceptIncentive: ( id: string ) => void;
 };
 
 export const PaymentExtensionSuggestionListItem = ( {
@@ -29,11 +39,17 @@ export const PaymentExtensionSuggestionListItem = ( {
 	installingPlugin,
 	setupPlugin,
 	pluginInstalled,
+	acceptIncentive,
 	...props
 }: PaymentExtensionSuggestionListItemProps ) => {
-	const hasIncentive = !! extension._incentive;
+	const incentive = hasIncentive( extension ) ? extension._incentive : null;
 	const shouldHighlightIncentive =
-		hasIncentive && ! extension._incentive?.promo_id.includes( '-action-' );
+		hasIncentive( extension ) &&
+		( ! isActionIncentive( extension._incentive ) ||
+			isIncentiveDismissedInContext(
+				extension._incentive,
+				'wc_settings_payments__banner'
+			) );
 
 	return (
 		<div
@@ -54,13 +70,14 @@ export const PaymentExtensionSuggestionListItem = ( {
 				<div className="woocommerce-list__item-text">
 					<span className="woocommerce-list__item-title">
 						{ extension.title }{ ' ' }
-						{ ! hasIncentive && isWooPayments( extension.id ) && (
-							<StatusBadge status="recommended" />
-						) }
-						{ hasIncentive && extension._incentive && (
+						{ ! hasIncentive( extension ) &&
+							isWooPayments( extension.id ) && (
+								<StatusBadge status="recommended" />
+							) }
+						{ incentive && (
 							<StatusBadge
 								status="has_incentive"
-								message={ extension._incentive.badge }
+								message={ incentive.badge }
 							/>
 						) }
 					</span>
@@ -81,12 +98,18 @@ export const PaymentExtensionSuggestionListItem = ( {
 					<div className="woocommerce-list__item-after__actions">
 						<Button
 							variant="primary"
-							onClick={ () =>
+							onClick={ () => {
+								if ( incentive ) {
+									acceptIncentive( incentive.promo_id );
+								}
+
 								setupPlugin(
 									extension.id,
-									extension.plugin.slug
-								)
-							}
+									extension.plugin.slug,
+									extension.onboarding?._links.onboard.href ??
+										null
+								);
+							} }
 							isBusy={ installingPlugin === extension.id }
 							disabled={ !! installingPlugin }
 						>

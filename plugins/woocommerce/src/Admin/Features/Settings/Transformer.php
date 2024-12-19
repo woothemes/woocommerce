@@ -104,7 +104,7 @@ class Transformer {
 		if ( $this->current_checkbox_group && 'checkbox' !== $type ) {
 			// It's expected that a checkbox group will always be closed before a non-checkbox setting.
 			// If not, it's likely a checkbox group was not closed properly so we flush the current checkbox group and add the setting as-is.
-			$this->flush_current_checkbox_group( $transformed_settings );
+			$this->flush_current_checkbox_group();
 		}
 
 		switch ( $type ) {
@@ -133,12 +133,6 @@ class Transformer {
 	 * @param array $transformed_settings Transformed settings array.
 	 */
 	private function handle_group_start( array $setting, array &$transformed_settings ): void {
-		// If setting doesn't have an ID, add it as-is since we will be unable to match it with a sectionend.
-		if ( ! isset( $setting['id'] ) ) {
-			$this->add_setting( $setting, $transformed_settings );
-			return;
-		}
-
 		// If we already have a group, flush it to settings before starting a new one.
 		if ( $this->current_group ) {
 			$this->flush_current_group( $transformed_settings );
@@ -159,8 +153,12 @@ class Transformer {
 			isset( $setting['id'] ) &&
 			$this->current_group[0]['id'] === $setting['id'];
 
+		$ids_match_undefined = $this->current_group &&
+			! isset( $this->current_group[0]['id'] ) &&
+			! isset( $setting['id'] );
+
 		// If IDs match, add the group and close it.
-		if ( $ids_match ) {
+		if ( $ids_match || $ids_match_undefined ) {
 			// Compose the group setting.
 			$title_setting          = array_shift( $this->current_group );
 			$transformed_settings[] = array_merge(
@@ -202,7 +200,7 @@ class Transformer {
 
 		switch ( $checkboxgroup ) {
 			case 'start':
-				$this->start_checkbox_group( $setting, $transformed_settings );
+				$this->start_checkbox_group( $setting );
 				break;
 
 			case 'end':
@@ -219,12 +217,11 @@ class Transformer {
 	 * Start a new checkbox group.
 	 *
 	 * @param array $setting Setting to add.
-	 * @param array $transformed_settings Transformed settings array.
 	 */
-	private function start_checkbox_group( array $setting, array &$transformed_settings ): void {
+	private function start_checkbox_group( array $setting ): void {
 		// If we already have an open checkbox group, flush it to settings before starting a new one.
 		if ( is_array( $this->current_checkbox_group ) ) {
-			$this->flush_current_checkbox_group( $transformed_settings );
+			$this->flush_current_checkbox_group();
 		}
 
 		$this->current_checkbox_group = array( $setting );
@@ -274,12 +271,15 @@ class Transformer {
 
 	/**
 	 * Flush current checkbox group to transformed settings.
-	 *
-	 * @param array $transformed_settings Transformed settings array.
 	 */
-	private function flush_current_checkbox_group( array &$transformed_settings ): void {
+	private function flush_current_checkbox_group(): void {
 		if ( is_array( $this->current_checkbox_group ) ) {
-			$transformed_settings         = array_merge( $transformed_settings, $this->current_checkbox_group );
+			if ( is_array( $this->current_group ) ) {
+				$this->current_group = array_merge( $this->current_group, $this->current_checkbox_group );
+			} else {
+				$this->current_group = $this->current_checkbox_group;
+			}
+
 			$this->current_checkbox_group = null;
 		}
 	}
@@ -305,8 +305,8 @@ class Transformer {
 	 * @param array &$transformed_settings Transformed settings array.
 	 */
 	private function finalize_transformation( array &$transformed_settings ): void {
+		$this->flush_current_checkbox_group();
 		$this->flush_current_group( $transformed_settings );
-		$this->flush_current_checkbox_group( $transformed_settings );
 	}
 
 	/**
