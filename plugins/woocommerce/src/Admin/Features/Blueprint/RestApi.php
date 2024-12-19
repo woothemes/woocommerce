@@ -4,6 +4,8 @@ declare( strict_types = 1 );
 
 namespace Automattic\WooCommerce\Admin\Features\Blueprint;
 
+use Automattic\WooCommerce\Blueprint\Exporters\ExportInstallPluginSteps;
+use Automattic\WooCommerce\Blueprint\Exporters\ExportInstallThemeSteps;
 use Automattic\WooCommerce\Blueprint\ExportSchema;
 use Automattic\WooCommerce\Blueprint\ImportSchema;
 use Automattic\WooCommerce\Blueprint\JsonResultFormatter;
@@ -52,19 +54,30 @@ class RestApi {
 					'permission_callback' => array( $this, 'check_permission' ),
 					'args'                => array(
 						'steps'         => array(
-							'description'       => __( 'A list of plugins to install', 'woocommerce' ),
-							'type'              => 'array',
-							'items'             => 'string',
-							'default'           => array(),
-							'sanitize_callback' => function ( $value ) {
-								return array_map(
-									function ( $value ) {
-										return sanitize_text_field( $value );
-									},
-									$value
-								);
-							},
-							'required'          => false,
+							'description' => __( 'A list of plugins to install', 'woocommerce' ),
+							'type'        => 'object',
+							'properties'  => array(
+								'settings' => array(
+									'type'  => 'array',
+									'items' => array(
+										'type' => 'string',
+									),
+								),
+								'plugins'  => array(
+									'type'  => 'array',
+									'items' => array(
+										'type' => 'string',
+									),
+								),
+								'themes'   => array(
+									'type'  => 'array',
+									'items' => array(
+										'type' => 'string',
+									),
+								),
+							),
+							'default'     => array(),
+							'required'    => true,
 						),
 						'export_as_zip' => array(
 							'description' => __( 'Export as a zip file', 'woocommerce' ),
@@ -97,9 +110,37 @@ class RestApi {
 	 * @return \WP_HTTP_Response The response object.
 	 */
 	public function export( $request ) {
-		$steps         = $request->get_param( 'steps' );
+		$payload = $request->get_param( 'steps' );
+		$steps   = $this->steps_payload_to_blueprint_steps( $payload );
+
 		$export_as_zip = $request->get_param( 'export_as_zip' );
 		$exporter      = new ExportSchema();
+
+		if ( isset( $payload['plugins'] ) ) {
+			$exporter->onBeforeExport(
+				'installPlugin',
+				function ( ExportInstallPluginSteps $exporter ) use ( $payload ) {
+					$exporter->filter(
+						function ( array $plugins ) use ( $payload ) {
+							return array_intersect_key( $plugins, array_flip( $payload['plugins'] ) );
+						}
+					);
+				}
+			);
+		}
+
+		if ( isset( $payload['themes'] ) ) {
+			$exporter->onBeforeExport(
+				'installTheme',
+				function ( ExportInstallThemeSteps $exporter ) use ( $payload ) {
+					$exporter->filter(
+						function ( array $plugins ) use ( $payload ) {
+							return array_intersect_key( $plugins, array_flip( $payload['themes'] ) );
+						}
+					);
+				}
+			);
+		}
 
 		$data = $exporter->export( $steps, $export_as_zip );
 
@@ -209,5 +250,41 @@ class RestApi {
 			),
 			400
 		);
+	}
+
+	/**
+	 * Convert step list from the frontend to the backend format.
+	 *
+	 * From:
+	 * {
+	 *  "settings": ["setWCSettings", "setWCShippingZones", "setWCShippingMethods", "setWCShippingRates"],
+	 *  "plugins": ["akismet/akismet.php],
+	 *  "themes": ["approach],
+	 * }
+	 *
+	 * To:
+	 *
+	 * ["setWCSettings", "setWCShippingZones", "setWCShippingMethods", "setWCShippingRates", "installPlugin", "installTheme"]
+	 *
+	 * @param array $steps steps payload from the frontend.
+	 *
+	 * @return array
+	 */
+	private function steps_payload_to_blueprint_steps( $steps ) {
+		$blueprint_steps = array();
+
+		if ( isset( $steps['settings'] ) ) {
+			$blueprint_steps = array_merge( $blueprint_steps, $steps['settings'] );
+		}
+
+		if ( isset( $steps['plugins'] ) ) {
+			$blueprint_steps[] = 'installPlugin';
+		}
+
+		if ( isset( $steps['themes'] ) ) {
+			$blueprint_steps[] = 'installTheme';
+		}
+
+		return $blueprint_steps;
 	}
 }

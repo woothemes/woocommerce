@@ -6,6 +6,7 @@ const tours = require( './tours' );
 const login = require( './login' );
 const editor = require( './editor' );
 const helpers = require( './helpers' );
+const comingSoon = require( './coming-soon' );
 
 module.exports = {
 	api,
@@ -16,4 +17,5 @@ module.exports = {
 	login,
 	editor,
 	helpers,
+	comingSoon,
 };

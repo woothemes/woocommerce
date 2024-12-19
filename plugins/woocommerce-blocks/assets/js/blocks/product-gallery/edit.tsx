@@ -122,13 +122,13 @@ export const Edit = ( {
 		),
 	} );
 
-	const { currentTemplateId, templateType } = useSelect(
-		( select ) => ( {
-			currentTemplateId: select( 'core/edit-site' ).getEditedPostId(),
-			templateType: select( 'core/edit-site' ).getEditedPostType(),
-		} ),
-		[]
-	);
+	const { currentTemplateId, templateType } = useSelect( ( select ) => {
+		const store = select( 'core/edit-site' );
+		return {
+			currentTemplateId: store ? store.getEditedPostId() : '',
+			templateType: store ? store.getEditedPostType() : '',
+		};
+	}, [] );
 
 	useEffect( () => {
 		const mode = getMode( currentTemplateId, templateType );

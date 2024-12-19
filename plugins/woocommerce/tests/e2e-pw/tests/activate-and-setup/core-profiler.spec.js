@@ -532,6 +532,7 @@ test.describe(
 			} );
 		} );
 
+		// TODO (E2E Audit): Move this test to the merchant folder as per the Critical Flows list on GitHub. This test should NOT be skipped on WPCOM. Newly created WPCOM sites are not connected to WooCommerce.com by default.
 		test( 'Can connect to WooCommerce.com', async ( { page } ) => {
 			await test.step( 'Go to WC Home and make sure the total sales is visible', async () => {
 				await page.goto( 'wp-admin/admin.php?page=wc-admin' );
