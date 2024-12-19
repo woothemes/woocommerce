@@ -486,20 +486,19 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 			// Get the partially refunded products ID and revenue from the parent order.
 			$partial_refund_products = $wpdb->get_results(
 				$wpdb->prepare(
-					'
+					"
 						SELECT
 							product_lookup.product_id,
 							product_lookup.variation_id,
 							product_lookup.product_net_revenue
-						FROM %s AS product_lookup
-						INNER JOIN %swc_order_stats AS order_stats
+						FROM %i AS product_lookup
+						INNER JOIN {$wpdb->prefix}wc_order_stats AS order_stats
 							ON order_stats.order_id = product_lookup.order_id
 						WHERE 1 = 1
 							AND order_stats.parent_id = %d
 							AND product_lookup.product_net_revenue < 0
-					',
+					",
 					$table_name,
-					$wpdb->prefix,
 					$parent_order_id
 				)
 			);
@@ -527,7 +526,7 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 							$carry['variation_ids'][ $product->variation_id ] += (float) $product->product_net_revenue;
 						}
 					} elseif ( ! isset( $carry['product_ids'][ $product->product_id ] ) ) {
-							$carry['product_ids'][ $product->product_id ] = (float) $product->product_net_revenue;
+						$carry['product_ids'][ $product->product_id ] = (float) $product->product_net_revenue;
 					} else {
 						$carry['product_ids'][ $product->product_id ] += (float) $product->product_net_revenue;
 					}
