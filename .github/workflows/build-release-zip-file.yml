@@ -63,24 +63,12 @@ jobs:
                   const githubActionsPRsQuery = await searchPRs(`repo:${owner}/${repo} is:pr is:open author:app/github-actions`);
                   const prsOpenByGithubActions = githubActionsPRsQuery.data.items;
 
-                  // Add delay before next API call to avoid rate limiting
-                  await delay(31000); // 31 second delay
-
-                  // Search for PRs with "cherry" in title
-                  const cherryPRsSearch = await searchPRs(`repo:${owner}/${repo} is:pr is:open cherry in:title -author:app/github-actions`);
-                  const prsWithCherryInTitle = cherryPRsSearch.data.items;
-
                   let failureMessage = ``;
 
-                  if (prsOpenByGithubActions.length > 0 || prsWithCherryInTitle.length > 0) {
+                  if (prsOpenByGithubActions.length > 0) {
                       runBuildZipJob = false;
-                      if (prsOpenByGithubActions.length > 0) {
-                        failureMessage += `Identified \`${prsOpenByGithubActions.length}\` open PR(s) from \`github-actions\` bot which should be merged or closed before proceeding. <https://github.com/${owner}/${repo}/issues?q=is%3Apr+is%3Aopen+author%3Aapp%2Fgithub-actions|Link toPRs>`;
-                      }
 
-                      if (prsWithCherryInTitle.length > 0) {
-                        failureMessage += `Identified \`${prsWithCherryInTitle.length}\` open PR(s) with \`cherry\` in the title which maybe opened by a human, please verify if they are relevant. <https://github.com/${owner}/${repo}/issues?q=is%3Apr+is%3Aopen+cherry+in%3Atitle+-author%3Aapp%2Fgithub-actions|Link to PRs>`;
-                      }
+                      failureMessage += `Identified \`${prsOpenByGithubActions.length}\` open PR(s) from \`github-actions\` bot which should be merged or closed before proceeding. <https://github.com/${owner}/${repo}/issues?q=is%3Apr+is%3Aopen+author%3Aapp%2Fgithub-actions|Link to PRs>`;
 
                       failureMessage += '\n\nThis step maintains the code integrity and is critical to avoid regression in future releases. Please merge them or close them before proceeding or set \`skip_verify\` to \`true\` before running the workflow to skip this step if you are confident that the PRs are irrelevant.';
 
