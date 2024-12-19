@@ -12,12 +12,15 @@ import { withProductDataContext } from '@woocommerce/shared-hocs';
 import type { HTMLAttributes } from 'react';
 import { ProductResponseItem } from '@woocommerce/types';
 import { getSetting } from '@woocommerce/settings';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import './style.scss';
 import type { BlockAttributes } from './types';
+import { store as woocommerceTemplateStateStore } from '../../../../shared/store';
+import type { ProductTypeProps } from '../../../../utils/get-product-type-options';
 
 type Props = BlockAttributes & HTMLAttributes< HTMLDivElement >;
 
@@ -47,8 +50,8 @@ const isStockIndicatorVisible = (
 		! productTypesWithoutStockIndicator.includes( productType );
 
 	return (
-		( isProductTypeAllowed && availabilityText !== '' ) ||
-		isDescendentOfSingleProductTemplate
+		isProductTypeAllowed &&
+		( availabilityText !== '' || isDescendentOfSingleProductTemplate )
 	);
 };
 
@@ -59,14 +62,25 @@ export const Block = ( props: Props ): JSX.Element | null => {
 	const { product } = useProductDataContext();
 	const { text: availabilityText, class: availabilityClass } =
 		product.stock_availability;
-	const { isDescendentOfSingleProductTemplate, selectedProductType } = props;
+	const { isDescendentOfSingleProductTemplate } = props;
+
+	const { selectedProductType } = useSelect< {
+		selectedProductType: ProductTypeProps;
+	} >( ( select ) => {
+		const { getCurrentProductType } = select(
+			woocommerceTemplateStateStore
+		);
+		return {
+			selectedProductType: getCurrentProductType(),
+		};
+	}, [] );
 
 	if (
 		! isStockIndicatorVisible(
 			product,
 			availabilityText,
 			isDescendentOfSingleProductTemplate,
-			selectedProductType
+			selectedProductType?.slug
 		)
 	) {
 		return null;

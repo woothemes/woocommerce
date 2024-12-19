@@ -20,10 +20,6 @@ export const blockAttributes: BlockAttributes = {
 		type: 'boolean',
 		default: false,
 	},
-	selectedProductType: {
-		type: 'string',
-		default: 'simple',
-	},
 };
 
 export default blockAttributes;
