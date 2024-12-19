@@ -8,6 +8,7 @@ import {
 	// @ts-expect-error missing types.
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
+import { sanitize } from 'dompurify';
 
 /**
  * Internal dependencies
@@ -50,6 +51,18 @@ const getComponent = ( setting: SettingsField ) => {
 			);
 		case 'select':
 			return <SettingsSelect setting={ setting } />;
+		case 'custom':
+			return (
+				<div id={ setting.id }>
+					<div
+						dangerouslySetInnerHTML={ {
+							__html: sanitize( setting.content || '' ),
+						} }
+					/>
+				</div>
+			);
+		case 'slotfill_placeholder':
+			return <div id={ setting.id } className={ setting.class }></div>;
 		default:
 			return <div>{ setting.type }</div>;
 	}
