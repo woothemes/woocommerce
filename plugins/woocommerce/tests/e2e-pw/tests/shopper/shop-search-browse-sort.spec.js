@@ -80,7 +80,7 @@ test.describe(
 
 				await expect(
 					page.getByRole( 'heading', {
-						name: `${ simpleProductName } 1`,
+						name: `${ products[ 0 ].name }`,
 						level: 1,
 					} )
 				).toBeVisible();
@@ -117,7 +117,7 @@ test.describe(
 				await page.locator( `text=${ products[ 1 ].name }` ).click();
 				await expect(
 					page.getByRole( 'heading', {
-						name: simpleProductName + ' 2',
+						name: products[ 1 ].name,
 						level: 1,
 					} )
 				).toBeVisible();
