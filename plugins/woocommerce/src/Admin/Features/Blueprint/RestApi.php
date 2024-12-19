@@ -410,8 +410,6 @@ class RestApi {
 		$extension = pathinfo( $fullpath, PATHINFO_EXTENSION );
 
 		// Process the uploaded file.
-		// We'll not call import function.
-		// Just validate the file by calling create_from_json or create_from_zip.
 		try {
 			if ( 'zip' === $extension ) {
 				$blueprint = ImportSchema::create_from_zip( $fullpath );
