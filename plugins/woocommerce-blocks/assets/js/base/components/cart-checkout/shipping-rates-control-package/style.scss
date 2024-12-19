@@ -16,12 +16,6 @@
 		padding-top: em($gap-small);
 	}
 
-	&:last-child {
-		.wc-block-components-panel__button {
-			padding-bottom: 0;
-		}
-	}
-
 	.wc-block-components-panel__content {
 		padding-bottom: em($gap-small);
 	}
@@ -45,11 +39,19 @@
 	}
 }
 
+.wc-block-components-shipping-rates-control__package-header {
+	margin: 0 0 $gap-small;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+}
+
 .wc-block-components-shipping-rates-control__package-items {
 	@include font-size(small);
-	display: block;
+	display: inline-block;
 	list-style: none;
-	margin: 0 0 $gap-small 0;
+	margin: 0;
 	padding: 0;
 }
 
