@@ -2,6 +2,7 @@
 namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 use Automattic\WooCommerce\Blocks\Utils\StyleAttributesUtils;
+use Automattic\WooCommerce\Enums\ProductType;
 
 /**
  * ProductStockIndicator class.
@@ -44,7 +45,7 @@ class ProductStockIndicator extends AbstractBlock {
 	 * @return array
 	 */
 	protected function get_product_types_without_stock_indicator() {
-		return array( 'external', 'grouped', 'variable' );
+		return array( ProductType::EXTERNAL, ProductType::GROUPED, ProductType::VARIABLE );
 	}
 
 	/**

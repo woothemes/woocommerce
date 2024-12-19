@@ -2017,7 +2017,7 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 		$post_type = get_post_type( $product_id );
 
 		if ( 'product_variation' === $post_type ) {
-			$product_type = 'variation';
+			$product_type = ProductType::VARIATION;
 		} elseif ( 'product' === $post_type ) {
 			$terms        = get_the_terms( $product_id, 'product_type' );
 			$product_type = ! empty( $terms ) && ! is_wp_error( $terms ) ? sanitize_title( current( $terms )->name ) : ProductType::SIMPLE;
@@ -2113,9 +2113,9 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 		}
 
 		// Handle product types.
-		if ( 'variation' === $query_vars['type'] ) {
+		if ( ProductType::VARIATION === $query_vars['type'] ) {
 			$wp_query_args['post_type'] = 'product_variation';
-		} elseif ( is_array( $query_vars['type'] ) && in_array( 'variation', $query_vars['type'], true ) ) {
+		} elseif ( is_array( $query_vars['type'] ) && in_array( ProductType::VARIATION, $query_vars['type'], true ) ) {
 			$wp_query_args['post_type']   = array( 'product_variation', 'product' );
 			$wp_query_args['tax_query'][] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 				'relation' => 'OR',
