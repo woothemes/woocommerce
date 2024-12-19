@@ -285,6 +285,11 @@ const productGallery = {
 						)
 					) {
 						context.selectedImage = currentImageAttribute;
+						swiperMain.slideToLoop(
+							getSlideIndexByImageId( currentImageAttribute ),
+							0,
+							false
+						);
 					}
 				}
 			} );
@@ -299,6 +304,11 @@ const productGallery = {
 
 			const selectFirstImage = () => {
 				context.selectedImage = context.firstMainImageId;
+				swiperMain.slideToLoop(
+					getSlideIndexByImageId( context.firstMainImageId ),
+					0,
+					false
+				);
 			};
 
 			if ( clearVariationsLink ) {
