@@ -345,7 +345,7 @@ class RestApi {
 
 		// Errors with "Detected usage of a non-sanitized input variable:"
 		// We don't want to sanitize the file name for pathinfo as it expects the raw file name.
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$extension = pathinfo( $_FILES['file']['name'], PATHINFO_EXTENSION );
 
 		// Same as above, we don't want to sanitize the file name for get_temp_dir as it expects the raw file name.
@@ -381,7 +381,7 @@ class RestApi {
 
 		// Same as above, we don't want to sanitize the file name for basename as it expects the raw file name.
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$response['reference']  = basename( $_FILES['file']['tmp_name'].'.'.$extension );
+		$response['reference']     = basename( $_FILES['file']['tmp_name'] . '.' . $extension );
 		$response['process_nonce'] = wp_create_nonce( $response['reference'] );
 
 		return $response;
