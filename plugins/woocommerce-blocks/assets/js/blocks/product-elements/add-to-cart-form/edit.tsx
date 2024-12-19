@@ -82,7 +82,7 @@ const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
 		<>
 			{ shouldBlockifiedAddtoCartWithOptionsBeRegistered && (
 				<InspectorControls>
-					<UpgradeNotice />
+					<UpgradeNotice blockClientId={ props?.clientId } />
 				</InspectorControls>
 			) }
 			<AddToCartFormSettings

@@ -19,11 +19,14 @@ import {
 import metadata from '../../block.json';
 import getInnerBlocksTemplate from '../../../../add-to-cart-with-options/utils/get-inner-blocks-template';
 
-const upgradeToBlockifiedAddtoCartWithOptions = async () => {
+const upgradeToBlockifiedAddtoCartWithOptions = async (
+	blockClientId: string
+) => {
 	const blocks = select( 'core/block-editor' ).getBlocks();
 	const foundBlock = findBlock( {
 		blocks,
-		findCondition: ( block ) => block.name === metadata.name,
+		findCondition: ( block ) =>
+			block.name === metadata.name && block.clientId === blockClientId,
 	} );
 
 	if ( ! foundBlock ) {
@@ -48,10 +51,14 @@ const upgradeToBlockifiedAddtoCartWithOptions = async () => {
 	);
 };
 
-export const UpgradeNotice = () => {
+export const UpgradeNotice = ( {
+	blockClientId,
+}: {
+	blockClientId: string;
+} ) => {
 	const notice = createInterpolateElement(
 		__(
-			'Upgrade Add to Cart with Options blocks on this page to <strongText /> for more features!',
+			'Upgrade the Add to Cart with Options block to <strongText /> for more features!',
 			'woocommerce'
 		),
 		{
@@ -69,7 +76,7 @@ export const UpgradeNotice = () => {
 	);
 
 	const handleClick = () => {
-		upgradeToBlockifiedAddtoCartWithOptions();
+		upgradeToBlockifiedAddtoCartWithOptions( blockClientId );
 		recordEvent( 'blocks_add_to_cart_with_options_migration', {
 			transform_to: 'blockified',
 		} );
