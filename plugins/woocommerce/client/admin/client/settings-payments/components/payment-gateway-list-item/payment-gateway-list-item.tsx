@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
+import { WooPaymentsMethodsLogos } from '@woocommerce/onboarding';
 import { __ } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
 import { PaymentGatewayProvider } from '@woocommerce/data';
@@ -117,8 +117,8 @@ export const PaymentGatewayListItem = ( {
 							decodeEntities( gateway.description )
 						) }
 					/>
-					{ isWcPay && (
-						<WooPaymentMethodsLogos
+					{ itemIsWooPayments && (
+						<WooPaymentsMethodsLogos
 							maxElements={ 10 }
 							isWooPayEligible={ true }
 						/>

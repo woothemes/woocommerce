@@ -5,7 +5,7 @@
 import { decodeEntities } from '@wordpress/html-entities';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
+import { WooPaymentsMethodsLogos } from '@woocommerce/onboarding';
 import { PaymentExtensionSuggestionProvider } from '@woocommerce/data';
 
 /**
@@ -88,7 +88,7 @@ export const PaymentExtensionSuggestionListItem = ( {
 						) }
 					/>
 					{ isWooPayments( extension.id ) && (
-						<WooPaymentMethodsLogos
+						<WooPaymentsMethodsLogos
 							maxElements={ 10 }
 							isWooPayEligible={ true }
 						/>
