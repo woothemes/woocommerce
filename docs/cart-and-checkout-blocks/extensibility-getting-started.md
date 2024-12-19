@@ -36,6 +36,7 @@ See [`WordPress Dependency Extraction Webpack Plugin`](https://github.com/WordPr
 This Webpack plugin is used to:
 
 - Externalize dependencies that are available as shared scripts or modules on WordPress sites.
+  - This means when you import something from `@woocommerce/blocks-checkout` it resolves that path to `window.wc.wcBlocksCheckout` without you needing to change your code. It makes your code easier to read and allows these packages to be loaded onto the page once.
 - Add an asset file for each entry point that declares an object with the list of WordPress script or module dependencies for the entry point. The asset file also contains the current version calculated for the current source code.
 
 The PHP "asset file" that this plugin outputs contains information your script needs to register itself, such as dependencies and paths.
