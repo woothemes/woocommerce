@@ -481,6 +481,8 @@ final class BlockTypesController {
 					'Cart',
 					'Checkout',
 					'ProductGallery',
+					'ProductCollection\Controller',
+					'ProductCollection\NoResults',
 				)
 			);
 		}
@@ -510,7 +512,6 @@ final class BlockTypesController {
 					'OrderConfirmation\AdditionalInformation',
 					'OrderConfirmation\AdditionalFieldsWrapper',
 					'OrderConfirmation\AdditionalFields',
-					'ProductGallery',
 				)
 			);
 		}

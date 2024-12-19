@@ -1,4 +1,5 @@
 const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
+const { setComingSoon } = require( '../../utils/coming-soon' );
 const { fillPageTitle } = require( '../../utils/editor' );
 const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
 
@@ -27,18 +28,19 @@ const test = baseTest.extend( {
 	testPageTitlePrefix: 'Products filter',
 } );
 
+//todo audit follow-up: see plugins/woocommerce-blocks/tests/e2e/tests/product-filters/price-filter-frontend.block_theme.spec.ts
 test.describe(
 	'Filter items in the shop by product price',
 	{
 		tag: [
-			tags.PAYMENTS,
-			tags.SERVICES,
 			tags.SKIP_ON_WPCOM,
 			tags.SKIP_ON_PRESSABLE,
+			tags.COULD_BE_LOWER_LEVEL_TEST,
 		],
 	},
 	() => {
-		test.beforeAll( async ( { api } ) => {
+		test.beforeAll( async ( { baseURL, api } ) => {
+			await setComingSoon( { baseURL, enabled: 'no' } );
 			// add products
 			await api
 				.post( 'products', {

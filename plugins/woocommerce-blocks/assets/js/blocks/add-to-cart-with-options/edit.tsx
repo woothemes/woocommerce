@@ -17,6 +17,8 @@ import type { InnerBlockTemplate } from '@wordpress/blocks';
 import { useIsDescendentOfSingleProductBlock } from '../../atomic/blocks/product-elements/shared/use-is-descendent-of-single-product-block';
 import { AddToCartOptionsSettings } from './settings';
 import ToolbarProductTypeGroup from './components/toolbar-type-product-selector-group';
+import useProductTypeSelector from './hooks/use-product-type-selector';
+
 export interface Attributes {
 	className?: string;
 	isDescendentOfSingleProductBlock: boolean;
@@ -38,6 +40,8 @@ const INNER_BLOCKS_TEMPLATE: InnerBlockTemplate[] = [
 			content: __( 'Add to Cart', 'woocommerce' ),
 		},
 	],
+	[ 'woocommerce/product-stock-indicator' ],
+	[ 'woocommerce/add-to-cart-with-options-quantity-selector' ],
 	[
 		'woocommerce/product-button',
 		{
@@ -51,16 +55,29 @@ const AddToCartOptionsEdit = ( props: BlockEditProps< Attributes > ) => {
 	const { setAttributes } = props;
 
 	const blockProps = useBlockProps();
+	const blockClientId = blockProps?.id;
 	const { isDescendentOfSingleProductBlock } =
 		useIsDescendentOfSingleProductBlock( {
-			blockClientId: blockProps?.id,
+			blockClientId,
 		} );
+
+	const { registerListener, unregisterListener } = useProductTypeSelector();
 
 	useEffect( () => {
 		setAttributes( {
 			isDescendentOfSingleProductBlock,
 		} );
-	}, [ setAttributes, isDescendentOfSingleProductBlock ] );
+		registerListener( blockClientId );
+		return () => {
+			unregisterListener( blockClientId );
+		};
+	}, [
+		setAttributes,
+		isDescendentOfSingleProductBlock,
+		blockClientId,
+		registerListener,
+		unregisterListener,
+	] );
 
 	return (
 		<>
