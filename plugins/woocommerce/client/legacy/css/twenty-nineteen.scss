@@ -371,6 +371,15 @@ table.variations {
 		display: inline-block;
 	}
 
+	.woocommerce-product-gallery__image a {
+		display: block;
+	}
+
+	.woocommerce-product-gallery__image a:focus img {
+		outline: thin dotted;
+		outline-offset: -1px;
+	}
+
 	.flex-control-thumbs {
 		li {
 			list-style: none;
