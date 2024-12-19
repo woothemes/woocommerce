@@ -270,9 +270,9 @@ class WC_Install {
 		'9.5.0' => array(
 			'wc_update_950_tracking_option_autoload',
 		),
-		'9.6.0' => array(
-			'wc_update_960_add_old_refunded_order_items_to_product_lookup_table',
-			'wc_update_960_update_primary_key_to_composite_in_order_product_lookup_table',
+		'9.7.0' => array(
+			'wc_update_970_update_primary_key_to_composite_in_order_product_lookup_table',
+			'wc_update_970_add_old_refunded_order_items_to_product_lookup_table',
 		),
 	);
 
