@@ -239,11 +239,8 @@
 						"--shard=3/4",
 						"--shard=4/4"
 					],
-					"changes": [ 
-						"tests/e2e-pw/**"
-					],
+					"changes": [],
 					"events": [
-						"pull_request",
 						"daily-checks",
 						"release-checks"
 					],
@@ -266,11 +263,8 @@
 						"--shard=3/4",
 						"--shard=4/4"
 					],
-					"changes": [
-						"tests/e2e-pw/**"
-					],
+					"changes": [],
 					"events": [
-						"pull_request",
 						"daily-checks",
 						"release-checks"
 					],
@@ -288,11 +282,8 @@
 					"testType": "e2e",
 					"command": "test:e2e:with-env woocommerce-payments",
 					"shardingArguments": [],
-					"changes": [
-						"tests/e2e-pw/**"
-					],
+					"changes": [],
 					"events": [
-						"pull_request",
 						"daily-checks",
 						"release-checks"
 					],
@@ -310,11 +301,8 @@
 					"testType": "e2e",
 					"command": "test:e2e:with-env woocommerce-paypal-payments",
 					"shardingArguments": [],
-					"changes": [
-						"tests/e2e-pw/**"
-					],
+					"changes": [],
 					"events": [
-						"pull_request",
 						"daily-checks",
 						"release-checks"
 					],
@@ -335,11 +323,8 @@
 						"--shard=1/2",
 						"--shard=2/2"
 					],
-					"changes": [
-						"tests/e2e-pw/**"
-					],
+					"changes": [],
 					"events": [
-						"pull_request",
 						"daily-checks",
 						"release-checks"
 					],
@@ -388,9 +373,7 @@
 						"--shard=4/5",
 						"--shard=5/5"
 					],
-					"changes": [
-						"tests/e2e-pw/**"
-					],
+					"changes": [],
 					"testEnv": {
 						"start": "env:test",
 						"config": {
@@ -398,7 +381,6 @@
 						}
 					},
 					"events": [
-						"pull_request",
 						"daily-checks",
 						"release-checks"
 					],
@@ -419,9 +401,7 @@
 						"--shard=4/5",
 						"--shard=5/5"
 					],
-					"changes": [
-						"tests/e2e-pw/**"
-					],
+					"changes": [],
 					"testEnv": {
 						"start": "env:test",
 						"config": {
@@ -429,7 +409,6 @@
 						}
 					},
 					"events": [
-						"pull_request",
 						"daily-checks",
 						"release-checks"
 					],
@@ -450,9 +429,7 @@
 						"--shard=4/5",
 						"--shard=5/5"
 					],
-					"changes": [
-						"tests/e2e-pw/**"
-					],
+					"changes": [],
 					"testEnv": {
 						"start": "env:test",
 						"config": {
@@ -460,7 +437,6 @@
 						}
 					},
 					"events": [
-						"pull_request",
 						"daily-checks",
 						"release-checks"
 					],
