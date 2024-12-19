@@ -70,6 +70,62 @@ test.describe( 'registerBlockSingleProductTemplate registers', () => {
 		} );
 	} );
 
+	test( 'blocks are registered correctly when switching templates via command palette', async ( {
+		admin,
+		editor,
+		page,
+	} ) => {
+		const blockName = 'woocommerce/product-price';
+
+		await test.step( 'Blocks not available in non-product template', async () => {
+			// Visit site editor with a non-product template
+			await admin.visitSiteEditor( {
+				postId: 'woocommerce/woocommerce//coming-soon',
+				postType: 'wp_template',
+				canvas: 'edit',
+			} );
+
+			// Try to insert the block
+			await editor.insertBlock( { name: blockName } );
+			await expect(
+				await editor.getBlockByName( blockName )
+			).toHaveCount( 0 );
+		} );
+
+		await test.step( 'Switch to Single Product template via command palette', async () => {
+			// Open command palette
+			await page.keyboard.press( 'Meta+K' );
+
+			// Wait for command palette to be visible
+			const searchInput = page.getByRole( 'combobox', {
+				name: 'Search',
+			} );
+			await expect( searchInput ).toBeVisible();
+
+			// Search for and select Single Product template
+			await searchInput.fill( 'Single Product' );
+			const templateOption = page.getByRole( 'option', {
+				name: /Single Product/i,
+			} );
+			await expect( templateOption ).toBeVisible();
+			await templateOption.click();
+
+			await expect(
+				await editor.getBlockByName( 'core/post-title' )
+			).toBeVisible();
+		} );
+
+		await test.step( 'Blocks available after switching to Single Product template', async () => {
+			// Try to insert the block
+			await editor.insertBlock( { name: blockName } );
+
+			// Verify block is now available
+			await expect(
+				await editor.getBlockByName( blockName )
+			).toHaveCount( 1 );
+		} );
+	} );
+
 	test( 'block unavailable on posts, e.g. Product Details', async ( {
 		admin,
 		editor,
