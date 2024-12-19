@@ -500,9 +500,7 @@ test.describe( `${ blockData.name } Block`, () => {
 		);
 		await editor.selectBlocks( addToCartWithOptionsBlock );
 
-		await page
-			.getByRole( 'button', { name: 'Switch back to the classic' } )
-			.click();
+		await page.getByRole( 'button', { name: 'Switch back' } ).click();
 
 		await expect(
 			editor.canvas.getByLabel(
