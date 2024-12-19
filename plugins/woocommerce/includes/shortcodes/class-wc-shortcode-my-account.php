@@ -94,7 +94,7 @@ class WC_Shortcode_My_Account {
 			wc_add_notice(
 				sprintf(
 					// translators: %s: site name.
-					__( 'Your account with %s is using a temporary password. We emailed you a link to set your account password.', 'woocommerce' ),
+					__( 'Your account with %s is using a temporary password. We emailed you a link to change your password.', 'woocommerce' ),
 					esc_html( wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES ) )
 				),
 				'notice',
