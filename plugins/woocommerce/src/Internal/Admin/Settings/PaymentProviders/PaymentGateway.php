@@ -135,11 +135,22 @@ class PaymentGateway {
 	 */
 	public function get_supports_list( WC_Payment_Gateway $payment_gateway ): array {
 		$supports_list = $payment_gateway->supports ?? array();
+		if ( ! is_array( $supports_list ) ) {
+			return array();
+		}
 
-		// Ensure the list is unique and re-indexed.
-		$supports_list = array_values( array_unique( $supports_list ) );
+		// Sanitize the list to ensure it only contains a list of key-like strings.
+		$sanitized_list = array();
+		foreach ( $supports_list as $support ) {
+			if ( ! is_string( $support ) ) {
+				continue;
+			}
 
-		return $supports_list;
+			$sanitized_list[] = sanitize_key( $support );
+		}
+
+		// Ensure the list contains unique values and re-indexed.
+		return array_values( array_unique( $sanitized_list ) );
 	}
 
 	/**
