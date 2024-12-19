@@ -4,11 +4,14 @@
 import { createElement, useState } from '@wordpress/element';
 import { CheckboxControl } from '@wordpress/components';
 
-export const SettingsCheckbox = ( { setting }: { setting: SettingsField } ) => {
-	const { id, desc } = setting;
-	const [ checked, setChecked ] = useState( setting.value === 'yes' );
-	const onChange = ( value: boolean ) => {
-		setChecked( value );
+export const SettingsCheckbox = ( {
+	id,
+	desc,
+	value,
+}: Pick< SettingsField, 'id' | 'desc' | 'value' > ) => {
+	const [ checked, setChecked ] = useState( value === 'yes' );
+	const onChange = ( newValue: boolean ) => {
+		setChecked( newValue );
 	};
 	return (
 		<CheckboxControl

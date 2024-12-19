@@ -7,9 +7,13 @@ import { createElement, useState } from '@wordpress/element';
 import { __experimentalInputControl as InputControl } from '@wordpress/components';
 /* eslint-enable @woocommerce/dependency-group */
 
-export const SettingsInput = ( { setting }: { setting: SettingsField } ) => {
-	const { id, desc } = setting;
-	const [ value, setValue ] = useState( setting.value );
+export const SettingsInput = ( {
+	id,
+	desc,
+	type,
+	value: initialValue,
+}: Pick< SettingsField, 'id' | 'desc' | 'type' | 'value' > ) => {
+	const [ value, setValue ] = useState( initialValue );
 	const onChange = ( newValue: string ) => {
 		setValue( newValue );
 	};
@@ -18,7 +22,7 @@ export const SettingsInput = ( { setting }: { setting: SettingsField } ) => {
 			id={ id }
 			label={ desc }
 			onChange={ onChange }
-			type={ setting.type }
+			type={ type }
 			value={ value }
 		/>
 	);
