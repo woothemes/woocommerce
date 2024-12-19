@@ -67,12 +67,8 @@ export const BuilderIntro = ( {
 							// @ts-expect-error tmp
 							process_nonce: data.process_nonce,
 						},
-					} ).then( ( response ) => {
-						setMessage(
-							'Schema imported successfully. Redirecting to ' +
-								// @ts-expect-error tmp
-								response.data.redirect
-						);
+					} ).then( () => {
+						setMessage( 'Schema imported successfully' );
 
 						setImporting( false );
 
