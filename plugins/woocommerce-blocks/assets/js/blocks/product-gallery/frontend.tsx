@@ -26,28 +26,16 @@ const getContext = ( ns?: string ) =>
 type Store = typeof productGallery & StorePart< ProductGallery >;
 const { state, actions } = store< Store >( 'woocommerce/product-gallery' );
 
-const selectImage = (
-	context: ProductGalleryContext,
-	select: 'next' | 'previous'
-) => {
-	const imagesIds =
-		context[
-			context.isDialogOpen ? 'dialogVisibleImagesIds' : 'visibleImagesIds'
-		];
-	const selectedImageIdIndex = imagesIds.indexOf( context.selectedImage );
-	const nextImageIndex =
-		select === 'next'
-			? Math.min( selectedImageIdIndex + 1, imagesIds.length - 1 )
-			: Math.max( selectedImageIdIndex - 1, 0 );
-	context.selectedImage = imagesIds[ nextImageIndex ];
-};
-
-const swiperContainer = document.querySelector(
+const swiperMainContainer = document.querySelector(
 	'.wc-block-product-gallery-large-image'
 );
 
+const swiperDialogContainer = document.querySelector(
+	'.wc-block-product-gallery--dialog .wc-block-product-gallery-large-image'
+);
+
 const getSlideIndexByImageId = ( imageId: string ) => {
-	const slides = swiperContainer?.querySelectorAll( '.swiper-slide' );
+	const slides = swiperMainContainer?.querySelectorAll( '.swiper-slide' );
 	let slideIndex = 0;
 
 	if ( slides ) {
@@ -76,7 +64,7 @@ const getSlideIndexByImageId = ( imageId: string ) => {
 };
 
 const getImageIdFromIndex = ( index: number ) => {
-	const imageIdContext = swiperContainer
+	const imageIdContext = swiperMainContainer
 		?.querySelector(
 			`.swiper-slide[data-swiper-slide-index="${ index }"] img`
 		)
@@ -89,29 +77,38 @@ const getImageIdFromIndex = ( index: number ) => {
 	return imageId;
 };
 
-const swiper = new Swiper( swiperContainer as HTMLElement, {
+const setPager = ( imageId: string ) => {
+	(
+		document.querySelector(
+			".wc-block-product-gallery-pager__pager-item[data-wc-context='" +
+				JSON.stringify( { imageId } ) +
+				"']"
+		) as HTMLButtonElement
+	 )?.click();
+};
+
+const swiperMain = new Swiper( swiperMainContainer as HTMLElement, {
 	direction: 'horizontal',
 	loop: true,
 	on: {
 		beforeInit: () => {
-			if ( swiperContainer ) {
-				( swiperContainer as HTMLElement ).style.width =
-					( swiperContainer as HTMLElement ).clientWidth + 'px';
+			if ( swiperMainContainer ) {
+				( swiperMainContainer as HTMLElement ).style.width =
+					( swiperMainContainer as HTMLElement ).clientWidth + 'px';
 			}
 		},
 		realIndexChange: ( swiperInstance ) => {
 			// Since we're not using the Swiper's pagination, we need to manually update the selected image for the pager.
 			const imageId = getImageIdFromIndex( swiperInstance.realIndex );
 
-			(
-				document.querySelector(
-					".wc-block-product-gallery-pager__pager-item[data-wc-context='" +
-						JSON.stringify( { imageId } ) +
-						"']"
-				) as HTMLButtonElement
-			 )?.click();
+			setPager( imageId );
 		},
 	},
+} );
+
+const swiperDialog = new Swiper( swiperDialogContainer as HTMLElement, {
+	direction: 'horizontal',
+	loop: true,
 } );
 
 const closeDialog = ( context: ProductGalleryContext ) => {
@@ -119,6 +116,13 @@ const closeDialog = ( context: ProductGalleryContext ) => {
 	// Reset the main image.
 	context.selectedImage = context.firstMainImageId;
 	document.body.classList.remove( 'wc-block-product-gallery-modal-open' );
+
+	const slideIndexId = getImageIdFromIndex(
+		parseInt( context.selectedImage, 10 )
+	);
+
+	swiperMain.slideToLoop( slideIndexId, 0, false );
+	setPager( context.selectedImage );
 
 	if ( context.elementThatTriggeredDialogOpening ) {
 		context.elementThatTriggeredDialogOpening?.focus();
@@ -150,6 +154,13 @@ const productGallery = {
 		openDialog: () => {
 			const context = getContext();
 			context.isDialogOpen = true;
+
+			swiperDialog.slideToLoop(
+				getSlideIndexByImageId( context.selectedImage ),
+				0,
+				false
+			);
+
 			document.body.classList.add(
 				'wc-block-product-gallery-modal-open'
 			);
@@ -176,7 +187,7 @@ const productGallery = {
 		selectImage: () => {
 			const context = getContext();
 			context.selectedImage = context.imageId;
-			swiper.slideToLoop(
+			swiperMain.slideToLoop(
 				getSlideIndexByImageId( context.imageId ),
 				0,
 				false
@@ -186,13 +197,23 @@ const productGallery = {
 			if ( event ) {
 				event.stopPropagation();
 			}
-			swiper.slideNext();
+			const context = getContext();
+			if ( context.isDialogOpen ) {
+				swiperDialog.slideNext();
+			} else {
+				swiperMain.slideNext();
+			}
 		},
 		selectPreviousImage: ( event: MouseEvent ) => {
 			if ( event ) {
 				event.stopPropagation();
 			}
-			swiper.slidePrev();
+			const context = getContext();
+			if ( context.isDialogOpen ) {
+				swiperDialog.slidePrev();
+			} else {
+				swiperMain.slidePrev();
+			}
 		},
 		onThumbnailKeyDown: ( event: KeyboardEvent ) => {
 			const context = getContext();
@@ -315,12 +336,12 @@ const productGallery = {
 
 				// Check if left arrow key is pressed.
 				if ( event.code === 'ArrowLeft' ) {
-					selectImage( context, 'previous' );
+					swiperDialog.slidePrev();
 				}
 
 				// Check if right arrow key is pressed.
 				if ( event.code === 'ArrowRight' ) {
-					selectImage( context, 'next' );
+					swiperDialog.slideNext();
 				}
 			};
 
