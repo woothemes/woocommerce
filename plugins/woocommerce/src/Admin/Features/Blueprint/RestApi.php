@@ -296,7 +296,7 @@ class RestApi {
 	/**
 	 * Handle the upload request.
 	 *
-	 * We're not caling to run the import process in this function.
+	 * We're not calling to run the import process in this function.
 	 * We'll upload the file to a temporary dir, validate the file, and return a reference to the file.
 	 * The uploaded file will be processed once user hits the import button and calls the process endpoint with a nonce.
 	 *
