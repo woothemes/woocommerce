@@ -53,13 +53,12 @@ const getComponent = ( setting: SettingsField ) => {
 			return <SettingsSelect setting={ setting } />;
 		case 'custom':
 			return (
-				<div id={ setting.id }>
-					<div
-						dangerouslySetInnerHTML={ {
-							__html: sanitize( setting.content || '' ),
-						} }
-					/>
-				</div>
+				<div
+					id={ setting.id }
+					dangerouslySetInnerHTML={ {
+						__html: sanitize( setting.content || '' ),
+					} }
+				/>
 			);
 		case 'slotfill_placeholder':
 			return <div id={ setting.id } className={ setting.class }></div>;
