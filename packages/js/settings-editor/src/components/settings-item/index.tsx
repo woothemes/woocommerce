@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { createElement } from '@wordpress/element';
+import { sanitize } from 'dompurify';
 import {
 	// @ts-expect-error missing types.
 	__experimentalVStack as VStack,
@@ -50,6 +51,17 @@ const getComponent = ( setting: SettingsField ) => {
 			);
 		case 'select':
 			return <SettingsSelect { ...setting } />;
+		case 'custom':
+			return (
+				<div
+					id={ setting.id }
+					dangerouslySetInnerHTML={ {
+						__html: sanitize( setting.content || '' ),
+					} }
+				/>
+			);
+		case 'slotfill_placeholder':
+			return <div id={ setting.id } className={ setting.class }></div>;
 		default:
 			return <div>{ setting.type }</div>;
 	}
