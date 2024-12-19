@@ -305,30 +305,30 @@ class RestApi {
 	public function queue() {
 		// Initialize response structure.
 		$response = array(
-			'reference' => null,
+			'reference'  => null,
 			'error_type' => null,
-			'errors' => array()
+			'errors'     => array(),
 		);
 
 		// Check for nonce to prevent CSRF.
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 		if ( ! isset( $_POST['blueprint_upload_nonce'] ) || ! \wp_verify_nonce( $_POST['blueprint_upload_nonce'], 'blueprint_upload_nonce' ) ) {
 			$response['error_type'] = 'upload';
-			$response['errors'][] = __( 'Invalid nonce', 'woocommerce' );
+			$response['errors'][]   = __( 'Invalid nonce', 'woocommerce' );
 			return $response;
 		}
 
 		// Validate file upload.
 		if ( empty( $_FILES['file'] ) || ! isset( $_FILES['file']['error'], $_FILES['file']['tmp_name'], $_FILES['file']['type'] ) ) {
 			$response['error_type'] = 'upload';
-			$response['errors'][] = __( 'No file uploaded', 'woocommerce' );
+			$response['errors'][]   = __( 'No file uploaded', 'woocommerce' );
 			return $response;
 		}
 
 		// phpcs:ignore
 		if ( UPLOAD_ERR_OK !== $_FILES['file']['error'] || ! is_uploaded_file( $_FILES['file']['tmp_name'] ) ) {
 			$response['error_type'] = 'upload';
-			$response['errors'][] = __( 'File upload error', 'woocommerce' );
+			$response['errors'][]   = __( 'File upload error', 'woocommerce' );
 			return $response;
 		}
 
@@ -337,7 +337,7 @@ class RestApi {
 		// Check for valid file types.
 		if ( 'application/json' !== $mime_type && 'application/zip' !== $mime_type ) {
 			$response['error_type'] = 'upload';
-			$response['errors'][] = __( 'Invalid file type', 'woocommerce' );
+			$response['errors'][]   = __( 'Invalid file type', 'woocommerce' );
 			return $response;
 		}
 
@@ -351,7 +351,7 @@ class RestApi {
 		// phpcs:ignore
 		if ( ! move_uploaded_file( $_FILES['file']['tmp_name'], $tmp_filepath ) ) {
 			$response['error_type'] = 'upload';
-			$response['errors'][] = __( 'Error moving file to tmp directory', 'woocommerce' );
+			$response['errors'][]   = __( 'Error moving file to tmp directory', 'woocommerce' );
 			return $response;
 		}
 
@@ -370,13 +370,13 @@ class RestApi {
 			}
 		} catch ( \Exception $e ) {
 			$response['error_type'] = 'schema_validation';
-			$response['errors'][] = $e->getMessage();
+			$response['errors'][]   = $e->getMessage();
 			return $response;
 		}
 
 		// phpcs:ignore
 		$response['reference']  = basename( $_FILES['file']['tmp_name'].'.'.$extension );
-		$response['process_nonce']       = wp_create_nonce( $response['reference'] );
+		$response['process_nonce'] = wp_create_nonce( $response['reference'] );
 
 		return $response;
 	}
@@ -437,8 +437,6 @@ class RestApi {
 			'result'   => $result_formatter->format(),
 		);
 
-		$this->record_import( $ref, $results );
-
 		return $response;
 	}
 
@@ -478,24 +476,6 @@ class RestApi {
 		return $blueprint_steps;
 	}
 
-	/**
-	 * Record an import so that it can be used for conflict checking later.
-	 *
-	 * @param StepProcessorResult[] $results result of step processors.
-	 * @return void
-	 */
-	private function record_import( $ref, array $results ) {
-		// Remove the first element as it is from the ImportSchema itself.
-		$results                  = array_slice( $results, 1 );
-		$blueprint_import_history = get_option( 'blueprint_import_histories', array() );
-		$history                  = new ImportHistory( $ref );
-		foreach ( $results as $result ) {
-			$history->add_result( $result );
-		}
-
-		$blueprint_import_history[] = $history->to_array();
-		update_option( 'blueprint_import_histories', $blueprint_import_history );
-	}
 
 	/**
 	 * Get the schema for the queue endpoint.
@@ -509,19 +489,19 @@ class RestApi {
 			'type'       => 'object',
 			'properties' => array(
 				'reference'     => array(
-					'type'     => 'string',
+					'type' => 'string',
 				),
 				'process_nonce' => array(
-					'type'     => 'string',
+					'type' => 'string',
 				),
 				'error_type'    => array(
-					'type'     => 'string',
+					'type'    => 'string',
 					'default' => null,
-					'enum'   => array( 'upload', 'schema_validation', 'conflict' ),
+					'enum'    => array( 'upload', 'schema_validation', 'conflict' ),
 				),
 				'errors'        => array(
-					'type'     => 'array',
-					'items'    => array(
+					'type'  => 'array',
+					'items' => array(
 						'type' => 'string',
 					),
 				),
@@ -543,19 +523,19 @@ class RestApi {
 			'type'       => 'object',
 			'properties' => array(
 				'processed' => array(
-					'type'     => 'boolean',
+					'type' => 'boolean',
 				),
 				'message'   => array(
-					'type'     => 'string',
+					'type' => 'string',
 				),
 				'data'      => array(
-					'type'     => 'object',
+					'type'       => 'object',
 					'properties' => array(
 						'redirect' => array(
-							'type'     => 'string',
+							'type' => 'string',
 						),
 						'result'   => array(
-							'type'     => 'array',
+							'type' => 'array',
 						),
 					),
 				),
