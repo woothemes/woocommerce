@@ -55,11 +55,10 @@ export const PaymentGatewayListItem = ( {
 			return 'needs_setup';
 		}
 		if ( gateway.state.enabled ) {
-			if ( isWcPay ) {
-				if ( gateway.state.test_mode ) {
-					return 'test_mode';
-				}
+			if ( gateway.state.test_mode ) {
+				return 'test_mode';
 			}
+
 			return 'active';
 		}
 
