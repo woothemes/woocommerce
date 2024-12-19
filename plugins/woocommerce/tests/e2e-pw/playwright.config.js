@@ -5,7 +5,7 @@ const testsRootPath = __dirname;
 const testsResultsPath = `${ testsRootPath }/test-results`;
 
 if ( ! process.env.BASE_URL ) {
-	console.log( 'BASE_URL is not set. Using default.' );
+	console.log( 'BASE_URL is not set. Using default' );
 	process.env.BASE_URL = 'http://localhost:8086';
 }
 
