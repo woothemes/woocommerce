@@ -185,7 +185,7 @@ const Blueprint = () => {
 			saveButton.style.display = 'none';
 		}
 	} );
-	console.log( queueResponse );
+
 	return (
 		<div className="blueprint-settings-slotfill">
 			{ error && (
@@ -336,7 +336,7 @@ const Blueprint = () => {
 					setIsOverwriteConfirmationModalOpen( false );
 				} }
 				onConfirm={ importBlueprint }
-				overwrittenItems={ queueResponse?.settings_to_override || [] }
+				overwrittenItems={ queueResponse?.settings_to_overwrite || [] }
 			/>
 		</div>
 	);

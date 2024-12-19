@@ -381,9 +381,9 @@ class RestApi {
 
 		// Same as above, we don't want to sanitize the file name for basename as it expects the raw file name.
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$response['reference']            = basename( $_FILES['file']['tmp_name'] . '.' . $extension );
-		$response['process_nonce']        = wp_create_nonce( $response['reference'] );
-		$response['settings_to_override'] = $this->get_settings_to_override( $import_schema->get_schema()->get_steps() );
+		$response['reference']             = basename( $_FILES['file']['tmp_name'] . '.' . $extension );
+		$response['process_nonce']         = wp_create_nonce( $response['reference'] );
+		$response['settings_to_overwrite'] = $this->get_settings_to_overwrite( $import_schema->get_schema()->get_steps() );
 
 		return $response;
 	}
@@ -488,7 +488,7 @@ class RestApi {
 	 * @param array $requested_steps List of steps from the import schema.
 	 * @return array List of settings that will be overridden.
 	 */
-	private function get_settings_to_override( array $requested_steps ): array {
+	private function get_settings_to_overwrite( array $requested_steps ): array {
 		$settings_map = array(
 			'setWCSettings'            => __( 'Settings', 'woocommerce' ),
 			'setWCCoreProfilerOptions' => __( 'Core Profiler Options', 'woocommerce' ),
@@ -525,24 +525,24 @@ class RestApi {
 			'title'      => 'queue',
 			'type'       => 'object',
 			'properties' => array(
-				'reference'            => array(
+				'reference'             => array(
 					'type' => 'string',
 				),
-				'process_nonce'        => array(
+				'process_nonce'         => array(
 					'type' => 'string',
 				),
-				'settings_to_override' => array(
+				'settings_to_overwrite' => array(
 					'type'  => 'array',
 					'items' => array(
 						'type' => 'string',
 					),
 				),
-				'error_type'           => array(
+				'error_type'            => array(
 					'type'    => 'string',
 					'default' => null,
 					'enum'    => array( 'upload', 'schema_validation', 'conflict' ),
 				),
-				'errors'               => array(
+				'errors'                => array(
 					'type'  => 'array',
 					'items' => array(
 						'type' => 'string',
