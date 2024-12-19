@@ -5,7 +5,7 @@ import { BlockAttributes, InnerBlockTemplate } from '@wordpress/blocks';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { stacks } from '@woocommerce/icons';
-import { registerBlockSingleProductTemplate } from '@woocommerce/atomic-utils';
+import { registerProductBlockType } from '@woocommerce/atomic-utils';
 import { getSettingWithCoercion } from '@woocommerce/settings';
 import { isBoolean } from '@woocommerce/types';
 
@@ -117,7 +117,7 @@ export const INNER_BLOCKS_TEMPLATE: InnerBlockTemplate[] = [
 	],
 ];
 
-registerBlockSingleProductTemplate( {
+registerProductBlockType( {
 	blockName: QUERY_LOOP_ID,
 	blockMetadata: {},
 	blockSettings: {
