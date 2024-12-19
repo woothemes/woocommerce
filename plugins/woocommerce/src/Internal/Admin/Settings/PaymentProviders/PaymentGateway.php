@@ -81,25 +81,31 @@ class PaymentGateway {
 	/**
 	 * Get the provider title of the payment gateway.
 	 *
+	 * This is the intended gateway title to use throughout the WC admin. It should be short.
+	 *
+	 * Note: We don't allow HTML tags in the title. All HTML tags will be stripped, including their contents.
+	 *
 	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
 	 *
 	 * @return string The provider title of the payment gateway.
 	 */
 	public function get_title( WC_Payment_Gateway $payment_gateway ): string {
-		// This is the WC admin title.
-		return $payment_gateway->get_method_title();
+		return  wp_strip_all_tags( html_entity_decode( $payment_gateway->get_method_title() ), true );
 	}
 
 	/**
 	 * Get the provider description of the payment gateway.
+	 *
+	 * This is the intended gateway description to use throughout the WC admin. It should be short and to the point.
+	 *
+	 * Note: We don't allow HTML tags in the description. All HTML tags will be stripped, including their contents.
 	 *
 	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
 	 *
 	 * @return string The provider description of the payment gateway.
 	 */
 	public function get_description( WC_Payment_Gateway $payment_gateway ): string {
-		// This is the WC admin description.
-		return $payment_gateway->get_method_description();
+		return wp_strip_all_tags( html_entity_decode( $payment_gateway->get_method_description() ), true );
 	}
 
 	/**
