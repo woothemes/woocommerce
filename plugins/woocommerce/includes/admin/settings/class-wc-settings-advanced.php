@@ -530,14 +530,14 @@ class WC_Settings_Advanced extends WC_Settings_Page {
 				}
 			}
 
-			if ( ! class_exists( 'WC_Tracks' ) && 'no' === $new_value && 'yes' === $prev_value ) {
+			if ( class_exists( 'WC_Tracks' ) && 'no' === $new_value && 'yes' === $prev_value ) {
 				WC_Tracks::track_woocommerce_allow_tracking_toggled( $prev_value, $new_value, 'settings' );
 			}
 
 			$this->save_settings_for_current_section();
 			$this->do_update_options_action();
 
-			if ( ! class_exists( 'WC_Tracks' ) && 'yes' === $new_value && 'no' === $prev_value ) {
+			if ( class_exists( 'WC_Tracks' ) && 'yes' === $new_value && 'no' === $prev_value ) {
 				WC_Tracks::track_woocommerce_allow_tracking_toggled( $prev_value, $new_value, 'settings' );
 			}
 		}
