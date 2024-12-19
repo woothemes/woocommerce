@@ -2994,14 +2994,6 @@ if ( ! function_exists( 'woocommerce_form_field' ) ) {
 		$args = wp_parse_args( $args, $defaults );
 		$args = apply_filters( 'woocommerce_form_field_args', $args, $key, $value );
 
-		$is_required = (bool) $args['required'];
-
-		if ( $is_required ) {
-			$required_indicator = '&nbsp;<span class="required" aria-hidden="true">*</span>';
-		} else {
-			$required_indicator = '&nbsp;<span class="optional">(' . esc_html__( 'optional', 'woocommerce' ) . ')</span>';
-		}
-
 		if ( is_string( $args['class'] ) ) {
 			$args['class'] = array( $args['class'] );
 		}
@@ -3015,6 +3007,9 @@ if ( ! function_exists( 'woocommerce_form_field' ) ) {
 			}
 
 			$args['class'][] = 'validate-required';
+			$required_indicator = '&nbsp;<span class="required" aria-hidden="true">*</span>';
+		} else {
+			$required_indicator = '&nbsp;<span class="optional">(' . esc_html__( 'optional', 'woocommerce' ) . ')</span>';
 		}
 
 		if ( is_string( $args['label_class'] ) ) {
