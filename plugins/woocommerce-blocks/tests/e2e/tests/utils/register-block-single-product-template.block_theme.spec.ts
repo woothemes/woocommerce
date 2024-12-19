@@ -94,7 +94,11 @@ test.describe( 'registerBlockSingleProductTemplate registers', () => {
 
 		await test.step( 'Switch to Single Product template via command palette', async () => {
 			// Open command palette
-			await page.keyboard.press( 'Meta+K' );
+			if ( process.platform === 'darwin' ) {
+				await page.keyboard.press( 'Meta+K' );
+			} else {
+				await page.keyboard.press( 'Control+K' );
+			}
 
 			const searchInput = page.getByRole( 'combobox', {
 				name: 'Search',
