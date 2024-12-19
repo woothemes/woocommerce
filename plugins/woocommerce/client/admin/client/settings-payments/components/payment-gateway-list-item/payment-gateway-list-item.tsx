@@ -33,7 +33,7 @@ export const PaymentGatewayListItem = ( {
 	acceptIncentive,
 	...props
 }: PaymentGatewayItemProps ) => {
-	const isWcPay = isWooPayments( gateway.id );
+	const itemIsWooPayments = isWooPayments( gateway.id );
 	const incentive = hasIncentive( gateway ) ? gateway._incentive : null;
 	const shouldHighlightIncentive =
 		incentive && ! incentive?.promo_id.includes( '-action-' );
@@ -69,7 +69,9 @@ export const PaymentGatewayListItem = ( {
 		<div
 			id={ gateway.id }
 			className={ `transitions-disabled woocommerce-list__item woocommerce-list__item-enter-done woocommerce-item__payment-gateway ${
-				isWcPay ? `woocommerce-item__woocommerce-payments` : ''
+				itemIsWooPayments
+					? `woocommerce-item__woocommerce-payments`
+					: ''
 			} ${ shouldHighlightIncentive ? `has-incentive` : '' }` }
 			{ ...props }
 		>
