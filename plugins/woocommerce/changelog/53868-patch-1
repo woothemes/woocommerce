@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+Comment: Check if there is a minimum of two values in the `$path_pieces`.
+
