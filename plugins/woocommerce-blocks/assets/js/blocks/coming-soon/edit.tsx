@@ -12,6 +12,7 @@ import { type BlockEditProps } from '@wordpress/blocks';
 
 export type Attributes = {
 	color: string;
+	storeOnly: boolean;
 };
 
 export type EditProps = BlockEditProps< Attributes >;
@@ -21,8 +22,16 @@ export type EditProps = BlockEditProps< Attributes >;
  */
 
 export default function Edit( { attributes, setAttributes }: EditProps ) {
-	const { color } = attributes;
+	const { color, storeOnly } = attributes;
 	const blockProps = { ...useBlockProps() };
+
+	if ( storeOnly ) {
+		return (
+			<div { ...blockProps }>
+				<InnerBlocks />
+			</div>
+		);
+	}
 
 	return (
 		<>

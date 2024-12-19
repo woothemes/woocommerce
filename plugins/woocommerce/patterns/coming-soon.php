@@ -8,6 +8,8 @@
  *
  * @package WooCommerce\Blocks
  */
+
+$store_pages_only = 'yes' === get_option( 'woocommerce_store_pages_only', 'no' );
 ?>
 
-<!-- wp:pattern {"slug":"woocommerce/page-coming-soon-default"} /-->
+<!-- wp:pattern {"slug":"woocommerce/<?php echo $store_pages_only ? 'page-coming-soon-with-header-footer' : 'page-coming-soon-default'; ?>"} /-->
