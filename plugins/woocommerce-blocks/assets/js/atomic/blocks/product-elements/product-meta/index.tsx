@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { registerBlockSingleProductTemplate } from '@woocommerce/atomic-utils';
+import { registerProductBlockType } from '@woocommerce/atomic-utils';
 import { Icon } from '@wordpress/icons';
 import { productMeta } from '@woocommerce/icons';
 
@@ -12,7 +12,7 @@ import edit from './edit';
 import save from './save';
 import metadata from './block.json';
 
-registerBlockSingleProductTemplate( {
+registerProductBlockType( {
 	blockName: metadata.name,
 	// @ts-expect-error: `metadata` currently does not have a type definition in WordPress core
 	blockMetadata: metadata,

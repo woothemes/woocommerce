@@ -78,7 +78,7 @@ const test = baseTest.extend( {
 	},
 } );
 
-test.describe( 'Merchant > Customer List', { tag: tags.SERVICES }, () => {
+test.describe( 'Merchant > Customer List', () => {
 	test.beforeEach( async ( { context } ) => {
 		// prevents the column picker from saving state between tests
 		await context.route( '**/users/**', ( route ) => route.abort() );
