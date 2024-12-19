@@ -4,15 +4,19 @@
 import { createElement, useState } from '@wordpress/element';
 import { SelectControl } from '@wordpress/components';
 
-export const SettingsSelect = ( { setting }: { setting: SettingsField } ) => {
-	const { id, desc } = setting;
-	const [ value, setValue ] = useState( String( setting.value ) );
+export const SettingsSelect = ( {
+	id,
+	desc,
+	value: originalValue,
+	options,
+}: Pick< SettingsField, 'id' | 'desc' | 'value' | 'options' > ) => {
+	const [ value, setValue ] = useState( String( originalValue ) );
 	const onChange = ( newValue: string ) => {
 		setValue( newValue );
 	};
-	const options = setting.options
-		? Object.keys( setting.options ).map( ( key ) => {
-				return { label: key, value: setting.options![ key ] };
+	const formattedOptions = options
+		? Object.keys( options ).map( ( key ) => {
+				return { label: key, value: options![ key ] };
 		  } )
 		: [];
 	return (
@@ -20,7 +24,7 @@ export const SettingsSelect = ( { setting }: { setting: SettingsField } ) => {
 			id={ id }
 			label={ desc }
 			value={ value }
-			options={ options }
+			options={ formattedOptions }
 			onChange={ onChange }
 			// @ts-expect-error.
 			__nextHasNoMarginBottom

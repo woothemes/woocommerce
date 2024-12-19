@@ -31,9 +31,9 @@ const getComponent = ( setting: SettingsField ) => {
 		case 'email':
 		case 'url':
 		case 'tel':
-			return <SettingsInput setting={ setting } />;
+			return <SettingsInput { ...setting } />;
 		case 'checkbox':
-			return <SettingsCheckbox setting={ setting } />;
+			return <SettingsCheckbox { ...setting } />;
 		case 'checkboxgroup':
 			return (
 				<VStack spacing={ 4 }>
@@ -42,7 +42,7 @@ const getComponent = ( setting: SettingsField ) => {
 							return (
 								<SettingsCheckbox
 									key={ checkboxSetting.id }
-									setting={ checkboxSetting }
+									{ ...checkboxSetting }
 								/>
 							);
 						}
@@ -50,7 +50,7 @@ const getComponent = ( setting: SettingsField ) => {
 				</VStack>
 			);
 		case 'select':
-			return <SettingsSelect setting={ setting } />;
+			return <SettingsSelect { ...setting } />;
 		case 'custom':
 			return (
 				<div

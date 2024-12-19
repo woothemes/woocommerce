@@ -37,7 +37,7 @@ export const SettingsGroup = ( { group }: { group: SettingsGroup } ) => {
 					const key =
 						setting.id +
 						'-' +
-						( setting.title ?? '' ).replace( ' ', '-' ) +
+						( setting.title ?? '' ).replace( /\s+/g, '-' ) +
 						'-' +
 						setting.type +
 						'-group';

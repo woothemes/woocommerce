@@ -2,7 +2,7 @@
  * External dependencies
  */
 import type { BlockConfiguration, BlockAttributes } from '@wordpress/blocks';
-import { registerBlockSingleProductTemplate } from '@woocommerce/atomic-utils';
+import { registerProductBlockType } from '@woocommerce/atomic-utils';
 import { isEmptyObject } from '@woocommerce/types';
 
 /**
@@ -42,7 +42,7 @@ const blockSettings: BlockConfiguration = {
 	edit,
 };
 
-registerBlockSingleProductTemplate( {
+registerProductBlockType( {
 	blockName: 'woocommerce/product-summary',
 	blockMetadata: metadata,
 	blockSettings,
