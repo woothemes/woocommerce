@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { registerBlockSingleProductTemplate } from '@woocommerce/atomic-utils';
+import { registerProductBlockType } from '@woocommerce/atomic-utils';
 import { Icon, button } from '@wordpress/icons';
 
 /**
@@ -29,7 +29,7 @@ const blockSettings = {
 	},
 };
 
-registerBlockSingleProductTemplate( {
+registerProductBlockType( {
 	blockName: metadata.name,
 	blockMetadata: metadata,
 	blockSettings,
