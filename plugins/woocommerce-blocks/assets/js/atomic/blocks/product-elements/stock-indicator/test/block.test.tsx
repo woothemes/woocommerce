@@ -11,6 +11,18 @@ import { getSetting } from '@woocommerce/settings';
  */
 import { Block } from '../block';
 
+jest.mock( '@wordpress/data', () => {
+	const originalModule = jest.requireActual( '@wordpress/data' );
+	return {
+		...originalModule,
+		useSelect: jest.fn( () => ( {
+			selectedProductType: {
+				slug: 'simple',
+			},
+		} ) ),
+	};
+} );
+
 jest.mock( '@woocommerce/settings', () => ( {
 	getSetting: jest.fn().mockImplementation( ( param ) => {
 		if ( param === 'wcBlocksConfig' ) {
@@ -39,6 +51,11 @@ jest.mock( '@woocommerce/settings', () => ( {
 				instock: 'In stock',
 				outofstock: 'Out of stock',
 				onbackorder: 'On backorder',
+			};
+		}
+		if ( param === 'productTypes' ) {
+			return {
+				simple: 'Simple product',
 			};
 		}
 	} ),
