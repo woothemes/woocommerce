@@ -325,7 +325,9 @@ class RestApi {
 			return $response;
 		}
 
-		// phpcs:ignore
+		// It errors with " Detected usage of a non-sanitized input variable:"
+		// We don't want to sanitize the file name for is_uploaded_file as it expects the raw file name.
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		if ( UPLOAD_ERR_OK !== $_FILES['file']['error'] || ! is_uploaded_file( $_FILES['file']['tmp_name'] ) ) {
 			$response['error_type'] = 'upload';
 			$response['errors'][]   = __( 'File upload error', 'woocommerce' );
@@ -341,14 +343,17 @@ class RestApi {
 			return $response;
 		}
 
-		// phpcs:ignore
+		// Errors with "Detected usage of a non-sanitized input variable:"
+		// We don't want to sanitize the file name for pathinfo as it expects the raw file name.
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$extension = pathinfo( $_FILES['file']['name'], PATHINFO_EXTENSION );
 
-		// Move file to temporary directory.
-		// phpcs:ignore
-		$tmp_filepath = get_temp_dir() . basename( $_FILES['file']['tmp_name'] ).'.'.$extension;
+		// Same as above, we don't want to sanitize the file name for get_temp_dir as it expects the raw file name.
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$tmp_filepath = get_temp_dir() . basename( $_FILES['file']['tmp_name'] ) . '.' . $extension;
 
-		// phpcs:ignore
+		// Same as above, we don't want to sanitize the file name for move_uploaded_file as it expects the raw file name.
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		if ( ! move_uploaded_file( $_FILES['file']['tmp_name'], $tmp_filepath ) ) {
 			$response['error_type'] = 'upload';
 			$response['errors'][]   = __( 'Error moving file to tmp directory', 'woocommerce' );
@@ -374,7 +379,8 @@ class RestApi {
 			return $response;
 		}
 
-		// phpcs:ignore
+		// Same as above, we don't want to sanitize the file name for basename as it expects the raw file name.
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$response['reference']  = basename( $_FILES['file']['tmp_name'].'.'.$extension );
 		$response['process_nonce'] = wp_create_nonce( $response['reference'] );
 
