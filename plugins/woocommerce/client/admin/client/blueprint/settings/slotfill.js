@@ -37,6 +37,8 @@ const Blueprint = () => {
 		setIsOverwriteConfirmationModalOpen,
 	] = useState( false );
 	const [ isImporting, setIsImporting ] = useState( false );
+	const [ queueResponse, setQueueResponse ] = useState( null );
+
 	const { createSuccessNotice } = useDispatch( noticesStore );
 
 	const blueprintStepGroups =
@@ -100,6 +102,36 @@ const Blueprint = () => {
 		setExportEnabled( true );
 	};
 
+	const handleFileChange = async ( event ) => {
+		const file = event.target.files[ 0 ];
+
+		if ( ! window?.wcSettings?.admin?.blueprint_upload_nonce ) {
+			throw new Error(
+				'Blueprint upload nonce is not set. Please contact support.'
+			);
+		}
+
+		const formData = new FormData();
+		formData.append( 'file', file );
+		formData.append(
+			'blueprint_upload_nonce',
+			window.wcSettings.admin.blueprint_upload_nonce
+		);
+
+		const { errors, ...restQueueResponse } = await apiFetch( {
+			path: '/wc-admin/blueprint/queue',
+			method: 'POST',
+			body: formData,
+		} );
+
+		if ( errors.length > 0 ) {
+			setError( errors.join( ', ' ) );
+			return;
+		}
+
+		setQueueResponse( restQueueResponse );
+	};
+
 	const importBlueprint = async () => {
 		setIsImporting( true );
 		try {
@@ -107,9 +139,8 @@ const Blueprint = () => {
 				path: '/wc-admin/blueprint/process',
 				method: 'POST',
 				data: {
-					// TODO: Get reference and process_nonce from the previous step
-					reference: '',
-					process_nonce: '',
+					reference: queueResponse.reference,
+					process_nonce: queueResponse.process_nonce,
 				},
 			} );
 
@@ -154,7 +185,7 @@ const Blueprint = () => {
 			saveButton.style.display = 'none';
 		}
 	} );
-
+	console.log( queueResponse );
 	return (
 		<div className="blueprint-settings-slotfill">
 			{ error && (
@@ -209,6 +240,13 @@ const Blueprint = () => {
 				className="woocommerce-blueprint-import-button"
 				variant="primary"
 				onClick={ () => {
+					if ( ! queueResponse ) {
+						setError(
+							'No import file found. Please select a file first.'
+						);
+						return;
+					}
+
 					setIsOverwriteConfirmationModalOpen( true );
 				} }
 			>
@@ -273,7 +311,7 @@ const Blueprint = () => {
 			</div>
 			<br></br>
 			<Button
-				isPrimary
+				variant="primary"
 				onClick={ () => {
 					const selectedSteps = Object.entries( checkedState ).reduce(
 						( acc, [ groupId, groupState ] ) => {
@@ -298,13 +336,7 @@ const Blueprint = () => {
 					setIsOverwriteConfirmationModalOpen( false );
 				} }
 				onConfirm={ importBlueprint }
-				// TODO: Get overwritten items from the API
-				overwrittenItems={ [
-					'General',
-					'Products',
-					'Shipping',
-					'Taxes',
-				] }
+				overwrittenItems={ queueResponse?.settings_to_override || [] }
 			/>
 		</div>
 	);
