@@ -2,13 +2,13 @@
  * External dependencies
  */
 import { createElement } from '@wordpress/element';
+import { sanitize } from 'dompurify';
 import {
 	// @ts-expect-error missing types.
 	__experimentalVStack as VStack,
 	// @ts-expect-error missing types.
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
-import { sanitize } from 'dompurify';
 
 /**
  * Internal dependencies
