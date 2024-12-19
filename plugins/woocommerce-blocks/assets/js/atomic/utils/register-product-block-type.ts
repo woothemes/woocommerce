@@ -183,10 +183,10 @@ export class BlockRegistrationManager {
 		}
 
 		this.blocks.forEach( ( config ) => {
-			if ( ! this.hasAttemptedRegistration( config.blockName ) ) {
-				this.unregisterBlock( config );
-				this.registerBlock( config );
-			}
+			// When the template changes, we need to unregister and register all blocks that are available on the new template
+			// Unregistering the block will remove it from the `hasAttemptedRegistration` set, so we can register it again
+			this.unregisterBlock( config );
+			this.registerBlock( config );
 		} );
 	}
 

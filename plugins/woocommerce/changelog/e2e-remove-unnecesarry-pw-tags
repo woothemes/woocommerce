@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+E2E tests: update test tags to make the different envs suites smaller
