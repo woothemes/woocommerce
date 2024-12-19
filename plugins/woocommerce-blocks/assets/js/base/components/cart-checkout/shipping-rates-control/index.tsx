@@ -2,7 +2,8 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useEffect, useRef } from '@wordpress/element';
+import { useEffect } from '@wordpress/element';
+import { usePrevious } from '@woocommerce/base-hooks';
 import LoadingMask from '@woocommerce/base-components/loading-mask';
 import { ExperimentalOrderShippingPackages } from '@woocommerce/blocks-checkout';
 import {
@@ -70,11 +71,14 @@ const ShippingRatesControl = ( {
 	renderOption,
 	context,
 }: ShippingRatesControlProps ): JSX.Element => {
-	const shippingRatesRateCount = useRef(
+	const shippingRatesRateCount = getShippingRatesRateCount( shippingRates );
+	const shippingRatesPackageCount =
+		getShippingRatesPackageCount( shippingRates );
+	const previousShippingRatesRateCount = usePrevious(
 		getShippingRatesRateCount( shippingRates )
 	);
-	const shippingRatesPackageCount = useRef(
-		getShippingRatesRateCount( shippingRates )
+	const previousShippingRatesPackageCount = usePrevious(
+		getShippingRatesPackageCount( shippingRates )
 	);
 
 	useEffect( () => {
@@ -82,26 +86,24 @@ const ShippingRatesControl = ( {
 			return;
 		}
 
-		const newShippingRatesRateCount =
-			getShippingRatesRateCount( shippingRates );
-		const newShippingRatesPackageCount =
-			getShippingRatesPackageCount( shippingRates );
-
 		if (
-			shippingRatesRateCount.current === newShippingRatesRateCount &&
-			shippingRatesPackageCount.current === newShippingRatesPackageCount
+			previousShippingRatesRateCount === shippingRatesRateCount &&
+			previousShippingRatesPackageCount === shippingRatesPackageCount
 		) {
 			return;
 		}
 
 		speakFoundShippingOptions(
-			newShippingRatesPackageCount,
-			newShippingRatesRateCount
+			shippingRatesPackageCount,
+			shippingRatesRateCount
 		);
-
-		shippingRatesRateCount.current = newShippingRatesRateCount;
-		shippingRatesPackageCount.current = newShippingRatesPackageCount;
-	}, [ isLoadingRates, shippingRates ] );
+	}, [
+		isLoadingRates,
+		shippingRatesRateCount,
+		shippingRatesPackageCount,
+		previousShippingRatesRateCount,
+		previousShippingRatesPackageCount,
+	] );
 
 	// Prepare props to pass to the ExperimentalOrderShippingPackages slot fill.
 	// We need to pluck out receiveCart.
