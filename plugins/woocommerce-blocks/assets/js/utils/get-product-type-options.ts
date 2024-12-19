@@ -18,7 +18,7 @@ const productTypes = getSetting< Record< string, string > >(
  *
  * @return {ProductTypeProps[]} Product types collection.
  */
-export default function getProductTypeOptions(): ProductTypeProps[] {
+export function getProductTypeOptions(): ProductTypeProps[] {
 	return Object.keys( productTypes ).map( ( key ) => ( {
 		slug: key,
 		label: productTypes[ key ],
