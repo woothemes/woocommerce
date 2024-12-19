@@ -61,7 +61,7 @@ class StepProcessorResult {
 		$this->step_name = $step_name;
 	}
 
-	public function set_paylaod( array $payload ) {
+	public function set_payload( array $payload ) {
 		$this->payload = $payload;
 	}
 
