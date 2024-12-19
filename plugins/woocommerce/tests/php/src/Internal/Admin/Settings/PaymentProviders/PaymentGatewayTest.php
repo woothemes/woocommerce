@@ -211,6 +211,26 @@ class PaymentGatewayTest extends WC_Unit_Test_Case {
 	public function test_get_icon() {
 		$fake_gateway = new FakePaymentGateway( 'woocommerce_payments', array( 'icon' => 'https://example.com/icon.png' ) );
 		$this->assertEquals( 'https://example.com/icon.png', $this->sut->get_icon( $fake_gateway ) );
+
+		// Test invalid URL falls back to default icon.
+		$fake_gateway = new FakePaymentGateway( 'woocommerce_payments', array( 'icon' => 'not_good_url/icon.svg' ) );
+		$this->assertStringContainsString( 'wp-content/plugins/woocommerce/assets/images/icons/default-payments.svg', $this->sut->get_icon( $fake_gateway ) );
+
+		// Test empty icon falls back to default icon.
+		$fake_gateway = new FakePaymentGateway( 'woocommerce_payments', array( 'icon' => '' ) );
+		$this->assertStringContainsString( 'wp-content/plugins/woocommerce/assets/images/icons/default-payments.svg', $this->sut->get_icon( $fake_gateway ) );
+
+		// Test missing icon falls back to default icon.
+		$fake_gateway = new FakePaymentGateway( 'woocommerce_payments', array() );
+		$this->assertStringContainsString( 'wp-content/plugins/woocommerce/assets/images/icons/default-payments.svg', $this->sut->get_icon( $fake_gateway ) );
+
+		// Test icon with img tag falls back to default icon.
+		$fake_gateway = new FakePaymentGateway( 'woocommerce_payments', array( 'icon' => '<img src="https://example.com/icon.png" />' ) );
+		$this->assertStringContainsString( 'wp-content/plugins/woocommerce/assets/images/icons/default-payments.svg', $this->sut->get_icon( $fake_gateway ) );
+
+		// Test icon with list of images falls back to default icon.
+		$fake_gateway = new FakePaymentGateway( 'woocommerce_payments', array( 'icon' => '<img src="https://example.com/icon.png" /><img src="https://example.com/icon2.png" />' ) );
+		$this->assertStringContainsString( 'wp-content/plugins/woocommerce/assets/images/icons/default-payments.svg', $this->sut->get_icon( $fake_gateway ) );
 	}
 
 	/**
@@ -221,10 +241,15 @@ class PaymentGatewayTest extends WC_Unit_Test_Case {
 			'gateway1',
 			array(
 				'supports' => array(
-					'key' => 'products',
-					2     => 'something',
-					3     => 'bogus',
+					'key'   => 'products',
+					2       => 'something',
+					3       => 'bogus', // Only one `bogus` entry should be returned.
 					'bogus',
+					// Sanitization.
+					'list'  => array( 'products', 'something', 'bogus' ), // This should be ignored.
+					'item'  => 1,                                         // This should be ignored.
+					'item2' => true,                                      // This should be ignored.
+					':"|<>bogus_-1%@#%^&*',
 				),
 			)
 		);
@@ -233,6 +258,7 @@ class PaymentGatewayTest extends WC_Unit_Test_Case {
 				'products',
 				'something',
 				'bogus',
+				'bogus_-1',
 			),
 			$this->sut->get_supports_list( $fake_gateway )
 		);
