@@ -364,9 +364,9 @@ class RestApi {
 		// Full validation is performed in the process function.
 		try {
 			if ( 'application/zip' === $mime_type ) {
-				$import_schema = ImportSchema::create_from_zip( $tmp_filepath );
+				ImportSchema::create_from_zip( $tmp_filepath );
 			} else {
-				$import_schema = ImportSchema::create_from_json( $tmp_filepath );
+				ImportSchema::create_from_json( $tmp_filepath );
 			}
 		} catch ( \Exception $e ) {
 			$response['error_type'] = 'schema_validation';
@@ -377,11 +377,6 @@ class RestApi {
 		// phpcs:ignore
 		$response['reference']  = basename( $_FILES['file']['tmp_name'].'.'.$extension );
 		$response['process_nonce']       = wp_create_nonce( $response['reference'] );
-//		$conflicts = $this->check_conflicts( $import_schema->get_schema()->get_steps() );
-//		if ($conflicts) {
-//			$response['error_type'] = 'conflict';
-//			$response['errors'] = $conflicts;
-//		}
 
 		return $response;
 	}
@@ -500,54 +495,6 @@ class RestApi {
 
 		$blueprint_import_history[] = $history->to_array();
 		update_option( 'blueprint_import_histories', $blueprint_import_history );
-	}
-
-	private function check_conflicts( array $requested_steps, array $histories = array() ) {
-		$conflicts = array(
-			'settings' => array(),
-			'plugins'  => array(),
-			'themes'   => array(),
-		);
-
-		if ( empty( $histories ) ) {
-			$histories = get_option( 'blueprint_import_histories', array() );
-			if ( empty( $histories ) ) {
-				return $conflicts;
-			}
-		}
-
-		$history = ImportHistory::from_array( end( $histories ) );
-
-		// @todo -- these should be dynamic.
-		$settings_steps = array(
-			'setWCSettings'            => 'Settings',
-			'setWCCoreProfilerOptions' => 'Core Profiler Options',
-			'setWCPaymentGateways'     => 'Payment Gateways',
-			'setWCShipping'            => 'Shipping',
-			'setWCTaskOptions'         => 'Task Options',
-			'setWCTaxRates'            => 'Tax Rates',
-		);
-
-		$settings_steps_keys = array_keys( $settings_steps );
-
-		foreach ( $requested_steps as $requested_step ) {
-			if ( $requested_step->step === 'installPlugin' || $requested_step->step === 'installTheme' ) {
-				$payload = array(
-					'slug' => $requested_step->step === 'installPlugin' ? $requested_step->pluginZipFile->slug : $requested_step->themeZipFile->slug,
-				);
-
-				if ( $history->has_step_with_payload( $requested_step->step, $payload ) ) {
-					$conflicts[ $requested_step->step === 'installPlugin' ? 'plugins' : 'themes' ][] = $payload['slug'];
-				}
-			} elseif ( in_array( $requested_step->step, $settings_steps_keys ) ) {
-				$step = $settings_steps[ $requested_step->step ];
-				if ( count( $history->get_steps_by_name( $requested_step->step ) ) > 0 ) {
-					$conflicts['settings'][] = $step;
-				}
-			}
-		}
-
-		return $conflicts;
 	}
 
 	/**
