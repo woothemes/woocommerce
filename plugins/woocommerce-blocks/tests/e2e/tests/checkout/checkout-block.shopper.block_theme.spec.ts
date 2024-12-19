@@ -254,25 +254,23 @@ test.describe( 'Shopper → Shipping and Billing Addresses', () => {
 	// `as string` is safe here because we know the variable is a string, it is defined above.
 	const blockSelectorInEditor = blockData.selectors.editor.block as string;
 
-	test.beforeEach( async ( { admin, editor } ) => {
+	test.beforeEach( async ( { admin, editor, page } ) => {
 		await admin.visitSiteEditor( {
 			postId: 'woocommerce/woocommerce//page-checkout',
 			postType: 'wp_template',
 			canvas: 'edit',
 		} );
 
+		await editor.openDocumentSettingsSidebar();
 		await editor.selectBlocks(
 			blockSelectorInEditor +
 				'  [data-type="woocommerce/checkout-shipping-address-block"]'
 		);
-
-		await editor.openDocumentSettingsSidebar();
-
-		const checkbox = editor.page.getByRole( 'checkbox', {
+		const checkbox = page.getByRole( 'checkbox', {
 			name: 'Company',
 			exact: true,
 		} );
-		await checkbox.click();
+		await checkbox.check();
 		await expect( checkbox ).toBeChecked();
 		await expect(
 			editor.canvas.locator(
