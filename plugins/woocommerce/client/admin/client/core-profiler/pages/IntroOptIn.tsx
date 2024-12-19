@@ -129,8 +129,8 @@ export const IntroOptIn = ( {
 						checked={ iOptInDataSharing }
 						onChange={ ( value ) => {
 							recordEvent( 'woocommerce_allow_tracking_toggled', {
-								previous_value: ! value,
-								new_value: value,
+								previous_value: value ? 'no' : 'yes',
+								new_value: value ? 'yes' : 'no',
 								context: 'core-profiler',
 							} );
 							setIsOptInDataSharing( value );
