@@ -54,8 +54,6 @@ class ImportInstallTheme implements StepProcessor {
 		$installed_themes = $this->wp_get_themes();
 		// phpcs:ignore
 		$theme = $schema->themeZipFile;
-		$this->result->set_paylaod( array( 'slug' => $theme->slug ) );
-
 
 		if ( isset( $installed_themes[ $theme->slug ] ) ) {
 			$this->result->add_info( "Skipped installing {$theme->slug}. It is already installed." );

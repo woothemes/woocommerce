@@ -32,22 +32,14 @@ class StepProcessorResult {
 	private string $step_name;
 
 	/**
-	 * Payload
-	 *
-	 * @var array $payload
-	 */
-	private array $payload;
-
-	/**
 	 * Construct.
 	 *
 	 * @param bool   $success Indicate whether the process was success or not.
 	 * @param string $step_name The name of the step.
 	 */
-	public function __construct( bool $success, string $step_name, array $payload = array() ) {
+	public function __construct( bool $success, string $step_name ) {
 		$this->success   = $success;
 		$this->step_name = $step_name;
-		$this->payload = $payload;
 	}
 
 	/**
@@ -61,13 +53,6 @@ class StepProcessorResult {
 		$this->step_name = $step_name;
 	}
 
-	public function set_payload( array $payload ) {
-		$this->payload = $payload;
-	}
-
-	public function get_payload() {
-		return $this->payload;
-	}
 	/**
 	 * Create a new instance with $success = true.
 	 *
