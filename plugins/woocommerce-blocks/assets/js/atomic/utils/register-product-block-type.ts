@@ -313,8 +313,25 @@ export class BlockRegistrationManager {
 }
 
 /**
- * Registers a block for use in single product templates and optionally in the post editor.
- * Main export and public API for the block registration system.
+ * Registers a block type specifically for WooCommerce product templates and optionally makes it available
+ * in the post editor. This function serves as the main entry point for registering product-related blocks.
+ *
+ * This function is specifically designed for blocks that require a product context to function properly.
+ * For example, blocks like 'product-price', 'product-title', or 'product-rating' only make sense when they
+ * have access to product data. These blocks should not be used in templates or block areas where no product
+ * context is defined, as they won't have access to the necessary product information to render meaningful content.
+ * The registration system enforces this by default by setting appropriate ancestor constraints.
+ *
+ * The function uses the BlockRegistrationManager singleton to handle the actual registration process,
+ * which includes:
+ * - Managing block registration across different editor contexts (site editor vs post editor)
+ * - Handling template-specific block constraints
+ * - Managing block variations if specified
+ * - Preventing duplicate registrations
+ *
+ * By default, blocks registered through this function will be available in the single product template
+ * with no ancestor constraints. The `isAvailableOnPostEditor` flag can be used to make
+ * the block available in regular post editing contexts as well where ancestor constraints are enforced.
  *
  * @example
  * ```typescript
