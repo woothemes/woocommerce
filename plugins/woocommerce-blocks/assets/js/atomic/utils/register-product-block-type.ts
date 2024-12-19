@@ -340,13 +340,12 @@ export class BlockRegistrationManager {
  * @example
  * ```typescript
  * registerProductBlockType({
- *     blockNameOrMetadata: 'woocommerce/product-price',
- *     settings: {
- *         title: 'Product Price',
- *         category: 'woocommerce',
- *         edit: () => <div>Price Editor</div>,
- *         save: () => <div>Saved Price</div>,
- *     },
+ *     name: 'woocommerce/product-price',
+ *     title: 'Product Price',
+ *     category: 'woocommerce',
+ *     edit: () => <div>Price Editor</div>,
+ *     save: () => <div>Saved Price</div>
+ * }, {
  *     isAvailableOnPostEditor: true
  * });
  * ```
