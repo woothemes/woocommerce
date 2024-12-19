@@ -31,7 +31,7 @@ export const LegacyContent = ( {
 					const key =
 						data.id +
 						'-' +
-						( data.title ?? '' ).replace( ' ', '-' ) +
+						( data.title ?? '' ).replace( /\s+/g, '-' ) +
 						'-' +
 						data.type;
 
