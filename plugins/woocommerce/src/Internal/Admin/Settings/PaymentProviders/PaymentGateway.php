@@ -111,16 +111,25 @@ class PaymentGateway {
 	/**
 	 * Get the provider icon URL of the payment gateway.
 	 *
+	 * We expect to receive a URL to an image file.
+	 * If the gateway provides an <img> tag or a list of them, we will fall back to the default payments icon.
+	 *
 	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
 	 *
 	 * @return string The provider icon URL of the payment gateway.
 	 */
 	public function get_icon( WC_Payment_Gateway $payment_gateway ): string {
-		// We only want the URl, not the <img> tag that the get_icon() method returns.
-		$icon_url = $payment_gateway->icon;
-		// Test if it actually is a URL as some gateways put an <img> tag.
+		$icon_url = $payment_gateway->icon ?? '';
+		if ( ! is_string( $icon_url ) ) {
+			$icon_url = '';
+		}
+
+		$icon_url = trim( $icon_url );
+
+		// Test if it actually is a URL as some gateways put an <img> tag or a list of them.
 		if ( ! wc_is_valid_url( $icon_url ) ) {
-			return '';
+			// Fall back to the default payments icon.
+			return plugins_url( 'assets/images/icons/default-payments.svg', WC_PLUGIN_FILE );
 		}
 
 		return WC_HTTPS::force_https_url( $icon_url );
