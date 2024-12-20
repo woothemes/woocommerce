@@ -54,8 +54,8 @@ class PaymentGatewayTest extends WC_Unit_Test_Case {
 				'test_mode_onboarding'        => true,
 				'plugin_slug'                 => 'woocommerce-payments',
 				'plugin_file'                 => 'woocommerce-payments/woocommerce-payments.php',
-				'method_title'                => 'WooPayments',
-				'method_description'          => 'Accept payments with WooPayments.',
+				'method_title'                => 'WooPayments has a very long title that should be truncated after some length like this',
+				'method_description'          => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
 				'supports'                    => array( 'products', 'something', 'bogus' ),
 				'icon'                        => 'https://example.com/icon.png',
 				'recommended_payment_methods' => array(
@@ -110,8 +110,8 @@ class PaymentGatewayTest extends WC_Unit_Test_Case {
 			array(
 				'id'          => 'woocommerce_payments',
 				'_order'      => 999,
-				'title'       => 'WooPayments',
-				'description' => 'Accept payments with WooPayments.',
+				'title'       => 'WooPayments has a very long title that should be truncated after some length',
+				'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim…',
 				'icon'        => 'https://example.com/icon.png',
 				'supports'    => array( 'products', 'something', 'bogus' ),
 				'state'       => array(
