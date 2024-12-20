@@ -12,7 +12,7 @@ To get started, it is recommended to first read the [Block Development Environme
 
 ## Example block template package
 
-There is an example block template in the WooCommerce repository. Having this template set up while reading this document may help to understand some of the concepts discussed. See the [`@woocommerce/extend-cart-checkout-block` package documentation](https://github.com/woocommerce/woocommerce/tree/trunk/packages/js/extend-cart-checkout-block#woocommerceextend-cart-checkout-block) for how to install and run the example block.
+There is an example block template in the WooCommerce repository. Having this template set up while reading this document may help to understand some of the concepts discussed. See the [`@woocommerce/extend-cart-checkout-block` package documentation](https://github.com/woocommerce/woocommerce/tree/trunk/packages/js/extend-cart-checkout-block/README.md) for how to install and run the example block.
 
 (Note: the code in the repository linked above will not be very useful alone; the code there is templating code. It will be transformed into regular JS and PHP after following the README instructions.)
 
