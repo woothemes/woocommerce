@@ -14,8 +14,11 @@ import { store as editSiteStore } from '@wordpress/edit-site/build-module/store'
  * Internal dependencies
  */
 import { homeRoute } from './route-home';
+import { productsRoute } from './route-products';
 
-const routes = [ homeRoute ];
+export type RouteArea = 'sidebar' | 'preview' | 'mobile';
+
+const routes = [ homeRoute, productsRoute ];
 
 export function useRegisterSiteEditorRoutes() {
 	const { registerRoute } = unlock( useDispatch( editSiteStore ) );

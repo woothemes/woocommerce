@@ -16,12 +16,12 @@ export type RouteProps = {
 	areas: Record< RouteArea, JSX.Element >;
 };
 
-export const homeRoute = {
+export const productsRoute = {
 	name: 'home',
-	path: '/wc-settings',
+	path: '/wc-settings/products',
 	areas: {
 		sidebar: (
-			<Sidebar title={ __( 'Settings', 'woocommerce' ) } backPack="/" />
+			<Sidebar title={ __( 'Products', 'woocommerce' ) } backPack="/" />
 		),
 		preview: <div>Preview</div>,
 		content: <div>Content</div>,
