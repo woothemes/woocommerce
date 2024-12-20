@@ -5,6 +5,8 @@
  * @package WooCommerce\Tests\Paypal.
  */
 
+use Automattic\WooCommerce\Enums\PaymentMethods;
+
 /**
  * Class WC_Gateway_Paypal_Test.
  */
@@ -31,7 +33,7 @@ class WC_Gateway_Paypal_Test extends \WC_Unit_Test_Case {
 
 		$order->update_meta_data( '_paypal_status', 'pending' );
 		$order->set_transaction_id( $this->transaction_id_26960 );
-		$order->set_payment_method( 'paypal' );
+		$order->set_payment_method( PaymentMethods::PAYPAL );
 		$order->save();
 
 		// Force HTTP error.
@@ -58,7 +60,7 @@ class WC_Gateway_Paypal_Test extends \WC_Unit_Test_Case {
 
 		$order->update_meta_data( '_paypal_status', 'pending' );
 		$order->set_transaction_id( $this->transaction_id_26960 );
-		$order->set_payment_method( 'paypal' );
+		$order->set_payment_method( PaymentMethods::PAYPAL );
 		$order->save();
 
 		// Force HTTP error.
@@ -102,7 +104,7 @@ class WC_Gateway_Paypal_Test extends \WC_Unit_Test_Case {
 		$order = WC_Helper_Order::create_order();
 		$order->update_meta_data( '_paypal_status', 'pending' );
 		$order->set_transaction_id( $this->transaction_id_26960 );
-		$order->set_payment_method( 'paypal' );
+		$order->set_payment_method( PaymentMethods::PAYPAL );
 		$order->save();
 
 		// Force HTTP error.
@@ -153,7 +155,7 @@ class WC_Gateway_Paypal_Test extends \WC_Unit_Test_Case {
 		$order->save();
 
 		$posted_meta = array(
-			'payment_type'   => 'paypal',
+			'payment_type'   => PaymentMethods::PAYPAL,
 			'txn_id'         => $this->transaction_id_26960,
 			'payment_status' => 'Completed',
 		);
@@ -164,7 +166,7 @@ class WC_Gateway_Paypal_Test extends \WC_Unit_Test_Case {
 
 		$call_posted_meta->call( ( new WC_Gateway_Paypal_IPN_Handler( true ) ), $order, $posted_meta );
 
-		$this->assertEquals( $order->get_meta( 'Payment type' ), 'paypal' );
+		$this->assertEquals( $order->get_meta( 'Payment type' ), PaymentMethods::PAYPAL );
 		$this->assertEquals( $order->get_transaction_id(), $this->transaction_id_26960 );
 		$this->assertEquals( $order->get_meta( '_paypal_status' ), 'Completed' );
 	}

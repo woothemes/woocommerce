@@ -10,6 +10,7 @@
  */
 
 use Automattic\Jetpack\Constants;
+use Automattic\WooCommerce\Enums\PaymentMethods;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -1452,7 +1453,7 @@ class WC_Admin_Setup_Wizard {
 					),
 				),
 			),
-			'paypal'          => array(
+			PaymentMethods::PAYPAL => array(
 				'name'        => __( 'PayPal Standard', 'woocommerce' ),
 				'description' => __( 'Accept payments via PayPal using account balance or credit card.', 'woocommerce' ),
 				'image'       => '',
@@ -1528,7 +1529,7 @@ class WC_Admin_Setup_Wizard {
 		$can_paypal  = $this->is_paypal_supported_currency( $currency );
 
 		if ( ! current_user_can( 'install_plugins' ) ) {
-			return $can_paypal ? array( 'paypal' => $gateways['paypal'] ) : array();
+			return $can_paypal ? array( PaymentMethods::PAYPAL => $gateways['paypal'] ) : array();
 		}
 
 		$klarna_or_square = false;
@@ -1589,19 +1590,19 @@ class WC_Admin_Setup_Wizard {
 	public function get_wizard_manual_payment_gateways() {
 		_deprecated_function( __CLASS__ . '::' . __FUNCTION__, '4.6.0', 'Onboarding is maintained in WooCommerce Admin.' );
 		$gateways = array(
-			'cheque' => array(
+			PaymentMethods::CHEQUE => array(
 				'name'        => _x( 'Check payments', 'Check payment method', 'woocommerce' ),
 				'description' => __( 'A simple offline gateway that lets you accept a check as method of payment.', 'woocommerce' ),
 				'image'       => '',
 				'class'       => '',
 			),
-			'bacs'   => array(
+			PaymentMethods::BACS   => array(
 				'name'        => __( 'Bank transfer (BACS) payments', 'woocommerce' ),
 				'description' => __( 'A simple offline gateway that lets you accept BACS payment.', 'woocommerce' ),
 				'image'       => '',
 				'class'       => '',
 			),
-			'cod'    => array(
+			PaymentMethods::COD    => array(
 				'name'        => __( 'Cash on delivery', 'woocommerce' ),
 				'description' => __( 'A simple offline gateway that lets you accept cash on delivery.', 'woocommerce' ),
 				'image'       => '',

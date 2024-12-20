@@ -10,6 +10,7 @@
 require_once __DIR__ . '/date-filtering.php';
 
 use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Enums\PaymentMethods;
 use Automattic\WooCommerce\RestApi\UnitTests\Helpers\CouponHelper;
 use Automattic\WooCommerce\RestApi\UnitTests\Helpers\OrderHelper;
 
@@ -276,7 +277,7 @@ class WC_Tests_API_Orders extends WC_REST_Unit_Test_Case {
 		$request = new WP_REST_Request( 'POST', '/wc/v3/orders' );
 		$request->set_body_params(
 			array(
-				'payment_method'       => 'bacs',
+				'payment_method'       => PaymentMethods::BACS,
 				'payment_method_title' => 'Direct Bank Transfer',
 				'set_paid'             => true,
 				'billing'              => array(
@@ -400,7 +401,7 @@ class WC_Tests_API_Orders extends WC_REST_Unit_Test_Case {
 		$request = new WP_REST_Request( 'POST', '/wc/v3/orders' );
 		$request->set_body_params(
 			array(
-				'payment_method'       => 'bacs',
+				'payment_method'       => PaymentMethods::BACS,
 				'payment_method_title' => '<h1>Sanitize this <script>alert(1);</script></h1>',
 				'set_paid'             => true,
 				'billing'              => array(
@@ -452,7 +453,7 @@ class WC_Tests_API_Orders extends WC_REST_Unit_Test_Case {
 		$request = new WP_REST_Request( 'PUT', '/wc/v3/orders/' . $data['id'] );
 		$request->set_body_params(
 			array(
-				'payment_method'       => 'bacs',
+				'payment_method'       => PaymentMethods::BACS,
 				'payment_method_title' => '<h1>Sanitize this too <script>alert(1);</script></h1>',
 			)
 		);
@@ -476,7 +477,7 @@ class WC_Tests_API_Orders extends WC_REST_Unit_Test_Case {
 		$request = new WP_REST_Request( 'POST', '/wc/v3/orders' );
 		$request->set_body_params(
 			array(
-				'payment_method'       => 'bacs',
+				'payment_method'       => PaymentMethods::BACS,
 				'payment_method_title' => 'Direct Bank Transfer',
 				'set_paid'             => true,
 				'customer_id'          => 99999,

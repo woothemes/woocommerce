@@ -8,6 +8,7 @@ declare( strict_types = 1 );
 namespace Automattic\WooCommerce\Internal\Admin\WCPayPromotion;
 
 use Automattic\WooCommerce\Admin\Features\PaymentGatewaySuggestions\DefaultPaymentGateways;
+use Automattic\WooCommerce\Enums\PaymentMethods;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -36,7 +37,7 @@ class DefaultPromotions {
 				'sub_title'  => self::get_wcpay_payment_icons(),
 			),
 			array(
-				'id'         => 'woocommerce_payments',
+				'id'         => PaymentMethods::WOOCOMMERCE_PAYMENTS,
 				'title'      => __( 'WooPayments', 'woocommerce' ),
 				'content'    => __( 'Payments made simple, with no monthly fees – designed exclusively for WooCommerce stores. Accept credit cards, debit cards, and other popular payment methods.', 'woocommerce' ),
 				'image'      => plugins_url( 'assets/images/onboarding/wcpay.svg', WC_PLUGIN_FILE ),

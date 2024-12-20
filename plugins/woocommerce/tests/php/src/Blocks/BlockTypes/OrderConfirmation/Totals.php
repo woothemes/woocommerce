@@ -136,7 +136,7 @@ class Totals extends \WP_UnitTestCase {
 				),
 				'create_account'   => true,
 				'customer_note'    => '<a href="http://attackerpage.com/csrf.html">This text should not save inside an anchor.</a><script>alert("alert")</script>',
-				'payment_method'   => 'bacs',
+				'payment_method'   => PaymentMethods::BACS,
 				'extensions'       => array(
 					'extension_namespace' => array(
 						'extension_key' => true,

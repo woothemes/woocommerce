@@ -11,6 +11,7 @@
  */
 
 use Automattic\Jetpack\Constants;
+use Automattic\WooCommerce\Enums\PaymentMethods;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -75,7 +76,7 @@ class WC_Gateway_Paypal extends WC_Payment_Gateway {
 	 * Constructor for the gateway.
 	 */
 	public function __construct() {
-		$this->id                = 'paypal';
+		$this->id                = PaymentMethods::PAYPAL;
 		$this->has_fields        = false;
 		$this->order_button_text = __( 'Proceed to PayPal', 'woocommerce' );
 		$this->method_title      = __( 'PayPal Standard', 'woocommerce' );
@@ -155,7 +156,7 @@ class WC_Gateway_Paypal extends WC_Payment_Gateway {
 			if ( empty( self::$log ) ) {
 				self::$log = wc_get_logger();
 			}
-			self::$log->log( $level, $message, array( 'source' => 'paypal' ) );
+			self::$log->log( $level, $message, array( 'source' => PaymentMethods::PAYPAL ) );
 		}
 	}
 
@@ -173,7 +174,7 @@ class WC_Gateway_Paypal extends WC_Payment_Gateway {
 			if ( empty( self::$log ) ) {
 				self::$log = wc_get_logger();
 			}
-			self::$log->clear( 'paypal' );
+			self::$log->clear( PaymentMethods::PAYPAL );
 		}
 
 		return $saved;
@@ -445,7 +446,7 @@ class WC_Gateway_Paypal extends WC_Payment_Gateway {
 	public function capture_payment( $order_id ) {
 		$order = wc_get_order( $order_id );
 
-		if ( 'paypal' === $order->get_payment_method() && 'pending' === $order->get_meta( '_paypal_status', true ) && $order->get_transaction_id() ) {
+		if ( PaymentMethods::PAYPAL === $order->get_payment_method() && 'pending' === $order->get_meta( '_paypal_status', true ) && $order->get_transaction_id() ) {
 			$this->init_api();
 			$result = WC_Gateway_Paypal_API_Handler::do_capture( $order );
 
@@ -549,7 +550,7 @@ class WC_Gateway_Paypal extends WC_Payment_Gateway {
 			array(
 				'limit'          => 1,
 				'return'         => 'ids',
-				'payment_method' => 'paypal',
+				'payment_method' => PaymentMethods::PAYPAL,
 			)
 		);
 

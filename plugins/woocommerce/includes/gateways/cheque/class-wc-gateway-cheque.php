@@ -6,6 +6,7 @@
  */
 
 use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Enums\PaymentMethods;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -34,7 +35,7 @@ class WC_Gateway_Cheque extends WC_Payment_Gateway {
 	 * Constructor for the gateway.
 	 */
 	public function __construct() {
-		$this->id                 = 'cheque';
+		$this->id                 = PaymentMethods::CHEQUE;
 		$this->icon               = apply_filters( 'woocommerce_cheque_icon', '' );
 		$this->has_fields         = false;
 		$this->method_title       = _x( 'Check payments', 'Check payment method', 'woocommerce' );
@@ -111,7 +112,7 @@ class WC_Gateway_Cheque extends WC_Payment_Gateway {
 	 * @param bool     $plain_text Email format: plain text or HTML.
 	 */
 	public function email_instructions( $order, $sent_to_admin, $plain_text = false ) {
-		if ( $this->instructions && ! $sent_to_admin && 'cheque' === $order->get_payment_method() ) {
+		if ( $this->instructions && ! $sent_to_admin && PaymentMethods::CHEQUE === $order->get_payment_method() ) {
 			/**
 			 * Filter the email instructions order status.
 			 *

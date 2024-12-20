@@ -3,6 +3,7 @@ declare( strict_types=1 );
 
 namespace Automattic\WooCommerce\Tests\Internal\Admin\Settings;
 
+use Automattic\WooCommerce\Enums\PaymentMethods;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders;
 use Automattic\WooCommerce\Internal\Admin\Settings\Payments;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentsRestController;
@@ -216,7 +217,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 				'_wc_pes_woopayments',
 				'_wc_pes_paypal_full_stack',
 				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
-				'paypal',
+				PaymentMethods::PAYPAL,
 			),
 			array_column( $data['providers'], 'id' )
 		);
@@ -290,7 +291,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 				'_wc_pes_woopayments',
 				'_wc_pes_paypal_full_stack',
 				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
-				'paypal',
+				PaymentMethods::PAYPAL,
 			),
 			array_column( $data['providers'], 'id' )
 		);
@@ -340,7 +341,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 			array(
 				'_wc_pes_woopayments',
 				'_wc_pes_paypal_full_stack',
-				'paypal',
+				PaymentMethods::PAYPAL,
 			),
 			array_column( $data['providers'], 'id' )
 		);
@@ -386,7 +387,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$this->assertSame(
 			array(
 				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
-				'paypal',
+				PaymentMethods::PAYPAL,
 			),
 			array_column( $data['providers'], 'id' )
 		);
@@ -542,27 +543,27 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		return array(
 			array( 1 ),
 			array( false ),
-			array( 0 => 'paypal' ),
-			array( array( 'paypal' ) ),
-			array( array( 'paypal' => false ) ),
-			array( array( 'paypal' => 'bogus' ) ),
-			array( array( 'paypal' => '1.0' ) ),
+			array( 0 => PaymentMethods::PAYPAL ),
+			array( array( PaymentMethods::PAYPAL ) ),
+			array( array( PaymentMethods::PAYPAL => false ) ),
+			array( array( PaymentMethods::PAYPAL => 'bogus' ) ),
+			array( array( PaymentMethods::PAYPAL => '1.0' ) ),
 			array( array( '()/paypal%#' => 1 ) ),
 			array(
 				array(
-					'paypal'                  => '1.1',
+					PaymentMethods::PAYPAL                  => '1.1',
 					'offline_payment_methods' => 2,
 				),
 			),
 			array(
 				array(
-					'paypal'                  => '0.1',
+					PaymentMethods::PAYPAL                  => '0.1',
 					'offline_payment_methods' => 2,
 				),
 			),
 			array(
 				array(
-					'paypal' => 1,
+					PaymentMethods::PAYPAL => 1,
 					'offline_payment_methods',
 				),
 			),
@@ -938,7 +939,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 				'icon'        => 'http://localhost:8888/wp-content/plugins/woocommerce/assets/images/payment_methods/cod.svg',
 			);
 			$mock_providers[] = array(
-				'id'          => 'bacs',
+				'id'          => PaymentMethods::BACS,
 				'_order'      => $order++,
 				'_type'       => PaymentProviders::TYPE_OFFLINE_PM,
 				'title'       => 'Direct bank transfer',
@@ -974,7 +975,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 				),
 			);
 			$mock_providers[] = array(
-				'id'          => 'cheque',
+				'id'          => PaymentMethods::CHEQUE,
 				'_order'      => $order++,
 				'_type'       => PaymentProviders::TYPE_OFFLINE_PM,
 				'title'       => 'Check payments',
@@ -1010,7 +1011,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 				),
 			);
 			$mock_providers[] = array(
-				'id'          => 'cod',
+				'id'          => PaymentMethods::COD,
 				'_order'      => $order++,
 				'_type'       => PaymentProviders::TYPE_OFFLINE_PM,
 				'title'       => 'Cash on delivery',
@@ -1049,7 +1050,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 
 		if ( ! $skip_paypal ) {
 			$mock_providers[] = array(
-				'id'          => 'paypal',
+				'id'          => PaymentMethods::PAYPAL,
 				'_order'      => $order++,
 				'_type'       => PaymentProviders::TYPE_GATEWAY,
 				'title'       => 'PayPal',

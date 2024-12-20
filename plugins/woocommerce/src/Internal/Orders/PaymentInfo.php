@@ -35,7 +35,7 @@ class PaymentInfo {
 	public static function get_card_info( WC_Abstract_Order $order ): array {
 		$method = $order->get_payment_method();
 
-		if ( 'woocommerce_payments' === $method ) {
+		if ( PaymentMethods::WOOCOMMERCE_PAYMENTS === $method ) {
 			$info = self::get_wcpay_card_info( $order );
 		} else {
 			/**
@@ -96,7 +96,7 @@ class PaymentInfo {
 	 * @return array
 	 */
 	private static function get_wcpay_card_info( WC_Abstract_Order $order ): array {
-		if ( 'woocommerce_payments' !== $order->get_payment_method() ) {
+		if ( PaymentMethods::WOOCOMMERCE_PAYMENTS !== $order->get_payment_method() ) {
 			return array();
 		}
 

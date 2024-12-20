@@ -1,4 +1,7 @@
 <?php
+
+use Automattic\WooCommerce\Enums\PaymentMethods;
+
 /**
  * Fake WooPayments class.
  *
@@ -9,7 +12,7 @@ class Fake_WCPayments extends WC_Payment_Gateway_WCPay {
 	 * Constructor.
 	 */
 	public function __construct() {
-		$this->id                 = 'woocommerce_payments';
+		$this->id                 = PaymentMethods::WOOCOMMERCE_PAYMENTS;
 		$this->has_fields         = true;
 		$this->method_title       = 'WooPayments';
 		$this->method_description = $this->get_method_description();

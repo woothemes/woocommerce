@@ -7,6 +7,7 @@ defined( 'ABSPATH' ) || exit;
 
 use Automattic\WooCommerce\Admin\WCAdminHelper;
 use Automattic\WooCommerce\Enums\OrderInternalStatus;
+use Automattic\WooCommerce\Enums\PaymentMethods;
 use WC_Abstract_Order;
 
 /**
@@ -255,7 +256,7 @@ class WooPayments extends Incentive {
 		if ( false === $had_wcpay && ! empty(
 			wc_get_orders(
 				array(
-					'payment_method' => 'woocommerce_payments',
+					'payment_method' => PaymentMethods::WOOCOMMERCE_PAYMENTS,
 					'return'         => 'ids',
 					'limit'          => 1,
 				)

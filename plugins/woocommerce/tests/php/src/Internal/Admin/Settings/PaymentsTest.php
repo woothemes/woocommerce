@@ -3,6 +3,7 @@ declare( strict_types=1 );
 
 namespace Automattic\WooCommerce\Tests\Internal\Admin\Settings;
 
+use Automattic\WooCommerce\Enums\PaymentMethods;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders;
 use Automattic\WooCommerce\Internal\Admin\Settings\Payments;
 use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestions;
@@ -109,11 +110,11 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 
 		// All are WooCommerce core gateways.
 		$gateways = array(
-			new FakePaymentGateway( 'paypal', array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( PaymentMethods::PAYPAL, array( 'plugin_slug' => 'woocommerce' ) ),
 			// The offline PMs.
-			new FakePaymentGateway( 'bacs', array( 'plugin_slug' => 'woocommerce' ) ),
-			new FakePaymentGateway( 'cheque', array( 'plugin_slug' => 'woocommerce' ) ),
-			new FakePaymentGateway( 'cod', array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( PaymentMethods::BACS, array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( PaymentMethods::CHEQUE, array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( PaymentMethods::COD, array( 'plugin_slug' => 'woocommerce' ) ),
 		);
 		$this->mock_providers
 			->expects( $this->atLeastOnce() )
@@ -130,11 +131,11 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 			->willReturn(
 				array_flip(
 					array(
-						'paypal',
+						PaymentMethods::PAYPAL,
 						PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
-						'bacs',
-						'cheque',
-						'cod',
+						PaymentMethods::BACS,
+						PaymentMethods::CHEQUE,
+						PaymentMethods::COD,
 					)
 				)
 			);
@@ -153,7 +154,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertCount( 5, $data );
 		// Because the core registers the PayPal PG after the offline PMs, the order we expect is this.
 		$this->assertSame(
-			array( 'paypal', PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP, 'bacs', 'cheque', 'cod' ),
+			array( PaymentMethods::PAYPAL, PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP, PaymentMethods::BACS, PaymentMethods::CHEQUE, PaymentMethods::COD ),
 			array_column( $data, 'id' )
 		);
 
@@ -235,11 +236,11 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 
 		// All are WooCommerce core gateways.
 		$gateways = array(
-			new FakePaymentGateway( 'paypal', array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( PaymentMethods::PAYPAL, array( 'plugin_slug' => 'woocommerce' ) ),
 			// The offline PMs.
-			new FakePaymentGateway( 'bacs', array( 'plugin_slug' => 'woocommerce' ) ),
-			new FakePaymentGateway( 'cheque', array( 'plugin_slug' => 'woocommerce' ) ),
-			new FakePaymentGateway( 'cod', array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( PaymentMethods::BACS, array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( PaymentMethods::CHEQUE, array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( PaymentMethods::COD, array( 'plugin_slug' => 'woocommerce' ) ),
 		);
 		$this->mock_providers
 			->expects( $this->atLeastOnce() )
@@ -258,11 +259,11 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 					array(
 						PaymentProviders::SUGGESTION_ORDERING_PREFIX . 'suggestion1',
 						PaymentProviders::SUGGESTION_ORDERING_PREFIX . 'suggestion2',
-						'paypal',
+						PaymentMethods::PAYPAL,
 						PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
-						'bacs',
-						'cheque',
-						'cod',
+						PaymentMethods::BACS,
+						PaymentMethods::CHEQUE,
+						PaymentMethods::COD,
 					)
 				)
 			);
@@ -353,11 +354,11 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 			array(
 				PaymentProviders::SUGGESTION_ORDERING_PREFIX . 'suggestion1',
 				PaymentProviders::SUGGESTION_ORDERING_PREFIX . 'suggestion2',
-				'paypal',
+				PaymentMethods::PAYPAL,
 				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
-				'bacs',
-				'cheque',
-				'cod',
+				PaymentMethods::BACS,
+				PaymentMethods::CHEQUE,
+				PaymentMethods::COD,
 			),
 			array_column( $data, 'id' )
 		);

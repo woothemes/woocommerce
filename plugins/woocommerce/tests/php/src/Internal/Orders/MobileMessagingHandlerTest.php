@@ -4,6 +4,7 @@ declare( strict_types = 1);
 namespace Automattic\WooCommerce\Tests\Internal\Orders;
 
 use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Enums\PaymentMethods;
 use Automattic\WooCommerce\Internal\Orders\MobileMessagingHandler;
 use DateTime;
 use WC_Order;
@@ -167,7 +168,7 @@ class MobileMessagingHandlerTest extends \WC_Unit_Test_Case {
 		$ipp_eligible_order->set_id( self::ORDER_ID );
 		$ipp_eligible_order->set_status( OrderStatus::PENDING );
 		try {
-			$ipp_eligible_order->set_payment_method( 'cod' );
+			$ipp_eligible_order->set_payment_method( PaymentMethods::COD );
 		} catch ( WC_Data_Exception $e ) {
 			exit();
 		}

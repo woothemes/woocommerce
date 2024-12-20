@@ -10,6 +10,7 @@
  */
 
 use Automattic\Jetpack\Constants;
+use Automattic\WooCommerce\Enums\PaymentMethods;
 use Automattic\WooCommerce\Internal\Utilities\HtmlSanitizer;
 use Automattic\WooCommerce\Admin\Features\Features;
 
@@ -206,7 +207,7 @@ abstract class WC_Payment_Gateway extends WC_Settings_API {
 	 */
 	public function admin_options() {
 		$is_reactify_enabled      = Features::is_enabled( 'reactify-classic-payments-settings' );
-		$offline_payment_gateways = array( 'bacs', 'cheque', 'cod' );
+		$offline_payment_gateways = array( PaymentMethods::BACS, PaymentMethods::CHEQUE, PaymentMethods::COD );
 		$is_offline_gateway       = in_array( $this->id, $offline_payment_gateways, true );
 
 		$return_url = admin_url( 'admin.php?page=wc-settings&tab=checkout' );

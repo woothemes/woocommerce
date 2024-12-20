@@ -3,6 +3,7 @@ declare( strict_types=1 );
 
 namespace Automattic\WooCommerce\Tests\Internal\Admin\Settings\PaymentProviders;
 
+use Automattic\WooCommerce\Enums\PaymentMethods;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\PaymentGateway;
 use Automattic\WooCommerce\Tests\Internal\Admin\Settings\Mocks\FakePaymentGateway;
@@ -42,7 +43,7 @@ class PaymentGatewayTest extends WC_REST_Unit_Test_Case {
 	public function test_get_details() {
 		// Arrange.
 		$fake_gateway = new FakePaymentGateway(
-			'woocommerce_payments',
+			PaymentMethods::WOOCOMMERCE_PAYMENTS,
 			array(
 				'enabled'                     => true,
 				'account_connected'           => true,
@@ -108,7 +109,7 @@ class PaymentGatewayTest extends WC_REST_Unit_Test_Case {
 		// Assert that we have all the details.
 		$this->assertEquals(
 			array(
-				'id'          => 'woocommerce_payments',
+				'id'          => PaymentMethods::WOOCOMMERCE_PAYMENTS,
 				'_order'      => 999,
 				'title'       => 'WooPayments',
 				'description' => 'Accept payments with WooPayments.',
@@ -193,7 +194,7 @@ class PaymentGatewayTest extends WC_REST_Unit_Test_Case {
 	 * Test get_title.
 	 */
 	public function test_get_title() {
-		$fake_gateway = new FakePaymentGateway( 'woocommerce_payments', array( 'method_title' => 'WooPayments' ) );
+		$fake_gateway = new FakePaymentGateway( PaymentMethods::WOOCOMMERCE_PAYMENTS, array( 'method_title' => 'WooPayments' ) );
 		$this->assertEquals( 'WooPayments', $this->sut->get_title( $fake_gateway ) );
 	}
 
@@ -201,7 +202,7 @@ class PaymentGatewayTest extends WC_REST_Unit_Test_Case {
 	 * Test get_description.
 	 */
 	public function test_get_description() {
-		$fake_gateway = new FakePaymentGateway( 'woocommerce_payments', array( 'method_description' => 'Accept payments with WooPayments.' ) );
+		$fake_gateway = new FakePaymentGateway( PaymentMethods::WOOCOMMERCE_PAYMENTS, array( 'method_description' => 'Accept payments with WooPayments.' ) );
 		$this->assertEquals( 'Accept payments with WooPayments.', $this->sut->get_description( $fake_gateway ) );
 	}
 
@@ -209,7 +210,7 @@ class PaymentGatewayTest extends WC_REST_Unit_Test_Case {
 	 * Test get_icon.
 	 */
 	public function test_get_icon() {
-		$fake_gateway = new FakePaymentGateway( 'woocommerce_payments', array( 'icon' => 'https://example.com/icon.png' ) );
+		$fake_gateway = new FakePaymentGateway( PaymentMethods::WOOCOMMERCE_PAYMENTS, array( 'icon' => 'https://example.com/icon.png' ) );
 		$this->assertEquals( 'https://example.com/icon.png', $this->sut->get_icon( $fake_gateway ) );
 	}
 

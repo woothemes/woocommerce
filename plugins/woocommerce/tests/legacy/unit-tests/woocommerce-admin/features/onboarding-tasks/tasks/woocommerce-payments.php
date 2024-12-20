@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 use Automattic\WooCommerce\Admin\Features\OnboardingTasks\TaskList;
 use Automattic\WooCommerce\Admin\Features\OnboardingTasks\Tasks\WooCommercePayments;
+use Automattic\WooCommerce\Enums\PaymentMethods;
 
 /**
  * class WC_Admin_Tests_OnboardingTasks_Task_WooCommerce_Payments
@@ -98,7 +99,7 @@ class WC_Admin_Tests_OnboardingTasks_Task_WooCommerce_Payments extends WC_Unit_T
 	 * @return array Modified gateways.
 	 */
 	public function inject_fake_gateway( $gateways ) {
-		return array( 'woocommerce_payments' => $this->fake_gateway );
+		return array( PaymentMethods::WOOCOMMERCE_PAYMENTS => $this->fake_gateway );
 	}
 }
 
@@ -126,7 +127,7 @@ class Fake_WC_Payments_Gateway extends WC_Payment_Gateway {
 	 * Constructor.
 	 */
 	public function __construct() {
-		$this->id = 'woocommerce_payments';
+		$this->id = PaymentMethods::WOOCOMMERCE_PAYMENTS;
 	}
 
 	/**

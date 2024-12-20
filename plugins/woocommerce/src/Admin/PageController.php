@@ -5,6 +5,7 @@
 
 namespace Automattic\WooCommerce\Admin;
 
+use Automattic\WooCommerce\Enums\PaymentMethods;
 use Automattic\WooCommerce\Internal\Admin\Loader;
 
 defined( 'ABSPATH' ) || exit;
@@ -296,7 +297,7 @@ class PageController {
 			array(
 				'products'          => array( '', 'inventory', 'downloadable' ),
 				'shipping'          => array( '', 'options', 'classes' ),
-				'checkout'          => array( 'bacs', 'cheque', 'cod', 'paypal' ),
+				'checkout'          => array( PaymentMethods::BACS, PaymentMethods::CHEQUE, PaymentMethods::COD, PaymentMethods::PAYPAL ),
 				'email'             => $wc_email_ids,
 				'advanced'          => array(
 					'',

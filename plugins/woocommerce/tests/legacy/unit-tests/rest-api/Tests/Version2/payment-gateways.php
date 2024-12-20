@@ -6,6 +6,7 @@
  * @since 3.0.0
  */
 
+use Automattic\WooCommerce\Enums\PaymentMethods;
 use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 
 /**
@@ -55,7 +56,7 @@ class Payment_Gateways_V2 extends WC_REST_Unit_Test_Case {
 			array_filter(
 				$gateways,
 				function( $gateway ) {
-					return 'cheque' === $gateway['id'];
+					return PaymentMethods::CHEQUE === $gateway['id'];
 				}
 			)
 		);
@@ -63,7 +64,7 @@ class Payment_Gateways_V2 extends WC_REST_Unit_Test_Case {
 
 		$this->assertArraySubset(
 			array(
-				'id'                     => 'cheque',
+				'id'                     => PaymentMethods::CHEQUE,
 				'title'                  => 'Check payments',
 				'description'            => 'Please send a check to Store Name, Store Street, Store Town, Store State / County, Store Postcode.',
 				'order'                  => '',
@@ -125,7 +126,7 @@ class Payment_Gateways_V2 extends WC_REST_Unit_Test_Case {
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertEquals(
 			array(
-				'id'                     => 'paypal',
+				'id'                     => PaymentMethods::PAYPAL,
 				'title'                  => 'PayPal',
 				'description'            => "Pay via PayPal; you can pay with your credit card if you don't have a PayPal account.",
 				'order'                  => '',

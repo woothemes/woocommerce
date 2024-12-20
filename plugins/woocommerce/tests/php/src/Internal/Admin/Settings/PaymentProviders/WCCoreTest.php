@@ -3,6 +3,7 @@ declare( strict_types=1 );
 
 namespace Automattic\WooCommerce\Tests\Internal\Admin\Settings\PaymentProviders;
 
+use Automattic\WooCommerce\Enums\PaymentMethods;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\WCCore;
 use Automattic\WooCommerce\Tests\Internal\Admin\Settings\Mocks\FakePaymentGateway;
@@ -35,7 +36,7 @@ class WCCoreTest extends WC_REST_Unit_Test_Case {
 	public function test_get_icon() {
 		// Arrange.
 		$fake_gateway = new FakePaymentGateway(
-			'bacs',
+			PaymentMethods::BACS,
 			array(
 				'enabled'            => true,
 				'plugin_slug'        => 'woocommerce',
@@ -55,7 +56,7 @@ class WCCoreTest extends WC_REST_Unit_Test_Case {
 
 		// Arrange.
 		$fake_gateway = new FakePaymentGateway(
-			'cheque',
+			PaymentMethods::CHEQUE,
 			array(
 				'enabled'            => true,
 				'plugin_slug'        => 'woocommerce',
@@ -75,7 +76,7 @@ class WCCoreTest extends WC_REST_Unit_Test_Case {
 
 		// Arrange.
 		$fake_gateway = new FakePaymentGateway(
-			'cod',
+			PaymentMethods::COD,
 			array(
 				'enabled'            => true,
 				'plugin_slug'        => 'woocommerce',
@@ -95,7 +96,7 @@ class WCCoreTest extends WC_REST_Unit_Test_Case {
 
 		// Arrange.
 		$fake_gateway = new FakePaymentGateway(
-			'paypal',
+			PaymentMethods::PAYPAL,
 			array(
 				'enabled'            => true,
 				'plugin_slug'        => 'woocommerce',

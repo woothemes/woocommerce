@@ -3,6 +3,7 @@ declare( strict_types=1 );
 
 namespace Automattic\WooCommerce\Tests\Internal\Admin\Settings;
 
+use Automattic\WooCommerce\Enums\PaymentMethods;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders;
 use Automattic\WooCommerce\Internal\Admin\Settings\Payments;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentsRestController;
@@ -154,7 +155,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 
 		$this->gateways_mock_ref = function ( \WC_Payment_Gateways $wc_payment_gateways ) {
 			$mock_gateways = array(
-				'woocommerce_payments' => array(
+				PaymentMethods::WOOCOMMERCE_PAYMENTS => array(
 					'enabled'                     => false,
 					'account_connected'           => false,
 					'needs_setup'                 => true,
@@ -262,12 +263,12 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$this->assertCount( 2, $data['providers'] );
 		// Because the core registers the PayPal PG after the offline PMs, the order we expect is this.
 		$this->assertSame(
-			array( PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP, 'paypal' ),
+			array( PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP, PaymentMethods::PAYPAL ),
 			array_column( $data['providers'], 'id' )
 		);
 		// We have the 3 offline payment methods.
 		$this->assertCount( 3, $data['offline_payment_methods'] );
-		$this->assertSame( array( 'bacs', 'cheque', 'cod' ), array_column( $data['offline_payment_methods'], 'id' ) );
+		$this->assertSame( array( PaymentMethods::BACS, PaymentMethods::CHEQUE, PaymentMethods::COD ), array_column( $data['offline_payment_methods'], 'id' ) );
 		// No suggestions are returned because the user can't install plugins.
 		$this->assertCount( 0, $data['suggestions'] );
 		// But we do get the suggestion categories.
@@ -524,9 +525,9 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 			array(
 				PaymentProviders::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::PAYPAL_FULL_STACK, // Preferred suggestion.
 				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
-				'paypal',
+				PaymentMethods::PAYPAL,
 				PaymentProviders::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::WOOPAYMENTS, // The WooPayments suggestion.
-				'woocommerce_payments', // The fake WooPayments gateway.
+				PaymentMethods::WOOCOMMERCE_PAYMENTS, // The fake WooPayments gateway.
 			),
 			array_column( $data['providers'], 'id' )
 		);
@@ -833,7 +834,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		// Arrange.
 		$order_map = array_flip(
 			array(
-				'paypal', // We move PayPal at the top.
+				PaymentMethods::PAYPAL, // We move PayPal at the top.
 				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
 			)
 		);
@@ -843,7 +844,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 				array(
 					PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
 					...PaymentProviders::OFFLINE_METHODS,
-					'paypal',
+					PaymentMethods::PAYPAL,
 				)
 			)
 		);
@@ -861,7 +862,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$this->assertSame(
 			array_flip(
 				array(
-					'paypal',
+					PaymentMethods::PAYPAL,
 					PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
 					...PaymentProviders::OFFLINE_METHODS,
 				)
@@ -896,7 +897,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 				array(
 					PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
 					...PaymentProviders::OFFLINE_METHODS,
-					'paypal',
+					PaymentMethods::PAYPAL,
 				)
 			),
 			get_option( PaymentProviders::PROVIDERS_ORDER_OPTION )
@@ -995,9 +996,9 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 			array(
 				PaymentProviders::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::PAYPAL_FULL_STACK, // Preferred suggestion.
 				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
-				'paypal',
+				PaymentMethods::PAYPAL,
 				PaymentProviders::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::WOOPAYMENTS, // The WooPayments suggestion.
-				'woocommerce_payments', // The fake WooPayments gateway.
+				PaymentMethods::WOOCOMMERCE_PAYMENTS, // The fake WooPayments gateway.
 			),
 			array_column( $data['providers'], 'id' )
 		);
@@ -1078,9 +1079,9 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 			array(
 				PaymentProviders::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::PAYPAL_FULL_STACK, // Preferred suggestion.
 				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
-				'paypal',
+				PaymentMethods::PAYPAL,
 				PaymentProviders::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::WOOPAYMENTS, // The WooPayments suggestion.
-				'woocommerce_payments', // The fake WooPayments gateway.
+				PaymentMethods::WOOCOMMERCE_PAYMENTS, // The fake WooPayments gateway.
 			),
 			array_column( $data['providers'], 'id' )
 		);

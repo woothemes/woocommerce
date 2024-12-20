@@ -5,6 +5,8 @@
  * @package WooCommerce\Tests\Payment_Tokens
  */
 
+use Automattic\WooCommerce\Enums\PaymentMethods;
+
 /**
  * Class Payment_Tokens
  */
@@ -62,19 +64,19 @@ class WC_Tests_Payment_Tokens extends WC_Unit_Test_Case {
 
 		$token = WC_Helper_Payment_Token::create_cc_token();
 		$token->set_user_id( $this->user_id );
-		$token->set_gateway_id( 'bacs' );
+		$token->set_gateway_id( PaymentMethods::BACS );
 		$token->save();
 
 		$token = WC_Helper_Payment_Token::create_cc_token();
 		$token->set_user_id( $this->user_id );
-		$token->set_gateway_id( 'paypal' );
+		$token->set_gateway_id( PaymentMethods::PAYPAL );
 		$token->save();
 
 		$this->assertCount( 2, WC_Payment_Tokens::get_customer_tokens( $this->user_id ) );
-		$this->assertCount( 1, WC_Payment_Tokens::get_customer_tokens( $this->user_id, 'bacs' ) );
+		$this->assertCount( 1, WC_Payment_Tokens::get_customer_tokens( $this->user_id, PaymentMethods::BACS ) );
 
-		foreach ( WC_Payment_Tokens::get_customer_tokens( $this->user_id, 'bacs' ) as $gateway_token ) {
-			$this->assertEquals( 'bacs', $gateway_token->get_gateway_id() );
+		foreach ( WC_Payment_Tokens::get_customer_tokens( $this->user_id, PaymentMethods::BACS ) as $gateway_token ) {
+			$this->assertEquals( PaymentMethods::BACS, $gateway_token->get_gateway_id() );
 		}
 	}
 
@@ -85,19 +87,19 @@ class WC_Tests_Payment_Tokens extends WC_Unit_Test_Case {
 	public function test_wc_get_customer_default_token() {
 		$token = WC_Helper_Payment_Token::create_cc_token();
 		$token->set_user_id( $this->user_id );
-		$token->set_gateway_id( 'bacs' );
+		$token->set_gateway_id( PaymentMethods::BACS );
 		$token->save();
 
 		$token = WC_Helper_Payment_Token::create_cc_token();
 		$token->set_user_id( $this->user_id );
 		$token->set_default( true );
-		$token->set_gateway_id( 'paypal' );
+		$token->set_gateway_id( PaymentMethods::PAYPAL );
 		$token->save();
 
 		$this->assertCount( 2, WC_Payment_Tokens::get_customer_tokens( $this->user_id ) );
 
 		$default_token = WC_Payment_Tokens::get_customer_default_token( $this->user_id );
-		$this->assertEquals( 'paypal', $default_token->get_gateway_id() );
+		$this->assertEquals( PaymentMethods::PAYPAL, $default_token->get_gateway_id() );
 	}
 
 	/**
@@ -108,17 +110,17 @@ class WC_Tests_Payment_Tokens extends WC_Unit_Test_Case {
 	 */
 	public function test_wc_get_customer_default_token_returns_first_created_when_no_default_token_set() {
 		$token = WC_Helper_Payment_Token::create_cc_token( $this->user_id );
-		$token->set_gateway_id( 'bacs' );
+		$token->set_gateway_id( PaymentMethods::BACS );
 		$token->save();
 
 		$token = WC_Helper_Payment_Token::create_cc_token( $this->user_id );
-		$token->set_gateway_id( 'paypal' );
+		$token->set_gateway_id( PaymentMethods::PAYPAL );
 		$token->save();
 
 		$this->assertCount( 2, WC_Payment_Tokens::get_customer_tokens( $this->user_id ) );
 
 		$default_token = WC_Payment_Tokens::get_customer_default_token( $this->user_id );
-		$this->assertEquals( 'bacs', $default_token->get_gateway_id() );
+		$this->assertEquals( PaymentMethods::BACS, $default_token->get_gateway_id() );
 	}
 
 	/**

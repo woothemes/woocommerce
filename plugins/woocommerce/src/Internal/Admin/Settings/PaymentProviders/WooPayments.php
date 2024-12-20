@@ -5,6 +5,7 @@ namespace Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders;
 
 use Automattic\WooCommerce\Admin\WCAdminHelper;
 use Automattic\WooCommerce\Enums\OrderInternalStatus;
+use Automattic\WooCommerce\Enums\PaymentMethods;
 use Automattic\WooCommerce\Internal\Admin\Onboarding\OnboardingProfile;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders;
 use WC_Abstract_Order;
@@ -268,7 +269,7 @@ class WooPayments extends PaymentGateway {
 				return 'yes' === $gateway->enabled &&
 					! in_array(
 						$gateway->id,
-						array( 'woocommerce_payments', ...PaymentProviders::OFFLINE_METHODS ),
+						array( PaymentMethods::WOOCOMMERCE_PAYMENTS, ...PaymentProviders::OFFLINE_METHODS ),
 						true
 					);
 			}
