@@ -645,7 +645,10 @@ test.describe(
 				.fill( 'Variable Product' );
 
 			await page
-				.getByRole( 'option', { name: 'Variable Product' } )
+				.getByRole( 'option', {
+					name: 'Variable Product',
+					exact: true,
+				} )
 				.click();
 
 			await expect(
