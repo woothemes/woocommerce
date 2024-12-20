@@ -17,9 +17,9 @@ import { isNumber, isEmpty } from '@woocommerce/types';
  * Settings for product block registration.
  *
  * @typedef {Object} ProductBlockSettings
- * @property {boolean} [isVariationBlock]      - Whether this block is a variation
- * @property {string}  [variationName]         - The name of the variation if applicable
- * @property {boolean} isAvailableOnPostEditor - Whether the block should be available in post editor
+ * @property {boolean} [isVariationBlock]        - Whether this block is a variation
+ * @property {string}  [variationName]           - The name of the variation if applicable
+ * @property {boolean} [isAvailableOnPostEditor] - Whether the block should be available in post editor
  */
 type ProductBlockSettings = {
 	isVariationBlock?: boolean;
