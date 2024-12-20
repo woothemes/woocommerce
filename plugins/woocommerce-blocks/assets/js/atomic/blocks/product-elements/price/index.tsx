@@ -12,19 +12,19 @@ import edit from './edit';
 import { supports } from './supports';
 import metadata from './block.json';
 
-registerProductBlockType( {
-	blockName: metadata.name,
-	blockMetadata: metadata,
-	blockSettings: {
-		...sharedConfig,
-		supports,
-		icon: (
-			<Icon
-				icon={ currencyDollar }
-				className="wc-block-editor-components-block-icon"
-			/>
-		),
-		edit,
-	},
+const blockConfig = {
+	...metadata,
+	...sharedConfig,
+	supports,
+	icon: (
+		<Icon
+			icon={ currencyDollar }
+			className="wc-block-editor-components-block-icon"
+		/>
+	),
+	edit,
+};
+
+registerProductBlockType( blockConfig, {
 	isAvailableOnPostEditor: true,
 } );

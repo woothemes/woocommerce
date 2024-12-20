@@ -8,6 +8,8 @@
  * @version 3.0.0
  */
 
+use Automattic\WooCommerce\Enums\ProductType;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -71,7 +73,7 @@ class WC_Product_Variation extends WC_Product_Simple {
 	 * @return string
 	 */
 	public function get_type() {
-		return 'variation';
+		return ProductType::VARIATION;
 	}
 
 	/**

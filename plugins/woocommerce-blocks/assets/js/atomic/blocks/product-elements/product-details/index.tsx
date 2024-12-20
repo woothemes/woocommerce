@@ -12,20 +12,19 @@ import metadata from './block.json';
 import edit from './edit';
 import './style.scss';
 
-registerProductBlockType( {
-	blockName: metadata.name,
-	// @ts-expect-error: `metadata` currently does not have a type definition in WordPress core
-	blockMetadata: metadata,
-	blockSettings: {
-		icon: {
-			src: (
-				<Icon
-					icon={ productDetails }
-					className="wc-block-editor-components-block-icon"
-				/>
-			),
-		},
-		edit,
+const blockConfig = {
+	...metadata,
+	icon: {
+		src: (
+			<Icon
+				icon={ productDetails }
+				className="wc-block-editor-components-block-icon"
+			/>
+		),
 	},
+	edit,
+};
+
+registerProductBlockType( blockConfig, {
 	isAvailableOnPostEditor: false,
 } );

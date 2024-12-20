@@ -6,6 +6,8 @@
  * @version     3.0.0
  */
 
+use Automattic\WooCommerce\Enums\ProductType;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -180,8 +182,12 @@ class WC_Admin_Duplicate_Product {
 		// Save parent product.
 		$duplicate->save();
 
-		// Duplicate children of a variable product.
-		if ( ! apply_filters( 'woocommerce_duplicate_product_exclude_children', false, $product ) && $product->is_type( 'variable' ) ) {
+		/**
+		 * Duplicate children of a variable product.
+		 *
+		 * @since 2.7
+		 */
+		if ( ! apply_filters( 'woocommerce_duplicate_product_exclude_children', false, $product ) && $product->is_type( ProductType::VARIABLE ) ) {
 			foreach ( $product->get_children() as $child_id ) {
 				$child           = wc_get_product( $child_id );
 				$child_duplicate = clone $child;
