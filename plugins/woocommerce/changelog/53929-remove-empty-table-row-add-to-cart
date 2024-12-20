@@ -1,0 +1,4 @@
+Significance: patch
+Type: tweak
+
+Fix issues with empty table rows added after each attribute in the add_to_cart widget when the attribute being rendered was not the latest.
