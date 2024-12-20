@@ -21,7 +21,6 @@ import {
 } from 'xstate5';
 import apiFetch from '@wordpress/api-fetch';
 import { dispatch } from '@wordpress/data';
-import { Action as WPNoticeAction } from '@wordpress/notices';
 
 /**
  * Internal dependencies
