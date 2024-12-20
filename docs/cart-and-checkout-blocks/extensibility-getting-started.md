@@ -125,7 +125,7 @@ Currently, none of our hooks are designed to be used externally, so trying to im
 
 ### Modifying information during the Checkout process
 
-Modifying the way the server-side part of the Cart and Checkout blocks works is possible by using PHP. Some actions and filters from the shortcode cart/checkout experience will work, however some do not, we do have a working document ([Hook alternatives document](https://github.com/woocommerce/woocommerce/tree/trunk/plugins/woocommerce-blocks/docs/third-party-developers/extensibility/hooks/hook-alternatives.md)) that outlines which hooks are supported, and which are not as well as listing any alternative approaches.
+Modifying the server-side part of the Cart and Checkout blocks is possible using PHP. Some actions and filters from the shortcode cart/checkout experience will work too, but not all of them. We have a working document ([Hook alternatives document](https://github.com/woocommerce/woocommerce/tree/trunk/plugins/woocommerce-blocks/docs/third-party-developers/extensibility/hooks/hook-alternatives.md)) that outlines which hooks are supported as well as alternatives.
 
 ### Extending Store API
 
