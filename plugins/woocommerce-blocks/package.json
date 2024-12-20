@@ -50,6 +50,7 @@
 		"build:project": "pnpm --if-present '/^build:project:.*$/'",
 		"build:project:validate-blocks-manifests": "wireit",
 		"build:project:bundle": "wireit",
+		"build:project:blocks-json-to-php": "wireit",
 		"build:check-assets": "rimraf build/* && cross-env ASSET_CHECK=true BABEL_ENV=default NODE_ENV=production webpack",
 		"prebuild:docs": "rimraf docs/extensibility/actions.md & rimraf docs/extensibility/filters.md",
 		"build:docs": "./vendor/bin/wp-hooks-generator --input=src --output=bin/hook-docs/data && node ./bin/hook-docs && pnpm build:docs:block-references",
@@ -103,7 +104,8 @@
 		"wp-env:config": "./bin/wp-env-pre-config.sh",
 		"watch:build": "pnpm --if-present --workspace-concurrency=Infinity --filter=\"$npm_package_name...\" --parallel '/^watch:build:project:.*$/'",
 		"watch:build:project": "pnpm --if-present run '/^watch:build:project:.*$/'",
-		"watch:build:project:bundle": "wireit"
+		"watch:build:project:bundle": "wireit",
+		"watch:build:project:blocks-json-to-php": "pnpm run build:project:blocks-json-to-php --watch"
 	},
 	"devDependencies": {
 		"@automattic/color-studio": "2.5.0",
@@ -392,7 +394,8 @@
 			],
 			"output": [
 				"build",
-				"blocks.ini"
+				"blocks.ini",
+				"!build/blocks-json.php"
 			],
 			"dependencies": [
 				"dependencyOutputs"
@@ -432,6 +435,20 @@
 		"watch:build:storybook": {
 			"command": "storybook dev  -c ./storybook -p 6006 --ci",
 			"service": true
+		},
+		"build:project:blocks-json-to-php": {
+			"command": "wp-scripts build-blocks-manifest --input=build --output=build/blocks-json.php",
+			"dependencies": [
+				"build:project:bundle",
+				"dependencyOutputs"
+			],
+			"files": [
+				"assets/js/blocks/**/block.json",
+				"build/**/block.json"
+			],
+			"output": [
+				"build/blocks-json.php"
+			]
 		},
 		"dependencyOutputs": {
 			"allowUsuallyExcludedPaths": true,

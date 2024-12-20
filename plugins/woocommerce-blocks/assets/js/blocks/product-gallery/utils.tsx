@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { BlockAttributes, BlockInstance } from '@wordpress/blocks';
+import { BlockAttributes } from '@wordpress/blocks';
 import { select, dispatch } from '@wordpress/data';
 import { findBlock } from '@woocommerce/utils';
 
@@ -35,25 +35,6 @@ export const getGroupLayoutAttributes = (
 };
 
 /**
- * Returns inner block lock attributes based on provided action.
- *
- * @param {string} action - The action to take on the inner blocks ('lock' or 'unlock').
- * @return {{lock: {move?: boolean, remove?: boolean}}} - An object representing lock attributes for inner blocks.
- */
-export const getInnerBlocksLockAttributes = (
-	action: string
-): { lock: { move?: boolean; remove?: boolean } } => {
-	switch ( action ) {
-		case 'lock':
-			return { lock: { move: true, remove: true } };
-		case 'unlock':
-			return { lock: {} };
-		default:
-			return { lock: {} };
-	}
-};
-
-/**
  * Updates block attributes based on provided attributes.
  *
  * @param {BlockAttributes}             attributesToUpdate - The new attributes to set on the block.
@@ -76,28 +57,6 @@ export const updateBlockAttributes = (
 			block.clientId,
 			updatedBlock
 		);
-	}
-};
-
-const controlBlocksLockAttribute = ( {
-	blocks,
-	lockBlocks,
-}: {
-	blocks: BlockInstance[];
-	lockBlocks: boolean;
-} ) => {
-	for ( const block of blocks ) {
-		if ( lockBlocks ) {
-			updateBlockAttributes(
-				getInnerBlocksLockAttributes( 'lock' ),
-				block
-			);
-		} else {
-			updateBlockAttributes(
-				getInnerBlocksLockAttributes( 'unlock' ),
-				block
-			);
-		}
 	}
 };
 
@@ -175,11 +134,6 @@ export const moveInnerBlocksToPosition = (
 			largeImageParentBlockIndex !== -1 &&
 			thumbnailsBlockIndex !== -1
 		) {
-			controlBlocksLockAttribute( {
-				blocks: [ thumbnailsBlock, largeImageParentBlock ],
-				lockBlocks: false,
-			} );
-
 			const { thumbnailsPosition } = attributes;
 			setGroupBlockLayoutByThumbnailsPosition(
 				thumbnailsPosition,
@@ -218,11 +172,6 @@ export const moveInnerBlocksToPosition = (
 					largeImageParentBlockIndex
 				);
 			}
-
-			controlBlocksLockAttribute( {
-				blocks: [ thumbnailsBlock, largeImageParentBlock ],
-				lockBlocks: true,
-			} );
 		}
 	}
 };
