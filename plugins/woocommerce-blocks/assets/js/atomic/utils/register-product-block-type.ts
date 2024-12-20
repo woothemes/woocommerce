@@ -30,12 +30,12 @@ type ProductBlockSettings = {
 /**
  * Internal block config type used by the BlockRegistrationManager
  *
- * @typedef {Object} BlockConfig
+ * @typedef {Object} ProductBlockConfig
  * @property {string}                      blockName            - The name of the block
  * @property {Partial<BlockConfiguration>} settings             - Block settings configuration
  * @property {ProductBlockSettings}        productBlockSettings - Product block settings
  */
-type BlockConfig = ProductBlockSettings & {
+type ProductBlockConfig = ProductBlockSettings & {
 	blockName: string;
 	settings: Partial< BlockConfiguration >;
 };
@@ -60,7 +60,7 @@ export class BlockRegistrationManager {
 	/** Singleton instance of the manager */
 	private static instance: BlockRegistrationManager;
 	/** Map storing block configurations keyed by block name or variation name */
-	private blocks: Map< string, BlockConfig > = new Map();
+	private blocks: Map< string, ProductBlockConfig > = new Map();
 	/** Current template ID being edited */
 	private currentTemplateId: string | undefined;
 	/** Flag indicating if the manager has been initialized */
@@ -223,9 +223,9 @@ export class BlockRegistrationManager {
 	 * Unregisters a block or block variation.
 	 * Handles both regular blocks and variations with error handling.
 	 *
-	 * @param {BlockConfig} config - Configuration of the block to unregister
+	 * @param {ProductBlockConfig} config - Configuration of the block to unregister
 	 */
-	private unregisterBlock( config: BlockConfig ): void {
+	private unregisterBlock( config: ProductBlockConfig ): void {
 		const { blockName, isVariationBlock, variationName } = config;
 
 		try {
@@ -250,9 +250,9 @@ export class BlockRegistrationManager {
 	 * Handles different registration requirements for various contexts.
 	 * Includes checks to prevent recursive registration.
 	 *
-	 * @param {BlockConfig} config - Configuration of the block to register
+	 * @param {ProductBlockConfig} config - Configuration of the block to register
 	 */
-	private registerBlock( config: BlockConfig ): void {
+	private registerBlock( config: ProductBlockConfig ): void {
 		const {
 			blockName,
 			settings,
@@ -308,9 +308,9 @@ export class BlockRegistrationManager {
 	 * Registers a new block configuration with the manager.
 	 * Main entry point for adding new blocks to be managed.
 	 *
-	 * @param {BlockConfig} config - Configuration for the block to register
+	 * @param {ProductBlockConfig} config - Configuration for the block to register
 	 */
-	public registerBlockConfig( config: BlockConfig ): void {
+	public registerBlockConfig( config: ProductBlockConfig ): void {
 		const key = config.variationName || config.blockName;
 		this.blocks.set( key, config );
 
@@ -401,7 +401,7 @@ export const registerProductBlockType = (
 		...( settings || {} ),
 	};
 
-	const internalConfig: BlockConfig = {
+	const internalConfig: ProductBlockConfig = {
 		blockName,
 		settings: { ...settingsWithoutCustomProperties },
 		isVariationBlock: isVariationBlock ?? false,
