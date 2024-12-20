@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import type { BlockConfiguration, BlockAttributes } from '@wordpress/blocks';
+import type { BlockAttributes } from '@wordpress/blocks';
 import { registerProductBlockType } from '@woocommerce/atomic-utils';
 import { isEmptyObject } from '@woocommerce/types';
 
@@ -33,18 +33,15 @@ const deprecated = [
 	},
 ];
 
-const blockSettings: BlockConfiguration = {
+const blockConfig = {
+	...metadata,
 	...sharedConfig,
 	icon: { src: icon },
-	attributes: metadata.attributes,
 	supports,
 	deprecated,
 	edit,
 };
 
-registerProductBlockType( {
-	blockName: 'woocommerce/product-summary',
-	blockMetadata: metadata,
-	blockSettings,
+registerProductBlockType( blockConfig, {
 	isAvailableOnPostEditor: true,
 } );

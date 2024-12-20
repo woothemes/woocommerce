@@ -14,15 +14,13 @@ import metadata from './block.json';
 import { supports } from './support';
 
 const blockConfig: BlockConfiguration = {
+	...metadata,
 	...sharedConfig,
 	icon: { src: icon },
 	supports,
 	edit,
 };
 
-registerProductBlockType( {
-	blockName: 'woocommerce/product-rating',
-	blockMetadata: metadata,
-	blockSettings: blockConfig,
+registerProductBlockType( blockConfig, {
 	isAvailableOnPostEditor: true,
 } );
