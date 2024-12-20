@@ -57,7 +57,7 @@ class Legacy {
 		$_POST = $post_data;
 
 		// If the payment failed with a message, throw an exception.
-		if ( 'failure' === $gateway_result['result'] ) {
+		if ( isset( $gateway_result['result'] ) && 'failure' === $gateway_result['result'] ) {
 			if ( isset( $gateway_result['message'] ) ) {
 				throw new RouteException( 'woocommerce_rest_payment_error', wp_strip_all_tags( $gateway_result['message'] ), 400 );
 			} else {
