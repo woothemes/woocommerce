@@ -19,12 +19,15 @@ import { SettingItem } from './setting-item';
 const { Icon, ...icons } = IconPackage;
 
 const SidebarNavigationScreenContent = ( {
-	activePage,
-	settingsData,
+	routeKey,
 }: {
-	activePage: string;
-	settingsData: SettingsData;
+	routeKey: string;
 } ) => {
+	const settingsData: SettingsData = window.wcSettings?.admin?.settingsData;
+	if ( ! settingsData ) {
+		return null;
+	}
+
 	return (
 		<ItemGroup>
 			{ Object.keys( settingsData ).map( ( slug ) => {
@@ -34,7 +37,7 @@ const SidebarNavigationScreenContent = ( {
 						key={ slug }
 						slug={ slug }
 						label={ label }
-						isActive={ activePage === slug }
+						isActive={ routeKey === slug }
 						icon={
 							<Icon
 								icon={
@@ -50,25 +53,19 @@ const SidebarNavigationScreenContent = ( {
 	);
 };
 
-export const Sidebar = ( {
-	activePage,
-	settingsData,
-	pageTitle,
-}: {
-	activePage: string;
-	settingsData: SettingsData;
-	pageTitle: string;
-} ) => {
+type SidebarProps = {
+	title: string;
+	routeKey: string;
+	backPack: string;
+};
+
+export const Sidebar = ( { title, routeKey, backPack }: SidebarProps ) => {
 	return (
 		<SidebarNavigationScreen
-			title={ pageTitle }
+			title={ title }
 			isRoot
-			content={
-				<SidebarNavigationScreenContent
-					activePage={ activePage }
-					settingsData={ settingsData }
-				/>
-			}
+			backPack={ backPack }
+			content={ <SidebarNavigationScreenContent routeKey={ routeKey } /> }
 		/>
 	);
 };
