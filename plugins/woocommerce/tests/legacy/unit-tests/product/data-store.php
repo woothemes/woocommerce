@@ -6,6 +6,8 @@
  * @since 3.0.0
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
+
 /**
  * Class WC_Tests_Product_Data_Store
  */
@@ -69,7 +71,7 @@ class WC_Tests_Product_Data_Store extends WC_Unit_Test_Case {
 	 */
 	public function test_product_create_with_woocommerce_new_product_data_filter() {
 		$force_draft_status_fn = function ( $data ) {
-			$data['post_status'] = 'draft';
+			$data['post_status'] = ProductStatus::DRAFT;
 			return $data;
 		};
 
@@ -79,10 +81,10 @@ class WC_Tests_Product_Data_Store extends WC_Unit_Test_Case {
 		);
 
 		$product = new WC_Product();
-		$product->set_status( 'pending' );
+		$product->set_status( ProductStatus::PENDING );
 		$product->save();
 
-		$this->assertEquals( 'draft', $product->get_status() );
+		$this->assertEquals( ProductStatus::DRAFT, $product->get_status() );
 
 		remove_filter(
 			'woocommerce_new_product_data',
@@ -129,7 +131,7 @@ class WC_Tests_Product_Data_Store extends WC_Unit_Test_Case {
 	public function test_product_trash() {
 		$product = WC_Helper_Product::create_simple_product();
 		$product->delete();
-		$this->assertEquals( 'trash', $product->get_status() );
+		$this->assertEquals( ProductStatus::TRASH, $product->get_status() );
 	}
 
 	/**

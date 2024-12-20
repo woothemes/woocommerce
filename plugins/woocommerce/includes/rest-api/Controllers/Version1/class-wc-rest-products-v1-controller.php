@@ -10,6 +10,7 @@
  * @since    3.0.0
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Utilities\I18nUtil;
 
@@ -1692,7 +1693,7 @@ class WC_REST_Products_V1_Controller extends WC_REST_Posts_Controller {
 			}
 
 			// Otherwise, only trash if we haven't already.
-			if ( 'trash' === $post->post_status ) {
+			if ( ProductStatus::TRASH === $post->post_status ) {
 				/* translators: %s: post type */
 				return new WP_Error( 'woocommerce_rest_already_trashed', sprintf( __( 'The %s has already been deleted.', 'woocommerce' ), $this->post_type ), array( 'status' => 410 ) );
 			}
@@ -1700,7 +1701,7 @@ class WC_REST_Products_V1_Controller extends WC_REST_Posts_Controller {
 			// (Note that internally this falls through to `wp_delete_post` if
 			// the trash is disabled.)
 			$product->delete();
-			$result = 'trash' === $product->get_status();
+			$result = ProductStatus::TRASH === $product->get_status();
 		}
 
 		if ( ! $result ) {
@@ -1784,7 +1785,7 @@ class WC_REST_Products_V1_Controller extends WC_REST_Posts_Controller {
 					'description' => __( 'Product status (post status).', 'woocommerce' ),
 					'type'        => 'string',
 					'default'     => 'publish',
-					'enum'        => array_merge( array_keys( get_post_statuses() ), array( 'future' ) ),
+					'enum'        => array_merge( array_keys( get_post_statuses() ), array( ProductStatus::FUTURE ) ),
 					'context'     => array( 'view', 'edit' ),
 				),
 				'featured' => array(
@@ -2591,7 +2592,7 @@ class WC_REST_Products_V1_Controller extends WC_REST_Posts_Controller {
 			'default'           => 'any',
 			'description'       => __( 'Limit result set to products assigned a specific status.', 'woocommerce' ),
 			'type'              => 'string',
-			'enum'              => array_merge( array( 'any', 'future' ), array_keys( get_post_statuses() ) ),
+			'enum'              => array_merge( array( 'any', ProductStatus::FUTURE ), array_keys( get_post_statuses() ) ),
 			'sanitize_callback' => 'sanitize_key',
 			'validate_callback' => 'rest_validate_request_arg',
 		);

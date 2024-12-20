@@ -7,6 +7,7 @@
 
 namespace Automattic\WooCommerce\Admin\API;
 
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 
 defined( 'ABSPATH' ) || exit;
@@ -426,7 +427,7 @@ final class ProductsLowInStock extends \WC_REST_Products_Controller {
 			'default'           => 'publish',
 			'description'       => __( 'Limit result set to products assigned a specific status.', 'woocommerce' ),
 			'type'              => 'string',
-			'enum'              => array_merge( array_keys( get_post_statuses() ), array( 'future' ) ),
+			'enum'              => array_merge( array_keys( get_post_statuses() ), array( ProductStatus::FUTURE ) ),
 			'sanitize_callback' => 'sanitize_key',
 			'validate_callback' => 'rest_validate_request_arg',
 		);
@@ -447,7 +448,7 @@ final class ProductsLowInStock extends \WC_REST_Products_Controller {
 			'default'           => 'publish',
 			'description'       => __( 'Limit result set to products assigned a specific status.', 'woocommerce' ),
 			'type'              => 'string',
-			'enum'              => array_merge( array_keys( get_post_statuses() ), array( 'future' ) ),
+			'enum'              => array_merge( array_keys( get_post_statuses() ), array( ProductStatus::FUTURE ) ),
 			'sanitize_callback' => 'sanitize_key',
 			'validate_callback' => 'rest_validate_request_arg',
 		);

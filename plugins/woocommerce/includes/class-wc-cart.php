@@ -9,6 +9,7 @@
  * @version 2.1.0
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Utilities\DiscountsUtil;
 use Automattic\WooCommerce\Utilities\NumberUtil;
@@ -744,7 +745,7 @@ class WC_Cart extends WC_Legacy_Cart {
 		foreach ( $this->get_cart() as $cart_item_key => $values ) {
 			$product = $values['data'];
 
-			if ( ! $product || ! $product->exists() || 'trash' === $product->get_status() ) {
+			if ( ! $product || ! $product->exists() || ProductStatus::TRASH === $product->get_status() ) {
 				$this->set_quantity( $cart_item_key, 0 );
 				$return = new WP_Error( 'invalid', __( 'An item which is no longer available was removed from your cart.', 'woocommerce' ) );
 			}
