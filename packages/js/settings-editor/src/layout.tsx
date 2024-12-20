@@ -14,6 +14,7 @@ import {
 	// @ts-expect-error missing type.
 	privateApis as editorPrivateApis,
 } from '@wordpress/editor';
+import { privateApis as routerPrivateApis } from '@wordpress/router';
 import {
 	// @ts-expect-error missing type.
 	__unstableMotion as motion,
@@ -33,22 +34,20 @@ import SidebarContent from '@wordpress/edit-site/build-module/components/sidebar
 /**
  * Internal dependencies
  */
-import { Route } from './types';
 import { SectionTabs, Header } from './components';
 
 const { NavigableRegion } = unlock( editorPrivateApis );
+const { useLocation } = unlock( routerPrivateApis );
 
 const ANIMATION_DURATION = 0.3;
 
 type LayoutProps = {
-	route: Route;
 	settingsPage?: SettingsPage;
 	activeSection?: string;
 	tabs?: Array< { name: string; title: string } >;
 };
 
 export function Layout( {
-	route,
 	settingsPage,
 	tabs = [],
 	activeSection,
@@ -58,7 +57,7 @@ export function Layout( {
 	const isMobileViewport = useViewportMatch( 'medium', '<' );
 	const disableMotion = useReducedMotion();
 
-	const { key: routeKey, areas, widths } = route;
+	const { name: routeKey, areas, widths } = useLocation();
 
 	return (
 		<>

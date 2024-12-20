@@ -25,11 +25,10 @@ import { useRegisterSiteEditorRoutes } from './components/routes';
 const { RouterProvider } = unlock( routerPrivateApis );
 
 const SettingsLayout = () => {
-	const { route, settingsPage, tabs, activeSection } = useActiveRoute();
+	const { settingsPage, tabs, activeSection } = useActiveRoute();
 
 	return (
 		<Layout
-			route={ route }
 			settingsPage={ settingsPage }
 			tabs={ tabs }
 			activeSection={ activeSection }
