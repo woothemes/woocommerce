@@ -1,16 +1,23 @@
 /**
  * External dependencies
  */
-import { useEffect } from '@wordpress/element';
-import { useBlockProps } from '@wordpress/block-editor';
+import { useEffect, createInterpolateElement } from '@wordpress/element';
+import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { Skeleton } from '@woocommerce/base-components/skeleton';
 import { BlockEditProps } from '@wordpress/blocks';
-import { Disabled, Tooltip } from '@wordpress/components';
+import {
+	PanelBody,
+	Disabled,
+	Tooltip,
+	SelectControl,
+	ExternalLink,
+} from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { isSiteEditorPage } from '@woocommerce/utils';
 import { getSettingWithCoercion } from '@woocommerce/settings';
 import { isBoolean } from '@woocommerce/types';
+import { getSetting } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
@@ -43,7 +50,7 @@ const isBlockifiedAddToCart = getSettingWithCoercion(
 );
 
 const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
-	const { setAttributes } = props;
+	const { attributes, setAttributes } = props;
 
 	const isStepperLayoutFeatureEnabled = getSettingWithCoercion(
 		'isStepperLayoutFeatureEnabled',
@@ -75,6 +82,31 @@ const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
 		( select ) => isSiteEditorPage( select( 'core/edit-site' ) ),
 		[]
 	);
+
+	const {
+		attributesAutoselectType,
+		attributesAutoselectOnPageLoad,
+		attributesUnattachedAction
+	} = attributes;
+
+	const InterfaceSettingsLink = () => {
+		const interfaceSettingsUrl = `${ getSetting(
+			'adminUrl'
+		) }admin.php?page=wc-settings&tab=interface`;
+
+		const linkText = createInterpolateElement(
+			`<a>${ __( 'Manage default WooCommerce interface settings', 'woocommerce' ) }</a>`,
+			{
+				a: <ExternalLink href={ interfaceSettingsUrl } />,
+			}
+		);
+
+		return (
+			<div className="wc-block-editor-interface__link">
+				{ linkText }
+			</div>
+		);
+	};
 
 	return (
 		<>
@@ -180,6 +212,53 @@ const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
 					</div>
 				</Tooltip>
 			</div>
+
+			<InspectorControls key="inspector">
+				<PanelBody>
+					<InterfaceSettingsLink />
+				</PanelBody>
+				<PanelBody title={ __( 'Attribute dropdowns options', 'woocommerce' ) }>
+					<SelectControl
+						label={ __( 'Auto-select behavior', 'woocommerce' ) }
+						help={ __( 'This controls which other attributes will be auto-selected when an attribute is changed. Only attributes with a single compatible value will be auto-selected.', 'woocommerce' ) }
+						value={ attributesAutoselectType }
+						options={ [
+							{ label: __( 'Default',              'woocommerce' ), value: '' },
+							{ label: __( 'None',                 'woocommerce' ), value: 'none' },
+							{ label: __( 'Previous attributes',  'woocommerce' ), value: 'previous' },
+							{ label: __( 'All other attributes', 'woocommerce' ), value: 'all' },
+							{ label: __( 'Next attributes',      'woocommerce' ), value: 'next' },
+						] }
+						onChange={ ( value ) => setAttributes( { attributesAutoselectType: value } ) }
+						__nextHasNoMarginBottom
+					/>
+					<SelectControl
+						label={ __( 'Auto-select on page load', 'woocommerce' ) }
+						help={ __( 'This controls whether or not attributes with only one possible option will be auto-selected upon loading the page.', 'woocommerce' ) }
+						value={ attributesAutoselectOnPageLoad }
+						options={ [
+							{ label: __( 'Default', 'woocommerce' ), value: '' },
+							{ label: __( 'Yes',     'woocommerce' ), value: 'yes' },
+							{ label: __( 'No',      'woocommerce' ), value: 'no' },
+						] }
+						onChange={ ( ) => setAttributes( { attributesAutoselectOnPageLoad: ! attributesAutoselectOnPageLoad } ) }
+						__nextHasNoMarginBottom
+					/>
+					<SelectControl
+						label={ __( 'Values in conflict with current selection', 'woocommerce' ) }
+						help={ __( 'This controls what to do with attribute values that conflict with the current selection.', 'woocommerce' ) }
+						value={ attributesUnattachedAction }
+						options={ [
+							{ label: __( 'Default',                                                                 'woocommerce' ), value: '' },
+							{ label: __( 'Hidden',                                                                  'woocommerce' ), value: 'hide' },
+							{ label: __( 'Grayed-out and disabled',                                                 'woocommerce' ), value: 'disable' },
+							{ label: __( 'Grayed-out but selectable (will clear all other attributes if selected)', 'woocommerce' ), value: 'gray' },
+						] }
+						onChange={ ( value ) => setAttributes( { attributesUnattachedAction: value } ) }
+						__nextHasNoMarginBottom
+					/>
+				</PanelBody>
+			</InspectorControls>
 		</>
 	);
 };

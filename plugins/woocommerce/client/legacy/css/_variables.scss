@@ -20,6 +20,8 @@ $highlightext:      desaturate(lighten($highlight, 80%), 18%) !default;  // Text
 $contentbg:         #fff !default;                                     // Content BG - Tabs (active state)
 $subtext:           #767676 !default;                                  // small, breadcrumbs etc
 
+$optionsdisabledtext: GrayText !default;                               // Text on disabled options
+
 // export vars as CSS vars
 :root {
 	--woocommerce: #{$woocommerce};
@@ -35,4 +37,5 @@ $subtext:           #767676 !default;                                  // small,
 	--wc-highligh-text: #{$highlightext};
 	--wc-content-bg: #{$contentbg};
 	--wc-subtext: #{$subtext};
+	--wc-options-disabled-text: #{$optionsdisabledtext};
 }

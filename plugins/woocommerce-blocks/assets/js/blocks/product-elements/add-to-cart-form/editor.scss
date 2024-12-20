@@ -37,3 +37,8 @@ input {
 		width: unset !important;
 	}
 }
+
+/* In sidebar without tabs (WP <=6.1) */
+.block-editor-block-card + div > .wc-block-editor-interface__link {
+	padding: 0 $gap $gap 52px;
+}
