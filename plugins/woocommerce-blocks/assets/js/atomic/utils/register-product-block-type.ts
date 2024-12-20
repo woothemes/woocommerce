@@ -24,7 +24,7 @@ import { isNumber, isEmpty } from '@woocommerce/types';
 type ProductBlockSettings = {
 	isVariationBlock?: boolean;
 	variationName?: string | undefined;
-	isAvailableOnPostEditor: boolean;
+	isAvailableOnPostEditor?: boolean;
 };
 
 /**
