@@ -95,7 +95,7 @@ The principles covered in [Tutorial: Build your first block
 
 ### Modifying existing values on the front-end
 
-You may not need to create a block to get your extension working the way you want, for example if your extension only modifies existing content through filters.
+You may not need to create a block to get your extension working the way you want, for example, if your extension only modifies existing content through filters.
 
 In this case, you could remove the block folder from the example block, modify the Webpack config file so it no longer reads from that directory, and include the code you need in the entry JavaScript file.
 
