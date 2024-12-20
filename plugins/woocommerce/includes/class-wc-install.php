@@ -1771,7 +1771,8 @@ CREATE TABLE {$wpdb->prefix}wc_order_product_lookup (
 	KEY order_id (order_id),
 	KEY product_id (product_id),
 	KEY customer_id (customer_id),
-	KEY date_created (date_created)
+	KEY date_created (date_created),
+	KEY customer_product_date (customer_id, product_id, date_created)
 ) $collate;
 CREATE TABLE {$wpdb->prefix}wc_order_tax_lookup (
 	order_id bigint(20) unsigned NOT NULL,
