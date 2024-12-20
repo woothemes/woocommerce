@@ -18,7 +18,7 @@ jobs:
                     echo "available=false" >> $GITHUB_OUTPUT;
                   fi
             - name: Check config and assign reviews
-              if: ${{ steps.secret-check.outputs.available != 'true' }}
+              if: ${{ steps.secret-check.outputs.available == 'true' }}
               uses: acq688/Request-Reviewer-For-Team-Action@v1.1
               with:
                   config: '.github/automate-team-review-assignment-config.yml'
