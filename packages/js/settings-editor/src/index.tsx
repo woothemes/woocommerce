@@ -21,6 +21,7 @@ const { RouterProvider } = unlock( routerPrivateApis );
 
 export const SettingsEditor = () => {
 	const isRequiredGutenbergVersion = isGutenbergVersionAtLeast( 19.0 );
+	const { route, settingsPage, tabs, activeSection } = useActiveRoute();
 
 	if ( ! isRequiredGutenbergVersion ) {
 		return (
@@ -33,8 +34,6 @@ export const SettingsEditor = () => {
 			</div>
 		);
 	}
-
-	const { route, settingsPage, tabs, activeSection } = useActiveRoute();
 
 	return (
 		<Layout
