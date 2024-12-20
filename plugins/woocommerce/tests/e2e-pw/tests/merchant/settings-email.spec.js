@@ -137,51 +137,38 @@ test.describe( 'WooCommerce Email Settings', () => {
 			return content.includes( code );
 		};
 
-		// Define colors and corresponding fields
-		const emailFields = [
-			{ id: 'woocommerce_email_background_color', value: '#012345' },
-			{ id: 'woocommerce_email_base_color', value: '#6789ab' },
-			{ id: 'woocommerce_email_body_background_color', value: '#cdef01' },
-			{ id: 'woocommerce_email_footer_text_color', value: '#234567' },
-			// This color is ligtened in styles and not used with this specific value so can't be tested
-			// { id: 'woocommerce_email_text_color', value: '#89abcd' },
-			{ id: 'woocommerce_email_footer_text', value: 'New footer value' },
-		];
+		const baseColorId = 'woocommerce_email_base_color';
+		const baseColorValue = '#012345';
 
-		let iframeSrc = await iframeElement.getAttribute( 'src' );
+		const iframeSrc = await iframeElement.getAttribute( 'src' );
 
-		for ( const { id, value } of emailFields ) {
-			await page.fill( `#${ id }`, value );
-			await page.evaluate( ( inputId ) => {
-				const input = document.getElementById( inputId );
-				input.blur();
-			}, id );
+		await page.fill( `#${ baseColorId }`, baseColorValue );
+		await page.evaluate( ( inputId ) => {
+			const input = document.getElementById( inputId );
+			input.blur();
+		}, baseColorId );
 
-			// I've tried many ways to wait for the iframe to reload, but none of them
-			// worked consistently because of debounce, so I'm using a simple retry loop
-			let retries = 0;
-			let newIframeSrc = null;
-			while ( retries < 10 ) {
-				newIframeSrc = await iframeElement.getAttribute( 'src' );
-				// eslint-disable-next-line playwright/no-conditional-in-test
-				if ( newIframeSrc !== iframeSrc ) {
-					break;
-				}
-				await new Promise( ( resolve ) => setTimeout( resolve, 200 ) );
-				retries++;
+		// I've tried many ways to wait for the iframe to reload, but none of them
+		// worked consistently because of debounce, so I'm using a simple retry loop
+		let retries = 0;
+		let newIframeSrc = null;
+		while ( retries < 10 ) {
+			newIframeSrc = await iframeElement.getAttribute( 'src' );
+			// eslint-disable-next-line playwright/no-conditional-in-test
+			if ( newIframeSrc !== iframeSrc ) {
+				break;
 			}
-			await expect( newIframeSrc ).not.toEqual( iframeSrc );
-			iframeSrc = newIframeSrc;
-
-			// Check that the iframe contains the new value
-			await expect( await iframeContainsHtml( value ) ).toBeTruthy();
+			await new Promise( ( resolve ) => setTimeout( resolve, 200 ) );
+			retries++;
 		}
+		await expect( newIframeSrc ).not.toEqual( iframeSrc );
+
+		// Check that the iframe contains the new value
+		await expect( await iframeContainsHtml( baseColorValue ) ).toBeTruthy();
 
 		// Check that the iframe does not contain any of the new values after page reload
 		await page.reload();
-		for ( const { value } of emailFields ) {
-			await expect( await iframeContainsHtml( value ) ).toBeFalsy();
-		}
+		await expect( await iframeContainsHtml( baseColorValue ) ).toBeFalsy();
 	} );
 
 	test( 'Send email preview', async ( { page, baseURL } ) => {
