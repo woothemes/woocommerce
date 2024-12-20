@@ -8,11 +8,7 @@ import {
 	PREFIX_QUERY_ARG_FILTER_TYPE,
 	PREFIX_QUERY_ARG_QUERY_TYPE,
 } from '@woocommerce/utils';
-import {
-	AttributeObject,
-	AttributeObjectForDisplay,
-	isString,
-} from '@woocommerce/types';
+import { AttributeObjectForDisplay, isString } from '@woocommerce/types';
 
 /**
  * Internal dependencies
