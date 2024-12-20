@@ -353,7 +353,7 @@ jobs:
   test-reports:
     name: 'Test reports - ${{ matrix.report }}'
     needs: ['project-jobs', 'project-test-jobs']
-    if: ${{ !cancelled() && github.repository == 'woocommerce/woocommerce' && ( github.event_name != 'pull_request' || needs.identify-jobs-to-run.outputs.needs-code-validation == 'true' ) && needs.project-jobs.outputs.report-jobs != '[]' && secrets.REPORTS_TOKEN }}
+    if: ${{ !cancelled() && github.repository == 'woocommerce/woocommerce' && ( github.event_name != 'pull_request' || needs.identify-jobs-to-run.outputs.needs-code-validation == 'true' ) && needs.project-jobs.outputs.report-jobs != '[]' }}
     strategy:
       fail-fast: false
       matrix:
@@ -395,18 +395,20 @@ jobs:
             REF_NAME="$GITHUB_REF_NAME"
           fi
 
-          gh workflow run report.yml \
-            -f artifact="$ARTIFACT_NAME" \
-            -f run_id="$GITHUB_RUN_ID" \
-            -f run_attempt="$GITHUB_RUN_ATTEMPT" \
-            -f event="$EVENT_NAME" \
-            -f pr_number="$PR_NUMBER" \
-            -f ref_name="$REF_NAME" \
-            -f commit_sha="$GITHUB_SHA" \
-            -f repository="$GITHUB_REPOSITORY" \
-            -f suite="$REPORT_NAME" \
-            -f report_title="$REPORT_TITLE" \
-            --repo woocommerce/woocommerce-test-reports
+          if [[ "${{ secrets.REPORTS_TOKEN }}" != '' ]]; then
+            gh workflow run report.yml \
+              -f artifact="$ARTIFACT_NAME" \
+              -f run_id="$GITHUB_RUN_ID" \
+              -f run_attempt="$GITHUB_RUN_ATTEMPT" \
+              -f event="$EVENT_NAME" \
+              -f pr_number="$PR_NUMBER" \
+              -f ref_name="$REF_NAME" \
+              -f commit_sha="$GITHUB_SHA" \
+              -f repository="$GITHUB_REPOSITORY" \
+              -f suite="$REPORT_NAME" \
+              -f report_title="$REPORT_TITLE" \
+              --repo woocommerce/woocommerce-test-reports
+          fi
 
   report-flaky-tests:
     name: 'Create issues for flaky tests'
