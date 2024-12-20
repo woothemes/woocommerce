@@ -140,6 +140,15 @@
           "id": "092e66dac8f44d08799ba1d2411d757fd53c9e00"
         },
         {
+          "post_title": "Cart and Checkout - Extensibility getting started guide",
+          "menu_title": "Extensibility",
+          "tags": "reference",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/cart-and-checkout-blocks/extensibility-getting-started.md",
+          "hash": "7d12b211f899c98aa7c0560462fdcfd547ab6e3db0b4ca526d7e235f4409f923",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/extensibility-getting-started.md",
+          "id": "7a379c2d6d96f15fe234a707d19ebdc20f8e9dd3"
+        },
+        {
           "post_title": "Cart and Checkout - DOM events",
           "menu_title": "DOM Events",
           "tags": "reference",
@@ -296,16 +305,13 @@
               }
             },
             {
-              "post_title": "Cart and Checkout - Hook alternatives",
+              "post_title": "Cart and Checkout - Hook support and common extensibility paths",
               "menu_title": "Hook alternatives",
               "tags": "reference",
               "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/cart-and-checkout-blocks/hooks/hook-alternatives.md",
-              "hash": "c100db14ccff379e6f0a38a3244573ea9b1366ccc7cd2388e9764614eb17ffac",
+              "hash": "ab6bfaaeace75b9b6d3d36d175136f2070f07cd8da9623224db9454d447ddbb3",
               "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/hooks/hook-alternatives.md",
-              "id": "8eed024a999bde3db20e86556b9dd0efaba814bd",
-              "links": {
-                "": "a4285ea554ac695e050a5d6d73a273b508172e02"
-              }
+              "id": "8eed024a999bde3db20e86556b9dd0efaba814bd"
             }
           ],
           "categories": []
@@ -1888,5 +1894,5 @@
       "categories": []
     }
   ],
-  "hash": "bc5bea0f9e0f2c054936cd16ac1229400ec9a7f7efd154188de73db67f9670aa"
+  "hash": "0947408b8d1da4dd21ef926ddec5724b6dff59c1918a42f594e34506cdd859e2"
 }
