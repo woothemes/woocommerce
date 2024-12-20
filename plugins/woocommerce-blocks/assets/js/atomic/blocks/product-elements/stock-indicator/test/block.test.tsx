@@ -192,7 +192,6 @@ describe( 'Stock Indicator Block', () => {
 					productId={ 1 }
 					isDescendentOfQueryLoop={ false }
 					isDescendantOfAllProducts={ false }
-					isDescendentOfSingleProductTemplate={ false }
 				/>
 			</ProductDataContextProvider>
 		);
@@ -216,7 +215,6 @@ describe( 'Stock Indicator Block', () => {
 					productId={ 1 }
 					isDescendentOfQueryLoop={ false }
 					isDescendantOfAllProducts={ false }
-					isDescendentOfSingleProductTemplate={ false }
 				/>
 			</ProductDataContextProvider>
 		);
@@ -240,7 +238,6 @@ describe( 'Stock Indicator Block', () => {
 					productId={ 1 }
 					isDescendentOfQueryLoop={ false }
 					isDescendantOfAllProducts={ false }
-					isDescendentOfSingleProductTemplate={ false }
 				/>
 			</ProductDataContextProvider>
 		);
@@ -252,16 +249,16 @@ describe( 'Stock Indicator Block', () => {
 	it( 'should show stock indicator when is descendent of single product template', () => {
 		const product = {
 			...defaultProduct,
+			id: 0,
 			type: 'simple',
 		};
 
 		const { container } = render(
 			<ProductDataContextProvider product={ product } isLoading={ false }>
 				<Block
-					productId={ 1 }
+					productId={ 0 }
 					isDescendentOfQueryLoop={ false }
 					isDescendantOfAllProducts={ false }
-					isDescendentOfSingleProductTemplate={ true }
 				/>
 			</ProductDataContextProvider>
 		);

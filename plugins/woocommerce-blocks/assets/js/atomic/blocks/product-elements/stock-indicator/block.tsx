@@ -27,18 +27,21 @@ type Props = BlockAttributes & HTMLAttributes< HTMLDivElement >;
 /**
  * Determines whether the stock indicator should be visible based on product type and availability.
  *
- * @param product                             The product.
- * @param availabilityText                    The stock availability text.
- * @param isDescendentOfSingleProductTemplate Whether this is descendent of single product template.
- * @param selectedProductType                 The selected product type.
+ * @param product             The product.
+ * @param availabilityText    The stock availability text.
+ * @param selectedProductType The selected product type.
  * @return True if stock indicator should be visible.
  */
 const isStockIndicatorVisible = (
 	product: ProductResponseItem,
 	availabilityText: string,
-	isDescendentOfSingleProductTemplate: boolean | undefined,
 	selectedProductType: string | undefined
 ) => {
+	// If we have product data, rely on availability text.
+	if ( product.id !== 0 ) {
+		return availabilityText !== '';
+	}
+
 	const productTypesWithoutStockIndicator = getSetting< string[] >(
 		'productTypesWithoutStockIndicator',
 		[ 'external', 'grouped', 'variable' ]
@@ -46,13 +49,7 @@ const isStockIndicatorVisible = (
 
 	const productType = selectedProductType || product?.type;
 
-	const isProductTypeAllowed =
-		! productTypesWithoutStockIndicator.includes( productType );
-
-	return (
-		isProductTypeAllowed &&
-		( availabilityText !== '' || isDescendentOfSingleProductTemplate )
-	);
+	return ! productTypesWithoutStockIndicator.includes( productType );
 };
 
 export const Block = ( props: Props ): JSX.Element | null => {
@@ -62,7 +59,6 @@ export const Block = ( props: Props ): JSX.Element | null => {
 	const { product } = useProductDataContext();
 	const { text: availabilityText, class: availabilityClass } =
 		product.stock_availability;
-	const { isDescendentOfSingleProductTemplate } = props;
 
 	const { selectedProductType } = useSelect< {
 		selectedProductType: ProductTypeProps;
@@ -79,13 +75,12 @@ export const Block = ( props: Props ): JSX.Element | null => {
 		! isStockIndicatorVisible(
 			product,
 			availabilityText,
-			isDescendentOfSingleProductTemplate,
 			selectedProductType?.slug
 		)
 	) {
 		return null;
 	}
-
+	const isInTemplate = product.id === 0;
 	const lowStock = product.low_stock_remaining;
 
 	return (
@@ -95,7 +90,7 @@ export const Block = ( props: Props ): JSX.Element | null => {
 				[ `wc-block-components-product-stock-indicator--${ availabilityClass }` ]:
 					availabilityClass,
 				'wc-block-components-product-stock-indicator--in-stock':
-					isDescendentOfSingleProductTemplate,
+					isInTemplate,
 				'wc-block-components-product-stock-indicator--low-stock':
 					!! lowStock,
 				// When inside All products block
@@ -110,7 +105,7 @@ export const Block = ( props: Props ): JSX.Element | null => {
 				style: styleProps.style,
 			} ) }
 		>
-			{ isDescendentOfSingleProductTemplate
+			{ isInTemplate
 				? __( 'In stock', 'woocommerce' )
 				: availabilityText }
 		</div>
@@ -118,7 +113,8 @@ export const Block = ( props: Props ): JSX.Element | null => {
 };
 
 export default ( props: Props ) => {
-	if ( props.isDescendentOfSingleProductTemplate ) {
+	const { product } = useProductDataContext();
+	if ( product.id === 0 ) {
 		return <Block { ...props } />;
 	}
 	return withProductDataContext( Block )( props );
