@@ -4,7 +4,6 @@
 import { __ } from '@wordpress/i18n';
 import { InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, ToggleControl, RadioControl } from '@wordpress/components';
-import { useEffect, useState } from '@wordpress/element';
 import { dispatch } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
 
@@ -15,36 +14,6 @@ import { useCheckoutBlockContext } from './context';
 
 export const AddressFieldControls = (): JSX.Element => {
 	const { defaultFields } = useCheckoutBlockContext();
-
-	// These state objects are in place so the required toggles remember their last value after being hidden and shown.
-	const [ lastPhoneRequired, setLastPhoneRequired ] = useState(
-		defaultFields.phone.required
-	);
-	const [ lastCompanyRequired, setLastCompanyRequired ] = useState(
-		defaultFields.company.required
-	);
-	const [ lastAddress2Required, setLastAddress2Required ] = useState(
-		defaultFields.address_2.required
-	);
-
-	useEffect( () => {
-		if ( ! defaultFields.phone.hidden ) {
-			setLastPhoneRequired( defaultFields.phone.required );
-		}
-		if ( ! defaultFields.company.hidden ) {
-			setLastCompanyRequired( defaultFields.company.required );
-		}
-		if ( ! defaultFields.address_2.hidden ) {
-			setLastAddress2Required( defaultFields.address_2.required );
-		}
-	}, [
-		defaultFields.phone.hidden,
-		defaultFields.company.hidden,
-		defaultFields.address_2.hidden,
-		defaultFields.phone.required,
-		defaultFields.company.required,
-		defaultFields.address_2.required,
-	] );
 
 	const setFieldEntity = ( field: string, value: string ) => {
 		if (
@@ -87,10 +56,7 @@ export const AddressFieldControls = (): JSX.Element => {
 					checked={ ! defaultFields.company.hidden }
 					onChange={ () => {
 						if ( defaultFields.company.hidden ) {
-							setFieldEntity(
-								'company',
-								lastCompanyRequired ? 'required' : 'optional'
-							);
+							setFieldEntity( 'company', 'optional' );
 						} else {
 							setFieldEntity( 'company', 'hidden' );
 						}
@@ -116,10 +82,7 @@ export const AddressFieldControls = (): JSX.Element => {
 					checked={ ! defaultFields.address_2.hidden }
 					onChange={ () => {
 						if ( defaultFields.address_2.hidden ) {
-							setFieldEntity(
-								'address_2',
-								lastAddress2Required ? 'required' : 'optional'
-							);
+							setFieldEntity( 'address_2', 'optional' );
 						} else {
 							setFieldEntity( 'address_2', 'hidden' );
 						}
@@ -145,10 +108,7 @@ export const AddressFieldControls = (): JSX.Element => {
 					checked={ ! defaultFields.phone.hidden }
 					onChange={ () => {
 						if ( defaultFields.phone.hidden ) {
-							setFieldEntity(
-								'phone',
-								lastPhoneRequired ? 'required' : 'optional'
-							);
+							setFieldEntity( 'phone', 'optional' );
 						} else {
 							setFieldEntity( 'phone', 'hidden' );
 						}
