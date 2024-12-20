@@ -38,18 +38,20 @@ export const Edit = ( {
 	}
 
 	return (
-		<FormStepBlock
-			setAttributes={ setAttributes }
-			attributes={ attributes }
-			className={ clsx(
-				'wc-block-checkout__shipping-fields',
-				attributes?.className
-			) }
-		>
+		<>
 			<Controls />
-			<Block />
-			<AdditionalFields block={ innerBlockAreas.SHIPPING_ADDRESS } />
-		</FormStepBlock>
+			<FormStepBlock
+				setAttributes={ setAttributes }
+				attributes={ attributes }
+				className={ clsx(
+					'wc-block-checkout__shipping-fields',
+					attributes?.className
+				) }
+			>
+				<Block />
+				<AdditionalFields block={ innerBlockAreas.SHIPPING_ADDRESS } />
+			</FormStepBlock>
+		</>
 	);
 };
 
