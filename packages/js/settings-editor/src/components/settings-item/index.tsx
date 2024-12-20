@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { createElement } from '@wordpress/element';
-import { sanitize } from 'dompurify';
 import {
 	// @ts-expect-error missing types.
 	__experimentalVStack as VStack,
@@ -16,6 +15,7 @@ import {
 import { SettingsInput } from '../settings-input';
 import { SettingsCheckbox } from '../settings-checkbox';
 import { SettingsSelect } from '../settings-select';
+import { CustomView } from '../custom-view';
 
 const getComponent = (
 	setting: Exclude< SettingsField, GroupSettingsField >
@@ -54,13 +54,7 @@ const getComponent = (
 		case 'select':
 			return <SettingsSelect { ...setting } />;
 		case 'custom':
-			return (
-				<div
-					dangerouslySetInnerHTML={ {
-						__html: sanitize( setting.content || '' ),
-					} }
-				/>
-			);
+			return <CustomView html={ setting.content } />;
 		case 'slotfill_placeholder':
 			return <div id={ setting.id } className={ setting.class }></div>;
 		default:
