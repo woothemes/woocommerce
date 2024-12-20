@@ -129,7 +129,6 @@ test.describe( 'WooCommerce Email Settings', () => {
 
 		// Wait for the iframe content to load
 		const iframeSelector = '#wc_settings_email_preview_slotfill iframe';
-		const iframeElement = page.locator( iframeSelector );
 
 		const iframeContainsHtml = async ( code ) => {
 			const iframe = page.frameLocator( iframeSelector );
@@ -140,28 +139,35 @@ test.describe( 'WooCommerce Email Settings', () => {
 		const baseColorId = 'woocommerce_email_base_color';
 		const baseColorValue = '#012345';
 
-		const iframeSrc = await iframeElement.getAttribute( 'src' );
-
+		// Change email base color
 		await page.fill( `#${ baseColorId }`, baseColorValue );
-		await page.evaluate( ( inputId ) => {
-			const input = document.getElementById( inputId );
-			input.blur();
-		}, baseColorId );
 
-		// I've tried many ways to wait for the iframe to reload, but none of them
-		// worked consistently because of debounce, so I'm using a simple retry loop
-		let retries = 0;
-		let newIframeSrc = null;
-		while ( retries < 10 ) {
-			newIframeSrc = await iframeElement.getAttribute( 'src' );
-			// eslint-disable-next-line playwright/no-conditional-in-test
-			if ( newIframeSrc !== iframeSrc ) {
-				break;
-			}
-			await new Promise( ( resolve ) => setTimeout( resolve, 200 ) );
-			retries++;
-		}
-		await expect( newIframeSrc ).not.toEqual( iframeSrc );
+		await page.evaluate(
+			async ( args ) => {
+				const input = document.getElementById( args.baseColorId );
+				// Blur the input to trigger value change event
+				input.blur();
+
+				const iframe = document.querySelector( args.iframeSelector );
+
+				// Wait for the transient to be saved
+				await new Promise( ( resolve ) => {
+					input.addEventListener(
+						'transient-saved',
+						() => resolve(),
+						{ once: true }
+					);
+				} );
+
+				// Wait for the iframe with email preview to reload
+				return new Promise( ( resolve ) => {
+					iframe.addEventListener( 'load', () => resolve(), {
+						once: true,
+					} );
+				} );
+			},
+			{ baseColorId, iframeSelector }
+		);
 
 		// Check that the iframe contains the new value
 		await expect( await iframeContainsHtml( baseColorValue ) ).toBeTruthy();
