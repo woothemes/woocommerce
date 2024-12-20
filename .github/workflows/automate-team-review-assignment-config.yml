@@ -8,7 +8,7 @@ jobs:
         if: github.event.pull_request.draft == false && github.actor != 'dependabot[bot]' 
         runs-on: ubuntu-latest
         steps:
-            # The token is not available in for-repositories and GH actions are supporting secrets check in if-conditions.
+            # The token is not available in fork-repositories and GH actions are supporting secrets check in if-conditions.
             - name: Check token availability
               id: secret-check
               shell: bash
