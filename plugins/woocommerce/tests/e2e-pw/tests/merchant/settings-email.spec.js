@@ -283,6 +283,21 @@ test.describe( 'WooCommerce Email Settings', () => {
 				} );
 			}, subjectId );
 			await expect( await getSubject() ).toContain( 'New subject' );
+
+			// Reset the subject to default value
+			await page.fill( `#${ subjectId }`, '' );
+			await page.evaluate( async ( inputId ) => {
+				const input = document.getElementById( inputId );
+				input.blur();
+
+				return await new Promise( ( resolve ) => {
+					input.addEventListener(
+						'transient-saved',
+						() => resolve(),
+						{ once: true }
+					);
+				} );
+			}, subjectId );
 		}
 	);
 
