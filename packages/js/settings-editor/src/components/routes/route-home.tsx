@@ -8,6 +8,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { Sidebar } from '../sidebar';
+import { LegacyContent } from '../../legacy';
 import type { RouteArea } from '.';
 
 export type RouteProps = {
@@ -15,6 +16,8 @@ export type RouteProps = {
 	path: string;
 	areas: Record< RouteArea, JSX.Element >;
 };
+
+const settingsData: SettingsData = window.wcSettings?.admin?.settingsData;
 
 export const homeRoute = {
 	name: 'home',
@@ -24,7 +27,13 @@ export const homeRoute = {
 			<Sidebar title={ __( 'Settings', 'woocommerce' ) } backPack="/" />
 		),
 		preview: <div>Preview</div>,
-		content: <div>Content</div>,
+		content: (
+			<LegacyContent
+				settingsPage={ settingsData?.general }
+				activeSection="default"
+			/>
+		),
+
 		mobile: <div>Mobile</div>,
 	},
 };
