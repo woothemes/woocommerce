@@ -35,14 +35,10 @@ const Settings = () => {
 	return <SettingsEditor />;
 };
 
-const SettingsApp = () => {
-	return (
+if ( node ) {
+	createRoot( node ).render(
 		<RouterProvider>
 			<Settings />
 		</RouterProvider>
 	);
-};
-
-if ( node ) {
-	createRoot( node ).render( <SettingsApp /> );
 }
