@@ -14,6 +14,33 @@ import { subscribe, select } from '@wordpress/data';
 import { isNumber, isEmpty } from '@woocommerce/types';
 
 /**
+ * Settings for product block registration.
+ *
+ * @typedef {Object} ProductBlockSettings
+ * @property {boolean} [isVariationBlock]      - Whether this block is a variation
+ * @property {string}  [variationName]         - The name of the variation if applicable
+ * @property {boolean} isAvailableOnPostEditor - Whether the block should be available in post editor
+ */
+type ProductBlockSettings = {
+	isVariationBlock?: boolean;
+	variationName?: string | undefined;
+	isAvailableOnPostEditor: boolean;
+};
+
+/**
+ * Internal block config type used by the BlockRegistrationManager
+ *
+ * @typedef {Object} BlockConfig
+ * @property {string}                      blockName            - The name of the block
+ * @property {Partial<BlockConfiguration>} settings             - Block settings configuration
+ * @property {ProductBlockSettings}        productBlockSettings - Product block settings
+ */
+type BlockConfig = ProductBlockSettings & {
+	blockName: string;
+	settings: Partial< BlockConfiguration >;
+};
+
+/**
  * Configuration object for registering a product block type.
  *
  * @typedef {Object} ProductBlockRegistrationConfig
@@ -22,21 +49,8 @@ import { isNumber, isEmpty } from '@woocommerce/types';
  * @property {string}                      [variationName]         - The name of the variation if applicable
  * @property {boolean}                     isAvailableOnPostEditor - Whether the block should be available in post editor
  */
-type ProductBlockRegistrationConfig = {
-	settings?: Partial< BlockConfiguration >;
-	isVariationBlock?: boolean;
-	variationName?: string;
-	isAvailableOnPostEditor: boolean;
-};
-
-// Internal block config type used by the BlockRegistrationManager
-type BlockConfig = {
-	blockName: string;
-	settings: Partial< BlockConfiguration >;
-	isVariationBlock: boolean;
-	variationName?: string | undefined;
-	isAvailableOnPostEditor: boolean;
-};
+type ProductBlockRegistrationConfig = Partial< BlockConfiguration > &
+	ProductBlockSettings;
 
 /**
  * Manages block registration and unregistration for WordPress blocks in different contexts.
