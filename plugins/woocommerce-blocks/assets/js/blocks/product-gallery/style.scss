@@ -201,6 +201,11 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 		padding: 0;
 		border: none;
 		background: none;
+
+		&:disabled {
+			opacity: 50%;
+			cursor: not-allowed;
+		}
 	}
 
 	.is-vertically-aligned-top {

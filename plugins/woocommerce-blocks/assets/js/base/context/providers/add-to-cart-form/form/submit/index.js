@@ -87,6 +87,9 @@ const FormSubmit = () => {
 				// Update nonce.
 				triggerFetch.setNonce( fetchResponse.headers );
 
+				// Update cart hash.
+				triggerFetch.setCartHash( fetchResponse.headers );
+
 				// Handle response.
 				fetchResponse.json().then( function ( response ) {
 					if ( ! fetchResponse.ok ) {

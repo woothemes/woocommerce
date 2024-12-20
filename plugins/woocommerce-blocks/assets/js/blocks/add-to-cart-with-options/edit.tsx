@@ -9,24 +9,16 @@ import {
 } from '@wordpress/block-editor';
 import { BlockEditProps } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
-import { eye } from '@woocommerce/icons';
 import type { InnerBlockTemplate } from '@wordpress/blocks';
-import { useDispatch, useSelect } from '@wordpress/data';
-import {
-	Icon,
-	ToolbarGroup,
-
-	// @ts-expect-error no exported member.
-	ToolbarDropdownMenu,
-} from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { useIsDescendentOfSingleProductBlock } from '../../atomic/blocks/product-elements/shared/use-is-descendent-of-single-product-block';
 import { AddToCartOptionsSettings } from './settings';
-import { store as woocommerceTemplateStateStore } from './store';
-import { ProductTypeProps } from './types';
+import ToolbarProductTypeGroup from './components/toolbar-type-product-selector-group';
+import useProductTypeSelector from './hooks/use-product-type-selector';
+
 export interface Attributes {
 	className?: string;
 	isDescendentOfSingleProductBlock: boolean;
@@ -48,6 +40,8 @@ const INNER_BLOCKS_TEMPLATE: InnerBlockTemplate[] = [
 			content: __( 'Add to Cart', 'woocommerce' ),
 		},
 	],
+	[ 'woocommerce/product-stock-indicator' ],
+	[ 'woocommerce/add-to-cart-with-options-quantity-selector' ],
 	[
 		'woocommerce/product-button',
 		{
@@ -60,52 +54,35 @@ const INNER_BLOCKS_TEMPLATE: InnerBlockTemplate[] = [
 const AddToCartOptionsEdit = ( props: BlockEditProps< Attributes > ) => {
 	const { setAttributes } = props;
 
-	const { productTypes, currentProduct } = useSelect< {
-		productTypes: ProductTypeProps[];
-		currentProduct: ProductTypeProps;
-	} >( ( select ) => {
-		const { getProductTypes, getCurrentProductType } = select(
-			woocommerceTemplateStateStore
-		);
-
-		return {
-			productTypes: getProductTypes(),
-			currentProduct: getCurrentProductType(),
-		};
-	}, [] );
-
-	const { switchProductType } = useDispatch( woocommerceTemplateStateStore );
-
 	const blockProps = useBlockProps();
+	const blockClientId = blockProps?.id;
 	const { isDescendentOfSingleProductBlock } =
 		useIsDescendentOfSingleProductBlock( {
-			blockClientId: blockProps?.id,
+			blockClientId,
 		} );
+
+	const { registerListener, unregisterListener } = useProductTypeSelector();
 
 	useEffect( () => {
 		setAttributes( {
 			isDescendentOfSingleProductBlock,
 		} );
-	}, [ setAttributes, isDescendentOfSingleProductBlock ] );
+		registerListener( blockClientId );
+		return () => {
+			unregisterListener( blockClientId );
+		};
+	}, [
+		setAttributes,
+		isDescendentOfSingleProductBlock,
+		blockClientId,
+		registerListener,
+		unregisterListener,
+	] );
 
 	return (
 		<>
 			<BlockControls>
-				<ToolbarGroup>
-					<ToolbarDropdownMenu
-						icon={ <Icon icon={ eye } /> }
-						text={
-							currentProduct?.label ||
-							__( 'Switch product type', 'woocommerce' )
-						}
-						value={ currentProduct?.slug }
-						controls={ productTypes.map( ( productType ) => ( {
-							title: productType.label,
-							onClick: () =>
-								switchProductType( productType.slug ),
-						} ) ) }
-					/>
-				</ToolbarGroup>
+				<ToolbarProductTypeGroup />
 			</BlockControls>
 
 			<AddToCartOptionsSettings
@@ -113,6 +90,7 @@ const AddToCartOptionsEdit = ( props: BlockEditProps< Attributes > ) => {
 					isBlockifiedAddToCart: true,
 				} }
 			/>
+
 			<div { ...blockProps }>
 				<InnerBlocks template={ INNER_BLOCKS_TEMPLATE } />
 			</div>

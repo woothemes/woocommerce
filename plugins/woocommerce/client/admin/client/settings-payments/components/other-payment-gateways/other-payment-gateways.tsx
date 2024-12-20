@@ -23,7 +23,11 @@ interface OtherPaymentGatewaysProps {
 	suggestions: SuggestedPaymentExtension[];
 	suggestionCategories: SuggestedPaymentExtensionCategory[];
 	installingPlugin: string | null;
-	setupPlugin: ( id: string, slug: string ) => void;
+	setupPlugin: (
+		id: string,
+		slug: string,
+		onboardingUrl: string | null
+	) => void;
 	isFetching: boolean;
 }
 
@@ -34,7 +38,10 @@ export const OtherPaymentGateways = ( {
 	setupPlugin,
 	isFetching,
 }: OtherPaymentGatewaysProps ) => {
-	const [ isExpanded, setIsExpanded ] = useState( false );
+	const urlParams = new URLSearchParams( window.location.search );
+	// Determine the initial expanded state based on URL params.
+	const initialExpanded = urlParams.get( 'other_pes_section' ) === 'expanded';
+	const [ isExpanded, setIsExpanded ] = useState( initialExpanded );
 
 	const suggestionsByCategory = useMemo(
 		() =>
@@ -140,7 +147,8 @@ export const OtherPaymentGateways = ( {
 														setupPlugin(
 															extension.id,
 															extension.plugin
-																.slug
+																.slug,
+															null // Suggested gateways won't have an onboarding URL.
 														)
 													}
 													isBusy={

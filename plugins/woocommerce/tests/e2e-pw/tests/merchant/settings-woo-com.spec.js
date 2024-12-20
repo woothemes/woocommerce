@@ -1,14 +1,11 @@
 const { test, expect } = require( '@playwright/test' );
+const { tags } = require( '../../fixtures/fixtures' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 test.describe(
 	'WooCommerce woo.com Settings',
 	{
-		tag: [
-			'@services',
-			'@skip-on-default-pressable',
-			'@skip-on-default-wpcom',
-		],
+		tag: [ tags.SERVICES, tags.SKIP_ON_PRESSABLE, tags.SKIP_ON_WPCOM ],
 	},
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );

@@ -1,23 +1,29 @@
 const { test, expect } = require( '@playwright/test' );
+const { tags } = require( '../../fixtures/fixtures' );
 
 test.describe( 'Marketing page', () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
-	test( 'A user can view the Marketing > Overview page without it crashing', async ( {
-		page,
-	} ) => {
-		// Go to the Marketing page.
-		await page.goto( 'wp-admin/admin.php?page=wc-admin&path=%2Fmarketing' );
+	//TODO (E2E Audit): Delete this test. Already covered in the test directly below it ('Marketing Overview page have relevant content').
+	test(
+		'A user can view the Marketing > Overview page without it crashing',
+		{ tag: [ tags.TO_BE_REMOVED ] },
+		async ( { page } ) => {
+			// Go to the Marketing page.
+			await page.goto(
+				'wp-admin/admin.php?page=wc-admin&path=%2Fmarketing'
+			);
 
-		// Users should see the "Learn about marketing a store" card.
-		await expect(
-			page.getByText( 'Learn about marketing a store' )
-		).toBeVisible();
-	} );
+			// Users should see the "Learn about marketing a store" card.
+			await expect(
+				page.getByText( 'Learn about marketing a store' )
+			).toBeVisible();
+		}
+	);
 
 	test(
 		'Marketing Overview page have relevant content',
-		{ tag: '@skip-on-default-wpcom' },
+		{ tag: tags.SKIP_ON_WPCOM },
 		async ( { page } ) => {
 			// Go to the Marketing page.
 			await page.goto(
@@ -56,7 +62,7 @@ test.describe( 'Marketing page', () => {
 
 	test(
 		'Introduction can be dismissed',
-		{ tag: '@skip-on-default-pressable' },
+		{ tag: tags.SKIP_ON_PRESSABLE },
 		async ( { page } ) => {
 			// Go to the Marketing page.
 			await page.goto(

@@ -66,6 +66,13 @@ a.button {
 	.woocommerce-form-login__rememberme {
 		margin: 1rem 0 3rem 0;
 	}
+
+	.show-password-input {
+		background-color: transparent !important;
+		color: var(--global--color-primary) !important;
+		display: inherit;
+		outline-offset: 0;
+	}
 }
 
 .woocommerce-notices-wrapper:empty {
@@ -604,6 +611,14 @@ button.reset_variations {
 	.woocommerce-product-gallery__image:nth-child(n+2) {
 		width: 25%;
 		display: inline-block;
+	}
+
+	.woocommerce-product-gallery__image a {
+		display: block;
+	}
+
+	.woocommerce-product-gallery__image a:focus img {
+		outline-offset: -2px;
 	}
 
 	.flex-control-thumbs {
@@ -1322,10 +1337,6 @@ button.reset_variations {
 			p {
 				margin-top: 20px;
 				margin-bottom: 0 !important;
-			}
-
-			.show-password-input {
-				display: inherit;
 			}
 		}
 
