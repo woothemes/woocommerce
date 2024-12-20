@@ -5,21 +5,10 @@ on:
 
 jobs:
     add-reviews:
-        if: github.event.pull_request.draft == false && github.actor != 'dependabot[bot]' 
+        if: github.event.pull_request.draft == false && github.actor != 'dependabot[bot]' && ! github.event.pull_request.head.repo.fork
         runs-on: ubuntu-latest
         steps:
-            # The token is not available in fork-repositories and GH actions are supporting secrets check in if-conditions.
-            - name: Check token availability
-              id: secret-check
-              shell: bash
-              run: |
-                  if [[ "${{ secrets.PR_ASSIGN_TOKEN }}" != '' ]]; then
-                    echo "available=true" >> $GITHUB_OUTPUT;
-                  else
-                    echo "available=false" >> $GITHUB_OUTPUT;
-                  fi
             - name: Check config and assign reviews
-              if: ${{ steps.secret-check.outputs.available == 'true' }}
               uses: acq688/Request-Reviewer-For-Team-Action@v1.1
               with:
                   config: '.github/automate-team-review-assignment-config.yml'
