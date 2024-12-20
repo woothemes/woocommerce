@@ -129,4 +129,4 @@ Modifying the way the server-side part of the Cart and Checkout blocks works is 
 
 ### Extending Store API
 
-If you need to extend the way Store API works and the data in the responses the best documentation is the [Extending the Store API](https://github.com/woocommerce/woocommerce/tree/trunk/plugins/woocommerce-blocks/docs/third-party-developers/extensibility/rest-api).
+If you need to change how the Store API works, or extend the data in the responses, see [Extending the Store API](https://github.com/woocommerce/woocommerce/tree/trunk/plugins/woocommerce-blocks/docs/third-party-developers/extensibility/rest-api).
