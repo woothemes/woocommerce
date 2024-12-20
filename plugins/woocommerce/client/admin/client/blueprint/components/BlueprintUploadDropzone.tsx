@@ -7,7 +7,7 @@ import {
 	Notice,
 	Spinner,
 	Button,
-	Icon
+	Icon,
 } from '@wordpress/components';
 import { closeSmall } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
@@ -91,14 +91,12 @@ export const fileUploadMachine = setup( {
 		},
 		reportError: ( { event } ) => {
 			if ( event.type === 'ERROR' ) {
-				console.error( 'error', event.error );
 				return assign( {
 					error: event.error,
 				} );
 			} else if (
 				event.type === 'xstate.error.actor.0.fileUpload.uploading'
 			) {
-				console.error( 'upload error', event.output );
 				return assign( {
 					error: event.output,
 				} );
@@ -155,7 +153,7 @@ export const fileUploadMachine = setup( {
 			entry: 'reportError',
 			always: {
 				target: 'idle',
-			}
+			},
 		},
 		success: {
 			on: {
@@ -245,8 +243,10 @@ export const BlueprintUploadDropzone = () => {
 						<span className="blueprint-upload-dropzone-text-file-name">
 							{ state.context.file?.name }
 						</span>
-						{ /* @ts-expect-error -- it does have a size prop */ }
-						<Button icon={ <Icon icon={ closeSmall } /> } size="compact" onClick={ () => send( { type: 'DISMISS' } ) } />
+						<Button
+							icon={ <Icon icon={ closeSmall } /> }
+							onClick={ () => send( { type: 'DISMISS' } ) }
+						/>
 					</p>
 				</div>
 			) }
