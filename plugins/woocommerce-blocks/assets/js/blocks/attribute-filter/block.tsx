@@ -549,7 +549,7 @@ const AttributeFilterBlock = ( {
 					<>
 						<FormTokenField
 							key={ remountKey }
-							label={ attributeObject.label as string }
+							label={ attributeObject.label }
 							className={ clsx( {
 								'single-selection': ! multiple,
 								'is-loading': isLoading,
