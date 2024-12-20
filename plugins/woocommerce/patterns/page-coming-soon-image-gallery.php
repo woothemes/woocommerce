@@ -60,9 +60,13 @@ $featured_image_urls = array(
 
 		<!-- wp:group {"align":"wide","layout":{"type":"constrained"}} -->
 		<div class="wp-block-group alignwide">
-			<!-- wp:heading {"level":1,"fontFamily":"<?php echo esc_html( $cardo_font_family ); ?>"} -->
-			<h1 class="wp-block-heading has-<?php echo esc_html( $cardo_font_family ); ?>-font-family"><em><?php echo esc_html__( 'Great things are coming soon', 'woocommerce' ); ?></em></h1>
-			<!-- /wp:heading -->
+			<!-- wp:group {"align":"wide","layout":{"type":"flex","flexWrap":"nowrap"}} -->
+			<div class="wp-block-group alignwide">
+				<!-- wp:heading {"level":1,"style":{"typography":{"fontSize":"48px","lineHeight":"1.3","fontStyle":"normal","fontWeight":"400"}},"fontFamily":"<?php echo esc_html( $cardo_font_family ); ?>"} -->
+					<h1 class="wp-block-heading has-<?php echo esc_html( $cardo_font_family ); ?>-font-family" style="font-size:48px;font-style:normal;font-weight:400;line-height:1.3"><em><?php echo esc_html__( 'Great things are coming soon', 'woocommerce' ); ?></em></h1>
+				<!-- /wp:heading -->
+			</div>
+			<!-- /wp:group -->
 		</div>
 		<!-- /wp:group -->
 
