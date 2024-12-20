@@ -61,7 +61,7 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 		return () => {
 			window.removeEventListener( 'resize', handleResize );
 		};
-	}, [] );
+	}, [ isSingleEmail ] );
 
 	return (
 		<Fill>
