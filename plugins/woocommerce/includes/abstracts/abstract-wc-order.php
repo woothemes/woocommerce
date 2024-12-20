@@ -12,6 +12,7 @@
 
 use Automattic\WooCommerce\Caches\OrderCache;
 use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareTrait;
 use Automattic\WooCommerce\Internal\Orders\PaymentInfo;
 use Automattic\WooCommerce\Proxies\LegacyProxy;
@@ -1578,9 +1579,9 @@ abstract class WC_Abstract_Order extends WC_Abstract_Legacy_Order {
 			$default_args = array(
 				'name'         => $product->get_name(),
 				'tax_class'    => $product->get_tax_class(),
-				'product_id'   => $product->is_type( 'variation' ) ? $product->get_parent_id() : $product->get_id(),
-				'variation_id' => $product->is_type( 'variation' ) ? $product->get_id() : 0,
-				'variation'    => $product->is_type( 'variation' ) ? $product->get_attributes() : array(),
+				'product_id'   => $product->is_type( ProductType::VARIATION ) ? $product->get_parent_id() : $product->get_id(),
+				'variation_id' => $product->is_type( ProductType::VARIATION ) ? $product->get_id() : 0,
+				'variation'    => $product->is_type( ProductType::VARIATION ) ? $product->get_attributes() : array(),
 				'subtotal'     => $total,
 				'total'        => $total,
 				'quantity'     => $qty,

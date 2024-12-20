@@ -9,6 +9,7 @@
  */
 
 use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareTrait;
 
 defined( 'ABSPATH' ) || exit;
@@ -554,8 +555,8 @@ class WC_Checkout {
 					array(
 						'name'         => $product->get_name(),
 						'tax_class'    => $product->get_tax_class(),
-						'product_id'   => $product->is_type( 'variation' ) ? $product->get_parent_id() : $product->get_id(),
-						'variation_id' => $product->is_type( 'variation' ) ? $product->get_id() : 0,
+						'product_id'   => $product->is_type( ProductType::VARIATION ) ? $product->get_parent_id() : $product->get_id(),
+						'variation_id' => $product->is_type( ProductType::VARIATION ) ? $product->get_id() : 0,
 					)
 				);
 			}
