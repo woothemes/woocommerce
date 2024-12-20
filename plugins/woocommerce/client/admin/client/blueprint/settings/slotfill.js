@@ -7,11 +7,9 @@ import {
 	Notice,
 	ToggleControl,
 } from '@wordpress/components';
-import { getAdminLink } from '@woocommerce/settings';
 import apiFetch from '@wordpress/api-fetch';
 import {
 	useState,
-	createElement,
 	useEffect,
 	createInterpolateElement,
 } from '@wordpress/element';
@@ -22,6 +20,7 @@ import { CollapsibleContent } from '@woocommerce/components';
  * Internal dependencies
  */
 import { SETTINGS_SLOT_FILL_CONSTANT } from '../../settings/settings-slots';
+import { BlueprintUploadDropzone } from '../components/BlueprintUploadDropzone';
 import './style.scss';
 
 const { Fill } = createSlotFill( SETTINGS_SLOT_FILL_CONSTANT );
@@ -146,18 +145,21 @@ const Blueprint = () => {
 			</p>
 			<h3>Import</h3>
 			<p>
-				You can import the schema on the{ ' ' }
-				<a
-					href={ getAdminLink(
-						'admin.php?page=wc-admin&path=%2Fsetup-wizard&step=intro-builder'
-					) }
-				>
-					builder setup page
-				</a>
-				{ ', or use the import WP CLI command ' }
-				<br />
-				<code>wp wc blueprint import path-to-woo-blueprint.json</code>.
+				{ createInterpolateElement(
+					__(
+						"Import your blueprint schema to ease the setup process for your store or allow teams to apply each others' changes. You can import only one Blueprint at the time. Want to know more? Check our <docLink/>",
+						'woocommerce'
+					),
+					{
+						docLink: (
+							<a href="#tba">
+								{ __( 'documentation', 'woocommerce' ) }
+							</a>
+						),
+					}
+				) }
 			</p>
+			<BlueprintUploadDropzone />
 			<p></p>
 			<h3>{ __( 'Export Blueprint', 'woocommerce' ) }</h3>
 			<p className="export-intro">
