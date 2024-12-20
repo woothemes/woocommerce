@@ -16,6 +16,7 @@ import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
 import { isGutenbergVersionAtLeast } from './utils';
 import { Layout } from './layout';
 import { useActiveRoute } from './route';
+import { useRegisterSiteEditorRoutes } from './components/settings-editor-routes';
 
 const { RouterProvider } = unlock( routerPrivateApis );
 
@@ -34,6 +35,7 @@ const SettingsLayout = () => {
 
 export const SettingsEditor = () => {
 	const isRequiredGutenbergVersion = isGutenbergVersionAtLeast( 19.0 );
+	useRegisterSiteEditorRoutes();
 
 	if ( ! isRequiredGutenbergVersion ) {
 		return (
@@ -48,7 +50,7 @@ export const SettingsEditor = () => {
 	}
 
 	return (
-		<RouterProvider>
+		<RouterProvider routes={ [] }>
 			<SettingsLayout />
 		</RouterProvider>
 	);
