@@ -6,7 +6,7 @@ declare global {
 		desc?: string;
 		desc_tip?: boolean | string;
 		default?: string | number | boolean | object;
-		value?: string | number | boolean | object;
+		value: string | number | boolean | object;
 		placeholder?: string;
 		custom_attributes?: {
 			[ key: string ]: string | number;

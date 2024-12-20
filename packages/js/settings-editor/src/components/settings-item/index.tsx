@@ -39,16 +39,14 @@ const getComponent = (
 		case 'checkboxgroup':
 			return (
 				<VStack spacing={ 4 }>
-					{ setting.settings.map(
-						( checkboxSetting: SettingsField, index ) => {
-							return (
-								<SettingsCheckbox
-									key={ `${ checkboxSetting.type }-${ index }` }
-									{ ...checkboxSetting }
-								/>
-							);
-						}
-					) }
+					{ setting.settings.map( ( checkboxSetting, index ) => {
+						return (
+							<SettingsCheckbox
+								key={ `${ checkboxSetting.type }-${ index }` }
+								{ ...checkboxSetting }
+							/>
+						);
+					} ) }
 				</VStack>
 			);
 		case 'select':
