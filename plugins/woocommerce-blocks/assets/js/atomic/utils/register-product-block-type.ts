@@ -53,7 +53,7 @@ type ProductBlockRegistrationConfig = Partial< BlockConfiguration > &
 	ProductBlockSettings;
 
 /**
- * Manages block registration and unregistration for WordPress blocks in different contexts.
+ * Manages block registration and unregistration for WooCommerce product blocks in different contexts.
  * Implements the Singleton pattern to ensure consistent block management across the application.
  */
 export class BlockRegistrationManager {
@@ -314,7 +314,8 @@ export class BlockRegistrationManager {
 		const key = config.variationName || config.blockName;
 		this.blocks.set( key, config );
 
-		// If we have executed `siteEditorUnsubscribe` and `postEditorUnsubscribe` and initialized already, we can register the block immediately
+		// If we have executed `unsubscribe()` and initialized already, we can register the block immediately
+		// since we've already detected our context.
 		if ( this.initialized ) {
 			const editSiteStore = select( 'core/edit-site' );
 			const editPostStore = select( 'core/edit-post' );
