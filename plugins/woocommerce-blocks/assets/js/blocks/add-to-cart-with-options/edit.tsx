@@ -18,12 +18,10 @@ import { useIsDescendentOfSingleProductBlock } from '../../atomic/blocks/product
 import { AddToCartOptionsSettings } from './settings';
 import ToolbarProductTypeGroup from './components/toolbar-type-product-selector-group';
 import useProductTypeSelector from './hooks/use-product-type-selector';
-import { useIsDescendentOfSingleProductTemplate } from '../../atomic/blocks/product-elements/shared/use-is-descendent-of-single-product-template';
 
 export interface Attributes {
 	className?: string;
 	isDescendentOfSingleProductBlock: boolean;
-	isDescendentOfSingleProductTemplate: boolean;
 }
 
 export type FeaturesKeys = 'isBlockifiedAddToCart';
@@ -36,8 +34,6 @@ export type UpdateFeaturesType = ( key: FeaturesKeys, value: boolean ) => void;
 
 const AddToCartOptionsEdit = ( props: BlockEditProps< Attributes > ) => {
 	const { setAttributes } = props;
-	const { isDescendentOfSingleProductTemplate } =
-		useIsDescendentOfSingleProductTemplate();
 
 	const INNER_BLOCKS_TEMPLATE: InnerBlockTemplate[] = [
 		[
@@ -47,12 +43,7 @@ const AddToCartOptionsEdit = ( props: BlockEditProps< Attributes > ) => {
 				content: __( 'Add to Cart', 'woocommerce' ),
 			},
 		],
-		[
-			'woocommerce/product-stock-indicator',
-			{
-				isDescendentOfSingleProductTemplate,
-			},
-		],
+		[ 'woocommerce/product-stock-indicator' ],
 		[ 'woocommerce/add-to-cart-with-options-quantity-selector' ],
 		[
 			'woocommerce/product-button',
@@ -75,7 +66,6 @@ const AddToCartOptionsEdit = ( props: BlockEditProps< Attributes > ) => {
 	useEffect( () => {
 		setAttributes( {
 			isDescendentOfSingleProductBlock,
-			isDescendentOfSingleProductTemplate,
 		} );
 		registerListener( blockClientId );
 		return () => {
@@ -84,7 +74,6 @@ const AddToCartOptionsEdit = ( props: BlockEditProps< Attributes > ) => {
 	}, [
 		setAttributes,
 		isDescendentOfSingleProductBlock,
-		isDescendentOfSingleProductTemplate,
 		blockClientId,
 		registerListener,
 		unregisterListener,
