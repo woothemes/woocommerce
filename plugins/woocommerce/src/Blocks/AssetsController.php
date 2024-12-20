@@ -82,13 +82,9 @@ final class AssetsController {
 
 		// Customer Effort Score.
 		$this->api->register_script(
-			'wc-experimental',
-			'assets/client/admin/experimental/index.min.js'
-		);
-		$this->api->register_script(
 			'wc-customer-effort-score',
 			'assets/client/admin/customer-effort-score/index.js',
-			array( 'wp-data', 'wp-data-controls', 'wc-store-data', 'wc-experimental' )
+			array( 'wp-data', 'wp-data-controls', 'wc-store-data' )
 		);
 		$this->api->register_style(
 			'wc-customer-effort-score',
