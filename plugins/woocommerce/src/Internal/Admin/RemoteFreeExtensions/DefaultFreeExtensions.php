@@ -180,6 +180,15 @@ class DefaultFreeExtensions {
 				'description'    => __( 'Create and send purchase follow-up emails, newsletters, and promotional campaigns straight from your dashboard.', 'woocommerce' ),
 				'image_url'      => plugins_url( '/assets/images/onboarding/mailpoet.png', WC_PLUGIN_FILE ),
 				'manage_url'     => 'admin.php?page=mailpoet-newsletters',
+				'is_visible'      => [
+					[
+						'type'        => 'option',
+						'option_name' => 'woocommerce_remote_variant_assignment',
+						'value'       => [ 1, 84 ], //70% segment
+						'default'     => false,
+						'operation'   => 'range',
+					],
+				],
 				'is_built_by_wc' => true,
 			),
 			// Shared 50% segment with pinterest-for-woocommerce.
@@ -210,6 +219,15 @@ class DefaultFreeExtensions {
 				'description'    => __( 'Grow and retain customers with intelligent, impactful email and SMS marketing automation and a consolidated view of customer interactions.', 'woocommerce' ),
 				'image_url'      => plugins_url( '/assets/images/onboarding/klaviyo.png', WC_PLUGIN_FILE ),
 				'manage_url'     => 'admin.php?page=klaviyo_settings',
+				'is_visible'      => [
+					[
+						'type'        => 'option',
+						'option_name' => 'woocommerce_remote_variant_assignment',
+						'value'       => [ 85, 120 ], //30% segment
+						'default'     => false,
+						'operation'   => 'range',
+					],
+				],
 				'is_built_by_wc' => false,
 			),
 			'woocommerce-payments'          => array(
