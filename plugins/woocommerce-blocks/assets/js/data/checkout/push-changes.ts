@@ -127,3 +127,8 @@ export const pushChanges = ( debounced = true ): void => {
 export const flushChanges = (): void => {
 	debouncedUpdateCheckoutData.flush();
 };
+
+// Cancel the debounced updateCheckoutData function without trigger it.
+export const clearChanges = (): void => {
+	debouncedUpdateCheckoutData.clear();
+};

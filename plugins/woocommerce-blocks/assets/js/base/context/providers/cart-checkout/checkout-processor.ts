@@ -21,6 +21,7 @@ import {
 	VALIDATION_STORE_KEY,
 	CART_STORE_KEY,
 	processErrorResponse,
+	clearCheckoutPutRequests,
 } from '@woocommerce/block-data';
 import {
 	getPaymentMethods,
@@ -40,6 +41,7 @@ import { preparePaymentData, processCheckoutResponseHeaders } from './utils';
 import { useCheckoutEventsContext } from './checkout-events';
 import { useShippingDataContext } from './shipping';
 import { useStoreCart } from '../../hooks/cart/use-store-cart';
+import { abortCheckoutPUT } from '../../../../data/shared-controls';
 
 /**
  * CheckoutProcessor component.
@@ -266,6 +268,8 @@ const CheckoutProcessor = () => {
 				: undefined,
 			...paymentData,
 		};
+
+		clearCheckoutPutRequests();
 
 		triggerFetch( {
 			path: '/wc/store/v1/checkout',

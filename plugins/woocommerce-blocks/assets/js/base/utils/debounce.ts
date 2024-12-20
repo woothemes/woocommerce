@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type DebouncedFunction< T extends ( ...args: any[] ) => any > = ( (
 	...args: Parameters< T >
-) => void ) & { flush: () => void };
+) => void ) & { flush: () => void; clear: () => void };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const debounce = < T extends ( ...args: any[] ) => any >(
@@ -28,6 +28,13 @@ export const debounce = < T extends ( ...args: any[] ) => any >(
 			clearTimeout( timeout );
 			timeout = null;
 		}
+	};
+
+	debounced.clear = () => {
+		if ( timeout ) {
+			clearTimeout( timeout );
+		}
+		timeout = null;
 	};
 
 	return debounced;

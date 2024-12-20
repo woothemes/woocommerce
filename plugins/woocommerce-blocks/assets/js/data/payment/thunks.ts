@@ -26,8 +26,8 @@ import {
 } from '../../types/type-guards/address';
 import { isObserverResponse } from '../../types/type-guards/observers';
 import { isValidValidationErrorsObject } from '../../types/type-guards/validation';
-import { processErrorResponse } from '../utils';
 import { apiFetchWithHeaders } from '../shared-controls';
+import { CheckoutPutAbortController } from '../utils/clear-put-requests';
 
 export const __internalSetExpressPaymentError = ( message?: string ) => {
 	return ( { registry } ) => {
@@ -231,6 +231,7 @@ export const updatePaymentMethodData = ( paymentMethodData: string ) => {
 				data: {
 					payment_method: paymentMethodData,
 				},
+				signal: CheckoutPutAbortController.signal,
 			} );
 
 			if ( response?.response?.cart ) {

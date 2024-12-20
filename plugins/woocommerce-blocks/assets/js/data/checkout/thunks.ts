@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import type { ApiErrorResponse, CheckoutResponse } from '@woocommerce/types';
+import type { CheckoutResponse } from '@woocommerce/types';
 import { store as noticesStore } from '@wordpress/notices';
 import { dispatch as wpDispatch, select as wpSelect } from '@wordpress/data';
 import { AdditionalValues } from '@woocommerce/settings';
@@ -28,7 +28,7 @@ import type {
 import type { DispatchFromMap } from '../mapped-types';
 import * as actions from './actions';
 import { apiFetchWithHeaders } from '../shared-controls';
-import { processErrorResponse } from '../utils';
+import { CheckoutPutAbortController } from '../utils/clear-put-requests';
 import { CART_STORE_KEY } from '../cart';
 
 /**
@@ -157,6 +157,7 @@ export const updateDraftOrder = ( {
 					additional_fields: { ...additionalFields },
 					order_notes: orderNotes,
 				},
+				signal: CheckoutPutAbortController.signal,
 			} );
 			if ( response?.response?.cart ) {
 				receiveCart( response.response.cart );
