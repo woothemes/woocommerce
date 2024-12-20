@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { createElement } from '@wordpress/element';
-import * as IconPackage from '@wordpress/icons';
+import * as icons from '@wordpress/icons';
 
 /* eslint-disable @woocommerce/dependency-group */
 // @ts-expect-error missing type.
@@ -17,7 +17,7 @@ import SidebarNavigationItem from '@wordpress/edit-site/build-module/components/
 /**
  * Internal dependencies
  */
-const { Icon, ...icons } = IconPackage;
+import { getSettingsSectionPath } from '../routes/utils';
 
 const SidebarNavigationScreenContent = () => {
 	const settingsData: SettingsData = window.wcSettings?.admin?.settingsData;
@@ -38,7 +38,7 @@ const SidebarNavigationScreenContent = () => {
 						}
 						uid={ slug }
 						key={ slug }
-						to={ `/wc-settings/${ slug }` }
+						to={ getSettingsSectionPath( settingsData[ slug ] ) }
 					>
 						{ label }
 					</SidebarNavigationItem>
