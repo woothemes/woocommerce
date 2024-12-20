@@ -2,10 +2,9 @@
  * External dependencies
  */
 import clsx from 'clsx';
-import { _n, sprintf } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
-import { Label, Panel } from '@woocommerce/blocks-components';
-import { useCallback, useMemo } from '@wordpress/element';
+import { Panel } from '@woocommerce/blocks-components';
+import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import { useShippingData } from '@woocommerce/base-context/hooks';
 import { sanitizeHTML } from '@woocommerce/utils';
 import type { ReactElement } from 'react';
@@ -16,6 +15,7 @@ import { CART_STORE_KEY } from '@woocommerce/block-data';
  * Internal dependencies
  */
 import PackageRates from './package-rates';
+import PackageItems from './package-items';
 import type { PackageProps } from './types';
 import './style.scss';
 
@@ -36,12 +36,28 @@ export const ShippingRatesControlPackage = ( {
 			select( CART_STORE_KEY )?.getCartData()?.shippingRates?.length
 	);
 
+	const packageClass = 'wc-block-components-shipping-rates-control__package';
+	const [ instanceCount, setInstanceCount ] = useState( 0 );
+
 	// We have no built-in way of checking if other extensions have added packages e.g. if subscriptions has added them.
-	const multiplePackages =
-		internalPackageCount > 1 ||
-		document.querySelectorAll(
-			'.wc-block-components-shipping-rates-control__package'
-		).length > 1;
+	const multiplePackages = internalPackageCount > 1 || instanceCount > 1;
+
+	useEffect( () => {
+		const updateCount = () => {
+			setInstanceCount(
+				document.querySelectorAll( `.${ packageClass }` ).length
+			);
+		};
+
+		updateCount();
+
+		const observer = new MutationObserver( updateCount );
+		observer.observe( document.body, { childList: true, subtree: true } );
+
+		return () => {
+			observer.disconnect();
+		};
+	}, [] );
 
 	// If showItems is not set, we check if we have multiple packages.
 	// We sometimes don't want to show items even if we have multiple packages.
@@ -51,51 +67,37 @@ export const ShippingRatesControlPackage = ( {
 	// We sometimes don't want to collapse even if we have multiple packages.
 	const shouldBeCollapsible = collapsible ?? multiplePackages;
 
-	const header = (
-		<>
-			{ ( shouldBeCollapsible || shouldShowItems ) && (
+	const { selectedOptionNumber, selectedOption } = useMemo( () => {
+		return {
+			selectedOptionNumber: packageData?.shipping_rates?.findIndex(
+				( rate ) => rate?.selected
+			),
+			selectedOption: packageData?.shipping_rates?.find(
+				( rate ) => rate?.selected
+			),
+		};
+	}, [ packageData?.shipping_rates ] );
+
+	// Collapsible and non-collapsible header handling.
+	const header =
+		shouldBeCollapsible || shouldShowItems ? (
+			<div className="wc-block-components-shipping-rates-control__package-header">
 				<div
 					className="wc-block-components-shipping-rates-control__package-title"
 					dangerouslySetInnerHTML={ {
 						__html: sanitizeHTML( packageData.name ),
 					} }
 				/>
-			) }
-			{ shouldShowItems && (
-				<ul className="wc-block-components-shipping-rates-control__package-items">
-					{ Object.values( packageData.items ).map( ( v ) => {
-						const name = decodeEntities( v.name );
-						const quantity = v.quantity;
-						return (
-							<li
-								key={ v.key }
-								className="wc-block-components-shipping-rates-control__package-item"
-							>
-								<Label
-									label={
-										quantity > 1
-											? `${ name } × ${ quantity }`
-											: `${ name }`
-									}
-									screenReaderLabel={ sprintf(
-										/* translators: %1$s name of the product (ie: Sunglasses), %2$d number of units in the current cart package */
-										_n(
-											'%1$s (%2$d unit)',
-											'%1$s (%2$d units)',
-											quantity,
-											'woocommerce'
-										),
-										name,
-										quantity
-									) }
-								/>
-							</li>
-						);
-					} ) }
-				</ul>
-			) }
-		</>
-	);
+				{ shouldBeCollapsible && (
+					<div className="wc-block-components-totals-shipping__via">
+						{ decodeEntities( selectedOption?.name ) }
+					</div>
+				) }
+				{ shouldShowItems && (
+					<PackageItems packageData={ packageData } />
+				) }
+			</div>
+		) : null;
 
 	const onSelectRate = useCallback(
 		( newShippingRateId: string ) => {
@@ -115,12 +117,6 @@ export const ShippingRatesControlPackage = ( {
 		disabled: isSelectingRate,
 		highlightChecked,
 	};
-
-	const selectedOptionNumber = useMemo( () => {
-		return packageData?.shipping_rates?.findIndex(
-			( rate ) => rate?.selected
-		);
-	}, [ packageData?.shipping_rates ] );
 
 	if ( shouldBeCollapsible ) {
 		return (

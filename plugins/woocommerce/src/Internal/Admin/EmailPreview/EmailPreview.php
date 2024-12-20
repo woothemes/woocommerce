@@ -125,9 +125,9 @@ class EmailPreview {
 			return array();
 		}
 		return array(
-			"woocommerce_${email_id}_subject",
-			"woocommerce_${email_id}_heading",
-			"woocommerce_${email_id}_additional_content",
+			"woocommerce_{$email_id}_subject",
+			"woocommerce_{$email_id}_heading",
+			"woocommerce_{$email_id}_additional_content",
 		);
 	}
 

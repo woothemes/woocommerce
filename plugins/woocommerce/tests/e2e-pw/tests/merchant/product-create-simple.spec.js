@@ -66,7 +66,7 @@ const test = baseTest.extend( {
 for ( const productType of Object.keys( productData ) ) {
 	test(
 		`can create a simple ${ productType } product`,
-		{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
+		{ tag: [ tags.GUTENBERG ] },
 		async ( { page, category, product, baseURL } ) => {
 			await test.step( 'add new product', async () => {
 				await page.goto( 'wp-admin/post-new.php?post_type=product' );
