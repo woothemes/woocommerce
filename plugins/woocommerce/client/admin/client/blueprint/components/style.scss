@@ -6,8 +6,8 @@
 	height: 133px;
 	position: relative; // make this element a positioned ancestor for the dropzone so that the dropzone takes reference from this element
 
-	border: 1px dashed #BBBBBB;
-	background-color: white;
+	border: 1px dashed #bbb;
+	background-color: #fff;
 	border-radius: 2px;
 
 	.components-form-file-upload {
@@ -30,8 +30,6 @@
 		justify-content: center;
 		gap: 12px;
 
-		
-
 		.blueprint-upload-dropzone-text {
 			color: $gray-700;
 			margin: 0;
@@ -52,7 +50,7 @@
 }
 
 .blueprint-upload-dropzone-success {
-	background: #FFFFFF;
+	background: #fff;
 	padding: 16px;
 
 	.blueprint-upload-dropzone-text {
