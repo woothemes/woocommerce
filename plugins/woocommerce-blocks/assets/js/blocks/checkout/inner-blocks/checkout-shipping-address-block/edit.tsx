@@ -14,8 +14,8 @@ import {
 	AdditionalFields,
 	AdditionalFieldsContent,
 } from '../../form-step';
-import { useCheckoutBlockControlsContext } from '../../context';
 import Block from './block';
+import { AddressFieldControls } from '../../address-field-controls';
 
 export const Edit = ( {
 	attributes,
@@ -29,8 +29,6 @@ export const Edit = ( {
 	};
 	setAttributes: ( attributes: Record< string, unknown > ) => void;
 } ): JSX.Element | null => {
-	const { addressFieldControls: Controls } =
-		useCheckoutBlockControlsContext();
 	const { showShippingFields } = useCheckoutAddress();
 
 	if ( ! showShippingFields ) {
@@ -39,7 +37,7 @@ export const Edit = ( {
 
 	return (
 		<>
-			<Controls />
+			<AddressFieldControls />
 			<FormStepBlock
 				setAttributes={ setAttributes }
 				attributes={ attributes }
