@@ -17,7 +17,9 @@ import { SettingsInput } from '../settings-input';
 import { SettingsCheckbox } from '../settings-checkbox';
 import { SettingsSelect } from '../settings-select';
 
-const getComponent = ( setting: SettingsField ) => {
+const getComponent = (
+	setting: Exclude< SettingsField, GroupSettingsField >
+) => {
 	switch ( setting.type ) {
 		case 'text':
 		case 'password':
@@ -38,10 +40,10 @@ const getComponent = ( setting: SettingsField ) => {
 			return (
 				<VStack spacing={ 4 }>
 					{ setting.settings.map(
-						( checkboxSetting: SettingsField ) => {
+						( checkboxSetting: SettingsField, index ) => {
 							return (
 								<SettingsCheckbox
-									key={ checkboxSetting.id }
+									key={ `${ checkboxSetting.type }-${ index }` }
 									{ ...checkboxSetting }
 								/>
 							);
@@ -54,7 +56,6 @@ const getComponent = ( setting: SettingsField ) => {
 		case 'custom':
 			return (
 				<div
-					id={ setting.id }
 					dangerouslySetInnerHTML={ {
 						__html: sanitize( setting.content || '' ),
 					} }
@@ -67,10 +68,14 @@ const getComponent = ( setting: SettingsField ) => {
 	}
 };
 
-export const SettingsItem = ( { setting }: { setting: SettingsField } ) => {
+export const SettingsItem = ( {
+	setting,
+}: {
+	setting: Exclude< SettingsField, GroupSettingsField >;
+} ) => {
 	return (
 		<VStack spacing={ 4 } className="woocommerce-settings-item">
-			{ setting.title && (
+			{ 'title' in setting && setting.title && (
 				<Heading level={ 5 }>{ setting.title }</Heading>
 			) }
 			{ getComponent( setting ) }

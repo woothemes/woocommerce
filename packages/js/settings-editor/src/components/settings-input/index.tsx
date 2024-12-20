@@ -12,7 +12,7 @@ export const SettingsInput = ( {
 	desc,
 	type,
 	value: initialValue,
-}: Pick< SettingsField, 'id' | 'desc' | 'type' | 'value' > ) => {
+}: Pick< BaseSettingsField, 'id' | 'desc' | 'type' | 'value' > ) => {
 	const [ value, setValue ] = useState( initialValue );
 	const onChange = ( newValue: string ) => {
 		setValue( newValue );

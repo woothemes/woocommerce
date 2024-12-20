@@ -9,14 +9,14 @@ export const SettingsSelect = ( {
 	desc,
 	value: originalValue,
 	options,
-}: Pick< SettingsField, 'id' | 'desc' | 'value' | 'options' > ) => {
+}: Pick< BaseSettingsField, 'id' | 'desc' | 'value' | 'options' > ) => {
 	const [ value, setValue ] = useState( String( originalValue ) );
 	const onChange = ( newValue: string ) => {
 		setValue( newValue );
 	};
 	const formattedOptions = options
 		? Object.keys( options ).map( ( key ) => {
-				return { label: key, value: options![ key ] };
+				return { label: key, value: options[ key ] };
 		  } )
 		: [];
 	return (
