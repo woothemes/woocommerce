@@ -22,10 +22,12 @@ const node = document.getElementById( 'wc-settings-page' );
 const Settings = () => {
 	const { activePage, activeSection } = useActiveRoute();
 
+	// Render the settings slots every time the page or section changes.
 	useEffect( () => {
 		possiblyRenderSettingsSlots();
 	}, [ activePage, activeSection ] );
 
+	// Register the settings slots only once.
 	useEffect( () => {
 		registerTaxSettingsConflictErrorFill();
 		registerPaymentsSettingsBannerFill();
