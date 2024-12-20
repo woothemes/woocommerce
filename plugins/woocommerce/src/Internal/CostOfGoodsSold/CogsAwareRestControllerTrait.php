@@ -74,7 +74,7 @@ trait CogsAwareRestControllerTrait {
 			'type'        => 'object',
 			'context'     => array( 'view', 'edit' ),
 			'properties'  => array(
-				'values'                         => array(
+				'values'                    => array(
 					'description' => __( 'Cost of Goods Sold values for the product.', 'woocommerce' ),
 					'type'        => 'array',
 					'context'     => array( 'view', 'edit' ),
@@ -102,7 +102,7 @@ trait CogsAwareRestControllerTrait {
 					'default'     => false,
 					'context'     => array( 'view', 'edit' ),
 				),
-				'total_value'                    => array(
+				'total_value'               => array(
 					'description' => __( 'Total monetary value of the Cost of Goods Sold for the product (sum of all the effective values).', 'woocommerce' ),
 					'type'        => 'number',
 					'context'     => array( 'view', 'edit' ),

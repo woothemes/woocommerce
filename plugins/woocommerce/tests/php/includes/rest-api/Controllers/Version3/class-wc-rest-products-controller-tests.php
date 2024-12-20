@@ -1453,14 +1453,14 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 
 		$expected_effective_value = $set_additive_flag ? 12.34 + 56.78 : 56.78;
 		$expected                 = array(
-			'values'                         => array(
+			'values'                    => array(
 				array(
 					'defined_value'   => 56.78,
 					'effective_value' => $expected_effective_value,
 				),
 			),
 			'defined_value_is_additive' => $set_additive_flag,
-			'total_value'                    => $expected_effective_value,
+			'total_value'               => $expected_effective_value,
 		);
 
 		$this->assertEquals( $expected, $data['cost_of_goods_sold'] );
