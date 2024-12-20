@@ -3,11 +3,15 @@
  */
 import { createElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useSelect } from '@wordpress/data';
+
 /* eslint-disable @woocommerce/dependency-group */
 // @ts-ignore No types for this exist yet.
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 // @ts-ignore No types for this exist yet.
 import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
+// @ts-ignore No types for this exist yet.
+import { store as editSiteStore } from '@wordpress/edit-site/build-module/store';
 /* eslint-enable @woocommerce/dependency-group */
 
 /**
@@ -16,7 +20,7 @@ import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
 import { isGutenbergVersionAtLeast } from './utils';
 import { Layout } from './layout';
 import { useActiveRoute } from './route';
-import { useRegisterSiteEditorRoutes } from './components/settings-editor-routes';
+import { useRegisterSiteEditorRoutes } from './components/routes';
 
 const { RouterProvider } = unlock( routerPrivateApis );
 
@@ -37,6 +41,10 @@ export const SettingsEditor = () => {
 	const isRequiredGutenbergVersion = isGutenbergVersionAtLeast( 19.0 );
 	useRegisterSiteEditorRoutes();
 
+	const routes = useSelect( ( select ) => {
+		return unlock( select( editSiteStore ) ).getRoutes();
+	}, [] );
+
 	if ( ! isRequiredGutenbergVersion ) {
 		return (
 			//  Temporary during development.
@@ -50,7 +58,7 @@ export const SettingsEditor = () => {
 	}
 
 	return (
-		<RouterProvider routes={ [] }>
+		<RouterProvider routes={ routes }>
 			<SettingsLayout />
 		</RouterProvider>
 	);

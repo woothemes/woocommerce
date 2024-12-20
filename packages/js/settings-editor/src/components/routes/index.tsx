@@ -7,7 +7,7 @@ import { useEffect } from '@wordpress/element';
 // @ts-ignore No types for this exist yet.
 import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
 // @ts-ignore No types for this exist yet.
-import { store as siteEditorStore } from '@wordpress/edit-site/build-module/store';
+import { store as editSiteStore } from '@wordpress/edit-site/build-module/store';
 /* eslint-enable @woocommerce/dependency-group */
 
 /**
@@ -18,7 +18,7 @@ import { homeRoute } from './route-home';
 const routes = [ homeRoute ];
 
 export function useRegisterSiteEditorRoutes() {
-	const { registerRoute } = unlock( useDispatch( siteEditorStore ) );
+	const { registerRoute } = unlock( useDispatch( editSiteStore ) );
 
 	useEffect( () => {
 		routes.forEach( registerRoute );
