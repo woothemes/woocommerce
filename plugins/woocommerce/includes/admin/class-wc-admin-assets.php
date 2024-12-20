@@ -205,7 +205,6 @@ if ( ! class_exists( 'WC_Admin_Assets', false ) ) :
 			);
 
 			// WooCommerce admin pages.
-			error_log( 'screen_id: ' . $screen_id );
 			if ( in_array( $screen_id, wc_get_screen_ids() ) ) {
 				wp_enqueue_script( 'iris' );
 				wp_enqueue_script( 'woocommerce_admin' );
