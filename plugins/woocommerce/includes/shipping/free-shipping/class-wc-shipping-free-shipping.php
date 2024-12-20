@@ -195,9 +195,10 @@ class WC_Shipping_Free_Shipping extends WC_Shipping_Method {
 				}
 			}
 
-			$total = NumberUtil::round( $total, wc_get_price_decimals() );
+			$total      = NumberUtil::round( $total, wc_get_price_decimals() );
+			$min_amount = NumberUtil::round( $this->min_amount, wc_get_price_decimals() );
 
-			if ( $total >= $this->min_amount ) {
+			if ( $total >= $min_amount ) {
 				$has_met_min_amount = true;
 			}
 		}
