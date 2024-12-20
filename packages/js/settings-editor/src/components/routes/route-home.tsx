@@ -12,8 +12,8 @@ export type RouteProps = {
 };
 
 export const homeRoute = {
-	name: 'woocommerce/home',
-	path: '/woocommerce/settings',
+	name: 'home',
+	path: '/wc-settings',
 	areas: {
 		sidebar: <div>Sidebar</div>,
 		preview: <div>Preview</div>,

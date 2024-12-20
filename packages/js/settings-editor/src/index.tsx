@@ -58,7 +58,7 @@ export const SettingsEditor = () => {
 	}
 
 	return (
-		<RouterProvider routes={ routes }>
+		<RouterProvider routes={ routes } pathArg="page">
 			<SettingsLayout />
 		</RouterProvider>
 	);
