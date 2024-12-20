@@ -18,15 +18,347 @@ class AddToCartWithOptionsVariationSelector extends AbstractBlock {
 	protected $block_name = 'add-to-cart-with-options-variation-selector';
 
 	/**
+	 * Render variation label.
+	 *
+	 * @param string $attribute_name Name of the attribute.
+	 * @return string Rendered label HTML.
+	 */
+	protected function render_variation_label( $attribute_name ): string {
+		$label_id   = esc_attr( 'attribute_' . sanitize_title( $attribute_name ) );
+		$label_text = wc_attribute_label( $attribute_name );
+
+		$html = sprintf(
+			'<label class="wc-block-components-product-add-to-cart-attribute-label" for="%s">%s</label>',
+			$label_id,
+			esc_html( $label_text )
+		);
+		return $html;
+	}
+
+	/**
+	 * Render variation selector dropdown.
+	 *
+	 * @param WC_Product $product The product object.
+	 * @param string     $attribute_name Name of the attribute.
+	 * @param array      $options Available options for this attribute.
+	 * @return string Rendered dropdown HTML.
+	 */
+	protected function render_variation_selector( $product, $attribute_name, $options ): string {
+		$selected  = $this->get_selected_attribute_value( $product, $attribute_name );
+		$select_id = esc_attr( 'attribute_' . sanitize_title( $attribute_name ) );
+
+		$html = sprintf(
+			'<select id="%1$s"
+				class="wc-block-components-product-add-to-cart-attribute-select"
+				name="%1$s"
+				data-attribute_name="attribute_%2$s"
+				data-wc-on--change="actions.updateVariation">',
+			$select_id,
+			esc_attr( sanitize_title( $attribute_name ) )
+		);
+
+		$html .= '<option value="">' . esc_html__( 'Choose an option', 'woocommerce' ) . '</option>';
+		$html .= $this->get_options_html( $product, $attribute_name, $options, $selected );
+		$html .= '</select>';
+
+		return $html;
+	}
+
+	/**
+	 * Get selected attribute value.
+	 *
+	 * @param WC_Product $product The product object.
+	 * @param string     $attribute_name Name of the attribute.
+	 * @return string Selected value
+	 */
+	private function get_selected_attribute_value( $product, $attribute_name ): string {
+		return $product->get_variation_default_attribute( $attribute_name );
+	}
+
+	/**
+	 * Get HTML for variation options.
+	 *
+	 * @param WC_Product $product The product object.
+	 * @param string     $attribute_name Name of the attribute.
+	 * @param array      $options Available options.
+	 * @param string     $selected Selected value.
+	 * @return string Options HTML
+	 */
+	private function get_options_html( $product, $attribute_name, $options, $selected ): string {
+		if ( empty( $options ) ) {
+			return '';
+		}
+
+		return taxonomy_exists( $attribute_name )
+			? $this->get_taxonomy_options_html( $product, $attribute_name, $options, $selected )
+			: $this->get_custom_options_html( $product, $attribute_name, $options, $selected );
+	}
+
+	/**
+	 * Get HTML for taxonomy-based options.
+	 *
+	 * @param WC_Product $product The product object.
+	 * @param string     $attribute_name Name of the attribute.
+	 * @param array      $options Available options.
+	 * @param string     $selected Selected value.
+	 * @return string Options HTML
+	 */
+	private function get_taxonomy_options_html( $product, $attribute_name, $options, $selected ): string {
+		$terms = wc_get_product_terms( $product->get_id(), $attribute_name, array( 'fields' => 'all' ) );
+		$html  = '';
+
+		foreach ( $terms as $term ) {
+			if ( in_array( $term->slug, $options, true ) ) {
+				$html .= sprintf(
+					'<option value="%s" %s>%s</option>',
+					esc_attr( $term->slug ),
+					selected( sanitize_title( $selected ), $term->slug, false ),
+					/**
+					 * Filter the variation option name.
+					 *
+					 * @since 9.7.0
+					 *
+					 * @param string   $term_name      The term name.
+					 * @param WP_Term  $term           Term object.
+					 * @param string   $attribute_name Name of the attribute.
+					 * @param WC_Product $product      Product object.
+					 */
+					esc_html( apply_filters( 'woocommerce_variation_option_name', $term->name, $term, $attribute_name, $product ) )
+				);
+			}
+		}
+
+		return $html;
+	}
+
+	/**
+	 * Get HTML for custom attribute options.
+	 *
+	 * @param WC_Product $product The product object.
+	 * @param string     $attribute_name Name of the attribute.
+	 * @param array      $options Available options.
+	 * @param string     $selected Selected value.
+	 * @return string Options HTML
+	 */
+	private function get_custom_options_html( $product, $attribute_name, $options, $selected ): string {
+		$html = '';
+
+		foreach ( $options as $option ) {
+			$selected_value = sanitize_title( $selected ) === $selected
+				? selected( $selected, sanitize_title( $option ), false )
+				: selected( $selected, $option, false );
+
+			$html .= sprintf(
+				'<option value="%s" %s>%s</option>',
+				esc_attr( $option ),
+				$selected_value,
+				/**
+				 * Filter the variation option name.
+				 *
+				 * @since 9.7.0
+				 *
+				 * @param string   $option_name      The option name.
+				 * @param string   $option           The option value.
+				 * @param string   $attribute_name Name of the attribute.
+				 * @param WC_Product $product      Product object.
+				 */
+				esc_html( apply_filters( 'woocommerce_variation_option_name', $option, null, $attribute_name, $product ) )
+			);
+		}
+
+		return $html;
+	}
+
+	/**
+	 * Render variation form.
+	 *
+	 * @param WC_Product $product Product instance.
+	 * @param array      $attributes Block attributes.
+	 * @return string Rendered form HTML
+	 */
+	private function render_variation_form( $product, $attributes ): string {
+		$variation_attributes = $product->get_variation_attributes();
+		if ( empty( $variation_attributes ) ) {
+			return '';
+		}
+
+		wp_enqueue_script( 'wc-add-to-cart-variation' );
+
+		$variations = $this->get_variations_data( $product );
+		if ( empty( $variations ) ) {
+			return '';
+		}
+
+		return $this->get_form_html( $product, $variations, $variation_attributes );
+	}
+
+	/**
+	 * Get variations data.
+	 *
+	 * @param WC_Product $product Product instance.
+	 * @return array|false
+	 */
+	private function get_variations_data( $product ) {
+		/**
+		 * Filter the number of variations threshold.
+		 *
+		 * @since 9.7.0
+		 *
+		 * @param int        $threshold Maximum number of variations to load upfront.
+		 * @param WC_Product $product   Product object.
+		 */
+		$get_variations = count( $product->get_children() ) <= apply_filters( 'woocommerce_ajax_variation_threshold', 30, $product );
+		return $get_variations ? $product->get_available_variations() : false;
+	}
+
+	/**
+	 * Get form HTML.
+	 *
+	 * @param WC_Product $product Product instance.
+	 * @param array      $variations Variations data.
+	 * @param array      $variation_attributes Variation attributes.
+	 * @return string Form HTML
+	 */
+	private function get_form_html( $product, $variations, $variation_attributes ): string {
+		$variations_json = wp_json_encode( $variations );
+		$variations_attr = function_exists( 'wc_esc_json' ) ? wc_esc_json( $variations_json ) : _wp_specialchars( $variations_json, ENT_QUOTES, 'UTF-8', true );
+
+		$wrapper_attributes = get_block_wrapper_attributes( array( 'class' => 'wc-block-add-to-cart-form' ) );
+
+		$form  = $this->get_form_opening( $product, $variations_attr );
+		$form .= $this->get_variations_table( $product, $variation_attributes );
+		$form .= '</form>';
+
+		return sprintf( '<div %1$s>%2$s</div>', $wrapper_attributes, $form );
+	}
+
+	/**
+	 * Get form opening HTML.
+	 *
+	 * @param WC_Product $product Product instance.
+	 * @param string     $variations_attr Variations JSON.
+	 * @return string Form opening HTML
+	 */
+	private function get_form_opening( $product, $variations_attr ): string {
+		return sprintf(
+			'<form class="variations_form cart" data-product_id="%d" data-product_variations="%s">',
+			absint( $product->get_id() ),
+			$variations_attr
+		);
+	}
+
+	/**
+	 * Get variations table HTML.
+	 *
+	 * @param WC_Product $product Product instance.
+	 * @param array      $variation_attributes Variation attributes.
+	 * @return string Table HTML
+	 */
+	private function get_variations_table( $product, $variation_attributes ): string {
+		ob_start();
+
+		/**
+		 * Action hook to add content before the variations table.
+		 *
+		 * @since 9.7.0
+		 */
+		do_action( 'woocommerce_before_variations_table' );
+		$before_table = ob_get_clean();
+
+		$table = '<table class="variations" cellspacing="0" role="presentation"><tbody>';
+
+		foreach ( $variation_attributes as $attribute_name => $options ) {
+			$table .= $this->get_variation_row( $product, $attribute_name, $options );
+		}
+
+		$table .= '</tbody></table>';
+
+		ob_start();
+
+		/**
+		 * Action hook to add content after the variations table.
+		 *
+		 * @since 9.7.0
+		 */
+		do_action( 'woocommerce_after_variations_table' );
+		$after_table = ob_get_clean();
+
+		return $before_table . $table . $after_table;
+	}
+
+	/**
+	 * Get variation row HTML.
+	 *
+	 * @param WC_Product $product Product instance.
+	 * @param string     $attribute_name Attribute name.
+	 * @param array      $options Attribute options.
+	 * @return string Row HTML
+	 */
+	private function get_variation_row( $product, $attribute_name, $options ): string {
+		$html  = '<tr>';
+		$html .= '<th class="label">' . $this->render_variation_label( $attribute_name ) . '</th>';
+		$html .= '<td class="value">';
+		$html .= $this->render_variation_selector( $product, $attribute_name, $options );
+		$html .= '</td>';
+		$html .= '</tr>';
+
+		$variation_attributes = $product->get_variation_attributes();
+		$attribute_keys       = array_keys( $variation_attributes );
+		if ( end( $attribute_keys ) === $attribute_name ) {
+			$html .= $this->get_reset_button_row();
+		}
+
+		return $html;
+	}
+
+	/**
+	 * Get reset button row HTML.
+	 *
+	 * @return string Row HTML
+	 */
+	private function get_reset_button_row(): string {
+		return sprintf(
+			'<tr><td colspan="2">%s</td></tr>',
+			wp_kses_post(
+				/**
+				 * Filter the reset variation button.
+				 *
+				 * @since 9.7.0
+				 */
+				apply_filters(
+					'woocommerce_reset_variations_link',
+					sprintf(
+						'<button class="reset_variations" aria-label="%1$s">%2$s</button>',
+						esc_html__( 'Clear options', 'woocommerce' ),
+						esc_html__( 'Clear', 'woocommerce' )
+					)
+				)
+			)
+		);
+	}
+
+	/**
 	 * Render the block.
 	 *
 	 * @param array    $attributes Block attributes.
 	 * @param string   $content Block content.
 	 * @param WP_Block $block Block instance.
-	 *
-	 * @return string | void Rendered block output.
+	 * @return string Rendered block output.
 	 */
-	protected function render( $attributes, $content, $block ) {
-		return '';
+	protected function render( $attributes, $content, $block ): string {
+		if ( ! isset( $block->context['postId'] ) ) {
+			return '';
+		}
+
+		global $product;
+		$previous_product = $product;
+		$product          = wc_get_product( $block->context['postId'] );
+
+		if ( ! $product instanceof \WC_Product || ! $product->is_type( 'variable' ) ) {
+			$product = $previous_product;
+			return '';
+		}
+
+		return $this->render_variation_form( $product, $attributes );
 	}
 }
