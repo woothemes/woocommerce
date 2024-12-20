@@ -5,7 +5,7 @@ on:
 
 jobs:
     add-reviews:
-        if: github.event.pull_request.draft == false && github.actor != 'dependabot[bot]' 
+        if: ${{ github.event.pull_request.draft == false && github.actor != 'dependabot[bot]' && secrets.PR_ASSIGN_TOKEN }}
         runs-on: ubuntu-latest
         steps:
             - name: Check config and assign reviews
