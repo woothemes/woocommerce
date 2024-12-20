@@ -32,27 +32,27 @@ export type FeaturesProps = {
 
 export type UpdateFeaturesType = ( key: FeaturesKeys, value: boolean ) => void;
 
+const INNER_BLOCKS_TEMPLATE: InnerBlockTemplate[] = [
+	[
+		'core/heading',
+		{
+			level: 2,
+			content: __( 'Add to Cart', 'woocommerce' ),
+		},
+	],
+	[ 'woocommerce/product-stock-indicator' ],
+	[ 'woocommerce/add-to-cart-with-options-quantity-selector' ],
+	[
+		'woocommerce/product-button',
+		{
+			textAlign: 'center',
+			fontSize: 'small',
+		},
+	],
+];
+
 const AddToCartOptionsEdit = ( props: BlockEditProps< Attributes > ) => {
 	const { setAttributes } = props;
-
-	const INNER_BLOCKS_TEMPLATE: InnerBlockTemplate[] = [
-		[
-			'core/heading',
-			{
-				level: 2,
-				content: __( 'Add to Cart', 'woocommerce' ),
-			},
-		],
-		[ 'woocommerce/product-stock-indicator' ],
-		[ 'woocommerce/add-to-cart-with-options-quantity-selector' ],
-		[
-			'woocommerce/product-button',
-			{
-				textAlign: 'center',
-				fontSize: 'small',
-			},
-		],
-	];
 
 	const blockProps = useBlockProps();
 	const blockClientId = blockProps?.id;
