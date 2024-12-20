@@ -54,7 +54,7 @@ const Blueprint = () => {
 
 		try {
 			const response = await apiFetch( {
-				path: '/blueprint/export',
+				path: '/wc-admin/blueprint/export',
 				method: 'POST',
 				data: {
 					steps: _steps,
