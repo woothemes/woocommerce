@@ -270,7 +270,7 @@ test.describe( 'Shopper → Shipping and Billing Addresses', () => {
 			name: 'Company',
 			exact: true,
 		} );
-		await checkbox.check();
+		await checkbox.click();
 		await expect( checkbox ).toBeChecked();
 		await expect(
 			editor.canvas.locator(
