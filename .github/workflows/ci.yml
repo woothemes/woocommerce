@@ -353,7 +353,7 @@ jobs:
   test-reports:
     name: 'Test reports - ${{ matrix.report }}'
     needs: ['project-jobs', 'project-test-jobs']
-    if: ${{ !cancelled() && github.repository == 'woocommerce/woocommerce' && ( github.event_name != 'pull_request' || needs.identify-jobs-to-run.outputs.needs-code-validation == 'true' ) && needs.project-jobs.outputs.report-jobs != '[]' }}
+    if: ${{ !cancelled() && github.repository == 'woocommerce/woocommerce' && ( github.event_name != 'pull_request' || needs.identify-jobs-to-run.outputs.needs-code-validation == 'true' ) && needs.project-jobs.outputs.report-jobs != '[]' && secrets.REPORTS_TOKEN }}
     strategy:
       fail-fast: false
       matrix:
