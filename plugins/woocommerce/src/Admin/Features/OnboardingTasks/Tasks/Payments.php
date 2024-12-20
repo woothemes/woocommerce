@@ -106,6 +106,8 @@ class Payments extends Task {
 	/**
 	 * The task action URL.
 	 *
+	 * Empty string means the task linking will be handled by the JS logic.
+	 *
 	 * @return string
 	 */
 	public function get_action_url() {

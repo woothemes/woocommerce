@@ -2,10 +2,11 @@
  * External dependencies
  */
 import React from 'react';
-import { Button, Card, CardBody, CardMedia } from '@wordpress/components';
+import { Button, Card, CardBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { createInterpolateElement, useState } from '@wordpress/element';
 import { Link } from '@woocommerce/components';
+import { PaymentIncentive, PaymentProvider } from '@woocommerce/data';
 
 /**
  * Internal dependencies
@@ -13,48 +14,103 @@ import { Link } from '@woocommerce/components';
 import { WC_ASSET_URL } from '~/utils/admin-settings';
 import './incentive-banner.scss';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
+import { isIncentiveDismissedInContext } from '~/settings-payments/utils';
 
-export const IncentiveBanner = () => {
+interface IncentiveBannerProps {
+	/**
+	 * Incentive data.
+	 */
+	incentive: PaymentIncentive;
+	/**
+	 * Payment provider.
+	 */
+	provider: PaymentProvider;
+	/**
+	 * Onboarding URL (if available).
+	 */
+	onboardingUrl: string | null;
+	/**
+	 * Callback used when an incentive is accepted.
+	 *
+	 * @param id Incentive ID.
+	 */
+	onAccept: ( id: string ) => void;
+	/**
+	 * Callback to handle dismiss action.
+	 *
+	 * @param dismissUrl Dismiss URL.
+	 * @param context    The context in which the incentive is dismissed. (e.g. whether it was in a modal or banner).
+	 */
+	onDismiss: ( dismissUrl: string, context: string ) => void;
+	/**
+	 * Callback to setup the plugin.
+	 *
+	 * @param id            Extension ID.
+	 * @param slug          Extension slug.
+	 * @param onboardingUrl Onboarding URL (if available).
+	 */
+	setupPlugin: (
+		id: string,
+		slug: string,
+		onboardingUrl: string | null
+	) => void;
+}
+
+export const IncentiveBanner = ( {
+	incentive,
+	provider,
+	onboardingUrl,
+	onDismiss,
+	onAccept,
+	setupPlugin,
+}: IncentiveBannerProps ) => {
 	const [ isSubmitted, setIsSubmitted ] = useState( false );
-	const [ isDismissClicked, setIsDismissClicked ] = useState( false );
+	const [ isDismissed, setIsDismissed ] = useState( false );
+	const [ isBusy, setIsBusy ] = useState( false );
 
-	const handleSetup = () => {
+	const context = 'wc_settings_payments__banner';
+
+	const handleAccept = () => {
+		setIsBusy( true );
+		onAccept( incentive.promo_id );
+		onDismiss( incentive._links.dismiss.href, context ); // We also dismiss the incentive when it is accepted.
 		setIsSubmitted( true );
+		setupPlugin( provider.id, provider.plugin.slug, onboardingUrl );
+		setIsBusy( false );
 	};
 
 	const handleDismiss = () => {
-		setIsDismissClicked( true );
+		setIsBusy( true );
+		onDismiss( incentive._links.dismiss.href, context );
+		setIsBusy( false );
+		setIsDismissed( true );
 	};
+
+	if (
+		isSubmitted ||
+		isIncentiveDismissedInContext( incentive, context ) ||
+		isDismissed
+	) {
+		return null;
+	}
 
 	return (
 		<Card className="woocommerce-incentive-banner" isRounded={ true }>
 			<div className="woocommerce-incentive-banner__content">
-				<CardMedia>
-					<img
-						src={
-							WC_ASSET_URL +
-							'images/settings-payments/incentives-icon.svg'
-						}
-						alt={ __( 'Incentive hero image', 'woocommerce' ) }
-					/>
-				</CardMedia>
+				<img
+					src={
+						WC_ASSET_URL +
+						'images/settings-payments/incentives-illustration.svg'
+					}
+					alt={ __( 'Incentive illustration', 'woocommerce' ) }
+				/>
 				<CardBody className="woocommerce-incentive-banner__body">
 					<StatusBadge
 						status="has_incentive"
 						message={ __( 'Limited time offer', 'woocommerce' ) }
 					/>
-					<h2>
-						{ __(
-							'Save 10% on processing fees for your first 3 months when you sign up for WooPayments',
-							'woocommerce'
-						) }
-					</h2>
-					<p>
-						{ __(
-							'Use the native payments solution built and supported by Woo to accept online and in-person payments, track revenue, and handle all payment activity in one place.',
-							'woocommerce'
-						) }
-					</p>
+					<h2>{ incentive.title }</h2>
+					<p>{ incentive.description }</p>
 					<p className={ 'woocommerce-incentive-banner__terms' }>
 						{ createInterpolateElement(
 							__(
@@ -64,7 +120,7 @@ export const IncentiveBanner = () => {
 							{
 								termsLink: (
 									<Link
-										href="https://woocommerce.com/terms-conditions/woopayments-action-promotion-2023/"
+										href={ incentive.tc_url }
 										target="_blank"
 										rel="noreferrer"
 										type="external"
@@ -83,17 +139,17 @@ export const IncentiveBanner = () => {
 						variant={ 'primary' }
 						isBusy={ isSubmitted }
 						disabled={ isSubmitted }
-						onClick={ handleSetup }
+						onClick={ handleAccept }
 					>
-						{ __( 'Save 10%', 'woocommerce' ) }
+						{ incentive.cta_label }
 					</Button>
 					<Button
 						variant={ 'tertiary' }
-						isBusy={ isDismissClicked }
-						disabled={ isDismissClicked }
+						isBusy={ isBusy }
+						disabled={ isBusy }
 						onClick={ handleDismiss }
 					>
-						{ __( 'No thanks', 'woocommerce' ) }
+						{ __( 'Dismiss', 'woocommerce' ) }
 					</Button>
 				</CardBody>
 			</div>

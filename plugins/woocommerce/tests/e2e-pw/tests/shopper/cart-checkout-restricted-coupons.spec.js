@@ -5,9 +5,13 @@ import {
 	addAProductToCart,
 	getOrderIdFromUrl,
 } from '@woocommerce/e2e-utils-playwright';
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
-
+const { setComingSoon } = require( '../../utils/coming-soon' );
 const includedProductName = 'Included test product';
 const excludedProductName = 'Excluded test product';
 const includedCategoryName = 'Included Category';
@@ -41,10 +45,10 @@ test.describe(
 	'Cart & Checkout Restricted Coupons',
 	{
 		tag: [
-			'@payments',
-			'@services',
-			'@hpos',
-			'@could-be-lower-level-test',
+			tags.PAYMENTS,
+			tags.SERVICES,
+			tags.HPOS,
+			tags.COULD_BE_LOWER_LEVEL_TEST,
 		],
 	},
 	() => {
@@ -56,6 +60,7 @@ test.describe(
 		const couponBatchId = [];
 
 		test.beforeAll( async ( { baseURL } ) => {
+			await setComingSoon( { baseURL, enabled: 'no' } );
 			const api = new wcApi( {
 				url: baseURL,
 				consumerKey: process.env.CONSUMER_KEY,
