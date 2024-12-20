@@ -220,7 +220,7 @@ const Blueprint = () => {
 			</div>
 			<br></br>
 			<Button
-				isPrimary
+				variant="primary"
 				onClick={ () => {
 					const selectedSteps = Object.entries( checkedState ).reduce(
 						( acc, [ groupId, groupState ] ) => {
