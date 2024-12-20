@@ -19,19 +19,6 @@ import { useActiveRoute } from './route';
 
 const { RouterProvider } = unlock( routerPrivateApis );
 
-const SettingsLayout = () => {
-	const { route, settingsPage, tabs, activeSection } = useActiveRoute();
-
-	return (
-		<Layout
-			route={ route }
-			settingsPage={ settingsPage }
-			tabs={ tabs }
-			activeSection={ activeSection }
-		/>
-	);
-};
-
 export const SettingsEditor = () => {
 	const isRequiredGutenbergVersion = isGutenbergVersionAtLeast( 19.0 );
 
@@ -47,12 +34,19 @@ export const SettingsEditor = () => {
 		);
 	}
 
+	const { route, settingsPage, tabs, activeSection } = useActiveRoute();
+
 	return (
-		<RouterProvider>
-			<SettingsLayout />
-		</RouterProvider>
+		<Layout
+			route={ route }
+			settingsPage={ settingsPage }
+			tabs={ tabs }
+			activeSection={ activeSection }
+		/>
 	);
 };
 
 export * from './components';
 export * from './legacy';
+export * from './route';
+export { RouterProvider };
