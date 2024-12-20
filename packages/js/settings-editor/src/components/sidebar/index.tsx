@@ -2,27 +2,24 @@
  * External dependencies
  */
 import { createElement } from '@wordpress/element';
+import * as IconPackage from '@wordpress/icons';
+
 /* eslint-disable @woocommerce/dependency-group */
 // @ts-expect-error missing type.
 // eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 import { __experimentalItemGroup as ItemGroup } from '@wordpress/components';
 // @ts-ignore No types for this exist yet.
 import SidebarNavigationScreen from '@wordpress/edit-site/build-module/components/sidebar-navigation-screen';
-import * as IconPackage from '@wordpress/icons';
+// @ts-ignore No types for this exist yet.
+import SidebarNavigationItem from '@wordpress/edit-site/build-module/components/sidebar-navigation-item';
 /* eslint-enable @woocommerce/dependency-group */
 
 /**
  * Internal dependencies
  */
-import { SettingItem } from './setting-item';
-
 const { Icon, ...icons } = IconPackage;
 
-const SidebarNavigationScreenContent = ( {
-	routeKey,
-}: {
-	routeKey: string;
-} ) => {
+const SidebarNavigationScreenContent = () => {
 	const settingsData: SettingsData = window.wcSettings?.admin?.settingsData;
 	if ( ! settingsData ) {
 		return null;
@@ -32,21 +29,19 @@ const SidebarNavigationScreenContent = ( {
 		<ItemGroup>
 			{ Object.keys( settingsData ).map( ( slug ) => {
 				const { label, icon } = settingsData[ slug ];
+
 				return (
-					<SettingItem
-						key={ slug }
-						slug={ slug }
-						label={ label }
-						isActive={ routeKey === slug }
+					<SidebarNavigationItem
 						icon={
-							<Icon
-								icon={
-									icons[ icon as keyof typeof icons ] ||
-									icons.settings
-								}
-							/>
+							icons[ icon as keyof typeof icons ] ||
+							icons.settings
 						}
-					/>
+						uid={ slug }
+						key={ slug }
+						to={ `/wc-settings/${ slug }` }
+					>
+						{ label }
+					</SidebarNavigationItem>
 				);
 			} ) }
 		</ItemGroup>
@@ -55,17 +50,16 @@ const SidebarNavigationScreenContent = ( {
 
 type SidebarProps = {
 	title: string;
-	routeKey: string;
 	backPack: string;
 };
 
-export const Sidebar = ( { title, routeKey, backPack }: SidebarProps ) => {
+export const Sidebar = ( { title, backPack }: SidebarProps ) => {
 	return (
 		<SidebarNavigationScreen
-			title={ title }
 			isRoot
+			title={ title }
 			backPack={ backPack }
-			content={ <SidebarNavigationScreenContent routeKey={ routeKey } /> }
+			content={ <SidebarNavigationScreenContent /> }
 		/>
 	);
 };
