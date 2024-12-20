@@ -13,14 +13,14 @@
 
 		label {
 			line-height: 2;
-		}
 
-		label.hidden {
-			visibility: hidden;
-		}
+			&.hidden {
+				visibility: hidden;
+		  	}
 
-		label.inline {
-			display: inline;
+			&.inline {
+				display: inline;
+			}
 		}
 
 		.woocommerce-input-wrapper {
