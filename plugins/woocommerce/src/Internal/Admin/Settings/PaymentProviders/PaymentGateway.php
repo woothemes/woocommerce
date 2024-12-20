@@ -5,6 +5,7 @@ namespace Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders;
 
 use Automattic\WooCommerce\Admin\PluginsHelper;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders;
+use Automattic\WooCommerce\Internal\Admin\Settings\Utils;
 use Automattic\WooCommerce\Internal\Utilities\ArrayUtil;
 use WC_HTTPS;
 use WC_Payment_Gateway;
@@ -90,7 +91,10 @@ class PaymentGateway {
 	 * @return string The provider title of the payment gateway.
 	 */
 	public function get_title( WC_Payment_Gateway $payment_gateway ): string {
-		return wp_strip_all_tags( html_entity_decode( $payment_gateway->get_method_title() ), true );
+		$title = wp_strip_all_tags( html_entity_decode( $payment_gateway->get_method_title() ), true );
+
+		// Truncate the title.
+		return Utils::truncate_with_words( $title, 75 );
 	}
 
 	/**
@@ -105,7 +109,10 @@ class PaymentGateway {
 	 * @return string The provider description of the payment gateway.
 	 */
 	public function get_description( WC_Payment_Gateway $payment_gateway ): string {
-		return wp_strip_all_tags( html_entity_decode( $payment_gateway->get_method_description() ), true );
+		$description = wp_strip_all_tags( html_entity_decode( $payment_gateway->get_method_description() ), true );
+
+		// Truncate the description.
+		return Utils::truncate_with_words( $description, 130, '…' );
 	}
 
 	/**
