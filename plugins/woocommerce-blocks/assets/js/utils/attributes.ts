@@ -18,7 +18,7 @@ const ATTRIBUTES = getSetting< AttributeSetting[] >( 'attributes', [] );
 /**
  * Format an attribute from the settings into an object with standardized keys.
  *
- * @param {Object} attribute The attribute object.
+ * @param {Object|null} attribute The attribute object.
  */
 const attributeSettingToObject = (
 	attribute: AttributeSetting
