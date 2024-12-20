@@ -63,6 +63,7 @@ export const Edit = ( {
 		cartPageId,
 		isPreview = false,
 		showFormStepNumbers = false,
+		hasDarkControls = false,
 	} = attributes;
 
 	const defaultFields = useSelect( ( select ) => {
@@ -179,17 +180,6 @@ export const Edit = ( {
 
 	const addressFieldControls = (): JSX.Element => (
 		<InspectorControls>
-			<PanelBody title={ __( 'Form Step Options', 'woocommerce' ) }>
-				<ToggleControl
-					label={ __( 'Show form step numbers', 'woocommerce' ) }
-					checked={ showFormStepNumbers }
-					onChange={ () =>
-						setAttributes( {
-							showFormStepNumbers: ! showFormStepNumbers,
-						} )
-					}
-				/>
-			</PanelBody>
 			<PanelBody title={ __( 'Address Fields', 'woocommerce' ) }>
 				<p className="wc-block-checkout__controls-text">
 					{ __(
@@ -308,7 +298,7 @@ export const Edit = ( {
 					<CheckoutProvider>
 						<SidebarLayout
 							className={ clsx( 'wc-block-checkout', {
-								'has-dark-controls': attributes.hasDarkControls,
+								'has-dark-controls': hasDarkControls,
 							} ) }
 						>
 							<CheckoutBlockControlsContext.Provider
