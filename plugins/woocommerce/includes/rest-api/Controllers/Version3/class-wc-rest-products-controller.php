@@ -8,6 +8,7 @@
  * @since   2.6.0
  */
 
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareRestControllerTrait;
 use Automattic\WooCommerce\Utilities\I18nUtil;
 
@@ -585,7 +586,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			$product = new WC_Product_Simple();
 		}
 
-		if ( 'variation' === $product->get_type() ) {
+		if ( ProductType::VARIATION === $product->get_type() ) {
 			return new WP_Error(
 				"woocommerce_rest_invalid_{$this->post_type}_id",
 				__( 'To manipulate product variations you should use the /products/&lt;product_id&gt;/variations/&lt;id&gt; endpoint.', 'woocommerce' ),
@@ -745,7 +746,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		}
 
 		// Sales and prices.
-		if ( in_array( $product->get_type(), array( 'variable', 'grouped' ), true ) ) {
+		if ( in_array( $product->get_type(), array( ProductType::VARIABLE, ProductType::GROUPED ), true ) ) {
 			$product->set_regular_price( '' );
 			$product->set_sale_price( '' );
 			$product->set_date_on_sale_to( '' );
@@ -808,19 +809,19 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 				$product->set_backorders( $request['backorders'] );
 			}
 
-			if ( $product->is_type( 'grouped' ) ) {
+			if ( $product->is_type( ProductType::GROUPED ) ) {
 				$product->set_manage_stock( 'no' );
 				$product->set_backorders( 'no' );
 				$product->set_stock_quantity( '' );
 				$product->set_stock_status( $stock_status );
-			} elseif ( $product->is_type( 'external' ) ) {
+			} elseif ( $product->is_type( ProductType::EXTERNAL ) ) {
 				$product->set_manage_stock( 'no' );
 				$product->set_backorders( 'no' );
 				$product->set_stock_quantity( '' );
 				$product->set_stock_status( 'instock' );
 			} elseif ( $product->get_manage_stock() ) {
 				// Stock status is always determined by children so sync later.
-				if ( ! $product->is_type( 'variable' ) ) {
+				if ( ! $product->is_type( ProductType::VARIABLE ) ) {
 					$product->set_stock_status( $stock_status );
 				}
 
@@ -849,7 +850,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 				$product->set_stock_status( $stock_status );
 				$product->set_low_stock_amount( '' );
 			}
-		} elseif ( ! $product->is_type( 'variable' ) ) {
+		} elseif ( ! $product->is_type( ProductType::VARIABLE ) ) {
 			$product->set_stock_status( $stock_status );
 		}
 
@@ -947,7 +948,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		}
 
 		// Product url and button text for external products.
-		if ( $product->is_type( 'external' ) ) {
+		if ( $product->is_type( ProductType::EXTERNAL ) ) {
 			if ( isset( $request['external_url'] ) ) {
 				$product->set_product_url( $request['external_url'] );
 			}
@@ -958,12 +959,12 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		}
 
 		// Save default attributes for variable products.
-		if ( $product->is_type( 'variable' ) ) {
+		if ( $product->is_type( ProductType::VARIABLE ) ) {
 			$product = $this->save_default_attributes( $product, $request );
 		}
 
 		// Set children for a grouped product.
-		if ( $product->is_type( 'grouped' ) && isset( $request['grouped_products'] ) ) {
+		if ( $product->is_type( ProductType::GROUPED ) && isset( $request['grouped_products'] ) ) {
 			$product->set_children( $request['grouped_products'] );
 		}
 
@@ -1073,7 +1074,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 				'type'                  => array(
 					'description' => __( 'Product type.', 'woocommerce' ),
 					'type'        => 'string',
-					'default'     => 'simple',
+					'default'     => ProductType::SIMPLE,
 					'enum'        => array_keys( wc_get_product_types() ),
 					'context'     => array( 'view', 'edit' ),
 				),
