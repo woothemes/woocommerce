@@ -23,7 +23,5 @@ const routes = [ homeRoute, productsRoute ];
 export function useRegisterSiteEditorRoutes() {
 	const { registerRoute } = unlock( useDispatch( editSiteStore ) );
 
-	useEffect( () => {
-		routes.forEach( registerRoute );
-	}, [ registerRoute ] );
+	useEffect( () => routes.forEach( registerRoute ), [ registerRoute ] );
 }
