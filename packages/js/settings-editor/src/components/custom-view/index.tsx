@@ -42,13 +42,19 @@ const processCustomView = ( html: string ) => {
 
 const SettingsScript = ( { content }: { content: string } ) => {
 	useEffect( () => {
-		const scriptElement = document.createElement( 'script' );
-		scriptElement.type = 'text/javascript';
-		scriptElement.innerHTML = content;
-		document.body.appendChild( scriptElement );
-		return () => {
-			document.body.removeChild( scriptElement );
-		};
+		try {
+			const scriptElement = document.createElement( 'script' );
+			scriptElement.type = 'text/javascript';
+			scriptElement.innerText = content;
+			document.body.appendChild( scriptElement );
+
+			return () => {
+				document.body.removeChild( scriptElement );
+			};
+		} catch ( error ) {
+			// eslint-disable-next-line no-console
+			console.error( 'Failed to execute script:', error );
+		}
 	}, [ content ] );
 	return null;
 };
