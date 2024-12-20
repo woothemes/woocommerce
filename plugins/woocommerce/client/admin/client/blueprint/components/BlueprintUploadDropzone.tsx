@@ -12,20 +12,46 @@ import {
 import { closeSmall } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 import { useMachine } from '@xstate5/react';
-import { assertEvent, assign, fromPromise, setup } from 'xstate5';
+import {
+	assertEvent,
+	assign,
+	enqueueActions,
+	fromPromise,
+	setup,
+} from 'xstate5';
 import apiFetch from '@wordpress/api-fetch';
+import { dispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import uploadIcon from './upload.svg';
 import './style.scss';
+import { OverwriteConfirmationModal } from '../settings/overwrite-confirmation-modal';
 
-type BlueprintImportResponse = {
+type BlueprintQueueResponse = {
 	reference?: string;
 	error_type?: string;
 	errors?: string[];
 	process_nonce?: string;
+	settings_to_overwrite?: string[];
+};
+
+type BlueprintImportResponse = {
+	// TODO: flesh out this type with more concrete values
+	processed: boolean;
+	message: string;
+	data: {
+		redirect: string;
+		result: {
+			is_success: boolean;
+			messages: {
+				step: string;
+				type: string;
+				message: string;
+			}[];
+		};
+	};
 };
 
 const uploadBlueprint = async ( file: File ) => {
@@ -41,7 +67,7 @@ const uploadBlueprint = async ( file: File ) => {
 		throw new Error( 'Blueprint upload nonce not found' ); // TODO: write a more user friendly error
 	}
 
-	const response = await apiFetch< BlueprintImportResponse >( {
+	const response = await apiFetch< BlueprintQueueResponse >( {
 		path: 'wc-admin/blueprint/queue',
 		method: 'POST',
 		body: formData,
@@ -54,11 +80,31 @@ const uploadBlueprint = async ( file: File ) => {
 	return response;
 };
 
+const importBlueprint = async ( process_nonce: string, reference: string ) => {
+	const { processed, message } = await apiFetch< BlueprintImportResponse >( {
+		path: '/wc-admin/blueprint/process',
+		method: 'POST',
+		data: {
+			reference,
+			process_nonce,
+		},
+	} );
+
+	if ( ! processed ) {
+		throw new Error( message );
+	}
+
+	dispatch( 'core/notices' ).createSuccessNotice(
+		`${ __( 'Your Blueprint has been imported!', 'woocommerce' ) }`
+	);
+};
+
 interface FileUploadContext {
 	file?: File;
 	process_nonce?: string;
 	reference?: string;
 	error?: Error;
+	settings_to_overwrite?: string[];
 }
 
 type FileUploadEvents =
@@ -66,13 +112,24 @@ type FileUploadEvents =
 	| { type: 'SUCCESS' }
 	| { type: 'ERROR'; error: Error }
 	| { type: 'DISMISS' }
+	| { type: 'DISMISS_OVERWRITE_MODAL' }
+	| { type: 'IMPORT' }
+	| { type: 'CONFIRM_IMPORT' }
 	| { type: 'RETRY' }
 	| {
 			type: `xstate.done.actor.${ number }.fileUpload.uploading`;
+			output: BlueprintQueueResponse;
+	  }
+	| {
+			type: `xstate.done.actor.${ number }.fileUpload.importer`;
 			output: BlueprintImportResponse;
 	  }
 	| {
 			type: `xstate.error.actor.${ number }.fileUpload.uploading`;
+			output: Error;
+	  }
+	| {
+			type: `xstate.error.actor.${ number }.fileUpload.importer`;
 			output: Error;
 	  };
 
@@ -82,20 +139,22 @@ export const fileUploadMachine = setup( {
 		events: FileUploadEvents;
 	},
 	actions: {
-		reportSuccess: ( { event } ) => {
+		reportSuccess: enqueueActions( ( { event, enqueue } ) => {
 			assertEvent( event, 'xstate.done.actor.0.fileUpload.uploading' );
-			return assign( {
+			enqueue.assign( {
 				process_nonce: event.output.process_nonce,
 				reference: event.output.reference,
+				settings_to_overwrite: event.output.settings_to_overwrite,
 			} );
-		},
+		} ),
 		reportError: ( { event } ) => {
 			if ( event.type === 'ERROR' ) {
 				return assign( {
 					error: event.error,
 				} );
 			} else if (
-				event.type === 'xstate.error.actor.0.fileUpload.uploading'
+				event.type === 'xstate.error.actor.0.fileUpload.uploading' ||
+				event.type === 'xstate.error.actor.0.fileUpload.importer'
 			) {
 				return assign( {
 					error: event.output,
@@ -107,6 +166,20 @@ export const fileUploadMachine = setup( {
 		uploader: fromPromise( ( { input }: { input: { file: File } } ) =>
 			uploadBlueprint( input.file )
 		),
+		importer: fromPromise(
+			( {
+				input,
+			}: {
+				input: { process_nonce: string; reference: string };
+			} ) => importBlueprint( input.process_nonce, input.reference )
+		),
+	},
+	guards: {
+		hasSettingsToOverwrite: ( { context } ) =>
+			Boolean(
+				context.settings_to_overwrite &&
+					context.settings_to_overwrite.length > 0
+			),
 	},
 } ).createMachine( {
 	id: 'fileUpload',
@@ -164,8 +237,41 @@ export const fileUploadMachine = setup( {
 					} ),
 					target: 'idle',
 				},
+				IMPORT: [
+					{
+						target: 'overrideModal',
+					},
+				],
 			},
 		},
+		overrideModal: {
+			on: {
+				CONFIRM_IMPORT: {
+					target: 'importing',
+				},
+				DISMISS_OVERWRITE_MODAL: {
+					target: 'success',
+				},
+			},
+		},
+		importing: {
+			invoke: {
+				src: 'importer',
+				input: ( { context } ) => {
+					return {
+						process_nonce: context.process_nonce!,
+						reference: context.reference!,
+					};
+				},
+				onDone: {
+					target: 'importSuccess',
+				},
+				onError: {
+					target: 'error',
+				},
+			},
+		},
+		importSuccess: {},
 	},
 } );
 
@@ -237,7 +343,9 @@ export const BlueprintUploadDropzone = () => {
 					</div>
 				</div>
 			) }
-			{ state.matches( 'success' ) && (
+			{ ( state.matches( 'success' ) ||
+				state.matches( 'importSuccess' ) ||
+				state.matches( 'overrideModal' ) ) && (
 				<div className="blueprint-upload-dropzone-success">
 					<p className="blueprint-upload-dropzone-text">
 						<span className="blueprint-upload-dropzone-text-file-name">
@@ -249,6 +357,32 @@ export const BlueprintUploadDropzone = () => {
 						/>
 					</p>
 				</div>
+			) }
+			{ ( state.matches( 'success' ) ||
+				state.matches( 'overrideModal' ) ) && (
+				<Button
+					className="woocommerce-blueprint-import-button"
+					variant="primary"
+					onClick={ () => {
+						send( { type: 'IMPORT' } );
+					} }
+				>
+					{ __( 'Import', 'woocommerce' ) }
+				</Button>
+			) }
+			{ ( state.matches( 'importing' ) ||
+				state.matches( 'overrideModal' ) ) && (
+				<OverwriteConfirmationModal
+					isOpen={ true }
+					isImporting={ state.matches( 'importing' ) }
+					onClose={ () =>
+						send( { type: 'DISMISS_OVERWRITE_MODAL' } )
+					}
+					onConfirm={ () => send( { type: 'CONFIRM_IMPORT' } ) }
+					overwrittenItems={
+						state.context.settings_to_overwrite || []
+					}
+				/>
 			) }
 		</>
 	);
