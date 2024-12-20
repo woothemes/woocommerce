@@ -1432,9 +1432,9 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	 * @testWith [true]
 	 *           [false]
 	 *
-	 * @param bool $set_override_flag Value of the "override parent" flag to use.
+	 * @param bool $set_additive_flag Value of the "additive" flag to use.
 	 */
-	public function test_cogs_values_received_for_variation_product( bool $set_override_flag ) {
+	public function test_cogs_values_received_for_variation_product( bool $set_additive_flag ) {
 		$this->enable_cogs_feature();
 
 		$parent_product = WC_Helper_Product::create_variation_product();
@@ -1443,7 +1443,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 
 		$variation = wc_get_product( $parent_product->get_children()[0] );
 		$variation->set_cogs_value( 56.78 );
-		$variation->set_cogs_value_overrides_parent( $set_override_flag );
+		$variation->set_cogs_value_is_additive( $set_additive_flag );
 		$variation->save();
 
 		$response = $this->server->dispatch( new WP_REST_Request( 'GET', '/wc/v3/products/' . $variation->get_id() ) );
@@ -1451,16 +1451,16 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 
 		$data = $response->get_data();
 
-		$expected_effective_value = $set_override_flag ? 56.78 : 12.34 + 56.78;
+		$expected_effective_value = $set_additive_flag ? 12.34 + 56.78 : 56.78;
 		$expected                 = array(
-			'values'                         => array(
+			'values'                    => array(
 				array(
 					'defined_value'   => 56.78,
 					'effective_value' => $expected_effective_value,
 				),
 			),
-			'defined_value_overrides_parent' => $set_override_flag,
-			'total_value'                    => $expected_effective_value,
+			'defined_value_is_additive' => $set_additive_flag,
+			'total_value'               => $expected_effective_value,
 		);
 
 		$this->assertEquals( $expected, $data['cost_of_goods_sold'] );
