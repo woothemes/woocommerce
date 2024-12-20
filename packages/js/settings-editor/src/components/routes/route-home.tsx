@@ -2,6 +2,12 @@
  * External dependencies
  */
 import { createElement } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
+import { Sidebar } from '../sidebar';
 
 export type RouteArea = 'sidebar' | 'preview' | 'mobile';
 
@@ -15,8 +21,11 @@ export const homeRoute = {
 	name: 'home',
 	path: '/wc-settings',
 	areas: {
-		sidebar: <div>Sidebar</div>,
+		sidebar: (
+			<Sidebar title={ __( 'Settings', 'woocommerce' ) } backPack="/" />
+		),
 		preview: <div>Preview</div>,
+		content: <div>Content</div>,
 		mobile: <div>Mobile</div>,
 	},
 };
