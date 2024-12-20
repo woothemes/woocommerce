@@ -726,7 +726,9 @@ class PaymentProviders {
 			// Enhance the suggestion details.
 			$suggestion = $this->enhance_extension_suggestion( $suggestion );
 
-			// The description, icon, and image from the suggestion take precedence over the ones from the gateway.
+			// The title, description, icon, and image from the suggestion take precedence over the ones from the gateway.
+			// This is temporary until we update the partner extensions.
+			$gateway_details['title']       = $suggestion['title'];
 			$gateway_details['description'] = $suggestion['description'];
 			$gateway_details['icon']        = $suggestion['icon'];
 			$gateway_details['image']       = $suggestion['image'];
