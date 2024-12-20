@@ -16,14 +16,11 @@ import {
 import { registerPlugin } from '@wordpress/plugins';
 import { __ } from '@wordpress/i18n';
 import { CollapsibleContent } from '@woocommerce/components';
-import { useDispatch } from '@wordpress/data';
-import { store as noticesStore } from '@wordpress/notices';
 /**
  * Internal dependencies
  */
 import { SETTINGS_SLOT_FILL_CONSTANT } from '../../settings/settings-slots';
 import { BlueprintUploadDropzone } from '../components/BlueprintUploadDropzone';
-import { OverwriteConfirmationModal } from './overwrite-confirmation-modal';
 import './style.scss';
 
 const { Fill } = createSlotFill( SETTINGS_SLOT_FILL_CONSTANT );
@@ -32,14 +29,6 @@ const Blueprint = () => {
 	const [ exportEnabled, setExportEnabled ] = useState( true );
 	const [ exportAsZip, setExportAsZip ] = useState( false );
 	const [ error, setError ] = useState( null );
-	const [
-		isOverwriteConfirmationModalOpen,
-		setIsOverwriteConfirmationModalOpen,
-	] = useState( false );
-	const [ isImporting, setIsImporting ] = useState( false );
-	const [ queueResponse, setQueueResponse ] = useState( null );
-
-	const { createSuccessNotice } = useDispatch( noticesStore );
 
 	const blueprintStepGroups =
 		window.wcSettings?.admin?.blueprint_step_groups || [];
@@ -100,70 +89,6 @@ const Blueprint = () => {
 		}
 
 		setExportEnabled( true );
-	};
-
-	const handleFileChange = async ( event ) => {
-		const file = event.target.files[ 0 ];
-
-		if ( ! window?.wcSettings?.admin?.blueprint_upload_nonce ) {
-			throw new Error(
-				'Blueprint upload nonce is not set. Please contact support.'
-			);
-		}
-
-		const formData = new FormData();
-		formData.append( 'file', file );
-		formData.append(
-			'blueprint_upload_nonce',
-			window.wcSettings.admin.blueprint_upload_nonce
-		);
-
-		const { errors, ...restQueueResponse } = await apiFetch( {
-			path: '/wc-admin/blueprint/queue',
-			method: 'POST',
-			body: formData,
-		} );
-
-		if ( errors.length > 0 ) {
-			setError( errors.join( ', ' ) );
-			return;
-		}
-
-		setQueueResponse( restQueueResponse );
-	};
-
-	const importBlueprint = async () => {
-		setIsImporting( true );
-		try {
-			const { processed, message } = await apiFetch( {
-				path: '/wc-admin/blueprint/process',
-				method: 'POST',
-				data: {
-					reference: queueResponse.reference,
-					process_nonce: queueResponse.process_nonce,
-				},
-			} );
-
-			// TODO: Remove skipError. This is just for testing.
-			if ( ! processed && ! window.skipError ) {
-				throw new Error( message );
-			}
-
-			createSuccessNotice(
-				`<div class="woocommerce-blueprint-import-notice">${ __(
-					'Your Blueprint has been imported!',
-					'woocommerce'
-				) }</div>`,
-				{
-					__unstableHTML: true,
-				}
-			);
-		} catch ( e ) {
-			setError( e.message );
-		} finally {
-			setIsImporting( false );
-			setIsOverwriteConfirmationModalOpen( false );
-		}
 	};
 
 	// Handle checkbox change
@@ -236,22 +161,6 @@ const Blueprint = () => {
 			</p>
 			<BlueprintUploadDropzone />
 			<p></p>
-			<Button
-				className="woocommerce-blueprint-import-button"
-				variant="primary"
-				onClick={ () => {
-					if ( ! queueResponse ) {
-						setError(
-							'No import file found. Please select a file first.'
-						);
-						return;
-					}
-
-					setIsOverwriteConfirmationModalOpen( true );
-				} }
-			>
-				{ __( 'Import', 'woocommerce' ) }
-			</Button>
 			<h3>{ __( 'Export Blueprint', 'woocommerce' ) }</h3>
 			<p className="export-intro">
 				{ createInterpolateElement(
@@ -329,15 +238,6 @@ const Blueprint = () => {
 			>
 				{ __( 'Export', 'woocommerce' ) }
 			</Button>
-			<OverwriteConfirmationModal
-				isOpen={ isOverwriteConfirmationModalOpen }
-				isImporting={ isImporting }
-				onClose={ () => {
-					setIsOverwriteConfirmationModalOpen( false );
-				} }
-				onConfirm={ importBlueprint }
-				overwrittenItems={ queueResponse?.settings_to_overwrite || [] }
-			/>
 		</div>
 	);
 };
