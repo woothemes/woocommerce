@@ -22,6 +22,7 @@ export const PluginsTermsOfService = ( {
 			'woocommerce-services:tax',
 			'woocommerce-shipping',
 			'woocommerce-tax',
+			'woocommerce-payments',
 		].includes( plugin.key )
 	);
 
