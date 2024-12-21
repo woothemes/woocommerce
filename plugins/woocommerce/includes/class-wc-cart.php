@@ -9,6 +9,7 @@
  * @version 2.1.0
  */
 
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Utilities\DiscountsUtil;
 use Automattic\WooCommerce\Utilities\NumberUtil;
 
@@ -827,7 +828,7 @@ class WC_Cart extends WC_Legacy_Cart {
 					$in_cart[]   = $values['product_id'];
 
 					// Add variations to the in cart array.
-					if ( $values['data']->is_type( 'variation' ) ) {
+					if ( $values['data']->is_type( ProductType::VARIATION ) ) {
 						$in_cart[] = $values['variation_id'];
 					}
 				}
@@ -1040,7 +1041,7 @@ class WC_Cart extends WC_Legacy_Cart {
 				return false;
 			}
 
-			if ( $product_data->is_type( 'variation' ) ) {
+			if ( $product_data->is_type( ProductType::VARIATION ) ) {
 				$missing_attributes = array();
 				$parent_data        = wc_get_product( $product_data->get_parent_id() );
 
@@ -1132,7 +1133,7 @@ class WC_Cart extends WC_Legacy_Cart {
 			if (
 				0 < $variation_id && // Only check if there's any variation_id.
 				(
-					! $product_data->is_type( 'variation' ) || // Check if isn't a variation, it suppose to be a variation at this point.
+					! $product_data->is_type( ProductType::VARIATION ) || // Check if isn't a variation, it suppose to be a variation at this point.
 					$product_data->get_parent_id() !== $product_id // Check if belongs to the selected variable product.
 				)
 			) {
@@ -1170,7 +1171,7 @@ class WC_Cart extends WC_Legacy_Cart {
 					$message         = apply_filters( 'woocommerce_cart_product_cannot_add_another_message', $message, $product_data );
 					$wp_button_class = wc_wp_theme_get_element_class_name( 'button' ) ? ' ' . wc_wp_theme_get_element_class_name( 'button' ) : '';
 
-					throw new Exception( sprintf( '%s <a href="%s" class="button wc-forward%s">%s</a>', $message, wc_get_cart_url(), esc_attr( $wp_button_class ), __( 'View cart', 'woocommerce' ) ) );
+					throw new Exception( sprintf( '%s <a href="%s" class="button wc-forward%s">%s</a>', $message, esc_url( wc_get_cart_url() ), esc_attr( $wp_button_class ), __( 'View cart', 'woocommerce' ) ) );
 				}
 			}
 
@@ -1235,7 +1236,7 @@ class WC_Cart extends WC_Legacy_Cart {
 						'%s <a href="%s" class="button wc-forward%s">%s</a>',
 						/* translators: 1: quantity in stock 2: current quantity */
 						sprintf( __( 'You cannot add that amount to the cart &mdash; we have %1$s in stock and you already have %2$s in your cart.', 'woocommerce' ), wc_format_stock_quantity_for_display( $stock_quantity, $product_data ), wc_format_stock_quantity_for_display( $stock_quantity_in_cart, $product_data ) ),
-						wc_get_cart_url(),
+						esc_url( wc_get_cart_url() ),
 						esc_attr( $wp_button_class ),
 						__( 'View cart', 'woocommerce' )
 					);

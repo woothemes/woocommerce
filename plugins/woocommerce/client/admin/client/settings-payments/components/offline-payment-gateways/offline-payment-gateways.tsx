@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { type OfflinePaymentGateway } from '@woocommerce/data';
+import { type OfflinePaymentMethodProvider } from '@woocommerce/data';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -9,11 +9,12 @@ import { __ } from '@wordpress/i18n';
  */
 import { OfflinePaymentGatewayList } from '../offline-gateway-list-item/offline-payment-gateway-list-item';
 import { ListPlaceholder } from '~/settings-payments/components/list-placeholder';
+import './offline-payment-gateways.scss';
 
 interface OfflinePaymentGatewaysProps {
 	isFetching: boolean;
-	offlinePaymentGateways: OfflinePaymentGateway[];
-	updateOrdering: ( gateways: OfflinePaymentGateway[] ) => void;
+	offlinePaymentGateways: OfflinePaymentMethodProvider[];
+	updateOrdering: ( gateways: OfflinePaymentMethodProvider[] ) => void;
 }
 
 export const OfflinePaymentGateways = ( {

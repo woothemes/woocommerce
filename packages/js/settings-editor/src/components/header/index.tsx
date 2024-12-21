@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { createElement } from '@wordpress/element';
+import classnames from 'classnames';
 import {
 	// @ts-expect-error missing types.
 	__experimentalHeading as Heading,
@@ -11,10 +12,21 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 
-export const Header = ( { pageTitle = '' }: { pageTitle?: string } ) => {
+export const Header = ( {
+	pageTitle = '',
+	hasTabs = false,
+}: {
+	pageTitle?: string;
+	hasTabs?: boolean;
+} ) => {
 	return (
 		<VStack
-			className="woocommerce-settings-header edit-site-page-header"
+			className={ classnames(
+				'woocommerce-settings-header edit-site-page-header',
+				{
+					'woocommerce-settings-header--has-tabs': hasTabs,
+				}
+			) }
 			as="header"
 			spacing={ 0 }
 		>

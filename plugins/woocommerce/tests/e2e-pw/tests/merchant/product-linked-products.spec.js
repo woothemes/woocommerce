@@ -1,4 +1,4 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 
 const test = baseTest.extend( {
 	storageState: process.env.ADMINSTATE,
@@ -29,7 +29,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Products > Related products',
-	{ tag: [ '@gutenberg', '@services' ] },
+	{ tag: [ tags.GUTENBERG ] },
 	() => {
 		async function navigate( page, productId ) {
 			await test.step( 'Navigate to product edit page', async () => {
@@ -50,7 +50,7 @@ test.describe(
 				// extra click somewhere in the page as a workaround for update button click not always working
 				await page
 					.getByRole( 'heading', {
-						name: 'Edit product',
+						name: 'Edit Product',
 						exact: true,
 					} )
 					.click();

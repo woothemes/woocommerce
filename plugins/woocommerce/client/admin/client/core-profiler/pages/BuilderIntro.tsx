@@ -51,41 +51,46 @@ export const BuilderIntro = ( {
 		}
 
 		apiFetch( {
-			path: '/blueprint/import',
+			path: '/wc-admin/blueprint/queue',
 			method: 'POST',
 			body: formData,
 		} )
 			.then( ( data ) => {
 				// @ts-expect-error tmp
-				if ( data.status === 'success' ) {
-					setMessage(
-						'Schema imported successfully. Redirecting to ' +
+				if ( data.errors.length === 0 ) {
+					apiFetch( {
+						path: '/wc-admin/blueprint/process',
+						method: 'POST',
+						data: {
 							// @ts-expect-error tmp
-							data.data.redirect
-					);
+							reference: data.reference,
+							// @ts-expect-error tmp
+							process_nonce: data.process_nonce,
+						},
+					} ).then( () => {
+						setMessage( 'Schema imported successfully' );
 
-					setImporting( false );
+						setImporting( false );
 
-					window.setTimeout( () => {
-						// @ts-expect-error tmp
-						window.location.href = data.data.redirect;
-					}, 2000 );
+						// window.setTimeout( () => {
+						// 	// @ts-expect-error tmp
+						// 	window.location.href = response.data.redirect;
+						// }, 2000 );
+					} );
 				} else {
 					setImporting( false );
+					setMessage(
+						`Error: There was an error importing the blueprint.`
+					);
+
 					// @ts-expect-error tmp
-					setMessage( `Error: ${ data.message }` );
-					// @ts-expect-error tmp
-					if ( data?.data?.result ) {
-						setMessage(
-							// @ts-expect-error tmp
-							JSON.stringify( data.data.result, null, 2 )
-						);
-					}
+					setMessage( JSON.stringify( data.errors, null, 2 ) );
 				}
 			} )
-			.catch( ( error ) => {
+			.catch( () => {
 				setImporting( false );
-				setMessage( `Error: ${ error.message }` );
+				// @ts-expect-error tmp
+				setMessage( JSON.stringify( data.errors, null, 2 ) );
 			} );
 	};
 	return (

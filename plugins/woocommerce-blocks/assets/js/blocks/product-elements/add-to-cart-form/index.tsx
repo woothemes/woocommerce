@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { registerBlockSingleProductTemplate } from '@woocommerce/atomic-utils';
+import { registerProductBlockType } from '@woocommerce/atomic-utils';
 import { Icon, button } from '@wordpress/icons';
 
 /**
@@ -13,7 +13,8 @@ import './style.scss';
 import './editor.scss';
 import '../../../base/components/quantity-selector/style.scss';
 
-const blockSettings = {
+const blockConfig = {
+	...metadata,
 	edit: AddToCartFormEdit,
 	icon: {
 		src: (
@@ -29,9 +30,6 @@ const blockSettings = {
 	},
 };
 
-registerBlockSingleProductTemplate( {
-	blockName: metadata.name,
-	blockMetadata: metadata,
-	blockSettings,
+registerProductBlockType( blockConfig, {
 	isAvailableOnPostEditor: true,
 } );
