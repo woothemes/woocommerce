@@ -1053,6 +1053,19 @@
           "hash": "f35b7458ea38f7c95f56888c76f139059bf38661991d7f0c37fbdd860786f5fc",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/localization-translation/translating-woocommerce.md",
           "id": "017b9f80a086d119f8bac193c9b4d87d1efff67d"
+        },
+        {
+          "post_title": "Updating Countries and Subdivisions",
+          "menu_title": "Translating WooCommerce",
+          "tags": "how-to",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/localization-translation/countries-and-subdivisions.md",
+          "hash": "a36db16c2dc44da8e9493902ce4ac0f07b1651a570c62b52fc96bbd7ce0594fb",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/localization-translation/countries-and-subdivisions.md",
+          "id": "385b95e7f5ca43eeb33472f883765e3b931b2f76",
+          "links": {
+            "../code-snippets/add-a-country.md": "3f20affcf41e51989b0a7408aefe32b95d1da073",
+            "../code-snippets/add-or-modify-states.md": "59ff38edfc09669967a06dd1dd3e6fb967422367"
+          }
         }
       ],
       "categories": []
@@ -1894,5 +1907,5 @@
       "categories": []
     }
   ],
-  "hash": "0947408b8d1da4dd21ef926ddec5724b6dff59c1918a42f594e34506cdd859e2"
+  "hash": "bc2819683db81f4eb2235ca2f592623221490d793c31f518397328e5961c1398"
 }
