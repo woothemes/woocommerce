@@ -12,7 +12,7 @@ import { recordEvent } from '@woocommerce/tracks';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { sanitize } from 'dompurify';
 import { __ } from '@wordpress/i18n';
-import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
+import { WooPaymentsMethodsLogos } from '@woocommerce/onboarding';
 
 /**
  * Internal dependencies
@@ -138,7 +138,7 @@ export const PaymentPromotionRow: React.FC< PaymentPromotionRowProps > = ( {
 								{ gatewayId ===
 									'pre_install_woocommerce_payments_promotion' && (
 									<div className="pre-install-payment-gateway__subtitle">
-										<WooPaymentMethodsLogos
+										<WooPaymentsMethodsLogos
 											maxElements={ 5 }
 											isWooPayEligible={
 												isWooPayEligible

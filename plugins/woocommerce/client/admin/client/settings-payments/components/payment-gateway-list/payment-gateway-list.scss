@@ -1,5 +1,7 @@
 .settings-payment-gateways__list {
 	border-top: 1px solid $gray-200;
+	// Without this, the window.innerWidth is not calculated correctly when elements are pushed outside the container.
+	overflow: hidden;
 
 	.woocommerce-list__item {
 		padding: 0 48px;

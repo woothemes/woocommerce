@@ -13,7 +13,7 @@ import { Text } from '@woocommerce/experimental';
 /**
  * Internal dependencies
  */
-import { WooPaymentMethodsLogos } from '../WooPaymentsMethodsLogos';
+import { WooPaymentsMethodsLogos } from '../WooPaymentsMethodsLogos';
 import { WCPayBannerImage } from './WCPayBannerImage';
 
 export const WCPayBannerFooter: React.VFC< {
@@ -28,7 +28,7 @@ export const WCPayBannerFooter: React.VFC< {
 				) }
 			</Text>
 		</div>
-		<WooPaymentMethodsLogos
+		<WooPaymentsMethodsLogos
 			isWooPayEligible={ isWooPayEligible }
 			maxElements={ 10 }
 		/>
