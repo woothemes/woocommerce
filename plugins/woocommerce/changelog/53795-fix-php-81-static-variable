@@ -1,0 +1,4 @@
+Significance: minor
+Type: fix
+
+Fix tests due to PHP 8.1 static variable breaking change.

@@ -6,6 +6,10 @@
 @import "mixins";
 @import "animation";
 
+/**
+ * Forms
+ */
+ @import "forms";
 
 /*
 	Layout fix.
@@ -247,6 +251,12 @@
 				margin: 0;
 			}
 
+		}
+
+		.woocommerce-product-gallery__image a {
+			display: block;
+			line-height: 0;
+			outline-offset: -1px;
 		}
 
 		div.summary {
@@ -1034,26 +1044,6 @@ ul.wc-tabs {
 	}
 
 }
-
-// TODO: This could look nicer.
-.select2-container {
-
-	.select2-selection,
-	.select2-dropdown {
-		border: 1px solid var(--wp--preset--color--black);
-		border-radius: 0;
-	}
-
-	.select2-dropdown {
-		border-top: 0;
-
-		.select2-search__field {
-			border: 1px solid var(--wp--preset--color--black);
-			border-radius: 0;
-		}
-	}
-}
-
 
 // Store-wide notice
 .theme-twentytwentythree .woocommerce-store-notice {

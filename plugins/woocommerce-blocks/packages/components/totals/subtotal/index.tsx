@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
 import { getSetting } from '@woocommerce/settings';
 import type { Currency } from '@woocommerce/types';
 import type { ReactElement } from 'react';
@@ -20,12 +19,14 @@ export interface SubtotalProps {
 	className?: string;
 	currency: Currency;
 	values: Values | Record< string, never >;
+	label: string | React.ReactNode;
 }
 
 const Subtotal = ( {
 	currency,
 	values,
 	className,
+	label,
 }: SubtotalProps ): ReactElement => {
 	const { total_items: totalItems, total_items_tax: totalItemsTax } = values;
 	const itemsValue = parseInt( totalItems, 10 );
@@ -35,7 +36,7 @@ const Subtotal = ( {
 		<TotalsItem
 			className={ className }
 			currency={ currency }
-			label={ __( 'Subtotal', 'woocommerce' ) }
+			label={ label }
 			value={
 				getSetting( 'displayCartPricesIncludingTax', false )
 					? itemsValue + itemsTaxValue
