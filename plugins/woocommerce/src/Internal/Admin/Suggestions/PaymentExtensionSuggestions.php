@@ -1993,7 +1993,7 @@ class PaymentExtensionSuggestions {
 				'title'       => esc_html__( 'Airwallex Payments', 'woocommerce' ),
 				'description' => esc_html__( 'Boost international sales and save on FX fees. Accept 60+ local payment methods including Apple Pay and Google Pay.', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/airwallex.png', WC_PLUGIN_FILE ),
-				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/airwallex.png', WC_PLUGIN_FILE ),
+				'icon'        => plugins_url( 'assets/images/onboarding/icons/airwallex.svg', WC_PLUGIN_FILE ),
 				'plugin'      => array(
 					'_type' => self::PLUGIN_TYPE_WPORG,
 					'slug'  => 'airwallex-online-payments-gateway',
@@ -2025,7 +2025,7 @@ class PaymentExtensionSuggestions {
 				'_type'       => self::TYPE_PSP,
 				'title'       => esc_html__( 'Antom', 'woocommerce' ),
 				'description' => esc_html__( 'Your trusted payments partner in Asia and around the world.', 'woocommerce' ),
-				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/antom.png', WC_PLUGIN_FILE ),
+				'icon'        => plugins_url( 'assets/images/onboarding/icons/antom.svg', WC_PLUGIN_FILE ),
 				'plugin'      => array(
 					'_type' => self::PLUGIN_TYPE_WPORG,
 					'slug'  => 'antom-payments',
@@ -2054,7 +2054,7 @@ class PaymentExtensionSuggestions {
 				'title'       => esc_html__( 'Mercado Pago', 'woocommerce' ),
 				'description' => esc_html__( 'Set up your payment methods and accept credit and debit cards, cash, bank transfers and money from your Mercado Pago account. Offer safe and secure payments with Latin America’s leading processor.', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/mercadopago.png', WC_PLUGIN_FILE ),
-				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/mercadopago.png', WC_PLUGIN_FILE ),
+				'icon'        => plugins_url( 'assets/images/onboarding/icons/mercadopago.svg', WC_PLUGIN_FILE ),
 				'plugin'      => array(
 					'_type' => self::PLUGIN_TYPE_WPORG,
 					'slug'  => 'woocommerce-mercadopago',
@@ -2080,7 +2080,7 @@ class PaymentExtensionSuggestions {
 				'title'       => esc_html__( 'Mollie', 'woocommerce' ),
 				'description' => esc_html__( 'Effortless payments by Mollie: Offer global and local payment methods, get onboarded in minutes, and supported in your language.', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/mollie.svg', WC_PLUGIN_FILE ),
-				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/mollie.png', WC_PLUGIN_FILE ),
+				'icon'        => plugins_url( 'assets/images/onboarding/icons/mollie.svg', WC_PLUGIN_FILE ),
 				'plugin'      => array(
 					'_type' => self::PLUGIN_TYPE_WPORG,
 					'slug'  => 'mollie-payments-for-woocommerce',
@@ -2113,7 +2113,7 @@ class PaymentExtensionSuggestions {
 				'title'       => esc_html__( 'Payfast', 'woocommerce' ),
 				'description' => esc_html__( 'The Payfast extension for WooCommerce enables you to accept payments by Credit Card and EFT via one of South Africa\'s most popular payment gateways. No setup fees or monthly subscription costs. Selecting this extension will configure your store to use South African rands as the selected currency.', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/payfast.png', WC_PLUGIN_FILE ),
-				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/payfast.png', WC_PLUGIN_FILE ),
+				'icon'        => plugins_url( 'assets/images/onboarding/icons/payfast.svg', WC_PLUGIN_FILE ),
 				'plugin'      => array(
 					'_type' => self::PLUGIN_TYPE_WPORG,
 					'slug'  => 'woocommerce-payfast-gateway',
@@ -2146,7 +2146,7 @@ class PaymentExtensionSuggestions {
 				'_type'       => self::TYPE_PSP,
 				'title'       => esc_html__( 'Paymob', 'woocommerce' ),
 				'description' => esc_html__( 'Paymob is a leading payment gateway in the Middle East and Africa. Accept payments online and in-store with Paymob.', 'woocommerce' ),
-				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/paymob.png', WC_PLUGIN_FILE ),
+				'icon'        => plugins_url( 'assets/images/onboarding/icons/paymob.svg', WC_PLUGIN_FILE ),
 				'plugin'      => array(
 					'_type' => self::PLUGIN_TYPE_WPORG,
 					'slug'  => 'paymob-for-woocommerce',
@@ -2179,7 +2179,7 @@ class PaymentExtensionSuggestions {
 				'title'       => esc_html__( 'PayPal Payments', 'woocommerce' ),
 				'description' => esc_html__( 'PayPal Payments lets you offer PayPal, Venmo (US only), Pay Later options and more.', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/paypal.png', WC_PLUGIN_FILE ),
-				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/paypal.png', WC_PLUGIN_FILE ),
+				'icon'        => plugins_url( 'assets/images/onboarding/icons/paypal.svg', WC_PLUGIN_FILE ),
 				'plugin'      => array(
 					'_type' => self::PLUGIN_TYPE_WPORG,
 					'slug'  => 'woocommerce-paypal-payments',
@@ -2213,7 +2213,7 @@ class PaymentExtensionSuggestions {
 				'title'       => esc_html__( 'PayPal Payments', 'woocommerce' ),
 				'description' => esc_html__( 'Safe and secure payments using your customer\'s PayPal account.', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/paypal.png', WC_PLUGIN_FILE ),
-				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/paypal.png', WC_PLUGIN_FILE ),
+				'icon'        => plugins_url( 'assets/images/onboarding/icons/paypal.svg', WC_PLUGIN_FILE ),
 				'plugin'      => array(
 					'_type' => self::PLUGIN_TYPE_WPORG,
 					'slug'  => 'woocommerce-paypal-payments',
@@ -2247,7 +2247,7 @@ class PaymentExtensionSuggestions {
 				'title'       => esc_html__( 'Payoneer Checkout', 'woocommerce' ),
 				'description' => esc_html__( 'Payoneer Checkout is the next generation of payment processing platforms, giving merchants around the world the solutions and direction they need to succeed in today\'s hyper-competitive global market.', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/payoneer.png', WC_PLUGIN_FILE ),
-				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/payoneer.png', WC_PLUGIN_FILE ),
+				'icon'        => plugins_url( 'assets/images/onboarding/icons/payoneer.svg', WC_PLUGIN_FILE ),
 				'plugin'      => array(
 					'_type' => self::PLUGIN_TYPE_WPORG,
 					'slug'  => 'payoneer-checkout',
@@ -2280,7 +2280,7 @@ class PaymentExtensionSuggestions {
 				'title'       => esc_html__( 'Paystack', 'woocommerce' ),
 				'description' => esc_html__( 'Paystack helps African merchants accept one-time and recurring payments online with a modern, safe, and secure payment gateway.', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/paystack.png', WC_PLUGIN_FILE ),
-				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/paystack.png', WC_PLUGIN_FILE ),
+				'icon'        => plugins_url( 'assets/images/onboarding/icons/paystack.svg', WC_PLUGIN_FILE ),
 				'plugin'      => array(
 					'_type' => self::PLUGIN_TYPE_WPORG,
 					'slug'  => 'woo-paystack',
@@ -2313,7 +2313,7 @@ class PaymentExtensionSuggestions {
 				'title'       => esc_html__( 'PayU India', 'woocommerce' ),
 				'description' => esc_html__( 'Enable PayU\'s exclusive plugin for WooCommerce to start accepting payments in 100+ payment methods available in India including credit cards, debit cards, UPI, & more!', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/payu.svg', WC_PLUGIN_FILE ),
-				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/payu.png', WC_PLUGIN_FILE ),
+				'icon'        => plugins_url( 'assets/images/onboarding/icons/payu.svg', WC_PLUGIN_FILE ),
 				'plugin'      => array(
 					'_type' => self::PLUGIN_TYPE_WPORG,
 					'slug'  => 'payu-india',
@@ -2346,7 +2346,7 @@ class PaymentExtensionSuggestions {
 				'title'       => esc_html__( 'Razorpay', 'woocommerce' ),
 				'description' => esc_html__( 'The official Razorpay extension for WooCommerce allows you to accept credit cards, debit cards, netbanking, wallet, and UPI payments.', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/razorpay.svg', WC_PLUGIN_FILE ),
-				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/razorpay.png', WC_PLUGIN_FILE ),
+				'icon'        => plugins_url( 'assets/images/onboarding/icons/razorpay.svg', WC_PLUGIN_FILE ),
 				'plugin'      => array(
 					'_type' => self::PLUGIN_TYPE_WPORG,
 					'slug'  => 'woo-razorpay',
@@ -2379,7 +2379,7 @@ class PaymentExtensionSuggestions {
 				'title'       => esc_html__( 'Square', 'woocommerce' ),
 				'description' => esc_html__( 'Securely accept credit and debit cards with one low rate, no surprise fees (custom rates available). Sell in store and track sales and inventory in one place.', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/square-black.png', WC_PLUGIN_FILE ),
-				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/square.png', WC_PLUGIN_FILE ),
+				'icon'        => plugins_url( 'assets/images/onboarding/icons/square.svg', WC_PLUGIN_FILE ),
 				'plugin'      => array(
 					'_type' => self::PLUGIN_TYPE_WPORG,
 					'slug'  => 'woocommerce-square',
@@ -2413,7 +2413,7 @@ class PaymentExtensionSuggestions {
 				'title'       => esc_html__( 'Stripe', 'woocommerce' ),
 				'description' => esc_html__( 'Accept debit and credit cards in 135+ currencies, methods such as Alipay, and one-touch checkout with Apple Pay.', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/stripe.png', WC_PLUGIN_FILE ),
-				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/stripe.png', WC_PLUGIN_FILE ),
+				'icon'        => plugins_url( 'assets/images/onboarding/icons/stripe.svg', WC_PLUGIN_FILE ),
 				'plugin'      => array(
 					'_type' => self::PLUGIN_TYPE_WPORG,
 					'slug'  => 'woocommerce-gateway-stripe',
@@ -2446,7 +2446,7 @@ class PaymentExtensionSuggestions {
 				'_type'       => self::TYPE_PSP,
 				'title'       => esc_html__( 'Tilopay', 'woocommerce' ),
 				'description' => esc_html__( 'Accept credit and debit cards on your WooCommerce store with advanced features like partial refunds, full/partial captures, and 3D Secure security.', 'woocommerce' ),
-				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/tilopay.png', WC_PLUGIN_FILE ),
+				'icon'        => plugins_url( 'assets/images/onboarding/icons/tilopay.svg', WC_PLUGIN_FILE ),
 				'plugin'      => array(
 					'_type' => self::PLUGIN_TYPE_WPORG,
 					'slug'  => 'tilopay',
@@ -2479,7 +2479,7 @@ class PaymentExtensionSuggestions {
 				'_type'       => self::TYPE_PSP,
 				'title'       => esc_html__( 'Viva.com Standard Checkout', 'woocommerce' ),
 				'description' => esc_html__( 'Viva.com is a European payments solution that allows you to accept payments in 24 countries and multiple currencies.', 'woocommerce' ),
-				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/viva-wallet.png', WC_PLUGIN_FILE ),
+				'icon'        => plugins_url( 'assets/images/onboarding/icons/vivacom.svg', WC_PLUGIN_FILE ),
 				'plugin'      => array(
 					'_type' => self::PLUGIN_TYPE_WPORG,
 					'slug'  => 'vivawallet-woocommerce-gateway',
@@ -2512,7 +2512,7 @@ class PaymentExtensionSuggestions {
 				'title'       => esc_html__( 'Accept payments with Woo', 'woocommerce' ),
 				'description' => esc_html__( 'Credit/debit cards, Apple Pay, Google Pay and more.', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/woopayments.svg', WC_PLUGIN_FILE ),
-				'icon'        => plugins_url( 'assets/images/onboarding/woopayments.svg', WC_PLUGIN_FILE ),
+				'icon'        => plugins_url( 'assets/images/onboarding/icons/woo.svg', WC_PLUGIN_FILE ),
 				'plugin'      => array(
 					'_type' => self::PLUGIN_TYPE_WPORG,
 					'slug'  => 'woocommerce-payments',
@@ -2546,7 +2546,7 @@ class PaymentExtensionSuggestions {
 				'title'       => esc_html__( 'Amazon Pay', 'woocommerce' ),
 				'description' => esc_html__( 'Enable a familiar, fast checkout for hundreds of millions of active Amazon customers globally.', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/amazonpay.png', WC_PLUGIN_FILE ),
-				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/amazonpay.png', WC_PLUGIN_FILE ),
+				'icon'        => plugins_url( 'assets/images/onboarding/icons/amazonpay.svg', WC_PLUGIN_FILE ),
 				'plugin'      => array(
 					'_type' => self::PLUGIN_TYPE_WPORG,
 					'slug'  => 'woocommerce-gateway-amazon-payments-advanced',
@@ -2580,7 +2580,7 @@ class PaymentExtensionSuggestions {
 				'title'       => esc_html__( 'Affirm', 'woocommerce' ),
 				'description' => esc_html__( 'Affirm\'s tailored Buy Now Pay Later programs remove price as a barrier, turning browsers into buyers, increasing average order value, and expanding your customer base.', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/affirm.png', WC_PLUGIN_FILE ),
-				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/affirm.png', WC_PLUGIN_FILE ),
+				'icon'        => plugins_url( 'assets/images/onboarding/icons/affirm.svg', WC_PLUGIN_FILE ),
 				'plugin'      => array(
 					'_type' => self::PLUGIN_TYPE_WPORG,
 					'slug'  => 'woocommerce-gateway-affirm',
@@ -2614,7 +2614,7 @@ class PaymentExtensionSuggestions {
 				'title'       => esc_html__( 'Afterpay', 'woocommerce' ),
 				'description' => esc_html__( 'Afterpay allows customers to receive products immediately and pay for purchases over four installments, always interest-free.', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/afterpay.png', WC_PLUGIN_FILE ),
-				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/afterpay.png', WC_PLUGIN_FILE ),
+				'icon'        => plugins_url( 'assets/images/onboarding/icons/afterpay-clearpay.svg', WC_PLUGIN_FILE ),
 				'plugin'      => array(
 					'_type' => self::PLUGIN_TYPE_WPORG,
 					'slug'  => 'afterpay-gateway-for-woocommerce',
@@ -2646,7 +2646,7 @@ class PaymentExtensionSuggestions {
 				'_type'       => self::TYPE_BNPL,
 				'title'       => esc_html__( 'Clearpay', 'woocommerce' ),
 				'description' => esc_html__( 'Clearpay allows customers to receive products immediately and pay for purchases over four installments, always interest-free.', 'woocommerce' ),
-				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/clearpay.png', WC_PLUGIN_FILE ),
+				'icon'        => plugins_url( 'assets/images/onboarding/icons/afterpay-clearpay.svg', WC_PLUGIN_FILE ),
 				'plugin'      => array(
 					'_type' => self::PLUGIN_TYPE_WPORG,
 					'slug'  => 'clearpay-gateway-for-woocommerce',
@@ -2679,7 +2679,7 @@ class PaymentExtensionSuggestions {
 				'title'       => esc_html__( 'Klarna Payments', 'woocommerce' ),
 				'description' => esc_html__( 'Choose the payment that you want, pay now, pay later or slice it. No credit card numbers, no passwords, no worries.', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/klarna-black.png', WC_PLUGIN_FILE ),
-				'icon'        => plugins_url( 'assets/images/payment_methods/72x72/klarna.png', WC_PLUGIN_FILE ),
+				'icon'        => plugins_url( 'assets/images/onboarding/icons/klarna.svg', WC_PLUGIN_FILE ),
 				'plugin'      => array(
 					'_type' => self::PLUGIN_TYPE_WPORG,
 					'slug'  => 'klarna-payments-for-woocommerce',
