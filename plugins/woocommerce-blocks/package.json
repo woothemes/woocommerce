@@ -108,7 +108,7 @@
 		"watch:build:project:blocks-json-to-php": "pnpm run build:project:blocks-json-to-php --watch"
 	},
 	"devDependencies": {
-		"@automattic/color-studio": "4.0.0",
+		"@automattic/color-studio": "2.5.0",
 		"@babel/cli": "7.23.0",
 		"@babel/core": "7.23.2",
 		"@babel/plugin-proposal-class-properties": "7.18.6",
