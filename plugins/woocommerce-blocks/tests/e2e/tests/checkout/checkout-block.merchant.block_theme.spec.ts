@@ -409,7 +409,7 @@ test.describe( 'Merchant → Checkout', () => {
 					}
 				);
 
-				// Verify the company field has the correct state from the previous test.
+				// Verify the company field on the billing address has the correct state from the shipping address.
 				await expect( billingCompanyToggle ).not.toBeChecked();
 				await expect( billingCompanyInput ).toBeHidden();
 			} );
@@ -509,7 +509,7 @@ test.describe( 'Merchant → Checkout', () => {
 					}
 				);
 
-				// Verify the apartment field has the correct state from the previous test.
+				// Verify the apartment field on the billing address has the correct state from the shipping address.
 				await expect( billingApartmentToggle ).not.toBeChecked();
 				await expect( billingApartmentLink ).toBeHidden();
 				await expect( billingApartmentInput ).not.toBeInViewport();
@@ -587,7 +587,7 @@ test.describe( 'Merchant → Checkout', () => {
 					exact: true,
 				} );
 
-				// Verify the phone field has the correct state from the previous test.
+				// Verify the phone field on the billing address has the correct state from the shipping address.
 				await expect( billingPhoneToggle ).not.toBeChecked();
 				await expect( billingPhoneInput ).toBeHidden();
 			} );
