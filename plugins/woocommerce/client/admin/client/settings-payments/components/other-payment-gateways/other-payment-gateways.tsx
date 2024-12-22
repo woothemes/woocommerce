@@ -67,19 +67,19 @@ export const OtherPaymentGateways = ( {
 	const collapsedImages = useMemo( () => {
 		return isFetching ? (
 			<>
-				<div className="other-payment-gateways__header__title__image-placeholder" />
-				<div className="other-payment-gateways__header__title__image-placeholder" />
-				<div className="other-payment-gateways__header__title__image-placeholder" />
+				<div className="other-payment-gateways__header__title-image-placeholder" />
+				<div className="other-payment-gateways__header__title-image-placeholder" />
+				<div className="other-payment-gateways__header__title-image-placeholder" />
 			</>
 		) : (
 			suggestions.map( ( extension ) => (
 				<img
 					key={ extension.id }
 					src={ extension.icon }
-					alt={ extension.title }
+					alt={ extension.title + ' small logo' }
 					width="24"
 					height="24"
-					className="other-payment-gateways__header__title__image"
+					className="other-payment-gateways__header__title-image"
 				/>
 			) )
 		);
@@ -126,10 +126,13 @@ export const OtherPaymentGateways = ( {
 										key={ extension.id }
 									>
 										<img
+											className="other-payment-gateways__content__grid-item-image"
 											src={ extension.icon }
-											alt={ decodeEntities(
-												extension.title
-											) }
+											alt={
+												decodeEntities(
+													extension.title
+												) + ' logo'
+											}
 										/>
 										<div className="other-payment-gateways__content__grid-item__content">
 											<span className="other-payment-gateways__content__grid-item__content__title">

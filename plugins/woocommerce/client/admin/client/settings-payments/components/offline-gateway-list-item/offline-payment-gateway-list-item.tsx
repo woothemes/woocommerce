@@ -38,6 +38,7 @@ export const OfflinePaymentGatewayListItem = ( {
 					<DefaultDragHandle />
 					{ gateway.icon && (
 						<img
+							className={ 'woocommerce-list__item-image' }
 							src={ gateway.icon }
 							alt={ gateway.title + ' logo' }
 						/>

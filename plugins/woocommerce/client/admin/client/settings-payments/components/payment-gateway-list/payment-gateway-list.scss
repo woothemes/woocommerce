@@ -46,12 +46,12 @@
 			.drag-handle {
 				min-height: 40px;
 			}
+		}
 
-			img {
-				max-width: 40px;
-				height: 40px;
-				border-radius: 4px;
-			}
+		&-image {
+			max-width: 40px;
+			height: 40px;
+			border-radius: 4px;
 		}
 
 		&-title {

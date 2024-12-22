@@ -64,6 +64,7 @@ export const PaymentExtensionSuggestionListItem = ( {
 					<DefaultDragHandle />
 					{ extension.icon && (
 						<img
+							className={ 'woocommerce-list__item-image' }
 							src={ extension.icon }
 							alt={ extension.title + ' logo' }
 						/>
