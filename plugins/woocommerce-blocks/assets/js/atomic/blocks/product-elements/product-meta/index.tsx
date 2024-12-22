@@ -12,22 +12,21 @@ import edit from './edit';
 import save from './save';
 import metadata from './block.json';
 
-registerProductBlockType( {
-	blockName: metadata.name,
-	// @ts-expect-error: `metadata` currently does not have a type definition in WordPress core
-	blockMetadata: metadata,
-	blockSettings: {
-		edit,
-		save,
-		icon: {
-			src: (
-				<Icon
-					icon={ productMeta }
-					className="wc-block-editor-components-block-icon"
-				/>
-			),
-		},
-		ancestor: [ 'woocommerce/single-product' ],
+const blockConfig = {
+	...metadata,
+	icon: {
+		src: (
+			<Icon
+				icon={ productMeta }
+				className="wc-block-editor-components-block-icon"
+			/>
+		),
 	},
+	edit,
+	save,
+	ancestor: [ 'woocommerce/single-product' ],
+};
+
+registerProductBlockType( blockConfig, {
 	isAvailableOnPostEditor: true,
 } );

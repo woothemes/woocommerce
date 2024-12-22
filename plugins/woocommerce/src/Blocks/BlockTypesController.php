@@ -146,6 +146,7 @@ final class BlockTypesController {
 	 * Register blocks, hooking up assets and render functions as needed.
 	 */
 	public function register_blocks() {
+		$this->register_block_metadata();
 		$block_types = $this->get_block_types();
 
 		foreach ( $block_types as $block_type ) {
@@ -153,6 +154,52 @@ final class BlockTypesController {
 
 			new $block_type_class( $this->asset_api, $this->asset_data_registry, new IntegrationRegistry() );
 		}
+	}
+
+	/**
+	 * Register block metadata collections for WooCommerce blocks.
+	 *
+	 * This method handles the registration of block metadata by using WordPress's block metadata
+	 * collection registration system. It includes a temporary workaround for WordPress 6.7's
+	 * strict path validation that might fail for sites using symlinked plugins.
+	 *
+	 * If the registration fails due to path validation, blocks will fall back to regular
+	 * registration without affecting functionality.
+	 */
+	public function register_block_metadata() {
+		$meta_file_path = WC_ABSPATH . 'assets/client/blocks/blocks-json.php';
+		if ( function_exists( 'wp_register_block_metadata_collection' ) && file_exists( $meta_file_path ) ) {
+			add_filter( 'doing_it_wrong_trigger_error', array( __CLASS__, 'bypass_block_metadata_doing_it_wrong' ), 10, 4 );
+			wp_register_block_metadata_collection(
+				WC_ABSPATH . 'assets/client/blocks/',
+				$meta_file_path
+			);
+			remove_filter( 'doing_it_wrong_trigger_error', array( __CLASS__, 'bypass_block_metadata_doing_it_wrong' ), 10 );
+		}
+	}
+
+	/**
+	 * Temporarily bypasses _doing_it_wrong() notices for block metadata collection registration.
+	 *
+	 * WordPress 6.7 introduced block metadata collections (with strict path validation).
+	 * Any sites using symlinks for plugins will fail the validation which causes the metadata
+	 * collection to not be registered. However, the blocks will still fall back to the regular
+	 * registration and no functionality is affected.
+	 * While this validation is being discussed in WordPress Core (#62140),
+	 * this method allows registration to proceed by temporarily disabling
+	 * the relevant notice.
+	 *
+	 * @param bool   $trigger       Whether to trigger the error.
+	 * @param string $function      The function that was called.
+	 * @param string $message       A message explaining what was done incorrectly.
+	 * @param string $version       The version of WordPress where the message was added.
+	 * @return bool Whether to trigger the error.
+	 */
+	public static function bypass_block_metadata_doing_it_wrong( $trigger, $function, $message, $version ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable,Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed,Universal.NamingConventions.NoReservedKeywordParameterNames.functionFound
+		if ( 'WP_Block_Metadata_Registry::register_collection' === $function ) {
+			return false;
+		}
+		return $trigger;
 	}
 
 	/**
