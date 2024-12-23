@@ -6,7 +6,7 @@ const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 test.describe(
 	'Merchant > Order Action emails received',
-	{ tag: [ tags.SERVICES, tags.HPOS ] },
+	{ tag: [ tags.SERVICES, tags.HPOS, tags.ONLY ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 
@@ -122,7 +122,7 @@ test.describe(
 
 		test(
 			'can receive completed email',
-			{ tag: [ tags.SKIP_ON_WPCOM, tags.ONLY ] },
+			{ tag: tags.SKIP_ON_WPCOM },
 			async ( { page, baseURL } ) => {
 				// Completed order emails are sent automatically when an order's payment is completed.
 				// Verify that the email is sent, and that the content is the expected one
