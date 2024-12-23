@@ -313,21 +313,7 @@ export class BlockRegistrationManager {
 	public registerBlockConfig( config: ProductBlockConfig ): void {
 		const key = config.variationName || config.blockName;
 		this.blocks.set( key, config );
-
-		// If we have executed `unsubscribe()` and initialized already, we can register the block immediately
-		// since we've already detected our context.
-		if ( this.initialized ) {
-			const editSiteStore = select( 'core/edit-site' );
-			const editPostStore = select( 'core/edit-post' );
-
-			if ( editSiteStore ) {
-				// Register in site editor context
-				this.registerBlock( config );
-			} else if ( editPostStore && config.isAvailableOnPostEditor ) {
-				// Register in post editor context if available
-				this.registerBlock( config );
-			}
-		}
+		this.registerBlock( config );
 	}
 }
 
