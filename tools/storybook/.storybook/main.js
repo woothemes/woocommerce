@@ -32,7 +32,7 @@ module.exports = {
 			return {
 				'woocommerce-blocks': {
 					expanded: false,
-					title: 'WooCommerce Blocks',
+					title: 'Blocks',
 					url: 'http://localhost:6006',
 				},
 			};
@@ -47,7 +47,7 @@ module.exports = {
 		return {
 			'woocommerce-blocks': {
 				expanded: false,
-				title: 'WooCommerce Blocks',
+				title: 'Blocks',
 				url: pathPrefix + '/assets/woocommerce-blocks',
 			},
 		};
