@@ -72,18 +72,27 @@ export const OtherPaymentGateways = ( {
 				<div className="other-payment-gateways__header__title-image-placeholder" />
 			</>
 		) : (
-			suggestions.map( ( extension ) => (
-				<img
-					key={ extension.id }
-					src={ extension.icon }
-					alt={ extension.title + ' small logo' }
-					width="24"
-					height="24"
-					className="other-payment-gateways__header__title-image"
-				/>
-			) )
+			// Go through the category hierarchy so we render the collapsed images in the same order as when expanded.
+			suggestionsByCategory.map(
+				( { suggestions: categorySuggestions } ) => {
+					if ( categorySuggestions.length === 0 ) {
+						return null;
+					}
+
+					return categorySuggestions.map( ( extension ) => (
+						<img
+							key={ extension.id }
+							src={ extension.icon }
+							alt={ extension.title + ' small logo' }
+							width="24"
+							height="24"
+							className="other-payment-gateways__header__title-image"
+						/>
+					) );
+				}
+			)
 		);
-	}, [ suggestions, isFetching ] );
+	}, [ suggestionsByCategory, isFetching ] );
 
 	// Memoize the expanded content to avoid re-rendering when expanded
 	const expandedContent = useMemo( () => {
