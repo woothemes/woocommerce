@@ -38,23 +38,12 @@ const NotFound = () => {
 /**
  * Default route when active page is not found.
  *
- * @param {string}       activePage   - The active page.
- * @param {settingsData} settingsData - The settings data.
- *
+ * @param {string} activePage - The active page.
  */
-const getNotFoundRoute = (
-	activePage: string,
-	settingsData: SettingsData
-): Route => ( {
+const getNotFoundRoute = ( activePage: string ): Route => ( {
 	key: activePage,
 	areas: {
-		sidebar: (
-			<Sidebar
-				activePage={ activePage }
-				settingsData={ settingsData }
-				pageTitle={ __( 'Settings', 'woocommerce' ) }
-			/>
-		),
+		sidebar: <Sidebar title={ __( 'Settings', 'woocommerce' ) } />,
 		content: <NotFound />,
 		edit: null,
 	},
@@ -90,23 +79,17 @@ const getSettingsPageTabs = (
  * @param {string}       activePage    - The active page.
  * @param {string}       activeSection - The active section.
  * @param {settingsPage} settingsPage  - The settings page.
- * @param {settingsData} settingsData  - The settings data.
  */
 const getLegacyRoute = (
 	activePage: string,
 	activeSection: string,
-	settingsPage: SettingsPage,
-	settingsData: SettingsData
+	settingsPage: SettingsPage
 ): Route => {
 	return {
 		key: activePage,
 		areas: {
 			sidebar: (
-				<Sidebar
-					activePage={ activePage }
-					settingsData={ settingsData }
-					pageTitle={ __( 'Store settings', 'woocommerce' ) }
-				/>
+				<Sidebar title={ __( 'Store settings', 'woocommerce' ) } />
 			),
 			content: (
 				<LegacyContent
@@ -205,7 +188,7 @@ export const useActiveRoute = (): {
 		const settingsPage = settingsData?.[ activePage ];
 
 		if ( ! settingsPage ) {
-			return { route: getNotFoundRoute( activePage, settingsData ) };
+			return { route: getNotFoundRoute( activePage ) };
 		}
 
 		const tabs = getSettingsPageTabs( settingsPage );
@@ -216,8 +199,7 @@ export const useActiveRoute = (): {
 				route: getLegacyRoute(
 					activePage,
 					activeSection || 'default',
-					settingsPage,
-					settingsData
+					settingsPage
 				),
 				settingsPage,
 				activePage,
@@ -230,16 +212,12 @@ export const useActiveRoute = (): {
 
 		// Handle modern pages.
 		if ( ! modernRoute ) {
-			return { route: getNotFoundRoute( activePage, settingsData ) };
+			return { route: getNotFoundRoute( activePage ) };
 		}
 
 		// Sidebar is responsibility of WooCommerce, not extensions so add it here.
 		modernRoute.areas.sidebar = (
-			<Sidebar
-				activePage={ activePage }
-				settingsData={ settingsData }
-				pageTitle={ __( 'Store settings', 'woocommerce' ) }
-			/>
+			<Sidebar title={ __( 'Store settings', 'woocommerce' ) } />
 		);
 		// Make sure we have a key.
 		modernRoute.key = activePage;

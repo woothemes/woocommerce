@@ -49,7 +49,7 @@ const SidebarNavigationScreenContent = () => {
 
 type SidebarProps = {
 	title: string;
-	backPack: string;
+	backPack?: string;
 };
 
 export const Sidebar = ( { title, backPack }: SidebarProps ) => {
