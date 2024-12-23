@@ -65,7 +65,7 @@ add_filter('woocommerce_get_country_locale', function( $locale ) {
 		'hidden'   => true,
 	];
 
-		return $locale;
+	return $locale;
 });
 ```
 
