@@ -120,10 +120,9 @@ test.describe(
 			).toContainText( 'You’ve received the following order from  :' );
 		} );
 
-		// eslint-disable-next-line jest/no-focused-tests
-		test.only(
+		test(
 			'can receive completed email',
-			{ tag: tags.SKIP_ON_WPCOM },
+			{ tag: [ tags.SKIP_ON_WPCOM, tags.ONLY ] },
 			async ( { page, baseURL } ) => {
 				// Completed order emails are sent automatically when an order's payment is completed.
 				// Verify that the email is sent, and that the content is the expected one

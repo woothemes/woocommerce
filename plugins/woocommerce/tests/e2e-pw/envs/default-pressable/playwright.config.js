@@ -18,6 +18,7 @@ config = {
 				'**/js-file-monitor/**',
 			],
 			grepInvert,
+			grep: new RegExp( tags.ONLY ),
 		},
 		{
 			name: 'api',
