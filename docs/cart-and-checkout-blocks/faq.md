@@ -46,7 +46,7 @@ extensionCartUpdate( {
 	namespace: 'extension-unique-namespace',
 } ).then( () => {
 	// Cart has been updated with the fee.
-  // Don't need to do anything else here as it's automatically updated.
+    // Don't need to do anything else here as it's automatically updated.
 } ).catch( ( error ) => {
 	// Handle error.
 	processErrorResponse(error);
