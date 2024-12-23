@@ -90,80 +90,60 @@ class AddToCartWithOptionsVariationSelector extends AbstractBlock {
 		}
 
 		return taxonomy_exists( $attribute_name )
-			? $this->get_taxonomy_options_html( $product, $attribute_name, $options, $selected )
-			: $this->get_custom_options_html( $product, $attribute_name, $options, $selected );
+			? $this->get_variation_options_html( $product, $attribute_name, $options, $selected, true )
+			: $this->get_variation_options_html( $product, $attribute_name, $options, $selected, false );
 	}
 
 	/**
-	 * Get HTML for taxonomy-based options.
+	 * Get HTML for variation options.
 	 *
 	 * @param WC_Product $product The product object.
 	 * @param string     $attribute_name Name of the attribute.
 	 * @param array      $options Available options.
 	 * @param string     $selected Selected value.
+	 * @param bool       $is_taxonomy Whether this is a taxonomy-based attribute.
 	 * @return string Options HTML
 	 */
-	private function get_taxonomy_options_html( $product, $attribute_name, $options, $selected ): string {
-		$terms = wc_get_product_terms( $product->get_id(), $attribute_name, array( 'fields' => 'all' ) );
-		$html  = '';
-
-		foreach ( $terms as $term ) {
-			if ( in_array( $term->slug, $options, true ) ) {
-				$html .= sprintf(
-					'<option value="%s" %s>%s</option>',
-					esc_attr( $term->slug ),
-					selected( sanitize_title( $selected ), $term->slug, false ),
-					/**
-					 * Filter the variation option name.
-					 *
-					 * @since 9.7.0
-					 *
-					 * @param string   $term_name      The term name.
-					 * @param WP_Term  $term           Term object.
-					 * @param string   $attribute_name Name of the attribute.
-					 * @param WC_Product $product      Product object.
-					 */
-					esc_html( apply_filters( 'woocommerce_variation_option_name', $term->name, $term, $attribute_name, $product ) )
-				);
-			}
-		}
-
-		return $html;
-	}
-
-	/**
-	 * Get HTML for custom attribute options.
-	 *
-	 * @param WC_Product $product The product object.
-	 * @param string     $attribute_name Name of the attribute.
-	 * @param array      $options Available options.
-	 * @param string     $selected Selected value.
-	 * @return string Options HTML
-	 */
-	private function get_custom_options_html( $product, $attribute_name, $options, $selected ): string {
+	private function get_variation_options_html( $product, $attribute_name, $options, $selected, $is_taxonomy ): string {
 		$html = '';
+		$items = $is_taxonomy
+			? wc_get_product_terms( $product->get_id(), $attribute_name, array( 'fields' => 'all' ) )
+			: $options;
 
-		foreach ( $options as $option ) {
-			$selected_value = sanitize_title( $selected ) === $selected
-				? selected( $selected, sanitize_title( $option ), false )
-				: selected( $selected, $option, false );
+		foreach ( $items as $item ) {
+			$option_value = $is_taxonomy ? $item->slug : $item;
+			$option_label = $is_taxonomy ? $item->name : $item;
 
-			$html .= sprintf(
-				'<option value="%s" %s>%s</option>',
-				esc_attr( $option ),
-				$selected_value,
+			if ( ! $is_taxonomy || in_array( $option_value, $options, true ) ) {
+				$selected_attr = $is_taxonomy
+					? selected( sanitize_title( $selected ), $option_value, false )
+					: selected( $selected, $option_value, false );
+
 				/**
 				 * Filter the variation option name.
 				 *
 				 * @since 9.7.0
 				 *
-				 * @param string   $option_name      The option name.
-				 * @param string   $option           The option value.
-				 * @param string   $attribute_name Name of the attribute.
-				 * @param WC_Product $product      Product object.
+				 * @param string     $option_label    The option label.
+				 * @param WP_Term|string|null $item   Term object for taxonomies, option string for custom attributes.
+				 * @param string     $attribute_name  Name of the attribute.
+				 * @param WC_Product $product         Product object.
 				 */
-				esc_html( apply_filters( 'woocommerce_variation_option_name', $option, null, $attribute_name, $product ) )
-			);
+				$filtered_label = apply_filters(
+					'woocommerce_variation_option_name',
+					$option_label,
+					$is_taxonomy ? $item : null,
+					$attribute_name,
+					$product
+				);
+
+				$html .= sprintf(
+					'<option value="%s" %s>%s</option>',
+					esc_attr( $option_value ),
+					$selected_attr,
+					esc_html( $filtered_label )
+				);
+			}
 		}
 
 		return $html;
