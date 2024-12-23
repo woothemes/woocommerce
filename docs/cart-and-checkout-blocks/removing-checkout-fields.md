@@ -5,11 +5,11 @@ tags: reference
 ---
 <!-- markdownlint-disable MD041 -->
 
-If you’re trying to extend the new Checkout block, you might notice the previous `checkout_fields` isn’t working. This is intentional, we’re taking back control of how to render and handle fields, yet, one of the most common requests we get is how to disable Checkout fields for certain order types. For a long time, our answer was "you can’t". You actually can, but we don’t encourage it.
+If you're trying to extend the new Checkout block, you might notice the previous `checkout_fields` isn't working. This is intentional, we're taking back control of how to render and handle fields, yet, one of the most common requests we get is how to disable Checkout fields for certain order types. For a long time, our answer was "you can't". You actually can, but we don't encourage it.
 
-## Why we don’t encourage removing fields
+## Why we don't encourage removing fields
 
-The simple reason is that Checkout is complex, and many plugins need different data, payment methods will need your address info to run fraud detection, or validate your card, tax (including core) will need your full address to calculate taxes correctly, this is something we still think about in Checkout and are looking for a universal solution, until then, you can go with code, and here’s how:
+The simple reason is that Checkout is complex, and many plugins need different data, payment methods will need your address info to run fraud detection, or validate your card, tax (including core) will need your full address to calculate taxes correctly, this is something we still think about in Checkout and are looking for a universal solution, until then, you can go with code, and here's how:
 
 ## Disabling fields for a single country
 
@@ -17,7 +17,7 @@ Checkout fields still country locale, which means you can modify fields for a co
 
 ![Image](https://github.com/user-attachments/assets/63d83769-c20c-4c85-aebf-da8510d1d9ae)
 
-Let’s say that in Algeria, we know for sure that postal code and city are redundant, so we can remove them:
+Let's say that in Algeria, we know for sure that postal code and city are redundant, so we can remove them:
 
 ```php
 add_filter('woocommerce_get_country_locale', function( $locale ) {
@@ -173,7 +173,7 @@ add_filter('woocommerce_get_country_locale', function( $locale ) {
 
 ## Editing the address card text
 
-For future visits, Checkout will show an address card for saved addresses, this isn’t working constantly right now for billing, but once it works, it will show up like this:
+For future visits, Checkout will show an address card for saved addresses, this isn't working constantly right now for billing, but once it works, it will show up like this:
 
 ![Image](https://github.com/user-attachments/assets/ab56c4ca-39ba-47ab-83d1-1ce6dfefc0c3)
 
@@ -194,4 +194,4 @@ add_filter( 'woocommerce_localisation_address_formats', function( $formats ) {
 
 ![Image](https://github.com/user-attachments/assets/2f87e168-896f-44b3-8c4f-63cc2e159d03)
 
-A note that you need to pass the string in double quotes for it to work; otherwise the line breaks won’t be recognized.
+A note that you need to pass the string in double quotes for it to work; otherwise the line breaks won't be recognized.
