@@ -165,7 +165,7 @@ test.describe(
 
 				// Enter email log and select to view the content in JSON
 				await page.click( 'button[title^="View log"]' );
-				await page.waitForTimeout( 2000 );
+				await page.locator( emailContentJson ).isEnabled();
 				await page.locator( emailContentJson ).click();
 
 				// Verify that the message includes an order processing confirmation
