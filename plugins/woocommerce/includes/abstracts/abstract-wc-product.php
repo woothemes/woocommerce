@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareTrait;
 use Automattic\WooCommerce\Internal\ProductAttributesLookup\LookupDataStore as ProductAttributesLookupDataStore;
 
@@ -151,7 +152,7 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	 * @return string
 	 */
 	public function get_type() {
-		return isset( $this->product_type ) ? $this->product_type : 'simple';
+		return isset( $this->product_type ) ? $this->product_type : ProductType::SIMPLE;
 	}
 
 	/**

@@ -7,6 +7,8 @@
 
 namespace Automattic\WooCommerce\Admin\API;
 
+use Automattic\WooCommerce\Enums\ProductType;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -257,7 +259,7 @@ final class ProductsLowInStock extends \WC_REST_Products_Controller {
 			'name'             => $query_result->post_title,
 			'parent_id'        => (int) $query_result->post_parent,
 			'stock_quantity'   => (int) $query_result->stock_quantity,
-			'type'             => 'product_variation' === $query_result->post_type ? 'variation' : 'simple',
+			'type'             => 'product_variation' === $query_result->post_type ? ProductType::VARIATION : ProductType::SIMPLE,
 		);
 	}
 

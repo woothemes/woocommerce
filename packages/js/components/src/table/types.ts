@@ -1,7 +1,7 @@
 export type QueryProps = {
 	orderby?: string;
 	order?: string;
-	page?: number;
+	page?: string;
 	per_page?: number;
 	/**
 	 * Allowing string for backward compatibility

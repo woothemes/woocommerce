@@ -1,0 +1,4 @@
+Significance: patch
+Type: tweak
+
+Update some of the language in our order emails to reference 'order details' instead of 'invoice'.
