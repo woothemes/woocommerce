@@ -7,6 +7,10 @@ tags: reference
 
 This document aims to answer some of the frequently asked questions we see from developers extending WooCommerce Blocks.
 
+We will add to the FAQ document as we receive questions, this isn't the document's final form.
+
+If you have questions that aren't addressed here, we invite you to ask them on [GitHub Discussions](https://github.com/woocommerce/woocommerce/discussions) or in the [WooCommerce Community Slack](https://woocommerce.com/community-slack/)
+
 ## Cart modifications
 
 ### How do I add fees to the cart?
