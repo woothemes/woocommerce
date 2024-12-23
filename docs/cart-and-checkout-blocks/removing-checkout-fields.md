@@ -13,7 +13,7 @@ The simple reason is that Checkout is complex, and many plugins need different d
 
 ## Disabling fields for a single country
 
-Checkout fields still country locale, which means you can modify fields for a country via PHP and this would work fine. The following billing form has 10 fields, 7 of them are required:
+Checkout fields still respects country locale, which means you can modify fields for a country via PHP and this would work fine. The following billing form has 10 fields, 7 of them are required:
 
 ![Image](https://github.com/user-attachments/assets/63d83769-c20c-4c85-aebf-da8510d1d9ae)
 
