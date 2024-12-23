@@ -25,6 +25,9 @@ export default function Edit( { attributes, setAttributes }: EditProps ) {
 	const { color, storeOnly } = attributes;
 	const blockProps = { ...useBlockProps() };
 
+	// Existance of storeOnly attribute means it doesn't have a background color,
+	// absense of custom color attribute means it's post-v1 template
+	// with both cases, no need to show the color picker.
 	if ( storeOnly || ! color ) {
 		return (
 			<div { ...blockProps }>
