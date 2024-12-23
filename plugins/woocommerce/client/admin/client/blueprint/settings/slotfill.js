@@ -128,13 +128,19 @@ const Blueprint = () => {
 			<p>
 				{ createInterpolateElement(
 					__(
-						'Import your blueprint schema to ease the setup process for your store or allow teams to apply each others’ changes. You can import only one Blueprint at the time. Want to know more? Check our <docLink/>',
+						'Import your blueprint schema to ease the setup process for your store or allow teams to apply each others’ changes. You can import only one Blueprint at the time. Want to know more? <docLink/>',
 						'woocommerce'
 					),
 					{
 						docLink: (
-							<a href="#tba">
-								{ __( 'documentation', 'woocommerce' ) }
+							<a
+								href="#tba"
+								className="woocommerce-admin-inline-documentation-link"
+							>
+								{ __(
+									'Check our documentation',
+									'woocommerce'
+								) }
 							</a>
 						),
 					}
@@ -146,12 +152,15 @@ const Blueprint = () => {
 			<p className="export-intro">
 				{ createInterpolateElement(
 					__(
-						'Export your blueprint schema. Select the options you want to export, then click on “Export”. Want to know more? <docLink/> ',
+						'Export your blueprint schema. Select the options you git want to export, then click on “Export”. Want to know more? <docLink/> ',
 						'woocommerce'
 					),
 					{
 						docLink: (
-							<a href="#tba">
+							<a
+								href="#tba"
+								className="woocommerce-admin-inline-documentation-link"
+							>
 								{ __(
 									'Check our documentation',
 									'woocommerce'
