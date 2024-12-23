@@ -40,22 +40,17 @@ const { useLocation } = unlock( routerPrivateApis );
 const ANIMATION_DURATION = 0.3;
 
 type LayoutProps = {
-	settingsPage?: SettingsPage;
 	activeSection?: string;
 	tabs?: Array< { name: string; title: string } >;
 };
 
-export function Layout( {
-	settingsPage,
-	tabs = [],
-	activeSection,
-}: LayoutProps ) {
+export function Layout( { tabs = [], activeSection }: LayoutProps ) {
 	const [ fullResizer ] = useResizeObserver();
 	const toggleRef = useRef< HTMLAnchorElement >( null );
 	const isMobileViewport = useViewportMatch( 'medium', '<' );
 	const disableMotion = useReducedMotion();
 
-	const { name: routeKey, areas, widths } = useLocation();
+	const { slug, name, areas, widths } = useLocation();
 
 	return (
 		<>
@@ -91,7 +86,7 @@ export function Layout( {
 										ref={ toggleRef }
 										isTransparent={ false }
 									/>
-									<SidebarContent routeKey={ routeKey }>
+									<SidebarContent routeKey={ slug }>
 										{ areas.sidebar }
 									</SidebarContent>
 								</motion.div>
@@ -110,7 +105,7 @@ export function Layout( {
 						>
 							<Header
 								hasTabs={ tabs.length > 1 }
-								pageTitle={ settingsPage?.label }
+								pageTitle={ name }
 							/>
 							<SectionTabs
 								tabs={ tabs }
