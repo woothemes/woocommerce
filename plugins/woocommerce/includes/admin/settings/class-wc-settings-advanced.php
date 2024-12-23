@@ -448,7 +448,7 @@ class WC_Settings_Advanced extends WC_Settings_Page {
 		$settings =
 			array(
 				array(
-					'title' => esc_html__( '', 'woocommerce' ),
+					'title' => '',
 					'type'  => 'title',
 				),
 				array(
