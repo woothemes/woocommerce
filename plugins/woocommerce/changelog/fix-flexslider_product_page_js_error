@@ -1,0 +1,4 @@
+Significance: minor
+Type: fix
+
+Fixes a JS error introduced in #53158 when navigating tabs using keyboard on a product page without a gallery.
