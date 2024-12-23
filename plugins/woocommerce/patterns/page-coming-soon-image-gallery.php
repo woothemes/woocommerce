@@ -18,21 +18,44 @@ if ( 'twentytwentyfour' === $current_theme ) {
 	$inter_font_family = 'body';
 	$cardo_font_family = 'heading';
 }
-
-$featured_image_urls = array(
-	PatternsHelper::get_image_url( $images, 0, 'assets/images/pattern-placeholders/gallery-1.jpg' ),
-	PatternsHelper::get_image_url( $images, 0, 'assets/images/pattern-placeholders/gallery-2.jpg' ),
-	PatternsHelper::get_image_url( $images, 0, 'assets/images/pattern-placeholders/gallery-3.jpg' ),
-	PatternsHelper::get_image_url( $images, 0, 'assets/images/pattern-placeholders/gallery-4.jpg' ),
-	PatternsHelper::get_image_url( $images, 0, 'assets/images/pattern-placeholders/gallery-5.jpg' ),
-	PatternsHelper::get_image_url( $images, 0, 'assets/images/pattern-placeholders/gallery-6.jpg' ),
-	PatternsHelper::get_image_url( $images, 0, 'assets/images/pattern-placeholders/gallery-7.jpg' ),
-	PatternsHelper::get_image_url( $images, 0, 'assets/images/pattern-placeholders/gallery-8.jpg' ),
-	PatternsHelper::get_image_url( $images, 0, 'assets/images/pattern-placeholders/gallery-9.jpg' ),
-	PatternsHelper::get_image_url( $images, 0, 'assets/images/pattern-placeholders/gallery-10.jpg' ),
-	PatternsHelper::get_image_url( $images, 0, 'assets/images/pattern-placeholders/gallery-11.jpg' ),
-	PatternsHelper::get_image_url( $images, 0, 'assets/images/pattern-placeholders/gallery-12.jpg' ),
+// Count how many products with images.
+$args = array(
+    'post_type'      => 'product',
+    'posts_per_page' => 12,
+    'fields'         => 'ids',
+    'meta_query'     => array(
+        array(
+            'key'     => '_thumbnail_id',
+            'compare' => 'EXISTS'
+        )
+    )
 );
+$query = new WP_Query( $args );
+$product_count = count( $query->posts );
+
+$data = get_option( 'woocommerce_coming_soon_template_settings', new \StdClass() );
+$use_product_images = isset( $data->product_images ) && $data->product_images === 'yes';
+
+if ( $use_product_images ) {
+	// Loop through products and fetch the featured image URLs.
+	$featured_image_urls = array();
+	if ( $query->have_posts() ) {
+	foreach ( $query->posts as $post_id ) {
+			$image_url = get_the_post_thumbnail_url( $post_id, 'full' );
+			if ( $image_url ) {
+				$featured_image_urls[] = $image_url;
+			}
+		}
+	}
+} else {
+	$featured_image_urls = array_map(
+		function( $index ) use ( $images ) {
+			return PatternsHelper::get_image_url( $images, 0, "assets/images/pattern-placeholders/gallery-{$index}.jpg" );
+		},
+		range( 1, 12 )
+	);
+}
+
 ?>
 
 <!-- wp:woocommerce/coming-soon {"className":"woocommerce-coming-soon-image-gallery wp-block-woocommerce-background-color"} -->
