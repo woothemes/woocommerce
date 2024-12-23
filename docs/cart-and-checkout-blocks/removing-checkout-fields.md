@@ -73,10 +73,7 @@ This is the result:
 
 ![Image](https://github.com/user-attachments/assets/19c82877-3405-4762-82ce-e952746abe66)
 
-You notice 2 things:
-
-- Address Line 2 is not visible, this is because it will always be skipped if Address Line 1 is skipped.
-- Phone and Company can be controlled the same way as others.
+You notice that Address Line 2 is not visible, this is because it will always be skipped if Address Line 1 is skipped.
 
 ## Removing Company and Phone
 
