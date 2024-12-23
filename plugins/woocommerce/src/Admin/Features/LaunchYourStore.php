@@ -319,7 +319,8 @@ class LaunchYourStore {
 			preg_match( '/"comingSoonPatternId":"([^"]+)"/', $content, $matches );
 
 			if ( isset( $matches[1] ) ) {
-				wc_admin_record_tracks_event( 'coming_soon_template_saved',
+				wc_admin_record_tracks_event(
+					'coming_soon_template_saved',
 					array(
 						'pattern_id' => $matches[1],
 						'is_update'  => $update,
