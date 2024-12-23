@@ -4,14 +4,14 @@ declare( strict_types=1 );
 namespace Automattic\WooCommerce\Tests\Internal\Admin\Suggestions\Incentives;
 
 use Automattic\WooCommerce\Internal\Admin\Suggestions\Incentives\Incentive;
-use WC_REST_Unit_Test_Case;
+use WC_Unit_Test_Case;
 
 /**
  * Incentive provider test.
  *
  * @class Incentive
  */
-class IncentiveTest extends WC_REST_Unit_Test_Case {
+class IncentiveTest extends WC_Unit_Test_Case {
 	/**
 	 * System under test.
 	 *
