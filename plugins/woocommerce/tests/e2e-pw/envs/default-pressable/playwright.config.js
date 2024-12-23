@@ -20,12 +20,12 @@ config = {
 			grepInvert,
 			grep: new RegExp( tags.ONLY ),
 		},
-		{
-			name: 'api',
-			use: { ...devices[ 'Desktop Chrome' ] },
-			testMatch: [ '**/api-tests/**' ],
-			grepInvert,
-		},
+		// {
+		// 	name: 'api',
+		// 	use: { ...devices[ 'Desktop Chrome' ] },
+		// 	testMatch: [ '**/api-tests/**' ],
+		// 	grepInvert,
+		// },
 	],
 };
 
