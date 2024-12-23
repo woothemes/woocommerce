@@ -146,7 +146,7 @@ const Blueprint = () => {
 			<p className="export-intro">
 				{ createInterpolateElement(
 					__(
-						'Export your blueprint schema. Select the options you want to export, then click on "Export". Want to know more? <docLink/> ',
+						'Export your blueprint schema. Select the options you want to export, then click on “Export”. Want to know more? <docLink/> ',
 						'woocommerce'
 					),
 					{
