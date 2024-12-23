@@ -701,7 +701,7 @@ class WC_REST_Products_V1_Controller extends WC_REST_Posts_Controller {
 
 		// Post status.
 		if ( isset( $request['status'] ) ) {
-			$product->set_status( get_post_status_object( $request['status'] ) ? $request['status'] : 'draft' );
+			$product->set_status( get_post_status_object( $request['status'] ) ? $request['status'] : ProductStatus::DRAFT );
 		}
 
 		// Post slug.
@@ -1374,7 +1374,7 @@ class WC_REST_Products_V1_Controller extends WC_REST_Posts_Controller {
 			if ( ! $variation->get_slug() ) {
 				/* translators: 1: variation id 2: product name */
 				$variation->set_name( sprintf( __( 'Variation #%1$s of %2$s', 'woocommerce' ), $variation->get_id(), $product->get_name() ) );
-				$variation->set_status( isset( $data['visible'] ) && false === $data['visible'] ? 'private' : 'publish' );
+				$variation->set_status( isset( $data['visible'] ) && false === $data['visible'] ? ProductStatus::PRIVATE : ProductStatus::PUBLISH );
 			}
 
 			// Parent ID.
@@ -1385,7 +1385,7 @@ class WC_REST_Products_V1_Controller extends WC_REST_Posts_Controller {
 
 			// Status.
 			if ( isset( $data['visible'] ) ) {
-				$variation->set_status( false === $data['visible'] ? 'private' : 'publish' );
+				$variation->set_status( false === $data['visible'] ? ProductStatus::PRIVATE : ProductStatus::PUBLISH );
 			}
 
 			// SKU.
@@ -1784,7 +1784,7 @@ class WC_REST_Products_V1_Controller extends WC_REST_Posts_Controller {
 				'status' => array(
 					'description' => __( 'Product status (post status).', 'woocommerce' ),
 					'type'        => 'string',
-					'default'     => 'publish',
+					'default'     => ProductStatus::PUBLISH,
 					'enum'        => array_merge( array_keys( get_post_statuses() ), array( ProductStatus::FUTURE ) ),
 					'context'     => array( 'view', 'edit' ),
 				),

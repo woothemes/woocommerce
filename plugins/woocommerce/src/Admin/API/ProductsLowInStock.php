@@ -191,7 +191,7 @@ final class ProductsLowInStock extends \WC_REST_Products_Controller {
 	 *
 	 * @return array
 	 */
-	protected function get_low_in_stock_products( $page = 1, $per_page = 1, $status = 'publish' ) {
+	protected function get_low_in_stock_products( $page = 1, $per_page = 1, $status = ProductStatus::PUBLISH ) {
 		global $wpdb;
 
 		$offset              = ( $page - 1 ) * $per_page;

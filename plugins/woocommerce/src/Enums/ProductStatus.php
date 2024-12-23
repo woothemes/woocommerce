@@ -9,6 +9,13 @@ namespace Automattic\WooCommerce\Enums;
  */
 final class ProductStatus {
 	/**
+	 * The product is in auto-draft status.
+	 *
+	 * @var string
+	 */
+	const AUTO_DRAFT = 'auto-draft';
+
+	/**
 	 * The product is in draft status.
 	 *
 	 * @var string

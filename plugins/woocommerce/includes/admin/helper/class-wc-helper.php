@@ -6,6 +6,7 @@
  */
 
 use Automattic\Jetpack\Constants;
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -1746,7 +1747,7 @@ class WC_Helper {
 				'key_type'          => '',
 				'key_type_label'    => '',
 				'lifetime'          => false,
-				'product_status'    => 'publish',
+				'product_status'    => ProductStatus::PUBLISH,
 				// Connections is empty because this is not a connected subscription.
 				'connections'       => array(),
 				'expires'           => 0,

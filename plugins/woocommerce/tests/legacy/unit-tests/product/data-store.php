@@ -36,7 +36,7 @@ class WC_Tests_Product_Data_Store extends WC_Unit_Test_Case {
 		$product->set_name( 'My Product' );
 		$product->save();
 
-		$this->assertEquals( 'publish', $product->get_status() );
+		$this->assertEquals( ProductStatus::PUBLISH, $product->get_status() );
 
 		$read_product = new WC_Product( $product->get_id() );
 
@@ -49,10 +49,10 @@ class WC_Tests_Product_Data_Store extends WC_Unit_Test_Case {
 	 */
 	public function test_product_create_published() {
 		$product = new WC_Product();
-		$product->set_status( 'publish' );
+		$product->set_status( ProductStatus::PUBLISH );
 		$product->save();
 
-		$this->assertEquals( 'publish', $product->get_status() );
+		$this->assertEquals( ProductStatus::PUBLISH, $product->get_status() );
 	}
 
 	/**
@@ -60,10 +60,10 @@ class WC_Tests_Product_Data_Store extends WC_Unit_Test_Case {
 	 */
 	public function test_product_create_draft() {
 		$product = new WC_Product();
-		$product->set_status( 'draft' );
+		$product->set_status( ProductStatus::DRAFT );
 		$product->save();
 
-		$this->assertEquals( 'draft', $product->get_status() );
+		$this->assertEquals( ProductStatus::DRAFT, $product->get_status() );
 	}
 
 	/**
@@ -417,13 +417,13 @@ class WC_Tests_Product_Data_Store extends WC_Unit_Test_Case {
 
 		// Now update some value unrelated to attributes.
 		$variation = wc_get_product( $variation->get_id() );
-		$variation->set_status( 'publish' );
+		$variation->set_status( ProductStatus::PUBLISH );
 		$variation->save();
 
 		// Load up the updated variation and verify that the saved state is correct.
 		$loaded_variation = wc_get_product( $variation->get_id() );
 
-		$this->assertEquals( 'publish', $loaded_variation->get_status( 'edit' ) );
+		$this->assertEquals( ProductStatus::PUBLISH, $loaded_variation->get_status( 'edit' ) );
 		$_attribute = $loaded_variation->get_attributes( 'edit' );
 		$this->assertEquals( 'green', $_attribute['color'] );
 	}
@@ -588,7 +588,7 @@ class WC_Tests_Product_Data_Store extends WC_Unit_Test_Case {
 		$future_sale_product->save();
 
 		$variable_draft_product = WC_Helper_Product::create_variation_product();
-		$variable_draft_product->set_status( 'draft' );
+		$variable_draft_product->set_status( ProductStatus::DRAFT );
 		$variable_draft_product->save();
 		$children                     = $variable_draft_product->get_children();
 		$variable_draft_product_child = wc_get_product( $children[0] );
