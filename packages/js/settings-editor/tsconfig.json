@@ -10,10 +10,13 @@
 		"typeRoots": [
 			"./typings",
 			"./node_modules/@types"
-		]
+		],
+	"jsx": "react-jsx",
+	"jsxFactory": null,
+	"jsxFragmentFactory": null
 	},
 	"include": [
 		"typings/**/*",
-		"src/**/*",
-	],
+		"src/**/*"
+	]
 }

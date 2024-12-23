@@ -1,13 +1,7 @@
 /**
  * External dependencies
  */
-import {
-	createElement,
-	useEffect,
-	useMemo,
-	useState,
-	useRef,
-} from '@wordpress/element';
+import { useEffect, useMemo, useState, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
 	addAction,

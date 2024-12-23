@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { createElement } from '@wordpress/element';
 /* eslint-disable @woocommerce/dependency-group */
 // @ts-expect-error missing type.
 // eslint-disable-next-line @wordpress/no-unsafe-wp-apis
