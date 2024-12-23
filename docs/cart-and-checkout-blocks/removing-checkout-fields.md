@@ -60,7 +60,17 @@ add_filter('woocommerce_get_country_locale', function( $locale ) {
 		'hidden'   => true,
 	];
 
+	$locale['DZ']['company'] = [
+		'required' => false,
+		'hidden'   => true,
+	];
+	
 	$locale['DZ']['state'] = [
+		'required' => false,
+		'hidden'   => true,
+	];
+	
+	$locale['DZ']['phone'] = [
 		'required' => false,
 		'hidden'   => true,
 	];
