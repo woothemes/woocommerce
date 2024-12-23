@@ -26,6 +26,7 @@ const ProductImagesPanel = () => {
 	);
 	const [ isToggled, setIsToggled ] = useState( false ); // State for toggle control
 	const [ loading, setLoading ] = useState( true ); // State for loading indicator
+	const [ isWaitingReload, setIsWaitingReload ] = useState( false ); // State for reload message
 
 	// Fetch the current value from the REST API
 	useEffect( () => {
@@ -56,7 +57,7 @@ const ProductImagesPanel = () => {
 			},
 		} )
 			.then( ( response ) => {
-				console.log( 'Settings updated successfully:', response );
+				setIsWaitingReload( true );
 			} )
 			.catch( ( error ) => {
 				console.error( 'Error updating template settings:', error );
@@ -96,6 +97,22 @@ const ProductImagesPanel = () => {
 					'woocommerce'
 				) }
 			</p>
+			{ isWaitingReload && (
+				<>
+					<p>
+						{ __(
+							'Reload the page to update the designs.',
+							'woocommerce'
+						) }
+					</p>
+					<button
+						className="button button-primary"
+						onClick={ () => window.location.reload() }
+					>
+						{ __( 'Reload', 'woocommerce' ) }
+					</button>
+				</>
+			) }
 		</PluginDocumentSettingPanel>
 	);
 };
