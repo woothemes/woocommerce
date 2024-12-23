@@ -8,7 +8,7 @@ import {
 	PREFIX_QUERY_ARG_FILTER_TYPE,
 	PREFIX_QUERY_ARG_QUERY_TYPE,
 } from '@woocommerce/utils';
-import { AttributeObject, isString } from '@woocommerce/types';
+import { AttributeObjectForDisplay, isString } from '@woocommerce/types';
 
 /**
  * Internal dependencies
@@ -68,7 +68,7 @@ export const areAllFiltersRemoved = ( {
 } ) => hasSetFilterDefaultsFromUrl && currentCheckedFilters.length === 0;
 
 export const getActiveFilters = (
-	attributeObject: AttributeObject | undefined
+	attributeObject: AttributeObjectForDisplay | undefined
 ) => {
 	if ( attributeObject ) {
 		const defaultAttributeParam = getUrlParameter(
