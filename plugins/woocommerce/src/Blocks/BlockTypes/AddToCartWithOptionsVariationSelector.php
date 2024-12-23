@@ -58,7 +58,7 @@ class AddToCartWithOptionsVariationSelector extends AbstractBlock {
 		);
 
 		$html .= '<option value="">' . esc_html__( 'Choose an option', 'woocommerce' ) . '</option>';
-		$html .= $this->get_options_html( $product, $attribute_name, $options, $selected );
+		$html .= $this->get_variation_options_html( $product, $attribute_name, $options, $selected, taxonomy_exists( $attribute_name ) );
 		$html .= '</select>';
 
 		return $html;
@@ -82,29 +82,14 @@ class AddToCartWithOptionsVariationSelector extends AbstractBlock {
 	 * @param string     $attribute_name Name of the attribute.
 	 * @param array      $options Available options.
 	 * @param string     $selected Selected value.
-	 * @return string Options HTML
-	 */
-	private function get_options_html( $product, $attribute_name, $options, $selected ): string {
-		if ( empty( $options ) ) {
-			return '';
-		}
-
-		return taxonomy_exists( $attribute_name )
-			? $this->get_variation_options_html( $product, $attribute_name, $options, $selected, true )
-			: $this->get_variation_options_html( $product, $attribute_name, $options, $selected, false );
-	}
-
-	/**
-	 * Get HTML for variation options.
-	 *
-	 * @param WC_Product $product The product object.
-	 * @param string     $attribute_name Name of the attribute.
-	 * @param array      $options Available options.
-	 * @param string     $selected Selected value.
 	 * @param bool       $is_taxonomy Whether this is a taxonomy-based attribute.
 	 * @return string Options HTML
 	 */
 	private function get_variation_options_html( $product, $attribute_name, $options, $selected, $is_taxonomy ): string {
+		if ( empty( $options ) ) {
+			return '';
+		}
+
 		$html  = '';
 		$items = $is_taxonomy
 			? wc_get_product_terms( $product->get_id(), $attribute_name, array( 'fields' => 'all' ) )
