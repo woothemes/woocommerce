@@ -119,5 +119,4 @@ exports.tags = {
 	TO_BE_REMOVED: '@to-be-removed',
 	NOT_E2E: '@not-e2e',
 	WP_CORE: '@wp-core',
-	ONLY: '@only',
 };
