@@ -2,72 +2,63 @@
  * External dependencies
  */
 import { createElement } from '@wordpress/element';
+import * as icons from '@wordpress/icons';
+
 /* eslint-disable @woocommerce/dependency-group */
 // eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 import { __experimentalItemGroup as ItemGroup } from '@wordpress/components';
 // @ts-ignore No types for this exist yet.
 import SidebarNavigationScreen from '@wordpress/edit-site/build-module/components/sidebar-navigation-screen';
-import * as IconPackage from '@wordpress/icons';
+// @ts-ignore No types for this exist yet.
+import SidebarNavigationItem from '@wordpress/edit-site/build-module/components/sidebar-navigation-item';
 /* eslint-enable @woocommerce/dependency-group */
 
 /**
  * Internal dependencies
  */
-import { SettingItem } from './setting-item';
+import { getSettingsSectionPath } from '../routes/utils';
 
-const { Icon, ...icons } = IconPackage;
+const SidebarNavigationScreenContent = () => {
+	const settingsData: SettingsData = window.wcSettings?.admin?.settingsData;
+	if ( ! settingsData ) {
+		return null;
+	}
 
-const SidebarNavigationScreenContent = ( {
-	activePage,
-	settingsData,
-}: {
-	activePage: string;
-	settingsData: SettingsData;
-} ) => {
 	return (
 		<ItemGroup>
 			{ Object.keys( settingsData ).map( ( slug ) => {
 				const { label, icon } = settingsData[ slug ];
+
 				return (
-					<SettingItem
-						key={ slug }
-						slug={ slug }
-						label={ label }
-						isActive={ activePage === slug }
+					<SidebarNavigationItem
 						icon={
-							<Icon
-								icon={
-									icons[ icon as keyof typeof icons ] ||
-									icons.settings
-								}
-							/>
+							icons[ icon as keyof typeof icons ] ||
+							icons.settings
 						}
-					/>
+						uid={ slug }
+						key={ slug }
+						to={ getSettingsSectionPath( settingsData[ slug ] ) }
+					>
+						{ label }
+					</SidebarNavigationItem>
 				);
 			} ) }
 		</ItemGroup>
 	);
 };
 
-export const Sidebar = ( {
-	activePage,
-	settingsData,
-	pageTitle,
-}: {
-	activePage: string;
-	settingsData: SettingsData;
-	pageTitle: string;
-} ) => {
+type SidebarProps = {
+	title: string;
+	backPack: string;
+};
+
+export const Sidebar = ( { title, backPack }: SidebarProps ) => {
 	return (
 		<SidebarNavigationScreen
-			title={ pageTitle }
 			isRoot
-			content={
-				<SidebarNavigationScreenContent
-					activePage={ activePage }
-					settingsData={ settingsData }
-				/>
-			}
+			title={ title }
+			backPack={ backPack }
+			content={ <SidebarNavigationScreenContent /> }
 		/>
 	);
 };
