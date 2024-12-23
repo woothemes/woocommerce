@@ -76,8 +76,8 @@ $featured_image_urls = array(
 				<!-- wp:column {"style":{"spacing":{"blockGap":"0"}}} -->
 				<div class="wp-block-column">
 					<?php if ( isset( $featured_image_urls[0] ) ) : ?>
-					<!-- wp:image {"id":113,"sizeSlug":"full","linkDestination":"none"} -->
-					<figure class="wp-block-image size-full"><img src="<?php echo $featured_image_urls[0]; ?>" alt="" class="wp-image-113"/></figure>
+					<!-- wp:image {"id":113,"sizeSlug":"full","linkDestination":"none","style":{"border":{"radius":"14px"}}} -->
+					<figure class="wp-block-image size-full has-custom-border""><img src="<?php echo $featured_image_urls[0]; ?>" alt="" class="wp-image-113" style="border-radius:14px"/></figure>
 					<!-- /wp:image -->
 					<!-- wp:spacer {"height":"var:preset|spacing|50"} -->
 					<div style="height:var(--wp--preset--spacing--50)" aria-hidden="true" class="wp-block-spacer">
@@ -85,8 +85,8 @@ $featured_image_urls = array(
 					<!-- /wp:spacer -->
 					<?php endif ?>
 					<?php if ( isset( $featured_image_urls[4] ) ) : ?>
-					<!-- wp:image {"id":113,"sizeSlug":"full","linkDestination":"none"} -->
-					<figure class="wp-block-image size-full"><img src="<?php echo $featured_image_urls[4]; ?>" alt="" class="wp-image-113"/></figure>
+					<!-- wp:image {"id":113,"sizeSlug":"full","linkDestination":"none","style":{"border":{"radius":"14px"}}} -->
+					<figure class="wp-block-image size-full has-custom-border""><img src="<?php echo $featured_image_urls[4]; ?>" alt="" class="wp-image-113" style="border-radius:14px"/></figure>
 					<!-- /wp:image -->
 					<!-- wp:spacer {"height":"var:preset|spacing|50"} -->
 					<div style="height:var(--wp--preset--spacing--50)" aria-hidden="true" class="wp-block-spacer">
@@ -94,8 +94,8 @@ $featured_image_urls = array(
 					<!-- /wp:spacer -->
 					<?php endif ?>
 					<?php if ( isset( $featured_image_urls[8] ) ) : ?>
-					<!-- wp:image {"id":113,"sizeSlug":"full","linkDestination":"none"} -->
-					<figure class="wp-block-image size-full"><img src="<?php echo $featured_image_urls[8]; ?>" alt="" class="wp-image-113"/></figure>
+					<!-- wp:image {"id":113,"sizeSlug":"full","linkDestination":"none","style":{"border":{"radius":"14px"}}} -->
+					<figure class="wp-block-image size-full has-custom-border""><img src="<?php echo $featured_image_urls[8]; ?>" alt="" class="wp-image-113" style="border-radius:14px"/></figure>
 					<!-- /wp:image -->
 					<!-- wp:spacer {"height":"var:preset|spacing|50"} -->
 					<div style="height:var(--wp--preset--spacing--50)" aria-hidden="true" class="wp-block-spacer">
@@ -113,8 +113,8 @@ $featured_image_urls = array(
 					<!-- /wp:spacer -->
 
 					<?php if ( isset( $featured_image_urls[1] ) ) : ?>
-					<!-- wp:image {"id":113,"sizeSlug":"full","linkDestination":"none"} -->
-					<figure class="wp-block-image size-full"><img src="<?php echo $featured_image_urls[1]; ?>" alt="" class="wp-image-113"/></figure>
+					<!-- wp:image {"id":113,"sizeSlug":"full","linkDestination":"none","style":{"border":{"radius":"14px"}}} -->
+					<figure class="wp-block-image size-full has-custom-border""><img src="<?php echo $featured_image_urls[1]; ?>" alt="" class="wp-image-113" style="border-radius:14px"/></figure>
 					<!-- /wp:image -->
 					<!-- wp:spacer {"height":"var:preset|spacing|50"} -->
 					<div style="height:var(--wp--preset--spacing--50)" aria-hidden="true" class="wp-block-spacer">
@@ -122,8 +122,8 @@ $featured_image_urls = array(
 					<!-- /wp:spacer -->
 					<?php endif ?>
 					<?php if ( isset( $featured_image_urls[5] ) ) : ?>
-					<!-- wp:image {"id":113,"sizeSlug":"full","linkDestination":"none"} -->
-					<figure class="wp-block-image size-full"><img src="<?php echo $featured_image_urls[5]; ?>" alt="" class="wp-image-113"/></figure>
+					<!-- wp:image {"id":113,"sizeSlug":"full","linkDestination":"none","style":{"border":{"radius":"14px"}}} -->
+					<figure class="wp-block-image size-full has-custom-border""><img src="<?php echo $featured_image_urls[5]; ?>" alt="" class="wp-image-113" style="border-radius:14px"/></figure>
 					<!-- /wp:image -->
 					<!-- wp:spacer {"height":"var:preset|spacing|50"} -->
 					<div style="height:var(--wp--preset--spacing--50)" aria-hidden="true" class="wp-block-spacer">
@@ -131,8 +131,8 @@ $featured_image_urls = array(
 					<!-- /wp:spacer -->
 					<?php endif ?>
 					<?php if ( isset( $featured_image_urls[9] ) ) : ?>
-					<!-- wp:image {"id":113,"sizeSlug":"full","linkDestination":"none"} -->
-					<figure class="wp-block-image size-full"><img src="<?php echo $featured_image_urls[9]; ?>" alt="" class="wp-image-113"/></figure>
+					<!-- wp:image {"id":113,"sizeSlug":"full","linkDestination":"none","style":{"border":{"radius":"14px"}}} -->
+					<figure class="wp-block-image size-full has-custom-border""><img src="<?php echo $featured_image_urls[9]; ?>" alt="" class="wp-image-113" style="border-radius:14px"/></figure>
 					<!-- /wp:image -->
 					<!-- wp:spacer {"height":"var:preset|spacing|50"} -->
 					<div style="height:var(--wp--preset--spacing--50)" aria-hidden="true" class="wp-block-spacer">
@@ -145,8 +145,8 @@ $featured_image_urls = array(
 				<!-- wp:column {"style":{"spacing":{"blockGap":"0"}}} -->
 				<div class="wp-block-column">
 					<?php if ( isset( $featured_image_urls[2] ) ) : ?>
-					<!-- wp:image {"id":113,"sizeSlug":"full","linkDestination":"none"} -->
-					<figure class="wp-block-image size-full"><img src="<?php echo $featured_image_urls[2]; ?>" alt="" class="wp-image-113"/></figure>
+					<!-- wp:image {"id":113,"sizeSlug":"full","linkDestination":"none","style":{"border":{"radius":"14px"}}} -->
+					<figure class="wp-block-image size-full has-custom-border""><img src="<?php echo $featured_image_urls[2]; ?>" alt="" class="wp-image-113" style="border-radius:14px"/></figure>
 					<!-- /wp:image -->
 					<!-- wp:spacer {"height":"var:preset|spacing|50"} -->
 					<div style="height:var(--wp--preset--spacing--50)" aria-hidden="true" class="wp-block-spacer">
@@ -154,8 +154,8 @@ $featured_image_urls = array(
 					<!-- /wp:spacer -->
 					<?php endif ?>
 					<?php if ( isset( $featured_image_urls[6] ) ) : ?>
-					<!-- wp:image {"id":113,"sizeSlug":"full","linkDestination":"none"} -->
-					<figure class="wp-block-image size-full"><img src="<?php echo $featured_image_urls[6]; ?>" alt="" class="wp-image-113"/></figure>
+					<!-- wp:image {"id":113,"sizeSlug":"full","linkDestination":"none","style":{"border":{"radius":"14px"}}} -->
+					<figure class="wp-block-image size-full has-custom-border""><img src="<?php echo $featured_image_urls[6]; ?>" alt="" class="wp-image-113" style="border-radius:14px"/></figure>
 					<!-- /wp:image -->
 					<!-- wp:spacer {"height":"var:preset|spacing|50"} -->
 					<div style="height:var(--wp--preset--spacing--50)" aria-hidden="true" class="wp-block-spacer">
@@ -163,8 +163,8 @@ $featured_image_urls = array(
 					<!-- /wp:spacer -->
 					<?php endif ?>
 					<?php if ( isset( $featured_image_urls[10] ) ) : ?>
-					<!-- wp:image {"id":113,"sizeSlug":"full","linkDestination":"none"} -->
-					<figure class="wp-block-image size-full"><img src="<?php echo $featured_image_urls[10]; ?>" alt="" class="wp-image-113"/></figure>
+					<!-- wp:image {"id":113,"sizeSlug":"full","linkDestination":"none","style":{"border":{"radius":"14px"}}} -->
+					<figure class="wp-block-image size-full has-custom-border""><img src="<?php echo $featured_image_urls[10]; ?>" alt="" class="wp-image-113" style="border-radius:14px"/></figure>
 					<!-- /wp:image -->
 					<!-- wp:spacer {"height":"var:preset|spacing|50"} -->
 					<div style="height:var(--wp--preset--spacing--50)" aria-hidden="true" class="wp-block-spacer">
@@ -181,8 +181,8 @@ $featured_image_urls = array(
 					</div>
 					<!-- /wp:spacer -->
 					<?php if ( isset( $featured_image_urls[3] ) ) : ?>
-					<!-- wp:image {"id":113,"sizeSlug":"full","linkDestination":"none"} -->
-					<figure class="wp-block-image size-full"><img src="<?php echo $featured_image_urls[3]; ?>" alt="" class="wp-image-113"/></figure>
+					<!-- wp:image {"id":113,"sizeSlug":"full","linkDestination":"none","style":{"border":{"radius":"14px"}}} -->
+					<figure class="wp-block-image size-full has-custom-border""><img src="<?php echo $featured_image_urls[3]; ?>" alt="" class="wp-image-113" style="border-radius:14px"/></figure>
 					<!-- /wp:image -->
 					<!-- wp:spacer {"height":"var:preset|spacing|50"} -->
 					<div style="height:var(--wp--preset--spacing--50)" aria-hidden="true" class="wp-block-spacer">
@@ -190,8 +190,8 @@ $featured_image_urls = array(
 					<!-- /wp:spacer -->
 					<?php endif ?>
 					<?php if ( isset( $featured_image_urls[7] ) ) : ?>
-					<!-- wp:image {"id":113,"sizeSlug":"full","linkDestination":"none"} -->
-					<figure class="wp-block-image size-full"><img src="<?php echo $featured_image_urls[7]; ?>" alt="" class="wp-image-113"/></figure>
+					<!-- wp:image {"id":113,"sizeSlug":"full","linkDestination":"none","style":{"border":{"radius":"14px"}}} -->
+					<figure class="wp-block-image size-full has-custom-border""><img src="<?php echo $featured_image_urls[7]; ?>" alt="" class="wp-image-113" style="border-radius:14px"/></figure>
 					<!-- /wp:image -->
 					<!-- wp:spacer {"height":"var:preset|spacing|50"} -->
 					<div style="height:var(--wp--preset--spacing--50)" aria-hidden="true" class="wp-block-spacer">
@@ -199,8 +199,8 @@ $featured_image_urls = array(
 					<!-- /wp:spacer -->
 					<?php endif ?>
 					<?php if ( isset( $featured_image_urls[11] ) ) : ?>
-					<!-- wp:image {"id":113,"sizeSlug":"full","linkDestination":"none"} -->
-					<figure class="wp-block-image size-full"><img src="<?php echo $featured_image_urls[11]; ?>" alt="" class="wp-image-113"/></figure>
+					<!-- wp:image {"id":113,"sizeSlug":"full","linkDestination":"none","style":{"border":{"radius":"14px"}}} -->
+					<figure class="wp-block-image size-full has-custom-border""><img src="<?php echo $featured_image_urls[11]; ?>" alt="" class="wp-image-113" style="border-radius:14px"/></figure>
 					<!-- /wp:image -->
 					<!-- wp:spacer {"height":"var:preset|spacing|50"} -->
 					<div style="height:var(--wp--preset--spacing--50)" aria-hidden="true" class="wp-block-spacer">
