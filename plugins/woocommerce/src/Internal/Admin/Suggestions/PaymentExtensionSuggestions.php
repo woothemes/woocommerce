@@ -122,7 +122,11 @@ class PaymentExtensionSuggestions {
 			self::KLARNA,
 		),
 		'US' => array(
-			self::WOOPAYMENTS,
+			self::WOOPAYMENTS => array(
+				'_append' => array(
+					'tags' => array( 'woopay_eligible' ), // Add a special tag that will be used to determine if the merchant is eligible for WooPay.
+				),
+			),
 			self::PAYPAL_FULL_STACK,
 			self::STRIPE,
 			self::AIRWALLEX,
