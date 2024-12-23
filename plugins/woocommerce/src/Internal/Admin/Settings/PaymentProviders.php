@@ -197,7 +197,7 @@ class PaymentProviders {
 	public function get_payment_gateway_plugin_file( WC_Payment_Gateway $payment_gateway, string $plugin_slug = '' ): string {
 		$provider = $this->get_gateway_provider_instance( $payment_gateway->id );
 
-		return $provider->get_plugin_slug( $payment_gateway, $plugin_slug );
+		return $provider->get_plugin_file( $payment_gateway, $plugin_slug );
 	}
 
 	/**
