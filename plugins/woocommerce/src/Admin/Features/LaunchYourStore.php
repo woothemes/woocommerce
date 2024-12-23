@@ -314,15 +314,17 @@ class LaunchYourStore {
 			'coming-soon' === $post->post_name &&
 			'Page: Coming soon' === $post->post_title
 			) {
-			$matches = [];
+			$matches = array();
 			$content = $post->post_content;
-			preg_match('/"comingSoonPatternId":"([^"]+)"/', $content, $matches);
+			preg_match( '/"comingSoonPatternId":"([^"]+)"/', $content, $matches );
 
 			if ( isset( $matches[1] ) ) {
-				wc_admin_record_tracks_event( 'coming_soon_template_saved', array(
-					'pattern_id' => $matches[1],
-					'is_update' => $update,
-				) );
+				wc_admin_record_tracks_event( 'coming_soon_template_saved',
+					array(
+						'pattern_id' => $matches[1],
+						'is_update'  => $update,
+					)
+				);
 			}
 		}
 	}
