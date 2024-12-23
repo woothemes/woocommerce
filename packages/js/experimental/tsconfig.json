@@ -2,6 +2,7 @@
 	"extends": "../tsconfig",
 	"compilerOptions": {
 		"rootDir": "src",
+		"noCheck": true,
 		"outDir": "build-module",
 		"target": "es2019",
 		"declaration": true,
