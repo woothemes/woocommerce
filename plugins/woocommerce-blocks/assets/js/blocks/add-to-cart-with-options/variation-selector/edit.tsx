@@ -30,10 +30,6 @@ const AddToCartWithOptionsVariationSelectorEdit = (
 	}
 
 	const renderAttributeSelectors = () => {
-		if ( ! product?.attributes ) {
-			return null;
-		}
-
 		return Object.entries( product.attributes ).map(
 			( [ attributeKey, attribute ] ) => (
 				<div
