@@ -105,7 +105,7 @@ class AddToCartWithOptionsVariationSelector extends AbstractBlock {
 	 * @return string Options HTML
 	 */
 	private function get_variation_options_html( $product, $attribute_name, $options, $selected, $is_taxonomy ): string {
-		$html = '';
+		$html  = '';
 		$items = $is_taxonomy
 			? wc_get_product_terms( $product->get_id(), $attribute_name, array( 'fields' => 'all' ) )
 			: $options;
