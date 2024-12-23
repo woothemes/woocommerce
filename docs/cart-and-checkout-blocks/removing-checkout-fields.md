@@ -28,7 +28,7 @@ add_filter('woocommerce_get_country_locale', function( $locale ) {
 	$locale['DZ']['city']['required'] = false;
 	$locale['DZ']['city']['hidden'] = true;
 
-		return $locale;
+	 return $locale;
 });
 ```
 
