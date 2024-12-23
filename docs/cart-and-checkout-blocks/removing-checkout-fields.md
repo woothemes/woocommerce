@@ -82,7 +82,7 @@ You notice 2 things:
 
 One easy way (if you have access to the website), is to just toggle off the fields from the editor:
 
-<img width="610" alt="Before and after" src="https://github.com/user-attachments/assets/53740d32-4ccd-4d5e-b08f-91a8b8b7d055" />
+![Image](https://github.com/user-attachments/assets/53740d32-4ccd-4d5e-b08f-91a8b8b7d055)
 
 This would be the result:
 
