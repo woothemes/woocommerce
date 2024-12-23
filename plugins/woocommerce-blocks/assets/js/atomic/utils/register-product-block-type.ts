@@ -127,17 +127,15 @@ export class BlockRegistrationManager {
 			// Site Editor Context
 			if ( editSiteStore ) {
 				const postId = editSiteStore.getEditedPostId();
-				if ( postId === undefined ) {
-					return;
-				}
 
 				// Unsubscribe from the main subscription since we've detected our context
 				unsubscribe();
 
 				// Set initial template ID
-				this.currentTemplateId = this.parseTemplateId(
-					postId as string
-				);
+				this.currentTemplateId =
+					typeof postId === 'string'
+						? this.parseTemplateId( postId )
+						: undefined;
 
 				// Set up the template change listener
 				subscribe( () => {
@@ -152,11 +150,6 @@ export class BlockRegistrationManager {
 						this.handleTemplateChange( previousTemplateId );
 					}
 				}, 'core/edit-site' );
-
-				// Register all blocks for site editor
-				this.blocks.forEach( ( config ) => {
-					this.registerBlock( config );
-				} );
 
 				this.initialized = true;
 			}
