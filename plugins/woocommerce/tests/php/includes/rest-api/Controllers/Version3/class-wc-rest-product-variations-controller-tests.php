@@ -52,9 +52,9 @@ class WC_REST_Product_Variations_Controller_Tests extends WC_REST_Unit_Test_Case
 	 * @testWith [true]
 	 *           [false]
 	 *
-	 * @param bool $set_override_flag Value of the "override parent" flag to use.
+	 * @param bool $set_additive_flag Value of the "additive" flag to use.
 	 */
-	public function test_cogs_values_received_for_variation_with_feature_enabled( bool $set_override_flag ) {
+	public function test_cogs_values_received_for_variation_with_feature_enabled( bool $set_additive_flag ) {
 		$this->enable_cogs_feature();
 
 		$parent_product = WC_Helper_Product::create_variation_product();
@@ -63,7 +63,7 @@ class WC_REST_Product_Variations_Controller_Tests extends WC_REST_Unit_Test_Case
 
 		$variation = wc_get_product( $parent_product->get_children()[0] );
 		$variation->set_cogs_value( 56.78 );
-		$variation->set_cogs_value_overrides_parent( $set_override_flag );
+		$variation->set_cogs_value_is_additive( $set_additive_flag );
 		$variation->save();
 
 		$response = $this->server->dispatch( new WP_REST_Request( 'GET', "/wc/v3/products/{$parent_product->get_id()}/variations/{$variation->get_id()}" ) );
@@ -71,16 +71,16 @@ class WC_REST_Product_Variations_Controller_Tests extends WC_REST_Unit_Test_Case
 
 		$data = $response->get_data();
 
-		$expected_effective_value = $set_override_flag ? 56.78 : 12.34 + 56.78;
+		$expected_effective_value = $set_additive_flag ? 12.34 + 56.78 : 56.78;
 		$expected                 = array(
-			'values'                         => array(
+			'values'                    => array(
 				array(
 					'defined_value'   => 56.78,
 					'effective_value' => $expected_effective_value,
 				),
 			),
-			'defined_value_overrides_parent' => $set_override_flag,
-			'total_value'                    => $expected_effective_value,
+			'defined_value_is_additive' => $set_additive_flag,
+			'total_value'               => $expected_effective_value,
 		);
 
 		$this->assertEquals( $expected, $data['cost_of_goods_sold'] );
@@ -92,13 +92,13 @@ class WC_REST_Product_Variations_Controller_Tests extends WC_REST_Unit_Test_Case
 	 * @testWith [true]
 	 *           [false]
 	 *
-	 * @param bool $set_override_flag The value of the "override parent value" flag to use.
+	 * @param bool $set_additive_flag The value of the "additive" flag to use.
 	 */
-	public function test_set_cogs_value_for_variation_via_post_request( bool $set_override_flag ) {
+	public function test_set_cogs_value_for_variation_via_post_request( bool $set_additive_flag ) {
 		$this->enable_cogs_feature();
 
 		$variation = wc_get_product( ( WC_Helper_Product::create_variation_product() )->get_children()[0] );
-		$variation->set_cogs_value_overrides_parent( $set_override_flag );
+		$variation->set_cogs_value_is_additive( $set_additive_flag );
 		$variation->save();
 		$this->assertEquals( 0, $variation->get_cogs_value() );
 
@@ -119,7 +119,7 @@ class WC_REST_Product_Variations_Controller_Tests extends WC_REST_Unit_Test_Case
 
 		$variation = wc_get_product( $variation->get_id() );
 		$this->assertEquals( 12.34 + 56.78, $variation->get_cogs_value() );
-		$this->assertEquals( $set_override_flag, $variation->get_cogs_value_overrides_parent() );
+		$this->assertEquals( $set_additive_flag, $variation->get_cogs_value_is_additive() );
 	}
 
 	/**
@@ -128,19 +128,19 @@ class WC_REST_Product_Variations_Controller_Tests extends WC_REST_Unit_Test_Case
 	 * @testWith [true]
 	 *           [false]
 	 *
-	 * @param bool $set_override_flag The value of the "override parent value" flag to use.
+	 * @param bool $set_additive_flag The value of the "additive" flag to use.
 	 */
-	public function test_set_cogs_override_field_for_variation_via_post_request( bool $set_override_flag ) {
+	public function test_set_cogs_additive_field_for_variation_via_post_request( bool $set_additive_flag ) {
 		$this->enable_cogs_feature();
 
 		$variation = wc_get_product( ( WC_Helper_Product::create_variation_product() )->get_children()[0] );
 		$variation->set_cogs_value( 12.34 );
-		$variation->set_cogs_value_overrides_parent( ! $set_override_flag );
+		$variation->set_cogs_value_is_additive( ! $set_additive_flag );
 		$variation->save();
 
 		$request_body = array(
 			'cost_of_goods_sold' => array(
-				'defined_value_overrides_parent' => $set_override_flag,
+				'defined_value_is_additive' => $set_additive_flag,
 			),
 		);
 
@@ -148,7 +148,7 @@ class WC_REST_Product_Variations_Controller_Tests extends WC_REST_Unit_Test_Case
 
 		$variation = wc_get_product( $variation->get_id() );
 		$this->assertEquals( 12.34, $variation->get_cogs_value() );
-		$this->assertEquals( $set_override_flag, $variation->get_cogs_value_overrides_parent() );
+		$this->assertEquals( $set_additive_flag, $variation->get_cogs_value_is_additive() );
 	}
 
 	/**
@@ -175,13 +175,13 @@ class WC_REST_Product_Variations_Controller_Tests extends WC_REST_Unit_Test_Case
 		$parent_product = WC_Helper_Product::create_variation_product();
 		$variation      = $parent_product->get_available_variations()[0];
 		$variation      = wc_get_product( $variation['variation_id'] );
-		$unique_id		= $parent_product->get_id() . '-1';
+		$unique_id      = $parent_product->get_id() . '-1';
 		$variation->set_global_unique_id( $unique_id );
 		$variation->save();
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products/' . $parent_product->get_id() . '/variations' );
 		$request->set_query_params(
 			array(
-				'global_unique_id' => $unique_id
+				'global_unique_id' => $unique_id,
 			)
 		);
 		$response = $this->server->dispatch( $request );

@@ -2,6 +2,7 @@
 namespace Automattic\WooCommerce\StoreApi\Utilities;
 
 use Automattic\WooCommerce\Checkout\Helpers\ReserveStock;
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\StoreApi\Exceptions\InvalidCartException;
 use Automattic\WooCommerce\StoreApi\Exceptions\NotPurchasableException;
 use Automattic\WooCommerce\StoreApi\Exceptions\OutOfStockException;
@@ -1148,7 +1149,7 @@ class CartController {
 	 * @return int
 	 */
 	protected function get_product_id( \WC_Product $product ) {
-		return $product->is_type( 'variation' ) ? $product->get_parent_id() : $product->get_id();
+		return $product->is_type( ProductType::VARIATION ) ? $product->get_parent_id() : $product->get_id();
 	}
 
 	/**
@@ -1158,7 +1159,7 @@ class CartController {
 	 * @return int
 	 */
 	protected function get_variation_id( \WC_Product $product ) {
-		return $product->is_type( 'variation' ) ? $product->get_id() : 0;
+		return $product->is_type( ProductType::VARIATION ) ? $product->get_id() : 0;
 	}
 
 	/**
@@ -1191,7 +1192,7 @@ class CartController {
 		$variation_id = 0;
 		$product      = wc_get_product( $product_id );
 
-		if ( $product->is_type( 'variation' ) ) {
+		if ( $product->is_type( ProductType::VARIATION ) ) {
 			$product_id   = $product->get_parent_id();
 			$variation_id = $product->get_id();
 		}
@@ -1250,7 +1251,7 @@ class CartController {
 		$product = $this->get_product_for_cart( $request );
 
 		// Remove variation request if not needed.
-		if ( ! $product->is_type( array( 'variation', 'variable' ) ) ) {
+		if ( ! $product->is_type( array( ProductType::VARIATION, ProductType::VARIABLE ) ) ) {
 			$request['variation'] = [];
 			return $request;
 		}
@@ -1260,7 +1261,7 @@ class CartController {
 		$request['variation']        = $this->sanitize_variation_data( wp_list_pluck( $request['variation'], 'value', 'attribute' ), $variable_product_attributes );
 
 		// If we have a parent product, find the variation ID.
-		if ( $product->is_type( 'variable' ) ) {
+		if ( $product->is_type( ProductType::VARIABLE ) ) {
 			$request['id'] = $this->get_variation_id_from_variation_data( $request, $product );
 		}
 
@@ -1409,7 +1410,7 @@ class CartController {
 	 * @return array
 	 */
 	protected function get_variable_product_attributes( $product ) {
-		if ( $product->is_type( 'variation' ) ) {
+		if ( $product->is_type( ProductType::VARIATION ) ) {
 			$product = wc_get_product( $product->get_parent_id() );
 		}
 
