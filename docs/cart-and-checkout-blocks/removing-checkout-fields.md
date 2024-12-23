@@ -116,7 +116,7 @@ Till now, all changes are applied to Algeria only, customers switching would see
 
 ## Applying changes to all countries you sell to
 
-As with the above, this is not something I recommend unless you sell to a very controlled set of countries and tested this with each country. Some payment gateways would only enable fraud detection on production mode and not test mode, and your fields that passed test mode fails in production mode, but here it is regardless:
+As with the above, this is not something we recommend unless you sell to a very controlled set of countries and tested this with each country. Some payment gateways would only enable fraud detection on production mode and not test mode, and your fields that passed test mode fails in production mode, but here it is regardless:
 
 ```php
 add_filter('woocommerce_get_country_locale', function( $locale ) {
