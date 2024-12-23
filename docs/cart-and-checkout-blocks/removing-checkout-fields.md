@@ -5,15 +5,15 @@ tags: reference
 ---
 <!-- markdownlint-disable MD041 -->
 
-If you're trying to extend the new Checkout block, you might notice the previous `checkout_fields` isn't working. This is intentional, we're taking back control of how to render and handle fields, yet, one of the most common requests we get is how to disable Checkout fields for certain order types. For a long time, our answer was "you can't". You actually can, but we don't encourage it.
+If you're trying to extend the new Checkout block, you might notice the previous `checkout_fields` isn't working. This is intentional as we want to offer more curated extensibility paths. With that said, one of the most common requests we get is how to disable Checkout fields for certain order types. This is not something we encourage, but we are sharing the details due to how commonly requested it is.
 
 ## Why we don't encourage removing fields
 
-The simple reason is that Checkout is complex, and many plugins need different data, payment methods will need your address info to run fraud detection, or validate your card, tax (including core) will need your full address to calculate taxes correctly, this is something we still think about in Checkout and are looking for a universal solution, until then, you can go with code, and here's how:
+The simple reason is that Checkout is complex, and many plugins need different data, payment methods will need your address info to run fraud detection, or validate your card, tax (including core) will need your full address to calculate taxes correctly, this is something we still think about in Checkout and are looking for a universal solution. While we work on this solution, the document below will help you remove checkout fields.
 
 ## Disabling fields for a single country
 
-Checkout fields still respects country locale, which means you can modify fields for a country via PHP and this would work fine. The following billing form has 10 fields, 7 of them are required:
+Checkout fields still respect country locale, which means you can modify fields for a country via PHP and this would work fine. The following billing form has 10 fields, 7 of them are required:
 
 ![Image](https://github.com/user-attachments/assets/63d83769-c20c-4c85-aebf-da8510d1d9ae)
 
