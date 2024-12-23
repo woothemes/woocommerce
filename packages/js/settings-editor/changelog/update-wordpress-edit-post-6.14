@@ -1,0 +1,4 @@
+Significance: patch
+Type: update
+
+Comment: Settings: update the `@wordpress/edit-site` pkg to 6.14.0
