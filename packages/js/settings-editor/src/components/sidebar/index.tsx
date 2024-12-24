@@ -3,6 +3,7 @@
  */
 import { createElement } from '@wordpress/element';
 import * as icons from '@wordpress/icons';
+import { privateApis as routerPrivateApis } from '@wordpress/router';
 
 /* eslint-disable @woocommerce/dependency-group */
 // eslint-disable-next-line @wordpress/no-unsafe-wp-apis
@@ -11,6 +12,8 @@ import { __experimentalItemGroup as ItemGroup } from '@wordpress/components';
 import SidebarNavigationScreen from '@wordpress/edit-site/build-module/components/sidebar-navigation-screen';
 // @ts-ignore No types for this exist yet.
 import SidebarNavigationItem from '@wordpress/edit-site/build-module/components/sidebar-navigation-item';
+// @ts-ignore No types for this exist yet.
+import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
 /* eslint-enable @woocommerce/dependency-group */
 
 /**
@@ -18,8 +21,13 @@ import SidebarNavigationItem from '@wordpress/edit-site/build-module/components/
  */
 import { getSettingsSectionPath } from '../../utils';
 
+const { useLocation } = unlock( routerPrivateApis );
+
 const SidebarNavigationScreenContent = () => {
 	const settingsData: SettingsData = window.wcSettings?.admin?.settingsData;
+
+	const { name } = useLocation();
+
 	if ( ! settingsData ) {
 		return null;
 	}
@@ -35,6 +43,7 @@ const SidebarNavigationScreenContent = () => {
 							icons[ icon as keyof typeof icons ] ||
 							icons.settings
 						}
+						aria-current={ name === slug }
 						uid={ slug }
 						key={ slug }
 						to={ getSettingsSectionPath( settingsData[ slug ] ) }
