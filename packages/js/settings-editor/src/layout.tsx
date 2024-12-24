@@ -50,7 +50,7 @@ export function Layout( { tabs = [], activeSection }: LayoutProps ) {
 	const isMobileViewport = useViewportMatch( 'medium', '<' );
 	const disableMotion = useReducedMotion();
 
-	const { slug, name, areas, widths } = useLocation();
+	const { name, areas, widths } = useLocation();
 
 	return (
 		<>
@@ -86,7 +86,7 @@ export function Layout( { tabs = [], activeSection }: LayoutProps ) {
 										ref={ toggleRef }
 										isTransparent={ false }
 									/>
-									<SidebarContent routeKey={ slug }>
+									<SidebarContent routeKey={ name }>
 										{ areas.sidebar }
 									</SidebarContent>
 								</motion.div>
