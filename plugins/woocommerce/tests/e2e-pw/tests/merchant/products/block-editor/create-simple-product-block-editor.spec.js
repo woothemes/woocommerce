@@ -34,7 +34,7 @@ const productData = {
 
 test.describe.configure( { mode: 'serial' } );
 
-test.describe( 'General tab', { tag: [ tags.GUTENBERG, tags.ONLY ] }, () => {
+test.describe( 'General tab', { tag: [ tags.GUTENBERG ] }, () => {
 	test.describe( 'Simple product form', () => {
 		test(
 			'renders each block without error',
