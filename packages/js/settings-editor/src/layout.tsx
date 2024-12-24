@@ -15,9 +15,7 @@ import {
 	privateApis as editorPrivateApis,
 } from '@wordpress/editor';
 import {
-	// @ts-expect-error missing type.
 	__unstableMotion as motion,
-	// @ts-expect-error missing type.
 	__unstableAnimatePresence as AnimatePresence,
 } from '@wordpress/components';
 import { createElement, Fragment, useRef } from '@wordpress/element';
@@ -119,6 +117,7 @@ export function Layout( {
 								tabs={ tabs }
 								activeSection={ activeSection }
 							>
+								{ /* @ts-expect-error -- TODO: react-18-upgrade - examine why the type is inference doesn't match the code */ }
 								{ areas.content }
 							</SectionTabs>
 						</div>
@@ -131,6 +130,7 @@ export function Layout( {
 								maxWidth: widths?.edit,
 							} }
 						>
+							{ /* @ts-expect-error -- TODO: react-18-upgrade - examine why the type is inference doesn't match the code */ }
 							{ areas.edit }
 						</div>
 					) }

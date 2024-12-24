@@ -13,7 +13,8 @@ import './style.scss';
 import './editor.scss';
 import '../../../base/components/quantity-selector/style.scss';
 
-const blockSettings = {
+const blockConfig = {
+	...metadata,
 	edit: AddToCartFormEdit,
 	icon: {
 		src: (
@@ -29,9 +30,6 @@ const blockSettings = {
 	},
 };
 
-registerProductBlockType( {
-	blockName: metadata.name,
-	blockMetadata: metadata,
-	blockSettings,
+registerProductBlockType( blockConfig, {
 	isAvailableOnPostEditor: true,
 } );

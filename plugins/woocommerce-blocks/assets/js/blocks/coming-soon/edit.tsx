@@ -11,8 +11,8 @@ import { PanelBody, ColorPicker } from '@wordpress/components';
 import { type BlockEditProps } from '@wordpress/blocks';
 
 export type Attributes = {
-	color: string;
-	storeOnly: boolean;
+	color?: string;
+	storeOnly?: boolean;
 };
 
 export type EditProps = BlockEditProps< Attributes >;
@@ -25,7 +25,10 @@ export default function Edit( { attributes, setAttributes }: EditProps ) {
 	const { color, storeOnly } = attributes;
 	const blockProps = { ...useBlockProps() };
 
-	if ( storeOnly ) {
+	// Existance of storeOnly attribute means it doesn't have a background color,
+	// absense of custom color attribute means it's post-v1 template,
+	// in both cases, no need to show the color picker.
+	if ( storeOnly || ! color ) {
 		return (
 			<div { ...blockProps }>
 				<InnerBlocks />

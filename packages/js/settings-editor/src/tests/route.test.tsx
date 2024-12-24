@@ -2,8 +2,7 @@
  * External dependencies
  */
 import { createElement } from '@wordpress/element';
-import { renderHook } from '@testing-library/react-hooks';
-import { screen, render } from '@testing-library/react';
+import { screen, render, renderHook } from '@testing-library/react';
 import { addAction, applyFilters, didFilter } from '@wordpress/hooks';
 /* eslint-disable @woocommerce/dependency-group */
 // @ts-ignore No types for this exist yet.
