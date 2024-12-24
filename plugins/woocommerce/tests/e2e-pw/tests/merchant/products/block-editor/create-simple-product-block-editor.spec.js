@@ -68,6 +68,7 @@ test.describe( 'General tab', { tag: [ tags.GUTENBERG, tags.ONLY ] }, () => {
 
 		test(
 			'can create a simple product',
+			{ tag: tags.SKIP_ON_PRESSABLE },
 			async ( { page } ) => {
 				await test.step( 'add new product', async () => {
 					await page.goto( NEW_EDITOR_ADD_PRODUCT_URL );
