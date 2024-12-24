@@ -80,12 +80,12 @@ export const CesFeedbackButton = ( {
 							<TextareaControl
 								label={ feedbackLabel }
 								value={
-									extraFieldsValues.feedbackComment || ''
+									extraFieldsValues.feedback_comment || ''
 								}
 								onChange={ ( value ) =>
 									setExtraFieldsValues( {
 										...extraFieldsValues,
-										feedbackComment: value,
+										feedback_comment: value,
 									} )
 								}
 								placeholder={ feedbackPlaceholder }
