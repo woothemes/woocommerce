@@ -16,7 +16,7 @@ import SidebarNavigationItem from '@wordpress/edit-site/build-module/components/
 /**
  * Internal dependencies
  */
-import { getSettingsSectionPath } from '../routes/utils';
+import { getSettingsSectionPath } from '../../utils';
 
 const SidebarNavigationScreenContent = () => {
 	const settingsData: SettingsData = window.wcSettings?.admin?.settingsData;

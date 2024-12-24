@@ -25,9 +25,9 @@ import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
 /**
  * Internal dependencies
  */
-import { Sidebar } from './components';
-import { Route, Location } from './types';
-import { LegacyContent } from './legacy';
+import { Sidebar } from '../components';
+import { Route, Location } from '../types';
+import { LegacyContent } from '../legacy';
 
 const { useLocation } = unlock( routerPrivateApis );
 

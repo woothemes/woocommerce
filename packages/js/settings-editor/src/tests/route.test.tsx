@@ -12,7 +12,7 @@ import { privateApis } from '@wordpress/router';
 /**
  * Internal dependencies
  */
-import { useActiveRoute, useModernRoutes } from '../route';
+import { useActiveRoute, useModernRoutes } from '../routes/route';
 
 // Mock external dependencies
 jest.mock( '@wordpress/hooks', () => ( {
