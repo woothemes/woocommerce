@@ -304,9 +304,9 @@ class LaunchYourStore {
 	/**
 	 * Track the template change.
 	 *
-	 * @param int    $post_id The post ID.
-	 * @param object $post The post object.
-	 * @param bool   $update Whether the post is being updated.
+	 * @param int     $post_id The post ID.
+	 * @param WP_Post $post The post object.
+	 * @param bool    $update Whether the post is being updated.
 	 */
 	public function maybe_track_template_change( $post_id, $post, $update ) {
 		// Check multiple fields to avoid false matches with non-WooCommerce templates.
