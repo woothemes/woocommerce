@@ -6,14 +6,14 @@ namespace Automattic\WooCommerce\Tests\Internal\Admin\Suggestions;
 use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestionIncentives;
 use Automattic\WooCommerce\Tests\Internal\Admin\Suggestions\Mocks\FakeIncentive;
 use PHPUnit\Framework\MockObject\MockObject;
-use WC_REST_Unit_Test_Case;
+use WC_Unit_Test_Case;
 
 /**
  * PaymentExtensionSuggestionIncentives provider test.
  *
  * @class PaymentExtensionSuggestionIncentives
  */
-class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
+class PaymentExtensionSuggestionIncentivesTest extends WC_Unit_Test_Case {
 	/**
 	 * @var PaymentExtensionSuggestionIncentives
 	 */
