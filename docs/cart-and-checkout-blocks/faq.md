@@ -108,7 +108,7 @@ add_action(
 
 ### How to force-refresh the cart from the server
 
-This can be achieved using [`extensionCartUpdate`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-blocks/docs/third-party-developers/extensibility/rest-api/extend-rest-api-update-cart.md) which is the preferred way, but it is also possible by executing the `receiveCart` action on the `wc/store/cart` data store with a cart object, like so:
+This can be achieved using [`extensionCartUpdate`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-blocks/docs/third-party-developers/extensibility/rest-api/extend-rest-api-update-cart.md) which is the preferred way, but it is also possible by executing the `receiveCart` action on the `wc/store/cart` data store with a valid cart object, like so:
 
 ```js
 const { dispatch } = window.wp.data;
@@ -116,7 +116,17 @@ const { dispatch } = window.wp.data;
 dispatch( 'wc/store/cart' ).receiveCart( cartObject )
 ```
 
-All the cart routes on Store API return a cart object which can be used here.
+All the cart routes on Store API return a cart object which can be used here. Passing an invalid cart object here will cause errors in the block.
+
+You can also use:
+
+```js
+const { dispatch } = window.wp.data;
+
+dispatch('wc/store/cart').invalidateResolutionForStore()
+```
+
+However, this will cause a brief flash of an empty cart while the new cart is fetched. 
 
 ## Checkout modifications
 
