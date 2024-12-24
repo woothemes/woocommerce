@@ -38,7 +38,7 @@ async function deleteAllPatterns( editor, assembler ) {
 
 test.describe(
 	'Assembler -> Full composability',
-	{ tag: tags.GUTENBERG },
+	{ tag: [ tags.GUTENBERG, tags.NOT_E2E ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 

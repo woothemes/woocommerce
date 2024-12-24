@@ -192,6 +192,67 @@ class TransformerTest extends WC_Unit_Test_Case {
 
 
 	/**
+	 * Test group grouping with no ids present.
+	 */
+	public function test_group_grouping_no_ids(): void {
+		$input = array(
+			'tab1' => array(
+				'sections' => array(
+					'section1' => array(
+						'settings' => array(
+							array(
+								'type'  => 'title',
+								'title' => 'group 1',
+								'desc'  => 'Description 1',
+							),
+							array(
+								'type' => 'text',
+								'id'   => 'setting1',
+							),
+							array(
+								'type' => 'text',
+								'id'   => 'setting2',
+							),
+							array(
+								'type' => 'sectionend',
+							),
+						),
+					),
+				),
+			),
+		);
+
+		$expected = array(
+			'tab1' => array(
+				'sections' => array(
+					'section1' => array(
+						'settings' => array(
+							array(
+								'type'     => 'group',
+								'title'    => 'group 1',
+								'desc'     => 'Description 1',
+								'settings' => array(
+									array(
+										'type' => 'text',
+										'id'   => 'setting1',
+									),
+									array(
+										'type' => 'text',
+										'id'   => 'setting2',
+									),
+								),
+							),
+						),
+					),
+				),
+			),
+		);
+
+		$this->assertEquals( $expected, $this->transformer->transform( $input ), 'Expected group to be transformed' );
+	}
+
+
+	/**
 	 * Test multiple groups in a section.
 	 */
 	public function test_multiple_groups(): void {
@@ -618,9 +679,9 @@ class TransformerTest extends WC_Unit_Test_Case {
 		$this->assertEquals( $expected, $this->transformer->transform( $input ), 'Expected orphaned end checkbox to remain untransformed' );
 	}
 
-		/**
-		 * Test group with checkbox inside.
-		 */
+	/**
+	 * Test group with checkbox inside.
+	 */
 	public function test_group_with_checkbox_inside(): void {
 		$input = array(
 			'tab1' => array(
@@ -689,5 +750,73 @@ class TransformerTest extends WC_Unit_Test_Case {
 		);
 
 		$this->assertEquals( $expected, $this->transformer->transform( $input ), 'Expected nested sectionend and checkboxgroup to be transformed' );
+	}
+
+	/**
+	 * Test group with malformed checkboxgroup inside. The checkbox items should still be included in the group.
+	 */
+	public function test_group_with_malformed_checkboxgroup_inside(): void {
+		$input = array(
+			'tab1' => array(
+				'sections' => array(
+					'section1' => array(
+						'settings' => array(
+							array(
+								'type'  => 'title',
+								'id'    => 'group_1',
+								'title' => 'group 1',
+							),
+							array(
+								'type'          => 'checkbox',
+								'id'            => 'check1',
+								'title'         => 'Checkbox Group',
+								'checkboxgroup' => 'start',
+							),
+							array(
+								'type'          => 'checkbox',
+								'id'            => 'check2',
+								// Starting a new group without closing the previous one.
+								'checkboxgroup' => 'start',
+							),
+							array(
+								'type' => 'sectionend',
+								'id'   => 'group_1',
+							),
+						),
+					),
+				),
+			),
+		);
+
+		$expected = array(
+			'tab1' => array(
+				'sections' => array(
+					'section1' => array(
+						'settings' => array(
+							array(
+								'type'     => 'group',
+								'id'       => 'group_1',
+								'title'    => 'group 1',
+								'settings' => array(
+									array(
+										'type'          => 'checkbox',
+										'id'            => 'check1',
+										'title'         => 'Checkbox Group',
+										'checkboxgroup' => 'start',
+									),
+									array(
+										'type'          => 'checkbox',
+										'id'            => 'check2',
+										'checkboxgroup' => 'start',
+									),
+								),
+							),
+						),
+					),
+				),
+			),
+		);
+
+		$this->assertEquals( $expected, $this->transformer->transform( $input ), 'Expected nested sectionend and malformed checkboxgroup to be transformed' );
 	}
 }

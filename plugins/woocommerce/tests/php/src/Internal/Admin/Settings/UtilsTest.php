@@ -5,6 +5,7 @@ namespace Automattic\WooCommerce\Tests\Internal\Admin\Settings;
 
 use Automattic\WooCommerce\Internal\Admin\Settings\Utils;
 use WC_Unit_Test_Case;
+use WP_Locale;
 
 /**
  * Payments settings utilities test.
@@ -1576,5 +1577,160 @@ class UtilsTest extends WC_Unit_Test_Case {
 				'plugin-slug',
 			),
 		);
+	}
+
+	/**
+	 * Test truncation with words.
+	 *
+	 * @dataProvider data_provider_truncate_with_words
+	 *
+	 * @param string $text     The text to truncate.
+	 * @param int    $length   The length to truncate the text to.
+	 * @param string $expected The expected truncated text.
+	 */
+	public function test_truncate_with_words( string $text, int $length, string $expected ) {
+		// Act.
+		$truncated = Utils::truncate_with_words( $text, $length );
+
+		// Assert.
+		$this->assertSame( $expected, $truncated );
+	}
+
+	/**
+	 * Data provider for the test_truncate_with_words test.
+	 *
+	 * @return array
+	 */
+	public function data_provider_truncate_with_words(): array {
+		return array(
+			'empty text'                   => array(
+				'',
+				10,
+				'',
+			),
+			'text shorter than the length' => array(
+				'Hello, world!',
+				20,
+				'Hello, world!',
+			),
+			'text longer than the length'  => array(
+				'Hello, world! This is a test.',
+				14,
+				'Hello, world!',
+			),
+			'text longer than length - does not cut word #1' => array(
+				'Hello, world! This_is_not_cut is a test.',
+				20,
+				'Hello, world! This_is_not_cut',
+			),
+			'text longer than length - does not cut word #2' => array(
+				'Hello, world! This_is_not_cut is a test.',
+				27,
+				'Hello, world! This_is_not_cut',
+			),
+		);
+	}
+
+	/**
+	 * Test truncation with words and appending a string when truncating.
+	 *
+	 * @dataProvider data_provider_truncate_with_words_append
+	 *
+	 * @param string $text     The text to truncate.
+	 * @param int    $length   The length to truncate the text to.
+	 * @param string $append   The string to append when truncating.
+	 * @param string $expected The expected truncated text.
+	 */
+	public function test_truncate_with_words_append( string $text, int $length, string $append, string $expected ) {
+		// Act.
+		$truncated = Utils::truncate_with_words( $text, $length, $append );
+
+		// Assert.
+		$this->assertSame( $expected, $truncated );
+	}
+
+	/**
+	 * Data provider for the truncate_with_words_append test.
+	 *
+	 * @return array
+	 */
+	public function data_provider_truncate_with_words_append(): array {
+		return array(
+			'empty text'                                 => array(
+				'',
+				10,
+				'...',
+				'',
+			),
+			'text shorter than the length'               => array(
+				'Hello, world!',
+				20,
+				'...',
+				'Hello, world!',
+			),
+			'text longer than the length'                => array(
+				'Hello, world! This is a test.',
+				14,
+				'...',
+				'Hello, world!...',
+			),
+			'text longer than length - does not cut word #1' => array(
+				'Hello, world! This_is_not_cut is a test.',
+				20,
+				'...',
+				'Hello, world! This_is_not_cut...',
+			),
+			'text longer than length - does not cut word #2' => array(
+				'Hello, world! This_is_not_cut is a test.',
+				27,
+				'...',
+				'Hello, world! This_is_not_cut...',
+			),
+			'text longer than the length - UTF-8 append' => array(
+				'Hello, world! This is a test.',
+				14,
+				'…',
+				'Hello, world!…',
+			),
+			'text longer than the length - single char append' => array(
+				'Hello, world! This is a test.',
+				14,
+				'*',
+				'Hello, world!*',
+			),
+		);
+	}
+
+	/**
+	 * Test truncation with words when dealing with locale that counts characters, not words.
+	 */
+	public function test_truncate_with_words_locale() {
+		global $wp_locale;
+
+		// Arrange.
+		$tmp_local = $wp_locale;
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$wp_locale                  = new WP_Locale();
+		$wp_locale->word_count_type = 'characters_excluding_spaces';
+
+		$text = '尉ち雨　ケ　ッピみ　イカ援'; // Translation of: 'This is just a test! for truncating without cutting words.'.
+
+		// Act.
+		$truncated = Utils::truncate_with_words( $text, 8, '...' );
+
+		// Assert.
+		// The space separators are ignored, so the text is truncated at the 8th character.
+		$this->assertSame( '尉ち雨　ケ　ッピ...', $truncated );
+
+		// Act.
+		$truncated = Utils::truncate_with_words( $text, 15, '...' );
+
+		// Assert.
+		// No truncation or appending.
+		$this->assertSame( $text, $truncated );
+
+		// Cleanup.
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$wp_locale = $tmp_local;
 	}
 }

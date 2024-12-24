@@ -6,6 +6,7 @@
  */
 
 use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Enums\ProductType;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -815,9 +816,9 @@ class WC_Form_Handler {
 
 		$add_to_cart_handler = apply_filters( 'woocommerce_add_to_cart_handler', $adding_to_cart->get_type(), $adding_to_cart );
 
-		if ( 'variable' === $add_to_cart_handler || 'variation' === $add_to_cart_handler ) {
+		if ( ProductType::VARIABLE === $add_to_cart_handler || ProductType::VARIATION === $add_to_cart_handler ) {
 			$was_added_to_cart = self::add_to_cart_handler_variable( $product_id );
-		} elseif ( 'grouped' === $add_to_cart_handler ) {
+		} elseif ( ProductType::GROUPED === $add_to_cart_handler ) {
 			$was_added_to_cart = self::add_to_cart_handler_grouped( $product_id );
 		} elseif ( has_action( 'woocommerce_add_to_cart_handler_' . $add_to_cart_handler ) ) {
 			do_action( 'woocommerce_add_to_cart_handler_' . $add_to_cart_handler, $url ); // Custom handler.
@@ -937,7 +938,7 @@ class WC_Form_Handler {
 		}
 
 		// Prevent parent variable product from being added to cart.
-		if ( empty( $variation_id ) && $product && $product->is_type( 'variable' ) ) {
+		if ( empty( $variation_id ) && $product && $product->is_type( ProductType::VARIABLE ) ) {
 			/* translators: 1: product link, 2: product name */
 			wc_add_notice( sprintf( __( 'Please choose product options by visiting <a href="%1$s" title="%2$s">%2$s</a>.', 'woocommerce' ), esc_url( get_permalink( $product_id ) ), esc_html( $product->get_name() ) ), 'error' );
 
