@@ -2,12 +2,9 @@
 
 namespace Automattic\WooCommerce\Admin\Features;
 
-use Automattic\WooCommerce\Admin\PageController;
 use Automattic\WooCommerce\Admin\PluginsHelper;
-use Automattic\WooCommerce\Blocks\Utils\BlockTemplateUtils;
 use Automattic\WooCommerce\Admin\WCAdminHelper;
 use Automattic\WooCommerce\Internal\Admin\WCAdminUser;
-use Automattic\WooCommerce\Internal\Admin\WCAdminAssets;
 
 
 /**
@@ -302,18 +299,19 @@ class LaunchYourStore {
 	}
 
 	/**
-	 * Track the template change.
+	 * Track when coming soon template is changed.
 	 *
 	 * @param int     $post_id The post ID.
 	 * @param WP_Post $post The post object.
 	 * @param bool    $update Whether the post is being updated.
 	 */
 	public function maybe_track_template_change( $post_id, $post, $update ) {
+		if ( ! $post instanceof \WP_Post || ! isset( $post->post_name, $post->post_title ) ) {
+			return;
+		}
+
 		// Check multiple fields to avoid false matches with non-WooCommerce templates.
-		if ( isset( $post->post_name ) &&
-			'coming-soon' === $post->post_name &&
-			'Page: Coming soon' === $post->post_title
-			) {
+		if ( 'coming-soon' === $post->post_name && 'Page: Coming soon' === $post->post_title ) {
 			$matches = array();
 			$content = $post->post_content;
 			preg_match( '/"comingSoonPatternId":"([^"]+)"/', $content, $matches );
