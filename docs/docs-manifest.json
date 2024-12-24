@@ -309,7 +309,7 @@
               "menu_title": "Hook alternatives",
               "tags": "reference",
               "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/cart-and-checkout-blocks/hooks/hook-alternatives.md",
-              "hash": "ab6bfaaeace75b9b6d3d36d175136f2070f07cd8da9623224db9454d447ddbb3",
+              "hash": "3e47e81185181d6a86764ddc90c9f7700189fe217387fc79bd19018b7efe4ea6",
               "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/hooks/hook-alternatives.md",
               "id": "8eed024a999bde3db20e86556b9dd0efaba814bd"
             }
@@ -1894,5 +1894,5 @@
       "categories": []
     }
   ],
-  "hash": "b86f1f8ac2d88f878f8a569a025534541198cf0aa587b68e7ab1ef3290d21548"
+  "hash": "edd646335292ca4aeeb4b03cfc7136957dc3c37cbd1a11c1daad8ba6332c0823"
 }
