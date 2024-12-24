@@ -13,6 +13,7 @@ import Save from './save';
 import metadata from './block.json';
 import deprecated from './deprecated';
 import NewsletterPanel from './newsletter-panel';
+import ProductImagesPanel from './product-images-panel';
 import './store-only.scss';
 import './entire-site.scss';
 
@@ -27,6 +28,11 @@ registerBlockType( metadata, {
 if ( typeof window.comingSoonNewsletter !== 'undefined' ) {
 	registerPlugin( 'plugin-coming-soon-newsletter-setting-panel', {
 		render: NewsletterPanel,
+		icon: 'palmtree',
+	} );
+
+	registerPlugin( 'plugin-coming-soon-product-images-setting-panel', {
+		render: ProductImagesPanel,
 		icon: 'palmtree',
 	} );
 }

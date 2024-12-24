@@ -101,6 +101,41 @@ class LaunchYourStore {
 				),
 			)
 		);
+
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->rest_base . '/template-settings',
+			array(
+				array(
+					'methods'             => 'GET',
+					'callback'            => array( $this, 'get_template_settings' ),
+					'permission_callback' => function () {
+						return current_user_can( 'edit_theme_options' );
+					}
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->rest_base . '/template-settings',
+			array(
+				array(
+					'methods'             => 'PUT',
+					'callback'            => array( $this, 'post_template_settings' ),
+					'permission_callback' => function () {
+						return current_user_can( 'edit_theme_options' );
+					},
+					'args'                => array(
+						'product_images' => array(
+							'type' => 'string',
+							'enum' => array( 'yes', 'no' ),
+							'required' => true, // Make it required
+						),
+					),
+				),
+			)
+		);
 	}
 
 	/**
@@ -218,5 +253,30 @@ class LaunchYourStore {
 	 */
 	public function has_survey_completed() {
 		return new \WP_REST_Response( get_option( 'woocommerce_admin_launch_your_store_survey_completed', 'no' ) );
+	}
+
+	/**
+	 * Return coming_soon_template_settings option.
+	 *
+	 * @return \WP_REST_Response
+	 */
+	public function get_template_settings() {
+		$obj = get_option( 'woocommerce_coming_soon_template_settings', new \StdClass() );
+		if ( ! isset( $obj->product_images ) ) {
+			$obj->product_images = 'yes';
+		}
+		return new \WP_REST_Response( $obj );
+	}
+
+	/**
+	 * Update coming_soon_template_settings option.
+	 *
+	 * @return \WP_REST_Response
+	 */
+	public function post_template_settings( \WP_REST_Request $request ) {
+		$obj = get_option( 'woocommerce_coming_soon_template_settings', new \StdClass() );
+		$obj->product_images = $request->get_param( 'product_images' );
+		update_option( 'woocommerce_coming_soon_template_settings', $obj );
+		return new \WP_REST_Response( $obj );
 	}
 }
