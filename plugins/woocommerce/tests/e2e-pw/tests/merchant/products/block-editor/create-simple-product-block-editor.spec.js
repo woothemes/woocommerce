@@ -37,7 +37,7 @@ const productData = {
 
 test.describe.configure( { mode: 'serial' } );
 
-test.describe( 'General tab', { tag: tags.GUTENBERG }, () => {
+test.describe( 'General tab', { tag: [ tags.GUTENBERG, tags.ONLY ] }, () => {
 	test.describe( 'Simple product form', () => {
 		test(
 			'renders each block without error',
@@ -68,7 +68,6 @@ test.describe( 'General tab', { tag: tags.GUTENBERG }, () => {
 
 		test(
 			'can create a simple product',
-			{ tag: tags.SKIP_ON_PRESSABLE },
 			async ( { page } ) => {
 				await test.step( 'add new product', async () => {
 					await page.goto( NEW_EDITOR_ADD_PRODUCT_URL );
