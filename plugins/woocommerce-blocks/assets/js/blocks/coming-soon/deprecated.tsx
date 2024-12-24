@@ -2,15 +2,32 @@
  * External dependencies
  */
 import { useBlockProps, InnerBlocks } from '@wordpress/block-editor';
+
 /**
  * Internal dependencies
  */
 import { generateStyles } from './styles';
-import metadata from './block.json';
+
+const v1Metadata = {
+	attributes: {
+		color: {
+			type: 'string',
+		},
+		storeOnly: {
+			type: 'boolean',
+			default: false,
+		},
+	},
+	supports: {
+		color: {
+			background: false,
+			text: true,
+		},
+	},
+};
 
 const v1 = {
-	attributes: metadata.attributes,
-	supports: metadata.supports,
+	...v1Metadata,
 	save: ( {
 		attributes,
 	}: {

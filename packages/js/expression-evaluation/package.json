@@ -32,7 +32,7 @@
 		"build-types"
 	],
 	"dependencies": {
-		"@wordpress/i18n": "wp-6.0",
+		"@wordpress/i18n": "wp-6.6",
 		"peggy": "^3.0.2"
 	},
 	"publishConfig": {
