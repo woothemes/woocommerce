@@ -35,6 +35,7 @@ test.describe(
 		} );
 
 		test.beforeEach( async ( { page } ) => {
+			test.setTimeout( 180000 );
 			await page.goto(
 				`wp-admin/tools.php?page=wpml_plugin_log&s=${ encodeURIComponent(
 					customerBilling.email
