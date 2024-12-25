@@ -19,7 +19,7 @@ export type Route = {
 		/**
 		 * The mobile component.
 		 */
-		mobile?: React.ReactNode | boolean;
+		mobile?: React.ReactNode;
 		/**
 		 * Whether the page can be previewed.
 		 */
