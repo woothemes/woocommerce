@@ -36,7 +36,7 @@ class ProductCategoriesById extends AbstractRoute {
 	 * @return string
 	 */
 	public static function get_path_regex() {
-		return '/products/categories/(?P<id>[\d]+)';
+		return '/products/categories/(?P<identifier>[\w-]+)';
 	}
 
 	/**
@@ -47,10 +47,10 @@ class ProductCategoriesById extends AbstractRoute {
 	public function get_args() {
 		return [
 			'args'   => array(
-				'id' => array(
+				'identifier' => array(
 					'description' => __( 'Unique identifier for the resource.', 'woocommerce' ),
-					'type'        => 'integer',
-				),
+					'type'        => 'string',
+				)
 			),
 			[
 				'methods'             => \WP_REST_Server::READABLE,
@@ -76,11 +76,21 @@ class ProductCategoriesById extends AbstractRoute {
 	 * @return \WP_REST_Response
 	 */
 	protected function get_route_response( \WP_REST_Request $request ) {
-		$object = get_term( (int) $request['id'], 'product_cat' );
-
-		if ( ! $object || 0 === $object->id ) {
-			throw new RouteException( 'woocommerce_rest_category_invalid_id', __( 'Invalid category ID.', 'woocommerce' ), 404 );
+		if ( isset( $request['identifier'] ) && is_numeric( $request['identifier'] ) ) {
+			$object = get_term( (int) $request['identifier'], 'product_cat' );
+		} else {
+			$object = get_term_by( 'slug', $request['identifier'], 'product_cat' );
 		}
+
+		if ( ! $object ) {
+			if ( isset( $request['identifier'] ) && is_numeric( $request['identifier'] ) ) {
+				throw new RouteException( 'woocommerce_rest_category_invalid_id', __( 'Invalid category ID.', 'woocommerce' ), 404 );
+			} else {
+				throw new RouteException( 'woocommerce_rest_category_invalid_slug', __( 'Invalid category slug.', 'woocommerce' ), 404 );
+			}
+		}
+
+
 
 		$data = $this->prepare_item_for_response( $object, $request );
 		return rest_ensure_response( $data );
