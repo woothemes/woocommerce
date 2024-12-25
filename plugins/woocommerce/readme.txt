@@ -307,7 +307,6 @@ WooCommerce comes with some sample data you can use to see how products look; im
 * Update - Include purge cache when coming soon template is updated in documentation [#52695](https://github.com/woocommerce/woocommerce/pull/52695)
 * Update - Introduce opt-in WooCommerce rebranding [#53308](https://github.com/woocommerce/woocommerce/pull/53308)
 * Update - Limit core profiler extensions to 8 maximum [#53742](https://github.com/woocommerce/woocommerce/pull/53742)
-* Update - Modernize product & coupon editor UI. [#52632](https://github.com/woocommerce/woocommerce/pull/52632)
 * Update - Product Collection: move "Display Settings" from Toolbar to Inspector Controls [#52666](https://github.com/woocommerce/woocommerce/pull/52666)
 * Update - Removed final use of the FeatureGating class and deprecated it. [#52768](https://github.com/woocommerce/woocommerce/pull/52768)
 * Update - Remove usage of the AccessiblePrivateMethods trait [#52937](https://github.com/woocommerce/woocommerce/pull/52937)
