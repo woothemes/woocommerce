@@ -383,20 +383,28 @@ test.describe( 'General tab', { tag: [ tags.GUTENBERG ] }, () => {
 
 				// Verify summary
 				await expect(
-					page.getByText( productData.summary )
+					page
+						.locator( '#wp--skip-link--target' )
+						.getByText( productData.summary )
 				).toBeVisible();
 
 				// Verify description
 				await page.getByRole( 'tab', { name: 'Description' } ).click();
 
 				await expect(
-					page.getByText( productData.descriptionTitle )
+					page.getByRole( 'heading', {
+						name: productData.descriptionTitle,
+					} )
 				).toBeVisible();
 				await expect(
-					page.getByText( productData.descriptionSimple )
+					page
+						.getByLabel( 'Description' )
+						.getByText( productData.descriptionSimple )
 				).toBeVisible();
 				await expect(
-					page.getByText( productData.descriptionParagraph )
+					page
+						.getByLabel( 'Description' )
+						.getByText( productData.descriptionParagraph )
 				).toBeVisible();
 
 				// Verify inventory details
