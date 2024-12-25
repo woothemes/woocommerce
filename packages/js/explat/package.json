@@ -56,8 +56,8 @@
 	"dependencies": {
 		"@automattic/explat-client": "^0.0.5",
 		"@automattic/explat-client-react-helpers": "^0.0.6",
-		"@wordpress/api-fetch": "wp-6.0",
-		"@wordpress/hooks": "wp-6.0",
+		"@wordpress/api-fetch": "wp-6.6",
+		"@wordpress/hooks": "wp-6.6",
 		"cookie": "^0.4.2",
 		"qs": "^6.11.2"
 	},
@@ -67,7 +67,7 @@
 		"@types/jest": "27.5.x",
 		"@types/node": "20.x.x",
 		"@types/qs": "^6.9.10",
-		"@types/react": "17.0.x",
+		"@types/react": "18.3.x",
 		"@woocommerce/eslint-plugin": "workspace:*",
 		"@woocommerce/internal-js-tests": "workspace:*",
 		"concurrently": "^7.6.0",

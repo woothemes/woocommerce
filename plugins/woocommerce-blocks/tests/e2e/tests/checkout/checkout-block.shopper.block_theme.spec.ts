@@ -261,18 +261,16 @@ test.describe( 'Shopper → Shipping and Billing Addresses', () => {
 			canvas: 'edit',
 		} );
 
+		await editor.openDocumentSettingsSidebar();
 		await editor.selectBlocks(
 			blockSelectorInEditor +
 				'  [data-type="woocommerce/checkout-shipping-address-block"]'
 		);
-
-		await editor.openDocumentSettingsSidebar();
-
 		const checkbox = page.getByRole( 'checkbox', {
 			name: 'Company',
 			exact: true,
 		} );
-		await checkbox.check();
+		await checkbox.click();
 		await expect( checkbox ).toBeChecked();
 		await expect(
 			editor.canvas.locator(

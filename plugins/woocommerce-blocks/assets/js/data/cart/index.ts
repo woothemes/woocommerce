@@ -1,7 +1,12 @@
 /**
  * External dependencies
  */
-import { register, subscribe, createReduxStore } from '@wordpress/data';
+import {
+	register,
+	subscribe,
+	createReduxStore,
+	dispatch as wpDispatch,
+} from '@wordpress/data';
 import { controls as dataControls } from '@wordpress/data-controls';
 
 /**
@@ -19,6 +24,12 @@ import {
 	debouncedUpdatePaymentMethods,
 } from './update-payment-methods';
 import { ResolveSelectFromMap } from '../mapped-types';
+import {
+	hasCartSession,
+	persistenceLayer,
+	isAddingToCart,
+} from './persistence-layer';
+import { defaultCartState } from './default-state';
 
 const store = createReduxStore( STORE_KEY, {
 	reducer,
@@ -27,9 +38,28 @@ const store = createReduxStore( STORE_KEY, {
 	controls: dataControls,
 	selectors,
 	resolvers,
+	initialState: {
+		...defaultCartState,
+		cartData: {
+			...defaultCartState.cartData,
+			...( persistenceLayer.get() || {} ),
+		},
+	},
 } );
 
 register( store );
+
+// The resolver for getCartData fires off an API request. But if we know the cart is empty, we can skip the request.
+// Likewise, if we have a valid persistent cart, we can skip the request.
+// The only reliable way to check if the cart is empty is to check the cookies.
+window.addEventListener( 'load', () => {
+	if (
+		( ! hasCartSession() || persistenceLayer.get() ) &&
+		! isAddingToCart
+	) {
+		wpDispatch( STORE_KEY ).finishResolution( 'getCartData' );
+	}
+} );
 
 // Pushes changes whenever the store is updated.
 subscribe( pushChanges, store );

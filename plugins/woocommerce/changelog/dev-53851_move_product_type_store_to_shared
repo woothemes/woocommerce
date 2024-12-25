@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+Comment: Move ProductType store to shared folder #53852
