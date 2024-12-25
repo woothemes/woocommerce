@@ -67,7 +67,7 @@ class Batch extends AbstractRoute implements RouteInterface {
 						'properties' => array(
 							'method'  => array(
 								'type'    => 'string',
-								'enum'    => array( 'POST', 'PUT', 'PATCH', 'DELETE' ),
+								'enum'    => apply_filters( '__experimental_woocommerce_store_api_batch_request_methods', array( 'POST', 'PUT', 'PATCH', 'DELETE' ) ),
 								'default' => 'POST',
 							),
 							'path'    => array(
