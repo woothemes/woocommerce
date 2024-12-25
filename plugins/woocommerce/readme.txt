@@ -301,7 +301,6 @@ WooCommerce comes with some sample data you can use to see how products look; im
 * Update - Enable remote logging UI and mark feature as stable in FeaturesController [#53649](https://github.com/woocommerce/woocommerce/pull/53649)
 * Update - Ensure Modern settings pages re-render on updated url [#53016](https://github.com/woocommerce/woocommerce/pull/53016)
 * Update - feat: add product review fields autocomplete attribute [#51970](https://github.com/woocommerce/woocommerce/pull/51970)
-* Update - Hide "Add new _" buttons from Product & Coupon editor pages. [#53121](https://github.com/woocommerce/woocommerce/pull/53121)
 * Update - Implement accepting and applying WooPayments incentives from the new Payments settings page. [#53672](https://github.com/woocommerce/woocommerce/pull/53672)
 * Update - Implement drag and drop ordering on the React payment settings page. [#53301](https://github.com/woocommerce/woocommerce/pull/53301)
 * Update - Include purge cache when coming soon template is updated in documentation [#52695](https://github.com/woocommerce/woocommerce/pull/52695)
