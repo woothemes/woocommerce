@@ -152,9 +152,7 @@ test.describe(
 					page.getByRole( 'heading', { name: testPage.title } )
 				).toBeVisible();
 				await expect(
-					page
-						.getByRole( 'group', { name: 'Contact information' } )
-						.locator( 'legend' )
+					page.getByRole( 'heading', { name: 'Contact information' } )
 				).toBeVisible();
 				await expect(
 					page
