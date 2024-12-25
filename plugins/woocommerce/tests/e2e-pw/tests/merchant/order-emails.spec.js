@@ -11,7 +11,7 @@ test.describe(
 		test.use( { storageState: process.env.ADMINSTATE } );
 
 		const customerBilling = {
-			email: 'john.doe.merchant.test@example.com',
+			email: `john.doe.merchant.test.${ Date.now() }@example.com`,
 		};
 
 		const storeName = 'WooCommerce Core E2E Test Suite';
