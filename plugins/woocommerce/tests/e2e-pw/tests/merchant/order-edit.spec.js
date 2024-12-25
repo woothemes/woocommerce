@@ -7,6 +7,7 @@ test.describe( 'Edit order', { tag: [ tags.SERVICES, tags.HPOS ] }, () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
 	let orderId, secondOrderId, orderToCancel, customerId;
+	const username = `big.archie.${ Date.now() }`;
 
 	test.beforeAll( async ( { baseURL } ) => {
 		const api = new wcApi( {
@@ -37,7 +38,6 @@ test.describe( 'Edit order', { tag: [ tags.SERVICES, tags.HPOS ] }, () => {
 				orderToCancel = response.data.id;
 			} );
 
-		const username = `big.archie.${ Date.now() }`;
 		await api
 			.post( 'customers', {
 				email: `${ username }@email.addr`,
@@ -268,7 +268,7 @@ test.describe( 'Edit order', { tag: [ tags.SERVICES, tags.HPOS ] }, () => {
 			await page
 				.getByRole( 'combobox' )
 				.nth( 4 )
-				.pressSequentially( 'big.archie' );
+				.pressSequentially( username );
 			await page.waitForSelector( 'li.select2-results__option' );
 			await page.locator( 'li.select2-results__option' ).click();
 		} );
@@ -326,7 +326,7 @@ test.describe( 'Edit order', { tag: [ tags.SERVICES, tags.HPOS ] }, () => {
 			await page
 				.getByRole( 'combobox' )
 				.nth( 4 )
-				.pressSequentially( 'big.archie' );
+				.pressSequentially( username );
 			await page.waitForSelector( 'li.select2-results__option' );
 			await page.locator( 'li.select2-results__option' ).click();
 		} );
