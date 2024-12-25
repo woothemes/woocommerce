@@ -6,6 +6,7 @@
 namespace Automattic\WooCommerce\Internal\DataStores\Orders;
 
 use Automattic\WooCommerce\Caches\OrderCacheController;
+use Automattic\WooCommerce\Caches\OrderAggregateCacheService;
 use Automattic\WooCommerce\Database\Migrations\CustomOrderTable\PostsToOrdersMigrationController;
 use Automattic\WooCommerce\Internal\Admin\Orders\EditLock;
 use Automattic\WooCommerce\Internal\BatchProcessing\{ BatchProcessingController, BatchProcessorInterface };
@@ -125,6 +126,7 @@ class DataSynchronizer implements BatchProcessorInterface {
 	 * @param LegacyProxy                      $legacy_proxy The legacy proxy instance to use.
 	 * @param OrderCacheController             $order_cache_controller The order cache controller instance to use.
 	 * @param BatchProcessingController        $batch_processing_controller The batch processing controller to use.
+	 * @param OrderAggregateCacheService       $order_aggregate_cache_service The aggregate cache service to use.
 	 * @internal
 	 */
 	final public function init(
@@ -133,15 +135,17 @@ class DataSynchronizer implements BatchProcessorInterface {
 		PostsToOrdersMigrationController $posts_to_cot_migrator,
 		LegacyProxy $legacy_proxy,
 		OrderCacheController $order_cache_controller,
-		BatchProcessingController $batch_processing_controller
+		BatchProcessingController $batch_processing_controller,
+		OrderAggregateCacheService $order_aggregate_cache_service
 	) {
-		$this->data_store                  = $data_store;
-		$this->database_util               = $database_util;
-		$this->posts_to_cot_migrator       = $posts_to_cot_migrator;
-		$this->legacy_proxy                = $legacy_proxy;
-		$this->error_logger                = $legacy_proxy->call_function( 'wc_get_logger' );
-		$this->order_cache_controller      = $order_cache_controller;
-		$this->batch_processing_controller = $batch_processing_controller;
+		$this->data_store                    = $data_store;
+		$this->database_util                 = $database_util;
+		$this->posts_to_cot_migrator         = $posts_to_cot_migrator;
+		$this->legacy_proxy                  = $legacy_proxy;
+		$this->error_logger                  = $legacy_proxy->call_function( 'wc_get_logger' );
+		$this->order_cache_controller        = $order_cache_controller;
+		$this->batch_processing_controller   = $batch_processing_controller;
+		$this->order_aggregate_cache_service = $order_aggregate_cache_service;
 	}
 
 	/**

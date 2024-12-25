@@ -13,6 +13,7 @@ use Automattic\WooCommerce\Internal\Admin\Orders\MetaBoxes\TaxonomiesMetaBox;
 use Automattic\WooCommerce\Internal\Admin\Orders\PageController;
 use Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTableDataStore;
 use Automattic\WooCommerce\Internal\DependencyManagement\AbstractServiceProvider;
+use Automattic\WooCommerce\Caches\OrderAggregateCache;
 
 /**
  * OrderAdminServiceProvider class.
@@ -42,7 +43,7 @@ class OrderAdminServiceProvider extends AbstractServiceProvider {
 		$this->share( COTRedirectionController::class );
 		$this->share( PageController::class );
 		$this->share( Edit::class )->addArgument( PageController::class );
-		$this->share( ListTable::class )->addArgument( PageController::class );
+		$this->share( ListTable::class )->addArguments( array( PageController::class, OrderAggregateCache::class ) );
 		$this->share( EditLock::class );
 		$this->share( TaxonomiesMetaBox::class )->addArgument( OrdersTableDataStore::class );
 	}
