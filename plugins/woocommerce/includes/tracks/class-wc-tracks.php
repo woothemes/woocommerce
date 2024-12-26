@@ -116,6 +116,29 @@ class WC_Tracks {
 	}
 
 	/**
+	 * Track when the user attempts to toggle
+	 * woocommerce_allow_tracking option.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param string $prev_value The previous value for the setting. 'yes' or 'no'.
+	 * @param string $new_value The new value for the setting. 'yes' or 'no'.
+	 * @param string $context Which avenue the user utilized to toggle.
+	 */
+	public static function track_woocommerce_allow_tracking_toggled( $prev_value, $new_value, $context = 'settings' ) {
+		if ( $new_value !== $prev_value ) {
+			self::record_event(
+				'woocommerce_allow_tracking_toggled',
+				array(
+					'previous_value' => $prev_value,
+					'new_value'      => $new_value,
+					'context'        => $context,
+				)
+			);
+		}
+	}
+
+	/**
 	 * Get all properties for the event including filtered and identity properties.
 	 *
 	 * @param string $event_name Event name.

@@ -9,6 +9,7 @@
  * @version 2.1.0
  */
 
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Utilities\DiscountsUtil;
 use Automattic\WooCommerce\Utilities\NumberUtil;
 
@@ -827,7 +828,7 @@ class WC_Cart extends WC_Legacy_Cart {
 					$in_cart[]   = $values['product_id'];
 
 					// Add variations to the in cart array.
-					if ( $values['data']->is_type( 'variation' ) ) {
+					if ( $values['data']->is_type( ProductType::VARIATION ) ) {
 						$in_cart[] = $values['variation_id'];
 					}
 				}
@@ -1040,7 +1041,7 @@ class WC_Cart extends WC_Legacy_Cart {
 				return false;
 			}
 
-			if ( $product_data->is_type( 'variation' ) ) {
+			if ( $product_data->is_type( ProductType::VARIATION ) ) {
 				$missing_attributes = array();
 				$parent_data        = wc_get_product( $product_data->get_parent_id() );
 
@@ -1132,7 +1133,7 @@ class WC_Cart extends WC_Legacy_Cart {
 			if (
 				0 < $variation_id && // Only check if there's any variation_id.
 				(
-					! $product_data->is_type( 'variation' ) || // Check if isn't a variation, it suppose to be a variation at this point.
+					! $product_data->is_type( ProductType::VARIATION ) || // Check if isn't a variation, it suppose to be a variation at this point.
 					$product_data->get_parent_id() !== $product_id // Check if belongs to the selected variable product.
 				)
 			) {

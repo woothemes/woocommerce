@@ -233,7 +233,7 @@ exports[`Filter by Stock block renders the stock filter block with the filter bu
       <span
         class="screen-reader-text"
       >
-        Apply filter
+        Apply stock filter
       </span>
     </button>
   </div>

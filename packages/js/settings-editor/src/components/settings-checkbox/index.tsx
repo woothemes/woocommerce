@@ -15,7 +15,6 @@ export const SettingsCheckbox = ( {
 	};
 	return (
 		<CheckboxControl
-			// @ts-expect-error.
 			__nextHasNoMarginBottom={ true }
 			id={ id }
 			label={ desc }

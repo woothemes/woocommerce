@@ -3,9 +3,7 @@
  */
 import { createElement } from '@wordpress/element';
 import {
-	// @ts-expect-error missing types.
 	__experimentalVStack as VStack,
-	// @ts-expect-error missing types.
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
 
