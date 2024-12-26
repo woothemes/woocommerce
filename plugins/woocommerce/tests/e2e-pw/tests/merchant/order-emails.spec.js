@@ -51,6 +51,9 @@ test.describe(
 					.locator( '#bulk-action-selector-top' )
 					.selectOption( 'delete' );
 				await page.locator( '#doaction' ).click();
+				await expect(
+					page.getByText( /successfully deleted/i )
+				).toBeVisible();
 			}
 		} );
 
@@ -90,6 +93,7 @@ test.describe(
 					newOrderId = response.data.id;
 				} );
 			// search to narrow it down to just the messages we want
+			console.log( customerBilling.email );
 			await page.goto(
 				`wp-admin/tools.php?page=wpml_plugin_log&s=${ encodeURIComponent(
 					customerBilling.email
