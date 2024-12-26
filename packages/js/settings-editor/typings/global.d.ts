@@ -1,7 +1,27 @@
 declare global {
 	interface BaseSettingsField {
 		title?: string;
-		type: 'text' | 'password' | 'datetime' | 'datetime-local' | 'date' | 'month' | 'time' | 'week' | 'number' | 'email' | 'url' | 'tel'  | 'select' | 'radio' | 'textarea' | 'sectionend' | 'slotfill_placeholder';
+		type:
+			| 'text'
+			| 'password'
+			| 'title'
+			| 'datetime'
+			| 'datetime-local'
+			| 'date'
+			| 'month'
+			| 'time'
+			| 'week'
+			| 'number'
+			| 'email'
+			| 'url'
+			| 'tel'
+			| 'select'
+			| 'radio'
+			| 'textarea'
+			| 'sectionend'
+			| 'single_select_page'
+			| 'single_select_country'
+			| 'slotfill_placeholder';
 		id?: string;
 		desc?: string;
 		desc_tip?: boolean | string;
