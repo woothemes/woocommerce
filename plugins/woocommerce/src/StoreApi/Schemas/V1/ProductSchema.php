@@ -212,7 +212,13 @@ class ProductSchema extends AbstractSchema {
 							'readonly'    => true,
 						],
 						'link' => [
-							'description' => __( 'Category link', 'woocommerce' ),
+							'description' => __( 'Deprecated: Category link, use permalink instead.', 'woocommerce' ),
+							'type'        => 'string',
+							'context'     => [ 'view', 'edit' ],
+							'readonly'    => true,
+						],
+						'permalink' => [
+							'description' => __( 'Category permalink', 'woocommerce' ),
 							'type'        => 'string',
 							'context'     => [ 'view', 'edit' ],
 							'readonly'    => true,
@@ -881,6 +887,7 @@ class ProductSchema extends AbstractSchema {
 				'name' => $term->name,
 				'slug' => $term->slug,
 				'link' => $link,
+				'permalink' => $link,
 			];
 		}
 
