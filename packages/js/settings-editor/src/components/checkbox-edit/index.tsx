@@ -20,7 +20,6 @@ export const CheckboxEdit = ( {
 
 	return (
 		<CheckboxControl
-			// @ts-expect-error.
 			__nextHasNoMarginBottom={ true }
 			id={ id }
 			label={ label }

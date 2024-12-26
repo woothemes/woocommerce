@@ -10,7 +10,7 @@ import type { Field, FormField } from '@wordpress/dataviews';
 import { CustomView } from '../components/custom-view';
 import { SettingsGroup } from '../components/settings-group';
 import { CheckboxEdit } from '../components/checkbox-edit';
-import { InputEdit } from '../components/InputEdit';
+import { getInputEdit } from '../components/InputEdit';
 
 export type DataItem = Record< string, BaseSettingsField[ 'value' ] >;
 
@@ -75,7 +75,7 @@ export const transformToField = (
 				id: setting.id,
 				type: 'text',
 				label: setting.desc,
-				Edit: InputEdit,
+				Edit: getInputEdit( setting.type ),
 			};
 
 		case 'select':
