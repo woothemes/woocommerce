@@ -93,7 +93,6 @@ test.describe(
 					newOrderId = response.data.id;
 				} );
 			// search to narrow it down to just the messages we want
-			console.log( customerBilling.email );
 			await page.goto(
 				`wp-admin/tools.php?page=wpml_plugin_log&s=${ encodeURIComponent(
 					customerBilling.email
