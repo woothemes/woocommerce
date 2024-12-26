@@ -5,6 +5,7 @@ declare global {
 			| 'text'
 			| 'password'
 			| 'title'
+			| 'multi_select_countries'
 			| 'datetime'
 			| 'datetime-local'
 			| 'date'
