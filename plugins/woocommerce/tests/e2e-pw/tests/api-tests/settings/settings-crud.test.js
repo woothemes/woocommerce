@@ -2052,7 +2052,7 @@ test.describe( 'Settings API tests: CRUD', () => {
 							tip: expect.stringContaining(
 								'Enter recipients (comma separated) for this email. Defaults to'
 							),
-							value: expect.any( String ), // Relax the constraint if value might differ (e.g., default email)
+							value: expect.any( String ),
 						} ),
 					] )
 				);
