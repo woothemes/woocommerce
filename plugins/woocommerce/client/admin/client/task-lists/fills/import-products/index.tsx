@@ -4,11 +4,11 @@
 import { WooOnboardingTask } from '@woocommerce/onboarding';
 import { registerPlugin } from '@wordpress/plugins';
 import { __ } from '@wordpress/i18n';
+import { Icon, chevronUp, chevronDown } from '@wordpress/icons';
 import { Button } from '@wordpress/components';
 import { useMemo, useState } from '@wordpress/element';
 import { getAdminLink } from '@woocommerce/settings';
 import { recordEvent } from '@woocommerce/tracks';
-import { Icon, chevronUp, chevronDown } from '@wordpress/icons';
 
 /**
  * Internal dependencies

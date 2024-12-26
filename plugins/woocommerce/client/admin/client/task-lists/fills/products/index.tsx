@@ -8,9 +8,9 @@ import { registerPlugin } from '@wordpress/plugins';
 import { useMemo, useState } from '@wordpress/element';
 import { Button } from '@wordpress/components';
 import { getAdminLink } from '@woocommerce/settings';
+import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import { recordEvent } from '@woocommerce/tracks';
 import { applyFilters } from '@wordpress/hooks';
-import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 
 /**
  * Internal dependencies

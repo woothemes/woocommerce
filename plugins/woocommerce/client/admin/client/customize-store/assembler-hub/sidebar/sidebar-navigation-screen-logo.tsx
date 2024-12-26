@@ -15,6 +15,7 @@ import {
 } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useViewportMatch } from '@wordpress/compose';
+import { Icon, upload, moreVertical } from '@wordpress/icons';
 import { store as coreStore } from '@wordpress/core-data';
 import { isBlobURL } from '@wordpress/blob';
 import {
@@ -25,7 +26,6 @@ import {
 import { store as noticesStore } from '@wordpress/notices';
 import interpolateComponents from '@automattic/interpolate-components';
 import { Link } from '@woocommerce/components';
-import { Icon, upload, moreVertical } from '@wordpress/icons';
 
 /**
  * Internal dependencies
