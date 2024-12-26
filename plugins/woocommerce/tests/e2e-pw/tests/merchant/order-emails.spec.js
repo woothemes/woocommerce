@@ -215,7 +215,6 @@ test.describe(
 						status: 'cancelled',
 					} );
 				} );
-			await page.waitForTimeout( 1000 );
 			// search to narrow it down to just the messages we want
 			await page.goto(
 				`wp-admin/tools.php?page=wpml_plugin_log&s=${ encodeURIComponent(
