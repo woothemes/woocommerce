@@ -28,6 +28,10 @@
 
 	&__header-account-modal {
 
+		.components-modal__header {
+			padding-top: 32px;
+		}
+
 		&__header-account-modal-text {
 			margin-bottom: $grid-unit-10;
 		}
