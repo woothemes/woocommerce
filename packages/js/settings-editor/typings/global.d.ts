@@ -26,7 +26,7 @@ declare global {
 			| 'single_select_page_with_search'
 			| 'single_select_country'
 			| 'slotfill_placeholder';
-		id?: string;
+		id: string;
 		desc?: string;
 		desc_tip?: boolean | string;
 		default?: string | number | boolean | object;
@@ -47,6 +47,7 @@ declare global {
 	}
 
 	interface CustomSettingsField {
+		id: string;
 		type: 'custom';
 		content: string;
 	}
