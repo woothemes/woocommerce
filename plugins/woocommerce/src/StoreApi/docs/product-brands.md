@@ -68,10 +68,9 @@ or
 GET /products/brands/:slug
 ```
 
-| Parameter | Type    | Required | Description                      |
-| :------- | :------ | :------: | :-------------------------------- |
-| `id`     | integer |   Yes    | The ID of the brand to retrieve. |
-| `slug`   | string  |   Yes    | The slug of the brand to retrieve. |
+| Parameter   | Type    | Required | Description                                                          |
+| :--------   | :------ | :------: |:---------------------------------------------------------------------|
+| `identifier` | string |   Yes    | The identifier of the brand to retrieve. Can be an brand ID or slug. |
 
 ```sh
 curl "https://example-store.com/wp-json/wc/store/v1/products/brands/1"
