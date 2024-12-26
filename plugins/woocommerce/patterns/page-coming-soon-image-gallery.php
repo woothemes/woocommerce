@@ -56,10 +56,10 @@ $featured_image_urls = array(
 
 		<!-- wp:group {"align":"wide","layout":{"type":"constrained"}} -->
 		<div class="wp-block-group alignwide">
-			<!-- wp:group {"align":"wide","style":{"spacing":{"padding":{"top":"85px","bottom":"85px"}}},"layout":{"type":"flex","flexWrap":"nowrap"}} -->
+			<!-- wp:group {"align":"wide","style":{"spacing":{"padding":{"top":"100px","bottom":"100px"}}},"layout":{"type":"flex","flexWrap":"nowrap"}} -->
 			<div class="wp-block-group alignwide">
-				<!-- wp:heading {"level":1,"style":{"typography":{"fontSize":"48px","lineHeight":"1.3","fontStyle":"normal","fontWeight":"400"},"spacing":{"padding":{"top":"85px","bottom":"85px"}}},"fontFamily":"heading"} -->
-					<h1 class="wp-block-heading has-heading-font-family" style="padding-top:85px;padding-bottom:85px;font-size:48px;font-style:normal;font-weight:400;line-height:1.3"><em>Great things are coming soon</em></h1>
+				<!-- wp:heading {"level":1,"style":{"typography":{"fontSize":"48px","lineHeight":"1.3","fontStyle":"normal","fontWeight":"400"},"spacing":{"padding":{"top":"100px","bottom":"100px"}}},"fontFamily":"heading"} -->
+					<h1 class="wp-block-heading has-heading-font-family" style="padding-top:100px;padding-bottom:100px;font-size:48px;font-style:normal;font-weight:400;line-height:1.3"><em>Great things are coming soon</em></h1>
 				<!-- /wp:heading -->
 			</div>
 			<!-- /wp:group -->
