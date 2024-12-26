@@ -12,7 +12,7 @@ import { ProductResponseItem } from '@woocommerce/types';
 import ErrorPlaceholder, {
 	ErrorObject,
 } from '@woocommerce/editor-components/error-placeholder';
-
+import { recordEvent } from '@woocommerce/tracks';
 import { PRODUCTS_STORE_NAME, Product } from '@woocommerce/data';
 import { useSelect } from '@wordpress/data';
 /**
@@ -67,6 +67,13 @@ const Editor = ( {
 		} );
 	} );
 
+	const recordErrorEvent = ( action: string ) => {
+		recordEvent( 'single_product_block_error', {
+			action,
+			error,
+		} );
+	};
+
 	useEffect( () => {
 		const productPreviewId = productPreview
 			? productPreview[ 0 ]?.id
@@ -90,7 +97,28 @@ const Editor = ( {
 				className="wc-block-editor-single-product-error"
 				error={ error as ErrorObject }
 				isLoading={ isLoading }
-				onRetry={ getProduct }
+				actions={ [
+					{
+						label: __( 'Choose another product', 'woocommerce' ),
+						onClick: () => {
+							recordErrorEvent( 'choose_another_product' );
+							setAttributes( {
+								...attributes,
+								productId: 0,
+							} );
+							setIsEditing( true );
+						},
+						variant: 'primary',
+					},
+					{
+						label: __( 'Retry', 'woocommerce' ),
+						onClick: () => {
+							recordErrorEvent( 'retry' );
+							getProduct();
+						},
+						variant: 'secondary',
+					},
+				] }
 			/>
 		);
 	}
