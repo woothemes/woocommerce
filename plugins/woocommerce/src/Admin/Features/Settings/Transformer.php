@@ -138,6 +138,10 @@ class Transformer {
 			$this->flush_current_group( $transformed_settings );
 		}
 
+		if ( ! isset( $setting['id'] ) ) {
+			$setting['id'] = 'title_' . wp_generate_uuid4();
+		}
+
 		$this->current_group = array( $setting );
 	}
 
@@ -164,6 +168,7 @@ class Transformer {
 			$transformed_settings[] = array_merge(
 				$title_setting,
 				array(
+					'id'       => 'group_' . wp_generate_uuid4(),
 					'type'     => 'group',
 					'settings' => $this->current_group,
 				)
@@ -244,6 +249,7 @@ class Transformer {
 		$first_setting                  = $this->current_checkbox_group[0];
 
 		$checkbox_group_setting = array(
+			'id'       => 'checkboxgroup_' . wp_generate_uuid4(),
 			'type'     => 'checkboxgroup',
 			'title'    => $first_setting['title'] ?? '',
 			'settings' => $this->current_checkbox_group,
@@ -291,6 +297,10 @@ class Transformer {
 	 * @param array $transformed_settings Transformed settings array.
 	 */
 	private function add_setting( array $setting, array &$transformed_settings ): void {
+		if ( ! isset( $setting['id'] ) ) {
+			$setting['id'] = 'setting_' . wp_generate_uuid4();
+		}
+
 		if ( is_array( $this->current_group ) ) {
 			$this->current_group[] = $setting;
 			return;
