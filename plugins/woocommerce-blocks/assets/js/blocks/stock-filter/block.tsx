@@ -528,6 +528,10 @@ const StockStatusFilterBlock = ( {
 							isLoading={ isLoading }
 							disabled={ isLoading || isDisabled }
 							onClick={ () => onSubmit( checked ) }
+							screenReaderLabel={ __(
+								'Apply stock filter',
+								'woocommerce'
+							) }
 						/>
 					) }
 				</div>
