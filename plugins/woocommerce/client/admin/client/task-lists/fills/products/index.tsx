@@ -8,9 +8,9 @@ import { registerPlugin } from '@wordpress/plugins';
 import { useMemo, useState } from '@wordpress/element';
 import { Button } from '@wordpress/components';
 import { getAdminLink } from '@woocommerce/settings';
-import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import { recordEvent } from '@woocommerce/tracks';
 import { applyFilters } from '@wordpress/hooks';
+import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 
 /**
  * Internal dependencies
@@ -204,7 +204,6 @@ const ProductsFill = () => {
 };
 
 registerPlugin( 'wc-admin-onboarding-task-products', {
-	// @ts-expect-error 'scope' does exist. @types/wordpress__plugins is outdated.
 	scope: 'woocommerce-tasks',
 	render: () => <ProductsFill />,
 } );
