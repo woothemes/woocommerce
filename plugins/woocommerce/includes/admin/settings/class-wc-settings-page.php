@@ -240,6 +240,7 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 			// If the custom view has output, add it to the settings data.
 			if ( ! empty( $custom_view ) ) {
 				$section_settings_data[] = array(
+					'id'      => $section_id . '_custom_view',
 					'type'    => 'custom',
 					'content' => $custom_view,
 				);
