@@ -14,10 +14,16 @@ import { getInputEdit } from '../components/InputEdit';
 
 export type DataItem = Record< string, BaseSettingsField[ 'value' ] >;
 
-export const transformToInitialData = (
-	setting: SettingsField,
-	acc: DataItem
-) => {
+/**
+ * Transforms a single setting into initial form data.
+ * For checkbox groups, it initializes each sub-setting with its value or 'no'.
+ * For other fields, it uses the setting's value or an empty string.
+ *
+ * @param setting The setting to transform
+ * @param acc     Accumulator object containing the form data
+ * @return         Updated accumulator with the setting's initial data
+ */
+const transformToInitialData = ( setting: SettingsField, acc: DataItem ) => {
 	switch ( setting.type ) {
 		case 'checkboxgroup':
 			if ( setting.settings?.length ) {
@@ -32,7 +38,14 @@ export const transformToInitialData = (
 	return acc;
 };
 
-export const transformToField = (
+/**
+ * Transforms a WooCommerce setting into a DataViews Field configuration.
+ * Handles various field types including groups, checkboxes, text inputs, and selects.
+ *
+ * @param setting The setting to transform
+ * @return         A Field configuration or array of Field configurations
+ */
+const transformToField = (
 	setting: SettingsField
 ): Field< DataItem >[] | Field< DataItem > => {
 	switch ( setting.type ) {
@@ -128,7 +141,14 @@ export const transformToField = (
 	}
 };
 
-export const transformToFormField = (
+/**
+ * Transforms a setting into a form layout field configuration.
+ * Determines how the field should be structured in the form layout.
+ *
+ * @param setting The setting to transform
+ * @return         FormField configuration, setting ID, or false if the field should be excluded
+ */
+const transformToFormField = (
 	setting: SettingsField
 ): FormField | string | false => {
 	switch ( setting.type ) {
@@ -159,6 +179,13 @@ export const transformToFormField = (
 	}
 };
 
+/**
+ * Generates initial data for an array of settings.
+ * Creates an object containing all settings' initial values.
+ *
+ * @param settings Array of settings to process
+ * @return         Object containing initial form data
+ */
 export const generateInitialData = ( settings: SettingsField[] ): DataItem => {
 	return settings.reduce< DataItem >(
 		( acc, setting ) => transformToInitialData( setting, acc ),
@@ -166,6 +193,13 @@ export const generateInitialData = ( settings: SettingsField[] ): DataItem => {
 	);
 };
 
+/**
+ * Generates DataViews Field configurations for an array of settings.
+ * Transforms all settings into their corresponding field configurations.
+ *
+ * @param settings Array of settings to transform
+ * @return         Array of Field configurations
+ */
 export const generateFields = (
 	settings: SettingsField[]
 ): Field< DataItem >[] => {
@@ -177,6 +211,13 @@ export const generateFields = (
 	}, [] );
 };
 
+/**
+ * Generates the form layout configuration for an array of settings.
+ * Creates a structure that defines how fields should be arranged in the form.
+ *
+ * @param settings Array of settings to process
+ * @return         Form layout configuration
+ */
 export const generateForm = ( settings: SettingsField[] ) => ( {
 	type: 'regular' as const,
 	labelPosition: 'top' as const,

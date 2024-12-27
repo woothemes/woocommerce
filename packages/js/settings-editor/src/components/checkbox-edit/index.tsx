@@ -8,13 +8,13 @@ import type { DataFormControlProps } from '@wordpress/dataviews';
 /**
  * Internal dependencies
  */
-import type { DataItem } from '../../types/field';
+import type { DataFormItem } from '../../types/form';
 
 export const CheckboxEdit = ( {
 	field,
 	onChange,
 	data,
-}: DataFormControlProps< DataItem > ) => {
+}: DataFormControlProps< DataFormItem > ) => {
 	const { id, getValue, label } = field;
 	const value = getValue( { item: data } );
 

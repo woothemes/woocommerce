@@ -8,11 +8,11 @@ import { __experimentalInputControl as InputControl } from '@wordpress/component
 /**
  * Internal dependencies
  */
-import type { DataItem } from '../../types/field';
+import type { DataFormItem } from '../../types/form';
 
 export const getInputEdit =
 	( type: BaseSettingsField[ 'type' ] ) =>
-	( { field, onChange, data }: DataFormControlProps< DataItem > ) => {
+	( { field, onChange, data }: DataFormControlProps< DataFormItem > ) => {
 		const { id, getValue, label } = field;
 		const value = getValue( { item: data } );
 
