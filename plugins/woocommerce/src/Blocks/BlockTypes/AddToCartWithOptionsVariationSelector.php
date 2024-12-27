@@ -51,8 +51,7 @@ class AddToCartWithOptionsVariationSelector extends AbstractBlock {
 			'<select id="%1$s"
 				class="wc-block-components-product-add-to-cart-attribute-select"
 				name="%1$s"
-				data-attribute_name="attribute_%2$s"
-				data-wc-on--change="actions.updateVariation">',
+				data-attribute_name="attribute_%2$s">',
 			$select_id,
 			esc_attr( sanitize_title( $attribute_name ) )
 		);
