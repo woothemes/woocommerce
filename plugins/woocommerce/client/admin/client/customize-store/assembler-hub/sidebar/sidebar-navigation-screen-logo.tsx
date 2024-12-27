@@ -1,5 +1,3 @@
-/* eslint-disable @woocommerce/dependency-group */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 /**
  * External dependencies
  */
@@ -18,18 +16,13 @@ import {
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useViewportMatch } from '@wordpress/compose';
 import { Icon, upload, moreVertical } from '@wordpress/icons';
-// @ts-ignore No types for this exist yet.
 import { store as coreStore } from '@wordpress/core-data';
-
-// @ts-ignore No types for this exist yet.
 import { isBlobURL } from '@wordpress/blob';
 import {
 	MediaUpload,
 	MediaUploadCheck,
 	store as blockEditorStore,
-	// @ts-ignore No types for this exist yet.
 } from '@wordpress/block-editor';
-// @ts-ignore No types for this exist yet.
 import { store as noticesStore } from '@wordpress/notices';
 import interpolateComponents from '@automattic/interpolate-components';
 import { Link } from '@woocommerce/components';
@@ -59,7 +52,6 @@ const useLogoEdit = ( {
 	setAttributes: ( newAttributes: LogoAttributes ) => void;
 } ) => {
 	const { siteIconId, mediaUpload } = useSelect( ( select ) => {
-		// @ts-ignore No types for this exist yet.
 		const { canUser, getEditedEntityRecord } = select( coreStore );
 		const _canUserEdit = canUser( 'update', 'settings' );
 		const siteSettings = _canUserEdit
@@ -69,12 +61,10 @@ const useLogoEdit = ( {
 		const _siteIconId = siteSettings?.site_icon;
 		return {
 			siteIconId: _siteIconId,
-			// @ts-ignore No types for this exist yet.
 			mediaUpload: select( blockEditorStore ).getSettings().mediaUpload,
 		};
 	}, [] );
 
-	// @ts-ignore No types for this exist yet.
 	const { editEntityRecord } = useDispatch( coreStore );
 
 	const setIcon = ( newValue: string | undefined | null ) =>
@@ -215,7 +205,6 @@ const LogoSettings = ( {
 				{ __( 'Settings', 'woocommerce' ) }
 			</div>
 			<RangeControl
-				// @ts-ignore No types for this exist yet.
 				__nextHasNoMarginBottom
 				__next40pxDefaultSize
 				label={ __( 'Image width', 'woocommerce' ) }
@@ -232,7 +221,6 @@ const LogoSettings = ( {
 				disabled={ ! isResizable }
 			/>
 			<ToggleControl
-				// @ts-ignore No types for this exist yet.
 				__nextHasNoMarginBottom
 				label={ __( 'Link logo to homepage', 'woocommerce' ) }
 				onChange={ () => {
@@ -243,7 +231,6 @@ const LogoSettings = ( {
 			{ canUserEdit && (
 				<>
 					<ToggleControl
-						// @ts-ignore No types for this exist yet.
 						__nextHasNoMarginBottom
 						label={ __( 'Use as site icon', 'woocommerce' ) }
 						onChange={ ( value: boolean ) => {
@@ -401,7 +388,6 @@ export const SidebarNavigationScreenLogo = ( {
 
 	const { siteLogoId, canUserEdit, mediaItemData, isRequestingMediaItem } =
 		useSelect( ( select ) => {
-			// @ts-ignore No types for this exist yet.
 			const { canUser, getEntityRecord, getEditedEntityRecord } =
 				select( coreStore );
 
@@ -416,13 +402,11 @@ export const SidebarNavigationScreenLogo = ( {
 
 			const mediaItem =
 				_siteLogoId &&
-				// @ts-ignore No types for this exist yet.
 				select( coreStore ).getMedia( _siteLogoId, {
 					context: 'view',
 				} );
 			const _isRequestingMediaItem =
 				_siteLogoId &&
-				// @ts-ignore No types for this exist yet.
 				! select( coreStore ).hasFinishedResolution( 'getMedia', [
 					_siteLogoId,
 					{ context: 'view' },
@@ -436,7 +420,6 @@ export const SidebarNavigationScreenLogo = ( {
 			};
 		}, [] );
 
-	// @ts-ignore No types for this exist yet.
 	const { updateBlockAttributes } = useDispatch( blockEditorStore );
 	const setAttributes = ( newAttributes: LogoAttributes ) => {
 		if ( ! logoBlockIds.length ) {
@@ -477,7 +460,6 @@ export const SidebarNavigationScreenLogo = ( {
 								popoverProps={ {
 									className:
 										'woocommerce-customize-store__logo-dropdown-popover',
-									// @ts-expect-error outdated TS.
 									placement: 'bottom-end',
 								} }
 							>

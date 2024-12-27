@@ -59,7 +59,6 @@ export default function ProductPage() {
 
 	useEffect( () => {
 		registerPlugin( 'wc-admin-product-editor', {
-			// @ts-expect-error 'scope' does exist. @types/wordpress__plugins is outdated.
 			scope: 'woocommerce-product-block-editor',
 			render: () => {
 				// eslint-disable-next-line react-hooks/rules-of-hooks
