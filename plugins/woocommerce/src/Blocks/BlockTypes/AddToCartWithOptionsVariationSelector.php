@@ -188,13 +188,11 @@ class AddToCartWithOptionsVariationSelector extends AbstractBlock {
 		$variations_json = wp_json_encode( $variations );
 		$variations_attr = function_exists( 'wc_esc_json' ) ? wc_esc_json( $variations_json ) : _wp_specialchars( $variations_json, ENT_QUOTES, 'UTF-8', true );
 
-		$wrapper_attributes = get_block_wrapper_attributes( array( 'class' => 'wc-block-add-to-cart-form' ) );
-
 		$form  = $this->get_form_opening( $product, $variations_attr );
 		$form .= $this->get_variations_table( $product, $variation_attributes );
 		$form .= '</form>';
 
-		return sprintf( '<div %1$s>%2$s</div>', $wrapper_attributes, $form );
+		return $form;
 	}
 
 	/**
