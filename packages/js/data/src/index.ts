@@ -48,6 +48,9 @@ export {
 } from './payment-settings/types';
 export { ShippingMethod } from './shipping-methods/types';
 
+// Export stores
+export { store as onboardingStore } from './onboarding';
+
 // Export hooks
 export { withSettingsHydration } from './settings/with-settings-hydration';
 export { withOnboardingHydration } from './onboarding/with-onboarding-hydration';

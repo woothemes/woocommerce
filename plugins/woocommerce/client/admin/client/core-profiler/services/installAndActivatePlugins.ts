@@ -3,9 +3,9 @@
  */
 import {
 	ExtensionList,
-	ONBOARDING_STORE_NAME,
 	PLUGINS_STORE_NAME,
 	PluginNames,
+	onboardingStore,
 } from '@woocommerce/data';
 import { dispatch } from '@wordpress/data';
 import {
@@ -329,7 +329,7 @@ export const pluginInstallerMachine = createMachine(
 					input: { pluginsInstallationQueue: PluginNames[] };
 				} ) => {
 					return dispatch(
-						ONBOARDING_STORE_NAME
+						onboardingStore
 					).installAndActivatePluginsAsync(
 						pluginsInstallationQueue
 					);
