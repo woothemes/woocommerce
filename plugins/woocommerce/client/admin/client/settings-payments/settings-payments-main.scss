@@ -48,7 +48,7 @@
 		}
 	}
 
-	.other-payment-gateways__header__title__image-placeholder {
+	.other-payment-gateways__header__title-image-placeholder {
 		width: 24px;
 		height: 24px;
 		background-color: $gray-100;
@@ -76,6 +76,12 @@
 				font-size: 16px;
 				font-weight: 600;
 				line-height: 24px;
+
+				&-image {
+					width: 24px;
+					height: 24px;
+					border-radius: 2px;
+				}
 			}
 
 			/* Override hover and focus states for the button */
@@ -130,10 +136,11 @@
 				align-items: flex-start; /* Align items to the top */
 				padding: $gap 0;
 
-				img {
+				&-image {
 					width: 40px;
 					height: 40px;
 					margin-right: 20px; /* Space between image and text */
+					border-radius: 4px;
 				}
 
 				&__content {
