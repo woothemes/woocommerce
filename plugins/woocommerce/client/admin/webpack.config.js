@@ -192,7 +192,6 @@ const webpackConfig = {
 				// the number is the original number of instances of that error when this comment is written
 				// hopefully this information helps prioritize fixing the errors :)
 				'TS2349', // ~107: This expression is not callable.
-				'TS2578', // ~69: Unused '@ts-expect-error' directive.
 				'TS2554', // ~60: Expected 2 arguments, but got 1.
 				'TS2339', // ~51: Property 'getActivePlugins' does not exist on type 'never'.
 				'TS7006', // ~38: Parameter implicitly has an 'any' type.
