@@ -1,0 +1,79 @@
+diff --git a/build-types/index.d.ts b/build-types/index.d.ts
+index db195ec1d0d981dce1622c12382f2b2394b25208..8c923576fbaf0fb34fd675ee0ec615a8e1c145db 100644
+--- a/build-types/index.d.ts
++++ b/build-types/index.d.ts
+@@ -9,6 +9,7 @@ export { controls } from "./controls";
+ export { default as createReduxStore } from "./redux-store";
+ export { dispatch } from "./dispatch";
+ export { select } from "./select";
++export { resolveSelect } from "./resolve-select";
+ export { plugins };
+ /**
+  * The combineReducers helper function turns an object whose values are different
+@@ -50,26 +51,7 @@ export { plugins };
+  *                    object, and constructs a state object with the same shape.
+  */
+ export const combineReducers: import('./types').combineReducers;
+-/**
+- * Given a store descriptor, returns an object containing the store's selectors pre-bound to state
+- * so that you only need to supply additional arguments, and modified so that they return promises
+- * that resolve to their eventual values, after any resolvers have ran.
+- *
+- * @param {StoreDescriptor|string} storeNameOrDescriptor The store descriptor. The legacy calling
+- *                                                       convention of passing the store name is
+- *                                                       also supported.
+- *
+- * @example
+- * ```js
+- * import { resolveSelect } from '@wordpress/data';
+- * import { store as myCustomStore } from 'my-custom-store';
+- *
+- * resolveSelect( myCustomStore ).getPrice( 'hammer' ).then(console.log)
+- * ```
+- *
+- * @return {Object} Object containing the store's promise-wrapped selectors.
+- */
+-export const resolveSelect: any;
++
+ /**
+  * Given a store descriptor, returns an object containing the store's selectors pre-bound to state
+  * so that you only need to supply additional arguments, and modified so that they throw promises
+diff --git a/build-types/resolve-select.d.ts b/build-types/resolve-select.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..cd5a7eddab97bed55ea0f25d21c1665427cd2a58
+--- /dev/null
++++ b/build-types/resolve-select.d.ts
+@@ -0,0 +1,33 @@
++/**
++ * Internal dependencies
++ */
++import type { AnyConfig, CurriedSelectorsOf, StoreDescriptor } from './types';
++/**
++ * Given a store descriptor, returns an object containing the store's selectors pre-bound to state
++ * so that you only need to supply additional arguments, and modified so that they return promises
++ * that resolve to their eventual values, after any resolvers have ran.
++ *
++ * @param {StoreDescriptor|string} storeNameOrDescriptor The store descriptor. The legacy calling
++ *                                                       convention of passing the store name is
++ *                                                       also supported.
++ *
++ * @example
++ * ```js
++ * import { resolveSelect } from '@wordpress/data';
++ * import { store as myCustomStore } from 'my-custom-store';
++ *
++ * resolveSelect( myCustomStore ).getPrice( 'hammer' ).then(console.log)
++ * ```
++ *
++ * @return {Object} Object containing the store's promise-wrapped selectors.
++ */
++export declare function resolveSelect<T extends StoreDescriptor<AnyConfig>>(storeDescriptor: string | T): PromiseifySelectors<CurriedSelectorsOf<T>>;
++
++export type PromiseifySelectors< Selectors > = {
++	[ SelectorFunction in keyof Selectors ]: Selectors[ SelectorFunction ] extends (
++		...args: infer SelectorArgs
++	) => infer SelectorReturnType
++		? ( ...args: SelectorArgs ) => Promise< SelectorReturnType >
++		: never;
++};
++//# sourceMappingURL=select.d.ts.map
