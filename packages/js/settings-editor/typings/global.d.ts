@@ -19,9 +19,11 @@ declare global {
 			| 'tel'
 			| 'select'
 			| 'radio'
+			| 'relative_date_selector'
 			| 'textarea'
 			| 'sectionend'
 			| 'single_select_page'
+			| 'single_select_page_with_search'
 			| 'single_select_country'
 			| 'slotfill_placeholder';
 		id?: string;
