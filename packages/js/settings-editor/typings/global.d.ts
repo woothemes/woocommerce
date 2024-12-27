@@ -6,6 +6,7 @@ declare global {
 			| 'password'
 			| 'title'
 			| 'multi_select_countries'
+			| 'color'
 			| 'datetime'
 			| 'datetime-local'
 			| 'date'
