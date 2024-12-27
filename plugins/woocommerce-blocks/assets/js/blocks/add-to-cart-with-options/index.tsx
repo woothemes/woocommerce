@@ -11,7 +11,7 @@ import { isBoolean } from '@woocommerce/types';
 /**
  * Internal dependencies
  */
-import registerStore from './store';
+import registerStore from '../../shared/store';
 import ProductTypeSelectorPlugin from './plugins';
 import metadata from './block.json';
 import AddToCartOptionsEdit from './edit';
