@@ -10,7 +10,6 @@ import { Icon, button } from '@wordpress/icons';
 import metadata from './block.json';
 import AddToCartWithOptionsVariationSelectorEdit from './edit';
 import { shouldRegisterBlock } from '..';
-import './style.scss';
 import './editor.scss';
 
 if ( shouldRegisterBlock ) {
