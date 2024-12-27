@@ -76,7 +76,8 @@
 			"react-resize-aware": "3.1.1"
 		},
 		"patchedDependencies": {
-			"@wordpress/edit-site@5.15.0": "bin/patches/@wordpress__edit-site@5.15.0.patch"
+			"@wordpress/edit-site@5.15.0": "bin/patches/@wordpress__edit-site@5.15.0.patch",
+			"@wordpress/dataviews@4.10.0": "patches/@wordpress__dataviews@4.10.0.patch"
 		}
 	}
 }
