@@ -16,11 +16,8 @@ import {
 import { __ } from '@wordpress/i18n';
 import type { ProductResponseItem } from '@woocommerce/types';
 import { getProduct } from '@woocommerce/editor-components/utils';
-import {
-	createBlock,
-	// @ts-expect-error Type definitions for this function are missing in Guteberg
-	createBlocksFromInnerBlocksTemplate,
-} from '@wordpress/blocks';
+import { createBlock } from '@wordpress/blocks';
+import { createSafeBlocksFromInnerBlocksTemplate } from '@woocommerce/atomic-utils';
 
 /**
  * Internal dependencies
@@ -455,7 +452,7 @@ export const getDefaultProductCollection = () =>
 				filterable: getDefaultValueOfFilterable(),
 			},
 		},
-		createBlocksFromInnerBlocksTemplate( INNER_BLOCKS_TEMPLATE )
+		createSafeBlocksFromInnerBlocksTemplate( INNER_BLOCKS_TEMPLATE )
 	);
 
 export const useGetProduct = ( productId: number | undefined ) => {
