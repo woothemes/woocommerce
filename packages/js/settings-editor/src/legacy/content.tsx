@@ -13,7 +13,7 @@ import {
 	generateInitialData,
 	generateFields,
 	generateForm,
-} from '../utils/transformers';
+} from '../utils/dataforms-transformers';
 
 const Form = ( { settings }: { settings: SettingsField[] } ) => {
 	const [ data, setData ] = useState( () => generateInitialData( settings ) );

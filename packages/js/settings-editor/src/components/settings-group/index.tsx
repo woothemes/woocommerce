@@ -12,7 +12,7 @@ import {
 	generateInitialData,
 	generateFields,
 	generateForm,
-} from '../../utils/transformers';
+} from '../../utils/dataforms-transformers';
 
 const ALLOWED_TAGS = [ 'a', 'b', 'em', 'i', 'strong', 'p', 'br' ];
 const ALLOWED_ATTR = [ 'target', 'href', 'rel', 'name', 'download' ];
