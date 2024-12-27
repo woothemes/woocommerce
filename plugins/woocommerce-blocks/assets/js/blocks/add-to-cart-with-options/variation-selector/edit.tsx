@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { __ } from '@wordpress/i18n';
 import { useBlockProps } from '@wordpress/block-editor';
 import { BlockEditProps } from '@wordpress/blocks';
 import { useProductDataContext } from '@woocommerce/shared-context';
@@ -47,7 +48,7 @@ const AddToCartWithOptionsVariationSelectorEdit = (
 						value=""
 						options={ [
 							{
-								label: 'Choose an option',
+								label: __( 'Choose an option', 'woocommerce' ),
 								value: '',
 								disabled: true,
 							},
