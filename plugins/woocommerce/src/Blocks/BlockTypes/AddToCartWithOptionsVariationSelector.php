@@ -28,7 +28,7 @@ class AddToCartWithOptionsVariationSelector extends AbstractBlock {
 		$label_text = wc_attribute_label( $attribute_name );
 
 		$html = sprintf(
-			'<label class="wc-block-components-product-add-to-cart-attribute-label" for="%s">%s</label>',
+			'<label class="wc-block-product-add-to-cart-attribute-label" for="%s">%s</label>',
 			$label_id,
 			esc_html( $label_text )
 		);
@@ -49,7 +49,7 @@ class AddToCartWithOptionsVariationSelector extends AbstractBlock {
 
 		$html = sprintf(
 			'<select id="%1$s"
-				class="wc-block-components-product-add-to-cart-attribute-select"
+				class="wc-block-product-add-to-cart-attribute-select"
 				name="%1$s"
 				data-attribute_name="attribute_%2$s">',
 			$select_id,
