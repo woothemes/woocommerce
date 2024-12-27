@@ -34,7 +34,7 @@ test.describe(
 				} );
 		} );
 
-		test.afterEach( async ( { page } ) => {
+		test.beforeEach( async ( { page } ) => {
 			await page.goto(
 				`wp-admin/tools.php?page=wpml_plugin_log&s=${ encodeURIComponent(
 					customerBilling.email
