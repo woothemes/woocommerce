@@ -16,7 +16,7 @@ import { store as coreStore } from '@wordpress/core-data';
 import { useIsSiteEditorLoading } from '@wordpress/edit-site/build-module/components/layout/hooks';
 // eslint-disable-next-line @woocommerce/dependency-group
 import {
-	// @ts-expect-error No types forthis exist yet.
+	// @ts-expect-error No types for this exist yet.
 	__experimentalBlockPatternsList as BlockPatternList,
 } from '@wordpress/block-editor';
 
