@@ -56,7 +56,5 @@ export const createSafeBlocksFromInnerBlocksTemplate = (
 ) => {
 	const filteredTemplate = filterUnavailableBlocksFromTemplate( template );
 
-	console.log( { template, filteredTemplate } );
-
 	return createBlocksFromInnerBlocksTemplate( filteredTemplate );
 };
