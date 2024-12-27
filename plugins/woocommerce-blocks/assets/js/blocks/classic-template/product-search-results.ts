@@ -8,10 +8,9 @@ import {
 	DEFAULT_ATTRIBUTES as productCollectionDefaultAttributes,
 	DEFAULT_QUERY as productCollectionDefaultQuery,
 } from '@woocommerce/blocks/product-collection/constants';
+import { createSafeBlocksFromInnerBlocksTemplate } from '@woocommerce/atomic-utils';
 import {
 	createBlock,
-	// @ts-expect-error Type definitions for this function are missing in Guteberg
-	createBlocksFromInnerBlocksTemplate,
 	type BlockInstance,
 	type InnerBlockTemplate,
 } from '@wordpress/blocks';
@@ -96,7 +95,7 @@ const createProductCollectionBlock = (
 				inherit: true,
 			},
 		},
-		createBlocksFromInnerBlocksTemplate(
+		createSafeBlocksFromInnerBlocksTemplate(
 			productCollectionInnerBlocksWithNoResults
 		)
 	);

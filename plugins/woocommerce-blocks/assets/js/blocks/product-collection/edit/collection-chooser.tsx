@@ -6,11 +6,10 @@ import { useSelect } from '@wordpress/data';
 import { Button, Dropdown, Icon, Tooltip } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
+import { createSafeBlocksFromInnerBlocksTemplate } from '@woocommerce/atomic-utils';
 import {
 	BlockInstance,
 	createBlock,
-	// @ts-expect-error Type definitions for this function are missing in Guteberg
-	createBlocksFromInnerBlocksTemplate,
 	// @ts-expect-error Type definitions for this function are missing in Guteberg
 	store as blocksStore,
 	BlockVariation,
@@ -56,7 +55,7 @@ export const applyCollection = (
 			: createBlock(
 					blockJson.name,
 					collection.attributes,
-					createBlocksFromInnerBlocksTemplate(
+					createSafeBlocksFromInnerBlocksTemplate(
 						collection.innerBlocks
 					)
 			  );

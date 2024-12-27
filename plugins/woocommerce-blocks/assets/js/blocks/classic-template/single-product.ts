@@ -9,12 +9,8 @@ import {
 	DEFAULT_ATTRIBUTES as productCollectionDefaultAttributes,
 	DEFAULT_QUERY as productCollectionDefaultQuery,
 } from '@woocommerce/blocks/product-collection/constants';
-import {
-	BlockInstance,
-	createBlock,
-	// @ts-expect-error Type definitions for this function are missing in Gutenberg
-	createBlocksFromInnerBlocksTemplate,
-} from '@wordpress/blocks';
+import { createSafeBlocksFromInnerBlocksTemplate } from '@woocommerce/atomic-utils';
+import { type BlockInstance, createBlock } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -87,7 +83,7 @@ const getBlockifiedTemplate = () =>
 				hideControls: [ 'inherit' ],
 				align: 'wide',
 			},
-			createBlocksFromInnerBlocksTemplate( [
+			createSafeBlocksFromInnerBlocksTemplate( [
 				productCollectionInnerBlocksTemplate,
 			] )
 		),

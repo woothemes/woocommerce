@@ -16,7 +16,7 @@ export const filterUnavailableBlocksFromTemplate = (
 		return [];
 	}
 
-	return innerBlocksOrTemplate.filter( ( innerBlock ) => {
+	return innerBlocksOrTemplate.reduce( ( acc, innerBlock ) => {
 		const innerBlockTemplate = Array.isArray( innerBlock )
 			? innerBlock
 			: [
@@ -28,12 +28,15 @@ export const filterUnavailableBlocksFromTemplate = (
 		const blockType = getBlockType( name );
 		return blockType
 			? [
-					name,
-					attributes,
-					filterUnavailableBlocksFromTemplate( innerBlocks ),
+					...acc,
+					[
+						name,
+						attributes,
+						filterUnavailableBlocksFromTemplate( innerBlocks ),
+					],
 			  ]
-			: false;
-	} );
+			: acc;
+	}, [] );
 };
 
 /**

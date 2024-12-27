@@ -4,13 +4,8 @@
 import { useRef, useEffect } from '@wordpress/element';
 import { useRegistry, dispatch } from '@wordpress/data';
 import { useEditorContext } from '@woocommerce/base-context';
-import {
-	createBlock,
-	getBlockType,
-	// @ts-expect-error Type definitions for this function are missing in Gutenberg
-	createBlocksFromInnerBlocksTemplate,
-	TemplateArray,
-} from '@wordpress/blocks';
+import { createSafeBlocksFromInnerBlocksTemplate } from '@woocommerce/atomic-utils';
+import { createBlock, getBlockType, TemplateArray } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -66,7 +61,7 @@ export const useForcedLayout = ( {
 				currentDefaultTemplate.current.length > 0 &&
 				! templateSynced
 			) {
-				const nextBlocks = createBlocksFromInnerBlocksTemplate(
+				const nextBlocks = createSafeBlocksFromInnerBlocksTemplate(
 					currentDefaultTemplate.current
 				);
 				if ( nextBlocks.length !== 0 ) {
