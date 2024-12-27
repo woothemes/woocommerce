@@ -75,6 +75,16 @@ export const isWooPayments = ( id: string ) => {
 	return [ '_wc_pes_woopayments', 'woocommerce_payments' ].includes( id );
 };
 
+/**
+ * Checks whether a provider is WooPayments and that it is eligible for WooPay.
+ */
+export const isWooPayEligible = ( provider: PaymentProvider ) => {
+	return (
+		isWooPayments( provider.id ) &&
+		( provider.tags?.includes( 'woopay_eligible' ) || false )
+	);
+};
+
 export const getWooPaymentsTestDriveAccountLink = () => {
 	return getAdminLink(
 		'admin.php?wcpay-connect=1&_wpnonce=' +

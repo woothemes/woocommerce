@@ -312,7 +312,8 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		// We also have the 3 offline payment methods.
 		$this->assertCount( 3, $data['offline_payment_methods'] );
 		// We only have PSPs because there is no payment gateway enabled.
-		$this->assertCount( 3, $data['suggestions'] );
+		// Square (in-person) is not a suggestion because we don't have the core profiler data set up for offline selling.
+		$this->assertCount( 2, $data['suggestions'] );
 		// Assert we get the suggestion categories.
 		$this->assertCount( 3, $data['suggestion_categories'] );
 
@@ -358,7 +359,8 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		// We also have the 3 offline payment methods.
 		$this->assertCount( 3, $data['offline_payment_methods'] );
 		// We get all the suggestions.
-		$this->assertCount( 7, $data['suggestions'] );
+		// Square (in-person) is not a suggestion because we don't have the core profiler data set up for offline selling.
+		$this->assertCount( 6, $data['suggestions'] );
 		// Assert we get the suggestion categories.
 		$this->assertCount( 3, $data['suggestion_categories'] );
 
@@ -534,7 +536,8 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		// We also have the 3 offline payment methods.
 		$this->assertCount( 3, $data['offline_payment_methods'] );
 		// We get all the suggestions.
-		$this->assertCount( 7, $data['suggestions'] );
+		// Square (in-person) is not a suggestion because we don't have the core profiler data set up for offline selling.
+		$this->assertCount( 6, $data['suggestions'] );
 		// Assert we get the suggestion categories.
 		$this->assertCount( 3, $data['suggestion_categories'] );
 

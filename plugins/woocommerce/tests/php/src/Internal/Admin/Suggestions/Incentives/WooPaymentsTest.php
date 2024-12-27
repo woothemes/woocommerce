@@ -5,14 +5,14 @@ namespace Automattic\WooCommerce\Tests\Internal\Admin\Suggestions\Incentives;
 
 use Automattic\WooCommerce\Internal\Admin\Suggestions\Incentives\Incentive;
 use Automattic\WooCommerce\Internal\Admin\Suggestions\Incentives\WooPayments;
-use WC_REST_Unit_Test_Case;
+use WC_Unit_Test_Case;
 
 /**
  * WooPayments incentive provider test.
  *
  * @class WooPayments
  */
-class WooPaymentsTest extends WC_REST_Unit_Test_Case {
+class WooPaymentsTest extends WC_Unit_Test_Case {
 	/**
 	 * The system under test.
 	 *
