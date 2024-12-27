@@ -136,7 +136,7 @@ const transformToField = (
 				id: setting.id,
 				type: 'text',
 				label: setting.desc,
-				Edit: () => <div>Unsupported field type: { setting.type }</div>,
+				Edit: () => <div>To be implemented: { setting.type }</div>,
 			};
 	}
 };
