@@ -147,12 +147,12 @@ class AddToCartWithOptionsVariationSelector extends AbstractBlock {
 			return '';
 		}
 
-		wp_enqueue_script( 'wc-add-to-cart-variation' );
-
 		$variations = $this->get_variations_data( $product );
 		if ( empty( $variations ) ) {
 			return '';
 		}
+
+		wp_enqueue_script( 'wc-add-to-cart-variation' );
 
 		return $this->get_form_html( $product, $variations, $variation_attributes );
 	}
