@@ -8,7 +8,7 @@ import {
 	InnerBlockLayoutContextProvider,
 	ProductDataContextProvider,
 } from '@woocommerce/shared-context';
-import { createBlocksFromTemplate } from '@woocommerce/atomic-utils';
+import { createSafeBlocksFromInnerBlocksTemplate } from '@woocommerce/atomic-utils';
 import { PanelBody, Button } from '@wordpress/components';
 import { backup } from '@wordpress/icons';
 import { ProductResponseItem } from '@woocommerce/types';
@@ -44,7 +44,7 @@ const LayoutEditor = ( {
 	const resetInnerBlocks = useCallback( () => {
 		replaceInnerBlocks(
 			clientId,
-			createBlocksFromTemplate( DEFAULT_INNER_BLOCKS ),
+			createSafeBlocksFromInnerBlocksTemplate( DEFAULT_INNER_BLOCKS ),
 			false
 		);
 	}, [ clientId, replaceInnerBlocks ] );
