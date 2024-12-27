@@ -23,8 +23,6 @@ export interface ErrorObject {
 	type: 'api' | 'general' | string;
 }
 
-type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'link';
-
 export interface ErrorPlaceholderProps {
 	/**
 	 * Classname to add to placeholder in addition to the defaults.
@@ -43,14 +41,6 @@ export interface ErrorPlaceholderProps {
 	 * Callback to retry an action.
 	 */
 	onRetry?: ( () => void ) | undefined;
-	/**
-	 * Actions to display in the placeholder.
-	 */
-	actions?: {
-		label: string;
-		onClick: () => void;
-		variant?: ButtonVariant;
-	}[];
 }
 
 const ErrorPlaceholder = ( {
@@ -58,7 +48,6 @@ const ErrorPlaceholder = ( {
 	error,
 	isLoading = false,
 	onRetry,
-	actions = [],
 }: ErrorPlaceholderProps ): JSX.Element => (
 	<Placeholder
 		icon={ <Icon icon={ warning } /> }
@@ -76,19 +65,6 @@ const ErrorPlaceholder = ( {
 					</Button>
 				) }
 			</>
-		) }
-		{ actions.length > 0 && (
-			<div className="wc-block-api-error__actions">
-				{ actions.map( ( action, index ) => (
-					<Button
-						key={ index }
-						variant={ action.variant || 'secondary' }
-						onClick={ action.onClick }
-					>
-						{ action.label }
-					</Button>
-				) ) }
-			</div>
 		) }
 	</Placeholder>
 );
