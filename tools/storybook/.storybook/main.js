@@ -15,6 +15,8 @@ if ( process.env.NODE_ENV && process.env.NODE_ENV === 'production' ) {
 }
 module.exports = {
 	stories: [
+		// Introductory documentation
+		'../stories/**/*.mdx',
 		// WooCommerce Admin / @woocommerce/components components
 		'../../../packages/js/components/src/**/stories/*.story.@(js|tsx)',
 		// WooCommerce Admin / @woocommerce/experimental components
@@ -30,7 +32,7 @@ module.exports = {
 			return {
 				'woocommerce-blocks': {
 					expanded: false,
-					title: 'WooCommerce Blocks',
+					title: 'Blocks',
 					url: 'http://localhost:6006',
 				},
 			};
@@ -45,7 +47,7 @@ module.exports = {
 		return {
 			'woocommerce-blocks': {
 				expanded: false,
-				title: 'WooCommerce Blocks',
+				title: 'Blocks',
 				url: pathPrefix + '/assets/woocommerce-blocks',
 			},
 		};
