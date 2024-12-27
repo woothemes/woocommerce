@@ -514,6 +514,7 @@ final class BlockTypesController {
 			if ( Features::is_enabled( 'blockified-add-to-cart' ) ) {
 				$block_types[] = 'AddToCartWithOptions';
 				$block_types[] = 'AddToCartWithOptionsQuantitySelector';
+				$block_types[] = 'AddToCartWithOptionsVariationSelector';
 			}
 		}
 
