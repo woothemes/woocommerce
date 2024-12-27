@@ -43,7 +43,7 @@ describe( 'filterUnavailableBlocksFromTemplate', () => {
 		] as InnerBlockTemplate[];
 
 		expect( filterUnavailableBlocksFromTemplate( template ) ).toEqual( [
-			{ name: 'available/block', attributes: {} },
+			[ 'available/block', {}, [] ],
 		] );
 	} );
 
@@ -96,9 +96,7 @@ describe( 'createSafeBlocksFromInnerBlocksTemplate', () => {
 		createSafeBlocksFromInnerBlocksTemplate( template );
 
 		expect( createBlocksFromInnerBlocksTemplate ).toHaveBeenCalledWith( [
-			'available/block',
-			{},
-			[ [ 'available/block', {}, [] ] ],
+			[ 'available/block', {}, [ [ 'available/block', {}, [] ] ] ],
 		] );
 	} );
 } );
