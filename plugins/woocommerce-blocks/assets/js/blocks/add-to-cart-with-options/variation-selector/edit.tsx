@@ -33,11 +33,11 @@ const AddToCartWithOptionsVariationSelectorEdit = (
 		return Object.entries( product.attributes ).map(
 			( [ attributeKey, attribute ] ) => (
 				<div
-					className="wc-block-components-variation-selector__wrapper"
+					className="wc-block-variation-selector__wrapper"
 					key={ attributeKey }
 				>
 					<Heading
-						className="wc-block-components-variation-selector__label"
+						className="wc-block-variation-selector__label"
 						level="3"
 					>
 						{ attribute.name }
@@ -55,7 +55,7 @@ const AddToCartWithOptionsVariationSelectorEdit = (
 						disabled
 						// eslint-disable-next-line @typescript-eslint/no-empty-function
 						onChange={ () => {} }
-						className="wc-block-components-variation-selector__select"
+						className="wc-block-variation-selector__select"
 					/>
 				</div>
 			)
@@ -65,7 +65,7 @@ const AddToCartWithOptionsVariationSelectorEdit = (
 	return (
 		<>
 			<div { ...blockProps }>
-				<div className="wc-block-components-variation-selector">
+				<div className="wc-block-variation-selector">
 					{ renderAttributeSelectors() }
 				</div>
 			</div>
