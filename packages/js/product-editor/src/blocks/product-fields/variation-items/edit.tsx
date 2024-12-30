@@ -139,7 +139,7 @@ export function Edit( {
 		} );
 		const productVariationsListPromise = resolveSelect(
 			EXPERIMENTAL_PRODUCT_VARIATIONS_STORE_NAME
-		).getProductVariations< PartialProductVariation[] >( {
+		).getProductVariations( {
 			product_id: productId,
 			order: 'asc',
 			orderby: 'menu_order',

@@ -61,7 +61,7 @@ export function ProductDetailsSectionDescriptionBlockEdit( {
 
 	// eslint-disable-next-line @wordpress/no-unused-vars-before-return
 	const [ supportedProductTemplates, unsupportedProductTemplates ] =
-		productTemplates.reduce< [ ProductTemplate[], ProductTemplate[] ] >(
+		productTemplates.reduce(
 			( [ supported, unsupported ], productTemplate ) => {
 				if ( productTemplate.isSelectableByUser ) {
 					if ( productTemplate.layoutTemplateId ) {
@@ -169,7 +169,7 @@ export function ProductDetailsSectionDescriptionBlockEdit( {
 					],
 				} );
 
-				await saveEditedEntityRecord< Product >(
+				await saveEditedEntityRecord(
 					'postType',
 					'product',
 					productId,
@@ -264,7 +264,7 @@ export function ProductDetailsSectionDescriptionBlockEdit( {
 
 			await validate( productData );
 
-			const product = ( await saveEditedEntityRecord< Product >(
+			const product = ( await saveEditedEntityRecord(
 				'postType',
 				'product',
 				productId,

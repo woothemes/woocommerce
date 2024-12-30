@@ -217,9 +217,7 @@ export function Edit( {
 						shippingClasses
 					) }
 					onAdd={ ( shippingClassValues ) =>
-						createProductShippingClass<
-							Promise< ProductShippingClass >
-						>( shippingClassValues, {
+						createProductShippingClass( shippingClassValues, {
 							optimisticQueryUpdate: shippingClassRequestQuery,
 						} )
 							.then( ( value ) => {

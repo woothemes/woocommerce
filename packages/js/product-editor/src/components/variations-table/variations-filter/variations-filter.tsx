@@ -69,14 +69,11 @@ export function VariationsFilter( {
 				search: searchText,
 			};
 
-			const terms = await getProductAttributeTerms<
-				ProductAttributeTerm[]
-			>( sharedRequestArgs );
+			const terms = await getProductAttributeTerms( sharedRequestArgs );
 
-			const totalTerms =
-				await getProductAttributeTermsTotalCount< number >(
-					sharedRequestArgs
-				);
+			const totalTerms = await getProductAttributeTermsTotalCount(
+				sharedRequestArgs
+			);
 
 			if ( page > 1 ) {
 				setOptions( ( current ) => [ ...current, ...terms ] );

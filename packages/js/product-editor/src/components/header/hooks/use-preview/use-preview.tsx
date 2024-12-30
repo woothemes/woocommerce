@@ -110,7 +110,7 @@ export function usePreview( {
 			}
 
 			// Persist the product changes before redirecting
-			const publishedProduct = await saveEditedEntityRecord< Product >(
+			const publishedProduct = await saveEditedEntityRecord(
 				'postType',
 				productType,
 				productId,

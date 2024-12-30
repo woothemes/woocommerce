@@ -83,7 +83,7 @@ export const AttributeTermInputField: React.FC<
 			return resolveSelect(
 				EXPERIMENTAL_PRODUCT_ATTRIBUTE_TERMS_STORE_NAME
 			)
-				.getProductAttributeTerms< ProductAttributeTerm[] >( {
+				.getProductAttributeTerms( {
 					search: searchString || '',
 					attribute_id: attributeId,
 				} )

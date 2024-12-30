@@ -88,7 +88,7 @@ export function useSaveDraft( {
 			await editEntityRecord( 'postType', productType, productId, {
 				status: 'draft',
 			} );
-			const publishedProduct = await saveEditedEntityRecord< Product >(
+			const publishedProduct = await saveEditedEntityRecord(
 				'postType',
 				productType,
 				productId,

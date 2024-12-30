@@ -63,7 +63,7 @@ export function getLoadLinkedProductsDispatcher(
 			},
 		} );
 		return resolveSelect( PRODUCTS_STORE_NAME )
-			.getProducts< Product[] >( {
+			.getProducts( {
 				include: linkedProductIds,
 			} )
 			.then( ( response ) => {

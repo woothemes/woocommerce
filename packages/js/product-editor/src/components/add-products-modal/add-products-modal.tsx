@@ -60,7 +60,7 @@ export function AddProductsModal( {
 			setProducts( [] );
 
 			return resolveSelect( PRODUCTS_STORE_NAME )
-				.getProducts< Product[] >( {
+				.getProducts( {
 					search,
 					orderby: 'title',
 					order: 'asc',
