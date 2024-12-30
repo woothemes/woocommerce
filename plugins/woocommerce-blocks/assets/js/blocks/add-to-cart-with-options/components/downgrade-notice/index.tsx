@@ -22,7 +22,7 @@ const downgradeToClassicAddtoCartWithOptions = ( blockClientId: string ) => {
 	} );
 
 	if ( ! foundBlock ) {
-		return;
+		return false;
 	}
 
 	const foundQuantitySelectorBlock = findBlock( {
@@ -42,6 +42,8 @@ const downgradeToClassicAddtoCartWithOptions = ( blockClientId: string ) => {
 		foundBlock.clientId,
 		newBlock
 	);
+
+	return true;
 };
 
 export const DowngradeNotice = ( {
@@ -56,11 +58,15 @@ export const DowngradeNotice = ( {
 
 	const buttonLabel = __( 'Switch back', 'woocommerce' );
 
-	const handleClick = () => {
-		downgradeToClassicAddtoCartWithOptions( blockClientId );
-		recordEvent( 'blocks_add_to_cart_with_options_migration', {
-			transform_to: 'legacy',
-		} );
+	const handleClick = async () => {
+		const downgraded = await downgradeToClassicAddtoCartWithOptions(
+			blockClientId
+		);
+		if ( downgraded ) {
+			recordEvent( 'blocks_add_to_cart_with_options_migration', {
+				transform_to: 'legacy',
+			} );
+		}
 	};
 
 	return (

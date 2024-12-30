@@ -30,7 +30,7 @@ const upgradeToBlockifiedAddtoCartWithOptions = async (
 	} );
 
 	if ( ! foundBlock ) {
-		return;
+		return false;
 	}
 
 	const newBlock = createBlock(
@@ -49,6 +49,8 @@ const upgradeToBlockifiedAddtoCartWithOptions = async (
 		foundBlock.clientId,
 		newBlock
 	);
+
+	return true;
 };
 
 export const UpgradeNotice = ( {
@@ -75,11 +77,15 @@ export const UpgradeNotice = ( {
 		'woocommerce'
 	);
 
-	const handleClick = () => {
-		upgradeToBlockifiedAddtoCartWithOptions( blockClientId );
-		recordEvent( 'blocks_add_to_cart_with_options_migration', {
-			transform_to: 'blockified',
-		} );
+	const handleClick = async () => {
+		const upgraded = await upgradeToBlockifiedAddtoCartWithOptions(
+			blockClientId
+		);
+		if ( upgraded ) {
+			recordEvent( 'blocks_add_to_cart_with_options_migration', {
+				transform_to: 'blockified',
+			} );
+		}
 	};
 
 	return (
