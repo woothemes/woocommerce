@@ -34,7 +34,6 @@ async function installPatterns() {
 		method: 'POST',
 	} );
 
-	// @ts-expect-error -- No types for this exist yet.
 	await dispatch( coreStore ).invalidateResolutionForStoreSelector(
 		'getBlockPatterns'
 	);

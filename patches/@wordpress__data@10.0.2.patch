@@ -38,9 +38,200 @@ index db195ec1d0d981dce1622c12382f2b2394b25208..8c923576fbaf0fb34fd675ee0ec615a8
  /**
   * Given a store descriptor, returns an object containing the store's selectors pre-bound to state
   * so that you only need to supply additional arguments, and modified so that they throw promises
+diff --git a/build-types/redux-store/metadata/actions.d.ts b/build-types/redux-store/metadata/actions.d.ts
+index 79f7bca6dbf5329568720413a51e8ecd009a1fcd..58e3bbc5fbb18409b7be3835291dd05744f04e15 100644
+--- a/build-types/redux-store/metadata/actions.d.ts
++++ b/build-types/redux-store/metadata/actions.d.ts
+@@ -1,127 +1,113 @@
++/**
++ * Internal dependencies
++ */
++import type { SelectorParameters } from '../../types';
+ /**
+  * Returns an action object used in signalling that selector resolution has
+  * started.
+  *
+- * @param {string}    selectorName Name of selector for which resolver triggered.
+- * @param {unknown[]} args         Arguments to associate for uniqueness.
+- *
+- * @return {{ type: 'START_RESOLUTION', selectorName: string, args: unknown[] }} Action object.
++ * @param selectorName Name of selector for which resolver triggered.
++ * @param args         Arguments to associate for uniqueness.
+  */
+-export function startResolution(selectorName: string, args: unknown[]): {
++export declare function startResolution<Selectors>(selectorName: keyof Selectors, args: SelectorParameters<Selectors[keyof Selectors]>): {
+     type: 'START_RESOLUTION';
+-    selectorName: string;
+-    args: unknown[];
++    selectorName: keyof Selectors;
++    args: SelectorParameters<Selectors[keyof Selectors]>;
+ };
+ /**
+  * Returns an action object used in signalling that selector resolution has
+  * completed.
+  *
+- * @param {string}    selectorName Name of selector for which resolver triggered.
+- * @param {unknown[]} args         Arguments to associate for uniqueness.
+- *
+- * @return {{ type: 'FINISH_RESOLUTION', selectorName: string, args: unknown[] }} Action object.
++ * @param selectorName Name of selector for which resolver triggered.
++ * @param args         Arguments to associate for uniqueness.
+  */
+-export function finishResolution(selectorName: string, args: unknown[]): {
++export declare function finishResolution<Selectors>(selectorName: keyof Selectors, args: SelectorParameters<Selectors[keyof Selectors]>): {
+     type: 'FINISH_RESOLUTION';
+-    selectorName: string;
+-    args: unknown[];
++    selectorName: keyof Selectors;
++    args: SelectorParameters<Selectors[keyof Selectors]>;
+ };
+ /**
+  * Returns an action object used in signalling that selector resolution has
+  * failed.
+  *
+- * @param {string}        selectorName Name of selector for which resolver triggered.
+- * @param {unknown[]}     args         Arguments to associate for uniqueness.
+- * @param {Error|unknown} error        The error that caused the failure.
+- *
+- * @return {{ type: 'FAIL_RESOLUTION', selectorName: string, args: unknown[], error: Error|unknown }} Action object.
++ * @param selectorName Name of selector for which resolver triggered.
++ * @param args         Arguments to associate for uniqueness.
++ * @param error        The error that caused the failure.
+  */
+-export function failResolution(selectorName: string, args: unknown[], error: Error | unknown): {
++export declare function failResolution<Selectors>(selectorName: keyof Selectors, args: SelectorParameters<Selectors[keyof Selectors]>, error: Error | unknown): {
+     type: 'FAIL_RESOLUTION';
+-    selectorName: string;
+-    args: unknown[];
++    selectorName: keyof Selectors;
++    args: SelectorParameters<Selectors[keyof Selectors]>;
+     error: Error | unknown;
+ };
+ /**
+  * Returns an action object used in signalling that a batch of selector resolutions has
+  * started.
+  *
+- * @param {string}      selectorName Name of selector for which resolver triggered.
+- * @param {unknown[][]} args         Array of arguments to associate for uniqueness, each item
+- *                                   is associated to a resolution.
+- *
+- * @return {{ type: 'START_RESOLUTIONS', selectorName: string, args: unknown[][] }} Action object.
++ * @param selectorName Name of selector for which resolver triggered.
++ * @param args         Array of arguments to associate for uniqueness, each item
++ *                     is associated to a resolution.
+  */
+-export function startResolutions(selectorName: string, args: unknown[][]): {
++export declare function startResolutions<Selectors>(selectorName: keyof Selectors, args: Array<SelectorParameters<Selectors[keyof Selectors]>>): {
+     type: 'START_RESOLUTIONS';
+-    selectorName: string;
+-    args: unknown[][];
++    selectorName: keyof Selectors;
++    args: Array<SelectorParameters<Selectors[keyof Selectors]>>;
+ };
+ /**
+  * Returns an action object used in signalling that a batch of selector resolutions has
+  * completed.
+  *
+- * @param {string}      selectorName Name of selector for which resolver triggered.
+- * @param {unknown[][]} args         Array of arguments to associate for uniqueness, each item
+- *                                   is associated to a resolution.
+- *
+- * @return {{ type: 'FINISH_RESOLUTIONS', selectorName: string, args: unknown[][] }} Action object.
++ * @param selectorName Name of selector for which resolver triggered.
++ * @param args         Array of arguments to associate for uniqueness, each item
++ *                     is associated to a resolution.
+  */
+-export function finishResolutions(selectorName: string, args: unknown[][]): {
++export declare function finishResolutions<Selectors>(selectorName: keyof Selectors, args: Array<SelectorParameters<Selectors[keyof Selectors]>>): {
+     type: 'FINISH_RESOLUTIONS';
+-    selectorName: string;
+-    args: unknown[][];
++    selectorName: keyof Selectors;
++    args: Array<SelectorParameters<Selectors[keyof Selectors]>>;
+ };
+ /**
+  * Returns an action object used in signalling that a batch of selector resolutions has
+  * completed and at least one of them has failed.
+  *
+- * @param {string}            selectorName Name of selector for which resolver triggered.
+- * @param {unknown[]}         args         Array of arguments to associate for uniqueness, each item
+- *                                         is associated to a resolution.
+- * @param {(Error|unknown)[]} errors       Array of errors to associate for uniqueness, each item
+- *                                         is associated to a resolution.
+- * @return {{ type: 'FAIL_RESOLUTIONS', selectorName: string, args: unknown[], errors: Array<Error|unknown> }} Action object.
++ * @param selectorName Name of selector for which resolver triggered.
++ * @param args         Array of arguments to associate for uniqueness, each item
++ *                     is associated to a resolution.
++ * @param errors       Array of errors to associate for uniqueness, each item
++ *                     is associated to a resolution.
+  */
+-export function failResolutions(selectorName: string, args: unknown[], errors: (Error | unknown)[]): {
++export declare function failResolutions<Selectors>(selectorName: keyof Selectors, args: Array<SelectorParameters<Selectors[keyof Selectors]>>, errors: Array<Error | unknown>): {
+     type: 'FAIL_RESOLUTIONS';
+-    selectorName: string;
+-    args: unknown[];
++    selectorName: keyof Selectors;
++    args: Array<SelectorParameters<Selectors[keyof Selectors]>>;
+     errors: Array<Error | unknown>;
+ };
+ /**
+  * Returns an action object used in signalling that we should invalidate the resolution cache.
+  *
+- * @param {string}    selectorName Name of selector for which resolver should be invalidated.
+- * @param {unknown[]} args         Arguments to associate for uniqueness.
+- *
+- * @return {{ type: 'INVALIDATE_RESOLUTION', selectorName: string, args: any[] }} Action object.
++ * @param selectorName Name of selector for which resolver should be invalidated.
++ * @param args         Arguments to associate for uniqueness.
+  */
+-export function invalidateResolution(selectorName: string, args: unknown[]): {
++export declare function invalidateResolution<Selectors>(selectorName: keyof Selectors, args: SelectorParameters<Selectors[keyof Selectors]>): {
+     type: 'INVALIDATE_RESOLUTION';
+-    selectorName: string;
+-    args: any[];
++    selectorName: keyof Selectors;
++    args: SelectorParameters<Selectors[keyof Selectors]>;
+ };
+ /**
+  * Returns an action object used in signalling that the resolution
+  * should be invalidated.
+- *
+- * @return {{ type: 'INVALIDATE_RESOLUTION_FOR_STORE' }} Action object.
+  */
+-export function invalidateResolutionForStore(): {
++export declare function invalidateResolutionForStore(): {
+     type: 'INVALIDATE_RESOLUTION_FOR_STORE';
+ };
+ /**
+  * Returns an action object used in signalling that the resolution cache for a
+  * given selectorName should be invalidated.
+  *
+- * @param {string} selectorName Name of selector for which all resolvers should
+- *                              be invalidated.
+- *
+- * @return  {{ type: 'INVALIDATE_RESOLUTION_FOR_STORE_SELECTOR', selectorName: string }} Action object.
++ * @param selectorName Name of selector for which all resolvers should be invalidated.
+  */
+-export function invalidateResolutionForStoreSelector(selectorName: string): {
++export declare function invalidateResolutionForStoreSelector<Selectors>(selectorName: keyof Selectors): {
+     type: 'INVALIDATE_RESOLUTION_FOR_STORE_SELECTOR';
+-    selectorName: string;
++    selectorName: keyof Selectors;
+ };
+ //# sourceMappingURL=actions.d.ts.map
+\ No newline at end of file
+diff --git a/build-types/redux-store/metadata/actions.d.ts.map b/build-types/redux-store/metadata/actions.d.ts.map
+index d7fac8c38f9c3fdb64fe2469a966e791e4855ed9..5b49d5663937e47af1f9b4fd82638c71a7fab2ec 100644
+--- a/build-types/redux-store/metadata/actions.d.ts.map
++++ b/build-types/redux-store/metadata/actions.d.ts.map
+@@ -1 +1 @@
+-{"version":3,"file":"actions.d.ts","sourceRoot":"","sources":["../../../src/redux-store/metadata/actions.js"],"names":[],"mappings":"AAAA;;;;;;;;GAQG;AACH,8CALW,MAAM,QACN,OAAO,EAAE,GAER;IAAE,IAAI,EAAE,kBAAkB,CAAC;IAAC,YAAY,EAAE,MAAM,CAAC;IAAC,IAAI,EAAE,OAAO,EAAE,CAAA;CAAE,CAQ9E;AAED;;;;;;;;GAQG;AACH,+CALW,MAAM,QACN,OAAO,EAAE,GAER;IAAE,IAAI,EAAE,mBAAmB,CAAC;IAAC,YAAY,EAAE,MAAM,CAAC;IAAC,IAAI,EAAE,OAAO,EAAE,CAAA;CAAE,CAQ/E;AAED;;;;;;;;;GASG;AACH,6CANW,MAAM,QACN,OAAO,EAAE,SACT,KAAK,GAAC,OAAO,GAEZ;IAAE,IAAI,EAAE,iBAAiB,CAAC;IAAC,YAAY,EAAE,MAAM,CAAC;IAAC,IAAI,EAAE,OAAO,EAAE,CAAC;IAAC,KAAK,EAAE,KAAK,GAAC,OAAO,CAAA;CAAE,CASnG;AAED;;;;;;;;;GASG;AACH,+CANW,MAAM,QACN,OAAO,EAAE,EAAE,GAGV;IAAE,IAAI,EAAE,mBAAmB,CAAC;IAAC,YAAY,EAAE,MAAM,CAAC;IAAC,IAAI,EAAE,OAAO,EAAE,EAAE,CAAA;CAAE,CAQjF;AAED;;;;;;;;;GASG;AACH,gDANW,MAAM,QACN,OAAO,EAAE,EAAE,GAGV;IAAE,IAAI,EAAE,oBAAoB,CAAC;IAAC,YAAY,EAAE,MAAM,CAAC;IAAC,IAAI,EAAE,OAAO,EAAE,EAAE,CAAA;CAAE,CAQlF;AAED;;;;;;;;;;GAUG;AACH,8CAPW,MAAM,QACN,OAAO,EAAE,UAET,CAAC,KAAK,GAAC,OAAO,CAAC,EAAE,GAEhB;IAAE,IAAI,EAAE,kBAAkB,CAAC;IAAC,YAAY,EAAE,MAAM,CAAC;IAAC,IAAI,EAAE,OAAO,EAAE,CAAC;IAAC,MAAM,EAAE,MAAM,KAAK,GAAC,OAAO,CAAC,CAAA;CAAE,CAS5G;AAED;;;;;;;GAOG;AACH,mDALW,MAAM,QACN,OAAO,EAAE,GAER;IAAE,IAAI,EAAE,uBAAuB,CAAC;IAAC,YAAY,EAAE,MAAM,CAAC;IAAC,IAAI,EAAE,GAAG,EAAE,CAAA;CAAE,CAQ/E;AAED;;;;;GAKG;AACH,gDAFY;IAAE,IAAI,EAAE,iCAAiC,CAAA;CAAE,CAMtD;AAED;;;;;;;;GAQG;AACH,mEALW,MAAM,GAGJ;IAAE,IAAI,EAAE,0CAA0C,CAAC;IAAC,YAAY,EAAE,MAAM,CAAA;CAAE,CAOtF"}
+\ No newline at end of file
++{"version":3,"file":"actions.d.ts","sourceRoot":"","sources":["../../../src/redux-store/metadata/actions.ts"],"names":[],"mappings":"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"}
+\ No newline at end of file
 diff --git a/build-types/resolve-select.d.ts b/build-types/resolve-select.d.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..cd5a7eddab97bed55ea0f25d21c1665427cd2a58
+index 0000000000000000000000000000000000000000..0459340d56efbdf86b36f4fe9f50b168466a4f52
 --- /dev/null
 +++ b/build-types/resolve-select.d.ts
 @@ -0,0 +1,33 @@
@@ -77,3 +268,45 @@ index 0000000000000000000000000000000000000000..cd5a7eddab97bed55ea0f25d21c16654
 +		: never;
 +};
 +//# sourceMappingURL=select.d.ts.map
+diff --git a/build-types/types.d.ts b/build-types/types.d.ts
+index 70261db904a6038c3ac61377d2bd9115e0c9f10c..30bdf2bbd30ddb87d7e06a8c0804656021aa499b 100644
+--- a/build-types/types.d.ts
++++ b/build-types/types.d.ts
+@@ -2,6 +2,11 @@
+  * External dependencies
+  */
+ import type { combineReducers as reduxCombineReducers } from 'redux';
++/**
++ * Internal dependencies
++ */
++import type * as MetadataActions from './redux-store/metadata/actions';
++export type SelectorParameters<Selector> = Selector extends (state: any, ...args: infer Parameters) => any ? Parameters : never;
+ type MapOf<T> = {
+     [name: string]: T;
+ };
+@@ -121,7 +126,7 @@ export interface DataEmitter {
+     isPaused: boolean;
+ }
+ export type ConfigOf<S> = S extends StoreDescriptor<infer C> ? C : never;
+-export type ActionCreatorsOf<Config extends AnyConfig> = Config extends ReduxStoreConfig<any, infer ActionCreators, any> ? PromisifiedActionCreators<ActionCreators> : never;
++export type ActionCreatorsOf<Config extends AnyConfig> = Config extends ReduxStoreConfig<any, infer ActionCreators, infer Selectors> ? PromisifiedActionCreators<ActionCreators & TypedMetadataActions<Selectors>> : never;
+ export type PromisifiedActionCreators<ActionCreators extends MapOf<ActionCreator>> = {
+     [Action in keyof ActionCreators]: PromisifyActionCreator<ActionCreators[Action]>;
+ };
+@@ -131,5 +136,16 @@ type SelectorsOf<Config extends AnyConfig> = Config extends ReduxStoreConfig<any
+     [name in keyof Selectors]: Function;
+ } : never;
+ export type combineReducers = typeof reduxCombineReducers;
++export type TypedMetadataActions<Selectors> = {
++    startResolution: typeof MetadataActions.startResolution<Selectors>;
++    finishResolution: typeof MetadataActions.finishResolution<Selectors>;
++    failResolution: typeof MetadataActions.failResolution<Selectors>;
++    startResolutions: typeof MetadataActions.startResolutions<Selectors>;
++    finishResolutions: typeof MetadataActions.finishResolutions<Selectors>;
++    failResolutions: typeof MetadataActions.failResolutions<Selectors>;
++    invalidateResolution: typeof MetadataActions.invalidateResolution<Selectors>;
++    invalidateResolutionForStore: typeof MetadataActions.invalidateResolutionForStore;
++    invalidateResolutionForStoreSelector: typeof MetadataActions.invalidateResolutionForStoreSelector<Selectors>;
++};
+ export {};
+ //# sourceMappingURL=types.d.ts.map
