@@ -18,7 +18,7 @@ export type BoundBlockAttributes = BlockAttributes & {
 };
 
 export type BoundBlockEditInstance = CoreBlockEditProps< BoundBlockAttributes >;
-export type BoundBlockEditComponent = ComponentType< BoundBlockEditInstance >;
+export type BoundBlockEditComponent = ComponentType;
 
 /*
  * Block Binding API

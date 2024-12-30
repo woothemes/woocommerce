@@ -13,5 +13,4 @@ import {
 export type DescriptionBlockEditProps =
 	ProductEditorBlockEditProps< ProductEditorBlockAttributes >;
 
-export type DescriptionBlockEditComponent =
-	ComponentType< DescriptionBlockEditProps >;
+export type DescriptionBlockEditComponent = ComponentType;
