@@ -626,7 +626,7 @@ importers:
         version: 18.3.0
       '@types/wordpress__block-editor':
         specifier: 7.0.0
-        version: 7.0.0(@emotion/is-prop-valid@1.2.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 7.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/wordpress__block-library':
         specifier: 2.6.1
         version: 2.6.1
@@ -846,7 +846,7 @@ importers:
         version: 6.0.0
       '@types/wordpress__media-utils':
         specifier: 3.0.0
-        version: 3.0.0(@emotion/is-prop-valid@1.2.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 3.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/wordpress__viewport':
         specifier: 2.5.4
         version: 2.5.4
@@ -2712,7 +2712,7 @@ importers:
         version: 5.14.9
       '@types/wordpress__block-editor':
         specifier: 7.0.0
-        version: 7.0.0(@emotion/is-prop-valid@1.2.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 7.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/wordpress__block-library':
         specifier: 2.6.1
         version: 2.6.1
@@ -2739,7 +2739,7 @@ importers:
         version: 2.3.1
       '@types/wordpress__media-utils':
         specifier: 3.0.0
-        version: 3.0.0(@emotion/is-prop-valid@1.2.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 3.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/wordpress__plugins':
         specifier: 3.0.0
         version: 3.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -40220,21 +40220,6 @@ snapshots:
       - react
       - react-dom
 
-  '@types/wordpress__block-editor@7.0.0(@emotion/is-prop-valid@1.2.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
-    dependencies:
-      '@types/react': 18.3.16
-      '@types/wordpress__blocks': 12.5.16(@emotion/is-prop-valid@1.2.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@types/wordpress__components': 23.0.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@types/wordpress__data': 6.0.2
-      '@types/wordpress__keycodes': 2.3.1
-      '@wordpress/element': 4.20.0
-      react-autosize-textarea: 7.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-    transitivePeerDependencies:
-      - '@emotion/is-prop-valid'
-      - react
-      - react-dom
-      - supports-color
-
   '@types/wordpress__block-editor@7.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@types/react': 18.3.16
@@ -40364,7 +40349,7 @@ snapshots:
       '@types/wordpress__components': 23.0.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/wordpress__core-data': 2.4.5
       '@types/wordpress__data': 6.0.2
-      '@types/wordpress__media-utils': 3.0.0(@emotion/is-prop-valid@1.2.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@types/wordpress__media-utils': 3.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/element': 5.22.0
     transitivePeerDependencies:
       - '@emotion/is-prop-valid'
@@ -40375,10 +40360,10 @@ snapshots:
   '@types/wordpress__editor@13.6.7(@emotion/is-prop-valid@1.2.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@types/react': 18.3.16
-      '@types/wordpress__block-editor': 7.0.0(@emotion/is-prop-valid@1.2.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@types/wordpress__block-editor': 7.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/wordpress__blocks': 11.0.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/wordpress__components': 23.0.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@types/wordpress__media-utils': 3.0.0(@emotion/is-prop-valid@1.2.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@types/wordpress__media-utils': 3.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/core-data': 6.24.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/data': 10.0.2(react@18.3.1)
       '@wordpress/element': 5.22.0
@@ -40392,16 +40377,14 @@ snapshots:
 
   '@types/wordpress__keycodes@2.3.1': {}
 
-  '@types/wordpress__media-utils@3.0.0(@emotion/is-prop-valid@1.2.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@types/wordpress__media-utils@3.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@types/wordpress__block-editor': 7.0.0(@emotion/is-prop-valid@1.2.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@types/wordpress__block-editor': 7.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/wordpress__core-data': 2.4.5
       '@wordpress/element': 4.20.0
     transitivePeerDependencies:
-      - '@emotion/is-prop-valid'
       - react
       - react-dom
-      - supports-color
 
   '@types/wordpress__media-utils@4.14.4(@emotion/is-prop-valid@1.2.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
