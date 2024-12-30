@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
-import { registerBlockType } from '@wordpress/blocks';
 import { Icon, button } from '@wordpress/icons';
 import { getPlugin, registerPlugin } from '@wordpress/plugins';
 import { isExperimentalBlocksEnabled } from '@woocommerce/block-settings';
 import { getSettingWithCoercion } from '@woocommerce/settings';
 import { isBoolean } from '@woocommerce/types';
+import { registerProductBlockType } from '@woocommerce/atomic-utils';
+import type { BlockConfiguration } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -25,6 +26,11 @@ const isBlockifiedAddToCart = getSettingWithCoercion(
 	isBoolean
 );
 
+export interface Attributes {
+	className?: string;
+	isDescendentOfSingleProductBlock: boolean;
+}
+
 export const shouldBlockifiedAddToCartWithOptionsBeRegistered =
 	isExperimentalBlocksEnabled() && isBlockifiedAddToCart;
 
@@ -40,9 +46,16 @@ if ( shouldBlockifiedAddToCartWithOptionsBeRegistered ) {
 	}
 
 	// Register the block
-	registerBlockType( metadata, {
-		icon: <Icon icon={ button } />,
-		edit: AddToCartOptionsEdit,
-		save,
-	} );
+	registerProductBlockType< Attributes >(
+		{
+			...( metadata as BlockConfiguration< Attributes > ),
+			icon: <Icon icon={ button } />,
+			edit: AddToCartOptionsEdit,
+			save,
+			ancestor: [ 'woocommerce/single-product' ],
+		},
+		{
+			isAvailableOnPostEditor: true,
+		}
+	);
 }
