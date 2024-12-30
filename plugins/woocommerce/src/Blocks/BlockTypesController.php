@@ -563,8 +563,7 @@ final class BlockTypesController {
 		/**
 		 * This enables specific blocks in Widget Areas using an opt-in approach.
 		 */
-		if ( in_array( $pagenow, array( 'widgets.php', 'themes.php', 'customize.php' ), true ) &&
-			( empty( $_GET['page'] ) || 'gutenberg-edit-site' !== $_GET['page'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+		if ( in_array( $pagenow, array( 'widgets.php', 'themes.php', 'customize.php' ), true ) && ( empty( $_GET['page'] ) || 'gutenberg-edit-site' !== $_GET['page'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 			$block_types = array_intersect(
 				$block_types,
 				$this->get_widget_area_block_types()
