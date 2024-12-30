@@ -78,14 +78,6 @@ const Editor = ( {
 		} );
 	} );
 
-	const handleProductInvalidId = () => {
-		setAttributes( {
-			...attributes,
-			productId: 0,
-		} );
-		setIsEditing( true );
-	};
-
 	const isProductInvalidId =
 		typeof error === 'object' &&
 		error?.code === 'woocommerce_rest_product_invalid_id';
@@ -108,8 +100,8 @@ const Editor = ( {
 	}, [ attributes, productId, productPreview, setAttributes ] );
 
 	useEffect( () => {
-		if ( isProductInvalidId && ! isEditing && productId !== 0 ) {
-			handleProductInvalidId();
+		if ( isProductInvalidId && ! isEditing ) {
+			setIsEditing( true );
 		}
 	}, [ isProductInvalidId ] );
 
