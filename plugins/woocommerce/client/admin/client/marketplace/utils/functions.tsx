@@ -4,7 +4,7 @@
 import apiFetch from '@wordpress/api-fetch';
 import { __, sprintf } from '@wordpress/i18n';
 import { dispatch } from '@wordpress/data';
-import { Options } from '@wordpress/notices';
+import type { Options } from '@wordpress/notices';
 import { Icon } from '@wordpress/components';
 
 /**

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { Options } from '@wordpress/notices';
+import type { Options } from '@wordpress/notices';
 
 /**
  * Internal dependencies

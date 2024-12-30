@@ -17,7 +17,8 @@
 		"module": "esnext",
 		"baseUrl": "client",
 		"paths": {
-			"~/*": [ "*" ]
+			"~/*": [ "*" ],
+			"@wordpress/*": ["../node_modules/@types/wordpress__*"]
 		},
 		"rootDir": "client",
 		"typeRoots": [ "./client/typings", "./node_modules/@types" ]
@@ -26,6 +27,6 @@
 		"./client/**/*"
 	],
 	"exclude": [
-		"**/test/*",
+		"**/test/*"
 	]
 }
