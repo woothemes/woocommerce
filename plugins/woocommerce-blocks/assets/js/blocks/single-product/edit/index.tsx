@@ -133,6 +133,10 @@ const Editor = ( {
 		<Text>{ block.description }</Text>
 	);
 
+	const onChange = isProductInvalidId
+		? () => setIsEditing( false )
+		: undefined;
+
 	return (
 		<div { ...blockProps }>
 			{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
@@ -155,9 +159,7 @@ const Editor = ( {
 							<SharedProductControl
 								attributes={ attributes }
 								setAttributes={ setAttributes }
-								onChange={ () => {
-									setIsEditing( false );
-								} }
+								onChange={ onChange }
 							/>
 							{ ! isProductInvalidId && (
 								<Button

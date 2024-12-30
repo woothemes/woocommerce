@@ -11,7 +11,7 @@ import { Attributes } from '../types';
 interface SharedProductControlProps {
 	attributes: Attributes;
 	setAttributes: ( attributes: Attributes ) => void;
-	onChange?: () => void;
+	onChange?: ( () => void ) | undefined;
 }
 
 const SharedProductControl = ( {
