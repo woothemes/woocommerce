@@ -25,10 +25,10 @@ const isBlockifiedAddToCart = getSettingWithCoercion(
 	isBoolean
 );
 
-export const shouldBlockifiedAddtoCartWithOptionsBeRegistered =
+export const shouldBlockifiedAddToCartWithOptionsBeRegistered =
 	isExperimentalBlocksEnabled() && isBlockifiedAddToCart;
 
-if ( shouldBlockifiedAddtoCartWithOptionsBeRegistered ) {
+if ( shouldBlockifiedAddToCartWithOptionsBeRegistered ) {
 	registerStore();
 
 	// Register a plugin that adds a product type selector to the template sidebar.

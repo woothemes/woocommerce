@@ -18,7 +18,7 @@ import { isBoolean } from '@woocommerce/types';
 import './editor.scss';
 import { useIsDescendentOfSingleProductBlock } from '../../../atomic/blocks/product-elements/shared/use-is-descendent-of-single-product-block';
 import { QuantitySelectorStyle, AddToCartFormSettings } from './settings';
-import { shouldBlockifiedAddtoCartWithOptionsBeRegistered } from '../../add-to-cart-with-options';
+import { shouldBlockifiedAddToCartWithOptionsBeRegistered } from '../../add-to-cart-with-options';
 import { UpgradeNotice } from './components/upgrade-notice';
 
 export interface Attributes {
@@ -80,7 +80,7 @@ const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
 
 	return (
 		<>
-			{ shouldBlockifiedAddtoCartWithOptionsBeRegistered && (
+			{ shouldBlockifiedAddToCartWithOptionsBeRegistered && (
 				<InspectorControls>
 					<UpgradeNotice blockClientId={ props?.clientId } />
 				</InspectorControls>

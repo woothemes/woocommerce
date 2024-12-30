@@ -19,7 +19,7 @@ import {
 import metadata from '../../block.json';
 import getInnerBlocksTemplate from '../../../../add-to-cart-with-options/utils/get-inner-blocks-template';
 
-const upgradeToBlockifiedAddtoCartWithOptions = async (
+const upgradeToBlockifiedAddToCartWithOptions = async (
 	blockClientId: string
 ) => {
 	const blocks = select( 'core/block-editor' ).getBlocks();
@@ -78,7 +78,7 @@ export const UpgradeNotice = ( {
 	);
 
 	const handleClick = async () => {
-		const upgraded = await upgradeToBlockifiedAddtoCartWithOptions(
+		const upgraded = await upgradeToBlockifiedAddToCartWithOptions(
 			blockClientId
 		);
 		if ( upgraded ) {

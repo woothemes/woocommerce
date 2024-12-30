@@ -13,7 +13,7 @@ import { findBlock } from '@woocommerce/utils';
  */
 import metadata from '../../block.json';
 
-const downgradeToClassicAddtoCartWithOptions = ( blockClientId: string ) => {
+const downgradeToClassicAddToCartWithOptions = ( blockClientId: string ) => {
 	const blocks = select( 'core/block-editor' ).getBlocks();
 	const foundBlock = findBlock( {
 		blocks,
@@ -59,7 +59,7 @@ export const DowngradeNotice = ( {
 	const buttonLabel = __( 'Switch back', 'woocommerce' );
 
 	const handleClick = async () => {
-		const downgraded = await downgradeToClassicAddtoCartWithOptions(
+		const downgraded = await downgradeToClassicAddToCartWithOptions(
 			blockClientId
 		);
 		if ( downgraded ) {
