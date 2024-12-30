@@ -1,0 +1,4 @@
+Significance: patch
+Type: enhancement
+
+Add type to the remove filter label in the active-filters block
