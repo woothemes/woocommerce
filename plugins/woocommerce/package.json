@@ -691,6 +691,7 @@
 					"shardingArguments": [],
 					"changes": [],
 					"events": [
+						"on-demand",
 						"core-e2e-pressable"
 					],
 					"report": {
