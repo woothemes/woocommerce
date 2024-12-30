@@ -413,11 +413,21 @@ final class BlockTypesController {
 	protected function get_widget_area_block_types() {
 		return array(
 			'ActiveFilters',
+			'AllReviews',
 			'AttributeFilter',
+			'Breadcrumbs',
+			'CartLink',
+			'CatalogSorting',
+			'ClassicShortcode',
+			'ComingSoon',
+			'CustomerAccount',
+			'FeaturedCategory',
+			'FeaturedProduct',
+			'FilterWrapper',
 			'PriceFilter',
 			'ProductCategories',
+			'ProductCategory',
 			'ProductSearch',
-			'ProductTag',
 			'RatingFilter',
 			'StockFilter',
 		);
