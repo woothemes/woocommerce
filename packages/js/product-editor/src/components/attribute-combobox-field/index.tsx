@@ -221,7 +221,7 @@ const AttributesComboboxControl: React.FC<
 					allowReset={ false }
 					options={ options }
 					value={ currentValue }
-					onChange={ ( newValue ) => {
+					onChange={ ( newValue: string ) => {
 						if ( ! newValue ) {
 							return;
 						}

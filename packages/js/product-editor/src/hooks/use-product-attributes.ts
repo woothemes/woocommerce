@@ -83,10 +83,10 @@ export function useProductAttributes( {
 					attribute_id: attributeId,
 				} )
 				.then(
-					( attributeTerms ) => {
+					( attributeTerms: ProductAttributeTerm[] ) => {
 						return attributeTerms;
 					},
-					( error ) => {
+					( error: string ) => {
 						return error;
 					}
 				);

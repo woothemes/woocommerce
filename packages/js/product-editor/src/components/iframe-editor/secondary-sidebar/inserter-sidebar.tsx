@@ -10,7 +10,6 @@ import {
 	useRef,
 } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
-import { ESCAPE } from '@wordpress/keycodes';
 import {
 	store as blockEditorStore,
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -42,8 +41,8 @@ export default function InserterSidebar() {
 	}, [ setIsInserterOpened ] );
 
 	const closeOnEscape = useCallback(
-		( event ) => {
-			if ( event.keyCode === ESCAPE && ! event.defaultPrevented ) {
+		( event: KeyboardEvent ) => {
+			if ( event.code === 'Escape' && ! event.defaultPrevented ) {
 				event.preventDefault();
 				closeInserter();
 			}

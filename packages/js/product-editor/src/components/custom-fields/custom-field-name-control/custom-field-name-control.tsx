@@ -18,7 +18,7 @@ import { addQueryArgs } from '@wordpress/url';
  */
 import { ComboboxControl, ComboboxControlProps } from '../../combobox-control';
 import type { ComboboxControlOption } from '../../attribute-combobox-field/types';
-import type { CustomFieldNameControlProps } from './types';
+import type { CustomFieldNameControlProps, CustomFieldName } from './types';
 
 /**
  * Since the Combobox does not support an arbitrary value, the
@@ -72,7 +72,8 @@ export const CustomFieldNameControl = forwardRef(
 			function prependSelectedValueAsOption() {
 				if ( value ) {
 					const isExisting = customFieldNames.some(
-						( customFieldName ) => customFieldName.value === value
+						( customFieldName: CustomFieldName ) =>
+							customFieldName.value === value
 					);
 					if ( ! isExisting ) {
 						return [ { label: value, value }, ...customFieldNames ];

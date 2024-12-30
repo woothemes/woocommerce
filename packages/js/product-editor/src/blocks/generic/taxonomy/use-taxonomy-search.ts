@@ -30,7 +30,7 @@ async function getTaxonomiesMissingParents(
 			.getEntityRecords( 'taxonomy', taxonomyName, {
 				include: missingParentIds,
 			} )
-			.then( ( parentTaxonomies ) => {
+			.then( ( parentTaxonomies: Taxonomy[] ) => {
 				return getTaxonomiesMissingParents(
 					[ ...( parentTaxonomies as Taxonomy[] ), ...taxonomies ],
 					taxonomyName

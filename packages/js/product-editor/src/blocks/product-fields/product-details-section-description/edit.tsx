@@ -62,7 +62,10 @@ export function ProductDetailsSectionDescriptionBlockEdit( {
 	// eslint-disable-next-line @wordpress/no-unused-vars-before-return
 	const [ supportedProductTemplates, unsupportedProductTemplates ] =
 		productTemplates.reduce(
-			( [ supported, unsupported ], productTemplate ) => {
+			(
+				[ supported, unsupported ]: ProductTemplate[][],
+				productTemplate: ProductTemplate
+			) => {
 				if ( productTemplate.isSelectableByUser ) {
 					if ( productTemplate.layoutTemplateId ) {
 						supported.push( productTemplate );
@@ -329,10 +332,12 @@ export function ProductDetailsSectionDescriptionBlockEdit( {
 				recordEvent( 'product_template_selector_open', {
 					source: TRACKS_SOURCE,
 					supported_templates: supportedProductTemplates.map(
-						( productTemplate ) => productTemplate.id
+						( productTemplate: ProductTemplate ) =>
+							productTemplate.id
 					),
 					unsupported_template: unsupportedProductTemplates.map(
-						( productTemplate ) => productTemplate.id
+						( productTemplate: ProductTemplate ) =>
+							productTemplate.id
 					),
 				} );
 			}

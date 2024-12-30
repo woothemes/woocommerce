@@ -5,6 +5,7 @@ import { sprintf, __ } from '@wordpress/i18n';
 import {
 	EXPERIMENTAL_PRODUCT_VARIATIONS_STORE_NAME,
 	PartialProductVariation,
+	ProductVariation,
 	Product,
 	useUserPreferences,
 } from '@woocommerce/data';
@@ -152,14 +153,16 @@ export function Edit( {
 				recordEvent( 'product_variations_set_prices_update', {
 					source: TRACKS_SOURCE,
 				} );
-				productVariationsListPromise.then( ( variations ) => {
-					handleUpdateAll(
-						variations.map( ( { id } ) => ( {
-							id,
-							regular_price: value,
-						} ) )
-					);
-				} );
+				productVariationsListPromise.then(
+					( variations: ProductVariation[] ) => {
+						handleUpdateAll(
+							variations.map( ( { id } ) => ( {
+								id,
+								regular_price: value,
+							} ) )
+						);
+					}
+				);
 			},
 		} );
 	}

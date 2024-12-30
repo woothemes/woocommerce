@@ -14,3 +14,8 @@ export type CustomFieldNameControlProps = Omit<
 		>,
 		'onBlur'
 	>;
+
+export type CustomFieldName = {
+	value: string;
+	label: string;
+};

@@ -68,7 +68,7 @@ export function AddProductsModal( {
 						( product ) => product.id
 					),
 				} )
-				.then( ( response ) => {
+				.then( ( response: Product[] ) => {
 					setProducts( response );
 					return response;
 				} );

@@ -88,12 +88,12 @@ export const AttributeTermInputField: React.FC<
 					attribute_id: attributeId,
 				} )
 				.then(
-					( attributeTerms ) => {
+					( attributeTerms: ProductAttributeTerm[] ) => {
 						setFetchedItems( attributeTerms );
 						setIsFetching( false );
 						return attributeTerms;
 					},
-					( error ) => {
+					( error: string ) => {
 						setIsFetching( false );
 						return error;
 					}

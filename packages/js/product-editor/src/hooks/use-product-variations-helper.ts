@@ -28,7 +28,7 @@ async function getDefaultVariationValues(
 			productId
 		);
 		const alreadyHasVariableAttribute = attributes.some(
-			( attr ) => attr.variation
+			( attr: Product ) => attr.variation
 		);
 		if ( ! alreadyHasVariableAttribute ) {
 			return {};
@@ -113,7 +113,7 @@ export function useProductVariationsHelper() {
 		);
 
 		await Promise.all(
-			variations.map( ( variationId ) =>
+			variations.map( ( variationId: number ) =>
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
 				dispatch( 'core' ).invalidateResolution( 'getEntityRecord', [
@@ -159,7 +159,7 @@ export function useProductVariationsHelper() {
 					meta_data,
 				}
 			)
-			.then( async ( response ) => {
+			.then( async ( response: ProductVariation[] ) => {
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
 				await dispatch( 'core' ).invalidateResolution(

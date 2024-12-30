@@ -75,7 +75,16 @@ WooProductTabItem.Slot = ( { fillProps, template, children } ) => (
 	>
 		{ ( fills ) => {
 			const tabData = fills.reduce(
-				( { childrenMap, tabs }, fill ) => {
+				(
+					{
+						childrenMap,
+						tabs,
+					}: {
+						childrenMap: Record< string, ReactElement >;
+						tabs: TabPanel.Tab[];
+					},
+					fill: Array< React.ReactElement >
+				) => {
 					const props: WooProductTabItemProps & { order: number } =
 						fill[ 0 ].props;
 					if ( props && props.tabProps ) {
@@ -96,12 +105,14 @@ WooProductTabItem.Slot = ( { fillProps, template, children } ) => (
 				},
 				{ childrenMap: {}, tabs: [] } as {
 					childrenMap: Record< string, ReactElement >;
-					tabs: Array< TabPanel.Tab & { order: number } >;
+					tabs: TabPanel.Tab[];
 				}
 			);
-			const orderedTabs = tabData.tabs.sort( ( a, b ) => {
-				return a.order - b.order;
-			} );
+			const orderedTabs = tabData.tabs.sort(
+				( a: TabPanel.Tab, b: TabPanel.Tab ) => {
+					return a.order - b.order;
+				}
+			);
 
 			return children( orderedTabs, tabData.childrenMap );
 		} }

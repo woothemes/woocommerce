@@ -220,7 +220,7 @@ export function Edit( {
 						createProductShippingClass( shippingClassValues, {
 							optimisticQueryUpdate: shippingClassRequestQuery,
 						} )
-							.then( ( value ) => {
+							.then( ( value: ProductShippingClass ) => {
 								recordEvent(
 									'product_new_shipping_class_modal_add_button_click'
 								);

@@ -179,7 +179,7 @@ export function useVariations( { productId }: UseVariationsProps ) {
 
 			fetchedCount += chunk.length;
 
-			chunk.forEach( ( variation ) => {
+			chunk.forEach( ( variation: ProductVariation ) => {
 				selectedVariationsRef.current[ variation.id ] = variation;
 			} );
 		}

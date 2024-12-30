@@ -66,7 +66,7 @@ export function getLoadLinkedProductsDispatcher(
 			.getProducts( {
 				include: linkedProductIds,
 			} )
-			.then( ( response ) => {
+			.then( ( response: Product[] ) => {
 				dispatch( {
 					type: 'SET_LINKED_PRODUCTS',
 					payload: {
