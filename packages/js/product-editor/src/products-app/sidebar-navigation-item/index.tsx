@@ -7,9 +7,7 @@ import { privateApis as routerPrivateApis } from '@wordpress/router';
 import classNames from 'classnames';
 import { createElement } from '@wordpress/element';
 import {
-	// @ts-expect-error missing type.
 	__experimentalItem as Item,
-	// @ts-expect-error missing type.
 	__experimentalHStack as HStack,
 	FlexBlock,
 } from '@wordpress/components';

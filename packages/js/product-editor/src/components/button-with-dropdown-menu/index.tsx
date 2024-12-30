@@ -60,7 +60,6 @@ export function ButtonWithDropdownMenu( {
 					label={ dropdownButtonLabel }
 					popoverProps={ {
 						placement,
-						// @ts-expect-error no exported member.
 						position,
 						offset,
 					} }

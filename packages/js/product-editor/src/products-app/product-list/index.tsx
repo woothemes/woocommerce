@@ -18,13 +18,9 @@ import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import classNames from 'classnames';
 import {
-	// @ts-expect-error missing types.
 	__experimentalHeading as Heading,
-	// @ts-expect-error missing types.
 	__experimentalText as Text,
-	// @ts-expect-error missing types.
 	__experimentalHStack as HStack,
-	// @ts-expect-error missing types.
 	__experimentalVStack as VStack,
 	FlexItem,
 	Button,
@@ -275,7 +271,6 @@ export default function ProductList( {
 										<Button
 											variant="primary"
 											disabled={ true }
-											// @ts-expect-error missing type.
 											__next40pxDefaultSize
 										>
 											{ labels.add_new_item }
@@ -311,7 +306,6 @@ export default function ProductList( {
 					header={
 						<>
 							<Button
-								// @ts-expect-error outdated type.
 								size="compact"
 								icon={ showNewNavigation ? seen : unseen }
 								label={ __(
@@ -323,7 +317,6 @@ export default function ProductList( {
 								} }
 							/>
 							<Button
-								// @ts-expect-error outdated type.
 								size="compact"
 								isPressed={ quickEdit }
 								icon={ drawerRight }

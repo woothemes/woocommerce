@@ -20,7 +20,6 @@ import {
 	Button,
 	CheckboxControl,
 	Dropdown,
-	// @ts-expect-error `__experimentalInputControl` does exist.
 	__experimentalInputControl as InputControl,
 	Spinner,
 } from '@wordpress/components';
@@ -203,7 +202,6 @@ export function VariationsFilter( {
 	return (
 		<Dropdown
 			className="woocommerce-product-variations-filter"
-			// @ts-expect-error Property 'onClose' does not exist
 			onClose={ handleClose }
 			renderToggle={ ( { isOpen, onToggle } ) => (
 				<Button

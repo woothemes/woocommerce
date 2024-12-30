@@ -10,7 +10,6 @@ import { decodeEntities } from '@wordpress/html-entities';
 import { filterURLForDisplay } from '@wordpress/url';
 import {
 	Button,
-	// @ts-expect-error missing types.
 	__experimentalHStack as HStack,
 	VisuallyHidden,
 } from '@wordpress/components';

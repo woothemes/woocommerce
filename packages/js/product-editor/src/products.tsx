@@ -7,7 +7,6 @@ import {
 	StrictMode,
 	Suspense,
 	createElement,
-	// @ts-expect-error createRoot is available.
 	createRoot,
 	lazy,
 } from '@wordpress/element';

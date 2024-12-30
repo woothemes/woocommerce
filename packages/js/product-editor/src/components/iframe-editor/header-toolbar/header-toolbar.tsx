@@ -17,12 +17,7 @@ import {
 import { isWpVersion } from '@woocommerce/settings';
 import classnames from 'classnames';
 import { MouseEvent } from 'react';
-import {
-	Button,
-	Popover,
-	/* @ts-expect-error missing types. */
-	ToolbarItem,
-} from '@wordpress/components';
+import { Button, Popover, ToolbarItem } from '@wordpress/components';
 // eslint-disable-next-line @woocommerce/dependency-group
 import {
 	store as preferencesStore,
@@ -89,7 +84,6 @@ export function HeaderToolbar( {
 			// @ts-expect-error These selectors are available in the block data store.
 			getBlockSelectionStart,
 		} = select( blockEditorStore );
-		// @ts-expect-error These selectors are available in the block data store.
 		const { get: getPreference } = select( preferencesStore );
 
 		return {

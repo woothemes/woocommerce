@@ -2,10 +2,7 @@
  * External dependencies
  */
 import type { BlockEditProps, BlockAttributes } from '@wordpress/blocks';
-import {
-	// @ts-expect-error no exported member.
-	type ComponentType,
-} from '@wordpress/element';
+import { type ComponentType } from '@wordpress/element';
 
 export type AttributeBindingProps = {
 	source: string;

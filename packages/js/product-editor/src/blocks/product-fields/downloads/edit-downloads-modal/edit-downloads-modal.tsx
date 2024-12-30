@@ -11,7 +11,6 @@ import {
 	Button,
 	Modal,
 	BaseControl,
-	// @ts-expect-error `__experimentalInputControl` does exist.
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 

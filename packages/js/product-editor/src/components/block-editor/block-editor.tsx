@@ -386,7 +386,6 @@ export function BlockEditor( {
 					{ /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */ }
 					<PostTypeContext.Provider value={ context.postType! }>
 						<Suspense fallback={ null }>
-							{ /* @ts-expect-error 'scope' does exist. @types/wordpress__plugins is outdated. */ }
 							<PluginArea scope="woocommerce-product-block-editor" />
 						</Suspense>
 					</PostTypeContext.Provider>

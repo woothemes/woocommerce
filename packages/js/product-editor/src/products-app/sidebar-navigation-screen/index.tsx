@@ -9,11 +9,8 @@ import { useSelect } from '@wordpress/data';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 import { createElement, Fragment } from '@wordpress/element';
 import {
-	// @ts-expect-error missing type.
 	__experimentalHStack as HStack,
-	// @ts-expect-error missing type.
 	__experimentalHeading as Heading,
-	// @ts-expect-error missing type.
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 

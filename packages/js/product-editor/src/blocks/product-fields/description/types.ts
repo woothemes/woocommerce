@@ -1,10 +1,7 @@
 /**
  * External dependencies
  */
-import {
-	// @ts-expect-error no exported member.
-	ComponentType,
-} from '@wordpress/element';
+import { ComponentType } from '@wordpress/element';
 /**
  * Internal dependencies
  */

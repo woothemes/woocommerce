@@ -15,7 +15,6 @@ import classNames from 'classnames';
 import {
 	Button,
 	ToggleControl,
-	// @ts-expect-error `__experimentalInputControl` does exist.
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 

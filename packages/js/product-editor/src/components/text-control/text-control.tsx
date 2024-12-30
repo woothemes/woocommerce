@@ -4,10 +4,7 @@
 import { Ref } from 'react';
 import { createElement, forwardRef } from '@wordpress/element';
 import classNames from 'classnames';
-import {
-	// @ts-expect-error `__experimentalInputControl` does exist.
-	__experimentalInputControl as InputControl,
-} from '@wordpress/components';
+import { __experimentalInputControl as InputControl } from '@wordpress/components';
 
 /**
  * Internal dependencies

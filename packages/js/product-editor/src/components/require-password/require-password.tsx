@@ -13,7 +13,6 @@ import { recordEvent } from '@woocommerce/tracks';
 import {
 	BaseControl,
 	CheckboxControl,
-	// @ts-expect-error `__experimentalInputControl` does exist.
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 
