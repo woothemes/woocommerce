@@ -79,6 +79,6 @@ export const CustomElements: React.FC = () => {
 };
 
 export default {
-	title: 'WooCommerce Admin/components/FormSection',
+	title: 'Components/FormSection',
 	component: FormSection,
 };

@@ -9,14 +9,14 @@ use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestion
 use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestions as ExtensionSuggestions;
 use Automattic\WooCommerce\Tests\Internal\Admin\Settings\Mocks\FakePaymentGateway;
 use PHPUnit\Framework\MockObject\MockObject;
-use WC_REST_Unit_Test_Case;
+use WC_Unit_Test_Case;
 
 /**
  * Payment Providers service test.
  *
  * @class PaymentProviders
  */
-class PaymentProvidersTest extends WC_REST_Unit_Test_Case {
+class PaymentProvidersTest extends WC_Unit_Test_Case {
 
 	/**
 	 * @var PaymentProviders
