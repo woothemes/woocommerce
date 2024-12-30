@@ -3,7 +3,6 @@
  */
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from '@wordpress/element';
-import { Placeholder, Button, PanelBody } from '@wordpress/components';
 import { withProduct } from '@woocommerce/block-hocs';
 import BlockErrorBoundary from '@woocommerce/base-components/block-error-boundary';
 import EditProductLink from '@woocommerce/editor-components/edit-product-link';
@@ -12,9 +11,21 @@ import { ProductResponseItem } from '@woocommerce/types';
 import ErrorPlaceholder, {
 	ErrorObject,
 } from '@woocommerce/editor-components/error-placeholder';
-
 import { PRODUCTS_STORE_NAME, Product } from '@woocommerce/data';
 import { useSelect } from '@wordpress/data';
+import { Icon, info } from '@wordpress/icons';
+import {
+	Placeholder,
+	// @ts-expect-error Using experimental features
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
+	__experimentalHStack as HStack,
+	// @ts-expect-error Using experimental features
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
+	__experimentalText as Text,
+	Button,
+	PanelBody,
+} from '@wordpress/components';
+
 /**
  * Internal dependencies
  */
@@ -67,6 +78,18 @@ const Editor = ( {
 		} );
 	} );
 
+	const handleProductInvalidId = () => {
+		setAttributes( {
+			...attributes,
+			productId: 0,
+		} );
+		setIsEditing( true );
+	};
+
+	const isProductInvalidId =
+		typeof error === 'object' &&
+		error?.code === 'woocommerce_rest_product_invalid_id';
+
 	useEffect( () => {
 		const productPreviewId = productPreview
 			? productPreview[ 0 ]?.id
@@ -84,7 +107,13 @@ const Editor = ( {
 		setIsEditing( false );
 	}, [ attributes, productId, productPreview, setAttributes ] );
 
-	if ( error ) {
+	useEffect( () => {
+		if ( isProductInvalidId && ! isEditing && productId !== 0 ) {
+			handleProductInvalidId();
+		}
+	}, [ isProductInvalidId ] );
+
+	if ( error && ! isProductInvalidId ) {
 		return (
 			<ErrorPlaceholder
 				className="wc-block-editor-single-product-error"
@@ -94,6 +123,23 @@ const Editor = ( {
 			/>
 		);
 	}
+
+	const infoTitle = isProductInvalidId ? (
+		<>
+			<Icon
+				icon={ info }
+				className="wc-block-editor-single-product__info-icon"
+			/>
+			<Text>
+				{ __(
+					'Previously selected product is no longer available.',
+					'woocommerce'
+				) }
+			</Text>
+		</>
+	) : (
+		<Text>{ block.description }</Text>
+	);
 
 	return (
 		<div { ...blockProps }>
@@ -112,20 +158,25 @@ const Editor = ( {
 						label={ block.title }
 						className="wc-block-editor-single-product"
 					>
-						{ block.description }
+						<HStack alignment="center"> { infoTitle } </HStack>
 						<div className="wc-block-editor-single-product__selection">
 							<SharedProductControl
 								attributes={ attributes }
 								setAttributes={ setAttributes }
-							/>
-							<Button
-								variant="secondary"
-								onClick={ () => {
+								onChange={ () => {
 									setIsEditing( false );
 								} }
-							>
-								{ __( 'Done', 'woocommerce' ) }
-							</Button>
+							/>
+							{ ! isProductInvalidId && (
+								<Button
+									variant="secondary"
+									onClick={ () => {
+										setIsEditing( false );
+									} }
+								>
+									{ __( 'Done', 'woocommerce' ) }
+								</Button>
+							) }
 						</div>
 					</Placeholder>
 				) : (
