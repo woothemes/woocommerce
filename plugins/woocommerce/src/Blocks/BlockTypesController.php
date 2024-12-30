@@ -419,17 +419,30 @@ final class BlockTypesController {
 			'CartLink',
 			'CatalogSorting',
 			'ClassicShortcode',
-			'ComingSoon',
 			'CustomerAccount',
 			'FeaturedCategory',
 			'FeaturedProduct',
 			'FilterWrapper',
+			'MiniCart',
 			'PriceFilter',
 			'ProductCategories',
-			'ProductCategory',
+			'ProductResultsCount',
 			'ProductSearch',
 			'RatingFilter',
+			'ReviewsByCategory',
+			'ReviewsByProduct',
 			'StockFilter',
+			'PageContentWrapper',
+			// Below product grids are hidden from inserter however they could have been used in widgets.
+			// Keep them for backward compatibility.
+			'HandpickedProducts',
+			'ProductBestSellers',
+			'ProductNew',
+			'ProductOnSale',
+			'ProductTopRated',
+			'ProductsByAttribute',
+			'ProductCategory',
+			'ProductTag',
 		);
 	}
 
