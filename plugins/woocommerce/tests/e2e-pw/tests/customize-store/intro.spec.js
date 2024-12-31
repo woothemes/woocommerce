@@ -115,7 +115,7 @@ test.describe(
 			).toBeVisible();
 		} );
 
-		test( 'it shows the "non default block theme" banner when the theme is a block theme different than TT4', async ( {
+		test( 'it shows the "non default block theme" banner when the theme is a block theme different than TT4 and redirects to the editor', async ( {
 			page,
 			baseURL,
 		} ) => {
@@ -126,11 +126,14 @@ test.describe(
 			await expect( page.locator( 'h1' ) ).toHaveText(
 				'Customize your theme'
 			);
-			await expect(
-				page.getByRole( 'button', { name: 'Go to the Editor' } )
-			).toBeVisible();
-		} );
 
+			const button = page.getByRole( 'button', {
+				name: 'Go to the Editor',
+			} );
+			await expect( button ).toBeVisible();
+			await button.click();
+			expect( page.url() ).toContain( 'wp-admin/site-editor.php' );
+		} );
 		test( 'clicking on "Go to the Customizer" with a classic theme should go to the customizer', async ( {
 			page,
 			baseURL,
