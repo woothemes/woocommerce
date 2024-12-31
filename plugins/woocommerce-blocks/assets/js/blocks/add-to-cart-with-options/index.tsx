@@ -12,7 +12,6 @@ import type { BlockConfiguration } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-import registerStore from '../../shared/store';
 import ProductTypeSelectorPlugin from './plugins';
 import metadata from './block.json';
 import AddToCartOptionsEdit from './edit';
@@ -31,8 +30,6 @@ export const shouldBlockifiedAddToCartWithOptionsBeRegistered =
 	isExperimentalBlocksEnabled() && isBlockifiedAddToCart;
 
 if ( shouldBlockifiedAddToCartWithOptionsBeRegistered ) {
-	registerStore();
-
 	// Register a plugin that adds a product type selector to the template sidebar.
 	const PLUGIN_NAME = 'document-settings-template-selector-pane';
 	if ( ! getPlugin( PLUGIN_NAME ) ) {
