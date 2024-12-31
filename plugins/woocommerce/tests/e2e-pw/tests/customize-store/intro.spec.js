@@ -132,7 +132,10 @@ test.describe(
 			} );
 			await expect( button ).toBeVisible();
 			await button.click();
-			expect( page.url() ).toContain( 'wp-admin/site-editor.php' );
+			// Expecting heading from editor to be visible.
+			await expect(
+				page.getByRole( 'heading', { name: 'Design' } )
+			).toBeVisible();
 		} );
 		test( 'clicking on "Go to the Customizer" with a classic theme should go to the customizer', async ( {
 			page,
