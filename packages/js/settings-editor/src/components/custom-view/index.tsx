@@ -45,7 +45,7 @@ const SettingsScript = ( { content }: { content: string } ) => {
 		try {
 			const scriptElement = document.createElement( 'script' );
 			scriptElement.type = 'text/javascript';
-			scriptElement.innerText = content;
+			scriptElement.innerHTML = content;
 			document.body.appendChild( scriptElement );
 
 			return () => {
