@@ -35,6 +35,12 @@ export const IntroductionBanner = ( {
 	const { data: dataRecommended } = useRecommendedChannels();
 	const { data: dataCampaignTypes } = useCampaignTypes();
 
+	if ( isNewBranding() ) {
+		import( './IntroductionBanner-new.scss' );
+	} else {
+		import( './IntroductionBanner-old.scss' );
+	}
+
 	const showButtons = !! (
 		dataRegistered?.length && dataCampaignTypes?.length
 	);
