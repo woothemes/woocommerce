@@ -1,5 +1,0 @@
-Significance: patch
-Type: dev
-Comment: Update the E2E selector so it covers WordPress 6.7 and 6.6, not worth mentioning in changelog
-
-

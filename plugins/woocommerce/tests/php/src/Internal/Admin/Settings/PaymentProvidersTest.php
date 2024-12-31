@@ -9,14 +9,14 @@ use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestion
 use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestions as ExtensionSuggestions;
 use Automattic\WooCommerce\Tests\Internal\Admin\Settings\Mocks\FakePaymentGateway;
 use PHPUnit\Framework\MockObject\MockObject;
-use WC_REST_Unit_Test_Case;
+use WC_Unit_Test_Case;
 
 /**
  * Payment Providers service test.
  *
  * @class PaymentProviders
  */
-class PaymentProvidersTest extends WC_REST_Unit_Test_Case {
+class PaymentProvidersTest extends WC_Unit_Test_Case {
 
 	/**
 	 * @var PaymentProviders
@@ -90,9 +90,13 @@ class PaymentProvidersTest extends WC_REST_Unit_Test_Case {
 			'woocommerce_payments',
 			array(
 				'enabled'                     => true,
+				'account_connected'           => true,
 				'needs_setup'                 => true,
 				'test_mode'                   => true,
 				'dev_mode'                    => true,
+				'onboarding_started'          => true,
+				'onboarding_completed'        => true,
+				'test_mode_onboarding'        => true,
 				'plugin_slug'                 => 'woocommerce-payments',
 				'plugin_file'                 => 'woocommerce-payments/woocommerce-payments.php',
 				'recommended_payment_methods' => array(
@@ -114,6 +118,7 @@ class PaymentProvidersTest extends WC_REST_Unit_Test_Case {
 						'id'          => 'card',
 						'order'       => 20,
 						'enabled'     => true,
+						'required'    => true,
 						'title'       => '<b>Credit/debit card (required)</b>', // All tags should be stripped.
 						// Paragraphs and line breaks should be stripped.
 						'description' => '<p><strong>Accepts</strong> <b>all major</b></br><em>credit</em> and <a href="#" target="_blank">debit cards</a>.</p>',
@@ -151,6 +156,8 @@ class PaymentProvidersTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'state', $gateway_details, 'Gateway `state` entry is missing' );
 		$this->assertArrayHasKey( 'enabled', $gateway_details['state'], 'Gateway `state[enabled]` entry is missing' );
 		$this->assertTrue( $gateway_details['state']['enabled'], 'Gateway `state[enabled]` entry is not true' );
+		$this->assertArrayHasKey( 'account_connected', $gateway_details['state'], 'Gateway `state[account_connected]` entry is missing' );
+		$this->assertTrue( $gateway_details['state']['account_connected'], 'Gateway `state[account_connected]` entry is not true' );
 		$this->assertArrayHasKey( 'needs_setup', $gateway_details['state'], 'Gateway `state[needs_setup]` entry is missing' );
 		$this->assertTrue( $gateway_details['state']['needs_setup'], 'Gateway `state[needs_setup]` entry is not true' );
 		$this->assertArrayHasKey( 'test_mode', $gateway_details['state'], 'Gateway `state[test_mode]` entry is missing' );
@@ -168,6 +175,13 @@ class PaymentProvidersTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'status', $gateway_details['plugin'], 'Gateway `plugin[status]` entry is missing' );
 		$this->assertSame( PaymentProviders::EXTENSION_ACTIVE, $gateway_details['plugin']['status'] );
 		$this->assertArrayHasKey( 'onboarding', $gateway_details, 'Gateway `onboarding` entry is missing' );
+		$this->assertArrayHasKey( 'state', $gateway_details['onboarding'], 'Gateway `onboarding[state]` entry is missing' );
+		$this->assertArrayHasKey( 'started', $gateway_details['onboarding']['state'], 'Gateway `onboarding[state][started]` entry is missing' );
+		$this->assertTrue( $gateway_details['onboarding']['state']['started'], 'Gateway `onboarding[state][started]` entry is not false' );
+		$this->assertArrayHasKey( 'completed', $gateway_details['onboarding']['state'], 'Gateway `onboarding[state][completed]` entry is missing' );
+		$this->assertTrue( $gateway_details['onboarding']['state']['completed'], 'Gateway `onboarding[state][completed]` entry is not false' );
+		$this->assertArrayHasKey( 'test_mode', $gateway_details['onboarding']['state'], 'Gateway `onboarding[state][test_mode]` entry is missing' );
+		$this->assertTrue( $gateway_details['onboarding']['state']['test_mode'], 'Gateway `onboarding[state][test_mode]` entry is not false' );
 		$this->assertArrayHasKey( '_links', $gateway_details['onboarding'], 'Gateway `onboarding[_links]` entry is missing' );
 		$this->assertArrayHasKey( 'onboard', $gateway_details['onboarding']['_links'], 'Gateway `onboarding[_links][onboard]` entry is missing' );
 		$this->assertArrayHasKey( 'recommended_payment_methods', $gateway_details['onboarding'], 'Gateway `onboarding[recommended_payment_methods]` entry is missing' );
@@ -178,6 +192,7 @@ class PaymentProvidersTest extends WC_REST_Unit_Test_Case {
 					'id'          => 'woopay',
 					'_order'      => 0,
 					'enabled'     => false,
+					'required'    => false,
 					'title'       => 'WooPay',
 					'description' => 'WooPay express checkout',
 					'icon'        => '', // The icon with an invalid URL is ignored.
@@ -186,6 +201,7 @@ class PaymentProvidersTest extends WC_REST_Unit_Test_Case {
 					'id'          => 'card',
 					'_order'      => 1,
 					'enabled'     => true,
+					'required'    => true,
 					'title'       => 'Credit/debit card (required)',
 					'description' => '<strong>Accepts</strong> <b>all major</b><em>credit</em> and <a href="#" target="_blank">debit cards</a>.',
 					'icon'        => 'https://example.com/card-icon.png',
@@ -194,6 +210,7 @@ class PaymentProvidersTest extends WC_REST_Unit_Test_Case {
 					'id'          => 'basic2',
 					'_order'      => 2,
 					'enabled'     => false,
+					'required'    => false,
 					'title'       => 'Title',
 					'description' => '',
 					'icon'        => '',
@@ -202,6 +219,7 @@ class PaymentProvidersTest extends WC_REST_Unit_Test_Case {
 					'id'          => 'basic',
 					'_order'      => 3,
 					'enabled'     => true,
+					'required'    => false,
 					'title'       => 'Title',
 					'description' => '',
 					'icon'        => '',
@@ -1570,17 +1588,7 @@ class PaymentProvidersTest extends WC_REST_Unit_Test_Case {
 
 					$order = 99999;
 					foreach ( $gateways as $gateway_id => $gateway_data ) {
-						$fake_gateway          = new FakePaymentGateway();
-						$fake_gateway->id      = $gateway_id;
-						$fake_gateway->enabled = ( $gateway_data['enabled'] ?? false ) ? 'yes' : 'no';
-						if ( isset( $gateway_data['plugin_slug'] ) ) {
-							$fake_gateway->plugin_slug = $gateway_data['plugin_slug'];
-						}
-						if ( isset( $gateway_data['recommended_payment_methods'] ) ) {
-							$fake_gateway->recommended_payment_methods = $gateway_data['recommended_payment_methods'];
-						}
-
-						$wc_payment_gateways->payment_gateways[ $order++ ] = $fake_gateway;
+						$wc_payment_gateways->payment_gateways[ $order++ ] = new FakePaymentGateway( $gateway_id, $gateway_data );
 					}
 				},
 				100
