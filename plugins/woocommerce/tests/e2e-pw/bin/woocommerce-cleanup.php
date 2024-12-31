@@ -329,21 +329,17 @@ function wc_cleanup_reset_site() {
 	// Set the WooCommerce "From" email address.
 	update_option( 'woocommerce_email_from_address', 'wordpress@example.com' );
 
-	// Set WooCommerce measurement units to US standard (lbs, in)
-	update_option( 'woocommerce_weight_unit', 'lbs' );
-    update_option( 'woocommerce_dimension_unit', 'in' );
-
-	// Set shipping location to "Ship to all countries"
+	// Set shipping location to "Ship to all countries".
 	update_option( 'woocommerce_allowed_countries', 'all' );
 	update_option( 'woocommerce_ship_to_countries', '' );
 
-	// Clear store address fields
+	// Clear store address fields.
 	update_option( 'woocommerce_store_address', '' );
 	update_option( 'woocommerce_store_address_2', '' );
 	update_option( 'woocommerce_store_city', '' );
 	update_option( 'woocommerce_store_postcode', '' );
 
-	// Set WooCommerce measurement units to US standard (lbs, in)
+	// Set WooCommerce measurement units to US standard (lbs, in).
 	update_option( 'woocommerce_weight_unit', 'lbs' );
 	update_option( 'woocommerce_dimension_unit', 'in' );
 
@@ -474,39 +470,43 @@ function wc_cleanup_csv_files( $dir ) {
  * Remove all product categories except the default "Uncategorized" category.
  */
 function wc_cleanup_product_categories() {
-    // Get all product categories
-    $product_categories = get_terms( array(
-        'taxonomy' => 'product_cat',
-        'hide_empty' => false,
-    ) );
+	// Get all product categories.
+	$product_categories = get_terms(
+		array(
+			'taxonomy'   => 'product_cat',
+			'hide_empty' => false,
+		)
+	);
 
-    if ( ! empty( $product_categories ) && ! is_wp_error( $product_categories ) ) {
-        foreach ( $product_categories as $category ) {
-            // Skip the default "uncategorized" category as it cannot be deleted
-            if ( $category->term_id === (int) get_option( 'default_product_cat', 0 ) ) {
-                continue;
-            }
-            wp_delete_term( $category->term_id, 'product_cat' );
-        }
-    }
+	if ( ! empty( $product_categories ) && ! is_wp_error( $product_categories ) ) {
+		foreach ( $product_categories as $category ) {
+			// Skip the default "uncategorized" category as it cannot be deleted.
+			if ( (int) get_option( 'default_product_cat', 0 ) === $category->term_id ) {
+				continue;
+			}
+			wp_delete_term( $category->term_id, 'product_cat' );
+		}
+	}
 
-    // Reset the default category thumbnail and display type
-    $default_cat_id = get_option( 'default_product_cat', 0 );
-    if ( $default_cat_id ) {
-        delete_term_meta( $default_cat_id, 'thumbnail_id' );
-        delete_term_meta( $default_cat_id, 'display_type' );
-    }
+	// Reset the default category thumbnail and display type.
+	$default_cat_id = get_option( 'default_product_cat', 0 );
+	if ( $default_cat_id ) {
+		delete_term_meta( $default_cat_id, 'thumbnail_id' );
+		delete_term_meta( $default_cat_id, 'display_type' );
+	}
 }
 
 /**
- * Reset customer user email address
+ * Reset customer user email address.
  */
 function wc_cleanup_reset_customer_email() {
-    $customer = get_user_by('login', 'customer');
-    if ($customer) {
-        wp_update_user([
-            'ID' => $customer->ID,
-            'user_email' => 'customer@woocommercecoree2etestsuite.com'
-        ]);
-    }
+	$customer = get_user_by( 'login', 'customer' );
+	if ( $customer ) {
+		wp_update_user(
+			array(
+				'ID'         => $customer->ID,
+				'user_email' => 'customer@woocommercecoree2etestsuite.com',
+			)
+		);
+	}
 }
