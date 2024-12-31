@@ -18,6 +18,7 @@ import metadata from './block.json';
 import AddToCartOptionsEdit from './edit';
 import save from './save';
 import './style.scss';
+import type { Attributes } from './types';
 
 // Pick the value of the "blockify add to cart flag"
 const isBlockifiedAddToCart = getSettingWithCoercion(
@@ -25,11 +26,6 @@ const isBlockifiedAddToCart = getSettingWithCoercion(
 	false,
 	isBoolean
 );
-
-export interface Attributes {
-	className?: string;
-	isDescendentOfSingleProductBlock: boolean;
-}
 
 export const shouldBlockifiedAddToCartWithOptionsBeRegistered =
 	isExperimentalBlocksEnabled() && isBlockifiedAddToCart;
