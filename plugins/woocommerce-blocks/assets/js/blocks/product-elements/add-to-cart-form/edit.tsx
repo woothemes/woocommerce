@@ -20,12 +20,7 @@ import { useIsDescendentOfSingleProductBlock } from '../../../atomic/blocks/prod
 import { QuantitySelectorStyle, AddToCartFormSettings } from './settings';
 import { shouldBlockifiedAddToCartWithOptionsBeRegistered } from '../../add-to-cart-with-options';
 import { UpgradeNotice } from './components/upgrade-notice';
-
-export interface Attributes {
-	className?: string;
-	isDescendentOfSingleProductBlock: boolean;
-	quantitySelectorStyle: QuantitySelectorStyle;
-}
+import type { Attributes } from './';
 
 export type FeaturesKeys =
 	| 'isStepperLayoutFeatureEnabled'
