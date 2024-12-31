@@ -55,7 +55,8 @@ export function Edit( {
 				parentName: name || '',
 				isParentResolving: isResolutionFinished,
 			};
-		}
+		},
+		[ parentId ]
 	);
 
 	if (

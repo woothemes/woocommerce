@@ -34,7 +34,7 @@ export default function InserterSidebar() {
 		return {
 			rootClientId: getBlockRootClientId( '' ),
 		};
-	} );
+	}, [] );
 
 	const closeInserter = useCallback( () => {
 		return setIsInserterOpened( false );

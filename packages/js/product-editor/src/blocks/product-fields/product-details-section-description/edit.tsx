@@ -57,7 +57,7 @@ export function ProductDetailsSectionDescriptionBlockEdit( {
 		useSelect( ( select ) => {
 			const { getEditorSettings } = select( 'core/editor' );
 			return getEditorSettings() as ProductEditorSettings;
-		} );
+		}, [] );
 
 	// eslint-disable-next-line @wordpress/no-unused-vars-before-return
 	const [ supportedProductTemplates, unsupportedProductTemplates ] =

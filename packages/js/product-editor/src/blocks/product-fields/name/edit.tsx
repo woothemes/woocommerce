@@ -54,14 +54,16 @@ export function NameBlockEdit( {
 		useState( false );
 
 	const productId = useEntityId( 'postType', 'product' );
-	const product: Product = useSelect( ( select ) =>
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		select( 'core' ).getEditedEntityRecord(
-			'postType',
-			'product',
-			productId
-		)
+	const product: Product = useSelect(
+		( select ) =>
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			select( 'core' ).getEditedEntityRecord(
+				'postType',
+				'product',
+				productId
+			),
+		[ productId ]
 	);
 
 	const [ sku, setSku ] = useEntityProp( 'postType', 'product', 'sku' );

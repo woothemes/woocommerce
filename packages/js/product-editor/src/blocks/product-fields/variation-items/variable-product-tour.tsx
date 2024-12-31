@@ -146,7 +146,7 @@ export const VariableProductTour: React.FC = () => {
 			hasShownProductEditorTour:
 				getOption( 'woocommerce_block_product_tour_shown' ) === 'yes',
 		};
-	} );
+	}, [] );
 
 	if (
 		hasShownTour === 'yes' ||

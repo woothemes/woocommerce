@@ -24,7 +24,7 @@ export const ProductMVPFeedbackModalContainer: React.FC< {
 		return {
 			isProductMVPModalVisible: isProductMVPFeedbackModalVisible(),
 		};
-	} );
+	}, [] );
 
 	const productId = _productId ?? values?.id;
 
