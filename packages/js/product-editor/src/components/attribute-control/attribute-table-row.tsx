@@ -32,7 +32,8 @@ import type { MouseEventHandler } from 'react';
 import AttributesComboboxControl from '../attribute-combobox-field';
 import type { AttributeTableRowProps } from './types';
 
-interface FormTokenFieldProps extends CoreFormTokenField.Props {
+interface FormTokenFieldProps
+	extends React.ComponentProps< typeof CoreFormTokenField > {
 	__experimentalExpandOnFocus: boolean;
 	__experimentalAutoSelectFirstMatch: boolean;
 	__experimentalShowHowTo?: boolean;

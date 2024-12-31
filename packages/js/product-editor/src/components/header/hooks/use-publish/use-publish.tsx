@@ -26,7 +26,7 @@ export function usePublish< T = Product >( {
 }: PublishButtonProps & {
 	onPublishSuccess?( product: T ): void;
 	onPublishError?( error: WPError ): void;
-} ): Button.ButtonProps {
+} ): React.ComponentProps< typeof Button > {
 	const { isValidating, isDirty, isPublishing, publish } =
 		useProductManager( productType );
 

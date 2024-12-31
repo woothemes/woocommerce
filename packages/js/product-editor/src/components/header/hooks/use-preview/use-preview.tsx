@@ -29,7 +29,7 @@ export function usePreview( {
 }: PreviewButtonProps & {
 	onSaveSuccess?( product: Product ): void;
 	onSaveError?( error: WPError ): void;
-} ): Button.AnchorProps {
+} ): React.ComponentProps< typeof Button > {
 	const anchorRef = useRef< HTMLAnchorElement >();
 
 	const [ productId ] = useEntityProp< number >(

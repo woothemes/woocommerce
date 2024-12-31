@@ -30,7 +30,7 @@ import type {
  * the `__experimentalRenderItem` property.
  */
 interface ComboboxControlProps
-	extends Omit< CoreComboboxControl.Props, 'label' | 'help' > {
+	extends Omit< typeof CoreComboboxControl, 'label' | 'help' > {
 	__experimentalRenderItem?: ( args: {
 		item: ComboboxControlOption;
 	} ) => string | JSX.Element;

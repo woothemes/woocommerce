@@ -31,7 +31,7 @@ export function useSaveDraft( {
 }: SaveDraftButtonProps & {
 	onSaveSuccess?( product: Product ): void;
 	onSaveError?( error: WPError ): void;
-} ): Button.ButtonProps {
+} ): React.ComponentProps< typeof Button > {
 	const [ productId ] = useEntityProp< number >(
 		'postType',
 		productType,

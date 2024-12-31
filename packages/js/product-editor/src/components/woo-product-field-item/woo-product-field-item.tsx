@@ -20,6 +20,8 @@ import {
 import { createOrderedChildren, sortFillsByOrder } from '../../utils';
 import { ProductFillLocationType } from '../woo-product-tab-item';
 
+type FillProps = Record< string, unknown > | undefined;
+
 type WooProductFieldItemProps = {
 	id: string;
 	sections: ProductFillLocationType[];
@@ -58,9 +60,9 @@ const WooProductFieldFill: React.FC< WooProductFieldFillProps > = ( {
 			name={ `woocommerce_product_field_${ sectionName }` }
 			key={ fieldId }
 		>
-			{ ( fillProps: Fill.Props ) =>
+			{ ( fillProps: FillProps ) =>
 				createOrderedChildren<
-					Fill.Props &
+					FillProps &
 						SlotContextHelpersType & {
 							sectionName: string;
 						},
@@ -81,7 +83,9 @@ const WooProductFieldFill: React.FC< WooProductFieldFillProps > = ( {
 };
 
 export const WooProductFieldItem: React.FC< WooProductFieldItemProps > & {
-	Slot: React.FC< Slot.Props & WooProductFieldSlotProps >;
+	Slot: React.FC<
+		React.ComponentProps< typeof Slot > & WooProductFieldSlotProps
+	>;
 } = ( { children, sections, id } ) => {
 	return (
 		<>

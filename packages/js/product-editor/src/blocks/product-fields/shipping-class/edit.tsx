@@ -34,7 +34,10 @@ type ServerErrorResponse = {
 	code: string;
 };
 
-export const DEFAULT_SHIPPING_CLASS_OPTIONS: SelectControl.Option[] = [
+export const DEFAULT_SHIPPING_CLASS_OPTIONS: Array< {
+	label: string;
+	value: string;
+} > = [
 	{ value: '', label: __( 'No shipping class', 'woocommerce' ) },
 	{
 		value: ADD_NEW_SHIPPING_CLASS_OPTION_VALUE,
@@ -44,7 +47,7 @@ export const DEFAULT_SHIPPING_CLASS_OPTIONS: SelectControl.Option[] = [
 
 function mapShippingClassToSelectOption(
 	shippingClasses: ProductShippingClass[]
-): SelectControl.Option[] {
+): Array< { label: string; value: string } > {
 	return shippingClasses.map( ( { slug, name } ) => ( {
 		value: slug,
 		label: name,

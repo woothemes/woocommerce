@@ -8,4 +8,4 @@ export type MediaLibraryMenuItemProps = Omit<
 	MediaUpload.Props< boolean >,
 	'children' | 'render' | 'onChange'
 > &
-	Pick< DropdownMenuItem.Props, 'icon' | 'iconPosition' | 'text' | 'info' >;
+	React.ComponentProps< typeof DropdownMenuItem >;

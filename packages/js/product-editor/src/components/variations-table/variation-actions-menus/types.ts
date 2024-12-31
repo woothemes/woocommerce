@@ -19,7 +19,10 @@ export type VariationQuickUpdateSlotProps = {
 	onClose: () => void;
 };
 
-export type MenuItemProps = Omit< MenuItem.Props, 'onClick' > & {
+export type MenuItemProps = Omit<
+	React.ComponentProps< typeof MenuItem >,
+	'onClick'
+> & {
 	order?: number;
 	group?: string;
 	supportsMultipleSelection?: boolean;

@@ -11,6 +11,8 @@ import { createElement, Fragment } from '@wordpress/element';
 import { createOrderedChildren, sortFillsByOrder } from '../../utils';
 import { ProductFillLocationType } from '../woo-product-tab-item';
 
+type FillProps = Record< string, unknown > | undefined;
+
 type WooProductSectionItemProps = {
 	id: string;
 	tabs: ProductFillLocationType[];
@@ -24,7 +26,9 @@ type WooProductSectionSlotProps = {
 const DEFAULT_SECTION_ORDER = 20;
 
 export const WooProductSectionItem: React.FC< WooProductSectionItemProps > & {
-	Slot: React.FC< Slot.Props & WooProductSectionSlotProps >;
+	Slot: React.FC<
+		React.ComponentProps< typeof Slot > & WooProductSectionSlotProps
+	>;
 } = ( { children, tabs } ) => {
 	return (
 		<>
@@ -33,9 +37,9 @@ export const WooProductSectionItem: React.FC< WooProductSectionItemProps > & {
 					name={ `woocommerce_product_section_${ tabName }` }
 					key={ tabName }
 				>
-					{ ( fillProps: Fill.Props ) => {
+					{ ( fillProps: FillProps ) => {
 						return createOrderedChildren<
-							Fill.Props & { tabName: string }
+							FillProps & { tabName: string }
 						>( children, sectionOrder || DEFAULT_SECTION_ORDER, {
 							tabName,
 							...fillProps,
