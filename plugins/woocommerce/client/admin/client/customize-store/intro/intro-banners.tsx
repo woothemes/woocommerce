@@ -13,11 +13,11 @@ import { Link } from '@woocommerce/components';
  */
 import { Intro } from '.';
 import { IntroSiteIframe } from './intro-site-iframe';
-import { getAdminSetting } from '~/utils/admin-settings';
-import { navigateOrParent } from '../utils';
+import { ADMIN_URL, getAdminSetting } from '~/utils/admin-settings';
 import { trackEvent } from '../tracking';
 
 export const BaseIntroBanner = ( {
+	bannerButtonHref,
 	bannerTitle,
 	bannerText,
 	bannerClass,
@@ -29,6 +29,7 @@ export const BaseIntroBanner = ( {
 	previewBanner,
 	children,
 }: {
+	bannerButtonHref?: string;
 	bannerTitle: string;
 	bannerText: string;
 	bannerClass: string;
@@ -53,6 +54,7 @@ export const BaseIntroBanner = ( {
 					<p>{ bannerText }</p>
 					{ bannerButtonText && (
 						<Button
+							href={ bannerButtonHref }
 							onClick={ () =>
 								bannerButtonOnClick && bannerButtonOnClick()
 							}
@@ -269,16 +271,13 @@ export const ExistingAiThemeBanner = ( {
 			) }
 			bannerClass="existing-ai-theme-banner"
 			buttonIsLink={ false }
+			bannerButtonHref={ `${ ADMIN_URL }${ getNewPath(
+				{ customizing: true },
+				'/customize-store/assembler-hub',
+				{}
+			) }` }
 			bannerButtonOnClick={ () => {
 				trackEvent( 'customize_your_store_intro_customize_click' );
-				navigateOrParent(
-					window,
-					getNewPath(
-						{ customizing: true },
-						'/customize-store/assembler-hub',
-						{}
-					)
-				);
 			} }
 			bannerButtonText={ __( 'Customize', 'woocommerce' ) }
 			secondaryButton={ secondaryButton }
@@ -305,18 +304,15 @@ export const ExistingNoAiThemeBanner = () => {
 			) }
 			bannerClass="existing-no-ai-theme-banner"
 			buttonIsLink={ false }
+			bannerButtonHref={ `${ ADMIN_URL }${ getNewPath(
+				{ customizing: true },
+				'/customize-store/assembler-hub',
+				{}
+			) }` }
 			bannerButtonOnClick={ () => {
 				trackEvent( 'customize_your_store_intro_customize_click', {
 					theme_type: 'block',
 				} );
-				navigateOrParent(
-					window,
-					getNewPath(
-						{ customizing: true },
-						'/customize-store/assembler-hub',
-						{}
-					)
-				);
 			} }
 			bannerButtonText={ __( 'Customize your store', 'woocommerce' ) }
 			showAIDisclaimer={ false }
@@ -337,14 +333,11 @@ export const ClassicThemeBanner = () => {
 			) }
 			bannerClass="existing-no-ai-theme-banner"
 			buttonIsLink={ false }
+			bannerButtonHref={ `${ ADMIN_URL }customize.php?return=/wp-admin/themes.php` }
 			bannerButtonOnClick={ () => {
 				trackEvent( 'customize_your_store_intro_customize_click', {
 					theme_type: 'classic',
 				} );
-				navigateOrParent(
-					window,
-					'customize.php?return=/wp-admin/themes.php'
-				);
 			} }
 			bannerButtonText={ __( 'Go to the Customizer', 'woocommerce' ) }
 			showAIDisclaimer={ false }
@@ -365,11 +358,11 @@ export const NonDefaultBlockThemeBanner = () => {
 			) }
 			bannerClass="existing-no-ai-theme-banner"
 			buttonIsLink={ false }
+			bannerButtonHref={ `${ ADMIN_URL }site-editor.php` }
 			bannerButtonOnClick={ () => {
 				trackEvent( 'customize_your_store_intro_customize_click', {
 					theme_type: 'block',
 				} );
-				navigateOrParent( window, 'site-editor.php' );
 			} }
 			bannerButtonText={ __( 'Go to the Editor', 'woocommerce' ) }
 			showAIDisclaimer={ false }
