@@ -9,11 +9,30 @@ defined( 'ABSPATH' ) || exit;
 
 require_once __DIR__ . '/../../includes/class-wc-beta-tester-live-branches-installer.php';
 
+
+/**
+ * Check if the user has the necessary permissions to perform live branches actions.
+ * Avoid using WC functions so user can call these API without WooCommerce active.
+ *
+ * @return bool|WP_Error
+ */
+function check_live_branches_permissions() {
+	if ( ! current_user_can( 'install_plugins' ) ) {
+		return new \WP_Error(
+			'woocommerce_rest_cannot_edit',
+			__( 'Sorry, you cannot perform this action', 'woocommerce-beta-tester' )
+		);
+	}
+	return true;
+}
+
+
 register_woocommerce_admin_test_helper_rest_route(
 	'/live-branches/install/v1',
 	'install_version',
 	array(
-		'methods' => 'POST',
+		'methods'             => 'POST',
+		'permission_callback' => 'check_live_branches_permissions',
 	)
 );
 
@@ -21,7 +40,8 @@ register_woocommerce_admin_test_helper_rest_route(
 	'/live-branches/deactivate/v1',
 	'deactivate_woocommerce',
 	array(
-		'methods' => 'GET',
+		'methods'             => 'GET',
+		'permission_callback' => 'check_live_branches_permissions',
 	)
 );
 
@@ -30,19 +50,7 @@ register_woocommerce_admin_test_helper_rest_route(
 	'activate_version',
 	array(
 		'methods'             => 'POST',
-		'permission_callback' => function( $request ) {
-			// Avoid using WC functions as core will be deactivated during this request.
-			$user = wp_get_current_user();
-			$allowed_roles = array( 'administrator' );
-			if ( array_intersect( $allowed_roles, $user->roles ) ) {
-				return true;
-			} else {
-				return new \WP_Error(
-					'woocommerce_rest_cannot_edit',
-					__( 'Sorry, you cannot perform this action', 'woocommerce-beta-tester' )
-				);
-			}
-		},
+		'permission_callback' => 'check_live_branches_permissions',
 	)
 );
 
@@ -58,7 +66,7 @@ function install_version( $request ) {
 	$version      = $params->version;
 
 	$installer = new WC_Beta_Tester_Live_Branches_Installer();
-	$result    = $installer->install( $download_url, $pr_name, $version );
+	$result    = $installer->install( $download_url, $version );
 
 	if ( is_wp_error( $result ) ) {
 		return new WP_Error( 400, "Could not install $pr_name with error {$result->get_error_message()}", '' );
