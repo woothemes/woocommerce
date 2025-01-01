@@ -12,13 +12,5 @@
 	"include": [
 		"typings/**/*",
 		"src/**/*",
-	],
-	"exclude": [
-		"./wireit",
-		"./build",
-		"./node_modules",
-		"./build-module",
-		"./build-style",
-		"./build-types"
 	]
 }
