@@ -109,7 +109,7 @@ function useView(
 
 			setView( newView );
 		},
-		[ history, isCustom ]
+		[ history ]
 	);
 
 	// When layout URL param changes, update the view type
@@ -179,17 +179,17 @@ export default function ProductList( {
 			search: view.search,
 			...filters,
 		};
-	}, [ location.params, view ] );
+	}, [ view ] );
 
 	const onChangeSelection = useCallback(
-		( items: number[] ) => {
+		( items: string[] ) => {
 			setSelection( items );
 			history.push( {
 				...location.params,
 				postId: items.join( ',' ),
 			} );
 		},
-		[ history, location.params, view?.type ]
+		[ history, location.params ]
 	);
 
 	// TODO: Use the Woo data store to get all the products, as this doesn't contain all the product data.
