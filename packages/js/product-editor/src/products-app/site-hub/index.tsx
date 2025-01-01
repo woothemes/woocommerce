@@ -35,7 +35,12 @@ const SiteHub = memo(
 					const {
 						getSite,
 						getUnstableBase, // Site index.
-					} = select( coreStore );
+					} = select( coreStore ) as {
+						getSite: () =>
+							| undefined
+							| { title: string; url: string };
+						getUnstableBase: () => { home: string };
+					};
 					const _site: undefined | { title: string; url: string } =
 						getSite();
 

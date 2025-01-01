@@ -82,7 +82,11 @@ export function useDefaultViews( { postType }: { postType: string } ): Array< {
 } > {
 	const labels = useSelect(
 		( select ) => {
-			const { getPostType } = select( coreStore );
+			const { getPostType } = select( coreStore ) as {
+				getPostType: ( postType: string ) => {
+					labels?: Record< string, string >;
+				};
+			};
 			const postTypeData: { labels?: Record< string, string > } =
 				getPostType( postType );
 			return postTypeData?.labels;

@@ -304,6 +304,7 @@ export function IframeEditor( {
 									{ resizeObserver }
 									<BlockList className="edit-site-block-editor__block-list wp-site-blocks" />
 								</EditorCanvas>
+								{ /* @ts-expect-error name does exist on PopoverSlot see: https://github.com/WordPress/gutenberg/blob/trunk/packages/components/src/popover/index.tsx#L555 */ }
 								<Popover.Slot />
 							</ResizableEditor>
 							{ /* This is a hack, but I couldn't find another (easy) way to not

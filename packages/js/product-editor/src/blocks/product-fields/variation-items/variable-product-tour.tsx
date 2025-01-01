@@ -46,10 +46,13 @@ export const VariableProductTour: React.FC = () => {
 		( select ) => {
 			const { getProductVariationsTotalCount } = select(
 				EXPERIMENTAL_PRODUCT_VARIATIONS_STORE_NAME
-			);
+			) as {
+				getProductVariationsTotalCount: (
+					params: Record< string, unknown >
+				) => number;
+			};
 			return {
-				totalCount:
-					getProductVariationsTotalCount< number >( requestParams ),
+				totalCount: getProductVariationsTotalCount( requestParams ),
 			};
 		},
 		[ productId ]
@@ -141,7 +144,9 @@ export const VariableProductTour: React.FC = () => {
 	}, [ totalCount ] );
 
 	const { hasShownProductEditorTour } = useSelect( ( select ) => {
-		const { getOption } = select( OPTIONS_STORE_NAME );
+		const { getOption } = select( OPTIONS_STORE_NAME ) as {
+			getOption: ( key: string ) => string;
+		};
 		return {
 			hasShownProductEditorTour:
 				getOption( 'woocommerce_block_product_tour_shown' ) === 'yes',

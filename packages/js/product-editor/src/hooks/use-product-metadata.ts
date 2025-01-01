@@ -30,8 +30,19 @@ function useProductMetadata( options?: Options ) {
 		( select ) => {
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
-			const { getEditedEntityRecord, hasFinishedResolution } =
-				select( 'core' );
+			const { getEditedEntityRecord, hasFinishedResolution } = select(
+				'core'
+			) as {
+				getEditedEntityRecord: (
+					kind: string,
+					name: string,
+					recordId: number
+				) => Product;
+				hasFinishedResolution: (
+					selectorName: string,
+					args?: unknown[]
+				) => boolean;
+			};
 			const { meta_data: metadata }: Product = getEditedEntityRecord(
 				'postType',
 				postType,

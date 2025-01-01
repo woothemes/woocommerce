@@ -75,11 +75,16 @@ export function useProductVariationsHelper() {
 			const {
 				isGeneratingVariations: getIsGeneratingVariations,
 				generateProductVariationsError,
-			} = select( EXPERIMENTAL_PRODUCT_VARIATIONS_STORE_NAME );
+			} = select( EXPERIMENTAL_PRODUCT_VARIATIONS_STORE_NAME ) as {
+				isGeneratingVariations: ( args: {
+					product_id: number;
+				} ) => boolean | undefined;
+				generateProductVariationsError: ( args: {
+					product_id: number;
+				} ) => Error | undefined;
+			};
 			return {
-				isGeneratingVariations: getIsGeneratingVariations<
-					boolean | undefined
-				>( {
+				isGeneratingVariations: getIsGeneratingVariations( {
 					product_id: productId,
 				} ),
 				generateError: generateProductVariationsError( {

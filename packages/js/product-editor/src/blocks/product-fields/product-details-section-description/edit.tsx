@@ -55,8 +55,10 @@ export function ProductDetailsSectionDescriptionBlockEdit( {
 
 	const { productTemplates, productTemplate: selectedProductTemplate } =
 		useSelect( ( select ) => {
-			const { getEditorSettings } = select( 'core/editor' );
-			return getEditorSettings() as ProductEditorSettings;
+			const { getEditorSettings } = select( 'core/editor' ) as {
+				getEditorSettings: () => ProductEditorSettings;
+			};
+			return getEditorSettings();
 		}, [] );
 
 	// eslint-disable-next-line @wordpress/no-unused-vars-before-return
@@ -96,7 +98,9 @@ export function ProductDetailsSectionDescriptionBlockEdit( {
 
 	const rootClientId = useSelect(
 		( select ) => {
-			const { getBlockRootClientId } = select( 'core/block-editor' );
+			const { getBlockRootClientId } = select( 'core/block-editor' ) as {
+				getBlockRootClientId: ( clientId: string ) => string;
+			};
 			return getBlockRootClientId( clientId );
 		},
 		[ clientId ]
@@ -106,27 +110,44 @@ export function ProductDetailsSectionDescriptionBlockEdit( {
 		useState< ProductTemplate >();
 
 	// Pull the product templates from the store.
-	const productFormPosts = useSelect( ( sel ) => {
-		// Do not fetch product form posts if the feature is not enabled.
-		if ( ! isProductFormTemplateSystemEnabled() ) {
-			return [];
-		}
+	const productFormPosts = useSelect(
+		(
+			sel: ( key: string ) => {
+				getEntityRecords: (
+					kind: string,
+					name: string,
+					query: Record< string, unknown >
+				) => ProductFormPostProps[] | undefined;
+			}
+		) => {
+			// Do not fetch product form posts if the feature is not enabled.
+			if ( ! isProductFormTemplateSystemEnabled() ) {
+				return [];
+			}
 
-		return (
-			sel( 'core' ).getEntityRecords( 'postType', 'product_form', {
-				per_page: -1,
-			} ) || []
-		);
-	}, [] ) as ProductFormPostProps[];
+			return (
+				sel( 'core' ).getEntityRecords( 'postType', 'product_form', {
+					per_page: -1,
+				} ) || []
+			);
+		},
+		[]
+	) as ProductFormPostProps[];
 
 	const { isSaving } = useSelect(
 		( select ) => {
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
-			const { isSavingEntityRecord } = select( 'core' );
+			const { isSavingEntityRecord } = select( 'core' ) as {
+				isSavingEntityRecord: (
+					kind: string,
+					name: string,
+					recordId: number
+				) => boolean;
+			};
 
 			return {
-				isSaving: isSavingEntityRecord< boolean >(
+				isSaving: isSavingEntityRecord(
 					'postType',
 					'product',
 					productId

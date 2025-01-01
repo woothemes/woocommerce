@@ -195,8 +195,13 @@ export default function ProductList( {
 	// TODO: Use the Woo data store to get all the products, as this doesn't contain all the product data.
 	const { records, totalCount, isLoading } = useSelect(
 		( select ) => {
-			const { getProducts, getProductsTotalCount, isResolving } =
-				select( 'wc/admin/products' );
+			const { getProducts, getProductsTotalCount, isResolving } = select(
+				'wc/admin/products'
+			) as {
+				getProducts: ( query: ProductQuery ) => Product[];
+				getProductsTotalCount: ( query: ProductQuery ) => number;
+				isResolving: ( action: string, args: unknown[] ) => boolean;
+			};
 			return {
 				records: getProducts( queryParams ) as Product[],
 				totalCount: getProductsTotalCount( queryParams ) as number,
@@ -216,7 +221,14 @@ export default function ProductList( {
 
 	const { labels, canCreateRecord } = useSelect(
 		( select ) => {
-			const { getPostType, canUser } = select( coreStore );
+			const { getPostType, canUser } = select( coreStore ) as {
+				getPostType: ( postType: string ) =>
+					| {
+							labels: Record< string, string >;
+					  }
+					| undefined;
+				canUser: ( action: string, args: unknown ) => boolean;
+			};
 			const postTypeData:
 				| { labels: Record< string, string > }
 				| undefined = getPostType( postType );

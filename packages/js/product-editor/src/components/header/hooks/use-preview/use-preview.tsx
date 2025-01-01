@@ -44,9 +44,21 @@ export function usePreview( {
 		( select ) => {
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
-			const { hasEditsForEntityRecord, isSavingEntityRecord } =
-				select( 'core' );
-			const isSaving = isSavingEntityRecord< boolean >(
+			const { hasEditsForEntityRecord, isSavingEntityRecord } = select(
+				'core'
+			) as {
+				hasEditsForEntityRecord: (
+					kind: string,
+					name: string,
+					recordId: number
+				) => boolean;
+				isSavingEntityRecord: (
+					kind: string,
+					name: string,
+					recordId: number
+				) => boolean;
+			};
+			const isSaving = isSavingEntityRecord(
 				'postType',
 				productType,
 				productId
@@ -54,7 +66,7 @@ export function usePreview( {
 
 			return {
 				isDisabled: isSaving,
-				hasEdits: hasEditsForEntityRecord< boolean >(
+				hasEdits: hasEditsForEntityRecord(
 					'postType',
 					productType,
 					productId

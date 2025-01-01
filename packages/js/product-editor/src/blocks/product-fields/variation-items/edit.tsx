@@ -77,11 +77,15 @@ export function Edit( {
 		( select ) => {
 			const { getProductVariationsTotalCount } = select(
 				EXPERIMENTAL_PRODUCT_VARIATIONS_STORE_NAME
-			);
+			) as {
+				getProductVariationsTotalCount: (
+					params: Record< string, unknown >
+				) => number;
+			};
 
 			return {
 				totalCountWithoutPrice: productHasOptions
-					? getProductVariationsTotalCount< number >(
+					? getProductVariationsTotalCount(
 							totalCountWithoutPriceRequestParams
 					  )
 					: 0,

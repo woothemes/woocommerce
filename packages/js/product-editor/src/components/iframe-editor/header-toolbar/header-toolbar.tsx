@@ -168,7 +168,7 @@ export function HeaderToolbar( {
 							{ /* @ts-expect-error missing type */ }
 							<BlockToolbar hideDragHandle />
 						</div>
-						{ /* @ts-expect-error missing type */ }
+						{ /* @ts-expect-error name does exist on PopoverSlot see: https://github.com/WordPress/gutenberg/blob/trunk/packages/components/src/popover/index.tsx#L555 */ }
 						<Popover.Slot name="block-toolbar" />
 						{ hasBlockSelection && (
 							<Button

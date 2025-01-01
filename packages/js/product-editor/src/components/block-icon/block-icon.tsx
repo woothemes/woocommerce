@@ -15,8 +15,14 @@ export function BlockIcon( { clientId }: BlockIconProps ) {
 	const icon = useSelect(
 		( select ) => {
 			// Try to get the icon from the block's attributes
-			const { getBlockAttributes, getBlockName } =
-				select( 'core/block-editor' );
+			const { getBlockAttributes, getBlockName } = select(
+				'core/block-editor'
+			) as {
+				getBlockAttributes: (
+					clientId: string
+				) => Record< string, unknown >;
+				getBlockName: ( clientId: string ) => string;
+			};
 			const attributes = getBlockAttributes( clientId );
 			if ( attributes?.icon ) {
 				return attributes.icon;
@@ -24,9 +30,11 @@ export function BlockIcon( { clientId }: BlockIconProps ) {
 
 			// If there is no icon defined in attributes
 			// Then try to get icon from block's metadata
-			const { getBlockType } = select( 'core/blocks' );
+			const { getBlockType } = select( 'core/blocks' ) as {
+				getBlockType: ( name: string ) => Block;
+			};
 			const blockName = getBlockName( clientId );
-			const block = getBlockType< Block >( blockName ?? undefined );
+			const block = getBlockType( blockName ?? undefined );
 			return block?.icon;
 		},
 		[ clientId ]

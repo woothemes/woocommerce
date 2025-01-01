@@ -134,11 +134,15 @@ export function Edit( {
 		( select ) => {
 			const { getProductShippingClasses } = select(
 				EXPERIMENTAL_PRODUCT_SHIPPING_CLASSES_STORE_NAME
-			);
+			) as {
+				getProductShippingClasses: (
+					query: Record< string, unknown >
+				) => ProductShippingClass[];
+			};
 			return {
 				shippingClasses:
 					( isInSelectedTab &&
-						getProductShippingClasses< ProductShippingClass[] >(
+						getProductShippingClasses(
 							shippingClassRequestQuery
 						) ) ||
 					[],

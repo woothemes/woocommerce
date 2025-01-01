@@ -55,7 +55,13 @@ export function VariationStockStatusForm( {
 
 	const { canManageStock, isLoadingManageStockOption } = useSelect(
 		( select ) => {
-			const { getOption, isResolving } = select( OPTIONS_STORE_NAME );
+			const { getOption, isResolving } = select( OPTIONS_STORE_NAME ) as {
+				getOption: ( option: string ) => string;
+				isResolving: (
+					selectorName: string,
+					args?: unknown[]
+				) => boolean;
+			};
 
 			return {
 				canManageStock: getOption( MANAGE_STOCK_OPTION ) === 'yes',

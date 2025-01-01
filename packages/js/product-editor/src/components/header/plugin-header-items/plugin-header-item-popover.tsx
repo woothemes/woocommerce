@@ -19,6 +19,7 @@ export const PluginHeaderItemPopover: React.FC<
 	PluginHeaderItemPopoverProps
 > = ( { children, label, icon } ) => {
 	const [ isVisible, setVisible ] = useState( false );
+
 	const childrenToRender =
 		typeof children === 'function'
 			? children( { isVisible, setVisible } )

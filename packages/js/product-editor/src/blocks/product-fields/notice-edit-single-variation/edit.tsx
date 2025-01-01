@@ -39,8 +39,20 @@ export function Edit( {
 		( select ) => {
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
-			const { getEditedEntityRecord, hasFinishedResolution } =
-				select( 'core' );
+			const { getEditedEntityRecord, hasFinishedResolution } = select(
+				'core'
+			) as {
+				getEditedEntityRecord: (
+					kind: string,
+					name: string,
+					recordId: number
+				) => Product | false;
+				hasFinishedResolution: (
+					selectorName: string,
+					args?: unknown[]
+				) => boolean;
+			};
+
 			const { name }: Product = getEditedEntityRecord(
 				'postType',
 				'product',
