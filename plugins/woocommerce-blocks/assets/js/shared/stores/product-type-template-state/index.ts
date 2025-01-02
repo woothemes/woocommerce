@@ -16,7 +16,7 @@ import {
 import {
 	getProductTypeOptions,
 	type ProductTypeProps,
-} from '../../utils/get-product-type-options';
+} from '../../../utils/get-product-type-options';
 
 type StoreState = {
 	productTypes: {
