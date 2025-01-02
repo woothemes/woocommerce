@@ -23,6 +23,10 @@ const appendSettingsScripts = ( scripts ) => {
 	return scripts.map( ( script ) => {
 		const scriptElement = document.createElement( 'script' );
 		scriptElement.src = script;
+		scriptElement.onerror = () => {
+			// eslint-disable-next-line no-console
+			console.error( `Failed to load script: ${ script }` );
+		};
 		document.body.appendChild( scriptElement );
 		return scriptElement;
 	} );
@@ -44,12 +48,14 @@ const Settings = () => {
 	const { activePage, activeSection } = useActiveRoute();
 
 	useLayoutEffect( () => {
-		const settingsScripts = [
-			...( SETTINGS_SCRIPTS._default || [] ),
-			...( SETTINGS_SCRIPTS[ activePage ] || [] ),
-		];
+		const scripts = Array.from(
+			new Set( [
+				...( SETTINGS_SCRIPTS._default || [] ),
+				...( SETTINGS_SCRIPTS[ activePage ] || [] ),
+			] )
+		);
 
-		const scriptsElements = appendSettingsScripts( settingsScripts );
+		const scriptsElements = appendSettingsScripts( scripts );
 
 		return () => {
 			removeSettingsScripts( scriptsElements );
