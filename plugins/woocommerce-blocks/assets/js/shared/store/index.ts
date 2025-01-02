@@ -136,8 +136,6 @@ export const store = createReduxStore( STORE_NAME, {
 	selectors,
 } );
 
-export default function registerStore() {
-	if ( ! select( STORE_NAME ) ) {
-		register( store );
-	}
+if ( ! select( STORE_NAME ) ) {
+	register( store );
 }

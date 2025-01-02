@@ -20,7 +20,6 @@ import { useSelect } from '@wordpress/data';
 import './style.scss';
 import type { BlockAttributes } from './types';
 import { store as woocommerceTemplateStateStore } from '../../../../shared/store';
-import type { ProductTypeProps } from '../../../../utils/get-product-type-options';
 
 type Props = BlockAttributes & HTMLAttributes< HTMLDivElement >;
 
@@ -60,9 +59,7 @@ export const Block = ( props: Props ): JSX.Element | null => {
 	const { text: availabilityText, class: availabilityClass } =
 		product.stock_availability;
 
-	const { selectedProductType } = useSelect< {
-		selectedProductType: ProductTypeProps;
-	} >( ( select ) => {
+	const { selectedProductType } = useSelect( ( select ) => {
 		const { getCurrentProductType } = select(
 			woocommerceTemplateStateStore
 		);
