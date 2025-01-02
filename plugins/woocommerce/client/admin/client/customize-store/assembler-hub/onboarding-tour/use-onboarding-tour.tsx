@@ -15,8 +15,15 @@ export const useOnboardingTour = () => {
 
 	const { updateOptions } = useDispatch( OPTIONS_STORE_NAME );
 	const { shouldTourBeShown } = useSelect( ( select ) => {
-		const { getOption, hasFinishedResolution } =
-			select( OPTIONS_STORE_NAME );
+		const { getOption, hasFinishedResolution } = select(
+			OPTIONS_STORE_NAME
+		) as {
+			getOption: ( option: string ) => unknown;
+			hasFinishedResolution: (
+				resolver: string,
+				args: string[]
+			) => boolean;
+		};
 
 		const wasTourShown =
 			getOption( CUSTOMIZE_STORE_ONBOARDING_TOUR_HIDDEN ) === 'yes' ||
@@ -27,7 +34,7 @@ export const useOnboardingTour = () => {
 		return {
 			shouldTourBeShown: ! wasTourShown,
 		};
-	} );
+	}, [] );
 
 	const onClose = () => {
 		updateOptions( {

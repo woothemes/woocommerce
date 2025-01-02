@@ -7,7 +7,7 @@
 import { useEntityBlockEditor } from '@wordpress/core-data';
 import { BlockInstance } from '@wordpress/blocks';
 
-export type ChangeHandler = (
+type ChangeHandler = (
 	blocks: BlockInstance[],
 	options: Record< string, unknown >
 ) => void;

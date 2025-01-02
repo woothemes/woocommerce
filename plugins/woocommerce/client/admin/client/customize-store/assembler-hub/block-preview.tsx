@@ -6,7 +6,7 @@
  * External dependencies
  */
 // @ts-ignore No types for this exist yet.
-import { BlockEditorProvider } from '@wordpress/block-editor';
+import { BlockEditorProvider, EditorSettings } from '@wordpress/block-editor';
 import { memo, useContext } from '@wordpress/element';
 import { BlockInstance } from '@wordpress/blocks';
 
@@ -17,7 +17,6 @@ import {
 	AutoHeightBlockPreview,
 	ScaledBlockPreviewProps,
 } from './auto-block-preview';
-import { ChangeHandler } from './hooks/use-editor-blocks';
 import { Toolbar } from './toolbar/toolbar';
 import { isFullComposabilityFeatureAndAPIAvailable } from './utils/is-full-composability-enabled';
 import { IsResizingContext } from './resizable-frame';
@@ -32,8 +31,8 @@ export const BlockPreview = ( {
 	...props
 }: {
 	blocks: BlockInstance | BlockInstance[];
-	settings: Record< string, unknown >;
-	onChange?: ChangeHandler | undefined;
+	settings: EditorSettings;
+	onChange?: ( blocks: BlockInstance[] ) => void;
 	useSubRegistry?: boolean;
 	isPatternPreview: boolean;
 } & Omit< ScaledBlockPreviewProps, 'containerWidth' > ) => {

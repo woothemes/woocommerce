@@ -27,9 +27,11 @@ export const OptInContextProvider = ( {
 } ) => {
 	const isAllowTrackingEnabled = useSelect(
 		( select ) =>
-			select( OPTIONS_STORE_NAME ).getOption(
-				'woocommerce_allow_tracking'
-			) === 'yes',
+			(
+				select( OPTIONS_STORE_NAME ) as {
+					getOption: ( option: string ) => unknown;
+				}
+			 ).getOption( 'woocommerce_allow_tracking' ) === 'yes',
 		[]
 	);
 

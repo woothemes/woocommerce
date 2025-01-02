@@ -99,9 +99,13 @@ async function installFonts(
 	const { __experimentalSaveSpecifiedEntityEdits: saveSpecifiedEntityEdits } =
 		dispatch( coreStore );
 
-	saveSpecifiedEntityEdits( 'root', 'globalStyles', globalStylesId, [
-		'settings.typography.fontFamilies',
-	] );
+	saveSpecifiedEntityEdits(
+		'root',
+		'globalStyles',
+		globalStylesId,
+		[ 'settings.typography.fontFamilies' ],
+		null
+	);
 
 	return {
 		...enabledFontFamilies,
@@ -121,9 +125,11 @@ export const OptInSubscribe = () => {
 	] = useGlobalSetting( 'typography.fontFamilies' );
 
 	const isOptedIn = useSelect( ( selectStore ) => {
-		const allowTracking = selectStore( OPTIONS_STORE_NAME ).getOption(
-			'woocommerce_allow_tracking'
-		);
+		const allowTracking = (
+			selectStore( OPTIONS_STORE_NAME ) as {
+				getOption: ( option: string ) => unknown;
+			}
+		 ).getOption( 'woocommerce_allow_tracking' );
 		return allowTracking === 'yes';
 	}, [] );
 
