@@ -19,7 +19,11 @@ import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
 /**
  * Internal dependencies
  */
-import { getSettingsSectionPath, settingsData } from '../../utils';
+import {
+	getSettingsPage,
+	getSettingsSectionPath,
+	settingsData,
+} from '../../utils';
 
 const { useLocation } = unlock( routerPrivateApis );
 
@@ -33,7 +37,7 @@ const SidebarNavigationScreenContent = () => {
 	return (
 		<ItemGroup>
 			{ Object.keys( settingsData ).map( ( slug ) => {
-				const { label, icon } = settingsData[ slug ];
+				const { label, icon } = getSettingsPage( slug );
 
 				return (
 					<SidebarNavigationItem
@@ -44,7 +48,7 @@ const SidebarNavigationScreenContent = () => {
 						aria-current={ name === slug }
 						uid={ slug }
 						key={ slug }
-						to={ getSettingsSectionPath( settingsData[ slug ] ) }
+						to={ getSettingsSectionPath( slug ) }
 					>
 						{ label }
 					</SidebarNavigationItem>
