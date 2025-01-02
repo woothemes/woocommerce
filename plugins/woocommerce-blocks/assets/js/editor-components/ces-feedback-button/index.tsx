@@ -7,11 +7,20 @@ import {
 	useCustomerEffortScoreModal,
 } from '@woocommerce/customer-effort-score';
 import { Button, TextareaControl, TextControl } from '@wordpress/components';
+import { isEmail } from '@wordpress/url';
 
 /**
  * Internal dependencies
  */
 import FeedbackIcon from './feedback-icon';
+
+declare global {
+	interface Window {
+		wcTracks?: {
+			isEnabled: boolean;
+		};
+	}
+}
 
 interface CesFeedbackButtonProps {
 	blockName: string;
@@ -23,6 +32,8 @@ interface CesFeedbackButtonProps {
 	emailHelp?: string;
 	buttonText?: string;
 	submitLabel?: string;
+	wrapper?: React.ElementType;
+	wrapperProps?: Record< string, unknown >;
 }
 
 export const CesFeedbackButton = ( {
@@ -54,10 +65,15 @@ export const CesFeedbackButton = ( {
 		'woocommerce'
 	),
 	buttonText = __( 'Help us improve', 'woocommerce' ),
-	// translators: %s is the block name.
 	submitLabel = __( "🙏🏻 Thanks for sharing — we're on it!", 'woocommerce' ),
+	wrapper: Wrapper,
+	wrapperProps = {},
 }: CesFeedbackButtonProps ) => {
 	const { showCesModal } = useCustomerEffortScoreModal();
+
+	if ( ! window.wcTracks?.isEnabled ) {
+		return null;
+	}
 
 	const handleFeedbackClick = () => {
 		showCesModal(
@@ -73,7 +89,8 @@ export const CesFeedbackButton = ( {
 					extraFieldsValues: { [ key: string ]: string },
 					setExtraFieldsValues: ( values: {
 						[ key: string ]: string;
-					} ) => void
+					} ) => void,
+					errors: Record< string, string > | undefined
 				) => {
 					return (
 						<div>
@@ -100,10 +117,28 @@ export const CesFeedbackButton = ( {
 										email: value,
 									} )
 								}
-								help={ emailHelp }
+								help={
+									errors?.email ? (
+										<span className="woocommerce-customer-effort-score__errors">
+											<p>{ errors.email }</p>
+										</span>
+									) : (
+										emailHelp
+									)
+								}
 							/>
 						</div>
 					);
+				},
+				validateExtraFields: ( { email = '' }: { email?: string } ) => {
+					const errors: Record< string, string > | undefined = {};
+					if ( email.length > 0 && ! isEmail( email ) ) {
+						errors.email = __(
+							'Please enter a valid email address.',
+							'woocommerce'
+						);
+					}
+					return errors;
 				},
 			},
 			{ blockName, shouldShowComments: () => false },
@@ -112,7 +147,7 @@ export const CesFeedbackButton = ( {
 		);
 	};
 
-	return (
+	const button = (
 		<>
 			<CustomerEffortScoreModalContainer />
 			<Button
@@ -126,4 +161,10 @@ export const CesFeedbackButton = ( {
 			</Button>
 		</>
 	);
+
+	if ( Wrapper ) {
+		return <Wrapper { ...wrapperProps }>{ button }</Wrapper>;
+	}
+
+	return button;
 };

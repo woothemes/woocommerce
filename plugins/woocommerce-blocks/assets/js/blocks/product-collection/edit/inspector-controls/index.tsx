@@ -221,9 +221,10 @@ const ProductCollectionInspectorControls = (
 					) }
 				</ToolsPanel>
 			) : null }
-			<PanelBody>
-				<CesFeedbackButton blockName={ metadata.title } />
-			</PanelBody>
+			<CesFeedbackButton
+				blockName={ metadata.title }
+				wrapper={ PanelBody }
+			/>
 		</InspectorControls>
 	);
 };
