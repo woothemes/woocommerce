@@ -11,7 +11,7 @@ import { ProductGalleryPage } from './product-gallery.page';
 
 const blockData = {
 	name: 'woocommerce/product-gallery',
-	title: 'Product Gallery',
+	title: 'Product Gallery (Beta)',
 	selectors: {
 		frontend: {},
 		editor: {
@@ -546,26 +546,22 @@ test.describe( `${ blockData.name }`, () => {
 			await expect( productGalleryBlockOption ).toBeVisible();
 		} );
 
-		test( 'should be available on the Product Gallery template part', async ( {
+		test( 'should be inserted on the Product Gallery template part by default', async ( {
 			admin,
 			editor,
-			page,
 		} ) => {
 			await admin.visitSiteEditor( {
 				postId: `woocommerce/woocommerce//product-gallery`,
 				postType: 'wp_template_part',
 				canvas: 'edit',
 			} );
-			await editor.openGlobalBlockInserter();
-			await page.getByRole( 'tab', { name: 'Blocks' } ).click();
-			const productGalleryBlockOption = page
-				.getByRole( 'listbox', { name: 'WooCommerce' } )
-				.getByRole( 'option', { name: blockData.title } );
 
-			await expect( productGalleryBlockOption ).toBeVisible();
+			await expect(
+				await editor.getBlockByName( blockData.name )
+			).toHaveCount( 1 );
 		} );
 
-		test( 'should be hidden on the post editor', async ( {
+		test( 'should be hidden on the post editor globally', async ( {
 			admin,
 			page,
 			editor,
@@ -577,6 +573,29 @@ test.describe( `${ blockData.name }`, () => {
 				.getByRole( 'option', { name: blockData.title } );
 
 			await expect( productGalleryBlockOption ).toBeHidden();
+		} );
+
+		test( 'should be visible on the post editor in Single Product block', async ( {
+			admin,
+			editor,
+		} ) => {
+			await admin.createNewPost();
+			await editor.insertBlockUsingGlobalInserter( 'Single Product' );
+			await editor.canvas.getByText( 'Album' ).click();
+			await editor.canvas.getByText( 'Done' ).click();
+			const singleProductBlock = await editor.getBlockByName(
+				'woocommerce/single-product'
+			);
+			const singleProductClientId =
+				( await singleProductBlock.getAttribute( 'data-block' ) ) ?? '';
+			await editor.insertBlock(
+				{ name: blockData.name },
+				{ clientId: singleProductClientId }
+			);
+
+			await expect(
+				await editor.getBlockByName( blockData.name )
+			).toHaveCount( 1 );
 		} );
 	} );
 

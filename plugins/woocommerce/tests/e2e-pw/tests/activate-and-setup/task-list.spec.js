@@ -1,4 +1,5 @@
 const { test, expect } = require( '@playwright/test' );
+const { tags } = require( '../../fixtures/fixtures' );
 const { exec } = require( 'child_process' );
 
 test.describe( 'WC Home Task List >', () => {
@@ -44,9 +45,10 @@ test.describe( 'WC Home Task List >', () => {
 		} );
 	} );
 
+	// TODO (E2E Audit): This test should be combined with other WC Homepage setup tests like the tests in activate-and-setup/stats-overview.spec.js into a single spec.
 	test(
-		' Can hide the task list',
-		{ tag: [ '@skip-on-default-pressable', '@skip-on-default-wpcom' ] },
+		'Can hide the task list',
+		{ tag: [ tags.SKIP_ON_PRESSABLE, tags.SKIP_ON_WPCOM, tags.NOT_E2E ] },
 		async ( { page } ) => {
 			await test.step( 'Load the WC Admin page', async () => {
 				await page.goto( 'wp-admin/admin.php?page=wc-admin' );

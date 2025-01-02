@@ -1,4 +1,4 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 const { fillPageTitle, publishPage } = require( '../../utils/editor' );
 const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
 
@@ -55,12 +55,7 @@ const test = baseTest.extend( {
 test.describe(
 	'Add WooCommerce Blocks Into Page',
 	{
-		tag: [
-			'@gutenberg',
-			'@services',
-			'@skip-on-default-pressable',
-			'@skip-on-default-wpcom',
-		],
+		tag: [ tags.GUTENBERG, tags.SKIP_ON_PRESSABLE, tags.SKIP_ON_WPCOM ],
 	},
 	() => {
 		test.beforeAll( async ( { api } ) => {

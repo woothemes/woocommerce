@@ -1,5 +1,6 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 const { fillPageTitle } = require( '../../utils/editor' );
+const { setComingSoon } = require( '../../utils/coming-soon' );
 
 /**
  * External dependencies
@@ -41,11 +42,13 @@ const DEFAULT_BILLING_LABEL = 'CALIFORNIA, UNITED STATES (US)';
 
 test.describe(
 	'Cart Block Calculate Shipping',
-	{ tag: [ '@payments', '@services' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		let product1Id, product2Id, shippingZoneNLId, shippingZonePTId;
 
-		test.beforeAll( async ( { api } ) => {
+		test.beforeAll( async ( { api, baseURL } ) => {
+			await setComingSoon( { baseURL, enabled: 'no' } );
+
 			// make sure the currency is USD
 			await api.put( 'settings/general/woocommerce_currency', {
 				value: 'USD',
@@ -140,7 +143,7 @@ test.describe(
 
 		test(
 			'allows customer to calculate Free Shipping in cart block if in Netherlands',
-			{ tag: [ '@could-be-lower-level-test' ] },
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 			async ( { page, context, cartBlockPage } ) => {
 				await context.clearCookies();
 
@@ -189,7 +192,7 @@ test.describe(
 
 		test(
 			'allows customer to calculate Flat rate and Local pickup in cart block if in Portugal',
-			{ tag: [ '@could-be-lower-level-test' ] },
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 			async ( { page, context, cartBlockPage } ) => {
 				await context.clearCookies();
 
@@ -244,7 +247,7 @@ test.describe(
 
 		test(
 			'should show correct total cart block price after updating quantity',
-			{ tag: [ '@could-be-lower-level-test' ] },
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 			async ( { page, context, cartBlockPage } ) => {
 				await context.clearCookies();
 
@@ -286,7 +289,7 @@ test.describe(
 
 		test(
 			'should show correct total cart block price with 2 different products and flat rate/local pickup',
-			{ tag: [ '@could-be-lower-level-test' ] },
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 			async ( { page, context, cartBlockPage } ) => {
 				await context.clearCookies();
 

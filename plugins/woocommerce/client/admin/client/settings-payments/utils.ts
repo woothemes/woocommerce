@@ -1,13 +1,67 @@
 /**
  * External dependencies
  */
-import { PaymentProvider } from '@woocommerce/data';
+import {
+	PaymentProvider,
+	PaymentIncentive,
+	RecommendedPaymentMethod,
+} from '@woocommerce/data';
 import { getAdminLink } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
  */
 import { getAdminSetting } from '~/utils/admin-settings';
+
+/**
+ * Checks whether a payment provider has an incentive.
+ */
+export const hasIncentive = ( extension: PaymentProvider ) => {
+	return !! extension._incentive;
+};
+
+/**
+ * Checks whether an incentive is an action incentive.
+ */
+export const isActionIncentive = (
+	incentive: PaymentIncentive | undefined
+) => {
+	if ( ! incentive ) {
+		return false;
+	}
+
+	return incentive.promo_id.includes( '-action-' );
+};
+
+/**
+ * Checks whether an incentive is a switch incentive.
+ */
+export const isSwitchIncentive = (
+	incentive: PaymentIncentive | undefined
+) => {
+	if ( ! incentive ) {
+		return false;
+	}
+
+	return incentive.promo_id.includes( '-switch-' );
+};
+
+/**
+ * Checks whether an incentive is dismissed in a given context.
+ */
+export const isIncentiveDismissedInContext = (
+	incentive: PaymentIncentive | undefined,
+	context: string
+) => {
+	if ( ! incentive ) {
+		return false;
+	}
+
+	return (
+		incentive._dismissals.includes( 'all' ) ||
+		incentive._dismissals.includes( context )
+	);
+};
 
 /**
  * Handles enabling WooCommerce Payments and redirection based on Jetpack connection status.
@@ -19,6 +73,16 @@ export const parseScriptTag = ( elementId: string ) => {
 
 export const isWooPayments = ( id: string ) => {
 	return [ '_wc_pes_woopayments', 'woocommerce_payments' ].includes( id );
+};
+
+/**
+ * Checks whether a provider is WooPayments and that it is eligible for WooPay.
+ */
+export const isWooPayEligible = ( provider: PaymentProvider ) => {
+	return (
+		isWooPayments( provider.id ) &&
+		( provider.tags?.includes( 'woopay_eligible' ) || false )
+	);
 };
 
 export const getWooPaymentsTestDriveAccountLink = () => {
@@ -45,6 +109,11 @@ export const getWooPaymentsSetupLiveAccountLink = () => {
 	);
 };
 
+export const getPaymentMethodById =
+	( id: string ) => ( providers: RecommendedPaymentMethod[] ) => {
+		return providers.find( ( provider ) => provider.id === id ) || null;
+	};
+
 /**
  * Checks whether providers contain WooPayments gateway in test mode that is set up.
  *
@@ -57,4 +126,46 @@ export const providersContainWooPaymentsInTestMode = (
 	return (
 		!! wooPayments?.state?.test_mode && ! wooPayments?.state?.needs_setup
 	);
+};
+
+/**
+ * Return the WooPayments gateway if it exists in the providers list.
+ *
+ * @param providers payment providers
+ */
+export const getWooPaymentsFromProviders = (
+	providers: PaymentProvider[]
+): PaymentProvider | null => {
+	return providers.find( ( obj ) => isWooPayments( obj.id ) ) ?? null;
+};
+
+/**
+ * Retrieves updated recommended payment methods for WooPayments.
+ *
+ * @param {PaymentProvider[]} providers Array of updated payment providers.
+ * @return {RecommendedPaymentMethod[]} List of recommended payment methods.
+ */
+export const getRecommendedPaymentMethods = (
+	providers: PaymentProvider[]
+): RecommendedPaymentMethod[] => {
+	const updatedWooPaymentsProvider = providers.find(
+		( provider: PaymentProvider ) => isWooPayments( provider.id )
+	);
+
+	return (
+		updatedWooPaymentsProvider?.onboarding?.recommended_payment_methods ??
+		( [] as RecommendedPaymentMethod[] )
+	);
+};
+
+/**
+ * Checks whether providers contain WooPayments gateway in dev mode that is set up.
+ *
+ * @param providers payment providers
+ */
+export const providersContainWooPaymentsInDevMode = (
+	providers: PaymentProvider[]
+): boolean => {
+	const wooPayments = providers.find( ( obj ) => isWooPayments( obj.id ) );
+	return !! wooPayments?.state?.dev_mode;
 };

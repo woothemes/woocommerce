@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Fix incorrect capitalization of checkout field labels for German locale

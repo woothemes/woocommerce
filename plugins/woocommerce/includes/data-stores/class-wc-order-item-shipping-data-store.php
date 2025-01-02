@@ -39,6 +39,7 @@ class WC_Order_Item_Shipping_Data_Store extends Abstract_WC_Order_Item_Type_Data
 				'instance_id' => get_metadata( 'order_item', $id, 'instance_id', true ),
 				'total'       => get_metadata( 'order_item', $id, 'cost', true ),
 				'taxes'       => get_metadata( 'order_item', $id, 'taxes', true ),
+				'tax_status'  => get_metadata( 'order_item', $id, 'tax_status', true ),
 			)
 		);
 

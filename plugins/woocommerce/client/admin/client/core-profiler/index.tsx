@@ -40,7 +40,8 @@ import {
 import { initializeExPlat } from '@woocommerce/explat';
 import { CountryStateOption } from '@woocommerce/onboarding';
 import { getAdminLink } from '@woocommerce/settings';
-import CurrencyFactory from '@woocommerce/currency';
+import CurrencyFactory, { CountryInfo } from '@woocommerce/currency';
+import { recordEvent } from '@woocommerce/tracks';
 
 /**
  * Internal dependencies
@@ -113,6 +114,7 @@ export type CoreProfilerStateMachineContext = {
 		sellingPlatforms?: SellingPlatform[] | null;
 	} & Partial< ProfileItems >;
 	pluginsAvailable: ExtensionList[ 'plugins' ] | [];
+	pluginsTruncated: string[];
 	pluginsSelected: string[]; // extension slugs
 	pluginsInstallationErrors: PluginInstallError[];
 	geolocatedLocation: GeolocationResponse | undefined;
@@ -374,8 +376,28 @@ const redirectToJetpackAuthPage = ( {
 	window.location.href = url.toString();
 };
 
+const recordUpdateTrackingOption = (
+	prevValue: 'yes' | 'no',
+	newValue: 'yes' | 'no'
+) => {
+	if ( prevValue !== newValue ) {
+		recordEvent( 'woocommerce_allow_tracking_toggled', {
+			previous_value: prevValue,
+			new_value: newValue,
+			context: 'core-profiler',
+		} );
+	}
+};
+
 const updateTrackingOption = fromPromise(
 	async ( { input }: { input: CoreProfilerStateMachineContext } ) => {
+		const prevValue =
+			( await resolveSelect( OPTIONS_STORE_NAME ).getOption(
+				'woocommerce_allow_tracking'
+			) ) === 'yes'
+				? 'yes'
+				: 'no';
+
 		await new Promise< void >( ( resolve ) => {
 			setTimeout( resolve, 500 );
 			if (
@@ -385,10 +407,12 @@ const updateTrackingOption = fromPromise(
 				window.wcTracks.enable( () => {
 					initializeExPlat();
 					initRemoteLogging();
+					recordUpdateTrackingOption( prevValue, 'yes' );
 					resolve(); // resolve the promise only after explat is enabled by the callback
 				} );
 			} else {
 				if ( ! input.optInDataSharing ) {
+					recordUpdateTrackingOption( prevValue, 'no' );
 					window.wcTracks.isEnabled = false;
 				}
 				resolve();
@@ -465,6 +489,44 @@ const updateStoreCurrency = async ( countryAndState: string ) => {
 	);
 };
 
+const updateStoreMeasurements = async ( countryAndState: string ) => {
+	if ( ! countryAndState?.trim() ) {
+		throw new Error( 'Country and state are required' );
+	}
+
+	const countryCode = getCountryCode( countryAndState );
+
+	if ( ! countryCode?.trim() ) {
+		throw new Error(
+			`Unable to extract country code from "${ countryAndState }"`
+		);
+	}
+	const { localeInfo = {} } = getAdminSetting( 'onboarding', {} ) as {
+		localeInfo: Record< string, CountryInfo >;
+	};
+
+	const countryInfo = localeInfo[ countryCode ];
+
+	if ( ! countryInfo?.weight_unit || ! countryInfo?.dimension_unit ) {
+		throw new Error(
+			`Missing required measurement units for country: ${ countryCode }. ` +
+				`Found: ${ JSON.stringify( countryInfo ) }`
+		);
+	}
+
+	const { weight_unit, dimension_unit } = countryInfo;
+
+	return dispatch( SETTINGS_STORE_NAME ).updateAndPersistSettingsForGroup(
+		'products',
+		{
+			products: {
+				woocommerce_weight_unit: weight_unit,
+				woocommerce_dimension_unit: dimension_unit,
+			},
+		}
+	);
+};
+
 const assignStoreLocation = assign( {
 	businessInfo: ( {
 		event,
@@ -501,6 +563,7 @@ const updateBusinessInfo = fromPromise(
 	} ) => {
 		return Promise.all( [
 			updateStoreCurrency( input.payload.storeLocation ),
+			updateStoreMeasurements( input.payload.storeLocation ),
 			dispatch( ONBOARDING_STORE_NAME ).updateProfileItems( {
 				is_store_country_set: true,
 				is_agree_marketing: input.payload.isOptInMarketing,
@@ -587,7 +650,16 @@ const handlePlugins = assign( {
 	}: {
 		event: DoneActorEvent< Extension[] >;
 	} ) => {
-		return event.output;
+		return event.output.slice( 0, 8 ); // in lieu of a plugin display priority system, we're only showing the first 8 plugins in the recommendations list
+	},
+	pluginsTruncated: ( {
+		event,
+	}: {
+		event: DoneActorEvent< Extension[] >;
+	} ) => {
+		return event.output
+			.slice( 8 )
+			.map( ( plugin ) => plugin.key.replace( ':alt', '' ) );
 	},
 } );
 
@@ -651,8 +723,16 @@ const skipFlowUpdateBusinessLocation = fromPromise(
 		const currencyUpdate = updateStoreCurrency(
 			context.businessInfo.location as string
 		);
+		const measurementsUpdate = updateStoreMeasurements(
+			context.businessInfo.location as string
+		);
 
-		return Promise.all( [ skipped, businessLocation, currencyUpdate ] );
+		return Promise.all( [
+			skipped,
+			businessLocation,
+			currencyUpdate,
+			measurementsUpdate,
+		] );
 	}
 );
 
@@ -751,6 +831,7 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 		countries: [] as CountryStateOption[],
 		pluginsAvailable: [],
 		pluginsInstallationErrors: [],
+		pluginsTruncated: [],
 		pluginsSelected: [],
 		loader: {},
 		onboardingProfile: {} as OnboardingProfile,
@@ -1603,6 +1684,7 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 										target: '#isJetpackConnected',
 										guard: or( [
 											'hasJpcRequiredPluginSelected',
+											'hasJpcRequiredPluginActivated',
 										] ),
 									},
 									{ actions: 'redirectToWooHome' },
@@ -1629,7 +1711,7 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 								onDone: [
 									{
 										target: '#isJetpackConnected',
-										guard: 'hasJetpackActivated',
+										guard: 'hasJpcRequiredPluginActivated',
 									},
 									{ actions: 'redirectToWooHome' },
 								],
@@ -1747,7 +1829,7 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 									{
 										type: 'hasJpcRequiredPluginSelected',
 									},
-									{ type: 'hasJetpackActivated' },
+									{ type: 'hasJpcRequiredPluginActivated' },
 								] )
 							)
 						) {
@@ -1825,11 +1907,11 @@ export const CoreProfilerController = ( {
 						return pluginDetails?.requires_jpc === true;
 					} );
 				},
-				hasJetpackActivated: ( { context } ) => {
+				hasJpcRequiredPluginActivated: ( { context } ) => {
 					return (
 						context.pluginsAvailable.find(
 							( plugin: Extension ) =>
-								plugin.key === 'jetpack' && plugin.is_activated
+								plugin.requires_jpc && plugin.is_activated
 						) !== undefined
 					);
 				},
