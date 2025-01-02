@@ -130,12 +130,12 @@ const reducer = ( state: StoreState = DEFAULT_STATE, action: Actions ) => {
 	}
 };
 
-export const productTypeTemplateStateStore = createReduxStore( STORE_NAME, {
+export const store = createReduxStore( STORE_NAME, {
 	reducer,
 	actions,
 	selectors,
 } );
 
 if ( ! select( STORE_NAME ) ) {
-	register( productTypeTemplateStateStore );
+	register( store );
 }

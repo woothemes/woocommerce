@@ -17,7 +17,7 @@ import { useSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { productTypeTemplateStateStore } from '../../../../shared/stores/product-type-template-state';
+import { store as productTypeTemplateStateStore } from '../../../../shared/stores/product-type-template-state';
 import type { BlockAttributes } from './types';
 import './style.scss';
 
