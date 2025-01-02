@@ -3,6 +3,7 @@
  * Gets a list of fallback methods if remote fetching is disabled.
  */
 
+declare( strict_types=1 );
 namespace Automattic\WooCommerce\Internal\Admin\RemoteFreeExtensions;
 
 use Automattic\WooCommerce\Admin\Features\PaymentGatewaySuggestions\DefaultPaymentGateways;
@@ -181,15 +182,15 @@ class DefaultFreeExtensions {
 				'description'    => __( 'Create and send purchase follow-up emails, newsletters, and promotional campaigns straight from your dashboard.', 'woocommerce' ),
 				'image_url'      => plugins_url( '/assets/images/onboarding/mailpoet.png', WC_PLUGIN_FILE ),
 				'manage_url'     => 'admin.php?page=mailpoet-newsletters',
-				'is_visible'      => [
-					[
+				'is_visible'     => array(
+					array(
 						'type'        => 'option',
 						'option_name' => 'woocommerce_remote_variant_assignment',
-						'value'       => [ 1, 84 ], //70% segment with klaviyo
+						'value'       => array( 1, 84 ), // 70% segment with klaviyo
 						'default'     => false,
 						'operation'   => 'range',
-					],
-				],
+					),
+				),
 				'is_built_by_wc' => true,
 			),
 			// Shared 50% segment with pinterest-for-woocommerce.
@@ -220,15 +221,15 @@ class DefaultFreeExtensions {
 				'description'    => __( 'Grow and retain customers with email, SMS, automations, and a consolidated view of customer interactions.', 'woocommerce' ),
 				'image_url'      => plugins_url( '/assets/images/onboarding/klaviyo.png', WC_PLUGIN_FILE ),
 				'manage_url'     => 'admin.php?page=klaviyo_settings',
-				'is_visible'      => [
-					[
+				'is_visible'     => array(
+					array(
 						'type'        => 'option',
 						'option_name' => 'woocommerce_remote_variant_assignment',
-						'value'       => [ 85, 120 ], //30% segment with mailpoet
+						'value'       => array( 85, 120 ), // 30% segment with mailpoet
 						'default'     => false,
 						'operation'   => 'range',
-					],
-				],
+					),
+				),
 				'is_built_by_wc' => false,
 			),
 			'woocommerce-payments'          => array(
@@ -585,7 +586,7 @@ class DefaultFreeExtensions {
 			),
 			'klaviyo'                       => array(
 				'label'            => __( 'Klaviyo', 'woocommerce' ),
-				'image_url'        =>  plugins_url( '/assets/images/onboarding/klaviyo.png', WC_PLUGIN_FILE ),
+				'image_url'        => plugins_url( '/assets/images/onboarding/klaviyo.png', WC_PLUGIN_FILE ),
 				'description'      => __( 'Grow and retain customers with email, SMS, automations, and a consolidated view of customer interactions.', 'woocommerce' ),
 				'learn_more_link'  => 'https://woocommerce.com/products/klaviyo-for-woocommerce?utm_source=storeprofiler&utm_medium=product&utm_campaign=freefeatures',
 				'install_priority' => 7,
