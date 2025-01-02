@@ -27,4 +27,8 @@ export function getSettingsSectionPath( slug: string ): string {
 }
 
 export const settingsData: SettingsData =
-	window.wcSettings?.admin?.settingsData || [];
+	window.wcSettings?.admin?.settingsData || {};
+
+export function getSettingsPage( slug: string ): SettingsPage {
+	return settingsData?.[ slug ] || {};
+}

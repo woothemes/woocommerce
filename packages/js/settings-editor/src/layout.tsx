@@ -33,6 +33,7 @@ import SidebarContent from '@wordpress/edit-site/build-module/components/sidebar
  * Internal dependencies
  */
 import { SectionTabs, Header } from './components';
+import { getSettingsPage } from './utils';
 
 const { NavigableRegion } = unlock( editorPrivateApis );
 const { useLocation } = unlock( routerPrivateApis );
@@ -51,6 +52,7 @@ export function Layout( { tabs = [], activeSection }: LayoutProps ) {
 	const disableMotion = useReducedMotion();
 
 	const { name, areas, widths } = useLocation();
+	const { label } = getSettingsPage( name );
 
 	return (
 		<>
@@ -105,8 +107,9 @@ export function Layout( { tabs = [], activeSection }: LayoutProps ) {
 						>
 							<Header
 								hasTabs={ tabs.length > 1 }
-								pageTitle={ name }
+								pageTitle={ label }
 							/>
+
 							<SectionTabs
 								tabs={ tabs }
 								activeSection={ activeSection }
