@@ -20,7 +20,7 @@ import { store as editSiteStore } from '@wordpress/edit-site/build-module/store'
 import { isGutenbergVersionAtLeast } from './utils';
 import { Layout } from './layout';
 import { useActiveRoute } from './routes/route';
-import useRegisterSiteEditorRoutes from './hooks/use-register-site-editor-routes';
+import useRegisterSettingsRoutes from './hooks/use-register-settings-routes';
 import settingsEditorRoutes from './routes';
 
 const { RouterProvider } = unlock( routerPrivateApis );
@@ -33,7 +33,7 @@ const SettingsLayout = () => {
 
 export const SettingsEditor = () => {
 	const isRequiredGutenbergVersion = isGutenbergVersionAtLeast( 19.0 );
-	useRegisterSiteEditorRoutes( settingsEditorRoutes );
+	useRegisterSettingsRoutes( settingsEditorRoutes );
 
 	const routes = useSelect( ( select ) => {
 		return unlock( select( editSiteStore ) ).getRoutes();

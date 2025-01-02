@@ -15,7 +15,7 @@ import { store as editSiteStore } from '@wordpress/edit-site/build-module/store'
  */
 import { RouteProps } from '../../routes';
 
-export default function useRegisterSiteEditorRoutes( routes: RouteProps[] ) {
+export default function useRegisterSettingsRoutes( routes: RouteProps[] ) {
 	const { registerRoute } = unlock( useDispatch( editSiteStore ) );
 
 	useEffect(
