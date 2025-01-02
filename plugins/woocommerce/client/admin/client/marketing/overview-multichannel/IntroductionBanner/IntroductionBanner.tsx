@@ -103,7 +103,9 @@ export const IntroductionBanner = ( {
 					<FlexItem>
 						<Flex>
 							<img
-								src={ isNewBranding() ? wooIconUrlNew : wooIconUrl }
+								src={
+									isNewBranding() ? wooIconUrlNew : wooIconUrl
+								}
 								alt={ __( 'WooCommerce logo', 'woocommerce' ) }
 								width="24"
 								height="24"
