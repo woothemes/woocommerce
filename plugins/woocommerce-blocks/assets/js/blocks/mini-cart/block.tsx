@@ -293,6 +293,8 @@ const MiniCartBlock = ( attributes: Props ): JSX.Element => {
 				<div
 					className="wc-block-mini-cart__template-part"
 					ref={ contentsRef }
+					// This string is sanitized by the backend https://github.com/woocommerce/woocommerce/blob/ec9274030f2f9d854e23ac332f3303c445c4c4c2/plugins/woocommerce/src/Blocks/BlockTypes/MiniCart.php#L474-L475
+					// eslint-disable-next-line react/no-danger
 					dangerouslySetInnerHTML={ { __html: contents } }
 				></div>
 			</Drawer>
