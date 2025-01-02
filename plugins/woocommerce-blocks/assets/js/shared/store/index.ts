@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { createReduxStore, register } from '@wordpress/data';
+import { createReduxStore, register, select } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -137,5 +137,7 @@ export const store = createReduxStore( STORE_NAME, {
 } );
 
 export default function registerStore() {
-	register( store );
+	if ( ! select( STORE_NAME ) ) {
+		register( store );
+	}
 }
