@@ -24,7 +24,10 @@ export default function HeaderAccountModal(
 
 	return (
 		<Modal
-			title={ __( 'Are you sure you want to disconnect?', 'woocommerce' ) }
+			title={ __(
+				'Are you sure you want to disconnect?',
+				'woocommerce'
+			) }
 			onRequestClose={ closeModal }
 			focusOnMount={ true }
 			className="woocommerce-marketplace__header-account-modal"
