@@ -59,12 +59,16 @@ const getNotFoundRoute = ( activePage: string ): Route => ( {
  * @param {settingsPage} settingsPage - The settings page.
  * @return {Array<{ name: string; title: string }>} The tabs.
  */
-const getSettingsPageTabs = (
+export const getSettingsPageTabs = (
 	settingsPage: SettingsPage
 ): Array< {
 	name: string;
 	title: string;
 } > => {
+	if ( ! settingsPage?.sections ) {
+		return [];
+	}
+
 	const sections = Object.keys( settingsPage.sections );
 
 	return sections.map( ( key ) => ( {
