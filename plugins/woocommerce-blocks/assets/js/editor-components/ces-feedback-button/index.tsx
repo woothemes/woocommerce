@@ -147,7 +147,7 @@ export const CesFeedbackButton = ( {
 		);
 	};
 
-	const button = (
+	const feedbackButtonWithModal = (
 		<>
 			<CustomerEffortScoreModalContainer />
 			<Button
@@ -163,8 +163,10 @@ export const CesFeedbackButton = ( {
 	);
 
 	if ( Wrapper ) {
-		return <Wrapper { ...wrapperProps }>{ button }</Wrapper>;
+		return (
+			<Wrapper { ...wrapperProps }>{ feedbackButtonWithModal }</Wrapper>
+		);
 	}
 
-	return button;
+	return feedbackButtonWithModal;
 };
