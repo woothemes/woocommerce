@@ -346,8 +346,8 @@ export class BlockRegistrationManager {
  *
  * @return {void}
  */
-export const registerProductBlockType = (
-	blockNameOrMetadata: string | Partial< BlockConfiguration >,
+export const registerProductBlockType = < T extends BlockAttributes >(
+	blockNameOrMetadata: string | Partial< BlockConfiguration< T > >,
 	settings?: ProductBlockRegistrationConfig
 ): void => {
 	const blockName =
