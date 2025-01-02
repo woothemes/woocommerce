@@ -35,10 +35,11 @@ type ProductBlockSettings = {
  * @property {Partial<BlockConfiguration>} settings             - Block settings configuration
  * @property {ProductBlockSettings}        productBlockSettings - Product block settings
  */
-type ProductBlockConfig = ProductBlockSettings & {
-	blockName: string;
-	settings: Partial< BlockConfiguration >;
-};
+type ProductBlockConfig< T extends BlockAttributes = BlockAttributes > =
+	ProductBlockSettings & {
+		blockName: string;
+		settings: Partial< BlockConfiguration< T > >;
+	};
 
 /**
  * Configuration object for registering a product block type.
@@ -49,8 +50,9 @@ type ProductBlockConfig = ProductBlockSettings & {
  * @property {string}                      [variationName]         - The name of the variation if applicable
  * @property {boolean}                     isAvailableOnPostEditor - Whether the block should be available in post editor
  */
-type ProductBlockRegistrationConfig = Partial< BlockConfiguration > &
-	ProductBlockSettings;
+type ProductBlockRegistrationConfig<
+	T extends BlockAttributes = BlockAttributes
+> = Partial< BlockConfiguration< T > > & ProductBlockSettings;
 
 /**
  * Manages block registration and unregistration for WooCommerce product blocks in different contexts.
@@ -344,9 +346,11 @@ export class BlockRegistrationManager {
  *
  * @return {void}
  */
-export const registerProductBlockType = < T extends BlockAttributes >(
+export const registerProductBlockType = <
+	T extends BlockAttributes = BlockAttributes
+>(
 	blockNameOrMetadata: string | Partial< BlockConfiguration< T > >,
-	settings?: ProductBlockRegistrationConfig
+	settings?: ProductBlockRegistrationConfig< T >
 ): void => {
 	const blockName =
 		typeof blockNameOrMetadata === 'string'
@@ -381,9 +385,9 @@ export const registerProductBlockType = < T extends BlockAttributes >(
 
 	const internalConfig: ProductBlockConfig = {
 		blockName,
-		settings: {
-			...( settingsWithoutCustomProperties as Partial< BlockConfiguration > ),
-		},
+		settings: settingsWithoutCustomProperties as unknown as Partial<
+			BlockConfiguration< BlockAttributes >
+		>,
 		isVariationBlock: isVariationBlock ?? false,
 		variationName: variationName ?? undefined,
 		isAvailableOnPostEditor: isAvailableOnPostEditor ?? false,
