@@ -28,12 +28,13 @@ type ProductBlockSettings = {
 };
 
 /**
- * Internal block config type used by the BlockRegistrationManager
+ * Internal block config type used by the BlockRegistrationManager.
+ * This type combines product block settings with core block configuration.
  *
  * @typedef {Object} ProductBlockConfig
- * @property {string}                      blockName            - The name of the block
- * @property {Partial<BlockConfiguration>} settings             - Block settings configuration
- * @property {ProductBlockSettings}        productBlockSettings - Product block settings
+ * @template T - Block attributes type that extends BlockAttributes
+ * @property {string}                      blockName - The name of the block to be registered
+ * @property {Partial<BlockConfiguration>} settings  - Core block settings configuration including attributes, edit/save functions, etc.
  */
 type ProductBlockConfig< T extends BlockAttributes = BlockAttributes > =
 	ProductBlockSettings & {
@@ -42,13 +43,15 @@ type ProductBlockConfig< T extends BlockAttributes = BlockAttributes > =
 	};
 
 /**
- * Configuration object for registering a product block type.
+ * Configuration type for registering a product block type. This combines the core block configuration
+ * with additional WooCommerce-specific product block settings.
  *
  * @typedef {Object} ProductBlockRegistrationConfig
- * @property {Partial<BlockConfiguration>} settings                - Block settings configuration
- * @property {boolean}                     [isVariationBlock]      - Whether this block is a variation
- * @property {string}                      [variationName]         - The name of the variation if applicable
- * @property {boolean}                     isAvailableOnPostEditor - Whether the block should be available in post editor
+ * @template T - Block attributes type that extends BlockAttributes
+ * @property {Partial<BlockConfiguration<T>>} settings                  - Core block settings including attributes, edit/save functions, etc.
+ * @property {boolean}                        [isVariationBlock]        - Optional flag indicating if this block should be registered as a variation of another block
+ * @property {string}                         [variationName]           - Optional name for the block variation if isVariationBlock is true
+ * @property {boolean}                        [isAvailableOnPostEditor] - Optional flag to make block available in post editor context (defaults to false)
  */
 type ProductBlockRegistrationConfig<
 	T extends BlockAttributes = BlockAttributes
