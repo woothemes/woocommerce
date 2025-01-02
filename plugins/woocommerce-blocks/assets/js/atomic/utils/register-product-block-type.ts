@@ -141,9 +141,7 @@ export class BlockRegistrationManager {
 				subscribe( () => {
 					const previousTemplateId = this.currentTemplateId;
 					this.currentTemplateId = this.parseTemplateId(
-						editSiteStore.getEditedPostId<
-							string | number | undefined
-						>()
+						editSiteStore.getEditedPostId()
 					);
 
 					if ( previousTemplateId !== this.currentTemplateId ) {
@@ -383,7 +381,9 @@ export const registerProductBlockType = < T extends BlockAttributes >(
 
 	const internalConfig: ProductBlockConfig = {
 		blockName,
-		settings: { ...settingsWithoutCustomProperties },
+		settings: {
+			...( settingsWithoutCustomProperties as Partial< BlockConfiguration > ),
+		},
 		isVariationBlock: isVariationBlock ?? false,
 		variationName: variationName ?? undefined,
 		isAvailableOnPostEditor: isAvailableOnPostEditor ?? false,
