@@ -14,25 +14,23 @@ import './style.scss';
 
 const galleryBlock = 'woocommerce/product-gallery';
 
-registerProductBlockType( {
-	blockName: metadata.name,
-	// @ts-expect-error: `metadata` currently does not have a type definition in WordPress core
-	blockMetadata: metadata,
-	blockSettings: {
-		icon,
-		// @ts-expect-error `edit` can be extended to include other attributes
-		edit,
-		transforms: {
-			to: [
-				{
-					type: 'block',
-					blocks: [ galleryBlock ],
-					transform: () => {
-						return createBlock( galleryBlock );
-					},
+const blockConfig = {
+	...metadata,
+	icon,
+	edit,
+	transforms: {
+		to: [
+			{
+				type: 'block',
+				blocks: [ galleryBlock ],
+				transform: () => {
+					return createBlock( galleryBlock );
 				},
-			],
-		},
+			},
+		],
 	},
+};
+
+registerProductBlockType( blockConfig, {
 	isAvailableOnPostEditor: false,
 } );
