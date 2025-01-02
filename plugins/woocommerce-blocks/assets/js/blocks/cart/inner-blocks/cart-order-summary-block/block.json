@@ -13,10 +13,6 @@
 		"lock": false
 	},
 	"attributes": {
-		"totalHeading": {
-			"type": "string",
-			"default": ""
-		},
 		"lock": {
 			"type": "object",
 			"default": {
@@ -25,7 +21,9 @@
 			}
 		}
 	},
-	"parent": [ "woocommerce/cart-totals-block" ],
+	"parent": [
+		"woocommerce/cart-totals-block"
+	],
 	"textdomain": "woocommerce",
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3

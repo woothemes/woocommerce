@@ -7,14 +7,14 @@ use Automattic\WooCommerce\Enums\PaymentMethods;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\WCCore;
 use Automattic\WooCommerce\Tests\Internal\Admin\Settings\Mocks\FakePaymentGateway;
-use WC_REST_Unit_Test_Case;
+use WC_Unit_Test_Case;
 
 /**
  * WC core payment gateway provider service test.
  *
  * @class WCCore
  */
-class WCCoreTest extends WC_REST_Unit_Test_Case {
+class WCCoreTest extends WC_Unit_Test_Case {
 
 	/**
 	 * @var WCCore

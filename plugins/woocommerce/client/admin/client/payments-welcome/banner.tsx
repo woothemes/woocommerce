@@ -3,7 +3,7 @@
  */
 import { Card, CardBody, Button, CardDivider } from '@wordpress/components';
 import { useState } from '@wordpress/element';
-import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
+import { WooPaymentsMethodsLogos } from '@woocommerce/onboarding';
 
 /**
  * Internal dependencies
@@ -76,7 +76,7 @@ const Banner: React.FC< Props > = ( { isSubmitted, handleSetup } ) => {
 			<CardDivider />
 			<CardBody className="woopayments-welcome-page__payments">
 				<p>{ strings.paymentOptions }</p>
-				<WooPaymentMethodsLogos
+				<WooPaymentsMethodsLogos
 					isWooPayEligible={ isWooPayEligible }
 					maxElements={ 10 }
 				/>
