@@ -49,9 +49,9 @@ type ProductBlockConfig< T extends BlockAttributes = BlockAttributes > =
  * @typedef {Object} ProductBlockRegistrationConfig
  * @template T - Block attributes type that extends BlockAttributes
  * @property {Partial<BlockConfiguration<T>>} settings                  - Core block settings including attributes, edit/save functions, etc.
- * @property {boolean}                        [isVariationBlock]        - Optional flag indicating if this block should be registered as a variation of another block
- * @property {string}                         [variationName]           - Optional name for the block variation if isVariationBlock is true
- * @property {boolean}                        [isAvailableOnPostEditor] - Optional flag to make block available in post editor context (defaults to false)
+ * @property {boolean}                        [isVariationBlock]        - Whether this block is a variation
+ * @property {string}                         [variationName]           - The name of the variation if applicable
+ * @property {boolean}                        [isAvailableOnPostEditor] - Whether the block should be available in post editor
  */
 type ProductBlockRegistrationConfig<
 	T extends BlockAttributes = BlockAttributes
