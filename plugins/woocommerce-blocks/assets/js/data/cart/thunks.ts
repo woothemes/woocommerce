@@ -125,6 +125,7 @@ export const applyExtensionCartUpdate =
 				return response;
 			}
 			dispatch.receiveCart( response );
+			return response;
 		} catch ( error ) {
 			dispatch.receiveError( isApiErrorResponse( error ) ? error : null );
 			return Promise.reject( error );

@@ -121,6 +121,6 @@ export const Actions = () => <TableCardWithActionsExample />;
 export const TablePreface = () => <TableCardWithTablePrefaceExample />;
 
 export default {
-	title: 'WooCommerce Admin/components/TableCard',
+	title: 'Components/TableCard',
 	component: TableCard,
 };

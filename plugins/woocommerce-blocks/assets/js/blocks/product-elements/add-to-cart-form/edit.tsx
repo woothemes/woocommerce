@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useEffect } from '@wordpress/element';
-import { useBlockProps } from '@wordpress/block-editor';
+import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { Skeleton } from '@woocommerce/base-components/skeleton';
 import { BlockEditProps } from '@wordpress/blocks';
@@ -18,12 +18,9 @@ import { isBoolean } from '@woocommerce/types';
 import './editor.scss';
 import { useIsDescendentOfSingleProductBlock } from '../../../atomic/blocks/product-elements/shared/use-is-descendent-of-single-product-block';
 import { QuantitySelectorStyle, AddToCartFormSettings } from './settings';
-
-export interface Attributes {
-	className?: string;
-	isDescendentOfSingleProductBlock: boolean;
-	quantitySelectorStyle: QuantitySelectorStyle;
-}
+import { shouldBlockifiedAddToCartWithOptionsBeRegistered } from '../../add-to-cart-with-options';
+import { UpgradeNotice } from './components/upgrade-notice';
+import type { Attributes } from './';
 
 export type FeaturesKeys =
 	| 'isStepperLayoutFeatureEnabled'
@@ -78,6 +75,11 @@ const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
 
 	return (
 		<>
+			{ shouldBlockifiedAddToCartWithOptionsBeRegistered && (
+				<InspectorControls>
+					<UpgradeNotice blockClientId={ props?.clientId } />
+				</InspectorControls>
+			) }
 			<AddToCartFormSettings
 				quantitySelectorStyle={ props.attributes.quantitySelectorStyle }
 				setAttributes={ setAttributes }

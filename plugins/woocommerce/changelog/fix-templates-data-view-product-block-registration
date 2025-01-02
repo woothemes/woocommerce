@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Always register the block within registerBlockConfig to fix unregistered blocks appearing within the templates data view

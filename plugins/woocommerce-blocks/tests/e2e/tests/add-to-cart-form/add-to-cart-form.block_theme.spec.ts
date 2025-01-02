@@ -463,4 +463,49 @@ test.describe( `${ blockData.name } Block`, () => {
 			expect( eventFired ).toBeUndefined();
 		} );
 	} );
+
+	test( 'can be migrated to the blockified Add to Cart with Options block', async ( {
+		page,
+		editor,
+		blockUtils,
+		admin,
+		requestUtils,
+	} ) => {
+		await requestUtils.setFeatureFlag( 'experimental-blocks', true );
+		await requestUtils.setFeatureFlag( 'blockified-add-to-cart', true );
+
+		await admin.createNewPost();
+		await editor.insertBlock( { name: 'woocommerce/single-product' } );
+
+		const productName = 'Hoodie with Logo';
+		await blockUtils.configureSingleProductBlock( productName );
+
+		const addToCartFormBlock = await editor.getBlockByName(
+			'woocommerce/add-to-cart-form'
+		);
+		await editor.selectBlocks( addToCartFormBlock );
+
+		await page
+			.getByRole( 'button', { name: 'Upgrade to the blockified' } )
+			.click();
+
+		await expect(
+			editor.canvas.getByLabel(
+				'Block: Quantity Selector (Experimental)'
+			)
+		).toBeVisible();
+
+		const addToCartWithOptionsBlock = await editor.getBlockByName(
+			'woocommerce/add-to-cart-with-options'
+		);
+		await editor.selectBlocks( addToCartWithOptionsBlock );
+
+		await page.getByRole( 'button', { name: 'Switch back' } ).click();
+
+		await expect(
+			editor.canvas.getByLabel(
+				'Block: Quantity Selector (Experimental)'
+			)
+		).toBeHidden();
+	} );
 } );
