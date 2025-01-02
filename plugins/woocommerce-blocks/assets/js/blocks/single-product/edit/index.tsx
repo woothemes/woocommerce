@@ -78,7 +78,7 @@ const Editor = ( {
 		} );
 	} );
 
-	const isProductInvalidId =
+	const isInvalidProductId =
 		typeof error === 'object' &&
 		error?.code === 'woocommerce_rest_product_invalid_id';
 
@@ -100,12 +100,12 @@ const Editor = ( {
 	}, [ attributes, productId, productPreview, setAttributes ] );
 
 	useEffect( () => {
-		if ( isProductInvalidId && ! isEditing ) {
+		if ( isInvalidProductId && ! isEditing ) {
 			setIsEditing( true );
 		}
-	}, [ isProductInvalidId ] );
+	}, [ isInvalidProductId ] );
 
-	if ( error && ! isProductInvalidId ) {
+	if ( error && ! isInvalidProductId ) {
 		return (
 			<ErrorPlaceholder
 				className="wc-block-editor-single-product-error"
@@ -116,7 +116,7 @@ const Editor = ( {
 		);
 	}
 
-	const infoTitle = isProductInvalidId ? (
+	const infoTitle = isInvalidProductId ? (
 		<>
 			<Icon
 				icon={ info }
@@ -133,7 +133,7 @@ const Editor = ( {
 		<Text>{ block.description }</Text>
 	);
 
-	const onChange = isProductInvalidId
+	const onChange = isInvalidProductId
 		? () => setIsEditing( false )
 		: undefined;
 
@@ -161,7 +161,7 @@ const Editor = ( {
 								setAttributes={ setAttributes }
 								onChange={ onChange }
 							/>
-							{ ! isProductInvalidId && (
+							{ ! isInvalidProductId && (
 								<Button
 									variant="secondary"
 									onClick={ () => {
