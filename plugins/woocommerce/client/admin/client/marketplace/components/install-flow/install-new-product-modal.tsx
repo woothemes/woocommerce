@@ -7,7 +7,7 @@ import { dispatch } from '@wordpress/data';
 import { useState, useEffect, useContext } from '@wordpress/element';
 import { navigateTo, getNewPath, useQuery } from '@woocommerce/navigation';
 import { recordEvent } from '@woocommerce/tracks';
-import type { Status } from '@wordpress/notices';
+import type { Status } from 'wordpress__notices';
 
 /**
  * Internal dependencies
