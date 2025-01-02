@@ -8,6 +8,7 @@ import { getSettingWithCoercion } from '@woocommerce/settings';
 import { isBoolean } from '@woocommerce/types';
 import { registerProductBlockType } from '@woocommerce/atomic-utils';
 import type { BlockConfiguration } from '@wordpress/blocks';
+import { select } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -19,6 +20,7 @@ import AddToCartOptionsEdit from './edit';
 import save from './save';
 import './style.scss';
 import type { Attributes } from './types';
+import { STORE_NAME } from '../../shared/store/constants';
 
 // Pick the value of the "blockify add to cart flag"
 const isBlockifiedAddToCart = getSettingWithCoercion(
@@ -31,7 +33,9 @@ export const shouldBlockifiedAddToCartWithOptionsBeRegistered =
 	isExperimentalBlocksEnabled() && isBlockifiedAddToCart;
 
 if ( shouldBlockifiedAddToCartWithOptionsBeRegistered ) {
-	registerStore();
+	if ( ! select( STORE_NAME ) ) {
+		registerStore();
+	}
 
 	// Register a plugin that adds a product type selector to the template sidebar.
 	const PLUGIN_NAME = 'document-settings-template-selector-pane';
