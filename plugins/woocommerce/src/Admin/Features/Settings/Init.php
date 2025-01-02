@@ -142,14 +142,71 @@ class Init {
 			return $settings;
 		}
 
+		global $wp_scripts;
+
+		// Set the scripts that all settings pages should have.
+		$ignored_settings_scripts                = array(
+			'wc-admin-app',
+			'wc-settings-editor',
+			'wc-admin-edit-settings',
+			'woocommerce_admin',
+			'WCPAY_DASH_APP',
+			'woo-tracks',
+			'svg-painter',
+			'woocommerce-admin-test-helper',
+			'woocommerce-beta-tester-live-branches',
+			'wp-auth-check',
+			'common',
+			'utils',
+			'admin-bar',
+			'jquery-ui-sortable',
+			'jquery-ui-autocomplete',
+			'iris',
+		);
+		$default_scripts_handles                 = array_diff(
+			$wp_scripts->queue,
+			$ignored_settings_scripts,
+		);
+		$settings['settingsScripts']['_default'] = self::get_scripts_sources( $default_scripts_handles );
+
+		// Add the settings data to the settings array.
 		$setting_pages = \WC_Admin_Settings::get_settings_pages();
 		$pages         = array();
 		foreach ( $setting_pages as $setting_page ) {
-			$pages = $setting_page->add_settings_page_data( $pages );
+			$scripts_before_adding_settings = $wp_scripts->queue;
+			$pages                          = $setting_page->add_settings_page_data( $pages );
+
+			$settings_scripts_handles                               = array_diff( $wp_scripts->queue, $scripts_before_adding_settings );
+			$settings['settingsScripts'][ $setting_page->get_id() ] = self::get_scripts_sources( $settings_scripts_handles );
 		}
+
 		$transformer              = new Transformer();
 		$settings['settingsData'] = $transformer->transform( $pages );
 
 		return $settings;
+	}
+
+	/**
+	 * Get the scripts sources from the script handles.
+	 *
+	 * @param array $scripts_handles Array of script handles.
+	 * @return array Array of script sources.
+	 */
+	private static function get_scripts_sources( $scripts_handles ) {
+		global $wp_scripts;
+		$setting_scripts = array();
+		foreach ( $scripts_handles as $script ) {
+			$registered_script = $wp_scripts->registered[ $script ];
+			if ( ! isset( $registered_script->src ) ) {
+				continue;
+			}
+
+			if ( strpos( $registered_script->src, '/' ) === 0 ) {
+				$setting_scripts[] = home_url( $registered_script->src );
+			} else {
+				$setting_scripts[] = $registered_script->src;
+			}
+		}
+		return $setting_scripts;
 	}
 }
