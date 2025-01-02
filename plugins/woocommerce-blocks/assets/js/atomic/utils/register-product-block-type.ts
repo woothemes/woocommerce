@@ -22,9 +22,9 @@ import { isNumber, isEmpty } from '@woocommerce/types';
  * @property {boolean} [isAvailableOnPostEditor] - Whether the block should be available in post editor
  */
 type ProductBlockSettings = {
-	isVariationBlock?: boolean;
+	isVariationBlock?: boolean | undefined;
 	variationName?: string | undefined;
-	isAvailableOnPostEditor?: boolean;
+	isAvailableOnPostEditor?: boolean | undefined;
 };
 
 /**
@@ -386,17 +386,18 @@ export const registerProductBlockType = <
 		...( settings || {} ),
 	};
 
-	const internalConfig: ProductBlockConfig = {
+	const internalConfig: ProductBlockConfig< T > = {
 		blockName,
-		settings: settingsWithoutCustomProperties as unknown as Partial<
-			BlockConfiguration< BlockAttributes >
-		>,
+		settings: settingsWithoutCustomProperties,
 		isVariationBlock: isVariationBlock ?? false,
 		variationName: variationName ?? undefined,
 		isAvailableOnPostEditor: isAvailableOnPostEditor ?? false,
 	};
 
 	BlockRegistrationManager.getInstance().registerBlockConfig(
-		internalConfig
+		// We cast to BlockAttributes since we never use custom attributes in this function.
+		// This bypasses TypeScript errors from the BlockRegistrationManager storing blocks
+		// in a Map with a non-generic ProductBlockConfig type.
+		internalConfig as ProductBlockConfig< BlockAttributes >
 	);
 };
