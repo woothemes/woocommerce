@@ -12,6 +12,7 @@ describe( 'formatError', () => {
 			message: 'Lorem Ipsum',
 		} );
 		const expectedError = {
+			code: '',
 			message: 'Lorem Ipsum',
 			type: 'general',
 		};
@@ -24,6 +25,7 @@ describe( 'formatError', () => {
 
 		const error = await formatError( mockResponse );
 		const expectedError = {
+			code: '',
 			message: 'Lorem Ipsum',
 			type: 'api',
 		};
