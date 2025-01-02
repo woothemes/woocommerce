@@ -35,9 +35,9 @@ type ProductBlockSettings = {
  * @property {Partial<BlockConfiguration>} settings             - Block settings configuration
  * @property {ProductBlockSettings}        productBlockSettings - Product block settings
  */
-type ProductBlockConfig = ProductBlockSettings & {
+type ProductBlockConfig< T extends BlockAttributes > = ProductBlockSettings & {
 	blockName: string;
-	settings: Partial< BlockConfiguration >;
+	settings: Partial< BlockConfiguration< T > >;
 };
 
 /**
@@ -49,7 +49,9 @@ type ProductBlockConfig = ProductBlockSettings & {
  * @property {string}                      [variationName]         - The name of the variation if applicable
  * @property {boolean}                     isAvailableOnPostEditor - Whether the block should be available in post editor
  */
-type ProductBlockRegistrationConfig = Partial< BlockConfiguration > &
+type ProductBlockRegistrationConfig< T extends BlockAttributes > = Partial<
+	BlockConfiguration< T >
+> &
 	ProductBlockSettings;
 
 /**
@@ -60,7 +62,13 @@ export class BlockRegistrationManager {
 	/** Singleton instance of the manager */
 	private static instance: BlockRegistrationManager;
 	/** Map storing block configurations keyed by block name or variation name */
-	private blocks: Map< string, ProductBlockConfig > = new Map();
+	private blocks: Map<
+		string,
+		ProductBlockSettings & {
+			blockName: string;
+			settings: Record< string, unknown >;
+		}
+	> = new Map();
 	/** Current template ID being edited */
 	private currentTemplateId: string | undefined;
 	/** Flag indicating if the manager has been initialized */
@@ -218,7 +226,9 @@ export class BlockRegistrationManager {
 	 *
 	 * @param {ProductBlockConfig} config - Configuration of the block to unregister
 	 */
-	private unregisterBlock( config: ProductBlockConfig ): void {
+	private unregisterBlock< T extends BlockAttributes >(
+		config: ProductBlockConfig< T >
+	): void {
 		const { blockName, isVariationBlock, variationName } = config;
 
 		try {
@@ -245,7 +255,9 @@ export class BlockRegistrationManager {
 	 *
 	 * @param {ProductBlockConfig} config - Configuration of the block to register
 	 */
-	private registerBlock( config: ProductBlockConfig ): void {
+	private registerBlock< T extends BlockAttributes >(
+		config: ProductBlockConfig< T >
+	): void {
 		const {
 			blockName,
 			settings,
@@ -303,7 +315,9 @@ export class BlockRegistrationManager {
 	 *
 	 * @param {ProductBlockConfig} config - Configuration for the block to register
 	 */
-	public registerBlockConfig( config: ProductBlockConfig ): void {
+	public registerBlockConfig< T extends BlockAttributes >(
+		config: ProductBlockConfig< T >
+	): void {
 		const key = config.variationName || config.blockName;
 		this.blocks.set( key, config );
 		this.registerBlock( config );
@@ -348,7 +362,7 @@ export class BlockRegistrationManager {
  */
 export const registerProductBlockType = < T extends BlockAttributes >(
 	blockNameOrMetadata: string | Partial< BlockConfiguration< T > >,
-	settings?: ProductBlockRegistrationConfig
+	settings?: ProductBlockRegistrationConfig< BlockConfiguration< T > >
 ): void => {
 	const blockName =
 		typeof blockNameOrMetadata === 'string'
@@ -381,9 +395,11 @@ export const registerProductBlockType = < T extends BlockAttributes >(
 		...( settings || {} ),
 	};
 
-	const internalConfig: ProductBlockConfig = {
+	const internalConfig: ProductBlockConfig< T > = {
 		blockName,
-		settings: { ...settingsWithoutCustomProperties },
+		settings: {
+			...settingsWithoutCustomProperties,
+		} as BlockConfiguration< T >,
 		isVariationBlock: isVariationBlock ?? false,
 		variationName: variationName ?? undefined,
 		isAvailableOnPostEditor: isAvailableOnPostEditor ?? false,
