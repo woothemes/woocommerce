@@ -1,6 +1,8 @@
 @include wordpress-admin-schemes();
 
 body.woocommerce_page_wc-settings {
+	@include wp-admin-reset(".wc-settings-page");
+
 	#wpcontent {
 		margin-left: 0 !important;
 	}
@@ -17,16 +19,6 @@ body.woocommerce_page_wc-settings {
 		background: #1d2327;
 	}
 
-	.wc-settings-page {
-		min-height: 100vh;
-		position: fixed;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
-		display: block !important;
-	}
-
 	.edit-site-layout__area {
 		background: #fff;
 		color: #1e1e1e;
@@ -41,4 +33,16 @@ body.woocommerce_page_wc-settings {
 			border-radius: 8px;
 		}
 	}
+}
+
+.wc-settings-page {
+	@include reset;
+
+	min-height: 100vh;
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	display: block !important;
 }
