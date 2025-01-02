@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { Root } from 'react-dom/client';
 import { __ } from '@wordpress/i18n';
 import {
 	StrictMode,
@@ -27,9 +28,9 @@ const ProductsApp = lazy( () =>
  *
  * @param {string} id DOM element id.
  */
-export function initializeProductsDashboard( id: string ) {
+export function initializeProductsDashboard( id: string ): Root {
 	const target = document.getElementById( id );
-	const root = createRoot( target );
+	const root = createRoot( target! );
 	const isGutenbergEnabled = getGutenbergVersion() > 0;
 
 	root.render(

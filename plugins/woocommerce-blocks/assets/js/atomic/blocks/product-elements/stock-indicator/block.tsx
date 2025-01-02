@@ -112,10 +112,12 @@ export const Block = ( props: Props ): JSX.Element | null => {
 	);
 };
 
-export default ( props: Props ) => {
+const StockIndicatorBlock: React.FC< Props > = ( props ) => {
 	const { product } = useProductDataContext();
 	if ( product.id === 0 ) {
 		return <Block { ...props } />;
 	}
 	return withProductDataContext( Block )( props );
 };
+
+export default StockIndicatorBlock;

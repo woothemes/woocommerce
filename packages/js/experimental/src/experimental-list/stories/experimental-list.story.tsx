@@ -13,7 +13,7 @@ import { ListProps } from '../experimental-list';
 import './style.scss';
 
 export default {
-	title: 'WooCommerce Admin/experimental/List',
+	title: 'Experimental/List',
 	component: List,
 	decorators: [ ( storyFn, context ) => withConsole()( storyFn )( context ) ],
 	argTypes: {
