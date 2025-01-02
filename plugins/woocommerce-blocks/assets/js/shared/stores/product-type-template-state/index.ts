@@ -16,7 +16,7 @@ import {
 import {
 	getProductTypeOptions,
 	type ProductTypeProps,
-} from '../../utils/get-product-type-options';
+} from '../../../utils/get-product-type-options';
 
 type StoreState = {
 	productTypes: {
@@ -130,12 +130,12 @@ const reducer = ( state: StoreState = DEFAULT_STATE, action: Actions ) => {
 	}
 };
 
-export const store = createReduxStore( STORE_NAME, {
+export const productTypeTemplateStateStore = createReduxStore( STORE_NAME, {
 	reducer,
 	actions,
 	selectors,
 } );
 
 if ( ! select( STORE_NAME ) ) {
-	register( store );
+	register( productTypeTemplateStateStore );
 }
