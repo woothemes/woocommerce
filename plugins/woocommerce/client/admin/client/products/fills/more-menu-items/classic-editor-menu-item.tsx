@@ -17,8 +17,8 @@ import {
 import { getAdminSetting } from '~/utils/admin-settings';
 
 type Select = {
-	getOption: ( option: string ) => 'yes' | 'no';
-	hasFinishedResolution: ( option: string, args: string[] ) => boolean;
+	getOption: < T = string >( option: string ) => T;
+	hasFinishedResolution: ( selectorName: string, args: unknown[] ) => boolean;
 };
 
 export const ClassicEditorMenuItem = ( {
@@ -36,7 +36,7 @@ export const ClassicEditorMenuItem = ( {
 		) as Select;
 
 		const allowTrackingOption =
-			getOption( ALLOW_TRACKING_OPTION_NAME ) || 'no';
+			getOption< 'yes' | 'no' >( ALLOW_TRACKING_OPTION_NAME ) || 'no';
 
 		const resolving = ! hasFinishedResolution( 'getOption', [
 			ALLOW_TRACKING_OPTION_NAME,
