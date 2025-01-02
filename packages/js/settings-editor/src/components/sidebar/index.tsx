@@ -19,13 +19,11 @@ import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
 /**
  * Internal dependencies
  */
-import { getSettingsSectionPath } from '../../utils';
+import { getSettingsSectionPath, settingsData } from '../../utils';
 
 const { useLocation } = unlock( routerPrivateApis );
 
 const SidebarNavigationScreenContent = () => {
-	const settingsData: SettingsData = window.wcSettings?.admin?.settingsData;
-
 	const { name } = useLocation();
 
 	if ( ! settingsData ) {

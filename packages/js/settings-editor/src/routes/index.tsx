@@ -6,11 +6,9 @@ import { createElement } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import { getSettingsSectionPath } from '../utils';
+import { getSettingsSectionPath, settingsData } from '../utils';
 import { Sidebar } from '../components';
 import { LegacyContent } from '../legacy';
-
-const settingsData: SettingsData = window.wcSettings?.admin?.settingsData || [];
 
 export type RouteProps = {
 	name: string;
@@ -26,7 +24,7 @@ const settingsEditorRoutes = Object.values( settingsData ).map(
 	( settingsPage ) => {
 		return {
 			name: settingsPage.slug,
-			path: getSettingsSectionPath( settingsPage ),
+			path: getSettingsSectionPath( settingsPage.slug ),
 			areas: {
 				sidebar: <Sidebar title={ settingsPage.label } backPack="/" />,
 				content: (
