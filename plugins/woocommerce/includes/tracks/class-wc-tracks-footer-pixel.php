@@ -90,8 +90,8 @@ class WC_Tracks_Footer_Pixel {
 				continue;
 			}
 
-			// Add the Request Timestamp the latest possible before the HTTP request.
-			$pixel .= '&_rt=' . WC_Tracks_Client::build_timestamp();
+			// Add the Request Timestamp and no cache parameter just before the HTTP request.
+			$pixel = WC_Tracks_Client::add_request_timestamp_and_nocache( $pixel );
 
 			echo '<img style="position: fixed;" src="', esc_url( $pixel ), '" />';
 		}
