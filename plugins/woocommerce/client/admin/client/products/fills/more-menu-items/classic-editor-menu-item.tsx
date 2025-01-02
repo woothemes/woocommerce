@@ -16,6 +16,11 @@ import {
  */
 import { getAdminSetting } from '~/utils/admin-settings';
 
+type Select = {
+	getOption: ( option: string ) => 'yes' | 'no';
+	hasFinishedResolution: ( option: string, args: string[] ) => boolean;
+};
+
 export const ClassicEditorMenuItem = ( {
 	onClick,
 	productId,
@@ -26,8 +31,9 @@ export const ClassicEditorMenuItem = ( {
 	const { showProductMVPFeedbackModal } = useDispatch( CES_STORE_KEY );
 
 	const { allowTracking, resolving: isLoading } = useSelect( ( select ) => {
-		const { getOption, hasFinishedResolution } =
-			select( OPTIONS_STORE_NAME );
+		const { getOption, hasFinishedResolution } = select(
+			OPTIONS_STORE_NAME
+		) as Select;
 
 		const allowTrackingOption =
 			getOption( ALLOW_TRACKING_OPTION_NAME ) || 'no';
@@ -40,7 +46,7 @@ export const ClassicEditorMenuItem = ( {
 			allowTracking: allowTrackingOption === 'yes',
 			resolving,
 		};
-	} );
+	}, [] );
 
 	const _feature_nonce = getAdminSetting( '_feature_nonce' );
 
