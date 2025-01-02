@@ -1,0 +1,4 @@
+Significance: patch
+Type: tweak
+
+Add missing ESLint comment for the subTitleContent of payment promotion row component.
