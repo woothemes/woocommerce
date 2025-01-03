@@ -39,7 +39,7 @@ type WooOnboardingTaskProps = {
 	variant?: string;
 };
 
-type WooOnboardingTaskSlotProps = Slot.Props & {
+type WooOnboardingTaskSlotProps = React.ComponentProps< typeof Slot > & {
 	id: string;
 };
 
