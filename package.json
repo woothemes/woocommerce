@@ -8,6 +8,7 @@
 		"node": "^20.11.1",
 		"pnpm": "9.15.0"
 	},
+	"engineStrict": false,
 	"private": true,
 	"repository": {
 		"type": "git",
