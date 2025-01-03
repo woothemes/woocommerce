@@ -141,9 +141,7 @@ export class BlockRegistrationManager {
 				subscribe( () => {
 					const previousTemplateId = this.currentTemplateId;
 					this.currentTemplateId = this.parseTemplateId(
-						editSiteStore.getEditedPostId<
-							string | number | undefined
-						>()
+						editSiteStore.getEditedPostId()
 					);
 
 					if ( previousTemplateId !== this.currentTemplateId ) {
