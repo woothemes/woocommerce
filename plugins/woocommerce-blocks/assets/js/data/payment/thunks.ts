@@ -221,16 +221,30 @@ export const __internalEmitPaymentProcessingEvent: emitProcessingEventType = (
  *
  * @param {Object} paymentMethodData The payment method data to update
  */
-export const updatePaymentMethodData = ( paymentMethodData: string ) => {
+export const updatePaymentMethodData = ( paymentMethodData: {
+	id: string;
+	token: string;
+} ) => {
 	return async ( { registry } ) => {
 		const { receiveCart } = registry.dispatch( CART_STORE_KEY );
+
+		// We send the payment method token only if a saved payment method is selected.
+		const data: {
+			payment_method: string;
+			payment_method_token?: string;
+		} = {
+			payment_method: paymentMethodData.id,
+		};
+
+		if ( paymentMethodData.token !== '' ) {
+			data.payment_method_token = paymentMethodData.token;
+		}
+
 		try {
 			const response = await apiFetchWithHeaders( {
 				path: '/wc/store/v1/checkout?calc_totals=true',
 				method: 'PUT',
-				data: {
-					payment_method: paymentMethodData,
-				},
+				data,
 				signal: CheckoutPutAbortController.signal,
 			} );
 

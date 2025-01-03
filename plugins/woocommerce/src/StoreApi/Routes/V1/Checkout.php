@@ -186,7 +186,6 @@ class Checkout extends AbstractCartRoute {
 	 */
 	protected function get_route_response( \WP_REST_Request $request ) {
 		$this->create_or_update_draft_order( $request );
-		$this->set_default_payment_method();
 		return $this->prepare_item_for_response(
 			(object) [
 				'order'          => $this->order,
@@ -770,11 +769,14 @@ class Checkout extends AbstractCartRoute {
 	 */
 	private function persist_payment_method_for_order( \WP_REST_Request $request ) {
 		$available_gateways = WC()->payment_gateways()->get_available_payment_gateways();
-		if ( isset( $request['payment_method'] ) && in_array( $request['payment_method'], $available_gateways, true ) ) {
+		if ( isset( $request['payment_method'] ) && in_array( $request['payment_method'], array_keys( $available_gateways ), true ) ) {
 			WC()->session->set( 'chosen_payment_method', sanitize_text_field( wp_unslash( $request['payment_method'] ) ) );
+			WC()->session->set( 'chosen_payment_method_token', '' );
 			$this->order->set_payment_method( sanitize_text_field( wp_unslash( $request['payment_method'] ) ) );
-		} else {
-			$this->set_default_payment_method();
+		}
+
+		if ( isset( $request['payment_method_token'] ) && '' !== $request['payment_method_token'] ) {
+			WC()->session->set( 'chosen_payment_method_token', sanitize_text_field( wp_unslash( $request['payment_method_token'] ) ) );
 		}
 	}
 

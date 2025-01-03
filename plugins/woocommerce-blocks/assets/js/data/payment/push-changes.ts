@@ -18,6 +18,8 @@ const localState = {
 	doingPush: false,
 	// Cache of the last active payment method
 	activePaymentMethod: '',
+	// Cache of the last active saved token
+	activeSavedToken: '',
 };
 
 /**
@@ -26,6 +28,7 @@ const localState = {
 const initialize = () => {
 	localState.activePaymentMethod =
 		select( STORE_KEY ).getActivePaymentMethod();
+	localState.activeSavedToken = select( STORE_KEY ).getActiveSavedToken();
 	localState.isInitialized = true;
 };
 
@@ -41,19 +44,23 @@ const updatePaymentData = (): void => {
 	localState.doingPush = true;
 
 	const newActivePaymentMethod = select( STORE_KEY ).getActivePaymentMethod();
+	const newActiveSavedToken = select( STORE_KEY ).getActiveSavedToken();
 	const isExpressPaymentMethodStarted =
 		select( STORE_KEY ).isExpressPaymentStarted();
 	// Only update if the active payment method has changed and it's not an express payment method or empty
 	if (
-		localState.activePaymentMethod !== '' &&
 		newActivePaymentMethod !== '' &&
-		newActivePaymentMethod !== localState.activePaymentMethod &&
+		( newActivePaymentMethod !== localState.activePaymentMethod ||
+			newActiveSavedToken !== localState.activeSavedToken ) &&
 		! isExpressPaymentMethodStarted
 	) {
 		localState.activePaymentMethod = newActivePaymentMethod;
 
 		dispatch( STORE_KEY )
-			.updatePaymentMethodData( newActivePaymentMethod )
+			.updatePaymentMethodData( {
+				id: newActivePaymentMethod,
+				token: newActiveSavedToken,
+			} )
 			.then( () => {
 				localState.doingPush = false;
 			} )
