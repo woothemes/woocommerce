@@ -2073,6 +2073,108 @@ class WC_Helper {
 	}
 
 	/**
+	 * Connect theme to the WCCOM.
+	 *
+	 * Depending on the activated theme attempts to look through available
+	 * subscriptions and auto-activate one if possible, so the user does not
+	 * need to visit the Helper UI at all after installing a new extension.
+	 *
+	 * @param string $filename The filename of the activated theme.
+	 */
+	public static function connect_theme( $filename ) {
+		$themes = self::get_local_woo_themes();
+
+		// Not a local woo plugin.
+		if ( empty( $themes[ $filename ] ) ) {
+			return;
+		}
+
+		// Make sure we have a connection.
+		$auth = WC_Helper_Options::get( 'auth' );
+		if ( empty( $auth ) ) {
+			return;
+		}
+
+		$theme         = $themes[ $filename ];
+		$product_id    = $theme['_product_id'];
+		$subscriptions = self::_get_subscriptions_from_product_id( $product_id, false );
+
+		// No valid subscriptions for this product.
+		if ( empty( $subscriptions ) ) {
+			return;
+		}
+
+		$subscription = null;
+		foreach ( $subscriptions as $_sub ) {
+
+			// Don't attempt to activate expired subscriptions.
+			if ( $_sub['expired'] ) {
+				continue;
+			}
+
+			// No more sites available in this subscription.
+			if ( isset( $_sub['maxed'] ) && $_sub['maxed'] ) {
+				continue;
+			}
+
+			// Looks good.
+			$subscription = $_sub;
+			break;
+		}
+
+		// No valid subscription found.
+		if ( ! $subscription ) {
+			return;
+		}
+
+		$product_key         = $subscription['product_key'];
+		$activation_response = WC_Helper_API::post(
+			'activate',
+			array(
+				'authenticated' => true,
+				'body'          => wp_json_encode(
+					array(
+						'product_key' => $product_key,
+					)
+				),
+			)
+		);
+
+		$activated = wp_remote_retrieve_response_code( $activation_response ) === 200;
+		$body      = json_decode( wp_remote_retrieve_body( $activation_response ), true );
+
+		if ( ! $activated && ! empty( $body['code'] ) && 'already_connected' === $body['code'] ) {
+			$activated = true;
+		}
+
+		if ( $activated ) {
+			self::log( 'Auto-activated a subscription for ' . $filename );
+			/**
+			 * Fires when the Helper activates a product successfully.
+			 *
+			 * @param int    $product_id Product ID being activated.
+			 * @param string $product_key Subscription product key.
+			 * @param array  $activation_response The response object from wp_safe_remote_request().
+			 */
+			do_action( 'woocommerce_helper_subscription_activate_success', $product_id, $product_key, $activation_response );
+		} else {
+			self::log( 'Could not activate a subscription for theme: ' . $filename );
+
+			/**
+			 * Fires when the Helper fails to activate a product.
+			 *
+			 * @param int    $product_id Product ID being activated.
+			 * @param string $product_key Subscription product key.
+			 * @param array  $activation_response The response object from wp_safe_remote_request().
+			 */
+			do_action( 'woocommerce_helper_subscription_activate_error', $product_id, $product_key, $activation_response );
+		}
+
+		self::_flush_subscriptions_cache();
+		self::_flush_updates_cache();
+	}
+
+	/**
 	 * Runs when any plugin is deactivated.
 	 *
 	 * When a user deactivates a plugin, attempt to deactivate any subscriptions
