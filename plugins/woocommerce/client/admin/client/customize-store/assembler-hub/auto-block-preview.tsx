@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { useResizeObserver, pure } from '@wordpress/compose';
+import { useResizeObserver } from '@wordpress/compose';
 import {
 	memo,
 	useContext,
