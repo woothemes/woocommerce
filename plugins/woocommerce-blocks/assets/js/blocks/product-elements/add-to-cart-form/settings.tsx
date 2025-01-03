@@ -58,32 +58,33 @@ export const AddToCartFormSettings = ( {
 	features,
 }: AddToCartFormSettingsProps ) => {
 	const { isBlockifiedAddToCart, isStepperLayoutFeatureEnabled } = features;
+	const devFeatures = {
+		isBlockifiedAddToCart,
+	};
 
-	const hasDevFeatures =
-		isStepperLayoutFeatureEnabled || isBlockifiedAddToCart;
-
-	if ( ! hasDevFeatures ) {
-		return null;
-	}
-
-	const featuresList = Object.keys( features ) as FeaturesKeys[];
-	const enabledFeatures = featuresList.filter(
+	const featuresDevList = Object.keys( devFeatures ) as FeaturesKeys[];
+	const enabledDevFeatures = featuresDevList.filter(
 		( feature ) => features[ feature ]
 	);
 
 	return (
 		<InspectorControls>
-			<PanelBody title={ 'Development' }>
-				<Flex gap={ 3 } direction="column">
-					<Notice status="warning" isDismissible={ false }>
-						{ __( 'Development features enabled.', 'woocommerce' ) }
-					</Notice>
+			{ enabledDevFeatures.length > 0 && (
+				<PanelBody title={ 'Development' }>
+					<Flex gap={ 3 } direction="column">
+						<Notice status="warning" isDismissible={ false }>
+							{ __(
+								'Development features enabled.',
+								'woocommerce'
+							) }
+						</Notice>
 
-					{ enabledFeatures.map( ( feature ) => (
-						<FlexItem key={ feature }>{ feature }</FlexItem>
-					) ) }
-				</Flex>
-			</PanelBody>
+						{ enabledDevFeatures.map( ( feature ) => (
+							<FlexItem key={ feature }>{ feature }</FlexItem>
+						) ) }
+					</Flex>
+				</PanelBody>
+			) }
 
 			{ isStepperLayoutFeatureEnabled && (
 				<PanelBody title={ __( 'Quantity Selector', 'woocommerce' ) }>
