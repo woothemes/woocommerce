@@ -1572,7 +1572,7 @@ if ( ! function_exists( 'woocommerce_catalog_ordering' ) ) {
 			/**
 			 * Filters the catalog orderby options.
 			 *
-			 * @since 9.6.0
+			 * @since 9.7.0
 			 * @param array $catalog_orderby_options Array of catalog orderby options.
 			 */
 			$catalog_orderby_options = apply_filters(
