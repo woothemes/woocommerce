@@ -685,14 +685,14 @@ jQuery( function( $ ) {
 				.focus()
 				.addClass( 'has-error' )
 				.attr( 'aria-invalid', 'true' )
-				.attr( 'aria-describedby', 'coupon-error-notice' );
+				.attr( 'aria-describedby', 'coupon-error-notice coupon-code-input-description' );
 			$target.append( '<span class="coupon-error-notice" id="coupon-error-notice" role="alert">' + msg + '</span>' );
 		},
 		remove_coupon_error: function( evt ) {
 			$( evt.currentTarget )
 				.removeClass( 'has-error' )
 				.removeAttr( 'aria-invalid' )
-				.removeAttr( 'aria-describedby' )
+				.attr( 'aria-describedby', 'coupon-code-input-description' )
 				.next( '.coupon-error-notice' )
 				.remove();
 		},
