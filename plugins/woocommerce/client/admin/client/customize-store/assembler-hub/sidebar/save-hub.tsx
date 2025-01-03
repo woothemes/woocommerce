@@ -112,7 +112,7 @@ export const SaveHub = () => {
 					} );
 				}
 
-				await saveEditedEntityRecord( kind, name, key, null );
+				await saveEditedEntityRecord( kind, name, key, undefined );
 				__unstableMarkLastChangeAsPersistent();
 			}
 		}
