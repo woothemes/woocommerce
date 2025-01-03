@@ -55,8 +55,10 @@
 	padding: 48px;
 }
 
-.wc-settings-page {
-	.components-input-control__label {
-		white-space: normal;
+#wpbody-content {
+	.wc-settings-page {
+		.components-input-control__label {
+			white-space: normal;
+		}
 	}
 }
