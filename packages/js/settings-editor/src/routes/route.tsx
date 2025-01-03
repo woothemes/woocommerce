@@ -71,9 +71,9 @@ export const getSettingsPageTabs = (
 
 	const sections = Object.keys( settingsPage.sections );
 
-	return sections.map( ( key ) => ( {
-		name: key,
-		title: settingsPage.sections[ key ].label,
+	return sections.map( ( name ) => ( {
+		name,
+		title: settingsPage.sections[ name ].label,
 	} ) );
 };
 
