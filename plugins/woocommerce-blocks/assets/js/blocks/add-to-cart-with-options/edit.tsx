@@ -2,7 +2,12 @@
  * External dependencies
  */
 import { useEffect } from '@wordpress/element';
-import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
+import {
+	BlockControls,
+	InnerBlocks,
+	InspectorControls,
+	useBlockProps,
+} from '@wordpress/block-editor';
 import { BlockEditProps } from '@wordpress/blocks';
 
 /**
@@ -10,11 +15,11 @@ import { BlockEditProps } from '@wordpress/blocks';
  */
 import { useIsDescendentOfSingleProductBlock } from '../../atomic/blocks/product-elements/shared/use-is-descendent-of-single-product-block';
 import { AddToCartOptionsSettings } from './settings';
-import { INNER_BLOCKS_TEMPLATE } from './constants';
-export interface Attributes {
-	className?: string;
-	isDescendentOfSingleProductBlock: boolean;
-}
+import ToolbarProductTypeGroup from './components/toolbar-type-product-selector-group';
+import { DowngradeNotice } from './components/downgrade-notice';
+import getInnerBlocksTemplate from './utils/get-inner-blocks-template';
+import useProductTypeSelector from './hooks/use-product-type-selector';
+import type { Attributes } from './types';
 
 export type FeaturesKeys = 'isBlockifiedAddToCart';
 
@@ -28,26 +33,48 @@ const AddToCartOptionsEdit = ( props: BlockEditProps< Attributes > ) => {
 	const { setAttributes } = props;
 
 	const blockProps = useBlockProps();
+	const blockClientId = blockProps?.id;
 	const { isDescendentOfSingleProductBlock } =
 		useIsDescendentOfSingleProductBlock( {
-			blockClientId: blockProps?.id,
+			blockClientId,
 		} );
+
+	const { registerListener, unregisterListener } = useProductTypeSelector();
 
 	useEffect( () => {
 		setAttributes( {
 			isDescendentOfSingleProductBlock,
 		} );
-	}, [ setAttributes, isDescendentOfSingleProductBlock ] );
+		registerListener( blockClientId );
+		return () => {
+			unregisterListener( blockClientId );
+		};
+	}, [
+		setAttributes,
+		isDescendentOfSingleProductBlock,
+		blockClientId,
+		registerListener,
+		unregisterListener,
+	] );
+
+	const innerBlocksTemplate = getInnerBlocksTemplate();
 
 	return (
 		<>
+			<InspectorControls>
+				<DowngradeNotice blockClientId={ props?.clientId } />
+			</InspectorControls>
+			<BlockControls>
+				<ToolbarProductTypeGroup />
+			</BlockControls>
 			<AddToCartOptionsSettings
 				features={ {
 					isBlockifiedAddToCart: true,
 				} }
 			/>
+
 			<div { ...blockProps }>
-				<InnerBlocks template={ INNER_BLOCKS_TEMPLATE } />
+				<InnerBlocks template={ innerBlocksTemplate } />
 			</div>
 		</>
 	);

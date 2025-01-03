@@ -24,7 +24,9 @@ registerBlockType( metadata, {
 	deprecated,
 } );
 
-registerPlugin( 'plugin-coming-soon-newsletter-setting-panel', {
-	render: NewsletterPanel,
-	icon: 'palmtree',
-} );
+if ( typeof window.comingSoonNewsletter !== 'undefined' ) {
+	registerPlugin( 'plugin-coming-soon-newsletter-setting-panel', {
+		render: NewsletterPanel,
+		icon: 'palmtree',
+	} );
+}

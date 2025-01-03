@@ -21,7 +21,7 @@ import {
  * Internal dependencies
  */
 import { notifyQuantityChanges } from './notify-quantity-changes';
-import { notifyCartErrors } from './notify-errors';
+import { updateCartErrorNotices } from './notify-errors';
 import { CartDispatchFromMap, CartSelectFromMap } from './index';
 import { apiFetchWithHeaders } from '../shared-controls';
 import { getIsCustomerDataDirty, setIsCustomerDataDirty } from './utils';
@@ -39,16 +39,24 @@ export const receiveCart =
 		dispatch: CartDispatchFromMap;
 		select: CartSelectFromMap;
 	} ) => {
-		const newCart = camelCaseKeys( response ) as unknown as Cart;
+		const cartResponse = camelCaseKeys( response ) as unknown as Cart;
 		const oldCart = select.getCartData();
-		notifyCartErrors( newCart.errors, oldCart.errors );
+		const oldCartErrors = [ ...oldCart.errors, ...select.getCartErrors() ];
+
+		// Set data from the response.
+		dispatch.setCartData( cartResponse );
+
+		// Get the new cart data before showing updates.
+		const newCart = select.getCartData();
+
 		notifyQuantityChanges( {
 			oldCart,
 			newCart,
 			cartItemsPendingQuantity: select.getItemsPendingQuantityUpdate(),
 			cartItemsPendingDelete: select.getItemsPendingDelete(),
 		} );
-		dispatch.setCartData( newCart );
+
+		updateCartErrorNotices( newCart.errors, oldCartErrors );
 		dispatch.setErrorData( null );
 	};
 
@@ -80,6 +88,7 @@ export const receiveError =
 		if ( response.data?.cart ) {
 			dispatch.receiveCart( response?.data?.cart );
 		}
+
 		dispatch.setErrorData( response );
 	};
 
@@ -116,6 +125,7 @@ export const applyExtensionCartUpdate =
 				return response;
 			}
 			dispatch.receiveCart( response );
+			return response;
 		} catch ( error ) {
 			dispatch.receiveError( isApiErrorResponse( error ) ? error : null );
 			return Promise.reject( error );
@@ -186,6 +196,11 @@ export const removeCoupon =
 		}
 	};
 
+type Variation = {
+	attribute: string;
+	value: string;
+};
+
 /**
  * Adds an item to the cart:
  * - Calls API to add item.
@@ -194,10 +209,17 @@ export const removeCoupon =
  *
  * @param {number} productId    Product ID to add to cart.
  * @param {number} [quantity=1] Number of product ID being added to cart.
- * @throws           Will throw an error if there is an API problem.
+ * @param {Array}  [variation] Array of variation attributes for the product.
+ * @param {Object} [additionalData] Array of additional fields for the product.
+ * @throws         Will throw an error if there is an API problem.
  */
 export const addItemToCart =
-	( productId: number, quantity = 1 ) =>
+	(
+		productId: number,
+		quantity = 1,
+		variation: Variation[],
+		additionalData: Record< string, unknown > = {}
+	) =>
 	async ( { dispatch }: { dispatch: CartDispatchFromMap } ) => {
 		try {
 			triggerAddingToCartEvent();
@@ -207,8 +229,10 @@ export const addItemToCart =
 				path: `/wc/store/v1/cart/add-item`,
 				method: 'POST',
 				data: {
+					...additionalData,
 					id: productId,
 					quantity,
+					variation,
 				},
 				cache: 'no-store',
 			} );

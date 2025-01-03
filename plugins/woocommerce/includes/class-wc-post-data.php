@@ -9,6 +9,8 @@
  */
 
 use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Enums\OrderInternalStatus;
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\DataStores\Orders\DataSynchronizer;
 use Automattic\WooCommerce\Internal\ProductAttributesLookup\LookupDataStore as ProductAttributesLookupDataStore;
 use Automattic\WooCommerce\Proxies\LegacyProxy;
@@ -148,7 +150,7 @@ class WC_Post_Data {
 		 * @return string    $from    Origin type.
 		 * @param string     $to      New type.
 		 */
-		if ( apply_filters( 'woocommerce_delete_variations_on_product_type_change', 'variable' === $from && 'variable' !== $to, $product, $from, $to ) ) {
+		if ( apply_filters( 'woocommerce_delete_variations_on_product_type_change', ProductType::VARIABLE === $from && ProductType::VARIABLE !== $to, $product, $from, $to ) ) {
 			// If the product is no longer variable, we should ensure all variations are removed.
 			$data_store = WC_Data_Store::load( 'product-variable' );
 			$data_store->delete_variations( $product->get_id(), true );
@@ -269,8 +271,8 @@ class WC_Post_Data {
 		} elseif ( 'product' === $data['post_type'] && isset( $_POST['product-type'] ) ) { // WPCS: input var ok, CSRF ok.
 			$product_type = wc_clean( wp_unslash( $_POST['product-type'] ) ); // WPCS: input var ok, CSRF ok.
 			switch ( $product_type ) {
-				case 'grouped':
-				case 'variable':
+				case ProductType::GROUPED:
+				case ProductType::VARIABLE:
 					$data['post_parent'] = 0;
 					break;
 			}
@@ -398,7 +400,7 @@ class WC_Post_Data {
 			$refunds = $wpdb->get_results( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type = 'shop_order_refund' AND post_parent = %d", $id ) );
 
 			foreach ( $refunds as $refund ) {
-				$wpdb->update( $wpdb->posts, array( 'post_status' => 'wc-completed' ), array( 'ID' => $refund->ID ) );
+				$wpdb->update( $wpdb->posts, array( 'post_status' => OrderInternalStatus::COMPLETED ), array( 'ID' => $refund->ID ) );
 			}
 
 			wc_delete_shop_order_transients( $id );

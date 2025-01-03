@@ -7,7 +7,7 @@ import { Extension } from '@woocommerce/data';
 /**
  * Internal dependencies
  */
-import { computePluginsSelection, Plugins } from '../Plugins';
+import { computePluginsSelection, joinWithAnd, Plugins } from '../Plugins';
 
 describe( 'Plugins Component', () => {
 	const mockSendEvent = jest.fn();
@@ -64,6 +64,7 @@ describe( 'Plugins Component', () => {
 		],
 		pluginsSelected: [],
 		pluginsInstallationErrors: [],
+		pluginsTruncated: [],
 	};
 	const navigationProgress = 80;
 
@@ -110,6 +111,7 @@ describe( 'Plugins Component', () => {
 				pluginsSelected: [ 'plugin1' ],
 				pluginsShown: [ 'plugin1', 'plugin2', 'plugin3', 'plugin4' ],
 				pluginsUnselected: [ 'plugin3', 'plugin4' ],
+				pluginsTruncated: [],
 			},
 		} );
 	} );
@@ -289,5 +291,20 @@ describe( 'computePluginsSelection', () => {
 			pluginsUnselected: [],
 			selectedPluginSlugs: [],
 		} );
+	} );
+} );
+
+describe( 'joinWithAnd', () => {
+	it( 'should fallback to en_US locale when current locale is invalid', () => {
+		const items = [ 'apple', 'banana', 'orange' ];
+		const result = joinWithAnd( items, 'invalid-locale' );
+
+		expect( result ).toEqual( [
+			{ type: 'element', value: 'apple' },
+			{ type: 'literal', value: ', ' },
+			{ type: 'element', value: 'banana' },
+			{ type: 'literal', value: ', and ' },
+			{ type: 'element', value: 'orange' },
+		] );
 	} );
 } );
