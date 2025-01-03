@@ -2816,20 +2816,6 @@ button.reset_variations {
 			}
 		}
 
-		.coupon {
-			position: relative;
-	
-			label {
-				@include woocommerce-float-label();
-				left: 0.85em;
-				transform: translateY(0.8em);
-				
-				@media only screen and (max-width: 768px) {
-					transform: translateY(0.9em);
-				}
-			}
-		}
-
 		.product-thumbnail {
 
 			.attachment-woocommerce_thumbnail {
