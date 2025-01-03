@@ -31,8 +31,8 @@ if ( ! wc_coupons_enabled() ) { // @codingStandardsIgnoreLine.
 	<p id="coupon-code-input-description"><?php esc_html_e( 'If you have a coupon code, please apply it below.', 'woocommerce' ); ?></p>
 
 	<p class="form-row form-row-first">
-		<label for="coupon_code"><?php esc_html_e( 'Coupon code', 'woocommerce' ); ?></label>
-		<input type="text" name="coupon_code" class="input-text input-with-wc-float-label" id="coupon_code" value="" aria-describedby="coupon-code-input-description" />
+		<label for="coupon_code" class="screen-reader-text"><?php esc_html_e( 'Coupon:', 'woocommerce' ); ?></label>
+		<input type="text" name="coupon_code" class="input-text" placeholder="<?php esc_attr_e( 'Coupon code', 'woocommerce' ); ?>" id="coupon_code" value="" aria-describedby="coupon-code-input-description" />
 	</p>
 
 	<p class="form-row form-row-last">
