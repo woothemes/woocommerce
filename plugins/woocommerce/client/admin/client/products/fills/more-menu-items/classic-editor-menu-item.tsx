@@ -32,12 +32,10 @@ export const ClassicEditorMenuItem = ( {
 		const allowTrackingOption =
 			// Todo: awaiting a more global fix, demo:
 			// https://github.com/woocommerce/woocommerce/pull/54146
-			// @ts-expect-error this is awaiting a more global fix.
 			getOption( ALLOW_TRACKING_OPTION_NAME ) || 'no';
 
 		// Todo: awaiting a more global fix, demo:
 		// https://github.com/woocommerce/woocommerce/pull/54146
-		// @ts-expect-error this is awaiting a more global fix.
 		const resolving = ! hasFinishedResolution( 'getOption', [
 			ALLOW_TRACKING_OPTION_NAME,
 		] );

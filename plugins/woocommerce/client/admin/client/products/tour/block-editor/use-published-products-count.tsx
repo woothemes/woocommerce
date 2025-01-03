@@ -16,7 +16,6 @@ export const usePublishedProductsCount = () => {
 
 		// Todo: awaiting a more global fix, demo:
 		// https://github.com/woocommerce/woocommerce/pull/54146
-		// @ts-expect-error this is awaiting a more global fix.
 		const publishedProductsCount = getProductsTotalCount(
 			PUBLISHED_PRODUCTS_QUERY_PARAMS,
 			0
@@ -24,7 +23,6 @@ export const usePublishedProductsCount = () => {
 
 		// Todo: awaiting a more global fix, demo:
 		// https://github.com/woocommerce/woocommerce/pull/54146
-		// @ts-expect-error this is awaiting a more global fix.
 		const loadingPublishedProductsCount = ! hasFinishedResolution(
 			'getProductsTotalCount',
 			[ PUBLISHED_PRODUCTS_QUERY_PARAMS, 0 ]
