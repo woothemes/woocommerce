@@ -7,63 +7,41 @@ import { privateApis as routerPrivateApis } from '@wordpress/router';
 /* eslint-disable @woocommerce/dependency-group */
 // @ts-ignore No types for this exist yet.
 import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
-import { getQueryArgs } from '@wordpress/url';
+import { getSettingsPage, getSettingsSectionPath } from '../../utils';
+import { getSettingsPageTabs } from '../../routes/route';
 /* eslint-enable @woocommerce/dependency-group */
 
 const { useHistory, useLocation } = unlock( routerPrivateApis );
 
 export const SectionTabs = ( {
 	children,
-	tabs = [],
 	activeSection,
 }: {
 	children: React.ReactNode;
-	tabs?: Array< {
-		name: string;
-		title: string;
-	} >;
 	activeSection?: string;
 } ) => {
-	const history = useHistory();
-	const {
-		params: { postType, page },
-	} = useLocation();
+	const { navigate } = useHistory();
+	const { name } = useLocation();
+
+	const settingsPage = getSettingsPage( name );
+	const tabs = getSettingsPageTabs( settingsPage );
 
 	if ( tabs.length <= 1 ) {
-		return <div>{ children }</div>;
+		return <>{ children }</>;
 	}
 
-	const onSelect = ( tabName: string ) => {
-		const currentArgs = getQueryArgs( window.location.href );
-
-		if ( currentArgs.section === tabName ) {
-			return;
-		}
-
-		const params =
-			tabName === 'default'
-				? {
-						page,
-						postType,
-						tab: currentArgs.tab,
-				  }
-				: {
-						page,
-						postType,
-						tab: currentArgs.tab,
-						section: tabName,
-				  };
-		history.push( params );
-	};
+	function navigateTo( nextSection: string ) {
+		navigate( getSettingsSectionPath( name, nextSection ) );
+	}
 
 	return (
 		<TabPanel
 			className="woocommerce-settings-section-tabs"
 			tabs={ tabs }
-			onSelect={ onSelect }
+			onSelect={ navigateTo }
 			initialTabName={ activeSection || tabs[ 0 ].name }
 		>
-			{ () => <>{ children }</> }
+			{ () => children }
 		</TabPanel>
 	);
 };
