@@ -1,9 +1,7 @@
 name: Cherry Pick Tool
 on:
     issues:
-        types: [milestoned, labeled]
-    pull_request:
-        types: [closed]
+        types: [milestoned]
     workflow_dispatch:
         inputs:
             release_branch:

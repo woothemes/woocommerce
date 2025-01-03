@@ -1,0 +1,4 @@
+Significance: minor
+Type: enhancement
+
+Add woocommercer_allow_tracking, woocommerce_allow_tracking_last_modified and woocommerce_allow_tracking_first_optin

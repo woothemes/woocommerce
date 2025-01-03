@@ -117,7 +117,6 @@ export function Layout( {
 								tabs={ tabs }
 								activeSection={ activeSection }
 							>
-								{ /* @ts-expect-error -- TODO: react-18-upgrade - examine why the type is inference doesn't match the code */ }
 								{ areas.content }
 							</SectionTabs>
 						</div>
@@ -130,7 +129,6 @@ export function Layout( {
 								maxWidth: widths?.edit,
 							} }
 						>
-							{ /* @ts-expect-error -- TODO: react-18-upgrade - examine why the type is inference doesn't match the code */ }
 							{ areas.edit }
 						</div>
 					) }
