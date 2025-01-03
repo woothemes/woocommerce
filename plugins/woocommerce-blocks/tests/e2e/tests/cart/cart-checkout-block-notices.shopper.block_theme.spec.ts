@@ -258,7 +258,7 @@ test.describe( 'Shopper → Notice Templates', () => {
 		page,
 	} ) => {
 		await frontendUtils.goToCartShortcode();
-		await page.getByLabel( 'Coupon code' ).fill( INVALID_COUPON );
+		await page.getByPlaceholder( 'Coupon code' ).fill( INVALID_COUPON );
 		await page.getByRole( 'button', { name: 'Apply coupon' } ).click();
 
 		await expect(
