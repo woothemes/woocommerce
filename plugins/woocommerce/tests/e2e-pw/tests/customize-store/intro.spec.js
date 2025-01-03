@@ -151,8 +151,7 @@ test.describe(
 					.getByRole( 'button', { name: 'Go to the Customizer' } )
 					.click();
 
-				await page.waitForNavigation();
-				await expect( page.url() ).toContain( 'customize.php' );
+				expect( page.url() ).toContain( 'customize.php' );
 			}
 		);
 	}
