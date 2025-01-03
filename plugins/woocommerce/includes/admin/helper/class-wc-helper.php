@@ -2346,6 +2346,9 @@ class WC_Helper {
 			)
 		);
 
+		$data = WC_Helper_Options::get( 'auth_user_data' );
+		WC_Helper_Options::update( 'last_disconnected_user_data', $data );
+
 		WC_Helper_Options::update( 'auth', array() );
 		WC_Helper_Options::update( 'auth_user_data', array() );
 
