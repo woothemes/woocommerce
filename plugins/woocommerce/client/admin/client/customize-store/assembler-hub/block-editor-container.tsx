@@ -186,7 +186,7 @@ export const BlockEditorContainer = () => {
 		<BlockEditor
 			renderedBlocks={ blocks }
 			isScrollable={ isScrollable }
-			onChange={ onChange }
+			onChange={ ( blockInstance ) => onChange( blockInstance, {} ) }
 			settings={ settings }
 			additionalStyles={ additionalStyles }
 		/>
