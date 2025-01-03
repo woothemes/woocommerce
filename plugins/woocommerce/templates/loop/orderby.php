@@ -30,7 +30,7 @@ $id_suffix = wp_unique_id();
 		name="orderby"
 		class="orderby"
 		<?php if ( $use_label ) : ?>
-			id="<?php esc_attr_e( "woocommerce-orderby-{$id_suffix}" ); ?>"
+			id="woocommerce-orderby-<?php esc_attr_e( $id_suffix, 'woocommerce' ); ?>"
 		<?php else : ?>
 			aria-label="<?php esc_attr_e( 'Shop order', 'woocommerce' ); ?>"
 		<?php endif; ?>
