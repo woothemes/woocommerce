@@ -807,6 +807,55 @@ test.describe( 'Product Collection', () => {
 			} );
 		}
 	);
+
+	test.describe( 'default query can be modified', () => {
+		test( 'default query can be modified', async ( {
+			admin,
+			page,
+			pageObject,
+			editor,
+			frontendUtils,
+		} ) => {
+			// Go to Customizer.
+			await page.goto( '/wp-admin/customize.php' );
+			await page.getByRole( 'button', { name: 'WooCommerce' } ).click();
+			await page
+				.getByRole( 'button', { name: 'Product Catalog' } )
+				.click();
+			await page
+				.getByLabel( 'Default product sorting' )
+				.selectOption( 'price' );
+			await page
+				.getByRole( 'button', { name: 'Publish', exact: true } )
+				.click();
+
+			await admin.visitSiteEditor( {
+				postId: `woocommerce/woocommerce//archive-product`,
+				postType: 'wp_template',
+				canvas: 'edit',
+			} );
+
+			await pageObject.focusProductCollection();
+
+			// Verify the default order matches the option set in the Customizer..
+			await expect( page.getByLabel( 'Order by' ) ).toHaveValue(
+				'price'
+			);
+
+			await page.getByLabel( 'Order by' ).selectOption( 'price-desc' );
+
+			await editor.saveSiteEditorEntities();
+
+			// Go to shop.
+			await frontendUtils.goToShop();
+
+			// Verify the first <h3> element has the text "Sunglasses".
+			await expect( page.locator( 'h3' ).first() ).toContainText(
+				'Sunglasses'
+			);
+		} );
+	} );
+
 	test.describe( 'Editor: In taxonomies templates', () => {
 		test( 'Products by specific category template displays products from this category', async ( {
 			admin,
