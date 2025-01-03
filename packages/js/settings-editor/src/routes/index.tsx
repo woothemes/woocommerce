@@ -33,7 +33,7 @@ const settingsEditorRoutes = Object.values( settingsData ).map(
 			name,
 			path,
 			areas: {
-				sidebar: <Sidebar title={ settingsPage.label } backPack="/" />,
+				sidebar: <Sidebar backPack="/" />,
 				content: <LegacyContent />,
 				mobile: <div>Mobile</div>,
 			},

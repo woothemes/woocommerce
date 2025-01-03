@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { createElement } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import * as icons from '@wordpress/icons';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 
@@ -73,7 +74,7 @@ export const Sidebar = ( { backPack }: SidebarProps ) => {
 	return (
 		<SidebarNavigationScreen
 			isRoot
-			title={ page.label }
+			title={ page?.label || __( 'Settings', 'woocommerce' ) }
 			backPack={ backPack }
 			content={ <SidebarNavigationScreenContent activeTab={ tab } /> }
 		/>

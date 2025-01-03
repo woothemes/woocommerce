@@ -43,7 +43,7 @@ const NotFound = () => {
 const getNotFoundRoute = ( activePage: string ): Route => ( {
 	key: activePage,
 	areas: {
-		sidebar: <Sidebar title={ __( 'Settings', 'woocommerce' ) } />,
+		sidebar: <Sidebar />,
 		content: <NotFound />,
 		edit: null,
 	},
@@ -80,27 +80,14 @@ export const getSettingsPageSections = (
 /**
  * Creates a route configuration for legacy settings.
  *
- * @param {string}       activePage    - The active page.
- * @param {string}       activeSection - The active section.
- * @param {settingsPage} settingsPage  - The settings page.
+ * @param {string} activePage - The active page.
  */
-const getLegacyRoute = (
-	activePage: string,
-	activeSection: string,
-	settingsPage: SettingsPage
-): Route => {
+const getLegacyRoute = ( activePage: string ): Route => {
 	return {
 		key: activePage,
 		areas: {
-			sidebar: (
-				<Sidebar title={ __( 'Store settings', 'woocommerce' ) } />
-			),
-			content: (
-				<LegacyContent
-					settingsPage={ settingsPage }
-					activeSection={ activeSection }
-				/>
-			),
+			sidebar: <Sidebar />,
+			content: <LegacyContent />,
 			edit: null,
 		},
 		widths: {
@@ -200,11 +187,7 @@ export const useActiveRoute = (): {
 		// Handle legacy pages.
 		if ( ! settingsPage.is_modern ) {
 			return {
-				route: getLegacyRoute(
-					activePage,
-					activeSection || 'default',
-					settingsPage
-				),
+				route: getLegacyRoute( activePage ),
 				settingsPage,
 				activePage,
 				activeSection,
@@ -220,9 +203,7 @@ export const useActiveRoute = (): {
 		}
 
 		// Sidebar is responsibility of WooCommerce, not extensions so add it here.
-		modernRoute.areas.sidebar = (
-			<Sidebar title={ __( 'Store settings', 'woocommerce' ) } />
-		);
+		modernRoute.areas.sidebar = <Sidebar />;
 		// Make sure we have a key.
 		modernRoute.key = activePage;
 
