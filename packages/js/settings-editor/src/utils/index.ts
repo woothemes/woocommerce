@@ -43,9 +43,7 @@ export function getSettingsSectionPath(
 		delete queryArgs.section;
 	}
 
-	const sectionPath = addQueryArgs( 'wc-settings', queryArgs );
-
-	return sectionPath;
+	return addQueryArgs( 'wc-settings', queryArgs );
 }
 
 export const settingsData: SettingsData =

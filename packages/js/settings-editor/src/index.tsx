@@ -11,7 +11,6 @@ import { privateApis as routerPrivateApis } from '@wordpress/router';
 import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
 // @ts-ignore No types for this exist yet.
 import { store as editSiteStore } from '@wordpress/edit-site/build-module/store';
-
 /* eslint-enable @woocommerce/dependency-group */
 
 /**
@@ -19,16 +18,10 @@ import { store as editSiteStore } from '@wordpress/edit-site/build-module/store'
  */
 import { isGutenbergVersionAtLeast } from './utils';
 import { Layout } from './layout';
-import { useActiveRoute } from './routes/route';
 import useRegisterSettingsRoutes from './hooks/use-register-settings-routes';
 import settingsEditorRoutes from './routes';
 
 const { RouterProvider } = unlock( routerPrivateApis );
-
-const SettingsLayout = () => {
-	const { activeSection } = useActiveRoute();
-	return <Layout activeSection={ activeSection } />;
-};
 
 export const SettingsEditor = () => {
 	const isRequiredGutenbergVersion = isGutenbergVersionAtLeast( 19.0 );
@@ -52,7 +45,7 @@ export const SettingsEditor = () => {
 
 	return (
 		<RouterProvider routes={ routes } pathArg="page">
-			<SettingsLayout />
+			<Layout />
 		</RouterProvider>
 	);
 };

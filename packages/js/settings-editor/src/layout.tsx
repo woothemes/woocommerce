@@ -40,12 +40,7 @@ const { useLocation } = unlock( routerPrivateApis );
 
 const ANIMATION_DURATION = 0.3;
 
-type LayoutProps = {
-	activeSection?: string;
-	tabs?: Array< { name: string; title: string } >;
-};
-
-export function Layout( { activeSection }: LayoutProps ) {
+export function Layout() {
 	const [ fullResizer ] = useResizeObserver();
 	const toggleRef = useRef< HTMLAnchorElement >( null );
 	const isMobileViewport = useViewportMatch( 'medium', '<' );
@@ -53,7 +48,6 @@ export function Layout( { activeSection }: LayoutProps ) {
 
 	const { name, areas, widths } = useLocation();
 	const settingsPage = getSettingsPage( name );
-	const { label } = settingsPage;
 
 	return (
 		<>
@@ -106,11 +100,9 @@ export function Layout( { activeSection }: LayoutProps ) {
 								maxWidth: widths?.content,
 							} }
 						>
-							<Header pageTitle={ label } />
+							<Header pageTitle={ settingsPage.label } />
 
-							<SectionTabs activeSection={ activeSection }>
-								{ areas.content }
-							</SectionTabs>
+							<SectionTabs>{ areas.content }</SectionTabs>
 						</div>
 					) }
 

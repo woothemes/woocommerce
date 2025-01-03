@@ -8,38 +8,33 @@ import { privateApis as routerPrivateApis } from '@wordpress/router';
 // @ts-ignore No types for this exist yet.
 import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
 import { getSettingsPage, getSettingsSectionPath } from '../../utils';
-import { getSettingsPageTabs } from '../../routes/route';
+import { getSettingsPageSections } from '../../routes/route';
 /* eslint-enable @woocommerce/dependency-group */
 
 const { useHistory, useLocation } = unlock( routerPrivateApis );
 
-export const SectionTabs = ( {
-	children,
-	activeSection,
-}: {
-	children: React.ReactNode;
-	activeSection?: string;
-} ) => {
+export const SectionTabs = ( { children }: { children: React.ReactNode } ) => {
 	const { navigate } = useHistory();
-	const { name } = useLocation();
+	const { query } = useLocation();
+	const { tab, section } = query;
 
-	const settingsPage = getSettingsPage( name );
-	const tabs = getSettingsPageTabs( settingsPage );
+	const page = getSettingsPage( tab );
+	const sections = getSettingsPageSections( page );
 
-	if ( tabs.length <= 1 ) {
+	if ( sections.length <= 1 ) {
 		return <>{ children }</>;
 	}
 
 	function navigateTo( nextSection: string ) {
-		navigate( getSettingsSectionPath( name, nextSection ) );
+		navigate( getSettingsSectionPath( tab, nextSection ) );
 	}
 
 	return (
 		<TabPanel
 			className="woocommerce-settings-section-tabs"
-			tabs={ tabs }
+			tabs={ sections }
 			onSelect={ navigateTo }
-			initialTabName={ activeSection || tabs[ 0 ].name }
+			initialTabName={ section }
 		>
 			{ () => children }
 		</TabPanel>

@@ -59,7 +59,7 @@ const getNotFoundRoute = ( activePage: string ): Route => ( {
  * @param {settingsPage} settingsPage - The settings page.
  * @return {Array<{ name: string; title: string }>} The tabs.
  */
-export const getSettingsPageTabs = (
+export const getSettingsPageSections = (
 	settingsPage: SettingsPage
 ): Array< {
 	name: string;
@@ -195,7 +195,7 @@ export const useActiveRoute = (): {
 			return { route: getNotFoundRoute( activePage ) };
 		}
 
-		const tabs = getSettingsPageTabs( settingsPage );
+		const tabs = getSettingsPageSections( settingsPage );
 
 		// Handle legacy pages.
 		if ( ! settingsPage.is_modern ) {
