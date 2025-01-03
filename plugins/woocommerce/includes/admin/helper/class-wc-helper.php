@@ -2079,24 +2079,30 @@ class WC_Helper {
 	 * subscriptions and auto-activate one if possible, so the user does not
 	 * need to visit the Helper UI at all after installing a new extension.
 	 *
-	 * @param string $filename The filename of the activated theme.
+	 * @param string $product_id The product id of the activated theme.
 	 */
-	public static function connect_theme( $filename ) {
-		$themes = self::get_local_woo_themes();
-
-		// Not a local woo plugin.
-		if ( empty( $themes[ $filename ] ) ) {
-			return;
-		}
-
+	public static function connect_theme( $product_id ) {
 		// Make sure we have a connection.
 		$auth = WC_Helper_Options::get( 'auth' );
 		if ( empty( $auth ) ) {
 			return;
 		}
 
-		$theme         = $themes[ $filename ];
-		$product_id    = $theme['_product_id'];
+		$themes = self::get_local_woo_themes();
+
+		$themes = array_filter(
+			$themes,
+			function( $theme ) use ( $product_id ) {
+				return $theme['_product_id'] === $product_id;
+			}
+		);
+
+		if ( empty( $themes ) ) {
+			return;
+		}
+
+		$theme = reset( $themes );
+
 		$subscriptions = self::_get_subscriptions_from_product_id( $product_id, false );
 
 		// No valid subscriptions for this product.
@@ -2148,7 +2154,7 @@ class WC_Helper {
 		}
 
 		if ( $activated ) {
-			self::log( 'Auto-activated a subscription for ' . $filename );
+			self::log( 'Auto-activated a subscription for ' . $theme['slug'] );
 			/**
 			 * Fires when the Helper activates a product successfully.
 			 *
@@ -2158,7 +2164,7 @@ class WC_Helper {
 			 */
 			do_action( 'woocommerce_helper_subscription_activate_success', $product_id, $product_key, $activation_response );
 		} else {
-			self::log( 'Could not activate a subscription for theme: ' . $filename );
+			self::log( 'Could not activate a subscription for theme: ' . $theme['slug'] );
 
 			/**
 			 * Fires when the Helper fails to activate a product.
