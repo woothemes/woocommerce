@@ -248,12 +248,6 @@ class Controller extends AbstractBlock {
 	 * the default query.
 	 */
 	public function register_settings() {
-		// $option_value = get_option( 'woocommerce_default_catalog_orderby' );
-
-		// if ( ! $option_value ) {
-		// $option_value = 'menu_order';
-		// }
-
 		register_setting(
 			'options',
 			'woocommerce_default_catalog_orderby',
