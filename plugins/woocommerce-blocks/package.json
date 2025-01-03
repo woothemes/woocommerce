@@ -162,6 +162,7 @@
 		"@woocommerce/e2e-utils": "workspace:*",
 		"@woocommerce/eslint-plugin": "workspace:*",
 		"@woocommerce/woocommerce-rest-api": "1.0.1",
+		"@woocommerce/customer-effort-score": "workspace:*",
 		"@wordpress/api-fetch": "6.21.0",
 		"@wordpress/babel-preset-default": "7.28.0",
 		"@wordpress/base-styles": "4.35.0",
@@ -454,6 +455,10 @@
 		"dependencyOutputs": {
 			"allowUsuallyExcludedPaths": true,
 			"files": [
+				"node_modules/@woocommerce/customer-effort-score/build",
+				"node_modules/@woocommerce/customer-effort-score/build-module",
+				"node_modules/@woocommerce/customer-effort-score/build-style",
+				"node_modules/@woocommerce/customer-effort-score/build-types",
 				"node_modules/@woocommerce/eslint-plugin/configs",
 				"node_modules/@woocommerce/eslint-plugin/rules",
 				"node_modules/@woocommerce/eslint-plugin/index.js",
