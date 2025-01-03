@@ -2,7 +2,6 @@
  * External dependencies
  */
 import type { BlockEditProps, BlockAttributes } from '@wordpress/blocks';
-import { type ComponentType } from '@wordpress/element';
 
 export type AttributeBindingProps = {
 	source: string;
@@ -18,7 +17,8 @@ export type BoundBlockAttributes = BlockAttributes & {
 };
 
 export type BoundBlockEditInstance = CoreBlockEditProps< BoundBlockAttributes >;
-export type BoundBlockEditComponent = ComponentType;
+export type BoundBlockEditComponent =
+	React.ComponentType< BoundBlockEditInstance >;
 
 /*
  * Block Binding API

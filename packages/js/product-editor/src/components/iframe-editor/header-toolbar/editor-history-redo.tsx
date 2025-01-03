@@ -7,8 +7,11 @@ import { createElement, forwardRef, useContext } from '@wordpress/element';
 
 import { redo as redoIcon, undo as undoIcon } from '@wordpress/icons';
 import { Ref } from 'react';
-// eslint-disable-next-line @woocommerce/dependency-group
-import { displayShortcut, isAppleOS } from '@wordpress/keycodes';
+import {
+	displayShortcut,
+	// @ts-expect-error no exported member.
+	isAppleOS,
+} from '@wordpress/keycodes';
 
 /**
  * Internal dependencies

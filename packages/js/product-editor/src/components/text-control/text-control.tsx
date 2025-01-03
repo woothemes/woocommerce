@@ -4,6 +4,7 @@
 import { Ref } from 'react';
 import { createElement, forwardRef } from '@wordpress/element';
 import classNames from 'classnames';
+// @ts-expect-error no exported member.
 import { __experimentalInputControl as InputControl } from '@wordpress/components';
 
 /**

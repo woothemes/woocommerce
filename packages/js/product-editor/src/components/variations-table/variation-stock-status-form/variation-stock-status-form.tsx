@@ -15,6 +15,7 @@ import classNames from 'classnames';
 import {
 	Button,
 	ToggleControl,
+	// @ts-expect-error no exported member.
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 

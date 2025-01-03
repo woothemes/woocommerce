@@ -10,6 +10,7 @@ import { decodeEntities } from '@wordpress/html-entities';
 import { filterURLForDisplay } from '@wordpress/url';
 import {
 	Button,
+	// @ts-expect-error no exported member.
 	__experimentalHStack as HStack,
 	VisuallyHidden,
 } from '@wordpress/components';

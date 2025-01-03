@@ -3,8 +3,10 @@
  */
 import { createElement, Fragment } from '@wordpress/element';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
-// eslint-disable-next-line @wordpress/no-unsafe-wp-apis, @woocommerce/dependency-group
-import { __experimentalItemGroup as ItemGroup } from '@wordpress/components';
+import {
+	// @ts-expect-error no exported member.
+	__experimentalItemGroup as ItemGroup
+} from '@wordpress/components';
 
 /**
  * Internal dependencies

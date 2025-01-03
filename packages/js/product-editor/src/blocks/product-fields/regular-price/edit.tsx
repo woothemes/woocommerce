@@ -10,6 +10,7 @@ import { createElement, useEffect } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import {
 	BaseControl,
+	// @ts-expect-error no exported member.
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 

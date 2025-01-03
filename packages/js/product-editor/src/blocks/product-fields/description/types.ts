@@ -1,8 +1,4 @@
 /**
- * External dependencies
- */
-import { ComponentType } from '@wordpress/element';
-/**
  * Internal dependencies
  */
 import {
@@ -13,4 +9,5 @@ import {
 export type DescriptionBlockEditProps =
 	ProductEditorBlockEditProps< ProductEditorBlockAttributes >;
 
-export type DescriptionBlockEditComponent = ComponentType;
+export type DescriptionBlockEditComponent =
+	React.ComponentType< DescriptionBlockEditProps >;

@@ -9,8 +9,11 @@ import { useSelect } from '@wordpress/data';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 import { createElement, Fragment } from '@wordpress/element';
 import {
+	// @ts-expect-error no exported member.
 	__experimentalHStack as HStack,
+	// @ts-expect-error no exported member.
 	__experimentalHeading as Heading,
+	// @ts-expect-error no exported member.
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 
