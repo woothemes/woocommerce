@@ -16,7 +16,7 @@ import {
 import {
 	getProductTypeOptions,
 	type ProductTypeProps,
-} from '../../utils/get-product-type-options';
+} from '../../../utils/get-product-type-options';
 
 type StoreState = {
 	productTypes: {
@@ -136,8 +136,6 @@ export const store = createReduxStore( STORE_NAME, {
 	selectors,
 } );
 
-export default function registerStore() {
-	if ( ! select( STORE_NAME ) ) {
-		register( store );
-	}
+if ( ! select( STORE_NAME ) ) {
+	register( store );
 }
