@@ -528,6 +528,7 @@ final class BlockTypesController {
 					'AllProducts',
 					'Cart',
 					'Checkout',
+					'ComingSoon',
 					'ProductGallery',
 					'ProductCollection\Controller',
 					'ProductCollection\NoResults',
