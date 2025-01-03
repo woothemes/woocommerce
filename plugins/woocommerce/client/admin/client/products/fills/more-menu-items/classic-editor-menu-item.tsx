@@ -16,11 +16,6 @@ import {
  */
 import { getAdminSetting } from '~/utils/admin-settings';
 
-type Select = {
-	getOption: < T = string >( option: string ) => T;
-	hasFinishedResolution: ( selectorName: string, args: unknown[] ) => boolean;
-};
-
 export const ClassicEditorMenuItem = ( {
 	onClick,
 	productId,
@@ -31,13 +26,18 @@ export const ClassicEditorMenuItem = ( {
 	const { showProductMVPFeedbackModal } = useDispatch( CES_STORE_KEY );
 
 	const { allowTracking, resolving: isLoading } = useSelect( ( select ) => {
-		const { getOption, hasFinishedResolution } = select(
-			OPTIONS_STORE_NAME
-		) as Select;
+		const { getOption, hasFinishedResolution } =
+			select( OPTIONS_STORE_NAME );
 
 		const allowTrackingOption =
-			getOption< 'yes' | 'no' >( ALLOW_TRACKING_OPTION_NAME ) || 'no';
+			// Todo: awaiting a more global fix, demo:
+			// https://github.com/woocommerce/woocommerce/pull/54146
+			// @ts-expect-error this is awaiting a more global fix.
+			getOption( ALLOW_TRACKING_OPTION_NAME ) || 'no';
 
+		// Todo: awaiting a more global fix, demo:
+		// https://github.com/woocommerce/woocommerce/pull/54146
+		// @ts-expect-error this is awaiting a more global fix.
 		const resolving = ! hasFinishedResolution( 'getOption', [
 			ALLOW_TRACKING_OPTION_NAME,
 		] );
