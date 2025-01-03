@@ -50,7 +50,7 @@ if ( shouldBlockifiedAddToCartWithOptionsBeRegistered ) {
 			edit: AddToCartOptionsEdit,
 			save,
 			ancestor: [ 'woocommerce/single-product' ],
-		} as unknown as BlockConfiguration,
+		} as unknown as Partial< BlockConfiguration >,
 		{
 			isAvailableOnPostEditor: true,
 		}
