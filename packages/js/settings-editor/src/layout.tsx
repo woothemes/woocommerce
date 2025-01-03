@@ -33,7 +33,6 @@ import SidebarContent from '@wordpress/edit-site/build-module/components/sidebar
  * Internal dependencies
  */
 import { SectionTabs, Header } from './components';
-import { getSettingsPage } from './utils';
 
 const { NavigableRegion } = unlock( editorPrivateApis );
 const { useLocation } = unlock( routerPrivateApis );
@@ -47,7 +46,6 @@ export function Layout() {
 	const disableMotion = useReducedMotion();
 
 	const { name, areas, widths } = useLocation();
-	const settingsPage = getSettingsPage( name );
 
 	return (
 		<>
@@ -100,8 +98,7 @@ export function Layout() {
 								maxWidth: widths?.content,
 							} }
 						>
-							<Header pageTitle={ settingsPage.label } />
-
+							<Header />
 							<SectionTabs>{ areas.content }</SectionTabs>
 						</div>
 					) }
