@@ -258,7 +258,6 @@ export const Tax: React.FC< TaxProps > = ( { onComplete, query, task } ) => {
 };
 
 registerPlugin( 'wc-admin-onboarding-task-tax', {
-	// @ts-expect-error @types/wordpress__plugins need to be updated
 	scope: 'woocommerce-tasks',
 	render: () => (
 		<WooOnboardingTask id="tax">
