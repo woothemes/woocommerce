@@ -26,9 +26,8 @@ import settingsEditorRoutes from './routes';
 const { RouterProvider } = unlock( routerPrivateApis );
 
 const SettingsLayout = () => {
-	const { tabs, activeSection } = useActiveRoute();
-
-	return <Layout tabs={ tabs } activeSection={ activeSection } />;
+	const { activeSection } = useActiveRoute();
+	return <Layout activeSection={ activeSection } />;
 };
 
 export const SettingsEditor = () => {
