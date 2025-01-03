@@ -22,7 +22,7 @@ export const useBlockEditorTourOptions = () => {
 		return {
 			shouldTourBeShown: ! wasTourShown,
 		};
-	} );
+	}, [] );
 
 	const dismissModal = () => {
 		updateOptions( {
