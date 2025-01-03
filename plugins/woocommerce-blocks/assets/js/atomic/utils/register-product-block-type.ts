@@ -66,7 +66,7 @@ export class BlockRegistrationManager {
 		string,
 		ProductBlockSettings & {
 			blockName: string;
-			settings: Record< string, unknown >;
+			settings: Partial< BlockConfiguration< BlockAttributes > >;
 		}
 	> = new Map();
 	/** Current template ID being edited */
@@ -149,9 +149,7 @@ export class BlockRegistrationManager {
 				subscribe( () => {
 					const previousTemplateId = this.currentTemplateId;
 					this.currentTemplateId = this.parseTemplateId(
-						editSiteStore.getEditedPostId<
-							string | number | undefined
-						>()
+						editSiteStore.getEditedPostId()
 					);
 
 					if ( previousTemplateId !== this.currentTemplateId ) {
@@ -319,7 +317,7 @@ export class BlockRegistrationManager {
 		config: ProductBlockConfig< T >
 	): void {
 		const key = config.variationName || config.blockName;
-		this.blocks.set( key, config );
+		this.blocks.set( key, config as ProductBlockConfig< BlockAttributes > );
 		this.registerBlock( config );
 	}
 }
