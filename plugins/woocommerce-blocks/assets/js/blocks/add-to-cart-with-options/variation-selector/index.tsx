@@ -9,11 +9,11 @@ import { Icon, button } from '@wordpress/icons';
  */
 import metadata from './block.json';
 import AddToCartWithOptionsVariationSelectorEdit from './edit';
-import { shouldRegisterBlock } from '..';
+import { shouldBlockifiedAddToCartWithOptionsBeRegistered } from '..';
 import './style.scss';
 import './editor.scss';
 
-if ( shouldRegisterBlock ) {
+if ( shouldBlockifiedAddToCartWithOptionsBeRegistered ) {
 	registerBlockType( metadata, {
 		edit: AddToCartWithOptionsVariationSelectorEdit,
 		attributes: metadata.attributes,

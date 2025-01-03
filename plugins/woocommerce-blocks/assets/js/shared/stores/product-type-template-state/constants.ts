@@ -1,4 +1,4 @@
-export const STORE_NAME = 'woocommerce/template-state';
+export const STORE_NAME = 'woocommerce/product-type-template-state';
 
 /**
  * Actions
