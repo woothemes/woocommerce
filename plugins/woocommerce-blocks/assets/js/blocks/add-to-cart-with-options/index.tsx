@@ -42,7 +42,7 @@ if ( shouldBlockifiedAddToCartWithOptionsBeRegistered ) {
 	}
 
 	// Register the block
-	registerProductBlockType< Attributes >(
+	registerProductBlockType(
 		{
 			...( metadata as BlockConfiguration< Attributes > ),
 			icon: <Icon icon={ button } />,
