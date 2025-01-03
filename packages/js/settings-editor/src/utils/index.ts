@@ -29,14 +29,21 @@ export function getSettingsSectionPath(
 	args?: PathArgs
 ): string {
 	if ( tab === 'general' ) {
-		return '/wc-settings';
+		return 'wc-settings';
 	}
 
-	const sectionPath = addQueryArgs( '/wc-settings', {
+	const queryArgs = {
 		tab,
 		section,
 		...args,
-	} );
+	};
+
+	// clean section query arg if it's the general section
+	if ( section && section === 'general' ) {
+		delete queryArgs.section;
+	}
+
+	const sectionPath = addQueryArgs( 'wc-settings', queryArgs );
 
 	return sectionPath;
 }
