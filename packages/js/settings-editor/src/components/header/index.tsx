@@ -2,28 +2,16 @@
  * External dependencies
  */
 import { createElement } from '@wordpress/element';
-import classnames from 'classnames';
 import {
 	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 
-export const Header = ( {
-	pageTitle = '',
-	hasTabs = false,
-}: {
-	pageTitle?: string;
-	hasTabs?: boolean;
-} ) => {
+export const Header = ( { pageTitle = '' }: { pageTitle?: string } ) => {
 	return (
 		<VStack
-			className={ classnames(
-				'woocommerce-settings-header edit-site-page-header',
-				{
-					'woocommerce-settings-header--has-tabs': hasTabs,
-				}
-			) }
+			className="woocommerce-settings-header edit-site-page-header"
 			as="header"
 			spacing={ 0 }
 		>
