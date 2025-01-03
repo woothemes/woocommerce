@@ -82,12 +82,6 @@ register_woocommerce_admin_test_helper_rest_route(
 				'description'       => 'The version identifier of WooCommerce to activate.',
 				'sanitize_callback' => 'sanitize_text_field',
 			),
-			'force'   => array(
-				'required'    => false,
-				'type'        => 'boolean',
-				'default'     => false,
-				'description' => 'Whether to force activation by deactivating WooCommerce first if it is already active.',
-			),
 		),
 	)
 );
@@ -121,15 +115,9 @@ function install_version( $request ) {
 function activate_version( $request ) {
 	$params  = json_decode( $request->get_body() );
 	$version = $params->version;
-	$force   = isset( $params->force ) ? $params->force : false;
 
 	$installer = new WC_Beta_Tester_Live_Branches_Installer();
-
-	if ( $force ) {
-		$installer->deactivate_woocommerce();
-	}
-
-	$result = $installer->activate( $version );
+	$result    = $installer->activate( $version );
 
 	if ( is_wp_error( $result ) ) {
 		return new WP_Error( 400, "Could not activate version: $version with error {$result->get_error_message()}", '' );
