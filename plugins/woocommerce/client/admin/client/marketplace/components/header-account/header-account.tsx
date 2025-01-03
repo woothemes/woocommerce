@@ -21,8 +21,7 @@ import { MARKETPLACE_HOST } from '../constants';
 import { connectUrl } from '../../utils/functions';
 
 // Make TS happy: The MenuItem component passes these as an href prop to the underlying button.
-interface MenuItemProps
-	extends React.ComponentProps< typeof OriginalMenuItem > {
+interface MenuItemProps extends ComponentProps< typeof OriginalMenuItem > {
 	href?: string; // Explicitly declare `href`
 }
 
