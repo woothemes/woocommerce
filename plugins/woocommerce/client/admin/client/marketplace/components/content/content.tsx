@@ -173,12 +173,14 @@ export default function Content(): JSX.Element {
 		setAllProducts( [] );
 
 		const recordSearchFinishedEvent = ( totalProducts?: number ) => {
-			recordEvent( 'marketplace_search_finish', {
-				tab: query.tab,
-				total_products: totalProducts,
-				category: query.category || '_all',
-				search_term: query.term || '',
-			} );
+			if ( query.search ) {
+				recordEvent( 'marketplace_search_finish', {
+					tab: query.tab,
+					total_products: totalProducts,
+					category: query.category || '_all',
+					search_term: query.term || '',
+				} );
+			}
 		};
 
 		// If query.category is present and not '_all', only fetch that category
