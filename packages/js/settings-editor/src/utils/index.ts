@@ -12,18 +12,25 @@ export function isGutenbergVersionAtLeast( version: number ) {
 }
 
 /**
- * Helper function to get the path for a settings section,
- * based on the settings page.
+ * Helper function to build the path for a settings section,
+ * based on the settings slug and section.
  *
- * @param {string} slug - The slug of the settings page.
+ * @param {string} slug    - The slug of the settings page.
+ * @param {string} section - The section of the settings page.
  * @return { string } Path for the settings section.
  */
-export function getSettingsSectionPath( slug: string ): string {
+export function getSettingsSectionPath(
+	slug: string,
+	section?: string
+): string {
 	if ( slug === 'general' ) {
 		return '/wc-settings';
 	}
 
-	return `/wc-settings/${ slug }`;
+	const sectionPath =
+		section?.length && section !== 'default' ? `/${ section }` : '';
+
+	return `/wc-settings/${ slug }${ sectionPath }`;
 }
 
 export const settingsData: SettingsData =
