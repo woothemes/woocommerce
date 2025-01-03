@@ -18,7 +18,7 @@ import {
 /**
  * Internal dependencies
  */
-import type { FeaturesKeys, FeaturesProps } from './edit';
+import type { FeaturesProps } from './edit';
 
 export enum QuantitySelectorStyle {
 	Input = 'input',
