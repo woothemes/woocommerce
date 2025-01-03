@@ -15,7 +15,7 @@
     -   [Misc](#misc)
 -   [Usages of `experimental` prefix](#usages-of-experimental-prefix)
 
-We also use an `__experimental` prefix for any experimental interfaces. This is a signal to those reading our code that it should not be implemented in for production use. Currently this prefix is used in the following ways:
+We also use an `__experimental` prefix for any experimental interfaces. This is a signal to those reading our code that it should not be implemented in for production use. Currently, this prefix is used in the following ways:
 
 -   Prefixing references that are experimental. An example would be PHP action or filter slugs.
 -   Prefixing functions or methods that are experimental.
@@ -108,29 +108,273 @@ We also have individual features or code blocks behind a feature flag, this is a
 
 ### Misc
 
--   `__experimental_woocommerce_blocks_hidden` property allows overwriting the `hidden` property for cart item data. This is useful to make some cart item data visible/hidden depending if it needs to be displayed in the Cart Block or the Cart Shortcode ([experimental property](https://github.com/woocommerce/woocommerce-gutenberg-products-block/blob/9c4288b0ee46960bdc2bf8ef351d05ac23073b0c/src/StoreApi/Schemas/CartItemSchema.php#L439-L441)). This was added in [this PR](https://github.com/woocommerce/woocommerce-blocks/pull/3732) to resolve [this issue with Subscriptions](https://github.com/woocommerce/woocommerce-blocks/issues/3731). This property will not be needed if the blocks replace the shortcode experience, since in that scenario, the `hidden` property would be sufficient.
+-   `__experimental_woocommerce_blocks_hidden` property allows overwriting the `hidden` property for cart item data. This is useful to make some cart item data visible/hidden depending on whether it needs to be displayed in the Cart Block or the Cart Shortcode ([experimental property](https://github.com/woocommerce/woocommerce-gutenberg-products-block/blob/9c4288b0ee46960bdc2bf8ef351d05ac23073b0c/src/StoreApi/Schemas/CartItemSchema.php#L439-L441)). This was added in [this PR](https://github.com/woocommerce/woocommerce-blocks/pull/3732) to resolve [this issue with Subscriptions](https://github.com/woocommerce/woocommerce-blocks/issues/3731). This property will not be needed if the blocks replace the shortcode experience, since in that scenario, the `hidden` property would be sufficient.
 
 ## Usages of `experimental` prefix
 
 `useStoreEvents` makes use of an `experimental__` prefix for wp-hook actions (since `__experimental` is not a valid prefix in that context).
 
+These are [`@wordpress/hooks`](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-hooks/) actions that are fired at certain times while using WooCommerce Blocks. We separate them into "store" events (events that happen in the store, i.e. while browsing the store or cart) and "checkout events" (events that happen on the checkout page)
+
 -   `experimental__woocommerce_blocks-` is used for store events.
 -   `experimental__woocommerce_blocks-checkout-` is used for checkout events.
 
-Current list of events:
+### Current list of events
 
--   `experimental__woocommerce_blocks-cart-add-item` - Fired when an item is added to the cart.
--   `experimental__woocommerce_blocks-cart-set-item-quantity` - Fired when cart item quantity is changed by the customer.
--   `experimental__woocommerce_blocks-cart-remove-item` - Fired when a cart item is removed from the cart.
--   `experimental__woocommerce_blocks-product-view-link` - Fired when a product link is clicked.
--   `experimental__woocommerce_blocks-product-list-render` - Fired when a product list is rendered.
--   `experimental__woocommerce_blocks-product-search` - Fired when a search is submitted.
--   `experimental__woocommerce_blocks-store-notice-create` - Fired when a store notice is created.
--   `experimental__woocommerce_blocks-product-render` - Fired when a single product block is rendered.
--   `experimental__woocommerce_blocks-checkout-submit` - Fired when the checkout form is submitted.
--   `experimental__woocommerce_blocks-checkout-set-selected-shipping-rate` - Fired when a shipping rate is chosen on checkout.
--   `experimental__woocommerce_blocks-checkout-set-active-payment-method` - Fired when a payment method is chosen on checkout.
--   `experimental__woocommerce_blocks-checkout-render-checkout-form` - Fired when the checkout form is rendered.
--   `experimental__woocommerce_blocks-checkout-set-email-address` - Fired when an email address is added during checkout.
--   `experimental__woocommerce_blocks-checkout-set-shipping-address` - Fired when a shipping address is added during checkout.
--   `experimental__woocommerce_blocks-checkout-set-billing-address` - Fired when a billing address is added during checkout.
+#### `experimental__woocommerce_blocks-cart-add-item`
+
+Fired when an item is added to the cart.
+
+##### Args
+
+| Argument | Type   | Description |
+|----------|--------|--------|
+| `product` | `object` | The product that was added to the cart. |
+
+##### Example
+
+```js
+wp.hooks.addAction(
+	'experimental__woocommerce_blocks-cart-add-item',
+	'plugin/namespace',
+	( { product } ) => {
+		console.log( `${ product.name } was added to the cart` );
+	}
+);
+```
+
+#### `experimental__woocommerce_blocks-cart-set-item-quantity`
+
+Fired when cart item quantity is changed by the customer. Fires on the Mini-cart block and the Cart block.
+
+##### Args
+
+| Argument   | Type     | Description                             |
+|------------|----------|-----------------------------------------|
+| `product`  | `object` | The product that was added to the cart. |
+| `quantity` | `number` | The new quantity of the product.        |
+
+##### Example
+
+```js
+wp.hooks.addAction(
+	'experimental__woocommerce_blocks-cart-set-item-quantity',
+	'plugin/namespace',
+	( { product, quantity } ) => {
+		console.log( `${ product.name }'s quantity was changed to ${ quantity }` );
+	}
+);
+```
+
+#### `experimental__woocommerce_blocks-cart-remove-item`
+
+Fired when a cart item is removed from the cart. Fires on the Mini-cart block and the Cart block.
+
+##### Args
+
+| Argument   | Type     | Description                                      |
+|------------|----------|--------------------------------------------------|
+| `product`  | `object` | The product that was added to the cart.          |
+| `quantity` | `number` | The quantity of the product when it was removed. |
+
+##### Example
+
+```js
+wp.hooks.addAction(
+	'experimental__woocommerce_blocks-cart-remove-item',
+	'plugin/namespace',
+	( { product, quantity } ) => {
+		console.log( `${ product.name } was removed from the cart. There were ${ quantity } in the cart.` );
+	}
+);
+```
+
+#### `experimental__woocommerce_blocks-product-view-link`
+
+Fired when a product link is clicked.
+
+##### Args
+
+| Argument   | Type     | Description                             |
+|------------|----------|-----------------------------------------|
+| `product`  | `object` | The product that was added to the cart. |
+
+##### Example
+
+```js
+wp.hooks.addAction(
+	'experimental__woocommerce_blocks-product-view-link',
+	'plugin/namespace',
+	( { product } ) => {
+		console.log( `${ product.name } view link clicked.` );
+	}
+);
+```
+
+#### `experimental__woocommerce_blocks-product-list-render`
+
+Fired when a product list is rendered.
+
+This documentation will be amended following a review of this action.
+
+#### `experimental__woocommerce_blocks-product-search`
+
+Fired when a search is submitted.
+
+This documentation will be amended following a review of this action.
+
+#### `experimental__woocommerce_blocks-store-notice-create`
+
+Fired when a store notice is created.
+
+This documentation will be amended following a review of this action.
+
+#### `experimental__woocommerce_blocks-product-render`
+
+Fired when a single product block is rendered.
+
+This documentation will be amended following a review of this action.
+
+#### `experimental__woocommerce_blocks-checkout-submit`
+
+Fired when the checkout form is submitted.
+
+##### Args
+
+This action has no arguments.
+
+##### Example
+
+```js
+wp.hooks.addAction(
+	'experimental__woocommerce_blocks-checkout-submit',
+	'plugin/namespace',
+	() => {
+		console.log( 'The checkout form was submitted.' );
+	}
+);
+```
+
+#### `experimental__woocommerce_blocks-checkout-set-selected-shipping-rate
+
+Fired when a shipping rate is chosen on checkout.
+
+##### Args
+
+| Argument   | Type     | Description                    |
+|------------|----------|--------------------------------|
+| `shippingRateId`  | `string` | The selected shipping rate ID. |
+
+##### Example
+
+```js
+wp.hooks.addAction(
+	'experimental__woocommerce_blocks-checkout-set-selected-shipping-rate',
+	'plugin/namespace',
+	( { shippingRateId } ) => {
+		console.log( `Selected shipping rate was changed to ${ shippingRateId }` );
+	}
+);
+```
+
+#### `experimental__woocommerce_blocks-checkout-set-active-payment-method`
+
+Fired when a payment method is chosen on checkout.
+
+##### Args
+
+| Argument   | Type     | Description                      |
+|------------|----------|----------------------------------|
+| `paymentMethodSlug`  | `string` | The payment method slug.         |
+
+##### Example
+
+```js
+wp.hooks.addAction(
+	'experimental__woocommerce_blocks-checkout-set-active-payment-method',
+	'plugin/namespace',
+	( { paymentMethodSlug } ) => {
+		console.log( `The selected payment method was changed to ${ paymentMethodSlug }` );
+	}
+);
+```
+
+#### `experimental__woocommerce_blocks-checkout-render-checkout-form`
+
+Fired when the checkout form is rendered.
+
+##### Args
+
+This action has no arguments.
+
+##### Example
+
+```js
+wp.hooks.addAction(
+	'experimental__woocommerce_blocks-checkout-render-checkout-form',
+	'plugin/namespace',
+	() => {
+		console.log( 'The checkout form was rendered.' );
+	}
+);
+```
+
+#### `experimental__woocommerce_blocks-checkout-set-email-address`
+
+Fired when the email address is added or changed on the Checkout block.
+
+##### Args
+
+This action has no arguments.
+
+##### Example
+
+```js
+wp.hooks.addAction(
+	'experimental__woocommerce_blocks-checkout-set-email-address',
+	'plugin/namespace',
+	() => {
+		console.log( 'The email address was changed.' );
+	}
+);
+```
+
+#### `experimental__woocommerce_blocks-checkout-set-shipping-address`
+
+Fired when the shipping address is added or changed on the Checkout block.
+
+##### Args
+
+This action has no arguments.
+
+##### Example
+
+```js
+wp.hooks.addAction(
+	'experimental__woocommerce_blocks-cart-set-shipping-address',
+	'plugin/namespace',
+	() => {
+		console.log( 'The shipping address was changed.' );
+	}
+);
+```
+
+#### `experimental__woocommerce_blocks-checkout-set-billing-address`
+
+Fired when the billing address is added or changed on the Checkout block.
+
+##### Args
+
+This action has no arguments.
+
+##### Example
+
+```js
+wp.hooks.addAction(
+	'experimental__woocommerce_blocks-cart-set-billing-address',
+	'plugin/namespace',
+	() => {
+		console.log( 'The billing address was changed.' );
+	}
+);
+```

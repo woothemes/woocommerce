@@ -2,21 +2,24 @@
  * External dependencies
  */
 import { decodeEntities } from '@wordpress/html-entities';
-import { type OfflinePaymentGateway } from '@woocommerce/data';
+import { type OfflinePaymentMethodProvider } from '@woocommerce/data';
 
 /**
  * Internal dependencies
  */
 import sanitizeHTML from '~/lib/sanitize-html';
-import { PaymentGatewayButton } from '~/settings-payments/components/payment-gateway-button';
 import {
 	DefaultDragHandle,
 	SortableContainer,
 	SortableItem,
 } from '../sortable';
+import {
+	EnableGatewayButton,
+	SettingsButton,
+} from '~/settings-payments/components/buttons';
 
 type OfflinePaymentGatewayListItemProps = {
-	gateway: OfflinePaymentGateway;
+	gateway: OfflinePaymentMethodProvider;
 };
 
 export const OfflinePaymentGatewayListItem = ( {
@@ -25,6 +28,7 @@ export const OfflinePaymentGatewayListItem = ( {
 }: OfflinePaymentGatewayListItemProps ) => {
 	return (
 		<SortableItem
+			key={ gateway.id }
 			id={ gateway.id }
 			className="woocommerce-list__item woocommerce-list__item-enter-done"
 			{ ...props }
@@ -32,7 +36,13 @@ export const OfflinePaymentGatewayListItem = ( {
 			<div className="woocommerce-list__item-inner">
 				<div className="woocommerce-list__item-before">
 					<DefaultDragHandle />
-					<img src={ gateway.icon } alt={ gateway.title + ' logo' } />
+					{ gateway.icon && (
+						<img
+							className={ 'woocommerce-list__item-image' }
+							src={ gateway.icon }
+							alt={ gateway.title + ' logo' }
+						/>
+					) }
 				</div>
 				<div className="woocommerce-list__item-text">
 					<span className="woocommerce-list__item-title">
@@ -47,12 +57,26 @@ export const OfflinePaymentGatewayListItem = ( {
 				</div>
 				<div className="woocommerce-list__item-after">
 					<div className="woocommerce-list__item-after__actions">
-						<PaymentGatewayButton
-							id={ gateway.id }
-							isOffline={ true }
-							enabled={ gateway.state.enabled }
-							settingsUrl={ gateway.management.settings_url }
-						/>
+						{ ! gateway.state.enabled ? (
+							<EnableGatewayButton
+								gatewayId={ gateway.id }
+								gatewayState={ gateway.state }
+								settingsHref={
+									gateway.management._links.settings.href
+								}
+								onboardingHref={
+									gateway.onboarding._links.onboard.href
+								}
+								isOffline={ true }
+								gatewayHasRecommendedPaymentMethods={ false }
+							/>
+						) : (
+							<SettingsButton
+								settingsHref={
+									gateway.management._links.settings.href
+								}
+							/>
+						) }
 					</div>
 				</div>
 			</div>
@@ -64,11 +88,11 @@ export const OfflinePaymentGatewayList = ( {
 	gateways,
 	setGateways,
 }: {
-	gateways: OfflinePaymentGateway[];
-	setGateways: ( gateways: OfflinePaymentGateway[] ) => void;
+	gateways: OfflinePaymentMethodProvider[];
+	setGateways: ( gateways: OfflinePaymentMethodProvider[] ) => void;
 } ) => {
 	return (
-		<SortableContainer< OfflinePaymentGateway >
+		<SortableContainer< OfflinePaymentMethodProvider >
 			className="woocommerce-list"
 			items={ gateways }
 			setItems={ setGateways }

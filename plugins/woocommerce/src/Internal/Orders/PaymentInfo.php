@@ -118,9 +118,8 @@ class PaymentInfo {
 			}
 
 			try {
-				$payment_details = \WC_Payments::get_payments_api_client()
-					->get_payment_method( $payment_method_id );
-			} catch ( Exception $ex ) {
+				$payment_details = \WC_Payments::get_payments_api_client()->get_payment_method( $payment_method_id );
+			} catch ( \Throwable $ex ) {
 				$order_id = $order->get_id();
 				$message  = $ex->getMessage();
 				wc_get_logger()->error(

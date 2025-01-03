@@ -41,6 +41,47 @@ test.describe( 'Shopper → Extensibility', () => {
 		await frontendUtils.goToCheckout();
 	} );
 	test.describe( 'extensionCartUpdate', () => {
+		test( 'Response is not undefined in any code path', async ( {
+			checkoutPageObject,
+		} ) => {
+			// With no additional args.
+			let response = await checkoutPageObject.page.evaluate(
+				"wc.blocksCheckout.extensionCartUpdate( { namespace: 'woocommerce-blocks-test-extension-cart-update' } ).then( ( response ) => response );"
+			);
+			let resolvedResponse = await Promise.resolve( response );
+			expect( resolvedResponse ).not.toBeUndefined();
+			expect( resolvedResponse ).toHaveProperty( 'billing_address' );
+
+			// With overwriteDirtyCustomerData true.
+			response = await checkoutPageObject.page.evaluate(
+				"wc.blocksCheckout.extensionCartUpdate( { namespace: 'woocommerce-blocks-test-extension-cart-update', overwriteDirtyCustomerData: true } ).then( ( response ) => response );"
+			);
+			resolvedResponse = await Promise.resolve( response );
+			expect( resolvedResponse ).not.toBeUndefined();
+			expect( resolvedResponse ).toHaveProperty( 'billing_address' );
+
+			// With overwriteDirtyCustomerData false.
+			response = await checkoutPageObject.page.evaluate(
+				"wc.blocksCheckout.extensionCartUpdate( { namespace: 'woocommerce-blocks-test-extension-cart-update', overwriteDirtyCustomerData: false } ).then( ( response ) => response );"
+			);
+			resolvedResponse = await Promise.resolve( response );
+			expect( resolvedResponse ).not.toBeUndefined();
+			expect( resolvedResponse ).toHaveProperty( 'billing_address' );
+
+			// With a dirty customer object.
+			await checkoutPageObject.page
+				.getByLabel( 'Country/Region' )
+				.selectOption( 'United Kingdom (UK)' );
+			await expect(
+				checkoutPageObject.page.getByLabel( 'Country/Region' )
+			).toHaveValue( 'GB' );
+			response = await checkoutPageObject.page.evaluate(
+				"wc.blocksCheckout.extensionCartUpdate( { namespace: 'woocommerce-blocks-test-extension-cart-update' } ).then( ( response ) => response );"
+			);
+			resolvedResponse = await Promise.resolve( response );
+			expect( resolvedResponse ).not.toBeUndefined();
+			expect( resolvedResponse ).toHaveProperty( 'billing_address' );
+		} );
 		test( 'Unpushed data is/is not overwritten depending on arg', async ( {
 			checkoutPageObject,
 		} ) => {

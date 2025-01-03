@@ -5,11 +5,10 @@ import { useEffect } from '@wordpress/element';
 import {
 	BlockControls,
 	InnerBlocks,
+	InspectorControls,
 	useBlockProps,
 } from '@wordpress/block-editor';
 import { BlockEditProps } from '@wordpress/blocks';
-import { __ } from '@wordpress/i18n';
-import type { InnerBlockTemplate } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -17,10 +16,10 @@ import type { InnerBlockTemplate } from '@wordpress/blocks';
 import { useIsDescendentOfSingleProductBlock } from '../../atomic/blocks/product-elements/shared/use-is-descendent-of-single-product-block';
 import { AddToCartOptionsSettings } from './settings';
 import ToolbarProductTypeGroup from './components/toolbar-type-product-selector-group';
-export interface Attributes {
-	className?: string;
-	isDescendentOfSingleProductBlock: boolean;
-}
+import { DowngradeNotice } from './components/downgrade-notice';
+import getInnerBlocksTemplate from './utils/get-inner-blocks-template';
+import useProductTypeSelector from './hooks/use-product-type-selector';
+import type { Attributes } from './types';
 
 export type FeaturesKeys = 'isBlockifiedAddToCart';
 
@@ -30,44 +29,44 @@ export type FeaturesProps = {
 
 export type UpdateFeaturesType = ( key: FeaturesKeys, value: boolean ) => void;
 
-const INNER_BLOCKS_TEMPLATE: InnerBlockTemplate[] = [
-	[
-		'core/heading',
-		{
-			level: 2,
-			content: __( 'Add to Cart', 'woocommerce' ),
-		},
-	],
-	[
-		'woocommerce/product-button',
-		{
-			textAlign: 'center',
-			fontSize: 'small',
-		},
-	],
-];
-
 const AddToCartOptionsEdit = ( props: BlockEditProps< Attributes > ) => {
 	const { setAttributes } = props;
 
 	const blockProps = useBlockProps();
+	const blockClientId = blockProps?.id;
 	const { isDescendentOfSingleProductBlock } =
 		useIsDescendentOfSingleProductBlock( {
-			blockClientId: blockProps?.id,
+			blockClientId,
 		} );
+
+	const { registerListener, unregisterListener } = useProductTypeSelector();
 
 	useEffect( () => {
 		setAttributes( {
 			isDescendentOfSingleProductBlock,
 		} );
-	}, [ setAttributes, isDescendentOfSingleProductBlock ] );
+		registerListener( blockClientId );
+		return () => {
+			unregisterListener( blockClientId );
+		};
+	}, [
+		setAttributes,
+		isDescendentOfSingleProductBlock,
+		blockClientId,
+		registerListener,
+		unregisterListener,
+	] );
+
+	const innerBlocksTemplate = getInnerBlocksTemplate();
 
 	return (
 		<>
+			<InspectorControls>
+				<DowngradeNotice blockClientId={ props?.clientId } />
+			</InspectorControls>
 			<BlockControls>
 				<ToolbarProductTypeGroup />
 			</BlockControls>
-
 			<AddToCartOptionsSettings
 				features={ {
 					isBlockifiedAddToCart: true,
@@ -75,7 +74,7 @@ const AddToCartOptionsEdit = ( props: BlockEditProps< Attributes > ) => {
 			/>
 
 			<div { ...blockProps }>
-				<InnerBlocks template={ INNER_BLOCKS_TEMPLATE } />
+				<InnerBlocks template={ innerBlocksTemplate } />
 			</div>
 		</>
 	);

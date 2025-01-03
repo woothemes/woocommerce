@@ -5,14 +5,14 @@ namespace Automattic\WooCommerce\Tests\Internal\Admin\Suggestions\Incentives;
 
 use Automattic\WooCommerce\Internal\Admin\Suggestions\Incentives\Incentive;
 use Automattic\WooCommerce\Internal\Admin\Suggestions\Incentives\WooPayments;
-use WC_REST_Unit_Test_Case;
+use WC_Unit_Test_Case;
 
 /**
  * WooPayments incentive provider test.
  *
  * @class WooPayments
  */
-class WooPaymentsTest extends WC_REST_Unit_Test_Case {
+class WooPaymentsTest extends WC_Unit_Test_Case {
 	/**
 	 * The system under test.
 	 *
@@ -137,8 +137,8 @@ class WooPaymentsTest extends WC_REST_Unit_Test_Case {
 
 		// Assert.
 		$this->assertCount( 2, $result );
-		$this->assertEquals( 'incentive1', $result[0]['id'] );
-		$this->assertEquals( 'incentive2', $result[1]['id'] );
+		$this->assertSame( 'incentive1', $result[0]['id'] );
+		$this->assertSame( 'incentive2', $result[1]['id'] );
 
 		// Test that the memo is used.
 		// Arrange.
@@ -150,8 +150,8 @@ class WooPaymentsTest extends WC_REST_Unit_Test_Case {
 
 		// Assert.
 		$this->assertCount( 2, $result );
-		$this->assertEquals( 'incentive1', $result[0]['id'] );
-		$this->assertEquals( 'incentive2', $result[1]['id'] );
+		$this->assertSame( 'incentive1', $result[0]['id'] );
+		$this->assertSame( 'incentive2', $result[1]['id'] );
 
 		// Test that the DB cache is used.
 		// Arrange.

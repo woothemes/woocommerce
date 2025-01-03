@@ -6,14 +6,14 @@ namespace Automattic\WooCommerce\Tests\Internal\Admin\Suggestions;
 use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestionIncentives;
 use Automattic\WooCommerce\Tests\Internal\Admin\Suggestions\Mocks\FakeIncentive;
 use PHPUnit\Framework\MockObject\MockObject;
-use WC_REST_Unit_Test_Case;
+use WC_Unit_Test_Case;
 
 /**
  * PaymentExtensionSuggestionIncentives provider test.
  *
  * @class PaymentExtensionSuggestionIncentives
  */
-class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
+class PaymentExtensionSuggestionIncentivesTest extends WC_Unit_Test_Case {
 	/**
 	 * @var PaymentExtensionSuggestionIncentives
 	 */
@@ -118,7 +118,7 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 		$incentive = $this->sut->get_incentive( 'suggestion1', 'RO' );
 
 		// Assert.
-		$this->assertEquals( 'incentive1', $incentive['id'] );
+		$this->assertSame( 'incentive1', $incentive['id'] );
 	}
 
 	/**
@@ -156,7 +156,7 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 		$incentive = $this->sut->get_incentive( 'suggestion1', 'RO', 'type1' );
 
 		// Assert.
-		$this->assertEquals( 'incentive1', $incentive['id'] );
+		$this->assertSame( 'incentive1', $incentive['id'] );
 	}
 
 	/**
@@ -266,8 +266,8 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 
 		// Assert.
 		$this->assertCount( 2, $incentives );
-		$this->assertEquals( 'incentive1', $incentives[0]['id'] );
-		$this->assertEquals( 'incentive2', $incentives[1]['id'] );
+		$this->assertSame( 'incentive1', $incentives[0]['id'] );
+		$this->assertSame( 'incentive2', $incentives[1]['id'] );
 	}
 
 	/**
@@ -354,8 +354,8 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 
 		// Assert.
 		$this->assertCount( 2, $incentives );
-		$this->assertEquals( 'incentive1', $incentives[0]['id'] );
-		$this->assertEquals( 'incentive2', $incentives[1]['id'] );
+		$this->assertSame( 'incentive1', $incentives[0]['id'] );
+		$this->assertSame( 'incentive2', $incentives[1]['id'] );
 	}
 
 	/**
@@ -422,8 +422,8 @@ class PaymentExtensionSuggestionIncentivesTest extends WC_REST_Unit_Test_Case {
 
 		// Assert.
 		$this->assertCount( 2, $incentives );
-		$this->assertEquals( 'incentive1', $incentives[0]['id'] );
-		$this->assertEquals( 'incentive2', $incentives[1]['id'] );
+		$this->assertSame( 'incentive1', $incentives[0]['id'] );
+		$this->assertSame( 'incentive2', $incentives[1]['id'] );
 	}
 
 	/**

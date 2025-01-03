@@ -7,6 +7,7 @@
  */
 
 use Automattic\Jetpack\Constants;
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\Orders\CouponsController;
 use Automattic\WooCommerce\Internal\Orders\TaxesController;
 use Automattic\WooCommerce\Internal\Admin\Orders\MetaBoxes\CustomMetaBox;
@@ -467,7 +468,7 @@ class WC_AJAX {
 		$variation_id      = 0;
 		$variation         = array();
 
-		if ( $product && 'variation' === $product->get_type() ) {
+		if ( $product && ProductType::VARIATION === $product->get_type() ) {
 			$variation_id = $product_id;
 			$product_id   = $product->get_parent_id();
 			$variation    = $product->get_variation_attributes();
@@ -623,7 +624,7 @@ class WC_AJAX {
 			wp_die( -1 );
 		}
 
-		$product_type = isset( $_POST['product_type'] ) ? sanitize_text_field( wp_unslash( $_POST['product_type'] ) ) : 'simple';
+		$product_type = isset( $_POST['product_type'] ) ? sanitize_text_field( wp_unslash( $_POST['product_type'] ) ) : ProductType::SIMPLE;
 
 		$i             = absint( $_POST['i'] );
 		$metabox_class = array();
@@ -636,7 +637,7 @@ class WC_AJAX {
 		$attribute->set_variation(
 			apply_filters(
 				'woocommerce_attribute_default_is_variation',
-				'variable' === $product_type ? 1 : 0,
+				ProductType::VARIABLE === $product_type ? 1 : 0,
 				$product_type
 			)
 		);
@@ -789,7 +790,7 @@ class WC_AJAX {
 		}
 		$attributes   = WC_Meta_Box_Product_Data::prepare_attributes( $data );
 		$product_id   = absint( wp_unslash( $_POST['post_id'] ) );
-		$product_type = ! empty( $_POST['product_type'] ) ? wc_clean( wp_unslash( $_POST['product_type'] ) ) : 'simple';
+		$product_type = ! empty( $_POST['product_type'] ) ? wc_clean( wp_unslash( $_POST['product_type'] ) ) : ProductType::SIMPLE;
 		$classname    = WC_Product_Factory::get_product_classname( $product_id, $product_type );
 		$product      = new $classname( $product_id );
 		$product->set_attributes( $attributes );
@@ -827,8 +828,8 @@ class WC_AJAX {
 		$product_id       = intval( $_POST['post_id'] );
 		$post             = get_post( $product_id ); // phpcs:ignore
 		$loop             = intval( $_POST['loop'] );
-		$product_object   = wc_get_product_object( 'variable', $product_id ); // Forces type to variable in case product is unsaved.
-		$variation_object = wc_get_product_object( 'variation' );
+		$product_object   = wc_get_product_object( ProductType::VARIABLE, $product_id ); // Forces type to variable in case product is unsaved.
+		$variation_object = wc_get_product_object( ProductType::VARIATION );
 		$variation_object->set_parent_id( $product_id );
 		$variation_object->set_attributes( array_fill_keys( array_map( 'sanitize_title', array_keys( $product_object->get_variation_attributes() ) ), '' ) );
 		$variation_id   = $variation_object->save();
@@ -1058,7 +1059,7 @@ class WC_AJAX {
 				if ( ! $product ) {
 					throw new Exception( __( 'Invalid product ID', 'woocommerce' ) . ' ' . $product_id );
 				}
-				if ( 'variable' === $product->get_type() ) {
+				if ( ProductType::VARIABLE === $product->get_type() ) {
 					/* translators: %s product name */
 					throw new Exception( sprintf( __( '%s is a variable product parent and cannot be added.', 'woocommerce' ), $product->get_name() ) );
 				}
@@ -1652,7 +1653,7 @@ class WC_AJAX {
 				$exclude_type = strtolower( trim( $exclude_type ) );
 			}
 			$exclude_types = array_intersect(
-				array_merge( array( 'variation' ), array_keys( wc_get_product_types() ) ),
+				array_merge( array( ProductType::VARIATION ), array_keys( wc_get_product_types() ) ),
 				$exclude_types
 			);
 		}
@@ -2394,7 +2395,7 @@ class WC_AJAX {
 		$variations     = wc_get_products(
 			array(
 				'status'  => array( 'private', 'publish' ),
-				'type'    => 'variation',
+				'type'    => ProductType::VARIATION,
 				'parent'  => $product_id,
 				'limit'   => $per_page,
 				'page'    => $page,
