@@ -15,18 +15,13 @@ export const useOnboardingTour = () => {
 
 	const { updateOptions } = useDispatch( OPTIONS_STORE_NAME );
 	const { shouldTourBeShown } = useSelect( ( select ) => {
-		const { getOption, hasFinishedResolution } = select(
-			OPTIONS_STORE_NAME
-		) as {
-			getOption: ( option: string ) => unknown;
-			hasFinishedResolution: (
-				resolver: string,
-				args: string[]
-			) => boolean;
-		};
+		const { getOption, hasFinishedResolution } =
+			select( OPTIONS_STORE_NAME );
 
 		const wasTourShown =
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			getOption( CUSTOMIZE_STORE_ONBOARDING_TOUR_HIDDEN ) === 'yes' ||
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			! hasFinishedResolution( 'getOption', [
 				CUSTOMIZE_STORE_ONBOARDING_TOUR_HIDDEN,
 			] );

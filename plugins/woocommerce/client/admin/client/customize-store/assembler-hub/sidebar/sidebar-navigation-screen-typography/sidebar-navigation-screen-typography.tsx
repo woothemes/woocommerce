@@ -50,11 +50,10 @@ export const SidebarNavigationScreenTypography = ( {
 
 	const trackingAllowed = useSelect(
 		( select ) =>
-			(
-				select( OPTIONS_STORE_NAME ) as {
-					getOption: ( option: string ) => unknown;
-				}
-			 ).getOption( 'woocommerce_allow_tracking' ),
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+			select( OPTIONS_STORE_NAME ).getOption(
+				'woocommerce_allow_tracking'
+			),
 		[]
 	);
 

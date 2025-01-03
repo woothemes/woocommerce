@@ -125,11 +125,11 @@ export const OptInSubscribe = () => {
 	] = useGlobalSetting( 'typography.fontFamilies' );
 
 	const isOptedIn = useSelect( ( selectStore ) => {
-		const allowTracking = (
-			selectStore( OPTIONS_STORE_NAME ) as {
-				getOption: ( option: string ) => unknown;
-			}
-		 ).getOption( 'woocommerce_allow_tracking' );
+		const allowTracking =
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+			selectStore( OPTIONS_STORE_NAME ).getOption(
+				'woocommerce_allow_tracking'
+			);
 		return allowTracking === 'yes';
 	}, [] );
 

@@ -68,18 +68,9 @@ const useLogoEdit = ( {
 		const _siteIconId = siteSettings?.site_icon;
 		return {
 			siteIconId: _siteIconId,
-			mediaUpload: (
-				select( blockEditorStore ) as {
-					getSettings: () => { mediaUpload: unknown };
-				}
-			 ).getSettings().mediaUpload as {
-				( options: {
-					allowedTypes: string[];
-					filesList: File[];
-					onFileChange: ( media: Media[] ) => void;
-					onError: ( message: string ) => void;
-				} ): void;
-			},
+			mediaUpload:
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+				select( blockEditorStore ).getSettings().mediaUpload,
 		};
 	}, [] );
 
@@ -152,7 +143,7 @@ const useLogoEdit = ( {
 		mediaUpload( {
 			allowedTypes: [ 'image' ],
 			filesList,
-			onFileChange( [ image ] ) {
+			onFileChange( [ image ]: Media[] ) {
 				if ( isBlobURL( image?.url ) ) {
 					return;
 				}

@@ -37,7 +37,7 @@ export const SiteHub = forwardRef<
 	}
 >( ( { isTransparent, ...restProps }, ref ) => {
 	const { siteTitle } = useSelect( ( select ) => {
-		// @ts-ignore No types for this exist yet.
+		// @ts-expect-error No types for this exist yet.
 		const { getSite } = select( coreStore );
 
 		return {

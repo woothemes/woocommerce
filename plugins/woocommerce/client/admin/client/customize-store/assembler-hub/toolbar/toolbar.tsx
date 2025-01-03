@@ -48,18 +48,17 @@ export const Toolbar = () => {
 		allBlocks: BlockInstance[];
 	} = useSelect( ( select ) => {
 		const {
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			getSelectedBlockClientId,
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			getNextBlockClientId,
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			getPreviousBlockClientId,
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			getBlocksByClientId,
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			getBlocks,
-		} = select( blockEditorStore ) as {
-			getSelectedBlockClientId: () => string | null;
-			getNextBlockClientId: () => string | null;
-			getPreviousBlockClientId: () => string | null;
-			getBlocksByClientId: ( clientIds: string[] ) => BlockInstance[];
-			getBlocks: () => BlockInstance[];
-		};
+		} = select( blockEditorStore );
 
 		const selectedBlockId = getSelectedBlockClientId();
 		const nextBlockClientId = getNextBlockClientId();

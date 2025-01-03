@@ -18,20 +18,14 @@ import { ColorPaletteResponse } from '~/customize-store/design-with-ai/types';
 
 export const ColorPalette = () => {
 	const { aiSuggestions, isLoading } = useSelect( ( select ) => {
-		const {
-			getOption,
-			hasFinishedResolution,
-		}: {
-			getOption: ( option: string ) => unknown;
-			hasFinishedResolution: (
-				storeName: string,
-				key: string[]
-			) => boolean;
-		} = select( OPTIONS_STORE_NAME );
+		const { getOption, hasFinishedResolution } =
+			select( OPTIONS_STORE_NAME );
 		return {
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			aiSuggestions: getOption(
 				'woocommerce_customize_store_ai_suggestions'
 			) as { defaultColorPalette: ColorPaletteResponse },
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			isLoading: ! hasFinishedResolution( 'getOption', [
 				'woocommerce_customize_store_ai_suggestions',
 			] ),
