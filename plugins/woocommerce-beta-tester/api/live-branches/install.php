@@ -33,6 +33,29 @@ register_woocommerce_admin_test_helper_rest_route(
 	array(
 		'methods'             => 'POST',
 		'permission_callback' => 'check_live_branches_permissions',
+		'args'                => array(
+			'download_url' => array(
+				'required'          => true,
+				'type'              => 'string',
+				'description'       => 'The URL to download the WooCommerce plugin zip file.',
+				'validate_callback' => function( $param ) {
+					return filter_var( $param, FILTER_VALIDATE_URL );
+				},
+				'sanitize_callback' => 'sanitize_text_field',
+			),
+			'pr_name'      => array(
+				'required'          => true,
+				'type'              => 'string',
+				'description'       => 'The name or identifier of the pull request being installed.',
+				'sanitize_callback' => 'sanitize_text_field',
+			),
+			'version'      => array(
+				'required'          => true,
+				'type'              => 'string',
+				'description'       => 'The version identifier of WooCommerce to be installed.',
+				'sanitize_callback' => 'sanitize_text_field',
+			),
+		),
 	)
 );
 
@@ -42,6 +65,7 @@ register_woocommerce_admin_test_helper_rest_route(
 	array(
 		'methods'             => 'GET',
 		'permission_callback' => 'check_live_branches_permissions',
+		'description'         => 'Deactivates the currently active WooCommerce plugin.',
 	)
 );
 
@@ -51,6 +75,20 @@ register_woocommerce_admin_test_helper_rest_route(
 	array(
 		'methods'             => 'POST',
 		'permission_callback' => 'check_live_branches_permissions',
+		'args'                => array(
+			'version' => array(
+				'required'          => true,
+				'type'              => 'string',
+				'description'       => 'The version identifier of WooCommerce to activate.',
+				'sanitize_callback' => 'sanitize_text_field',
+			),
+			'force'   => array(
+				'required'    => false,
+				'type'        => 'boolean',
+				'default'     => false,
+				'description' => 'Whether to force activation by deactivating WooCommerce first if it is already active.',
+			),
+		),
 	)
 );
 
@@ -83,9 +121,15 @@ function install_version( $request ) {
 function activate_version( $request ) {
 	$params  = json_decode( $request->get_body() );
 	$version = $params->version;
+	$force   = isset( $params->force ) ? $params->force : false;
 
 	$installer = new WC_Beta_Tester_Live_Branches_Installer();
-	$result    = $installer->activate( $version );
+
+	if ( $force ) {
+		$installer->deactivate_woocommerce();
+	}
+
+	$result = $installer->activate( $version );
 
 	if ( is_wp_error( $result ) ) {
 		return new WP_Error( 400, "Could not activate version: $version with error {$result->get_error_message()}", '' );
