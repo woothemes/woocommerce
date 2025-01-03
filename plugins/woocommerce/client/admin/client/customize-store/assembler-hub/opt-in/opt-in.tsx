@@ -104,7 +104,7 @@ async function installFonts(
 		'globalStyles',
 		globalStylesId,
 		[ 'settings.typography.fontFamilies' ],
-		null
+		undefined
 	);
 
 	return {

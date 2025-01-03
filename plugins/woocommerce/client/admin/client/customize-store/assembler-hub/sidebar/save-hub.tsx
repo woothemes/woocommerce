@@ -96,7 +96,7 @@ export const SaveHub = () => {
 					'site',
 					undefined,
 					[ property ],
-					null
+					undefined
 				);
 			} else {
 				if (
