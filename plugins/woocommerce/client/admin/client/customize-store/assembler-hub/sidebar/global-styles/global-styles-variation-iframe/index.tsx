@@ -5,6 +5,7 @@
  * External dependencies
  */
 import {
+	// @ts-expect-error No types for this
 	__unstableEditorStyles as EditorStyles,
 	// @ts-expect-error No types for this
 	privateApis as blockEditorPrivateApis,

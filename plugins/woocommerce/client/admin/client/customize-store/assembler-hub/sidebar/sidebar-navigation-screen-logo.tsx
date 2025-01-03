@@ -411,29 +411,35 @@ export const SidebarNavigationScreenLogo = ( {
 			const _canUserEdit = canUser( 'update', 'settings' );
 			const siteSettings = _canUserEdit
 				? // @ts-expect-error No support for root and site
-				  getEditedEntityRecord( 'root', 'site' )
+				  ( getEditedEntityRecord( 'root', 'site' ) as {
+						site_logo: string;
+				  } )
 				: undefined;
 			// @ts-expect-error No support for root and site
-			const siteData = getEntityRecord( 'root', '__unstableBase' );
+			const siteData = getEntityRecord( 'root', '__unstableBase' ) as {
+				site_logo: string;
+			};
 			const _siteLogoId = _canUserEdit
 				? siteSettings?.site_logo
 				: siteData?.site_logo;
 
 			const mediaItem =
 				_siteLogoId &&
+				// @ts-expect-error No getMedia selector type definition
 				select( coreStore ).getMedia( _siteLogoId, {
 					context: 'view',
 				} );
 			const _isRequestingMediaItem =
 				_siteLogoId &&
+				// @ts-expect-error No hasFinishedResolution selector type definition
 				! select( coreStore ).hasFinishedResolution( 'getMedia', [
 					_siteLogoId,
 					{ context: 'view' },
 				] );
 
 			return {
-				siteLogoId: _siteLogoId,
-				canUserEdit: _canUserEdit,
+				siteLogoId: _siteLogoId ?? '',
+				canUserEdit: _canUserEdit ?? false,
 				mediaItemData: mediaItem,
 				isRequestingMediaItem: _isRequestingMediaItem,
 			};

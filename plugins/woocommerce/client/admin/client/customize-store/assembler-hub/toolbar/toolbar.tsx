@@ -47,26 +47,37 @@ export const Toolbar = () => {
 		previousBlock: BlockInstance | undefined;
 		allBlocks: BlockInstance[];
 	} = useSelect( ( select ) => {
-		const selectedBlockId =
-			select( blockEditorStore ).getSelectedBlockClientId();
-		const nextBlockClientId =
-			select( blockEditorStore ).getNextBlockClientId();
-		const previousBlockClientId =
-			select( blockEditorStore ).getPreviousBlockClientId();
+		const {
+			getSelectedBlockClientId,
+			getNextBlockClientId,
+			getPreviousBlockClientId,
+			getBlocksByClientId,
+			getBlocks,
+		} = select( blockEditorStore ) as {
+			getSelectedBlockClientId: () => string | null;
+			getNextBlockClientId: () => string | null;
+			getPreviousBlockClientId: () => string | null;
+			getBlocksByClientId: ( clientIds: string[] ) => BlockInstance[];
+			getBlocks: () => BlockInstance[];
+		};
 
-		const [ current ] = select( blockEditorStore ).getBlocksByClientId( [
-			selectedBlockId,
-		] );
+		const selectedBlockId = getSelectedBlockClientId();
+		const nextBlockClientId = getNextBlockClientId();
+		const previousBlockClientId = getPreviousBlockClientId();
 
-		const [ next ] = select( blockEditorStore ).getBlocksByClientId( [
-			nextBlockClientId,
-		] );
+		const [ current ] = getBlocksByClientId(
+			selectedBlockId ? [ selectedBlockId ] : []
+		);
 
-		const [ previous ] = select( blockEditorStore ).getBlocksByClientId( [
-			previousBlockClientId,
-		] );
+		const [ next ] = getBlocksByClientId(
+			nextBlockClientId ? [ nextBlockClientId ] : []
+		);
 
-		const blocks = select( blockEditorStore ).getBlocks();
+		const [ previous ] = getBlocksByClientId(
+			previousBlockClientId ? [ previousBlockClientId ] : []
+		);
+
+		const blocks = getBlocks();
 
 		return {
 			currentBlock: current,
@@ -187,6 +198,7 @@ export const Toolbar = () => {
 						<ToolbarGroup>
 							<BlockMover
 								clientIds={ [ selectedBlockClientId ] }
+								// @ts-expect-error - isBlockMoverUpButtonDisabled isn't defined in the type.
 								isBlockMoverUpButtonDisabled={
 									isBlockMoverUpButtonDisabled
 								}

@@ -6,6 +6,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Button, Path, SVG, ToolbarGroup } from '@wordpress/components';
 import { store as blockEditorStore } from '@wordpress/block-editor';
+import { BlockAttributes } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -79,7 +80,9 @@ export default function Shuffle( { clientId }: { clientId: string } ) {
 		patternName: string;
 	} = useSelect(
 		( select ) => {
-			const { getBlockAttributes } = select( blockEditorStore );
+			const { getBlockAttributes } = select( blockEditorStore ) as {
+				getBlockAttributes: ( clientId: string ) => BlockAttributes;
+			};
 			const attributes = getBlockAttributes( clientId );
 			const categories = attributes?.metadata?.categories;
 			// We know that the category is one of the keys of PATTERN_CATEGORIES.

@@ -164,9 +164,6 @@ export const Layout = () => {
 								animate={ 'view' }
 							>
 								<SiteHub
-									variants={ {
-										view: { x: 0 },
-									} }
 									isTransparent={ false }
 									className="woocommerce-edit-site-layout__hub"
 								/>
