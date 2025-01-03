@@ -1063,24 +1063,7 @@ class WC_Helper {
 		$product_id = $subscription['product_id'];
 
 		// Activate subscription.
-		$activation_response = WC_Helper_API::post(
-			'activate',
-			array(
-				'authenticated' => true,
-				'body'          => wp_json_encode(
-					array(
-						'product_key' => $product_key,
-					)
-				),
-			)
-		);
-
-		$activated = wp_remote_retrieve_response_code( $activation_response ) === 200;
-		$body      = json_decode( wp_remote_retrieve_body( $activation_response ), true );
-
-		if ( ! $activated && ! empty( $body['code'] ) && 'already_connected' === $body['code'] ) {
-			$activated = true;
-		}
+		list( $activation_response, $activated ) = self::_wccom_activate( $product_key );
 
 		if ( $activated ) {
 			/**
@@ -2026,24 +2009,7 @@ class WC_Helper {
 		}
 
 		$product_key         = $subscription['product_key'];
-		$activation_response = WC_Helper_API::post(
-			'activate',
-			array(
-				'authenticated' => true,
-				'body'          => wp_json_encode(
-					array(
-						'product_key' => $product_key,
-					)
-				),
-			)
-		);
-
-		$activated = wp_remote_retrieve_response_code( $activation_response ) === 200;
-		$body      = json_decode( wp_remote_retrieve_body( $activation_response ), true );
-
-		if ( ! $activated && ! empty( $body['code'] ) && 'already_connected' === $body['code'] ) {
-			$activated = true;
-		}
+		list( $activation_response, $activated ) = self::_wccom_activate( $product_key );
 
 		if ( $activated ) {
 			self::log( 'Auto-activated a subscription for ' . $filename );
@@ -2134,24 +2100,7 @@ class WC_Helper {
 		}
 
 		$product_key         = $subscription['product_key'];
-		$activation_response = WC_Helper_API::post(
-			'activate',
-			array(
-				'authenticated' => true,
-				'body'          => wp_json_encode(
-					array(
-						'product_key' => $product_key,
-					)
-				),
-			)
-		);
-
-		$activated = wp_remote_retrieve_response_code( $activation_response ) === 200;
-		$body      = json_decode( wp_remote_retrieve_body( $activation_response ), true );
-
-		if ( ! $activated && ! empty( $body['code'] ) && 'already_connected' === $body['code'] ) {
-			$activated = true;
-		}
+		list( $activation_response, $activated ) = self::_wccom_activate( $product_key );
 
 		if ( $activated ) {
 			self::log( 'Auto-activated a subscription for ' . $theme['slug'] );
@@ -2610,6 +2559,29 @@ class WC_Helper {
 
 		set_transient( $cache_key, $data, 1 * HOUR_IN_SECONDS );
 		return $data;
+	}
+
+	protected static function _wccom_activate( mixed $product_key ): array {
+		$activation_response = WC_Helper_API::post(
+			'activate',
+			array(
+				'authenticated' => true,
+				'body'          => wp_json_encode(
+					array(
+						'product_key' => $product_key,
+					)
+				),
+			)
+		);
+
+		$activated = wp_remote_retrieve_response_code( $activation_response ) === 200;
+		$body      = json_decode( wp_remote_retrieve_body( $activation_response ), true );
+
+		if ( ! $activated && ! empty( $body['code'] ) && 'already_connected' === $body['code'] ) {
+			$activated = true;
+		}
+
+		return array( $activation_response, $activated );
 	}
 }
 
