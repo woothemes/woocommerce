@@ -16,6 +16,7 @@ const Edit = (): JSX.Element => {
 
 	return (
 		<div { ...blockProps }>
+			<h1>{ __( 'Order received', 'woocommerce' ) }</h1>
 			<p>
 				{ __(
 					'Thank you. Your order has been received.',

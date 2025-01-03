@@ -1351,7 +1351,7 @@ class OrdersTableQuery {
 		$this->orders = array_map( 'absint', $wpdb->get_col( $this->sql ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		// Set max_num_pages and found_orders if necessary.
-		if ( ( $this->arg_isset( 'no_found_rows' ) && ! $this->args['no_found_rows'] ) || empty( $this->orders ) ) {
+		if ( ( $this->arg_isset( 'no_found_rows' ) && $this->args['no_found_rows'] ) || empty( $this->orders ) ) {
 			return;
 		}
 

@@ -66,7 +66,6 @@ export const Header = ( {
 		 * Unregister existing header plugins since we don't want to show the default items such as activity panel.
 		 */
 		const unRegisterHeaderItems = () => {
-			// @ts-expect-error scope param is not typed
 			const plugins = getPlugins( 'woocommerce-admin' );
 			plugins.forEach( ( plugin ) => {
 				if ( ITEMS_TO_REMOVE.includes( plugin.name ) ) {
@@ -111,7 +110,6 @@ export const Header = ( {
 					) }
 				</>
 			),
-			// @ts-expect-error scope param is not typed
 			scope: 'woocommerce-admin',
 		} );
 

@@ -1,0 +1,4 @@
+Significance: patch
+Type: performance
+
+Refactored address field controls to prevent slow rerendering in the checkout editor.
