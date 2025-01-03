@@ -65,6 +65,16 @@ class WC_WCCOM_Site_Installation_Step_Move_Product implements WC_WCCOM_Site_Inst
 
 		$this->state->set_installed_path( $result['destination'] );
 
+		$this->maybe_connect_theme();
+
 		return $this->state;
+	}
+
+	protected function maybe_connect_theme() {
+		if ( 'theme' !== $this->state->get_product_type() ) {
+			return;
+		}
+
+		WC_Helper::connect_theme( $this->state->get_product_id() );
 	}
 }
