@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { Icon, button } from '@wordpress/icons';
+import { button } from '@wordpress/icons';
 import { getPlugin, registerPlugin } from '@wordpress/plugins';
 import { isExperimentalBlocksEnabled } from '@woocommerce/block-settings';
 import { getSettingWithCoercion } from '@woocommerce/settings';
@@ -44,7 +44,9 @@ if ( shouldBlockifiedAddToCartWithOptionsBeRegistered ) {
 	registerProductBlockType(
 		{
 			...metadata,
-			icon: <Icon icon={ button } />,
+			icon: {
+				src: button,
+			},
 			edit: AddToCartOptionsEdit,
 			save,
 			ancestor: [ 'woocommerce/single-product' ],
