@@ -30,5 +30,5 @@ export const usePublishedProductsCount = () => {
 			// we consider a user new if they have no published products
 			isNewUser: publishedProductsCount < 1,
 		};
-	} );
+	}, [] );
 };
