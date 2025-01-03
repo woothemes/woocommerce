@@ -18,7 +18,6 @@ import metadata from './block.json';
 import AddToCartOptionsEdit from './edit';
 import save from './save';
 import './style.scss';
-import type { Attributes } from './types';
 
 // Pick the value of the "blockify add to cart flag"
 const isBlockifiedAddToCart = getSettingWithCoercion(
@@ -44,12 +43,12 @@ if ( shouldBlockifiedAddToCartWithOptionsBeRegistered ) {
 	// Register the block
 	registerProductBlockType(
 		{
-			...( metadata as BlockConfiguration< Attributes > ),
+			...metadata,
 			icon: <Icon icon={ button } />,
 			edit: AddToCartOptionsEdit,
 			save,
 			ancestor: [ 'woocommerce/single-product' ],
-		},
+		} as unknown as BlockConfiguration,
 		{
 			isAvailableOnPostEditor: true,
 		}
