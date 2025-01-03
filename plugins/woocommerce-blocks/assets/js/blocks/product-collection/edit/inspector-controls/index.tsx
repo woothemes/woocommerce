@@ -39,7 +39,8 @@ import {
 	InheritQueryControl,
 	FilterableControl,
 } from './use-page-context-control';
-import OrderByControl from './order-by-control';
+import DefaultQueryOrderByControl from './order-by-control/default-query-order-by-control';
+import CustomQueryOrderByControl from './order-by-control/custom-query-order-by-control';
 import OnSaleControl from './on-sale-control';
 import StockStatusControl from './stock-status-control';
 import KeywordControl from './keyword-control';
@@ -91,7 +92,7 @@ const ProductCollectionInspectorControls = (
 		isArchiveTemplate && shouldShowFilter( CoreFilterNames.INHERIT );
 	const showFilterableControl =
 		! isArchiveTemplate && shouldShowFilter( CoreFilterNames.FILTERABLE );
-	const showOrderControl =
+	const showCustomOrderControl =
 		showQueryControls && shouldShowFilter( CoreFilterNames.ORDER );
 	const showOffsetControl =
 		showQueryControls && shouldShowFilter( CoreFilterNames.OFFSET );
@@ -171,8 +172,10 @@ const ProductCollectionInspectorControls = (
 					<ProductsPerPageControl { ...queryControlProps } />
 				) }
 				<ColumnsControl { ...displayControlProps } />
-				{ showOrderControl && (
-					<OrderByControl { ...queryControlProps } />
+				{ showCustomOrderControl ? (
+					<CustomQueryOrderByControl { ...queryControlProps } />
+				) : (
+					<DefaultQueryOrderByControl />
 				) }
 				{ showOffsetControl && (
 					<OffsetControl { ...queryControlProps } />
