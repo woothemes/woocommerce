@@ -78,7 +78,7 @@ const AddToCartWithOptionsVariationSelectorEdit = (
 					className="wc-block-variation-selector__label"
 					level="3"
 				>
-					{ __( 'My Attribute', 'woocommerce' ) }
+					{ __( 'Example Attribute', 'woocommerce' ) }
 				</Heading>
 				<SelectControl
 					value=""
