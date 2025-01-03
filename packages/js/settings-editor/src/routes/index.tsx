@@ -26,17 +26,15 @@ export type RouteProps = {
  */
 const settingsEditorRoutes = Object.values( settingsData ).map(
 	( settingsPage ) => {
+		const name = settingsPage.slug;
+		const path = getSettingsSectionPath( name );
+
 		return {
-			name: settingsPage.slug,
-			path: getSettingsSectionPath( settingsPage.slug ),
+			name,
+			path,
 			areas: {
 				sidebar: <Sidebar title={ settingsPage.label } backPack="/" />,
-				content: (
-					<LegacyContent
-						settingsPage={ settingsPage }
-						activeSection="default"
-					/>
-				),
+				content: <LegacyContent />,
 				mobile: <div>Mobile</div>,
 			},
 		};

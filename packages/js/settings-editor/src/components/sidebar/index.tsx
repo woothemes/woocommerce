@@ -28,16 +28,19 @@ import {
 const { useLocation } = unlock( routerPrivateApis );
 
 const SidebarNavigationScreenContent = () => {
-	const { name } = useLocation();
+	const { query } = useLocation();
 
 	if ( ! settingsData ) {
 		return null;
 	}
 
+	const { tab: activeTab } = query;
+
 	return (
 		<ItemGroup>
-			{ Object.keys( settingsData ).map( ( slug ) => {
-				const { label, icon } = getSettingsPage( slug );
+			{ Object.keys( settingsData ).map( ( tab ) => {
+				const { label, icon } = getSettingsPage( tab );
+				const to = getSettingsSectionPath( tab );
 
 				return (
 					<SidebarNavigationItem
@@ -45,10 +48,10 @@ const SidebarNavigationScreenContent = () => {
 							icons[ icon as keyof typeof icons ] ||
 							icons.settings
 						}
-						aria-current={ name === slug }
-						uid={ slug }
-						key={ slug }
-						to={ getSettingsSectionPath( slug ) }
+						aria-current={ activeTab === tab }
+						uid={ tab }
+						key={ tab }
+						to={ to }
 					>
 						{ label }
 					</SidebarNavigationItem>
