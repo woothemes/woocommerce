@@ -1,5 +1,3 @@
-/* eslint-disable @woocommerce/dependency-group */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 /**
  * External dependencies
  */
@@ -11,9 +9,11 @@ import {
 	useMemo,
 } from '@wordpress/element';
 import { Spinner } from '@wordpress/components';
-// @ts-expect-error No types for this exist yet.
 import { store as coreStore } from '@wordpress/core-data';
-
+import { useSelect } from '@wordpress/data';
+// @ts-expect-error No types for this exist yet.
+// eslint-disable-next-line @woocommerce/dependency-group
+import { __experimentalBlockPatternsList as BlockPatternList } from '@wordpress/block-editor';
 /**
  * Internal dependencies
  */
@@ -24,14 +24,9 @@ import { HighlightedBlockContext } from '../../context/highlighted-block-context
 import { useEditorScroll } from '../../hooks/use-editor-scroll';
 import { useSelectedPattern } from '../../hooks/use-selected-pattern';
 import { findPatternByBlock } from '../utils';
-import {
-	__experimentalBlockPatternsList as BlockPatternList,
-	// @ts-expect-error No types for this exist yet.
-} from '@wordpress/block-editor';
 import { CustomizeStoreContext } from '~/customize-store/assembler-hub';
 import { FlowType } from '~/customize-store/types';
 import { footerTemplateId } from '~/customize-store/data/homepageTemplates';
-import { useSelect } from '@wordpress/data';
 
 import './style.scss';
 
@@ -55,7 +50,6 @@ export const SidebarNavigationScreenFooter = ( {
 
 	const currentTemplateId: string | undefined = useSelect(
 		( select ) =>
-			// @ts-expect-error No types for this exist yet.
 			select( coreStore ).getDefaultTemplateId( { slug: 'home' } ),
 		[]
 	);

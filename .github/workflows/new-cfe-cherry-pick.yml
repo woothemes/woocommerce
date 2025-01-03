@@ -23,6 +23,9 @@ jobs:
     verify:
         name: Verify
         runs-on: ubuntu-20.04
+        permissions:
+            contents: read
+            pull-requests: read
         outputs:
             run: ${{ steps.check.outputs.run }}
             base_ref: ${{ steps.fetch_pr_details.outputs.base_ref }}
@@ -234,6 +237,16 @@ jobs:
                       Please merge the following PR :pr: into `trunk`:
 
                       ${{ steps.cherry-pick-pr.outputs.cherry-pick-pr }}
+
+            - name: Apply label "cherry pick failed" using the newly created PR url
+              if: ${{ failure() }}
+              run: |
+                gh pr edit $PR_NUMBER --add-label "cherry pick failed" --repo "$OWNER/$REPO"
+              env:
+                PR_NUMBER: ${{ needs.prep.outputs.pr }}
+                OWNER: ${{ github.event.repository.owner.login }}
+                REPO: ${{ github.event.repository.name }}
+                GH_TOKEN: ${{ github.token }}
 
             - name: Comment on PR about the failed cherry pick
               if: ${{ failure() }}

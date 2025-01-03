@@ -1,18 +1,14 @@
 /* eslint-disable @woocommerce/dependency-group */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 /**
  * External dependencies
  */
 import {
 	Button,
 	CheckboxControl,
-	// @ts-ignore No types for this exist yet.
 	__experimentalItemGroup as ItemGroup,
 	Modal,
-	// @ts-ignore No types for this exist yet.
 	__experimentalNavigatorButton as NavigatorButton,
 	Spinner,
-	// @ts-ignore No types for this exist yet.
 } from '@wordpress/components';
 import {
 	createInterpolateElement,
@@ -22,11 +18,8 @@ import {
 } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import interpolateComponents from '@automattic/interpolate-components';
-import {
-	store as coreStore,
-	// @ts-expect-error No types for this exist yet.
-} from '@wordpress/core-data';
-// @ts-expect-error Missing type.
+import { store as coreStore } from '@wordpress/core-data';
+// @ts-expect-error No types for this exist yet.
 import SidebarNavigationItem from '@wordpress/edit-site/build-module/components/sidebar-navigation-item';
 
 /**
@@ -67,9 +60,7 @@ export const SidebarNavigationScreenHomepagePTK = ( {
 	const isPTKPatternsAPIAvailable = context.isPTKPatternsAPIAvailable;
 
 	const currentTemplateId: string | undefined = useSelect(
-		( sel ) =>
-			// @ts-expect-error No types for this exist yet.
-			sel( coreStore ).getDefaultTemplateId( { slug: 'home' } ),
+		( sel ) => sel( coreStore ).getDefaultTemplateId( { slug: 'home' } ),
 		[]
 	);
 

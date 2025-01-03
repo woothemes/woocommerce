@@ -232,7 +232,6 @@ const Marketing: React.FC< MarketingProps > = ( { onComplete } ) => {
 };
 
 registerPlugin( 'wc-admin-onboarding-task-marketing', {
-	// @ts-expect-error @types/wordpress__plugins need to be updated
 	scope: 'woocommerce-tasks',
 	render: () => (
 		<WooOnboardingTask id="marketing">

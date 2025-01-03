@@ -141,13 +141,9 @@ class EmailPreviewTest extends WC_Unit_Test_Case {
 			return $product;
 		};
 		add_filter( 'woocommerce_email_preview_dummy_product', $product_filter, 10, 1 );
-
-		$content = $this->sut->render();
-		$this->assertStringContainsString( 'Filtered Product', $content );
-		$this->assertStringContainsString( '99', $content );
-		$this->assertStringNotContainsString( 'Dummy Product', $content );
-		$this->assertStringNotContainsString( '25', $content );
-
+		$product = $this->sut->get_dummy_product_when_not_set( null );
+		$this->assertEquals( 'Filtered Product', $product->get_name() );
+		$this->assertEquals( '99', $product->get_price() );
 		remove_filter( 'woocommerce_email_preview_dummy_product', $product_filter, 10 );
 	}
 
@@ -246,7 +242,7 @@ class EmailPreviewTest extends WC_Unit_Test_Case {
 	 */
 	public function test_transient_values_in_subject() {
 		$email_id = EmailPreview::DEFAULT_EMAIL_ID;
-		$key      = "woocommerce_${email_id}_subject";
+		$key      = "woocommerce_{$email_id}_subject";
 
 		$this->sut->set_email_type( EmailPreview::DEFAULT_EMAIL_TYPE );
 		$this->assertEquals( $this->sut->get_subject(), 'Your ' . self::SITE_TITLE . ' order has been received!' );
@@ -261,8 +257,8 @@ class EmailPreviewTest extends WC_Unit_Test_Case {
 	 */
 	public function test_transient_values_in_email_content() {
 		$email_id         = EmailPreview::DEFAULT_EMAIL_ID;
-		$heading_key      = "woocommerce_${email_id}_heading";
-		$additional_key   = "woocommerce_${email_id}_additional_content";
+		$heading_key      = "woocommerce_{$email_id}_heading";
+		$additional_key   = "woocommerce_{$email_id}_additional_content";
 		$heading_value    = get_option( $heading_key );
 		$additional_value = get_option( $additional_key );
 

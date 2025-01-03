@@ -5,6 +5,8 @@
  * @package WooCommerce\Tests\Importer
  */
 
+use Automattic\WooCommerce\Enums\ProductType;
+
 /**
  * Test class for WC_Product_CSV_Importer.
  */
@@ -220,7 +222,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 		);
 		$items    = array(
 			array(
-				'simple',
+				ProductType::SIMPLE,
 				'WOOLOGO',
 				'Woo Logo',
 				'1',
@@ -333,7 +335,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 		$importer = new WC_Product_CSV_Importer( $this->csv_file, $args );
 		$items    = array(
 			array(
-				'type'                  => 'simple',
+				'type'                  => ProductType::SIMPLE,
 				'sku'                   => 'WOOLOGO',
 				'name'                  => 'Woo Logo',
 				'featured'              => '',
@@ -377,7 +379,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'menu_order'            => 0,
 			),
 			array(
-				'type'                  => 'simple',
+				'type'                  => ProductType::SIMPLE,
 				'sku'                   => 'WOOALBUM',
 				'name'                  => 'Woo Album #1',
 				'featured'              => true,
@@ -430,7 +432,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'menu_order'            => 1,
 			),
 			array(
-				'type'               => 'external',
+				'type'               => ProductType::EXTERNAL,
 				'sku'                => '',
 				'name'               => 'WooCommerce Product CSV Suite',
 				'featured'           => '',
@@ -466,7 +468,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'menu_order'         => 2,
 			),
 			array(
-				'type'                  => 'variable',
+				'type'                  => ProductType::VARIABLE,
 				'sku'                   => 'WOOIDEA',
 				'name'                  => 'Ship Your Idea',
 				'featured'              => '',
@@ -518,7 +520,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'menu_order'            => 3,
 			),
 			array(
-				'type'               => 'variation',
+				'type'               => ProductType::VARIATION,
 				'sku'                => '',
 				'name'               => '',
 				'featured'           => '',
@@ -563,7 +565,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'menu_order'         => 1,
 			),
 			array(
-				'type'               => 'variation',
+				'type'               => ProductType::VARIATION,
 				'sku'                => '',
 				'name'               => '',
 				'featured'           => '',
@@ -608,7 +610,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'menu_order'         => 2,
 			),
 			array(
-				'type'                  => 'grouped',
+				'type'                  => ProductType::GROUPED,
 				'sku'                   => '',
 				'name'                  => 'Best Woo Products',
 				'featured'              => true,
