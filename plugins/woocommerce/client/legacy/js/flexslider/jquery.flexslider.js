@@ -887,17 +887,17 @@
         }
         if (type === "init") {
           if (!touch) {
-            // Every "opacity" change before outerWidth() does NOT get animated; every "opacity" change after outerWidth() becomes a fadeIn
+            // Every "opacity" change before outerWidth() does NOT get animated; every "opacity" change after outerWidth() becomes a fadeIn animation
             if (slider.vars.fadeFirstSlide == false) {
-              slider.slides.css({ "opacity": 0, "display": "block", "zIndex": 1 }).eq(slider.currentSlide).css({"zIndex": 2}).css({"opacity": 1});
+              slider.slides.css({ "opacity": 0, "display": "block", "zIndex": 1 }).eq(slider.currentSlide).css({ "opacity": 1, "zIndex": 2 });
               slider.slides.outerWidth();
             } else {
               slider.slides.css({ "opacity": 0, "display": "block", "zIndex": 1 }).outerWidth();
-              slider.slides.eq(slider.currentSlide).css({"zIndex": 2}).css({"opacity": 1});
+              slider.slides.eq(slider.currentSlide).css({ "opacity": 1, "zIndex": 2 });
             }
             slider.slides.css({ "transition": "opacity " + slider.vars.animationSpeed / 1000 + "s " + easing });
           } else {
-            slider.slides.css({ "opacity": 0, "display": "block", "transition": "opacity " + slider.vars.animationSpeed / 1000 + "s ease", "zIndex": 1 }).eq(slider.currentSlide).css({ "opacity": 1, "zIndex": 2});
+            slider.slides.css({ "opacity": 0, "display": "block", "transition": "opacity " + slider.vars.animationSpeed / 1000 + "s ease", "zIndex": 1 }).eq(slider.currentSlide).css({ "opacity": 1, "zIndex": 2 });
           }
         }
         // SMOOTH HEIGHT:

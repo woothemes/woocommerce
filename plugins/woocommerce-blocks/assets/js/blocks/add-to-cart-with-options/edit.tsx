@@ -19,11 +19,7 @@ import ToolbarProductTypeGroup from './components/toolbar-type-product-selector-
 import { DowngradeNotice } from './components/downgrade-notice';
 import getInnerBlocksTemplate from './utils/get-inner-blocks-template';
 import useProductTypeSelector from './hooks/use-product-type-selector';
-
-export interface Attributes {
-	className?: string;
-	isDescendentOfSingleProductBlock: boolean;
-}
+import type { Attributes } from './types';
 
 export type FeaturesKeys = 'isBlockifiedAddToCart';
 
