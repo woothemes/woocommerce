@@ -1978,30 +1978,8 @@ class WC_Helper {
 
 		$plugin        = $plugins[ $filename ];
 		$product_id    = $plugin['_product_id'];
-		$subscriptions = self::_get_subscriptions_from_product_id( $product_id, false );
 
-		// No valid subscriptions for this product.
-		if ( empty( $subscriptions ) ) {
-			return;
-		}
-
-		$subscription = null;
-		foreach ( $subscriptions as $_sub ) {
-
-			// Don't attempt to activate expired subscriptions.
-			if ( $_sub['expired'] ) {
-				continue;
-			}
-
-			// No more sites available in this subscription.
-			if ( isset( $_sub['maxed'] ) && $_sub['maxed'] ) {
-				continue;
-			}
-
-			// Looks good.
-			$subscription = $_sub;
-			break;
-		}
+		$subscription  = self::_get_available_subscription( $product_id );
 
 		// No valid subscription found.
 		if ( ! $subscription ) {
@@ -2069,30 +2047,7 @@ class WC_Helper {
 
 		$theme = reset( $themes );
 
-		$subscriptions = self::_get_subscriptions_from_product_id( $product_id, false );
-
-		// No valid subscriptions for this product.
-		if ( empty( $subscriptions ) ) {
-			return;
-		}
-
-		$subscription = null;
-		foreach ( $subscriptions as $_sub ) {
-
-			// Don't attempt to activate expired subscriptions.
-			if ( $_sub['expired'] ) {
-				continue;
-			}
-
-			// No more sites available in this subscription.
-			if ( isset( $_sub['maxed'] ) && $_sub['maxed'] ) {
-				continue;
-			}
-
-			// Looks good.
-			$subscription = $_sub;
-			break;
-		}
+		$subscription = self::_get_available_subscription( $product_id );
 
 		// No valid subscription found.
 		if ( ! $subscription ) {
@@ -2582,6 +2537,35 @@ class WC_Helper {
 		}
 
 		return array( $activation_response, $activated );
+	}
+
+	protected static function _get_available_subscription( $product_id ) {
+		$subscriptions = self::_get_subscriptions_from_product_id( $product_id, false );
+
+		// No valid subscriptions for this product.
+		if ( empty( $subscriptions ) ) {
+			return null;
+		}
+
+		$subscription = null;
+		foreach ( $subscriptions as $_sub ) {
+
+			// Don't attempt to activate expired subscriptions.
+			if ( $_sub['expired'] ) {
+				continue;
+			}
+
+			// No more sites available in this subscription.
+			if ( isset( $_sub['maxed'] ) && $_sub['maxed'] ) {
+				continue;
+			}
+
+			// Looks good.
+			$subscription = $_sub;
+			break;
+		}
+
+		return $subscription;
 	}
 }
 
