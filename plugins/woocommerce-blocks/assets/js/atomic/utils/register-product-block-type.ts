@@ -31,6 +31,7 @@ type ProductBlockSettings = {
  * Internal block config type used by the BlockRegistrationManager
  *
  * @typedef {Object} ProductBlockConfig
+ * @template T Extends BlockAttributes to define the block's attribute types
  * @property {string}                      blockName            - The name of the block
  * @property {Partial<BlockConfiguration>} settings             - Block settings configuration
  * @property {ProductBlockSettings}        productBlockSettings - Product block settings
@@ -44,6 +45,7 @@ type ProductBlockConfig< T extends BlockAttributes > = ProductBlockSettings & {
  * Configuration object for registering a product block type.
  *
  * @typedef {Object} ProductBlockRegistrationConfig
+ * @template T Extends BlockAttributes to define the block's attribute types
  * @property {Partial<BlockConfiguration>} settings                - Block settings configuration
  * @property {boolean}                     [isVariationBlock]      - Whether this block is a variation
  * @property {string}                      [variationName]         - The name of the variation if applicable
@@ -222,7 +224,8 @@ export class BlockRegistrationManager {
 	 * Unregisters a block or block variation.
 	 * Handles both regular blocks and variations with error handling.
 	 *
-	 * @param {ProductBlockConfig} config - Configuration of the block to unregister
+	 * @template T The type of block attributes
+	 * @param {ProductBlockConfig<T>} config - Configuration of the block to unregister
 	 */
 	private unregisterBlock< T extends BlockAttributes >(
 		config: ProductBlockConfig< T >
@@ -251,7 +254,8 @@ export class BlockRegistrationManager {
 	 * Handles different registration requirements for various contexts.
 	 * Includes checks to prevent recursive registration.
 	 *
-	 * @param {ProductBlockConfig} config - Configuration of the block to register
+	 * @template T The type of block attributes
+	 * @param {ProductBlockConfig<T>} config - Configuration of the block to unregister
 	 */
 	private registerBlock< T extends BlockAttributes >(
 		config: ProductBlockConfig< T >
@@ -311,7 +315,8 @@ export class BlockRegistrationManager {
 	 * Registers a new block configuration with the manager.
 	 * Main entry point for adding new blocks to be managed.
 	 *
-	 * @param {ProductBlockConfig} config - Configuration for the block to register
+	 * @template T The type of block attributes
+	 * @param {ProductBlockConfig<T>} config - Configuration of the block to unregister
 	 */
 	public registerBlockConfig< T extends BlockAttributes >(
 		config: ProductBlockConfig< T >
@@ -343,6 +348,11 @@ export class BlockRegistrationManager {
  * with no ancestor constraints. The `isAvailableOnPostEditor` flag can be used to make
  * the block available in regular post editing contexts as well where ancestor constraints are enforced.
  *
+ * @template T Extends BlockAttributes to define the block's attribute types
+ * @param {string | Partial<BlockConfiguration<T>>}               blockNameOrMetadata - Either a string block name or block metadata object
+ * @param {ProductBlockRegistrationConfig<BlockConfiguration<T>>} [settings]          - Optional settings for block registration
+ * @return {void}
+ *
  * @example
  * ```typescript
  * registerProductBlockType({
@@ -355,8 +365,6 @@ export class BlockRegistrationManager {
  *     isAvailableOnPostEditor: true
  * });
  * ```
- *
- * @return {void}
  */
 export const registerProductBlockType = < T extends BlockAttributes >(
 	blockNameOrMetadata: string | Partial< BlockConfiguration< T > >,
