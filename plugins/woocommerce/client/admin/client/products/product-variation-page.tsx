@@ -41,15 +41,19 @@ export default function ProductPage() {
 			render: () => (
 				<>
 					<WooProductMoreMenuItem>
-						{ ( { onClose }: { onClose: () => void } ) => (
-							<>
-								<DeleteVariationMenuItem onClose={ onClose } />
-								<MoreMenuFill
-									productType="product_variation"
-									onClose={ onClose }
-								/>
-							</>
-						) }
+						{
+							( ( { onClose }: { onClose: () => void } ) => (
+								<>
+									<DeleteVariationMenuItem
+										onClose={ onClose }
+									/>
+									<MoreMenuFill
+										productType="product_variation"
+										onClose={ onClose }
+									/>
+								</>
+							) ) as unknown as React.ReactNode
+						}
 					</WooProductMoreMenuItem>
 				</>
 			),
