@@ -2,9 +2,6 @@ const { test } = require( '../../../../fixtures/block-editor-fixtures' );
 const { expect } = require( '@playwright/test' );
 
 const { clickOnTab } = require( '../../../../utils/simple-products' );
-const {
-	getInstalledWordPressVersion,
-} = require( '../../../../utils/wordpress' );
 const { insertBlock } = require( '../../../../utils/editor' );
 const { tags } = require( '../../../../fixtures/fixtures' );
 
@@ -37,7 +34,7 @@ const productData = {
 
 test.describe.configure( { mode: 'serial' } );
 
-test.describe( 'General tab', { tag: tags.GUTENBERG }, () => {
+test.describe( 'General tab', { tag: [ tags.GUTENBERG ] }, () => {
 	test.describe( 'Simple product form', () => {
 		test(
 			'renders each block without error',
@@ -99,8 +96,8 @@ test.describe( 'General tab', { tag: tags.GUTENBERG }, () => {
 
 				await page.getByText( 'Full editor' ).click();
 
-				const wordPressVersion = await getInstalledWordPressVersion();
-				await insertBlock( page, 'Heading', wordPressVersion );
+				const timestamp = Date.now().toString();
+				await insertBlock( page, 'Heading', timestamp );
 
 				const editorCanvasLocator = page.frameLocator(
 					'iframe[name="editor-canvas"]'
@@ -114,7 +111,7 @@ test.describe( 'General tab', { tag: tags.GUTENBERG }, () => {
 					.locator( '[data-title="Heading"]' )
 					.blur();
 
-				await insertBlock( page, 'Paragraph', wordPressVersion );
+				await insertBlock( page, 'Paragraph', timestamp );
 
 				await editorCanvasLocator
 					.locator( '[data-title="Paragraph"]' )
