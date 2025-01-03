@@ -514,20 +514,6 @@ $tt2-gray: #f7f7f7;
 			padding: 0.7rem 2rem;
 		}
 	}
-
-	// Float label.
-	form .form-row {
-
-		&:has(.input-with-wc-float-label) {
-			position: relative;
-
-			label {
-				@include woocommerce-float-label();
-				left: 1.15rem;
-				transform: translateY(0.8em);
-			}
-		}
-	}
 }
 
 // Description/Additional info/Reviews tabs.
@@ -773,20 +759,6 @@ ul.wc-tabs {
 			margin-right: 0;
 		}
 
-		.coupon {
-			position: relative;
-
-			label {
-				@include woocommerce-float-label();
-				left: 1.15em;
-				transform: translateY(1.1em);
-
-				&.is-active {
-					transform: translateY(2px) scale(.75);
-				}
-			}
-		}		
-
 		table.shop_table_responsive {
 
 			td,
@@ -811,6 +783,7 @@ ul.wc-tabs {
 
 					#coupon_code {
 						float: left;
+						margin-bottom: 1rem;
 					}
 				}
 			}
