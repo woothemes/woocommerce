@@ -4,10 +4,7 @@
 import { InspectorControls } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import {
-	Flex,
-	FlexItem,
 	PanelBody,
-	Notice,
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore - Ignoring because `__experimentalToggleGroupControl` is not yet in the type definitions.
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
@@ -57,35 +54,10 @@ export const AddToCartFormSettings = ( {
 	setAttributes,
 	features,
 }: AddToCartFormSettingsProps ) => {
-	const { isBlockifiedAddToCart, isStepperLayoutFeatureEnabled } = features;
-	const devFeatures = {
-		isBlockifiedAddToCart,
-	};
-
-	const featuresDevList = Object.keys( devFeatures ) as FeaturesKeys[];
-	const enabledDevFeatures = featuresDevList.filter(
-		( feature ) => features[ feature ]
-	);
+	const { isStepperLayoutFeatureEnabled } = features;
 
 	return (
 		<InspectorControls>
-			{ enabledDevFeatures.length > 0 && (
-				<PanelBody title={ 'Development' }>
-					<Flex gap={ 3 } direction="column">
-						<Notice status="warning" isDismissible={ false }>
-							{ __(
-								'Development features enabled.',
-								'woocommerce'
-							) }
-						</Notice>
-
-						{ enabledDevFeatures.map( ( feature ) => (
-							<FlexItem key={ feature }>{ feature }</FlexItem>
-						) ) }
-					</Flex>
-				</PanelBody>
-			) }
-
 			{ isStepperLayoutFeatureEnabled && (
 				<PanelBody title={ __( 'Quantity Selector', 'woocommerce' ) }>
 					<ToggleGroupControl
