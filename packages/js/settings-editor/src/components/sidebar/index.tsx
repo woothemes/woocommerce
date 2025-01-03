@@ -27,14 +27,14 @@ import {
 
 const { useLocation } = unlock( routerPrivateApis );
 
-const SidebarNavigationScreenContent = () => {
-	const { query } = useLocation();
-
+const SidebarNavigationScreenContent = ( {
+	activeTab,
+}: {
+	activeTab?: string;
+} ) => {
 	if ( ! settingsData ) {
 		return null;
 	}
-
-	const { tab: activeTab } = query;
 
 	return (
 		<ItemGroup>
@@ -62,17 +62,20 @@ const SidebarNavigationScreenContent = () => {
 };
 
 type SidebarProps = {
-	title: string;
 	backPack?: string;
 };
 
-export const Sidebar = ( { title, backPack }: SidebarProps ) => {
+export const Sidebar = ( { backPack }: SidebarProps ) => {
+	const { query } = useLocation();
+	const { tab = 'general' } = query;
+	const page = getSettingsPage( tab );
+
 	return (
 		<SidebarNavigationScreen
 			isRoot
-			title={ title }
+			title={ page.label }
 			backPack={ backPack }
-			content={ <SidebarNavigationScreenContent /> }
+			content={ <SidebarNavigationScreenContent activeTab={ tab } /> }
 		/>
 	);
 };
