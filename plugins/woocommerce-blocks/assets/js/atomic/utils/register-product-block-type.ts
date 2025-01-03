@@ -255,7 +255,7 @@ export class BlockRegistrationManager {
 	 * Includes checks to prevent recursive registration.
 	 *
 	 * @template T The type of block attributes
-	 * @param {ProductBlockConfig<T>} config - Configuration of the block to unregister
+	 * @param {ProductBlockConfig<T>} config - Configuration of the block to register
 	 */
 	private registerBlock< T extends BlockAttributes >(
 		config: ProductBlockConfig< T >
@@ -316,7 +316,7 @@ export class BlockRegistrationManager {
 	 * Main entry point for adding new blocks to be managed.
 	 *
 	 * @template T The type of block attributes
-	 * @param {ProductBlockConfig<T>} config - Configuration of the block to unregister
+	 * @param {ProductBlockConfig<T>} config - Configuration of the block to register
 	 */
 	public registerBlockConfig< T extends BlockAttributes >(
 		config: ProductBlockConfig< T >
