@@ -20,23 +20,27 @@ export type RouteProps = {
 	};
 };
 
-const settingsEditorRoutes = Object.values( settingsData ).map(
-	( settingsPage ) => {
-		return {
-			name: settingsPage.slug,
-			path: getSettingsSectionPath( settingsPage.slug ),
-			areas: {
-				sidebar: <Sidebar title={ settingsPage.label } backPack="/" />,
-				content: (
-					<LegacyContent
-						settingsPage={ settingsPage }
-						activeSection="default"
-					/>
-				),
-				mobile: <div>Mobile</div>,
-			},
-		};
-	}
-);
+const settingsEditorRoutes = Object.values( settingsData )
+	.map( ( settingsPage ) => {
+		return Object.entries( settingsPage.sections ).map( ( [ key ] ) => {
+			return {
+				name: settingsPage.slug,
+				path: getSettingsSectionPath( settingsPage.slug, key ),
+				areas: {
+					sidebar: (
+						<Sidebar title={ settingsPage.label } backPack="/" />
+					),
+					content: (
+						<LegacyContent
+							settingsPage={ settingsPage }
+							activeSection="default"
+						/>
+					),
+					mobile: <div>Mobile</div>,
+				},
+			};
+		} );
+	} )
+	.flat();
 
 export default settingsEditorRoutes;
