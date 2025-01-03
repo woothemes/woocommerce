@@ -773,8 +773,7 @@
 		"wp-textdomain": "1.0.1"
 	},
 	"engines": {
-		"node": "^20.11.1",
-		"pnpm": "9.15.0"
+		"node": "^20.11.1"
 	},
 	"browserslist": [
 		"> 0.1%",
