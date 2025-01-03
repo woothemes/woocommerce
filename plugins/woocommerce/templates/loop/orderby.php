@@ -26,7 +26,15 @@ $id_suffix = wp_unique_id();
 	<?php if ( $use_label ) : ?>
 		<label for="woocommerce-orderby-<?php echo esc_attr( $id_suffix ); ?>"><?php echo esc_html__( 'Sort by', 'woocommerce' ); ?></label>
 	<?php endif; ?>
-	<select name="orderby" class="orderby" <?php echo $use_label ? "id='woocommerce-orderby-" . esc_attr( $id_suffix ) . "'" : "aria-label='" . esc_attr__( 'Shop order', 'woocommerce' ) . "'"; ?>>
+	<select
+		name="orderby"
+		class="orderby"
+		<?php if ( $use_label ) : ?>
+			id="<?php esc_attr_e( "woocommerce-orderby-{$id_suffix}" ); ?>"
+		<?php else : ?>
+			aria-label="<?php esc_attr_e( 'Shop order', 'woocommerce' ); ?>"
+		<?php endif; ?>
+	>
 		<?php foreach ( $catalog_orderby_options as $id => $name ) : ?>
 			<option value="<?php echo esc_attr( $id ); ?>" <?php selected( $orderby, $id ); ?>><?php echo esc_html( $name ); ?></option>
 		<?php endforeach; ?>
