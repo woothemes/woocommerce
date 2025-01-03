@@ -23,32 +23,24 @@ export type RouteProps = {
 /*
  * Generate routes for settings editor.
  * It will create a route for each settings page and each section of the page.
- * eg:
- *  - /wc-settings/general,
- *  - /wc-settings/products/general,
- *  - /wc-settings/products/inventory
  */
-const settingsEditorRoutes = Object.values( settingsData )
-	.map( ( settingsPage ) => {
-		return Object.entries( settingsPage.sections ).map( ( [ section ] ) => {
-			return {
-				name: settingsPage.slug,
-				path: getSettingsSectionPath( settingsPage.slug, section ),
-				areas: {
-					sidebar: (
-						<Sidebar title={ settingsPage.label } backPack="/" />
-					),
-					content: (
-						<LegacyContent
-							settingsPage={ settingsPage }
-							activeSection={ section }
-						/>
-					),
-					mobile: <div>Mobile</div>,
-				},
-			};
-		} );
-	} )
-	.flat();
+const settingsEditorRoutes = Object.values( settingsData ).map(
+	( settingsPage ) => {
+		return {
+			name: settingsPage.slug,
+			path: getSettingsSectionPath( settingsPage.slug ),
+			areas: {
+				sidebar: <Sidebar title={ settingsPage.label } backPack="/" />,
+				content: (
+					<LegacyContent
+						settingsPage={ settingsPage }
+						activeSection="default"
+					/>
+				),
+				mobile: <div>Mobile</div>,
+			},
+		};
+	}
+);
 
 export default settingsEditorRoutes;
