@@ -45,14 +45,15 @@ type LayoutProps = {
 	tabs?: Array< { name: string; title: string } >;
 };
 
-export function Layout( { tabs = [], activeSection }: LayoutProps ) {
+export function Layout( { activeSection }: LayoutProps ) {
 	const [ fullResizer ] = useResizeObserver();
 	const toggleRef = useRef< HTMLAnchorElement >( null );
 	const isMobileViewport = useViewportMatch( 'medium', '<' );
 	const disableMotion = useReducedMotion();
 
 	const { name, areas, widths } = useLocation();
-	const { label } = getSettingsPage( name );
+	const settingsPage = getSettingsPage( name );
+	const { label } = settingsPage;
 
 	return (
 		<>
@@ -105,15 +106,9 @@ export function Layout( { tabs = [], activeSection }: LayoutProps ) {
 								maxWidth: widths?.content,
 							} }
 						>
-							<Header
-								hasTabs={ tabs.length > 1 }
-								pageTitle={ label }
-							/>
+							<Header pageTitle={ label } />
 
-							<SectionTabs
-								tabs={ tabs }
-								activeSection={ activeSection }
-							>
+							<SectionTabs activeSection={ activeSection }>
 								{ areas.content }
 							</SectionTabs>
 						</div>
