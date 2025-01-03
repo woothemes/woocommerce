@@ -51,15 +51,15 @@ const Edit = ( {
 			<InspectorControls>
 				<PanelBody title={ __( 'Accessibility', 'woocommerce' ) }>
 					<ToggleControl
-						label={ __( 'Use a label HTML tag', 'woocommerce' ) }
+						label={ __( 'Show visual label', 'woocommerce' ) }
 						help={ __(
-							'Add a label HTML tag associated to the sorting selector.',
+							'Displays "Sort by" text before the dropdown menu to improve clarity and accessibility.',
 							'woocommerce'
 						) }
 						checked={ useLabel }
-						onChange={ () =>
+						onChange={ ( isChecked ) =>
 							setAttributes( {
-								useLabel: ! useLabel,
+								useLabel: isChecked,
 							} )
 						}
 					/>
