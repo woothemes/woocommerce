@@ -5,12 +5,12 @@ import { useSelect, useDispatch } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { store as woocommerceTemplateStateStore } from '../../../../shared/store';
+import { store as productTypeTemplateStateStore } from '../../../../shared/stores/product-type-template-state';
 import type { ProductTypeProps } from '../../types';
 
 type ProductTypeSelector = {
 	productTypes: ProductTypeProps[];
-	current: ProductTypeProps;
+	current: ProductTypeProps | undefined;
 	set: ( productType: string ) => void;
 	registeredListeners: string[];
 	registerListener: ( listener: string ) => void;
@@ -29,29 +29,25 @@ export default function useProductTypeSelector(): ProductTypeSelector {
 	 * Get the registered listeners, available product types and the current product type
 	 * from the store.
 	 */
-	const { productTypes, current, registeredListeners } = useSelect< {
-		productTypes: ProductTypeProps[];
-		current: ProductTypeProps;
-		registeredListeners: string[];
-	} >( ( select ) => {
-		const {
-			getProductTypes,
-			getCurrentProductType,
-			getRegisteredListeners,
-		} = select( woocommerceTemplateStateStore );
+	const { productTypes, current, registeredListeners } = useSelect(
+		( select ) => {
+			const {
+				getProductTypes,
+				getCurrentProductType,
+				getRegisteredListeners,
+			} = select( productTypeTemplateStateStore );
 
-		return {
-			productTypes: getProductTypes(),
-			current: getCurrentProductType(),
-			registeredListeners: getRegisteredListeners(),
-		};
-	}, [] );
-
-	const { registerListener, unregisterListener } = useDispatch(
-		woocommerceTemplateStateStore
+			return {
+				productTypes: getProductTypes(),
+				current: getCurrentProductType(),
+				registeredListeners: getRegisteredListeners(),
+			};
+		},
+		[]
 	);
 
-	const { switchProductType } = useDispatch( woocommerceTemplateStateStore );
+	const { switchProductType, registerListener, unregisterListener } =
+		useDispatch( productTypeTemplateStateStore );
 
 	return {
 		productTypes,
