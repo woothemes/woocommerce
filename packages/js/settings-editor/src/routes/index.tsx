@@ -6,7 +6,7 @@ import { createElement } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import { Sidebar } from '../components';
+import { Header, Sidebar } from '../components';
 import { LegacyContent } from '../legacy';
 
 export type RouteProps = {
@@ -28,6 +28,7 @@ const settingsEditorRoutes = [
 		name: 'wc-settings',
 		path: '/wc-settings',
 		areas: {
+			header: <Header />,
 			sidebar: <Sidebar backPack="/" />,
 			content: <LegacyContent />,
 			mobile: <div>Mobile</div>,
