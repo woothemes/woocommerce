@@ -6,7 +6,6 @@ import { createElement } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import { getSettingsSectionPath, settingsData } from '../utils';
 import { Sidebar } from '../components';
 import { LegacyContent } from '../legacy';
 
@@ -24,21 +23,16 @@ export type RouteProps = {
  * Generate routes for settings editor.
  * It will create a route for each settings page and each section of the page.
  */
-const settingsEditorRoutes = Object.values( settingsData ).map(
-	( settingsPage ) => {
-		const name = settingsPage.slug;
-		const path = getSettingsSectionPath( name );
-
-		return {
-			name,
-			path,
-			areas: {
-				sidebar: <Sidebar backPack="/" />,
-				content: <LegacyContent />,
-				mobile: <div>Mobile</div>,
-			},
-		};
-	}
-);
+const settingsEditorRoutes = [
+	{
+		name: 'wc-settings',
+		path: '/wc-settings',
+		areas: {
+			sidebar: <Sidebar backPack="/" />,
+			content: <LegacyContent />,
+			mobile: <div>Mobile</div>,
+		},
+	},
+];
 
 export default settingsEditorRoutes;
