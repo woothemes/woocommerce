@@ -18,14 +18,14 @@ import { store as editSiteStore } from '@wordpress/edit-site/build-module/store'
  */
 import { isGutenbergVersionAtLeast } from './utils';
 import { Layout } from './layout';
-import useRegisterSettingsRoutes from './hooks/use-register-settings-routes';
+import useInitialConfiguration from './hooks/use-initial-configuration';
 import settingsEditorRoutes from './routes';
 
 const { RouterProvider } = unlock( routerPrivateApis );
 
 export const SettingsEditor = () => {
 	const isRequiredGutenbergVersion = isGutenbergVersionAtLeast( 19.0 );
-	useRegisterSettingsRoutes( settingsEditorRoutes );
+	useInitialConfiguration( settingsEditorRoutes );
 
 	const routes = useSelect( ( select ) => {
 		return unlock( select( editSiteStore ) ).getRoutes();

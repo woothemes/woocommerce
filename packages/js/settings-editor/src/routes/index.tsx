@@ -29,7 +29,7 @@ const settingsEditorRoutes = [
 		path: '/wc-settings',
 		areas: {
 			header: <Header />,
-			sidebar: <Sidebar backPack="/" />,
+			sidebar: <Sidebar />,
 			content: <LegacyContent />,
 			mobile: <div>Mobile</div>,
 		},

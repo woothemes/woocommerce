@@ -15,11 +15,18 @@ import { store as editSiteStore } from '@wordpress/edit-site/build-module/store'
  */
 import { RouteProps } from '../../routes';
 
-export default function useRegisterSettingsRoutes( routes: RouteProps[] ) {
-	const { registerRoute } = unlock( useDispatch( editSiteStore ) );
-
-	useEffect(
-		() => routes.forEach( registerRoute ),
-		[ registerRoute, routes ]
+export default function useInitialConfiguration( routes: RouteProps[] ) {
+	const { registerRoute, updateSettings } = unlock(
+		useDispatch( editSiteStore )
 	);
+
+	useEffect( () => {
+		// Register all routes.
+		routes.forEach( registerRoute );
+
+		// Update settings with the dashboard link.
+		updateSettings( {
+			__experimentalDashboardLink: window.wcSettings.adminUrl,
+		} );
+	}, [ registerRoute, routes, updateSettings ] );
 }

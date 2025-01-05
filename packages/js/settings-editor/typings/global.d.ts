@@ -103,6 +103,7 @@ declare global {
 			admin: {
 				settingsData: SettingsData;
 			};
+			adminUrl: string;
 		};
 		wcTracks: {
 			isEnabled: boolean;

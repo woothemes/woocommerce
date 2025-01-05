@@ -57,16 +57,11 @@ const SidebarNavigationScreenContent = () => {
 	);
 };
 
-type SidebarProps = {
-	backPack?: string;
-};
-
-export const Sidebar = ( { backPack }: SidebarProps ) => {
+export const Sidebar = () => {
 	return (
 		<SidebarNavigationScreen
 			isRoot
 			title={ __( 'Settings', 'woocommerce' ) }
-			backPack={ backPack }
 			content={ <SidebarNavigationScreenContent /> }
 		/>
 	);
