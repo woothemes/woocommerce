@@ -351,6 +351,37 @@
 
 					$( document.body ).trigger( 'init_tooltips' );
 				},
+				unformatShippingMethodNumericValues: function( data ) {
+					if ( ! window.wc.ShippingCurrencyContext ) {
+						return data;
+					}
+
+					const config = window.wc.ShippingCurrencyContext.getCurrencyConfig();
+					const numericValuesFields = [
+						'woocommerce_free_shipping_min_amount',
+						'woocommerce_flat_rate_cost',
+					];
+
+					numericValuesFields.forEach( function( field ) {
+						const formattedValue = data[ field ];
+						
+						if ( ! formattedValue ) {
+							return;
+						}
+
+						if ( 'number' === typeof formattedValue ) {
+							return;
+						}
+
+						const unformattedValue = formattedValue
+							.replaceAll( config.thousandSeparator, '' )
+							.replaceAll( config.decimalSeparator, '.' );
+
+						data[ field ] = unformattedValue;
+					} );
+
+					return data;
+				},
 				onConfigureShippingMethodSubmitted: function( event, target, posted_data ) {
 					if ( 'wc-modal-shipping-method-settings' === target ) {
 						shippingMethodView.block();
@@ -361,7 +392,7 @@
 							{
 								wc_shipping_zones_nonce : data.wc_shipping_zones_nonce,
 								instance_id             : posted_data.instance_id,
-								data                    : posted_data
+								data                    : shippingMethodView.unformatShippingMethodNumericValues( posted_data )
 							},
 							function( response, textStatus ) {
 								if ( 'success' === textStatus && response.success ) {
