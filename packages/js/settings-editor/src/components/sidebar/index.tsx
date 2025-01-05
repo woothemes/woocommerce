@@ -28,14 +28,9 @@ import {
 
 const { useLocation } = unlock( routerPrivateApis );
 
-const SidebarNavigationScreenContent = ( {
-	activeTab,
-}: {
-	activeTab?: string;
-} ) => {
-	if ( ! settingsData ) {
-		return null;
-	}
+const SidebarNavigationScreenContent = () => {
+	const { query } = useLocation();
+	const { tab: activeTab = 'general' } = query;
 
 	return (
 		<ItemGroup>
@@ -67,16 +62,12 @@ type SidebarProps = {
 };
 
 export const Sidebar = ( { backPack }: SidebarProps ) => {
-	const { query } = useLocation();
-	const { tab = 'general' } = query;
-	const page = getSettingsPage( tab );
-
 	return (
 		<SidebarNavigationScreen
 			isRoot
-			title={ page?.label || __( 'Settings', 'woocommerce' ) }
+			title={ __( 'Settings', 'woocommerce' ) }
 			backPack={ backPack }
-			content={ <SidebarNavigationScreenContent activeTab={ tab } /> }
+			content={ <SidebarNavigationScreenContent /> }
 		/>
 	);
 };
