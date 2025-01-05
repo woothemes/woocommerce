@@ -12,6 +12,9 @@ overrides:
 pnpmfileChecksum: y3ex4x7shfdnqpcpdnu67kmuvu
 
 patchedDependencies:
+  '@wordpress/dataviews@4.10.0':
+    hash: gfnjgwydsjh5nea6dpodxljxs4
+    path: patches/@wordpress__dataviews@4.10.0.patch
   '@wordpress/edit-site@5.15.0':
     hash: u2xn4lpm453vgqpkdgbivlveaa
     path: bin/patches/@wordpress__edit-site@5.15.0.patch
@@ -2920,7 +2923,7 @@ importers:
         version: 10.0.2(react@18.3.1)
       '@wordpress/dataviews':
         specifier: ^4.10.0
-        version: 4.10.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 4.10.0(patch_hash=gfnjgwydsjh5nea6dpodxljxs4)(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/date':
         specifier: wp-6.6
         version: 5.0.1
@@ -42991,7 +42994,7 @@ snapshots:
       rememo: 4.0.2
       use-memo-one: 1.1.3(react@18.3.1)
 
-  '@wordpress/dataviews@4.10.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@wordpress/dataviews@4.10.0(patch_hash=gfnjgwydsjh5nea6dpodxljxs4)(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@ariakit/react': 0.4.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@babel/runtime': 7.25.7
@@ -43484,7 +43487,7 @@ snapshots:
       '@wordpress/core-commands': 1.11.0(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/core-data': 7.10.0(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/data': 10.0.2(react@18.3.1)
-      '@wordpress/dataviews': 4.10.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@wordpress/dataviews': 4.10.0(patch_hash=gfnjgwydsjh5nea6dpodxljxs4)(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/date': 5.10.0
       '@wordpress/deprecated': 4.10.0
       '@wordpress/dom': 4.10.0
@@ -43651,7 +43654,7 @@ snapshots:
       '@wordpress/compose': 7.0.1(react@18.3.1)
       '@wordpress/core-data': 7.0.7(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/data': 10.0.2(react@18.3.1)
-      '@wordpress/dataviews': 4.10.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@wordpress/dataviews': 4.10.0(patch_hash=gfnjgwydsjh5nea6dpodxljxs4)(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/date': 5.0.1
       '@wordpress/deprecated': 4.0.1
       '@wordpress/dom': 4.0.1
@@ -44021,7 +44024,7 @@ snapshots:
       '@wordpress/compose': 7.10.0(react@18.3.1)
       '@wordpress/core-data': 7.10.0(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.0.10)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/data': 10.0.2(react@18.3.1)
-      '@wordpress/dataviews': 4.10.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@wordpress/dataviews': 4.10.0(patch_hash=gfnjgwydsjh5nea6dpodxljxs4)(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/element': 6.10.0
       '@wordpress/hooks': 4.10.0
       '@wordpress/html-entities': 4.10.0
@@ -44054,7 +44057,7 @@ snapshots:
       '@wordpress/compose': 7.10.0(react@18.3.1)
       '@wordpress/core-data': 7.10.0(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/data': 10.0.2(react@18.3.1)
-      '@wordpress/dataviews': 4.10.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@wordpress/dataviews': 4.10.0(patch_hash=gfnjgwydsjh5nea6dpodxljxs4)(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/element': 6.10.0
       '@wordpress/hooks': 4.10.0
       '@wordpress/html-entities': 4.10.0
