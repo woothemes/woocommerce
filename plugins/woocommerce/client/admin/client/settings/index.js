@@ -19,6 +19,10 @@ import './settings.scss';
 
 const node = document.getElementById( 'wc-settings-page' );
 
+registerTaxSettingsConflictErrorFill();
+registerPaymentsSettingsBannerFill();
+registerSiteVisibilitySlotFill();
+
 const Settings = () => {
 	const { activePage, activeSection } = useActiveRoute();
 
@@ -26,13 +30,6 @@ const Settings = () => {
 	useEffect( () => {
 		possiblyRenderSettingsSlots();
 	}, [ activePage, activeSection ] );
-
-	// Register the settings slots only once.
-	useEffect( () => {
-		registerTaxSettingsConflictErrorFill();
-		registerPaymentsSettingsBannerFill();
-		registerSiteVisibilitySlotFill();
-	}, [] );
 
 	return <SettingsEditor />;
 };
