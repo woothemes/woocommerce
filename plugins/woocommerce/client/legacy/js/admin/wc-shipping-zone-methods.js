@@ -375,6 +375,11 @@
 							return;
 						}
 
+						// Brackets signal a formula. Avoid unformatting these values.
+						if ( formattedValue.includes( '[' ) && formattedValue.includes( ']' ) ) {
+							return;
+						}
+
 						const unformattedValue = formattedValue
 							.replaceAll( config.thousandSeparator, '' )
 							.replace( config.decimalSeparator, '.' );
