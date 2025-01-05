@@ -56,29 +56,27 @@ const moveMarkers = (
 /**
  * Calculate how long the content can be based on the maximum number of lines allowed, and client height.
  *
- * @param {string}      originalContent Content to be clamped.
+ * @param {HTMLElement} originalContent Element with content to be clamped.
  * @param {HTMLElement} targetElement   Element which will contain the clamped content.
  * @param {number}      maxHeight       Max height of the clamped content.
  */
 const calculateLength = (
-	originalContent: string,
+	originalContent: HTMLElement,
 	targetElement: HTMLElement,
 	maxHeight: number
 ): number => {
+	const content = originalContent.innerHTML;
 	let markers: Markers = {
 		start: 0,
 		middle: 0,
-		end: originalContent.length,
+		end: content.length,
 	};
 
 	while ( markers.start <= markers.end ) {
 		markers.middle = Math.floor( ( markers.start + markers.end ) / 2 );
 
 		// We set the innerHTML directly in the DOM here so we can reliably check the clientHeight later in moveMarkers.
-		targetElement.innerHTML = truncateHtml(
-			originalContent,
-			markers.middle
-		);
+		targetElement.innerHTML = truncateHtml( content, markers.middle );
 
 		markers = moveMarkers( markers, targetElement.clientHeight, maxHeight );
 	}
@@ -90,19 +88,23 @@ const calculateLength = (
  * Clamp lines calculates the height of a line of text and then limits it to the
  * value of the lines prop. Content is updated once limited.
  *
- * @param {string}      originalContent Content to be clamped.
+ * @param {HTMLElement} originalContent Element with content to be clamped.
  * @param {HTMLElement} targetElement   Element which will contain the clamped content.
  * @param {number}      maxHeight       Max height of the clamped content.
  * @param {string}      ellipsis        Character to append to clamped content.
  * @return {string} clamped content
  */
 export const clampLines = (
-	originalContent: string,
+	originalContent: HTMLElement,
 	targetElement: HTMLElement,
 	maxHeight: number,
 	ellipsis: string
 ): string => {
 	const length = calculateLength( originalContent, targetElement, maxHeight );
 
-	return truncateHtml( originalContent, length - ellipsis.length, ellipsis );
+	return truncateHtml(
+		originalContent.innerHTML,
+		length - ellipsis.length,
+		ellipsis
+	);
 };

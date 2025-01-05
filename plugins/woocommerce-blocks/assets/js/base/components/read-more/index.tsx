@@ -157,7 +157,7 @@ class ReadMore extends Component< ReadMoreProps, ReadMoreState > {
 			if ( clampEnabled ) {
 				this.setState( {
 					summary: clampLines(
-						this.reviewContent.current.innerHTML,
+						this.reviewContent.current,
 						this.reviewSummary.current,
 						maxHeight,
 						ellipsis
