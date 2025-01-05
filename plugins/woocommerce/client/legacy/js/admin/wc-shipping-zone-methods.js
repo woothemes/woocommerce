@@ -351,6 +351,8 @@
 
 					$( document.body ).trigger( 'init_tooltips' );
 				},
+				// Cost values need to be stripped of thier thousandth separators and made sure
+				// the decimal separator is a ".".
 				unformatShippingMethodNumericValues: function( data ) {
 					if ( ! window.wc.ShippingCurrencyContext ) {
 						return data;
@@ -375,7 +377,7 @@
 
 						const unformattedValue = formattedValue
 							.replaceAll( config.thousandSeparator, '' )
-							.replaceAll( config.decimalSeparator, '.' );
+							.replace( config.decimalSeparator, '.' );
 
 						data[ field ] = unformattedValue;
 					} );
