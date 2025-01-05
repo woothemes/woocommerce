@@ -6,6 +6,7 @@
 namespace Automattic\WooCommerce\Admin\Features\ProductBlockEditor;
 
 use Automattic\WooCommerce\Admin\Features\Features;
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\Admin\WCAdminAssets;
 
 /**
@@ -75,7 +76,7 @@ class RedirectionController {
 			$product_data_type = $product_data['type'];
 			// Treat a variable product as a simple product since there is not a product template
 			// for variable products.
-			$product_type = $product->get_type() === 'variable' ? 'simple' : $product->get_type();
+			$product_type = $product->get_type() === ProductType::VARIABLE ? ProductType::SIMPLE : $product->get_type();
 
 			if ( isset( $product_data_type ) && $product_data_type !== $product_type ) {
 				continue;

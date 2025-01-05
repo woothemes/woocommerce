@@ -14,34 +14,63 @@ import { subscribe, select } from '@wordpress/data';
 import { isNumber, isEmpty } from '@woocommerce/types';
 
 /**
- * Configuration object for registering a block.
+ * Settings for product block registration.
  *
- * @typedef {Object} BlockConfig
- * @property {string}                               blockName               - The name of the block to register
- * @property {(string|Partial<BlockConfiguration>)} [blockMetadata]         - Block metadata or name
- * @property {Partial<BlockConfiguration>}          blockSettings           - Block settings configuration
- * @property {boolean}                              [isVariationBlock]      - Whether this block is a variation
- * @property {string}                               [variationName]         - The name of the variation if applicable
- * @property {boolean}                              isAvailableOnPostEditor - Whether the block should be available in post editor
+ * @typedef {Object} ProductBlockSettings
+ * @property {boolean} [isVariationBlock]        - Whether this block is a variation
+ * @property {string}  [variationName]           - The name of the variation if applicable
+ * @property {boolean} [isAvailableOnPostEditor] - Whether the block should be available in post editor
  */
-type BlockConfig = {
-	blockName: string;
-	blockMetadata?: string | Partial< BlockConfiguration >;
-	blockSettings: Partial< BlockConfiguration >;
+type ProductBlockSettings = {
 	isVariationBlock?: boolean;
-	variationName?: string;
-	isAvailableOnPostEditor: boolean;
+	variationName?: string | undefined;
+	isAvailableOnPostEditor?: boolean;
 };
 
 /**
- * Manages block registration and unregistration for WordPress blocks in different contexts.
+ * Internal block config type used by the BlockRegistrationManager
+ *
+ * @typedef {Object} ProductBlockConfig
+ * @template T Extends BlockAttributes to define the block's attribute types
+ * @property {string}                      blockName            - The name of the block
+ * @property {Partial<BlockConfiguration>} settings             - Block settings configuration
+ * @property {ProductBlockSettings}        productBlockSettings - Product block settings
+ */
+type ProductBlockConfig< T extends BlockAttributes > = ProductBlockSettings & {
+	blockName: string;
+	settings: Partial< BlockConfiguration< T > >;
+};
+
+/**
+ * Configuration object for registering a product block type.
+ *
+ * @typedef {Object} ProductBlockRegistrationConfig
+ * @template T Extends BlockAttributes to define the block's attribute types
+ * @property {Partial<BlockConfiguration>} settings                - Block settings configuration
+ * @property {boolean}                     [isVariationBlock]      - Whether this block is a variation
+ * @property {string}                      [variationName]         - The name of the variation if applicable
+ * @property {boolean}                     isAvailableOnPostEditor - Whether the block should be available in post editor
+ */
+type ProductBlockRegistrationConfig< T extends BlockAttributes > = Partial<
+	BlockConfiguration< T >
+> &
+	ProductBlockSettings;
+
+/**
+ * Manages block registration and unregistration for WooCommerce product blocks in different contexts.
  * Implements the Singleton pattern to ensure consistent block management across the application.
  */
 export class BlockRegistrationManager {
 	/** Singleton instance of the manager */
 	private static instance: BlockRegistrationManager;
 	/** Map storing block configurations keyed by block name or variation name */
-	private blocks: Map< string, BlockConfig > = new Map();
+	private blocks: Map<
+		string,
+		ProductBlockSettings & {
+			blockName: string;
+			settings: Partial< BlockConfiguration< BlockAttributes > >;
+		}
+	> = new Map();
 	/** Current template ID being edited */
 	private currentTemplateId: string | undefined;
 	/** Flag indicating if the manager has been initialized */
@@ -108,36 +137,27 @@ export class BlockRegistrationManager {
 			// Site Editor Context
 			if ( editSiteStore ) {
 				const postId = editSiteStore.getEditedPostId();
-				if ( postId === undefined ) {
-					return;
-				}
 
 				// Unsubscribe from the main subscription since we've detected our context
 				unsubscribe();
 
 				// Set initial template ID
-				this.currentTemplateId = this.parseTemplateId(
-					postId as string
-				);
+				this.currentTemplateId =
+					typeof postId === 'string'
+						? this.parseTemplateId( postId )
+						: undefined;
 
 				// Set up the template change listener
 				subscribe( () => {
 					const previousTemplateId = this.currentTemplateId;
 					this.currentTemplateId = this.parseTemplateId(
-						editSiteStore.getEditedPostId<
-							string | number | undefined
-						>()
+						editSiteStore.getEditedPostId()
 					);
 
 					if ( previousTemplateId !== this.currentTemplateId ) {
 						this.handleTemplateChange( previousTemplateId );
 					}
 				}, 'core/edit-site' );
-
-				// Register all blocks for site editor
-				this.blocks.forEach( ( config ) => {
-					this.registerBlock( config );
-				} );
 
 				this.initialized = true;
 			}
@@ -204,9 +224,12 @@ export class BlockRegistrationManager {
 	 * Unregisters a block or block variation.
 	 * Handles both regular blocks and variations with error handling.
 	 *
-	 * @param {BlockConfig} config - Configuration of the block to unregister
+	 * @template T The type of block attributes
+	 * @param {ProductBlockConfig<T>} config - Configuration of the block to unregister
 	 */
-	private unregisterBlock( config: BlockConfig ): void {
+	private unregisterBlock< T extends BlockAttributes >(
+		config: ProductBlockConfig< T >
+	): void {
 		const { blockName, isVariationBlock, variationName } = config;
 
 		try {
@@ -231,13 +254,15 @@ export class BlockRegistrationManager {
 	 * Handles different registration requirements for various contexts.
 	 * Includes checks to prevent recursive registration.
 	 *
-	 * @param {BlockConfig} config - Configuration of the block to register
+	 * @template T The type of block attributes
+	 * @param {ProductBlockConfig<T>} config - Configuration of the block to register
 	 */
-	private registerBlock( config: BlockConfig ): void {
+	private registerBlock< T extends BlockAttributes >(
+		config: ProductBlockConfig< T >
+	): void {
 		const {
 			blockName,
-			blockMetadata = blockName,
-			blockSettings,
+			settings,
 			isVariationBlock,
 			variationName,
 			isAvailableOnPostEditor,
@@ -260,21 +285,21 @@ export class BlockRegistrationManager {
 			if ( isVariationBlock ) {
 				registerBlockVariation(
 					blockName,
-					blockSettings as BlockVariation< BlockAttributes >
+					settings as BlockVariation< BlockAttributes >
 				);
 			} else {
-				const ancestor = isEmpty( blockSettings?.ancestor )
+				const ancestor = isEmpty( settings?.ancestor )
 					? [ 'woocommerce/single-product' ]
-					: blockSettings?.ancestor;
+					: settings?.ancestor;
 
 				// Only remove ancestor if we're in site editor AND in single-product template
 				const shouldRemoveAncestor =
 					editSiteStore &&
 					this.currentTemplateId?.includes( 'single-product' );
 
-				// @ts-expect-error - blockMetadata can be either string or object
-				registerBlockType( blockMetadata, {
-					...blockSettings,
+				// @ts-expect-error - blockName can be either string or object
+				registerBlockType( blockName, {
+					...settings,
 					ancestor: shouldRemoveAncestor ? undefined : ancestor,
 				} );
 			}
@@ -290,25 +315,15 @@ export class BlockRegistrationManager {
 	 * Registers a new block configuration with the manager.
 	 * Main entry point for adding new blocks to be managed.
 	 *
-	 * @param {BlockConfig} config - Configuration for the block to register
+	 * @template T The type of block attributes
+	 * @param {ProductBlockConfig<T>} config - Configuration of the block to register
 	 */
-	public registerBlockConfig( config: BlockConfig ): void {
+	public registerBlockConfig< T extends BlockAttributes >(
+		config: ProductBlockConfig< T >
+	): void {
 		const key = config.variationName || config.blockName;
-		this.blocks.set( key, config );
-
-		// If we have executed `siteEditorUnsubscribe` and `postEditorUnsubscribe` and initialized already, we can register the block immediately
-		if ( this.initialized ) {
-			const editSiteStore = select( 'core/edit-site' );
-			const editPostStore = select( 'core/edit-post' );
-
-			if ( editSiteStore ) {
-				// Register in site editor context
-				this.registerBlock( config );
-			} else if ( editPostStore && config.isAvailableOnPostEditor ) {
-				// Register in post editor context if available
-				this.registerBlock( config );
-			}
-		}
+		this.blocks.set( key, config as ProductBlockConfig< BlockAttributes > );
+		this.registerBlock( config );
 	}
 }
 
@@ -333,26 +348,70 @@ export class BlockRegistrationManager {
  * with no ancestor constraints. The `isAvailableOnPostEditor` flag can be used to make
  * the block available in regular post editing contexts as well where ancestor constraints are enforced.
  *
+ * @template T Extends BlockAttributes to define the block's attribute types
+ * @param {string | Partial<BlockConfiguration<T>>}               blockNameOrMetadata - Either a string block name or block metadata object
+ * @param {ProductBlockRegistrationConfig<BlockConfiguration<T>>} [settings]          - Optional settings for block registration
+ * @return {void}
+ *
  * @example
  * ```typescript
  * registerProductBlockType({
- *     blockName: 'woocommerce/product-price',
- *     blockSettings: {
- *         title: 'Product Price',
- *         category: 'woocommerce',
- *     },
+ *     name: 'woocommerce/product-price',
+ *     title: 'Product Price',
+ *     category: 'woocommerce',
+ *     edit: () => <div>Price Editor</div>,
+ *     save: () => <div>Saved Price</div>
+ * }, {
  *     isAvailableOnPostEditor: true
  * });
  * ```
- *
- * @param {BlockConfig} config - Configuration object for the block
  */
-export const registerProductBlockType = ( config: BlockConfig ): void => {
-	if ( ! config.blockName ) {
+export const registerProductBlockType = < T extends BlockAttributes >(
+	blockNameOrMetadata: string | Partial< BlockConfiguration< T > >,
+	settings?: ProductBlockRegistrationConfig< BlockConfiguration< T > >
+): void => {
+	const blockName =
+		typeof blockNameOrMetadata === 'string'
+			? blockNameOrMetadata
+			: blockNameOrMetadata.name;
+
+	if ( ! blockName ) {
 		// eslint-disable-next-line no-console
-		console.error( 'Block name is required for registration' );
+		console.error(
+			'registerProductBlockType: Block name is required for registration'
+		);
 		return;
 	}
 
-	BlockRegistrationManager.getInstance().registerBlockConfig( config );
+	// If blockNameOrMetadata is an object, use all its properties except 'name' as settings
+	const metaDataWithoutName =
+		typeof blockNameOrMetadata === 'string'
+			? {}
+			: // eslint-disable-next-line @typescript-eslint/no-unused-vars
+			  ( ( { name, ...metadata } ) => metadata )( blockNameOrMetadata );
+
+	// Extract settings without custom properties
+	const {
+		isVariationBlock,
+		variationName,
+		isAvailableOnPostEditor,
+		...settingsWithoutCustomProperties
+	} = {
+		...metaDataWithoutName,
+		...( settings || {} ),
+	};
+
+	const internalConfig: ProductBlockConfig< T > = {
+		blockName,
+		settings: {
+			...settingsWithoutCustomProperties,
+		} as BlockConfiguration< T >,
+		isVariationBlock: isVariationBlock ?? false,
+		variationName: variationName ?? undefined,
+		isAvailableOnPostEditor: isAvailableOnPostEditor ?? false,
+	};
+
+	BlockRegistrationManager.getInstance().registerBlockConfig(
+		internalConfig
+	);
 };

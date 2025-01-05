@@ -26,7 +26,6 @@ export const SettingsSelect = ( {
 			value={ value }
 			options={ formattedOptions }
 			onChange={ onChange }
-			// @ts-expect-error.
 			__nextHasNoMarginBottom
 		/>
 	);

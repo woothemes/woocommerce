@@ -1,0 +1,4 @@
+Significance: patch
+Type: update
+
+Enhance live branches API with permission checks to allow install desired WC version without WC exists

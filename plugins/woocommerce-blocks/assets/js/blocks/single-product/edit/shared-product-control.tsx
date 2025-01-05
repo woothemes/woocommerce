@@ -11,11 +11,13 @@ import { Attributes } from '../types';
 interface SharedProductControlProps {
 	attributes: Attributes;
 	setAttributes: ( attributes: Attributes ) => void;
+	onChange?: ( () => void ) | undefined;
 }
 
 const SharedProductControl = ( {
 	attributes,
 	setAttributes,
+	onChange,
 }: SharedProductControlProps ) => (
 	<ProductControl
 		selected={ attributes.productId || 0 }
@@ -25,6 +27,9 @@ const SharedProductControl = ( {
 			setAttributes( {
 				productId: id,
 			} );
+			if ( onChange ) {
+				onChange();
+			}
 		} }
 	/>
 );

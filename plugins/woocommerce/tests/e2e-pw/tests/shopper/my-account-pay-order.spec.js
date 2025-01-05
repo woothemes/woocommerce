@@ -100,6 +100,15 @@ test.describe(
 			await expect(
 				page.getByRole( 'button', { name: 'Pay for order' } )
 			).toBeVisible();
+
+			// Handle notice if present
+			await page.addLocatorHandler(
+				page.getByRole( 'link', { name: 'Dismiss' } ),
+				async () => {
+					await page.getByRole( 'link', { name: 'Dismiss' } ).click();
+				}
+			);
+
 			await page.locator( '#place_order' ).click();
 
 			await expect(

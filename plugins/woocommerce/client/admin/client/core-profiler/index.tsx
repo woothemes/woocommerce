@@ -41,6 +41,7 @@ import { initializeExPlat } from '@woocommerce/explat';
 import { CountryStateOption } from '@woocommerce/onboarding';
 import { getAdminLink } from '@woocommerce/settings';
 import CurrencyFactory, { CountryInfo } from '@woocommerce/currency';
+import { recordEvent } from '@woocommerce/tracks';
 
 /**
  * Internal dependencies
@@ -60,7 +61,6 @@ import {
 	POSSIBLY_DEFAULT_STORE_NAMES,
 } from './pages/BusinessInfo';
 import { BusinessLocation } from './pages/BusinessLocation';
-import { BuilderIntro } from './pages/BuilderIntro';
 import { getCountryStateOptions } from './services/country';
 import { CoreProfilerLoader } from './components/loader/Loader';
 import { Plugins } from './pages/Plugins/Plugins';
@@ -375,8 +375,28 @@ const redirectToJetpackAuthPage = ( {
 	window.location.href = url.toString();
 };
 
+const recordUpdateTrackingOption = (
+	prevValue: 'yes' | 'no',
+	newValue: 'yes' | 'no'
+) => {
+	if ( prevValue !== newValue ) {
+		recordEvent( 'woocommerce_allow_tracking_toggled', {
+			previous_value: prevValue,
+			new_value: newValue,
+			context: 'core-profiler',
+		} );
+	}
+};
+
 const updateTrackingOption = fromPromise(
 	async ( { input }: { input: CoreProfilerStateMachineContext } ) => {
+		const prevValue =
+			( await resolveSelect( OPTIONS_STORE_NAME ).getOption(
+				'woocommerce_allow_tracking'
+			) ) === 'yes'
+				? 'yes'
+				: 'no';
+
 		await new Promise< void >( ( resolve ) => {
 			setTimeout( resolve, 500 );
 			if (
@@ -386,10 +406,12 @@ const updateTrackingOption = fromPromise(
 				window.wcTracks.enable( () => {
 					initializeExPlat();
 					initRemoteLogging();
+					recordUpdateTrackingOption( prevValue, 'yes' );
 					resolve(); // resolve the promise only after explat is enabled by the callback
 				} );
 			} else {
 				if ( ! input.optInDataSharing ) {
+					recordUpdateTrackingOption( prevValue, 'no' );
 					window.wcTracks.isEnabled = false;
 				}
 				resolve();
@@ -870,13 +892,6 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 					},
 				},
 				{
-					target: '#introBuilder',
-					guard: {
-						type: 'hasStepInUrl',
-						params: { step: 'intro-builder' },
-					},
-				},
-				{
 					target: 'introOptIn',
 				},
 			],
@@ -1012,16 +1027,6 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 										assertEvent( event, 'INTRO_SKIPPED' );
 										return event.payload;
 									},
-								} ),
-							],
-						},
-						INTRO_BUILDER: {
-							target: '#introBuilder',
-							actions: [
-								'assignOptInDataSharing',
-								'updateTrackingOption',
-								spawnChild( 'updateProfilerCompletedSteps', {
-									input: { step: 'intro-opt-in' },
 								} ),
 							],
 						},
@@ -1347,30 +1352,6 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 						},
 						onError: {
 							target: '#plugins',
-						},
-					},
-				},
-			},
-		},
-		introBuilder: {
-			id: 'introBuilder',
-			initial: 'uploadConfig',
-			entry: [
-				{ type: 'updateQueryStep', params: { step: 'intro-builder' } },
-			],
-			states: {
-				uploadConfig: {
-					meta: {
-						component: BuilderIntro,
-					},
-					on: {
-						INTRO_SKIPPED: {
-							// if the user skips the intro, we set the optInDataSharing to false and go to the Business Location page
-							target: '#skipGuidedSetup',
-							actions: [
-								'assignOptInDataSharing',
-								'updateTrackingOption',
-							],
 						},
 					},
 				},

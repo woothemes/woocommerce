@@ -6,6 +6,7 @@
  * @version 3.1.0
  */
 
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Utilities\I18nUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -184,7 +185,7 @@ class WC_Product_CSV_Exporter extends WC_CSV_Batch_Exporter {
 
 		foreach ( $products->products as $product ) {
 			// Check if the category is set, this means we need to fetch variations separately as they are not tied to a category.
-			if ( ! empty( $args['category'] ) && $product->is_type( 'variable' ) ) {
+			if ( ! empty( $args['category'] ) && $product->is_type( ProductType::VARIABLE ) ) {
 				$variable_products[] = $product->get_id();
 			}
 
@@ -197,7 +198,7 @@ class WC_Product_CSV_Exporter extends WC_CSV_Batch_Exporter {
 				$products = wc_get_products(
 					array(
 						'parent' => $parent_id,
-						'type'   => array( 'variation' ),
+						'type'   => array( ProductType::VARIATION ),
 						'return' => 'objects',
 						'limit'  => -1,
 					)
@@ -285,7 +286,7 @@ class WC_Product_CSV_Exporter extends WC_CSV_Batch_Exporter {
 		);
 
 		// Fix display for variations when parent product is a draft.
-		if ( 'variation' === $product->get_type() ) {
+		if ( ProductType::VARIATION === $product->get_type() ) {
 			$parent = $product->get_parent_data();
 			$status = 'draft' === $parent['status'] ? $parent['status'] : $product->get_status( 'edit' );
 		} else {
@@ -454,7 +455,7 @@ class WC_Product_CSV_Exporter extends WC_CSV_Batch_Exporter {
 	 * @return string
 	 */
 	protected function get_column_value_grouped_products( $product ) {
-		if ( 'grouped' !== $product->get_type() ) {
+		if ( ProductType::GROUPED !== $product->get_type() ) {
 			return '';
 		}
 
@@ -507,7 +508,7 @@ class WC_Product_CSV_Exporter extends WC_CSV_Batch_Exporter {
 		$manage_stock   = $product->get_manage_stock( 'edit' );
 		$stock_quantity = $product->get_stock_quantity( 'edit' );
 
-		if ( $product->is_type( 'variation' ) && 'parent' === $manage_stock ) {
+		if ( $product->is_type( ProductType::VARIATION ) && 'parent' === $manage_stock ) {
 			return 'parent';
 		} elseif ( $manage_stock ) {
 			return $stock_quantity;
@@ -691,7 +692,7 @@ class WC_Product_CSV_Exporter extends WC_CSV_Batch_Exporter {
 						$row[ 'attributes:visible' . $i ] = '';
 					}
 
-					if ( $product->is_type( 'variable' ) && isset( $default_attributes[ sanitize_title( $attribute_name ) ] ) ) {
+					if ( $product->is_type( ProductType::VARIABLE ) && isset( $default_attributes[ sanitize_title( $attribute_name ) ] ) ) {
 						/* translators: %s: attribute number */
 						$this->column_names[ 'attributes:default' . $i ] = sprintf( __( 'Attribute %d default', 'woocommerce' ), $i );
 						$default_value                                   = $default_attributes[ sanitize_title( $attribute_name ) ];

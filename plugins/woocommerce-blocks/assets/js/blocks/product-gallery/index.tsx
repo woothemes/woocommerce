@@ -13,9 +13,11 @@ import './inner-blocks/product-gallery-large-image-next-previous';
 import './inner-blocks/product-gallery-pager';
 import './inner-blocks/product-gallery-thumbnails';
 
-registerProductBlockType( {
-	blockName: metadata.name,
-	blockMetadata: metadata,
-	blockSettings: ProductGalleryBlockSettings,
+const blockConfig = {
+	...metadata,
+	...ProductGalleryBlockSettings,
+};
+
+registerProductBlockType( blockConfig, {
 	isAvailableOnPostEditor: true,
 } );
