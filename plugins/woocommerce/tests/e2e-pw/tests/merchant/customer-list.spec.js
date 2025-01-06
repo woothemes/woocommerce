@@ -78,7 +78,7 @@ const test = baseTest.extend( {
 	},
 } );
 
-test.describe( 'Merchant > Customer List', { tag: tags.SERVICES }, () => {
+test.describe( 'Merchant > Customer List', () => {
 	test.beforeEach( async ( { context } ) => {
 		// prevents the column picker from saving state between tests
 		await context.route( '**/users/**', ( route ) => route.abort() );
@@ -86,7 +86,7 @@ test.describe( 'Merchant > Customer List', { tag: tags.SERVICES }, () => {
 
 	test(
 		'Merchant can view a list of all customers, filter and download',
-		{ tag: [ tags.SKIP_ON_PRESSABLE, tags.SKIP_ON_WPCOM ] },
+		{ tag: tags.SKIP_ON_PRESSABLE },
 		async ( { page, customers } ) => {
 			await test.step( 'Go to the customers reports page', async () => {
 				const responsePromise = page.waitForResponse(

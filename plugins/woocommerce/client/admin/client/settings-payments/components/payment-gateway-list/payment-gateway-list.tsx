@@ -26,7 +26,12 @@ interface PaymentGatewayListProps {
 	providers: PaymentProvider[];
 	installedPluginSlugs: string[];
 	installingPlugin: string | null;
-	setupPlugin: ( id: string, slug: string ) => void;
+	setupPlugin: (
+		id: string,
+		slug: string,
+		onboardingUrl: string | null
+	) => void;
+	acceptIncentive: ( id: string ) => void;
 	updateOrdering: ( providers: PaymentProvider[] ) => void;
 }
 
@@ -35,6 +40,7 @@ export const PaymentGatewayList = ( {
 	installedPluginSlugs,
 	installingPlugin,
 	setupPlugin,
+	acceptIncentive,
 	updateOrdering,
 }: PaymentGatewayListProps ) => {
 	return (
@@ -61,6 +67,7 @@ export const PaymentGatewayList = ( {
 									installingPlugin,
 									setupPlugin,
 									pluginInstalled,
+									acceptIncentive,
 								} ) }
 							</SortableItem>
 						);
@@ -73,6 +80,7 @@ export const PaymentGatewayList = ( {
 							>
 								{ PaymentGatewayListItem( {
 									gateway,
+									acceptIncentive,
 								} ) }
 							</SortableItem>
 						);
@@ -110,6 +118,7 @@ export const PaymentGatewayList = ( {
 											</span>
 											<span
 												className="woocommerce-list__item-content"
+												// eslint-disable-next-line react/no-danger -- This string is sanitized by the PaymentGateway class.
 												dangerouslySetInnerHTML={ {
 													__html: offlinePmsGroup.description,
 												} }

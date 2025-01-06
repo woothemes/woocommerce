@@ -7,7 +7,8 @@ import { COUNTRIES_STORE_NAME } from '@woocommerce/data';
 import { Fragment, useState } from '@wordpress/element';
 import { Form, FormContextType, Spinner } from '@woocommerce/components';
 import { useSelect } from '@wordpress/data';
-import { Status, Options } from 'wordpress__notices';
+import type { Status, Options } from 'wordpress__notices';
+
 /**
  * Internal dependencies
  */

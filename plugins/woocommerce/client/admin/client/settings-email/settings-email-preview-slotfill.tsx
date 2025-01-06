@@ -3,7 +3,7 @@
  */
 import { createSlotFill, SelectControl, Spinner } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from '@wordpress/element';
 import { debounce } from 'lodash';
 
 /**
@@ -61,7 +61,7 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 		return () => {
 			window.removeEventListener( 'resize', handleResize );
 		};
-	}, [] );
+	}, [ isSingleEmail ] );
 
 	return (
 		<Fill>
@@ -130,7 +130,6 @@ export const registerSettingsEmailPreviewFill = () => {
 	} catch ( e ) {}
 
 	registerPlugin( 'woocommerce-admin-settings-email-preview', {
-		// @ts-expect-error 'scope' does exist. @types/wordpress__plugins is outdated.
 		scope: 'woocommerce-email-preview-settings',
 		render: () => (
 			<EmailPreviewFill

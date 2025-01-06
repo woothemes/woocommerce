@@ -37,8 +37,11 @@
 			@include font-size(larger);
 			display: block;
 		}
-		.woo-icon {
+		.woo-icon-wrapper {
 			color: #{$studio-woocommerce-purple};
+			display: flex;
+			gap: 0.5rem;
+			align-items: center;
 			@include font-size(large);
 
 			svg {

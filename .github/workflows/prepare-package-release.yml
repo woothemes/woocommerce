@@ -40,20 +40,22 @@ jobs:
 
       - name: Set all package string
         id: all_description
-        if: ${{ github.event.inputs.packages == '-a'}}
+        if: ${{ github.event.inputs.packages == '-a' }}
         run: echo "str=all packages" >> $GITHUB_OUTPUT
 
       - name: Set Specific packages string
         id: specific_description
-        if: ${{ github.event.inputs.packages != '-a'}}
+        if: ${{ github.event.inputs.packages != '-a' }}
         run: echo "str=${{ github.event.inputs.packages }}" >> $GITHUB_OUTPUT
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
+        env:
+          HUSKY: '0' # pre-push hook incorrectly considers the working branch as the push-to branch and the push will fail if the working branch is trunk
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'Automated change: Prep ${{ steps.all_description.outputs.str || steps.specific_description.outputs.str }} for release.'
-          branch: release/packages-${{ steps.date.outputs.date }}
+          branch: prepare-releases/packages-${{ steps.date.outputs.date }}
           delete-branch: true
           title: Prepare Packages for Release
           reviewers: ${{ github.actor }}

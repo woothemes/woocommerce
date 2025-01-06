@@ -6,6 +6,7 @@
  * @version  3.1.0
  */
 
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Utilities\NumberUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -181,7 +182,7 @@ abstract class WC_Product_Importer implements WC_Importer_Interface {
 
 			try {
 				// Prevent getting "variation_invalid_id" error message from Variation Data Store.
-				if ( 'variation' === $data['type'] ) {
+				if ( ProductType::VARIATION === $data['type'] ) {
 					$id = wp_update_post(
 						array(
 							'ID'        => $id,
@@ -209,7 +210,7 @@ abstract class WC_Product_Importer implements WC_Importer_Interface {
 				);
 			}
 		} else {
-			$product = wc_get_product_object( 'simple', $id );
+			$product = wc_get_product_object( ProductType::SIMPLE, $id );
 		}
 
 		return apply_filters( 'woocommerce_product_import_get_product_object', $product, $data );
@@ -247,11 +248,11 @@ abstract class WC_Product_Importer implements WC_Importer_Interface {
 				$updating = true;
 			}
 
-			if ( 'external' === $object->get_type() ) {
+			if ( ProductType::EXTERNAL === $object->get_type() ) {
 				unset( $data['manage_stock'], $data['stock_status'], $data['backorders'], $data['low_stock_amount'] );
 			}
 			$is_variation = false;
-			if ( 'variation' === $object->get_type() ) {
+			if ( ProductType::VARIATION === $object->get_type() ) {
 				if ( isset( $data['status'] ) && -1 === $data['status'] ) {
 					$data['status'] = 0; // Variations cannot be drafts - set to private.
 				}
@@ -269,7 +270,7 @@ abstract class WC_Product_Importer implements WC_Importer_Interface {
 				throw new Exception( $result->get_error_message() );
 			}
 
-			if ( 'variation' === $object->get_type() ) {
+			if ( ProductType::VARIATION === $object->get_type() ) {
 				$this->set_variation_data( $object, $data );
 			} else {
 				$this->set_product_data( $object, $data );
@@ -427,7 +428,7 @@ abstract class WC_Product_Importer implements WC_Importer_Interface {
 			$product->set_attributes( $attributes );
 
 			// Set variable default attributes.
-			if ( $product->is_type( 'variable' ) ) {
+			if ( $product->is_type( ProductType::VARIABLE ) ) {
 				$product->set_default_attributes( $default_attributes );
 			}
 		}
@@ -459,7 +460,7 @@ abstract class WC_Product_Importer implements WC_Importer_Interface {
 		}
 
 		// Stop if parent is a product variation.
-		if ( $parent->is_type( 'variation' ) ) {
+		if ( $parent->is_type( ProductType::VARIATION ) ) {
 			return new WP_Error( 'woocommerce_product_importer_parent_set_as_variation', __( 'Variation cannot be imported: Parent product cannot be a product variation', 'woocommerce' ), array( 'status' => 401 ) );
 		}
 
