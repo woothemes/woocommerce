@@ -648,10 +648,11 @@ test.describe(
 					.locator( '.wc-block-components-totals-shipping__via' )
 					.getByText( 'Local pickup' )
 					.waitFor( { state: 'visible' } );
-				await expect( page.locator() ).toContainText(
-					singleProductSalePrice
-				);
-				( '.wc-block-components-totals-footer-item > .wc-block-components-totals-item__value' );
+				await expect(
+					page.locator(
+						'.wc-block-components-totals-footer-item > .wc-block-components-totals-item__value'
+					)
+				).toContainText( singleProductSalePrice );
 
 				// check flat rate option
 				await page
