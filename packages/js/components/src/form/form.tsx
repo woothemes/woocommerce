@@ -123,6 +123,43 @@ export type ConsumerInputProps< Values > = {
 	sanitize?: ( value: Values[ keyof Values ] ) => Values[ keyof Values ];
 };
 
+type StateAndHelpers< Values > = {
+	values: Values;
+	errors: FormErrors< Values >;
+	touched: { [ P in keyof Values ]?: boolean };
+	isDirty: boolean;
+	isValidForm: boolean;
+	setTouched: React.Dispatch<
+		React.SetStateAction< { [ P in keyof Values ]?: boolean | undefined } >
+	>;
+	setValue: ( name: string, value: Values[ keyof Values ] ) => void;
+	setValues: ( valuesToSet: Values ) => void;
+	handleSubmit: () => unknown;
+	getCheckboxControlProps: (
+		name: string,
+		inputProps?: ConsumerInputProps< Values >
+	) => CheckboxProps< Values, Values[ keyof Values ] >;
+	getInputProps: (
+		name: string,
+		inputProps?: ConsumerInputProps< Values >
+	) => InputProps< Values, Values[ keyof Values ] >;
+	getSelectControlProps: (
+		name: string,
+		inputProps?: ConsumerInputProps< Values >
+	) => SelectControlProps< Values, Values[ keyof Values ] >;
+	resetForm: (
+		newInitialValues?: Values,
+		newTouchedFields?:
+			| { [ P in keyof Values ]?: boolean | undefined }
+			| undefined,
+		newErrors?: FormErrors< Values >
+	) => void;
+};
+
+type PropsWithChildrenFunction< P, T > = P & {
+	children?: React.ReactNode | ( ( props: T ) => React.ReactElement );
+};
+
 /**
  * A form component to handle form state and provide input helper props.
  */
@@ -134,7 +171,10 @@ function FormComponent< Values extends Record< string, any > >(
 		onChange = () => {},
 		onChanges = () => {},
 		...props
-	}: PropsWithChildren< FormProps< Values > >,
+	}: PropsWithChildrenFunction<
+		FormProps< Values >,
+		StateAndHelpers< Values >
+	>,
 	ref: React.Ref< FormRef< Values > >
 ): React.ReactElement | null {
 	const initialValues = useRef( props.initialValues ?? ( {} as Values ) );
@@ -413,7 +453,10 @@ const Form = forwardRef( FormComponent ) as <
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	Values extends Record< string, any >
 >(
-	props: PropsWithChildren< FormProps< Values > > & {
+	props: PropsWithChildrenFunction<
+		FormProps< Values >,
+		StateAndHelpers< Values >
+	> & {
 		ref?: React.ForwardedRef< FormRef< Values > >;
 	},
 	ref: React.Ref< FormRef< Values > >
