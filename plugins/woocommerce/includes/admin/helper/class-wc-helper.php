@@ -2522,7 +2522,7 @@ class WC_Helper {
 	/**
 	 * Activate the product subscription to WCCOM
 	 *
-	 * @param string $product_key the product key to be activated
+	 * @param string $product_key the product key to be activated.
 	 *
 	 * @return array
 	 */
@@ -2552,7 +2552,7 @@ class WC_Helper {
 	/**
 	 * Get subscriptions for a product if it is available
 	 *
-	 * @param string|int $product_id the product id to get subscriptions for
+	 * @param string|int $product_id the product id to get subscriptions for.
 	 *
 	 * @return mixed|null
 	 */
