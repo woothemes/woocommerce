@@ -129,37 +129,4 @@ class WC_Product_Image_Handler {
 
 		return implode( ' ', $html );
 	}
-
-	/**
-	 * Render the JavaScript for container-aware image sizing
-	 */
-	private static function render_container_script() {
-		?>
-		<script>
-		(function() {
-			if (!('ResizeObserver' in window)) {
-				return;
-			}
-			
-			const observer = new ResizeObserver(entries => {
-				entries.forEach(entry => {
-					const container = entry.target;
-					const image = container.querySelector('[data-product-image="responsive"]');
-					
-					if (image) {
-						// Update sizes attribute based on container width
-						image.sizes = `${entry.contentRect.width}px`;
-					}
-				});
-			});
-			
-			// Observe all product image containers
-			document.querySelectorAll('[data-product-image="container"]').forEach(container => {
-				observer.observe(container);
-			});
-		})();
-		</script>
-		<?php
-	}
 }
-
