@@ -176,9 +176,7 @@ const ProductCollectionInspectorControls = (
 				{ showCustomOrderControl && (
 					<CustomQueryOrderByControl { ...queryControlProps } />
 				) }
-				{ showDefaultOrderControl && (
-					<CustomQueryOrderByControl { ...queryControlProps } />
-				) }
+				{ showDefaultOrderControl && <DefaultQueryOrderByControl /> }
 				{ showOffsetControl && (
 					<OffsetControl { ...queryControlProps } />
 				) }
