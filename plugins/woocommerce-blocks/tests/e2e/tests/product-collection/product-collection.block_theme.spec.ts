@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { Request } from '@playwright/test';
-import { test as base, expect } from '@woocommerce/e2e-utils';
+import { test as base, expect, wpCLI } from '@woocommerce/e2e-utils';
 
 /**
  * Internal dependencies
@@ -816,18 +816,9 @@ test.describe( 'Product Collection', () => {
 			editor,
 			frontendUtils,
 		} ) => {
-			// Go to Customizer.
-			await page.goto( '/wp-admin/customize.php' );
-			await page.getByRole( 'button', { name: 'WooCommerce' } ).click();
-			await page
-				.getByRole( 'button', { name: 'Product Catalog' } )
-				.click();
-			await page
-				.getByLabel( 'Default product sorting' )
-				.selectOption( 'price' );
-			await page
-				.getByRole( 'button', { name: 'Publish', exact: true } )
-				.click();
+			await wpCLI(
+				'option update woocommerce_default_catalog_orderby price'
+			);
 
 			await admin.visitSiteEditor( {
 				postId: `woocommerce/woocommerce//archive-product`,
@@ -837,12 +828,12 @@ test.describe( 'Product Collection', () => {
 
 			await pageObject.focusProductCollection();
 
-			// Verify the default order matches the option set in the Customizer..
-			await expect( page.getByLabel( 'Order by' ) ).toHaveValue(
-				'price'
-			);
+			const orderBySelect = await pageObject.getOrderByElement();
 
-			await page.getByLabel( 'Order by' ).selectOption( 'price-desc' );
+			// Verify the default order matches the option in the database.
+			await expect( orderBySelect ).toHaveValue( 'price' );
+
+			await orderBySelect.selectOption( 'price-desc' );
 
 			await editor.saveSiteEditorEntities();
 
