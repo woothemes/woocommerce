@@ -3,7 +3,6 @@
  */
 import classnames from 'classnames';
 import {
-	cloneElement,
 	useState,
 	createElement,
 	useCallback,
