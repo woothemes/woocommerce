@@ -94,6 +94,7 @@ const ProductCollectionInspectorControls = (
 		! isArchiveTemplate && shouldShowFilter( CoreFilterNames.FILTERABLE );
 	const showCustomOrderControl =
 		showQueryControls && shouldShowFilter( CoreFilterNames.ORDER );
+	const showDefaultOrderControl = ! showQueryControls;
 	const showOffsetControl =
 		showQueryControls && shouldShowFilter( CoreFilterNames.OFFSET );
 	const showMaxPagesToShowControl =
@@ -172,10 +173,11 @@ const ProductCollectionInspectorControls = (
 					<ProductsPerPageControl { ...queryControlProps } />
 				) }
 				<ColumnsControl { ...displayControlProps } />
-				{ showCustomOrderControl ? (
+				{ showCustomOrderControl && (
 					<CustomQueryOrderByControl { ...queryControlProps } />
-				) : (
-					<DefaultQueryOrderByControl />
+				) }
+				{ showDefaultOrderControl && (
+					<CustomQueryOrderByControl { ...queryControlProps } />
 				) }
 				{ showOffsetControl && (
 					<OffsetControl { ...queryControlProps } />
