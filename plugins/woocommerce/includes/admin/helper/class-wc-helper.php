@@ -2032,6 +2032,7 @@ class WC_Helper {
 			return;
 		}
 
+		wp_clean_themes_cache( false );
 		$themes = self::get_local_woo_themes();
 
 		$themes = array_filter(
@@ -2058,7 +2059,7 @@ class WC_Helper {
 		list( $activation_response, $activated ) = self::_wccom_activate( $product_key );
 
 		if ( $activated ) {
-			self::log( 'Auto-activated a subscription for ' . $theme['slug'] );
+			self::log( 'Auto-activated a subscription for ' . $theme['Name'] );
 			/**
 			 * Fires when the Helper activates a product successfully.
 			 *
@@ -2068,7 +2069,7 @@ class WC_Helper {
 			 */
 			do_action( 'woocommerce_helper_subscription_activate_success', $product_id, $product_key, $activation_response );
 		} else {
-			self::log( 'Could not activate a subscription for theme: ' . $theme['slug'] );
+			self::log( 'Could not activate a subscription for theme: ' . $theme['Name'] );
 
 			/**
 			 * Fires when the Helper fails to activate a product.

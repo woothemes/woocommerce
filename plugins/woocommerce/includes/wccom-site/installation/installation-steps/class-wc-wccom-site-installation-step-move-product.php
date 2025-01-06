@@ -59,12 +59,12 @@ class WC_WCCOM_Site_Installation_Step_Move_Product implements WC_WCCOM_Site_Inst
 
 			$this->state->set_installed_path( $existing_folder_path );
 			$this->state->set_already_installed_plugin_info( $plugin_info );
+			$this->maybe_connect_theme();
 
 			return $this->state;
 		}
 
 		$this->state->set_installed_path( $result['destination'] );
-
 		$this->maybe_connect_theme();
 
 		return $this->state;
