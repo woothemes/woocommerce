@@ -2521,11 +2521,12 @@ class WC_Helper {
 
 	/**
 	 * Activate the product subscription to WCCOM
-	 * @param mixed $product_key
+	 *
+	 * @param string $product_key the product key to be activated
 	 *
 	 * @return array
 	 */
-	protected static function _wccom_activate( mixed $product_key ): array {
+	protected static function _wccom_activate( $product_key ): array {
 		$activation_response = WC_Helper_API::post(
 			'activate',
 			array(
@@ -2550,7 +2551,8 @@ class WC_Helper {
 
 	/**
 	 * Get subscriptions for a product if it is available
-	 * @param $product_id
+	 *
+	 * @param string|int $product_id the product id to get subscriptions for
 	 *
 	 * @return mixed|null
 	 */
