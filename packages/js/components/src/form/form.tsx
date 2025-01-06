@@ -13,7 +13,7 @@ import {
 	useImperativeHandle,
 } from '@wordpress/element';
 import deprecated from '@wordpress/deprecated';
-import { ChangeEvent, PropsWithChildren, useRef } from 'react';
+import { ChangeEvent, useRef } from 'react';
 import _setWith from 'lodash/setWith';
 import _get from 'lodash/get';
 import _clone from 'lodash/clone';
@@ -436,8 +436,7 @@ function FormComponent< Values extends Record< string, any > >(
 
 	function getChildren() {
 		if ( typeof children === 'function' ) {
-			const element = children( getStateAndHelpers() );
-			return cloneElement( element );
+			return children( getStateAndHelpers() );
 		}
 		return children;
 	}
