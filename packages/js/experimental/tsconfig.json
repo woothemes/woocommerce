@@ -7,10 +7,9 @@
 		"declaration": true,
 		"declarationMap": true,
 		"declarationDir": "./build-types",
-		"typeRoots": [ "./typings", "./node_modules/@types" ]
+		"typeRoots": [ "./typings", "./node_modules/@types" ],
+		"types": [ "jest" ]
 	},
-	"include": [
-		"typings/**/*",
-		"src/**/*",
-	]
+	"exclude": [],
+	"include": [ "typings/**/*", "src/**/*" ]
 }

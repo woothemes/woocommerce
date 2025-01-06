@@ -88,6 +88,6 @@ export const Basic = () => <TableCardExample />;
 export const Actions = () => <TableCardWithActionsExample />;
 
 export default {
-	title: 'WooCommerce Admin/components/TableCard',
+	title: 'Components/TableCard',
 	component: TableCard,
 };

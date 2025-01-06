@@ -2,19 +2,18 @@
  * External dependencies
  */
 import { createElement, useState } from '@wordpress/element';
-/* eslint-disable @woocommerce/dependency-group */
-// @ts-expect-error missing types.
 import { __experimentalInputControl as InputControl } from '@wordpress/components';
-/* eslint-enable @woocommerce/dependency-group */
 
 export const SettingsInput = ( {
 	id,
 	desc,
 	type,
 	value: initialValue,
-}: Pick< SettingsField, 'id' | 'desc' | 'type' | 'value' > ) => {
-	const [ value, setValue ] = useState( initialValue );
-	const onChange = ( newValue: string ) => {
+}: Pick< BaseSettingsField, 'id' | 'desc' | 'type' | 'value' > ) => {
+	const [ value, setValue ] = useState< string | undefined >(
+		initialValue?.toString()
+	);
+	const onChange = ( newValue: string | undefined ) => {
 		setValue( newValue );
 	};
 	return (
