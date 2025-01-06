@@ -70,6 +70,11 @@ class WC_WCCOM_Site_Installation_Step_Move_Product implements WC_WCCOM_Site_Inst
 		return $this->state;
 	}
 
+	/**
+	 * Connect to wccom if installing a theme
+	 *
+	 * @return void
+	 */
 	protected function maybe_connect_theme() {
 		if ( 'theme' !== $this->state->get_product_type() ) {
 			return;
