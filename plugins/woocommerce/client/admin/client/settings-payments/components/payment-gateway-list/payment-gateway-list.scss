@@ -1,3 +1,5 @@
+@import  "../../../marketplace/stylesheets/_variables.scss";
+
 .settings-payment-gateways__list {
 	border-top: 1px solid $gray-200;
 	// Without this, the window.innerWidth is not calculated correctly when elements are pushed outside the container.
@@ -46,7 +48,7 @@
 			align-items: center;
 
 			.drag-handle {
-				min-height: 40px;
+				min-height: 30px;
 			}
 		}
 
@@ -68,6 +70,16 @@
 
 		&-text {
 			margin-right: $gap;
+			flex-grow: 1;
+			display: flex;
+			&-left {
+				float:left;
+				flex: 1;
+			}
+			&-right {
+				float:right;
+				flex-sharink: 0;
+			}
 		}
 
 		&-content {
@@ -97,3 +109,75 @@
 		}
 	}
 }
+
+.settings-payments-main__container .other-payment-gateways__content__grid {
+	border-bottom: 1px solid $gray-200;
+}
+
+@media (max-width: 767px) {
+
+	.settings-payments-main__container .other-payment-gateways {
+		margin-left: 18px;
+		margin-right: 18px;
+	}
+
+	.components-button {
+		margin-top: 5px;
+	}
+
+	.settings-payment-gateways__list .woocommerce-list__item-before {
+		margin-right: 0;
+	}
+
+	.woocommerce-woopayments-payment-methods-logos svg {
+		margin-right: 6px;
+	}
+
+	.sortable-container .drag-handle-wrapper {
+		margin-right: 8px;
+	}
+	.settings-payments-main__container .other-payment-gateways__content__grid {
+		display: block;
+	}
+
+	.settings-payment-gateways__list {
+		.woocommerce-list {
+			&__item {
+				padding: 0 20px;
+
+				&-image {
+					display: none;
+				}
+				&-title {
+					display: block;
+
+					span {
+						vertical-align: middle;
+						margin-left: 5px;
+					}
+				}
+				&-text {
+					display:block;
+
+					&-left {
+						width:100%;
+					}
+					&-right {
+						float: left;
+					}
+				}
+			}
+		}
+	}
+	.settings-payments-methods__container .woocommerce-list__item {
+		padding: 0 24px;
+	}
+
+}
+
+@media (max-width: 361px) {
+	.woocommerce-woopayments-payment-methods-logos svg {
+		margin-right: 1px;
+	}
+}
+

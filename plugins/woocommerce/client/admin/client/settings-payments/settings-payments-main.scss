@@ -61,6 +61,10 @@
 		margin: 32px 48px 0 48px;
 		padding: 8px 24px;
 
+		@media (max-width: 767px) {
+			padding: 8px 16px;
+		}
+
 		&__header {
 			padding: 20px 0;
 			display: flex;

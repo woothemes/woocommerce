@@ -115,3 +115,13 @@
 #wpbody:has(.settings-payments-methods__container) {
 	margin-top: 0;
 }
+
+@media (max-width: 767px) {
+	.settings-payments-methods__container .woocommerce-list__item {
+		padding: 0 24px;
+	}
+
+	.settings-payments-methods__container .woocommerce-list__item-content {
+		padding-right: 20px;
+	}
+}

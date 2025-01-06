@@ -65,3 +65,21 @@
 		}
 	}
 }
+
+@media (max-width: 768px) {
+	.woocommerce-list {
+		.woocommerce-list {
+			&__item {
+				padding: 0 18px;
+
+				&-image {
+					display: none;
+				}
+			}
+		}
+	}
+
+	.sortable-container .drag-handle-wrapper {
+		margin-right: 0px;
+	}
+}

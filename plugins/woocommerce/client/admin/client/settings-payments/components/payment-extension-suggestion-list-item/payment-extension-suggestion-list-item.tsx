@@ -72,36 +72,38 @@ export const PaymentExtensionSuggestionListItem = ( {
 					) }
 				</div>
 				<div className="woocommerce-list__item-text">
-					<span className="woocommerce-list__item-title">
-						{ extension.title }{ ' ' }
-						{ ! hasIncentive( extension ) &&
-							isWooPayments( extension.id ) && (
-								<StatusBadge status="recommended" />
+					<div className="woocommerce-list__item-text-left">
+						<span className="woocommerce-list__item-title">
+							{ extension.title }{ ' ' }
+							{ ! hasIncentive( extension ) &&
+								isWooPayments( extension.id ) && (
+									<StatusBadge status="recommended" />
+								) }
+							{ incentive && (
+								<StatusBadge
+									status="has_incentive"
+									message={ incentive.badge }
+								/>
 							) }
-						{ incentive && (
-							<StatusBadge
-								status="has_incentive"
-								message={ incentive.badge }
-							/>
-						) }
-					</span>
-					<span
-						className="woocommerce-list__item-content"
-						dangerouslySetInnerHTML={ sanitizeHTML(
-							decodeEntities( extension.description )
-						) }
-					/>
-					{ isWooPayments( extension.id ) && (
-						<WooPaymentsMethodsLogos
-							maxElements={ 10 }
-							tabletWidthBreakpoint={ 1080 } // Reduce the number of logos earlier.
-							mobileWidthBreakpoint={ 768 } // Reduce the number of logos earlier.
-							isWooPayEligible={ isWooPayEligible( extension ) }
+						</span>
+						<span
+							className="woocommerce-list__item-content"
+							dangerouslySetInnerHTML={ sanitizeHTML(
+								decodeEntities( extension.description )
+							)}
 						/>
-					) }
-				</div>
-				<div className="woocommerce-list__item-after">
-					<div className="woocommerce-list__item-after__actions">
+						{ isWooPayments( extension.id ) && (
+							<WooPaymentsMethodsLogos
+								maxElements={ 10 }
+								tabletWidthBreakpoint={ 1080 } // Reduce the number of logos earlier.
+								mobileWidthBreakpoint={ 768 } // Reduce the number of logos earlier.
+								isWooPayEligible={ isWooPayEligible(
+									extension
+								) }
+							/>
+						)}
+					</div>
+					<div className="woocommerce-list__item-text-right">
 						<Button
 							variant="primary"
 							onClick={ () => {
@@ -123,6 +125,10 @@ export const PaymentExtensionSuggestionListItem = ( {
 								? __( 'Enable', 'woocommerce' )
 								: __( 'Install', 'woocommerce' ) }
 						</Button>
+					</div>
+				</div>
+				<div className="woocommerce-list__item-after">
+					<div className="woocommerce-list__item-after__actions">
 
 						<EllipsisMenu
 							label={ __(

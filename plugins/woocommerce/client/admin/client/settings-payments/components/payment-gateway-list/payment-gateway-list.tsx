@@ -105,6 +105,7 @@ export const PaymentGatewayList = ( {
 										<div className="woocommerce-list__item-before">
 											<DefaultDragHandle />
 											<img
+												className={'woocommerce-list__item-image'}
 												src={ offlinePmsGroup.icon }
 												alt={
 													offlinePmsGroup.title +
@@ -113,15 +114,17 @@ export const PaymentGatewayList = ( {
 											/>
 										</div>
 										<div className="woocommerce-list__item-text">
-											<span className="woocommerce-list__item-title">
-												{ offlinePmsGroup.title }
-											</span>
-											<span
-												className="woocommerce-list__item-content"
-												dangerouslySetInnerHTML={ {
-													__html: offlinePmsGroup.description,
-												} }
-											/>
+											<div className="woocommerce-list__item-text-left">
+												<span className="woocommerce-list__item-title">
+													{ offlinePmsGroup.title }
+												</span>
+												<span
+													className="woocommerce-list__item-content"
+													dangerouslySetInnerHTML={ {
+														__html: offlinePmsGroup.description,
+													} }
+												/>
+											</div>
 										</div>
 										<div className="woocommerce-list__item-after centered">
 											<div className="woocommerce-list__item-after__actions">

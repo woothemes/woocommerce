@@ -4,10 +4,20 @@
 	box-shadow: none;
 	border-radius: 8px;
 
+	@media screen  and ( max-width: 768px )  {
+		margin-left: -20px;
+		margin-right: -20px;
+	}
+
+
 	&__content {
 		display: flex;
 		align-items: center;
 		padding: 0 calc(48px);
+
+		@media screen and ( max-width: 782px ) {
+			padding: 0 16px;
+		}
 
 		& > img {
 			margin-right: 32px;

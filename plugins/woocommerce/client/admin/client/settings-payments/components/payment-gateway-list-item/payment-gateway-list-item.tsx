@@ -91,54 +91,58 @@ export const PaymentGatewayListItem = ( {
 					) }
 				</div>
 				<div className="woocommerce-list__item-text">
-					<span className="woocommerce-list__item-title">
-						{ gateway.title }
-						{ incentive ? (
-							<StatusBadge
-								status="has_incentive"
-								message={ incentive.badge }
-							/>
-						) : (
-							<StatusBadge status={ determineGatewayStatus() } />
-						) }
-						{ gateway.supports?.includes( 'subscriptions' ) && (
-							<Tooltip
-								text={ __(
-									'Supports recurring payments',
-									'woocommerce'
-								) }
-								children={
-									<img
-										src={
-											WC_ASSET_URL +
-											'images/icons/recurring-payments.svg'
-										}
-										alt={ __(
-											'Icon to indicate support for recurring payments',
+					<div className="woocommerce-list__item-text-left">
+						<span className="woocommerce-list__item-title">
+							<span>{ gateway.title }</span>
+							{ incentive ? (
+								<StatusBadge
+									status="has_incentive"
+									message={ incentive.badge }
+								/>
+							) : (
+								<StatusBadge
+									status={ determineGatewayStatus() }
+								/>
+							) }
+							{ gateway.supports?.includes( 'subscriptions' ) && (
+								<span>
+									<Tooltip
+										text={ __(
+											'Supports recurring payments',
 											'woocommerce'
 										) }
+										children={
+											<img
+												src={
+													WC_ASSET_URL +
+													'images/icons/recurring-payments.svg'
+												}
+												alt={ __(
+													'Icon to indicate support for recurring payments',
+													'woocommerce'
+												) }
+											/>
+										}
 									/>
-								}
+								</span>
+							) }
+						</span>
+						<span
+							className="woocommerce-list__item-content"
+							dangerouslySetInnerHTML={ sanitizeHTML(
+								decodeEntities( gateway.description )
+							) }
+						/>
+						{ itemIsWooPayments && (
+							<WooPaymentsMethodsLogos
+								maxElements={ 10 }
+								tabletWidthBreakpoint={ 1080 } // Reduce the number of logos earlier.
+								mobileWidthBreakpoint={ 768 } // Reduce the number of logos earlier.
+								isWooPayEligible={ isWooPayEligible( gateway ) }
 							/>
 						) }
-					</span>
-					<span
-						className="woocommerce-list__item-content"
-						dangerouslySetInnerHTML={ sanitizeHTML(
-							decodeEntities( gateway.description )
-						) }
-					/>
-					{ itemIsWooPayments && (
-						<WooPaymentsMethodsLogos
-							maxElements={ 10 }
-							tabletWidthBreakpoint={ 1080 } // Reduce the number of logos earlier.
-							mobileWidthBreakpoint={ 768 } // Reduce the number of logos earlier.
-							isWooPayEligible={ isWooPayEligible( gateway ) }
-						/>
-					) }
-				</div>
-				<div className="woocommerce-list__item-after">
-					<div className="woocommerce-list__item-after__actions">
+					</div>
+					<div className="woocommerce-list__item-text-right">
 						{ ! gateway.state.enabled &&
 							! gatewayNeedsOnboarding && (
 								<EnableGatewayButton
@@ -195,7 +199,10 @@ export const PaymentGatewayListItem = ( {
 									incentive={ incentive }
 								/>
 							) }
-
+					</div>
+				</div>
+				<div className="woocommerce-list__item-after">
+					<div className="woocommerce-list__item-after__actions">
 						<EllipsisMenu
 							label={ __(
 								'Payment Provider Options',
