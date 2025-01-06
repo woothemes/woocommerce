@@ -58,6 +58,9 @@ class WC_User_Functions_Tests extends WC_Unit_Test_Case {
 		$order_4->set_status( OrderStatus::COMPLETED );
 		$order_4->save();
 
+		// Manually trigger the product lookup tables update, since it may take a few moments for it to happen automatically.
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
+
 		$this->assertTrue( wc_customer_bought_product( 'test@example.com', $customer_id_1, $product_id_1 ) );
 		$this->assertTrue( wc_customer_bought_product( '', $customer_id_1, $product_id_1 ) );
 		$this->assertTrue( wc_customer_bought_product( 'test@example.com', 0, $product_id_1 ) );

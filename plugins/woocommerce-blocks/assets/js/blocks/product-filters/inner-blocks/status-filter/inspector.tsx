@@ -22,8 +22,11 @@ import {
  */
 import { BlockAttributes, EditProps } from './types';
 import { getInnerBlockByName } from '../../utils';
+import { toggleProductFilterClearButtonVisibilityFactory } from '../../utils/toggle-product-filter-clear-button-visibility';
 
 let displayStyleOptions: Block[] = [];
+const toggleProductFilterClearButtonVisibility =
+	toggleProductFilterClearButtonVisibilityFactory();
 
 export const Inspector = ( {
 	attributes,
@@ -59,6 +62,7 @@ export const Inspector = ( {
 				<PanelBody title={ __( 'Display', 'woocommerce' ) }>
 					<ToggleGroupControl
 						value={ displayStyle }
+						isBlock
 						onChange={ (
 							value: BlockAttributes[ 'displayStyle' ]
 						) => {
@@ -119,9 +123,13 @@ export const Inspector = ( {
 					<ToggleControl
 						label={ __( 'Clear button', 'woocommerce' ) }
 						checked={ clearButton }
-						onChange={ ( value ) =>
-							setAttributes( { clearButton: value } )
-						}
+						onChange={ ( value ) => {
+							setAttributes( { clearButton: value } );
+							toggleProductFilterClearButtonVisibility( {
+								clientId,
+								showClearButton: value,
+							} );
+						} }
 					/>
 				</PanelBody>
 			</InspectorControls>

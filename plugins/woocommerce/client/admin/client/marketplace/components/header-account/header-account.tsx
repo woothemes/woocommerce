@@ -1,8 +1,13 @@
 /**
  * External dependencies
  */
+import { ComponentProps } from 'react';
 import { useState } from '@wordpress/element';
-import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
+import {
+	DropdownMenu,
+	MenuGroup,
+	MenuItem as OriginalMenuItem,
+} from '@wordpress/components';
 import { Icon, commentAuthorAvatar, external, linkOff } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 
@@ -15,6 +20,13 @@ import HeaderAccountModal from './header-account-modal';
 import { MARKETPLACE_HOST } from '../constants';
 import { connectUrl } from '../../utils/functions';
 
+// Make TS happy: The MenuItem component passes these as an href prop to the underlying button.
+interface MenuItemProps extends ComponentProps< typeof OriginalMenuItem > {
+	href?: string; // Explicitly declare `href`
+}
+
+const MenuItem = ( props: MenuItemProps ) => <OriginalMenuItem { ...props } />;
+
 export default function HeaderAccount(): JSX.Element {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const openModal = () => setIsModalOpen( true );
@@ -25,11 +37,7 @@ export default function HeaderAccount(): JSX.Element {
 	const userEmail = wccomSettings?.userEmail;
 	const avatarURL = wccomSettings?.userAvatar ?? commentAuthorAvatar;
 
-	// This is a hack to prevent TypeScript errors. The MenuItem component passes these as an href prop to the underlying button
-	// component. That component is either an anchor with href if provided or a button that won't accept an href if no href is provided.
-	// Due to early erroring of TypeScript, it only takes the button version into account which doesn't accept href.
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const accountURL: any = MARKETPLACE_HOST + '/my-dashboard/';
+	const accountURL = MARKETPLACE_HOST + '/my-dashboard/';
 	const accountOrConnect = isConnected ? accountURL : connectionURL;
 
 	const avatar = () => {

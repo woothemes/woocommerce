@@ -18,10 +18,7 @@ export type InitializationCompleteEvent = {
 	payload: { optInDataSharing: boolean };
 };
 
-export type IntroOptInEvent =
-	| IntroCompletedEvent
-	| IntroSkippedEvent
-	| IntroBuilderEvent;
+export type IntroOptInEvent = IntroCompletedEvent | IntroSkippedEvent;
 
 export type IntroCompletedEvent = {
 	type: 'INTRO_COMPLETED';
@@ -77,6 +74,7 @@ export type PluginsInstallationRequestedEvent = {
 		pluginsShown: string[];
 		pluginsSelected: string[];
 		pluginsUnselected: string[];
+		pluginsTruncated: string[];
 	};
 };
 
@@ -90,6 +88,10 @@ export type PluginsLearnMoreLinkClickedEvent = {
 
 export type PluginsPageSkippedEvent = {
 	type: 'PLUGINS_PAGE_SKIPPED';
+};
+
+export type PluginsPageCompletedWithoutSelectingPluginsEvent = {
+	type: 'PLUGINS_PAGE_COMPLETED_WITHOUT_SELECTING_PLUGINS';
 };
 
 export type PluginInstalledAndActivatedEvent = {
@@ -120,11 +122,6 @@ export type RedirectToWooHomeEvent = {
 	type: 'REDIRECT_TO_WOO_HOME';
 };
 
-export type IntroBuilderEvent = {
-	type: 'INTRO_BUILDER';
-	payload: { optInDataSharing: false };
-}; // always false for now
-
 export type CoreProfilerEvents =
 	| InitializationCompleteEvent
 	| IntroOptInEvent
@@ -134,9 +131,9 @@ export type CoreProfilerEvents =
 	| PluginsInstallationRequestedEvent
 	| PluginsLearnMoreLinkClickedEvent
 	| PluginsPageSkippedEvent
+	| PluginsPageCompletedWithoutSelectingPluginsEvent
 	| PluginInstalledAndActivatedEvent
 	| PluginsInstallationCompletedEvent
 	| PluginsInstallationCompletedWithErrorsEvent
 	| ExternalUrlUpdateEvent
-	| RedirectToWooHomeEvent
-	| IntroBuilderEvent;
+	| RedirectToWooHomeEvent;

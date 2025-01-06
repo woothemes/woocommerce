@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useEffect } from '@wordpress/element';
-import { useBlockProps } from '@wordpress/block-editor';
+import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { Skeleton } from '@woocommerce/base-components/skeleton';
 import { BlockEditProps } from '@wordpress/blocks';
@@ -17,15 +17,29 @@ import { isBoolean } from '@woocommerce/types';
  */
 import './editor.scss';
 import { useIsDescendentOfSingleProductBlock } from '../../../atomic/blocks/product-elements/shared/use-is-descendent-of-single-product-block';
-import { QuantitySelectorStyle, Settings } from './settings';
+import { QuantitySelectorStyle, AddToCartFormSettings } from './settings';
+import { shouldBlockifiedAddToCartWithOptionsBeRegistered } from '../../add-to-cart-with-options';
+import { UpgradeNotice } from './components/upgrade-notice';
+import type { Attributes } from './';
 
-export interface Attributes {
-	className?: string;
-	isDescendentOfSingleProductBlock: boolean;
-	quantitySelectorStyle: QuantitySelectorStyle;
-}
+export type FeaturesKeys =
+	| 'isStepperLayoutFeatureEnabled'
+	| 'isBlockifiedAddToCart';
 
-const Edit = ( props: BlockEditProps< Attributes > ) => {
+export type FeaturesProps = {
+	[ key in FeaturesKeys ]?: boolean;
+};
+
+export type UpdateFeaturesType = ( key: FeaturesKeys, value: boolean ) => void;
+
+// Pick the value of the "blockify add to cart flag"
+const isBlockifiedAddToCart = getSettingWithCoercion(
+	'isBlockifiedAddToCart',
+	false,
+	isBoolean
+);
+
+const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
 	const { setAttributes } = props;
 
 	const isStepperLayoutFeatureEnabled = getSettingWithCoercion(
@@ -61,17 +75,25 @@ const Edit = ( props: BlockEditProps< Attributes > ) => {
 
 	return (
 		<>
-			{ isStepperLayoutFeatureEnabled && (
-				<Settings
-					quantitySelectorStyle={
-						props.attributes.quantitySelectorStyle
-					}
-					setAttributes={ setAttributes }
-				/>
+			{ shouldBlockifiedAddToCartWithOptionsBeRegistered && (
+				<InspectorControls>
+					<UpgradeNotice blockClientId={ props?.clientId } />
+				</InspectorControls>
 			) }
+			<AddToCartFormSettings
+				quantitySelectorStyle={ props.attributes.quantitySelectorStyle }
+				setAttributes={ setAttributes }
+				features={ {
+					isStepperLayoutFeatureEnabled,
+					isBlockifiedAddToCart,
+				} }
+			/>
 			<div { ...blockProps }>
 				<Tooltip
-					text="Customer will see product add-to-cart options in this space, dependent on the product type. "
+					text={ __(
+						'Customer will see product add-to-cart options in this space, dependent on the product type.',
+						'woocommerce'
+					) }
 					position="bottom right"
 				>
 					<div className="wc-block-editor-add-to-cart-form-container">
@@ -98,9 +120,9 @@ const Edit = ( props: BlockEditProps< Attributes > ) => {
 													  }
 													: {}
 											}
-											type={ 'number' }
-											value={ '1' }
-											className={ 'input-text qty text' }
+											type="number"
+											value="1"
+											className="input-text qty text"
 											readOnly
 										/>
 									</div>
@@ -137,11 +159,9 @@ const Edit = ( props: BlockEditProps< Attributes > ) => {
 														  }
 														: {}
 												}
-												type={ 'number' }
-												value={ '1' }
-												className={
-													'input-text qty text'
-												}
+												type="number"
+												value="1"
+												className="input-text qty text"
 												readOnly
 											/>
 											<button className="wc-block-components-quantity-selector__button wc-block-components-quantity-selector__button--plus">
@@ -166,4 +186,4 @@ const Edit = ( props: BlockEditProps< Attributes > ) => {
 	);
 };
 
-export default Edit;
+export default AddToCartFormEdit;

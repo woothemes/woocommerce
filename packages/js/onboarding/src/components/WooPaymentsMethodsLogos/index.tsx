@@ -20,7 +20,7 @@ import Affirm from '../../images/payment-methods/affirm';
 import Klarna from '../../images/payment-methods/klarna';
 
 /**
- * Payment methods logos
+ * Payment methods list.
  */
 const PaymentMethods = [
 	{
@@ -69,27 +69,59 @@ const PaymentMethods = [
 	},
 ];
 
-// Maximum number of logos to be displayed on a mobile screen.
-const maxElementsMobile = 5;
-// Maximum number of logos to be displayed on a tablet screen.
-const maxElementsTablet = 7;
-// Maximum number of logos to be displayed on a desktop screen.
-const maxElementsDesktop = 10;
-// Total number of available payment methods from https://woocommerce.com/document/woopayments/payment-methods.
-const totalPaymentMethods = 20;
-
-export const WooPaymentMethodsLogos: React.VFC< {
+export const WooPaymentsMethodsLogos: React.VFC< {
 	isWooPayEligible: boolean;
 	maxElements: number;
-} > = ( { isWooPayEligible = false, maxElements = maxElementsDesktop } ) => {
+	tabletWidthBreakpoint?: number;
+	maxElementsTablet?: number;
+	mobileWidthBreakpoint?: number;
+	maxElementsMobile?: number;
+	totalPaymentMethods?: number;
+} > = ( {
+	/**
+	 * Whether the store (location) is eligible for WooPay.
+	 * Based on this we will include or not the WooPay logo in the list.
+	 */
+	isWooPayEligible = false,
+	/**
+	 * Maximum number of logos to be displayed (on a desktop screen).
+	 */
+	maxElements = 10,
+	/**
+	 * Breakpoint at which the number of logos to display changes to the tablet layout.
+	 */
+	tabletWidthBreakpoint = 768,
+	/**
+	 * Maximum number of logos to be displayed on a tablet screen.
+	 */
+	maxElementsTablet = 7,
+	/**
+	 * Breakpoint at which the number of logos to display changes to the mobile layout.
+	 */
+	mobileWidthBreakpoint = 480,
+	/**
+	 * Maximum number of logos to be displayed on a mobile screen.
+	 */
+	maxElementsMobile = 5,
+	/**
+	 * Total number of payment methods that WooPayments supports.
+	 * The default is set according to https://woocommerce.com/document/woopayments/payment-methods.
+	 * If not eligible for WooPay, the total number of payment methods is reduced by one.
+	 */
+	totalPaymentMethods = 20,
+} ) => {
 	const [ maxShownElements, setMaxShownElements ] = useState( maxElements );
 
-	// Determine the maximum number of logos to display, taking into account WooPay’s eligibility.
-	const getMaxShownElements = (
-		maxElementsNumber: number,
-		isWooPayAvailable: boolean
-	) => {
-		if ( ! isWooPayAvailable ) {
+	// Reduce the total number of payment methods by one if the store is not eligible for WooPay.
+	const maxSupportedPaymentMethods = isWooPayEligible
+		? totalPaymentMethods
+		: totalPaymentMethods - 1;
+
+	/**
+	 * Determine the maximum number of logos to display, taking into account WooPay’s eligibility.
+	 */
+	const getMaxShownElements = ( maxElementsNumber: number ) => {
+		if ( ! isWooPayEligible ) {
 			return maxElementsNumber + 1;
 		}
 
@@ -98,9 +130,9 @@ export const WooPaymentMethodsLogos: React.VFC< {
 
 	useEffect( () => {
 		const updateMaxElements = () => {
-			if ( window.innerWidth <= 480 ) {
+			if ( window.innerWidth <= mobileWidthBreakpoint ) {
 				setMaxShownElements( maxElementsMobile );
-			} else if ( window.innerWidth <= 768 ) {
+			} else if ( window.innerWidth <= tabletWidthBreakpoint ) {
 				setMaxShownElements( maxElementsTablet );
 			} else {
 				setMaxShownElements( maxElements );
@@ -109,29 +141,38 @@ export const WooPaymentMethodsLogos: React.VFC< {
 
 		updateMaxElements();
 
+		// Update the number of logos to display when the window is resized.
 		window.addEventListener( 'resize', updateMaxElements );
 
+		// Cleanup on unmount.
 		return () => {
 			window.removeEventListener( 'resize', updateMaxElements );
 		};
-	}, [ maxElements ] );
+	}, [
+		maxElements,
+		maxElementsMobile,
+		maxElementsTablet,
+		tabletWidthBreakpoint,
+		mobileWidthBreakpoint,
+	] );
 
 	return (
 		<>
 			<div className="woocommerce-woopayments-payment-methods-logos">
 				{ PaymentMethods.slice(
 					0,
-					getMaxShownElements( maxShownElements, isWooPayEligible )
+					getMaxShownElements( maxShownElements )
 				).map( ( pm ) => {
+					// Do not display the WooPay logo if the store is not eligible for WooPay.
 					if ( ! isWooPayEligible && pm.name === 'woopay' ) {
 						return null;
 					}
 
 					return pm.component;
 				} ) }
-				{ maxShownElements < totalPaymentMethods && (
+				{ maxShownElements < maxSupportedPaymentMethods && (
 					<div className="woocommerce-woopayments-payment-methods-logos-count">
-						+ { totalPaymentMethods - maxShownElements }
+						+ { maxSupportedPaymentMethods - maxShownElements }
 					</div>
 				) }
 			</div>

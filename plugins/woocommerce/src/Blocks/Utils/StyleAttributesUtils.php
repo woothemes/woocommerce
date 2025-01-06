@@ -699,7 +699,7 @@ class StyleAttributesUtils {
 
 		if ( '' !== $extra_css_classes ) {
 			return array(
-				'class' => $extra_css_classes,
+				'class' => esc_attr( $extra_css_classes ),
 				'style' => null,
 			);
 		}
@@ -758,14 +758,14 @@ class StyleAttributesUtils {
 		$classes_and_styles = array_filter( $classes_and_styles );
 
 		$classes = array_map(
-			function( $item ) {
+			function ( $item ) {
 				return $item['class'];
 			},
 			$classes_and_styles
 		);
 
 		$styles = array_map(
-			function( $item ) {
+			function ( $item ) {
 				return $item['style'];
 			},
 			// Exclude link color styles from parent to avoid conflict with text color.

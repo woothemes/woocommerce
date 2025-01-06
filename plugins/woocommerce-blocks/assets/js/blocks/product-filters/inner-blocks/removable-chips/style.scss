@@ -1,24 +1,26 @@
-.is-vertical {
-	.wc-block-product-filter-removable-chips__items {
-		flex-direction: column;
+.wc-block-product-filter-removable-chips {
+	&.is-vertical {
+		.wc-block-product-filter-removable-chips__items {
+			flex-direction: column;
+		}
 	}
-}
 
-.is-content-justification-center {
-	.wc-block-product-filter-removable-chips__items {
-		justify-content: center;
+	&.is-content-justification-center {
+		.wc-block-product-filter-removable-chips__items {
+			justify-content: center;
+		}
 	}
-}
 
-.is-content-justification-right {
-	.wc-block-product-filter-removable-chips__items {
-		justify-content: flex-end;
+	&.is-content-justification-right {
+		.wc-block-product-filter-removable-chips__items {
+			justify-content: flex-end;
+		}
 	}
-}
 
-.is-content-justification-space-between {
-	.wc-block-product-filter-removable-chips__items {
-		justify-content: space-between;
+	&.is-content-justification-space-between {
+		.wc-block-product-filter-removable-chips__items {
+			justify-content: space-between;
+		}
 	}
 }
 
