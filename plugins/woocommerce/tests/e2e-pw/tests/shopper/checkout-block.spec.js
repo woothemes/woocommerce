@@ -634,23 +634,24 @@ test.describe(
 					)
 				).toContainText( singleProductSalePrice );
 
-			// check local pickup option
-			const masks = await page
-				.locator( '.wc-block-components-loading-mask' )
-				.all();
+				// Check local pickup option.
+				const masks = await page
+					.locator( '.wc-block-components-loading-mask' )
+					.all();
 
-			masks.forEach( ( mask ) => mask.waitFor( { state: 'hidden' } ) );
-			await page.getByLabel( 'Local pickup' ).click();
-			await expect( page.getByLabel( 'Local pickup' ) ).toBeChecked();
-			await page
-				.locator( '.wc-block-components-totals-shipping__via' )
-				.getByText( 'Local pickup' )
-				.waitFor( { state: 'visible' } );
-			await expect(
-				page.locator(
-				)
-			).toContainText( singleProductSalePrice );
-						'.wc-block-components-totals-footer-item > .wc-block-components-totals-item__value'
+				masks.forEach( ( mask ) =>
+					mask.waitFor( { state: 'hidden' } )
+				);
+				await page.getByLabel( 'Local pickup' ).click();
+				await expect( page.getByLabel( 'Local pickup' ) ).toBeChecked();
+				await page
+					.locator( '.wc-block-components-totals-shipping__via' )
+					.getByText( 'Local pickup' )
+					.waitFor( { state: 'visible' } );
+				await expect( page.locator() ).toContainText(
+					singleProductSalePrice
+				);
+				( '.wc-block-components-totals-footer-item > .wc-block-components-totals-item__value' );
 
 				// check flat rate option
 				await page
