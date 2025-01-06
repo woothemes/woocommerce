@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { ReactElement, Component } from 'react';
 import {
 	UseComboboxGetItemPropsOptions,
 	UseComboboxGetMenuPropsOptions,
