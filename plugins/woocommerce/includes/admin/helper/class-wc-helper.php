@@ -1997,6 +1997,7 @@ class WC_Helper {
 			 * @param int    $product_id Product ID being activated.
 			 * @param string $product_key Subscription product key.
 			 * @param array  $activation_response The response object from wp_safe_remote_request().
+			 * @since 9.7
 			 */
 			do_action( 'woocommerce_helper_subscription_activate_success', $product_id, $product_key, $activation_response );
 		} else {
@@ -2008,6 +2009,7 @@ class WC_Helper {
 			 * @param int    $product_id Product ID being activated.
 			 * @param string $product_key Subscription product key.
 			 * @param array  $activation_response The response object from wp_safe_remote_request().
+			 * @since 9.7
 			 */
 			do_action( 'woocommerce_helper_subscription_activate_error', $product_id, $product_key, $activation_response );
 		}
@@ -2037,7 +2039,7 @@ class WC_Helper {
 
 		$themes = array_filter(
 			$themes,
-			function( $theme ) use ( $product_id ) {
+			function ( $theme ) use ( $product_id ) {
 				return $theme['_product_id'] === $product_id;
 			}
 		);
@@ -2517,6 +2519,12 @@ class WC_Helper {
 		return $data;
 	}
 
+	/**
+	 * Activate the product subscription to WCCOM
+	 * @param mixed $product_key
+	 *
+	 * @return array
+	 */
 	protected static function _wccom_activate( mixed $product_key ): array {
 		$activation_response = WC_Helper_API::post(
 			'activate',
@@ -2540,6 +2548,12 @@ class WC_Helper {
 		return array( $activation_response, $activated );
 	}
 
+	/**
+	 * Get subscriptions for a product if it is available
+	 * @param $product_id
+	 *
+	 * @return mixed|null
+	 */
 	protected static function _get_available_subscription( $product_id ) {
 		$subscriptions = self::_get_subscriptions_from_product_id( $product_id, false );
 
