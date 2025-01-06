@@ -69,9 +69,6 @@ export function Edit( {
 					disabled={ disabled }
 					id={ priceId }
 					name={ property }
-					onChange={ ( value: string | undefined ) =>
-						setPrice( value || '' )
-					}
 					label={
 						tooltip ? (
 							<Label label={ label } tooltip={ tooltip } />
