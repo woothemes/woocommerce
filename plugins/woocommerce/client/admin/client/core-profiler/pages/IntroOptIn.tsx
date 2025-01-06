@@ -13,16 +13,41 @@ import { Link } from '@woocommerce/components';
 import { IntroOptInEvent } from '../events';
 import { Heading } from '../components/heading/heading';
 import { Navigation } from '../components/navigation/navigation';
+import { CoreProfilerStateMachineContext } from '..';
 
 export const IntroOptIn = ( {
 	sendEvent,
 	navigationProgress,
+	context,
 }: {
 	sendEvent: ( event: IntroOptInEvent ) => void;
 	navigationProgress: number;
+	context: Pick<
+		CoreProfilerStateMachineContext,
+		'optInDataSharing' | 'userProfile' | 'coreProfilerCompletedSteps'
+	>;
 } ) => {
-	const [ iOptInDataSharing, setIsOptInDataSharing ] =
-		useState< boolean >( true );
+	const hasCompletedIntroOptInPreviously =
+		context.userProfile?.completed ||
+		context.userProfile?.skipped ||
+		context.coreProfilerCompletedSteps?.[ 'intro-opt-in' ];
+	const optInCheckboxInitialStatus =
+		( hasCompletedIntroOptInPreviously && context.optInDataSharing ) ||
+		! hasCompletedIntroOptInPreviously;
+
+	const [ iOptInDataSharing, setIsOptInDataSharing ] = useState< boolean >(
+		optInCheckboxInitialStatus
+	);
+
+	// we want the checkbox to be checked if
+	// 1. the user has previously completed the profiler and opted in
+	//  1a. the user has completed the intro-opt-in step previously and opted in
+	// 2. the user has not previously completed the profiler
+	// conversely, the checkbox should be unchecked if
+	// 1. the user has previously completed the profiler and opted out
+	//  1a. the user has completed the intro-opt-in step previously and opted out
+	// a user has completed the profiler if context.userProfile.completed is true or
+	// context.userProfile.skipped is true
 
 	return (
 		<div
@@ -68,20 +93,6 @@ export const IntroOptIn = ( {
 				>
 					{ __( 'Skip guided setup', 'woocommerce' ) }
 				</Button>
-				{ window.wcAdminFeatures?.blueprint && (
-					<Button
-						className="woocommerce-profiler-setup-store__button"
-						variant="tertiary"
-						onClick={ () =>
-							sendEvent( {
-								type: 'INTRO_BUILDER',
-								payload: { optInDataSharing: false },
-							} )
-						}
-					>
-						{ __( 'Builder setup', 'woocommerce' ) }
-					</Button>
-				) }
 				<div className="woocommerce-profiler-intro-opt-in__footer">
 					<CheckboxControl
 						className="core-profiler__checkbox"

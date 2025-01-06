@@ -17,7 +17,6 @@ const blockData: BlockData = {
 test.describe( `${ blockData.name } Block`, () => {
 	test( "can't be added in the Post Editor", async ( { admin, editor } ) => {
 		await admin.createNewPost();
-
 		await expect(
 			editor.insertBlock( { name: blockData.slug } )
 		).rejects.toThrow(
@@ -25,7 +24,7 @@ test.describe( `${ blockData.name } Block`, () => {
 		);
 	} );
 
-	test( "can't be added in the Post Editor - Product Catalog Template", async ( {
+	test( "can't be added in the Product Catalog Template", async ( {
 		admin,
 		editor,
 	} ) => {
@@ -48,7 +47,7 @@ test.describe( `${ blockData.name } Block`, () => {
 		).toBeHidden();
 	} );
 
-	test( "can't be added in the Post Editor - Single Product Template", async ( {
+	test( "can't be added in the Single Product Template", async ( {
 		admin,
 		editor,
 	} ) => {

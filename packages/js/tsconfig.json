@@ -10,7 +10,7 @@
 		"jsx": "react",
 		"jsxFactory": "createElement",
 		"jsxFragmentFactory": "Fragment",
-		"typeRoots": []
+		"typeRoots": [ "./typings" ]
 	},
 	"exclude": [
 		"node_modules",
@@ -24,5 +24,7 @@
 		"**/jest-preset.js",
 		"**/webpack.*.js",
 		"**/babel.config.js"
-	]
+	],
+
+	"include": [ "typings/**/*", "src/**/*" ]
 }

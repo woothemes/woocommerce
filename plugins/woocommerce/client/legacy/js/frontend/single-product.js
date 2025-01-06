@@ -31,13 +31,66 @@ jQuery( function( $ ) {
 			var $tabs_wrapper = $tab.closest( '.wc-tabs-wrapper, .woocommerce-tabs' );
 			var $tabs         = $tabs_wrapper.find( '.wc-tabs, ul.tabs' );
 
-			$tabs.find( 'li' ).attr( 'aria-selected', 'false' );
 			$tabs.find( 'li' ).removeClass( 'active' );
+			$tabs
+				.find( 'a[role="tab"]' )
+				.attr( 'aria-selected', 'false' )
+				.attr( 'tabindex', '-1' );
 			$tabs_wrapper.find( '.wc-tab, .panel:not(.panel .panel)' ).hide();
 
-			$tab.closest( 'li' ).attr( 'aria-selected', 'true' );
 			$tab.closest( 'li' ).addClass( 'active' );
+			$tab
+				.attr( 'aria-selected', 'true' )
+				.attr( 'tabindex', '0' );
 			$tabs_wrapper.find( '#' + $tab.attr( 'href' ).split( '#' )[1] ).show();
+		} )
+		.on( 'keydown', '.wc-tabs li a, ul.tabs li a', function( e ) {
+			var direction = e.key;
+			var next      = 'ArrowRight';
+			var prev      = 'ArrowLeft';
+			var home	  = 'Home';
+			var end		  = 'End';
+
+			if ( ! [ next, prev, end, home ].includes( direction ) ) {
+				return;
+			}
+
+			e.preventDefault();
+
+			var $tab          = $( this );
+			var $tabs_wrapper = $tab.closest( '.wc-tabs-wrapper, .woocommerce-tabs' );
+			var $tabsList     = $tabs_wrapper.find( '.wc-tabs, ul.tabs' );
+			var $tabs         = $tabsList.find( 'a[role="tab"]' );
+			var endIndex	  = $tabs.length - 1;
+			var tabIndex      = $tabs.index( $tab );
+			var targetIndex   = direction === prev ? tabIndex - 1 : tabIndex + 1;
+			
+			if ( ( direction === prev && tabIndex === 0 ) || direction === end ) {
+				targetIndex = endIndex;
+			} else if ( ( next === direction && tabIndex === endIndex ) || direction === home ) {
+				targetIndex = 0;
+			}
+			
+			$tabs.eq( targetIndex ).focus();
+		} )
+		.on( 'focusout', '.wc-tabs li a, ul.tabs li a, #respond p.stars a', function() {
+			if ( ! productGalleryElement.data( 'flexslider' ) ) {
+				// Don't do anything if gallery does not exist.
+				return;
+			}
+			setTimeout( function () {
+				var $activeElement = $( document.activeElement );
+				var sliderKeyupBlockers = [ '.stars', '.tabs', '.wc-tabs'];
+				var $closestBlocker = $activeElement.closest( sliderKeyupBlockers.join( ', ' ) );
+		
+				if ( $closestBlocker.length ) {
+					// Prevent keyup events from being triggered on the flexslider when the focus is on the stars or tabs.
+					productGalleryElement.data('flexslider').animating = true;
+					return;
+				}
+		
+				productGalleryElement.data('flexslider').animating = false;
+			}, 0);
 		} )
 		// Review link
 		.on( 'click', 'a.woocommerce-review-link', function() {
@@ -85,6 +138,8 @@ jQuery( function( $ ) {
 
 	// Init Tabs and Star Ratings
 	$( '.wc-tabs-wrapper, .woocommerce-tabs, #rating' ).trigger( 'init' );
+
+	var productGalleryElement;
 
 	/**
 	 * Product gallery class.
@@ -417,7 +472,7 @@ jQuery( function( $ ) {
 
 		$( this ).trigger( 'wc-product-gallery-before-init', [ this, wc_single_product_params ] );
 
-		$( this ).wc_product_gallery( wc_single_product_params );
+		productGalleryElement = $( this ).wc_product_gallery( wc_single_product_params );
 
 		$( this ).trigger( 'wc-product-gallery-after-init', [ this, wc_single_product_params ] );
 

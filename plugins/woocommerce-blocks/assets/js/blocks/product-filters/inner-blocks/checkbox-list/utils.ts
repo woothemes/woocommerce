@@ -1,14 +1,8 @@
 /**
  * Internal dependencies
  */
+import { getColorCSSVar } from '../../utils/colors';
 import { BlockAttributes } from './types';
-
-function getCSSVar( slug: string | undefined, value: string | undefined ) {
-	if ( slug ) {
-		return `var(--wp--preset--color--${ slug })`;
-	}
-	return value || '';
-}
 
 export function getColorVars( attributes: BlockAttributes ) {
 	const {
@@ -21,18 +15,17 @@ export function getColorVars( attributes: BlockAttributes ) {
 	} = attributes;
 
 	const vars: Record< string, string > = {
-		'--wc-product-filter-checkbox-list-option-element': getCSSVar(
+		'--wc-product-filter-checkbox-list-option-element': getColorCSSVar(
 			optionElement,
 			customOptionElement
 		),
-		'--wc-product-filter-checkbox-list-option-element-border': getCSSVar(
-			optionElementBorder,
-			customOptionElementBorder
-		),
-		'--wc-product-filter-checkbox-list-option-element-selected': getCSSVar(
-			optionElementSelected,
-			customOptionElementSelected
-		),
+		'--wc-product-filter-checkbox-list-option-element-border':
+			getColorCSSVar( optionElementBorder, customOptionElementBorder ),
+		'--wc-product-filter-checkbox-list-option-element-selected':
+			getColorCSSVar(
+				optionElementSelected,
+				customOptionElementSelected
+			),
 	};
 
 	return Object.keys( vars ).reduce(

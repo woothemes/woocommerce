@@ -52,7 +52,7 @@ export const Inspector = ( { attributes, setAttributes }: EditProps ) => {
 					<ToggleGroupControl
 						label={ __( 'Icon', 'woocommerce' ) }
 						className="wc-block-editor-product-filters__overlay-button-toggle"
-						isBlock={ true }
+						isBlock
 						value={ overlayIcon }
 						onChange={ (
 							value: BlockAttributes[ 'overlayIcon' ]
