@@ -71,7 +71,7 @@ export const Tooltip: React.FC< TooltipProps > = ( {
 
 				{ isPopoverVisible && (
 					<Popover
-						focusOnMount="firstElement"
+						focusOnMount={ true }
 						position={ position }
 						inline
 						className="woocommerce-tooltip__text"
