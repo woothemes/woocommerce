@@ -54,7 +54,7 @@ class ExportWCPaymentGateways implements StepExporter {
 	 * @return string
 	 */
 	public function get_step_name() {
-		return SetWCPaymentGateways::get_step_name();
+		return 'wcPaymentGateways';
 	}
 
 	/**
