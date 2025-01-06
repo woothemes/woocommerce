@@ -405,6 +405,47 @@ final class BlockTypesController {
 	}
 
 	/**
+	 * Get list of block types allowed in Widget Areas. New blocks won't be
+	 * exposed in the Widget Area unless specifically added here.
+	 *
+	 * @return array Array of block types.
+	 */
+	protected function get_widget_area_block_types() {
+		return array(
+			'ActiveFilters',
+			'AllReviews',
+			'AttributeFilter',
+			'Breadcrumbs',
+			'CartLink',
+			'CatalogSorting',
+			'ClassicShortcode',
+			'CustomerAccount',
+			'FeaturedCategory',
+			'FeaturedProduct',
+			'FilterWrapper',
+			'MiniCart',
+			'PriceFilter',
+			'ProductCategories',
+			'ProductResultsCount',
+			'ProductSearch',
+			'RatingFilter',
+			'ReviewsByCategory',
+			'ReviewsByProduct',
+			'StockFilter',
+			// Below product grids are hidden from inserter however they could have been used in widgets.
+			// Keep them for backward compatibility.
+			'HandpickedProducts',
+			'ProductBestSellers',
+			'ProductNew',
+			'ProductOnSale',
+			'ProductTopRated',
+			'ProductsByAttribute',
+			'ProductCategory',
+			'ProductTag',
+		);
+	}
+
+	/**
 	 * Get list of block types.
 	 *
 	 * @return array
@@ -519,20 +560,12 @@ final class BlockTypesController {
 		}
 
 		/**
-		 * This disables specific blocks in Widget Areas by not registering them.
+		 * This enables specific blocks in Widget Areas using an opt-in approach.
 		 */
 		if ( in_array( $pagenow, array( 'widgets.php', 'themes.php', 'customize.php' ), true ) && ( empty( $_GET['page'] ) || 'gutenberg-edit-site' !== $_GET['page'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-			$block_types = array_diff(
+			$block_types = array_intersect(
 				$block_types,
-				array(
-					'AllProducts',
-					'Cart',
-					'Checkout',
-					'ComingSoon',
-					'ProductGallery',
-					'ProductCollection\Controller',
-					'ProductCollection\NoResults',
-				)
+				$this->get_widget_area_block_types()
 			);
 		}
 

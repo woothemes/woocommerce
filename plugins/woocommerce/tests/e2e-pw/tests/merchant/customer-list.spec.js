@@ -84,14 +84,14 @@ test.describe( 'Merchant > Customer List', () => {
 		await context.route( '**/users/**', ( route ) => route.abort() );
 	} );
 
-	test(
-		'Merchant can view a list of all customers, filter and download',
-		{ tag: tags.SKIP_ON_WPCOM },
-		async ( { page, customers } ) => {
-			await test.step( 'Go to the customers reports page', async () => {
-				const responsePromise = page.waitForResponse(
-					'**/wp-json/wc-analytics/reports/customers?orderby**'
-				);
+	test( 'Merchant can view a list of all customers, filter and download', async ( {
+		page,
+		customers,
+	} ) => {
+		await test.step( 'Go to the customers reports page', async () => {
+			const responsePromise = page.waitForResponse(
+				'**/wp-json/wc-analytics/reports/customers?orderby**'
+			);
 				await page.goto(
 					'wp-admin/admin.php?page=wc-admin&path=%2Fcustomers'
 				);
