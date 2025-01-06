@@ -5,7 +5,7 @@
  */
 import clsx from 'clsx';
 import { memo, useMemo, useState } from '@wordpress/element';
-import { select, useSelect } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import {
 	BlockContextProvider,
@@ -131,13 +131,8 @@ const ProductContent = withProduct(
 	}
 );
 
-const getOrderPropertiesForDefaultQuery = () => {
-	const settings = select( 'core' ).getEditedEntityRecord(
-		'root',
-		'site'
-	) as Record< string, string >;
-
-	switch ( settings.woocommerce_default_catalog_orderby ) {
+const getOrderPropertiesForDefaultQuery = ( defaultSetting: string ) => {
+	switch ( defaultSetting ) {
 		case 'title':
 			return {
 				orderby: 'title',
@@ -237,7 +232,8 @@ const ProductTemplateEdit = (
 
 	const { products, blocks } = useSelect(
 		( select ) => {
-			const { getEntityRecords, getTaxonomies } = select( coreStore );
+			const { getEntityRecords, getEditedEntityRecord, getTaxonomies } =
+				select( coreStore );
 			const { getBlocks } = select( blockEditorStore );
 			const taxonomies = getTaxonomies( {
 				type: postType,
@@ -307,7 +303,15 @@ const ProductTemplateEdit = (
 				}
 				query.per_page = loopShopPerPage;
 
-				const orderProperties = getOrderPropertiesForDefaultQuery();
+				const settings = getEditedEntityRecord(
+					'root',
+					'site',
+					undefined
+				) as unknown as Record< string, string >;
+
+				const orderProperties = getOrderPropertiesForDefaultQuery(
+					settings.woocommerce_default_catalog_orderby
+				);
 				query.orderby = orderProperties.orderby;
 				query.order = orderProperties.order;
 			}
