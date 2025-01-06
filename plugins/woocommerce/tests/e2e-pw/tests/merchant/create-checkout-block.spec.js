@@ -4,7 +4,6 @@ const {
 	transformIntoBlocks,
 	publishPage,
 } = require( '../../utils/editor' );
-const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
 
 /**
  * External dependencies
@@ -83,8 +82,11 @@ test.describe(
 				await closeChoosePatternModal( { page } );
 
 				await fillPageTitle( page, testPage.title );
-				const wordPressVersion = await getInstalledWordPressVersion();
-				await insertBlock( page, 'Classic Checkout', wordPressVersion );
+				await insertBlock(
+					page,
+					'Classic Checkout',
+					Date.now().toString()
+				);
 				await transformIntoBlocks( page );
 
 				// When Gutenberg is active, the canvas is in an iframe
@@ -150,9 +152,7 @@ test.describe(
 					page.getByRole( 'heading', { name: testPage.title } )
 				).toBeVisible();
 				await expect(
-					page
-						.getByRole( 'group', { name: 'Contact information' } )
-						.locator( 'legend' )
+					page.getByRole( 'heading', { name: 'Contact information' } )
 				).toBeVisible();
 				await expect(
 					page

@@ -29,7 +29,7 @@ pnpm --filter='@woocommerce/plugin-woocommerce' watch:build
 pnpm --filter='@woocommerce/plugin-woocommerce' env:dev
 ```
 
-If desired, you can also run commands without `--filter='@woocommrece/plugin-woocommerce'` by running `pnpm <command>` from within the `plugins/woocommerce` directory.
+If desired, you can also run commands without `--filter='@woocommerce/plugin-woocommerce'` by running `pnpm <command>` from within the `plugins/woocommerce` directory.
 
 ## Building Components
 
@@ -42,9 +42,9 @@ This directory contains the Classic CSS and jQuery code for WooCommerce.
 
 ```bash
 # Build the assets.
-pnpm --filter='@woocommerce/plugin-woocommerce' build:classic-assets 
+pnpm --filter='@woocommerce/plugin-woocommerce' build:classic-assets
 # Lint the assets.
-pnpm --filter='@woocommerce/classic-assets' lint 
+pnpm --filter='@woocommerce/classic-assets' lint
 ```
 
 ### `plugins/woocommerce/client/admin`
@@ -55,13 +55,13 @@ This directory contains the React-based admin interface.
 # Build the React-based admin client.
 pnpm --filter='@woocommerce/plugin-woocommerce' build:admin
 # Lint the React-based admin client.
-pnpm --filter='@woocommerce/admin-library' lint 
+pnpm --filter='@woocommerce/admin-library' lint
 # Test the React-based admin client.
 pnpm --filter='@woocommerce/admin-library' test
 # Watch the tests of the React-based admin client.
-pnpm --filter=@woocommerce/admin-library test:watch 
+pnpm --filter='@woocommerce/admin-library' test:watch
 # Run a type check over the React-based admin client's TypeScript files.
-pnpm --filter=@woocommerce/admin-library ts:check 
+pnpm --filter='@woocommerce/admin-library' ts:check
 ```
 
 ### `plugins/woocommerce-blocks`
@@ -72,9 +72,9 @@ This directory contains the client for WooCommerce + Gutenberg.
 # Build the Blocks client.
 pnpm --filter='@woocommerce/plugin-woocommerce' build:blocks
 # Lint the Blocks client.
-pnpm run --filter='@woocommerce/block-library' lint 
+pnpm run --filter='@woocommerce/block-library' lint
 # Test the Blocks client.
-pnpm run --filter='@woocommerce/block-library' test 
+pnpm run --filter='@woocommerce/block-library' test
 ```
 
 ## Documentation
