@@ -51,7 +51,7 @@ export type ChildrenType< ItemType > = ( {
 	items,
 	isOpen,
 	highlightedIndex,
-}: ChildrenProps< ItemType > ) => ReactElement | Component;
+}: ChildrenProps< ItemType > ) => React.ReactNode;
 
 export type getItemLabelType< ItemType > = ( item: ItemType | null ) => string;
 

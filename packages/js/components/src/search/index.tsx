@@ -10,6 +10,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import SelectControl from '../select-control';
+import { Option } from '../select-control/types';
 import {
 	attributes,
 	countries,
@@ -27,13 +28,6 @@ import {
 	AutoCompleter,
 	OptionCompletionValue,
 } from './autocompleters';
-
-type Option = {
-	key: string | number;
-	label: React.ReactNode;
-	keywords: string[];
-	value: unknown;
-};
 
 type SearchType =
 	| 'attributes'
@@ -61,8 +55,8 @@ type Props = {
 	selected?:
 		| string
 		| Array< {
-				key: number | string;
-				label?: string;
+				key: string;
+				label: string;
 		  } >;
 	inlineTags?: boolean;
 	showClearButton?: boolean;
@@ -72,7 +66,7 @@ type Props = {
 };
 
 type State = {
-	options: unknown[];
+	options: Option[];
 };
 
 /**
@@ -230,7 +224,7 @@ export class Search extends Component< Props, State > {
 
 		options.forEach( ( option ) => {
 			const formattedOption = {
-				key: autocompleter.getOptionIdentifier( option ),
+				key: autocompleter.getOptionIdentifier( option ).toString(),
 				label: autocompleter.getOptionLabel( option, query ),
 				keywords: autocompleter
 					.getOptionKeywords( option )
@@ -243,9 +237,12 @@ export class Search extends Component< Props, State > {
 		return formattedOptions;
 	}
 
-	fetchOptions( previousOptions: unknown[], query: string ) {
+	fetchOptions(
+		previousOptions: unknown[],
+		query: string | null
+	): Promise< Option[] > {
 		if ( ! query ) {
-			return [];
+			return Promise.resolve( [] );
 		}
 
 		const autocompleterOptions = this.getAutocompleter().options;
@@ -263,7 +260,10 @@ export class Search extends Component< Props, State > {
 		} );
 	}
 
-	updateSelected( selected: Option[] ) {
+	updateSelected( selected: Option[] | string ) {
+		if ( ! Array.isArray( selected ) ) {
+			return;
+		}
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { onChange = ( _option: unknown[] ) => {} } = this.props;
 		const autocompleter = this.getAutocompleter();
@@ -279,7 +279,7 @@ export class Search extends Component< Props, State > {
 		onChange( formattedSelections );
 	}
 
-	appendFreeTextSearch( options: unknown[], query: string ) {
+	appendFreeTextSearch( options: Option[], query: string | null ) {
 		const { allowFreeTextSearch } = this.props;
 
 		if ( ! query || ! query.length ) {
@@ -295,7 +295,10 @@ export class Search extends Component< Props, State > {
 			return options;
 		}
 
-		return [ ...autocompleter.getFreeTextOptions( query ), ...options ];
+		return [
+			...( autocompleter.getFreeTextOptions( query ) as Option[] ),
+			...options,
+		];
 	}
 
 	render() {

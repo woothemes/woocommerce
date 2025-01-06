@@ -233,7 +233,7 @@ export class SelectControl extends Component< Props, State > {
 		this.node = node;
 	}
 
-	reset( selected = this.getSelected() ) {
+	reset( selected: Selected | Option[] | undefined = this.getSelected() ) {
 		const { multiple, excludeSelectedOptions } = this.props;
 		const newState = { ...initialState };
 		// Reset selectedIndex if single selection.
@@ -271,7 +271,7 @@ export class SelectControl extends Component< Props, State > {
 		return Boolean( selected );
 	}
 
-	getSelected() {
+	getSelected(): Selected | undefined {
 		const { multiple, options, selected } = this.props;
 
 		// Return the passed value if an array is provided.
@@ -282,7 +282,7 @@ export class SelectControl extends Component< Props, State > {
 		const selectedOption = options.find(
 			( option ) => option.key === selected
 		);
-		return selectedOption ? [ selectedOption ] : [];
+		return selectedOption ? ( [ selectedOption ] as Selected ) : [];
 	}
 
 	selectOption( option: Option ) {
