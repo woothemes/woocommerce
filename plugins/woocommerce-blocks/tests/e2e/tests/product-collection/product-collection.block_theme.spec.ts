@@ -810,40 +810,38 @@ test.describe( 'Product Collection', () => {
 
 	test.describe( 'default query can be modified', () => {
 		test( 'default query can be modified', async ( {
-			admin,
 			page,
 			pageObject,
 			editor,
-			frontendUtils,
 		} ) => {
 			await wpCLI(
 				'option update woocommerce_default_catalog_orderby price'
 			);
 
-			await admin.visitSiteEditor( {
-				postId: `woocommerce/woocommerce//archive-product`,
-				postType: 'wp_template',
-				canvas: 'edit',
-			} );
+			await pageObject.goToEditorTemplate();
 
 			await pageObject.focusProductCollection();
 
-			const orderBySelect = await pageObject.getOrderByElement();
-
 			// Verify the default order matches the option in the database.
+			const orderBySelect = await pageObject.getOrderByElement();
+			const editorProductTitle = editor.canvas
+				.locator( SELECTORS.productTitle )
+				.first();
+
 			await expect( orderBySelect ).toHaveValue( 'price' );
+			await expect( editorProductTitle ).toHaveText( 'Single' );
 
 			await orderBySelect.selectOption( 'price-desc' );
 
+			await expect( editorProductTitle ).toHaveText( 'Sunglasses' );
+
 			await editor.saveSiteEditorEntities();
+			await pageObject.goToProductCatalogFrontend();
 
-			// Go to shop.
-			await frontendUtils.goToShop();
-
-			// Verify the first <h3> element has the text "Sunglasses".
-			await expect( page.locator( 'h3' ).first() ).toContainText(
-				'Sunglasses'
-			);
+			const frontendProductTitle = page
+				.locator( SELECTORS.productTitle )
+				.first();
+			await expect( frontendProductTitle ).toContainText( 'Sunglasses' );
 		} );
 	} );
 

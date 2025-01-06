@@ -5,7 +5,7 @@
  */
 import clsx from 'clsx';
 import { memo, useMemo, useState } from '@wordpress/element';
-import { useSelect } from '@wordpress/data';
+import { select, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import {
 	BlockContextProvider,
@@ -130,6 +130,50 @@ const ProductContent = withProduct(
 		);
 	}
 );
+
+const getOrderPropertiesForDefaultQuery = () => {
+	const settings = select(
+		coreStore as unknown as string
+	).getEditedEntityRecord( 'root', 'site' ) as Record< string, string >;
+
+	switch ( settings.woocommerce_default_catalog_orderby ) {
+		case 'title':
+			return {
+				orderby: 'title',
+				order: 'asc',
+			};
+		case 'price':
+			return {
+				orderby: 'price',
+				order: 'asc',
+			};
+		case 'price-desc':
+			return {
+				orderby: 'price',
+				order: 'desc',
+			};
+		case 'popularity':
+			return {
+				orderby: 'popularity',
+				order: 'desc',
+			};
+		case 'rating':
+			return {
+				orderby: 'rating',
+				order: 'desc',
+			};
+		case 'date':
+			return {
+				orderby: 'date',
+				order: 'desc',
+			};
+	}
+
+	return {
+		orderby: 'menu_order',
+		order: 'asc',
+	};
+};
 
 const ProductTemplateEdit = (
 	props: BlockEditProps< {
@@ -261,6 +305,10 @@ const ProductTemplateEdit = (
 					}
 				}
 				query.per_page = loopShopPerPage;
+
+				const orderProperties = getOrderPropertiesForDefaultQuery();
+				query.orderby = orderProperties.orderby;
+				query.order = orderProperties.order;
 			}
 			return {
 				products: getEntityRecords( 'postType', postType, {
