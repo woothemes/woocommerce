@@ -31,7 +31,7 @@ import {
 } from './persistence-layer';
 import { defaultCartState } from './default-state';
 
-const store = createReduxStore( STORE_KEY, {
+export const config = {
 	reducer,
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	actions: actions as any,
@@ -45,7 +45,8 @@ const store = createReduxStore( STORE_KEY, {
 			...( persistenceLayer.get() || {} ),
 		},
 	},
-} );
+};
+const store = createReduxStore( STORE_KEY, config );
 
 register( store );
 
