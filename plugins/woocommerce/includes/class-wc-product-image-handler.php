@@ -96,15 +96,6 @@ class WC_Product_Image_Handler {
 			self::build_attributes( $image_attributes )
 		);
 
-		// Add JavaScript if not already rendered.
-		static $js_rendered = true;
-		if ( ! $js_rendered ) {
-			ob_start();
-			self::render_container_script();
-			$html       .= ob_get_clean();
-			$js_rendered = true;
-		}
-
 		return $html;
 	}
 
