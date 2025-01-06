@@ -10,7 +10,6 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
 	BaseControl,
-	// @ts-expect-error no exported member.
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 
@@ -70,6 +69,9 @@ export function Edit( {
 					disabled={ disabled }
 					id={ priceId }
 					name={ property }
+					onChange={ ( value: string | undefined ) =>
+						setPrice( value || '' )
+					}
 					label={
 						tooltip ? (
 							<Label label={ label } tooltip={ tooltip } />
