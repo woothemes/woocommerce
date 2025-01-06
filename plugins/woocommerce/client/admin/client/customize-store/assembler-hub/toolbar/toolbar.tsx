@@ -1,4 +1,3 @@
-/* eslint-disable @woocommerce/dependency-group */
 /**
  * External dependencies
  */
@@ -17,17 +16,12 @@ import {
 	useRef,
 	useState,
 } from '@wordpress/element';
-
-import {
-	BlockMover,
-	store as blockEditorStore,
-	// @ts-expect-error missing type
-} from '@wordpress/block-editor';
+import { useQuery } from '@woocommerce/navigation';
+import { BlockMover, store as blockEditorStore } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
  */
-import { useQuery } from '@woocommerce/navigation';
 import Shuffle from './shuffle';
 import Delete from './delete';
 import './style.scss';
@@ -54,34 +48,25 @@ export const Toolbar = () => {
 		allBlocks: BlockInstance[];
 	} = useSelect( ( select ) => {
 		const selectedBlockId =
-			// @ts-expect-error missing type
 			select( blockEditorStore ).getSelectedBlockClientId();
 		const nextBlockClientId =
-			// @ts-expect-error missing type
 			select( blockEditorStore ).getNextBlockClientId();
 		const previousBlockClientId =
-			// @ts-expect-error missing type
 			select( blockEditorStore ).getPreviousBlockClientId();
 
-		// @ts-expect-error missing type
 		const [ current ] = select( blockEditorStore ).getBlocksByClientId( [
 			selectedBlockId,
 		] );
 
-		// @ts-expect-error missing type
 		const [ next ] = select( blockEditorStore ).getBlocksByClientId( [
 			nextBlockClientId,
 		] );
 
-		const [ previous ] = select(
-			blockEditorStore
-			// @ts-expect-error missing type
-		).getBlocksByClientId( [ previousBlockClientId ] );
+		const [ previous ] = select( blockEditorStore ).getBlocksByClientId( [
+			previousBlockClientId,
+		] );
 
-		const blocks = select(
-			blockEditorStore
-			// @ts-expect-error missing type
-		).getBlocks();
+		const blocks = select( blockEditorStore ).getBlocks();
 
 		return {
 			currentBlock: current,
@@ -188,7 +173,6 @@ export const Toolbar = () => {
 			as="div"
 			animate={ false }
 			className="components-tooltip woocommerce-customize-store_block-toolbar-popover"
-			// @ts-expect-error missing type
 			variant="unstyled"
 			resize={ false }
 			flip={ false }

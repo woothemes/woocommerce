@@ -89,6 +89,10 @@ require( 'fs-extra' ).ensureSymlinkSync(
 
 const webpackConfig = {
 	mode: NODE_ENV,
+	ignoreWarnings:
+		process.env.HIDE_TYPESCRIPT_WARNINGS === 'true'
+			? [ { message: /TS\d{4,6}:\ / } ]
+			: [],
 	entry: getEntryPoints(),
 	output: {
 		filename: ( data ) => {
@@ -179,14 +183,15 @@ const webpackConfig = {
 	plugins: [
 		...styleConfig.plugins,
 		// Runs TypeScript type checker on a separate process.
-		! process.env.STORYBOOK && new ForkTsCheckerWebpackPlugin(),
+		! process.env.STORYBOOK &&
+			! ( process.env.DISABLE_TYPESCRIPT_CHECKING === 'true' ) &&
+			new ForkTsCheckerWebpackPlugin(),
 		! process.env.STORYBOOK &&
 			new TypeScriptWarnOnlyWebpackPlugin( [
 				// these are the errors that have been converted into warnings during the react-18 upgrade
 				// the number is the original number of instances of that error when this comment is written
 				// hopefully this information helps prioritize fixing the errors :)
 				'TS2349', // ~107: This expression is not callable.
-				'TS2578', // ~69: Unused '@ts-expect-error' directive.
 				'TS2554', // ~60: Expected 2 arguments, but got 1.
 				'TS2339', // ~51: Property 'getActivePlugins' does not exist on type 'never'.
 				'TS7006', // ~38: Parameter implicitly has an 'any' type.

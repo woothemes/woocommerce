@@ -82,7 +82,13 @@ export const PaymentGatewayListItem = ( {
 			<div className="woocommerce-list__item-inner">
 				<div className="woocommerce-list__item-before">
 					<DefaultDragHandle />
-					<img src={ gateway.icon } alt={ gateway.title + ' logo' } />
+					{ gateway.icon && (
+						<img
+							className={ 'woocommerce-list__item-image' }
+							src={ gateway.icon }
+							alt={ gateway.title + ' logo' }
+						/>
+					) }
 				</div>
 				<div className="woocommerce-list__item-text">
 					<span className="woocommerce-list__item-title">
