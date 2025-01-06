@@ -1063,7 +1063,7 @@ class WC_Helper {
 		$product_id = $subscription['product_id'];
 
 		// Activate subscription.
-		list( $activation_response, $activated ) = self::_wccom_activate( $product_key );
+		list( $activation_response, $activated ) = self::wccom_activate( $product_key );
 
 		if ( $activated ) {
 			/**
@@ -1976,18 +1976,17 @@ class WC_Helper {
 			return;
 		}
 
-		$plugin        = $plugins[ $filename ];
-		$product_id    = $plugin['_product_id'];
-
-		$subscription  = self::_get_available_subscription( $product_id );
+		$plugin       = $plugins[ $filename ];
+		$product_id   = $plugin['_product_id'];
+		$subscription = self::get_available_subscription( $product_id );
 
 		// No valid subscription found.
 		if ( ! $subscription ) {
 			return;
 		}
 
-		$product_key         = $subscription['product_key'];
-		list( $activation_response, $activated ) = self::_wccom_activate( $product_key );
+		$product_key                             = $subscription['product_key'];
+		list( $activation_response, $activated ) = self::wccom_activate( $product_key );
 
 		if ( $activated ) {
 			self::log( 'Auto-activated a subscription for ' . $filename );
@@ -2050,15 +2049,15 @@ class WC_Helper {
 
 		$theme = reset( $themes );
 
-		$subscription = self::_get_available_subscription( $product_id );
+		$subscription = self::get_available_subscription( $product_id );
 
 		// No valid subscription found.
 		if ( ! $subscription ) {
 			return;
 		}
 
-		$product_key         = $subscription['product_key'];
-		list( $activation_response, $activated ) = self::_wccom_activate( $product_key );
+		$product_key                             = $subscription['product_key'];
+		list( $activation_response, $activated ) = self::wccom_activate( $product_key );
 
 		if ( $activated ) {
 			self::log( 'Auto-activated a subscription for ' . $theme['Name'] );
@@ -2526,7 +2525,7 @@ class WC_Helper {
 	 *
 	 * @return array
 	 */
-	protected static function _wccom_activate( $product_key ): array {
+	protected static function wccom_activate( $product_key ): array {
 		$activation_response = WC_Helper_API::post(
 			'activate',
 			array(
@@ -2556,7 +2555,7 @@ class WC_Helper {
 	 *
 	 * @return mixed|null
 	 */
-	protected static function _get_available_subscription( $product_id ) {
+	protected static function get_available_subscription( $product_id ) {
 		$subscriptions = self::_get_subscriptions_from_product_id( $product_id, false );
 
 		// No valid subscriptions for this product.
