@@ -420,6 +420,13 @@ WooCommerce comes with some sample data you can use to see how products look; im
 * Enhancement - Prevent the variation list from being displayed as an HTML list if there is only one attribute on the Mini Cart Modal [#52924](https://github.com/woocommerce/woocommerce/pull/52924)
 * Enhancement - Redirect to the connection approval screen when the connection is initiated from WooCommerce.com. [#53445](https://github.com/woocommerce/woocommerce/pull/53445)
 * Enhancement - Update coming soon minimal left image template image handling for better responsiveness [#53236](https://github.com/woocommerce/woocommerce/pull/53236)
+* Fix - Fixes a JS error introduced in #53158 when navigating tabs using keyboard on a product page without a gallery. [#53877](https://github.com/woocommerce/woocommerce/pull/53877)
+* Fix - Fix role retrieval for users with non-sequential roles [#53974](https://github.com/woocommerce/woocommerce/pull/53974)
+* Fix - Fix test previously expecting a md5 hash but now produces a SHA-256 hash for the gravatar URL. [#53916](https://github.com/woocommerce/woocommerce/pull/53916)
+* Update - Update plugins with terms of service notice in core profiler. [#53806](https://github.com/woocommerce/woocommerce/pull/53806)
+* Dev - Change the Woo logo in the marketing banner [#54096](https://github.com/woocommerce/woocommerce/pull/54096)
+* Dev - Update WooCommerce logo in blocks [#54147](https://github.com/woocommerce/woocommerce/pull/54147)
+* Tweak - Fix deprecation warnings in PHP 8.3 in email preview classes [#53870](https://github.com/woocommerce/woocommerce/pull/53870)
 
 
 [See changelog for all versions](https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/changelog.txt).
