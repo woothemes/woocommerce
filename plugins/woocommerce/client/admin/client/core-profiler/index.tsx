@@ -61,7 +61,6 @@ import {
 	POSSIBLY_DEFAULT_STORE_NAMES,
 } from './pages/BusinessInfo';
 import { BusinessLocation } from './pages/BusinessLocation';
-import { BuilderIntro } from './pages/BuilderIntro';
 import { getCountryStateOptions } from './services/country';
 import { CoreProfilerLoader } from './components/loader/Loader';
 import { Plugins } from './pages/Plugins/Plugins';
@@ -893,13 +892,6 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 					},
 				},
 				{
-					target: '#introBuilder',
-					guard: {
-						type: 'hasStepInUrl',
-						params: { step: 'intro-builder' },
-					},
-				},
-				{
 					target: 'introOptIn',
 				},
 			],
@@ -1035,16 +1027,6 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 										assertEvent( event, 'INTRO_SKIPPED' );
 										return event.payload;
 									},
-								} ),
-							],
-						},
-						INTRO_BUILDER: {
-							target: '#introBuilder',
-							actions: [
-								'assignOptInDataSharing',
-								'updateTrackingOption',
-								spawnChild( 'updateProfilerCompletedSteps', {
-									input: { step: 'intro-opt-in' },
 								} ),
 							],
 						},
@@ -1370,30 +1352,6 @@ export const coreProfilerStateMachineDefinition = createMachine( {
 						},
 						onError: {
 							target: '#plugins',
-						},
-					},
-				},
-			},
-		},
-		introBuilder: {
-			id: 'introBuilder',
-			initial: 'uploadConfig',
-			entry: [
-				{ type: 'updateQueryStep', params: { step: 'intro-builder' } },
-			],
-			states: {
-				uploadConfig: {
-					meta: {
-						component: BuilderIntro,
-					},
-					on: {
-						INTRO_SKIPPED: {
-							// if the user skips the intro, we set the optInDataSharing to false and go to the Business Location page
-							target: '#skipGuidedSetup',
-							actions: [
-								'assignOptInDataSharing',
-								'updateTrackingOption',
-							],
 						},
 					},
 				},
