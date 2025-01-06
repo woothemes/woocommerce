@@ -160,10 +160,10 @@ test.describe(
 				page.getByText( `Your ${ storeName } order is now complete` )
 			).toBeVisible();
 
-				// Enter email log and select to view the content in JSON
-				await page.click( 'button[title^="View log"]' );
-				await page.locator( emailContentJson ).isEnabled();
-				await page.locator( emailContentJson ).click();
+			// Enter email log and select to view the content in JSON
+			await page.click( 'button[title^="View log"]' );
+			await page.locator( emailContentJson ).isEnabled();
+			await page.locator( emailContentJson ).click();
 
 			// Verify that the message includes an order processing confirmation
 			await expect( page.locator( emailContent ) ).toContainText(
