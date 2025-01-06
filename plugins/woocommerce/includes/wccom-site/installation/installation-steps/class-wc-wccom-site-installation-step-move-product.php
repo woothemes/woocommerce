@@ -64,8 +64,11 @@ class WC_WCCOM_Site_Installation_Step_Move_Product implements WC_WCCOM_Site_Inst
 			return $this->state;
 		}
 
+		if ( ! is_wp_error( $result ) ) {
+			$this->maybe_connect_theme();
+		}
+
 		$this->state->set_installed_path( $result['destination'] );
-		$this->maybe_connect_theme();
 
 		return $this->state;
 	}
