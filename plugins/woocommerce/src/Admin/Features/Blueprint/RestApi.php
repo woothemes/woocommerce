@@ -431,7 +431,7 @@ class RestApi {
 		$results          = $blueprint->import();
 		$result_formatter = new JsonResultFormatter( $results );
 		$redirect         = $blueprint->get_schema()->landingPage ?? null;
-		$redirect_url     = $redirect->url ?? 'admin.php?page=wc-admin';
+		$redirect_url     = $redirect->url ?? '/wp-admin/admin.php?page=wc-admin';
 
 		$is_success = $result_formatter->is_success();
 

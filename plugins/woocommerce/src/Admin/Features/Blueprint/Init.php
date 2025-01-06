@@ -44,7 +44,7 @@ class Init {
 		add_filter(
 			'wooblueprint_export_landingpage',
 			function () {
-				return 'admin.php?page=wc-admin';
+				return '/wp-admin/admin.php?page=wc-admin';
 			}
 		);
 
