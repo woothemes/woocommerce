@@ -29,7 +29,6 @@ const WoocommercePaymentsTaskPage = () => (
 );
 
 registerPlugin( 'woocommerce-admin-task-wcpay-page', {
-	// @ts-expect-error scope is not defined in the type definition but it is a valid property
 	scope: 'woocommerce-tasks',
 	render: WoocommercePaymentsTaskPage,
 } );

@@ -226,6 +226,5 @@ export const MobileAppHelpMenuEntryLoader = () => {
 
 registerPlugin( 'woocommerce-mobile-app-modal', {
 	render: MobileAppHelpMenuEntryLoader,
-	// @ts-expect-error 'scope' does exist. @types/wordpress__plugins is outdated.
 	scope: 'woocommerce-admin',
 } );

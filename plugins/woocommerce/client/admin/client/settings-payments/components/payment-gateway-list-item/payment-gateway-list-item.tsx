@@ -100,9 +100,7 @@ export const PaymentGatewayListItem = ( {
 									message={ incentive.badge }
 								/>
 							) : (
-								<StatusBadge
-									status={ determineGatewayStatus() }
-								/>
+								<StatusBadge status={ determineGatewayStatus() } />
 							) }
 							{ gateway.supports?.includes( 'subscriptions' ) && (
 								<span>
@@ -129,6 +127,7 @@ export const PaymentGatewayListItem = ( {
 						</span>
 						<span
 							className="woocommerce-list__item-content"
+							// eslint-disable-next-line react/no-danger -- This string is sanitized by the PaymentGateway class.
 							dangerouslySetInnerHTML={ sanitizeHTML(
 								decodeEntities( gateway.description )
 							) }

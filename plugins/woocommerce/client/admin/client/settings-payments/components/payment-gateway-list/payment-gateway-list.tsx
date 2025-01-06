@@ -105,7 +105,7 @@ export const PaymentGatewayList = ( {
 										<div className="woocommerce-list__item-before">
 											<DefaultDragHandle />
 											<img
-												className={'woocommerce-list__item-image'}
+												className="woocommerce-list__item-image"
 												src={ offlinePmsGroup.icon }
 												alt={
 													offlinePmsGroup.title +
@@ -120,6 +120,7 @@ export const PaymentGatewayList = ( {
 												</span>
 												<span
 													className="woocommerce-list__item-content"
+													// eslint-disable-next-line react/no-danger -- This string is sanitized by the PaymentGateway class.
 													dangerouslySetInnerHTML={ {
 														__html: offlinePmsGroup.description,
 													} }
