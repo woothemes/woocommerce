@@ -7,7 +7,7 @@ const test = baseTest.extend( {
 test(
 	'logged-in customer can comment on a post',
 	{
-		tag: [ tags.WP_CORE, tags.SKIP_ON_WPCOM, tags.SKIP_ON_PRESSABLE ],
+		tag: [ tags.WP_CORE, tags.SKIP_ON_WPCOM ],
 	},
 	async ( { baseURL, page } ) => {
 		await setComingSoon( { baseURL, enabled: 'no' } );
