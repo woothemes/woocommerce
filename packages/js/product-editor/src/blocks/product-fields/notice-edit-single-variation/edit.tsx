@@ -37,27 +37,16 @@ export function Edit( {
 		isParentResolving,
 	}: { parentName: string; isParentResolving: boolean } = useSelect(
 		( select ) => {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			const { getEditedEntityRecord, hasFinishedResolution } = select(
-				'core'
-			) as {
-				getEditedEntityRecord: (
-					kind: string,
-					name: string,
-					recordId: number
-				) => Product | false;
-				hasFinishedResolution: (
-					selectorName: string,
-					args?: unknown[]
-				) => boolean;
-			};
+			const { getEditedEntityRecord, hasFinishedResolution } =
+				select( 'core' );
 
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			const { name }: Product = getEditedEntityRecord(
 				'postType',
 				'product',
 				parentId
 			);
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			const isResolutionFinished = ! hasFinishedResolution(
 				'getEditedEntityRecord',
 				[ 'postType', 'product', parentId ]

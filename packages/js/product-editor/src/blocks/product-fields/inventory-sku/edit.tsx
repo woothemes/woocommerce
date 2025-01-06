@@ -9,7 +9,6 @@ import { useWooBlockProps } from '@woocommerce/block-templates';
 import { Product } from '@woocommerce/data';
 import {
 	BaseControl,
-	// @ts-expect-error no exported member.
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -22,6 +21,7 @@ import { useEntityProp } from '@wordpress/core-data';
  */
 import { ProductEditorBlockEditProps } from '../../../types';
 import { useValidation } from '../../../contexts/validation-context';
+import { Ref } from 'react';
 
 /**
  * Internal dependencies
@@ -33,11 +33,8 @@ export function Edit( {
 }: ProductEditorBlockEditProps< BlockAttributes > ) {
 	const blockProps = useWooBlockProps( attributes );
 
-	const [ sku, setSku ] = useEntityProp(
-		'postType',
-		context.postType,
-		'sku'
-	);
+	const [ sku, setSku ]: [ string, ( newSku: string ) => void, unknown ] =
+		useEntityProp( 'postType', context.postType, 'sku' );
 
 	const { ref: skuRef } = useValidation< Product >(
 		'sku',
@@ -69,10 +66,14 @@ export function Edit( {
 				) }
 			>
 				<InputControl
-					ref={ skuRef }
+					ref={ skuRef as Ref< HTMLInputElement > }
 					id={ inputControlId }
 					name={ 'woocommerce-product-sku' }
-					onChange={ setSku }
+					onChange={ ( nextValue ) => {
+						if ( nextValue ) {
+							setSku( nextValue );
+						}
+					} }
 					value={ sku || '' }
 					disabled={ attributes.disabled }
 				/>

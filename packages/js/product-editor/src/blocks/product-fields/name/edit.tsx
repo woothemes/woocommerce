@@ -19,7 +19,6 @@ import {
 	Button,
 	BaseControl,
 	Tooltip,
-	// @ts-expect-error no exported member.
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -38,6 +37,7 @@ import useProductEntityProp from '../../../hooks/use-product-entity-prop';
 import { ProductEditorBlockEditProps } from '../../../types';
 import { AUTO_DRAFT_NAME, getPermalinkParts } from '../../../utils';
 import { NameBlockAttributes } from './types';
+import { Ref } from 'react';
 
 export function NameBlockEdit( {
 	attributes,
@@ -195,7 +195,7 @@ export function NameBlockEdit( {
 				>
 					<InputControl
 						id={ nameControlId }
-						ref={ nameRef }
+						ref={ nameRef as Ref< HTMLInputElement > }
 						name="name"
 						// eslint-disable-next-line jsx-a11y/no-autofocus
 						autoFocus={ attributes.autoFocus }
@@ -203,7 +203,11 @@ export function NameBlockEdit( {
 							'e.g. 12 oz Coffee Mug',
 							'woocommerce'
 						) }
-						onChange={ setName }
+						onChange={ ( nextValue ) => {
+							if ( nextValue ) {
+								setName( nextValue );
+							}
+						} }
 						value={ name && name !== AUTO_DRAFT_NAME ? name : '' }
 						autoComplete="off"
 						data-1p-ignore

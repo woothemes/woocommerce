@@ -10,7 +10,6 @@ import { createElement, useEffect } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import {
 	BaseControl,
-	// @ts-expect-error no exported member.
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 
@@ -23,6 +22,7 @@ import { useCurrencyInputProps } from '../../../hooks/use-currency-input-props';
 import { sanitizeHTML } from '../../../utils/sanitize-html';
 import type { ProductEditorBlockEditProps } from '../../../types';
 import type { SalePriceBlockAttributes } from './types';
+import { Ref } from 'react';
 
 export function Edit( {
 	attributes,
@@ -122,7 +122,7 @@ export function Edit( {
 					id={ regularPriceId }
 					name={ 'regular_price' }
 					inputMode="decimal"
-					ref={ regularPriceRef }
+					ref={ regularPriceRef as Ref< HTMLInputElement > }
 					label={
 						tooltip ? (
 							<Label label={ label } tooltip={ tooltip } />
@@ -131,7 +131,7 @@ export function Edit( {
 						)
 					}
 					disabled={ disabled }
-					onBlur={ validateRegularPrice }
+					onBlur={ () => validateRegularPrice() }
 				/>
 			</BaseControl>
 		</div>

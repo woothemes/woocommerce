@@ -10,7 +10,6 @@ import {
 	Button,
 	Dropdown,
 	MenuItem,
-	// @ts-expect-error no exported member.
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 

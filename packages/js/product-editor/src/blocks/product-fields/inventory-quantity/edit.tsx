@@ -9,7 +9,6 @@ import { createElement, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
 	BaseControl,
-	// @ts-expect-error no exported member.
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 
@@ -83,11 +82,17 @@ export function Edit( {
 						<InputControl
 							id={ stockQuantityId }
 							name="stock_quantity"
-							ref={ stockQuantityRef }
+							ref={
+								stockQuantityRef as React.RefObject< HTMLInputElement >
+							}
 							label={ __( 'Available stock', 'woocommerce' ) }
-							value={ stockQuantity }
-							onChange={ setStockQuantity }
-							onBlur={ validateStockQuantity }
+							value={ stockQuantity?.toString() }
+							onChange={ ( value ) => {
+								if ( value ) {
+									setStockQuantity( parseInt( value, 10 ) );
+								}
+							} }
+							onBlur={ () => validateStockQuantity() }
 							type="number"
 							min={ 0 }
 						/>

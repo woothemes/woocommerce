@@ -14,7 +14,6 @@ import { getSetting } from '@woocommerce/settings';
 import { useInstanceId } from '@wordpress/compose';
 import {
 	BaseControl,
-	// @ts-expect-error no exported member.
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -28,6 +27,7 @@ import { useEntityProp } from '@wordpress/core-data';
 import { useValidation } from '../../../contexts/validation-context';
 import { InventoryEmailBlockAttributes } from './types';
 import { ProductEditorBlockEditProps } from '../../../types';
+import { Ref } from 'react';
 
 export function Edit( {
 	attributes,
@@ -100,16 +100,26 @@ export function Edit( {
 						>
 							<InputControl
 								id={ id }
-								ref={ lowStockAmountRef }
+								ref={
+									lowStockAmountRef as Ref< HTMLInputElement >
+								}
 								name={ 'low_stock_amount' }
 								placeholder={ sprintf(
 									// translators: Default quantity to notify merchants of low stock.
 									__( '%d (store default)', 'woocommerce' ),
 									notifyLowStockAmount
 								) }
-								onChange={ setLowStockAmount }
-								onBlur={ validateLowStockAmount }
-								value={ lowStockAmount }
+								onChange={ ( nextValue ) => {
+									if ( nextValue ) {
+										setLowStockAmount(
+											parseInt( nextValue, 10 )
+										);
+									}
+								} }
+								onBlur={ async () =>
+									await validateLowStockAmount()
+								}
+								value={ lowStockAmount.toString() }
 								type="number"
 								min={ 0 }
 							/>
