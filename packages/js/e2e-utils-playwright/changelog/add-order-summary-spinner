@@ -1,0 +1,4 @@
+Significance: patch
+Type: add
+
+Adds a check to ensure the loading masks are hidden after entering customer data in the Checkout block.
