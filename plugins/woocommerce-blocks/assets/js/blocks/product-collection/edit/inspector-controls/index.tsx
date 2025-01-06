@@ -94,7 +94,7 @@ const ProductCollectionInspectorControls = (
 		! isArchiveTemplate && shouldShowFilter( CoreFilterNames.FILTERABLE );
 	const showCustomOrderControl =
 		showQueryControls && shouldShowFilter( CoreFilterNames.ORDER );
-	const showDefaultOrderControl = ! showQueryControls;
+	const showDefaultOrderControl = inherit === true;
 	const showOffsetControl =
 		showQueryControls && shouldShowFilter( CoreFilterNames.OFFSET );
 	const showMaxPagesToShowControl =
