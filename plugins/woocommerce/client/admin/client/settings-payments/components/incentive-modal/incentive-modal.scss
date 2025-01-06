@@ -1,7 +1,7 @@
 .woocommerce-incentive-modal {
 	max-width: 840px;
 
-	@media screen  and ( max-width: 820px )  {
+	@media screen and ( max-width: 820px ) {
 		margin-left: 20px;
 		margin-right: 20px;
 	}
@@ -12,8 +12,8 @@
 	}
 
 	&__media {
-		@media screen  and ( max-width: 820px )  {
-			width:100%;
+		@media screen and ( max-width: 820px ) {
+			width: 100%;
 		}
 
 		background-color: $studio-woocommerce-purple-0;
@@ -28,7 +28,7 @@
 		align-items: center;
 
 
-		@media screen  and ( max-width: 820px )  {
+		@media screen and ( max-width: 820px ) {
 			flex-direction: column;
 		}
 
@@ -61,11 +61,11 @@
 		width: 280px;
 		padding: 76px 40px;
 
-		@media screen  and ( max-width: 820px )  {
+		@media screen and ( max-width: 820px ) {
 			max-height: 400px;
 			padding: 0;
 		}
-		@media screen  and ( max-width: 768px )  {
+		@media screen and ( max-width: 768px ) {
 			max-height: 200px;
 		}
 	}
