@@ -23,13 +23,13 @@ class WC_Shipping_Rate {
 	 * @var   array
 	 */
 	protected $data = array(
-		'id'          => '',
-		'method_id'   => '',
-		'instance_id' => 0,
-		'label'       => '',
-		'cost'        => 0,
-		'taxes'       => array(),
-		'tax_status'  => 'taxable',
+		'id'            => '',
+		'method_id'     => '',
+		'instance_id'   => 0,
+		'label'         => '',
+		'cost'          => 0,
+		'taxes'         => array(),
+		'tax_status'    => 'taxable',
 		'description'   => '',
 		'delivery_time' => '',
 	);
