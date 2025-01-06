@@ -926,6 +926,30 @@ final class WooCommerce {
 		$single            = wc_get_image_size( 'single' );
 		$gallery_thumbnail = wc_get_image_size( 'gallery_thumbnail' );
 
+		// Add responsive image sizes for product images so we can render them with container awareness.
+		$responsive_sizes = array(
+			array(
+				'name'  => 'woocommerce_300',
+				'width' => 300,
+			),
+			array(
+				'name'  => 'woocommerce_600',
+				'width' => 600,
+			),
+			array(
+				'name'  => 'woocommerce_900',
+				'width' => 900,
+			),
+			array(
+				'name'  => 'woocommerce_1200',
+				'width' => 1200,
+			),
+		);
+
+		foreach ( $responsive_sizes as $size ) {
+			add_image_size( $size['name'], $size['width'] );
+		}
+
 		add_image_size( 'woocommerce_thumbnail', $thumbnail['width'], $thumbnail['height'], $thumbnail['crop'] );
 		add_image_size( 'woocommerce_single', $single['width'], $single['height'], $single['crop'] );
 		add_image_size( 'woocommerce_gallery_thumbnail', $gallery_thumbnail['width'], $gallery_thumbnail['height'], $gallery_thumbnail['crop'] );
