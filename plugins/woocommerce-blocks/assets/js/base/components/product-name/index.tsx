@@ -40,8 +40,6 @@ export interface ProductNameProps
 
 /**
  * Render the Product name.
- *
- * The store API runs titles through `wp_kses_post()` which removes dangerous HTML tags, so using it inside `dangerouslySetInnerHTML` is considered safe.
  */
 export const ProductName = ( {
 	className = '',
@@ -57,6 +55,10 @@ export const ProductName = ( {
 }: ProductNameProps ): JSX.Element => {
 	const classes = clsx( 'wc-block-components-product-name', className );
 	const DisabledTagName = disabledTagName as DisabledTagNameType;
+	// This HTML is safe because the store API runs titles through `wp_kses_post()` which removes dangerous HTML tags.
+	// Ref: https://github.com/woocommerce/woocommerce/blob/trunk/src/StoreApi/Schemas/V1/ProductSchema.php#L100
+	const decodedName = decodeEntities( name );
+
 	if ( disabled ) {
 		const disabledProps = props as HTMLAttributes<
 			HTMLHeadingElement | HTMLSpanElement
@@ -65,8 +67,9 @@ export const ProductName = ( {
 			<DisabledTagName
 				className={ classes }
 				{ ...disabledProps }
+				// eslint-disable-next-line react/no-danger
 				dangerouslySetInnerHTML={ {
-					__html: decodeEntities( name ),
+					__html: decodedName,
 				} }
 			/>
 		);
@@ -77,8 +80,9 @@ export const ProductName = ( {
 			href={ permalink }
 			target={ target }
 			{ ...props }
+			// eslint-disable-next-line react/no-danger
 			dangerouslySetInnerHTML={ {
-				__html: decodeEntities( name ),
+				__html: decodedName,
 			} }
 			style={ style }
 		/>

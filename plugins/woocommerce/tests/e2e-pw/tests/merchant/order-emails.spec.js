@@ -11,7 +11,7 @@ test.describe(
 		test.use( { storageState: process.env.ADMINSTATE } );
 
 		const customerBilling = {
-			email: 'john.doe.merchant.test@example.com',
+			email: `john.doe.merchant.test.${ Date.now() }@example.com`,
 		};
 
 		const storeName = 'WooCommerce Core E2E Test Suite';
@@ -51,6 +51,9 @@ test.describe(
 					.locator( '#bulk-action-selector-top' )
 					.selectOption( 'delete' );
 				await page.locator( '#doaction' ).click();
+				await expect(
+					page.getByText( /successfully deleted/i )
+				).toBeVisible();
 			}
 		} );
 
@@ -165,6 +168,7 @@ test.describe(
 
 				// Enter email log and select to view the content in JSON
 				await page.click( 'button[title^="View log"]' );
+				await page.locator( emailContentJson ).isEnabled();
 				await page.locator( emailContentJson ).click();
 
 				// Verify that the message includes an order processing confirmation
