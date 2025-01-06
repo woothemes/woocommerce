@@ -132,9 +132,10 @@ const ProductContent = withProduct(
 );
 
 const getOrderPropertiesForDefaultQuery = () => {
-	const settings = select(
-		coreStore as unknown as string
-	).getEditedEntityRecord( 'root', 'site' ) as Record< string, string >;
+	const settings = select( 'core' ).getEditedEntityRecord(
+		'root',
+		'site'
+	) as Record< string, string >;
 
 	switch ( settings.woocommerce_default_catalog_orderby ) {
 		case 'title':

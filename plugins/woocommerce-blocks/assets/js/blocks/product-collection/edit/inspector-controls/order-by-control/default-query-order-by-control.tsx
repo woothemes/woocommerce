@@ -41,9 +41,10 @@ const orderOptions = [
 ];
 
 const DefaultQueryOrderByControl = () => {
-	const settings = select(
-		coreStore as unknown as string
-	).getEditedEntityRecord( 'root', 'site' ) as Record< string, string >;
+	const settings = select( 'core' ).getEditedEntityRecord(
+		'root',
+		'site'
+	) as Record< string, string >;
 
 	const [ value, setValue ] = useState(
 		settings.woocommerce_default_catalog_orderby || 'menu_order'
