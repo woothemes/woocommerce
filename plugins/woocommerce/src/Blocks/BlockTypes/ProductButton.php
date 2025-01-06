@@ -4,7 +4,6 @@ declare( strict_types = 1 );
 namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 use Automattic\WooCommerce\Blocks\Utils\StyleAttributesUtils;
-
 /**
  * ProductButton class.
  */
@@ -16,6 +15,34 @@ class ProductButton extends AbstractBlock {
 	 * @var string
 	 */
 	protected $block_name = 'product-button';
+
+	/**
+	 * Initialize the block.
+	 */
+	protected function initialize() {
+		parent::initialize();
+
+		// add_filter( 'hooked_block_types', [ $this, 'block_hook_fallback_store_notice' ], 10, 4 );
+	}
+
+	/**
+	 * Hook the fallback store notice after the post content
+	 *
+	 * @param array  $hooked_blocks The array of hooked blocks.
+	 * @param string $position The position of the block.
+	 * @param string $anchor_block The anchor block.
+	 * @return array The array of hooked blocks.
+	 */
+	public function block_hook_fallback_store_notice( $hooked_blocks, $position, $anchor_block ) {
+		// Hooks the fallback store notice after the post content.
+		if ( 'core/post-content' === $anchor_block &&
+			'after' === $position
+		) {
+			$hooked_blocks[] = 'woocommerce/fallback-store-notice';
+		}
+
+		return $hooked_blocks;
+	}
 
 
 	/**

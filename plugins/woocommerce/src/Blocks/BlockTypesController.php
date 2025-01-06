@@ -514,6 +514,7 @@ final class BlockTypesController {
 			'ProductDetails',
 			'SingleProduct',
 			'StockFilter',
+			'FallbackStoreNotice',
 			'PageContentWrapper',
 			'OrderConfirmation\Status',
 			'OrderConfirmation\Summary',

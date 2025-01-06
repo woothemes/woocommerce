@@ -152,8 +152,8 @@ class AddToCartForm extends AbstractBlock {
 		}
 
 		$is_external_product_with_url = $product instanceof \WC_Product_External && $product->get_product_url();
-		$is_stepper_style             = 'stepper' === $attributes['quantitySelectorStyle'] && ! $product->is_sold_individually() && Features::is_enabled( 'add-to-cart-with-options-stepper-layout' );
-
+		// $is_stepper_style             = 'stepper' === $attributes['quantitySelectorStyle'] && ! $product->is_sold_individually() && Features::is_enabled( 'add-to-cart-with-options-stepper-layout' );
+		$is_stepper_style = false;
 		ob_start();
 
 		/**
