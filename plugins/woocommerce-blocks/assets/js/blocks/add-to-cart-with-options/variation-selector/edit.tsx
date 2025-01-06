@@ -72,13 +72,19 @@ const AddToCartWithOptionsVariationSelectorEdit = (
 	};
 
 	const renderDefaultVariationSelector = () => {
-		return (
-			<div className="wc-block-variation-selector__wrapper">
+		return [
+			__( 'Color', 'woocommerce' ),
+			__( 'Size', 'woocommerce' ),
+		].map( ( attribute ) => (
+			<div
+				className="wc-block-variation-selector__wrapper"
+				key={ attribute }
+			>
 				<Heading
 					className="wc-block-variation-selector__label"
 					level="3"
 				>
-					{ __( 'Example Attribute', 'woocommerce' ) }
+					{ attribute }
 				</Heading>
 				<SelectControl
 					value=""
@@ -95,7 +101,7 @@ const AddToCartWithOptionsVariationSelectorEdit = (
 					className="wc-block-variation-selector__select"
 				/>
 			</div>
-		);
+		) );
 	};
 
 	return (
