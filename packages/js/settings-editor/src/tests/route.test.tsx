@@ -72,6 +72,7 @@ describe( 'route.tsx', () => {
 			admin: {
 				settingsData: mockSettingsPages,
 			},
+			adminUrl: 'admin.php',
 		};
 
 		// Mock default location
@@ -140,6 +141,7 @@ describe( 'route.tsx', () => {
 						},
 					},
 				},
+				adminUrl: 'admin.php',
 			};
 
 			( applyFilters as jest.Mock ).mockReturnValue( {
