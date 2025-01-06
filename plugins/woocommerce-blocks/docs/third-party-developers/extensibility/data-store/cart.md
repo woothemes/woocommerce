@@ -54,7 +54,7 @@
     -   [isShippingRateBeingSelected](#isshippingratebeingselected)
     -   [getItemsPendingQuantityUpdate](#getitemspendingquantityupdate)
     -   [getItemsPendingDelete](#getitemspendingdelete)
-    -   [getApplyingExtensionCartUpdates](#getApplyingExtensionCartUpdates)
+    -   [getApplyingExtensionCartUpdates](#getapplyingextensioncartupdates)
 
 ## Overview
 
@@ -559,7 +559,7 @@ Dispatch an action to either increment or decrement the number of `applyingExten
 #### _Parameters_ <!-- omit in toc -->
 
 - _isApplyingUpdate_ `boolean`: If true, signal that an update is being applied, if false, signal an update is no longer being applied (i.e. it has finished). Calling this action with `false` will not result in the `getApplyingExtensionCartUpdates` returning 0, it will only decrement the counter.
--
+
 #### _Example_ <!-- omit in toc -->
 
 ```js
