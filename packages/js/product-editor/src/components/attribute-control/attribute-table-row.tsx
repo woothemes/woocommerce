@@ -86,8 +86,9 @@ const stringToTokenItem = ( v: string | TokenItem ): TokenItem => ( {
  * @param {string | TokenItem} item - The item to convert.
  * @return {string} The string.
  */
-const tokenItemToString = ( item: string | TokenItem ): string =>
-	typeof item === 'string' ? item : item.value;
+const tokenItemToString = (
+	item: string | Omit< TokenItem, 'slug' >
+): string => ( typeof item === 'string' ? item : item.value );
 
 const INITIAL_MAX_TOKENS_TO_SHOW = 20;
 const MAX_TERMS_TO_LOAD = 100;
@@ -399,7 +400,7 @@ export const AttributeTableRow: React.FC< AttributeTableRowProps > = ( {
 					disabled={ ! attribute }
 					suggestions={ tokenFieldSuggestions }
 					value={ tokenFieldValues }
-					onChange={ ( nextTokens: ( TokenItem | string )[] ) => {
+					onChange={ ( nextTokens ) => {
 						// If there is no attribute, exit.
 						if ( ! attribute ) {
 							return;
@@ -418,8 +419,9 @@ export const AttributeTableRow: React.FC< AttributeTableRowProps > = ( {
 							.map( stringToTokenItem );
 
 						// Create a string list of the next string tokens.
-						const nextStringTokens =
-							nextTokens.map( tokenItemToString );
+						const nextStringTokens = nextTokens.map( ( value ) =>
+							tokenItemToString( value )
+						);
 
 						// *** LOCAL Attributes ***
 						if ( isLocalAttribute ) {

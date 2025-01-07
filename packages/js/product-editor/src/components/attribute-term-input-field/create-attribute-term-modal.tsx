@@ -92,13 +92,8 @@ export const CreateAttributeTermModal: React.FC<
 	return (
 		<Modal
 			title={ __( 'Create attribute', 'woocommerce' ) }
-			onRequestClose={ (
-				event:
-					| React.KeyboardEvent< Element >
-					| React.MouseEvent< Element >
-					| React.FocusEvent< Element >
-			) => {
-				event.stopPropagation();
+			onRequestClose={ ( event ) => {
+				event?.stopPropagation();
 				onCancel();
 			} }
 			className="woocommerce-create-attribute-term-modal"
@@ -112,6 +107,7 @@ export const CreateAttributeTermModal: React.FC<
 				errors={ {} }
 				onSubmit={ onAdd }
 			>
+				{ /* @ts-expect-error: Typing this component involves handling complex structures that require additional refactoring. */ }
 				{ ( {
 					getInputProps,
 					handleSubmit,

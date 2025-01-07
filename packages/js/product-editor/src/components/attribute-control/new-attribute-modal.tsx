@@ -216,6 +216,7 @@ export const NewAttributeModal: React.FC< NewAttributeModalProps > = ( {
 					attributes: [ defaultSearch ? initialAttribute : null ],
 				} }
 			>
+				{ /* @ts-expect-error: Typing this component involves handling complex structures that require additional refactoring. */ }
 				{ ( {
 					values,
 					setValue,

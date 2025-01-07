@@ -149,9 +149,7 @@ export const CustomAttributeTermInputField: React.FC<
 												checked={ value.includes(
 													item
 												) }
-												label={
-													<span> { item } </span>
-												}
+												label={ item }
 											/>
 										) }
 									</MenuItem>

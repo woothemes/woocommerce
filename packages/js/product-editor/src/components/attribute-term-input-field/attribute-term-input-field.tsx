@@ -311,11 +311,7 @@ export const AttributeTermInputField: React.FC<
 												<CheckboxControl
 													onChange={ () => null }
 													checked={ isSelected }
-													label={
-														<span>
-															{ item.name }
-														</span>
-													}
+													label={ item.name }
 												/>
 											) : (
 												<div className="woocommerce-attribute-term-field__add-new">
