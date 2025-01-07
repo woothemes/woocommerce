@@ -32,10 +32,10 @@ if [ "$CHECKOUT_TYPE" = '1' ]; then
 	if [ -n "$currentComposerDate" ]; then
 		currentComposerDate=$( date +%F -d $currentComposerDate )
 		twelveMonthsAgo=$( date +%F -d '12 months ago' )
-
-		printf "${orangeColoured}Composer date $currentComposerDate, 12mo date $twelveMonthsAgo\n"
-
-		# if [ $date < $twelveMonthsAgo ]; then
-		# fi
+		if [ $date < $twelveMonthsAgo ]; then
+			printf "${orangeColoured}composer version (build at $currentComposerDate) is older than twelve months, ensure to update it with 'composer self-update'.\n"
+		else
+		    printf "${orangeColoured}composer version (build at $currentComposerDate) is ok, no update needed.\n"
+		fi
     fi
 fi
