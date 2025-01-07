@@ -6,9 +6,11 @@ import classNames from 'classnames';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 import { addQueryArgs, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { VIEW_LAYOUTS } from '@wordpress/dataviews';
-// @ts-expect-error missing type.
 // eslint-disable-next-line @woocommerce/dependency-group
-import { __experimentalHStack as HStack } from '@wordpress/components';
+import {
+	// @ts-expect-error no exported member.
+	__experimentalHStack as HStack
+} from '@wordpress/components';
 
 /**
  * Internal dependencies

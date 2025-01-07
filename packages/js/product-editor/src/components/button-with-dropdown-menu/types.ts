@@ -38,13 +38,15 @@ export type PopoverProps = {
 };
 
 export type ButtonWithDropdownMenuProps = Omit<
-	Button.ButtonProps,
+	React.ComponentProps< typeof Button >,
 	'controls'
 > & {
 	dropdownButtonLabel?: string;
 	defaultOpen?: boolean;
 	controls?: DropdownOption[];
 	popoverProps?: PopoverProps;
-	renderMenu?( props: Dropdown.RenderProps ): React.ReactElement;
+	renderMenu?(
+		props: React.ComponentProps< typeof Dropdown >
+	): React.ReactElement;
 	onToggle?: ( isOpen: boolean ) => void;
 };

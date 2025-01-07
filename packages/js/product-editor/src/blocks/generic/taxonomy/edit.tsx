@@ -50,7 +50,8 @@ export function Edit( {
 			// @ts-ignore
 			select( 'core' ).getTaxonomy( attributes.slug ) || {
 				hierarchical: false,
-			}
+			},
+		[ attributes.slug ]
 	);
 	const {
 		label,

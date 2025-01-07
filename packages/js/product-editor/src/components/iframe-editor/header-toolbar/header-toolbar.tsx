@@ -20,7 +20,7 @@ import { MouseEvent } from 'react';
 import {
 	Button,
 	Popover,
-	/* @ts-expect-error missing types. */
+	// @ts-expect-error no exported member.
 	ToolbarItem,
 } from '@wordpress/components';
 // eslint-disable-next-line @woocommerce/dependency-group
@@ -89,7 +89,6 @@ export function HeaderToolbar( {
 			// @ts-expect-error These selectors are available in the block data store.
 			getBlockSelectionStart,
 		} = select( blockEditorStore );
-		// @ts-expect-error These selectors are available in the block data store.
 		const { get: getPreference } = select( preferencesStore );
 
 		return {
@@ -174,7 +173,7 @@ export function HeaderToolbar( {
 							{ /* @ts-expect-error missing type */ }
 							<BlockToolbar hideDragHandle />
 						</div>
-						{ /* @ts-expect-error missing type */ }
+						{ /* @ts-expect-error name does exist on PopoverSlot see: https://github.com/WordPress/gutenberg/blob/trunk/packages/components/src/popover/index.tsx#L555 */ }
 						<Popover.Slot name="block-toolbar" />
 						{ hasBlockSelection && (
 							<Button

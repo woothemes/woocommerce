@@ -21,6 +21,10 @@ import {
 const DEFAULT_ORDER = 20;
 const TOP_LEVEL_MENU = 'top-level';
 
+type FillProps =
+	| Record< string, unknown >
+	| ( undefined & VariationQuickUpdateSlotProps );
+
 export const getGroupName = (
 	group?: string,
 	isMultipleSelection?: boolean
@@ -34,7 +38,9 @@ export const getGroupName = (
 };
 
 export const VariationQuickUpdateMenuItem: React.FC< MenuItemProps > & {
-	Slot: React.FC< Slot.Props & VariationQuickUpdateSlotProps >;
+	Slot: React.FC<
+		React.ComponentProps< typeof Slot > & VariationQuickUpdateSlotProps
+	>;
 } = ( {
 	children,
 	order = DEFAULT_ORDER,
@@ -44,7 +50,11 @@ export const VariationQuickUpdateMenuItem: React.FC< MenuItemProps > & {
 	...props
 } ) => {
 	const handleClick =
-		( fillProps: Fill.Props & VariationQuickUpdateSlotProps ) => () => {
+		(
+			fillProps: React.ComponentProps< typeof Fill > &
+				VariationQuickUpdateSlotProps
+		) =>
+		() => {
 			const { selection, onChange, onClose } = fillProps;
 			onClick( {
 				selection: Array.isArray( selection )
@@ -60,7 +70,7 @@ export const VariationQuickUpdateMenuItem: React.FC< MenuItemProps > & {
 			key={ updateType }
 			name={ getGroupName( group, updateType === MULTIPLE_UPDATE ) }
 		>
-			{ ( fillProps: Fill.Props & VariationQuickUpdateSlotProps ) =>
+			{ ( fillProps: FillProps ) =>
 				createOrderedChildren(
 					<MenuItem { ...props } onClick={ handleClick( fillProps ) }>
 						{ children }

@@ -13,8 +13,15 @@ export function useNotice() {
 	const { updateOptions } = useDispatch( OPTIONS_STORE_NAME );
 
 	const { dismissedNotices, isResolving } = useSelect( ( select ) => {
-		const { getOption, hasFinishedResolution } =
-			select( OPTIONS_STORE_NAME );
+		const { getOption, hasFinishedResolution } = select(
+			OPTIONS_STORE_NAME
+		) as {
+			getOption: ( option: string ) => [ number ];
+			hasFinishedResolution: (
+				selectorName: string,
+				args?: unknown[]
+			) => boolean;
+		};
 
 		const dismissedNoticesOption = getOption(
 			SINGLE_VARIATION_NOTICE_DISMISSED_OPTION

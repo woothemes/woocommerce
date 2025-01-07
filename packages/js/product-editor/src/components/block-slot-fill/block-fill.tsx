@@ -24,9 +24,15 @@ export function BlockFill( {
 
 	const closestAncestorClientId = useSelect(
 		( select ) => {
-			// @ts-expect-error Outdated type definition.
-			const { getBlockParentsByBlockName } =
-				select( 'core/block-editor' );
+			const { getBlockParentsByBlockName } = select(
+				'core/block-editor'
+			) as {
+				getBlockParentsByBlockName: (
+					clientId: string,
+					blockName: string | string[],
+					ascending: boolean
+				) => string[];
+			};
 
 			const [ closestParentClientId ] = getBlockParentsByBlockName(
 				clientId,

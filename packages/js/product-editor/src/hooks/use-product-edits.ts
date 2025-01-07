@@ -28,7 +28,13 @@ export function useProductEdits( productType = <string>'product' ) {
 		( select ) => {
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
-			const { getEntityRecordNonTransientEdits } = select( 'core' );
+			const { getEntityRecordNonTransientEdits } = select( 'core' ) as {
+				getEntityRecordNonTransientEdits: (
+					kind: string,
+					name: string,
+					recordId: number
+				) => EntityEdits;
+			};
 
 			const _edits = getEntityRecordNonTransientEdits(
 				'postType',

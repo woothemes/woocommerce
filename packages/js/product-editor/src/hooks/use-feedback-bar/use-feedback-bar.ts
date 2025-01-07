@@ -13,8 +13,15 @@ export const useFeedbackBar = () => {
 	const { updateOptions } = useDispatch( OPTIONS_STORE_NAME );
 
 	const { shouldShowFeedbackBar } = useSelect( ( select ) => {
-		const { getOption, hasFinishedResolution } =
-			select( OPTIONS_STORE_NAME );
+		const { getOption, hasFinishedResolution } = select(
+			OPTIONS_STORE_NAME
+		) as {
+			getOption: ( option: string ) => string;
+			hasFinishedResolution: (
+				selectorName: string,
+				args?: unknown[]
+			) => boolean;
+		};
 
 		const showFeedbackBarOption = getOption(
 			PRODUCT_EDITOR_SHOW_FEEDBACK_BAR_OPTION_NAME

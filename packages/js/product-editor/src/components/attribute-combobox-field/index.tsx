@@ -30,7 +30,7 @@ import type {
  * the `__experimentalRenderItem` property.
  */
 interface ComboboxControlProps
-	extends Omit< CoreComboboxControl.Props, 'label' | 'help' > {
+	extends Omit< typeof CoreComboboxControl, 'label' | 'help' > {
 	__experimentalRenderItem?: ( args: {
 		item: ComboboxControlOption;
 	} ) => string | JSX.Element;
@@ -221,7 +221,7 @@ const AttributesComboboxControl: React.FC<
 					allowReset={ false }
 					options={ options }
 					value={ currentValue }
-					onChange={ ( newValue ) => {
+					onChange={ ( newValue: string ) => {
 						if ( ! newValue ) {
 							return;
 						}

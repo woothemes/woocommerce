@@ -40,9 +40,11 @@ export function ResizableEditor( {
 }: ResizableEditorProps ) {
 	const [ width, setWidth ] = useState( '100%' );
 	const resizableRef = useRef< HTMLDivElement >();
-	const resizeWidthBy = useCallback( ( deltaPixels ) => {
+	const resizeWidthBy = useCallback( ( deltaPixels: number ): void => {
 		if ( resizableRef.current ) {
-			setWidth( resizableRef.current.offsetWidth + deltaPixels );
+			setWidth(
+				( resizableRef.current.offsetWidth + deltaPixels ).toString()
+			);
 		}
 	}, [] );
 	return (

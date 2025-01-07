@@ -8,13 +8,13 @@ import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import classNames from 'classnames';
 import {
-	// @ts-expect-error missing types.
+	// @ts-expect-error no exported member.
 	__experimentalHeading as Heading,
-	// @ts-expect-error missing types.
+	// @ts-expect-error no exported member.
 	__experimentalText as Text,
-	// @ts-expect-error missing types.
+	// @ts-expect-error no exported member.
 	__experimentalHStack as HStack,
-	// @ts-expect-error missing types.
+	// @ts-expect-error no exported member.
 	__experimentalVStack as VStack,
 	FlexItem,
 	Button,

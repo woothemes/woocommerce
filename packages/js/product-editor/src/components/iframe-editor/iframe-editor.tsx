@@ -175,7 +175,6 @@ export function IframeEditor( {
 	}, [] );
 
 	const { hasFixedToolbar } = useSelect( ( select ) => {
-		// @ts-expect-error These selectors are available in the block data store.
 		const { get: getPreference } = select( preferencesStore );
 
 		return {
@@ -305,6 +304,7 @@ export function IframeEditor( {
 									{ resizeObserver }
 									<BlockList className="edit-site-block-editor__block-list wp-site-blocks" />
 								</EditorCanvas>
+								{ /* @ts-expect-error name does exist on PopoverSlot see: https://github.com/WordPress/gutenberg/blob/trunk/packages/components/src/popover/index.tsx#L555 */ }
 								<Popover.Slot />
 							</ResizableEditor>
 							{ /* This is a hack, but I couldn't find another (easy) way to not
@@ -318,7 +318,6 @@ export function IframeEditor( {
 							scope={ SIDEBAR_COMPLEMENTARY_AREA_SCOPE }
 						/>
 					</div>
-					{ /* @ts-expect-error 'scope' does exist. @types/wordpress__plugins is outdated. */ }
 					<PluginArea scope="woocommerce-product-editor-modal-block-editor" />
 					<SettingsSidebar smallScreenTitle={ name } />
 				</BlockEditorProvider>

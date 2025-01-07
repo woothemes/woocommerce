@@ -22,18 +22,20 @@ async function getDefaultVariationValues(
 	productId: number
 ): Promise< Partial< Omit< ProductVariation, 'id' > > > {
 	try {
-		const { attributes } = await resolveSelect(
-			'core'
-		).getEntityRecord< Product >( 'postType', 'product', productId );
+		const { attributes } = await resolveSelect( 'core' ).getEntityRecord(
+			'postType',
+			'product',
+			productId
+		);
 		const alreadyHasVariableAttribute = attributes.some(
-			( attr ) => attr.variation
+			( attr: Product ) => attr.variation
 		);
 		if ( ! alreadyHasVariableAttribute ) {
 			return {};
 		}
 		const products = await resolveSelect(
 			EXPERIMENTAL_PRODUCT_VARIATIONS_STORE_NAME
-		).getProductVariations< ProductVariation[] >( {
+		).getProductVariations( {
 			product_id: productId,
 			per_page: 1,
 			has_price: true,
@@ -73,11 +75,16 @@ export function useProductVariationsHelper() {
 			const {
 				isGeneratingVariations: getIsGeneratingVariations,
 				generateProductVariationsError,
-			} = select( EXPERIMENTAL_PRODUCT_VARIATIONS_STORE_NAME );
+			} = select( EXPERIMENTAL_PRODUCT_VARIATIONS_STORE_NAME ) as {
+				isGeneratingVariations: ( args: {
+					product_id: number;
+				} ) => boolean | undefined;
+				generateProductVariationsError: ( args: {
+					product_id: number;
+				} ) => Error | undefined;
+			};
 			return {
-				isGeneratingVariations: getIsGeneratingVariations<
-					boolean | undefined
-				>( {
+				isGeneratingVariations: getIsGeneratingVariations( {
 					product_id: productId,
 				} ),
 				generateError: generateProductVariationsError( {
@@ -101,7 +108,7 @@ export function useProductVariationsHelper() {
 
 		const { status: lastStatus, variations } = await resolveSelect(
 			'core'
-		).getEditedEntityRecord< Product >( 'postType', 'product', productId );
+		).getEditedEntityRecord( 'postType', 'product', productId );
 		const hasVariableAttribute = attributes.some(
 			( attr ) => attr.variation
 		);
@@ -111,7 +118,7 @@ export function useProductVariationsHelper() {
 		);
 
 		await Promise.all(
-			variations.map( ( variationId ) =>
+			variations.map( ( variationId: number ) =>
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
 				dispatch( 'core' ).invalidateResolution( 'getEntityRecord', [
@@ -157,7 +164,7 @@ export function useProductVariationsHelper() {
 					meta_data,
 				}
 			)
-			.then( async ( response ) => {
+			.then( async ( response: ProductVariation[] ) => {
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
 				await dispatch( 'core' ).invalidateResolution(

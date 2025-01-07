@@ -19,7 +19,7 @@ import {
 	Button,
 	BaseControl,
 	Tooltip,
-	// @ts-expect-error `__experimentalInputControl` does exist.
+	// @ts-expect-error no exported member.
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -55,14 +55,16 @@ export function NameBlockEdit( {
 		useState( false );
 
 	const productId = useEntityId( 'postType', 'product' );
-	const product: Product = useSelect( ( select ) =>
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		select( 'core' ).getEditedEntityRecord(
-			'postType',
-			'product',
-			productId
-		)
+	const product: Product = useSelect(
+		( select ) =>
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			select( 'core' ).getEditedEntityRecord(
+				'postType',
+				'product',
+				productId
+			),
+		[ productId ]
 	);
 
 	const [ sku, setSku ] = useEntityProp( 'postType', 'product', 'sku' );

@@ -8,6 +8,7 @@ import { recordEvent } from '@woocommerce/tracks';
 import { dispatch } from '@wordpress/data';
 import { useEntityProp } from '@wordpress/core-data';
 import { parse, rawHandler } from '@wordpress/blocks';
+import type { BlockInstance } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -39,7 +40,10 @@ export default function FullEditorToolbarButton( {
 	label = __( 'Edit Product description', 'woocommerce' ),
 	text = __( 'Full editor', 'woocommerce' ),
 } ) {
-	const { openModalEditor, setModalEditorBlocks } = dispatch( store );
+	const { openModalEditor, setModalEditorBlocks } = dispatch( store ) as {
+		openModalEditor: () => void;
+		setModalEditorBlocks: ( blocks: BlockInstance[] ) => void;
+	};
 	const [ description ] = useEntityProp< string >(
 		'postType',
 		'product',

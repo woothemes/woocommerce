@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
 import {
 	Button,
-	// @ts-expect-error `__experimentalInputControl` does exist.
+	// @ts-expect-error no exported member.
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 

@@ -64,13 +64,9 @@ export function useVariations( { productId }: UseVariationsProps ) {
 			setIsLoading( true );
 			setGetVariationsError( undefined );
 
-			const data = await getProductVariations< ProductVariation[] >(
-				requestParams
-			);
+			const data = await getProductVariations( requestParams );
 
-			const total = await getProductVariationsTotalCount< number >(
-				requestParams
-			);
+			const total = await getProductVariationsTotalCount( requestParams );
 
 			setVariations( data );
 			setTotalCount( total );
@@ -172,7 +168,7 @@ export function useVariations( { productId }: UseVariationsProps ) {
 		let fetchedCount = 0;
 
 		while ( fetchedCount < totalCount ) {
-			const chunk = await getProductVariations< ProductVariation[] >( {
+			const chunk = await getProductVariations( {
 				product_id: productId,
 				page: currentPage++,
 				per_page: 50,
@@ -183,7 +179,7 @@ export function useVariations( { productId }: UseVariationsProps ) {
 
 			fetchedCount += chunk.length;
 
-			chunk.forEach( ( variation ) => {
+			chunk.forEach( ( variation: ProductVariation ) => {
 				selectedVariationsRef.current[ variation.id ] = variation;
 			} );
 		}

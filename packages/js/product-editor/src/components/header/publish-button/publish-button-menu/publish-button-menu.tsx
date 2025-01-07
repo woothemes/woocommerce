@@ -75,7 +75,9 @@ export function PublishButtonMenu( {
 		);
 	}
 
-	function renderMenu( { onClose }: Dropdown.RenderProps ) {
+	function renderMenu( {
+		onClose,
+	}: React.ComponentProps< typeof Dropdown > ) {
 		return (
 			<>
 				<MenuGroup>

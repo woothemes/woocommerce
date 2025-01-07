@@ -21,10 +21,16 @@ export function useConfirmUnsavedProductChanges(
 		( select ) => {
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
-			const { isSavingEntityRecord } = select( 'core' );
+			const { isSavingEntityRecord } = select( 'core' ) as {
+				isSavingEntityRecord: (
+					kind: string,
+					name: string,
+					recordId: number
+				) => boolean;
+			};
 
 			return {
-				isSaving: isSavingEntityRecord< boolean >(
+				isSaving: isSavingEntityRecord(
 					'postType',
 					productType,
 					productId

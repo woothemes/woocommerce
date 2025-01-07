@@ -7,7 +7,7 @@ import {
 	StrictMode,
 	Suspense,
 	createElement,
-	// @ts-expect-error createRoot is available.
+	// @ts-expect-error no exported member.
 	createRoot,
 	lazy,
 } from '@wordpress/element';

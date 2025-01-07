@@ -71,7 +71,7 @@ export function PublishButton( {
 
 	if ( productType === 'product' && isMenuButton ) {
 		function renderPublishButtonMenu(
-			menuProps: Dropdown.RenderProps
+			menuProps: React.ComponentProps< typeof Dropdown >
 		): React.ReactElement {
 			return (
 				<PublishButtonMenu

@@ -69,7 +69,6 @@ export function ImageActionsMenu( {
 	return (
 		<Dropdown
 			{ ...props }
-			// @ts-expect-error missing prop in types.
 			popoverProps={ {
 				placement: 'bottom-end',
 			} }

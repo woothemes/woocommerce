@@ -13,8 +13,15 @@ export function useShowPrepublishChecks() {
 	const { updateOptions } = useDispatch( OPTIONS_STORE_NAME );
 
 	const { isResolving, showPrepublishChecks } = useSelect( ( select ) => {
-		const { getOption, hasFinishedResolution } =
-			select( OPTIONS_STORE_NAME );
+		const { getOption, hasFinishedResolution } = select(
+			OPTIONS_STORE_NAME
+		) as {
+			getOption: ( option: string ) => string;
+			hasFinishedResolution: (
+				selectorName: string,
+				args?: unknown[]
+			) => boolean;
+		};
 
 		const showPrepublishChecksOption =
 			getOption( SHOW_PREPUBLISH_CHECKS_ENABLED_OPTION_NAME ) || 'yes';

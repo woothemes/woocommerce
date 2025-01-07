@@ -60,7 +60,9 @@ export function Edit( {
 	const [ highlightSide, setHighlightSide ] = useState< HighlightSides >();
 
 	const { dimensionUnit, weightUnit } = useSelect( ( select ) => {
-		const { getOption } = select( OPTIONS_STORE_NAME );
+		const { getOption } = select( OPTIONS_STORE_NAME ) as {
+			getOption: ( key: string ) => string;
+		};
 		return {
 			dimensionUnit: getOption( 'woocommerce_dimension_unit' ),
 			weightUnit: getOption( 'woocommerce_weight_unit' ),

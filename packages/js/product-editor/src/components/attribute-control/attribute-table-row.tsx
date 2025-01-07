@@ -32,7 +32,8 @@ import type { MouseEventHandler } from 'react';
 import AttributesComboboxControl from '../attribute-combobox-field';
 import type { AttributeTableRowProps } from './types';
 
-interface FormTokenFieldProps extends CoreFormTokenField.Props {
+interface FormTokenFieldProps
+	extends React.ComponentProps< typeof CoreFormTokenField > {
 	__experimentalExpandOnFocus: boolean;
 	__experimentalAutoSelectFirstMatch: boolean;
 	__experimentalShowHowTo?: boolean;
@@ -334,9 +335,7 @@ export const AttributeTableRow: React.FC< AttributeTableRowProps > = ( {
 		 */
 		const recentTermsList = sel(
 			EXPERIMENTAL_PRODUCT_ATTRIBUTE_TERMS_STORE_NAME
-		).getProductAttributeTerms(
-			selectItemsQuery
-		) as ProductAttributeTerm[];
+		).getProductAttributeTerms();
 
 		/*
 		 * New selected terms are the ones that are in the recent terms list

@@ -14,7 +14,7 @@ import { getSetting } from '@woocommerce/settings';
 import { useInstanceId } from '@wordpress/compose';
 import {
 	BaseControl,
-	// @ts-expect-error `__experimentalInputControl` does exist.
+	// @ts-expect-error no exported member.
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

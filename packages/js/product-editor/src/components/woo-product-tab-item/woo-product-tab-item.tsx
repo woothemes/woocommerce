@@ -12,20 +12,27 @@ import { createOrderedChildren } from '../../utils';
 
 export type ProductFillLocationType = { name: string; order?: number };
 
+type TabPanelProps = React.ComponentProps< typeof TabPanel > & {
+	order: number;
+	name: string;
+};
+
+type FillProps = Record< string, unknown > | undefined;
+
 type WooProductTabItemProps = {
 	id: string;
 	pluginId: string;
 	tabProps:
-		| TabPanel.Tab
+		| TabPanelProps
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		| ( ( fillProps: Record< string, any > | undefined ) => TabPanel.Tab );
+		| ( ( fillProps: FillProps ) => TabPanelProps );
 	templates?: Array< ProductFillLocationType >;
 };
 
 type WooProductFieldSlotProps = {
 	template: string;
 	children: (
-		tabs: TabPanel.Tab[],
+		tabs: TabPanelProps[],
 		tabChildren: Record< string, ReactNode >
 	) => ReactElement | null;
 };
@@ -34,7 +41,8 @@ const DEFAULT_TAB_ORDER = 20;
 
 export const WooProductTabItem: React.FC< WooProductTabItemProps > & {
 	Slot: React.VFC<
-		Omit< Slot.Props, 'children' > & WooProductFieldSlotProps
+		Omit< React.ComponentProps< typeof Slot >, 'children' > &
+			WooProductFieldSlotProps
 	>;
 } = ( { children, tabProps, templates } ) => {
 	if ( ! templates ) {
@@ -49,8 +57,8 @@ export const WooProductTabItem: React.FC< WooProductTabItemProps > & {
 					name={ `woocommerce_product_tab_${ templateData.name }` }
 					key={ templateData.name }
 				>
-					{ ( fillProps: Fill.Props ) => {
-						return createOrderedChildren< Fill.Props >(
+					{ ( fillProps: FillProps ) => {
+						return createOrderedChildren< FillProps >(
 							children,
 							templateData.order || DEFAULT_TAB_ORDER,
 							{},
@@ -75,7 +83,16 @@ WooProductTabItem.Slot = ( { fillProps, template, children } ) => (
 	>
 		{ ( fills ) => {
 			const tabData = fills.reduce(
-				( { childrenMap, tabs }, fill ) => {
+				(
+					{
+						childrenMap,
+						tabs,
+					}: {
+						childrenMap: Record< string, ReactElement >;
+						tabs: TabPanelProps[];
+					},
+					fill: Array< React.ReactElement >
+				) => {
 					const props: WooProductTabItemProps & { order: number } =
 						fill[ 0 ].props;
 					if ( props && props.tabProps ) {
@@ -96,12 +113,14 @@ WooProductTabItem.Slot = ( { fillProps, template, children } ) => (
 				},
 				{ childrenMap: {}, tabs: [] } as {
 					childrenMap: Record< string, ReactElement >;
-					tabs: Array< TabPanel.Tab & { order: number } >;
+					tabs: TabPanelProps[];
 				}
 			);
-			const orderedTabs = tabData.tabs.sort( ( a, b ) => {
-				return a.order - b.order;
-			} );
+			const orderedTabs = tabData.tabs.sort(
+				( a: TabPanelProps, b: TabPanelProps ) => {
+					return a.order - b.order;
+				}
+			);
 
 			return children( orderedTabs, tabData.childrenMap );
 		} }

@@ -15,12 +15,15 @@ type SiteIconProps = {
 
 function SiteIcon( { className }: SiteIconProps ) {
 	const { isRequestingSite, siteIconUrl } = useSelect( ( select ) => {
-		const { getEntityRecord } = select( coreDataStore );
-		const siteData: { site_icon_url?: string } = getEntityRecord(
-			'root',
-			'__unstableBase',
-			undefined
-		);
+		const { getEntityRecord } = select( coreDataStore ) as {
+			getEntityRecord: (
+				kind: string,
+				name: string
+			) => Record< string, string > | undefined;
+		};
+		const siteData = getEntityRecord( 'root', '__unstableBase' ) as
+			| { site_icon_url?: string }
+			| undefined;
 
 		return {
 			isRequestingSite: ! siteData,

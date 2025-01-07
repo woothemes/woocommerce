@@ -34,7 +34,10 @@ type ServerErrorResponse = {
 	code: string;
 };
 
-export const DEFAULT_SHIPPING_CLASS_OPTIONS: SelectControl.Option[] = [
+export const DEFAULT_SHIPPING_CLASS_OPTIONS: Array< {
+	label: string;
+	value: string;
+} > = [
 	{ value: '', label: __( 'No shipping class', 'woocommerce' ) },
 	{
 		value: ADD_NEW_SHIPPING_CLASS_OPTION_VALUE,
@@ -44,7 +47,7 @@ export const DEFAULT_SHIPPING_CLASS_OPTIONS: SelectControl.Option[] = [
 
 function mapShippingClassToSelectOption(
 	shippingClasses: ProductShippingClass[]
-): SelectControl.Option[] {
+): Array< { label: string; value: string } > {
 	return shippingClasses.map( ( { slug, name } ) => ( {
 		value: slug,
 		label: name,
@@ -131,11 +134,15 @@ export function Edit( {
 		( select ) => {
 			const { getProductShippingClasses } = select(
 				EXPERIMENTAL_PRODUCT_SHIPPING_CLASSES_STORE_NAME
-			);
+			) as {
+				getProductShippingClasses: (
+					query: Record< string, unknown >
+				) => ProductShippingClass[];
+			};
 			return {
 				shippingClasses:
 					( isInSelectedTab &&
-						getProductShippingClasses< ProductShippingClass[] >(
+						getProductShippingClasses(
 							shippingClassRequestQuery
 						) ) ||
 					[],
@@ -217,12 +224,10 @@ export function Edit( {
 						shippingClasses
 					) }
 					onAdd={ ( shippingClassValues ) =>
-						createProductShippingClass<
-							Promise< ProductShippingClass >
-						>( shippingClassValues, {
+						createProductShippingClass( shippingClassValues, {
 							optimisticQueryUpdate: shippingClassRequestQuery,
 						} )
-							.then( ( value ) => {
+							.then( ( value: ProductShippingClass ) => {
 								recordEvent(
 									'product_new_shipping_class_modal_add_button_click'
 								);

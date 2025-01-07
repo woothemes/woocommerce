@@ -29,7 +29,7 @@ export function usePreview( {
 }: PreviewButtonProps & {
 	onSaveSuccess?( product: Product ): void;
 	onSaveError?( error: WPError ): void;
-} ): Button.AnchorProps {
+} ): React.ComponentProps< typeof Button > {
 	const anchorRef = useRef< HTMLAnchorElement >();
 
 	const [ productId ] = useEntityProp< number >(
@@ -44,9 +44,21 @@ export function usePreview( {
 		( select ) => {
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
-			const { hasEditsForEntityRecord, isSavingEntityRecord } =
-				select( 'core' );
-			const isSaving = isSavingEntityRecord< boolean >(
+			const { hasEditsForEntityRecord, isSavingEntityRecord } = select(
+				'core'
+			) as {
+				hasEditsForEntityRecord: (
+					kind: string,
+					name: string,
+					recordId: number
+				) => boolean;
+				isSavingEntityRecord: (
+					kind: string,
+					name: string,
+					recordId: number
+				) => boolean;
+			};
+			const isSaving = isSavingEntityRecord(
 				'postType',
 				productType,
 				productId
@@ -54,7 +66,7 @@ export function usePreview( {
 
 			return {
 				isDisabled: isSaving,
-				hasEdits: hasEditsForEntityRecord< boolean >(
+				hasEdits: hasEditsForEntityRecord(
 					'postType',
 					productType,
 					productId
@@ -110,7 +122,7 @@ export function usePreview( {
 			}
 
 			// Persist the product changes before redirecting
-			const publishedProduct = await saveEditedEntityRecord< Product >(
+			const publishedProduct = await saveEditedEntityRecord(
 				'postType',
 				productType,
 				productId,

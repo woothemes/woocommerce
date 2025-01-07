@@ -18,13 +18,13 @@ import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import classNames from 'classnames';
 import {
-	// @ts-expect-error missing types.
+	// @ts-expect-error no exported member.
 	__experimentalHeading as Heading,
-	// @ts-expect-error missing types.
+	// @ts-expect-error no exported member.
 	__experimentalText as Text,
-	// @ts-expect-error missing types.
+	// @ts-expect-error no exported member.
 	__experimentalHStack as HStack,
-	// @ts-expect-error missing types.
+	// @ts-expect-error no exported member.
 	__experimentalVStack as VStack,
 	FlexItem,
 	Button,
@@ -113,7 +113,7 @@ function useView(
 
 			setView( newView );
 		},
-		[ history, isCustom ]
+		[ history ]
 	);
 
 	// When layout URL param changes, update the view type
@@ -183,24 +183,29 @@ export default function ProductList( {
 			search: view.search,
 			...filters,
 		};
-	}, [ location.params, view ] );
+	}, [ view ] );
 
 	const onChangeSelection = useCallback(
-		( items ) => {
+		( items: string[] ) => {
 			setSelection( items );
 			history.push( {
 				...location.params,
 				postId: items.join( ',' ),
 			} );
 		},
-		[ history, location.params, view?.type ]
+		[ history, location.params ]
 	);
 
 	// TODO: Use the Woo data store to get all the products, as this doesn't contain all the product data.
 	const { records, totalCount, isLoading } = useSelect(
 		( select ) => {
-			const { getProducts, getProductsTotalCount, isResolving } =
-				select( 'wc/admin/products' );
+			const { getProducts, getProductsTotalCount, isResolving } = select(
+				'wc/admin/products'
+			) as {
+				getProducts: ( query: ProductQuery ) => Product[];
+				getProductsTotalCount: ( query: ProductQuery ) => number;
+				isResolving: ( action: string, args: unknown[] ) => boolean;
+			};
 			return {
 				records: getProducts( queryParams ) as Product[],
 				totalCount: getProductsTotalCount( queryParams ) as number,
@@ -220,7 +225,14 @@ export default function ProductList( {
 
 	const { labels, canCreateRecord } = useSelect(
 		( select ) => {
-			const { getPostType, canUser } = select( coreStore );
+			const { getPostType, canUser } = select( coreStore ) as {
+				getPostType: ( postType: string ) =>
+					| {
+							labels: Record< string, string >;
+					  }
+					| undefined;
+				canUser: ( action: string, args: unknown ) => boolean;
+			};
 			const postTypeData:
 				| { labels: Record< string, string > }
 				| undefined = getPostType( postType );
@@ -275,7 +287,6 @@ export default function ProductList( {
 										<Button
 											variant="primary"
 											disabled={ true }
-											// @ts-expect-error missing type.
 											__next40pxDefaultSize
 										>
 											{ labels.add_new_item }
@@ -311,7 +322,6 @@ export default function ProductList( {
 					header={
 						<>
 							<Button
-								// @ts-expect-error outdated type.
 								size="compact"
 								icon={ showNewNavigation ? seen : unseen }
 								label={ __(
@@ -323,7 +333,6 @@ export default function ProductList( {
 								} }
 							/>
 							<Button
-								// @ts-expect-error outdated type.
 								size="compact"
 								isPressed={ quickEdit }
 								icon={ drawerRight }

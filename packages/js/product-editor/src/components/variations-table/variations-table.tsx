@@ -461,7 +461,6 @@ export const VariationsTable = forwardRef<
 									<CheckboxControl
 										value="all"
 										checked={ areAllSelected }
-										// @ts-expect-error Property 'indeterminate' does not exist
 										indeterminate={
 											! areAllSelected && areSomeSelected
 										}

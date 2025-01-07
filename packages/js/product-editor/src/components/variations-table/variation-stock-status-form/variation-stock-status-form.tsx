@@ -15,7 +15,7 @@ import classNames from 'classnames';
 import {
 	Button,
 	ToggleControl,
-	// @ts-expect-error `__experimentalInputControl` does exist.
+	// @ts-expect-error no exported member.
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 
@@ -56,7 +56,13 @@ export function VariationStockStatusForm( {
 
 	const { canManageStock, isLoadingManageStockOption } = useSelect(
 		( select ) => {
-			const { getOption, isResolving } = select( OPTIONS_STORE_NAME );
+			const { getOption, isResolving } = select( OPTIONS_STORE_NAME ) as {
+				getOption: ( option: string ) => string;
+				isResolving: (
+					selectorName: string,
+					args?: unknown[]
+				) => boolean;
+			};
 
 			return {
 				canManageStock: getOption( MANAGE_STOCK_OPTION ) === 'yes',

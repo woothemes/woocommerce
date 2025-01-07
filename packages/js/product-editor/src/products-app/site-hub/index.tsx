@@ -10,7 +10,7 @@ import { decodeEntities } from '@wordpress/html-entities';
 import { filterURLForDisplay } from '@wordpress/url';
 import {
 	Button,
-	// @ts-expect-error missing types.
+	// @ts-expect-error no exported member.
 	__experimentalHStack as HStack,
 	VisuallyHidden,
 } from '@wordpress/components';
@@ -36,7 +36,12 @@ const SiteHub = memo(
 					const {
 						getSite,
 						getUnstableBase, // Site index.
-					} = select( coreStore );
+					} = select( coreStore ) as {
+						getSite: () =>
+							| undefined
+							| { title: string; url: string };
+						getUnstableBase: () => { home: string };
+					};
 					const _site: undefined | { title: string; url: string } =
 						getSite();
 

@@ -9,10 +9,10 @@ import { MediaItem, UploadMediaOptions } from '@wordpress/media-utils';
 import { MediaUploaderErrorCallback } from '@woocommerce/components';
 
 export type UploadFilesMenuItemProps = Omit<
-	FormFileUpload.Props,
+	React.ComponentProps< typeof FormFileUpload >,
 	'children' | 'render' | 'onChange'
 > &
-	Pick< DropdownMenuItem.Props, 'icon' | 'iconPosition' | 'text' | 'info' > &
+	React.ComponentProps< typeof DropdownMenuItem > &
 	Partial<
 		Pick<
 			UploadMediaOptions,
