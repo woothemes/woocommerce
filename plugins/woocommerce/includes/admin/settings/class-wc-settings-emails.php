@@ -442,11 +442,21 @@ class WC_Settings_Emails extends WC_Settings_Page {
 
 			if ( wc_current_theme_is_fse_theme() && function_exists( 'wp_get_global_styles' ) ) {
 				$global_styles             = wp_get_global_styles( array(), array( 'transforms' => array( 'resolve-variables' ) ) );
-				$base_color_default        = $global_styles['elements']['button']['color']['text'] ?? $base_color_default;
-				$bg_color_default          = $global_styles['color']['background'] ?? $bg_color_default;
-				$body_bg_color_default     = $global_styles['color']['background'] ?? $body_bg_color_default;
-				$body_text_color_default   = $global_styles['color']['text'] ?? $body_text_color_default;
-				$footer_text_color_default = $global_styles['elements']['caption']['color']['text'] ?? $footer_text_color_default;
+				$base_color_global         = isset( $global_styles['elements']['button']['color']['text'] )
+					? sanitize_hex_color( $global_styles['elements']['button']['color']['text'] ) : '';
+				$bg_color_global           = isset( $global_styles['color']['background'] )
+					? sanitize_hex_color( $global_styles['color']['background'] ) : '';
+				$body_bg_color_global      = isset( $global_styles['color']['background'] )
+					? sanitize_hex_color( $global_styles['color']['background'] ) : '';
+				$body_text_color_global    = isset( $global_styles['color']['text'] )
+					? sanitize_hex_color( $global_styles['color']['text'] ) : '';
+				$footer_text_color_global  = isset( $global_styles['elements']['caption']['color']['text'] )
+					? sanitize_hex_color( $global_styles['elements']['caption']['color']['text'] ) : '';
+				$base_color_default        = $base_color_global ? $base_color_global : $base_color_default;
+				$bg_color_default          = $bg_color_global ? $bg_color_global : $bg_color_default;
+				$body_bg_color_default     = $body_bg_color_global ? $body_bg_color_global : $body_bg_color_default;
+				$body_text_color_default   = $body_text_color_global ? $body_text_color_global : $body_text_color_default;
+				$footer_text_color_default = $footer_text_color_global ? $footer_text_color_global : $footer_text_color_default;
 			}
 		}
 
