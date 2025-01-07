@@ -7,7 +7,7 @@ test.describe( 'Coupons page', () => {
 	// TODO (E2E Audit): This test is for the WooCommerce > Coupons menu item. Move this test to page-loads.spec.js.
 	test(
 		'A user can view the coupons overview without it crashing',
-		{ tag: [ tags.NOT_E2E, tags.SKIP_ON_WPCOM ] },
+		{ tag: tags.NOT_E2E },
 		async ( { page } ) => {
 			await page.goto(
 				'wp-admin/edit.php?post_type=shop_coupon&legacy_coupon_menu=1'
