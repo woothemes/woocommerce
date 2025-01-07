@@ -174,7 +174,7 @@ describe( 'useStoreCart', () => {
 					.fn()
 					.mockReturnValue( ! mockCartIsLoading ),
 				isCustomerDataUpdating: jest.fn().mockReturnValue( false ),
-				applyingExtensionCartUpdatesCount:
+				getApplyingExtensionCartUpdatesCount:
 					getApplyingExtensionCartUpdatesCountMock,
 			},
 		};
