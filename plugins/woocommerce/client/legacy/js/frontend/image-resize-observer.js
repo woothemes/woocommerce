@@ -8,11 +8,6 @@ const galleryObserver = new ResizeObserver(entries => {
 			return;
 		}
 
-		// Remove sizes attribute if it exists
-		if (img.hasAttribute('sizes')) {
-			img.removeAttribute('sizes');
-		}
-
 		const containerWidth = entry.contentRect.width;
 		const srcset = img.dataset.srcset;
 		
