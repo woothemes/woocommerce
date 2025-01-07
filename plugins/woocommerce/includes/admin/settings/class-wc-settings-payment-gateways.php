@@ -8,6 +8,7 @@
 use Automattic\WooCommerce\Admin\Features\OnboardingTasks\Tasks\WooCommercePayments;
 use Automattic\WooCommerce\Admin\Features\PaymentGatewaySuggestions\Init;
 use Automattic\WooCommerce\Admin\PluginsHelper;
+use Automattic\WooCommerce\Enums\PaymentMethods;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -247,7 +248,7 @@ class WC_Settings_Payment_Gateways extends WC_Settings_Page {
 						 * See https://github.com/woocommerce/woocommerce/issues/32130 for more details.
 						 */
 						if ( WooCommercePayments::is_supported() ) {
-							$wcpay_setup        = isset( $payment_gateways['woocommerce_payments'] ) && ! $payment_gateways['woocommerce_payments']->needs_setup();
+							$wcpay_setup        = isset( $payment_gateways[ PaymentMethods::WOOCOMMERCE_PAYMENTS ] ) && ! $payment_gateways[ PaymentMethods::WOOCOMMERCE_PAYMENTS ]->needs_setup();
 							$country            = wc_get_base_location()['country'];
 							$plugin_suggestions = Init::get_suggestions();
 							$active_plugins     = PluginsHelper::get_active_plugin_slugs();

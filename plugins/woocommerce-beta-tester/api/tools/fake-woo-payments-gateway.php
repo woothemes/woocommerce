@@ -5,6 +5,8 @@
  * @package WC_Beta_Tester
  * */
 
+use Automattic\WooCommerce\Enums\PaymentMethods;
+
 defined( 'ABSPATH' ) || exit();
 
 
@@ -67,7 +69,7 @@ if (
 	 * @param array $gateways List of available payment gateways.
 	 */
 	function tools_fake_wcpay( $gateways ) {
-		$gateways['woocommerce_payments'] = new Fake_WCPayments();
+		$gateways[ PaymentMethods::WOOCOMMERCE_PAYMENTS ] = new Fake_WCPayments();
 		return $gateways;
 	}
 }

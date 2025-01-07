@@ -214,23 +214,23 @@ class PaymentGatewayTest extends WC_Unit_Test_Case {
 		$this->assertEquals( 'https://example.com/icon.png', $this->sut->get_icon( $fake_gateway ) );
 
 		// Test invalid URL falls back to default icon.
-		$fake_gateway = new FakePaymentGateway( 'woocommerce_payments', array( 'icon' => 'not_good_url/icon.svg' ) );
+		$fake_gateway = new FakePaymentGateway( PaymentMethods::WOOCOMMERCE_PAYMENTS, array( 'icon' => 'not_good_url/icon.svg' ) );
 		$this->assertStringContainsString( 'wp-content/plugins/woocommerce/assets/images/icons/default-payments.svg', $this->sut->get_icon( $fake_gateway ) );
 
 		// Test empty icon falls back to default icon.
-		$fake_gateway = new FakePaymentGateway( 'woocommerce_payments', array( 'icon' => '' ) );
+		$fake_gateway = new FakePaymentGateway( PaymentMethods::WOOCOMMERCE_PAYMENTS, array( 'icon' => '' ) );
 		$this->assertStringContainsString( 'wp-content/plugins/woocommerce/assets/images/icons/default-payments.svg', $this->sut->get_icon( $fake_gateway ) );
 
 		// Test missing icon falls back to default icon.
-		$fake_gateway = new FakePaymentGateway( 'woocommerce_payments', array() );
+		$fake_gateway = new FakePaymentGateway( PaymentMethods::WOOCOMMERCE_PAYMENTS, array() );
 		$this->assertStringContainsString( 'wp-content/plugins/woocommerce/assets/images/icons/default-payments.svg', $this->sut->get_icon( $fake_gateway ) );
 
 		// Test icon with img tag falls back to default icon.
-		$fake_gateway = new FakePaymentGateway( 'woocommerce_payments', array( 'icon' => '<img src="https://example.com/icon.png" />' ) );
+		$fake_gateway = new FakePaymentGateway( PaymentMethods::WOOCOMMERCE_PAYMENTS, array( 'icon' => '<img src="https://example.com/icon.png" />' ) );
 		$this->assertStringContainsString( 'wp-content/plugins/woocommerce/assets/images/icons/default-payments.svg', $this->sut->get_icon( $fake_gateway ) );
 
 		// Test icon with list of images falls back to default icon.
-		$fake_gateway = new FakePaymentGateway( 'woocommerce_payments', array( 'icon' => '<img src="https://example.com/icon.png" /><img src="https://example.com/icon2.png" />' ) );
+		$fake_gateway = new FakePaymentGateway( PaymentMethods::WOOCOMMERCE_PAYMENTS, array( 'icon' => '<img src="https://example.com/icon.png" /><img src="https://example.com/icon2.png" />' ) );
 		$this->assertStringContainsString( 'wp-content/plugins/woocommerce/assets/images/icons/default-payments.svg', $this->sut->get_icon( $fake_gateway ) );
 	}
 
