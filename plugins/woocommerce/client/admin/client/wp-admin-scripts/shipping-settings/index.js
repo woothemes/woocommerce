@@ -35,9 +35,8 @@ const getAreas = ( section, zoneId, methodId ) => {
 
 	if ( zoneId && ! methodId ) {
 		return {
-			content: null,
-			fullEdit: <EditZone zoneId={ zoneId } />,
-			edit: null,
+			content: <ShippingZones />,
+			edit: <EditZone zoneId={ zoneId } />,
 		};
 	}
 

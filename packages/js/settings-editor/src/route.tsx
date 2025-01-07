@@ -114,7 +114,6 @@ const getLegacyRoute = (
 					activeSection={ activeSection }
 				/>
 			),
-			fullEdit: null,
 			edit: null,
 		},
 		widths: {

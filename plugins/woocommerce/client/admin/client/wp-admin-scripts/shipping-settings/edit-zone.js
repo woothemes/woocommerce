@@ -23,7 +23,7 @@ const { useHistory } = unlock( routerPrivateApis );
 
 export const EditZone = ( { zoneId } ) => {
 	const history = useHistory();
-	const { zones, regionOptions } = window.shippingZonesLocalizeScript;
+	const { zones, regionOptions } = window.shippingZonesData;
 	const zone =
 		zoneId === '0'
 			? {

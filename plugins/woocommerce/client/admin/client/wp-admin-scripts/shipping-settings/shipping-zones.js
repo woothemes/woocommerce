@@ -10,7 +10,7 @@ const { useHistory } = unlock( routerPrivateApis );
 
 export const ShippingZones = () => {
 	const history = useHistory();
-	const { zones } = window.shippingZonesLocalizeScript;
+	const { zones } = window.shippingZonesData;
 	const zoneList = Object.keys( zones ).map( ( zoneId ) => zones[ zoneId ] );
 
 	const onEdit = ( zoneId ) => {

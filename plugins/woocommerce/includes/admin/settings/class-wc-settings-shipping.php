@@ -32,7 +32,7 @@ class WC_Settings_Shipping extends WC_Settings_Page {
 			// Register as a modern page.
 			$this->is_modern = true;
 			// Include the script to power the modern settings page.
-			WCAdminAssets::register_script( 'wp-admin-scripts', 'shipping-settings', true, array(), false );
+			WCAdminAssets::register_script( 'wp-admin-scripts', 'shipping-settings', true, array( 'wc-shipping-zones' ), false );
 			// Make sure the required data is available.
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_modern_screen_data' ) );
 		}
@@ -192,7 +192,7 @@ class WC_Settings_Shipping extends WC_Settings_Page {
 
 		wp_localize_script(
 			'wc-admin-shipping-settings',
-			'shippingZonesLocalizeScript',
+			'shippingZonesData',
 			array(
 				'zones'                   => WC_Shipping_Zones::get_zones( 'json' ),
 				'default_zone'            => array(
