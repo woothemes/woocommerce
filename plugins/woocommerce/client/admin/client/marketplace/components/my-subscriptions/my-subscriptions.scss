@@ -28,7 +28,7 @@
 	}
 	.woocommerce-marketplace__my-subscriptions__header-refresh {
 		display: flex;
-		justify-content: end;
+		justify-content: flex-end;
 		order: 1;
 	}
 
@@ -276,7 +276,7 @@
 
 .woocommerce-marketplace__my-subscriptions__actions {
 	display: flex;
-	justify-content: end;
+	justify-content: flex-end;
 
 	.components-button {
 		margin-right: $grid-unit-10;

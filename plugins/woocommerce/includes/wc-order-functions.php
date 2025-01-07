@@ -164,7 +164,7 @@ function wc_get_is_pending_statuses() {
  */
 function wc_get_order_status_name( $status ) {
 	// "Special statuses": these are in common usage across WooCommerce, but are not normally returned by
-	// wc_get_order_statuses(). We add them only to avoid unnecessary doing-it-wrong errors.
+	// wc_get_order_statuses().
 	$special_statuses = array(
 		'wc-' . OrderStatus::AUTO_DRAFT => OrderStatus::AUTO_DRAFT,
 		'wc-' . OrderStatus::TRASH      => OrderStatus::TRASH,
@@ -175,7 +175,7 @@ function wc_get_order_status_name( $status ) {
 	$statuses   = array_merge( $special_statuses, wc_get_order_statuses() );
 	$unprefixed = OrderUtil::remove_status_prefix( (string) $status );
 
-	if ( ! is_string( $status ) || ! isset( $statuses[ 'wc-' . $unprefixed ] ) ) {
+	if ( ! is_string( $status ) ) {
 		wc_doing_it_wrong(
 			__FUNCTION__,
 			__( 'An invalid order status slug was supplied.', 'woocommerce' ),

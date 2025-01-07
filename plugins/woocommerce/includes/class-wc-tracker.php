@@ -221,6 +221,11 @@ class WC_Tracker {
 		// Mobile info.
 		$data['wc_mobile_usage'] = self::get_woocommerce_mobile_usage();
 
+		// WC Tracker data.
+		$data['woocommerce_allow_tracking']               = get_option( 'woocommerce_allow_tracking', 'no' );
+		$data['woocommerce_allow_tracking_last_modified'] = get_option( 'woocommerce_allow_tracking_last_modified', 'unknown' );
+		$data['woocommerce_allow_tracking_first_optin']   = get_option( 'woocommerce_allow_tracking_first_optin', 'unknown' );
+
 		/**
 		 * Filter the data that's sent with the tracker.
 		 *
