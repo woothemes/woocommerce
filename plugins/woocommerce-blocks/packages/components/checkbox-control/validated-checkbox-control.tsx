@@ -115,6 +115,8 @@ const ValidatedCheckboxControl = forwardRef<
 			customValidationRef.current = customValidation;
 		}, [ customValidation ] );
 
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore - The second argument is a dependency array, this has no deps it should recalculate all the time.
 		const { validationError, validationErrorId } = useSelect(
 			( select ) => {
 				const store = select( VALIDATION_STORE_KEY );
