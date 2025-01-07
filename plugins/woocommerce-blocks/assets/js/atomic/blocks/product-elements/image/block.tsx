@@ -90,7 +90,7 @@ const Image = ( {
 			{ ! image && (
 				<ImagePlaceholder
 					style={ imageStyles }
-					// alt={ imageProps.alt }
+					alt={ imageProps.alt }
 				/>
 			) }
 		</>
