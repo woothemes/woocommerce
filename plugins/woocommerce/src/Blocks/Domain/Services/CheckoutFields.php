@@ -411,9 +411,11 @@ class CheckoutFields {
 			return false;
 		}
 
-		// Filter the boolean in case the developer added it as a string.
-		$options['required']    = filter_var( $options['required'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE );
-		$field_data['required'] = $options['required'];
+		if ( isset( $options['required'] ) ) {
+			// Filter the boolean in case the developer added it as a string.
+			$options['required']    = filter_var( $options['required'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE );
+			$field_data['required'] = $options['required'];
+		}
 
 		if ( ( ! isset( $options['required'] ) || false === $options['required'] ) && ! empty( $options['error_message'] ) ) {
 			$message = sprintf( 'Passing an error message to a non-required checkbox "%s" will have no effect. The error message has been removed from the field.', $id );
