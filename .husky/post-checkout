@@ -31,7 +31,7 @@ if [ "$CHECKOUT_TYPE" = '1' ]; then
 	currentComposerDate=$( ( command -v composer > /dev/null && ( composer --version 2>/dev/null | awk '{print $4}' ) ) || echo '' )
 	if [ -n "$currentComposerDate" ]; then
 		currentComposerDate=$( date +%F -d $currentComposerDate )
-		twelveMonthsAgo=$( date +%F -d '6 months ago' )
+		twelveMonthsAgo=$( date +%F -d '3 months ago' )
 		if [ $date < $twelveMonthsAgo ]; then
 			printf "${orangeColoured}composer version (build at $currentComposerDate) is older than twelve months, ensure to update it with 'composer self-update'.\n"
 		else
