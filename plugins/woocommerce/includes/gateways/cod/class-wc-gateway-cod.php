@@ -207,7 +207,7 @@ class WC_Gateway_COD extends WC_Payment_Gateway {
 			if ( ! isset( $_REQUEST['tab'] ) || 'checkout' !== $_REQUEST['tab'] ) {
 				return false;
 			}
-			if ( ! isset( $_REQUEST['section'] ) || 'cod' !== $_REQUEST['section'] ) {
+			if ( ! isset( $_REQUEST['section'] ) || PaymentMethods::COD !== $_REQUEST['section'] ) {
 				return false;
 			}
 			// phpcs:enable WordPress.Security.NonceVerification

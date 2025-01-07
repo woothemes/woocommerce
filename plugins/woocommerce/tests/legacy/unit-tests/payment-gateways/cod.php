@@ -6,6 +6,7 @@
  */
 
 use Automattic\Jetpack\Constants;
+use Automattic\WooCommerce\Enums\PaymentMethods;
 
 /**
  * Class WC_Tests_Payment_Gateway_COD
@@ -39,7 +40,7 @@ class WC_Tests_Payment_Gateway_COD extends WC_Unit_Test_Case {
 		set_current_screen( 'woocommerce_page_wc-settings' );
 		$_REQUEST['page']    = 'wc-settings';
 		$_REQUEST['tab']     = 'checkout';
-		$_REQUEST['section'] = 'cod';
+		$_REQUEST['section'] = PaymentMethods::COD;
 
 		$gateway = new WC_Gateway_COD();
 

@@ -5,6 +5,8 @@
  * @package WooCommerce\Tests\Gateways\Paypal
  */
 
+use Automattic\WooCommerce\Enums\PaymentMethods;
+
 /**
  * Class WC_Tests_Paypal_Gateway_Request.
  */
@@ -111,7 +113,7 @@ class WC_Tests_Paypal_Gateway_Request extends WC_Unit_Test_Case {
 
 		// Set payment method to Paypal.
 		$payment_gateways = WC()->payment_gateways->payment_gateways();
-		$this->order->set_payment_method( $payment_gateways['paypal'] );
+		$this->order->set_payment_method( $payment_gateways[ PaymentMethods::PAYPAL ] );
 
 		// Add tax.
 		if ( wc_tax_enabled() ) {

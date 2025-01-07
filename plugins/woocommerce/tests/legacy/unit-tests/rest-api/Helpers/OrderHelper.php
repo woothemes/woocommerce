@@ -11,6 +11,7 @@ namespace Automattic\WooCommerce\RestApi\UnitTests\Helpers;
 defined( 'ABSPATH' ) || exit;
 
 use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Enums\PaymentMethods;
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 use Automattic\WooCommerce\Internal\DataStores\Orders\DataSynchronizer;
 use Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTableDataStore;
@@ -126,7 +127,7 @@ class OrderHelper {
 
 		// Set payment gateway.
 		$payment_gateways = WC()->payment_gateways->payment_gateways();
-		$order->set_payment_method( $payment_gateways['bacs'] );
+		$order->set_payment_method( $payment_gateways[ PaymentMethods::BACS ] );
 
 		// Set totals.
 		$order->set_shipping_total( 10 );
@@ -332,7 +333,7 @@ class OrderHelper {
 		$order->set_billing_phone( '555-32123' );
 
 		$payment_gateways = WC()->payment_gateways->payment_gateways();
-		$order->set_payment_method( $payment_gateways['bacs'] );
+		$order->set_payment_method( $payment_gateways[ PaymentMethods::BACS ] );
 
 		$order->set_shipping_total( 5.0 );
 		$order->set_discount_total( 0.0 );
