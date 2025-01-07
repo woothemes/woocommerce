@@ -869,7 +869,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 		$request->set_query_params(
 			array(
 				'include_status' => array( 'any' ),
-				'exclude_status' => array( ProductStatus::PENDING, ProductStatus::DRAFT ),
+				'exclude_status' => array( ProductStatus::PRIVATE, ProductStatus::DRAFT ),
 			)
 		);
 
