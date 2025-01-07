@@ -179,6 +179,7 @@ const SavedPaymentMethodOptions = () => {
 	);
 	return options.length > 0 ? (
 		<LoadingMask
+			showSpinner={ true }
 			isLoading={
 				isCustomerDataUpdating || isApplyingExtensionCartUpdate
 			}

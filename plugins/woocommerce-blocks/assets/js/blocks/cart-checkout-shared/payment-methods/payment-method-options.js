@@ -109,6 +109,7 @@ const PaymentMethodOptions = () => {
 	} );
 	return isExpressPaymentMethodActive ? null : (
 		<LoadingMask
+			showSpinner={ true }
 			isLoading={
 				isCustomerDataUpdating || isApplyingExtensionCartUpdate
 			}
