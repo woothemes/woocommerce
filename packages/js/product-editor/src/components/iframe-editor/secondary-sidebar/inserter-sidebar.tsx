@@ -41,7 +41,7 @@ export default function InserterSidebar() {
 	}, [ setIsInserterOpened ] );
 
 	const closeOnEscape = useCallback(
-		( event: KeyboardEvent ) => {
+		( event: React.KeyboardEvent ) => {
 			if ( event.code === 'Escape' && ! event.defaultPrevented ) {
 				event.preventDefault();
 				closeInserter();
@@ -60,7 +60,7 @@ export default function InserterSidebar() {
 	return (
 		// eslint-disable-next-line jsx-a11y/no-static-element-interactions
 		<div
-			onKeyDown={ closeOnEscape }
+			onKeyDown={ ( event ) => closeOnEscape( event ) }
 			className="woocommerce-iframe-editor__inserter-panel"
 		>
 			<div className="woocommerce-iframe-editor__inserter-panel-content">
