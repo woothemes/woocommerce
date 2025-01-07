@@ -9,7 +9,7 @@ export const SettingsInput = ( {
 	desc,
 	type,
 	value: initialValue,
-}: Pick< SettingsField, 'id' | 'desc' | 'type' | 'value' > ) => {
+}: Pick< BaseSettingsField, 'id' | 'desc' | 'type' | 'value' > ) => {
 	const [ value, setValue ] = useState< string | undefined >(
 		initialValue?.toString()
 	);
