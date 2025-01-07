@@ -16,6 +16,7 @@ class WC_Product_Image_Handler {
 		$sizes      = array( 300, 600, 900, 1200 );
 		$image_data = array();
 
+		// Get sized images first
 		foreach ( $sizes as $size ) {
 			$name  = 'woocommerce_' . $size;
 			$image = wp_get_attachment_image_src( $attachment_id, $name );
@@ -26,6 +27,16 @@ class WC_Product_Image_Handler {
 					'width' => $image[1],
 				);
 			}
+		}
+
+		// Get original image last
+		$original_image = wp_get_attachment_image_src( $attachment_id, 'full' );
+		if ( $original_image ) {
+			$image_data[] = array(
+				'name'  => 'full',
+				'url'   => $original_image[0],
+				'width' => $original_image[1],
+			);
 		}
 
 		return $image_data;
@@ -70,6 +81,15 @@ class WC_Product_Image_Handler {
 			''
 		);
 
+		// Find the full size image URL
+		$full_image_url = wc_placeholder_img_src();
+		foreach ( $image_data as $data ) {
+			if ( $data['name'] === 'full' ) {
+				$full_image_url = $data['url'];
+				break;
+			}
+		}
+
 		// We use data-srcset and data-sizes for ResizeObserver, so that the browser doesn't hijack the image
 		// and we can use the correct image size for the container width.
 		$image_attributes = array(
@@ -78,7 +98,7 @@ class WC_Product_Image_Handler {
 			'alt'                     => trim( wp_strip_all_tags( get_post_meta( $attachment_id, '_wp_attachment_image_alt', true ) ) ),
 			'data-srcset'             => implode( ', ', $srcset ),
 			'data-sizes'              => $sizes_attribute_value,
-			'data-original-image-src' => $image_data[ count( $image_data ) - 1 ]['url'],
+			'data-original-image-src' => $full_image_url,
 			'data-product-image'      => 'container-responsive',
 		);
 
