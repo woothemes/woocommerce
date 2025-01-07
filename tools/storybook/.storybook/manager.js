@@ -13,9 +13,11 @@ addons.setConfig( {
 	theme: { ...themes.light, brandImage: logoUrl },
 	sidebar: {
 		collapsedRoots: [
-			'woocommerce-admin',
+			'components',
+			'experimental',
+			'onboarding',
 			'product-editor',
-			'product-app',
+			'woocommerce-admin',
 		],
 	},
 } );

@@ -1,5 +1,8 @@
-const { test, expect } = require( '../../../fixtures/api-tests-fixtures' );
-
+const {
+	test,
+	expect,
+	tags,
+} = require( '../../../fixtures/api-tests-fixtures' );
 const {
 	getOrderExample,
 	getTaxRateExamples,
@@ -78,7 +81,7 @@ test.describe( 'Orders API test', () => {
 		/**
 		 * Delete all pre-existing tax rates.
 		 */
-		const response = await request.get( '/wp-json/wc/v3/taxes', {
+		const response = await request.get( './wp-json/wc/v3/taxes', {
 			params: {
 				_fields: 'id',
 			},
@@ -88,7 +91,7 @@ test.describe( 'Orders API test', () => {
 		if ( Array.isArray( responseJSON ) && responseJSON.length > 0 ) {
 			const ids = responseJSON.map( ( { id } ) => id );
 
-			await request.post( '/wp-json/wc/v3/taxes/batch', {
+			await request.post( './wp-json/wc/v3/taxes/batch', {
 				data: {
 					delete: ids,
 				},
@@ -101,7 +104,7 @@ test.describe( 'Orders API test', () => {
 		const taxRates = [ standardTaxRate, reducedTaxRate, zeroTaxRate ];
 
 		for ( const taxRate of taxRates ) {
-			const taxResponse = await request.post( '/wp-json/wc/v3/taxes', {
+			const taxResponse = await request.post( './wp-json/wc/v3/taxes', {
 				data: taxRate,
 			} );
 			const taxResponseJSON = await taxResponse.json();
@@ -113,7 +116,7 @@ test.describe( 'Orders API test', () => {
 		 */
 		// Create a simple product
 		const createdSimpleProduct = await request.post(
-			'/wp-json/wc/v3/products',
+			'./wp-json/wc/v3/products',
 			{
 				data: simpleProduct,
 			}
@@ -123,7 +126,7 @@ test.describe( 'Orders API test', () => {
 
 		// Create a variable product with 1 variation
 		const createdVariableProduct = await request.post(
-			'/wp-json/wc/v3/products',
+			'./wp-json/wc/v3/products',
 			{
 				data: variableProduct,
 			}
@@ -132,7 +135,7 @@ test.describe( 'Orders API test', () => {
 
 		variableProduct.id = createdVariableProductJSON.id;
 		await request.post(
-			`/wp-json/wc/v3/products/${ variableProduct.id }/variations`,
+			`./wp-json/wc/v3/products/${ variableProduct.id }/variations`,
 			{
 				data: variation,
 			}
@@ -141,7 +144,7 @@ test.describe( 'Orders API test', () => {
 		// Create a grouped product using the simple product created earlier.
 		groupedProduct.grouped_products = [ simpleProduct.id ];
 		const createdGroupedProduct = await request.post(
-			'/wp-json/wc/v3/products',
+			'./wp-json/wc/v3/products',
 			{
 				data: groupedProduct,
 			}
@@ -151,7 +154,7 @@ test.describe( 'Orders API test', () => {
 
 		// Create an external product
 		const createdExternalProduct = await request.post(
-			'/wp-json/wc/v3/products',
+			'./wp-json/wc/v3/products',
 			{
 				data: externalProduct,
 			}
@@ -178,14 +181,14 @@ test.describe( 'Orders API test', () => {
 
 	test.afterAll( async ( { request } ) => {
 		// Delete order
-		await request.delete( `/wp-json/wc/v3/orders/${ order.id }`, {
+		await request.delete( `./wp-json/wc/v3/orders/${ order.id }`, {
 			data: {
 				force: true,
 			},
 		} );
 
 		// Delete products
-		await request.post( '/wp-json/wc/v3/products/batch', {
+		await request.post( './wp-json/wc/v3/products/batch', {
 			data: {
 				delete: [
 					simpleProduct.id,
@@ -197,7 +200,7 @@ test.describe( 'Orders API test', () => {
 		} );
 
 		// Delete tax rates
-		await request.post( '/wp-json/wc/v3/taxes/batch', {
+		await request.post( './wp-json/wc/v3/taxes/batch', {
 			data: {
 				delete: [
 					standardTaxRate.id,
@@ -210,11 +213,11 @@ test.describe( 'Orders API test', () => {
 
 	test(
 		'can add complex order',
-		{ tag: [ '@skip-on-default-pressable', '@skip-on-default-wpcom' ] },
+		{ tag: [ tags.SKIP_ON_PRESSABLE, tags.SKIP_ON_WPCOM ] },
 		async ( { request } ) => {
 			//ensure tax calculations are enabled
 			await request.put(
-				'/wp-json/wc/v3/settings/general/woocommerce_calc_taxes',
+				'./wp-json/wc/v3/settings/general/woocommerce_calc_taxes',
 				{
 					data: {
 						value: 'yes',
@@ -223,7 +226,7 @@ test.describe( 'Orders API test', () => {
 			);
 
 			// Create the complex order and save its ID.
-			const response = await request.post( '/wp-json/wc/v3/orders', {
+			const response = await request.post( './wp-json/wc/v3/orders', {
 				data: order,
 			} );
 			const responseJSON = await response.json();

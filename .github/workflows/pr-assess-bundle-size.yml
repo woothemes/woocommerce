@@ -37,6 +37,7 @@ jobs:
         name: Check Asset Sizes
         runs-on: ubuntu-latest
         permissions:
+            contents: read
             pull-requests: write
 
         steps:

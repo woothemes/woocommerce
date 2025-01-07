@@ -4,7 +4,8 @@
 import apiFetch from '@wordpress/api-fetch';
 import { __, sprintf } from '@wordpress/i18n';
 import { dispatch } from '@wordpress/data';
-import { Options } from '@wordpress/notices';
+import type { Options } from 'wordpress__notices';
+import { store as coreNoticesStore } from '@wordpress/notices';
 import { Icon } from '@wordpress/components';
 
 /**
@@ -112,6 +113,11 @@ async function fetchSearchResults(
 	totalPages: number;
 	totalProducts: number;
 } > {
+	// add user locale to search params if not already present
+	if ( LOCALE.userLocale && ! params.get( 'locale' ) ) {
+		params.set( 'locale', LOCALE.userLocale );
+	}
+
 	const url =
 		MARKETPLACE_HOST +
 		MARKETPLACE_SEARCH_API_PATH +
@@ -408,7 +414,7 @@ function addNotice(
 			};
 		}
 
-		dispatch( 'core/notices' ).createSuccessNotice( message, options );
+		dispatch( coreNoticesStore ).createSuccessNotice( message, options );
 	}
 }
 

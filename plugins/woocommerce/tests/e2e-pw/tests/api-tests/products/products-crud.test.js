@@ -1,6 +1,7 @@
 const {
 	test: baseTest,
 	expect,
+	tags,
 } = require( '../../../fixtures/api-tests-fixtures' );
 const { BASE_URL } = process.env;
 const { admin } = require( '../../../test-data/data' );
@@ -287,7 +288,7 @@ test.describe( 'Products API tests: CRUD', () => {
 		test( 'can retrieve all product attribute', async ( { request } ) => {
 			// call API to retrieve all product attributes
 			const response = await request.get(
-				'/wp-json/wc/v3/products/attributes'
+				'./wp-json/wc/v3/products/attributes'
 			);
 			const responseJSON = await response.json();
 			expect( response.status() ).toEqual( 200 );
@@ -461,7 +462,7 @@ test.describe( 'Products API tests: CRUD', () => {
 		test( 'can retrieve all product categories', async ( { request } ) => {
 			// call API to retrieve all product categories
 			const response = await request.get(
-				'/wp-json/wc/v3/products/categories'
+				'./wp-json/wc/v3/products/categories'
 			);
 			const responseJSON = await response.json();
 			expect( response.status() ).toEqual( 200 );
@@ -591,7 +592,7 @@ test.describe( 'Products API tests: CRUD', () => {
 
 	test.describe(
 		'Product review tests: CRUD',
-		{ tag: '@skip-on-default-wpcom' },
+		{ tag: tags.SKIP_ON_WPCOM },
 		() => {
 			let productReviewId;
 			let reviewsTestProduct;
@@ -710,7 +711,7 @@ test.describe( 'Products API tests: CRUD', () => {
 			test( 'can retrieve all product reviews', async ( { request } ) => {
 				// call API to retrieve all product reviews
 				const response = await request.get(
-					'/wp-json/wc/v3/products/reviews'
+					'./wp-json/wc/v3/products/reviews'
 				);
 				const responseJSON = await response.json();
 				expect( response.status() ).toEqual( 200 );
@@ -928,7 +929,7 @@ test.describe( 'Products API tests: CRUD', () => {
 		} ) => {
 			// call API to retrieve all product shipping classes
 			const response = await request.get(
-				'/wp-json/wc/v3/products/shipping_classes'
+				'./wp-json/wc/v3/products/shipping_classes'
 			);
 			const responseJSON = await response.json();
 			expect( response.status() ).toEqual( 200 );
@@ -983,7 +984,7 @@ test.describe( 'Products API tests: CRUD', () => {
 
 		test(
 			'can batch update product shipping classes',
-			{ tag: [ '@skip-on-default-pressable', '@skip-on-default-wpcom' ] },
+			{ tag: [ tags.SKIP_ON_PRESSABLE, tags.SKIP_ON_WPCOM ] },
 			async ( { request } ) => {
 				// Batch create product shipping classes.
 				const response = await request.post(
@@ -1103,7 +1104,7 @@ test.describe( 'Products API tests: CRUD', () => {
 		test( 'can retrieve all product tags', async ( { request } ) => {
 			// call API to retrieve all product tags
 			const response = await request.get(
-				'/wp-json/wc/v3/products/tags'
+				'./wp-json/wc/v3/products/tags'
 			);
 			const responseJSON = await response.json();
 			expect( response.status() ).toEqual( 200 );

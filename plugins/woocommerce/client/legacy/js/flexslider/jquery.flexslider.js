@@ -292,7 +292,7 @@
           slider.controlNavScaffold.on(eventType, 'a, img', function(event) {
             event.preventDefault();
 
-            if (watchedEvent === "" || watchedEvent === event.type) {
+            if (watchedEvent === "" || watchedEvent === event.type || event.type === "flexslider-click") {
               var $this = $(this),
                   target = slider.controlNav.index($this);
 
@@ -317,7 +317,7 @@
           slider.controlNav.on(eventType, function(event) {
             event.preventDefault();
 
-            if (watchedEvent === "" || watchedEvent === event.type) {
+            if (watchedEvent === "" || watchedEvent === event.type || event.type === "flexslider-click") {
               var $this = $(this),
                   target = slider.controlNav.index($this);
 
@@ -375,7 +375,7 @@
             event.preventDefault();
             var target;
 
-            if (watchedEvent === "" || watchedEvent === event.type) {
+            if (watchedEvent === "" || watchedEvent === event.type || event.type === "flexslider-click") {
               target = ($(this).hasClass(namespace + 'next')) ? slider.getTarget('next') : slider.getTarget('prev');
               slider.flexAnimate(target, slider.vars.pauseOnAction);
             }
@@ -422,7 +422,7 @@
           slider.pausePlay.on(eventType, function(event) {
             event.preventDefault();
 
-            if (watchedEvent === "" || watchedEvent === event.type) {
+            if (watchedEvent === "" || watchedEvent === event.type || event.type === "flexslider-click") {
               if ($(this).hasClass(namespace + 'pause')) {
                 slider.manualPause = true;
                 slider.manualPlay = false;
@@ -557,7 +557,7 @@
       smoothHeight: function(dur) {
         if (!vertical || fade) {
           var $obj = (fade) ? slider : slider.viewport;
-          (dur) ? $obj.animate({"height": slider.slides.eq(slider.animatingTo).innerHeight()}, dur) : $obj.innerHeight(slider.slides.eq(slider.animatingTo).innerHeight());
+          $obj.css({"height": slider.slides.eq(slider.animatingTo).innerHeight(), "transition": dur ? ("height " + dur + "ms") : "none"});
         }
       },
       sync: function(action) {
@@ -887,17 +887,17 @@
         }
         if (type === "init") {
           if (!touch) {
-            // Every "opacity" change before outerWidth() does NOT get animated; every "opacity" change after outerWidth() becomes a fadeIn
+            // Every "opacity" change before outerWidth() does NOT get animated; every "opacity" change after outerWidth() becomes a fadeIn animation
             if (slider.vars.fadeFirstSlide == false) {
-              slider.slides.css({ "opacity": 0, "display": "block", "zIndex": 1 }).eq(slider.currentSlide).css({"zIndex": 2}).css({"opacity": 1});
+              slider.slides.css({ "opacity": 0, "display": "block", "zIndex": 1 }).eq(slider.currentSlide).css({ "opacity": 1, "zIndex": 2 });
               slider.slides.outerWidth();
             } else {
               slider.slides.css({ "opacity": 0, "display": "block", "zIndex": 1 }).outerWidth();
-              slider.slides.eq(slider.currentSlide).css({"zIndex": 2}).css({"opacity": 1});
+              slider.slides.eq(slider.currentSlide).css({ "opacity": 1, "zIndex": 2 });
             }
             slider.slides.css({ "transition": "opacity " + slider.vars.animationSpeed / 1000 + "s " + easing });
           } else {
-            slider.slides.css({ "opacity": 0, "display": "block", "transition": "opacity " + slider.vars.animationSpeed / 1000 + "s ease", "zIndex": 1 }).eq(slider.currentSlide).css({ "opacity": 1, "zIndex": 2});
+            slider.slides.css({ "opacity": 0, "display": "block", "transition": "opacity " + slider.vars.animationSpeed / 1000 + "s ease", "zIndex": 1 }).eq(slider.currentSlide).css({ "opacity": 1, "zIndex": 2 });
           }
         }
         // SMOOTH HEIGHT:

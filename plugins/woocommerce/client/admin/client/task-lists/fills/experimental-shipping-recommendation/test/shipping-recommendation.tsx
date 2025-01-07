@@ -3,6 +3,7 @@
  */
 import { render } from '@testing-library/react';
 import { TaskType } from '@woocommerce/data';
+import userEvent from '@testing-library/user-event';
 
 /**
  * Internal dependencies
@@ -126,7 +127,7 @@ describe( 'ShippingRecommendation', () => {
 		expect( redirectToWCSSettings ).toHaveBeenCalled();
 	} );
 
-	test( 'should allow location step to be manually navigated', () => {
+	test( 'should allow location step to be manually navigated', async () => {
 		const { getByText } = render(
 			<ShippingRecommendation
 				isJetpackConnected={ true }
@@ -135,7 +136,7 @@ describe( 'ShippingRecommendation', () => {
 			/>
 		);
 
-		getByText( 'Set store location' ).click();
+		await userEvent.click( getByText( 'Set store location' ) );
 		expect( getByText( 'Address' ) ).toBeInTheDocument();
 	} );
 } );

@@ -23,10 +23,35 @@ if ( ! defined( 'ABSPATH' ) ) {
 $bg               = get_option( 'woocommerce_email_background_color' );
 $body             = get_option( 'woocommerce_email_body_background_color' );
 $base             = get_option( 'woocommerce_email_base_color' );
-$base_text        = wc_light_or_dark( $base, '#202020', '#ffffff' );
 $text             = get_option( 'woocommerce_email_text_color' );
 $footer_text      = get_option( 'woocommerce_email_footer_text_color' );
 $header_alignment = get_option( 'woocommerce_email_header_alignment' );
+
+/**
+ * Check if we are in preview mode (WooCommerce > Settings > Emails).
+ *
+ * @since 9.6.0
+ * @param bool $is_email_preview Whether the email is being previewed.
+ */
+$is_email_preview = apply_filters( 'woocommerce_is_email_preview', false );
+
+if ( $is_email_preview ) {
+	$bg_transient               = get_transient( 'woocommerce_email_background_color' );
+	$body_transient             = get_transient( 'woocommerce_email_body_background_color' );
+	$base_transient             = get_transient( 'woocommerce_email_base_color' );
+	$text_transient             = get_transient( 'woocommerce_email_text_color' );
+	$footer_text_transient      = get_transient( 'woocommerce_email_footer_text_color' );
+	$header_alignment_transient = get_transient( 'woocommerce_email_header_alignment' );
+
+	$bg               = $bg_transient ? $bg_transient : $bg;
+	$body             = $body_transient ? $body_transient : $body;
+	$base             = $base_transient ? $base_transient : $base;
+	$text             = $text_transient ? $text_transient : $text;
+	$footer_text      = $footer_text_transient ? $footer_text_transient : $footer_text;
+	$header_alignment = $header_alignment_transient ? $header_alignment_transient : $header_alignment;
+}
+
+$base_text = wc_light_or_dark( $base, '#202020', '#ffffff' );
 
 // Pick a contrasting color for links.
 $link_color = wc_hex_is_light( $base ) ? $base : $base_text;

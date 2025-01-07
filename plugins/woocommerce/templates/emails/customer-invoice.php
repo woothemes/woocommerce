@@ -12,7 +12,7 @@
  *
  * @see https://woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates\Emails
- * @version 9.6.0
+ * @version 9.7.0
  */
 
 use Automattic\WooCommerce\Enums\OrderStatus;
@@ -52,7 +52,7 @@ do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 		printf(
 			wp_kses(
 			/* translators: %1$s Site title, %2$s Order pay link */
-				__( 'An order has been created for you on %1$s. Your invoice is below, with a link to make payment when you’re ready: %2$s', 'woocommerce' ),
+				__( 'An order has been created for you on %1$s. Your order details are below, with a link to make payment when you’re ready: %2$s', 'woocommerce' ),
 				array(
 					'a' => array(
 						'href' => array(),

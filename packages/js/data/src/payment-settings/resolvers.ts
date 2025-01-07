@@ -7,33 +7,35 @@ import { apiFetch } from '@wordpress/data-controls';
  * Internal dependencies
  */
 import {
-	getPaymentGatewaySuggestionsSuccess,
-	getPaymentGatewaySuggestionsError,
-	getPaymentGatewaySuggestionsRequest,
+	getPaymentProvidersSuccess,
+	getPaymentProvidersError,
+	getPaymentProvidersRequest,
 } from './actions';
-import { PaymentSuggestionsResponse } from './types';
+import { PaymentProvidersResponse } from './types';
 import { WC_ADMIN_NAMESPACE } from '../constants';
 
-export function* getRegisteredPaymentGateways() {
-	yield getPaymentGatewaySuggestionsRequest();
+export function* getPaymentProviders( country?: string ) {
+	yield getPaymentProvidersRequest();
 
 	try {
-		const paymentSuggestionsResponse: PaymentSuggestionsResponse =
+		const paymentProvidersResponse: PaymentProvidersResponse =
 			yield apiFetch( {
-				path: WC_ADMIN_NAMESPACE + '/settings/payments/providers',
+				path:
+					WC_ADMIN_NAMESPACE +
+					'/settings/payments/providers?' +
+					( country ? `location=${ country }` : '' ),
 			} );
-		yield getPaymentGatewaySuggestionsSuccess(
-			paymentSuggestionsResponse.gateways,
-			paymentSuggestionsResponse.offline_payment_methods,
-			paymentSuggestionsResponse.preferred_suggestions,
-			paymentSuggestionsResponse.other_suggestions,
-			paymentSuggestionsResponse.suggestion_categories
+		yield getPaymentProvidersSuccess(
+			paymentProvidersResponse.providers,
+			paymentProvidersResponse.offline_payment_methods,
+			paymentProvidersResponse.suggestions,
+			paymentProvidersResponse.suggestion_categories
 		);
 	} catch ( e ) {
-		yield getPaymentGatewaySuggestionsError( e );
+		yield getPaymentProvidersError( e );
 	}
 }
 
-export function* getOfflinePaymentGateways() {
-	yield getRegisteredPaymentGateways();
+export function* getOfflinePaymentGateways( country?: string ) {
+	yield getPaymentProviders( country );
 }

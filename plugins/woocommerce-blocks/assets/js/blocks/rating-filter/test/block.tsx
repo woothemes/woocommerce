@@ -12,6 +12,7 @@ import {
 } from '@testing-library/react';
 import * as hooks from '@woocommerce/base-context/hooks';
 import userEvent from '@testing-library/user-event';
+import type { WCStoreV1ProductsCollectionProps } from '@woocommerce/types';
 
 /**
  * Internal dependencies
@@ -40,7 +41,7 @@ const acceptErrorWithDuplicatedKeys = () => {
 	expect( console ).toHaveErrored();
 };
 
-const stubCollectionData = () => ( {
+const stubCollectionData = (): WCStoreV1ProductsCollectionProps => ( {
 	price_range: null,
 	attribute_counts: null,
 	rating_counts: [
@@ -81,7 +82,7 @@ const setup = ( params: SetupParams ) => {
 	};
 
 	jest.spyOn( hooks, 'useCollectionData' ).mockReturnValue( {
-		results: stubCollectionData(),
+		data: stubCollectionData(),
 		isLoading: false,
 	} );
 

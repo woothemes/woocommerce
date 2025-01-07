@@ -7,23 +7,19 @@ export type Route = {
 		/**
 		 * The sidebar component.
 		 */
-		sidebar: React.JSX.Element | React.ComponentType | null;
+		sidebar: React.ReactNode;
 		/**
 		 * The content component.
 		 */
-		content?: React.JSX.Element | React.ComponentType;
+		content?: React.ReactNode;
 		/**
 		 * The edit component.
 		 */
-		fullEdit?: React.JSX.Element | React.ComponentType | null;
-		/**
-		 * The edit component.
-		 */
-		edit?: React.JSX.Element | React.ComponentType | null;
+		edit?: React.ReactNode;
 		/**
 		 * The mobile component.
 		 */
-		mobile?: React.JSX.Element | React.ComponentType | boolean;
+		mobile?: React.ReactNode;
 		/**
 		 * Whether the page can be previewed.
 		 */
@@ -38,10 +34,6 @@ export type Route = {
 		 * The main content width.
 		 */
 		content?: number;
-		/**
-		 * The edit component width.
-		 */
-		fullEdit?: number;
 		/**
 		 * The edit component width.
 		 */
