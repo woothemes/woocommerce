@@ -35,7 +35,7 @@
 			width: calc(100% + em($gap-huge / 0.875));
 			box-sizing: border-box;
 			border-radius: $universal-border-radius;
-			padding: 0 em($gap-small);
+			padding: 0 em($gap);
 			margin-left: -(em($gap-huge));
 			margin-top: em($gap);
 			@include font-size(regular);
