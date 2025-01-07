@@ -151,7 +151,7 @@ class WC_REST_Customers_V1_Controller extends WC_REST_Controller {
 		 *
 		 * @param array $roles Array of allowed roles.
 		 *
-		 * @since 9.3.0
+		 * @since 9.5.2
 		 */
 		return apply_filters( 'woocommerce_rest_customer_allowed_roles', array( 'customer', 'subscriber' ) );
 	}
