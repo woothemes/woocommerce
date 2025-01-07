@@ -12,14 +12,12 @@ const galleryObserver = new ResizeObserver(entries => {
 		const srcset = img.dataset.srcset;
 		
 		if (!srcset) {
-			if (!srcset) {
-				// Fallback to original image if no srcset available
-				const originalSrc = img.getAttribute('data-original-image-src');
-				if (originalSrc && img.src !== originalSrc) {
-					img.src = originalSrc;
-				}
-				return;
+			// Fallback to original image if no srcset available
+			const originalSrc = img.getAttribute('data-original-image-src');
+			if (originalSrc && img.src !== originalSrc) {
+				img.src = originalSrc;
 			}
+			return;
 		}
 
 		try {
