@@ -151,6 +151,7 @@ export const PaymentPromotionRow: React.FC< PaymentPromotionRowProps > = ( {
 								subTitleContent ? (
 									<div
 										className="pre-install-payment-gateway__subtitle"
+										// eslint-disable-next-line react/no-danger -- innerHTML from the element with class name: gateway-subtitle.
 										dangerouslySetInnerHTML={ sanitizeHTML(
 											subTitleContent
 										) }
