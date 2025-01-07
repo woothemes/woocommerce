@@ -50,6 +50,7 @@ const storeNoticeClass = '.wc-block-store-notices';
 const createNoticeContainer = () => {
 	const noticeContainer = document.createElement( 'div' );
 	noticeContainer.classList.add( storeNoticeClass.replace( '.', '' ) );
+	noticeContainer.classList.add( 'neato-bro' );
 	return noticeContainer;
 };
 
@@ -136,6 +137,8 @@ const { state } = store< Store >( 'woocommerce/product-button', {
 
 			context.isLoading = true;
 
+			console.log( 'add to cart yo' );
+
 			try {
 				yield dispatch( storeKey ).addItemToCart(
 					productId,
@@ -147,6 +150,8 @@ const { state } = store< Store >( 'woocommerce/product-button', {
 			} catch ( error ) {
 				const storeNoticeBlock =
 					document.querySelector( storeNoticeClass );
+
+				console.log( 'storeNoticeBlock doing stuff', storeNoticeBlock );
 
 				if ( ! storeNoticeBlock ) {
 					document

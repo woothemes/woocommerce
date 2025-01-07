@@ -17,6 +17,31 @@ class ProductButton extends AbstractBlock {
 	 */
 	protected $block_name = 'product-button';
 
+	/**
+	 * Initialize the block.
+	 */
+	protected function initialize() {
+		parent::initialize();
+
+		add_filter( 'hooked_block_types', [ $this, 'block_hook_fallback_store_notice' ], 1, 4 );
+	}
+
+	/**
+	 * Hook the fallback store notice after the post content
+	 *
+	 * @param array  $hooked_blocks The array of hooked blocks.
+	 * @param string $position The position of the block.
+	 * @param string $anchor_block The anchor block.
+	 * @return array The array of hooked blocks.
+	 */
+	public function block_hook_fallback_store_notice( $hooked_blocks, $position, $anchor_block ) {
+		if ( 'core/post-content' === $anchor_block && 'before' === $position ) {
+			$hooked_blocks[] = 'woocommerce/fallback-store-notice';
+		}
+
+		return $hooked_blocks;
+	}
+
 
 	/**
 	 * Get the frontend script handle for this block type.
