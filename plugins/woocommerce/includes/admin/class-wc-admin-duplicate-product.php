@@ -54,7 +54,7 @@ class WC_Admin_Duplicate_Product {
 			$the_product = wc_get_product( $post );
 		}
 
-		if ( ProductStatus::PUBLISH === $post->post_status && $the_product && 0 < $the_product->get_total_sales() ) {
+		if ( $the_product && ProductStatus::PUBLISH === $the_product->get_status() && 0 < $the_product->get_total_sales() ) {
 			$actions['trash'] = sprintf(
 				'<a href="%s" class="submitdelete trash-product" aria-label="%s">%s</a>',
 				get_delete_post_link( $the_product->get_id(), '', false ),
