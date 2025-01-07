@@ -1753,7 +1753,7 @@ class WC_Helper {
 				'key_type'          => '',
 				'key_type_label'    => '',
 				'lifetime'          => false,
-				'product_status'    => ProductStatus::PUBLISH,
+				'product_status'    => 'publish',
 				// Connections is empty because this is not a connected subscription.
 				'connections'       => array(),
 				'expires'           => 0,
