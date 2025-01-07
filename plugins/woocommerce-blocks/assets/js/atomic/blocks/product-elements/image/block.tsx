@@ -26,7 +26,7 @@ const ImagePlaceholder = ( props ): JSX.Element => {
 		<img
 			{ ...props }
 			src={ PLACEHOLDER_IMG_SRC }
-			alt={ props.alt || 'Placeholder' }
+			alt={ props.alt }
 			width={ undefined }
 			height={ undefined }
 		/>
