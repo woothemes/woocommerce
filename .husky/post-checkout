@@ -33,7 +33,8 @@ if [ "$CHECKOUT_TYPE" = '1' ]; then
 		current=$( date +%Y%m%d -d $currentComposerDate )
 		threshold=$( date +%Y%m%d -d '3 months ago' )
 		if [ $current -lt $threshold ]; then
-			printf "${orangeColoured}composer version (build at $currentComposerDate) is older than twelve months, ensure to update it with 'composer self-update'.\n"
+			version=$( ( composer --version 2>/dev/null | awk '{print $3}' ) || echo '' )
+			printf "${orangeColoured}composer version (v$version build at $currentComposerDate) is older than twelve months, ensure to update it with 'composer self-update'.\n"
 		fi
     fi
 fi
