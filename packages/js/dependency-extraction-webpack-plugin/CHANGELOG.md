@@ -10,7 +10,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 -   Patch - Fix a bug where the assets folder was not distributed with @woocommerce/dependency-extraction-webpack-plugin [#46755]
 -   Patch - bump php version in packages/js/*/composer.json [#42020]
--    - Bump node to version 20 [#46702]
+-   Bump node to version 20 [#46702]
 -   Minor - Bump node version. [#45148]
 
 ## [2.3.0](https://www.npmjs.com/package/@woocommerce/dependency-extraction-webpack-plugin/v/2.3.0) - 2023-10-27 
