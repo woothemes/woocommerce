@@ -1529,7 +1529,7 @@ class WC_Admin_Setup_Wizard {
 		$can_paypal  = $this->is_paypal_supported_currency( $currency );
 
 		if ( ! current_user_can( 'install_plugins' ) ) {
-			return $can_paypal ? array( PaymentMethods::PAYPAL => $gateways[PaymentMethods::PAYPAL] ) : array();
+			return $can_paypal ? array( PaymentMethods::PAYPAL => $gateways[ PaymentMethods::PAYPAL ] ) : array();
 		}
 
 		$klarna_or_square = false;
