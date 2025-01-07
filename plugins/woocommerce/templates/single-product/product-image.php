@@ -42,13 +42,7 @@ $wrapper_classes   = apply_filters(
 	<div class="woocommerce-product-gallery__wrapper">
 		<?php
 		if ( $post_thumbnail_id ) {
-			$html = WC_Product_Image_Handler::render_responsive_image(
-				$post_thumbnail_id,
-				array(
-					'container_class' => 'wp-gallery-image-container',
-				)
-			);
-			// $html = wc_get_gallery_image_html( $post_thumbnail_id, true );
+			$html = wc_get_gallery_image_html( $post_thumbnail_id, true );
 		} else {
 			$wrapper_classname = $product->is_type( ProductType::VARIABLE ) && ! empty( $product->get_available_variations( 'image' ) ) ?
 				'woocommerce-product-gallery__image woocommerce-product-gallery__image--placeholder' :
