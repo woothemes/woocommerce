@@ -183,7 +183,7 @@ const ValidatedCheckboxControl = forwardRef<
 		 */
 		useEffect( () => {
 			if ( validateOnMount ) {
-				validateInput( false );
+				validateInput( true );
 			}
 		}, [ validateOnMount, validateInput ] );
 
