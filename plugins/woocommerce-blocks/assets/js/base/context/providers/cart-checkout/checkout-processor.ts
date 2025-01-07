@@ -41,7 +41,6 @@ import { preparePaymentData, processCheckoutResponseHeaders } from './utils';
 import { useCheckoutEventsContext } from './checkout-events';
 import { useShippingDataContext } from './shipping';
 import { useStoreCart } from '../../hooks/cart/use-store-cart';
-import { abortCheckoutPUT } from '../../../../data/shared-controls';
 
 /**
  * CheckoutProcessor component.

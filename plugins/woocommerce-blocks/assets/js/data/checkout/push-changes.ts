@@ -61,7 +61,7 @@ const updateCheckoutData = (): void => {
 		return;
 	}
 
-	// Figure out which fields have changed and only send those to the server
+	// Figure out which additional fields have changed and only send those to the server
 	const changedFields = Object.keys( newCheckoutData.additionalFields )
 		.filter( ( key ) => {
 			return (
@@ -74,7 +74,11 @@ const updateCheckoutData = (): void => {
 			return acc;
 		}, {} );
 
-	if ( Object.keys( changedFields ).length === 0 ) {
+	// If no additional fields have changed, and the order notes are the same, we can skip the update
+	if (
+		Object.keys( changedFields ).length === 0 &&
+		localState.checkoutData.orderNotes === newCheckoutData.orderNotes
+	) {
 		localState.doingPush = false;
 		return;
 	}
