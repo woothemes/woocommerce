@@ -21,10 +21,6 @@ import {
 const DEFAULT_ORDER = 20;
 const TOP_LEVEL_MENU = 'top-level';
 
-type FillProps =
-	| Record< string, unknown >
-	| ( undefined & VariationQuickUpdateSlotProps );
-
 export const getGroupName = (
 	group?: string,
 	isMultipleSelection?: boolean
@@ -49,36 +45,32 @@ export const VariationQuickUpdateMenuItem: React.FC< MenuItemProps > & {
 	onClick = () => {},
 	...props
 } ) => {
-	const handleClick =
-		(
-			fillProps: React.ComponentProps< typeof Fill > &
-				VariationQuickUpdateSlotProps
-		) =>
-		() => {
-			const { selection, onChange, onClose } = fillProps;
-			onClick( {
-				selection: Array.isArray( selection )
-					? selection
-					: [ selection ],
-				onChange,
-				onClose,
-			} );
-		};
-
 	const createFill = ( updateType: string ) => (
 		<Fill
 			key={ updateType }
 			name={ getGroupName( group, updateType === MULTIPLE_UPDATE ) }
 		>
-			{ ( fillProps: FillProps ) =>
-				createOrderedChildren(
-					<MenuItem { ...props } onClick={ handleClick( fillProps ) }>
+			{ ( fillProps ) => {
+				return createOrderedChildren(
+					<MenuItem
+						{ ...props }
+						onClick={ () => {
+							const { selection, onChange, onClose } = fillProps;
+							onClick( {
+								selection: Array.isArray( selection )
+									? selection
+									: [ selection ],
+								onChange,
+								onClose,
+							} );
+						} }
+					>
 						{ children }
 					</MenuItem>,
 					order,
 					fillProps
-				)
-			}
+				);
+			} }
 		</Fill>
 	);
 
@@ -102,7 +94,15 @@ VariationQuickUpdateMenuItem.Slot = ( {
 			fillProps={ { ...fillProps, onChange, onClose, selection } }
 		>
 			{ ( fills ) => {
-				if ( ! sortFillsByOrder || ! fills?.length ) {
+				if (
+					! sortFillsByOrder ||
+					( fills &&
+						typeof fills !== 'number' &&
+						typeof fills !== 'string' &&
+						typeof fills !== 'boolean' &&
+						'length' in fills &&
+						! fills?.length )
+				) {
 					return null;
 				}
 

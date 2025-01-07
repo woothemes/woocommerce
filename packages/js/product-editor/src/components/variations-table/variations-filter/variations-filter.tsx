@@ -20,7 +20,6 @@ import {
 	Button,
 	CheckboxControl,
 	Dropdown,
-	// @ts-expect-error no exported member.
 	__experimentalInputControl as InputControl,
 	Spinner,
 } from '@wordpress/components';
@@ -241,7 +240,11 @@ export function VariationsFilter( {
 									type="search"
 									value={ search }
 									suffix={ <Icon icon={ searchIcon } /> }
-									onChange={ handleInputControlChange }
+									onChange={ ( value ) => {
+										if ( value ) {
+											handleInputControlChange( value );
+										}
+									} }
 									onKeyDown={ handleKeyDown }
 								/>
 							</label>

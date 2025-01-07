@@ -362,6 +362,7 @@ export function PricingMenuItem( {
 						</MenuItem>
 					</MenuGroup>
 					<VariationQuickUpdateMenuItem.Slot
+						name=""
 						group={ 'pricing' }
 						onChange={ onChange }
 						onClose={ onClose }

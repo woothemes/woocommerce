@@ -196,6 +196,7 @@ export function InventoryMenuItem( {
 						</MenuItem>
 					</MenuGroup>
 					<VariationQuickUpdateMenuItem.Slot
+						name=""
 						group={ 'inventory' }
 						onChange={ onChange }
 						onClose={ onClose }

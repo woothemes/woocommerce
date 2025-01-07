@@ -14,7 +14,9 @@ export type ImageActionsMenuProps = Omit<
 > &
 	VariationActionsMenuProps & {
 		renderToggle(
-			props: React.ComponentProps< typeof Dropdown > & {
+			props: Parameters<
+				React.ComponentProps< typeof Dropdown >[ 'renderToggle' ]
+			>[ 0 ] & {
 				isBusy?: boolean;
 			}
 		): JSX.Element;
