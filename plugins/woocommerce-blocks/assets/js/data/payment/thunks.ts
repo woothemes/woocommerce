@@ -219,7 +219,9 @@ export const __internalEmitPaymentProcessingEvent: emitProcessingEventType = (
 /**
  * Updates the payment method data on the server
  *
- * @param {Object} paymentMethodData The payment method data to update
+ * @param {Object} paymentMethodData       The payment method data to update
+ * @param {string} paymentMethodData.id    The payment method ID
+ * @param {string} paymentMethodData.token The payment method token
  */
 export const updatePaymentMethodData = ( paymentMethodData: {
 	id: string;
