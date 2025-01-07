@@ -24,7 +24,7 @@ const options = [
 
 export const EditMethod = ( { zoneId, methodId } ) => {
 	const history = useHistory();
-	const { zones } = window.shippingZonesLocalizeScript;
+	const { zones } = window.shippingZonesData;
 	const zone = zones[ zoneId ];
 	const method = zone.shipping_methods[ methodId ];
 

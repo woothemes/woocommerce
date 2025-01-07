@@ -20,30 +20,27 @@ const getAreas = ( section, zoneId, methodId ) => {
 	if ( section ) {
 		return {
 			content: <ShippingLegacyView />,
-			fullEdit: null,
 			edit: null,
 		};
 	}
 
 	if ( ! zoneId ) {
 		return {
-			content: <ShippingZones />,
-			fullEdit: null,
+			content: <ShippingZones zoneId={ undefined } />,
 			edit: null,
 		};
 	}
 
 	if ( zoneId && ! methodId ) {
 		return {
-			content: <ShippingZones />,
+			content: <ShippingZones zoneId={ zoneId } />,
 			edit: <EditZone zoneId={ zoneId } />,
 		};
 	}
 
 	if ( zoneId && methodId ) {
 		return {
-			content: null,
-			fullEdit: <EditZone zoneId={ zoneId } />,
+			content: <ShippingZones zoneId={ zoneId } />,
 			edit: <EditMethod zoneId={ zoneId } methodId={ methodId } />,
 		};
 	}
@@ -54,8 +51,8 @@ addFilter( 'woocommerce_admin_settings_pages', 'woocommerce', ( pages ) => {
 	pages.shipping = {
 		areas: { ...getAreas( section, zoneId, methodId ) },
 		widths: {
-			content: undefined,
-			edit: 380,
+			content: zoneId || methodId ? 600 : undefined,
+			edit: zoneId || methodId ? undefined : 380,
 		},
 	};
 	return pages;

@@ -8,7 +8,7 @@ import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
 
 const { useHistory } = unlock( routerPrivateApis );
 
-export const ShippingZones = () => {
+export const ShippingZones = ( { zoneId } ) => {
 	const history = useHistory();
 	const { zones } = window.shippingZonesData;
 	const zoneList = Object.keys( zones ).map( ( zoneId ) => zones[ zoneId ] );
@@ -46,7 +46,15 @@ export const ShippingZones = () => {
 				</thead>
 				<tbody>
 					{ zoneList.map( ( zone ) => (
-						<tr key={ zone.zone_id }>
+						<tr
+							key={ zone.zone_id }
+							style={ {
+								backgroundColor:
+									Number( zoneId ) === zone.zone_id
+										? 'lightgray'
+										: 'initial',
+							} }
+						>
 							<td>{ zone.zone_name }</td>
 							<td>{ zone.formatted_zone_location }</td>
 							<td>
@@ -54,7 +62,7 @@ export const ShippingZones = () => {
 									.map(
 										( methodId ) =>
 											zone.shipping_methods[ methodId ]
-												.method_title
+												.title
 									)
 									.join( ', ' ) }
 							</td>

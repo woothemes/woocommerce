@@ -64,7 +64,6 @@ export const EditZone = ( { zoneId } ) => {
 					padding: '20px',
 					display: 'flex',
 					alignItems: 'center',
-					borderBottom: '1px solid #e0e0e0',
 				} }
 			>
 				<Button onClick={ back }>
@@ -102,6 +101,7 @@ export const EditZone = ( { zoneId } ) => {
 					<thead>
 						<tr>
 							<th style={ { textAlign: 'left' } }>Title</th>
+							<th style={ { textAlign: 'left' } }>Type</th>
 							<th style={ { textAlign: 'left' } }>Enabled</th>
 							<th style={ { textAlign: 'left' } }>Actions</th>
 						</tr>
@@ -110,6 +110,12 @@ export const EditZone = ( { zoneId } ) => {
 						{ Object.keys( zone.shipping_methods ).map(
 							( methodId ) => (
 								<tr key={ methodId }>
+									<td>
+										{
+											zone.shipping_methods[ methodId ]
+												.title
+										}
+									</td>
 									<td>
 										{
 											zone.shipping_methods[ methodId ]
@@ -140,7 +146,9 @@ export const EditZone = ( { zoneId } ) => {
 						) }
 					</tbody>
 				</table>
-				<Button variant="primary">Add Method</Button>
+				<Button style={ { margin: '16px 0' } } variant="primary">
+					Add Method
+				</Button>
 			</div>
 		</>
 	);
