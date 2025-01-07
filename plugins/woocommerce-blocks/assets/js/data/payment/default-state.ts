@@ -19,6 +19,7 @@ function getDefaultPaymentMethod() {
 		'defaultPaymentMethod',
 		''
 	);
+
 	if ( ! defaultPaymentMethod ) {
 		return '';
 	}
@@ -39,12 +40,18 @@ function getDefaultPaymentMethod() {
 	return '';
 }
 
+/**
+ * Set the default payment method data. This can be in two places,
+ * Either as part of the `defaultPaymentMethod` object or
+ * as a token stored in `wcSettings`.
+ */
 function getDefaultPaymentMethodData() {
 	const defaultPaymentMethod = getSetting< SavedPaymentMethod | string >(
 		'defaultPaymentMethod',
 		''
 	);
 
+	// Saved payment method token stored in wcSettings.
 	const defaultPaymentMethodToken = getSetting< string >(
 		'defaultPaymentMethodToken',
 		''
@@ -54,16 +61,27 @@ function getDefaultPaymentMethodData() {
 		return {};
 	}
 
-	if ( defaultPaymentMethodToken ) {
-		return { token: defaultPaymentMethodToken };
+	// If a token has been hydrated to wcSettings, use it.
+	if ( defaultPaymentMethod && defaultPaymentMethodToken ) {
+		const savedTokenKey = `wc-${ defaultPaymentMethod }-payment-token`;
+		return {
+			token: defaultPaymentMethodToken,
+			payment_method: defaultPaymentMethod,
+			[ savedTokenKey ]: defaultPaymentMethodToken,
+			isSavedToken: true,
+		};
 	}
 
-	// default payment method data is only needed for a saved payment method.
+	// If the default payment method is a SavedPaymentMethod object,
+	// find the token and set the payment method data.
 	if (
 		typeof defaultPaymentMethod !== 'string' &&
 		defaultPaymentMethod?.tokenId
 	) {
-		return { token: defaultPaymentMethod.tokenId.toString() };
+		const token = defaultPaymentMethod.tokenId.toString();
+		const slug = defaultPaymentMethod.method.gateway;
+		const savedTokenKey = `wc-${ slug }-payment-token`;
+		return { token, payment_method: slug, [ savedTokenKey ]: token };
 	}
 
 	return {};

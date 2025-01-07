@@ -602,6 +602,7 @@ class Checkout extends AbstractBlock {
 		$chosen_payment_method       = WC()->session->get( 'chosen_payment_method' );
 		$chosen_payment_method_token = WC()->session->get( 'chosen_payment_method_token' );
 
+		// If payment method is already stored in session, use it.
 		if ( $chosen_payment_method ) {
 			$this->asset_data_registry->add( 'defaultPaymentMethod', $chosen_payment_method );
 			if ( $chosen_payment_method_token ) {
@@ -617,6 +618,7 @@ class Checkout extends AbstractBlock {
 			return;
 		}
 
+		// If no saved payment method exists, use the first enabled payment method.
 		$enabled_payment_gateways = $this->get_enabled_payment_gateways();
 		$first_key                = array_key_first( $enabled_payment_gateways );
 		$first_payment_method     = $enabled_payment_gateways[ $first_key ];
