@@ -4,8 +4,20 @@
  *
  * @package WooCommerce\Views
  */
+use Automattic\WooCommerce\Internal\BrandingController;
 
 defined( 'ABSPATH' ) || exit();
+
+// Old branding.
+$logo_filename = 'woocommerce_logo.png';
+
+if (
+	class_exists('BrandingController' )
+	 && BrandingController::use_new_branding()
+) {
+	// New branding.
+	$logo_filename = 'woocommerce-logo.svg';
+}
 
 ?>
 
@@ -16,7 +28,7 @@ defined( 'ABSPATH' ) || exit();
 
 		<div class="start-container">
 			<div class="text">
-				<img src="<?php echo esc_url( WC()->plugin_url() . '/assets/images/woocommerce_logo.png' ); ?>" alt="<?php esc_attr_e( 'WooCommerce', 'woocommerce' ); ?>" style="width:180px;">
+				<img src="<?php echo esc_url( WC()->plugin_url() . '/assets/images/' . $logo_filename ); ?>" alt="<?php esc_attr_e( 'WooCommerce', 'woocommerce' ); ?>" style="width:180px;">
 
 				<?php if ( ! empty( $_GET['wc-helper-status'] ) && 'helper-disconnected' === $_GET['wc-helper-status'] ) : ?>
 					<p><strong><?php esc_html_e( 'Sorry to see you go.', 'woocommerce' ); ?></strong> <?php esc_html_e( 'Feel free to reconnect again using the button below.', 'woocommerce' ); ?></p>
