@@ -4,13 +4,11 @@
 import { OPTIONS_STORE_NAME } from '@woocommerce/data';
 import apiFetch from '@wordpress/api-fetch';
 import { dispatch, resolveSelect } from '@wordpress/data';
+import { store as coreStore } from '@wordpress/core-data';
 import { Sender } from 'xstate';
-// @ts-expect-error -- No types for this exist yet.
+// @ts-expect-error No types for this exist yet.
 // eslint-disable-next-line @woocommerce/dependency-group
 import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/components/global-styles/global-styles-provider';
-// @ts-expect-error -- No types for this exist yet.
-// eslint-disable-next-line @woocommerce/dependency-group
-import { store as coreStore } from '@wordpress/core-data';
 
 /**
  * Internal dependencies
@@ -99,7 +97,6 @@ const updateGlobalStylesWithDefaultValues = async (
 		return;
 	}
 
-	// @ts-expect-error No types for this exist yet.
 	const { saveEntityRecord } = dispatch( coreStore );
 
 	await saveEntityRecord(
