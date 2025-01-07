@@ -1721,13 +1721,7 @@ function wc_get_gallery_image_html( $attachment_id, $main_image = false, $image_
 		)
 	);
 
-	// Add container styles to wrapper div.
-	$wrapper_style = sprintf(
-		'style="%s"',
-		esc_attr( WC_Product_Image_Handler::get_container_style() )
-	);
-
-	return '<div data-thumb="' . esc_url( $thumbnail_src[0] ) . '" data-thumb-alt="' . esc_attr( $alt_text ) . '" class="woocommerce-product-gallery__image"><a ' . $wrapper_style . ' href="' . esc_url( $full_src[0] ) . '">' . $image . '</a></div>';
+	return '<div data-thumb="' . esc_url( $thumbnail_src[0] ) . '" data-thumb-alt="' . esc_attr( $alt_text ) . '" class="woocommerce-product-gallery__image"><a href="' . esc_url( $full_src[0] ) . '">' . $image . '</a></div>';
 }
 
 if ( ! function_exists( 'woocommerce_get_alt_from_product_title_and_position' ) ) {

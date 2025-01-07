@@ -31,15 +31,6 @@ class WC_Product_Image_Handler {
 		return $image_data;
 	}
 
-	/**
-	 * Get container style attributes
-	 *
-	 * @return string
-	 */
-	public static function get_container_style() {
-		return 'container-type: inline-size;';
-	}
-
 
 	/**
 	 * Output responsive image markup without container
@@ -62,9 +53,6 @@ class WC_Product_Image_Handler {
 			return '';
 		}
 
-		// Get the default image (smallest size).
-		$default_image = reset( $image_data );
-
 		// Build srcset.
 		$srcset = array();
 		foreach ( $image_data as $data ) {
@@ -76,81 +64,29 @@ class WC_Product_Image_Handler {
 			function ( $sizes, $data ) {
 				$width = $data['width'];
 				return $sizes
-					? "{$sizes}, @container (min-width: {$width}px) {$width}px"
+					? "{$sizes}, (min-width: {$width}px) {$width}px"
 					: "{$width}px";
 			},
 			''
 		);
 
 		$image_attributes = array(
-			'src'                => $default_image['url'],
-			'class'              => trim( 'wp-post-image ' . $args['class'] ),
-			'alt'                => trim( wp_strip_all_tags( get_post_meta( $attachment_id, '_wp_attachment_image_alt', true ) ) ),
-			'srcset'             => implode( ', ', $srcset ),
-			'sizes'              => $sizes_attribute_value,
-			'data-product-image' => 'responsive',
+			'src'                 => wc_placeholder_img_src(),
+			'class'               => trim( 'wp-post-image ' . $args['class'] ),
+			'alt'                 => trim( wp_strip_all_tags( get_post_meta( $attachment_id, '_wp_attachment_image_alt', true ) ) ),
+			'data-srcset'         => implode( ', ', $srcset ),
+			'data-sizes'          => $sizes_attribute_value, // Keep this for ResizeObserver.
+			'data-original-image' => $image_data[ count( $image_data ) - 1 ]['url'],
+			'data-product-image'  => 'responsive',
 		);
 
+		// Add loading="lazy" if enabled.
 		if ( $args['lazy_load'] ) {
 			$image_attributes['loading'] = 'lazy';
 		}
 
+		// Don't add native srcset/sizes - let ResizeObserver handle it.
 		return sprintf( '<img %s>', self::build_attributes( $image_attributes ) );
-	}
-
-	/**
-	 * Register container query styles
-	 *
-	 * @return void
-	 */
-	public static function register_container_styles() {
-		// Only add on single product pages.
-		if ( ! is_product() ) {
-			return;
-		}
-
-		$styles = '
-            .woocommerce-product-gallery__image {
-                container-type: inline-size;
-                container-name: gallery-image;
-            }
-            
-            @container gallery-image (min-width: 300px) {
-                img {
-                    width: 300px;
-                }
-            }
-            
-            @container gallery-image (min-width: 600px) {
-                img {
-                    width: 600px;
-                }
-            }
-            
-            @container gallery-image (min-width: 900px) {
-                img {
-                    width: 900px;
-                }
-            }
-            
-            @container gallery-image (min-width: 1200px) {
-                img {
-                    width: 1200px;
-                }
-            }
-        ';
-
-		// Add fallback for browsers that don't support container queries.
-		$styles .= '
-            @supports not (container-type: inline-size) {
-                .woocommerce-product-gallery__image img {
-                    width: 100%;
-                    max-width: 1200px;
-                }
-            }
-        ';
-
-		wp_add_inline_style( 'woocommerce-single-product', $styles );
 	}
 
 	/**
@@ -173,5 +109,18 @@ class WC_Product_Image_Handler {
 		}
 
 		return implode( ' ', $html );
+	}
+
+	/**
+	 * Enqueue the image resize observer script.
+	 */
+	public static function enqueue_image_resize_observer() {
+		wp_enqueue_script(
+			'wc-image-resize-observer',
+			WC()->plugin_url() . '/assets/js/frontend/image-resize-observer.min.js',
+			array(),
+			WC()->version,
+			true
+		);
 	}
 }
