@@ -40,7 +40,7 @@ const ConnectAccountPage = () => {
 				getAdminSetting( 'wcpay_welcome_page_connect_nonce' ) +
 				'&from=WCADMIN_PAYMENT_INCENTIVE',
 		};
-	} );
+	}, [] );
 
 	const determineTrackingSource = () => {
 		const urlParams = new URLSearchParams( window.location.search );
