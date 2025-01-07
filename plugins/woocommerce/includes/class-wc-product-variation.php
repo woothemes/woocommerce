@@ -573,6 +573,15 @@ class WC_Product_Variation extends WC_Product_Simple {
 	 * @return bool
 	 */
 	public function variation_is_visible() {
+		/**
+		 * Filter to adjust if a variation is visible.
+		 *
+		 * @since 3.0.0
+		 * @param bool $visible If the variation is visible.
+		 * @param int $variation_id The variation ID.
+		 * @param int $product_id The product ID.
+		 * @param object $variation The variation object.
+		 */
 		return apply_filters( 'woocommerce_variation_is_visible', ProductStatus::PUBLISH === get_post_status( $this->get_id() ) && '' !== $this->get_price(), $this->get_id(), $this->get_parent_id(), $this );
 	}
 
