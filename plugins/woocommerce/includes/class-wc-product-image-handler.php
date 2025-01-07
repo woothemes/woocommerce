@@ -70,14 +70,16 @@ class WC_Product_Image_Handler {
 			''
 		);
 
+		// We use data-srcset and data-sizes for ResizeObserver, so that the browser doesn't hijack the image
+		// and we can use the correct image size for the container width.
 		$image_attributes = array(
-			'src'                 => wc_placeholder_img_src(),
-			'class'               => trim( 'wp-post-image ' . $args['class'] ),
-			'alt'                 => trim( wp_strip_all_tags( get_post_meta( $attachment_id, '_wp_attachment_image_alt', true ) ) ),
-			'data-srcset'         => implode( ', ', $srcset ),
-			'data-sizes'          => $sizes_attribute_value, // Keep this for ResizeObserver.
-			'data-original-image' => $image_data[ count( $image_data ) - 1 ]['url'],
-			'data-product-image'  => 'responsive',
+			'src'                     => wc_placeholder_img_src(),
+			'class'                   => trim( 'wp-post-image ' . $args['class'] ),
+			'alt'                     => trim( wp_strip_all_tags( get_post_meta( $attachment_id, '_wp_attachment_image_alt', true ) ) ),
+			'data-srcset'             => implode( ', ', $srcset ),
+			'data-sizes'              => $sizes_attribute_value,
+			'data-original-image-src' => $image_data[ count( $image_data ) - 1 ]['url'],
+			'data-product-image'      => 'container-responsive',
 		);
 
 		// Add loading="lazy" if enabled.
