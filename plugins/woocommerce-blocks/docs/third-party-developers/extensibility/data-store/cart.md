@@ -54,7 +54,7 @@
     -   [isShippingRateBeingSelected](#isshippingratebeingselected)
     -   [getItemsPendingQuantityUpdate](#getitemspendingquantityupdate)
     -   [getItemsPendingDelete](#getitemspendingdelete)
-    -   [getApplyingExtensionCartUpdates](#getapplyingextensioncartupdates)
+    -   [getApplyingExtensionCartUpdatesCount](#getapplyingextensioncartupdatescount)
 
 ## Overview
 
@@ -984,7 +984,7 @@ const store = select( CART_STORE_KEY );
 const itemsPendingDelete = store.getItemsPendingDelete();
 ```
 
-### getApplyingExtensionCartUpdates
+### getApplyingExtensionCartUpdatesCount
 
 Retrieves the number of `extensionCartUpdate` actions currently being processed.
 
@@ -996,7 +996,7 @@ Retrieves the number of `extensionCartUpdate` actions currently being processed.
 
 ```js
 const store = select( CART_STORE_KEY );
-const applyingExtensionCartUpdates = store.getApplyingExtensionCartUpdates();
+const applyingExtensionCartUpdatesCount = store.getApplyingExtensionCartUpdatesCount();
 ```
 <!-- FEEDBACK -->
 

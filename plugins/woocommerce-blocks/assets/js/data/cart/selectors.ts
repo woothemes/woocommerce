@@ -204,8 +204,10 @@ export const isCustomerDataUpdating = ( state: CartState ): boolean => {
  * @param {CartState} state The current state.
  * @return {number} current number of extensionCartUpdates being applied.
  */
-export const getApplyingExtensionCartUpdates = ( state: CartState ): number => {
-	return state.metaData.applyingExtensionCartUpdates;
+export const getApplyingExtensionCartUpdatesCount = (
+	state: CartState
+): number => {
+	return state.metaData.applyingExtensionCartUpdatesCount;
 };
 
 /**

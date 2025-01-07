@@ -160,7 +160,9 @@ describe( 'useStoreCart', () => {
 		);
 	};
 
-	const getApplyingExtensionCartUpdatesMock = jest.fn().mockReturnValue( 0 );
+	const getApplyingExtensionCartUpdatesCountMock = jest
+		.fn()
+		.mockReturnValue( 0 );
 
 	const setUpMocks = () => {
 		const mocks = {
@@ -172,8 +174,8 @@ describe( 'useStoreCart', () => {
 					.fn()
 					.mockReturnValue( ! mockCartIsLoading ),
 				isCustomerDataUpdating: jest.fn().mockReturnValue( false ),
-				getApplyingExtensionCartUpdates:
-					getApplyingExtensionCartUpdatesMock,
+				applyingExtensionCartUpdatesCount:
+					getApplyingExtensionCartUpdatesCountMock,
 			},
 		};
 		const store = createReduxStore( storeKey, {
@@ -190,7 +192,7 @@ describe( 'useStoreCart', () => {
 	} );
 
 	afterEach( () => {
-		getApplyingExtensionCartUpdatesMock.mockReturnValue( 0 );
+		getApplyingExtensionCartUpdatesCountMock.mockReturnValue( 0 );
 		useEditorContext.mockReset();
 	} );
 
@@ -227,8 +229,8 @@ describe( 'useStoreCart', () => {
 			expect( receiveCartContents ).toEqual( defaultReceiveCartContents );
 		} );
 
-		it( 'returns correct isApplyingExtensionCartUpdate value when applyingExtensionCartUpdates > 0', () => {
-			getApplyingExtensionCartUpdatesMock.mockReturnValue( 1 );
+		it( 'returns correct isApplyingExtensionCartUpdateCount value when applyingExtensionCartUpdatesCount > 0', () => {
+			getApplyingExtensionCartUpdatesCountMock.mockReturnValue( 1 );
 			const TestComponent = getTestComponent();
 			act( () => {
 				renderer = TestRenderer.create(

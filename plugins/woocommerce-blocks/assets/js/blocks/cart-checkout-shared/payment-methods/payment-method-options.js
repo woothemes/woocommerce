@@ -57,7 +57,7 @@ const PaymentMethodOptions = () => {
 			return {
 				isCustomerDataUpdating: store.isCustomerDataUpdating(),
 				isApplyingExtensionCartUpdate:
-					store.getApplyingExtensionCartUpdates() > 0,
+					store.getApplyingExtensionCartUpdatesCount() > 0,
 			};
 		}
 	);
