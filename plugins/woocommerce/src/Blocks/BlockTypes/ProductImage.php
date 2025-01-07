@@ -167,10 +167,10 @@ class ProductImage extends AbstractBlock {
 
 		$image_id = $product->get_image_id();
 		$alt_text = '';
-		$title = '';
+		$title    = '';
 		if ( $image_id ) {
 			$alt_text = get_post_meta( $image_id, '_wp_attachment_image_alt', true );
-			$title = get_the_title( $image_id );
+			$title    = get_the_title( $image_id );
 		}
 
 		return $product->get_image(
