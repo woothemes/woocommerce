@@ -61,7 +61,7 @@ const FrontendBlock = ( {
 					isSelectingRate
 				}
 				screenReaderLabel={ __(
-					'Loading shipping rates…',
+					'Updating order totals…',
 					'woocommerce'
 				) }
 				showSpinner={ true }
