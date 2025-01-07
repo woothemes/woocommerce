@@ -63,9 +63,6 @@ module.exports = function ( grunt ) {
 				options: {
 					implementation: sass,
 					sourceMap: false,
-					includePaths: [
-						'node_modules',
-					]
 				},
 				files: [
 					{
