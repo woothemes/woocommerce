@@ -210,8 +210,8 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 						return (
 							<ValidatedCheckboxControl
 								key={ field.key }
-								{ ...( field.error_message
-									? field.error_message
+								{ ...( field.errorMessage
+									? { errorMessage: field.errorMessage }
 									: {} ) }
 								{ ...checkboxProps }
 							/>

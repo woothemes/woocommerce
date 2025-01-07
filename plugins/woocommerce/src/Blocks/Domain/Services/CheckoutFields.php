@@ -427,6 +427,12 @@ class CheckoutFields {
 			unset( $field_data['error_message'] );
 		}
 
+		// Get the error message property and set it to errorMessage for use in JS.
+		if ( isset( $field_data['error_message'] ) ) {
+			$field_data['errorMessage'] = $field_data['error_message'];
+			unset( $field_data['error_message'] );
+		}
+
 		return $field_data;
 	}
 
