@@ -31,7 +31,7 @@ export function useSaveDraft( {
 }: SaveDraftButtonProps & {
 	onSaveSuccess?( product: Product ): void;
 	onSaveError?( error: WPError ): void;
-} ): React.ComponentProps< typeof Button > {
+} ) {
 	const [ productId ] = useEntityProp< number >(
 		'postType',
 		productType,
@@ -129,7 +129,7 @@ export function useSaveDraft( {
 		}
 	}
 
-	async function handleClick( event: MouseEvent< HTMLButtonElement > ) {
+	async function handleClick( event: MouseEvent< HTMLElement > ) {
 		if ( ariaDisabled ) {
 			return event.preventDefault();
 		}
@@ -168,7 +168,7 @@ export function useSaveDraft( {
 		children,
 		...props,
 		'aria-disabled': ariaDisabled,
-		variant: 'tertiary',
+		variant: 'tertiary' as const,
 		onClick: handleClick,
 	};
 }

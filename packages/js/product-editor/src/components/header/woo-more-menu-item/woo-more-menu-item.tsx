@@ -18,7 +18,7 @@ export const WooProductMoreMenuItem: React.FC< {
 } = ( { children, order = 1 } ) => {
 	return (
 		<Fill name={ WC_PRODUCT_MORE_MENU_SLOT_NAME }>
-			{ ( fillProps: React.ComponentProps< typeof Fill > ) => {
+			{ ( fillProps ) => {
 				return createOrderedChildren( children, order, fillProps );
 			} }
 		</Fill>

@@ -37,7 +37,6 @@ export const PluginHeaderItemPopover: React.FC<
 					<Popover
 						onFocusOutside={ () => setVisible( false ) }
 						onClose={ () => setVisible( false ) }
-						focusOnMount="container"
 					>
 						{ childrenToRender }
 					</Popover>
