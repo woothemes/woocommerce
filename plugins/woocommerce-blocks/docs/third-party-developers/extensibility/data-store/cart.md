@@ -24,6 +24,7 @@
     -   [updatingCustomerData](#updatingcustomerdata)
     -   [shippingRatesBeingSelected](#shippingratesbeingselected)
     -   [applyExtensionCartUpdate](#applyextensioncartupdate)
+    -   [applyingExtensionCartUpdate](#applyingextensioncartupdate)
     -   [applyCoupon](#applycoupon)
     -   [removeCoupon](#removecoupon)
     -   [addItemToCart](#additemtocart)
@@ -384,6 +385,21 @@ const { dispatch } = useDispatch( CART_STORE_KEY );
 dispatch( applyExtensionCartUpdate( args ) );
 ```
 
+### applyingExtensionCartUpdate
+
+Dispatch an action to either increment or decrement the number of `applyingExtensionCartUpdate` in the data store. This is used to track whether an update is being made on the server. Applications for this include blocking certain parts of the UI that may change following an update.
+
+#### _Parameters_ <!-- omit in toc -->
+
+- _isApplyingUpdate_ `boolean`: If true, signal that an update is being applied, if false, signal an update is no longer being applied (i.e. it has finished). Calling this action with `false` will not result in the `getApplyingExtensionCartUpdates` returning 0, it will only decrement the counter.
+
+#### _Example_ <!-- omit in toc -->
+
+```js
+const { dispatch } = useDispatch( CART_STORE_KEY );
+dispatch( applyingExtensionCartUpdate( true ) );
+```
+
 ### applyCoupon
 
 This action is used to apply a coupon to the cart.
@@ -550,21 +566,6 @@ This action is used to updates the shipping and/or billing address for the custo
 ```js
 const { dispatch } = useDispatch( CART_STORE_KEY );
 dispatch( updateCustomerData( customerData, editing ) );
-```
-
-### applyingExtensionCartUpdate
-
-Dispatch an action to either increment or decrement the number of `applyingExtensionCartUpdate` in the data store. This is used to track whether an update is being made on the server. Applications for this include blocking certain parts of the UI that may change following an update.
-
-#### _Parameters_ <!-- omit in toc -->
-
-- _isApplyingUpdate_ `boolean`: If true, signal that an update is being applied, if false, signal an update is no longer being applied (i.e. it has finished). Calling this action with `false` will not result in the `getApplyingExtensionCartUpdates` returning 0, it will only decrement the counter.
-
-#### _Example_ <!-- omit in toc -->
-
-```js
-const { dispatch } = useDispatch( CART_STORE_KEY );
-dispatch( applyingExtensionCartUpdate( true ) );
 ```
 
 ## Selectors
