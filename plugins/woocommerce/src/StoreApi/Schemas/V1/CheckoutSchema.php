@@ -407,8 +407,10 @@ class CheckoutSchema extends AbstractSchema {
 		$fields                  = $this->sanitize_additional_fields( $fields );
 		$additional_field_schema = $this->get_additional_fields_schema();
 
-		// Loop over the schema instead of the fields. This is to ensure missing fields are validated.
-		foreach ( $additional_field_schema as $key => $schema ) {
+		// on POST, loop over the schema instead of the fields. This is to ensure missing fields are validated.
+		$additional_fields_to_validate = $request->get_method() === 'PUT' ? $fields : $additional_field_schema;
+
+		foreach ( $additional_fields_to_validate as $key => $schema ) {
 			if ( ! isset( $fields[ $key ] ) && ! $schema['required'] ) {
 				// Optional fields can go missing.
 				continue;
