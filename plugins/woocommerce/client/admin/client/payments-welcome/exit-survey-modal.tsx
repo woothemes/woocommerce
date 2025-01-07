@@ -44,7 +44,7 @@ function ExitSurveyModal( {}: {
 				'wcpay_welcome_page_incentives_dismissed'
 			) as string[] ) || []
 		);
-	} );
+	}, [] );
 
 	const closeModal = async () => {
 		setOpen( false );
