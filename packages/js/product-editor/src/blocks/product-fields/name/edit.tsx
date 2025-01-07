@@ -19,7 +19,6 @@ import {
 	Button,
 	BaseControl,
 	Tooltip,
-	// @ts-expect-error no exported member.
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -57,8 +56,7 @@ export function NameBlockEdit( {
 	const productId = useEntityId( 'postType', 'product' );
 	const product: Product = useSelect(
 		( select ) =>
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			select( 'core' ).getEditedEntityRecord(
 				'postType',
 				'product',
