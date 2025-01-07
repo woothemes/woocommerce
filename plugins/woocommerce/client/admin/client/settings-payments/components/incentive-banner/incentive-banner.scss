@@ -17,7 +17,7 @@
 		padding: 0 calc(48px);
 
 		@media screen and ( max-width: 782px ) {
-			padding: 0 16px;
+			padding: 0 $gap;
 		}
 
 		& > img {

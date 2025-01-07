@@ -131,7 +131,7 @@
 	}
 
 	.sortable-container .drag-handle-wrapper {
-		margin-right: 8px;
+		margin-right: $gap-smaller;
 	}
 	.settings-payments-main__container .other-payment-gateways__content__grid {
 		display: block;
@@ -167,7 +167,7 @@
 		}
 	}
 	.settings-payments-methods__container .woocommerce-list__item {
-		padding: 0 24px;
+		padding: 0 $gap-large;
 	}
 
 }

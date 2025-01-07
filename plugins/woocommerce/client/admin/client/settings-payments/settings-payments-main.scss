@@ -62,7 +62,7 @@
 		padding: 8px 24px;
 
 		@media (max-width: 767px) {
-			padding: 8px 16px;
+			padding: $gap-smaller $gap;
 		}
 
 		&__header {
