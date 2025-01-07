@@ -7,10 +7,9 @@ import { themes } from '@storybook/theming';
 /**
  * Internal dependencies
  */
-import logoUrl from '../woocommerce-logo.svg';
 
 addons.setConfig( {
-	theme: { ...themes.light, brandImage: logoUrl },
+	theme: { ...themes.light },
 	sidebar: {
 		collapsedRoots: [
 			'components',
