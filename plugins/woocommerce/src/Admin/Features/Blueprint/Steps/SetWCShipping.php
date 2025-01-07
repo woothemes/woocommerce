@@ -4,6 +4,7 @@ declare( strict_types = 1);
 
 namespace Automattic\WooCommerce\Admin\Features\Blueprint\Steps;
 
+use Automattic\WooCommerce\Blueprint\ClassExtractor;
 use Automattic\WooCommerce\Blueprint\Steps\Step;
 
 /**
@@ -82,16 +83,22 @@ class SetWCShipping extends Step {
 	 * @return array The JSON array.
 	 */
 	public function prepare_json_array(): array {
+
+		$class_extractor = new ClassExtractor(__DIR__.'/../RunPHPTemplates/ImportSetWCShipping.php');
+		$class_extractor->replace_method_variable('import', 'shipping_data', (object) array(
+			'terms'            => $this->terms,
+			'classes'          => $this->classes,
+			'shipping_zones'   => $this->zones,
+			'shipping_methods' => $this->methods,
+			'shipping_locations' => $this->locations,
+			'local_pickup'     => $this->local_pickup,
+		));
+
+		$code = $class_extractor->with_wp_load()->get_code();
+
 		return array(
-			'step'   => static::get_step_name(),
-			'values' => array(
-				'shipping_methods'   => $this->methods,
-				'shipping_locations' => $this->locations,
-				'shipping_zones'     => $this->zones,
-				'terms'              => $this->terms,
-				'classes'            => $this->classes,
-				'local_pickup'       => $this->local_pickup,
-			),
+			'step'   => 'runPHP',
+			'code' => $code
 		);
 	}
 

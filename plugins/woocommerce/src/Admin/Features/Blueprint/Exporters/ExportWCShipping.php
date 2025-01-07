@@ -143,11 +143,11 @@ class ExportWCShipping implements StepExporter {
 
 		// Create a new SetWCShipping step with the fetched data.
 		$step = new SetWCShipping( $methods, $locations, $zones, $terms, $classes, $local_pickup );
-		$step->set_meta_values(
-			array(
-				'plugin' => 'woocommerce',
-			)
-		);
+//		$step->set_meta_values(
+//			array(
+//				'plugin' => 'woocommerce',
+//			)
+//		);
 
 		return $step;
 	}

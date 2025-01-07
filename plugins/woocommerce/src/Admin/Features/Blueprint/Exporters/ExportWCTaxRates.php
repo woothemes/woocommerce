@@ -44,11 +44,11 @@ class ExportWCTaxRates implements StepExporter {
 
 		// Create a new SetWCTaxRates step with the fetched data.
 		$step = new SetWCTaxRates( $rates, $locations );
-		$step->set_meta_values(
-			array(
-				'plugin' => 'woocommerce',
-			)
-		);
+//		$step->set_meta_values(
+//			array(
+//				'plugin' => 'woocommerce',
+//			)
+//		);
 
 		return $step;
 	}

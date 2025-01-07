@@ -33,12 +33,12 @@ class ExportWCTaskOptions implements StepExporter, HasAlias {
 			)
 		);
 
-		$step->set_meta_values(
-			array(
-				'plugin' => 'woocommerce',
-				'alias'  => $this->get_alias(),
-			)
-		);
+//		$step->set_meta_values(
+//			array(
+//				'plugin' => 'woocommerce',
+//				'alias'  => $this->get_alias(),
+//			)
+//		);
 
 		return $step;
 	}

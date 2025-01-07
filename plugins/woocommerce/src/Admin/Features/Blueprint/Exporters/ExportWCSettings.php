@@ -78,14 +78,14 @@ class ExportWCSettings implements StepExporter, HasAlias {
 		$filtered = $this->wp_apply_filters( 'wooblueprint_export_settings', $options, $pages, $option_info );
 
 		$step = new SetSiteOptions( $filtered['options'] );
-		$step->set_meta_values(
-			array(
-				'plugin' => 'woocommerce',
-				'pages'  => $filtered['pages'],
-				'info'   => $option_info,
-				'alias'  => $this->get_alias(),
-			)
-		);
+//		$step->set_meta_values(
+//			array(
+//				'plugin' => 'woocommerce',
+//				'pages'  => $filtered['pages'],
+//				'info'   => $option_info,
+//				'alias'  => $this->get_alias(),
+//			)
+//		);
 
 		return $step;
 	}

@@ -5,6 +5,7 @@ declare( strict_types = 1);
 namespace Automattic\WooCommerce\Admin\Features\Blueprint\Steps;
 
 use Automattic\WooCommerce\Admin\Features\Blueprint\FunctionCodeExtractor;
+use Automattic\WooCommerce\Blueprint\ClassExtractor;
 use Automattic\WooCommerce\Blueprint\Steps\Step;
 
 /**
@@ -41,80 +42,20 @@ class SetWCTaxRates extends Step {
 		$this->locations = $locations;
 	}
 
-	public function import(){
-		$exist = function ( $id ) {
-			global $wpdb;
-			return $wpdb->get_row(
-				$wpdb->prepare(
-					"
-                SELECT *
-                FROM {$wpdb->prefix}woocommerce_tax_rates
-                WHERE tax_rate_id = %d
-                ",
-					$id
-				),
-				ARRAY_A
-			);
-		};
-
-		$add_rate = function( $rate ) use ($exist){
-			$tax_rate = (array) $rate;
-			if ( $exist( $tax_rate['tax_rate_id'] ) ) {
-				return false;
-			}
-
-			$tax_rate_id = WC_Tax::_insert_tax_rate( $tax_rate );
-
-			if ( isset( $rate->postcode ) ) {
-				$postcode = array_map( 'wc_clean', explode( ';', $rate->postcode ) );
-				$postcode = array_map( 'wc_normalize_postcode', $postcode );
-				WC_Tax::_update_tax_rate_postcodes( $tax_rate_id, $postcode );
-			}
-			if ( isset( $rate->city ) ) {
-				$cities = explode( ';', $rate->city );
-				WC_Tax::_update_tax_rate_cities( $tax_rate_id, array_map( 'wc_clean', array_map( 'wp_unslash', $cities ) ) );
-			}
-
-			return $tax_rate_id;
-		};
-
-		$add_location = function ( $location ) {
-			global $wpdb;
-			$location = (array) $location;
-			$columns  = implode( ',', array_keys( $location ) );
-			$format   = implode( ',', array( '%d', '%s', '%d', '%s' ) );
-			$table    = $wpdb->prefix . 'woocommerce_tax_rate_locations';
-			// phpcs:ignore
-			$sql      = $wpdb->prepare( "REPLACE INTO $table ($columns) VALUES ($format)", $location );
-			// phpcs:ignore
-			$wpdb->query( $sql );
-		};
-
-		$rates = [];
-		$locations = [];
-		foreach ($rates as $rate) {
-			$add_rate($rate);
-		}
-
-		foreach ($locations as $location) {
-			$add_location($location);
-		}
-	}
-
 	/**
 	 * Prepare the JSON array for the step.
 	 *
 	 * @return array The JSON array.
 	 */
 	public function prepare_json_array(): array {
-		$code_extractor = new FunctionCodeExtractor($this, 'import');
-		$code = $code_extractor->get_code(array(
-			'rates'     => $this->rates,
-			'locations' => $this->locations,
-		));
+		$class_extractor = new ClassExtractor(__DIR__.'/../RunPHPTemplates/ImportSetWCTaxRates.php');
+		$class_extractor->replace_class_variable('rates', $this->rates);
+		$class_extractor->replace_class_variable('locations', $this->locations);
+		$code = $class_extractor->with_wp_load()->get_code();
+
 		return array(
 			'step'   => 'runPHP',
-			'code' => "<?php require_once 'wordpress/wp-load.php'; $code",
+			'code' => $code,
 		);
 	}
 
