@@ -29,7 +29,7 @@ if [ "$CHECKOUT_TYPE" = '1' ]; then
 	fi
 
 	currentComposerDate=$( ( command -v composer > /dev/null && ( composer --version 2>/dev/null | awk '{print $4}' ) ) || echo '' )
-	f [ -n "$currentComposerDate" ]; then
+	if [ -n "$currentComposerDate" ]; then
 		currentComposerDate=$( date +%F -d $currentComposerDate )
 		twelveMonthsAgo=$( date +%F -d '12 months ago' )
 
