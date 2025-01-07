@@ -28,7 +28,7 @@ const galleryObserver = new ResizeObserver(entries => {
 		sources.sort((a, b) => a.width - b.width);
 
 		// Find the most appropriate image size
-		// Use the smallest image larger than the container width
+		// Use the smallest image which is larger than the container width
 		// Or fall back to the largest available image
 		const appropriateSource = sources.find(source => source.width >= containerWidth) || sources[sources.length - 1];
 
@@ -46,17 +46,12 @@ function initializeGalleryObserver() {
 }
 
 (function() {
-	// Run on DOM ready
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', initializeGalleryObserver);
 	} else {
 		initializeGalleryObserver();
 	}
 
-	// Handle dynamic gallery updates (e.g., variation changes)
-	document.addEventListener('wc_additional_variation_images_frontend_update_gallery', initializeGalleryObserver);
-
-	// Cleanup on page unload
 	window.addEventListener('unload', () => {
 		galleryObserver.disconnect();
 	});
