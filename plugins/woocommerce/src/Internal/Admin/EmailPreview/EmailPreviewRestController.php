@@ -110,6 +110,7 @@ class EmailPreviewRestController extends RestApiControllerBase {
 				'type'              => 'string',
 				'required'          => true,
 				'validate_callback' => fn( $key ) => $this->validate_email_type( $key ),
+				'sanitize_callback' => 'sanitize_text_field',
 			),
 			'email' => array(
 				'description'       => __( 'Email address to send the email preview to.', 'woocommerce' ),
@@ -117,6 +118,7 @@ class EmailPreviewRestController extends RestApiControllerBase {
 				'format'            => 'email',
 				'required'          => true,
 				'validate_callback' => 'rest_validate_request_arg',
+				'sanitize_callback' => 'sanitize_email',
 			),
 		);
 	}
@@ -133,6 +135,7 @@ class EmailPreviewRestController extends RestApiControllerBase {
 				'type'              => 'string',
 				'required'          => true,
 				'validate_callback' => fn( $key ) => $this->validate_email_type( $key ),
+				'sanitize_callback' => 'sanitize_text_field',
 			),
 		);
 	}
