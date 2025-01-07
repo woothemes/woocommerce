@@ -43,10 +43,10 @@ class WC_Tests_Payment_Gateway extends WC_Unit_Test_Case {
 		wp_set_current_user( 1 );
 
 		$gateways = WC()->payment_gateways()->get_available_payment_gateways();
-		$gateways['bacs']->chosen = false;
+		$gateways[ PaymentMethods::BACS ]->chosen = false;
 		WC()->session->set( 'chosen_payment_method', PaymentMethods::BACS );
 		WC()->payment_gateways()->set_current_gateway( $gateways );
-		$this->assertTrue( $gateways['bacs']->chosen );
+		$this->assertTrue( $gateways[ PaymentMethods::BACS ]->chosen );
 	}
 
 	/**
