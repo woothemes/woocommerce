@@ -25,9 +25,9 @@ import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
 /**
  * Internal dependencies
  */
-import { Sidebar } from './components';
-import { Route, Location } from './types';
-import { LegacyContent } from './legacy';
+import { Sidebar } from '../components';
+import { Route, Location } from '../types';
+import { LegacyContent } from '../legacy';
 
 const { useLocation } = unlock( routerPrivateApis );
 
@@ -38,23 +38,12 @@ const NotFound = () => {
 /**
  * Default route when active page is not found.
  *
- * @param {string}       activePage   - The active page.
- * @param {settingsData} settingsData - The settings data.
- *
+ * @param {string} activePage - The active page.
  */
-const getNotFoundRoute = (
-	activePage: string,
-	settingsData: SettingsData
-): Route => ( {
+const getNotFoundRoute = ( activePage: string ): Route => ( {
 	key: activePage,
 	areas: {
-		sidebar: (
-			<Sidebar
-				activePage={ activePage }
-				settingsData={ settingsData }
-				pageTitle={ __( 'Settings', 'woocommerce' ) }
-			/>
-		),
+		sidebar: <Sidebar />,
 		content: <NotFound />,
 		edit: null,
 	},
@@ -70,50 +59,35 @@ const getNotFoundRoute = (
  * @param {settingsPage} settingsPage - The settings page.
  * @return {Array<{ name: string; title: string }>} The tabs.
  */
-const getSettingsPageTabs = (
+export const getSettingsPageSections = (
 	settingsPage: SettingsPage
 ): Array< {
 	name: string;
 	title: string;
 } > => {
+	if ( ! settingsPage?.sections ) {
+		return [];
+	}
+
 	const sections = Object.keys( settingsPage.sections );
 
-	return sections.map( ( key ) => ( {
-		name: key,
-		title: settingsPage.sections[ key ].label,
+	return sections.map( ( name ) => ( {
+		name,
+		title: settingsPage.sections[ name ].label,
 	} ) );
 };
 
 /**
  * Creates a route configuration for legacy settings.
  *
- * @param {string}       activePage    - The active page.
- * @param {string}       activeSection - The active section.
- * @param {settingsPage} settingsPage  - The settings page.
- * @param {settingsData} settingsData  - The settings data.
+ * @param {string} activePage - The active page.
  */
-const getLegacyRoute = (
-	activePage: string,
-	activeSection: string,
-	settingsPage: SettingsPage,
-	settingsData: SettingsData
-): Route => {
+const getLegacyRoute = ( activePage: string ): Route => {
 	return {
 		key: activePage,
 		areas: {
-			sidebar: (
-				<Sidebar
-					activePage={ activePage }
-					settingsData={ settingsData }
-					pageTitle={ __( 'Store settings', 'woocommerce' ) }
-				/>
-			),
-			content: (
-				<LegacyContent
-					settingsPage={ settingsPage }
-					activeSection={ activeSection }
-				/>
-			),
+			sidebar: <Sidebar />,
+			content: <LegacyContent />,
 			edit: null,
 		},
 		widths: {
@@ -205,20 +179,15 @@ export const useActiveRoute = (): {
 		const settingsPage = settingsData?.[ activePage ];
 
 		if ( ! settingsPage ) {
-			return { route: getNotFoundRoute( activePage, settingsData ) };
+			return { route: getNotFoundRoute( activePage ) };
 		}
 
-		const tabs = getSettingsPageTabs( settingsPage );
+		const tabs = getSettingsPageSections( settingsPage );
 
 		// Handle legacy pages.
 		if ( ! settingsPage.is_modern ) {
 			return {
-				route: getLegacyRoute(
-					activePage,
-					activeSection || 'default',
-					settingsPage,
-					settingsData
-				),
+				route: getLegacyRoute( activePage ),
 				settingsPage,
 				activePage,
 				activeSection,
@@ -230,17 +199,11 @@ export const useActiveRoute = (): {
 
 		// Handle modern pages.
 		if ( ! modernRoute ) {
-			return { route: getNotFoundRoute( activePage, settingsData ) };
+			return { route: getNotFoundRoute( activePage ) };
 		}
 
 		// Sidebar is responsibility of WooCommerce, not extensions so add it here.
-		modernRoute.areas.sidebar = (
-			<Sidebar
-				activePage={ activePage }
-				settingsData={ settingsData }
-				pageTitle={ __( 'Store settings', 'woocommerce' ) }
-			/>
-		);
+		modernRoute.areas.sidebar = <Sidebar />;
 		// Make sure we have a key.
 		modernRoute.key = activePage;
 

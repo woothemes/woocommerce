@@ -14,6 +14,7 @@ import {
 	// @ts-expect-error missing type.
 	privateApis as editorPrivateApis,
 } from '@wordpress/editor';
+import { privateApis as routerPrivateApis } from '@wordpress/router';
 import {
 	__unstableMotion as motion,
 	__unstableAnimatePresence as AnimatePresence,
@@ -31,33 +32,20 @@ import SidebarContent from '@wordpress/edit-site/build-module/components/sidebar
 /**
  * Internal dependencies
  */
-import { Route } from './types';
-import { SectionTabs, Header } from './components';
+import { SectionTabs } from './components';
 
 const { NavigableRegion } = unlock( editorPrivateApis );
+const { useLocation } = unlock( routerPrivateApis );
 
 const ANIMATION_DURATION = 0.3;
 
-type LayoutProps = {
-	route: Route;
-	settingsPage?: SettingsPage;
-	activeSection?: string;
-	tabs?: Array< { name: string; title: string } >;
-};
-
-export function Layout( {
-	route,
-	settingsPage,
-	tabs = [],
-	activeSection,
-}: LayoutProps ) {
+export function Layout() {
 	const [ fullResizer ] = useResizeObserver();
 	const toggleRef = useRef< HTMLAnchorElement >( null );
 	const isMobileViewport = useViewportMatch( 'medium', '<' );
 	const disableMotion = useReducedMotion();
 
-	const { key: routeKey, areas, widths } = route;
-
+	const { name, areas, widths } = useLocation();
 	return (
 		<>
 			{ fullResizer }
@@ -92,7 +80,7 @@ export function Layout( {
 										ref={ toggleRef }
 										isTransparent={ false }
 									/>
-									<SidebarContent routeKey={ routeKey }>
+									<SidebarContent routeKey={ name }>
 										{ areas.sidebar }
 									</SidebarContent>
 								</motion.div>
@@ -109,16 +97,8 @@ export function Layout( {
 								maxWidth: widths?.content,
 							} }
 						>
-							<Header
-								hasTabs={ tabs.length > 1 }
-								pageTitle={ settingsPage?.label }
-							/>
-							<SectionTabs
-								tabs={ tabs }
-								activeSection={ activeSection }
-							>
-								{ areas.content }
-							</SectionTabs>
+							{ areas.header }
+							<SectionTabs>{ areas.content }</SectionTabs>
 						</div>
 					) }
 

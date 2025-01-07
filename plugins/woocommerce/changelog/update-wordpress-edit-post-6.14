@@ -1,0 +1,4 @@
+Significance: patch
+Type: update
+
+Settings: introduce CSS class for the settings root DOM element

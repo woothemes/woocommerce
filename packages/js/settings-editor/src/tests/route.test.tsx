@@ -12,7 +12,7 @@ import { privateApis } from '@wordpress/router';
 /**
  * Internal dependencies
  */
-import { useActiveRoute, useModernRoutes } from '../route';
+import { useActiveRoute, useModernRoutes } from '../routes/route';
 
 // Mock external dependencies
 jest.mock( '@wordpress/hooks', () => ( {
@@ -72,6 +72,7 @@ describe( 'route.tsx', () => {
 			admin: {
 				settingsData: mockSettingsPages,
 			},
+			adminUrl: 'admin.php',
 		};
 
 		// Mock default location
@@ -140,6 +141,7 @@ describe( 'route.tsx', () => {
 						},
 					},
 				},
+				adminUrl: 'admin.php',
 			};
 
 			( applyFilters as jest.Mock ).mockReturnValue( {
