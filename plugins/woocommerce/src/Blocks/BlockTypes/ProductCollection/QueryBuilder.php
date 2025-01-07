@@ -155,7 +155,7 @@ class QueryBuilder {
 			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 			'tax_query'      => array(),
 			'paged'          => $page,
-			's'              => $query['search'],
+			's'              => $query['search'] ?? '',
 		);
 
 		$is_on_sale          = $query['woocommerceOnSale'] ?? false;
@@ -176,8 +176,8 @@ class QueryBuilder {
 			$common_query_values,
 			array(
 				'on_sale'             => $is_on_sale,
-				'stock_status'        => $query['woocommerceStockStatus'],
-				'orderby'             => $query['orderBy'],
+				'stock_status'        => $query['woocommerceStockStatus'] ?? array_keys( wc_get_product_stock_status_options() ),
+				'orderby'             => $query['orderBy'] ?? 'title',
 				'product_attributes'  => $product_attributes,
 				'taxonomies_query'    => $taxonomies_query,
 				'handpicked_products' => $handpicked_products,
