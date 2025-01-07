@@ -35,7 +35,7 @@ export const usePaymentsBanner = () => {
 					'getPaymentGateways'
 				),
 		};
-	} );
+	}, [] );
 
 	const isWcPayInstalled = installedPaymentGateways.some(
 		( gateway: PaymentGateway ) => {
