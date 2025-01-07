@@ -8,13 +8,9 @@ import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import classNames from 'classnames';
 import {
-	// @ts-expect-error no exported member.
 	__experimentalHeading as Heading,
-	// @ts-expect-error no exported member.
 	__experimentalText as Text,
-	// @ts-expect-error no exported member.
 	__experimentalHStack as HStack,
-	// @ts-expect-error no exported member.
 	__experimentalVStack as VStack,
 	FlexItem,
 	Button,
@@ -28,6 +24,7 @@ import { privateApis as editorPrivateApis } from '@wordpress/editor';
  */
 import { unlock } from '../../lock-unlock';
 import { productFields } from '../product-list/fields';
+import { FormEvent } from 'react';
 
 const { NavigableRegion } = unlock( editorPrivateApis );
 
@@ -62,7 +59,8 @@ export default function ProductEdit( {
 			return {
 				initialEdits:
 					ids.length === 1
-						? select( 'wc/admin/products' ).getProduct( ids[ 0 ] )
+						? // @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+						  select( 'wc/admin/products' ).getProduct( ids[ 0 ] )
 						: null,
 			};
 		},
@@ -81,7 +79,7 @@ export default function ProductEdit( {
 		form
 	);
 
-	const onSubmit = async ( event: Event ) => {
+	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
 
 		if ( ! isItemValid( itemWithEdits, productFields, form ) ) {

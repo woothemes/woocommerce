@@ -18,13 +18,9 @@ import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import classNames from 'classnames';
 import {
-	// @ts-expect-error no exported member.
 	__experimentalHeading as Heading,
-	// @ts-expect-error no exported member.
 	__experimentalText as Text,
-	// @ts-expect-error no exported member.
 	__experimentalHStack as HStack,
-	// @ts-expect-error no exported member.
 	__experimentalVStack as VStack,
 	FlexItem,
 	Button,
@@ -207,7 +203,9 @@ export default function ProductList( {
 				isResolving: ( action: string, args: unknown[] ) => boolean;
 			};
 			return {
+				// @ts-expect-error This is a todo. We should use the Woo data store to get all the products.
 				records: getProducts( queryParams ) as Product[],
+				// @ts-expect-error This is a todo. We should use the Woo data store to get all the products.
 				totalCount: getProductsTotalCount( queryParams ) as number,
 				isLoading: isResolving( 'getProducts', [ queryParams ] ),
 			};
