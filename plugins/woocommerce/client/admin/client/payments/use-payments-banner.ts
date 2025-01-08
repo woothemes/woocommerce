@@ -6,7 +6,7 @@ import {
 	ONBOARDING_STORE_NAME,
 	PAYMENT_GATEWAYS_STORE_NAME,
 	PaymentGateway,
-	WCDataSelector,
+	PaymentSelectors,
 } from '@woocommerce/data';
 
 /**
@@ -15,11 +15,12 @@ import {
 import { isWcPaySupported } from './utils';
 
 export const usePaymentsBanner = () => {
+	
 	const {
 		installedPaymentGateways,
 		paymentGatewaySuggestions,
 		hasFinishedResolution,
-	} = useSelect( ( select: WCDataSelector ) => {
+	} = useSelect( ( select: PaymentSelectors ) => {
 		return {
 			installedPaymentGateways: select(
 				PAYMENT_GATEWAYS_STORE_NAME
