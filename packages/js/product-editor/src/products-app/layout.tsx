@@ -16,9 +16,7 @@ import {
 } from '@wordpress/editor';
 // eslint-disable-next-line @woocommerce/dependency-group
 import {
-	// @ts-expect-error no exported member.
 	__unstableMotion as motion,
-	// @ts-expect-error no exported member.
 	__unstableAnimatePresence as AnimatePresence,
 } from '@wordpress/components';
 

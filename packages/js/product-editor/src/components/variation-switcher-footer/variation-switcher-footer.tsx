@@ -43,17 +43,12 @@ export function VariationSwitcherFooter( {
 	} );
 	const { previousVariation, nextVariation } = useSelect(
 		( select ) => {
-			const { getEntityRecord } = select( 'core' ) as {
-				getEntityRecord: (
-					type: string,
-					name: string,
-					id: number
-				) => ProductVariation | null;
-			};
+			const { getEntityRecord } = select( 'core' );
 			if ( numberOfVariations && numberOfVariations > 0 ) {
 				return {
 					previousVariation:
 						previousVariationId !== null &&
+						// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 						getEntityRecord(
 							'postType',
 							'product_variation',
@@ -61,6 +56,7 @@ export function VariationSwitcherFooter( {
 						),
 					nextVariation:
 						nextVariationId !== null &&
+						// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 						getEntityRecord(
 							'postType',
 							'product_variation',

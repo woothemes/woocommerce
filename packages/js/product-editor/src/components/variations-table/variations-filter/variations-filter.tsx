@@ -20,7 +20,6 @@ import {
 	Button,
 	CheckboxControl,
 	Dropdown,
-	// @ts-expect-error no exported member.
 	__experimentalInputControl as InputControl,
 	Spinner,
 } from '@wordpress/components';

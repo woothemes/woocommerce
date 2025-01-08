@@ -15,7 +15,6 @@ import classNames from 'classnames';
 import {
 	Button,
 	ToggleControl,
-	// @ts-expect-error no exported member.
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 
@@ -56,16 +55,12 @@ export function VariationStockStatusForm( {
 
 	const { canManageStock, isLoadingManageStockOption } = useSelect(
 		( select ) => {
-			const { getOption, isResolving } = select( OPTIONS_STORE_NAME ) as {
-				getOption: ( option: string ) => string;
-				isResolving: (
-					selectorName: string,
-					args?: unknown[]
-				) => boolean;
-			};
+			const { getOption, isResolving } = select( OPTIONS_STORE_NAME );
 
 			return {
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				canManageStock: getOption( MANAGE_STOCK_OPTION ) === 'yes',
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				isLoadingManageStockOption: isResolving( 'getOption', [
 					MANAGE_STOCK_OPTION,
 				] ),
