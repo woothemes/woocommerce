@@ -163,12 +163,12 @@ export const SettingsPaymentsMain = () => {
 	}
 
 	const incentiveProvider = providers.find(
-		( provider ) => '_incentive' in provider
+		( provider: PaymentProvider ) => '_incentive' in provider
 	);
 	const incentive = incentiveProvider ? incentiveProvider._incentive : null;
 
 	const setupPlugin = useCallback(
-		( id, slug, onboardingUrl: string | null ) => {
+		( id: string, slug: string, onboardingUrl: string | null ) => {
 			if ( installingPlugin ) {
 				return;
 			}
@@ -181,7 +181,7 @@ export const SettingsPaymentsMain = () => {
 
 			setInstallingPlugin( id );
 			installAndActivatePlugins( [ slug ] )
-				.then( async ( response ) => {
+				.then( async ( response: Response ) => {
 					createNoticesFromResponse( response );
 					invalidateResolutionForStoreSelector(
 						'getPaymentProviders'
@@ -194,7 +194,7 @@ export const SettingsPaymentsMain = () => {
 
 					// Find the matching provider the updated list.
 					const updatedProvider = updatedProviders.find(
-						( provider ) =>
+						( provider: PaymentProvider ) =>
 							provider.id === id ||
 							provider?._suggestion_id === id || // For suggestions that were replaced by a gateway.
 							provider.plugin.slug === slug // Last resort to find the provider.
