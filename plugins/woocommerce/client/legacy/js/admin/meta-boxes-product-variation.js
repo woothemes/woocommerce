@@ -1228,9 +1228,12 @@ jQuery( function ( $ ) {
 				case 'variable_regular_price_decrease':
 				case 'variable_sale_price_increase':
 				case 'variable_sale_price_decrease':
-					value = window.prompt(
-						woocommerce_admin_meta_boxes_variations.i18n_enter_a_value_fixed_or_percent
-					);
+					const message =
+						woocommerce_admin_meta_boxes_variations.i18n_enter_a_value_fixed_or_percent +
+						'\n\n' +
+						woocommerce_admin_meta_boxes_variations.i18n_sale_price_warning;
+
+					value = window.prompt( message );
 
 					if ( value != null ) {
 						if ( value.indexOf( '%' ) >= 0 ) {
