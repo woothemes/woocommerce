@@ -85,9 +85,6 @@ const stateReducer = < ItemType extends Item >(
  * and diacritical marks, then removes the diacritical marks. It is commonly used for case-insensitive
  * and accent-insensitive text searches or comparisons.
  *
- * @param {string} str - The input string to normalize and strip accents from.
- * @returns {string} The normalized string without accents or diacritical marks.
- *
  * @example
  * // Returns 'Cafe'
  * removeAccents('Café');
