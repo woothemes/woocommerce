@@ -7,12 +7,12 @@ import {
 	forwardRef,
 	useImperativeHandle,
 	useRef,
+	useId,
 } from '@wordpress/element';
 import clsx from 'clsx';
 import { isObject } from '@woocommerce/types';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
-import { useInstanceId } from '@wordpress/compose';
 import type { InputHTMLAttributes, ReactElement } from 'react';
 
 /**
@@ -84,11 +84,8 @@ const ValidatedCheckboxControl = forwardRef<
 		// Ref for the input element.
 		const inputRef = useRef< HTMLInputElement >( null );
 
-		const instanceId = useInstanceId(
-			ValidatedCheckboxControl,
-			'',
-			preferredInstanceId
-		);
+		const genId = useId();
+		const instanceId = preferredInstanceId || genId;
 		const textInputId = id || `textinput-${ instanceId }`;
 		const errorIdString = errorId || textInputId;
 
