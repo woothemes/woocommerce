@@ -651,6 +651,7 @@ class WC_Cart extends WC_Legacy_Cart {
 		}
 
 		$this->fees_api->remove_all_fees();
+		WC()->shipping()->reset_shipping();
 
 		do_action( 'woocommerce_cart_emptied', $clear_persistent_cart );
 	}
