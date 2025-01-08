@@ -5,8 +5,6 @@
 
 namespace Automattic\WooCommerce\Admin\Features\PaymentGatewaySuggestions;
 
-use Automattic\WooCommerce\Enums\PaymentMethods;
-
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -21,7 +19,7 @@ class DefaultPaymentGateways {
 	 * @var array
 	 */
 	private static $recommendation_priority = array(
-		PaymentMethods::WOOCOMMERCE_PAYMENTS              => 1,
+		'woocommerce_payments'              => 1,
 		'woocommerce_payments:with-in-person-payments'    => 1,
 		'woocommerce_payments:without-in-person-payments' => 1,
 		'stripe'                                          => 2,
@@ -178,7 +176,7 @@ class DefaultPaymentGateways {
 				),
 			),
 			array(
-				'id'          => PaymentMethods::BACS,
+				'id'          => \WC_Gateway_BACS::ID,
 				'title'       => __( 'Direct bank transfer', 'woocommerce' ),
 				'content'     => __( 'Take payments via bank transfer.', 'woocommerce' ),
 				'image'       => WC_ADMIN_IMAGES_FOLDER_URL . '/onboarding/bacs.svg',
@@ -189,7 +187,7 @@ class DefaultPaymentGateways {
 				'is_offline'  => true,
 			),
 			array(
-				'id'          => PaymentMethods::COD,
+				'id'          => \WC_Gateway_COD::ID,
 				'title'       => __( 'Cash on delivery', 'woocommerce' ),
 				'content'     => __( 'Take payments in cash upon delivery.', 'woocommerce' ),
 				'image'       => WC_ADMIN_IMAGES_FOLDER_URL . '/onboarding/cod.svg',
@@ -781,7 +779,7 @@ class DefaultPaymentGateways {
 			),
 			// This is for backwards compatibility only (WC < 5.10.0-dev or WCA < 2.9.0-dev).
 			array(
-				'id'          => PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'id'          => 'woocommerce_payments',
 				'title'       => __( 'WooPayments', 'woocommerce' ),
 				'content'     => __(
 					'Manage transactions without leaving your WordPress Dashboard. Only with WooPayments.',
@@ -1141,7 +1139,7 @@ class DefaultPaymentGateways {
 			'US' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 				'square_credit_card',
@@ -1153,7 +1151,7 @@ class DefaultPaymentGateways {
 			'CA' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 				'square_credit_card',
@@ -1164,7 +1162,7 @@ class DefaultPaymentGateways {
 			'AT' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 				'airwallex_main',
@@ -1175,7 +1173,7 @@ class DefaultPaymentGateways {
 			'BE' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 				'airwallex_main',
@@ -1186,20 +1184,20 @@ class DefaultPaymentGateways {
 			'BG' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 			),
 			'HR' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'ppcp-gateway',
 			),
 			'CH' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 				'mollie_wc_gateway_banktransfer',
@@ -1208,7 +1206,7 @@ class DefaultPaymentGateways {
 			'CY' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 				'amazon_payments_advanced',
@@ -1216,14 +1214,14 @@ class DefaultPaymentGateways {
 			'CZ' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 			),
 			'DK' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 				'klarna_payments',
@@ -1232,7 +1230,7 @@ class DefaultPaymentGateways {
 			'EE' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 				'airwallex_main',
@@ -1240,7 +1238,7 @@ class DefaultPaymentGateways {
 			'ES' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 				'mollie_wc_gateway_banktransfer',
@@ -1251,7 +1249,7 @@ class DefaultPaymentGateways {
 			'FI' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 				'mollie_wc_gateway_banktransfer',
@@ -1261,7 +1259,7 @@ class DefaultPaymentGateways {
 			'FR' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 				'airwallex_main',
@@ -1273,7 +1271,7 @@ class DefaultPaymentGateways {
 			'DE' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 				'airwallex_main',
@@ -1284,7 +1282,7 @@ class DefaultPaymentGateways {
 			'GB' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 				'airwallex_main',
@@ -1296,7 +1294,7 @@ class DefaultPaymentGateways {
 			'GR' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 				'airwallex_main',
@@ -1304,7 +1302,7 @@ class DefaultPaymentGateways {
 			'HU' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 				'amazon_payments_advanced',
@@ -1312,7 +1310,7 @@ class DefaultPaymentGateways {
 			'IE' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 				'airwallex_main',
@@ -1322,7 +1320,7 @@ class DefaultPaymentGateways {
 			'IT' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 				'airwallex_main',
@@ -1333,21 +1331,21 @@ class DefaultPaymentGateways {
 			'LV' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 			),
 			'LT' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 			),
 			'LU' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 				'amazon_payments_advanced',
@@ -1355,14 +1353,14 @@ class DefaultPaymentGateways {
 			'MT' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 			),
 			'NL' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 				'airwallex_main',
@@ -1373,7 +1371,7 @@ class DefaultPaymentGateways {
 			'NO' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 				'kco',
@@ -1382,7 +1380,7 @@ class DefaultPaymentGateways {
 			'PL' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 				'airwallex_main',
@@ -1392,7 +1390,7 @@ class DefaultPaymentGateways {
 			'PT' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 				'airwallex_main',
@@ -1401,21 +1399,21 @@ class DefaultPaymentGateways {
 			'RO' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 			),
 			'SK' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 			),
 			'SL' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 				'amazon_payments_advanced',
@@ -1423,7 +1421,7 @@ class DefaultPaymentGateways {
 			'SE' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 				'kco',
@@ -1453,7 +1451,7 @@ class DefaultPaymentGateways {
 			'AU' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'airwallex_main',
 				'ppcp-gateway',
@@ -1464,7 +1462,7 @@ class DefaultPaymentGateways {
 			'NZ' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'airwallex_main',
 				'ppcp-gateway',
@@ -1473,7 +1471,7 @@ class DefaultPaymentGateways {
 			'HK' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'airwallex_main',
 				'ppcp-gateway',
@@ -1482,7 +1480,7 @@ class DefaultPaymentGateways {
 			'JP' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'ppcp-gateway',
 				'square_credit_card',
@@ -1491,7 +1489,7 @@ class DefaultPaymentGateways {
 			'SG' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 				'stripe',
 				'airwallex_main',
 				'ppcp-gateway',
@@ -1507,7 +1505,7 @@ class DefaultPaymentGateways {
 			'AE' => array(
 				'woocommerce_payments:with-in-person-payments',
 				'woocommerce_payments:without-in-person-payments',
-				PaymentMethods::WOOCOMMERCE_PAYMENTS,
+				'woocommerce_payments',
 			),
 		);
 

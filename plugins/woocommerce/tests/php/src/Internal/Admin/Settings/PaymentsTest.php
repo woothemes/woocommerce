@@ -3,7 +3,6 @@ declare( strict_types=1 );
 
 namespace Automattic\WooCommerce\Tests\Internal\Admin\Settings;
 
-use Automattic\WooCommerce\Enums\PaymentMethods;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders;
 use Automattic\WooCommerce\Internal\Admin\Settings\Payments;
 use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestions;
@@ -110,11 +109,11 @@ class PaymentsTest extends WC_Unit_Test_Case {
 
 		// All are WooCommerce core gateways.
 		$gateways = array(
-			new FakePaymentGateway( PaymentMethods::PAYPAL, array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( \WC_Gateway_Paypal::ID, array( 'plugin_slug' => 'woocommerce' ) ),
 			// The offline PMs.
-			new FakePaymentGateway( PaymentMethods::BACS, array( 'plugin_slug' => 'woocommerce' ) ),
-			new FakePaymentGateway( PaymentMethods::CHEQUE, array( 'plugin_slug' => 'woocommerce' ) ),
-			new FakePaymentGateway( PaymentMethods::COD, array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( \WC_Gateway_BACS::ID, array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( \WC_Gateway_Cheque::ID, array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( \WC_Gateway_COD::ID, array( 'plugin_slug' => 'woocommerce' ) ),
 		);
 		$this->mock_providers
 			->expects( $this->atLeastOnce() )
@@ -131,11 +130,11 @@ class PaymentsTest extends WC_Unit_Test_Case {
 			->willReturn(
 				array_flip(
 					array(
-						PaymentMethods::PAYPAL,
+						\WC_Gateway_Paypal::ID,
 						PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
-						PaymentMethods::BACS,
-						PaymentMethods::CHEQUE,
-						PaymentMethods::COD,
+						\WC_Gateway_BACS::ID,
+						\WC_Gateway_Cheque::ID,
+						\WC_Gateway_COD::ID,
 					)
 				)
 			);
@@ -154,7 +153,7 @@ class PaymentsTest extends WC_Unit_Test_Case {
 		$this->assertCount( 5, $data );
 		// Because the core registers the PayPal PG after the offline PMs, the order we expect is this.
 		$this->assertSame(
-			array( PaymentMethods::PAYPAL, PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP, PaymentMethods::BACS, PaymentMethods::CHEQUE, PaymentMethods::COD ),
+			array( \WC_Gateway_Paypal::ID, PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP, \WC_Gateway_BACS::ID, \WC_Gateway_Cheque::ID, \WC_Gateway_COD::ID ),
 			array_column( $data, 'id' )
 		);
 
@@ -236,11 +235,11 @@ class PaymentsTest extends WC_Unit_Test_Case {
 
 		// All are WooCommerce core gateways.
 		$gateways = array(
-			new FakePaymentGateway( PaymentMethods::PAYPAL, array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( \WC_Gateway_Paypal::ID, array( 'plugin_slug' => 'woocommerce' ) ),
 			// The offline PMs.
-			new FakePaymentGateway( PaymentMethods::BACS, array( 'plugin_slug' => 'woocommerce' ) ),
-			new FakePaymentGateway( PaymentMethods::CHEQUE, array( 'plugin_slug' => 'woocommerce' ) ),
-			new FakePaymentGateway( PaymentMethods::COD, array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( \WC_Gateway_BACS::ID, array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( \WC_Gateway_Cheque::ID, array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( \WC_Gateway_COD::ID, array( 'plugin_slug' => 'woocommerce' ) ),
 		);
 		$this->mock_providers
 			->expects( $this->atLeastOnce() )
@@ -259,11 +258,11 @@ class PaymentsTest extends WC_Unit_Test_Case {
 					array(
 						PaymentProviders::SUGGESTION_ORDERING_PREFIX . 'suggestion1',
 						PaymentProviders::SUGGESTION_ORDERING_PREFIX . 'suggestion2',
-						PaymentMethods::PAYPAL,
+						\WC_Gateway_Paypal::ID,
 						PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
-						PaymentMethods::BACS,
-						PaymentMethods::CHEQUE,
-						PaymentMethods::COD,
+						\WC_Gateway_BACS::ID,
+						\WC_Gateway_Cheque::ID,
+						\WC_Gateway_COD::ID,
 					)
 				)
 			);
@@ -354,11 +353,11 @@ class PaymentsTest extends WC_Unit_Test_Case {
 			array(
 				PaymentProviders::SUGGESTION_ORDERING_PREFIX . 'suggestion1',
 				PaymentProviders::SUGGESTION_ORDERING_PREFIX . 'suggestion2',
-				PaymentMethods::PAYPAL,
+				\WC_Gateway_Paypal::ID,
 				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
-				PaymentMethods::BACS,
-				PaymentMethods::CHEQUE,
-				PaymentMethods::COD,
+				\WC_Gateway_BACS::ID,
+				\WC_Gateway_Cheque::ID,
+				\WC_Gateway_COD::ID,
 			),
 			array_column( $data, 'id' )
 		);

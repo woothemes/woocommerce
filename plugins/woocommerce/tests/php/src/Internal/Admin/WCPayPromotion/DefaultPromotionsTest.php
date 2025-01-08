@@ -72,7 +72,7 @@ class DefaultPromotionsTest extends WC_Unit_Test_Case {
 
 		$this->assertCount( 0, $results['errors'] );
 		$this->assertCount( 1, $results['suggestions'] );
-		$this->assertEquals( PaymentMethods::WOOCOMMERCE_PAYMENTS, $results['suggestions'][0]->id );
+		$this->assertEquals( 'woocommerce_payments', $results['suggestions'][0]->id );
 	}
 
 	/**

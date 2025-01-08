@@ -1,7 +1,6 @@
 <?php
 
 use Automattic\WooCommerce\Enums\OrderStatus;
-use Automattic\WooCommerce\Enums\PaymentMethods;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareUnitTestSuiteTrait;
 use Automattic\WooCommerce\RestApi\UnitTests\HPOSToggleTrait;
 
@@ -207,7 +206,7 @@ class WC_REST_Orders_Controller_Tests extends WC_REST_Unit_Test_Case {
 	public function test_orders_create(): void {
 		$product                  = \Automattic\WooCommerce\RestApi\UnitTests\Helpers\ProductHelper::create_simple_product();
 		$order_params             = array(
-			'payment_method'       => PaymentMethods::BACS,
+			'payment_method'       => WC_Gateway_BACS::ID,
 			'payment_method_title' => 'Direct Bank Transfer',
 			'set_paid'             => true,
 			'billing'              => array(

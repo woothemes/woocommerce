@@ -3,7 +3,6 @@ declare( strict_types=1 );
 
 namespace Automattic\WooCommerce\Tests\Internal\Admin\Settings;
 
-use Automattic\WooCommerce\Enums\PaymentMethods;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders;
 use Automattic\WooCommerce\Internal\Admin\Settings\Payments;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentsRestController;
@@ -217,7 +216,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 				'_wc_pes_woopayments',
 				'_wc_pes_paypal_full_stack',
 				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
-				PaymentMethods::PAYPAL,
+				\WC_Gateway_Paypal::ID,
 			),
 			array_column( $data['providers'], 'id' )
 		);
@@ -291,7 +290,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 				'_wc_pes_woopayments',
 				'_wc_pes_paypal_full_stack',
 				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
-				PaymentMethods::PAYPAL,
+				\WC_Gateway_Paypal::ID,
 			),
 			array_column( $data['providers'], 'id' )
 		);
@@ -341,7 +340,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 			array(
 				'_wc_pes_woopayments',
 				'_wc_pes_paypal_full_stack',
-				PaymentMethods::PAYPAL,
+				\WC_Gateway_Paypal::ID,
 			),
 			array_column( $data['providers'], 'id' )
 		);
@@ -387,7 +386,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$this->assertSame(
 			array(
 				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
-				PaymentMethods::PAYPAL,
+				\WC_Gateway_Paypal::ID,
 			),
 			array_column( $data['providers'], 'id' )
 		);
@@ -543,27 +542,27 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		return array(
 			array( 1 ),
 			array( false ),
-			array( 0 => PaymentMethods::PAYPAL ),
-			array( array( PaymentMethods::PAYPAL ) ),
-			array( array( PaymentMethods::PAYPAL => false ) ),
-			array( array( PaymentMethods::PAYPAL => 'bogus' ) ),
-			array( array( PaymentMethods::PAYPAL => '1.0' ) ),
+			array( 0 => \WC_Gateway_Paypal::ID ),
+			array( array( \WC_Gateway_Paypal::ID ) ),
+			array( array( \WC_Gateway_Paypal::ID => false ) ),
+			array( array( \WC_Gateway_Paypal::ID => 'bogus' ) ),
+			array( array( \WC_Gateway_Paypal::ID => '1.0' ) ),
 			array( array( '()/paypal%#' => 1 ) ),
 			array(
 				array(
-					PaymentMethods::PAYPAL                  => '1.1',
+					\WC_Gateway_Paypal::ID                  => '1.1',
 					'offline_payment_methods' => 2,
 				),
 			),
 			array(
 				array(
-					PaymentMethods::PAYPAL                  => '0.1',
+					\WC_Gateway_Paypal::ID                  => '0.1',
 					'offline_payment_methods' => 2,
 				),
 			),
 			array(
 				array(
-					PaymentMethods::PAYPAL => 1,
+					\WC_Gateway_Paypal::ID => 1,
 					'offline_payment_methods',
 				),
 			),
@@ -939,7 +938,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 				'icon'        => 'http://localhost:8888/wp-content/plugins/woocommerce/assets/images/payment_methods/cod.svg',
 			);
 			$mock_providers[] = array(
-				'id'          => PaymentMethods::BACS,
+				'id'          => \WC_Gateway_BACS::ID,
 				'_order'      => $order++,
 				'_type'       => PaymentProviders::TYPE_OFFLINE_PM,
 				'title'       => 'Direct bank transfer',
@@ -975,7 +974,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 				),
 			);
 			$mock_providers[] = array(
-				'id'          => PaymentMethods::CHEQUE,
+				'id'          => \WC_Gateway_Cheque::ID,
 				'_order'      => $order++,
 				'_type'       => PaymentProviders::TYPE_OFFLINE_PM,
 				'title'       => 'Check payments',
@@ -1011,7 +1010,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 				),
 			);
 			$mock_providers[] = array(
-				'id'          => PaymentMethods::COD,
+				'id'          => \WC_Gateway_COD::ID,
 				'_order'      => $order++,
 				'_type'       => PaymentProviders::TYPE_OFFLINE_PM,
 				'title'       => 'Cash on delivery',
@@ -1050,7 +1049,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 
 		if ( ! $skip_paypal ) {
 			$mock_providers[] = array(
-				'id'          => PaymentMethods::PAYPAL,
+				'id'          => \WC_Gateway_Paypal::ID,
 				'_order'      => $order++,
 				'_type'       => PaymentProviders::TYPE_GATEWAY,
 				'title'       => 'PayPal',

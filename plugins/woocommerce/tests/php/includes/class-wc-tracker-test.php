@@ -6,7 +6,6 @@
  */
 
 use Automattic\WooCommerce\Enums\OrderInternalStatus;
-use Automattic\WooCommerce\Enums\PaymentMethods;
 use Automattic\WooCommerce\Internal\Features\FeaturesController;
 use Automattic\WooCommerce\Utilities\PluginUtil;
 
@@ -170,7 +169,7 @@ class WC_Tracker_Test extends \WC_Unit_Test_Case {
 		$dummy_product          = WC_Helper_Product::create_simple_product();
 		$status_entries         = array( OrderInternalStatus::PROCESSING, OrderInternalStatus::COMPLETED, OrderInternalStatus::REFUNDED, OrderInternalStatus::PENDING );
 		$created_via_entries    = array( 'api', 'checkout', 'admin' );
-		$payment_method_entries = array( PaymentMethods::PAYPAL, 'stripe', PaymentMethods::COD );
+		$payment_method_entries = array( \WC_Gateway_Paypal::ID, 'stripe', \WC_Gateway_COD::ID );
 
 		$order_count = count( $status_entries ) * count( $created_via_entries ) * count( $payment_method_entries );
 

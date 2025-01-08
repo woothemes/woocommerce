@@ -1,7 +1,6 @@
 <?php
 namespace Automattic\WooCommerce\Blocks\Payments\Integrations;
 
-use Automattic\WooCommerce\Enums\PaymentMethods;
 use Exception;
 use Automattic\WooCommerce\Blocks\Assets\Api;
 
@@ -16,7 +15,7 @@ final class Cheque extends AbstractPaymentMethodType {
 	 *
 	 * @var string
 	 */
-	protected $name = PaymentMethods::CHEQUE;
+	protected $name = \WC_Gateway_Cheque::ID;
 
 	/**
 	 * An instance of the Asset Api

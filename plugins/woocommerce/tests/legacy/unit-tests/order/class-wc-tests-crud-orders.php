@@ -6,7 +6,6 @@
  */
 
 use Automattic\WooCommerce\Enums\OrderStatus;
-use Automattic\WooCommerce\Enums\PaymentMethods;
 use Automattic\WooCommerce\Utilities\OrderUtil;
 
 /**
@@ -1305,7 +1304,7 @@ class WC_Tests_CRUD_Orders extends WC_Unit_Test_Case {
 	 */
 	public function test_get_payment_method() {
 		$object = new WC_Order();
-		$set_to = PaymentMethods::PAYPAL;
+		$set_to = \WC_Gateway_Paypal::ID;
 		$object->set_payment_method( $set_to );
 		$this->assertEquals( $set_to, $object->get_payment_method() );
 	}

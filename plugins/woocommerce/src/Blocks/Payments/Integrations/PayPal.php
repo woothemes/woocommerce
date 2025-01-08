@@ -1,7 +1,6 @@
 <?php
 namespace Automattic\WooCommerce\Blocks\Payments\Integrations;
 
-use Automattic\WooCommerce\Enums\PaymentMethods;
 use WC_Gateway_Paypal;
 use Automattic\WooCommerce\Blocks\Assets\Api;
 
@@ -16,7 +15,7 @@ final class PayPal extends AbstractPaymentMethodType {
 	 *
 	 * @var string
 	 */
-	protected $name = PaymentMethods::PAYPAL;
+	protected $name = \WC_Gateway_Paypal::ID;
 
 	/**
 	 * An instance of the Asset Api

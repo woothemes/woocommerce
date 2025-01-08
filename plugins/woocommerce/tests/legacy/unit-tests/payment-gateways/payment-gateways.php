@@ -3,8 +3,6 @@
  * @package WooCommerce\Tests\PaymentGateways
  */
 
-use Automattic\WooCommerce\Enums\PaymentMethods;
-
 /**
  * Class WC_Tests_Payment_Gateway.
  */
@@ -21,7 +19,7 @@ class WC_Tests_Payment_Gateway extends WC_Unit_Test_Case {
 		$wc_payment_gateways = WC_Payment_Gateways::instance();
 		$wc_payment_gateways->init();
 		foreach ( $wc_payment_gateways->payment_gateways() as $name => $gateway ) {
-			if ( in_array( $name, array( PaymentMethods::COD, PaymentMethods::BACS ) ) ) {
+			if ( in_array( $name, array( \WC_Gateway_COD::ID, WC_Gateway_BACS::ID ) ) ) {
 				$gateway->enabled = 'yes';
 			}
 		}
@@ -43,10 +41,10 @@ class WC_Tests_Payment_Gateway extends WC_Unit_Test_Case {
 		wp_set_current_user( 1 );
 
 		$gateways = WC()->payment_gateways()->get_available_payment_gateways();
-		$gateways[ PaymentMethods::BACS ]->chosen = false;
-		WC()->session->set( 'chosen_payment_method', PaymentMethods::BACS );
+		$gateways[ WC_Gateway_BACS::ID ]->chosen = false;
+		WC()->session->set( 'chosen_payment_method', WC_Gateway_BACS::ID );
 		WC()->payment_gateways()->set_current_gateway( $gateways );
-		$this->assertTrue( $gateways[ PaymentMethods::BACS ]->chosen );
+		$this->assertTrue( $gateways[ WC_Gateway_BACS::ID ]->chosen );
 	}
 
 	/**

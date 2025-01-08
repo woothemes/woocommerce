@@ -2,7 +2,6 @@
 
 namespace Automattic\WooCommerce\Admin\Features\OnboardingTasks\Tasks;
 
-use Automattic\WooCommerce\Enums\PaymentMethods;
 use Automattic\WooCommerce\Internal\Admin\Onboarding\OnboardingProfile;
 use Automattic\WooCommerce\Admin\Features\OnboardingTasks\Task;
 use Automattic\WooCommerce\Admin\PluginsHelper;
@@ -237,8 +236,8 @@ class WooCommercePayments extends Task {
 	 */
 	private static function get_gateway() {
 		$payment_gateways = WC()->payment_gateways->payment_gateways();
-		if ( isset( $payment_gateways[ PaymentMethods::WOOCOMMERCE_PAYMENTS ] ) ) {
-			return $payment_gateways[ PaymentMethods::WOOCOMMERCE_PAYMENTS ];
+		if ( isset( $payment_gateways['woocommerce_payments'] ) ) {
+			return $payment_gateways['woocommerce_payments'];
 		}
 		return null;
 	}
@@ -257,8 +256,8 @@ class WooCommercePayments extends Task {
 			function ( $gateway ) {
 				// Filter out any WooPayments-related or offline gateways.
 				return 'yes' === $gateway->enabled
-					&& 0 !== strpos( $gateway->id, PaymentMethods::WOOCOMMERCE_PAYMENTS )
-					&& ! in_array( $gateway->id, array( PaymentMethods::BACS, PaymentMethods::CHEQUE, PaymentMethods::COD ), true );
+					&& 0 !== strpos( $gateway->id, 'woocommerce_payments' )
+					&& ! in_array( $gateway->id, array( \WC_Gateway_BACS::ID, \WC_Gateway_Cheque::ID, \WC_Gateway_COD::ID ), true );
 			}
 		);
 
