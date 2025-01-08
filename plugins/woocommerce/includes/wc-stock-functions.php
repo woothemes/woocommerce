@@ -489,6 +489,21 @@ add_action( 'woocommerce_order_status_processing', 'wc_release_stock_for_order',
 add_action( 'woocommerce_order_status_on-hold', 'wc_release_stock_for_order', 11 );
 
 /**
+ * Release coupons used for another order.
+ *
+ * @since 9.5.2
+ * @param \WC_Order|int $order Order ID or instance.
+ * @param bool          $save Save the order after releasing coupons.
+ */
+function wc_release_coupons_for_order( $order, bool $save = true ) {
+	$order = $order instanceof WC_Order ? $order : wc_get_order( $order );
+
+	if ( $order ) {
+		$order->get_data_store()->release_held_coupons( $order, $save );
+	}
+}
+
+/**
  * Return low stock amount to determine if notification needs to be sent
  *
  * Since 5.2.0, this function no longer redirects from variation to its parent product.
