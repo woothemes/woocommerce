@@ -2804,6 +2804,11 @@ class WC_AJAX {
 			$variation   = wc_get_product( $variation_id );
 			$field_value = $variation->{"get_$field"}( 'edit' );
 
+			// Skip variations without a price set
+			if ( '' === $field_value || null === $field_value ) {
+				continue;
+			}
+
 			if ( '%' === substr( $value, -1 ) ) {
 				$percent      = wc_format_decimal( substr( $value, 0, -1 ) );
 				$field_value += NumberUtil::round( ( $field_value / 100 ) * $percent, wc_get_price_decimals() ) * "{$operator}1";

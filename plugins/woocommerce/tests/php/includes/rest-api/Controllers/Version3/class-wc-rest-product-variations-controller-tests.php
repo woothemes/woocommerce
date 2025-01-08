@@ -191,4 +191,65 @@ class WC_REST_Product_Variations_Controller_Tests extends WC_REST_Unit_Test_Case
 		$this->assertEquals( 1, count( $response_products ) );
 		$this->assertEquals( $response_products[0]['id'], $variation->get_id() );
 	}
+
+	/**
+	 * Test `downloadable` filter returns only downloadable product variations.
+	 */
+	public function test_downloadable_filter_returns_only_downloadable_products() {
+		$parent_product = WC_Helper_Product::create_variation_product();
+		$variations     = $parent_product->get_available_variations( 'objects' );
+		$variations[0]->set_downloadable( true );
+		$variations[0]->save();
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products/' . $parent_product->get_id() . '/variations' );
+		$request->set_param( 'downloadable', true );
+
+		$response = $this->server->dispatch( $request );
+		$products = $response->get_data();
+
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertCount( 1, $products );
+
+		foreach ( $products as $product ) {
+			$this->assertTrue( $product['downloadable'] );
+		}
+	}
+
+	/**
+	 * Test `downloadable` filter returns only non-downloadable products when is false.
+	 */
+	public function test_downloadable_filter_returns_only_non_downloadable_products() {
+		$parent_product = WC_Helper_Product::create_variation_product();
+		$variations     = $parent_product->get_available_variations( 'objects' );
+		$variations[0]->set_downloadable( true );
+		$variations[0]->save();
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products/' . $parent_product->get_id() . '/variations' );
+		$request->set_param( 'downloadable', false );
+
+		$response = $this->server->dispatch( $request );
+		$products = $response->get_data();
+
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertCount( 5, $products );
+
+		foreach ( $products as $product ) {
+			$this->assertFalse( $product['downloadable'] );
+		}
+	}
+
+	/**
+	 * Test invalid downloadable parameter type returns error.
+	 */
+	public function test_downloadable_filter_with_invalid_param() {
+		$parent_product = WC_Helper_Product::create_variation_product();
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products/' . $parent_product->get_id() . '/variations' );
+		$request->set_param( 'downloadable', 'invalid' );
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 'rest_invalid_param', $response->get_data()['code'] );
+	}
 }

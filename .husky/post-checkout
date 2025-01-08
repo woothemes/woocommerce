@@ -25,4 +25,14 @@ if [ "$CHECKOUT_TYPE" = '1' ]; then
 	if [ "$currentPnpmVersion" != "$targetPnpmVersion" ]; then
 		printf "${orangeColoured}pnpm versions mismatch: in use '$currentPnpmVersion', needed '$targetPnpmVersion'. Ensure to enable automatic version switch with 'corepack enable' (see https://nodejs.org/api/corepack.html#corepack for more details).\n"
 	fi
+
+	currentComposerDate=$( ( command -v composer > /dev/null && ( composer --version 2>/dev/null | awk '{print $4}' ) ) || echo '' )
+	if [ -n "$currentComposerDate" ]; then
+		current=$( php -r "echo date( 'Ymd', strtotime( '$currentComposerDate' ) );" )
+		threshold=$( php -r "echo date( 'Ymd', strtotime( '-12 months' ) );" )
+		if [ $current -lt $threshold ]; then
+			version=$( ( composer --version 2>/dev/null | awk '{print $3}' ) || echo '' )
+			printf "${orangeColoured}composer version (v$version build at $currentComposerDate) is older than twelve months, ensure to update it with 'composer self-update'.\n"
+		fi
+    fi
 fi
