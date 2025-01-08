@@ -138,14 +138,14 @@ type StateAndHelpers< Values > = {
 		name: string,
 		inputProps?: ConsumerInputProps< Values >
 	) => CheckboxProps< Values, Values[ keyof Values ] >;
-	getInputProps: (
-		name: string,
+	getInputProps: < P extends keyof Values >(
+		name: P,
 		inputProps?: ConsumerInputProps< Values >
-	) => InputProps< Values, Values[ keyof Values ] >;
-	getSelectControlProps: (
-		name: string,
+	) => InputProps< Values, Values[ P ] >;
+	getSelectControlProps: < P extends keyof Values >(
+		name: P,
 		inputProps?: ConsumerInputProps< Values >
-	) => SelectControlProps< Values, Values[ keyof Values ] >;
+	) => SelectControlProps< Values, Values[ P ] >;
 	resetForm: (
 		newInitialValues?: Values,
 		newTouchedFields?:
@@ -281,7 +281,7 @@ function FormComponent< Values extends Record< string, any > >(
 
 	const setValue = useCallback(
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		( name: string, value: any ) => {
+		( name: keyof Values, value: any ) => {
 			setValues( _setWith( { ...values }, name, value, _clone ) );
 		},
 		[ values, validate, onChange, props.onChangeCallback ]
@@ -289,7 +289,7 @@ function FormComponent< Values extends Record< string, any > >(
 
 	const handleChange = useCallback(
 		(
-			name: string,
+			name: keyof Values,
 			value: ChangeEvent< HTMLInputElement > | Values[ keyof Values ]
 		) => {
 			// Handle native events.
@@ -307,7 +307,7 @@ function FormComponent< Values extends Record< string, any > >(
 	);
 
 	const handleBlur = useCallback(
-		( name: string ) => {
+		( name: keyof Values ) => {
 			setTouched( {
 				...touched,
 				[ name ]: true,
@@ -342,10 +342,10 @@ function FormComponent< Values extends Record< string, any > >(
 		}
 	};
 
-	function getInputProps< Value = Values[ keyof Values ] >(
-		name: string,
+	function getInputProps< P extends keyof Values >(
+		name: P,
 		inputProps: ConsumerInputProps< Values > = {}
-	): InputProps< Values, Value > {
+	): InputProps< Values, Values[ P ] > {
 		const inputValue = _get( values, name );
 		const isTouched = touched[ name ];
 		const inputError = _get( errors, name );
@@ -396,10 +396,10 @@ function FormComponent< Values extends Record< string, any > >(
 		] );
 	}
 
-	function getSelectControlProps< Value = Values[ keyof Values ] >(
-		name: string,
+	function getSelectControlProps< P extends keyof Values >(
+		name: P,
 		inputProps: ConsumerInputProps< Values > = {}
-	): SelectControlProps< Values, Value > {
+	): SelectControlProps< Values, Values[ P ] > {
 		const selectControlProps = getInputProps( name, inputProps );
 		return {
 			...selectControlProps,
