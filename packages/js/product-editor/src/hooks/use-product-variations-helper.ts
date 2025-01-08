@@ -79,18 +79,13 @@ export function useProductVariationsHelper() {
 			const {
 				isGeneratingVariations: getIsGeneratingVariations,
 				generateProductVariationsError,
-			} = select( EXPERIMENTAL_PRODUCT_VARIATIONS_STORE_NAME ) as {
-				isGeneratingVariations: ( args: {
-					product_id: number;
-				} ) => boolean | undefined;
-				generateProductVariationsError: ( args: {
-					product_id: number;
-				} ) => Error | undefined;
-			};
+			} = select( EXPERIMENTAL_PRODUCT_VARIATIONS_STORE_NAME );
 			return {
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				isGeneratingVariations: getIsGeneratingVariations( {
 					product_id: productId,
 				} ),
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				generateError: generateProductVariationsError( {
 					product_id: productId,
 				} ),

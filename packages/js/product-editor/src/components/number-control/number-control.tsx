@@ -18,7 +18,6 @@ import type { ForwardedRef } from 'react';
 import {
 	BaseControl,
 	Button,
-	// @ts-expect-error no exported member.
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 

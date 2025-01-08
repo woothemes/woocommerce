@@ -8,6 +8,7 @@
  * @since   3.0.0
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareRestControllerTrait;
 use Automattic\WooCommerce\Utilities\I18nUtil;
 
@@ -193,7 +194,7 @@ class WC_REST_Product_Variations_Controller extends WC_REST_Product_Variations_V
 
 		// Status.
 		if ( isset( $request['status'] ) ) {
-			$variation->set_status( get_post_status_object( $request['status'] ) ? $request['status'] : 'draft' );
+			$variation->set_status( get_post_status_object( $request['status'] ) ? $request['status'] : ProductStatus::DRAFT );
 		}
 
 		// SKU.
@@ -606,7 +607,7 @@ class WC_REST_Product_Variations_Controller extends WC_REST_Product_Variations_V
 				'status'                => array(
 					'description' => __( 'Variation status.', 'woocommerce' ),
 					'type'        => 'string',
-					'default'     => 'publish',
+					'default'     => ProductStatus::PUBLISH,
 					'enum'        => array_keys( get_post_statuses() ),
 					'context'     => array( 'view', 'edit' ),
 				),
@@ -892,6 +893,17 @@ class WC_REST_Product_Variations_Controller extends WC_REST_Product_Variations_V
 		// Set post_status.
 		$args['post_status'] = $request['status'];
 
+		// Filter downloadable product variations.
+		if ( isset( $request['downloadable'] ) ) {
+			$args['meta_query'] = $this->add_meta_query( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+				$args,
+				array(
+					'key'   => '_downloadable',
+					'value' => wc_bool_to_string( $request['downloadable'] ),
+				)
+			);
+		}
+
 		/**
 		 * @deprecated 8.1.0 replaced by attributes.
 		 * Filter by local attributes.
@@ -1110,6 +1122,13 @@ class WC_REST_Product_Variations_Controller extends WC_REST_Product_Variations_V
 					),
 				),
 			),
+		);
+
+		$params['downloadable'] = array(
+			'description'       => __( 'Limit result set to downloadable product variations.', 'woocommerce' ),
+			'type'              => 'boolean',
+			'sanitize_callback' => 'rest_sanitize_boolean',
+			'validate_callback' => 'rest_validate_request_arg',
 		);
 
 		return $params;
