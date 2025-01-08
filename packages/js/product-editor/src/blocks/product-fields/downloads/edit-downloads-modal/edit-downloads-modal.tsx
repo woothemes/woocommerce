@@ -11,7 +11,6 @@ import {
 	Button,
 	Modal,
 	BaseControl,
-	// @ts-expect-error no exported member.
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 
