@@ -8,13 +8,9 @@ import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import classNames from 'classnames';
 import {
-	// @ts-expect-error no exported member.
 	__experimentalHeading as Heading,
-	// @ts-expect-error no exported member.
 	__experimentalText as Text,
-	// @ts-expect-error no exported member.
 	__experimentalHStack as HStack,
-	// @ts-expect-error no exported member.
 	__experimentalVStack as VStack,
 	FlexItem,
 	Button,
@@ -62,7 +58,8 @@ export default function ProductEdit( {
 			return {
 				initialEdits:
 					ids.length === 1
-						? select( 'wc/admin/products' ).getProduct( ids[ 0 ] )
+						? // @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+						  select( 'wc/admin/products' ).getProduct( ids[ 0 ] )
 						: null,
 			};
 		},

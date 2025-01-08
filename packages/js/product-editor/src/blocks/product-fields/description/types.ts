@@ -10,4 +10,6 @@ export type DescriptionBlockEditProps =
 	ProductEditorBlockEditProps< ProductEditorBlockAttributes >;
 
 export type DescriptionBlockEditComponent =
-	React.ComponentType< DescriptionBlockEditProps >;
+	React.ComponentType< DescriptionBlockEditProps > & {
+		attributes: Record< string, unknown >;
+	};

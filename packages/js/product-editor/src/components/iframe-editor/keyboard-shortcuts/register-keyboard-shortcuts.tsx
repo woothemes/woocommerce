@@ -5,10 +5,7 @@ import { useEffect } from '@wordpress/element';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as keyboardShortcutsStore } from '@wordpress/keyboard-shortcuts';
-import {
-	// @ts-expect-error no exported member.
-	isAppleOS,
-} from '@wordpress/keycodes';
+import { isAppleOS } from '@wordpress/keycodes';
 
 export const RegisterKeyboardShortcuts = () => {
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment

@@ -17,12 +17,7 @@ import {
 import { isWpVersion } from '@woocommerce/settings';
 import classnames from 'classnames';
 import { MouseEvent } from 'react';
-import {
-	Button,
-	Popover,
-	// @ts-expect-error no exported member.
-	ToolbarItem,
-} from '@wordpress/components';
+import { Button, Popover, ToolbarItem } from '@wordpress/components';
 // eslint-disable-next-line @woocommerce/dependency-group
 import {
 	store as preferencesStore,

@@ -142,7 +142,7 @@ export function ProductSelect( {
 					options={ options }
 					value={ value }
 					ref={ comboRef }
-					onChange={ ( newValue: string ) => {
+					onChange={ ( newValue ) => {
 						if ( ! newValue ) {
 							return;
 						}
