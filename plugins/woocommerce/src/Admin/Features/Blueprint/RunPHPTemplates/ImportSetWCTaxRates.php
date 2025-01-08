@@ -11,8 +11,19 @@ declare( strict_types = 1);
  */
 class ImportSetWCTaxRates {
 
-	protected $rates = array();
-	protected $locations = array();
+	/**
+	 * Tax rates.
+	 *
+	 * @var array $rates
+	 */
+	protected array $rates = array();
+
+	/**
+	 * Tax rate locations.
+	 *
+	 * @var array $locations
+	 */
+	protected array $locations = array();
 
 	/**
 	 * Process the import of WooCommerce tax rates.
@@ -96,4 +107,4 @@ class ImportSetWCTaxRates {
 	}
 }
 
-(new ImportSetWCTaxRates())->import();
+( new ImportSetWCTaxRates() )->import();

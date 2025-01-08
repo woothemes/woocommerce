@@ -45,11 +45,10 @@ class ExportWCTaxRates implements StepExporter, HasAlias {
 			ARRAY_A
 		);
 
-		$class_extractor = new ClassExtractor(__DIR__.'/../RunPHPTemplates/ImportSetWCTaxRates.php');
-		$class_extractor->replace_class_variable('rates', $rates);
-		$class_extractor->replace_class_variable('locations', $locations);
+		$class_extractor = new ClassExtractor( __DIR__ . '/../RunPHPTemplates/ImportSetWCTaxRates.php' );
+		$class_extractor->replace_class_variable( 'rates', $rates );
+		$class_extractor->replace_class_variable( 'locations', $locations );
 		$code = $class_extractor->with_wp_load()->get_code();
-
 
 		return new RunPHP( $code );
 	}
@@ -86,7 +85,7 @@ class ExportWCTaxRates implements StepExporter, HasAlias {
 	 *
 	 * @return string
 	 */
-	public function get_alias(){
+	public function get_alias() {
 		return 'setWCTaxRates';
 	}
 }

@@ -3,12 +3,20 @@
 use Automattic\WooCommerce\Admin\Features\Blueprint\Steps\SetWCShipping;
 use Automattic\WooCommerce\Blueprint\UseWPFunctions;
 
+/**
+ * Class ImportSetWCShipping
+ */
 class ImportSetWCShipping {
 	use UseWPFunctions;
 
+	/**
+	 * Import the shipping settings.
+	 *
+	 * @return void
+	 */
 	public function import() {
 		$shipping_data = new \stdClass();
-		$fields = array(
+		$fields        = array(
 			'terms'              => array( 'terms', array( '%d', '%s', '%s', '%d' ) ),
 			'classes'            => array( 'term_taxonomy', array( '%d', '%d', '%s', '%s', '%d', '%d' ) ),
 			'shipping_zones'     => array( 'woocommerce_shipping_zones', array( '%d', '%s', '%d' ) ),
@@ -122,4 +130,4 @@ class ImportSetWCShipping {
 	}
 }
 
-(new ImportSetWCShipping())->import();
+( new ImportSetWCShipping() )->import();

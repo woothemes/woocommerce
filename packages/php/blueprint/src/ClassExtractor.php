@@ -2,64 +2,117 @@
 
 namespace Automattic\WooCommerce\Blueprint;
 
+/**
+ * Class ClassExtractor
+ *
+ * Provides functionality to manipulate PHP class files by replacing variables,
+ * adding prefixes, and removing strict types declarations.
+ *
+ * This class is used to generate 'code' part for runPHP step from a template file.
+ */
 class ClassExtractor {
-	private $filePath;
-	private $hasStrictTypesDeclaration = false;
-	private $prefix = '';
-	private $classVariableReplacements = [];
-	private $methodVariableReplacements = [];
+	/**
+	 * @var string Path to the PHP file being processed.
+	 */
+	private string $filePath;
 
-	public function __construct($filePath) {
-		if (!file_exists($filePath)) {
-			throw new \InvalidArgumentException("File not found: $filePath");
+	/**
+	 * @var bool Whether the file contains a strict types declaration.
+	 */
+	private bool $hasStrictTypesDeclaration = false;
+
+	/**
+	 * @var string PHP code to prefix to the final output.
+	 */
+	private string $prefix = '';
+
+	/**
+	 * @var array Replacements for class variables.
+	 */
+	private array $classVariableReplacements = array();
+
+	/**
+	 * @var array Replacements for method variables.
+	 */
+	private array $methodVariableReplacements = array();
+
+	/**
+	 * Constructor.
+	 *
+	 * @param string $filePath Path to the PHP file to process.
+	 *
+	 * @throws \InvalidArgumentException If the file does not exist.
+	 */
+	public function __construct( string $filePath ) {
+		if ( ! file_exists( $filePath ) ) {
+			throw new \InvalidArgumentException( "File not found: $filePath" );
 		}
 		$this->filePath = $filePath;
 	}
 
+	/**
+	 * Adds a prefix to include the WordPress wp-load.php file.
+	 *
+	 * @return $this
+	 */
 	public function with_wp_load() {
 		$this->prefix .= "<?php require_once 'wordpress/wp-load.php'; ";
 		return $this;
 	}
 
-	public function replace_class_variable($variableName, $newValue) {
-		// Store the replacement for class variables
-		$this->classVariableReplacements[$variableName] = $newValue;
+	/**
+	 * Replaces a class variable with a new value.
+	 *
+	 * @param string $variableName Name of the class variable.
+	 * @param mixed  $newValue The new value to assign to the variable.
+	 *
+	 * @return $this
+	 */
+	public function replace_class_variable( $variableName, $newValue ) {
+		$this->classVariableReplacements[ $variableName ] = $newValue;
 		return $this;
 	}
 
-	public function replace_method_variable($methodName, $variableName, $newValue) {
-		// Store the replacement for method variables
-		$this->methodVariableReplacements[] = [
-			'method' => $methodName,
+	/**
+	 * Replaces a variable inside a method with a new value.
+	 *
+	 * @param string $methodName Name of the method.
+	 * @param string $variableName Name of the variable to replace.
+	 * @param mixed  $newValue The new value to assign to the variable.
+	 *
+	 * @return $this
+	 */
+	public function replace_method_variable( $methodName, $variableName, $newValue ) {
+		$this->methodVariableReplacements[] = array(
+			'method'   => $methodName,
 			'variable' => $variableName,
-			'value' => $newValue,
-		];
+			'value'    => $newValue,
+		);
 		return $this;
 	}
 
+	/**
+	 * Generates the processed PHP code with applied replacements and prefixes.
+	 *
+	 * @return string The modified PHP code.
+	 */
 	public function get_code() {
-		// Load the file content
-		$fileContent = file_get_contents($this->filePath);
+		$fileContent = file_get_contents( $this->filePath );
 
-		// Remove the <?php tag
-		$fileContent = preg_replace('/<\?php\s*/', '', $fileContent);
+		$fileContent = preg_replace( '/<\?php\s*/', '', $fileContent );
 
-		// Check for and remove declare(strict_types=1);
-		if (preg_match('/declare\s*\(\s*strict_types\s*=\s*1\s*\)\s*;/', $fileContent)) {
+		if ( preg_match( '/declare\s*\(\s*strict_types\s*=\s*1\s*\)\s*;/', $fileContent ) ) {
 			$this->hasStrictTypesDeclaration = true;
-			$fileContent = preg_replace('/declare\s*\(\s*strict_types\s*=\s*1\s*\)\s*;/', '', $fileContent);
+			$fileContent                     = preg_replace( '/declare\s*\(\s*strict_types\s*=\s*1\s*\)\s*;/', '', $fileContent );
 		}
 
-		// Remove all PHP comments
-		$fileContent = preg_replace('/\/\*.*?\*\/|\/\/.*?(?=\r?\n)/s', '', $fileContent);
+		$fileContent = preg_replace( '/\/\*.*?\*\/|\/\/.*?(?=\r?\n)/s', '', $fileContent );
 
-		// Apply class variable replacements
-		foreach ($this->classVariableReplacements as $variable => $value) {
-			$fileContent = $this->apply_class_variable_replacement($fileContent, $variable, $value);
+		foreach ( $this->classVariableReplacements as $variable => $value ) {
+			$fileContent = $this->apply_class_variable_replacement( $fileContent, $variable, $value );
 		}
 
-		// Apply method variable replacements
-		foreach ($this->methodVariableReplacements as $replacement) {
+		foreach ( $this->methodVariableReplacements as $replacement ) {
 			$fileContent = $this->apply_variable_replacement(
 				$fileContent,
 				$replacement['method'],
@@ -68,43 +121,62 @@ class ClassExtractor {
 			);
 		}
 
-		return $this->prefix . trim($fileContent);
+		return $this->prefix . trim( $fileContent );
 	}
 
-	private function apply_class_variable_replacement($fileContent, $variableName, $newValue) {
-		// Convert replacement value into valid PHP syntax
-		$replacementValue = var_export($newValue, true);
+	/**
+	 * Applies a replacement to a class variable in the file content.
+	 *
+	 * @param string $fileContent The content of the PHP file.
+	 * @param string $variableName The name of the variable to replace.
+	 * @param mixed  $newValue The new value for the variable.
+	 *
+	 * @return string The updated file content.
+	 */
+	private function apply_class_variable_replacement( $fileContent, $variableName, $newValue ) {
+		$replacementValue = var_export( $newValue, true );
 
-		// Match the entire class property declaration, including existing assignments
-		$pattern = '/(protected|private|public)\s+\$' . preg_quote($variableName, '/') . '\s*=\s*.*?;|'
-			. '(protected|private|public)\s+\$' . preg_quote($variableName, '/') . '\s*;?/';
+		$pattern = '/(protected|private|public)\s+\$' . preg_quote( $variableName, '/' ) . '\s*=\s*.*?;|'
+			. '(protected|private|public)\s+\$' . preg_quote( $variableName, '/' ) . '\s*;?/';
 
 		$replacement = "$1 \$$variableName = $replacementValue;";
-		return preg_replace($pattern, $replacement, $fileContent, 1); // Replace only the first match
+		return preg_replace( $pattern, $replacement, $fileContent, 1 );
 	}
 
-	private function apply_variable_replacement($fileContent, $methodName, $variableName, $newValue) {
-		// Match the specified method and extract its content
-		$pattern = '/function\s+' . preg_quote($methodName, '/') . '\s*\([^)]*\)\s*\{\s*(.*?)\s*\}/s';
-		if (preg_match($pattern, $fileContent, $matches)) {
-			$methodBody = $matches[1]; // Extract the body of the method
+	/**
+	 * Applies a replacement to a variable in a specific method.
+	 *
+	 * @param string $fileContent The content of the PHP file.
+	 * @param string $methodName The name of the method containing the variable.
+	 * @param string $variableName The name of the variable to replace.
+	 * @param mixed  $newValue The new value for the variable.
+	 *
+	 * @return string The updated file content.
+	 */
+	private function apply_variable_replacement( $fileContent, $methodName, $variableName, $newValue ) {
+		$pattern = '/function\s+' . preg_quote( $methodName, '/' ) . '\s*\([^)]*\)\s*\{\s*(.*?)\s*\}/s';
+		if ( preg_match( $pattern, $fileContent, $matches ) ) {
+			$methodBody = $matches[1];
 
-			// Replace the variable assignment within the method body
-			$newValueExported = var_export($newValue, true);
-			$variablePattern = '/\$' . preg_quote($variableName, '/') . '\s*=\s*[^;]+;/';
-			$replacement = '$' . $variableName . ' = ' . $newValueExported . ';';
+			$newValueExported = var_export( $newValue, true );
+			$variablePattern  = '/\$' . preg_quote( $variableName, '/' ) . '\s*=\s*[^;]+;/';
+			$replacement      = '$' . $variableName . ' = ' . $newValueExported . ';';
 
-			$updatedMethodBody = preg_replace($variablePattern, $replacement, $methodBody, 1);
+			$updatedMethodBody = preg_replace( $variablePattern, $replacement, $methodBody, 1 );
 
-			if ($updatedMethodBody !== null) {
-				// Replace the method body in the file content
-				$fileContent = str_replace($methodBody, $updatedMethodBody, $fileContent);
+			if ( $updatedMethodBody !== null ) {
+				$fileContent = str_replace( $methodBody, $updatedMethodBody, $fileContent );
 			}
 		}
 
 		return $fileContent;
 	}
 
+	/**
+	 * Checks if the file has a strict types declaration.
+	 *
+	 * @return bool True if the file has a strict types declaration, false otherwise.
+	 */
 	public function has_strict_type_declaration() {
 		return $this->hasStrictTypesDeclaration;
 	}

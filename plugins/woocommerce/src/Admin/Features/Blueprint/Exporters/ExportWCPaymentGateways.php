@@ -33,10 +33,10 @@ class ExportWCPaymentGateways implements StepExporter {
 				continue;
 			}
 
-			$options['woocommerce_'.$id.'_settings'] = $payment_gateway->settings;
+			$options[ 'woocommerce_' . $id . '_settings' ] = $payment_gateway->settings;
 		}
 
-		return new SetSiteOptions($options);
+		return new SetSiteOptions( $options );
 	}
 
 	/**

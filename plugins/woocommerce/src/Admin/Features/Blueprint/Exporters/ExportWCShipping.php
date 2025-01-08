@@ -144,19 +144,23 @@ class ExportWCShipping implements StepExporter, HasAlias {
 			$locations_by_zone_id[ $location->zone_id ][] = $location->location_id;
 		}
 
-		$class_extractor = new ClassExtractor(__DIR__.'/../RunPHPTemplates/ImportSetWCShipping.php');
-		$class_extractor->replace_method_variable('import', 'shipping_data', (object) array(
-			'terms'            => $terms,
-			'classes'          => $classes,
-			'shipping_zones'   => $zones,
-			'shipping_methods' => $methods,
-			'shipping_locations' => $locations,
-			'local_pickup'     => $local_pickup,
-		));
+		$class_extractor = new ClassExtractor( __DIR__ . '/../RunPHPTemplates/ImportSetWCShipping.php' );
+		$class_extractor->replace_method_variable(
+			'import',
+			'shipping_data',
+			(object) array(
+				'terms'              => $terms,
+				'classes'            => $classes,
+				'shipping_zones'     => $zones,
+				'shipping_methods'   => $methods,
+				'shipping_locations' => $locations,
+				'local_pickup'       => $local_pickup,
+			)
+		);
 
 		$code = $class_extractor->with_wp_load()->get_code();
 
-		return new RunPHP($code);
+		return new RunPHP( $code );
 	}
 
 	/**
@@ -191,7 +195,7 @@ class ExportWCShipping implements StepExporter, HasAlias {
 	 *
 	 * @return string
 	 */
-	public function get_alias(){
+	public function get_alias() {
 		return 'setWCShipping';
 	}
 }
