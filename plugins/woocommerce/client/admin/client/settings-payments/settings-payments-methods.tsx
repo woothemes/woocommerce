@@ -81,7 +81,7 @@ export const SettingsPaymentsMethods: React.FC<
 			isFetching: select( PAYMENT_SETTINGS_STORE_NAME ).isFetching(),
 			paymentMethods: combineRequestMethods( recommendedPaymentMethods ),
 		};
-	} );
+	}, [] );
 
 	const initialPaymentMethodsState = paymentMethods.reduce<
 		Record< string, boolean >

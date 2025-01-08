@@ -23,7 +23,7 @@ export const SettingsPaymentsOffline = () => {
 				PAYMENT_SETTINGS_STORE_NAME
 			).getOfflinePaymentGateways(),
 		};
-	} );
+	}, [] );
 	const { updateProviderOrdering } = useDispatch(
 		PAYMENT_SETTINGS_STORE_NAME
 	);

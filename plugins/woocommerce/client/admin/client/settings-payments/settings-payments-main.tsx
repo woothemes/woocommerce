@@ -121,7 +121,7 @@ export const SettingsPaymentsMain = () => {
 				).getSuggestionCategories(),
 				isFetching: select( PAYMENT_SETTINGS_STORE_NAME ).isFetching(),
 			};
-		} );
+		}, [] );
 
 	const dismissIncentive = useCallback(
 		( dismissHref: string, context: string ) => {
