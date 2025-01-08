@@ -32,7 +32,7 @@ async function getTaxonomiesMissingParents(
 			} )
 			.then( ( parentTaxonomies: Taxonomy[] ) => {
 				return getTaxonomiesMissingParents(
-					[ ...( parentTaxonomies as Taxonomy[] ), ...taxonomies ],
+					[ ...parentTaxonomies, ...taxonomies ],
 					taxonomyName
 				);
 			} );

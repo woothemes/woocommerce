@@ -7,11 +7,7 @@ import { createElement, forwardRef, useContext } from '@wordpress/element';
 
 import { redo as redoIcon, undo as undoIcon } from '@wordpress/icons';
 import { Ref } from 'react';
-import {
-	displayShortcut,
-	// @ts-expect-error no exported member.
-	isAppleOS,
-} from '@wordpress/keycodes';
+import { displayShortcut, isAppleOS } from '@wordpress/keycodes';
 
 /**
  * Internal dependencies

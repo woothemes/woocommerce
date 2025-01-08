@@ -58,7 +58,8 @@ export default function ProductEdit( {
 			return {
 				initialEdits:
 					ids.length === 1
-						? select( 'wc/admin/products' ).getProduct( ids[ 0 ] )
+						? // @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+						  select( 'wc/admin/products' ).getProduct( ids[ 0 ] )
 						: null,
 			};
 		},
