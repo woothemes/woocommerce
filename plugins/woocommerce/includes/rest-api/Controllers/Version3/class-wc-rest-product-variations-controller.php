@@ -1083,14 +1083,14 @@ class WC_REST_Product_Variations_Controller extends WC_REST_Product_Variations_V
 	protected function get_objects( $query_args ) {
 		// Add filters for excluding product variation statuses.
 		if ( ! empty( $this->exclude_status ) ) {
-			add_filter( 'posts_where', array( $this, 'exclude_product_statuses' ) );
+			add_filter( 'posts_where', array( $this, 'exclude_product_variation_statuses' ) );
 		}
 
 		$result = parent::get_objects( $query_args );
 
 		// Remove filters for excluding product variation statuses.
 		if ( ! empty( $this->exclude_status ) ) {
-			remove_filter( 'posts_where', array( $this, 'exclude_product_statuses' ) );
+			remove_filter( 'posts_where', array( $this, 'exclude_product_variation_statuses' ) );
 
 			$this->exclude_status = array();
 		}
@@ -1247,12 +1247,12 @@ class WC_REST_Product_Variations_Controller extends WC_REST_Product_Variations_V
 	}
 
 	/**
-	 * Exclude product statuses from the query.
+	 * Exclude product variation statuses from the query.
 	 *
 	 * @param string $where Where clause used to search posts.
 	 * @return string
 	 */
-	public function exclude_product_statuses( $where ) {
+	public function exclude_product_variation_statuses( $where ) {
 		if ( ! empty( $this->exclude_status ) && is_array( $this->exclude_status ) ) {
 			global $wpdb;
 
