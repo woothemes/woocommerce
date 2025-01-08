@@ -24,18 +24,9 @@ import { ValidationInputError } from '../validation-input-error';
 import { getValidityMessageForInput } from '../../checkout/utils';
 
 export interface ValidatedCheckboxControlProps
-	extends Omit<
-		InputHTMLAttributes< HTMLInputElement >,
-		'onChange' | 'onBlur' | 'aria-describedby'
-	> {
-	// id to use for the input. If not provided, an id will be generated.
-	id?: string;
+	extends Omit< InputHTMLAttributes< HTMLInputElement >, 'onChange' > {
 	// Unique instance ID. id will be used instead if provided.
 	instanceId?: string | undefined;
-	// Class name to add to the input.
-	className?: string | undefined;
-	// aria-describedby attribute to add to the input.
-	ariaDescribedBy?: string | undefined;
 	// id to use for the error message. If not provided, an id will be generated.
 	errorId?: string;
 	// Feedback to display alongside the input. May be hidden when validation errors are displayed.
@@ -44,8 +35,6 @@ export interface ValidatedCheckboxControlProps
 	onChange: ( newValue: boolean ) => void;
 	// Optional label for the field.
 	label?: string | undefined;
-	// Field value.
-	checked?: boolean | undefined;
 	// If true, validation errors will be shown.
 	showError?: boolean;
 	// Error message to display alongside the field regardless of validation.
@@ -76,7 +65,7 @@ const ValidatedCheckboxControl = forwardRef<
 		{
 			className,
 			id,
-			ariaDescribedBy,
+			'aria-describedby': ariaDescribedBy,
 			errorId,
 			onChange,
 			showError = true,
