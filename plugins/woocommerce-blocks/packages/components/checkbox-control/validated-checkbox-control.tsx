@@ -55,7 +55,7 @@ export type ValidatedCheckboxControlHandle = {
 };
 
 /**
- * A text based input which validates the input value.
+ * A checkbox which validates the input is checked.
  */
 const ValidatedCheckboxControl = forwardRef<
 	ValidatedCheckboxControlHandle,
