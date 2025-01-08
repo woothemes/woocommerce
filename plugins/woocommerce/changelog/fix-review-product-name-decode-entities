@@ -1,0 +1,4 @@
+Significance: patch
+Type: tweak
+
+Use decodeEntities() to render Review product name in Reviews blocks
