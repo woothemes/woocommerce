@@ -6,6 +6,8 @@ import { MediaUpload } from '@wordpress/media-utils';
 
 export type MediaLibraryMenuItemProps = Omit<
 	MediaUpload.Props< boolean >,
-	'children' | 'render' | 'onChange'
+	'render' | 'onChange'
 > &
-	React.ComponentProps< typeof DropdownMenuItem >;
+	React.ComponentProps< typeof DropdownMenuItem > & {
+		text?: string;
+	};

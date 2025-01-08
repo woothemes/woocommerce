@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Slot, Fill } from '@wordpress/components';
 import { createElement, Fragment } from '@wordpress/element';
 
@@ -15,6 +15,7 @@ type WooProductSectionItemProps = {
 	id: string;
 	tabs: ProductFillLocationType[];
 	pluginId: string;
+	children: ReactNode;
 };
 
 type WooProductSectionSlotProps = {
@@ -36,7 +37,7 @@ export const WooProductSectionItem: React.FC< WooProductSectionItemProps > & {
 					key={ tabName }
 				>
 					{ ( fillProps ) => {
-						return createOrderedChildren< { tabName: string } >(
+						return createOrderedChildren(
 							children,
 							sectionOrder || DEFAULT_SECTION_ORDER,
 							{
@@ -60,7 +61,7 @@ WooProductSectionItem.Slot = ( { fillProps, tab } ) => (
 			if ( ! sortFillsByOrder ) {
 				return null;
 			}
-
+			// @ts-expect-error The type definitions for Slot are incorrect.
 			return sortFillsByOrder( fills );
 		} }
 	</Slot>

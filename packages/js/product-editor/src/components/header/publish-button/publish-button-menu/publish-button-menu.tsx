@@ -75,9 +75,7 @@ export function PublishButtonMenu( {
 		);
 	}
 
-	function renderMenu( {
-		onClose,
-	}: React.ComponentProps< typeof Dropdown > ) {
+	function renderMenu( { onClose }: { onClose?: () => void } ) {
 		return (
 			<>
 				<MenuGroup>
@@ -212,7 +210,7 @@ export function PublishButtonMenu( {
 		<>
 			<ButtonWithDropdownMenu
 				{ ...props }
-				onToggle={ ( isOpen: boolean ) => {
+				onToggle={ ( isOpen ) => {
 					if ( isOpen ) {
 						recordEvent( 'product_publish_dropdown_open', {
 							source: TRACKS_SOURCE,

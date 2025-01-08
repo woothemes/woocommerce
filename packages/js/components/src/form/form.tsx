@@ -133,7 +133,7 @@ type StateAndHelpers< Values > = {
 	>;
 	setValue: ( name: string, value: Values[ keyof Values ] ) => void;
 	setValues: ( valuesToSet: Values ) => void;
-	handleSubmit: () => unknown;
+	handleSubmit: () => Promise< void >;
 	getCheckboxControlProps: < P extends keyof Values >(
 		name: P,
 		inputProps?: ConsumerInputProps< Values >

@@ -1,14 +1,20 @@
 /**
  * External dependencies
  */
-import { Children, isValidElement, createElement } from '@wordpress/element';
+import {
+	Children,
+	isValidElement,
+	createElement,
+	Element,
+} from '@wordpress/element';
 import { FormSection } from '@woocommerce/components';
 
-type ProductSectionLayoutProps = {
+interface ProductSectionLayoutProps {
 	title: string;
 	description: string | JSX.Element;
 	className?: string;
-};
+	children: Element[];
+}
 
 export const ProductSectionLayout: React.FC< ProductSectionLayoutProps > = ( {
 	title,

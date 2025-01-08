@@ -77,7 +77,7 @@ export function CreateModal( {
 		customField: Metadata< string >,
 		prop: keyof Metadata< string >
 	) {
-		return function handleChange( value: string | null ) {
+		return function handleChange( value: string | null | undefined ) {
 			setCustomFields( ( current ) =>
 				current.map( ( field ) =>
 					field.id === customField.id
@@ -236,10 +236,12 @@ export function CreateModal( {
 										'key'
 									) }
 									value={ customField.key }
-									onChange={ changeHandler(
-										customField,
-										'key'
-									) }
+									onChange={ ( value ) =>
+										changeHandler(
+											customField,
+											'key'
+										)( value )
+									}
 									onBlur={ blurHandler( customField, 'key' ) }
 									className={ classNames( {
 										'has-error': getValidationError(

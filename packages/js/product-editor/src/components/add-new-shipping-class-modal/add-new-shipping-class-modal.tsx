@@ -17,16 +17,12 @@ import {
 	Button,
 	Modal,
 	TextControl,
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore We need this to import the block modules for registration.
 	__experimentalInputControl as InputControl,
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore We need this to import the block modules for registration.
 	__experimentalInputControlPrefixWrapper as InputControlPrefixWrapper,
 } from '@wordpress/components';
 
 export type ShippingClassFormProps = {
-	onAdd: () => Promise< ProductShippingClass >;
+	onAdd: () => Promise< void >;
 	onCancel: () => void;
 };
 
@@ -129,11 +125,13 @@ function ShippingClassForm( { onAdd, onCancel }: ShippingClassFormProps ) {
 			/>
 
 			<InputControl
-				{ ...getInputProps( 'slug' ) }
+				{ ...getInputProps< string >( 'slug' ) }
 				label={ __( 'Slug', 'woocommerce' ) }
-				onChange={ ( value: string ) => {
-					setPrevNameValue( '' ); // clean the previous name value.
-					getInputProps( 'slug' ).onChange( value );
+				onChange={ ( value ) => {
+					if ( value ) {
+						setPrevNameValue( '' ); // clean the previous name value.
+						getInputProps( 'slug' ).onChange( value );
+					}
 				} }
 				disabled={ isRequestingSlug }
 				help={ __(
@@ -241,9 +239,7 @@ export function AddNewShippingClassModal( {
 				errors={ {} }
 				onSubmit={ handleSubmit }
 			>
-				{ ( childrenProps: {
-					handleSubmit: () => Promise< ProductShippingClass >;
-				} ) => (
+				{ ( childrenProps ) => (
 					<ShippingClassForm
 						onAdd={ childrenProps.handleSubmit }
 						onCancel={ onCancel }

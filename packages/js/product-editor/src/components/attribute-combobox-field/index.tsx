@@ -219,6 +219,7 @@ const AttributesComboboxControl: React.FC<
 			<BaseControl label={ label } help={ help } id={ labelFor }>
 				<ComboboxControl
 					className="woocommerce-attributes-combobox"
+					// @ts-expect-error allowReset is a valid prop of ComboboxControl.
 					allowReset={ false }
 					options={ options }
 					value={ currentValue }

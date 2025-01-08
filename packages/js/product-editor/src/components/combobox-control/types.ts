@@ -15,8 +15,4 @@ export type ComboboxControlProps = React.ComponentProps< typeof Combobox > &
 			HTMLInputElement
 		>,
 		'id' | 'name' | 'onBlur'
-	> & {
-		__experimentalRenderItem?: ( args: {
-			item: ComboboxControlOption;
-		} ) => string | JSX.Element;
-	};
+	>;

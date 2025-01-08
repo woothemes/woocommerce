@@ -282,6 +282,7 @@ export function BlockEditor( {
 
 			const blockInstances = synchronizeBlocksWithTemplate(
 				[],
+				// @ts-expect-error Type definitions are missing
 				layoutTemplate.blockTemplates
 			);
 
@@ -293,6 +294,7 @@ export function BlockEditor( {
 
 			onChange( editorTemplate, {} );
 
+			// @ts-expect-error Type definitions are missing
 			dispatch( 'core/editor' ).updateEditorSettings( {
 				...settings,
 				productTemplate,

@@ -46,7 +46,11 @@ export const TextControl = forwardRef( function ForwardedTextControl(
 			}
 			required={ required }
 			help={ error || help }
-			onChange={ onChange }
+			onChange={ ( value: string | undefined ) => {
+				if ( value && onChange ) {
+					onChange( value );
+				}
+			} }
 			onBlur={ onBlur }
 		/>
 	);

@@ -15,6 +15,7 @@ type ProductFieldSectionProps = {
 	title: string;
 	description: string | JSX.Element;
 	className?: string;
+	children: JSX.Element | JSX.Element[];
 };
 
 export const ProductFieldSection: React.FC< ProductFieldSectionProps > = ( {

@@ -25,4 +25,5 @@ export type UploadFilesMenuItemProps = Omit<
 		onUploadProgress?( files: MediaItem[] ): void;
 		onUploadSuccess( files: MediaItem[] ): void;
 		onUploadError: MediaUploaderErrorCallback;
+		text?: string;
 	};

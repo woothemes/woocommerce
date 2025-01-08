@@ -6,7 +6,7 @@ import { deferSelectInFocus } from '../utils';
 
 export type NumberInputProps = {
 	value: string;
-	onChange: ( value: string ) => void;
+	onChange: ( value: string | undefined ) => void;
 	onFocus: ( event: React.FocusEvent< HTMLInputElement > ) => void;
 	onKeyDown: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
 	onKeyUp: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
@@ -64,7 +64,10 @@ export const useNumberInputProps = ( {
 				onKeyDown( event );
 			}
 		},
-		onChange( newValue: string ) {
+		onChange( newValue ) {
+			if ( ! newValue ) {
+				return;
+			}
 			let sanitizeValue = parseNumber(
 				newValue.replace( NOT_NUMBERS_OR_SEPARATORS_OR_MINUS_REGEX, '' )
 			);
