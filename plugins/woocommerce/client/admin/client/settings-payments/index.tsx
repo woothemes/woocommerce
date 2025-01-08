@@ -102,6 +102,8 @@ const SettingsPaymentsMain = () => {
 												'Business location :',
 												'woocommerce'
 											) }
+											// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+											// @ts-ignore placeholder prop exists
 											placeholder={ '' }
 											label={ '' }
 											options={ [] }
@@ -156,7 +158,7 @@ const SettingsPaymentsMethods = () => {
 				select( PAYMENT_SETTINGS_STORE_NAME ).getPaymentProviders() ||
 				[],
 		};
-	} );
+	}, [] );
 
 	// Retrieve wooPayments gateway
 	const wooPayments = getWooPaymentsFromProviders( providers );
