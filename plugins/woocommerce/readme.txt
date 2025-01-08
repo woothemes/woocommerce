@@ -169,14 +169,12 @@ WooCommerce comes with some sample data you can use to see how products look; im
 
 == Changelog ==
 
-= 9.5.0 2025-01-27 =
+= 9.5.2 2025-01-08 =
 
 **WooCommerce**
 
 * Fix - Fixed a bug where limited usage coupons would experience conflicts when applied simultaneously. [#54269](https://github.com/woocommerce/woocommerce/pull/54269)
-* Fix - Fix test previously expecting a md5 hash but now produces a SHA-256 hash for the gravatar URL. [#53914](https://github.com/woocommerce/woocommerce/pull/53914)
 * Update - Enhance the security of the customers API [#54267](https://github.com/woocommerce/woocommerce/pull/54267)
-* Dev - Bump @wordpress/env to 10.14.0 and remove patch for 10.10.0 [#53701](https://github.com/woocommerce/woocommerce/pull/53701)
 
 
 [See changelog for all versions](https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/changelog.txt).
