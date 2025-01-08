@@ -6,6 +6,7 @@
  * @since 3.5.0
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 
@@ -149,7 +150,7 @@ class WC_Tests_API_Product extends WC_REST_Unit_Test_Case {
 				'id'            => $simple->get_id(),
 				'name'          => 'Dummy External Product',
 				'type'          => ProductType::EXTERNAL,
-				'status'        => 'publish',
+				'status'        => ProductStatus::PUBLISH,
 				'sku'           => 'DUMMY EXTERNAL SKU',
 				'regular_price' => '10',
 			),
@@ -602,7 +603,7 @@ class WC_Tests_API_Product extends WC_REST_Unit_Test_Case {
 				wp_update_post(
 					array(
 						'ID'          => $product->get_id(),
-						'post_status' => 'draft',
+						'post_status' => ProductStatus::DRAFT,
 					)
 				);
 			}
@@ -610,24 +611,24 @@ class WC_Tests_API_Product extends WC_REST_Unit_Test_Case {
 
 		// Test filtering with status=publish.
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
-		$request->set_param( 'status', 'publish' );
+		$request->set_param( 'status', ProductStatus::PUBLISH );
 		$response = $this->server->dispatch( $request );
 		$products = $response->get_data();
 
 		$this->assertEquals( 4, count( $products ) );
 		foreach ( $products as $product ) {
-			$this->assertEquals( 'publish', $product['status'] );
+			$this->assertEquals( ProductStatus::PUBLISH, $product['status'] );
 		}
 
 		// Test filtering with status=draft.
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
-		$request->set_param( 'status', 'draft' );
+		$request->set_param( 'status', ProductStatus::DRAFT );
 		$response = $this->server->dispatch( $request );
 		$products = $response->get_data();
 
 		$this->assertEquals( 4, count( $products ) );
 		foreach ( $products as $product ) {
-			$this->assertEquals( 'draft', $product['status'] );
+			$this->assertEquals( ProductStatus::DRAFT, $product['status'] );
 		}
 
 		// Test filtering with no filters - which should return 'any' (all 8).

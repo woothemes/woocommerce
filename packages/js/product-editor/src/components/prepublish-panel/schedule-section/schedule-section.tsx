@@ -4,10 +4,7 @@
 import { PanelBody } from '@wordpress/components';
 import { createElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import {
-	// @ts-expect-error has no exported member
-	__experimentalPublishDateTimePicker as PublishDateTimePicker,
-} from '@wordpress/block-editor';
+import { __experimentalPublishDateTimePicker as PublishDateTimePicker } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
