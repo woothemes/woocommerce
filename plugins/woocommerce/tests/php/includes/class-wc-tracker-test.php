@@ -213,6 +213,60 @@ class WC_Tracker_Test extends \WC_Unit_Test_Case {
 	}
 
 	/**
+	 * @testDox Test order snapshot data.
+	 */
+	public function test_get_tracking_data_order_snapshot() {
+		$dummy_product = WC_Helper_Product::create_simple_product();
+		$year          = gmdate( 'Y' );
+		$first_20      = array();
+		$last_20       = array();
+
+		// Populate order dates.
+		for ( $i = 1; $i <= 20; $i++ ) {
+			$first_20[] = sprintf( '%d-02-%02d 12:00:00', $year - 2, $i );
+			$last_20[]  = sprintf( '%d-02-%02d 12:00:00', $year + 2, $i );
+		}
+
+		// Create set of orders.
+		foreach ( array_merge( $first_20, $last_20 ) as $order_date ) {
+			$order = wc_create_order(
+				array(
+					'status' => 'wc-completed',
+				)
+			);
+			$order->add_product( $dummy_product );
+			$order->set_date_created( $order_date );
+			$order->save();
+			$order->calculate_totals();
+		}
+
+		$order_snapshot = WC_Tracker::get_tracking_data()['order_snapshot'];
+
+		$this->assertCount( 20, $order_snapshot['first_20_orders'] );
+		$this->assertCount( 20, $order_snapshot['last_20_orders'] );
+
+		// Check order rank for first 20 orders.
+		$counter = 1;
+		foreach ( $order_snapshot['first_20_orders'] as $order_details ) {
+			$this->assertEquals( $order_details['order_rank'], $counter++ );
+			$this->assertEquals( $order_details['currency'], 'USD' );
+			$this->assertEquals( $order_details['total_amount'], '10.00' );
+			$this->assertEquals( $order_details['recorded_sales'], 'yes' );
+			$this->assertEquals( $order_details['woocommerce_version'], WOOCOMMERCE_VERSION );
+		}
+
+		// Check order rank for last 20 orders.
+		$counter = 40;
+		foreach ( $order_snapshot['last_20_orders'] as $order_details ) {
+			$this->assertEquals( $order_details['order_rank'], $counter-- );
+			$this->assertEquals( $order_details['currency'], 'USD' );
+			$this->assertEquals( $order_details['total_amount'], '10.00' );
+			$this->assertEquals( $order_details['recorded_sales'], 'yes' );
+			$this->assertEquals( $order_details['woocommerce_version'], WOOCOMMERCE_VERSION );
+		}
+	}
+
+	/**
 	 * @testDox Test enabled features tracking data.
 	 */
 	public function test_get_tracking_data_enabled_features() {
@@ -242,5 +296,12 @@ class WC_Tracker_Test extends \WC_Unit_Test_Case {
 		$this->assertArrayHasKey( 'admin_install_timestamp', $tracking_data['settings'] );
 		$this->assertEquals( $tracking_data['settings']['admin_install_timestamp'], $time );
 		delete_option( 'woocommerce_admin_install_timestamp' );
+	}
+
+	/**
+	 * @testDox Test tracking data records snapshot generation time.
+	 */
+	public function test_get_tracking_data_snapshot_generation_time() {
+		$this->assertGreaterThan( 0, WC_Tracker::get_tracking_data()['snapshot_generation_time'] );
 	}
 }

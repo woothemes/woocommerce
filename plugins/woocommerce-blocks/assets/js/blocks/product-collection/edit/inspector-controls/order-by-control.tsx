@@ -38,12 +38,38 @@ const orderOptions = [
 		value: 'date/asc',
 	},
 	{
-		value: 'popularity/desc',
-		label: __( 'Best Selling', 'woocommerce' ),
+		label: __( 'Price, high to low', 'woocommerce' ),
+		value: 'price/desc',
+	},
+	{
+		label: __( 'Price, low to high', 'woocommerce' ),
+		value: 'price/asc',
+	},
+	{
+		label: __( 'Sales, high to low', 'woocommerce' ),
+		value: 'sales/desc',
+	},
+	{
+		label: __( 'Sales, low to high', 'woocommerce' ),
+		value: 'sales/asc',
 	},
 	{
 		value: 'rating/desc',
-		label: __( 'Top Rated', 'woocommerce' ),
+		label: __( 'Rating, high to low', 'woocommerce' ),
+	},
+	{
+		value: 'rating/asc',
+		label: __( 'Rating, low to high', 'woocommerce' ),
+	},
+	{
+		// In WooCommerce, "Manual (menu order)" refers to a custom ordering set by the store owner.
+		// Products can be manually arranged in the desired order in the WooCommerce admin panel.
+		value: 'menu_order/asc',
+		label: __( 'Manual (menu order)', 'woocommerce' ),
+	},
+	{
+		value: 'random',
+		label: __( 'Random', 'woocommerce' ),
 	},
 ];
 
@@ -57,6 +83,13 @@ const OrderByControl = ( props: QueryControlProps ) => {
 		trackInteraction( CoreFilterNames.ORDER );
 	};
 
+	let orderValue = order ? `${ orderBy }/${ order }` : orderBy;
+
+	// This is to provide backward compatibility as we removed the 'popularity' (Best Selling) option from the order options.
+	if ( orderBy === 'popularity' ) {
+		orderValue = `sales/${ order }`;
+	}
+
 	return (
 		<ToolsPanelItem
 			label={ __( 'Order by', 'woocommerce' ) }
@@ -69,14 +102,16 @@ const OrderByControl = ( props: QueryControlProps ) => {
 			resetAllFilter={ deselectCallback }
 		>
 			<SelectControl
-				value={ `${ orderBy }/${ order }` }
+				value={ orderValue }
 				options={ orderOptions }
 				label={ __( 'Order by', 'woocommerce' ) }
 				onChange={ ( value ) => {
 					const [ newOrderBy, newOrder ] = value.split( '/' );
 					setQueryAttribute( {
-						order: newOrder as TProductCollectionOrder,
 						orderBy: newOrderBy as TProductCollectionOrderBy,
+						order:
+							( newOrder as TProductCollectionOrder ) ||
+							undefined,
 					} );
 					trackInteraction( CoreFilterNames.ORDER );
 				} }

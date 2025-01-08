@@ -45,7 +45,7 @@ final class WooCommerce {
 	 *
 	 * @var string
 	 */
-	public $version = '9.4.0';
+	public $version = '9.5.2';
 
 	/**
 	 * WooCommerce Schema version.
@@ -335,13 +335,18 @@ final class WooCommerce {
 
 		/**
 		 * These classes have a register method for attaching hooks.
-		 *
-		 * @var RegisterHooksInterface[] $hook_register_classes
 		 */
-		$hook_register_classes = $container->get( RegisterHooksInterface::class );
-		foreach ( $hook_register_classes as $hook_register_class ) {
-			$hook_register_class->register();
-		}
+		$container->get( Automattic\WooCommerce\Internal\Utilities\PluginInstaller::class )->register();
+		$container->get( Automattic\WooCommerce\Internal\TransientFiles\TransientFilesEngine::class )->register();
+		$container->get( Automattic\WooCommerce\Internal\Orders\OrderAttributionController::class )->register();
+		$container->get( Automattic\WooCommerce\Internal\Orders\OrderAttributionBlocksController::class )->register();
+		$container->get( Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController::class )->register();
+		$container->get( Automattic\WooCommerce\Internal\Utilities\LegacyRestApiStub::class )->register();
+
+		// Classes inheriting from RestApiControllerBase.
+
+		$container->get( Automattic\WooCommerce\Internal\ReceiptRendering\ReceiptRenderingRestController::class )->register();
+		$container->get( Automattic\WooCommerce\Internal\Orders\OrderActionsRestController::class )->register();
 	}
 
 	/**
@@ -723,6 +728,9 @@ final class WooCommerce {
 
 		if ( $this->is_request( 'admin' ) ) {
 			include_once WC_ABSPATH . 'includes/admin/class-wc-admin.php';
+			// Simulate loading plugin for the legacy reports.
+			// This will be removed after moving the legacy reports to a separate plugin.
+			include_once WC_ABSPATH . 'includes/admin/woocommerce-legacy-reports.php';
 		}
 
 		// We load frontend includes in the post editor, because they may be invoked via pre-loading of blocks.
@@ -868,7 +876,7 @@ final class WooCommerce {
 		 */
 		$locale = apply_filters( 'plugin_locale', $locale, 'woocommerce' ); // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingSinceComment
 
-		unload_textdomain( 'woocommerce' );
+		unload_textdomain( 'woocommerce', true );
 		load_textdomain( 'woocommerce', WP_LANG_DIR . '/woocommerce/woocommerce-' . $locale . '.mo' );
 		load_plugin_textdomain( 'woocommerce', false, plugin_basename( dirname( WC_PLUGIN_FILE ) ) . '/i18n/languages' );
 	}

@@ -33,11 +33,12 @@ import { EXCLUDED_BLOCKS } from '../../constants';
 import { FilterOptionItem } from '../../types';
 import { InitialDisabled } from '../../components/initial-disabled';
 import { Notice } from '../../components/notice';
+import { useProductFilterClearButtonManager } from '../../hooks/use-product-filter-clear-button-manager';
 
 const ATTRIBUTES = getSetting< AttributeSetting[] >( 'attributes', [] );
 
 const Edit = ( props: EditProps ) => {
-	const { attributes: blockAttributes } = props;
+	const { attributes: blockAttributes, clientId } = props;
 
 	const {
 		attributeId,
@@ -47,6 +48,7 @@ const Edit = ( props: EditProps ) => {
 		showCounts,
 		sortOrder,
 		hideEmpty,
+		clearButton,
 	} = blockAttributes;
 
 	const attributeObject = getAttributeFromId( attributeId );
@@ -57,8 +59,13 @@ const Edit = ( props: EditProps ) => {
 	const [ isOptionsLoading, setIsOptionsLoading ] =
 		useState< boolean >( true );
 
+	useProductFilterClearButtonManager( {
+		clientId,
+		showClearButton: clearButton,
+	} );
+
 	const { results: attributeTerms, isLoading: isTermsLoading } =
-		useCollection< AttributeTerm >( {
+		useCollection< AttributeTerm[] >( {
 			namespace: '/wc/store/v1',
 			resourceName: 'products/attributes/terms',
 			resourceValues: [ attributeObject?.id || 0 ],

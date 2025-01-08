@@ -31,7 +31,11 @@ class CartItemSchema extends ItemSchema {
 	 * @return array
 	 */
 	public function get_item_response( $cart_item ) {
-		$product = $cart_item['data'];
+		$product = $cart_item['data'] ?? false;
+
+		if ( ! $product instanceof \WC_Product ) {
+			return [];
+		}
 
 		/**
 		 * Filter the product permalink.

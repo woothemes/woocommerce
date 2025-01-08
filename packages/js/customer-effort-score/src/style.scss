@@ -4,7 +4,7 @@
 .woocommerce-customer-effort-score__selection {
 	margin: 1em 0 1.5em 0;
 
-	.components-base-control__field {
+	.components-base-control__field, .components-radio-control__group-wrapper {
 		display: flex;
 		flex-direction: column;
 		margin: 0 auto;

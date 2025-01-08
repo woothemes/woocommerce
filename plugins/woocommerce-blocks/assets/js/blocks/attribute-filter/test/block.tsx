@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import * as hooks from '@woocommerce/base-context/hooks';
 import userEvent from '@testing-library/user-event';
 
@@ -109,6 +109,7 @@ const setup = ( params: SetupParams ) => {
 	const utils = render( <AttributeFilterBlock attributes={ attributes } />, {
 		legacyRoot: true,
 	} );
+
 	// We need to switch to React 17 rendering to allow these tests to keep passing, but as a result the React
 	// rendering error will be shown.
 	expect( console ).toHaveErroredWith(
@@ -164,8 +165,10 @@ describe( 'Filter by Attribute block', () => {
 		test( 'should enable Apply button when filter attributes are changed', async () => {
 			const { applyButton, smallAttributeCheckbox } =
 				setupWithoutSelectedFilterAttributes();
-			await userEvent.click( smallAttributeCheckbox );
 
+			await act( async () => {
+				await userEvent.click( smallAttributeCheckbox );
+			} );
 			expect( applyButton ).not.toBeDisabled();
 		} );
 	} );
@@ -180,18 +183,25 @@ describe( 'Filter by Attribute block', () => {
 		test( 'should enable Apply button when filter attributes are changed', async () => {
 			const { applyButton, smallAttributeCheckbox } =
 				setupWithSelectedFilterAttributes();
-			await userEvent.click( smallAttributeCheckbox );
 
+			await act( async () => {
+				await userEvent.click( smallAttributeCheckbox );
+			} );
 			expect( applyButton ).not.toBeDisabled();
 		} );
 
 		test( 'should disable Apply button when deselecting the same previously selected attribute', async () => {
 			const { applyButton, smallAttributeCheckbox } =
 				setupWithSelectedFilterAttributes( { filterSize: 'small' } );
-			await userEvent.click( smallAttributeCheckbox );
+
+			await act( async () => {
+				await userEvent.click( smallAttributeCheckbox );
+			} );
 			expect( applyButton ).not.toBeDisabled();
 
-			await userEvent.click( smallAttributeCheckbox );
+			await act( async () => {
+				await userEvent.click( smallAttributeCheckbox );
+			} );
 			expect( applyButton ).toBeDisabled();
 		} );
 	} );

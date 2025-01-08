@@ -11,7 +11,7 @@
 		text-transform: uppercase;
 	}
 
-
+	.wc-block-components-totals-shipping__delivery-options-notice,
 	.wc-block-components-shipping-address {
 		margin-top: $gap;
 		display: block;
@@ -33,6 +33,7 @@
 	}
 
 	.wc-block-components-totals-shipping__change-address__link {
+		color: inherit;
 		font-weight: normal;
 		background: none;
 		border: none;
@@ -49,6 +50,15 @@
 		&:active {
 			opacity: 0.8;
 		}
+	}
+
+	.wc-block-components-shipping-placeholder__value {
+		@include font-size(small);
+	}
+
+	.wc-block-components-totals-shipping__via {
+		@include font-size(small);
+		width: 100%;
 	}
 }
 

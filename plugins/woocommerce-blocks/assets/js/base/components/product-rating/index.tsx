@@ -3,6 +3,7 @@
  */
 import clsx from 'clsx';
 import { __, sprintf } from '@wordpress/i18n';
+import type { RatingValues } from '@woocommerce/blocks/product-collection/types';
 
 /**
  * Internal dependencies
@@ -58,7 +59,6 @@ const Rating = ( {
 	);
 };
 
-export type RatingValues = 0 | 1 | 2 | 3 | 4 | 5;
 interface RatingProps {
 	className?: string;
 	rating: RatingValues;

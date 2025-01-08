@@ -2,7 +2,7 @@
  * External dependencies
  */
 import type { BlockEditProps } from '@wordpress/blocks';
-import { type AttributeMetadata } from '@woocommerce/types';
+import type { CurrencyCode, AttributeMetadata } from '@woocommerce/types';
 
 /**
  * Internal dependencies
@@ -29,6 +29,7 @@ export interface ProductCollectionAttributes {
 	];
 	templateSlug: string;
 	displayLayout: ProductCollectionDisplayLayout;
+	dimensions: ProductCollectionDimensions;
 	tagName: string;
 	convertedFromProducts: boolean;
 	collection?: string;
@@ -48,10 +49,20 @@ export enum LayoutOptions {
 	STACK = 'list',
 }
 
+export enum WidthOptions {
+	FILL = 'fill',
+	FIXED = 'fixed',
+}
+
 export interface ProductCollectionDisplayLayout {
 	type: LayoutOptions;
 	columns: number;
 	shrinkColumns: boolean;
+}
+
+export interface ProductCollectionDimensions {
+	widthType: WidthOptions;
+	fixedWidth?: string;
 }
 
 export enum ETimeFrameOperator {
@@ -106,10 +117,17 @@ export interface ProductCollectionQuery {
 	priceRange: undefined | PriceRange;
 	filterable: boolean;
 	productReference?: number;
+	relatedBy?: RelatedBy | undefined;
 }
+
+export type RelatedBy = {
+	categories: boolean;
+	tags: boolean;
+};
 
 export type ProductCollectionEditComponentProps =
 	BlockEditProps< ProductCollectionAttributes > & {
+		name: string;
 		preview?: {
 			initialPreviewState?: PreviewState;
 			setPreviewState?: SetPreviewState;
@@ -118,6 +136,7 @@ export type ProductCollectionEditComponentProps =
 		context: {
 			templateSlug: string;
 		};
+		tracksLocation: string;
 	};
 
 export type ProductCollectionContentProps =
@@ -132,6 +151,7 @@ export type TProductCollectionOrderBy =
 	| 'date'
 	| 'title'
 	| 'popularity'
+	| 'price'
 	| 'rating';
 
 export type ProductCollectionSetAttributes = (
@@ -144,6 +164,12 @@ export type DisplayLayoutControlProps = {
 	displayLayout: ProductCollectionDisplayLayout;
 	setAttributes: ProductCollectionSetAttributes;
 };
+
+export type DimensionsControlProps = {
+	dimensions: ProductCollectionDimensions;
+	setAttributes: ProductCollectionSetAttributes;
+};
+
 export type QueryControlProps = {
 	query: ProductCollectionQuery;
 	trackInteraction: TrackInteraction;
@@ -157,6 +183,10 @@ export enum CoreCollectionNames {
 	NEW_ARRIVALS = 'woocommerce/product-collection/new-arrivals',
 	ON_SALE = 'woocommerce/product-collection/on-sale',
 	TOP_RATED = 'woocommerce/product-collection/top-rated',
+	HAND_PICKED = 'woocommerce/product-collection/hand-picked',
+	RELATED = 'woocommerce/product-collection/related',
+	UPSELLS = 'woocommerce/product-collection/upsells',
+	CROSS_SELLS = 'woocommerce/product-collection/cross-sells',
 }
 
 export enum CoreFilterNames {
@@ -172,6 +202,7 @@ export enum CoreFilterNames {
 	TAXONOMY = 'taxonomy',
 	PRICE_RANGE = 'price-range',
 	FILTERABLE = 'filterable',
+	RELATED_BY = 'related-by',
 }
 
 export type CollectionName = CoreCollectionNames | string;
@@ -187,3 +218,43 @@ export type SetPreviewState = ( args: {
 	location: WooCommerceBlockLocation;
 	attributes: ProductCollectionAttributes;
 } ) => void | ( () => void );
+
+type AttributeCount = {
+	term: number;
+	count: number;
+};
+
+export type RatingValues = 0 | 1 | 2 | 3 | 4 | 5;
+
+type RatingCount = {
+	rating: RatingValues;
+	count: number;
+};
+
+type StockStatusCount = {
+	status: 'instock' | 'outofstock' | 'onbackorder';
+	count: number;
+};
+
+/*
+ * Prop types for the `wc/store/v1/products/collection-data` endpoint
+ */
+export type WCStoreV1ProductsCollectionProps = {
+	price_range: {
+		min_price: string;
+		max_price: string;
+		currency_code: CurrencyCode;
+		currency_decimal_separator: '.' | string;
+		currency_minor_unit: number;
+		currency_prefix: '$' | string;
+		currency_suffix: '' | string;
+		currency_symbol: '$' | string;
+		currency_thousand_separator: ',' | string;
+	};
+
+	attribute_counts: AttributeCount[];
+
+	rating_counts: RatingCount[];
+
+	stock_status_counts: StockStatusCount[];
+};

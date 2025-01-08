@@ -61,6 +61,52 @@ class WC_Tracks_Test extends \WC_Unit_Test_Case {
 		$this->assertNotEquals( 'bad', $properties['_ut'] );
 	}
 
+
+	/**
+	 * Test role properties for logged out user
+	 */
+	public function test_role_properties_for_logged_out_user() {
+		$properties = \WC_Tracks::get_properties( 'test_event', array() );
+
+		$this->assertContains( 'role', array_keys( $properties ) );
+		$this->assertEquals( '', $properties['role'] );
+		$this->assertEquals( false, $properties['can_install_plugins'] );
+		$this->assertEquals( false, $properties['can_activate_plugins'] );
+		$this->assertEquals( false, $properties['can_manage_woocommerce'] );
+	}
+
+	/**
+	 * Test role properties for administrator
+	 */
+	public function test_role_properties_for_administrator() {
+		$user = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $user );
+
+		$properties = \WC_Tracks::get_properties( 'test_event', array() );
+
+		$this->assertEquals( 'administrator', $properties['role'] );
+		$this->assertEquals( true, $properties['can_install_plugins'] );
+		$this->assertEquals( true, $properties['can_activate_plugins'] );
+		$this->assertEquals( true, $properties['can_manage_woocommerce'] );
+	}
+
+	/**
+	 * Test role properties for user with multiple roles
+	 */
+	public function test_role_properties_for_multiple_roles() {
+		$user = $this->factory->user->create( array( 'role' => 'shop_manager' ) );
+		wp_set_current_user( $user );
+		$current_user = wp_get_current_user();
+		$current_user->add_role( 'editor' );
+
+		$properties = \WC_Tracks::get_properties( 'test_event', array() );
+
+		$this->assertEquals( 'shop_manager', $properties['role'] );
+		$this->assertEquals( false, $properties['can_install_plugins'] );
+		$this->assertEquals( false, $properties['can_activate_plugins'] );
+		$this->assertEquals( true, $properties['can_manage_woocommerce'] );
+	}
+
 	/**
 	 * Test the event validation and sanitization with a valid event.
 	 */

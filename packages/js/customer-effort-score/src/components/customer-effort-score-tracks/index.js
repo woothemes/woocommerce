@@ -8,6 +8,7 @@ import { createElement, useState } from '@wordpress/element';
 import { OPTIONS_STORE_NAME } from '@woocommerce/data';
 import { __ } from '@wordpress/i18n';
 import { recordEvent } from '@woocommerce/tracks';
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
@@ -38,7 +39,6 @@ import { getStoreAgeInWeeks } from '../../utils';
  * @param {boolean}  props.allowTracking      Whether tracking is allowed or not.
  * @param {boolean}  props.resolving          Are values still being resolved.
  * @param {number}   props.storeAgeInWeeks    The age of the store in weeks.
- * @param {Function} props.updateOptions      Function to update options.
  * @param {Function} props.createNotice       Function to create a snackbar.
  */
 function _CustomerEffortScoreTracks( {
@@ -55,7 +55,6 @@ function _CustomerEffortScoreTracks( {
 	allowTracking,
 	resolving,
 	storeAgeInWeeks,
-	updateOptions,
 	createNotice,
 } ) {
 	const [ modalShown, setModalShown ] = useState( false );
@@ -91,12 +90,17 @@ function _CustomerEffortScoreTracks( {
 			ces_location: 'inside',
 			...trackProps,
 		} );
+
 		if ( ! cesShownForActions || ! cesShownForActions.includes( action ) ) {
-			updateOptions( {
-				[ SHOWN_FOR_ACTIONS_OPTION_NAME ]: [
-					action,
-					...( cesShownForActions || [] ),
-				],
+			apiFetch( {
+				path: 'wc-admin/options',
+				method: 'POST',
+				data: {
+					[ SHOWN_FOR_ACTIONS_OPTION_NAME ]: [
+						action,
+						...( cesShownForActions || [] ),
+					],
+				},
 			} );
 		}
 	};
@@ -247,11 +251,9 @@ export const CustomerEffortScoreTracks = compose(
 		};
 	} ),
 	withDispatch( ( dispatch ) => {
-		const { updateOptions } = dispatch( OPTIONS_STORE_NAME );
 		const { createNotice } = dispatch( 'core/notices' );
 
 		return {
-			updateOptions,
 			createNotice,
 		};
 	} )

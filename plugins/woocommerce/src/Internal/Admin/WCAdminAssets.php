@@ -279,6 +279,7 @@ class WCAdminAssets {
 			'wc-navigation',
 			'wc-block-templates',
 			'wc-product-editor',
+			'wc-settings-editor',
 			'wc-remote-logging',
 		);
 

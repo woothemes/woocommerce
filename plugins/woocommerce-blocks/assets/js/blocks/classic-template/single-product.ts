@@ -3,9 +3,19 @@
  */
 import { __, sprintf } from '@wordpress/i18n';
 import { isWpVersion } from '@woocommerce/settings';
-import { BlockInstance, createBlock } from '@wordpress/blocks';
 import { VARIATION_NAME as PRODUCT_TITLE_VARIATION_NAME } from '@woocommerce/blocks/product-query/variations/elements/product-title';
 import { VARIATION_NAME as PRODUCT_SUMMARY_VARIATION_NAME } from '@woocommerce/blocks/product-query/variations/elements/product-summary';
+import {
+	INNER_BLOCKS_PRODUCT_TEMPLATE as productCollectionInnerBlocksTemplate,
+	DEFAULT_ATTRIBUTES as productCollectionDefaultAttributes,
+	DEFAULT_QUERY as productCollectionDefaultQuery,
+} from '@woocommerce/blocks/product-collection/constants';
+import {
+	BlockInstance,
+	createBlock,
+	// @ts-expect-error Type definitions for this function are missing in Gutenberg
+	createBlocksFromInnerBlocksTemplate,
+} from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -53,9 +63,36 @@ const getBlockifiedTemplate = () =>
 			align: 'wide',
 			className: 'is-style-minimal',
 		} ),
-		createBlock( 'woocommerce/related-products', {
+		createBlock( 'core/heading', {
 			align: 'wide',
+			level: 2,
+			content: __( 'Related Products', 'woocommerce' ),
+			style: { spacing: { margin: { bottom: '1rem' } } },
 		} ),
+		createBlock(
+			'woocommerce/product-collection',
+			{
+				...productCollectionDefaultAttributes,
+				query: {
+					...productCollectionDefaultQuery,
+					perPage: 5,
+					pages: 1,
+					woocommerceStockStatus: [ 'instock', 'onbackorder' ],
+					filterable: false,
+				},
+				displayLayout: {
+					type: 'flex',
+					columns: 5,
+					shrinkColumns: true,
+				},
+				collection: 'woocommerce/product-collection/related',
+				hideControls: [ 'inherit' ],
+				align: 'wide',
+			},
+			createBlocksFromInnerBlocksTemplate( [
+				productCollectionInnerBlocksTemplate,
+			] )
+		),
 	].filter( Boolean ) as BlockInstance[];
 
 const isConversionPossible = () => {

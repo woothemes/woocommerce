@@ -53,7 +53,7 @@ test.describe( 'Template customization', () => {
 				// See: https://github.com/woocommerce/woocommerce/issues/42221
 				await expect(
 					page.getByRole( 'heading', {
-						name: `Editing ${ templateTypeName }: ${ testData.templateName }`,
+						name: `${ testData.templateName } · ${ templateTypeName }`,
 					} )
 				).toBeVisible();
 
