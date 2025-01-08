@@ -205,11 +205,14 @@ const ValidatedCheckboxControl = forwardRef<
 						: undefined
 				}
 				ref={ inputRef }
-				onChange={ ( newValue ) => {
-					validateInput( false );
-					// Push the changes up to the parent component.
-					onChange( newValue );
-				} }
+				onChange={ useCallback(
+					( newValue ) => {
+						validateInput( false );
+						// Push the changes up to the parent component.
+						onChange( newValue );
+					},
+					[ onChange, validateInput ]
+				) }
 				ariaDescribedBy={ ariaDescribedBy }
 				checked={ checked }
 				title="" // This prevents the same error being shown on hover.
