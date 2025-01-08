@@ -15,7 +15,7 @@ export type CurrencyInputProps = {
 	className: string;
 	value: string;
 	sanitize: ( value: string | number ) => string;
-	onChange: ( value: string ) => void;
+	onChange: ( value: string | undefined ) => void;
 	onFocus: ( event: React.FocusEvent< HTMLInputElement > ) => void;
 	onKeyUp: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
 };
