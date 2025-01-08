@@ -253,6 +253,13 @@ const MiniCartBlock = ( attributes: Props ): JSX.Element => {
 				} }
 				aria-label={ ariaLabel }
 			>
+				<QuantityBadge
+					count={ cartItemsCount }
+					icon={ miniCartIcon }
+					iconColor={ iconColor }
+					productCountColor={ productCountColor }
+					productCountVisibility={ productCountVisibility }
+				/>
 				{ ! hasHiddenPrice && (
 					<span
 						className="wc-block-mini-cart__amount"
@@ -272,13 +279,6 @@ const MiniCartBlock = ( attributes: Props ): JSX.Element => {
 						{ taxLabel }
 					</small>
 				) }
-				<QuantityBadge
-					count={ cartItemsCount }
-					icon={ miniCartIcon }
-					iconColor={ iconColor }
-					productCountColor={ productCountColor }
-					productCountVisibility={ productCountVisibility }
-				/>
 			</button>
 			<Drawer
 				className={ clsx( 'wc-block-mini-cart__drawer', 'is-mobile', {
