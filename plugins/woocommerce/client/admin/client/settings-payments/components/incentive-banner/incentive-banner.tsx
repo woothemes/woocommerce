@@ -57,8 +57,6 @@ interface IncentiveBannerProps {
 }
 
 /**
- * IncentiveBanner
- *
  * A banner component that displays a promotional incentive to the user. The banner allows the user to:
  * - Accept the incentive, triggering setup actions.
  * - Dismiss the incentive, removing it from the current context.
