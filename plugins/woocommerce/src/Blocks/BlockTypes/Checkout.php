@@ -438,8 +438,6 @@ class Checkout extends AbstractBlock {
 
 		$shipping_methods_count = wc_get_shipping_method_count( true, true );
 
-		var_dump( $shipping_methods_count );
-
 		// Local pickup is included with legacy shipping methods since they do not support shipping zones.
 		if ( $pickup_location_settings['enabled'] ) {
 			$this->asset_data_registry->add( 'shippingMethodsExist', $shipping_methods_count > 1 );
