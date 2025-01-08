@@ -52,7 +52,7 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 	values,
 	children,
 	isEditing,
-	ariaDescribedBy,
+	ariaDescribedBy = '',
 }: AddressFormProps< T > ): JSX.Element => {
 	const instanceId = useInstanceId( Form );
 	const isFirstRender = useRef( true );

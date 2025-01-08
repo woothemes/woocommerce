@@ -27,7 +27,7 @@ export interface AddressFormProps< T > {
 	// Type of form (billing or shipping).
 	addressType?: FormType;
 	// aria-describedby attribute to add to the input.
-	ariaDescribedBy?: string | undefined;
+	ariaDescribedBy?: string;
 	// Array of fields in form.
 	fields: ( keyof FormFields )[];
 	// Called with the new address data when the address form changes. This is only called when all required fields are filled and there are no validation errors.
