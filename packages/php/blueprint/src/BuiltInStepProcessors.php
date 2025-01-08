@@ -8,6 +8,7 @@ use Automattic\WooCommerce\Blueprint\Importers\ImportDeactivatePlugin;
 use Automattic\WooCommerce\Blueprint\Importers\ImportDeletePlugin;
 use Automattic\WooCommerce\Blueprint\Importers\ImportInstallPlugin;
 use Automattic\WooCommerce\Blueprint\Importers\ImportInstallTheme;
+use Automattic\WooCommerce\Blueprint\Importers\ImportRunPHP;
 use Automattic\WooCommerce\Blueprint\Importers\ImportSetSiteOptions;
 use Automattic\WooCommerce\Blueprint\ResourceStorages\LocalPluginResourceStorage;
 use Automattic\WooCommerce\Blueprint\ResourceStorages\LocalThemeResourceStorage;
@@ -52,6 +53,7 @@ class BuiltInStepProcessors {
 			new ImportActivatePlugin(),
 			new ImportActivateTheme(),
 			new ImportDeactivatePlugin(),
+			new ImportRunPHP(),
 		);
 	}
 

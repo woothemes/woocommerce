@@ -59,7 +59,6 @@ class ImportSetWCTaxRates {
 		$tax_rate = (array) $rate;
 
 		if ( $this->exist( $tax_rate['tax_rate_id'] ) ) {
-			$this->result->add_info( "Tax rate with I.D {$tax_rate['tax_rate_id']} already exists. Skipped creating it." );
 			return false;
 		}
 

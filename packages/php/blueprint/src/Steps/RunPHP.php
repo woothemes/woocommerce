@@ -8,14 +8,14 @@ namespace Automattic\WooCommerce\Blueprint\Steps;
  * @package Automattic\WooCommerce\Blueprint\Steps
  */
 class RunPHP extends Step {
-	protected $code = '';
+	protected string $code = '';
 	/**
 	 * The PHP code to run.
 	 *
-	 * @var string The PHP code to run.
+	 * @var string $code The PHP code to run.
 	 */
-	public function __construct( $template, array $replacements ) {
-
+	public function __construct( string $code ) {
+		$this->code = $code;
 	}
 
 	/**

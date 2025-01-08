@@ -51,9 +51,6 @@ class ExportInstallPluginSteps implements StepExporter {
 	public function export() {
 		$plugins = $this->sort_plugins_by_dep( $this->wp_get_plugins() );
 
-
-		wplog($plugins);
-
 		if ( is_callable( $this->filter_callback ) ) {
 			$plugins = call_user_func( $this->filter_callback, $plugins );
 		}

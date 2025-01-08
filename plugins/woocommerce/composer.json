@@ -23,7 +23,7 @@
 			"type": "path",
 			"url": "../../packages/php/blueprint",
 			"options": {
-				"symlink": false
+				"symlink": true
 			}
 		}
 	],

@@ -29,12 +29,6 @@ class ExportWCCoreProfilerOptions implements StepExporter, HasAlias {
 				'woocommerce_default_country'    => $this->wp_get_option( 'woocommerce_default_country' ),
 			)
 		);
-//		$step->set_meta_values(
-//			array(
-//				'plugin' => 'woocommerce',
-//				'alias'  => $this->get_alias(),
-//			)
-//		);
 
 		return $step;
 	}

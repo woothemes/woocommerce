@@ -2,10 +2,9 @@
 
 namespace Automattic\WooCommerce\Blueprint;
 
-use Automattic\WooCommerce\Blueprint\Exporters\StepExporter;
 use Automattic\WooCommerce\Blueprint\Exporters\ExportInstallPluginSteps;
-use Automattic\WooCommerce\Blueprint\Exporters\ExportInstallThemeSteps;
 use Automattic\WooCommerce\Blueprint\Exporters\HasAlias;
+use Automattic\WooCommerce\Blueprint\Exporters\StepExporter;
 
 /**
  * Class ExportSchema

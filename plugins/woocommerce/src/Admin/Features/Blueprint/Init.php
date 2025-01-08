@@ -5,19 +5,16 @@ declare( strict_types = 1 );
 namespace Automattic\WooCommerce\Admin\Features\Blueprint;
 
 use Automattic\WooCommerce\Admin\Features\Blueprint\Exporters\ExportWCCoreProfilerOptions;
-use Automattic\WooCommerce\Admin\Features\Blueprint\Exporters\ExportWCPaymentGateways;
 use Automattic\WooCommerce\Admin\Features\Blueprint\Exporters\ExportWCSettings;
 use Automattic\WooCommerce\Admin\Features\Blueprint\Exporters\ExportWCShipping;
 use Automattic\WooCommerce\Admin\Features\Blueprint\Exporters\ExportWCTaskOptions;
 use Automattic\WooCommerce\Admin\Features\Blueprint\Exporters\ExportWCTaxRates;
-use Automattic\WooCommerce\Admin\Features\Blueprint\Importers\ImportSetWCPaymentGateways;
-use Automattic\WooCommerce\Admin\Features\Blueprint\Importers\ImportSetWCShipping;
-use Automattic\WooCommerce\Admin\Features\Blueprint\Importers\ImportSetWCTaxRates;
-use Automattic\WooCommerce\Admin\PageController;
+use Automattic\WooCommerce\Admin\Features\Blueprint\Exporters\ExportWCPaymentGateways;
 use Automattic\WooCommerce\Blueprint\Exporters\HasAlias;
 use Automattic\WooCommerce\Blueprint\Exporters\StepExporter;
 use Automattic\WooCommerce\Blueprint\StepProcessor;
 use Automattic\WooCommerce\Blueprint\UseWPFunctions;
+use Automattic\WooCommerce\Admin\PageController;
 
 /**
  * Class Init
@@ -107,14 +104,7 @@ class Init {
 	 * @return array
 	 */
 	public function add_woo_importers( array $importers ) {
-		return array_merge(
-			$importers,
-			array(
-				new ImportSetWCPaymentGateways(),
-				new ImportSetWCShipping(),
-				new ImportSetWCTaxRates(),
-			)
-		);
+		return $importers;
 	}
 
 	/**
