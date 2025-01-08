@@ -7,6 +7,7 @@
  */
 
 use Automattic\Jetpack\Constants;
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\Orders\CouponsController;
 use Automattic\WooCommerce\Internal\Orders\TaxesController;
@@ -474,7 +475,7 @@ class WC_AJAX {
 			$variation    = $product->get_variation_attributes();
 		}
 
-		if ( $passed_validation && false !== WC()->cart->add_to_cart( $product_id, $quantity, $variation_id, $variation ) && 'publish' === $product_status ) {
+		if ( $passed_validation && false !== WC()->cart->add_to_cart( $product_id, $quantity, $variation_id, $variation ) && ProductStatus::PUBLISH === $product_status ) {
 
 			do_action( 'woocommerce_ajax_added_to_cart', $product_id );
 
@@ -2469,7 +2470,7 @@ class WC_AJAX {
 	private static function variation_bulk_action_toggle_enabled( $variations, $data ) {
 		foreach ( $variations as $variation_id ) {
 			$variation = wc_get_product( $variation_id );
-			$variation->set_status( 'private' === $variation->get_status( 'edit' ) ? 'publish' : 'private' );
+			$variation->set_status( ProductStatus::PRIVATE === $variation->get_status( 'edit' ) ? ProductStatus::PUBLISH : ProductStatus::PRIVATE );
 			$variation->save();
 		}
 	}
@@ -2803,6 +2804,11 @@ class WC_AJAX {
 		foreach ( $variations as $variation_id ) {
 			$variation   = wc_get_product( $variation_id );
 			$field_value = $variation->{"get_$field"}( 'edit' );
+
+			// Skip variations without a price set
+			if ( '' === $field_value || null === $field_value ) {
+				continue;
+			}
 
 			if ( '%' === substr( $value, -1 ) ) {
 				$percent      = wc_format_decimal( substr( $value, 0, -1 ) );

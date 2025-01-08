@@ -8,7 +8,6 @@ import { addQueryArgs, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { VIEW_LAYOUTS } from '@wordpress/dataviews';
 // eslint-disable-next-line @woocommerce/dependency-group
 import {
-	// @ts-expect-error no exported member.
 	__experimentalHStack as HStack
 } from '@wordpress/components';
 

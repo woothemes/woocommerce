@@ -1,5 +1,7 @@
 <?php
 
+use Automattic\WooCommerce\Enums\ProductStatus;
+
 /**
  * Meta
  * @package WooCommerce\Tests\Exporter
@@ -153,7 +155,7 @@ class WC_Tests_Product_CSV_Exporter extends WC_Unit_Test_Case {
 		$this->assertEquals( $product->get_sold_individually(), $row['sold_individually'] );
 		$this->assertEquals( $product->get_date_on_sale_from(), $row['date_on_sale_from'] );
 		$this->assertEquals( $product->get_date_on_sale_to(), $row['date_on_sale_to'] );
-		$this->assertEquals( 'publish' === $product->get_status(), $row['published'] );
+		$this->assertEquals( ProductStatus::PUBLISH === $product->get_status(), $row['published'] );
 		$this->assertEquals( 'instock' === $product->get_stock_status(), $row['stock_status'] );
 		$this->assertEquals( $product->get_menu_order(), $row['menu_order'] );
 

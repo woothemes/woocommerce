@@ -8,6 +8,7 @@
  * @version  3.0.0
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -522,7 +523,7 @@ class WC_Meta_Box_Product_Data {
 
 				$errors = $variation->set_props(
 					array(
-						'status'            => isset( $_POST['variable_enabled'][ $i ] ) ? 'publish' : 'private',
+						'status'            => isset( $_POST['variable_enabled'][ $i ] ) ? ProductStatus::PUBLISH : ProductStatus::PRIVATE,
 						'menu_order'        => isset( $_POST['variation_menu_order'][ $i ] ) ? wc_clean( wp_unslash( $_POST['variation_menu_order'][ $i ] ) ) : null,
 						'regular_price'     => isset( $_POST['variable_regular_price'][ $i ] ) ? wc_clean( wp_unslash( $_POST['variable_regular_price'][ $i ] ) ) : null,
 						'sale_price'        => isset( $_POST['variable_sale_price'][ $i ] ) ? wc_clean( wp_unslash( $_POST['variable_sale_price'][ $i ] ) ) : null,

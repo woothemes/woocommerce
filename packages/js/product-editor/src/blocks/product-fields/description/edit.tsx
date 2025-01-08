@@ -51,7 +51,7 @@ export function getContentFromFreeform(
 
 export function DescriptionBlockEdit( {
 	attributes,
-}: DescriptionBlockEditComponent & { attributes: Record< string, unknown > } ) {
+}: DescriptionBlockEditComponent ) {
 	const [ description, setDescription ] = useEntityProp< string >(
 		'postType',
 		'product',
