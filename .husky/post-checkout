@@ -30,8 +30,8 @@ if [ "$CHECKOUT_TYPE" = '1' ]; then
 
 	currentComposerDate=$( ( command -v composer > /dev/null && ( composer --version 2>/dev/null | awk '{print $4}' ) ) || echo '' )
 	if [ -n "$currentComposerDate" ]; then
-		current=$( php -r "echo date( 'Y:m:d', strtotime( '$currentComposerDate' ) );" )
-		threshold=$( php -r "echo date( 'Y:m:d', strtotime( '-12 months' ) );" )
+		current=$( php -r "echo date( 'Ymd', strtotime( '$currentComposerDate' ) );" )
+		threshold=$( php -r "echo date( 'Ymd', strtotime( '-12 months' ) );" )
 		if [ $current -lt $threshold ]; then
 			version=$( ( composer --version 2>/dev/null | awk '{print $3}' ) || echo '' )
 			printf "${orangeColoured}composer version (v$version build at $currentComposerDate) is older than twelve months, ensure to update it with 'composer self-update'.\n"
