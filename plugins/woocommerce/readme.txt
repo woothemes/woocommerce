@@ -173,6 +173,7 @@ WooCommerce comes with some sample data you can use to see how products look; im
 
 **WooCommerce**
 
+* Fix - Fix EmailPreviewTest::test_dummy_product_filter to validate dummy product properties directly [#54104](https://github.com/woocommerce/woocommerce/pull/54104)
 * Fix - Add aria modal attribute to photoswipe [#53245](https://github.com/woocommerce/woocommerce/pull/53245)
 * Fix - Add check for comingSoonNewsletter object before adding in newsletter panel [#53781](https://github.com/woocommerce/woocommerce/pull/53781)
 * Fix - Add checks to various template functions, guard against fatal errors when the global $product object is unavailable. [#53167](https://github.com/woocommerce/woocommerce/pull/53167)
