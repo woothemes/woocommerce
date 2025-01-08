@@ -6,6 +6,9 @@ import {
 	ONBOARDING_STORE_NAME,
 	PAYMENT_GATEWAYS_STORE_NAME,
 	PaymentGateway,
+	PaymentSelectors,
+	OnboardingSelectors,
+	WPDataSelectors,
 } from '@woocommerce/data';
 
 /**
@@ -18,23 +21,21 @@ export const usePaymentsBanner = () => {
 		installedPaymentGateways,
 		paymentGatewaySuggestions,
 		hasFinishedResolution,
-		// TODO: Replace any with proper type from @wordpress/data.
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	} = useSelect( ( select: any ) => {
+	} = useSelect( ( select ) => {
 		return {
-			installedPaymentGateways: select(
-				PAYMENT_GATEWAYS_STORE_NAME
-			).getPaymentGateways(),
-			paymentGatewaySuggestions: select(
-				ONBOARDING_STORE_NAME
-			).getPaymentGatewaySuggestions(),
+			installedPaymentGateways: (
+				select( PAYMENT_GATEWAYS_STORE_NAME ) as PaymentSelectors
+			 ).getPaymentGateways(),
+			paymentGatewaySuggestions: (
+				select( ONBOARDING_STORE_NAME ) as OnboardingSelectors
+			 ).getPaymentGatewaySuggestions(),
 			hasFinishedResolution:
-				select( ONBOARDING_STORE_NAME ).hasFinishedResolution(
-					'getPaymentGatewaySuggestions'
-				) &&
-				select( PAYMENT_GATEWAYS_STORE_NAME ).hasFinishedResolution(
-					'getPaymentGateways'
-				),
+				(
+					select( ONBOARDING_STORE_NAME ) as WPDataSelectors
+				 ).hasFinishedResolution( 'getPaymentGatewaySuggestions' ) &&
+				(
+					select( PAYMENT_GATEWAYS_STORE_NAME ) as WPDataSelectors
+				 ).hasFinishedResolution( 'getPaymentGateways' ),
 		};
 	}, [] );
 
