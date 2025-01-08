@@ -22,7 +22,7 @@ defined( 'ABSPATH' ) || exit;
 $logo_filename = 'woocommerce_logo.png';
 
 if (
-	class_exists('BrandingController' )
+	class_exists('Automattic\WooCommerce\Internal\BrandingController' )
 	 && BrandingController::use_new_branding()
 ) {
 	// New branding.
