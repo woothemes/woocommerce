@@ -286,7 +286,7 @@ class WC_Order_Item_Shipping extends WC_Order_Item {
 	 */
 	public function get_tax_status( $context = 'view' ) {
 		$shipping_method = WC_Shipping_Zones::get_shipping_method( $this->get_instance_id() );
-		return $shipping_method->get_option( 'tax_status' ) ?? 'taxable';
+		return $shipping_method ? $shipping_method->get_option( 'tax_status' ) : 'taxable';
 	}
 
 	/*
