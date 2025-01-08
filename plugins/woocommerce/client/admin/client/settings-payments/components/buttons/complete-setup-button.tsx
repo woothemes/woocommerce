@@ -14,6 +14,11 @@ import { getHistory, getNewPath } from '@woocommerce/navigation';
  * Internal dependencies
  */
 
+/**
+ * A button component that guides users through completing the setup for a payment gateway.
+ * The button dynamically determines the appropriate action (e.g., redirecting to onboarding
+ * or settings) based on the gateway's and onboarding state.
+ */
 interface CompleteSetupButtonProps {
 	/**
 	 * The ID of the gateway to activate payments for.
