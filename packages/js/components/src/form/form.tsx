@@ -134,10 +134,10 @@ type StateAndHelpers< Values > = {
 	setValue: ( name: string, value: Values[ keyof Values ] ) => void;
 	setValues: ( valuesToSet: Values ) => void;
 	handleSubmit: () => unknown;
-	getCheckboxControlProps: (
-		name: string,
+	getCheckboxControlProps: < P extends keyof Values >(
+		name: P,
 		inputProps?: ConsumerInputProps< Values >
-	) => CheckboxProps< Values, Values[ keyof Values ] >;
+	) => CheckboxProps< Values, Values[ P ] >;
 	getInputProps: < P extends keyof Values >(
 		name: P,
 		inputProps?: ConsumerInputProps< Values >
@@ -386,10 +386,10 @@ function FormComponent< Values extends Record< string, any > >(
 		};
 	}
 
-	function getCheckboxControlProps< Value = Values[ keyof Values ] >(
-		name: string,
+	function getCheckboxControlProps< P extends keyof Values >(
+		name: P,
 		inputProps: ConsumerInputProps< Values > = {}
-	): CheckboxProps< Values, Value > {
+	): CheckboxProps< Values, Values[ P ] > {
 		return _omit( getInputProps( name, inputProps ), [
 			'selected',
 			'value',
