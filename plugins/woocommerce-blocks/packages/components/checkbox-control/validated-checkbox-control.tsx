@@ -45,7 +45,7 @@ export interface ValidatedCheckboxControlProps
 		| undefined;
 	// Custom validation message to display when validity is false. Given the input element. Expected to use inputObject.validity.
 	customValidityMessage?: ( validity: ValidityState ) => string;
-	// Whether validation should run when focused - only has an effect when focusOnMount is also true.
+	// Whether validation should run on mount.
 	validateOnMount?: boolean;
 }
 
