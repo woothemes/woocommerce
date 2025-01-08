@@ -154,6 +154,16 @@ class WC_Order_Item_Shipping extends WC_Order_Item {
 	}
 
 	/**
+	 * Set tax_status.
+	 *
+	 * @param string $value Tax status.
+	 * @deprecated 9.7.0 order shipping lines don't support setting tax status, hook into the shipping method instead.
+	 */
+	public function set_tax_status( $value ) {
+		wc_deprecated_function( 'WC_Order_Item_Shipping::set_tax_status', '9.7.0', 'hook into the shipping method instead' );
+	}
+
+	/**
 	 * Set properties based on passed in shipping rate object.
 	 *
 	 * @param WC_Shipping_Rate $shipping_rate Shipping rate to set.
