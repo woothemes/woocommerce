@@ -62,7 +62,7 @@ const PaymentRecommendations: React.FC = () => {
 				installedPaymentGateways: select( PAYMENT_GATEWAYS_STORE_NAME )
 					.getPaymentGateways()
 					.reduce(
-						( gateways: { [ id: string ]: boolean }, gateway ) => {
+						( gateways: { [ id: string ]: boolean }, gateway: { id: string } ) => {
 							if ( installingGatewayId === gateway.id ) {
 								return gateways;
 							}
