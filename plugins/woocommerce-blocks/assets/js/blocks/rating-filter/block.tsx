@@ -75,7 +75,7 @@ const RatingFilterBlock = ( {
 
 	const [ queryState ] = useQueryStateByContext();
 
-	const { results: filteredCounts, isLoading: filteredCountsLoading } =
+	const { data: filteredCounts, isLoading: filteredCountsLoading } =
 		useCollectionData( {
 			queryRating: true,
 			queryState,
@@ -485,6 +485,10 @@ const RatingFilterBlock = ( {
 							isLoading={ isLoading }
 							disabled={ isLoading || isDisabled }
 							onClick={ () => onSubmit( checked ) }
+							screenReaderLabel={ __(
+								'Apply rating filter',
+								'woocommerce'
+							) }
 						/>
 					) }
 				</div>

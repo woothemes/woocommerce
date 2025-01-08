@@ -1,66 +1,67 @@
 const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
 
-const customerData = {
-	walterWhite: {
-		first_name: 'Walter',
-		last_name: 'White',
-		username: 'heisenberg',
-		email: 'heisenberg@example.com',
-		billing: {
-			first_name: 'Walter',
-			last_name: 'White',
-			company: 'Los Pollos Hermanos',
-			country: 'US',
-			address_1: '308 Negra Arroyo Lane',
-			address_2: 'Suite 6',
-			city: 'Albuquerque',
-			state: 'NM',
-			postcode: '87104',
-			phone: '505-842-5662',
-			email: 'heisenberg@example.com',
-		},
-	},
-	jessePinkman: {
-		first_name: 'Jesse',
-		last_name: 'Pinkman',
-		username: 'jesse',
-		email: 'jesse@example.com',
-		billing: {
-			first_name: 'Jesse',
-			last_name: 'Pinkman',
-			company: 'Los Pollos Hermanos',
-			country: 'US',
-			address_1: '9809 Margo St',
-			city: 'Albuquerque',
-			state: 'NM',
-			postcode: '87104',
-			phone: '505-842-5663',
-			email: 'jesse@example.com',
-		},
-	},
-	saulGoodman: {
-		first_name: 'Saul',
-		last_name: 'Goodman',
-		username: 'saul',
-		email: 'saul@example.com',
-		billing: {
-			first_name: 'Saul',
-			last_name: 'Goodman',
-			company: 'Goodman & McGill',
-			country: 'US',
-			address_1: '160 Juan Tabo Blvd NE',
-			city: 'Albuquerque',
-			state: 'NM',
-			postcode: '87123',
-			phone: '505-842-5664',
-			email: 'saul@example.com',
-		},
-	},
-};
-
 const test = baseTest.extend( {
 	storageState: process.env.ADMINSTATE,
 	customers: async ( { api }, use ) => {
+		const now = Date.now();
+		const customerData = {
+			walterWhite: {
+				first_name: 'Walter',
+				last_name: 'White',
+				username: `heisenberg.${ now }`,
+				email: `heisenberg.${ now }@example.com`,
+				billing: {
+					first_name: 'Walter',
+					last_name: 'White',
+					company: 'Los Pollos Hermanos',
+					country: 'US',
+					address_1: '308 Negra Arroyo Lane',
+					address_2: 'Suite 6',
+					city: 'Albuquerque',
+					state: 'NM',
+					postcode: '87104',
+					phone: '505-842-5662',
+					email: `heisenberg.${ now }@example.com`,
+				},
+			},
+			jessePinkman: {
+				first_name: 'Jesse',
+				last_name: 'Pinkman',
+				username: `jesse.${ now }`,
+				email: `jesse.${ now }@example.com`,
+				billing: {
+					first_name: 'Jesse',
+					last_name: 'Pinkman',
+					company: 'Los Pollos Hermanos',
+					country: 'US',
+					address_1: '9809 Margo St',
+					city: 'Albuquerque',
+					state: 'NM',
+					postcode: '87104',
+					phone: '505-842-5663',
+					email: `jesse.${ now }@example.com`,
+				},
+			},
+			saulGoodman: {
+				first_name: 'Saul',
+				last_name: 'Goodman',
+				username: `saul.${ now }`,
+				email: `saul.${ now }@example.com`,
+				billing: {
+					first_name: 'Saul',
+					last_name: 'Goodman',
+					company: 'Goodman & McGill',
+					country: 'US',
+					address_1: '160 Juan Tabo Blvd NE',
+					city: 'Albuquerque',
+					state: 'NM',
+					postcode: '87123',
+					phone: '505-842-5664',
+					email: `saul.${ now }@example.com`,
+				},
+			},
+		};
+
 		const customers = [];
 
 		for ( const customer of Object.values( customerData ) ) {
@@ -77,171 +78,156 @@ const test = baseTest.extend( {
 	},
 } );
 
-test.describe( 'Merchant > Customer List', { tag: '@services' }, () => {
+test.describe( 'Merchant > Customer List', () => {
 	test.beforeEach( async ( { context } ) => {
 		// prevents the column picker from saving state between tests
 		await context.route( '**/users/**', ( route ) => route.abort() );
 	} );
 
-	test(
-		'Merchant can view a list of all customers, filter and download',
-		{ tag: [ '@skip-on-default-pressable', '@skip-on-default-wpcom' ] },
-		async ( { page, customers } ) => {
-			await test.step( 'Go to the customers reports page', async () => {
-				const responsePromise = page.waitForResponse(
-					'**/wp-json/wc-analytics/reports/customers?orderby**'
-				);
-				await page.goto(
-					'/wp-admin/admin.php?page=wc-admin&path=%2Fcustomers'
-				);
-				await responsePromise;
-			} );
+	test( 'Merchant can view a list of all customers, filter and download', async ( {
+		page,
+		customers,
+	} ) => {
+		await test.step( 'Go to the customers reports page', async () => {
+			const responsePromise = page.waitForResponse(
+				'**/wp-json/wc-analytics/reports/customers?orderby**'
+			);
+			await page.goto(
+				'wp-admin/admin.php?page=wc-admin&path=%2Fcustomers'
+			);
+			await responsePromise;
+		} );
 
-			// may have more than 3 customers due to guest orders
-			// await test.step( 'Check that 3 customers are displayed', async () => {
-			// 	await expect(
-			// 		page.getByText( '3customers0Average orders$0.' )
-			// 	).toBeVisible();
-			// } );
+		// may have more than 3 customers due to guest orders
+		// await test.step( 'Check that 3 customers are displayed', async () => {
+		// 	await expect(
+		// 		page.getByText( '3customers0Average orders$0.' )
+		// 	).toBeVisible();
+		// } );
 
-			await test.step( 'Check that the customers are displayed in the list', async () => {
-				for ( const customer of customers ) {
-					await expect(
-						page.getByRole( 'link', { name: customer.email } )
-					).toBeVisible();
-				}
-			} );
+		await test.step( 'Check that the customers are displayed in the list', async () => {
+			for ( const customer of customers ) {
+				await expect(
+					page.getByRole( 'link', { name: customer.email } )
+				).toBeVisible();
+			}
+		} );
 
-			await test.step( 'Check that the customer list can be filtered by first name', async () => {
-				let x = 1;
-				for ( const customer of customers ) {
-					await page
-						.getByRole( 'combobox', {
-							expanded: false,
-							disabled: false,
-						} )
-						.click();
-					await page
-						.getByRole( 'combobox', {
-							expanded: false,
-							disabled: false,
-						} )
-						.pressSequentially(
-							`${ customer.first_name } ${ customer.last_name }`
-						);
-					await page
-						.getByRole( 'option', {
-							name: `All customers with names that include ${ customer.first_name } ${ customer.last_name }`,
-							exact: true,
-						} )
-						.waitFor();
-					await page
-						.getByRole( 'option', {
-							name: `${ customer.first_name } ${ customer.last_name }`,
-							exact: true,
-						} )
-						.waitFor();
-					await page
-						.getByRole( 'option', {
-							name: `All customers with names that include ${ customer.first_name } ${ customer.last_name }`,
-							exact: true,
-						} )
-						.click( { delay: 300 } );
-					await expect(
-						page.getByRole( 'link', { name: customer.email } )
-					).toBeVisible();
-					await expect(
-						page.getByText( `${ x }customer` )
-					).toBeVisible();
-					x++;
-				}
-				await page.getByRole( 'button', { name: 'Clear all' } ).click();
-			} );
-
-			await test.step( 'Hide and display columns', async () => {
+		await test.step( 'Check that the customer list can be filtered by first name', async () => {
+			let x = 1;
+			for ( const customer of customers ) {
 				await page
-					.getByRole( 'button', {
-						name: 'Choose which values to display',
+					.getByRole( 'combobox', {
+						expanded: false,
+						disabled: false,
 					} )
 					.click();
-				// hide a few columns
-				await page.getByRole( 'menu' ).getByText( 'Username' ).click();
 				await page
-					.getByRole( 'menu' )
-					.getByText( 'Last active' )
-					.click();
-				await page
-					.getByRole( 'menu' )
-					.getByText( 'Total spend' )
-					.click();
-
-				// click to close the menu
-				await page.getByText( 'Show:' ).click();
-
-				await expect(
-					page.getByRole( 'columnheader', { name: 'Username' } )
-				).toBeHidden();
-				await expect(
-					page.getByRole( 'columnheader', { name: 'Last active' } )
-				).toBeHidden();
-				await expect(
-					page.getByRole( 'columnheader', { name: 'Total spend' } )
-				).toBeHidden();
-
-				// show the columns again
-				await page
-					.getByRole( 'button', {
-						name: 'Choose which values to display',
+					.getByRole( 'combobox', {
+						expanded: false,
+						disabled: false,
 					} )
-					.click();
-				await page.getByRole( 'menu' ).getByText( 'Username' ).click();
+					.pressSequentially(
+						`${ customer.first_name } ${ customer.last_name }`
+					);
 				await page
-					.getByRole( 'menu' )
-					.getByText( 'Last active' )
-					.click();
+					.getByRole( 'option', {
+						name: `All customers with names that include ${ customer.first_name } ${ customer.last_name }`,
+						exact: true,
+					} )
+					.waitFor();
 				await page
-					.getByRole( 'menu' )
-					.getByText( 'Total spend' )
-					.click();
-
-				// click to close the menu
-				await page.getByText( 'Show:' ).click();
-
+					.getByRole( 'option', {
+						name: `${ customer.first_name } ${ customer.last_name }`,
+						exact: true,
+					} )
+					.waitFor();
+				await page
+					.getByRole( 'option', {
+						name: `All customers with names that include ${ customer.first_name } ${ customer.last_name }`,
+						exact: true,
+					} )
+					.click( { delay: 300 } );
 				await expect(
-					page.getByRole( 'columnheader', { name: 'Username' } )
+					page.getByRole( 'link', { name: customer.email } )
 				).toBeVisible();
 				await expect(
-					page.getByRole( 'columnheader', { name: 'Last active' } )
+					page.getByText( `${ x }customer` )
 				).toBeVisible();
-				await expect(
-					page.getByRole( 'columnheader', { name: 'Total spend' } )
-				).toBeVisible();
-			} );
+				x++;
+			}
+			await page.getByRole( 'button', { name: 'Clear all' } ).click();
+		} );
 
-			await test.step( 'Download the customer list', async () => {
-				const downloadPromise = page.waitForEvent( 'download' );
-				await page.getByRole( 'button', { name: 'Download' } ).click();
-				const download = await downloadPromise;
+		await test.step( 'Hide and display columns', async () => {
+			await page
+				.getByRole( 'button', {
+					name: 'Choose which values to display',
+				} )
+				.click();
+			// hide a few columns
+			await page.getByRole( 'menu' ).getByText( 'Username' ).click();
+			await page.getByRole( 'menu' ).getByText( 'Last active' ).click();
+			await page.getByRole( 'menu' ).getByText( 'Total spend' ).click();
 
-				const today = new Date();
-				const year = today.getFullYear();
-				const month = String( today.getMonth() + 1 ).padStart( 2, '0' );
-				const day = String( today.getDate() ).padStart( 2, '0' );
+			// click to close the menu
+			await page.getByText( 'Show:' ).click();
 
-				const filename = `customers_${ year }-${ month }-${ day }_orderby-date-last-active_order-desc_page-wc-admin_path--customers.csv`;
+			await expect(
+				page.getByRole( 'columnheader', { name: 'Username' } )
+			).toBeHidden();
+			await expect(
+				page.getByRole( 'columnheader', { name: 'Last active' } )
+			).toBeHidden();
+			await expect(
+				page.getByRole( 'columnheader', { name: 'Total spend' } )
+			).toBeHidden();
 
-				await expect( download.suggestedFilename() ).toBe( filename );
-			} );
-		}
-	);
+			// show the columns again
+			await page
+				.getByRole( 'button', {
+					name: 'Choose which values to display',
+				} )
+				.click();
+			await page.getByRole( 'menu' ).getByText( 'Username' ).click();
+			await page.getByRole( 'menu' ).getByText( 'Last active' ).click();
+			await page.getByRole( 'menu' ).getByText( 'Total spend' ).click();
+
+			// click to close the menu
+			await page.getByText( 'Show:' ).click();
+
+			await expect(
+				page.getByRole( 'columnheader', { name: 'Username' } )
+			).toBeVisible();
+			await expect(
+				page.getByRole( 'columnheader', { name: 'Last active' } )
+			).toBeVisible();
+			await expect(
+				page.getByRole( 'columnheader', { name: 'Total spend' } )
+			).toBeVisible();
+		} );
+
+		await test.step( 'Download the customer list', async () => {
+			const downloadPromise = page.waitForEvent( 'download' );
+			await page.getByRole( 'button', { name: 'Download' } ).click();
+			const download = await downloadPromise;
+
+			const today = new Date();
+			const year = today.getFullYear();
+			const month = String( today.getMonth() + 1 ).padStart( 2, '0' );
+			const day = String( today.getDate() ).padStart( 2, '0' );
+
+			const filename = `customers_${ year }-${ month }-${ day }_orderby-date-last-active_order-desc_page-wc-admin_path--customers.csv`;
+
+			await expect( download.suggestedFilename() ).toBe( filename );
+		} );
+	} );
 
 	test( 'Merchant can view a single customer', async ( {
 		page,
 		customers,
 	} ) => {
-		await page.goto(
-			'/wp-admin/admin.php?page=wc-admin&path=%2Fcustomers'
-		);
+		await page.goto( 'wp-admin/admin.php?page=wc-admin&path=%2Fcustomers' );
 
 		await test.step( 'Switch to single customer view', async () => {
 			await page.getByRole( 'button', { name: 'All Customers' } ).click();
@@ -280,9 +266,7 @@ test.describe( 'Merchant > Customer List', { tag: '@services' }, () => {
 		page,
 		customers,
 	} ) => {
-		await page.goto(
-			'/wp-admin/admin.php?page=wc-admin&path=%2Fcustomers'
-		);
+		await page.goto( 'wp-admin/admin.php?page=wc-admin&path=%2Fcustomers' );
 
 		await test.step( 'Switch to advanced filters', async () => {
 			await page.getByRole( 'button', { name: 'All Customers' } ).click();

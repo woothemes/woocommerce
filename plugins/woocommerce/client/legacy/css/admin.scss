@@ -216,7 +216,7 @@ $font-sf-pro-text: helveticaneue-light, "Helvetica Neue Light",
 
 	/**
 	 * Marketplace related variables
- 	 */
+	 */
 	$font-sf-pro-display: sans-serif;
 
 	h1.search-form-title {
@@ -1983,11 +1983,11 @@ ul.wc_coupon_list_block {
 				width: 100%;
 			}
 			input.date-picker {
-				width: 50%;
+				width: 40%;
 			}
 			input.hour,
 			input.minute {
-				width: 3.5em;
+				width: 4em;
 			}
 		}
 
@@ -3654,6 +3654,10 @@ table.wp-list-table {
 	.column-product_type {
 		width: 48px;
 		text-align: left !important;
+
+		a:focus {
+			box-shadow: none;
+		}
 	}
 
 	.column-customer_message,
@@ -4386,7 +4390,7 @@ table.wc_shipping {
 				margin: 6px 0;
 				padding: 12px;
 				font-size: 13px;
-    			line-height: 16px;
+				line-height: 16px;
 
 				&:not([type="checkbox"]) {
 					width: 100%;
@@ -4521,7 +4525,7 @@ table {
 
 		input {
 			font-size: 13px;
-    		line-height: 16px;
+			line-height: 16px;
 		}
 	}
 
@@ -5058,6 +5062,11 @@ img.help_tip {
 		margin: 0;
 		position: relative;
 		table-layout: fixed;
+
+		.forminp {
+			display: block;
+			position: relative;
+		}
 
 		.forminp-radio ul {
 			margin: 0;
@@ -6003,6 +6012,17 @@ img.help_tip {
 		/* Warning asterisk (indicates if there is a problem with a downloadable file). */
 		span.disabled {
 			color: var(--wc-red);
+		}
+	}
+}
+
+.woocommerce_variation .woocommerce_variable_attributes .dimensions_field.form-row {
+	.wrap {
+		display: flex;
+		gap: 12px;
+
+		input {
+			width: 33.33%;
 		}
 	}
 }

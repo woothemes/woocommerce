@@ -9,6 +9,8 @@ import { controls, dispatch } from '@wordpress/data';
  */
 import TYPES from './action-types';
 import { WC_ADMIN_NAMESPACE } from '../constants';
+import { STORE_NAME } from './constants';
+
 import { DeprecatedTasks } from './deprecated-tasks';
 import { STORE_NAME as OPTIONS_STORE_NAME } from '../options/constants';
 import {
@@ -19,6 +21,8 @@ import {
 	OnboardingProductTypes,
 	InstallAndActivatePluginsAsyncResponse,
 	GetJetpackAuthUrlResponse,
+	CoreProfilerStep,
+	CoreProfilerCompletedSteps,
 } from './types';
 import { Plugin, PluginNames } from '../plugins/types';
 
@@ -283,6 +287,15 @@ export function getProductTypesError( error: unknown ) {
 	};
 }
 
+export function setProfileProgress(
+	profileProgress: Partial< CoreProfilerCompletedSteps >
+) {
+	return {
+		type: TYPES.SET_PROFILE_PROGRESS,
+		profileProgress,
+	};
+}
+
 export function* keepCompletedTaskList( taskListId: string ) {
 	const updateOptionsParams = {
 		woocommerce_task_list_keep_completed: 'yes',
@@ -328,6 +341,44 @@ export function* updateProfileItems( items: ProfileItems ) {
 		yield dispatch( OPTIONS_STORE_NAME ).invalidateResolution(
 			'getOption',
 			[ 'woocommerce_onboarding_profile' ]
+		);
+		yield dispatch( STORE_NAME ).invalidateResolution( 'getProfileItems' );
+	}
+}
+
+export function* updateCoreProfilerStep( step: CoreProfilerStep ) {
+	yield setIsRequesting( 'updateCoreProfilerStep', true );
+	yield setError( 'updateCoreProfilerStep', null );
+
+	try {
+		const results: {
+			results: CoreProfilerStep;
+			status: string;
+		} = yield apiFetch( {
+			path: `${ WC_ADMIN_NAMESPACE }/onboarding/profile/progress/core-profiler/complete`,
+			method: 'POST',
+			data: { step },
+		} );
+
+		if ( results && results.status === 'success' ) {
+			yield setIsRequesting( 'updateCoreProfilerStep', false );
+			return results;
+		}
+
+		throw new Error();
+	} catch ( error ) {
+		yield setError( 'updateCoreProfilerStep', error );
+		yield setIsRequesting( 'updateCoreProfilerStep', false );
+		throw error;
+	} finally {
+		yield dispatch( STORE_NAME ).invalidateResolution(
+			'getProfileProgress'
+		);
+		yield dispatch( STORE_NAME ).invalidateResolution(
+			'getCoreProfilerCompletedSteps'
+		);
+		yield dispatch( STORE_NAME ).invalidateResolution(
+			'getMostRecentCoreProfilerStep'
 		);
 	}
 }
@@ -582,4 +633,5 @@ export type Action = ReturnType<
 	| typeof coreProfilerCompletedRequest
 	| typeof coreProfilerCompletedSuccess
 	| typeof coreProfilerCompletedError
+	| typeof setProfileProgress
 >;

@@ -379,11 +379,13 @@ class OrderController {
 	protected function validate_address_fields( \WC_Order $order, $address_type, \WP_Error $errors ) {
 		$all_locales    = wc()->countries->get_country_locale();
 		$address        = $order->get_address( $address_type );
-		$current_locale = isset( $all_locales[ $address['country'] ] ) ? $all_locales[ $address['country'] ] : array();
+		$current_locale = $all_locales[ $address['country'] ] ?? [];
 
 		foreach ( $all_locales['default'] as $key => $value ) {
-			$default_value          = empty( $current_locale[ $key ] ) ? [] : $current_locale[ $key ];
-			$current_locale[ $key ] = wp_parse_args( $default_value, $value );
+			// If $current_locale[ $key ] is not empty, merge it with locale default, otherwise just use default locale.
+			$current_locale[ $key ] = ! empty( $current_locale[ $key ] )
+				? wp_parse_args( $current_locale[ $key ], $value )
+				: $value;
 		}
 
 		$additional_fields = $this->additional_fields_controller->get_all_fields_from_object( $order, $address_type );
@@ -391,7 +393,17 @@ class OrderController {
 		$address = array_merge( $address, $additional_fields );
 
 		foreach ( $current_locale as $address_field_key => $address_field ) {
-			if ( empty( $address[ $address_field_key ] ) && $address_field['required'] ) {
+			// Skip validation if field is not required.
+			if ( ! $address_field['required'] ) {
+				continue;
+			}
+
+			// Check if field is not set, is an empty string, or is an empty array.
+			$is_empty = ! isset( $address[ $address_field_key ] ) ||
+				( is_string( $address[ $address_field_key ] ) && '' === trim( $address[ $address_field_key ] ) ) ||
+				( is_array( $address[ $address_field_key ] ) && 0 === count( $address[ $address_field_key ] ) );
+
+			if ( $is_empty ) {
 				/* translators: %s Field label. */
 				$errors->add( $address_type, sprintf( __( '%s is required', 'woocommerce' ), $address_field['label'] ), $address_field_key );
 			}

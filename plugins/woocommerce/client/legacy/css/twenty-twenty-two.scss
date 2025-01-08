@@ -10,6 +10,11 @@
 $tt2-gray: #f7f7f7;
 
 /**
+ * Forms
+ */
+ @import "forms";
+
+/**
  * Main layout.
  */
 
@@ -261,6 +266,12 @@ $tt2-gray: #f7f7f7;
 				margin: 0;
 			}
 
+		}
+
+		.woocommerce-product-gallery__image a {
+			display: block;
+			line-height: 0;
+			outline-offset: -1px;
 		}
 
 		div.summary {
@@ -1008,24 +1019,6 @@ ul.wc-tabs {
 
 		thead th {
 			text-transform: uppercase;
-		}
-	}
-}
-
-.select2-container {
-
-	.select2-selection,
-	.select2-dropdown {
-		border: 1px solid var(--wp--preset--color--black);
-		border-radius: 0;
-	}
-
-	.select2-dropdown {
-		border-top: 0;
-
-		.select2-search__field {
-			border: 1px solid var(--wp--preset--color--black);
-			border-radius: 0;
 		}
 	}
 }

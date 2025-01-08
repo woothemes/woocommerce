@@ -1,6 +1,6 @@
 {
 	"name": "@woocommerce/dependency-extraction-webpack-plugin",
-	"version": "3.0.1",
+	"version": "3.1.0",
 	"description": "WooCommerce Dependency Extraction Webpack Plugin",
 	"author": "Automattic",
 	"license": "GPL-2.0-or-later",
@@ -39,7 +39,7 @@
 		"jest-cli": "27.5.x",
 		"rimraf": "5.0.5",
 		"ts-jest": "29.1.x",
-		"typescript": "5.3.x",
+		"typescript": "5.7.x",
 		"webpack": "^5.89.0",
 		"webpack-cli": "^3.3.12",
 		"wireit": "0.14.3"
