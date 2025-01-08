@@ -10,7 +10,7 @@ import { createElement } from '@wordpress/element';
  * Internal dependencies
  */
 import { SelectControl } from '../index';
-import { Option } from '../types';
+import { Option, Selected } from '../types';
 
 describe( 'SelectControl', () => {
 	const query = 'lorem';
@@ -59,7 +59,7 @@ describe( 'SelectControl', () => {
 			<SelectControl
 				isSearchable
 				options={ options }
-				selected={ [ options[ 1 ] ] }
+				selected={ [ options[ 1 ] ] as Selected }
 				excludeSelectedOptions
 				multiple
 			/>
@@ -172,7 +172,10 @@ describe( 'SelectControl', () => {
 	it( 'changes the options on search', async () => {
 		const queriedOptions: Option[] = [];
 		// eslint-disable-next-line @typescript-eslint/no-shadow
-		const queryOptions = async ( options: Option[], searchedQuery: string | null ) => {
+		const queryOptions = async (
+			options: Option[],
+			searchedQuery: string | null
+		) => {
 			if ( searchedQuery === 'test' ) {
 				queriedOptions.push( {
 					key: 'test-option',
@@ -229,7 +232,7 @@ describe( 'SelectControl', () => {
 			const { getByRole } = render(
 				<SelectControl
 					isSearchable
-					selected={ [ { ...options[ 0 ] } ] }
+					selected={ [ { ...options[ 0 ] } ] as Selected }
 					options={ options }
 					onSearch={ async () => options }
 					onFilter={ () => options }
@@ -364,7 +367,7 @@ describe( 'SelectControl', () => {
 				const { getByRole } = render(
 					<SelectControl
 						isSearchable
-						selected={ [ { ...options[ 0 ] } ] }
+						selected={ [ { ...options[ 0 ] } ] as Selected }
 						options={ options }
 						onSearch={ async () => options }
 						onFilter={ () => options }
@@ -404,13 +407,13 @@ describe( 'SelectControl', () => {
 			<SelectControl
 				isSearchable
 				options={ options }
-				selected={ [ options[ 1 ] ] }
+				selected={ [ options[ 1 ] ] as Selected }
 				multiple
 				inlineTags={ false }
 			/>
 		);
 
-		expect( getByText( options[ 1 ].label ) ).toBeInTheDocument();
+		expect( getByText( options[ 1 ].label as string ) ).toBeInTheDocument();
 	} );
 
 	describe( 'keyboard interaction', () => {
