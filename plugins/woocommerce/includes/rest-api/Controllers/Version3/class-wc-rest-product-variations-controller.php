@@ -1063,7 +1063,7 @@ class WC_REST_Product_Variations_Controller extends WC_REST_Product_Variations_V
 			$args['post_type'] = $this->post_type;
 		}
 
-		// Filter virtual product variations
+		// Filter virtual product variations.
 		if ( isset( $request['virtual'] ) ) {
 			$args['meta_query'] = $this->add_meta_query( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 				$args,
