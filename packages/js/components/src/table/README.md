@@ -77,6 +77,7 @@ Name | Type | Default | Description
 `totalRows` | Number | `null` | (required) The total number of rows (across all pages)
 `baseSearchQuery` | Object | `{}` | Pass in query parameters to be included in the path when onSearch creates a new url
 `rowKey` | Function(row, index): string | `null` | Function used for the row key.
+`tablePreface` | ReactNode | `null` | Content to be displayed before the table but after the header. Useful for notices or custom content.
 
 ### `labels` structure
 
