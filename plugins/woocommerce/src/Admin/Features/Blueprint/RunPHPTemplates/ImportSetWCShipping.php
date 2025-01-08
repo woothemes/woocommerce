@@ -1,5 +1,5 @@
 <?php
-
+// phpcs:ignoreFile
 use Automattic\WooCommerce\Admin\Features\Blueprint\Steps\SetWCShipping;
 use Automattic\WooCommerce\Blueprint\UseWPFunctions;
 
