@@ -12,7 +12,7 @@ const generateDocsPlaygroundBlueprint = (runId, prNumber) => {
         step: 'installPlugin',
         pluginData: {
           resource: 'url',
-          url: 'https://github-proxy.com/proxy/?repo=https://github.com/wpcomvip/woocommerce-woo-docs-multi-com',
+          url: `https://playground.wordpress.net/plugin-proxy.php?org=wpcomvip&repo=woocommerce-woo-docs-multi-com&workflow=Build%20Live%20Branch&artifact=plugins-${runId}&pr=${prNumber}`,
         },
         options: {
           activate: true,
