@@ -4,6 +4,7 @@ on:
     types: [opened, reopened, converted_to_draft, ready_for_review]
     paths:
       - 'docs/**'
+  workflow_dispatch:
 
 jobs:
   build:
