@@ -143,6 +143,10 @@ export type TableCardProps = CommonTableProps & {
 	 */
 	hasSearch?: boolean;
 	/**
+	 * Content to be displayed before the table but after the header.
+	 */
+	tablePreface?: React.ReactNode;
+	/**
 	 * A list of IDs, matching to the row list so that ids[ 0 ] contains the object ID for the object displayed in row[ 0 ].
 	 */
 	ids?: Array< number >;
@@ -189,8 +193,4 @@ export type TableCardProps = CommonTableProps & {
 	 * The total number of rows (across all pages).
 	 */
 	totalRows: number;
-	/**
-	 * A component to be displayed before the table.
-	 */
-	tablePreface?: React.ReactNode;
 };
