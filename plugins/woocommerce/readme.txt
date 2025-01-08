@@ -169,11 +169,12 @@ WooCommerce comes with some sample data you can use to see how products look; im
 
 == Changelog ==
 
-= 9.5.1 2024-12-17 =
+= 9.5.2 2025-01-08 =
 
 **WooCommerce**
 
-* Fix - Product Gallery: fix PHP fatal error. [#53762](https://github.com/woocommerce/woocommerce/pull/53762)
+* Fix - Fixed a bug where limited usage coupons would experience conflicts when applied simultaneously. [#54269](https://github.com/woocommerce/woocommerce/pull/54269)
+* Update - Enhance the security of the customers API [#54267](https://github.com/woocommerce/woocommerce/pull/54267)
 
 
 [See changelog for all versions](https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/changelog.txt).
