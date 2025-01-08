@@ -205,6 +205,26 @@ describe( 'TableCard', () => {
 
 		expect( screen.queryByText( emptyMessage ) ).toBeInTheDocument();
 	} );
+
+	it( 'should render the tablePreface content when provided', () => {
+		const prefaceContent = 'Important table notice';
+
+		render(
+			<TableCard
+				title="My table"
+				headers={ mockHeaders }
+				isLoading={ false }
+				rows={ mockData }
+				rowsPerPage={ 5 }
+				tablePreface={ <div>{ prefaceContent }</div> }
+			/>
+		);
+
+		expect( screen.queryByText( prefaceContent ) ).toBeInTheDocument();
+		expect(
+			screen.getByText( prefaceContent ).closest( 'div' )
+		).toHaveClass( 'woocommerce-table__table-preface' );
+	} );
 } );
 
 describe( 'Table', () => {
