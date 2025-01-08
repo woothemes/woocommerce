@@ -22,8 +22,8 @@ defined( 'ABSPATH' ) || exit;
 $logo_filename = 'woocommerce_logo.png';
 
 if (
-	class_exists('Automattic\WooCommerce\Internal\BrandingController' )
-	 && BrandingController::use_new_branding()
+	class_exists( 'Automattic\WooCommerce\Internal\BrandingController' )
+	&& BrandingController::use_new_branding()
 ) {
 	// New branding.
 	$logo_filename = 'woocommerce-logo.svg';
@@ -38,8 +38,11 @@ if (
 	<meta name="robots" content="noindex, nofollow" />
 	<title><?php esc_html_e( 'Application authentication request', 'woocommerce' ); ?></title>
 	<?php wp_admin_css( 'install', true ); ?>
-	<link rel="stylesheet" href="<?php echo esc_url( str_replace( array( 'http:', 'https:' ), '', WC()->plugin_url() ) . '/assets/css/auth.css' ); ?>" type="text/css" />
+	<link rel="stylesheet" href="<?php echo esc_url( str_replace( array( 'http:', 'https:' ), '',
+			WC()->plugin_url() ) . '/assets/css/auth.css' ); ?>" type="text/css" />
 </head>
 <body class="wc-auth wp-core-ui">
-	<h1 id="wc-logo"><img src="<?php echo esc_url( WC()->plugin_url() . '/assets/images/' . $logo_filename ); ?>" alt="<?php esc_attr_e( 'WooCommerce', 'woocommerce' ); ?>" /></h1>
-	<div class="wc-auth-content">
+<h1 id="wc-logo">
+	<img src="<?php echo esc_url( WC()->plugin_url() . '/assets/images/' . $logo_filename ); ?>" alt="<?php esc_attr_e( 'WooCommerce',
+		'woocommerce' ); ?>" /></h1>
+<div class="wc-auth-content">
