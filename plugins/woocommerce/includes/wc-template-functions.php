@@ -4220,8 +4220,9 @@ function wc_after_switch_theme( $old_name, $old_theme ) {
 
 /**
  * Update the Store Notice visibility when switching themes:
- * - When switching from a classic theme to a block theme, disable it.
- * - When switching from a block theme to a classic theme, re-enable only if it was enabled when switching from a classic theme to a block theme.
+ * - When switching from a classic theme to a block theme, disable the Store Notice.
+ * - When switching from a block theme to a classic theme, re-enable the Store Notice
+ *   only if it was enabled last time there was a switchi from a classic theme to a block theme.
  *
  * @since 9.7.0
  *
@@ -4241,19 +4242,19 @@ function wc_update_store_notice_visible_on_theme_switch( $old_name, $old_theme )
 		$store_notice_is_active = get_option( $is_store_notice_active_option, 'no' );
 
 		if ( 'yes' === $store_notice_is_active ) {
-			add_option( $enable_store_notice_in_classic_theme_option, 'yes' );
 			update_option( $is_store_notice_active_option, 'no' );
+			add_option( $enable_store_notice_in_classic_theme_option, 'yes' );
 		}
 	} elseif ( $old_theme->is_block_theme() && ! wc_current_theme_is_fse_theme() ) {
 		/*
 		 * When switching from a block theme to a clasic theme, check if we have set the option to
-		 * re-enale the store notice. If so, re-enable it.
+		 * re-enable the store notice. If so, re-enable it.
 		 */
 		$enable_store_notice_in_classic_theme = get_option( $enable_store_notice_in_classic_theme_option, 'no' );
 
 		if ( 'yes' === $enable_store_notice_in_classic_theme ) {
-			delete_option( $enable_store_notice_in_classic_theme_option );
 			update_option( $is_store_notice_active_option, 'yes' );
+			delete_option( $enable_store_notice_in_classic_theme_option );
 		}
 	}
 }
