@@ -79,6 +79,7 @@ test.describe( 'Feature: Signing up', () => {
 		test( 'Sign-ups are limited to logged-in users', async () => {
 			const { given, when, then } = helper;
 			await given.signUpsAreLimitedToLoggedInUsers();
+			await given.iGoToTheProductPage();
 			await then.iDontSeeAFieldToEnterMyEmail();
 			await then.iDontSeeAnOptInCheckbox();
 			await when.iClickTheNotifyMeButton();
@@ -90,6 +91,7 @@ test.describe( 'Feature: Signing up', () => {
 		test( 'Sign-ups are single opt-in without checkbox', async () => {
 			const { given, when, then } = helper;
 			await given.signUpsAreSingleOptInWithoutCheckbox();
+			await given.iGoToTheProductPage();
 			await then.iDontSeeAnOptInCheckbox();
 			await when.iEnterMyEmail();
 			await when.iClickTheNotifyMeButton();
@@ -98,6 +100,7 @@ test.describe( 'Feature: Signing up', () => {
 		test( 'Sign-ups are single opt-in with checkbox', async () => {
 			const { given, when, then } = helper;
 			await given.signUpsAreSingleOptInWithCheckbox();
+			await given.iGoToTheProductPage();
 
 			await then.iSeeAPromptToSignUpAndBeNotifiedWhenTheProductIsBackInStock();
 
@@ -111,6 +114,7 @@ test.describe( 'Feature: Signing up', () => {
 		test( 'Sign-ups are double opt-in', async () => {
 			const { given, when, then } = helper;
 			await given.signUpsAreDoubleOptIn();
+			await given.iGoToTheProductPage();
 			await then.iSeeAPromptToSignUpAndBeNotifiedWhenTheProductIsBackInStock();
 			await when.iEnterMyEmail();
 			await when.iTickTheCheckbox();
@@ -121,6 +125,7 @@ test.describe( 'Feature: Signing up', () => {
 		test( 'Sign-ups are single opt-in and create new account', async () => {
 			const { given, when, then } = helper;
 			await given.signUpsAreSingleOptInAndANewAccountIsCreatedOnSignUp();
+			await given.iGoToTheProductPage();
 			await then.iSeeAPromptToSignUpAndBeNotifiedWhenTheProductIsBackInStock();
 			await when.iEnterMyEmail();
 			await when.iTickTheCheckbox();
@@ -131,6 +136,7 @@ test.describe( 'Feature: Signing up', () => {
 		test( 'Sign-ups are double opt-in and create new account', async () => {
 			const { given, when, then } = helper;
 			await given.signUpsAreDoubleOptInAndANewAccountIsCreatedOnSignUp();
+			await given.iGoToTheProductPage();
 			await then.iSeeAPromptToSignUpAndBeNotifiedWhenTheProductIsBackInStock();
 			await when.iEnterMyEmail();
 			await when.iClickTheNotifyMeButton();

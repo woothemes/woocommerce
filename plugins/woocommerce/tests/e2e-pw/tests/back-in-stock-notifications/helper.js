@@ -52,6 +52,8 @@ class AcceptanceHelper {
 			this.signUpsAreDoubleOptInAndANewAccountIsCreatedOnSignUp.bind(
 				this
 			),
+		numberOfCustomerWhoHaveJoinedTheWaitlistIsVisible:
+			this.numberOfCustomerWhoHaveJoinedTheWaitlistIsVisible.bind( this ),
 	};
 	when = {
 		iClickTheNotifyMeButton: this.iClickTheNotifyMeButton.bind( this ),
@@ -62,6 +64,9 @@ class AcceptanceHelper {
 		iLogInToMyAccount: this.iLogInToMyAccount.bind( this ),
 		iEnterMyEmail: this.iEnterMyEmail.bind( this ),
 		iTickTheCheckbox: this.iTickTheCheckbox.bind( this ),
+		iAmViewingThePageOfASimpleProductThatIsOutOfStock:
+			this.iAmViewingThePageOfASimpleProductThatIsOutOfStock.bind( this ),
+		iGoToTheProductPage: this.iGoToTheProductPage.bind( this ),
 	};
 	then = {
 		iSeeAPromptToSignUpAndBeNotifiedWhenTheProductIsBackInStock:
@@ -74,6 +79,7 @@ class AcceptanceHelper {
 		iSeeThatMySignupRequestWasSuccessful:
 			this.iSeeThatMySignupRequestWasSuccessful.bind( this ),
 		iDontSeeASignUpButton: this.iDontSeeASignUpButton.bind( this ),
+		iSeeASignUpButton: this.iSeeASignUpButton.bind( this ),
 		iSeeAPromptToManageMyNotifications:
 			this.iSeeAPromptToManageMyNotifications.bind( this ),
 		iSeeThatIAlreadyJoinedTheWaitlist:
@@ -87,7 +93,24 @@ class AcceptanceHelper {
 			this.iSeeAPromptToLogInToMyAccount.bind( this ),
 		iSeeAnOptInCheckbox: this.iSeeAnOptInCheckbox.bind( this ),
 		iAmPromptedToCheckMyEmail: this.iAmPromptedToCheckMyEmail.bind( this ),
+		iSeeThatSomeCustomersHaveAlreadySignedUp:
+			this.iSeeThatSomeCustomersHaveAlreadySignedUp.bind( this ),
 	};
+
+	async iSeeThatSomeCustomersHaveAlreadySignedUp() {
+		await expect(
+			this.page.getByText( 'joined the waitlist' )
+		).toBeVisible();
+	}
+
+	async numberOfCustomerWhoHaveJoinedTheWaitlistIsVisible() {
+		await setOption(
+			request,
+			this.baseURL,
+			'wc_bis_show_product_registrations_count',
+			'yes'
+		);
+	}
 
 	async signUpsAreDoubleOptInAndANewAccountIsCreatedOnSignUp() {
 		await setOption(
@@ -112,7 +135,6 @@ class AcceptanceHelper {
 			.then( ( response ) => {
 				this.productData = response.data;
 			} );
-		this.page.goto( this.productData.permalink );
 	}
 
 	async signUpsAreSingleOptInAndANewAccountIsCreatedOnSignUp() {
@@ -138,7 +160,6 @@ class AcceptanceHelper {
 			.then( ( response ) => {
 				this.productData = response.data;
 			} );
-		this.page.goto( this.productData.permalink );
 	}
 
 	async iAmPromptedToCheckMyEmail() {
@@ -172,7 +193,6 @@ class AcceptanceHelper {
 			'wc_bis_opt_in_required',
 			'yes'
 		);
-		await this.page.goto( this.productData.permalink );
 	}
 
 	async signUpsAreSingleOptInWithCheckbox() {
@@ -192,7 +212,6 @@ class AcceptanceHelper {
 			'wc_bis_opt_in_required',
 			'yes'
 		);
-		await this.page.goto( this.productData.permalink );
 	}
 
 	async signUpsAreSingleOptInWithoutCheckbox() {
@@ -218,7 +237,6 @@ class AcceptanceHelper {
 			'wc_bis_opt_in_required',
 			'no'
 		);
-		await this.page.goto( this.productData.permalink );
 	}
 
 	async iLogInToMyAccount() {
@@ -250,7 +268,6 @@ class AcceptanceHelper {
 			'wc_bis_account_required',
 			'yes'
 		);
-		await this.page.goto( this.productData.permalink );
 	}
 
 	async iAmViewingThePageOfASimpleProductThatIsOutOfStock() {
@@ -367,6 +384,10 @@ class AcceptanceHelper {
 
 	iDontSeeASignUpButton() {
 		return expect( this.page.getByText( 'Notify me' ) ).not.toBeVisible();
+	}
+
+	iSeeASignUpButton() {
+		return expect( this.page.getByText( 'Notify me' ) ).toBeVisible();
 	}
 
 	iClickTheNotifyMeButton() {
