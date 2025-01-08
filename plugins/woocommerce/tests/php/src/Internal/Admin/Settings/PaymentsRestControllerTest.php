@@ -550,13 +550,13 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 			array( array( '()/paypal%#' => 1 ) ),
 			array(
 				array(
-					\WC_Gateway_Paypal::ID                  => '1.1',
+					\WC_Gateway_Paypal::ID    => '1.1',
 					'offline_payment_methods' => 2,
 				),
 			),
 			array(
 				array(
-					\WC_Gateway_Paypal::ID                  => '0.1',
+					\WC_Gateway_Paypal::ID    => '0.1',
 					'offline_payment_methods' => 2,
 				),
 			),
