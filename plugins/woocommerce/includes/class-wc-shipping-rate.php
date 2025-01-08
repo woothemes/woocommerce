@@ -19,16 +19,19 @@ class WC_Shipping_Rate {
 	 * Stores data for this rate.
 	 *
 	 * @since 3.2.0
+	 * @since 9.2.0 Added description and delivery_time.
 	 * @var   array
 	 */
 	protected $data = array(
-		'id'          => '',
-		'method_id'   => '',
-		'instance_id' => 0,
-		'label'       => '',
-		'cost'        => 0,
-		'taxes'       => array(),
-		'tax_status'  => 'taxable',
+		'id'            => '',
+		'method_id'     => '',
+		'instance_id'   => 0,
+		'label'         => '',
+		'cost'          => 0,
+		'taxes'         => array(),
+		'tax_status'    => 'taxable',
+		'description'   => '',
+		'delivery_time' => '',
 	);
 
 	/**
@@ -42,15 +45,17 @@ class WC_Shipping_Rate {
 	/**
 	 * Constructor.
 	 *
-	 * @param string  $id          Shipping rate ID.
-	 * @param string  $label       Shipping rate label.
-	 * @param integer $cost        Cost.
-	 * @param array   $taxes       Taxes applied to shipping rate.
-	 * @param string  $method_id   Shipping method ID.
-	 * @param int     $instance_id Shipping instance ID.
-	 * @param string  $tax_status  Tax status.
+	 * @param string  $id            Shipping rate ID.
+	 * @param string  $label         Shipping rate label.
+	 * @param integer $cost          Cost.
+	 * @param array   $taxes         Taxes applied to shipping rate.
+	 * @param string  $method_id     Shipping method ID.
+	 * @param int     $instance_id   Shipping instance ID.
+	 * @param string  $tax_status    Tax status.
+	 * @param string  $description   Shipping rate description.
+	 * @param string  $delivery_time Shipping rate delivery time.
 	 */
-	public function __construct( $id = '', $label = '', $cost = 0, $taxes = array(), $method_id = '', $instance_id = 0, $tax_status = 'taxable' ) {
+	public function __construct( $id = '', $label = '', $cost = 0, $taxes = array(), $method_id = '', $instance_id = 0, $tax_status = 'taxable', $description = '', $delivery_time = '' ) {
 		$this->set_id( $id );
 		$this->set_label( $label );
 		$this->set_cost( $cost );
@@ -58,6 +63,8 @@ class WC_Shipping_Rate {
 		$this->set_method_id( $method_id );
 		$this->set_instance_id( $instance_id );
 		$this->set_tax_status( $tax_status );
+		$this->set_description( $description );
+		$this->set_delivery_time( $delivery_time );
 	}
 
 	/**
@@ -180,6 +187,26 @@ class WC_Shipping_Rate {
 	}
 
 	/**
+	 * Set rate description.
+	 *
+	 * @since 9.2.0
+	 * @param string $description Shipping rate description.
+	 */
+	public function set_description( $description ) {
+		$this->data['description'] = (string) $description;
+	}
+
+	/**
+	 * Set rate delivery time.
+	 *
+	 * @since 9.2.0
+	 * @param string $delivery_time Shipping rate delivery time.
+	 */
+	public function set_delivery_time( $delivery_time ) {
+		$this->data['delivery_time'] = (string) $delivery_time;
+	}
+
+	/**
 	 * Get ID for the rate. This is usually a combination of the method and instance IDs.
 	 *
 	 * @since 3.2.0
@@ -262,6 +289,42 @@ class WC_Shipping_Rate {
 		 * @param WC_Shipping_Rate $this Shipping rate object.
 		 */
 		return apply_filters( 'woocommerce_shipping_rate_tax_status', $this->data['tax_status'], $this );
+	}
+
+	/**
+	 * Get rate description.
+	 *
+	 * @since 9.2.0
+	 * @return string
+	 */
+	public function get_description() {
+		/**
+		 * Filter the shipping rate description.
+		 *
+		 * @since 9.2.0
+		 *
+		 * @param string            $description The current description.
+		 * @param WC_Shipping_Rate  $this        The shipping rate.
+		 */
+		return apply_filters( 'woocommerce_shipping_rate_description', $this->data['description'], $this );
+	}
+
+	/**
+	 * Get rate delivery time.
+	 *
+	 * @since 9.2.0
+	 * @return string
+	 */
+	public function get_delivery_time() {
+		/**
+		 * Filter the shipping rate delivery time.
+		 *
+		 * @since 9.2.0
+		 *
+		 * @param string            $delivery_time The current description.
+		 * @param WC_Shipping_Rate  $this          The shipping rate.
+		 */
+		return apply_filters( 'woocommerce_shipping_rate_delivery_time', $this->data['delivery_time'], $this );
 	}
 
 	/**

@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Fix test previously expecting a md5 hash but now produces a SHA-256 hash for the gravatar URL.

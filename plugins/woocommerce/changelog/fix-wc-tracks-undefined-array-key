@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Fix role retrieval for users with non-sequential roles
