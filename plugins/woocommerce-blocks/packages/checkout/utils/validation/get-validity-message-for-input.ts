@@ -46,7 +46,7 @@ const defaultValidityMessage =
 const getValidityMessageForInput = (
 	label: string | undefined,
 	inputElement: HTMLInputElement,
-	customValidityMessage?: ( validity: ValidityState ) => string | undefined
+	customValidityMessage?: ( validity: ValidityState ) => string
 ): string => {
 	// No errors, or custom error - return early.
 	if ( inputElement.validity.valid || inputElement.validity.customError ) {
