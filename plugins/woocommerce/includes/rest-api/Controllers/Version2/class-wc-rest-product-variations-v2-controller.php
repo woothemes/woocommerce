@@ -8,6 +8,7 @@
  * @since   3.0.0
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Utilities\I18nUtil;
 
 defined( 'ABSPATH' ) || exit;
@@ -325,7 +326,7 @@ class WC_REST_Product_Variations_V2_Controller extends WC_REST_Products_V2_Contr
 
 		// Status.
 		if ( isset( $request['visible'] ) ) {
-			$variation->set_status( false === $request['visible'] ? 'private' : 'publish' );
+			$variation->set_status( false === $request['visible'] ? ProductStatus::PRIVATE : ProductStatus::PUBLISH );
 		}
 
 		// SKU.
