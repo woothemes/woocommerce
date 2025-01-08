@@ -6,7 +6,6 @@ import {
 	ONBOARDING_STORE_NAME,
 	PAYMENT_GATEWAYS_STORE_NAME,
 	PaymentGateway,
-	PaymentSelectors,
 } from '@woocommerce/data';
 
 /**
@@ -20,7 +19,7 @@ export const usePaymentsBanner = () => {
 		installedPaymentGateways,
 		paymentGatewaySuggestions,
 		hasFinishedResolution,
-	} = useSelect( ( select: PaymentSelectors ) => {
+	} = useSelect( ( select: any ) => {
 		return {
 			installedPaymentGateways: select(
 				PAYMENT_GATEWAYS_STORE_NAME

@@ -14,7 +14,6 @@ import {
 	PAYMENT_GATEWAYS_STORE_NAME,
 	PLUGINS_STORE_NAME,
 	Plugin,
-	PaymentSelectors,
 } from '@woocommerce/data';
 import { recordEvent } from '@woocommerce/tracks';
 import ExternalIcon from 'gridicons/dist/external';
@@ -50,7 +49,7 @@ const PaymentRecommendations: React.FC = () => {
 		paymentGatewaySuggestions,
 		isResolving,
 	} = useSelect(
-		( select: PaymentSelectors ) => {
+		( select: any ) => {
 			const installingGatewayId =
 				isInstalled && getPluginSlug( installingPlugin );
 			return {
