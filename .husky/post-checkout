@@ -23,6 +23,7 @@ if [ "$CHECKOUT_TYPE" = '1' ]; then
 	currentPnpmVersion=$( ( command -v pnpm > /dev/null && pnpm --version 2>/dev/null ) || echo 'n/a' )
 	targetPnpmVersion=$( grep packageManager package.json | sed -nr 's/.+packageManager.+pnpm@([[:digit:].]+).+/\1/p' )
 	if [ "$currentPnpmVersion" != "$targetPnpmVersion" ]; then
+		printf "${orangeColoured}pnpm versions mismatch: in use '$currentPnpmVersion', needed '$targetPnpmVersion'. Enabling corepack for automatic pnpm version switching (see https://nodejs.org/api/corepack.html#corepack for more details).\n"
 		corepack enable pnpm
 	fi
 
