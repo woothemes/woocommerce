@@ -118,7 +118,7 @@ class Checkout extends AbstractCartRoute {
 	 * Get the route response based on the type of request.
 	 *
 	 * @param \WP_REST_Request $request Request object.
-	 * 
+	 *
 	 * @throws RouteException If the nonce is invalid, which is caught later on.
 	 * @return \WP_REST_Response
 	 */
