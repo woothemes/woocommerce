@@ -31,8 +31,9 @@ const ConnectAccountPage = () => {
 
 	const { isJetpackConnected, connectUrl } = useSelect( ( select ) => {
 		return {
-			isJetpackConnected:
-				( select( 'wc/admin/plugins' ) as PluginSelectors ).isJetpackConnected(),
+			isJetpackConnected: (
+				select( 'wc/admin/plugins' ) as PluginSelectors
+			 ).isJetpackConnected(),
 			connectUrl:
 				'admin.php?wcpay-connect=1&promo=' +
 				encodeURIComponent( incentive.id ) +

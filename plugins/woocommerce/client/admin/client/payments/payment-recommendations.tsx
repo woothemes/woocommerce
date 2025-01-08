@@ -49,6 +49,8 @@ const PaymentRecommendations: React.FC = () => {
 		paymentGatewaySuggestions,
 		isResolving,
 	} = useSelect(
+		// TODO: Replace any with proper type from @wordpress/data.
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		( select: any ) => {
 			const installingGatewayId =
 				isInstalled && getPluginSlug( installingPlugin );
@@ -61,7 +63,10 @@ const PaymentRecommendations: React.FC = () => {
 				installedPaymentGateways: select( PAYMENT_GATEWAYS_STORE_NAME )
 					.getPaymentGateways()
 					.reduce(
-						( gateways: { [ id: string ]: boolean }, gateway: { id: string } ) => {
+						(
+							gateways: { [ id: string ]: boolean },
+							gateway: { id: string }
+						) => {
 							if ( installingGatewayId === gateway.id ) {
 								return gateways;
 							}

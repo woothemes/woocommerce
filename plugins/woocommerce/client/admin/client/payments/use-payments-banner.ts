@@ -14,11 +14,12 @@ import {
 import { isWcPaySupported } from './utils';
 
 export const usePaymentsBanner = () => {
-	
 	const {
 		installedPaymentGateways,
 		paymentGatewaySuggestions,
 		hasFinishedResolution,
+		// TODO: Replace any with proper type from @wordpress/data.
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} = useSelect( ( select: any ) => {
 		return {
 			installedPaymentGateways: select(
