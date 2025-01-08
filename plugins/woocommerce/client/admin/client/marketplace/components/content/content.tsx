@@ -180,6 +180,14 @@ export default function Content(): JSX.Element {
 					category: query.category || '_all',
 					search_term: query.term || '',
 				} );
+				// Remove search query from the URL so the event is not recorded again. Keep other parameters.
+				const url = new URL( window.location.href );
+				url.searchParams.delete( 'search' );
+				window.history.replaceState(
+					null,
+					'',
+					url.pathname + url.search
+				);
 			}
 		};
 
