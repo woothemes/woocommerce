@@ -19,7 +19,7 @@ if [ "$CHECKOUT_TYPE" = '1' ]; then
 		printf "${orangeColoured}If you are working on something in this branch, ensure to refresh dependencies with 'pnpm install --frozen-lockfile'\n"
 	fi
 
-	# Prompt about pnpm versions mismatch when switching between branches.
+	# Auto-switch pnpm versions when switching between branches.
 	currentPnpmVersion=$( ( command -v pnpm > /dev/null && pnpm --version 2>/dev/null ) || echo 'n/a' )
 	targetPnpmVersion=$( grep packageManager package.json | sed -nr 's/.+packageManager.+pnpm@([[:digit:].]+).+/\1/p' )
 	if [ "$currentPnpmVersion" != "$targetPnpmVersion" ]; then
