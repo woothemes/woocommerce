@@ -127,11 +127,8 @@ function ScaledBlockPreview( {
 	const { setSelectedBlockRef } = useContext( SelectedBlockContext );
 
 	const selectedBlockClientId = useSelect( ( select ) => {
-		const block = (
-			select( blockEditorStore ) as {
-				getSelectedBlock: () => { clientId: string | undefined };
-			}
-		 ).getSelectedBlock();
+		// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+		const block = select( blockEditorStore ).getSelectedBlock();
 
 		return block?.clientId;
 	}, [] );

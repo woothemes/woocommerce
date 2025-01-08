@@ -80,9 +80,8 @@ export default function Shuffle( { clientId }: { clientId: string } ) {
 		patternName: string;
 	} = useSelect(
 		( select ) => {
-			const { getBlockAttributes } = select( blockEditorStore ) as {
-				getBlockAttributes: ( clientId: string ) => BlockAttributes;
-			};
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+			const { getBlockAttributes } = select( blockEditorStore );
 			const attributes = getBlockAttributes( clientId );
 			const categories = attributes?.metadata?.categories;
 			// We know that the category is one of the keys of PATTERN_CATEGORIES.
