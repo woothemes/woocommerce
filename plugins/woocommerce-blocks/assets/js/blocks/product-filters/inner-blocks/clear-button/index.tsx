@@ -11,11 +11,13 @@ import { isExperimentalBlocksEnabled } from '@woocommerce/block-settings';
 import metadata from './block.json';
 import Edit from './edit';
 import save from './save';
+import { blockVariations } from './block-variations';
 
 if ( isExperimentalBlocksEnabled() ) {
 	registerBlockType( metadata, {
 		icon,
 		edit: Edit,
 		save,
+		variations: blockVariations,
 	} );
 }

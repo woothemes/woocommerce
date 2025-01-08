@@ -19,6 +19,17 @@ const blocks = {
 	'add-to-cart-form': {
 		customDir: 'product-elements/add-to-cart-form',
 	},
+	'add-to-cart-with-options': {
+		isExperimental: true,
+	},
+	'add-to-cart-with-options-quantity-selector': {
+		customDir: 'add-to-cart-with-options/quantity-selector',
+		isExperimental: true,
+	},
+	'add-to-cart-with-options-variation-selector': {
+		customDir: 'add-to-cart-with-options/variation-selector',
+		isExperimental: true,
+	},
 	'all-products': {
 		customDir: 'products/all-products',
 	},
@@ -91,17 +102,9 @@ const blocks = {
 	'product-filters': {
 		isExperimental: true,
 	},
-	'product-filters-overlay': {
+	'product-filter-status': {
 		isExperimental: true,
-		customDir: 'product-filters/inner-blocks/overlay',
-	},
-	'product-filters-overlay-navigation': {
-		isExperimental: true,
-		customDir: 'product-filters/inner-blocks/overlay-navigation',
-	},
-	'product-filter-stock-status': {
-		isExperimental: true,
-		customDir: 'product-filters/inner-blocks/stock-filter',
+		customDir: 'product-filters/inner-blocks/status-filter',
 	},
 	'product-filter-price': {
 		customDir: 'product-filters/inner-blocks/price-filter',
@@ -119,6 +122,10 @@ const blocks = {
 		customDir: 'product-filters/inner-blocks/active-filters',
 		isExperimental: true,
 	},
+	'product-filter-removable-chips': {
+		customDir: 'product-filters/inner-blocks/removable-chips',
+		isExperimental: true,
+	},
 	'product-filter-clear-button': {
 		customDir: 'product-filters/inner-blocks/clear-button',
 		isExperimental: true,
@@ -129,6 +136,10 @@ const blocks = {
 	},
 	'product-filter-chips': {
 		customDir: 'product-filters/inner-blocks/chips',
+		isExperimental: true,
+	},
+	'product-filter-price-slider': {
+		customDir: 'product-filters/inner-blocks/price-slider',
 		isExperimental: true,
 	},
 	'order-confirmation-summary': {
@@ -179,6 +190,7 @@ const blocks = {
 // Intentional separation of cart and checkout entry points to allow for better code splitting.
 const cartAndCheckoutBlocks = {
 	cart: {},
+	'cart-link': {},
 	checkout: {},
 	'mini-cart': {},
 	'mini-cart-contents': {

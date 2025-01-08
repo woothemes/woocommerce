@@ -1,17 +1,15 @@
-/* eslint-disable @woocommerce/dependency-group */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 /**
  * External dependencies
  */
 import { useCallback, useMemo, useRef } from '@wordpress/element';
 import { useSelect, useDispatch, select } from '@wordpress/data';
 import { BlockInstance, cloneBlock } from '@wordpress/blocks';
-// @ts-ignore No types for this exist yet.
-import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
-// @ts-ignore No types for this exist yet.
 import { store as coreStore } from '@wordpress/core-data';
-// @ts-ignore No types for this exist yet.
 import { store as blockEditorStore } from '@wordpress/block-editor';
+
+// @ts-expect-error No types for this exist yet.
+// eslint-disable-next-line @woocommerce/dependency-group
+import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
 
 /**
  * Internal dependencies
@@ -27,21 +25,18 @@ import { trackEvent } from '../../tracking';
 export const useInsertPattern = () => {
 	const isActiveNewNeutralVariation = useIsActiveNewNeutralVariation();
 
-	const currentTemplate = useSelect(
-		( sel ) =>
-			// @ts-expect-error No types for this exist yet.
-			sel( coreStore ).__experimentalGetTemplateForLink( '/' ),
+	const currentTemplateId: string | undefined = useSelect(
+		( sel ) => sel( coreStore ).getDefaultTemplateId( { slug: 'home' } ),
 		[]
 	);
 
 	const [ blocks ] = useEditorBlocks(
 		'wp_template',
-		currentTemplate?.id ?? ''
+		currentTemplateId || ''
 	);
 
 	const insertedPatternRef = useRef< string | null >( null );
 
-	// @ts-expect-error No types for this exist yet.
 	const { insertBlocks } = useDispatch( blockEditorStore );
 
 	const insertableIndex = useMemo( () => {

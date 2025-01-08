@@ -1,23 +1,20 @@
-/* eslint-disable @woocommerce/dependency-group */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 /**
  * External dependencies
  */
-import {
-	store as blockEditorStore,
-	// @ts-expect-error No types for this exist yet.
-} from '@wordpress/block-editor';
-// @ts-expect-error No types for this exist yet.
+import { store as blockEditorStore } from '@wordpress/block-editor';
 import { store as coreStore } from '@wordpress/core-data';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useQuery } from '@woocommerce/navigation';
-// @ts-expect-error No types for this exist yet.
-import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
-// @ts-expect-error No types for this exist yet.
-import useSiteEditorSettings from '@wordpress/edit-site/build-module/components/block-editor/use-site-editor-settings';
 import { useContext, useEffect, useMemo } from '@wordpress/element';
 import { BlockInstance, createBlock } from '@wordpress/blocks';
 // @ts-expect-error No types for this exist yet.
+// eslint-disable-next-line @woocommerce/dependency-group
+import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
+// @ts-expect-error No types for this exist yet.
+// eslint-disable-next-line @woocommerce/dependency-group
+import useSiteEditorSettings from '@wordpress/edit-site/build-module/components/block-editor/use-site-editor-settings';
+// @ts-expect-error No types for this exist yet.
+// eslint-disable-next-line @woocommerce/dependency-group
 import { store as editSiteStore } from '@wordpress/edit-site/build-module/store';
 
 /**
@@ -38,14 +35,9 @@ import { useIsActiveNewNeutralVariation } from './hooks/use-is-active-new-neutra
 export const BlockEditorContainer = () => {
 	const settings = useSiteEditorSettings();
 
-	const currentTemplate:
-		| {
-				id: string;
-		  }
-		| undefined = useSelect(
+	const currentTemplateId: string | undefined = useSelect(
 		( select ) =>
-			// @ts-expect-error No types for this exist yet.
-			select( coreStore ).__experimentalGetTemplateForLink( '/' ),
+			select( coreStore ).getDefaultTemplateId( { slug: 'home' } ),
 		[]
 	);
 
@@ -61,7 +53,7 @@ export const BlockEditorContainer = () => {
 
 	const [ blocks, , onChange ] = useEditorBlocks(
 		templateType,
-		currentTemplate?.id ?? ''
+		currentTemplateId || ''
 	);
 
 	const urlParams = useQuery();
@@ -91,7 +83,6 @@ export const BlockEditorContainer = () => {
 
 	const clientIds = blocks.map( ( block ) => block.clientId );
 
-	// @ts-expect-error No types for this exist yet.
 	const { updateBlockAttributes } = useDispatch( blockEditorStore );
 
 	const isActiveNewNeutralVariation = useIsActiveNewNeutralVariation();
@@ -131,7 +122,6 @@ export const BlockEditorContainer = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ isActiveNewNeutralVariation, updateBlockAttributes ] );
 
-	// @ts-expect-error No types for this exist yet.
 	const { insertBlock, removeBlock } = useDispatch( blockEditorStore );
 
 	useAddNoBlocksPlaceholder( {

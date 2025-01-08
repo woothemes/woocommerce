@@ -1,7 +1,10 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .wc-block-order-confirmation-create-account {
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
+	flex-wrap: wrap;
 	align-items: center;
 	gap: $gap;
 	padding: $gap-larger;
@@ -12,6 +15,12 @@
 
 	> div {
 		flex: 1;
+	}
+
+	@media (max-width: #{$break-medium}) {
+		> div {
+			flex: 0 0 100%;
+		}
 	}
 
 	p {
@@ -28,6 +37,8 @@
 			margin-bottom: 0 !important;
 		}
 		ul {
+			padding-left: 1em;
+
 			li {
 				margin-bottom: $gap;
 			}
@@ -40,7 +51,7 @@
 	form {
 		display: flex;
 		flex-direction: column;
-		gap: $gap;
+		gap: $gap-small;
 
 		p,
 		.wc-block-components-text-input {
@@ -55,7 +66,7 @@
 
 		.wc-block-order-confirmation-create-account-description {
 			p {
-				@include font-size(small);
+				@include font-size(smaller);
 				text-align: center;
 
 				a,
@@ -66,7 +77,7 @@
 		}
 
 		.wc-block-components-password-strength.hidden {
-			display: none;
+			opacity: 1;
 		}
 	}
 

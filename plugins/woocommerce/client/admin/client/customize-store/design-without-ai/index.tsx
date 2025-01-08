@@ -3,7 +3,6 @@
  */
 import { useMachine, useSelector } from '@xstate/react';
 import { AnyInterpreter, Sender } from 'xstate';
-import { useEffect, useState } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 
 /**
@@ -68,25 +67,16 @@ export const DesignWithNoAiController = ( {
 		)
 	);
 
-	const [ CurrentComponent, setCurrentComponent ] =
-		useState< DesignWithoutAiComponent | null >( null );
-
-	useEffect( () => {
-		if ( currentNodeMeta?.component ) {
-			setCurrentComponent( () => currentNodeMeta?.component );
-		}
-	}, [ CurrentComponent, currentNodeMeta?.component ] );
+	const CurrentComponent = currentNodeMeta?.component;
 
 	return (
-		<>
-			<div className={ `woocommerce-design-without-ai__container` }>
-				{ CurrentComponent ? (
-					<CurrentComponent sendEvent={ send } />
-				) : (
-					<div />
-				) }
-			</div>
-		</>
+		<div className={ `woocommerce-design-without-ai__container` }>
+			{ CurrentComponent ? (
+				<CurrentComponent sendEvent={ send } />
+			) : (
+				<div />
+			) }
+		</div>
 	);
 };
 
@@ -96,11 +86,9 @@ export const DesignWithoutAi: CustomizeStoreComponent = ( {
 	context,
 } ) => {
 	return (
-		<>
-			<DesignWithNoAiController
-				parentMachine={ parentMachine }
-				parentContext={ context }
-			/>
-		</>
+		<DesignWithNoAiController
+			parentMachine={ parentMachine }
+			parentContext={ context }
+		/>
 	);
 };

@@ -14,6 +14,7 @@ import {
 	BillingAddress,
 	CoreAddress,
 	KeyedFormField,
+	defaultFields,
 } from '@woocommerce/settings';
 import { decodeEntities } from '@wordpress/html-entities';
 import {
@@ -98,7 +99,7 @@ export const emptyHiddenAddressFields = <
 ): T => {
 	const addressForm = prepareFormFields(
 		ADDRESS_FORM_KEYS,
-		{},
+		defaultFields,
 		address.country
 	);
 	const newAddress = Object.assign( {}, address ) as T;
@@ -125,7 +126,7 @@ export const emptyAddressFields = <
 ): T => {
 	const addressForm = prepareFormFields(
 		ADDRESS_FORM_KEYS,
-		{},
+		defaultFields,
 		address.country
 	);
 	const newAddress = Object.assign( {}, address ) as T;
@@ -201,7 +202,7 @@ export const isAddressComplete = (
 	}
 	const addressForm = prepareFormFields(
 		ADDRESS_FORM_KEYS,
-		{},
+		defaultFields,
 		address.country
 	);
 

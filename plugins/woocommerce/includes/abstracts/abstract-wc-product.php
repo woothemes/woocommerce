@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareTrait;
 use Automattic\WooCommerce\Internal\ProductAttributesLookup\LookupDataStore as ProductAttributesLookupDataStore;
 
@@ -151,7 +152,7 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	 * @return string
 	 */
 	public function get_type() {
-		return isset( $this->product_type ) ? $this->product_type : 'simple';
+		return isset( $this->product_type ) ? $this->product_type : ProductType::SIMPLE;
 	}
 
 	/**
@@ -2209,7 +2210,7 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	 * @param float $value The value to set for this product.
 	 */
 	public function set_cogs_value( float $value ): void {
-		if ( $this->cogs_is_enabled( __CLASS__ . '::' . __METHOD__ ) ) {
+		if ( $this->cogs_is_enabled( __METHOD__ ) ) {
 			$this->set_prop( 'cogs_value', $value );
 		}
 	}
@@ -2222,7 +2223,7 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	 * @return float The current value for this product.
 	 */
 	public function get_cogs_value(): float {
-		return $this->cogs_is_enabled( __CLASS__ . '::' . __METHOD__ ) ? (float) $this->get_prop( 'cogs_value' ) : 0;
+		return $this->cogs_is_enabled( __METHOD__ ) ? (float) $this->get_prop( 'cogs_value' ) : 0;
 	}
 
 	/**
@@ -2234,7 +2235,7 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	 * @return float The effective value for this product.
 	 */
 	public function get_cogs_effective_value(): float {
-		return $this->cogs_is_enabled( __CLASS__ . '::' . __METHOD__ ) ? $this->get_cogs_effective_value_core() : 0;
+		return $this->cogs_is_enabled( __METHOD__ ) ? $this->get_cogs_effective_value_core() : 0;
 	}
 
 	/**
@@ -2260,7 +2261,7 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	 * @return float The effective total value for this product.
 	 */
 	public function get_cogs_total_value(): float {
-		if ( ! $this->cogs_is_enabled( __CLASS__ . '::' . __METHOD__ ) ) {
+		if ( ! $this->cogs_is_enabled( __METHOD__ ) ) {
 			return 0;
 		}
 
@@ -2272,7 +2273,7 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 		 * @param float $total_value The effective total value of the product.
 		 * @param WC_Product $product The product for which the total value is being retrieved.
 		 */
-		return apply_filters( 'woocommerce_get_cogs_total_value', $this->get_cogs_total_value_core(), $this );
+		return apply_filters( 'woocommerce_get_product_cogs_total_value', $this->get_cogs_total_value_core(), $this );
 	}
 
 	/**

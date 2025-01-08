@@ -7,9 +7,6 @@
 	"keywords": [
 		"WooCommerce"
 	],
-	"blockHooks": {
-		"woocommerce/order-confirmation-summary": "after"
-	},
 	"attributes": {
 		"customerEmail": {
 			"type": "string",

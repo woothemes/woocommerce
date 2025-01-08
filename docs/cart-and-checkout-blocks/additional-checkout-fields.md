@@ -12,9 +12,11 @@ This document will outline the steps an extension should take to register some a
 
 Additional checkout fields can be registered in three different places:
 
-- Contact information
-- Addresses (Shipping **and** Billing)
-- Order information
+| Title                                | Identifier |
+| ------------------------------------ | ---------- |
+| Contact information                  | **`contact`**  |
+| Addresses (Shipping **and** Billing) | **`address`**  |
+| Order information                    | **`order`**    |
 
 A field can only be shown in one location, it is not possible to render the same field in multiple locations in the same registration.
 
@@ -454,7 +456,7 @@ add_action(
 	'woocommerce_sanitize_additional_field',
 	function ( $field_value, $field_key ) {
 		if ( 'namespace/gov-id' === $field_key ) {
-			$field_value = str_replace( ' ', '', $field_key );
+			$field_value = str_replace( ' ', '', $field_value );
 			$field_value = strtoupper( $field_value );
 		}
 		return $field_value;
@@ -686,7 +688,7 @@ add_action(
 			'woocommerce_sanitize_additional_field',
 			function ( $field_value, $field_key ) {
 				if ( 'namespace/gov-id' === $field_key || 'namespace/confirm-gov-id' === $field_key ) {
-					$field_value = str_replace( ' ', '', $field_key );
+					$field_value = str_replace( ' ', '', $field_value );
 					$field_value = strtoupper( $field_value );
 				}
 				return $field_value;

@@ -1,5 +1,3 @@
-/* eslint-disable @woocommerce/dependency-group */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 /**
  * External dependencies
  */
@@ -12,8 +10,10 @@ import {
 } from '@wordpress/element';
 import { Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-// @ts-expect-error No types for this exist yet.
 import { store as coreStore } from '@wordpress/core-data';
+// @ts-expect-error No types for this exist yet.
+// eslint-disable-next-line @woocommerce/dependency-group
+import { __experimentalBlockPatternsList as BlockPatternList } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
@@ -25,10 +25,6 @@ import { useEditorBlocks } from '../../hooks/use-editor-blocks';
 import { HighlightedBlockContext } from '../../context/highlighted-block-context';
 import { useEditorScroll } from '../../hooks/use-editor-scroll';
 import { findPatternByBlock } from '../utils';
-import {
-	__experimentalBlockPatternsList as BlockPatternList,
-	// @ts-expect-error No types for this exist yet.
-} from '@wordpress/block-editor';
 import { CustomizeStoreContext } from '~/customize-store/assembler-hub';
 import { FlowType } from '~/customize-store/types';
 import { headerTemplateId } from '~/customize-store/data/homepageTemplates';
@@ -40,6 +36,7 @@ const SUPPORTED_HEADER_PATTERNS = [
 	'woocommerce-blocks/header-essential',
 	'woocommerce-blocks/header-minimal',
 	'woocommerce-blocks/header-large',
+	'woocommerce-blocks/header-distraction-free',
 ];
 export const SidebarNavigationScreenHeader = ( {
 	onNavigateBackClick,
@@ -53,16 +50,15 @@ export const SidebarNavigationScreenHeader = ( {
 
 	const { isLoading, patterns } = usePatternsByCategory( 'woo-commerce' );
 
-	const currentTemplate = useSelect(
+	const currentTemplateId: string | undefined = useSelect(
 		( select ) =>
-			// @ts-expect-error No types for this exist yet.
-			select( coreStore ).__experimentalGetTemplateForLink( '/' ),
+			select( coreStore ).getDefaultTemplateId( { slug: 'home' } ),
 		[]
 	);
 
 	const [ mainTemplateBlocks ] = useEditorBlocks(
 		'wp_template',
-		currentTemplate?.id ?? ''
+		currentTemplateId || ''
 	);
 
 	const [ blocks, , onChange ] = useEditorBlocks(

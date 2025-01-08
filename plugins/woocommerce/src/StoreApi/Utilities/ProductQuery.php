@@ -1,6 +1,7 @@
 <?php
 namespace Automattic\WooCommerce\StoreApi\Utilities;
 
+use Automattic\WooCommerce\Enums\ProductType;
 use WC_Tax;
 
 /**
@@ -45,7 +46,7 @@ class ProductQuery {
 
 		// Filter product type by slug.
 		if ( ! empty( $request['type'] ) ) {
-			if ( 'variation' === $request['type'] ) {
+			if ( ProductType::VARIATION === $request['type'] ) {
 				$args['post_type'] = 'product_variation';
 			} else {
 				$args['post_type'] = 'product';
@@ -359,7 +360,7 @@ class ProductQuery {
 				$skus[] = $wp_query->get( 'sku' );
 			}
 			$args['join']   = $this->append_product_sorting_table_join( $args['join'] );
-			$args['where'] .= ' AND wc_product_meta_lookup.sku IN ("' . implode( '","', array_map( 'esc_sql', $skus ) ) . '")';
+			$args['where'] .= ' AND wc_product_meta_lookup.sku IN (\'' . implode( '\',\'', array_map( 'esc_sql', $skus ) ) . '\')';
 		}
 
 		if ( $wp_query->get( 'slug' ) ) {
@@ -375,10 +376,10 @@ class ProductQuery {
 
 		if ( $wp_query->get( 'stock_status' ) ) {
 			$args['join']   = $this->append_product_sorting_table_join( $args['join'] );
-			$args['where'] .= ' AND wc_product_meta_lookup.stock_status IN ("' . implode( '","', array_map( 'esc_sql', $wp_query->get( 'stock_status' ) ) ) . '")';
+			$args['where'] .= ' AND wc_product_meta_lookup.stock_status IN (\'' . implode( '\',\'', array_map( 'esc_sql', $wp_query->get( 'stock_status' ) ) ) . '\')';
 		} elseif ( 'yes' === get_option( 'woocommerce_hide_out_of_stock_items' ) ) {
 			$args['join']   = $this->append_product_sorting_table_join( $args['join'] );
-			$args['where'] .= ' AND wc_product_meta_lookup.stock_status NOT IN ("outofstock")';
+			$args['where'] .= ' AND wc_product_meta_lookup.stock_status NOT IN (\'outofstock\')';
 		}
 
 		if ( $wp_query->get( 'min_price' ) || $wp_query->get( 'max_price' ) ) {

@@ -1,5 +1,5 @@
 <?php
-
+declare( strict_types=1 );
 namespace Automattic\WooCommerce\StoreApi\Routes\V1;
 
 use Automattic\WooCommerce\Blocks\Package;
@@ -157,6 +157,7 @@ abstract class AbstractCartRoute extends AbstractRoute {
 		$response->header( 'Nonce-Timestamp', time() );
 		$response->header( 'User-ID', get_current_user_id() );
 		$response->header( 'Cart-Token', $this->get_cart_token() );
+		$response->header( 'Cart-Hash', WC()->cart->get_cart_hash() );
 
 		return $response;
 	}
@@ -177,6 +178,7 @@ abstract class AbstractCartRoute extends AbstractRoute {
 			);
 		}
 		$this->cart_controller->load_cart();
+		$this->cart_controller->normalize_cart();
 	}
 
 	/**
@@ -188,6 +190,13 @@ abstract class AbstractCartRoute extends AbstractRoute {
 	 * @return string
 	 */
 	protected function get_cart_token() {
+		// Ensure cart is loaded.
+		$this->cart_controller->load_cart();
+
+		if ( ! wc()->session ) {
+			return null;
+		}
+
 		return JsonWebToken::create(
 			[
 				'user_id' => wc()->session->get_customer_id(),

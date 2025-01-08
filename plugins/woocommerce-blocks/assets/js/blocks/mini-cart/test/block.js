@@ -58,15 +58,6 @@ const mockFullCart = () => {
 	} );
 };
 
-const initializeLocalStorage = () => {
-	Object.defineProperty( window, 'localStorage', {
-		value: {
-			setItem: jest.fn(),
-		},
-		writable: true,
-	} );
-};
-
 describe( 'Testing Mini-Cart', () => {
 	beforeEach( () => {
 		act( () => {
@@ -132,9 +123,11 @@ describe( 'Testing Mini-Cart', () => {
 
 		// Close drawer.
 		let closeButton = null;
+
 		await waitFor( () => {
 			closeButton = screen.getByLabelText( /close/i );
 		} );
+
 		if ( closeButton ) {
 			await act( async () => {
 				await user.click( closeButton );
@@ -216,21 +209,6 @@ describe( 'Testing Mini-Cart', () => {
 			expect(
 				screen.getByLabelText( /3 items in cart/i )
 			).toBeInTheDocument()
-		);
-	} );
-
-	it( 'updates local storage when cart finishes loading', async () => {
-		initializeLocalStorage();
-		mockFullCart();
-		render( <MiniCartBlock /> );
-		await waitFor( () => expect( fetchMock ).toHaveBeenCalled() );
-
-		// Assert we saved the values returned to the localStorage.
-		await waitFor( () =>
-			expect(
-				JSON.parse( window.localStorage.setItem.mock.calls[ 0 ][ 1 ] )
-					.itemsCount
-			).toEqual( 3 )
 		);
 	} );
 
