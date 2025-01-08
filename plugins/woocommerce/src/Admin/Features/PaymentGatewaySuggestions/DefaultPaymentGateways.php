@@ -19,7 +19,7 @@ class DefaultPaymentGateways {
 	 * @var array
 	 */
 	private static $recommendation_priority = array(
-		'woocommerce_payments'              => 1,
+		'woocommerce_payments'                            => 1,
 		'woocommerce_payments:with-in-person-payments'    => 1,
 		'woocommerce_payments:without-in-person-payments' => 1,
 		'stripe'                                          => 2,
