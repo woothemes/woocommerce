@@ -892,7 +892,7 @@ class WC_REST_Product_Variations_Controller extends WC_REST_Product_Variations_V
 		// Set post_status.
 		$args['post_status'] = $request['status'];
 
-		// Filter downloadable product variations
+		// Filter downloadable product variations.
 		if ( isset( $request['downloadable'] ) ) {
 			$args['meta_query'] = $this->add_meta_query( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 				$args,
