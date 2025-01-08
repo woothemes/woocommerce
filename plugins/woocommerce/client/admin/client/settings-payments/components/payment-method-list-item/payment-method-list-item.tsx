@@ -118,6 +118,7 @@ export const PaymentMethodListItem = ( {
 							// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 							// @ts-ignore disabled prop exists
 							disabled={ method.required ?? false }
+							label=""
 						/>
 					</div>
 				</div>
