@@ -2,6 +2,7 @@
 namespace Automattic\WooCommerce\StoreApi\Utilities;
 
 use Automattic\WooCommerce\Checkout\Helpers\ReserveStock;
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\StoreApi\Exceptions\InvalidCartException;
 use Automattic\WooCommerce\StoreApi\Exceptions\NotPurchasableException;
@@ -1131,7 +1132,7 @@ class CartController {
 	protected function get_product_for_cart( $request ) {
 		$product = wc_get_product( $request['id'] );
 
-		if ( ! $product || 'trash' === $product->get_status() ) {
+		if ( ! $product || ProductStatus::TRASH === $product->get_status() ) {
 			throw new RouteException(
 				'woocommerce_rest_cart_invalid_product',
 				__( 'This product cannot be added to the cart.', 'woocommerce' ),
@@ -1366,11 +1367,17 @@ class CartController {
 			if ( ! $attribute['is_variation'] ) {
 				continue;
 			}
-			$attribute_label          = wc_attribute_label( $attribute['name'] );
-			$variation_attribute_name = wc_variation_attribute_name( $attribute['name'] );
+
+			$attribute_label           = wc_attribute_label( $attribute['name'] );
+			$lowercase_attribute_label = strtolower( $attribute_label );
+			$variation_attribute_name  = wc_variation_attribute_name( $attribute['name'] );
 
 			// Attribute labels e.g. Size.
-			if ( isset( $variation_data[ $attribute_label ] ) ) {
+			if ( isset( $variation_data[ $attribute_label ] ) || isset( $variation_data[ $lowercase_attribute_label ] ) ) {
+
+				// Check both the original and lowercase attribute label.
+				$attribute_label = isset( $variation_data[ $attribute_label ] ) ? $attribute_label : $lowercase_attribute_label;
+
 				$return[ $variation_attribute_name ] =
 					$attribute['is_taxonomy']
 						?
@@ -1414,7 +1421,7 @@ class CartController {
 			$product = wc_get_product( $product->get_parent_id() );
 		}
 
-		if ( ! $product || 'trash' === $product->get_status() ) {
+		if ( ! $product || ProductStatus::TRASH === $product->get_status() ) {
 			throw new RouteException(
 				'woocommerce_rest_cart_invalid_parent_product',
 				__( 'This product cannot be added to the cart.', 'woocommerce' ),

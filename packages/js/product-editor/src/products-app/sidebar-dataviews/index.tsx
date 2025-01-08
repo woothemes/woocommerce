@@ -3,10 +3,7 @@
  */
 import { createElement, Fragment } from '@wordpress/element';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
-import {
-	// @ts-expect-error no exported member.
-	__experimentalItemGroup as ItemGroup
-} from '@wordpress/components';
+import { __experimentalItemGroup as ItemGroup } from '@wordpress/components';
 
 /**
  * Internal dependencies
