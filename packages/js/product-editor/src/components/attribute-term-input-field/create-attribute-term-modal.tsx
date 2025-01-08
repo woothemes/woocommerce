@@ -98,24 +98,26 @@ export const CreateAttributeTermModal: React.FC<
 			} }
 			className="woocommerce-create-attribute-term-modal"
 		>
-			<Form< Partial< ProductAttributeTerm > >
+			<Form<
+				Pick< ProductAttributeTerm, 'name' | 'slug' | 'description' >
+			>
 				initialValues={ {
 					name: initialAttributeTermName,
 					slug: cleanForSlug( initialAttributeTermName ),
+					description: '',
 				} }
 				validate={ validateForm }
 				errors={ {} }
 				onSubmit={ onAdd }
 			>
-				{ /* @ts-expect-error: Typing this component involves handling complex structures that require additional refactoring. */ }
 				{ ( {
 					getInputProps,
 					handleSubmit,
 					isValidForm,
 					setValue,
 					values,
-				}: FormContextType< ProductProductAttribute > ) => {
-					const nameInputProps = getInputProps< string >( 'name' );
+				} ) => {
+					const nameInputProps = getInputProps( 'name' );
 					return (
 						<>
 							<TextControl
