@@ -26,7 +26,7 @@ import { getValidityMessageForInput } from '../../checkout/utils';
 export interface ValidatedCheckboxControlProps
 	extends Omit< InputHTMLAttributes< HTMLInputElement >, 'onChange' > {
 	// Unique instance ID. id will be used instead if provided.
-	instanceId?: string | undefined;
+	instanceId?: string;
 	// id to use for the error message. If not provided, an id will be generated.
 	errorId?: string;
 	// Feedback to display alongside the input. May be hidden when validation errors are displayed.
@@ -34,19 +34,19 @@ export interface ValidatedCheckboxControlProps
 	// Callback to run on change which is passed the updated value.
 	onChange: ( newValue: boolean ) => void;
 	// Optional label for the field.
-	label?: string | undefined;
+	label?: string;
 	// If true, validation errors will be shown.
 	showError?: boolean;
 	// Error message to display alongside the field regardless of validation.
-	errorMessage?: string | undefined;
+	errorMessage?: string;
 	// Custom validation function that is run on change. Use setCustomValidity to set an error message.
 	customValidation?:
 		| ( ( inputObject: HTMLInputElement ) => boolean )
 		| undefined;
 	// Custom validation message to display when validity is false. Given the input element. Expected to use inputObject.validity.
-	customValidityMessage?: ( validity: ValidityState ) => undefined | string;
+	customValidityMessage?: ( validity: ValidityState ) => string;
 	// Whether validation should run when focused - only has an effect when focusOnMount is also true.
-	validateOnMount?: boolean | undefined;
+	validateOnMount?: boolean;
 }
 
 export type ValidatedCheckboxControlHandle = {
