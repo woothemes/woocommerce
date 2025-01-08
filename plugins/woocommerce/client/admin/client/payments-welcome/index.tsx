@@ -5,7 +5,7 @@ import { Notice } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 import { recordEvent } from '@woocommerce/tracks';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { OPTIONS_STORE_NAME } from '@woocommerce/data';
+import { OPTIONS_STORE_NAME, PluginSelectors } from '@woocommerce/data';
 import apiFetch from '@wordpress/api-fetch';
 
 /**
@@ -32,7 +32,7 @@ const ConnectAccountPage = () => {
 	const { isJetpackConnected, connectUrl } = useSelect( ( select ) => {
 		return {
 			isJetpackConnected:
-				select( 'wc/admin/plugins' ).isJetpackConnected(),
+				( select( 'wc/admin/plugins' ) as PluginSelectors ).isJetpackConnected(),
 			connectUrl:
 				'admin.php?wcpay-connect=1&promo=' +
 				encodeURIComponent( incentive.id ) +
