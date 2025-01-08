@@ -6,7 +6,6 @@
  */
 
 use Automattic\Jetpack\Constants;
-use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
