@@ -30,24 +30,15 @@ function useProductMetadata( options?: Options ) {
 		( select ) => {
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
-			const { getEditedEntityRecord, hasFinishedResolution } = select(
-				'core'
-			) as {
-				getEditedEntityRecord: (
-					kind: string,
-					name: string,
-					recordId: number
-				) => Product;
-				hasFinishedResolution: (
-					selectorName: string,
-					args?: unknown[]
-				) => boolean;
-			};
+			const { getEditedEntityRecord, hasFinishedResolution } =
+				select( 'core' );
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			const { meta_data: metadata }: Product = getEditedEntityRecord(
 				'postType',
 				postType,
 				id
 			);
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			const isResolutionFinished = hasFinishedResolution(
 				'getEditedEntityRecord',
 				[ 'postType', postType, id ]

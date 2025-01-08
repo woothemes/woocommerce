@@ -34,10 +34,12 @@ type ServerErrorResponse = {
 	code: string;
 };
 
-export const DEFAULT_SHIPPING_CLASS_OPTIONS: Array< {
+type Select = {
 	label: string;
 	value: string;
-} > = [
+};
+
+export const DEFAULT_SHIPPING_CLASS_OPTIONS: Array< Select > = [
 	{ value: '', label: __( 'No shipping class', 'woocommerce' ) },
 	{
 		value: ADD_NEW_SHIPPING_CLASS_OPTION_VALUE,
@@ -47,7 +49,7 @@ export const DEFAULT_SHIPPING_CLASS_OPTIONS: Array< {
 
 function mapShippingClassToSelectOption(
 	shippingClasses: ProductShippingClass[]
-): Array< { label: string; value: string } > {
+): Array< Select > {
 	return shippingClasses.map( ( { slug, name } ) => ( {
 		value: slug,
 		label: name,
@@ -134,14 +136,11 @@ export function Edit( {
 		( select ) => {
 			const { getProductShippingClasses } = select(
 				EXPERIMENTAL_PRODUCT_SHIPPING_CLASSES_STORE_NAME
-			) as {
-				getProductShippingClasses: (
-					query: Record< string, unknown >
-				) => ProductShippingClass[];
-			};
+			);
 			return {
 				shippingClasses:
 					( isInSelectedTab &&
+						// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 						getProductShippingClasses(
 							shippingClassRequestQuery
 						) ) ||

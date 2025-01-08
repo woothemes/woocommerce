@@ -46,12 +46,9 @@ export const VariableProductTour: React.FC = () => {
 		( select ) => {
 			const { getProductVariationsTotalCount } = select(
 				EXPERIMENTAL_PRODUCT_VARIATIONS_STORE_NAME
-			) as {
-				getProductVariationsTotalCount: (
-					params: Record< string, unknown >
-				) => number;
-			};
+			);
 			return {
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				totalCount: getProductVariationsTotalCount( requestParams ),
 			};
 		},
@@ -144,11 +141,10 @@ export const VariableProductTour: React.FC = () => {
 	}, [ totalCount ] );
 
 	const { hasShownProductEditorTour } = useSelect( ( select ) => {
-		const { getOption } = select( OPTIONS_STORE_NAME ) as {
-			getOption: ( key: string ) => string;
-		};
+		const { getOption } = select( OPTIONS_STORE_NAME );
 		return {
 			hasShownProductEditorTour:
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				getOption( 'woocommerce_block_product_tour_shown' ) === 'yes',
 		};
 	}, [] );

@@ -9,7 +9,6 @@ import { createElement, Fragment } from '@wordpress/element';
  * Internal dependencies
  */
 import { TABS_SLOT_NAME } from '../../../components/tabs/constants';
-import { TabsFillProps } from '../../../components/tabs';
 
 export const DEFAULT_TAB_ORDER = 100;
 
