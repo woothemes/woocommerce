@@ -77,15 +77,12 @@ export function Edit( {
 		( select ) => {
 			const { getProductVariationsTotalCount } = select(
 				EXPERIMENTAL_PRODUCT_VARIATIONS_STORE_NAME
-			) as {
-				getProductVariationsTotalCount: (
-					params: Record< string, unknown >
-				) => number;
-			};
+			);
 
 			return {
 				totalCountWithoutPrice: productHasOptions
-					? getProductVariationsTotalCount(
+					? // @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+					  getProductVariationsTotalCount(
 							totalCountWithoutPriceRequestParams
 					  )
 					: 0,

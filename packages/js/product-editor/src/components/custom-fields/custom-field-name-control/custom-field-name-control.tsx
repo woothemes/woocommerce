@@ -72,8 +72,7 @@ export const CustomFieldNameControl = forwardRef(
 			function prependSelectedValueAsOption() {
 				if ( value ) {
 					const isExisting = customFieldNames.some(
-						( customFieldName: CustomFieldName ) =>
-							customFieldName.value === value
+						( customFieldName ) => customFieldName.value === value
 					);
 					if ( ! isExisting ) {
 						return [ { label: value, value }, ...customFieldNames ];

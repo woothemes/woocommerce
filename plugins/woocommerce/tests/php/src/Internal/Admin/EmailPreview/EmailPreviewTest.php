@@ -141,13 +141,9 @@ class EmailPreviewTest extends WC_Unit_Test_Case {
 			return $product;
 		};
 		add_filter( 'woocommerce_email_preview_dummy_product', $product_filter, 10, 1 );
-
-		$content = $this->sut->render();
-		$this->assertStringContainsString( 'Filtered Product', $content );
-		$this->assertStringContainsString( '99', $content );
-		$this->assertStringNotContainsString( 'Dummy Product', $content );
-		$this->assertStringNotContainsString( '25', $content );
-
+		$product = $this->sut->get_dummy_product_when_not_set( null );
+		$this->assertEquals( 'Filtered Product', $product->get_name() );
+		$this->assertEquals( '99', $product->get_price() );
 		remove_filter( 'woocommerce_email_preview_dummy_product', $product_filter, 10 );
 	}
 

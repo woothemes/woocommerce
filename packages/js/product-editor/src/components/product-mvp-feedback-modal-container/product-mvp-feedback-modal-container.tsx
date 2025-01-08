@@ -20,10 +20,9 @@ export const ProductMVPFeedbackModalContainer: React.FC< {
 	const { values } = useFormContext< Product >();
 	const { hideProductMVPFeedbackModal } = useDispatch( STORE_KEY );
 	const { isProductMVPModalVisible } = useSelect( ( select ) => {
-		const { isProductMVPFeedbackModalVisible } = select( STORE_KEY ) as {
-			isProductMVPFeedbackModalVisible: () => boolean;
-		};
+		const { isProductMVPFeedbackModalVisible } = select( STORE_KEY );
 		return {
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			isProductMVPModalVisible: isProductMVPFeedbackModalVisible(),
 		};
 	}, [] );
