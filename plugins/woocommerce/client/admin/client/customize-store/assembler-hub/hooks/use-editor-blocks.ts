@@ -10,7 +10,7 @@ import { BlockInstance } from '@wordpress/blocks';
 type InputHandler = ( blocks: BlockInstance[] ) => void;
 type ChangeHandler = (
 	blocks: BlockInstance[],
-	options: Record< string, unknown >
+	options?: Record< string, unknown >
 ) => void;
 
 // Note, must be used within BlockEditorProvider. This allows shared access of blocks currently
