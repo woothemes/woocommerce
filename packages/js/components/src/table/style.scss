@@ -86,6 +86,10 @@
 		justify-content: flex-end;
 		display: flex;
 	}
+
+	&__table-preface {
+		margin: $gap-small $gap $gap-small $gap;
+	}
 }
 
 .woocommerce-table__caption {
@@ -313,7 +317,3 @@ th.woocommerce-table__item {
 		font-weight: 600;
 	}
 }
-.woocommerce-table__table-preface {
-	margin: $gap-small $gap $gap-small $gap;
-}
-
