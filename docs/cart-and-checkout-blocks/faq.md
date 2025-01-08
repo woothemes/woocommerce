@@ -1,6 +1,6 @@
 ---
 post_title: Cart and Checkout - Frequently Asked Questions
-menu_title: Extensibility
+menu_title: Frequently Asked Questions
 tags: reference
 ---
 <!-- markdownlint-disable MD041 -->
