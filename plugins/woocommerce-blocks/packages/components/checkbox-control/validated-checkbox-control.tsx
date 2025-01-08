@@ -80,7 +80,7 @@ const ValidatedCheckboxControl = forwardRef<
 			...rest
 		},
 		forwardedRef
-	): JSX.Element => {
+	) => {
 		// Ref for the input element.
 		const inputRef = useRef< HTMLInputElement >( null );
 
@@ -89,9 +89,8 @@ const ValidatedCheckboxControl = forwardRef<
 			'',
 			preferredInstanceId
 		);
-		const textInputId =
-			typeof id !== 'undefined' ? id : 'textinput-' + instanceId;
-		const errorIdString = errorId !== undefined ? errorId : textInputId;
+		const textInputId = id || `textinput-${ instanceId }`;
+		const errorIdString = errorId || textInputId;
 
 		const { setValidationErrors, clearValidationError } =
 			useDispatch( VALIDATION_STORE_KEY );
