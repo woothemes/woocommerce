@@ -14,6 +14,9 @@ import {
 	PAYMENT_GATEWAYS_STORE_NAME,
 	PLUGINS_STORE_NAME,
 	Plugin,
+	PaymentSelectors,
+	OnboardingSelectors,
+	WPDataSelectors,
 } from '@woocommerce/data';
 import { recordEvent } from '@woocommerce/tracks';
 import ExternalIcon from 'gridicons/dist/external';
@@ -49,18 +52,20 @@ const PaymentRecommendations: React.FC = () => {
 		paymentGatewaySuggestions,
 		isResolving,
 	} = useSelect(
-		// TODO: Replace any with proper type from @wordpress/data.
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		( select: any ) => {
+		( select ) => {
 			const installingGatewayId =
 				isInstalled && getPluginSlug( installingPlugin );
 			return {
 				installedPaymentGateway:
 					installingGatewayId &&
-					select( PAYMENT_GATEWAYS_STORE_NAME ).getPaymentGateway(
-						installingGatewayId
-					),
-				installedPaymentGateways: select( PAYMENT_GATEWAYS_STORE_NAME )
+					(
+						select(
+							PAYMENT_GATEWAYS_STORE_NAME
+						) as PaymentSelectors
+					 ).getPaymentGateway( installingGatewayId ),
+				installedPaymentGateways: (
+					select( PAYMENT_GATEWAYS_STORE_NAME ) as PaymentSelectors
+				 )
 					.getPaymentGateways()
 					.reduce(
 						(
@@ -75,12 +80,12 @@ const PaymentRecommendations: React.FC = () => {
 						},
 						{}
 					),
-				isResolving: select( ONBOARDING_STORE_NAME ).isResolving(
-					'getPaymentGatewaySuggestions'
-				),
-				paymentGatewaySuggestions: select(
-					ONBOARDING_STORE_NAME
-				).getPaymentGatewaySuggestions(),
+				isResolving: (
+					select( ONBOARDING_STORE_NAME ) as WPDataSelectors
+				 ).isResolving( 'getPaymentGatewaySuggestions' ),
+				paymentGatewaySuggestions: (
+					select( ONBOARDING_STORE_NAME ) as OnboardingSelectors
+				 ).getPaymentGatewaySuggestions(),
 			};
 		},
 		[ isInstalled ]
