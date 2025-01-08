@@ -8,6 +8,7 @@ on:
             - '**/changelog/**'
             - '**/tests/**'
             - '**/*.md'
+            - '.husky/**'
             - '.github/**'
             - '!.github/workflows/pr-build-live-branch.yml'
 
