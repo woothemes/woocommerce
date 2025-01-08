@@ -32,6 +32,13 @@ class WC_REST_Product_Variations_Controller extends WC_REST_Product_Variations_V
 	protected $namespace = 'wc/v3';
 
 	/**
+	 * Product statuses to exclude from the query.
+	 *
+	 * @var array
+	 */
+	private $exclude_status = array();
+
+	/**
 	 * Register the routes for products.
 	 */
 	public function register_routes() {
@@ -897,6 +904,12 @@ class WC_REST_Product_Variations_Controller extends WC_REST_Product_Variations_V
 			$args['post_status'] = $request['include_status'];
 		}
 
+		if ( ! empty( $request['exclude_status'] ) ) {
+			$this->exclude_status = $request['exclude_status'];
+		} else {
+			$this->exclude_status = array();
+		}
+
 		/**
 		 * @deprecated 8.1.0 replaced by attributes.
 		 * Filter by local attributes.
@@ -1062,6 +1075,30 @@ class WC_REST_Product_Variations_Controller extends WC_REST_Product_Variations_V
 	}
 
 	/**
+	 * Get objects.
+	 *
+	 * @param array $query_args Query args.
+	 * @return array
+	 */
+	protected function get_objects( $query_args ) {
+		// Add filters for excluding product variation statuses.
+		if ( ! empty( $this->exclude_status ) ) {
+			add_filter( 'posts_where', array( $this, 'exclude_product_statuses' ) );
+		}
+
+		$result = parent::get_objects( $query_args );
+
+		// Remove filters for excluding product variation statuses.
+		if ( ! empty( $this->exclude_status ) ) {
+			remove_filter( 'posts_where', array( $this, 'exclude_product_statuses' ) );
+
+			$this->exclude_status = array();
+		}
+
+		return $result;
+	}
+
+	/**
 	 * Get the query params for collections of attachments.
 	 *
 	 * @return array
@@ -1123,6 +1160,17 @@ class WC_REST_Product_Variations_Controller extends WC_REST_Product_Variations_V
 			'items'             => array(
 				'type' => 'string',
 				'enum' => array_merge( array( 'any', 'future', 'trash' ), array_keys( get_post_statuses() ) ),
+			),
+			'sanitize_callback' => 'wp_parse_list',
+			'validate_callback' => 'rest_validate_request_arg',
+		);
+
+		$params['exclude_status'] = array(
+			'description'       => __( 'Exclude product variations with any of the statuses from result set.', 'woocommerce' ),
+			'type'              => 'array',
+			'items'             => array(
+				'type' => 'string',
+				'enum' => array_merge( array( 'future', 'trash' ), array_keys( get_post_statuses() ) ),
 			),
 			'sanitize_callback' => 'wp_parse_list',
 			'validate_callback' => 'rest_validate_request_arg',
@@ -1196,5 +1244,27 @@ class WC_REST_Product_Variations_Controller extends WC_REST_Product_Variations_V
 		$data_store->sort_all_product_variations( $product->get_id() );
 
 		return rest_ensure_response( $response );
+	}
+
+	/**
+	 * Exclude product statuses from the query.
+	 *
+	 * @param string $where Where clause used to search posts.
+	 * @return string
+	 */
+	public function exclude_product_statuses( $where ) {
+		if ( ! empty( $this->exclude_status ) && is_array( $this->exclude_status ) ) {
+			global $wpdb;
+
+			$not_in = array();
+			foreach ( $this->exclude_status as $status_to_exclude ) {
+				$not_in[] = $wpdb->prepare( '%s', $status_to_exclude );
+			}
+
+			$not_in = join( ', ', $not_in );
+			return $where . " AND $wpdb->posts.post_status NOT IN ( $not_in )";
+		}
+
+		return $where;
 	}
 }
