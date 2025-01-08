@@ -61,7 +61,7 @@ class Legacy {
 		// If the payment failed with a message, throw an exception.
 		if ( isset( $gateway_result['result'] ) && 'failure' === $gateway_result['result'] ) {
 			if ( isset( $gateway_result['message'] ) ) {
-				throw new RouteException( 'woocommerce_rest_payment_error', wp_strip_all_tags( $gateway_result['message'] ), 400 );
+				throw new RouteException( 'woocommerce_rest_payment_error', esc_html( wp_strip_all_tags( $gateway_result['message'] ) ), 400 );
 			} else {
 				NoticeHandler::convert_notices_to_exceptions( 'woocommerce_rest_payment_error' );
 			}
