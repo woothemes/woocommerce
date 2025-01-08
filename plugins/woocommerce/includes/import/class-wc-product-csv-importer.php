@@ -6,6 +6,7 @@
  * @version 3.1.0
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Utilities\ArrayUtil;
 
@@ -879,15 +880,15 @@ class WC_Product_CSV_Importer extends WC_Product_Importer {
 			}
 
 			$statuses       = array(
-				-1 => 'draft',
-				0  => 'private',
-				1  => 'publish',
+				-1 => ProductStatus::DRAFT,
+				0  => ProductStatus::PRIVATE,
+				1  => ProductStatus::PUBLISH,
 			);
-			$data['status'] = $statuses[ $published ] ?? 'draft';
+			$data['status'] = $statuses[ $published ] ?? ProductStatus::DRAFT;
 
 			// Fix draft status of variations.
 			if ( ProductType::VARIATION === ( $data['type'] ?? null ) && -1 === $published ) {
-				$data['status'] = 'publish';
+				$data['status'] = ProductStatus::PUBLISH;
 			}
 
 			unset( $data['published'] );
