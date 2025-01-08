@@ -42,7 +42,7 @@ const ValidatedTextInput = forwardRef<
 			className,
 			id,
 			type = 'text',
-			ariaDescribedBy,
+			ariaDescribedBy = '',
 			errorId,
 			focusOnMount = false,
 			onChange,
