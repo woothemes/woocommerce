@@ -1228,12 +1228,27 @@ jQuery( function ( $ ) {
 				case 'variable_regular_price_decrease':
 				case 'variable_sale_price_increase':
 				case 'variable_sale_price_decrease':
-					const message =
-						woocommerce_admin_meta_boxes_variations.i18n_enter_a_value_fixed_or_percent +
-						'\n\n' +
-						woocommerce_admin_meta_boxes_variations.i18n_sale_price_warning;
+					let promptMessage =
+						woocommerce_admin_meta_boxes_variations.i18n_enter_a_value_fixed_or_percent;
 
-					value = window.prompt( message );
+					/**
+					 * There are two cases where sale price becomes more than regular price:
+					 * 1. When regular price is decreased
+					 * 2. When sale price is increased
+					 *
+					 * In both cases, we need to show the warning message.
+					 */
+					if (
+						do_variation_action ===
+							'variable_regular_price_decrease' ||
+						do_variation_action === 'variable_sale_price_increase'
+					) {
+						promptMessage +=
+							'\n\n' +
+							woocommerce_admin_meta_boxes_variations.i18n_sale_price_warning;
+					}
+
+					value = window.prompt( promptMessage );
 
 					if ( value != null ) {
 						if ( value.indexOf( '%' ) >= 0 ) {
