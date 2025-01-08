@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { Ref } from 'react';
 import { __ } from '@wordpress/i18n';
 import { BlockAttributes } from '@wordpress/blocks';
 import { useInstanceId } from '@wordpress/compose';
@@ -21,7 +22,6 @@ import { useEntityProp } from '@wordpress/core-data';
  */
 import { ProductEditorBlockEditProps } from '../../../types';
 import { useValidation } from '../../../contexts/validation-context';
-import { Ref } from 'react';
 
 /**
  * Internal dependencies

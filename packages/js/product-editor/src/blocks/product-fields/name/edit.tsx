@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { Ref } from 'react';
 import { useInstanceId } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import {
@@ -37,7 +38,6 @@ import useProductEntityProp from '../../../hooks/use-product-entity-prop';
 import { ProductEditorBlockEditProps } from '../../../types';
 import { AUTO_DRAFT_NAME, getPermalinkParts } from '../../../utils';
 import { NameBlockAttributes } from './types';
-import { Ref } from 'react';
 
 export function NameBlockEdit( {
 	attributes,

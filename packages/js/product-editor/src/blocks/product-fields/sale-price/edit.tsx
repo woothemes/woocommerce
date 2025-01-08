@@ -12,6 +12,7 @@ import {
 	BaseControl,
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
+import { Ref } from 'react';
 
 /**
  * Internal dependencies
@@ -21,7 +22,6 @@ import { useCurrencyInputProps } from '../../../hooks/use-currency-input-props';
 import { SalePriceBlockAttributes } from './types';
 import { ProductEditorBlockEditProps } from '../../../types';
 import { Label } from '../../../components/label/label';
-import { Ref } from 'react';
 
 export function Edit( {
 	attributes,

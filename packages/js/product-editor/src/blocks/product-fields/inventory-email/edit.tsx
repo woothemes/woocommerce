@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { Ref } from 'react';
 import { __, sprintf } from '@wordpress/i18n';
 import { useWooBlockProps } from '@woocommerce/block-templates';
 import { Link } from '@woocommerce/components';
@@ -27,7 +28,6 @@ import { useEntityProp } from '@wordpress/core-data';
 import { useValidation } from '../../../contexts/validation-context';
 import { InventoryEmailBlockAttributes } from './types';
 import { ProductEditorBlockEditProps } from '../../../types';
-import { Ref } from 'react';
 
 export function Edit( {
 	attributes,
