@@ -436,14 +436,18 @@ class Checkout extends AbstractBlock {
 		$this->asset_data_registry->add( 'localPickupText', $pickup_location_settings['title'] );
 		$this->asset_data_registry->add( 'collectableMethodIds', LocalPickupUtils::get_local_pickup_method_ids() );
 
-		$shipping_methods_count = wc_get_shipping_method_count( true, true );
-
 		// Local pickup is included with legacy shipping methods since they do not support shipping zones.
-		if ( $pickup_location_settings['enabled'] ) {
-			$this->asset_data_registry->add( 'shippingMethodsExist', $shipping_methods_count > 1 );
-		} else {
-			$this->asset_data_registry->add( 'shippingMethodsExist', $shipping_methods_count > 0 );
-		}
+		$local_pickup_count = count(
+			array_filter(
+				WC()->shipping()->get_shipping_methods(),
+				function ( $method ) {
+					return isset( $method->enabled ) && 'yes' === $method->enabled && ! $method->supports( 'shipping-zones' ) && $method->supports( 'local-pickup' );
+				}
+			)
+		);
+
+		$shipping_methods_count = wc_get_shipping_method_count( true, true ) - $local_pickup_count;
+		$this->asset_data_registry->add( 'shippingMethodsExist', $shipping_methods_count > 0 );
 
 		$is_block_editor = $this->is_block_editor();
 
