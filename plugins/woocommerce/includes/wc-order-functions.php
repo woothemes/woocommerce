@@ -981,7 +981,7 @@ function wc_update_coupon_usage_counts( $order_id ) {
 		$action = 'increase';
 		$order->get_data_store()->set_recorded_coupon_usage_counts( $order, true );
 	} elseif ( $order->has_status( $invalid_statuses ) ) {
-		$order->get_data_store()->release_held_coupons( $order, true );
+		wc_release_coupons_for_order( $order );
 		return;
 	} else {
 		return;
@@ -1009,7 +1009,7 @@ function wc_update_coupon_usage_counts( $order_id ) {
 					break;
 			}
 		}
-		$order->get_data_store()->release_held_coupons( $order, true );
+		wc_release_coupons_for_order( $order );
 	}
 }
 add_action( 'woocommerce_order_status_pending', 'wc_update_coupon_usage_counts' );
