@@ -431,16 +431,17 @@ class Checkout extends AbstractBlock {
 		$this->asset_data_registry->add( 'isBlockTheme', wc_current_theme_is_fse_theme() );
 
 		$pickup_location_settings = LocalPickupUtils::get_local_pickup_settings();
-		$local_pickup_method_ids  = LocalPickupUtils::get_local_pickup_method_ids();
-		$local_pickup_enabled     = $pickup_location_settings['enabled'];
-		$shipping_methods_count   = wc_get_shipping_method_count( true, true );
 
-		$this->asset_data_registry->add( 'localPickupEnabled', $local_pickup_enabled );
+		$this->asset_data_registry->add( 'localPickupEnabled', $pickup_location_settings['enabled'] );
 		$this->asset_data_registry->add( 'localPickupText', $pickup_location_settings['title'] );
-		$this->asset_data_registry->add( 'collectableMethodIds', $local_pickup_method_ids );
+		$this->asset_data_registry->add( 'collectableMethodIds', LocalPickupUtils::get_local_pickup_method_ids() );
+
+		$shipping_methods_count = wc_get_shipping_method_count( true, true );
+
+		var_dump( $shipping_methods_count );
 
 		// Local pickup is included with legacy shipping methods since they do not support shipping zones.
-		if ( $local_pickup_enabled ) {
+		if ( $pickup_location_settings['enabled'] ) {
 			$this->asset_data_registry->add( 'shippingMethodsExist', $shipping_methods_count > 1 );
 		} else {
 			$this->asset_data_registry->add( 'shippingMethodsExist', $shipping_methods_count > 0 );
