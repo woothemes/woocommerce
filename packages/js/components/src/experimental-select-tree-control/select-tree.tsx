@@ -55,7 +55,7 @@ interface SelectTreeProps extends TreeControlProps {
 function isBlurEvent(
 	event: React.SyntheticEvent | React.FocusEvent
 ): event is React.FocusEvent {
-	return ( event as React.FocusEvent ).hasOwnProperty( 'relatedTarget' );
+	return event.type === 'blur';
 }
 
 export const SelectTree = function SelectTree( {
