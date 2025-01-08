@@ -23,6 +23,8 @@ class Legacy {
 	 *
 	 * @param PaymentContext $context Holds context for the payment.
 	 * @param PaymentResult  $result  Result of the payment.
+	 *
+	 * @throws RouteException If the gateway returns an explicit error message.
 	 */
 	public function process_legacy_payment( PaymentContext $context, PaymentResult &$result ) {
 		if ( $result->status ) {
