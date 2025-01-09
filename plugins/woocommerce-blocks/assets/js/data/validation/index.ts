@@ -17,7 +17,7 @@ export const config = {
 	actions,
 };
 
-const store = createReduxStore( STORE_KEY, config );
+export const store = createReduxStore( STORE_KEY, config );
 register( store );
 
 export const VALIDATION_STORE_KEY = STORE_KEY;

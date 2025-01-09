@@ -29,7 +29,7 @@ import {
 } from './persistence-layer';
 import { defaultCartState } from './default-state';
 
-const store = createReduxStore( STORE_KEY, {
+export const config = {
 	reducer,
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	actions: actions as any,
@@ -43,7 +43,8 @@ const store = createReduxStore( STORE_KEY, {
 			...( persistenceLayer.get() || {} ),
 		},
 	},
-} );
+};
+export const store = createReduxStore( STORE_KEY, config );
 
 register( store );
 
@@ -55,7 +56,7 @@ window.addEventListener( 'load', () => {
 		( ! hasCartSession() || persistenceLayer.get() ) &&
 		! isAddingToCart
 	) {
-		wpDispatch( STORE_KEY ).finishResolution( 'getCartData' );
+		wpDispatch( store ).finishResolution( 'getCartData' );
 	}
 } );
 

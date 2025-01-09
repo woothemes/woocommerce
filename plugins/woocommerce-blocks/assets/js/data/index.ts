@@ -6,13 +6,16 @@ import '@wordpress/notices';
 /**
  * Internal dependencies
  */
-export { CART_STORE_KEY } from './cart';
-export { CHECKOUT_STORE_KEY } from './checkout';
+export { CART_STORE_KEY, store as cartStore } from './cart';
+export { CHECKOUT_STORE_KEY, store as CheckoutStore } from './checkout';
 export { COLLECTIONS_STORE_KEY } from './collections';
-export { PAYMENT_STORE_KEY } from './payment';
+export { PAYMENT_STORE_KEY, store as paymentStore } from './payment';
 export { QUERY_STATE_STORE_KEY } from './query-state';
 export { SCHEMA_STORE_KEY } from './schema';
-export { STORE_NOTICES_STORE_KEY } from './store-notices';
-export { VALIDATION_STORE_KEY } from './validation';
+export {
+	STORE_NOTICES_STORE_KEY,
+	store as storeNoticesStore,
+} from './store-notices';
+export { VALIDATION_STORE_KEY, store as validationStore } from './validation';
 export * from './constants';
 export * from './utils';

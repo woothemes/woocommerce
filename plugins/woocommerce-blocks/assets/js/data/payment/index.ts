@@ -22,7 +22,7 @@ export const config = {
 	__experimentalUseThunks: true,
 };
 
-const store = createReduxStore( STORE_KEY, config );
+export const store = createReduxStore( STORE_KEY, config );
 register( store );
 
 export const PAYMENT_STORE_KEY = STORE_KEY;
