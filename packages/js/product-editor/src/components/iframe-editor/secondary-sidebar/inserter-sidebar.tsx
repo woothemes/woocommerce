@@ -61,7 +61,7 @@ export default function InserterSidebar() {
 	return (
 		// eslint-disable-next-line jsx-a11y/no-static-element-interactions
 		<div
-			onKeyDown={ ( event ) => closeOnEscape( event ) }
+			onKeyDown={ closeOnEscape }
 			className="woocommerce-iframe-editor__inserter-panel"
 		>
 			<div className="woocommerce-iframe-editor__inserter-panel-content">
