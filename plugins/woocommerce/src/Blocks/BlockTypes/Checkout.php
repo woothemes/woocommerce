@@ -431,10 +431,11 @@ class Checkout extends AbstractBlock {
 		$this->asset_data_registry->add( 'isBlockTheme', wc_current_theme_is_fse_theme() );
 
 		$pickup_location_settings = LocalPickupUtils::get_local_pickup_settings();
+		$local_pickup_method_ids  = LocalPickupUtils::get_local_pickup_method_ids();
 
 		$this->asset_data_registry->add( 'localPickupEnabled', $pickup_location_settings['enabled'] );
 		$this->asset_data_registry->add( 'localPickupText', $pickup_location_settings['title'] );
-		$this->asset_data_registry->add( 'collectableMethodIds', LocalPickupUtils::get_local_pickup_method_ids() );
+		$this->asset_data_registry->add( 'collectableMethodIds', $local_pickup_method_ids );
 
 		// Local pickup is included with legacy shipping methods since they do not support shipping zones.
 		$local_pickup_count = count(
