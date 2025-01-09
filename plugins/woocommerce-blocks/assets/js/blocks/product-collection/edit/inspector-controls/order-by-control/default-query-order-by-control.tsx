@@ -63,7 +63,7 @@ const DefaultQueryOrderByControl = () => {
 			orderOptions={ orderOptions }
 			onChange={ onChange }
 			help={ __(
-				'This setting is sincyed across all Product Collection blocks using the default query type.',
+				'This setting is synced across all Product Collection blocks using the default query type.',
 				'woocommerce'
 			) }
 		/>
