@@ -252,4 +252,65 @@ class WC_REST_Product_Variations_Controller_Tests extends WC_REST_Unit_Test_Case
 		$this->assertEquals( 400, $response->get_status() );
 		$this->assertEquals( 'rest_invalid_param', $response->get_data()['code'] );
 	}
+
+	/**
+	 * Test `virtual` filter returns only virtual product variations.
+	 */
+	public function test_virtual_filter_returns_only_virtual_products() {
+		$parent_product = WC_Helper_Product::create_variation_product();
+		$variations     = $parent_product->get_available_variations( 'objects' );
+		$variations[0]->set_virtual( true );
+		$variations[0]->save();
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products/' . $parent_product->get_id() . '/variations' );
+		$request->set_param( 'virtual', true );
+
+		$response = $this->server->dispatch( $request );
+		$products = $response->get_data();
+
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertCount( 1, $products );
+
+		foreach ( $products as $product ) {
+			$this->assertTrue( $product['virtual'] );
+		}
+	}
+
+	/**
+	 * Test `virtual` filter returns only non-virtual products when is false.
+	 */
+	public function test_virtual_filter_returns_only_non_virtual_products() {
+		$parent_product = WC_Helper_Product::create_variation_product();
+		$variations     = $parent_product->get_available_variations( 'objects' );
+		$variations[0]->set_virtual( true );
+		$variations[0]->save();
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products/' . $parent_product->get_id() . '/variations' );
+		$request->set_param( 'virtual', false );
+
+		$response = $this->server->dispatch( $request );
+		$products = $response->get_data();
+
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertCount( 5, $products );
+
+		foreach ( $products as $product ) {
+			$this->assertFalse( $product['virtual'] );
+		}
+	}
+
+	/**
+	 * Test invalid virtual parameter type returns error.
+	 */
+	public function test_virtual_filter_with_invalid_param() {
+		$parent_product = WC_Helper_Product::create_variation_product();
+
+		$request = new WP_REST_Request( 'GET', '/wc/v3/products/' . $parent_product->get_id() . '/variations' );
+		$request->set_param( 'virtual', 'invalid' );
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 'rest_invalid_param', $response->get_data()['code'] );
+	}
 }
