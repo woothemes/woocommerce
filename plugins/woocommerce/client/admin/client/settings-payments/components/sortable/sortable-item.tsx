@@ -15,7 +15,7 @@ import { DragHandleContext } from './sortable-drag-handle';
  * @param {Object} props - Component properties.
  * @param {string} props.id - Unique identifier for the sortable item.
  * @param {string} [props.className] - Additional class names for the sortable item.
- * @param {React.ReactNode} props.children - The content of the sortable item.
+ * @param {ReactNode} props.children - The content of the sortable item.
  *
  * @example
  * <SortableItem id="item-1">

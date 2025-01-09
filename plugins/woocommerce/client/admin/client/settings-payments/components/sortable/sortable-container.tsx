@@ -37,7 +37,7 @@ import './sortable.scss';
  * @param {Object} props - Component properties.
  * @param {T[]} props.items - Array of items to be sorted, each having a unique `id` property.
  * @param {Function} props.setItems - Callback to update the order of items.
- * @param {React.ReactNode} props.children - The content to be rendered inside the container.
+ * @param {ReactNode} props.children - The content to be rendered inside the container.
  * @param {'vertical' | 'horizontal'} [props.sorting='vertical'] - Direction for sorting items. Defaults to 'vertical'.
  * @param {Function} [props.onDragStart] - Callback invoked when dragging starts.
  * @param {Function} [props.onDragEnd] - Callback invoked when dragging ends.
