@@ -26,7 +26,6 @@ import {
  */
 import { useNumberInputProps } from '../../hooks/use-number-input-props';
 import { Label } from '../label/label';
-import { number } from 'prop-types';
 
 export type NumberProps = {
 	id?: string;

@@ -29,7 +29,6 @@ import { useEntityId, useEntityProp } from '@wordpress/core-data';
 /**
  * Internal dependencies
  */
-import { ProductEditorSettings } from '../../../components';
 import { BlockFill } from '../../../components/block-slot-fill';
 import { useValidations } from '../../../contexts/validation-context';
 import { TRACKS_SOURCE } from '../../../constants';

@@ -18,7 +18,7 @@ import { addQueryArgs } from '@wordpress/url';
  */
 import { ComboboxControl, ComboboxControlProps } from '../../combobox-control';
 import type { ComboboxControlOption } from '../../attribute-combobox-field/types';
-import type { CustomFieldNameControlProps, CustomFieldName } from './types';
+import type { CustomFieldNameControlProps } from './types';
 
 /**
  * Since the Combobox does not support an arbitrary value, the

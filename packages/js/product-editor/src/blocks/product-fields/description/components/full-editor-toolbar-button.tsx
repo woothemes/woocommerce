@@ -8,7 +8,6 @@ import { recordEvent } from '@woocommerce/tracks';
 import { dispatch } from '@wordpress/data';
 import { useEntityProp } from '@wordpress/core-data';
 import { parse, rawHandler } from '@wordpress/blocks';
-import type { BlockInstance } from '@wordpress/blocks';
 
 /**
  * Internal dependencies

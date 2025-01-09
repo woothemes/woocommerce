@@ -2,7 +2,7 @@
  * External dependencies
  */
 import type { MouseEvent } from 'react';
-import { Button, Dropdown } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import { useDispatch } from '@wordpress/data';
 import { createElement } from '@wordpress/element';
