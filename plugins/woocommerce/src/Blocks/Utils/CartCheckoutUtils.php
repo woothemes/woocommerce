@@ -23,7 +23,7 @@ class CartCheckoutUtils {
 		}
 
 		// Check page contents for block/shortcode.
-		return is_a( $post, 'WP_Post' ) && ( wc_post_content_has_shortcode( 'woocommerce_cart' ) || self::has_block_variation( 'woocommerce/classic-shortcode', 'shortcode', 'cart' ) );
+		return is_a( $post, 'WP_Post' ) && ( wc_post_content_has_shortcode( 'woocommerce_cart' ) || self::has_block_variation( 'woocommerce/classic-shortcode', 'shortcode', 'cart', $post->post_content ) );
 	}
 
 	/**
@@ -44,26 +44,24 @@ class CartCheckoutUtils {
 		}
 
 		// Check page contents for block/shortcode.
-		return is_a( $post, 'WP_Post' ) && ( wc_post_content_has_shortcode( 'woocommerce_checkout' ) || self::has_block_variation( 'woocommerce/classic-shortcode', 'shortcode', 'checkout' ) );
+		return is_a( $post, 'WP_Post' ) && ( wc_post_content_has_shortcode( 'woocommerce_checkout' ) || self::has_block_variation( 'woocommerce/classic-shortcode', 'shortcode', 'checkout', $post->post_content ) );
 	}
 
 	/**
-	 * Check if the current post has a block with a specific attribute value.
+	 * Check if the post content contains a block with a specific attribute value.
 	 *
 	 * @param string $block_id The block ID to check for.
 	 * @param string $attribute The attribute to check.
 	 * @param string $value The value to check for.
 	 * @return boolean
 	 */
-	private static function has_block_variation( $block_id, $attribute, $value ) {
-		$post = get_post();
-
-		if ( ! $post ) {
+	public static function has_block_variation( $block_id, $attribute, $value, $post_content ) {
+		if ( ! $post_content ) {
 			return false;
 		}
 
-		if ( has_block( $block_id, $post->ID ) ) {
-			$blocks = (array) parse_blocks( $post->post_content );
+		if ( has_block( $block_id, $post_content ) ) {
+			$blocks = (array) parse_blocks( $post_content );
 
 			foreach ( $blocks as $block ) {
 				if ( isset( $block['attrs'][ $attribute ] ) && $value === $block['attrs'][ $attribute ] ) {
