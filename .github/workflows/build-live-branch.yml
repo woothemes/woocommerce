@@ -4,15 +4,15 @@ on:
         branches:
             - trunk
         paths-ignore:
-          - 'docs/**'
-          - 'packages/php/**'
-          - 'tools/**'
-          - '**/changelog/**'
-          - '**/tests/**'
-          - '**/*.md'
-          - '.husky/**'
-          - '.github/**'
-          - '!.github/workflows/build-live-branch.yml'
+            - 'docs/**'
+            - 'packages/php/**'
+            - 'tools/**'
+            - '**/changelog/**'
+            - '**/tests/**'
+            - '**/*.md'
+            - '.husky/**'
+            - '.github/**'
+            - '!.github/workflows/build-live-branch.yml'
 
 concurrency:
     group: ${{ github.workflow }}-${{ github.ref }}
