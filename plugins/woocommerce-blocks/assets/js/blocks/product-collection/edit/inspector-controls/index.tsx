@@ -87,21 +87,21 @@ const ProductCollectionInspectorControls = (
 		tracksLocation === 'product-catalog' ||
 		tracksLocation === 'product-archive';
 
-	const showQueryControls = inherit === false;
+	const showCustomQueryControls = inherit === false;
 	const showInheritQueryControl =
 		isArchiveTemplate && shouldShowFilter( CoreFilterNames.INHERIT );
 	const showFilterableControl =
 		! isArchiveTemplate && shouldShowFilter( CoreFilterNames.FILTERABLE );
 	const showCustomOrderControl =
-		showQueryControls && shouldShowFilter( CoreFilterNames.ORDER );
-	const showDefaultOrderControl = inherit === true;
+		showCustomQueryControls && shouldShowFilter( CoreFilterNames.ORDER );
+	const showDefaultOrderControl = ! showCustomQueryControls;
 	const showOffsetControl =
-		showQueryControls && shouldShowFilter( CoreFilterNames.OFFSET );
+		showCustomQueryControls && shouldShowFilter( CoreFilterNames.OFFSET );
 	const showMaxPagesToShowControl =
-		showQueryControls &&
+		showCustomQueryControls &&
 		shouldShowFilter( CoreFilterNames.MAX_PAGES_TO_SHOW );
 	const showProductsPerPageControl =
-		showQueryControls &&
+		showCustomQueryControls &&
 		shouldShowFilter( CoreFilterNames.PRODUCTS_PER_PAGE );
 	const showOnSaleControl = shouldShowFilter( CoreFilterNames.ON_SALE );
 	const showStockStatusControl = shouldShowFilter(
@@ -185,7 +185,7 @@ const ProductCollectionInspectorControls = (
 				) }
 			</ToolsPanel>
 
-			{ showQueryControls ? (
+			{ showCustomQueryControls ? (
 				<ToolsPanel
 					label={ __( 'Filters', 'woocommerce' ) }
 					resetAll={ ( resetAllFilters: ( () => void )[] ) => {
