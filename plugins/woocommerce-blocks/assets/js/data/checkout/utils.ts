@@ -25,7 +25,6 @@ import {
 	CheckoutAndPaymentNotices,
 	CheckoutAfterProcessingWithErrorEventData,
 } from './types';
-import * as actions from './actions';
 
 /**
  * Based on the given observers, create Error Notices where necessary
