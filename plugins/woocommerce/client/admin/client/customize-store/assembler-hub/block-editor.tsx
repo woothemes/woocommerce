@@ -27,7 +27,10 @@ export const BlockEditor = memo(
 		};
 		additionalStyles: string;
 		isScrollable: boolean;
-		onChange: ( blocks: BlockInstance[] ) => void;
+		onChange: (
+			blocks: BlockInstance[],
+			options: Record< string, unknown >
+		) => void;
 	} ) => {
 		return (
 			<div className="woocommerce-customize-store__block-editor">

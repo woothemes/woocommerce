@@ -32,7 +32,10 @@ export const BlockPreview = ( {
 }: {
 	blocks: BlockInstance | BlockInstance[];
 	settings: EditorSettings;
-	onChange?: ( blocks: BlockInstance[] ) => void;
+	onChange: (
+		blocks: BlockInstance[],
+		options: Record< string, unknown >
+	) => void;
 	useSubRegistry?: boolean;
 	isPatternPreview: boolean;
 } & Omit< ScaledBlockPreviewProps, 'containerWidth' > ) => {
@@ -46,6 +49,7 @@ export const BlockPreview = ( {
 				value={ renderedBlocks }
 				settings={ settings }
 				// We need to set onChange for logo to work, but we don't want to trigger the onChange callback when highlighting blocks in the preview. It would persist the highlighted block and cause the opacity to be applied to block permanently.
+				// @ts-expect-error The type is not up to date.
 				onChange={ onChange }
 				useSubRegistry={ useSubRegistry }
 			>
