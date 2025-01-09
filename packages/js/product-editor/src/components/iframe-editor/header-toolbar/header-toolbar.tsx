@@ -126,6 +126,7 @@ export function HeaderToolbar( {
 							ref={ inserterButton }
 							as={ Button }
 							className="woocommerce-iframe-editor__header-inserter-toggle"
+							// @ts-expect-error the prop variant is passed to the Button component
 							variant="primary"
 							isPressed={ isInserterOpened }
 							onMouseDown={ (
@@ -146,12 +147,16 @@ export function HeaderToolbar( {
 						{ isLargeViewport && (
 							<ToolbarItem
 								as={ ToolSelector }
+								// @ts-expect-error the prop size is passed to the ToolSelector component
 								disabled={ isTextModeEnabled }
 								size="compact"
 							/>
 						) }
+						{ /* @ts-expect-error the prop size is passed to the EditorHistoryUndo component */ }
 						<ToolbarItem as={ EditorHistoryUndo } size="compact" />
+						{ /* @ts-expect-error the prop size is passed to the EditorHistoryRedo component */ }
 						<ToolbarItem as={ EditorHistoryRedo } size="compact" />
+						{ /* @ts-expect-error the prop size is passed to the DocumentOverview component */ }
 						<ToolbarItem as={ DocumentOverview } size="compact" />
 					</div>
 				</NavigableToolbar>

@@ -119,6 +119,7 @@ export function IframeEditor( {
 
 	// Pick the blocks from the store.
 	const blocks: BlockInstance[] = useSelect( ( select ) => {
+		// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 		return select( productEditorUiStore ).getModalEditorBlocks();
 	}, [] );
 
@@ -163,14 +164,11 @@ export function IframeEditor( {
 		} );
 	}, [] );
 
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore This action exists in the block editor store.
 	const { clearSelectedBlock, updateSettings } =
 		useDispatch( blockEditorStore );
 
 	const parentEditorSettings = useSelect( ( select ) => {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
+		// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 		return select( blockEditorStore ).getSettings();
 	}, [] );
 
