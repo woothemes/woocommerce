@@ -3,7 +3,7 @@
  */
 import { useState, useEffect, useRef } from '@wordpress/element';
 import { useDispatch } from '@wordpress/data';
-import { CART_STORE_KEY as storeKey } from '@woocommerce/block-data';
+import { cartStore } from '@woocommerce/block-data';
 import { decodeEntities } from '@wordpress/html-entities';
 import type { CartItem } from '@woocommerce/types';
 
@@ -49,7 +49,7 @@ const getQuantityFromCartItems = (
  *                                  to add to cart functionality.
  */
 export const useStoreAddToCart = ( productId: number ): StoreAddToCart => {
-	const { addItemToCart } = useDispatch( storeKey );
+	const { addItemToCart } = useDispatch( cartStore );
 	const { cartItems, cartIsLoading } = useStoreCart();
 	const { createErrorNotice, removeNotice } = useDispatch( 'core/notices' );
 
