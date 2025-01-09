@@ -1063,7 +1063,7 @@ class WC_Helper {
 		$product_id = $subscription['product_id'];
 
 		// Activate subscription.
-		list( $activation_response, $activated ) = self::wccom_activate( $product_key );
+		list( $activation_response, $activated, $body ) = self::wccom_activate( $product_key );
 
 		if ( $activated ) {
 			/**
@@ -1986,7 +1986,7 @@ class WC_Helper {
 		}
 
 		$product_key                             = $subscription['product_key'];
-		list( $activation_response, $activated ) = self::wccom_activate( $product_key );
+		list( $activation_response, $activated, $body ) = self::wccom_activate( $product_key );
 
 		if ( $activated ) {
 			self::log( 'Auto-activated a subscription for ' . $filename );
@@ -2057,7 +2057,7 @@ class WC_Helper {
 		}
 
 		$product_key                             = $subscription['product_key'];
-		list( $activation_response, $activated ) = self::wccom_activate( $product_key );
+		list( $activation_response, $activated, $body ) = self::wccom_activate( $product_key );
 
 		if ( $activated ) {
 			self::log( 'Auto-activated a subscription for ' . $theme['Name'] );
@@ -2545,7 +2545,7 @@ class WC_Helper {
 			$activated = true;
 		}
 
-		return array( $activation_response, $activated );
+		return array( $activation_response, $activated, $body );
 	}
 
 	/**
