@@ -1,7 +1,7 @@
 ---
 post_title: Cart and Checkout - Extensibility getting started guide
-menu_title: Extensibility
-tags: reference
+menu_title: Extensibility - Getting started
+tags: how-to
 ---
 <!-- markdownlint-disable MD041 -->
 
