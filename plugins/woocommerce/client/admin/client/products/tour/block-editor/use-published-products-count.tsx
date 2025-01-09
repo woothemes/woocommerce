@@ -14,15 +14,13 @@ export const usePublishedProductsCount = () => {
 		const { getProductsTotalCount, hasFinishedResolution } =
 			select( PRODUCTS_STORE_NAME );
 
-		// Todo: awaiting a more global fix, demo:
-		// https://github.com/woocommerce/woocommerce/pull/54146
+		// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 		const publishedProductsCount = getProductsTotalCount(
 			PUBLISHED_PRODUCTS_QUERY_PARAMS,
 			0
 		) as number;
 
-		// Todo: awaiting a more global fix, demo:
-		// https://github.com/woocommerce/woocommerce/pull/54146
+		// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 		const loadingPublishedProductsCount = ! hasFinishedResolution(
 			'getProductsTotalCount',
 			[ PUBLISHED_PRODUCTS_QUERY_PARAMS, 0 ]
