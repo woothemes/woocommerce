@@ -12,6 +12,7 @@ import {
 	BaseControl,
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
+import { Ref } from 'react';
 
 /**
  * Internal dependencies
