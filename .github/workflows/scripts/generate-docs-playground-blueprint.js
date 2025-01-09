@@ -9,7 +9,7 @@ const generateDocsPlaygroundBlueprint = (runId, prNumber, context) => {
     `&ghexport-commit-message=Documentation+update` +
     `&ghexport-playground-root=/wordpress/wp-content/static-content/docs` +
     `&ghexport-repo-root=/docs` +
-    `&blueprint-url=https://raw.githubusercontent.com/${context.repo.owner}/${context.repo.repo}/${currentRef}/.github/workflows/scripts/woocommerce-docs-blueprint.json` +
+    `&blueprint-url=https://raw.githubusercontent.com/woocommerce/woocommerce/d5e2a9e718ef3e9bed30b36bdc725215aff0ca2d/.github/workflows/scripts/woocommerce-docs-blueprint.json` +
     `&ghexport-pr-action=create` +
     `&ghexport-allow-include-zip=no`;
 };
