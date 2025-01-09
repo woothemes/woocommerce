@@ -1592,11 +1592,11 @@ if ( ! function_exists( 'woocommerce_catalog_ordering' ) ) {
 				'woocommerce_catalog_orderby',
 				array(
 					'menu_order' => __( 'Default sorting', 'woocommerce' ),
-					'popularity' => __( 'Sort by Popularity', 'woocommerce' ),
-					'rating'     => __( 'Sort by Average rating', 'woocommerce' ),
-					'date'       => __( 'Sort by Latest', 'woocommerce' ),
-					'price'      => __( 'Sort by Price: low to high', 'woocommerce' ),
-					'price-desc' => __( 'Sort by Price: high to low', 'woocommerce' ),
+					'popularity' => __( 'Sort by popularity', 'woocommerce' ),
+					'rating'     => __( 'Sort by average rating', 'woocommerce' ),
+					'date'       => __( 'Sort by latest', 'woocommerce' ),
+					'price'      => __( 'Sort by price: low to high', 'woocommerce' ),
+					'price-desc' => __( 'Sort by price: high to low', 'woocommerce' ),
 				)
 			);
 		}
