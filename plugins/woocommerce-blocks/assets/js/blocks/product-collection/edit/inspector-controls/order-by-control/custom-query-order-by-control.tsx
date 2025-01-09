@@ -101,6 +101,10 @@ const CustomQueryOrderByControl = ( props: QueryControlProps ) => {
 				trackInteraction( CoreFilterNames.ORDER );
 			} }
 			onDeselect={ deselectCallback }
+			help={ __(
+				'Set the products order in this collection.',
+				'woocommerce'
+			) }
 		/>
 	);
 };
