@@ -24,7 +24,7 @@ export const MoreMenu = () => {
 				{ ( onClose ) => (
 					<>
 						<WooProductMoreMenuItem.Slot
-							name=""
+							name="product-more-menu"
 							fillProps={ { onClose } }
 						/>
 					</>
