@@ -198,6 +198,50 @@ test.describe( 'Shopper → Local pickup', () => {
 			'john.doe@test.com'
 		);
 	} );
+
+	test( 'Delivery/pickup toggle is not shown when other shipping methods are disabled', async ( {
+		admin,
+		page,
+		frontendUtils,
+		checkoutPageObject,
+	} ) => {
+		// Disable all other shipping methods.
+		await admin.visitAdminPage(
+			'admin.php',
+			'page=wc-settings&tab=shipping&zone_id=0'
+		);
+
+		// There are 2 shipping methods and 2 toggles with our test data. Disable both.
+		await admin.page.getByRole( 'link', { name: 'Yes' } ).first().click();
+		await admin.page.getByRole( 'link', { name: 'Yes' } ).last().click();
+		const saveButton = admin.page.getByRole( 'button', {
+			name: 'Save changes',
+		} );
+		await saveButton.click();
+
+		// Go to checkout.
+		await frontendUtils.goToShop();
+		await frontendUtils.addToCart( SIMPLE_PHYSICAL_PRODUCT_NAME );
+		await frontendUtils.goToCheckout();
+
+		await expect(
+			page.getByRole( 'radio', { name: 'Local Pickup', exact: true } )
+		).toBeHidden();
+		await expect(
+			page.getByRole( 'radio', { name: 'Ship', exact: true } )
+		).toBeHidden();
+
+		await expect( page.getByLabel( 'Testing' ).last() ).toBeVisible();
+		await page.getByLabel( 'Testing' ).last().check();
+
+		await checkoutPageObject.fillInCheckoutWithTestData();
+		await checkoutPageObject.placeOrder();
+
+		await expect(
+			page.getByText( 'Collection from Testing' )
+		).toBeVisible();
+		await checkoutPageObject.verifyBillingDetails();
+	} );
 } );
 
 test.describe( 'Shopper → Payment Methods', () => {

@@ -91,23 +91,28 @@ export const SaveHub = () => {
 	const save = useCallback( async () => {
 		for ( const { kind, name, key, property } of dirtyEntityRecords ) {
 			if ( kind === 'root' && name === 'site' ) {
-				await saveSpecifiedEntityEdits( 'root', 'site', undefined, [
-					property,
-				] );
+				await saveSpecifiedEntityEdits(
+					'root',
+					'site',
+					undefined,
+					[ property ],
+					undefined
+				);
 			} else {
 				if (
 					PUBLISH_ON_SAVE_ENTITIES.some(
 						( typeToPublish ) =>
 							typeToPublish.kind === kind &&
 							typeToPublish.name === name
-					)
+					) &&
+					typeof key !== 'undefined'
 				) {
 					editEntityRecord( kind, name, key, {
 						status: 'publish',
 					} );
 				}
 
-				await saveEditedEntityRecord( kind, name, key );
+				await saveEditedEntityRecord( kind, name, key, undefined );
 				__unstableMarkLastChangeAsPersistent();
 			}
 		}
