@@ -12,8 +12,6 @@ import { BillingAddress, ShippingAddress } from '@woocommerce/settings';
  * Internal dependencies
  */
 import { ACTION_TYPES as types } from './action-types';
-import { ReturnOrGeneratorYieldUnion } from '../mapped-types';
-import type { Thunks } from './thunks';
 
 // Thunks are functions that can be dispatched, similar to actions creators
 export * from './thunks';
@@ -158,19 +156,3 @@ export function setShippingAddress(
 ) {
 	return { type: types.SET_SHIPPING_ADDRESS, shippingAddress };
 }
-
-export type Actions =
-	| typeof itemIsPendingDelete
-	| typeof itemIsPendingQuantity
-	| typeof receiveApplyingCoupon
-	| typeof receiveCartItem
-	| typeof receiveRemovingCoupon
-	| typeof setBillingAddress
-	| typeof setCartData
-	| typeof setErrorData
-	| typeof setIsCartDataStale
-	| typeof setShippingAddress
-	| typeof shippingRatesBeingSelected
-	| typeof updatingCustomerData;
-
-export type CartAction = ReturnOrGeneratorYieldUnion< Actions | Thunks >;
