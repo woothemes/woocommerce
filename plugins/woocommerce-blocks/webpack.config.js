@@ -11,6 +11,7 @@ const {
 	getSiteEditorConfig,
 	getStylingConfig,
 	getInteractivityAPIConfig,
+	getContainerImageObserverConfig,
 	getCartAndCheckoutFrontendConfig,
 } = require( './bin/webpack-configs.js' );
 
@@ -100,6 +101,14 @@ const SiteEditorConfig = {
 	...getSiteEditorConfig( { alias: getAlias() } ),
 };
 
+/**
+ * Config to generate the container image observer script.
+ */
+const ContainerImageObserverConfig = {
+	...sharedConfig,
+	...getContainerImageObserverConfig( { alias: getAlias() } ),
+};
+
 module.exports = [
 	CartAndCheckoutFrontendConfig,
 	CoreConfig,
@@ -110,4 +119,5 @@ module.exports = [
 	SiteEditorConfig,
 	StylingConfig,
 	InteractivityConfig,
+	ContainerImageObserverConfig,
 ];
