@@ -97,7 +97,7 @@ const TableCardWithTablePrefaceExample = () => {
 			rows={ rows }
 			headers={ headers }
 			tablePreface={
-				<div style={{ padding: '8px', backgroundColor: '#f0f4f8' }}>
+				<div style={ { padding: '8px', backgroundColor: '#f0f4f8' } }>
 					This is an important notice about the table
 				</div>
 			}
