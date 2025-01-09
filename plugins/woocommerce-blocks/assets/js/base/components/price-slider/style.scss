@@ -140,6 +140,12 @@
 	}
 }
 
+.wc-block-components-price-slider--is-input-inline {
+	.wc-block-components-price-slider__controls {
+		align-items: start;
+	}
+}
+
 .wc-block-components-price-slider__control {
 	align-items: start;
 	display: grid;
@@ -307,6 +313,14 @@
 		}
 		&::-ms-track {
 			border-color: transparent !important;
+		}
+	}
+}
+
+.theme-twentytwentyfive {
+	.wc-block-components-price-slider--is-input-inline {
+		.wc-block-components-price-slider__range-input-wrapper {
+			margin: 17px 0 15px 0;
 		}
 	}
 }
