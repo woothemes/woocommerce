@@ -130,6 +130,10 @@ test.describe(
 
 				await page.goto( CUSTOMIZE_STORE_URL );
 
+				await expect( page.locator( 'h1' ) ).toHaveText(
+					'Customize your theme'
+				);
+
 				const button = page.getByRole( 'button', {
 					name: 'Go to the Editor',
 				} );
