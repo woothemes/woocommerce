@@ -842,6 +842,10 @@ test.describe( 'Product Collection', () => {
 				.locator( SELECTORS.productTitle )
 				.first();
 			await expect( frontendProductTitle ).toContainText( 'Sunglasses' );
+
+			await wpCLI(
+				'option update woocommerce_default_catalog_orderby menu_order'
+			);
 		} );
 	} );
 
