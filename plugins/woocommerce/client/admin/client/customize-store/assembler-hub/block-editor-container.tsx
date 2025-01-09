@@ -186,6 +186,7 @@ export const BlockEditorContainer = () => {
 		<BlockEditor
 			renderedBlocks={ blocks }
 			isScrollable={ isScrollable }
+			// @ts-expect-error The type is not up to date.
 			onChange={ onChange }
 			settings={ settings }
 			additionalStyles={ additionalStyles }
