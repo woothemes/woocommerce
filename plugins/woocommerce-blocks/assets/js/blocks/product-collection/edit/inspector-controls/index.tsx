@@ -164,6 +164,14 @@ const ProductCollectionInspectorControls = (
 				{ showInheritQueryControl && (
 					<InheritQueryControl { ...queryControlProps } />
 				) }
+				{ showCustomOrderControl && (
+					<CustomQueryOrderByControl { ...queryControlProps } />
+				) }
+				{ showDefaultOrderControl && (
+					<DefaultQueryOrderByControl
+						trackInteraction={ trackInteraction }
+					/>
+				) }
 				{ showFilterableControl && (
 					<FilterableControl { ...queryControlProps } />
 				) }
@@ -173,14 +181,6 @@ const ProductCollectionInspectorControls = (
 					<ProductsPerPageControl { ...queryControlProps } />
 				) }
 				<ColumnsControl { ...displayControlProps } />
-				{ showCustomOrderControl && (
-					<CustomQueryOrderByControl { ...queryControlProps } />
-				) }
-				{ showDefaultOrderControl && (
-					<DefaultQueryOrderByControl
-						trackInteraction={ trackInteraction }
-					/>
-				) }
 				{ showOffsetControl && (
 					<OffsetControl { ...queryControlProps } />
 				) }
