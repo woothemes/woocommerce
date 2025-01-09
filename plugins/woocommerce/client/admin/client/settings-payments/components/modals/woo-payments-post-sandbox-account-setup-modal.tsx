@@ -22,7 +22,7 @@ interface WooPaymentsReadyToTestModalProps {
 	 */
 	isOpen: boolean;
 	/**
-	 *  Determines if the modal is in developer mode.
+	 *  Indicates if the developer mode is on.
 	 */
 	devMode: boolean;
 	/**
