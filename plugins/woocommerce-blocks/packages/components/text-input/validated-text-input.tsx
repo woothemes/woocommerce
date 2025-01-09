@@ -12,7 +12,7 @@ import {
 import clsx from 'clsx';
 import { isObject } from '@woocommerce/types';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
+import { validationStore } from '@woocommerce/block-data';
 import { usePrevious } from '@woocommerce/base-hooks';
 import { useInstanceId } from '@wordpress/compose';
 
@@ -82,7 +82,7 @@ const ValidatedTextInput = forwardRef<
 			setValidationErrors,
 			hideValidationError,
 			clearValidationError,
-		} = useDispatch( VALIDATION_STORE_KEY );
+		} = useDispatch( validationStore );
 
 		// Ref for validation callback.
 		const customValidationRef = useRef( customValidation );
@@ -94,7 +94,7 @@ const ValidatedTextInput = forwardRef<
 
 		const { validationError, validationErrorId } = useSelect(
 			( select ) => {
-				const store = select( VALIDATION_STORE_KEY );
+				const store = select( validationStore );
 				return {
 					validationError: store.getValidationError( errorIdString ),
 					validationErrorId:
