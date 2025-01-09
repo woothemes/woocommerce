@@ -1,76 +1,5 @@
 const generateDocsPlaygroundBlueprint = (runId, prNumber, context) => {
-  // First, create our own blueprint that matches the structure but uses WooCommerce docs
-  const blueprint = {
-    "$schema": "https://playground.wordpress.net/blueprint-schema.json",
-    "login": true,
-    "landingPage": "/wp-admin/?markdown-file-path=docs/contributors/accessibility-testing.md",
-    "steps": [
-      {
-        "step": "unzip",
-        "extractToPath": "/tmp",
-        "zipFile": {
-          "resource": "url",
-          "url": "https://github-proxy.com/proxy/?repo=adamziel/playground-content-converters&branch=explore-markdown-editor-setup&directory=src",
-          "caption": "Downloading Markdown editing plugin"
-        }
-      },
-      {
-        "step": "mkdir",
-        "path": "/wordpress/wp-content/static-content"
-      },
-      {
-        "step": "unzip",
-        "extractToPath": "/wordpress/wp-content/static-content",
-        "zipFile": {
-          "resource": "url",
-          "url": `https://github-proxy.com/proxy/?repo=${context.repo.owner}/${context.repo.repo}&directory=docs`,
-          "caption": "Importing WooCommerce documentation"
-        }
-      },
-      {
-        "step": "defineWpConfigConsts",
-        "consts": {
-          "STATIC_FILES_ROOT": "/wordpress/wp-content/static-content"
-        }
-      },
-      {
-        "step": "mv",
-        "fromPath": "/tmp/src/convert-markdown-to-blocks-in-js",
-        "toPath": "/wordpress/wp-content/plugins/convert-markdown-to-blocks-in-js"
-      },
-      {
-        "step": "mv",
-        "fromPath": "/tmp/src/import-static-files",
-        "toPath": "/wordpress/wp-content/plugins/import-static-files"
-      },
-      {
-        "step": "mv",
-        "fromPath": "/tmp/src/store-markdown-as-post-meta",
-        "toPath": "/wordpress/wp-content/plugins/store-markdown-as-post-meta"
-      },
-      {
-        "step": "mv",
-        "fromPath": "/tmp/src/save-pages-as-static-files",
-        "toPath": "/wordpress/wp-content/plugins/save-pages-as-static-files"
-      },
-      {
-        "step": "activatePlugin",
-        "pluginPath": "import-static-files/import-static-files.php"
-      },
-      {
-        "step": "activatePlugin",
-        "pluginPath": "store-markdown-as-post-meta/index.php"
-      },
-      {
-        "step": "activatePlugin",
-        "pluginPath": "convert-markdown-to-blocks-in-js/convert-markdown-to-blocks-in-js.php"
-      },
-      {
-        "step": "activatePlugin",
-        "pluginPath": "save-pages-as-static-files/index.php"
-      }
-    ]
-  };
+  const currentRef = context.ref.replace('refs/heads/', '');
 
   return `https://playground.wordpress.net/` +
     `?gh-ensure-auth=yes` +
@@ -80,9 +9,9 @@ const generateDocsPlaygroundBlueprint = (runId, prNumber, context) => {
     `&ghexport-commit-message=Documentation+update` +
     `&ghexport-playground-root=/wordpress/wp-content/static-content/docs` +
     `&ghexport-repo-root=/docs` +
+    `&blueprint-url=https://raw.githubusercontent.com/${context.repo.owner}/${context.repo.repo}/${currentRef}/.github/workflows/scripts/woocommerce-docs-blueprint.json` +
     `&ghexport-pr-action=create` +
-    `&ghexport-allow-include-zip=no` +
-    `#${JSON.stringify(blueprint)}`;
+    `&ghexport-allow-include-zip=no`;
 };
 
 async function run({ github, context, core }) {
