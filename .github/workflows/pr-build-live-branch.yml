@@ -71,7 +71,7 @@ jobs:
                 
                   mkdir -p "$GITHUB_WORKSPACE/unzips/woocommerce"
                   cd "$GITHUB_WORKSPACE/zips"
-                  unzip -qq wwoocommerce-dev.zip
+                  unzip -qq woocommerce-dev.zip
                   mv "$GITHUB_WORKSPACE/zips/woocommerce-dev" "$GITHUB_WORKSPACE/unzips/woocommerce/woocommerce"
                 
                   # Plugin data is passed as a JSON object.
