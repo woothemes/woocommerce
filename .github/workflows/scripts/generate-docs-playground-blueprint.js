@@ -1,23 +1,5 @@
 const generateDocsPlaygroundBlueprint = (runId, prNumber) => {
-  const url = new URL('https://playground.wordpress.net/');
-  
-  // Add query parameters
-  const params = {
-    'gh-ensure-auth': 'yes',
-    'ghexport-repo-url': `https://github.com/${context.repo.owner}/${context.repo.repo}`,
-    'ghexport-content-type': 'custom-paths',
-    'ghexport-path': '.',
-    'ghexport-commit-message': 'Documentation update',
-    'ghexport-playground-root': '/wordpress/wp-content/static-content/docs',
-    'ghexport-repo-root': '/docs',
-    'blueprint-url': 'https://raw.githubusercontent.com/adamziel/playground-content-converters/21ecd28/src/blueprint-web-browser-gutenberg-handbook.json',
-    'ghexport-pr-action': 'create',
-    'ghexport-allow-include-zip': 'no'
-  };
-
-  Object.entries(params).forEach(([key, value]) => {
-    url.searchParams.append(key, value);
-  });
+  const url = new URL('https://playground.wordpress.net/?gh-ensure-auth=yes&ghexport-repo-url=https://github.com/' + context.repo.owner + '/' + context.repo.repo + '&ghexport-content-type=custom-paths&ghexport-path=.&ghexport-commit-message=Documentation%20update&ghexport-playground-root=/wordpress/wp-content/static-content/docs&ghexport-repo-root=/docs&blueprint-url=https://raw.githubusercontent.com/adamziel/playground-content-converters/21ecd28/src/blueprint-web-browser-gutenberg-handbook.json&ghexport-pr-action=create&ghexport-allow-include-zip=no');
 
   return url.toString();
 };
@@ -47,12 +29,9 @@ async function run({ github, context, core }) {
     context.issue.number
   );
 
-  const url = `https://playground.wordpress.net/#${JSON.stringify(
+  const url = `https://playground.wordpress.net/?${JSON.stringify(
     defaultSchema
-  )}` +
-    '&ghexport-playground-root=/wordpress/wp-content/static-content/docs' +
-    '&ghexport-repo-root=/docs' +
-    '&ghexport-content-type=custom-paths';
+  )}`;
 
   const body = `
 ## Preview Documentation using WordPress Playground
