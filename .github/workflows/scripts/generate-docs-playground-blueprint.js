@@ -1,5 +1,92 @@
 const generateDocsPlaygroundBlueprint = (runId, prNumber, context) => {
-  return `https://playground.wordpress.net/?gh-ensure-auth=yes&ghexport-repo-url=https://github.com/${context.repo.owner}/${context.repo.repo}&ghexport-content-type=custom-paths&ghexport-path=.&ghexport-commit-message=Documentation+update&ghexport-playground-root=/wordpress/wp-content/static-content/docs&ghexport-repo-root=/docs&blueprint-url=https://raw.githubusercontent.com/adamziel/playground-content-converters/21ecd28/src/blueprint-web-browser-gutenberg-handbook.json&ghexport-pr-action=create&ghexport-allow-include-zip=no`;
+  // First, create our own blueprint that matches the structure but uses WooCommerce docs
+  const blueprint = {
+    "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+    "login": true,
+    "landingPage": "/wp-admin/?markdown-file-path=docs/contributors/accessibility-testing.md",
+    "steps": [
+      {
+        "step": "unzip",
+        "extractToPath": "/tmp",
+        "zipFile": {
+          "resource": "url",
+          "url": "https://github-proxy.com/proxy/?repo=adamziel/playground-content-converters&branch=explore-markdown-editor-setup&directory=src",
+          "caption": "Downloading Markdown editing plugin"
+        }
+      },
+      {
+        "step": "mkdir",
+        "path": "/wordpress/wp-content/static-content"
+      },
+      // Replace Gutenberg docs with WooCommerce docs
+      {
+        "step": "unzip",
+        "extractToPath": "/wordpress/wp-content/static-content",
+        "zipFile": {
+          "resource": "url",
+          "url": `https://github-proxy.com/proxy/?repo=${context.repo.owner}/${context.repo.repo}&directory=docs`,
+          "caption": "Importing WooCommerce documentation"
+        }
+      },
+      {
+        "step": "defineWpConfigConsts",
+        "consts": {
+          "STATIC_FILES_ROOT": "/wordpress/wp-content/static-content"
+        }
+      },
+      {
+        "step": "mv",
+        "fromPath": "/tmp/src/convert-markdown-to-blocks-in-js",
+        "toPath": "/wordpress/wp-content/plugins/convert-markdown-to-blocks-in-js"
+      },
+      {
+        "step": "mv",
+        "fromPath": "/tmp/src/import-static-files",
+        "toPath": "/wordpress/wp-content/plugins/import-static-files"
+      },
+      {
+        "step": "mv",
+        "fromPath": "/tmp/src/store-markdown-as-post-meta",
+        "toPath": "/wordpress/wp-content/plugins/store-markdown-as-post-meta"
+      },
+      {
+        "step": "mv",
+        "fromPath": "/tmp/src/save-pages-as-static-files",
+        "toPath": "/wordpress/wp-content/plugins/save-pages-as-static-files"
+      },
+      {
+        "step": "activatePlugin",
+        "pluginPath": "import-static-files/import-static-files.php"
+      },
+      {
+        "step": "activatePlugin",
+        "pluginPath": "store-markdown-as-post-meta/index.php"
+      },
+      {
+        "step": "activatePlugin",
+        "pluginPath": "convert-markdown-to-blocks-in-js/convert-markdown-to-blocks-in-js.php"
+      },
+      {
+        "step": "activatePlugin",
+        "pluginPath": "save-pages-as-static-files/index.php"
+      }
+    ]
+  };
+
+  // Convert blueprint to base64 to include in URL
+  const blueprintBase64 = Buffer.from(JSON.stringify(blueprint)).toString('base64');
+
+  return `https://playground.wordpress.net/` +
+    `?gh-ensure-auth=yes` +
+    `&ghexport-repo-url=https://github.com/${context.repo.owner}/${context.repo.repo}` +
+    `&ghexport-content-type=custom-paths` +
+    `&ghexport-path=.` +
+    `&ghexport-commit-message=Documentation+update` +
+    `&ghexport-playground-root=/wordpress/wp-content/static-content/docs` +
+    `&ghexport-repo-root=/docs` +
+    `&blueprint=${blueprintBase64}` +
+    `&ghexport-pr-action=create` +
+    `&ghexport-allow-include-zip=no`;
 };
 
 async function run({ github, context, core }) {
