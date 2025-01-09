@@ -64,13 +64,8 @@ export class BlockRegistrationManager {
 	/** Singleton instance of the manager */
 	private static instance: BlockRegistrationManager;
 	/** Map storing block configurations keyed by block name or variation name */
-	private blocks: Map<
-		string,
-		ProductBlockSettings & {
-			blockName: string;
-			settings: Partial< BlockConfiguration< BlockAttributes > >;
-		}
-	> = new Map();
+	private blocks: Map< string, ProductBlockConfig< BlockAttributes > > =
+		new Map();
 	/** Current template ID being edited */
 	private currentTemplateId: string | undefined;
 	/** Flag indicating if the manager has been initialized */

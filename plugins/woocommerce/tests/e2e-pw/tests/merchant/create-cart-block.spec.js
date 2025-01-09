@@ -4,7 +4,6 @@ const {
 	transformIntoBlocks,
 	publishPage,
 } = require( '../../utils/editor' );
-const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
 
 /**
  * External dependencies
@@ -33,8 +32,7 @@ test.describe(
 			await closeChoosePatternModal( { page } );
 
 			await fillPageTitle( page, testPage.title );
-			const wordPressVersion = await getInstalledWordPressVersion();
-			await insertBlock( page, 'Classic Cart', wordPressVersion );
+			await insertBlock( page, 'Classic Cart', Date.now().toString() );
 			await transformIntoBlocks( page );
 			await publishPage( page, testPage.title );
 

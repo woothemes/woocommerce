@@ -1,0 +1,4 @@
+Significance: patch
+Type: tweak
+
+FlexSlider variable slider.transitions renamed to slider.transforms
