@@ -1,57 +1,25 @@
 const generateDocsPlaygroundBlueprint = (runId, prNumber) => {
-  return {
-    landingPage: '/wp-admin/post-new.php?post_type=page',
-    preferredVersions: {
-      php: '8.0',
-      wp: 'latest'
-    },
-    phpExtensionBundles: ['kitchen-sink'],
-    features: { networking: true },
-    steps: [
-      {
-        step: 'mkdir',
-        path: '/wordpress/wp-content/static-content'
-      },
-      {
-        step: 'defineWpConfigConsts',
-        consts: {
-          STATIC_FILES_ROOT: '/wordpress/wp-content/static-content'
-        }
-      },
-      {
-        step: 'installPlugin',
-        pluginZipFile: {
-          resource: 'url',
-          url: 'https://raw.githubusercontent.com/adamziel/playground-content-converters/21ecd28/dist/playground-content-converters.zip'
-        },
-        options: {
-          activate: true
-        }
-      },
-      {
-        step: 'activatePlugin',
-        pluginPath: 'import-static-files/import-static-files.php'
-      },
-      {
-        step: 'activatePlugin',
-        pluginPath: 'store-markdown-as-post-meta/index.php'
-      },
-      {
-        step: 'activatePlugin',
-        pluginPath: 'convert-markdown-to-blocks-in-js/convert-markdown-to-blocks-in-js.php'
-      },
-      {
-        step: 'activatePlugin',
-        pluginPath: 'save-pages-as-static-files/index.php'
-      },
-      {
-        step: 'login',
-        username: 'admin',
-        password: 'password',
-      }
-    ],
-    plugins: []
+  const url = new URL('https://playground.wordpress.net/');
+  
+  // Add query parameters
+  const params = {
+    'gh-ensure-auth': 'yes',
+    'ghexport-repo-url': `https://github.com/${context.repo.owner}/${context.repo.repo}`,
+    'ghexport-content-type': 'custom-paths',
+    'ghexport-path': '.',
+    'ghexport-commit-message': 'Documentation update',
+    'ghexport-playground-root': '/wordpress/wp-content/static-content/docs',
+    'ghexport-repo-root': '/docs',
+    'blueprint-url': 'https://raw.githubusercontent.com/adamziel/playground-content-converters/21ecd28/src/blueprint-web-browser-gutenberg-handbook.json',
+    'ghexport-pr-action': 'create',
+    'ghexport-allow-include-zip': 'no'
   };
+
+  Object.entries(params).forEach(([key, value]) => {
+    url.searchParams.append(key, value);
+  });
+
+  return url.toString();
 };
 
 async function run({ github, context, core }) {
