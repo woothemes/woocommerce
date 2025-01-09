@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { Root } from 'react-dom/client';
 import { __ } from '@wordpress/i18n';
 import {
 	StrictMode,
@@ -10,6 +9,11 @@ import {
 	createRoot,
 	lazy,
 } from '@wordpress/element';
+
+import {
+	Root,
+	// @ts-expect-error missing types.
+} from 'react-dom/client';
 
 /**
  * Internal dependencies

@@ -24,6 +24,7 @@ import { privateApis as editorPrivateApis } from '@wordpress/editor';
  */
 import { unlock } from '../../lock-unlock';
 import { productFields } from '../product-list/fields';
+import { FormEvent } from 'react';
 
 const { NavigableRegion } = unlock( editorPrivateApis );
 
@@ -78,7 +79,7 @@ export default function ProductEdit( {
 		form
 	);
 
-	const onSubmit = async ( event: Event ) => {
+	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
 
 		if ( ! isItemValid( itemWithEdits, productFields, form ) ) {

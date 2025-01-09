@@ -26,7 +26,7 @@ type SidebarNavigationItemProps = {
 	withChevron?: boolean;
 	uid?: string;
 	params?: Record< string, string >;
-	onClick?: ( e: Event ) => void;
+	onClick?: ( e: React.MouseEvent ) => void;
 	children: React.ReactNode;
 };
 
@@ -43,7 +43,7 @@ export default function SidebarNavigationItem( {
 }: SidebarNavigationItemProps ) {
 	const history = useHistory();
 	// If there is no custom click handler, create one that navigates to `params`.
-	function handleClick( e: Event ) {
+	function handleClick( e: React.MouseEvent ) {
 		if ( onClick ) {
 			onClick( e );
 		} else if ( params ) {

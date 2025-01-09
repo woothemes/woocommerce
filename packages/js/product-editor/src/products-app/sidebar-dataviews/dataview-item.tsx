@@ -6,10 +6,7 @@ import classNames from 'classnames';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 import { addQueryArgs, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { VIEW_LAYOUTS } from '@wordpress/dataviews';
-// eslint-disable-next-line @woocommerce/dependency-group
-import {
-	__experimentalHStack as HStack
-} from '@wordpress/components';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -36,7 +33,7 @@ function useLink(
 	shouldReplace = false
 ) {
 	const history = useHistory();
-	function onClick( event: Event ) {
+	function onClick( event: React.MouseEvent ) {
 		event?.preventDefault();
 
 		if ( shouldReplace ) {

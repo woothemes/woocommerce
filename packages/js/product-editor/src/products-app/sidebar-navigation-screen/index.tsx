@@ -93,10 +93,10 @@ export default function SidebarNavigationScreen( {
 						/>
 					) }
 					<Heading
+						as="h1"
 						className="edit-site-sidebar-navigation-screen__title"
 						color={ '#e0e0e0' /* $gray-200 */ }
 						level={ 1 }
-						size={ 20 }
 					>
 						{ title }
 					</Heading>

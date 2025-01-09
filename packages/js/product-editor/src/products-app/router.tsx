@@ -3,6 +3,7 @@
  */
 import { createElement } from '@wordpress/element';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
+import { ReactNode } from 'react';
 
 /**
  * Internal dependencies
@@ -18,10 +19,10 @@ const { useLocation } = unlock( routerPrivateApis );
 export type Route = {
 	key: string;
 	areas: {
-		sidebar: React.JSX.Element | React.FunctionComponent;
-		content?: React.JSX.Element | React.FunctionComponent;
-		edit?: React.JSX.Element | React.FunctionComponent;
-		mobile?: React.JSX.Element | React.FunctionComponent | boolean;
+		sidebar?: React.JSX.Element;
+		content?: React.JSX.Element;
+		edit?: React.JSX.Element;
+		mobile?: React.JSX.Element | boolean;
 		preview?: boolean;
 	};
 	widths?: {
@@ -70,7 +71,6 @@ export default function useLayoutAreas() {
 	return {
 		key: 'default',
 		areas: {
-			sidebar: () => null,
 			preview: false,
 			mobile: canvas === 'edit',
 		},
