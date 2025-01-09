@@ -4,7 +4,7 @@
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useCallback, useState, useEffect } from '@wordpress/element';
 import {
-	CART_STORE_KEY,
+	cartStore,
 	CHECKOUT_STORE_KEY,
 	processErrorResponse,
 } from '@woocommerce/block-data';
@@ -64,7 +64,7 @@ export const useStoreCartItemQuantity = (
 	const [ debouncedQuantity ] = useDebounce< number >( quantity, 400 );
 	const previousDebouncedQuantity = usePrevious( debouncedQuantity );
 	const { removeItemFromCart, changeCartItemQuantity } =
-		useDispatch( CART_STORE_KEY );
+		useDispatch( cartStore );
 
 	// Update local state when server updates.
 	useEffect( () => setQuantity( cartItemQuantity ), [ cartItemQuantity ] );
@@ -78,7 +78,7 @@ export const useStoreCartItemQuantity = (
 					delete: false,
 				};
 			}
-			const store = select( CART_STORE_KEY );
+			const store = select( cartStore );
 			return {
 				quantity: store.isItemPendingQuantity( cartItemKey ),
 				delete: store.isItemPendingDelete( cartItemKey ),
