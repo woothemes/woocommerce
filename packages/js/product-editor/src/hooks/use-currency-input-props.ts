@@ -71,7 +71,10 @@ export const useCurrencyInputProps = ( {
 				onKeyUp( event );
 			}
 		},
-		onChange( newValue: string ) {
+		onChange( newValue ) {
+			if ( newValue === undefined ) {
+				return;
+			}
 			const sanitizeValue = sanitizePrice( newValue );
 			if ( onChange ) {
 				onChange(

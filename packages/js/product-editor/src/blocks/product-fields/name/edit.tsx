@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { Ref } from 'react';
 import { useInstanceId } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import {
@@ -193,7 +194,7 @@ export function NameBlockEdit( {
 				>
 					<InputControl
 						id={ nameControlId }
-						ref={ nameRef }
+						ref={ nameRef as Ref< HTMLInputElement > }
 						name="name"
 						// eslint-disable-next-line jsx-a11y/no-autofocus
 						autoFocus={ attributes.autoFocus }
@@ -201,7 +202,11 @@ export function NameBlockEdit( {
 							'e.g. 12 oz Coffee Mug',
 							'woocommerce'
 						) }
-						onChange={ setName }
+						onChange={ ( nextValue ) => {
+							if ( nextValue ) {
+								setName( nextValue );
+							}
+						} }
 						value={ name && name !== AUTO_DRAFT_NAME ? name : '' }
 						autoComplete="off"
 						data-1p-ignore

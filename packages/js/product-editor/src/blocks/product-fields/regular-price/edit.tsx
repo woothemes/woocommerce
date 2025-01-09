@@ -12,6 +12,7 @@ import {
 	BaseControl,
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
+import { Ref } from 'react';
 
 /**
  * Internal dependencies
@@ -121,7 +122,7 @@ export function Edit( {
 					id={ regularPriceId }
 					name={ 'regular_price' }
 					inputMode="decimal"
-					ref={ regularPriceRef }
+					ref={ regularPriceRef as Ref< HTMLInputElement > }
 					label={
 						tooltip ? (
 							<Label label={ label } tooltip={ tooltip } />
@@ -130,7 +131,7 @@ export function Edit( {
 						)
 					}
 					disabled={ disabled }
-					onBlur={ validateRegularPrice }
+					onBlur={ () => validateRegularPrice() }
 				/>
 			</BaseControl>
 		</div>

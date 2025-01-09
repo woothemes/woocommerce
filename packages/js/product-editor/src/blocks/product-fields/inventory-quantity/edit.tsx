@@ -82,11 +82,17 @@ export function Edit( {
 						<InputControl
 							id={ stockQuantityId }
 							name="stock_quantity"
-							ref={ stockQuantityRef }
+							ref={
+								stockQuantityRef as React.RefObject< HTMLInputElement >
+							}
 							label={ __( 'Available stock', 'woocommerce' ) }
-							value={ stockQuantity }
-							onChange={ setStockQuantity }
-							onBlur={ validateStockQuantity }
+							value={ stockQuantity?.toString() }
+							onChange={ ( value ) => {
+								if ( value ) {
+									setStockQuantity( parseInt( value, 10 ) );
+								}
+							} }
+							onBlur={ () => validateStockQuantity() }
 							type="number"
 							min={ 0 }
 						/>

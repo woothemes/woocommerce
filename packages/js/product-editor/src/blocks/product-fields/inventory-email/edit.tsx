@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { Ref } from 'react';
 import { __, sprintf } from '@wordpress/i18n';
 import { useWooBlockProps } from '@woocommerce/block-templates';
 import { Link } from '@woocommerce/components';
@@ -99,16 +100,26 @@ export function Edit( {
 						>
 							<InputControl
 								id={ id }
-								ref={ lowStockAmountRef }
+								ref={
+									lowStockAmountRef as Ref< HTMLInputElement >
+								}
 								name={ 'low_stock_amount' }
 								placeholder={ sprintf(
 									// translators: Default quantity to notify merchants of low stock.
 									__( '%d (store default)', 'woocommerce' ),
 									notifyLowStockAmount
 								) }
-								onChange={ setLowStockAmount }
-								onBlur={ validateLowStockAmount }
-								value={ lowStockAmount }
+								onChange={ ( nextValue ) => {
+									if ( nextValue ) {
+										setLowStockAmount(
+											parseInt( nextValue, 10 )
+										);
+									}
+								} }
+								onBlur={ async () =>
+									await validateLowStockAmount()
+								}
+								value={ lowStockAmount.toString() }
 								type="number"
 								min={ 0 }
 							/>

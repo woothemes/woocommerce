@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { Ref } from 'react';
 import { __ } from '@wordpress/i18n';
 import { BlockAttributes } from '@wordpress/blocks';
 import { useInstanceId } from '@wordpress/compose';
@@ -32,11 +33,8 @@ export function Edit( {
 }: ProductEditorBlockEditProps< BlockAttributes > ) {
 	const blockProps = useWooBlockProps( attributes );
 
-	const [ sku, setSku ] = useEntityProp(
-		'postType',
-		context.postType,
-		'sku'
-	);
+	const [ sku, setSku ]: [ string, ( newSku: string ) => void, unknown ] =
+		useEntityProp( 'postType', context.postType, 'sku' );
 
 	const { ref: skuRef } = useValidation< Product >(
 		'sku',
@@ -68,10 +66,14 @@ export function Edit( {
 				) }
 			>
 				<InputControl
-					ref={ skuRef }
+					ref={ skuRef as Ref< HTMLInputElement > }
 					id={ inputControlId }
 					name={ 'woocommerce-product-sku' }
-					onChange={ setSku }
+					onChange={ ( nextValue ) => {
+						if ( nextValue ) {
+							setSku( nextValue );
+						}
+					} }
 					value={ sku || '' }
 					disabled={ attributes.disabled }
 				/>

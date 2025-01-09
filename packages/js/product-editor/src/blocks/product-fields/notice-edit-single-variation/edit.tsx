@@ -37,8 +37,6 @@ export function Edit( {
 		isParentResolving,
 	}: { parentName: string; isParentResolving: boolean } = useSelect(
 		( select ) => {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
 			const { getEditedEntityRecord, hasFinishedResolution } =
 				select( 'core' );
 
