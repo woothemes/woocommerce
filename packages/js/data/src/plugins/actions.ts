@@ -6,7 +6,7 @@ import {
 	select,
 	dispatch as depreciatedDispatch,
 } from '@wordpress/data-controls';
-import { __, _n, sprintf } from '@wordpress/i18n';
+import { _n, sprintf } from '@wordpress/i18n';
 import { DispatchFromMap } from '@automattic/data-stores';
 import { controls } from '@wordpress/data';
 import { recordEvent } from '@woocommerce/tracks';
@@ -302,8 +302,10 @@ export function* installAndActivatePlugins( plugins: string[] ) {
 			activations.success &&
 			activations.data.activated.length
 		) {
-			response.message = __(
+			response.message = _n(
+				'A plugin was successfully installed and activated.',
 				'Plugins were successfully installed and activated.',
+				activations.data.activated.length,
 				'woocommerce'
 			);
 		}
