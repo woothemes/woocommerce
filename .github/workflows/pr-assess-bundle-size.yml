@@ -35,6 +35,7 @@ env:
 jobs:
     build:
         name: Check Asset Sizes
+        if: github.event.pull_request.draft == false
         runs-on: ubuntu-latest
         permissions:
             contents: read
