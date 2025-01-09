@@ -21,8 +21,8 @@
         "extractToPath": "/wordpress/wp-content/static-content",
         "zipFile": {
           "resource": "url",
-          "url": "https://github-proxy.com/proxy/?repo=woocommerce/woocommerce&directory=docs",
-          "caption": "Importing WooCommerce documentation"
+          "url": "https://github-proxy.com/proxy/?repo=woocommerce/woocommerce&directory=docs/performance",
+          "caption": "Importing WooCommerce performance docs"
         }
       },
       {
