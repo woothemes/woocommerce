@@ -431,16 +431,18 @@ class ShippingController {
 	}
 
 	/**
-	 * Remove shipping if no address is entered.
+	 * Remove shipping (i.e. delivery, not local pickup) if
+	 * "Hide shipping costs until an address is entered" is enabled,
+	 * and no address has been entered yet.
 	 *
 	 * @param array $packages Array of shipping packages.
 	 * @return array
 	 */
 	public function remove_shipping_if_no_address( $packages ) {
-		$customer = wc()->customer;
+		$customer    = wc()->customer;
 		$has_address = $customer->has_shipping_address();
 
-		remove_filter( 'option_woocommerce_shipping_cost_requires_address', array( $this, 'override_cost_requires_address_option' ) );		
+		remove_filter( 'option_woocommerce_shipping_cost_requires_address', array( $this, 'override_cost_requires_address_option' ) );
 		$option_checked = filter_var( get_option( 'woocommerce_shipping_cost_requires_address', 'no' ), FILTER_VALIDATE_BOOLEAN );
 		add_filter( 'option_woocommerce_shipping_cost_requires_address', array( $this, 'override_cost_requires_address_option' ) );
 
