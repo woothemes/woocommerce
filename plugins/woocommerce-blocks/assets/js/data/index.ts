@@ -6,6 +6,8 @@ import '@wordpress/notices';
 /**
  * Internal dependencies
  */
+// eslint-ignore @typescript-eslint/no-unused-vars
+// The above rule is ignored because the exported keys will be used in follow-up PRs.
 export { CART_STORE_KEY, store as cartStore } from './cart';
 export { CHECKOUT_STORE_KEY, store as checkoutStore } from './checkout';
 export {
