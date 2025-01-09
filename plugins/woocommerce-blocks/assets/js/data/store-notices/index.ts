@@ -16,7 +16,7 @@ const config = {
 	actions,
 	selectors,
 };
-const store = createReduxStore( STORE_KEY, config );
+export const store = createReduxStore( STORE_KEY, config );
 register( store );
 
 export const STORE_NOTICES_STORE_KEY = STORE_KEY;
