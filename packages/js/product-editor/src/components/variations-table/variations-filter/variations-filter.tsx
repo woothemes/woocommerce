@@ -180,7 +180,7 @@ export function VariationsFilter( {
 	}
 
 	const handleInputControlChange = useDebounce(
-		function handleInputControlChange( value: string ) {
+		function handleInputControlChange( value: string | undefined ) {
 			setSearch( value );
 			setOptions( [] );
 			setCurrentPage( 1 );
@@ -240,11 +240,7 @@ export function VariationsFilter( {
 									type="search"
 									value={ search }
 									suffix={ <Icon icon={ searchIcon } /> }
-									onChange={ ( value ) => {
-										if ( value ) {
-											handleInputControlChange( value );
-										}
-									} }
+									onChange={ handleInputControlChange }
 									onKeyDown={ handleKeyDown }
 								/>
 							</label>

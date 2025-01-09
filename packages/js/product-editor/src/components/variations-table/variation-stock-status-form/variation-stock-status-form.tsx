@@ -128,7 +128,9 @@ export function VariationStockStatusForm( {
 		setValue( ( current ) => ( { ...current, stock_status: selected } ) );
 	}
 
-	function handleStockQuantityInputControlChange( stock_quantity: string ) {
+	function handleStockQuantityInputControlChange(
+		stock_quantity: string | undefined
+	) {
 		setValue( ( current ) => ( { ...current, stock_quantity } ) );
 	}
 
@@ -157,11 +159,7 @@ export function VariationStockStatusForm( {
 						label={ __( 'Available stock', 'woocommerce' ) }
 						help={ errors.stock_quantity }
 						value={ value.stock_quantity }
-						onChange={ ( val ) => {
-							if ( val ) {
-								handleStockQuantityInputControlChange( val );
-							}
-						} }
+						onChange={ handleStockQuantityInputControlChange }
 						onBlur={ validateStockQuantity }
 						className={ classNames( {
 							'has-error': errors.stock_quantity,
