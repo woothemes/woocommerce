@@ -1,5 +1,9 @@
 export interface ErrorObject {
 	/**
+	 * Error code for more specific identification of the error.
+	 */
+	code?: string;
+	/**
 	 * Human-readable error message to display.
 	 */
 	message: string;
@@ -10,6 +14,7 @@ export interface ErrorObject {
 }
 
 type SimpleError = {
+	code?: string;
 	message: string;
 	type?: string;
 };
@@ -21,6 +26,7 @@ export const formatError = async (
 		try {
 			const parsedError = await error.json();
 			return {
+				code: parsedError.code || '',
 				message: parsedError.message,
 				type: parsedError.type || 'api',
 			};
@@ -34,6 +40,7 @@ export const formatError = async (
 		}
 	} else {
 		return {
+			code: error.code || '',
 			message: error.message,
 			type: error.type || 'general',
 		};

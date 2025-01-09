@@ -55,12 +55,7 @@ const test = baseTest.extend( {
 test.describe(
 	'Add WooCommerce Blocks Into Page',
 	{
-		tag: [
-			tags.GUTENBERG,
-			tags.SERVICES,
-			tags.SKIP_ON_PRESSABLE,
-			tags.SKIP_ON_WPCOM,
-		],
+		tag: [ tags.GUTENBERG, tags.SKIP_ON_EXTERNAL_ENV ],
 	},
 	() => {
 		test.beforeAll( async ( { api } ) => {

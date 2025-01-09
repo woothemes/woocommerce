@@ -6,6 +6,7 @@ namespace Automattic\WooCommerce\Internal\Admin\Settings;
 use Automattic\WooCommerce\Admin\PluginsHelper;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\PaymentGateway;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\PayPal;
+use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\Stripe;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\WCCore;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\WooPayments;
 use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestions as ExtensionSuggestions;
@@ -52,6 +53,7 @@ class PaymentProviders {
 		'paypal'               => WCCore::class,
 		'woocommerce_payments' => WooPayments::class,
 		'ppcp-gateway'         => PayPal::class,
+		'stripe'               => Stripe::class,
 	);
 
 	/**
@@ -195,7 +197,7 @@ class PaymentProviders {
 	public function get_payment_gateway_plugin_file( WC_Payment_Gateway $payment_gateway, string $plugin_slug = '' ): string {
 		$provider = $this->get_gateway_provider_instance( $payment_gateway->id );
 
-		return $provider->get_plugin_slug( $payment_gateway, $plugin_slug );
+		return $provider->get_plugin_file( $payment_gateway, $plugin_slug );
 	}
 
 	/**
@@ -724,9 +726,22 @@ class PaymentProviders {
 			// Enhance the suggestion details.
 			$suggestion = $this->enhance_extension_suggestion( $suggestion );
 
-			// The icon and image from the suggestion take precedence over the ones from the gateway.
-			$gateway_details['icon']  = $suggestion['icon'];
-			$gateway_details['image'] = $suggestion['image'];
+			// The title, description, icon, and image from the suggestion take precedence over the ones from the gateway.
+			// This is temporary until we update the partner extensions.
+			// Do not override the title for certain suggestions because their title is more descriptive.
+			if ( ! in_array(
+				$suggestion['id'],
+				array(
+					ExtensionSuggestions::PAYPAL_FULL_STACK,
+					ExtensionSuggestions::PAYPAL_WALLET,
+				),
+				true
+			) ) {
+				$gateway_details['title'] = $suggestion['title'];
+			}
+			$gateway_details['description'] = $suggestion['description'];
+			$gateway_details['icon']        = $suggestion['icon'];
+			$gateway_details['image']       = $suggestion['image'];
 
 			if ( empty( $gateway_details['links'] ) ) {
 				$gateway_details['links'] = $suggestion['links'];
@@ -740,6 +755,8 @@ class PaymentProviders {
 			if ( empty( $gateway_details['_incentive'] ) && ! empty( $suggestion['_incentive'] ) ) {
 				$gateway_details['_incentive'] = $suggestion['_incentive'];
 			}
+
+			// Attach the suggestion ID to the gateway details so we can reference it with precision.
 			$gateway_details['_suggestion_id'] = $suggestion['id'];
 		}
 

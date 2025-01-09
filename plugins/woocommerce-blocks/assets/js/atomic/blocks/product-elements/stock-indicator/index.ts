@@ -26,6 +26,7 @@ const blockConfig: BlockConfiguration = {
 	attributes,
 	supports,
 	edit,
+	save: () => null,
 	usesContext: [ 'query', 'queryId', 'postId' ],
 };
 

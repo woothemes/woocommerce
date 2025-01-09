@@ -4,6 +4,7 @@ namespace Automattic\WooCommerce\Blocks\BlockTypes;
 use Automattic\WooCommerce\Blocks\Utils\BlockTemplateUtils;
 use Automattic\WooCommerce\Blocks\Utils\ProductGalleryUtils;
 use Automattic\WooCommerce\Blocks\Utils\StyleAttributesUtils;
+use Automattic\WooCommerce\Enums\ProductType;
 
 /**
  * ProductGallery class.
@@ -17,12 +18,53 @@ class ProductGallery extends AbstractBlock {
 	protected $block_name = 'product-gallery';
 
 	/**
+	 * Used to preserve the context for dialog rendering.
+	 *
+	 * @var array
+	 */
+	protected $dialog_context;
+
+	/**
+	 * Initialize the block and Hook into the `render_block_context` filter
+	 * to update the context for dialog rendering.
+	 */
+	protected function initialize() {
+		parent::initialize();
+		add_filter( 'render_block_context', [ $this, 'inject_dialog_context' ], 10, 3 );
+	}
+
+	/**
 	 *  Register the context
 	 *
 	 * @return string[]
 	 */
 	protected function get_block_type_uses_context() {
 		return [ 'postId' ];
+	}
+
+	/**
+	 * Inject the single productcontext into the dialog blocks.
+	 *
+	 * @param array $context The block context.
+	 * @param array $block The block.
+	 * @param array $parent_block The parent block.
+	 * @return array The updated block context.
+	 */
+	public function inject_dialog_context( $context, $block, $parent_block ) {
+		$expected_inner_blocks = [
+			'woocommerce/product-gallery',
+			'woocommerce/product-gallery-large-image',
+			'woocommerce/product-gallery-large-image-next-previous',
+			'woocommerce/product-gallery-pager',
+			'woocommerce/product-gallery-thumbnails',
+		];
+		$is_single_product     = $this->dialog_context['singleProduct'] ?? false;
+
+		if ( $is_single_product && in_array( $block['blockName'], $expected_inner_blocks, true ) ) {
+			return array_merge( $context, $this->dialog_context );
+		}
+
+		return $context;
 	}
 
 	/**
@@ -99,6 +141,7 @@ class ProductGallery extends AbstractBlock {
 				'{{close_dialog_aria_label}}' => __( 'Close Product Gallery dialog', 'woocommerce' ),
 			)
 		);
+		remove_filter( 'render_block_context', [ $this, 'inject_dialog_context' ], 10 );
 		return $gallery_dialog;
 	}
 
@@ -111,8 +154,9 @@ class ProductGallery extends AbstractBlock {
 	 * @return string Rendered block type output.
 	 */
 	protected function render( $attributes, $content, $block ) {
-		$post_id = $block->context['postId'] ?? '';
-		$product = wc_get_product( $post_id );
+		$this->dialog_context = $block->context;
+		$post_id              = $block->context['postId'] ?? '';
+		$product              = wc_get_product( $post_id );
 
 		if ( ! $product instanceof \WC_Product ) {
 			return '';
@@ -157,7 +201,7 @@ class ProductGallery extends AbstractBlock {
 				)
 			);
 
-			if ( $product->is_type( 'variable' ) ) {
+			if ( $product->is_type( ProductType::VARIABLE ) ) {
 				$p->set_attribute( 'data-wc-init--watch-changes-on-add-to-cart-form', 'callbacks.watchForChangesOnAddToCartForm' );
 			}
 

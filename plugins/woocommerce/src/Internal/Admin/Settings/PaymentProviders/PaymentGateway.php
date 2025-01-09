@@ -5,6 +5,7 @@ namespace Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders;
 
 use Automattic\WooCommerce\Admin\PluginsHelper;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders;
+use Automattic\WooCommerce\Internal\Admin\Settings\Utils;
 use Automattic\WooCommerce\Internal\Utilities\ArrayUtil;
 use WC_HTTPS;
 use WC_Payment_Gateway;
@@ -41,10 +42,11 @@ class PaymentGateway {
 			'icon'        => $this->get_icon( $gateway ),
 			'supports'    => $this->get_supports_list( $gateway ),
 			'state'       => array(
-				'enabled'     => $this->is_enabled( $gateway ),
-				'needs_setup' => $this->needs_setup( $gateway ),
-				'test_mode'   => $this->is_in_test_mode( $gateway ),
-				'dev_mode'    => $this->is_in_dev_mode( $gateway ),
+				'enabled'           => $this->is_enabled( $gateway ),
+				'account_connected' => $this->is_account_connected( $gateway ),
+				'needs_setup'       => $this->needs_setup( $gateway ),
+				'test_mode'         => $this->is_in_test_mode( $gateway ),
+				'dev_mode'          => $this->is_in_dev_mode( $gateway ),
 			),
 			'management'  => array(
 				'_links' => array(
@@ -54,6 +56,11 @@ class PaymentGateway {
 				),
 			),
 			'onboarding'  => array(
+				'state'                       => array(
+					'started'   => $this->is_onboarding_started( $gateway ),
+					'completed' => $this->is_onboarding_completed( $gateway ),
+					'test_mode' => $this->is_in_test_mode_onboarding( $gateway ),
+				),
 				'_links'                      => array(
 					'onboard' => array(
 						'href' => $this->get_onboarding_url( $gateway ),
@@ -75,40 +82,61 @@ class PaymentGateway {
 	/**
 	 * Get the provider title of the payment gateway.
 	 *
+	 * This is the intended gateway title to use throughout the WC admin. It should be short.
+	 *
+	 * Note: We don't allow HTML tags in the title. All HTML tags will be stripped, including their contents.
+	 *
 	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
 	 *
 	 * @return string The provider title of the payment gateway.
 	 */
 	public function get_title( WC_Payment_Gateway $payment_gateway ): string {
-		// This is the WC admin title.
-		return $payment_gateway->get_method_title();
+		$title = wp_strip_all_tags( html_entity_decode( $payment_gateway->get_method_title() ), true );
+
+		// Truncate the title.
+		return Utils::truncate_with_words( $title, 75 );
 	}
 
 	/**
 	 * Get the provider description of the payment gateway.
+	 *
+	 * This is the intended gateway description to use throughout the WC admin. It should be short and to the point.
+	 *
+	 * Note: We don't allow HTML tags in the description. All HTML tags will be stripped, including their contents.
 	 *
 	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
 	 *
 	 * @return string The provider description of the payment gateway.
 	 */
 	public function get_description( WC_Payment_Gateway $payment_gateway ): string {
-		// This is the WC admin description.
-		return $payment_gateway->get_method_description();
+		$description = wp_strip_all_tags( html_entity_decode( $payment_gateway->get_method_description() ), true );
+
+		// Truncate the description.
+		return Utils::truncate_with_words( $description, 130, '…' );
 	}
 
 	/**
 	 * Get the provider icon URL of the payment gateway.
+	 *
+	 * We expect to receive a URL to an image file.
+	 * If the gateway provides an <img> tag or a list of them, we will fall back to the default payments icon.
 	 *
 	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
 	 *
 	 * @return string The provider icon URL of the payment gateway.
 	 */
 	public function get_icon( WC_Payment_Gateway $payment_gateway ): string {
-		// We only want the URl, not the <img> tag that the get_icon() method returns.
-		$icon_url = $payment_gateway->icon;
-		// Test if it actually is a URL as some gateways put an <img> tag.
+		$icon_url = $payment_gateway->icon ?? '';
+		if ( ! is_string( $icon_url ) ) {
+			$icon_url = '';
+		}
+
+		$icon_url = trim( $icon_url );
+
+		// Test if it actually is a URL as some gateways put an <img> tag or a list of them.
 		if ( ! wc_is_valid_url( $icon_url ) ) {
-			return '';
+			// Fall back to the default payments icon.
+			return plugins_url( 'assets/images/icons/default-payments.svg', WC_PLUGIN_FILE );
 		}
 
 		return WC_HTTPS::force_https_url( $icon_url );
@@ -123,11 +151,22 @@ class PaymentGateway {
 	 */
 	public function get_supports_list( WC_Payment_Gateway $payment_gateway ): array {
 		$supports_list = $payment_gateway->supports ?? array();
+		if ( ! is_array( $supports_list ) ) {
+			return array();
+		}
 
-		// Ensure the list is unique and re-indexed.
-		$supports_list = array_values( array_unique( $supports_list ) );
+		// Sanitize the list to ensure it only contains a list of key-like strings.
+		$sanitized_list = array();
+		foreach ( $supports_list as $support ) {
+			if ( ! is_string( $support ) ) {
+				continue;
+			}
 
-		return $supports_list;
+			$sanitized_list[] = sanitize_key( $support );
+		}
+
+		// Ensure the list contains unique values and re-indexed.
+		return array_values( array_unique( $sanitized_list ) );
 	}
 
 	/**
@@ -164,15 +203,15 @@ class PaymentGateway {
 	 */
 	public function is_in_test_mode( WC_Payment_Gateway $payment_gateway ): bool {
 		// Try various gateway methods to check if the payment gateway is in test mode.
-		if ( method_exists( $payment_gateway, 'is_test_mode' ) ) {
+		if ( is_callable( array( $payment_gateway, 'is_test_mode' ) ) ) {
 			return filter_var( $payment_gateway->is_test_mode(), FILTER_VALIDATE_BOOLEAN );
 		}
-		if ( method_exists( $payment_gateway, 'is_in_test_mode' ) ) {
+		if ( is_callable( array( $payment_gateway, 'is_in_test_mode' ) ) ) {
 			return filter_var( $payment_gateway->is_in_test_mode(), FILTER_VALIDATE_BOOLEAN );
 		}
 
 		// Try various gateway option entries to check if the payment gateway is in test mode.
-		if ( method_exists( $payment_gateway, 'get_option' ) ) {
+		if ( is_callable( array( $payment_gateway, 'get_option' ) ) ) {
 			$test_mode = filter_var( $payment_gateway->get_option( 'test_mode', 'not_found' ), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE );
 			if ( ! is_null( $test_mode ) ) {
 				return $test_mode;
@@ -199,11 +238,100 @@ class PaymentGateway {
 	 */
 	public function is_in_dev_mode( WC_Payment_Gateway $payment_gateway ): bool {
 		// Try various gateway methods to check if the payment gateway is in dev mode.
-		if ( method_exists( $payment_gateway, 'is_dev_mode' ) ) {
+		if ( is_callable( array( $payment_gateway, 'is_dev_mode' ) ) ) {
 			return filter_var( $payment_gateway->is_dev_mode(), FILTER_VALIDATE_BOOLEAN );
 		}
-		if ( method_exists( $payment_gateway, 'is_in_dev_mode' ) ) {
+		if ( is_callable( array( $payment_gateway, 'is_in_dev_mode' ) ) ) {
 			return filter_var( $payment_gateway->is_in_dev_mode(), FILTER_VALIDATE_BOOLEAN );
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if the payment gateway has a payments processor account connected.
+	 *
+	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
+	 *
+	 * @return bool True if the payment gateway account is connected, false otherwise.
+	 *              If the payment gateway does not provide the information, it will return true.
+	 */
+	public function is_account_connected( WC_Payment_Gateway $payment_gateway ): bool {
+		if ( is_callable( array( $payment_gateway, 'is_account_connected' ) ) ) {
+			return filter_var( $payment_gateway->is_account_connected(), FILTER_VALIDATE_BOOLEAN );
+		}
+
+		if ( is_callable( array( $payment_gateway, 'is_connected' ) ) ) {
+			return filter_var( $payment_gateway->is_connected(), FILTER_VALIDATE_BOOLEAN );
+		}
+
+		// Fall back to assuming that it is connected. This is the safest option.
+		return true;
+	}
+
+	/**
+	 * Check if the payment gateway has started the onboarding process.
+	 *
+	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
+	 *
+	 * @return bool True if the payment gateway has started the onboarding process, false otherwise.
+	 *              If the payment gateway does not provide the information,
+	 *              it will infer it from having a connected account.
+	 */
+	public function is_onboarding_started( WC_Payment_Gateway $payment_gateway ): bool {
+		if ( is_callable( array( $payment_gateway, 'is_onboarding_started' ) ) ) {
+			return filter_var( $payment_gateway->is_onboarding_started(), FILTER_VALIDATE_BOOLEAN );
+		}
+
+		// Fall back to inferring this from having a connected account.
+		return $this->is_account_connected( $payment_gateway );
+	}
+
+	/**
+	 * Check if the payment gateway has completed the onboarding process.
+	 *
+	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
+	 *
+	 * @return bool True if the payment gateway has completed the onboarding process, false otherwise.
+	 *              If the payment gateway does not provide the information,
+	 *              it will infer it from having a connected account.
+	 */
+	public function is_onboarding_completed( WC_Payment_Gateway $payment_gateway ): bool {
+		// Sanity check: If the onboarding has not started, it cannot be completed.
+		if ( ! $this->is_onboarding_started( $payment_gateway ) ) {
+			return false;
+		}
+
+		if ( is_callable( array( $payment_gateway, 'is_onboarding_completed' ) ) ) {
+			return filter_var( $payment_gateway->is_onboarding_completed(), FILTER_VALIDATE_BOOLEAN );
+		}
+
+		// Note: This is what WooPayments provides, but it should become standard.
+		if ( is_callable( array( $payment_gateway, 'is_account_partially_onboarded' ) ) ) {
+			return ! filter_var( $payment_gateway->is_account_partially_onboarded(), FILTER_VALIDATE_BOOLEAN );
+		}
+
+		// Fall back to inferring this from having a connected account.
+		return $this->is_account_connected( $payment_gateway );
+	}
+
+	/**
+	 * Try to determine if the payment gateway is in test mode onboarding (aka sandbox or test-drive).
+	 *
+	 * This is a best-effort attempt, as there is no standard way to determine this.
+	 * Trust the true value, but don't consider a false value as definitive.
+	 *
+	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
+	 *
+	 * @return bool True if the payment gateway is in test mode onboarding, false otherwise.
+	 */
+	public function is_in_test_mode_onboarding( WC_Payment_Gateway $payment_gateway ): bool {
+		// Try various gateway methods to check if the payment gateway is in test mode onboarding.
+		if ( is_callable( array( $payment_gateway, 'is_test_mode_onboarding' ) ) ) {
+			return filter_var( $payment_gateway->is_test_mode_onboarding(), FILTER_VALIDATE_BOOLEAN );
+		}
+		if ( is_callable( array( $payment_gateway, 'is_in_test_mode_onboarding' ) ) ) {
+			return filter_var( $payment_gateway->is_in_test_mode_onboarding(), FILTER_VALIDATE_BOOLEAN );
 		}
 
 		return false;
@@ -217,7 +345,7 @@ class PaymentGateway {
 	 * @return string The settings URL for the payment gateway.
 	 */
 	public function get_settings_url( WC_Payment_Gateway $payment_gateway ): string {
-		if ( method_exists( $payment_gateway, 'get_settings_url' ) ) {
+		if ( is_callable( array( $payment_gateway, 'get_settings_url' ) ) ) {
 			return $payment_gateway->get_settings_url();
 		}
 
@@ -236,7 +364,7 @@ class PaymentGateway {
 	 * @return string The onboarding URL for the payment gateway.
 	 */
 	public function get_onboarding_url( WC_Payment_Gateway $payment_gateway, string $return_url = '' ): string {
-		if ( method_exists( $payment_gateway, 'get_connection_url' ) ) {
+		if ( is_callable( array( $payment_gateway, 'get_connection_url' ) ) ) {
 			// If we received no return URL, we will set the WC Payments Settings page as the return URL.
 			$return_url = ! empty( $return_url ) ? $return_url : admin_url( 'admin.php?page=wc-settings&tab=checkout' );
 
@@ -257,7 +385,7 @@ class PaymentGateway {
 	public function get_plugin_slug( WC_Payment_Gateway $payment_gateway ): string {
 		// If the payment gateway object has a `plugin_slug` property, use it.
 		// This is useful for testing.
-		if ( property_exists( $payment_gateway, 'plugin_slug' ) ) {
+		if ( isset( $payment_gateway->plugin_slug ) ) {
 			return $payment_gateway->plugin_slug;
 		}
 
@@ -294,7 +422,7 @@ class PaymentGateway {
 	public function get_plugin_file( WC_Payment_Gateway $payment_gateway, string $plugin_slug = '' ): string {
 		// If the payment gateway object has a `plugin_file` property, use it.
 		// This is useful for testing.
-		if ( property_exists( $payment_gateway, 'plugin_file' ) ) {
+		if ( isset( $payment_gateway->plugin_file ) ) {
 			$plugin_file = $payment_gateway->plugin_file;
 			// Remove the .php extension from the file path. The WP API expects it without it.
 			if ( ! empty( $plugin_file ) && str_ends_with( $plugin_file, '.php' ) ) {
@@ -339,7 +467,7 @@ class PaymentGateway {
 	 */
 	public function get_recommended_payment_methods( WC_Payment_Gateway $payment_gateway, string $country_code = '' ): array {
 		// Bail if the payment gateway does not implement the method.
-		if ( ! method_exists( $payment_gateway, 'get_recommended_payment_methods' ) ) {
+		if ( ! is_callable( array( $payment_gateway, 'get_recommended_payment_methods' ) ) ) {
 			return array();
 		}
 
