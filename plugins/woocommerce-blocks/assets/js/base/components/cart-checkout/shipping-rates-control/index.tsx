@@ -75,10 +75,10 @@ const ShippingRatesControl = ( {
 	const shippingRatesPackageCount =
 		getShippingRatesPackageCount( shippingRates );
 	const previousShippingRatesRateCount = usePrevious(
-		getShippingRatesRateCount( shippingRates )
+		shippingRatesRateCount
 	);
 	const previousShippingRatesPackageCount = usePrevious(
-		getShippingRatesPackageCount( shippingRates )
+		shippingRatesPackageCount
 	);
 
 	useEffect( () => {
