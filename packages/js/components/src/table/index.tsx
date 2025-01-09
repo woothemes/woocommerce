@@ -185,7 +185,7 @@ const TableCard: React.VFC< TableCardProps > = ( {
 			{ /* @ts-expect-error: size must be one of small, medium, largel, xSmall, extraSmall. */ }
 			<CardBody size={ null }>
 				{ tablePreface && (
-					<div className="woocommerce-table__table-preface">
+					<div className="woocommerce-table__preface">
 						{ tablePreface }
 					</div>
 				) }

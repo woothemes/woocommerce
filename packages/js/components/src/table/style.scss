@@ -86,10 +86,10 @@
 		justify-content: flex-end;
 		display: flex;
 	}
+}
 
-	&__table-preface {
-		margin: $gap-small $gap $gap-small $gap;
-	}
+.woocommerce-table__preface {
+	margin: $gap-small $gap $gap-small $gap;
 }
 
 .woocommerce-table__caption {
