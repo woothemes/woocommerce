@@ -20,7 +20,7 @@ interface StoreAddToCart {
 	cartQuantity: number;
 	addingToCart: boolean;
 	cartIsLoading: boolean;
-	addToCart: ( quantity?: number ) => Promise< boolean >;
+	addToCart: ( quantity?: number ) => Promise< void >;
 }
 /**
  * Get the quantity of a product in the cart.
