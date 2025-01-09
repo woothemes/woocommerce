@@ -1985,7 +1985,7 @@ class WC_Helper {
 			return;
 		}
 
-		$product_key                             = $subscription['product_key'];
+		$product_key                                    = $subscription['product_key'];
 		list( $activation_response, $activated, $body ) = self::wccom_activate( $product_key );
 
 		if ( $activated ) {
@@ -2056,7 +2056,7 @@ class WC_Helper {
 			return;
 		}
 
-		$product_key                             = $subscription['product_key'];
+		$product_key                                    = $subscription['product_key'];
 		list( $activation_response, $activated, $body ) = self::wccom_activate( $product_key );
 
 		if ( $activated ) {
