@@ -82,12 +82,9 @@ export function useDefaultViews( { postType }: { postType: string } ): Array< {
 } > {
 	const labels = useSelect(
 		( select ) => {
-			const { getPostType } = select( coreStore ) as {
-				getPostType: ( postType: string ) => {
-					labels?: Record< string, string >;
-				};
-			};
+			const { getPostType } = select( coreStore );
 			const postTypeData: { labels?: Record< string, string > } =
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				getPostType( postType );
 			return postTypeData?.labels;
 		},

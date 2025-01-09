@@ -55,9 +55,8 @@ export function ProductDetailsSectionDescriptionBlockEdit( {
 
 	const { productTemplates, productTemplate: selectedProductTemplate } =
 		useSelect( ( select ) => {
-			const { getEditorSettings } = select( 'core/editor' ) as {
-				getEditorSettings: () => ProductEditorSettings;
-			};
+			const { getEditorSettings } = select( 'core/editor' );
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			return getEditorSettings();
 		}, [] );
 
@@ -98,9 +97,8 @@ export function ProductDetailsSectionDescriptionBlockEdit( {
 
 	const rootClientId = useSelect(
 		( select ) => {
-			const { getBlockRootClientId } = select( 'core/block-editor' ) as {
-				getBlockRootClientId: ( clientId: string ) => string;
-			};
+			const { getBlockRootClientId } = select( 'core/block-editor' );
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			return getBlockRootClientId( clientId );
 		},
 		[ clientId ]
@@ -138,15 +136,10 @@ export function ProductDetailsSectionDescriptionBlockEdit( {
 		( select ) => {
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
-			const { isSavingEntityRecord } = select( 'core' ) as {
-				isSavingEntityRecord: (
-					kind: string,
-					name: string,
-					recordId: number
-				) => boolean;
-			};
+			const { isSavingEntityRecord } = select( 'core' );
 
 			return {
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				isSaving: isSavingEntityRecord(
 					'postType',
 					'product',

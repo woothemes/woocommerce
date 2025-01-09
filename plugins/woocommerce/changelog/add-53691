@@ -1,0 +1,4 @@
+Significance: patch
+Type: update
+
+Widget area: change the block registration strategy from opt-out to opt-in

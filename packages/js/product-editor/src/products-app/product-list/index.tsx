@@ -18,13 +18,9 @@ import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import classNames from 'classnames';
 import {
-	// @ts-expect-error no exported member.
 	__experimentalHeading as Heading,
-	// @ts-expect-error no exported member.
 	__experimentalText as Text,
-	// @ts-expect-error no exported member.
 	__experimentalHStack as HStack,
-	// @ts-expect-error no exported member.
 	__experimentalVStack as VStack,
 	FlexItem,
 	Button,
@@ -199,16 +195,14 @@ export default function ProductList( {
 	// TODO: Use the Woo data store to get all the products, as this doesn't contain all the product data.
 	const { records, totalCount, isLoading } = useSelect(
 		( select ) => {
-			const { getProducts, getProductsTotalCount, isResolving } = select(
-				'wc/admin/products'
-			) as {
-				getProducts: ( query: ProductQuery ) => Product[];
-				getProductsTotalCount: ( query: ProductQuery ) => number;
-				isResolving: ( action: string, args: unknown[] ) => boolean;
-			};
+			const { getProducts, getProductsTotalCount, isResolving } =
+				select( 'wc/admin/products' );
 			return {
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				records: getProducts( queryParams ) as Product[],
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				totalCount: getProductsTotalCount( queryParams ) as number,
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				isLoading: isResolving( 'getProducts', [ queryParams ] ),
 			};
 		},
@@ -225,19 +219,14 @@ export default function ProductList( {
 
 	const { labels, canCreateRecord } = useSelect(
 		( select ) => {
-			const { getPostType, canUser } = select( coreStore ) as {
-				getPostType: ( postType: string ) =>
-					| {
-							labels: Record< string, string >;
-					  }
-					| undefined;
-				canUser: ( action: string, args: unknown ) => boolean;
-			};
+			const { getPostType, canUser } = select( coreStore );
 			const postTypeData:
 				| { labels: Record< string, string > }
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				| undefined = getPostType( postType );
 			return {
 				labels: postTypeData?.labels,
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				canCreateRecord: canUser( 'create', {
 					kind: 'postType',
 					name: postType,

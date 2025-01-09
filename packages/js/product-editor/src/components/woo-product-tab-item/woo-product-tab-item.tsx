@@ -22,10 +22,7 @@ type FillProps = Record< string, unknown > | undefined;
 type WooProductTabItemProps = {
 	id: string;
 	pluginId: string;
-	tabProps:
-		| TabPanelProps
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		| ( ( fillProps: FillProps ) => TabPanelProps );
+	tabProps: TabPanelProps | ( ( fillProps: FillProps ) => TabPanelProps );
 	templates?: Array< ProductFillLocationType >;
 };
 

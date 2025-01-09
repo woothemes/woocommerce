@@ -43,20 +43,9 @@ export function usePreview( {
 		( select ) => {
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
-			const { hasEditsForEntityRecord, isSavingEntityRecord } = select(
-				'core'
-			) as {
-				hasEditsForEntityRecord: (
-					kind: string,
-					name: string,
-					recordId: number
-				) => boolean;
-				isSavingEntityRecord: (
-					kind: string,
-					name: string,
-					recordId: number
-				) => boolean;
-			};
+			const { hasEditsForEntityRecord, isSavingEntityRecord } =
+				select( 'core' );
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			const isSaving = isSavingEntityRecord(
 				'postType',
 				productType,
@@ -65,6 +54,7 @@ export function usePreview( {
 
 			return {
 				isDisabled: isSaving,
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				hasEdits: hasEditsForEntityRecord(
 					'postType',
 					productType,

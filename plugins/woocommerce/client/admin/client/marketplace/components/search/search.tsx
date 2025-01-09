@@ -3,6 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from '@wordpress/element';
+import { recordEvent } from '@woocommerce/tracks';
 import { navigateTo, getNewPath, useQuery } from '@woocommerce/navigation';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -37,7 +38,8 @@ function Search(): JSX.Element {
 	}, [ query.term ] );
 
 	const runSearch = ( term?: string ) => {
-		const newQuery: { term?: string; tab?: string } = query;
+		const newQuery: { term?: string; tab?: string; search?: string } =
+			query;
 
 		// If we're on 'Discover' or 'My subscriptions' when a search is initiated, move to the extensions tab
 		if ( ! newQuery.tab || newQuery.tab === 'my-subscriptions' ) {
@@ -45,6 +47,7 @@ function Search(): JSX.Element {
 		}
 
 		newQuery.term = typeof term !== 'undefined' ? term : searchTerm.trim();
+		newQuery.search = '1';
 		if ( ! newQuery.term ) {
 			delete newQuery.term;
 		}
@@ -72,6 +75,13 @@ function Search(): JSX.Element {
 		runSearch( '' );
 	};
 
+	const onFocus = () => {
+		recordEvent( 'marketplace_search_start', {
+			current_search_term: searchTerm,
+			current_tab: query.tab,
+		} );
+	};
+
 	return (
 		<SearchControl
 			label={ searchPlaceholder }
@@ -80,6 +90,7 @@ function Search(): JSX.Element {
 			onChange={ setSearchTerm }
 			onKeyUp={ handleKeyUp }
 			onClose={ onClose }
+			onFocus={ onFocus }
 			className="woocommerce-marketplace__search"
 		/>
 	);
