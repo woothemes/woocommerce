@@ -7,7 +7,7 @@ import '@wordpress/notices';
  * Internal dependencies
  */
 export { CART_STORE_KEY, store as cartStore } from './cart';
-export { CHECKOUT_STORE_KEY, store as CheckoutStore } from './checkout';
+export { CHECKOUT_STORE_KEY, store as checkoutStore } from './checkout';
 export { COLLECTIONS_STORE_KEY } from './collections';
 export { PAYMENT_STORE_KEY, store as paymentStore } from './payment';
 export { QUERY_STATE_STORE_KEY } from './query-state';
