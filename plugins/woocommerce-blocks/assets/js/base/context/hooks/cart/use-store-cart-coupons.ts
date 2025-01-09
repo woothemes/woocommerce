@@ -4,9 +4,9 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
 import {
-	CART_STORE_KEY,
-	VALIDATION_STORE_KEY,
-	CHECKOUT_STORE_KEY,
+	cartStore,
+	validationStore,
+	checkoutStore,
 } from '@woocommerce/block-data';
 import { decodeEntities } from '@wordpress/html-entities';
 import type { StoreCartCoupon, ApiErrorResponse } from '@woocommerce/types';
@@ -26,7 +26,7 @@ export const useStoreCartCoupons = ( context = '' ): StoreCartCoupon => {
 	const { cartCoupons, cartIsLoading } = useStoreCart();
 	const { createErrorNotice } = useDispatch( 'core/notices' );
 	const { createNotice } = useDispatch( 'core/notices' );
-	const { setValidationErrors } = useDispatch( VALIDATION_STORE_KEY );
+	const { setValidationErrors } = useDispatch( validationStore );
 
 	const {
 		isApplyingCoupon,
@@ -34,7 +34,7 @@ export const useStoreCartCoupons = ( context = '' ): StoreCartCoupon => {
 	}: Pick< StoreCartCoupon, 'isApplyingCoupon' | 'isRemovingCoupon' > =
 		useSelect(
 			( select ) => {
-				const store = select( CART_STORE_KEY );
+				const store = select( cartStore );
 
 				return {
 					isApplyingCoupon: store.isApplyingCoupon(),
@@ -44,9 +44,10 @@ export const useStoreCartCoupons = ( context = '' ): StoreCartCoupon => {
 			[ createErrorNotice, createNotice ]
 		);
 
-	const { applyCoupon, removeCoupon } = useDispatch( CART_STORE_KEY );
-	const orderId = useSelect( ( select ) =>
-		select( CHECKOUT_STORE_KEY ).getOrderId()
+	const { applyCoupon, removeCoupon } = useDispatch( cartStore );
+	const orderId = useSelect(
+		( select ) => select( checkoutStore ).getOrderId(),
+		[]
 	);
 
 	// Return cart, checkout or generic error message.
