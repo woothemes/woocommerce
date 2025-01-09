@@ -48,13 +48,13 @@ do_action( 'woocommerce_before_shipping_calculator' ); ?>
 
 				if ( is_array( $states ) && empty( $states ) ) {
 					?>
-					<input type="hidden" name="calc_shipping_state" id="calc_shipping_state" placeholder="<?php esc_attr_e( 'State / County', 'woocommerce' ); ?>" />
+					<input type="hidden" name="calc_shipping_state" id="calc_shipping_state" />
 					<?php
 				} elseif ( is_array( $states ) ) {
 					?>
 					<span>
 						<label for="calc_shipping_state"><?php esc_html_e( 'State / County', 'woocommerce' ); ?></label>
-						<select name="calc_shipping_state" class="state_select" id="calc_shipping_state" data-placeholder="<?php esc_attr_e( 'State / County', 'woocommerce' ); ?>">
+						<select name="calc_shipping_state" class="state_select" id="calc_shipping_state">
 							<option value=""><?php esc_html_e( 'Select an option&hellip;', 'woocommerce' ); ?></option>
 							<?php
 							foreach ( $states as $ckey => $cvalue ) {
@@ -67,7 +67,7 @@ do_action( 'woocommerce_before_shipping_calculator' ); ?>
 				} else {
 					?>
 					<label for="calc_shipping_state"><?php esc_html_e( 'State / County', 'woocommerce' ); ?></label>
-					<input type="text" class="input-text" value="<?php echo esc_attr( $current_r ); ?>" placeholder="<?php esc_attr_e( 'State / County', 'woocommerce' ); ?>" name="calc_shipping_state" id="calc_shipping_state" />
+					<input type="text" class="input-text" value="<?php echo esc_attr( $current_r ); ?>" name="calc_shipping_state" id="calc_shipping_state" />
 					<?php
 				}
 				?>
@@ -77,14 +77,14 @@ do_action( 'woocommerce_before_shipping_calculator' ); ?>
 		<?php if ( apply_filters( 'woocommerce_shipping_calculator_enable_city', true ) ) : ?>
 			<p class="form-row form-row-wide" id="calc_shipping_city_field">
 				<label for="calc_shipping_city"><?php esc_html_e( 'City:', 'woocommerce' ); ?></label>
-				<input type="text" class="input-text" value="<?php echo esc_attr( WC()->customer->get_shipping_city() ); ?>" placeholder="<?php esc_attr_e( 'City', 'woocommerce' ); ?>" name="calc_shipping_city" id="calc_shipping_city" />
+				<input type="text" class="input-text" value="<?php echo esc_attr( WC()->customer->get_shipping_city() ); ?>" name="calc_shipping_city" id="calc_shipping_city" />
 			</p>
 		<?php endif; ?>
 
 		<?php if ( apply_filters( 'woocommerce_shipping_calculator_enable_postcode', true ) ) : ?>
 			<p class="form-row form-row-wide" id="calc_shipping_postcode_field">
 				<label for="calc_shipping_postcode"><?php esc_html_e( 'Postcode / ZIP:', 'woocommerce' ); ?></label>
-				<input type="text" class="input-text" value="<?php echo esc_attr( WC()->customer->get_shipping_postcode() ); ?>" placeholder="<?php esc_attr_e( 'Postcode / ZIP', 'woocommerce' ); ?>" name="calc_shipping_postcode" id="calc_shipping_postcode" />
+				<input type="text" class="input-text" value="<?php echo esc_attr( WC()->customer->get_shipping_postcode() ); ?>" name="calc_shipping_postcode" id="calc_shipping_postcode" />
 			</p>
 		<?php endif; ?>
 
