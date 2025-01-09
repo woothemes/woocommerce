@@ -30,13 +30,15 @@ import type {
  * the `__experimentalRenderItem` property.
  */
 interface ComboboxControlProps
-	extends Omit< typeof CoreComboboxControl, 'label' | 'help' > {
+	extends Omit<
+		React.ComponentProps< typeof CoreComboboxControl >,
+		'label' | 'help'
+	> {
 	__experimentalRenderItem?: ( args: {
 		item: ComboboxControlOption;
 	} ) => string | JSX.Element;
 	className?: string;
 }
-
 /*
  * Create an alias for the ComboboxControl core component,
  * but with the custom ComboboxControlProps interface.
@@ -219,11 +221,10 @@ const AttributesComboboxControl: React.FC<
 			<BaseControl label={ label } help={ help } id={ labelFor }>
 				<ComboboxControl
 					className="woocommerce-attributes-combobox"
-					// @ts-expect-error allowReset is a valid prop of ComboboxControl.
 					allowReset={ false }
 					options={ options }
 					value={ currentValue }
-					onChange={ ( newValue: string ) => {
+					onChange={ ( newValue ) => {
 						if ( ! newValue ) {
 							return;
 						}
