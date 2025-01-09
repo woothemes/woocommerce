@@ -24,7 +24,7 @@ if [ "$CHECKOUT_TYPE" = '1' ]; then
 	targetPnpmVersion=$( grep packageManager package.json | sed -nr 's/.+packageManager.+pnpm@([[:digit:].]+).+/\1/p' )
 	if [ "$currentPnpmVersion" != "$targetPnpmVersion" ]; then
 		printf "${orangeColoured}pnpm versions mismatch: in use '$currentPnpmVersion', needed '$targetPnpmVersion'. Enabling corepack for automatic pnpm version switching (see https://nodejs.org/api/corepack.html#corepack for more details).\n"
-		corepack enable pnpm
+		command -v corepack > /dev/null && corepack enable pnpm
 	fi
 
 	currentComposerDate=$( ( command -v composer > /dev/null && ( composer --version 2>/dev/null | awk '{print $4}' ) ) || echo '' )
