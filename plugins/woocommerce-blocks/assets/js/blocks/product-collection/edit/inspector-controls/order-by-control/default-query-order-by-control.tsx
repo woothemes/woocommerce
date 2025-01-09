@@ -5,6 +5,10 @@ import { __ } from '@wordpress/i18n';
 import { store as coreStore } from '@wordpress/core-data';
 import { dispatch, select } from '@wordpress/data';
 import { useState } from '@wordpress/element';
+import {
+	CoreFilterNames,
+	TrackInteraction,
+} from '@woocommerce/blocks/product-collection/types';
 
 /**
  * Internal dependencies
@@ -40,7 +44,11 @@ const orderOptions = [
 	},
 ];
 
-const DefaultQueryOrderByControl = () => {
+const DefaultQueryOrderByControl = ( {
+	trackInteraction,
+}: {
+	trackInteraction: TrackInteraction;
+} ) => {
 	const settings = select( 'core' ).getEditedEntityRecord(
 		'root',
 		'site'
@@ -55,6 +63,7 @@ const DefaultQueryOrderByControl = () => {
 		dispatch( coreStore ).editEntityRecord( 'root', 'site', undefined, {
 			[ `woocommerce_default_catalog_orderby` ]: newValue,
 		} );
+		trackInteraction( CoreFilterNames.DEFAULT_ORDER );
 	};
 
 	return (
