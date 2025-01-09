@@ -18,10 +18,7 @@ export type VariationQuickUpdateSlotProps = {
 	group: string;
 	supportsMultipleSelection: boolean;
 	selection: ProductVariation[];
-	onChange(
-		values: PartialProductVariation[] | React.FormEvent< HTMLDivElement >,
-		showSuccess?: boolean
-	): void;
+	onChange( values: PartialProductVariation[], showSuccess?: boolean ): void;
 	onClose: () => void;
 };
 

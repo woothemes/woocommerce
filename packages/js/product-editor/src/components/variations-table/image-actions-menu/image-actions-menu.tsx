@@ -113,7 +113,7 @@ export function ImageActionsMenu( {
 					<VariationQuickUpdateMenuItem.Slot
 						name=""
 						group={ 'image-actions-menu' }
-						onChange={ ( value ) => onChange( value ) }
+						onChange={ onChange }
 						onClose={ onClose }
 						selection={ selection }
 						supportsMultipleSelection={ false }
