@@ -5,7 +5,10 @@ on:
             - trunk
         paths-ignore:
           - 'docs/**'
+          - 'packages/php/**'
+          - 'tools/**'
           - '**/changelog/**'
+          - '**/tests/**'
           - '**/*.md'
           - '.husky/**'
           - '.github/**'
