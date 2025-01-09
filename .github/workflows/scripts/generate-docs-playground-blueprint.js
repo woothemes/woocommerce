@@ -9,6 +9,16 @@ const generateDocsPlaygroundBlueprint = (runId, prNumber) => {
     features: { networking: true },
     steps: [
       {
+        step: 'mkdir',
+        path: '/wordpress/wp-content/static-content'
+      },
+      {
+        step: 'defineWpConfigConsts',
+        consts: {
+          STATIC_FILES_ROOT: '/wordpress/wp-content/static-content'
+        }
+      },
+      {
         step: 'installPlugin',
         pluginZipFile: {
           resource: 'url',
@@ -17,6 +27,22 @@ const generateDocsPlaygroundBlueprint = (runId, prNumber) => {
         options: {
           activate: true
         }
+      },
+      {
+        step: 'activatePlugin',
+        pluginPath: 'import-static-files/import-static-files.php'
+      },
+      {
+        step: 'activatePlugin',
+        pluginPath: 'store-markdown-as-post-meta/index.php'
+      },
+      {
+        step: 'activatePlugin',
+        pluginPath: 'convert-markdown-to-blocks-in-js/convert-markdown-to-blocks-in-js.php'
+      },
+      {
+        step: 'activatePlugin',
+        pluginPath: 'save-pages-as-static-files/index.php'
       },
       {
         step: 'login',
@@ -57,7 +83,7 @@ async function run({ github, context, core }) {
     defaultSchema
   )}` +
     '&ghexport-playground-root=/wordpress/wp-content/static-content/docs' +
-    '&ghexport-repo-root=/../../../docs' +
+    '&ghexport-repo-root=/docs' +
     '&ghexport-content-type=custom-paths';
 
   const body = `
