@@ -18,7 +18,6 @@ const generateDocsPlaygroundBlueprint = (runId, prNumber, context) => {
         "step": "mkdir",
         "path": "/wordpress/wp-content/static-content"
       },
-      // Replace Gutenberg docs with WooCommerce docs
       {
         "step": "unzip",
         "extractToPath": "/wordpress/wp-content/static-content",
@@ -73,9 +72,6 @@ const generateDocsPlaygroundBlueprint = (runId, prNumber, context) => {
     ]
   };
 
-  // Convert blueprint to base64 to include in URL
-  const blueprintBase64 = Buffer.from(JSON.stringify(blueprint)).toString('base64');
-
   return `https://playground.wordpress.net/` +
     `?gh-ensure-auth=yes` +
     `&ghexport-repo-url=https://github.com/${context.repo.owner}/${context.repo.repo}` +
@@ -84,9 +80,9 @@ const generateDocsPlaygroundBlueprint = (runId, prNumber, context) => {
     `&ghexport-commit-message=Documentation+update` +
     `&ghexport-playground-root=/wordpress/wp-content/static-content/docs` +
     `&ghexport-repo-root=/docs` +
-    `&blueprint=${blueprintBase64}` +
     `&ghexport-pr-action=create` +
-    `&ghexport-allow-include-zip=no`;
+    `&ghexport-allow-include-zip=no` +
+    `#${JSON.stringify(blueprint)}`;
 };
 
 async function run({ github, context, core }) {
