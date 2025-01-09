@@ -3,6 +3,13 @@ on:
     push:
         branches:
             - trunk
+        paths-ignore:
+          - 'docs/**'
+          - '**/changelog/**'
+          - '**/*.md'
+          - '.husky/**'
+          - '.github/**'
+          - '!.github/workflows/build-live-branch.yml'
 
 concurrency:
     group: ${{ github.workflow }}-${{ github.ref }}
