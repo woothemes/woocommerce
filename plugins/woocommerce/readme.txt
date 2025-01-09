@@ -4,7 +4,7 @@ Tags: online store, ecommerce, shop, shopping cart, sell online
 Requires at least: 6.6
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 9.5.1
+Stable tag: 9.5.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -173,6 +173,7 @@ WooCommerce comes with some sample data you can use to see how products look; im
 
 **WooCommerce**
 
+* Fix - Fix EmailPreviewTest::test_dummy_product_filter to validate dummy product properties directly [#54104](https://github.com/woocommerce/woocommerce/pull/54104)
 * Fix - Add aria modal attribute to photoswipe [#53245](https://github.com/woocommerce/woocommerce/pull/53245)
 * Fix - Add check for comingSoonNewsletter object before adding in newsletter panel [#53781](https://github.com/woocommerce/woocommerce/pull/53781)
 * Fix - Add checks to various template functions, guard against fatal errors when the global $product object is unavailable. [#53167](https://github.com/woocommerce/woocommerce/pull/53167)
