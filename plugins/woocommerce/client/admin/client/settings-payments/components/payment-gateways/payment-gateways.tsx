@@ -34,6 +34,11 @@ interface PaymentGatewaysProps {
 	setBusinessRegistrationCountry: ( country: string ) => void;
 }
 
+/**
+ * A component for displaying and managing the list of payment providers. It includes a country selector
+ * to filter providers based on the business location and supports real-time updates when the country or
+ * provider order changes.
+ */
 export const PaymentGateways = ( {
 	providers,
 	installedPluginSlugs,
@@ -47,7 +52,9 @@ export const PaymentGateways = ( {
 }: PaymentGatewaysProps ) => {
 	const { invalidateResolution } = useDispatch( PAYMENT_SETTINGS_STORE_NAME );
 
-	// Convert countries from wcSettings to appropriate format for CountrySelector, with entries sorted by decoded name.
+	/**
+	 * Generates a list of country options from the WooCommerce settings.
+	 */
 	const countryOptions = useMemo( () => {
 		return Object.entries( window.wcSettings.countries || [] )
 			.map( ( [ key, name ] ) => ( {
