@@ -12,11 +12,6 @@ import { DragHandleContext } from './sortable-drag-handle';
 /**
  * A component that renders a sortable list item. Integrates with `useSortable` to handle drag-and-drop functionality.
  *
- * @param {Object} props - Component properties.
- * @param {string} props.id - Unique identifier for the sortable item.
- * @param {string} [props.className] - Additional class names for the sortable item.
- * @param {ReactNode} props.children - The content of the sortable item.
- *
  * @example
  * <SortableItem id="item-1">
  *     <div>Sortable Content</div>
