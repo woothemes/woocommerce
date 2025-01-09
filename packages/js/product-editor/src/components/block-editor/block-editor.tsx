@@ -309,7 +309,6 @@ export function BlockEditor( {
 			productTemplate,
 			productFormTemplate,
 			productId,
-			onChange,
 		]
 	);
 
