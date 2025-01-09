@@ -1,5 +1,4 @@
 let config = require( '../../playwright.config.js' );
-const { devices } = require( '@playwright/test' );
 const { tags } = require( '../../fixtures/fixtures' );
 
 const grepInvert = new RegExp(
@@ -11,7 +10,6 @@ config = {
 	projects: [
 		{
 			name: 'ui',
-			use: { ...devices[ 'Desktop Chrome' ] },
 			testIgnore: [
 				'**/api-tests/**',
 				'**/customize-store/**',
@@ -21,7 +19,6 @@ config = {
 		},
 		{
 			name: 'api',
-			use: { ...devices[ 'Desktop Chrome' ] },
 			testMatch: [ '**/api-tests/**' ],
 			grepInvert,
 		},
