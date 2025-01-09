@@ -101,7 +101,7 @@
 			]
 		},
 		{
-			"label": "React-related dependencies: React 18",
+			"label": "React-related dependencies: @woocommerce/blocks-library",
 			"dependencies": [
 				"react",
 				"react-dom",
@@ -115,17 +115,36 @@
 			]
 		},
 		{
-			"label": "React-related dependencies: React 17",
+			"label": "React-related dependencies: Everything else",
 			"dependencies": [
 				"react",
 				"react-dom",
+				"react-test-renderer",
 				"@types/react-dom",
 				"@types/react"
 			],
-			"pinVersion": "17.0.x",
+			"pinVersion": "18.3.x",
 			"packages": [
 				"**"
 			]
+		},
+		{
+			"dependencies": [
+				"@testing-library/react"
+			],
+			"packages": [
+				"**"
+			],
+			"pinVersion": "^16.x.x"
+		},
+		{
+			"dependencies": [
+				"@testing-library/jest-dom"
+			],
+			"packages": [
+				"**"
+			],
+			"pinVersion": "^6.x.x"
 		},
 		{
 			"dependencies": [
@@ -203,7 +222,6 @@
 		{
 			"dependencies": [
 				"@wordpress/block**",
-				"@wordpress/viewport",
 				"@wordpress/interface",
 				"@wordpress/router",
 				"@wordpress/edit-site",
@@ -255,7 +273,7 @@
 				"@woocommerce/block-library",
 				"**"
 			],
-			"pinVersion": "10.10.x"
+			"pinVersion": "10.14.0"
 		},
 		{
 			"dependencies": [
@@ -273,7 +291,7 @@
 			"packages": [
 				"**"
 			],
-			"pinVersion": "wp-6.0"
+			"pinVersion": "wp-6.6"
 		},
 		{
 			"dependencies": [
@@ -450,6 +468,7 @@
 		{
 			"label": "Only manage versions for these dependencies",
 			"dependencies": [
+				"@automattic/color-studio",
 				"@types/node",
 				"@types/wordpress__components",
 				"@typescript-eslint/**",

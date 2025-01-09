@@ -19,7 +19,9 @@ export const useOnboardingTour = () => {
 			select( OPTIONS_STORE_NAME );
 
 		const wasTourShown =
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			getOption( CUSTOMIZE_STORE_ONBOARDING_TOUR_HIDDEN ) === 'yes' ||
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			! hasFinishedResolution( 'getOption', [
 				CUSTOMIZE_STORE_ONBOARDING_TOUR_HIDDEN,
 			] );
@@ -27,7 +29,7 @@ export const useOnboardingTour = () => {
 		return {
 			shouldTourBeShown: ! wasTourShown,
 		};
-	} );
+	}, [] );
 
 	const onClose = () => {
 		updateOptions( {

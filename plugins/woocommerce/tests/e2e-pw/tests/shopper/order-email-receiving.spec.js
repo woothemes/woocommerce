@@ -12,6 +12,7 @@ import { tags } from '../../fixtures/fixtures';
 const { test, expect } = require( '@playwright/test' );
 const { customer, storeDetails } = require( '../../test-data/data' );
 const { api } = require( '../../utils' );
+const { setComingSoon } = require( '../../utils/coming-soon' );
 
 let productId, orderId, zoneId;
 
@@ -36,7 +37,8 @@ test.describe(
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 
-		test.beforeAll( async () => {
+		test.beforeAll( async ( { baseURL } ) => {
+			await setComingSoon( { baseURL, enabled: 'no' } );
 			productId = await api.create.product( product );
 			await api.update.enableCashOnDelivery();
 

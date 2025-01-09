@@ -5,6 +5,8 @@
  * @package WooCommerce\Classes
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -142,12 +144,12 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 					'ID'         => 'ASC',
 				),
 				'fields'      => 'ids',
-				'post_status' => array( 'publish', 'private' ),
+				'post_status' => array( ProductStatus::PUBLISH, ProductStatus::PRIVATE ),
 				'numberposts' => -1, // phpcs:ignore WordPress.VIP.PostsPerPage.posts_per_page_numberposts
 			);
 
 			$visible_only_args                = $all_args;
-			$visible_only_args['post_status'] = 'publish';
+			$visible_only_args['post_status'] = ProductStatus::PUBLISH;
 
 			if ( 'yes' === get_option( 'woocommerce_hide_out_of_stock_items' ) ) {
 				$visible_only_args['tax_query'][] = array(
@@ -673,7 +675,7 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 					'post_parent' => $product_id,
 					'post_type'   => 'product_variation',
 					'fields'      => 'ids',
-					'post_status' => array( 'any', 'trash', 'auto-draft' ),
+					'post_status' => array( 'any', ProductStatus::TRASH, ProductStatus::AUTO_DRAFT ),
 					'numberposts' => -1, // phpcs:ignore WordPress.VIP.PostsPerPage.posts_per_page_numberposts
 				)
 			)
@@ -735,7 +737,7 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 		}
 
 		// Basic structure checks.
-		if ( ! isset( $children['all'] ) || ! isset( $children['visible'] ) ) {
+		if ( empty( $children['all'] ) || ! isset( $children['visible'] ) ) {
 			return false;
 		}
 
@@ -775,11 +777,17 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 			return false;
 		}
 
+		// Fail if array is empty - we want to rebuild in this case.
+		if ( empty( $prices_array ) ) {
+			return false;
+		}
+
 		if ( isset( $prices_array['version'] ) && $prices_array['version'] !== $current_version ) {
 			return false;
 		}
 
 		$data_without_version = array_diff_key( $prices_array, array( 'version' => '' ) );
+		$price_data_is_empty  = true;
 
 		foreach ( $data_without_version as $price_data ) {
 			if ( ! is_array( $price_data ) ) {
@@ -789,6 +797,11 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 			$required_types = array( 'price', 'regular_price', 'sale_price' );
 
 			foreach ( $required_types as $type ) {
+				// If all 'price' fields are empty, we want to track that so we can rebuild the data.
+				if ( 'price' === $type && ! empty( $price_data[ $type ] ) && $price_data_is_empty ) {
+					$price_data_is_empty = false;
+				}
+
 				if ( ! isset( $price_data[ $type ] ) || ! is_array( $price_data[ $type ] ) ) {
 					return false;
 				}
@@ -812,6 +825,11 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 					}
 				}
 			}
+		}
+
+		// If price is empty, we want to rebuild the data.
+		if ( $price_data_is_empty ) {
+			return false;
 		}
 
 		return true;

@@ -24,11 +24,9 @@ interface EllipsisMenuContentProps {
 	suggestionHideUrl?: string;
 	onToggle: () => void;
 	links?: PaymentGatewayLink[];
-	isWooPayments?: boolean;
+	canResetAccount?: boolean;
 	setResetAccountModalVisible?: ( isVisible: boolean ) => void;
 	isEnabled?: boolean;
-	needsSetup?: boolean;
-	testMode?: boolean;
 }
 
 export const EllipsisMenuContent = ( {
@@ -38,11 +36,9 @@ export const EllipsisMenuContent = ( {
 	suggestionHideUrl = '',
 	onToggle,
 	links = [],
-	isWooPayments = false,
+	canResetAccount = false,
 	setResetAccountModalVisible = () => {},
 	isEnabled = false,
-	needsSetup = false,
-	testMode = false,
 }: EllipsisMenuContentProps ) => {
 	const { deactivatePlugin } = useDispatch( PLUGINS_STORE_NAME );
 	const [ isDeactivating, setIsDeactivating ] = useState( false );
@@ -184,7 +180,7 @@ export const EllipsisMenuContent = ( {
 					</Button>
 				</div>
 			) }
-			{ ! isSuggestion && isWooPayments && ! needsSetup && testMode && (
+			{ canResetAccount && (
 				<div
 					className="woocommerce-ellipsis-menu__content__item"
 					key="reset-account"

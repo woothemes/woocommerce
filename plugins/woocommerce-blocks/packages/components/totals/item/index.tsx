@@ -15,7 +15,7 @@ import FormattedMonetaryAmount from '../../formatted-monetary-amount';
 export interface TotalsItemProps {
 	className?: string | undefined;
 	currency: Currency;
-	label: string | React.ReactNode;
+	label: string;
 	// Value may be a number, or react node. Numbers are passed to FormattedMonetaryAmount.
 	value: number | ReactNode;
 	description?: ReactNode;
