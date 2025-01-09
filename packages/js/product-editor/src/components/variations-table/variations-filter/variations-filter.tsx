@@ -180,7 +180,7 @@ export function VariationsFilter( {
 	}
 
 	const handleInputControlChange = useDebounce(
-		function handleInputControlChange( value: string ) {
+		function handleInputControlChange( value: string | undefined ) {
 			setSearch( value );
 			setOptions( [] );
 			setCurrentPage( 1 );
