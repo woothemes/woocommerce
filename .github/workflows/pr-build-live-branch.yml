@@ -69,6 +69,11 @@ jobs:
                   mkdir "$GITHUB_WORKSPACE/zips"
                   mv "$GITHUB_WORKSPACE/plugins/woocommerce/woocommerce-dev.zip" "$GITHUB_WORKSPACE/zips/woocommerce-dev.zip"
                 
+                  mkdir -p "$GITHUB_WORKSPACE/unzips/woocommerce"
+                  cd "$GITHUB_WORKSPACE/zips"
+                  unzip -qq wwoocommerce-dev.zip
+                  mv "$GITHUB_WORKSPACE/zips/woocommerce-dev" "$GITHUB_WORKSPACE/unzips/woocommerce/woocommerce"
+                
                   # Plugin data is passed as a JSON object.
                   PLUGIN_DATA="{}"          
                   PLUGIN_DATA=$( jq -c --arg slug "woocommerce" --arg ver "$CURRENT_VERSION" '.[ $slug ] = { version: $ver }' <<<"$PLUGIN_DATA" )
