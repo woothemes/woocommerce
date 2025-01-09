@@ -70,7 +70,7 @@ const config = {
 	testDir: `${ testsRootPath }/tests`,
 	retries: CI ? 1 : 0,
 	repeatEach: REPEAT_EACH ? Number( REPEAT_EACH ) : 1,
-	workers: 1,
+	workers: CI ? 2 : 1,
 	reportSlowTests: { max: 5, threshold: 30 * 1000 }, // 30 seconds threshold
 	reporter,
 	maxFailures: E2E_MAX_FAILURES ? Number( E2E_MAX_FAILURES ) : 0,
