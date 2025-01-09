@@ -68,7 +68,6 @@ export const Summary = ( {
 	className = '',
 	style = {},
 }: SummaryProps ): JSX.Element => {
-	console.log( 'source', source );
 	const summaryText = useMemo( () => {
 		return generateSummary( source, maxLength, countType );
 	}, [ source, maxLength, countType ] );
