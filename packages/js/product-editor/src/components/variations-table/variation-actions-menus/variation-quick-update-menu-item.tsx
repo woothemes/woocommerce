@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { Slot, Fill, MenuItem, MenuGroup } from '@wordpress/components';
-import { createElement, Fragment } from '@wordpress/element';
+import { Children, createElement, Fragment } from '@wordpress/element';
 import {
 	createOrderedChildren,
 	sortFillsByOrder,
@@ -20,10 +20,6 @@ import {
 
 const DEFAULT_ORDER = 20;
 const TOP_LEVEL_MENU = 'top-level';
-
-type FillProps =
-	| Record< string, unknown >
-	| ( undefined & VariationQuickUpdateSlotProps );
 
 export const getGroupName = (
 	group?: string,
@@ -49,36 +45,32 @@ export const VariationQuickUpdateMenuItem: React.FC< MenuItemProps > & {
 	onClick = () => {},
 	...props
 } ) => {
-	const handleClick =
-		(
-			fillProps: React.ComponentProps< typeof Fill > &
-				VariationQuickUpdateSlotProps
-		) =>
-		() => {
-			const { selection, onChange, onClose } = fillProps;
-			onClick( {
-				selection: Array.isArray( selection )
-					? selection
-					: [ selection ],
-				onChange,
-				onClose,
-			} );
-		};
-
 	const createFill = ( updateType: string ) => (
 		<Fill
 			key={ updateType }
 			name={ getGroupName( group, updateType === MULTIPLE_UPDATE ) }
 		>
-			{ ( fillProps: FillProps ) =>
-				createOrderedChildren(
-					<MenuItem { ...props } onClick={ handleClick( fillProps ) }>
+			{ ( fillProps ) => {
+				return createOrderedChildren(
+					<MenuItem
+						{ ...props }
+						onClick={ () => {
+							const { selection, onChange, onClose } = fillProps;
+							onClick( {
+								selection: Array.isArray( selection )
+									? selection
+									: [ selection ],
+								onChange,
+								onClose,
+							} );
+						} }
+					>
 						{ children }
 					</MenuItem>,
 					order,
 					fillProps
-				)
-			}
+				);
+			} }
 		</Fill>
 	);
 
@@ -102,7 +94,10 @@ VariationQuickUpdateMenuItem.Slot = ( {
 			fillProps={ { ...fillProps, onChange, onClose, selection } }
 		>
 			{ ( fills ) => {
-				if ( ! sortFillsByOrder || ! fills?.length ) {
+				if (
+					! sortFillsByOrder ||
+					( fills && Children.count( fills ) === 0 )
+				) {
 					return null;
 				}
 

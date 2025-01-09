@@ -74,8 +74,6 @@ export function VariationActions( {
 					</>
 				) : (
 					<MenuItem
-						href={ singleSelection?.permalink }
-						target="_blank"
 						rel="noreferrer"
 						onClick={ () => {
 							recordEvent( 'product_variations_preview', {
@@ -95,6 +93,7 @@ export function VariationActions( {
 				/>
 			</MenuGroup>
 			<VariationQuickUpdateMenuItem.Slot
+				name=""
 				group={ 'top-level' }
 				onChange={ onChange }
 				onClose={ onClose }
@@ -128,6 +127,7 @@ export function VariationActions( {
 				/>
 			</MenuGroup>
 			<VariationQuickUpdateMenuItem.Slot
+				name=""
 				group={ 'secondary' }
 				onChange={ onChange }
 				onClose={ onClose }
@@ -142,7 +142,6 @@ export function VariationActions( {
 							? __( 'Delete variation', 'woocommerce' )
 							: undefined
 					}
-					variant="link"
 					onClick={ () => {
 						onDelete( selection );
 						onClose();
@@ -153,6 +152,7 @@ export function VariationActions( {
 				</MenuItem>
 			</MenuGroup>
 			<VariationQuickUpdateMenuItem.Slot
+				name=""
 				group={ 'tertiary' }
 				onChange={ onChange }
 				onClose={ onClose }

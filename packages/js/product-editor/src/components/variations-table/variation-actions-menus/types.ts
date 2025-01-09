@@ -7,7 +7,10 @@ import { MenuItem } from '@wordpress/components';
 export type VariationActionsMenuProps = {
 	disabled?: boolean;
 	selection: ProductVariation[];
-	onChange( values: PartialProductVariation[], showSuccess?: boolean ): void;
+	onChange(
+		values: PartialProductVariation[] | React.FormEvent,
+		showSuccess?: boolean
+	): void;
 	onDelete( values: PartialProductVariation[] ): void;
 };
 

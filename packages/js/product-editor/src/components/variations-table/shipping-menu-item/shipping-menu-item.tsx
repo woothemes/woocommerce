@@ -216,6 +216,7 @@ export function ShippingMenuItem( {
 						</MenuItem>
 					</MenuGroup>
 					<VariationQuickUpdateMenuItem.Slot
+						name=""
 						group={ 'shipping' }
 						onChange={ onChange }
 						onClose={ onClose }

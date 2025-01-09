@@ -128,7 +128,9 @@ export function VariationStockStatusForm( {
 		setValue( ( current ) => ( { ...current, stock_status: selected } ) );
 	}
 
-	function handleStockQuantityInputControlChange( stock_quantity: string ) {
+	function handleStockQuantityInputControlChange(
+		stock_quantity: string | undefined
+	) {
 		setValue( ( current ) => ( { ...current, stock_quantity } ) );
 	}
 
