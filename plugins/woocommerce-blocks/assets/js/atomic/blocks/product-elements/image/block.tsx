@@ -13,6 +13,7 @@ import { useStyleProps } from '@woocommerce/base-hooks';
 import { withProductDataContext } from '@woocommerce/shared-hocs';
 import { useStoreEvents } from '@woocommerce/base-context/hooks';
 import type { HTMLAttributes } from 'react';
+import { decodeEntities } from '@wordpress/html-entities';
 
 /**
  * Internal dependencies
@@ -176,7 +177,7 @@ export const Block = ( props: Props ): JSX.Element | null => {
 					/>
 				) }
 				<Image
-					fallbackAlt={ product.name }
+					fallbackAlt={ decodeEntities( product.name ) }
 					image={ image }
 					loaded={ ! isLoading }
 					showFullSize={ imageSizing !== ImageSizing.THUMBNAIL }
