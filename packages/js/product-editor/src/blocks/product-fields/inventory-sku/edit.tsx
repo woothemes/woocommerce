@@ -22,6 +22,7 @@ import { useEntityProp } from '@wordpress/core-data';
  */
 import { ProductEditorBlockEditProps } from '../../../types';
 import { useValidation } from '../../../contexts/validation-context';
+import { Ref } from 'react';
 
 /**
  * Internal dependencies

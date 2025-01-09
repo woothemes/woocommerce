@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { Product } from '@woocommerce/data';
-import { Button } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useRef } from '@wordpress/element';
@@ -29,7 +28,7 @@ export function usePreview( {
 }: PreviewButtonProps & {
 	onSaveSuccess?( product: Product ): void;
 	onSaveError?( error: WPError ): void;
-} ): React.ComponentProps< typeof Button > {
+} ) {
 	const anchorRef = useRef< HTMLAnchorElement >();
 
 	const [ productId ] = useEntityProp< number >(
@@ -81,7 +80,7 @@ export function usePreview( {
 	 *
 	 * @param event
 	 */
-	async function handleClick( event: MouseEvent< HTMLAnchorElement > ) {
+	async function handleClick( event: MouseEvent< HTMLElement > ) {
 		if ( ariaDisabled ) {
 			return event.preventDefault();
 		}
@@ -153,7 +152,7 @@ export function usePreview( {
 		// Note that the href is always passed for a11y support. So
 		// the final rendered element is always an anchor.
 		href: getProductURL( true ),
-		variant: 'tertiary',
+		variant: 'tertiary' as const,
 		onClick: handleClick,
 	};
 }

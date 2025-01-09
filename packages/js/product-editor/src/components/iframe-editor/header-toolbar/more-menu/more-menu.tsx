@@ -25,7 +25,7 @@ export const MoreMenu = () => {
 
 	return (
 		<MoreMenuDropdown>
-			{ ( { onClose }: { onClose: () => void } ) => (
+			{ ( onClose ) => (
 				<>
 					{ renderBlockToolbar && <WritingMenu /> }
 

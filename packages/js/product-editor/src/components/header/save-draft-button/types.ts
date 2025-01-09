@@ -2,13 +2,12 @@
  * External dependencies
  */
 import { Product } from '@woocommerce/data';
-import { Button } from '@wordpress/components';
 
-export type SaveDraftButtonProps = Omit<
-	React.ComponentProps< typeof Button >,
-	'aria-disabled' | 'variant' | 'children'
-> & {
+export type SaveDraftButtonProps = {
 	productStatus: Product[ 'status' ];
 	productType?: string;
 	visibleTab?: string | null;
+	disabled?: boolean;
+	href?: string;
+	onClick?: ( event: React.MouseEvent< HTMLElement > ) => void;
 };

@@ -23,6 +23,7 @@ import { useCurrencyInputProps } from '../../../hooks/use-currency-input-props';
 import { sanitizeHTML } from '../../../utils/sanitize-html';
 import type { ProductEditorBlockEditProps } from '../../../types';
 import type { SalePriceBlockAttributes } from './types';
+import { Ref } from 'react';
 
 export function Edit( {
 	attributes,

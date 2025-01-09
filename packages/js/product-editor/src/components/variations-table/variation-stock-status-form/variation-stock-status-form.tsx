@@ -159,7 +159,11 @@ export function VariationStockStatusForm( {
 						label={ __( 'Available stock', 'woocommerce' ) }
 						help={ errors.stock_quantity }
 						value={ value.stock_quantity }
-						onChange={ handleStockQuantityInputControlChange }
+						onChange={ ( val ) => {
+							if ( val ) {
+								handleStockQuantityInputControlChange( val );
+							}
+						} }
 						onBlur={ validateStockQuantity }
 						className={ classNames( {
 							'has-error': errors.stock_quantity,

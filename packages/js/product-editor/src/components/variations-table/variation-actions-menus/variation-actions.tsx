@@ -95,7 +95,7 @@ export function VariationActions( {
 			<VariationQuickUpdateMenuItem.Slot
 				name=""
 				group={ 'top-level' }
-				onChange={ onChange }
+				onChange={ ( value ) => onChange( value ) }
 				onClose={ onClose }
 				selection={ selection }
 				supportsMultipleSelection={ supportsMultipleSelection }

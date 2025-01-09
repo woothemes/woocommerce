@@ -240,7 +240,11 @@ export function VariationsFilter( {
 									type="search"
 									value={ search }
 									suffix={ <Icon icon={ searchIcon } /> }
-									onChange={ handleInputControlChange }
+									onChange={ ( value ) => {
+										if ( value ) {
+											handleInputControlChange( value );
+										}
+									} }
 									onKeyDown={ handleKeyDown }
 								/>
 							</label>

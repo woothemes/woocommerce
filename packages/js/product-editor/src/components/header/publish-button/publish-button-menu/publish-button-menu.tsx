@@ -86,7 +86,9 @@ export function PublishButtonMenu( {
 							<MenuItem
 								onClick={ () => {
 									scheduleProduct();
-									onClose();
+									if ( onClose ) {
+										onClose();
+									}
 								} }
 							>
 								{ __( 'Publish now', 'woocommerce' ) }
@@ -95,7 +97,9 @@ export function PublishButtonMenu( {
 								info={ formattedDate }
 								onClick={ () => {
 									setShowScheduleModal( 'edit' );
-									onClose();
+									if ( onClose ) {
+										onClose();
+									}
 								} }
 							>
 								{ __( 'Edit schedule', 'woocommerce' ) }
@@ -108,7 +112,9 @@ export function PublishButtonMenu( {
 									source: TRACKS_SOURCE,
 								} );
 								setShowScheduleModal( 'schedule' );
-								onClose();
+								if ( onClose ) {
+									onClose();
+								}
 							} }
 						>
 							{ __( 'Schedule publish', 'woocommerce' ) }
@@ -149,7 +155,9 @@ export function PublishButtonMenu( {
 											errorProps
 										);
 									} );
-								onClose();
+								if ( onClose ) {
+									onClose();
+								}
 							} }
 						>
 							{ __( 'Copy to a new draft', 'woocommerce' ) }
@@ -187,7 +195,9 @@ export function PublishButtonMenu( {
 											errorProps
 										);
 									} );
-								onClose();
+								if ( onClose ) {
+									onClose();
+								}
 							} }
 						>
 							{ __( 'Move to trash', 'woocommerce' ) }
