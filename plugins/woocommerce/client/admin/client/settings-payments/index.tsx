@@ -34,6 +34,9 @@ import {
 } from '~/settings-payments/utils';
 import './settings-payments-main.scss';
 
+/**
+ * Lazy-loaded chunk for the main settings page of payment gateways.
+ */
 const SettingsPaymentsMainChunk = lazy(
 	() =>
 		import(
@@ -41,6 +44,9 @@ const SettingsPaymentsMainChunk = lazy(
 		)
 );
 
+/**
+ * Lazy-loaded chunk for the recommended payment methods settings page.
+ */
 const SettingsPaymentsMethodsChunk = lazy(
 	() =>
 		import(
@@ -48,6 +54,9 @@ const SettingsPaymentsMethodsChunk = lazy(
 		)
 );
 
+/**
+ * Lazy-loaded chunk for the offline payment gateways settings page.
+ */
 const SettingsPaymentsOfflineChunk = lazy(
 	() =>
 		import(
@@ -55,6 +64,9 @@ const SettingsPaymentsOfflineChunk = lazy(
 		)
 );
 
+/**
+ * Lazy-loaded chunk for the WooPayments settings page.
+ */
 const SettingsPaymentsWooCommercePaymentsChunk = lazy(
 	() =>
 		import(
@@ -62,6 +74,9 @@ const SettingsPaymentsWooCommercePaymentsChunk = lazy(
 		)
 );
 
+/**
+ * Hides or displays the WooCommerce navigation tab based on the provided display style.
+ */
 const hideWooCommerceNavTab = ( display: string ) => {
 	const externalElement = document.querySelector< HTMLElement >(
 		'.woo-nav-tab-wrapper'
@@ -73,6 +88,9 @@ const hideWooCommerceNavTab = ( display: string ) => {
 	}
 };
 
+/**
+ * Renders the main payment settings page with a fallback while loading.
+ */
 const SettingsPaymentsMain = () => {
 	const location = useLocation();
 
@@ -145,6 +163,9 @@ const SettingsPaymentsMain = () => {
 	);
 };
 
+/**
+ * Renders the recommended payment methods settings page with a fallback while loading.
+ */
 const SettingsPaymentsMethods = () => {
 	const location = useLocation();
 	const [ paymentMethodsState, setPaymentMethodsState ] = useState( {} );
@@ -242,6 +263,9 @@ const SettingsPaymentsMethods = () => {
 	);
 };
 
+/**
+ * Wraps the main payment settings and payment methods settings pages.
+ */
 export const SettingsPaymentsMainWrapper = () => {
 	return (
 		<>
@@ -259,6 +283,9 @@ export const SettingsPaymentsMainWrapper = () => {
 	);
 };
 
+/**
+ * Wraps the offline payment gateways settings page.
+ */
 export const SettingsPaymentsOfflineWrapper = () => {
 	return (
 		<>
@@ -293,6 +320,9 @@ export const SettingsPaymentsOfflineWrapper = () => {
 	);
 };
 
+/**
+ * Wraps the WooPayments settings page.
+ */
 export const SettingsPaymentsWooCommercePaymentsWrapper = () => {
 	return (
 		<>

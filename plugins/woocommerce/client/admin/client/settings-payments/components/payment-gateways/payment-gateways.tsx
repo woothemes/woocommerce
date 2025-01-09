@@ -47,6 +47,7 @@ export const PaymentGateways = ( {
 }: PaymentGatewaysProps ) => {
 	const { invalidateResolution } = useDispatch( PAYMENT_SETTINGS_STORE_NAME );
 
+	// Convert countries from wcSettings to appropriate format for CountrySelector, with entries sorted by decoded name.
 	const countryOptions = useMemo( () => {
 		return Object.entries( window.wcSettings.countries || [] )
 			.map( ( [ key, name ] ) => ( {
@@ -76,6 +77,7 @@ export const PaymentGateways = ( {
 						}
 						options={ countryOptions }
 						onChange={ ( value: string ) => {
+							// save selected country and refresh the store by invalidating getPaymentProviders.
 							apiFetch( {
 								path:
 									WC_ADMIN_NAMESPACE +
