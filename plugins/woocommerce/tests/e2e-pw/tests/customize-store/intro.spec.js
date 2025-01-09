@@ -116,7 +116,7 @@ test.describe(
 			).toBeVisible();
 		} );
 
-		test( 'it shows the "non default block theme" banner when the theme is a block theme different than TT4', async ( {
+		test( 'it shows the "non default block theme" banner when the theme is a block theme different than TT4 and redirects to the editor', async ( {
 			page,
 			baseURL,
 		} ) => {
@@ -127,8 +127,15 @@ test.describe(
 			await expect( page.locator( 'h1' ) ).toHaveText(
 				'Customize your theme'
 			);
+
+			const button = page.getByRole( 'button', {
+				name: 'Go to the Editor',
+			} );
+			await expect( button ).toBeVisible();
+			await button.click();
+			// Expecting heading from editor to be visible.
 			await expect(
-				page.getByRole( 'button', { name: 'Go to the Editor' } )
+				page.getByRole( 'heading', { name: 'Design' } )
 			).toBeVisible();
 		} );
 
