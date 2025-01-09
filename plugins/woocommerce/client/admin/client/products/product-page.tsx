@@ -72,9 +72,10 @@ export default function ProductPage() {
 					<>
 						<WooProductMoreMenuItem>
 							{
-								( ( { onClose }: { onClose: () => void } ) => (
+								// @ts-expect-error Requires further investigation
+								( { onClose }: { onClose: () => void } ) => (
 									<MoreMenuFill onClose={ onClose } />
-								) ) as unknown as React.ReactNode
+								)
 							}
 						</WooProductMoreMenuItem>
 
