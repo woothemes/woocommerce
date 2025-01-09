@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { createElement } from '@wordpress/element';
+import { createElement, Fragment } from '@wordpress/element';
 import { Card, CardBody } from '@wordpress/components';
 
 /**
@@ -30,11 +30,13 @@ export const ProductFieldSection: React.FC< ProductFieldSectionProps > = ( {
 		description={ description }
 		className={ className }
 	>
-		<Card>
-			<CardBody>
-				{ children }
-				<WooProductFieldItem.Slot section={ id } />
-			</CardBody>
-		</Card>
+		<>
+			<Card>
+				<CardBody>
+					{ children }
+					<WooProductFieldItem.Slot name="" section={ id } />
+				</CardBody>
+			</Card>
+		</>
 	</ProductSectionLayout>
 );

@@ -67,7 +67,11 @@ export function SchedulePublishModal( {
 
 				<DateTimePicker
 					currentDate={ date }
-					onChange={ handleDateTimePickerChange }
+					onChange={ ( val ) => {
+						if ( val ) {
+							handleDateTimePickerChange( val );
+						}
+					} }
 					is12Hour={ isSiteSettingsTime12HourFormatted() }
 				/>
 			</div>

@@ -70,9 +70,9 @@ export function PublishButton( {
 	} );
 
 	if ( productType === 'product' && isMenuButton ) {
-		function renderPublishButtonMenu(
-			menuProps: Omit< React.ComponentProps< typeof Dropdown >, 'onCopy' >
-		): React.ReactElement {
+		function renderPublishButtonMenu( menuProps: {
+			onClose: () => void;
+		} ): React.ReactElement {
 			return (
 				<PublishButtonMenu
 					{ ...menuProps }

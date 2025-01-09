@@ -13,7 +13,7 @@ interface ProductSectionLayoutProps {
 	title: string;
 	description: string | JSX.Element;
 	className?: string;
-	children: Element[];
+	children: Element[] | Element;
 }
 
 export const ProductSectionLayout: React.FC< ProductSectionLayoutProps > = ( {
@@ -28,6 +28,7 @@ export const ProductSectionLayout: React.FC< ProductSectionLayoutProps > = ( {
 		className={ className }
 	>
 		{ Children.map( children, ( child ) => {
+			// @ts-expect-error child.props is not a defined prop
 			if ( isValidElement( child ) && child.props.onChange ) {
 				return <div className="product-field-layout">{ child }</div>;
 			}
