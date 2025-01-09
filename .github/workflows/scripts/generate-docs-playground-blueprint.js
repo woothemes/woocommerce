@@ -1,6 +1,6 @@
 const generateDocsPlaygroundBlueprint = (runId, prNumber) => {
   return {
-    landingPage: '/wp-admin/admin.php?page=wc-admin&path=/docs',
+    landingPage: '/wp-admin/post-new.php?post_type=page',
     preferredVersions: {
       php: '8.0',
       wp: 'latest'
@@ -10,19 +10,19 @@ const generateDocsPlaygroundBlueprint = (runId, prNumber) => {
     steps: [
       {
         step: 'installPlugin',
-        pluginData: {
+        pluginZipFile: {
           resource: 'url',
-          url: `https://playground.wordpress.net/plugin-proxy.php?org=wpcomvip&repo=woocommerce-woo-docs-multi-com&workflow=Build%20Live%20Branch&artifact=plugins-${runId}&pr=${prNumber}`,
+          url: 'https://raw.githubusercontent.com/adamziel/playground-content-converters/21ecd28/dist/playground-content-converters.zip'
         },
         options: {
-          activate: true,
-        },
+          activate: true
+        }
       },
       {
         step: 'login',
         username: 'admin',
         password: 'password',
-      },
+      }
     ],
     plugins: []
   };
@@ -55,7 +55,10 @@ async function run({ github, context, core }) {
 
   const url = `https://playground.wordpress.net/#${JSON.stringify(
     defaultSchema
-  )}`;
+  )}` +
+    '&ghexport-playground-root=/wordpress/wp-content/static-content/docs' +
+    '&ghexport-repo-root=/../../../docs' +
+    '&ghexport-content-type=custom-paths';
 
   const body = `
 ## Preview Documentation using WordPress Playground
