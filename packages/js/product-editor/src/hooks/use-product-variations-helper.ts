@@ -11,7 +11,11 @@ import {
 	ProductVariation,
 } from '@woocommerce/data';
 import { applyFilters } from '@wordpress/hooks';
-import { useEntityProp, useEntityRecord } from '@wordpress/core-data';
+import {
+	useEntityProp,
+	useEntityRecord,
+	store as coreStore,
+} from '@wordpress/core-data';
 
 /**
  * Internal dependencies
@@ -114,16 +118,15 @@ export function useProductVariationsHelper() {
 
 		await Promise.all(
 			variations.map( ( variationId: number ) =>
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-ignore
-				dispatch( 'core' ).invalidateResolution( 'getEntityRecord', [
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+				dispatch( coreStore ).invalidateResolution( 'getEntityRecord', [
 					'postType',
 					'product_variation',
 					variationId,
 				] )
 			)
 		);
-
+		// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 		await dispatch(
 			EXPERIMENTAL_PRODUCT_VARIATIONS_STORE_NAME
 		).invalidateResolutionForStore();
@@ -140,6 +143,7 @@ export function useProductVariationsHelper() {
 			product
 		);
 
+		// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 		return dispatch( EXPERIMENTAL_PRODUCT_VARIATIONS_STORE_NAME )
 			.generateProductVariations< {
 				count: number;
@@ -160,19 +164,19 @@ export function useProductVariationsHelper() {
 				}
 			)
 			.then( async ( response: ProductVariation[] ) => {
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-ignore
-				await dispatch( 'core' ).invalidateResolution(
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+				await dispatch( coreStore ).invalidateResolution(
 					'getEntityRecord',
 					[ 'postType', 'product', productId ]
 				);
 
-				await resolveSelect( 'core' ).getEntityRecord(
+				await resolveSelect( coreStore ).getEntityRecord(
 					'postType',
 					'product',
 					productId
 				);
 
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				await dispatch(
 					EXPERIMENTAL_PRODUCT_VARIATIONS_STORE_NAME
 				).invalidateResolutionForStore();

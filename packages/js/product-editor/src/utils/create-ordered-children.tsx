@@ -22,7 +22,14 @@ type ChildrenProps = {
 function getChildrenAndProps<
 	T = React.ComponentProps< typeof Fill >,
 	S = Record< string, unknown >
->( children: React.ReactNode, order: number, props: T, injectProps?: S ) {
+>(
+	children:
+		| ( ( props: Record< string, unknown > ) => JSX.Element )
+		| React.ReactNode,
+	order: number,
+	props: T,
+	injectProps?: S
+) {
 	if ( typeof children === 'function' ) {
 		return {
 			children: children( { ...props, order, ...injectProps } ),
