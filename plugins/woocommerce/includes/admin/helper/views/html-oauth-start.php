@@ -38,7 +38,11 @@ if (
 								?>
 				" style="width:180px;">
 
-			<?php if ( ! empty( $_GET['wc-helper-status'] ) && 'helper-disconnected' === $_GET['wc-helper-status'] ) : ?>
+			<?php
+			// phpcs:disable WordPress.Security.NonceVerification.Recommended
+			if ( ! empty( $_GET['wc-helper-status'] ) && 'helper-disconnected' === $_GET['wc-helper-status'] ) :
+				// phpcs:enable WordPress.Security.NonceVerification.Recommended
+				?>
 				<p><strong>
 						<?php
 						esc_html_e(
