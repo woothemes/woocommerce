@@ -458,6 +458,7 @@ class WC_Admin_Post_Types {
 			} else {
 				$new_regular_price = null;
 			}
+
 			if ( isset( $request_data['_sale_price'] ) ) {
 				// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 				$new_sale_price = ( '' === $request_data['_sale_price'] ) ? '' : wc_format_decimal( $request_data['_sale_price'] );
@@ -478,6 +479,11 @@ class WC_Admin_Post_Types {
 			if ( $price_changed ) {
 				$product->set_date_on_sale_to( '' );
 				$product->set_date_on_sale_from( '' );
+			}
+
+			if ( wc_get_container()->get( CostOfGoodsSoldController::class )->feature_is_enabled() ) {
+				$cogs_value = $request_data['_cogs_value'] ?? '0';
+				$product->set_cogs_value( (float) $cogs_value );
 			}
 		}
 

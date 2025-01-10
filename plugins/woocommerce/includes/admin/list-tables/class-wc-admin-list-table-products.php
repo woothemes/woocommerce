@@ -7,6 +7,7 @@
  */
 
 use Automattic\WooCommerce\Enums\ProductType;
+use Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -178,6 +179,10 @@ class WC_Admin_List_Table_Products extends WC_Admin_List_Table {
 
 		get_inline_data( $post );
 
+		$cogs_value_html = wc_get_container()->get( CostOfGoodsSoldController::class )->feature_is_enabled() ?
+				'<div class="cogs_value">' . esc_html( $this->object->get_cogs_value() ) . '</div>' :
+				'';
+
 		/* Custom inline data for woocommerce. */
 		echo '
 			<div class="hidden" id="woocommerce_inline_' . absint( $this->object->get_id() ) . '">
@@ -200,9 +205,9 @@ class WC_Admin_List_Table_Products extends WC_Admin_List_Table {
 				<div class="tax_status">' . esc_html( $this->object->get_tax_status() ) . '</div>
 				<div class="tax_class">' . esc_html( $this->object->get_tax_class() ) . '</div>
 				<div class="backorders">' . esc_html( $this->object->get_backorders() ) . '</div>
-				<div class="low_stock_amount">' . esc_html( $this->object->get_low_stock_amount() ) . '</div>
-			</div>
-		';
+				<div class="low_stock_amount">' . esc_html( $this->object->get_low_stock_amount() ) . '</div>'
+				. $cogs_value_html .
+			'</div>';
 	}
 
 	/**
