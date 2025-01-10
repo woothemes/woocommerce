@@ -10,8 +10,9 @@ import {
 
 export const WC_PRODUCT_MORE_MENU_SLOT_NAME = 'WooProductMenuMenuItem';
 
+type FillProps = React.ComponentProps< typeof Fill >;
 export const WooProductMoreMenuItem: React.FC< {
-	children?: React.ReactNode;
+	children?: FillProps[ 'children' ];
 	order?: number;
 } > & {
 	Slot: React.FC< Slot.Props >;
