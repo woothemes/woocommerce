@@ -21,15 +21,19 @@ export const useShowShippingTotalWarning = () => {
 	const { shippingRates, hasSelectedLocalPickup } = useShippingData();
 	const hasRates = hasShippingRate( shippingRates );
 	const { prefersCollection, isRateBeingSelected, shippingNotices } =
-		useSelect( ( select ) => {
-			return {
-				prefersCollection:
-					select( CHECKOUT_STORE_KEY ).prefersCollection(),
-				isRateBeingSelected:
-					select( CART_STORE_KEY ).isShippingRateBeingSelected(),
-				shippingNotices: select( noticesStore ).getNotices( context ),
-			};
-		} );
+		useSelect(
+			( select ) => {
+				return {
+					prefersCollection:
+						select( CHECKOUT_STORE_KEY ).prefersCollection(),
+					isRateBeingSelected:
+						select( CART_STORE_KEY ).isShippingRateBeingSelected(),
+					shippingNotices:
+						select( noticesStore ).getNotices( context ),
+				};
+			},
+			[ context ]
+		);
 	const { createInfoNotice, removeNotice } = useDispatch( noticesStore );
 
 	useEffect( () => {
