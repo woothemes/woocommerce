@@ -3,6 +3,7 @@
  */
 import { ProductVariation } from '@woocommerce/data';
 import { resolveSelect } from '@wordpress/data';
+import { store as coreStore } from '@wordpress/core-data';
 import { useEffect, useState } from '@wordpress/element';
 
 export function useProductVariationEntityRecord(
@@ -14,8 +15,8 @@ export function useProductVariationEntityRecord(
 
 	useEffect( () => {
 		const getRecordPromise: Promise< ProductVariation > = resolveSelect(
-			'core'
-		).getEntityRecord< ProductVariation >(
+			coreStore
+		).getEntityRecord(
 			'postType',
 			'product_variation',
 			Number.parseInt( variationId, 10 )
