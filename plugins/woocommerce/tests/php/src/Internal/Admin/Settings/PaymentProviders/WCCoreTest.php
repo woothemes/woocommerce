@@ -7,6 +7,7 @@ use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\WCCore;
 use Automattic\WooCommerce\Tests\Internal\Admin\Settings\Mocks\FakePaymentGateway;
 use WC_Unit_Test_Case;
+use WC_Gateway_BACS;
 
 /**
  * WC core payment gateway provider service test.
@@ -35,7 +36,7 @@ class WCCoreTest extends WC_Unit_Test_Case {
 	public function test_get_icon() {
 		// Arrange.
 		$fake_gateway = new FakePaymentGateway(
-			\WC_Gateway_BACS::ID,
+			WC_Gateway_BACS::ID,
 			array(
 				'enabled'            => true,
 				'plugin_slug'        => 'woocommerce',

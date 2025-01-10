@@ -9,7 +9,7 @@ use Automattic\WooCommerce\Tests\Blocks\Helpers\FixtureData;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields;
 use Automattic\WooCommerce\Blocks\Package;
-
+use WC_Gateway_BACS;
 
 /**
  * AdditionalFields Controller Tests.
@@ -1191,7 +1191,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'my-gov-id',
 				),
-				'payment_method'    => \WC_Gateway_BACS::ID,
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function'   => 'engineering',
 					'plugin-namespace/leave-on-porch' => true,
@@ -1242,7 +1242,7 @@ class AdditionalFields extends MockeryTestCase {
 					$id          => array( 'array-instead-of-text' ),
 
 				),
-				'payment_method'    => \WC_Gateway_BACS::ID,
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function'   => 'engineering',
 					'plugin-namespace/leave-on-porch' => true,
@@ -1303,7 +1303,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'my-gov-id',
 				),
-				'payment_method'    => \WC_Gateway_BACS::ID,
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 					$id                             => 'value',
@@ -1372,7 +1372,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'my-gov-id',
 				),
-				'payment_method'    => \WC_Gateway_BACS::ID,
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 					$id                             => 'invalid',
@@ -1448,7 +1448,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'my-gov-id',
 				),
-				'payment_method'    => \WC_Gateway_BACS::ID,
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 					$id                             => 'value',
@@ -1525,7 +1525,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'my-gov-id',
 				),
-				'payment_method'    => \WC_Gateway_BACS::ID,
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 					$id                             => 'invalid',
@@ -1593,7 +1593,7 @@ class AdditionalFields extends MockeryTestCase {
 					'plugin-namespace/gov-id'            => 'gov id',
 					'plugin-namespace/my-required-field' => 'req. field',
 				),
-				'payment_method'    => \WC_Gateway_BACS::ID,
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 				),
@@ -1638,7 +1638,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'gov id',
 				),
-				'payment_method'    => \WC_Gateway_BACS::ID,
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 				),
@@ -1683,7 +1683,7 @@ class AdditionalFields extends MockeryTestCase {
 					'plugin-namespace/gov-id'            => 'gov id',
 					'plugin-namespace/my-required-field' => 'gov id',
 				),
-				'payment_method'    => \WC_Gateway_BACS::ID,
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => '',
 				),
@@ -1738,7 +1738,7 @@ class AdditionalFields extends MockeryTestCase {
 					'plugin-namespace/gov-id'            => 'gov id',
 					'plugin-namespace/my-required-field' => 'req. field',
 				),
-				'payment_method'    => \WC_Gateway_BACS::ID,
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 				),
@@ -1771,7 +1771,7 @@ class AdditionalFields extends MockeryTestCase {
 					'plugin-namespace/gov-id'            => 'gov id',
 					'plugin-namespace/my-required-field' => 'req. field',
 				),
-				'payment_method'    => \WC_Gateway_BACS::ID,
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 				),
@@ -1831,7 +1831,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'gov id',
 				),
-				'payment_method'    => \WC_Gateway_BACS::ID,
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 				),
@@ -1886,7 +1886,7 @@ class AdditionalFields extends MockeryTestCase {
 					'plugin-namespace/gov-id' => 'my-gov-id',
 
 				),
-				'payment_method'    => \WC_Gateway_BACS::ID,
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'invalid-prop',
 				),
@@ -1934,7 +1934,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'shipping-saved-gov-id',
 				),
-				'payment_method'    => \WC_Gateway_BACS::ID,
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function'   => 'engineering',
 					'plugin-namespace/leave-on-porch' => true,
@@ -1993,7 +1993,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'shipping-saved-gov-id',
 				),
-				'payment_method'    => \WC_Gateway_BACS::ID,
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function'   => 'engineering',
 					'plugin-namespace/leave-on-porch' => true,
@@ -2113,7 +2113,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'gov id',
 				),
-				'payment_method'    => \WC_Gateway_BACS::ID,
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 					$id                             => 'value',
@@ -2195,7 +2195,7 @@ class AdditionalFields extends MockeryTestCase {
 					'country'    => 'GB',
 					'phone'      => '',
 				),
-				'payment_method'    => \WC_Gateway_BACS::ID,
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					$id => 'my-value',
 				),

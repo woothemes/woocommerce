@@ -10,6 +10,7 @@ use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestion
 use Automattic\WooCommerce\Tests\Internal\Admin\Settings\Mocks\FakePaymentGateway;
 use PHPUnit\Framework\MockObject\MockObject;
 use WC_Unit_Test_Case;
+use WC_Gateway_BACS;
 
 /**
  * Payments settings service test.
@@ -111,7 +112,7 @@ class PaymentsTest extends WC_Unit_Test_Case {
 		$gateways = array(
 			new FakePaymentGateway( \WC_Gateway_Paypal::ID, array( 'plugin_slug' => 'woocommerce' ) ),
 			// The offline PMs.
-			new FakePaymentGateway( \WC_Gateway_BACS::ID, array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( WC_Gateway_BACS::ID, array( 'plugin_slug' => 'woocommerce' ) ),
 			new FakePaymentGateway( \WC_Gateway_Cheque::ID, array( 'plugin_slug' => 'woocommerce' ) ),
 			new FakePaymentGateway( \WC_Gateway_COD::ID, array( 'plugin_slug' => 'woocommerce' ) ),
 		);
@@ -132,7 +133,7 @@ class PaymentsTest extends WC_Unit_Test_Case {
 					array(
 						\WC_Gateway_Paypal::ID,
 						PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
-						\WC_Gateway_BACS::ID,
+						WC_Gateway_BACS::ID,
 						\WC_Gateway_Cheque::ID,
 						\WC_Gateway_COD::ID,
 					)
@@ -153,7 +154,7 @@ class PaymentsTest extends WC_Unit_Test_Case {
 		$this->assertCount( 5, $data );
 		// Because the core registers the PayPal PG after the offline PMs, the order we expect is this.
 		$this->assertSame(
-			array( \WC_Gateway_Paypal::ID, PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP, \WC_Gateway_BACS::ID, \WC_Gateway_Cheque::ID, \WC_Gateway_COD::ID ),
+			array( \WC_Gateway_Paypal::ID, PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP, WC_Gateway_BACS::ID, \WC_Gateway_Cheque::ID, \WC_Gateway_COD::ID ),
 			array_column( $data, 'id' )
 		);
 
@@ -237,7 +238,7 @@ class PaymentsTest extends WC_Unit_Test_Case {
 		$gateways = array(
 			new FakePaymentGateway( \WC_Gateway_Paypal::ID, array( 'plugin_slug' => 'woocommerce' ) ),
 			// The offline PMs.
-			new FakePaymentGateway( \WC_Gateway_BACS::ID, array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( WC_Gateway_BACS::ID, array( 'plugin_slug' => 'woocommerce' ) ),
 			new FakePaymentGateway( \WC_Gateway_Cheque::ID, array( 'plugin_slug' => 'woocommerce' ) ),
 			new FakePaymentGateway( \WC_Gateway_COD::ID, array( 'plugin_slug' => 'woocommerce' ) ),
 		);
@@ -260,7 +261,7 @@ class PaymentsTest extends WC_Unit_Test_Case {
 						PaymentProviders::SUGGESTION_ORDERING_PREFIX . 'suggestion2',
 						\WC_Gateway_Paypal::ID,
 						PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
-						\WC_Gateway_BACS::ID,
+						WC_Gateway_BACS::ID,
 						\WC_Gateway_Cheque::ID,
 						\WC_Gateway_COD::ID,
 					)
@@ -355,7 +356,7 @@ class PaymentsTest extends WC_Unit_Test_Case {
 				PaymentProviders::SUGGESTION_ORDERING_PREFIX . 'suggestion2',
 				\WC_Gateway_Paypal::ID,
 				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
-				\WC_Gateway_BACS::ID,
+				WC_Gateway_BACS::ID,
 				\WC_Gateway_Cheque::ID,
 				\WC_Gateway_COD::ID,
 			),

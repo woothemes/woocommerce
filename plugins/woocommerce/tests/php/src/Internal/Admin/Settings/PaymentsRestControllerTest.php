@@ -9,6 +9,7 @@ use Automattic\WooCommerce\Internal\Admin\Settings\PaymentsRestController;
 use PHPUnit\Framework\MockObject\MockObject;
 use WC_REST_Unit_Test_Case;
 use WP_REST_Request;
+use WC_Gateway_BACS;
 
 /**
  * PaymentsRestController API controller test.
@@ -938,7 +939,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 				'icon'        => 'http://localhost:8888/wp-content/plugins/woocommerce/assets/images/payment_methods/cod.svg',
 			);
 			$mock_providers[] = array(
-				'id'          => \WC_Gateway_BACS::ID,
+				'id'          => WC_Gateway_BACS::ID,
 				'_order'      => $order++,
 				'_type'       => PaymentProviders::TYPE_OFFLINE_PM,
 				'title'       => 'Direct bank transfer',
