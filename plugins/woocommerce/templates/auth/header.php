@@ -14,6 +14,7 @@
  * @package WooCommerce\Templates\Auth
  * @version 9.7.0
  */
+
 use Automattic\WooCommerce\Internal\BrandingController;
 
 defined( 'ABSPATH' ) || exit;
@@ -38,11 +39,26 @@ if (
 	<meta name="robots" content="noindex, nofollow" />
 	<title><?php esc_html_e( 'Application authentication request', 'woocommerce' ); ?></title>
 	<?php wp_admin_css( 'install', true ); ?>
-	<link rel="stylesheet" href="<?php echo esc_url( str_replace( array( 'http:', 'https:' ), '',
-			WC()->plugin_url() ) . '/assets/css/auth.css' ); ?>" type="text/css" />
+	<link rel="stylesheet" href="
+	<?php
+	echo esc_url(
+		str_replace(
+			array( 'http:', 'https:' ),
+			'',
+			WC()->plugin_url()
+		) . '/assets/css/auth.css'
+	);
+	?>
+			" type="text/css" />
 </head>
 <body class="wc-auth wp-core-ui">
 <h1 id="wc-logo">
-	<img src="<?php echo esc_url( WC()->plugin_url() . '/assets/images/' . $logo_filename ); ?>" alt="<?php esc_attr_e( 'WooCommerce',
-		'woocommerce' ); ?>" /></h1>
+	<img src="<?php echo esc_url( WC()->plugin_url() . '/assets/images/' . $logo_filename ); ?>" alt="
+						<?php
+							esc_attr_e(
+								'WooCommerce',
+								'woocommerce'
+							);
+							?>
+		" /></h1>
 <div class="wc-auth-content">
