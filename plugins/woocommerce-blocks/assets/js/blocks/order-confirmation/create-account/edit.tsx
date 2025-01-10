@@ -4,13 +4,18 @@
 import { __, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
 import type { TemplateArray, BlockAttributes } from '@wordpress/blocks';
-import { Disabled, PanelBody, ToggleControl } from '@wordpress/components';
+import {
+	Disabled,
+	PanelBody,
+	ToggleControl,
+	ExternalLink,
+} from '@wordpress/components';
 import {
 	InnerBlocks,
 	useBlockProps,
 	InspectorControls,
 } from '@wordpress/block-editor';
-import { getSetting } from '@woocommerce/settings';
+import { getSetting, ADMIN_URL } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
@@ -123,6 +128,21 @@ export const Edit = ( {
 					</PanelBody>
 				</InspectorControls>
 			) }
+			<InspectorControls>
+				<PanelBody>
+					<p>
+						{ __(
+							'Configure this feature in your store settings.',
+							'woocommerce'
+						) }
+					</p>
+					<ExternalLink
+						href={ `${ ADMIN_URL }admin.php?page=wc-settings&tab=account` }
+					>
+						{ __( 'Manage account settings', 'woocommerce' ) }
+					</ExternalLink>
+				</PanelBody>
+			</InspectorControls>
 		</div>
 	);
 };
