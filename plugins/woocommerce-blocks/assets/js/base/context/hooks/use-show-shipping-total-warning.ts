@@ -6,6 +6,7 @@ import { CART_STORE_KEY, CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
 import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { hasShippingRate } from '@woocommerce/base-utils';
+import { store as noticesStore } from '@wordpress/notices';
 import type { WPNotice } from '@wordpress/notices/build-types/store/selectors';
 
 /**
@@ -26,10 +27,10 @@ export const useShowShippingTotalWarning = () => {
 					select( CHECKOUT_STORE_KEY ).prefersCollection(),
 				isRateBeingSelected:
 					select( CART_STORE_KEY ).isShippingRateBeingSelected(),
-				shippingNotices: select( 'core/notices' ).getNotices( context ),
+				shippingNotices: select( noticesStore ).getNotices( context ),
 			};
 		} );
-	const { createInfoNotice, removeNotice } = useDispatch( 'core/notices' );
+	const { createInfoNotice, removeNotice } = useDispatch( noticesStore );
 
 	useEffect( () => {
 		const isShowingNotice =
