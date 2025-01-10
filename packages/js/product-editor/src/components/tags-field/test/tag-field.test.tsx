@@ -3,8 +3,7 @@
  */
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Form, FormContextType } from '@woocommerce/components';
-import { Product } from '@woocommerce/data';
+import { Form } from '@woocommerce/components';
 import { createElement } from '@wordpress/element';
 
 /**
