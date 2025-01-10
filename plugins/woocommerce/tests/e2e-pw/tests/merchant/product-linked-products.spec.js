@@ -1,4 +1,4 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 
 const test = baseTest.extend( {
 	storageState: process.env.ADMINSTATE,
@@ -29,7 +29,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Products > Related products',
-	{ tag: [ '@gutenberg', '@services' ] },
+	{ tag: [ tags.GUTENBERG ] },
 	() => {
 		async function navigate( page, productId ) {
 			await test.step( 'Navigate to product edit page', async () => {
@@ -54,7 +54,10 @@ test.describe(
 						exact: true,
 					} )
 					.click();
-				await page.getByRole( 'button', { name: 'Update' } ).click();
+				await page
+					.locator( '#publishing-action' )
+					.getByRole( 'button', { name: 'Update' } )
+					.click();
 				await expect(
 					page.getByText( 'Product updated.' )
 				).toBeVisible();

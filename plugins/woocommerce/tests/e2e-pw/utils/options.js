@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import { encodeCredentials } from './plugin-utils';
+const { admin } = require( '../test-data/data' );
 
 export const setOption = async (
 	request,
@@ -13,15 +14,15 @@ export const setOption = async (
 		baseURL,
 		extraHTTPHeaders: {
 			Authorization: `Basic ${ encodeCredentials(
-				'admin',
-				'password'
+				admin.username,
+				admin.password
 			) }`,
 			cookie: '',
 		},
 	} );
 
 	return await apiContext
-		.post( '/wp-json/e2e-options/update', {
+		.post( './wp-json/e2e-options/update', {
 			failOnStatusCode: true,
 			data: { option_name: optionName, option_value: optionValue },
 		} )

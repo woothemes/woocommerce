@@ -9,8 +9,8 @@ use Automattic\WooCommerce\Admin\API\Plugins;
 use Automattic\WooCommerce\Admin\PageController;
 use Automattic\WooCommerce\Admin\API\Reports\Orders\DataStore as OrdersDataStore;
 use Automattic\WooCommerce\Admin\PluginsHelper;
-use Automattic\WooCommerce\Internal\Admin\WCPayPromotion\Init as WCPayPromotionInit;
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
+use Automattic\WooCommerce\Internal\BrandingController;
 use WC_Marketplace_Suggestions;
 
 /**
@@ -78,7 +78,7 @@ class Settings {
 	}
 
 	/**
-	 * Return an object defining the currecy options for the site's current currency
+	 * Return an object defining the currency options for the site's current currency
 	 *
 	 * @return  array  Settings for the current currency {
 	 *     Array of settings.
@@ -200,6 +200,12 @@ class Settings {
 			'installedPlugins' => PluginsHelper::get_installed_plugin_slugs(),
 			'activePlugins'    => Plugins::get_active_plugins(),
 		);
+
+		// DO NOT use outside of core, these can be removed without deprecation.
+		$settings['__experimentalFlags'] = array(
+			'isNewBranding' => BrandingController::use_new_branding(),
+		);
+
 		// Plugins that depend on changing the translation work on the server but not the client -
 		// WooCommerce Branding is an example of this - so pass through the translation of
 		// 'WooCommerce' to wcSettings.
@@ -238,8 +244,6 @@ class Settings {
 
 		$settings['features'] = $this->get_features();
 
-		$settings['isWooPayEligible'] = WCPayPromotionInit::is_woopay_eligible();
-
 		$has_gutenberg     = is_plugin_active( 'gutenberg/gutenberg.php' );
 		$gutenberg_version = '';
 		if ( $has_gutenberg ) {
@@ -258,7 +262,7 @@ class Settings {
 	}
 
 	/**
-	 * Removes non necesary feature properties for the client side.
+	 * Removes non-necessary feature properties for the client side.
 	 *
 	 * @return array
 	 */

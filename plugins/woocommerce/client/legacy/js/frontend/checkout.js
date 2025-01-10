@@ -35,7 +35,7 @@ jQuery( function( $ ) {
 			this.$checkout_form.on( 'submit', this.submit );
 
 			// Inline validation
-			this.$checkout_form.on( 'input validate change', '.input-text, select, input:checkbox', this.validate_field );
+			this.$checkout_form.on( 'input validate change focusout', '.input-text, select, input:checkbox', this.validate_field );
 
 			// Manual trigger
 			this.$checkout_form.on( 'update', this.trigger_update_checkout );
@@ -157,10 +157,10 @@ jQuery( function( $ ) {
 			wc_checkout_form.reset_update_checkout_timer();
 			wc_checkout_form.updateTimer = setTimeout( wc_checkout_form.maybe_update_checkout, '1000' );
 		},
-		trigger_update_checkout: function() {
+		trigger_update_checkout: function( event ) {
 			wc_checkout_form.reset_update_checkout_timer();
 			wc_checkout_form.dirtyInput = false;
-			$( document.body ).trigger( 'update_checkout' );
+			$( document.body ).trigger( 'update_checkout', { current_target: event ? event.currentTarget : null } );
 		},
 		maybe_update_checkout: function() {
 			var update_totals = true;
@@ -209,16 +209,16 @@ jQuery( function( $ ) {
 				event_type        = e.type;
 
 			if ( 'input' === event_type ) {
+				$this.removeAttr( 'aria-invalid' ).removeAttr( 'aria-describedby' );
+				$parent.find( '.checkout-inline-error-message' ).remove();
 				$parent.removeClass( 'woocommerce-invalid woocommerce-invalid-required-field woocommerce-invalid-email woocommerce-invalid-phone woocommerce-validated' ); // eslint-disable-line max-len
 			}
 
-			if ( 'validate' === event_type || 'change' === event_type ) {
+			if ( 'validate' === event_type || 'change' === event_type || 'focusout' === event_type ) {
 
 				if ( validate_required ) {
-					if ( 'checkbox' === $this.attr( 'type' ) && ! $this.is( ':checked' ) ) {
-						$parent.removeClass( 'woocommerce-validated' ).addClass( 'woocommerce-invalid woocommerce-invalid-required-field' );
-						validated = false;
-					} else if ( $this.val() === '' ) {
+					if ( ( 'checkbox' === $this.attr( 'type' ) && ! $this.is( ':checked' ) ) || $this.val() === '' ) {
+						$this.attr( 'aria-invalid', 'true' );
 						$parent.removeClass( 'woocommerce-validated' ).addClass( 'woocommerce-invalid woocommerce-invalid-required-field' );
 						validated = false;
 					}
@@ -230,6 +230,7 @@ jQuery( function( $ ) {
 						pattern = new RegExp( /^([a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+(\.[a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)*|"((([ \t]*\r\n)?[ \t]+)?([\x01-\x08\x0b\x0c\x0e-\x1f\x7f\x21\x23-\x5b\x5d-\x7e\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|\\[\x01-\x09\x0b\x0c\x0d-\x7f\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))*(([ \t]*\r\n)?[ \t]+)?")@(([a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.)+([a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[0-9a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.?$/i ); // eslint-disable-line max-len
 
 						if ( ! pattern.test( $this.val() ) ) {
+							$this.attr( 'aria-invalid', 'true' );
 							$parent.removeClass( 'woocommerce-validated' ).addClass( 'woocommerce-invalid woocommerce-invalid-email woocommerce-invalid-phone' ); // eslint-disable-line max-len
 							validated = false;
 						}
@@ -240,12 +241,15 @@ jQuery( function( $ ) {
 					pattern = new RegExp( /[\s\#0-9_\-\+\/\(\)\.]/g );
 
 					if ( 0 < $this.val().replace( pattern, '' ).length ) {
+						$this.attr( 'aria-invalid', 'true' );
 						$parent.removeClass( 'woocommerce-validated' ).addClass( 'woocommerce-invalid woocommerce-invalid-phone' );
 						validated = false;
 					}
 				}
 
 				if ( validated ) {
+					$this.removeAttr( 'aria-invalid' ).removeAttr( 'aria-describedby' );
+					$parent.find( '.checkout-inline-error-message' ).remove();
 					$parent.removeClass( 'woocommerce-invalid woocommerce-invalid-required-field woocommerce-invalid-email woocommerce-invalid-phone' ).addClass( 'woocommerce-validated' ); // eslint-disable-line max-len
 				}
 			}
@@ -425,6 +429,16 @@ jQuery( function( $ ) {
 					// Re-init methods
 					wc_checkout_form.init_payment_methods();
 
+					// If there is no errors and the checkout update was triggered by changing the shipping method, focus its radio input.
+					if (
+						data &&
+						'success' === data.result &&
+						args.current_target &&
+						args.current_target.id.indexOf( 'shipping_method' ) !== -1
+					) {
+						document.getElementById( args.current_target.id ).focus();
+					}
+
 					// Fire updated_checkout event.
 					$( document.body ).trigger( 'updated_checkout', [ data ] );
 				}
@@ -523,9 +537,12 @@ jQuery( function( $ ) {
 					success:	function( result ) {
 						// Detach the unload handler that prevents a reload / redirect
 						wc_checkout_form.detachUnloadEventsOnSubmit();
+						
+						$( '.checkout-inline-error-message' ).remove();
 
 						try {
-							if ( 'success' === result.result && $form.triggerHandler( 'checkout_place_order_success', [ result, wc_checkout_form ] ) !== false ) {
+							if ( 'success' === result.result && 
+								$form.triggerHandler( 'checkout_place_order_success', [ result, wc_checkout_form ] ) !== false ) {
 								if ( -1 === result.redirect.indexOf( 'https://' ) || -1 === result.redirect.indexOf( 'http://' ) ) {
 									window.location = result.redirect;
 								} else {
@@ -550,7 +567,17 @@ jQuery( function( $ ) {
 
 							// Add new errors
 							if ( result.messages ) {
-								wc_checkout_form.submit_error( result.messages );
+								var $msgs = $( result.messages )
+									// The error notice template (plugins/woocommerce/templates/notices/error.php)
+									// adds the role="alert" to a list HTML element. This becomes a problem in this context
+									// because screen readers won't read the list content correctly if its role is not "list".
+									.removeAttr( 'role' )
+									.attr( 'tabindex', '-1' );
+								var $msgsWithLink = wc_checkout_form.wrapMessagesInsideLink( $msgs );
+								var $msgsWrapper = $( '<div role="alert"></div>' ).append( $msgsWithLink );
+
+								wc_checkout_form.submit_error( $msgsWrapper.prop( 'outerHTML' ) );
+								wc_checkout_form.show_inline_errors( $msgs );
 							} else {
 								wc_checkout_form.submit_error( '<div class="woocommerce-error">' + wc_checkout_params.i18n_checkout_error + '</div>' ); // eslint-disable-line max-len
 							}
@@ -588,10 +615,40 @@ jQuery( function( $ ) {
 			wc_checkout_form.$checkout_form.removeClass( 'processing' ).unblock();
 			wc_checkout_form.$checkout_form.find( '.input-text, select, input:checkbox' ).trigger( 'validate' ).trigger( 'blur' );
 			wc_checkout_form.scroll_to_notices();
+			wc_checkout_form.$checkout_form.find(
+				'.woocommerce-error[tabindex="-1"], .wc-block-components-notice-banner.is-error[tabindex="-1"]' )
+			.focus();
 			$( document.body ).trigger( 'checkout_error' , [ error_message ] );
 		},
+		wrapMessagesInsideLink: function( $msgs ) {
+			$( 'li[data-id]', $msgs ).each( function() {
+				var $this = $( this );
+
+				$this.wrapInner( '<a href="#' + $this.attr( 'data-id' ) + '"></a>' );				
+			} );
+
+			return $msgs;
+		},
+		show_inline_errors: function( $messages ) {
+			$messages.find( 'li[data-id]' ).each( function() {
+				var $this = $( this );
+				var dataId = $this.attr( 'data-id' );
+				var $field = $( '#' + dataId );
+
+				if ( $field.length === 1 ) {
+					var descriptionId = dataId + '_description';
+					var msg = $this.text().trim();
+					var $formRow = $field.closest( '.form-row' );
+					
+					$formRow.append( '<p id="' + descriptionId + '" class="checkout-inline-error-message">' + msg + '</p>' );
+					$field
+						.attr( 'aria-describedby', descriptionId )
+						.attr( 'aria-invalid', 'true' );
+				}
+			} );
+		},
 		scroll_to_notices: function() {
-			var scrollElement           = $( '.woocommerce-NoticeGroup-updateOrderReview, .woocommerce-NoticeGroup-checkout' );
+			var scrollElement = $( '.woocommerce-NoticeGroup-updateOrderReview, .woocommerce-NoticeGroup-checkout' );
 
 			if ( ! scrollElement.length ) {
 				scrollElement = $( 'form.checkout' );
@@ -604,7 +661,8 @@ jQuery( function( $ ) {
 		init: function() {
 			$( document.body ).on( 'click', 'a.showcoupon', this.show_coupon_form );
 			$( document.body ).on( 'click', '.woocommerce-remove-coupon', this.remove_coupon );
-			$( 'form.checkout_coupon' ).hide().on( 'submit', this.submit );
+			$( document.body ).on( 'blur change input', '#coupon_code', this.remove_coupon_error );
+			$( 'form.checkout_coupon' ).hide().on( 'submit', this.submit.bind( this ) );
 		},
 		show_coupon_form: function() {
 			$( '.checkout_coupon' ).slideToggle( 400, function() {
@@ -612,8 +670,36 @@ jQuery( function( $ ) {
 			});
 			return false;
 		},
-		submit: function() {
-			var $form = $( this );
+		show_coupon_error: function( html_element, $target ) {
+			if ( $target.length === 0 ) {
+				return;
+			}
+	
+			var msg = $( $.parseHTML( html_element ) ).text().trim();
+
+			if ( msg === '' ) {
+				return;
+			}
+				
+			$target.find( '#coupon_code' )
+				.focus()
+				.addClass( 'has-error' )
+				.attr( 'aria-invalid', 'true' )
+				.attr( 'aria-describedby', 'coupon-error-notice' );
+			$target.append( '<span class="coupon-error-notice" id="coupon-error-notice" role="alert">' + msg + '</span>' );
+		},
+		remove_coupon_error: function( evt ) {
+			$( evt.currentTarget )
+				.removeClass( 'has-error' )
+				.removeAttr( 'aria-invalid' )
+				.removeAttr( 'aria-describedby' )
+				.next( '.coupon-error-notice' )
+				.remove();
+		},
+		submit: function( evt ) {
+			var $form = $( evt.currentTarget );
+			var $coupon_field = $form.find( '#coupon_code' );
+			var self = this;
 
 			if ( $form.is( '.processing' ) ) {
 				return false;
@@ -637,13 +723,20 @@ jQuery( function( $ ) {
 				type:		'POST',
 				url:		wc_checkout_params.wc_ajax_url.toString().replace( '%%endpoint%%', 'apply_coupon' ),
 				data:		data,
-				success:	function( code ) {
-					$( '.woocommerce-error, .woocommerce-message, .is-error, .is-success' ).remove();
+				success:	function( response ) {
+					$( '.woocommerce-error, .woocommerce-message, .is-error, .is-success, .checkout-inline-error-message' ).remove();
 					$form.removeClass( 'processing' ).unblock();
 
-					if ( code ) {
-						$form.before( code );
-						$form.slideUp();
+					if ( response ) {
+						// We only want to show coupon notices if they are no errors.
+						// Coupon errors are shown under the input.
+						if ( response.indexOf( 'woocommerce-error' ) === -1 && response.indexOf( 'is-error' ) === -1 ) {
+							$form.slideUp( 400, function() {
+								$form.before( response );
+							} );
+						} else {
+							self.show_coupon_error( response, $coupon_field.parent() );
+						}
 
 						$( document.body ).trigger( 'applied_coupon_in_checkout', [ data.coupon_code ] );
 						$( document.body ).trigger( 'update_checkout', { update_shipping_method: false } );
@@ -689,6 +782,7 @@ jQuery( function( $ ) {
 
 						// Remove coupon code from coupon field
 						$( 'form.checkout_coupon' ).find( 'input[name="coupon_code"]' ).val( '' );
+						$( 'form.checkout_coupon' ).slideUp();
 					}
 				},
 				error: function ( jqXHR ) {

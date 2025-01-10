@@ -32,10 +32,65 @@ jQuery( function( $ ) {
 			var $tabs         = $tabs_wrapper.find( '.wc-tabs, ul.tabs' );
 
 			$tabs.find( 'li' ).removeClass( 'active' );
+			$tabs
+				.find( 'a[role="tab"]' )
+				.attr( 'aria-selected', 'false' )
+				.attr( 'tabindex', '-1' );
 			$tabs_wrapper.find( '.wc-tab, .panel:not(.panel .panel)' ).hide();
 
 			$tab.closest( 'li' ).addClass( 'active' );
+			$tab
+				.attr( 'aria-selected', 'true' )
+				.attr( 'tabindex', '0' );
 			$tabs_wrapper.find( '#' + $tab.attr( 'href' ).split( '#' )[1] ).show();
+		} )
+		.on( 'keydown', '.wc-tabs li a, ul.tabs li a', function( e ) {
+			var direction = e.key;
+			var next      = 'ArrowRight';
+			var prev      = 'ArrowLeft';
+			var home	  = 'Home';
+			var end		  = 'End';
+
+			if ( ! [ next, prev, end, home ].includes( direction ) ) {
+				return;
+			}
+
+			e.preventDefault();
+
+			var $tab          = $( this );
+			var $tabs_wrapper = $tab.closest( '.wc-tabs-wrapper, .woocommerce-tabs' );
+			var $tabsList     = $tabs_wrapper.find( '.wc-tabs, ul.tabs' );
+			var $tabs         = $tabsList.find( 'a[role="tab"]' );
+			var endIndex	  = $tabs.length - 1;
+			var tabIndex      = $tabs.index( $tab );
+			var targetIndex   = direction === prev ? tabIndex - 1 : tabIndex + 1;
+			
+			if ( ( direction === prev && tabIndex === 0 ) || direction === end ) {
+				targetIndex = endIndex;
+			} else if ( ( next === direction && tabIndex === endIndex ) || direction === home ) {
+				targetIndex = 0;
+			}
+			
+			$tabs.eq( targetIndex ).focus();
+		} )
+		.on( 'focusout', '.wc-tabs li a, ul.tabs li a, #respond p.stars a', function() {
+			if ( ! productGalleryElement.data( 'flexslider' ) ) {
+				// Don't do anything if gallery does not exist.
+				return;
+			}
+			setTimeout( function () {
+				var $activeElement = $( document.activeElement );
+				var sliderKeyupBlockers = [ '.stars', '.tabs', '.wc-tabs'];
+				var $closestBlocker = $activeElement.closest( sliderKeyupBlockers.join( ', ' ) );
+		
+				if ( $closestBlocker.length ) {
+					// Prevent keyup events from being triggered on the flexslider when the focus is on the stars or tabs.
+					productGalleryElement.data('flexslider').animating = true;
+					return;
+				}
+		
+				productGalleryElement.data('flexslider').animating = false;
+			}, 0);
 		} )
 		// Review link
 		.on( 'click', 'a.woocommerce-review-link', function() {
@@ -84,6 +139,8 @@ jQuery( function( $ ) {
 	// Init Tabs and Star Ratings
 	$( '.wc-tabs-wrapper, .woocommerce-tabs, #rating' ).trigger( 'init' );
 
+	var productGalleryElement;
+
 	/**
 	 * Product gallery class.
 	 */
@@ -125,6 +182,8 @@ jQuery( function( $ ) {
 		this.onResetSlidePosition = this.onResetSlidePosition.bind( this );
 		this.getGalleryItems      = this.getGalleryItems.bind( this );
 		this.openPhotoswipe       = this.openPhotoswipe.bind( this );
+		this.trapFocusPhotoswipe  = this.trapFocusPhotoswipe.bind( this );
+		this.handlePswpTrapFocus  = this.handlePswpTrapFocus.bind( this );
 
 		if ( this.flexslider_enabled ) {
 			this.initFlexslider( args.flexslider );
@@ -213,7 +272,16 @@ jQuery( function( $ ) {
 		// But only zoom if the img is larger than its container.
 		if ( zoomEnabled ) {
 			var zoom_options = $.extend( {
-				touch: false
+				touch: false,
+				callback: function() {
+					var zoomImg = this;
+					
+					setTimeout( function() {
+						zoomImg.removeAttribute( 'role' );
+						zoomImg.setAttribute( 'alt', '' );
+						zoomImg.setAttribute( 'aria-hidden', 'true' );
+					}, 100 );
+				}
 			}, wc_single_product_params.zoom_options );
 
 			if ( 'ontouchstart' in document.documentElement ) {
@@ -236,7 +304,12 @@ jQuery( function( $ ) {
 	 */
 	ProductGallery.prototype.initPhotoswipe = function() {
 		if ( this.zoom_enabled && this.$images.length > 0 ) {
-			this.$target.prepend( '<a href="#" class="woocommerce-product-gallery__trigger">🔍</a>' );
+			this.$target.prepend(
+				'<a href="#" role="button" class="woocommerce-product-gallery__trigger" aria-haspopup="dialog" aria-label="'+
+				wc_single_product_params.i18n_product_gallery_trigger_text + '">' +
+					'<span aria-hidden="true">🔍</span>' +
+				'</a>'
+			);
 			this.$target.on( 'click', '.woocommerce-product-gallery__trigger', this.openPhotoswipe );
 			this.$target.on( 'click', '.woocommerce-product-gallery__image a', function( e ) {
 				e.preventDefault();
@@ -296,8 +369,10 @@ jQuery( function( $ ) {
 		e.preventDefault();
 
 		var pswpElement = $( '.pswp' )[0],
-			items       = this.getGalleryItems(),
-			eventTarget = $( e.target ),
+			items         = this.getGalleryItems(),
+			eventTarget   = $( e.target ),
+			currentTarget = e.currentTarget,
+			self          = this,
 			clicked;
 
 		if ( 0 < eventTarget.closest( '.woocommerce-product-gallery__trigger' ).length ) {
@@ -315,12 +390,71 @@ jQuery( function( $ ) {
 				}
 				captionEl.children[0].textContent = item.title;
 				return true;
-			}
+			},
+			timeToIdle: 0, // Ensure the gallery controls are always visible to avoid keyboard navigation issues.
 		}, wc_single_product_params.photoswipe_options );
 
 		// Initializes and opens PhotoSwipe.
 		var photoswipe = new PhotoSwipe( pswpElement, PhotoSwipeUI_Default, items, options );
+
+		photoswipe.listen( 'afterInit', function() {
+			self.trapFocusPhotoswipe( true );
+		});
+
+		photoswipe.listen( 'close', function() {
+			self.trapFocusPhotoswipe( false );
+			currentTarget.focus();
+		});
+
 		photoswipe.init();
+	};
+
+	/**
+	 * Control focus in photoswipe modal.
+	 * 
+	 * @param {boolean} trapFocus - Whether to trap focus or not.
+	 */
+	ProductGallery.prototype.trapFocusPhotoswipe = function( trapFocus ) {
+		var pswp = document.querySelector( '.pswp' );
+
+		if ( ! pswp ) {
+			return;
+		}
+
+		if ( trapFocus ) {
+			pswp.addEventListener( 'keydown', this.handlePswpTrapFocus );
+		} else {
+			pswp.removeEventListener( 'keydown', this.handlePswpTrapFocus );
+		}
+	};
+	
+	/**
+	 * Handle keydown event in photoswipe modal.
+	 */
+	ProductGallery.prototype.handlePswpTrapFocus = function( e ) {
+		var allFocusablesEls      = e.currentTarget.querySelectorAll( 'button:not([disabled])' );
+		var filteredFocusablesEls = Array.from( allFocusablesEls ).filter( function( btn ) {
+			return btn.style.display !== 'none' && window.getComputedStyle( btn ).display !== 'none';
+		} );
+
+		if ( 1 >= filteredFocusablesEls.length ) {
+			return;
+		}
+
+		var firstTabStop = filteredFocusablesEls[0];
+		var lastTabStop  = filteredFocusablesEls[filteredFocusablesEls.length - 1];
+
+		if ( e.key === 'Tab' ) {
+			if ( e.shiftKey ) {
+				if ( document.activeElement === firstTabStop ) {
+					e.preventDefault();
+					lastTabStop.focus();
+				}
+			} else if ( document.activeElement === lastTabStop ) {
+				e.preventDefault();
+				firstTabStop.focus();
+			}
+		}
 	};
 
 	/**
@@ -338,7 +472,7 @@ jQuery( function( $ ) {
 
 		$( this ).trigger( 'wc-product-gallery-before-init', [ this, wc_single_product_params ] );
 
-		$( this ).wc_product_gallery( wc_single_product_params );
+		productGalleryElement = $( this ).wc_product_gallery( wc_single_product_params );
 
 		$( this ).trigger( 'wc-product-gallery-after-init', [ this, wc_single_product_params ] );
 

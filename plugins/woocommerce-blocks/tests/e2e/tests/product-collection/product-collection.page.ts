@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { Locator, Page } from '@playwright/test';
+import { FrameLocator, Locator, Page } from '@playwright/test';
 import { Editor, Admin } from '@woocommerce/e2e-utils';
 import { BlockRepresentation } from '@wordpress/e2e-test-utils-playwright/build-types/editor/insert-block';
 
@@ -38,8 +38,7 @@ export const SELECTORS = {
 	},
 	onSaleControlLabel: 'Show only products on sale',
 	featuredControlLabel: 'Show only featured products',
-	usePageContextControl:
-		'.wc-block-product-collection__inherit-query-control',
+	usePageContextControl: 'Query type',
 	shrinkColumnsToFit: 'Responsive',
 	productSearchLabel: 'Search',
 	productSearchButton: '.wp-block-search__button wp-element-button',
@@ -62,6 +61,12 @@ export const SELECTORS = {
 	previewButtonTestID: 'product-collection-preview-button',
 	collectionPlaceholder:
 		'[data-type="woocommerce/product-collection"] .components-placeholder',
+	productPicker: '.wc-blocks-product-collection__editor-product-picker',
+	linkedProductControl: {
+		button: '.wc-block-product-collection-linked-product-control__button',
+		popoverContent:
+			'.wc-block-product-collection-linked-product__popover-content',
+	},
 };
 
 export type Collections =
@@ -70,22 +75,42 @@ export type Collections =
 	| 'bestSellers'
 	| 'onSale'
 	| 'featured'
+	| 'relatedProducts'
 	| 'productCatalog'
 	| 'myCustomCollection'
 	| 'myCustomCollectionWithPreview'
-	| 'myCustomCollectionWithAdvancedPreview';
+	| 'myCustomCollectionWithAdvancedPreview'
+	| 'myCustomCollectionWithProductContext'
+	| 'myCustomCollectionWithOrderContext'
+	| 'myCustomCollectionWithCartContext'
+	| 'myCustomCollectionWithArchiveContext'
+	| 'myCustomCollectionMultipleContexts'
+	| 'myCustomCollectionWithInserterScope'
+	| 'myCustomCollectionWithBlockScope';
 
 const collectionToButtonNameMap = {
 	newArrivals: 'New Arrivals',
-	topRated: 'Top Rated',
+	topRated: 'Top Rated Products',
 	bestSellers: 'Best Sellers',
-	onSale: 'On Sale',
-	featured: 'Featured',
+	onSale: 'On Sale Products',
+	featured: 'Featured Products',
+	relatedProducts: 'Related Products',
 	productCatalog: 'create your own',
 	myCustomCollection: 'My Custom Collection',
 	myCustomCollectionWithPreview: 'My Custom Collection with Preview',
 	myCustomCollectionWithAdvancedPreview:
 		'My Custom Collection with Advanced Preview',
+	myCustomCollectionWithProductContext:
+		'My Custom Collection - Product Context',
+	myCustomCollectionWithOrderContext: 'My Custom Collection - Order Context',
+	myCustomCollectionWithCartContext: 'My Custom Collection - Cart Context',
+	myCustomCollectionWithArchiveContext:
+		'My Custom Collection - Archive Context',
+	myCustomCollectionMultipleContexts:
+		'My Custom Collection - Multiple Contexts',
+	myCustomCollectionWithInserterScope:
+		'My Custom Collection - With Inserter Scope',
+	myCustomCollectionWithBlockScope: 'My Custom Collection - With Block Scope',
 };
 
 class ProductCollectionPage {
@@ -121,7 +146,7 @@ class ProductCollectionPage {
 			? collectionToButtonNameMap[ collection ]
 			: collectionToButtonNameMap.productCatalog;
 
-		const placeholderSelector = this.admin.page.locator(
+		const placeholderSelector = this.editor.canvas.locator(
 			SELECTORS.collectionPlaceholder
 		);
 
@@ -187,10 +212,32 @@ class ProductCollectionPage {
 		}
 	}
 
+	async chooseProductInEditorProductPickerIfAvailable(
+		pageReference: Page | FrameLocator,
+		productName = 'Album'
+	) {
+		const editorProductPicker = pageReference.locator(
+			SELECTORS.productPicker
+		);
+
+		if ( await editorProductPicker.isVisible() ) {
+			await editorProductPicker
+				.locator( 'label' )
+				.filter( {
+					hasText: productName,
+				} )
+				.click();
+		}
+	}
+
 	async createNewPostAndInsertBlock( collection?: Collections ) {
 		await this.admin.createNewPost();
 		await this.insertProductCollection();
 		await this.chooseCollectionInPost( collection );
+		// If product picker is available, choose a product.
+		await this.chooseProductInEditorProductPickerIfAvailable(
+			this.admin.page
+		);
 		await this.refreshLocators( 'editor' );
 		await this.editor.openDocumentSettingsSidebar();
 	}
@@ -332,6 +379,10 @@ class ProductCollectionPage {
 		await this.editor.canvas.locator( 'body' ).click();
 		await this.insertProductCollection();
 		await this.chooseCollectionInTemplate( collection );
+		// If product picker is available, choose a product.
+		await this.chooseProductInEditorProductPickerIfAvailable(
+			this.editor.canvas
+		);
 		await this.refreshLocators( 'editor' );
 	}
 
@@ -351,7 +402,7 @@ class ProductCollectionPage {
 
 	async addFilter(
 		name:
-			| 'Show Hand-picked Products'
+			| 'Show Hand-picked'
 			| 'Keyword'
 			| 'Show product categories'
 			| 'Show product tags'
@@ -395,7 +446,7 @@ class ProductCollectionPage {
 			name: 'Order by',
 		} );
 		await orderByComboBox.selectOption( orderBy );
-		await this.page.locator( SELECTORS.product ).first().waitFor();
+		await this.editor.canvas.locator( SELECTORS.product ).first().waitFor();
 		await this.refreshLocators( 'editor' );
 	}
 
@@ -488,8 +539,11 @@ class ProductCollectionPage {
 		const maxInputSelector = SELECTORS.priceRangeFilter.max;
 
 		const sidebarSettings = this.locateSidebarSettings();
-		const minInput = sidebarSettings.getByLabel( minInputSelector );
-		const maxInput = sidebarSettings.getByLabel( maxInputSelector );
+		const priceRangeContainer = sidebarSettings.locator(
+			'.wc-block-product-price-range-control'
+		);
+		const minInput = priceRangeContainer.getByLabel( minInputSelector );
+		const maxInput = priceRangeContainer.getByLabel( maxInputSelector );
 
 		await minInput.fill( min || '' );
 		await maxInput.fill( max || '' );
@@ -549,44 +603,28 @@ class ProductCollectionPage {
 		] );
 	}
 
-	async clickDisplaySettings() {
-		// Select the block, so that toolbar is visible.
-		await this.focusProductCollection();
-		// Open the display settings.
-		await this.page
-			.getByRole( 'button', { name: 'Display settings' } )
+	async changeCollectionUsingToolbar( collection: Collections ) {
+		// Click "Choose collection" button in the toolbar.
+		await this.admin.page
+			.getByRole( 'toolbar', { name: 'Block Tools' } )
+			.getByRole( 'button', { name: 'Choose collection' } )
 			.click();
-	}
 
-	async setDisplaySettings( {
-		itemsPerPage,
-		offset,
-		maxPageToShow,
-	}: {
-		itemsPerPage: number;
-		offset: number;
-		maxPageToShow: number;
-		isOnFrontend?: boolean;
-	} ) {
-		// Set the values.
-		const displaySettingsContainer = this.page.locator(
-			'.wc-block-editor-product-collection__display-settings'
+		// Select the collection from the modal.
+		const collectionChooserModal = this.admin.page.locator(
+			'.wc-blocks-product-collection__modal'
 		);
-		await displaySettingsContainer.getByLabel( 'Items per Page' ).click();
-		await displaySettingsContainer
-			.getByLabel( 'Items per Page' )
-			.fill( itemsPerPage.toString() );
-		await displaySettingsContainer.getByLabel( 'Offset' ).click();
-		await displaySettingsContainer
-			.getByLabel( 'Offset' )
-			.fill( offset.toString() );
-		await displaySettingsContainer.getByLabel( 'Max page to show' ).click();
-		await displaySettingsContainer
-			.getByLabel( 'Max page to show' )
-			.fill( maxPageToShow.toString() );
+		await collectionChooserModal
+			.getByRole( 'button', {
+				name: collectionToButtonNameMap[ collection ],
+			} )
+			.click();
 
-		await this.page.click( 'body' );
-		await this.refreshLocators( 'editor' );
+		await collectionChooserModal
+			.getByRole( 'button', {
+				name: 'Continue',
+			} )
+			.click();
 	}
 
 	async setShrinkColumnsToFit( value = true ) {
@@ -632,13 +670,13 @@ class ProductCollectionPage {
 
 	async setInheritQueryFromTemplate( inheritQueryFromTemplate: boolean ) {
 		const sidebarSettings = this.locateSidebarSettings();
-		const input = sidebarSettings.locator(
-			`${ SELECTORS.usePageContextControl } input`
+		const queryTypeLocator = sidebarSettings.locator(
+			SELECTORS.usePageContextControl
 		);
 		if ( inheritQueryFromTemplate ) {
-			await input.check();
+			await queryTypeLocator.getByLabel( 'Default' ).click();
 		} else {
-			await input.uncheck();
+			await queryTypeLocator.getByLabel( 'Custom' ).click();
 		}
 	}
 
@@ -730,11 +768,13 @@ class ProductCollectionPage {
 	}
 
 	private async initializeLocatorsForEditor() {
-		this.productTemplate = this.page.locator( SELECTORS.productTemplate );
-		this.products = this.page
+		this.productTemplate = this.editor.canvas.locator(
+			SELECTORS.productTemplate
+		);
+		this.products = this.editor.canvas
 			.locator( SELECTORS.product )
 			.locator( 'visible=true' );
-		this.productImages = this.page
+		this.productImages = this.editor.canvas
 			.locator( SELECTORS.productImage.inEditor )
 			.locator( 'visible=true' );
 		this.productTitles = this.productTemplate
@@ -743,10 +783,10 @@ class ProductCollectionPage {
 		this.productPrices = this.productTemplate
 			.locator( SELECTORS.productPrice.inEditor )
 			.locator( 'visible=true' );
-		this.addToCartButtons = this.page
+		this.addToCartButtons = this.editor.canvas
 			.locator( SELECTORS.addToCartButton.inEditor )
 			.locator( 'visible=true' );
-		this.pagination = this.page.getByRole( 'document', {
+		this.pagination = this.editor.canvas.getByRole( 'document', {
 			name: 'Block: Pagination',
 		} );
 	}

@@ -20,13 +20,13 @@ import {
 
 const blockConfig: BlockConfiguration = {
 	...sharedConfig,
-	apiVersion: 2,
 	title,
 	description,
 	icon: { src: icon },
 	attributes,
 	supports,
 	edit,
+	save: () => null,
 	usesContext: [ 'query', 'queryId', 'postId' ],
 };
 

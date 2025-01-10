@@ -49,11 +49,12 @@ test.describe( 'Template customization', () => {
 				await editor.saveSiteEditorEntities( {
 					isOnlyCurrentEntityDirty: true,
 				} );
+
 				// Verify template name didn't change.
 				// See: https://github.com/woocommerce/woocommerce/issues/42221
 				await expect(
 					page.getByRole( 'heading', {
-						name: `Editing ${ templateTypeName }: ${ testData.templateName }`,
+						name: templateTypeName,
 					} )
 				).toBeVisible();
 
@@ -67,7 +68,7 @@ test.describe( 'Template customization', () => {
 				await admin.visitSiteEditor( {
 					postType: testData.templateType,
 				} );
-				await editor.revertTemplateCustomizations( {
+				await editor.revertTemplate( {
 					templateName: testData.templateName,
 				} );
 				await testData.visitPage( { frontendUtils, page } );

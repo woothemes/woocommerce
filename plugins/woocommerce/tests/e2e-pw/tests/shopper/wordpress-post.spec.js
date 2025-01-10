@@ -1,13 +1,16 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
-
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
+const { setComingSoon } = require( '../../utils/coming-soon' );
 const test = baseTest.extend( {
 	storageState: process.env.CUSTOMERSTATE,
 } );
 
 test(
 	'logged-in customer can comment on a post',
-	{ tag: [ '@gutenberg', '@payments', '@services' ] },
-	async ( { page } ) => {
+	{
+		tag: [ tags.WP_CORE, tags.SKIP_ON_WPCOM ],
+	},
+	async ( { baseURL, page } ) => {
+		await setComingSoon( { baseURL, enabled: 'no' } );
 		await page.goto( 'hello-world/' );
 		await expect(
 			page.getByRole( 'heading', { name: 'Hello world!', exact: true } )

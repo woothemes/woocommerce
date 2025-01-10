@@ -48,9 +48,9 @@ class ProductGalleryThumbnails extends AbstractBlock {
 	 * @return string
 	 */
 	protected function generate_view_all_html( $remaining_thumbnails_count ) {
-		$view_all_html = '<div class="wc-block-product-gallery-thumbnails__thumbnail__overlay wc-block-product-gallery-dialog-on-click" data-wc-on--click="actions.openDialog" data-wc-on--keydown="actions.onViewAllImagesKeyDown" tabindex="0">
-			<span class="wc-block-product-gallery-thumbnails__thumbnail__remaining-thumbnails-count wc-block-product-gallery-dialog-on-click">+%1$s</span>
-			<span class="wc-block-product-gallery-thumbnails__thumbnail__view-all wc-block-product-gallery-dialog-on-click">%2$s</span>
+		$view_all_html = '<div class="wc-block-product-gallery-thumbnails__thumbnail__overlay" data-wc-on--click="actions.openDialog" data-wc-on--keydown="actions.onViewAllImagesKeyDown" tabindex="0">
+			<span class="wc-block-product-gallery-thumbnails__thumbnail__remaining-thumbnails-count">+%1$s</span>
+			<span class="wc-block-product-gallery-thumbnails__thumbnail__view-all">%2$s</span>
 			</div>';
 
 		return sprintf(
@@ -168,7 +168,7 @@ class ProductGalleryThumbnails extends AbstractBlock {
 							}
 						}
 
-						$thumbnails_count++;
+						++$thumbnails_count;
 					}
 
 					return sprintf(
@@ -178,7 +178,7 @@ class ProductGalleryThumbnails extends AbstractBlock {
 						esc_attr( $classes_and_styles['classes'] ),
 						esc_attr( $classes_and_styles['styles'] ),
 						$html,
-						wp_json_encode( array( 'namespace' => 'woocommerce/product-gallery' ) )
+						wp_json_encode( array( 'namespace' => 'woocommerce/product-gallery' ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP )
 					);
 				}
 			}

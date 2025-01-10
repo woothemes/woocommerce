@@ -9,7 +9,13 @@ import {
 	type CartResponseShippingAddress,
 	isObject,
 } from '@woocommerce/types';
-import { ShippingAddress, BillingAddress } from '@woocommerce/settings';
+import {
+	ShippingAddress,
+	BillingAddress,
+	CoreAddress,
+	KeyedFormField,
+	defaultFields,
+} from '@woocommerce/settings';
 import { decodeEntities } from '@wordpress/html-entities';
 import {
 	SHIPPING_COUNTRIES,
@@ -93,7 +99,7 @@ export const emptyHiddenAddressFields = <
 ): T => {
 	const addressForm = prepareFormFields(
 		ADDRESS_FORM_KEYS,
-		{},
+		defaultFields,
 		address.country
 	);
 	const newAddress = Object.assign( {}, address ) as T;
@@ -120,7 +126,7 @@ export const emptyAddressFields = <
 ): T => {
 	const addressForm = prepareFormFields(
 		ADDRESS_FORM_KEYS,
-		{},
+		defaultFields,
 		address.country
 	);
 	const newAddress = Object.assign( {}, address ) as T;
@@ -181,20 +187,36 @@ export const formatShippingAddress = (
 
 /**
  * Checks that all required fields in an address are completed based on the settings in countryLocale.
+ *
+ * @param {Object} address     The address to check.
+ * @param {Array}  keysToCheck Optional override to include only specific keys for checking.
+ *                             If there are other required fields in the address, but not specified in this arg then
+ *                             they will be ignored.
  */
 export const isAddressComplete = (
-	address: ShippingAddress | BillingAddress
+	address: ShippingAddress | BillingAddress,
+	keysToCheck: ( keyof CoreAddress )[] = []
 ): boolean => {
 	if ( ! address.country ) {
 		return false;
 	}
 	const addressForm = prepareFormFields(
 		ADDRESS_FORM_KEYS,
-		{},
+		defaultFields,
 		address.country
 	);
 
-	return addressForm.every(
+	// Filter the address form so only fields from the keysToCheck arg remain, if that arg is empty, then default to the
+	// full address form.
+	const filteredAddressForm =
+		keysToCheck.length > 0
+			? ( Object.values( addressForm ) as KeyedFormField[] ).filter(
+					( { key } ) =>
+						keysToCheck.includes( key as keyof CoreAddress )
+			  )
+			: addressForm;
+
+	return filteredAddressForm.every(
 		( { key = '', hidden = false, required = false } ) => {
 			if ( hidden || ! required ) {
 				return true;

@@ -9,21 +9,18 @@ use Automattic\WooCommerce\Caches\OrderCacheController;
 use Automattic\WooCommerce\Database\Migrations\CustomOrderTable\PostsToOrdersMigrationController;
 use Automattic\WooCommerce\Internal\Admin\Orders\EditLock;
 use Automattic\WooCommerce\Internal\BatchProcessing\{ BatchProcessingController, BatchProcessorInterface };
-use Automattic\WooCommerce\Internal\Traits\AccessiblePrivateMethods;
 use Automattic\WooCommerce\Internal\Utilities\DatabaseUtil;
 use Automattic\WooCommerce\Proxies\LegacyProxy;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * This class handles the database structure creation and the data synchronization for the custom orders tables. Its responsibilites are:
+ * This class handles the database structure creation and the data synchronization for the custom orders tables. Its responsibilities are:
  *
  * - Providing entry points for creating and deleting the required database tables.
  * - Synchronizing changes between the custom orders tables and the posts table whenever changes in orders happen.
  */
 class DataSynchronizer implements BatchProcessorInterface {
-
-	use AccessiblePrivateMethods;
 
 	public const ORDERS_DATA_SYNC_ENABLED_OPTION = 'woocommerce_custom_orders_table_data_sync_enabled';
 	public const PLACEHOLDER_ORDER_POST_TYPE     = 'shop_order_placehold';
@@ -103,19 +100,19 @@ class DataSynchronizer implements BatchProcessorInterface {
 	 * Class constructor.
 	 */
 	public function __construct() {
-		self::add_filter( 'pre_delete_post', array( $this, 'maybe_prevent_deletion_of_post' ), 10, 2 );
-		self::add_action( 'deleted_post', array( $this, 'handle_deleted_post' ), 10, 2 );
-		self::add_action( 'woocommerce_new_order', array( $this, 'handle_updated_order' ), 100 );
-		self::add_action( 'woocommerce_refund_created', array( $this, 'handle_updated_order' ), 100 );
-		self::add_action( 'woocommerce_update_order', array( $this, 'handle_updated_order' ), 100 );
-		self::add_action( 'wp_scheduled_auto_draft_delete', array( $this, 'delete_auto_draft_orders' ), 9 );
-		self::add_action( 'wp_scheduled_delete', array( $this, 'delete_trashed_orders' ), 9 );
-		self::add_filter( 'updated_option', array( $this, 'process_updated_option' ), 999, 3 );
-		self::add_filter( 'added_option', array( $this, 'process_added_option' ), 999, 2 );
-		self::add_filter( 'deleted_option', array( $this, 'process_deleted_option' ), 999 );
-		self::add_action( self::BACKGROUND_SYNC_EVENT_HOOK, array( $this, 'handle_interval_background_sync' ) );
+		add_filter( 'pre_delete_post', array( $this, 'maybe_prevent_deletion_of_post' ), 10, 2 );
+		add_action( 'deleted_post', array( $this, 'handle_deleted_post' ), 10, 2 );
+		add_action( 'woocommerce_new_order', array( $this, 'handle_updated_order' ), 100 );
+		add_action( 'woocommerce_refund_created', array( $this, 'handle_updated_order' ), 100 );
+		add_action( 'woocommerce_update_order', array( $this, 'handle_updated_order' ), 100 );
+		add_action( 'wp_scheduled_auto_draft_delete', array( $this, 'delete_auto_draft_orders' ), 9 );
+		add_action( 'wp_scheduled_delete', array( $this, 'delete_trashed_orders' ), 9 );
+		add_filter( 'updated_option', array( $this, 'process_updated_option' ), 999, 3 );
+		add_filter( 'added_option', array( $this, 'process_added_option' ), 999, 2 );
+		add_filter( 'deleted_option', array( $this, 'process_deleted_option' ), 999 );
+		add_action( self::BACKGROUND_SYNC_EVENT_HOOK, array( $this, 'handle_interval_background_sync' ) );
 		if ( self::BACKGROUND_SYNC_MODE_CONTINUOUS === $this->get_background_sync_mode() ) {
-			self::add_action( 'shutdown', array( $this, 'handle_continuous_background_sync' ) );
+			add_action( 'shutdown', array( $this, 'handle_continuous_background_sync' ) );
 		}
 	}
 
@@ -205,6 +202,9 @@ class DataSynchronizer implements BatchProcessorInterface {
 		foreach ( $table_names as $table_name ) {
 			$this->database_util->drop_database_table( $table_name );
 		}
+		if ( is_callable( array( $this->data_store, 'clear_all_cached_data' ) ) ) {
+			$this->data_store->clear_all_cached_data();
+		}
 		delete_option( self::ORDERS_TABLE_CREATED );
 	}
 
@@ -248,8 +248,10 @@ class DataSynchronizer implements BatchProcessorInterface {
 	 * @param string $new_value  The new value.
 	 *
 	 * @return void
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function process_updated_option( $option_key, $old_value, $new_value ) {
+	public function process_updated_option( $option_key, $old_value, $new_value ) {
 		$sync_option_keys = array( self::ORDERS_DATA_SYNC_ENABLED_OPTION, self::BACKGROUND_SYNC_MODE_OPTION );
 		if ( ! in_array( $option_key, $sync_option_keys, true ) || $new_value === $old_value ) {
 			return;
@@ -293,8 +295,10 @@ class DataSynchronizer implements BatchProcessorInterface {
 	 * @param string $value      The new value.
 	 *
 	 * @return void
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function process_added_option( $option_key, $value ) {
+	public function process_added_option( $option_key, $value ) {
 		$this->process_updated_option( $option_key, false, $value );
 	}
 
@@ -304,8 +308,10 @@ class DataSynchronizer implements BatchProcessorInterface {
 	 * @param string $option_key The option key.
 	 *
 	 * @return void
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function process_deleted_option( $option_key ) {
+	public function process_deleted_option( $option_key ) {
 		if ( self::BACKGROUND_SYNC_MODE_OPTION !== $option_key ) {
 			return;
 		}
@@ -392,8 +398,10 @@ class DataSynchronizer implements BatchProcessorInterface {
 	 * Callback to check for pending syncs and enqueue the background data sync processor when in interval mode.
 	 *
 	 * @return void
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function handle_interval_background_sync() {
+	public function handle_interval_background_sync() {
 		if ( self::BACKGROUND_SYNC_MODE_INTERVAL !== $this->get_background_sync_mode() ) {
 			$this->unschedule_background_sync();
 			return;
@@ -409,8 +417,10 @@ class DataSynchronizer implements BatchProcessorInterface {
 	 * Callback to keep the background data sync processor enqueued when in continuous mode.
 	 *
 	 * @return void
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function handle_continuous_background_sync() {
+	public function handle_continuous_background_sync() {
 		if ( self::BACKGROUND_SYNC_MODE_CONTINUOUS !== $this->get_background_sync_mode() ) {
 			$this->batch_processing_controller->remove_processor( self::class );
 			return;
@@ -912,8 +922,10 @@ ORDER BY orders.id ASC
 	 * @param WP_Post|false|null $delete Whether to go forward with deletion.
 	 * @param WP_Post            $post   Post object.
 	 * @return WP_Post|false|null
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function maybe_prevent_deletion_of_post( $delete, $post ) {
+	public function maybe_prevent_deletion_of_post( $delete, $post ) {
 		if ( self::PLACEHOLDER_ORDER_POST_TYPE !== $post->post_type && $this->custom_orders_table_is_authoritative() && $this->data_store->order_exists( $post->ID ) ) {
 			$delete = false;
 		}
@@ -928,8 +940,10 @@ ORDER BY orders.id ASC
 	 *
 	 * @param int     $postid The post id.
 	 * @param WP_Post $post The deleted post.
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function handle_deleted_post( $postid, $post ): void {
+	public function handle_deleted_post( $postid, $post ): void {
 		global $wpdb;
 
 		$order_post_types = wc_get_order_types( 'cot-migration' );
@@ -977,8 +991,10 @@ ORDER BY orders.id ASC
 	 * When posts is authoritative and sync is enabled, updating a post triggers a corresponding change in the COT table.
 	 *
 	 * @param int $order_id The order id.
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function handle_updated_order( $order_id ): void {
+	public function handle_updated_order( $order_id ): void {
 		if ( ! $this->custom_orders_table_is_authoritative() && $this->data_sync_is_enabled() ) {
 			$this->posts_to_cot_migrator->migrate_orders( array( $order_id ) );
 		}
@@ -990,8 +1006,10 @@ ORDER BY orders.id ASC
 	 * @since 7.7.0
 	 *
 	 * @return void
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function delete_auto_draft_orders() {
+	public function delete_auto_draft_orders() {
 		if ( ! $this->custom_orders_table_is_authoritative() ) {
 			return;
 		}
@@ -1029,8 +1047,10 @@ ORDER BY orders.id ASC
 	 * @since 8.5.0
 	 *
 	 * @return void
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function delete_trashed_orders() {
+	public function delete_trashed_orders() {
 		if ( ! $this->custom_orders_table_is_authoritative() ) {
 			return;
 		}

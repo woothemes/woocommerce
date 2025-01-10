@@ -100,6 +100,7 @@ export const RichTextEditor: React.VFC< RichTextEditorProps > = ( {
 							placeholder={ placeholder }
 						/>
 					</ShortcutProvider>
+					{ /* @ts-expect-error Popover is missing Slot type: https://github.com/WordPress/gutenberg/blob/dd042a265afc0d4679858220441dd45c98b27ed3/packages/components/src/popover/index.tsx#L521 */ }
 					<Popover.Slot />
 				</BlockEditorProvider>
 			</SlotFillProvider>

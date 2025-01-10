@@ -12,7 +12,7 @@
  *
  * @see     https://woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates\Emails
- * @version 8.6.0
+ * @version 9.6.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,11 +20,38 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Load colors.
-$bg        = get_option( 'woocommerce_email_background_color' );
-$body      = get_option( 'woocommerce_email_body_background_color' );
-$base      = get_option( 'woocommerce_email_base_color' );
+$bg               = get_option( 'woocommerce_email_background_color' );
+$body             = get_option( 'woocommerce_email_body_background_color' );
+$base             = get_option( 'woocommerce_email_base_color' );
+$text             = get_option( 'woocommerce_email_text_color' );
+$footer_text      = get_option( 'woocommerce_email_footer_text_color' );
+$header_alignment = get_option( 'woocommerce_email_header_alignment' );
+
+/**
+ * Check if we are in preview mode (WooCommerce > Settings > Emails).
+ *
+ * @since 9.6.0
+ * @param bool $is_email_preview Whether the email is being previewed.
+ */
+$is_email_preview = apply_filters( 'woocommerce_is_email_preview', false );
+
+if ( $is_email_preview ) {
+	$bg_transient               = get_transient( 'woocommerce_email_background_color' );
+	$body_transient             = get_transient( 'woocommerce_email_body_background_color' );
+	$base_transient             = get_transient( 'woocommerce_email_base_color' );
+	$text_transient             = get_transient( 'woocommerce_email_text_color' );
+	$footer_text_transient      = get_transient( 'woocommerce_email_footer_text_color' );
+	$header_alignment_transient = get_transient( 'woocommerce_email_header_alignment' );
+
+	$bg               = $bg_transient ? $bg_transient : $bg;
+	$body             = $body_transient ? $body_transient : $body;
+	$base             = $base_transient ? $base_transient : $base;
+	$text             = $text_transient ? $text_transient : $text;
+	$footer_text      = $footer_text_transient ? $footer_text_transient : $footer_text;
+	$header_alignment = $header_alignment_transient ? $header_alignment_transient : $header_alignment;
+}
+
 $base_text = wc_light_or_dark( $base, '#202020', '#ffffff' );
-$text      = get_option( 'woocommerce_email_text_color' );
 
 // Pick a contrasting color for links.
 $link_color = wc_hex_is_light( $base ) ? $base : $base_text;
@@ -85,6 +112,12 @@ body {
 	background-color: inherit;
 }
 
+<?php if ( $header_alignment ) : ?>
+#template_header_image p {
+	text-align: <?php echo esc_attr( $header_alignment ); ?>;
+}
+<?php endif; ?>
+
 #template_header_image img {
 	margin-left: 0;
 	margin-right: 0;
@@ -97,7 +130,7 @@ body {
 
 #template_footer #credit {
 	border: 0;
-	color: <?php echo esc_attr( $text_lighter_40 ); ?>;
+	color: <?php echo esc_attr( $footer_text ); ?>;
 	font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
 	font-size: 12px;
 	line-height: 150%;
@@ -188,6 +221,17 @@ body {
 #header_wrapper {
 	padding: 36px 48px;
 	display: block;
+}
+
+<?php if ( $header_alignment ) : ?>
+#header_wrapper h1 {
+	text-align: <?php echo esc_attr( $header_alignment ); ?>;
+}
+<?php endif; ?>
+
+#template_footer #credit,
+#template_footer #credit a {
+	color: <?php echo esc_attr( $footer_text ); ?>;
 }
 
 h1 {

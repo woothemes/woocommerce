@@ -74,11 +74,12 @@ test.describe( 'Template part customization', () => {
 			await editor.saveSiteEditorEntities( {
 				isOnlyCurrentEntityDirty: true,
 			} );
+
 			// Verify template name didn't change.
 			// See: https://github.com/woocommerce/woocommerce/issues/42221
 			await expect(
 				page.getByRole( 'heading', {
-					name: `Editing template part: ${ templateName }`,
+					name: templateName,
 				} )
 			).toBeVisible();
 
@@ -90,9 +91,8 @@ test.describe( 'Template part customization', () => {
 			await admin.visitSiteEditor( {
 				postType: 'wp_template_part',
 			} );
-			await editor.revertTemplateCustomizations( {
+			await editor.revertTemplate( {
 				templateName,
-				templateType: 'wp_template_part',
 			} );
 			await testUtils.openMiniCart();
 

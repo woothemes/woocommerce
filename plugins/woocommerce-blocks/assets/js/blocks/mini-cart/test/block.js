@@ -58,15 +58,6 @@ const mockFullCart = () => {
 	} );
 };
 
-const initializeLocalStorage = () => {
-	Object.defineProperty( window, 'localStorage', {
-		value: {
-			setItem: jest.fn(),
-		},
-		writable: true,
-	} );
-};
-
 describe( 'Testing Mini-Cart', () => {
 	beforeEach( () => {
 		act( () => {
@@ -111,6 +102,13 @@ describe( 'Testing Mini-Cart', () => {
 		await waitFor( () =>
 			expect( screen.getByText( /your cart/i ) ).toBeInTheDocument()
 		);
+
+		// The opening of the drawer uses deprecated ReactDOM.render.
+		expect( console ).toHaveErroredWith(
+			`Warning: ReactDOM.render is no longer supported in React 18. Use createRoot instead. Until you switch to the new API, your app will behave as if it's running React 17. Learn more: https://reactjs.org/link/switch-to-createroot%s`,
+			// The stack trace
+			expect.any( String )
+		);
 	} );
 
 	it( 'closes the drawer when clicking on the close button', async () => {
@@ -141,6 +139,13 @@ describe( 'Testing Mini-Cart', () => {
 				screen.queryByText( /your cart/i )
 			).not.toBeInTheDocument();
 		} );
+
+		// The opening of the drawer uses deprecated ReactDOM.render.
+		expect( console ).toHaveErroredWith(
+			`Warning: ReactDOM.render is no longer supported in React 18. Use createRoot instead. Until you switch to the new API, your app will behave as if it's running React 17. Learn more: https://reactjs.org/link/switch-to-createroot%s`,
+			// The stack trace
+			expect.any( String )
+		);
 	} );
 
 	it( 'renders empty cart if there are no items in the cart', async () => {
@@ -155,6 +160,13 @@ describe( 'Testing Mini-Cart', () => {
 		} );
 
 		expect( fetchMock ).toHaveBeenCalledTimes( 1 );
+
+		// The opening of the drawer uses deprecated ReactDOM.render.
+		expect( console ).toHaveErroredWith(
+			`Warning: ReactDOM.render is no longer supported in React 18. Use createRoot instead. Until you switch to the new API, your app will behave as if it's running React 17. Learn more: https://reactjs.org/link/switch-to-createroot%s`,
+			// The stack trace
+			expect.any( String )
+		);
 	} );
 
 	it( 'updates contents when removed from cart event is triggered', async () => {
@@ -197,21 +209,6 @@ describe( 'Testing Mini-Cart', () => {
 			expect(
 				screen.getByLabelText( /3 items in cart/i )
 			).toBeInTheDocument()
-		);
-	} );
-
-	it( 'updates local storage when cart finishes loading', async () => {
-		initializeLocalStorage();
-		mockFullCart();
-		render( <MiniCartBlock /> );
-		await waitFor( () => expect( fetchMock ).toHaveBeenCalled() );
-
-		// Assert we saved the values returned to the localStorage.
-		await waitFor( () =>
-			expect(
-				JSON.parse( window.localStorage.setItem.mock.calls[ 0 ][ 1 ] )
-					.itemsCount
-			).toEqual( 3 )
 		);
 	} );
 

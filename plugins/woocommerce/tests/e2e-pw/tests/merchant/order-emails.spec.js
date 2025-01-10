@@ -1,16 +1,17 @@
 /* eslint-disable no-console */
 const { test, expect } = require( '@playwright/test' );
+const { tags } = require( '../../fixtures/fixtures' );
 const { admin } = require( '../../test-data/data' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 test.describe(
 	'Merchant > Order Action emails received',
-	{ tag: '@services' },
+	{ tag: [ tags.SERVICES, tags.HPOS ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 
 		const customerBilling = {
-			email: 'john.doe.merchant.test@example.com',
+			email: `john.doe.merchant.test.${ Date.now() }@example.com`,
 		};
 
 		const storeName = 'WooCommerce Core E2E Test Suite';
@@ -50,6 +51,9 @@ test.describe(
 					.locator( '#bulk-action-selector-top' )
 					.selectOption( 'delete' );
 				await page.locator( '#doaction' ).click();
+				await expect(
+					page.getByText( /successfully deleted/i )
+				).toBeVisible();
 			}
 		} );
 
@@ -90,7 +94,7 @@ test.describe(
 				} );
 			// search to narrow it down to just the messages we want
 			await page.goto(
-				`/wp-admin/tools.php?page=wpml_plugin_log&s=${ encodeURIComponent(
+				`wp-admin/tools.php?page=wpml_plugin_log&s=${ encodeURIComponent(
 					customerBilling.email
 				) }`
 			);
@@ -108,7 +112,7 @@ test.describe(
 				.click();
 
 			await expect(
-				page.getByText( 'Receiver wordpress@example.com' )
+				page.getByText( `Receiver ${ admin.email }` )
 			).toBeVisible();
 			await expect(
 				page.getByText( 'Subject [WooCommerce Core E2E' )
@@ -158,6 +162,7 @@ test.describe(
 
 			// Enter email log and select to view the content in JSON
 			await page.click( 'button[title^="View log"]' );
+			await page.locator( emailContentJson ).isEnabled();
 			await page.locator( emailContentJson ).click();
 
 			// Verify that the message includes an order processing confirmation
@@ -228,7 +233,7 @@ test.describe(
 
 			// search to narrow it down to just the messages we want
 			await page.goto(
-				`/wp-admin/tools.php?page=wpml_plugin_log&s=${ encodeURIComponent(
+				`wp-admin/tools.php?page=wpml_plugin_log&s=${ encodeURIComponent(
 					customerBilling.email
 				) }`
 			);

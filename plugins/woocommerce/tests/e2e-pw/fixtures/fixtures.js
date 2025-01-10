@@ -48,14 +48,14 @@ exports.test = base.test.extend( {
 	testPageTitlePrefix: [ '', { option: true } ],
 
 	testPage: async ( { wpApi, testPageTitlePrefix }, use ) => {
-		const pageTitle = `${ testPageTitlePrefix } Page ${ random() }`;
+		const pageTitle = `${ testPageTitlePrefix } Page ${ random() }`.trim();
 		const pageSlug = pageTitle.replace( / /gi, '-' ).toLowerCase();
 
 		await use( { title: pageTitle, slug: pageSlug } );
 
 		// Cleanup
 		const pages = await wpApi.get(
-			`/wp-json/wp/v2/pages?slug=${ pageSlug }`,
+			`./wp-json/wp/v2/pages?slug=${ pageSlug }`,
 			{
 				data: {
 					_fields: [ 'id' ],
@@ -66,7 +66,7 @@ exports.test = base.test.extend( {
 
 		for ( const page of await pages.json() ) {
 			console.log( `Deleting page ${ page.id }` );
-			await wpApi.delete( `/wp-json/wp/v2/pages/${ page.id }`, {
+			await wpApi.delete( `./wp-json/wp/v2/pages/${ page.id }`, {
 				data: {
 					force: true,
 				},
@@ -77,14 +77,14 @@ exports.test = base.test.extend( {
 	testPostTitlePrefix: [ '', { option: true } ],
 
 	testPost: async ( { wpApi, testPostTitlePrefix }, use ) => {
-		const postTitle = `${ testPostTitlePrefix } Post ${ random() }`;
+		const postTitle = `${ testPostTitlePrefix } Post ${ random() }`.trim();
 		const postSlug = postTitle.replace( / /gi, '-' ).toLowerCase();
 
 		await use( { title: postTitle, slug: postSlug } );
 
 		// Cleanup
 		const posts = await wpApi.get(
-			`/wp-json/wp/v2/posts?slug=${ postSlug }`,
+			`./wp-json/wp/v2/posts?slug=${ postSlug }`,
 			{
 				data: {
 					_fields: [ 'id' ],
@@ -95,7 +95,7 @@ exports.test = base.test.extend( {
 
 		for ( const post of await posts.json() ) {
 			console.log( `Deleting post ${ post.id }` );
-			await wpApi.delete( `/wp-json/wp/v2/posts/${ post.id }`, {
+			await wpApi.delete( `./wp-json/wp/v2/posts/${ post.id }`, {
 				data: {
 					force: true,
 				},
@@ -105,3 +105,18 @@ exports.test = base.test.extend( {
 } );
 
 exports.expect = base.expect;
+exports.request = base.request;
+exports.tags = {
+	GUTENBERG: '@gutenberg',
+	SERVICES: '@services',
+	PAYMENTS: '@payments',
+	HPOS: '@hpos',
+	SKIP_ON_EXTERNAL_ENV: '@skip-on-external-env',
+	SKIP_ON_WPCOM: '@skip-on-wpcom',
+	SKIP_ON_PRESSABLE: '@skip-on-pressable',
+	COULD_BE_LOWER_LEVEL_TEST: '@could-be-lower-level-test',
+	NON_CRITICAL: '@non-critical',
+	TO_BE_REMOVED: '@to-be-removed',
+	NOT_E2E: '@not-e2e',
+	WP_CORE: '@wp-core',
+};

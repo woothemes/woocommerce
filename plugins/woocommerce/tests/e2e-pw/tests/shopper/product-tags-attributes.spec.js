@@ -1,9 +1,16 @@
+/**
+ * External dependencies
+ */
+import { getCanvas, goToPageEditor } from '@woocommerce/e2e-utils-playwright';
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
 const { test, expect, request } = require( '@playwright/test' );
 const { admin } = require( '../../test-data/data' );
 const pageTitle = 'Product Showcase';
-const { goToPageEditor } = require( '../../utils/editor' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
-
+const { setComingSoon } = require( '../../utils/coming-soon' );
 const singleProductPrice1 = '5.00';
 const singleProductPrice2 = '10.00';
 const singleProductPrice3 = '15.00';
@@ -27,11 +34,12 @@ let product1Id,
 
 test.describe(
 	'Browse product tags and attributes from the product page',
-	{ tag: [ '@payments', '@services' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 
 		test.beforeAll( async ( { baseURL } ) => {
+			await setComingSoon( { baseURL, enabled: 'no' } );
 			const api = new wcApi( {
 				url: baseURL,
 				consumerKey: process.env.CONSUMER_KEY,
@@ -282,15 +290,17 @@ test.describe(
 			// create as a merchant a new page with Product Collection block
 			await goToPageEditor( { page } );
 
-			await page
+			const canvas = await getCanvas( page );
+
+			await canvas
 				.getByRole( 'textbox', { name: 'Add Title' } )
 				.fill( pageTitle );
 
-			await page
+			await canvas
 				.getByRole( 'button', { name: 'Add default block' } )
 				.click();
 
-			await page
+			await canvas
 				.getByRole( 'document', {
 					name: 'Empty block; start writing or type forward slash to choose a block',
 				} )
@@ -298,7 +308,7 @@ test.describe(
 			await page.keyboard.press( 'Enter' );
 
 			// Product Collection requires choosing some collection.
-			await page
+			await canvas
 				.locator(
 					'[data-type="woocommerce/product-collection"] .components-placeholder'
 				)
@@ -331,7 +341,7 @@ test.describe(
 			await expect(
 				page.getByRole( 'heading', { name: pageTitle } )
 			).toBeVisible();
-			await expect(
+			expect(
 				await page
 					.getByRole( 'button', { name: 'Add to cart' } )
 					.count()

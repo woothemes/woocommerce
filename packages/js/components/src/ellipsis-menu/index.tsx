@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import type { ComponentProps } from 'react';
 import { createElement } from '@wordpress/element';
 import classnames from 'classnames';
 import { Button, Dropdown, NavigableMenu } from '@wordpress/components';
@@ -31,6 +32,13 @@ type EllipsisMenuProps = {
 	 * Callback function when dropdown button is clicked, it provides the click event.
 	 */
 	onToggle?: ( e: MouseEvent | KeyboardEvent ) => void;
+	/**
+	 * Placement of the dropdown menu. Default is 'bottom-start'.
+	 */
+	placement?: ComponentProps<
+		typeof Dropdown
+		// @ts-expect-error missing prop in types. -- Props type definition is outdated and does not include popoverProps.
+	>[ 'popoverProps' ][ 'placement' ];
 };
 
 /**
@@ -42,6 +50,9 @@ const EllipsisMenu = ( {
 	renderContent,
 	className,
 	onToggle,
+	// if set bottom-start, it will fallback to bottom-end / top-end / top-start
+	// if it's bottom, it will fallback to only top
+	placement = 'bottom-start',
 }: EllipsisMenuProps ) => {
 	if ( ! renderContent ) {
 		return null;
@@ -87,10 +98,7 @@ const EllipsisMenu = ( {
 		<div className={ classnames( className, 'woocommerce-ellipsis-menu' ) }>
 			<Dropdown
 				contentClassName="woocommerce-ellipsis-menu__popover"
-				// @ts-expect-error missing prop in types.
-				popoverProps={ {
-					placement: 'bottom',
-				} }
+				popoverProps={ { placement } }
 				renderToggle={ renderEllipsis }
 				renderContent={ renderMenu }
 			/>

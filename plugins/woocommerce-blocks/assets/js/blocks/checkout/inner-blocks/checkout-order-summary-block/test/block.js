@@ -46,6 +46,13 @@ const defaultUseStoreCartValue = {
 	cartHasCalculatedShipping: mockPreviewCart.has_calculated_shipping,
 };
 
+jest.mock( '@wordpress/data', () => {
+	return {
+		__esModule: true,
+		...jest.requireActual( 'wordpress-data-wp-6-7' ),
+	};
+} );
+
 jest.mock( '@woocommerce/settings', () => ( {
 	...jest.requireActual( '@woocommerce/settings' ),
 	SITE_CURRENCY: {
@@ -517,7 +524,7 @@ describe( 'Checkout Order Summary', () => {
 			await findByText(
 				container,
 				textContentMatcherAcrossSiblings(
-					'Shipping $40.00 Free shipping'
+					'Delivery $40.00 Free shipping'
 				)
 			)
 		).toBeInTheDocument();

@@ -1,7 +1,10 @@
 /**
  * External dependencies
  */
-import type { InnerBlockTemplate } from '@wordpress/blocks';
+import type {
+	InnerBlockTemplate,
+	BlockVariationScope,
+} from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import { Icon, percent } from '@wordpress/icons';
 
@@ -13,14 +16,14 @@ import { CoreCollectionNames, CoreFilterNames } from '../types';
 
 const collection = {
 	name: CoreCollectionNames.ON_SALE,
-	title: __( 'On Sale', 'woocommerce' ),
+	title: __( 'On Sale Products', 'woocommerce' ),
 	icon: <Icon icon={ percent } />,
 	description: __(
 		'Highlight products that are currently on sale.',
 		'woocommerce'
 	),
-	keywords: [ 'product collection' ],
-	scope: [],
+	keywords: [ 'discount', 'promotion', 'onsale' ],
+	scope: [ 'inserter', 'block' ] as BlockVariationScope[],
 };
 
 const attributes = {

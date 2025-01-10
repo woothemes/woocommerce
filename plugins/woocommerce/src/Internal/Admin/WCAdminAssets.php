@@ -279,6 +279,8 @@ class WCAdminAssets {
 			'wc-navigation',
 			'wc-block-templates',
 			'wc-product-editor',
+			'wc-settings-editor',
+			'wc-remote-logging',
 		);
 
 		$scripts_map = array(
@@ -364,6 +366,9 @@ class WCAdminAssets {
 			),
 			array(
 				'handle' => 'wc-product-editor',
+			),
+			array(
+				'handle' => 'wc-settings-editor',
 			),
 			array(
 				'handle' => 'wc-customer-effort-score',

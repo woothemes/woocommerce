@@ -164,7 +164,8 @@ abstract class AbstractAddressSchema extends AbstractSchema {
 		$address         = (array) $address;
 		$validation_util = new ValidationUtils();
 		$schema          = $this->get_properties();
-		// omit all keys from address that are not in the schema. This should account for email.
+
+		// Omit all keys from address that are not in the schema. This should account for email.
 		$address = array_intersect_key( $address, $schema );
 
 		// The flow is Validate -> Sanitize -> Re-Validate
@@ -179,6 +180,7 @@ abstract class AbstractAddressSchema extends AbstractSchema {
 			if ( empty( $schema[ $key ] ) || empty( $address[ $key ] ) ) {
 				continue;
 			}
+
 			if ( is_wp_error( rest_validate_value_from_schema( $value, $schema[ $key ], $key ) ) ) {
 				$errors->add(
 					'invalid_' . $key,
@@ -230,11 +232,15 @@ abstract class AbstractAddressSchema extends AbstractSchema {
 			);
 		}
 
-		if ( ! empty( $address['phone'] ) && ! \WC_Validation::is_phone( $address['phone'] ) ) {
-			$errors->add(
-				'invalid_phone',
-				__( 'The provided phone number is not valid', 'woocommerce' )
-			);
+		if ( ! empty( $address['phone'] ) ) {
+			$address['phone'] = wc_sanitize_phone_number( $address['phone'] );
+
+			if ( ! \WC_Validation::is_phone( $address['phone'] ) ) {
+				$errors->add(
+					'invalid_phone',
+					__( 'The provided phone number is not valid', 'woocommerce' )
+				);
+			}
 		}
 
 		// Get additional field keys here as we need to know if they are present in the address for validation.

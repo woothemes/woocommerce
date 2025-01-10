@@ -1,11 +1,19 @@
-const { test, expect } = require( '@playwright/test' );
-const {
-	disableWelcomeModal,
+/**
+ * External dependencies
+ */
+import {
 	openEditorSettings,
-} = require( '../../utils/editor' );
+	getCanvas,
+	goToPageEditor,
+} from '@woocommerce/e2e-utils-playwright';
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
+const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const { random } = require( '../../utils/helpers' );
-
+const { setComingSoon } = require( '../../utils/coming-soon' );
 const miniCartPageTitle = `Mini Cart ${ random() }`;
 const miniCartPageSlug = miniCartPageTitle.replace( / /gi, '-' ).toLowerCase();
 const miniCartButton = 'main .wc-block-mini-cart__button';
@@ -21,11 +29,12 @@ let productId, countryTaxId, stateTaxId, shippingZoneId;
 
 test.describe(
 	'Mini Cart block page',
-	{ tag: [ '@payments', '@services' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 
 		test.beforeAll( async ( { baseURL } ) => {
+			await setComingSoon( { baseURL, enabled: 'no' } );
 			const api = new wcApi( {
 				url: baseURL,
 				consumerKey: process.env.CONSUMER_KEY,
@@ -132,15 +141,15 @@ test.describe(
 			const greenColor = '00cc09';
 
 			// go to create a new page
-			await page.goto( 'wp-admin/post-new.php?post_type=page' );
+			await goToPageEditor( { page } );
 
-			await disableWelcomeModal( { page } );
+			const canvas = await getCanvas( page );
 
 			// add page title and mini cart block
-			await page
+			await canvas
 				.getByRole( 'textbox', { name: 'Add title' } )
 				.fill( miniCartPageTitle );
-			await page.getByLabel( 'Add block' ).click();
+			await canvas.getByLabel( 'Add block' ).click();
 			await page
 				.getByLabel( 'Search for blocks and patterns' )
 				.fill( '/mini cart' );
@@ -148,13 +157,15 @@ test.describe(
 				.getByRole( 'option' )
 				.filter( { hasText: 'Mini-Cart' } )
 				.click();
-			await expect( page.getByLabel( 'Block: Mini-Cart' ) ).toBeVisible();
+			await expect(
+				canvas.getByLabel( 'Block: Mini-Cart' )
+			).toBeVisible();
 
 			// Open Settings sidebar if closed
 			await openEditorSettings( { page } );
 
 			// customize mini cart block
-			await page.getByLabel( 'Block: Mini-Cart' ).click();
+			await canvas.getByLabel( 'Block: Mini-Cart' ).click();
 			// display total price
 			await page.getByLabel( 'Display total price' ).click();
 			// open drawer when a product
@@ -184,7 +195,14 @@ test.describe(
 			await page.getByTitle( 'Product Count', { exact: true } ).click();
 			// customize font size and weight
 			await page.getByLabel( 'Large', { exact: true } ).click();
-			await page.getByRole( 'button', { name: 'Font weight' } ).click();
+
+			// This complicated locator is needed to make it work with both WP6.6 and WP6.7
+			// Once support for WP6.6 is dropped, this can be simplified to: `getByRole('combobox', { name: 'Font weight' })`
+			await page
+				.getByText( 'Font weight' )
+				.locator( 'xpath=..' )
+				.locator( 'button' )
+				.click();
 			// choose Light via kb press due to encountered issue with normal click
 			await page.keyboard.press( 'ArrowDown' );
 			await page.keyboard.press( 'ArrowDown' );
@@ -226,7 +244,7 @@ test.describe(
 			);
 			await expect( page.locator( miniCartBlock ) ).toHaveAttribute(
 				'data-style',
-				'{"typography":{"fontWeight":"300"}}'
+				/"typography":{"fontWeight":"300"/
 			);
 			await page.locator( miniCartButton ).click();
 			await expect(
@@ -238,7 +256,7 @@ test.describe(
 			).toBeVisible();
 
 			// add product to cart
-			await page.goto( `/shop/?add-to-cart=${ productId }` );
+			await page.goto( `shop/?add-to-cart=${ productId }` );
 
 			// go to page with mini cart block and test with the product added
 			await page.goto( miniCartPageSlug );
@@ -280,7 +298,7 @@ test.describe(
 			).toBeVisible();
 
 			// add product to cart and redirect from mini to regular cart
-			await page.goto( `/shop/?add-to-cart=${ productId }` );
+			await page.goto( `shop/?add-to-cart=${ productId }` );
 			await page.goto( miniCartPageSlug );
 			await page.locator( miniCartButton ).click();
 			await page.getByRole( 'link', { name: 'View my cart' } ).click();
@@ -312,10 +330,10 @@ test.describe(
 			} );
 
 			// add product to cart
-			await page.goto( `/shop/?add-to-cart=${ productId }` );
+			await page.goto( `shop/?add-to-cart=${ productId }` );
 
 			// go to cart and add shipping details to calculate tax
-			await page.goto( '/cart/' ); // we will use the old cart for this purpose
+			await page.goto( 'cart/' ); // we will use the old cart for this purpose
 			await page.locator( '.shipping-calculator-button' ).click();
 			await page.getByLabel( 'Town / City' ).fill( 'Sacramento' );
 			await page.getByLabel( 'ZIP Code' ).fill( '96000' );
@@ -335,6 +353,9 @@ test.describe(
 			await expect(
 				page.locator( '.wc-block-components-totals-item__value' )
 			).toContainText( `$${ totalInclusiveTax }` );
+			await expect(
+				page.getByRole( 'link', { name: simpleProductName } )
+			).toBeVisible();
 			await page
 				.getByRole( 'button' )
 				.filter( { hasText: 'Remove item' } )

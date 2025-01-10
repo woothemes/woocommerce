@@ -1,6 +1,6 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
-	"apiVersion": 2,
+	"apiVersion": 3,
 	"name": "woocommerce/product-gallery",
 	"version": "1.0.0",
 	"title": "Product Gallery (Beta)",
@@ -9,7 +9,6 @@
 	"keywords": [ "WooCommerce" ],
 	"supports": {
 		"align": true,
-		"multiple": false,
 		"interactivity": true
 	},
 	"textdomain": "woocommerce",
@@ -25,6 +24,7 @@
 		"mode": "mode",
 		"cropImages": "cropImages"
 	},
+	"ancestor": [ "woocommerce/single-product" ],
 	"attributes": {
 		"thumbnailsPosition": {
 			"type": "string",
@@ -54,7 +54,7 @@
 			"type": "boolean",
 			"default": true
 		},
-		"nextPreviousButtonsPosition":{
+		"nextPreviousButtonsPosition": {
 			"type": "string",
 			"default": "insideTheImage"
 		},

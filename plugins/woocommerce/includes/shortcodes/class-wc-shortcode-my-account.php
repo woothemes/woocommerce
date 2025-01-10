@@ -39,6 +39,33 @@ class WC_Shortcode_My_Account {
 			return;
 		}
 
+		self::my_account_add_notices();
+
+		// Show the lost password page. This can still be accessed directly by logged in accounts which is important for the initial create password links sent via email.
+		if ( isset( $wp->query_vars['lost-password'] ) ) {
+			self::lost_password();
+			return;
+		}
+
+		// Show login form if not logged in.
+		if ( ! is_user_logged_in() ) {
+			wc_get_template( 'myaccount/form-login.php' );
+			return;
+		}
+
+		// Output the my account page.
+		self::my_account( $atts );
+	}
+
+	/**
+	 * Add notices to the my account page.
+	 *
+	 * Historically a filter has existed to render a message above the my account page content while the user is
+	 * logged out. See `woocommerce_my_account_message`.
+	 */
+	private static function my_account_add_notices() {
+		global $wp;
+
 		if ( ! is_user_logged_in() ) {
 			/**
 			 * Filters the message shown on the 'my account' page when the user is not logged in.
@@ -50,27 +77,31 @@ class WC_Shortcode_My_Account {
 			if ( ! empty( $message ) ) {
 				wc_add_notice( $message );
 			}
-
-			// After password reset, add confirmation message.
-			if ( ! empty( $_GET['password-reset'] ) ) { // WPCS: input var ok, CSRF ok.
-				wc_add_notice( __( 'Your password has been reset successfully.', 'woocommerce' ) );
-			}
-
-			if ( isset( $wp->query_vars['lost-password'] ) ) {
-				self::lost_password();
-			} else {
-				wc_get_template( 'myaccount/form-login.php' );
-			}
-			return;
 		}
 
-		if ( isset( $wp->query_vars['customer-logout'] ) ) {
+		// After password reset, add confirmation message.
+		if ( ! empty( $_GET['password-reset'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			wc_add_notice( __( 'Your password has been reset successfully.', 'woocommerce' ) );
+		}
+
+		// After logging out without a nonce, add confirmation message.
+		if ( isset( $wp->query_vars['customer-logout'] ) && is_user_logged_in() ) {
 			/* translators: %s: logout url */
 			wc_add_notice( sprintf( __( 'Are you sure you want to log out? <a href="%s">Confirm and log out</a>', 'woocommerce' ), wc_logout_url() ) );
 		}
 
-		// Output the my account page.
-		self::my_account( $atts );
+		if ( get_user_option( 'default_password_nag' ) && ( wc_is_current_account_menu_item( 'dashboard' ) || wc_is_current_account_menu_item( 'edit-account' ) ) ) {
+			wc_add_notice(
+				sprintf(
+					// translators: %s: site name.
+					__( 'Your account with %s is using a temporary password. We emailed you a link to change your password.', 'woocommerce' ),
+					esc_html( wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES ) )
+				),
+				'notice',
+				array(),
+				true
+			);
+		}
 	}
 
 	/**
@@ -340,16 +371,21 @@ class WC_Shortcode_My_Account {
 	/**
 	 * Handles resetting the user's password.
 	 *
+	 * @since 9.4.0 This will log the user in after resetting the password/session.
+	 *
 	 * @param object $user     The user.
 	 * @param string $new_pass New password for the user in plaintext.
 	 */
 	public static function reset_password( $user, $new_pass ) {
+		// phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment
 		do_action( 'password_reset', $user, $new_pass );
 
 		wp_set_password( $new_pass, $user->ID );
 		update_user_meta( $user->ID, 'default_password_nag', false );
 		self::set_reset_password_cookie();
+		wc_set_customer_auth_cookie( $user->ID );
 
+		// phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment
 		if ( ! apply_filters( 'woocommerce_disable_password_change_notification', false ) ) {
 			wp_password_change_notification( $user );
 		}

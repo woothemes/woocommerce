@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore Generic.PHP.RequireStrictTypes.MissingDeclaration
 namespace Automattic\WooCommerce\Blocks\Utils;
 
 /**
@@ -44,6 +44,125 @@ class CartCheckoutUtils {
 		return $checkout_page_id && has_block( 'woocommerce/checkout', $checkout_page_id );
 	}
 
+	/**
+	 * Migrate checkout block field visibility attributes to settings when using the checkout block.
+	 *
+	 * This migration routine is called if the options (woocommerce_checkout_phone_field, woocommerce_checkout_company_field,
+	 * woocommerce_checkout_address_2_field) are not set. They are not set by default; they were orignally set by the
+	 * customizer interface of the legacy shortcode based checkout.
+	 *
+	 * Once migration is initiated, the settings will be updated and will not trigger this routine again.
+	 *
+	 * Note: The block only stores non-default attributes. Not all attributes will be present.
+	 *
+	 * e.g. `{"showCompanyField":true,"requireCompanyField":true,"showApartmentField":false,"className":"wc-block-checkout"}`
+	 *
+	 * If the attributes are missing, we assume default values are needed.
+	 */
+	protected static function migrate_checkout_block_field_visibility_attributes() {
+		// Before migrating attributes, migrate the "default" options checkout block uses into the settings.
+		update_option( 'woocommerce_checkout_phone_field', 'optional' );
+		update_option( 'woocommerce_checkout_company_field', 'hidden' );
+		update_option( 'woocommerce_checkout_address_2_field', 'optional' );
+
+		// Parse the block from the checkout page.
+		$checkout_blocks = \WC_Blocks_Utils::get_blocks_from_page( 'woocommerce/checkout', 'checkout' );
+
+		if ( empty( $checkout_blocks ) || ! isset( $checkout_blocks[0]['attrs'] ) ) {
+			return;
+		}
+
+		// Combine actual attributes with default values.
+		$block_attributes = wp_parse_args(
+			$checkout_blocks[0]['attrs'],
+			array(
+				'showPhoneField'        => true,
+				'requirePhoneField'     => false,
+				'showCompanyField'      => false,
+				'requireCompanyField'   => false,
+				'showApartmentField'    => true,
+				'requireApartmentField' => false,
+			)
+		);
+
+		if ( $block_attributes['showPhoneField'] ) {
+			update_option( 'woocommerce_checkout_phone_field', $block_attributes['requirePhoneField'] ? 'required' : 'optional' );
+		} else {
+			update_option( 'woocommerce_checkout_phone_field', 'hidden' );
+		}
+
+		if ( $block_attributes['showCompanyField'] ) {
+			update_option( 'woocommerce_checkout_company_field', $block_attributes['requireCompanyField'] ? 'required' : 'optional' );
+		} else {
+			update_option( 'woocommerce_checkout_company_field', 'hidden' );
+		}
+
+		if ( $block_attributes['showApartmentField'] ) {
+			update_option( 'woocommerce_checkout_address_2_field', $block_attributes['requireApartmentField'] ? 'required' : 'optional' );
+		} else {
+			update_option( 'woocommerce_checkout_address_2_field', 'hidden' );
+		}
+	}
+
+	/**
+	 * Get the default visibility for the address_2 field.
+	 *
+	 * @return string
+	 */
+	public static function get_company_field_visibility() {
+		$option_value = get_option( 'woocommerce_checkout_company_field' );
+
+		if ( $option_value ) {
+			return $option_value;
+		}
+
+		if ( self::is_checkout_block_default() ) {
+			self::migrate_checkout_block_field_visibility_attributes();
+			return get_option( 'woocommerce_checkout_company_field', 'hidden' );
+		}
+
+		return 'optional';
+	}
+
+	/**
+	 * Get the default visibility for the address_2 field.
+	 *
+	 * @return string
+	 */
+	public static function get_address_2_field_visibility() {
+		$option_value = get_option( 'woocommerce_checkout_address_2_field' );
+
+		if ( $option_value ) {
+			return $option_value;
+		}
+
+		if ( self::is_checkout_block_default() ) {
+			self::migrate_checkout_block_field_visibility_attributes();
+			return get_option( 'woocommerce_checkout_address_2_field', 'optional' );
+		}
+
+		return 'optional';
+	}
+
+	/**
+	 * Get the default visibility for the address_2 field.
+	 *
+	 * @return string
+	 */
+	public static function get_phone_field_visibility() {
+		$option_value = get_option( 'woocommerce_checkout_phone_field' );
+
+		if ( $option_value ) {
+			return $option_value;
+		}
+
+		if ( self::is_checkout_block_default() ) {
+			self::migrate_checkout_block_field_visibility_attributes();
+			return get_option( 'woocommerce_checkout_phone_field', 'optional' );
+		}
+
+		return 'required';
+	}
 
 	/**
 	 * Checks if the template overriding the page loads the page content or not.
@@ -108,7 +227,7 @@ class CartCheckoutUtils {
 		}
 
 		$array_without_accents = array_map(
-			function( $value ) {
+			function ( $value ) {
 				return is_array( $value )
 					? self::deep_sort_with_accents( $value )
 					: remove_accents( wc_strtolower( html_entity_decode( $value ) ) );
@@ -129,7 +248,7 @@ class CartCheckoutUtils {
 		$shipping_zones             = \WC_Shipping_Zones::get_zones();
 		$formatted_shipping_zones   = array_reduce(
 			$shipping_zones,
-			function( $acc, $zone ) {
+			function ( $acc, $zone ) {
 				$acc[] = [
 					'id'          => $zone['id'],
 					'title'       => $zone['zone_name'],
@@ -145,5 +264,48 @@ class CartCheckoutUtils {
 			'description' => __( 'Locations outside all other zones', 'woocommerce' ),
 		];
 		return $formatted_shipping_zones;
+	}
+
+	/**
+	 * Recursively search the checkout block to find the express checkout block and
+	 * get the button style attributes
+	 *
+	 * @param array  $blocks Blocks to search.
+	 * @param string $cart_or_checkout The block type to check.
+	 */
+	public static function find_express_checkout_attributes( $blocks, $cart_or_checkout ) {
+		$express_block_name = 'woocommerce/' . $cart_or_checkout . '-express-payment-block';
+		foreach ( $blocks as $block ) {
+			if ( ! empty( $block['blockName'] ) && $express_block_name === $block['blockName'] && ! empty( $block['attrs'] ) ) {
+				return $block['attrs'];
+			}
+
+			if ( ! empty( $block['innerBlocks'] ) ) {
+				$answer = self::find_express_checkout_attributes( $block['innerBlocks'], $cart_or_checkout );
+				if ( $answer ) {
+					return $answer;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Given an array of blocks, find the express payment block and update its attributes.
+	 *
+	 * @param array  $blocks Blocks to search.
+	 * @param string $cart_or_checkout The block type to check.
+	 * @param array  $updated_attrs The new attributes to set.
+	 */
+	public static function update_blocks_with_new_attrs( &$blocks, $cart_or_checkout, $updated_attrs ) {
+		$express_block_name = 'woocommerce/' . $cart_or_checkout . '-express-payment-block';
+		foreach ( $blocks as $key => &$block ) {
+			if ( ! empty( $block['blockName'] ) && $express_block_name === $block['blockName'] ) {
+				$blocks[ $key ]['attrs'] = $updated_attrs;
+			}
+
+			if ( ! empty( $block['innerBlocks'] ) ) {
+				self::update_blocks_with_new_attrs( $block['innerBlocks'], $cart_or_checkout, $updated_attrs );
+			}
+		}
 	}
 }

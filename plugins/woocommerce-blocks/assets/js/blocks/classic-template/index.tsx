@@ -248,7 +248,7 @@ const Edit = ( {
 				</div>
 				<div className="wp-block-woocommerce-classic-template__placeholder-copy">
 					<div className="wp-block-woocommerce-classic-template__placeholder-copy__icon-container">
-						<span className="woo-icon">
+						<span className="woo-icon-wrapper">
 							<Icon icon={ woo } />{ ' ' }
 							{ __( 'WooCommerce', 'woocommerce' ) }
 						</span>
@@ -310,7 +310,7 @@ const registerClassicTemplateBlock = ( {
 			/>
 		),
 		category: 'woocommerce',
-		apiVersion: 2,
+		apiVersion: 3,
 		keywords: [ __( 'WooCommerce', 'woocommerce' ) ],
 		description:
 			template && TEMPLATES[ template ]

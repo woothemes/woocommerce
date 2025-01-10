@@ -13,6 +13,7 @@ const tabs = require( './data/tabs' );
 const {
 	waitForGlobalAttributesLoaded,
 } = require( './helpers/wait-for-global-attributes-loaded' );
+const { tags } = require( '../../../../fixtures/fixtures' );
 
 const {
 	createVariableProduct,
@@ -41,7 +42,7 @@ let productId_editVariations,
 	productId_deleteVariations,
 	productId_singleVariation;
 
-test.describe( 'Variations tab', { tag: '@gutenberg' }, () => {
+test.describe( 'Variations tab', { tag: tags.GUTENBERG }, () => {
 	test.describe( 'Create variable products', () => {
 		test.beforeAll( async ( { browser } ) => {
 			productId_editVariations = await createVariableProduct(
@@ -114,9 +115,10 @@ test.describe( 'Variations tab', { tag: '@gutenberg' }, () => {
 				await waitForGlobalAttributesLoaded( page );
 
 				// Attribute combobox input
-				const attributeInputLocator = page.locator(
-					'input[aria-describedby^="components-form-token-suggestions-howto-combobox-control"]'
-				);
+				const attributeInputLocator = page
+					.getByRole( 'dialog' )
+					.getByRole( 'combobox' )
+					.first();
 
 				await attributeInputLocator.fill( sizeAttribute.name );
 
@@ -146,9 +148,24 @@ test.describe( 'Variations tab', { tag: '@gutenberg' }, () => {
 					);
 
 				for ( const term of sizeAttribute.terms ) {
+					const apiResponsePromise = page.waitForResponse(
+						( response ) => {
+							const urlToMatch = `/wp-json/wc/v3/products/attributes/${ newAttrData.id }/terms?name=${ term.name }&slug=${ term.slug }`;
+
+							return (
+								response
+									.url()
+									.includes( encodeURI( urlToMatch ) ) &&
+								response.status() === 201
+							);
+						}
+					);
+
 					// Fill the input field with the option
 					await FormTokenFieldInputLocator.fill( term.name );
 					await FormTokenFieldInputLocator.press( 'Enter' );
+
+					await apiResponsePromise;
 
 					/*
 					 * Check the new option is added to the list,
@@ -162,21 +179,6 @@ test.describe( 'Variations tab', { tag: '@gutenberg' }, () => {
 					await expect( newAriaHiddenTokenLocator ).toHaveText(
 						term.name
 					);
-
-					/*
-					 * Wait for the async POST request
-					 * that creates the new attribute term to finish.
-					 */
-					await page.waitForResponse( ( response ) => {
-						const urlToMatch = `/wp-json/wc/v3/products/attributes/${ newAttrData.id }/terms?name=${ term.name }&slug=${ term.slug }&_locale=user`;
-
-						return (
-							response
-								.url()
-								.includes( encodeURI( urlToMatch ) ) &&
-							response.status() === 201
-						);
-					} );
 				}
 
 				await page
@@ -245,7 +247,7 @@ test.describe( 'Variations tab', { tag: '@gutenberg' }, () => {
 
 		test( 'can edit a variation', async ( { page } ) => {
 			await page.goto(
-				`/wp-admin/admin.php?page=wc-admin&path=/product/${ productId_editVariations }`
+				`wp-admin/admin.php?page=wc-admin&path=/product/${ productId_editVariations }`
 			);
 
 			await disableVariableProductBlockTour( { page } );
@@ -308,7 +310,7 @@ test.describe( 'Variations tab', { tag: '@gutenberg' }, () => {
 				.click();
 
 			await page
-				.locator( '#inspector-input-control-2' )
+				.locator( '[name="woocommerce-product-sku"]' )
 				.fill( `product-sku-${ new Date().getTime().toString() }` );
 
 			await page
@@ -340,7 +342,7 @@ test.describe( 'Variations tab', { tag: '@gutenberg' }, () => {
 
 		test( 'can delete a variation', async ( { page } ) => {
 			await page.goto(
-				`/wp-admin/admin.php?page=wc-admin&path=/product/${ productId_deleteVariations }`
+				`wp-admin/admin.php?page=wc-admin&path=/product/${ productId_deleteVariations }`
 			);
 
 			const getVariationsResponsePromise = page.waitForResponse(
@@ -366,10 +368,16 @@ test.describe( 'Variations tab', { tag: '@gutenberg' }, () => {
 
 			await page.getByLabel( 'Delete variation' ).click();
 
-			const element = page.locator( 'div.components-snackbar__content' );
-			await expect( await element.innerText() ).toMatch(
-				'1 variation deleted.'
-			);
+			await expect(
+				page
+					.getByLabel( 'Dismiss this notice' )
+					.getByText( '1 variation deleted.' )
+			).toBeVisible();
+
+			await page.waitForSelector(
+				'div.woocommerce-product-variations-pagination__info',
+				{ timeout: 20000 }
+			); // test was timing out before page loaded
 
 			await expect(
 				await page
@@ -380,22 +388,76 @@ test.describe( 'Variations tab', { tag: '@gutenberg' }, () => {
 			).toEqual( 5 );
 		} );
 
-		test( 'can see variations warning and click the CTA', async ( {
-			page,
-		} ) => {
-			await page.goto(
-				`/wp-admin/admin.php?page=wc-admin&path=/product/${ productId_deleteVariations }`
-			);
+		test(
+			'can see variations warning and click the CTA',
+			{ tag: tags.COULD_BE_LOWER_LEVEL_TEST },
+			async ( { page } ) => {
+				await page.goto(
+					`wp-admin/admin.php?page=wc-admin&path=/product/${ productId_deleteVariations }`
+				);
 
-			for ( const tab of tabs ) {
-				const { name: tabName, noteText } = tab;
-				await clickOnTab( tabName, page );
+				for ( const tab of tabs ) {
+					const { name: tabName, noteText } = tab;
+					await clickOnTab( tabName, page );
 
-				const notices = page.locator(
-					'p.woocommerce-product-notice__content'
+					const notices = page.locator(
+						'p.woocommerce-product-notice__content'
+					);
+
+					const noticeCount = await notices.count();
+
+					for ( let i = 0; i < noticeCount; i++ ) {
+						const notice = notices.nth( i );
+						if ( await notice.isVisible() ) {
+							await expect( notice ).toHaveText( noteText );
+						}
+					}
+
+					await page
+						.locator( '.woocommerce-product-notice__content' )
+						.getByRole( 'button', { name: 'Go to Variations' } )
+						.click();
+
+					await expect(
+						page.getByRole( 'heading', {
+							name: 'Variation options',
+						} )
+					).toBeVisible();
+				}
+			}
+		);
+
+		test(
+			'can see single variation warning and click the CTA',
+			{ tag: tags.COULD_BE_LOWER_LEVEL_TEST },
+			async ( { page } ) => {
+				await page.goto(
+					`wp-admin/admin.php?page=wc-admin&path=/product/${ productId_singleVariation }&tab=variations`
+				);
+
+				await page
+					.getByRole( 'button', { name: 'Generate from options' } )
+					.click();
+
+				await expect(
+					page.getByText(
+						'variations do not have prices. Variations that do not have prices will not be visible to customers.Set prices'
+					)
+				).toBeVisible();
+
+				await page
+					.getByRole( 'link', { name: 'Edit', exact: true } )
+					.first()
+					.click();
+
+				const notices = page.getByText(
+					'You’re editing details specific to this variation.'
 				);
 
 				const noticeCount = await notices.count();
+
+				const noteText =
+					'You’re editing details specific to this variation.';
 
 				for ( let i = 0; i < noticeCount; i++ ) {
 					const notice = notices.nth( i );
@@ -405,8 +467,8 @@ test.describe( 'Variations tab', { tag: '@gutenberg' }, () => {
 				}
 
 				await page
-					.locator( '.woocommerce-product-notice__content' )
-					.getByRole( 'button', { name: 'Go to Variations' } )
+					.locator( '.woocommerce-product-notice__content > a' )
+					.first()
 					.click();
 
 				await expect(
@@ -415,56 +477,6 @@ test.describe( 'Variations tab', { tag: '@gutenberg' }, () => {
 					} )
 				).toBeVisible();
 			}
-		} );
-
-		test( 'can see single variation warning and click the CTA', async ( {
-			page,
-		} ) => {
-			await page.goto(
-				`/wp-admin/admin.php?page=wc-admin&path=/product/${ productId_singleVariation }&tab=variations`
-			);
-
-			await page
-				.getByRole( 'button', { name: 'Generate from options' } )
-				.click();
-
-			await expect(
-				page.getByText(
-					'variations do not have prices. Variations that do not have prices will not be visible to customers.Set prices'
-				)
-			).toBeVisible();
-
-			await page
-				.getByRole( 'link', { name: 'Edit', exact: true } )
-				.first()
-				.click();
-
-			const notices = page.getByText(
-				'You’re editing details specific to this variation.'
-			);
-
-			const noticeCount = await notices.count();
-
-			const noteText =
-				'You’re editing details specific to this variation.';
-
-			for ( let i = 0; i < noticeCount; i++ ) {
-				const notice = notices.nth( i );
-				if ( await notice.isVisible() ) {
-					await expect( notice ).toHaveText( noteText );
-				}
-			}
-
-			await page
-				.locator( '.woocommerce-product-notice__content > a' )
-				.first()
-				.click();
-
-			await expect(
-				page.getByRole( 'heading', {
-					name: 'Variation options',
-				} )
-			).toBeVisible();
-		} );
+		);
 	} );
 } );

@@ -1,4 +1,5 @@
 const { test, expect } = require( '@playwright/test' );
+const { tags } = require( '../../fixtures/fixtures' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 const orderBatchId = [];
@@ -6,6 +7,7 @@ const statusColumnTextSelector = 'mark.order-status > span';
 
 // Define order statuses to filter against
 const orderStatus = [
+	[ 'All', 'all' ],
 	[ 'Pending payment', 'wc-pending' ],
 	[ 'Processing', 'wc-processing' ],
 	[ 'On hold', 'wc-on-hold' ],
@@ -17,7 +19,7 @@ const orderStatus = [
 
 test.describe(
 	'WooCommerce Orders > Filter Order by Status',
-	{ tag: '@services' },
+	{ tag: [ tags.HPOS ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 
@@ -55,26 +57,16 @@ test.describe(
 			await api.post( 'orders/batch', { delete: [ ...orderBatchId ] } );
 		} );
 
-		test( 'should filter by All', async ( { page } ) => {
-			await page.goto( '/wp-admin/admin.php?page=wc-orders' );
-
-			await page.locator( 'li.all > a' ).click();
-			// because tests are running in parallel, we can't know how many orders there
-			// are beyond the ones we created here.
-			for ( let i = 0; i < orderStatus.length; i++ ) {
-				const statusTag = 'text=' + orderStatus[ i ][ 0 ];
-				const countElements = await page.locator( statusTag ).count();
-				await expect( countElements ).toBeGreaterThan( 0 );
-			}
-		} );
-
 		for ( let i = 0; i < orderStatus.length; i++ ) {
 			test( `should filter by ${ orderStatus[ i ][ 0 ] }`, async ( {
 				page,
 			} ) => {
-				await page.goto( '/wp-admin/admin.php?page=wc-orders' );
+				await page.goto( 'wp-admin/admin.php?page=wc-orders' );
 
 				await page.locator( `li.${ orderStatus[ i ][ 1 ] }` ).click();
+				await expect(
+					page.locator( `li.${ orderStatus[ i ][ 1 ] } > a.current` )
+				).toBeVisible();
 				const countElements = await page
 					.locator( statusColumnTextSelector )
 					.count();

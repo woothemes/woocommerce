@@ -2,6 +2,7 @@
 
 namespace Automattic\WooCommerce\Blocks\Domain\Services;
 
+use Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils;
 use Automattic\WooCommerce\Blocks\Assets\AssetDataRegistry;
 use WC_Customer;
 use WC_Data;
@@ -508,6 +509,7 @@ class CheckoutFields {
 				'hidden'         => false,
 				'autocomplete'   => 'email',
 				'autocapitalize' => 'none',
+				'type'           => 'email',
 				'index'          => 0,
 			],
 			'country'    => [
@@ -551,8 +553,8 @@ class CheckoutFields {
 					'Company (optional)',
 					'woocommerce'
 				),
-				'required'       => false,
-				'hidden'         => false,
+				'required'       => 'required' === CartCheckoutUtils::get_company_field_visibility(),
+				'hidden'         => 'hidden' === CartCheckoutUtils::get_company_field_visibility(),
 				'autocomplete'   => 'organization',
 				'autocapitalize' => 'sentences',
 				'index'          => 30,
@@ -575,8 +577,8 @@ class CheckoutFields {
 					'Apartment, suite, etc. (optional)',
 					'woocommerce'
 				),
-				'required'       => false,
-				'hidden'         => false,
+				'required'       => 'required' === CartCheckoutUtils::get_address_2_field_visibility(),
+				'hidden'         => 'hidden' === CartCheckoutUtils::get_address_2_field_visibility(),
 				'autocomplete'   => 'address-line2',
 				'autocapitalize' => 'sentences',
 				'index'          => 50,
@@ -623,8 +625,8 @@ class CheckoutFields {
 					'Phone (optional)',
 					'woocommerce'
 				),
-				'required'       => false,
-				'hidden'         => false,
+				'required'       => 'required' === CartCheckoutUtils::get_phone_field_visibility(),
+				'hidden'         => 'hidden' === CartCheckoutUtils::get_phone_field_visibility(),
 				'type'           => 'tel',
 				'autocomplete'   => 'tel',
 				'autocapitalize' => 'characters',
@@ -780,7 +782,7 @@ class CheckoutFields {
 	 * @return mixed
 	 */
 	public function update_default_locale_with_fields( $locale ) {
-		foreach ( $this->fields_locations['address'] as $field_id => $additional_field ) {
+		foreach ( $this->get_fields_for_location( 'address' ) as $field_id => $additional_field ) {
 			if ( empty( $locale[ $field_id ] ) ) {
 				$locale[ $field_id ] = $additional_field;
 			}
@@ -1121,7 +1123,7 @@ class CheckoutFields {
 
 		$value = $wc_object->get_meta( $meta_key, true );
 
-		if ( ! $value ) {
+		if ( ! $value && '0' !== $value ) {
 			/**
 			 * Allow providing a default value for additional fields if no value is already set.
 			 *

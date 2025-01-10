@@ -1,10 +1,11 @@
-const { test, expect, request } = require( '@playwright/test' );
+const { request } = require( '@playwright/test' );
+const { test, expect, tags } = require( '../../fixtures/fixtures' );
 const { setOption } = require( '../../utils/options' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 test.describe(
 	'Launch Your Store - logged in',
-	{ tag: [ '@gutenberg', '@services' ] },
+	{ tag: [ tags.GUTENBERG, tags.SKIP_ON_WPCOM ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 
@@ -85,7 +86,7 @@ test.describe(
 				console.log( error );
 			}
 
-			await page.goto( baseURL + '/shop/' );
+			await page.goto( baseURL + 'shop/' );
 
 			await expect(
 				page.getByText(
@@ -121,7 +122,7 @@ test.describe(
 			}
 
 			await page.goto(
-				'/wp-admin/admin.php?page=wc-settings&tab=site-visibility'
+				'wp-admin/admin.php?page=wc-settings&tab=site-visibility'
 			);
 
 			// The Coming soon radio should not be checked.
@@ -132,7 +133,7 @@ test.describe(
 			// The store only checkbox should not be on the page.
 			await expect(
 				page.getByRole( 'checkbox', {
-					name: 'Restrict to store pages only',
+					name: 'Apply to store pages only',
 				} )
 			).toHaveCount( 0 );
 
@@ -156,14 +157,14 @@ test.describe(
 			// The store only checkbox should be visible.
 			await expect(
 				page.getByRole( 'checkbox', {
-					name: 'Restrict to store pages only',
+					name: 'Apply to store pages only',
 				} )
 			).toBeVisible();
 
 			// The store only checkbox should not be checked.
 			await expect(
 				page.getByRole( 'checkbox', {
-					name: 'Restrict to store pages only',
+					name: 'Apply to store pages only',
 				} )
 			).not.toBeChecked();
 
@@ -209,26 +210,13 @@ test.describe(
 				console.log( error );
 			}
 
-			await page.goto( '/wp-admin/admin.php?page=wc-admin' );
+			await page.goto( 'wp-admin/admin.php?page=wc-admin' );
 
 			await expect(
-				page.getByRole( 'button', {
+				page.getByRole( 'menuitem', {
 					name: 'Store coming soon',
 					exact: true,
 				} )
-			).toBeVisible();
-
-			page.getByRole( 'button', {
-				name: 'Store coming soon',
-				exact: true,
-			} ).click();
-
-			await expect(
-				page.getByText( 'Manage site visibility' )
-			).toBeVisible();
-
-			await expect(
-				page.getByText( 'Customize "Coming soon" page' )
 			).toBeVisible();
 		} );
 
@@ -254,26 +242,13 @@ test.describe(
 				console.log( error );
 			}
 
-			await page.goto( '/wp-admin/admin.php?page=wc-admin' );
+			await page.goto( 'wp-admin/admin.php?page=wc-admin' );
 
 			await expect(
-				page.getByRole( 'button', {
-					name: 'Site coming soon',
+				page.getByRole( 'menuitem', {
+					name: 'Coming soon',
 					exact: true,
 				} )
-			).toBeVisible();
-
-			page.getByRole( 'button', {
-				name: 'Site coming soon',
-				exact: true,
-			} ).click();
-
-			await expect(
-				page.getByText( 'Manage site visibility' )
-			).toBeVisible();
-
-			await expect(
-				page.getByText( 'Customize "Coming soon" page' )
 			).toBeVisible();
 		} );
 
@@ -296,27 +271,14 @@ test.describe(
 				console.log( error );
 			}
 
-			await page.goto( '/wp-admin/admin.php?page=wc-admin' );
+			await page.goto( 'wp-admin/admin.php?page=wc-admin' );
 
 			await expect(
-				page.getByRole( 'button', {
+				page.getByRole( 'menuitem', {
 					name: 'Live',
 					exact: true,
 				} )
 			).toBeVisible();
-
-			page.getByRole( 'button', {
-				name: 'Live',
-				exact: true,
-			} ).click();
-
-			await expect(
-				page.getByText( 'Manage site visibility' )
-			).toBeVisible();
-
-			await expect(
-				page.getByText( 'Customize "Coming soon" page' )
-			).toBeHidden();
 		} );
 	}
 );
