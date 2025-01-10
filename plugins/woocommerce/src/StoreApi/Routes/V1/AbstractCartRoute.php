@@ -111,9 +111,14 @@ abstract class AbstractCartRoute extends AbstractRoute {
 	 * @return \WP_REST_Response
 	 */
 	public function get_response( \WP_REST_Request $request ) {
-		$this->load_cart_session( $request );
-
 		$response    = null;
+
+		try {
+			$this->load_cart_session( $request );
+		} catch (RouteException $error) {
+			$response = $this->get_route_error_response( $error->getErrorCode(), $error->getMessage(), $error->getCode(), $error->getAdditionalData() );
+		}
+
 		$nonce_check = $this->requires_nonce( $request ) ? $this->check_nonce( $request ) : null;
 
 		if ( is_wp_error( $nonce_check ) ) {
