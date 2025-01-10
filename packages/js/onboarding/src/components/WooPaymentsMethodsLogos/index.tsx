@@ -171,6 +171,7 @@ export const WooPaymentsMethodsLogos: React.FC< {
 			{ visiblePaymentMethods.map( ( pm ) => pm.component ) }
 			{ maxShownElements < maxSupportedPaymentMethods && (
 				<Tooltip
+					delay={ 300 }
 					text={
 						<div className="woocommerce-woopayments-payment-methods-logos">
 							{ hiddenPaymentMethods.map(
