@@ -55,16 +55,11 @@ Watch mode: `pnpm --filter=@woocommerce/block-library run test:integration:js --
 #### How to write a test?
 
 It is important to import all the blocks that are going to be tested together
-within a jest `beforeAll` hook because the blocks are registered under the `index.ts`
-file. So by the time they are included in the test file they will automatically
-be registered. This produces a warning when the category of these blocks is not
-registered yet.
+for them to be registered before testing.
 
 ```javascript
-beforeAll( async () => {
-	await import( '../../assets/js/blocks/active-filters' );
-	await import( '..' );
-} );
+import '../../assets/js/blocks/active-filters';
+import '..';
 ```
 
 Once the blocks are all included and registered then the Block Editor must be setup.
