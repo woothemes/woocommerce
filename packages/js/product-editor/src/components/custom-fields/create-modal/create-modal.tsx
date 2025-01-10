@@ -236,12 +236,10 @@ export function CreateModal( {
 										'key'
 									) }
 									value={ customField.key }
-									onChange={ ( value ) =>
-										changeHandler(
-											customField,
-											'key'
-										)( value )
-									}
+									onChange={ changeHandler(
+										customField,
+										'key'
+									) }
 									onBlur={ blurHandler( customField, 'key' ) }
 									className={ classNames( {
 										'has-error': getValidationError(
