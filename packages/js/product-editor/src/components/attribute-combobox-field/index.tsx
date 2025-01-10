@@ -34,6 +34,7 @@ interface ComboboxControlProps
 	__experimentalRenderItem?: ( args: {
 		item: ComboboxControlOption;
 	} ) => string | JSX.Element;
+	className?: string;
 }
 
 /*
