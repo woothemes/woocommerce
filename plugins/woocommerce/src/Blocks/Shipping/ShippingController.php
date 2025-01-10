@@ -90,7 +90,7 @@ class ShippingController {
 	 * @return boolean Whether shipping cost calculation should require an address to be entered before calculating.
 	 */
 	public function override_cost_requires_address_option( $value ) {
-		if ( is_checkout() && ! is_admin() && CartCheckoutUtils::is_checkout_block_default() && $this->local_pickup_enabled ) {
+		if ( is_checkout() && CartCheckoutUtils::is_checkout_block_default() && $this->local_pickup_enabled ) {
 			return 'no';
 		}
 
@@ -445,7 +445,7 @@ class ShippingController {
 		$has_address = $customer->has_shipping_address();
 
 		remove_filter( 'option_woocommerce_shipping_cost_requires_address', array( $this, 'override_cost_requires_address_option' ) );
-		$option_checked = filter_var( get_option( 'woocommerce_shipping_cost_requires_address', 'no' ), FILTER_VALIDATE_BOOLEAN );
+		$option_checked = wc_string_to_bool( get_option( 'woocommerce_shipping_cost_requires_address', 'no' ) );
 		add_filter( 'option_woocommerce_shipping_cost_requires_address', array( $this, 'override_cost_requires_address_option' ) );
 
 		if ( ! $has_address && $option_checked ) {
