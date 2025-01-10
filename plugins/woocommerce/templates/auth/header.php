@@ -27,7 +27,7 @@ if (
 	&& BrandingController::use_new_branding()
 ) {
 	// New branding.
-	$logo_filename = 'woocommerce-logo.svg';
+	$logo_filename = 'woo-logo.svg';
 }
 
 // phpcs:disable WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet
