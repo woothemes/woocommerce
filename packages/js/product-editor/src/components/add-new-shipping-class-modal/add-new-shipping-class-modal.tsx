@@ -128,10 +128,8 @@ function ShippingClassForm( { onAdd, onCancel }: ShippingClassFormProps ) {
 				{ ...getInputProps( 'slug' ) }
 				label={ __( 'Slug', 'woocommerce' ) }
 				onChange={ ( value ) => {
-					if ( value ) {
-						setPrevNameValue( '' ); // clean the previous name value.
-						getInputProps( 'slug' ).onChange( value );
-					}
+					setPrevNameValue( '' ); // clean the previous name value.
+					getInputProps( 'slug' ).onChange( value ?? '' );
 				} }
 				disabled={ isRequestingSlug }
 				help={ __(
