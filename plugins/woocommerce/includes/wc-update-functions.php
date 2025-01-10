@@ -21,6 +21,7 @@ defined( 'ABSPATH' ) || exit;
 use Automattic\WooCommerce\Admin\Notes\Note;
 use Automattic\WooCommerce\Admin\Notes\Notes;
 use Automattic\WooCommerce\Database\Migrations\MigrationHelper;
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\Admin\Marketing\MarketingSpecs;
 use Automattic\WooCommerce\Internal\Admin\Notes\WooSubscriptionsNotes;
 use Automattic\WooCommerce\Internal\AssignDefaultCategory;
@@ -1270,7 +1271,7 @@ function wc_update_300_grouped_products() {
 	$parents = $wpdb->get_col( "SELECT DISTINCT( post_parent ) FROM {$wpdb->posts} WHERE post_parent > 0 AND post_type = 'product';" );
 	foreach ( $parents as $parent_id ) {
 		$parent = wc_get_product( $parent_id );
-		if ( $parent && $parent->is_type( 'grouped' ) ) {
+		if ( $parent && $parent->is_type( ProductType::GROUPED ) ) {
 			$children_ids = get_posts(
 				array(
 					'post_parent'    => $parent_id,

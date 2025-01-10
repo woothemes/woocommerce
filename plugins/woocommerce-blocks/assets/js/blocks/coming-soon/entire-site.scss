@@ -202,3 +202,22 @@ body:has(.woocommerce-coming-soon-banner) {
 		aspect-ratio: 1 / 1;
 	}
 }
+
+// Product image gallery template styles
+.woocommerce-coming-soon-image-gallery {
+	.wp-block-loginout {
+		display: flex;
+
+		a {
+			box-sizing: border-box;
+			border-radius: 6px;
+			gap: 10px;
+			font-size: 14px;
+			font-style: normal;
+			line-height: normal;
+			text-align: center;
+			text-decoration: none;
+			padding: 12px 16px;
+		}
+	}
+}

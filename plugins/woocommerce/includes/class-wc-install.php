@@ -8,6 +8,7 @@
 
 use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Admin\Notes\Notes;
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\TransientFiles\TransientFilesEngine;
 use Automattic\WooCommerce\Internal\DataStores\Orders\{ CustomOrdersTableController, DataSynchronizer, OrdersTableDataStore };
 use Automattic\WooCommerce\Internal\Features\FeaturesController;
@@ -1187,10 +1188,10 @@ class WC_Install {
 	public static function create_terms() {
 		$taxonomies = array(
 			'product_type'       => array(
-				'simple',
-				'grouped',
-				'variable',
-				'external',
+				ProductType::SIMPLE,
+				ProductType::GROUPED,
+				ProductType::VARIABLE,
+				ProductType::EXTERNAL,
 			),
 			'product_visibility' => array(
 				'exclude-from-search',

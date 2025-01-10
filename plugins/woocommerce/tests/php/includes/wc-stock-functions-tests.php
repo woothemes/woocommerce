@@ -38,6 +38,14 @@ class WC_Stock_Functions_Tests extends \WC_Unit_Test_Case {
 	);
 
 	/**
+	 * tearDown.
+	 */
+	public function tearDown(): void {
+		parent::tearDown();
+		WC()->cart->empty_cart();
+	}
+
+	/**
 	 * Helper function to simulate creating order from cart.
 	 *
 	 * @param string $status Status for the newly created order.
