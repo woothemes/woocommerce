@@ -28,7 +28,7 @@ export function ButtonWithDropdownMenu( {
 	},
 	className,
 	renderMenu,
-	onToggle = () => {},
+	onToggle,
 	...props
 }: ButtonWithDropdownMenuProps ) {
 	return (

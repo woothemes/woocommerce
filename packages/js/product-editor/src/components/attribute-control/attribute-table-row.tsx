@@ -336,7 +336,8 @@ export const AttributeTableRow: React.FC< AttributeTableRowProps > = ( {
 		 */
 		const recentTermsList = sel(
 			EXPERIMENTAL_PRODUCT_ATTRIBUTE_TERMS_STORE_NAME
-		).getProductAttributeTerms();
+			// @ts-expect-error - TS doesn't know about the `getProductAttributeTerms` selector
+		).getProductAttributeTerms( selectItemsQuery );
 
 		/*
 		 * New selected terms are the ones that are in the recent terms list

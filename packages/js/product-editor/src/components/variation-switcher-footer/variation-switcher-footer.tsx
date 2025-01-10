@@ -7,7 +7,6 @@ import { createElement } from '@wordpress/element';
 import { arrowLeft, arrowRight, Icon } from '@wordpress/icons';
 import { useSelect } from '@wordpress/data';
 import { recordEvent } from '@woocommerce/tracks';
-import type { ProductVariation } from '@woocommerce/data';
 
 /**
  * Internal dependencies

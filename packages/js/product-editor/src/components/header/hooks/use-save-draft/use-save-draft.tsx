@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { Product } from '@woocommerce/data';
-import { Button, Icon } from '@wordpress/components';
+import { Icon } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
