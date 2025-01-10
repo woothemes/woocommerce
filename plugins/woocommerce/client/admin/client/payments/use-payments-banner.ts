@@ -6,9 +6,9 @@ import {
 	ONBOARDING_STORE_NAME,
 	PAYMENT_GATEWAYS_STORE_NAME,
 	PaymentGateway,
-	PaymentSelectors,
-	OnboardingSelectors,
-	WPDataSelectors,
+	type PaymentSelectors,
+	type OnboardingSelectors,
+	type WPDataSelectors,
 } from '@woocommerce/data';
 
 /**

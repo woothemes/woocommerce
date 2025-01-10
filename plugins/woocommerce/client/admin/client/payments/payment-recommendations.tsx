@@ -14,9 +14,9 @@ import {
 	PAYMENT_GATEWAYS_STORE_NAME,
 	PLUGINS_STORE_NAME,
 	Plugin,
-	PaymentSelectors,
-	OnboardingSelectors,
-	WPDataSelectors,
+	type PaymentSelectors,
+	type OnboardingSelectors,
+	type WPDataSelectors,
 } from '@woocommerce/data';
 import { recordEvent } from '@woocommerce/tracks';
 import ExternalIcon from 'gridicons/dist/external';

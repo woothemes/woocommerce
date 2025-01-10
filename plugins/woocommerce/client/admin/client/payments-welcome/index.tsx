@@ -5,7 +5,7 @@ import { Notice } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 import { recordEvent } from '@woocommerce/tracks';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { OPTIONS_STORE_NAME, PluginSelectors } from '@woocommerce/data';
+import { OPTIONS_STORE_NAME, type PluginSelectors } from '@woocommerce/data';
 import apiFetch from '@wordpress/api-fetch';
 
 /**
