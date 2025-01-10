@@ -6,6 +6,7 @@ import { CART_STORE_KEY, CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
 import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { hasShippingRate } from '@woocommerce/base-utils';
+import type { WPNotice } from '@wordpress/notices/build-types/store/selectors';
 
 /**
  * Internal dependencies
@@ -31,7 +32,11 @@ export const useShowShippingTotalWarning = () => {
 	const { createInfoNotice, removeNotice } = useDispatch( 'core/notices' );
 
 	useEffect( () => {
-		const isShowingNotice = shippingNotices.length > 0;
+		const isShowingNotice =
+			shippingNotices.length > 0 &&
+			shippingNotices.some(
+				( notice: WPNotice ) => notice.id === errorNoticeId
+			);
 		const hasMismatch = ! prefersCollection && hasSelectedLocalPickup;
 
 		if ( ! hasRates || isRateBeingSelected ) {
