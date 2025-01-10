@@ -4,7 +4,7 @@
 import { Circle, SVG, Path } from '@wordpress/primitives';
 
 const customerAccountStyleLine = (
-	<SVG viewBox="5 5 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+	<SVG viewBox="1 1 29 29" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<Circle
 			cx="16"
 			cy="10.5"

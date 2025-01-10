@@ -1,4 +1,5 @@
 const { test, expect } = require( '@playwright/test' );
+const { tags } = require( '../../fixtures/fixtures' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 test.describe( 'Manage webhooks', () => {
@@ -23,50 +24,45 @@ test.describe( 'Manage webhooks', () => {
 	const WEBHOOKS_SCREEN_URI =
 		'wp-admin/admin.php?page=wc-settings&tab=advanced&section=webhooks';
 
-	test( 'Webhook cannot be bulk deleted without nonce', async ( {
-		page,
-	} ) => {
-		await page.goto( WEBHOOKS_SCREEN_URI, { waitUntil: 'networkidle' } );
+	test(
+		'Webhook cannot be bulk deleted without nonce',
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+		async ( { page } ) => {
+			await page.goto( WEBHOOKS_SCREEN_URI );
 
-		await page.getByRole( 'link', { name: 'Add webhook' } ).click();
+			await page.getByRole( 'link', { name: 'Add webhook' } ).click();
+			await page
+				.getByRole( 'textbox', { name: 'Name' } )
+				.fill( 'Webhook 1' );
+			await page.getByRole( 'button', { name: 'Save webhook' } ).click();
 
-		await page.waitForLoadState( 'networkidle' );
+			await expect(
+				page.getByText( 'Webhook updated successfully.' )
+			).toBeVisible();
 
-		await page.getByRole( 'textbox', { name: 'Name' } ).fill( 'Webhook 1' );
+			await page.goto( WEBHOOKS_SCREEN_URI );
 
-		await page.getByRole( 'button', { name: 'Save webhook' } ).click();
+			await expect(
+				page.getByRole( 'row', { name: 'Webhook 1' } )
+			).toBeVisible();
 
-		await page.waitForLoadState( 'networkidle' );
+			let editURL = await page
+				.getByRole( 'link', { name: 'Webhook 1', exact: true } )
+				.getAttribute( 'href' );
+			editURL = new URL( editURL );
+			const webhookID = editURL.searchParams.get( 'edit-webhook' );
 
-		await expect(
-			page.getByText( 'Webhook updated successfully.' )
-		).toBeVisible( { timeout: 1 } );
+			await page.goto(
+				`${ WEBHOOKS_SCREEN_URI }&action=delete&webhook[]=${ webhookID }`
+			);
 
-		await page.goto( WEBHOOKS_SCREEN_URI, { waitUntil: 'networkidle' } );
+			await expect(
+				page.getByText( 'The link you followed has expired.' )
+			).toBeVisible();
 
-		await expect(
-			page.getByRole( 'row', { name: 'Webhook 1' } )
-		).toBeVisible( { timeout: 1 } );
-
-		let editURL = await page
-			.getByRole( 'link', { name: 'Webhook 1', exact: true } )
-			.getAttribute( 'href' );
-		editURL = new URL( editURL );
-		const origin = editURL.origin;
-		const webhookID = editURL.searchParams.get( 'edit-webhook' );
-
-		const actionURI = new URL( origin + '/' + WEBHOOKS_SCREEN_URI );
-		actionURI.searchParams.set( 'action', 'delete' );
-		actionURI.searchParams.set( 'webhook[]', webhookID );
-
-		await page.goto( actionURI.toString(), { waitUntil: 'networkidle' } );
-
-		await expect(
-			page.getByText( 'webhook permanently deleted' )
-		).toBeHidden( { timeout: 1 } );
-
-		await expect(
-			page.getByText( 'The link you followed has expired.' )
-		).toBeVisible( { timeout: 1 } );
-	} );
+			await expect(
+				page.getByText( 'webhook permanently deleted' )
+			).toBeHidden( { timeout: 1 } );
+		}
+	);
 } );

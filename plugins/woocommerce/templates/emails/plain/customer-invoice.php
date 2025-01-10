@@ -12,7 +12,7 @@
  *
  * @see https://woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates\Emails\Plain
- * @version 9.6.0
+ * @version 9.7.0
  */
 
 // phpcs:disable Universal.WhiteSpace.PrecisionAlignment.Found, Generic.WhiteSpace.DisallowSpaceIndent.SpacesUsed -- Plain text output needs specific spacing without tabs
@@ -42,7 +42,7 @@ if ( $order->needs_payment() ) {
 		echo wp_kses_post(
 			sprintf(
 				/* translators: %1$s: Site title, %2$s: Order pay link */
-				__( 'An order has been created for you on %1$s. Your invoice is below, with a link to make payment when you’re ready: %2$s', 'woocommerce' ),
+				__( 'An order has been created for you on %1$s. Your order details are below, with a link to make payment when you’re ready: %2$s', 'woocommerce' ),
 				esc_html( get_bloginfo( 'name', 'display' ) ),
 				esc_url( $order->get_checkout_payment_url() )
 			)

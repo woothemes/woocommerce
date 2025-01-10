@@ -32,6 +32,7 @@ class Checkout extends AbstractBlock {
 	 */
 	protected function initialize() {
 		parent::initialize();
+		add_action( 'rest_api_init', array( $this, 'register_settings' ) );
 		add_action( 'wp_loaded', array( $this, 'register_patterns' ) );
 		// This prevents the page redirecting when the cart is empty. This is so the editor still loads the page preview.
 		add_filter(
@@ -55,6 +56,63 @@ class Checkout extends AbstractBlock {
 		wp_dequeue_script( 'wc-password-strength-meter' );
 		wp_dequeue_script( 'selectWoo' );
 		wp_dequeue_style( 'select2' );
+	}
+
+	/**
+	 * Exposes settings exposed by the checkout block.
+	 */
+	public function register_settings() {
+		register_setting(
+			'options',
+			'woocommerce_checkout_phone_field',
+			array(
+				'type'         => 'object',
+				'description'  => __( 'Controls the display of the phone field in checkout.', 'woocommerce' ),
+				'label'        => __( 'Phone number', 'woocommerce' ),
+				'show_in_rest' => array(
+					'name'   => 'woocommerce_checkout_phone_field',
+					'schema' => array(
+						'type' => 'string',
+						'enum' => array( 'optional', 'required', 'hidden' ),
+					),
+				),
+				'default'      => CartCheckoutUtils::get_phone_field_visibility(),
+			)
+		);
+		register_setting(
+			'options',
+			'woocommerce_checkout_company_field',
+			array(
+				'type'         => 'object',
+				'description'  => __( 'Controls the display of the company field in checkout.', 'woocommerce' ),
+				'label'        => __( 'Company', 'woocommerce' ),
+				'show_in_rest' => array(
+					'name'   => 'woocommerce_checkout_company_field',
+					'schema' => array(
+						'type' => 'string',
+						'enum' => array( 'optional', 'required', 'hidden' ),
+					),
+				),
+				'default'      => CartCheckoutUtils::get_company_field_visibility(),
+			)
+		);
+		register_setting(
+			'options',
+			'woocommerce_checkout_address_2_field',
+			array(
+				'type'         => 'object',
+				'description'  => __( 'Controls the display of the apartment (address_2) field in checkout.', 'woocommerce' ),
+				'label'        => __( 'Address Line 2', 'woocommerce' ),
+				'show_in_rest' => array(
+					'name'   => 'woocommerce_checkout_address_2_field',
+					'schema' => array(
+						'type' => 'string',
+						'enum' => array( 'optional', 'required', 'hidden' ),
+					),
+				),
+				'default'      => CartCheckoutUtils::get_address_2_field_visibility(),
+			)
+		);
 	}
 
 	/**
@@ -379,13 +437,20 @@ class Checkout extends AbstractBlock {
 		$this->asset_data_registry->add( 'localPickupText', $pickup_location_settings['title'] );
 		$this->asset_data_registry->add( 'collectableMethodIds', $local_pickup_method_ids );
 
-		$is_block_editor = $this->is_block_editor();
+		// Local pickup is included with legacy shipping methods since they do not support shipping zones.
+		$local_pickup_count = count(
+			array_filter(
+				WC()->shipping()->get_shipping_methods(),
+				function ( $method ) {
+					return isset( $method->enabled ) && 'yes' === $method->enabled && ! $method->supports( 'shipping-zones' ) && $method->supports( 'local-pickup' );
+				}
+			)
+		);
 
-		// Hydrate the following data depending on admin or frontend context.
-		if ( $is_block_editor && ! $this->asset_data_registry->exists( 'shippingMethodsExist' ) ) {
-			$methods_exist = wc_get_shipping_method_count( false, true ) > 0;
-			$this->asset_data_registry->add( 'shippingMethodsExist', $methods_exist );
-		}
+		$shipping_methods_count = wc_get_shipping_method_count( true, true ) - $local_pickup_count;
+		$this->asset_data_registry->add( 'shippingMethodsExist', $shipping_methods_count > 0 );
+
+		$is_block_editor = $this->is_block_editor();
 
 		if ( $is_block_editor && ! $this->asset_data_registry->exists( 'globalShippingMethods' ) ) {
 			$shipping_methods           = WC()->shipping()->get_shipping_methods();

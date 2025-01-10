@@ -58,7 +58,6 @@ const DeprecatedWooOnboardingTaskFills = () => {
 };
 
 registerPlugin( 'wc-admin-deprecated-task-container', {
-	// @ts-expect-error @types/wordpress__plugins need to be updated
 	scope: 'woocommerce-tasks',
 	render: () => <DeprecatedWooOnboardingTaskFills />,
 } );

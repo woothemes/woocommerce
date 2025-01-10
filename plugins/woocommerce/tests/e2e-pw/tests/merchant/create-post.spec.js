@@ -1,10 +1,14 @@
-const { test: baseTest } = require( '../../fixtures/fixtures' );
-const {
-	goToPostEditor,
-	fillPageTitle,
+const { test: baseTest, tags } = require( '../../fixtures/fixtures' );
+const { fillPageTitle } = require( '../../utils/editor' );
+
+/**
+ * External dependencies
+ */
+import {
 	getCanvas,
+	goToPostEditor,
 	publishPage,
-} = require( '../../utils/editor' );
+} from '@woocommerce/e2e-utils-playwright';
 
 const test = baseTest.extend( {
 	storageState: process.env.ADMINSTATE,
@@ -12,7 +16,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Can create a new post',
-	{ tag: [ '@gutenberg', '@services' ] },
+	{ tag: [ tags.GUTENBERG, tags.WP_CORE ] },
 	() => {
 		test( 'can create new post', async ( { page, testPost } ) => {
 			await goToPostEditor( { page } );

@@ -1,7 +1,7 @@
 const {
 	test: baseTest,
 } = require( '../../../../fixtures/block-editor-fixtures' );
-const { expect } = require( '../../../../fixtures/fixtures' );
+const { expect, tags } = require( '../../../../fixtures/fixtures' );
 const { updateProduct } = require( '../../../../utils/product-block-editor' );
 const { clickOnTab } = require( '../../../../utils/simple-products' );
 const attributesData = require( './fixtures/attributes' );
@@ -101,7 +101,7 @@ const test = baseTest.extend( {
 
 test(
 	'add local attribute (with terms) to the Product',
-	{ tag: '@gutenberg' },
+	{ tag: tags.GUTENBERG },
 	async ( { page, product } ) => {
 		await test.step( 'go to product editor -> Organization tab -> Click on `Add new`', async () => {
 			await page.goto(
@@ -272,7 +272,7 @@ test(
 
 test(
 	'can add existing attributes',
-	{ tag: '@gutenberg' },
+	{ tag: tags.GUTENBERG },
 	async ( { page, product, attributes } ) => {
 		await test.step( 'go to product editor, Organization tab', async () => {
 			await page.goto(
@@ -358,7 +358,7 @@ test(
 
 test(
 	'can update product attributes',
-	{ tag: '@gutenberg' },
+	{ tag: tags.GUTENBERG },
 	async ( { page, productWithAttributes } ) => {
 		const attribute = productWithAttributes.attributes[ 0 ];
 
@@ -372,14 +372,6 @@ test(
 			// See https://github.com/woocommerce/woocommerce/issues/44925
 			await expect(
 				async () => {
-					await page.reload();
-					// Waiting for the "Block: Product attributes" will ensure
-					// that test will pass against the Pressable environment
-					await expect(
-						page.locator(
-							`[aria-label="Block: Product attributes"]`
-						)
-					).toBeVisible();
 					await page.getByRole( 'button', { name: 'Edit' } ).click();
 					await expect(
 						page.locator(
@@ -462,7 +454,7 @@ test(
 
 test(
 	'can remove product attributes',
-	{ tag: '@gutenberg' },
+	{ tag: tags.GUTENBERG },
 	async ( { page, productWithAttributes, attributes } ) => {
 		await test.step( 'go to product editor, Organization tab', async () => {
 			await page.goto(

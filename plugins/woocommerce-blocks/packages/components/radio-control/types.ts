@@ -32,6 +32,7 @@ export interface RadioControlOptionProps {
 
 interface RadioControlOptionContent {
 	label: string | JSX.Element;
+	content?: string | JSX.Element;
 	description?: string | ReactElement | undefined;
 	secondaryLabel?: string | ReactElement | undefined;
 	secondaryDescription?: string | ReactElement | undefined;

@@ -1,11 +1,15 @@
-const { test: baseTest } = require( '../../fixtures/fixtures' );
-const {
-	goToPageEditor,
-	fillPageTitle,
-	getCanvas,
-	publishPage,
+const { test: baseTest, tags } = require( '../../fixtures/fixtures' );
+const { fillPageTitle } = require( '../../utils/editor' );
+
+/**
+ * External dependencies
+ */
+import {
 	closeChoosePatternModal,
-} = require( '../../utils/editor' );
+	getCanvas,
+	goToPageEditor,
+	publishPage,
+} from '@woocommerce/e2e-utils-playwright';
 
 const test = baseTest.extend( {
 	storageState: process.env.ADMINSTATE,
@@ -13,7 +17,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Can create a new page',
-	{ tag: [ '@gutenberg', '@services' ] },
+	{ tag: [ tags.GUTENBERG, tags.WP_CORE ] },
 	() => {
 		// eslint-disable-next-line playwright/expect-expect
 		test( 'can create new page', async ( { page, testPage } ) => {
@@ -23,8 +27,12 @@ test.describe(
 
 			const canvas = await getCanvas( page );
 
+			// TODO (Gutenberg 19.9): Remove this click() step.
+			// Current stable version of Gutenberg (19.7) doesn't show the "Empty block" element right away, you need to click on the "Add default block" element first before it appears.
+			// Upcoming Gutenberg nightly (version 19.9) no longer shows the "Add default block" element, but rather displays the "Empty block" right away.
+			// There's no need for this click() step anymore when GB 19.9 comes out.
 			await canvas
-				.getByRole( 'button', { name: 'Add default block' } )
+				.getByLabel( /(Add default block|Empty block)/ )
 				.click();
 
 			await canvas
