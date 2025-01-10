@@ -33,7 +33,7 @@ export function SchedulePublishModal( {
 		() => value ?? getSiteDatetime()
 	);
 
-	function handleDateTimePickerChange( newDate?: string ) {
+	function handleDateTimePickerChange( newDate?: string | null ) {
 		setDate( newDate ?? '' );
 	}
 
