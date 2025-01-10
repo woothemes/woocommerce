@@ -1,12 +1,7 @@
 /**
  * External dependencies
  */
-import {
-	Children,
-	isValidElement,
-	createElement,
-	Fragment,
-} from '@wordpress/element';
+import { Children, isValidElement, createElement } from '@wordpress/element';
 import { FormSection } from '@woocommerce/components';
 
 interface ProductSectionLayoutProps {
