@@ -10,7 +10,7 @@ const getPluginLocator = ( page, slug ) => {
 
 test.describe(
 	'Store owner can complete the core profiler',
-	{ tag: [ tags.SKIP_ON_PRESSABLE, tags.SKIP_ON_WPCOM ] },
+	{ tag: tags.SKIP_ON_EXTERNAL_ENV },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 
@@ -471,7 +471,7 @@ test.describe(
 
 test.describe(
 	'Store owner can skip the core profiler',
-	{ tag: [ tags.SKIP_ON_PRESSABLE, tags.SKIP_ON_WPCOM ] },
+	{ tag: tags.SKIP_ON_EXTERNAL_ENV },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 

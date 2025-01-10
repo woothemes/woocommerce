@@ -18,6 +18,8 @@ import type {
 	PluginActions,
 } from '@woocommerce/data';
 
+type ButtonProps = React.ComponentProps< typeof Button >;
+
 type PluginsProps = {
 	onComplete: (
 		activePlugins: string[],
@@ -32,7 +34,7 @@ type PluginsProps = {
 	onAbort?: () => void;
 	abortText?: string;
 	installText?: string;
-	installButtonVariant?: Button.BaseProps[ 'variant' ];
+	installButtonVariant?: ButtonProps[ 'variant' ];
 	learnMoreLink?: string;
 	learnMoreText?: string;
 	onLearnMore?: () => void;
@@ -92,7 +94,7 @@ export const Plugins = ( {
 	);
 
 	const installAndActivate = useCallback(
-		async ( event?: SyntheticEvent< HTMLAnchorElement > ) => {
+		async ( event?: SyntheticEvent ) => {
 			if ( event ) {
 				event.preventDefault();
 			}
