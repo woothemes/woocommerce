@@ -29,19 +29,22 @@ const ConnectAccountPage = () => {
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const [ enabledApms, setEnabledApms ] = useState( new Set< Apm >() );
 
-	const { isJetpackConnected, connectUrl } = useSelect( ( select ) => {
-		return {
-			isJetpackConnected: (
-				select( 'wc/admin/plugins' ) as PluginSelectors
-			 ).isJetpackConnected(),
-			connectUrl:
-				'admin.php?wcpay-connect=1&promo=' +
-				encodeURIComponent( incentive.id ) +
-				'&_wpnonce=' +
-				getAdminSetting( 'wcpay_welcome_page_connect_nonce' ) +
-				'&from=WCADMIN_PAYMENT_INCENTIVE',
-		};
-	}, [ incentive ] );
+	const { isJetpackConnected, connectUrl } = useSelect(
+		( select ) => {
+			return {
+				isJetpackConnected: (
+					select( 'wc/admin/plugins' ) as PluginSelectors
+				 ).isJetpackConnected(),
+				connectUrl:
+					'admin.php?wcpay-connect=1&promo=' +
+					encodeURIComponent( incentive.id ) +
+					'&_wpnonce=' +
+					getAdminSetting( 'wcpay_welcome_page_connect_nonce' ) +
+					'&from=WCADMIN_PAYMENT_INCENTIVE',
+			};
+		},
+		[ incentive ]
+	);
 
 	const determineTrackingSource = () => {
 		const urlParams = new URLSearchParams( window.location.search );
