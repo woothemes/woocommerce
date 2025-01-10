@@ -17,31 +17,36 @@ type TabPanelProps = React.ComponentProps< typeof TabPanel > & {
 	name: string;
 };
 
-type FillProps = Record< string, unknown > | undefined;
+type FillProps = Record< string, unknown >;
 
 type WooProductTabItemProps = {
 	id: string;
 	pluginId: string;
 	tabProps: TabPanelProps | ( ( fillProps: FillProps ) => TabPanelProps );
 	templates?: Array< ProductFillLocationType >;
+	children: ReactNode[];
 };
 
 type WooProductFieldSlotProps = {
 	template: string;
 	children: (
 		tabs: TabPanelProps[],
-		tabChildren: Record< string, ReactNode >
-	) => ReactElement | null;
-};
+		tabChildren: Record< string, ReactNode[] >
+	) => ReactElement[] | null;
+	fillProps: FillProps;
+} & WooProductTabItemProps;
 
 const DEFAULT_TAB_ORDER = 20;
 
-export const WooProductTabItem: React.FC< WooProductTabItemProps > & {
-	Slot: React.VFC<
-		Omit< React.ComponentProps< typeof Slot >, 'children' > &
-			WooProductFieldSlotProps
-	>;
-} = ( { children, tabProps, templates } ) => {
+type WooProductTabItemComponent = React.FC< WooProductFieldSlotProps > & {
+	Slot: React.FC< WooProductFieldSlotProps >;
+};
+
+export const WooProductTabItem: WooProductTabItemComponent = ( {
+	children,
+	tabProps,
+	templates,
+} ) => {
 	if ( ! templates ) {
 		// eslint-disable-next-line no-console
 		console.warn( 'WooProductTabItem fill is missing templates property.' );
@@ -54,8 +59,8 @@ export const WooProductTabItem: React.FC< WooProductTabItemProps > & {
 					name={ `woocommerce_product_tab_${ templateData.name }` }
 					key={ templateData.name }
 				>
-					{ ( fillProps: FillProps ) => {
-						return createOrderedChildren< FillProps >(
+					{ ( fillProps ) => {
+						return createOrderedChildren(
 							children,
 							templateData.order || DEFAULT_TAB_ORDER,
 							{},
@@ -79,6 +84,7 @@ WooProductTabItem.Slot = ( { fillProps, template, children } ) => (
 		fillProps={ fillProps }
 	>
 		{ ( fills ) => {
+			// @ts-expect-error Slot fill is not typed
 			const tabData = fills.reduce(
 				(
 					{

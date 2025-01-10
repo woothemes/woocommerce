@@ -3,7 +3,6 @@
  */
 import { createElement } from '@wordpress/element';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
-import { ReactNode } from 'react';
 
 /**
  * Internal dependencies

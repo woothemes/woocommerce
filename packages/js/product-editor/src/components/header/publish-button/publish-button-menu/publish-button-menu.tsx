@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
+import { MenuGroup, MenuItem } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import { useDispatch } from '@wordpress/data';
 import { createElement, Fragment, useState } from '@wordpress/element';
@@ -75,9 +75,7 @@ export function PublishButtonMenu( {
 		);
 	}
 
-	function renderMenu( {
-		onClose,
-	}: React.ComponentProps< typeof Dropdown > ) {
+	function renderMenu( { onClose }: { onClose?: () => void } ) {
 		return (
 			<>
 				<MenuGroup>
@@ -212,7 +210,7 @@ export function PublishButtonMenu( {
 		<>
 			<ButtonWithDropdownMenu
 				{ ...props }
-				onToggle={ ( isOpen: boolean ) => {
+				onToggle={ ( isOpen ) => {
 					if ( isOpen ) {
 						recordEvent( 'product_publish_dropdown_open', {
 							source: TRACKS_SOURCE,

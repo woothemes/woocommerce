@@ -24,6 +24,7 @@ type WooProductFieldItemProps = {
 	id: string;
 	sections: ProductFillLocationType[];
 	pluginId: string;
+	children: ReactNode;
 };
 
 type WooProductFieldSlotProps = {
@@ -117,6 +118,7 @@ WooProductFieldItem.Slot = ( { fillProps, section } ) => {
 				}
 
 				return Children.map(
+					// @ts-expect-error The type definitions for Slot are incorrect.
 					sortFillsByOrder( filterRegisteredFills( fills ) )?.props
 						.children,
 					( child ) => (

@@ -311,6 +311,7 @@ export const AttributeTermInputField: React.FC<
 												<CheckboxControl
 													onChange={ () => null }
 													checked={ isSelected }
+													// @ts-expect-error The label prop can be a string, however, the final consumer of this prop accepts ReactNode.
 													label={
 														<span>
 															{ item.name }

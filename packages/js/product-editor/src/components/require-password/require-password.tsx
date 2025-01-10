@@ -67,7 +67,9 @@ export function RequirePassword( {
 					<InputControl
 						id={ postPasswordId }
 						value={ postPassword }
-						onChange={ onInputChange }
+						onChange={ ( value ) => {
+							onInputChange( value ?? '' );
+						} }
 					/>
 				</BaseControl>
 			) }

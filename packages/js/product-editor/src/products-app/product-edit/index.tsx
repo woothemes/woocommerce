@@ -4,6 +4,7 @@
 import { DataForm, isItemValid } from '@wordpress/dataviews';
 import type { Form } from '@wordpress/dataviews';
 import { createElement, useState, useMemo } from '@wordpress/element';
+import { FormEvent } from 'react';
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import classNames from 'classnames';
@@ -24,7 +25,6 @@ import { privateApis as editorPrivateApis } from '@wordpress/editor';
  */
 import { unlock } from '../../lock-unlock';
 import { productFields } from '../product-list/fields';
-import { FormEvent } from 'react';
 
 const { NavigableRegion } = unlock( editorPrivateApis );
 
