@@ -3,7 +3,10 @@
  */
 import { Gridicon } from '@automattic/components';
 import { Button, SelectControl } from '@wordpress/components';
-import { PAYMENT_SETTINGS_STORE_NAME, PaymentSettingsSelectors } from '@woocommerce/data';
+import {
+	PAYMENT_SETTINGS_STORE_NAME,
+	type PaymentSettingsSelectors,
+} from '@woocommerce/data';
 import { useSelect } from '@wordpress/data';
 import React, {
 	useState,
@@ -154,11 +157,16 @@ const SettingsPaymentsMethods = () => {
 	const { providers } = useSelect( ( select ) => {
 		return {
 			isFetching: (
-				select( PAYMENT_SETTINGS_STORE_NAME ) as PaymentSettingsSelectors
-			).isFetching(),
-			providers: (
-				select( PAYMENT_SETTINGS_STORE_NAME ) as PaymentSettingsSelectors
-			).getPaymentProviders() || [],
+				select(
+					PAYMENT_SETTINGS_STORE_NAME
+				) as PaymentSettingsSelectors
+			 ).isFetching(),
+			providers:
+				(
+					select(
+						PAYMENT_SETTINGS_STORE_NAME
+					) as PaymentSettingsSelectors
+				 ).getPaymentProviders() || [],
 		};
 	}, [] );
 

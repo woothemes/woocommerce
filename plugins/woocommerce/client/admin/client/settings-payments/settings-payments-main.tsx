@@ -103,7 +103,7 @@ export const SettingsPaymentsMain = () => {
 	const installedPluginSlugs = useSelect( ( select ) => {
 		return (
 			select( PLUGINS_STORE_NAME ) as PluginSelectors
-		).getInstalledPlugins();
+		 ).getInstalledPlugins();
 	}, [] );
 
 	// Make UI refresh when plugin is installed.
@@ -112,15 +112,23 @@ export const SettingsPaymentsMain = () => {
 	);
 
 	const { providers, suggestions, suggestionCategories, isFetching } =
-		useSelect( ( select ) => {
-			const paymentSettings = select( PAYMENT_SETTINGS_STORE_NAME ) as PaymentSettingsSelectors;
-			return {
-				providers: paymentSettings.getPaymentProviders(storeCountry),
-				suggestions: paymentSettings.getSuggestions(),
-				suggestionCategories: paymentSettings.getSuggestionCategories(),
-				isFetching: paymentSettings.isFetching(),
-			};
-		}, [ storeCountry ] );
+		useSelect(
+			( select ) => {
+				const paymentSettings = select(
+					PAYMENT_SETTINGS_STORE_NAME
+				) as PaymentSettingsSelectors;
+
+				return {
+					providers:
+						paymentSettings.getPaymentProviders( storeCountry ),
+					suggestions: paymentSettings.getSuggestions(),
+					suggestionCategories:
+						paymentSettings.getSuggestionCategories(),
+					isFetching: paymentSettings.isFetching(),
+				};
+			},
+			[ storeCountry ]
+		);
 
 	const dismissIncentive = useCallback(
 		( dismissHref: string, context: string ) => {

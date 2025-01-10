@@ -73,7 +73,9 @@ export const SettingsPaymentsMethods: React.FC<
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
 	const { paymentMethods, isFetching } = useSelect( ( select ) => {
-		const paymentSettings = select( PAYMENT_SETTINGS_STORE_NAME ) as PaymentSettingsSelectors;
+		const paymentSettings = select(
+			PAYMENT_SETTINGS_STORE_NAME
+		) as PaymentSettingsSelectors;
 		const paymentProviders = paymentSettings.getPaymentProviders() || [];
 		const recommendedPaymentMethods =
 			getRecommendedPaymentMethods( paymentProviders );
