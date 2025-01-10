@@ -3,6 +3,7 @@
  * Admin View: Bulk Edit Products
  */
 
+use Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController;
 use Automattic\WooCommerce\Utilities\I18nUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -66,6 +67,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<input type="text" name="_sale_price" class="text sale_price" placeholder="<?php printf( esc_attr__( 'Enter sale price (%s)', 'woocommerce' ), get_woocommerce_currency_symbol() ); ?>" value="" />
 			</label>
 		</div>
+
+		<?php if ( wc_get_container()->get( CostOfGoodsSoldController::class )->feature_is_enabled() ) : ?>
+			<div class="inline-edit-group">
+				<label class="alignleft">
+					<span class="title"><?php _e( 'Cost', 'woocommerce' ); ?></span>
+					<span class="input-text-wrap">
+						<select class="change_cogs_value change_to" name="change_cogs_value">
+							<?php
+							$options = array(
+								''  => __( '— No change —', 'woocommerce' ),
+								'1' => __( 'Change to:', 'woocommerce' ),
+							);
+							foreach ( $options as $key => $value ) {
+								echo '<option value="' . esc_attr( $key ) . '">' . esc_html( $value ) . '</option>';
+							}
+							?>
+						</select>
+					</span>
+				</label>
+				<label class="change-input">
+					<input type="text" name="_cogs_value" class="text cogs_value" placeholder="<?php printf( esc_attr__( 'Enter cost value (%s)', 'woocommerce' ), get_woocommerce_currency_symbol() ); ?>" value="" />
+				</label>
+			<div class="inline-edit-group">
+		<?php endif; ?>
 
 		<?php if ( wc_tax_enabled() ) : ?>
 			<label>

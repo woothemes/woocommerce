@@ -8,6 +8,7 @@
 
 use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Enums\ProductType;
+use Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController;
 use Automattic\WooCommerce\Utilities\NumberUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -655,6 +656,10 @@ class WC_Admin_Post_Types {
 		$stock_status = empty( $request_data['_stock_status'] ) ? null : wc_clean( $request_data['_stock_status'] );
 		$product      = $this->maybe_update_stock_status( $product, $stock_status );
 
+		if ( wc_get_container()->get( CostOfGoodsSoldController::class )->feature_is_enabled() ) {
+			$this->maybe_update_cogs_value( $product, $request_data );
+		}
+
 		$product->save();
 
 		do_action( 'woocommerce_product_bulk_edit_save', $product );
@@ -978,6 +983,22 @@ class WC_Admin_Post_Types {
 	 */
 	protected function request_data() {
 		return $_REQUEST;
+	}
+
+	/**
+	 * Update the Cost of Goods Sold value coming from a bulk edit for a product.
+	 *
+	 * @param WC_Product $product The product to update.
+	 * @param array      $request_data The current request data.
+	 */
+	private function maybe_update_cogs_value( WC_Product $product, array $request_data ) {
+		$change_cogs_value = absint( $request_data['change_cogs_value'] );
+		if ( 1 !== $change_cogs_value ) {
+			return;
+		}
+
+		$cogs_value = wc_clean( wp_unslash( $request_data['_cogs_value'] ?? '0' ) );
+		$product->set_cogs_value( $cogs_value );
 	}
 }
 
