@@ -34,14 +34,18 @@ describe( 'TagField', () => {
 
 	it( 'should render a dropdown select control', () => {
 		const { queryByText, queryByPlaceholderText } = render(
-			<Form initialValues={ { tags: [] } }>
-				{ ( { getInputProps }: FormContextType< Product > ) => (
+			<Form< {
+				tags: ProductTagNodeProps[];
+			} >
+				initialValues={ { tags: [] } }
+			>
+				{ ( { getInputProps } ) => (
 					<TagField
 						id="tag-field"
 						isVisible={ true }
 						label="Tags"
 						placeholder="Search or create tag…"
-						{ ...getInputProps< ProductTagNodeProps[] >( 'tags' ) }
+						{ ...getInputProps( 'tags' ) }
 					/>
 				) }
 			</Form>
@@ -53,7 +57,9 @@ describe( 'TagField', () => {
 
 	it( 'should pass in the selected tags as select control items', () => {
 		const { queryAllByText, queryByPlaceholderText } = render(
-			<Form
+			<Form< {
+				tags: ProductTagNodeProps[];
+			} >
 				initialValues={ {
 					tags: [
 						{ id: 2, name: 'Test' },
@@ -61,13 +67,13 @@ describe( 'TagField', () => {
 					],
 				} }
 			>
-				{ ( { getInputProps }: FormContextType< Product > ) => (
+				{ ( { getInputProps } ) => (
 					<TagField
 						id="another-tag-field"
 						isVisible={ true }
 						label="Tags"
 						placeholder="Search or create tag…"
-						{ ...getInputProps< ProductTagNodeProps[] >( 'tags' ) }
+						{ ...getInputProps( 'tags' ) }
 					/>
 				) }
 			</Form>

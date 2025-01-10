@@ -9,7 +9,7 @@ import { ProductAttributeTerm } from '@woocommerce/data';
 /**
  * Internal dependencies
  */
-// import { AttributeTermInputField } from '../attribute-term-input-field'; // see below explanation for the skip
+import { AttributeTermInputField } from '../attribute-term-input-field'; // see below explanation for the skip
 /* eslint-disable react/jsx-no-undef */
 
 jest.mock( '@wordpress/data', () => ( {
