@@ -608,9 +608,10 @@
 
 	/**
 	 * Handle reset key down event for accessibility.
+	 * @param {KeyboardEvent} event - The keyboard event object
 	 */
 	VariationForm.prototype.onResetKeyDown = function ( event ) {
-		if ( event.keyCode === 32 || event.keyCode === 13 ) {
+		if ( event.code === 'Enter' || event.code === 'Space' ) {
 			event.preventDefault();
 			event.data.variationForm.onReset( event );
 		}
