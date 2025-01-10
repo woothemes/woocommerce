@@ -21,14 +21,16 @@ export const ColorPalette = () => {
 		const { getOption, hasFinishedResolution } =
 			select( OPTIONS_STORE_NAME );
 		return {
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			aiSuggestions: getOption(
 				'woocommerce_customize_store_ai_suggestions'
 			) as { defaultColorPalette: ColorPaletteResponse },
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			isLoading: ! hasFinishedResolution( 'getOption', [
 				'woocommerce_customize_store_ai_suggestions',
 			] ),
 		};
-	} );
+	}, [] );
 
 	const [ colorPalettes, setColorPalettes ] = useState(
 		[] as typeof COLOR_PALETTES
