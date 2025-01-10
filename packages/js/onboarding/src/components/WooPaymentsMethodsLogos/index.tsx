@@ -19,6 +19,15 @@ import WooPay from '../../images/payment-methods/woopay';
 import AfterPay from '../../images/payment-methods/afterpay';
 import Affirm from '../../images/payment-methods/affirm';
 import Klarna from '../../images/payment-methods/klarna';
+import Cartebancaire from '../../images/cards/cb';
+import UnionPay from '../../images/cards/unionpay';
+import Diners from '../../images/cards/diners';
+import Eftpos from '../../images/cards/eftpos';
+import Ideal from '../../images/payment-methods/ideal';
+import Bancontact from '../../images/payment-methods/bancontact';
+import Eps from '../../images/payment-methods/eps';
+import Becs from '../../images/payment-methods/becs';
+import Przelewy24 from '../../images/payment-methods/przelewy24';
 
 /**
  * Payment methods list.
@@ -65,8 +74,44 @@ const PaymentMethods = [
 		component: <Klarna key="klarna" />,
 	},
 	{
+		name: 'cartebancaire',
+		component: <Cartebancaire key="cartebancaire" />,
+	},
+	{
+		name: 'unionpay',
+		component: <UnionPay key="unionpay" />,
+	},
+	{
+		name: 'diners',
+		component: <Diners key="diners" />,
+	},
+	{
+		name: 'eftpos',
+		component: <Eftpos key="eftpos" />,
+	},
+	{
 		name: 'jcb',
 		component: <JCB key="jcb" />,
+	},
+	{
+		name: 'bancontact',
+		component: <Bancontact key="bancontact" />,
+	},
+	{
+		name: 'becs',
+		component: <Becs key="becs" />,
+	},
+	{
+		name: 'eps',
+		component: <Eps key="eps" />,
+	},
+	{
+		name: 'ideal',
+		component: <Ideal key="ideal" />,
+	},
+	{
+		name: 'przelewy24',
+		component: <Przelewy24 key="przelewy24" />,
 	},
 ];
 
