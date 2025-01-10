@@ -250,7 +250,6 @@ class CheckoutFieldsFrontend {
 				) {
 					$address[ $field_key ]['options'] = array( '' => $address[ $field_key ]['placeholder'] ) + $address[ $field_key ]['options'];
 				}
-
 			}
 
 			if ( 'checkbox' === $field['type'] ) {
