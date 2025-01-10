@@ -125,7 +125,7 @@ function ShippingClassForm( { onAdd, onCancel }: ShippingClassFormProps ) {
 			/>
 
 			<InputControl
-				{ ...getInputProps< string >( 'slug' ) }
+				{ ...getInputProps( 'slug' ) }
 				label={ __( 'Slug', 'woocommerce' ) }
 				onChange={ ( value ) => {
 					if ( value ) {

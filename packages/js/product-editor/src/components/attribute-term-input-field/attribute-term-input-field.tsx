@@ -83,17 +83,17 @@ export const AttributeTermInputField: React.FC<
 			return resolveSelect(
 				EXPERIMENTAL_PRODUCT_ATTRIBUTE_TERMS_STORE_NAME
 			)
-				.getProductAttributeTerms( {
+				.getProductAttributeTerms< ProductAttributeTerm[] >( {
 					search: searchString || '',
 					attribute_id: attributeId,
 				} )
 				.then(
-					( attributeTerms: ProductAttributeTerm[] ) => {
+					( attributeTerms ) => {
 						setFetchedItems( attributeTerms );
 						setIsFetching( false );
 						return attributeTerms;
 					},
-					( error: string ) => {
+					( error ) => {
 						setIsFetching( false );
 						return error;
 					}
