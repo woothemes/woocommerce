@@ -13,6 +13,8 @@ use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestion
 use Exception;
 use WC_Payment_Gateway;
 use WC_Gateway_BACS;
+use WC_Gateway_Cheque;
+use WC_Gateway_COD;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -26,7 +28,7 @@ class PaymentProviders {
 	public const TYPE_OFFLINE_PMS_GROUP = 'offline_pms_group';
 	public const TYPE_SUGGESTION        = 'suggestion';
 
-	public const OFFLINE_METHODS = array( WC_Gateway_BACS::ID, \WC_Gateway_Cheque::ID, \WC_Gateway_COD::ID );
+	public const OFFLINE_METHODS = array( WC_Gateway_BACS::ID, WC_Gateway_Cheque::ID, WC_Gateway_COD::ID );
 
 	public const EXTENSION_NOT_INSTALLED = 'not_installed';
 	public const EXTENSION_INSTALLED     = 'installed';
@@ -49,8 +51,8 @@ class PaymentProviders {
 	 */
 	private array $payment_gateways_providers_class_map = array(
 		WC_Gateway_BACS::ID   => WCCore::class,
-		\WC_Gateway_Cheque::ID => WCCore::class,
-		\WC_Gateway_COD::ID    => WCCore::class,
+		WC_Gateway_Cheque::ID => WCCore::class,
+		WC_Gateway_COD::ID    => WCCore::class,
 		\WC_Gateway_Paypal::ID => WCCore::class,
 		'woocommerce_payments' => WooPayments::class,
 		'ppcp-gateway'         => PayPal::class,

@@ -1601,7 +1601,7 @@ class WC_Admin_Setup_Wizard {
 				'image'       => '',
 				'class'       => '',
 			),
-			\WC_Gateway_COD::ID    => array(
+			WC_Gateway_COD::ID    => array(
 				'name'        => __( 'Cash on delivery', 'woocommerce' ),
 				'description' => __( 'A simple offline gateway that lets you accept cash on delivery.', 'woocommerce' ),
 				'image'       => '',

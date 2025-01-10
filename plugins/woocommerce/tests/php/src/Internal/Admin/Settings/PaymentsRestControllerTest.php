@@ -10,6 +10,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use WC_REST_Unit_Test_Case;
 use WP_REST_Request;
 use WC_Gateway_BACS;
+use WC_Gateway_Cheque;
 
 /**
  * PaymentsRestController API controller test.
@@ -975,7 +976,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 				),
 			);
 			$mock_providers[] = array(
-				'id'          => \WC_Gateway_Cheque::ID,
+				'id'          => WC_Gateway_Cheque::ID,
 				'_order'      => $order++,
 				'_type'       => PaymentProviders::TYPE_OFFLINE_PM,
 				'title'       => 'Check payments',
@@ -1011,7 +1012,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 				),
 			);
 			$mock_providers[] = array(
-				'id'          => \WC_Gateway_COD::ID,
+				'id'          => WC_Gateway_COD::ID,
 				'_order'      => $order++,
 				'_type'       => PaymentProviders::TYPE_OFFLINE_PM,
 				'title'       => 'Cash on delivery',

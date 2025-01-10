@@ -55,7 +55,7 @@ class Payment_Gateways extends WC_REST_Unit_Test_Case {
 			array_filter(
 				$gateways,
 				function( $gateway ) {
-					return \WC_Gateway_Cheque::ID === $gateway['id'];
+					return WC_Gateway_Cheque::ID === $gateway['id'];
 				}
 			)
 		);
@@ -63,7 +63,7 @@ class Payment_Gateways extends WC_REST_Unit_Test_Case {
 
 		$this->assertArraySubset(
 			array(
-				'id'                     => \WC_Gateway_Cheque::ID,
+				'id'                     => WC_Gateway_Cheque::ID,
 				'title'                  => 'Check payments',
 				'description'            => 'Please send a check to Store Name, Store Street, Store Town, Store State / County, Store Postcode.',
 				'order'                  => '',
