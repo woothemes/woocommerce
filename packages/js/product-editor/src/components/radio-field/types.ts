@@ -12,7 +12,7 @@ export type RadioFieldProps = Omit<
 	disabled?: boolean;
 	className?: string;
 	onChange( value: string ): void;
-	selected: string | undefined;
+	selected?: string;
 	options: {
 		label: string;
 		value: string;

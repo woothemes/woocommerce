@@ -68,9 +68,7 @@ export function RequirePassword( {
 						id={ postPasswordId }
 						value={ postPassword }
 						onChange={ ( value ) => {
-							if ( value ) {
-								onInputChange( value );
-							}
+							onInputChange( value ?? '' );
 						} }
 					/>
 				</BaseControl>

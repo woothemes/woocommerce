@@ -65,11 +65,11 @@ export const useNumberInputProps = ( {
 			}
 		},
 		onChange( newValue ) {
-			if ( ! newValue ) {
-				return;
-			}
 			let sanitizeValue = parseNumber(
-				newValue.replace( NOT_NUMBERS_OR_SEPARATORS_OR_MINUS_REGEX, '' )
+				( newValue ?? '' ).replace(
+					NOT_NUMBERS_OR_SEPARATORS_OR_MINUS_REGEX,
+					''
+				)
 			);
 			const numberValue = Number( sanitizeValue );
 

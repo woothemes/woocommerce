@@ -15,28 +15,25 @@ type ProductFieldSectionProps = {
 	title: string;
 	description: string | JSX.Element;
 	className?: string;
-	children: JSX.Element | JSX.Element[];
 };
 
-export const ProductFieldSection: React.FC< ProductFieldSectionProps > = ( {
+export const ProductFieldSection = ( {
 	id,
 	title,
 	description,
 	className,
 	children,
-} ) => (
+}: React.PropsWithChildren< ProductFieldSectionProps > ) => (
 	<ProductSectionLayout
 		title={ title }
 		description={ description }
 		className={ className }
 	>
-		<>
-			<Card>
-				<CardBody>
-					{ children }
-					<WooProductFieldItem.Slot name="" section={ id } />
-				</CardBody>
-			</Card>
-		</>
+		<Card>
+			<CardBody>
+				{ children }
+				<WooProductFieldItem.Slot name="" section={ id } />
+			</CardBody>
+		</Card>
 	</ProductSectionLayout>
 );

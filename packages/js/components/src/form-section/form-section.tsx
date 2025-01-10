@@ -8,7 +8,6 @@ type FormSectionProps = {
 	title: JSX.Element | string;
 	description: JSX.Element | string;
 	className?: string;
-	children: JSX.Element[];
 };
 
 export const FormSection = ( {
