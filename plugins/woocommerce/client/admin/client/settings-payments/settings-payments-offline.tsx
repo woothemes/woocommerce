@@ -18,7 +18,9 @@ import { OfflinePaymentGateways } from './components/offline-payment-gateways';
 
 export const SettingsPaymentsOffline = () => {
 	const { offlinePaymentGateways, isFetching } = useSelect( ( select ) => {
-		const paymentSettings = select( PAYMENT_SETTINGS_STORE_NAME ) as PaymentSettingsSelectors;
+		const paymentSettings = select(
+			PAYMENT_SETTINGS_STORE_NAME
+		) as PaymentSettingsSelectors;
 		return {
 			isFetching: paymentSettings.isFetching(),
 			offlinePaymentGateways: paymentSettings.getOfflinePaymentGateways(),
