@@ -248,7 +248,7 @@ class CheckoutFieldsFrontend {
 					! empty( $address[ $field_key ]['placeholder'] )
 					&& ! array_key_exists( '', $address[ $field_key ]['options'] )
 				) {
-					$address[ $field_key ]['options'] = array_merge( array( '' => $address[ $field_key ]['placeholder'] ), $address[ $field_key ]['options'] );
+					$address[ $field_key ]['options'] = array( '' => $address[ $field_key ]['placeholder'] ) + $address[ $field_key ]['options'];
 				}
 
 			}
