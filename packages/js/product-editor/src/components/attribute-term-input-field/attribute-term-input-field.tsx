@@ -83,17 +83,17 @@ export const AttributeTermInputField: React.FC<
 			return resolveSelect(
 				EXPERIMENTAL_PRODUCT_ATTRIBUTE_TERMS_STORE_NAME
 			)
-				.getProductAttributeTerms( {
+				.getProductAttributeTerms< ProductAttributeTerm[] >( {
 					search: searchString || '',
 					attribute_id: attributeId,
 				} )
 				.then(
-					( attributeTerms: ProductAttributeTerm[] ) => {
+					( attributeTerms ) => {
 						setFetchedItems( attributeTerms );
 						setIsFetching( false );
 						return attributeTerms;
 					},
-					( error: string ) => {
+					( error ) => {
 						setIsFetching( false );
 						return error;
 					}
@@ -311,7 +311,12 @@ export const AttributeTermInputField: React.FC<
 												<CheckboxControl
 													onChange={ () => null }
 													checked={ isSelected }
-													label={ item.name }
+													// @ts-expect-error The label prop can be a string, however, the final consumer of this prop accepts ReactNode.
+													label={
+														<span>
+															{ item.name }
+														</span>
+													}
 												/>
 											) : (
 												<div className="woocommerce-attribute-term-field__add-new">
