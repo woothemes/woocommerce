@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Fake WooPayments class.
  *
