@@ -311,7 +311,12 @@ export const AttributeTermInputField: React.FC<
 												<CheckboxControl
 													onChange={ () => null }
 													checked={ isSelected }
-													label={ item.name }
+													// @ts-expect-error The label prop can be a string, however, the final consumer of this prop accepts ReactNode.
+													label={
+														<span>
+															{ item.name }
+														</span>
+													}
 												/>
 											) : (
 												<div className="woocommerce-attribute-term-field__add-new">
