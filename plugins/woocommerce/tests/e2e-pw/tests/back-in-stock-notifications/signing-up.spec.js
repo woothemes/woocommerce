@@ -136,6 +136,7 @@ test.describe( 'Feature: Signing up', () => {
 		test( 'Sign-ups are double opt-in and create new account', async () => {
 			const { given, when, then } = helper;
 			await given.signUpsAreDoubleOptInAndANewAccountIsCreatedOnSignUp();
+			await given.aSimpleProductThatIsOutOfStock();
 			await given.iGoToTheProductPage();
 			await then.iSeeAPromptToSignUpAndBeNotifiedWhenTheProductIsBackInStock();
 			await when.iEnterMyEmail();

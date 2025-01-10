@@ -11,7 +11,8 @@ import { setOption } from '../../utils/options';
 import { logIn } from '../../utils/login';
 import { customer } from '../../test-data/data';
 
-const productName = `Out of stock product test ${ Date.now() }`;
+const now = Date.now();
+const productName = `Out of stock product test ${ now }`;
 const productPrice = '13.99';
 
 class AcceptanceHelper {
@@ -54,6 +55,18 @@ class AcceptanceHelper {
 			),
 		numberOfCustomerWhoHaveJoinedTheWaitlistIsVisible:
 			this.numberOfCustomerWhoHaveJoinedTheWaitlistIsVisible.bind( this ),
+		aSimpleProductThatIsOutOfStock:
+			this.aSimpleProductThatIsOutOfStock.bind( this ),
+		aVariableProductThatIsOutOfStock:
+			this.aVariableProductThatIsOutOfStock.bind( this ),
+		theProductHasNotifications:
+			this.theProductHasNotifications.bind( this ),
+		theVariationHasNotifications:
+			this.theVariationHasNotifications.bind( this ),
+		aVariableProductThatContainsOutOfStockVariationsWithAnAttributeWithValueAny:
+			this.aVariableProductThatContainsOutOfStockVariationsWithAnAttributeWithValueAny.bind(
+				this
+			),
 	};
 	when = {
 		iClickTheNotifyMeButton: this.iClickTheNotifyMeButton.bind( this ),
@@ -67,6 +80,12 @@ class AcceptanceHelper {
 		iAmViewingThePageOfASimpleProductThatIsOutOfStock:
 			this.iAmViewingThePageOfASimpleProductThatIsOutOfStock.bind( this ),
 		iGoToTheProductPage: this.iGoToTheProductPage.bind( this ),
+		iViewTheConfirmationIReceivedViaEmail:
+			this.iViewTheConfirmationIReceivedViaEmail.bind( this ),
+		iFollowTheLink: this.iFollowTheLink.bind( this ),
+		iViewTheDoubleOptInVerificationIReceivedViaEmail:
+			this.iViewTheDoubleOptInVerificationIReceivedViaEmail.bind( this ),
+		iFollowTheConfirmLink: this.iFollowTheConfirmLink.bind( this ),
 	};
 	then = {
 		iSeeAPromptToSignUpAndBeNotifiedWhenTheProductIsBackInStock:
@@ -95,7 +114,121 @@ class AcceptanceHelper {
 		iAmPromptedToCheckMyEmail: this.iAmPromptedToCheckMyEmail.bind( this ),
 		iSeeThatSomeCustomersHaveAlreadySignedUp:
 			this.iSeeThatSomeCustomersHaveAlreadySignedUp.bind( this ),
+		iSeeSomeDetailsAboutTheProductISubscribedTo:
+			this.iSeeSomeDetailsAboutTheProductISubscribedTo.bind( this ),
+		iSeeSomeDetailsAboutTheVariationProductISubscribedTo:
+			this.iSeeSomeDetailsAboutTheVariationProductISubscribedTo.bind(
+				this
+			),
+		iSeeALinkToCancelMyRequest:
+			this.iSeeALinkToCancelMyRequest.bind( this ),
+		iSeeThatMyRequestWasCancelled:
+			this.iSeeThatMyRequestWasCancelled.bind( this ),
+		iAmPromptedToVerifyMyRequest:
+			this.iAmPromptedToVerifyMyRequest.bind( this ),
+		iSeeALinkToVerifyMyRequest:
+			this.iSeeALinkToVerifyMyRequest.bind( this ),
+		iSeeTheTitleOfTheVerificationEmail:
+			this.iSeeTheTitleOfTheVerificationEmail.bind( this ),
+		iSeeAMessageThatMyConfirmRequestWasSuccessful:
+			this.iSeeAMessageThatMyConfirmRequestWasSuccessful.bind( this ),
+		iCanSeeAConfirmationEmailWithDetailsAboutTheVariationProductISubscribedTo:
+			this.iCanSeeAConfirmationEmailWithDetailsAboutTheVariationProductISubscribedTo.bind(
+				this
+			),
+		iCanSeeAConfirmationEmailWithDetailsAboutTheProductISubscribedTo:
+			this.iCanSeeAConfirmationEmailWithDetailsAboutTheProductISubscribedTo.bind(
+				this
+			),
 	};
+
+	async iCanSeeAConfirmationEmailWithDetailsAboutTheVariationProductISubscribedTo() {
+		await this.iViewTheConfirmationIReceivedViaEmail();
+		await this.iSeeSomeDetailsAboutTheVariationProductISubscribedTo();
+	}
+
+	async iCanSeeAConfirmationEmailWithDetailsAboutTheProductISubscribedTo() {
+		await this.iViewTheConfirmationIReceivedViaEmail();
+		await this.iSeeSomeDetailsAboutTheProductISubscribedTo();
+	}
+
+	async iSeeAMessageThatMyConfirmRequestWasSuccessful() {
+		await expect(
+			this.page.getByText(
+				'Successfully verified stock notifications for'
+			)
+		).toBeVisible();
+	}
+
+	async iFollowTheConfirmLink() {
+		await this.page
+			.getByRole( 'link', { name: 'Confirm', exact: true } )
+			.click();
+	}
+
+	async iSeeTheTitleOfTheVerificationEmail() {
+		await expect(
+			this.page.getByText(
+				new RegExp( `Join the [“"]${ productName }[”"] waitlist.` )
+			)
+		).toBeVisible();
+	}
+
+	async iAmPromptedToVerifyMyRequest() {
+		await expect(
+			this.page.getByText(
+				'Please follow the link below to complete the sign-up process'
+			)
+		).toBeVisible();
+	}
+
+	async iSeeALinkToVerifyMyRequest() {
+		await expect(
+			this.page.getByRole( 'link', { name: 'Confirm', exact: true } )
+		).toBeVisible();
+	}
+
+	async iViewTheDoubleOptInVerificationIReceivedViaEmail() {
+		await this.page.goto(
+			'/verification-email/?notification_id=' + this.notificationId
+		);
+	}
+
+	async iFollowTheLink() {
+		await this.page.click( 'text=Click here' );
+	}
+
+	async iSeeThatMyRequestWasCancelled() {
+		await expect(
+			this.page.getByText( 'Successfully unsubscribe' )
+		).toBeVisible();
+	}
+
+	async iSeeALinkToCancelMyRequest() {
+		await expect(
+			this.page.getByText(
+				'You have received this message because your e-mail address was used to sign up for stock notifications on our store. Changed your mind? Click here to unsubscribe.'
+			)
+		).toBeVisible();
+	}
+
+	async iViewTheConfirmationIReceivedViaEmail() {
+		await this.page.goto(
+			'/confirmation-email/?notification_id=' + this.notificationId
+		);
+	}
+
+	async iSeeSomeDetailsAboutTheProductISubscribedTo( name ) {
+		await expect(
+			this.page.getByText(
+				new RegExp(
+					`You have joined the [“"]${
+						name || productName
+					}[”"] waitlist.`
+				)
+			)
+		).toBeVisible();
+	}
 
 	async iSeeThatSomeCustomersHaveAlreadySignedUp() {
 		await expect(
@@ -125,16 +258,6 @@ class AcceptanceHelper {
 			'wc_bis_create_new_account_on_registration',
 			'yes'
 		);
-		await this.api
-			.post( 'products', {
-				name: productName,
-				type: 'simple',
-				regular_price: productPrice,
-				stock_status: 'outofstock',
-			} )
-			.then( ( response ) => {
-				this.productData = response.data;
-			} );
 	}
 
 	async signUpsAreSingleOptInAndANewAccountIsCreatedOnSignUp() {
@@ -270,7 +393,7 @@ class AcceptanceHelper {
 		);
 	}
 
-	async iAmViewingThePageOfASimpleProductThatIsOutOfStock() {
+	async aSimpleProductThatIsOutOfStock() {
 		await this.api
 			.post( 'products', {
 				name: productName,
@@ -281,13 +404,37 @@ class AcceptanceHelper {
 			.then( ( response ) => {
 				this.productData = response.data;
 			} );
+	}
+
+	async theProductHasNotifications() {
+		return this.api
+			.post( 'create-bis-notifications', {
+				product_id: this.productData.id,
+			} )
+			.then( ( response ) => {
+				this.notificationId = response.data.data;
+			} );
+	}
+
+	async theVariationHasNotifications() {
+		return this.api
+			.post( 'create-bis-notifications', {
+				product_id: this.variationId,
+			} )
+			.then( ( response ) => {
+				this.notificationId = response.data.data;
+			} );
+	}
+
+	async iAmViewingThePageOfASimpleProductThatIsOutOfStock() {
+		await this.aSimpleProductThatIsOutOfStock();
 		this.page.goto( this.productData.permalink );
 	}
 
-	async iAmViewingThePageOfAVariableProductThatContainsOutOfStockVariationsWithAnAttributeWithValueAny() {
+	async aVariableProductThatContainsOutOfStockVariationsWithAnAttributeWithValueAny() {
 		await this.api
 			.post( 'products', {
-				name: 'A Variable Product with any',
+				name: `A Variable Product with any ${ now }`,
 				type: 'variable',
 				attributes: [
 					{
@@ -301,13 +448,19 @@ class AcceptanceHelper {
 			.then( ( response ) => {
 				this.productData = response.data;
 			} );
-		await this.api.post(
+		const variation = await this.api.post(
 			'products/' + this.productData.id + '/variations',
 			{
 				regular_price: '1.00',
 				stock_status: 'outofstock',
 			}
 		);
+		this.outOfStockVariationType = 'free';
+		this.variationId = variation.data.id;
+	}
+
+	async iAmViewingThePageOfAVariableProductThatContainsOutOfStockVariationsWithAnAttributeWithValueAny() {
+		await this.aVariableProductThatContainsOutOfStockVariationsWithAnAttributeWithValueAny();
 		await this.page.goto( this.productData.permalink );
 	}
 
@@ -319,10 +472,19 @@ class AcceptanceHelper {
 		return this.page.getByRole( 'combobox' ).selectOption( 'Green' );
 	}
 
-	async iAmViewingThePageOfAVariableProductThatContainsOutOfStockVariations() {
+	async iSeeSomeDetailsAboutTheVariationProductISubscribedTo() {
+		// this is part of a regex and contains two types of dash characters.
+		await this.iSeeSomeDetailsAboutTheProductISubscribedTo(
+			this.outOfStockVariationType === 'defined'
+				? `A Variable Product ${ now } [-–] Green`
+				: `A Variable Product with any ${ now }`
+		);
+	}
+
+	async aVariableProductThatIsOutOfStock() {
 		await this.api
 			.post( 'products', {
-				name: 'A Variable Product',
+				name: `A Variable Product ${ now }`,
 				type: 'variable',
 				attributes: [
 					{
@@ -348,7 +510,7 @@ class AcceptanceHelper {
 				],
 			}
 		);
-		await this.api.post(
+		const variation = await this.api.post(
 			'products/' + this.productData.id + '/variations',
 			{
 				regular_price: '1.00',
@@ -361,6 +523,12 @@ class AcceptanceHelper {
 				],
 			}
 		);
+		this.outOfStockVariationType = 'defined';
+		this.variationId = variation.data.id;
+	}
+
+	async iAmViewingThePageOfAVariableProductThatContainsOutOfStockVariations() {
+		await this.aVariableProductThatIsOutOfStock();
 		await this.page.goto( this.productData.permalink );
 	}
 

@@ -7,7 +7,8 @@
  * Author URI: https://somewherewarm.com/
  */
 
-class SW_BIS_Acceptance_Test_Helper {
+class SW_BIS_Acceptance_Test_Helper
+{
 
 	protected static $default_settings = array(
 		'wc_bis_account_required'                   => 'no',
@@ -21,16 +22,32 @@ class SW_BIS_Acceptance_Test_Helper {
 	/*
 	 * Add Hooks.
 	 */
-	public static function init() {
+	public static function init()
+	{
 
 		// Handle requests.
-		add_action( 'woocommerce_init', array( __CLASS__, 'handle_request' ), 100 );
+		add_action('woocommerce_init', array(__CLASS__, 'handle_request'), 100);
 
 		// Register shortcodes for viewing confirmation emails.
-		add_action( 'plugins_loaded', array( __CLASS__, 'register_shortcodes' ) );
+		add_action('plugins_loaded', array(__CLASS__, 'register_shortcodes'));
 
 		// Creates some notifications that are required for tests.
-		add_action( 'wc_e2e_provision', array( __CLASS__, 'create_notifications' ) );
+		add_action('wc_e2e_provision', array(__CLASS__, 'create_notifications'));
+
+		add_action('rest_api_init', array(__CLASS__, 'register_rest_routes'));
+	}
+
+	public static function register_rest_routes()
+	{
+		register_rest_route('wc/v3', '/create-bis-notifications', array(
+			'methods'  => 'POST',
+			'callback' => array(__CLASS__, 'create_notifications'),
+			'args'                => array(
+				'product_id' => array(
+					'required'          => true,
+				),
+			),
+		));
 	}
 
 	/*
@@ -42,17 +59,18 @@ class SW_BIS_Acceptance_Test_Helper {
 	 * @param  string $type admin, ajax, cron or frontend.
 	 * @return bool
 	 */
-	protected static function is_request( $type ) {
+	protected static function is_request($type)
+	{
 
-		switch ( $type ) {
+		switch ($type) {
 			case 'admin':
 				return is_admin();
 			case 'ajax':
-				return defined( 'DOING_AJAX' );
+				return defined('DOING_AJAX');
 			case 'cron':
-				return defined( 'DOING_CRON' );
+				return defined('DOING_CRON');
 			case 'frontend':
-				return ( ! is_admin() || defined( 'DOING_AJAX' ) ) && ! defined( 'DOING_CRON' );
+				return (! is_admin() || defined('DOING_AJAX')) && ! defined('DOING_CRON');
 		}
 	}
 
@@ -66,33 +84,34 @@ class SW_BIS_Acceptance_Test_Helper {
 	 *
 	 * @return  void
 	 */
-	public static function handle_request() {
+	public static function handle_request()
+	{
 
-		if ( ! self::is_request( 'frontend' ) ) {
+		if (! self::is_request('frontend')) {
 			return;
 		}
 
-		if ( ! empty( $_GET[ 'process_notifications' ] ) ) {
+		if (! empty($_GET['process_notifications'])) {
 
-			$action_id = ActionScheduler::store()->query_action( array(
+			$action_id = ActionScheduler::store()->query_action(array(
 				'hook' => 'wc_bis_process_notifications_batch',
-			) );
+			));
 
-			if ( $action_id ) {
+			if ($action_id) {
 				$runner = ActionScheduler_QueueRunner::instance();
-				$runner->process_action( $action_id, 'E2E Tester' );
+				$runner->process_action($action_id, 'E2E Tester');
 			}
 		}
 
-		if ( ! empty( $_GET[ 'process_outofstock_products' ] ) ) {
+		if (! empty($_GET['process_outofstock_products'])) {
 
-			$action_id = ActionScheduler::store()->query_action( array(
+			$action_id = ActionScheduler::store()->query_action(array(
 				'hook' => 'wc_bis_process_outofstock_products',
-			) );
+			));
 
-			if ( $action_id ) {
+			if ($action_id) {
 				$runner = ActionScheduler_QueueRunner::instance();
-				$runner->process_action( $action_id, 'E2E Tester' );
+				$runner->process_action($action_id, 'E2E Tester');
 			}
 		}
 	}
@@ -102,10 +121,11 @@ class SW_BIS_Acceptance_Test_Helper {
 	 *
 	 * @return  void
 	 */
-	public static function register_shortcodes() {
-		add_shortcode( 'confirmation_received_email', array( __CLASS__, 'render_confirmation_received_email_shortcode' ) );
-		add_shortcode( 'notification_received_email', array( __CLASS__, 'render_notification_received_email_shortcode' ) );
-		add_shortcode( 'verify_received_email', array( __CLASS__, 'render_verification_received_email_shortcode' ) );
+	public static function register_shortcodes()
+	{
+		add_shortcode('confirmation_received_email', array(__CLASS__, 'render_confirmation_received_email_shortcode'));
+		add_shortcode('notification_received_email', array(__CLASS__, 'render_notification_received_email_shortcode'));
+		add_shortcode('verify_received_email', array(__CLASS__, 'render_verification_received_email_shortcode'));
 	}
 
 	/**
@@ -114,21 +134,22 @@ class SW_BIS_Acceptance_Test_Helper {
 	 * @param  array $atts
 	 * @return string
 	 */
-	public static function render_confirmation_received_email_shortcode( $atts ) {
+	public static function render_confirmation_received_email_shortcode($atts)
+	{
 
-		$args = shortcode_atts( array(
+		$args = shortcode_atts(array(
 			'notification_id' => ''
-		), $atts );
+		), $atts);
 
-		$notification_id = ! empty( $_GET[ 'notification_id' ] ) ? intval( $_GET[ 'notification_id' ] ) : intval( $args[ 'notification_id' ] );
+		$notification_id = ! empty($_GET['notification_id']) ? intval($_GET['notification_id']) : intval($args['notification_id']);
 
-		if ( ! $notification_id ) {
+		if (! $notification_id) {
 			return;
 		}
 
-		$notification = new WC_BIS_Notification_Data( $notification_id );
+		$notification = new WC_BIS_Notification_Data($notification_id);
 
-		if ( ! $notification->get_id() ) {
+		if (! $notification->get_id()) {
 			return;
 		}
 
@@ -142,7 +163,7 @@ class SW_BIS_Acceptance_Test_Helper {
 
 		ob_start();
 		echo '<h2 class="bis-confirm-email-title">' . $email->get_subject() . '</h2>';
-		WC_BIS()->emails->confirm_notification_email_html( $notification, $email );
+		WC_BIS()->emails->confirm_notification_email_html($notification, $email);
 		$content = ob_get_clean();
 
 		return '<div class="bis-confirm-email-content">' . $content . '</div>';
@@ -154,21 +175,22 @@ class SW_BIS_Acceptance_Test_Helper {
 	 * @param  array $atts
 	 * @return string
 	 */
-	public static function render_notification_received_email_shortcode( $atts ) {
+	public static function render_notification_received_email_shortcode($atts)
+	{
 
-		$args = shortcode_atts( array(
+		$args = shortcode_atts(array(
 			'notification_id' => ''
-		), $atts );
+		), $atts);
 
-		$notification_id = ! empty( $_GET[ 'notification_id' ] ) ? intval( $_GET[ 'notification_id' ] ) : intval( $args[ 'notification_id' ] );
+		$notification_id = ! empty($_GET['notification_id']) ? intval($_GET['notification_id']) : intval($args['notification_id']);
 
-		if ( ! $notification_id ) {
+		if (! $notification_id) {
 			return;
 		}
 
-		$notification = new WC_BIS_Notification_Data( $notification_id );
+		$notification = new WC_BIS_Notification_Data($notification_id);
 
-		if ( ! $notification->get_id() ) {
+		if (! $notification->get_id()) {
 			return;
 		}
 
@@ -182,7 +204,7 @@ class SW_BIS_Acceptance_Test_Helper {
 
 		ob_start();
 		echo '<h2 class="bis-notify-email-title">' . $email->get_subject() . '</h2>';
-		WC_BIS()->emails->notification_email_html( $notification, $email );
+		WC_BIS()->emails->notification_email_html($notification, $email);
 		$content = ob_get_clean();
 
 		return '<div class="bis-notify-email-content">' . $content . '</div>';
@@ -194,21 +216,22 @@ class SW_BIS_Acceptance_Test_Helper {
 	 * @param  array $atts
 	 * @return string
 	 */
-	public static function render_verification_received_email_shortcode( $atts ) {
+	public static function render_verification_received_email_shortcode($atts)
+	{
 
-		$args = shortcode_atts( array(
+		$args = shortcode_atts(array(
 			'notification_id' => ''
-		), $atts );
+		), $atts);
 
-		$notification_id = ! empty( $_GET[ 'notification_id' ] ) ? intval( $_GET[ 'notification_id' ] ) : intval( $args[ 'notification_id' ] );
+		$notification_id = ! empty($_GET['notification_id']) ? intval($_GET['notification_id']) : intval($args['notification_id']);
 
-		if ( ! $notification_id ) {
+		if (! $notification_id) {
 			return;
 		}
 
-		$notification = new WC_BIS_Notification_Data( $notification_id );
+		$notification = new WC_BIS_Notification_Data($notification_id);
 
-		if ( ! $notification->get_id() ) {
+		if (! $notification->get_id()) {
 			return;
 		}
 
@@ -222,7 +245,7 @@ class SW_BIS_Acceptance_Test_Helper {
 
 		ob_start();
 		echo '<h2 class="bis-verify-email-title">' . $email->get_subject() . '</h2>';
-		WC_BIS()->emails->verify_notification_email_html( $notification, $email );
+		WC_BIS()->emails->verify_notification_email_html($notification, $email);
 		$content = ob_get_clean();
 
 		return '<div class="bis-verify-email-content">' . $content . '</div>';
@@ -232,57 +255,27 @@ class SW_BIS_Acceptance_Test_Helper {
 	 * Creates some notifications that are required for tests.
 	 *
 	 */
-	public static function create_notifications() {
+	public static function create_notifications($request)
+	{
 
-		$id = wc_get_product_id_by_sku( 'out-of-stock-beanie-to-be-cancelled' );
-
-		$notification = new WC_BIS_Notification_Data( array(
+		$notification = new WC_BIS_Notification_Data(array(
 			'type'                 => 'one-time',
-			'product_id'           => $id,
-			'user_id'              => 2,
-			'user_email'           => 'test@test.com',
+			'product_id'           => $request['product_id'],
+			'user_id'              => 1,
+			'user_email'           => 'customer@woocommercecoree2etestsuite.com',
 			'create_date'          => 0,
 			'last_notified_date'   => 0,
 			'subscribe_date'       => 0,
 			'is_queued'            => 'off',
-			'is_active'            => 'on',
+			'is_active'            => 'off',
 			'is_verified'          => 'yes'
-		) );
+		));
 
 		$notification->save();
 
-		$notification = new WC_BIS_Notification_Data( array(
-			'type'                 => 'one-time',
-			'product_id'           => $id,
-			'user_id'              => 0,
-			'user_email'           => 'guest@guest.local',
-			'create_date'          => 0,
-			'last_notified_date'   => 0,
-			'subscribe_date'       => 0,
-			'is_queued'            => 'off',
-			'is_active'            => 'on',
-			'is_verified'          => 'yes'
-		) );
-
-		$notification->save();
-
-		$id = wc_get_product_id_by_sku( 'out-of-stock-beanie' );
-
-		$notification = new WC_BIS_Notification_Data( array(
-			'type'                 => 'one-time',
-			'product_id'           => $id,
-			'user_id'              => 0,
-			'user_email'           => 'guest@guest.local',
-			'create_date'          => 0,
-			'last_notified_date'   => 0,
-			'subscribe_date'       => 0,
-			'is_queued'            => 'off',
-			'is_active'            => 'on',
-			'is_verified'          => 'yes'
-		) );
-
-		$notification->save();
-
+		wp_send_json_success(
+			$notification->get_id()
+		);
 	}
 
 	/*
@@ -296,9 +289,10 @@ class SW_BIS_Acceptance_Test_Helper {
 	 * @param  string $level
 	 * @param  string $context
 	 */
-	public static function log( $message, $level, $context ) {
+	public static function log($message, $level, $context)
+	{
 		$logger = wc_get_logger();
-		$logger->log( $level, $message, array( 'source' => $context ) );
+		$logger->log($level, $message, array('source' => $context));
 	}
 }
 
