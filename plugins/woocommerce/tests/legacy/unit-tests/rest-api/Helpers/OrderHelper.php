@@ -333,7 +333,7 @@ class OrderHelper {
 		$order->set_billing_phone( '555-32123' );
 
 		$payment_gateways = WC()->payment_gateways->payment_gateways();
-		$order->set_payment_method( $payment_gateways[ WC_Gateway_BACS::class ] );
+		$order->set_payment_method( $payment_gateways[ WC_Gateway_BACS::ID ] );
 
 		$order->set_shipping_total( 5.0 );
 		$order->set_discount_total( 0.0 );
