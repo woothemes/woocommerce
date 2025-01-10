@@ -30,15 +30,20 @@
 	font-size: inherit;
 	font-family: inherit;
 	font-weight: inherit;
-	padding: em($gap-small) em($gap-smaller);
+	padding: em($gap-smaller);
+	gap: em($gap-smaller);
+	white-space: nowrap;
+	line-height: 1;
 
 	&:hover:not([disabled]) {
 		cursor: pointer;
 	}
-}
 
-.wc-block-mini-cart__amount {
-	margin-right: 0.5em;
+	.wc-block-mini-cart__icon {
+		width: em($grid-unit-30);
+		height: em($grid-unit-30);
+		margin: 0;
+	}
 }
 
 .wc-block-mini-cart--preview {
@@ -56,7 +61,6 @@
 		display: initial;
 		font-size: inherit;
 		font-weight: inherit;
-		margin-right: $gap-smaller;
 	}
 }
 
@@ -111,8 +115,7 @@
 	justify-content: space-between;
 }
 
-.wp-block-woocommerce-empty-mini-cart-contents-block
-.wc-block-mini-cart__empty-cart-wrapper {
+.wp-block-woocommerce-empty-mini-cart-contents-block .wc-block-mini-cart__empty-cart-wrapper {
 	overflow-y: auto;
 	padding: $gap-largest $gap $gap;
 }

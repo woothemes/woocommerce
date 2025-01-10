@@ -22,7 +22,7 @@ function logLinkClick( event ) {
 }
 
 export default {
-	title: 'WooCommerce Admin/components/Link',
+	title: 'Components/Link',
 	component: Link,
 	decorators: [ ( storyFn, context ) => withConsole()( storyFn )( context ) ],
 };

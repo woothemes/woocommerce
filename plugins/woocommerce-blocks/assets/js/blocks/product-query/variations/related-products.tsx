@@ -5,7 +5,7 @@ import { BlockAttributes, InnerBlockTemplate } from '@wordpress/blocks';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { stacks } from '@woocommerce/icons';
-import { registerBlockSingleProductTemplate } from '@woocommerce/atomic-utils';
+import { registerProductBlockType } from '@woocommerce/atomic-utils';
 import { getSettingWithCoercion } from '@woocommerce/settings';
 import { isBoolean } from '@woocommerce/types';
 
@@ -117,31 +117,30 @@ export const INNER_BLOCKS_TEMPLATE: InnerBlockTemplate[] = [
 	],
 ];
 
-registerBlockSingleProductTemplate( {
-	blockName: QUERY_LOOP_ID,
-	blockMetadata: {},
-	blockSettings: {
-		description: __( 'Display related products.', 'woocommerce' ),
-		name: 'Related Products Controls',
-		title: __( 'Related Products Controls', 'woocommerce' ),
-		// @ts-expect-error: `isActive` exists on Block Variation configuration
-		isActive: ( blockAttributes: BlockAttributes ) =>
-			blockAttributes.namespace === VARIATION_NAME,
-		icon: (
-			<Icon
-				icon={ stacks }
-				className="wc-block-editor-components-block-icon wc-block-editor-components-block-icon--stacks"
-			/>
-		),
-		attributes: BLOCK_ATTRIBUTES,
-		// Gutenberg doesn't support this type yet, discussion here:
-		// https://github.com/WordPress/gutenberg/pull/43632
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		allowedControls: [],
-		innerBlocks: INNER_BLOCKS_TEMPLATE,
-		scope: [ 'block' ],
-	},
+const blockConfig = {
+	name: QUERY_LOOP_ID,
+	description: __( 'Display related products.', 'woocommerce' ),
+	title: __( 'Related Products Controls', 'woocommerce' ),
+	isActive: ( blockAttributes: BlockAttributes ) =>
+		blockAttributes.namespace === VARIATION_NAME,
+	icon: (
+		<Icon
+			icon={ stacks }
+			className="wc-block-editor-components-block-icon wc-block-editor-components-block-icon--stacks"
+		/>
+	),
+	attributes: BLOCK_ATTRIBUTES,
+	// Gutenberg doesn't support this type yet, discussion here:
+	// https://github.com/WordPress/gutenberg/pull/43632
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore
+	allowedControls: [],
+	innerBlocks: INNER_BLOCKS_TEMPLATE,
+	scope: [ 'block' ],
+};
+
+registerProductBlockType( blockConfig, {
 	isVariationBlock: true,
 	variationName: VARIATION_NAME,
+	isAvailableOnPostEditor: false,
 } );

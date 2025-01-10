@@ -76,24 +76,6 @@ const MiniCartBlock = ( attributes: Props ): JSX.Element => {
 		}
 	}, [ cartIsLoading, cartIsLoadingForTheFirstTime ] );
 
-	useEffect( () => {
-		if (
-			! cartIsLoading &&
-			isCartResponseTotals( cartTotalsFromApi ) &&
-			isNumber( cartItemsCountFromApi )
-		) {
-			// Save server data to local storage, so we can re-fetch it faster
-			// on the next page load.
-			localStorage.setItem(
-				'wc-blocks_mini_cart_totals',
-				JSON.stringify( {
-					totals: cartTotalsFromApi,
-					itemsCount: cartItemsCountFromApi,
-				} )
-			);
-		}
-	} );
-
 	const [ isOpen, setIsOpen ] = useState< boolean >( isInitiallyOpen );
 	// We already rendered the HTML drawer placeholder, so we want to skip the
 	// slide in animation.
@@ -271,6 +253,13 @@ const MiniCartBlock = ( attributes: Props ): JSX.Element => {
 				} }
 				aria-label={ ariaLabel }
 			>
+				<QuantityBadge
+					count={ cartItemsCount }
+					icon={ miniCartIcon }
+					iconColor={ iconColor }
+					productCountColor={ productCountColor }
+					productCountVisibility={ productCountVisibility }
+				/>
 				{ ! hasHiddenPrice && (
 					<span
 						className="wc-block-mini-cart__amount"
@@ -290,13 +279,6 @@ const MiniCartBlock = ( attributes: Props ): JSX.Element => {
 						{ taxLabel }
 					</small>
 				) }
-				<QuantityBadge
-					count={ cartItemsCount }
-					icon={ miniCartIcon }
-					iconColor={ iconColor }
-					productCountColor={ productCountColor }
-					productCountVisibility={ productCountVisibility }
-				/>
 			</button>
 			<Drawer
 				className={ clsx( 'wc-block-mini-cart__drawer', 'is-mobile', {
@@ -311,6 +293,8 @@ const MiniCartBlock = ( attributes: Props ): JSX.Element => {
 				<div
 					className="wc-block-mini-cart__template-part"
 					ref={ contentsRef }
+					// This string is sanitized by the backend https://github.com/woocommerce/woocommerce/blob/ec9274030f2f9d854e23ac332f3303c445c4c4c2/plugins/woocommerce/src/Blocks/BlockTypes/MiniCart.php#L474-L475
+					// eslint-disable-next-line react/no-danger
 					dangerouslySetInnerHTML={ { __html: contents } }
 				></div>
 			</Drawer>

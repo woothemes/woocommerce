@@ -172,6 +172,8 @@ class WooPayments extends PaymentGateway {
 		 * - Store is at least 90 days old.
 		 * - Store has an active payments gateway (other than WooPayments).
 		 * - Store has processed a live electronic payment in the past 90 days (any gateway).
+		 *
+		 * @see plugins/woocommerce/client/admin/client/core-profiler/pages/UserProfile.tsx for the values.
 		 */
 		if (
 			isset( $onboarding_profile['business_choice'] ) && 'im_already_selling' === $onboarding_profile['business_choice'] &&
