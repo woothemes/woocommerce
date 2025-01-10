@@ -12,6 +12,10 @@ import { ProductAttributeTerm } from '@woocommerce/data';
 import { AttributeTermInputField } from '../attribute-term-input-field'; // see below explanation for the skip
 /* eslint-disable react/jsx-no-undef */
 
+jest.mock( '@wordpress/core-data', () => ( {
+	registerStore: jest.fn(),
+} ) );
+
 jest.mock( '@wordpress/data', () => ( {
 	...jest.requireActual( '@wordpress/data' ),
 	resolveSelect: jest.fn(),
