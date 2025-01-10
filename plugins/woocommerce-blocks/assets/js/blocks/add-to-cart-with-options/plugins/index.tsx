@@ -31,6 +31,7 @@ function ProductTypeSwitcher() {
 				recordEvent(
 					'blocks_add_to_cart_with_options_product_type_switched',
 					{
+						context: 'inspector',
 						from: current?.slug,
 						to: slug,
 					}
