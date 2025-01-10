@@ -1402,12 +1402,12 @@ class WC_Admin_Setup_Wizard {
 
 		return array(
 			'stripe'               => array(
-				'name'             => __( 'WooCommerce Stripe Gateway', 'woocommerce' ),
-				'image'            => WC()->plugin_url() . '/assets/images/stripe.png',
-				'description'      => $stripe_description,
-				'class'            => 'checked stripe-logo',
-				'repo-slug'        => 'woocommerce-gateway-stripe',
-				'settings'         => array(
+				'name'        => __( 'WooCommerce Stripe Gateway', 'woocommerce' ),
+				'image'       => WC()->plugin_url() . '/assets/images/stripe.png',
+				'description' => $stripe_description,
+				'class'       => 'checked stripe-logo',
+				'repo-slug'   => 'woocommerce-gateway-stripe',
+				'settings'    => array(
 					'create_account' => array(
 						'label'       => __( 'Set up Stripe for me using this email:', 'woocommerce' ),
 						'type'        => 'checkbox',
