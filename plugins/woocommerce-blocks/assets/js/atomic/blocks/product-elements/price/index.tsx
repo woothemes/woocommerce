@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { registerBlockSingleProductTemplate } from '@woocommerce/atomic-utils';
+import { registerProductBlockType } from '@woocommerce/atomic-utils';
 import { currencyDollar, Icon } from '@wordpress/icons';
 
 /**
@@ -12,19 +12,19 @@ import edit from './edit';
 import { supports } from './supports';
 import metadata from './block.json';
 
-registerBlockSingleProductTemplate( {
-	blockName: metadata.name,
-	blockMetadata: metadata,
-	blockSettings: {
-		...sharedConfig,
-		supports,
-		icon: (
-			<Icon
-				icon={ currencyDollar }
-				className="wc-block-editor-components-block-icon"
-			/>
-		),
-		edit,
-	},
+const blockConfig = {
+	...metadata,
+	...sharedConfig,
+	supports,
+	icon: (
+		<Icon
+			icon={ currencyDollar }
+			className="wc-block-editor-components-block-icon"
+		/>
+	),
+	edit,
+};
+
+registerProductBlockType( blockConfig, {
 	isAvailableOnPostEditor: true,
 } );

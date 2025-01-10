@@ -178,10 +178,46 @@ body:has(.woocommerce-coming-soon-banner) {
 	font-family: Inter, sans-serif;
 }
 
+// Split right image template styles
+.woocommerce-coming-soon-split-right-image {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+
+	.woocommerce-split-right-image-content {
+		width: 100%;
+	}
+
+	.woocommerce-split-right-image-cover {
+		align-items: start;
+	}
+
+	.is-size-fit-content {
+		width: fit-content;
+	}
+}
+
 .block-editor-block-preview__content-iframe {
 	body:has(.woocommerce-coming-soon-entire-site),
 	body:has(.woocommerce-coming-soon-banner) {
 		/* Set ratio to 1:1 so height is always equal to width for the preview. */
 		aspect-ratio: 1 / 1;
+	}
+}
+
+// Product image gallery template styles
+.woocommerce-coming-soon-image-gallery {
+	.wp-block-loginout {
+		display: flex;
+
+		a {
+			box-sizing: border-box;
+			border-radius: 6px;
+			gap: 10px;
+			font-size: 14px;
+			font-style: normal;
+			line-height: normal;
+			text-align: center;
+			text-decoration: none;
+			padding: 12px 16px;
+		}
 	}
 }

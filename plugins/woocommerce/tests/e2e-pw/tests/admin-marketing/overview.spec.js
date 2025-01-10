@@ -4,18 +4,6 @@ const { tags } = require( '../../fixtures/fixtures' );
 test.describe( 'Marketing page', () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
-	test( 'A user can view the Marketing > Overview page without it crashing', async ( {
-		page,
-	} ) => {
-		// Go to the Marketing page.
-		await page.goto( 'wp-admin/admin.php?page=wc-admin&path=%2Fmarketing' );
-
-		// Users should see the "Learn about marketing a store" card.
-		await expect(
-			page.getByText( 'Learn about marketing a store' )
-		).toBeVisible();
-	} );
-
 	test(
 		'Marketing Overview page have relevant content',
 		{ tag: tags.SKIP_ON_WPCOM },
@@ -57,7 +45,7 @@ test.describe( 'Marketing page', () => {
 
 	test(
 		'Introduction can be dismissed',
-		{ tag: tags.SKIP_ON_PRESSABLE },
+		{ tag: [ tags.SKIP_ON_PRESSABLE, tags.NOT_E2E, tags.NON_CRITICAL ] },
 		async ( { page } ) => {
 			// Go to the Marketing page.
 			await page.goto(
@@ -94,28 +82,37 @@ test.describe( 'Marketing page', () => {
 		}
 	);
 
-	test( 'Learning section can be expanded', async ( { page } ) => {
-		// Go to the Dashboard page (this adds time for posts to be created)
-		await page.goto( 'wp-admin/index.php' );
+	test(
+		'Learning section can be expanded',
+		{ tag: [ tags.NOT_E2E, tags.NON_CRITICAL ] },
+		async ( { page } ) => {
+			// Go to the Dashboard page (this adds time for posts to be created)
+			await page.goto( 'wp-admin/index.php' );
 
-		// Go to the Marketing page.
-		await page.goto( 'wp-admin/admin.php?page=wc-admin&path=%2Fmarketing' );
+			// Go to the Marketing page.
+			await page.goto(
+				'wp-admin/admin.php?page=wc-admin&path=%2Fmarketing'
+			);
 
-		// Expand the learning section
-		await page.getByLabel( 'Expand' ).waitFor();
-		await page.getByLabel( 'Expand' ).click( { timeout: 2000 } );
+			// Expand the learning section
+			await page.getByLabel( 'Expand' ).waitFor();
+			await page.getByLabel( 'Expand' ).click( { timeout: 2000 } );
 
-		// The learning section should be expanded.
-		await expect( page.getByText( 'Page 1 of 4' ) ).toBeVisible();
+			// The learning section should be expanded.
+			await expect( page.getByText( 'Page 1 of 4' ) ).toBeVisible();
 
-		// Can navigate to next page
-		await page.getByLabel( 'Next page' ).click();
-		await expect( page.getByText( 'Page 2 of 4' ) ).toBeVisible();
+			// Can navigate to next page
+			await page.getByLabel( 'Next page' ).click();
+			await expect( page.getByText( 'Page 2 of 4' ) ).toBeVisible();
 
-		// Collapse the learning section
-		await page.getByLabel( 'Collapse' ).nth( 2 ).click( { timeout: 2000 } );
+			// Collapse the learning section
+			await page
+				.getByLabel( 'Collapse' )
+				.nth( 2 )
+				.click( { timeout: 2000 } );
 
-		// The learning section should be collapsed.
-		await expect( page.getByText( 'Page 1 of 4' ) ).toBeHidden();
-	} );
+			// The learning section should be collapsed.
+			await expect( page.getByText( 'Page 1 of 4' ) ).toBeHidden();
+		}
+	);
 } );

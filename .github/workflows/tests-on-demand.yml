@@ -1,4 +1,5 @@
 name: 'On demand tests run'
+run-name: On demand tests run - ${{ inputs.trigger }}
 
 on:
   workflow_dispatch:

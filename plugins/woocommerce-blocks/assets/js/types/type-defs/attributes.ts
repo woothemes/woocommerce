@@ -19,6 +19,11 @@ export interface AttributeObject {
 	type: string;
 }
 
+export type AttributeObjectForDisplay = Omit<
+	AttributeObject,
+	'has_archives' | 'count' | 'parent' | 'type'
+>;
+
 export interface AttributeQuery {
 	attribute: string;
 	operator: 'in' | 'and';

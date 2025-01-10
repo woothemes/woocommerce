@@ -1,4 +1,0 @@
-Significance: patch
-Type: enhancement
-
-Prevent the variation list from being displayed as an HTML list if there is only one attribute on the Mini Cart Modal

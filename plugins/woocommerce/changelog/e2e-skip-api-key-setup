@@ -1,4 +1,0 @@
-Significance: patch
-Type: dev
-
-E2E tests: support consumer key from env variable

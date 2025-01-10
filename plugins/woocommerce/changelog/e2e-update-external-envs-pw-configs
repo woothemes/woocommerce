@@ -1,4 +1,0 @@
-Significance: patch
-Type: dev
-
-E2E tests: update Playwright tags and configs for environments

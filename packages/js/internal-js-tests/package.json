@@ -42,9 +42,9 @@
 		"watch:build:project:esm": "wireit"
 	},
 	"dependencies": {
-		"@testing-library/jest-dom": "5.16.2",
-		"@testing-library/react": "12.1.3",
-		"@wordpress/i18n": "wp-6.0",
+		"@testing-library/jest-dom": "^6.x.x",
+		"@testing-library/react": "^16.x.x",
+		"@wordpress/i18n": "wp-6.6",
 		"@wordpress/jest-console": "^5.4.0",
 		"regenerator-runtime": "^0.13.11"
 	},
@@ -58,13 +58,14 @@
 		"resize-observer-polyfill": "1.5.1",
 		"rimraf": "5.0.5",
 		"ts-jest": "29.1.x",
+		"lib0": "0.2.x",
 		"typescript": "5.7.x",
 		"wireit": "0.14.3"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "wp-6.0",
-		"react": "17.0.x",
-		"react-dom": "17.0.x"
+		"@wordpress/data": "wp-6.6",
+		"react": "18.3.x",
+		"react-dom": "18.3.x"
 	},
 	"lint-staged": {
 		"*.(t|j)s?(x)": [
