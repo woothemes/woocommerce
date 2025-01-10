@@ -31,6 +31,7 @@ export const PackageItems = ( {
 									? `${ name } × ${ quantity }`
 									: `${ name }`
 							}
+							allowHTML
 							screenReaderLabel={ sprintf(
 								/* translators: %1$s name of the product (ie: Sunglasses), %2$d number of units in the current cart package */
 								_n(

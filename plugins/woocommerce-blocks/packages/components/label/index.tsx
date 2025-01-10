@@ -7,6 +7,7 @@ import type { ReactElement, HTMLProps } from 'react';
 
 export interface LabelProps extends HTMLProps< HTMLElement > {
 	label?: string | undefined;
+	allowHTML?: boolean | undefined;
 	screenReaderLabel?: string | undefined;
 	wrapperElement?: string | undefined;
 	wrapperProps?: HTMLProps< HTMLElement > | undefined;
@@ -20,6 +21,7 @@ export interface LabelProps extends HTMLProps< HTMLElement > {
  */
 const Label = ( {
 	label,
+	allowHTML,
 	screenReaderLabel,
 	wrapperElement,
 	wrapperProps = {},
@@ -45,7 +47,17 @@ const Label = ( {
 	if ( hasLabel && hasScreenReaderLabel && label !== screenReaderLabel ) {
 		return (
 			<Wrapper { ...wrapperProps }>
-				<span aria-hidden="true">{ label }</span>
+				{ allowHTML ? (
+					<span
+						aria-hidden="true"
+						dangerouslySetInnerHTML={ {
+							__html: label,
+						} }
+					></span>
+				) : (
+					<span aria-hidden="true">{ label }</span>
+				) }
+
 				<span className="screen-reader-text">
 					{ screenReaderLabel }
 				</span>
