@@ -48,14 +48,16 @@ export default function ToolbarProductTypeGroup() {
 					title: productType.label,
 					onClick: () => {
 						set( productType.slug );
-						recordEvent(
-							'blocks_add_to_cart_with_options_product_type_switched',
-							{
-								context: 'toolbar',
-								from: currentProductType?.slug,
-								to: productType.slug,
-							}
-						);
+						if ( currentProductType?.slug !== productType.slug ) {
+							recordEvent(
+								'blocks_add_to_cart_with_options_product_type_switched',
+								{
+									context: 'toolbar',
+									from: currentProductType?.slug,
+									to: productType.slug,
+								}
+							);
+						}
 					},
 				} ) ) }
 			/>
