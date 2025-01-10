@@ -117,7 +117,7 @@ export function Edit( {
 								onBlur={ async () =>
 									await validateLowStockAmount()
 								}
-								value={ lowStockAmount.toString() }
+								value={ lowStockAmount?.toString() }
 								type="number"
 								min={ 0 }
 							/>
