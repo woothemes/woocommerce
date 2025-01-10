@@ -632,6 +632,8 @@ class WC_Cart extends WC_Legacy_Cart {
 	/**
 	 * Empties the cart and optionally the persistent cart too.
 	 *
+	 * @since 9.7.0 Also clears shipping methods and packages since the items they are linked to are cleared.
+	 *
 	 * @param bool $clear_persistent_cart Should the persistent cart be cleared too. Defaults to true.
 	 */
 	public function empty_cart( $clear_persistent_cart = true ) {
@@ -651,6 +653,7 @@ class WC_Cart extends WC_Legacy_Cart {
 		}
 
 		$this->fees_api->remove_all_fees();
+		WC()->shipping()->reset_shipping();
 
 		do_action( 'woocommerce_cart_emptied', $clear_persistent_cart );
 	}

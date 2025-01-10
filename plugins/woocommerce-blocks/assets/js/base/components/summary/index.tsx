@@ -3,6 +3,7 @@
  */
 import { RawHTML, useMemo } from '@wordpress/element';
 import { WordCountType } from '@woocommerce/block-settings';
+import { sanitizeHTML } from '@woocommerce/utils';
 import type { CSSProperties } from 'react';
 
 /**
@@ -17,6 +18,38 @@ interface SummaryProps {
 	countType?: WordCountType;
 	style?: CSSProperties;
 }
+
+const allowedTags = [
+	'a',
+	'b',
+	'em',
+	'i',
+	'strong',
+	'p',
+	'br',
+	'ul',
+	'ol',
+	'li',
+	'h1',
+	'h2',
+	'h3',
+	'h4',
+	'h5',
+	'h6',
+	'pre',
+	'blockquote',
+	'img',
+];
+
+const allowedAttributes = [
+	'target',
+	'href',
+	'rel',
+	'name',
+	'download',
+	'src',
+];
+
 /**
  * Summary component.
  *
@@ -41,7 +74,10 @@ export const Summary = ( {
 
 	return (
 		<RawHTML style={ style } className={ className }>
-			{ summaryText }
+			{ sanitizeHTML( summaryText, {
+				tags: allowedTags,
+				attr: allowedAttributes,
+			} ) }
 		</RawHTML>
 	);
 };
