@@ -3357,24 +3357,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^5.62.0
         version: 5.62.0(eslint@8.55.0)(typescript@5.7.2)
-      '@woocommerce/admin-e2e-tests':
-        specifier: workspace:*
-        version: link:../../packages/js/admin-e2e-tests
       '@woocommerce/api':
         specifier: workspace:*
         version: link:../../packages/js/api
-      '@woocommerce/api-core-tests':
-        specifier: workspace:*
-        version: link:../../packages/js/api-core-tests
-      '@woocommerce/e2e-core-tests':
-        specifier: workspace:*
-        version: link:../../packages/js/e2e-core-tests
-      '@woocommerce/e2e-environment':
-        specifier: workspace:*
-        version: link:../../packages/js/e2e-environment
-      '@woocommerce/e2e-utils':
-        specifier: workspace:*
-        version: link:../../packages/js/e2e-utils
       '@woocommerce/e2e-utils-playwright':
         specifier: workspace:*
         version: link:../../packages/js/e2e-utils-playwright
