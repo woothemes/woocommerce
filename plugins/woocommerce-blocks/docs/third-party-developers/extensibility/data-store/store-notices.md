@@ -77,7 +77,9 @@ This action will register a new container.
 #### _Example_ <!-- omit in toc -->
 
 ```javascript
-dispatch( registerContainer( 'someContainerContext' ) );
+import { storeNoticesStore } from '@woocommerce/block-data';
+
+dispatch( storeNoticesStore ).registerContainer( 'someContainerContext' );
 ```
 
 ### unregisterContainer( containerContext )
@@ -97,7 +99,9 @@ This action will unregister an existing container.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-dispatch( unregisterContainer( 'someContainerContext' ) );
+import { storeNoticesStore } from '@woocommerce/block-data';
+
+dispatch( storeNoticesStore ).unregisterContainer( 'someContainerContext' );
 ```
 
 ## Selectors
