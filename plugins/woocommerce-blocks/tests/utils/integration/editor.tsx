@@ -7,33 +7,37 @@ import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { registerCoreBlocks } from '@wordpress/block-library';
 import {
-	createBlock,
-	unregisterBlockType,
-	getBlockTypes,
 	type BlockAttributes,
 	type BlockInstance,
+	createBlock,
+	getBlockTypes,
+	unregisterBlockType,
 } from '@wordpress/blocks';
-import { Popover, SlotFillProvider } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 import '@wordpress/format-library';
-import { ShortcutProvider } from '@wordpress/keyboard-shortcuts';
 import {
-	BlockEditorKeyboardShortcuts,
-	BlockEditorProvider,
-	BlockList,
-	// eslint-disable-next-line
-	// @ts-ignore has no exported member named 'BlockTools'
-	BlockTools,
-	BlockInspector,
-	WritingFlow,
-	ObserveTyping,
+	store as richTextStore,
+	unregisterFormatType,
+} from '@wordpress/rich-text';
+import {
 	type EditorSettings,
 	type EditorBlockListSettings,
+	BlockEditorProvider,
+	BlockInspector,
+	// eslint-disable-next-line
+	// @ts-ignore has no exported member named 'BlockTools'
+	privateApis as blockEditorPrivateApis,
 } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
  */
 import { waitForStoreResolvers } from './wait-for-store-resolvers';
+import { unlock } from './lock-unlock';
+
+const { ExperimentalBlockCanvas: BlockCanvas } = unlock(
+	blockEditorPrivateApis
+);
 
 /**
  * Selects the block to be tested by the aria-label on the block wrapper, eg. "Block: Cover".
@@ -52,40 +56,29 @@ export function Editor( {
 	settings?: Partial< EditorSettings & EditorBlockListSettings >;
 } ) {
 	const [ currentBlocks, updateBlocks ] = useState( testBlocks );
+	const { getFormatTypes } = useSelect( richTextStore, [] );
 
 	useEffect( () => {
 		return () => {
 			getBlockTypes().forEach( ( { name } ) =>
 				unregisterBlockType( name )
 			);
+			getFormatTypes().forEach( ( { name } ) =>
+				unregisterFormatType( name )
+			);
 		};
-	}, [] );
+	}, [ getFormatTypes ] );
 
 	return (
-		<ShortcutProvider>
-			<SlotFillProvider>
-				<BlockEditorProvider
-					value={ currentBlocks }
-					onInput={ updateBlocks }
-					onChange={ updateBlocks }
-					settings={ settings }
-				>
-					<BlockInspector />
-					<BlockTools>
-						{ /* eslint-disable-next-line */ }
-						{ /* @ts-ignore The Register component does exist in the @wordpress/block-editor library but not in its type definitions */ }
-						<BlockEditorKeyboardShortcuts.Register />
-						<WritingFlow>
-							<ObserveTyping>
-								<BlockList />
-							</ObserveTyping>
-						</WritingFlow>
-					</BlockTools>
-
-					<Popover.Slot />
-				</BlockEditorProvider>
-			</SlotFillProvider>
-		</ShortcutProvider>
+		<BlockEditorProvider
+			value={ currentBlocks }
+			onInput={ updateBlocks }
+			onChange={ updateBlocks }
+			settings={ settings }
+		>
+			<BlockInspector />
+			<BlockCanvas height="100%" shouldIframe={ false } />
+		</BlockEditorProvider>
 	);
 }
 
