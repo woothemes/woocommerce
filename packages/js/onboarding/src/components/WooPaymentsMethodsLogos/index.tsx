@@ -2,7 +2,8 @@
  * External dependencies
  */
 import React, { useState, useEffect } from 'react';
-import { Fragment, createElement } from '@wordpress/element';
+import { createElement } from '@wordpress/element';
+import { Tooltip } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -156,26 +157,35 @@ export const WooPaymentsMethodsLogos: React.FC< {
 		mobileWidthBreakpoint,
 	] );
 
-	return (
-		<>
-			<div className="woocommerce-woopayments-payment-methods-logos">
-				{ PaymentMethods.slice(
-					0,
-					getMaxShownElements( maxShownElements )
-				).map( ( pm ) => {
-					// Do not display the WooPay logo if the store is not eligible for WooPay.
-					if ( ! isWooPayEligible && pm.name === 'woopay' ) {
-						return null;
-					}
+	const visiblePaymentMethods = PaymentMethods.slice(
+		0,
+		getMaxShownElements( maxShownElements )
+	).filter( ( pm ) => isWooPayEligible || pm.name !== 'woopay' );
 
-					return pm.component;
-				} ) }
-				{ maxShownElements < maxSupportedPaymentMethods && (
+	const hiddenPaymentMethods = PaymentMethods.slice(
+		getMaxShownElements( maxShownElements )
+	).filter( ( pm ) => isWooPayEligible || pm.name !== 'woopay' );
+
+	return (
+		<div className="woocommerce-woopayments-payment-methods-logos">
+			{ visiblePaymentMethods.map( ( pm ) => pm.component ) }
+			{ maxShownElements < maxSupportedPaymentMethods && (
+				<Tooltip
+					text={
+						<div className="woocommerce-woopayments-payment-methods-logos">
+							{ hiddenPaymentMethods.map(
+								( pm ) => pm.component
+							) }
+						</div>
+					}
+					className="woocommerce-woopayments-payment-methods-logos-tooltip"
+					placement="top-start"
+				>
 					<div className="woocommerce-woopayments-payment-methods-logos-count">
 						+ { maxSupportedPaymentMethods - maxShownElements }
 					</div>
-				) }
-			</div>
-		</>
+				</Tooltip>
+			) }
+		</div>
 	);
 };
