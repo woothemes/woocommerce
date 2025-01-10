@@ -7,6 +7,8 @@ import {
 	PLUGINS_STORE_NAME,
 	PAYMENT_SETTINGS_STORE_NAME,
 	PaymentProvider,
+	type PaymentSettingsSelectors,
+	type PluginSelectors,
 } from '@woocommerce/data';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
@@ -99,7 +101,9 @@ export const SettingsPaymentsMain = () => {
 	}, [] );
 
 	const installedPluginSlugs = useSelect( ( select ) => {
-		return select( PLUGINS_STORE_NAME ).getInstalledPlugins();
+		return (
+			select( PLUGINS_STORE_NAME ) as PluginSelectors
+		).getInstalledPlugins();
 	}, [] );
 
 	// Make UI refresh when plugin is installed.
@@ -109,17 +113,12 @@ export const SettingsPaymentsMain = () => {
 
 	const { providers, suggestions, suggestionCategories, isFetching } =
 		useSelect( ( select ) => {
+			const paymentSettings = select( PAYMENT_SETTINGS_STORE_NAME ) as PaymentSettingsSelectors;
 			return {
-				providers: select(
-					PAYMENT_SETTINGS_STORE_NAME
-				).getPaymentProviders( storeCountry ),
-				suggestions: select(
-					PAYMENT_SETTINGS_STORE_NAME
-				).getSuggestions(),
-				suggestionCategories: select(
-					PAYMENT_SETTINGS_STORE_NAME
-				).getSuggestionCategories(),
-				isFetching: select( PAYMENT_SETTINGS_STORE_NAME ).isFetching(),
+				providers: paymentSettings.getPaymentProviders(storeCountry),
+				suggestions: paymentSettings.getSuggestions(),
+				suggestionCategories: paymentSettings.getSuggestionCategories(),
+				isFetching: paymentSettings.isFetching(),
 			};
 		}, [ storeCountry ] );
 

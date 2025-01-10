@@ -6,6 +6,7 @@ import { useState } from '@wordpress/element';
 import {
 	type OfflinePaymentMethodProvider,
 	PAYMENT_SETTINGS_STORE_NAME,
+	type PaymentSettingsSelectors,
 } from '@woocommerce/data';
 
 /**
@@ -17,11 +18,10 @@ import { OfflinePaymentGateways } from './components/offline-payment-gateways';
 
 export const SettingsPaymentsOffline = () => {
 	const { offlinePaymentGateways, isFetching } = useSelect( ( select ) => {
+		const paymentSettings = select( PAYMENT_SETTINGS_STORE_NAME ) as PaymentSettingsSelectors;
 		return {
-			isFetching: select( PAYMENT_SETTINGS_STORE_NAME ).isFetching(),
-			offlinePaymentGateways: select(
-				PAYMENT_SETTINGS_STORE_NAME
-			).getOfflinePaymentGateways(),
+			isFetching: paymentSettings.isFetching(),
+			offlinePaymentGateways: paymentSettings.getOfflinePaymentGateways(),
 		};
 	}, [] );
 	const { updateProviderOrdering } = useDispatch(
