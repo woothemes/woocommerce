@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import { PluginTemplateSettingPanel } from '@wordpress/edit-site';
+import { PluginDocumentSettingPanel } from '@wordpress/editor';
 import { subscribe, select, useSelect, useDispatch } from '@wordpress/data';
 import { BlockInstance, createBlock } from '@wordpress/blocks';
-import { Button, PanelBody } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { useEntityRecord } from '@wordpress/core-data';
@@ -69,8 +69,8 @@ const RevertClassicTemplateButton = () => {
 	return (
 		<>
 			{ ! isLegacyTemplateBlockAdded && (
-				<PluginTemplateSettingPanel>
-					<PanelBody className="wc-block-editor-revert-button-container">
+				<PluginDocumentSettingPanel name="wc-block-editor-revert-button-panel">
+					<div className="wc-block-editor-revert-button-container">
 						<Button
 							variant="secondary"
 							onClick={ () => {
@@ -119,8 +119,8 @@ const RevertClassicTemplateButton = () => {
 								}
 							) }
 						</span>
-					</PanelBody>
-				</PluginTemplateSettingPanel>
+					</div>
+				</PluginDocumentSettingPanel>
 			) }
 		</>
 	);
@@ -156,10 +156,10 @@ subscribe( () => {
 		currentTemplateId?.includes( slug )
 	);
 
-	const hasSupportForPluginTemplateSettingPanel =
-		PluginTemplateSettingPanel !== undefined;
+	const hasSupportForPluginDocumentSettingPanel =
+		PluginDocumentSettingPanel !== undefined;
 
-	if ( isWooTemplate && hasSupportForPluginTemplateSettingPanel ) {
+	if ( isWooTemplate && hasSupportForPluginDocumentSettingPanel ) {
 		if ( getPlugin( REVERT_BUTTON_PLUGIN_NAME ) ) {
 			return;
 		}
