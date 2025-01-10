@@ -4239,21 +4239,19 @@ function wc_update_store_notice_visible_on_theme_switch( $old_name, $old_theme )
 		 * When switching from a classic theme to a block theme, check if the store notice is active,
 		 * if it is, disable it but set an option to re-enable it when switching back to a classic theme.
 		 */
-		$store_notice_is_active = get_option( $is_store_notice_active_option, 'no' );
-
-		if ( 'yes' === $store_notice_is_active ) {
-			update_option( $is_store_notice_active_option, 'no' );
-			add_option( $enable_store_notice_in_classic_theme_option, 'yes' );
+		if ( is_store_notice_showing() ) {
+			update_option( $is_store_notice_active_option, wc_bool_to_string( false ) );
+			add_option( $enable_store_notice_in_classic_theme_option, wc_bool_to_string( true ) );
 		}
 	} elseif ( $old_theme->is_block_theme() && ! wc_current_theme_is_fse_theme() ) {
 		/*
 		 * When switching from a block theme to a clasic theme, check if we have set the option to
 		 * re-enable the store notice. If so, re-enable it.
 		 */
-		$enable_store_notice_in_classic_theme = get_option( $enable_store_notice_in_classic_theme_option, 'no' );
+		$enable_store_notice_in_classic_theme = wc_string_to_bool( get_option( $enable_store_notice_in_classic_theme_option, 'no' ) );
 
-		if ( 'yes' === $enable_store_notice_in_classic_theme ) {
-			update_option( $is_store_notice_active_option, 'yes' );
+		if ( $enable_store_notice_in_classic_theme ) {
+			update_option( $is_store_notice_active_option, wc_bool_to_string( true ) );
 			delete_option( $enable_store_notice_in_classic_theme_option );
 		}
 	}
