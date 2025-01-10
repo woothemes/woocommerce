@@ -29,6 +29,8 @@ export const useShowShippingTotalWarning = () => {
 					select( CART_STORE_KEY ).isShippingRateBeingSelected(),
 				shippingNotices: select( noticesStore ).getNotices( context ),
 			};
+		} );
+	const { createInfoNotice, removeNotice } = useDispatch( noticesStore );
 		}, [] );
 	const { createInfoNotice, removeNotice } = useDispatch( noticesStore );
 
