@@ -11,12 +11,11 @@ import {
 import { useState, createElement, Fragment } from '@wordpress/element';
 import { useDispatch } from '@wordpress/data';
 import { cleanForSlug } from '@wordpress/url';
-import { Form, FormContextType, FormErrors } from '@woocommerce/components';
+import { Form, FormErrors } from '@woocommerce/components';
 import { recordEvent } from '@woocommerce/tracks';
 import {
 	EXPERIMENTAL_PRODUCT_ATTRIBUTE_TERMS_STORE_NAME,
 	ProductAttributeTerm,
-	ProductProductAttribute,
 } from '@woocommerce/data';
 
 /**
