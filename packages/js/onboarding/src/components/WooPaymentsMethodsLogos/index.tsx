@@ -69,7 +69,7 @@ const PaymentMethods = [
 	},
 ];
 
-export const WooPaymentsMethodsLogos: React.VFC< {
+export const WooPaymentsMethodsLogos: React.FC< {
 	isWooPayEligible: boolean;
 	maxElements: number;
 	tabletWidthBreakpoint?: number;
