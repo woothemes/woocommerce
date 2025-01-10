@@ -71,12 +71,9 @@ export default function ProductPage() {
 				return (
 					<>
 						<WooProductMoreMenuItem>
-							{
-								// @ts-expect-error Requires further investigation
-								( { onClose }: { onClose: () => void } ) => (
-									<MoreMenuFill onClose={ onClose } />
-								)
-							}
+							{ ( { onClose } ) => (
+								<MoreMenuFill onClose={ onClose } />
+							) }
 						</WooProductMoreMenuItem>
 
 						<WooFooterItem>

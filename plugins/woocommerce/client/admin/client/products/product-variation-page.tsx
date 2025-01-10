@@ -41,20 +41,15 @@ export default function ProductPage() {
 			render: () => (
 				<>
 					<WooProductMoreMenuItem>
-						{
-							// @ts-expect-error Requires further investigation
-							( { onClose }: { onClose: () => void } ) => (
-								<>
-									<DeleteVariationMenuItem
-										onClose={ onClose }
-									/>
-									<MoreMenuFill
-										productType="product_variation"
-										onClose={ onClose }
-									/>
-								</>
-							)
-						}
+						{ ( { onClose } ) => (
+							<>
+								<DeleteVariationMenuItem onClose={ onClose } />
+								<MoreMenuFill
+									productType="product_variation"
+									onClose={ onClose }
+								/>
+							</>
+						) }
 					</WooProductMoreMenuItem>
 				</>
 			),
