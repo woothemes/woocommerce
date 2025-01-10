@@ -1018,7 +1018,7 @@ class WC_Tracker {
 		 *
 		 * @since 2.3.0
 		 */
-		$template_paths = apply_filters( 'woocommerce_template_overrides_scan_paths', array( 'WooCommerce' => WC()->plugin_path() . '/templates/' ) );
+		$template_paths = (array) apply_filters( 'woocommerce_template_overrides_scan_paths', array( 'WooCommerce' => WC()->plugin_path() . '/templates/' ) );
 		$scanned_files  = array();
 
 		require_once WC()->plugin_path() . '/includes/admin/class-wc-admin-status.php';
