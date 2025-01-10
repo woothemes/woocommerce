@@ -94,7 +94,7 @@ const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
 						'Customer will see product add-to-cart options in this space, dependent on the product type.',
 						'woocommerce'
 					) }
-					position="bottom right"
+					placement="bottom-end"
 				>
 					<div className="wc-block-editor-add-to-cart-form-container">
 						<Skeleton numberOfLines={ 3 } />
