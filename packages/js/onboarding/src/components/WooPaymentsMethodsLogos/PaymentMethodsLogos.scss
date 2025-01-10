@@ -2,14 +2,7 @@
 	display: flex;
 	align-items: center;
 	padding: $gap-small 0;
-
-	> * {
-		margin-right: $gap-smaller;
-
-		&:last-child {
-			margin-right: 0;
-		}
-	}
+	gap: 8px;
 
 	svg {
 		width: 38px;
