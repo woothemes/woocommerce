@@ -5,6 +5,8 @@
  * @package WooCommerce\Admin
  */
 
+use Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController;
+
 defined( 'ABSPATH' ) || exit;
 
 ?>
@@ -73,6 +75,23 @@ defined( 'ABSPATH' ) || exit;
 		do_action( 'woocommerce_product_options_pricing' );
 		?>
 	</div>
+
+	<?php if ( wc_get_container()->get( CostOfGoodsSoldController::class )->feature_is_enabled() ) : ?>
+		<div class="options_group pricing show_if_simple show_if_external hidden">
+			<?php
+			woocommerce_wp_text_input(
+				array(
+					'id'          => '_cogs_value',
+					'value'       => $product_object->get_cogs_value(),
+					'label'       => __( 'Cost', 'woocommerce' ) . ' (' . get_woocommerce_currency_symbol() . ')',
+					'data_type'   => 'price',
+					'desc_tip'    => 'true',
+					'description' => __( 'This is the cost per item and will not be displayed in your store.', 'woocommerce' ),
+				)
+			);
+			?>
+		</div>
+	<?php endif; ?>
 
 	<div class="options_group show_if_downloadable hidden">
 		<div class="form-field downloadable_files">

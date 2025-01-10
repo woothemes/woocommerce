@@ -10,6 +10,7 @@
 
 use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
+use Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -413,6 +414,11 @@ class WC_Meta_Box_Product_Data {
 				'default_attributes' => self::prepare_set_attributes( $attributes, 'default_attribute_' ),
 			)
 		);
+
+		if ( wc_get_container()->get( CostOfGoodsSoldController::class )->feature_is_enabled() ) {
+			$cogs_value = wc_clean( wp_unslash( $_POST['_cogs_value'] ?? '0' ) );
+			$product->set_cogs_value( (float) $cogs_value );
+		}
 
 		if ( is_wp_error( $errors ) ) {
 			WC_Admin_Meta_Boxes::add_error( $errors->get_error_message() );
