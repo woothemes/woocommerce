@@ -27,6 +27,7 @@ export const OptInContextProvider = ( {
 } ) => {
 	const isAllowTrackingEnabled = useSelect(
 		( select ) =>
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			select( OPTIONS_STORE_NAME ).getOption(
 				'woocommerce_allow_tracking'
 			) === 'yes',
