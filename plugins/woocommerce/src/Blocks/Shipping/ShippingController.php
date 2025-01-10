@@ -144,8 +144,10 @@ class ShippingController {
 		if ( CartCheckoutUtils::is_checkout_block_default() && $this->local_pickup_enabled ) {
 			foreach ( $settings as $index => $setting ) {
 				if ( 'woocommerce_shipping_cost_requires_address' === $setting['id'] ) {
-					$settings[ $index ]['desc'] =
-						__( 'Hide shipping costs until an address is entered (Local pickup rates will display in the Checkout block, even without an address)', 'woocommerce' );
+					$settings[ $index ]['desc']     =
+						__( 'Hide shipping costs until an address is entered', 'woocommerce' );
+					$settings[ $index ]['desc_tip'] =
+						__( 'Local pickup rates will display in the Checkout block, even without an address', 'woocommerce' );
 					break;
 				}
 			}
@@ -449,7 +451,7 @@ class ShippingController {
 		if ( ! $has_address && $option_checked ) {
 			$packages = array_map(
 				function ( $package ) {
-					if ( ! is_array( $package['rates'] ) ) {
+					if ( isset( $package['rates'] ) && ! is_array( $package['rates'] ) ) {
 						$package['rates'] = array();
 						return $package;
 					}
