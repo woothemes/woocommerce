@@ -1452,7 +1452,7 @@ class WC_Admin_Setup_Wizard {
 					),
 				),
 			),
-			\WC_Gateway_Paypal::ID => array(
+			WC_Gateway_Paypal::ID => array(
 				'name'        => __( 'PayPal Standard', 'woocommerce' ),
 				'description' => __( 'Accept payments via PayPal using account balance or credit card.', 'woocommerce' ),
 				'image'       => '',
@@ -1528,7 +1528,7 @@ class WC_Admin_Setup_Wizard {
 		$can_paypal  = $this->is_paypal_supported_currency( $currency );
 
 		if ( ! current_user_can( 'install_plugins' ) ) {
-			return $can_paypal ? array( \WC_Gateway_Paypal::ID => $gateways[ \WC_Gateway_Paypal::ID ] ) : array();
+			return $can_paypal ? array( WC_Gateway_Paypal::ID => $gateways[ WC_Gateway_Paypal::ID ] ) : array();
 		}
 
 		$klarna_or_square = false;

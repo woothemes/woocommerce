@@ -10,6 +10,7 @@ use WC_Unit_Test_Case;
 use WC_Gateway_BACS;
 use WC_Gateway_Cheque;
 use WC_Gateway_COD;
+use WC_Gateway_Paypal;
 
 /**
  * WC core payment gateway provider service test.
@@ -98,7 +99,7 @@ class WCCoreTest extends WC_Unit_Test_Case {
 
 		// Arrange.
 		$fake_gateway = new FakePaymentGateway(
-			\WC_Gateway_Paypal::ID,
+			WC_Gateway_Paypal::ID,
 			array(
 				'enabled'            => true,
 				'plugin_slug'        => 'woocommerce',

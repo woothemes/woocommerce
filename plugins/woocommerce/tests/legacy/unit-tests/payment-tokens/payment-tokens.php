@@ -67,7 +67,7 @@ class WC_Tests_Payment_Tokens extends WC_Unit_Test_Case {
 
 		$token = WC_Helper_Payment_Token::create_cc_token();
 		$token->set_user_id( $this->user_id );
-		$token->set_gateway_id( \WC_Gateway_Paypal::ID );
+		$token->set_gateway_id( WC_Gateway_Paypal::ID );
 		$token->save();
 
 		$this->assertCount( 2, WC_Payment_Tokens::get_customer_tokens( $this->user_id ) );
@@ -91,13 +91,13 @@ class WC_Tests_Payment_Tokens extends WC_Unit_Test_Case {
 		$token = WC_Helper_Payment_Token::create_cc_token();
 		$token->set_user_id( $this->user_id );
 		$token->set_default( true );
-		$token->set_gateway_id( \WC_Gateway_Paypal::ID );
+		$token->set_gateway_id( WC_Gateway_Paypal::ID );
 		$token->save();
 
 		$this->assertCount( 2, WC_Payment_Tokens::get_customer_tokens( $this->user_id ) );
 
 		$default_token = WC_Payment_Tokens::get_customer_default_token( $this->user_id );
-		$this->assertEquals( \WC_Gateway_Paypal::ID, $default_token->get_gateway_id() );
+		$this->assertEquals( WC_Gateway_Paypal::ID, $default_token->get_gateway_id() );
 	}
 
 	/**
@@ -112,7 +112,7 @@ class WC_Tests_Payment_Tokens extends WC_Unit_Test_Case {
 		$token->save();
 
 		$token = WC_Helper_Payment_Token::create_cc_token( $this->user_id );
-		$token->set_gateway_id( \WC_Gateway_Paypal::ID );
+		$token->set_gateway_id( WC_Gateway_Paypal::ID );
 		$token->save();
 
 		$this->assertCount( 2, WC_Payment_Tokens::get_customer_tokens( $this->user_id ) );

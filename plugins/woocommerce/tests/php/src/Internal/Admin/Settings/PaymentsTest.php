@@ -13,6 +13,7 @@ use WC_Unit_Test_Case;
 use WC_Gateway_BACS;
 use WC_Gateway_Cheque;
 use WC_Gateway_COD;
+use WC_Gateway_Paypal;
 
 /**
  * Payments settings service test.
@@ -112,7 +113,7 @@ class PaymentsTest extends WC_Unit_Test_Case {
 
 		// All are WooCommerce core gateways.
 		$gateways = array(
-			new FakePaymentGateway( \WC_Gateway_Paypal::ID, array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( WC_Gateway_Paypal::ID, array( 'plugin_slug' => 'woocommerce' ) ),
 			// The offline PMs.
 			new FakePaymentGateway( WC_Gateway_BACS::ID, array( 'plugin_slug' => 'woocommerce' ) ),
 			new FakePaymentGateway( WC_Gateway_Cheque::ID, array( 'plugin_slug' => 'woocommerce' ) ),
@@ -133,7 +134,7 @@ class PaymentsTest extends WC_Unit_Test_Case {
 			->willReturn(
 				array_flip(
 					array(
-						\WC_Gateway_Paypal::ID,
+						WC_Gateway_Paypal::ID,
 						PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
 						WC_Gateway_BACS::ID,
 						WC_Gateway_Cheque::ID,
@@ -156,7 +157,7 @@ class PaymentsTest extends WC_Unit_Test_Case {
 		$this->assertCount( 5, $data );
 		// Because the core registers the PayPal PG after the offline PMs, the order we expect is this.
 		$this->assertSame(
-			array( \WC_Gateway_Paypal::ID, PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP, WC_Gateway_BACS::ID, WC_Gateway_Cheque::ID, WC_Gateway_COD::ID ),
+			array( WC_Gateway_Paypal::ID, PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP, WC_Gateway_BACS::ID, WC_Gateway_Cheque::ID, WC_Gateway_COD::ID ),
 			array_column( $data, 'id' )
 		);
 
@@ -238,7 +239,7 @@ class PaymentsTest extends WC_Unit_Test_Case {
 
 		// All are WooCommerce core gateways.
 		$gateways = array(
-			new FakePaymentGateway( \WC_Gateway_Paypal::ID, array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( WC_Gateway_Paypal::ID, array( 'plugin_slug' => 'woocommerce' ) ),
 			// The offline PMs.
 			new FakePaymentGateway( WC_Gateway_BACS::ID, array( 'plugin_slug' => 'woocommerce' ) ),
 			new FakePaymentGateway( WC_Gateway_Cheque::ID, array( 'plugin_slug' => 'woocommerce' ) ),
@@ -261,7 +262,7 @@ class PaymentsTest extends WC_Unit_Test_Case {
 					array(
 						PaymentProviders::SUGGESTION_ORDERING_PREFIX . 'suggestion1',
 						PaymentProviders::SUGGESTION_ORDERING_PREFIX . 'suggestion2',
-						\WC_Gateway_Paypal::ID,
+						WC_Gateway_Paypal::ID,
 						PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
 						WC_Gateway_BACS::ID,
 						WC_Gateway_Cheque::ID,
@@ -356,7 +357,7 @@ class PaymentsTest extends WC_Unit_Test_Case {
 			array(
 				PaymentProviders::SUGGESTION_ORDERING_PREFIX . 'suggestion1',
 				PaymentProviders::SUGGESTION_ORDERING_PREFIX . 'suggestion2',
-				\WC_Gateway_Paypal::ID,
+				WC_Gateway_Paypal::ID,
 				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
 				WC_Gateway_BACS::ID,
 				WC_Gateway_Cheque::ID,

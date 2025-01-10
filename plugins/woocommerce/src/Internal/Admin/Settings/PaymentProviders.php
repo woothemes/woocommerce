@@ -15,6 +15,7 @@ use WC_Payment_Gateway;
 use WC_Gateway_BACS;
 use WC_Gateway_Cheque;
 use WC_Gateway_COD;
+use WC_Gateway_Paypal;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -53,7 +54,7 @@ class PaymentProviders {
 		WC_Gateway_BACS::ID   => WCCore::class,
 		WC_Gateway_Cheque::ID => WCCore::class,
 		WC_Gateway_COD::ID    => WCCore::class,
-		\WC_Gateway_Paypal::ID => WCCore::class,
+		WC_Gateway_Paypal::ID => WCCore::class,
 		'woocommerce_payments' => WooPayments::class,
 		'ppcp-gateway'         => PayPal::class,
 		'stripe'               => Stripe::class,

@@ -128,7 +128,7 @@ class Payment_Gateways extends WC_REST_Unit_Test_Case {
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertEquals(
 			array(
-				'id'                     => \WC_Gateway_Paypal::ID,
+				'id'                     => WC_Gateway_Paypal::ID,
 				'title'                  => 'PayPal',
 				'description'            => "Pay via PayPal; you can pay with your credit card if you don't have a PayPal account.",
 				'order'                  => '',

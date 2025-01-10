@@ -15,6 +15,7 @@ use WP_REST_Request;
 use WC_Gateway_BACS;
 use WC_Gateway_Cheque;
 use WC_Gateway_COD;
+use WC_Gateway_Paypal;
 
 /**
  * PaymentsRestController API controller integration test.
@@ -265,7 +266,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$this->assertCount( 2, $data['providers'] );
 		// Because the core registers the PayPal PG after the offline PMs, the order we expect is this.
 		$this->assertSame(
-			array( PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP, \WC_Gateway_Paypal::ID ),
+			array( PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP, WC_Gateway_Paypal::ID ),
 			array_column( $data['providers'], 'id' )
 		);
 		// We have the 3 offline payment methods.
@@ -529,7 +530,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 			array(
 				PaymentProviders::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::PAYPAL_FULL_STACK, // Preferred suggestion.
 				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
-				\WC_Gateway_Paypal::ID,
+				WC_Gateway_Paypal::ID,
 				PaymentProviders::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::WOOPAYMENTS, // The WooPayments suggestion.
 				'woocommerce_payments', // The fake WooPayments gateway.
 			),
@@ -839,7 +840,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		// Arrange.
 		$order_map = array_flip(
 			array(
-				\WC_Gateway_Paypal::ID, // We move PayPal at the top.
+				WC_Gateway_Paypal::ID, // We move PayPal at the top.
 				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
 			)
 		);
@@ -849,7 +850,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 				array(
 					PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
 					...PaymentProviders::OFFLINE_METHODS,
-					\WC_Gateway_Paypal::ID,
+					WC_Gateway_Paypal::ID,
 				)
 			)
 		);
@@ -867,7 +868,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 		$this->assertSame(
 			array_flip(
 				array(
-					\WC_Gateway_Paypal::ID,
+					WC_Gateway_Paypal::ID,
 					PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
 					...PaymentProviders::OFFLINE_METHODS,
 				)
@@ -902,7 +903,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 				array(
 					PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
 					...PaymentProviders::OFFLINE_METHODS,
-					\WC_Gateway_Paypal::ID,
+					WC_Gateway_Paypal::ID,
 				)
 			),
 			get_option( PaymentProviders::PROVIDERS_ORDER_OPTION )
@@ -1001,7 +1002,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 			array(
 				PaymentProviders::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::PAYPAL_FULL_STACK, // Preferred suggestion.
 				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
-				\WC_Gateway_Paypal::ID,
+				WC_Gateway_Paypal::ID,
 				PaymentProviders::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::WOOPAYMENTS, // The WooPayments suggestion.
 				'woocommerce_payments', // The fake WooPayments gateway.
 			),
@@ -1084,7 +1085,7 @@ class PaymentsRestControllerIntegrationTest extends WC_REST_Unit_Test_Case {
 			array(
 				PaymentProviders::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::PAYPAL_FULL_STACK, // Preferred suggestion.
 				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
-				\WC_Gateway_Paypal::ID,
+				WC_Gateway_Paypal::ID,
 				PaymentProviders::SUGGESTION_ORDERING_PREFIX . PaymentExtensionSuggestions::WOOPAYMENTS, // The WooPayments suggestion.
 				'woocommerce_payments', // The fake WooPayments gateway.
 			),

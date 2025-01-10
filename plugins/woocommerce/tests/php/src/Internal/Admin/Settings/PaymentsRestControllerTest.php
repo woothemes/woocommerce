@@ -11,6 +11,8 @@ use WC_REST_Unit_Test_Case;
 use WP_REST_Request;
 use WC_Gateway_BACS;
 use WC_Gateway_Cheque;
+use WC_Gateway_COD;
+use WC_Gateway_PayPal;
 
 /**
  * PaymentsRestController API controller test.
@@ -218,7 +220,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 				'_wc_pes_woopayments',
 				'_wc_pes_paypal_full_stack',
 				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
-				\WC_Gateway_Paypal::ID,
+				WC_Gateway_Paypal::ID,
 			),
 			array_column( $data['providers'], 'id' )
 		);
@@ -292,7 +294,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 				'_wc_pes_woopayments',
 				'_wc_pes_paypal_full_stack',
 				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
-				\WC_Gateway_Paypal::ID,
+				WC_Gateway_Paypal::ID,
 			),
 			array_column( $data['providers'], 'id' )
 		);
@@ -342,7 +344,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 			array(
 				'_wc_pes_woopayments',
 				'_wc_pes_paypal_full_stack',
-				\WC_Gateway_Paypal::ID,
+				WC_Gateway_Paypal::ID,
 			),
 			array_column( $data['providers'], 'id' )
 		);
@@ -388,7 +390,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$this->assertSame(
 			array(
 				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
-				\WC_Gateway_Paypal::ID,
+				WC_Gateway_Paypal::ID,
 			),
 			array_column( $data['providers'], 'id' )
 		);
@@ -544,27 +546,27 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		return array(
 			array( 1 ),
 			array( false ),
-			array( 0 => \WC_Gateway_Paypal::ID ),
-			array( array( \WC_Gateway_Paypal::ID ) ),
-			array( array( \WC_Gateway_Paypal::ID => false ) ),
-			array( array( \WC_Gateway_Paypal::ID => 'bogus' ) ),
-			array( array( \WC_Gateway_Paypal::ID => '1.0' ) ),
+			array( 0 => WC_Gateway_Paypal::ID ),
+			array( array( WC_Gateway_Paypal::ID ) ),
+			array( array( WC_Gateway_Paypal::ID => false ) ),
+			array( array( WC_Gateway_Paypal::ID => 'bogus' ) ),
+			array( array( WC_Gateway_Paypal::ID => '1.0' ) ),
 			array( array( '()/paypal%#' => 1 ) ),
 			array(
 				array(
-					\WC_Gateway_Paypal::ID    => '1.1',
+					WC_Gateway_Paypal::ID    => '1.1',
 					'offline_payment_methods' => 2,
 				),
 			),
 			array(
 				array(
-					\WC_Gateway_Paypal::ID    => '0.1',
+					WC_Gateway_Paypal::ID    => '0.1',
 					'offline_payment_methods' => 2,
 				),
 			),
 			array(
 				array(
-					\WC_Gateway_Paypal::ID => 1,
+					WC_Gateway_Paypal::ID => 1,
 					'offline_payment_methods',
 				),
 			),
@@ -1051,7 +1053,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 
 		if ( ! $skip_paypal ) {
 			$mock_providers[] = array(
-				'id'          => \WC_Gateway_Paypal::ID,
+				'id'          => WC_Gateway_Paypal::ID,
 				'_order'      => $order++,
 				'_type'       => PaymentProviders::TYPE_GATEWAY,
 				'title'       => 'PayPal',
