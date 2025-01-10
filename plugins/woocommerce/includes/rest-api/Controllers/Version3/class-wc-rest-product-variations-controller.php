@@ -1063,6 +1063,17 @@ class WC_REST_Product_Variations_Controller extends WC_REST_Product_Variations_V
 			$args['post_type'] = $this->post_type;
 		}
 
+		// Filter virtual product variations.
+		if ( isset( $request['virtual'] ) ) {
+			$args['meta_query'] = $this->add_meta_query( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+				$args,
+				array(
+					'key'   => '_virtual',
+					'value' => wc_bool_to_string( $request['virtual'] ),
+				)
+			);
+		}
+
 		$args['post_parent'] = $request['product_id'];
 
 		return $args;
@@ -1122,6 +1133,13 @@ class WC_REST_Product_Variations_Controller extends WC_REST_Product_Variations_V
 					),
 				),
 			),
+		);
+
+		$params['virtual'] = array(
+			'description'       => __( 'Limit result set to virtual product variations.', 'woocommerce' ),
+			'type'              => 'boolean',
+			'sanitize_callback' => 'rest_sanitize_boolean',
+			'validate_callback' => 'rest_validate_request_arg',
 		);
 
 		$params['downloadable'] = array(

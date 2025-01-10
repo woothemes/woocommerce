@@ -48,8 +48,13 @@ export const SidebarNavigationScreenTypography = ( {
 				'woocommerce'
 		  );
 
-	const trackingAllowed = useSelect( ( select ) =>
-		select( OPTIONS_STORE_NAME ).getOption( 'woocommerce_allow_tracking' )
+	const trackingAllowed = useSelect(
+		( select ) =>
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+			select( OPTIONS_STORE_NAME ).getOption(
+				'woocommerce_allow_tracking'
+			),
+		[]
 	);
 
 	const isTrackingDisallowed = trackingAllowed === 'no' || ! trackingAllowed;
@@ -143,6 +148,7 @@ export const SidebarNavigationScreenTypography = ( {
 								>
 									<CheckboxControl
 										className="core-profiler__checkbox"
+										// @ts-expect-error Type mismatch
 										label={ interpolateComponents( {
 											mixedString: __(
 												'More fonts are available! Opt in to connect your store and access the full font library, plus get more relevant content and a tailored store setup experience. Opting in will enable {{link}}usage tracking{{/link}}, which you can opt out of at any time via WooCommerce settings.',

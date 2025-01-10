@@ -129,10 +129,9 @@ const renderPickupLocation = (
 				{ decodeEntities( address ) }
 			</>
 		) : undefined,
-
-		secondaryDescription: (
+		secondaryDescription: details ? (
 			<ReadMore maxLines={ 2 }>{ decodeEntities( details ) }</ReadMore>
-		),
+		) : undefined,
 	};
 };
 
