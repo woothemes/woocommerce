@@ -110,11 +110,9 @@ export function Edit( {
 									notifyLowStockAmount
 								) }
 								onChange={ ( nextValue ) => {
-									if ( nextValue ) {
-										setLowStockAmount(
-											parseInt( nextValue, 10 )
-										);
-									}
+									setLowStockAmount(
+										parseInt( nextValue ?? '', 10 )
+									);
 								} }
 								onBlur={ async () =>
 									await validateLowStockAmount()

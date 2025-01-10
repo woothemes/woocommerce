@@ -130,10 +130,7 @@ export const EditDownloadsModal: React.FC< EditDownloadsModalProps > = ( {
 					name={ 'file-name' }
 					value={ name || '' }
 					onChange={ ( value ) => {
-						if ( value === undefined ) {
-							return;
-						}
-						onChange( value );
+						onChange( value ?? '' );
 					} }
 				/>
 			</BaseControl>

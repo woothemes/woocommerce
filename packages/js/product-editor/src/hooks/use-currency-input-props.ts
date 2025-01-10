@@ -72,10 +72,7 @@ export const useCurrencyInputProps = ( {
 			}
 		},
 		onChange( newValue ) {
-			if ( newValue === undefined ) {
-				return;
-			}
-			const sanitizeValue = sanitizePrice( newValue );
+			const sanitizeValue = sanitizePrice( newValue ?? '' );
 			if ( onChange ) {
 				onChange(
 					Number( sanitizeValue ) <= CURRENCY_INPUT_MAX

@@ -70,9 +70,7 @@ export function Edit( {
 					id={ inputControlId }
 					name={ 'woocommerce-product-sku' }
 					onChange={ ( nextValue ) => {
-						if ( nextValue ) {
-							setSku( nextValue );
-						}
+						setSku( nextValue ?? '' );
 					} }
 					value={ sku || '' }
 					disabled={ attributes.disabled }
