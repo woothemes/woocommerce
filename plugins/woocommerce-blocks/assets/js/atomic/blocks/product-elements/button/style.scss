@@ -15,6 +15,7 @@
 		text-align: center;
 		// Set button font size so it inherits from parent.
 		font-size: 1em;
+		width: auto;
 
 		&.loading {
 			opacity: 0.25;
