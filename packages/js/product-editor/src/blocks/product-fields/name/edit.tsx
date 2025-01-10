@@ -203,9 +203,7 @@ export function NameBlockEdit( {
 							'woocommerce'
 						) }
 						onChange={ ( nextValue ) => {
-							if ( nextValue ) {
-								setName( nextValue );
-							}
+							setName( nextValue ?? '' );
 						} }
 						value={ name && name !== AUTO_DRAFT_NAME ? name : '' }
 						autoComplete="off"

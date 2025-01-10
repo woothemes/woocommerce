@@ -88,9 +88,7 @@ export function Edit( {
 							label={ __( 'Available stock', 'woocommerce' ) }
 							value={ stockQuantity?.toString() }
 							onChange={ ( value ) => {
-								if ( value ) {
-									setStockQuantity( parseInt( value, 10 ) );
-								}
+								setStockQuantity( parseInt( value ?? '', 10 ) );
 							} }
 							onBlur={ () => validateStockQuantity() }
 							type="number"
