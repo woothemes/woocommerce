@@ -681,7 +681,7 @@ class WC_Install {
 			 *
 			 * @since 3.2.0
 			 */
-			if ( apply_filters( 'woocommerce_enable_auto_update_db', false ) ) {
+			if ( apply_filters( 'woocommerce_enable_auto_update_db', true ) ) {
 				self::update();
 			} else {
 				WC_Admin_Notices::add_notice( 'update', true );
