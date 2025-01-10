@@ -31,7 +31,6 @@ class WC_Settings_Payment_Gateways_React extends WC_Settings_Page {
 		$sections = array(
 			'offline',
 			'main',
-			'recommended',
 		);
 
 		/**

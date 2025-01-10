@@ -2,7 +2,7 @@
 	"name": "@woocommerce/plugin-woocommerce",
 	"private": true,
 	"title": "WooCommerce",
-	"version": "9.6.0",
+	"version": "9.7.0",
 	"homepage": "https://woocommerce.com/",
 	"repository": {
 		"type": "git",
@@ -107,7 +107,7 @@
 			},
 			"tests": [
 				{
-					"name": "PHP: 8.0 WP: latest",
+					"name": "PHP: 8.1 WP: latest",
 					"testType": "unit:php",
 					"command": "test:php:env",
 					"shardingArguments": [
@@ -125,13 +125,14 @@
 					"testEnv": {
 						"start": "env:test",
 						"config": {
-							"phpVersion": "8.0",
+							"phpVersion": "8.1",
 							"wpVersion": "latest"
 						}
 					},
 					"events": [
 						"pull_request",
-						"push"
+						"push",
+						"php-unit-php-8.8-wp-latest"
 					]
 				},
 				{
@@ -158,7 +159,8 @@
 					},
 					"events": [
 						"pull_request",
-						"push"
+						"push",
+						"php-unit-wp-latest-1"
 					]
 				},
 				{
@@ -186,7 +188,8 @@
 					},
 					"events": [
 						"pull_request",
-						"push"
+						"push",
+						"php-unit-wp-nightly"
 					]
 				},
 				{
@@ -221,7 +224,8 @@
 					"events": [
 						"pull_request",
 						"push",
-						"release-checks"
+						"release-checks",
+						"core-e2e"
 					],
 					"report": {
 						"resultsBlobName": "core-e2e-report",
@@ -234,16 +238,16 @@
 					"testType": "e2e",
 					"command": "test:e2e:with-env gutenberg-stable",
 					"shardingArguments": [
-						"--shard=1/5",
-						"--shard=2/5",
-						"--shard=3/5",
-						"--shard=4/5",
-						"--shard=5/5"
+						"--shard=1/4",
+						"--shard=2/4",
+						"--shard=3/4",
+						"--shard=4/4"
 					],
 					"changes": [],
 					"events": [
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"core-e2e-gutenberg"
 					],
 					"testEnv": {
 						"start": "env:test"
@@ -259,16 +263,16 @@
 					"testType": "e2e",
 					"command": "test:e2e:with-env gutenberg-nightly",
 					"shardingArguments": [
-						"--shard=1/5",
-						"--shard=2/5",
-						"--shard=3/5",
-						"--shard=4/5",
-						"--shard=5/5"
+						"--shard=1/4",
+						"--shard=2/4",
+						"--shard=3/4",
+						"--shard=4/4"
 					],
 					"changes": [],
 					"events": [
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"core-e2e-gutenberg"
 					],
 					"testEnv": {
 						"start": "env:test"
@@ -287,7 +291,8 @@
 					"changes": [],
 					"events": [
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"core-e2e-woocommerce-payments"
 					],
 					"testEnv": {
 						"start": "env:test"
@@ -306,7 +311,8 @@
 					"changes": [],
 					"events": [
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"core-e2e-woocommerce-paypal-payments"
 					],
 					"testEnv": {
 						"start": "env:test"
@@ -321,11 +327,15 @@
 					"name": "Core e2e tests - WooCommerce Shipping & Tax",
 					"testType": "e2e",
 					"command": "test:e2e:with-env woocommerce-services",
-					"shardingArguments": [],
+					"shardingArguments": [
+						"--shard=1/2",
+						"--shard=2/2"
+					],
 					"changes": [],
 					"events": [
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"core-e2e-woocommerce-services"
 					],
 					"testEnv": {
 						"start": "env:test"
@@ -340,10 +350,14 @@
 					"name": "Core e2e tests - HPOS disabled",
 					"testType": "e2e",
 					"command": "test:e2e:with-env default-hpos-disabled --project=ui",
-					"shardingArguments": [],
+					"shardingArguments": [
+						"tests/e2e-pw/**"
+					],
 					"events": [
+						"pull_request",
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"core-e2e-hpos-disabled"
 					],
 					"changes": [],
 					"testEnv": {
@@ -378,7 +392,8 @@
 					},
 					"events": [
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"core-e2e-php-8.1"
 					],
 					"report": {
 						"resultsBlobName": "core-e2e-report-php-8.1",
@@ -406,7 +421,8 @@
 					},
 					"events": [
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"core-e2e-wp-latest-1"
 					],
 					"report": {
 						"resultsBlobName": "core-e2e-report-wp-latest-1",
@@ -434,7 +450,8 @@
 					},
 					"events": [
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"core-e2e-wp-pre-release"
 					],
 					"report": {
 						"resultsBlobName": "core-e2e-report-wp-pre-release",
@@ -468,7 +485,8 @@
 					},
 					"events": [
 						"pull_request",
-						"push"
+						"push",
+						"core-api"
 					],
 					"report": {
 						"resultsBlobName": "core-api-report",
@@ -496,7 +514,8 @@
 						"uninstall.php"
 					],
 					"events": [
-						"push"
+						"push",
+						"core-api-hpos-disabled"
 					],
 					"testEnv": {
 						"start": "env:test",
@@ -522,7 +541,8 @@
 						"start": "test:perf:ci-setup"
 					},
 					"events": [
-						"push"
+						"push",
+						"core-k6"
 					]
 				},
 				{
@@ -547,7 +567,8 @@
 					},
 					"events": [
 						"push",
-						"pull_request"
+						"pull_request",
+						"perf-metrics"
 					],
 					"report": {
 						"resultsBlobName": "core-metrics-report",
@@ -582,7 +603,8 @@
 						"pull_request",
 						"push",
 						"release-checks",
-						"nightly-checks"
+						"nightly-checks",
+						"blocks-e2e"
 					],
 					"report": {
 						"resultsBlobName": "blocks-e2e-report",
@@ -619,7 +641,8 @@
 					},
 					"events": [
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"blocks-e2e-wp-pre-release"
 					],
 					"report": {
 						"resultsBlobName": "blocks-e2e-report-wp-pre-release",
@@ -652,7 +675,8 @@
 					},
 					"events": [
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"blocks-e2e-wp-latest-1"
 					],
 					"report": {
 						"resultsBlobName": "blocks-e2e-report-wp-latest-1",
@@ -667,7 +691,8 @@
 					"shardingArguments": [],
 					"changes": [],
 					"events": [
-						"on-demand"
+						"on-demand",
+						"core-e2e-pressable"
 					],
 					"report": {
 						"resultsBlobName": "default-pressable-core-e2e-and-api",
@@ -682,7 +707,8 @@
 					"shardingArguments": [],
 					"changes": [],
 					"events": [
-						"on-demand"
+						"on-demand",
+						"core-e2e-wpcom"
 					],
 					"report": {
 						"resultsBlobName": "default-wpcom-core-e2e-and-api",
@@ -715,7 +741,7 @@
 		"@wordpress/babel-plugin-import-jsx-pragma": "1.1.3",
 		"@wordpress/babel-preset-default": "3.0.2",
 		"@wordpress/e2e-test-utils-playwright": "wp-6.6",
-		"@wordpress/env": "10.10.x",
+		"@wordpress/env": "10.14.0",
 		"@wordpress/stylelint-config": "^21.36.0",
 		"allure-commandline": "^2.25.0",
 		"allure-playwright": "^2.9.2",
@@ -759,7 +785,7 @@
 		"@woocommerce/admin-library": "workspace:*",
 		"@woocommerce/block-library": "workspace:*",
 		"@woocommerce/classic-assets": "workspace:*",
-		"@wordpress/browserslist-config": "wp-6.0"
+		"@wordpress/browserslist-config": "wp-6.6"
 	},
 	"nodemonConfig": {
 		"delay": 2500,

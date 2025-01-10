@@ -16,18 +16,37 @@ import type { CartDispatchFromMap, CartResolveSelectFromMap } from './index';
 export const getCartData =
 	() =>
 	async ( { dispatch }: { dispatch: CartDispatchFromMap } ) => {
-		const cartData = await apiFetch< CartResponse >( {
+		const response = await apiFetch< Response >( {
 			path: '/wc/store/v1/cart',
 			method: 'GET',
 			cache: 'no-store',
+			parse: false,
 		} );
 
-		const { receiveCart, receiveError } = dispatch;
-		if ( ! cartData ) {
-			receiveError( CART_API_ERROR );
-			return;
+		if (
+			// @ts-expect-error setCartHash exists but is not typed
+			typeof apiFetch.setCartHash === 'function'
+		) {
+			// @ts-expect-error setCartHash exists but is not typed
+			apiFetch.setCartHash( response?.headers );
 		}
-		receiveCart( cartData );
+
+		response
+			.json()
+			.then( function ( cartData: CartResponse ) {
+				const { receiveCart, receiveError } = dispatch;
+
+				if ( ! cartData ) {
+					receiveError( CART_API_ERROR );
+					return;
+				}
+
+				receiveCart( cartData );
+			} )
+			.catch( () => {
+				const { receiveError } = dispatch;
+				receiveError( CART_API_ERROR );
+			} );
 	};
 
 /**

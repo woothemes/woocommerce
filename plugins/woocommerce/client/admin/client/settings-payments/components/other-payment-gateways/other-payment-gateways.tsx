@@ -23,7 +23,11 @@ interface OtherPaymentGatewaysProps {
 	suggestions: SuggestedPaymentExtension[];
 	suggestionCategories: SuggestedPaymentExtensionCategory[];
 	installingPlugin: string | null;
-	setupPlugin: ( id: string, slug: string ) => void;
+	setupPlugin: (
+		id: string,
+		slug: string,
+		onboardingUrl: string | null
+	) => void;
 	isFetching: boolean;
 }
 
@@ -63,23 +67,32 @@ export const OtherPaymentGateways = ( {
 	const collapsedImages = useMemo( () => {
 		return isFetching ? (
 			<>
-				<div className="other-payment-gateways__header__title__image-placeholder" />
-				<div className="other-payment-gateways__header__title__image-placeholder" />
-				<div className="other-payment-gateways__header__title__image-placeholder" />
+				<div className="other-payment-gateways__header__title-image-placeholder" />
+				<div className="other-payment-gateways__header__title-image-placeholder" />
+				<div className="other-payment-gateways__header__title-image-placeholder" />
 			</>
 		) : (
-			suggestions.map( ( extension ) => (
-				<img
-					key={ extension.id }
-					src={ extension.icon }
-					alt={ extension.title }
-					width="24"
-					height="24"
-					className="other-payment-gateways__header__title__image"
-				/>
-			) )
+			// Go through the category hierarchy so we render the collapsed images in the same order as when expanded.
+			suggestionsByCategory.map(
+				( { suggestions: categorySuggestions } ) => {
+					if ( categorySuggestions.length === 0 ) {
+						return null;
+					}
+
+					return categorySuggestions.map( ( extension ) => (
+						<img
+							key={ extension.id }
+							src={ extension.icon }
+							alt={ extension.title + ' small logo' }
+							width="24"
+							height="24"
+							className="other-payment-gateways__header__title-image"
+						/>
+					) );
+				}
+			)
 		);
-	}, [ suggestions, isFetching ] );
+	}, [ suggestionsByCategory, isFetching ] );
 
 	// Memoize the expanded content to avoid re-rendering when expanded
 	const expandedContent = useMemo( () => {
@@ -122,10 +135,13 @@ export const OtherPaymentGateways = ( {
 										key={ extension.id }
 									>
 										<img
+											className="other-payment-gateways__content__grid-item-image"
 											src={ extension.icon }
-											alt={ decodeEntities(
-												extension.title
-											) }
+											alt={
+												decodeEntities(
+													extension.title
+												) + ' logo'
+											}
 										/>
 										<div className="other-payment-gateways__content__grid-item__content">
 											<span className="other-payment-gateways__content__grid-item__content__title">
@@ -143,7 +159,8 @@ export const OtherPaymentGateways = ( {
 														setupPlugin(
 															extension.id,
 															extension.plugin
-																.slug
+																.slug,
+															null // Suggested gateways won't have an onboarding URL.
 														)
 													}
 													isBusy={

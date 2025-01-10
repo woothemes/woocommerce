@@ -7,8 +7,6 @@ import {
 	WCUser,
 } from '@woocommerce/data';
 import debugFactory from 'debug';
-// @ts-expect-error @wordpress/element
-// eslint-disable-next-line @woocommerce/dependency-group
 import { createRoot } from '@wordpress/element';
 
 /**

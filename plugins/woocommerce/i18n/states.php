@@ -1451,7 +1451,7 @@ return array(
 		'TKI' => __( 'Taranaki', 'woocommerce' ),
 		'GIS' => __( 'Gisborne', 'woocommerce' ),
 		'HKB' => __( 'Hawke’s Bay', 'woocommerce' ),
-		'MWT' => __( 'Manawatu-Wanganui', 'woocommerce' ),
+		'MWT' => __( 'Manawatu-Whanganui', 'woocommerce' ),
 		'WGN' => __( 'Wellington', 'woocommerce' ),
 		'NSN' => __( 'Nelson', 'woocommerce' ),
 		'MBH' => __( 'Marlborough', 'woocommerce' ),

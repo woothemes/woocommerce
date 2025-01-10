@@ -918,8 +918,14 @@ class WC_Helper {
 
 		// Enable tracking when connected.
 		if ( class_exists( 'WC_Tracker' ) ) {
+			$prev_value = get_option( 'woocommerce_allow_tracking', 'no' );
 			update_option( 'woocommerce_allow_tracking', 'yes' );
 			WC_Tracker::send_tracking_data( true );
+
+			// Track woocommerce_allow_tracking_toggled in case was set as 'no' before.
+			if ( class_exists( 'WC_Tracks' ) && 'no' === $prev_value ) {
+				WC_Tracks::track_woocommerce_allow_tracking_toggled( $prev_value, 'yes', 'wccom_connect' );
+			}
 		}
 
 		// If connecting through in-app purchase, redirects back to WooCommerce.com
@@ -1003,7 +1009,6 @@ class WC_Helper {
 		 * @since 8.3.0
 		 */
 		do_action( 'woocommerce_helper_subscriptions_refresh' );
-
 		self::_flush_authentication_cache();
 		self::_flush_subscriptions_cache();
 		self::_flush_updates_cache();
@@ -1607,6 +1612,30 @@ class WC_Helper {
 
 		set_transient( $cache_key, $data, 1 * HOUR_IN_SECONDS );
 		return $data;
+	}
+
+	/**
+	 * Verify request hash created by WooCommerce.com.
+	 *
+	 * @param string $request_hash request hash to be verified.
+	 * @return bool
+	 */
+	public static function verify_request_hash( string $request_hash ): bool {
+		$request = WC_Helper_API::get(
+			'verify-request-hash',
+			array(
+				'authenticated' => true,
+				'query_string'  => '?request_hash=' . $request_hash,
+			)
+		);
+
+		if ( wp_remote_retrieve_response_code( $request ) !== 200 ) {
+			return false;
+		}
+
+		$data = json_decode( wp_remote_retrieve_body( $request ), true );
+
+		return isset( $data['success'] ) && true === $data['success'];
 	}
 
 

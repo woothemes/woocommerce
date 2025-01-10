@@ -141,13 +141,9 @@ class EmailPreviewTest extends WC_Unit_Test_Case {
 			return $product;
 		};
 		add_filter( 'woocommerce_email_preview_dummy_product', $product_filter, 10, 1 );
-
-		$content = $this->sut->render();
-		$this->assertStringContainsString( 'Filtered Product', $content );
-		$this->assertStringContainsString( '99', $content );
-		$this->assertStringNotContainsString( 'Dummy Product', $content );
-		$this->assertStringNotContainsString( '25', $content );
-
+		$product = $this->sut->get_dummy_product_when_not_set( null );
+		$this->assertEquals( 'Filtered Product', $product->get_name() );
+		$this->assertEquals( '99', $product->get_price() );
 		remove_filter( 'woocommerce_email_preview_dummy_product', $product_filter, 10 );
 	}
 
@@ -209,8 +205,9 @@ class EmailPreviewTest extends WC_Unit_Test_Case {
 	 */
 	public function test_prepare_email_for_preview_filter() {
 		$email_filter = function ( $email ) {
-			$email->settings['subject'] = 'Filtered Subject {order_number}';
-			return $email;
+			$new_email                      = clone $email;
+			$new_email->settings['subject'] = 'Filtered Subject {order_number}';
+			return $new_email;
 		};
 		add_filter( 'woocommerce_prepare_email_for_preview', $email_filter, 10, 1 );
 
@@ -220,5 +217,67 @@ class EmailPreviewTest extends WC_Unit_Test_Case {
 		$this->assertStringNotContainsString( 'Your ' . self::SITE_TITLE . ' order has been received!', $subject );
 
 		remove_filter( 'woocommerce_prepare_email_for_preview', $email_filter, 10 );
+	}
+
+	/**
+	 * Test that transient values are applied in email preview
+	 */
+	public function test_transient_values_in_preview() {
+		$original_value = get_option( EmailPreview::get_email_style_settings_ids()[0] );
+		update_option( EmailPreview::get_email_style_settings_ids()[0], 'option_value' );
+		set_transient( EmailPreview::get_email_style_settings_ids()[0], 'transient_value', HOUR_IN_SECONDS );
+
+		$this->sut->set_email_type( EmailPreview::DEFAULT_EMAIL_TYPE );
+		$content = $this->sut->render();
+
+		$this->assertStringNotContainsString( 'option_value', $content );
+		$this->assertStringContainsString( 'transient_value', $content );
+
+		update_option( EmailPreview::get_email_style_settings_ids()[0], $original_value );
+		delete_transient( EmailPreview::get_email_style_settings_ids()[0] );
+	}
+
+	/**
+	 * Test that transient values are applied in subject
+	 */
+	public function test_transient_values_in_subject() {
+		$email_id = EmailPreview::DEFAULT_EMAIL_ID;
+		$key      = "woocommerce_{$email_id}_subject";
+
+		$this->sut->set_email_type( EmailPreview::DEFAULT_EMAIL_TYPE );
+		$this->assertEquals( $this->sut->get_subject(), 'Your ' . self::SITE_TITLE . ' order has been received!' );
+
+		set_transient( $key, 'transient_subject', HOUR_IN_SECONDS );
+		$this->assertEquals( $this->sut->get_subject(), 'transient_subject' );
+		delete_transient( $key );
+	}
+
+	/**
+	 * Test that transient values are applied in email content
+	 */
+	public function test_transient_values_in_email_content() {
+		$email_id         = EmailPreview::DEFAULT_EMAIL_ID;
+		$heading_key      = "woocommerce_{$email_id}_heading";
+		$additional_key   = "woocommerce_{$email_id}_additional_content";
+		$heading_value    = get_option( $heading_key );
+		$additional_value = get_option( $additional_key );
+
+		update_option( $heading_key, 'option_value_heading' );
+		set_transient( $heading_key, 'transient_value_heading', HOUR_IN_SECONDS );
+		update_option( $additional_key, 'option_value_additional' );
+		set_transient( $additional_key, 'transient_value_additional', HOUR_IN_SECONDS );
+
+		$this->sut->set_email_type( EmailPreview::DEFAULT_EMAIL_TYPE );
+		$content = $this->sut->render();
+
+		$this->assertStringNotContainsString( 'option_value_heading', $content );
+		$this->assertStringNotContainsString( 'option_value_additional', $content );
+		$this->assertStringContainsString( 'transient_value_heading', $content );
+		$this->assertStringContainsString( 'transient_value_additional', $content );
+
+		update_option( $heading_key, $heading_value );
+		update_option( $additional_key, $additional_value );
+		delete_transient( $heading_key );
+		delete_transient( $additional_key );
 	}
 }
