@@ -50,7 +50,7 @@ export const FontFamiliesLoader = ( {
 			site: select( coreStore ).getSite(),
 			currentTheme: select( coreStore ).getCurrentTheme(),
 		};
-	} );
+	}, [] );
 
 	useEffect( () => {
 		if ( ! Array.isArray( fontFamilies ) || ! site ) {
