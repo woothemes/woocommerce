@@ -1,24 +1,23 @@
 /**
  * External dependencies
  */
-import { registerBlockType } from '@wordpress/blocks';
-import { Icon, button } from '@wordpress/icons';
-import { dispatch } from '@wordpress/data';
+import { button } from '@wordpress/icons';
 import { getPlugin, registerPlugin } from '@wordpress/plugins';
 import { isExperimentalBlocksEnabled } from '@woocommerce/block-settings';
 import { getSettingWithCoercion } from '@woocommerce/settings';
 import { isBoolean } from '@woocommerce/types';
+import { registerProductBlockType } from '@woocommerce/atomic-utils';
+import type { BlockConfiguration } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
  */
-import registerStore, { store as woocommerceTemplateStateStore } from './store';
 import ProductTypeSelectorPlugin from './plugins';
-import getProductTypeOptions from './utils/get-product-types';
 import metadata from './block.json';
 import AddToCartOptionsEdit from './edit';
 import save from './save';
 import './style.scss';
+import type { Attributes } from './types';
 
 // Pick the value of the "blockify add to cart flag"
 const isBlockifiedAddToCart = getSettingWithCoercion(
@@ -27,21 +26,10 @@ const isBlockifiedAddToCart = getSettingWithCoercion(
 	isBoolean
 );
 
-export const shouldRegisterBlock =
+export const shouldBlockifiedAddToCartWithOptionsBeRegistered =
 	isExperimentalBlocksEnabled() && isBlockifiedAddToCart;
 
-if ( shouldRegisterBlock ) {
-	// Register the store
-	registerStore();
-
-	// loads the product types
-	dispatch( woocommerceTemplateStateStore ).setProductTypes(
-		getProductTypeOptions()
-	);
-
-	// Select Simple product type
-	dispatch( woocommerceTemplateStateStore ).switchProductType( 'simple' );
-
+if ( shouldBlockifiedAddToCartWithOptionsBeRegistered ) {
 	// Register a plugin that adds a product type selector to the template sidebar.
 	const PLUGIN_NAME = 'document-settings-template-selector-pane';
 	if ( ! getPlugin( PLUGIN_NAME ) ) {
@@ -51,9 +39,18 @@ if ( shouldRegisterBlock ) {
 	}
 
 	// Register the block
-	registerBlockType( metadata, {
-		icon: <Icon icon={ button } />,
-		edit: AddToCartOptionsEdit,
-		save,
-	} );
+	registerProductBlockType< Attributes >(
+		{
+			...( metadata as BlockConfiguration< Attributes > ),
+			icon: {
+				src: button,
+			},
+			edit: AddToCartOptionsEdit,
+			save,
+			ancestor: [ 'woocommerce/single-product' ],
+		},
+		{
+			isAvailableOnPostEditor: true,
+		}
+	);
 }

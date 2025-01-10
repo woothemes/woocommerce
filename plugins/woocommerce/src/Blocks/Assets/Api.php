@@ -289,6 +289,7 @@ class Api {
 
 		if ( $has_i18n && function_exists( 'wp_set_script_translations' ) ) {
 			wp_set_script_translations( $handle, 'woocommerce', $this->package->get_path( 'languages' ) );
+			wp_set_script_translations( $handle, 'woocommerce', $this->package->get_path( 'i18n/languages' ) );
 		}
 	}
 

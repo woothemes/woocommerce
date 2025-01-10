@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
+import { WooPaymentsMethodsLogos } from '@woocommerce/onboarding';
 import { __ } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
 import { PaymentGatewayProvider } from '@woocommerce/data';
@@ -13,7 +13,11 @@ import { Tooltip } from '@wordpress/components';
 import sanitizeHTML from '~/lib/sanitize-html';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
 import { EllipsisMenuWrapper as EllipsisMenu } from '~/settings-payments/components/ellipsis-menu-content';
-import { hasIncentive, isWooPayments } from '~/settings-payments/utils';
+import {
+	hasIncentive,
+	isWooPayEligible,
+	isWooPayments,
+} from '~/settings-payments/utils';
 import { DefaultDragHandle } from '~/settings-payments/components/sortable';
 import { WC_ASSET_URL } from '~/utils/admin-settings';
 import {
@@ -33,7 +37,7 @@ export const PaymentGatewayListItem = ( {
 	acceptIncentive,
 	...props
 }: PaymentGatewayItemProps ) => {
-	const isWcPay = isWooPayments( gateway.id );
+	const itemIsWooPayments = isWooPayments( gateway.id );
 	const incentive = hasIncentive( gateway ) ? gateway._incentive : null;
 	const shouldHighlightIncentive =
 		incentive && ! incentive?.promo_id.includes( '-action-' );
@@ -55,11 +59,10 @@ export const PaymentGatewayListItem = ( {
 			return 'needs_setup';
 		}
 		if ( gateway.state.enabled ) {
-			if ( isWcPay ) {
-				if ( gateway.state.test_mode ) {
-					return 'test_mode';
-				}
+			if ( gateway.state.test_mode ) {
+				return 'test_mode';
 			}
+
 			return 'active';
 		}
 
@@ -70,14 +73,22 @@ export const PaymentGatewayListItem = ( {
 		<div
 			id={ gateway.id }
 			className={ `transitions-disabled woocommerce-list__item woocommerce-list__item-enter-done woocommerce-item__payment-gateway ${
-				isWcPay ? `woocommerce-item__woocommerce-payments` : ''
+				itemIsWooPayments
+					? `woocommerce-item__woocommerce-payments`
+					: ''
 			} ${ shouldHighlightIncentive ? `has-incentive` : '' }` }
 			{ ...props }
 		>
 			<div className="woocommerce-list__item-inner">
 				<div className="woocommerce-list__item-before">
 					<DefaultDragHandle />
-					<img src={ gateway.icon } alt={ gateway.title + ' logo' } />
+					{ gateway.icon && (
+						<img
+							className={ 'woocommerce-list__item-image' }
+							src={ gateway.icon }
+							alt={ gateway.title + ' logo' }
+						/>
+					) }
 				</div>
 				<div className="woocommerce-list__item-text">
 					<span className="woocommerce-list__item-title">
@@ -113,14 +124,17 @@ export const PaymentGatewayListItem = ( {
 					</span>
 					<span
 						className="woocommerce-list__item-content"
+						// eslint-disable-next-line react/no-danger -- This string is sanitized by the PaymentGateway class.
 						dangerouslySetInnerHTML={ sanitizeHTML(
 							decodeEntities( gateway.description )
 						) }
 					/>
-					{ isWcPay && (
-						<WooPaymentMethodsLogos
+					{ itemIsWooPayments && (
+						<WooPaymentsMethodsLogos
 							maxElements={ 10 }
-							isWooPayEligible={ true }
+							tabletWidthBreakpoint={ 1080 } // Reduce the number of logos earlier.
+							mobileWidthBreakpoint={ 768 } // Reduce the number of logos earlier.
+							isWooPayEligible={ isWooPayEligible( gateway ) }
 						/>
 					) }
 				</div>

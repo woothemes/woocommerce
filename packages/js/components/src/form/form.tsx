@@ -3,7 +3,6 @@
  */
 import classnames from 'classnames';
 import {
-	cloneElement,
 	useState,
 	createElement,
 	useCallback,
@@ -13,7 +12,7 @@ import {
 	useImperativeHandle,
 } from '@wordpress/element';
 import deprecated from '@wordpress/deprecated';
-import { ChangeEvent, PropsWithChildren, useRef } from 'react';
+import { ChangeEvent, useRef } from 'react';
 import _setWith from 'lodash/setWith';
 import _get from 'lodash/get';
 import _clone from 'lodash/clone';
@@ -123,6 +122,43 @@ export type ConsumerInputProps< Values > = {
 	sanitize?: ( value: Values[ keyof Values ] ) => Values[ keyof Values ];
 };
 
+type StateAndHelpers< Values > = {
+	values: Values;
+	errors: FormErrors< Values >;
+	touched: { [ P in keyof Values ]?: boolean };
+	isDirty: boolean;
+	isValidForm: boolean;
+	setTouched: React.Dispatch<
+		React.SetStateAction< { [ P in keyof Values ]?: boolean | undefined } >
+	>;
+	setValue: ( name: string, value: Values[ keyof Values ] ) => void;
+	setValues: ( valuesToSet: Values ) => void;
+	handleSubmit: () => unknown;
+	getCheckboxControlProps: < P extends keyof Values >(
+		name: P,
+		inputProps?: ConsumerInputProps< Values >
+	) => CheckboxProps< Values, Values[ P ] >;
+	getInputProps: < P extends keyof Values >(
+		name: P,
+		inputProps?: ConsumerInputProps< Values >
+	) => InputProps< Values, Values[ P ] >;
+	getSelectControlProps: < P extends keyof Values >(
+		name: P,
+		inputProps?: ConsumerInputProps< Values >
+	) => SelectControlProps< Values, Values[ P ] >;
+	resetForm: (
+		newInitialValues?: Values,
+		newTouchedFields?:
+			| { [ P in keyof Values ]?: boolean | undefined }
+			| undefined,
+		newErrors?: FormErrors< Values >
+	) => void;
+};
+
+type PropsWithChildrenFunction< P, T > = P & {
+	children?: React.ReactNode | ( ( props: T ) => React.ReactElement );
+};
+
 /**
  * A form component to handle form state and provide input helper props.
  */
@@ -134,7 +170,10 @@ function FormComponent< Values extends Record< string, any > >(
 		onChange = () => {},
 		onChanges = () => {},
 		...props
-	}: PropsWithChildren< FormProps< Values > >,
+	}: PropsWithChildrenFunction<
+		FormProps< Values >,
+		StateAndHelpers< Values >
+	>,
 	ref: React.Ref< FormRef< Values > >
 ): React.ReactElement | null {
 	const initialValues = useRef( props.initialValues ?? ( {} as Values ) );
@@ -242,7 +281,7 @@ function FormComponent< Values extends Record< string, any > >(
 
 	const setValue = useCallback(
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		( name: string, value: any ) => {
+		( name: keyof Values, value: any ) => {
 			setValues( _setWith( { ...values }, name, value, _clone ) );
 		},
 		[ values, validate, onChange, props.onChangeCallback ]
@@ -250,7 +289,7 @@ function FormComponent< Values extends Record< string, any > >(
 
 	const handleChange = useCallback(
 		(
-			name: string,
+			name: keyof Values,
 			value: ChangeEvent< HTMLInputElement > | Values[ keyof Values ]
 		) => {
 			// Handle native events.
@@ -268,7 +307,7 @@ function FormComponent< Values extends Record< string, any > >(
 	);
 
 	const handleBlur = useCallback(
-		( name: string ) => {
+		( name: keyof Values ) => {
 			setTouched( {
 				...touched,
 				[ name ]: true,
@@ -303,10 +342,10 @@ function FormComponent< Values extends Record< string, any > >(
 		}
 	};
 
-	function getInputProps< Value = Values[ keyof Values ] >(
-		name: string,
+	function getInputProps< P extends keyof Values >(
+		name: P,
 		inputProps: ConsumerInputProps< Values > = {}
-	): InputProps< Values, Value > {
+	): InputProps< Values, Values[ P ] > {
 		const inputValue = _get( values, name );
 		const isTouched = touched[ name ];
 		const inputError = _get( errors, name );
@@ -347,20 +386,20 @@ function FormComponent< Values extends Record< string, any > >(
 		};
 	}
 
-	function getCheckboxControlProps< Value = Values[ keyof Values ] >(
-		name: string,
+	function getCheckboxControlProps< P extends keyof Values >(
+		name: P,
 		inputProps: ConsumerInputProps< Values > = {}
-	): CheckboxProps< Values, Value > {
+	): CheckboxProps< Values, Values[ P ] > {
 		return _omit( getInputProps( name, inputProps ), [
 			'selected',
 			'value',
 		] );
 	}
 
-	function getSelectControlProps< Value = Values[ keyof Values ] >(
-		name: string,
+	function getSelectControlProps< P extends keyof Values >(
+		name: P,
 		inputProps: ConsumerInputProps< Values > = {}
-	): SelectControlProps< Values, Value > {
+	): SelectControlProps< Values, Values[ P ] > {
 		const selectControlProps = getInputProps( name, inputProps );
 		return {
 			...selectControlProps,
@@ -396,8 +435,7 @@ function FormComponent< Values extends Record< string, any > >(
 
 	function getChildren() {
 		if ( typeof children === 'function' ) {
-			const element = children( getStateAndHelpers() );
-			return cloneElement( element );
+			return children( getStateAndHelpers() );
 		}
 		return children;
 	}
@@ -413,7 +451,10 @@ const Form = forwardRef( FormComponent ) as <
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	Values extends Record< string, any >
 >(
-	props: PropsWithChildren< FormProps< Values > > & {
+	props: PropsWithChildrenFunction<
+		FormProps< Values >,
+		StateAndHelpers< Values >
+	> & {
 		ref?: React.ForwardedRef< FormRef< Values > >;
 	},
 	ref: React.Ref< FormRef< Values > >

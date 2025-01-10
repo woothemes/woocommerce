@@ -74,6 +74,10 @@ jQuery( function( $ ) {
 			$tabs.eq( targetIndex ).focus();
 		} )
 		.on( 'focusout', '.wc-tabs li a, ul.tabs li a, #respond p.stars a', function() {
+			if ( ! productGalleryElement.data( 'flexslider' ) ) {
+				// Don't do anything if gallery does not exist.
+				return;
+			}
 			setTimeout( function () {
 				var $activeElement = $( document.activeElement );
 				var sliderKeyupBlockers = [ '.stars', '.tabs', '.wc-tabs'];

@@ -43,7 +43,6 @@ const ShippingRecommendationWrapper = compose(
 )( ShippingRecommendation );
 
 registerPlugin( 'wc-admin-onboarding-task-shipping-recommendation', {
-	// @ts-expect-error 'scope' does exist. @types/wordpress__plugins is outdated.
 	scope: 'woocommerce-tasks',
 	render: () => (
 		<WooOnboardingTask id="shipping-recommendation">

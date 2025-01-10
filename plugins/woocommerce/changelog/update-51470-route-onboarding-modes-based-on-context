@@ -1,5 +1,0 @@
-Significance: patch
-Type: update
-Comment: Refactor gateway provider logic into separate services and add WooPayments onboarding routing based on store context for the new Payments settings page.
-
-

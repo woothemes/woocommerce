@@ -61,145 +61,157 @@ test.describe(
 			);
 		} );
 
-		test( 'Accessing the transitional page when the CYS flow is not completed should redirect to the Intro page', async ( {
-			page,
-			baseURL,
-		} ) => {
-			await page.goto( TRANSITIONAL_URL );
+		test(
+			'Accessing the transitional page when the CYS flow is not completed should redirect to the Intro page',
+			{ tag: tags.NOT_E2E },
+			async ( { page, baseURL } ) => {
+				await page.goto( TRANSITIONAL_URL );
 
-			const locator = page.locator( 'h1:visible' );
-			await expect( locator ).not.toHaveText( 'Your store looks great!' );
+				const locator = page.locator( 'h1:visible' );
+				await expect( locator ).not.toHaveText(
+					'Your store looks great!'
+				);
 
-			await expect( page.url() ).toBe( `${ baseURL }${ INTRO_URL }` );
-		} );
+				await expect( page.url() ).toBe( `${ baseURL }${ INTRO_URL }` );
+			}
+		);
 
-		test( 'Clicking on "Finish customizing" in the assembler should go to the transitional page', async ( {
-			pageObject,
-			baseURL,
-		} ) => {
-			await pageObject.setupSite( baseURL );
-			await pageObject.waitForLoadingScreenFinish();
+		test(
+			'Clicking on "Finish customizing" in the assembler should go to the transitional page',
+			{ tag: tags.NOT_E2E },
+			async ( { pageObject, baseURL } ) => {
+				await pageObject.setupSite( baseURL );
+				await pageObject.waitForLoadingScreenFinish();
 
-			const assembler = await pageObject.getAssembler();
-			await assembler
-				.getByRole( 'button', { name: 'Finish customizing' } )
-				.click();
+				const assembler = await pageObject.getAssembler();
+				await assembler
+					.getByRole( 'button', { name: 'Finish customizing' } )
+					.click();
 
-			await expect(
-				assembler.locator( 'text=Your store looks great!' )
-			).toBeVisible();
-			await expect(
-				assembler.locator( 'text=Go to Products' )
-			).toBeVisible();
-			await expect(
-				assembler.locator( 'text=Go to the Editor' )
-			).toBeVisible();
-			await expect(
-				assembler.locator( 'text=Back to home' )
-			).toBeVisible();
-		} );
+				await expect(
+					assembler.locator( 'text=Your store looks great!' )
+				).toBeVisible();
+				await expect(
+					assembler.locator( 'text=Go to Products' )
+				).toBeVisible();
+				await expect(
+					assembler.locator( 'text=Go to the Editor' )
+				).toBeVisible();
+				await expect(
+					assembler.locator( 'text=Back to home' )
+				).toBeVisible();
+			}
+		);
 
-		test( 'Clicking on "View store" should go to the store home page', async ( {
-			pageObject,
-			baseURL,
-			page,
-		} ) => {
-			await setOption(
-				request,
-				baseURL,
-				'woocommerce_admin_customize_store_completed',
-				'yes'
-			);
+		test(
+			'Clicking on "View store" should go to the store home page',
+			{ tag: tags.NOT_E2E },
+			async ( { pageObject, baseURL, page } ) => {
+				await setOption(
+					request,
+					baseURL,
+					'woocommerce_admin_customize_store_completed',
+					'yes'
+				);
 
-			await page.goto( TRANSITIONAL_URL );
-			const assembler = await pageObject.getAssembler();
+				await page.goto( TRANSITIONAL_URL );
+				const assembler = await pageObject.getAssembler();
 
-			await assembler.getByRole( 'link', { name: 'View store' } ).click();
+				await assembler
+					.getByRole( 'link', { name: 'View store' } )
+					.click();
 
-			await expect( page ).toHaveURL( './' );
-		} );
+				await expect( page ).toHaveURL( './' );
+			}
+		);
 
-		test( 'Clicking on "Share feedback" should open the survey modal', async ( {
-			pageObject,
-			baseURL,
-			page,
-		} ) => {
-			await setOption(
-				request,
-				baseURL,
-				'woocommerce_admin_customize_store_completed',
-				'yes'
-			);
+		test(
+			'Clicking on "Share feedback" should open the survey modal',
+			{ tag: tags.NOT_E2E },
+			async ( { pageObject, baseURL, page } ) => {
+				await setOption(
+					request,
+					baseURL,
+					'woocommerce_admin_customize_store_completed',
+					'yes'
+				);
 
-			await setOption(
-				request,
-				baseURL,
-				'woocommerce_admin_customize_store_survey_completed',
-				'no'
-			);
+				await setOption(
+					request,
+					baseURL,
+					'woocommerce_admin_customize_store_survey_completed',
+					'no'
+				);
 
-			await page.goto( TRANSITIONAL_URL );
-			const assembler = await pageObject.getAssembler();
+				await page.goto( TRANSITIONAL_URL );
+				const assembler = await pageObject.getAssembler();
 
-			const shareFeedbackButton = assembler.getByRole( 'button', {
-				name: 'Share feedback',
-			} );
-			const shareFeedbackModal = assembler.locator(
-				'.woocommerce-ai-survey-modal'
-			);
-			const sendButton = assembler.getByRole( 'button', {
-				name: 'Send',
-			} );
-			const cancelButton = assembler.getByRole( 'button', {
-				name: 'Cancel',
-			} );
+				const shareFeedbackButton = assembler.getByRole( 'button', {
+					name: 'Share feedback',
+				} );
+				const shareFeedbackModal = assembler.locator(
+					'.woocommerce-ai-survey-modal'
+				);
+				const sendButton = assembler.getByRole( 'button', {
+					name: 'Send',
+				} );
+				const cancelButton = assembler.getByRole( 'button', {
+					name: 'Cancel',
+				} );
 
-			await expect(
-				page.locator( '.woocommerce-edit-site-site-hub__site-title' )
-			).toBeVisible();
+				await expect(
+					page.locator(
+						'.woocommerce-edit-site-site-hub__site-title'
+					)
+				).toBeVisible();
 
-			await shareFeedbackButton.click();
+				await shareFeedbackButton.click();
 
-			await expect( shareFeedbackModal ).toBeVisible();
-			await expect( sendButton ).toBeDisabled();
+				await expect( shareFeedbackModal ).toBeVisible();
+				await expect( sendButton ).toBeDisabled();
 
-			await cancelButton.click();
-			await expect( shareFeedbackModal ).toBeHidden();
+				await cancelButton.click();
+				await expect( shareFeedbackModal ).toBeHidden();
 
-			await shareFeedbackButton.click();
+				await shareFeedbackButton.click();
 
-			await expect( shareFeedbackModal ).toBeVisible();
-			await expect( sendButton ).toBeDisabled();
-			await expect(
-				assembler.locator( 'text=I wanted to design my own theme.' )
-			).toBeVisible();
+				await expect( shareFeedbackModal ).toBeVisible();
+				await expect( sendButton ).toBeDisabled();
+				await expect(
+					assembler.locator( 'text=I wanted to design my own theme.' )
+				).toBeVisible();
 
-			await assembler
-				.getByRole( 'button', { name: '★' } )
-				.first()
-				.click();
-			await assembler
-				.locator( 'text=I wanted to design my own theme.' )
-				.click();
-			await assembler
-				.getByRole( 'button', { name: '★' } )
-				.first()
-				.click();
-			await assembler
-				.locator( `text=I didn't like any of the available themes.` )
-				.click();
-			await assembler
-				.getByRole( 'button', { name: '★' } )
-				.first()
-				.click();
-			await assembler
-				.locator( `text=I didn't find a theme that matched my needs.` )
-				.click();
-			await expect( sendButton ).toBeEnabled();
-			await sendButton.click();
-			await expect( shareFeedbackModal ).toBeHidden();
+				await assembler
+					.getByRole( 'button', { name: '★' } )
+					.first()
+					.click();
+				await assembler
+					.locator( 'text=I wanted to design my own theme.' )
+					.click();
+				await assembler
+					.getByRole( 'button', { name: '★' } )
+					.first()
+					.click();
+				await assembler
+					.locator(
+						`text=I didn't like any of the available themes.`
+					)
+					.click();
+				await assembler
+					.getByRole( 'button', { name: '★' } )
+					.first()
+					.click();
+				await assembler
+					.locator(
+						`text=I didn't find a theme that matched my needs.`
+					)
+					.click();
+				await expect( sendButton ).toBeEnabled();
+				await sendButton.click();
+				await expect( shareFeedbackModal ).toBeHidden();
 
-			await expect( shareFeedbackButton ).toBeHidden();
-		} );
+				await expect( shareFeedbackButton ).toBeHidden();
+			}
+		);
 	}
 );
