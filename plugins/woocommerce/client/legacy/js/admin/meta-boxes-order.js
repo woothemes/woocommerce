@@ -1600,12 +1600,12 @@ jQuery( function ( $ ) {
 	wc_meta_boxes_order_downloads.init();
 	wc_meta_boxes_order_custom_meta.init();
 
-	// this allows third party plugin to call woocommerce function
-	window.wcOrderMetaBoxes = {
-		wc_meta_boxes_order: wc_meta_boxes_order,
-		wc_meta_boxes_order_items: wc_meta_boxes_order_items,
-		wc_meta_boxes_order_notes: wc_meta_boxes_order_notes,
-		wc_meta_boxes_order_downloads: wc_meta_boxes_order_downloads,
-		wc_meta_boxes_order_custom_meta: wc_meta_boxes_order_custom_meta,
+	// This allows third party plugins to re-initialize meta boxes if they change them.
+	window.wcOrderMetaBoxesInit = {
+		wc_meta_boxes_order: wc_meta_boxes_order.init.bind( wc_meta_boxes_order ),
+		wc_meta_boxes_order_items: wc_meta_boxes_order_items.init.bind( wc_meta_boxes_order_items ),
+		wc_meta_boxes_order_notes: wc_meta_boxes_order_notes.init.bind( wc_meta_boxes_order_notes ),
+		wc_meta_boxes_order_downloads: wc_meta_boxes_order_downloads.init.bind( wc_meta_boxes_order_downloads ),
+		wc_meta_boxes_order_custom_meta: wc_meta_boxes_order_custom_meta.init.bind( wc_meta_boxes_order_custom_meta ),
 	};
 });
