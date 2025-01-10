@@ -1,5 +1,5 @@
 const { test: baseTest, tags } = require( '../../fixtures/fixtures' );
-const { fillPageTitle, publishPage } = require( '../../utils/editor' );
+const { fillPageTitle } = require( '../../utils/editor' );
 
 /**
  * External dependencies
@@ -8,6 +8,7 @@ import {
 	closeChoosePatternModal,
 	getCanvas,
 	goToPageEditor,
+	publishPage,
 } from '@woocommerce/e2e-utils-playwright';
 
 const test = baseTest.extend( {
