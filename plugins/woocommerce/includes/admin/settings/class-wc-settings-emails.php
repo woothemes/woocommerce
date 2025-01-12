@@ -52,6 +52,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 		add_action( 'woocommerce_admin_field_email_color_palette', array( $this, 'email_color_palette' ) );
 		if ( FeaturesUtil::feature_is_enabled( 'email_improvements' ) ) {
 			add_action( 'woocommerce_email_settings_after', array( $this, 'email_preview_single' ) );
+			add_filter( 'woocommerce_admin_settings_sanitize_option_woocommerce_email_header_image', array( $this, 'sanitize_email_header_image' ), 10, 3 );
 		}
 		parent::__construct();
 	}
@@ -735,6 +736,18 @@ class WC_Settings_Emails extends WC_Settings_Page {
 			</td>
 		</tr>
 		<?php
+	}
+
+	/**
+	 * Sanitize email image URL.
+	 *
+	 * @param  string $value     Option value.
+	 * @param  array  $option    Option name.
+	 * @param  string $raw_value Raw value.
+	 * @return string
+	 */
+	public function sanitize_email_header_image( $value, $option, $raw_value ) {
+		return sanitize_url( $raw_value );
 	}
 
 	/**
