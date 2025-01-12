@@ -60,34 +60,37 @@ class StoreNotices extends AbstractBlock {
 		$all_notices  = wc_get_notices();
 		$notice_types = apply_filters( 'woocommerce_notice_types', array( 'error', 'success', 'notice' ) );
 
+		$store_notices_context = array();
+		$iapi_notices = array();
+
 		foreach ( $notice_types as $notice_type ) {
 			if ( wc_notice_count( $notice_type ) > 0 ) {
 				$notices_by_type = $all_notices[ $notice_type ];
 
-				foreach ( $notices_by_type as $notice ) {
+				foreach ( $notices_by_type as $index => $notice ) {
 					$messages[] = isset( $notice['notice'] ) ? $notice['notice'] : $notice;
+
+					$iapi_notices[ $notice_type ][] = array(
+						'notice'       => '<span data-wc-key="' . $index . '-' . $notice_type . '" data-wc-each-child>' . $notice['notice'] . '</span>',
+						'data'         => $notice['data'],
+						'key'          => $index . '-' . $notice_type,
+						'noticeString' => $notice['notice'],
+					);
+
+					$store_notices_context[ $notice_type . 'Notices' ] = $iapi_notices[ $notice_type ];
 				}
 			}
-		}
-
-		$iapi_notices = array();
-
-		foreach ( $notices_by_type as $index => $notice ) {
-			$iapi_notices[] = array(
-				'notice' => '<span data-wc-key="' . $index . '-' . $notice_type . '" data-wc-each-child>' . $notice['notice'] . '</span>',
-				'data'   => $notice['data'],
-			);
 		}
 
 		ob_start();
 
 		?>
-		<div data-wc-interactive="<?php echo esc_attr( $namespace ); ?>" class="wc-block-store-notices woocommerce">
+		<div data-wc-context="<?php echo esc_attr( wp_json_encode( $store_notices_context ) ); ?>" data-wc-interactive="<?php echo esc_attr( $namespace ); ?>" class="wc-block-store-notices woocommerce">
 			<div class="woocommerce-notices-wrapper">
 				<?php foreach ( $notice_types as $notice_type ) { ?>
-					<?php $state_key = "{$notice_type}Notices"; ?>
-					<template data-wc-each="state.<?php echo esc_attr( $state_key ); ?>">
-						<span data-wc-text="state.item.notice"></span>
+					<?php $context_key = "{$notice_type}Notices"; ?>
+					<template data-wc-each-key="context.item.key" data-wc-each="context.<?php echo esc_attr( $context_key ); ?>">
+						<span data-wc-text="context.item.noticeString"></span>
 					</template>
 
 					<?php
@@ -96,7 +99,7 @@ class StoreNotices extends AbstractBlock {
 								"notices/{$notice_type}.php",
 								array(
 									'messages' => array_filter( $messages ), // @deprecated 3.9.0
-									'notices'  => $iapi_notices,
+									'notices'  => $iapi_notices[ $notice_type ],
 								),
 							),
 						);

@@ -9,8 +9,10 @@ type Notice = {
 };
 
 type StoreNoticesStore = {
-	state: {
-		notices: Notice[];
+	context: {
+		errorNotices: Notice[];
+		successNotices: Notice[];
+		noticeNotices: Notice[];
 	};
 
 	actions: {
@@ -19,6 +21,11 @@ type StoreNoticesStore = {
 };
 
 store< StoreNoticesStore >( 'woocommerce/store-notices', {
+	context: {
+		errorNotices: [],
+		successNotices: [],
+		noticeNotices: [],
+	},
 	actions: {
 		addNotice: ( notice: Notice ) => {
 			// TODO add notice.
