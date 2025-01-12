@@ -2,6 +2,11 @@ name: Compressed Size
 
 on:
     pull_request:
+        types:
+            - opened
+            - reopened
+            - synchronize
+            - ready_for_review
         paths:
             - '**.jsx?'
             - '**.tsx?'
@@ -35,7 +40,7 @@ env:
 jobs:
     build:
         name: Check Asset Sizes
-        if: github.event.pull_request.draft == false
+        if: github.event.pull_request.draft == false && github.event.pull_request.user.login != 'github-actions[bot]'
         runs-on: ubuntu-latest
         permissions:
             contents: read
