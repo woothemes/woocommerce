@@ -1,6 +1,7 @@
 <?php
 namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
+use Automattic\WooCommerce\Enums\ProductStatus;
 use WP_Query;
 use Automattic\WooCommerce\Blocks\Utils\Utils;
 
@@ -256,7 +257,7 @@ class ProductQuery extends AbstractBlock {
 			'order'          => $query['order'],
 			'offset'         => $query['offset'],
 			'post__in'       => array(),
-			'post_status'    => 'publish',
+			'post_status'    => ProductStatus::PUBLISH,
 			'post_type'      => 'product',
 			'tax_query'      => array(),
 		);

@@ -92,6 +92,15 @@ class Totals extends \WP_UnitTestCase {
 		wc()->cart->add_to_cart( $this->products[0]->get_id(), 2 );
 		wc()->cart->add_to_cart( $this->products[1]->get_id(), 1 );
 	}
+
+	/**
+	 * tearDown.
+	 */
+	public function tearDown(): void {
+		parent::tearDown();
+		WC()->cart->empty_cart();
+	}
+
 	/**
 	 * We ensure deep sort works with all sort of arrays.
 	 */
@@ -165,4 +174,3 @@ class Totals extends \WP_UnitTestCase {
 		WC()->session = $old_session;
 	}
 }
-

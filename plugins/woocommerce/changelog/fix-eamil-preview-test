@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Fix EmailPreviewTest::test_dummy_product_filter to validate dummy product properties directly
