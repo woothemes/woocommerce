@@ -50,6 +50,7 @@ const allowedAttributes = [
 	'src',
 	'class',
 	'alt',
+	'style',
 ];
 
 /**
