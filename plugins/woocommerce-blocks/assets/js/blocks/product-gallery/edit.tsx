@@ -14,10 +14,7 @@ import { useSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import {
-	moveInnerBlocksToPosition,
-	getClassNameByNextPreviousButtonsPosition,
-} from './utils';
+import { moveInnerBlocksToPosition } from './utils';
 import { ProductGalleryBlockSettings } from './block-settings/index';
 import type { ProductGalleryAttributes } from './types';
 
@@ -106,11 +103,7 @@ export const Edit = ( {
 	attributes,
 	setAttributes,
 }: BlockEditProps< ProductGalleryAttributes > ) => {
-	const blockProps = useBlockProps( {
-		className: getClassNameByNextPreviousButtonsPosition(
-			attributes.nextPreviousButtonsPosition
-		),
-	} );
+	const blockProps = useBlockProps();
 
 	const { currentTemplateId, templateType } = useSelect( ( select ) => {
 		const store = select( 'core/edit-site' );
@@ -146,12 +139,9 @@ export const Edit = ( {
 					setAttributes={ setAttributes }
 					context={ {
 						productGalleryClientId: clientId,
-						pagerDisplayMode: attributes.pagerDisplayMode,
 						thumbnailsPosition: attributes.thumbnailsPosition,
 						thumbnailsNumberOfThumbnails:
 							attributes.thumbnailsNumberOfThumbnails,
-						nextPreviousButtonsPosition:
-							attributes.nextPreviousButtonsPosition,
 					} }
 				/>
 			</InspectorControls>

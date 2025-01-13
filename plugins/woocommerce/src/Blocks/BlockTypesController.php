@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Automattic\WooCommerce\Blocks;
 
 use Automattic\WooCommerce\Admin\Features\Features;
@@ -61,18 +63,6 @@ final class BlockTypesController {
 		add_action( 'woocommerce_login_form_end', array( $this, 'redirect_to_field' ) );
 		add_filter( 'widget_types_to_hide_from_legacy_widget_block', array( $this, 'hide_legacy_widgets_with_block_equivalent' ) );
 		add_action( 'woocommerce_delete_product_transients', array( $this, 'delete_product_transients' ) );
-		add_filter(
-			'woocommerce_is_checkout',
-			function ( $ret ) {
-				return $ret || $this->has_block_variation( 'woocommerce/classic-shortcode', 'shortcode', 'checkout' );
-			}
-		);
-		add_filter(
-			'woocommerce_is_cart',
-			function ( $ret ) {
-				return $ret || $this->has_block_variation( 'woocommerce/classic-shortcode', 'shortcode', 'cart' );
-			}
-		);
 	}
 
 	/**
@@ -112,34 +102,6 @@ final class BlockTypesController {
 			}
 		);
 		return $this->registered_blocks_with_woocommerce_parents;
-	}
-
-	/**
-	 * Check if the current post has a block with a specific attribute value.
-	 *
-	 * @param string $block_id The block ID to check for.
-	 * @param string $attribute The attribute to check.
-	 * @param string $value The value to check for.
-	 * @return boolean
-	 */
-	private function has_block_variation( $block_id, $attribute, $value ) {
-		$post = get_post();
-
-		if ( ! $post ) {
-			return false;
-		}
-
-		if ( has_block( $block_id, $post->ID ) ) {
-			$blocks = (array) parse_blocks( $post->post_content );
-
-			foreach ( $blocks as $block ) {
-				if ( isset( $block['attrs'][ $attribute ] ) && $value === $block['attrs'][ $attribute ] ) {
-					return true;
-				}
-			}
-		}
-
-		return false;
 	}
 
 	/**
@@ -556,7 +518,15 @@ final class BlockTypesController {
 				$block_types[] = 'AddToCartWithOptions';
 				$block_types[] = 'AddToCartWithOptionsQuantitySelector';
 				$block_types[] = 'AddToCartWithOptionsVariationSelector';
+				$block_types[] = 'AddToCartWithOptionsGroupedProductSelector';
+				$block_types[] = 'AddToCartWithOptionsGroupedProductSelectorItemTemplate';
 			}
+			// Generic blocks that will be pushed upstream.
+			$block_types[] = 'Accordion\AccordionGroup';
+			$block_types[] = 'Accordion\AccordionItem';
+			$block_types[] = 'Accordion\AccordionPanel';
+			$block_types[] = 'Accordion\AccordionHeader';
+			$block_types[] = 'BlockifiedProductDetails';
 		}
 
 		/**

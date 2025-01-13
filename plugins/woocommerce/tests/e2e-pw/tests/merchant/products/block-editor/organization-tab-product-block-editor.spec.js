@@ -136,7 +136,10 @@ test.describe( 'General tab', { tag: tags.GUTENBERG }, () => {
 			await page.getByRole( 'button', { name: 'Enter' } ).click();
 
 			await expect(
-				page.getByRole( 'heading', { name: productData.name } )
+				page.getByRole( 'heading', {
+					name: productData.name,
+					level: 1,
+				} )
 			).toBeVisible();
 
 			await expect(
