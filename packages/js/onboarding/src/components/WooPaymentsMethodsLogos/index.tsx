@@ -3,7 +3,7 @@
  */
 import React, { useState, useEffect } from 'react';
 import { createElement } from '@wordpress/element';
-import { Tooltip } from '@wordpress/components';
+import { Popover } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -157,6 +157,7 @@ export const WooPaymentsMethodsLogos: React.FC< {
 	totalPaymentMethods = 20,
 } ) => {
 	const [ maxShownElements, setMaxShownElements ] = useState( maxElements );
+	const [ isPopoverVisible, setIsPopoverVisible ] = useState( false );
 
 	// Reduce the total number of payment methods by one if the store is not eligible for WooPay.
 	const maxSupportedPaymentMethods = isWooPayEligible
@@ -215,22 +216,34 @@ export const WooPaymentsMethodsLogos: React.FC< {
 		<div className="woocommerce-woopayments-payment-methods-logos">
 			{ visiblePaymentMethods.map( ( pm ) => pm.component ) }
 			{ maxShownElements < maxSupportedPaymentMethods && (
-				<Tooltip
-					delay={ 300 }
-					text={
-						<div className="woocommerce-woopayments-payment-methods-logos inside-tooltip">
-							{ hiddenPaymentMethods.map(
-								( pm ) => pm.component
-							) }
-						</div>
-					}
-					className="woocommerce-woopayments-payment-methods-logos-tooltip"
-					placement="top-start"
+				<div
+					className="woocommerce-woopayments-payment-methods-logos-count"
+					onClick={ () => setIsPopoverVisible( ! isPopoverVisible ) }
+					onMouseEnter={ () => setIsPopoverVisible( true ) }
+					onMouseLeave={ () => setIsPopoverVisible( false ) }
+					role="button"
+					tabIndex={ 0 }
+					onKeyDown={ ( event ) => {
+						if ( event.key === 'Enter' || event.key === ' ' ) {
+							setIsPopoverVisible( ! isPopoverVisible );
+						}
+					} }
 				>
-					<div className="woocommerce-woopayments-payment-methods-logos-count">
-						+ { maxSupportedPaymentMethods - maxShownElements }
-					</div>
-				</Tooltip>
+					+ { maxSupportedPaymentMethods - maxShownElements }
+					{ isPopoverVisible && (
+						<Popover
+							position="top right"
+							noArrow={ true }
+							onClose={ () => setIsPopoverVisible( false ) }
+						>
+							<div className="woocommerce-woopayments-payment-methods-logos inside-popover">
+								{ hiddenPaymentMethods.map(
+									( pm ) => pm.component
+								) }
+							</div>
+						</Popover>
+					) }
+				</div>
 			) }
 		</div>
 	);
