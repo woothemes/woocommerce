@@ -95,11 +95,21 @@ do_action( 'woocommerce_email_before_order_table', $order, $sent_to_admin, $plai
 					<?php
 				}
 			}
-			if ( $order->get_customer_note() ) {
+			if ( $order->get_customer_note() && ! $email_improvements_enabled ) {
 				?>
 				<tr>
 					<th class="td text-align-left" scope="row" colspan="2"><?php esc_html_e( 'Note:', 'woocommerce' ); ?></th>
 					<td class="td text-align-left"><?php echo wp_kses( nl2br( wptexturize( $order->get_customer_note() ) ), array() ); ?></td>
+				</tr>
+				<?php
+			}
+			if ( $order->get_customer_note() && $email_improvements_enabled ) {
+				?>
+				<tr class="order-customer-note">
+					<td class="td text-align-left" colspan="3">
+						<b><?php esc_html_e( 'Customer note', 'woocommerce' ); ?></b><br>
+						<?php echo wp_kses( nl2br( wptexturize( $order->get_customer_note() ) ), array() ); ?>
+					</td>
 				</tr>
 				<?php
 			}
