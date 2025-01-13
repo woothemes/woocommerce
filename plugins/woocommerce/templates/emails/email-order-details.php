@@ -15,9 +15,13 @@
  * @version 3.7.0
  */
 
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
+
 defined( 'ABSPATH' ) || exit;
 
 $text_align = is_rtl() ? 'right' : 'left';
+
+$email_improvements_enabled = FeaturesUtil::feature_is_enabled( 'email_improvements' );
 
 do_action( 'woocommerce_email_before_order_table', $order, $sent_to_admin, $plain_text, $email ); ?>
 
@@ -50,7 +54,7 @@ do_action( 'woocommerce_email_before_order_table', $order, $sent_to_admin, $plai
 				$order,
 				array(
 					'show_sku'      => $sent_to_admin,
-					'show_image'    => false,
+					'show_image'    => $email_improvements_enabled,
 					'image_size'    => array( 32, 32 ),
 					'plain_text'    => $plain_text,
 					'sent_to_admin' => $sent_to_admin,
