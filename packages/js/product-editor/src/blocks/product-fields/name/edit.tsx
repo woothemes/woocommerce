@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { Ref } from 'react';
 import { useInstanceId } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import {

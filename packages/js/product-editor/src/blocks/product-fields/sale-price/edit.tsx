@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { Ref } from 'react';
 import classNames from 'classnames';
 import { useWooBlockProps } from '@woocommerce/block-templates';
 import { Product } from '@woocommerce/data';
