@@ -83,6 +83,8 @@ describe( 'useStoreCart', () => {
 		extensions: {},
 		isLoadingRates: false,
 		cartHasCalculatedShipping: true,
+		paymentMethods: previewCart.payment_methods,
+		paymentRequirements: previewCart.payment_requirements,
 	};
 
 	const mockCartItems = [ { key: '1', id: 1, name: 'Lorem Ipsum' } ];

@@ -169,6 +169,8 @@ export const useStoreCart = (
 					shippingRates: previewCart.shipping_rates,
 					cartHasCalculatedShipping:
 						previewCart.has_calculated_shipping,
+					paymentMethods: previewCart.payment_methods,
+					paymentRequirements: previewCart.payment_requirements,
 					cartIsLoading: false,
 				};
 			}
