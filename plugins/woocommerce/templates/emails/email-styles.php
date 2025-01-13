@@ -309,6 +309,10 @@ img {
 	text-align: <?php echo is_rtl() ? 'right' : 'left'; ?>;
 }
 
+.text-align-right {
+	text-align: <?php echo is_rtl() ? 'left' : 'right'; ?>;
+}
+
 /**
  * Media queries are not supported by all email clients, however they do work on modern mobile
  * Gmail clients and can help us achieve better consistency there.
