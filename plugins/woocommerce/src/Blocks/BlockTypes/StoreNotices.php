@@ -61,52 +61,30 @@ class StoreNotices extends AbstractBlock {
 		$notice_types = apply_filters( 'woocommerce_notice_types', array( 'error', 'success', 'notice' ) );
 
 		$store_notices_context = array();
-		$iapi_notices = array();
 
 		foreach ( $notice_types as $notice_type ) {
+			if ( ! isset( $store_notices_context[ $notice_type . 'Notices' ] ) ) {
+				$store_notices_context[ $notice_type . 'Notices' ] = '';
+			}
+
 			if ( wc_notice_count( $notice_type ) > 0 ) {
 				$notices_by_type = $all_notices[ $notice_type ];
 
-				foreach ( $notices_by_type as $index => $notice ) {
-					$messages[] = isset( $notice['notice'] ) ? $notice['notice'] : $notice;
-
-					$iapi_notices[ $notice_type ][] = array(
-						'notice'       => '<span>' . $notice['notice'] . '</span>',
-						'data'         => $notice['data'],
-						'key'          => $index . '-' . $notice_type,
-						'noticeString' => $notice['notice'],
-					);
-
-					$store_notices_context[ $notice_type . 'Notices' ] = $iapi_notices[ $notice_type ];
+				foreach ( $notices_by_type as $notice ) {
+					$store_notices_context[ $notice_type . 'Notices' ] .= $notice['notice'];
 				}
 			}
 		}
 
 		ob_start();
 
-		// Notes
-		// ~ We can render the notices server side, wrapped with a directive that renders the raw html.
-		
 		?>
-		<div data-wc-context="<?php echo esc_attr( wp_json_encode( $store_notices_context ) ); ?>" data-wc-interactive="<?php echo esc_attr( $namespace ); ?>" class="wc-block-store-notices woocommerce">
-			<div class="woocommerce-notices-wrapper">
+		<div data-wc-interactive="<?php echo esc_attr( $namespace ); ?>" class="wc-block-store-notices woocommerce">
+			<div data-wc-context="<?php echo esc_attr( wp_json_encode( $store_notices_context ) ); ?>" class="woocommerce-notices-wrapper">
 				<?php foreach ( $notice_types as $notice_type ) { ?>
-					<?php $context_key = "{$notice_type}Notices"; ?>
-					<template data-wc-each-key="context.item.key" data-wc-each="context.<?php echo esc_attr( $context_key ); ?>">
-						<span data-wc-init="context.renderNoticeContent"></span>
-					</template>
-
-					<?php
-						echo wc_kses_notice(
-							wc_get_template(
-								"notices/{$notice_type}.php",
-								array(
-									'messages' => array_filter( $messages ), // @deprecated 3.9.0
-									'notices'  => $iapi_notices[ $notice_type ],
-								),
-							),
-						);
-					?>
+					<?php if ( wc_notice_count( $notice_type ) > 0 ) { ?>
+						<?php echo $this->render_iapi_notice_type( $notice_type ); ?>
+					<?php } ?>
 				<?php } ?>
 			</div>
 		</div>
@@ -117,12 +95,31 @@ class StoreNotices extends AbstractBlock {
 	}
 
 	/**
-	 * Get the frontend script handle for this block type.
+	 * Render the notice type using the Interactivity API.
 	 *
-	 * @param string $key Data to get, or default to everything.
+	 * @param string $notice_type The notice type.
+	 *
+	 * @return string Rendered notice type output.
 	 */
-	protected function get_block_type_script( $key = null ) {
-		return null;
+	protected function render_iapi_notice_type( $notice_type ) {
+		$capitalized_notice_type = ucfirst( $notice_type );
+		$iapi_notices_directive  = "<span data-notice-type='{$notice_type}' data-wc-init='callbacks.renderNoticesByType'></span>";
+		ob_start();
+
+		?>
+		<div>
+			<?php
+					echo wc_get_template(
+						"notices/{$notice_type}.php",
+						array(
+							'messages' => array(),
+							'notices'  => array( array( 'notice' => $iapi_notices_directive ) ),
+						),
+					);
+			?>
+		</div>
+		<?php
+		return ob_get_clean();
 	}
 
 	/**
