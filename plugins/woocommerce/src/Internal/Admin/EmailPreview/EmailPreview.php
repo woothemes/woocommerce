@@ -12,6 +12,7 @@ use WC_Email;
 use WC_Order;
 use WC_Product;
 use WC_Product_Variation;
+use WP_User;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -22,6 +23,10 @@ defined( 'ABSPATH' ) || exit;
 class EmailPreview {
 	const DEFAULT_EMAIL_TYPE = 'WC_Email_Customer_Processing_Order';
 	const DEFAULT_EMAIL_ID   = 'customer_processing_order';
+	const USER_OBJECT_EMAILS = array(
+		'WC_Email_Customer_New_Account',
+		'WC_Email_Customer_Reset_Password',
+	);
 
 	/**
 	 * All fields IDs that can customize email styles in Settings.
@@ -146,12 +151,21 @@ class EmailPreview {
 		}
 		$this->email_type = $email_type;
 		$this->email      = $emails[ $email_type ];
+		$object           = null;
 
-		$order = $this->get_dummy_order();
-		$this->email->set_object( $order );
+		if ( in_array( $email_type, self::USER_OBJECT_EMAILS, true ) ) {
+			$object                  = wp_get_current_user();
+			$this->email->user_id    = $object->ID;
+			$this->email->user_email = $object->user_email;
+			$this->email->user_login = $object->user_login;
+			$this->email->set_object( $object );
+		} else {
+			$object = $this->get_dummy_order();
+			$this->email->set_object( $object );
+		}
 		$this->email->placeholders = array_merge(
 			$this->email->placeholders,
-			$this->get_placeholders( $order )
+			$this->get_placeholders( $object )
 		);
 
 		/**
@@ -375,16 +389,16 @@ class EmailPreview {
 	/**
 	 * Get the placeholders for the email preview.
 	 *
-	 * @param WC_Order $order The order object.
+	 * @param WC_Order|WP_User $email_object The object to render email with.
 	 * @return array
 	 */
-	private function get_placeholders( $order ) {
+	private function get_placeholders( $email_object ) {
 		$placeholders = array();
 
-		if ( is_a( $order, 'WC_Order' ) ) {
-			$placeholders['{order_date}']              = wc_format_datetime( $order->get_date_created() );
-			$placeholders['{order_number}']            = $order->get_order_number();
-			$placeholders['{order_billing_full_name}'] = $order->get_formatted_billing_full_name();
+		if ( is_a( $email_object, 'WC_Order' ) ) {
+			$placeholders['{order_date}']              = wc_format_datetime( $email_object->get_date_created() );
+			$placeholders['{order_number}']            = $email_object->get_order_number();
+			$placeholders['{order_billing_full_name}'] = $email_object->get_formatted_billing_full_name();
 		}
 
 		/**
