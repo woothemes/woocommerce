@@ -28,6 +28,10 @@ interface ActivatePaymentsButtonProps {
 	incentive?: PaymentIncentive | null;
 }
 
+/**
+ * A button component that initiates the payment activation process.
+ * If incentive data is provided, it will trigger the `acceptIncentive` callback with the incentive ID before redirecting to setup live payments link.
+ */
 export const ActivatePaymentsButton = ( {
 	acceptIncentive,
 	buttonText = __( 'Activate payments', 'woocommerce' ),

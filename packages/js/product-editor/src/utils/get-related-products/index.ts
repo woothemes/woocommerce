@@ -110,6 +110,7 @@ export async function getSuggestedProductsFor( {
 	};
 
 	if ( forceRequest ) {
+		// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 		await dispatch( PRODUCTS_STORE_NAME ).invalidateResolution(
 			'getSuggestedProducts',
 			[ options ]

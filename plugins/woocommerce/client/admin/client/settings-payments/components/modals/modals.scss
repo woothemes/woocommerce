@@ -92,7 +92,7 @@
 	}
 
 	&__actions {
-		flex-direction: row-reverse;
+		flex-direction: row-reverse; // Use this to force items to start from end. That would require actions to be introduced in reverse order.
 		padding: $gap-large 0 0 0;
 		display: flex;
 		gap: $gap-small;
