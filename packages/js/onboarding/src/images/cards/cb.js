@@ -10,16 +10,12 @@ export default () => (
 		viewBox="0 0 52 35"
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"
+		style={ {
+			background:
+				// Having a background color on the SVG will make the border disappear
+				'linear-gradient(135deg, #222E72 0%, #40CBFF 59.16%, #3CB792 100%)',
+		} }
 	>
-		<rect
-			x="1.18945"
-			y="0.5"
-			width="49.6897"
-			height="34"
-			rx="2.5"
-			fill="url(#paint0_linear)"
-			stroke="#F1F1F1"
-		/>
 		<path
 			fillRule="evenodd"
 			clipRule="evenodd"
