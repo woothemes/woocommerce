@@ -82,7 +82,8 @@ const WooProductFieldFill: React.FC< WooProductFieldFillProps > = ( {
 
 export const WooProductFieldItem: React.FC< WooProductFieldItemProps > & {
 	Slot: React.FC<
-		React.ComponentProps< typeof Slot > & WooProductFieldSlotProps
+		Omit< React.ComponentProps< typeof Slot >, 'name' > &
+			WooProductFieldSlotProps
 	>;
 } = ( { children, sections, id } ) => {
 	return (

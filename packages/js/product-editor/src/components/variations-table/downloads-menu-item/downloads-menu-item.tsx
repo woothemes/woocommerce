@@ -194,7 +194,6 @@ export function DownloadsMenuItem( {
 						</MenuItem>
 					</MenuGroup>
 					<VariationQuickUpdateMenuItem.Slot
-						name=""
 						group={ 'downloads' }
 						onChange={ ( value ) => onChange( value ) }
 						onClose={ onClose }

@@ -35,7 +35,8 @@ export const getGroupName = (
 
 export const VariationQuickUpdateMenuItem: React.FC< MenuItemProps > & {
 	Slot: React.FC<
-		React.ComponentProps< typeof Slot > & VariationQuickUpdateSlotProps
+		Omit< React.ComponentProps< typeof Slot >, 'name' > &
+			VariationQuickUpdateSlotProps
 	>;
 } = ( {
 	children,

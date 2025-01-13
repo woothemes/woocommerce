@@ -194,7 +194,7 @@ export function NameBlockEdit( {
 				>
 					<InputControl
 						id={ nameControlId }
-						ref={ nameRef as Ref< HTMLInputElement > }
+						ref={ nameRef }
 						name="name"
 						// eslint-disable-next-line jsx-a11y/no-autofocus
 						autoFocus={ attributes.autoFocus }

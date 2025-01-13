@@ -99,7 +99,7 @@ export function Edit( {
 					id={ salePriceId }
 					name={ 'sale_price' }
 					inputMode="decimal"
-					ref={ salePriceRef as Ref< HTMLInputElement > }
+					ref={ salePriceRef }
 					label={
 						tooltip ? (
 							<Label label={ label } tooltip={ tooltip } />
