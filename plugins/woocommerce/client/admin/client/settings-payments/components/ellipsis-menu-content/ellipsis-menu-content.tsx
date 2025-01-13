@@ -23,7 +23,7 @@ interface EllipsisMenuContentProps {
 	 */
 	providerId: string;
 	/**
-	 * The file path of the plugin associated with the payment gateway.
+	 * The main plugin file path of the plugin associated with the payment gateway.
 	 */
 	pluginFile: string;
 	/**
@@ -51,7 +51,7 @@ interface EllipsisMenuContentProps {
 	 */
 	setResetAccountModalVisible?: ( isVisible: boolean ) => void;
 	/**
-	 * Indicates if the payment gateway is enabled. Optional.
+	 * Indicates if the payment gateway is enabled for payment processing. Optional.
 	 */
 	isEnabled?: boolean;
 }
@@ -117,7 +117,7 @@ export const EllipsisMenuContent = ( {
 	};
 
 	/**
-	 * Disables the payment gateway.
+	 * Disables the payment gateway from payment processing.
 	 */
 	const disableGateway = () => {
 		const gatewayToggleNonce =

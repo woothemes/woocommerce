@@ -84,7 +84,7 @@ export const PaymentGateways = ( {
 						}
 						options={ countryOptions }
 						onChange={ ( value: string ) => {
-							// save selected country and refresh the store by invalidating getPaymentProviders.
+							// Save selected country and refresh the store by invalidating getPaymentProviders.
 							apiFetch( {
 								path:
 									WC_ADMIN_NAMESPACE +
