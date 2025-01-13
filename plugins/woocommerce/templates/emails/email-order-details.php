@@ -50,7 +50,7 @@ do_action( 'woocommerce_email_before_order_table', $order, $sent_to_admin, $plai
 </h2>
 
 <div style="margin-bottom: 40px;">
-	<table class="td" cellspacing="0" cellpadding="6" style="width: 100%; font-family: 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif;" border="1">
+	<table class="td font-family" cellspacing="0" cellpadding="6" style="width: 100%;" border="1">
 		<?php if ( ! $email_improvements_enabled ) { ?>
 		<thead>
 			<tr>

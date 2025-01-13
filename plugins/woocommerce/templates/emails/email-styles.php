@@ -30,6 +30,8 @@ $base             = get_option( 'woocommerce_email_base_color' );
 $text             = get_option( 'woocommerce_email_text_color' );
 $footer_text      = get_option( 'woocommerce_email_footer_text_color' );
 $header_alignment = get_option( 'woocommerce_email_header_alignment' );
+$default_font     = '"Helvetica Neue", Helvetica, Roboto, Arial, sans-serif';
+$font_family      = $email_improvements_enabled ? get_option( 'woocommerce_email_font_family', $default_font ) : $default_font;
 
 /**
  * Check if we are in preview mode (WooCommerce > Settings > Emails).
@@ -46,6 +48,7 @@ if ( $is_email_preview ) {
 	$text_transient             = get_transient( 'woocommerce_email_text_color' );
 	$footer_text_transient      = get_transient( 'woocommerce_email_footer_text_color' );
 	$header_alignment_transient = get_transient( 'woocommerce_email_header_alignment' );
+	$font_family_transient      = get_transient( 'woocommerce_email_font_family' );
 
 	$bg               = $bg_transient ? $bg_transient : $bg;
 	$body             = $body_transient ? $body_transient : $body;
@@ -53,6 +56,7 @@ if ( $is_email_preview ) {
 	$text             = $text_transient ? $text_transient : $text;
 	$footer_text      = $footer_text_transient ? $footer_text_transient : $footer_text;
 	$header_alignment = $header_alignment_transient ? $header_alignment_transient : $header_alignment;
+	$font_family      = $font_family_transient ? $font_family_transient : $font_family;
 }
 
 $base_text = wc_light_or_dark( $base, '#202020', '#ffffff' );
@@ -107,7 +111,7 @@ body {
 	font-weight: bold;
 	line-height: 100%;
 	vertical-align: middle;
-	font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
+	font-family: <?php echo esc_attr( $font_family ); ?>;
 }
 
 #template_header h1,
@@ -135,7 +139,7 @@ body {
 #template_footer #credit {
 	border: 0;
 	color: <?php echo esc_attr( $footer_text ); ?>;
-	font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
+	font-family: <?php echo esc_attr( $font_family ); ?>;
 	font-size: 12px;
 	line-height: 150%;
 	text-align: center;
@@ -184,7 +188,7 @@ body {
 
 #body_content_inner {
 	color: <?php echo esc_attr( $text_lighter_20 ); ?>;
-	font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
+	font-family: <?php echo esc_attr( $font_family ); ?>;
 	font-size: 14px;
 	line-height: 150%;
 	text-align: <?php echo is_rtl() ? 'right' : 'left'; ?>;
@@ -215,7 +219,7 @@ body {
 
 .text {
 	color: <?php echo esc_attr( $text ); ?>;
-	font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
+	font-family: <?php echo esc_attr( $font_family ); ?>;
 }
 
 .link {
@@ -240,7 +244,7 @@ body {
 
 h1 {
 	color: <?php echo esc_attr( $base ); ?>;
-	font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
+	font-family: <?php echo esc_attr( $font_family ); ?>;
 	font-size: 30px;
 	font-weight: 300;
 	line-height: 150%;
@@ -252,7 +256,7 @@ h1 {
 h2 {
 	color: <?php echo esc_attr( $base ); ?>;
 	display: block;
-	font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
+	font-family: <?php echo esc_attr( $font_family ); ?>;
 	font-size: <?php echo $email_improvements_enabled ? '20px' : '18px'; ?>;
 	font-weight: bold;
 	line-height: <?php echo $email_improvements_enabled ? '160%' : '130%'; ?>;
@@ -263,7 +267,7 @@ h2 {
 h3 {
 	color: <?php echo esc_attr( $base ); ?>;
 	display: block;
-	font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
+	font-family: <?php echo esc_attr( $font_family ); ?>;
 	font-size: 16px;
 	font-weight: bold;
 	line-height: 130%;
@@ -295,6 +299,10 @@ img {
 	display: block;
 	font-size: 14px;
 	font-weight: normal;
+}
+
+.font-family {
+	font-family: <?php echo esc_attr( $font_family ); ?>;
 }
 
 /**
