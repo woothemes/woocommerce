@@ -7,7 +7,6 @@ import { render } from '@testing-library/react';
  * Internal dependencies
  */
 import Summary, { SummaryProps } from '../index';
-import './utils';
 
 const allowedSource =
 	'<p class="some-class">' +
