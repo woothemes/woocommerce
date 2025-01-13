@@ -19,8 +19,10 @@ Add some items to your cart and visit the Checkout block, notice there is additi
 WooCommerce Blocks uses `wp-prettier` to format the JS files. If you want to use `wp-prettier`, you will need to run the following command:
 
 ```sh
-nvm use && npm i --D "prettier@npm:wp-prettier@latest"
+nvm use && npm i --D "prettier@npm:wp-prettier@latest" && npm i --D eslint-plugin-prettier
 ```
+
+You can then lint the project by running `npm run lint:js`
 
 ### Installing `wp-env` (optional)
 
