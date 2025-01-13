@@ -21,7 +21,7 @@ export const MoreMenu = () => {
 					className: 'woocommerce-product-header__more-menu',
 				} }
 			>
-				{ ( { onClose }: { onClose: () => void } ) => (
+				{ ( onClose ) => (
 					<>
 						<WooProductMoreMenuItem.Slot
 							fillProps={ { onClose } }
