@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+Remove dangerouslySetInnerHTML usage in classic-shortcode block where its not needed.

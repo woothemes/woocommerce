@@ -4205,6 +4205,59 @@ function wc_set_hooked_blocks_version() {
 }
 
 /**
+ * Attach functions that listen to theme switches.
+ *
+ * @since 9.7.0
+ *
+ * @param string    $old_name Old theme name.
+ * @param \WP_Theme $old_theme Instance of the old theme.
+ * @return void
+ */
+function wc_after_switch_theme( $old_name, $old_theme ) {
+	wc_set_hooked_blocks_version_on_theme_switch( $old_name, $old_theme );
+	wc_update_store_notice_visible_on_theme_switch( $old_name, $old_theme );
+}
+
+/**
+ * Update the Store Notice visibility when switching themes:
+ * - When switching from a classic theme to a block theme, disable the Store Notice.
+ * - When switching from a block theme to a classic theme, re-enable the Store Notice
+ *   only if it was enabled last time there was a switchi from a classic theme to a block theme.
+ *
+ * @since 9.7.0
+ *
+ * @param string    $old_name Old theme name.
+ * @param \WP_Theme $old_theme Instance of the old theme.
+ * @return void
+ */
+function wc_update_store_notice_visible_on_theme_switch( $old_name, $old_theme ) {
+	$enable_store_notice_in_classic_theme_option = 'woocommerce_enable_store_notice_in_classic_theme';
+	$is_store_notice_active_option               = 'woocommerce_demo_store';
+
+	if ( ! $old_theme->is_block_theme() && wc_current_theme_is_fse_theme() ) {
+		/*
+		 * When switching from a classic theme to a block theme, check if the store notice is active,
+		 * if it is, disable it but set an option to re-enable it when switching back to a classic theme.
+		 */
+		if ( is_store_notice_showing() ) {
+			update_option( $is_store_notice_active_option, wc_bool_to_string( false ) );
+			add_option( $enable_store_notice_in_classic_theme_option, wc_bool_to_string( true ) );
+		}
+	} elseif ( $old_theme->is_block_theme() && ! wc_current_theme_is_fse_theme() ) {
+		/*
+		 * When switching from a block theme to a clasic theme, check if we have set the option to
+		 * re-enable the store notice. If so, re-enable it.
+		 */
+		$enable_store_notice_in_classic_theme = wc_string_to_bool( get_option( $enable_store_notice_in_classic_theme_option, 'no' ) );
+
+		if ( $enable_store_notice_in_classic_theme ) {
+			update_option( $is_store_notice_active_option, wc_bool_to_string( true ) );
+			delete_option( $enable_store_notice_in_classic_theme_option );
+		}
+	}
+}
+
+/**
  * If the user switches from a classic to a block theme and they haven't already got a woocommerce_hooked_blocks_version,
  * set the version of the hooked blocks in the database, or as "no" to disable all block hooks then set as the latest WC version.
  *

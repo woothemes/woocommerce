@@ -11,12 +11,28 @@ import { ToggleControl } from '@wordpress/components';
 import sanitizeHTML from '~/lib/sanitize-html';
 
 type PaymentMethodListItemProps = {
+	/**
+	 * The recommended payment method to display.
+	 */
 	method: RecommendedPaymentMethod;
+	/**
+	 * Current state of payment methods, mapping method IDs to their enabled status.
+	 */
 	paymentMethodsState: Record< string, boolean >;
+	/**
+	 * Callback to update the state of payment methods. Receives a new state object as a parameter.
+	 */
 	setPaymentMethodsState: ( state: Record< string, boolean > ) => void;
+	/**
+	 * Indicates whether the payment methods list is currently expanded.
+	 */
 	isExpanded: boolean;
 };
 
+/**
+ * A component that renders a recommened payment method as a list item.
+ * Displays the payment method's icon, title, description, and a toggle control to enable or disable it.
+ */
 export const PaymentMethodListItem = ( {
 	method,
 	paymentMethodsState,
@@ -24,6 +40,7 @@ export const PaymentMethodListItem = ( {
 	isExpanded,
 	...props
 }: PaymentMethodListItemProps ) => {
+	// Do not render if the method is disabled and the list is not expanded.
 	if ( ! method.enabled && ! isExpanded ) {
 		return null;
 	}
@@ -35,6 +52,7 @@ export const PaymentMethodListItem = ( {
 			{ ...props }
 		>
 			<div className="woocommerce-list__item-inner">
+				{ /* Default layout for regular payment methods */ }
 				{ method.id !== 'apple_google' && (
 					<>
 						<div className="woocommerce-list__item-before">
@@ -49,6 +67,7 @@ export const PaymentMethodListItem = ( {
 							</span>
 							<span
 								className="woocommerce-list__item-content"
+								// eslint-disable-next-line react/no-danger -- This string is sanitized by the PaymentGateway class.
 								dangerouslySetInnerHTML={ sanitizeHTML(
 									decodeEntities( method.description )
 								) }
@@ -56,6 +75,7 @@ export const PaymentMethodListItem = ( {
 						</div>
 					</>
 				) }
+				{ /* Special layout for "apple_google" payment methods */ }
 				{ method.id === 'apple_google' && (
 					<div className="woocommerce-list__item-multi">
 						<div className="woocommerce-list__item-multi-row multi-row-space">
@@ -71,6 +91,7 @@ export const PaymentMethodListItem = ( {
 								</span>
 								<span
 									className="woocommerce-list__item-content"
+									// eslint-disable-next-line react/no-danger -- This string is sanitized by the PaymentGateway class.
 									dangerouslySetInnerHTML={ sanitizeHTML(
 										decodeEntities( method.description )
 									) }
@@ -90,6 +111,7 @@ export const PaymentMethodListItem = ( {
 								</span>
 								<span
 									className="woocommerce-list__item-content"
+									// eslint-disable-next-line react/no-danger -- This string is sanitized by the PaymentGateway class.
 									dangerouslySetInnerHTML={ sanitizeHTML(
 										decodeEntities(
 											method.extraDescription ?? ''
@@ -115,6 +137,7 @@ export const PaymentMethodListItem = ( {
 							// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 							// @ts-ignore disabled prop exists
 							disabled={ method.required ?? false }
+							label=""
 						/>
 					</div>
 				</div>

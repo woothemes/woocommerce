@@ -9,8 +9,8 @@ import { OPTIONS_STORE_NAME } from '@woocommerce/data';
 import { useSelect } from '@wordpress/data';
 import { useContext, useMemo } from '@wordpress/element';
 import {
+	// @ts-expect-error No types for this exist yet.
 	privateApis as blockEditorPrivateApis,
-	// @ts-ignore no types exist yet.
 } from '@wordpress/block-editor';
 // @ts-expect-error no types exist yet.
 import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
@@ -40,14 +40,16 @@ export const FontPairing = () => {
 		const { getOption, hasFinishedResolution } =
 			select( OPTIONS_STORE_NAME );
 		return {
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			aiSuggestions: getOption(
 				'woocommerce_customize_store_ai_suggestions'
 			) as { lookAndFeel: Look },
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			isLoading: ! hasFinishedResolution( 'getOption', [
 				'woocommerce_customize_store_ai_suggestions',
 			] ),
 		};
-	} );
+	}, [] );
 
 	const { useGlobalSetting } = unlock( blockEditorPrivateApis );
 
@@ -71,9 +73,14 @@ export const FontPairing = () => {
 	const isFontLibraryAvailable = context.isFontLibraryAvailable;
 	const trackingAllowed = useSelect(
 		( select ) =>
-			select( OPTIONS_STORE_NAME ).getOption(
-				'woocommerce_allow_tracking'
-			) === 'yes'
+			// Todo: awaiting more global fix, demo:
+			// https://github.com/woocommerce/woocommerce/pull/54146
+			(
+				select( OPTIONS_STORE_NAME ) as {
+					getOption: ( option: string ) => unknown;
+				}
+			 ).getOption( 'woocommerce_allow_tracking' ) === 'yes',
+		[]
 	);
 
 	const { optInFlowStatus } = useContext( OptInContext );

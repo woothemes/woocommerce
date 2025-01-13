@@ -15,7 +15,6 @@ import classNames from 'classnames';
 import {
 	Button,
 	ToggleControl,
-	// @ts-expect-error `__experimentalInputControl` does exist.
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 
@@ -59,7 +58,9 @@ export function VariationStockStatusForm( {
 			const { getOption, isResolving } = select( OPTIONS_STORE_NAME );
 
 			return {
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				canManageStock: getOption( MANAGE_STOCK_OPTION ) === 'yes',
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				isLoadingManageStockOption: isResolving( 'getOption', [
 					MANAGE_STOCK_OPTION,
 				] ),
@@ -127,7 +128,9 @@ export function VariationStockStatusForm( {
 		setValue( ( current ) => ( { ...current, stock_status: selected } ) );
 	}
 
-	function handleStockQuantityInputControlChange( stock_quantity: string ) {
+	function handleStockQuantityInputControlChange(
+		stock_quantity: string | undefined
+	) {
 		setValue( ( current ) => ( { ...current, stock_quantity } ) );
 	}
 

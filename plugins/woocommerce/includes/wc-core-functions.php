@@ -10,6 +10,7 @@
 
 use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Utilities\NumberUtil;
+use Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -1556,11 +1557,7 @@ function wc_get_cart_url() {
 	global $post;
 
 	// We don't use is_cart() here because that also checks for a defined constant. We are only interested in the page.
-	$page_id      = wc_get_page_id( 'cart' );
-	$is_cart_page = $page_id && is_page( $page_id );
-
-	// If this isn't the cart page, but the page does contain the cart shortcode, we'll return the current page permalink.
-	if ( ! $is_cart_page && is_a( $post, 'WP_Post' ) && wc_post_content_has_shortcode( 'woocommerce_cart' ) ) {
+	if ( CartCheckoutUtils::is_cart_page() ) {
 		$cart_url = get_permalink( $post->ID );
 	} else {
 		$cart_url = wc_get_page_permalink( 'cart' );
@@ -1787,43 +1784,58 @@ function wc_postcode_location_matcher( $postcode, $objects, $object_id_key, $obj
 function wc_get_shipping_method_count( $include_legacy = false, $enabled_only = false ) {
 	global $wpdb;
 
-	$transient_name    = $include_legacy ? 'wc_shipping_method_count_legacy' : 'wc_shipping_method_count';
+	$transient_name    = 'wc_shipping_method_count';
 	$transient_version = WC_Cache_Helper::get_transient_version( 'shipping' );
 	$transient_value   = get_transient( $transient_name );
-
-	if ( isset( $transient_value['value'], $transient_value['version'] ) && $transient_value['version'] === $transient_version ) {
-		return absint( $transient_value['value'] );
-	}
-
-	// Count activated methods that don't support shipping zones if $include_legacy is true.
-	$methods      = WC()->shipping()->get_shipping_methods();
-	$method_ids   = array();
-	$method_count = 0;
-
-	foreach ( $methods as $method ) {
-		$method_ids[] = $method->id;
-
-		if ( $include_legacy && isset( $method->enabled ) && 'yes' === $method->enabled && ! $method->supports( 'shipping-zones' ) ) {
-			++$method_count;
-		}
-	}
-
-	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
-	if ( $enabled_only ) {
-		$method_count = $method_count + absint( $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}woocommerce_shipping_zone_methods WHERE is_enabled=1 AND method_id IN ('" . implode( "','", array_map( 'esc_sql', $method_ids ) ) . "')" ) );
-	} else {
-		$method_count = $method_count + absint( $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}woocommerce_shipping_zone_methods WHERE method_id IN ('" . implode( "','", array_map( 'esc_sql', $method_ids ) ) . "')" ) );
-	}
-	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
-
-	$transient_value = array(
-		'version' => $transient_version,
-		'value'   => $method_count,
+	$counts            = array(
+		'legacy'   => 0,
+		'enabled'  => 0,
+		'disabled' => 0,
 	);
 
-	set_transient( $transient_name, $transient_value, DAY_IN_SECONDS * 30 );
+	if ( ! isset( $transient_value['legacy'], $transient_value['enabled'], $transient_value['disabled'], $transient_value['version'] ) || $transient_value['version'] !== $transient_version ) {
+		// Count activated methods that don't support shipping zones if $include_legacy is true.
+		$methods    = WC()->shipping()->get_shipping_methods();
+		$method_ids = array();
 
-	return $method_count;
+		foreach ( $methods as $method ) {
+			$method_ids[] = $method->id;
+
+			if ( isset( $method->enabled ) && 'yes' === $method->enabled && ! $method->supports( 'shipping-zones' ) ) {
+				++$counts['legacy'];
+			}
+		}
+
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
+		$counts['enabled']  = absint( $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}woocommerce_shipping_zone_methods WHERE is_enabled=1 AND method_id IN ('" . implode( "','", array_map( 'esc_sql', $method_ids ) ) . "')" ) );
+		$counts['disabled'] = absint( $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}woocommerce_shipping_zone_methods WHERE is_enabled=0 AND method_id IN ('" . implode( "','", array_map( 'esc_sql', $method_ids ) ) . "')" ) );
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
+
+		$transient_value = array(
+			'version'  => $transient_version,
+			'legacy'   => $counts['legacy'],
+			'enabled'  => $counts['enabled'],
+			'disabled' => $counts['disabled'],
+		);
+
+		set_transient( $transient_name, $transient_value, DAY_IN_SECONDS * 30 );
+	} else {
+		$counts = $transient_value;
+	}
+
+	$return = 0;
+
+	if ( $enabled_only ) {
+		$return = $counts['enabled'];
+	} else {
+		$return = $counts['enabled'] + $counts['disabled'];
+	}
+
+	if ( $include_legacy ) {
+		$return += $counts['legacy'];
+	}
+
+	return $return;
 }
 
 /**

@@ -19,9 +19,16 @@ import {
 } from '~/settings-payments/components/buttons';
 
 type OfflinePaymentGatewayListItemProps = {
+	/**
+	 * The offline payment gateway to display in the list item.
+	 */
 	gateway: OfflinePaymentMethodProvider;
 };
 
+/**
+ * A component that renders an offline payment gateway as a sortable list item.
+ * Displays gateway information including the title, description, icon, and actions to enable or manage the gateway.
+ */
 export const OfflinePaymentGatewayListItem = ( {
 	gateway,
 	...props
@@ -34,6 +41,7 @@ export const OfflinePaymentGatewayListItem = ( {
 			{ ...props }
 		>
 			<div className="woocommerce-list__item-inner">
+				{ /* Left section with drag handle and icon */ }
 				<div className="woocommerce-list__item-before">
 					<DefaultDragHandle />
 					{ gateway.icon && (
@@ -44,17 +52,20 @@ export const OfflinePaymentGatewayListItem = ( {
 						/>
 					) }
 				</div>
+				{ /* Middle section with title and description */ }
 				<div className="woocommerce-list__item-text">
 					<span className="woocommerce-list__item-title">
 						{ gateway.title }
 					</span>
 					<span
 						className="woocommerce-list__item-content"
+						// eslint-disable-next-line react/no-danger -- This string is sanitized by the PaymentGateway class.
 						dangerouslySetInnerHTML={ sanitizeHTML(
 							decodeEntities( gateway.description )
 						) }
 					/>
 				</div>
+				{ /* Right section with action buttons */ }
 				<div className="woocommerce-list__item-after">
 					<div className="woocommerce-list__item-after__actions">
 						{ ! gateway.state.enabled ? (
@@ -68,7 +79,7 @@ export const OfflinePaymentGatewayListItem = ( {
 									gateway.onboarding._links.onboard.href
 								}
 								isOffline={ true }
-								gatewayHasRecommendedPaymentMethods={ false }
+								gatewayHasRecommendedPaymentMethods={ false } // Offline gateway items don't have recommended PMs.
 							/>
 						) : (
 							<SettingsButton
@@ -84,6 +95,10 @@ export const OfflinePaymentGatewayListItem = ( {
 	);
 };
 
+/**
+ * A component that renders a sortable list of offline payment gateways.
+ * Each gateway is rendered as a `OfflinePaymentGatewayListItem` and the list supports reordering via drag-and-drop.
+ */
 export const OfflinePaymentGatewayList = ( {
 	gateways,
 	setGateways,

@@ -16,9 +16,11 @@ export function useNotice() {
 		const { getOption, hasFinishedResolution } =
 			select( OPTIONS_STORE_NAME );
 
+		// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 		const dismissedNoticesOption = getOption(
 			SINGLE_VARIATION_NOTICE_DISMISSED_OPTION
 		) as [ number ];
+		// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 		const resolving = ! hasFinishedResolution( 'getOption', [
 			SINGLE_VARIATION_NOTICE_DISMISSED_OPTION,
 		] );
