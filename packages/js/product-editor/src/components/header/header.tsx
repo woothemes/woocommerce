@@ -66,13 +66,12 @@ export function Header( {
 		{ enabled: productId !== -1 }
 	);
 
-	const lastPersistedProduct = useSelect< Product | null >(
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
+	const lastPersistedProduct = useSelect(
 		( select ) => {
 			const { getEntityRecord } = select( 'core' );
 			return productId !== -1
-				? getEntityRecord( 'postType', productType, productId )
+				? // @ts-expect-error getEntityRecord is not typed correctly.
+				  getEntityRecord( 'postType', productType, productId )
 				: null;
 		},
 		[ productType, productId ]

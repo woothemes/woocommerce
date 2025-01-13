@@ -48,8 +48,8 @@ export const VariableProductTour: React.FC = () => {
 				EXPERIMENTAL_PRODUCT_VARIATIONS_STORE_NAME
 			);
 			return {
-				totalCount:
-					getProductVariationsTotalCount< number >( requestParams ),
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+				totalCount: getProductVariationsTotalCount( requestParams ),
 			};
 		},
 		[ productId ]
@@ -144,9 +144,10 @@ export const VariableProductTour: React.FC = () => {
 		const { getOption } = select( OPTIONS_STORE_NAME );
 		return {
 			hasShownProductEditorTour:
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				getOption( 'woocommerce_block_product_tour_shown' ) === 'yes',
 		};
-	} );
+	}, [] );
 
 	if (
 		hasShownTour === 'yes' ||

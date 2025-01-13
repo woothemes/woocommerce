@@ -181,6 +181,8 @@ jQuery( function ( $ ) {
 			},
 		} );
 	} );
+
+	$( document.body ).on( 'item_removed_from_classic_cart', focus_populate_live_region );
 } );
 
 /**

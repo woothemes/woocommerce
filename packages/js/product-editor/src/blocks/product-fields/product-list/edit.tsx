@@ -62,7 +62,7 @@ export function ProductListBlockEdit( {
 			if ( groupedProductIds.length ) {
 				setIsLoading( false );
 				resolveSelect( PRODUCTS_STORE_NAME )
-					.getProducts< Product[] >( {
+					.getProducts( {
 						include: groupedProductIds,
 						orderby: 'include',
 					} )

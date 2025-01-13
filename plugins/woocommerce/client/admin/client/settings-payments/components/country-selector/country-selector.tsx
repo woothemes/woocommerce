@@ -78,10 +78,28 @@ const stateReducer = < ItemType extends Item >(
 	}
 };
 
+/**
+ * Removes accents and diacritical marks from a given string.
+ *
+ * This function uses Unicode normalization to decompose accented characters into their base characters
+ * and diacritical marks, then removes the diacritical marks. It is commonly used for case-insensitive
+ * and accent-insensitive text searches or comparisons.
+ *
+ * @example
+ * // Returns 'Cafe'
+ * removeAccents('Café');
+ *
+ * // Returns 'aeeioou'
+ * removeAccents('áèêíòóú');
+ */
 const removeAccents = ( str: string ) => {
 	return str.normalize( 'NFD' ).replace( /[\u0300-\u036f]/g, '' );
 };
 
+/**
+ * A flexible dropdown component for selecting a country from a list. Supports search,
+ * custom rendering of items, and a variety of state management options.
+ */
 export const CountrySelector = < ItemType extends Item >( {
 	name,
 	className,
@@ -137,6 +155,7 @@ export const CountrySelector = < ItemType extends Item >( {
 
 	const menuRef = useRef< HTMLInputElement >( null );
 	const searchRef = useRef< HTMLInputElement >( null );
+
 	function getDescribedBy() {
 		if ( describedBy ) {
 			return describedBy;
@@ -207,7 +226,7 @@ export const CountrySelector = < ItemType extends Item >( {
 	);
 
 	const onEnterApply = useCallback(
-		( event ) => {
+		( event: React.KeyboardEvent< HTMLButtonElement > ) => {
 			event.stopPropagation();
 			if ( event.key === 'Enter' ) {
 				onChange( selectedValue );

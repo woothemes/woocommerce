@@ -9,6 +9,14 @@ import clsx from 'clsx';
  */
 import { DragHandleContext } from './sortable-drag-handle';
 
+/**
+ * A component that renders a sortable list item. Integrates with `useSortable` to handle drag-and-drop functionality.
+ *
+ * @example
+ * <SortableItem id="item-1">
+ *     <div>Sortable Content</div>
+ * </SortableItem>
+ */
 export const SortableItem = ( {
 	id,
 	className = '',

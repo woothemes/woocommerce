@@ -10,6 +10,7 @@
 
 use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Utilities\NumberUtil;
+use Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -1556,11 +1557,7 @@ function wc_get_cart_url() {
 	global $post;
 
 	// We don't use is_cart() here because that also checks for a defined constant. We are only interested in the page.
-	$page_id      = wc_get_page_id( 'cart' );
-	$is_cart_page = $page_id && is_page( $page_id );
-
-	// If this isn't the cart page, but the page does contain the cart shortcode, we'll return the current page permalink.
-	if ( ! $is_cart_page && is_a( $post, 'WP_Post' ) && wc_post_content_has_shortcode( 'woocommerce_cart' ) ) {
+	if ( CartCheckoutUtils::is_cart_page() ) {
 		$cart_url = get_permalink( $post->ID );
 	} else {
 		$cart_url = wc_get_page_permalink( 'cart' );

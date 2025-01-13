@@ -5,6 +5,77 @@ namespace Automattic\WooCommerce\Blocks\Utils;
  * Class containing utility methods for dealing with the Cart and Checkout blocks.
  */
 class CartCheckoutUtils {
+	/**
+	 * Returns true if:
+	 * - The cart page is being viewed.
+	 * - The page contains a cart block, cart shortcode or classic shortcode block with the cart attribute.
+	 *
+	 * @return bool
+	 */
+	public static function is_cart_page() {
+		global $post;
+
+		$page_id      = wc_get_page_id( 'cart' );
+		$is_cart_page = $page_id && is_page( $page_id );
+
+		if ( $is_cart_page ) {
+			return true;
+		}
+
+		// Check page contents for block/shortcode.
+		return is_a( $post, 'WP_Post' ) && ( wc_post_content_has_shortcode( 'woocommerce_cart' ) || self::has_block_variation( 'woocommerce/classic-shortcode', 'shortcode', 'cart', $post->post_content ) );
+	}
+
+	/**
+	 * Returns true if:
+	 * - The checkout page is being viewed.
+	 * - The page contains a checkout block, checkout shortcode or classic shortcode block with the checkout attribute.
+	 *
+	 * @return bool
+	 */
+	public static function is_checkout_page() {
+		global $post;
+
+		$page_id          = wc_get_page_id( 'checkout' );
+		$is_checkout_page = $page_id && is_page( $page_id );
+
+		if ( $is_checkout_page ) {
+			return true;
+		}
+
+		// Check page contents for block/shortcode.
+		return is_a( $post, 'WP_Post' ) && ( wc_post_content_has_shortcode( 'woocommerce_checkout' ) || self::has_block_variation( 'woocommerce/classic-shortcode', 'shortcode', 'checkout', $post->post_content ) );
+	}
+
+	/**
+	 * Check if the post content contains a block with a specific attribute value.
+	 *
+	 * @param string $block_id The block ID to check for.
+	 * @param string $attribute The attribute to check.
+	 * @param string $value The value to check for.
+	 * @return boolean
+	 */
+	public static function has_block_variation( $block_id, $attribute, $value, $post_content ) {
+		if ( ! $post_content ) {
+			return false;
+		}
+
+		if ( has_block( $block_id, $post_content ) ) {
+			$blocks = (array) parse_blocks( $post_content );
+
+			foreach ( $blocks as $block ) {
+				if ( isset( $block['attrs'][ $attribute ] ) && $value === $block['attrs'][ $attribute ] ) {
+					return true;
+				}
+				// Cart is default so it will be empty.
+				if ( 'woocommerce/classic-shortcode' === $block_id && 'shortcode' === $attribute && 'cart' === $value && ! isset( $block['attrs']['shortcode'] ) ) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
 
 	/**
 	 * Checks if the default cart page is using the Cart block.
