@@ -218,7 +218,7 @@ export const WooPaymentsMethodsLogos: React.FC< {
 				<Tooltip
 					delay={ 300 }
 					text={
-						<div className="woocommerce-woopayments-payment-methods-logos">
+						<div className="woocommerce-woopayments-payment-methods-logos inside-tooltip">
 							{ hiddenPaymentMethods.map(
 								( pm ) => pm.component
 							) }

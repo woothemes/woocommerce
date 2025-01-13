@@ -15,6 +15,7 @@
 		background: $white;
 		border: 1px solid $gray-300;
 		border-radius: 3px;
+		max-width: 246px;
 	}
 
 	&-count {
@@ -50,4 +51,11 @@
 			margin-left: 0;
 		}
 	}
+}
+
+.inside-tooltip {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	grid-template-rows: repeat(3, 1fr);
+	gap: 8px;
 }
