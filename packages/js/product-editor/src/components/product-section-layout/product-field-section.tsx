@@ -32,7 +32,7 @@ export const ProductFieldSection = ( {
 		<Card>
 			<CardBody>
 				{ children }
-				<WooProductFieldItem.Slot name="" section={ id } />
+				<WooProductFieldItem.Slot section={ id } />
 			</CardBody>
 		</Card>
 	</ProductSectionLayout>
