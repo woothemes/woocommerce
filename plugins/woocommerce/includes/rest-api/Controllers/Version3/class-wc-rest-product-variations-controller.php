@@ -8,6 +8,7 @@
  * @since   3.0.0
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareRestControllerTrait;
 use Automattic\WooCommerce\Utilities\I18nUtil;
 
@@ -200,8 +201,7 @@ class WC_REST_Product_Variations_Controller extends WC_REST_Product_Variations_V
 
 		// Status.
 		if ( isset( $request['status'] ) ) {
-			// Not using ProductStatus constants here due the class not being loaded upon installation.
-			$variation->set_status( get_post_status_object( $request['status'] ) ? $request['status'] : 'draft' );
+			$variation->set_status( get_post_status_object( $request['status'] ) ? $request['status'] : ProductStatus::DRAFT );
 		}
 
 		// SKU.
