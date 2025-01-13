@@ -19,13 +19,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$text_align = is_rtl() ? 'right' : 'left';
 $address    = $order->get_formatted_billing_address();
 $shipping   = $order->get_formatted_shipping_address();
 
 ?><table id="addresses" cellspacing="0" cellpadding="0" style="width: 100%; vertical-align: top; margin-bottom: 40px; padding:0;" border="0">
 	<tr>
-		<td class="font-family" style="text-align:<?php echo esc_attr( $text_align ); ?>; border:0; padding:0;" valign="top" width="50%">
+		<td class="font-family text-align-left" style="border:0; padding:0;" valign="top" width="50%">
 			<h2><?php esc_html_e( 'Billing address', 'woocommerce' ); ?></h2>
 
 			<address class="address">
@@ -52,7 +51,7 @@ $shipping   = $order->get_formatted_shipping_address();
 			</address>
 		</td>
 		<?php if ( ! wc_ship_to_billing_address_only() && $order->needs_shipping_address() && $shipping ) : ?>
-			<td class="font-family" style="text-align:<?php echo esc_attr( $text_align ); ?>; padding:0;" valign="top" width="50%">
+			<td class="font-family text-align-left" style="padding:0;" valign="top" width="50%">
 				<h2><?php esc_html_e( 'Shipping address', 'woocommerce' ); ?></h2>
 
 				<address class="address">

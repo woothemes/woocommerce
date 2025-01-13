@@ -305,6 +305,10 @@ img {
 	font-family: <?php echo esc_attr( $font_family ); ?>;
 }
 
+.text-align-left {
+	text-align: <?php echo is_rtl() ? 'right' : 'left'; ?>;
+}
+
 /**
  * Media queries are not supported by all email clients, however they do work on modern mobile
  * Gmail clients and can help us achieve better consistency there.
