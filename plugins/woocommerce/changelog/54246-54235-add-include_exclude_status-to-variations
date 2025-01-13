@@ -1,0 +1,4 @@
+Significance: minor
+Type: add
+
+Add new `include_status` and `exclude_status` filter on the products variations endpoint.
