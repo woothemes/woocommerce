@@ -62,12 +62,13 @@ do_action( 'woocommerce_email_before_order_table', $order, $sent_to_admin, $plai
 		<?php } ?>
 		<tbody>
 			<?php
+			$image_size = $email_improvements_enabled ? 48 : 32;
 			echo wc_get_email_order_items( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				$order,
 				array(
 					'show_sku'      => $sent_to_admin,
 					'show_image'    => $email_improvements_enabled,
-					'image_size'    => array( 32, 32 ),
+					'image_size'    => array( $image_size, $image_size ),
 					'plain_text'    => $plain_text,
 					'sent_to_admin' => $sent_to_admin,
 				)
