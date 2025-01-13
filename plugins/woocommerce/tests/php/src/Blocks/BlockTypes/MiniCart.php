@@ -28,7 +28,7 @@ class MiniCart extends \WP_UnitTestCase {
 				)
 			),
 		);
-		wc_empty_cart();
+		WC()->cart->empty_cart();
 		add_filter( 'woocommerce_is_rest_api_request', '__return_false', 1 );
 	}
 
@@ -36,8 +36,9 @@ class MiniCart extends \WP_UnitTestCase {
 	 * Tear down test. Called after every test.
 	 * @return void
 	 */
-	protected function tearDown(): void {
+	public function tearDown(): void {
 		parent::tearDown();
+		WC()->cart->empty_cart();
 		remove_filter( 'woocommerce_is_rest_api_request', '__return_false', 1 );
 	}
 

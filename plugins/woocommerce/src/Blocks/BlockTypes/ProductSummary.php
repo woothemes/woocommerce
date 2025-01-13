@@ -239,7 +239,7 @@ class ProductSummary extends AbstractBlock {
 			</div></div>',
 			esc_attr( $styles_and_classes['classes'] ),
 			esc_attr( $styles_and_classes['styles'] ?? '' ),
-			$final_summary
+			wp_kses_post( $final_summary )
 		);
 	}
 }
