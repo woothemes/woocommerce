@@ -48,6 +48,7 @@ const allowedAttributes = [
 	'name',
 	'download',
 	'src',
+	'class',
 ];
 
 /**
