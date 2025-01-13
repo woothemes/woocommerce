@@ -266,6 +266,7 @@ class EmailPreview {
 		$order->set_date_created( time() );
 		$order->set_currency( 'USD' );
 		$order->set_total( 100 );
+		$order->set_customer_note( __( 'This is a customer note. Customers can add a note to their order on checkout. It can be multiple lines. If there’s no note, this section is hidden.', 'woocommerce' ) );
 
 		$address = $this->get_dummy_address();
 		$order->set_billing_address( $address );
