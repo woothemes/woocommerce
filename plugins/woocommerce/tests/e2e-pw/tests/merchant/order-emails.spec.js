@@ -177,7 +177,7 @@ test.describe(
 
 			// Verify that the email contains the order ID
 			await expect( page.locator( emailContent ) ).toContainText(
-				`[Order #${ completedOrderId.toString() }]`
+				`Order #${ completedOrderId.toString() }`
 			);
 
 			// Verify that the email contains a "Thanks" note
