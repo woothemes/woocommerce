@@ -44,6 +44,12 @@
 		$form.on( 'found_variation.wc-variation-form', { variationForm: self }, self.onFoundVariation );
 		$form.on( 'check_variations.wc-variation-form', { variationForm: self }, self.onFindVariation );
 		$form.on( 'update_variation_values.wc-variation-form', { variationForm: self }, self.onUpdateAttributes );
+		$form.on(
+			'keydown.wc-variation-form',
+			'.reset_variations',
+			{ variationForm: self },
+			self.onResetKeyDown
+		);
 
 		// Init after gallery.
 		setTimeout( function() {
@@ -570,18 +576,15 @@
 	};
 
 	/**
-	 * Show or hide the reset button.
+	 * Show or hide the reset link.
 	 */
 	VariationForm.prototype.toggleResetLink = function( on ) {
-		this.$resetAlert.text( '' );
 		if ( on ) {
 			if ( this.$resetVariations.css( 'visibility' ) === 'hidden' ) {
 				this.$resetVariations.css( 'visibility', 'visible' ).hide().fadeIn();
-				this.$resetVariations.css( 'display', 'inline-block' );
 			}
 		} else {
 			this.$resetVariations.css( 'visibility', 'hidden' );
-			this.$resetVariations.css( 'display', 'none' );
 		}
 	};
 
@@ -601,6 +604,17 @@
 			.next( 'div' )
 			.find( '.wc-no-matching-variations' )
 			.slideDown( 200 );
+	};
+
+	/**
+	 * Handle reset key down event for accessibility.
+	 * @param {KeyboardEvent} event - The keyboard event object
+	 */
+	VariationForm.prototype.onResetKeyDown = function ( event ) {
+		if ( event.code === 'Enter' || event.code === 'Space' ) {
+			event.preventDefault();
+			event.data.variationForm.onReset( event );
+		}
 	};
 
 	/**
