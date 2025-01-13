@@ -267,6 +267,7 @@ class EmailPreview {
 		$order->set_currency( 'USD' );
 		$order->set_discount_total( 10 );
 		$order->set_total( 40 );
+		$order->set_payment_method_title( __( 'Direct bank transfer', 'woocommerce' ) );
 		$order->set_customer_note( __( 'This is a customer note. Customers can add a note to their order on checkout. It can be multiple lines. If there’s no note, this section is hidden.', 'woocommerce' ) );
 
 		$address = $this->get_dummy_address();
