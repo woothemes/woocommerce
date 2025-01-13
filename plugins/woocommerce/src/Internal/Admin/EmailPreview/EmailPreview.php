@@ -266,7 +266,8 @@ class EmailPreview {
 		$order->set_date_created( time() );
 		$order->set_currency( 'USD' );
 		$order->set_discount_total( 10 );
-		$order->set_total( 40 );
+		$order->set_shipping_total( 5 );
+		$order->set_total( 45 );
 		$order->set_payment_method_title( __( 'Direct bank transfer', 'woocommerce' ) );
 		$order->set_customer_note( __( 'This is a customer note. Customers can add a note to their order on checkout. It can be multiple lines. If there’s no note, this section is hidden.', 'woocommerce' ) );
 
@@ -374,6 +375,8 @@ class EmailPreview {
 		add_filter( 'woocommerce_order_item_product', array( $this, 'get_dummy_product_when_not_set' ), 10, 1 );
 		// Enable email preview mode - this way transient values are fetched for live preview.
 		add_filter( 'woocommerce_is_email_preview', array( $this, 'enable_preview_mode' ) );
+		// Get shipping method without needing to save it in the order.
+		add_filter( 'woocommerce_order_shipping_method', array( $this, 'get_shipping_method' ) );
 	}
 
 	/**
@@ -383,6 +386,16 @@ class EmailPreview {
 		remove_filter( 'woocommerce_order_needs_shipping_address', array( $this, 'enable_shipping_address' ) );
 		remove_filter( 'woocommerce_order_item_product', array( $this, 'get_dummy_product_when_not_set' ), 10 );
 		remove_filter( 'woocommerce_is_email_preview', array( $this, 'enable_preview_mode' ) );
+		remove_filter( 'woocommerce_order_shipping_method', array( $this, 'get_shipping_method' ) );
+	}
+
+	/**
+	 * Get the shipping method for the preview email.
+	 *
+	 * @return string
+	 */
+	public function get_shipping_method() {
+		return __( 'Flat rate', 'woocommerce' );
 	}
 
 	/**
