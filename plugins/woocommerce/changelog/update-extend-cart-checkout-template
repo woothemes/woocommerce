@@ -1,0 +1,4 @@
+Significance: patch
+Type: update
+
+Fix some linting issues, update .nvmrc and .esli
