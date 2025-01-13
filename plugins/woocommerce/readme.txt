@@ -416,7 +416,6 @@ WooCommerce comes with some sample data you can use to see how products look; im
 * Enhancement - Hide Knowledge Base when the marketplace suggestions option is disabled. [#52715](https://github.com/woocommerce/woocommerce/pull/52715)
 * Enhancement - Improve embedded CES layout rendering with element checks and code refactor [#52729](https://github.com/woocommerce/woocommerce/pull/52729)
 * Enhancement - Introduce dedicated payment extension suggestions incentives providers and expose them through the Payments settings API. [#53317](https://github.com/woocommerce/woocommerce/pull/53317)
-* Enhancement - Make the scripts that initialize the meta boxes on the Edit Order screen accessible to third parties [#51185](https://github.com/woocommerce/woocommerce/pull/51185)
 * Enhancement - Pass product instance into `woocommerce_product_read` action as second argument [#51851](https://github.com/woocommerce/woocommerce/pull/51851)
 * Enhancement - Prevent the variation list from being displayed as an HTML list if there is only one attribute on the Mini Cart Modal [#52924](https://github.com/woocommerce/woocommerce/pull/52924)
 * Enhancement - Redirect to the connection approval screen when the connection is initiated from WooCommerce.com. [#53445](https://github.com/woocommerce/woocommerce/pull/53445)
