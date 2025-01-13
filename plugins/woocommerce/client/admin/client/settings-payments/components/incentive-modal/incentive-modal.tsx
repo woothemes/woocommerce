@@ -62,6 +62,15 @@ interface IncentiveModalProps {
 	) => void;
 }
 
+/**
+ * A modal component that displays a promotional incentive to the user.
+ * The modal allows the user to:
+ * - Accept the incentive, triggering setup actions.
+ * - Dismiss the incentive, removing it from the current context.
+ *
+ * This component manages its own visibility state. If the incentive is already dismissed
+ * for the current context, the modal does not render.
+ */
 export const IncentiveModal = ( {
 	incentive,
 	provider,
@@ -76,10 +85,17 @@ export const IncentiveModal = ( {
 	const context = 'wc_settings_payments__modal';
 	const isDismissed = isIncentiveDismissedInContext( incentive, context );
 
+	/**
+	 * Closes the modal.
+	 */
 	const handleClose = () => {
 		setIsOpen( false );
 	};
 
+	/**
+	 * Handles accepting the incentive.
+	 * Triggers the onAccept callback, dismisses the incentive, closes the modal, and trigger plugin setup.
+	 */
 	const handleAccept = () => {
 		setIsBusy( true );
 		onAccept( incentive.promo_id );
@@ -89,6 +105,7 @@ export const IncentiveModal = ( {
 		setIsBusy( false );
 	};
 
+	// Do not render the modal if the incentive is dismissed in this context.
 	if ( isDismissed ) {
 		return null;
 	}

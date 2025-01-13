@@ -1,0 +1,4 @@
+Significance: patch
+Type: enhancement
+
+Enhancement: Improve UX by showing price validation warnings before bulk updates for variations

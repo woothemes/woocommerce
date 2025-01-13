@@ -41,7 +41,7 @@ export default function ProductPage() {
 			render: () => (
 				<>
 					<WooProductMoreMenuItem>
-						{ ( { onClose }: { onClose: () => void } ) => (
+						{ ( { onClose } ) => (
 							<>
 								<DeleteVariationMenuItem onClose={ onClose } />
 								<MoreMenuFill

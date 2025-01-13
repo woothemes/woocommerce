@@ -13,16 +13,29 @@ import './modals.scss';
 import { getWooPaymentsResetAccountLink } from '~/settings-payments/utils';
 
 interface WooPaymentsResetAccountModalProps {
+	/**
+	 * Indicates if the modal is currently open.
+	 */
 	isOpen: boolean;
+	/**
+	 * Callback function to handle modal closure.
+	 */
 	onClose: () => void;
 }
 
+/**
+ * A modal component that allows users to reset their WooPayments test account.
+ */
 export const WooPaymentsResetAccountModal = ( {
 	isOpen,
 	onClose,
 }: WooPaymentsResetAccountModalProps ) => {
 	const [ isResettingAccount, setIsResettingAccount ] = useState( false );
 
+	/**
+	 * Handles the "Reset Account" action.
+	 * Redirects the user to the WooPayments reset account link.
+	 */
 	const handleResetAccount = () => {
 		setIsResettingAccount( true );
 

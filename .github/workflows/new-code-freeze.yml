@@ -214,7 +214,7 @@ jobs:
               id: version-bump
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: pnpm utils code-freeze version-bump -o ${{ github.repository_owner }} -b ${{ needs.prep-for-code-freeze.outputs.nextReleaseBranch }} -c ${{ needs.prep-for-code-freeze.outputs.nextReleaseVersion }}-beta.1
+              run: pnpm utils code-freeze version-bump ${{ needs.prep-for-code-freeze.outputs.nextReleaseVersion }}-beta.1 -o ${{ github.repository_owner }} -b ${{ needs.prep-for-code-freeze.outputs.nextReleaseBranch }}
 
             - name: Prepare trunk for next development cycle
               id: prep-trunk
