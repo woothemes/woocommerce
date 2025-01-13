@@ -51,10 +51,10 @@ class PaymentProviders {
 	 * @var \class-string[]
 	 */
 	private array $payment_gateways_providers_class_map = array(
-		WC_Gateway_BACS::ID   => WCCore::class,
-		WC_Gateway_Cheque::ID => WCCore::class,
-		WC_Gateway_COD::ID    => WCCore::class,
-		WC_Gateway_Paypal::ID => WCCore::class,
+		WC_Gateway_BACS::ID    => WCCore::class,
+		WC_Gateway_Cheque::ID  => WCCore::class,
+		WC_Gateway_COD::ID     => WCCore::class,
+		WC_Gateway_Paypal::ID  => WCCore::class,
 		'woocommerce_payments' => WooPayments::class,
 		'ppcp-gateway'         => PayPal::class,
 		'stripe'               => Stripe::class,
