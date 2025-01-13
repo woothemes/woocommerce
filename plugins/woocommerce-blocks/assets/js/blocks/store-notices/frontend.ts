@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { store } from '@woocommerce/interactivity';
+import { getContext, store } from '@woocommerce/interactivity';
 
 type Notice = {
 	type: 'warning' | 'error' | 'info';
@@ -25,6 +25,11 @@ store< StoreNoticesStore >( 'woocommerce/store-notices', {
 		errorNotices: [],
 		successNotices: [],
 		noticeNotices: [],
+
+		renderNoticeContent: () => {
+			const context = getContext();
+			console.log( context );
+		},
 	},
 	actions: {
 		addNotice: ( notice: Notice ) => {

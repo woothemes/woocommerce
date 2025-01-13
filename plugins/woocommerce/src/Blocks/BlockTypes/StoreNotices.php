@@ -71,7 +71,7 @@ class StoreNotices extends AbstractBlock {
 					$messages[] = isset( $notice['notice'] ) ? $notice['notice'] : $notice;
 
 					$iapi_notices[ $notice_type ][] = array(
-						'notice'       => '<span data-wc-key="' . $index . '-' . $notice_type . '" data-wc-each-child>' . $notice['notice'] . '</span>',
+						'notice'       => '<span>' . $notice['notice'] . '</span>',
 						'data'         => $notice['data'],
 						'key'          => $index . '-' . $notice_type,
 						'noticeString' => $notice['notice'],
@@ -84,17 +84,20 @@ class StoreNotices extends AbstractBlock {
 
 		ob_start();
 
+		// Notes
+		// ~ We can render the notices server side, wrapped with a directive that renders the raw html.
+		
 		?>
 		<div data-wc-context="<?php echo esc_attr( wp_json_encode( $store_notices_context ) ); ?>" data-wc-interactive="<?php echo esc_attr( $namespace ); ?>" class="wc-block-store-notices woocommerce">
 			<div class="woocommerce-notices-wrapper">
 				<?php foreach ( $notice_types as $notice_type ) { ?>
 					<?php $context_key = "{$notice_type}Notices"; ?>
 					<template data-wc-each-key="context.item.key" data-wc-each="context.<?php echo esc_attr( $context_key ); ?>">
-						<span data-wc-text="context.item.noticeString"></span>
+						<span data-wc-init="context.renderNoticeContent"></span>
 					</template>
 
 					<?php
-						echo wp_kses_post(
+						echo wc_kses_notice(
 							wc_get_template(
 								"notices/{$notice_type}.php",
 								array(
