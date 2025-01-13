@@ -4,6 +4,12 @@ This is a template to be used with `@wordpress/create-block` to create a WooComm
 
 ## Installation
 
+You may need to install a node version manager, for example [`nvm`](https://github.com/nvm-sh/nvm) or [`fnm`](https://github.com/Schniz/fnm)
+
+Before getting started, switch to Node v20.
+
+e.g. `nvm install 20 && nvm use 20` or `fnm install 20 && fnm use 20`
+
 From your `plugins` directory run:
 
 ```sh
@@ -19,8 +25,10 @@ Add some items to your cart and visit the Checkout block, notice there is additi
 WooCommerce Blocks uses `wp-prettier` to format the JS files. If you want to use `wp-prettier`, you will need to run the following command:
 
 ```sh
-nvm use && npm i --D "prettier@npm:wp-prettier@latest" && npm i --D eslint-plugin-prettier
+npm i --D "prettier@npm:wp-prettier@latest" && npm i --D eslint-plugin-prettier
 ```
+
+It is important to chain these commands as `eslint-plugin-prettier` will error if it is not installed _after_ `prettier@npm:wp-prettier@latest`.
 
 You can then lint the project by running `npm run lint:js`
 
