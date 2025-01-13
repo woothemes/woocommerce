@@ -11,6 +11,7 @@ use Automattic\WooCommerce\Utilities\FeaturesUtil;
 use WC_Email;
 use WC_Order;
 use WC_Product;
+use WC_Product_Variation;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -258,16 +259,22 @@ class EmailPreview {
 	 * @return WC_Order
 	 */
 	private function get_dummy_order() {
-		$product = $this->get_dummy_product();
+		$product   = $this->get_dummy_product();
+		$variation = $this->get_dummy_product_variation();
 
 		$order = new WC_Order();
-		$order->add_product( $product, 2 );
+		if ( $product ) {
+			$order->add_product( $product, 2 );
+		}
+		if ( $variation ) {
+			$order->add_product( $variation );
+		}
 		$order->set_id( 12345 );
 		$order->set_date_created( time() );
 		$order->set_currency( 'USD' );
 		$order->set_discount_total( 10 );
 		$order->set_shipping_total( 5 );
-		$order->set_total( 45 );
+		$order->set_total( 65 );
 		$order->set_payment_method_title( __( 'Direct bank transfer', 'woocommerce' ) );
 		$order->set_customer_note( __( 'This is a customer note. Customers can add a note to their order on checkout. It can be multiple lines. If there’s no note, this section is hidden.', 'woocommerce' ) );
 
@@ -306,6 +313,33 @@ class EmailPreview {
 		 * @since 9.6.0
 		 */
 		return apply_filters( 'woocommerce_email_preview_dummy_product', $product, $this->email_type );
+	}
+
+	/**
+	 * Get a dummy product variation.
+	 *
+	 * @return WC_Product_Variation
+	 */
+	private function get_dummy_product_variation() {
+		$variation = new WC_Product_Variation();
+		$variation->set_name( 'Dummy Product Variation' );
+		$variation->set_price( 20 );
+		$variation->set_attributes(
+			array(
+				'pa_color' => 'red',
+				'pa_size'  => 'small',
+			)
+		);
+
+		/**
+		 * A dummy WC_Product_Variation used in email preview.
+		 *
+		 * @param WC_Product_Variation $variation The dummy product variation object.
+		 * @param string               $email_type The email type to preview.
+		 *
+		 * @since 9.7.0
+		 */
+		return apply_filters( 'woocommerce_email_preview_dummy_product_variation', $variation, $this->email_type );
 	}
 
 	/**
