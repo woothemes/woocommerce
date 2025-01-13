@@ -2,7 +2,7 @@
 	display: flex;
 	align-items: center;
 	padding: $gap-small 0;
-	gap: 8px;
+	gap: $gap-smaller;
 
 	svg {
 		width: 38px;
@@ -58,7 +58,7 @@
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
 	grid-template-rows: repeat(3, 1fr);
-	gap: 8px;
+	gap: $gap-smaller;
 	padding: 0px;
 }
 
@@ -67,7 +67,7 @@
 	border: 1px solid $gray-100;
 	border-radius: 3px;
 	max-width: 246px;
-	padding: 8px;
+	padding: $gap-smaller;
 	box-shadow: none;
-	margin-bottom: 8px;
+	margin-bottom: $gap-smaller;
 }
