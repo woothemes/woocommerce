@@ -1,5 +1,4 @@
-TableCard
-===
+# TableCard
 
 This is an accessible, sortable, and scrollable table for displaying tabular data (like revenue and other analytics data).
 It accepts `headers` for column headers, and `rows` for the table content.
@@ -85,25 +84,24 @@ Table header action labels object with properties:
 
 - `compareButton`: String - Compare button label
 - `downloadButton`: String - Download button label
-- `helpText`: String - 
-- `placeholder`: String - 
+- `helpText`: String -
+- `placeholder`: String -
 
 ### `summary` structure
 
 Array of summary items objects with properties:
 
 - `label`: ReactNode
-- `value`: One of type: string, number 
+- `value`: One of type: string, number
 
 
-EmptyTable
-===
+## EmptyTable
 
 `EmptyTable` displays a blank space with an optional message passed as a children node
 with the purpose of replacing a table with no rows.
 It mimics the same height a table would have according to the `numberOfRows` prop.
 
-## Usage
+### Usage
 
 ```jsx
 <EmptyTable>
@@ -118,12 +116,11 @@ Name | Type | Default | Description
 `numberOfRows` | Number | `5` | An integer with the number of rows the box should occupy
 
 
-TablePlaceholder
-===
+## TablePlaceholder
 
 `TablePlaceholder` behaves like `Table` but displays placeholder boxes instead of data. This can be used while loading.
 
-## Usage
+### Usage
 
 ```jsx
 const headers = [
@@ -148,12 +145,11 @@ Name | Type | Default | Description
 `numberOfRows` | Number | `5` | An integer with the number of rows to display
 
 
-TableSummary
-===
+## TableSummary
 
 A component to display summarized table data - the list of data passed in on a single line.
 
-## Usage
+### Usage
 
 ```jsx
 const summary = [
@@ -171,19 +167,17 @@ Name | Type | Default | Description
 --- | --- | --- | ---
 `data` | Array | `null` | An array of objects with `label` & `value` properties, which display on a single line
 
-TableSummaryPlaceholder
-===
+## TableSummaryPlaceholder
 
 A component to display a placeholder box for `TableSummary`. There is no prop for this component.
 
-## Usage
+### Usage
 
 ```jsx
 <TableSummaryPlaceholder />
 ```
 
-Table
-===
+## Table
 
 A table component, without the Card wrapper. This is a basic table display, sortable, but no default filtering.
 
@@ -212,13 +206,13 @@ const rows = [
 ]
 ```
 
-|   Month  | Orders | Revenue |
-| ---------|--------|---------|
-| January  |     10 | $530.00 |
-| February |     13 | $675.00 |
-| March    |      9 | $460.00 |
+ Month  | Orders | Revenue
+---------|--------|---------
+ January  |     10 | $530.00
+ February |     13 | $675.00
+ March    |      9 | $460.00
 
-## Usage
+### Usage
 
 ```jsx
 <Table
@@ -256,7 +250,7 @@ Array of column header objects with properties:
 - `key`: String - The API parameter name for this column, passed to `orderby` when sorting via API.
 - `label`: ReactNode - The display label for this column.
 - `required`: Boolean - Boolean, true if this column should always display in the table (not shown in toggle-able list).
-- `screenReaderLabel`: String - The label used for screen readers for this column. 
+- `screenReaderLabel`: String - The label used for screen readers for this column.
 
 ### `rows` structure
 
