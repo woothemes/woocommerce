@@ -1401,7 +1401,7 @@ class WC_Admin_Setup_Wizard {
 		) . '</p>';
 
 		return array(
-			'stripe'               => array(
+			'stripe'              => array(
 				'name'        => __( 'WooCommerce Stripe Gateway', 'woocommerce' ),
 				'image'       => WC()->plugin_url() . '/assets/images/stripe.png',
 				'description' => $stripe_description,
@@ -1426,14 +1426,14 @@ class WC_Admin_Setup_Wizard {
 					),
 				),
 			),
-			'ppec_paypal'          => array(
-				'name'             => __( 'WooCommerce PayPal Checkout Gateway', 'woocommerce' ),
-				'image'            => WC()->plugin_url() . '/assets/images/paypal.png',
-				'description'      => $paypal_checkout_description,
-				'enabled'          => false,
-				'class'            => 'checked paypal-logo',
-				'repo-slug'        => 'woocommerce-gateway-paypal-express-checkout',
-				'settings'         => array(
+			'ppec_paypal'         => array(
+				'name'        => __( 'WooCommerce PayPal Checkout Gateway', 'woocommerce' ),
+				'image'       => WC()->plugin_url() . '/assets/images/paypal.png',
+				'description' => $paypal_checkout_description,
+				'enabled'     => false,
+				'class'       => 'checked paypal-logo',
+				'repo-slug'   => 'woocommerce-gateway-paypal-express-checkout',
+				'settings'    => array(
 					'reroute_requests' => array(
 						'label'       => __( 'Set up PayPal for me using this email:', 'woocommerce' ),
 						'type'        => 'checkbox',
@@ -1466,46 +1466,46 @@ class WC_Admin_Setup_Wizard {
 					),
 				),
 			),
-			'klarna_checkout'      => array(
-				'name'             => __( 'Klarna Checkout for WooCommerce', 'woocommerce' ),
-				'description'      => $klarna_checkout_description,
-				'image'            => WC()->plugin_url() . '/assets/images/klarna-black.png',
-				'enabled'          => true,
-				'class'            => 'klarna-logo',
-				'repo-slug'        => 'klarna-checkout-for-woocommerce',
+			'klarna_checkout'     => array(
+				'name'        => __( 'Klarna Checkout for WooCommerce', 'woocommerce' ),
+				'description' => $klarna_checkout_description,
+				'image'       => WC()->plugin_url() . '/assets/images/klarna-black.png',
+				'enabled'     => true,
+				'class'       => 'klarna-logo',
+				'repo-slug'   => 'klarna-checkout-for-woocommerce',
 			),
-			'klarna_payments'      => array(
-				'name'             => __( 'Klarna Payments for WooCommerce', 'woocommerce' ),
-				'description'      => $klarna_payments_description,
-				'image'            => WC()->plugin_url() . '/assets/images/klarna-black.png',
-				'enabled'          => true,
-				'class'            => 'klarna-logo',
-				'repo-slug'        => 'klarna-payments-for-woocommerce',
+			'klarna_payments'     => array(
+				'name'        => __( 'Klarna Payments for WooCommerce', 'woocommerce' ),
+				'description' => $klarna_payments_description,
+				'image'       => WC()->plugin_url() . '/assets/images/klarna-black.png',
+				'enabled'     => true,
+				'class'       => 'klarna-logo',
+				'repo-slug'   => 'klarna-payments-for-woocommerce',
 			),
-			'square'               => array(
-				'name'             => __( 'WooCommerce Square', 'woocommerce' ),
-				'description'      => $square_description,
-				'image'            => WC()->plugin_url() . '/assets/images/square-black.png',
-				'class'            => 'square-logo',
-				'enabled'          => false,
-				'repo-slug'        => 'woocommerce-square',
+			'square'              => array(
+				'name'        => __( 'WooCommerce Square', 'woocommerce' ),
+				'description' => $square_description,
+				'image'       => WC()->plugin_url() . '/assets/images/square-black.png',
+				'class'       => 'square-logo',
+				'enabled'     => false,
+				'repo-slug'   => 'woocommerce-square',
 			),
-			'eway'                 => array(
-				'name'             => __( 'WooCommerce eWAY Gateway', 'woocommerce' ),
-				'description'      => __( 'The eWAY extension for WooCommerce allows you to take credit card payments directly on your store without redirecting your customers to a third party site to make payment.', 'woocommerce' ),
-				'image'            => WC()->plugin_url() . '/assets/images/eway-logo.jpg',
-				'enabled'          => false,
-				'class'            => 'eway-logo',
-				'repo-slug'        => 'woocommerce-gateway-eway',
+			'eway'                => array(
+				'name'        => __( 'WooCommerce eWAY Gateway', 'woocommerce' ),
+				'description' => __( 'The eWAY extension for WooCommerce allows you to take credit card payments directly on your store without redirecting your customers to a third party site to make payment.', 'woocommerce' ),
+				'image'       => WC()->plugin_url() . '/assets/images/eway-logo.jpg',
+				'enabled'     => false,
+				'class'       => 'eway-logo',
+				'repo-slug'   => 'woocommerce-gateway-eway',
 			),
-			'payfast'              => array(
-				'name'             => __( 'WooCommerce PayFast Gateway', 'woocommerce' ),
-				'description'      => __( 'The PayFast extension for WooCommerce enables you to accept payments by Credit Card and EFT via one of South Africa’s most popular payment gateways. No setup fees or monthly subscription costs.', 'woocommerce' ),
-				'image'            => WC()->plugin_url() . '/assets/images/payfast.png',
-				'class'            => 'payfast-logo',
-				'enabled'          => false,
-				'repo-slug'        => 'woocommerce-payfast-gateway',
-				'file'             => 'gateway-payfast.php',
+			'payfast'             => array(
+				'name'        => __( 'WooCommerce PayFast Gateway', 'woocommerce' ),
+				'description' => __( 'The PayFast extension for WooCommerce enables you to accept payments by Credit Card and EFT via one of South Africa’s most popular payment gateways. No setup fees or monthly subscription costs.', 'woocommerce' ),
+				'image'       => WC()->plugin_url() . '/assets/images/payfast.png',
+				'class'       => 'payfast-logo',
+				'enabled'     => false,
+				'repo-slug'   => 'woocommerce-payfast-gateway',
+				'file'        => 'gateway-payfast.php',
 			),
 		);
 	}
