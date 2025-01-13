@@ -52,7 +52,7 @@
 		"test:api": "pnpm test:e2e:default --project=api --workers 4",
 		"test:e2e": "pnpm test:e2e:default --project=ui",
 		"test:e2e:default": "pnpm test:e2e:install && pnpm test:e2e:with-env default",
-		"test:e2e:install": "pnpm playwright install chromium",
+		"test:e2e:install": "pnpm playwright install",
 		"test:e2e:blocks": "pnpm --filter='@woocommerce/block-library' test:e2e",
 		"test:e2e:with-env": "pnpm test:e2e:install && bash ./tests/e2e-pw/run-tests-with-env.sh",
 		"test:env:start": "pnpm env:test",
