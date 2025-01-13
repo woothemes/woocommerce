@@ -100,9 +100,7 @@ export function Edit( {
 						>
 							<InputControl
 								id={ id }
-								ref={
-									lowStockAmountRef as Ref< HTMLInputElement >
-								}
+								ref={ lowStockAmountRef }
 								name={ 'low_stock_amount' }
 								placeholder={ sprintf(
 									// translators: Default quantity to notify merchants of low stock.

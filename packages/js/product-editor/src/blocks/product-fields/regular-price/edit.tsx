@@ -122,7 +122,7 @@ export function Edit( {
 					id={ regularPriceId }
 					name={ 'regular_price' }
 					inputMode="decimal"
-					ref={ regularPriceRef as Ref< HTMLInputElement > }
+					ref={ regularPriceRef }
 					label={
 						tooltip ? (
 							<Label label={ label } tooltip={ tooltip } />

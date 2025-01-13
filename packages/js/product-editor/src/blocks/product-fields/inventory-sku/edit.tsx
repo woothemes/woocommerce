@@ -66,7 +66,7 @@ export function Edit( {
 				) }
 			>
 				<InputControl
-					ref={ skuRef as Ref< HTMLInputElement > }
+					ref={ skuRef }
 					id={ inputControlId }
 					name={ 'woocommerce-product-sku' }
 					onChange={ ( nextValue ) => {
