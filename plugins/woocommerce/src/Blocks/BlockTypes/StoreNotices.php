@@ -82,9 +82,7 @@ class StoreNotices extends AbstractBlock {
 		<div data-wc-interactive="<?php echo esc_attr( $namespace ); ?>" class="wc-block-store-notices woocommerce">
 			<div data-wc-context="<?php echo esc_attr( wp_json_encode( $store_notices_context ) ); ?>" class="woocommerce-notices-wrapper">
 				<?php foreach ( $notice_types as $notice_type ) { ?>
-					<?php if ( wc_notice_count( $notice_type ) > 0 ) { ?>
-						<?php echo $this->render_iapi_notice_type( $notice_type ); ?>
-					<?php } ?>
+					<?php echo $this->render_iapi_notice_type( $notice_type ); ?>
 				<?php } ?>
 			</div>
 		</div>
@@ -106,7 +104,7 @@ class StoreNotices extends AbstractBlock {
 		ob_start();
 
 		?>
-		<div>
+		<div data-notice-type="<?php echo esc_attr( $notice_type ); ?>" data-wc-bind--hidden="state.noticeTypeShouldBeHidden" hidden>
 			<?php
 					echo wc_get_template(
 						"notices/{$notice_type}.php",

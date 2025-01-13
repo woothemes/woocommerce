@@ -3,13 +3,15 @@
  */
 import { getContext, getElement, store } from '@woocommerce/interactivity';
 
-type Notice = {
-	type: 'warning' | 'error' | 'info';
-	message: string;
-};
-
 type StoreNoticesContext = {
 	[ Key in `${ string }Notices` ]?: string;
+} & {
+	noticeTypeShouldBeHidden: boolean;
+};
+
+type Notice = {
+	type: keyof StoreNoticesContext;
+	message: string;
 };
 
 type StoreNoticesStore = {
@@ -23,6 +25,17 @@ type StoreNoticesStore = {
 };
 
 store< StoreNoticesStore >( 'woocommerce/store-notices', {
+	state: {
+		get noticeTypeShouldBeHidden() {
+			const context = getContext< StoreNoticesContext >();
+			const element = getElement();
+			const noticeType = element.ref.getAttribute(
+				'data-notice-type'
+			) as string;
+			const prop: keyof StoreNoticesContext = `${ noticeType }Notices`;
+			return context?.[ prop ] === undefined || context?.[ prop ] === '';
+		},
+	},
 	context: {
 		// default notice types, but may contain others generated dynamically.
 		errorNotices: '',
@@ -31,7 +44,14 @@ store< StoreNoticesStore >( 'woocommerce/store-notices', {
 	},
 	actions: {
 		addNotice: ( notice: Notice ) => {
-			// TODO add notice.
+			const context = getContext< StoreNoticesContext >();
+			const prop: keyof StoreNoticesContext = `${ notice.type }Notices`;
+
+			if ( context[ prop ] === undefined ) {
+				context[ prop ] = '';
+			}
+
+			context[ prop ] += notice.message;
 		},
 	},
 	callbacks: {
