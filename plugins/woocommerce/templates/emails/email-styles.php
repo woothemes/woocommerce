@@ -195,6 +195,12 @@ body {
 	padding-top: 24px;
 }
 
+#body_content .order-item-data td {
+	border: 0 !important;
+	padding: 0 !important;
+	vertical-align: middle;
+}
+
 #body_content .email-order-details .order-totals td,
 #body_content .email-order-details .order-totals th {
 	font-weight: normal;
@@ -226,19 +232,29 @@ body {
 }
 
 #body_content td ul.wc-item-meta {
-	font-size: small;
-	margin: 1em 0 0;
+	font-size: <?php echo $email_improvements_enabled ? '14px' : 'small'; ?>;
+	margin: <?php echo $email_improvements_enabled ? '0' : '1em 0 0'; ?>;
 	padding: 0;
+	<?php if ( $email_improvements_enabled ) { ?>
+	line-height: 140%;
+	<?php } ?>;
 	list-style: none;
 }
 
 #body_content td ul.wc-item-meta li {
-	margin: 0.5em 0 0;
+	margin: <?php echo $email_improvements_enabled ? '0' : '0.5em 0 0'; ?>;
 	padding: 0;
 }
 
 #body_content td ul.wc-item-meta li p {
 	margin: 0;
+}
+
+#body_content .email-order-details .wc-item-meta-label {
+	clear: both;
+	float: <?php echo is_rtl() ? 'right' : 'left'; ?>;
+	font-weight: normal;
+	margin-<?php echo is_rtl() ? 'left' : 'right'; ?>: .25em;
 }
 
 #body_content p {

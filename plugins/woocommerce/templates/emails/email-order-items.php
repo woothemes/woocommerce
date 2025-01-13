@@ -44,7 +44,7 @@ foreach ( $items as $item_id => $item ) :
 	<tr class="<?php echo esc_attr( apply_filters( 'woocommerce_order_item_class', 'order_item', $item, $order ) ); ?>">
 		<td class="td font-family text-align-left" style="vertical-align: middle; word-wrap:break-word;">
 			<?php if ( $email_improvements_enabled ) { ?>
-				<table>
+				<table class="order-item-data">
 					<tr>
 						<?php
 						// Show title/image etc.
@@ -65,12 +65,7 @@ foreach ( $items as $item_id => $item ) :
 							// allow other plugins to add additional product information here.
 							do_action( 'woocommerce_order_item_meta_start', $item_id, $item, $order, $plain_text );
 
-							wc_display_item_meta(
-								$item,
-								array(
-									'label_before' => '<strong class="wc-item-meta-label" style="float: ' . ( is_rtl() ? 'right' : 'left' ) . '; margin-' . esc_attr( $margin_side ) . ': .25em; clear: both">',
-								)
-							);
+							wc_display_item_meta( $item );
 
 							// allow other plugins to add additional product information here.
 							do_action( 'woocommerce_order_item_meta_end', $item_id, $item, $order, $plain_text );
