@@ -11,7 +11,7 @@ import ExternalLinkCard from '@woocommerce/editor-components/external-link-card'
 import { innerBlockAreas } from '@woocommerce/blocks-checkout';
 import Noninteractive from '@woocommerce/base-components/noninteractive';
 import { GlobalPaymentMethod } from '@woocommerce/types';
-import { useSelect } from '@wordpress/data';
+import { select } from '@wordpress/data';
 import { PAYMENT_STORE_KEY } from '@woocommerce/block-data';
 import { blocksConfig } from '@woocommerce/block-settings';
 import { trimCharacters, trimWords } from '@woocommerce/utils';
@@ -42,13 +42,9 @@ export const Edit = ( {
 	const globalPaymentMethods = getSetting< GlobalPaymentMethod[] >(
 		'globalPaymentMethods'
 	);
+	const incompatiblePaymentMethods =
+		select( PAYMENT_STORE_KEY ).getIncompatiblePaymentMethods();
 
-	const { incompatiblePaymentMethods } = useSelect( ( select ) => {
-		const { getIncompatiblePaymentMethods } = select( PAYMENT_STORE_KEY );
-		return {
-			incompatiblePaymentMethods: getIncompatiblePaymentMethods(),
-		};
-	}, [] );
 	const incompatiblePaymentMethodMessage = __(
 		'Incompatible with block-based checkout',
 		'woocommerce'
