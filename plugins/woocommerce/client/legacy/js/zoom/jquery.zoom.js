@@ -236,8 +236,8 @@
 					// and trigger mouseenter event to start zoom
 					img.onload = function() {
 						setupZoomOnload();
-						// Simulate mouseenter event to start zoom
-						$source.trigger('mouseenter.zoom');
+						// Simulate both mouseenter and touchstart events to start zoom
+						$source.trigger('mouseenter.zoom touchstart.zoom');
 					}
 					img.src = settings.url;
 				});
