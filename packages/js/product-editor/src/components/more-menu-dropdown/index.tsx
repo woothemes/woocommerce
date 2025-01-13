@@ -51,7 +51,7 @@ export const MoreMenuDropdown = ( {
 				size: 'compact',
 			} }
 		>
-			{ ( onClose: () => void ) => children( onClose ) }
+			{ ( { onClose }: { onClose: () => void } ) => children( onClose ) }
 		</DropdownComponent>
 	);
 };
