@@ -102,8 +102,7 @@ class StoreNotices extends AbstractBlock {
 	 * @return string Rendered notice type output.
 	 */
 	protected function render_iapi_notice_type( $notice_type ) {
-		$capitalized_notice_type = ucfirst( $notice_type );
-		$iapi_notices_directive  = "<span data-notice-type='{$notice_type}' data-wc-init='callbacks.renderNoticesByType'></span>";
+		$iapi_notices_directive = "<span data-notice-type='{$notice_type}' data-wc-init='callbacks.renderNoticesByType'></span>";
 		ob_start();
 
 		?>
