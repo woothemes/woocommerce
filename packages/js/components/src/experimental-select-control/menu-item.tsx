@@ -50,7 +50,7 @@ export const MenuItem = < ItemType, >( {
 
 	if ( tooltipText ) {
 		return (
-			<Tooltip text={ tooltipText } placement="top">
+			<Tooltip text={ tooltipText } position="top center">
 				{ renderListItem() }
 			</Tooltip>
 		);
