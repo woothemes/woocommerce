@@ -52,7 +52,6 @@ const config = defineConfig( {
 		{
 			name: 'chromium',
 			use: { ...devices[ 'Desktop Chrome' ] },
-			channel: 'chromium',
 		},
 	],
 } );
