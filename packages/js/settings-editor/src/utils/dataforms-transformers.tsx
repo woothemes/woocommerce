@@ -10,8 +10,8 @@ import type { Field, FormField } from '@wordpress/dataviews';
 import { CustomView } from '../components/custom-view';
 import { SettingsGroup } from '../components/settings-group';
 import { CheckboxEdit } from '../components/checkbox-edit';
-import { getInputEdit } from '../components/InputEdit';
-import { SelectEdit } from '../components/SelectEdit';
+import { getInputEdit } from '../components/inputEdit';
+import { SelectEdit } from '../components/selectEdit';
 
 export type DataItem = Record< string, BaseSettingsField[ 'value' ] >;
 
@@ -29,7 +29,8 @@ const transformToInitialData = ( setting: SettingsField, acc: DataItem ) => {
 		case 'checkboxgroup':
 			if ( setting.settings?.length ) {
 				setting.settings.forEach( ( subSetting ) => {
-					acc[ subSetting.id ] = subSetting.value ?? 'no';
+					acc[ subSetting.id ] =
+						subSetting.value === 'yes' ? 'yes' : 'no';
 				} );
 			}
 			break;

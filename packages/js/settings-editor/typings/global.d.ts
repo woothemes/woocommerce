@@ -66,8 +66,10 @@ declare global {
 		checkboxgroup?: 'start' | 'end' | '';
 	}
 
-	interface CheckboxGroupSettingsField extends BaseSettingsField {
+	interface CheckboxGroupSettingsField {
+		id: string;
 		type: 'checkboxgroup';
+		title: string;
 		settings: CheckboxSettingsField[];
 	}
 
