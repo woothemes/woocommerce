@@ -23,6 +23,7 @@ $text_align = is_rtl() ? 'right' : 'left';
 
 $email_improvements_enabled = FeaturesUtil::feature_is_enabled( 'email_improvements' );
 $heading_class              = $email_improvements_enabled ? 'email-order-detail-heading' : '';
+$order_table_class          = $email_improvements_enabled ? 'email-order-details' : '';
 
 do_action( 'woocommerce_email_before_order_table', $order, $sent_to_admin, $plain_text, $email ); ?>
 
@@ -50,7 +51,7 @@ do_action( 'woocommerce_email_before_order_table', $order, $sent_to_admin, $plai
 </h2>
 
 <div style="margin-bottom: 40px;">
-	<table class="td font-family" cellspacing="0" cellpadding="6" style="width: 100%;" border="1">
+	<table class="td font-family <?php echo esc_attr( $order_table_class ); ?>" cellspacing="0" cellpadding="6" style="width: 100%;" border="1">
 		<?php if ( ! $email_improvements_enabled ) { ?>
 		<thead>
 			<tr>
