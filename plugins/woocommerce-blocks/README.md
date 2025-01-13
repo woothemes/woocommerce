@@ -46,13 +46,13 @@ The integration tests are organized under the directory `/tests/integration` and
 
 `[name-of-the-integration-test-suite].spec.ts`
 
-#### How to run the tests?
+### How to run the tests?
 
 Single run mode: `pnpm --filter=@woocommerce/block-library run test:integration:js`
 
 Watch mode: `pnpm --filter=@woocommerce/block-library run test:integration:js --watch`
 
-#### How to write a test?
+### How to write a test?
 
 It is important to import all the blocks that are going to be tested together
 for them to be registered before testing.

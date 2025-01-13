@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { useState, useEffect } from '@wordpress/element';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
