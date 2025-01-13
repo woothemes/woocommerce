@@ -110,6 +110,7 @@ export const defaultCartData: StoreCart = {
 	cartTotals: defaultCartTotals,
 	cartIsLoading: true,
 	cartErrors: EMPTY_CART_ERRORS,
+	billingData: defaultBillingAddress,
 	billingAddress: defaultBillingAddress,
 	shippingAddress: defaultShippingAddress,
 	shippingRates: EMPTY_SHIPPING_RATES,
