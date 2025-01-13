@@ -1,0 +1,5 @@
+Significance: patch
+Type: tweak
+Comment: We reduce the contexts in which the Payments main menu item gets a red notice badge to only incentives.
+
+
