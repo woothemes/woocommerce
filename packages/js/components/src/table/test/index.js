@@ -220,10 +220,11 @@ describe( 'TableCard', () => {
 			/>
 		);
 
-		expect( screen.queryByText( prefaceContent ) ).toBeInTheDocument();
 		expect(
-			screen.getByText( prefaceContent ).closest( 'div' )
-		).toHaveClass( 'woocommerce-table__table-preface' );
+			screen
+				.getByText( prefaceContent )
+				.closest( '.woocommerce-table__preface' )
+		).toBeInTheDocument();
 	} );
 } );
 
