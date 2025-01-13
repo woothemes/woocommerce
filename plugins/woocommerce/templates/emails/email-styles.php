@@ -190,8 +190,32 @@ body {
 	padding-bottom: 24px;
 }
 
-#body_content .email-order-details tfoot tr:first-child td {
+#body_content .email-order-details tfoot tr:first-child td,
+#body_content .email-order-details tfoot tr:first-child th {
 	padding-top: 24px;
+}
+
+#body_content .email-order-details .order-totals td,
+#body_content .email-order-details .order-totals th {
+	font-weight: normal;
+	padding-bottom: 5px;
+	padding-top: 5px;
+}
+
+#body_content .email-order-details .order-totals-total th {
+	font-weight: bold;
+}
+
+#body_content .email-order-details .order-totals-total td {
+	font-weight: bold;
+	font-size: 20px;
+}
+
+#body_content .email-order-details .order-totals-last td,
+#body_content .email-order-details .order-totals-last th {
+	border-bottom: 1px solid #ccc;
+	border-bottom: 1px solid rgba(0, 0, 0, .2);
+	padding-bottom: 24px;
 }
 
 #body_content td ul.wc-item-meta {
