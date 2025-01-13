@@ -12,12 +12,16 @@
  *
  * @see     https://woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates\Emails
- * @version 9.6.0
+ * @version 9.7.0
  */
+
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+$email_improvements_enabled = FeaturesUtil::feature_is_enabled( 'email_improvements' );
 
 // Load colors.
 $bg               = get_option( 'woocommerce_email_background_color' );
@@ -249,9 +253,9 @@ h2 {
 	color: <?php echo esc_attr( $base ); ?>;
 	display: block;
 	font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
-	font-size: 18px;
+	font-size: <?php echo $email_improvements_enabled ? '20px' : '18px'; ?>;
 	font-weight: bold;
-	line-height: 130%;
+	line-height: <?php echo $email_improvements_enabled ? '160%' : '130%'; ?>;
 	margin: 0 0 18px;
 	text-align: <?php echo is_rtl() ? 'right' : 'left'; ?>;
 }
@@ -285,6 +289,12 @@ img {
 	vertical-align: middle;
 	margin-<?php echo is_rtl() ? 'left' : 'right'; ?>: 10px;
 	max-width: 100%;
+}
+
+.email-order-detail-heading span {
+	display: block;
+	font-size: 14px;
+	font-weight: normal;
 }
 
 /**

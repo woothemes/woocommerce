@@ -12,7 +12,7 @@
  *
  * @see https://woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates\Emails
- * @version 3.7.0
+ * @version 9.7.0
  */
 
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
@@ -22,11 +22,15 @@ defined( 'ABSPATH' ) || exit;
 $text_align = is_rtl() ? 'right' : 'left';
 
 $email_improvements_enabled = FeaturesUtil::feature_is_enabled( 'email_improvements' );
+$heading_class              = $email_improvements_enabled ? 'email-order-detail-heading' : '';
 
 do_action( 'woocommerce_email_before_order_table', $order, $sent_to_admin, $plain_text, $email ); ?>
 
-<h2>
+<h2 class="<?php echo esc_attr( $heading_class ); ?>">
 	<?php
+	if ( $email_improvements_enabled ) {
+		echo wp_kses_post( __( 'Order summary', 'woocommerce' ) );
+	}
 	if ( $sent_to_admin ) {
 		$before = '<a class="link" href="' . esc_url( $order->get_edit_order_url() ) . '">';
 		$after  = '</a>';
@@ -34,8 +38,14 @@ do_action( 'woocommerce_email_before_order_table', $order, $sent_to_admin, $plai
 		$before = '';
 		$after  = '';
 	}
+	if ( $email_improvements_enabled ) {
+		echo '<span>';
+	}
 	/* translators: %s: Order ID. */
-	echo wp_kses_post( $before . sprintf( __( '[Order #%s]', 'woocommerce' ) . $after . ' (<time datetime="%s">%s</time>)', $order->get_order_number(), $order->get_date_created()->format( 'c' ), wc_format_datetime( $order->get_date_created() ) ) );
+	echo wp_kses_post( $before . sprintf( __( 'Order #%s', 'woocommerce' ) . $after . ' (<time datetime="%s">%s</time>)', $order->get_order_number(), $order->get_date_created()->format( 'c' ), wc_format_datetime( $order->get_date_created() ) ) );
+	if ( $email_improvements_enabled ) {
+		echo '</span>';
+	}
 	?>
 </h2>
 
