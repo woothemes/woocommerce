@@ -2356,6 +2356,7 @@ class WC_Order extends WC_Abstract_Order {
 			}
 
 			$total_rows['payment_method'] = array(
+				'type'  => 'payment_method',
 				'label' => __( 'Payment method:', 'woocommerce' ),
 				'value' => $value,
 			);
@@ -2379,6 +2380,7 @@ class WC_Order extends WC_Abstract_Order {
 				}
 
 				$total_rows[ 'refund_' . $id ] = array(
+					'type'  => 'refund',
 					'label' => __( 'Refund', 'woocommerce' ) . ':',
 					'value' => wc_price( '-' . $refund->get_amount(), array( 'currency' => $this->get_currency() ) ) . $reason,
 				);

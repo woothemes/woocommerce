@@ -85,7 +85,7 @@ do_action( 'woocommerce_email_before_order_table', $order, $sent_to_admin, $plai
 				foreach ( $item_totals as $total ) {
 					$i++;
 					?>
-					<tr>
+					<tr class="order-totals order-totals-<?php echo esc_attr( $total['type'] ?? 'unknown' ); ?>">
 						<th class="td text-align-left" scope="row" colspan="2" style="<?php echo ( 1 === $i ) ? 'border-top-width: 4px;' : ''; ?>"><?php echo wp_kses_post( $total['label'] ); ?></th>
 						<td class="td text-align-left" style="<?php echo ( 1 === $i ) ? 'border-top-width: 4px;' : ''; ?>"><?php echo wp_kses_post( $total['value'] ); ?></td>
 					</tr>
