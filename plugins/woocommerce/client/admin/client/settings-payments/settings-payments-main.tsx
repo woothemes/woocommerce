@@ -33,6 +33,11 @@ import {
 } from '~/settings-payments/utils';
 import { WooPaymentsPostSandboxAccountSetupModal } from '~/settings-payments/components/modals';
 
+/**
+ * A component that renders the main settings page for managing payment gateways in WooCommerce.
+ * It handles fetching and displaying payment providers, managing plugin installations, and
+ * displaying incentive banners or modals when applicable.
+ */
 export const SettingsPaymentsMain = () => {
 	const [ installingPlugin, setInstallingPlugin ] = useState< string | null >(
 		null
@@ -58,6 +63,7 @@ export const SettingsPaymentsMain = () => {
 
 	const urlParams = new URLSearchParams( window.location.search );
 
+	// Effect for handling URL parameters and displaying messages or modals.
 	useEffect( () => {
 		const isAccountTestDriveError =
 			urlParams.get( 'test_drive_error' ) === 'true';

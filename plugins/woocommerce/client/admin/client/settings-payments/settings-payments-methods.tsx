@@ -25,12 +25,25 @@ import { PaymentMethodListItem } from './components/payment-method-list-item';
 type PaymentMethodsState = Record< string, boolean >;
 
 interface SettingsPaymentsMethodsProps {
+	/**
+	 * Current state of payment methods, mapping method IDs to their enabled status.
+	 */
 	paymentMethodsState: PaymentMethodsState;
+	/**
+	 * A callback to update the state of payment methods.
+	 */
 	setPaymentMethodsState: React.Dispatch<
 		React.SetStateAction< PaymentMethodsState >
 	>;
 }
 
+/**
+ * Combines Apple Pay and Google Pay into a single payment method.
+ *
+ * If both Apple Pay and Google Pay exist in the list of payment methods, they are combined into a single
+ * method with the ID `apple_google`, including data from both methods. If either is missing, the original
+ * list is returned.
+ */
 const combineRequestMethods = (
 	paymentMethods: RecommendedPaymentMethod[]
 ) => {
@@ -66,6 +79,11 @@ const combineRequestMethods = (
 		); // Filter null values
 };
 
+/**
+ * A component for displaying and managing the list of recommended payment methods.
+ * Combines Apple Pay and Google Pay into a single method if both exist and allows users
+ * to toggle the enabled/disabled state of each payment method.
+ */
 export const SettingsPaymentsMethods: React.FC<
 	SettingsPaymentsMethodsProps
 > = ( { paymentMethodsState, setPaymentMethodsState } ) => {
