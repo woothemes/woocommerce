@@ -226,7 +226,7 @@ export const CountrySelector = < ItemType extends Item >( {
 	);
 
 	const onEnterApply = useCallback(
-		( event ) => {
+		( event: React.KeyboardEvent< HTMLButtonElement > ) => {
 			event.stopPropagation();
 			if ( event.key === 'Enter' ) {
 				onChange( selectedValue );

@@ -4,6 +4,7 @@
 import {
 	type RecommendedPaymentMethod,
 	PAYMENT_SETTINGS_STORE_NAME,
+	type PaymentSettingsSelectors,
 } from '@woocommerce/data';
 import { useEffect, useState } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
@@ -90,16 +91,18 @@ export const SettingsPaymentsMethods: React.FC<
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
 	const { paymentMethods, isFetching } = useSelect( ( select ) => {
-		const paymentProviders =
-			select( PAYMENT_SETTINGS_STORE_NAME ).getPaymentProviders() || [];
+		const paymentSettings = select(
+			PAYMENT_SETTINGS_STORE_NAME
+		) as PaymentSettingsSelectors;
+		const paymentProviders = paymentSettings.getPaymentProviders() || [];
 		const recommendedPaymentMethods =
 			getRecommendedPaymentMethods( paymentProviders );
 
 		return {
-			isFetching: select( PAYMENT_SETTINGS_STORE_NAME ).isFetching(),
+			isFetching: paymentSettings.isFetching(),
 			paymentMethods: combineRequestMethods( recommendedPaymentMethods ),
 		};
-	} );
+	}, [] );
 
 	const initialPaymentMethodsState = paymentMethods.reduce<
 		Record< string, boolean >

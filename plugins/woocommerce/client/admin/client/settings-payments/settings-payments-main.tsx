@@ -7,6 +7,8 @@ import {
 	PLUGINS_STORE_NAME,
 	PAYMENT_SETTINGS_STORE_NAME,
 	PaymentProvider,
+	type PaymentSettingsSelectors,
+	type PluginSelectors,
 } from '@woocommerce/data';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
@@ -105,7 +107,9 @@ export const SettingsPaymentsMain = () => {
 	}, [] );
 
 	const installedPluginSlugs = useSelect( ( select ) => {
-		return select( PLUGINS_STORE_NAME ).getInstalledPlugins();
+		return (
+			select( PLUGINS_STORE_NAME ) as PluginSelectors
+		 ).getInstalledPlugins();
 	}, [] );
 
 	// Make UI refresh when plugin is installed.
@@ -114,20 +118,23 @@ export const SettingsPaymentsMain = () => {
 	);
 
 	const { providers, suggestions, suggestionCategories, isFetching } =
-		useSelect( ( select ) => {
-			return {
-				providers: select(
+		useSelect(
+			( select ) => {
+				const paymentSettings = select(
 					PAYMENT_SETTINGS_STORE_NAME
-				).getPaymentProviders( storeCountry ),
-				suggestions: select(
-					PAYMENT_SETTINGS_STORE_NAME
-				).getSuggestions(),
-				suggestionCategories: select(
-					PAYMENT_SETTINGS_STORE_NAME
-				).getSuggestionCategories(),
-				isFetching: select( PAYMENT_SETTINGS_STORE_NAME ).isFetching(),
-			};
-		} );
+				) as PaymentSettingsSelectors;
+
+				return {
+					providers:
+						paymentSettings.getPaymentProviders( storeCountry ),
+					suggestions: paymentSettings.getSuggestions(),
+					suggestionCategories:
+						paymentSettings.getSuggestionCategories(),
+					isFetching: paymentSettings.isFetching(),
+				};
+			},
+			[ storeCountry ]
+		);
 
 	const dismissIncentive = useCallback(
 		( dismissHref: string, context: string ) => {
@@ -169,12 +176,12 @@ export const SettingsPaymentsMain = () => {
 	}
 
 	const incentiveProvider = providers.find(
-		( provider ) => '_incentive' in provider
+		( provider: PaymentProvider ) => '_incentive' in provider
 	);
 	const incentive = incentiveProvider ? incentiveProvider._incentive : null;
 
 	const setupPlugin = useCallback(
-		( id, slug, onboardingUrl: string | null ) => {
+		( id: string, slug: string, onboardingUrl: string | null ) => {
 			if ( installingPlugin ) {
 				return;
 			}
@@ -187,7 +194,7 @@ export const SettingsPaymentsMain = () => {
 
 			setInstallingPlugin( id );
 			installAndActivatePlugins( [ slug ] )
-				.then( async ( response ) => {
+				.then( async ( response: Response ) => {
 					createNoticesFromResponse( response );
 					invalidateResolutionForStoreSelector(
 						'getPaymentProviders'
@@ -200,7 +207,7 @@ export const SettingsPaymentsMain = () => {
 
 					// Find the matching provider the updated list.
 					const updatedProvider = updatedProviders.find(
-						( provider ) =>
+						( provider: PaymentProvider ) =>
 							provider.id === id ||
 							provider?._suggestion_id === id || // For suggestions that were replaced by a gateway.
 							provider.plugin.slug === slug // Last resort to find the provider.

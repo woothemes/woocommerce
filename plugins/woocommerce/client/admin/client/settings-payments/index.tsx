@@ -3,7 +3,10 @@
  */
 import { Gridicon } from '@automattic/components';
 import { Button, SelectControl } from '@wordpress/components';
-import { PAYMENT_SETTINGS_STORE_NAME } from '@woocommerce/data';
+import {
+	PAYMENT_SETTINGS_STORE_NAME,
+	type PaymentSettingsSelectors,
+} from '@woocommerce/data';
 import { useSelect } from '@wordpress/data';
 import React, {
 	useState,
@@ -120,6 +123,8 @@ const SettingsPaymentsMain = () => {
 												'Business location :',
 												'woocommerce'
 											) }
+											// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+											// @ts-ignore placeholder prop exists
 											placeholder={ '' }
 											label={ '' }
 											options={ [] }
@@ -172,12 +177,19 @@ const SettingsPaymentsMethods = () => {
 	const [ isCompleted, setIsCompleted ] = useState( false );
 	const { providers } = useSelect( ( select ) => {
 		return {
-			isFetching: select( PAYMENT_SETTINGS_STORE_NAME ).isFetching(),
+			isFetching: (
+				select(
+					PAYMENT_SETTINGS_STORE_NAME
+				) as PaymentSettingsSelectors
+			 ).isFetching(),
 			providers:
-				select( PAYMENT_SETTINGS_STORE_NAME ).getPaymentProviders() ||
-				[],
+				(
+					select(
+						PAYMENT_SETTINGS_STORE_NAME
+					) as PaymentSettingsSelectors
+				 ).getPaymentProviders() || [],
 		};
-	} );
+	}, [] );
 
 	// Retrieve wooPayments gateway
 	const wooPayments = getWooPaymentsFromProviders( providers );
