@@ -7,7 +7,7 @@ export default () => (
 	<svg
 		width="29"
 		height="14"
-		viewBox="-2 -2 33 18"
+		viewBox="-4 -2 35 18"
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"
 	>
