@@ -11,6 +11,7 @@ import { CustomView } from '../components/custom-view';
 import { SettingsGroup } from '../components/settings-group';
 import { CheckboxEdit } from '../components/checkbox-edit';
 import { getInputEdit } from '../components/InputEdit';
+import { SelectEdit } from '../components/SelectEdit';
 
 export type DataItem = Record< string, BaseSettingsField[ 'value' ] >;
 
@@ -105,7 +106,7 @@ const transformToField = (
 						value,
 					} )
 				),
-				Edit: 'select',
+				Edit: SelectEdit,
 			};
 
 		case 'custom':
