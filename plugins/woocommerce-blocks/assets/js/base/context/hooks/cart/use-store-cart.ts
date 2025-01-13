@@ -141,7 +141,10 @@ export const useStoreCart = (
 ): StoreCart => {
 	const { shouldSelect } = options;
 	const { isEditor, previewData } = useEditorContext();
-	const previewCart = previewData?.previewCart as unknown as CartResponse;
+	const previewCart = previewData?.previewCart as unknown as CartResponse & {
+		receiveCart?: ( cart: CartResponse ) => void;
+		receiveCartContents?: ( cart: CartResponse ) => void;
+	};
 	const currentResults = useRef();
 	const billingAddressRef = useRef( defaultBillingAddress );
 	const shippingAddressRef = useRef( defaultShippingAddress );
@@ -173,6 +176,14 @@ export const useStoreCart = (
 					paymentMethods: previewCart.payment_methods,
 					paymentRequirements: previewCart.payment_requirements,
 					cartIsLoading: false,
+					receiveCart:
+						typeof previewCart?.receiveCart === 'function'
+							? previewCart.receiveCart
+							: () => undefined,
+					receiveCartContents:
+						typeof previewCart?.receiveCartContents === 'function'
+							? previewCart.receiveCartContents
+							: () => undefined,
 				};
 			}
 
