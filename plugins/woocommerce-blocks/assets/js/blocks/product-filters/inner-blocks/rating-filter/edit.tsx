@@ -128,7 +128,10 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 			return;
 		}
 
-		if ( collectionFilters?.rating_counts?.length === 0 ) {
+		if (
+			! collectionFilters?.rating_counts ||
+			collectionFilters?.rating_counts?.length === 0
+		) {
 			setDisplayedOptions( previewOptions );
 			return;
 		}
