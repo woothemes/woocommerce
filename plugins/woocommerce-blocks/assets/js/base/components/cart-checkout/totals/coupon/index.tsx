@@ -12,7 +12,7 @@ import {
 	Panel,
 } from '@woocommerce/blocks-components';
 import { useSelect } from '@wordpress/data';
-import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
+import { validationStore } from '@woocommerce/block-data';
 import type { MouseEvent, MouseEventHandler } from 'react';
 
 /**
@@ -49,12 +49,15 @@ export const TotalsCoupon = ( {
 	const [ isCouponFormVisible, setIsCouponFormVisible ] =
 		useState( displayCouponForm );
 	const textInputId = `wc-block-components-totals-coupon__input-${ instanceId }`;
-	const { validationErrorId } = useSelect( ( select ) => {
-		const store = select( VALIDATION_STORE_KEY );
-		return {
-			validationErrorId: store.getValidationErrorId( instanceId ),
-		};
-	} );
+	const { validationErrorId } = useSelect(
+		( select ) => {
+			const store = select( validationStore );
+			return {
+				validationErrorId: store.getValidationErrorId( instanceId ),
+			};
+		},
+		[ instanceId ]
+	);
 	const inputRef = useRef< ValidatedTextInputHandle >( null );
 
 	const handleCouponSubmit: MouseEventHandler< HTMLButtonElement > = (
