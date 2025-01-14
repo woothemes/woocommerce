@@ -805,7 +805,7 @@ test.describe( 'Shopper → Additional Checkout Fields', () => {
 
 			// Check text inputs in edit mode match the expected values.
 			const shippingGovIdInput = checkoutPageObject.page.getByLabel(
-				'Government ID',
+				'Government ID *',
 				{ exact: true }
 			);
 			const shippingConfirmGovIdInput =
