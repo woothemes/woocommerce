@@ -485,6 +485,10 @@ const RatingFilterBlock = ( {
 							isLoading={ isLoading }
 							disabled={ isLoading || isDisabled }
 							onClick={ () => onSubmit( checked ) }
+							screenReaderLabel={ __(
+								'Apply rating filter',
+								'woocommerce'
+							) }
 						/>
 					) }
 				</div>

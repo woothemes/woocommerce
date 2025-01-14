@@ -16,10 +16,12 @@ export const useFeedbackBar = () => {
 		const { getOption, hasFinishedResolution } =
 			select( OPTIONS_STORE_NAME );
 
+		// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 		const showFeedbackBarOption = getOption(
 			PRODUCT_EDITOR_SHOW_FEEDBACK_BAR_OPTION_NAME
 		) as string;
 
+		// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 		const resolving = ! hasFinishedResolution( 'getOption', [
 			PRODUCT_EDITOR_SHOW_FEEDBACK_BAR_OPTION_NAME,
 		] );

@@ -4745,7 +4745,7 @@ export const countryStateOptions = [
 	},
 	{
 		key: 'NZ:MWT',
-		label: 'New Zealand — Manawatu-Wanganui',
+		label: 'New Zealand — Manawatu-Whanganui',
 	},
 	{
 		key: 'NZ:WGN',

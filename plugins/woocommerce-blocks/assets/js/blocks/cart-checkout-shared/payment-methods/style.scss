@@ -248,7 +248,7 @@
 	}
 }
 .wc-block-components-radio-control-accordion-content {
-	padding: $gap-smaller $gap;
+	padding: 0 em($gap) em($gap);
 
 	&:empty,
 	&:has(> *:only-child:empty) {

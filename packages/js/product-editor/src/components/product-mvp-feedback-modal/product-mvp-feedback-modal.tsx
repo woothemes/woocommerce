@@ -172,7 +172,6 @@ function ProductMVPFeedbackModal( {
 						) }
 						value={ email }
 						onChange={ ( value: string ) => setEmail( value ) }
-						rows={ 5 }
 						help={ __(
 							'In case you want to participate in further discussion and future user research.',
 							'woocommerce'

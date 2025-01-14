@@ -50,7 +50,7 @@ const mockSettingsPages = {
 				settings: [
 					{
 						title: 'Store Address',
-						type: 'title',
+						type: 'title' as const,
 						desc: 'This is where your business is located.',
 						id: 'store_address',
 						value: false,

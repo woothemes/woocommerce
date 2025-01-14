@@ -142,14 +142,69 @@ class Init {
 			return $settings;
 		}
 
+		global $wp_scripts;
+
+		// Set the scripts that all settings pages should have.
+		$ignored_settings_scripts                = array(
+			'wc-admin-app',
+			'woocommerce_admin',
+			'wc-settings-editor',
+			'wc-admin-edit-settings',
+			'woo-tracks',
+			'woocommerce-admin-test-helper',
+			'woocommerce-beta-tester-live-branches',
+			'WCPAY_DASH_APP',
+		);
+		$default_scripts_handles                 = array_diff(
+			$wp_scripts->queue,
+			$ignored_settings_scripts,
+		);
+		$settings['settingsScripts']['_default'] = self::get_script_urls( $default_scripts_handles );
+
+		// Add the settings data to the settings array.
 		$setting_pages = \WC_Admin_Settings::get_settings_pages();
 		$pages         = array();
 		foreach ( $setting_pages as $setting_page ) {
-			$pages = $setting_page->add_settings_page_data( $pages );
+			$scripts_before_adding_settings = $wp_scripts->queue;
+			$pages                          = $setting_page->add_settings_page_data( $pages );
+
+			$settings_scripts_handles                               = array_diff( $wp_scripts->queue, $scripts_before_adding_settings );
+			$settings['settingsScripts'][ $setting_page->get_id() ] = self::get_script_urls( $settings_scripts_handles );
 		}
+
 		$transformer              = new Transformer();
 		$settings['settingsData'] = $transformer->transform( $pages );
 
 		return $settings;
+	}
+
+	/**
+	 * Retrieve the script URLs from the provided script handles.
+	 * This will also filter out scripts from WordPress core since they only need to be loaded once.
+	 *
+	 * @param array $script_handles Array of script handles.
+	 * @return array Array of script URLs.
+	 */
+	private static function get_script_urls( $script_handles ) {
+		global $wp_scripts;
+		$script_urls = array();
+		foreach ( $script_handles as $script ) {
+			$registered_script = $wp_scripts->registered[ $script ];
+			if ( ! isset( $registered_script->src ) ) {
+				continue;
+			}
+
+			// Skip scripts from WordPress core since they only need to be loaded once.
+			if ( strpos( $registered_script->src, '/' . WPINC . '/js' ) === 0 || strpos( $registered_script->src, '/wp-admin/js' ) === 0 ) {
+				continue;
+			}
+
+			if ( strpos( $registered_script->src, '/' ) === 0 ) {
+				$script_urls[] = home_url( $registered_script->src );
+			} else {
+				$script_urls[] = $registered_script->src;
+			}
+		}
+		return $script_urls;
 	}
 }

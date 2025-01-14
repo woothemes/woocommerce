@@ -143,28 +143,32 @@ export const CheckoutEventsProvider = ( {
 
 	const { setValidationErrors } = useDispatch( VALIDATION_STORE_KEY );
 	const { dispatchCheckoutEvent } = useStoreEvents();
-	const { checkoutNotices, paymentNotices, expressPaymentNotices } =
-		useSelect( ( select ) => {
+
+	const checkoutContexts = Object.values( noticeContexts ).filter(
+		( context ) =>
+			context !== noticeContexts.PAYMENTS &&
+			context !== noticeContexts.EXPRESS_PAYMENTS
+	);
+
+	const checkoutNotices = useSelect(
+		( select ) => {
 			const { getNotices } = select( 'core/notices' );
-			const checkoutContexts = Object.values( noticeContexts ).filter(
-				( context ) =>
-					context !== noticeContexts.PAYMENTS &&
-					context !== noticeContexts.EXPRESS_PAYMENTS
-			);
-			const allCheckoutNotices = checkoutContexts.reduce(
-				( acc, context ) => {
-					return [ ...acc, ...getNotices( context ) ];
-				},
-				[]
-			);
-			return {
-				checkoutNotices: allCheckoutNotices,
-				paymentNotices: getNotices( noticeContexts.PAYMENTS ),
-				expressPaymentNotices: getNotices(
-					noticeContexts.EXPRESS_PAYMENTS
-				),
-			};
-		}, [] );
+			return checkoutContexts.reduce( ( acc, context ) => {
+				return [ ...acc, ...getNotices( context ) ];
+			}, [] );
+		},
+		[ checkoutContexts ]
+	);
+
+	const { paymentNotices, expressPaymentNotices } = useSelect( ( select ) => {
+		const { getNotices } = select( 'core/notices' );
+		return {
+			paymentNotices: getNotices( noticeContexts.PAYMENTS ),
+			expressPaymentNotices: getNotices(
+				noticeContexts.EXPRESS_PAYMENTS
+			),
+		};
+	}, [] );
 
 	const [ observers, observerDispatch ] = useReducer( emitReducer, {} );
 	const currentObservers = useRef( observers );

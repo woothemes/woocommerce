@@ -14,6 +14,10 @@ use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\WooPayments;
 use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestions as ExtensionSuggestions;
 use Exception;
 use WC_Payment_Gateway;
+use WC_Gateway_BACS;
+use WC_Gateway_Cheque;
+use WC_Gateway_COD;
+use WC_Gateway_Paypal;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -27,7 +31,7 @@ class PaymentProviders {
 	public const TYPE_OFFLINE_PMS_GROUP = 'offline_pms_group';
 	public const TYPE_SUGGESTION        = 'suggestion';
 
-	public const OFFLINE_METHODS = array( 'bacs', 'cheque', 'cod' );
+	public const OFFLINE_METHODS = array( WC_Gateway_BACS::ID, WC_Gateway_Cheque::ID, WC_Gateway_COD::ID );
 
 	public const EXTENSION_NOT_INSTALLED = 'not_installed';
 	public const EXTENSION_INSTALLED     = 'installed';
@@ -49,10 +53,10 @@ class PaymentProviders {
 	 * @var \class-string[]
 	 */
 	private array $payment_gateways_providers_class_map = array(
-		'bacs'                      => WCCore::class,
-		'cheque'                    => WCCore::class,
-		'cod'                       => WCCore::class,
-		'paypal'                    => WCCore::class,
+		WC_Gateway_BACS::ID         => WCCore::class,
+		WC_Gateway_Cheque::ID       => WCCore::class,
+		WC_Gateway_COD::ID          => WCCore::class,
+		WC_Gateway_Paypal::ID       => WCCore::class,
 		'woocommerce_payments'      => WooPayments::class,
 		'ppcp-gateway'              => PayPal::class,
 		'stripe'                    => Stripe::class,
