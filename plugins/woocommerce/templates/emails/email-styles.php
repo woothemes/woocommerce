@@ -127,8 +127,13 @@ body {
 	background-color: inherit;
 }
 
-<?php if ( $header_alignment ) : ?>
+<?php if ( $email_improvements_enabled ) : ?>
+#template_header_image {
+	padding: 32px 32px 0;
+}
+
 #template_header_image p {
+	margin-bottom: 0;
 	text-align: <?php echo esc_attr( $header_alignment ); ?>;
 }
 <?php endif; ?>
@@ -150,7 +155,7 @@ body {
 	font-size: 12px;
 	line-height: 150%;
 	text-align: center;
-	padding: 24px 0;
+	padding: <?php echo $email_improvements_enabled ? '32px' : '24px 0'; ?>;
 }
 
 #template_footer #credit p {
@@ -162,7 +167,7 @@ body {
 }
 
 #body_content table td {
-	padding: 48px 48px 32px;
+	padding: <?php echo $email_improvements_enabled ? '20px 32px 32px' : '48px 48px 32px'; ?>;
 }
 
 #body_content table td td {
@@ -314,7 +319,7 @@ body {
 }
 
 #header_wrapper {
-	padding: 36px 48px;
+	padding: <?php echo $email_improvements_enabled ? '20px 32px 0' : '36px 48px'; ?>;
 	display: block;
 }
 
