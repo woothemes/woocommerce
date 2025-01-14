@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import { Fragment } from '@wordpress/element';
+import { Fragment, RawHTML } from '@wordpress/element';
+import { sanitizeHTML } from '@woocommerce/utils';
 import clsx from 'clsx';
 import type { ReactElement, HTMLProps } from 'react';
 
@@ -21,10 +22,10 @@ export interface LabelProps extends HTMLProps< HTMLElement > {
  */
 const Label = ( {
 	label,
-	allowHTML,
 	screenReaderLabel,
 	wrapperElement,
 	wrapperProps = {},
+	allowHTML = false,
 }: LabelProps ): ReactElement => {
 	let Wrapper;
 
@@ -48,12 +49,20 @@ const Label = ( {
 		return (
 			<Wrapper { ...wrapperProps }>
 				{ allowHTML ? (
-					<span
-						aria-hidden="true"
-						dangerouslySetInnerHTML={ {
-							__html: label,
-						} }
-					></span>
+					<RawHTML>
+						{ sanitizeHTML( label, {
+							tags: [
+								'b',
+								'em',
+								'i',
+								'strong',
+								'p',
+								'br',
+								'span',
+							],
+							attr: [ 'style' ],
+						} ) }
+					</RawHTML>
 				) : (
 					<span aria-hidden="true">{ label }</span>
 				) }
