@@ -6,7 +6,7 @@ import { useCallback, useId, useMemo, useEffect } from '@wordpress/element';
 import { sprintf, __, getLocaleData } from '@wordpress/i18n';
 import { useSelect, useDispatch } from '@wordpress/data';
 import clsx from 'clsx';
-import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
+import { validationStore } from '@woocommerce/block-data';
 import { ValidationInputError } from '@woocommerce/blocks-components';
 
 /**
@@ -84,15 +84,18 @@ export const Select = ( props: SelectProps ) => {
 	}, [ required, value, emptyOption, options ] );
 
 	const { setValidationErrors, clearValidationError } =
-		useDispatch( VALIDATION_STORE_KEY );
+		useDispatch( validationStore );
 
-	const { error, validationErrorId } = useSelect( ( select ) => {
-		const store = select( VALIDATION_STORE_KEY );
-		return {
-			error: store.getValidationError( errorId ),
-			validationErrorId: store.getValidationErrorId( errorId ),
-		};
-	} );
+	const { error, validationErrorId } = useSelect(
+		( select ) => {
+			const store = select( validationStore );
+			return {
+				error: store.getValidationError( errorId ),
+				validationErrorId: store.getValidationErrorId( errorId ),
+			};
+		},
+		[ errorId ]
+	);
 
 	useEffect( () => {
 		if ( ! required || value ) {
@@ -117,14 +120,17 @@ export const Select = ( props: SelectProps ) => {
 		setValidationErrors,
 	] );
 
-	const validationError = useSelect( ( select ) => {
-		const store = select( VALIDATION_STORE_KEY );
-		return (
-			store.getValidationError( errorId || '' ) || {
-				hidden: true,
-			}
-		);
-	} );
+	const validationError = useSelect(
+		( select ) => {
+			const store = select( validationStore );
+			return (
+				store.getValidationError( errorId || '' ) || {
+					hidden: true,
+				}
+			);
+		},
+		[ errorId ]
+	);
 
 	return (
 		<div
