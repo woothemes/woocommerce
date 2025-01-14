@@ -2,10 +2,10 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Notice, Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { recordEvent } from '@woocommerce/tracks';
 import { dispatch, select } from '@wordpress/data';
+import { UpgradeDowngradeNotice as Notice } from '@woocommerce/editor-components/upgrade-downgrade-notice';
 import { findBlock } from '@woocommerce/utils';
 import {
 	createBlock,
@@ -89,13 +89,10 @@ export const UpgradeNotice = ( {
 	};
 
 	return (
-		<Notice isDismissible={ false }>
-			<>{ notice }</>
-			<br />
-			<br />
-			<Button variant="link" onClick={ handleClick }>
-				{ buttonLabel }
-			</Button>
-		</Notice>
+		<Notice
+			notice={ notice }
+			actionLabel={ buttonLabel }
+			onActionClick={ handleClick }
+		/>
 	);
 };
