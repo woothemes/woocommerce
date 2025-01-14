@@ -31,7 +31,7 @@ final class ProductFilterRating extends AbstractBlock {
 		parent::initialize();
 
 		add_filter( 'product_filters_param_keys', array( $this, 'get_filter_query_param_keys' ), 10, 2 );
-		add_filter( 'product_filters_active_items', array( $this, 'prepare_selected_filters' ), 10, 2 );
+		add_filter( 'product_filters_selected_items', array( $this, 'prepare_selected_filters' ), 10, 2 );
 	}
 
 	/**
