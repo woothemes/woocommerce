@@ -634,10 +634,14 @@ test.describe(
 					)
 				).toContainText( singleProductSalePrice );
 
-				// check local pickup option
-				await page
+				// Check local pickup option.
+				const masks = await page
 					.locator( '.wc-block-components-loading-mask' )
-					.waitFor( { state: 'hidden' } );
+					.all();
+
+				masks.forEach( ( mask ) =>
+					mask.waitFor( { state: 'hidden' } )
+				);
 				await page.getByLabel( 'Local pickup' ).click();
 				await expect( page.getByLabel( 'Local pickup' ) ).toBeChecked();
 				await page

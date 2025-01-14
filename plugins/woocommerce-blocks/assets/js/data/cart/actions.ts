@@ -131,6 +131,16 @@ export function updatingCustomerData( isResolving: boolean ) {
 }
 
 /**
+ * Returns an action object used to track when extensionCartUpdate is being applied
+ */
+export function applyingExtensionCartUpdate( isApplying: boolean ) {
+	return {
+		type: types.APPLYING_EXTENSION_CART_UPDATE,
+		isApplying,
+	};
+}
+
+/**
  * Returns an action object used to track whether the shipping rate is being
  * selected or not.
  *

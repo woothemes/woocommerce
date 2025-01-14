@@ -3,11 +3,13 @@
  */
 import { TotalsFooterItem } from '@woocommerce/base-components/cart-checkout';
 import { getCurrencyFromPriceResponse } from '@woocommerce/price-format';
-import { useStoreCart } from '@woocommerce/base-context/hooks';
+import { useShippingData, useStoreCart } from '@woocommerce/base-context/hooks';
 import { __ } from '@wordpress/i18n';
 import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import { useId, useState } from '@wordpress/element';
 import clsx from 'clsx';
+import LoadingMask from '@woocommerce/base-components/loading-mask';
+
 /**
  * Internal dependencies
  */
@@ -23,7 +25,9 @@ const FrontendBlock = ( {
 	children: JSX.Element | JSX.Element[];
 	className?: string;
 } ): JSX.Element | null => {
-	const { cartTotals } = useStoreCart();
+	const { cartTotals, isApplyingExtensionCartUpdate, isLoadingRates } =
+		useStoreCart();
+	const { isSelectingRate } = useShippingData();
 	const { isLarge } = useContainerWidthContext();
 	const [ isOpen, setIsOpen ] = useState( false );
 
@@ -50,77 +54,89 @@ const FrontendBlock = ( {
 	// rendered on small and mobile screens.
 	return (
 		<>
-			<div className={ className }>
-				<div
-					className={ clsx(
-						'wc-block-components-checkout-order-summary__title',
-						{
-							'is-open': isOpen,
-						}
-					) }
-					{ ...orderSummaryProps }
-				>
-					<p
-						className="wc-block-components-checkout-order-summary__title-text"
-						role="heading"
-					>
-						{ __( 'Order summary', 'woocommerce' ) }
-					</p>
-					{ ! isLarge && (
-						<>
-							<FormattedMonetaryAmount
-								currency={ totalsCurrency }
-								value={ totalPrice }
-							/>
-
-							<Icon
-								className="wc-block-components-checkout-order-summary__title-icon"
-								icon={ isOpen ? chevronUp : chevronDown }
-							/>
-						</>
-					) }
-				</div>
-				<div
-					className={ clsx(
-						'wc-block-components-checkout-order-summary__content',
-						{
-							'is-open': isOpen,
-						}
-					) }
-					id={ ariaControlsId }
-				>
-					{ children }
-					<div className="wc-block-components-totals-wrapper">
-						<TotalsFooterItem
-							currency={ totalsCurrency }
-							values={ cartTotals }
-						/>
-					</div>
-					<OrderMetaSlotFill />
-				</div>
-			</div>
-
-			{ ! isLarge && (
-				<CheckoutOrderSummaryFill>
+			<LoadingMask
+				isLoading={
+					isApplyingExtensionCartUpdate ||
+					isLoadingRates ||
+					isSelectingRate
+				}
+				screenReaderLabel={ __(
+					'Updating order totals…',
+					'woocommerce'
+				) }
+				showSpinner={ true }
+			>
+				<div className={ className }>
 					<div
-						className={ `${ className } checkout-order-summary-block-fill-wrapper` }
+						className={ clsx(
+							'wc-block-components-checkout-order-summary__title',
+							{
+								'is-open': isOpen,
+							}
+						) }
+						{ ...orderSummaryProps }
 					>
-						<FormStepHeading>
-							<>{ __( 'Order summary', 'woocommerce' ) }</>
-						</FormStepHeading>
-						<div className="checkout-order-summary-block-fill">
-							{ children }
-							<div className="wc-block-components-totals-wrapper">
-								<TotalsFooterItem
+						<p
+							className="wc-block-components-checkout-order-summary__title-text"
+							role="heading"
+						>
+							{ __( 'Order summary', 'woocommerce' ) }
+						</p>
+						{ ! isLarge && (
+							<>
+								<FormattedMonetaryAmount
 									currency={ totalsCurrency }
-									values={ cartTotals }
+									value={ totalPrice }
 								/>
-							</div>
-							<OrderMetaSlotFill />
-						</div>
+
+								<Icon
+									className="wc-block-components-checkout-order-summary__title-icon"
+									icon={ isOpen ? chevronUp : chevronDown }
+								/>
+							</>
+						) }
 					</div>
-				</CheckoutOrderSummaryFill>
-			) }
+					<div
+						className={ clsx(
+							'wc-block-components-checkout-order-summary__content',
+							{
+								'is-open': isOpen,
+							}
+						) }
+						id={ ariaControlsId }
+					>
+						{ children }
+						<div className="wc-block-components-totals-wrapper">
+							<TotalsFooterItem
+								currency={ totalsCurrency }
+								values={ cartTotals }
+							/>
+						</div>
+						<OrderMetaSlotFill />
+					</div>
+				</div>
+				{ ! isLarge && (
+					<CheckoutOrderSummaryFill>
+						<div
+							className={ `${ className } checkout-order-summary-block-fill-wrapper` }
+						>
+							<FormStepHeading>
+								<>{ __( 'Order summary', 'woocommerce' ) }</>
+							</FormStepHeading>
+							<div className="checkout-order-summary-block-fill">
+								{ children }
+								<div className="wc-block-components-totals-wrapper">
+									<TotalsFooterItem
+										currency={ totalsCurrency }
+										values={ cartTotals }
+									/>
+								</div>
+								<OrderMetaSlotFill />
+							</div>
+						</div>
+					</CheckoutOrderSummaryFill>
+				) }
+			</LoadingMask>
 		</>
 	);
 };

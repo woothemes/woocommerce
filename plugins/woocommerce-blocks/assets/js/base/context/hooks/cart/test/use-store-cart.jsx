@@ -2,7 +2,11 @@
  * External dependencies
  */
 import TestRenderer, { act } from 'react-test-renderer';
-import { createRegistry, RegistryProvider } from '@wordpress/data';
+import {
+	createReduxStore,
+	createRegistry,
+	RegistryProvider,
+} from '@wordpress/data';
 import { previewCart } from '@woocommerce/resource-previews';
 import { CART_STORE_KEY as storeKey } from '@woocommerce/block-data';
 
@@ -83,6 +87,7 @@ describe( 'useStoreCart', () => {
 		extensions: {},
 		isLoadingRates: false,
 		cartHasCalculatedShipping: true,
+		isApplyingExtensionCartUpdate: false,
 	};
 
 	const mockCartItems = [ { key: '1', id: 1, name: 'Lorem Ipsum' } ];
@@ -134,6 +139,7 @@ describe( 'useStoreCart', () => {
 		paymentRequirements: [],
 		receiveCart: undefined,
 		receiveCartContents: undefined,
+		isApplyingExtensionCartUpdate: false,
 	};
 
 	const getWrappedComponents = ( Component ) => (
@@ -154,6 +160,10 @@ describe( 'useStoreCart', () => {
 		);
 	};
 
+	const getApplyingExtensionCartUpdatesCountMock = jest
+		.fn()
+		.mockReturnValue( 0 );
+
 	const setUpMocks = () => {
 		const mocks = {
 			selectors: {
@@ -164,12 +174,15 @@ describe( 'useStoreCart', () => {
 					.fn()
 					.mockReturnValue( ! mockCartIsLoading ),
 				isCustomerDataUpdating: jest.fn().mockReturnValue( false ),
+				getApplyingExtensionCartUpdatesCount:
+					getApplyingExtensionCartUpdatesCountMock,
 			},
 		};
-		registry.registerStore( storeKey, {
+		const store = createReduxStore( storeKey, {
 			reducer: () => ( {} ),
 			selectors: mocks.selectors,
 		} );
+		registry.register( store );
 	};
 
 	beforeEach( () => {
@@ -179,6 +192,7 @@ describe( 'useStoreCart', () => {
 	} );
 
 	afterEach( () => {
+		getApplyingExtensionCartUpdatesCountMock.mockReturnValue( 0 );
 		useEditorContext.mockReset();
 	} );
 
@@ -213,6 +227,21 @@ describe( 'useStoreCart', () => {
 			expect( results ).toEqual( remaining );
 			expect( receiveCart ).toEqual( defaultReceiveCart );
 			expect( receiveCartContents ).toEqual( defaultReceiveCartContents );
+		} );
+
+		it( 'returns correct isApplyingExtensionCartUpdateCount value when applyingExtensionCartUpdatesCount > 0', () => {
+			getApplyingExtensionCartUpdatesCountMock.mockReturnValue( 1 );
+			const TestComponent = getTestComponent();
+			act( () => {
+				renderer = TestRenderer.create(
+					getWrappedComponents( TestComponent )
+				);
+			} );
+
+			const props = renderer.root.findByType( 'div' ).props; //eslint-disable-line testing-library/await-async-query
+			const results = props[ 'data-results' ];
+
+			expect( results.isApplyingExtensionCartUpdate ).toEqual( true );
 		} );
 
 		it( 'return store data when shouldSelect is true', () => {

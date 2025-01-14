@@ -56,6 +56,14 @@ export async function fillShippingCheckoutBlocks( page, shippingDetails = {} ) {
 		.getByRole( 'group', { name: 'Shipping address' } )
 		.getByLabel( isPostalCode ? 'Postal code' : 'ZIP Code' )
 		.fill( zip );
+
+	// Wait for loading masks to be hidden after data push.
+	// The waitForTimeout is necessary because data doesn't push immediately, it is debounced.
+	await page.waitForTimeout( 2000 );
+	const masks = await page
+		.locator( '.wc-block-components-loading-mask' )
+		.all();
+	masks.forEach( ( mask ) => mask.waitFor( { state: 'detached' } ) );
 }
 
 /**
@@ -117,4 +125,12 @@ export async function fillBillingCheckoutBlocks( page, billingDetails = {} ) {
 		.getByRole( 'group', { name: 'Billing address' } )
 		.getByLabel( isPostalCode ? 'Postal code' : 'ZIP Code' )
 		.fill( zip );
+
+	// Wait for loading masks to be hidden after data push.
+	// The waitForTimeout is necessary because data doesn't push immediately, it is debounced.
+	await page.waitForTimeout( 2000 );
+	const masks = await page
+		.locator( '.wc-block-components-loading-mask' )
+		.all();
+	masks.forEach( ( mask ) => mask.waitFor( { state: 'detached' } ) );
 }

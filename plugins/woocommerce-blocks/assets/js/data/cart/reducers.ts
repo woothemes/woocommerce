@@ -157,6 +157,17 @@ const reducer: Reducer< CartState > = ( state = defaultCartState, action ) => {
 				},
 			};
 			break;
+		case types.APPLYING_EXTENSION_CART_UPDATE:
+			state = {
+				...state,
+				metaData: {
+					...state.metaData,
+					applyingExtensionCartUpdatesCount: action.isApplying
+						? state.metaData.applyingExtensionCartUpdatesCount + 1
+						: state.metaData.applyingExtensionCartUpdatesCount - 1,
+				},
+			};
+			break;
 		case types.UPDATING_SELECTED_SHIPPING_RATE:
 			state = {
 				...state,

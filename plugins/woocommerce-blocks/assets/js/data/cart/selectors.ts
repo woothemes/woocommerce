@@ -199,6 +199,18 @@ export const isCustomerDataUpdating = ( state: CartState ): boolean => {
 };
 
 /**
+ * Retrieves number of extensionCartUpdate being applied.
+ *
+ * @param {CartState} state The current state.
+ * @return {number} current number of extensionCartUpdates being applied.
+ */
+export const getApplyingExtensionCartUpdatesCount = (
+	state: CartState
+): number => {
+	return state.metaData.applyingExtensionCartUpdatesCount;
+};
+
+/**
  * Retrieves if the shipping rate selection is being persisted.
  *
  * @param {CartState} state The current state.

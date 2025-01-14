@@ -101,6 +101,7 @@ export const applyExtensionCartUpdate =
 	( args: ExtensionCartUpdateArgs ) =>
 	async ( { dispatch }: { dispatch: CartDispatchFromMap } ) => {
 		try {
+			dispatch.applyingExtensionCartUpdate( true );
 			const { response } = await apiFetchWithHeaders< {
 				response: CartResponse;
 			} >( {
@@ -129,6 +130,8 @@ export const applyExtensionCartUpdate =
 		} catch ( error ) {
 			dispatch.receiveError( isApiErrorResponse( error ) ? error : null );
 			return Promise.reject( error );
+		} finally {
+			dispatch.applyingExtensionCartUpdate( false );
 		}
 	};
 

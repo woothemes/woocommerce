@@ -97,6 +97,7 @@ export const defaultCartState: CartState = {
 	},
 	metaData: {
 		updatingCustomerData: false,
+		applyingExtensionCartUpdatesCount: 0,
 		updatingSelectedRate: false,
 		applyingCoupon: '',
 		removingCoupon: '',

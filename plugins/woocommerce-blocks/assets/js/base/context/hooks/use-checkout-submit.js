@@ -1,7 +1,11 @@
 /**
  * External dependencies
  */
-import { CHECKOUT_STORE_KEY, PAYMENT_STORE_KEY } from '@woocommerce/block-data';
+import {
+	CHECKOUT_STORE_KEY,
+	PAYMENT_STORE_KEY,
+	CART_STORE_KEY,
+} from '@woocommerce/block-data';
 import { useSelect } from '@wordpress/data';
 
 /**
@@ -33,6 +37,18 @@ export const useCheckoutSubmit = () => {
 			hasError: store.hasError(),
 		};
 	} );
+
+	const { isCustomerDataUpdating, isApplyingExtensionCartUpdate } = useSelect(
+		( select ) => {
+			const store = select( CART_STORE_KEY );
+			return {
+				isCustomerDataUpdating: store.isCustomerDataUpdating(),
+				isApplyingExtensionCartUpdate:
+					store.getApplyingExtensionCartUpdatesCount() > 0,
+			};
+		}
+	);
+
 	const { activePaymentMethod, isExpressPaymentMethodActive } = useSelect(
 		( select ) => {
 			const store = select( PAYMENT_STORE_KEY );
@@ -58,7 +74,11 @@ export const useCheckoutSubmit = () => {
 		paymentMethodButtonLabel,
 		onSubmit,
 		isCalculating,
-		isDisabled: isProcessing || isExpressPaymentMethodActive,
+		isDisabled:
+			isProcessing ||
+			isExpressPaymentMethodActive ||
+			isCustomerDataUpdating ||
+			isApplyingExtensionCartUpdate,
 		waitingForProcessing,
 		waitingForRedirect,
 	};

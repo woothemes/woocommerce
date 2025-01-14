@@ -118,6 +118,7 @@ export const defaultCartData: StoreCart = {
 	receiveCart: () => undefined,
 	receiveCartContents: () => undefined,
 	extensions: EMPTY_EXTENSIONS,
+	isApplyingExtensionCartUpdate: false,
 };
 
 /**
@@ -181,6 +182,7 @@ export const useStoreCart = (
 						typeof previewCart?.receiveCartContents === 'function'
 							? previewCart.receiveCartContents
 							: () => undefined,
+					isApplyingExtensionCartUpdate: false,
 				};
 			}
 
@@ -203,6 +205,9 @@ export const useStoreCart = (
 							decodeValues( fee )
 					  )
 					: EMPTY_CART_FEES;
+
+			const applyingExtensionCartUpdatesCount =
+				store.getApplyingExtensionCartUpdatesCount();
 
 			// Add a text property to the coupon to allow extensions to modify
 			// the text used to display the coupon, without affecting the
@@ -240,6 +245,8 @@ export const useStoreCart = (
 				paymentRequirements: cartData.paymentRequirements,
 				receiveCart,
 				receiveCartContents,
+				isApplyingExtensionCartUpdate:
+					applyingExtensionCartUpdatesCount > 0,
 			};
 		},
 		[ shouldSelect ]
