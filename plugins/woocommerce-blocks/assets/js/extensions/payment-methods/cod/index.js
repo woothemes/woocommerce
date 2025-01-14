@@ -44,10 +44,9 @@ const Label = ( props ) => {
  * @return {boolean}  True if COD payment method should be displayed as a payment option.
  */
 const canMakePayment = ( { cartNeedsShipping, selectedShippingMethods } ) => {
-	if ( ! settings.enableForVirtual && ! cartNeedsShipping ) {
-		// Store doesn't allow COD for virtual orders AND
-		// order doesn't contain any shippable products.
-		return false;
+	if ( settings.enableForVirtual && ! cartNeedsShipping ) {
+		// Store allows COD for virtual orders.
+		return true;
 	}
 
 	if ( ! settings.enableForShippingMethods.length ) {
