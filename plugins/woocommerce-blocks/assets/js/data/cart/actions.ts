@@ -13,7 +13,7 @@ import { BillingAddress, ShippingAddress } from '@woocommerce/settings';
  */
 import { ACTION_TYPES as types } from './action-types';
 
-// Thunks are functions that can be dispatched, similar to actions creators
+// Thunks are functions that can be dispatched, similar to actions creators.
 export * from './thunks';
 
 /**
