@@ -4,6 +4,7 @@ declare( strict_types=1 );
 namespace Automattic\WooCommerce\Internal\Admin\Settings;
 
 use Automattic\WooCommerce\Admin\PluginsHelper;
+use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\Mollie;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\PaymentGateway;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\PayPal;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\Stripe;
@@ -54,6 +55,7 @@ class PaymentProviders {
 		'woocommerce_payments' => WooPayments::class,
 		'ppcp-gateway'         => PayPal::class,
 		'stripe'               => Stripe::class,
+		'mollie'			   => Mollie::class
 	);
 
 	/**
@@ -118,6 +120,9 @@ class PaymentProviders {
 
 			// Get all payment gateways, ordered by the user.
 			$payment_gateways = WC()->payment_gateways()->payment_gateways;
+
+			// Handle edge-cases for certain providers.
+			$payment_gateways = $this->handle_non_standard_registration_for_payment_gateways( $payment_gateways );
 
 			// Store the entire payment gateways list for later use.
 			$this->payment_gateways_memo = $payment_gateways;
@@ -698,6 +703,56 @@ class PaymentProviders {
 	 */
 	public function reset_memo(): void {
 		$this->payment_gateways_memo = null;
+	}
+
+	/**
+	 * Handle payment gateways with non-standard registration behavior.
+	 *
+	 * @param array $payment_gateways The payment gateways list.
+	 *
+	 * @return array The payment gateways list with the necessary adjustments.
+	 */
+	private function handle_non_standard_registration_for_payment_gateways( array $payment_gateways ): array {
+		/*
+		 * Handle the Mollie gateway's particular behavior: if there are no API keys or no PMs enabled,
+		 * the extension doesn't register a gateway instance.
+		 * We will need to register a mock gateway to represent Mollie in the settings page.
+		 */
+		$payment_gateways = $this->maybe_add_pseudo_mollie_gateway( $payment_gateways );
+
+		return $payment_gateways;
+	}
+
+	/**
+	 * Add the pseudo Mollie gateway to the payment gateways list if necessary.
+	 *
+	 * @param array $payment_gateways The payment gateways list.
+	 *
+	 * @return array The payment gateways list with the pseudo Mollie gateway added if necessary.
+	 */
+	private function maybe_add_pseudo_mollie_gateway( array $payment_gateways ): array {
+		$mollie_provider = $this->get_gateway_provider_instance( 'mollie' );
+
+		// Do nothing if there is a Mollie gateway registered.
+		if ( $mollie_provider->is_gateway_registered( $payment_gateways ) ) {
+			return $payment_gateways;
+		}
+
+		// Get the Mollie suggestion and determine if the plugin is active.
+		$mollie_suggestion = $this->get_extension_suggestion_by_id( ExtensionSuggestions::MOLLIE );
+		if ( empty( $mollie_suggestion ) ) {
+			return $payment_gateways;
+		}
+		$mollie_suggestion = $this->enhance_extension_suggestion( $mollie_suggestion );
+		// Do nothing if the plugin is not active.
+		if ( self::EXTENSION_ACTIVE !== $mollie_suggestion['plugin']['status'] ) {
+			return $payment_gateways;
+		}
+
+		// Add the pseudo Mollie gateway to the list since the plugin is active but there is no Mollie gateway registered.
+		$payment_gateways[] = $mollie_provider->get_pseudo_gateway( $mollie_suggestion );
+
+		return $payment_gateways;
 	}
 
 	/**
