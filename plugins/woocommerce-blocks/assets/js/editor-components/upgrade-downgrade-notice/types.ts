@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-import type { ReactNode } from 'react';
+import { Notice } from '@wordpress/components';
 
-export type UpgradeDowngradeNoticeProps = {
-	notice: ReactNode;
+export type UpgradeDowngradeNoticeProps = Omit< Notice.Props, 'actions' > & {
 	actionLabel: string;
 	onActionClick(): void;
 };

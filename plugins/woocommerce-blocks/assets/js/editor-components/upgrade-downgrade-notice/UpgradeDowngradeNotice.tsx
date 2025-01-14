@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { Notice } from '@wordpress/components';
+import { clsx } from 'clsx';
 
 /**
  * Internal dependencies
@@ -10,14 +11,16 @@ import type { UpgradeDowngradeNoticeProps } from './types';
 import './style.scss';
 
 export function UpgradeDowngradeNotice( {
-	notice,
+	children,
+	className,
 	actionLabel,
 	onActionClick,
+	...props
 }: UpgradeDowngradeNoticeProps ) {
 	return (
 		<Notice
-			isDismissible={ false }
-			className="wc-block-upgrade-downgrade-notice"
+			{ ...props }
+			className={ clsx( 'wc-block-upgrade-downgrade-notice', className ) }
 			actions={ [
 				{
 					label: actionLabel,
@@ -29,7 +32,7 @@ export function UpgradeDowngradeNotice( {
 			] }
 		>
 			<div className="wc-block-upgrade-downgrade-notice__text">
-				{ notice }
+				{ children }
 			</div>
 		</Notice>
 	);
