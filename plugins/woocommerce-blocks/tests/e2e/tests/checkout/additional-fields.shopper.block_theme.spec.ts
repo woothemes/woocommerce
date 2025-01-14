@@ -753,7 +753,7 @@ test.describe( 'Shopper → Additional Checkout Fields', () => {
 				{ exact: true }
 			);
 			const confirmGovIdInput = checkoutPageObject.page.getByLabel(
-				'Confirm government ID',
+				'Confirm government ID *',
 				{ exact: true }
 			);
 			await expect( govIdInput ).toHaveValue( '54321' );
