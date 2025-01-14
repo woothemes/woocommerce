@@ -1,0 +1,54 @@
+.woocommerce-incentive-modal {
+	max-width: 840px;
+
+	& > .components-modal__content {
+		padding: 0;
+		margin-top: 0;
+	}
+
+	&__media {
+		// Hide the image on mobile to make the text more readable.
+		@media screen and ( max-width: 782px ) {
+			display: none;
+		}
+
+		background-color: $studio-woocommerce-purple-0;
+	}
+
+	&__card {
+		box-shadow: none;
+	}
+
+	&__content {
+		display: flex;
+		align-items: center;
+	}
+
+	&__body {
+		flex: 1;
+
+		& > h2 {
+			font-weight: 400;
+			font-size: 24px;
+			line-height: 32px;
+		}
+		& > p {
+			font-size: 16px;
+			line-height: 24px;
+		}
+
+		& > p.woocommerce-incentive-modal__terms {
+			font-size: 12px;
+			margin-bottom: 0;
+		}
+
+		& > .woocommerce-incentive-model__actions {
+			margin-top: 32px;
+		}
+	}
+
+	&__content img {
+		width: 280px;
+		padding: 76px 40px;
+	}
+}

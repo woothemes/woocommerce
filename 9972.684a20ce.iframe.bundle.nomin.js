@@ -1,0 +1,31 @@
+(self["webpackChunk_woocommerce_storybook"] = self["webpackChunk_woocommerce_storybook"] || []).push([[9972],{
+
+/***/ "../../node_modules/.pnpm/@storybook+addon-docs@7.6.19_@types+react-dom@18.3.0_@types+react@18.3.16_encoding@0.1.13_rea_barajlbjibnyqhkihcf6w4vobe/node_modules/@storybook/addon-docs/dist/DocsRenderer-NNNQARDV.mjs":
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   DocsRenderer: () => (/* reexport safe */ _chunk_HLWAVYOI_mjs__WEBPACK_IMPORTED_MODULE_0__.f)
+/* harmony export */ });
+/* harmony import */ var _chunk_HLWAVYOI_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/.pnpm/@storybook+addon-docs@7.6.19_@types+react-dom@18.3.0_@types+react@18.3.16_encoding@0.1.13_rea_barajlbjibnyqhkihcf6w4vobe/node_modules/@storybook/addon-docs/dist/chunk-HLWAVYOI.mjs");
+
+
+
+/***/ }),
+
+/***/ "../../node_modules/.pnpm/memoizerific@1.11.3/node_modules/memoizerific sync recursive":
+/***/ ((module) => {
+
+function webpackEmptyContext(req) {
+	var e = new Error("Cannot find module '" + req + "'");
+	e.code = 'MODULE_NOT_FOUND';
+	throw e;
+}
+webpackEmptyContext.keys = () => ([]);
+webpackEmptyContext.resolve = webpackEmptyContext;
+webpackEmptyContext.id = "../../node_modules/.pnpm/memoizerific@1.11.3/node_modules/memoizerific sync recursive";
+module.exports = webpackEmptyContext;
+
+/***/ })
+
+}]);
