@@ -270,6 +270,7 @@ body {
 	margin: <?php echo $email_improvements_enabled ? '0' : '1em 0 0'; ?>;
 	padding: 0;
 	<?php if ( $email_improvements_enabled ) { ?>
+	color: <?php echo esc_attr( $footer_text ); ?>;
 	line-height: 140%;
 	<?php } ?>;
 	list-style: none;
@@ -357,7 +358,7 @@ body {
 }
 
 h1 {
-	color: <?php echo esc_attr( $base ); ?>;
+	color: <?php echo esc_attr( $email_improvements_enabled ? $text : $base ); ?>;
 	font-family: <?php echo esc_attr( $font_family ); ?>;
 	font-size: <?php echo $email_improvements_enabled ? '36px' : '30px'; ?>;
 	font-weight: <?php echo $email_improvements_enabled ? 700 : 300; ?>;
@@ -373,7 +374,7 @@ h1 {
 }
 
 h2 {
-	color: <?php echo esc_attr( $base ); ?>;
+	color: <?php echo esc_attr( $email_improvements_enabled ? $text : $base ); ?>;
 	display: block;
 	font-family: <?php echo esc_attr( $font_family ); ?>;
 	font-size: <?php echo $email_improvements_enabled ? '20px' : '18px'; ?>;
@@ -384,7 +385,7 @@ h2 {
 }
 
 h3 {
-	color: <?php echo esc_attr( $base ); ?>;
+	color: <?php echo esc_attr( $email_improvements_enabled ? $text : $base ); ?>;
 	display: block;
 	font-family: <?php echo esc_attr( $font_family ); ?>;
 	font-size: 16px;
@@ -414,7 +415,8 @@ img {
 	max-width: 100%;
 }
 
-.email-order-detail-heading span {
+h2.email-order-detail-heading span {
+	color: <?php echo esc_attr( $footer_text ); ?>;
 	display: block;
 	font-size: 14px;
 	font-weight: normal;
