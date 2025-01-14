@@ -3346,7 +3346,7 @@ importers:
         specifier: ^9.3.0
         version: 9.3.0
       '@playwright/test':
-        specifier: ^1.48.2
+        specifier: ^1.49.1
         version: 1.49.1
       '@typescript-eslint/eslint-plugin':
         specifier: ^5.62.0
@@ -3383,7 +3383,7 @@ importers:
         version: 10.14.0
       '@wordpress/stylelint-config':
         specifier: ^21.36.0
-        version: 21.36.0(postcss@8.4.32)(stylelint@14.16.1)
+        version: 21.36.0(postcss@8.4.49)(stylelint@14.16.1)
       allure-commandline:
         specifier: ^2.25.0
         version: 2.25.0
@@ -3757,7 +3757,7 @@ importers:
         specifier: 5.0.0
         version: 5.0.0
       '@playwright/test':
-        specifier: ^1.48.2
+        specifier: ^1.49.1
         version: 1.49.1
       '@storybook/addon-a11y':
         specifier: 7.5.2
@@ -34081,10 +34081,7 @@ snapshots:
       jest-runner: 25.5.4
       jest-runtime: 25.5.4
     transitivePeerDependencies:
-      - bufferutil
-      - canvas
       - supports-color
-      - utf-8-validate
 
   '@jest/test-sequencer@26.6.3':
     dependencies:
