@@ -1,4 +1,5 @@
 let config = require( '../../playwright.config.js' );
+const { tags } = require( '../../fixtures/fixtures' );
 
 process.env.USE_WP_ENV = 'true';
 
@@ -7,7 +8,7 @@ config = {
 	projects: [
 		{
 			name: 'WooCommerce Shipping & Tax',
-			grep: /@services/,
+			grep: new RegExp( tags.SERVICES ),
 		},
 	],
 };

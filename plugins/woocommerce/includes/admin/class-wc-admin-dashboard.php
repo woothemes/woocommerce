@@ -8,6 +8,8 @@
 
 use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Admin\Features\Features;
+use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Enums\OrderInternalStatus;
 use Automattic\WooCommerce\Utilities\OrderUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -103,7 +105,7 @@ if ( ! class_exists( 'WC_Admin_Dashboard', false ) ) :
 			 *
 			 * @param string[] $order_statuses Order statuses.
 			 */
-			$order_statuses  = apply_filters( 'woocommerce_reports_order_statuses', array( 'completed', 'processing', 'on-hold' ) );
+			$order_statuses  = apply_filters( 'woocommerce_reports_order_statuses', array( OrderStatus::COMPLETED, OrderStatus::PROCESSING, OrderStatus::ON_HOLD ) );
 			$query['where'] .= "AND orders.{$orders_column_status} IN ( 'wc-" . implode( "','wc-", $order_statuses ) . "' ) ";
 
 			$query['where']  .= "AND order_item_meta.meta_key = '_qty' ";
@@ -253,8 +255,8 @@ if ( ! class_exists( 'WC_Admin_Dashboard', false ) ) :
 
 			foreach ( wc_get_order_types( 'order-count' ) as $type ) {
 				$counts            = OrderUtil::get_count_for_type( $type );
-				$on_hold_count    += $counts['wc-on-hold'];
-				$processing_count += $counts['wc-processing'];
+				$on_hold_count    += $counts[ OrderInternalStatus::ON_HOLD ];
+				$processing_count += $counts[ OrderInternalStatus::PROCESSING ];
 			}
 			?>
 			<li class="processing-orders">

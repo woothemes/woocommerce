@@ -1,0 +1,4 @@
+Significance: patch
+Type: update
+
+Rely on core's createBlocksFromInnerBlocksTemplate function instead of internal one

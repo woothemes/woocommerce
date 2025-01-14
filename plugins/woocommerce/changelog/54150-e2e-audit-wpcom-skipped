@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Audit and un-skip some e2e tests for the WPCOM environment.

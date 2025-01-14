@@ -81,6 +81,7 @@ export const TotalsCoupon = ( {
 			className="wc-block-components-totals-coupon"
 			initialOpen={ isCouponFormVisible }
 			hasBorder={ false }
+			headingLevel={ 2 }
 			title={ __( 'Add a coupon', 'woocommerce' ) }
 			state={ [ isCouponFormVisible, setIsCouponFormVisible ] }
 		>

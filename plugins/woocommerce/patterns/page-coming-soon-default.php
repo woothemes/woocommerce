@@ -18,9 +18,8 @@ if ( 'twentytwentyfour' === $current_theme ) {
 }
 ?>
 
-<!-- wp:woocommerce/coming-soon {"color":"#bea0f2","storeOnly":false,"className":"woocommerce-coming-soon-entire-site wp-block-woocommerce-background-color"} -->
-<div class="woocommerce-coming-soon-entire-site wp-block-woocommerce-coming-soon wp-block-woocommerce-background-color"><!-- wp:cover {"minHeight":100,"minHeightUnit":"vh","isDark":false,"className":"coming-soon-is-vertically-aligned-center coming-soon-cover","layout":{"type":"default"}} -->
-<div class="wp-block-cover is-light coming-soon-is-vertically-aligned-center coming-soon-cover" style="min-height:100vh"><span aria-hidden="true" class="wp-block-cover__background has-background-dim-100 has-background-dim" style=""></span><div class="wp-block-cover__inner-container"><!-- wp:group {"className":"woocommerce-coming-soon-banner-container","layout":{"type":"default"}} -->
+<!-- wp:woocommerce/coming-soon {"comingSoonPatternId":"page-coming-soon-default","className":"woocommerce-coming-soon-entire-site","style":{"color":{"background":"#bea0f2"}}} -->
+<div class="wp-block-woocommerce-coming-soon woocommerce-coming-soon-entire-site has-background" style="background-color:#bea0f2"><!-- wp:cover {"minHeight":100,"minHeightUnit":"vh","isDark":false,"className":"coming-soon-is-vertically-aligned-center coming-soon-cover","layout":{"type":"default"}} --><div class="wp-block-cover is-light coming-soon-is-vertically-aligned-center coming-soon-cover" style="min-height:100vh"><span aria-hidden="true" class="wp-block-cover__background has-background-dim-100 has-background-dim" style=""></span><div class="wp-block-cover__inner-container"><!-- wp:group {"className":"woocommerce-coming-soon-banner-container","layout":{"type":"default"}} -->
 <div class="wp-block-group woocommerce-coming-soon-banner-container"><!-- wp:group {"align":"wide","style":{"spacing":{"padding":{"top":"10px","bottom":"14px"}}},"className":"woocommerce-coming-soon-header","layout":{"type":"constrained"}} -->
 <div class="wp-block-group alignwide woocommerce-coming-soon-header has-background" style="padding-top:10px;padding-bottom:14px"><!-- wp:group {"align":"wide","layout":{"type":"flex","justifyContent":"space-between","flexWrap":"wrap"}} -->
 <div class="wp-block-group alignwide"><!-- wp:group {"style":{"spacing":{"blockGap":"var:preset|spacing|20"},"layout":{"selfStretch":"fit","flexSize":null}},"layout":{"type":"flex"}} -->
@@ -32,15 +31,9 @@ if ( 'twentytwentyfour' === $current_theme ) {
 <!-- /wp:group -->
 
 <!-- wp:group {"style":{"spacing":{"blockGap":"48px"}},"className":"woocommerce-coming-soon-social-login","layout":{"type":"flex","flexWrap":"nowrap"}} -->
-<div class="wp-block-group woocommerce-coming-soon-social-login"><!-- wp:social-links {"iconColor":"contrast","iconColorValue":"#111111","style":{"layout":{"selfStretch":"fit","flexSize":null},"spacing":{"blockGap":{"left":"18px"}}},"className":"is-style-logos-only"} -->
-<ul class="wp-block-social-links has-icon-color is-style-logos-only"><!-- wp:social-link {"url":"https://www.linkedin.com/","service":"linkedin"} /-->
-
-<!-- wp:social-link {"url":"https://www.instagram.com","service":"instagram"} /-->
-
-<!-- wp:social-link {"url":"https://www.facebook.com","service":"facebook"} /--></ul>
-<!-- /wp:social-links -->
-
-<!-- wp:loginout {"fontFamily":"<?php echo esc_html( $inter_font_family ); ?>"} /--></div>
+<div class="wp-block-group woocommerce-coming-soon-social-login">
+<!-- wp:template-part {"slug":"coming-soon-social-links","theme":"woocommerce/woocommerce","tagName":"div"} /-->
+<!-- wp:loginout {"style":{"elements":{"link":{"color":{"text":"#ffffff"}}},"color":{"background":"#000000"}},"fontFamily":"<?php echo esc_html( $inter_font_family ); ?>"} /--></div>
 <!-- /wp:group --></div>
 <!-- /wp:group --></div>
 <!-- /wp:group -->

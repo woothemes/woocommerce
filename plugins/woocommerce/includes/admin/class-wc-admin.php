@@ -7,7 +7,7 @@
  * @version  2.6.0
  */
 
-use Automattic\WooCommerce\Internal\Admin\EmailPreview;
+use Automattic\WooCommerce\Internal\Admin\EmailPreview\EmailPreview;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -197,7 +197,21 @@ class WC_Admin {
 			}
 
 			$email_preview = wc_get_container()->get( EmailPreview::class );
-			$message       = $email_preview->render();
+
+			if ( isset( $_GET['type'] ) ) {
+				$type_param = sanitize_text_field( wp_unslash( $_GET['type'] ) );
+				try {
+					$email_preview->set_email_type( $type_param );
+				} catch ( InvalidArgumentException $e ) {
+					wp_die( esc_html__( 'Invalid email type.', 'woocommerce' ), 400 );
+				}
+			}
+
+			try {
+				$message = $email_preview->render();
+			} catch ( Throwable $e ) {
+				wp_die( esc_html__( 'There was an error rendering an email preview.', 'woocommerce' ), 404 );
+			}
 
 			// print the preview email.
 			// phpcs:ignore WordPress.Security.EscapeOutput

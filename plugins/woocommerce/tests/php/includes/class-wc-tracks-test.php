@@ -108,6 +108,25 @@ class WC_Tracks_Test extends \WC_Unit_Test_Case {
 	}
 
 	/**
+	 * Test role properties for non-sequential roles.
+	 */
+	public function test_role_properties_for_non_sequential_roles() {
+		$user = $this->factory->user->create( array( 'role' => 'shop_manager' ) );
+		wp_set_current_user( $user );
+		$current_user = wp_get_current_user();
+		$current_user->add_role( 'administrator' );
+		// Mock the roles to be an associative array to simulate the scenario where the roles are not sequential.
+		$current_user->roles = array(
+			2 => 'administrator',
+		);
+		$properties          = \WC_Tracks::get_role_details( $current_user );
+		$this->assertEquals( 'administrator', $properties['role'] );
+		$this->assertEquals( true, $properties['can_install_plugins'] );
+		$this->assertEquals( true, $properties['can_activate_plugins'] );
+		$this->assertEquals( true, $properties['can_manage_woocommerce'] );
+	}
+
+	/**
 	 * Test the event validation and sanitization with a valid event.
 	 */
 	public function test_event_validation_and_sanitization_valid_event() {

@@ -10,17 +10,12 @@ import {
 import { BlockEditProps, InnerBlockTemplate } from '@wordpress/blocks';
 import { useEffect } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
-import ErrorPlaceholder, {
-	ErrorObject,
-} from '@woocommerce/editor-components/error-placeholder';
-import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
 import {
 	moveInnerBlocksToPosition,
-	getInnerBlocksLockAttributes,
 	getClassNameByNextPreviousButtonsPosition,
 } from './utils';
 import { ProductGalleryBlockSettings } from './block-settings/index';
@@ -40,10 +35,7 @@ const TEMPLATE: InnerBlockTemplate[] = [
 			},
 		},
 		[
-			[
-				'woocommerce/product-gallery-thumbnails',
-				getInnerBlocksLockAttributes( 'lock' ),
-			],
+			[ 'woocommerce/product-gallery-thumbnails' ],
 			[
 				'core/group',
 				{
@@ -59,12 +51,11 @@ const TEMPLATE: InnerBlockTemplate[] = [
 					metadata: {
 						name: 'Large Image and Navigation',
 					},
-					...getInnerBlocksLockAttributes( 'lock' ),
 				},
 				[
 					[
 						'woocommerce/product-gallery-large-image',
-						getInnerBlocksLockAttributes( 'lock' ),
+						{},
 						[
 							[
 								'woocommerce/product-sale-badge',
@@ -80,7 +71,6 @@ const TEMPLATE: InnerBlockTemplate[] = [
 											},
 										},
 									},
-									lock: { move: true },
 								},
 							],
 							[
@@ -90,15 +80,11 @@ const TEMPLATE: InnerBlockTemplate[] = [
 										type: 'flex',
 										verticalAlignment: 'bottom',
 									},
-									lock: { move: true, remove: true },
 								},
 							],
 						],
 					],
-					[
-						'woocommerce/product-gallery-pager',
-						{ lock: { move: true, remove: true } },
-					],
+					[ 'woocommerce/product-gallery-pager' ],
 				],
 			],
 		],
@@ -126,26 +112,24 @@ export const Edit = ( {
 		),
 	} );
 
-	const { currentTemplateId, templateType } = useSelect(
-		( select ) => ( {
-			currentTemplateId: select( 'core/edit-site' ).getEditedPostId(),
-			templateType: select( 'core/edit-site' ).getEditedPostType(),
-		} ),
-		[]
-	);
+	const { currentTemplateId, templateType } = useSelect( ( select ) => {
+		const store = select( 'core/edit-site' );
+		return {
+			currentTemplateId: store ? store.getEditedPostId() : '',
+			templateType: store ? store.getEditedPostType() : '',
+		};
+	}, [] );
 
 	useEffect( () => {
 		const mode = getMode( currentTemplateId, templateType );
-		const newProductGalleryClientId =
-			attributes.productGalleryClientId || clientId;
 
 		setAttributes( {
 			...attributes,
 			mode,
-			productGalleryClientId: newProductGalleryClientId,
+			productGalleryClientId: clientId,
 		} );
 		// Move the Thumbnails block to the correct above or below the Large Image based on the thumbnailsPosition attribute.
-		moveInnerBlocksToPosition( attributes, newProductGalleryClientId );
+		moveInnerBlocksToPosition( attributes, clientId );
 	}, [
 		setAttributes,
 		attributes,
@@ -153,18 +137,6 @@ export const Edit = ( {
 		currentTemplateId,
 		templateType,
 	] );
-
-	if ( attributes.productGalleryClientId !== clientId ) {
-		const error = {
-			message: __(
-				'productGalleryClientId and clientId codes mismatch.',
-				'woocommerce'
-			),
-			type: 'general',
-		} as ErrorObject;
-
-		return <ErrorPlaceholder error={ error } isLoading={ false } />;
-	}
 
 	return (
 		<div { ...blockProps }>

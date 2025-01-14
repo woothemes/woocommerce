@@ -20,7 +20,7 @@ class ProductImage extends AbstractBlock {
 	 *
 	 * @var string
 	 */
-	protected $api_version = '2';
+	protected $api_version = '3';
 
 	/**
 	 * Get block supports. Shared with the frontend.
@@ -166,13 +166,20 @@ class ProductImage extends AbstractBlock {
 		}
 
 		$image_id = $product->get_image_id();
+		$alt_text = '';
+		$title    = '';
+		if ( $image_id ) {
+			$alt_text = get_post_meta( $image_id, '_wp_attachment_image_alt', true );
+			$title    = get_the_title( $image_id );
+		}
 
 		return $product->get_image(
 			$image_size,
 			array(
+				'alt'         => empty( $alt_text ) ? $product->get_title() : $alt_text,
 				'data-testid' => 'product-image',
 				'style'       => $image_style,
-				'title'       => $image_id ? get_the_title( $image_id ) : '',
+				'title'       => $title,
 			)
 		);
 	}

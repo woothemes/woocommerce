@@ -28,7 +28,22 @@ interface StatusBadgeProps {
 	message?: string;
 }
 
+/**
+ * A component that displays a status badge with a customizable appearance and message.
+ * The appearance and default message are determined by the `status` prop, but a custom message can be provided via the `message` prop.
+ *
+ * @example
+ * // Render a status badge with the default message for "active" status.
+ * <StatusBadge status="active" />
+ *
+ * @example
+ * // Render a status badge with a custom message.
+ * <StatusBadge status="inactive" message="Not in use" />
+ */
 export const StatusBadge = ( { status, message }: StatusBadgeProps ) => {
+	/**
+	 * Get the appropriate CSS class for the badge based on the status.
+	 */
 	const getStatusClass = () => {
 		switch ( status ) {
 			case 'active':
@@ -45,6 +60,9 @@ export const StatusBadge = ( { status, message }: StatusBadgeProps ) => {
 		}
 	};
 
+	/**
+	 * Get the default message for the badge based on the status.
+	 */
 	const getStatusMessage = () => {
 		switch ( status ) {
 			case 'active':
@@ -52,7 +70,7 @@ export const StatusBadge = ( { status, message }: StatusBadgeProps ) => {
 			case 'inactive':
 				return __( 'Inactive', 'woocommerce' );
 			case 'needs_setup':
-				return __( 'Needs setup', 'woocommerce' );
+				return __( 'Action needed', 'woocommerce' );
 			case 'test_mode':
 				return __( 'Test mode', 'woocommerce' );
 			case 'recommended':

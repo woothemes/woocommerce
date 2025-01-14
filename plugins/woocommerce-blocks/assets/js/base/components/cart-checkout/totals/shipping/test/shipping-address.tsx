@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import ShippingAddress from '@woocommerce/base-components/cart-checkout/totals/shipping/shipping-address';
 import { CART_STORE_KEY, CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
 import { ShippingCalculatorContext } from '@woocommerce/base-components/cart-checkout';
@@ -76,8 +76,16 @@ describe( 'ShippingAddress', () => {
 				<ShippingAddress />
 			</ShippingCalculatorContext.Provider>
 		);
-		expect( screen.getByText( /Delivers to 94107/ ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Change address' ) ).toBeInTheDocument();
+
+		const panel = screen.getByRole( 'button' );
+		const paragraph = within( panel ).getByRole( 'paragraph' );
+
+		expect(
+			within( paragraph ).getByText( ( _, element ) => {
+				const text = element?.textContent || '';
+				return /Delivers to 94107/.test( text );
+			} )
+		).toBeInTheDocument();
 		expect(
 			screen.queryByText( /Collection from/ )
 		).not.toBeInTheDocument();
@@ -119,10 +127,15 @@ describe( 'ShippingAddress', () => {
 				<ShippingAddress />
 			</ShippingCalculatorContext.Provider>
 		);
+
+		const panel = screen.getByRole( 'button' );
+		const paragraph = within( panel ).getByRole( 'paragraph' );
+
 		expect(
-			screen.getByText(
-				/Collection from 123 Easy Street, New York, 12345/
-			)
+			within( paragraph ).getByText( ( _, element ) => {
+				const text = element?.textContent || '';
+				return /Collection from 123 Easy Street/.test( text );
+			} )
 		).toBeInTheDocument();
 	} );
 
@@ -147,11 +160,27 @@ describe( 'ShippingAddress', () => {
 
 		dispatch( CART_STORE_KEY ).receiveCart( previewCart );
 
-		render( <ShippingAddress /> );
+		render(
+			<ShippingCalculatorContext.Provider
+				value={ {
+					showCalculator: true,
+					isShippingCalculatorOpen: false,
+					setIsShippingCalculatorOpen: jest.fn(),
+					shippingCalculatorID: 'shipping-calculator-form-wrapper',
+				} }
+			>
+				<ShippingAddress />
+			</ShippingCalculatorContext.Provider>
+		);
+
+		const panel = screen.getByRole( 'button' );
+		const paragraph = within( panel ).getByRole( 'paragraph' );
+
 		expect(
-			screen.getByText(
-				/Collection from 123 Easy Street, New York, 12345/
-			)
+			within( paragraph ).getByText( ( _, element ) => {
+				const text = element?.textContent || '';
+				return /Collection from 123 Easy Street/.test( text );
+			} )
 		).toBeInTheDocument();
 	} );
 	it( 'renders no address if one is not set in the methods metadata', async () => {

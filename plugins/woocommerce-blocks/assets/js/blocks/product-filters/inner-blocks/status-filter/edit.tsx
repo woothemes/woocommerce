@@ -10,7 +10,6 @@ import { useCollectionData } from '@woocommerce/base-context/hooks';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from '@wordpress/element';
 import { getSetting } from '@woocommerce/settings';
-import type { WCStoreV1ProductsCollectionProps } from '@woocommerce/blocks/product-collection/types';
 import type { TemplateArray } from '@wordpress/blocks';
 
 /**
@@ -80,12 +79,11 @@ const Edit = ( props: EditProps ) => {
 		{}
 	);
 
-	const { results: filteredCounts, isLoading } =
-		useCollectionData< WCStoreV1ProductsCollectionProps >( {
-			queryStock: true,
-			queryState: {},
-			isEditor: true,
-		} );
+	const { data: filteredCounts, isLoading } = useCollectionData( {
+		queryStock: true,
+		queryState: {},
+		isEditor: true,
+	} );
 
 	const items = useMemo( () => {
 		return Object.entries( stockStatusOptions )

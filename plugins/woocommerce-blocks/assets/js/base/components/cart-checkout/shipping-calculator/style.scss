@@ -1,3 +1,15 @@
+.wp-block-woocommerce-cart-order-summary-shipping-block {
+	.wc-block-components-totals-shipping-panel {
+		.wc-block-components-panel__button {
+			padding-top: 0;
+		}
+
+		.wc-block-components-shipping-calculator {
+			padding-top: 0;
+		}
+	}
+}
+
 .wc-block-components-shipping-calculator-address {
 	margin-bottom: 0;
 }

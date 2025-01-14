@@ -14,6 +14,10 @@ import './editor.scss';
 
 export interface ErrorObject {
 	/**
+	 * Error code for more specific identification of the error.
+	 */
+	code?: string;
+	/**
 	 * Human-readable error message to display.
 	 */
 	message: string;

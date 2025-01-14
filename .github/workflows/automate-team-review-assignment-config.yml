@@ -5,10 +5,11 @@ on:
 
 jobs:
     add-reviews:
-        if: github.event.pull_request.draft == false && github.actor != 'dependabot[bot]' 
+        if: github.event.pull_request.draft == false && github.actor != 'dependabot[bot]'
         runs-on: ubuntu-latest
         steps:
             - name: Check config and assign reviews
+              continue-on-error: ${{ ( github.event.pull_request.head.repo.fork && 'true' ) || 'false' }}
               uses: acq688/Request-Reviewer-For-Team-Action@v1.1
               with:
                   config: '.github/automate-team-review-assignment-config.yml'

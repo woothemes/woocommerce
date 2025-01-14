@@ -12,7 +12,7 @@
  *
  * @see     https://woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates\Emails
- * @version 7.4.0
+ * @version 9.6.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -39,6 +39,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 									<div id="template_header_image">
 										<?php
 										$img = get_option( 'woocommerce_email_header_image' );
+										/**
+										 * This filter is documented in templates/emails/email-styles.php
+										 *
+										 * @since 9.6.0
+										 */
+										if ( apply_filters( 'woocommerce_is_email_preview', false ) ) {
+											$img_transient = get_transient( 'woocommerce_email_header_image' );
+											$img           = false !== $img_transient ? $img_transient : $img;
+										}
 
 										if ( $img ) {
 											echo '<p style="margin-top:0;"><img src="' . esc_url( $img ) . '" alt="' . esc_attr( get_bloginfo( 'name', 'display' ) ) . '" /></p>';

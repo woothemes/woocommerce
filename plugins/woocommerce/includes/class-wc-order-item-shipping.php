@@ -31,6 +31,7 @@ class WC_Order_Item_Shipping extends WC_Order_Item {
 		'taxes'        => array(
 			'total' => array(),
 		),
+		'tax_status'   => 'taxable',
 	);
 
 	/**
@@ -44,7 +45,7 @@ class WC_Order_Item_Shipping extends WC_Order_Item {
 		if ( ! isset( $calculate_tax_for['country'], $calculate_tax_for['state'], $calculate_tax_for['postcode'], $calculate_tax_for['city'], $calculate_tax_for['tax_class'] ) ) {
 			return false;
 		}
-		if ( wc_tax_enabled() ) {
+		if ( wc_tax_enabled() && 'taxable' === $this->get_tax_status() ) {
 			$tax_rates = WC_Tax::find_shipping_rates( $calculate_tax_for );
 			$taxes     = WC_Tax::calc_tax( $this->get_total(), $tax_rates, false );
 			$this->set_taxes( array( 'total' => $taxes ) );
@@ -150,6 +151,17 @@ class WC_Order_Item_Shipping extends WC_Order_Item {
 		} else {
 			$this->set_total_tax( NumberUtil::array_sum( array_map( 'wc_round_tax_total', $tax_data['total'] ) ) );
 		}
+	}
+
+	/**
+	 * Set tax_status.
+	 *
+	 * @param string $value Tax status.
+	 * @deprecated 9.7.0 order shipping lines don't support setting tax status, hook into the shipping method instead.
+	 *
+	 * @return void
+	 */
+	public function set_tax_status( $value ) {
 	}
 
 	/**
@@ -264,6 +276,17 @@ class WC_Order_Item_Shipping extends WC_Order_Item {
 	 */
 	public function get_tax_class( $context = 'view' ) {
 		return get_option( 'woocommerce_shipping_tax_class' );
+	}
+
+	/**
+	 * Get tax status.
+	 *
+	 * @param  string $context What the value is for. Valid values are 'view' and 'edit'.
+	 * @return string
+	 */
+	public function get_tax_status( $context = 'view' ) {
+		$shipping_method = WC_Shipping_Zones::get_shipping_method( $this->get_instance_id() );
+		return $shipping_method ? $shipping_method->get_option( 'tax_status' ) : 'taxable';
 	}
 
 	/*

@@ -1,4 +1,4 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 
 const test = baseTest.extend( {
 	storageState: process.env.ADMINSTATE,
@@ -26,7 +26,7 @@ const test = baseTest.extend( {
 test.describe(
 	'Analytics-related tests',
 	{
-		tag: [ '@payments', '@services' ],
+		tag: [ tags.PAYMENTS, tags.SERVICES ],
 	},
 	() => {
 		let categoryIds, productIds, orderIds, setupPage;
@@ -171,6 +171,7 @@ test.describe(
 
 			// process the Action Scheduler tasks
 			setupPage = await browser.newPage();
+			// eslint-disable-next-line playwright/no-wait-for-timeout
 			await setupPage.waitForTimeout( 5000 );
 			await setupPage.goto( '?process-waiting-actions' );
 			await setupPage.close();
@@ -191,7 +192,7 @@ test.describe(
 			page,
 		} ) => {
 			await page.goto(
-				'/wp-admin/admin.php?page=wc-admin&path=%2Fanalytics%2Foverview'
+				'wp-admin/admin.php?page=wc-admin&path=%2Fanalytics%2Foverview'
 			);
 
 			await expect(
@@ -223,7 +224,7 @@ test.describe(
 
 		test( 'downloads revenue report as CSV', async ( { page } ) => {
 			await page.goto(
-				'/wp-admin/admin.php?page=wc-admin&path=%2Fanalytics%2Frevenue'
+				'wp-admin/admin.php?page=wc-admin&path=%2Fanalytics%2Frevenue'
 			);
 
 			// the revenue report can either download immediately, or get mailed.
@@ -248,7 +249,7 @@ test.describe(
 
 		test( 'use date filter on overview page', async ( { page } ) => {
 			await page.goto(
-				'/wp-admin/admin.php?page=wc-admin&path=%2Fanalytics%2Foverview'
+				'wp-admin/admin.php?page=wc-admin&path=%2Fanalytics%2Foverview'
 			);
 
 			// assert that current month is shown and that values are for that
@@ -312,196 +313,210 @@ test.describe(
 			).toBeVisible();
 		} );
 
-		test( 'use date filter on revenue report', async ( { page } ) => {
-			await page.goto(
-				'/wp-admin/admin.php?page=wc-admin&path=%2Fanalytics%2Frevenue'
-			);
+		// TODO (E2E Audit): The date range filter is already being tested in the 'use date filter on overview page' test above. Other date range values should be tested extensively in lower-level tests, probably in REST API tests where WC Admin endpoints could be used.
+		test(
+			'use date filter on revenue report',
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+			async ( { page } ) => {
+				await page.goto(
+					'wp-admin/admin.php?page=wc-admin&path=%2Fanalytics%2Frevenue'
+				);
 
-			// assert that current month is shown and that values are for that
-			await expect(
-				page.getByText( 'Month to date' ).first()
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Gross sales $1,229.30 No change from Previous year:',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Returns $0.00 No change from Previous year:',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Coupons $0.00 No change from Previous year:',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Net sales $1,229.30 No change from Previous year:',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Taxes $0.00 No change from Previous year:',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Shipping $0.00 No change from Previous year:',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Total sales $1,229.30 No change from Previous year:',
-				} )
-			).toBeVisible();
+				// assert that current month is shown and that values are for that
+				await expect(
+					page.getByText( 'Month to date' ).first()
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Gross sales $1,229.30 No change from Previous year:',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Returns $0.00 No change from Previous year:',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Coupons $0.00 No change from Previous year:',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Net sales $1,229.30 No change from Previous year:',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Taxes $0.00 No change from Previous year:',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Shipping $0.00 No change from Previous year:',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Total sales $1,229.30 No change from Previous year:',
+					} )
+				).toBeVisible();
 
-			// click the date filter and change to Last month (should be no sales/orders)
-			await page.getByRole( 'button', { name: 'Month to date' } ).click();
-			await page.getByText( 'Last month' ).click();
-			await page.getByRole( 'button', { name: 'Update' } ).click();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Gross sales $0.00 No change from Previous year:',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Returns $0.00 No change from Previous year:',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Coupons $0.00 No change from Previous year:',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Net sales $0.00 No change from Previous year:',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Taxes $0.00 No change from Previous year:',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Shipping $0.00 No change from Previous year:',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Total sales $0.00 No change from Previous year:',
-				} )
-			).toBeVisible();
-		} );
+				// click the date filter and change to Last month (should be no sales/orders)
+				await page
+					.getByRole( 'button', { name: 'Month to date' } )
+					.click();
+				await page.getByText( 'Last month' ).click();
+				await page.getByRole( 'button', { name: 'Update' } ).click();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Gross sales $0.00 No change from Previous year:',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Returns $0.00 No change from Previous year:',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Coupons $0.00 No change from Previous year:',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Net sales $0.00 No change from Previous year:',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Taxes $0.00 No change from Previous year:',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Shipping $0.00 No change from Previous year:',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Total sales $0.00 No change from Previous year:',
+					} )
+				).toBeVisible();
+			}
+		);
 
-		test( 'set custom date range on revenue report', async ( { page } ) => {
-			await page.goto(
-				'/wp-admin/admin.php?page=wc-admin&path=%2Fanalytics%2Frevenue'
-			);
+		// TODO (E2E Audit): The date range filter is already being tested in the 'use date filter on overview page' test above. Other date range values should be tested extensively in lower-level tests, probably in REST API tests where WC Admin endpoints could be used.
+		test(
+			'set custom date range on revenue report',
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+			async ( { page } ) => {
+				await page.goto(
+					'wp-admin/admin.php?page=wc-admin&path=%2Fanalytics%2Frevenue'
+				);
 
-			// assert that current month is shown and that values are for that
-			await expect(
-				page.getByText( 'Month to date' ).first()
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Gross sales $1,229.30 No change from Previous year:',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Returns $0.00 No change from Previous year:',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Coupons $0.00 No change from Previous year:',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Net sales $1,229.30 No change from Previous year:',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Taxes $0.00 No change from Previous year:',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Shipping $0.00 No change from Previous year:',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Total sales $1,229.30 No change from Previous year:',
-				} )
-			).toBeVisible();
+				// assert that current month is shown and that values are for that
+				await expect(
+					page.getByText( 'Month to date' ).first()
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Gross sales $1,229.30 No change from Previous year:',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Returns $0.00 No change from Previous year:',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Coupons $0.00 No change from Previous year:',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Net sales $1,229.30 No change from Previous year:',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Taxes $0.00 No change from Previous year:',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Shipping $0.00 No change from Previous year:',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Total sales $1,229.30 No change from Previous year:',
+					} )
+				).toBeVisible();
 
-			// click the date filter and change to custom date range (should be no sales/orders)
-			await page.getByRole( 'button', { name: 'Month to date' } ).click();
-			await page.getByText( 'Custom', { exact: true } ).click();
-			await page
-				.getByPlaceholder( 'mm/dd/yyyy' )
-				.first()
-				.fill( '01/01/2022' );
-			await page
-				.getByPlaceholder( 'mm/dd/yyyy' )
-				.last()
-				.fill( '01/30/2022' );
-			await page.getByRole( 'button', { name: 'Update' } ).click();
+				// click the date filter and change to custom date range (should be no sales/orders)
+				await page
+					.getByRole( 'button', { name: 'Month to date' } )
+					.click();
+				await page.getByText( 'Custom', { exact: true } ).click();
+				await page
+					.getByPlaceholder( 'mm/dd/yyyy' )
+					.first()
+					.fill( '01/01/2022' );
+				await page
+					.getByPlaceholder( 'mm/dd/yyyy' )
+					.last()
+					.fill( '01/30/2022' );
+				await page.getByRole( 'button', { name: 'Update' } ).click();
 
-			// assert values updated
-			await expect(
-				page.getByRole( 'button', {
-					name: 'Custom (Jan 1 - 30, 2022) vs. Previous year (Jan 1 - 30, 2021)',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Gross sales $0.00 No change from Previous year:',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Returns $0.00 No change from Previous year:',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Coupons $0.00 No change from Previous year:',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Net sales $0.00 No change from Previous year:',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Taxes $0.00 No change from Previous year:',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Shipping $0.00 No change from Previous year:',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'menuitem', {
-					name: 'Total sales $0.00 No change from Previous year:',
-				} )
-			).toBeVisible();
-		} );
+				// assert values updated
+				await expect(
+					page.getByRole( 'button', {
+						name: 'Custom (Jan 1 - 30, 2022) vs. Previous year (Jan 1 - 30, 2021)',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Gross sales $0.00 No change from Previous year:',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Returns $0.00 No change from Previous year:',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Coupons $0.00 No change from Previous year:',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Net sales $0.00 No change from Previous year:',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Taxes $0.00 No change from Previous year:',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Shipping $0.00 No change from Previous year:',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'menuitem', {
+						name: 'Total sales $0.00 No change from Previous year:',
+					} )
+				).toBeVisible();
+			}
+		);
 
 		test( 'use advanced filters on orders report', async ( { page } ) => {
 			await page.goto(
-				'/wp-admin/admin.php?page=wc-admin&path=%2Fanalytics%2Forders'
+				'wp-admin/admin.php?page=wc-admin&path=%2Fanalytics%2Forders'
 			);
 
 			// no filters applied
@@ -595,7 +610,7 @@ test.describe(
 			page,
 		} ) => {
 			await page.goto(
-				'/wp-admin/admin.php?page=wc-admin&path=%2Fanalytics%2Fproducts'
+				'wp-admin/admin.php?page=wc-admin&path=%2Fanalytics%2Fproducts'
 			);
 
 			// no filters applied
@@ -631,7 +646,10 @@ test.describe(
 				.fill( 'Variable Product' );
 
 			await page
-				.getByRole( 'option', { name: 'Variable Product' } )
+				.getByRole( 'option', {
+					name: 'Variable Product',
+					exact: true,
+				} )
 				.click();
 
 			await expect(
@@ -687,7 +705,7 @@ test.describe(
 
 		test( 'analytics settings', async ( { page } ) => {
 			await page.goto(
-				'/wp-admin/admin.php?page=wc-admin&path=%2Fanalytics%2Fsettings'
+				'wp-admin/admin.php?page=wc-admin&path=%2Fanalytics%2Fsettings'
 			);
 			page.on( 'dialog', ( dialog ) => dialog.accept() );
 

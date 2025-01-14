@@ -19,7 +19,6 @@ import { isBoolean } from '@woocommerce/types';
 import { useState, useMemo, useEffect } from '@wordpress/element';
 import { withSpokenMessages } from '@wordpress/components';
 import type { BlockEditProps, TemplateArray } from '@wordpress/blocks';
-import type { WCStoreV1ProductsCollectionProps } from '@woocommerce/blocks/product-collection/types';
 
 /**
  * Internal dependencies
@@ -95,8 +94,8 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 
 	const [ queryState ] = useQueryStateByContext();
 
-	const { results: collectionFilters, isLoading: filteredCountsLoading } =
-		useCollectionData< WCStoreV1ProductsCollectionProps >( {
+	const { data: collectionFilters, isLoading: filteredCountsLoading } =
+		useCollectionData( {
 			queryRating: true,
 			queryState,
 			isEditor: true,
@@ -146,19 +145,21 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 		 * - Filter out ratings below the minimum rating
 		 * - Map the ratings to the format expected by the filter component
 		 */
-		const productsRating = collectionFilters.rating_counts
-			.sort( ( a, b ) => b.rating - a.rating )
-			.filter( ( { rating } ) => rating >= minimumRating )
-			.map( ( { rating, count } ) => ( {
-				label: (
-					<Rating
-						key={ rating }
-						rating={ rating }
-						ratedProductsCount={ showCounts ? count : null }
-					/>
-				),
-				value: rating?.toString(),
-			} ) );
+		const productsRating = collectionFilters?.rating_counts?.length
+			? collectionFilters.rating_counts
+					.sort( ( a, b ) => b.rating - a.rating )
+					.filter( ( { rating } ) => rating >= minimumRating )
+					.map( ( { rating, count } ) => ( {
+						label: (
+							<Rating
+								key={ rating }
+								rating={ rating }
+								ratedProductsCount={ showCounts ? count : null }
+							/>
+						),
+						value: rating?.toString(),
+					} ) )
+			: [];
 
 		setDisplayedOptions( productsRating );
 	}, [

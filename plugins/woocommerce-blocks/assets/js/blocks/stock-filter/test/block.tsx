@@ -40,7 +40,7 @@ const mockResults = {
 jest.mock( '@woocommerce/base-context/hooks', () => {
 	return {
 		...jest.requireActual( '@woocommerce/base-context/hooks' ),
-		useCollectionData: () => ( { isLoading: false, results: mockResults } ),
+		useCollectionData: () => ( { isLoading: false, data: mockResults } ),
 	};
 } );
 

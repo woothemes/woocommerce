@@ -330,6 +330,7 @@ abstract class WC_Shipping_Method extends WC_Settings_API {
 		$rate->set_label( $args['label'] );
 		$rate->set_cost( $total_cost );
 		$rate->set_taxes( $taxes );
+		$rate->set_tax_status( $this->tax_status );
 
 		if ( ! empty( $args['meta_data'] ) ) {
 			foreach ( $args['meta_data'] as $key => $value ) {
@@ -477,7 +478,7 @@ abstract class WC_Shipping_Method extends WC_Settings_API {
 	/**
 	 * Get_option function.
 	 *
-	 * Gets and option from the settings API, using defaults if necessary to prevent undefined notices.
+	 * Gets an option from the settings API, using defaults if necessary to prevent undefined notices.
 	 *
 	 * @param  string $key Key.
 	 * @param  mixed  $empty_value Empty value.

@@ -1,22 +1,26 @@
 .wc-block-components-validation-error {
-	@include font-size(smaller);
+
 	color: $alert-red;
 	max-width: 100%;
 	white-space: normal;
+	min-height: 1em;
+	padding: $gap-smaller 0 0 0;
+	@include font-size(smaller);
 
 	> p {
 		margin: 0;
-		padding: $gap-smaller 0 0 0;
+		padding: 0;
 		display: flex;
 		align-items: center;
 		gap: 2px;
+		line-height: 1;
 	}
 
 	svg {
 		fill: currentColor;
 		width: 1.5em;
 		height: 1.5em;
-		margin-top: -1px;
+		margin: -0.4735em 0 -0.4735em;
 	}
 }
 

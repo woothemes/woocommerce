@@ -1,0 +1,4 @@
+Significance: minor
+Type: performance
+
+Prevent unnecessary requests to cart API when cart is empty

@@ -20,7 +20,6 @@ import {
 	Button,
 	CheckboxControl,
 	Dropdown,
-	// @ts-expect-error `__experimentalInputControl` does exist.
 	__experimentalInputControl as InputControl,
 	Spinner,
 } from '@wordpress/components';
@@ -70,14 +69,11 @@ export function VariationsFilter( {
 				search: searchText,
 			};
 
-			const terms = await getProductAttributeTerms<
-				ProductAttributeTerm[]
-			>( sharedRequestArgs );
+			const terms = await getProductAttributeTerms( sharedRequestArgs );
 
-			const totalTerms =
-				await getProductAttributeTermsTotalCount< number >(
-					sharedRequestArgs
-				);
+			const totalTerms = await getProductAttributeTermsTotalCount(
+				sharedRequestArgs
+			);
 
 			if ( page > 1 ) {
 				setOptions( ( current ) => [ ...current, ...terms ] );
@@ -184,8 +180,8 @@ export function VariationsFilter( {
 	}
 
 	const handleInputControlChange = useDebounce(
-		function handleInputControlChange( value: string ) {
-			setSearch( value );
+		function handleInputControlChange( value: string | undefined ) {
+			setSearch( value ?? '' );
 			setOptions( [] );
 			setCurrentPage( 1 );
 
@@ -203,7 +199,6 @@ export function VariationsFilter( {
 	return (
 		<Dropdown
 			className="woocommerce-product-variations-filter"
-			// @ts-expect-error Property 'onClose' does not exist
 			onClose={ handleClose }
 			renderToggle={ ( { isOpen, onToggle } ) => (
 				<Button

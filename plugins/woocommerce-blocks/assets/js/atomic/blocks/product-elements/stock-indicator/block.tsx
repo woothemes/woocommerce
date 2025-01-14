@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import {
 	useInnerBlockLayoutContext,
@@ -10,80 +10,86 @@ import {
 import { useStyleProps } from '@woocommerce/base-hooks';
 import { withProductDataContext } from '@woocommerce/shared-hocs';
 import type { HTMLAttributes } from 'react';
+import { ProductResponseItem } from '@woocommerce/types';
+import { getSetting } from '@woocommerce/settings';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
-import './style.scss';
+import { store as productTypeTemplateStateStore } from '../../../../shared/stores/product-type-template-state';
 import type { BlockAttributes } from './types';
-
-/**
- * Get stock text based on stock. For example:
- * - In stock
- * - Out of stock
- * - Available on backorder
- * - 2 left in stock
- *
- * @param stockInfo                Object containing stock information.
- * @param stockInfo.isInStock      Whether product is in stock.
- * @param stockInfo.isLowStock     Whether product is low in stock.
- * @param stockInfo.lowStockAmount Number of items left in stock.
- * @param stockInfo.isOnBackorder  Whether product is on backorder.
- * @return string Stock text.
- */
-const getTextBasedOnStock = ( {
-	isInStock = false,
-	isLowStock = false,
-	lowStockAmount = null,
-	isOnBackorder = false,
-}: {
-	isInStock?: boolean;
-	isLowStock?: boolean;
-	lowStockAmount?: number | null;
-	isOnBackorder?: boolean;
-} ): string => {
-	if ( isLowStock && lowStockAmount !== null ) {
-		return sprintf(
-			/* translators: %d stock amount (number of items in stock for product) */
-			__( '%d left in stock', 'woocommerce' ),
-			lowStockAmount
-		);
-	} else if ( isOnBackorder ) {
-		return __( 'Available on backorder', 'woocommerce' );
-	} else if ( isInStock ) {
-		return __( 'In stock', 'woocommerce' );
-	}
-	return __( 'Out of stock', 'woocommerce' );
-};
+import './style.scss';
 
 type Props = BlockAttributes & HTMLAttributes< HTMLDivElement >;
+
+/**
+ * Determines whether the stock indicator should be visible based on product type and availability.
+ *
+ * @param product             The product.
+ * @param availabilityText    The stock availability text.
+ * @param selectedProductType The selected product type.
+ * @return True if stock indicator should be visible.
+ */
+const isStockIndicatorVisible = (
+	product: ProductResponseItem,
+	availabilityText: string,
+	selectedProductType: string | undefined
+) => {
+	// If we have product data, rely on availability text.
+	if ( product.id !== 0 ) {
+		return availabilityText !== '';
+	}
+
+	const productTypesWithoutStockIndicator = getSetting< string[] >(
+		'productTypesWithoutStockIndicator',
+		[ 'external', 'grouped', 'variable' ]
+	);
+
+	const productType = selectedProductType || product?.type;
+
+	return ! productTypesWithoutStockIndicator.includes( productType );
+};
 
 export const Block = ( props: Props ): JSX.Element | null => {
 	const { className } = props;
 	const styleProps = useStyleProps( props );
 	const { parentClassName } = useInnerBlockLayoutContext();
 	const { product } = useProductDataContext();
+	const { text: availabilityText, class: availabilityClass } =
+		product.stock_availability;
 
-	if ( ! product.id ) {
+	const { selectedProductType } = useSelect( ( select ) => {
+		const { getCurrentProductType } = select(
+			productTypeTemplateStateStore
+		);
+		return {
+			selectedProductType: getCurrentProductType(),
+		};
+	}, [] );
+
+	if (
+		! isStockIndicatorVisible(
+			product,
+			availabilityText,
+			selectedProductType?.slug
+		)
+	) {
 		return null;
 	}
-
-	const inStock = !! product.is_in_stock;
+	const isInTemplate = product.id === 0;
 	const lowStock = product.low_stock_remaining;
-	const isBackordered = product.is_on_backorder;
 
 	return (
 		<div
 			className={ clsx( className, {
 				[ `${ parentClassName }__stock-indicator` ]: parentClassName,
+				[ `wc-block-components-product-stock-indicator--${ availabilityClass }` ]:
+					availabilityClass,
 				'wc-block-components-product-stock-indicator--in-stock':
-					inStock,
-				'wc-block-components-product-stock-indicator--out-of-stock':
-					! inStock,
+					isInTemplate,
 				'wc-block-components-product-stock-indicator--low-stock':
 					!! lowStock,
-				'wc-block-components-product-stock-indicator--available-on-backorder':
-					!! isBackordered,
 				// When inside All products block
 				...( props.isDescendantOfAllProducts && {
 					[ styleProps.className ]: styleProps.className,
@@ -96,14 +102,19 @@ export const Block = ( props: Props ): JSX.Element | null => {
 				style: styleProps.style,
 			} ) }
 		>
-			{ getTextBasedOnStock( {
-				isInStock: inStock,
-				isLowStock: !! lowStock,
-				lowStockAmount: lowStock,
-				isOnBackorder: isBackordered,
-			} ) }
+			{ isInTemplate
+				? __( 'In stock', 'woocommerce' )
+				: availabilityText }
 		</div>
 	);
 };
 
-export default withProductDataContext( Block );
+const StockIndicatorBlock: React.FC< Props > = ( props ) => {
+	const { product } = useProductDataContext();
+	if ( product.id === 0 ) {
+		return <Block { ...props } />;
+	}
+	return withProductDataContext( Block )( props );
+};
+
+export default StockIndicatorBlock;

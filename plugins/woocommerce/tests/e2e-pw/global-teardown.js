@@ -16,78 +16,41 @@ module.exports = async ( config ) => {
 
 	// Clean up the consumer keys
 	const keysRetries = 5;
-
-	for ( let i = 0; i < keysRetries; i++ ) {
-		try {
-			console.log( 'Trying to clear consumer token... Try:' + i );
-			await adminPage.goto( `/wp-admin` );
-			await logIn( adminPage, admin.username, admin.password );
-			await adminPage.goto(
-				`/wp-admin/admin.php?page=wc-settings&tab=advanced&section=keys`
-			);
-			await adminPage
-				.getByRole( 'link', { name: 'Revoke', includeHidden: true } )
-				.first()
-				.dispatchEvent( 'click' );
-			console.log( 'Cleared up consumer token successfully.' );
-			consumerTokenCleared = true;
-
-			console.log( 'Clearing pages...' );
-			// clear pages created
-			await adminPage.goto(
-				'/wp-admin/edit.php?s=page-&post_status=all&post_type=page'
-			);
-			if ( ! adminPage.getByText( 'No pages found.' ) ) {
-				await adminPage.locator( '#cb-select-all-1' ).check();
+	if ( process.env.API_KEY_NAME ) {
+		for ( let i = 0; i < keysRetries; i++ ) {
+			try {
+				console.log(
+					`Trying to clear consumer token ${ process.env.API_KEY_NAME }... Try:` +
+						i
+				);
+				await adminPage.goto( `./wp-admin` );
+				await logIn( adminPage, admin.username, admin.password );
+				await adminPage.goto(
+					`./wp-admin/admin.php?page=wc-settings&tab=advanced&section=keys`
+				);
 				await adminPage
-					.locator( '#bulk-action-selector-top' )
-					.selectOption( 'Move to Trash' );
-				await adminPage.locator( '#doaction' ).click();
+					.getByRole( 'cell', {
+						name: process.env.API_KEY_NAME,
+					} )
+					.getByRole( 'link', {
+						name: 'Revoke',
+						includeHidden: true,
+					} )
+					.dispatchEvent( 'click' );
+				consumerTokenCleared = true;
+				console.log(
+					`Cleared up consumer token  ${ process.env.API_KEY_NAME } successfully.`
+				);
+				break;
+			} catch ( e ) {
+				console.log(
+					`Failed to clear consumer token  ${ process.env.API_KEY_NAME }. Retrying...`
+				);
+				console.log( e );
 			}
-
-			// clear mini cart pages
-			await adminPage.goto(
-				'/wp-admin/edit.php?s=Mini+Cart&post_status=all&post_type=page'
-			);
-			if ( ! adminPage.getByText( 'No pages found.' ) ) {
-				await adminPage.locator( '#cb-select-all-1' ).check();
-				await adminPage
-					.locator( '#bulk-action-selector-top' )
-					.selectOption( 'Move to Trash' );
-				await adminPage.locator( '#doaction' ).click();
-			}
-
-			// clear product showcase pages
-			await adminPage.goto(
-				'/wp-admin/edit.php?s=Product+Showcase&post_status=all&post_type=page'
-			);
-			if ( ! adminPage.getByText( 'No pages found.' ) ) {
-				await adminPage.locator( '#cb-select-all-1' ).check();
-				await adminPage
-					.locator( '#bulk-action-selector-top' )
-					.selectOption( 'Move to Trash' );
-				await adminPage.locator( '#doaction' ).click();
-			}
-
-			console.log( 'Clearing posts...' );
-			// clear posts
-			await adminPage.goto(
-				'/wp-admin/edit.php?s=Post-&post_status=all&post_type=post'
-			);
-			if ( ! adminPage.getByText( 'No posts found.' ) ) {
-				await adminPage.locator( '#cb-select-all-1' ).check();
-				await adminPage
-					.locator( '#bulk-action-selector-top' )
-					.selectOption( 'Move to Trash' );
-				await adminPage.locator( '#doaction' ).click();
-			}
-
-			break;
-		} catch ( e ) {
-			console.log( 'Failed to clear consumer token. Retrying...' );
-			console.log( e );
 		}
+		await expect( consumerTokenCleared ).toBe( true );
+	} else {
+		console.log( 'No consumer token to clear.' );
 	}
-
-	await expect( consumerTokenCleared ).toBe( true );
 };

@@ -598,9 +598,15 @@ class ReviewsListTableTest extends WC_Unit_Test_Case {
 		$method->invokeArgs( $list_table, [ $review ] );
 
 		$column_content = ob_get_clean();
-
 		$this->assertStringNotContainsString( 'In reply to', $column_content );
-		$this->assertStringContainsString( '<div class="comment-text">Test review</div>', $column_content );
+		$this->assertStringContainsString( '<div class="comment-text"><p>Test review</p></div>',
+			str_replace(
+			// Remove new lines from the content to make the comparison easier.
+				PHP_EOL,
+				'',
+				$column_content
+			)
+		);
 
 		$reply = $this->factory()->comment->create_and_get(
 			[
@@ -616,7 +622,14 @@ class ReviewsListTableTest extends WC_Unit_Test_Case {
 		$column_content = ob_get_clean();
 
 		$this->assertStringContainsString( 'In reply to', $column_content );
-		$this->assertStringContainsString( '<div class="comment-text">Test reply</div>', $column_content );
+		$this->assertStringContainsString( '<div class="comment-text"><p>Test reply</p></div>',
+			str_replace(
+			// Remove new lines from the content to make the comparison easier.
+				PHP_EOL,
+				'',
+				$column_content
+			)
+		);
 	}
 
 	/**

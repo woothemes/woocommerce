@@ -150,6 +150,7 @@ const recordTracksPluginsInstallationRequest = ( {
 		shown: event.payload.pluginsShown || [],
 		selected: event.payload.pluginsSelected || [],
 		unselected: event.payload.pluginsUnselected || [],
+		truncated: event.payload.pluginsTruncated || [],
 	} );
 };
 
