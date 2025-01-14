@@ -331,9 +331,9 @@
 							.replace( /^-+|-+$/g, '' )
 					);
 
-					$( document.body ).triggerHandler( 
-						'wc_remove_error_tip', 
-						[ $( this ), 'i18n_global_unique_id_error']
+					$( document.body ).triggerHandler(
+						'wc_remove_error_tip',
+						[ $( this ), 'i18n_global_unique_id_error' ]
 					);
 				}
 			)
