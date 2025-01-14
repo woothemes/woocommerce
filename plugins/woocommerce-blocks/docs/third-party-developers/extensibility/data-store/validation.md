@@ -193,7 +193,7 @@ store.clearValidationErrors( [
 	'terms-and-conditions',
 ] );
 ```
-
+<!-- markdownlint-disable MD029 -->
 2. This will clear all validation errors.
 
 ```js
