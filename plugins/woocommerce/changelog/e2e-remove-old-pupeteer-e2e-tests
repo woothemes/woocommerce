@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+Removed old e2e tests folder and cleaned up related dependencies and scripts.

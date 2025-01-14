@@ -20,8 +20,8 @@ export const useTagSearch = () => {
 		const query = search !== undefined ? { search } : '';
 		resolveSelect( EXPERIMENTAL_PRODUCT_TAGS_STORE_NAME )
 			.getProductTags( query )
-			.then( ( tags ) => {
-				setFetchedTags( tags as ProductTag[] );
+			.then( ( tags: ProductTag[] ) => {
+				setFetchedTags( tags );
 			} )
 			.finally( () => {
 				setIsSearching( false );

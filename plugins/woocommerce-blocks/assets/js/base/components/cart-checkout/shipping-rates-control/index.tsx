@@ -3,6 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { useEffect } from '@wordpress/element';
+import { usePrevious } from '@woocommerce/base-hooks';
 import LoadingMask from '@woocommerce/base-components/loading-mask';
 import { ExperimentalOrderShippingPackages } from '@woocommerce/blocks-checkout';
 import {
@@ -70,15 +71,39 @@ const ShippingRatesControl = ( {
 	renderOption,
 	context,
 }: ShippingRatesControlProps ): JSX.Element => {
+	const shippingRatesRateCount = getShippingRatesRateCount( shippingRates );
+	const shippingRatesPackageCount =
+		getShippingRatesPackageCount( shippingRates );
+	const previousShippingRatesRateCount = usePrevious(
+		shippingRatesRateCount
+	);
+	const previousShippingRatesPackageCount = usePrevious(
+		shippingRatesPackageCount
+	);
+
 	useEffect( () => {
 		if ( isLoadingRates ) {
 			return;
 		}
+
+		if (
+			previousShippingRatesRateCount === shippingRatesRateCount &&
+			previousShippingRatesPackageCount === shippingRatesPackageCount
+		) {
+			return;
+		}
+
 		speakFoundShippingOptions(
-			getShippingRatesPackageCount( shippingRates ),
-			getShippingRatesRateCount( shippingRates )
+			shippingRatesPackageCount,
+			shippingRatesRateCount
 		);
-	}, [ isLoadingRates, shippingRates ] );
+	}, [
+		isLoadingRates,
+		shippingRatesRateCount,
+		shippingRatesPackageCount,
+		previousShippingRatesRateCount,
+		previousShippingRatesPackageCount,
+	] );
 
 	// Prepare props to pass to the ExperimentalOrderShippingPackages slot fill.
 	// We need to pluck out receiveCart.

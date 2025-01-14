@@ -809,15 +809,15 @@ class WC_Tests_Order_Functions extends WC_Unit_Test_Case {
 	 */
 	public function test_wc_get_order_payment_method_param() {
 		$order1 = WC_Helper_Order::create_order();
-		$order1->set_payment_method( 'cheque' );
+		$order1->set_payment_method( WC_Gateway_Cheque::ID );
 		$order1->save();
 		$order2 = WC_Helper_Order::create_order();
-		$order2->set_payment_method( 'cod' );
+		$order2->set_payment_method( WC_Gateway_COD::ID );
 		$order2->save();
 
 		$orders   = wc_get_orders(
 			array(
-				'payment_method' => 'cheque',
+				'payment_method' => WC_Gateway_Cheque::ID,
 				'return'         => 'ids',
 			)
 		);
@@ -826,7 +826,7 @@ class WC_Tests_Order_Functions extends WC_Unit_Test_Case {
 
 		$orders   = wc_get_orders(
 			array(
-				'payment_method' => 'cod',
+				'payment_method' => WC_Gateway_COD::ID,
 				'return'         => 'ids',
 			)
 		);
