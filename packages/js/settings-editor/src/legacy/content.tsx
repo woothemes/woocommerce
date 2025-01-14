@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { createElement, useMemo, useState } from '@wordpress/element';
+import { createElement } from '@wordpress/element';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { DataForm } from '@wordpress/dataviews';
@@ -9,21 +9,11 @@ import { DataForm } from '@wordpress/dataviews';
 /**
  * Internal dependencies
  */
-import {
-	generateInitialData,
-	generateFields,
-	generateForm,
-} from '../utils/dataforms-transformers';
+import { useSettingsForm } from '../hooks/use-settings-form';
 
 const Form = ( { settings }: { settings: SettingsField[] } ) => {
-	const [ data, setData ] = useState( () => generateInitialData( settings ) );
-	const { fields, form } = useMemo(
-		() => ( {
-			fields: generateFields( settings ),
-			form: generateForm( settings ),
-		} ),
-		[ settings ]
-	);
+	const { data, fields, form, updateField } = useSettingsForm( settings );
+
 	return (
 		<form id="mainform">
 			<div className="woocommerce-settings-content">
@@ -31,7 +21,7 @@ const Form = ( { settings }: { settings: SettingsField[] } ) => {
 					fields={ fields }
 					form={ form }
 					data={ data }
-					onChange={ setData }
+					onChange={ updateField }
 				/>
 			</div>
 			<div className="woocommerce-settings-content-footer">

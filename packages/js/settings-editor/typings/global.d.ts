@@ -54,11 +54,11 @@ declare global {
 
 	interface GroupSettingsField {
 		type: 'group';
-		label: string;
-		desc: string;
 		id: string;
-		title: string;
 		settings: Exclude< SettingsField, GroupSettingsField >[];
+		label?: string;
+		desc?: string;
+		title?: string;
 	}
 
 	interface CheckboxSettingsField extends BaseSettingsField {

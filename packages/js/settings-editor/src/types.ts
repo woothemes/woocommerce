@@ -49,3 +49,5 @@ export type Location = {
 	key: string;
 	params: Record< string, string >;
 };
+
+export type DataFormItem = Record< string, BaseSettingsField[ 'value' ] >;

@@ -8,7 +8,7 @@ import { __experimentalInputControl as InputControl } from '@wordpress/component
 /**
  * Internal dependencies
  */
-import type { DataFormItem } from '../../types/form';
+import type { DataFormItem } from '../../types';
 
 export const getInputEdit =
 	( type: BaseSettingsField[ 'type' ] ) =>
