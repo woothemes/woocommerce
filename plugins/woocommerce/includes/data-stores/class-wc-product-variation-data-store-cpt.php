@@ -382,9 +382,11 @@ class WC_Product_Variation_Data_Store_CPT extends WC_Product_Data_Store_CPT impl
 		);
 
 		if ( $this->cogs_feature_is_enabled() ) {
+			$cogs_value = get_post_meta( $id, '_cogs_total_value', true );
+			$cogs_value = '' === $cogs_value ? null : (float)$cogs_value;
 			$product->set_props(
 				array(
-					'cogs_value'             => (float) get_post_meta( $id, '_cogs_total_value', true ),
+					'cogs_value'             => $cogs_value,
 					'cogs_value_is_additive' => 'yes' === get_post_meta( $id, '_cogs_value_is_additive', true ),
 				)
 			);
