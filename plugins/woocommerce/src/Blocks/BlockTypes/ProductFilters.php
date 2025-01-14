@@ -49,7 +49,7 @@ class ProductFilters extends AbstractBlock {
 	protected function render( $attributes, $content, $block ) {
 		$query_id       = $block->context['queryId'] ?? 0;
 		$filter_params  = $this->get_filter_params( $query_id );
-		$active_filters = apply_filters( 'product_filters_active_items', array(), $filter_params );
+		$active_filters = apply_filters( 'product_filters_selected_items', array(), $filter_params );
 
 		usort(
 			$active_filters,
