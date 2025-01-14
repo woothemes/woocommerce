@@ -130,7 +130,7 @@ class WC_Settings_Payment_Gateways_Test extends WC_Settings_Unit_Test_Case {
 		$process_admin_options_invoked = false;
 		$init_invoked                  = false;
 
-		$gateway = WC_Payment_Gateways::instance()->payment_gateways()['bacs'];
+		$gateway = WC_Payment_Gateways::instance()->payment_gateways()[ WC_Gateway_BACS::ID ];
 
 		$payment_gateways = $this->getMockBuilder( WC_Payment_Gateways::class )
 								 ->setMethods( array( 'process_admin_options', 'init', 'payment_gateways' ) )
