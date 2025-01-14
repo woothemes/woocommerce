@@ -155,7 +155,6 @@ class EmailPreview {
 
 		if ( in_array( $email_type, self::USER_OBJECT_EMAILS, true ) ) {
 			$object                  = wp_get_current_user();
-			$this->email->user_id    = $object->ID;
 			$this->email->user_email = $object->user_email;
 			$this->email->user_login = $object->user_login;
 			$this->email->set_object( $object );
