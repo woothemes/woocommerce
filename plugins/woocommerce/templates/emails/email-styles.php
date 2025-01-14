@@ -88,6 +88,13 @@ body {
 	background-color: <?php echo esc_attr( $bg ); ?>;
 }
 
+<?php if ( $email_improvements_enabled ) : ?>
+#inner_wrapper {
+	background-color: <?php echo esc_attr( $body ); ?>;
+	border-radius: 8px;
+}
+<?php endif; ?>
+
 #wrapper {
 	margin: 0 auto;
 	padding: 70px 0;
@@ -104,7 +111,7 @@ body {
 }
 
 #template_header {
-	background-color: <?php echo esc_attr( $base ); ?>;
+	background-color: <?php echo esc_attr( $email_improvements_enabled ? $body : $base ); ?>;
 	border-radius: 3px 3px 0 0 !important;
 	color: <?php echo esc_attr( $base_text ); ?>;
 	border-bottom: 0;
