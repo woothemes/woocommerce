@@ -4,6 +4,7 @@ declare( strict_types=1 );
 namespace Automattic\WooCommerce\Internal\Admin\Settings;
 
 use Automattic\WooCommerce\Admin\PluginsHelper;
+use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\AmazonPay;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\Mollie;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\PaymentGateway;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\PayPal;
@@ -48,14 +49,16 @@ class PaymentProviders {
 	 * @var \class-string[]
 	 */
 	private array $payment_gateways_providers_class_map = array(
-		'bacs'                 => WCCore::class,
-		'cheque'               => WCCore::class,
-		'cod'                  => WCCore::class,
-		'paypal'               => WCCore::class,
-		'woocommerce_payments' => WooPayments::class,
-		'ppcp-gateway'         => PayPal::class,
-		'stripe'               => Stripe::class,
-		'mollie'               => Mollie::class,
+		'bacs'                      => WCCore::class,
+		'cheque'                    => WCCore::class,
+		'cod'                       => WCCore::class,
+		'paypal'                    => WCCore::class,
+		'woocommerce_payments'      => WooPayments::class,
+		'ppcp-gateway'              => PayPal::class,
+		'stripe'                    => Stripe::class,
+		'mollie'                    => Mollie::class,
+		'mollie_wc_gateway_*'       => Mollie::class, // Target all the Mollie gateways.
+		'amazon_payments_advanced*' => AmazonPay::class,
 	);
 
 	/**

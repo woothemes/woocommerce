@@ -22,7 +22,27 @@ class Mollie extends PaymentGateway {
 	 * @return string The settings URL for the payment gateway.
 	 */
 	public function get_settings_url( WC_Payment_Gateway $payment_gateway ): string {
-		return $this->get_custom_settings_url();
+		// Don't target any section because there are none to target when Mollie is not connected.
+		if ( 'mollie_stand_in' === $payment_gateway->id ) {
+			return $this->get_custom_settings_url();
+		}
+
+		// Target the payment methods section when the gateway is connected.
+		return $this->get_custom_settings_url( 'mollie_payment_methods' );
+	}
+
+	/**
+	 * Determine if the payment gateway is in test mode.
+	 *
+	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
+	 *
+	 * @return bool True if the payment gateway is in test mode, false otherwise.
+	 */
+	public function is_in_test_mode( WC_Payment_Gateway $payment_gateway ): bool {
+		$testModeEnabled  = get_option( 'mollie-payments-for-woocommerce_test_mode_enabled', true );
+		$testKeyEntered   = get_option( 'mollie-payments-for-woocommerce_test_api_key', true );
+
+		return filter_var( $testModeEnabled, FILTER_VALIDATE_BOOLEAN ) && ! empty( $testKeyEntered );
 	}
 
 	/**
@@ -74,9 +94,17 @@ class Mollie extends PaymentGateway {
 	/**
 	 * Get the URL to the custom settings page for Mollie.
 	 *
+	 * @param string $section Optional. The section to navigate to.
+	 *
 	 * @return string The URL to the custom settings page for Mollie.
 	 */
-	private function get_custom_settings_url(): string {
-		return admin_url( 'admin.php?page=wc-settings&tab=mollie_settings' );
+	private function get_custom_settings_url( string $section = '' ): string {
+		$settings_url = admin_url( 'admin.php?page=wc-settings&tab=mollie_settings' );
+
+		if ( ! empty( $section ) ) {
+			$settings_url = add_query_arg( 'section', $section, $settings_url );
+		}
+
+		return $settings_url;
 	}
 }
