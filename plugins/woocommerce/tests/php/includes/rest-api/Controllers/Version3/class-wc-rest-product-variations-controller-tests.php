@@ -72,7 +72,7 @@ class WC_REST_Product_Variations_Controller_Tests extends WC_REST_Unit_Test_Case
 		$data = $response->get_data();
 
 		$expected_total_value = $set_additive_flag ? 12.34 + 56.78 : 56.78;
-		$expected                 = array(
+		$expected             = array(
 			'values'                    => array(
 				array(
 					'defined_value'   => 56.78,

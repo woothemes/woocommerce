@@ -501,7 +501,7 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 	 */
 	protected function load_cogs_data( $product ) {
 		$cogs_value = get_post_meta( $product->get_id(), '_cogs_total_value', true );
-		$cogs_value = '' === $cogs_value ? null : (float)$cogs_value;
+		$cogs_value = '' === $cogs_value ? null : (float) $cogs_value;
 
 		/**
 		 * Filter to customize the Cost of Goods Sold value that gets loaded for a given product.
