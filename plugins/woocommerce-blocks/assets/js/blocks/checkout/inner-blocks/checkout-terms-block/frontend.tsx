@@ -8,7 +8,7 @@ import { CheckboxControl } from '@woocommerce/blocks-components';
 import { useCheckoutSubmit } from '@woocommerce/base-context/hooks';
 import { withInstanceId } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
+import { validationStore } from '@woocommerce/block-data';
 
 /**
  * Internal dependencies
@@ -35,13 +35,16 @@ const FrontendBlock = ( {
 
 	const validationErrorId = 'terms-and-conditions-' + instanceId;
 	const { setValidationErrors, clearValidationError } =
-		useDispatch( VALIDATION_STORE_KEY );
+		useDispatch( validationStore );
 
-	const error = useSelect( ( select ) => {
-		return select( VALIDATION_STORE_KEY ).getValidationError(
-			validationErrorId
-		);
-	} );
+	const error = useSelect(
+		( select ) => {
+			return select( validationStore ).getValidationError(
+				validationErrorId
+			);
+		},
+		[ validationErrorId ]
+	);
 	const hasError = !! ( error?.message && ! error?.hidden );
 
 	// Track validation errors for this input.
