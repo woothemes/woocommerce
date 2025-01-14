@@ -1013,8 +1013,31 @@ class PaymentProviders {
 			return $this->instances[ $gateway_id ];
 		}
 
-		// If the ID is not mapped to a provider class, return the generic provider.
-		if ( ! isset( $this->payment_gateways_providers_class_map[ $gateway_id ] ) ) {
+		/**
+		 * The provider class for the gateway.
+		 *
+		 * @var PaymentGateway|null $provider_class
+		 */
+		$provider_class = null;
+		if ( isset( $this->payment_gateways_providers_class_map[ $gateway_id ] ) ) {
+			$provider_class = $this->payment_gateways_providers_class_map[ $gateway_id ];
+		} else {
+			// Check for wildcard mappings.
+			foreach ( $this->payment_gateways_providers_class_map as $gateway_id_pattern => $mapped_class ) {
+				// Try to see if we have a wildcard mapping and if the gateway ID matches it.
+				// Use the first found match.
+				if ( false !== strpos( $gateway_id_pattern, '*' ) ) {
+					$gateway_id_pattern = str_replace( '*', '.*', $gateway_id_pattern );
+					if ( preg_match( '/^' . $gateway_id_pattern . '$/', $gateway_id ) ) {
+						$provider_class = $mapped_class;
+						break;
+					}
+				}
+			}
+		}
+
+		// If the gateway ID is not mapped to a provider class, return the generic provider.
+		if ( is_null( $provider_class ) ) {
 			if ( ! isset( $this->instances['generic'] ) ) {
 				$this->instances['generic'] = new PaymentGateway();
 			}
@@ -1022,12 +1045,6 @@ class PaymentProviders {
 			return $this->instances['generic'];
 		}
 
-		/**
-		 * The provider class for the gateway.
-		 *
-		 * @var PaymentGateway $provider_class
-		 */
-		$provider_class                 = $this->payment_gateways_providers_class_map[ $gateway_id ];
 		$this->instances[ $gateway_id ] = new $provider_class();
 
 		return $this->instances[ $gateway_id ];
