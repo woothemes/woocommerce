@@ -1196,7 +1196,8 @@ mark.amount {
 	}
 }
 
-h2 .woocommerce-help-tip {
+h2 .woocommerce-help-tip,
+.woocommerce-product-type-tip {
 	margin-top: -5px;
 	margin-left: 0.25em;
 }
@@ -5573,14 +5574,168 @@ img.help_tip {
 	}
 }
 
+#woocommerce-product-data {
+	.hndle {
+		padding: 10px;
+
+		span {
+			display: block;
+			line-height: 24px;
+		}
+
+		.product-data-wrapper {
+			label > * {
+				display: inline-block;
+			}
+
+			.woocommerce-product-type-tip {
+				font-size: 1.4em;
+				margin-left: 9px;
+			}
+		}
+
+		.type_box {
+			display: inline;
+			line-height: inherit;
+			vertical-align: baseline;
+		}
+
+		select {
+			margin: 0;
+		}
+
+		label {
+			padding-right: 1em;
+			font-size: 12px;
+			vertical-align: baseline;
+		}
+
+		label:first-child {
+			margin-right: 1.4em;
+			border-right: 1px solid #dfdfdf;
+		}
+
+		input,
+		select {
+			margin-top: -2px;
+			vertical-align: middle;
+		}
+
+		label.has-checkbox {
+			margin-right: 15px;
+		}
+
+		label.has-checkbox > input[type="checkbox"] {
+			margin-right: 3px;
+		}
+
+		select {
+			margin-left: 0.5em;
+		}
+	}
+
+	> .handlediv {
+		margin-top: 4px;
+	}
+
+	.wrap {
+		margin: 0;
+	}
+}
+
+#woocommerce-coupon-description {
+	padding: 3px 8px;
+	font-size: 1.7em;
+	line-height: 1.42em;
+	height: auto;
+	width: 100%;
+	outline: 0;
+	margin: 10px 0;
+	display: block;
+
+	&::-webkit-input-placeholder {
+		line-height: 1.42em;
+		color: #bbb;
+	}
+
+	&::-moz-placeholder {
+		line-height: 1.42em;
+		color: #bbb;
+	}
+
+	&:-ms-input-placeholder {
+		line-height: 1.42em;
+		color: #bbb;
+	}
+
+	&:-moz-placeholder {
+		line-height: 1.42em;
+		color: #bbb;
+	}
+}
+
+#woocommerce-product-data,
+#woocommerce-coupon-data {
+	.panel-wrap {
+		background: #fff;
+	}
+
+	.woocommerce_options_panel,
+	.wc-metaboxes-wrapper {
+		float: left;
+		width: 80%;
+
+		._backorders_field .wc-radios li {
+			display: block;
+			padding: 0 0 2px;
+		}
+
+		.wc-radios {
+			display: block;
+			float: left;
+			margin: 0;
+
+			li {
+				display: block;
+				padding: 0 0 10px;
+
+				input {
+					width: auto;
+				}
+			}
+		}
+	}
+}
+
 #woocommerce-product-data,
 #woocommerce-coupon-data,
 .woocommerce {
 	.panel-wrap {
 		overflow: hidden;
 	}
+
 	ul.wc-tabs {
 		margin: 0;
+		width: 20%;
+		float: left;
+		line-height: 1em;
+		padding: 0 0 10px;
+		position: relative;
+		background-color: #fafafa;
+		border-right: 1px solid #eee;
+		box-sizing: border-box;
+
+		&::after {
+			content: "";
+			display: block;
+			width: 100%;
+			height: 9999em;
+			position: absolute;
+			bottom: -9999em;
+			left: 0;
+			background-color: #fafafa;
+			border-right: 1px solid #eee;
+		}
 
 		li {
 			margin: 0;
@@ -5590,9 +5745,17 @@ img.help_tip {
 
 			a {
 				margin: 0;
+				padding: 10px;
 				display: block;
 				box-shadow: none;
 				text-decoration: none;
+				line-height: 20px !important;
+				border-bottom: 1px solid #eee;
+
+				span {
+					margin-left: 0.618em;
+					margin-right: 0.618em;
+				}
 
 				&::before {
 					@include iconbeforedashicons("\f107");
@@ -5647,54 +5810,12 @@ img.help_tip {
 				font-family: "WooCommerce";
 				content: "\e600";
 			}
-		}
-	}
-}
 
-.woocommerce {
-	ul.wc-tabs {
-		width: 20%;
-		float: left;
-		line-height: 1em;
-		padding: 0 0 10px;
-		position: relative;
-		background-color: #fafafa;
-		border-right: 1px solid #eee;
-		box-sizing: border-box;
-
-		&::after {
-			content: "";
-			display: block;
-			width: 100%;
-			height: 9999em;
-			position: absolute;
-			bottom: -9999em;
-			left: 0;
-			background-color: #fafafa;
-			border-right: 1px solid #eee;
-		}
-
-		li {
-			a {
-				padding: 10px;
-				line-height: 20px !important;
-				border-bottom: 1px solid #eee;
-
-				span {
-					margin-left: 0.618em;
-					margin-right: 0.618em;
-				}
-
-				&::before {
-					@include iconbeforedashicons("\f107");
-				}
+			&.active a {
+				color: #555;
+				position: relative;
+				background-color: #eee;
 			}
-		}
-
-		&.active a {
-			color: #555;
-			position: relative;
-			background-color: #eee;
 		}
 	}
 }
@@ -5740,9 +5861,11 @@ img.help_tip {
 	}
 }
 
+#woocommerce-product-data,
 #woocommerce-product-type-options,
 #woocommerce-order-data,
-#woocommerce-order-downloads {
+#woocommerce-order-downloads,
+#woocommerce-coupon-data {
 	.inside {
 		margin: 0;
 		padding: 0;
@@ -6147,6 +6270,10 @@ img.help_tip {
 			align-self: center;
 		}
 	}
+}
+
+#woocommerce-product-data input.dp-applied {
+	float: left;
 }
 
 #grouped_product_options,
@@ -7423,6 +7550,44 @@ table.bar_chart {
 }
 
 /**
+  * Optimisation for screens 900px and smaller
+  */
+@media only screen and (max-width: 900px) {
+	#woocommerce-coupon-data ul.coupon_data_tabs,
+	#woocommerce-product-data ul.product_data_tabs,
+	#woocommerce-product-data .wc-tabs-back {
+		width: 10%;
+	}
+
+	#woocommerce-coupon-data .wc-metaboxes-wrapper,
+	#woocommerce-coupon-data .woocommerce_options_panel,
+	#woocommerce-product-data .wc-metaboxes-wrapper,
+	#woocommerce-product-data .woocommerce_options_panel {
+		width: 90%;
+	}
+
+	#woocommerce-coupon-data ul.coupon_data_tabs li a,
+	#woocommerce-product-data ul.product_data_tabs li a {
+		position: relative;
+		text-indent: -999px;
+		padding: 10px;
+
+		&::before {
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			text-indent: 0;
+			text-align: center;
+			line-height: 40px;
+			width: 100%;
+			height: 40px;
+		}
+	}
+}
+
+/**
   * Optimisation for screens 782px and smaller
   */
 @media only screen and (max-width: 782px) {
@@ -7438,6 +7603,10 @@ table.bar_chart {
 		padding-right: 15px;
 		overflow: hidden;
 		margin-bottom: -1px;
+	}
+
+	#woocommerce-product-data .checkbox {
+		width: 25px;
 	}
 
 	.variations-pagenav {
@@ -7958,6 +8127,21 @@ table.bar_chart {
 	.woocommerce table.form-table .select2-container {
 		@media only screen and (max-width: 782px) {
 			min-width: 100% !important;
+		}
+	}
+}
+
+.wc-wp-version-gte-55 {
+	#woocommerce-product-data {
+		.hndle {
+			display: block;
+			line-height: 28px;
+
+			.type_box {
+				display: inline;
+				line-height: inherit;
+				vertical-align: baseline;
+			}
 		}
 	}
 }
@@ -8528,7 +8712,6 @@ table.bar_chart {
 	}
 }
 
-// Consider unifying it with product editor look.
 #wp-content-media-buttons {
 	display: flex;
 	align-items: center;
@@ -8538,7 +8721,6 @@ table.bar_chart {
 	}
 }
 
-// Consider unifying it with product editor look.
 #postexcerpt {
 	> .postbox-header {
 		> .hndle {
@@ -8551,7 +8733,6 @@ table.bar_chart {
 	}
 }
 
-// Consider unifying it with product editor look.
 #postdivrich.woocommerce-product-description {
 	margin-top: 20px;
 	margin-bottom: 0px;
@@ -8638,6 +8819,3 @@ html:has(#status-table-templates){
 .woocommerce-admin-page #postbox-container-2 {
 	clear: left;
 }
-
-// Import refubrished product editor styles.
-@import "admin/product-editor";

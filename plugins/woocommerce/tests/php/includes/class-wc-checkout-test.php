@@ -77,7 +77,7 @@ class WC_Checkout_Test extends \WC_Unit_Test_Case {
 		$data = array(
 			'ship_to_different_address' => false,
 			'order_comments'             => '<a href="http://attackerpage.com/csrf.html">This text should not save inside an anchor.</a><script>alert("alert")</script>',
-			'payment_method'            => 'bacs',
+			'payment_method'            => WC_Gateway_BACS::ID,
 		);
 
 		$errors = new WP_Error();

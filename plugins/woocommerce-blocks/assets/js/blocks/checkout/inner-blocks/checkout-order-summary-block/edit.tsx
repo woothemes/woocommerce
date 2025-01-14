@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import { useBlockProps, InnerBlocks, RichText } from '@wordpress/block-editor';
-import type { BlockEditProps, TemplateArray } from '@wordpress/blocks';
+import { useBlockProps, InnerBlocks } from '@wordpress/block-editor';
+import type { TemplateArray } from '@wordpress/blocks';
 import { innerBlockAreas } from '@woocommerce/blocks-checkout';
 import { TotalsFooterItem } from '@woocommerce/base-components/cart-checkout';
 import { getCurrencyFromPriceResponse } from '@woocommerce/price-format';
 import { useStoreCart } from '@woocommerce/base-context/hooks';
 import { __ } from '@wordpress/i18n';
-import { useCallback, useId, useState } from '@wordpress/element';
+import { useId, useState } from '@wordpress/element';
 import { Icon } from '@wordpress/components';
 import { chevronDown, chevronUp } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -23,17 +23,8 @@ import {
 	getAllowedBlocks,
 } from '../../../cart-checkout-shared';
 import { OrderMetaSlotFill } from './slotfills';
-import { DEFAULT_TOTAL_HEADING } from './constants';
-export type BlockAttributes = {
-	totalHeading: string;
-	className: string;
-};
 
-export const Edit = ( {
-	clientId,
-	attributes,
-	setAttributes,
-}: BlockEditProps< BlockAttributes > ) => {
+export const Edit = ( { clientId }: { clientId: string } ): JSX.Element => {
 	const blockProps = useBlockProps();
 	const { cartTotals } = useStoreCart();
 	const totalsCurrency = getCurrencyFromPriceResponse( cartTotals );
@@ -44,9 +35,6 @@ export const Edit = ( {
 	const { isLarge } = useContainerWidthContext();
 	const [ isOpen, setIsOpen ] = useState( false );
 	const ariaControlsId = useId();
-	const [ totalHeadingText, setTotalHeadingText ] = useState(
-		attributes.totalHeading || DEFAULT_TOTAL_HEADING
-	);
 
 	const orderSummaryProps = ! isLarge
 		? {
@@ -74,30 +62,6 @@ export const Edit = ( {
 		registeredBlocks: allowedBlocks,
 		defaultTemplate,
 	} );
-
-	const onChangeTotalHeading = useCallback(
-		( value: string ) => {
-			setTotalHeadingText( value );
-
-			// If the user sets the text of the heading back to the default heading, we clear the block attribute,
-			// this ensures that when returning to the default text they will get the translated heading, not a fixed
-			// string saved in the block attribute.
-			if ( value === DEFAULT_TOTAL_HEADING ) {
-				setAttributes( { totalHeading: '' } );
-			} else {
-				setAttributes( { totalHeading: value } );
-			}
-		},
-		[ setAttributes ]
-	);
-
-	const totalHeadingLabel = (
-		<RichText
-			value={ totalHeadingText }
-			onChange={ onChangeTotalHeading }
-			placeholder={ DEFAULT_TOTAL_HEADING }
-		/>
-	);
 
 	return (
 		<div { ...blockProps }>
@@ -137,7 +101,6 @@ export const Edit = ( {
 				/>
 				<div className="wc-block-components-totals-wrapper">
 					<TotalsFooterItem
-						label={ totalHeadingLabel }
 						currency={ totalsCurrency }
 						values={ cartTotals }
 					/>

@@ -5,6 +5,7 @@ namespace Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders;
 
 use Automattic\WooCommerce\Admin\PluginsHelper;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders;
+use Automattic\WooCommerce\Internal\Admin\Settings\Utils;
 use Automattic\WooCommerce\Internal\Utilities\ArrayUtil;
 use WC_HTTPS;
 use WC_Payment_Gateway;
@@ -81,40 +82,61 @@ class PaymentGateway {
 	/**
 	 * Get the provider title of the payment gateway.
 	 *
+	 * This is the intended gateway title to use throughout the WC admin. It should be short.
+	 *
+	 * Note: We don't allow HTML tags in the title. All HTML tags will be stripped, including their contents.
+	 *
 	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
 	 *
 	 * @return string The provider title of the payment gateway.
 	 */
 	public function get_title( WC_Payment_Gateway $payment_gateway ): string {
-		// This is the WC admin title.
-		return $payment_gateway->get_method_title();
+		$title = wp_strip_all_tags( html_entity_decode( $payment_gateway->get_method_title() ), true );
+
+		// Truncate the title.
+		return Utils::truncate_with_words( $title, 75 );
 	}
 
 	/**
 	 * Get the provider description of the payment gateway.
+	 *
+	 * This is the intended gateway description to use throughout the WC admin. It should be short and to the point.
+	 *
+	 * Note: We don't allow HTML tags in the description. All HTML tags will be stripped, including their contents.
 	 *
 	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
 	 *
 	 * @return string The provider description of the payment gateway.
 	 */
 	public function get_description( WC_Payment_Gateway $payment_gateway ): string {
-		// This is the WC admin description.
-		return $payment_gateway->get_method_description();
+		$description = wp_strip_all_tags( html_entity_decode( $payment_gateway->get_method_description() ), true );
+
+		// Truncate the description.
+		return Utils::truncate_with_words( $description, 130, '…' );
 	}
 
 	/**
 	 * Get the provider icon URL of the payment gateway.
+	 *
+	 * We expect to receive a URL to an image file.
+	 * If the gateway provides an <img> tag or a list of them, we will fall back to the default payments icon.
 	 *
 	 * @param WC_Payment_Gateway $payment_gateway The payment gateway object.
 	 *
 	 * @return string The provider icon URL of the payment gateway.
 	 */
 	public function get_icon( WC_Payment_Gateway $payment_gateway ): string {
-		// We only want the URl, not the <img> tag that the get_icon() method returns.
-		$icon_url = $payment_gateway->icon;
-		// Test if it actually is a URL as some gateways put an <img> tag.
+		$icon_url = $payment_gateway->icon ?? '';
+		if ( ! is_string( $icon_url ) ) {
+			$icon_url = '';
+		}
+
+		$icon_url = trim( $icon_url );
+
+		// Test if it actually is a URL as some gateways put an <img> tag or a list of them.
 		if ( ! wc_is_valid_url( $icon_url ) ) {
-			return '';
+			// Fall back to the default payments icon.
+			return plugins_url( 'assets/images/icons/default-payments.svg', WC_PLUGIN_FILE );
 		}
 
 		return WC_HTTPS::force_https_url( $icon_url );
@@ -129,11 +151,22 @@ class PaymentGateway {
 	 */
 	public function get_supports_list( WC_Payment_Gateway $payment_gateway ): array {
 		$supports_list = $payment_gateway->supports ?? array();
+		if ( ! is_array( $supports_list ) ) {
+			return array();
+		}
 
-		// Ensure the list is unique and re-indexed.
-		$supports_list = array_values( array_unique( $supports_list ) );
+		// Sanitize the list to ensure it only contains a list of key-like strings.
+		$sanitized_list = array();
+		foreach ( $supports_list as $support ) {
+			if ( ! is_string( $support ) ) {
+				continue;
+			}
 
-		return $supports_list;
+			$sanitized_list[] = sanitize_key( $support );
+		}
+
+		// Ensure the list contains unique values and re-indexed.
+		return array_values( array_unique( $sanitized_list ) );
 	}
 
 	/**

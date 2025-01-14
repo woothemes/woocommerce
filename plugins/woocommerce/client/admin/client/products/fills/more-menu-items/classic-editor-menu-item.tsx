@@ -30,8 +30,10 @@ export const ClassicEditorMenuItem = ( {
 			select( OPTIONS_STORE_NAME );
 
 		const allowTrackingOption =
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			getOption( ALLOW_TRACKING_OPTION_NAME ) || 'no';
 
+		// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 		const resolving = ! hasFinishedResolution( 'getOption', [
 			ALLOW_TRACKING_OPTION_NAME,
 		] );
@@ -40,7 +42,7 @@ export const ClassicEditorMenuItem = ( {
 			allowTracking: allowTrackingOption === 'yes',
 			resolving,
 		};
-	} );
+	}, [] );
 
 	const _feature_nonce = getAdminSetting( '_feature_nonce' );
 

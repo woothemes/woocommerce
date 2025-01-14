@@ -271,9 +271,7 @@ describe( 'useCollection', () => {
 		} );
 		const { results: results2 } = getProps( renderer );
 		expect( results2 ).toBe( results );
-		// expect 2 calls because internally, useSelect invokes callback twice
-		// on mount.
-		expect( mocks.selectors.getCollection ).toHaveBeenCalledTimes( 2 );
+		expect( mocks.selectors.getCollection ).toHaveBeenCalledTimes( 1 );
 
 		// rerender again but set shouldSelect to true again and we should see
 		// new results

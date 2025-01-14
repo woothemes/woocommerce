@@ -23,8 +23,8 @@ $left_image  = PatternsHelper::get_image_url( $images, 0, 'assets/images/pattern
 $right_image = PatternsHelper::get_image_url( $images, 0, 'assets/images/pattern-placeholders/orange-wall-with-bicycle.jpg' );
 
 ?>
-<!-- wp:woocommerce/coming-soon {"color":"#f9f9f9","className":"woocommerce-coming-soon-split-right-image"} -->
-<div class="wp-block-woocommerce-coming-soon woocommerce-coming-soon-split-right-image">
+<!-- wp:woocommerce/coming-soon {"comingSoonPatternId":"page-coming-soon-split-right-image","className":"woocommerce-coming-soon-split-right-image","style":{"color":{"background":"#f9f9f9"}}} -->
+<div class="wp-block-woocommerce-coming-soon woocommerce-coming-soon-split-right-image has-background" style="background-color:#f9f9f9">
 	<!-- wp:group {"style":{"dimensions":{"minHeight":"100vh"},"spacing":{"padding":{"top":"0px","bottom":"0px"},"blockGap":"0px"}},"layout":{"type":"flex","flexWrap":"nowrap","verticalAlignment":"top","orientation":"vertical","justifyContent":"center"}} -->
 	<div class="wp-block-group" style="min-height:100vh;padding-top:0px;padding-bottom:0px"><!-- wp:group {"style":{"dimensions":{"minHeight":"117px"}},"layout":{"type":"flex","flexWrap":"nowrap","justifyContent":"center"}} -->
 		<div class="wp-block-group" style="min-height:117px"><!-- wp:site-title {"textAlign":"center","style":{"typography":{"fontSize":"18px","letterSpacing":"2.7px","fontStyle":"normal","fontWeight":"400"}},"fontFamily":"<?php echo esc_attr( $inter_font_family ); ?>"} /--></div>

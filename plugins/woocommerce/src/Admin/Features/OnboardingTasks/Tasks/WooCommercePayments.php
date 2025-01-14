@@ -8,6 +8,9 @@ use Automattic\WooCommerce\Admin\PluginsHelper;
 use Automattic\WooCommerce\Admin\Features\PaymentGatewaySuggestions\Init as Suggestions;
 use Automattic\WooCommerce\Admin\Features\PaymentGatewaySuggestions\DefaultPaymentGateways;
 use Automattic\WooCommerce\Internal\Admin\WcPayWelcomePage;
+use WC_Gateway_BACS;
+use WC_Gateway_Cheque;
+use WC_Gateway_COD;
 
 /**
  * WooCommercePayments Task
@@ -257,7 +260,7 @@ class WooCommercePayments extends Task {
 				// Filter out any WooPayments-related or offline gateways.
 				return 'yes' === $gateway->enabled
 					&& 0 !== strpos( $gateway->id, 'woocommerce_payments' )
-					&& ! in_array( $gateway->id, array( 'bacs', 'cheque', 'cod' ), true );
+					&& ! in_array( $gateway->id, array( WC_Gateway_BACS::ID, WC_Gateway_Cheque::ID, WC_Gateway_COD::ID ), true );
 			}
 		);
 

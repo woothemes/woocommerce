@@ -6,6 +6,7 @@ import { useBlockProps } from '@wordpress/block-editor';
 import type { BlockEditProps } from '@wordpress/blocks';
 import { ProductQueryContext as Context } from '@woocommerce/blocks/product-query/types';
 import { useEffect } from '@wordpress/element';
+import { useProductDataContext } from '@woocommerce/shared-context';
 
 /**
  * Internal dependencies
@@ -55,4 +56,14 @@ const Edit = ( {
 	);
 };
 
-export default withProductSelector( { icon, label, description } )( Edit );
+const StockIndicatorEdit: React.FC<
+	BlockEditProps< BlockAttributes > & { context: Context }
+> = ( props ) => {
+	const { product } = useProductDataContext();
+	if ( product.id === 0 ) {
+		return <Edit { ...props } />;
+	}
+	return withProductSelector( { icon, label, description } )( Edit )( props );
+};
+
+export default StockIndicatorEdit;

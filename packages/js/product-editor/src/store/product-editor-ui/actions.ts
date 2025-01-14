@@ -33,6 +33,10 @@ const modalEditorActions = {
 		type: ACTION_MODAL_EDITOR_CONTENT_HAS_CHANGED,
 		hasChanged,
 	} ),
+
+	isModalEditorOpen: () => ( {
+		type: Boolean,
+	} ),
 };
 
 const prepublishPanelActions = {

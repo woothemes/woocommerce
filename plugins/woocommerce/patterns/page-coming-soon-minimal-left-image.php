@@ -33,9 +33,8 @@ $store_description = ! empty( $site_tagline )
 	);
 
 ?>
-<!-- wp:woocommerce/coming-soon {"color":"#f9f9f9","storeOnly":false,"className":"woocommerce-coming-soon-entire-site woocommerce-coming-soon-minimal-left-image wp-block-woocommerce-background-color"} -->
-<div class="woocommerce-coming-soon-entire-site woocommerce-coming-soon-minimal-left-image wp-block-woocommerce-coming-soon wp-block-woocommerce-background-color">
-	<!-- wp:cover {"minHeight":100,"minHeightUnit":"vh","isDark":false,"className":"coming-soon-is-vertically-aligned-center coming-soon-cover","layout":{"type":"default"}} -->
+<!-- wp:woocommerce/coming-soon {"comingSoonPatternId":"page-coming-soon-minimal-left-image","className":"woocommerce-coming-soon-entire-site woocommerce-coming-soon-minimal-left-image","style":{"color":{"background":"#f9f9f9"}}} -->
+<div class="wp-block-woocommerce-coming-soon woocommerce-coming-soon-entire-site woocommerce-coming-soon-minimal-left-image has-background" style="background-color:#f9f9f9"><!-- wp:cover {"minHeight":100,"minHeightUnit":"vh","isDark":false,"className":"coming-soon-is-vertically-aligned-center coming-soon-cover","layout":{"type":"default"}} -->
 	<div class="wp-block-cover is-light coming-soon-is-vertically-aligned-center coming-soon-cover" style="min-height:100vh"><span aria-hidden="true" class="wp-block-cover__background has-background-dim-100 has-background-dim"></span><div class="wp-block-cover__inner-container"><!-- wp:group {"align":"wide","className":"woocommerce-coming-soon-header has-background","style":{"spacing":{"padding":{"top":"10px","bottom":"14px"}}},"layout":{"type":"constrained"}} -->
 		<div class="wp-block-group alignwide woocommerce-coming-soon-header has-background" style="padding-top:10px;padding-bottom:14px"><!-- wp:group {"align":"wide","layout":{"type":"flex","justifyContent":"space-between","flexWrap":"wrap"}} -->
 			<div class="wp-block-group alignwide"><!-- wp:group {"style":{"spacing":{"blockGap":"var:preset|spacing|20"},"layout":{"selfStretch":"fit","flexSize":null}},"layout":{"type":"flex"}} -->

@@ -93,20 +93,6 @@ export const IntroOptIn = ( {
 				>
 					{ __( 'Skip guided setup', 'woocommerce' ) }
 				</Button>
-				{ window.wcAdminFeatures?.blueprint && (
-					<Button
-						className="woocommerce-profiler-setup-store__button"
-						variant="tertiary"
-						onClick={ () =>
-							sendEvent( {
-								type: 'INTRO_BUILDER',
-								payload: { optInDataSharing: false },
-							} )
-						}
-					>
-						{ __( 'Builder setup', 'woocommerce' ) }
-					</Button>
-				) }
 				<div className="woocommerce-profiler-intro-opt-in__footer">
 					<CheckboxControl
 						className="core-profiler__checkbox"

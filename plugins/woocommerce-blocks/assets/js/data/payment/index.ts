@@ -24,7 +24,7 @@ export const config = {
 	__experimentalUseThunks: true,
 };
 
-const store = createReduxStore( STORE_KEY, config );
+export const store = createReduxStore( STORE_KEY, config );
 register( store );
 
 subscribe( pushChanges, store );

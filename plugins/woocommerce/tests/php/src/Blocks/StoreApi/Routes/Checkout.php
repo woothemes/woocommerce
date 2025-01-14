@@ -18,6 +18,7 @@ use Automattic\WooCommerce\Blocks\Package;
 use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields;
 use Automattic\WooCommerce\Tests\Blocks\StoreApi\MockSessionHandler;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use WC_Gateway_BACS;
 
 /**
  * Checkout Controller Tests.
@@ -168,7 +169,7 @@ class Checkout extends MockeryTestCase {
 					'country'    => 'GB',
 					'phone'      => '',
 				),
-				'payment_method'   => 'bacs',
+				'payment_method'   => WC_Gateway_BACS::ID,
 			)
 		);
 		$response = rest_get_server()->dispatch( $request );
@@ -210,7 +211,7 @@ class Checkout extends MockeryTestCase {
 					'country'    => 'GB',
 					'phone'      => '',
 				),
-				'payment_method'   => 'bacs',
+				'payment_method'   => WC_Gateway_BACS::ID,
 			)
 		);
 		$response = rest_get_server()->dispatch( $request );
@@ -294,7 +295,7 @@ class Checkout extends MockeryTestCase {
 					'country'    => 'GB',
 					'phone'      => '',
 				),
-				'payment_method'   => 'bacs',
+				'payment_method'   => WC_Gateway_BACS::ID,
 			)
 		);
 		$response = rest_get_server()->dispatch( $request );
@@ -343,7 +344,7 @@ class Checkout extends MockeryTestCase {
 					'country'    => 'GB',
 					'phone'      => '',
 				),
-				'payment_method'   => 'bacs',
+				'payment_method'   => WC_Gateway_BACS::ID,
 			)
 		);
 		$response = rest_get_server()->dispatch( $request );
@@ -391,7 +392,7 @@ class Checkout extends MockeryTestCase {
 					'country'    => 'GB',
 					'phone'      => '',
 				),
-				'payment_method'   => 'bacs',
+				'payment_method'   => WC_Gateway_BACS::ID,
 			)
 		);
 		$response = rest_get_server()->dispatch( $request );
@@ -428,7 +429,7 @@ class Checkout extends MockeryTestCase {
 					'country'    => 'GB',
 					'phone'      => '',
 				),
-				'payment_method'   => 'bacs',
+				'payment_method'   => WC_Gateway_BACS::ID,
 			)
 		);
 		$response = rest_get_server()->dispatch( $request );
@@ -471,7 +472,7 @@ class Checkout extends MockeryTestCase {
 					'country'    => 'GB',
 					'phone'      => '',
 				),
-				'payment_method'   => 'bacs',
+				'payment_method'   => WC_Gateway_BACS::ID,
 			)
 		);
 		$response = rest_get_server()->dispatch( $request );
@@ -514,7 +515,7 @@ class Checkout extends MockeryTestCase {
 					'country'    => 'US',
 					'phone'      => '',
 				),
-				'payment_method'   => 'bacs',
+				'payment_method'   => WC_Gateway_BACS::ID,
 			)
 		);
 		$response = rest_get_server()->dispatch( $request );
@@ -548,7 +549,7 @@ class Checkout extends MockeryTestCase {
 					'country'    => 'US',
 					'phone'      => '',
 				),
-				'payment_method'   => 'bacs',
+				'payment_method'   => WC_Gateway_BACS::ID,
 			)
 		);
 		$response = rest_get_server()->dispatch( $request );
@@ -580,7 +581,7 @@ class Checkout extends MockeryTestCase {
 					'country'    => 'US',
 					'phone'      => '',
 				),
-				'payment_method'   => 'bacs',
+				'payment_method'   => WC_Gateway_BACS::ID,
 			)
 		);
 		$response = rest_get_server()->dispatch( $request );
@@ -630,7 +631,7 @@ class Checkout extends MockeryTestCase {
 					'country'    => 'US',
 					'phone'      => '123456',
 				),
-				'payment_method'   => 'bacs',
+				'payment_method'   => WC_Gateway_BACS::ID,
 			)
 		);
 		$response = rest_get_server()->dispatch( $request );
@@ -683,7 +684,7 @@ class Checkout extends MockeryTestCase {
 					'country'    => 'DE',
 					'phone'      => '123456',
 				),
-				'payment_method'   => 'bacs',
+				'payment_method'   => WC_Gateway_BACS::ID,
 			)
 		);
 		$response = rest_get_server()->dispatch( $request );
@@ -741,7 +742,7 @@ class Checkout extends MockeryTestCase {
 					'country'    => 'GB',
 					'phone'      => '',
 				),
-				'payment_method'   => 'bacs',
+				'payment_method'   => WC_Gateway_BACS::ID,
 				'extensions'       => array(
 					'extension_namespace' => array(
 						'extension_key' => true,
@@ -799,7 +800,7 @@ class Checkout extends MockeryTestCase {
 					'country'    => 'GB',
 					'phone'      => '',
 				),
-				'payment_method'   => 'bacs',
+				'payment_method'   => WC_Gateway_BACS::ID,
 				'extensions'       => array(
 					'extension_namespace' => array(
 						'extension_key' => 'invalid-string',
@@ -845,7 +846,7 @@ class Checkout extends MockeryTestCase {
 					'country'    => 'GB',
 					'phone'      => '',
 				),
-				'payment_method'   => 'bacs',
+				'payment_method'   => WC_Gateway_BACS::ID,
 				'extensions'       => array(
 					'other_extension_data' => array(
 						'another_key' => true,
@@ -891,7 +892,7 @@ class Checkout extends MockeryTestCase {
 					'country'    => 'GB',
 					'phone'      => '',
 				),
-				'payment_method'   => 'bacs',
+				'payment_method'   => WC_Gateway_BACS::ID,
 			)
 		);
 
@@ -941,7 +942,7 @@ class Checkout extends MockeryTestCase {
 					'phone'      => '',
 				),
 				'create_account'   => true,
-				'payment_method'   => 'bacs',
+				'payment_method'   => WC_Gateway_BACS::ID,
 				'extensions'       => array(
 					'extension_namespace' => array(
 						'extension_key' => true,
@@ -1007,7 +1008,7 @@ class Checkout extends MockeryTestCase {
 					'phone'      => '',
 				),
 				'create_account'   => false,
-				'payment_method'   => 'bacs',
+				'payment_method'   => WC_Gateway_BACS::ID,
 				'extensions'       => array(
 					'extension_namespace' => array(
 						'extension_key' => true,
@@ -1069,7 +1070,7 @@ class Checkout extends MockeryTestCase {
 					'country'    => 'GB',
 					'phone'      => '',
 				),
-				'payment_method'   => 'bacs',
+				'payment_method'   => WC_Gateway_BACS::ID,
 				'extensions'       => array(
 					'extension_namespace' => array(
 						'extension_key' => true,
@@ -1127,7 +1128,7 @@ class Checkout extends MockeryTestCase {
 					'country'    => 'GB',
 					'phone'      => '',
 				),
-				'payment_method'   => 'bacs',
+				'payment_method'   => WC_Gateway_BACS::ID,
 			)
 		);
 
@@ -1177,7 +1178,7 @@ class Checkout extends MockeryTestCase {
 					'country'    => 'GB',
 					'phone'      => '',
 				),
-				'payment_method'   => 'bacs',
+				'payment_method'   => WC_Gateway_BACS::ID,
 			)
 		);
 
@@ -1233,7 +1234,7 @@ class Checkout extends MockeryTestCase {
 					'country'    => 'GB',
 					'phone'      => '',
 				),
-				'payment_method'   => 'bacs',
+				'payment_method'   => WC_Gateway_BACS::ID,
 				'extensions'       => array(
 					'extension_namespace' => array(
 						'extension_key' => true,
