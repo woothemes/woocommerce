@@ -154,9 +154,9 @@ class EmailPreview {
 		$object           = null;
 
 		if ( in_array( $email_type, self::USER_OBJECT_EMAILS, true ) ) {
-			$object                  = wp_get_current_user();
-			$this->email->user_email = $object->user_email;
-			$this->email->user_login = $object->user_login;
+			$object                  = new WP_User( 0 );
+			$this->email->user_email = 'user_preview@example.com';
+			$this->email->user_login = 'user_preview';
 			$this->email->set_object( $object );
 		} else {
 			$object = $this->get_dummy_order();
