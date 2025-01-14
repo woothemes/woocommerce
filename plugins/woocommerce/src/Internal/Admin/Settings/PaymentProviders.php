@@ -55,7 +55,7 @@ class PaymentProviders {
 		'woocommerce_payments' => WooPayments::class,
 		'ppcp-gateway'         => PayPal::class,
 		'stripe'               => Stripe::class,
-		'mollie'			   => Mollie::class
+		'mollie'               => Mollie::class,
 	);
 
 	/**
