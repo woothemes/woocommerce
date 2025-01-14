@@ -190,6 +190,26 @@ class EmailPreview {
 	}
 
 	/**
+	 * Ensure links open in new tab. User in WooCommerce Settings,
+	 * so the links don't open inside the iframe.
+	 *
+	 * @param string $content Email content HTML.
+	 * @return string
+	 */
+	public function ensure_links_open_in_new_tab( string $content ) {
+		return (string) preg_replace_callback(
+			'/<a\s+([^>]*?)(target=["\']?[^"\']*["\']?)?([^>]*)>/i',
+			function ( $matches ) {
+				$before = $matches[1];
+				$target = 'target="_blank"';
+				$after  = $matches[3];
+				return "<a $before $target $after>";
+			},
+			$content
+		);
+	}
+
+	/**
 	 * Get the preview email content.
 	 *
 	 * @return string
