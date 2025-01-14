@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { store, getContext, getElement } from '@woocommerce/interactivity';
-import { formatPrice, getCurrency } from '@woocommerce/price-format';
 import { HTMLElementEvent } from '@woocommerce/types';
 import { debounce } from '@woocommerce/base-utils';
 

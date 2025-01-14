@@ -74,6 +74,7 @@ final class ProductFilterRemovableChips extends AbstractBlock {
 					</li>
 				</template>
 				<?php foreach ( $filter_items as $item ) : ?>
+					<?php // translators: %s: item label. ?>
 					<?php $remove_label = sprintf( __( 'Remove filter: %s', 'woocommerce' ), $item['label'] ); ?>
 					<li class="wc-block-product-filter-removable-chips__item" data-wc-each-child>
 						<span class="wc-block-product-filter-removable-chips__label">
