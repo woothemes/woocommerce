@@ -783,20 +783,28 @@ class PaymentProviders {
 
 			// The title, description, icon, and image from the suggestion take precedence over the ones from the gateway.
 			// This is temporary until we update the partner extensions.
-			// Do not override the title for certain suggestions because their title is more descriptive.
+			// Do not override the title and description for certain suggestions because theirs are more descriptive
+			// (like including the payment method when registering multiple gateways for the same provider).
 			if ( ! in_array(
 				$suggestion['id'],
 				array(
 					ExtensionSuggestions::PAYPAL_FULL_STACK,
 					ExtensionSuggestions::PAYPAL_WALLET,
+					ExtensionSuggestions::MOLLIE,
+					ExtensionSuggestions::ANTOM,
+					ExtensionSuggestions::MERCADO_PAGO,
+					ExtensionSuggestions::AMAZON_PAY,
+					ExtensionSuggestions::SQUARE_IN_PERSON,
+					ExtensionSuggestions::PAYONEER,
 				),
 				true
 			) ) {
-				$gateway_details['title'] = $suggestion['title'];
+				$gateway_details['title']       = $suggestion['title'];
+				$gateway_details['description'] = $suggestion['description'];
 			}
-			$gateway_details['description'] = $suggestion['description'];
-			$gateway_details['icon']        = $suggestion['icon'];
-			$gateway_details['image']       = $suggestion['image'];
+
+			$gateway_details['icon']  = $suggestion['icon'];
+			$gateway_details['image'] = $suggestion['image'];
 
 			if ( empty( $gateway_details['links'] ) ) {
 				$gateway_details['links'] = $suggestion['links'];
