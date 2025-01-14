@@ -30,6 +30,15 @@ if ( $email_improvements_enabled ) {
 	add_filter( 'woocommerce_order_shipping_to_display_shipped_via', '__return_false' );
 }
 
+/**
+ * Action hook to add custom content before order details in email.
+ *
+ * @param WC_Order $order Order object.
+ * @param bool     $sent_to_admin Whether it's sent to admin or customer.
+ * @param bool     $plain_text Whether it's a plain text email.
+ * @param WC_Email $email Email object.
+ * @since 2.5.0
+ */
 do_action( 'woocommerce_email_before_order_table', $order, $sent_to_admin, $plain_text, $email ); ?>
 
 <h2 class="<?php echo esc_attr( $heading_class ); ?>">
@@ -133,5 +142,15 @@ do_action( 'woocommerce_email_before_order_table', $order, $sent_to_admin, $plai
 if ( $email_improvements_enabled ) {
 	remove_filter( 'woocommerce_order_shipping_to_display_shipped_via', '__return_false' );
 }
+
+/**
+ * Action hook to add custom content after order details in email.
+ *
+ * @param WC_Order $order Order object.
+ * @param bool     $sent_to_admin Whether it's sent to admin or customer.
+ * @param bool     $plain_text Whether it's a plain text email.
+ * @param WC_Email $email Email object.
+ * @since 2.5.0
+ */
 do_action( 'woocommerce_email_after_order_table', $order, $sent_to_admin, $plain_text, $email );
 ?>
