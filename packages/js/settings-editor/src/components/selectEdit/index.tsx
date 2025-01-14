@@ -9,7 +9,7 @@ import type { DataFormControlProps } from '@wordpress/dataviews';
 /**
  * Internal dependencies
  */
-import type { DataFormItem } from '../../types/form';
+import type { DataFormItem } from '../../types';
 
 export const SelectEdit = ( {
 	data,

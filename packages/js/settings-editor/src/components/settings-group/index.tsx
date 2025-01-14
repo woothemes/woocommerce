@@ -2,17 +2,13 @@
  * External dependencies
  */
 import { __experimentalHeading as Heading } from '@wordpress/components';
-import { createElement, useMemo, useState } from '@wordpress/element';
+import { createElement } from '@wordpress/element';
 import { DataForm } from '@wordpress/dataviews';
 import { sanitize } from 'dompurify';
 /**
  * Internal dependencies
  */
-import {
-	generateInitialData,
-	generateFields,
-	generateForm,
-} from '../../utils/dataforms-transformers';
+import { useSettingsForm } from '../../hooks/use-settings-form';
 
 const ALLOWED_TAGS = [ 'a', 'b', 'em', 'i', 'strong', 'p', 'br' ];
 const ALLOWED_ATTR = [ 'target', 'href', 'rel', 'name', 'download' ];
@@ -25,32 +21,22 @@ export const SettingsGroup = ( {
 	desc,
 	settings,
 }: GroupSettingsField ) => {
-	const [ data, setData ] = useState( () => generateInitialData( settings ) );
-	const { fields, form } = useMemo(
-		() => ( {
-			fields: generateFields( settings ),
-			form: generateForm( settings ),
-		} ),
-		[ settings ]
-	);
+	const { data, fields, form, updateField } = useSettingsForm( settings );
 
 	return (
 		<fieldset className="woocommerce-settings-group">
 			<div className="woocommerce-settings-group-title">
 				<Heading level={ 4 }>{ title }</Heading>
-				<legend dangerouslySetInnerHTML={ sanitizeHTML( desc ) } />
+				{ desc && (
+					<legend dangerouslySetInnerHTML={ sanitizeHTML( desc ) } />
+				) }
 			</div>
 			<div className="woocommerce-settings-group-content">
 				<DataForm
 					data={ data }
 					fields={ fields }
 					form={ form }
-					onChange={ ( changedField ) => {
-						setData( {
-							...data,
-							...changedField,
-						} );
-					} }
+					onChange={ updateField }
 				/>
 			</div>
 		</fieldset>
