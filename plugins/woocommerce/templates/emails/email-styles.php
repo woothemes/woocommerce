@@ -145,21 +145,25 @@ body {
 
 #template_footer td {
 	padding: 0;
-	border-radius: 6px;
+	border-radius: <?php echo $email_improvements_enabled ? '0' : '6px'; ?>;
 }
 
 #template_footer #credit {
 	border: 0;
+	<?php if ( $email_improvements_enabled ) : ?>
+		border-top: 1px solid #ccc;
+		border-top: 1px solid rgba(0, 0, 0, .2);
+	<?php endif; ?>
 	color: <?php echo esc_attr( $footer_text ); ?>;
 	font-family: <?php echo esc_attr( $font_family ); ?>;
 	font-size: 12px;
-	line-height: 150%;
+	line-height: <?php echo $email_improvements_enabled ? '140%' : '150%'; ?>;
 	text-align: center;
 	padding: <?php echo $email_improvements_enabled ? '32px' : '24px 0'; ?>;
 }
 
 #template_footer #credit p {
-	margin: 0 0 16px;
+	margin: <?php echo $email_improvements_enabled ? '0' : '0 0 16px'; ?>;
 }
 
 #body_content {
