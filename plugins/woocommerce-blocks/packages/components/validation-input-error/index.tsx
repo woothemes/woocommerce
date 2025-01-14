@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useSelect } from '@wordpress/data';
-import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
+import { validationStore } from '@woocommerce/block-data';
 import { Icon, warning } from '@wordpress/icons';
 
 /**
@@ -21,13 +21,16 @@ export const ValidationInputError = ( {
 	propertyName = '',
 	elementId = '',
 }: ValidationInputErrorProps ): JSX.Element | null => {
-	const { validationError, validationErrorId } = useSelect( ( select ) => {
-		const store = select( VALIDATION_STORE_KEY );
-		return {
-			validationError: store.getValidationError( propertyName ),
-			validationErrorId: store.getValidationErrorId( elementId ),
-		};
-	} );
+	const { validationError, validationErrorId } = useSelect(
+		( select ) => {
+			const store = select( validationStore );
+			return {
+				validationError: store.getValidationError( propertyName ),
+				validationErrorId: store.getValidationErrorId( elementId ),
+			};
+		},
+		[ elementId, propertyName ]
+	);
 
 	if ( ! errorMessage || typeof errorMessage !== 'string' ) {
 		if ( validationError?.message && ! validationError?.hidden ) {
