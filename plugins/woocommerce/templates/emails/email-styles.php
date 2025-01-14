@@ -141,6 +141,14 @@ body {
 	width: 120px
 }
 
+.email-additional-content {
+	padding-top: 32px;
+}
+
+.email-additional-content p {
+	text-align: center;
+}
+
 <?php else : ?>
 
 #template_header_image img {
