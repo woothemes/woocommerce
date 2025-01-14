@@ -90,9 +90,11 @@ export const UpgradeNotice = ( {
 
 	return (
 		<Notice
-			notice={ notice }
+			isDismissible={ false }
 			actionLabel={ buttonLabel }
 			onActionClick={ handleClick }
-		/>
+		>
+			{ notice }
+		</Notice>
 	);
 };

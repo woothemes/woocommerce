@@ -71,9 +71,11 @@ export const DowngradeNotice = ( {
 
 	return (
 		<UpgradeDowngradeNotice
-			notice={ notice }
+			isDismissible={ false }
 			actionLabel={ buttonLabel }
 			onActionClick={ handleClick }
-		/>
+		>
+			{ notice }
+		</UpgradeDowngradeNotice>
 	);
 };

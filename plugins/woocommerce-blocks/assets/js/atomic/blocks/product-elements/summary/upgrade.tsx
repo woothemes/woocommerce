@@ -82,10 +82,12 @@ const UpgradeNotice = ( { clientId }: { clientId: string } ) => {
 
 	return (
 		<UpgradeDowngradeNotice
-			notice={ notice }
+			isDismissible={ false }
 			actionLabel={ buttonLabel }
 			onActionClick={ handleClick }
-		/>
+		>
+			{ notice }
+		</UpgradeDowngradeNotice>
 	);
 };
 
