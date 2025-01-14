@@ -22,6 +22,7 @@ import { RefreshButton } from './table/actions/refresh-button';
 import Notices from './notices';
 import InstallModal from './table/actions/install-modal';
 import { connectUrl } from '../../utils/functions';
+import Notice from '../notice/notice';
 
 export default function MySubscriptions(): JSX.Element {
 	const { subscriptions, isLoading } = useContext( SubscriptionsContext );
@@ -82,55 +83,63 @@ export default function MySubscriptions(): JSX.Element {
 	}
 
 	return (
-		<div className="woocommerce-marketplace__my-subscriptions">
-			<InstallModal />
-			<section className="woocommerce-marketplace__my-subscriptions__notices">
-				<Notices />
-			</section>
-			<section className="woocommerce-marketplace__my-subscriptions-section woocommerce-marketplace__my-subscriptions__installed">
-				<header className="woocommerce-marketplace__my-subscriptions__header">
-					<div className="woocommerce-marketplace__my-subscriptions__header-content">
-						<h2 className="woocommerce-marketplace__my-subscriptions__heading">
-							{ __( 'Installed on this store', 'woocommerce' ) }
-						</h2>
-						<p className="woocommerce-marketplace__my-subscriptions__table-description">
-							{ installedTableDescription }
-						</p>
-					</div>
-					<div className="woocommerce-marketplace__my-subscriptions__header-refresh">
-						<RefreshButton />
-					</div>
-				</header>
-				<div className="woocommerce-marketplace__my-subscriptions__table-wrapper">
-					<InstalledSubscriptionsTable
-						isLoading={ isLoading }
-						rows={ subscriptionsInstalled.map( ( item ) => {
-							return subscriptionRow( item, 'installed' );
-						} ) }
-					/>
-				</div>
-			</section>
-			{ subscriptionsAvailable.length > 0 && (
-				<section className="woocommerce-marketplace__my-subscriptions-section woocommerce-marketplace__my-subscriptions__available">
-					<h2 className="woocommerce-marketplace__my-subscriptions__heading">
-						{ __( 'Available to use', 'woocommerce' ) }
-					</h2>
-					<p className="woocommerce-marketplace__my-subscriptions__table-description">
-						{ __(
-							"WooCommerce.com subscriptions you haven't used yet.",
-							'woocommerce'
-						) }
-					</p>
+		<>
+			<Notice
+				id={ 'woo-connect-notice' }
+				description={ 'test description' }
+				isDismissible={ true }
+				variant="success"
+			/>
+			<div className="woocommerce-marketplace__my-subscriptions">
+				<InstallModal />
+				<section className="woocommerce-marketplace__my-subscriptions__notices">
+					<Notices />
+				</section>
+				<section className="woocommerce-marketplace__my-subscriptions-section woocommerce-marketplace__my-subscriptions__installed">
+					<header className="woocommerce-marketplace__my-subscriptions__header">
+						<div className="woocommerce-marketplace__my-subscriptions__header-content">
+							<h2 className="woocommerce-marketplace__my-subscriptions__heading">
+								{ __( 'Installed on this store', 'woocommerce' ) }
+							</h2>
+							<p className="woocommerce-marketplace__my-subscriptions__table-description">
+								{ installedTableDescription }
+							</p>
+						</div>
+						<div className="woocommerce-marketplace__my-subscriptions__header-refresh">
+							<RefreshButton />
+						</div>
+					</header>
 					<div className="woocommerce-marketplace__my-subscriptions__table-wrapper">
-						<AvailableSubscriptionsTable
+						<InstalledSubscriptionsTable
 							isLoading={ isLoading }
-							rows={ subscriptionsAvailable.map( ( item ) => {
-								return subscriptionRow( item, 'available' );
+							rows={ subscriptionsInstalled.map( ( item ) => {
+								return subscriptionRow( item, 'installed' );
 							} ) }
 						/>
 					</div>
 				</section>
-			) }
-		</div>
+				{ subscriptionsAvailable.length > 0 && (
+					<section className="woocommerce-marketplace__my-subscriptions-section woocommerce-marketplace__my-subscriptions__available">
+						<h2 className="woocommerce-marketplace__my-subscriptions__heading">
+							{ __( 'Available to use', 'woocommerce' ) }
+						</h2>
+						<p className="woocommerce-marketplace__my-subscriptions__table-description">
+							{ __(
+								"WooCommerce.com subscriptions you haven't used yet.",
+								'woocommerce'
+							) }
+						</p>
+						<div className="woocommerce-marketplace__my-subscriptions__table-wrapper">
+							<AvailableSubscriptionsTable
+								isLoading={ isLoading }
+								rows={ subscriptionsAvailable.map( ( item ) => {
+									return subscriptionRow( item, 'available' );
+								} ) }
+							/>
+						</div>
+					</section>
+				) }
+			</div>
+		</>
 	);
 }
