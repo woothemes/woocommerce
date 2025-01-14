@@ -427,6 +427,12 @@ WooCommerce comes with some sample data you can use to see how products look; im
 * Dev - Change the Woo logo in the marketing banner [#54096](https://github.com/woocommerce/woocommerce/pull/54096)
 * Dev - Update WooCommerce logo in blocks [#54147](https://github.com/woocommerce/woocommerce/pull/54147)
 * Tweak - Fix deprecation warnings in PHP 8.3 in email preview classes [#53870](https://github.com/woocommerce/woocommerce/pull/53870)
+* Fix - CYS: Fix redirection in "Go to the store" link [#54260](https://github.com/woocommerce/woocommerce/pull/54260)
+* Fix - Fix: Revert "Clear" Button from <button> to <a> Tag for Improved Theme Compatibility while maintaining accessibility improvements [#54320](https://github.com/woocommerce/woocommerce/pull/54320)
+* Fix - Fix product-image border for images without "alt" #54247 [#54247](https://github.com/woocommerce/woocommerce/pull/54247)
+* Fix - Summary: Extend allowed attributes with class in Summary component [#54410](https://github.com/woocommerce/woocommerce/pull/54410)
+* Update - Product Summary: sanitize HTML in Product Summary [#54324](https://github.com/woocommerce/woocommerce/pull/54324)
+* Dev - Change logo in old WooCommerce.com connect page and API auth page. [#54378](https://github.com/woocommerce/woocommerce/pull/54378)
 
 
 [See changelog for all versions](https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/changelog.txt).

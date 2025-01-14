@@ -1,4 +1,0 @@
-Significance: minor
-Type: fix
-
-Fix: Revert "Clear" Button from <button> to <a> Tag for Improved Theme Compatibility while maintaining accessibility improvements
