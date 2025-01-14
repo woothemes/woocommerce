@@ -357,12 +357,7 @@ export const NewAttributeModal: React.FC< NewAttributeModalProps > = ( {
 					return (
 						<Modal
 							title={ title }
-							onRequestClose={ (
-								event:
-									| React.KeyboardEvent< Element >
-									| React.MouseEvent< Element >
-									| React.FocusEvent< Element >
-							) => {
+							onRequestClose={ ( event ) => {
 								if ( ! event?.isPropagationStopped() ) {
 									onCancel();
 								}

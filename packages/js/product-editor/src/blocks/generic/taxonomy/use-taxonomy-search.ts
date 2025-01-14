@@ -27,12 +27,12 @@ async function getTaxonomiesMissingParents(
 	} );
 	if ( missingParentIds.length > 0 ) {
 		return resolveSelect( 'core' )
-			.getEntityRecords< Taxonomy[] >( 'taxonomy', taxonomyName, {
+			.getEntityRecords( 'taxonomy', taxonomyName, {
 				include: missingParentIds,
 			} )
-			.then( ( parentTaxonomies ) => {
+			.then( ( parentTaxonomies: Taxonomy[] ) => {
 				return getTaxonomiesMissingParents(
-					[ ...( parentTaxonomies as Taxonomy[] ), ...taxonomies ],
+					[ ...parentTaxonomies, ...taxonomies ],
 					taxonomyName
 				);
 			} );
@@ -58,12 +58,14 @@ const useTaxonomySearch = (
 		setIsSearching( true );
 		let taxonomies: Taxonomy[] = [];
 		try {
-			taxonomies = await resolveSelect( 'core' ).getEntityRecords<
-				Taxonomy[]
-			>( 'taxonomy', taxonomyName, {
-				per_page: PAGINATION_SIZE,
-				search: escapeHTML( search ),
-			} );
+			taxonomies = await resolveSelect( 'core' ).getEntityRecords(
+				'taxonomy',
+				taxonomyName,
+				{
+					per_page: PAGINATION_SIZE,
+					search: escapeHTML( search ),
+				}
+			);
 			if ( options?.fetchParents ) {
 				taxonomies = await getTaxonomiesMissingParents(
 					taxonomies,

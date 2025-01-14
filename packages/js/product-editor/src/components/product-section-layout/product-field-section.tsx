@@ -17,13 +17,13 @@ type ProductFieldSectionProps = {
 	className?: string;
 };
 
-export const ProductFieldSection: React.FC< ProductFieldSectionProps > = ( {
+export const ProductFieldSection = ( {
 	id,
 	title,
 	description,
 	className,
 	children,
-} ) => (
+}: React.PropsWithChildren< ProductFieldSectionProps > ) => (
 	<ProductSectionLayout
 		title={ title }
 		description={ description }

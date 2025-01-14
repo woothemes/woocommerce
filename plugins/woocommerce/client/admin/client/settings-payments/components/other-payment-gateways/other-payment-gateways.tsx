@@ -20,17 +20,37 @@ import { GridItemPlaceholder } from '~/settings-payments/components/grid-item-pl
 const assetUrl = getAdminSetting( 'wcAdminAssetUrl' );
 
 interface OtherPaymentGatewaysProps {
+	/**
+	 * Array of suggested payment extensions.
+	 */
 	suggestions: SuggestedPaymentExtension[];
+	/**
+	 * Array of categories for the suggested payment extensions.
+	 */
 	suggestionCategories: SuggestedPaymentExtensionCategory[];
+	/**
+	 * The ID of the plugin currently being installed, or `null` if none.
+	 */
 	installingPlugin: string | null;
+	/**
+	 * Callback to handle plugin setup. Accepts the plugin ID, slug, and onboarding URL (if available).
+	 */
 	setupPlugin: (
 		id: string,
 		slug: string,
 		onboardingUrl: string | null
 	) => void;
+	/**
+	 * Indicates whether the suggestions are still being fetched.
+	 */
 	isFetching: boolean;
 }
 
+/**
+ * A component that displays a collapsible list of suggested payment extensions grouped by categories.
+ * When collapsed, it shows a few icons representing the suggestions. When expanded, it displays detailed
+ * information about each suggestion and allows the user to install them.
+ */
 export const OtherPaymentGateways = ( {
 	suggestions,
 	suggestionCategories,
@@ -39,10 +59,12 @@ export const OtherPaymentGateways = ( {
 	isFetching,
 }: OtherPaymentGatewaysProps ) => {
 	const urlParams = new URLSearchParams( window.location.search );
+
 	// Determine the initial expanded state based on URL params.
 	const initialExpanded = urlParams.get( 'other_pes_section' ) === 'expanded';
 	const [ isExpanded, setIsExpanded ] = useState( initialExpanded );
 
+	// Group suggestions by category.
 	const suggestionsByCategory = useMemo(
 		() =>
 			suggestionCategories.map(
@@ -188,8 +210,9 @@ export const OtherPaymentGateways = ( {
 		);
 	}, [ suggestionsByCategory, installingPlugin, setupPlugin, isFetching ] );
 
+	// Don't render the component if there are no suggestions and not fetching.
 	if ( ! isFetching && suggestions.length === 0 ) {
-		return null; // Don't render the component if there are no suggestions
+		return null;
 	}
 
 	return (

@@ -570,7 +570,7 @@ test.describe( 'Billing Address Form', () => {
 		const companyCheckbox = page.getByLabel( 'Company', {
 			exact: true,
 		} );
-		await companyCheckbox.check();
+		await companyCheckbox.click();
 		await expect( companyCheckbox ).toBeChecked();
 
 		const companyInput = editor.canvas.getByLabel( 'Company (optional)' );

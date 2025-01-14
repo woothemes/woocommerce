@@ -24,7 +24,8 @@ export function useConfirmUnsavedProductChanges(
 			const { isSavingEntityRecord } = select( 'core' );
 
 			return {
-				isSaving: isSavingEntityRecord< boolean >(
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+				isSaving: isSavingEntityRecord(
 					'postType',
 					productType,
 					productId

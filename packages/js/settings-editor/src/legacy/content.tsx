@@ -25,7 +25,7 @@ export const LegacyContent = ( {
 	}
 
 	return (
-		<form>
+		<form id="mainform">
 			<div className="woocommerce-settings-content">
 				{ section.settings.map( ( data, index ) => {
 					const key = `${ data.type }-${ index }`;

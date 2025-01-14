@@ -62,7 +62,9 @@ export function Edit( {
 	const { dimensionUnit, weightUnit } = useSelect( ( select ) => {
 		const { getOption } = select( OPTIONS_STORE_NAME );
 		return {
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			dimensionUnit: getOption( 'woocommerce_dimension_unit' ),
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			weightUnit: getOption( 'woocommerce_weight_unit' ),
 		};
 	}, [] );

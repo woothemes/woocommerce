@@ -54,6 +54,11 @@ interface EnableGatewayButtonProps {
 	incentive?: PaymentIncentive | null;
 }
 
+/**
+ * A button component that allows users to enable a payment gateway.
+ * Depending on the gateway's state, it redirects to settings, onboarding, or recommended payment methods pages.
+ * If incentive data is provided, it will trigger the `acceptIncentive` callback with the incentive ID.
+ */
 export const EnableGatewayButton = ( {
 	gatewayId,
 	gatewayState,
@@ -126,6 +131,7 @@ export const EnableGatewayButton = ( {
 						}
 					}
 				}
+				// If no redirect occured, the data needs to be refreshed.
 				invalidateResolutionForStoreSelector(
 					isOffline
 						? 'getOfflinePaymentGateways'

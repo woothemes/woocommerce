@@ -66,8 +66,11 @@ export function DescriptionBlockEdit( {
 	const { isModalEditorOpen, modalEditorBlocks, hasChanged } = useSelect(
 		( select ) => {
 			return {
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				isModalEditorOpen: select( store ).isModalEditorOpen(),
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				modalEditorBlocks: select( store ).getModalEditorBlocks(),
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				hasChanged: select( store ).getModalEditorContentHasChanged(),
 			};
 		},
