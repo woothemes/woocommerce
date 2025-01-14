@@ -290,7 +290,7 @@ class EmailPreview {
 		$order->set_shipping_total( 5 );
 		$order->set_total( 65 );
 		$order->set_payment_method_title( __( 'Direct bank transfer', 'woocommerce' ) );
-		$order->set_customer_note( __( 'This is a customer note. Customers can add a note to their order on checkout. It can be multiple lines. If there’s no note, this section is hidden.', 'woocommerce' ) );
+		$order->set_customer_note( __( "This is a customer note. Customers can add a note to their order on checkout.\n\nIt can be multiple lines. If there’s no note, this section is hidden.", 'woocommerce' ) );
 
 		$address = $this->get_dummy_address();
 		$order->set_billing_address( $address );
