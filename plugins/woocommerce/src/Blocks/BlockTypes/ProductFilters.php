@@ -47,10 +47,12 @@ class ProductFilters extends AbstractBlock {
 	 * @return string Rendered block type output.
 	 */
 	protected function render( $attributes, $content, $block ) {
-		$query_id       = $block->context['queryId'] ?? 0;
-		$filter_params  = $this->get_filter_params( $query_id );
+		$query_id      = $block->context['queryId'] ?? 0;
+		$filter_params = $this->get_filter_params( $query_id );
 		/**
 		 * Filter hook to modify the selected filter items.
+		 *
+		 * @since 9.7.0
 		 */
 		$active_filters = apply_filters( 'woocommerce_blocks_product_filters_selected_items', array(), $filter_params );
 
