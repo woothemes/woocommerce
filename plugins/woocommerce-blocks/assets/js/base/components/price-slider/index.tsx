@@ -420,60 +420,78 @@ const PriceSlider = ( {
 			{ showInputFields && (
 				<div className="wc-block-price-filter__controls wc-block-components-price-slider__controls">
 					{ ! isUpdating ? (
-						<FormattedMonetaryAmount
-							{ ...commonFormattedMonetaryAmountInputProps }
-							className={ getInputClassName( 'min' ) }
-							aria-label={ __(
-								'Filter products by minimum price',
-								'woocommerce'
-							) }
-							isAllowed={ isValidMinValue( {
-								minConstraint,
-								minorUnit: currency.minorUnit,
-								currentMaxValue: maxPriceInput,
-							} ) }
-							onValueChange={ ( value ) => {
-								if ( value === minPriceInput ) {
-									return;
-								}
-								setMinPriceInput( value );
-								handlePriceChange(
-									value,
-									maxPriceInput as number,
-									true
-								);
-							} }
-							value={ minPriceInput }
-						/>
+						<div className="wc-block-price-filter__control wc-block-components-price-slider__control">
+							<label
+								className="wc-block-components-price-slider__label"
+								htmlFor="minPriceInput"
+							>
+								{ __( 'Min. Price', 'woocommerce' ) }
+							</label>
+							<FormattedMonetaryAmount
+								{ ...commonFormattedMonetaryAmountInputProps }
+								id="minPriceInput"
+								className={ getInputClassName( 'min' ) }
+								aria-label={ __(
+									'Filter products by minimum price',
+									'woocommerce'
+								) }
+								isAllowed={ isValidMinValue( {
+									minConstraint,
+									minorUnit: currency.minorUnit,
+									currentMaxValue: maxPriceInput,
+								} ) }
+								onValueChange={ ( value ) => {
+									if ( value === minPriceInput ) {
+										return;
+									}
+									setMinPriceInput( value );
+									handlePriceChange(
+										value,
+										maxPriceInput as number,
+										true
+									);
+								} }
+								value={ minPriceInput }
+							/>
+						</div>
 					) : (
 						<div className="input-loading"></div>
 					) }
 					{ inlineInputAvailable && slider }
 					{ ! isUpdating ? (
-						<FormattedMonetaryAmount
-							{ ...commonFormattedMonetaryAmountInputProps }
-							className={ getInputClassName( 'max' ) }
-							aria-label={ __(
-								'Filter products by maximum price',
-								'woocommerce'
-							) }
-							isAllowed={ isValidMaxValue( {
-								maxConstraint,
-								minorUnit: currency.minorUnit,
-							} ) }
-							onValueChange={ ( value ) => {
-								if ( value === maxPriceInput ) {
-									return;
-								}
-								setMaxPriceInput( value );
-								handlePriceChange(
-									minPriceInput as number,
-									value,
-									false
-								);
-							} }
-							value={ maxPriceInput }
-						/>
+						<div className="wc-block-price-filter__control wc-block-components-price-slider__control">
+							<label
+								className="wc-block-components-price-slider__label"
+								htmlFor="maxPriceInput"
+							>
+								{ __( 'Max. Price', 'woocommerce' ) }
+							</label>
+							<FormattedMonetaryAmount
+								{ ...commonFormattedMonetaryAmountInputProps }
+								id="maxPriceInput"
+								className={ getInputClassName( 'max' ) }
+								aria-label={ __(
+									'Filter products by maximum price',
+									'woocommerce'
+								) }
+								isAllowed={ isValidMaxValue( {
+									maxConstraint,
+									minorUnit: currency.minorUnit,
+								} ) }
+								onValueChange={ ( value ) => {
+									if ( value === maxPriceInput ) {
+										return;
+									}
+									setMaxPriceInput( value );
+									handlePriceChange(
+										minPriceInput as number,
+										value,
+										false
+									);
+								} }
+								value={ maxPriceInput }
+							/>
+						</div>
 					) : (
 						<div className="input-loading"></div>
 					) }
