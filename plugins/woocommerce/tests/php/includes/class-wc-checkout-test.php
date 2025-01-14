@@ -121,7 +121,7 @@ class WC_Checkout_Test extends \WC_Unit_Test_Case {
 				'show_downloads' => false,
 			)
 		);
-		// The \n are necessary because those characters actually exist in the template.
+		// The preg_replace is necessary because the template outputs a lot of whitespace, we can just make sure the <br /> tags are there as the other whitespace doesn't matter.
 		$this->assertStringContainsString( 'A string<br />with linebreaks<br />in it.', preg_replace('/[\t|\\n]+/', '', $content) );
 	}
 
