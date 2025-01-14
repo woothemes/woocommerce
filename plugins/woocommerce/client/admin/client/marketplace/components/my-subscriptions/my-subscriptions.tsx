@@ -5,6 +5,7 @@ import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { createInterpolateElement, useContext } from '@wordpress/element';
 import { Icon, external } from '@wordpress/icons';
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
@@ -59,6 +60,22 @@ export default function MySubscriptions(): JSX.Element {
 			! subscription.maxed // no more connections allowed for the subscription so it's no longer "available to use"
 	);
 
+	const handleConnectedNoticeClose = () => {
+		const data = {
+			notice_id: 'woo-connected-notice',
+			dismiss_notice_nonce: wccomSettings?.dismissNoticeNonce || '',
+		};
+		apiFetch( {
+			path: `/wc-admin/notice/dismiss`,
+			method: 'POST',
+			data,
+		} );
+		localStorage.setItem(
+			'wc-marketplaceNoticeClosed-woo-connected-notice',
+			'false'
+		);
+	};
+
 	if ( ! wccomSettings?.isConnected ) {
 		const connectMessage = __(
 			"Connect your store to WooCommerce.com using the WooCommerce.com Update Manager. Once connected, you'll be able to manage your subscriptions, receive product updates, and access streamlined support from this screen.",
@@ -92,6 +109,7 @@ export default function MySubscriptions(): JSX.Element {
 				) }
 				isDismissible={ true }
 				variant="success"
+				onClose={ handleConnectedNoticeClose }
 			/>
 			<div className="woocommerce-marketplace__my-subscriptions">
 				<InstallModal />
