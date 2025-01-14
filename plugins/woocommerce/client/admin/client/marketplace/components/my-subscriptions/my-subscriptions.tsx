@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { createInterpolateElement, useContext } from '@wordpress/element';
 import { Icon, external } from '@wordpress/icons';
 
@@ -85,8 +85,11 @@ export default function MySubscriptions(): JSX.Element {
 	return (
 		<>
 			<Notice
-				id={ 'woo-connect-notice' }
-				description={ 'test description' }
+				id={ 'woo-connected-notice' }
+				description={ sprintf(
+					__( 'Successfully connected to <b>%s</b>' ),
+					wccomSettings?.userEmail
+				) }
 				isDismissible={ true }
 				variant="success"
 			/>
