@@ -141,6 +141,10 @@ body {
 	width: 120px
 }
 
+.email-introduction {
+	padding-bottom: 24px;
+}
+
 .email-additional-content {
 	padding-top: 32px;
 }

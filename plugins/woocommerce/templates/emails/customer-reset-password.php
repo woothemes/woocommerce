@@ -23,6 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <?php do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 
+<div class="email-introduction">
 <?php /* translators: %s: Customer username */ ?>
 <p><?php printf( esc_html__( 'Hi %s,', 'woocommerce' ), esc_html( $user_login ) ); ?></p>
 <?php /* translators: %s: Store name */ ?>
@@ -35,6 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<?php esc_html_e( 'Click here to reset your password', 'woocommerce' ); ?>
 	</a>
 </p>
+</div>
 
 <?php
 /**

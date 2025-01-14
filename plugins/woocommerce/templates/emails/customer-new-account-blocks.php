@@ -20,6 +20,7 @@ defined( 'ABSPATH' ) || exit;
  */
 do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 
+<div class="email-introduction">
 <?php /* translators: %s: Customer username */ ?>
 <p><?php printf( esc_html__( 'Hello %s,', 'woocommerce' ), esc_html( $user_login ) ); ?></p>
 <?php /* translators: %1$s: Site title, %2$s: Username, %3$s: My account link */ ?>
@@ -27,6 +28,7 @@ do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 <?php if ( $set_password_url ) : ?>
 	<p><a href="<?php echo esc_attr( $set_password_url ); ?>"><?php printf( esc_html__( 'Click here to set your new password.', 'woocommerce' ) ); ?></a></p>
 <?php endif; ?>
+</div>
 
 <?php
 /**
