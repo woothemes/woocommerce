@@ -9,11 +9,11 @@ import { useCallback } from '@wordpress/element';
  */
 import { STORE_KEY } from '~/marketing/data-multichannel/constants';
 import {
-	CampaignTypesState,
 	CampaignType as APICampaignType,
 	ApiFetchError,
 } from '~/marketing/data-multichannel/types';
 import { CampaignType } from '~/marketing/types/CampaignType';
+import { Selectors } from '../data-multichannel/selectors';
 
 type UseCampaignTypes = {
 	loading: boolean;
@@ -41,11 +41,12 @@ export const useCampaignTypes = (): UseCampaignTypes => {
 		invalidateResolution( 'getCampaignTypes', [] );
 	}, [ invalidateResolution ] );
 
-	return useSelect< UseCampaignTypes >(
+	return useSelect(
 		( select ) => {
-			const { hasFinishedResolution, getCampaignTypes } =
-				select( STORE_KEY );
-			const campaignTypesState = getCampaignTypes< CampaignTypesState >();
+			const { hasFinishedResolution, getCampaignTypes } = select(
+				STORE_KEY
+			) as Selectors;
+			const campaignTypesState = getCampaignTypes();
 
 			return {
 				loading: ! hasFinishedResolution( 'getCampaignTypes', [] ),
