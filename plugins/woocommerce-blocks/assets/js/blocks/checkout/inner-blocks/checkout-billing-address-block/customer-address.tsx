@@ -6,7 +6,7 @@ import { Form } from '@woocommerce/base-components/cart-checkout';
 import { useCheckoutAddress, useStoreEvents } from '@woocommerce/base-context';
 import type { AddressFormValues } from '@woocommerce/settings';
 import { useSelect } from '@wordpress/data';
-import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
+import { validationStore } from '@woocommerce/block-data';
 import { ADDRESS_FORM_KEYS } from '@woocommerce/block-settings';
 
 /**
@@ -27,21 +27,24 @@ const CustomerAddress = () => {
 	const { dispatchCheckoutEvent } = useStoreEvents();
 
 	// Forces editing state if store has errors.
-	const { hasValidationErrors, invalidProps } = useSelect( ( select ) => {
-		const store = select( VALIDATION_STORE_KEY );
-		return {
-			hasValidationErrors: store.hasValidationErrors(),
-			invalidProps: Object.keys( billingAddress )
-				.filter( ( key ) => {
-					return (
-						key !== 'email' &&
-						store.getValidationError( 'billing_' + key ) !==
-							undefined
-					);
-				} )
-				.filter( Boolean ),
-		};
-	} );
+	const { hasValidationErrors, invalidProps } = useSelect(
+		( select ) => {
+			const store = select( validationStore );
+			return {
+				hasValidationErrors: store.hasValidationErrors(),
+				invalidProps: Object.keys( billingAddress )
+					.filter( ( key ) => {
+						return (
+							key !== 'email' &&
+							store.getValidationError( 'billing_' + key ) !==
+								undefined
+						);
+					} )
+					.filter( Boolean ),
+			};
+		},
+		[ billingAddress ]
+	);
 
 	useEffect( () => {
 		if ( invalidProps.length > 0 && editing === false ) {
