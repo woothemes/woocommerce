@@ -62,7 +62,7 @@ body:
     id: other
     attributes:
       label: Other context
-      description: Please describe anything else that might be helpful around the issue.
+      description: Please describe anything else that might be helpful around the issue (optional).
     validations:
       required: false
 
