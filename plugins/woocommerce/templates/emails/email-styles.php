@@ -97,9 +97,9 @@ body {
 }
 
 #template_container {
-	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1) !important;
+	box-shadow: <?php echo $email_improvements_enabled ? 'none' : '0 1px 4px rgba(0, 0, 0, 0.1) !important'; ?>;
 	background-color: <?php echo esc_attr( $body ); ?>;
-	border: 1px solid <?php echo esc_attr( $bg_darker_10 ); ?>;
+	border: <?php echo $email_improvements_enabled ? '0' : '1px solid ' . esc_attr( $bg_darker_10 ); ?>;
 	border-radius: 3px !important;
 }
 
