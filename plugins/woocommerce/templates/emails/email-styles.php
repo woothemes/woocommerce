@@ -141,6 +141,12 @@ body {
 	width: 120px
 }
 
+.email-logo-text {
+	color: <?php echo esc_attr( $link_color ); ?>;
+	font-family: <?php echo esc_attr( $font_family ); ?>;
+	font-size: 18px;
+}
+
 .email-introduction {
 	padding-bottom: 24px;
 }

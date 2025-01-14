@@ -55,6 +55,8 @@ $email_improvements_enabled = FeaturesUtil::feature_is_enabled( 'email_improveme
 
 										if ( $img ) {
 											echo '<p style="margin-top:0;"><img src="' . esc_url( $img ) . '" alt="' . esc_attr( get_bloginfo( 'name', 'display' ) ) . '" /></p>';
+										} elseif ( $email_improvements_enabled ) {
+											echo '<p class="email-logo-text">' . esc_html( get_bloginfo( 'name', 'display' ) ) . '</p>';
 										}
 										?>
 									</div>
