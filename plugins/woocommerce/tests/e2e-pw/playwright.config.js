@@ -93,7 +93,6 @@ const config = {
 		{
 			name: 'ui',
 			testIgnore: '**/api-tests/**',
-			use: { ...devices[ 'Desktop Chrome' ] },
 		},
 		{
 			name: 'api',
