@@ -5,6 +5,8 @@
  * @package WooCommerce\Classes
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -142,12 +144,12 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 					'ID'         => 'ASC',
 				),
 				'fields'      => 'ids',
-				'post_status' => array( 'publish', 'private' ),
+				'post_status' => array( ProductStatus::PUBLISH, ProductStatus::PRIVATE ),
 				'numberposts' => -1, // phpcs:ignore WordPress.VIP.PostsPerPage.posts_per_page_numberposts
 			);
 
 			$visible_only_args                = $all_args;
-			$visible_only_args['post_status'] = 'publish';
+			$visible_only_args['post_status'] = ProductStatus::PUBLISH;
 
 			if ( 'yes' === get_option( 'woocommerce_hide_out_of_stock_items' ) ) {
 				$visible_only_args['tax_query'][] = array(
@@ -673,7 +675,7 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 					'post_parent' => $product_id,
 					'post_type'   => 'product_variation',
 					'fields'      => 'ids',
-					'post_status' => array( 'any', 'trash', 'auto-draft' ),
+					'post_status' => array( 'any', ProductStatus::TRASH, ProductStatus::AUTO_DRAFT ),
 					'numberposts' => -1, // phpcs:ignore WordPress.VIP.PostsPerPage.posts_per_page_numberposts
 				)
 			)

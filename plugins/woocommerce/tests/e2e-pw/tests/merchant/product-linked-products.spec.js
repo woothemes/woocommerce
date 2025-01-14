@@ -29,7 +29,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Products > Related products',
-	{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
+	{ tag: [ tags.GUTENBERG ] },
 	() => {
 		async function navigate( page, productId ) {
 			await test.step( 'Navigate to product edit page', async () => {
@@ -50,7 +50,7 @@ test.describe(
 				// extra click somewhere in the page as a workaround for update button click not always working
 				await page
 					.getByRole( 'heading', {
-						name: 'Edit Product',
+						name: 'Edit product',
 						exact: true,
 					} )
 					.click();

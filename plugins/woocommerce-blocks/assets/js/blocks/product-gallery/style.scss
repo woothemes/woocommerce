@@ -73,7 +73,7 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 		#{$large-image} {
 			img {
 				max-height: $full-height-desktop;
-				width: auto;
+				width: 100%;
 			}
 
 			.wc-block-product-gallery-large-image__container {
@@ -109,6 +109,7 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 	#{$gallery-next-previous-outside-image} & .wc-block-product-gallery-large-image__image-element {
 		margin-right: auto;
 		margin-left: auto;
+		width: 100%;
 		max-width: $outside-image-max-width;
 	}
 
@@ -136,7 +137,7 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 	}
 
 	#{$gallery-next-previous-inside-image} & .wc-block-product-gallery-large-image__image-element {
-		width: fit-content;
+		width: 100%;
 		overflow: hidden;
 		margin-right: auto;
 		margin-left: auto;
@@ -151,6 +152,7 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 		transition: all 0.1s linear;
 		aspect-ratio: 1 / 1;
 		object-fit: contain;
+		width: 100%;
 
 		// Keep the order in this way. The hoverZoom class should override the full-screen-on-click class when both are applied.
 		&.wc-block-woocommerce-product-gallery-large-image__image--full-screen-on-click {

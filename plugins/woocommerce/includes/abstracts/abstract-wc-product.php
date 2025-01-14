@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareTrait;
 use Automattic\WooCommerce\Internal\ProductAttributesLookup\LookupDataStore as ProductAttributesLookupDataStore;
 
@@ -151,7 +153,7 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	 * @return string
 	 */
 	public function get_type() {
-		return isset( $this->product_type ) ? $this->product_type : 'simple';
+		return isset( $this->product_type ) ? $this->product_type : ProductType::SIMPLE;
 	}
 
 	/**
@@ -1631,16 +1633,16 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	protected function is_visible_core() {
 		$visible = 'visible' === $this->get_catalog_visibility() || ( is_search() && 'search' === $this->get_catalog_visibility() ) || ( ! is_search() && 'catalog' === $this->get_catalog_visibility() );
 
-		if ( 'trash' === $this->get_status() ) {
+		if ( ProductStatus::TRASH === $this->get_status() ) {
 			$visible = false;
-		} elseif ( 'publish' !== $this->get_status() && ! current_user_can( 'edit_post', $this->get_id() ) ) {
+		} elseif ( ProductStatus::PUBLISH !== $this->get_status() && ! current_user_can( 'edit_post', $this->get_id() ) ) {
 			$visible = false;
 		}
 
 		if ( $this->get_parent_id() ) {
 			$parent_product = wc_get_product( $this->get_parent_id() );
 
-			if ( $parent_product && 'publish' !== $parent_product->get_status() && ! current_user_can( 'edit_post', $parent_product->get_id() ) ) {
+			if ( $parent_product && ProductStatus::PUBLISH !== $parent_product->get_status() && ! current_user_can( 'edit_post', $parent_product->get_id() ) ) {
 				$visible = false;
 			}
 		}
@@ -1658,7 +1660,14 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	 * @return bool
 	 */
 	public function is_purchasable() {
-		return apply_filters( 'woocommerce_is_purchasable', $this->exists() && ( 'publish' === $this->get_status() || current_user_can( 'edit_post', $this->get_id() ) ) && '' !== $this->get_price(), $this );
+		/**
+		 * Filters whether a product is purchasable.
+		 *
+		 * @since 2.7.0
+		 * @param bool          $purchasable Whether the product is purchasable.
+		 * @param WC_Product    $product     Product object.
+		 */
+		return apply_filters( 'woocommerce_is_purchasable', $this->exists() && ( ProductStatus::PUBLISH === $this->get_status() || current_user_can( 'edit_post', $this->get_id() ) ) && '' !== $this->get_price(), $this );
 	}
 
 	/**

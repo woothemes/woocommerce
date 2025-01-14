@@ -15,14 +15,14 @@ import { OrderMetaSlotFill, CheckoutOrderSummaryFill } from './slotfills';
 import { useContainerWidthContext } from '../../../../base/context';
 import { FormattedMonetaryAmount } from '../../../../../../packages/components';
 import { FormStepHeading } from '../../form-step';
-import { BlockAttributes } from './edit';
-import { DEFAULT_TOTAL_HEADING } from './constants';
 
 const FrontendBlock = ( {
 	children,
 	className = '',
-	totalHeading,
-}: BlockAttributes & { children?: JSX.Element | JSX.Element[] } ) => {
+}: {
+	children: JSX.Element | JSX.Element[];
+	className?: string;
+} ): JSX.Element | null => {
 	const { cartTotals } = useStoreCart();
 	const { isLarge } = useContainerWidthContext();
 	const [ isOpen, setIsOpen ] = useState( false );
@@ -92,7 +92,6 @@ const FrontendBlock = ( {
 					{ children }
 					<div className="wc-block-components-totals-wrapper">
 						<TotalsFooterItem
-							label={ totalHeading || DEFAULT_TOTAL_HEADING }
 							currency={ totalsCurrency }
 							values={ cartTotals }
 						/>
@@ -113,9 +112,6 @@ const FrontendBlock = ( {
 							{ children }
 							<div className="wc-block-components-totals-wrapper">
 								<TotalsFooterItem
-									label={
-										totalHeading || DEFAULT_TOTAL_HEADING
-									}
 									currency={ totalsCurrency }
 									values={ cartTotals }
 								/>

@@ -110,7 +110,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Shopper Checkout Login Account',
-	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS ] },
+	{ tag: [ tags.PAYMENTS, tags.HPOS ] },
 	() => {
 		test.beforeAll( async ( { baseURL } ) => {
 			await setComingSoon( { baseURL, enabled: 'no' } );

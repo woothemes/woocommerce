@@ -5,6 +5,7 @@ import { SearchListItem } from '@woocommerce/editor-components/search-list-contr
 import { getSetting } from '@woocommerce/settings';
 import {
 	AttributeObject,
+	AttributeObjectForDisplay,
 	AttributeSetting,
 	AttributeTerm,
 	AttributeWithTerms,
@@ -17,9 +18,11 @@ const ATTRIBUTES = getSetting< AttributeSetting[] >( 'attributes', [] );
 /**
  * Format an attribute from the settings into an object with standardized keys.
  *
- * @param {Object} attribute The attribute object.
+ * @param {Object|null} attribute The attribute object.
  */
-const attributeSettingToObject = ( attribute: AttributeSetting ) => {
+const attributeSettingToObject = (
+	attribute: AttributeSetting
+): AttributeObjectForDisplay | null => {
 	if ( ! attribute || ! attribute.attribute_name ) {
 		return null;
 	}
@@ -36,7 +39,7 @@ const attributeSettingToObject = ( attribute: AttributeSetting ) => {
  * Format all attribute settings into objects.
  */
 const attributeObjects = ATTRIBUTES.reduce(
-	( acc: Partial< AttributeObject >[], current ) => {
+	( acc: AttributeObjectForDisplay[], current ) => {
 		const attributeObject = attributeSettingToObject( current );
 
 		if ( attributeObject && attributeObject.id ) {

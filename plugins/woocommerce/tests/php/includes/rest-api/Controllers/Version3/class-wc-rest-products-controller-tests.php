@@ -1,5 +1,7 @@
 <?php
 
+use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareUnitTestSuiteTrait;
 
 /**
@@ -530,7 +532,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 			true,
 			array(
 				'name'   => 'Draft Product',
-				'status' => 'draft',
+				'status' => ProductStatus::DRAFT,
 			)
 		);
 
@@ -538,14 +540,14 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 			true,
 			array(
 				'name'   => 'Pending Product',
-				'status' => 'pending',
+				'status' => ProductStatus::PENDING,
 			)
 		);
 
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
 		$request->set_query_params(
 			array(
-				'include_status' => array( 'draft' ),
+				'include_status' => array( ProductStatus::DRAFT ),
 			)
 		);
 
@@ -555,7 +557,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 
 		$this->assertCount( 1, $response_products );
 		$this->assertEquals( $draft_product->get_id(), $response_products[0]['id'] );
-		$this->assertEquals( 'draft', $response_products[0]['status'] );
+		$this->assertEquals( ProductStatus::DRAFT, $response_products[0]['status'] );
 	}
 
 	/**
@@ -568,7 +570,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 			true,
 			array(
 				'name'   => 'Draft Product',
-				'status' => 'draft',
+				'status' => ProductStatus::DRAFT,
 			)
 		);
 
@@ -576,7 +578,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 			true,
 			array(
 				'name'   => 'Pending Product',
-				'status' => 'pending',
+				'status' => ProductStatus::PENDING,
 			)
 		);
 
@@ -584,14 +586,14 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 			true,
 			array(
 				'name'   => 'Private Product',
-				'status' => 'private',
+				'status' => ProductStatus::PRIVATE,
 			)
 		);
 
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
 		$request->set_query_params(
 			array(
-				'include_status' => array( 'draft', 'pending' ),
+				'include_status' => array( ProductStatus::DRAFT, ProductStatus::PENDING ),
 			)
 		);
 
@@ -608,9 +610,9 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 			$response_products
 		);
 
-		$this->assertContains( 'draft', $statuses );
-		$this->assertContains( 'pending', $statuses );
-		$this->assertNotContains( 'private', $statuses );
+		$this->assertContains( ProductStatus::DRAFT, $statuses );
+		$this->assertContains( ProductStatus::PENDING, $statuses );
+		$this->assertNotContains( ProductStatus::PRIVATE, $statuses );
 	}
 
 	/**
@@ -689,7 +691,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
 		$request->set_query_params(
 			array(
-				'exclude_status' => array( 'draft' ),
+				'exclude_status' => array( ProductStatus::DRAFT ),
 			)
 		);
 
@@ -699,7 +701,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 
 		$statuses = array_unique( array_column( $data, 'status' ) );
 
-		$this->assertNotContains( 'draft', $statuses );
+		$this->assertNotContains( ProductStatus::DRAFT, $statuses );
 	}
 
 	/**
@@ -720,7 +722,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
 		$request->set_query_params(
 			array(
-				'exclude_status' => array( 'draft', 'private' ),
+				'exclude_status' => array( ProductStatus::DRAFT, ProductStatus::PRIVATE ),
 			)
 		);
 
@@ -731,12 +733,12 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 		$statuses = array_unique( array_column( $data, 'status' ) );
 
 		$this->assertEqualsCanonicalizing(
-			array( 'publish', 'pending' ),
+			array( ProductStatus::PUBLISH, ProductStatus::PENDING ),
 			$statuses
 		);
 
-		$this->assertNotContains( 'draft', $statuses );
-		$this->assertNotContains( 'private', $statuses );
+		$this->assertNotContains( ProductStatus::DRAFT, $statuses );
+		$this->assertNotContains( ProductStatus::PRIVATE, $statuses );
 	}
 
 	/**
@@ -780,7 +782,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
 		$request->set_query_params(
 			array(
-				'exclude_status' => array( 'draft', 'invalid_status' ),
+				'exclude_status' => array( ProductStatus::DRAFT, 'invalid_status' ),
 			)
 		);
 
@@ -834,8 +836,8 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
 		$request->set_query_params(
 			array(
-				'include_status' => array( 'draft', 'private' ),
-				'exclude_status' => array( 'private' ),
+				'include_status' => array( ProductStatus::DRAFT, ProductStatus::PRIVATE ),
+				'exclude_status' => array( ProductStatus::PRIVATE ),
 			)
 		);
 
@@ -844,8 +846,8 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 
 		$statuses = array_unique( array_column( $response->get_data(), 'status' ) );
 
-		$this->assertContains( 'draft', $statuses );
-		$this->assertNotContains( 'private', $statuses );
+		$this->assertContains( ProductStatus::DRAFT, $statuses );
+		$this->assertNotContains( ProductStatus::PRIVATE, $statuses );
 	}
 
 	/**
@@ -867,7 +869,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 		$request->set_query_params(
 			array(
 				'include_status' => array( 'any' ),
-				'exclude_status' => array( 'private', 'draft' ),
+				'exclude_status' => array( ProductStatus::PRIVATE, ProductStatus::DRAFT ),
 			)
 		);
 
@@ -877,11 +879,11 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 		$statuses = array_unique( array_column( $response->get_data(), 'status' ) );
 
 		$this->assertEqualsCanonicalizing(
-			array( 'publish', 'pending' ),
+			array( ProductStatus::PUBLISH, ProductStatus::PENDING ),
 			$statuses
 		);
-		$this->assertNotContains( 'private', $statuses );
-		$this->assertNotContains( 'draft', $statuses );
+		$this->assertNotContains( ProductStatus::PRIVATE, $statuses );
+		$this->assertNotContains( ProductStatus::DRAFT, $statuses );
 	}
 
 	/**
@@ -902,8 +904,8 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
 		$request->set_query_params(
 			array(
-				'include_status' => array( 'draft', 'pending', 'private' ),
-				'exclude_status' => array( 'private', 'draft' ),
+				'include_status' => array( ProductStatus::DRAFT, ProductStatus::PENDING, ProductStatus::PRIVATE ),
+				'exclude_status' => array( ProductStatus::PRIVATE, ProductStatus::DRAFT ),
 			)
 		);
 
@@ -912,10 +914,10 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 
 		$statuses = array_unique( array_column( $response->get_data(), 'status' ) );
 
-		$this->assertEqualsCanonicalizing( array( 'pending' ), $statuses );
-		$this->assertNotContains( 'private', $statuses );
-		$this->assertNotContains( 'draft', $statuses );
-		$this->assertNotContains( 'publish', $statuses );
+		$this->assertEqualsCanonicalizing( array( ProductStatus::PENDING ), $statuses );
+		$this->assertNotContains( ProductStatus::PRIVATE, $statuses );
+		$this->assertNotContains( ProductStatus::DRAFT, $statuses );
+		$this->assertNotContains( ProductStatus::PUBLISH, $statuses );
 	}
 
 	/**
@@ -936,8 +938,8 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
 		$request->set_query_params(
 			array(
-				'status'         => 'draft',
-				'exclude_status' => array( 'draft' ),
+				'status'         => ProductStatus::DRAFT,
+				'exclude_status' => array( ProductStatus::DRAFT ),
 			)
 		);
 
@@ -960,7 +962,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
 		$request->set_query_params(
 			array(
-				'include_types' => array( 'grouped' ),
+				'include_types' => array( ProductType::GROUPED ),
 			)
 		);
 
@@ -969,7 +971,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 		$response_products = $response->get_data();
 
 		$this->assertCount( 1, $response_products );
-		$this->assertEquals( 'grouped', $response_products[0]['type'] );
+		$this->assertEquals( ProductType::GROUPED, $response_products[0]['type'] );
 	}
 
 	/**
@@ -984,7 +986,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
 		$request->set_query_params(
 			array(
-				'include_types' => array( 'external', 'grouped' ),
+				'include_types' => array( ProductType::EXTERNAL, ProductType::GROUPED ),
 			)
 		);
 
@@ -995,7 +997,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 		$this->assertCount( 2, $response_products );
 
 		$product_types = wp_list_pluck( $response_products, 'type' );
-		$this->assertEqualsCanonicalizing( array( 'external', 'grouped' ), $product_types );
+		$this->assertEqualsCanonicalizing( array( ProductType::EXTERNAL, ProductType::GROUPED ), $product_types );
 	}
 
 	/**
@@ -1026,7 +1028,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
 		$request->set_query_params(
 			array(
-				'exclude_types' => array( 'simple' ),
+				'exclude_types' => array( ProductType::SIMPLE ),
 			)
 		);
 
@@ -1036,7 +1038,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 
 		$types = array_unique( array_column( $data, 'type' ) );
 
-		$this->assertNotContains( 'simple', $types );
+		$this->assertNotContains( ProductType::SIMPLE, $types );
 	}
 
 	/**
@@ -1051,7 +1053,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
 		$request->set_query_params(
 			array(
-				'exclude_types' => array( 'simple', 'grouped' ),
+				'exclude_types' => array( ProductType::SIMPLE, ProductType::GROUPED ),
 			)
 		);
 
@@ -1062,12 +1064,12 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 		$types = array_unique( wp_list_pluck( $data, 'type' ) );
 
 		$this->assertEqualsCanonicalizing(
-			array( 'variable', 'external' ),
+			array( ProductType::VARIABLE, ProductType::EXTERNAL ),
 			$types
 		);
 
-		$this->assertNotContains( 'simple', $types );
-		$this->assertNotContains( 'grouped', $types );
+		$this->assertNotContains( ProductType::SIMPLE, $types );
+		$this->assertNotContains( ProductType::GROUPED, $types );
 	}
 
 	/**
@@ -1105,7 +1107,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
 		$request->set_query_params(
 			array(
-				'exclude_types' => array( 'simple', 'invalid_type' ),
+				'exclude_types' => array( ProductType::SIMPLE, 'invalid_type' ),
 			)
 		);
 
@@ -1146,8 +1148,8 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
 		$request->set_query_params(
 			array(
-				'include_types' => array( 'simple', 'grouped' ),
-				'exclude_types' => array( 'grouped' ),
+				'include_types' => array( ProductType::SIMPLE, ProductType::GROUPED ),
+				'exclude_types' => array( ProductType::GROUPED ),
 			)
 		);
 
@@ -1156,8 +1158,8 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 
 		$types = array_unique( wp_list_pluck( $response->get_data(), 'type' ) );
 
-		$this->assertContains( 'simple', $types );
-		$this->assertNotContains( 'grouped', $types );
+		$this->assertContains( ProductType::SIMPLE, $types );
+		$this->assertNotContains( ProductType::GROUPED, $types );
 		$this->assertEquals( 1, count( $types ) );
 	}
 
@@ -1173,8 +1175,8 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 		$request = new WP_REST_Request( 'GET', '/wc/v3/products' );
 		$request->set_query_params(
 			array(
-				'type'          => 'simple',
-				'exclude_types' => array( 'simple' ),
+				'type'          => ProductType::SIMPLE,
+				'exclude_types' => array( ProductType::SIMPLE ),
 			)
 		);
 
@@ -1310,7 +1312,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 
 		$duplicated_product = wc_get_product( $response_data['id'] );
 		$this->assertEquals( $product->get_name() . ' (Copy)', $duplicated_product->get_name() );
-		$this->assertEquals( 'draft', $duplicated_product->get_status() );
+		$this->assertEquals( ProductStatus::DRAFT, $duplicated_product->get_status() );
 	}
 
 	/**
@@ -1330,7 +1332,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 
 		$duplicated_product = wc_get_product( $response_data['id'] );
 		$this->assertEquals( $variable_product->get_name() . ' (Copy)', $duplicated_product->get_name() );
-		$this->assertTrue( $duplicated_product->is_type( 'variable' ) );
+		$this->assertTrue( $duplicated_product->is_type( ProductType::VARIABLE ) );
 	}
 
 	/**
@@ -1432,9 +1434,9 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 	 * @testWith [true]
 	 *           [false]
 	 *
-	 * @param bool $set_override_flag Value of the "override parent" flag to use.
+	 * @param bool $set_additive_flag Value of the "additive" flag to use.
 	 */
-	public function test_cogs_values_received_for_variation_product( bool $set_override_flag ) {
+	public function test_cogs_values_received_for_variation_product( bool $set_additive_flag ) {
 		$this->enable_cogs_feature();
 
 		$parent_product = WC_Helper_Product::create_variation_product();
@@ -1443,7 +1445,7 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 
 		$variation = wc_get_product( $parent_product->get_children()[0] );
 		$variation->set_cogs_value( 56.78 );
-		$variation->set_cogs_value_overrides_parent( $set_override_flag );
+		$variation->set_cogs_value_is_additive( $set_additive_flag );
 		$variation->save();
 
 		$response = $this->server->dispatch( new WP_REST_Request( 'GET', '/wc/v3/products/' . $variation->get_id() ) );
@@ -1451,16 +1453,16 @@ class WC_REST_Products_Controller_Tests extends WC_REST_Unit_Test_Case {
 
 		$data = $response->get_data();
 
-		$expected_effective_value = $set_override_flag ? 56.78 : 12.34 + 56.78;
+		$expected_effective_value = $set_additive_flag ? 12.34 + 56.78 : 56.78;
 		$expected                 = array(
-			'values'                         => array(
+			'values'                    => array(
 				array(
 					'defined_value'   => 56.78,
 					'effective_value' => $expected_effective_value,
 				),
 			),
-			'defined_value_overrides_parent' => $set_override_flag,
-			'total_value'                    => $expected_effective_value,
+			'defined_value_is_additive' => $set_additive_flag,
+			'total_value'               => $expected_effective_value,
 		);
 
 		$this->assertEquals( $expected, $data['cost_of_goods_sold'] );

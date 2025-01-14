@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { SettingsGroup } from '../components/settings-group';
+import { SettingsItem } from '../components/settings-item';
 
 export const LegacyContent = ( {
 	settingsPage,
@@ -24,16 +25,30 @@ export const LegacyContent = ( {
 	}
 
 	return (
-		<form>
+		<form id="mainform">
 			<div className="woocommerce-settings-content">
-				{ section.settings.map( ( group ) => {
-					if ( group.type === 'group' ) {
+				{ section.settings.map( ( data, index ) => {
+					const key = `${ data.type }-${ index }`;
+
+					if ( data.type === 'sectionend' ) {
+						return null;
+					}
+
+					if ( data.type === 'group' ) {
 						return (
-							<SettingsGroup key={ group.id } group={ group } />
+							<SettingsGroup
+								key={ key }
+								group={ data as GroupSettingsField }
+							/>
 						);
 					}
+
 					// Handle settings not in a group here.
-					return null;
+					return (
+						<fieldset key={ key }>
+							<SettingsItem setting={ data } />
+						</fieldset>
+					);
 				} ) }
 			</div>
 			<div className="woocommerce-settings-content-footer">

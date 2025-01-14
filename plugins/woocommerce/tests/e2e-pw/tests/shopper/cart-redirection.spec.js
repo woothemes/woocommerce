@@ -9,12 +9,7 @@ const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 test.describe(
 	'Cart > Redirect to cart from shop',
 	{
-		tag: [
-			tags.PAYMENTS,
-			tags.SERVICES,
-			tags.NOT_E2E,
-			tags.COULD_BE_LOWER_LEVEL_TEST,
-		],
+		tag: [ tags.PAYMENTS, tags.NOT_E2E, tags.COULD_BE_LOWER_LEVEL_TEST ],
 	},
 	() => {
 		let productId;

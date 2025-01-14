@@ -21,12 +21,6 @@
 		"build:project:copy-assets:blocks": "rsync -avhW --checksum --delete --quiet ../woocommerce-blocks/build/ assets/client/blocks && rsync -avhW --checksum --quiet ../woocommerce-blocks/blocks.ini blocks.ini",
 		"build:project:actualize-translation-domains": "wireit",
 		"changelog": "XDEBUG_MODE=off composer install --quiet && composer exec -- changelogger",
-		"docker:down": "pnpm exec wc-e2e docker:down",
-		"docker:ssh": "pnpm exec wc-e2e docker:ssh",
-		"docker:up": "pnpm exec wc-e2e docker:up",
-		"e2e": "pnpm exec wc-e2e test:e2e",
-		"e2e:debug": "pnpm exec wc-e2e test:e2e-debug",
-		"e2e:dev": "pnpm exec wc-e2e test:e2e-dev",
 		"env:destroy": "pnpm wp-env destroy",
 		"env:dev": "pnpm wp-env start --update",
 		"env:down": "pnpm wp-env stop",
@@ -107,7 +101,7 @@
 			},
 			"tests": [
 				{
-					"name": "PHP: 8.0 WP: latest",
+					"name": "PHP: 8.1 WP: latest",
 					"testType": "unit:php",
 					"command": "test:php:env",
 					"shardingArguments": [
@@ -125,13 +119,14 @@
 					"testEnv": {
 						"start": "env:test",
 						"config": {
-							"phpVersion": "8.0",
+							"phpVersion": "8.1",
 							"wpVersion": "latest"
 						}
 					},
 					"events": [
 						"pull_request",
-						"push"
+						"push",
+						"php-unit-php-8.8-wp-latest"
 					]
 				},
 				{
@@ -158,7 +153,8 @@
 					},
 					"events": [
 						"pull_request",
-						"push"
+						"push",
+						"php-unit-wp-latest-1"
 					]
 				},
 				{
@@ -186,7 +182,8 @@
 					},
 					"events": [
 						"pull_request",
-						"push"
+						"push",
+						"php-unit-wp-nightly"
 					]
 				},
 				{
@@ -221,7 +218,8 @@
 					"events": [
 						"pull_request",
 						"push",
-						"release-checks"
+						"release-checks",
+						"core-e2e"
 					],
 					"report": {
 						"resultsBlobName": "core-e2e-report",
@@ -239,13 +237,11 @@
 						"--shard=3/4",
 						"--shard=4/4"
 					],
-					"changes": [ 
-						"tests/e2e-pw/**"
-					],
+					"changes": [],
 					"events": [
-						"pull_request",
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"core-e2e-gutenberg"
 					],
 					"testEnv": {
 						"start": "env:test"
@@ -266,13 +262,11 @@
 						"--shard=3/4",
 						"--shard=4/4"
 					],
-					"changes": [
-						"tests/e2e-pw/**"
-					],
+					"changes": [],
 					"events": [
-						"pull_request",
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"core-e2e-gutenberg"
 					],
 					"testEnv": {
 						"start": "env:test"
@@ -288,13 +282,11 @@
 					"testType": "e2e",
 					"command": "test:e2e:with-env woocommerce-payments",
 					"shardingArguments": [],
-					"changes": [
-						"tests/e2e-pw/**"
-					],
+					"changes": [],
 					"events": [
-						"pull_request",
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"core-e2e-woocommerce-payments"
 					],
 					"testEnv": {
 						"start": "env:test"
@@ -310,13 +302,11 @@
 					"testType": "e2e",
 					"command": "test:e2e:with-env woocommerce-paypal-payments",
 					"shardingArguments": [],
-					"changes": [
-						"tests/e2e-pw/**"
-					],
+					"changes": [],
 					"events": [
-						"pull_request",
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"core-e2e-woocommerce-paypal-payments"
 					],
 					"testEnv": {
 						"start": "env:test"
@@ -335,13 +325,11 @@
 						"--shard=1/2",
 						"--shard=2/2"
 					],
-					"changes": [
-						"tests/e2e-pw/**"
-					],
+					"changes": [],
 					"events": [
-						"pull_request",
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"core-e2e-woocommerce-services"
 					],
 					"testEnv": {
 						"start": "env:test"
@@ -362,7 +350,8 @@
 					"events": [
 						"pull_request",
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"core-e2e-hpos-disabled"
 					],
 					"changes": [],
 					"testEnv": {
@@ -388,9 +377,7 @@
 						"--shard=4/5",
 						"--shard=5/5"
 					],
-					"changes": [
-						"tests/e2e-pw/**"
-					],
+					"changes": [],
 					"testEnv": {
 						"start": "env:test",
 						"config": {
@@ -398,9 +385,9 @@
 						}
 					},
 					"events": [
-						"pull_request",
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"core-e2e-php-8.1"
 					],
 					"report": {
 						"resultsBlobName": "core-e2e-report-php-8.1",
@@ -419,9 +406,7 @@
 						"--shard=4/5",
 						"--shard=5/5"
 					],
-					"changes": [
-						"tests/e2e-pw/**"
-					],
+					"changes": [],
 					"testEnv": {
 						"start": "env:test",
 						"config": {
@@ -429,9 +414,9 @@
 						}
 					},
 					"events": [
-						"pull_request",
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"core-e2e-wp-latest-1"
 					],
 					"report": {
 						"resultsBlobName": "core-e2e-report-wp-latest-1",
@@ -450,9 +435,7 @@
 						"--shard=4/5",
 						"--shard=5/5"
 					],
-					"changes": [
-						"tests/e2e-pw/**"
-					],
+					"changes": [],
 					"testEnv": {
 						"start": "env:test",
 						"config": {
@@ -460,9 +443,9 @@
 						}
 					},
 					"events": [
-						"pull_request",
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"core-e2e-wp-pre-release"
 					],
 					"report": {
 						"resultsBlobName": "core-e2e-report-wp-pre-release",
@@ -496,7 +479,8 @@
 					},
 					"events": [
 						"pull_request",
-						"push"
+						"push",
+						"core-api"
 					],
 					"report": {
 						"resultsBlobName": "core-api-report",
@@ -524,7 +508,8 @@
 						"uninstall.php"
 					],
 					"events": [
-						"push"
+						"push",
+						"core-api-hpos-disabled"
 					],
 					"testEnv": {
 						"start": "env:test",
@@ -550,7 +535,8 @@
 						"start": "test:perf:ci-setup"
 					},
 					"events": [
-						"push"
+						"push",
+						"core-k6"
 					]
 				},
 				{
@@ -575,7 +561,8 @@
 					},
 					"events": [
 						"push",
-						"pull_request"
+						"pull_request",
+						"perf-metrics"
 					],
 					"report": {
 						"resultsBlobName": "core-metrics-report",
@@ -610,7 +597,8 @@
 						"pull_request",
 						"push",
 						"release-checks",
-						"nightly-checks"
+						"nightly-checks",
+						"blocks-e2e"
 					],
 					"report": {
 						"resultsBlobName": "blocks-e2e-report",
@@ -647,7 +635,8 @@
 					},
 					"events": [
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"blocks-e2e-wp-pre-release"
 					],
 					"report": {
 						"resultsBlobName": "blocks-e2e-report-wp-pre-release",
@@ -680,7 +669,8 @@
 					},
 					"events": [
 						"daily-checks",
-						"release-checks"
+						"release-checks",
+						"blocks-e2e-wp-latest-1"
 					],
 					"report": {
 						"resultsBlobName": "blocks-e2e-report-wp-latest-1",
@@ -695,7 +685,8 @@
 					"shardingArguments": [],
 					"changes": [],
 					"events": [
-						"on-demand"
+						"on-demand",
+						"core-e2e-pressable"
 					],
 					"report": {
 						"resultsBlobName": "default-pressable-core-e2e-and-api",
@@ -710,7 +701,8 @@
 					"shardingArguments": [],
 					"changes": [],
 					"events": [
-						"on-demand"
+						"on-demand",
+						"core-e2e-wpcom"
 					],
 					"report": {
 						"resultsBlobName": "default-wpcom-core-e2e-and-api",
@@ -727,16 +719,11 @@
 		"@babel/preset-env": "7.12.7",
 		"@babel/register": "7.12.1",
 		"@faker-js/faker": "^9.3.0",
-		"@playwright/test": "^1.46.1",
+		"@playwright/test": "^1.49.1",
 		"@typescript-eslint/eslint-plugin": "^5.62.0",
 		"@typescript-eslint/experimental-utils": "^5.62.0",
 		"@typescript-eslint/parser": "^5.62.0",
-		"@woocommerce/admin-e2e-tests": "workspace:*",
 		"@woocommerce/api": "workspace:*",
-		"@woocommerce/api-core-tests": "workspace:*",
-		"@woocommerce/e2e-core-tests": "workspace:*",
-		"@woocommerce/e2e-environment": "workspace:*",
-		"@woocommerce/e2e-utils": "workspace:*",
 		"@woocommerce/e2e-utils-playwright": "workspace:*",
 		"@woocommerce/eslint-plugin": "workspace:*",
 		"@woocommerce/woocommerce-rest-api": "^1.0.1",
@@ -775,8 +762,7 @@
 		"wp-textdomain": "1.0.1"
 	},
 	"engines": {
-		"node": "^20.11.1",
-		"pnpm": "9.1.3"
+		"node": "^20.11.1"
 	},
 	"browserslist": [
 		"> 0.1%",
@@ -787,7 +773,7 @@
 		"@woocommerce/admin-library": "workspace:*",
 		"@woocommerce/block-library": "workspace:*",
 		"@woocommerce/classic-assets": "workspace:*",
-		"@wordpress/browserslist-config": "wp-6.0"
+		"@wordpress/browserslist-config": "wp-6.6"
 	},
 	"nodemonConfig": {
 		"delay": 2500,
@@ -818,21 +804,12 @@
 				"node_modules/@woocommerce/eslint-plugin/configs",
 				"node_modules/@woocommerce/eslint-plugin/rules",
 				"node_modules/@woocommerce/eslint-plugin/index.js",
-				"node_modules/@woocommerce/e2e-core-tests/build",
-				"node_modules/@woocommerce/e2e-core-tests/build-module",
-				"node_modules/@woocommerce/e2e-core-tests/test-data",
-				"node_modules/@woocommerce/e2e-core-tests/core-tests-root.js",
-				"node_modules/@woocommerce/e2e-core-tests/installFiles",
-				"node_modules/@woocommerce/e2e-core-tests/CHANGELOG.md",
 				"node_modules/@woocommerce/api/dist/",
-				"node_modules/@woocommerce/admin-e2e-tests/build",
 				"node_modules/@woocommerce/classic-assets/build",
 				"node_modules/@woocommerce/block-library/build",
 				"node_modules/@woocommerce/block-library/blocks.ini",
 				"node_modules/@woocommerce/admin-library/build",
 				"package.json",
-				"!node_modules/@woocommerce/admin-e2e-tests/*.ts.map",
-				"!node_modules/@woocommerce/admin-e2e-tests/*.tsbuildinfo",
 				"!node_modules/@woocommerce/api/*.ts.map",
 				"!node_modules/@woocommerce/api/*.tsbuildinfo",
 				"!node_modules/@woocommerce/api/dist/**/__tests__/",

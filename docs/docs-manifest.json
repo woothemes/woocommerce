@@ -113,11 +113,20 @@
           }
         },
         {
+          "post_title": "Cart and Checkout - Removing checkout fields",
+          "menu_title": "Removing checkout fields",
+          "tags": "reference",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/cart-and-checkout-blocks/removing-checkout-fields.md",
+          "hash": "6eaeb0393487dd1007367a5f2d3984420c085c6ae26dda04c4e08ee33ac6faf6",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/removing-checkout-fields.md",
+          "id": "030247059754260bce6285cfb352a4a733f1f677"
+        },
+        {
           "post_title": "Cart and Checkout - Overview of data flow between client and server",
-          "menu_title": "Data flow",
+          "menu_title": "Data flow overview",
           "tags": "reference",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/cart-and-checkout-blocks/overview-of-data-flow.md",
-          "hash": "ce9b67884f37af97d1f96a47d6bbc65e24ee49f97ec3444d3deba23bb6568d48",
+          "hash": "6953a9883ab34d238fd6a8c5f4839795e0e7f12b71b4e94a3cf626aa4fcd97aa",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/overview-of-data-flow.md",
           "id": "d2d8cf26967438f16815b129da855324be7a7ef8"
         },
@@ -138,6 +147,27 @@
           "hash": "738c3bf03138a084723061bafdc9315a58606c1dad2ab8743d44b7af93e7ecfc",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/how-checkout-processes-an-order.md",
           "id": "092e66dac8f44d08799ba1d2411d757fd53c9e00"
+        },
+        {
+          "post_title": "Cart and Checkout - Frequently Asked Questions",
+          "menu_title": "Frequently Asked Questions",
+          "tags": "reference",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/cart-and-checkout-blocks/faq.md",
+          "hash": "f83f3517106b024b853718d17c3c44a522156ea55aa441de9433d3f312d5f851",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/faq.md",
+          "id": "041787aca25af363a5eff3e710bd669cc8aebc4b",
+          "links": {
+            "./removing-checkout-fields.md": "030247059754260bce6285cfb352a4a733f1f677"
+          }
+        },
+        {
+          "post_title": "Cart and Checkout - Extensibility getting started guide",
+          "menu_title": "Extensibility - Getting started",
+          "tags": "how-to",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/cart-and-checkout-blocks/extensibility-getting-started.md",
+          "hash": "e5bc04784214cc1662dd23cb7ff2e2e06c6ac33070676f72cdcfd79643a32dc5",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/extensibility-getting-started.md",
+          "id": "7a379c2d6d96f15fe234a707d19ebdc20f8e9dd3"
         },
         {
           "post_title": "Cart and Checkout - DOM events",
@@ -294,6 +324,15 @@
               "links": {
                 "../../extensibility-in-blocks/README.md": "ef684d3345f67690b37179cd879a40072f5c6f80"
               }
+            },
+            {
+              "post_title": "Cart and Checkout - Hook support and common extensibility paths",
+              "menu_title": "Hook alternatives",
+              "tags": "reference",
+              "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/cart-and-checkout-blocks/hooks/hook-alternatives.md",
+              "hash": "3e47e81185181d6a86764ddc90c9f7700189fe217387fc79bd19018b7efe4ea6",
+              "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/hooks/hook-alternatives.md",
+              "id": "8eed024a999bde3db20e86556b9dd0efaba814bd"
             }
           ],
           "categories": []
@@ -1578,7 +1617,7 @@
       "categories": []
     },
     {
-      "content": "\nThis section covers general guidelines, and best practices to follow in order to ensure your product experience aligns with WooCommerce for ease of use, seamless integration, and strong adoption.\n\nWe strongly recommend you review the current [WooCommerce setup experience](https://woocommerce.com/documentation/plugins/woocommerce/getting-started/) to get familiar with the user experience and taxonomy.\n\nWe also recommend you review the [WordPress core guidelines](https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/) to ensure your product isn't breaking any rules, and review [this helpful resource](https://woocommerce.com/document/grammar-punctuation-style-guide/) on content style.\n\n## General\n\nUse existing WordPress/WooCommerce UI, built in components (text fields, checkboxes, etc) and existing menu structures.\n\nPlugins which draw on WordPress' core design aesthetic will benefit from future updates to this design as WordPress continues to evolve. If you need to make an exception for your product, be prepared to provide a valid use case.\n\n- [WordPress Components library](https://wordpress.github.io/gutenberg/?path=/story/docs-introduction--page)\n- [Figma for WordPress](https://make.wordpress.org/design/2018/11/19/figma-for-wordpress/) | ([WordPress Design Library Figma](https://www.figma.com/file/e4tLacmlPuZV47l7901FEs/WordPress-Design-Library))\n- [WooCommerce Component Library](https://woocommerce.github.io/woocommerce/)\n",
+      "content": "\nThis section covers general guidelines, and best practices to follow in order to ensure your product experience aligns with WooCommerce for ease of use, seamless integration, and strong adoption.\n\nWe strongly recommend you review the current [WooCommerce setup experience](https://woocommerce.com/documentation/plugins/woocommerce/getting-started/) to get familiar with the user experience and taxonomy.\n\nWe also recommend you review the [WordPress core guidelines](https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/) to ensure your product isn't breaking any rules, and review [this helpful resource](https://woocommerce.com/document/grammar-punctuation-style-guide/) on content style.\n\n## General\n\nUse existing WordPress/WooCommerce UI, built in components (text fields, checkboxes, etc) and existing menu structures.\n\nPlugins which draw on WordPress' core design aesthetic will benefit from future updates to this design as WordPress continues to evolve. If you need to make an exception for your product, be prepared to provide a valid use case.\n\n-   [WordPress Components library](https://wordpress.github.io/gutenberg/?path=/story/docs-introduction--page)\n-   [Figma for WordPress](https://make.wordpress.org/design/2018/11/19/figma-for-wordpress/) | ([WordPress Design Library Figma](https://www.figma.com/file/e4tLacmlPuZV47l7901FEs/WordPress-Design-Library))\n-   [WooCommerce Component Library](https://woocommerce.github.io/woocommerce/)\n\n## Component Library - Storybook\n\n> Storybook is an open source tool for developing UI components in isolation for React, React Native and more. It makes building stunning UIs organized and efficient.\n\nThe WooCommerce repository also includes [Storybook](https://storybook.js.org/) integration that allows testing and developing in a WooCommerce-agnostic context. This is very helpful for developing reusable components and trying generic JavaScript modules without any backend dependency.\n\nYou can launch Storybook by running `pnpm --filter=@woocommerce/storybook watch:build` locally. It will open in your browser automatically.\n\nYou can also test Storybook for the current `trunk` branch on GitHub Pages: [https://woocommerce.github.io/woocommerce](https://woocommerce.github.io/woocommerce)\n",
       "category_slug": "user-experience-extensions",
       "category_title": "Extension Guidelines",
       "posts": [
@@ -1876,5 +1915,5 @@
       "categories": []
     }
   ],
-  "hash": "6c73c24006f96bfa0d372514e0da1728669a115a44b04f3f546a1900a152b36f"
+  "hash": "35c7649104b1618028b6e2dcaeb2cd79bcc1b12af5b3b6506d2ca3809f277541"
 }

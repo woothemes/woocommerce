@@ -5,7 +5,7 @@ const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 test.describe(
 	'Launch Your Store - logged in',
-	{ tag: [ tags.GUTENBERG, tags.SERVICES, tags.SKIP_ON_WPCOM ] },
+	{ tag: [ tags.GUTENBERG, tags.SKIP_ON_WPCOM ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 

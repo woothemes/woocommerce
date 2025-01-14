@@ -1,0 +1,4 @@
+Significance: minor
+Type: update
+
+Updated the function signature for registerProductBlockType

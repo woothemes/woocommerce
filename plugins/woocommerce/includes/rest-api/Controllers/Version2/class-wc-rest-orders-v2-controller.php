@@ -11,6 +11,7 @@
 defined( 'ABSPATH' ) || exit;
 
 use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Utilities\ArrayUtil;
 use Automattic\WooCommerce\Utilities\OrderUtil;
 use Automattic\WooCommerce\Utilities\StringUtil;
@@ -281,7 +282,7 @@ class WC_REST_Orders_V2_Controller extends WC_REST_CRUD_Controller {
 					$display_value = wp_kses_post( rawurldecode( (string) $meta->value ) );
 
 					// Skip items with values already in the product details area of the product name.
-					if ( $product && $product->is_type( 'variation' ) && wc_is_attribute_in_product_name( $display_value, $order_item_name ) ) {
+					if ( $product && $product->is_type( ProductType::VARIATION ) && wc_is_attribute_in_product_name( $display_value, $order_item_name ) ) {
 						return false;
 					}
 

@@ -1236,7 +1236,7 @@ class WC_Email extends WC_Settings_API {
 		$is_email_preview = apply_filters( 'woocommerce_is_email_preview', false );
 		if ( $is_email_preview ) {
 			$email_id  = $this->id;
-			$transient = get_transient( "woocommerce_${email_id}_${key}" );
+			$transient = get_transient( "woocommerce_{$email_id}_{$key}" );
 			if ( false !== $transient ) {
 				$option = $transient ? $transient : $empty_value;
 			}

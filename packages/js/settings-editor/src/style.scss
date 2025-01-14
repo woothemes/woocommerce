@@ -8,6 +8,7 @@
 	.components-tab-panel__tabs {
 		border-bottom: 1px solid #f0f0f0;
 		padding: 0 32px;
+		z-index: 1;
 	}
 }
 
@@ -51,11 +52,17 @@
 	flex: 2;
 	display: flex;
 	flex-direction: column;
-	gap: 24px;
+	gap: 48px;
 }
 
 .woocommerce-settings-content-footer {
 	display: flex;
 	justify-content: flex-end;
 	padding: 48px;
+}
+
+#wc-settings-page {
+	.components-input-control__label {
+		white-space: normal;
+	}
 }

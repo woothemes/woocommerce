@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { registerBlockSingleProductTemplate } from '@woocommerce/atomic-utils';
+import { registerProductBlockType } from '@woocommerce/atomic-utils';
 
 /**
  * Internal dependencies
@@ -13,9 +13,11 @@ import './inner-blocks/product-gallery-large-image-next-previous';
 import './inner-blocks/product-gallery-pager';
 import './inner-blocks/product-gallery-thumbnails';
 
-registerBlockSingleProductTemplate( {
-	blockName: metadata.name,
-	blockMetadata: metadata,
-	blockSettings: ProductGalleryBlockSettings,
+const blockConfig = {
+	...metadata,
+	...ProductGalleryBlockSettings,
+};
+
+registerProductBlockType( blockConfig, {
 	isAvailableOnPostEditor: true,
 } );

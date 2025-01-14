@@ -353,6 +353,9 @@ test.describe(
 			await expect(
 				page.locator( '.wc-block-components-totals-item__value' )
 			).toContainText( `$${ totalInclusiveTax }` );
+			await expect(
+				page.getByRole( 'link', { name: simpleProductName } )
+			).toBeVisible();
 			await page
 				.getByRole( 'button' )
 				.filter( { hasText: 'Remove item' } )

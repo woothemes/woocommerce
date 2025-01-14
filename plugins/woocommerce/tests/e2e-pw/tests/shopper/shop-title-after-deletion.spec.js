@@ -31,7 +31,7 @@ const test = baseTest.extend( {
 
 test(
 	'Check the title of the shop page after the page has been deleted',
-	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.COULD_BE_LOWER_LEVEL_TEST ] },
+	{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 	async ( { baseURL, page } ) => {
 		await setComingSoon( { baseURL, enabled: 'no' } );
 		await page.goto( 'shop/' );

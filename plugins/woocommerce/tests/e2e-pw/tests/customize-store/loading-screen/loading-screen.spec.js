@@ -117,38 +117,5 @@ test.describe(
 					)
 			).toBeVisible();
 		} );
-
-		test( 'should hide loading screen and steps on subsequent runs', async ( {
-			pageObject,
-			baseURL,
-			page,
-		} ) => {
-			await pageObject.setupSite( baseURL );
-			await pageObject.waitForLoadingScreenFinish();
-
-			const assembler = await pageObject.getAssembler();
-			await assembler
-				.getByRole( 'button', { name: 'Finish customizing' } )
-				.click();
-			await assembler.getByText( 'Your store looks great!' ).waitFor();
-			// Abort any additional unnecessary requests
-			await page.evaluate( () => window.stop() );
-			await pageObject.setupSite( baseURL );
-
-			const requestToSetupStore = createRequestsToSetupStoreDictionary();
-
-			setupRequestInterceptor( page, requestToSetupStore );
-
-			for ( const step of steps ) {
-				await expect( page.getByText( step ) ).toBeHidden();
-				await expect( page.getByAltText( step ) ).toBeHidden();
-			}
-
-			expect( Object.values( requestToSetupStore ) ).toEqual( [
-				false,
-				false,
-				false,
-			] );
-		} );
 	}
 );

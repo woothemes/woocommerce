@@ -186,13 +186,14 @@ class Init {
 			return $settings;
 		}
 
-		$screen_id = PageController::get_instance()->get_current_screen_id();
-		if ( 'woocommerce_page_wc-admin' === $screen_id ) {
+		$screen_id     = PageController::get_instance()->get_current_screen_id();
+		$advanced_page = strpos( $screen_id, 'woocommerce_page_wc-settings-advanced' ) !== false;
+		if ( 'woocommerce_page_wc-admin' === $screen_id || $advanced_page ) {
 			// Add upload nonce to global JS settings. The value can be accessed at wcSettings.admin.blueprint_upload_nonce.
 			$settings['blueprint_upload_nonce'] = wp_create_nonce( 'blueprint_upload_nonce' );
 		}
 
-		if ( strpos( $screen_id, 'woocommerce_page_wc-settings-advanced' ) !== false ) {
+		if ( $advanced_page ) {
 			// Used on the settings page.
 			// wcSettings.admin.blueprint_step_groups.
 			$settings['blueprint_step_groups'] = $this->get_step_groups_for_js();

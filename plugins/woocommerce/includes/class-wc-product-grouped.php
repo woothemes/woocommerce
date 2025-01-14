@@ -8,6 +8,8 @@
  * @version 3.0.0
  */
 
+use Automattic\WooCommerce\Enums\ProductType;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -30,7 +32,7 @@ class WC_Product_Grouped extends WC_Product {
 	 * @return string
 	 */
 	public function get_type() {
-		return 'grouped';
+		return ProductType::GROUPED;
 	}
 
 	/**

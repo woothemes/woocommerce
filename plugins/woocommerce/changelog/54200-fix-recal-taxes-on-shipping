@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Correctly calculate shipping taxes when running recalculation on admin.

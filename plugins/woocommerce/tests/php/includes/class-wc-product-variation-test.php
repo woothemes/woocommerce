@@ -18,14 +18,14 @@ class WC_Product_Variation_Test extends WC_Unit_Test_Case {
 	}
 
 	/**
-	 * @testdox Effective Cost of Goods Sold value for a variation is its defined value + the parent's defined value, unless the "overrides parent" flag is set.
+	 * @testdox Effective Cost of Goods Sold value for a variation is its defined value + the parent's defined value if the "additive" flag is set.
 	 *
 	 * @testWith [true]
 	 *           [false]
 	 *
-	 * @param bool $set_override_flag Value of the override flag to test with.
+	 * @param bool $set_additive Value of the override flag to test with.
 	 */
-	public function test_effective_cogs_value_depends_on_parent_override_flag( bool $set_override_flag ) {
+	public function test_effective_cogs_value_depends_on_additive_flag( bool $set_additive ) {
 		$this->enable_cogs_feature();
 
 		$parent_product = WC_Helper_Product::create_variation_product();
@@ -34,10 +34,10 @@ class WC_Product_Variation_Test extends WC_Unit_Test_Case {
 
 		$variation = wc_get_product( $parent_product->get_children()[0] );
 		$variation->set_cogs_value( 56.78 );
-		$variation->set_cogs_value_overrides_parent( $set_override_flag );
+		$variation->set_cogs_value_is_additive( $set_additive );
 		$variation->save();
 
-		$expected_effective_value = $set_override_flag ? 56.78 : 12.34 + 56.78;
+		$expected_effective_value = $set_additive ? 12.34 + 56.78 : 56.78;
 		$this->assertEquals( $expected_effective_value, $variation->get_cogs_effective_value() );
 		$this->assertEquals( $expected_effective_value, $variation->get_cogs_total_value() );
 	}

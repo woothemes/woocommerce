@@ -10,6 +10,7 @@
 
 use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\StoreApi\Utilities\LocalPickupUtils;
 
 defined( 'ABSPATH' ) || exit;
@@ -577,7 +578,7 @@ function wc_get_cart_item_data_hash( $product ) {
 				'woocommerce_cart_item_data_to_validate',
 				array(
 					'type'       => $product->get_type(),
-					'attributes' => 'variation' === $product->get_type() ? $product->get_variation_attributes() : '',
+					'attributes' => ProductType::VARIATION === $product->get_type() ? $product->get_variation_attributes() : '',
 				),
 				$product
 			)

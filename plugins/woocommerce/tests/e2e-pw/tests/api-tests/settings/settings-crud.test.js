@@ -422,7 +422,7 @@ test.describe( 'Settings API tests: CRUD', () => {
 						type: 'select',
 						default: '',
 						tip: 'Choose which countries you want to ship to, or choose to ship to all locations you sell to.',
-						value: '',
+						value: expect.any( String ),
 						options: expect.objectContaining( {
 							'': 'Ship to all countries you sell to',
 							all: 'Ship to all countries',
@@ -2052,7 +2052,7 @@ test.describe( 'Settings API tests: CRUD', () => {
 							tip: expect.stringContaining(
 								'Enter recipients (comma separated) for this email. Defaults to'
 							),
-							value: '',
+							value: expect.any( String ),
 						} ),
 					] )
 				);

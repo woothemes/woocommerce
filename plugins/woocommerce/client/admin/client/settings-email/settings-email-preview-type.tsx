@@ -7,10 +7,10 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { EmailType } from './settings-email-preview-slotfill';
+import { EmailTypes } from './settings-email-preview-slotfill';
 
 type EmailPreviewTypeProps = {
-	emailTypes: EmailType[];
+	emailTypes: EmailTypes;
 	emailType: string;
 	setEmailType: ( emailType: string ) => void;
 };

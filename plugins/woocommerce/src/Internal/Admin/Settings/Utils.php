@@ -245,4 +245,66 @@ class Utils {
 
 		return $slug;
 	}
+
+	/**
+	 * Truncate a text to a target character length while preserving whole words.
+	 *
+	 * We take a greedy approach: if some characters of a word fit in the target length, the whole word is included.
+	 * This means we might exceed the target length by a few characters.
+	 * The append string length is not included in the character count.
+	 *
+	 * @param string      $text          The text to truncate.
+	 *                                   It will not be sanitized, stripped of HTML tags, or modified in any way before truncation.
+	 * @param int         $target_length The target character length of the truncated text.
+	 * @param string|null $append        Optional. The string to append to the truncated text, if there is any truncation.
+	 *
+	 * @return string The truncated text.
+	 */
+	public static function truncate_with_words( string $text, int $target_length, string $append = null ): string {
+		// First, deal with locale that doesn't have words separated by spaces, but instead deals with characters.
+		// Borrowed from wp_trim_words().
+		if ( str_starts_with( wp_get_word_count_type(), 'characters' ) && preg_match( '/^utf\-?8$/i', get_option( 'blog_charset' ) ) ) {
+			$text = trim( preg_replace( "/[\n\r\t ]+/", ' ', $text ), ' ' );
+			preg_match_all( '/./u', $text, $words_array );
+
+			// Nothing to do if the text is already short enough.
+			if ( count( $words_array[0] ) <= $target_length ) {
+				return $text;
+			}
+
+			$words_array = array_slice( $words_array[0], 0, $target_length );
+			$truncated   = implode( '', $words_array );
+			if ( null !== $append ) {
+				$truncated .= $append;
+			}
+
+			return $truncated;
+		}
+
+		// Deal with locale that has words separated by spaces.
+		if ( strlen( $text ) <= $target_length ) {
+			return $text;
+		}
+
+		$words_array = preg_split( "/[\n\r\t ]+/", $text, - 1, PREG_SPLIT_NO_EMPTY );
+		$sep         = ' ';
+
+		// Include words until the target length is reached.
+		$truncated        = '';
+		$remaining_length = $target_length;
+		while ( $remaining_length > 0 && ! empty( $words_array ) ) {
+			$word              = array_shift( $words_array );
+			$truncated        .= $word . $sep;
+			$remaining_length -= strlen( $word . $sep );
+		}
+
+		// Remove the last separator.
+		$truncated = rtrim( $truncated, $sep );
+
+		if ( null !== $append ) {
+			$truncated .= $append;
+		}
+
+		return $truncated;
+	}
 }

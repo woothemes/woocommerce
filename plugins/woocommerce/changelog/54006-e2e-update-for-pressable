@@ -1,0 +1,4 @@
+Significance: patch
+Type: update
+
+Update e2e tests so they're passing against Pressable environment

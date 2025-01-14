@@ -32,7 +32,7 @@ const insertInSingleProductTemplate = async (
 	await editor.insertBlock( { name: blockName } );
 };
 
-test.describe( 'registerBlockSingleProductTemplate registers', () => {
+test.describe( 'registerProductBlockType registers', () => {
 	test( 'block available on posts, e.g. Product Price', async ( {
 		admin,
 		editor,
@@ -64,6 +64,65 @@ test.describe( 'registerBlockSingleProductTemplate registers', () => {
 
 		await test.step( 'Available in Single Product template globally', async () => {
 			await insertInSingleProductTemplate( blockName, editor, admin );
+			await expect(
+				await editor.getBlockByName( blockName )
+			).toHaveCount( 1 );
+		} );
+	} );
+
+	test( 'blocks are registered correctly when switching templates via command palette', async ( {
+		admin,
+		editor,
+		page,
+	} ) => {
+		const blockName = 'woocommerce/product-price';
+		const blockTitle = 'Product Price';
+		await test.step( 'Blocks not available in non-product template', async () => {
+			// Visit site editor with a non-product template
+			await admin.visitSiteEditor( {
+				postId: 'woocommerce/woocommerce//coming-soon',
+				postType: 'wp_template',
+				canvas: 'edit',
+			} );
+
+			// Try to insert the block
+			await editor.insertBlock( { name: blockName } );
+			await expect(
+				await editor.getBlockByName( blockName )
+			).toHaveCount( 0 );
+		} );
+
+		await test.step( 'Switch to Single Product template via command palette', async () => {
+			// Open command palette
+			if ( process.platform === 'darwin' ) {
+				await page.keyboard.press( 'Meta+K' );
+			} else {
+				await page.keyboard.press( 'Control+K' );
+			}
+
+			const searchInput = page.getByRole( 'combobox', {
+				name: 'Search',
+			} );
+			await expect( searchInput ).toBeVisible();
+
+			await searchInput.fill( 'Single Product' );
+			const templateOption = page.getByRole( 'option', {
+				name: /Single Product/i,
+			} );
+			await expect( templateOption ).toBeVisible();
+			await templateOption.click();
+
+			await expect(
+				await editor.getBlockByName( 'core/post-title' )
+			).toBeVisible();
+		} );
+
+		await test.step( 'Blocks available after switching to Single Product template', async () => {
+			await editor.setContent( '' );
+
+			// Product Price is available in the global inserter. For some reason, using await editor.insertBlock( { name: blockName } ); does not work here.
+			await editor.insertBlockUsingGlobalInserter( blockTitle );
+
 			await expect(
 				await editor.getBlockByName( blockName )
 			).toHaveCount( 1 );

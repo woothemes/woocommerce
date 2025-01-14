@@ -2,6 +2,7 @@
 
 namespace Automattic\WooCommerce\Tests\Internal\ProductAttributesLookup;
 
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\AttributesHelper;
 use Automattic\WooCommerce\RestApi\UnitTests\Helpers\ProductHelper;
 use Automattic\WooCommerce\Utilities\ArrayUtil;
@@ -70,7 +71,7 @@ class FiltererTest extends \WC_Unit_Test_Case {
 		$product_ids = wc_get_products( array( 'return' => 'ids' ) );
 		foreach ( $product_ids as $product_id ) {
 			$product     = wc_get_product( $product_id );
-			$is_variable = $product->is_type( 'variable' );
+			$is_variable = $product->is_type( ProductType::VARIABLE );
 
 			foreach ( $product->get_children() as $child_id ) {
 				$child = wc_get_product( $child_id );

@@ -24,6 +24,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WC_Gateway_Cheque extends WC_Payment_Gateway {
 
 	/**
+	 * Unique ID for this gateway.
+	 *
+	 * @var string
+	 */
+	const ID = 'cheque';
+
+	/**
 	 * Gateway instructions that will be added to the thank you page and emails.
 	 *
 	 * @var string
@@ -34,7 +41,7 @@ class WC_Gateway_Cheque extends WC_Payment_Gateway {
 	 * Constructor for the gateway.
 	 */
 	public function __construct() {
-		$this->id                 = 'cheque';
+		$this->id                 = self::ID;
 		$this->icon               = apply_filters( 'woocommerce_cheque_icon', '' );
 		$this->has_fields         = false;
 		$this->method_title       = _x( 'Check payments', 'Check payment method', 'woocommerce' );
@@ -111,7 +118,7 @@ class WC_Gateway_Cheque extends WC_Payment_Gateway {
 	 * @param bool     $plain_text Email format: plain text or HTML.
 	 */
 	public function email_instructions( $order, $sent_to_admin, $plain_text = false ) {
-		if ( $this->instructions && ! $sent_to_admin && 'cheque' === $order->get_payment_method() ) {
+		if ( $this->instructions && ! $sent_to_admin && self::ID === $order->get_payment_method() ) {
 			/**
 			 * Filter the email instructions order status.
 			 *
