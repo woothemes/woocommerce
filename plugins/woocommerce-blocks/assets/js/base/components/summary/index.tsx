@@ -11,7 +11,7 @@ import type { CSSProperties } from 'react';
  */
 import { generateSummary } from './utils';
 
-interface SummaryProps {
+export interface SummaryProps {
 	className?: string;
 	source: string;
 	maxLength?: number;
@@ -48,6 +48,9 @@ const allowedAttributes = [
 	'name',
 	'download',
 	'src',
+	'class',
+	'alt',
+	'style',
 ];
 
 /**

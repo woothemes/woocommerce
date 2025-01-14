@@ -103,24 +103,41 @@ jQuery( function( $ ) {
 				.hide()
 				.before(
 					'<p class="stars">\
-						<span>\
-							<a class="star-1" href="#">1</a>\
-							<a class="star-2" href="#">2</a>\
-							<a class="star-3" href="#">3</a>\
-							<a class="star-4" href="#">4</a>\
-							<a class="star-5" href="#">5</a>\
+						<span role="group" aria-labeledby="comment-form-rating-label">\
+							<a role="radio" tabindex="0" aria-checked="false" class="star-1" href="#">' +
+								wc_single_product_params.i18n_rating_options[0] + 
+							'</a>\
+							<a role="radio" tabindex="-1" aria-checked="false" class="star-2" href="#">' + 
+								wc_single_product_params.i18n_rating_options[1] + 
+							'</a>\
+							<a role="radio" tabindex="-1" aria-checked="false" class="star-3" href="#">' + 
+								wc_single_product_params.i18n_rating_options[2] + 
+							'</a>\
+							<a role="radio" tabindex="-1" aria-checked="false" class="star-4" href="#">' + 
+								wc_single_product_params.i18n_rating_options[3] + 
+							'</a>\
+							<a role="radio" tabindex="-1" aria-checked="false" class="star-5" href="#">' + 
+								wc_single_product_params.i18n_rating_options[4] + 
+							'</a>\
 						</span>\
 					</p>'
 				);
 		} )
 		.on( 'click', '#respond p.stars a', function() {
 			var $star   	= $( this ),
+				starPos     = $star.closest( 'p.stars' ).find( 'a' ).index( $star ) + 1,
 				$rating 	= $( this ).closest( '#respond' ).find( '#rating' ),
 				$container 	= $( this ).closest( '.stars' );
 
-			$rating.val( $star.text() );
-			$star.siblings( 'a' ).removeClass( 'active' );
-			$star.addClass( 'active' );
+			$rating.val( starPos );
+			$star.siblings( 'a' )
+				.removeClass( 'active' )
+				.attr( 'aria-checked', 'false' )
+				.attr( 'tabindex', '-1' );
+			$star
+				.addClass( 'active' )
+				.attr( 'aria-checked', 'true' )
+				.attr( 'tabindex', '0' );
 			$container.addClass( 'selected' );
 
 			return false;
@@ -134,6 +151,26 @@ jQuery( function( $ ) {
 
 				return false;
 			}
+		} )
+		.on( 'keydown', '#respond p.stars a', function( e ) {
+			var direction = e.key;
+			var next = [ 'ArrowRight', 'ArrowDown' ];
+			var prev = [ 'ArrowLeft', 'ArrowUp' ];
+			var allDirections = next.concat( prev );
+
+			if ( ! allDirections.includes( direction ) ) {
+				return;
+			}
+			
+			e.preventDefault();
+
+			if ( next.includes( direction ) ) {
+				$( this ).next().focus().click();
+
+				return;
+			}
+
+			$( this ).prev().focus().click();
 		} );
 
 	// Init Tabs and Star Ratings

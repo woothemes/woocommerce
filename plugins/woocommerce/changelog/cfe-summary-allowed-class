@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Summary: Extend allowed attributes with class in Summary component
