@@ -12,7 +12,7 @@
  *
  * @see     https://woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates\Auth
- * @version 9.6.0
+ * @version 9.7.0
  */
 
 use Automattic\WooCommerce\Internal\BrandingController;
