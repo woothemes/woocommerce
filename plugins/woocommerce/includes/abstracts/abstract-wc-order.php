@@ -2320,6 +2320,7 @@ abstract class WC_Abstract_Order extends WC_Abstract_Legacy_Order {
 				'type'  => 'shipping',
 				'label' => __( 'Shipping:', 'woocommerce' ),
 				'value' => $this->get_shipping_to_display( $tax_display ),
+				'meta'  => $this->get_shipping_method(),
 			);
 		}
 	}

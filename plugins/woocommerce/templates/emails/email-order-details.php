@@ -26,6 +26,10 @@ $heading_class              = $email_improvements_enabled ? 'email-order-detail-
 $order_table_class          = $email_improvements_enabled ? 'email-order-details' : '';
 $order_total_text_align     = $email_improvements_enabled ? 'right' : 'left';
 
+if ( $email_improvements_enabled ) {
+	add_filter( 'woocommerce_order_shipping_to_display_shipped_via', '__return_false' );
+}
+
 do_action( 'woocommerce_email_before_order_table', $order, $sent_to_admin, $plain_text, $email ); ?>
 
 <h2 class="<?php echo esc_attr( $heading_class ); ?>">
@@ -89,7 +93,14 @@ do_action( 'woocommerce_email_before_order_table', $order, $sent_to_admin, $plai
 					$last_class = ( $i === $item_totals_count ) ? ' order-totals-last' : '';
 					?>
 					<tr class="order-totals order-totals-<?php echo esc_attr( $total['type'] ?? 'unknown' ); ?><?php echo esc_attr( $last_class ); ?>">
-						<th class="td text-align-left" scope="row" colspan="2" style="<?php echo ( 1 === $i ) ? 'border-top-width: 4px;' : ''; ?>"><?php echo wp_kses_post( $total['label'] ); ?></th>
+						<th class="td text-align-left" scope="row" colspan="2" style="<?php echo ( 1 === $i ) ? 'border-top-width: 4px;' : ''; ?>">
+							<?php
+							echo wp_kses_post( $total['label'] ) . ' ';
+							if ( $email_improvements_enabled ) {
+								echo isset( $total['meta'] ) ? wp_kses_post( $total['meta'] ) : '';
+							}
+							?>
+						</th>
 						<td class="td text-align-<?php echo esc_attr( $order_total_text_align ); ?>" style="<?php echo ( 1 === $i ) ? 'border-top-width: 4px;' : ''; ?>"><?php echo wp_kses_post( $total['value'] ); ?></td>
 					</tr>
 					<?php
@@ -118,4 +129,9 @@ do_action( 'woocommerce_email_before_order_table', $order, $sent_to_admin, $plai
 	</table>
 </div>
 
-<?php do_action( 'woocommerce_email_after_order_table', $order, $sent_to_admin, $plain_text, $email ); ?>
+<?php
+if ( $email_improvements_enabled ) {
+	remove_filter( 'woocommerce_order_shipping_to_display_shipped_via', '__return_false' );
+}
+do_action( 'woocommerce_email_after_order_table', $order, $sent_to_admin, $plain_text, $email );
+?>
