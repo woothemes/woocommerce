@@ -6,6 +6,10 @@
 namespace Automattic\WooCommerce\Admin;
 
 use Automattic\WooCommerce\Internal\Admin\Loader;
+use WC_Gateway_BACS;
+use WC_Gateway_Cheque;
+use WC_Gateway_COD;
+use WC_Gateway_Paypal;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -296,7 +300,7 @@ class PageController {
 			array(
 				'products'          => array( '', 'inventory', 'downloadable' ),
 				'shipping'          => array( '', 'options', 'classes' ),
-				'checkout'          => array( 'bacs', 'cheque', 'cod', 'paypal' ),
+				'checkout'          => array( WC_Gateway_BACS::ID, WC_Gateway_Cheque::ID, WC_Gateway_COD::ID, WC_Gateway_Paypal::ID ),
 				'email'             => $wc_email_ids,
 				'advanced'          => array(
 					'',
