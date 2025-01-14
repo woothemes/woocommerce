@@ -2,12 +2,6 @@
  * External dependencies
  */
 import { store, getContext as getContextFn } from '@woocommerce/interactivity';
-import { select, subscribe, dispatch } from '@wordpress/data';
-import { CART_STORE_KEY as storeKey } from '@woocommerce/block-data';
-import { Cart } from '@woocommerce/type-defs/cart';
-import { createRoot } from '@wordpress/element';
-import NoticeBanner from '@woocommerce/base-components/notice-banner';
-import { decodeEntities } from '@wordpress/html-entities';
 
 interface Context {
 	isLoading: boolean;
@@ -25,9 +19,17 @@ enum AnimationStatus {
 	SLIDE_IN = 'SLIDE-IN',
 }
 
+interface Cart {
+	items: {
+		key?: string;
+		id: number;
+		quantity: number;
+	}[];
+}
+
 interface Store {
 	state: {
-		cart?: Cart;
+		cart: Cart;
 		inTheCartText?: string;
 		numberOfItemsInTheCart: number;
 		hasCartLoaded: boolean;
@@ -46,29 +48,6 @@ interface Store {
 	};
 }
 
-const storeNoticeClass = '.wc-block-store-notices';
-
-const createNoticeContainer = () => {
-	const noticeContainer = document.createElement( 'div' );
-	noticeContainer.classList.add( storeNoticeClass.replace( '.', '' ) );
-	return noticeContainer;
-};
-
-const injectNotice = ( domNode: Element, errorMessage: string ) => {
-	const root = createRoot( domNode );
-
-	root.render(
-		<NoticeBanner status="error" onRemove={ () => root.unmount() }>
-			{ errorMessage }
-		</NoticeBanner>
-	);
-
-	domNode?.scrollIntoView( {
-		behavior: 'smooth',
-		inline: 'nearest',
-	} );
-};
-
 const getProductById = ( cartState: Cart | undefined, productId: number ) => {
 	return cartState?.items.find( ( item ) => item.id === productId );
 };
@@ -82,8 +61,9 @@ const getButtonText = (
 	return inTheCart.replace( '###', numberOfItems.toString() );
 };
 
-// The `getContextFn` function is wrapped just to avoid prettier issues.
 const getContext = ( ns?: string ) => getContextFn< Context >( ns );
+
+window.wooStore = store( 'woocommerce/product-button' );
 
 const { state } = store< Store >( 'woocommerce/product-button', {
 	state: {
@@ -132,46 +112,52 @@ const { state } = store< Store >( 'woocommerce/product-button', {
 	},
 	actions: {
 		*addToCart() {
-			const context = getContext();
-			const { productId, quantityToAdd } = context;
+			const { productId, quantityToAdd } = getContext();
+			const { restUrl, wcStoreApiNonce } = store< {
+				state: { restUrl: string; wcStoreApiNonce: string };
+			} >( 'woocommerce' ).state;
+			let item = state.cart.items.find( ( { id } ) => id === productId );
+			let endpoint = `update-item`;
 
-			context.isLoading = true;
+			// Optimistically update the number of items in the cart and then
+			// update the database.
+			if ( item ) {
+				item.quantity += quantityToAdd;
+			} else {
+				endpoint = 'add-item';
+				item = {
+					id: productId,
+					quantity: quantityToAdd,
+				};
+				state.cart.items.push( item );
+			}
 
+			// Update the database.
 			try {
-				yield dispatch( storeKey ).addItemToCart(
-					productId,
-					quantityToAdd
+				const res: Response = yield fetch(
+					`${ restUrl }wc/store/v1/cart/${ endpoint }`,
+					{
+						method: 'POST',
+						headers: {
+							Nonce: wcStoreApiNonce,
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify( item ),
+					}
 				);
-
-				// After the cart is updated, sync the temporary number of items again.
-				context.temporaryNumberOfItems = state.numberOfItemsInTheCart;
+				state.cart = yield res.json();
 			} catch ( error ) {
-				const storeNoticeBlock =
-					document.querySelector( storeNoticeClass );
+				// Todo: Handle error using the new Store Notices block.
+				// const { actions } = store('woo/store-notices');
+				// actions.addNotice(...);
 
-				if ( ! storeNoticeBlock ) {
-					document
-						.querySelector( '.entry-content' )
-						?.prepend( createNoticeContainer() );
+				// Revert the optimistic update.
+				if ( item ) {
+					item.quantity -= quantityToAdd;
+				} else {
+					// Todo: Avoid race conditions here.
+					state.cart.items.pop();
 				}
-
-				const domNode =
-					storeNoticeBlock ??
-					document.querySelector( storeNoticeClass );
-
-				const message = ( error as Error ).message;
-
-				if ( domNode ) {
-					injectNotice( domNode, decodeEntities( message ) );
-				}
-
-				// We don't care about errors blocking execution, but will
-				// console.error for troubleshooting.
-				// eslint-disable-next-line no-console
-				console.error( error );
-			} finally {
-				context.displayViewCart = true;
-				context.isLoading = false;
 			}
 		},
 		handleAnimationEnd: ( event: AnimationEvent ) => {
@@ -217,26 +203,4 @@ const { state } = store< Store >( 'woocommerce/product-button', {
 			}
 		},
 	},
-} );
-
-// Subscribe to changes in Cart data.
-subscribe( () => {
-	const cartData = select( storeKey ).getCartData();
-	const isResolutionFinished =
-		select( storeKey ).hasFinishedResolution( 'getCartData' );
-	if ( isResolutionFinished ) {
-		state.cart = cartData;
-	}
-}, storeKey );
-
-// RequestIdleCallback is not available in Safari, so we use setTimeout as an alternative.
-const callIdleCallback =
-	window.requestIdleCallback || ( ( cb ) => setTimeout( cb, 100 ) );
-
-// This selector triggers a fetch of the Cart data. It is done in a
-// `requestIdleCallback` to avoid potential performance issues.
-callIdleCallback( () => {
-	if ( ! state.hasCartLoaded ) {
-		select( storeKey ).getCartData();
-	}
 } );

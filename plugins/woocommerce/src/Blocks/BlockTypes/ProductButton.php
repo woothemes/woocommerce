@@ -82,9 +82,24 @@ class ProductButton extends AbstractBlock {
 		$post_id = isset( $block->context['postId'] ) ? $block->context['postId'] : '';
 		$product = wc_get_product( $post_id );
 
+		// Todo: move this to a general function so it's only triggered once.
+		$cart = rest_do_request( new \WP_REST_Request( 'GET', '/wc/store/v1/cart' ) );
+
+		// Todo: move this to wp_interactivity_config() instead of state.
+		wc_initial_state(
+			'woocommerce',
+			array(
+				'restUrl' => get_rest_url(),
+				'wcStoreApiNonce' => $cart->headers['Nonce'],
+			)
+		);
+
 		wc_initial_state(
 			'woocommerce/product-button',
 			array(
+				'cart' => $cart->data,
+
+				// Todo: move this to wp_interactivity_config() instead of state.
 				'inTheCartText' => sprintf(
 					/* translators: %s: product number. */
 					__( '%s in cart', 'woocommerce' ),
@@ -95,8 +110,7 @@ class ProductButton extends AbstractBlock {
 
 		if ( $product ) {
 			$number_of_items_in_cart = $this->get_cart_item_quantities_by_product_id( $product->get_id() );
-			$more_than_one_item      = $number_of_items_in_cart > 0;
-			$initial_product_text    = $more_than_one_item ? sprintf(
+			$initial_product_text    = $number_of_items_in_cart > 0 ? sprintf(
 			/* translators: %s: product number. */
 				__( '%s in cart', 'woocommerce' ),
 				$number_of_items_in_cart
@@ -132,6 +146,7 @@ class ProductButton extends AbstractBlock {
 			* @param number $default_quantity The default quantity.
 			* @param number $product_id The product id.
 			*/
+			// Question: Is this info in the Store API cart?
 			$quantity_to_add = apply_filters( 'woocommerce_add_to_cart_quantity', $default_quantity, $product->get_id() );
 
 			$context = array(
