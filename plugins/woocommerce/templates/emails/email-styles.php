@@ -113,7 +113,7 @@ body {
 #template_header {
 	background-color: <?php echo esc_attr( $email_improvements_enabled ? $body : $base ); ?>;
 	border-radius: 3px 3px 0 0 !important;
-	color: <?php echo esc_attr( $base_text ); ?>;
+	color: <?php echo esc_attr( $email_improvements_enabled ? $text : $base_text ); ?>;
 	border-bottom: 0;
 	font-weight: bold;
 	line-height: 100%;
@@ -123,7 +123,7 @@ body {
 
 #template_header h1,
 #template_header h1 a {
-	color: <?php echo esc_attr( $base_text ); ?>;
+	color: <?php echo esc_attr( $email_improvements_enabled ? $text : $base_text ); ?>;
 	background-color: inherit;
 }
 
@@ -136,12 +136,18 @@ body {
 	margin-bottom: 0;
 	text-align: <?php echo esc_attr( $header_alignment ); ?>;
 }
-<?php endif; ?>
+
+#template_header_image img {
+	width: 120px
+}
+
+<?php else : ?>
 
 #template_header_image img {
 	margin-left: 0;
 	margin-right: 0;
 }
+<?php endif; ?>
 
 #template_footer td {
 	padding: 0;
@@ -341,12 +347,17 @@ body {
 h1 {
 	color: <?php echo esc_attr( $base ); ?>;
 	font-family: <?php echo esc_attr( $font_family ); ?>;
-	font-size: 30px;
-	font-weight: 300;
-	line-height: 150%;
+	font-size: <?php echo $email_improvements_enabled ? '36px' : '30px'; ?>;
+	font-weight: <?php echo $email_improvements_enabled ? 700 : 300; ?>;
+	<?php if ( $email_improvements_enabled ) : ?>
+		letter-spacing: -1px;
+	<?php endif; ?>
+	line-height: <?php echo $email_improvements_enabled ? '120%' : '150%'; ?>;
 	margin: 0;
 	text-align: <?php echo is_rtl() ? 'right' : 'left'; ?>;
-	text-shadow: 0 1px 0 <?php echo esc_attr( $base_lighter_20 ); ?>;
+	<?php if ( ! $email_improvements_enabled ) : ?>
+		text-shadow: 0 1px 0 <?php echo esc_attr( $base_lighter_20 ); ?>;
+	<?php endif; ?>
 }
 
 h2 {
