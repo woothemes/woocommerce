@@ -99,9 +99,6 @@ export const transformToField = (
 			};
 
 		case 'select':
-		case 'single_select_country':
-		case 'single_select_page':
-		case 'multi_select_countries':
 			return {
 				id: setting.id,
 				type: 'text',
