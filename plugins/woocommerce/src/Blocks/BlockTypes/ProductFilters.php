@@ -224,7 +224,7 @@ class ProductFilters extends AbstractBlock {
 		 *
 		 * @return array Active filters params.
 		 */
-		$filter_param_keys = array_unique( apply_filters( 'product_filters_param_keys', array(), array_keys( $url_query_params ) ) );
+		$filter_param_keys = array_unique( apply_filters( 'woocommerce_blocks_product_filters_param_keys', array(), array_keys( $url_query_params ) ) );
 
 		return array_filter(
 			$url_query_params,
