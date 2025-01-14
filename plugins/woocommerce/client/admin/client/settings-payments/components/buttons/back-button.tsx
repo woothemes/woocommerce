@@ -29,6 +29,10 @@ interface BackButtonProps {
 	isRoute?: boolean;
 }
 
+/**
+ * A button component that navigates to the specified URL or route when clicked.
+ * It supports navigation using either `window.location.href` or browser history based on the `isRoute` prop.
+ */
 export const BackButton = ( {
 	href,
 	tooltipText = __( 'WooCommerce Settings', 'woocommerce' ),

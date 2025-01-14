@@ -3,7 +3,10 @@
  */
 import { Gridicon } from '@automattic/components';
 import { Button, SelectControl } from '@wordpress/components';
-import { PAYMENT_SETTINGS_STORE_NAME } from '@woocommerce/data';
+import {
+	PAYMENT_SETTINGS_STORE_NAME,
+	type PaymentSettingsSelectors,
+} from '@woocommerce/data';
 import { useSelect } from '@wordpress/data';
 import React, {
 	useState,
@@ -34,6 +37,9 @@ import {
 } from '~/settings-payments/utils';
 import './settings-payments-main.scss';
 
+/**
+ * Lazy-loaded chunk for the main settings page of payment gateways.
+ */
 const SettingsPaymentsMainChunk = lazy(
 	() =>
 		import(
@@ -41,6 +47,9 @@ const SettingsPaymentsMainChunk = lazy(
 		)
 );
 
+/**
+ * Lazy-loaded chunk for the recommended payment methods settings page.
+ */
 const SettingsPaymentsMethodsChunk = lazy(
 	() =>
 		import(
@@ -48,6 +57,9 @@ const SettingsPaymentsMethodsChunk = lazy(
 		)
 );
 
+/**
+ * Lazy-loaded chunk for the offline payment gateways settings page.
+ */
 const SettingsPaymentsOfflineChunk = lazy(
 	() =>
 		import(
@@ -55,6 +67,9 @@ const SettingsPaymentsOfflineChunk = lazy(
 		)
 );
 
+/**
+ * Lazy-loaded chunk for the WooPayments settings page.
+ */
 const SettingsPaymentsWooCommercePaymentsChunk = lazy(
 	() =>
 		import(
@@ -62,6 +77,9 @@ const SettingsPaymentsWooCommercePaymentsChunk = lazy(
 		)
 );
 
+/**
+ * Hides or displays the WooCommerce navigation tab based on the provided display style.
+ */
 const hideWooCommerceNavTab = ( display: string ) => {
 	const externalElement = document.querySelector< HTMLElement >(
 		'.woo-nav-tab-wrapper'
@@ -73,6 +91,9 @@ const hideWooCommerceNavTab = ( display: string ) => {
 	}
 };
 
+/**
+ * Renders the main payment settings page with a fallback while loading.
+ */
 const SettingsPaymentsMain = () => {
 	const location = useLocation();
 
@@ -102,6 +123,8 @@ const SettingsPaymentsMain = () => {
 												'Business location :',
 												'woocommerce'
 											) }
+											// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+											// @ts-ignore placeholder prop exists
 											placeholder={ '' }
 											label={ '' }
 											options={ [] }
@@ -145,18 +168,28 @@ const SettingsPaymentsMain = () => {
 	);
 };
 
+/**
+ * Renders the recommended payment methods settings page with a fallback while loading.
+ */
 const SettingsPaymentsMethods = () => {
 	const location = useLocation();
 	const [ paymentMethodsState, setPaymentMethodsState ] = useState( {} );
 	const [ isCompleted, setIsCompleted ] = useState( false );
 	const { providers } = useSelect( ( select ) => {
 		return {
-			isFetching: select( PAYMENT_SETTINGS_STORE_NAME ).isFetching(),
+			isFetching: (
+				select(
+					PAYMENT_SETTINGS_STORE_NAME
+				) as PaymentSettingsSelectors
+			 ).isFetching(),
 			providers:
-				select( PAYMENT_SETTINGS_STORE_NAME ).getPaymentProviders() ||
-				[],
+				(
+					select(
+						PAYMENT_SETTINGS_STORE_NAME
+					) as PaymentSettingsSelectors
+				 ).getPaymentProviders() || [],
 		};
-	} );
+	}, [] );
 
 	// Retrieve wooPayments gateway
 	const wooPayments = getWooPaymentsFromProviders( providers );
@@ -242,6 +275,9 @@ const SettingsPaymentsMethods = () => {
 	);
 };
 
+/**
+ * Wraps the main payment settings and payment methods settings pages.
+ */
 export const SettingsPaymentsMainWrapper = () => {
 	return (
 		<>
@@ -259,6 +295,9 @@ export const SettingsPaymentsMainWrapper = () => {
 	);
 };
 
+/**
+ * Wraps the offline payment gateways settings page.
+ */
 export const SettingsPaymentsOfflineWrapper = () => {
 	return (
 		<>
@@ -293,6 +332,9 @@ export const SettingsPaymentsOfflineWrapper = () => {
 	);
 };
 
+/**
+ * Wraps the WooPayments settings page.
+ */
 export const SettingsPaymentsWooCommercePaymentsWrapper = () => {
 	return (
 		<>

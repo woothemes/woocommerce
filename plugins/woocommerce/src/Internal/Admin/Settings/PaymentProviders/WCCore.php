@@ -4,6 +4,10 @@ declare( strict_types=1 );
 namespace Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders;
 
 use WC_Payment_Gateway;
+use WC_Gateway_BACS;
+use WC_Gateway_Cheque;
+use WC_Gateway_COD;
+use WC_Gateway_Paypal;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -24,13 +28,13 @@ class WCCore extends PaymentGateway {
 	public function get_icon( WC_Payment_Gateway $payment_gateway ): string {
 		// Provide custom icons for core payment gateways.
 		switch ( $payment_gateway->id ) {
-			case 'bacs':
+			case WC_Gateway_BACS::ID:
 				return plugins_url( 'assets/images/payment_methods/bacs.svg', WC_PLUGIN_FILE );
-			case 'cheque':
+			case WC_Gateway_Cheque::ID:
 				return plugins_url( 'assets/images/payment_methods/cheque.svg', WC_PLUGIN_FILE );
-			case 'cod':
+			case WC_Gateway_COD::ID:
 				return plugins_url( 'assets/images/payment_methods/cod.svg', WC_PLUGIN_FILE );
-			case 'paypal':
+			case WC_Gateway_Paypal::ID:
 				return plugins_url( 'assets/images/payment_methods/72x72/paypal.png', WC_PLUGIN_FILE );
 		}
 

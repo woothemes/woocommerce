@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Removed `'IN'` country code from the `$countries` array as India adopted GST on 1 July 2017.

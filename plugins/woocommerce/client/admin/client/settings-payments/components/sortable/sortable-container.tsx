@@ -30,6 +30,21 @@ import { useState } from '@wordpress/element';
  */
 import './sortable.scss';
 
+/**
+ * A container component for sortable items. Manages drag-and-drop behavior and updates the order of items when dragging ends.
+ *
+ * @example
+ * <SortableContainer
+ *     items={items}
+ *     setItems={(newItems) => console.log('Updated items:', newItems)}
+ * >
+ *     {items.map((item) => (
+ *         <SortableItem id={item.id} key={item.id}>
+ *             {item.content}
+ *         </SortableItem>
+ *     ))}
+ * </SortableContainer>
+ */
 export const SortableContainer = < T extends { id: string } >( {
 	items,
 	setItems,

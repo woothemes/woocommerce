@@ -18,13 +18,9 @@ import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import classNames from 'classnames';
 import {
-	// @ts-expect-error missing types.
 	__experimentalHeading as Heading,
-	// @ts-expect-error missing types.
 	__experimentalText as Text,
-	// @ts-expect-error missing types.
 	__experimentalHStack as HStack,
-	// @ts-expect-error missing types.
 	__experimentalVStack as VStack,
 	FlexItem,
 	Button,
@@ -113,7 +109,7 @@ function useView(
 
 			setView( newView );
 		},
-		[ history, isCustom ]
+		[ history ]
 	);
 
 	// When layout URL param changes, update the view type
@@ -183,17 +179,17 @@ export default function ProductList( {
 			search: view.search,
 			...filters,
 		};
-	}, [ location.params, view ] );
+	}, [ view ] );
 
 	const onChangeSelection = useCallback(
-		( items ) => {
+		( items: string[] ) => {
 			setSelection( items );
 			history.push( {
 				...location.params,
 				postId: items.join( ',' ),
 			} );
 		},
-		[ history, location.params, view?.type ]
+		[ history, location.params ]
 	);
 
 	// TODO: Use the Woo data store to get all the products, as this doesn't contain all the product data.
@@ -202,8 +198,11 @@ export default function ProductList( {
 			const { getProducts, getProductsTotalCount, isResolving } =
 				select( 'wc/admin/products' );
 			return {
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				records: getProducts( queryParams ) as Product[],
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				totalCount: getProductsTotalCount( queryParams ) as number,
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				isLoading: isResolving( 'getProducts', [ queryParams ] ),
 			};
 		},
@@ -223,9 +222,11 @@ export default function ProductList( {
 			const { getPostType, canUser } = select( coreStore );
 			const postTypeData:
 				| { labels: Record< string, string > }
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				| undefined = getPostType( postType );
 			return {
 				labels: postTypeData?.labels,
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				canCreateRecord: canUser( 'create', {
 					kind: 'postType',
 					name: postType,
@@ -275,7 +276,6 @@ export default function ProductList( {
 										<Button
 											variant="primary"
 											disabled={ true }
-											// @ts-expect-error missing type.
 											__next40pxDefaultSize
 										>
 											{ labels.add_new_item }
@@ -311,7 +311,6 @@ export default function ProductList( {
 					header={
 						<>
 							<Button
-								// @ts-expect-error outdated type.
 								size="compact"
 								icon={ showNewNavigation ? seen : unseen }
 								label={ __(
@@ -323,7 +322,6 @@ export default function ProductList( {
 								} }
 							/>
 							<Button
-								// @ts-expect-error outdated type.
 								size="compact"
 								isPressed={ quickEdit }
 								icon={ drawerRight }

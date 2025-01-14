@@ -47,6 +47,7 @@ export function VariationSwitcherFooter( {
 				return {
 					previousVariation:
 						previousVariationId !== null &&
+						// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 						getEntityRecord(
 							'postType',
 							'product_variation',
@@ -54,6 +55,7 @@ export function VariationSwitcherFooter( {
 						),
 					nextVariation:
 						nextVariationId !== null &&
+						// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 						getEntityRecord(
 							'postType',
 							'product_variation',

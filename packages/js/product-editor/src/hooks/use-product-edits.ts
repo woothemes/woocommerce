@@ -30,6 +30,7 @@ export function useProductEdits( productType = <string>'product' ) {
 			// @ts-ignore
 			const { getEntityRecordNonTransientEdits } = select( 'core' );
 
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			const _edits = getEntityRecordNonTransientEdits(
 				'postType',
 				productType,
