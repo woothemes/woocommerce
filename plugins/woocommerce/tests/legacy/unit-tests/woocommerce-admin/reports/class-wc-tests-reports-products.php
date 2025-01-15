@@ -8,6 +8,7 @@
 
 use Automattic\WooCommerce\Admin\API\Reports\GenericQuery;
 use Automattic\WooCommerce\Admin\API\Reports\Products\DataStore as ProductsDataStore;
+use Automattic\WooCommerce\Admin\API\Reports\TimeInterval;
 use Automattic\WooCommerce\Admin\ReportCSVExporter;
 use Automattic\WooCommerce\Enums\OrderStatus;
 
@@ -694,5 +695,78 @@ class WC_Admin_Tests_Reports_Products extends WC_Unit_Test_Case {
 		$this->assertEquals( 100, $export->get_percent_complete() );
 		$this->assertEquals( 0, $export->get_total_exported() );
 		$this->assertEquals( $expected_csv, $actual_csv );
+	}
+
+	/**
+	 * Tests the data stored in the wc_order_product_lookup table when a full refund is made.
+	 *
+	 * The full refunds here are the ones that change the order status to refunded.
+	 * The refund type will be full but there will not be refund order line items.
+	 */
+	public function test_sync_order_products_full_refund() {
+		global $wpdb;
+
+		WC_Helper_Reports::reset_stats_dbs();
+
+		$product_1 = new WC_Product_Simple();
+		$product_1->set_name( 'Test Product 1' );
+		$product_1->set_regular_price( 25 );
+		$product_1->save();
+
+		$product_2 = new WC_Product_Simple();
+		$product_2->set_name( 'Test Product 2' );
+		$product_2->set_regular_price( 30 );
+		$product_2->save();
+
+		// Create an order and add product_1 as the order item.
+		$order = WC_Helper_Order::create_order( 1, $product_1 );
+
+		// Add product_2 as the second order item.
+		$item = new WC_Order_Item_Product();
+		$item->set_props(
+			array(
+				'product'  => $product_2,
+				'quantity' => 2,
+				'subtotal' => wc_get_price_excluding_tax( $product_2, array( 'qty' => 2 ) ),
+				'total'    => wc_get_price_excluding_tax( $product_2, array( 'qty' => 2 ) ),
+			)
+		);
+		$item->save();
+		$order->add_item( $item );
+
+		$order->set_status( OrderStatus::COMPLETED );
+		$order->set_shipping_total( 100 );
+		$order->set_discount_total( 0 );
+		$order->set_discount_tax( 0 );
+		$order->set_cart_tax( 0 );
+		$order->set_shipping_tax( 0 );
+		$order->set_total( 260 ); // $25x4 product_1 + $30x2 product_2 + $100 shipping.
+		$order->save();
+
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
+
+		$order->set_status( OrderStatus::REFUNDED );
+		$order->save();
+
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
+
+		// Get the last order item from the order.
+		$order_item_id = end( $order->get_items() )->get_id();
+
+		// Get the refund order id.
+		$refund_order_id = $order->get_refunds()[0]->get_id();
+
+		$result = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT * FROM wp_wc_order_product_lookup WHERE order_item_id = %d AND order_id = %d',
+				$order_item_id,
+				$refund_order_id
+			)
+		);
+
+		$this->assertEquals( '-2', $result[0]->product_qty );
+		$this->assertEquals( -60.000000, $result[0]->product_net_revenue );   // -($30 product_2 * 2).
+		$this->assertEquals( -33.333333, $result[0]->shipping_amount );       // -($100 shipping / 6 total products x 2 product_2 ).
+		$this->assertEquals( -93.333333, $result[0]->product_gross_revenue ); // product_net_revenue + shipping_amount + + shipping_tax_amount + tax_amount.
 	}
 }

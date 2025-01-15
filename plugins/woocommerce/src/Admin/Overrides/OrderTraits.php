@@ -20,7 +20,7 @@ trait OrderTraits {
 	 *
 	 * @return float|int
 	 */
-	public function get_item_shipping_amount( $item ) {
+	public function get_item_shipping_amount( $item, $shipping_amount = null ) {
 		// Shipping amount loosely based on woocommerce code in includes/admin/meta-boxes/views/html-order-item(s).php
 		// distributed simply based on number of line items.
 		$product_qty = $item->get_quantity( 'edit' );
@@ -29,7 +29,7 @@ trait OrderTraits {
 			return 0;
 		}
 
-		$total_shipping_amount = (float) $this->get_shipping_total();
+		$total_shipping_amount = $shipping_amount ? $shipping_amount : (float) $this->get_shipping_total();
 
 		return $total_shipping_amount / $order_items * $product_qty;
 	}

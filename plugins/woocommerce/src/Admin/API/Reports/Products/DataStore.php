@@ -471,6 +471,8 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 		$partial_refund_product_revenue    = array();
 		$refund_type                       = $order->get_meta( '_refund_type' );
 
+		$parent_order = null;
+
 		// When changing the order status to "Refunded", the refund order's type will be full refund, and the order items will be empty.
 		// We need to get the parent order items, and exclude the items that is already being patially refunded.
 		if (
@@ -546,6 +548,17 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 				}
 
 				$product_qty = -abs( $product_qty );
+
+				if ( $parent_order ) {
+					// Calculate the shipping amount to refund from the parent order.
+					$total_shipping_refunded  = (float) $parent_order->get_total_shipping_refunded();
+					$shipping_total           = (float) $parent_order->get_shipping_total();
+					$total_shipping_to_refund = $shipping_total - $total_shipping_refunded;
+
+					if ( $total_shipping_to_refund > 0 ) {
+						$shipping_amount = -abs( $parent_order->get_item_shipping_amount( $order_item, $total_shipping_to_refund ) );
+					}
+				}
 			}
 
 			$is_refund = $net_revenue < 0;
