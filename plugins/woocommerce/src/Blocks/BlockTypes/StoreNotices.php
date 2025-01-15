@@ -43,7 +43,8 @@ class StoreNotices extends AbstractBlock {
 			'<div %1$s>%2$s</div>',
 			get_block_wrapper_attributes(
 				array(
-					'class' => 'wc-block-store-notices woocommerce ' . esc_attr( $classes_and_styles['classes'] ),
+					'class'               => 'wc-block-store-notices woocommerce ' . esc_attr( $classes_and_styles['classes'] ),
+					'data-wc-interactive' => wp_json_encode( array( 'namespace' => 'woocommerce/store-notices' ) ),
 				)
 			),
 			$this->render_notices_iapi(),
@@ -56,22 +57,22 @@ class StoreNotices extends AbstractBlock {
 	 * @return string Rendered block output.
 	 */
 	protected function render_notices_iapi() {
-		$namespace    = wp_json_encode( array( 'namespace' => 'woocommerce/store-notices' ) );
 		$all_notices  = wc_get_notices();
 		$notice_types = apply_filters( 'woocommerce_notice_types', array( 'error', 'success', 'notice' ) );
 
-		$store_notices_context = array();
+		$store_notices_context = array( 'notices' => array() );
 
 		foreach ( $notice_types as $notice_type ) {
-			if ( ! isset( $store_notices_context[ $notice_type . 'Notices' ] ) ) {
-				$store_notices_context[ $notice_type . 'Notices' ] = '';
-			}
-
 			if ( wc_notice_count( $notice_type ) > 0 ) {
 				$notices_by_type = $all_notices[ $notice_type ];
 
-				foreach ( $notices_by_type as $notice ) {
-					$store_notices_context[ $notice_type . 'Notices' ] .= $notice['notice'];
+				foreach ( $notices_by_type as $index => $notice ) {
+					$store_notices_context['notices'][] = array(
+						'notice' => $notice['notice'],
+						'data'   => $notice['data'],
+						'index'  => $notice_type . '-' . $index,
+						'type'   => $notice_type,
+					);
 				}
 			}
 		}
@@ -79,12 +80,18 @@ class StoreNotices extends AbstractBlock {
 		ob_start();
 
 		?>
-		<div data-wc-interactive="<?php echo esc_attr( $namespace ); ?>" class="wc-block-store-notices woocommerce">
-			<div data-wc-context="<?php echo esc_attr( wp_json_encode( $store_notices_context ) ); ?>" class="woocommerce-notices-wrapper">
-				<?php foreach ( $notice_types as $notice_type ) { ?>
-					<?php echo $this->render_iapi_notice_type( $notice_type ); ?>
-				<?php } ?>
-			</div>
+		<div data-wc-context="<?php echo esc_attr( wp_json_encode( $store_notices_context ) ); ?>" class="woocommerce-notices-wrapper">
+			<?php foreach ( $notice_types as $notice_type ) { ?>
+				<?php
+				$notices = array_filter(
+					$store_notices_context['notices'],
+					function ( $notice ) use ( $notice_type ) {
+						return $notice['type'] === $notice_type;
+					}
+				);
+				?>
+				<?php echo $this->render_iapi_notice_type( $notices, $notice_type ); ?>
+			<?php } ?>
 		</div>
 		<?php
 
@@ -99,20 +106,41 @@ class StoreNotices extends AbstractBlock {
 	 *
 	 * @return string Rendered notice type output.
 	 */
-	protected function render_iapi_notice_type( $notice_type ) {
-		$iapi_notices_directive = "<span data-notice-type='{$notice_type}' data-wc-init='callbacks.renderNoticesByType'></span>";
+	protected function render_iapi_notice_type( $notices, $notice_type ) {
+		$iapi_notices = array_map(
+			function ( $notice ) {
+				$notice_id_context = esc_attr( wp_json_encode( array( 'noticeId' => $notice['index'] ) ) );
+				return array(
+					'notice' => "<span data-wc-context='{$notice_id_context}' data-wc-init='callbacks.renderNoticeById' ></span>",
+					'data'   => $notice['data'],
+				);
+			},
+			$notices
+		);
+
+		$has_notices_context = wp_json_encode( array( 'hasNoticesOfType' => count( $iapi_notices ) > 0 ) );
+
+		if ( empty( $iapi_notices ) ) {
+			// This will force the rendering of the notice template for each notice type so that client side notices can be added later for that type.
+			$iapi_notices = array(
+				array(
+					'notice' => '',
+				),
+			);
+		}
+
 		ob_start();
 
 		?>
-		<div data-notice-type="<?php echo esc_attr( $notice_type ); ?>" data-wc-bind--hidden="state.noticeTypeShouldBeHidden" hidden>
+		<div data-wc-context="<?php echo esc_attr( $has_notices_context ); ?>" data-wc-bind--hidden="!context.hasNoticesOfType" hidden>
 			<?php
-					echo wc_get_template(
-						"notices/{$notice_type}.php",
-						array(
-							'messages' => array(),
-							'notices'  => array( array( 'notice' => $iapi_notices_directive ) ),
-						),
-					);
+				echo wc_get_template(
+					"notices/{$notice_type}.php",
+					array(
+						'messages' => array(),
+						'notices'  => $iapi_notices,
+					),
+				);
 			?>
 		</div>
 		<?php

@@ -4,14 +4,17 @@
 import { getContext, getElement, store } from '@woocommerce/interactivity';
 
 type StoreNoticesContext = {
-	[ Key in `${ string }Notices` ]?: string;
-} & {
-	noticeTypeShouldBeHidden: boolean;
+	notices: Notice[];
+};
+
+type NoticeIdContext = StoreNoticesContext & {
+	noticeId: string;
 };
 
 type Notice = {
-	type: keyof StoreNoticesContext;
-	message: string;
+	notice: string;
+	data: Record< string, unknown >;
+	index: string;
 };
 
 type StoreNoticesStore = {
@@ -20,53 +23,29 @@ type StoreNoticesStore = {
 		addNotice: ( notice: Notice ) => void;
 	};
 	callbacks: {
-		renderNoticesByType: () => void;
+		renderNoticeById: () => void;
 	};
 };
 
 store< StoreNoticesStore >( 'woocommerce/store-notices', {
-	state: {
-		get noticeTypeShouldBeHidden() {
-			const context = getContext< StoreNoticesContext >();
-			const element = getElement();
-			const noticeType = element.ref.getAttribute(
-				'data-notice-type'
-			) as string;
-			const prop: keyof StoreNoticesContext = `${ noticeType }Notices`;
-			return context?.[ prop ] === undefined || context?.[ prop ] === '';
-		},
-	},
 	context: {
-		// default notice types, but may contain others generated dynamically.
-		errorNotices: '',
-		successNotices: '',
-		noticeNotices: '',
+		notices: [],
 	},
 	actions: {
 		addNotice: ( notice: Notice ) => {
-			const context = getContext< StoreNoticesContext >();
-			const prop: keyof StoreNoticesContext = `${ notice.type }Notices`;
-
-			if ( context[ prop ] === undefined ) {
-				context[ prop ] = '';
-			}
-
-			context[ prop ] += notice.message;
+			//  TODO - add notice to context here.
 		},
 	},
 	callbacks: {
-		renderNoticesByType: () => {
-			const context = getContext< StoreNoticesContext >();
+		renderNoticeById: () => {
 			const element = getElement();
+			const context = getContext< NoticeIdContext >();
+			const noticeId = context.noticeId;
+			const notice = context.notices.find(
+				( n ) => n.index === noticeId
+			);
 
-			const noticeType = element.ref.getAttribute(
-				'data-notice-type'
-			) as string;
-			const prop: keyof StoreNoticesContext = `${ noticeType }Notices`;
-
-			if ( context[ prop ] ) {
-				element.ref.innerHTML = context.errorNotices;
-			}
+			element.ref.innerHTML = notice?.notice;
 		},
 	},
 } );
