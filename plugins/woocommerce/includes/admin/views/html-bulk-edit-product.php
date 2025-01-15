@@ -224,7 +224,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<select class="visibility" name="_visibility">
 					<?php
 					$options = array(
-						''        => __( '— No change —', 'woocommerce' ),
+						''                         => __( '— No change —', 'woocommerce' ),
 						ProductVisibility::VISIBLE => __( 'Catalog &amp; search', 'woocommerce' ),
 						ProductVisibility::CATALOG => __( 'Catalog', 'woocommerce' ),
 						ProductVisibility::SEARCH  => __( 'Search', 'woocommerce' ),
