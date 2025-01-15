@@ -28,7 +28,8 @@ export const usePatterns = () => {
 				dispatch( coreStore ).invalidateResolutionForStoreSelector(
 					'getBlockPatterns'
 				),
-		} )
+		} ),
+		[]
 	);
 
 	return {

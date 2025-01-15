@@ -5,6 +5,7 @@
  * @package WooCommerce\Tests\Importer.
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 
 /**
@@ -59,8 +60,8 @@ class WC_Product_CSV_Importer_Test extends \WC_Unit_Test_Case {
 			)
 		);
 
-		$this->assertEquals( 'draft', $variable['status'] );
-		$this->assertEquals( 'publish', $variation['status'] );
+		$this->assertEquals( ProductStatus::DRAFT, $variable['status'] );
+		$this->assertEquals( ProductStatus::PUBLISH, $variation['status'] );
 	}
 
 	/**

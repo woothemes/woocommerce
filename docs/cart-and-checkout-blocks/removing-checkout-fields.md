@@ -1,6 +1,6 @@
 ---
 post_title: Cart and Checkout - Removing checkout fields
-menu_title: Extensibility
+menu_title: Removing checkout fields
 tags: reference
 ---
 <!-- markdownlint-disable MD041 -->

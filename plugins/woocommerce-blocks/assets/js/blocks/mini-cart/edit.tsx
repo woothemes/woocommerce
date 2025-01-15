@@ -350,6 +350,13 @@ const Edit = ( { attributes, setAttributes }: Props ): ReactElement => {
 			<ColorPanel colorTypes={ miniCartColorAttributes } />
 			<Noninteractive>
 				<button className="wc-block-mini-cart__button">
+					<QuantityBadge
+						count={ productCount }
+						iconColor={ iconColor }
+						productCountColor={ productCountColor }
+						icon={ miniCartIcon }
+						productCountVisibility={ productCountVisibility }
+					/>
 					{ ! hasHiddenPrice && (
 						<span
 							className="wc-block-mini-cart__amount"
@@ -358,13 +365,6 @@ const Edit = ( { attributes, setAttributes }: Props ): ReactElement => {
 							{ formatPrice( productTotal ) }
 						</span>
 					) }
-					<QuantityBadge
-						count={ productCount }
-						iconColor={ iconColor }
-						productCountColor={ productCountColor }
-						icon={ miniCartIcon }
-						productCountVisibility={ productCountVisibility }
-					/>
 				</button>
 			</Noninteractive>
 		</div>

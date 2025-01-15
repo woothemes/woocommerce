@@ -24,6 +24,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WC_Gateway_BACS extends WC_Payment_Gateway {
 
 	/**
+	 * Unique ID for this gateway.
+	 *
+	 * @var string
+	 */
+	const ID = 'bacs';
+
+	/**
 	 * Array of locales
 	 *
 	 * @var array
@@ -49,7 +56,7 @@ class WC_Gateway_BACS extends WC_Payment_Gateway {
 	 */
 	public function __construct() {
 
-		$this->id                 = 'bacs';
+		$this->id                 = self::ID;
 		$this->icon               = apply_filters( 'woocommerce_bacs_icon', '' );
 		$this->has_fields         = false;
 		$this->method_title       = __( 'Direct bank transfer', 'woocommerce' );
@@ -280,7 +287,7 @@ class WC_Gateway_BACS extends WC_Payment_Gateway {
 	 * @param bool     $plain_text Email format: plain text or HTML.
 	 */
 	public function email_instructions( $order, $sent_to_admin, $plain_text = false ) {
-		if ( ! $sent_to_admin && 'bacs' === $order->get_payment_method() ) {
+		if ( ! $sent_to_admin && self::ID === $order->get_payment_method() ) {
 			/**
 			 * Filter the email instructions order status.
 			 *

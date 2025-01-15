@@ -8,6 +8,7 @@
  * @version 3.0.0
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 
 defined( 'ABSPATH' ) || exit;
@@ -550,7 +551,14 @@ class WC_Product_Variation extends WC_Product_Simple {
 	 * @return bool
 	 */
 	public function is_purchasable() {
-		return apply_filters( 'woocommerce_variation_is_purchasable', $this->variation_is_visible() && parent::is_purchasable() && ( 'publish' === $this->parent_data['status'] || current_user_can( 'edit_post', $this->get_parent_id() ) ), $this );
+		/**
+		 * Filter to adjust if a variation is purchasable.
+		 *
+		 * @since 3.0.0
+		 * @param bool $purchasable If the variation is purchasable.
+		 * @param object $variation The variation object.
+		 */
+		return apply_filters( 'woocommerce_variation_is_purchasable', $this->variation_is_visible() && parent::is_purchasable() && ( ProductStatus::PUBLISH === $this->parent_data['status'] || current_user_can( 'edit_post', $this->get_parent_id() ) ), $this );
 	}
 
 	/**
@@ -572,7 +580,16 @@ class WC_Product_Variation extends WC_Product_Simple {
 	 * @return bool
 	 */
 	public function variation_is_visible() {
-		return apply_filters( 'woocommerce_variation_is_visible', 'publish' === get_post_status( $this->get_id() ) && '' !== $this->get_price(), $this->get_id(), $this->get_parent_id(), $this );
+		/**
+		 * Filter to adjust if a variation is visible.
+		 *
+		 * @since 3.0.0
+		 * @param bool $visible If the variation is visible.
+		 * @param int $variation_id The variation ID.
+		 * @param int $product_id The product ID.
+		 * @param object $variation The variation object.
+		 */
+		return apply_filters( 'woocommerce_variation_is_visible', ProductStatus::PUBLISH === get_post_status( $this->get_id() ) && '' !== $this->get_price(), $this->get_id(), $this->get_parent_id(), $this );
 	}
 
 	/**

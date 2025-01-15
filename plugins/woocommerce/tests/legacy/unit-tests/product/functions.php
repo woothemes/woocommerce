@@ -5,6 +5,7 @@
  * @since 2.3
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 
 /**
@@ -51,7 +52,7 @@ class WC_Tests_Product_Functions extends WC_Unit_Test_Case {
 		$variation->save();
 
 		$draft = WC_Helper_Product::create_simple_product();
-		$draft->set_status( 'draft' );
+		$draft->set_status( ProductStatus::DRAFT );
 		$draft->save();
 
 		$this->assertCount( 9, wc_get_products( array( 'return' => 'ids' ) ) );
@@ -60,7 +61,7 @@ class WC_Tests_Product_Functions extends WC_Unit_Test_Case {
 		$products = wc_get_products(
 			array(
 				'return' => 'ids',
-				'status' => 'draft',
+				'status' => ProductStatus::DRAFT,
 			)
 		);
 		$this->assertEquals( array( $draft->get_id() ), $products );
