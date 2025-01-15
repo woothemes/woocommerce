@@ -49,4 +49,36 @@ final class NumberUtil {
 
 		return array_sum( $sanitized_array );
 	}
+
+	/**
+	 * Accepts a cost using the current locale and returns it expressed as a numeric string.
+	 *
+	 * @param string $value The cost to sanitize, containing only numbers and the current locale's separators.
+	 * @return string The sanitized cost as a numeric string (passing is_numeric()).
+	 * @throws \InvalidArgumentException If the value contains invalid characters (including "." or " " if they are not the current locale's separators).
+	 */
+	public static function sanitize_cost_in_current_locale( $value ): string {
+		$value = is_null( $value ) ? '' : $value;
+		$value = wp_kses_post( trim( wp_unslash( $value ) ) );
+		$value = str_replace( array( get_woocommerce_currency_symbol(), html_entity_decode( get_woocommerce_currency_symbol() ) ), '', $value );
+
+		$allowed_characters_regex = sprintf(
+			'/^[0-9\%s\%s]*$/',
+			wc_get_price_thousand_separator(),
+			wc_get_price_decimal_separator()
+		);
+
+		if ( 1 !== preg_match( $allowed_characters_regex, $value ) ) {
+			throw new \InvalidArgumentException( __( 'Please enter a valid number', 'woocommerce' ) );
+		}
+
+		$value = str_replace( wc_get_price_thousand_separator(), '', $value );
+		$value = str_replace( wc_get_price_decimal_separator(), '.', $value );
+
+		if ( $value && ! is_numeric( $value ) ) {
+			throw new \InvalidArgumentException( __( 'Please enter a valid number', 'woocommerce' ) );
+		}
+
+		return $value;
+	}
 }
