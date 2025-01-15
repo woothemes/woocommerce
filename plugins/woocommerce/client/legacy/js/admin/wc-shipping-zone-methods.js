@@ -380,7 +380,11 @@
 							return;
 						}
 
-						const unformattedValue = formattedValue
+						// Create regex to match only numbers and configured separators
+						const regex = new RegExp(`[^0-9${config.thousandSeparator}${config.decimalSeparator}]`, 'g');
+						const strippedValue = formattedValue.replace(regex, '');
+
+						const unformattedValue = strippedValue
 							.replaceAll( config.thousandSeparator, '' )
 							.replace( config.decimalSeparator, '.' );
 
