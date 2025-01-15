@@ -62,10 +62,20 @@ describe( 'InboxNoteCard', () => {
 	};
 
 	it( 'should render the defined action buttons', () => {
-		const { queryByText } = render(
+		const { queryByText, queryByRole } = render(
 			<InboxNoteCard key={ note.id } note={ note } />
 		);
+		expect(
+			queryByRole( 'link', {
+				name: 'Connect',
+			} )
+		).toHaveAttribute( 'href', 'http://test.com' );
 		expect( queryByText( 'Connect' ) ).toBeInTheDocument();
+		expect(
+			queryByRole( 'link', {
+				name: 'Learn More',
+			} )
+		).toHaveAttribute( 'href', 'http://test.com' );
 		expect( queryByText( 'Learn More' ) ).toBeInTheDocument();
 	} );
 

@@ -76,6 +76,7 @@ export const InboxNoteActionButton: React.FC< InboxNoteActionProps > = ( {
 			variant={ variant }
 			isBusy={ inAction }
 			disabled={ inAction }
+			href={ href ?? '#' }
 			onClick={ handleActionClick }
 		>
 			<span>{ label }</span>
