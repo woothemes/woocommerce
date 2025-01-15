@@ -675,10 +675,9 @@ class WC_Install {
 		 *
 		 * @since 3.2.0
 		 */
-		return (bool) apply_filters(
-			'woocommerce_enable_auto_update_db',
+		return
 			! Constants::is_true( 'WC_DISABLE_DB_AUTO_UPDATE' )
-		);
+			&& (bool) apply_filters( 'woocommerce_enable_auto_update_db', true );
 	}
 
 	/**
