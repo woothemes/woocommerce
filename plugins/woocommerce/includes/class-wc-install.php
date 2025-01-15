@@ -383,8 +383,9 @@ class WC_Install {
 	 */
 	public static function wc_admin_db_update_notice() {
 		if (
-			WC()->is_wc_admin_active() &&
-			false !== get_option( 'woocommerce_admin_install_timestamp' )
+			WC()->is_wc_admin_active()
+			&& false !== get_option( 'woocommerce_admin_install_timestamp' )
+			&& ! self::is_db_auto_update_enabled()
 		) {
 			new WC_Notes_Run_Db_Update();
 		}
