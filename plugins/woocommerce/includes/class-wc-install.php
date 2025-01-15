@@ -451,7 +451,7 @@ class WC_Install {
 	public static function install_actions() {
 		if ( ! empty( $_GET['do_update_woocommerce'] ) ) { // WPCS: input var ok.
 			check_admin_referer( 'wc_db_update', 'wc_db_update_nonce' );
-			wc_get_logger()->info( 'Manual database update triggered.', array( 'source' => 'install' ) );
+			wc_get_logger()->info( 'Manual database update triggered.', array( 'source' => 'wc-updater' ) );
 			self::update();
 			WC_Admin_Notices::add_notice( 'update', true );
 
@@ -704,7 +704,7 @@ class WC_Install {
 			 * @since 3.2.0
 			 */
 			if ( self::is_db_auto_update_enabled() ) {
-				wc_get_logger()->info( 'Automatic database update triggered.', array( 'source' => 'install' ) );
+				wc_get_logger()->info( 'Automatic database update triggered.', array( 'source' => 'wc-updater' ) );
 				self::update();
 			} else {
 				WC_Admin_Notices::add_notice( 'update', true );
@@ -752,7 +752,7 @@ class WC_Install {
 
 		wc_get_logger()->info(
 			sprintf( 'Scheduling database updates (from %s to %s)...', $current_db_version, $current_wc_version ),
-			array( 'source' => 'install' )
+			array( 'source' => 'wc-updater' )
 		);
 		foreach ( self::get_db_update_callbacks() as $version => $update_callbacks ) {
 			if ( version_compare( $current_db_version, $version, '<' ) ) {
@@ -769,8 +769,8 @@ class WC_Install {
 				}
 
 				wc_get_logger()->info(
-					sprintf( '  Updates from version %s scheduled.', $current_db_version, $version ),
-					array( 'source' => 'install' )
+					sprintf( '  Updates from version %s scheduled.', $version ),
+					array( 'source' => 'wc-updater' )
 				);
 			}
 		}
@@ -788,7 +788,7 @@ class WC_Install {
 			);
 		}
 
-		wc_get_logger()->info( 'Database updates scheduled.', array( 'source' => 'install' )  );
+		wc_get_logger()->info( 'Database updates scheduled.', array( 'source' => 'wc-updater' )  );
 	}
 
 	/**
