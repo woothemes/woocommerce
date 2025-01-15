@@ -3,11 +3,7 @@
  */
 import './CardHeaderDescription.scss';
 
-interface CardHeaderDescriptionProps {
-	children: React.ReactNode;
-}
-
-export const CardHeaderDescription: React.FC< CardHeaderDescriptionProps > = ( {
+export const CardHeaderDescription: React.FC< React.PropsWithChildren > = ( {
 	children,
 } ) => {
 	return (
