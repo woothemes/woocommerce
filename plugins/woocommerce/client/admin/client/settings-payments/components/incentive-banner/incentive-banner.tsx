@@ -56,6 +56,11 @@ interface IncentiveBannerProps {
 	) => void;
 }
 
+/**
+ * A banner component that displays a promotional incentive to the user. The banner allows the user to:
+ * - Accept the incentive, triggering setup actions.
+ * - Dismiss the incentive, removing it from the current context.
+ */
 export const IncentiveBanner = ( {
 	incentive,
 	provider,
@@ -70,6 +75,10 @@ export const IncentiveBanner = ( {
 
 	const context = 'wc_settings_payments__banner';
 
+	/**
+	 * Handles accepting the incentive.
+	 * Triggers the onAccept callback, dismisses the banner, and triggers plugin setup.
+	 */
 	const handleAccept = () => {
 		setIsBusy( true );
 		onAccept( incentive.promo_id );
@@ -79,6 +88,10 @@ export const IncentiveBanner = ( {
 		setIsBusy( false );
 	};
 
+	/**
+	 * Handles dismissing the incentive.
+	 * Triggers the onDismiss callback and hides the banner.
+	 */
 	const handleDismiss = () => {
 		setIsBusy( true );
 		onDismiss( incentive._links.dismiss.href, context );
@@ -86,6 +99,7 @@ export const IncentiveBanner = ( {
 		setIsDismissed( true );
 	};
 
+	// Do not render the banner if it has been submitted, dismissed, or already dismissed in this context.
 	if (
 		isSubmitted ||
 		isIncentiveDismissedInContext( incentive, context ) ||
