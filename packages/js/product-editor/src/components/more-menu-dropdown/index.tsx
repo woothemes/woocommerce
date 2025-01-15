@@ -21,6 +21,13 @@ export const MoreMenuDropdown = ( {
 	popoverProps,
 	toggleProps,
 	children,
+}: {
+	as?: React.ElementType;
+	className?: string;
+	label?: string;
+	popoverProps?: Record< string, unknown > & { className?: string };
+	toggleProps?: Record< string, unknown >;
+	children: ( onClose: () => void ) => React.ReactNode;
 } ) => {
 	return (
 		<DropdownComponent
@@ -44,7 +51,7 @@ export const MoreMenuDropdown = ( {
 				size: 'compact',
 			} }
 		>
-			{ ( onClose ) => children( onClose ) }
+			{ ( { onClose }: { onClose: () => void } ) => children( onClose ) }
 		</DropdownComponent>
 	);
 };

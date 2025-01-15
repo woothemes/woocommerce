@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import { createSlotFill, SelectControl, Spinner } from '@wordpress/components';
+import { createSlotFill, Spinner } from '@wordpress/components';
+import { SelectControlSingleSelectionProps } from '@wordpress/components/build-types/select-control/types';
 import { registerPlugin } from '@wordpress/plugins';
 import { useEffect, useState } from '@wordpress/element';
 import { debounce } from 'lodash';
@@ -22,10 +23,12 @@ import { EmailPreviewType } from './settings-email-preview-type';
 
 const { Fill } = createSlotFill( SETTINGS_SLOT_FILL_CONSTANT );
 
-export type EmailType = SelectControl.Option;
+export type EmailTypes = NonNullable<
+	SelectControlSingleSelectionProps[ 'options' ]
+>;
 
 type EmailPreviewFillProps = {
-	emailTypes: EmailType[];
+	emailTypes: EmailTypes;
 	previewUrl: string;
 	settingsIds: string[];
 };
@@ -117,7 +120,7 @@ export const registerSettingsEmailPreviewFill = () => {
 		return null;
 	}
 	const emailTypesData = slotElement.getAttribute( 'data-email-types' );
-	let emailTypes: EmailType[] = [];
+	let emailTypes: EmailTypes = [];
 	try {
 		emailTypes = JSON.parse( emailTypesData || '' );
 	} catch ( e ) {}
