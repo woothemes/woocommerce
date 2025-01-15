@@ -25,6 +25,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WC_Gateway_COD extends WC_Payment_Gateway {
 
 	/**
+	 * Unique ID for this gateway.
+	 *
+	 * @var string
+	 */
+	const ID = 'cod';
+
+	/**
 	 * Gateway instructions that will be added to the thank you page and emails.
 	 *
 	 * @var string
@@ -76,7 +83,7 @@ class WC_Gateway_COD extends WC_Payment_Gateway {
 	 * Setup general properties for the gateway.
 	 */
 	protected function setup_properties() {
-		$this->id                 = 'cod';
+		$this->id                 = self::ID;
 		$this->icon               = apply_filters( 'woocommerce_cod_icon', '' );
 		$this->method_title       = __( 'Cash on delivery', 'woocommerce' );
 		$this->method_description = __( 'Let your shoppers pay upon delivery — by cash or other methods of payment.', 'woocommerce' );
@@ -206,7 +213,7 @@ class WC_Gateway_COD extends WC_Payment_Gateway {
 			if ( ! isset( $_REQUEST['tab'] ) || 'checkout' !== $_REQUEST['tab'] ) {
 				return false;
 			}
-			if ( ! isset( $_REQUEST['section'] ) || 'cod' !== $_REQUEST['section'] ) {
+			if ( ! isset( $_REQUEST['section'] ) || self::ID !== $_REQUEST['section'] ) {
 				return false;
 			}
 			// phpcs:enable WordPress.Security.NonceVerification
@@ -389,7 +396,7 @@ class WC_Gateway_COD extends WC_Payment_Gateway {
 	 * @return string
 	 */
 	public function change_payment_complete_order_status( $status, $order_id = 0, $order = false ) {
-		if ( $order && 'cod' === $order->get_payment_method() ) {
+		if ( $order && self::ID === $order->get_payment_method() ) {
 			$status = OrderStatus::COMPLETED;
 		}
 		return $status;

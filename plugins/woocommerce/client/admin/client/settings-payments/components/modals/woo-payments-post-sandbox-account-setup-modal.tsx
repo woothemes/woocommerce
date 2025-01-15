@@ -17,11 +17,25 @@ import { getWooPaymentsSetupLiveAccountLink } from '~/settings-payments/utils';
 import { WC_ASSET_URL } from '~/utils/admin-settings';
 
 interface WooPaymentsReadyToTestModalProps {
+	/**
+	 * Indicates if the modal is currently open.
+	 */
 	isOpen: boolean;
+	/**
+	 *  Indicates if the developer mode is on.
+	 */
 	devMode: boolean;
+	/**
+	 * Callback function to handle modal closure.
+	 */
 	onClose: () => void;
 }
 
+/**
+ * A modal component displayed when a sandbox account is ready for testing payments. It provides
+ * options to continue setting up the store or to activate payments.
+ * Supports dev mode: makes modal shorter and activate payments button is not available in this case.
+ */
 export const WooPaymentsPostSandboxAccountSetupModal = ( {
 	isOpen,
 	devMode,
@@ -30,12 +44,21 @@ export const WooPaymentsPostSandboxAccountSetupModal = ( {
 	const [ isActivatingPayments, setIsActivatingPayments ] = useState( false );
 	const [ isContinuingStoreSetup, setIsContinuingStoreSetup ] =
 		useState( false );
+
+	/**
+	 * Handles the "Activate Payments" action.
+	 * Redirects the user to the WooPayments setup live account link.
+	 */
 	const handleActivatePayments = () => {
 		setIsActivatingPayments( true );
 
 		window.location.href = getWooPaymentsSetupLiveAccountLink();
 	};
 
+	/**
+	 * Handles the "Continue Store Setup" action.
+	 * Redirects the user to the WooCommerce admin store setup page.
+	 */
 	const handleContinueStoreSetup = () => {
 		setIsContinuingStoreSetup( true );
 

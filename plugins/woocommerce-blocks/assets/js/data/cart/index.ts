@@ -17,13 +17,11 @@ import * as selectors from './selectors';
 import * as actions from './actions';
 import * as resolvers from './resolvers';
 import reducer from './reducers';
-import type { SelectFromMap, DispatchFromMap } from '../mapped-types';
 import { pushChanges, flushChanges } from './push-changes';
 import {
 	updatePaymentMethods,
 	debouncedUpdatePaymentMethods,
 } from './update-payment-methods';
-import { ResolveSelectFromMap } from '../mapped-types';
 import {
 	hasCartSession,
 	persistenceLayer,
@@ -31,7 +29,7 @@ import {
 } from './persistence-layer';
 import { defaultCartState } from './default-state';
 
-const store = createReduxStore( STORE_KEY, {
+export const config = {
 	reducer,
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	actions: actions as any,
@@ -45,7 +43,8 @@ const store = createReduxStore( STORE_KEY, {
 			...( persistenceLayer.get() || {} ),
 		},
 	},
-} );
+};
+export const store = createReduxStore( STORE_KEY, config );
 
 register( store );
 
@@ -57,7 +56,7 @@ window.addEventListener( 'load', () => {
 		( ! hasCartSession() || persistenceLayer.get() ) &&
 		! isAddingToCart
 	) {
-		wpDispatch( STORE_KEY ).finishResolution( 'getCartData' );
+		wpDispatch( store ).finishResolution( 'getCartData' );
 	}
 } );
 
@@ -90,32 +89,3 @@ const unsubscribeUpdatePaymentMethods = subscribe( async () => {
 }, store );
 
 export const CART_STORE_KEY = STORE_KEY;
-
-declare module '@wordpress/data' {
-	function dispatch(
-		key: typeof STORE_KEY
-	): DispatchFromMap< typeof actions >;
-	function select( key: typeof STORE_KEY ): SelectFromMap<
-		typeof selectors
-	> & {
-		hasFinishedResolution: ( selector: string ) => boolean;
-	};
-}
-
-/**
- * CartDispatchFromMap is a type that maps the cart store's action creators to the dispatch function passed to thunks.
- */
-export type CartDispatchFromMap = DispatchFromMap< typeof actions >;
-
-/**
- * CartResolveSelectFromMap is a type that maps the cart store's resolvers and selectors to the resolveSelect function
- * passed to thunks.
- */
-export type CartResolveSelectFromMap = ResolveSelectFromMap<
-	typeof resolvers & typeof selectors
->;
-
-/**
- * CartSelectFromMap is a type that maps the cart store's selectors to the select function passed to thunks.
- */
-export type CartSelectFromMap = SelectFromMap< typeof selectors >;
