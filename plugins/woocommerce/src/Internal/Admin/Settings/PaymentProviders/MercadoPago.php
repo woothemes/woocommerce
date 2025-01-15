@@ -167,12 +167,13 @@ class MercadoPago extends PaymentGateway {
 	private function is_mercado_pago_in_sandbox_mode(): ?bool {
 		global $mercadopago;
 
-		if ( class_exists('\MercadoPago\Woocommerce\WoocommerceMercadoPago') &&
+		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+		if ( class_exists( '\MercadoPago\Woocommerce\WoocommerceMercadoPago' ) &&
 			class_exists( '\MercadoPago\Woocommerce\Configs\Store' ) &&
 			$mercadopago instanceof \MercadoPago\Woocommerce\WoocommerceMercadoPago &&
 			! is_null( $mercadopago->storeConfig ) &&
 			$mercadopago->storeConfig instanceof \MercadoPago\Woocommerce\Configs\Store &&
-			is_callable( [ $mercadopago->storeConfig, 'isTestMode' ] )
+			is_callable( array( $mercadopago->storeConfig, 'isTestMode' ) )
 		) {
 			return $mercadopago->storeConfig->isTestMode();
 
@@ -193,16 +194,17 @@ class MercadoPago extends PaymentGateway {
 	private function is_mercado_pago_onboarded(): ?bool {
 		global $mercadopago;
 
+		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		if ( class_exists( '\MercadoPago\Woocommerce\WoocommerceMercadoPago' ) &&
-			 class_exists( '\MercadoPago\Woocommerce\Configs\Seller' ) &&
-			 $mercadopago instanceof \MercadoPago\Woocommerce\WoocommerceMercadoPago &&
-			 ! is_null( $mercadopago->sellerConfig ) &&
-			 $mercadopago->sellerConfig instanceof \MercadoPago\Woocommerce\Configs\Seller &&
-			 is_callable( [ $mercadopago->sellerConfig, 'getCredentialsPublicKey' ] ) &&
-			 is_callable( [ $mercadopago->sellerConfig, 'getCredentialsAccessToken' ] )
+			class_exists( '\MercadoPago\Woocommerce\Configs\Seller' ) &&
+			$mercadopago instanceof \MercadoPago\Woocommerce\WoocommerceMercadoPago &&
+			! is_null( $mercadopago->sellerConfig ) &&
+			$mercadopago->sellerConfig instanceof \MercadoPago\Woocommerce\Configs\Seller &&
+			is_callable( array( $mercadopago->sellerConfig, 'getCredentialsPublicKey' ) ) &&
+			is_callable( array( $mercadopago->sellerConfig, 'getCredentialsAccessToken' ) )
 		) {
 			return ! empty( $mercadopago->sellerConfig->getCredentialsPublicKey() ) &&
-				   ! empty( $mercadopago->sellerConfig->getCredentialsAccessToken() );
+					! empty( $mercadopago->sellerConfig->getCredentialsAccessToken() );
 
 		}
 
