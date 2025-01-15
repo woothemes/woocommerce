@@ -86,7 +86,7 @@ class StoreNotices extends AbstractBlock {
 						<path data-wc-bind--d="callbacks.getNoticeIconPath"></path>
 					</svg>
 					<div class="wc-block-components-notice-banner__content">
-						<span data-wc-init="callbacks.getNoticeContent"></span>
+						<span data-wc-init="callbacks.renderNoticeContent"></span>
 					</div>
 					<button
 						data-wc-bind--hidden="!callbacks.isNoticeDismissible"

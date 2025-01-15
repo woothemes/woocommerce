@@ -28,7 +28,7 @@ export type StoreNoticesStore = {
 		getNoticeClass: () => string;
 		getNoticeRole: () => string;
 		getNoticeIconPath: () => string;
-		getNoticeContent: () => string;
+		renderNoticeContent: () => void;
 		isNoticeDismissible: () => boolean;
 		dismissNotice: () => void;
 	};
@@ -47,17 +47,6 @@ const { state } = store< StoreNoticesStore >( 'woocommerce/store-notices', {
 	state: {
 		notices: [],
 	},
-	// state: {
-	// 	get noticeClass() {
-	// 		console.log( 'noticeClass' );
-	// 		return 'woocommerce-message';
-	// 	},
-
-	// 	get noticeRole() {
-	// 		console.log( 'noticeRole' );
-	// 		return 'alert';
-	// 	},
-	// },
 	actions: {
 		addNotice: ( notice: Notice ) => {
 			state.notices = [
@@ -97,10 +86,11 @@ const { state } = store< StoreNoticesStore >( 'woocommerce/store-notices', {
 			return ICON_PATHS[ noticeType ];
 		},
 
-		getNoticeContent: () => {
-			console.log( 'getNoticeContent' );
-			const context = getContext();
-			console.log( context );
+		renderNoticeContent: () => {
+			const context = getContext< { notice: Notice } >();
+			const { ref } = getElement();
+
+			ref.innerHTML = context.notice.notice;
 		},
 
 		isNoticeDismissible: () => {
@@ -109,9 +99,7 @@ const { state } = store< StoreNoticesStore >( 'woocommerce/store-notices', {
 		},
 
 		dismissNotice: () => {
-			console.log( 'dismissNotice' );
-			const context = getContext();
-			console.log( context );
+			// TODO: Implement dismiss notice
 		},
 	},
 } );
