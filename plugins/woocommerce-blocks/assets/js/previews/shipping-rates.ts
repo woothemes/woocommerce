@@ -20,34 +20,36 @@ const localPickupLocations = getSetting<
 	}[]
 >( 'localPickupLocations', {} );
 
-const localPickupRates = Object.values( localPickupLocations ).map(
-	( location, index: number ) => ( {
-		...API_SITE_CURRENCY,
-		name: __( 'Local pickup #1', 'woocommerce' ),
-		description: '',
-		delivery_time: '',
-		price: '0',
-		taxes: '0',
-		rate_id: `pickup_location:${ index }`,
-		instance_id: index,
-		meta_data: [
-			{
-				key: 'pickup_location',
-				value: location.name,
-			},
-			{
-				key: 'pickup_address',
-				value: location.formatted_address,
-			},
-			{
-				key: 'pickup_details',
-				value: location.details,
-			},
-		],
-		method_id: 'pickup_location',
-		selected: false,
-	} )
-);
+const localPickupRates = localPickupLocations
+	? Object.values( localPickupLocations ).map(
+			( location, index: number ) => ( {
+				...API_SITE_CURRENCY,
+				name: __( 'Local pickup #1', 'woocommerce' ),
+				description: '',
+				delivery_time: '',
+				price: '0',
+				taxes: '0',
+				rate_id: `pickup_location:${ index }`,
+				instance_id: index,
+				meta_data: [
+					{
+						key: 'pickup_location',
+						value: location.name,
+					},
+					{
+						key: 'pickup_address',
+						value: location.formatted_address,
+					},
+					{
+						key: 'pickup_details',
+						value: location.details,
+					},
+				],
+				method_id: 'pickup_location',
+				selected: false,
+			} )
+	  )
+	: [];
 
 export const previewShippingRates: CartResponseShippingRate[] = [
 	{
