@@ -53,6 +53,7 @@ test.describe(
 			}
 		} );
 
+		// TODO: Fix on multisite: Update locators based on the different layout of the "Add user" page in multisites.
 		test( 'should receive an email when creating an account', async ( {
 			page,
 			user,
@@ -116,6 +117,7 @@ test.describe(
 			} );
 		} );
 
+		// TODO: Fix on multisite: Update locators based on the different layout of the "Add user" page in multisites.
 		test( 'should receive an email when password reset initiated from admin', async ( {
 			page,
 			user,
