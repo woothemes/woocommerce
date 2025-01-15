@@ -16,6 +16,7 @@ const localPickupLocations = getSetting<
 		enabled: boolean;
 		name: string;
 		formatted_address: string;
+		details: string;
 	}[]
 >( 'localPickupLocations', {} );
 
@@ -37,6 +38,10 @@ const localPickupRates = Object.values( localPickupLocations ).map(
 			{
 				key: 'pickup_address',
 				value: location.formatted_address,
+			},
+			{
+				key: 'pickup_details',
+				value: location.details,
 			},
 		],
 		method_id: 'pickup_location',
