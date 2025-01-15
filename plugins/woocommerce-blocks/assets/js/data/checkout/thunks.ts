@@ -4,6 +4,14 @@
 import type { CheckoutResponse } from '@woocommerce/types';
 import { store as noticesStore } from '@wordpress/notices';
 import { dispatch as wpDispatch, select as wpSelect } from '@wordpress/data';
+import type {
+	ActionCreatorsOf,
+	ConfigOf,
+	CurriedSelectorsOf,
+	DispatchFunction,
+	SelectFunction,
+} from '@wordpress/data/build-types/types';
+import { checkoutStore } from '@woocommerce/block-data';
 
 /**
  * Internal dependencies
@@ -24,8 +32,12 @@ import type {
 	emitValidateEventType,
 	emitAfterProcessingEventsType,
 } from './types';
-import type { DispatchFromMap } from '../mapped-types';
-import * as actions from './actions';
+
+interface CheckoutThunkArgs {
+	select?: CurriedSelectorsOf< typeof checkoutStore >;
+	dispatch: ActionCreatorsOf< ConfigOf< typeof checkoutStore > >;
+	registry: { dispatch: DispatchFunction; select: SelectFunction };
+}
 
 /**
  * Based on the result of the payment, update the redirect url,
@@ -35,11 +47,7 @@ import * as actions from './actions';
 export const __internalProcessCheckoutResponse = (
 	response: CheckoutResponse
 ) => {
-	return ( {
-		dispatch,
-	}: {
-		dispatch: DispatchFromMap< typeof actions >;
-	} ) => {
+	return ( { dispatch }: CheckoutThunkArgs ) => {
 		const paymentResult = getPaymentResultFromCheckoutResponse( response );
 		dispatch.__internalSetRedirectUrl( paymentResult?.redirectUrl || '' );
 		// The local `dispatch` here is bound  to the actions of the data store. We need to use the global dispatch here
@@ -59,7 +67,7 @@ export const __internalEmitValidateEvent: emitValidateEventType = ( {
 	observers,
 	setValidationErrors, // TODO: Fix this type after we move to validation store
 } ) => {
-	return ( { dispatch, registry } ) => {
+	return ( { dispatch, registry }: CheckoutThunkArgs ) => {
 		const { createErrorNotice } = registry.dispatch( noticesStore );
 		removeNoticesByStatus( 'error' );
 		emitEvent( observers, EVENTS.CHECKOUT_VALIDATION, {} ).then(
