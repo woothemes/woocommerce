@@ -40,8 +40,8 @@ test.describe(
 					'./wp-json/wp/v2/users',
 					{
 						data: {
-							username: `customer_${ now }`,
-							email: `customer_${ now }@woocommercecoretestsuite.com`,
+							username: `customer${ now }`,
+							email: `customer${ now }@woocommercecoretestsuite.com`,
 							first_name: 'Jane',
 							last_name: 'Smith',
 							roles: [ 'subscriber' ],
