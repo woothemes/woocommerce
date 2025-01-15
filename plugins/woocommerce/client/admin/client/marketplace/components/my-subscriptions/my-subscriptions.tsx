@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { Button } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { createInterpolateElement, useContext } from '@wordpress/element';
 import { Icon, external } from '@wordpress/icons';
 import apiFetch from '@wordpress/api-fetch';
@@ -101,16 +101,15 @@ export default function MySubscriptions(): JSX.Element {
 
 	return (
 		<>
-			<Notice
-				id={ 'woo-connected-notice' }
-				description={ sprintf(
-					__( 'Successfully connected to <b>%s</b>' ),
-					wccomSettings?.userEmail
-				) }
-				isDismissible={ true }
-				variant="success"
-				onClose={ handleConnectedNoticeClose }
-			/>
+			{ wccomSettings?.connectedNotice && (
+				<Notice
+					id={ 'woo-connected-notice' }
+					description={ wccomSettings?.connectedNotice }
+					isDismissible={ true }
+					variant="success"
+					onClose={ handleConnectedNoticeClose }
+				/>
+			) }
 			<div className="woocommerce-marketplace__my-subscriptions">
 				<InstallModal />
 				<section className="woocommerce-marketplace__my-subscriptions__notices">
@@ -120,7 +119,10 @@ export default function MySubscriptions(): JSX.Element {
 					<header className="woocommerce-marketplace__my-subscriptions__header">
 						<div className="woocommerce-marketplace__my-subscriptions__header-content">
 							<h2 className="woocommerce-marketplace__my-subscriptions__heading">
-								{ __( 'Installed on this store', 'woocommerce' ) }
+								{ __(
+									'Installed on this store',
+									'woocommerce'
+								) }
 							</h2>
 							<p className="woocommerce-marketplace__my-subscriptions__table-description">
 								{ installedTableDescription }

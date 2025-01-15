@@ -72,6 +72,11 @@ class PluginsHelper {
 	const DISMISS_MISSING_SUBS_NOTICE = 'woo_subscription_missing_notice_dismiss';
 
 	/**
+	 * Meta key for dismissing connected notice
+	 */
+	const DISMISS_CONNECTED_NOTICE = 'woo_connected_notice_dismiss';
+
+	/**
 	 * Initialize hooks.
 	 */
 	public static function init() {
@@ -1141,6 +1146,26 @@ class PluginsHelper {
 			'description' => $description,
 			'button_text' => __( 'Add payment method', 'woocommerce' ),
 			'button_link' => $add_payment_method_link,
+		);
+	}
+
+	public static function get_wccom_connected_notice( $user_email ) {
+		if ( ! WC_Helper::is_site_connected() ) {
+			return '';
+		}
+
+		if ( ! self::should_show_notice( self::DISMISS_CONNECTED_NOTICE ) ) {
+			return '';
+		}
+
+		if ( ! $user_email ) {
+			return '';
+		}
+
+		return sprintf(
+		/* translators: 1: Disconnected user email */
+			__( 'Successfully connected to <b>%s</b>.', 'woocommerce' ),
+			$user_email
 		);
 	}
 }
