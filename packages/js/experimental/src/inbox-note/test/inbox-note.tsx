@@ -62,7 +62,7 @@ describe( 'InboxNoteCard', () => {
 	};
 
 	it( 'should render the defined action buttons', () => {
-		const { queryByText, queryByRole } = render(
+		const { queryByText } = render(
 			<InboxNoteCard key={ note.id } note={ note } />
 		);
 
