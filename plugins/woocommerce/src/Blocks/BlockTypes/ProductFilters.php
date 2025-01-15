@@ -47,12 +47,22 @@ class ProductFilters extends AbstractBlock {
 	 * @return string Rendered block type output.
 	 */
 	protected function render( $attributes, $content, $block ) {
-		$query_id              = $block->context['queryId'] ?? 0;
-		$filter_params         = $this->get_filter_params( $query_id );
+		$query_id       = $block->context['queryId'] ?? 0;
+		$filter_params  = $this->get_filter_params( $query_id );
+		$active_filters = apply_filters( 'product_filters_active_items', array(), $filter_params );
+
+		usort(
+			$active_filters,
+			function ( $a, $b ) {
+				return strnatcmp( $a['label'], $b['label'] );
+			}
+		);
+
 		$block_context         = array_merge(
 			$block->context,
 			array(
-				'filterParams' => $filter_params,
+				'filterParams'  => $filter_params,
+				'activeFilters' => $active_filters,
 			),
 		);
 		$inner_blocks          = array_reduce(
@@ -64,8 +74,8 @@ class ProductFilters extends AbstractBlock {
 			''
 		);
 		$interactivity_context = array(
-			'params'         => $filter_params,
 			'originalParams' => $filter_params,
+			'activeFilters'  => $active_filters,
 		);
 
 		$classes = '';
@@ -208,7 +218,7 @@ class ProductFilters extends AbstractBlock {
 		 *
 		 * @return array Active filters params.
 		 */
-		$filter_param_keys = array_unique( apply_filters( 'collection_filter_query_param_keys', array(), array_keys( $url_query_params ) ) );
+		$filter_param_keys = array_unique( apply_filters( 'product_filters_param_keys', array(), array_keys( $url_query_params ) ) );
 
 		return array_filter(
 			$url_query_params,
