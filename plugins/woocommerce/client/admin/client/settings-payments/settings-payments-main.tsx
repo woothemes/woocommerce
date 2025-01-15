@@ -157,6 +157,13 @@ export const SettingsPaymentsMain = () => {
 		} );
 	}, [] );
 
+	/**
+	 * Clear sortedProviders when data store updates.
+	 */
+	useEffect( () => {
+		setSortedProviders( null );
+	}, [ providers ] );
+
 	function handleOrderingUpdate( sorted: PaymentProvider[] ) {
 		// Extract the existing _order values in the sorted order
 		const updatedOrderValues = sorted
