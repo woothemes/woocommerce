@@ -661,6 +661,12 @@ class WC_Product_Variation extends WC_Product_Simple {
 	 * @return float Cost of Goods Sold effective value of the parent product.
 	 */
 	public function get_parent_cogs_effective_value(): float {
-		return (float) get_post_meta( $this->get_parent_id(), '_cogs_total_value', true );
+		$parent_cogs = $this->parent_data['cogs_effective_value'] ?? null;
+		if ( is_null( $parent_cogs ) ) {
+			$parent_product                            = wc_get_product( $this->get_parent_id() );
+			$parent_cogs                               = $parent_product ? $parent_product->get_cogs_effective_value() : 0;
+			$this->parent_data['cogs_effective_value'] = $parent_cogs;
+		}
+		return $parent_cogs;
 	}
 }
