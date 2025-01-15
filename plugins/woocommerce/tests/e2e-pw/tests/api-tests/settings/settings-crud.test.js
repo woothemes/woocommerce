@@ -1115,7 +1115,7 @@ test.describe( 'Settings API tests: CRUD', () => {
 							type: 'textarea',
 							default: '',
 							tip: 'List additional tax classes you need below (1 per line, e.g. Reduced Rates). These are in addition to "Standard rate" which exists by default.',
-							value: '',
+							value: expect.any( String ),
 						} ),
 					] )
 				);

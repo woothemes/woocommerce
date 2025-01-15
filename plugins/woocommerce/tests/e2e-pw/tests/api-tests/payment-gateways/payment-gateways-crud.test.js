@@ -20,7 +20,12 @@ test.describe( 'Payment Gateways API tests', () => {
 			const localPickupKey =
 				// eslint-disable-next-line playwright/no-conditional-in-test
 				process.env.BASE_URL &&
-				! process.env.BASE_URL.includes( 'localhost' )
+				! (
+					(
+						process.env.BASE_URL.includes( 'localhost' ) ||
+						process.env.BASE_URL.includes( '.local' )
+					) // TODO: simplify assertion to handle both values
+				)
 					? 'pickup_location'
 					: 'local_pickup';
 			console.log( 'localPickupKey=', localPickupKey );
