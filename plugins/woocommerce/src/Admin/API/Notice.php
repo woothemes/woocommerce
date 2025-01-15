@@ -72,7 +72,7 @@ class Notice extends \WC_REST_Data_Controller {
 				update_user_meta( get_current_user_id(), PluginsHelper::DISMISS_EXPIRING_SUBS_NOTICE, time() );
 				$dismissed = true;
 				break;
-			case 'woo-connected-notice' :
+			case 'woo-connected-notice':
 				update_user_meta( get_current_user_id(), PluginsHelper::DISMISS_CONNECTED_NOTICE, time() );
 				$dismissed = true;
 				break;

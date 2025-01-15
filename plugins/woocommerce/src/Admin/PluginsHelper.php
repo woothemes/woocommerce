@@ -1149,6 +1149,13 @@ class PluginsHelper {
 		);
 	}
 
+	/**
+	 * Get the connected status notice message.
+	 *
+	 * @param string $user_email the user email.
+	 *
+	 * @return string the connected notice message.
+	 */
 	public static function get_wccom_connected_notice( $user_email ) {
 		if ( ! WC_Helper::is_site_connected() ) {
 			return '';
