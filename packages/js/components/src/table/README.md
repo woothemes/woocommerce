@@ -38,6 +38,8 @@ const summary = [
 	{ label: 'Shipping', value: '$50.00' },
 ];
 
+const [ showNotice, setShowNotice ] = useState( true );
+
 <TableCard
 	title="Revenue last week"
 	rows={ rows }
@@ -46,6 +48,17 @@ const summary = [
 	rowsPerPage={ 7 }
 	totalRows={ 10 }
 	summary={ summary }
+	tablePreface={
+    showNotice && (
+      <Notice
+        status="info"
+        isDismissible={ true }
+        onRemove={ () => setShowNotice( false ) }
+      >
+        This is an informative notice about the table.
+      </Notice>
+				)
+  }
 />
 ```
 

@@ -3,7 +3,7 @@
  */
 import { TableCard } from '@woocommerce/components';
 import { useState, createElement } from '@wordpress/element';
-import { Button } from '@wordpress/components';
+import { Button, Notice } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -91,15 +91,23 @@ const TableCardWithTablePrefaceExample = () => {
 		},
 	} );
 
+	const [ showNotice, setShowNotice ] = useState( true );
+
 	return (
 		<TableCard
 			title="Revenue last week"
 			rows={ rows }
 			headers={ headers }
 			tablePreface={
-				<div style={ { padding: '8px', backgroundColor: '#f0f4f8' } }>
-					This is an important notice about the table
-				</div>
+				showNotice && (
+					<Notice
+						status="info"
+						isDismissible={ true }
+						onRemove={ () => setShowNotice( false ) }
+					>
+						This is an important notice about the table
+					</Notice>
+				)
 			}
 			onQueryChange={ ( param ) => ( value ) =>
 				setState( {
