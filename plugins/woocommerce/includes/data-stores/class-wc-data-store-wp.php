@@ -88,8 +88,7 @@ class WC_Data_Store_WP {
 				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				"SELECT {$db_info['meta_id_field']} as meta_id, meta_key, meta_value
 				FROM {$db_info['table']}
-				WHERE {$db_info['object_id_field']} = %d
-				ORDER BY {$db_info['meta_id_field']}",
+				WHERE {$db_info['object_id_field']} = %d",
 				// phpcs:enable
 				$object->get_id()
 			)
