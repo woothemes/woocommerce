@@ -30,7 +30,7 @@ const test = baseTest.extend( {
 	manager: async ( { wpApi }, use ) => {
 		const now = Date.now();
 		let user = {
-			username: `manager.${ now }`,
+			username: `manager${ now }`,
 			email: `manager.${ now }@example.com`,
 			password: 'ewdveth345tgrg',
 			roles: [ 'shop_manager' ],
