@@ -10,6 +10,7 @@
 
 use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
+use Automattic\WooCommerce\Enums\ProductVisibility;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -480,7 +481,7 @@ class WC_Product_Variation extends WC_Product_Simple {
 				'shipping_class_id'  => 0,
 				'image_id'           => 0,
 				'purchase_note'      => '',
-				'catalog_visibility' => 'visible',
+				'catalog_visibility' => ProductVisibility::VISIBLE,
 			)
 		);
 

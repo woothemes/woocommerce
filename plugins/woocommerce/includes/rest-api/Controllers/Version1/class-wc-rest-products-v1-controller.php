@@ -12,6 +12,7 @@
 
 use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
+use Automattic\WooCommerce\Enums\ProductVisibility;
 use Automattic\WooCommerce\Utilities\I18nUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -1797,8 +1798,8 @@ class WC_REST_Products_V1_Controller extends WC_REST_Posts_Controller {
 				'catalog_visibility' => array(
 					'description' => __( 'Catalog visibility.', 'woocommerce' ),
 					'type'        => 'string',
-					'default'     => 'visible',
-					'enum'        => array( 'visible', 'catalog', 'search', 'hidden' ),
+					'default'     => ProductVisibility::VISIBLE,
+					'enum'        => array( ProductVisibility::VISIBLE, ProductVisibility::CATALOG, ProductVisibility::SEARCH, ProductVisibility::HIDDEN ),
 					'context'     => array( 'view', 'edit' ),
 				),
 				'description' => array(

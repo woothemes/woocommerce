@@ -7,6 +7,7 @@
 
 use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
+use Automattic\WooCommerce\Enums\ProductVisibility;
 
 /**
  * Test class for WC_Product_CSV_Importer.
@@ -340,7 +341,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'sku'                   => 'WOOLOGO',
 				'name'                  => 'Woo Logo',
 				'featured'              => '',
-				'catalog_visibility'    => 'visible',
+				'catalog_visibility'    => ProductVisibility::VISIBLE,
 				'short_description'     => 'Lorem ipsum dolor sit amet, at exerci civibus appetere sit, iuvaret hendrerit mea no. Eam integre feugait liberavisse an.',
 				'description'           => 'Lorem ipsum dolor sit amet, at exerci civibus appetere sit, iuvaret hendrerit mea no. Eam integre feugait liberavisse an.',
 				'date_on_sale_from'     => '2017-01-01',
@@ -384,7 +385,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'sku'                   => 'WOOALBUM',
 				'name'                  => 'Woo Album #1',
 				'featured'              => true,
-				'catalog_visibility'    => 'visible',
+				'catalog_visibility'    => ProductVisibility::VISIBLE,
 				'short_description'     => 'Lorem ipsum dolor sit amet, at exerci civibus appetere sit, iuvaret hendrerit mea no. Eam integre feugait liberavisse an.',
 				'description'           => 'Lorem ipsum dolor sit amet, at exerci civibus appetere sit, iuvaret hendrerit mea no. Eam integre feugait liberavisse an.',
 				'date_on_sale_from'     => 'Jul 8, 2023',
@@ -437,7 +438,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'sku'                => '',
 				'name'               => 'WooCommerce Product CSV Suite',
 				'featured'           => '',
-				'catalog_visibility' => 'visible',
+				'catalog_visibility' => ProductVisibility::VISIBLE,
 				'short_description'  => 'Lorem ipsum dolor sit amet, at exerci civibus appetere sit, iuvaret hendrerit mea no. Eam integre feugait liberavisse an.',
 				'description'        => 'Lorem ipsum dolor sit amet, at exerci civibus appetere sit, iuvaret hendrerit mea no. Eam integre feugait liberavisse an.',
 				'date_on_sale_from'  => '2023-07-08 05:10:15',
@@ -473,7 +474,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'sku'                   => 'WOOIDEA',
 				'name'                  => 'Ship Your Idea',
 				'featured'              => '',
-				'catalog_visibility'    => 'visible',
+				'catalog_visibility'    => ProductVisibility::VISIBLE,
 				'short_description'     => 'Lorem ipsum dolor sit amet, at exerci civibus appetere sit, iuvaret hendrerit mea no. Eam integre feugait liberavisse an.',
 				'description'           => 'Lorem ipsum dolor sit amet, at exerci civibus appetere sit, iuvaret hendrerit mea no. Eam integre feugait liberavisse an.',
 				'date_on_sale_from'     => null,
@@ -525,7 +526,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'sku'                => '',
 				'name'               => '',
 				'featured'           => '',
-				'catalog_visibility' => 'visible',
+				'catalog_visibility' => ProductVisibility::VISIBLE,
 				'short_description'  => '',
 				'description'        => 'Lorem ipsum dolor sit amet, at exerci civibus appetere sit, iuvaret hendrerit mea no. Eam integre feugait liberavisse an.',
 				'date_on_sale_from'  => null,
@@ -570,7 +571,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'sku'                => '',
 				'name'               => '',
 				'featured'           => '',
-				'catalog_visibility' => 'visible',
+				'catalog_visibility' => ProductVisibility::VISIBLE,
 				'short_description'  => '',
 				'description'        => 'Lorem ipsum dolor sit amet, at exerci civibus appetere sit, iuvaret hendrerit mea no. Eam integre feugait liberavisse an.',
 				'date_on_sale_from'  => null,
@@ -615,7 +616,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'sku'                   => '',
 				'name'                  => 'Best Woo Products',
 				'featured'              => true,
-				'catalog_visibility'    => 'visible',
+				'catalog_visibility'    => ProductVisibility::VISIBLE,
 				'short_description'     => 'Lorem ipsum dolor sit amet, at exerci civibus appetere sit, iuvaret hendrerit mea no. Eam integre feugait liberavisse an.',
 				'description'           => 'Lorem ipsum dolor sit amet, at exerci civibus appetere sit, iuvaret hendrerit mea no. Eam integre feugait liberavisse an.',
 				'date_on_sale_from'     => null,

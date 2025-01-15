@@ -1,6 +1,7 @@
 <?php
 
 use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductVisibility;
 
 /**
  * Meta
@@ -159,7 +160,7 @@ class WC_Tests_Product_CSV_Exporter extends WC_Unit_Test_Case {
 		$this->assertEquals( 'instock' === $product->get_stock_status(), $row['stock_status'] );
 		$this->assertEquals( $product->get_menu_order(), $row['menu_order'] );
 
-		$this->assertContains( $row['catalog_visibility'], array( 'visible', 'catalog', 'search', 'hidden' ) );
+		$this->assertContains( $row['catalog_visibility'], array( ProductVisibility::VISIBLE, ProductVisibility::CATALOG, ProductVisibility::SEARCH, ProductVisibility::HIDDEN ) );
 		$this->assertContains( $row['backorders'], array( 1, 0, 'notify' ) );
 
 		$expected_parent = '';

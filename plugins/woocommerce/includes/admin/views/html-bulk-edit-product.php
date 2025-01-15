@@ -3,6 +3,7 @@
  * Admin View: Bulk Edit Products
  */
 
+use Automattic\WooCommerce\Enums\ProductVisibility;
 use Automattic\WooCommerce\Utilities\I18nUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -224,10 +225,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<?php
 					$options = array(
 						''        => __( '— No change —', 'woocommerce' ),
-						'visible' => __( 'Catalog &amp; search', 'woocommerce' ),
-						'catalog' => __( 'Catalog', 'woocommerce' ),
-						'search'  => __( 'Search', 'woocommerce' ),
-						'hidden'  => __( 'Hidden', 'woocommerce' ),
+						ProductVisibility::VISIBLE => __( 'Catalog &amp; search', 'woocommerce' ),
+						ProductVisibility::CATALOG => __( 'Catalog', 'woocommerce' ),
+						ProductVisibility::SEARCH  => __( 'Search', 'woocommerce' ),
+						ProductVisibility::HIDDEN  => __( 'Hidden', 'woocommerce' ),
 					);
 					foreach ( $options as $key => $value ) {
 						echo '<option value="' . esc_attr( $key ) . '">' . esc_html( $value ) . '</option>';
