@@ -54,49 +54,85 @@ type BlueprintImportResponse = {
 	};
 };
 
-const uploadBlueprint = async ( file: File ) => {
-	const formData = new FormData();
-	formData.append( 'file', file );
-
-	if ( window?.wcSettings?.admin?.blueprint_upload_nonce ) {
-		formData.append(
-			'blueprint_upload_nonce',
-			window.wcSettings.admin.blueprint_upload_nonce
-		);
-	} else {
-		throw new Error( 'Blueprint upload nonce not found' ); // TODO: write a more user friendly error
-	}
-
-	const response = await apiFetch< BlueprintQueueResponse >( {
-		path: 'wc-admin/blueprint/queue',
-		method: 'POST',
-		body: formData,
-	} );
-
-	if ( response.error_type ) {
-		throw new Error( response.errors?.[ 0 ] ?? 'Unknown error' );
-	}
-
-	return response;
+type BlueprintImportStepResponse = {
+	success: boolean;
+	messages: {
+		step: string;
+		type: string;
+		message: string;
+	}[];
 };
 
-const importBlueprint = async ( process_nonce: string, reference: string ) => {
-	const { processed, message } = await apiFetch< BlueprintImportResponse >( {
-		path: '/wc-admin/blueprint/process',
-		method: 'POST',
-		data: {
-			reference,
-			process_nonce,
-		},
-	} );
+const importBlueprint = async ( file: File ) => {
+	const errors = [];
+	try {
+		// Create a FileReader instance
+		const reader = new FileReader();
 
-	if ( ! processed ) {
-		throw new Error( message );
+		// Create a promise to handle async file reading
+		const fileContent: string = await new Promise( ( resolve, reject ) => {
+			reader.onload = () => resolve( reader.result as string );
+			reader.onerror = () => reject( reader.error );
+			reader.readAsText( file );
+		} );
+
+		// Parse the file content as JSON
+		const steps = JSON.parse( fileContent ).steps;
+
+		// Ensure the parsed data is an array
+		if ( ! Array.isArray( steps ) ) {
+			throw new Error( 'Invalid JSON format: Expected an array.' );
+		}
+
+		// Loop through each step and send it to the endpoint
+		for ( const step of steps ) {
+			const logLabel = `${ step.step }: Importing `;
+			console.log( logLabel );
+			console.time( step.step );
+
+			const response = await apiFetch< BlueprintImportStepResponse >( {
+				path: 'wc-admin/blueprint/import-step',
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify( {
+					step_definition: step,
+				} ),
+			} );
+
+			if ( ! response.success ) {
+				errors.push( {
+					step: step.step,
+					messages: response.messages,
+				} );
+				console.error(
+					`${ step.step }: Failed to import step.`,
+					response.messages
+				);
+			} else {
+				console.log( `${ step.step }: Successfully imported step.` );
+				console.timeEnd( step.step );
+			}
+		}
+
+		let errorMessage;
+		if ( errors.length > 0 ) {
+			errorMessage = `${ __(
+				'Your Blueprint has been imported, but there were some errors. Please check the messages.',
+				'woocommerce'
+			) }`;
+		} else {
+			errorMessage = `${ __(
+				'Your Blueprint has been imported!',
+				'woocommerce'
+			) }`;
+		}
+		dispatch( 'core/notices' ).createSuccessNotice( errorMessage );
+		return errors;
+	} catch ( e ) {
+		throw new Error( 'Error reading or parsing file' );
 	}
-
-	dispatch( 'core/notices' ).createSuccessNotice(
-		`${ __( 'Your Blueprint has been imported!', 'woocommerce' ) }`
-	);
 };
 
 interface FileUploadContext {
@@ -163,15 +199,8 @@ export const fileUploadMachine = setup( {
 		},
 	},
 	actors: {
-		uploader: fromPromise( ( { input }: { input: { file: File } } ) =>
-			uploadBlueprint( input.file )
-		),
-		importer: fromPromise(
-			( {
-				input,
-			}: {
-				input: { process_nonce: string; reference: string };
-			} ) => importBlueprint( input.process_nonce, input.reference )
+		importer: fromPromise( ( { input }: { input: { file: File } } ) =>
+			importBlueprint( input.file )
 		),
 	},
 	guards: {
@@ -189,32 +218,13 @@ export const fileUploadMachine = setup( {
 		idle: {
 			on: {
 				UPLOAD: {
-					target: 'uploading',
+					target: 'success',
 					actions: assign( {
 						file: ( { event } ) => event.file,
 						error: () => undefined,
 					} ),
 				},
 				ERROR: {
-					target: 'error',
-					actions: assign( {
-						error: ( { event } ) => event?.error as Error,
-					} ),
-				},
-			},
-		},
-		uploading: {
-			invoke: {
-				src: 'uploader',
-				input: ( { event } ) => {
-					assertEvent( event, 'UPLOAD' );
-					return { file: event.file };
-				},
-				onDone: {
-					target: 'success',
-					actions: 'reportSuccess',
-				},
-				onError: {
 					target: 'error',
 					actions: assign( {
 						error: ( { event } ) => event?.error as Error,
@@ -259,12 +269,35 @@ export const fileUploadMachine = setup( {
 				src: 'importer',
 				input: ( { context } ) => {
 					return {
-						process_nonce: context.process_nonce!,
-						reference: context.reference!,
+						file: context.file!,
 					};
 				},
 				onDone: {
 					target: 'importSuccess',
+					actions: assign( {
+						error: ( { event } ) => {
+							if ( event.output.length ) {
+								return {
+									message: event.output
+										.map( ( item ) => {
+											const step = `step: ${ item.step }`;
+											const errors = item.messages
+												.filter(
+													( msg ) =>
+														msg.type === 'error'
+												) // Filter messages with type 'error'
+												.map(
+													( msg ) =>
+														`  ${ msg.message.trim() }.`
+												) // Trim and append a period
+												.join( '\n' ); // Join messages with newlines
+											return `${ step }\nerrors:\n${ errors }`;
+										} )
+										.join( '\n\n' ),
+								};
+							}
+						},
+					} ),
 				},
 				onError: {
 					target: 'error',
@@ -283,7 +316,7 @@ export const BlueprintUploadDropzone = () => {
 			{ state.context.error && (
 				<div className="blueprint-upload-dropzone-error">
 					<Notice status="error" isDismissible={ false }>
-						{ state.context.error.message }
+						<pre>{ state.context.error.message }</pre>
 					</Notice>
 				</div>
 			) }
@@ -307,10 +340,7 @@ export const BlueprintUploadDropzone = () => {
 								alt="Upload"
 							/>
 							<p className="blueprint-upload-dropzone-text">
-								{ __(
-									'Upload a .zip or .json file',
-									'woocommerce'
-								) }
+								{ __( 'Upload a .json file', 'woocommerce' ) }
 							</p>
 							<DropZone
 								onFilesDrop={ ( files ) => {
@@ -332,12 +362,12 @@ export const BlueprintUploadDropzone = () => {
 					</FormFileUpload>
 				</div>
 			) }
-			{ state.matches( 'uploading' ) && (
+			{ state.matches( 'importing' ) && (
 				<div className="blueprint-upload-form">
 					<div className="blueprint-upload-dropzone-uploading">
 						<Spinner className="blueprint-upload-dropzone-spinner" />
 						<p className="blueprint-upload-dropzone-text">
-							{ __( 'Uploading your file…', 'woocommerce' ) }
+							{ __( 'Importing your file…', 'woocommerce' ) }
 						</p>
 					</div>
 				</div>
