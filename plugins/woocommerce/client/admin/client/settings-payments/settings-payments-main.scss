@@ -18,6 +18,7 @@
 
 			@media screen and ( max-width: 782px ) {
 				display: block;
+				padding-left: 20px;
 			}
 		}
 
@@ -69,6 +70,10 @@
 			padding: 20px 0;
 			display: flex;
 			justify-content: space-between;
+
+			@media (max-width: 767px) {
+				padding-left: $gap-smaller $gap;
+			}
 
 			&:hover {
 				cursor: pointer;
@@ -139,6 +144,7 @@
 				display: flex; /* Use Flexbox to align image and content */
 				align-items: flex-start; /* Align items to the top */
 				padding: $gap 0;
+				padding-bottom: $gap-larger;
 
 				&-image {
 					width: 40px;

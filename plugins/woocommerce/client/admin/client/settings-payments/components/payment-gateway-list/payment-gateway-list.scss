@@ -61,9 +61,13 @@
 			line-height: 24px;
 			color: $gray-900;
 			font-weight: 600;
-			display: inline-flex;
-			gap: 10px;
-			align-items: start;
+
+			span {
+				display: inline-block;
+				vertical-align:top;
+				margin-right: 5px;
+			}
+
 		}
 
 		&-text {
@@ -145,14 +149,6 @@
 				&-image {
 					display: none;
 				}
-				&-title {
-					display: block;
-
-					span {
-						vertical-align: middle;
-						margin-left: 5px;
-					}
-				}
 				&-text {
 					display: block;
 
@@ -163,11 +159,17 @@
 						float: left;
 					}
 				}
+				&-content {
+					padding-bottom: 12px;
+				}
 			}
 		}
 	}
 	.settings-payments-methods__container .woocommerce-list__item {
 		padding: 0 $gap-large;
+	}
+	.woocommerce-woopayments-payment-methods-logos {
+		padding-top: 0px;
 	}
 
 }
