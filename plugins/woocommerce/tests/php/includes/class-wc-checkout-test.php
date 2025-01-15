@@ -103,9 +103,7 @@ class WC_Checkout_Test extends \WC_Unit_Test_Case {
 	public function test_order_notes_linebreaks() {
 		$data = array(
 			'ship_to_different_address' => false,
-			'order_comments'            => 'A string
-			with linebreaks
-			in it.',
+			'order_comments'            => 'A string' . PHP_EOL . 'with linebreaks' . PHP_EOL . 'in it.',
 			'payment_method'            => WC_Gateway_BACS::ID,
 		);
 
