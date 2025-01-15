@@ -276,7 +276,10 @@ export const fileUploadMachine = setup( {
 					target: 'importSuccess',
 					actions: assign( {
 						error: ( { event } ) => {
-							if ( event.output.length ) {
+							if (
+								Array.isArray( event.output ) &&
+								event.output.length
+							) {
 								return {
 									message: event.output
 										.map( ( item ) => {
