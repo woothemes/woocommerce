@@ -19,6 +19,10 @@ interface SettingsButtonProps {
 	buttonText?: string;
 }
 
+/**
+ * A simple button component that navigates to the provided settings URL when clicked.
+ * Used for managing settings for a payment gateway.
+ */
 export const SettingsButton = ( {
 	settingsHref,
 	buttonText = __( 'Manage', 'woocommerce' ),

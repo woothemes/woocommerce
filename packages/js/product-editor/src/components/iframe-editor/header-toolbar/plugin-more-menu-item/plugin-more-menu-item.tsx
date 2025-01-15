@@ -20,6 +20,7 @@ type PluginMoreMenuItemProps = {
 };
 
 export const PluginMoreMenuItem = compose(
+	// @ts-expect-error The type defintion of withPluginContext is incorrect.
 	withPluginContext( ( context, ownProps: PluginMoreMenuItemProps ) => {
 		return {
 			as: ownProps.as ?? MenuItem,

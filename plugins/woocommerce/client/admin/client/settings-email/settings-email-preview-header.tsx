@@ -9,6 +9,7 @@ import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
  * Internal dependencies
  */
 import avatarIcon from './icon-avatar.svg';
+import { emailPreviewNonce } from './settings-email-preview-nonce';
 
 type EmailPreviewHeaderProps = {
 	emailType: string;
@@ -25,11 +26,12 @@ export const EmailPreviewHeader: React.FC< EmailPreviewHeaderProps > = ( {
 	const [ fromAddress, setFromAddress ] = useState( '' );
 	const [ subject, setSubject ] = useState( '' );
 	const subjectEl = useRef< Element | null >( null );
+	const nonce = emailPreviewNonce();
 
 	const fetchSubject = useCallback( async () => {
 		try {
 			const response: EmailPreviewSubjectResponse = await apiFetch( {
-				path: `wc-admin-email/settings/email/preview-subject?type=${ emailType }`,
+				path: `wc-admin-email/settings/email/preview-subject?type=${ emailType }&nonce=${ nonce }`,
 			} );
 			setSubject( response.subject );
 			if ( subjectEl.current ) {
@@ -40,7 +42,7 @@ export const EmailPreviewHeader: React.FC< EmailPreviewHeaderProps > = ( {
 		} catch ( e ) {
 			setSubject( '' );
 		}
-	}, [ emailType, subjectEl ] );
+	}, [ emailType, nonce, subjectEl ] );
 
 	useEffect( () => {
 		const fromNameEl = document.getElementById(

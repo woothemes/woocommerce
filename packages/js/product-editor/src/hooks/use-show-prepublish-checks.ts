@@ -17,8 +17,10 @@ export function useShowPrepublishChecks() {
 			select( OPTIONS_STORE_NAME );
 
 		const showPrepublishChecksOption =
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			getOption( SHOW_PREPUBLISH_CHECKS_ENABLED_OPTION_NAME ) || 'yes';
 
+		// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 		const resolving = ! hasFinishedResolution( 'getOption', [
 			SHOW_PREPUBLISH_CHECKS_ENABLED_OPTION_NAME,
 		] );

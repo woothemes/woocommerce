@@ -21,6 +21,7 @@ import {
 } from '../utils/black-background-pattern-update-button';
 import { useIsActiveNewNeutralVariation } from './use-is-active-new-neutral-variation';
 import { trackEvent } from '../../tracking';
+import { Pattern } from '~/customize-store/types/pattern';
 
 export const useInsertPattern = () => {
 	const isActiveNewNeutralVariation = useIsActiveNewNeutralVariation();
@@ -46,7 +47,7 @@ export const useInsertPattern = () => {
 	}, [ blocks ] );
 
 	const insertPattern = useCallback(
-		( pattern ) => {
+		( pattern: Pattern ) => {
 			const parsedPattern = unlock(
 				select( blockEditorStore )
 			).__experimentalGetParsedPattern( pattern.name );

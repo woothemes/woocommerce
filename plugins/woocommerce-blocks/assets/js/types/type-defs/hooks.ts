@@ -50,6 +50,8 @@ export interface StoreCart {
 	cartTotals: CartResponseTotals;
 	cartIsLoading: boolean;
 	cartErrors: ApiErrorResponse[];
+	/** @deprecated Use billingAddress instead */
+	billingData: CartResponseBillingAddress;
 	billingAddress: CartResponseBillingAddress;
 	shippingAddress: CartResponseShippingAddress;
 	shippingRates: CartResponseShippingRate[];
