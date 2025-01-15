@@ -128,6 +128,7 @@ test( 'Merchant can add brands', async ( { page } ) => {
 			dialog.accept();
 		} );
 
+		// TODO: Fix this error on multisite: Strict mode violation with "Delete site" link.
 		// Click on the "Delete" button.
 		await page.getByRole( 'link', { name: 'Delete' } ).click();
 
