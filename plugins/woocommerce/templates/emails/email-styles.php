@@ -366,7 +366,7 @@ body {
 h1 {
 	color: <?php echo esc_attr( $email_improvements_enabled ? $text : $base ); ?>;
 	font-family: <?php echo esc_attr( $font_family ); ?>;
-	font-size: <?php echo $email_improvements_enabled ? '36px' : '30px'; ?>;
+	font-size: <?php echo $email_improvements_enabled ? '32px' : '30px'; ?>;
 	font-weight: <?php echo $email_improvements_enabled ? 700 : 300; ?>;
 	<?php if ( $email_improvements_enabled ) : ?>
 		letter-spacing: -1px;
