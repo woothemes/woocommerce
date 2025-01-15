@@ -2939,6 +2939,7 @@ function wc_update_950_tracking_option_autoload() {
  */
 function wc_update_970_modify_primary_key_for_order_related_meta_tables()
 {
+	// TODO: tables existence and verifying PKs were not modified yet.
 	// ALTER TABLE wp_woocommerce_order_itemmeta ADD UNIQUE KEY meta_id (meta_id), DROP PRIMARY KEY, ADD PRIMARY KEY (order_item_id, meta_key, meta_id), DROP KEY order_item_id;
 	// ALTER TABLE wp_wc_orders_meta ADD UNIQUE KEY id (id), DROP PRIMARY KEY, ADD PRIMARY KEY (order_id, meta_key, id);
 }
