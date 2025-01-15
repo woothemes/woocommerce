@@ -64,17 +64,24 @@ class StoreNotices extends AbstractBlock {
 	 * can be added client-side.
 	 */
 	protected function render_interactivity_notices_region() {
-		$store_notices_context = array( 'notices' => array() );
-		$namespace             = array( 'namespace' => 'woocommerce/store-notices' );
+		$namespace = array( 'namespace' => 'woocommerce/store-notices' );
+		$context   = wp_json_encode( array( 'notices' => array() ) );
+
+		wc_initial_state(
+			'woocommerce/store-notices',
+			array(
+				'notices' => array(),
+			)
+		);
 
 		ob_start();
 		?>
-		<div data-wc-interactivity="<?php echo esc_attr( wp_json_encode( $namespace ) ); ?>" data-wc-context="<?php echo esc_attr( wp_json_encode( $store_notices_context ) ); ?>" class="woocommerce-notices-wrapper">
+		<div data-wc-context="<?php echo esc_attr( $context ); ?>" data-wc-interactive="<?php echo esc_attr( wp_json_encode( $namespace ) ); ?>" class="woocommerce-notices-wrapper">
 			<template
-				data-wc-each="context.notices"
-				data-wc-each-key="context.item.id"
+				data-wc-each--notice="state.notices"
+				data-wc-each-key="context.notice.id"
 			>
-				<div data-wc-bind--class="callbacks.getNoticeClass" data-wc-bind--role="callbacks.getNoticeRole" data-wc-bind--role="callbacks.getNoticeRole">
+				<div data-wc-bind--class="callbacks.getNoticeClass" data-wc-bind--role="callbacks.getNoticeRole" >
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
 						<path data-wc-bind--d="callbacks.getNoticeIconPath"></path>
 					</svg>
@@ -82,7 +89,7 @@ class StoreNotices extends AbstractBlock {
 						<span data-wc-init="callbacks.getNoticeContent"></span>
 					</div>
 					<button
-						data-wc-bind--hidden="callbacks.isNoticeDismissible"
+						data-wc-bind--hidden="!callbacks.isNoticeDismissible"
 						class="wc-block-components-notice-banner__dismiss"
 						aria-label="<?php esc_attr_e( 'Dismiss this notice', 'woocommerce' ); ?>"
 						data-wc-on--click="callbacks.dismissNotice"
