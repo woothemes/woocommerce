@@ -129,6 +129,23 @@ export const EnableGatewayButton = ( {
 							window.location.href = onboardingHref;
 							return;
 						}
+					} else {
+						createErrorNotice(
+							__(
+								'The provider could not be enabled. Check the Manage page for details.',
+								'woocommerce'
+							),
+							{
+								type: 'snackbar',
+								explicitDismiss: true,
+								actions: [
+									{
+										label: __( 'Manage', 'woocommerce' ),
+										url: settingsHref,
+									},
+								],
+							}
+						);
 					}
 				}
 				// If no redirect occured, the data needs to be refreshed.
