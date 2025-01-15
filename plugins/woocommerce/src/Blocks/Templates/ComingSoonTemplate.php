@@ -50,4 +50,51 @@ class ComingSoonTemplate extends AbstractPageTemplate {
 	protected function is_active_template() {
 		return false;
 	}
+
+	/**
+	 * Returns the font family for the body and heading.
+	 *
+	 * When the current theme is not an FSE theme, we use the default fonts.
+	 * When the current theme is an FSE theme, we use the fonts from the theme.json file if available except for the 'twentytwentyfour' theme.
+	 *
+	 * @return array
+	 */
+	public static function get_font_families() {
+		$default_fonts = array(
+			'heading' => 'cardo',
+			'body'    => 'inter',
+		);
+
+		if ( ! wc_current_theme_is_fse_theme() ) {
+			return $default_fonts;
+		}
+
+		$current_theme = wp_get_theme()->get_stylesheet();
+
+		if ( 'twentytwentyfour' === $current_theme ) {
+			return array(
+				'heading' => 'heading',
+				'body'    => 'body',
+			);
+		}
+
+		if ( ! class_exists( '\WP_Font_Face_Resolver' ) ) {
+			require_once ABSPATH . WPINC . '/fonts/class-wp-font-face-resolver.php';
+		}
+
+		$theme_fonts = \WP_Font_Face_Resolver::get_fonts_from_theme_json();
+		if ( is_array( $theme_fonts ) && count( $theme_fonts ) > 0 ) {
+			// Override default fonts if available in theme.json.
+			if ( isset( $theme_fonts[0][0]['font-family'] ) && ! empty( $theme_fonts[0][0]['font-family'] ) ) {
+				// Convert the font family to lowercase and replace spaces with hyphens.
+				$default_fonts['heading'] = strtolower( str_replace( ' ', '-', $theme_fonts[0][0]['font-family'] ) );
+			}
+			if ( isset( $theme_fonts[1][0]['font-family'] ) && ! empty( $theme_fonts[1][0]['font-family'] ) ) {
+				$default_fonts['body']      = strtolower( str_replace( ' ', '-', $theme_fonts[1][0]['font-family'] ) );
+				$default_fonts['paragraph'] = $default_fonts['body'];
+			}
+		}
+
+		return $default_fonts;
+	}
 }
