@@ -8,12 +8,12 @@ import { useCallback } from '@wordpress/element';
  * Internal dependencies
  */
 import { STORE_KEY } from '~/marketing/data-multichannel/constants';
+import { Selectors } from '~/marketing/data-multichannel/selectors';
 import {
 	CampaignType as APICampaignType,
 	ApiFetchError,
 } from '~/marketing/data-multichannel/types';
 import { CampaignType } from '~/marketing/types/CampaignType';
-import { Selectors } from '../data-multichannel/selectors';
 
 type UseCampaignTypes = {
 	loading: boolean;
