@@ -7,7 +7,7 @@ import { chain } from 'lodash';
 /**
  * Internal dependencies
  */
-import { store } from '~/marketing/data';
+import { store as marketingStore } from '~/marketing/data';
 import { InstalledPlugin } from '~/marketing/types';
 import { useRecommendedChannels } from './useRecommendedChannels';
 import { useRegisteredChannels } from './useRegisteredChannels';
@@ -28,7 +28,7 @@ export const useInstalledPluginsWithoutChannels =
 		const { installedPlugins, activatingPlugins } = useSelect(
 			( select ) => {
 				const { getInstalledPlugins, getActivatingPlugins } =
-					select( store );
+					select( marketingStore );
 
 				return {
 					installedPlugins: getInstalledPlugins(),
@@ -48,7 +48,7 @@ export const useInstalledPluginsWithoutChannels =
 		} = useRecommendedChannels();
 
 		const { activateInstalledPlugin, loadInstalledPluginsAfterActivation } =
-			useDispatch( store );
+			useDispatch( marketingStore );
 
 		const loading = loadingRegisteredChannels || loadingRecommendedChannels;
 		const installedPluginsWithoutChannels = chain( installedPlugins )

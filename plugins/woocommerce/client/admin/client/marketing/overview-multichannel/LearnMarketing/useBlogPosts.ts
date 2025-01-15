@@ -6,7 +6,7 @@ import { useSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { store } from '~/marketing/data';
+import { store as marketingStore } from '~/marketing/data';
 import { Post } from './types';
 
 export const useBlogPosts = ( category: string ) => {
@@ -14,7 +14,7 @@ export const useBlogPosts = ( category: string ) => {
 		( select ) => {
 			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			const { getBlogPosts, getBlogPostsError, isResolving } =
-				select( store );
+				select( marketingStore );
 
 			return {
 				isLoading: isResolving( 'getBlogPosts', [ category ] ),

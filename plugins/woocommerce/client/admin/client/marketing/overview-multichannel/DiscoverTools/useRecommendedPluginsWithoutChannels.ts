@@ -7,7 +7,7 @@ import { differenceWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import { store } from '~/marketing/data';
+import { store as marketingStore } from '~/marketing/data';
 import { useRecommendedChannels } from '~/marketing/hooks';
 import { RecommendedPlugin } from '~/marketing/types';
 
@@ -51,7 +51,7 @@ export const useRecommendedPluginsWithoutChannels =
 		} = useSelect( ( select ) => {
 			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			const { getRecommendedPlugins, hasFinishedResolution } =
-				select( store );
+				select( marketingStore );
 
 			return {
 				loading: ! hasFinishedResolution( selector, [ category ] ),
@@ -66,7 +66,7 @@ export const useRecommendedPluginsWithoutChannels =
 
 		// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 		const { invalidateResolution, installAndActivateRecommendedPlugin } =
-			useDispatch( store );
+			useDispatch( marketingStore );
 
 		const isInitializing =
 			( loadingRecommendedPlugins && ! dataRecommendedPlugins.length ) ||
