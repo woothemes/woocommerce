@@ -14,6 +14,7 @@ import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
  * Internal dependencies
  */
 import { termsConsentDefaultText, termsCheckboxDefaultText } from './constants';
+import { CheckoutOrderSummarySlot } from '../checkout-order-summary-block/slotfills';
 
 const FrontendBlock = ( {
 	text,
@@ -73,41 +74,49 @@ const FrontendBlock = ( {
 	] );
 
 	return (
-		<div
-			className={ clsx(
-				'wc-block-checkout__terms',
-				{
-					'wc-block-checkout__terms--disabled': isDisabled,
-					'wc-block-checkout__terms--with-separator':
-						showSeparator !== 'false' && showSeparator !== false,
-				},
-				className
-			) }
-		>
-			{ checkbox ? (
-				<>
-					<CheckboxControl
-						id="terms-and-conditions"
-						checked={ checked }
-						onChange={ () => setChecked( ( value ) => ! value ) }
-						hasError={ hasError }
-						disabled={ isDisabled }
-					>
-						<span
-							dangerouslySetInnerHTML={ {
-								__html: text || termsCheckboxDefaultText,
-							} }
-						/>
-					</CheckboxControl>
-				</>
-			) : (
-				<span
-					dangerouslySetInnerHTML={ {
-						__html: text || termsConsentDefaultText,
-					} }
-				/>
-			) }
-		</div>
+		<>
+			<CheckoutOrderSummarySlot />
+			<div
+				className={ clsx(
+					'wc-block-checkout__terms',
+					{
+						'wc-block-checkout__terms--disabled': isDisabled,
+						'wc-block-checkout__terms--with-separator':
+							showSeparator !== 'false' &&
+							showSeparator !== false,
+					},
+					className
+				) }
+			>
+				{ checkbox ? (
+					<>
+						<CheckboxControl
+							id="terms-and-conditions"
+							checked={ checked }
+							onChange={ () =>
+								setChecked( ( value ) => ! value )
+							}
+							hasError={ hasError }
+							disabled={ isDisabled }
+						>
+							<span
+								className="wc-block-components-checkbox__label"
+								dangerouslySetInnerHTML={ {
+									__html: text || termsCheckboxDefaultText,
+								} }
+							/>
+						</CheckboxControl>
+					</>
+				) : (
+					<span
+						className="wc-block-components-checkbox__label"
+						dangerouslySetInnerHTML={ {
+							__html: text || termsConsentDefaultText,
+						} }
+					/>
+				) }
+			</div>
+		</>
 	);
 };
 

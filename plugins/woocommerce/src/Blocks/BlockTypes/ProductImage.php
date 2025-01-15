@@ -20,7 +20,7 @@ class ProductImage extends AbstractBlock {
 	 *
 	 * @var string
 	 */
-	protected $api_version = '2';
+	protected $api_version = '3';
 
 	/**
 	 * Get block supports. Shared with the frontend.
@@ -165,12 +165,21 @@ class ProductImage extends AbstractBlock {
 			$image_style .= sprintf( 'aspect-ratio:%s;', $attributes['aspectRatio'] );
 		}
 
+		$image_id = $product->get_image_id();
+		$alt_text = '';
+		$title    = '';
+		if ( $image_id ) {
+			$alt_text = get_post_meta( $image_id, '_wp_attachment_image_alt', true );
+			$title    = get_the_title( $image_id );
+		}
+
 		return $product->get_image(
 			$image_size,
 			array(
-				'alt'         => $product->get_title(),
+				'alt'         => empty( $alt_text ) ? $product->get_title() : $alt_text,
 				'data-testid' => 'product-image',
 				'style'       => $image_style,
+				'title'       => $title,
 			)
 		);
 	}
@@ -203,18 +212,34 @@ class ProductImage extends AbstractBlock {
 		}
 		$parsed_attributes = $this->parse_attributes( $attributes );
 
-		$classes_and_styles = StyleAttributesUtils::get_classes_and_styles_by_attributes( $attributes );
+		$classes_and_styles = StyleAttributesUtils::get_classes_and_styles_by_attributes( $attributes, array(), array( 'extra_classes' ) );
 
 		$post_id = isset( $block->context['postId'] ) ? $block->context['postId'] : '';
 		$product = wc_get_product( $post_id );
 
+		$classes = implode(
+			' ',
+			array_filter(
+				array(
+					'wc-block-components-product-image wc-block-grid__product-image',
+					esc_attr( $classes_and_styles['classes'] ),
+				)
+			)
+		);
+
+		$wrapper_attributes = get_block_wrapper_attributes(
+			array(
+				'class' => $classes,
+				'style' => esc_attr( $classes_and_styles['styles'] ),
+			)
+		);
+
 		if ( $product ) {
 			return sprintf(
-				'<div class="wc-block-components-product-image wc-block-grid__product-image %1$s" style="%2$s">
-					%3$s
+				'<div %1$s>
+					%2$s
 				</div>',
-				esc_attr( $classes_and_styles['classes'] ),
-				esc_attr( $classes_and_styles['styles'] ),
+				$wrapper_attributes,
 				$this->render_anchor(
 					$product,
 					$this->render_on_sale_badge( $product, $parsed_attributes ),

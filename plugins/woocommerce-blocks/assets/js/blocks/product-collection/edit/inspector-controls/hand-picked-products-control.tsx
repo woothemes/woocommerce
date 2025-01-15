@@ -80,7 +80,7 @@ function useProducts(
 	return { productsMap, productsList };
 }
 
-const HandPickedProductsControl = ( {
+export const HandPickedProductsControlField = ( {
 	query,
 	trackInteraction,
 	setQueryAttribute,
@@ -148,6 +148,38 @@ const HandPickedProductsControl = ( {
 		return decodeEntities( product?.name ) || '';
 	};
 
+	return (
+		<FormTokenField
+			displayTransform={ transformTokenIntoProductName }
+			label={ __( 'Hand-Picked', 'woocommerce' ) }
+			onChange={ onTokenChange }
+			onInputChange={ isLargeCatalog ? handleSearch : undefined }
+			suggestions={ suggestions }
+			// @ts-expect-error Using experimental features
+			__experimentalValidateInput={ ( value: string ) =>
+				productsMap.has( value )
+			}
+			value={
+				! productsMap.size
+					? [ __( 'Loading…', 'woocommerce' ) ]
+					: selectedProductIds || []
+			}
+			__experimentalExpandOnFocus={ true }
+			__experimentalShowHowTo={ false }
+			placeholder={ __(
+				'Search for products to display…',
+				'woocommerce'
+			) }
+		/>
+	);
+};
+
+const HandPickedProductsControl = ( {
+	query,
+	trackInteraction,
+	setQueryAttribute,
+}: QueryControlProps ) => {
+	const selectedProductIds = query.woocommerceHandPickedProducts;
 	const deselectCallback = () => {
 		setQueryAttribute( {
 			woocommerceHandPickedProducts:
@@ -158,28 +190,15 @@ const HandPickedProductsControl = ( {
 
 	return (
 		<ToolsPanelItem
-			label={ __( 'Hand-picked Products', 'woocommerce' ) }
+			label={ __( 'Hand-Picked', 'woocommerce' ) }
 			hasValue={ () => !! selectedProductIds?.length }
 			onDeselect={ deselectCallback }
 			resetAllFilter={ deselectCallback }
 		>
-			<FormTokenField
-				displayTransform={ transformTokenIntoProductName }
-				label={ __( 'Hand-picked Products', 'woocommerce' ) }
-				onChange={ onTokenChange }
-				onInputChange={ isLargeCatalog ? handleSearch : undefined }
-				suggestions={ suggestions }
-				// @ts-expect-error Using experimental features
-				__experimentalValidateInput={ ( value: string ) =>
-					productsMap.has( value )
-				}
-				value={
-					! productsMap.size
-						? [ __( 'Loading…', 'woocommerce' ) ]
-						: selectedProductIds || []
-				}
-				__experimentalExpandOnFocus={ true }
-				__experimentalShowHowTo={ false }
+			<HandPickedProductsControlField
+				query={ query }
+				trackInteraction={ trackInteraction }
+				setQueryAttribute={ setQueryAttribute }
 			/>
 		</ToolsPanelItem>
 	);

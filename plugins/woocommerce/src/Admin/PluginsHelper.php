@@ -217,7 +217,7 @@ class PluginsHelper {
 	 *
 	 * @return array
 	 */
-	public static function install_plugins( $plugins, PluginsInstallLogger $logger = null ) {
+	public static function install_plugins( $plugins, ?PluginsInstallLogger $logger = null ) {
 		/**
 		 * Filter the list of plugins to install.
 		 *
@@ -420,7 +420,7 @@ class PluginsHelper {
 	 *
 	 * @return WP_Error|array Plugin Status
 	 */
-	public static function activate_plugins( $plugins, PluginsInstallLogger $logger = null ) {
+	public static function activate_plugins( $plugins, ?PluginsInstallLogger $logger = null ) {
 		if ( empty( $plugins ) || ! is_array( $plugins ) ) {
 			return new WP_Error(
 				'woocommerce_plugins_invalid_plugins',

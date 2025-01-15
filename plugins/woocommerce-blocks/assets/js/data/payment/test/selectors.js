@@ -26,23 +26,28 @@ import {
 } from '../../../blocks/cart-checkout-shared/payment-methods';
 import { defaultCartState } from '../../cart/default-state';
 
-const originalSelect = jest.requireActual( '@wordpress/data' ).select;
-jest.spyOn( wpDataFunctions, 'select' ).mockImplementation( ( storeName ) => {
-	const originalStore = originalSelect( storeName );
-	if ( storeName === storeKey ) {
-		return {
-			...originalStore,
-			hasFinishedResolution: jest
-				.fn()
-				.mockImplementation( ( selectorName ) => {
-					if ( selectorName === 'getCartTotals' ) {
-						return true;
-					}
-					return originalStore.hasFinishedResolution( selectorName );
-				} ),
-		};
-	}
-	return originalStore;
+jest.mock( '@wordpress/data', () => {
+	const originalModule = jest.requireActual( '@wordpress/data' );
+	return {
+		...originalModule,
+		select: jest.fn( ( storeName ) => {
+			const originalStore = originalModule.select( storeName );
+			if ( storeName === 'wc/store/cart' ) {
+				return {
+					...originalStore,
+					hasFinishedResolution: jest.fn( ( selectorName ) => {
+						if ( selectorName === 'getCartTotals' ) {
+							return true;
+						}
+						return originalStore.hasFinishedResolution(
+							selectorName
+						);
+					} ),
+				};
+			}
+			return originalStore;
+		} ),
+	};
 } );
 
 jest.mock( '@woocommerce/settings', () => {
@@ -123,6 +128,9 @@ const registerMockPaymentMethods = ( savedCards = true ) => {
 		};
 		registerExpressPaymentMethod( {
 			name,
+			title: `${ name } express payment method`,
+			description: `${ name } express payment method description`,
+			gatewayId: 'woo',
 			content: <Content />,
 			edit: <div>An express payment method</div>,
 			canMakePayment: () => true,

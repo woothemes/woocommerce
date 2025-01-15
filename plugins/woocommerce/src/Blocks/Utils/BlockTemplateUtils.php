@@ -316,13 +316,9 @@ class BlockTemplateUtils {
 
 		$wp_template_part_filenames = array(
 			'checkout-header.html',
+			'coming-soon-social-links.html',
 			'mini-cart.html',
 		);
-
-		if ( Features::is_enabled( 'experimental-blocks' ) ) {
-			$wp_template_part_filenames[] = 'product-filters.html';
-			$wp_template_part_filenames[] = 'product-filters-overlay.html';
-		}
 
 		/*
 		* This may return the blockified directory for wp_templates.
@@ -481,7 +477,7 @@ class BlockTemplateUtils {
 	 * @return boolean
 	 */
 	public static function theme_has_template( $template_name ) {
-		return ! ! self::get_theme_template_path( $template_name, 'wp_template' );
+		return (bool) self::get_theme_template_path( $template_name, 'wp_template' );
 	}
 
 	/**
@@ -491,7 +487,7 @@ class BlockTemplateUtils {
 	 * @return boolean
 	 */
 	public static function theme_has_template_part( $template_name ) {
-		return ! ! self::get_theme_template_path( $template_name, 'wp_template_part' );
+		return (bool) self::get_theme_template_path( $template_name, 'wp_template_part' );
 	}
 
 	/**

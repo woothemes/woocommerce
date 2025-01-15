@@ -24,32 +24,23 @@ final class ProductFilterCheckboxList extends AbstractBlock {
 	 * @return string Rendered block type output.
 	 */
 	protected function render( $attributes, $content, $block ) {
+		if ( empty( $block->context['filterData'] ) || empty( $block->context['filterData']['items'] ) ) {
+			return '';
+		}
+
 		$context               = $block->context['filterData'];
 		$items                 = $context['items'] ?? array();
-		$checkbox_list_context = array( 'items' => $items );
-		$on_change             = $context['on_change'] ?? '';
+		$interactivity_context = array( 'items' => $items );
+		$action                = $context['actions']['toggleFilter'] ?? '';
 		$namespace             = wp_json_encode( array( 'namespace' => 'woocommerce/product-filter-checkbox-list' ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP );
+		$classes               = '';
+		$style                 = '';
 
-		$classes = array(
-			'has-option-element-border-color'   => $this->get_color_attribute_value( 'optionElementBorder', $attributes ),
-			'has-option-element-selected-color' => $this->get_color_attribute_value( 'optionElementSelected', $attributes ),
-			'has-option-element-color'          => $this->get_color_attribute_value( 'optionElement', $attributes ),
-		);
-		$classes = array_filter( $classes );
-
-		$styles = array(
-			'--wc-product-filter-checkbox-list-option-element-border' => $this->get_color_attribute_value( 'optionElementBorder', $attributes ),
-			'--wc-product-filter-checkbox-list-option-element-selected' => $this->get_color_attribute_value( 'optionElementSelected', $attributes ),
-			'--wc-product-filter-checkbox-list-option-element' => $this->get_color_attribute_value( 'optionElement', $attributes ),
-		);
-		$style  = array_reduce(
-			array_keys( $styles ),
-			function ( $acc, $key ) use ( $styles ) {
-				if ( $styles[ $key ] ) {
-					return $acc . "{$key}:  var( --wp--preset--color--{$styles[$key]} );";
-				}
-			}
-		);
+		$tags = new \WP_HTML_Tag_Processor( $content );
+		if ( $tags->next_tag( array( 'class_name' => 'wc-block-product-filter-checkbox-list' ) ) ) {
+			$classes = $tags->get_attribute( 'class' );
+			$style   = $tags->get_attribute( 'style' );
+		}
 
 		$checked_items               = array_filter(
 			$items,
@@ -63,8 +54,9 @@ final class ProductFilterCheckboxList extends AbstractBlock {
 
 		$wrapper_attributes = array(
 			'data-wc-interactive' => esc_attr( $namespace ),
-			'data-wc-context'     => wp_json_encode( $checkbox_list_context, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
-			'class'               => implode( ' ', array_keys( $classes ) ),
+			'data-wc-context'     => wp_json_encode( $interactivity_context, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
+			'data-wc-key'         => wp_unique_prefixed_id( $this->get_full_block_name() ),
+			'class'               => esc_attr( $classes ),
 			'style'               => esc_attr( $style ),
 		);
 
@@ -72,7 +64,7 @@ final class ProductFilterCheckboxList extends AbstractBlock {
 		?>
 		<div <?php echo get_block_wrapper_attributes( $wrapper_attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<ul class="wc-block-product-filter-checkbox-list__list" aria-label="<?php echo esc_attr__( 'Filter Options', 'woocommerce' ); ?>">
-			<?php foreach ( $items as $item ) { ?>
+				<?php foreach ( $items as $item ) { ?>
 					<?php
 					$item['id'] = $item['id'] ?? uniqid( 'checkbox-' );
 					// translators: %s: checkbox label.
@@ -84,8 +76,9 @@ final class ProductFilterCheckboxList extends AbstractBlock {
 						if ( ! $item['selected'] ) :
 							if ( $count >= $remaining_initial_unchecked ) :
 								?>
-								class="wc-block-product-filter-checkbox-list__item hidden"
-								data-wc-class--hidden="!context.showAll"
+								class="wc-block-product-filter-checkbox-list__item"
+								data-wc-bind--hidden="!context.showAll"
+								hidden
 							<?php else : ?>
 								<?php ++$count; ?>
 							<?php endif; ?>
@@ -104,9 +97,10 @@ final class ProductFilterCheckboxList extends AbstractBlock {
 									aria-invalid="false"
 									aria-label="<?php echo esc_attr( $i18n_label ); ?>"
 									data-wc-on--change--select-item="actions.selectCheckboxItem"
-									data-wc-on--change--parent-action="<?php echo esc_attr( $on_change ); ?>"
+									data-wc-on--change--parent-action="<?php echo esc_attr( $action ); ?>"
 									value="<?php echo esc_attr( $item['value'] ); ?>"
 									<?php checked( $item['selected'], 1 ); ?>
+									data-wc-bind--checked="state.isItemSelected"
 								>
 								<svg class="wc-block-product-filter-checkbox-list__mark" viewBox="0 0 10 8" fill="none" xmlns="http://www.w3.org/2000/svg">
 									<path d="M9.25 1.19922L3.75 6.69922L1 3.94922" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -120,36 +114,17 @@ final class ProductFilterCheckboxList extends AbstractBlock {
 				<?php } ?>
 			</ul>
 			<?php if ( count( $items ) > $show_initially ) : ?>
-				<span
-					role="button"
+				<button
 					class="wc-block-product-filter-checkbox-list__show-more"
-					data-wc-class--hidden="context.showAll"
+					data-wc-bind--hidden="context.showAll"
 					data-wc-on--click="actions.showAllItems"
+					hidden
 				>
-					<small role="presentation"><?php echo esc_html__( 'Show more...', 'woocommerce' ); ?></small>
-				</span>
+					<?php echo esc_html__( 'Show more...', 'woocommerce' ); ?>
+				</button>
 			<?php endif; ?>
 		</div>
 		<?php
 		return ob_get_clean();
-	}
-
-	/**
-	 * Get the color value from the color attributes.
-	 *
-	 * @param string $key        The key of the color attribute.
-	 * @param array  $attributes The block attributes.
-	 * @return string
-	 */
-	private function get_color_attribute_value( $key, $attributes ) {
-		if ( $attributes[ $key ] ) {
-			return $attributes[ $key ];
-		}
-
-		if ( $attributes[ 'custom' . ucfirst( $key ) ] ) {
-			return $attributes[ 'custom' . ucfirst( $key ) ];
-		}
-
-		return '';
 	}
 }

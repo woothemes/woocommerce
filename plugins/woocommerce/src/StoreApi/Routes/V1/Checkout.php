@@ -146,9 +146,10 @@ class Checkout extends AbstractCartRoute {
 		if ( is_wp_error( $response ) ) {
 			$response = $this->error_to_response( $response );
 
-			// If we encountered an exception, free up stock.
+			// If we encountered an exception, free up stock and release held coupons.
 			if ( $this->order ) {
 				wc_release_stock_for_order( $this->order );
+				wc_release_coupons_for_order( $this->order );
 			}
 		}
 
@@ -201,6 +202,7 @@ class Checkout extends AbstractCartRoute {
 
 		$address_fields = $this->additional_fields_controller->get_fields_for_location( 'address' );
 		if ( ! empty( $address_fields ) ) {
+			$needs_shipping = WC()->cart->needs_shipping();
 			foreach ( $address_fields as $field_key => $address_field ) {
 				if ( $address_field['required'] && ! isset( $request['billing_address'][ $field_key ] ) ) {
 					throw new RouteException(
@@ -210,7 +212,7 @@ class Checkout extends AbstractCartRoute {
 						400
 					);
 				}
-				if ( $address_field['required'] && ! isset( $request['shipping_address'][ $field_key ] ) ) {
+				if ( $needs_shipping && $address_field['required'] && ! isset( $request['shipping_address'][ $field_key ] ) ) {
 					throw new RouteException(
 						'woocommerce_rest_checkout_missing_required_field',
 						/* translators: %s: is the field label */
@@ -239,10 +241,20 @@ class Checkout extends AbstractCartRoute {
 	 */
 	protected function get_route_post_response( \WP_REST_Request $request ) {
 		/**
+		 * Ensure required permissions based on store settings are valid to place the order.
+		 */
+		$this->validate_user_can_place_order();
+
+		/**
 		 * Before triggering validation, ensure totals are current and in turn, things such as shipping costs are present.
 		 * This is so plugins that validate other cart data (e.g. conditional shipping and payments) can access this data.
 		 */
 		$this->cart_controller->calculate_totals();
+
+		/**
+		 * Validate that the cart is not empty.
+		 */
+		$this->cart_controller->validate_cart_not_empty();
 
 		/**
 		 * Validate items and fix violations before the order is processed.
@@ -256,7 +268,7 @@ class Checkout extends AbstractCartRoute {
 
 		/**
 		 * Persist customer session data from the request first so that OrderController::update_addresses_from_cart
-		 * uses the up to date customer address.
+		 * uses the up-to-date customer address.
 		 */
 		$this->update_customer_from_request( $request );
 
@@ -271,6 +283,21 @@ class Checkout extends AbstractCartRoute {
 		 * Validate updated order before payment is attempted.
 		 */
 		$this->order_controller->validate_order_before_payment( $this->order );
+
+		/**
+		 * Hold coupons for the order as soon as the draft order is created.
+		 */
+		try {
+			// $this->order->get_billing_email() is already validated by validate_order_before_payment()
+			$this->order->hold_applied_coupons( $this->order->get_billing_email() );
+		} catch ( \Exception $e ) {
+			// Turn the Exception into a RouteException for the API.
+			throw new RouteException(
+				'woocommerce_rest_coupon_reserve_failed',
+				esc_html( $e->getMessage() ),
+				400
+			);
+		}
 
 		/**
 		 * Reserve stock for the order.
@@ -647,5 +674,39 @@ class Checkout extends AbstractCartRoute {
 		}
 
 		return false;
+	}
+
+	/**
+	 * This validates if the order can be placed regarding settings in WooCommerce > Settings > Accounts & Privacy
+	 * If registration during checkout is disabled, guest checkout is disabled and the user is not logged in, prevent checkout.
+	 *
+	 * @throws RouteException If user cannot place order.
+	 */
+	private function validate_user_can_place_order() {
+		if (
+			// "woocommerce_enable_signup_and_login_from_checkout" === no.
+			false === filter_var( wc()->checkout()->is_registration_enabled(), FILTER_VALIDATE_BOOLEAN ) &&
+			// "woocommerce_enable_guest_checkout" === no.
+			true === filter_var( wc()->checkout()->is_registration_required(), FILTER_VALIDATE_BOOLEAN ) &&
+			! is_user_logged_in()
+		) {
+			throw new RouteException(
+				'woocommerce_rest_guest_checkout_disabled',
+				esc_html(
+					/**
+					 * Filter to customize the checkout message when a user must be logged in.
+					 *
+					 * @since 9.4.3
+					 *
+					 * @param string $message Message to display when a user must be logged in to check out.
+					 */
+					apply_filters(
+						'woocommerce_checkout_must_be_logged_in_message',
+						__( 'You must be logged in to checkout.', 'woocommerce' )
+					)
+				),
+				403
+			);
+		}
 	}
 }

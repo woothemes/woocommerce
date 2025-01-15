@@ -417,7 +417,7 @@ add_filter( 'woocommerce_store_api_add_to_cart_data', function( $add_to_cart_dat
 		$add_to_cart_data['cart_item_data']['custom-request-data'] = sanitize_text_field( $request['custom-request-param'] );
 	}
 	return $add_to_cart_data;
-} );
+}, 10, 2 );
 ```
 
 **Variation attribute naming:**
@@ -633,6 +633,6 @@ Returns the full [Cart Response](#cart-response) on success, or an [Error Respon
 
 [We're hiring!](https://woocommerce.com/careers/) Come work with us!
 
-🐞 Found a mistake, or have a suggestion? [Leave feedback about this document here.](https://github.com/woocommerce/woocommerce-blocks/issues/new?assignees=&labels=type%3A+documentation&template=--doc-feedback.md&title=Feedback%20on%20./src/StoreApi/docs/cart.md)
+🐞 Found a mistake, or have a suggestion? [Leave feedback about this document here.](https://github.com/woocommerce/woocommerce/issues/new?assignees=&labels=type%3A+documentation&template=suggestion-for-documentation-improvement-correction.md&title=Feedback%20on%20./src/StoreApi/docs/cart.md)
 
 <!-- /FEEDBACK -->

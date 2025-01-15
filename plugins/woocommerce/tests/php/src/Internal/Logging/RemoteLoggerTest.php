@@ -1,13 +1,14 @@
 <?php
 declare( strict_types = 1 );
 
-
 // phpcs:disable Universal.Namespaces.DisallowCurlyBraceSyntax.Forbidden -- need to override filter_input
 // phpcs:disable Universal.Files.SeparateFunctionsFromOO.Mixed -- same
 // phpcs:disable Universal.Namespaces.OneDeclarationPerFile.MultipleFound -- same
 namespace Automattic\WooCommerce\Tests\Internal\Logging {
 
+	use Automattic\Jetpack\Constants;
 	use Automattic\WooCommerce\Internal\Logging\RemoteLogger;
+	use Automattic\WooCommerce\Utilities\StringUtil;
 	use WC_Rate_Limiter;
 	use WC_Cache_Helper;
 	/**
@@ -43,6 +44,7 @@ namespace Automattic\WooCommerce\Tests\Internal\Logging {
 			global $wpdb;
 			$wpdb->query( "DELETE FROM {$wpdb->prefix}wc_rate_limits" );
 			WC_Cache_Helper::invalidate_cache_group( WC_Rate_Limiter::CACHE_GROUP );
+			Constants::clear_constants();
 		}
 
 		/**
@@ -139,8 +141,7 @@ namespace Automattic\WooCommerce\Tests\Internal\Logging {
 		 * @param bool   $expected The expected result.
 		 */
 		public function test_should_current_version_be_logged( $current_version, $new_version, $transient_value, $expected ) {
-			$wc_version   = WC()->version;
-			WC()->version = $current_version;
+			Constants::set_constant( 'WC_VERSION', $current_version );
 
 			// Set up the transient.
 			if ( null !== $transient_value ) {
@@ -156,8 +157,6 @@ namespace Automattic\WooCommerce\Tests\Internal\Logging {
 
 			// Clean up.
 			delete_site_transient( RemoteLogger::WC_NEW_VERSION_TRANSIENT );
-
-			WC()->version = $wc_version;
 		}
 
 		/**
@@ -228,7 +227,7 @@ namespace Automattic\WooCommerce\Tests\Internal\Logging {
 					array(
 						'feature'  => 'woocommerce_core',
 						'severity' => 'error',
-						'message'  => 'Fatal error occurred at line 123 in **/wp-content/file.php',
+						'message'  => 'Fatal error occurred at line 123 in ./wp-content/file.php',
 						'tags'     => array( 'woocommerce', 'php', 'tag1', 'tag2' ),
 					),
 				),
@@ -236,7 +235,7 @@ namespace Automattic\WooCommerce\Tests\Internal\Logging {
 					'error',
 					'Test error message',
 					array( 'backtrace' => ABSPATH . 'wp-content/plugins/woocommerce/file.php' ),
-					array( 'trace' => '**/woocommerce/file.php' ),
+					array( 'trace' => './woocommerce/file.php' ),
 				),
 				'log with extra attributes' => array(
 					'error',
@@ -252,6 +251,14 @@ namespace Automattic\WooCommerce\Tests\Internal\Logging {
 							'key1' => 'value1',
 							'key2' => 'value2',
 						),
+					),
+				),
+				'log with error file'       => array(
+					'error',
+					'Test error message',
+					array( 'error' => array( 'file' => WC_ABSPATH . 'includes/class-wc-test.php' ) ),
+					array(
+						'file' => './woocommerce/includes/class-wc-test.php',
 					),
 				),
 			);
@@ -348,7 +355,7 @@ namespace Automattic\WooCommerce\Tests\Internal\Logging {
 
 			$setup( $this );
 
-			$result = $this->invoke_private_method( $this->sut, 'should_handle', array( $level, 'Test message', array() ) );
+			$result = $this->invoke_private_method( $this->sut, 'should_handle', array( $level, 'Test message', array( 'remote-logging' => true ) ) );
 			$this->assertEquals( $expected, $result );
 		}
 
@@ -378,6 +385,14 @@ namespace Automattic\WooCommerce\Tests\Internal\Logging {
 		}
 
 		/**
+		 * @testdox Test should_handle returns false without remote-logging context
+		 */
+		public function test_should_handle_no_remote_logging_context() {
+			$result = $this->invoke_private_method( $this->sut, 'should_handle', array( 'error', 'Test message', array() ) );
+			$this->assertFalse( $result, 'should_handle should return false without remote-logging context' );
+		}
+
+		/**
 		 * @testdox handle method applies filter and doesn't send logs when filtered to null
 		 */
 		public function test_handle_filtered_log_null() {
@@ -390,7 +405,7 @@ namespace Automattic\WooCommerce\Tests\Internal\Logging {
 			add_filter( 'woocommerce_remote_logger_formatted_log_data', fn() => null, 10, 4 );
 			add_filter( 'pre_http_request', fn() => $this->fail( 'wp_safe_remote_post should not be called' ), 10, 3 );
 
-			$this->assertFalse( $this->sut->handle( time(), 'error', 'Test message', array() ) );
+			$this->assertFalse( $this->sut->handle( time(), 'error', 'Test message', array( 'remote-logging' => true ) ) );
 		}
 
 		/**
@@ -404,7 +419,7 @@ namespace Automattic\WooCommerce\Tests\Internal\Logging {
 			$this->sut->set_is_dev_or_local( true );
 			$this->sut->method( 'is_remote_logging_allowed' )->willReturn( true );
 
-			$this->assertFalse( $this->sut->handle( time(), 'error', 'Test message', array() ) );
+			$this->assertFalse( $this->sut->handle( time(), 'error', 'Test message', array( 'remote-logging' => true ) ) );
 		}
 
 		/**
@@ -435,7 +450,7 @@ namespace Automattic\WooCommerce\Tests\Internal\Logging {
 				3
 			);
 
-			$this->assertTrue( $this->sut->handle( time(), 'critical', 'Test message', array() ) );
+			$this->assertTrue( $this->sut->handle( time(), 'critical', 'Test message', array( 'remote-logging' => true ) ) );
 			$this->assertTrue( WC_Rate_Limiter::retried_too_soon( RemoteLogger::RATE_LIMIT_ID ) );
 		}
 
@@ -462,7 +477,7 @@ namespace Automattic\WooCommerce\Tests\Internal\Logging {
 				3
 			);
 
-			$this->assertFalse( $this->sut->handle( time(), 'critical', 'Test message', array() ) );
+			$this->assertFalse( $this->sut->handle( time(), 'critical', 'Test message', array( 'remote-logging' => true ) ) );
 			$this->assertTrue( WC_Rate_Limiter::retried_too_soon( RemoteLogger::RATE_LIMIT_ID ) );
 		}
 
@@ -484,41 +499,63 @@ namespace Automattic\WooCommerce\Tests\Internal\Logging {
 		 * @return array[] Test cases.
 		 */
 		public function is_third_party_error_provider() {
+			$wc_plugin_dir   = StringUtil::normalize_local_path_slashes( WC_ABSPATH );
+			$wp_includes_dir = StringUtil::normalize_local_path_slashes( ABSPATH . WPINC );
+			$wp_admin_dir    = StringUtil::normalize_local_path_slashes( ABSPATH . 'wp-admin' );
+
 			return array(
-				array( 'Fatal error in ' . WC_ABSPATH . 'file.php', array(), false ),
-				array( 'Fatal error in /wp-content/file.php', array(), false ),
-				array( 'Fatal error in /wp-content/file.php', array( 'source' => 'fatal-errors' ), false ),
-				array(
-					'Fatal error in /wp-content/plugins/3rd-plugin/file.php',
+				'WooCommerce error message' => array(
+					'Error in ' . $wc_plugin_dir . 'includes/class-wc-cart.php',
 					array(
 						'source'    => 'fatal-errors',
-						'backtrace' => array( '/wp-content/plugins/3rd-plugin/file.php', WC_ABSPATH . 'file.php' ),
+						'backtrace' => array(),
 					),
 					false,
 				),
-				array(
-					'Fatal error in /wp-content/plugins/woocommerce-3rd-plugin/file.php',
+				'Third-party error message' => array(
+					'Error in /plugins/some-other-plugin/file.php',
 					array(
 						'source'    => 'fatal-errors',
-						'backtrace' => array( WP_PLUGIN_DIR . 'woocommerce-3rd-plugin/file.php' ),
+						'backtrace' => array(),
 					),
 					true,
 				),
-				array(
-					'Fatal error in /wp-content/plugins/3rd-plugin/file.php',
+				'WooCommerce backtrace'     => array(
+					'Some error message',
 					array(
 						'source'    => 'fatal-errors',
-						'backtrace' => array( WP_PLUGIN_DIR . '3rd-plugin/file.php' ),
+						'backtrace' => array(
+							$wp_includes_dir . 'functions.php',
+							$wc_plugin_dir . 'includes/class-wc-cart.php',
+							'/plugins/some-other-plugin/file.php',
+						),
+					),
+					false,
+				),
+				'Third-party backtrace'     => array(
+					'Some error message',
+					array(
+						'source'    => 'fatal-errors',
+						'backtrace' => array(
+							$wp_includes_dir . 'functions.php',
+							$wp_admin_dir . 'admin.php',
+							'/plugins/some-other-plugin/file.php',
+						),
 					),
 					true,
 				),
-				array(
-					'Fatal error in /wp-content/plugins/3rd-plugin/file.php',
+				'Non-fatal-errors source'   => array(
+					'Some error message',
 					array(
-						'source'    => 'fatal-errors',
-						'backtrace' => array( array( 'file' => WP_PLUGIN_DIR . '3rd-plugin/file.php' ) ),
+						'source'    => 'other-source',
+						'backtrace' => array(),
 					),
-					true,
+					false,
+				),
+				'Missing backtrace'         => array(
+					'Some error message',
+					array( 'source' => 'fatal-errors' ),
+					false,
 				),
 			);
 		}
@@ -528,7 +565,7 @@ namespace Automattic\WooCommerce\Tests\Internal\Logging {
 		 */
 		public function test_sanitize() {
 			$message  = WC_ABSPATH . 'includes/class-wc-test.php on line 123';
-			$expected = '**/woocommerce/includes/class-wc-test.php on line 123';
+			$expected = './woocommerce/includes/class-wc-test.php on line 123';
 			$result   = $this->invoke_private_method( $this->sut, 'sanitize', array( $message ) );
 			$this->assertEquals( $expected, $result );
 		}
@@ -541,8 +578,113 @@ namespace Automattic\WooCommerce\Tests\Internal\Logging {
 				WC_ABSPATH . 'includes/class-wc-test.php:123',
 				ABSPATH . 'wp-includes/plugin.php:456',
 			);
-			$expected = "**/woocommerce/includes/class-wc-test.php:123\n**/wp-includes/plugin.php:456";
+			$expected = "./woocommerce/includes/class-wc-test.php:123\n./wp-includes/plugin.php:456";
 			$result   = $this->invoke_private_method( $this->sut, 'sanitize_trace', array( $trace ) );
+			$this->assertEquals( $expected, $result );
+		}
+
+		/**
+		 * @testdox redact_user_data method correctly redacts sensitive information
+		 * @dataProvider redact_user_data_provider
+		 *
+		 * @param string $input    The input string containing sensitive data.
+		 * @param string $expected The expected output with redacted data.
+		 */
+		public function test_redact_user_data( $input, $expected ) {
+			$result = $this->invoke_private_method( $this->sut, 'redact_user_data', array( $input ) );
+			$this->assertEquals( $expected, $result );
+		}
+
+		/**
+		 * Data provider for test_redact_user_data.
+		 *
+		 * @return array[] Test cases with input strings and expected redacted outputs.
+		 */
+		public function redact_user_data_provider() {
+			return array(
+				'email address'                        => array(
+					'input'    => 'User email is john.doe@example.com',
+					'expected' => 'User email is [redacted_email]',
+				),
+				'complex email address'                => array(
+					'input'    => 'Email: test.user+label@sub-domain.example.co.uk',
+					'expected' => 'Email: [redacted_email]',
+				),
+				'international phone with parentheses' => array(
+					'input'    => 'Phone: +1 (123) 456 7890',
+					'expected' => 'Phone: [redacted_phone]',
+				),
+				'international phone with dashes'      => array(
+					'input'    => 'Contact at +44-123-456-7890',
+					'expected' => 'Contact at [redacted_phone]',
+				),
+				'simple phone number'                  => array(
+					'input'    => 'Call 1234567890',
+					'expected' => 'Call [redacted_phone]',
+				),
+				'formatted phone number'               => array(
+					'input'    => 'Phone: (123) 456-7890',
+					'expected' => 'Phone: [redacted_phone]',
+				),
+				'should not match short number'        => array(
+					'input'    => 'Order #123 status',
+					'expected' => 'Order #123 status',
+				),
+				'should not match medium number'       => array(
+					'input'    => 'Product 12345',
+					'expected' => 'Product 12345',
+				),
+				'IP address'                           => array(
+					'input'    => 'User IP: 192.168.1.1',
+					'expected' => 'User IP: [redacted_ip]',
+				),
+				'credit card number spaced'            => array(
+					'input'    => 'Card: 4111 1111 1111 1111',
+					'expected' => 'Card: [redacted_credit_card]',
+				),
+				'mixed sensitive data'                 => array(
+					'input'    => 'Contact: user@example.com, Tel: +1-234-567-8900, IP: 192.168.0.1, Card: 4111 1111 1111 1111',
+					'expected' => 'Contact: [redacted_email], Tel: [redacted_phone], IP: [redacted_ip], Card: [redacted_credit_card]',
+				),
+				'numbers in text'                      => array(
+					'input'    => 'Order #123 had 456 items costing $789',
+					'expected' => 'Order #123 had 456 items costing $789',
+				),
+				'generic api key'                      => array(
+					'input'    => 'API Key: a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0',
+					'expected' => 'API Key: [redacted_api_key]',
+				),
+				'hex api key'                          => array(
+					'input'    => 'Key: 1234567890abcdef1234567890abcdef',
+					'expected' => 'Key: [redacted_api_key]',
+				),
+				'segmented api key'                    => array(
+					'input'    => 'Access Key: ABCD-1234-EFGH-5678',
+					'expected' => 'Access Key: [redacted_api_key]',
+				),
+				'multiple api keys'                    => array(
+					'input'    => 'Keys: a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0, ABCD-1234-EFGH-5678, sk_fakekey0123456789abcdefg',
+					'expected' => 'Keys: [redacted_api_key], [redacted_api_key], [redacted_api_key]',
+				),
+			);
+		}
+
+		/**
+		 * @testdox sanitize method applies custom sanitization filter
+		 */
+		public function test_sanitize_with_custom_filter() {
+			add_filter(
+				'woocommerce_remote_logger_sanitized_content',
+				function ( $sanitized ) {
+					return str_replace( 'test', 'filtered', $sanitized );
+				},
+				10,
+				2
+			);
+
+			$message  = WC_ABSPATH . 'includes/class-wc-test.php on line 123';
+			$expected = './woocommerce/includes/class-wc-filtered.php on line 123';
+			$result   = $this->invoke_private_method( $this->sut, 'sanitize', array( $message ) );
 			$this->assertEquals( $expected, $result );
 		}
 

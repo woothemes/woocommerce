@@ -1,5 +1,5 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
-
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
+const { setComingSoon } = require( '../../utils/coming-soon' );
 const productData = {
 	virtual: {
 		name: `Virtual product ${ Date.now() }`,
@@ -66,8 +66,8 @@ const test = baseTest.extend( {
 for ( const productType of Object.keys( productData ) ) {
 	test(
 		`can create a simple ${ productType } product`,
-		{ tag: [ '@gutenberg', '@services' ] },
-		async ( { page, category, product } ) => {
+		{ tag: [ tags.GUTENBERG ] },
+		async ( { page, category, product, baseURL } ) => {
 			await test.step( 'add new product', async () => {
 				await page.goto( 'wp-admin/post-new.php?post_type=product' );
 			} );
@@ -96,7 +96,10 @@ for ( const productType of Object.keys( productData ) ) {
 				await page
 					.getByLabel( 'Regular price ($)' )
 					.fill( productData[ productType ].regularPrice );
-				await page.getByText( 'Inventory' ).click();
+				await page
+					.getByRole( 'link' )
+					.filter( { hasText: 'Inventory' } )
+					.click();
 
 				// Inventory information
 				await page
@@ -112,7 +115,7 @@ for ( const productType of Object.keys( productData ) ) {
 					.getByRole( 'link', { name: 'Attributes' } )
 					.click();
 				await page
-					.getByPlaceholder( 'f.e. size or color' )
+					.getByPlaceholder( 'e.g. length or weight' )
 					.fill( attributeName );
 				await page
 					.getByPlaceholder( 'Enter some descriptive text.' )
@@ -130,7 +133,11 @@ for ( const productType of Object.keys( productData ) ) {
 
 			await test.step( 'add product advanced information', async () => {
 				// Advanced information
-				await page.getByText( 'Advanced' ).click();
+				await page
+					.getByRole( 'link' )
+					.filter( { hasText: 'Advanced' } )
+					.first()
+					.click();
 				await page
 					.getByLabel( 'Purchase note' )
 					.fill( productData[ productType ].purchaseNote );
@@ -138,12 +145,7 @@ for ( const productType of Object.keys( productData ) ) {
 			} );
 
 			await test.step( 'add product categories', async () => {
-				// Using getByRole here is unreliable
-				const categoryCheckbox = page.locator(
-					`#in-product_cat-${ category.id }`
-				);
-				await categoryCheckbox.check();
-				await expect( categoryCheckbox ).toBeChecked();
+				await page.getByText( category.name ).first().check();
 
 				await expect(
 					page
@@ -183,7 +185,7 @@ for ( const productType of Object.keys( productData ) ) {
 						.getByPlaceholder( '0' )
 						.fill( productData[ productType ].shipping.weight );
 					await page
-						.getByPlaceholder( 'Length' )
+						.getByPlaceholder( 'Length', { exact: true } )
 						.fill( productData[ productType ].shipping.length );
 					await page
 						.getByPlaceholder( 'Width' )
@@ -265,12 +267,16 @@ for ( const productType of Object.keys( productData ) ) {
 
 				// Verify description
 				await expect(
-					page.getByText(
-						productData[ productType ].shortDescription
-					)
+					page
+						.getByText(
+							productData[ productType ].shortDescription
+						)
+						.first()
 				).toBeVisible();
 				await expect(
-					page.getByText( productData[ productType ].description )
+					page
+						.getByText( productData[ productType ].description )
+						.first()
 				).toBeVisible();
 				await expect(
 					page.getByText( `SKU: ${ productData[ productType ].sku }` )
@@ -294,6 +300,8 @@ for ( const productType of Object.keys( productData ) ) {
 			} );
 
 			await test.step( 'shopper can add the product to cart', async () => {
+				await setComingSoon( { baseURL, enabled: 'no' } );
+
 				// logout admin user
 				await page.context().clearCookies();
 				await page.reload();

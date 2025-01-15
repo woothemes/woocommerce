@@ -9,7 +9,7 @@ use Automattic\WooCommerce\Tests\Blocks\Helpers\FixtureData;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields;
 use Automattic\WooCommerce\Blocks\Package;
-
+use WC_Gateway_BACS;
 
 /**
  * AdditionalFields Controller Tests.
@@ -72,6 +72,24 @@ class AdditionalFields extends MockeryTestCase {
 					'weight'        => 10,
 				)
 			),
+			$fixtures->get_simple_product(
+				array(
+					'name'          => 'Virtual Test Product 3',
+					'stock_status'  => 'instock',
+					'regular_price' => 10,
+					'weight'        => 10,
+					'virtual'       => true,
+				)
+			),
+			$fixtures->get_simple_product(
+				array(
+					'name'          => 'Downloadable Test Product 4',
+					'stock_status'  => 'instock',
+					'regular_price' => 10,
+					'weight'        => 10,
+					'downloadable'  => true,
+				)
+			),
 		);
 		$this->reset_session();
 	}
@@ -82,6 +100,7 @@ class AdditionalFields extends MockeryTestCase {
 	protected function tearDown(): void {
 		parent::tearDown();
 		unset( WC()->countries->locale );
+		WC()->cart->empty_cart();
 		remove_all_filters( 'woocommerce_get_country_locale' );
 		global $wp_rest_server;
 		$wp_rest_server = null;
@@ -1173,7 +1192,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'my-gov-id',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function'   => 'engineering',
 					'plugin-namespace/leave-on-porch' => true,
@@ -1224,7 +1243,7 @@ class AdditionalFields extends MockeryTestCase {
 					$id          => array( 'array-instead-of-text' ),
 
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function'   => 'engineering',
 					'plugin-namespace/leave-on-porch' => true,
@@ -1285,7 +1304,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'my-gov-id',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 					$id                             => 'value',
@@ -1354,7 +1373,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'my-gov-id',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 					$id                             => 'invalid',
@@ -1430,7 +1449,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'my-gov-id',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 					$id                             => 'value',
@@ -1507,7 +1526,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'my-gov-id',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 					$id                             => 'invalid',
@@ -1575,7 +1594,7 @@ class AdditionalFields extends MockeryTestCase {
 					'plugin-namespace/gov-id'            => 'gov id',
 					'plugin-namespace/my-required-field' => 'req. field',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 				),
@@ -1620,7 +1639,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'gov id',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 				),
@@ -1665,7 +1684,7 @@ class AdditionalFields extends MockeryTestCase {
 					'plugin-namespace/gov-id'            => 'gov id',
 					'plugin-namespace/my-required-field' => 'gov id',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => '',
 				),
@@ -1680,6 +1699,91 @@ class AdditionalFields extends MockeryTestCase {
 
 		// Ensures the field isn't registered.
 		$this->assertFalse( $this->controller->is_field( $id ), \sprintf( '%s is still registered', $id ) );
+	}
+
+	/**
+	 * Ensures an order for a virtual product can be placed without a shipping address, but an order for a downloadable
+	 * non-virtual cannot.
+	 */
+	public function test_place_virtual_downloadable_product_order() {
+		WC()->cart->empty_cart();
+		WC()->cart->add_to_cart( $this->products[2]->get_id(), 2 );
+		$id    = 'plugin-namespace/my-required-field';
+		$label = 'My Required Field';
+		\woocommerce_register_additional_checkout_field(
+			array(
+				'id'       => $id,
+				'label'    => $label,
+				'location' => 'address',
+				'type'     => 'text',
+				'required' => true,
+			)
+		);
+
+		$request = new \WP_REST_Request( 'POST', '/wc/store/v1/checkout' );
+		$request->set_header( 'Nonce', wp_create_nonce( 'wc_store_api' ) );
+		$request->set_body_params(
+			array(
+				'billing_address'   => (object) array(
+					'first_name'                         => 'test',
+					'last_name'                          => 'test',
+					'company'                            => '',
+					'address_1'                          => 'test',
+					'address_2'                          => '',
+					'city'                               => 'test',
+					'state'                              => '',
+					'postcode'                           => 'cb241ab',
+					'country'                            => 'GB',
+					'phone'                              => '',
+					'email'                              => 'testaccount@test.com',
+					'plugin-namespace/gov-id'            => 'gov id',
+					'plugin-namespace/my-required-field' => 'req. field',
+				),
+				'payment_method'    => WC_Gateway_BACS::ID,
+				'additional_fields' => array(
+					'plugin-namespace/job-function' => 'engineering',
+				),
+			)
+		);
+		$response = rest_get_server()->dispatch( $request );
+		$data     = $response->get_data();
+		$this->assertEquals( 200, $response->get_status(), print_r( $data, true ) );
+
+		// Test with downloadable, but not virtual product.
+		WC()->cart->empty_cart();
+		WC()->cart->add_to_cart( $this->products[3]->get_id(), 2 );
+
+		$request = new \WP_REST_Request( 'POST', '/wc/store/v1/checkout' );
+		$request->set_header( 'Nonce', wp_create_nonce( 'wc_store_api' ) );
+		$request->set_body_params(
+			array(
+				'billing_address'   => (object) array(
+					'first_name'                         => 'test',
+					'last_name'                          => 'test',
+					'company'                            => '',
+					'address_1'                          => 'test',
+					'address_2'                          => '',
+					'city'                               => 'test',
+					'state'                              => '',
+					'postcode'                           => 'cb241ab',
+					'country'                            => 'GB',
+					'phone'                              => '',
+					'email'                              => 'testaccount@test.com',
+					'plugin-namespace/gov-id'            => 'gov id',
+					'plugin-namespace/my-required-field' => 'req. field',
+				),
+				'payment_method'    => WC_Gateway_BACS::ID,
+				'additional_fields' => array(
+					'plugin-namespace/job-function' => 'engineering',
+				),
+			)
+		);
+		$response = rest_get_server()->dispatch( $request );
+		$data     = $response->get_data();
+
+		// The product is downloadable, but not virtual, so should still require a shipping address.
+		$this->assertEquals( 400, $response->get_status(), print_r( $data, true ) );
+		$this->assertEquals( 'There was a problem with the provided shipping address: Government ID is required', $data['message'], print_r( $data, true ) );
 	}
 
 	/**
@@ -1728,7 +1832,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'gov id',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 				),
@@ -1783,7 +1887,7 @@ class AdditionalFields extends MockeryTestCase {
 					'plugin-namespace/gov-id' => 'my-gov-id',
 
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'invalid-prop',
 				),
@@ -1831,7 +1935,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'shipping-saved-gov-id',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function'   => 'engineering',
 					'plugin-namespace/leave-on-porch' => true,
@@ -1890,7 +1994,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'shipping-saved-gov-id',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function'   => 'engineering',
 					'plugin-namespace/leave-on-porch' => true,
@@ -2010,7 +2114,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'gov id',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 					$id                             => 'value',
@@ -2092,7 +2196,7 @@ class AdditionalFields extends MockeryTestCase {
 					'country'    => 'GB',
 					'phone'      => '',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					$id => 'my-value',
 				),

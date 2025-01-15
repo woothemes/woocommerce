@@ -24,6 +24,7 @@ import {
 	isBoolean,
 	isString,
 	objectHasProp,
+	isObject,
 } from '@woocommerce/types';
 import { Icon, chevronDown } from '@wordpress/icons';
 import {
@@ -53,7 +54,7 @@ import {
 } from './utils';
 import { BlockAttributes, DisplayOption, GetNotice } from './types';
 import CheckboxFilter from './checkbox-filter';
-import { useSetWraperVisibility } from '../filter-wrapper/context';
+import { useSetWrapperVisibility } from '../filter-wrapper/context';
 
 /**
  * Component displaying an attribute filter.
@@ -133,13 +134,21 @@ const AttributeFilterBlock = ( {
 			query: { orderby: attributeObject?.orderby || 'menu_order' },
 		} );
 
-	const { results: filteredCounts, isLoading: filteredCountsLoading } =
+	const backendQueryState = getSettingWithCoercion(
+		'queryState',
+		{},
+		isObject
+	);
+	const { data: filteredCounts, isLoading: filteredCountsLoading } =
 		useCollectionData( {
 			queryAttribute: {
 				taxonomy: attributeObject?.taxonomy || '',
 				queryType: blockAttributes.queryType,
 			},
-			queryState,
+			queryState: {
+				...backendQueryState,
+				...queryState,
+			},
 			isEditor,
 		} );
 
@@ -459,7 +468,7 @@ const AttributeFilterBlock = ( {
 		filteringForPhpTemplate,
 	] );
 
-	const setWrapperVisibility = useSetWraperVisibility();
+	const setWrapperVisibility = useSetWrapperVisibility();
 
 	if ( ! hasFilterableProducts ) {
 		setWrapperVisibility( false );
@@ -540,6 +549,7 @@ const AttributeFilterBlock = ( {
 					<>
 						<FormTokenField
 							key={ remountKey }
+							label={ attributeObject.label }
 							className={ clsx( {
 								'single-selection': ! multiple,
 								'is-loading': isLoading,
@@ -661,6 +671,11 @@ const AttributeFilterBlock = ( {
 						isLoading={ isLoading }
 						disabled={ getIsApplyButtonDisabled() }
 						onClick={ () => onSubmit( checked ) }
+						screenReaderLabel={ sprintf(
+							/* translators: %s is the attribute label */
+							__( 'Apply attribute filter: %s', 'woocommerce' ),
+							attributeObject.label
+						) }
 					/>
 				) }
 			</div>

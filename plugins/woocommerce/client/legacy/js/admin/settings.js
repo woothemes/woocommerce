@@ -51,10 +51,14 @@
 		$( '.colorpick' )
 			.iris( {
 				change: function ( event, ui ) {
-					$( this )
+					const $this = $( this );
+					$this
 						.parent()
 						.find( '.colorpickpreview' )
 						.css( { backgroundColor: ui.color.toString() } );
+					setTimeout( function () {
+						$this.trigger( 'change' );
+					} );
 				},
 				hide: true,
 				border: true,
@@ -92,16 +96,17 @@
 		// Edit prompt
 		function editPrompt () {
 			var changed = false;
-			let $check_column = $( '.wp-list-table .check-column' );
+			let $prevent_change_elements = $( '.wp-list-table .check-column, .wc-settings-prevent-change-event' );
 
 			$( 'input, textarea, select, checkbox' ).on( 'change input', function (
 				event
 			) {
-				// Toggling WP List Table checkboxes should not trigger navigation warnings.
-				// Theses checkboxes only select/unselect rows, they don't change the form.
+				// Prevent change event on specific elements, that don't change the form. E.g.:
+				// - WP List Table checkboxes that only (un)select rows
+				// - Changing email type in email preview
 				if (
-					$check_column.length &&
-					$check_column.has( event.target ).length
+					$prevent_change_elements.length &&
+					$prevent_change_elements.has( event.target ).length
 				) {
 					return;
 				}
@@ -252,7 +257,7 @@
 					.attr( { tabindex: '-1', 'aria-hidden': 'true' } );
 				if ( ! data.isInitialLoad ) {
 					$( '.woocommerce-save-button' ).removeAttr( 'disabled' );
-				}	
+				}
 			} );
 
 		$( '.wc-item-reorder-nav' )

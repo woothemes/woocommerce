@@ -38,8 +38,7 @@ export const SELECTORS = {
 	},
 	onSaleControlLabel: 'Show only products on sale',
 	featuredControlLabel: 'Show only featured products',
-	usePageContextControl:
-		'.wc-block-product-collection__inherit-query-control',
+	usePageContextControl: 'Query type',
 	shrinkColumnsToFit: 'Responsive',
 	productSearchLabel: 'Search',
 	productSearchButton: '.wp-block-search__button wp-element-button',
@@ -76,6 +75,7 @@ export type Collections =
 	| 'bestSellers'
 	| 'onSale'
 	| 'featured'
+	| 'relatedProducts'
 	| 'productCatalog'
 	| 'myCustomCollection'
 	| 'myCustomCollectionWithPreview'
@@ -84,14 +84,17 @@ export type Collections =
 	| 'myCustomCollectionWithOrderContext'
 	| 'myCustomCollectionWithCartContext'
 	| 'myCustomCollectionWithArchiveContext'
-	| 'myCustomCollectionMultipleContexts';
+	| 'myCustomCollectionMultipleContexts'
+	| 'myCustomCollectionWithInserterScope'
+	| 'myCustomCollectionWithBlockScope';
 
 const collectionToButtonNameMap = {
 	newArrivals: 'New Arrivals',
-	topRated: 'Top Rated',
+	topRated: 'Top Rated Products',
 	bestSellers: 'Best Sellers',
-	onSale: 'On Sale',
-	featured: 'Featured',
+	onSale: 'On Sale Products',
+	featured: 'Featured Products',
+	relatedProducts: 'Related Products',
 	productCatalog: 'create your own',
 	myCustomCollection: 'My Custom Collection',
 	myCustomCollectionWithPreview: 'My Custom Collection with Preview',
@@ -105,6 +108,9 @@ const collectionToButtonNameMap = {
 		'My Custom Collection - Archive Context',
 	myCustomCollectionMultipleContexts:
 		'My Custom Collection - Multiple Contexts',
+	myCustomCollectionWithInserterScope:
+		'My Custom Collection - With Inserter Scope',
+	myCustomCollectionWithBlockScope: 'My Custom Collection - With Block Scope',
 };
 
 class ProductCollectionPage {
@@ -207,7 +213,8 @@ class ProductCollectionPage {
 	}
 
 	async chooseProductInEditorProductPickerIfAvailable(
-		pageReference: Page | FrameLocator
+		pageReference: Page | FrameLocator,
+		productName = 'Album'
 	) {
 		const editorProductPicker = pageReference.locator(
 			SELECTORS.productPicker
@@ -217,7 +224,7 @@ class ProductCollectionPage {
 			await editorProductPicker
 				.locator( 'label' )
 				.filter( {
-					hasText: 'Album',
+					hasText: productName,
 				} )
 				.click();
 		}
@@ -395,7 +402,7 @@ class ProductCollectionPage {
 
 	async addFilter(
 		name:
-			| 'Show Hand-picked Products'
+			| 'Show Hand-picked'
 			| 'Keyword'
 			| 'Show product categories'
 			| 'Show product tags'
@@ -532,8 +539,11 @@ class ProductCollectionPage {
 		const maxInputSelector = SELECTORS.priceRangeFilter.max;
 
 		const sidebarSettings = this.locateSidebarSettings();
-		const minInput = sidebarSettings.getByLabel( minInputSelector );
-		const maxInput = sidebarSettings.getByLabel( maxInputSelector );
+		const priceRangeContainer = sidebarSettings.locator(
+			'.wc-block-product-price-range-control'
+		);
+		const minInput = priceRangeContainer.getByLabel( minInputSelector );
+		const maxInput = priceRangeContainer.getByLabel( maxInputSelector );
 
 		await minInput.fill( min || '' );
 		await maxInput.fill( max || '' );
@@ -593,15 +603,6 @@ class ProductCollectionPage {
 		] );
 	}
 
-	async clickDisplaySettings() {
-		// Select the block, so that toolbar is visible.
-		await this.focusProductCollection();
-		// Open the display settings.
-		await this.page
-			.getByRole( 'button', { name: 'Display settings' } )
-			.click();
-	}
-
 	async changeCollectionUsingToolbar( collection: Collections ) {
 		// Click "Choose collection" button in the toolbar.
 		await this.admin.page
@@ -624,37 +625,6 @@ class ProductCollectionPage {
 				name: 'Continue',
 			} )
 			.click();
-	}
-
-	async setDisplaySettings( {
-		itemsPerPage,
-		offset,
-		maxPageToShow,
-	}: {
-		itemsPerPage: number;
-		offset: number;
-		maxPageToShow: number;
-		isOnFrontend?: boolean;
-	} ) {
-		// Set the values.
-		const displaySettingsContainer = this.page.locator(
-			'.wc-block-editor-product-collection__display-settings'
-		);
-		await displaySettingsContainer.getByLabel( 'Items per Page' ).click();
-		await displaySettingsContainer
-			.getByLabel( 'Items per Page' )
-			.fill( itemsPerPage.toString() );
-		await displaySettingsContainer.getByLabel( 'Offset' ).click();
-		await displaySettingsContainer
-			.getByLabel( 'Offset' )
-			.fill( offset.toString() );
-		await displaySettingsContainer.getByLabel( 'Max page to show' ).click();
-		await displaySettingsContainer
-			.getByLabel( 'Max page to show' )
-			.fill( maxPageToShow.toString() );
-
-		await this.page.click( 'body' );
-		await this.refreshLocators( 'editor' );
 	}
 
 	async setShrinkColumnsToFit( value = true ) {
@@ -700,13 +670,13 @@ class ProductCollectionPage {
 
 	async setInheritQueryFromTemplate( inheritQueryFromTemplate: boolean ) {
 		const sidebarSettings = this.locateSidebarSettings();
-		const input = sidebarSettings.locator(
-			`${ SELECTORS.usePageContextControl } input`
+		const queryTypeLocator = sidebarSettings.locator(
+			SELECTORS.usePageContextControl
 		);
 		if ( inheritQueryFromTemplate ) {
-			await input.check();
+			await queryTypeLocator.getByLabel( 'Default' ).click();
 		} else {
-			await input.uncheck();
+			await queryTypeLocator.getByLabel( 'Custom' ).click();
 		}
 	}
 

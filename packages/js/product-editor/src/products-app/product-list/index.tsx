@@ -11,20 +11,16 @@ import {
 	Fragment,
 } from '@wordpress/element';
 import { Product, ProductQuery } from '@woocommerce/data';
-import { drawerRight } from '@wordpress/icons';
+import { drawerRight, seen, unseen } from '@wordpress/icons';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 import { store as coreStore } from '@wordpress/core-data';
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import classNames from 'classnames';
 import {
-	// @ts-expect-error missing types.
 	__experimentalHeading as Heading,
-	// @ts-expect-error missing types.
 	__experimentalText as Text,
-	// @ts-expect-error missing types.
 	__experimentalHStack as HStack,
-	// @ts-expect-error missing types.
 	__experimentalVStack as VStack,
 	FlexItem,
 	Button,
@@ -44,6 +40,7 @@ import {
 import { LAYOUT_LIST } from '../constants';
 import { productFields } from './fields';
 import { useEditProductAction } from '../dataviews-actions';
+import { useNewNavigation } from '../utilites/new-navigation';
 
 const { NavigableRegion, usePostActions } = unlock( editorPrivateApis );
 const { useHistory, useLocation } = unlock( routerPrivateApis );
@@ -112,7 +109,7 @@ function useView(
 
 			setView( newView );
 		},
-		[ history, isCustom ]
+		[ history ]
 	);
 
 	// When layout URL param changes, update the view type
@@ -149,6 +146,7 @@ export default function ProductList( {
 	className,
 	hideTitleFromUI = false,
 }: ProductListProps ) {
+	const [ showNewNavigation, setNewNavigation ] = useNewNavigation();
 	const history = useHistory();
 	const location = useLocation();
 	const {
@@ -181,17 +179,17 @@ export default function ProductList( {
 			search: view.search,
 			...filters,
 		};
-	}, [ location.params, view ] );
+	}, [ view ] );
 
 	const onChangeSelection = useCallback(
-		( items ) => {
+		( items: string[] ) => {
 			setSelection( items );
 			history.push( {
 				...location.params,
 				postId: items.join( ',' ),
 			} );
 		},
-		[ history, location.params, view?.type ]
+		[ history, location.params ]
 	);
 
 	// TODO: Use the Woo data store to get all the products, as this doesn't contain all the product data.
@@ -200,8 +198,11 @@ export default function ProductList( {
 			const { getProducts, getProductsTotalCount, isResolving } =
 				select( 'wc/admin/products' );
 			return {
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				records: getProducts( queryParams ) as Product[],
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				totalCount: getProductsTotalCount( queryParams ) as number,
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				isLoading: isResolving( 'getProducts', [ queryParams ] ),
 			};
 		},
@@ -221,9 +222,11 @@ export default function ProductList( {
 			const { getPostType, canUser } = select( coreStore );
 			const postTypeData:
 				| { labels: Record< string, string > }
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				| undefined = getPostType( postType );
 			return {
 				labels: postTypeData?.labels,
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				canCreateRecord: canUser( 'create', {
 					kind: 'postType',
 					name: postType,
@@ -273,7 +276,6 @@ export default function ProductList( {
 										<Button
 											variant="primary"
 											disabled={ true }
-											// @ts-expect-error missing type.
 											__next40pxDefaultSize
 										>
 											{ labels.add_new_item }
@@ -307,22 +309,34 @@ export default function ProductList( {
 					selection={ selection }
 					defaultLayouts={ defaultLayouts }
 					header={
-						<Button
-							// @ts-expect-error outdated type.
-							size="compact"
-							isPressed={ quickEdit }
-							icon={ drawerRight }
-							label={ __(
-								'Toggle details panel',
-								'woocommerce'
-							) }
-							onClick={ () => {
-								history.push( {
-									...location.params,
-									quickEdit: quickEdit ? undefined : true,
-								} );
-							} }
-						/>
+						<>
+							<Button
+								size="compact"
+								icon={ showNewNavigation ? seen : unseen }
+								label={ __(
+									'Toggle navigation',
+									'woocommerce'
+								) }
+								onClick={ () => {
+									setNewNavigation( ! showNewNavigation );
+								} }
+							/>
+							<Button
+								size="compact"
+								isPressed={ quickEdit }
+								icon={ drawerRight }
+								label={ __(
+									'Toggle details panel',
+									'woocommerce'
+								) }
+								onClick={ () => {
+									history.push( {
+										...location.params,
+										quickEdit: quickEdit ? undefined : true,
+									} );
+								} }
+							/>
+						</>
 					}
 				/>
 			</div>

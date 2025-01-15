@@ -1,11 +1,16 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
-const {
-	goToPageEditor,
-	fillPageTitle,
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
+const { fillPageTitle } = require( '../../utils/editor' );
+const { setComingSoon } = require( '../../utils/coming-soon' );
+
+/**
+ * External dependencies
+ */
+import {
+	addAProductToCart,
 	insertBlockByShortcut,
+	goToPageEditor,
 	publishPage,
-} = require( '../../utils/editor' );
-const { addAProductToCart } = require( '../../utils/cart' );
+} from '@woocommerce/e2e-utils-playwright';
 
 const firstProductName = 'First Product';
 const firstProductPrice = '10.00';
@@ -31,13 +36,19 @@ const test = baseTest.extend( {
 	},
 } );
 
+// Note: Shipping Settings for these tests default to shipping to user's default billing address,
+// when we go to change the country, we click the "Delivers to CALIFORNIA, UNITED STATES (US)" to open the address panel.
+const DEFAULT_BILLING_LABEL = 'CALIFORNIA, UNITED STATES (US)';
+
 test.describe(
 	'Cart Block Calculate Shipping',
-	{ tag: [ '@payments', '@services' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		let product1Id, product2Id, shippingZoneNLId, shippingZonePTId;
 
-		test.beforeAll( async ( { api } ) => {
+		test.beforeAll( async ( { api, baseURL } ) => {
+			await setComingSoon( { baseURL, enabled: 'no' } );
+
 			// make sure the currency is USD
 			await api.put( 'settings/general/woocommerce_currency', {
 				value: 'USD',
@@ -132,16 +143,24 @@ test.describe(
 
 		test(
 			'allows customer to calculate Free Shipping in cart block if in Netherlands',
-			{ tag: [ '@could-be-unit-test' ] },
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 			async ( { page, context, cartBlockPage } ) => {
 				await context.clearCookies();
+
+				//  Do we need to clear localStorage and sessionStorage? Something is remembering the address.
+				await page.evaluate( () => {
+					localStorage.clear();
+					sessionStorage.clear();
+				} );
 
 				await addAProductToCart( page, product1Id );
 				await page.goto( cartBlockPage.slug );
 
 				// Set shipping country to Netherlands
 				await page
-					.getByLabel( 'Enter address to check delivery options' )
+					.getByText(
+						`No delivery options available for ${ DEFAULT_BILLING_LABEL }`
+					)
 					.click();
 				await page
 					.getByRole( 'combobox' )
@@ -149,7 +168,12 @@ test.describe(
 					.selectOption( 'Netherlands' );
 				await page.getByLabel( 'Postal code' ).fill( '1011AA' );
 				await page.getByLabel( 'City' ).fill( 'Amsterdam' );
-				await page.getByRole( 'button', { name: 'Update' } ).click();
+				await page
+					.getByRole( 'button', {
+						name: 'Check delivery options',
+						exact: true,
+					} )
+					.click();
 
 				// Verify shipping costs
 				await expect(
@@ -168,7 +192,7 @@ test.describe(
 
 		test(
 			'allows customer to calculate Flat rate and Local pickup in cart block if in Portugal',
-			{ tag: [ '@could-be-unit-test' ] },
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 			async ( { page, context, cartBlockPage } ) => {
 				await context.clearCookies();
 
@@ -177,7 +201,9 @@ test.describe(
 
 				// Set shipping country to Portugal
 				await page
-					.getByLabel( 'Enter address to check delivery options' )
+					.getByText(
+						`No delivery options available for ${ DEFAULT_BILLING_LABEL }`
+					)
 					.click();
 				await page
 					.getByRole( 'combobox' )
@@ -185,7 +211,12 @@ test.describe(
 					.selectOption( 'Portugal' );
 				await page.getByLabel( 'Postal code' ).fill( '1000-001' );
 				await page.getByLabel( 'City' ).fill( 'Lisbon' );
-				await page.getByRole( 'button', { name: 'Update' } ).click();
+				await page
+					.getByRole( 'button', {
+						name: 'Check delivery options',
+						exact: true,
+					} )
+					.click();
 
 				// Verify shipping costs
 				await expect(
@@ -216,7 +247,7 @@ test.describe(
 
 		test(
 			'should show correct total cart block price after updating quantity',
-			{ tag: [ '@could-be-unit-test' ] },
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 			async ( { page, context, cartBlockPage } ) => {
 				await context.clearCookies();
 
@@ -225,7 +256,9 @@ test.describe(
 
 				// Set shipping country to Portugal
 				await page
-					.getByLabel( 'Enter address to check delivery options' )
+					.getByText(
+						`No delivery options available for ${ DEFAULT_BILLING_LABEL }`
+					)
 					.click();
 				await page
 					.getByRole( 'combobox' )
@@ -233,7 +266,12 @@ test.describe(
 					.selectOption( 'Portugal' );
 				await page.getByLabel( 'Postal code' ).fill( '1000-001' );
 				await page.getByLabel( 'City' ).fill( 'Lisbon' );
-				await page.getByRole( 'button', { name: 'Update' } ).click();
+				await page
+					.getByRole( 'button', {
+						name: 'Check delivery options',
+						exact: true,
+					} )
+					.click();
 
 				// Increase product quantity and verify the updated price
 				await page.getByLabel( 'Increase quantity of First' ).click();
@@ -251,7 +289,7 @@ test.describe(
 
 		test(
 			'should show correct total cart block price with 2 different products and flat rate/local pickup',
-			{ tag: [ '@could-be-unit-test' ] },
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 			async ( { page, context, cartBlockPage } ) => {
 				await context.clearCookies();
 
@@ -261,7 +299,9 @@ test.describe(
 
 				// Set shipping country to Portugal
 				await page
-					.getByLabel( 'Enter address to check delivery options' )
+					.getByText(
+						`No delivery options available for ${ DEFAULT_BILLING_LABEL }`
+					)
 					.click();
 				await page
 					.getByRole( 'combobox' )
@@ -269,7 +309,12 @@ test.describe(
 					.selectOption( 'Portugal' );
 				await page.getByLabel( 'Postal code' ).fill( '1000-001' );
 				await page.getByLabel( 'City' ).fill( 'Lisbon' );
-				await page.getByRole( 'button', { name: 'Update' } ).click();
+				await page
+					.getByRole( 'button', {
+						name: 'Check delivery options',
+						exact: true,
+					} )
+					.click();
 
 				// Verify shipping costs
 				await expect(

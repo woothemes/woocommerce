@@ -220,11 +220,15 @@ class WC_Admin_Tests_Admin_Helper extends WC_Unit_Test_Case {
 	public function get_store_page_test_data() {
 		return array(
 			array( get_permalink( wc_get_page_id( 'cart' ) ), true ), // Test case 1: URL matches cart page.
-			array( 'https://example.com/product-category/sample-category/', true ), // Test case 3: URL matches product category page.
-			array( 'https://example.com/product-tag/sample-tag/', true ), // Test case 4: URL matches product tag page.
-			array( 'https://example.com/shop/uncategorized/test/', true ), // Test case 5: URL matches product page.
-			array( '/shop/t-shirt/test/', true ), // Test case 6: URL path matches product page.
-			array( 'https://example.com/about-us/', false ), // Test case 7: URL does not match any store page.
+			array( get_permalink( wc_get_page_id( 'shop' ) ), true ), // Test case 2: URL matches shop page.
+			array( get_permalink( wc_get_page_id( 'checkout' ) ), true ), // Test case 3: URL matches checkout page.
+			array( 'https://example.com/product-category/sample-category/', true ), // Test case 6: URL matches product category page.
+			array( 'https://example.com/product-tag/sample-tag/', true ), // Test case 7: URL matches product tag page.
+			array( 'https://example.com/shop/uncategorized/test/', true ), // Test case 8: URL matches product page.
+			array( '/shop/t-shirt/test/', true ), // Test case 9: URL path matches product page.
+			array( 'https://example.com/about-us/', false ), // Test case 10: URL does not match any store page.
+			array( 'https://example.com/shopping-url/', false ), // Test case 11: URL path contains part of 'shop' page.
+			array( 'https://example.com/shop/?tag=test', true ), // Test case 12: URL matches product tag page.
 		);
 	}
 
@@ -238,23 +242,33 @@ class WC_Admin_Tests_Admin_Helper extends WC_Unit_Test_Case {
 
 		$wp_rewrite = $this->getMockBuilder( 'WP_Rewrite' )->getMock(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
-		$permalink_structure = array(
-			'category_base' => 'product-category',
-			'tag_base'      => 'product-tag',
-			'product_base'  => 'product',
-		);
-
 		$wp_rewrite->expects( $this->any() )
 			->method( 'generate_rewrite_rule' )
-			->willReturn( array( 'shop/(.+?)/?$' => 'index.php?product_cat=$matches[1]&year=$matches[2]' ) );
+			->willReturn(
+				array(
+					'shop/.*?$' => 'index.php',
+				)
+			);
 
 		$test_data = $this->get_store_page_test_data();
 
 		foreach ( $test_data as $data ) {
 			list( $url, $expected_result ) = $data;
 			$result                        = WCAdminHelper::is_store_page( $url );
-			$this->assertEquals( $expected_result, $result );
+			$this->assertEquals( $expected_result, $result, 'Test failed for ' . $url );
 		}
+
+		$callback = function ( $value ) {
+			$value['product_base'] = 'product/';
+			return $value;
+		};
+
+		add_filter( 'pre_option_woocommerce_permalinks', $callback, 10, 1 );
+
+		// Pages with name "products-demo" shouldn't be considered as a store page when product_base is set to "product/".
+		$this->assertEquals( false, WCAdminHelper::is_store_page( 'https://example.com/products-demo/' ) );
+
+		remove_filter( 'pre_option_woocommerce_permalinks', $callback );
 	}
 
 	/**

@@ -37,6 +37,7 @@ import './editor.scss';
 export interface Attributes {
 	miniCartIcon: 'cart' | 'bag' | 'bag-alt';
 	addToCartBehaviour: string;
+	onCartClickBehaviour: 'navigate_to_checkout' | 'open_drawer';
 	hasHiddenPrice: boolean;
 	cartAndCheckoutRenderStyle: boolean;
 	priceColor: ColorPaletteOption;
@@ -58,6 +59,7 @@ const Edit = ( { attributes, setAttributes }: Props ): ReactElement => {
 	const {
 		cartAndCheckoutRenderStyle,
 		addToCartBehaviour,
+		onCartClickBehaviour,
 		hasHiddenPrice,
 		priceColor = defaultColorItem,
 		iconColor = defaultColorItem,
@@ -164,7 +166,7 @@ const Edit = ( { attributes, setAttributes }: Props ): ReactElement => {
 				<PanelBody title={ __( 'Settings', 'woocommerce' ) }>
 					<ToggleGroupControl
 						className="wc-block-editor-mini-cart__cart-icon-toggle"
-						isBlock={ true }
+						isBlock
 						label={ __( 'Cart Icon', 'woocommerce' ) }
 						value={ miniCartIcon }
 						onChange={ ( value: 'cart' | 'bag' | 'bag-alt' ) => {
@@ -249,6 +251,7 @@ const Edit = ( { attributes, setAttributes }: Props ): ReactElement => {
 								'Mini-Cart in cart and checkout pages',
 								'woocommerce'
 							) }
+							isBlock
 							value={ cartAndCheckoutRenderStyle }
 							onChange={ ( value: boolean ) => {
 								setAttributes( {
@@ -321,12 +324,39 @@ const Edit = ( { attributes, setAttributes }: Props ): ReactElement => {
 							) }
 							checked={ addToCartBehaviour === 'open_drawer' }
 						/>
+						<ToggleControl
+							label={ __(
+								'Navigate to checkout when clicking the Mini-Cart, instead of opening the drawer.',
+								'woocommerce'
+							) }
+							onChange={ ( value ) => {
+								setAttributes( {
+									onCartClickBehaviour: value
+										? 'navigate_to_checkout'
+										: 'open_drawer',
+								} );
+							} }
+							help={ __(
+								'Toggle to disable opening the Mini-Cart drawer when clicking the cart icon, and instead navigate to the checkout page.',
+								'woocommerce'
+							) }
+							checked={
+								onCartClickBehaviour === 'navigate_to_checkout'
+							}
+						/>
 					</BaseControl>
 				</PanelBody>
 			</InspectorControls>
 			<ColorPanel colorTypes={ miniCartColorAttributes } />
 			<Noninteractive>
 				<button className="wc-block-mini-cart__button">
+					<QuantityBadge
+						count={ productCount }
+						iconColor={ iconColor }
+						productCountColor={ productCountColor }
+						icon={ miniCartIcon }
+						productCountVisibility={ productCountVisibility }
+					/>
 					{ ! hasHiddenPrice && (
 						<span
 							className="wc-block-mini-cart__amount"
@@ -335,13 +365,6 @@ const Edit = ( { attributes, setAttributes }: Props ): ReactElement => {
 							{ formatPrice( productTotal ) }
 						</span>
 					) }
-					<QuantityBadge
-						count={ productCount }
-						iconColor={ iconColor }
-						productCountColor={ productCountColor }
-						icon={ miniCartIcon }
-						productCountVisibility={ productCountVisibility }
-					/>
 				</button>
 			</Noninteractive>
 		</div>

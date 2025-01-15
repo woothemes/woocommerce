@@ -4,7 +4,13 @@
 import { BlockInstance } from '@wordpress/blocks';
 import { Popover } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { createElement, useEffect, useState } from '@wordpress/element';
+import {
+	createElement,
+	useCallback,
+	useEffect,
+	useReducer,
+	useState,
+} from '@wordpress/element';
 import { useResizeObserver } from '@wordpress/compose';
 import { PluginArea } from '@wordpress/plugins';
 import classNames from 'classnames';
@@ -54,6 +60,40 @@ import {
 } from './keyboard-shortcuts';
 import { areBlocksEmpty } from './utils/are-blocks-empty';
 
+type SidebarState = {
+	isInserterOpened: boolean;
+	isListViewOpened: boolean;
+};
+
+const setIsInserterOpenedAction = 'SET_IS_INSERTER_OPENED';
+const setIsListViewOpenedAction = 'SET_IS_LISTVIEW_OPENED';
+const initialSidebarState: SidebarState = {
+	isInserterOpened: false,
+	isListViewOpened: false,
+};
+function sidebarReducer(
+	state: SidebarState,
+	action: { type: string; value: boolean }
+): SidebarState {
+	switch ( action.type ) {
+		case setIsInserterOpenedAction: {
+			return {
+				...state,
+				isInserterOpened: action.value,
+				isListViewOpened: action.value ? false : state.isListViewOpened,
+			};
+		}
+		case setIsListViewOpenedAction: {
+			return {
+				...state,
+				isListViewOpened: action.value,
+				isInserterOpened: action.value ? false : state.isInserterOpened,
+			};
+		}
+	}
+	return state;
+}
+
 type IframeEditorProps = {
 	initialBlocks?: BlockInstance[];
 	onChange?: ( blocks: BlockInstance[] ) => void;
@@ -79,6 +119,7 @@ export function IframeEditor( {
 
 	// Pick the blocks from the store.
 	const blocks: BlockInstance[] = useSelect( ( select ) => {
+		// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 		return select( productEditorUiStore ).getModalEditorBlocks();
 	}, [] );
 
@@ -104,21 +145,34 @@ export function IframeEditor( {
 		setTemporalBlocks( blocks );
 	}, [] ); // eslint-disable-line
 
-	const [ isInserterOpened, setIsInserterOpened ] = useState( false );
-	const [ isListViewOpened, setIsListViewOpened ] = useState( false );
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore This action exists in the block editor store.
+	const [ { isInserterOpened, isListViewOpened }, dispatch ] = useReducer(
+		sidebarReducer,
+		initialSidebarState
+	);
+
+	const setIsInserterOpened = useCallback( ( value: boolean ) => {
+		dispatch( {
+			type: setIsInserterOpenedAction,
+			value,
+		} );
+	}, [] );
+
+	const setIsListViewOpened = useCallback( ( value: boolean ) => {
+		dispatch( {
+			type: setIsListViewOpenedAction,
+			value,
+		} );
+	}, [] );
+
 	const { clearSelectedBlock, updateSettings } =
 		useDispatch( blockEditorStore );
 
 	const parentEditorSettings = useSelect( ( select ) => {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
+		// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 		return select( blockEditorStore ).getSettings();
 	}, [] );
 
 	const { hasFixedToolbar } = useSelect( ( select ) => {
-		// @ts-expect-error These selectors are available in the block data store.
 		const { get: getPreference } = select( preferencesStore );
 
 		return {
@@ -248,6 +302,7 @@ export function IframeEditor( {
 									{ resizeObserver }
 									<BlockList className="edit-site-block-editor__block-list wp-site-blocks" />
 								</EditorCanvas>
+								{ /* @ts-expect-error name does exist on PopoverSlot see: https://github.com/WordPress/gutenberg/blob/trunk/packages/components/src/popover/index.tsx#L555 */ }
 								<Popover.Slot />
 							</ResizableEditor>
 							{ /* This is a hack, but I couldn't find another (easy) way to not
@@ -261,7 +316,6 @@ export function IframeEditor( {
 							scope={ SIDEBAR_COMPLEMENTARY_AREA_SCOPE }
 						/>
 					</div>
-					{ /* @ts-expect-error 'scope' does exist. @types/wordpress__plugins is outdated. */ }
 					<PluginArea scope="woocommerce-product-editor-modal-block-editor" />
 					<SettingsSidebar smallScreenTitle={ name } />
 				</BlockEditorProvider>

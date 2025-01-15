@@ -1,4 +1,4 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 
 const couponData = {
 	fixedCart: {
@@ -39,7 +39,7 @@ const test = baseTest.extend( {
 	},
 } );
 
-test.describe( 'Coupon management', { tag: '@services' }, () => {
+test.describe( 'Coupon management', { tag: tags.SERVICES }, () => {
 	for ( const couponType of Object.keys( couponData ) ) {
 		test( `can create new ${ couponType } coupon`, async ( {
 			page,

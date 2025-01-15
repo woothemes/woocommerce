@@ -1,4 +1,4 @@
-# Updating the cart with the Store API <!-- omit in toc -->
+# Updating the cart on-demand with the Store API <!-- omit in toc -->
 
 ## Table of Contents <!-- omit in toc -->
 
@@ -123,10 +123,11 @@ If you try to register again, under the same namespace, the previously registere
 
 `extensionCartUpdate`: Used to signal that you want your registered callback to be executed, and to pass data to the callback. It takes an object as its only argument.
 
-| Attribute   | Type     | Required | Description                                                                                                                                                      |
-| ----------- | -------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `namespace` | `string` | Yes      | The namespace of your extension. This is used to determine which extension's callbacks should be executed.                                                       |
-| `data`      | `Object` | No       | The data you want to pass to your callback. Anything in the `data` key will be passed as the first (and only) argument to your callback as an associative array. |
+| Attribute   | Type      | Required | Description                                                                                                                                                      |
+| ----------- |-----------|----------| ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `namespace` | `string`  | Yes      | The namespace of your extension. This is used to determine which extension's callbacks should be executed.                                                       |
+| `data`      | `Object`  | No       | The data you want to pass to your callback. Anything in the `data` key will be passed as the first (and only) argument to your callback as an associative array. |
+| `overwriteDirtyCustomerData`      | `boolean` | No       | Whether to overwrite the customer data in the client with the data returned from the server, even if it is dirty (i.e. it hasn't been pushed to the server yet). |
 
 ## Putting it all together
 
@@ -195,6 +196,6 @@ Now that this is registered, when the button is pressed, the `cart/extensions` e
 
 [We're hiring!](https://woocommerce.com/careers/) Come work with us!
 
-🐞 Found a mistake, or have a suggestion? [Leave feedback about this document here.](https://github.com/woocommerce/woocommerce-blocks/issues/new?assignees=&labels=type%3A+documentation&template=--doc-feedback.md&title=Feedback%20on%20./docs/third-party-developers/extensibility/rest-api/extend-rest-api-update-cart.md)
+🐞 Found a mistake, or have a suggestion? [Leave feedback about this document here.](https://github.com/woocommerce/woocommerce/issues/new?assignees=&labels=type%3A+documentation&template=suggestion-for-documentation-improvement-correction.md&title=Feedback%20on%20./docs/third-party-developers/extensibility/rest-api/extend-rest-api-update-cart.md)
 
 <!-- /FEEDBACK -->

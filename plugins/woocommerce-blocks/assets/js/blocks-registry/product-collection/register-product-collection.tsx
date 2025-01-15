@@ -238,6 +238,13 @@ const isValidCollectionConfig = ( config: ProductCollectionConfig ) => {
 			'Invalid displayLayout: displayLayout must be an object.'
 		);
 	}
+	// attributes.dimensions
+	if (
+		config.attributes?.dimensions !== undefined &&
+		typeof config.attributes.dimensions !== 'object'
+	) {
+		console.warn( 'Invalid dimensions: dimensions must be an object.' );
+	}
 	// attributes.hideControls
 	if (
 		config.attributes?.hideControls !== undefined &&
@@ -368,6 +375,7 @@ export const __experimentalRegisterProductCollection = (
 		example: config.example,
 		scope: config.scope,
 		attributes: {
+			...config.attributes, // Allow users to pass extra attributes.
 			query: {
 				...DEFAULT_QUERY,
 				...( query.offset !== undefined && { offset: query.offset } ),
@@ -406,9 +414,7 @@ export const __experimentalRegisterProductCollection = (
 					priceRange: query.priceRange,
 				} ),
 			},
-			displayLayout: config.attributes?.displayLayout,
 			hideControls,
-			queryContextIncludes: config.attributes?.queryContextIncludes,
 			// collection should be set to the name of the collection i.e. config.name
 			collection: config.name,
 			// Collections should always have inherit set to false.

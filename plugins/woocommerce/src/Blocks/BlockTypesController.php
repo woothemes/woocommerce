@@ -53,25 +53,14 @@ final class BlockTypesController {
 	/**
 	 * Initialize class features.
 	 */
-	protected function init() {
+	protected function init() { // phpcs:ignore WooCommerce.Functions.InternalInjectionMethod.MissingPublic
 		add_action( 'init', array( $this, 'register_blocks' ) );
+		add_action( 'wp_loaded', array( $this, 'register_block_patterns' ) );
 		add_filter( 'block_categories_all', array( $this, 'register_block_categories' ), 10, 2 );
 		add_filter( 'render_block', array( $this, 'add_data_attributes' ), 10, 2 );
 		add_action( 'woocommerce_login_form_end', array( $this, 'redirect_to_field' ) );
 		add_filter( 'widget_types_to_hide_from_legacy_widget_block', array( $this, 'hide_legacy_widgets_with_block_equivalent' ) );
 		add_action( 'woocommerce_delete_product_transients', array( $this, 'delete_product_transients' ) );
-		add_filter(
-			'woocommerce_is_checkout',
-			function ( $ret ) {
-				return $ret || $this->has_block_variation( 'woocommerce/classic-shortcode', 'shortcode', 'checkout' );
-			}
-		);
-		add_filter(
-			'woocommerce_is_cart',
-			function ( $ret ) {
-				return $ret || $this->has_block_variation( 'woocommerce/classic-shortcode', 'shortcode', 'cart' );
-			}
-		);
 	}
 
 	/**
@@ -114,37 +103,10 @@ final class BlockTypesController {
 	}
 
 	/**
-	 * Check if the current post has a block with a specific attribute value.
-	 *
-	 * @param string $block_id The block ID to check for.
-	 * @param string $attribute The attribute to check.
-	 * @param string $value The value to check for.
-	 * @return boolean
-	 */
-	private function has_block_variation( $block_id, $attribute, $value ) {
-		$post = get_post();
-
-		if ( ! $post ) {
-			return false;
-		}
-
-		if ( has_block( $block_id, $post->ID ) ) {
-			$blocks = (array) parse_blocks( $post->post_content );
-
-			foreach ( $blocks as $block ) {
-				if ( isset( $block['attrs'][ $attribute ] ) && $value === $block['attrs'][ $attribute ] ) {
-					return true;
-				}
-			}
-		}
-
-		return false;
-	}
-
-	/**
 	 * Register blocks, hooking up assets and render functions as needed.
 	 */
 	public function register_blocks() {
+		$this->register_block_metadata();
 		$block_types = $this->get_block_types();
 
 		foreach ( $block_types as $block_type ) {
@@ -152,6 +114,98 @@ final class BlockTypesController {
 
 			new $block_type_class( $this->asset_api, $this->asset_data_registry, new IntegrationRegistry() );
 		}
+	}
+
+	/**
+	 * Register block metadata collections for WooCommerce blocks.
+	 *
+	 * This method handles the registration of block metadata by using WordPress's block metadata
+	 * collection registration system. It includes a temporary workaround for WordPress 6.7's
+	 * strict path validation that might fail for sites using symlinked plugins.
+	 *
+	 * If the registration fails due to path validation, blocks will fall back to regular
+	 * registration without affecting functionality.
+	 */
+	public function register_block_metadata() {
+		$meta_file_path = WC_ABSPATH . 'assets/client/blocks/blocks-json.php';
+		if ( function_exists( 'wp_register_block_metadata_collection' ) && file_exists( $meta_file_path ) ) {
+			add_filter( 'doing_it_wrong_trigger_error', array( __CLASS__, 'bypass_block_metadata_doing_it_wrong' ), 10, 4 );
+			wp_register_block_metadata_collection(
+				WC_ABSPATH . 'assets/client/blocks/',
+				$meta_file_path
+			);
+			remove_filter( 'doing_it_wrong_trigger_error', array( __CLASS__, 'bypass_block_metadata_doing_it_wrong' ), 10 );
+		}
+	}
+
+	/**
+	 * Temporarily bypasses _doing_it_wrong() notices for block metadata collection registration.
+	 *
+	 * WordPress 6.7 introduced block metadata collections (with strict path validation).
+	 * Any sites using symlinks for plugins will fail the validation which causes the metadata
+	 * collection to not be registered. However, the blocks will still fall back to the regular
+	 * registration and no functionality is affected.
+	 * While this validation is being discussed in WordPress Core (#62140),
+	 * this method allows registration to proceed by temporarily disabling
+	 * the relevant notice.
+	 *
+	 * @param bool   $trigger       Whether to trigger the error.
+	 * @param string $function      The function that was called.
+	 * @param string $message       A message explaining what was done incorrectly.
+	 * @param string $version       The version of WordPress where the message was added.
+	 * @return bool Whether to trigger the error.
+	 */
+	public static function bypass_block_metadata_doing_it_wrong( $trigger, $function, $message, $version ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable,Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed,Universal.NamingConventions.NoReservedKeywordParameterNames.functionFound
+		if ( 'WP_Block_Metadata_Registry::register_collection' === $function ) {
+			return false;
+		}
+		return $trigger;
+	}
+
+	/**
+	 * Register block patterns
+	 */
+	public function register_block_patterns() {
+		register_block_pattern(
+			'woocommerce/order-confirmation-totals-heading',
+			array(
+				'title'    => '',
+				'inserter' => false,
+				'content'  => '<!-- wp:heading {"level":2,"style":{"typography":{"fontSize":"24px"}}} --><h2 class="wp-block-heading" style="font-size:24px">' . esc_html__( 'Order details', 'woocommerce' ) . '</h2><!-- /wp:heading -->',
+			)
+		);
+		register_block_pattern(
+			'woocommerce/order-confirmation-downloads-heading',
+			array(
+				'title'    => '',
+				'inserter' => false,
+				'content'  => '<!-- wp:heading {"level":2,"style":{"typography":{"fontSize":"24px"}}} --><h2 class="wp-block-heading" style="font-size:24px">' . esc_html__( 'Downloads', 'woocommerce' ) . '</h2><!-- /wp:heading -->',
+			)
+		);
+		register_block_pattern(
+			'woocommerce/order-confirmation-shipping-heading',
+			array(
+				'title'    => '',
+				'inserter' => false,
+				'content'  => '<!-- wp:heading {"level":2,"style":{"typography":{"fontSize":"24px"}}} --><h2 class="wp-block-heading" style="font-size:24px">' . esc_html__( 'Shipping address', 'woocommerce' ) . '</h2><!-- /wp:heading -->',
+			)
+		);
+		register_block_pattern(
+			'woocommerce/order-confirmation-billing-heading',
+			array(
+				'title'    => '',
+				'inserter' => false,
+				'content'  => '<!-- wp:heading {"level":2,"style":{"typography":{"fontSize":"24px"}}} --><h2 class="wp-block-heading" style="font-size:24px">' . esc_html__( 'Billing address', 'woocommerce' ) . '</h2><!-- /wp:heading -->',
+			)
+		);
+		register_block_pattern(
+			'woocommerce/order-confirmation-additional-fields-heading',
+			array(
+				'title'    => '',
+				'inserter' => false,
+				'content'  => '<!-- wp:heading {"level":2,"style":{"typography":{"fontSize":"24px"}}} --><h2 class="wp-block-heading" style="font-size:24px">' . esc_html__( 'Additional information', 'woocommerce' ) . '</h2><!-- /wp:heading -->',
+			)
+		);
 	}
 
 	/**
@@ -311,6 +365,47 @@ final class BlockTypesController {
 	}
 
 	/**
+	 * Get list of block types allowed in Widget Areas. New blocks won't be
+	 * exposed in the Widget Area unless specifically added here.
+	 *
+	 * @return array Array of block types.
+	 */
+	protected function get_widget_area_block_types() {
+		return array(
+			'ActiveFilters',
+			'AllReviews',
+			'AttributeFilter',
+			'Breadcrumbs',
+			'CartLink',
+			'CatalogSorting',
+			'ClassicShortcode',
+			'CustomerAccount',
+			'FeaturedCategory',
+			'FeaturedProduct',
+			'FilterWrapper',
+			'MiniCart',
+			'PriceFilter',
+			'ProductCategories',
+			'ProductResultsCount',
+			'ProductSearch',
+			'RatingFilter',
+			'ReviewsByCategory',
+			'ReviewsByProduct',
+			'StockFilter',
+			// Below product grids are hidden from inserter however they could have been used in widgets.
+			// Keep them for backward compatibility.
+			'HandpickedProducts',
+			'ProductBestSellers',
+			'ProductNew',
+			'ProductOnSale',
+			'ProductTopRated',
+			'ProductsByAttribute',
+			'ProductCategory',
+			'ProductTag',
+		);
+	}
+
+	/**
 	 * Get list of block types.
 	 *
 	 * @return array
@@ -325,6 +420,7 @@ final class BlockTypesController {
 			'AllReviews',
 			'AttributeFilter',
 			'Breadcrumbs',
+			'CartLink',
 			'CatalogSorting',
 			'ClassicTemplate',
 			'ClassicShortcode',
@@ -341,8 +437,8 @@ final class BlockTypesController {
 			'ProductButton',
 			'ProductCategories',
 			'ProductCategory',
-			'ProductCollection',
-			'ProductCollectionNoResults',
+			'ProductCollection\Controller',
+			'ProductCollection\NoResults',
 			'ProductGallery',
 			'ProductGalleryLargeImage',
 			'ProductGalleryLargeImageNextPrevious',
@@ -392,6 +488,7 @@ final class BlockTypesController {
 			'OrderConfirmation\AdditionalInformation',
 			'OrderConfirmation\AdditionalFieldsWrapper',
 			'OrderConfirmation\AdditionalFields',
+			'OrderConfirmation\CreateAccount',
 		);
 
 		$block_types = array_merge(
@@ -405,31 +502,30 @@ final class BlockTypesController {
 		// when modifying this list.
 		if ( Features::is_enabled( 'experimental-blocks' ) ) {
 			$block_types[] = 'ProductFilters';
-			$block_types[] = 'ProductFiltersOverlay';
-			$block_types[] = 'ProductFiltersOverlayNavigation';
-			$block_types[] = 'ProductFilterStockStatus';
+			$block_types[] = 'ProductFilterStatus';
 			$block_types[] = 'ProductFilterPrice';
+			$block_types[] = 'ProductFilterPriceSlider';
 			$block_types[] = 'ProductFilterAttribute';
 			$block_types[] = 'ProductFilterRating';
 			$block_types[] = 'ProductFilterActive';
+			$block_types[] = 'ProductFilterRemovableChips';
 			$block_types[] = 'ProductFilterClearButton';
 			$block_types[] = 'ProductFilterCheckboxList';
 			$block_types[] = 'ProductFilterChips';
-			$block_types[] = 'OrderConfirmation\CreateAccount';
+			if ( Features::is_enabled( 'blockified-add-to-cart' ) ) {
+				$block_types[] = 'AddToCartWithOptions';
+				$block_types[] = 'AddToCartWithOptionsQuantitySelector';
+				$block_types[] = 'AddToCartWithOptionsVariationSelector';
+			}
 		}
 
 		/**
-		 * This disables specific blocks in Widget Areas by not registering them.
+		 * This enables specific blocks in Widget Areas using an opt-in approach.
 		 */
 		if ( in_array( $pagenow, array( 'widgets.php', 'themes.php', 'customize.php' ), true ) && ( empty( $_GET['page'] ) || 'gutenberg-edit-site' !== $_GET['page'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-			$block_types = array_diff(
+			$block_types = array_intersect(
 				$block_types,
-				array(
-					'AllProducts',
-					'Cart',
-					'Checkout',
-					'ProductGallery',
-				)
+				$this->get_widget_area_block_types()
 			);
 		}
 
@@ -458,7 +554,6 @@ final class BlockTypesController {
 					'OrderConfirmation\AdditionalInformation',
 					'OrderConfirmation\AdditionalFieldsWrapper',
 					'OrderConfirmation\AdditionalFields',
-					'ProductGallery',
 				)
 			);
 		}

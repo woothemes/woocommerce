@@ -1,4 +1,4 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 
 const couponData = {
 	minimumSpend: {
@@ -36,6 +36,14 @@ const couponData = {
 		description: 'Exclude product categories coupon',
 		amount: '60',
 		excludeProductCategories: [ 'Uncategorized' ],
+	},
+	excludeProductBrands: {
+		code: `excludeProductBrands-${ new Date().getTime().toString() }`,
+		description: 'Exclude product brands coupon',
+		amount: '65',
+		excludeProductBrands: [
+			`WooCommerce Apparels ${ new Date().getTime().toString() }`,
+		],
 	},
 	products: {
 		code: `products-${ new Date().getTime().toString() }`,
@@ -95,14 +103,32 @@ const test = baseTest.extend( {
 		// Product cleanup
 		await api.delete( `products/${ product.id }`, { force: true } );
 	},
+
+	brand: async ( { api }, use ) => {
+		let brand = {};
+
+		await api
+			.post( 'products/brands', {
+				name: couponData.excludeProductBrands.excludeProductBrands[ 0 ],
+			} )
+			.then( ( response ) => {
+				brand = response.data;
+			} );
+
+		await use( brand );
+
+		// Brand cleanup
+		await api.delete( `products/brands/${ brand.id }`, { force: true } );
+	},
 } );
 
-test.describe( 'Restricted coupon management', { tag: [ '@services' ] }, () => {
+test.describe( 'Restricted coupon management', { tag: tags.SERVICES }, () => {
 	for ( const couponType of Object.keys( couponData ) ) {
 		test( `can create new ${ couponType } coupon`, async ( {
 			page,
 			coupon,
 			product,
+			brand,
 		} ) => {
 			// create basics for the coupon
 			await test.step( 'add new coupon', async () => {
@@ -199,6 +225,25 @@ test.describe( 'Restricted coupon management', { tag: [ '@services' ] }, () => {
 						.pressSequentially( 'Uncategorized' );
 					await page
 						.getByRole( 'option', { name: 'Uncategorized' } )
+						.click();
+				} );
+			}
+
+			// set exclude product brands
+			if ( couponType === 'excludeProductBrands' ) {
+				await test.step( 'set exclude product brands coupon', async () => {
+					await page
+						.getByRole( 'link', {
+							name: 'Usage restriction',
+						} )
+						.click();
+					await page
+						.getByPlaceholder( 'No brands' )
+						.pressSequentially( brand.name );
+					await page
+						.getByRole( 'option', {
+							name: brand.name,
+						} )
 						.click();
 				} );
 			}

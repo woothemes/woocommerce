@@ -8,11 +8,10 @@ import { FieldValidationStatus } from '@woocommerce/types';
  */
 import reducer from '../reducers';
 import { ACTION_TYPES as types } from '.././action-types';
-import { ValidationAction } from '../actions';
 
 describe( 'Validation reducer', () => {
 	it( 'Sets a single validation error', () => {
-		const singleValidationAction: ValidationAction = {
+		const singleValidationAction = {
 			type: types.SET_VALIDATION_ERRORS,
 			errors: {
 				singleValidationError: {
@@ -37,7 +36,7 @@ describe( 'Validation reducer', () => {
 				hidden: false,
 			},
 		};
-		const existingErrorValidation: ValidationAction = {
+		const existingErrorValidation = {
 			type: types.SET_VALIDATION_ERRORS,
 			errors: {
 				existingError: {
@@ -56,7 +55,7 @@ describe( 'Validation reducer', () => {
 	} );
 
 	it( 'Does not add new errors if error message is not string, but keeps existing errors', () => {
-		const integerErrorAction: ValidationAction = {
+		const integerErrorAction = {
 			type: types.SET_VALIDATION_ERRORS,
 			errors: {
 				integerError: {
@@ -78,7 +77,7 @@ describe( 'Validation reducer', () => {
 				hidden: false,
 			},
 		};
-		const updateExistingErrorAction: ValidationAction = {
+		const updateExistingErrorAction = {
 			type: types.SET_VALIDATION_ERRORS,
 			errors: {
 				existingValidationError: {
@@ -103,7 +102,7 @@ describe( 'Validation reducer', () => {
 				hidden: false,
 			},
 		};
-		const addNewError: ValidationAction = {
+		const addNewError = {
 			type: types.SET_VALIDATION_ERRORS,
 			errors: {
 				newError: {
@@ -132,7 +131,7 @@ describe( 'Validation reducer', () => {
 				hidden: false,
 			},
 		};
-		const clearAllErrors: ValidationAction = {
+		const clearAllErrors = {
 			type: types.CLEAR_VALIDATION_ERRORS,
 			errors: undefined,
 		};
@@ -151,7 +150,7 @@ describe( 'Validation reducer', () => {
 				hidden: false,
 			},
 		};
-		const clearError: ValidationAction = {
+		const clearError = {
 			type: types.CLEAR_VALIDATION_ERROR,
 			error: 'existingError',
 		};
@@ -171,7 +170,7 @@ describe( 'Validation reducer', () => {
 				hidden: false,
 			},
 		};
-		const clearError: ValidationAction = {
+		const clearError = {
 			type: types.CLEAR_VALIDATION_ERRORS,
 			errors: [ 'existingError', 'testError' ],
 		};
@@ -191,7 +190,7 @@ describe( 'Validation reducer', () => {
 				hidden: false,
 			},
 		};
-		const testAction: ValidationAction = {
+		const testAction = {
 			type: types.HIDE_VALIDATION_ERROR,
 			error: 'existingError',
 		};
@@ -223,7 +222,7 @@ describe( 'Validation reducer', () => {
 				hidden: false,
 			},
 		};
-		const testAction: ValidationAction = {
+		const testAction = {
 			type: types.SHOW_VALIDATION_ERROR,
 			error: 'existingError',
 		};
@@ -255,7 +254,7 @@ describe( 'Validation reducer', () => {
 				hidden: true,
 			},
 		};
-		const showAllErrors: ValidationAction = {
+		const showAllErrors = {
 			type: types.SHOW_ALL_VALIDATION_ERRORS,
 		};
 		const nextState = reducer( state, showAllErrors );

@@ -20,6 +20,22 @@ exports[`ProductDetails should not render hidden details 1`] = `
       IPSUM
     </span>
   </li>
+  <li
+    className="wc-block-components-product-details__lorem-2"
+  >
+    <span
+      className="wc-block-components-product-details__name"
+    >
+      LOREM 2
+      :
+    </span>
+     
+    <span
+      className="wc-block-components-product-details__value"
+    >
+      IPSUM 2
+    </span>
+  </li>
 </ul>
 `;
 
@@ -73,4 +89,27 @@ exports[`ProductDetails should render details 1`] = `
     </span>
   </li>
 </ul>
+`;
+
+exports[`ProductDetails should not render list if there is only one detail 1`] = `
+<div
+  className="wc-block-components-product-details"
+>
+  <div
+    className="wc-block-components-product-details__lorem"
+  >
+    <span
+      className="wc-block-components-product-details__name"
+    >
+      LOREM
+      :
+    </span>
+     
+    <span
+      className="wc-block-components-product-details__value"
+    >
+      IPSUM
+    </span>
+  </div>
+</div>
 `;

@@ -2,6 +2,10 @@
 	align-items: center;
 	display: flex;
 	position: relative;
+
+	&:empty {
+		display: none;
+	}
 }
 
 .wc-block-mini-cart__badge {

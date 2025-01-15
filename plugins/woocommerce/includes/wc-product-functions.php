@@ -9,6 +9,8 @@
  */
 
 use Automattic\Jetpack\Constants;
+use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Proxies\LegacyProxy;
 use Automattic\WooCommerce\Utilities\ArrayUtil;
 use Automattic\WooCommerce\Utilities\NumberUtil;
@@ -281,6 +283,47 @@ function wc_product_post_type_link( $permalink, $post ) {
 	return $permalink;
 }
 add_filter( 'post_type_link', 'wc_product_post_type_link', 10, 2 );
+
+/**
+ * Ensure that the product_cat value determined in `wc_product_post_type_link` is the canonical value.
+ *
+ * If other values are used in this part of the permalink, it will be redirected.
+ *
+ * @return void
+ */
+function wc_product_canonical_redirect(): void {
+	global $wp_rewrite;
+
+	if (
+		! did_action( 'woocommerce_init' )
+		|| ! is_product()
+		|| ! is_a( $wp_rewrite, WP_Rewrite::class )
+	) {
+		return;
+	}
+
+	// In the event we are dealing with ugly permalinks, this will be empty.
+	$specified_category_slug = get_query_var( 'product_cat' );
+
+	if ( ! is_string( $specified_category_slug ) || strlen( $specified_category_slug ) < 1 ) {
+		return;
+	}
+
+	// What category slug did we expect? Normally this maps back to the first assigned product_cat
+	// term. However, this is filterable so we use the relevant helper function to figure this out.
+	$expected_category_slug = wc_product_post_type_link( '%product_cat%', get_post( get_the_ID() ) );
+
+	if ( $specified_category_slug === $expected_category_slug ) {
+		return;
+	}
+
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$query_vars = isset( $_GET ) && is_array( $_GET ) ? $_GET : array();
+
+	wp_safe_redirect( add_query_arg( $query_vars, wc_get_product( get_the_ID() )->get_permalink() ), 301 );
+	exit();
+}
+add_action( 'template_redirect', 'wc_product_canonical_redirect', 5 );
 
 /**
  * Get the placeholder image URL either from media, or use the fallback image.
@@ -598,10 +641,10 @@ function wc_get_product_types() {
 	return (array) apply_filters(
 		'product_type_selector',
 		array(
-			'simple'   => __( 'Simple product', 'woocommerce' ),
-			'grouped'  => __( 'Grouped product', 'woocommerce' ),
-			'external' => __( 'External/Affiliate product', 'woocommerce' ),
-			'variable' => __( 'Variable product', 'woocommerce' ),
+			ProductType::SIMPLE   => __( 'Simple product', 'woocommerce' ),
+			ProductType::GROUPED  => __( 'Grouped product', 'woocommerce' ),
+			ProductType::EXTERNAL => __( 'External/Affiliate product', 'woocommerce' ),
+			ProductType::VARIABLE => __( 'Variable product', 'woocommerce' ),
 		)
 	);
 }
@@ -1145,6 +1188,10 @@ function wc_get_price_including_tax( $product, $args = array() ) {
  * @return float|string Price with tax excluded, or an empty string if price calculation failed.
  */
 function wc_get_price_excluding_tax( $product, $args = array() ) {
+	if ( ! ( $product instanceof WC_Product ) ) {
+		return '';
+	}
+
 	$args = wp_parse_args(
 		$args,
 		array(
@@ -1271,7 +1318,7 @@ function wc_products_array_filter_visible( $product ) {
  * @return bool
  */
 function wc_products_array_filter_visible_grouped( $product ) {
-	return $product && is_a( $product, 'WC_Product' ) && ( 'publish' === $product->get_status() || current_user_can( 'edit_product', $product->get_id() ) );
+	return $product && is_a( $product, 'WC_Product' ) && ( ProductStatus::PUBLISH === $product->get_status() || current_user_can( 'edit_product', $product->get_id() ) );
 }
 
 /**

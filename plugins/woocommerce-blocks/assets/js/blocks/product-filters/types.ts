@@ -1,22 +1,25 @@
 /**
- * Internal dependencies
+ * External dependencies
  */
-import { BlockOverlayAttribute } from './constants';
+import { BlockEditProps } from '@wordpress/blocks';
 
-export type BlockOverlayAttributeOptions =
-	( typeof BlockOverlayAttribute )[ keyof typeof BlockOverlayAttribute ];
-
-export interface BlockAttributes {
-	setAttributes: ( attributes: ProductFiltersBlockAttributes ) => void;
+export type BlockAttributes = {
 	productId?: string;
-	overlay: BlockOverlayAttributeOptions;
 	overlayIcon:
 		| 'filter-icon-1'
 		| 'filter-icon-2'
 		| 'filter-icon-3'
 		| 'filter-icon-4';
-	overlayButtonStyle: 'label-icon' | 'label' | 'icon';
-	overlayIconSize?: number;
+	overlayButtonType: 'label-icon' | 'label-only' | 'icon-only';
+	overlayIconSize: number;
+};
+
+export type EditProps = BlockEditProps< BlockAttributes >;
+
+export const enum StockStatus {
+	IN_STOCK = 'instock',
+	OUT_OF_STOCK = 'outofstock',
+	ON_BACKORDER = 'onbackorder',
 }
 
 export type FilterOptionItem = {
@@ -30,11 +33,22 @@ export type FilterBlockContext = {
 	filterData: {
 		isLoading: boolean;
 		items?: FilterOptionItem[];
-		range?: {
-			min: number;
-			max: number;
-			step: number;
+		price?: {
+			minPrice: number;
+			minRange: number;
+			maxPrice: number;
+			maxRange: number;
 		};
+		stock: Array< {
+			status: StockStatus;
+			count: number;
+		} >;
 	};
-	isParentSelected: boolean;
+};
+
+export type Color = {
+	slug?: string;
+	class?: string;
+	name?: string;
+	color: string;
 };

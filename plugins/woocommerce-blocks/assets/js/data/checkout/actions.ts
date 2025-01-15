@@ -7,9 +7,8 @@ import { AdditionalValues } from '@woocommerce/settings';
  * Internal dependencies
  */
 import { ACTION_TYPES as types } from './action-types';
-import { ReturnOrGeneratorYieldUnion } from '../mapped-types';
 
-// `Thunks are functions that can be dispatched, similar to actions creators
+// Thunks are functions that can be dispatched, similar to actions creators.
 export * from './thunks';
 
 /**
@@ -119,6 +118,30 @@ export const __internalSetUseShippingAsBilling = (
 } );
 
 /**
+ * Set whether the billing address is being edited
+ *
+ * @param isEditing True if the billing address is being edited, false otherwise
+ */
+export const setEditingBillingAddress = ( isEditing: boolean ) => {
+	return {
+		type: types.SET_EDITING_BILLING_ADDRESS,
+		isEditing,
+	};
+};
+
+/**
+ * Set whether the shipping address is being edited
+ *
+ * @param isEditing True if the shipping address is being edited, false otherwise
+ */
+export const setEditingShippingAddress = ( isEditing: boolean ) => {
+	return {
+		type: types.SET_EDITING_SHIPPING_ADDRESS,
+		isEditing,
+	};
+};
+
+/**
  * Whether an account should be created for the user while checking out
  *
  * @param shouldCreateAccount True if an account should be created, false otherwise
@@ -167,25 +190,3 @@ export const __internalSetExtensionData = (
 	namespace,
 	replace,
 } );
-
-export type CheckoutAction =
-	| ReturnOrGeneratorYieldUnion<
-			| typeof __internalSetIdle
-			| typeof __internalSetComplete
-			| typeof __internalSetProcessing
-			| typeof __internalSetBeforeProcessing
-			| typeof __internalSetAfterProcessing
-			| typeof __internalSetRedirectUrl
-			| typeof __internalSetHasError
-			| typeof __internalIncrementCalculating
-			| typeof __internalDecrementCalculating
-			| typeof __internalSetCustomerId
-			| typeof __internalSetCustomerPassword
-			| typeof __internalSetUseShippingAsBilling
-			| typeof __internalSetShouldCreateAccount
-			| typeof __internalSetOrderNotes
-			| typeof setPrefersCollection
-			| typeof __internalSetExtensionData
-			| typeof setAdditionalFields
-	  >
-	| Record< string, never >;

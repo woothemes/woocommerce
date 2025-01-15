@@ -1,210 +1,106 @@
 /**
  * External dependencies
  */
-import { getSetting } from '@woocommerce/settings';
-import {
-	InnerBlocks,
-	InspectorControls,
-	useBlockProps,
-	useInnerBlocksProps,
-} from '@wordpress/block-editor';
-import {
-	BlockEditProps,
-	BlockInstance,
-	InnerBlockTemplate,
-	createBlock,
-} from '@wordpress/blocks';
+import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
+import { BlockEditProps, InnerBlockTemplate } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
-import { useEffect } from '@wordpress/element';
-import { select, dispatch } from '@wordpress/data';
-import { useLocalStorageState } from '@woocommerce/base-hooks';
-import {
-	ExternalLink,
-	PanelBody,
-	// @ts-expect-error - no types.
-	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
-	__experimentalToggleGroupControl as ToggleGroupControl,
-	// @ts-expect-error - no types.
-	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
-	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
-} from '@wordpress/components';
+import { Icon, close, menu, settings } from '@wordpress/icons';
+import { useState } from '@wordpress/element';
+import { filter, filterThreeLines } from '@woocommerce/icons';
+import clsx from 'clsx';
 
 /**
  * Internal dependencies
  */
 import './editor.scss';
 import { type BlockAttributes } from './types';
-import { BlockOverlayAttribute } from './constants';
+import { getProductFiltersCss } from './utils';
+import { Inspector } from './inspector';
 
 const TEMPLATE: InnerBlockTemplate[] = [
 	[
 		'core/heading',
 		{
 			level: 3,
-			style: { typography: { fontSize: '24px' } },
 			content: __( 'Filters', 'woocommerce' ),
+			style: {
+				margin: { top: '0', bottom: '0' },
+				spacing: { margin: { top: '0', bottom: '0' } },
+			},
 		},
 	],
 	[ 'woocommerce/product-filter-active' ],
+	[ 'woocommerce/product-filter-price' ],
+	[ 'woocommerce/product-filter-rating' ],
 	[ 'woocommerce/product-filter-attribute' ],
-	[
-		'core/buttons',
-		{ layout: { type: 'flex' } },
-		[
-			[
-				'core/button',
-				{
-					text: __( 'Apply', 'woocommerce' ),
-					className: 'wc-block-product-filters__apply-button',
-					style: {
-						border: {
-							width: '0px',
-							style: 'none',
-						},
-						typography: {
-							textDecoration: 'none',
-						},
-						outline: 'none',
-						fontSize: 'medium',
-					},
-				},
-			],
-		],
-	],
+	[ 'woocommerce/product-filter-status' ],
 ];
 
-export const Edit = ( {
-	setAttributes,
-	attributes,
-	clientId,
-}: BlockEditProps< BlockAttributes > ) => {
-	const blockProps = useBlockProps();
+const icons = {
+	'filter-icon-1': filter,
+	'filter-icon-2': filterThreeLines,
+	'filter-icon-3': menu,
+	'filter-icon-4': settings,
+};
 
-	const templatePartEditUri = getSetting< string >(
-		'templatePartProductFiltersOverlayEditUri',
-		''
-	);
-
-	const [
-		productFiltersOverlayNavigationAttributes,
-		setProductFiltersOverlayNavigationAttributes,
-	] = useLocalStorageState< Record< string, unknown > >(
-		'product-filters-overlay-navigation-attributes',
-		{}
-	);
-
-	useEffect( () => {
-		const filtersClientIds = select( 'core/block-editor' ).getBlocksByName(
-			'woocommerce/product-filters'
-		);
-
-		let overlayBlock:
-			| BlockInstance< { [ k: string ]: unknown } >
-			| undefined;
-
-		for ( const filterClientId of filtersClientIds ) {
-			const filterBlock =
-				select( 'core/block-editor' ).getBlock( filterClientId );
-
-			if ( filterBlock ) {
-				for ( const innerBlock of filterBlock.innerBlocks ) {
-					if (
-						innerBlock.name ===
-							'woocommerce/product-filters-overlay-navigation' &&
-						innerBlock.attributes.triggerType === 'open-overlay'
-					) {
-						overlayBlock = innerBlock;
-					}
-				}
-			}
-		}
-
-		if ( attributes.overlay === 'never' && overlayBlock ) {
-			setProductFiltersOverlayNavigationAttributes(
-				overlayBlock.attributes
-			);
-
-			dispatch( 'core/block-editor' ).updateBlockAttributes(
-				overlayBlock.clientId,
-				{
-					lock: {},
-				}
-			);
-
-			dispatch( 'core/block-editor' ).removeBlock(
-				overlayBlock.clientId
-			);
-		} else if ( attributes.overlay !== 'never' && ! overlayBlock ) {
-			if ( productFiltersOverlayNavigationAttributes ) {
-				productFiltersOverlayNavigationAttributes.triggerType =
-					'open-overlay';
-			}
-
-			dispatch( 'core/block-editor' ).insertBlock(
-				createBlock(
-					'woocommerce/product-filters-overlay-navigation',
-					productFiltersOverlayNavigationAttributes
-						? productFiltersOverlayNavigationAttributes
-						: {
-								align: 'left',
-								triggerType: 'open-overlay',
-								lock: { move: true, remove: true },
-						  }
-				),
-				0,
-				clientId,
-				false
-			);
-		}
-	}, [
-		attributes.overlay,
-		clientId,
-		productFiltersOverlayNavigationAttributes,
-		setProductFiltersOverlayNavigationAttributes,
-	] );
+export const Edit = ( props: BlockEditProps< BlockAttributes > ) => {
+	const { attributes } = props;
+	const { overlayIcon, overlayButtonType } = attributes;
+	const [ isOpen, setIsOpen ] = useState( false );
+	const blockProps = useBlockProps( {
+		className: clsx( 'wc-block-product-filters', {
+			'is-overlay-opened': isOpen,
+		} ),
+		style: getProductFiltersCss( attributes ),
+	} );
 
 	return (
 		<div { ...blockProps }>
-			<InspectorControls>
-				<PanelBody title={ __( 'Overlay', 'woocommerce' ) }>
-					<ToggleGroupControl
-						className="wc-block-editor-product-filters__overlay-toggle"
-						isBlock={ true }
-						value={ attributes.overlay }
-						onChange={ ( value: BlockAttributes[ 'overlay' ] ) => {
-							setAttributes( { overlay: value } );
-						} }
+			<Inspector { ...props } />
+			<button
+				className="wc-block-product-filters__open-overlay"
+				onClick={ () => setIsOpen( ! isOpen ) }
+			>
+				{ overlayButtonType !== 'label-only' && (
+					<Icon icon={ icons[ overlayIcon ] || filterThreeLines } />
+				) }
+				{ overlayButtonType !== 'icon-only' && (
+					<span>{ __( 'Filter products', 'woocommerce' ) }</span>
+				) }
+			</button>
+
+			<div className="wc-block-product-filters__overlay">
+				<div className="wc-block-product-filters__overlay-wrapper">
+					<div
+						className="wc-block-product-filters__overlay-dialog"
+						role="dialog"
 					>
-						<ToggleGroupControlOption
-							value={ BlockOverlayAttribute.NEVER }
-							label={ __( 'Never', 'woocommerce' ) }
-						/>
-						<ToggleGroupControlOption
-							value={ BlockOverlayAttribute.MOBILE }
-							label={ __( 'Mobile', 'woocommerce' ) }
-						/>
-						<ToggleGroupControlOption
-							value={ BlockOverlayAttribute.ALWAYS }
-							label={ __( 'Always', 'woocommerce' ) }
-						/>
-					</ToggleGroupControl>
-					{ attributes.overlay !== 'never' && (
-						<ExternalLink
-							href={ templatePartEditUri }
-							className="wc-block-editor-product-filters__overlay-link"
-						>
-							{ __( 'Edit overlay', 'woocommerce' ) }
-						</ExternalLink>
-					) }
-				</PanelBody>
-			</InspectorControls>
-			<InnerBlocks templateLock={ false } template={ TEMPLATE } />
+						<header className="wc-block-product-filters__overlay-header">
+							<button
+								className="wc-block-product-filters__close-overlay"
+								onClick={ () => setIsOpen( ! isOpen ) }
+							>
+								<span>{ __( 'Close', 'woocommerce' ) }</span>
+								<Icon icon={ close } />
+							</button>
+						</header>
+						<div className="wc-block-product-filters__overlay-content">
+							<InnerBlocks
+								templateLock={ false }
+								template={ TEMPLATE }
+							/>
+						</div>
+						<footer className="wc-block-product-filters__overlay-footer">
+							<button
+								className="wc-block-product-filters__apply wp-block-button__link wp-element-button"
+								onClick={ () => setIsOpen( ! isOpen ) }
+							>
+								<span>{ __( 'Apply', 'woocommerce' ) }</span>
+							</button>
+						</footer>
+					</div>
+				</div>
+			</div>
 		</div>
 	);
-};
-
-export const Save = () => {
-	const blockProps = useBlockProps.save();
-	const innerBlocksProps = useInnerBlocksProps.save( blockProps );
-	return <div { ...innerBlocksProps } />;
 };

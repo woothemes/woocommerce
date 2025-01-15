@@ -103,6 +103,7 @@ const Edit = ( {
 								'Sale Badge Alignment',
 								'woocommerce'
 							) }
+							isBlock
 							value={ saleBadgeAlign }
 							onChange={ ( value: SaleBadgeAlignProps ) =>
 								setAttributes( { saleBadgeAlign: value } )
@@ -124,6 +125,7 @@ const Edit = ( {
 					) }
 					<ToggleGroupControl
 						label={ __( 'Image Sizing', 'woocommerce' ) }
+						isBlock
 						help={
 							! isBlockThemeEnabled
 								? createInterpolateElement(

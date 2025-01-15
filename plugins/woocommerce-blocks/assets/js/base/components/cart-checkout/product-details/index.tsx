@@ -27,8 +27,16 @@ const ProductDetails = ( {
 		return null;
 	}
 
+	let ParentTag = 'ul' as keyof JSX.IntrinsicElements;
+	let ChildTag = 'li' as keyof JSX.IntrinsicElements;
+
+	if ( details.length === 1 ) {
+		ParentTag = 'div';
+		ChildTag = 'div';
+	}
+
 	return (
-		<ul className="wc-block-components-product-details">
+		<ParentTag className="wc-block-components-product-details">
 			{ details.map( ( detail ) => {
 				// Support both `key` and `name` props
 				const name = detail?.key || detail.name || '';
@@ -40,7 +48,7 @@ const ProductDetails = ( {
 						  ) }`
 						: '' );
 				return (
-					<li
+					<ChildTag
 						key={ name + ( detail.display || detail.value ) }
 						className={ className }
 					>
@@ -54,10 +62,10 @@ const ProductDetails = ( {
 						<span className="wc-block-components-product-details__value">
 							{ decodeEntities( detail.display || detail.value ) }
 						</span>
-					</li>
+					</ChildTag>
 				);
 			} ) }
-		</ul>
+		</ParentTag>
 	);
 };
 

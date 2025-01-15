@@ -2,7 +2,7 @@
  * External dependencies
  */
 import type { BlockEditProps } from '@wordpress/blocks';
-import { type AttributeMetadata } from '@woocommerce/types';
+import type { AttributeMetadata } from '@woocommerce/types';
 
 /**
  * Internal dependencies
@@ -14,9 +14,9 @@ export enum ProductCollectionUIStatesInEditor {
 	PRODUCT_REFERENCE_PICKER = 'product_context_picker',
 	VALID_WITH_PREVIEW = 'uses_reference_preview_mode',
 	VALID = 'valid',
+	DELETED_PRODUCT_REFERENCE = 'deleted_product_reference',
 	// Future states
 	// INVALID = 'invalid',
-	// DELETED_PRODUCT_REFERENCE = 'deleted_product_reference',
 }
 
 export interface ProductCollectionAttributes {
@@ -29,6 +29,7 @@ export interface ProductCollectionAttributes {
 	];
 	templateSlug: string;
 	displayLayout: ProductCollectionDisplayLayout;
+	dimensions: ProductCollectionDimensions;
 	tagName: string;
 	convertedFromProducts: boolean;
 	collection?: string;
@@ -48,10 +49,20 @@ export enum LayoutOptions {
 	STACK = 'list',
 }
 
+export enum WidthOptions {
+	FILL = 'fill',
+	FIXED = 'fixed',
+}
+
 export interface ProductCollectionDisplayLayout {
 	type: LayoutOptions;
 	columns: number;
 	shrinkColumns: boolean;
+}
+
+export interface ProductCollectionDimensions {
+	widthType: WidthOptions;
+	fixedWidth?: string;
 }
 
 export enum ETimeFrameOperator {
@@ -106,11 +117,17 @@ export interface ProductCollectionQuery {
 	priceRange: undefined | PriceRange;
 	filterable: boolean;
 	productReference?: number;
+	relatedBy?: RelatedBy | undefined;
 }
+
+export type RelatedBy = {
+	categories: boolean;
+	tags: boolean;
+};
 
 export type ProductCollectionEditComponentProps =
 	BlockEditProps< ProductCollectionAttributes > & {
-		openCollectionSelectionModal: () => void;
+		name: string;
 		preview?: {
 			initialPreviewState?: PreviewState;
 			setPreviewState?: SetPreviewState;
@@ -119,8 +136,14 @@ export type ProductCollectionEditComponentProps =
 		context: {
 			templateSlug: string;
 		};
-		isUsingReferencePreviewMode: boolean;
+		tracksLocation: string;
+	};
+
+export type ProductCollectionContentProps =
+	ProductCollectionEditComponentProps & {
 		location: WooCommerceBlockLocation;
+		isUsingReferencePreviewMode: boolean;
+		openCollectionSelectionModal: () => void;
 	};
 
 export type TProductCollectionOrder = 'asc' | 'desc';
@@ -128,6 +151,7 @@ export type TProductCollectionOrderBy =
 	| 'date'
 	| 'title'
 	| 'popularity'
+	| 'price'
 	| 'rating';
 
 export type ProductCollectionSetAttributes = (
@@ -140,6 +164,12 @@ export type DisplayLayoutControlProps = {
 	displayLayout: ProductCollectionDisplayLayout;
 	setAttributes: ProductCollectionSetAttributes;
 };
+
+export type DimensionsControlProps = {
+	dimensions: ProductCollectionDimensions;
+	setAttributes: ProductCollectionSetAttributes;
+};
+
 export type QueryControlProps = {
 	query: ProductCollectionQuery;
 	trackInteraction: TrackInteraction;
@@ -153,6 +183,10 @@ export enum CoreCollectionNames {
 	NEW_ARRIVALS = 'woocommerce/product-collection/new-arrivals',
 	ON_SALE = 'woocommerce/product-collection/on-sale',
 	TOP_RATED = 'woocommerce/product-collection/top-rated',
+	HAND_PICKED = 'woocommerce/product-collection/hand-picked',
+	RELATED = 'woocommerce/product-collection/related',
+	UPSELLS = 'woocommerce/product-collection/upsells',
+	CROSS_SELLS = 'woocommerce/product-collection/cross-sells',
 }
 
 export enum CoreFilterNames {
@@ -168,6 +202,10 @@ export enum CoreFilterNames {
 	TAXONOMY = 'taxonomy',
 	PRICE_RANGE = 'price-range',
 	FILTERABLE = 'filterable',
+	PRODUCTS_PER_PAGE = 'products-per-page',
+	MAX_PAGES_TO_SHOW = 'max-pages-to-show',
+	OFFSET = 'offset',
+	RELATED_BY = 'related-by',
 }
 
 export type CollectionName = CoreCollectionNames | string;

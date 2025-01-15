@@ -3,13 +3,17 @@
  */
 import { __ } from '@wordpress/i18n';
 import { usePrevious } from '@woocommerce/base-hooks';
-import { select } from '@wordpress/data';
 import { useMemo } from '@wordpress/element';
 import {
-	ToggleControl,
 	// @ts-expect-error Using experimental features
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalToolsPanelItem as ToolsPanelItem,
+	// @ts-expect-error Using experimental features
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	// @ts-expect-error Using experimental features
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 
 /**
@@ -26,53 +30,22 @@ import {
 	getDefaultValueOfFilterable,
 } from '../../utils';
 
-const label = __( 'Sync with current query', 'woocommerce' );
+const label = __( 'Query type', 'woocommerce' );
+const defaultOptionLabel = __( 'Default', 'woocommerce' );
+const customOptionLabel = __( 'Custom', 'woocommerce' );
 
-const productArchiveHelpText = __(
-	'Enable to adjust the displayed products based on the current template and any applied filters.',
+const defaultInheritHelpText = __(
+	'Display products based on the current template and allow shoppers to filter.',
 	'woocommerce'
 );
-
-const productsByCategoryHelpText = __(
-	'Enable to adjust the displayed products based on the current category and any applied filters.',
+const defaultFilterableHelpText = __(
+	'Show products based on specific criteria and allow shoppers to filter.',
 	'woocommerce'
 );
-
-const productsByTagHelpText = __(
-	'Enable to adjust the displayed products based on the current tag and any applied filters.',
+const customHelpText = __(
+	'Show a list of products based on fixed criteria.',
 	'woocommerce'
 );
-
-const productsByAttributeHelpText = __(
-	'Enable to adjust the displayed products based on the current attribute and any applied filters.',
-	'woocommerce'
-);
-
-const searchResultsHelpText = __(
-	'Enable to adjust the displayed products based on the current search and any applied filters.',
-	'woocommerce'
-);
-
-const filterableHelpText = __(
-	'Adjust the displayed products depending on the current template and any applied query filters.',
-	'woocommerce'
-);
-
-const getHelpTextForTemplate = ( templateId: string ): string => {
-	if ( templateId.includes( '//taxonomy-product_cat' ) ) {
-		return productsByCategoryHelpText;
-	}
-	if ( templateId.includes( '//taxonomy-product_tag' ) ) {
-		return productsByTagHelpText;
-	}
-	if ( templateId.includes( '//taxonomy-product_attribute' ) ) {
-		return productsByAttributeHelpText;
-	}
-	if ( templateId.includes( '//product-search-results' ) ) {
-		return searchResultsHelpText;
-	}
-	return productArchiveHelpText;
-};
 
 const InheritQueryControl = ( {
 	setQueryAttribute,
@@ -80,7 +53,6 @@ const InheritQueryControl = ( {
 	query,
 }: QueryControlProps ) => {
 	const inherit = query?.inherit;
-	const editSiteStore = select( 'core/edit-site' );
 
 	const queryObjectBeforeInheritEnabled = usePrevious(
 		query,
@@ -90,9 +62,6 @@ const InheritQueryControl = ( {
 	);
 
 	const defaultValue = useMemo( () => getDefaultValueOfInherit(), [] );
-
-	const currentTemplateId = editSiteStore.getEditedPostId() as string;
-	const helpText = getHelpTextForTemplate( currentTemplateId );
 
 	return (
 		<ToolsPanelItem
@@ -106,29 +75,36 @@ const InheritQueryControl = ( {
 				trackInteraction( CoreFilterNames.INHERIT );
 			} }
 		>
-			<ToggleControl
+			<ToggleGroupControl
 				className="wc-block-product-collection__inherit-query-control"
+				isBlock
 				label={ label }
-				help={ helpText }
-				checked={ !! inherit }
-				onChange={ ( newInherit ) => {
-					if ( newInherit ) {
+				help={ inherit ? defaultInheritHelpText : customHelpText }
+				value={ !! inherit }
+				onChange={ ( value: boolean ) => {
+					if ( value ) {
 						// If the inherit is enabled, we want to reset the query to the default.
 						setQueryAttribute( {
 							...DEFAULT_QUERY,
-							inherit: newInherit,
+							inherit: value,
 						} );
 					} else {
 						// If the inherit is disabled, we want to reset the query to the previous query before the inherit was enabled.
 						setQueryAttribute( {
 							...DEFAULT_QUERY,
 							...queryObjectBeforeInheritEnabled,
-							inherit: newInherit,
+							inherit: value,
 						} );
 					}
 					trackInteraction( CoreFilterNames.INHERIT );
 				} }
-			/>
+			>
+				<ToggleGroupControlOption value label={ defaultOptionLabel } />
+				<ToggleGroupControlOption
+					value={ false }
+					label={ customOptionLabel }
+				/>
+			</ToggleGroupControl>
 		</ToolsPanelItem>
 	);
 };
@@ -154,18 +130,25 @@ const FilterableControl = ( {
 				trackInteraction( CoreFilterNames.FILTERABLE );
 			} }
 		>
-			<ToggleControl
+			<ToggleGroupControl
 				className="wc-block-product-collection__inherit-query-control"
+				isBlock
 				label={ label }
-				help={ filterableHelpText }
-				checked={ !! filterable }
-				onChange={ ( value ) => {
+				help={ filterable ? defaultFilterableHelpText : customHelpText }
+				value={ !! filterable }
+				onChange={ ( value: boolean ) => {
 					setQueryAttribute( {
 						filterable: value,
 					} );
 					trackInteraction( CoreFilterNames.FILTERABLE );
 				} }
-			/>
+			>
+				<ToggleGroupControlOption value label={ defaultOptionLabel } />
+				<ToggleGroupControlOption
+					value={ false }
+					label={ customOptionLabel }
+				/>
+			</ToggleGroupControl>
 		</ToolsPanelItem>
 	);
 };

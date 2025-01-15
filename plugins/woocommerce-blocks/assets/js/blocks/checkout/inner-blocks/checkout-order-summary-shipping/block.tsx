@@ -1,32 +1,68 @@
 /**
  * External dependencies
  */
+import { __ } from '@wordpress/i18n';
 import { TotalsShipping } from '@woocommerce/base-components/cart-checkout';
-import { getCurrencyFromPriceResponse } from '@woocommerce/price-format';
-import { useStoreCart } from '@woocommerce/base-context/hooks';
+import { useStoreCart } from '@woocommerce/base-context';
 import { TotalsWrapper } from '@woocommerce/blocks-checkout';
+import { useSelect } from '@wordpress/data';
+import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import {
+	filterShippingRatesByPrefersCollection,
+	isAddressComplete,
+	selectedRatesAreCollectable,
+} from '@woocommerce/base-utils';
 
 const Block = ( {
 	className = '',
 }: {
 	className?: string;
 } ): JSX.Element | null => {
-	const { cartTotals, cartNeedsShipping } = useStoreCart();
+	const { cartNeedsShipping, shippingRates, shippingAddress } =
+		useStoreCart();
+	const prefersCollection = useSelect( ( select ) =>
+		select( CHECKOUT_STORE_KEY ).prefersCollection()
+	);
 
 	if ( ! cartNeedsShipping ) {
 		return null;
 	}
 
-	const totalsCurrency = getCurrencyFromPriceResponse( cartTotals );
+	const hasSelectedCollectionOnly = selectedRatesAreCollectable(
+		filterShippingRatesByPrefersCollection(
+			shippingRates,
+			prefersCollection ?? false
+		)
+	);
+
+	const hasCompleteAddress = isAddressComplete( shippingAddress, [
+		'state',
+		'country',
+		'postcode',
+		'city',
+	] );
 
 	return (
 		<TotalsWrapper className={ className }>
 			<TotalsShipping
-				showCalculator={ false }
-				showRateSelector={ false }
-				values={ cartTotals }
-				currency={ totalsCurrency }
-				isCheckout={ true }
+				label={
+					hasSelectedCollectionOnly
+						? __( 'Collection', 'woocommerce' )
+						: __( 'Delivery', 'woocommerce' )
+				}
+				placeholder={
+					<span className="wc-block-components-shipping-placeholder__value">
+						{ hasCompleteAddress
+							? __(
+									'No available delivery option',
+									'woocommerce'
+							  )
+							: __(
+									'Enter address to calculate',
+									'woocommerce'
+							  ) }
+					</span>
+				}
 			/>
 		</TotalsWrapper>
 	);

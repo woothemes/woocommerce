@@ -1,13 +1,17 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
-const {
-	goToPageEditor,
-	fillPageTitle,
-	insertBlock,
-	getCanvas,
-	publishPage,
-	closeChoosePatternModal,
-} = require( '../../utils/editor' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
+const { fillPageTitle } = require( '../../utils/editor' );
 const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
+
+/**
+ * External dependencies
+ */
+import {
+	closeChoosePatternModal,
+	getCanvas,
+	goToPageEditor,
+	insertBlock,
+	publishPage,
+} from '@woocommerce/e2e-utils-playwright';
 
 // some WooCommerce Patterns to use
 const wooPatterns = [
@@ -28,7 +32,9 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Add WooCommerce Patterns Into Page',
-	{ tag: [ '@gutenberg', '@services', '@skip-on-default-pressable' ] },
+	{
+		tag: [ tags.GUTENBERG, tags.SKIP_ON_EXTERNAL_ENV ],
+	},
 	() => {
 		test( 'can insert WooCommerce patterns into page', async ( {
 			page,
@@ -86,7 +92,9 @@ test.describe(
 			// check some elements from added patterns
 			for ( let i = 1; i < wooPatterns.length; i++ ) {
 				await expect(
-					page.getByText( `${ wooPatterns[ i ].button }` )
+					page.getByRole( 'link', {
+						name: `${ wooPatterns[ i ].button }`,
+					} )
 				).toBeVisible();
 			}
 		} );
