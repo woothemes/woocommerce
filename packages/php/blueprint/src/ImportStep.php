@@ -59,7 +59,7 @@ class ImportStep {
 		$result = StepProcessorResult::success( 'ImportStep' );
 
 		if ( ! isset( $this->indexed_importers[ $this->step_definition->step ] ) ) {
-			$result->add_error( "Unable to find a impoter for {$this->step_definition->step}" );
+			$result->add_error( "Unable to find an importer for {$this->step_definition->step}" );
 			return $result;
 		}
 
@@ -83,7 +83,7 @@ class ImportStep {
 		$validate = $this->validator->validate( $this->step_definition, json_encode( $step_schema ) );
 
 		if ( ! $validate->isValid() ) {
-			$result->add_error( "Schema validation failed for step {$step_json->step}" );
+			$result->add_error( "Schema validation failed for step {$this->step_definition->step}" );
 			$errors           = ( new ErrorFormatter() )->format( $validate->error() );
 			$formatted_errors = array();
 			foreach ( $errors as $value ) {
