@@ -2942,7 +2942,7 @@ function wc_update_970_modify_primary_key_for_order_related_meta_tables() {
 
 	$prefix  = $wpdb->prefix;
 	$changes = array(
-		// TODO: contradicts with the function name a bit.
+		// NEXT: contradicts with the function name a bit.
 		'options'                    => array(
 			'original_pk' => 'option_id',
 			'query'       => "ALTER TABLE {$prefix}options ADD UNIQUE KEY option_id (option_id), DROP PRIMARY KEY, ADD PRIMARY KEY (option_name), DROP KEY option_name",
@@ -2955,16 +2955,16 @@ function wc_update_970_modify_primary_key_for_order_related_meta_tables() {
 			'original_pk' => 'id',
 			'query'       => "ALTER TABLE {$prefix}wc_orders_meta ADD UNIQUE KEY id (id), DROP PRIMARY KEY, ADD PRIMARY KEY (order_id, meta_key, id)",
 		),
-		// TODO: wp_woocommerce_payment_tokenmeta - explore SQLs and include into migration
-		// TODO: would modifying user and post meta here be the right move from core POV?
+		// NEXT: wp_woocommerce_payment_tokenmeta - explore SQLs and include into migration.
+		// NEXT: would modifying user and post meta here be the right move from core POV?
 	);
 
 	foreach ( $changes as $table => $modification ) {
-		$create_table_sql = $wpdb->get_var( "SHOW CREATE TABLE {$prefix}{$table}", 1 );
+		$create_table_sql = $wpdb->get_var( "SHOW CREATE TABLE {$prefix}{$table}", 1 ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		if ( $create_table_sql ) {
 			$original = $modification['original_pk'];
 			if ( strpos( $create_table_sql, "PRIMARY KEY (`{$original}`)" ) !== false ) {
-				$wpdb->query( $modification['query'] ); // phpcs:ignore WordPress.WP.PreparedSQL.NotPrepared
+				$wpdb->query( $modification['query'] ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			}
 		}
 	}
