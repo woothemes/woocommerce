@@ -48,23 +48,53 @@ class StoreNotices extends AbstractBlock {
 		$classes_and_styles = StyleAttributesUtils::get_classes_and_styles_by_attributes( $attributes, array(), array( 'extra_classes' ) );
 
 		return sprintf(
-			'<div %1$s>%2$s</div>',
+			'<div %1$s>%2$s%3$s</div>',
 			get_block_wrapper_attributes(
 				array(
 					'class' => 'wc-block-store-notices woocommerce ' . esc_attr( $classes_and_styles['classes'] ),
 				)
 			),
-			wc_kses_notice( $notices )
+			wc_kses_notice( $notices ),
+			$this->render_interactivity_notices_region()
 		);
 	}
 
 	/**
-	 * Get the frontend script handle for this block type.
-	 *
-	 * @param string $key Data to get, or default to everything.
+	 * In addition to the server notices we render interactivity API powered notices that
+	 * can be added client-side.
 	 */
-	protected function get_block_type_script( $key = null ) {
-		return null;
+	protected function render_interactivity_notices_region() {
+		$store_notices_context = array( 'notices' => array() );
+		$namespace             = array( 'namespace' => 'woocommerce/store-notices' );
+
+		ob_start();
+		?>
+		<div data-wc-interactivity="<?php echo esc_attr( wp_json_encode( $namespace ) ); ?>" data-wc-context="<?php echo esc_attr( wp_json_encode( $store_notices_context ) ); ?>" class="woocommerce-notices-wrapper">
+			<template
+				data-wc-each="context.notices"
+				data-wc-each-key="context.item.id"
+			>
+				<div data-wc-bind--class="callbacks.getNoticeClass" data-wc-bind--role="callbacks.getNoticeRole" data-wc-bind--role="callbacks.getNoticeRole">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+						<path data-wc-bind--d="callbacks.getNoticeIconPath"></path>
+					</svg>
+					<div class="wc-block-components-notice-banner__content">
+						<span data-wc-init="callbacks.getNoticeContent"></span>
+					</div>
+					<button
+						data-wc-bind--hidden="callbacks.isNoticeDismissible"
+						class="wc-block-components-notice-banner__dismiss"
+						aria-label="<?php esc_attr_e( 'Dismiss this notice', 'woocommerce' ); ?>"
+						data-wc-on--click="callbacks.dismissNotice"
+						hidden
+					>
+						X
+					</button>
+				</div>
+			</template>
+		</div>
+		<?php
+		return ob_get_clean();
 	}
 
 	/**
