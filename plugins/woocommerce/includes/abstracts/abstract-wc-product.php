@@ -2249,7 +2249,7 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	 * Get the defined value of the Cost of Goods Sold for this product.
 	 * See set_cogs_value.
 	 *
-	 * WARNING! If the Cost of Goods Sold feature is disabled this method will always return zero.
+	 * WARNING! If the Cost of Goods Sold feature is disabled this method will always return null.
 	 *
 	 * @return float The current value for this product.
 	 */
