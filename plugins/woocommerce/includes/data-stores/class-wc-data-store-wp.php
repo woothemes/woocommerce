@@ -84,11 +84,13 @@ class WC_Data_Store_WP {
 		global $wpdb;
 		$db_info       = $this->get_db_info();
 		$raw_meta_data = $wpdb->get_results(
+			// NEXT: dropping `ORDER BY` causing 2 tests to fail - evaluate tests refactoring
 			$wpdb->prepare(
 				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				"SELECT {$db_info['meta_id_field']} as meta_id, meta_key, meta_value
 				FROM {$db_info['table']}
-				WHERE {$db_info['object_id_field']} = %d",
+				WHERE {$db_info['object_id_field']} = %d
+				ORDER BY {$db_info['meta_id_field']}",
 				// phpcs:enable
 				$object->get_id()
 			)
