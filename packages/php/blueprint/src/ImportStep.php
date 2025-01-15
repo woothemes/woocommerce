@@ -15,6 +15,11 @@ use Opis\JsonSchema\Validator;
 class ImportStep {
 	use UseWPFunctions;
 
+	/**
+	 * Step definition.
+	 *
+	 * @var object The step definition.
+	 */
 	private object $step_definition;
 
 	/**
@@ -31,17 +36,34 @@ class ImportStep {
 	 */
 	private BuiltInStepProcessors $builtin_step_processors;
 
+	/**
+	 * Importers.
+	 *
+	 * @var array|mixed The importers.
+	 */
 	private array $importers;
+
+	/**
+	 * Indexed importers.
+	 *
+	 * @var array The indexed importers by step name.
+	 */
 	private array $indexed_importers;
 
 
+	/**
+	 * ImportStep constructor.
+	 *
+	 * @param object         $step_definition The step definition.
+	 * @param Validator|null $validator The validator instance, optional.
+	 */
 	public function __construct( $step_definition, ?Validator $validator = null ) {
 		$this->step_definition = $step_definition;
 		if ( null === $validator ) {
 			$validator = new Validator();
 		}
 		$this->validator         = $validator;
-		$this->importers         = $this->wp_apply_filters( 'wooblueprint_importers', ( ( new BuiltInStepProcessors() )->get_all() ));
+		$this->importers         = $this->wp_apply_filters( 'wooblueprint_importers', ( ( new BuiltInStepProcessors() )->get_all() ) );
 		$this->indexed_importers = Util::index_array(
 			$this->importers,
 			function ( $key, $importer ) {
@@ -77,8 +99,16 @@ class ImportStep {
 		return $result;
 	}
 
+	/**
+	 * Validate the step schemas.
+	 *
+	 * @param StepProcessor       $importer The importer.
+	 * @param StepProcessorResult $result The result object to add messages to.
+	 *
+	 * @return void
+	 */
 	protected function validate_step_schemas( StepProcessor $importer, StepProcessorResult $result ) {
-		$step_schema    = call_user_func( [ $importer->get_step_class(), 'get_schema' ] );
+		$step_schema = call_user_func( array( $importer->get_step_class(), 'get_schema' ) );
 
 		$validate = $this->validator->validate( $this->step_definition, json_encode( $step_schema ) );
 

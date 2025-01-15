@@ -91,7 +91,7 @@ class StepProcessorResult {
 	 * @return void
 	 */
 	public function merge_messages( StepProcessorResult $other ) {
-		$this->messages = array_merge($this->messages, $other->get_messages());
+		$this->messages = array_merge( $this->messages, $other->get_messages() );
 	}
 
 	/**
