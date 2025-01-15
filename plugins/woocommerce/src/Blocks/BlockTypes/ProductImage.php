@@ -109,7 +109,7 @@ class ProductImage extends AbstractBlock {
 			isset( $font_size['class'] ) ? esc_attr( $font_size['class'] ) : '',
 			isset( $font_size['style'] ) ? esc_attr( $font_size['style'] ) : '',
 			esc_html__( 'Sale', 'woocommerce' ),
-			esc_html__( 'Product on sale', 'woocommerce )
+			esc_html__( 'Product on sale', 'woocommerce' )
 		);
 		return $on_sale_badge;
 	}
