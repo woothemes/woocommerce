@@ -35,7 +35,7 @@ test.describe( 'Feature: Signing up', () => {
 		} );
 		test( 'Receive a variation sign-up confirmation', async () => {
 			const { given, when, then } = helper;
-			await given.aVariableProductThatIsOutOfStock();
+			await given.aVariableProductThatContainsOutOfStockVariations();
 			await given.theVariationHasNotifications();
 
 			await when.iViewTheConfirmationIReceivedViaEmail();

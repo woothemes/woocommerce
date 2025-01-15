@@ -57,8 +57,8 @@ class AcceptanceHelper {
 			this.numberOfCustomerWhoHaveJoinedTheWaitlistIsVisible.bind( this ),
 		aSimpleProductThatIsOutOfStock:
 			this.aSimpleProductThatIsOutOfStock.bind( this ),
-		aVariableProductThatIsOutOfStock:
-			this.aVariableProductThatIsOutOfStock.bind( this ),
+		aVariableProductThatContainsOutOfStockVariations:
+			this.aVariableProductThatContainsOutOfStockVariations.bind( this ),
 		theProductHasNotifications:
 			this.theProductHasNotifications.bind( this ),
 		theVariationHasNotifications:
@@ -86,6 +86,10 @@ class AcceptanceHelper {
 		iViewTheDoubleOptInVerificationIReceivedViaEmail:
 			this.iViewTheDoubleOptInVerificationIReceivedViaEmail.bind( this ),
 		iFollowTheConfirmLink: this.iFollowTheConfirmLink.bind( this ),
+		iViewTheNotificationIReceivedViaEmail:
+			this.iViewTheNotificationIReceivedViaEmail.bind( this ),
+		iClickTheButtonPromptingMeToPurchaseTheProduct:
+			this.iClickTheButtonPromptingMeToPurchaseTheProduct.bind( this ),
 	};
 	then = {
 		iSeeAPromptToSignUpAndBeNotifiedWhenTheProductIsBackInStock:
@@ -140,7 +144,33 @@ class AcceptanceHelper {
 			this.iCanSeeAConfirmationEmailWithDetailsAboutTheProductISubscribedTo.bind(
 				this
 			),
+		iAmTakenToTheProductPageToCompleteMyPurchase:
+			this.iAmTakenToTheProductPageToCompleteMyPurchase.bind( this ),
+		iSeeThatTheVariationIHadSignedUpForIsPreSelected:
+			this.iSeeThatTheVariationIHadSignedUpForIsPreSelected.bind( this ),
 	};
+
+	async iSeeThatTheVariationIHadSignedUpForIsPreSelected() {
+		await expect( this.page.getByLabel( 'Colour' ) ).toHaveValue( 'White' );
+	}
+
+	async iAmTakenToTheProductPageToCompleteMyPurchase() {
+		await expect(
+			this.page.getByRole( 'heading', {
+				name: this.productData.name,
+			} )
+		).toBeVisible();
+	}
+
+	async iClickTheButtonPromptingMeToPurchaseTheProduct() {
+		await this.page.getByRole( 'link', { name: 'Shop Now' } ).click();
+	}
+
+	async iViewTheNotificationIReceivedViaEmail() {
+		await this.page.goto(
+			'/notification-email/?notification_id=' + this.notificationId
+		);
+	}
 
 	async iCanSeeAConfirmationEmailWithDetailsAboutTheVariationProductISubscribedTo() {
 		await this.iViewTheConfirmationIReceivedViaEmail();
@@ -441,7 +471,7 @@ class AcceptanceHelper {
 						name: 'Colour',
 						visible: true,
 						variation: true,
-						options: [ 'Red', 'Green', 'Blue' ],
+						options: [ 'Red', 'Green', 'Blue', 'White' ],
 					},
 				],
 			} )
@@ -469,19 +499,19 @@ class AcceptanceHelper {
 	}
 
 	iChooseAVariationThatIsOutOfStock() {
-		return this.page.getByRole( 'combobox' ).selectOption( 'Green' );
+		return this.page.getByRole( 'combobox' ).selectOption( 'White' );
 	}
 
 	async iSeeSomeDetailsAboutTheVariationProductISubscribedTo() {
 		// this is part of a regex and contains two types of dash characters.
 		await this.iSeeSomeDetailsAboutTheProductISubscribedTo(
 			this.outOfStockVariationType === 'defined'
-				? `A Variable Product ${ now } [-–] Green`
+				? `A Variable Product ${ now } [-–] White`
 				: `A Variable Product with any ${ now }`
 		);
 	}
 
-	async aVariableProductThatIsOutOfStock() {
+	async aVariableProductThatContainsOutOfStockVariations() {
 		await this.api
 			.post( 'products', {
 				name: `A Variable Product ${ now }`,
@@ -491,7 +521,7 @@ class AcceptanceHelper {
 						name: 'Colour',
 						visible: true,
 						variation: true,
-						options: [ 'Red', 'Green', 'Blue' ],
+						options: [ 'Red', 'Green', 'Blue', 'White' ],
 					},
 				],
 			} )
@@ -518,7 +548,7 @@ class AcceptanceHelper {
 				attributes: [
 					{
 						name: 'Colour',
-						option: 'Green',
+						option: 'White',
 					},
 				],
 			}
@@ -528,7 +558,7 @@ class AcceptanceHelper {
 	}
 
 	async iAmViewingThePageOfAVariableProductThatContainsOutOfStockVariations() {
-		await this.aVariableProductThatIsOutOfStock();
+		await this.aVariableProductThatContainsOutOfStockVariations();
 		await this.page.goto( this.productData.permalink );
 	}
 
