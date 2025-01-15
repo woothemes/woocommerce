@@ -177,7 +177,19 @@ class AcceptanceHelper {
 			this.iSeeThatICanCancelPendingNotifications.bind( this ),
 		iSeeThatThePendingNotificationWasCancelled:
 			this.iSeeThatThePendingNotificationWasCancelled.bind( this ),
+		iSeeSomeActivityRelatedWithNotificationsISignedUpToReceiveInThePast:
+			this.iSeeSomeActivityRelatedWithNotificationsISignedUpToReceiveInThePast.bind(
+				this
+			),
 	};
+
+	async iSeeSomeActivityRelatedWithNotificationsISignedUpToReceiveInThePast() {
+		await expect(
+			await this.page
+				.locator( `.wc-bis-notifications-activity-table tbody tr` )
+				.count()
+		).toBeGreaterThan( 0 );
+	}
 
 	async iSeeThatThePendingNotificationWasCancelled() {
 		await expect(
