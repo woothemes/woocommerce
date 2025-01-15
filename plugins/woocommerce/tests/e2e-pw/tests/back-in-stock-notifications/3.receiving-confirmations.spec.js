@@ -5,7 +5,7 @@ import { setOption } from '../../utils/options';
 import { activateTheme } from '../../utils/themes';
 import AcceptanceHelper from './helper';
 const { test, request } = require( '@playwright/test' );
-test.describe( 'Feature: Signing up', () => {
+test.describe( 'Feature: Receiving Confirmations', () => {
 	let helper;
 	test.beforeAll( async ( { baseURL } ) => {
 		activateTheme( baseURL, 'twentytwentythree' );
@@ -21,6 +21,9 @@ test.describe( 'Feature: Signing up', () => {
 			'no'
 		);
 		helper = new AcceptanceHelper( baseURL, page );
+	} );
+	test.afterEach( async ( {} ) => {
+		helper.deleteAllProducts();
 	} );
 	test.describe( 'Receiving Confirmations', () => {
 		test.use( { storageState: process.env.CUSTOMERSTATE } );

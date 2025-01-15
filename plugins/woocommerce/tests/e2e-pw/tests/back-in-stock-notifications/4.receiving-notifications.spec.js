@@ -5,7 +5,7 @@ import { setOption } from '../../utils/options';
 import { activateTheme } from '../../utils/themes';
 import AcceptanceHelper from './helper';
 const { test, request } = require( '@playwright/test' );
-test.describe( 'Feature: Signing up', () => {
+test.describe( 'Feature: Receiving Notifications', () => {
 	let helper;
 	test.beforeAll( async ( { baseURL } ) => {
 		activateTheme( baseURL, 'twentytwentythree' );
@@ -22,30 +22,31 @@ test.describe( 'Feature: Signing up', () => {
 		);
 		helper = new AcceptanceHelper( baseURL, page );
 	} );
-	test.describe( 'Receiving Notifications', () => {
-		test.use( { storageState: process.env.CUSTOMERSTATE } );
-		test( 'Receive a simple product notification', async () => {
-			const { given, when, then } = helper;
-			await given.aSimpleProductThatIsOutOfStock();
-			await given.theProductHasNotifications();
+	test.afterEach( async ( {} ) => {
+		helper.deleteAllProducts();
+	} );
+	test.use( { storageState: process.env.CUSTOMERSTATE } );
+	test( 'Receive a simple product notification', async () => {
+		const { given, when, then } = helper;
+		await given.aSimpleProductThatIsOutOfStock();
+		await given.theProductHasNotifications();
 
-			await when.iViewTheNotificationIReceivedViaEmail();
+		await when.iViewTheNotificationIReceivedViaEmail();
 
-			await when.iClickTheButtonPromptingMeToPurchaseTheProduct();
+		await when.iClickTheButtonPromptingMeToPurchaseTheProduct();
 
-			await then.iAmTakenToTheProductPageToCompleteMyPurchase();
-		} );
-		test( 'Receive a variation notification', async () => {
-			const { given, when, then } = helper;
-			await given.aVariableProductThatContainsOutOfStockVariations();
-			await given.theVariationHasNotifications();
+		await then.iAmTakenToTheProductPageToCompleteMyPurchase();
+	} );
+	test( 'Receive a variation notification', async () => {
+		const { given, when, then } = helper;
+		await given.aVariableProductThatContainsOutOfStockVariations();
+		await given.theVariationHasNotifications();
 
-			await when.iViewTheNotificationIReceivedViaEmail();
+		await when.iViewTheNotificationIReceivedViaEmail();
 
-			await when.iClickTheButtonPromptingMeToPurchaseTheProduct();
+		await when.iClickTheButtonPromptingMeToPurchaseTheProduct();
 
-			await then.iAmTakenToTheProductPageToCompleteMyPurchase();
-			await then.iSeeThatTheVariationIHadSignedUpForIsPreSelected();
-		} );
+		await then.iAmTakenToTheProductPageToCompleteMyPurchase();
+		await then.iSeeThatTheVariationIHadSignedUpForIsPreSelected();
 	} );
 } );

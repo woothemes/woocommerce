@@ -90,6 +90,13 @@ class AcceptanceHelper {
 			this.iViewTheNotificationIReceivedViaEmail.bind( this ),
 		iClickTheButtonPromptingMeToPurchaseTheProduct:
 			this.iClickTheButtonPromptingMeToPurchaseTheProduct.bind( this ),
+		iAmOnTheStockNotificationsAccountPage:
+			this.iAmOnTheStockNotificationsAccountPage.bind( this ),
+		iCancelAnActiveNotification:
+			this.iCancelAnActiveNotification.bind( this ),
+		iReSendAVerificationEmail: this.iReSendAVerificationEmail.bind( this ),
+		iCancelAPendingNotification:
+			this.iCancelAPendingNotification.bind( this ),
 	};
 	then = {
 		iSeeAPromptToSignUpAndBeNotifiedWhenTheProductIsBackInStock:
@@ -148,7 +155,143 @@ class AcceptanceHelper {
 			this.iAmTakenToTheProductPageToCompleteMyPurchase.bind( this ),
 		iSeeThatTheVariationIHadSignedUpForIsPreSelected:
 			this.iSeeThatTheVariationIHadSignedUpForIsPreSelected.bind( this ),
+		iSeeAnActiveNotificationsTable:
+			this.iSeeAnActiveNotificationsTable.bind( this ),
+		iSeeANotificationForTheProductIHaveSubscribedTo:
+			this.iSeeANotificationForTheProductIHaveSubscribedTo.bind( this ),
+		iSeeThatICanCancelActiveNotifications:
+			this.iSeeThatICanCancelActiveNotifications.bind( this ),
+		iSeeThatTheNotificationWasCancelled:
+			this.iSeeThatTheNotificationWasCancelled.bind( this ),
+		iSeeThatICanReSendVerificationEmails:
+			this.iSeeThatICanReSendVerificationEmails.bind( this ),
+		iSeeThatTheEmailWasResentSuccessfully:
+			this.iSeeThatTheEmailWasResentSuccessfully.bind( this ),
+		iSeeAPendingNotificationsTable:
+			this.iSeeAPendingNotificationsTable.bind( this ),
+		iSeeAPendingNotificationForTheProductIHaveSubscribedTo:
+			this.iSeeAPendingNotificationForTheProductIHaveSubscribedTo.bind(
+				this
+			),
+		iSeeThatICanCancelPendingNotifications:
+			this.iSeeThatICanCancelPendingNotifications.bind( this ),
+		iSeeThatThePendingNotificationWasCancelled:
+			this.iSeeThatThePendingNotificationWasCancelled.bind( this ),
 	};
+
+	async iSeeThatThePendingNotificationWasCancelled() {
+		await expect(
+			this.page.getByText( 'Pending notification cancelled.' )
+		).toBeVisible();
+	}
+
+	async iSeeThatICanCancelPendingNotifications() {
+		await expect(
+			this.page.locator( `h2:has-text("Pending") + table tr a`, {
+				hasText: 'Cancel',
+			} )
+		).toBeVisible();
+	}
+
+	async iCancelAPendingNotification() {
+		this.page
+			.locator( `h2:has-text("Pending") + table tr a`, {
+				hasText: 'Cancel',
+			} )
+			.click();
+	}
+
+	async iSeeAPendingNotificationForTheProductIHaveSubscribedTo() {
+		let expectedText;
+		if ( this.outOfStockVariationType === 'defined' ) {
+			expectedText = `${ this.productData.name } [-–] White`;
+		} else {
+			expectedText = this.productData.name;
+		}
+		await expect(
+			this.page.locator( `h2:has-text("Pending") + table tr a`, {
+				hasText: new RegExp( expectedText ),
+			} )
+		).toBeVisible();
+	}
+
+	async iSeeAPendingNotificationsTable() {
+		await expect(
+			await this.page
+				.locator( 'h2:has-text("Pending") + table tr' )
+				.count()
+		).toBeGreaterThan( 0 );
+	}
+
+	async iReSendAVerificationEmail() {
+		await this.page
+			.locator( `h2:has-text("Pending") + table tr a`, {
+				hasText: 'Resend verification',
+			} )
+			.click();
+	}
+
+	async iSeeThatTheEmailWasResentSuccessfully() {
+		await expect(
+			this.page.getByText( 'Verification e-mail sent' )
+		).toBeVisible();
+	}
+
+	async iSeeThatICanReSendVerificationEmails() {
+		await expect(
+			this.page.locator( `h2:has-text("Pending") + table tr a`, {
+				hasText: 'Resend verification',
+			} )
+		).toBeVisible();
+	}
+
+	async iSeeThatTheNotificationWasCancelled() {
+		await expect(
+			this.page.getByText( 'Notification deactivated.' )
+		).toBeVisible();
+	}
+
+	iCancelAnActiveNotification() {
+		this.page
+			.locator( `h2:has-text("Active") + table tr a`, {
+				hasText: 'Deactivate',
+			} )
+			.click();
+	}
+
+	async iSeeThatICanCancelActiveNotifications() {
+		await expect(
+			this.page.locator( `h2:has-text("Active") + table tr a`, {
+				hasText: 'Deactivate',
+			} )
+		).toBeVisible();
+	}
+
+	async iSeeANotificationForTheProductIHaveSubscribedTo() {
+		let expectedText;
+		if ( this.outOfStockVariationType === 'defined' ) {
+			expectedText = `${ this.productData.name } [-–] White`;
+		} else {
+			expectedText = this.productData.name;
+		}
+		await expect(
+			this.page.locator( `h2:has-text("Active") + table tr a`, {
+				hasText: new RegExp( expectedText ),
+			} )
+		).toBeVisible();
+	}
+
+	async iSeeAnActiveNotificationsTable() {
+		await expect(
+			await this.page
+				.locator( 'h2:has-text("Active") + table tr' )
+				.count()
+		).toBeGreaterThan( 0 );
+	}
+
+	async iAmOnTheStockNotificationsAccountPage() {
+		await this.page.goto( '/my-account/backinstock/' );
+	}
 
 	async iSeeThatTheVariationIHadSignedUpForIsPreSelected() {
 		await expect( this.page.getByLabel( 'Colour' ) ).toHaveValue( 'White' );

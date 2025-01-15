@@ -5,7 +5,7 @@ import { setOption } from '../../utils/options';
 import { activateTheme } from '../../utils/themes';
 import AcceptanceHelper from './helper';
 const { test, request } = require( '@playwright/test' );
-test.describe( 'Feature: Signing up', () => {
+test.describe( 'Feature: Viewing Subscribers Count', () => {
 	let helper;
 	test.beforeAll( async ( { baseURL } ) => {
 		activateTheme( baseURL, 'twentytwentythree' );
@@ -25,19 +25,17 @@ test.describe( 'Feature: Signing up', () => {
 	test.afterEach( async ( {} ) => {
 		helper.deleteAllProducts();
 	} );
-	test.describe( 'Viewing Subscribers Count', () => {
-		test( 'View number of customers who have joined the waitlist', async () => {
-			const { given, when, then } = helper;
-			await given.numberOfCustomerWhoHaveJoinedTheWaitlistIsVisible();
-			await given.signUpsAreSingleOptInWithoutCheckbox();
-			await given.iGoToTheProductPage();
-			await when.iEnterMyEmail();
-			await when.iClickTheNotifyMeButton();
+	test( 'View number of customers who have joined the waitlist', async () => {
+		const { given, when, then } = helper;
+		await given.numberOfCustomerWhoHaveJoinedTheWaitlistIsVisible();
+		await given.signUpsAreSingleOptInWithoutCheckbox();
+		await given.iGoToTheProductPage();
+		await when.iEnterMyEmail();
+		await when.iClickTheNotifyMeButton();
 
-			await when.iGoToTheProductPage();
-			await then.iSeeAPromptToSignUpAndBeNotifiedWhenTheProductIsBackInStock();
-			await then.iSeeASignUpButton();
-			await then.iSeeThatSomeCustomersHaveAlreadySignedUp();
-		} );
+		await when.iGoToTheProductPage();
+		await then.iSeeAPromptToSignUpAndBeNotifiedWhenTheProductIsBackInStock();
+		await then.iSeeASignUpButton();
+		await then.iSeeThatSomeCustomersHaveAlreadySignedUp();
 	} );
 } );
