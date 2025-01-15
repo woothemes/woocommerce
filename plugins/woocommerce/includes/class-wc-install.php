@@ -1638,8 +1638,8 @@ CREATE TABLE {$wpdb->prefix}woocommerce_payment_tokenmeta (
   payment_token_id bigint(20) unsigned NOT NULL,
   meta_key varchar(255) NULL,
   meta_value longtext NULL,
-  PRIMARY KEY  (meta_id),
-  KEY payment_token_id (payment_token_id),
+  PRIMARY KEY (order_item_id, meta_key, meta_id),
+  UNIQUE KEY meta_id (meta_id),
   KEY meta_key (meta_key(32))
 ) $collate;
 CREATE TABLE {$wpdb->prefix}woocommerce_log (
