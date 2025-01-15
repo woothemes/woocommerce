@@ -29,8 +29,8 @@ const localPickupRates = localPickupLocations
 				delivery_time: '',
 				price: '0',
 				taxes: '0',
-				rate_id: `pickup_location:${ index }`,
-				instance_id: index,
+				rate_id: `pickup_location:${ index + 1 }`,
+				instance_id: index + 1,
 				meta_data: [
 					{
 						key: 'pickup_location',
