@@ -88,6 +88,26 @@ class AddToCartWithOptions extends AbstractBlock {
 			return '';
 		}
 
+		$product_type = $product->get_type();
+
+		if ( ! in_array( $product_type, array( 'simple', 'variable', 'external', 'grouped' ), true ) ) {
+
+			ob_start();
+
+			/**
+			 * Trigger the single product add to cart action for each product type.
+			 *
+			 * @since 9.7.0
+			 */
+			do_action( 'woocommerce_' . $product->get_type() . '_add_to_cart' );
+
+			$product_html = ob_get_clean();
+
+			$product = $previous_product;
+
+			return $product_html;
+		}
+
 		$is_external_product_with_url = $product instanceof \WC_Product_External && $product->get_product_url();
 		/**
 		 * Filter to modify the add to cart with options HTML output.
