@@ -2956,7 +2956,7 @@ function wc_update_970_modify_primary_key_for_order_related_meta_tables() {
 			'query'       => "ALTER TABLE {$prefix}wc_orders_meta ADD UNIQUE KEY id (id), DROP PRIMARY KEY, ADD PRIMARY KEY (order_id, meta_key, id)",
 		),
 		// NEXT: wp_woocommerce_payment_tokenmeta - explore SQLs and include into migration.
-		// NEXT: would modifying user and post meta here be the right move from core POV?
+		// NEXT: would modifying user (umeta_id pk), post (meta_id pk), term (meta_id pk) and comment (meta_id pk) metas here be the right move from core POV?
 	);
 
 	foreach ( $changes as $table => $modification ) {
