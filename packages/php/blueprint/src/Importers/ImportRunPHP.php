@@ -32,6 +32,33 @@ class ImportRunPHP implements StepProcessor {
 		// This is Playground specific and should be removed in Woo Blueprint.
 		$code = preg_replace( '/require_once\s+\'wordpress\/wp-load\.php\';/s', '', $code );
 
+		// List of disallowed functions.
+		$disallowed_functions = array(
+			'shell_exec',
+			'exec',
+			'system',
+			'passthru',
+			'proc_open',
+			'popen',
+			'eval',
+			'assert',
+			'preg_replace_callback',
+			'create_function',
+			'include',
+			'include_once',
+			'require',
+			'require_once',
+		);
+
+		// Build a regex pattern to detect disallowed functions.
+		$pattern = '/\b(' . implode( '|', $disallowed_functions ) . ')\b/';
+
+		// Check if the code contains any disallowed functions.
+		if ( preg_match( $pattern, $code ) ) {
+			$result->add_error( 'Disallowed function used in code.' );
+			return $result;
+		}
+
 		// phpcs:ignore -- this is the only way to run 'runPHP' step.
 		eval( $code );
 
