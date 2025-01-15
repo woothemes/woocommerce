@@ -5,6 +5,7 @@ use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\StoreApi\SchemaController;
 use Automattic\WooCommerce\StoreApi\Schemas\ExtendSchema;
 use Automattic\WooCommerce\StoreApi\Utilities\QuantityLimits;
+use Automattic\WooCommerce\Blocks\Utils\ProductAvailabilityUtils;
 
 /**
  * ProductSchema class.
@@ -472,7 +473,7 @@ class ProductSchema extends AbstractSchema {
 	 * @return array
 	 */
 	public function get_item_response( $product ) {
-		$availability = $product->get_availability();
+		$availability = ProductAvailabilityUtils::get_product_availability( $product );
 		return [
 			'id'                  => $product->get_id(),
 			'name'                => $this->prepare_html_response( $product->get_title() ),

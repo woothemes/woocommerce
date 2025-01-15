@@ -1,9 +1,15 @@
-const { test } = require( '../../../../fixtures/block-editor-fixtures' );
-const { expect } = require( '@playwright/test' );
+/**
+ * External dependencies
+ */
+import { expect } from '@playwright/test';
+import { insertBlock } from '@woocommerce/e2e-utils-playwright';
 
-const { clickOnTab } = require( '../../../../utils/simple-products' );
-const { insertBlock } = require( '../../../../utils/editor' );
-const { tags } = require( '../../../../fixtures/fixtures' );
+/**
+ * Internal dependencies
+ */
+import { test } from '../../../../fixtures/block-editor-fixtures';
+import { clickOnTab } from '../../../../utils/simple-products';
+import { tags } from '../../../../fixtures/fixtures';
 
 const NEW_EDITOR_ADD_PRODUCT_URL =
 	'wp-admin/admin.php?page=wc-admin&path=%2Fadd-product';
@@ -383,20 +389,28 @@ test.describe( 'General tab', { tag: [ tags.GUTENBERG ] }, () => {
 
 				// Verify summary
 				await expect(
-					page.getByText( productData.summary )
+					page
+						.locator( '#wp--skip-link--target' )
+						.getByText( productData.summary )
 				).toBeVisible();
 
 				// Verify description
 				await page.getByRole( 'tab', { name: 'Description' } ).click();
 
 				await expect(
-					page.getByText( productData.descriptionTitle )
+					page.getByRole( 'heading', {
+						name: productData.descriptionTitle,
+					} )
 				).toBeVisible();
 				await expect(
-					page.getByText( productData.descriptionSimple )
+					page
+						.getByLabel( 'Description' )
+						.getByText( productData.descriptionSimple )
 				).toBeVisible();
 				await expect(
-					page.getByText( productData.descriptionParagraph )
+					page
+						.getByLabel( 'Description' )
+						.getByText( productData.descriptionParagraph )
 				).toBeVisible();
 
 				// Verify inventory details

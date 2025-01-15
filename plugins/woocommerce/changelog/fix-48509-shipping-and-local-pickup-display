@@ -1,0 +1,4 @@
+Significance: patch
+Type: enhancement
+
+Hides the delivery/pickup toggle when only local pickup is enabled in block checkout.

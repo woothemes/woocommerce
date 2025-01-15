@@ -1,6 +1,7 @@
 <?php
 namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 
 /**
@@ -24,7 +25,7 @@ class FeaturedProduct extends FeaturedItem {
 		$id = absint( $attributes['productId'] ?? 0 );
 
 		$product = wc_get_product( $id );
-		if ( ! $product || ( 'publish' !== $product->get_status() && ! current_user_can( 'read_product', $id ) ) ) {
+		if ( ! $product || ( ProductStatus::PUBLISH !== $product->get_status() && ! current_user_can( 'read_product', $id ) ) ) {
 			return null;
 		}
 

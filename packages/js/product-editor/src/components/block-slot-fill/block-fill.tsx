@@ -24,10 +24,10 @@ export function BlockFill( {
 
 	const closestAncestorClientId = useSelect(
 		( select ) => {
-			// @ts-expect-error Outdated type definition.
 			const { getBlockParentsByBlockName } =
 				select( 'core/block-editor' );
 
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			const [ closestParentClientId ] = getBlockParentsByBlockName(
 				clientId,
 				slotContainerBlockName,

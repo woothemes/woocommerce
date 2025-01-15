@@ -1,7 +1,31 @@
 declare global {
 	interface BaseSettingsField {
 		title?: string;
-		type: string;
+		type:
+			| 'text'
+			| 'password'
+			| 'title'
+			| 'multi_select_countries'
+			| 'color'
+			| 'datetime'
+			| 'datetime-local'
+			| 'date'
+			| 'month'
+			| 'time'
+			| 'week'
+			| 'number'
+			| 'email'
+			| 'url'
+			| 'tel'
+			| 'select'
+			| 'radio'
+			| 'relative_date_selector'
+			| 'textarea'
+			| 'sectionend'
+			| 'single_select_page'
+			| 'single_select_page_with_search'
+			| 'single_select_country'
+			| 'slotfill_placeholder';
 		id?: string;
 		desc?: string;
 		desc_tip?: boolean | string;
@@ -22,10 +46,20 @@ declare global {
 		[ key: string ]: any;
 	}
 
-	interface GroupSettingsField extends BaseSettingsField {
-		type: 'group';
-		settings: SettingsField[];
+	interface CustomSettingsField {
+		type: 'custom';
+		content: string;
 	}
+
+	interface GroupSettingsField {
+		type: 'group';
+		label: string;
+		desc: string;
+		id: string;
+		title: string;
+		settings: Exclude< SettingsField, GroupSettingsField >[];
+	}
+
 	interface CheckboxSettingsField extends BaseSettingsField {
 		type: 'checkbox';
 		checkboxgroup?: 'start' | 'end' | '';
@@ -38,13 +72,14 @@ declare global {
 
 	type SettingsField =
 		| BaseSettingsField
+		| CustomSettingsField
 		| GroupSettingsField
 		| CheckboxGroupSettingsField
 		| CheckboxSettingsField;
 
 	interface SettingsSection {
 		label: string;
-		settings: SettingField[];
+		settings: SettingsField[];
 	}
 
 	interface SettingsPage {
@@ -59,15 +94,6 @@ declare global {
 
 	interface SettingsData {
 		[ key: string ]: SettingsPage;
-	}
-
-	interface SettingsGroup {
-		label: string;
-		desc: string;
-		id: string;
-		title: string;
-		type: 'group';
-		settings: SettingsField[];
 	}
 }
 

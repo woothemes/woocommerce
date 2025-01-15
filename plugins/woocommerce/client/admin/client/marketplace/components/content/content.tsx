@@ -10,6 +10,7 @@ import {
 import { useQuery } from '@woocommerce/navigation';
 import { speak } from '@wordpress/a11y';
 import { __, sprintf } from '@wordpress/i18n';
+import { recordEvent } from '@woocommerce/tracks';
 
 /**
  * Internal dependencies
@@ -171,6 +172,25 @@ export default function Content(): JSX.Element {
 		setIsLoading( true );
 		setAllProducts( [] );
 
+		const recordSearchFinishedEvent = ( totalProducts?: number ) => {
+			if ( query.search ) {
+				recordEvent( 'marketplace_search_finish', {
+					tab: query.tab,
+					total_products: totalProducts,
+					category: query.category || '_all',
+					search_term: query.term || '',
+				} );
+				// Remove search query from the URL so the event is not recorded again. Keep other parameters.
+				const url = new URL( window.location.href );
+				url.searchParams.delete( 'search' );
+				window.history.replaceState(
+					null,
+					'',
+					url.pathname + url.search
+				);
+			}
+		};
+
 		// If query.category is present and not '_all', only fetch that category
 		if ( query.category && query.category !== '_all' ) {
 			const params = new URLSearchParams();
@@ -195,6 +215,8 @@ export default function Content(): JSX.Element {
 					} );
 
 					searchCompleteAnnouncement( productList.totalProducts );
+
+					recordSearchFinishedEvent( productList.totalProducts );
 				} )
 				.catch( () => {
 					setAllProducts( [] );
@@ -246,7 +268,7 @@ export default function Content(): JSX.Element {
 
 					setAllProducts( combinedProducts );
 
-					setSearchResultsCount( {
+					const resultsCounts = {
 						extensions: results.find(
 							( i ) => i.type === 'extension'
 						)?.totalProducts,
@@ -255,7 +277,9 @@ export default function Content(): JSX.Element {
 						'business-services': results.find(
 							( i ) => i.type === 'business-service'
 						)?.totalProducts,
-					} );
+					};
+
+					setSearchResultsCount( resultsCounts );
 
 					results.forEach( ( result ) => {
 						switch ( result.type ) {
@@ -272,6 +296,13 @@ export default function Content(): JSX.Element {
 								break;
 						}
 					} );
+
+					const tab = query.tab as
+						| 'extensions'
+						| 'themes'
+						| 'business-services';
+
+					recordSearchFinishedEvent( resultsCounts[ tab ] );
 
 					searchCompleteAnnouncement(
 						results.reduce( ( acc, curr ) => {
@@ -368,6 +399,7 @@ export default function Content(): JSX.Element {
 						products={ filteredProducts }
 						categorySelector={ true }
 						type={ getProductType( selectedTab ) }
+						searchTerm={ query.term }
 					/>
 				);
 			case 'discover':

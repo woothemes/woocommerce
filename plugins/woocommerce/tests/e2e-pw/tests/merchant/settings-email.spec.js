@@ -122,7 +122,7 @@ test.describe( 'WooCommerce Email Settings', () => {
 
 	test(
 		'Live preview when changing email settings',
-		{ tag: tags.SKIP_ON_PRESSABLE },
+		{ tag: tags.SKIP_ON_EXTERNAL_ENV },
 		async ( { page, baseURL } ) => {
 			await setFeatureFlag( baseURL, 'yes' );
 			await page.goto( 'wp-admin/admin.php?page=wc-settings&tab=email' );

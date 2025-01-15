@@ -171,6 +171,7 @@ test.describe(
 
 			// process the Action Scheduler tasks
 			setupPage = await browser.newPage();
+			// eslint-disable-next-line playwright/no-wait-for-timeout
 			await setupPage.waitForTimeout( 5000 );
 			await setupPage.goto( '?process-waiting-actions' );
 			await setupPage.close();

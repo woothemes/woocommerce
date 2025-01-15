@@ -25,22 +25,22 @@ export const LegacyContent = ( {
 	}
 
 	return (
-		<form>
+		<form id="mainform">
 			<div className="woocommerce-settings-content">
-				{ section.settings.map( ( data ) => {
-					const key =
-						data.id +
-						'-' +
-						( data.title ?? '' ).replace( /\s+/g, '-' ) +
-						'-' +
-						data.type;
+				{ section.settings.map( ( data, index ) => {
+					const key = `${ data.type }-${ index }`;
 
 					if ( data.type === 'sectionend' ) {
 						return null;
 					}
 
 					if ( data.type === 'group' ) {
-						return <SettingsGroup key={ key } group={ data } />;
+						return (
+							<SettingsGroup
+								key={ key }
+								group={ data as GroupSettingsField }
+							/>
+						);
 					}
 
 					// Handle settings not in a group here.
