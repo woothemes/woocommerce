@@ -982,6 +982,7 @@ class WC_Countries {
 						),
 						'state'    => array(
 							'required' => false,
+							'hidden'   => true,
 							'label'    => __( 'District', 'woocommerce' ),
 						),
 					),
