@@ -354,11 +354,11 @@
 				// Cost values need to be stripped of thier thousandth separators and made sure
 				// the decimal separator is a ".".
 				unformatShippingMethodNumericValues: function( data ) {
-					if ( ! window.wc.ShippingCurrencyContext ) {
+					if ( ! window.wc.wcSettings.CURRENCY ) {
 						return data;
 					}
 
-					const config = window.wc.ShippingCurrencyContext.getCurrencyConfig();
+					const config = window.wc.wcSettings.CURRENCY ;
 					const numericValuesFields = [
 						'woocommerce_free_shipping_min_amount',
 						'woocommerce_flat_rate_cost',
