@@ -827,6 +827,9 @@ class WC_Helper {
 		 */
 		do_action( 'woocommerce_helper_connect_start' );
 
+		// Ignore all previously dismissed connected notices.
+		delete_metadata('user', 0, \Automattic\WooCommerce\Admin\PluginsHelper::DISMISS_CONNECTED_NOTICE, '', true);
+
 		$connect_url = add_query_arg(
 			array(
 				'home_url'           => rawurlencode( home_url() ),
