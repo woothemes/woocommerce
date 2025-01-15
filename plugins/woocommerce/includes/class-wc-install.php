@@ -271,6 +271,9 @@ class WC_Install {
 		'9.5.0' => array(
 			'wc_update_950_tracking_option_autoload',
 		),
+		'9.7.0' => array(
+			'wc_update_970_modify_primary_key_for_order_related_meta_tables',
+		),
 	);
 
 	/**
