@@ -20,7 +20,7 @@ defined( 'ABSPATH' ) || exit;
  * @param bool       $final_step Optional. Whether this is the final step of the order logging, and should clear the log.
  *
  * @internal This function is intended for internal use only.
- * @since 9.6.0
+ * @since 9.7.0
  */
 function wc_log_order_step( string $message, ?array $context = null, bool $final_step = false ) {
 
