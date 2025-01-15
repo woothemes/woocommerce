@@ -1570,6 +1570,7 @@ CREATE TABLE {$wpdb->prefix}woocommerce_order_itemmeta (
   order_item_id bigint(20) unsigned NOT NULL,
   meta_key varchar(255) default NULL,
   meta_value longtext NULL,
+  # TODO: modify PK
   PRIMARY KEY  (meta_id),
   KEY order_item_id (order_item_id),
   KEY meta_key (meta_key(32))

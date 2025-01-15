@@ -3186,6 +3186,7 @@ CREATE TABLE $meta_table (
 	order_id bigint(20) unsigned null,
 	meta_key varchar(255),
 	meta_value text null,
+	# TODO: modify PK
 	KEY meta_key_value (meta_key(100), meta_value($composite_meta_value_index_length)),
 	KEY order_id_meta_key_meta_value (order_id, meta_key(100), meta_value($composite_meta_value_index_length))
 ) $collate;

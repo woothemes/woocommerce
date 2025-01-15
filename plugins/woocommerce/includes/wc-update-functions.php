@@ -2939,8 +2939,34 @@ function wc_update_950_tracking_option_autoload() {
  */
 function wc_update_970_modify_primary_key_for_order_related_meta_tables()
 {
-	// TODO: tables existence and verifying PKs were not modified yet.
-	// TODO: verify if modifying user and post meta here would be the right move from core POV.
-	// ALTER TABLE wp_woocommerce_order_itemmeta ADD UNIQUE KEY meta_id (meta_id), DROP PRIMARY KEY, ADD PRIMARY KEY (order_item_id, meta_key, meta_id), DROP KEY order_item_id;
-	// ALTER TABLE wp_wc_orders_meta ADD UNIQUE KEY id (id), DROP PRIMARY KEY, ADD PRIMARY KEY (order_id, meta_key, id);
+	global $wpdb;
+
+	$prefix = $wpdb->prefix;
+	$changes = array(
+		// TODO: contradicts with the function name a bit.
+		'options'                    => [
+			'original_pk' => 'option_id',
+			'query'       => "ALTER TABLE {$prefix}options ADD UNIQUE KEY option_id (option_id), DROP PRIMARY KEY, ADD PRIMARY KEY (option_name), DROP KEY option_name"
+		],
+		'woocommerce_order_itemmeta' => [
+			'original_pk' => 'meta_id',
+			'query'       => "ALTER TABLE {$prefix}woocommerce_order_itemmeta ADD UNIQUE KEY meta_id (meta_id), DROP PRIMARY KEY, ADD PRIMARY KEY (order_item_id, meta_key, meta_id), DROP KEY order_item_id"
+		],
+		'wc_orders_meta'             => [
+			'original_pk' => 'id',
+			'query'       => "ALTER TABLE {$prefix}wc_orders_meta ADD UNIQUE KEY id (id), DROP PRIMARY KEY, ADD PRIMARY KEY (order_id, meta_key, id)"
+		],
+		// TODO: wp_woocommerce_payment_tokenmeta - explore SQLs and include into migration
+		// TODO: would modifying user and post meta here be the right move from core POV?
+	);
+
+	foreach ( $changes as $table => $modification ) {
+		$create_table_sql = $wpdb->get_var( "SHOW CREATE TABLE {$prefix}{$table}", 1 );
+		if ( $create_table_sql ) {
+			$original = $modification['original_pk'];
+			if ( strpos( $create_table_sql, "PRIMARY KEY (`{$original}`)" ) !== false ) {
+				$wpdb->query( $modification['query'] ); // phpcs:ignore WordPress.WP.PreparedSQL.NotPrepared
+			}
+		}
+	}
 }
